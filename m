@@ -1,57 +1,60 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
- by mx.groups.io with SMTP id smtpd.web10.6871.1712135593701727152
+Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
+ by mx.groups.io with SMTP id smtpd.web10.31121.1712417651204757068
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 03 Apr 2024 02:13:13 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1712135593; x=1743671593;
-  h=from:to:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=3FNHF/cIpZCrbTTY84pxa3/Z6aZu+6PYbkkwlaO/Usc=;
-  b=WPwalX8vWCpN+EkvJT9Y86jdLQOOtjiSLkWdPjn25H6J8rgCaOH6tcef
-   oLQ1zKfAc0U9ZpAd6pXaJAkoC28LMSyYggDcUXG6pvnQovRGLg8qjs9wV
-   XZaN9EFWBn9GsrnJjUSfPRNp6+bkiQmasaJUwt42XUfqFtNt16tO0bLvi
-   wkVfm7Qow1CVX0rCOEiMepbf3RE6sZ7VHAIvqBVQHiLZBkqSkXnjzCFr+
-   sfhwN4mmyDLItKVEDGLV3z0hG6zcgaucj3ZcUUQn+OQVrs+HPYfjwnRNk
-   P7k+ZqZGE3UUTQGSPT1+KthCIqcibgXfbj9VDEc/W02Ci8U6Fx1ppCUCV
-   Q==;
-From: "Naveen Saini" <naveen.kumar.saini@intel.com>
-Subject: [meta-zephyr][PATCH] README.txt: update mailing list
-Date: Wed,  3 Apr 2024 17:41:48 +0800
-Message-Id: <20240403094148.2184120-1-naveen.kumar.saini@intel.com>
+ Sat, 06 Apr 2024 08:34:11 -0700
+Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-1e3ca4fe4cfso7737345ad.2
+        for <yocto-patches@lists.yoctoproject.org>; Sat, 06 Apr 2024 08:34:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=konsulko.com; s=google; t=1712417650; x=1713022450; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=St4OcOBaV/Itw+h6NkNGJxpG7ZTRkQa/nl3b8fa5JhI=;
+        b=mx+qDkiTPSRkVN0lawsUsX7D5oTA3CSAGcQPWXqZDYMZDYjvaxLb9GpIGnKWojpn9f
+         7XbA1oqF6lRH56Ikiv59si83ejFg77oYL3KS410wcWXLmLHvbwOpVkYUQmK/N9oLgkIt
+         33+AucXNiYVRpdu4U1DcDdoVsXnxmIbtFH6Ag=
+Return-Path: <tim.orling@konsulko.com>
+Received: from localhost ([2601:1c0:ca00:bd60:b218:59be:238f:ebbb])
+        by smtp.gmail.com with ESMTPSA id p4-20020a170902eac400b001e28aa6ab54sm3538867pld.301.2024.04.06.08.34.08
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 06 Apr 2024 08:34:09 -0700 (PDT)
+From: "Tim Orling" <tim.orling@konsulko.com>
+Subject: [meta-lts-mixins][scarthgap/u-boot][PATCH 0/2] v2024.04 release
+Date: Sat,  6 Apr 2024 08:34:01 -0700
+Message-ID: <cover.1712417041.git.tim.orling@konsulko.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 To: yocto-patches@lists.yoctoproject.org
 List-ID: <yocto-patches.lists.yoctoproject.org>
 
-Patches should now be sent to yocto-patches@
-https://lists.yoctoproject.org/g/yocto-patches
+Since the original RFC [1] (which has been merged as is), u-boot had
+an -rc5 release and then the final v2024.04 release.
 
-Signed-off-by: Naveen Saini <naveen.kumar.saini@intel.com>
----
- README.txt | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+This series captures the two new updates. Switching to the new yocto-patches
+mailing list.
 
-diff --git a/README.txt b/README.txt
-index ea129ba..d3694a6 100644
---- a/README.txt
-+++ b/README.txt
-@@ -145,12 +145,12 @@ described in "Contributing".
- Contributing
- ============
- 
--Patches for meta-zephyr should be sent to the yocto@lists.yoctoproject.org
--mailing list.  See https://lists.yoctoproject.org/g/yocto for subscription
-+Patches for meta-zephyr should be sent to the yocto-patches@lists.yoctoproject.org
-+mailing list.  See https://lists.yoctoproject.org/g/yocto-patches for subscription
- details and the list archive.  Please add [meta-zephyr] to the subject so
- the patches are identifable.
- 
- Git can be configured to send mails appropriately when using git send-email:
- 
--$ git config --local sendemail.to yocto@lists.yoctoproject.org
-+$ git config --local sendemail.to yocto-patches@lists.yoctoproject.org
- $ git config --local format.subjectPrefix meta-zephyr][PATCH
+[1] https://lore.kernel.org/yocto/20240320185317.2173087-1-tim.orling@konsulko.com/
+
+The following changes since commit bc4fe6a64de65cb05d46af752715b1eb6f578f57:
+
+  u-boot: bump to v2024.04-rc4 (2024-03-20 11:34:40 -0700)
+
+are available in the Git repository at:
+
+  https://github.com/moto-timo/meta-lts-mixins scarthgap/u-boot
+  https://github.com/moto-timo/meta-lts-mixins/tree/scarthgap/u-boot
+
+Tim Orling (2):
+  u-boot: bump to v2024.04-rc5
+  u-boot: update to final v2024.04 release
+
+ recipes-bsp/u-boot/u-boot-common.inc                            | 2 +-
+ .../{u-boot-tools_2024.04-rc4.bb => u-boot-tools_2024.04.bb}    | 0
+ recipes-bsp/u-boot/{u-boot_2024.04-rc4.bb => u-boot_2024.04.bb} | 0
+ 3 files changed, 1 insertion(+), 1 deletion(-)
+ rename recipes-bsp/u-boot/{u-boot-tools_2024.04-rc4.bb => u-boot-tools_2024.04.bb} (100%)
+ rename recipes-bsp/u-boot/{u-boot_2024.04-rc4.bb => u-boot_2024.04.bb} (100%)
+
 -- 
-2.34.1
+2.43.2
 
