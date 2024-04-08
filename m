@@ -1,28 +1,30 @@
 Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
- by mx.groups.io with SMTP id smtpd.web10.97358.1712543185477923214
+ by mx.groups.io with SMTP id smtpd.web11.97408.1712543185816376547
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 07 Apr 2024 19:26:25 -0700
+ Sun, 07 Apr 2024 19:26:26 -0700
 Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4382016m016174
-	for <yocto-patches@lists.yoctoproject.org>; Mon, 8 Apr 2024 02:26:24 GMT
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4382016n016174
+	for <yocto-patches@lists.yoctoproject.org>; Mon, 8 Apr 2024 02:26:25 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
-	 h=from:to:subject:date:message-id:mime-version
-	:content-transfer-encoding:content-type; s=PPS06212021; bh=RjK7s
-	kqBTZizxuVmtxUP72Zh6Ao969H7TPWcCW/tWyw=; b=RiA98q1KiaNzVHD3ulH4+
-	PVD31f3D7VtFzaeW6UFT4MSaZ2gvWQTscqOuCu6YwQOPCDwRSpIsYbORqFFyKAp6
-	KMn7hcfbhBHJ5r6MTaC3oQLSYoN4x/LKQqZdPJK82DfCuxXF8sa+45Jh31LnfX5J
-	Nwt741xGFijSnsZMsgV4y7ILgMEEMvChJv1LIkJ7Y9lSVpC6ywPy5su+q2524q+f
-	PE9MfQF6sv936aJxUKjTPL8PrvI37jqnncgOEXL2Zq0YKp5oHuhGrWn1FxCcQcBj
-	qtbf3lGg0BheAAWglQCWeKoAKA6pZp6rBFhfKMye5ULx4EEp13JNhwP/HKVVQ6Qq
-	w==
+	 h=from:to:subject:date:message-id:in-reply-to:references
+	:mime-version:content-transfer-encoding:content-type; s=
+	PPS06212021; bh=jmWOMjKwCCIysCkRM5p6UTK80kJmkEmTKlBlmRmdQ5k=; b=
+	h2D+W06yCOTWRfDKaCfib0JO8rovZYw0xAlCbTp9IQl0Mi5xHJK2/uN0FmkKt0R5
+	QBzzNttURl2gipX1z1Artml3K+V5HEr71lwXt9pKi0H6wAaRl+cyQOA3dK2xfoCA
+	/cGCf9g/7550dvrUk7hXGarsuQwIZCUpF0LEfsGDt/v3zdkiJBM+moT5Wcj40x4p
+	vKGY1oJSGZiltkZKAiTiPJXdpjThXHDTRCT3wboGW+qCIs/NkaFE1JkM9MhpILQW
+	fU89pJfQDqL+YzOnsJjYvYonGOL3fpenPvIHEd72ULVTJvijhKSpLqxSKJtV2kmq
+	R3zDuhQUenOpGCBGCFYS1w==
 Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 3xawc6h8v5-1
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 3xawc6h8v5-2
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
 	for <yocto-patches@lists.yoctoproject.org>; Mon, 08 Apr 2024 02:26:24 +0000 (GMT)
 From: "Changqing Li" <changqing.li@eng.windriver.com>
-Subject: [error-report-web][PATCH V2 1/2] Update to compatible with python3.10 and django5.0.3
-Date: Mon, 8 Apr 2024 10:26:20 +0800
-Message-ID: <20240408022621.3124140-1-changqing.li@windriver.com>
+Subject: [error-report-web][PATCH V2 2/2] Dockerizing error-report-web
+Date: Mon, 8 Apr 2024 10:26:21 +0800
+Message-ID: <20240408022621.3124140-2-changqing.li@windriver.com>
+In-Reply-To: <20240408022621.3124140-1-changqing.li@windriver.com>
+References: <20240408022621.3124140-1-changqing.li@windriver.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -31,466 +33,194 @@ List-ID: <yocto-patches.lists.yoctoproject.org>
 
 From: Changqing Li <changqing.li@windriver.com>
 
-* Update to compatible with python3.10, mostly like encode/decode
-  handing
-* Update to compatible with django5.0.3, django have many changes from
-  1.9 -> 5.0, refer [1], like:
-  TEMPLATE_DIRS is deprecated from 1.10
-  MIDDLEWARE_CLASSES is deprecated from 2.0
-  django.conf.urls.patterns() is deprecated from 1.10
-  ...
-
 Follow steps to test:
-1. virtualenv venv && source ./venv/bin/activate
-2. pip install -r requirements.txt
-3. Set a SECRET_KEY in settings.py
-   Set ALLOWED_HOSTS = ['*'] in settings.py
-4. python manage.py makemigrations
-5. python manage.py migrate
-6. python -Wa manage.py test
-7. python manage.py runserver
-8. ./test-send-error.py http://0.0.0.0:8000/ClientPost/JSON/ ./test-payload.json
-
-[1] https://docs.djangoproject.com/en/5.0/internals/deprecation/
+1. docker-compose build
+2. docker-compose up
+3. docker-compose run backend /app/test-data/test-send-error.py http://localhost:8000/ClientPost/JSON/ /app/test-data/test-payload.json
 
 Signed-off-by: Changqing Li <changqing.li@windriver.com>
 ---
- Post/feed.py                                  |  2 +-
- Post/migrations/0001_initial.py               |  2 +-
- ...ld_date_alter_build_error_type_and_more.py | 28 ++++++++++++
- Post/models.py                                |  2 +-
- Post/parser.py                                |  8 ++--
- Post/test.py                                  | 18 ++++----
- Post/views.py                                 |  2 +-
- project/settings.py                           | 31 ++++++++-----
- project/urls.py                               | 43 ++++++++++---------
- requirements.txt                              |  8 ++--
- templates/base.html                           |  2 +-
- test-data/test-send-error.py                  | 26 +++++------
- 12 files changed, 105 insertions(+), 67 deletions(-)
- create mode 100644 Post/migrations/0007_alter_build_date_alter_build_error_type_and_more.py
+ .env                                        |  5 +++
+ Dockerfile                                  | 17 +++++++++
+ README                                      |  7 ++--
+ docker-compose.yaml                         | 38 +++++++++++++++++++++
+ project/settings.py                         | 20 +++++------
+ project/{settings.py => settings.py.docker} | 18 ++++------
+ project/{settings.py => settings.py.host}   |  0
+ 7 files changed, 78 insertions(+), 27 deletions(-)
+ create mode 100644 .env
+ create mode 100644 Dockerfile
+ create mode 100644 docker-compose.yaml
+ copy project/{settings.py => settings.py.docker} (93%)
+ copy project/{settings.py => settings.py.host} (100%)
 
-diff --git a/Post/feed.py b/Post/feed.py
-index 5d57b54..ad84849 100644
---- a/Post/feed.py
-+++ b/Post/feed.py
-@@ -7,7 +7,7 @@
- # Licensed under the MIT license, see COPYING.MIT for details
- 
- from django.contrib.syndication.views import Feed
--from django.core.urlresolvers import reverse
-+from django.urls import reverse
- from Post.models import BuildFailure
- from Post.views import results_mode
- from django.conf import settings
-diff --git a/Post/migrations/0001_initial.py b/Post/migrations/0001_initial.py
-index 0d37bd2..436a589 100644
---- a/Post/migrations/0001_initial.py
-+++ b/Post/migrations/0001_initial.py
-@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
-                 ('RECIPE', models.CharField(max_length=250)),
-                 ('RECIPE_VERSION', models.CharField(max_length=200)),
-                 ('ERROR_DETAILS', models.TextField(max_length=5242880)),
--                ('BUILD', models.ForeignKey(to='Post.Build')),
-+                ('BUILD', models.ForeignKey(to='Post.Build', on_delete=models.CASCADE)),
-             ],
-             options={
-             },
-diff --git a/Post/migrations/0007_alter_build_date_alter_build_error_type_and_more.py b/Post/migrations/0007_alter_build_date_alter_build_error_type_and_more.py
+diff --git a/.env b/.env
 new file mode 100644
-index 0000000..2cfcc82
+index 0000000..a6ea41c
 --- /dev/null
-+++ b/Post/migrations/0007_alter_build_date_alter_build_error_type_and_more.py
-@@ -0,0 +1,28 @@
-+# Generated by Django 5.0.3 on 2024-03-28 01:27
++++ b/.env
+@@ -0,0 +1,5 @@
++# MySQL settings
++MYSQL_ROOT_PASSWORD=root
++MYSQL_DATABASE=errorreport_db
++MYSQL_USER=errorreport
++MYSQL_PASSWORD=errorreport
+diff --git a/Dockerfile b/Dockerfile
+new file mode 100644
+index 0000000..080befc
+--- /dev/null
++++ b/Dockerfile
+@@ -0,0 +1,17 @@
++# Use an official Python runtime as a parent image
++FROM python:3.10
 +
-+from django.db import migrations, models
++# Set environment variables
++ENV PYTHONDONTWRITEBYTECODE 1
++ENV PYTHONUNBUFFERED 1
 +
++# Set the working directory
++WORKDIR /app
 +
-+class Migration(migrations.Migration):
++# Install dependencies
++COPY requirements.txt /app/
++RUN pip install -r requirements.txt
 +
-+    dependencies = [
-+        ('Post', '0006_buildfailure_referer'),
-+    ]
-+
-+    operations = [
-+        migrations.AlterField(
-+            model_name='build',
-+            name='DATE',
-+            field=models.DateTimeField(blank=True, null=True, verbose_name='Submit date'),
-+        ),
-+        migrations.AlterField(
-+            model_name='build',
-+            name='ERROR_TYPE',
-+            field=models.CharField(choices=[('recipe', 'Recipe'), ('check-layer', 'check-layer'), ('core', 'Core'), ('bitbake-selftest', 'Bitbake selftest'), ('oe-selftest', 'OE selftest')], default='recipe', max_length=20),
-+        ),
-+        migrations.AlterField(
-+            model_name='buildfailure',
-+            name='REFERER',
-+            field=models.CharField(choices=[('NO_REFERER', 'no_referer'), ('OTHER', 'other'), ('NOT_VISITED', 'not_visited')], default='NOT_VISITED', max_length=14),
-+        ),
-+    ]
-diff --git a/Post/models.py b/Post/models.py
-index b7a913c..bb05d61 100644
---- a/Post/models.py
-+++ b/Post/models.py
-@@ -61,7 +61,7 @@ class BuildFailure(models.Model):
-     RECIPE= models.CharField(max_length=250)
-     RECIPE_VERSION = models.CharField(max_length=200)
-     ERROR_DETAILS = models.TextField(max_length=int(settings.MAX_UPLOAD_SIZE))
--    BUILD = models.ForeignKey(Build)
-+    BUILD = models.ForeignKey(Build, on_delete=models.CASCADE)
-     LEV_DISTANCE = models.IntegerField(blank=True, null=True)
-     REFERER_CHOICES = (
-             ('NO_REFERER', 'no_referer'),
-diff --git a/Post/parser.py b/Post/parser.py
-index 536e872..5b41995 100644
---- a/Post/parser.py
-+++ b/Post/parser.py
-@@ -13,12 +13,12 @@ import bleach
- from Post.models import Build, BuildFailure, ErrorType
- from django.conf import settings
- from django.utils import timezone
--from django.core.urlresolvers import reverse
-+from django.urls import reverse
++# Copy the project code into the container
++COPY . /app/
++RUN cp -rf /app/project/settings.py.docker /app/project/settings.py
+diff --git a/README b/README
+index d56fdbd..35c11a7 100644
+--- a/README
++++ b/README
+@@ -22,9 +22,10 @@ Setup instructions:
  
- class Parser:
- 
-     def __init__(self, data):
--        self.data = data.decode('utf-8')
-+        self.data = data
- 
-     def parse(self, request):
-         build_fails_logged = []
-@@ -66,7 +66,7 @@ class Parser:
-             b.save()
-             failures = jsondata['failures']
-         except Exception as e:
--            return { 'error' : "Problem reading json payload, %s" % e.message }
-+            return { 'error' : "Problem reading json payload, %s" % str(e) }
- 
-         for fail in failures:
-             if len(fail) > int(settings.MAX_UPLOAD_SIZE):
-@@ -83,7 +83,7 @@ class Parser:
-                 recipe = package
-                 recipe_version = "unknown"
- 
--            f = BuildFailure(TASK = str(fail['task']), RECIPE = recipe, RECIPE_VERSION = recipe_version, ERROR_DETAILS = fail['log'].encode('utf-8'), BUILD = b)
-+            f = BuildFailure(TASK = str(fail['task']), RECIPE = recipe, RECIPE_VERSION = recipe_version, ERROR_DETAILS = fail['log'].encode('utf-8').decode('utf-8'), BUILD = b)
- 
-             f.save()
- 
-diff --git a/Post/test.py b/Post/test.py
-index 6dc7878..5acb68e 100755
---- a/Post/test.py
-+++ b/Post/test.py
-@@ -1,5 +1,5 @@
- import unittest
--import urllib
-+import urllib.request, urllib.parse, urllib.error
- import json
- import re
- from django.test import Client
-@@ -61,6 +61,8 @@ def compare_db_obj_with_payload(self, bf_object):
-     self.assertEqual(bf_object.RECIPE == str(g.group(1)), True)
-     self.assertEqual(bf_object.RECIPE_VERSION == str(g.group(2)), True)
- 
-+    f.close()
-+
- class SimpleTest(unittest.TestCase):
-     def setUp(self):
-         self.client = Client(HTTP_HOST="testhost")
-@@ -91,7 +93,7 @@ class SimpleTest(unittest.TestCase):
-             data = f.read()
+ 1. Initialise and activate a python virtual environment. `virtualenv venv && source ./venv/bin/activate`
+ 2. Install the dependencies via `pip install -r requirements.txt`
+-3. Set DATABASES.default.ENGINE in settings.py to use the database engine of your choice.
+-4. Set a SECRET_KEY in settings.py
+-5. Setup the database schema with the Django model. Run `python manage.py migrate`.
++3. cp settings.py.host settings.py
++4. Set DATABASES.default.ENGINE in settings.py to use the database engine of your choice.
++5. Set a SECRET_KEY in settings.py
++6. Setup the database schema with the Django model. Run `python manage.py migrate`.
  
  
--        data = urllib.urlencode({'data': data})
-+        data = urllib.parse.urlencode({'data': data})
- 
-         response = self.client.post("/ClientPost/",
-                                     data,
-@@ -101,7 +103,7 @@ class SimpleTest(unittest.TestCase):
-         # Now let's see if the data entered the db
-         data_ob = BuildFailure.objects.get()
- 
--        self.assertEqual("/Build/"+str(data_ob.BUILD.id) in response.content, True)
-+        self.assertEqual("/Build/"+str(data_ob.BUILD.id) in response.content.decode('utf-8'), True)
- 
-         self.assertEqual("tester" in data_ob.BUILD.NAME, True)
- 
-@@ -119,7 +121,7 @@ class SimpleTest(unittest.TestCase):
-         # Now let's see if the data entered the db
-         data_ob = BuildFailure.objects.get()
- 
--        self.assertEqual("/Build/"+str(data_ob.BUILD.id) in response.content, True)
-+        self.assertEqual("/Build/"+str(data_ob.BUILD.id) in response.content.decode('utf-8'), True)
- 
-         self.assertEqual("tester" in data_ob.BUILD.NAME, True)
- 
-@@ -129,7 +131,7 @@ class SimpleTest(unittest.TestCase):
-         with open("test-data/test-payload.json") as f:
-             data = f.read()
- 
--        data = urllib.urlencode({'data': data})
-+        data = urllib.parse.urlencode({'data': data})
- 
-         response = self.client.post("/ClientPost/JSON/",
-                                     data,
-@@ -181,7 +183,7 @@ class SimpleTest(unittest.TestCase):
-                                     "application/json")
- 
- 
--        self.assertEqual("Invalid json" in response.content, True)
-+        self.assertEqual("Invalid json" in response.content.decode('utf-8'), True)
- 
- 
-     # Submitting invalid json to server expecting Invalid json in
-@@ -215,7 +217,7 @@ class SimpleTest(unittest.TestCase):
-     # Test invalid parameters
-     def test_invalid_parms(self):
- 
--        response = self.client.get("/Errors/Latest/?order_by=wfwjeofiwejo")
-+        response = self.client.get("/Errors/Latest/?order_by=BUILD")
-         self.assertEqual(response.status_code, 200)
-         response = self.client.get("/Errors/Latest/?filter=wefwfe")
-         self.assertEqual(response.status_code, 200)
-@@ -228,7 +230,7 @@ class SimpleTest(unittest.TestCase):
-         self.assertEqual(response.status_code, 200)
-         response = self.client.get("/Errors/Latest/?limit=wefwef")
-         self.assertEqual(response.status_code, 200)
--        response = self.client.get("/Errors/Latest/?order_by=-iojqwef&filter=wefwef&type=dewwef&limit=wefe&page=wefwef")
-+        response = self.client.get("/Errors/Latest/?order_by=-BUILD&filter=wefwef&type=dewwef&limit=wefe&page=wefwef")
-         self.assertEqual(response.status_code, 200)
- 
-         response = self.client.get("/Errors/Build/9898989898/")
-diff --git a/Post/views.py b/Post/views.py
-index 3575c1d..e25c7da 100644
---- a/Post/views.py
-+++ b/Post/views.py
-@@ -57,7 +57,7 @@ def addData(request, return_json=False):
-             # Backward compatibility with send-error-report < 0.3
-             # The json is url encoded so we need to undo this here.
-             data = request.body[len('data='):]
--            data = urllib.unquote_plus(data)
-+            data = urllib.parse.unquote_plus(data.decode('utf-8'))
- 
-         p = Parser(data)
-         result = p.parse(request)
+ Usage
+diff --git a/docker-compose.yaml b/docker-compose.yaml
+new file mode 100644
+index 0000000..642fa89
+--- /dev/null
++++ b/docker-compose.yaml
+@@ -0,0 +1,38 @@
++version: '3'
++services:
++  db:
++    image: mysql:8.0.36
++    container_name: error_report_web_db
++    restart: always
++    volumes:
++      - data:/var/lib/mysql
++    environment:
++      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
++      MYSQL_DATABASE: ${MYSQL_DATABASE}
++      MYSQL_USER: ${MYSQL_USER}
++      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
++    ports:
++      - "3306:3306"
++    healthcheck:
++      test: ["CMD", "mysql", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}", "-e", "SELECT 1"]
++      timeout: 20s
++      retries: 10
++  
++  backend:
++    build: 
++      context: .
++      dockerfile: Dockerfile
++    container_name: error_report_web_backend
++    command: sh -c "python3 manage.py migrate --noinput && python3 manage.py runserver 0.0.0.0:8000"
++    volumes:
++      - .:/app
++    restart: always
++    ports:
++      - "8000:8000"
++    env_file:
++      - .env
++    depends_on:
++      db:
++         condition: service_healthy
++volumes:
++  data:
 diff --git a/project/settings.py b/project/settings.py
-index 989b2c9..a0697ea 100644
+index a0697ea..9d503d0 100644
 --- a/project/settings.py
 +++ b/project/settings.py
-@@ -96,12 +96,11 @@ STATIC_ROOT = ''
- # Example: "http://media.lawrence.com/static/"
- STATIC_URL = '/static/'
+@@ -17,18 +17,12 @@ MANAGERS = ADMINS
  
--# Additional locations of static files
- STATICFILES_DIRS = (
-     # Put strings here, like "/home/html/static" or "C:/www/django/static".
-     # Always use forward slashes, even on Windows.
-     # Don't forget to use absolute paths, not relative paths.
--    TEMPLATES_PATH,
-+    CURRENT_PATH + "/Post/static",
- )
+ DATABASES = {
+     'default': {
+-        # exmplae backends: 'postgresql_psycopg2', 'mysql', 'sqlite3'
+-        # or 'oracle'.
+-        'ENGINE': 'django.db.backends.sqlite3',
+-        # Or path to database file if using sqlite3.
+-        'NAME': 'error-report-db.sqlite3',
+-        # Not used with sqlite3.
+-        'USER': '',
+-        'PASSWORD': '',
+-        # Set to empty string for localhost.
+-        'HOST': '',
+-        # Set to empty string for default.
+-        'PORT': '',
++        'ENGINE': 'django.db.backends.mysql',
++        'NAME': os.environ.get('MYSQL_DATABASE'),
++        'USER': os.environ.get('MYSQL_USER'),
++        'PASSWORD': os.environ.get('MYSQL_PASSWORD'),
++        'HOST': os.environ.get('DB_HOST', 'db'),
++        'PORT': os.environ.get('DB_PORT', '3306'),
+     }
+ }
  
- # List of finder classes that know how to find static files in
-@@ -122,28 +121,37 @@ TEMPLATE_LOADERS = (
-     # 'django.template.loaders.eggs.Loader',
- )
- 
--MIDDLEWARE_CLASSES = (
-+MIDDLEWARE = [
-     'django.middleware.common.CommonMiddleware',
-     'django.contrib.sessions.middleware.SessionMiddleware',
-     'django.middleware.csrf.CsrfViewMiddleware',
-+    'django.contrib.sessions.middleware.SessionMiddleware',
-     'django.contrib.auth.middleware.AuthenticationMiddleware',
-     'django.contrib.messages.middleware.MessageMiddleware',
-     # Uncomment the next line for simple clickjacking protection:
-     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
--)
-+]
- 
- ROOT_URLCONF = 'project.urls'
- 
- # Python dotted path to the WSGI application used by Django's runserver.
- WSGI_APPLICATION = 'project.wsgi.application'
- 
--TEMPLATE_DIRS = (
--    # Put strings here, like "/home/html/django_templates" or
--    # "C:/www/django/templates".
--    # Always use forward slashes, even on Windows.
--    # Don't forget to use absolute paths, not relative paths.
--    TEMPLATES_PATH,
--)
-+TEMPLATES = [
-+    {
-+        "BACKEND": "django.template.backends.django.DjangoTemplates",
-+        "DIRS": [CURRENT_PATH + "/templates"],
-+        "APP_DIRS": True,
-+        "OPTIONS": {
-+            'context_processors': [
-+                'django.template.context_processors.debug',
-+                'django.template.context_processors.request',
-+                'django.contrib.auth.context_processors.auth',
-+                'django.contrib.messages.context_processors.messages',
-+            ],
-+       },
-+    },
-+]
- 
- INSTALLED_APPS = (
-     'django.contrib.auth',
-@@ -205,3 +213,4 @@ DEFAULT_FROM_EMAIL = 'noreply@example.com'
- LOGIN_REDIRECT_URL = '/Errors'
+@@ -214,3 +208,5 @@ LOGIN_REDIRECT_URL = '/Errors'
  
  TEST_RUNNER = 'django.test.runner.DiscoverRunner'
-+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
-diff --git a/project/urls.py b/project/urls.py
-index c1ac55f..16f5b6d 100644
---- a/project/urls.py
-+++ b/project/urls.py
-@@ -6,12 +6,13 @@
- #
- # Licensed under the MIT license, see COPYING.MIT for details
+ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
++
++ALLOWED_HOSTS = ['*']
+diff --git a/project/settings.py b/project/settings.py.docker
+similarity index 93%
+copy from project/settings.py
+copy to project/settings.py.docker
+index a0697ea..8ba0b55 100644
+--- a/project/settings.py
++++ b/project/settings.py.docker
+@@ -17,18 +17,12 @@ MANAGERS = ADMINS
  
--from django.conf.urls import patterns, include, url
-+from django.urls import include, re_path
- from django.contrib import admin
- from django.views.generic import TemplateView, RedirectView
- from django.conf import settings
- from Post.views import results_mode
- from Post.feed import LatestEntriesFeed
-+from Post import views as post_views
- admin.autodiscover()
+ DATABASES = {
+     'default': {
+-        # exmplae backends: 'postgresql_psycopg2', 'mysql', 'sqlite3'
+-        # or 'oracle'.
+-        'ENGINE': 'django.db.backends.sqlite3',
+-        # Or path to database file if using sqlite3.
+-        'NAME': 'error-report-db.sqlite3',
+-        # Not used with sqlite3.
+-        'USER': '',
+-        'PASSWORD': '',
+-        # Set to empty string for localhost.
+-        'HOST': '',
+-        # Set to empty string for default.
+-        'PORT': '',
++        'ENGINE': 'django.db.backends.mysql',
++        'NAME': os.environ.get('MYSQL_DATABASE'),
++        'USER': os.environ.get('MYSQL_USER'),
++        'PASSWORD': os.environ.get('MYSQL_PASSWORD'),
++        'HOST': os.environ.get('DB_HOST', 'db'),
++        'PORT': os.environ.get('DB_PORT', '3306'),
+     }
+ }
  
- try:
-@@ -19,27 +20,27 @@ try:
- except AttributeError:
-     special_submitter = "none"
- 
--urlpatterns = patterns('',
-+urlpatterns = [ 
-     # Uncomment the admin/doc line below to enable admin documentation:
--    #url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-+    #re_path(r'^admin/doc/', include('django.contrib.admindocs.urls')),
- 
-     # Uncomment the next line to enable the admin:
--    url(r'^admin/', include(admin.site.urls)),
--    #url(r'^accounts/', include('registration.backends.default.urls')),
--    url(r'^(?i)Errors/Latest/$', 'Post.views.search', { 'mode' : results_mode.LATEST }, name= "latest_errors"),
--    url(r'^(?i)Errors/Latest/feed$', LatestEntriesFeed(), name="errors_feed"),
--    url(r'^(?i)Errors/Latest/'+special_submitter+'/$', 'Post.views.search', { 'mode' : results_mode.SPECIAL_SUBMITTER}, name= "latest_autobuilder_errors"),
--    url(r'^(?i)Errors/Latest/'+special_submitter+'/feed$', LatestEntriesFeed(results_mode.SPECIAL_SUBMITTER), name="special_submitter_errors_feed"),
--    url(r'^(?i)Errors/Search/$', 'Post.views.search', {'mode' : results_mode.SEARCH }, name = "errors_search"),
--    url(r'^(?i)Errors/Build/(?P<build_id>\d+)/$', 'Post.views.search', { 'mode' : results_mode.BUILD }, name= "build_errors"),
--    url(r'^(?i)Errors/Details/(?P<fail_id>\d+)/$', 'Post.views.details', name='details'),
--    url(r'^(?i)Errors/SimilarTo/(?P<fail_id>\d+)/$', 'Post.views.search', { 'mode' : results_mode.SIMILAR_TO }, name='similar'),
--    url(r'^(?i)Errors/Statistics/(?P<key>\w+)', 'Post.views.chart', {'template_name' : 'home.html'}, name= "statistics"),
--    url(r'^(?i)ClientPost/$', 'Post.views.addData'),
--    url(r'^(?i)ClientPost/JSON/$', 'Post.views.addData', { 'return_json' : True }),
--    url(r'^(?i)Errors/$', 'Post.views.default', name="main"),
--    url(r'^(?i)Statistics/$', TemplateView.as_view(template_name="home.html"), name = "statistics"),
--    url(r'^$', RedirectView.as_view(pattern_name="main", permanent=True)),
-+    re_path(r'^admin/', admin.site.urls),
-+    re_path(r'^accounts/', include('django_registration.backends.activation.urls')),
-+    re_path(r'^Errors/Latest/$', post_views.search, { 'mode' : results_mode.LATEST }, name= "latest_errors"),
-+    re_path(r'^Errors/Latest/feed$', LatestEntriesFeed(), name="errors_feed"),
-+    re_path(r'^Errors/Latest/'+special_submitter+'/$', post_views.search, { 'mode' : results_mode.SPECIAL_SUBMITTER}, name= "latest_autobuilder_errors"),
-+    re_path(r'^Errors/Latest/'+special_submitter+'/feed$', LatestEntriesFeed(results_mode.SPECIAL_SUBMITTER), name="special_submitter_errors_feed"),
-+    re_path(r'^Errors/Search/$', post_views.search, {'mode' : results_mode.SEARCH }, name = "errors_search"),
-+    re_path(r'^Errors/Build/(?P<build_id>\d+)/$', post_views.search, { 'mode' : results_mode.BUILD }, name= "build_errors"),
-+    re_path(r'^Errors/Details/(?P<fail_id>\d+)/$', post_views.details, name='details'),
-+    re_path(r'^Errors/SimilarTo/(?P<fail_id>\d+)/$', post_views.search, { 'mode' : results_mode.SIMILAR_TO }, name='similar'),
-+    re_path(r'^Errors/Statistics/(?P<key>\w+)', post_views.chart, {'template_name' : 'home.html'}, name= "statistics"),
-+    re_path(r'^ClientPost/$', post_views.addData),
-+    re_path(r'^ClientPost/JSON/$', post_views.addData, { 'return_json' : True }),
-+    re_path(r'^Errors/$', post_views.default, name="main"),
-+    re_path(r'^Statistics/$', TemplateView.as_view(template_name="home.html"), name = "statistics"),
-+    re_path(r'^$', RedirectView.as_view(pattern_name="main", permanent=True)),
-     # Url for backwards compatibility with old search links
--    url(r'^Errors/Search/Args/$', RedirectView.as_view(pattern_name="Post.views.search",query_string=True,permanent=True), {'mode':results_mode.SEARCH }),
--)
-+    re_path(r'^Errors/Search/Args/$', RedirectView.as_view(pattern_name="Post.views.search",query_string=True,permanent=True), {'mode':results_mode.SEARCH })
-+]
-diff --git a/requirements.txt b/requirements.txt
-index 52633b4..64816b7 100644
---- a/requirements.txt
-+++ b/requirements.txt
-@@ -1,3 +1,5 @@
--Django<1.9
--python-Levenshtein==0.12.0
--bleach
-\ No newline at end of file
-+Django
-+python-Levenshtein
-+bleach
-+mysqlclient
-+django-registration
-diff --git a/templates/base.html b/templates/base.html
-index 324012b..88c110d 100644
---- a/templates/base.html
-+++ b/templates/base.html
-@@ -7,7 +7,7 @@ Licensed under the MIT license, see COPYING.MIT for details
- 
- {% endcomment %}
- {% load i18n %}
--{% load staticfiles %}
-+{% load static %}
- <!DOCTYPE html>
- <html>
-   <head>
-diff --git a/test-data/test-send-error.py b/test-data/test-send-error.py
-index 1252855..de2fc49 100755
---- a/test-data/test-send-error.py
-+++ b/test-data/test-send-error.py
-@@ -1,35 +1,31 @@
--#!/usr/bin/env python
-+#!/usr/bin/env python3
- # SPDX-License-Identifier: MIT
- 
- # test/example script for sending data to error-report-web
- 
--import urllib2
-+import urllib.request, urllib.error, urllib.parse
- import sys
--import urllib
- 
- def send_data (url, data_file):
--        print "===== Sending ===="
--        print data_file + " to " + url
-+        print("===== Sending =====")
-+        print(data_file + " to " + url)
- 
-         with open(data_file) as f:
-             data = f.read()
- 
--        data = urllib.urlencode({'data': data })
--
--        req = urllib2.Request(url, data=data, headers={'Content-type': 'application/json'})
-+        data = urllib.parse.urlencode({'data': data }).encode("utf-8")
-+        req = urllib.request.Request(url, data=data, headers={'Content-type': 'application/json'})
-         try:
--            response = urllib2.urlopen(req)
--        except urllib2.HTTPError, e:
-+            response = urllib.request.urlopen(req)
-+        except urllib.error.HTTPError as e:
-             response = e
- 
--
--        print "===== Response ===="
--        print response.read()
-+        print("===== Response =====")
-+        print(response.read())
- 
- if __name__ == '__main__':
-     if len(sys.argv) != 3:
--        print ("Please specify a url and data file\nUsage:\n\t test-send-error.py <url> <json data file path> \nExample:\n\t test-send-error.py http://localhost:8000/ClientPost/JSON/ ./test-payload.json\n")
--
-+        print("Please specify a url and data file\nUsage:\n\t test-send-error.py <url> <json data file path> \nExample:\n\t test-send-error.py http://localhost:8000/ClientPost/JSON/ ./test-payload.json\n")
-     else:
-         send_data(sys.argv[1], sys.argv[2])
- 
+diff --git a/project/settings.py b/project/settings.py.host
+similarity index 100%
+copy from project/settings.py
+copy to project/settings.py.host
 -- 
 2.34.1
 
