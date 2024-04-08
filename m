@@ -1,529 +1,154 @@
-Return-Path: <changqing.li@eng.windriver.com>
+Return-Path: <yi.zhao@eng.windriver.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65671CD128A
-	for <webhook@archiver.kernel.org>; Mon,  8 Apr 2024 02:26:29 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
- by mx.groups.io with SMTP id smtpd.web10.97358.1712543185477923214
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E0F0CD128A
+	for <webhook@archiver.kernel.org>; Mon,  8 Apr 2024 05:19:20 +0000 (UTC)
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+ by mx.groups.io with SMTP id smtpd.web11.99467.1712553558423223045
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 07 Apr 2024 19:26:25 -0700
+ Sun, 07 Apr 2024 22:19:18 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@windriver.com header.s=PPS06212021 header.b=RiA98q1K;
- spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.178.238, mailfrom: prvs=4828f56ed5=changqing.li@windriver.com)
-Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4382016m016174
-	for <yocto-patches@lists.yoctoproject.org>; Mon, 8 Apr 2024 02:26:24 GMT
+ dkim=pass header.i=@windriver.com header.s=PPS06212021 header.b=gTD4Vsys;
+ spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.166.238, mailfrom: prvs=482879bfaa=yi.zhao@windriver.com)
+Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4384splc020849;
+	Sun, 7 Apr 2024 22:19:16 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
-	 h=from:to:subject:date:message-id:mime-version
-	:content-transfer-encoding:content-type; s=PPS06212021; bh=RjK7s
-	kqBTZizxuVmtxUP72Zh6Ao969H7TPWcCW/tWyw=; b=RiA98q1KiaNzVHD3ulH4+
-	PVD31f3D7VtFzaeW6UFT4MSaZ2gvWQTscqOuCu6YwQOPCDwRSpIsYbORqFFyKAp6
-	KMn7hcfbhBHJ5r6MTaC3oQLSYoN4x/LKQqZdPJK82DfCuxXF8sa+45Jh31LnfX5J
-	Nwt741xGFijSnsZMsgV4y7ILgMEEMvChJv1LIkJ7Y9lSVpC6ywPy5su+q2524q+f
-	PE9MfQF6sv936aJxUKjTPL8PrvI37jqnncgOEXL2Zq0YKp5oHuhGrWn1FxCcQcBj
-	qtbf3lGg0BheAAWglQCWeKoAKA6pZp6rBFhfKMye5ULx4EEp13JNhwP/HKVVQ6Qq
-	w==
-Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 3xawc6h8v5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <yocto-patches@lists.yoctoproject.org>; Mon, 08 Apr 2024 02:26:24 +0000 (GMT)
-Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.37; Sun, 7 Apr 2024 19:26:22 -0700
-Received: from pek-lpg-core2.wrs.com (128.224.153.41) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
- 15.1.2507.37 via Frontend Transport; Sun, 7 Apr 2024 19:26:22 -0700
-From: <changqing.li@windriver.com>
-To: <yocto-patches@lists.yoctoproject.org>
-Subject: [error-report-web][PATCH V2 1/2] Update to compatible with python3.10 and django5.0.3
-Date: Mon, 8 Apr 2024 10:26:20 +0800
-Message-ID: <20240408022621.3124140-1-changqing.li@windriver.com>
+	 h=from:to:subject:date:message-id:content-transfer-encoding
+	:content-type:mime-version; s=PPS06212021; bh=5q9bAGOqFNMMcokYnu
+	vjq7eCUEzz74r84UrhEt2YpcM=; b=gTD4VsysqDo60F6COUzSyCS+WBfl4ZawtR
+	r0mE91RQ5JRxtHemBOB87A/+x+e8fDt5KhhfyOAWPG3XJ4MbV0SkIFmYrH3KSYse
+	hwY1Xu4b0v8T7GHM2uIN6GSo6W6/OFwwHS0ECtNxvtl2v78YMdmnlsHCXWk/n6RU
+	uXeI3SX8/Kdia9/M9lg9BURttgDdJbqbOrNOknN3Nkumdbo80xMujgRJMdYBRdzq
+	LCqthgIeKyJlWhS57sUbHvWdNK/XEtvB5//G/fK14ZGxpdqwnGQWELQ+DLDQ/L7E
+	79u2S/KN+kR3r7oJob+RCo90YMcs0g8NaJg23H0WwWGjTAfDiglA==
+Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1nam02lp2041.outbound.protection.outlook.com [104.47.57.41])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 3xb1p0988n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 07 Apr 2024 22:19:16 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=JPPVJgSfRBG3G2HRMRNqp6X04478oVekwfe+70V3A1fqPrf0knkTixz6JdXLHbagTsZt7/be4XeFSEaGQpGhLO8HA93wkbwEZa6Y0f/GglbUtoFkQp3LQ5iVzGr0nTv8P3zps0TNbjAEPTBhNKsqxyy/pBfjnmdDOmE+nnBdaf1L+ALrNC1rCR8/a8iqEaF68zR2BRKTUiamRWGDhrxPksSfbw6ucVzYNU15/9hRdP8iEz4VL7llydhVIrDvdcEIBETVcBpHO9O8i9uzjfiNDBQAhJJtEs4MgD50Ifsu14LiateG1nhiuVmulCoYVXkyuQuwvUF8xw8CViFYjCFSsw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5q9bAGOqFNMMcokYnuvjq7eCUEzz74r84UrhEt2YpcM=;
+ b=mAD6NS3cRniI5QpF00OCqYrxB52c/Tw9SJfvFeG7lhY0SGweUxK2JITPQoMvDYJxrkFe0tAoPFqMaMRxARnO8d138Bf3GhuAXL5HiXYxQri+zmjc58Cw9qCHyO0vjLSu+NQAsWH5cgI25TnPDEzFXZzWPH6R6cC7lZidVcTetzC9NEpIAP25n+kphgurcSJPJmvCPh7DkSN+jyYPu8LOSavMeIFfv43FqNLryDrjmtof4K3qibGkkcajbnyGybQ//1lnZq3CKnUtwwZ6evxI8s3XZCkZRDbGb4bDokXwPkjNoeVSRDxz9gCJqdLDbJH+0REIXH6qXbK/yLvvECNbUQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=windriver.com; dmarc=pass action=none
+ header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
+Received: from DS0PR11MB7484.namprd11.prod.outlook.com (2603:10b6:8:14c::10)
+ by PH7PR11MB8502.namprd11.prod.outlook.com (2603:10b6:510:30c::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7452.26; Mon, 8 Apr
+ 2024 05:19:14 +0000
+Received: from DS0PR11MB7484.namprd11.prod.outlook.com
+ ([fe80::97da:833f:8511:a558]) by DS0PR11MB7484.namprd11.prod.outlook.com
+ ([fe80::97da:833f:8511:a558%6]) with mapi id 15.20.7452.019; Mon, 8 Apr 2024
+ 05:19:14 +0000
+From: Yi Zhao <yi.zhao@windriver.com>
+To: yocto-patches@lists.yoctoproject.org, joe.macdonald@siemens.com,
+        joe_macdonald@mentor.com, joe@deserted.net
+Subject: [meta-selinux][PATCH] refpolicy: update to latest git rev
+Date: Mon,  8 Apr 2024 13:19:02 +0800
+Message-ID: <20240408051902.189739-1-yi.zhao@windriver.com>
 X-Mailer: git-send-email 2.25.1
-MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: Zq4ni5ONfxU01q1ldtjGzaSF807IaVtZ
-X-Proofpoint-ORIG-GUID: Zq4ni5ONfxU01q1ldtjGzaSF807IaVtZ
+X-ClientProxiedBy: SI1PR02CA0026.apcprd02.prod.outlook.com
+ (2603:1096:4:1f4::11) To DS0PR11MB7484.namprd11.prod.outlook.com
+ (2603:10b6:8:14c::10)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7484:EE_|PH7PR11MB8502:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	T5dG4kvXSjzCsVDVR1FWb+fZ4dqCTxTWrTjbaVdXINk8A+KiqoMIn0cZl5/GzuTlfcXEdaWo34umVSPczZHxn7uTfijOyHfkrsmDGIefwFoYCvjMCXt9sIzrRVnTJLCzXoueUGJnHXYZEQhhXGbWXm2GMm3wULB+hg2dZ441LKCBJR1/mIUlqwdxwLeLhJsqX9wKuR39Bvi12sHX5+ZALn2v8Gjk5XpgHiVK9r1QxUBkz1pku/Nj8n4b6T1CwidB4ihcdHOOdJHN3K4UVVYtzeIV5AZSO+jO81F1o/OMvhDQV172IYP8Tj0aUXY0EaEKpZixalJQ+7xjVEvA/xp3uNli139YS0rxw9IpMJXKljRxzt1aIVrXsXoJkn88Zl6GYYhkTzRRleW79iAduk9xcRlCLyWdYuY6g0PvwYdRDsnuiWohcDRx+zD2ipjxbprTppgRkNll9LeZz9ZRd8YcsAShavo0ygord+k8qdmyWJb7Opd57nb52QlmSwnXraPj6gyJFjgEZhIb70NoeTuQRT8BPOuqSxBcPtIEV+VM8taAg7SiLF+Depr26a35dw9zUT2GgSJ4KdnWS/a9PpFuZqyq3wygLHR0kkX2boqLgG4/xv4kGHBio8Pem89LNHBdA9ZWvwe2irIJ/ZIO3Ec2jedviJ4JsoFP1DbZuxfdDyglF5lVcXGuTbmoPhfIUj1az2+dPfbTEls96zsDl34QAo2FI1BrIbqM/jiPflpCFUw=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB7484.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(52116005)(1800799015)(38350700005);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?wYEP5C/NIq9NSEUdCBaB1NCstDbSBO9vW2c/d8dNbxc8THsd7dnFbvqgH5xF?=
+ =?us-ascii?Q?IoF9L7S6on7uFtAWU3JU8x16bL9tt3uPP8GrSw0DrXt1oItkFeVzEZg9e9xT?=
+ =?us-ascii?Q?6qngJu1yD/GMIQ483SfpPE/JtHn/9chSn6a7acJXavyrvUFuC2fciXVJ/unN?=
+ =?us-ascii?Q?G620dtlutx0h/w0hB75otjmmM6vdS6NaG3huhbQ2UK+rdJsfbvkE87V8Q8b0?=
+ =?us-ascii?Q?QAKOIXra+AdI1FqCa/UJmSWt2sHuw3TbVgvWNYnRSj39AoQu9De5qIiXKuGk?=
+ =?us-ascii?Q?nyqTQtk74cPSui5xBhfaXRYfsKoLUAms1mge07sOq+Rh6o4F8XPSWcjYz88s?=
+ =?us-ascii?Q?efZkFX9QsDkrB2UTkJcd9x80F6137VtMNvZU3VqDnq2Uc/5Z6V2A/jf297wY?=
+ =?us-ascii?Q?BKseUw2SlLChs/pkFFLR9foqpEda6Sjm7LlYQ1cdDIGXTW2PWL1mFBYV843M?=
+ =?us-ascii?Q?O0iK8GmymLNH7VdgpA6HYXKah/eIwUOFBT8C0Q+BZ7QlRWZgQfQJlserme36?=
+ =?us-ascii?Q?evXwP/JLn/NiZKYV+cwnE5T4jiw2pqdkV0Cn5AQWpyDQC9MFGG5wL+rbv22r?=
+ =?us-ascii?Q?jhvz3hb/8xsPAPMPAvTV8Qh0md+Y5NntMUdiJPqW2ImtvG6vgmxK+LEiP0JE?=
+ =?us-ascii?Q?DjDfQMaGt2a21ljSatwrSYgvydHc9gjUziu8uHxlsX5Cf/Z+Z1+sQZuNCxY1?=
+ =?us-ascii?Q?OFWo4PAPuxYyO/UUpjWjvuMBoFgZ/0tTlmagsvdv5lyxXalJL5ysiQ3P+mYG?=
+ =?us-ascii?Q?Vva3ZkRAUu5sK3sX81lbzNExf+yICPk59bfRfFkrWIjStwMSfqgTFeHrEZx1?=
+ =?us-ascii?Q?cDCEuHeJExSd+04sUY3PXboypJ9eN1C46+uZdAfvdnnYDF7f02Pl8Ceu9gKu?=
+ =?us-ascii?Q?BqWQc4d1sckEjjjN7E/oYkG7QT+8nzdVfGhv/JnOS3DKp46J938P0ObeAqEp?=
+ =?us-ascii?Q?gUTZ7EcUB6R7AEZxSh53RpHcrLigUjVQBbHqNmK6ZdLndsjAZLHYS/0iZo+L?=
+ =?us-ascii?Q?KpxRYTRvPlGlHMhkfOXUlDu8A0dOC0N7RsnE2Dalu4gwhepIDEutsFYNNqjO?=
+ =?us-ascii?Q?sSPa2HCOCchFqVkmq6862qxBr1caDIU6+ynGjXi8BsoAPLbfY+6b0a3DWAfj?=
+ =?us-ascii?Q?Y2PkE+R7ldlVtiuXG9CMlO9JjejrcCzgQrnACbunBjiGw+seKjsNwhpjSO7b?=
+ =?us-ascii?Q?O7E8iNxyJgxfo6tiaSa+Z63zeZrJOVk8lG8NUfcz2wrVSSNaEdF7Dzwe8ET1?=
+ =?us-ascii?Q?aNNz5D8FhxFoKV22i9zJR2zm8H/GRkJUMbpk+01KzGWdq8ZHt2xSqdodhFx2?=
+ =?us-ascii?Q?b8V+weinnxWT3ylctVUqGFLjgmEbRfkcJqp1+hOvcjciwLJ08MgULWHN9LU/?=
+ =?us-ascii?Q?KweMRzrNaPLuIVQq7cg4ukgYajx7OUuL6BkcA541To2G2GlbFpbYNV+E/ZTK?=
+ =?us-ascii?Q?vARWc8zt6hUy7u36FuVDKl/F6oRKghGyFyrrbqC1wZrLt6DEZvWlqw1LCu5p?=
+ =?us-ascii?Q?lo0dyHTItNHO6m+NawS9tjdVN2/3plympPOGl1dlQZXbzHYhZcrPsVkFXcwG?=
+ =?us-ascii?Q?bqmKTADsDJxqzWmXbyeoDqyeT6V1BsqZg0rW/Joz?=
+X-OriginatorOrg: windriver.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e8381f1a-47af-4013-ed93-08dc578b6e44
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7484.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Apr 2024 05:19:14.5098
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7p5tbBE1xQ6dQ9NtM7ZgUK3MK+JTfGS8jvGqjBiHmv0omi04K6t/qP0m9tcn7hWdQbfp5Tscy9d7QqoLpZUIKw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB8502
+X-Proofpoint-ORIG-GUID: 82Fe1dlJXC4ph5hw0nvliaK536CQ-8yj
+X-Proofpoint-GUID: 82Fe1dlJXC4ph5hw0nvliaK536CQ-8yj
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-04-08_01,2024-04-05_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- bulkscore=0 mlxlogscore=999 impostorscore=0 priorityscore=1501
- malwarescore=0 clxscore=1015 adultscore=0 spamscore=0 phishscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2404010003 definitions=main-2404080018
+ definitions=2024-04-08_03,2024-04-05_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ phishscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0 mlxscore=0
+ impostorscore=0 mlxlogscore=728 spamscore=0 priorityscore=1501
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2404010003 definitions=main-2404080038
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 08 Apr 2024 02:26:29 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/10
-Message-ID: <20240408022620.tbGeyNExOfPnY_7rbnqO5gY_Td77b7Th87xLnIQHnMA@z>
+ <yocto-patches@lists.yoctoproject.org>; Mon, 08 Apr 2024 05:19:20 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/12
+Message-ID: <20240408051902.cnomKG4jVvyr3ZG62Hlk41FXrLTpkqha0YN6au2dU-8@z>
 
-From: Changqing Li <changqing.li@windriver.com>
+* 0aff1990e quote: read localization
+* ab13c0421 getty: grant checkpoint_restore
+* 3643773ae Update SOS report to work on RHEL9
+* 523b279bd Setup domain for dbus selinux interface
 
-* Update to compatible with python3.10, mostly like encode/decode
-  handing
-* Update to compatible with django5.0.3, django have many changes from
-  1.9 -> 5.0, refer [1], like:
-  TEMPLATE_DIRS is deprecated from 1.10
-  MIDDLEWARE_CLASSES is deprecated from 2.0
-  django.conf.urls.patterns() is deprecated from 1.10
-  ...
-
-Follow steps to test:
-1. virtualenv venv && source ./venv/bin/activate
-2. pip install -r requirements.txt
-3. Set a SECRET_KEY in settings.py
-   Set ALLOWED_HOSTS = ['*'] in settings.py
-4. python manage.py makemigrations
-5. python manage.py migrate
-6. python -Wa manage.py test
-7. python manage.py runserver
-8. ./test-send-error.py http://0.0.0.0:8000/ClientPost/JSON/ ./test-payload.json
-
-[1] https://docs.djangoproject.com/en/5.0/internals/deprecation/
-
-Signed-off-by: Changqing Li <changqing.li@windriver.com>
+Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
 ---
- Post/feed.py                                  |  2 +-
- Post/migrations/0001_initial.py               |  2 +-
- ...ld_date_alter_build_error_type_and_more.py | 28 ++++++++++++
- Post/models.py                                |  2 +-
- Post/parser.py                                |  8 ++--
- Post/test.py                                  | 18 ++++----
- Post/views.py                                 |  2 +-
- project/settings.py                           | 31 ++++++++-----
- project/urls.py                               | 43 ++++++++++---------
- requirements.txt                              |  8 ++--
- templates/base.html                           |  2 +-
- test-data/test-send-error.py                  | 26 +++++------
- 12 files changed, 105 insertions(+), 67 deletions(-)
- create mode 100644 Post/migrations/0007_alter_build_date_alter_build_error_type_and_more.py
+ recipes-security/refpolicy/refpolicy_git.inc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Post/feed.py b/Post/feed.py
-index 5d57b54..ad84849 100644
---- a/Post/feed.py
-+++ b/Post/feed.py
-@@ -7,7 +7,7 @@
- # Licensed under the MIT license, see COPYING.MIT for details
+diff --git a/recipes-security/refpolicy/refpolicy_git.inc b/recipes-security/refpolicy/refpolicy_git.inc
+index e13fc96..322c277 100644
+--- a/recipes-security/refpolicy/refpolicy_git.inc
++++ b/recipes-security/refpolicy/refpolicy_git.inc
+@@ -2,7 +2,7 @@ PV = "2.20240226+git"
  
- from django.contrib.syndication.views import Feed
--from django.core.urlresolvers import reverse
-+from django.urls import reverse
- from Post.models import BuildFailure
- from Post.views import results_mode
- from django.conf import settings
-diff --git a/Post/migrations/0001_initial.py b/Post/migrations/0001_initial.py
-index 0d37bd2..436a589 100644
---- a/Post/migrations/0001_initial.py
-+++ b/Post/migrations/0001_initial.py
-@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
-                 ('RECIPE', models.CharField(max_length=250)),
-                 ('RECIPE_VERSION', models.CharField(max_length=200)),
-                 ('ERROR_DETAILS', models.TextField(max_length=5242880)),
--                ('BUILD', models.ForeignKey(to='Post.Build')),
-+                ('BUILD', models.ForeignKey(to='Post.Build', on_delete=models.CASCADE)),
-             ],
-             options={
-             },
-diff --git a/Post/migrations/0007_alter_build_date_alter_build_error_type_and_more.py b/Post/migrations/0007_alter_build_date_alter_build_error_type_and_more.py
-new file mode 100644
-index 0000000..2cfcc82
---- /dev/null
-+++ b/Post/migrations/0007_alter_build_date_alter_build_error_type_and_more.py
-@@ -0,0 +1,28 @@
-+# Generated by Django 5.0.3 on 2024-03-28 01:27
-+
-+from django.db import migrations, models
-+
-+
-+class Migration(migrations.Migration):
-+
-+    dependencies = [
-+        ('Post', '0006_buildfailure_referer'),
-+    ]
-+
-+    operations = [
-+        migrations.AlterField(
-+            model_name='build',
-+            name='DATE',
-+            field=models.DateTimeField(blank=True, null=True, verbose_name='Submit date'),
-+        ),
-+        migrations.AlterField(
-+            model_name='build',
-+            name='ERROR_TYPE',
-+            field=models.CharField(choices=[('recipe', 'Recipe'), ('check-layer', 'check-layer'), ('core', 'Core'), ('bitbake-selftest', 'Bitbake selftest'), ('oe-selftest', 'OE selftest')], default='recipe', max_length=20),
-+        ),
-+        migrations.AlterField(
-+            model_name='buildfailure',
-+            name='REFERER',
-+            field=models.CharField(choices=[('NO_REFERER', 'no_referer'), ('OTHER', 'other'), ('NOT_VISITED', 'not_visited')], default='NOT_VISITED', max_length=14),
-+        ),
-+    ]
-diff --git a/Post/models.py b/Post/models.py
-index b7a913c..bb05d61 100644
---- a/Post/models.py
-+++ b/Post/models.py
-@@ -61,7 +61,7 @@ class BuildFailure(models.Model):
-     RECIPE= models.CharField(max_length=250)
-     RECIPE_VERSION = models.CharField(max_length=200)
-     ERROR_DETAILS = models.TextField(max_length=int(settings.MAX_UPLOAD_SIZE))
--    BUILD = models.ForeignKey(Build)
-+    BUILD = models.ForeignKey(Build, on_delete=models.CASCADE)
-     LEV_DISTANCE = models.IntegerField(blank=True, null=True)
-     REFERER_CHOICES = (
-             ('NO_REFERER', 'no_referer'),
-diff --git a/Post/parser.py b/Post/parser.py
-index 536e872..5b41995 100644
---- a/Post/parser.py
-+++ b/Post/parser.py
-@@ -13,12 +13,12 @@ import bleach
- from Post.models import Build, BuildFailure, ErrorType
- from django.conf import settings
- from django.utils import timezone
--from django.core.urlresolvers import reverse
-+from django.urls import reverse
+ SRC_URI = "git://github.com/SELinuxProject/refpolicy.git;protocol=https;branch=main;name=refpolicy;destsuffix=refpolicy"
  
- class Parser:
+-SRCREV_refpolicy ?= "fa84ee8fc04af56cced5ab8ed7abfb1abbd246dc"
++SRCREV_refpolicy ?= "6507eebc238b4495b1e0d3baa2bc0bb737f9819a"
  
-     def __init__(self, data):
--        self.data = data.decode('utf-8')
-+        self.data = data
- 
-     def parse(self, request):
-         build_fails_logged = []
-@@ -66,7 +66,7 @@ class Parser:
-             b.save()
-             failures = jsondata['failures']
-         except Exception as e:
--            return { 'error' : "Problem reading json payload, %s" % e.message }
-+            return { 'error' : "Problem reading json payload, %s" % str(e) }
- 
-         for fail in failures:
-             if len(fail) > int(settings.MAX_UPLOAD_SIZE):
-@@ -83,7 +83,7 @@ class Parser:
-                 recipe = package
-                 recipe_version = "unknown"
- 
--            f = BuildFailure(TASK = str(fail['task']), RECIPE = recipe, RECIPE_VERSION = recipe_version, ERROR_DETAILS = fail['log'].encode('utf-8'), BUILD = b)
-+            f = BuildFailure(TASK = str(fail['task']), RECIPE = recipe, RECIPE_VERSION = recipe_version, ERROR_DETAILS = fail['log'].encode('utf-8').decode('utf-8'), BUILD = b)
- 
-             f.save()
- 
-diff --git a/Post/test.py b/Post/test.py
-index 6dc7878..5acb68e 100755
---- a/Post/test.py
-+++ b/Post/test.py
-@@ -1,5 +1,5 @@
- import unittest
--import urllib
-+import urllib.request, urllib.parse, urllib.error
- import json
- import re
- from django.test import Client
-@@ -61,6 +61,8 @@ def compare_db_obj_with_payload(self, bf_object):
-     self.assertEqual(bf_object.RECIPE == str(g.group(1)), True)
-     self.assertEqual(bf_object.RECIPE_VERSION == str(g.group(2)), True)
- 
-+    f.close()
-+
- class SimpleTest(unittest.TestCase):
-     def setUp(self):
-         self.client = Client(HTTP_HOST="testhost")
-@@ -91,7 +93,7 @@ class SimpleTest(unittest.TestCase):
-             data = f.read()
- 
- 
--        data = urllib.urlencode({'data': data})
-+        data = urllib.parse.urlencode({'data': data})
- 
-         response = self.client.post("/ClientPost/",
-                                     data,
-@@ -101,7 +103,7 @@ class SimpleTest(unittest.TestCase):
-         # Now let's see if the data entered the db
-         data_ob = BuildFailure.objects.get()
- 
--        self.assertEqual("/Build/"+str(data_ob.BUILD.id) in response.content, True)
-+        self.assertEqual("/Build/"+str(data_ob.BUILD.id) in response.content.decode('utf-8'), True)
- 
-         self.assertEqual("tester" in data_ob.BUILD.NAME, True)
- 
-@@ -119,7 +121,7 @@ class SimpleTest(unittest.TestCase):
-         # Now let's see if the data entered the db
-         data_ob = BuildFailure.objects.get()
- 
--        self.assertEqual("/Build/"+str(data_ob.BUILD.id) in response.content, True)
-+        self.assertEqual("/Build/"+str(data_ob.BUILD.id) in response.content.decode('utf-8'), True)
- 
-         self.assertEqual("tester" in data_ob.BUILD.NAME, True)
- 
-@@ -129,7 +131,7 @@ class SimpleTest(unittest.TestCase):
-         with open("test-data/test-payload.json") as f:
-             data = f.read()
- 
--        data = urllib.urlencode({'data': data})
-+        data = urllib.parse.urlencode({'data': data})
- 
-         response = self.client.post("/ClientPost/JSON/",
-                                     data,
-@@ -181,7 +183,7 @@ class SimpleTest(unittest.TestCase):
-                                     "application/json")
- 
- 
--        self.assertEqual("Invalid json" in response.content, True)
-+        self.assertEqual("Invalid json" in response.content.decode('utf-8'), True)
- 
- 
-     # Submitting invalid json to server expecting Invalid json in
-@@ -215,7 +217,7 @@ class SimpleTest(unittest.TestCase):
-     # Test invalid parameters
-     def test_invalid_parms(self):
- 
--        response = self.client.get("/Errors/Latest/?order_by=wfwjeofiwejo")
-+        response = self.client.get("/Errors/Latest/?order_by=BUILD")
-         self.assertEqual(response.status_code, 200)
-         response = self.client.get("/Errors/Latest/?filter=wefwfe")
-         self.assertEqual(response.status_code, 200)
-@@ -228,7 +230,7 @@ class SimpleTest(unittest.TestCase):
-         self.assertEqual(response.status_code, 200)
-         response = self.client.get("/Errors/Latest/?limit=wefwef")
-         self.assertEqual(response.status_code, 200)
--        response = self.client.get("/Errors/Latest/?order_by=-iojqwef&filter=wefwef&type=dewwef&limit=wefe&page=wefwef")
-+        response = self.client.get("/Errors/Latest/?order_by=-BUILD&filter=wefwef&type=dewwef&limit=wefe&page=wefwef")
-         self.assertEqual(response.status_code, 200)
- 
-         response = self.client.get("/Errors/Build/9898989898/")
-diff --git a/Post/views.py b/Post/views.py
-index 3575c1d..e25c7da 100644
---- a/Post/views.py
-+++ b/Post/views.py
-@@ -57,7 +57,7 @@ def addData(request, return_json=False):
-             # Backward compatibility with send-error-report < 0.3
-             # The json is url encoded so we need to undo this here.
-             data = request.body[len('data='):]
--            data = urllib.unquote_plus(data)
-+            data = urllib.parse.unquote_plus(data.decode('utf-8'))
- 
-         p = Parser(data)
-         result = p.parse(request)
-diff --git a/project/settings.py b/project/settings.py
-index 989b2c9..a0697ea 100644
---- a/project/settings.py
-+++ b/project/settings.py
-@@ -96,12 +96,11 @@ STATIC_ROOT = ''
- # Example: "http://media.lawrence.com/static/"
- STATIC_URL = '/static/'
- 
--# Additional locations of static files
- STATICFILES_DIRS = (
-     # Put strings here, like "/home/html/static" or "C:/www/django/static".
-     # Always use forward slashes, even on Windows.
-     # Don't forget to use absolute paths, not relative paths.
--    TEMPLATES_PATH,
-+    CURRENT_PATH + "/Post/static",
- )
- 
- # List of finder classes that know how to find static files in
-@@ -122,28 +121,37 @@ TEMPLATE_LOADERS = (
-     # 'django.template.loaders.eggs.Loader',
- )
- 
--MIDDLEWARE_CLASSES = (
-+MIDDLEWARE = [
-     'django.middleware.common.CommonMiddleware',
-     'django.contrib.sessions.middleware.SessionMiddleware',
-     'django.middleware.csrf.CsrfViewMiddleware',
-+    'django.contrib.sessions.middleware.SessionMiddleware',
-     'django.contrib.auth.middleware.AuthenticationMiddleware',
-     'django.contrib.messages.middleware.MessageMiddleware',
-     # Uncomment the next line for simple clickjacking protection:
-     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
--)
-+]
- 
- ROOT_URLCONF = 'project.urls'
- 
- # Python dotted path to the WSGI application used by Django's runserver.
- WSGI_APPLICATION = 'project.wsgi.application'
- 
--TEMPLATE_DIRS = (
--    # Put strings here, like "/home/html/django_templates" or
--    # "C:/www/django/templates".
--    # Always use forward slashes, even on Windows.
--    # Don't forget to use absolute paths, not relative paths.
--    TEMPLATES_PATH,
--)
-+TEMPLATES = [
-+    {
-+        "BACKEND": "django.template.backends.django.DjangoTemplates",
-+        "DIRS": [CURRENT_PATH + "/templates"],
-+        "APP_DIRS": True,
-+        "OPTIONS": {
-+            'context_processors': [
-+                'django.template.context_processors.debug',
-+                'django.template.context_processors.request',
-+                'django.contrib.auth.context_processors.auth',
-+                'django.contrib.messages.context_processors.messages',
-+            ],
-+       },
-+    },
-+]
- 
- INSTALLED_APPS = (
-     'django.contrib.auth',
-@@ -205,3 +213,4 @@ DEFAULT_FROM_EMAIL = 'noreply@example.com'
- LOGIN_REDIRECT_URL = '/Errors'
- 
- TEST_RUNNER = 'django.test.runner.DiscoverRunner'
-+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
-diff --git a/project/urls.py b/project/urls.py
-index c1ac55f..16f5b6d 100644
---- a/project/urls.py
-+++ b/project/urls.py
-@@ -6,12 +6,13 @@
- #
- # Licensed under the MIT license, see COPYING.MIT for details
- 
--from django.conf.urls import patterns, include, url
-+from django.urls import include, re_path
- from django.contrib import admin
- from django.views.generic import TemplateView, RedirectView
- from django.conf import settings
- from Post.views import results_mode
- from Post.feed import LatestEntriesFeed
-+from Post import views as post_views
- admin.autodiscover()
- 
- try:
-@@ -19,27 +20,27 @@ try:
- except AttributeError:
-     special_submitter = "none"
- 
--urlpatterns = patterns('',
-+urlpatterns = [ 
-     # Uncomment the admin/doc line below to enable admin documentation:
--    #url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-+    #re_path(r'^admin/doc/', include('django.contrib.admindocs.urls')),
- 
-     # Uncomment the next line to enable the admin:
--    url(r'^admin/', include(admin.site.urls)),
--    #url(r'^accounts/', include('registration.backends.default.urls')),
--    url(r'^(?i)Errors/Latest/$', 'Post.views.search', { 'mode' : results_mode.LATEST }, name= "latest_errors"),
--    url(r'^(?i)Errors/Latest/feed$', LatestEntriesFeed(), name="errors_feed"),
--    url(r'^(?i)Errors/Latest/'+special_submitter+'/$', 'Post.views.search', { 'mode' : results_mode.SPECIAL_SUBMITTER}, name= "latest_autobuilder_errors"),
--    url(r'^(?i)Errors/Latest/'+special_submitter+'/feed$', LatestEntriesFeed(results_mode.SPECIAL_SUBMITTER), name="special_submitter_errors_feed"),
--    url(r'^(?i)Errors/Search/$', 'Post.views.search', {'mode' : results_mode.SEARCH }, name = "errors_search"),
--    url(r'^(?i)Errors/Build/(?P<build_id>\d+)/$', 'Post.views.search', { 'mode' : results_mode.BUILD }, name= "build_errors"),
--    url(r'^(?i)Errors/Details/(?P<fail_id>\d+)/$', 'Post.views.details', name='details'),
--    url(r'^(?i)Errors/SimilarTo/(?P<fail_id>\d+)/$', 'Post.views.search', { 'mode' : results_mode.SIMILAR_TO }, name='similar'),
--    url(r'^(?i)Errors/Statistics/(?P<key>\w+)', 'Post.views.chart', {'template_name' : 'home.html'}, name= "statistics"),
--    url(r'^(?i)ClientPost/$', 'Post.views.addData'),
--    url(r'^(?i)ClientPost/JSON/$', 'Post.views.addData', { 'return_json' : True }),
--    url(r'^(?i)Errors/$', 'Post.views.default', name="main"),
--    url(r'^(?i)Statistics/$', TemplateView.as_view(template_name="home.html"), name = "statistics"),
--    url(r'^$', RedirectView.as_view(pattern_name="main", permanent=True)),
-+    re_path(r'^admin/', admin.site.urls),
-+    re_path(r'^accounts/', include('django_registration.backends.activation.urls')),
-+    re_path(r'^Errors/Latest/$', post_views.search, { 'mode' : results_mode.LATEST }, name= "latest_errors"),
-+    re_path(r'^Errors/Latest/feed$', LatestEntriesFeed(), name="errors_feed"),
-+    re_path(r'^Errors/Latest/'+special_submitter+'/$', post_views.search, { 'mode' : results_mode.SPECIAL_SUBMITTER}, name= "latest_autobuilder_errors"),
-+    re_path(r'^Errors/Latest/'+special_submitter+'/feed$', LatestEntriesFeed(results_mode.SPECIAL_SUBMITTER), name="special_submitter_errors_feed"),
-+    re_path(r'^Errors/Search/$', post_views.search, {'mode' : results_mode.SEARCH }, name = "errors_search"),
-+    re_path(r'^Errors/Build/(?P<build_id>\d+)/$', post_views.search, { 'mode' : results_mode.BUILD }, name= "build_errors"),
-+    re_path(r'^Errors/Details/(?P<fail_id>\d+)/$', post_views.details, name='details'),
-+    re_path(r'^Errors/SimilarTo/(?P<fail_id>\d+)/$', post_views.search, { 'mode' : results_mode.SIMILAR_TO }, name='similar'),
-+    re_path(r'^Errors/Statistics/(?P<key>\w+)', post_views.chart, {'template_name' : 'home.html'}, name= "statistics"),
-+    re_path(r'^ClientPost/$', post_views.addData),
-+    re_path(r'^ClientPost/JSON/$', post_views.addData, { 'return_json' : True }),
-+    re_path(r'^Errors/$', post_views.default, name="main"),
-+    re_path(r'^Statistics/$', TemplateView.as_view(template_name="home.html"), name = "statistics"),
-+    re_path(r'^$', RedirectView.as_view(pattern_name="main", permanent=True)),
-     # Url for backwards compatibility with old search links
--    url(r'^Errors/Search/Args/$', RedirectView.as_view(pattern_name="Post.views.search",query_string=True,permanent=True), {'mode':results_mode.SEARCH }),
--)
-+    re_path(r'^Errors/Search/Args/$', RedirectView.as_view(pattern_name="Post.views.search",query_string=True,permanent=True), {'mode':results_mode.SEARCH })
-+]
-diff --git a/requirements.txt b/requirements.txt
-index 52633b4..64816b7 100644
---- a/requirements.txt
-+++ b/requirements.txt
-@@ -1,3 +1,5 @@
--Django<1.9
--python-Levenshtein==0.12.0
--bleach
-\ No newline at end of file
-+Django
-+python-Levenshtein
-+bleach
-+mysqlclient
-+django-registration
-diff --git a/templates/base.html b/templates/base.html
-index 324012b..88c110d 100644
---- a/templates/base.html
-+++ b/templates/base.html
-@@ -7,7 +7,7 @@ Licensed under the MIT license, see COPYING.MIT for details
- 
- {% endcomment %}
- {% load i18n %}
--{% load staticfiles %}
-+{% load static %}
- <!DOCTYPE html>
- <html>
-   <head>
-diff --git a/test-data/test-send-error.py b/test-data/test-send-error.py
-index 1252855..de2fc49 100755
---- a/test-data/test-send-error.py
-+++ b/test-data/test-send-error.py
-@@ -1,35 +1,31 @@
--#!/usr/bin/env python
-+#!/usr/bin/env python3
- # SPDX-License-Identifier: MIT
- 
- # test/example script for sending data to error-report-web
- 
--import urllib2
-+import urllib.request, urllib.error, urllib.parse
- import sys
--import urllib
- 
- def send_data (url, data_file):
--        print "===== Sending ===="
--        print data_file + " to " + url
-+        print("===== Sending =====")
-+        print(data_file + " to " + url)
- 
-         with open(data_file) as f:
-             data = f.read()
- 
--        data = urllib.urlencode({'data': data })
--
--        req = urllib2.Request(url, data=data, headers={'Content-type': 'application/json'})
-+        data = urllib.parse.urlencode({'data': data }).encode("utf-8")
-+        req = urllib.request.Request(url, data=data, headers={'Content-type': 'application/json'})
-         try:
--            response = urllib2.urlopen(req)
--        except urllib2.HTTPError, e:
-+            response = urllib.request.urlopen(req)
-+        except urllib.error.HTTPError as e:
-             response = e
- 
--
--        print "===== Response ===="
--        print response.read()
-+        print("===== Response =====")
-+        print(response.read())
- 
- if __name__ == '__main__':
-     if len(sys.argv) != 3:
--        print ("Please specify a url and data file\nUsage:\n\t test-send-error.py <url> <json data file path> \nExample:\n\t test-send-error.py http://localhost:8000/ClientPost/JSON/ ./test-payload.json\n")
--
-+        print("Please specify a url and data file\nUsage:\n\t test-send-error.py <url> <json data file path> \nExample:\n\t test-send-error.py http://localhost:8000/ClientPost/JSON/ ./test-payload.json\n")
-     else:
-         send_data(sys.argv[1], sys.argv[2])
+ UPSTREAM_CHECK_GITTAGREGEX = "RELEASE_(?P<pver>\d+_\d+)"
  
 -- 
-2.34.1
+2.25.1
 
 
