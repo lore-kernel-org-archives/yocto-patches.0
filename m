@@ -1,71 +1,67 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
- by mx.groups.io with SMTP id smtpd.web11.162656.1712741391823475924
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+ by mx.groups.io with SMTP id smtpd.web10.161555.1712741392981834916
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 10 Apr 2024 02:29:52 -0700
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-416a208d496so12020045e9.1
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 10 Apr 2024 02:29:51 -0700 (PDT)
+ Wed, 10 Apr 2024 02:29:53 -0700
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-516cbf3fd3dso7527831e87.2
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 10 Apr 2024 02:29:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1712741390; x=1713346190; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GLqh6+yinidPsXKL0OcYIWo7fnhcpEWrfUTNvkxflU8=;
-        b=Fw5CJOsWGjlOjBi/eaF5vx3FmU8NUqv7lfxvvph2rzDjiwhzpNzZqSsC4LMotRkFLF
-         t4eNB3KCpUPRpec9YhLxdzsoQ1r2whwdXJAGgL+y51E8hLgifRcRuLMalpc/2DxDem6F
-         aJVKA21MJhIgIieByNnSQdPeJXoSzQMch46Tw=
+        d=linuxfoundation.org; s=google; t=1712741391; x=1713346191; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e0RdsSRE03fLBJbvroJWwoI3VHnNRd8Pv31msWNW7Fs=;
+        b=GnfOPVhN4gEqbUacGrB6F0SUBDKW3zX+W+lGIAnUuuj8cVsJFoOkZCxtR8x60T8k5i
+         ULAO6mMwM28ouLEzJ/An6o3X/25dJocFgRvN/Rsorh2odo/JBAqGuhJvZC8VtANLkCJM
+         jSYG0Ib2kMEC5UzeyP1eJLVd1VGZ3dTskb/tE=
 Return-Path: <richard.purdie@linuxfoundation.org>
 From: "Richard Purdie" <richard.purdie@linuxfoundation.org>
-Subject: [PATCH 1/2] README: Switch to yocto-patches mailing list
-Date: Wed, 10 Apr 2024 10:29:47 +0100
-Message-Id: <20240410092948.1989389-1-richard.purdie@linuxfoundation.org>
+Subject: [PATCH 2/2] fchmodat: Ignore symlinks, don't return an error
+Date: Wed, 10 Apr 2024 10:29:48 +0100
+Message-Id: <20240410092948.1989389-2-richard.purdie@linuxfoundation.org>
+In-Reply-To: <20240410092948.1989389-1-richard.purdie@linuxfoundation.org>
+References: <20240410092948.1989389-1-richard.purdie@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 To: yocto-patches@lists.yoctoproject.org
 Cc: openembedded-core@lists.openembedded.org, seebs@seebs.net, mark.hatle@kernel.crashing.org
 List-ID: <yocto-patches.lists.yoctoproject.org>
 
-We're trying to align the various components so tweak pseudo to match our
-other projects a little more and use the yocto-patches mailing list for
-submissions.
+Ugrading to coreutils 9.5 pulls in:
+https://git.savannah.gnu.org/cgit/coreutils.git/commit/src/chmod.c?id=07a69fc3ba717b879218592db685a1c79869cb28
+which calls fchmodat with AT_SYMLINK_NOFOLLOW.
+
+All the docs I can find say that symlinks don't have modes and are
+always readable. With the error in place, we see things like:
+
+chmod: changing permissions of 'XXX/build-appliance-image/15.0.0/rootfs/home/builder/poky/scripts/esdk-tools/runqemu-gen-tapdevs': Function not implemented
+
+when building build-appliance-image, which uses tools from coreutils-native.
+It is only a matter of time before distros start shipping those newer tools.
+
+I believe the correct thing to do is just return success here rather
+than failure. This does fix the build failure.
 
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
 ---
- README | 17 ++++-------------
- 1 file changed, 4 insertions(+), 13 deletions(-)
+ ports/unix/guts/fchmodat.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/README b/README
-index 468cf66..425ee6e 100644
---- a/README
-+++ b/README
-@@ -1,17 +1,9 @@
- pseudo -- an analogue to sudo
+diff --git a/ports/unix/guts/fchmodat.c b/ports/unix/guts/fchmodat.c
+index d1ac7bb..5a31151 100644
+--- a/ports/unix/guts/fchmodat.c
++++ b/ports/unix/guts/fchmodat.c
+@@ -28,9 +28,8 @@
+ 		return rc;
+ 	}
+ 	if (S_ISLNK(buf.st_mode)) {
+-		/* we don't really support chmod of a symlink */
+-		errno = ENOSYS;
+-		return -1;
++		/* according to docs, "chmod on a symbolic link always succeeds and has no effect" */
++		return 0;
+ 	}
+ 	save_errno = errno;
  
--IMPORTANT NOTE:
-+The official home for pseudo's git repository is:
- 
--As of this writing, the official home for pseudo's git repository has
--changed to:
- 	git://git.yoctoproject.org/pseudo
- 
--The old site at:
--	https://github.com/wrpseudo/pseudo
--
--is no longer the "real" master, although I'll probably try to keep it in
--sync.
--
- OVERVIEW:
- 
- The pseudo utility offers a way to run commands in a virtualized "root"
-@@ -88,7 +80,6 @@ available for other people to look at.
- 
- CONTACT:
- 
--Discussions and patches should be directed at the openembedded-core mailing
--list at openembedded-core at lists.openembedded.org. More information at
--https://www.openembedded.org/wiki/Mailing_lists. Bugs should be filed with
--the Yocto project at https://bugzilla.yoctoproject.org/.
-+Patches should be directed at the yocto-patches mailing list at yocto-patches
-+at lists.yoctoproject.org.  Bugs should be filed with the Yocto project
-+at https://bugzilla.yoctoproject.org/.
 -- 
 2.40.1
 
