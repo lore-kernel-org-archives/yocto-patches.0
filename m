@@ -1,53 +1,52 @@
-Received: from mail-oo1-f67.google.com (mail-oo1-f67.google.com [209.85.161.67])
- by mx.groups.io with SMTP id smtpd.web11.154116.1712706989306231510
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+ by mx.groups.io with SMTP id smtpd.web11.157891.1712719706887292802
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 09 Apr 2024 16:56:29 -0700
-Received: by mail-oo1-f67.google.com with SMTP id 006d021491bc7-5aa4204bacdso1573488eaf.2
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 09 Apr 2024 16:56:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1712706988; x=1713311788; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gWHi+mN+MBl34g8OpGXm6sjOyFzPl07C17fnKXIe/oI=;
-        b=PN4yTqjNzr46AZcwxEOqER+GR3ERvWjaGOv/qWXayz7nlPiO/WkPmmymrncLYr7Q46
-         pEE5NeMdFkEdaeRISGZ0JxvUXDpHq+tCPT26DM3DcqGhu/qybrkX5qnw2ZMFb+G13d+G
-         HjhRSaAFWPL26eQxPwP2l1KR7ZbYk6RfNFJas=
-Return-Path: <tim.orling@konsulko.com>
-From: "Tim Orling" <tim.orling@konsulko.com>
-Subject: [layerindex-web][PATCH 3/3] README: update to new yocto-patches mailing list
-Date: Tue,  9 Apr 2024 16:55:45 -0700
-Message-ID: <20240409235602.3362257-3-tim.orling@konsulko.com>
-In-Reply-To: <20240409235602.3362257-1-tim.orling@konsulko.com>
-References: <20240409235602.3362257-1-tim.orling@konsulko.com>
+ Tue, 09 Apr 2024 20:28:27 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
+	 h=from:to:subject:date:message-id:content-transfer-encoding
+	:content-type:mime-version; s=PPS06212021; bh=Mzy/jCW7A1BihhCxh+
+	cqYZNi3WnOk8mATJts/fuhTPk=; b=KLYQzf7zjrDpYmt9LbWkL1OMRpe2lIaBkE
+	W+CrLumx+4z4wZU7T0zprB1n8Z6gA33jQoQBaV8y+T9bIA/PSvTJDnvd12+9IlUE
+	dIqSwvp1Xx9rp804W0kCMz4+u2ia459tGjUEEEtC4js2XL1XL5Ou6Xco7mz5h55r
+	f4H5zO9eAIAKKe4NpVv3rmpW5+NfLawe9U4tiuf4bfNW5KTGW2scOYCi+bpAP37l
+	sH1pxmSUNxfGzCvYqGzG9dAdEEnhVyYGt0vdUaQo5SiHygoaIDjgi49a0DxwzTMu
+	TnalqqPI9X1aLuxQaJnFC111JhATNL4JiUCjhJ+NrvMNYvq6PoJg==
+From: "Yi Zhao" <yi.zhao@eng.windriver.com>
+Subject: [meta-selinux][PATCH] MAINTAINERS: update to new yocto-patches mailing list
+Date: Wed, 10 Apr 2024 11:28:10 +0800
+Message-Id: <20240410032810.93843-1-yi.zhao@windriver.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To: yocto@lists.yoctoproject.org, yocto-patches@lists.yoctoproject.org
-Cc: Tim Orling <tim.orling@konsulko.com>
+Content-Type: text/plain
+To: yocto-patches@lists.yoctoproject.org, joe.macdonald@siemens.com, joe_macdonald@mentor.com, joe@deserted.net
 List-ID: <yocto-patches.lists.yoctoproject.org>
 
-Change the canonical, definitive place to send patches to
-the new yocto-patches@lists.yoctoproject.org list.
-
-Signed-off-by: Tim Orling <tim.orling@konsulko.com>
+Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
 ---
- README | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ MAINTAINERS | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/README b/README
-index 6fc4591..89dbd5b 100644
---- a/README
-+++ b/README
-@@ -431,7 +431,8 @@ The latest version of the code can always be found here:
-   http://git.yoctoproject.org/cgit/cgit.cgi/layerindex-web/
+diff --git a/MAINTAINERS b/MAINTAINERS
+index aa6c484..016f325 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1,13 +1,13 @@
+ This file contains a list of maintainers for the meta-selinux layer.
  
- Contributions are welcome. Please send patches / pull requests to
--yocto@lists.yoctoproject.org with '[layerindex-web]' in the subject.
-+yocto-patches@lists.yoctoproject.org with '[layerindex-web]' in the
-+subject.
+ Please submit any patches against meta-selinux to the Yocto Project mailing
+-list (yocto@lists.yoctoproject.org).
++list (yocto-patches@lists.yoctoproject.org).
  
+-git send-email -1 --to yocto@lists.yoctoproject.org --subject-prefix=meta-selinux][PATCH
++git send-email -1 --to yocto-patches@lists.yoctoproject.org --subject-prefix=meta-selinux][PATCH
  
+ These values can be set as defaults for this repository:
  
+-$ git config sendemail.to yocto@lists.yoctoproject.org
++$ git config sendemail.to yocto-patches@lists.yoctoproject.org
+ $ git config format.subjectPrefix meta-selinux][PATCH
+ 
+ You may also contact the maintainers directly.
 -- 
-2.43.2
+2.25.1
 
