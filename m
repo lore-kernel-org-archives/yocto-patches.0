@@ -1,107 +1,83 @@
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
- by mx.groups.io with SMTP id smtpd.web11.167338.1712756520259338536
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+ by mx.groups.io with SMTP id smtpd.web10.7627.1712770215533182283
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 10 Apr 2024 06:42:00 -0700
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2d29aad15a5so63538011fa.3
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 10 Apr 2024 06:41:59 -0700 (PDT)
+ Wed, 10 Apr 2024 10:30:15 -0700
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-516d09bd434so7763248e87.1
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 10 Apr 2024 10:30:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1712756518; x=1713361318; darn=lists.yoctoproject.org;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=X1S8rB6DtK48yqEsxuvUa5w7MITXKWdQSls2NZ5kreQ=;
-        b=N6FQRgC0uY4skA1blU1Fzw3vNCyWxsXjNWflDf04df/BO5poj17KJDPLwavHQvuOdX
-         mBMEF0ew0J5oz8kmTycAEjGtqdSNhg4BqNeGoJVQlSakBed6HDJ8tkytUyJRyZfP+cAy
-         4TXqltWm5EAyEd7CZ7Dsa/k4EQUSvEh4kLQV4=
+        d=linuxfoundation.org; s=google; t=1712770213; x=1713375013; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IoYaBCbaO/8vl2D4luf6imCyiO/B62d/ZivxsgQvfLY=;
+        b=ANypigN/vk9RJ07UIgTRY0ujWm5AGSd/uK2tSCplpr5l+aTklrdHshqlW9c89x2YmX
+         CEehGUDLmI+unA++zAwcK1iZexKBnk6JBjVIdFbfF0OnJlvV73eXgFrjUD3G9u8gZ+Qf
+         8Q+djF2q1wY+YGTsVQ8GZ3wRJuot+hNOcPhls=
 Return-Path: <richard.purdie@linuxfoundation.org>
-Message-ID: <c1d708d4217c9a400c1ebf8a6978d9a76f553c77.camel@linuxfoundation.org>
-Subject: Re: [yocto-patches] [PATCH 1/2] README: Switch to yocto-patches mailing list
 From: "Richard Purdie" <richard.purdie@linuxfoundation.org>
-Date: Wed, 10 Apr 2024 14:41:56 +0100
-In-Reply-To: <1044c9e2-409e-4c6d-b0d5-95fbf27289dc@theobroma-systems.com>
-References: <20240410092948.1989389-1-richard.purdie@linuxfoundation.org>
-	 <1044c9e2-409e-4c6d-b0d5-95fbf27289dc@theobroma-systems.com>
+Subject: [PATCH] README: Further improve the information about sending patches
+Date: Wed, 10 Apr 2024 18:30:12 +0100
+Message-Id: <20240410173012.2051694-1-richard.purdie@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 To: yocto-patches@lists.yoctoproject.org
-Cc: openembedded-core@lists.openembedded.org, seebs@seebs.net, mark.hatle@kernel.crashing.org
+Cc: seebs@seebs.net, mark.hatle@kernel.crashing.org
 List-ID: <yocto-patches.lists.yoctoproject.org>
 
-On Wed, 2024-04-10 at 14:30 +0200, Quentin Schulz via lists.yoctoproject.or=
-g wrote:
-> Hi Richard,
->=20
-> On 4/10/24 11:29, Richard Purdie via lists.yoctoproject.org wrote:
-> > We're trying to align the various components so tweak pseudo to match o=
-ur
-> > other projects a little more and use the yocto-patches mailing list for
-> > submissions.
-> >=20
-> > Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-> > ---
-> > =C2=A0 README | 17 ++++-------------
-> > =C2=A0 1 file changed, 4 insertions(+), 13 deletions(-)
-> >=20
-> > diff --git a/README b/README
-> > index 468cf66..425ee6e 100644
-> > --- a/README
-> > +++ b/README
-> > @@ -1,17 +1,9 @@
-> > =C2=A0 pseudo -- an analogue to sudo
-> > =C2=A0=20
-> > -IMPORTANT NOTE:
-> > +The official home for pseudo's git repository is:
-> > =C2=A0=20
-> > -As of this writing, the official home for pseudo's git repository has
-> > -changed to:
-> > =C2=A0=C2=A0	git://git.yoctoproject.org/pseudo
-> > =C2=A0=20
->=20
-> Maybe we could use https here?
->=20
-> https://git.yoctoproject.org/pseudo
->
-> for example?
+Add the git config commands needed to correctly/more easily send patches.
 
-We could, yes.
+Also tweak the description and mention who the current nominal maintainers
+are.
 
-> > -The old site at:
-> > -	https://github.com/wrpseudo/pseudo
-> > -
-> > -is no longer the "real" master, although I'll probably try to keep it =
-in
-> > -sync.
-> > -
-> > =C2=A0 OVERVIEW:
-> > =C2=A0=20
-> > =C2=A0 The pseudo utility offers a way to run commands in a virtualized=
- "root"
-> > @@ -88,7 +80,6 @@ available for other people to look at.
-> > =C2=A0=20
-> > =C2=A0 CONTACT:
-> > =C2=A0=20
-> > -Discussions and patches should be directed at the openembedded-core ma=
-iling
-> > -list at openembedded-core at lists.openembedded.org. More information =
-at
-> > -https://www.openembedded.org/wiki/Mailing_lists. Bugs should be filed =
-with
-> > -the Yocto project at https://bugzilla.yoctoproject.org/.
-> > +Patches should be directed at the yocto-patches mailing list at yocto-=
-patches
-> > +at lists.yoctoproject.org.=C2=A0 Bugs should be filed with the Yocto p=
-roject
-> > +at https://bugzilla.yoctoproject.org/.
->=20
-> Maybe we want to add a prefix here too so we can identify easily for=20
-> which project this is for?
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+---
+ README | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
-It is implied, but yes, we should mention that specifically, agreed.
-
-Cheers,
-
-Richard
-
-
+diff --git a/README b/README
+index 425ee6e..c4cb997 100644
+--- a/README
++++ b/README
+@@ -1,8 +1,8 @@
+-pseudo -- an analogue to sudo
++pseudo -- an analogue to sudo and an alternative to fakeroot
+ 
+ The official home for pseudo's git repository is:
+ 
+-	git://git.yoctoproject.org/pseudo
++	https://git.yoctoproject.org/pseudo
+ 
+ OVERVIEW:
+ 
+@@ -70,6 +70,7 @@ commentary.
+ 
+ ACKNOWLEDGEMENTS:
+ 
++Peter Seebach:
+ My various coworkers, both engineering and management, made this possible.
+ While I did most of the actual typing, this code has benefitted greatly
+ from detailed code reviews, excellent reproducers for bugs, and the
+@@ -78,8 +79,19 @@ deal of fun, and I'm pretty happy that we're finally ready to make it
+ available for other people to look at.
+ 
+ 
++MAINTAINERS:
++
++Richard Purdie
++Mark Hatle
++
++
+ CONTACT:
+ 
+ Patches should be directed at the yocto-patches mailing list at yocto-patches
+-at lists.yoctoproject.org.  Bugs should be filed with the Yocto project
+-at https://bugzilla.yoctoproject.org/.
++at lists.yoctoproject.org with [pseudo] in the subject line.  Bugs should be
++filed with the Yocto project at https://bugzilla.yoctoproject.org/.
++
++The repository can be configured to do this correctly with:
++
++  git config format.subjectprefix "pseudo] [PATCH"
++  git config sendemail.to yocto-patches@lists.yoctoproject.org
+-- 
+2.40.1
 
