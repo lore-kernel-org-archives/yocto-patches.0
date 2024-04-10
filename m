@@ -1,40 +1,78 @@
-Received: from EUR04-VI1-obe.outbound.protection.outlook.com (EUR04-VI1-obe.outbound.protection.outlook.com [40.107.8.119])
- by mx.groups.io with SMTP id smtpd.web11.7882.1712770421804725487
+Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
+ by mx.groups.io with SMTP id smtpd.web10.9567.1712774718365985514
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 10 Apr 2024 10:33:42 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=theobroma-systems.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nU3JD7fccP0JXid31IWjWrekzrwbgjzrV3sAAU36+ls=;
- b=bKY3Mo+ZDqBjBQJFqsbwElGPrnY9HqNcnh2BWgxX0Lifn4vnx1XcsOKm16IakP+4N4W1o4+Q8bDisSrJh3siQQBvo4HQ/UynKtqIeqEtGkb2a+sxGHKS3vRTNJVA/9dZs3zry46CdwtENWI7l7aRAPZJ91YwMchsJGg8iTZW38advyhNgMMvKixhc4xN+cd8oO/qY4MjgUr4d9DUEtKebnb5BOqRTMDO5wX4TZCU415iIMT8v9hgtDn2BegCAB88SKL+CeO/LPOKGrbMrTRwwpvkfSSlwIIzQe0GL2Vwh5753usvkfPFFrORwPiQOdpnChZpGVDib/fQ0VFleWCchw==
-Message-ID: <33b55178-0779-4449-b5f8-dbca4b3a4195@theobroma-systems.com>
-Date: Wed, 10 Apr 2024 19:33:32 +0200
-Subject: Re: [yocto-patches] [PATCH] README: Further improve the information about sending patches
-References: <20240410173012.2051694-1-richard.purdie@linuxfoundation.org>
-From: "Quentin Schulz" <quentin.schulz@theobroma-systems.com>
-In-Reply-To: <20240410173012.2051694-1-richard.purdie@linuxfoundation.org>
-Return-Path: quentin.schulz@theobroma-systems.com
+ Wed, 10 Apr 2024 11:45:18 -0700
+Message-ID: <8437f5e9-eff1-4fbc-af02-8d63575943b0@kernel.crashing.org>
+Date: Wed, 10 Apr 2024 13:44:14 -0500
 MIME-Version: 1.0
+Subject: Re: [PATCH] README: Further improve the information about sending patches
+References: <20240410173012.2051694-1-richard.purdie@linuxfoundation.org>
+From: "Mark Hatle" <mark.hatle@kernel.crashing.org>
+In-Reply-To: <20240410173012.2051694-1-richard.purdie@linuxfoundation.org>
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-To: yocto-patches@lists.yoctoproject.org
-Cc: seebs@seebs.net, mark.hatle@kernel.crashing.org
+To: Richard Purdie <richard.purdie@linuxfoundation.org>, yocto-patches@lists.yoctoproject.org
+Cc: seebs@seebs.net
 List-ID: <yocto-patches.lists.yoctoproject.org>
 
-Hi Richard,
+Ack.  Looks good to me.
 
-On 4/10/24 19:30, Richard Purdie via lists.yoctoproject.org wrote:
+Signed-off-by: Mark Hatle <mark.hatle@kernel.crashing.org>
+
+On 4/10/24 12:30 PM, Richard Purdie wrote:
 > Add the git config commands needed to correctly/more easily send patches.
 > 
 > Also tweak the description and mention who the current nominal maintainers
 > are.
 > 
 > Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-
-Got sidetracked today and forgot to send a patch, thanks for doing this.
-
-Reviewed-by: Quentin Schulz <quentin.schulz@theobroma-systems.com>
-
-Thanks,
-Quentin
+> ---
+>   README | 20 ++++++++++++++++----
+>   1 file changed, 16 insertions(+), 4 deletions(-)
+> 
+> diff --git a/README b/README
+> index 425ee6e..c4cb997 100644
+> --- a/README
+> +++ b/README
+> @@ -1,8 +1,8 @@
+> -pseudo -- an analogue to sudo
+> +pseudo -- an analogue to sudo and an alternative to fakeroot
+>   
+>   The official home for pseudo's git repository is:
+>   
+> -	git://git.yoctoproject.org/pseudo
+> +	https://git.yoctoproject.org/pseudo
+>   
+>   OVERVIEW:
+>   
+> @@ -70,6 +70,7 @@ commentary.
+>   
+>   ACKNOWLEDGEMENTS:
+>   
+> +Peter Seebach:
+>   My various coworkers, both engineering and management, made this possible.
+>   While I did most of the actual typing, this code has benefitted greatly
+>   from detailed code reviews, excellent reproducers for bugs, and the
+> @@ -78,8 +79,19 @@ deal of fun, and I'm pretty happy that we're finally ready to make it
+>   available for other people to look at.
+>   
+>   
+> +MAINTAINERS:
+> +
+> +Richard Purdie
+> +Mark Hatle
+> +
+> +
+>   CONTACT:
+>   
+>   Patches should be directed at the yocto-patches mailing list at yocto-patches
+> -at lists.yoctoproject.org.  Bugs should be filed with the Yocto project
+> -at https://bugzilla.yoctoproject.org/.
+> +at lists.yoctoproject.org with [pseudo] in the subject line.  Bugs should be
+> +filed with the Yocto project at https://bugzilla.yoctoproject.org/.
+> +
+> +The repository can be configured to do this correctly with:
+> +
+> +  git config format.subjectprefix "pseudo] [PATCH"
+> +  git config sendemail.to yocto-patches@lists.yoctoproject.org
