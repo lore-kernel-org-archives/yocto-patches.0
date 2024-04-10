@@ -1,67 +1,45 @@
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
- by mx.groups.io with SMTP id smtpd.web10.161555.1712741392981834916
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+ by mx.groups.io with SMTP id smtpd.web10.161669.1712742117999606055
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 10 Apr 2024 02:29:53 -0700
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-516cbf3fd3dso7527831e87.2
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 10 Apr 2024 02:29:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1712741391; x=1713346191; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e0RdsSRE03fLBJbvroJWwoI3VHnNRd8Pv31msWNW7Fs=;
-        b=GnfOPVhN4gEqbUacGrB6F0SUBDKW3zX+W+lGIAnUuuj8cVsJFoOkZCxtR8x60T8k5i
-         ULAO6mMwM28ouLEzJ/An6o3X/25dJocFgRvN/Rsorh2odo/JBAqGuhJvZC8VtANLkCJM
-         jSYG0Ib2kMEC5UzeyP1eJLVd1VGZ3dTskb/tE=
-Return-Path: <richard.purdie@linuxfoundation.org>
-From: "Richard Purdie" <richard.purdie@linuxfoundation.org>
-Subject: [PATCH 2/2] fchmodat: Ignore symlinks, don't return an error
-Date: Wed, 10 Apr 2024 10:29:48 +0100
-Message-Id: <20240410092948.1989389-2-richard.purdie@linuxfoundation.org>
-In-Reply-To: <20240410092948.1989389-1-richard.purdie@linuxfoundation.org>
-References: <20240410092948.1989389-1-richard.purdie@linuxfoundation.org>
+ Wed, 10 Apr 2024 02:41:58 -0700
+From: "Ross Burton" <ross.burton@arm.com>
+Subject: [meta-mingw] [PATCH] README: change patch submission list to yocto-patches@
+Date: Wed, 10 Apr 2024 09:41:54 +0000
+Message-Id: <20240410094154.1248824-1-ross.burton@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 To: yocto-patches@lists.yoctoproject.org
-Cc: openembedded-core@lists.openembedded.org, seebs@seebs.net, mark.hatle@kernel.crashing.org
+Cc: nd@arm.com, jpewhacker@gmail.com
 List-ID: <yocto-patches.lists.yoctoproject.org>
 
-Ugrading to coreutils 9.5 pulls in:
-https://git.savannah.gnu.org/cgit/coreutils.git/commit/src/chmod.c?id=07a69fc3ba717b879218592db685a1c79869cb28
-which calls fchmodat with AT_SYMLINK_NOFOLLOW.
+Patches are being moved off yocto@ to yocto-patches@.
 
-All the docs I can find say that symlinks don't have modes and are
-always readable. With the error in place, we see things like:
-
-chmod: changing permissions of 'XXX/build-appliance-image/15.0.0/rootfs/home/builder/poky/scripts/esdk-tools/runqemu-gen-tapdevs': Function not implemented
-
-when building build-appliance-image, which uses tools from coreutils-native.
-It is only a matter of time before distros start shipping those newer tools.
-
-I believe the correct thing to do is just return success here rather
-than failure. This does fix the build failure.
-
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+Signed-off-by: Ross Burton <ross.burton@arm.com>
 ---
- ports/unix/guts/fchmodat.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ README | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/ports/unix/guts/fchmodat.c b/ports/unix/guts/fchmodat.c
-index d1ac7bb..5a31151 100644
---- a/ports/unix/guts/fchmodat.c
-+++ b/ports/unix/guts/fchmodat.c
-@@ -28,9 +28,8 @@
- 		return rc;
- 	}
- 	if (S_ISLNK(buf.st_mode)) {
--		/* we don't really support chmod of a symlink */
--		errno = ENOSYS;
--		return -1;
-+		/* according to docs, "chmod on a symbolic link always succeeds and has no effect" */
-+		return 0;
- 	}
- 	save_errno = errno;
- 
--- 
-2.40.1
+diff --git a/README b/README
+index af3ace9..fdb3cd5 100644
+--- a/README
++++ b/README
+@@ -13,11 +13,11 @@ This layer depends on:
+=20
+ Layer Maintainer: Joshua Watt <jpewhacker@gmail.com>
+=20
+-Please send changes to the yocto mailing list with [meta-mingw] in the s=
+ubject line,
+-cc'ing the maintainer.
++Please send changes to the yocto-patches mailing list with [meta-mingw] =
+in the
++subject line, cc'ing the maintainer.
+=20
+ This can be configured within the repository with the commands:
+=20
+-git config sendemail.to yocto@lists.yoctoproject.org
++git config sendemail.to yocto-patches@lists.yoctoproject.org
+ git config sendemail.cc jpewhacker@gmail.com
+ git config format.subjectprefix "meta-mingw] [PATCH"
+--=20
+2.34.1
 
