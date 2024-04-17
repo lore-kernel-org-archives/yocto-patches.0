@@ -1,61 +1,52 @@
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
- by mx.groups.io with SMTP id smtpd.web11.14689.1713364542231903272
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+ by mx.groups.io with SMTP id smtpd.web10.15141.1713365661420383778
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 17 Apr 2024 07:35:42 -0700
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-6ecf406551aso4664048b3a.2
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 17 Apr 2024 07:35:42 -0700 (PDT)
+ Wed, 17 Apr 2024 07:54:21 -0700
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4347e55066cso23630141cf.2
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 17 Apr 2024 07:54:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1713364541; x=1713969341; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+a1q2F49yvXoQGF3uhcfTSTxCQ6odXeFQ1lCxo2+FLI=;
-        b=kLQrDf4yiQAbpr9+QtLq2TGDrdt/IdVI36y5u54MWTtgY5eKRMmx4MoD+9ZQ5LdE8O
-         b74EmhV9EUt9V1IPlcTEElzcliaz6NElGYrTi7fPQ9ZGgeMFq5ekQ0IvOlkzeCNvdpM0
-         uSeUFAirrX6MdthKgmY0B++k+pckhYIm86UXs=
-Return-Path: <tim.orling@konsulko.com>
-From: "Tim Orling" <tim.orling@konsulko.com>
-Subject: [layerindex-web][PATCH 2/2] requirements.txt: bump django-ipware; kombu
-Date: Wed, 17 Apr 2024 07:35:19 -0700
-Message-ID: <20240417143529.106594-2-tim.orling@konsulko.com>
-In-Reply-To: <20240417143529.106594-1-tim.orling@konsulko.com>
-References: <20240417143529.106594-1-tim.orling@konsulko.com>
+        d=gmail.com; s=20230601; t=1713365660; x=1713970460; darn=lists.yoctoproject.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QIl6jeB+fms+9V+goRzeA/xpMHVFjJVoI1WaBae2iA4=;
+        b=lnBm0ETMb89w0jUaAP1SYuw6TJpX0kum2CawzwqXzPQOEGNZrNzx9wn1FEkPN70XB5
+         CTZILo5RgIOs1JIsYeb9q2BlutK4VYOollhIRqWgQ5ANNJqtQkqfAo/Re00G81/qoOTC
+         Vqidxmywp7hWiG5X89E/q4YRkA9NYd8DtEwN5Hhu++QAQdQnd8Ov4JYYpXRpb8S8zpbw
+         EEZMnxnqi8Z9S8uUnlOqe1hcY62FFOnu9+QufUGgfNUyJN7kfGOTct3vOZrmoEVtuuFO
+         bn/OOIrFTJrvUu0Iw7nZfsUR3LxbiVDlg3JZO02LliGbuhqD2rbUbHP4nJyL7lYIGluK
+         Bl+w==
+Return-Path: <twoerner@gmail.com>
+Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
+        by smtp.gmail.com with ESMTPSA id g6-20020ac81246000000b0043700c0da4asm3674072qtj.4.2024.04.17.07.54.18
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Apr 2024 07:54:18 -0700 (PDT)
+Date: Wed, 17 Apr 2024 10:54:17 -0400
+From: "Trevor Woerner" <twoerner@gmail.com>
+Subject: Re: [meta-rockchip][PATCH] u-boot: remove now-upstreamed rock-pi-e patches
+Message-ID: <20240417145416.GA17090@localhost>
+References: <20240417041013.13341-1-twoerner@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240417041013.13341-1-twoerner@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 To: yocto-patches@lists.yoctoproject.org
-Cc: Tim Orling <tim.orling@konsulko.com>
 List-ID: <yocto-patches.lists.yoctoproject.org>
 
-Bump requirements.txt after running:
-pur -r requirements.txt
+On Wed 2024-04-17 @ 12:10:13 AM, Trevor Woerner wrote:
+> These patches were back-ported from upstream to fix an issue with automatically
+> handling different ethernet PHY chips on different spins of the rock-pi-e
+> board. Now that the version of U-Boot has been updated in oe-core master,
+> these pack-ports are no longer required to be applied explicitly.
+> 
+> Signed-off-by: Trevor Woerner <twoerner@gmail.com>
+> ---
+>  ...are_Reset_eth_phy_before_phy_connect.patch | 83 -------------------
+>  ...-e_Enable_DM_ETH_PHY_and_PHY_REALTEK.patch | 65 ---------------
+>  recipes-bsp/u-boot/u-boot_%.bbappend          |  6 --
+>  3 files changed, 154 deletions(-)
+>  delete mode 100644 recipes-bsp/u-boot/files/PATCH_1-2_net_designware_Reset_eth_phy_before_phy_connect.patch
+>  delete mode 100644 recipes-bsp/u-boot/files/PATCH_2-2_rockchip_rk3328-rock-pi-e_Enable_DM_ETH_PHY_and_PHY_REALTEK.patch
 
-Signed-off-by: Tim Orling <tim.orling@konsulko.com>
----
- requirements.txt | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/requirements.txt b/requirements.txt
-index 9a5d0de..8ab5e56 100644
---- a/requirements.txt
-+++ b/requirements.txt
-@@ -13,7 +13,7 @@ Django>=4.2,<4.3
- django-appconf==1.0.6
- django-axes==6.4.0
- django-cors-headers==4.3.1
--django-ipware==6.0.4
-+django-ipware==6.0.5
- django-ranged-response==0.2.0
- django-registration==3.4
- django-reversion==5.0.12
-@@ -22,7 +22,7 @@ django-simple-captcha==0.6.0
- djangorestframework==3.15.1
- gitdb==4.0.11
- GitPython==3.1.43
--kombu==5.3.6
-+kombu==5.3.7
- mysqlclient==2.2.4
- packaging_legacy==23.0.post0
- Pillow==10.3.0
--- 
-2.43.2
-
+Applied to meta-rockchip, master branch.
