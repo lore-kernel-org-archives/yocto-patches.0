@@ -1,67 +1,61 @@
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
- by mx.groups.io with SMTP id smtpd.web11.18282.1713791942809990241
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+ by mx.groups.io with SMTP id smtpd.web10.15825.1713870214048501617
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 22 Apr 2024 06:19:02 -0700
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-790605809cbso192189485a.3
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 22 Apr 2024 06:19:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1713791941; x=1714396741; darn=lists.yoctoproject.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KkAqtOlnDCOdOmpoHkoLycVoW/T7a6/H9JXalLfGJes=;
-        b=RUp2q2o7P7tFfoP/zJ/zYtmfe5+yRacNamj1qxYhCpTzw9Ltp/zeRk2xluhR8Eqs8U
-         nG+x0GbaBMKLQldTwWpjdzMBO/LgzgcX4xjxlK10epBV4qPPWgv/Ou8hXMP3vYrvvxEg
-         y9TMRQufGV67bWAxNTUQWeMpuP0UO933IQjmG65hKOd608OBMYWn+blpPKIBYOgxA2/A
-         q351GaagEaV2bsYtz4vkKLmyX8+0rQbnmnEfl+I/aRYcqrRIG46ZC0wiatA7jvfgkAjH
-         sJEINRdGB3WNtxrb0UhCuerbkp3L5KgKanttR15S+eYxk595TEAQNh2bf5pYWcDyTNFS
-         Jx7A==
-Return-Path: <twoerner@gmail.com>
-Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id c5-20020a05620a11a500b007907a91e573sm453495qkk.130.2024.04.22.06.18.59
-        for <yocto-patches@lists.yoctoproject.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Apr 2024 06:19:00 -0700 (PDT)
-Date: Mon, 22 Apr 2024 09:18:58 -0400
-From: "Trevor Woerner" <twoerner@gmail.com>
-Subject: Re: [meta-rockchip][PATCH] wic: add GPT partition names to partitions
-Message-ID: <20240422131858.GA12473@localhost>
-References: <20240418220431.31286-1-twoerner@gmail.com>
+ Tue, 23 Apr 2024 04:03:34 -0700
+Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 43N1Cksw014597
+	for <yocto-patches@lists.yoctoproject.org>; Tue, 23 Apr 2024 04:03:33 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
+	 h=from:to:subject:date:message-id:content-transfer-encoding
+	:content-type:mime-version; s=PPS06212021; bh=dYop1IdCOyj9DVmma6
+	qVsCdK5KbRV1P2+XS22Esok9o=; b=keV2CuQggYjf/c6atvrBA+epxIc1Cus1v5
+	6YdknZJzLNH2ov1aI3OFD+WLAyUqjhJiDrYT6z7SH+RjpCVeX5tnWdsIgtfbZaq4
+	YPqvFcLaTg9ULcMz58CArl8aNXLAsb8LXIJKCIVSP1s5BR2nrUQKnKZWxeOVMzfZ
+	RmA8VmE88bdFH3Bczmvi9uHEvdRj/dwTUexlySVp5fPqRCvdwsw1B1ULD2z9pSTL
+	8Bj5JWVyKdoRQ5iwDmxX/LhX13fsig2wdxmiS2cwnfTXwNE/KQ5ZLYP1T1tUdVj0
+	8HHZLUGUSpGsr+vBPkQ4vn6niqRl8hckBCZYg+C9MGv8leR/YiKw==
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2168.outbound.protection.outlook.com [104.47.59.168])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 3xmd7gjf3u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+	for <yocto-patches@lists.yoctoproject.org>; Tue, 23 Apr 2024 04:03:33 -0700 (PDT)
+From: "Yi Zhao" <yi.zhao@eng.windriver.com>
+Subject: [meta-security][PATCH] scap-security-guide: remove __pycache__ in ptest directory
+Date: Tue, 23 Apr 2024 19:03:19 +0800
+Message-Id: <20240423110319.1053510-1-yi.zhao@windriver.com>
 MIME-Version: 1.0
-In-Reply-To: <20240418220431.31286-1-twoerner@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 To: yocto-patches@lists.yoctoproject.org
 List-ID: <yocto-patches.lists.yoctoproject.org>
 
-On Thu 2024-04-18 @ 06:04:31 PM, Trevor Woerner wrote:
-> A filesystem label (/dev/disk/by-label) is a property of, and stored in, the
-> filesystem itself. Partitions that are not destined to hold filesystems are
-> not formatted, therefore it is not possible to assign filesystem labels to
-> such partitions.
-> 
-> However, if GPT partitioning is being used, GPT supports the notion of
-> assigning labels/names to the partitions which are stored as part of the GPT
-> partition table itself (instead of being stored in the filesystem in the
-> partition). The naming is a bit confusing (different tools use different
-> names) but `wic` calls this "--part-name", `lsblk` calls this "PARTLABEL", and
-> `parted` calls this "name".
-> 
-> In Linux user-space these partition labels are referenced via
-> /dev/disk/by-partlabel and provide an excellent way of finding these GPT
-> partitions regardless of which backing device is actually being used (e.g.
-> mmcblk0, mmcblk1... i.e. emmc, sdcard...).
-> 
-> An example where this would be handy is for interacting with a stored U-Boot
-> environment. Another potential use would be to use one of the unused raw
-> partitions to store information such as MAC addresses, serial numbers, etc.
-> which could be set/updated "at the factory" as images are flashed.
-> 
-> Tested with both systemd and sysvinit on both rock-pi-e and rock-pi-s.
-> 
-> Signed-off-by: Trevor Woerner <twoerner@gmail.com>
-> ---
->  wic/rockchip.wks | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
+Remove __pycache__ directories as they contains references to TMPDIR.
 
-Applied to meta-rockchip, master branch.
+Fix QA warnings:
+WARNING: scap-security-guide-0.1.71-r0 do_package_qa: QA Issue: File
+/usr/lib64/scap-security-guide/ptest/git/utils/_pycache_/gen_reference_table.cpython-312.pyc
+in package scap-security-guide-ptest contains reference to TMPDIR
+
+Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
+---
+ .../scap-security-guide/scap-security-guide_0.1.71.bb        | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/recipes-compliance/scap-security-guide/scap-security-guide_0.1.71.bb b/recipes-compliance/scap-security-guide/scap-security-guide_0.1.71.bb
+index 5e45332..43c8b8d 100644
+--- a/recipes-compliance/scap-security-guide/scap-security-guide_0.1.71.bb
++++ b/recipes-compliance/scap-security-guide/scap-security-guide_0.1.71.bb
+@@ -82,6 +82,11 @@ do_install_ptest() {
+         install -d ${t}/$d
+         cp -fr ${S}/$d/* ${t}/$d/.
+     done
++
++    # Remove __pycache__ directories as they contain references to TMPDIR
++    for pycachedir in $(find ${D}/${PTEST_PATH} -name __pycache__); do
++        rm -rf $pycachedir
++    done
+ }
+ 
+ FILES:${PN} += "${datadir}/xml ${datadir}/openscap"
+-- 
+2.25.1
+
