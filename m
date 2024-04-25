@@ -2,65 +2,65 @@ Return-Path: <changqing.li@eng.windriver.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA646C4345F
-	for <webhook@archiver.kernel.org>; Wed, 24 Apr 2024 01:02:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E4F0C4345F
+	for <webhook@archiver.kernel.org>; Thu, 25 Apr 2024 01:47:37 +0000 (UTC)
 Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
- by mx.groups.io with SMTP id smtpd.web11.6025.1713920570969814581
+ by mx.groups.io with SMTP id smtpd.web11.7080.1714009652573400228
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 23 Apr 2024 18:02:51 -0700
+ Wed, 24 Apr 2024 18:47:32 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@windriver.com header.s=PPS06212021 header.b=P617caoa;
- spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.166.238, mailfrom: prvs=48443a9d6c=changqing.li@windriver.com)
+ dkim=pass header.i=@windriver.com header.s=PPS06212021 header.b=jAS76IY2;
+ spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.166.238, mailfrom: prvs=4845b5da70=changqing.li@windriver.com)
 Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 43O0OsoL018486
-	for <yocto-patches@lists.yoctoproject.org>; Tue, 23 Apr 2024 18:02:50 -0700
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 43P1U3I2023607;
+	Wed, 24 Apr 2024 18:47:31 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
 	 h=from:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding:content-type; s=PPS06212021; bh=B1WIM
-	Vsn0dWRyuzUNiXD/h9JsmjmLW3xzBf/vFSTLW8=; b=P617caoaOBM/ZAZpH5gpz
-	FhJfFxjSg+wg2v3xZUOFTVOYml6ZAojrIXn2rUeAU6UsIjFH7S1mmrCYLY89029R
-	AMnlKCSOieYymatWAMjYIfvf/XOjnerlZGXjdy8BWSwMlLR0G9qYNRchfzOkMIpL
-	4BMAzK3M+amv2lt38RTBjz9LzYx2hC8U2mcjkqtleyas36e0URxV/7VuokVSMGf3
-	A3I+sEWeF3wTuCstQt2CSxMd6JjOpkPjjH81abXVkl9TM86wiK8fsYxblrlvtSAE
-	FNPYvIra7DPRx1o59HcyHzbbwvDu5zjInavlt9D9yrr1VztKmurEdN3NFZpQZDT3
+	:content-transfer-encoding:content-type; s=PPS06212021; bh=41lvO
+	jOZsjqMMAsP3ohmUZsEEvre+8HXbe0AxC0U9qo=; b=jAS76IY2BISumZgg+Cf5H
+	ZHpJCuBCQPTbDb4cnmT0/HQ1bHyvjoAkLAhuidOtDNMosQAGfWAy1ec4Zh2e11mu
+	L5/6W6xUBEmQ70jHiG/LWcWhl6vpSykqOwvFW9XCWakGusmFMn/V/k0ZHgkfLT32
+	2woL9WyZI/+gCV+CF6HqIf91ie+bW/T6K8UbKc6xomCUO+sby4GTfx6HAFvoNuye
+	8WYk+Wszz8kSMFPoJTcWumDCgg0UljKjugV5NU7/Y8c0q7O0JtOYKiAP+HFOw3Vu
+	UJlOzu9HVvGhKPikWHwfWh6l/qoYF/Yswn6rnfFPedfSNKIP8r7wlhGfMjDnifjS
 	g==
 Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 3xmd7gk8y4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <yocto-patches@lists.yoctoproject.org>; Tue, 23 Apr 2024 18:02:50 -0700 (PDT)
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 3xmd7gmf9t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Wed, 24 Apr 2024 18:47:30 -0700 (PDT)
 Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
  ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.37; Tue, 23 Apr 2024 18:02:49 -0700
+ 15.1.2507.37; Wed, 24 Apr 2024 18:47:30 -0700
 Received: from pek-lpg-core2.wrs.com (128.224.153.41) by
  ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
- 15.1.2507.37 via Frontend Transport; Tue, 23 Apr 2024 18:02:48 -0700
+ 15.1.2507.37 via Frontend Transport; Wed, 24 Apr 2024 18:47:28 -0700
 From: <changqing.li@windriver.com>
 To: <yocto-patches@lists.yoctoproject.org>
-CC: <randy.macleod@windriver.com>
-Subject: [ptest-runner][PATCH] utils.c: fix pty setup
-Date: Wed, 24 Apr 2024 09:02:48 +0800
-Message-ID: <20240424010248.3211147-1-changqing.li@windriver.com>
+CC: <anibal@limonsoftware.com>, <randy.macleod@windriver.com>
+Subject: [PATCH V2] utils.c: fix pty setup
+Date: Thu, 25 Apr 2024 09:47:27 +0800
+Message-ID: <20240425014728.4070856-1-changqing.li@windriver.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: shIbBopn6JB9nSu576UGqI8032yEGEXd
-X-Proofpoint-GUID: shIbBopn6JB9nSu576UGqI8032yEGEXd
+X-Proofpoint-ORIG-GUID: 2JmrnQEBrJqjvHG0PIbjzW5eREZzLHGI
+X-Proofpoint-GUID: 2JmrnQEBrJqjvHG0PIbjzW5eREZzLHGI
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-04-23_20,2024-04-23_02,2023-05-22_02
+ definitions=2024-04-25_01,2024-04-24_01,2023-05-22_02
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
  phishscore=0 spamscore=0 malwarescore=0 mlxlogscore=999 impostorscore=0
- bulkscore=0 priorityscore=1501 suspectscore=0 clxscore=1015 adultscore=0
+ bulkscore=0 priorityscore=1501 suspectscore=0 clxscore=1011 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2404010003
- definitions=main-2404240004
+ definitions=main-2404250012
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 24 Apr 2024 01:02:51 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/56
-Message-ID: <20240424010248.49qotV7pQOBcMjgy5b20btXOLaSP0r40_EbvHBPUP0o@z>
+ <yocto-patches@lists.yoctoproject.org>; Thu, 25 Apr 2024 01:47:37 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/61
+Message-ID: <20240425014727.IagYlABv4eE43kdFMdBMnmkdtDvSqTVwqn2XxXHStmM@z>
 
 From: Changqing Li <changqing.li@windriver.com>
 
@@ -93,11 +93,11 @@ l-wx------ 1 root root 64 Apr 23 07:35 2 -> 'pipe:[37001]'
 
 Signed-off-by: Changqing Li <changqing.li@windriver.com>
 ---
- utils.c | 66 ++++++++++++++++++++++++++++++++-------------------------
- 1 file changed, 37 insertions(+), 29 deletions(-)
+ utils.c | 67 ++++++++++++++++++++++++++++++++-------------------------
+ 1 file changed, 38 insertions(+), 29 deletions(-)
 
 diff --git a/utils.c b/utils.c
-index 46918f4..8a6acca 100644
+index 46918f4..6b3a492 100644
 --- a/utils.c
 +++ b/utils.c
 @@ -341,25 +341,31 @@ run_child(char *run_ptest, int fd_stdout, int fd_stderr)
@@ -235,11 +235,12 @@ index 46918f4..8a6acca 100644
  				time_t start_time= time(NULL);
  				fprintf(fp, "%s\n", get_stime(stime, GET_STIME_BUF_SIZE, start_time));
  				fprintf(fp, "BEGIN: %s\n", ptest_dir);
-@@ -608,6 +615,7 @@ run_ptests(struct ptest_list *head, const struct ptest_options opts,
+@@ -608,6 +615,8 @@ run_ptests(struct ptest_list *head, const struct ptest_options opts,
  			do_close(&pipefd_stdout[PIPE_WRITE]);
  			do_close(&pipefd_stderr[PIPE_READ]);
  			do_close(&pipefd_stderr[PIPE_WRITE]);
 +			do_close(&pty_master);
++			do_close(&pty_slave);
  
  			fflush(fp);
  			fflush(fp_stderr);
