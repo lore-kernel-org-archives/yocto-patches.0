@@ -1,22 +1,18 @@
-Received: from EUR04-HE1-obe.outbound.protection.outlook.com (EUR04-HE1-obe.outbound.protection.outlook.com [40.107.7.98])
- by mx.groups.io with SMTP id smtpd.web11.15493.1714047723689072080
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (EUR05-DB8-obe.outbound.protection.outlook.com [40.107.20.139])
+ by mx.groups.io with SMTP id smtpd.web10.16557.1714050466775722131
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 25 Apr 2024 05:22:04 -0700
+ Thu, 25 Apr 2024 06:07:47 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=theobroma-systems.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=s1ic4ptJYvHXO3SqQUGO1KcH0JkcqTiucvZJlgRa5Y4=;
- b=L+gVWQDOCtJwpgsDyPpLtw4sMydX6qOmo8c+wYm18cnHpGS+BsyBqIyn6k+Fza3ysw3IByG2QOb3B3MGoRva2MJ38RyFUrp5ebQNNQZ3gNzJ5q9zmBsTRkzspNMJTUCDIvuEfWv6kCREPzeYZo/r9wcKfbRc1oL0bV0iKLd0KHqgy3JOUy8S8oqRWPmHCU3BBkVaRBex0H8bpAQkW9NmVDYDez7qc/fVDrN9VRE6nTSWt+ymzBn0TBjPuwKoKK8p4p1Os6ynnMcUJiEAgKJHXySXmO0tC4xuSVY3eL1BfgGi7XrPA9QuXe8Juw7xhr4tGVs2dVOwclOr6Y6TYsZufA==
-Message-ID: <9e5785d5-5c63-4467-bacd-6f0af89ca515@theobroma-systems.com>
-Date: Thu, 25 Apr 2024 14:21:57 +0200
-Subject: Re: [yocto-patches] [meta-rockchip][PATCH v2 1/2] enable stored U-Boot environment
-References: <20240411011638.12198-1-twoerner@gmail.com>
- <bb4b9d20-b71d-4907-9df4-e3fbdd07275a@theobroma-systems.com>
- <20240417141930.GA11714@localhost>
- <1d35ff20-9a01-42c9-b001-a7df1310e60c@theobroma-systems.com>
- <20240424174350.GA35393@localhost>
+ bh=2B2eW2UYQJX7bSZcujxjC7vn29Eve4v1ZwQSKipJkTE=;
+ b=LniqhZtwEF5TswycQ6gXJlNzxCASpO0m1oExOf/60SYx5qew7vIwclhWmuyDfZk2FCqG2Q7xwXlXWU11BsqqjHU3idSOWot4oFn9tHOl7OVl7vaQ2gZVhE67PDsArGwresriRAzmwfy20nM06IFVlyhuwiNd92XQMMdwGw2oCsglKp+hQd/tVTbFG1+RUdU2m8sZLf0ROKbBX/mraPTDyrPdj14SXK39FCZagowZNH3UEbHU/w5y+qMif5UgGqcXZwuud2fMeztc0nW7NoRMFlEidT0BSpY0yOD3Nz44yrguyJ+aw5UkV4S33s5X42oWa9j7RgCDUfZ0HV9HURyAVA==
+Message-ID: <4cb8ceff-8850-4f0a-bc7f-7ed1fa44799f@theobroma-systems.com>
+Date: Thu, 25 Apr 2024 15:07:39 +0200
+Subject: Re: [yocto-patches] [meta-rockchip][PATCH v3] enable stored U-Boot environment
+References: <20240424174444.37244-1-twoerner@gmail.com>
 From: "Quentin Schulz" <quentin.schulz@theobroma-systems.com>
-In-Reply-To: <20240424174350.GA35393@localhost>
+In-Reply-To: <20240424174444.37244-1-twoerner@gmail.com>
 Return-Path: quentin.schulz@theobroma-systems.com
 MIME-Version: 1.0
 Content-Language: en-US
@@ -27,121 +23,269 @@ List-ID: <yocto-patches.lists.yoctoproject.org>
 
 Hi Trevor,
 
-On 4/24/24 19:43, Trevor Woerner via lists.yoctoproject.org wrote:
-> On Thu 2024-04-18 @ 10:43:10 AM, Quentin Schulz wrote:
->> Hi Trevor,
->>
->> On 4/17/24 16:19, Trevor Woerner via lists.yoctoproject.org wrote:
->> [...]
->>>>
->>>>> +}
->>>>> +
->>>>> +do_deploy:append:rk-u-boot-env() {
->>>>> +	UBOOT_ENV_SIZE="$(cat ${B}/.config | grep "^CONFIG_ENV_SIZE=" | cut
->>>> -d'=' -f2)"
->>>>> +	mkenvimage -s ${UBOOT_ENV_SIZE} ${B}/u-boot-initial-env -o
->>>> ${WORKDIR}/u-boot.env
->>>>> +
->>>>> +	install -d ${DEPLOYDIR}
->>>>> +	install -m 0644 ${WORKDIR}/u-boot.env ${DEPLOYDIR}
->>>> Just install at the top and then write the file directly to DEPLOYDIR? Or,
->>>> actually, create the file in do_compile if possible?
->>>
->>> But I want this file handled correctly by do_deploy when sstate is being used?
->>> So don't I need to do this in the do_deploy task?
->>>
->>
->> Not sure to follow what's the concern about sstate? do_deploy sstate
->> monitors everything in DEPLOYDIR so everything you install in there shall be
->> under sstate?
->>
->> For me do_deploy is for moving a file from one location to another, in
->> DEPLOYDIR, nothing else. Everything that involves compilation/configuration
->> is in do_compile/do_configure, so it's a bit odd to me to see a call to
->> mkenvimage in do_deploy.
->>
->> I guess you could have an issue with sstate if you use WORKDIR for
->> u-boot.env since this wouldn't be under do_compile's sstate? But then just
->> use ${B} for that instead?
->>
->> Can you tell me a bit more about your concern here, I'm not getting the big
->> picture yet :/
+On 4/24/24 19:44, Trevor Woerner via lists.yoctoproject.org wrote:
+> U-Boot has the ability to store its environment variables to a permanent
+> storage device. Whether or not it does so for any one specific device
+> depends on whatever settings are enabled in that specific device's
+> defconfig. In order to definitively configure U-Boot to be able to store
+> its environment into the device from which it boots, for any device
+> supported in this BSP, simply add the following to MACHINE_FEATURES:
 > 
-> Firstly I want these files handled correctly by the oe-core U-Boot packaging
-> so they get included in the image/sstate correctly.
+> 	rk-u-boot-env
 > 
-
-Using WORKDIR as a way to pass files between tasks is a terrible idea, 
-WORKDIR isn't properly cleaned. However... this is an issue in the 
-"upstream" U-Boot recipe, not something you can deal with in your 
-bbappend, so let's ignore this issue here.
-
-I'm also not entirely sure how the sstate works for do_compile... 
-Couldn't find any sstate-indirs and sstate-outdirs for 
-do_compile/do_install with bitbake-getvar or a quick check with grep. Do 
-you have any idea how/where this is handled?
-
-> Second, I'm pretty sure that anything you want inserted into a wic image (i.e.
-> all the "--sourceparams=..." that are specified in the wks file) need to be placed in
-> ${WORKDIR} for wic to find them when assembling the image. I might be wrong
-> about this, or there might be other directories that are searched, but I do
-> know that putting these artifacts in ${WORKDIR} will get them included in the
-> wic file as expected.
+> If enabled, there is now a second choice to make: should the build also
+> include the U-Boot environment in the image or not? The default environment,
+> as generated by U-Boot, can be included in the generated wic image. If it
+> is included, then flashing the image will also flash the default U-Boot
+> environment variables and settings, wiping out anything that might have been
+> there already. If it is not included then your device will either continue
+> using whatever environment happens to be there (if valid), or will not use any
+> stored environment if the stored environment has not been set or is invalid.
+> The variable which governs this behaviour is:
 > 
-
-I hope you're wrong about this. wic is run as part of the image recipe. 
-It should therefore not assume anything about the location of WORKDIR of 
-the u-boot package recipe. The recommended way for exchanging data 
-between recipes is to use either SYSROOT_DIRS (and DEPENDS) or DEPLOYDIR 
-(and DEPLOY_DIR_IMAGE from the other recipe; + do_task[depends] += 
-"recipea:do_deploy"), so I assume this is what's used by wic.
-
-The `wic create` command called in do_image_wic (IMAGE_CMD:wic) seems to 
-be trying to get data from three directories: IMAGE_ROOTFS, 
-DEPLOY_DIR_IMAGE, STAGING_DATADIR (and BUILDDIR passed as an environment 
-variable).
-
-U-Boot upstream recipe takes fw_env.config from WORKDIR and puts it into 
-DEPLOYDIR as part of the do_deploy task. Therefore, we need to put it 
-there (WORKDIR) now, so that we don't mess with the current 
-implementation of U-Boot recipe.
-
-However I don't think there's a reason for putting u-boot.env into the 
-WORKDIR before installing it into DEPLOYDIR.
-
-> Thirdly, the default U-Boot environment is placed in "u-boot-initial-env" (a
-> text file). Later "u-boot-initial-env" is converted into a U-Boot environment
-> file (i.e. apparently it has a checksum prepended to it) via `mkenvimage`.
-> If all of that takes place in do_compile(), then the user will never have an
-> opportunity to inject any variables into the U-Boot environment before it is
-> converted to its binary form. So by doing this operation in do_deploy(),
-> it gives the user an opportunity to inject things between the creation of
-> "u-boot-initial-env" in do_compile(), and it's conversion to its binary form
-> (i.e. the form that is including into the wic image) in do_deploy().
+> 	RK_IMAGE_INCLUDES_UBOOT_ENV
 > 
-> I've had rauc working with my rockchip boards for about 5-6 months now, and I
-> know when I put that together initially I wanted to inject extra variables
-> during the build. I'll have to revisit whether or not I still need to do that,
-> but even if I don't, doesn't mean it wouldn't be a nice feature for a user.
+> By default this is set to "0", meaning that by default the image does not
+> contain the U-Boot environment. To enable this behaviour, enable this
+> variable. This variable only takes effect if rk-u-boot-env is listed in
+> MACHINE_FEATURES, and has no effect otherwise.
 > 
+> The script:
+> 
+> 	scripts/dump-uboot-env-from-yocto-image.sh
+> 
+> can be used on a rockchip wic image to see the contents of the U-Boot
+> environment partition at build time.
+> 
+> Tested by booting the same image on both eMMC and SDcard with the following
+> devices, verifying the ability to read and write the U-Boot environment in
+> both U-Boot and Linux user-space, and that changes made in one are seen in the
+> other:
+> 	rock-3a
+> 	rock-5a
+> 	rock-5b
+> 	rock-pi-4b
+> 	rock-pi-e
+> 	rock64
+> 
+> Signed-off-by: Trevor Woerner <twoerner@gmail.com>
+> ---
+> v3 changes:
+> - switch from using a bbclass so the `rk-u-boot-env` override can be used
+>    directly
+> - add SPDX header to script
+> - drop `inherit deploy` in U-Boot bbappend
+> 
+> v2 changes:
+> - re-word the commit message and README for clarity
+> - use bash's built-in math handling instead of depending on `bc`
+> - in anticipation of the upcoming feature in U-Boot whereby rockchip
+>    devices can automatically select the environment storage device to be
+>    the same as the boot device, use a more recent SRCREV for builds that do
+>    environment handling, instead of hardcoding the environment storage device
+>    by SoC family
+> - handle RK_IMAGE_INCLUDES_UBOOT_ENV as a boolean
+> ---
+>   README                                        | 20 +++++++++++++
+>   conf/machine/include/rockchip-wic.inc         | 11 +++++++
+>   .../rockchip-enable-environment-mmc.cfg       |  6 ++++
+>   recipes-bsp/u-boot/u-boot_%.bbappend          | 19 ++++++++++++
+>   scripts/dump-uboot-env-from-yocto-image.sh    | 29 +++++++++++++++++++
+>   wic/rockchip.wks                              |  2 +-
+>   6 files changed, 86 insertions(+), 1 deletion(-)
+>   create mode 100644 recipes-bsp/u-boot/files/rk-u-boot-env/rockchip-enable-environment-mmc.cfg
+>   create mode 100755 scripts/dump-uboot-env-from-yocto-image.sh
+> 
+> diff --git a/README b/README
+> index c76fc9131276..605773d4ecd3 100644
+> --- a/README
+> +++ b/README
+> @@ -67,6 +67,26 @@ Notes:
+>   	
+>   	in the configuration (e.g. conf/local.conf).
+>   
+> +U-Boot Environment:
+> +------------------
+> +	In order to configure U-Boot to be able to store its environment into the
+> +	device from which it was booted, for any device supported in this BSP,
+> +	simply add the following to MACHINE_FEATURES:
+> +
+> +		rk-u-boot-env
+> +
+> +	If enabled, to additionally have the U-Boot environment generated and
+> +	stored in the image, also enable the following variable (default: off):
+> +
+> +		RK_IMAGE_INCLUDES_UBOOT_ENV
+> +
+> +	The script:
+> +
+> +		scripts/dump-uboot-env-from-yocto-image.sh
+> +
+> +	can be used on a rockchip wic image to see the contents of the U-Boot
+> +	environment partition at build time.
+> +
+>   Maintenance:
+>   -----------
+>   	Please send pull requests, patches, comments, or questions to the
+> diff --git a/conf/machine/include/rockchip-wic.inc b/conf/machine/include/rockchip-wic.inc
+> index 147a36685d7d..18b75a2de945 100644
+> --- a/conf/machine/include/rockchip-wic.inc
+> +++ b/conf/machine/include/rockchip-wic.inc
+> @@ -2,6 +2,11 @@
+>   
+>   require conf/machine/include/rockchip-extlinux.inc
+>   
+> +# 'rk-u-boot-env' indicates the user wants to be able to save their U-Boot
+> +# environment back to the drive from which the device was booted
+> +MACHINEOVERRIDES .= "${@bb.utils.contains('MACHINE_FEATURES', 'rk-u-boot-env', ':rk-u-boot-env', '', d)}"
 
-Agreed that's a nice thing to have.
+FYI, this results in:
 
-We could use a do_compile postfunc for the mkenvimage part though. And 
-then you could always do_compile:append to modify u-boot-initial-env 
-file before your postfunc to create the mkenvimage runs.
+MACHINEOVERRIDES="aarch64:cortexa76-cortexa55:rk3588s:rk3588:rock-5b:rk-u-boot-env"
 
-We could also simply have another variable called e.g. 
-UBOOT_INITIAL_ENV_EXTRA_VARS whose content is added at the end of 
-fw_env.config in the upstream recipe (or in your bbappend before calling 
-mkenvimage). That would allow to extend it.
+which means rk-u-boot-env is "stronger" than rock-5b as an OVERRIDES. 
+Considering that they are likely going to be used in different contexts 
+where we wouldn't have both VAR:rock-5b AND VAR:rk-u-boot-env, I guess 
+it's fine?
 
-I think it'd make sense to add support for creating the u-boot env "fs" 
-(via mkenvimage) to the upstream recipe as I see this as something 
-people could reuse on other vendors?
+> +IMAGE_INSTALL:append:rk-u-boot-env = " u-boot-fw-utils u-boot-env"
+> +
+>   SPL_BINARY ?= "idbloader.img"
+>   
+>   IMAGE_FSTYPES += "wic wic.bmap"
+> @@ -11,7 +16,13 @@ WKS_FILE_DEPENDS ?= " \
+>   	virtual/bootloader \
+>   	"
+>   
+> +RK_IMAGE_INCLUDES_UBOOT_ENV ?= "no"
+> +RK_UBOOT_ENV = " "
+> +RK_UBOOT_ENV:rk-u-boot-env = "${@ '--source rawcopy --sourceparams=file=u-boot.env' if \
 
-Thanks for taking the time to list the reasons, I see better what you're 
-attempting to do in this series now :)
+I could recommend to put u-boot.env in a variable so that we can change 
+it if we want and it's easier to keep track of things that go together. 
+(e.g. do_deploy:append:rk-u-boot-env() would be using it too).
+
+> +	bb.utils.to_boolean(d.getVar('RK_IMAGE_INCLUDES_UBOOT_ENV'), False) else ' '}"
+> +
+>   WICVARS:append = " \
+>   	SPL_BINARY \
+>   	UBOOT_SUFFIX \
+> +	RK_UBOOT_ENV \
+
+Wondering if we want to alphabetically order this list?
+
+>   	"
+> diff --git a/recipes-bsp/u-boot/files/rk-u-boot-env/rockchip-enable-environment-mmc.cfg b/recipes-bsp/u-boot/files/rk-u-boot-env/rockchip-enable-environment-mmc.cfg
+> new file mode 100644
+> index 000000000000..778772d27767
+> --- /dev/null
+> +++ b/recipes-bsp/u-boot/files/rk-u-boot-env/rockchip-enable-environment-mmc.cfg
+> @@ -0,0 +1,6 @@
+> +CONFIG_ENV_SIZE=0x8000
+> +CONFIG_ENV_OFFSET=0x3f8000
+> +# CONFIG_ENV_IS_NOWHERE is not set
+> +CONFIG_ENV_IS_IN_MMC=y
+> +CONFIG_DM_SEQ_ALIAS=y
+> +CONFIG_SPL_DM_SEQ_ALIAS=y
+> diff --git a/recipes-bsp/u-boot/u-boot_%.bbappend b/recipes-bsp/u-boot/u-boot_%.bbappend
+> index a83179a9f007..d63042b9be41 100644
+> --- a/recipes-bsp/u-boot/u-boot_%.bbappend
+> +++ b/recipes-bsp/u-boot/u-boot_%.bbappend
+> @@ -1,7 +1,13 @@
+> +FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
+> +
+> +SRC_URI:append:rk-u-boot-env = " file://rockchip-enable-environment-mmc.cfg"
+> +SRCREV:rk-u-boot-env = "cdfcc37428e06f4730ab9a17cc084eeb7676ea1a"
+> +
+>   # various machines require the pyelftools library for parsing dtb files
+>   DEPENDS:append = " python3-pyelftools-native"
+
+Unrelated, but this is not required anymore since 
+ab37ae5bdd46ba61e4b2c0de2a61b9473264f714 where it is now in the upstream 
+recipe.
+
+>   DEPENDS:append:rk3308 = " u-boot-tools-native"
+>   DEPENDS:append:rock-pi-4 = " gnutls-native"
+> +DEPENDS:append:rk-u-boot-env = " u-boot-mkenvimage-native"
+>   
+>   EXTRA_OEMAKE:append:px30 = " BL31=${DEPLOY_DIR_IMAGE}/bl31-px30.elf"
+>   EXTRA_OEMAKE:append:rk3308 = " \
+> @@ -34,3 +40,16 @@ do_compile:append:rock2-square () {
+>   		cp ${B}/spl/${SPL_BINARY} ${B}
+>   	fi
+>   }
+
+Unrelated, but I'm wondering whether the above is still necessary for 
+rock2-square? I think we should have migrated all Rockchip SoCs to binman?
+
+> +
+> +do_compile:append:rk-u-boot-env() {
+> +	UBOOT_ENV_SIZE="$(cat ${B}/.config | grep "^CONFIG_ENV_SIZE=" | cut -d'=' -f2)"
+> +	echo "/dev/disk/by-partlabel/uboot_env 0x0000 ${UBOOT_ENV_SIZE}" > ${WORKDIR}/fw_env.config
+> +}
+> +
+> +do_deploy:append:rk-u-boot-env() {
+> +	UBOOT_ENV_SIZE="$(cat ${B}/.config | grep "^CONFIG_ENV_SIZE=" | cut -d'=' -f2)"
+> +	mkenvimage -s ${UBOOT_ENV_SIZE} ${B}/u-boot-initial-env -o ${WORKDIR}/u-boot.env
+
+Better make sure this file is created first by guarding it with
+
+if [ -n "${UBOOT_INITIAL_ENV}" ];
+
+to match the upstream recipe?
+
+I see this as the last obvious blocker. I raised a few other points, the 
+"blockiness" part of those depending on what you want to do/what you 
+will answer :) But I think we're almos there :)
+
+> +
+> +	install -d ${DEPLOYDIR}
+> +	install -m 0644 ${WORKDIR}/u-boot.env ${DEPLOYDIR}
+> +}
+> diff --git a/scripts/dump-uboot-env-from-yocto-image.sh b/scripts/dump-uboot-env-from-yocto-image.sh
+> new file mode 100755
+> index 000000000000..9386c1d29213
+> --- /dev/null
+> +++ b/scripts/dump-uboot-env-from-yocto-image.sh
+> @@ -0,0 +1,29 @@
+> +#/bin/bash
+> +# SPDX-License-Identifier: OSL-3.0
+> +#
+> +# a program that can take a wic file and dump out the contents
+> +# of the U-Boot environment in canonical hex+ascii format
+> +# (assuming the "rockchip" layout specified in this layer's wic file)
+> +
+> +# check for programs
+> +check_pgm() {
+> +	$1 --help > /dev/null 2>&1
+> +	if [ $? -ne 0 ]; then
+> +		echo "required program \"$1\" not found"
+> +		exit 1
+> +	fi
+> +}
+> +check_pgm dd
+> +check_pgm hexdump
+> +
+> +if [ $# -ne 1 ]; then
+> +	echo "required param missing: yocto wic image"
+> +	exit 1
+> +fi
+> +if [ ! -e "$1" ]; then
+
+This could match a directory, maybe you want ! -f here?
+
+> +	echo "specified file \"$1\" not found"
+> +	exit 1
+> +fi
+> +
+> +SKIP=$(( 8128 * 512 ))
+> +dd if="$1" ibs=1 skip=$SKIP count=32k 2> /dev/null | hexdump -C
+
+Just because I was curious, this could also be
+
+xxd -s $SKIP -l $(( 32 * 1024 )) "$1"
+
+though it doesn't "collapse" regions with the same values like dd does.
 
 Cheers,
 Quentin
