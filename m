@@ -1,115 +1,225 @@
-Return-Path: <richard.purdie@linuxfoundation.org>
+Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8137C4345F
-	for <webhook@archiver.kernel.org>; Fri, 26 Apr 2024 10:09:34 +0000 (UTC)
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
- by mx.groups.io with SMTP id smtpd.web10.10228.1714126166647031289
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57C8EC4345F
+	for <webhook@archiver.kernel.org>; Fri, 26 Apr 2024 18:35:58 +0000 (UTC)
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+ by mx.groups.io with SMTP id smtpd.web11.3507.1714156550928488702
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 26 Apr 2024 03:09:27 -0700
+ Fri, 26 Apr 2024 11:35:51 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=Z3n3iqGr;
- spf=pass (domain: linuxfoundation.org, ip: 209.85.128.47, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-41a0979b9aeso13036275e9.3
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 26 Apr 2024 03:09:26 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=UGGJFfXx;
+ spf=pass (domain: gmail.com, ip: 209.85.219.48, mailfrom: twoerner@gmail.com)
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-69b514d3cf4so24826686d6.0
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 26 Apr 2024 11:35:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1714126164; x=1714730964; darn=lists.yoctoproject.org;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=z3/hAU/nCmIgwdTqdLgF5t6qsAzx6rp0/nVTA/g3oXs=;
-        b=Z3n3iqGrqLDvC1VNFHhCbn7isvLrTqAHG1lCiVH0VJ5I+Pe2i7SvKSXkV8raw4qL+h
-         cf2j5E8FsAl4slHHa56oEs6szJ4y4gS5nSTUkaDsHbJ/GX36U9ES4LWtW7QAzM/jDpB/
-         c6QN0VLKpFsGluKu6ZSvv3ifrCSO5lXVWs834=
+        d=gmail.com; s=20230601; t=1714156549; x=1714761349; darn=lists.yoctoproject.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZXmy0kyqLLIrcn93OQae7dPK64WpzjdwVMUdHE9EDOg=;
+        b=UGGJFfXxCKIwNDyZvKjcPebj4B6+5JaOgDXda+y/GYsXv7S/OTSYopEsSUi4ENjoL5
+         zVAvAxQWpubhJPadG62rESBMjY+xfJu8Ge5NU3dOpy4ZetWBAtYdy33bpkTcDGa69Qpe
+         Ln5ILXv35mZcsONfosH/Zr591FAPqO4maoioiLn24pD5+VG7vphhZ2b1qXMAQSGVORKn
+         wY1OFVKVtlTuFscHtfzVrO5lyMULlJmd27/bR6kjo/FPkcojo7lco9li7FwZkqq4dDUg
+         Dwzu+UKxTzpJJMV0nnMAbLXpPdXTtIMItAAFW1YIaUqpzgwnZTG/329SWWxv+LheOJqR
+         2quw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714126164; x=1714730964;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=z3/hAU/nCmIgwdTqdLgF5t6qsAzx6rp0/nVTA/g3oXs=;
-        b=Q8yxQ2QuLEUI9Z8p7lUXBu/seoWCEwG3tf+6vWylM63RWMiC0Y8KQ4nNNhL+DO+cbt
-         RciV9k9dMyvYGwgtYxyAeD8H49HkPEAwl2ygoBnyajbe1c3Avv+knvbpp1X6fpNZX4mc
-         D83nc+M28oTAqtTEdw0xO8BVP6NV9hH6W+PzG7YARA39/6NHT1Dtce+hhPDjSYzs/4Pp
-         Tp9CknAj16kcJVnEd1xbCcqo2YYTDUhmA/uq19cvq4BDcExPpKOmZYuMUSJbYWMoCSxS
-         r3hPWyLsstoE8w/JyFCtaMGGtAOleHs/U6pQrO11jDHgjkJwK6PptyyFM7mrc7UvnoZ6
-         lAGg==
-X-Gm-Message-State: AOJu0YwBIDT04HSvcPEwWCHGKakHCuBkVPc5kyBYw9a93gkFx85DgbCz
-	56Q83gvucWQv5Nrw/jV7I6SOAyD7PuNi3Lz9X2QLfqZBQZS5DqL1+eMU1RKP7TmqgY3hStyMOiX
-	nh/A=
-X-Google-Smtp-Source: AGHT+IEotTkrEeKSdqjObQd9f3PB0eMLm8GG+0M/ZlsOAW+jmFAtxm12RJ6mCrq9QfJflwIrvYrSAQ==
-X-Received: by 2002:a05:600c:154e:b0:416:34c0:de9 with SMTP id f14-20020a05600c154e00b0041634c00de9mr2248083wmg.29.1714126164244;
-        Fri, 26 Apr 2024 03:09:24 -0700 (PDT)
-Received: from ?IPv6:2001:8b0:aba:5f3c:c2c3:166d:66c4:a177? ([2001:8b0:aba:5f3c:c2c3:166d:66c4:a177])
-        by smtp.gmail.com with ESMTPSA id p8-20020a05600c358800b00418f72d9027sm28301651wmq.18.2024.04.26.03.09.23
+        d=1e100.net; s=20230601; t=1714156549; x=1714761349;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZXmy0kyqLLIrcn93OQae7dPK64WpzjdwVMUdHE9EDOg=;
+        b=ExD53SnnOFShRzoewNw+8p3i/DLSyXE5rRHiQ0cKvwOOTFXKCmg+rOv4YSJ7mbQF1W
+         Hvvd5u6sGVX0o/mncOrn7ff8Xop7GjwN4yAUd4V+D2kMNLlIl2CASOxQEoImOGSTiDlU
+         OwaMXBRlK62HelJiAU6TXTBwKJIBsHvS1Lyn5d+65PYlx857/BlyJyDRUL4PaHze4Z8Z
+         89NFIAO973VFLuwfjrM0nbsN2bqde/hbEEE8CQDFt1m9n2lDr194ObFEVl3ewhMsTIr0
+         qjXob0JYBKlAXURH1Edc0m68TBTMDpGqFELrA5IUFmTAax11iy2an+295kAlg01REHsm
+         CMLg==
+X-Gm-Message-State: AOJu0Yy81gJSocjMa/tilqNtAIQUucURVbfQAejL3g+wusyaLpssKpDX
+	YU5g26B1eZZKRvkCGpU1iYUTU2PKXW4fCWXrbhde2lLjuLgbnBH8WixgBg==
+X-Google-Smtp-Source: AGHT+IEXpKrJtBRsmcm1gIAgNa4EFu7AR4SxODZUqLolqPn2Egl6VRLAW+GkJHIQCDBL4O42odFMXg==
+X-Received: by 2002:a05:6214:529a:b0:6a0:b1a2:7540 with SMTP id kj26-20020a056214529a00b006a0b1a27540mr2546929qvb.61.1714156549186;
+        Fri, 26 Apr 2024 11:35:49 -0700 (PDT)
+Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
+        by smtp.gmail.com with ESMTPSA id ml20-20020a056214585400b006a0b3ff2cf7sm415300qvb.39.2024.04.26.11.35.48
+        for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Apr 2024 03:09:23 -0700 (PDT)
-Message-ID: <fdc3711bd8683ed3c47561def9e41a84f5b345bd.camel@linuxfoundation.org>
-Subject: Re: [yocto-patches] [PATCH 0/2] [yocto-autobuilder-helper] M10:
- Metrics view: CVEs per branch section and M11: Unify metrics views
-From: Richard Purdie <richard.purdie@linuxfoundation.org>
+        Fri, 26 Apr 2024 11:35:48 -0700 (PDT)
+Date: Fri, 26 Apr 2024 14:35:46 -0400
+From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: engineering@neighbourhood.ie, hulkoba <jacoba@neighbourhood.ie>, Ninette
-	Adhikari <ninette@thehoodiefirm.com>
-Date: Fri, 26 Apr 2024 11:09:23 +0100
-In-Reply-To: <20240418094921.86489-1-ninette@thehoodiefirm.com>
-References: <20240418094921.86489-1-ninette@thehoodiefirm.com>
-Autocrypt: addr=richard.purdie@linuxfoundation.org; prefer-encrypt=mutual; keydata=mQINBGN1PzgBEADqZynxX+ivalgYtZ+AoHoGynCiJw0lR+H9rC83sj9z38nlKHBCuh8r8KOqelDUf1B73E9oCLjZQVwqKLmao6ZDQYt7utG+h6qGLEgyDfeochYkLwElvRtjhTp0Ks5WPIHUgE4lwfqmsLrHbkEfRYui9eSd+zJpPKTRgQ7WhTGfRaXPEVYn24fWEo637biLyoEop1qaZMoY/mPsflDYDISWgAeunFx63oL9zNAhOWbLIy2uicKq2GyS56CooPzQkpUv7ssQBOqXp/FSuGJ49RV7Npj/eXyEepAh3BtMliJF08rAj07Hpywp3skXku8YcwUAD7TqOnJ4Wr6G8vpJlQKSITIGMBqtq3f8+SwImWEMRVXxDzrmznihOC7qEUWH4tN/AEkz2BJQbGYnp3iQjZqsoqKblyC83/5MCCUHHpDg20HooEWVNTUxUa8dGWaJehKC5fX1276Sm4WLaoqbQwSGCmwS1e+LjO9lFT80WHIELw07iDhQxshNqVLIxCt3pZfWRlf9fHCtxStiQIRrQLAKN7ze+//YjExjkDOt1ZFIsgMmKIQmJ6b8kRAAmQUraTcn4E/hy0mArFLmROyPSc1nD8hQMeELDcjyjEmo7j3qQCsU464v4tcvJVXyqPc4TU1GDQdZBaKP0/jR68aR3ZOvzx99jdocPdHNW4Kpbv6PnQARAQABtDNSaWNoYXJkIFB1cmRpZSA8cmljaGFyZC5wdXJkaWVAbGludXhmb3VuZGF0aW9uLm9yZz6JAlcEEwEKAEECGwEFCQPCZwAFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AWIQQRclb3b/q6zLA9Fn+aUMY1GLyygAUCY3VBgQIZAQAKCRCaUMY1GLyygAtOEADglyjAhkCSGGetbs40FJ4
- xdHKck7aaB1FgbpGn9e9/WAeAPC722eJsxhujxgKaS9b7mHcTcWeMP7KFut4yKTDHovt4VbQOd PGqwyUmi8z0yd2ORlT9E3RjEEllpj/Z2Wfzs3H4qR5wz3Rij1BCirDH8LD5yAO8PpIW2N1Y4VbzFDTPX2KtLGQYIraOHZQQe8XjAJnXflVQbzSIbNw14IlVWnF94UwkamxRhhCVAdA4139ebU+R0inaVsG0Bb7GP3KiED4C1I/tj171G4bOsyz3zYkpuV64yuq5pVevLBuCJv1Z/yiBdbB02B+FkosKLWRvoZFa2gqK2xpZT8RvDdkBQTmZTs/hP59mh1QSt4d2p1KsBu7cx2fjRBuf9XVG+uR/XnbD5T1BQRVV641ZNzPTjtE3rEZzR1nsUv+vcFYv0V/FPcLg5f3Ui+4cuYj/xDykMKZlrBIVGExBOJr7Anbzwq8o4nYUsrbFE3Fu88l8/mWrQCkAIZqc2NRyuXplZrDanB9Abi2XmZO0B3Q9wKvzmH0yJyLfswmzrejf3oVOJNEKJP5acPnXfQqAr5F7gdeLvdHbOAtg1iU8GujkOvRA7ad5ahT/1mDzKlkjaf36p4jodsGzPydOks2/jbVZxbZsR1il3BuDXb0agChNXJH4IpcnrjAliBtTKwnEYuLQeLQsUmljaGFyZCBQdXJkaWUgPHJwdXJkaWVAbGludXhmb3VuZGF0aW9uLm9yZz6JAlQEEwEKAD4WIQQRclb3b/q6zLA9Fn+aUMY1GLyygAUCY3VBEAIbAQUJA8JnAAULCQgHAgYVCgkICwIEFgIDAQIeAQIXgAAKCRCaUMY1GLyygA0tD/4l5GVZ1OTKoCsHzQuSUVnyzmSwYmJD7W7E1VeVVvVk5bfFf/w6p3dXfGjhZ8zFackE+RmT3//8kQ+Zs68csd0wjX8klyFXgA5PWP3DxNkejnHCq7wiLouOGC/E9RSUULn1DYb68yPzvdGQBooqPQZORtXzNgM
- NuWDKH+9uvhGbdvURJHCRPTpgcdCo64d+IMzA+XmZUg0P722IyVmB+I2TgjaIRr/NsbsGP4x3u8 TVfJPXmE1IS9nrKEm023ntuy1AH9JlACLZ4LGvpxf8x7ZVKaXXqWOQ1aQ5BCQoOc41AiVUyeiq2wdLRQaNOxbb8+ED34BYLyMjZdII9eovZMbMt7kLSjkbOs/k3s7wtQ2eY7QnSggf8/MWUSUaJzLKHnOBRcqGjdFdlZ0BKXL+v9NrpjcUBsG1TY5XORIahk6Pt1+cPyIsKdycKU4RHtNfwX5fidE8AhU97U04z3tIYs121J4M/EG3bEfOtwDaH7BRTZHK5B05Mks/kX608CwLSJSbX2dSENInh5+dSVQ0egbFbXQGcHFmCCMjYH09hcNUSEyI4OUQHVu8HHQIfvutPqIsZEtJ1K/s3ZD3Zyq35UUiwnCu5hYohX9B0o0TwgDaI85dS2edHy2bnM3a9yuTPiwNYpfR6dp6cg8BM+9qqkJvwp5LiMcZcJC8S5xR3U0FtbQiUmljaGFyZCBQdXJkaWUgPHJwdXJkaWVAcnBzeXMubmV0PokCVAQTAQoAPhYhBBFyVvdv+rrMsD0Wf5pQxjUYvLKABQJjdUEhAhsBBQkDwmcABQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAAoJEJpQxjUYvLKA/iUQAJJkVW2yDzxrH/5szOuG0ZDDH6X6Yrdp+m+F4hHHJQkTYgdRPeoHYKyXNOettdVKrZyEDkztBWkB7Sd7zuVHR3Q4PVTsEh09ZzkqBgN8OevMA7RPHZOa2PYJ8pAx7eTah1whM2eOf+VZGKrW1R9ouTluV7/c4o5loaKuh+t61W2nH6E+lQt3/gKnwj4QmUb5V957ZSHO1cnjtHrd4FFmkYQOCbolEfC25lT9vh4ldY+dILQPcq4at/LEABp4xEgS6R7K4E3cDnjWogrZTiniAUrR7P0SNYv7WCpAbvk4Z9DGCHXpKod
- KjTi3em7xDpqA1Rxd/rV4z9VQJrbpL/oiPCnTW/iCx+eMH70dRk+gHxSU8FWVf+CucFZprvO9UMi tGHLvfpBxfnGDT2EOqOoFOYgYHq7MfSDZT+zM/gBWfHXbyz6W9RYqycwWCIhG5jhMhT2sEWr4FlwmXfogvSqxvKondwPfXsgNT1MdBqa0Hhm0pIJYs4ovKWnvymTraziqSWI2C9X5lPmf6ugNiuzJt5BqlilNHxsej9OC53HfBbkgDONdcJbduW9nrJlIl9OLanB4/fvuqG1ZIS/eFFAkb2YnBBuS2TNz3aPd7vFkOoMU7VegDic/sH23eZPGQm3XWcTYwIY2djBU8Jzyy4mRIOQZMGXb/ygrGXAuIxL2R2O1uFYEY3VB1RIIKoZIzj0DAQcCAwQzkAYGjbS/m2SeumSYfDZKeazIkOpwUxpTQ7kPxz0ijiquKSsEZzlPMFzhA+iBJh2jdCyabi5K+8+v3VZZglbWAwEIB4kCNgQYAQoAIBYhBBFyVvdv+rrMsD0Wf5pQxjUYvLKABQJjdUHVAhsMAAoJEJpQxjUYvLKAr6UQAMyaDatvvCkxvOyFgO6jxLLzbkwl40hTNB/TsG5RdwL6FXnBMzkIa5lEfgV1u2zwu0p7SKWH9J3DSNqYKjUCAfwDEv6aDKrFYqGQZMuke1ZAfKqmWTIYOKYG4vRgvvF1u0aCOrRJiipjEPnrw1LC6eaqpnI3WGJyy8Wgr8aO0RBUO93ax/+Mpw3QG+jQqZjuomBWGvUwsjRtzE9j2QUcGxjyTrocVsR2qjK0boE4jLGJWNreSIgs5Nllww++3l0pabmXhyXqDdoYE1U0WkI/yemsc8ydDtjpeG4uzv9rfd5VUqHoZpuYZ1sc4DTGFrEAoght/9FXWsOFOtX8vZprLFFi7iFNSDChIFEsyuizHOW5wl/PYkGCCMZvwPK61IvCARKwevdnSrle9omYEqjnU/HjVZ/kvtKxn1VN15j1NNF
- 0zgmm+/RfbZFHbeuea/lVInXpNBMDj+pl3VyygUae65DMFWgYVSLtXPTRLVMb2mIxiNpk3T2UcuVW 1XC9LWup6h8jHEJ0zBCPjPyd1tFQ9hHVOJnwRthV+VG3zuBf8sri1TPnz5XjNpu3Q3r/6turvh+Khal2itb980tITH5fDbLUewPiA2jCAgZCkVMQcvYTS4rZCC+hpHSMte4m1n7AcmF9ohhw6tt41AEhwbMh+nRkyjDkY+k/vivg0obC2JpruDMEY3VCGBYJKwYBBAHaRw8BAQdArl5/9Fe2aA9JEc+HRm2rnCl6NMb7DZJLnM0xmQg1ouyJAq0EGAEKACAWIQQRclb3b/q6zLA9Fn+aUMY1GLyygAUCY3VCGAIbAgCBCRCaUMY1GLyygHYgBBkWCAAdFiEEHKt8QO5c0zRDdmiGodJewzbIKeYFAmN1QhgACgkQodJewzbIKeawUgEAzEwjSYf8lXVNcZVYL/4SLX9FEop83Q8+WmwT2rGhA+MBAKga5Fl8afYVHuPlPOxB/M7aQdP8vfYEx/cWmHmQEUICQxQQAJd85C4//BU0FOUPlEQ1vofZGNC1wTzVA7cQtYlIRrgQOmjR4tOFTxEzusA8QvXxOYkMkDlaa/Ai4/nicMqadnWPQ37BmTAW3/O5PVA22mWaC/ZVeG6DGBGVWb/OAwZe9KMxOR6say+bEIM6B6iDgc3V/HNsLWYYPHaj5HebHOKAJ7dqGGUlFV02OrVW5yAaOUEI61cKw0QuwoN1fZgih94EvFicNaLnDVDV64cbOnNyxGlJhbv4WMErtU4RVD3tT1soESmDB4jS2v49reBpsVVXg2G/M1xFO3sUcczHeo5LRaKtXpkXNh4WO3HDT/eb/IWP8Me2YKpwa5dzlrUz0AYi2s+h+LGclOP0Mls0tgS8sQSVdTj/feLk1FSSQGhSKdHMMGTlSsqj7XjToTAnIheq+5sdaY8UCEYu4s6jDiKu6G02HlF
- WpERQ9FmtGo2PVqnMaZy2w9lkNNn8ccyMWpP2EwGuCxONQrc22a7WnCYLTpOukLUSD7ApH7M2Jk8on
- kPGvi48NFq7PWaTkvG3vuSm+eApSToeyz7AVtFt8QOUnHTiNHbuiNpQsDd3y5bLLhU9mIJTbsWNP/72oXV7Tcz7w8zVh2qmuZqhu5qz9rcox3D9unGQ49N3i+CO9c7SqxcLckEjd9o62HsDDpqYv3cdtFNajNsHD8bFU9bb+swCuDMEY3VCRhYJKwYBBAHaRw8BAQdAjoQBsbbnpigttLSFJOFohHY6BGWmjCi520kt0UBBgG+JAjYEGAEKACAWIQQRclb3b/q6zLA9Fn+aUMY1GLyygAUCY3VCRgIbIAAKCRCaUMY1GLyygAQbD/0WyvGz8jA3CTAMTa8yoAlcX73+7aHQaP+DT1PaVU6W85Mm/Bv5JXJ+RWyCCa1jllAWTOhqkOXZ1lXqgislBGtpY22LdwlXW4NGETWwZb79ypR+nayuIPnjOrxkxPOFpcH+wCk9wX0qYi4/8xFTeIZtoty6ayP2bZUZL8aQ91kyUn7nrLmAymPhDq1AAjg+Dkz6DDyzkzXDsY6OY9SpKcWxLkcOm8oXn5B5K5Pl3FaRfYrmX2pAZ6DliQsvPMtXlA01qJ6W4nvRN5ROfjXefNGdyRK8LfJ8BkfDqtZ9/5UrMrW1b7CPA9/7dC5P2jfImtU6R90fz/S4ua2jzeVY2gt7olSDsBqJDOMBPwqEETDROu1+oCIXvdrrZszBu0pTCLV8r+rQqqjICZtK17CEXH3jmDeD/Q6MmAQqeyIhi3uQpGOaveP81WMiC8DDLRXmSuMYOIH/KebzgNnaCQzlQl3a+8tD2qQ48RqzR6JLcKu6h0A6KWItZScfshopNRVsm7FIWM1XUGm1nG6lmPtpVYsXF75hx+YxpAogbzm6fOnUJWFiP1/NVRgtWiii2HG8YCIrEeR3LCUQd/5aYS0CI0cy8WATg/1qkLbcr0lVaCRLT2KZd5WH7tz/4IBanSdCAj6vEfovE5ilWNThQHwg8aPQI6COaHFcTcervMD4Sy
- YNvg==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.0-1 
+Subject: Re: [yocto-patches] [meta-rockchip][PATCH v2 1/2] enable stored
+ U-Boot environment
+Message-ID: <20240426183546.GA29649@localhost>
+References: <20240411011638.12198-1-twoerner@gmail.com>
+ <bb4b9d20-b71d-4907-9df4-e3fbdd07275a@theobroma-systems.com>
+ <20240417141930.GA11714@localhost>
+ <1d35ff20-9a01-42c9-b001-a7df1310e60c@theobroma-systems.com>
+ <20240424174350.GA35393@localhost>
+ <9e5785d5-5c63-4467-bacd-6f0af89ca515@theobroma-systems.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <9e5785d5-5c63-4467-bacd-6f0af89ca515@theobroma-systems.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 26 Apr 2024 10:09:34 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/69
+ <yocto-patches@lists.yoctoproject.org>; Fri, 26 Apr 2024 18:35:58 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/70
 
-On Thu, 2024-04-18 at 11:49 +0200, Ninette Adhikari via lists.yoctoproject.=
-org wrote:
-> This work is done according to "Milestone 10: Metrics view: CVEs per
-> branch section and Milestone 11: Unify metrics views" as stated in
-> the Scope of Work with Sovereign Tech Fund (STF)
-> (https://www.sovereigntechfund.de/).
->=20
-> This patch affects the repository:
-> https://git.yoctoproject.org/yocto-autobuilder-helper
->=20
-> This change does:
-> - Don't create chartdata-lastyear.json files because they are not
-> needed anymore
-> - Change format for generated cve-per-branch-report so it can be
-> interpreted by the metrics view:
+Gosh darn! Yes you're right. I kept saying WORKDIR over and over but I meant
+DEPLOYDIR. I must have been distracted or something because in my mind, the
+whole time, I was thinking $TMPDIR/deploy/images/$MACHINE but I kept writing
+WORKDIR for some unknown reason.
 
-Sorry for the delay on these, I had a number of challenges. The mailing
-list patches didn't want to apply properly so I ended up pulling them
-from the git repository. I have merged them and made them live.
+On Thu 2024-04-25 @ 02:21:57 PM, Quentin Schulz via lists.yoctoproject.org wrote:
+> Hi Trevor,
+> 
+> On 4/24/24 19:43, Trevor Woerner via lists.yoctoproject.org wrote:
+> > On Thu 2024-04-18 @ 10:43:10 AM, Quentin Schulz wrote:
+> > > Hi Trevor,
+> > > 
+> > > On 4/17/24 16:19, Trevor Woerner via lists.yoctoproject.org wrote:
+> > > [...]
+> > > > > 
+> > > > > > +}
+> > > > > > +
+> > > > > > +do_deploy:append:rk-u-boot-env() {
+> > > > > > +	UBOOT_ENV_SIZE="$(cat ${B}/.config | grep "^CONFIG_ENV_SIZE=" | cut
+> > > > > -d'=' -f2)"
+> > > > > > +	mkenvimage -s ${UBOOT_ENV_SIZE} ${B}/u-boot-initial-env -o
+> > > > > ${WORKDIR}/u-boot.env
+> > > > > > +
+> > > > > > +	install -d ${DEPLOYDIR}
+> > > > > > +	install -m 0644 ${WORKDIR}/u-boot.env ${DEPLOYDIR}
+> > > > > Just install at the top and then write the file directly to DEPLOYDIR? Or,
+> > > > > actually, create the file in do_compile if possible?
+> > > > 
+> > > > But I want this file handled correctly by do_deploy when sstate is being used?
+> > > > So don't I need to do this in the do_deploy task?
+> > > > 
+> > > 
+> > > Not sure to follow what's the concern about sstate? do_deploy sstate
+> > > monitors everything in DEPLOYDIR so everything you install in there shall be
+> > > under sstate?
+> > > 
+> > > For me do_deploy is for moving a file from one location to another, in
+> > > DEPLOYDIR, nothing else. Everything that involves compilation/configuration
+> > > is in do_compile/do_configure, so it's a bit odd to me to see a call to
+> > > mkenvimage in do_deploy.
+> > > 
+> > > I guess you could have an issue with sstate if you use WORKDIR for
+> > > u-boot.env since this wouldn't be under do_compile's sstate? But then just
+> > > use ${B} for that instead?
+> > > 
+> > > Can you tell me a bit more about your concern here, I'm not getting the big
+> > > picture yet :/
+> > 
+> > Firstly I want these files handled correctly by the oe-core U-Boot packaging
+> > so they get included in the image/sstate correctly.
+> > 
+> 
+> Using WORKDIR as a way to pass files between tasks is a terrible idea,
+> WORKDIR isn't properly cleaned. However... this is an issue in the
+> "upstream" U-Boot recipe, not something you can deal with in your bbappend,
+> so let's ignore this issue here.
 
-The "../" path in the code didn't work in our environment so I removed
-that bit to fix chart display.
+Yep, agreed.
 
-There was also an issue with the addition of extra files in a sub
-directory when then broke the copy commands so I fixed that to be
-recursive.
+> I'm also not entirely sure how the sstate works for do_compile... Couldn't
+> find any sstate-indirs and sstate-outdirs for do_compile/do_install with
+> bitbake-getvar or a quick check with grep. Do you have any idea how/where
+> this is handled?
+> 
+> > Second, I'm pretty sure that anything you want inserted into a wic image (i.e.
+> > all the "--sourceparams=..." that are specified in the wks file) need to be placed in
+> > ${WORKDIR} for wic to find them when assembling the image. I might be wrong
+> > about this, or there might be other directories that are searched, but I do
+> > know that putting these artifacts in ${WORKDIR} will get them included in the
+> > wic file as expected.
+> > 
+> 
+> I hope you're wrong about this.
 
-The data still doesn't look quite right since I've applied the master
-branch change but the other branches don't have it so the CVE text
-files aren't in the new format which is breaking the non-master branch
-listings.
+Yep entirely. I was totally thinking DEPLOYDIR the whole time, but writing
+WORKDIR.
 
-Overall, it is nice to see the improved chart display though, thanks!
+> wic is run as part of the image recipe. It
+> should therefore not assume anything about the location of WORKDIR of the
+> u-boot package recipe. The recommended way for exchanging data between
+> recipes is to use either SYSROOT_DIRS (and DEPENDS) or DEPLOYDIR (and
+> DEPLOY_DIR_IMAGE from the other recipe; + do_task[depends] +=
+> "recipea:do_deploy"), so I assume this is what's used by wic.
+> 
+> The `wic create` command called in do_image_wic (IMAGE_CMD:wic) seems to be
+> trying to get data from three directories: IMAGE_ROOTFS, DEPLOY_DIR_IMAGE,
+> STAGING_DATADIR (and BUILDDIR passed as an environment variable).
+> 
+> U-Boot upstream recipe takes fw_env.config from WORKDIR and puts it into
+> DEPLOYDIR as part of the do_deploy task. Therefore, we need to put it there
+> (WORKDIR) now, so that we don't mess with the current implementation of
+> U-Boot recipe.
+> 
+> However I don't think there's a reason for putting u-boot.env into the
+> WORKDIR before installing it into DEPLOYDIR.
 
-We just need to fix the other branches, not sure if you can help there
-or I need to look at it?
+Sounds good.
 
-Cheers,
+> > Thirdly, the default U-Boot environment is placed in "u-boot-initial-env" (a
+> > text file). Later "u-boot-initial-env" is converted into a U-Boot environment
+> > file (i.e. apparently it has a checksum prepended to it) via `mkenvimage`.
+> > If all of that takes place in do_compile(), then the user will never have an
+> > opportunity to inject any variables into the U-Boot environment before it is
+> > converted to its binary form. So by doing this operation in do_deploy(),
+> > it gives the user an opportunity to inject things between the creation of
+> > "u-boot-initial-env" in do_compile(), and it's conversion to its binary form
+> > (i.e. the form that is including into the wic image) in do_deploy().
+> > 
+> > I've had rauc working with my rockchip boards for about 5-6 months now, and I
+> > know when I put that together initially I wanted to inject extra variables
+> > during the build. I'll have to revisit whether or not I still need to do that,
+> > but even if I don't, doesn't mean it wouldn't be a nice feature for a user.
+> > 
+> 
+> Agreed that's a nice thing to have.
+> 
+> We could use a do_compile postfunc for the mkenvimage part though. And then
+> you could always do_compile:append to modify u-boot-initial-env file before
+> your postfunc to create the mkenvimage runs.
 
-Richard
+Okay.
+
+> We could also simply have another variable called e.g.
+> UBOOT_INITIAL_ENV_EXTRA_VARS whose content is added at the end of
+> fw_env.config in the upstream recipe (or in your bbappend before calling
+> mkenvimage). That would allow to extend it.
+> 
+> I think it'd make sense to add support for creating the u-boot env "fs" (via
+> mkenvimage) to the upstream recipe as I see this as something people could
+> reuse on other vendors?
+
+There was something else strange that I think I noticed in the upstream
+recipe. If I'm not mistaken, you can do an environment or you could do a
+script, but not both. I'll have to double-check that and maybe take a stab at
+fixing that as well (if I'm correct in my reading of the recipe).
+
+> Thanks for taking the time to list the reasons, I see better what you're
+> attempting to do in this series now :)
+> 
+> Cheers,
+> Quentin
+> 
+> 
+> -=-=-=-=-=-=-=-=-=-=-=-
+> Links: You receive all messages sent to this group.
+> View/Reply Online (#63): https://lists.yoctoproject.org/g/yocto-patches/message/63
+> Mute This Topic: https://lists.yoctoproject.org/mt/105454848/900817
+> Group Owner: yocto-patches+owner@lists.yoctoproject.org
+> Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/13168745/900817/63955952/xyzzy [twoerner@gmail.com]
+> -=-=-=-=-=-=-=-=-=-=-=-
+> 
+> 
 
