@@ -2,54 +2,54 @@ Return-Path: <tim.orling@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BAD0C10F16
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19458C41513
 	for <webhook@archiver.kernel.org>; Tue, 30 Apr 2024 20:33:53 +0000 (UTC)
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
- by mx.groups.io with SMTP id smtpd.web11.26388.1714509229300774962
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+ by mx.groups.io with SMTP id smtpd.web11.26387.1714509228074844949
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 30 Apr 2024 13:33:49 -0700
+ Tue, 30 Apr 2024 13:33:48 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=hpF8OJy/;
- spf=pass (domain: konsulko.com, ip: 209.85.215.170, mailfrom: tim.orling@konsulko.com)
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-5c6bd3100fcso4191701a12.3
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 30 Apr 2024 13:33:49 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=VP4lSrVw;
+ spf=pass (domain: konsulko.com, ip: 209.85.161.45, mailfrom: tim.orling@konsulko.com)
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5afbd1c3ffeso1009634eaf.2
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 30 Apr 2024 13:33:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1714509228; x=1715114028; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1714509226; x=1715114026; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OqbNu10cZ0e96rT1opGtOyr8cL5pEo70o50L8yLaSEk=;
-        b=hpF8OJy/q07PeHm3BkflM7o+9DzRYqnpaZP90nRnjWnsMtqQzPe+DbK3TwaliPBRqv
-         wNNWoChqPHJHsk5uewdiEDunYw8FmN5O4q9yY8njy5WvfUzXfq/bjpnC04B8bSjBsjFQ
-         C8PE9zEvpf4ZkotmGC4/r8ytKvHswwZ6oE+3U=
+        bh=pj//6M3s+JTLGm7FjiRimk3y3dNcu0tJXLsoS10YveA=;
+        b=VP4lSrVwH3E6R1t4rU5vRiYtaF25fFfASEDZOygx9CV7YRK/BQHe8IkX9nhcRoqg9x
+         n9M0DLnNQzQ+o3omw25s5wVGXt2tMrCi3I3U8QwB3cS0bnhQiQV1OdAqo4yVdBHhQHT1
+         C0k7Y5/dAShZXUzzZ45ntg8gSGBr41y+GIPyo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714509228; x=1715114028;
+        d=1e100.net; s=20230601; t=1714509226; x=1715114026;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=OqbNu10cZ0e96rT1opGtOyr8cL5pEo70o50L8yLaSEk=;
-        b=e5S91W08s1UcRcHn8eIypCROpyNQJd0yePY+uvppZYqTOr3Bj37vfnMZ+uulSMobev
-         7ROeFVJrSFS+LBKdHLfi7a2CkPIzWRm7yALIf1UfGTViKDfGjG+OckeZeBZl+h6Te+Lb
-         2gfBoewpmb8E7OOV9A1E8oVyxjgqhv2yldE0Cg7qc9LoWTwQgfmzxDoA3Hvi+cQPk+so
-         KyzQyzQsNEFj2bv2lNeuj5XY7qzogLQKcT881XI7mhsQresSrbJi6hKq50hJEnmXo/1J
-         nwjtERj4eKKTWIiJzKay68AQH+wyG6AxkNOesJxHnQRvLcN8clOUFQXRz2cWaKsdp8cT
-         huNw==
-X-Gm-Message-State: AOJu0Yw7veTGscKbHGDLhbXFbkzUDzb5DZ6itj2FsK44yODeEJ58kkVx
-	NLcb+I0JFtPyg5Po4o+bqIwfWmr205pzmfn43L2lYRCIOPxHm4TNnnn6C0+hjPs+GpUIY3caAN+
-	VsAw=
-X-Google-Smtp-Source: AGHT+IHSeR4O72KtZqWEDOl/ex/fEIUagyzCRUoomkkUCvuwN1q00AaDIX/vED1OlELYtGGaez2RHQ==
-X-Received: by 2002:a17:90b:8c:b0:2af:a2a:ad67 with SMTP id bb12-20020a17090b008c00b002af0a2aad67mr634951pjb.4.1714509228251;
-        Tue, 30 Apr 2024 13:33:48 -0700 (PDT)
+        bh=pj//6M3s+JTLGm7FjiRimk3y3dNcu0tJXLsoS10YveA=;
+        b=Sk76yJFo+gwfrUMSsod4Ejl+q11VilxTK23Nl3F2t+q3QXeAgPstlACcF4nvCrjo50
+         orVYOR7OqBKO6fBmLvnl8FDbqXJx6taTwbS7v2wmRD8b2zn47xhwnLzfDpFFZtddDOAS
+         Hr7xOoflRL19+kMy1hBDN+CGcZPId9BU6THYDuRM86WBQYPldmRNa4Ep/Gl5VCz0ddJu
+         82a/3Lwgpc0xc04lWmrJOs4zlbBcxha9VsYBN1Khxfl/J7QBPx8vk3Npc7PF55ipPyg1
+         1jynwBMugylAXYlrV/tg9RRXgPg0HuHZao0LID0yXLd8H4LKeYRNxRhgF0a15rG1rVta
+         V5Hg==
+X-Gm-Message-State: AOJu0YxLpsV8i44InUpSwWcNGV8b+9YI8fEa5XVLh7Td6/+MmWIEfR1z
+	t2MLmMIEcKnDrNeBvSkAOmbyrvr3Sqet0hb8xKdoaJYhzfJETbL2hgLQCqiUqWC/IrRTef5qX2g
+	wpns=
+X-Google-Smtp-Source: AGHT+IEG1ie3XzTlrhHs7t3V++eWX0gy7D9chcUlFEu+Xu/DQUm2OO6kU4pkkgiNzmjljCfjXaeATg==
+X-Received: by 2002:a05:6359:410e:b0:18e:a0ce:a35c with SMTP id kh14-20020a056359410e00b0018ea0cea35cmr1180370rwc.14.1714509226377;
+        Tue, 30 Apr 2024 13:33:46 -0700 (PDT)
 Received: from localhost ([2601:1c0:ca00:bd60:e8c5:20ec:b8be:259c])
-        by smtp.gmail.com with ESMTPSA id n5-20020a6563c5000000b0060ec09873fbsm6614196pgv.7.2024.04.30.13.33.47
+        by smtp.gmail.com with ESMTPSA id x1-20020a63b201000000b005e838b99c96sm21372746pge.80.2024.04.30.13.33.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Apr 2024 13:33:47 -0700 (PDT)
+        Tue, 30 Apr 2024 13:33:45 -0700 (PDT)
 From: Tim Orling <tim.orling@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Tim Orling <tim.orling@konsulko.com>
-Subject: [meta-security][PATCH 4/4] tpm2-tss: BBCLASSEXTEND nativesdk
-Date: Tue, 30 Apr 2024 13:33:35 -0700
-Message-ID: <20240430203335.110707-4-tim.orling@konsulko.com>
+Subject: [meta-security][PATCH 3/4] libtpm: BBCLASSEXTEND nativesdk
+Date: Tue, 30 Apr 2024 13:33:34 -0700
+Message-ID: <20240430203335.110707-3-tim.orling@konsulko.com>
 X-Mailer: git-send-email 2.43.2
 In-Reply-To: <20240430203335.110707-1-tim.orling@konsulko.com>
 References: <20240430203335.110707-1-tim.orling@konsulko.com>
@@ -59,22 +59,22 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Tue, 30 Apr 2024 20:33:53 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/78
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/77
 
-Dependency for nativesdk-swtpm
+nativesdk-swtpm needs nativesdk-libtpm
 
 Signed-off-by: Tim Orling <tim.orling@konsulko.com>
 ---
- meta-tpm/recipes-tpm2/tpm2-tss/tpm2-tss_4.0.1.bb | 2 +-
+ meta-tpm/recipes-tpm/libtpm/libtpm_0.9.6.bb | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/meta-tpm/recipes-tpm2/tpm2-tss/tpm2-tss_4.0.1.bb b/meta-tpm/recipes-tpm2/tpm2-tss/tpm2-tss_4.0.1.bb
-index dceebc2..334b638 100644
---- a/meta-tpm/recipes-tpm2/tpm2-tss/tpm2-tss_4.0.1.bb
-+++ b/meta-tpm/recipes-tpm2/tpm2-tss/tpm2-tss_4.0.1.bb
-@@ -94,4 +94,4 @@ FILES:${PN} = "\
- 
- RDEPENDS:libtss2 = "libgcrypt"
+diff --git a/meta-tpm/recipes-tpm/libtpm/libtpm_0.9.6.bb b/meta-tpm/recipes-tpm/libtpm/libtpm_0.9.6.bb
+index a860319..cd47155 100644
+--- a/meta-tpm/recipes-tpm/libtpm/libtpm_0.9.6.bb
++++ b/meta-tpm/recipes-tpm/libtpm/libtpm_0.9.6.bb
+@@ -13,4 +13,4 @@ inherit autotools-brokensep pkgconfig perlnative
+ PACKAGECONFIG ?= "openssl"
+ PACKAGECONFIG[openssl] = "--with-openssl, --without-openssl, openssl"
  
 -BBCLASSEXTEND = "native"
 +BBCLASSEXTEND = "native nativesdk"
