@@ -1,331 +1,81 @@
-Return-Path: <twoerner@gmail.com>
+Return-Path: <tim.orling@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA6DCC4345F
-	for <webhook@archiver.kernel.org>; Tue, 30 Apr 2024 20:24:12 +0000 (UTC)
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
- by mx.groups.io with SMTP id smtpd.web11.26165.1714508644975002335
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD5FCC4345F
+	for <webhook@archiver.kernel.org>; Tue, 30 Apr 2024 20:33:52 +0000 (UTC)
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+ by mx.groups.io with SMTP id smtpd.web11.26383.1714509222766728463
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 30 Apr 2024 13:24:05 -0700
+ Tue, 30 Apr 2024 13:33:42 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=J7vVMsNZ;
- spf=pass (domain: gmail.com, ip: 209.85.219.41, mailfrom: twoerner@gmail.com)
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-69b5ece41dfso25764776d6.2
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 30 Apr 2024 13:24:04 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=p3sCrY8b;
+ spf=pass (domain: konsulko.com, ip: 209.85.214.169, mailfrom: tim.orling@konsulko.com)
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1e3c3aa8938so40684595ad.1
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 30 Apr 2024 13:33:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714508643; x=1715113443; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=z2a3pyXwSn5yQclnQ7gI9VrZqxfJpG2FOJUlM0320wY=;
-        b=J7vVMsNZ+L++tgdw6gosBS4c1CApF5x6UxUv1yfRy4WSR1pRd/T/DYqydeOpk6Cw2+
-         UgXMy7R14bZuCJ/1wZwuaC4T/lZ+UpR6/ZS0LFq5mt60wk9LhN20fg++nao/lmgEZyyM
-         dxcNyGG750hUnDrL1NobtsU4nD3k3swxh/xi3E0omK/le5efwbpo/8Y5JQISq7tHu4sl
-         aehLPhX4k3lAR2Ec4PeiCzEzlbWnQQH/giIXjU8qM3Lfz4HO6zNd9orIiLIaEVKeyONb
-         yWjjljzMt04xA4Z1SbhNi1x+1ZCtIJmDLc8tvvgujwCzaeEBuYsPl0B1OP2wl7ks+GYO
-         UCUw==
+        d=konsulko.com; s=google; t=1714509222; x=1715114022; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JP6quc/ZZN8CKB4Ygp4ohwED5zkh9q8QunV/3s9V7mQ=;
+        b=p3sCrY8bqaIU/LpheCMRBrlzH19jNgf08LaXuc/7mfRXJlZKCJW6AR+GwxkPKJzpoG
+         GgH5u58YsVyWURJbC69Xd+P/7fv6pIQKg597sfsK1wKQ33vsix3lC9Vw8bnSoj0SEm44
+         ufWUmoOC+Tz+//ySw+5GEtwh+CCPx7Ft4cF/w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714508643; x=1715113443;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=z2a3pyXwSn5yQclnQ7gI9VrZqxfJpG2FOJUlM0320wY=;
-        b=dwGhEsjeRpkKR1xh5N8dArCHQcJlh/fBvo66LF7h00BkwhGXwKXBu24mmiRExT6vrU
-         OSof9uzISihPYi49wqKBFjFwC2HI82ICuT23nEWiHNsrUCH7lPfTAFSS7ExhRei20I7C
-         sIzSDiX+XzIYHZqWw61vSv7QPaPezQLRgreizzrUBd90C0gz0Anyuhz3XFm2jBIyiwTT
-         ViKEPjdndCRkyIWLtwsB0Bicz8yylfiEZ17jbplTOm/30TzOlpUWiB/2EJ0VCyuBcBBN
-         df35GibGS3IMiURpIreYbGcDtv27bNz3Pd6KiTI0VTYY2b1Oeo6M8aLEjPwGbUAie5Ap
-         G6GQ==
-X-Gm-Message-State: AOJu0YyHTlToVxrwepOGE+4N+uKUA/cWxxSQMLSnXb5jK+CaOhzJo852
-	4Ezd00vV3Zozodoq3W17++pKYnE+oYIokmp56cWx8ZmdAeegOxk/8dqnMw==
-X-Google-Smtp-Source: AGHT+IEsLJNpiZYWhRAprp5Tw1S/zxFtoY7zKN28QrBSa+kH7I8xcMEijyf/eO7uWUKlaSLjJRyu4Q==
-X-Received: by 2002:ad4:5f07:0:b0:6a0:ce2b:c813 with SMTP id fo7-20020ad45f07000000b006a0ce2bc813mr511460qvb.3.1714508643110;
-        Tue, 30 Apr 2024 13:24:03 -0700 (PDT)
-Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id bz9-20020ad44c09000000b006a0d1820258sm417103qvb.47.2024.04.30.13.24.01
-        for <yocto-patches@lists.yoctoproject.org>
+        d=1e100.net; s=20230601; t=1714509222; x=1715114022;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JP6quc/ZZN8CKB4Ygp4ohwED5zkh9q8QunV/3s9V7mQ=;
+        b=vUqWuRVGckVP+pHCgYMqzD0GXPUsH+C88LAl32vFXALmUy8gr8OiZitY8egNFBiuZW
+         3Xoly2tIOq5F6RJeNdlIuK05p55OjLsF4ippl2Nr5n4usIOxyFnIMUQOLFALFHcK2+nn
+         bbyk+ydVQBrvefNnJjIFib0OJjdaYNb50+g8J9iOSmWj11vqoUT1hxC+13U3vYpjegz4
+         9W7P3lzdWzVMr6JFtLfAQ9e9hSdW2gBFWg3wLfqeuk/0xk/SIfPLf/Hej2KEUje3CikP
+         eh8BLTU7bxM4qUURdkyWAQGs65yGT7I4JA7X5I4WD6y5Iw5QIWx5dlxGStJcppOgien9
+         hIbw==
+X-Gm-Message-State: AOJu0YxrSpQe/hDfgow0dTQBl9m9q5DXhFj1PHoe/4U6ssPsGQXPymxW
+	HVnjpntxhU3Amyi5dROnr+rpV0D8WZTIXB9pTJPZsH0dc3e68btawX8txPWPcGNznMQgeIYCvLI
+	zvSg=
+X-Google-Smtp-Source: AGHT+IGMi30IX04+xrgtsgCR+jQ3hWwIFYS/GSJo7+tvwcfXt7GcQZIF+3BJigfgEcrIT8z/m6vS3w==
+X-Received: by 2002:a17:903:4292:b0:1e2:c554:a93c with SMTP id ju18-20020a170903429200b001e2c554a93cmr513939plb.29.1714509219825;
+        Tue, 30 Apr 2024 13:33:39 -0700 (PDT)
+Received: from localhost ([2601:1c0:ca00:bd60:e8c5:20ec:b8be:259c])
+        by smtp.gmail.com with ESMTPSA id s17-20020a170902ea1100b001e511acfd0esm22820052plg.140.2024.04.30.13.33.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Apr 2024 13:24:01 -0700 (PDT)
-From: Trevor Woerner <twoerner@gmail.com>
+        Tue, 30 Apr 2024 13:33:39 -0700 (PDT)
+From: Tim Orling <tim.orling@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-rockchip][PATCH v4] enable stored U-Boot environment
-Date: Tue, 30 Apr 2024 16:23:59 -0400
-Message-ID: <20240430202359.12771-1-twoerner@gmail.com>
-X-Mailer: git-send-email 2.44.0.501.g19981daefd7c
+Cc: Tim Orling <tim.orling@konsulko.com>
+Subject: [meta-security][PATCH 1/4] tpm2-pkcs11: BBCLASSEXTEND native and nativesdk
+Date: Tue, 30 Apr 2024 13:33:32 -0700
+Message-ID: <20240430203335.110707-1-tim.orling@konsulko.com>
+X-Mailer: git-send-email 2.43.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 30 Apr 2024 20:24:12 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/74
+ <yocto-patches@lists.yoctoproject.org>; Tue, 30 Apr 2024 20:33:52 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/75
 
-U-Boot has the ability to store its environment variables to a permanent
-storage device. Whether or not it does so for any one specific device
-depends on whatever settings are enabled in that specific device's
-defconfig. In order to definitively configure U-Boot to be able to store
-its environment into the device from which it boots, for any device
-supported in this BSP, simply add the following to MACHINE_FEATURES:
+swtpm-native requires tpm2-pkcs11-tools-native for gnutls PACKAGECONFIG
 
-	rk-u-boot-env
-
-If enabled, there is now a second choice to make: should the build also
-include the U-Boot environment in the image or not? The default environment,
-as generated by U-Boot, can be included in the generated wic image. If it
-is included, then flashing the image will also flash the default U-Boot
-environment variables and settings, wiping out anything that might have been
-there already. If it is not included then your device will either continue
-using whatever environment happens to be there (if valid), or will not use any
-stored environment if the stored environment has not been set or is invalid.
-The variable which governs this behaviour is:
-
-	RK_IMAGE_INCLUDES_UBOOT_ENV
-
-By default this is set to "0", meaning that by default the image does not
-contain the U-Boot environment. To enable this behaviour, enable this
-variable. This variable only takes effect if rk-u-boot-env is listed in
-MACHINE_FEATURES, and has no effect otherwise.
-
-The script:
-
-	scripts/dump-uboot-env-from-yocto-image.sh
-
-can be used on a rockchip wic image to see the contents of the U-Boot
-environment partition at build time.
-
-Tested by booting the same image on both eMMC and SDcard with the following
-devices, verifying the ability to read and write the U-Boot environment in
-both U-Boot and Linux user-space, and that changes made in one are seen in the
-other:
-	rock-3a
-	rock-5a
-	rock-5b
-	rock-pi-4b
-	rock-pi-e
-	rock64
-
-Signed-off-by: Trevor Woerner <twoerner@gmail.com>
+Signed-off-by: Tim Orling <tim.orling@konsulko.com>
 ---
-v4 changes:
-- sort WICVARS alphabetically
-- tweak dump-uboot-env-from-yocto-image.sh script to not just check for
-  the existence of the user-supplied parameter, but that it is a file
-  specifically
-- u-boot bbappend:
-  - use a do_compile[postfuncs] for generating the fw_env.config instead of
-    a do_compile:append
-  - move the conversion of the U-Boot text-based environment to the
-    require binary representation from a do_deploy:append to the newly-created
-    do_compile[postfuncs] created above, this will allow the user to inject
-    any extra U-Boot environment variables they might wish as part of a
-    do_compile:append and have that occur before the binary is generated
-    so that those additional user-supplied values are included
-  - add a lot of extra checking (instead of assuming various resources exist)
-    before making use of said resources
+ meta-tpm/recipes-tpm2/tpm2-pkcs11/tpm2-pkcs11_1.9.0.bb | 2 ++
+ 1 file changed, 2 insertions(+)
 
-v3 changes:
-- switch from using a bbclass so the `rk-u-boot-env` override can be used
-  directly
-- add SPDX header to script
-- drop `inherit deploy` in U-Boot bbappend
-
-v2 changes:
-- re-word the commit message and README for clarity
-- use bash's built-in math handling instead of depending on `bc`
-- in anticipation of the upcoming feature in U-Boot whereby rockchip
-  devices can automatically select the environment storage device to be
-  the same as the boot device, use a more recent SRCREV for builds that do
-  environment handling, instead of hardcoding the environment storage device
-  by SoC family
-- handle RK_IMAGE_INCLUDES_UBOOT_ENV as a boolean
----
- README                                        | 20 ++++++++++
- conf/machine/include/rockchip-wic.inc         | 11 +++++
- .../rockchip-enable-environment-mmc.cfg       |  6 +++
- recipes-bsp/u-boot/u-boot_%.bbappend          | 40 +++++++++++++++++++
- scripts/dump-uboot-env-from-yocto-image.sh    | 29 ++++++++++++++
- wic/rockchip.wks                              |  2 +-
- 6 files changed, 107 insertions(+), 1 deletion(-)
- create mode 100644 recipes-bsp/u-boot/files/rk-u-boot-env/rockchip-enable-environment-mmc.cfg
- create mode 100755 scripts/dump-uboot-env-from-yocto-image.sh
-
-diff --git a/README b/README
-index c76fc9131276..605773d4ecd3 100644
---- a/README
-+++ b/README
-@@ -67,6 +67,26 @@ Notes:
- 	
- 	in the configuration (e.g. conf/local.conf).
+diff --git a/meta-tpm/recipes-tpm2/tpm2-pkcs11/tpm2-pkcs11_1.9.0.bb b/meta-tpm/recipes-tpm2/tpm2-pkcs11/tpm2-pkcs11_1.9.0.bb
+index 9dea957..59add84 100644
+--- a/meta-tpm/recipes-tpm2/tpm2-pkcs11/tpm2-pkcs11_1.9.0.bb
++++ b/meta-tpm/recipes-tpm2/tpm2-pkcs11/tpm2-pkcs11_1.9.0.bb
+@@ -45,3 +45,5 @@ INSANE_SKIP:${PN}   += "dev-so"
  
-+U-Boot Environment:
-+------------------
-+	In order to configure U-Boot to be able to store its environment into the
-+	device from which it was booted, for any device supported in this BSP,
-+	simply add the following to MACHINE_FEATURES:
+ RDEPENDS:${PN} = "p11-kit tpm2-tools "
+ RDEPENDS:${PN}-tools = "python3-pyyaml python3-cryptography python3-pyasn1-modules"
 +
-+		rk-u-boot-env
-+
-+	If enabled, to additionally have the U-Boot environment generated and
-+	stored in the image, also enable the following variable (default: off):
-+
-+		RK_IMAGE_INCLUDES_UBOOT_ENV
-+
-+	The script:
-+
-+		scripts/dump-uboot-env-from-yocto-image.sh
-+
-+	can be used on a rockchip wic image to see the contents of the U-Boot
-+	environment partition at build time.
-+
- Maintenance:
- -----------
- 	Please send pull requests, patches, comments, or questions to the
-diff --git a/conf/machine/include/rockchip-wic.inc b/conf/machine/include/rockchip-wic.inc
-index 147a36685d7d..92749b514499 100644
---- a/conf/machine/include/rockchip-wic.inc
-+++ b/conf/machine/include/rockchip-wic.inc
-@@ -2,6 +2,11 @@
- 
- require conf/machine/include/rockchip-extlinux.inc
- 
-+# 'rk-u-boot-env' indicates the user wants to be able to save their U-Boot
-+# environment back to the drive from which the device was booted
-+MACHINEOVERRIDES .= "${@bb.utils.contains('MACHINE_FEATURES', 'rk-u-boot-env', ':rk-u-boot-env', '', d)}"
-+IMAGE_INSTALL:append:rk-u-boot-env = " u-boot-fw-utils u-boot-env"
-+
- SPL_BINARY ?= "idbloader.img"
- 
- IMAGE_FSTYPES += "wic wic.bmap"
-@@ -11,7 +16,13 @@ WKS_FILE_DEPENDS ?= " \
- 	virtual/bootloader \
- 	"
- 
-+RK_IMAGE_INCLUDES_UBOOT_ENV ?= "no"
-+RK_UBOOT_ENV = " "
-+RK_UBOOT_ENV:rk-u-boot-env = "${@ '--source rawcopy --sourceparams=file=u-boot.env' if \
-+	bb.utils.to_boolean(d.getVar('RK_IMAGE_INCLUDES_UBOOT_ENV'), False) else ' '}"
-+
- WICVARS:append = " \
-+	RK_UBOOT_ENV \
- 	SPL_BINARY \
- 	UBOOT_SUFFIX \
- 	"
-diff --git a/recipes-bsp/u-boot/files/rk-u-boot-env/rockchip-enable-environment-mmc.cfg b/recipes-bsp/u-boot/files/rk-u-boot-env/rockchip-enable-environment-mmc.cfg
-new file mode 100644
-index 000000000000..778772d27767
---- /dev/null
-+++ b/recipes-bsp/u-boot/files/rk-u-boot-env/rockchip-enable-environment-mmc.cfg
-@@ -0,0 +1,6 @@
-+CONFIG_ENV_SIZE=0x8000
-+CONFIG_ENV_OFFSET=0x3f8000
-+# CONFIG_ENV_IS_NOWHERE is not set
-+CONFIG_ENV_IS_IN_MMC=y
-+CONFIG_DM_SEQ_ALIAS=y
-+CONFIG_SPL_DM_SEQ_ALIAS=y
-diff --git a/recipes-bsp/u-boot/u-boot_%.bbappend b/recipes-bsp/u-boot/u-boot_%.bbappend
-index a83179a9f007..3dd7f08732c5 100644
---- a/recipes-bsp/u-boot/u-boot_%.bbappend
-+++ b/recipes-bsp/u-boot/u-boot_%.bbappend
-@@ -1,7 +1,13 @@
-+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
-+
-+SRC_URI:append:rk-u-boot-env = " file://rockchip-enable-environment-mmc.cfg"
-+SRCREV:rk-u-boot-env = "cdfcc37428e06f4730ab9a17cc084eeb7676ea1a"
-+
- # various machines require the pyelftools library for parsing dtb files
- DEPENDS:append = " python3-pyelftools-native"
- DEPENDS:append:rk3308 = " u-boot-tools-native"
- DEPENDS:append:rock-pi-4 = " gnutls-native"
-+DEPENDS:append:rk-u-boot-env = " u-boot-mkenvimage-native"
- 
- EXTRA_OEMAKE:append:px30 = " BL31=${DEPLOY_DIR_IMAGE}/bl31-px30.elf"
- EXTRA_OEMAKE:append:rk3308 = " \
-@@ -34,3 +40,37 @@ do_compile:append:rock2-square () {
- 		cp ${B}/spl/${SPL_BINARY} ${B}
- 	fi
- }
-+
-+rk_generate_env() {
-+	if [ ! -f "${B}/.config" ]; then
-+		echo "U-Boot .config not found, can't determine environment size"
-+		return 1
-+	fi
-+	cat ${B}/.config | grep "^CONFIG_ENV_SIZE=" > /dev/null
-+	if [ $? -ne 0 ]; then
-+		echo "can not find CONFIG_ENV_SIZE value in U-Boot .config"
-+		return 1
-+	fi
-+
-+	UBOOT_ENV_SIZE="$(cat ${B}/.config | grep "^CONFIG_ENV_SIZE=" | cut -d'=' -f2)"
-+
-+	# linux user-space U-Boot env config file
-+	echo "/dev/disk/by-partlabel/uboot_env 0x0000 ${UBOOT_ENV_SIZE}" > ${WORKDIR}/fw_env.config
-+
-+	# convert text-based environment to binary suitable for image
-+	if ${@bb.utils.to_boolean(d.getVar('RK_IMAGE_INCLUDES_UBOOT_ENV'), False)}; then
-+		if [ ! -f ${B}/u-boot-initial-env ]; then
-+			echo "initial, text-formatted U-Boot environment file \"${B}/u-boot-initial-env\" not found"
-+			return 1
-+		fi
-+		mkenvimage -s ${UBOOT_ENV_SIZE} ${B}/u-boot-initial-env -o ${WORKDIR}/u-boot.env
-+	fi
-+}
-+do_compile[postfuncs] += "${@bb.utils.contains('MACHINE_FEATURES', 'rk-u-boot-env', 'rk_generate_env', '', d)}"
-+
-+do_deploy:append:rk-u-boot-env() {
-+	if [ -f ${WORKDIR}/u-boot.env ]; then
-+		install -d ${DEPLOYDIR}
-+		install -m 0644 ${WORKDIR}/u-boot.env ${DEPLOYDIR}
-+	fi
-+}
-diff --git a/scripts/dump-uboot-env-from-yocto-image.sh b/scripts/dump-uboot-env-from-yocto-image.sh
-new file mode 100755
-index 000000000000..05b7048f1734
---- /dev/null
-+++ b/scripts/dump-uboot-env-from-yocto-image.sh
-@@ -0,0 +1,29 @@
-+#/bin/bash
-+# SPDX-License-Identifier: OSL-3.0
-+#
-+# a program that can take a wic file and dump out the contents
-+# of the U-Boot environment in canonical hex+ascii format
-+# (assuming the "rockchip" layout specified in this layer's wic file)
-+
-+# check for programs
-+check_pgm() {
-+	$1 --help > /dev/null 2>&1
-+	if [ $? -ne 0 ]; then
-+		echo "required program \"$1\" not found"
-+		exit 1
-+	fi
-+}
-+check_pgm dd
-+check_pgm hexdump
-+
-+if [ $# -ne 1 ]; then
-+	echo "required param missing: yocto wic image"
-+	exit 1
-+fi
-+if [ ! -f "$1" ]; then
-+	echo "specified file \"$1\" not found"
-+	exit 1
-+fi
-+
-+SKIP=$(( 8128 * 512 ))
-+dd if="$1" ibs=1 skip=$SKIP count=32k 2> /dev/null | hexdump -C
-diff --git a/wic/rockchip.wks b/wic/rockchip.wks
-index 9ba3352b51bb..bc65f73b0cf3 100644
---- a/wic/rockchip.wks
-+++ b/wic/rockchip.wks
-@@ -22,7 +22,7 @@ part loader1   --offset 64s    --fixed-size 3552K --fstype=none --part-name load
- part v_storage --offset 7168s  --fixed-size 256K  --fstype=none --part-name v_storage
- part reserved  --offset 7680s  --fixed-size 192K  --fstype=none --part-name reserved
- part reserved1 --offset 8064s  --fixed-size 32K   --fstype=none --part-name reserved1
--part uboot_env --offset 8128s  --fixed-size 32K   --fstype=none --part-name uboot_env
-+part uboot_env --offset 8128s  --fixed-size 32K   --fstype=none --part-name uboot_env ${RK_UBOOT_ENV}
- part reserved2 --offset 8192s  --fixed-size 4096K --fstype=none --part-name reserved2
- part loader2   --offset 16384s --fixed-size 4096K --fstype=none --part-name loader2   --source rawcopy --sourceparams="file=u-boot.${UBOOT_SUFFIX}"
- part atf       --offset 24576s --fixed-size 4096K --fstype=none --part-name atf
++BBCLASSEXTEND = "native nativesdk"
 -- 
-2.44.0.478.g7774cfed6261
+2.43.2
 
 
