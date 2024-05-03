@@ -1,889 +1,414 @@
-Return-Path: <anibal@limonsoftware.com>
+Return-Path: <quentin.schulz@cherry.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAEC4C4345F
-	for <webhook@archiver.kernel.org>; Thu,  2 May 2024 22:42:41 +0000 (UTC)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
- by mx.groups.io with SMTP id smtpd.web10.8092.1714689758132277496
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3674CC4345F
+	for <webhook@archiver.kernel.org>; Fri,  3 May 2024 13:23:09 +0000 (UTC)
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com (EUR03-AM7-obe.outbound.protection.outlook.com [40.107.105.114])
+ by mx.groups.io with SMTP id smtpd.web10.12512.1714742581610854493
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 02 May 2024 15:42:38 -0700
+ Fri, 03 May 2024 06:23:02 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@limonsoftware-com.20230601.gappssmtp.com header.s=20230601 header.b=mIQ0A3KX;
- spf=pass (domain: limonsoftware.com, ip: 209.85.128.174, mailfrom: anibal@limonsoftware.com)
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-61bed738438so35158827b3.2
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 02 May 2024 15:42:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=limonsoftware-com.20230601.gappssmtp.com; s=20230601; t=1714689757; x=1715294557; darn=lists.yoctoproject.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=UnAJGZg9wncILMSGE/qC042BD8BEKU03B4q1WMuH7Lw=;
-        b=mIQ0A3KXGNNV0+vyBAJEr5vWH+iTBoR5eCG7m32iDAljKycOtsz90koPrSrWdbUyG+
-         EVPmSQiydCd9GDD5+t5Tm98SxS8THeBg/bzqDBsJItYY2yjTrGwKpPydHYdXvorF4Qx1
-         y4GWhU+333odSlkFy78y+pcQwQMIKeVOAT2miIeePd7XR3Nd8RlcSM4cD+lOiutSUa7d
-         N8JIiuvI1QgVXRiFOCbBzO1eUfbklBy9JcYGeHeloL0FujAxAsJlQJMSEtkd0e8DfClr
-         mEwiSbfJNQHgBP8HmvKyVzd+KuY+buBlY2jI9+PFgHM/qefMkb6BwwEvtfdLnBA3wjJO
-         LNHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714689757; x=1715294557;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UnAJGZg9wncILMSGE/qC042BD8BEKU03B4q1WMuH7Lw=;
-        b=CnZxtz34+NmB+9cIBFjgbykGKNi2mF6agSseswjze5prhT7tYC/vXN8C8yS+xZA0KR
-         u8W0A4KcaTxG2mIBNHsdxXa5oPDmctbgShFMCiKB47SrzTlPupDUF6WfJvMQXbJfjTdN
-         3DjqvXbRmRyqiU/WP+slxvtX99g08APi3m4dgt9/cguSIkszj97rHbjEr8SRAReXh5Qp
-         KIaCNmbB4uJPdH+sz4HOVMfR64uFsF2DYY6hQHkqvLUxI1caTYWHbliHSb0jPFwbfG3d
-         aY6/gt8x2IfiI4C8boc7QxvPLRkOtG7C60leLUjzAi8qyGjtu+y78JFjRdf4EfegTYbm
-         ayDQ==
-X-Gm-Message-State: AOJu0YxFe7jlzH0Tm5dKul9nlI6i3CD9TjnlB9/1YPqoEaJFHhUBW0SZ
-	FQEOpls5Y1vr32a0Ul+dDug7+n+VPKjfzwz7CUgrCmzY6GMNnpEqfaYEyj4FlgofbyfkjeHVgHM
-	iC+HFc0smOmAE4vR7NY8le+ijk4ZA9qknIcTRww==
-X-Google-Smtp-Source: AGHT+IE96DOwu5yIAPiYQDYwzqJsVnWM8TtFZTfW5Hy5cejqpv6PavUafoEQOkCWfzSy/t2jNPFzGCDR8KGn6N5WYhA=
-X-Received: by 2002:a05:690c:399:b0:610:cd34:439e with SMTP id
- bh25-20020a05690c039900b00610cd34439emr1021632ywb.49.1714689757202; Thu, 02
- May 2024 15:42:37 -0700 (PDT)
+ dkim=pass header.i=@cherry.de header.s=selector1 header.b=jXFm++mf;
+ spf=pass (domain: cherry.de, ip: 40.107.105.114, mailfrom: quentin.schulz@cherry.de)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=G7wMZQn2LIZfp5Y5bBFLAKKOBGiJLgJwCC7JJNyD53aNwdBYaSMxSSmPPbfQnwQ2Oaedko7AXhYXIQ9/5WEtKZQZ+lWm1uZOSQZ8kqt5W4wAPiJ7PDEkAX+zY+4RoYNrlRbZi5QxjsDdHYa47lXWoAn6xmn/pEAuJ7e76it9GxSZfCSyw9tDOfkKFjf4LAgFk283zxStufzio14C280J1ZLtKdLt1WKxvsXl+W7id/eKxNnfvkiKbWKmjKG4AimDFEUyAtOj8f9ha97aW0xCFrohLsRParnIx6ab5R2DDf7OKL/7FvaoAzde22uafrDeNn16zSx2YSe8uF+OaUkK4w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vsj2SGySat97+Iyjeas8px9dLnMZ/lE6fVlFQmL/oss=;
+ b=Z9p4+EmZSI4Ig2aCw2QN5ZRLVuMiZWtQAJBE61+q5uJfYCW0asp3tifxwSk1UeRrdiW0cmA56phbo/3tc3rowu/8Qj/7gZnuYsiipdqkg/EPUJS5BYw8pv2aaro8KusZVisID9Yll4Ec7JX87PtGAKwLfAXdToKbwvvH9cSDymim4m9CQyetlxcY9gR4ssIcFvtRhbr1iLBgg4TSyUlEYXkQZqhyba8OQWipEOCXSgL+bRFPd4ZKAJ4QATnhv347IB74CG0Nv1LhFYNGlHCsLi2me/aNqUvJNXnEtReCXBv3Ca9qR3F2qz1eG4viVuWm0WEkDhABb3DDdAv4HWZxpw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
+ dkim=pass header.d=cherry.de; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vsj2SGySat97+Iyjeas8px9dLnMZ/lE6fVlFQmL/oss=;
+ b=jXFm++mfC0g7lIshEZrqk7PKgYIu6yPyOriawREKUtyiMzIE+Q0hv+Cd5yAyPO/3xfmS55FGDVTxMm64SYyUqe6X31Wcws2Rvw1KyAycTyN8Enak4zigj2Bw4mN4H3j+yR/iIfan0rVmKd9z3kwg/eCaPKepwBaJXozjaQeh6zQ=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=cherry.de;
+Received: from DB7PR04MB4842.eurprd04.prod.outlook.com (2603:10a6:10:1b::13)
+ by VI1PR04MB9787.eurprd04.prod.outlook.com (2603:10a6:800:1d8::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.29; Fri, 3 May
+ 2024 13:22:56 +0000
+Received: from DB7PR04MB4842.eurprd04.prod.outlook.com
+ ([fe80::ac08:df46:97bd:4ae6]) by DB7PR04MB4842.eurprd04.prod.outlook.com
+ ([fe80::ac08:df46:97bd:4ae6%6]) with mapi id 15.20.7544.029; Fri, 3 May 2024
+ 13:22:56 +0000
+Message-ID: <933c30f5-f6ee-4e8f-a976-70a06e083fcb@cherry.de>
+Date: Fri, 3 May 2024 15:22:54 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [yocto-patches] [meta-rockchip][PATCH v4] enable stored U-Boot
+ environment
+To: yocto-patches@lists.yoctoproject.org
+References: <20240430202359.12771-1-twoerner@gmail.com>
+Content-Language: en-US
+From: Quentin Schulz <quentin.schulz@cherry.de>
+In-Reply-To: <20240430202359.12771-1-twoerner@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: WA1P291CA0005.POLP291.PROD.OUTLOOK.COM
+ (2603:10a6:1d0:19::28) To DB7PR04MB4842.eurprd04.prod.outlook.com
+ (2603:10a6:10:1b::13)
 MIME-Version: 1.0
-References: <20240425014728.4070856-1-changqing.li@windriver.com>
- <CAOU5ZMue2AZxq_7fJTVn6LEXPPXWrn-D7UFdzX43xvvJV6yQEA@mail.gmail.com> <abab1e79-ca87-4544-a317-931c84738b88@windriver.com>
-In-Reply-To: <abab1e79-ca87-4544-a317-931c84738b88@windriver.com>
-From: Anibal Limon <anibal@limonsoftware.com>
-Date: Thu, 2 May 2024 16:42:25 -0600
-Message-ID: <CAOU5ZMtLFy-5opXW58Fp5Qpdeo8+t8BkTZBgSFzAjFGGXPhboQ@mail.gmail.com>
-Subject: Re: [PATCH V2] utils.c: fix pty setup
-To: Changqing Li <changqing.li@windriver.com>
-Cc: yocto-patches@lists.yoctoproject.org, randy.macleod@windriver.com
-Content-Type: multipart/alternative; boundary="000000000000e0ea0e06178051be"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB7PR04MB4842:EE_|VI1PR04MB9787:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2f18ea51-4663-4798-b4a8-08dc6b742507
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|376005|366007;
+X-Microsoft-Antispam-Message-Info: 
+	=?utf-8?B?bEs4dXV6cmNzbWh1U2xtMkh5Qng3NmVIL3MwdmUyRWs3bjd5SHJiQ3hGNDhX?=
+ =?utf-8?B?VjdsWTl2UFlORGc0eU9Ca1FSZ1B4bmNKWXRQYVh0NndiQlhoangyUVEwektT?=
+ =?utf-8?B?TURqNitMMC82WDhBaUlJcHJDZC92K1pRWmdIMHpraEZQS3VlVTdUREFVS0ZC?=
+ =?utf-8?B?dysyU0diZlVLNXpYeXFrOVZNNUdSbFBXT3FMN09SdmRjS1RnVUdQc2VobDVT?=
+ =?utf-8?B?dm1JUTdTUkErUjR5elM1RTN0NFBkQWhqN29VOUFobEUyV3p3Mi9xRzJmS00z?=
+ =?utf-8?B?blZYdDhhZlVvUGs3VlJIQzJNNko3OGMrVHdkeXFXaTBSZjB2eGt4UFhKYmlD?=
+ =?utf-8?B?d2tvMmdNc3VVaCt6MmExaDQ0b2NKM3ZDQ3lRZnIyV3NJbFJRT09WZFMvQnpW?=
+ =?utf-8?B?VGJKbGlnTGFBU2xSZnRodjlNb205VkVZdzYxS096SGRXL015Q3VTYjlrZ1B6?=
+ =?utf-8?B?dm4zMVpZWHJOSi9BQWI5ajFGcEFyMjBqR2tYUktXZ2ZrbDF1ZDZvbFQ3L1VH?=
+ =?utf-8?B?aHNpZlJnSXZscmFIN0l1UGdOUXV6L2g0OE96eEkwVmNnWnZHYnFUV080V254?=
+ =?utf-8?B?Y0dUM1RsbkszNW5nM0Z2OExqWWgyM3pUNVhvREhEVlExV0NmTTRZdkNVMjE3?=
+ =?utf-8?B?MVhXUjFTeWNtWmV6ckR5NUdKSWlRdnNPdk45aXRlRTRDNE0zRTNBb3NSNWFs?=
+ =?utf-8?B?OFdzQ0p6RW5xd1ltTFd0S0tYdWhNSTVtSlFlYkJ5TnpNbWt2bGpiUFdFWURw?=
+ =?utf-8?B?L05CQ3FtaWJ4djN1QzZ0MUx6dXVlejd5SjZneWN4ZTZseU5sV043WkhGakNU?=
+ =?utf-8?B?RVh3aG13WWhhaVo2V3M1cG1qNFZmelU4OVAzcHZyWTZnZ01uNkdFWGNPWWVI?=
+ =?utf-8?B?ajlVUkgrYzNYU1dnWUx1SVI2dEQrLzg2VXIvQVpXM0FzZlIxUklhUlJ4TnhU?=
+ =?utf-8?B?QU0yWHFyTEtTQXdpOG9IaWxJUUpWd1VVeitCWFUzVERFZVFJNTRPOFIxYmxz?=
+ =?utf-8?B?d3RSR2dPRm5NVHFEVDFPV3hTejVQeEhxY1N5Z0pINWtKTjZUWTg0dTFqVEMv?=
+ =?utf-8?B?NXFuQkI5ODNSNUV2RHNLaFExNDkzZTRpV2UrdkcwSDhSOHU2cGpOMjEyaVA1?=
+ =?utf-8?B?SW5URzFVOWo0ajdHanRTQVZhRTBBQW9paUFWbkIwc1pTYnVxcjNheG8yUkhS?=
+ =?utf-8?B?QTA4S00zRVFSWFVtZzRMV0wzRTZTRjlSKzEyZzFNSG9Ib0EyQTExNFlObldZ?=
+ =?utf-8?B?b0RaSVh5YmU1aXYzSTVQd3JvQ1ZIdDZrNy9nUDVwTHJER1NTeVd1MlJnRnVM?=
+ =?utf-8?B?MndqMmZHcWI5S0JTVXZFb2I2YnVBL09Mdms0dERiUzIwc1dkY3FoUWhleEE1?=
+ =?utf-8?B?WjBtZ1FKNGNwVmlhTCtBK2kyMGYvblhYallObE5KTTJWRThVcGNCMHZPZE9r?=
+ =?utf-8?B?RG5tbHFVMTJaZC9halIvdnhoYlhQblB2OHcxSnE2bkhIS1UvanFHSmFOSGRo?=
+ =?utf-8?B?bFpwb3h6Rm5iQWdQdmN2b1JKckRTL0liQjBCM2J1VUl2N1U5Q2JEQ3BNdW5V?=
+ =?utf-8?B?ZGRGTS8zdU0rakozUjUxN3ZtOWw2azA1ZERIc1gxWkJ2QjFKL0sxYTRpM0dr?=
+ =?utf-8?B?eUx2VnFsSW1CV1lmR1YxNjE2YkJTU283TndnZUhuTWNEM1ZWajR4dXhNUFc4?=
+ =?utf-8?B?NjE2dUFreUgyaFQzbmxvMlRHRlIreFFHK2pFZSt6WFZtSzJUcHQwSDZBPT0=?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB7PR04MB4842.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?ZHJaTFd1OXhkNHNJVmZwRkE2a0F3aHFhWGE2SW5sVlBFZXRPSGZ5VlZ3MXNz?=
+ =?utf-8?B?NWZzYU1kdnJrcDRIZzlUUjRRQmlXTnBhZjJpa2lwZ2JaRWFHNnR3QXJSL1BO?=
+ =?utf-8?B?RjJhcnZEUHJNZXRPMDFWZER3enJnb09SSSs5WkxwZi9ZbHRIWE80bXlhYmt3?=
+ =?utf-8?B?RUd6eFI0enZWMVhKZWtLS0FDZ0RXMVFUUlhsRXQ1VkdKZVlON3BGREROSDlP?=
+ =?utf-8?B?K3JUTGoycUtkQUFtL2ZvUW1VMzVTdjBEaC9MYmV2eGNkNlowQ0J1bGQzM0h2?=
+ =?utf-8?B?ZWM0U1pRdWFXZzUwOTdjNXY1Ylk4bUk5ZjZWY0QxVGVGNDV2ZXdTSXJaQVQx?=
+ =?utf-8?B?bmNHa1kxRHVJVzRzejJGc3hNTHRYeWFMSUFxRGZ6VVp2QUdkN1RFNVFVdHNT?=
+ =?utf-8?B?NlE0cm5ZN0s0M0E3TUU1eXJuWExvWFhYd1hwbmRvaXZsRWxKVVRTZG9kQmx6?=
+ =?utf-8?B?R1gzSW1BVmxWZlhHODNveStEM3RGTkNqNEQwMjE3bUQ2L0FFYXZBa0dYRFFB?=
+ =?utf-8?B?bHdmMjhRRjkrT01NRDlWdWJSUHlSZlR5TEFyb2JtTmQ0SlFhdVJCSTBCQlk1?=
+ =?utf-8?B?TXZIWkNocC92U0w1VHdPbnk3Tjd0bWRaUlhXdERCeGdKVVVxM245TmxIQU5W?=
+ =?utf-8?B?YnczT0dES0NrYzkyS1NOZVk2ZU5PM1g3czNkRUs0b25ubWduOENtTEZNbVFr?=
+ =?utf-8?B?WncwMjJHSzRYNTFSVDJJNVdXbG5SNVppZ3puak1yV20zcVFacCtrTDVpR0g2?=
+ =?utf-8?B?SHYwTSs1dEQ4ajM4bHVuR2tlOG1yZCtST0l1QkFoM01WWm5MMzh5cW95R3ZN?=
+ =?utf-8?B?ZEd5RlRRUmZRNm4zMnh2aGVpWWRjV2J5bkQvMDlwRW9ucmhUVW9NbDhwYjNw?=
+ =?utf-8?B?QTYxOUY5MnlPV0l4ZDhDTmNSd0F1SGNzM1pQRkx1L1N0dEJ5dUdIYnhEMkNN?=
+ =?utf-8?B?dFFRN0Rnb0RhQ0VQZkNld0RzdHM5cC9PTVNTRzBkY2plUCtURGJHQ3NjQXJX?=
+ =?utf-8?B?TXF3K1Z0RFp0SThjNWY0cjR3cTlLeHJUVFFVRHVydHZrMU1uelBiVEJjaHY4?=
+ =?utf-8?B?d042dXhDRGRnWGpERXBXU1pBQkRyVjFDUWx6Zkt3VldhalNRR1M1Tmh1c2JU?=
+ =?utf-8?B?OEtZQWNsWjVER1VEN2hVQXlBZjkzUVpjd3ZYRnZnL2tIY0k1TkQ2U1N3Vmd2?=
+ =?utf-8?B?eXVEQ2krbUJWb1JrZ3FVT1lNUEE3cUJBOS9KZ2NGTFpCWm9PL0JybjZCdHZJ?=
+ =?utf-8?B?bVRaNjNUNVJYbkczK0FWRzFraVlkVlJ6RThCWHFDNVYvT0s4dlVuR0tYNmxI?=
+ =?utf-8?B?QmU3VVVJZjlOaFhjZis2eVBMaEkyRUU4TFQrZW4xb2R5QzIzNUlHOU1iNkho?=
+ =?utf-8?B?WmdaVnRQUHB5NER1SnhwUDhMYmRBcmhtbC90R0drOXMxd2Z6N1B2aGg1a3lv?=
+ =?utf-8?B?SFZUNEw4QzdPQm1JYnlYbXdVd0NSRHpBQmNXa2c2VDh5WVFoMjV5QXNtNkZo?=
+ =?utf-8?B?d094Q01lWWFsenR5VHJERWZMVFZ6L20wbWp5a1ZUZnNsdFF6KzA1dDQwKzFq?=
+ =?utf-8?B?aG50UnR3UjVZZkFiV25aQldldEplUGd6b0lKZjk3bTJ3aENzcUVPdG5PUEtK?=
+ =?utf-8?B?OG5OSHZiUmYvWHpBWmZLR3JoTUpONFhDMEw2aU51OXAwNUpVMzVsU2c3NjU3?=
+ =?utf-8?B?K0hLNm5YTGs5Z1l0SXF4V1RNZ2MrV3I3SjNiY2hHck9ZaWZYTnRXQXl3WjBW?=
+ =?utf-8?B?UXZsbW9KaCtwZ0tLNWVxNGM4Q0lpOVVpQThDQVArWVFMcHF5a1h6YXBiNXhX?=
+ =?utf-8?B?N3J6WmEzbnllTGxTVTMzZjZValZ4NFhGVDdZSGFHTnpIdnR3SWdGU3V5REJP?=
+ =?utf-8?B?ZE5XK2d4YjJWemFudW5kRE5hTkRZd3gvU1FiT3NwbFBnb3BMUnU3UEV1Q2FF?=
+ =?utf-8?B?a0RtT0tKdThYM0lCTFZqRU5aYU1DWEl2Nk1NRllXZmwzSnRiY29KcnFqQy9I?=
+ =?utf-8?B?c1REdWlpK3kwODRtNSs1YjN0NnlEeHJpRGkyWkJsSUNpVW5NVS8yUGMwbFRM?=
+ =?utf-8?B?WlJYa29jckRWZlU2R3BWck13dmtRNlB3NUloRjhzbEJiVlUzcG1pSHlOTW1m?=
+ =?utf-8?B?S3BPdE54M2FaeXBvMGpQL0JROTdiaUVhNU1DZFY2VmNQZzkwZlpjYTArdmoy?=
+ =?utf-8?B?dmc9PQ==?=
+X-OriginatorOrg: cherry.de
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2f18ea51-4663-4798-b4a8-08dc6b742507
+X-MS-Exchange-CrossTenant-AuthSource: DB7PR04MB4842.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 May 2024 13:22:56.2553
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: SlofPJIi5+7nY6WbLlmY0B3B6/hyG82uZNkneY+ntFwz7gUKZ37x32x2QG/FjnQ8xv0m87tNdf2krztOTjEJdh7GzhfpzaeVSgLVeWugKoo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB9787
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 02 May 2024 22:42:41 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/80
+ <yocto-patches@lists.yoctoproject.org>; Fri, 03 May 2024 13:23:09 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/81
 
---000000000000e0ea0e06178051be
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Hi Trevor,
 
-Hi Changqing,
+On 4/30/24 10:23 PM, Trevor Woerner via lists.yoctoproject.org wrote:
+> U-Boot has the ability to store its environment variables to a permanent
+> storage device. Whether or not it does so for any one specific device
+> depends on whatever settings are enabled in that specific device's
+> defconfig. In order to definitively configure U-Boot to be able to store
+> its environment into the device from which it boots, for any device
+> supported in this BSP, simply add the following to MACHINE_FEATURES:
+> 
+> 	rk-u-boot-env
+> 
+> If enabled, there is now a second choice to make: should the build also
+> include the U-Boot environment in the image or not? The default environment,
+> as generated by U-Boot, can be included in the generated wic image. If it
+> is included, then flashing the image will also flash the default U-Boot
+> environment variables and settings, wiping out anything that might have been
+> there already. If it is not included then your device will either continue
+> using whatever environment happens to be there (if valid), or will not use any
+> stored environment if the stored environment has not been set or is invalid.
+> The variable which governs this behaviour is:
+> 
+> 	RK_IMAGE_INCLUDES_UBOOT_ENV
+> 
+> By default this is set to "0", meaning that by default the image does not
+> contain the U-Boot environment. To enable this behaviour, enable this
+> variable. This variable only takes effect if rk-u-boot-env is listed in
+> MACHINE_FEATURES, and has no effect otherwise.
+> 
+> The script:
+> 
+> 	scripts/dump-uboot-env-from-yocto-image.sh
+> 
+> can be used on a rockchip wic image to see the contents of the U-Boot
+> environment partition at build time.
+> 
+> Tested by booting the same image on both eMMC and SDcard with the following
+> devices, verifying the ability to read and write the U-Boot environment in
+> both U-Boot and Linux user-space, and that changes made in one are seen in the
+> other:
+> 	rock-3a
+> 	rock-5a
+> 	rock-5b
+> 	rock-pi-4b
+> 	rock-pi-e
+> 	rock64
+> 
+> Signed-off-by: Trevor Woerner <twoerner@gmail.com>
+> ---
+> v4 changes:
+> - sort WICVARS alphabetically
+> - tweak dump-uboot-env-from-yocto-image.sh script to not just check for
+>    the existence of the user-supplied parameter, but that it is a file
+>    specifically
+> - u-boot bbappend:
+>    - use a do_compile[postfuncs] for generating the fw_env.config instead of
+>      a do_compile:append
+>    - move the conversion of the U-Boot text-based environment to the
+>      require binary representation from a do_deploy:append to the newly-created
+>      do_compile[postfuncs] created above, this will allow the user to inject
+>      any extra U-Boot environment variables they might wish as part of a
+>      do_compile:append and have that occur before the binary is generated
+>      so that those additional user-supplied values are included
+>    - add a lot of extra checking (instead of assuming various resources exist)
+>      before making use of said resources
+> 
+> v3 changes:
+> - switch from using a bbclass so the `rk-u-boot-env` override can be used
+>    directly
+> - add SPDX header to script
+> - drop `inherit deploy` in U-Boot bbappend
+> 
+> v2 changes:
+> - re-word the commit message and README for clarity
+> - use bash's built-in math handling instead of depending on `bc`
+> - in anticipation of the upcoming feature in U-Boot whereby rockchip
+>    devices can automatically select the environment storage device to be
+>    the same as the boot device, use a more recent SRCREV for builds that do
+>    environment handling, instead of hardcoding the environment storage device
+>    by SoC family
+> - handle RK_IMAGE_INCLUDES_UBOOT_ENV as a boolean
+> ---
+>   README                                        | 20 ++++++++++
+>   conf/machine/include/rockchip-wic.inc         | 11 +++++
+>   .../rockchip-enable-environment-mmc.cfg       |  6 +++
+>   recipes-bsp/u-boot/u-boot_%.bbappend          | 40 +++++++++++++++++++
+>   scripts/dump-uboot-env-from-yocto-image.sh    | 29 ++++++++++++++
+>   wic/rockchip.wks                              |  2 +-
+>   6 files changed, 107 insertions(+), 1 deletion(-)
+>   create mode 100644 recipes-bsp/u-boot/files/rk-u-boot-env/rockchip-enable-environment-mmc.cfg
+>   create mode 100755 scripts/dump-uboot-env-from-yocto-image.sh
+> 
+> diff --git a/README b/README
+> index c76fc9131276..605773d4ecd3 100644
+> --- a/README
+> +++ b/README
+> @@ -67,6 +67,26 @@ Notes:
+>   	
+>   	in the configuration (e.g. conf/local.conf).
+>   
+> +U-Boot Environment:
+> +------------------
+> +	In order to configure U-Boot to be able to store its environment into the
+> +	device from which it was booted, for any device supported in this BSP,
+> +	simply add the following to MACHINE_FEATURES:
+> +
+> +		rk-u-boot-env
+> +
+> +	If enabled, to additionally have the U-Boot environment generated and
+> +	stored in the image, also enable the following variable (default: off):
+> +
+> +		RK_IMAGE_INCLUDES_UBOOT_ENV
+> +
+> +	The script:
+> +
+> +		scripts/dump-uboot-env-from-yocto-image.sh
+> +
+> +	can be used on a rockchip wic image to see the contents of the U-Boot
+> +	environment partition at build time.
+> +
+>   Maintenance:
+>   -----------
+>   	Please send pull requests, patches, comments, or questions to the
+> diff --git a/conf/machine/include/rockchip-wic.inc b/conf/machine/include/rockchip-wic.inc
+> index 147a36685d7d..92749b514499 100644
+> --- a/conf/machine/include/rockchip-wic.inc
+> +++ b/conf/machine/include/rockchip-wic.inc
+> @@ -2,6 +2,11 @@
+>   
+>   require conf/machine/include/rockchip-extlinux.inc
+>   
+> +# 'rk-u-boot-env' indicates the user wants to be able to save their U-Boot
+> +# environment back to the drive from which the device was booted
+> +MACHINEOVERRIDES .= "${@bb.utils.contains('MACHINE_FEATURES', 'rk-u-boot-env', ':rk-u-boot-env', '', d)}"
+> +IMAGE_INSTALL:append:rk-u-boot-env = " u-boot-fw-utils u-boot-env"
+> +
+>   SPL_BINARY ?= "idbloader.img"
+>   
+>   IMAGE_FSTYPES += "wic wic.bmap"
+> @@ -11,7 +16,13 @@ WKS_FILE_DEPENDS ?= " \
+>   	virtual/bootloader \
+>   	"
+>   
+> +RK_IMAGE_INCLUDES_UBOOT_ENV ?= "no"
+> +RK_UBOOT_ENV = " "
+> +RK_UBOOT_ENV:rk-u-boot-env = "${@ '--source rawcopy --sourceparams=file=u-boot.env' if \
+> +	bb.utils.to_boolean(d.getVar('RK_IMAGE_INCLUDES_UBOOT_ENV'), False) else ' '}"
+> +
+>   WICVARS:append = " \
+> +	RK_UBOOT_ENV \
+>   	SPL_BINARY \
+>   	UBOOT_SUFFIX \
+>   	"
+> diff --git a/recipes-bsp/u-boot/files/rk-u-boot-env/rockchip-enable-environment-mmc.cfg b/recipes-bsp/u-boot/files/rk-u-boot-env/rockchip-enable-environment-mmc.cfg
+> new file mode 100644
+> index 000000000000..778772d27767
+> --- /dev/null
+> +++ b/recipes-bsp/u-boot/files/rk-u-boot-env/rockchip-enable-environment-mmc.cfg
+> @@ -0,0 +1,6 @@
+> +CONFIG_ENV_SIZE=0x8000
+> +CONFIG_ENV_OFFSET=0x3f8000
+> +# CONFIG_ENV_IS_NOWHERE is not set
+> +CONFIG_ENV_IS_IN_MMC=y
+> +CONFIG_DM_SEQ_ALIAS=y
+> +CONFIG_SPL_DM_SEQ_ALIAS=y
+> diff --git a/recipes-bsp/u-boot/u-boot_%.bbappend b/recipes-bsp/u-boot/u-boot_%.bbappend
+> index a83179a9f007..3dd7f08732c5 100644
+> --- a/recipes-bsp/u-boot/u-boot_%.bbappend
+> +++ b/recipes-bsp/u-boot/u-boot_%.bbappend
+> @@ -1,7 +1,13 @@
+> +FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
+> +
+> +SRC_URI:append:rk-u-boot-env = " file://rockchip-enable-environment-mmc.cfg"
+> +SRCREV:rk-u-boot-env = "cdfcc37428e06f4730ab9a17cc084eeb7676ea1a"
+> +
+>   # various machines require the pyelftools library for parsing dtb files
+>   DEPENDS:append = " python3-pyelftools-native"
+>   DEPENDS:append:rk3308 = " u-boot-tools-native"
+>   DEPENDS:append:rock-pi-4 = " gnutls-native"
+> +DEPENDS:append:rk-u-boot-env = " u-boot-mkenvimage-native"
+>   
+>   EXTRA_OEMAKE:append:px30 = " BL31=${DEPLOY_DIR_IMAGE}/bl31-px30.elf"
+>   EXTRA_OEMAKE:append:rk3308 = " \
+> @@ -34,3 +40,37 @@ do_compile:append:rock2-square () {
+>   		cp ${B}/spl/${SPL_BINARY} ${B}
+>   	fi
+>   }
+> +
+> +rk_generate_env() {
+> +	if [ ! -f "${B}/.config" ]; then
+> +		echo "U-Boot .config not found, can't determine environment size"
+> +		return 1
+> +	fi
+> +	cat ${B}/.config | grep "^CONFIG_ENV_SIZE=" > /dev/null
+> +	if [ $? -ne 0 ]; then
+> +		echo "can not find CONFIG_ENV_SIZE value in U-Boot .config"
+> +		return 1
+> +	fi
+> +
+> +	UBOOT_ENV_SIZE="$(cat ${B}/.config | grep "^CONFIG_ENV_SIZE=" | cut -d'=' -f2)"
+> +
+> +	# linux user-space U-Boot env config file
+> +	echo "/dev/disk/by-partlabel/uboot_env 0x0000 ${UBOOT_ENV_SIZE}" > ${WORKDIR}/fw_env.config
+> +
+> +	# convert text-based environment to binary suitable for image
+> +	if ${@bb.utils.to_boolean(d.getVar('RK_IMAGE_INCLUDES_UBOOT_ENV'), False)}; then
+> +		if [ ! -f ${B}/u-boot-initial-env ]; then
+> +			echo "initial, text-formatted U-Boot environment file \"${B}/u-boot-initial-env\" not found"
+> +			return 1
+> +		fi
+> +		mkenvimage -s ${UBOOT_ENV_SIZE} ${B}/u-boot-initial-env -o ${WORKDIR}/u-boot.env
 
-I ran the test suite and it looks good so far.
-I will run more tests before pushing this + minor changes may be.
+Could be put into ${B} instead of ${WORKDIR}, since we generate it? I 
+guess since other files we generate are put into WORKDIR, it'd be up to 
+you here.
 
-Thanks!,
-Anibal
+> +	fi
+> +}
+> +do_compile[postfuncs] += "${@bb.utils.contains('MACHINE_FEATURES', 'rk-u-boot-env', 'rk_generate_env', '', d)}"
 
-On Thu, Apr 25, 2024 at 7:22=E2=80=AFPM Changqing Li <changqing.li@windrive=
-r.com>
-wrote:
+I can suggest:
 
->
-> On 4/26/24 05:59, Anibal Limon wrote:
->
-> *CAUTION: This email comes from a non Wind River email account!*
-> Do not click links or open attachments unless you recognize the sender an=
-d
-> know the content is safe.
-> Comments below,
->
-> Thanks!,
-> Anibal
->
-> On Wed, Apr 24, 2024 at 7:47=E2=80=AFPM <changqing.li@windriver.com> wrot=
-e:
->
->> From: Changqing Li <changqing.li@windriver.com>
->>
->> subcase test_tevent_trace will fail if run libtevent-ptest with
->> ptest-runner, but if run directly, the subcase can successfully.
->>
->> The failure related to how pty is setup:
->> In child progress, after close(0), the master pty will use 0 as file
->> descriptors, and then master pty is attched as child stdin, and slave
->> pty will also be closed by func close_fds. This will make epoll_wait
->> will get signal EPOLLHUP, then test failed.
->>
->> Refer:
->> epoll_wait(3, [{events=3DEPOLLOUT|EPOLLHUP, data=3D{u32=3D2625883648,
->> u64=3D94496201362944}}], 1, 30000) =3D 1
->>
->> lrwx------ 1 root root 64 Apr 23 01:08 0 -> /dev/ptmx
->> l-wx------ 1 root root 64 Apr 23 01:08 1 -> 'pipe:[4261]'
->> l-wx------ 1 root root 64 Apr 23 01:08 2 -> 'pipe:[4261]'
->>
->> To fix this:
->> 1. Open master pty in parent process
->> 2. Attach slave pty to child stdin
->> 3. Remove detaching controlling tty from parent process
->> 4. Remove seting process groupid for child process
->>
->> Refer:
->> lrwx------ 1 root root 64 Apr 23 07:35 0 -> /dev/pts/0
->> l-wx------ 1 root root 64 Apr 23 07:35 1 -> 'pipe:[37001]'
->> l-wx------ 1 root root 64 Apr 23 07:35 2 -> 'pipe:[37001]'
->>
->> Signed-off-by: Changqing Li <changqing.li@windriver.com>
->> ---
->>  utils.c | 67 ++++++++++++++++++++++++++++++++-------------------------
->>  1 file changed, 38 insertions(+), 29 deletions(-)
->>
->> diff --git a/utils.c b/utils.c
->> index 46918f4..6b3a492 100644
->> --- a/utils.c
->> +++ b/utils.c
->> @@ -341,25 +341,31 @@ run_child(char *run_ptest, int fd_stdout, int
->> fd_stderr)
->>         /* exit(1); not needed? */
->>  }
->>
->> +/* Returns an integer.
->> + * If it returns < 0, an error has occurred.
->> + * Otherwise, return 0 means successfully
->> + * fp should be writable, likely stdout/err.
->> + */
->> +static int
->> +setup_master_pty(int* pty_master, int* pty_slave, char*pty_name, FILE
->> *fp) {
->> +       if (openpty(pty_master, pty_slave, pty_name, NULL, NULL) < 0) {
->> +               fprintf(fp, "ERROR: openpty() failed with: %s.\n",
->> strerror(errno));
->> +               return -1;
->> +       }
->> +       return 0;
->> +}
->> +
->>  /* Returns an integer file descriptor.
->>   * If it returns < 0, an error has occurred.
->>   * Otherwise, it has returned the slave pty file descriptor.
->>   * fp should be writable, likely stdout/err.
->>   */
->>  static int
->> -setup_slave_pty(FILE *fp) {
->> -       int pty_master =3D -1;
->> -       int pty_slave =3D -1;
->> -       char pty_name[256];
->> +setup_slave_pty(char* pty_name, FILE *fp) {
->>         struct group *gptr;
->>         gid_t gid;
->>         int slave =3D -1;
->>
->> -       if (openpty(&pty_master, &pty_slave, pty_name, NULL, NULL) < 0) =
-{
->> -               fprintf(fp, "ERROR: openpty() failed with: %s.\n",
->> strerror(errno));
->> -               return -1;
->> -       }
->> -
->>         if ((gptr =3D getgrnam(pty_name)) !=3D 0) {
->>                 gid =3D gptr->gr_gid;
->>         } else {
->> @@ -384,9 +390,9 @@ setup_slave_pty(FILE *fp) {
->>         if ((slave =3D open(pty_name, O_RDWR)) =3D=3D -1) {
->>                 fprintf(fp, "ERROR: open() failed with: %s.\n",
->> strerror(errno));
->>         }
->> -       return (slave);
->> -}
->>
->> +       return slave;
->> +}
->>
->>  int
->>  run_ptests(struct ptest_list *head, const struct ptest_options opts,
->> @@ -406,16 +412,13 @@ run_ptests(struct ptest_list *head, const struct
->> ptest_options opts,
->>
->>         do
->>         {
->> -               if (isatty(0) && ioctl(0, TIOCNOTTY) =3D=3D -1) {
->> -                       fprintf(fp, "ERROR: Unable to detach from
->> controlling tty, %s\n", strerror(errno));
->> -               }
->> -
->> -
->>                 fprintf(fp, "START: %s\n", progname);
->>                 PTEST_LIST_ITERATE_START(head, p)
->>                         int pipefd_stdout[2] =3D {-1, -1};
->>                         int pipefd_stderr[2] =3D {-1, -1};
->> -                       int pgid =3D -1;
->> +                       int pty_master =3D -1;
->> +                       int pty_slave =3D -1;
->> +                       char pty_name[256] =3D {0};
->>
->>                         if (pipe2(pipefd_stdout, 0) =3D=3D -1) {
->>                                 rc =3D -1;
->> @@ -435,8 +438,9 @@ run_ptests(struct ptest_list *head, const struct
->> ptest_options opts,
->>                         }
->>                         dirname(ptest_dir);
->>
->> -                       if ((pgid =3D getpgid(0)) =3D=3D -1) {
->> -                               fprintf(fp, "ERROR: getpgid() failed,
->> %s\n", strerror(errno));
->>
->
-> This comes from Randy patch to ensure child tests are in the same process
-> group than the ptest-runner, 59381a64. Any specific reason to remove this=
-?.
->
-> See blow comments where pgid is used.
->
->
->
->> +                       if (setup_master_pty(&pty_master, &pty_slave,
->> pty_name, fp) < 0) {
->> +                               fprintf(fp, "ERROR: setup_master_pty
->> failed, %s\n", strerror(errno));
->> +                               break;
->>                         }
->>
->>                         pid_t child =3D fork();
->> @@ -447,25 +451,32 @@ run_ptests(struct ptest_list *head, const struct
->> ptest_options opts,
->>                         } else if (child =3D=3D 0) {
->>                                 int slave;
->>
->> -                               close(0);
->>                                 /* Close read ends of the pipe */
->>                                 do_close(&pipefd_stdout[PIPE_READ]);
->>                                 do_close(&pipefd_stderr[PIPE_READ]);
->> +                               do_close(&pty_master);
->>
->> -                               if ((slave =3D setup_slave_pty(fp)) < 0)=
- {
->> +                               if ((slave =3D setup_slave_pty(pty_name,
->> fp)) < 0) {
->>                                         fprintf(fp, "ERROR: could not
->> setup pty (%d).", slave);
->>                                 }
->> -                               if (setpgid(0,pgid) =3D=3D -1) {
->> -                                       fprintf(fp, "ERROR: setpgid()
->> failed, %s\n", strerror(errno));
->> -                               }
->>
-> The pgid is used to set child process to join the same progress group as
-> parent.
->
-> But next line,  we will make child as session leader,  then the child wil=
-l
-> also be in the new progress group.
->
-> So above setpgid actually not need.  Here is the process stat with
-> ptest-runner(without this patch):
->
-> root@qemux86-64:~# cat /proc/455/stat
-> 455 (ptest-runner) S 422 *455* 283 0 -1 4194304 109 0 0 0 0 2 0 0 20 0 1
-> 0 62009 2441216 352 18446744073709551615 94258154364928 94258154373585
-> 140722320232848 0 0 0 0 0 0 1 0 0 17 0 0 0 0 0 0 94258154384384
-> 94258154385424 94258154389504 140722320240155 140722320240178
-> 140722320240178 140722320240610 0
-> root@qemux86-64:~# cat /proc/456/stat
-> 456 (run-ptest) S 455 *456* 456 34817 456 4194560 242 0 0 0 0 0 0 0 20 0
-> 1 0 62065 3813376 640 18446744073709551615 94612400209920 94612400903225
-> 140724672843248 0 0 0 65536 4 65538 1 0 0 17 1 0 0 0 0 0 94612401150672
-> 94612401198372 94612401246208 140724672851446 140724672851491
-> 140724672851491 140724672851923 0
-> root@qemux86-64:~#
->
-> We can see,  although setpgid,  but finally,  we pgid of child will be th=
-e
-> child pid.
->
->
->>                                 if (setsid() =3D=3D  -1) {
->>                                         fprintf(fp, "ERROR: setsid()
->> failed, %s\n", strerror(errno));
->>                                 }
->>
->> -                               if (ioctl(0, TIOCSCTTY, NULL) =3D=3D -1)=
- {
->> +                               if (ioctl(slave, TIOCSCTTY, NULL) =3D=3D=
- -1) {
->>                                         fprintf(fp, "ERROR: Unable to
->> attach to controlling tty, %s\n", strerror(errno));
->>                                 }
->
-> +                               if (slave > 2) {
->> +                                       close(slave);
->> +                               }
->> +
->> +                               if (dup2(pty_slave, STDIN_FILENO) < 0) {
->> +                                       fprintf(fp, "ERROR: Unable to du=
-p
->> slave pty to stdin, %s\n", strerror(errno));
->> +                               }
->> +                               if (pty_slave > 2) {
->> +                                       close(pty_slave);
->> +                               }
->>
-> Which is the reason to make it twice?, and also closing with slave > 2.
->
-> first,  according  to current code logic,  the slave/pty_slave should
-> always > 2,  the if checking just for ensure it is.
->
-> pty_slave and slave are point to slave pty,  but they have different fd.
-> So I need to close them both after dup slave pty to stdin.
->
->
->
->>
->>                                 if (chdir(ptest_dir) =3D=3D -1) {
->>                                         fprintf(fp, "ERROR: Unable to
->> chdir(%s), %s\n", ptest_dir, strerror(errno));
->> @@ -481,10 +492,6 @@ run_ptests(struct ptest_list *head, const struct
->> ptest_options opts,
->>                                 do_close(&pipefd_stdout[PIPE_WRITE]);
->>                                 do_close(&pipefd_stderr[PIPE_WRITE]);
->>
->> -                               if (setpgid(child, pgid) =3D=3D -1) {
->> -                                       fprintf(fp, "ERROR: setpgid()
->> failed, %s\n", strerror(errno));
->> -                               }
->> -
->>
-> Removal comment up.
->
-> Same as what I comments above,  child is in another session,  so this is
-> not needed.
->
->
-> Regards
->
-> Changqing
->
->
->
->>                                 time_t start_time=3D time(NULL);
->>                                 fprintf(fp, "%s\n", get_stime(stime,
->> GET_STIME_BUF_SIZE, start_time));
->>                                 fprintf(fp, "BEGIN: %s\n", ptest_dir);
->> @@ -608,6 +615,8 @@ run_ptests(struct ptest_list *head, const struct
->> ptest_options opts,
->>                         do_close(&pipefd_stdout[PIPE_WRITE]);
->>                         do_close(&pipefd_stderr[PIPE_READ]);
->>                         do_close(&pipefd_stderr[PIPE_WRITE]);
->> +                       do_close(&pty_master);
->> +                       do_close(&pty_slave);
->>
->>                         fflush(fp);
->>                         fflush(fp_stderr);
->> --
->> 2.25.1
->>
->>
+"""
+rk_generate_env() {
+     :
+}
 
---000000000000e0ea0e06178051be
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+rk_generate_env:rk-u-boot-env() {
+    [...]
+}
 
-<div dir=3D"ltr"><div dir=3D"ltr">Hi Changqing,<div><br></div><div>I ran th=
-e test suite and it looks=C2=A0good so far.=C2=A0</div><div>I will run more=
- tests before pushing this=C2=A0+ minor=C2=A0changes may be.</div><div><br>=
-</div><div>Thanks!,</div><div>Anibal</div></div><br><div class=3D"gmail_quo=
-te"><div dir=3D"ltr" class=3D"gmail_attr">On Thu, Apr 25, 2024 at 7:22=E2=
-=80=AFPM Changqing Li &lt;<a href=3D"mailto:changqing.li@windriver.com">cha=
-ngqing.li@windriver.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_=
-quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,=
-204);padding-left:1ex"><u></u>
+do_compile[postfuncs] += "rk_generate_env;"
+"""
 
- =20
-  <div>
-    <p><br>
-    </p>
-    <div>On 4/26/24 05:59, Anibal Limon wrote:<br>
-    </div>
-    <blockquote type=3D"cite">
-     =20
-      <strong>
-      </strong>
-      <div style=3D"border:1pt solid rgb(156,101,0);padding:2pt;background:=
-rgb(252,252,3)"><strong><u></u><span style=3D"font-size:11pt;color:rgb(0,0,=
-0)">CAUTION: This email
-              comes from a non Wind River email account!</span><u></u></str=
-ong><br>
-        <u></u><span style=3D"font-size:10pt;color:rgb(0,0,0)">Do not click=
- links or open
-            attachments unless you recognize the sender and know the
-            content is safe.</span><br>
-        <u></u></div>
-      <div>
-        <div dir=3D"ltr">
-          <div dir=3D"ltr">Comments below,</div>
-          <div dir=3D"ltr"><br>
-          </div>
-          <div>Thanks!,</div>
-          <div>Anibal</div>
-          <br>
-          <div class=3D"gmail_quote">
-            <div dir=3D"ltr" class=3D"gmail_attr">On Wed, Apr 24, 2024 at
-              7:47=E2=80=AFPM &lt;<a href=3D"mailto:changqing.li@windriver.=
-com" target=3D"_blank">changqing.li@windriver.com</a>&gt;
-              wrote:<br>
-            </div>
-            <blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0=
-.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">
-              From: Changqing Li &lt;<a href=3D"mailto:changqing.li@windriv=
-er.com" target=3D"_blank">changqing.li@windriver.com</a>&gt;<br>
-              <br>
-              subcase test_tevent_trace will fail if run libtevent-ptest
-              with<br>
-              ptest-runner, but if run directly, the subcase can
-              successfully.<br>
-              <br>
-              The failure related to how pty is setup:<br>
-              In child progress, after close(0), the master pty will use
-              0 as file<br>
-              descriptors, and then master pty is attched as child
-              stdin, and slave<br>
-              pty will also be closed by func close_fds. This will make
-              epoll_wait<br>
-              will get signal EPOLLHUP, then test failed.<br>
-              <br>
-              Refer:<br>
-              epoll_wait(3, [{events=3DEPOLLOUT|EPOLLHUP,
-              data=3D{u32=3D2625883648, u64=3D94496201362944}}], 1, 30000) =
-=3D 1<br>
-              <br>
-              lrwx------ 1 root root 64 Apr 23 01:08 0 -&gt; /dev/ptmx<br>
-              l-wx------ 1 root root 64 Apr 23 01:08 1 -&gt;
-              &#39;pipe:[4261]&#39;<br>
-              l-wx------ 1 root root 64 Apr 23 01:08 2 -&gt;
-              &#39;pipe:[4261]&#39;<br>
-              <br>
-              To fix this:<br>
-              1. Open master pty in parent process<br>
-              2. Attach slave pty to child stdin<br>
-              3. Remove detaching controlling tty from parent process<br>
-              4. Remove seting process groupid for child process<br>
-              <br>
-              Refer:<br>
-              lrwx------ 1 root root 64 Apr 23 07:35 0 -&gt; /dev/pts/0<br>
-              l-wx------ 1 root root 64 Apr 23 07:35 1 -&gt;
-              &#39;pipe:[37001]&#39;<br>
-              l-wx------ 1 root root 64 Apr 23 07:35 2 -&gt;
-              &#39;pipe:[37001]&#39;<br>
-              <br>
-              Signed-off-by: Changqing Li &lt;<a href=3D"mailto:changqing.l=
-i@windriver.com" target=3D"_blank">changqing.li@windriver.com</a>&gt;<br>
-              ---<br>
-              =C2=A0utils.c | 67
-              ++++++++++++++++++++++++++++++++-------------------------<br>
-              =C2=A01 file changed, 38 insertions(+), 29 deletions(-)<br>
-              <br>
-              diff --git a/utils.c b/utils.c<br>
-              index 46918f4..6b3a492 100644<br>
-              --- a/utils.c<br>
-              +++ b/utils.c<br>
-              @@ -341,25 +341,31 @@ run_child(char *run_ptest, int
-              fd_stdout, int fd_stderr)<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 /* exit(1); not needed? */<br>
-              =C2=A0}<br>
-              <br>
-              +/* Returns an integer.<br>
-              + * If it returns &lt; 0, an error has occurred.<br>
-              + * Otherwise, return 0 means successfully<br>
-              + * fp should be writable, likely stdout/err.<br>
-              + */<br>
-              +static int<br>
-              +setup_master_pty(int* pty_master, int* pty_slave,
-              char*pty_name, FILE *fp) {<br>
-              +=C2=A0 =C2=A0 =C2=A0 =C2=A0if (openpty(pty_master, pty_slave=
-, pty_name, NULL,
-              NULL) &lt; 0) {<br>
-              +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0fprin=
-tf(fp, &quot;ERROR: openpty() failed with:
-              %s.\n&quot;, strerror(errno));<br>
-              +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0retur=
-n -1;<br>
-              +=C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-              +=C2=A0 =C2=A0 =C2=A0 =C2=A0return 0;<br>
-              +}<br>
-              +<br>
-              =C2=A0/* Returns an integer file descriptor.<br>
-              =C2=A0 * If it returns &lt; 0, an error has occurred.<br>
-              =C2=A0 * Otherwise, it has returned the slave pty file
-              descriptor.<br>
-              =C2=A0 * fp should be writable, likely stdout/err.<br>
-              =C2=A0 */<br>
-              =C2=A0static int<br>
-              -setup_slave_pty(FILE *fp) {<br>
-              -=C2=A0 =C2=A0 =C2=A0 =C2=A0int pty_master =3D -1;<br>
-              -=C2=A0 =C2=A0 =C2=A0 =C2=A0int pty_slave =3D -1;<br>
-              -=C2=A0 =C2=A0 =C2=A0 =C2=A0char pty_name[256];<br>
-              +setup_slave_pty(char* pty_name, FILE *fp) {<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 struct group *gptr;<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 gid_t gid;<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 int slave =3D -1;<br>
-              <br>
-              -=C2=A0 =C2=A0 =C2=A0 =C2=A0if (openpty(&amp;pty_master, &amp=
-;pty_slave,
-              pty_name, NULL, NULL) &lt; 0) {<br>
-              -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0fprin=
-tf(fp, &quot;ERROR: openpty() failed with:
-              %s.\n&quot;, strerror(errno));<br>
-              -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0retur=
-n -1;<br>
-              -=C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-              -<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 if ((gptr =3D getgrnam(pty_name))=
- !=3D 0) {<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 gid =
-=3D gptr-&gt;gr_gid;<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 } else {<br>
-              @@ -384,9 +390,9 @@ setup_slave_pty(FILE *fp) {<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 if ((slave =3D open(pty_name, O_R=
-DWR)) =3D=3D -1) {<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 fprin=
-tf(fp, &quot;ERROR: open() failed with:
-              %s.\n&quot;, strerror(errno));<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 }<br>
-              -=C2=A0 =C2=A0 =C2=A0 =C2=A0return (slave);<br>
-              -}<br>
-              <br>
-              +=C2=A0 =C2=A0 =C2=A0 =C2=A0return slave;<br>
-              +}<br>
-              <br>
-              =C2=A0int<br>
-              =C2=A0run_ptests(struct ptest_list *head, const struct
-              ptest_options opts,<br>
-              @@ -406,16 +412,13 @@ run_ptests(struct ptest_list *head,
-              const struct ptest_options opts,<br>
-              <br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 do<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 {<br>
-              -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (i=
-satty(0) &amp;&amp; ioctl(0,
-              TIOCNOTTY) =3D=3D -1) {<br>
-              -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0fprintf(fp, &quot;ERROR: Unable to
-              detach from controlling tty, %s\n&quot;, strerror(errno));<br=
->
-              -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-              -<br>
-              -<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 fprin=
-tf(fp, &quot;START: %s\n&quot;, progname);<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 PTEST=
-_LIST_ITERATE_START(head, p)<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 int pipefd_stdout[2] =3D {-1, -1};<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 int pipefd_stderr[2] =3D {-1, -1};<br>
-              -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0int pgid =3D -1;<br>
-              +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0int pty_master =3D -1;<br>
-              +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0int pty_slave =3D -1;<br>
-              +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0char pty_name[256] =3D {0};<br>
-              <br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 if (pipe2(pipefd_stdout, 0) =3D=3D -1)
-              {<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 rc =3D -1;<br>
-              @@ -435,8 +438,9 @@ run_ptests(struct ptest_list *head,
-              const struct ptest_options opts,<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 }<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 dirname(ptest_dir);<br>
-              <br>
-              -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0if ((pgid =3D getpgid(0)) =3D=3D -1) {<br>
-              -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0fprintf(fp, &quot;ERROR=
-:
-              getpgid() failed, %s\n&quot;, strerror(errno));<br>
-            </blockquote>
-            <div><br>
-            </div>
-            <div>This comes from Randy patch to ensure child tests are
-              in the same process group than the ptest-runner,=C2=A059381a6=
-4.
-              Any specific reason to remove this?. <br>
-            </div>
-          </div>
-        </div>
-      </div>
-    </blockquote>
-    See blow comments where pgid is used.<br>
-    <blockquote type=3D"cite">
-      <div>
-        <div dir=3D"ltr">
-          <div class=3D"gmail_quote">
-            <div>=C2=A0</div>
-            <blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0=
-.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">
-              +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0if
-              (setup_master_pty(&amp;pty_master, &amp;pty_slave,
-              pty_name, fp) &lt; 0) {<br>
-              +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0fprintf(fp, &quot;ERROR=
-:
-              setup_master_pty failed, %s\n&quot;, strerror(errno));<br>
-              +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0break;<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 }<br>
-              <br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 pid_t child =3D fork();<br>
-              @@ -447,25 +451,32 @@ run_ptests(struct ptest_list *head,
-              const struct ptest_options opts,<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 } else if (child =3D=3D 0) {<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 int slave;<br>
-              <br>
-              -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0close(0);<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 /* Close read ends of =
-the
-              pipe */<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0
-              do_close(&amp;pipefd_stdout[PIPE_READ]);<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0
-              do_close(&amp;pipefd_stderr[PIPE_READ]);<br>
-              +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0do_close(&amp;pty_maste=
-r);<br>
-              <br>
-              -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if ((slave =3D
-              setup_slave_pty(fp)) &lt; 0) {<br>
-              +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if ((slave =3D
-              setup_slave_pty(pty_name, fp)) &lt; 0) {<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 fprintf(fp,
-              &quot;ERROR: could not setup pty (%d).&quot;, slave);<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 }<br>
-              -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (setpgid(0,pgid) =3D=
-=3D -1)
-              {<br>
-              -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0fprintf(fp,
-              &quot;ERROR: setpgid() failed, %s\n&quot;, strerror(errno));<=
-br>
-              -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-            </blockquote>
-          </div>
-        </div>
-      </div>
-    </blockquote>
-    <p>The pgid is used to set child process to join the same progress
-      group as parent.</p>
-    <p>But next line,=C2=A0 we will make child as session leader,=C2=A0 the=
-n the
-      child will also be in the new progress group.=C2=A0 <br>
-    </p>
-    <p>So above setpgid actually not need.=C2=A0 Here is the process stat
-      with ptest-runner(without this patch):</p>
-    <p>root@qemux86-64:~# cat /proc/455/stat<br>
-      455 (ptest-runner) S 422 <b>455</b> 283 0 -1 4194304 109 0 0 0 0
-      2 0 0 20 0 1 0 62009 2441216 352 18446744073709551615
-      94258154364928 94258154373585 140722320232848 0 0 0 0 0 0 1 0 0 17
-      0 0 0 0 0 0 94258154384384 94258154385424 94258154389504
-      140722320240155 140722320240178 140722320240178 140722320240610 0<br>
-      root@qemux86-64:~# cat /proc/456/stat<br>
-      456 (run-ptest) S 455 <b>456</b> 456 34817 456 4194560 242 0 0 0
-      0 0 0 0 20 0 1 0 62065 3813376 640 18446744073709551615
-      94612400209920 94612400903225 140724672843248 0 0 0 65536 4 65538
-      1 0 0 17 1 0 0 0 0 0 94612401150672 94612401198372 94612401246208
-      140724672851446 140724672851491 140724672851491 140724672851923 0<br>
-      root@qemux86-64:~# <br>
-    </p>
-    <p>We can see,=C2=A0 although=C2=A0setpgid,=C2=A0 but finally,=C2=A0 we=
- pgid of child
-      will be the child pid. </p>
-    <blockquote type=3D"cite">
-      <div>
-        <div dir=3D"ltr">
-          <div class=3D"gmail_quote">
-            <blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0=
-.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">
-              <br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (setsid() =3D=3D=C2=
-=A0 -1) {<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 fprintf(fp,
-              &quot;ERROR: setsid() failed, %s\n&quot;, strerror(errno));<b=
-r>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 }<br>
-              <br>
-              -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (ioctl(0, TIOCSCTTY,
-              NULL) =3D=3D -1) {<br>
-              +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (ioctl(slave,
-              TIOCSCTTY, NULL) =3D=3D -1) {<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 fprintf(fp,
-              &quot;ERROR: Unable to attach to controlling tty, %s\n&quot;,
-              strerror(errno));<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 }=C2=A0</blockquote>
-            <blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0=
-.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">
-              +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (slave &gt; 2) {<br>
-              +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0close(slave);<br>
-              +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-              +<br>
-              +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (dup2(pty_slave,
-              STDIN_FILENO) &lt; 0) {<br>
-              +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0fprintf(fp,
-              &quot;ERROR: Unable to dup slave pty to stdin, %s\n&quot;,
-              strerror(errno));<br>
-              +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-              +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (pty_slave &gt; 2) {=
-<br>
-              +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0close(pty_slave);<br>
-              +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-            </blockquote>
-            <div>Which is the reason to make it twice?, and also closing
-              with slave &gt; 2.<br>
-            </div>
-          </div>
-        </div>
-      </div>
-    </blockquote>
-    <p>first,=C2=A0 according=C2=A0 to current code logic,=C2=A0 the slave/=
-pty_slave
-      should always &gt; 2,=C2=A0 the if checking just for ensure it is.</p=
->
-    <p>pty_slave and slave are point to slave pty,=C2=A0 but they have
-      different fd.=C2=A0 So I need to close them both after dup slave pty =
-to
-      stdin.</p>
-    <blockquote type=3D"cite">
-      <div>
-        <div dir=3D"ltr">
-          <div class=3D"gmail_quote">
-            <div>
-            </div>
-            <div>=C2=A0</div>
-            <blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0=
-.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">
-              <br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (chdir(ptest_dir) =
-=3D=3D
-              -1) {<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 fprintf(fp,
-              &quot;ERROR: Unable to chdir(%s), %s\n&quot;, ptest_dir,
-              strerror(errno));<br>
-              @@ -481,10 +492,6 @@ run_ptests(struct ptest_list *head,
-              const struct ptest_options opts,<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0
-              do_close(&amp;pipefd_stdout[PIPE_WRITE]);<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0
-              do_close(&amp;pipefd_stderr[PIPE_WRITE]);<br>
-              <br>
-              -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (setpgid(child, pgid=
-)
-              =3D=3D -1) {<br>
-              -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0fprintf(fp,
-              &quot;ERROR: setpgid() failed, %s\n&quot;, strerror(errno));<=
-br>
-              -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-              -<br>
-            </blockquote>
-            <div>Removal comment up.</div>
-          </div>
-        </div>
-      </div>
-    </blockquote>
-    <p>Same as what I comments above,=C2=A0 child is in another session,=C2=
-=A0 so
-      this is not needed.</p>
-    <p><br>
-    </p>
-    <p>Regards</p>
-    <p>Changqing<br>
-    </p>
-    <blockquote type=3D"cite">
-      <div>
-        <div dir=3D"ltr">
-          <div class=3D"gmail_quote">
-            <div>=C2=A0</div>
-            <blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0=
-.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 time_t start_time=3D
-              time(NULL);<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 fprintf(fp, &quot;%s\n=
-&quot;,
-              get_stime(stime, GET_STIME_BUF_SIZE, start_time));<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 fprintf(fp, &quot;BEGI=
-N: %s\n&quot;,
-              ptest_dir);<br>
-              @@ -608,6 +615,8 @@ run_ptests(struct ptest_list *head,
-              const struct ptest_options opts,<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0
-              do_close(&amp;pipefd_stdout[PIPE_WRITE]);<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0
-              do_close(&amp;pipefd_stderr[PIPE_READ]);<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0
-              do_close(&amp;pipefd_stderr[PIPE_WRITE]);<br>
-              +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0do_close(&amp;pty_master);<br>
-              +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0do_close(&amp;pty_slave);<br>
-              <br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 fflush(fp);<br>
-              =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 fflush(fp_stderr);<br>
-              -- <br>
-              2.25.1<br>
-              <br>
-            </blockquote>
-          </div>
-        </div>
-      </div>
-    </blockquote>
-  </div>
+Which is a bit more readable for the do_compile[postfuncs] part. Up to you.
 
-</blockquote></div></div>
+> +
+> +do_deploy:append:rk-u-boot-env() {
+> +	if [ -f ${WORKDIR}/u-boot.env ]; then
 
---000000000000e0ea0e06178051be--
+This is an issue. If one builds with RK_IMAGE_INCLUDES_UBOOT_ENV = 1 and 
+then RK_IMAGE_INCLUDES_UBOOT_ENV = 0, the file will still be in WORKDIR 
+(because it is never cleaned). I suggest to test for 
+RK_IMAGE_INCLUDES_UBOOT_ENV = true/1/yes/whatever instead (or in addition).
+
+I am not entirely sure the migration to UNPACKDIR would fix this 
+(haven't read anything about the consequences of it, e.g. I'm not sure 
+it's cleaned by any task). I'm also a bit puzzled by master still having 
+some bits using WORKDIR in the u-boot recipe. Not sure what's going on here.
+
+> +		install -d ${DEPLOYDIR}
+> +		install -m 0644 ${WORKDIR}/u-boot.env ${DEPLOYDIR}
+> +	fi
+> +}
+
+We probably need to adapt this now that master uses UNPACKDIR instead of 
+WORKDIR. This will require us to fork a branch for scarthgap now, which 
+still uses WORKDIR but for the master branch, we need to use UNPACKDIR here.
+
+Outside from the blocker in do_deploy, and the questions around 
+UNPACKDIR/WORKDIR, I think it's looking good right now?
+
+Cheers,
+Quentin
 
