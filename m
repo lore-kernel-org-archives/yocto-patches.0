@@ -1,312 +1,102 @@
-Return-Path: <mingli.yu@eng.windriver.com>
+Return-Path: <richard.purdie@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53452C10F1A
-	for <webhook@archiver.kernel.org>; Thu,  9 May 2024 05:40:58 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
- by mx.groups.io with SMTP id smtpd.web11.3410.1715233251908372254
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC4EEC10F1A
+	for <webhook@archiver.kernel.org>; Thu,  9 May 2024 10:53:09 +0000 (UTC)
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+ by mx.groups.io with SMTP id smtpd.web10.7458.1715251981023179625
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 08 May 2024 22:40:51 -0700
+ Thu, 09 May 2024 03:53:01 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.166.238, mailfrom: prvs=5859e85daf=mingli.yu@windriver.com)
-Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4495Ud3t021935;
-	Wed, 8 May 2024 22:39:50 -0700
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2101.outbound.protection.outlook.com [104.47.70.101])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 3xyse1hfvb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 08 May 2024 22:39:49 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=H1HMDQkdalu6ahA7E2FiBOXVP3YaG2h1Oq81rNXsFnjfMnzlRkc9nU/xPdZLy2agwOZOXjdme5+h5KJ5gyWK07DulUd/QFq5israwbbMmvHXvmjCGTxzdvTdBvARF68qXuVVvRequ4H696GOaTWA0M0iaGxlG4J+X6/mFbM3XD9R1KxfOAOd0qHJIZY5t0iFxeBWxU2JsVzImqFVVvMAJQPr8GXkb7u205EcS6KYwaiy+/XKtPVUjVTv99P3dEJTcCrK7YLCdoEYn2gUe92KA3QcMpHAyMfjuxqxxWy+Jk9+4WbgzCWZzOqEgxWDofNJi9eZZOk07z9utDWmAj9nBA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MSZd8/m47zf1mEGRazn7AxDHfH+c5qCidf45BsIAbNs=;
- b=CoDA0cOGnPgSohIjzjhQ/a/gsRRbPfZDotUfmV8XDlMaWr8Oyv3Xr1zPzxKXYX8arP+YUYZXuPxv6rnRyJXT7DIx3Vi9GwP4Sk1N0xQpFAl8ZVwuOxugdQ0wcdFx49Kt1XQGRBOk1g4Lyy3VjipPNDxNJmY9wxJxMsVOAVVuhBysIMVt9i/CdnzlulIs/iCD0UHf223quJlJVfeUnofbhP1pQhcPOj9N/wlSAgiF+Tg74Khaj7yJmQ56O4hAcv6FxLPTIfOGS2W7/jm92nGO7Z/OD27Nd0vAuorm9AFaRKidToEC8iH3lKUP5uib0o4XSx9EELFxIrwyX1i79LbQ2A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=windriver.com; dmarc=pass action=none
- header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
-Received: from CO1PR11MB5009.namprd11.prod.outlook.com (2603:10b6:303:9e::11)
- by SN7PR11MB7509.namprd11.prod.outlook.com (2603:10b6:806:346::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.46; Thu, 9 May
- 2024 05:39:39 +0000
-Received: from CO1PR11MB5009.namprd11.prod.outlook.com
- ([fe80::b792:3207:f838:98a1]) by CO1PR11MB5009.namprd11.prod.outlook.com
- ([fe80::b792:3207:f838:98a1%4]) with mapi id 15.20.7544.046; Thu, 9 May 2024
- 05:39:38 +0000
-Message-ID: <41fdcf95-8db0-44af-b7a4-56e9ec078f00@windriver.com>
-Date: Thu, 9 May 2024 13:39:31 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [yocto-kernel-cache][PATCH] preempt-rt: add bfp
- configs by default
-Content-Language: en-US
-To: yocto-patches@lists.yoctoproject.org,
-        Bruce Ashfield <bruce.ashfield@gmail.com>
-Cc: Kevin Hao <kexin.hao@windriver.com>, "He, Zhe" <zhe.he@windriver.com>
-References: <20240508070412.2939015-1-mingli.yu@windriver.com>
- <Zju3bQe0KEoRZcpH@gmail.com>
- <7aedf47d-3c8b-4627-b533-3cff6ceacc77@windriver.com>
- <CADkTA4P4vuunbmNc8O712pD9=uR=fDFcXwuwG129vd0yF-4VoQ@mail.gmail.com>
-From: "Yu, Mingli" <mingli.yu@windriver.com>
-In-Reply-To: <CADkTA4P4vuunbmNc8O712pD9=uR=fDFcXwuwG129vd0yF-4VoQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-ClientProxiedBy: SI2P153CA0032.APCP153.PROD.OUTLOOK.COM
- (2603:1096:4:190::23) To CO1PR11MB5009.namprd11.prod.outlook.com
- (2603:10b6:303:9e::11)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PR11MB5009:EE_|SN7PR11MB7509:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9de208b0-965c-4022-ee35-08dc6fea6ac9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|366007|376005;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?QVp4cUZxYlNuUTFUa0p6NVNITDBzZ0MwK2hHQUNxQUF3dklJRHcrRTlZOW5S?=
- =?utf-8?B?UjdJNVlTTXc3Q1NUM2FWSGZDTDhFdDJFQWpwdjRQeHJUTUtNdWVaamhjQlps?=
- =?utf-8?B?UHhOZWpvSXhyR01uMDdIY0RlSHJuR2lJRGgwZUJ6d0dFZ0pxWTIxV1VzMUE2?=
- =?utf-8?B?bVBhakpJZHpBQ25MMEwrRDJrekRXeGI0b1M2L3NaSFc5eHkvaEp3NDh2a1dy?=
- =?utf-8?B?b2NPQ1RTQlN4R1dEZDFyWU9aREVBQnkvK3F4cWhVSE9XWDVSWmhGc1RqdCtZ?=
- =?utf-8?B?WjBaTy94Z0o0SFIxVU93V1g3dUR0Yjd4RUYzMER3MGtwdlBJS1dhT1lnNW5a?=
- =?utf-8?B?RDlveGJnWjFJanRPSGFPaVBEMG5WMC9tUVRVcFBsc01FYWkrSmY3eG5peDVt?=
- =?utf-8?B?MlJpZHhrSFIwQkU4eUJMc0N2akt4cXJ4dHl3KzZ1QWtiSXlzUzJFNnF5eTk5?=
- =?utf-8?B?VDFJblAyS3FrTFkveDV3VzVmS1ZDQkd5c2V2aTBpVXZxMzFFTmdlOE9XM0Vo?=
- =?utf-8?B?MFlxbjB6MTR1MGtubWJITVVUUU1TNGE0OTdFWnRra1E5RndQVlFaK1VCaG1v?=
- =?utf-8?B?blpNbjFlZjVFdHBDZlU1TkVPY1N4ekJyekVrNFVpcVkxYWhLWXo2cWJQazJw?=
- =?utf-8?B?K2s0WWgzUThGd1laeEU5QnVZNjUwMWpOOTBTR1JCWGRrL0orSzk4MStBc21k?=
- =?utf-8?B?ZCtKWFlLejcwRmlDZ0taa1lEUWJwTzRFWjlVM3ltZnM5WVJkWTExeXpOVkxM?=
- =?utf-8?B?Z3hUa0IzSzdNTllocFRCZUFueDNFeU1zWVpKWUxKcnBMVXUyTnBlUDJhR3Jp?=
- =?utf-8?B?WUt5clpTMnpKM0FHVEN2ZGgwTVVjM0RRbzJ1Mjg3QjZEbU00OXg4T2tWTXFS?=
- =?utf-8?B?d212bmhldmdUWGtaSWJFWU5yNHV3dTE2bVNyT25hV3lUaUVPbDBPUnM3SGdl?=
- =?utf-8?B?U2t6L21tbnNlUEZ4cmN3VE80bmk2TVNLTGR3VkFMUTQ1K1V5MVpRa1ZLSjJC?=
- =?utf-8?B?bWF0V3R3Uk52WHdHZ05URTFRTUlLRTJoZHNyTzk5VVhNL1FrNHFMYjBHbXBS?=
- =?utf-8?B?em0rZVg1aVJ3T3FYVU0vbGdZU3pzb01YK0ZKUTVsdGh4aVcvZDZPNFliTUVj?=
- =?utf-8?B?NXBUVlYzWG8wcWFrcDNwd3pXeXZ6TGJjSEVqN05sMVFPZHZybmJKZXovUSt0?=
- =?utf-8?B?eU9wV2c0amtxNFhXSkRYRmZuOUxTTlUzZmZrbERPSzdCNUl1c1JTMi9zT0Zz?=
- =?utf-8?B?UXJjL2dRVklZUFdJdnZsVFpkK3pBNEViZjFQOTBNT0syaUxpZmNRQm50Sisv?=
- =?utf-8?B?UmFsbjBuOXhrMGJ6aU5qdUdGOXJJNzl2Wm5NYmV0dW5BOW1BWXhJN2ZUT1ZC?=
- =?utf-8?B?Y0ppYkQ0aUNKeCtGTDFTVFhENTk0MGFNRFhyMEJ0OEtKNUNab2xFTFQzVXpE?=
- =?utf-8?B?aXdBQmdHOWJqYmJ4K1VLWGladVpNWG05NGlTNUpIUnJRY24xeFdaT3BqU3FY?=
- =?utf-8?B?Tno2dXFXVERoaUdkbGxHbkVVa2tRcnNsU0FOdHFMaHJwNDhBOGluSWw2RkVp?=
- =?utf-8?B?dEt0MHhLdDhiZysvemtOR2dtVWQyUTRoYjQ5YzN1d2VPYzlhY3Jkamk2R1ps?=
- =?utf-8?B?VG5aamZUNDhrNGpZK0F5N2pjK09ERXc9PQ==?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5009.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?Z2QvcjJuQ2MyN0h6SkVoR2c1N0NoaTZQU3VEYTFOWFNCQWt3VDVKR0FCcXRJ?=
- =?utf-8?B?WUYyL2FCZWNpZC8raHVSSHhKSUd6M2kvQ0JvaDRLVlMzZ2ZkcStFcE1ySTEz?=
- =?utf-8?B?YmJGR1FiK2NUN2J2cEt1NllaamhlQS8vSnhnemtIeUsrM3BZYmJEMHBzU25m?=
- =?utf-8?B?dzh3RGc0OVREVEZZVlRpQ1pZMjhwTnY2WTZXYU50U2RJd0NsSTVteERGbHEr?=
- =?utf-8?B?WHJyT05zMUZ2ZnlUNVZCZ2FqaFR4Q2IyMzRidllNZTVQdldVWVY3MnRSZjFZ?=
- =?utf-8?B?dmtsakFpR21TR2RyOVJPUW5mZ2FlL2FWazdoaGdTUUdEK3Exb3plemI5WFJy?=
- =?utf-8?B?dHlzV2U1RThraUNOa3AwRThSMm1hTkorRmV1NmJma3BjQllleGJSSXg0NEho?=
- =?utf-8?B?blA1N253bFdRd3lZejhxcXpkc0RDTm1MTmRrS1M3eDMwOTljUlBFYXlHS3JU?=
- =?utf-8?B?d0lER3lJb0cyU1NuVGhwdk81STJ2cWhZRGlrcWUzNThpclVpVlBlaTNlWEtw?=
- =?utf-8?B?Vkl5aUJGaUs4VjVzTFRGeWsyWndKSzloYmR3SW9QTjh3N0RRb0dlUVdSRitH?=
- =?utf-8?B?emV5Ti9rWXFIaUFZb3VxRFlPaytyQkFCK2xEMGxIQktXQVJVeUlGU2gzSito?=
- =?utf-8?B?cnNPN1BLbVlDa240NFJVR3BvdUFIYzRyWkIwc2puRS9xbUd2TkEwcE85aGd0?=
- =?utf-8?B?QTF5V1A4NjNYYU0wKzZkMWxIbnFwdnpBc1dTOWRtTlYyYXZhY2hTd3pyOXZG?=
- =?utf-8?B?di9xUWtaK3hOUWZGeTd0bTFBRzRYZDZKcjdhU0FXNlRDc2pFcnFOczFpUlFa?=
- =?utf-8?B?SXNvS3UvbkZWZGNMTml6VG94R09tdTFhaGJGTTFvSEF2QTJaUmFTcDEyLzNJ?=
- =?utf-8?B?OU1jYjFDYWdQYWY2amxJWm1QdDhGZm5HdVRrMlpqVlhGaUpjK3cwc252VDIr?=
- =?utf-8?B?eTZCZHFTNWJSUDJSeVBwQy8xd3k4ZENHQkw0K01KVTk4Rloxam1SRGJjQjhS?=
- =?utf-8?B?K3NmdHdrS1Z6YlJjL1lnMmdCMXM3UlJTMlp3M0lGVWRhL1lBQmtZNWxxN1dl?=
- =?utf-8?B?L2JMak4vWXN4UUpKeUIwUmhLcHEyUDIxYjdaQmZpQ0lCN3ZMTmR4a1M2RnYx?=
- =?utf-8?B?NUtyZy91VjVRcllISE1VVEp2cTcxMWJmbVUveTVUUUxWdmwyVEdYb3VwUFVk?=
- =?utf-8?B?L3Z5WE1adTZlY3crVzNGZElQSDdMek5FYk9uclRlckp2cUdSMW5hUStub2VJ?=
- =?utf-8?B?RkVOeXJ3VXUyZysrWjM3cVZIaFVyREVaZ3NweVRoQnJrcVFNS1JUTUlqRzg5?=
- =?utf-8?B?L2hIMXEyemxwMk0rQWVqSjVudnhmT2dzU1p2ZmEwbFZHVm55WHVFWXphRnRZ?=
- =?utf-8?B?MDRJbjJTcWVGRWx1cEh6WFZ2TlU5QXpIa0U4MWxLZWpTOTBGcFVpdUgxUHJQ?=
- =?utf-8?B?Ry9qRlpBTnFZQmR2Si9kemswR000M0NWK2hISkJIdHM2cU92L0ZaY1prSmY5?=
- =?utf-8?B?NUs3NWYvdjdOanQyUml5U0pUYkJNZFdTcFNqZWJCazZ5eFp2SlBJcDN0Qjgz?=
- =?utf-8?B?c3hsODhhZFF1UEQ4c0JiaGxCa0RVZFhkZ0FBNW0vaGUvdncvcHlIeXE1TXkz?=
- =?utf-8?B?MGpTSFVxeEJMckZNYTdoMkJWYjA3bW9Ub1I1VFZGTHlhb1dmTGM4VTk2WVlG?=
- =?utf-8?B?dm1Sd3JMUGQzSzFGYVYxdWJXa2ljZldUTVZudDBIdEk5bWVTenRCbFFhV2lS?=
- =?utf-8?B?bW1GWGtVY1h1b0t5VldtMXRZTVVCMW1BZVpOTFZrdytSN0RGV1pqeWE5S2ZM?=
- =?utf-8?B?N3ZJTUwvd25IdUZueWtlNm9iNVFQUmtFMGxIUnZuOGZQMVRsbDhHdE1YNE1l?=
- =?utf-8?B?eHdQSlZZVWhiQ3NqNSsvVUlZcTRkczJ0WFAvQUN0ZVRuWjd1K1BWQ1VQYkZu?=
- =?utf-8?B?TTdPc3lsZ1NVRVR2R2Z2NEdGVS9CcmVTQkxqTjlLQ3pBeFpGaFJoNDYwa2FO?=
- =?utf-8?B?WHRGeWMvSjZkdVk4N3RiSjNsV1NaT0tTejU1ZjdEUjlCTmxTZExNNkJmZ0RI?=
- =?utf-8?B?V0QxOHIzdmZtS2VxZzBMYVMrUURUd3IrbEl5YmpkempzUTVBTmVyd2J5bUNx?=
- =?utf-8?Q?TSrJnDvwfF9bCitSkoWPkZzVn?=
-X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9de208b0-965c-4022-ee35-08dc6fea6ac9
-X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5009.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2024 05:39:38.7341
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CuKWhUoqDnCRS5CI+3KmH4kvcsvjrdHR6QUfvfPovrjtTsCbJH+yXFKtxOg/MeIwU9q3LGUc9yJPGxeSro7niQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB7509
-X-Proofpoint-GUID: 5P_H8T6Ur8BSGXnNj27amnzD7le_Xwic
-X-Proofpoint-ORIG-GUID: 5P_H8T6Ur8BSGXnNj27amnzD7le_Xwic
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-09_02,2024-05-08_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 malwarescore=0
- bulkscore=0 impostorscore=0 clxscore=1015 lowpriorityscore=0 spamscore=0
- phishscore=0 mlxlogscore=999 priorityscore=1501 mlxscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405010000
- definitions=main-2405090036
+ dkim=pass header.i=@linuxfoundation.org header.s=google header.b=CWwtdeJf;
+ spf=pass (domain: linuxfoundation.org, ip: 209.85.128.52, mailfrom: richard.purdie@linuxfoundation.org)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-41b7a26326eso5354335e9.3
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 09 May 2024 03:53:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1715251979; x=1715856779; darn=lists.yoctoproject.org;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=fchQkwpQKy+G8gvCxlwkGWcBh6ZCKFQubVMTfesa7hs=;
+        b=CWwtdeJfKjSjqvbkay82a3X5IBwyWxJGfxRmLD90Fskczps/0jGr5Zit0hkOJvkEZ4
+         lEpxXfhmzTjdVXdbRSL0H7xrPU6dEUWp1wnPrYCWH4nPitv/yXtQPKu4vaCNAhru0BxM
+         nyT8eLpDb2l5nWyj/gwArSuoD/z3k5kAUU6xw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715251979; x=1715856779;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fchQkwpQKy+G8gvCxlwkGWcBh6ZCKFQubVMTfesa7hs=;
+        b=CFnJWtQIWDGWORmiEtXurR/WrUgn19UbpDAiK8GNsAZrZVoDC9LK0dkwSevQfS46jl
+         gEBSIv0NSHujrAnJZEwse0mfAxSdmnQU1WC0rtMzbilbMQA9L5WXmVliHN1J/Bi2ilH3
+         SoGMbGa/fO1aOe0+wOLyzPpIyxAuR8t9kn4x7QLDb+dzLA95yN1jEVLBE8cxB99ZiDuF
+         bnQQg3vmKrKKWcIU7qetF+2Zq2rwZuKAM1LVq+nY6BtfQXF0CtAq4AzA09oxVr+tgKkS
+         4j/sexSR9T74i5TlR6MfxvOJScAzdGSmoqQRmYbiWMQb/2S995BKFGxwfpmoClI9tjg2
+         flsg==
+X-Gm-Message-State: AOJu0YxDejBw63yfkVxCpLYZC+pAAQVejFZNYdbZKzYfSTJIDkU3HIIo
+	hhtxtfXOJW1yE/L9Dk7I8nwDApUGfa/S/w9MlZIZx9iz2skb3iXxoNQfGyvCl3CYJiYtabbnYQw
+	lykw=
+X-Google-Smtp-Source: AGHT+IEZOrSutnEURn42pNqTZMBkaylrpAaescdJZt7LZ0XxB5KgigqKea4KGZgUUdtq9H4EE1J3HQ==
+X-Received: by 2002:a05:600c:450c:b0:418:fb6f:5f59 with SMTP id 5b1f17b1804b1-41f71cc25a8mr43320985e9.2.1715251978990;
+        Thu, 09 May 2024 03:52:58 -0700 (PDT)
+Received: from ?IPv6:2001:8b0:aba:5f3c:a95b:1bc1:5128:ffbc? ([2001:8b0:aba:5f3c:a95b:1bc1:5128:ffbc])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fccce24c0sm21689065e9.17.2024.05.09.03.52.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 May 2024 03:52:58 -0700 (PDT)
+Message-ID: <3ebe931181412a352eb719d19cee95b0f2eebe23.camel@linuxfoundation.org>
+Subject: Re: [yocto-patches] [PATCH 02/12] patch-status: add README.md file
+From: Richard Purdie <richard.purdie@linuxfoundation.org>
+To: yocto-patches@lists.yoctoproject.org
+Cc: engineering@neighbourhood.ie, Alex Feyerke <hello@alexfeyerke.com>
+Date: Thu, 09 May 2024 11:52:57 +0100
+In-Reply-To: <20240508153131.94270-3-ninette@thehoodiefirm.com>
+References: <20240508153131.94270-1-ninette@thehoodiefirm.com>
+	 <20240508153131.94270-3-ninette@thehoodiefirm.com>
+Autocrypt: addr=richard.purdie@linuxfoundation.org; prefer-encrypt=mutual; keydata=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
+ YNvg==
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-MIME-Autoconverted: from 8bit to quoted-printable by mx0a-0064b401.pphosted.com id 4495Ud3t021935
+User-Agent: Evolution 3.50.0-1 
+MIME-Version: 1.0
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 09 May 2024 05:40:58 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/110
+ <yocto-patches@lists.yoctoproject.org>; Thu, 09 May 2024 10:53:09 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/111
 
-
-
-On 5/9/24 11:22, Bruce Ashfield wrote:
-> CAUTION: This email comes from a non Wind River email account!
-> Do not click links or open attachments unless you recognize the sender =
-and know the content is safe.
->=20
-> On Wed, May 8, 2024 at 10:14=E2=80=AFPM Yu, Mingli via lists.yoctoproje=
-ct.org
-> <mingli.yu=3Deng.windriver.com@lists.yoctoproject.org> wrote:
->>
->>
->>
->> On 5/9/24 01:33, Bruce Ashfield wrote:
->>> CAUTION: This email comes from a non Wind River email account!
->>> Do not click links or open attachments unless you recognize the sende=
-r and know the content is safe.
->>>
->>> In message: [yocto-patches] [yocto-kernel-cache][PATCH] preempt-rt: a=
-dd bfp configs by default
->>> on 08/05/2024 Yu, Mingli via lists.yoctoproject.org wrote:
->>>
->>>> From: Mingli Yu <mingli.yu@windriver.com>
->>>>
->>>> Userspace functionality that requires BPF is becoming more common,
->>>> so enable it by default [1].
->>>
->>> bpf used to have locking issues with preempt-rt, which is
->>> why it isn't already enabled.
->>>
->>> Can you show some logs for your testing that has happened
->>> with BPF enabled -rt so that we can document what has been
->>> done to prove it works now.
->>
->> When CONFIG_BPF_SYSCALL is't enabled, there comes below failure with r=
-t
->> kernel.
->>    # docker run hello-world
->> Unable to find image 'hello-world:latest' locally
->> latest: Pulling from library/hello-world
->> c1ec31eb5944: Already exists
->> Digest:
->> sha256:a26bff933ddc26d5cdf7faa98b4ae1e3ec20c4985e6f87ac0973052224d2430=
-2
->> Status: Downloaded newer image for hello-world:latest
->> docker: Error response from daemon: failed to create task for containe=
-r:
->> failed to create shim task: OCI runtime create failed: runc create
->> failed: unable to start container process: error during container init=
-:
->> error setting cgroup config for procHooks process:
->> bpf_prog_query(BPF_CGROUP_DEVICE) failed: function not implemented: un=
-known.
->> ERRO[0059] error waiting for container: context canceled
->>
->> And the above issue is resolved once CONFIG_BPF_SYSCALL enabled.
->=20
-> Being able to run docker on preempt-rt isn't a use case that I
-> consider high priority. Not that it is a bad use case it is that if we =
-want
-> -rt to have any value, we actually need to show that realtime behaviour
-> is preserved as we enable more options and run different workloads.
->=20
-> Getting docker to pull an image doesn't prove/show that -rt and BPF
-> aren't going to spike latencies, or cause other issues.
->=20
-> BPF used to cause locking issues and other latency issues.
->=20
-> There are BPF self tests, showing that they run and pass is a good
-> first step.
->=20
-> Then also running the latency measurements while running both
-> BPF tests and pulling, deleting, pulling, running, etc, containers is
-> the second thing we need to show. If there aren't any latency
-> spikes or locking traces we can consider it "safe enough" to enable
-> for -rt.
-
-Thanks Bruce for your clarification!
-
-I'm not familiar with BPF tests, so can't provide the test results right=20
-now. I'm okay with your concerns.
-
-Thanks,
-
->=20
-> Bruce
->=20
->>
->> Thanks,
->>
->>>
->>> Bruce
->>>
->>>>
->>>> [1] https://lore.kernel.org/all/20200224140131.461979697@linutronix.=
-de/
->>>>
->>>> Signed-off-by: Mingli Yu <mingli.yu@windriver.com>
->>>> ---
->>>>    ktypes/preempt-rt/preempt-rt.scc | 1 +
->>>>    1 file changed, 1 insertion(+)
->>>>
->>>> diff --git a/ktypes/preempt-rt/preempt-rt.scc b/ktypes/preempt-rt/pr=
-eempt-rt.scc
->>>> index 7ff7c0a8..a5e345f9 100644
->>>> --- a/ktypes/preempt-rt/preempt-rt.scc
->>>> +++ b/ktypes/preempt-rt/preempt-rt.scc
->>>> @@ -39,3 +39,4 @@ include backports/backports.scc
->>>>    include features/rt/rt.scc
->>>>
->>>>    kconf non-hardware preempt-rt.cfg
->>>> +include features/bpf/bpf.scc
->>>> --
->>>> 2.25.1
->>>>
->>>>
->>>>
->>>>
->>>>
->>>>
->>>
->>>
->>>
->>>
->>>
->>
->>
->>
->>
->>
->=20
->=20
-> --
-> - Thou shalt not follow the NULL pointer, for chaos and madness await
-> thee at its end
-> - "Use the force Harry" - Gandalf, Star Trek II
+On Wed, 2024-05-08 at 17:31 +0200, Ninette Adhikari via lists.yoctoproject.=
+org wrote:
 >=20
 >=20
 > -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 > Links: You receive all messages sent to this group.
-> View/Reply Online (#108): https://lists.yoctoproject.org/g/yocto-patche=
-s/message/108
-> Mute This Topic: https://lists.yoctoproject.org/mt/105976633/3618448
+> View/Reply Online (#93):
+> https://lists.yoctoproject.org/g/yocto-patches/message/93
+> Mute This Topic: https://lists.yoctoproject.org/mt/105983324/1686473
 > Group Owner: yocto-patches+owner@lists.yoctoproject.org
-> Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/13176=
-015/3618448/1484545583/xyzzy [mingli.yu@eng.windriver.com]
+> Unsubscribe:
+> https://lists.yoctoproject.org/g/yocto-patches/leave/13162210/1686473/167=
+7322349/xyzzy
+> =C2=A0[richard.purdie@linuxfoundation.org]
 > -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
->=20
->=20
+
+
+This patch and patches 4, 7 and 8 all appeared to come through as empty
+unfortunately (messages with nothing in them other than the list
+footer).
+
+Any idea what happened to them?
+
+Cheers,
+
+Richard
+
+
 
