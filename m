@@ -1,821 +1,368 @@
-Return-Path: <anibal@limonsoftware.com>
+Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD822C10F1A
-	for <webhook@archiver.kernel.org>; Thu,  9 May 2024 17:20:48 +0000 (UTC)
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
- by mx.groups.io with SMTP id smtpd.web10.1452.1715275239473292681
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D857C04FFE
+	for <webhook@archiver.kernel.org>; Sun, 12 May 2024 02:28:30 +0000 (UTC)
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+ by mx.groups.io with SMTP id smtpd.web10.27933.1715480901280563911
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 09 May 2024 10:20:39 -0700
+ Sat, 11 May 2024 19:28:21 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@limonsoftware-com.20230601.gappssmtp.com header.s=20230601 header.b=sUlBYjnc;
- spf=pass (domain: limonsoftware.com, ip: 209.85.128.182, mailfrom: anibal@limonsoftware.com)
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-61e0f733e8aso12566737b3.0
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 09 May 2024 10:20:39 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=dJzZULH2;
+ spf=pass (domain: gmail.com, ip: 209.85.222.179, mailfrom: twoerner@gmail.com)
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-792b8d989e4so277948585a.2
+        for <yocto-patches@lists.yoctoproject.org>; Sat, 11 May 2024 19:28:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=limonsoftware-com.20230601.gappssmtp.com; s=20230601; t=1715275238; x=1715880038; darn=lists.yoctoproject.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=g6N36pLwg3ui1gdwYAtD5fcml7kN946e48JiwCYYHdw=;
-        b=sUlBYjnczPquRfLP0r1NwDVU+u65U19pPtuF3b84ADxwR81/ZABMKQnJSuz7fsGNkF
-         ISY+8dmzdWjYSTrvmvJmhYUrS9Xik1T/OsXAZqyeCzbCMks7E3DotV7WXQ7chBWaUd2d
-         yxOmilaL3igTXp6nEf8uV6U0lNTWV6zuFEbISR6Fq23/oYBK/CIlXuaYS68MdfhUgrIL
-         A4B7eaKVzfpngvsQ4AkgNoGounXtP9MANTrvx1fRh4bzs/ehuPEjgMqR2qw1V2Jl/bG3
-         rwcy0PbXALE0b6T6ijIxHvSRoWfZpDGIMQGBgHu3S8+XdfHTTEhQjtXYVLlE9ZyKB6DX
-         AfgQ==
+        d=gmail.com; s=20230601; t=1715480899; x=1716085699; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z8VRRHp+q8aFfZbAumNWCvG2+FfnuYiu7VJ2Thj6Fys=;
+        b=dJzZULH2V0j//JbYM+1Tbms1Z7irrg5kNMnsnvgjEqwHVtc8B5xosz4NlcakgxUhUr
+         QmbvIKP9CfEJRg12BsiyUUn6KJloEYN4VH6qXFKn1tYTIQI4uX116ElIgb6vm+e89b5w
+         q5mPL+U+2x2i7ARDZLGB6sg2+arGIRePygnwAWE3nrF4so2Ut17rmmtmHTfRnDEn8KbC
+         XtRBj4FnLWRKHWbFX4RtgL/DxMu2KqBi5tEBp9013ae91imZPOasoz5UcVBSyVZFjeHK
+         9+xRhTsQsInL4KsanP4zB0vMW9llLSHhsxPB1YZtPoi2Nh2wdSbeZn0EOKDydUt1PMVa
+         d8cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715275238; x=1715880038;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=g6N36pLwg3ui1gdwYAtD5fcml7kN946e48JiwCYYHdw=;
-        b=eQejICbL2USRxIvqyhy0beGVVOKk9qtB7x7rGjVe3sDApQb5XFFKx0zTdwqk8JOycS
-         SVqxc3W4u0SI3/IYa7RuwZ7K2L8Tx45e0gZf+3kG6H8iJExQZQ4Dp0BVCWd645+EiBZ3
-         Xi+KclpzECmHJVpRTjW33K2CF0Q5sVZaMaueqQXQpompkwQ70XloqHvu2QKjOGIbWatS
-         02usJsuYln7vf+iYjwyK6M0MAPNwUlNXMJEAAktTQmHmqkyjVNtCGC/2k46OYTQ5sowL
-         HhVbusVMHDVZxDOoRyXysBWr10Zo4GMtwDf2lNmi1Ek6nPO+6BUTqoSZ/HNPIbHutLrZ
-         QP3A==
-X-Forwarded-Encrypted: i=1; AJvYcCVGq4bIpbebtujDVM0czlbbiOqLWVQoEppz/Dht6AzAgeEY5YHJE72dzK/YjALoiEVKLKmj31IrfRajHfT1yYESFNPddGkFKQHymN3POQNXlgpWKeY=
-X-Gm-Message-State: AOJu0YxOs4YaGrRFj+xQzF3jwphIcSTQkCr9iVmka4qLmz6Vnl5B519S
-	gXE4Xzw2tpdTuVcjt+iZ4u3AZxhzZu/zR9UYFdAeXJt1QcKdMRhbHtKuIuxw6CCT1sjo6+lMGTR
-	0BNVbOwwwA1z9I8tGD358bC5XMr12g0V46Db6zg==
-X-Google-Smtp-Source: AGHT+IGUhuSDcmhTS+/razLCO/1gDL7CnwV2i1wH/bDjrAyZwQZkZgF9TtNyZWgqyA6hv3N+hAW/+QVNimgN+Foo0O0=
-X-Received: by 2002:a05:690c:112:b0:618:8390:341f with SMTP id
- 00721157ae682-622aff42b9amr2039527b3.1.1715275238457; Thu, 09 May 2024
- 10:20:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715480899; x=1716085699;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z8VRRHp+q8aFfZbAumNWCvG2+FfnuYiu7VJ2Thj6Fys=;
+        b=woFGJpZFL/nmu+R1vV3ik1xJPG4iMYVQex6T2UDxQUJwNPajlDkGkk6DSdFlWAGtL9
+         +MykLAMXLumuoY3oiEqQ8/qaYx6m3N6j/JnCZI44tOsigj4eRHA6D+S1LbrwMR0yHIu+
+         ecQuBpHpLOdBRhQWnrV/7WClQntmlSOmBETJkQah/mNwK/SZmCKw9w2zghQILD0fPj8m
+         QvuPBSZ1YGYDop6rRl4F+jcoRV389t8v1prIkncu4/oPi7Mj3EyiLRcoNtLtzE8W1XPS
+         fkkwASS48Ab1PDk0kkyQzEXJH9LKQ+x0QTSnIbNf1F1SV9jBRA4Dc3hvcqFKkSJpfc8c
+         I6+g==
+X-Gm-Message-State: AOJu0Yw2VcKanyemwshDBRn1K5O9Ejx9Qo6HsKBUFaakSS3jvj6TNquu
+	adudnb1Rv4HQWmEnLOsYJnxxr+6/YiNlNxXk75u3fo84DWaKzU1H5dY75w==
+X-Google-Smtp-Source: AGHT+IEzJhck4XxQbcDQwESei1aJExJ/fBoEhzJqBPyUNS7nDDwJ8soePEHzYBRXZvcfIeujOj7I6A==
+X-Received: by 2002:a05:620a:57d7:b0:792:b254:640f with SMTP id af79cd13be357-792c75f5636mr760618685a.57.1715480898742;
+        Sat, 11 May 2024 19:28:18 -0700 (PDT)
+Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-792bf2fc3dbsm325914385a.96.2024.05.11.19.28.17
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 11 May 2024 19:28:17 -0700 (PDT)
+From: Trevor Woerner <twoerner@gmail.com>
+To: yocto-patches@lists.yoctoproject.org
+Subject: [meta-rockchip][PATCH v6] enable stored U-Boot environment
+Date: Sat, 11 May 2024 22:28:15 -0400
+Message-ID: <20240512022815.39350-1-twoerner@gmail.com>
+X-Mailer: git-send-email 2.44.0.501.g19981daefd7c
 MIME-Version: 1.0
-References: <17CCF08ED1ED8647.29739@lists.yoctoproject.org>
- <CAOU5ZMuzwmC_BAZGGgG+5+Ejy6O5XvqUuz+07zZMNhwQ0X541g@mail.gmail.com> <d1d75d86-b72d-464e-8405-99d19619c685@windriver.com>
-In-Reply-To: <d1d75d86-b72d-464e-8405-99d19619c685@windriver.com>
-From: Anibal Limon <anibal@limonsoftware.com>
-Date: Thu, 9 May 2024 11:20:27 -0600
-Message-ID: <CAOU5ZMuMdyrnmHTKi9i9E7QCFbQdHAGddYd-knVB-Pnc3MUssg@mail.gmail.com>
-Subject: Re: [yocto-patches] [ptest-runner 1/2] utils.c: run-ptests improve
- pseudo-terminal handling
-To: Changqing Li <changqing.li@windriver.com>, yocto-patches@lists.yoctoproject.org
-Cc: randy.macleod@windriver.com
-Content-Type: multipart/alternative; boundary="00000000000047e3e9061808a36a"
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 09 May 2024 17:20:48 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/115
+ <yocto-patches@lists.yoctoproject.org>; Sun, 12 May 2024 02:28:30 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/116
 
---00000000000047e3e9061808a36a
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+U-Boot has the ability to store its environment variables to a permanent
+storage device. Whether or not it does so for any one specific device
+depends on whatever settings are enabled in that specific device's
+defconfig. In order to definitively configure U-Boot to be able to store
+its environment into the device from which it boots, for any device
+supported in this BSP, simply add the following to MACHINE_FEATURES:
 
-Awesome!, pushing the changes to master.
+	rk-u-boot-env
 
-Cheers!,
-Anibal
+If enabled, there is now a second choice to make: should the build also
+include the U-Boot environment in the image or not? The default environment,
+as generated by U-Boot, can be included in the generated wic image. If it
+is included, then flashing the image will also flash the default U-Boot
+environment variables and settings, wiping out anything that might have been
+there already. If it is not included then your device will either continue
+using whatever environment happens to be there (if valid), or will not use any
+stored environment if the stored environment has not been set or is invalid.
+The variable which governs this behaviour is:
 
-On Tue, May 7, 2024 at 7:39=E2=80=AFPM Changqing Li via lists.yoctoproject.=
-org <
-changqing.li=3Deng.windriver.com@lists.yoctoproject.org> wrote:
+	RK_IMAGE_INCLUDES_UBOOT_ENV
 
->
-> On 5/6/24 23:44, Anibal Limon wrote:
->
-> *CAUTION: This email comes from a non Wind River email account!*
-> Do not click links or open attachments unless you recognize the sender an=
-d
-> know the content is safe.
-> Hi Changqing,
->
-> I spent some time reviewing the patch and this is a reduced version of it=
-,
->
-> If the parent set up a pty and then set up the child as stdin, It all
-> needs to cover your case and previous cases raised by Randy.
->
-> I tested the libtevent ptest and passed the 3 tests with this patch.
->
-> Regards!,
-> Anibal
->
-> Hi, Anibal
->
-> I am fine with this change, also try to run ptest for libtevent and bash,
-> works as expect.
->
-> Regards
->
-> Changqing
->
->
-> On Mon, May 6, 2024 at 9:40=E2=80=AFAM Anibal Limon via lists.yoctoprojec=
-t.org
-> <https://urldefense.com/v3/__http://lists.yoctoproject.org__;!!AjveYdw8Ev=
-Q!eVbZXGRCp4bk_15nIgzDv0PrX-TJJz4iqyzoaBBkeMbiEdMJqGRZCXHery36kMYVbaHJEwYmR=
-F_Ith-cM35U6kMg_eyi$>
-> <anibal=3Dlimonsoftware.com@lists.yoctoproject.org> wrote:
->
->> Setup master and slave pty before run ptest, on child attach to the
->> slave pty and set it as controlling tty and stdin.
->>
->> See rev 59381a643e1fcce9b6920cb59af9402dd5eb0dfb .
->>
->> Co-authored-by: Changqing Li <changqing.li@windriver.com>
->> Signed-off-by: Anibal Limon <anibal@limonsoftware.com>
->> ---
->>  utils.c | 90 ++++++++++++---------------------------------------------
->>  1 file changed, 19 insertions(+), 71 deletions(-)
->>
->> diff --git a/utils.c b/utils.c
->> index 46918f4..3a35313 100644
->> --- a/utils.c
->> +++ b/utils.c
->> @@ -341,53 +341,6 @@ run_child(char *run_ptest, int fd_stdout, int
->> fd_stderr)
->>         /* exit(1); not needed? */
->>  }
->>
->> -/* Returns an integer file descriptor.
->> - * If it returns < 0, an error has occurred.
->> - * Otherwise, it has returned the slave pty file descriptor.
->> - * fp should be writable, likely stdout/err.
->> - */
->> -static int
->> -setup_slave_pty(FILE *fp) {
->> -       int pty_master =3D -1;
->> -       int pty_slave =3D -1;
->> -       char pty_name[256];
->> -       struct group *gptr;
->> -       gid_t gid;
->> -       int slave =3D -1;
->> -
->> -       if (openpty(&pty_master, &pty_slave, pty_name, NULL, NULL) < 0) =
-{
->> -               fprintf(fp, "ERROR: openpty() failed with: %s.\n",
->> strerror(errno));
->> -               return -1;
->> -       }
->> -
->> -       if ((gptr =3D getgrnam(pty_name)) !=3D 0) {
->> -               gid =3D gptr->gr_gid;
->> -       } else {
->> -               /* If the tty group does not exist, don't change the
->> -                * group on the slave pty, only the owner
->> -                */
->> -               gid =3D (gid_t)-1;
->> -       }
->> -
->> -       /* chown/chmod the corresponding pty, if possible.
->> -        * This will only work if the process has root permissions.
->> -        */
->> -       if (chown(pty_name, getuid(), gid) !=3D 0) {
->> -               fprintf(fp, "ERROR; chown() failed with: %s.\n",
->> strerror(errno));
->> -       }
->> -
->> -       /* Makes the slave read/writeable for the user. */
->> -       if (chmod(pty_name, S_IRUSR|S_IWUSR) !=3D 0) {
->> -               fprintf(fp, "ERROR: chmod() failed with: %s.\n",
->> strerror(errno));
->> -       }
->> -
->> -       if ((slave =3D open(pty_name, O_RDWR)) =3D=3D -1) {
->> -               fprintf(fp, "ERROR: open() failed with: %s.\n",
->> strerror(errno));
->> -       }
->> -       return (slave);
->> -}
->> -
->> -
->>  int
->>  run_ptests(struct ptest_list *head, const struct ptest_options opts,
->>                 const char *progname, FILE *fp, FILE *fp_stderr)
->> @@ -406,16 +359,12 @@ run_ptests(struct ptest_list *head, const struct
->> ptest_options opts,
->>
->>         do
->>         {
->> -               if (isatty(0) && ioctl(0, TIOCNOTTY) =3D=3D -1) {
->> -                       fprintf(fp, "ERROR: Unable to detach from
->> controlling tty, %s\n", strerror(errno));
->> -               }
->> -
->>
->>                 fprintf(fp, "START: %s\n", progname);
->>                 PTEST_LIST_ITERATE_START(head, p)
->>                         int pipefd_stdout[2] =3D {-1, -1};
->>                         int pipefd_stderr[2] =3D {-1, -1};
->> -                       int pgid =3D -1;
->> +                       int pty[2] =3D {-1, -1};
->>
->>                         if (pipe2(pipefd_stdout, 0) =3D=3D -1) {
->>                                 rc =3D -1;
->> @@ -428,6 +377,16 @@ run_ptests(struct ptest_list *head, const struct
->> ptest_options opts,
->>                                 break;
->>                         }
->>
->> +                       if (openpty(&pty[0], &pty[1], NULL, NULL, NULL) =
-<
->> 0) {
->> +                               fprintf(fp, "ERROR: openpty() failed
->> with: %s.\n", strerror(errno));
->> +                               close(pipefd_stderr[PIPE_READ]);
->> +                               close(pipefd_stderr[PIPE_WRITE]);
->> +                               close(pipefd_stdout[PIPE_READ]);
->> +                               close(pipefd_stdout[PIPE_WRITE]);
->> +                               rc =3D -1;
->> +                               break;
->> +                       }
->> +
->>                         char *ptest_dir =3D strdup(p->run_ptest);
->>                         if (ptest_dir =3D=3D NULL) {
->>                                 rc =3D -1;
->> @@ -435,38 +394,31 @@ run_ptests(struct ptest_list *head, const struct
->> ptest_options opts,
->>                         }
->>                         dirname(ptest_dir);
->>
->> -                       if ((pgid =3D getpgid(0)) =3D=3D -1) {
->> -                               fprintf(fp, "ERROR: getpgid() failed,
->> %s\n", strerror(errno));
->> -                       }
->> -
->>                         pid_t child =3D fork();
->>                         if (child =3D=3D -1) {
->>                                 fprintf(fp, "ERROR: Fork %s\n",
->> strerror(errno));
->>                                 rc =3D -1;
->>                                 break;
->>                         } else if (child =3D=3D 0) {
->> -                               int slave;
->> -
->> -                               close(0);
->>                                 /* Close read ends of the pipe */
->>                                 do_close(&pipefd_stdout[PIPE_READ]);
->>                                 do_close(&pipefd_stderr[PIPE_READ]);
->>
->> -                               if ((slave =3D setup_slave_pty(fp)) < 0)=
- {
->> -                                       fprintf(fp, "ERROR: could not
->> setup pty (%d).", slave);
->> -                               }
->> -                               if (setpgid(0,pgid) =3D=3D -1) {
->> -                                       fprintf(fp, "ERROR: setpgid()
->> failed, %s\n", strerror(errno));
->> -                               }
->> +                               /* Close master pty and set slave pty as
->> stdin */
->> +                               do_close(&pty[0]);
->>
->>                                 if (setsid() =3D=3D  -1) {
->>                                         fprintf(fp, "ERROR: setsid()
->> failed, %s\n", strerror(errno));
->>                                 }
->> -
->> -                               if (ioctl(0, TIOCSCTTY, NULL) =3D=3D -1)=
- {
->> +                               if (ioctl(pty[1], TIOCSCTTY, NULL) =3D=
-=3D -1)
->> {
->>                                         fprintf(fp, "ERROR: Unable to
->> attach to controlling tty, %s\n", strerror(errno));
->>                                 }
->>
->> +                               if (dup2(pty[1], STDIN_FILENO) < 0) {
->> +                                       fprintf(fp, "ERROR: Unable to du=
-p
->> slave pty to stdin, %s\n", strerror(errno));
->> +                               }
->> +                               do_close(&pty[1]);
->> +
->>                                 if (chdir(ptest_dir) =3D=3D -1) {
->>                                         fprintf(fp, "ERROR: Unable to
->> chdir(%s), %s\n", ptest_dir, strerror(errno));
->>                                 } else {
->> @@ -481,10 +433,6 @@ run_ptests(struct ptest_list *head, const struct
->> ptest_options opts,
->>                                 do_close(&pipefd_stdout[PIPE_WRITE]);
->>                                 do_close(&pipefd_stderr[PIPE_WRITE]);
->>
->> -                               if (setpgid(child, pgid) =3D=3D -1) {
->> -                                       fprintf(fp, "ERROR: setpgid()
->> failed, %s\n", strerror(errno));
->> -                               }
->> -
->>                                 time_t start_time=3D time(NULL);
->>                                 fprintf(fp, "%s\n", get_stime(stime,
->> GET_STIME_BUF_SIZE, start_time));
->>                                 fprintf(fp, "BEGIN: %s\n", ptest_dir);
->> --
->> 2.43.0
->>
->>
->>
->>
->>
->>
->> _._,_._,_
-> ------------------------------
-> Links:
->
-> You receive all messages sent to this group.
->
-> View/Reply Online (#88)
-> <https://lists.yoctoproject.org/g/yocto-patches/message/88> | Reply To
-> Group
-> <yocto-patches@lists.yoctoproject.org?subject=3DRe:%20Re%3A%20%5Byocto-pa=
-tches%5D%20%5Bptest-runner%201%2F2%5D%20utils.c%3A%20run-ptests%20improve%2=
-0pseudo-terminal%20handling>
-> | Reply To Sender
-> <changqing.li@eng.windriver.com?subject=3DPrivate:%20Re:%20Re%3A%20%5Byoc=
-to-patches%5D%20%5Bptest-runner%201%2F2%5D%20utils.c%3A%20run-ptests%20impr=
-ove%20pseudo-terminal%20handling>
-> | Mute This Topic <https://lists.yoctoproject.org/mt/105941917/8181911> |=
- New
-> Topic <https://lists.yoctoproject.org/g/yocto-patches/post>
-> Your Subscription
-> <https://lists.yoctoproject.org/g/yocto-patches/editsub/8181911> | Contac=
-t
-> Group Owner <yocto-patches+owner@lists.yoctoproject.org> | Unsubscribe
-> <https://lists.yoctoproject.org/g/yocto-patches/leave/13235916/8181911/17=
-931940/xyzzy>
-> [anibal@limonsoftware.com]
-> _._,_._,_
->
->
+By default this is set to "0", meaning that by default the image does not
+contain the U-Boot environment. To enable this behaviour, enable this
+variable. This variable only takes effect if rk-u-boot-env is listed in
+MACHINE_FEATURES, and has no effect otherwise.
 
---00000000000047e3e9061808a36a
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+The script:
 
-<div dir=3D"ltr"><div>Awesome!, pushing the changes to master.</div><div><b=
-r></div>Cheers!,<div>Anibal</div></div><br><div class=3D"gmail_quote"><div =
-dir=3D"ltr" class=3D"gmail_attr">On Tue, May 7, 2024 at 7:39=E2=80=AFPM Cha=
-ngqing Li via <a href=3D"http://lists.yoctoproject.org">lists.yoctoproject.=
-org</a> &lt;<a href=3D"http://changqing.li">changqing.li</a>=3D<a href=3D"m=
-ailto:eng.windriver.com@lists.yoctoproject.org">eng.windriver.com@lists.yoc=
-toproject.org</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" sty=
-le=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);paddi=
-ng-left:1ex"><u></u>
+	scripts/dump-uboot-env-from-yocto-image.sh
 
- =20
-  <div bgcolor=3D"#cceed0">
-    <p><br>
-    </p>
-    <div>On 5/6/24 23:44, Anibal Limon wrote:<br>
-    </div>
-    <blockquote type=3D"cite">
-     =20
-      <strong>
-      </strong>
-      <div style=3D"border:1pt solid rgb(156,101,0);padding:2pt;background:=
-rgb(252,252,3)"><strong><u></u><span style=3D"font-size:11pt;color:rgb(0,0,=
-0)">CAUTION: This email
-              comes from a non Wind River email account!</span><u></u></str=
-ong><br>
-        <u></u><span style=3D"font-size:10pt;color:rgb(0,0,0)">Do not click=
- links or open
-            attachments unless you recognize the sender and know the
-            content is safe.</span><br>
-        <u></u></div>
-      <div>
-        <div dir=3D"ltr">Hi Changqing,
-          <div><br>
-          </div>
-          <div>I spent some time reviewing the patch and this is a
-            reduced version of it,</div>
-          <div><br>
-          </div>
-          <div>If the parent set up a pty and then set up the child as
-            stdin, It all needs to cover your case and previous cases
-            raised by Randy.</div>
-          <div><br>
-          </div>
-          <div>I tested the libtevent ptest and passed the 3 tests with
-            this patch.</div>
-          <div><br>
-          </div>
-          <div>Regards!,</div>
-          <div>Anibal</div>
-        </div>
-      </div>
-    </blockquote>
-    <p>Hi, Anibal</p>
-    <p>I am fine with this change, also try to run ptest for libtevent
-      and bash, works as expect.</p>
-    <p>Regards</p>
-    <p>Changqing<br>
-    </p>
-    <blockquote type=3D"cite">
-      <div>
-        <div dir=3D"ltr">
-        </div>
-        <br>
-        <div class=3D"gmail_quote">
-          <div dir=3D"ltr" class=3D"gmail_attr">On Mon, May 6, 2024 at
-            9:40=E2=80=AFAM Anibal Limon via
-            <a href=3D"https://urldefense.com/v3/__http://lists.yoctoprojec=
-t.org__;!!AjveYdw8EvQ!eVbZXGRCp4bk_15nIgzDv0PrX-TJJz4iqyzoaBBkeMbiEdMJqGRZC=
-XHery36kMYVbaHJEwYmRF_Ith-cM35U6kMg_eyi$" target=3D"_blank">
-              lists.yoctoproject.org</a> &lt;anibal=3D<a href=3D"mailto:lim=
-onsoftware.com@lists.yoctoproject.org" target=3D"_blank">limonsoftware.com@=
-lists.yoctoproject.org</a>&gt;
-            wrote:<br>
-          </div>
-          <blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8=
-ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">
-            Setup master and slave pty before run ptest, on child attach
-            to the<br>
-            slave pty and set it as controlling tty and stdin.<br>
-            <br>
-            See rev 59381a643e1fcce9b6920cb59af9402dd5eb0dfb .<br>
-            <br>
-            Co-authored-by: Changqing Li &lt;<a href=3D"mailto:changqing.li=
-@windriver.com" target=3D"_blank">changqing.li@windriver.com</a>&gt;<br>
-            Signed-off-by: Anibal Limon &lt;<a href=3D"mailto:anibal@limons=
-oftware.com" target=3D"_blank">anibal@limonsoftware.com</a>&gt;<br>
-            ---<br>
-            =C2=A0utils.c | 90
-            ++++++++++++---------------------------------------------<br>
-            =C2=A01 file changed, 19 insertions(+), 71 deletions(-)<br>
-            <br>
-            diff --git a/utils.c b/utils.c<br>
-            index 46918f4..3a35313 100644<br>
-            --- a/utils.c<br>
-            +++ b/utils.c<br>
-            @@ -341,53 +341,6 @@ run_child(char *run_ptest, int
-            fd_stdout, int fd_stderr)<br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 /* exit(1); not needed? */<br>
-            =C2=A0}<br>
-            <br>
-            -/* Returns an integer file descriptor.<br>
-            - * If it returns &lt; 0, an error has occurred.<br>
-            - * Otherwise, it has returned the slave pty file
-            descriptor.<br>
-            - * fp should be writable, likely stdout/err.<br>
-            - */<br>
-            -static int<br>
-            -setup_slave_pty(FILE *fp) {<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0int pty_master =3D -1;<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0int pty_slave =3D -1;<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0char pty_name[256];<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0struct group *gptr;<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0gid_t gid;<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0int slave =3D -1;<br>
-            -<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0if (openpty(&amp;pty_master, &amp;p=
-ty_slave,
-            pty_name, NULL, NULL) &lt; 0) {<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0fprintf=
-(fp, &quot;ERROR: openpty() failed with:
-            %s.\n&quot;, strerror(errno));<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return =
--1;<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-            -<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0if ((gptr =3D getgrnam(pty_name)) !=
-=3D 0) {<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0gid =3D=
- gptr-&gt;gr_gid;<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0} else {<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0/* If t=
-he tty group does not exist, don&#39;t
-            change the<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * grou=
-p on the slave pty, only the owner<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 */<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0gid =3D=
- (gid_t)-1;<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-            -<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0/* chown/chmod the corresponding pt=
-y, if possible.<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0 * This will only work if the proce=
-ss has root
-            permissions.<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0 */<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0if (chown(pty_name, getuid(), gid) =
-!=3D 0) {<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0fprintf=
-(fp, &quot;ERROR; chown() failed with:
-            %s.\n&quot;, strerror(errno));<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-            -<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0/* Makes the slave read/writeable f=
-or the user. */<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0if (chmod(pty_name, S_IRUSR|S_IWUSR=
-) !=3D 0) {<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0fprintf=
-(fp, &quot;ERROR: chmod() failed with:
-            %s.\n&quot;, strerror(errno));<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-            -<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0if ((slave =3D open(pty_name, O_RDW=
-R)) =3D=3D -1) {<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0fprintf=
-(fp, &quot;ERROR: open() failed with:
-            %s.\n&quot;, strerror(errno));<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0return (slave);<br>
-            -}<br>
-            -<br>
-            -<br>
-            =C2=A0int<br>
-            =C2=A0run_ptests(struct ptest_list *head, const struct
-            ptest_options opts,<br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 const c=
-har *progname, FILE *fp, FILE
-            *fp_stderr)<br>
-            @@ -406,16 +359,12 @@ run_ptests(struct ptest_list *head,
-            const struct ptest_options opts,<br>
-            <br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 do<br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 {<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (isa=
-tty(0) &amp;&amp; ioctl(0, TIOCNOTTY)
-            =3D=3D -1) {<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0fprintf(fp, &quot;ERROR: Unable to detach
-            from controlling tty, %s\n&quot;, strerror(errno));<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-            -<br>
-            <br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 fprintf=
-(fp, &quot;START: %s\n&quot;, progname);<br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 PTEST_L=
-IST_ITERATE_START(head, p)<br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 int pipefd_stdout[2] =3D {-1, -1};<br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 int pipefd_stderr[2] =3D {-1, -1};<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0int pgid =3D -1;<br>
-            +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0int pty[2] =3D {-1, -1};<br>
-            <br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 if (pipe2(pipefd_stdout, 0) =3D=3D -1) {<br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 rc =3D -1;<br>
-            @@ -428,6 +377,16 @@ run_ptests(struct ptest_list *head,
-            const struct ptest_options opts,<br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 break;<br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 }<br>
-            <br>
-            +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0if (openpty(&amp;pty[0],
-            &amp;pty[1], NULL, NULL, NULL) &lt; 0) {<br>
-            +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0fprintf(fp, &quot;ERROR:
-            openpty() failed with: %s.\n&quot;, strerror(errno));<br>
-            +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0
-            =C2=A0close(pipefd_stderr[PIPE_READ]);<br>
-            +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0
-            =C2=A0close(pipefd_stderr[PIPE_WRITE]);<br>
-            +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0
-            =C2=A0close(pipefd_stdout[PIPE_READ]);<br>
-            +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0
-            =C2=A0close(pipefd_stdout[PIPE_WRITE]);<br>
-            +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0rc =3D -1;<br>
-            +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0break;<br>
-            +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0}<br>
-            +<br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 char *ptest_dir =3D
-            strdup(p-&gt;run_ptest);<br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 if (ptest_dir =3D=3D NULL) {<br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 rc =3D -1;<br>
-            @@ -435,38 +394,31 @@ run_ptests(struct ptest_list *head,
-            const struct ptest_options opts,<br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 }<br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 dirname(ptest_dir);<br>
-            <br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0if ((pgid =3D getpgid(0)) =3D=3D -1) {<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0fprintf(fp, &quot;ERROR:
-            getpgid() failed, %s\n&quot;, strerror(errno));<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0}<br>
-            -<br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 pid_t child =3D fork();<br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 if (child =3D=3D -1) {<br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 fprintf(fp, &quot;ERROR: F=
-ork
-            %s\n&quot;, strerror(errno));<br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 rc =3D -1;<br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 break;<br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 } else if (child =3D=3D 0) {<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0int slave;<br>
-            -<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0close(0);<br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 /* Close read ends of the
-            pipe */<br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0
-            do_close(&amp;pipefd_stdout[PIPE_READ]);<br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0
-            do_close(&amp;pipefd_stderr[PIPE_READ]);<br>
-            <br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if ((slave =3D
-            setup_slave_pty(fp)) &lt; 0) {<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0fprintf(fp, &quot;ERROR:
-            could not setup pty (%d).&quot;, slave);<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (setpgid(0,pgid) =3D=3D=
- -1) {<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0fprintf(fp, &quot;ERROR:
-            setpgid() failed, %s\n&quot;, strerror(errno));<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-            +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0/* Close master pty and se=
-t
-            slave pty as stdin */<br>
-            +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0do_close(&amp;pty[0]);<br>
-            <br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (setsid() =3D=3D=C2=A0 =
--1) {<br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 fprintf(fp, &quot;ERROR:
-            setsid() failed, %s\n&quot;, strerror(errno));<br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 }<br>
-            -<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (ioctl(0, TIOCSCTTY,
-            NULL) =3D=3D -1) {<br>
-            +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (ioctl(pty[1], TIOCSCTT=
-Y,
-            NULL) =3D=3D -1) {<br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 fprintf(fp, &quot;ERROR:
-            Unable to attach to controlling tty, %s\n&quot;,
-            strerror(errno));<br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 }<br>
-            <br>
-            +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (dup2(pty[1],
-            STDIN_FILENO) &lt; 0) {<br>
-            +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0fprintf(fp, &quot;ERROR:
-            Unable to dup slave pty to stdin, %s\n&quot;, strerror(errno));=
-<br>
-            +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-            +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0do_close(&amp;pty[1]);<br>
-            +<br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (chdir(ptest_dir) =3D=
-=3D -1)
-            {<br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 fprintf(fp, &quot;ERROR:
-            Unable to chdir(%s), %s\n&quot;, ptest_dir, strerror(errno));<b=
-r>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 } else {<br>
-            @@ -481,10 +433,6 @@ run_ptests(struct ptest_list *head,
-            const struct ptest_options opts,<br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0
-            do_close(&amp;pipefd_stdout[PIPE_WRITE]);<br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0
-            do_close(&amp;pipefd_stderr[PIPE_WRITE]);<br>
-            <br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (setpgid(child, pgid) =
-=3D=3D
-            -1) {<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0fprintf(fp, &quot;ERROR:
-            setpgid() failed, %s\n&quot;, strerror(errno));<br>
-            -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-            -<br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 time_t start_time=3D
-            time(NULL);<br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 fprintf(fp, &quot;%s\n&quo=
-t;,
-            get_stime(stime, GET_STIME_BUF_SIZE, start_time));<br>
-            =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 fprintf(fp, &quot;BEGIN: %=
-s\n&quot;,
-            ptest_dir);<br>
-            -- <br>
-            2.43.0<br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-          </blockquote>
-        </div>
-       =20
-      </div>
-    </blockquote>
-  </div>
+can be used on a rockchip wic image to see the contents of the U-Boot
+environment partition at build time.
 
+Tested by booting the same image on both eMMC and SDcard with the following
+devices, verifying the ability to read and write the U-Boot environment in
+both U-Boot and Linux user-space, and that changes made in one are seen in the
+other:
+	rock-3a
+	rock-5a
+	rock-5b
+	rock-pi-4b
+	rock-pi-e
+	rock64
 
+Signed-off-by: Trevor Woerner <twoerner@gmail.com>
+---
+v6 changes:
+- separate out the MACHINEOVERRIDES handling into its own include so
+  that it can be included more flexibly into different scenarios; i.e.
+  rock2-square build was failing because it is not wic-based
 
-<div width=3D"1" style=3D"color:white;clear:both">_._,_._,_</div>
-<hr>
+v5 changes:
+- fix a bug in v4 to handle RK_IMAGE_INCLUDES_UBOOT_ENV correctly in the
+  bash test in postfuncs of u-boot bbappend
+- add extra check in do_deploy() of u-boot bbappend to only copy the
+  environment if RK_IMAGE_INCLUDES_UBOOT_ENV is true
 
+v4 changes:
+- sort WICVARS alphabetically
+- tweak dump-uboot-env-from-yocto-image.sh script to not just check for
+  the existence of the user-supplied parameter, but that it is a file
+  specifically
+- u-boot bbappend:
+  - use a do_compile[postfuncs] for generating the fw_env.config instead of
+    a do_compile:append
+  - move the conversion of the U-Boot text-based environment to the
+    require binary representation from a do_deploy:append to the newly-created
+    do_compile[postfuncs] created above, this will allow the user to inject
+    any extra U-Boot environment variables they might wish as part of a
+    do_compile:append and have that occur before the binary is generated
+    so that those additional user-supplied values are included
+  - add a lot of extra checking (instead of assuming various resources exist)
+    before making use of said resources
 
-Links:<p>
+v3 changes:
+- switch from using a bbclass so the `rk-u-boot-env` override can be used
+  directly
+- add SPDX header to script
+- drop `inherit deploy` in U-Boot bbappend
 
+v2 changes:
+- re-word the commit message and README for clarity
+- use bash's built-in math handling instead of depending on `bc`
+- in anticipation of the upcoming feature in U-Boot whereby rockchip
+  devices can automatically select the environment storage device to be
+  the same as the boot device, use a more recent SRCREV for builds that do
+  environment handling, instead of hardcoding the environment storage device
+  by SoC family
+- handle RK_IMAGE_INCLUDES_UBOOT_ENV as a boolean
+---
+ README                                        | 20 ++++++++++
+ .../include/rockchip-rk-u-boot-env.inc        |  4 ++
+ conf/machine/include/rockchip-wic.inc         |  7 ++++
+ conf/machine/rock2-square.conf                |  2 +-
+ .../rockchip-enable-environment-mmc.cfg       |  6 +++
+ recipes-bsp/u-boot/u-boot_%.bbappend          | 40 +++++++++++++++++++
+ scripts/dump-uboot-env-from-yocto-image.sh    | 29 ++++++++++++++
+ wic/rockchip.wks                              |  2 +-
+ 8 files changed, 108 insertions(+), 2 deletions(-)
+ create mode 100644 conf/machine/include/rockchip-rk-u-boot-env.inc
+ create mode 100644 recipes-bsp/u-boot/files/rk-u-boot-env/rockchip-enable-environment-mmc.cfg
+ create mode 100755 scripts/dump-uboot-env-from-yocto-image.sh
 
- =20
-    You receive all messages sent to this group.
- =20
- =20
+diff --git a/README b/README
+index c76fc9131276..605773d4ecd3 100644
+--- a/README
++++ b/README
+@@ -67,6 +67,26 @@ Notes:
+ 	
+ 	in the configuration (e.g. conf/local.conf).
+ 
++U-Boot Environment:
++------------------
++	In order to configure U-Boot to be able to store its environment into the
++	device from which it was booted, for any device supported in this BSP,
++	simply add the following to MACHINE_FEATURES:
++
++		rk-u-boot-env
++
++	If enabled, to additionally have the U-Boot environment generated and
++	stored in the image, also enable the following variable (default: off):
++
++		RK_IMAGE_INCLUDES_UBOOT_ENV
++
++	The script:
++
++		scripts/dump-uboot-env-from-yocto-image.sh
++
++	can be used on a rockchip wic image to see the contents of the U-Boot
++	environment partition at build time.
++
+ Maintenance:
+ -----------
+ 	Please send pull requests, patches, comments, or questions to the
+diff --git a/conf/machine/include/rockchip-rk-u-boot-env.inc b/conf/machine/include/rockchip-rk-u-boot-env.inc
+new file mode 100644
+index 000000000000..4eb877f77c48
+--- /dev/null
++++ b/conf/machine/include/rockchip-rk-u-boot-env.inc
+@@ -0,0 +1,4 @@
++# 'rk-u-boot-env' indicates the user wants to be able to save their U-Boot
++# environment back to the drive from which the device was booted
++MACHINEOVERRIDES .= "${@bb.utils.contains('MACHINE_FEATURES', 'rk-u-boot-env', ':rk-u-boot-env', '', d)}"
++IMAGE_INSTALL:append:rk-u-boot-env = " u-boot-fw-utils u-boot-env"
+diff --git a/conf/machine/include/rockchip-wic.inc b/conf/machine/include/rockchip-wic.inc
+index 147a36685d7d..1f662116d7cf 100644
+--- a/conf/machine/include/rockchip-wic.inc
++++ b/conf/machine/include/rockchip-wic.inc
+@@ -1,6 +1,7 @@
+ # common meta-rockchip wic/wks items
+ 
+ require conf/machine/include/rockchip-extlinux.inc
++require conf/machine/include/rockchip-rk-u-boot-env.inc
+ 
+ SPL_BINARY ?= "idbloader.img"
+ 
+@@ -11,7 +12,13 @@ WKS_FILE_DEPENDS ?= " \
+ 	virtual/bootloader \
+ 	"
+ 
++RK_IMAGE_INCLUDES_UBOOT_ENV ?= "no"
++RK_UBOOT_ENV = " "
++RK_UBOOT_ENV:rk-u-boot-env = "${@ '--source rawcopy --sourceparams=file=u-boot.env' if \
++	bb.utils.to_boolean(d.getVar('RK_IMAGE_INCLUDES_UBOOT_ENV'), False) else ' '}"
++
+ WICVARS:append = " \
++	RK_UBOOT_ENV \
+ 	SPL_BINARY \
+ 	UBOOT_SUFFIX \
+ 	"
+diff --git a/conf/machine/rock2-square.conf b/conf/machine/rock2-square.conf
+index 9468b9a6b559..bd36b2ecfcc7 100644
+--- a/conf/machine/rock2-square.conf
++++ b/conf/machine/rock2-square.conf
+@@ -7,6 +7,7 @@
+ #http://radxa.com/Rock2
+ 
+ require conf/machine/include/rk3288.inc
++require conf/machine/include/rockchip-rk-u-boot-env.inc
+ 
+ SPL_BINARY = "u-boot-spl-dtb.bin"
+ KERNEL_DEVICETREE = "rockchip/rk3288-rock2-square.dtb"
+@@ -16,4 +17,3 @@ UBOOT_MACHINE = "rock2_defconfig"
+ # image class
+ IMAGE_FSTYPES += "rockchip-gpt-img"
+ IMAGE_CLASSES += "rockchip-gpt-img"
+-
+diff --git a/recipes-bsp/u-boot/files/rk-u-boot-env/rockchip-enable-environment-mmc.cfg b/recipes-bsp/u-boot/files/rk-u-boot-env/rockchip-enable-environment-mmc.cfg
+new file mode 100644
+index 000000000000..778772d27767
+--- /dev/null
++++ b/recipes-bsp/u-boot/files/rk-u-boot-env/rockchip-enable-environment-mmc.cfg
+@@ -0,0 +1,6 @@
++CONFIG_ENV_SIZE=0x8000
++CONFIG_ENV_OFFSET=0x3f8000
++# CONFIG_ENV_IS_NOWHERE is not set
++CONFIG_ENV_IS_IN_MMC=y
++CONFIG_DM_SEQ_ALIAS=y
++CONFIG_SPL_DM_SEQ_ALIAS=y
+diff --git a/recipes-bsp/u-boot/u-boot_%.bbappend b/recipes-bsp/u-boot/u-boot_%.bbappend
+index a83179a9f007..32cb11939f77 100644
+--- a/recipes-bsp/u-boot/u-boot_%.bbappend
++++ b/recipes-bsp/u-boot/u-boot_%.bbappend
+@@ -1,7 +1,13 @@
++FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
++
++SRC_URI:append:rk-u-boot-env = " file://rockchip-enable-environment-mmc.cfg"
++SRCREV:rk-u-boot-env = "cdfcc37428e06f4730ab9a17cc084eeb7676ea1a"
++
+ # various machines require the pyelftools library for parsing dtb files
+ DEPENDS:append = " python3-pyelftools-native"
+ DEPENDS:append:rk3308 = " u-boot-tools-native"
+ DEPENDS:append:rock-pi-4 = " gnutls-native"
++DEPENDS:append:rk-u-boot-env = " u-boot-mkenvimage-native"
+ 
+ EXTRA_OEMAKE:append:px30 = " BL31=${DEPLOY_DIR_IMAGE}/bl31-px30.elf"
+ EXTRA_OEMAKE:append:rk3308 = " \
+@@ -34,3 +40,37 @@ do_compile:append:rock2-square () {
+ 		cp ${B}/spl/${SPL_BINARY} ${B}
+ 	fi
+ }
++
++rk_generate_env() {
++	if [ ! -f "${B}/.config" ]; then
++		echo "U-Boot .config not found, can't determine environment size"
++		return 1
++	fi
++	cat ${B}/.config | grep "^CONFIG_ENV_SIZE=" > /dev/null
++	if [ $? -ne 0 ]; then
++		echo "can not find CONFIG_ENV_SIZE value in U-Boot .config"
++		return 1
++	fi
++
++	UBOOT_ENV_SIZE="$(cat ${B}/.config | grep "^CONFIG_ENV_SIZE=" | cut -d'=' -f2)"
++
++	# linux user-space U-Boot env config file
++	echo "/dev/disk/by-partlabel/uboot_env 0x0000 ${UBOOT_ENV_SIZE}" > ${WORKDIR}/fw_env.config
++
++	# convert text-based environment to binary suitable for image
++	if [ "${@bb.utils.to_boolean(d.getVar('RK_IMAGE_INCLUDES_UBOOT_ENV'), False)}" = "True" ]; then
++		if [ ! -f ${B}/u-boot-initial-env ]; then
++			echo "initial, text-formatted U-Boot environment file \"${B}/u-boot-initial-env\" not found"
++			return 1
++		fi
++		mkenvimage -s ${UBOOT_ENV_SIZE} ${B}/u-boot-initial-env -o ${WORKDIR}/u-boot.env
++	fi
++}
++do_compile[postfuncs] += "${@bb.utils.contains('MACHINE_FEATURES', 'rk-u-boot-env', 'rk_generate_env', '', d)}"
++
++do_deploy:append:rk-u-boot-env() {
++	if [ -f ${WORKDIR}/u-boot.env -a "${@bb.utils.to_boolean(d.getVar('RK_IMAGE_INCLUDES_UBOOT_ENV'),False)}" = "True" ]; then
++		install -d ${DEPLOYDIR}
++		install -m 0644 ${WORKDIR}/u-boot.env ${DEPLOYDIR}
++	fi
++}
+diff --git a/scripts/dump-uboot-env-from-yocto-image.sh b/scripts/dump-uboot-env-from-yocto-image.sh
+new file mode 100755
+index 000000000000..05b7048f1734
+--- /dev/null
++++ b/scripts/dump-uboot-env-from-yocto-image.sh
+@@ -0,0 +1,29 @@
++#/bin/bash
++# SPDX-License-Identifier: OSL-3.0
++#
++# a program that can take a wic file and dump out the contents
++# of the U-Boot environment in canonical hex+ascii format
++# (assuming the "rockchip" layout specified in this layer's wic file)
++
++# check for programs
++check_pgm() {
++	$1 --help > /dev/null 2>&1
++	if [ $? -ne 0 ]; then
++		echo "required program \"$1\" not found"
++		exit 1
++	fi
++}
++check_pgm dd
++check_pgm hexdump
++
++if [ $# -ne 1 ]; then
++	echo "required param missing: yocto wic image"
++	exit 1
++fi
++if [ ! -f "$1" ]; then
++	echo "specified file \"$1\" not found"
++	exit 1
++fi
++
++SKIP=$(( 8128 * 512 ))
++dd if="$1" ibs=1 skip=$SKIP count=32k 2> /dev/null | hexdump -C
+diff --git a/wic/rockchip.wks b/wic/rockchip.wks
+index 9ba3352b51bb..bc65f73b0cf3 100644
+--- a/wic/rockchip.wks
++++ b/wic/rockchip.wks
+@@ -22,7 +22,7 @@ part loader1   --offset 64s    --fixed-size 3552K --fstype=none --part-name load
+ part v_storage --offset 7168s  --fixed-size 256K  --fstype=none --part-name v_storage
+ part reserved  --offset 7680s  --fixed-size 192K  --fstype=none --part-name reserved
+ part reserved1 --offset 8064s  --fixed-size 32K   --fstype=none --part-name reserved1
+-part uboot_env --offset 8128s  --fixed-size 32K   --fstype=none --part-name uboot_env
++part uboot_env --offset 8128s  --fixed-size 32K   --fstype=none --part-name uboot_env ${RK_UBOOT_ENV}
+ part reserved2 --offset 8192s  --fixed-size 4096K --fstype=none --part-name reserved2
+ part loader2   --offset 16384s --fixed-size 4096K --fstype=none --part-name loader2   --source rawcopy --sourceparams="file=u-boot.${UBOOT_SUFFIX}"
+ part atf       --offset 24576s --fixed-size 4096K --fstype=none --part-name atf
+-- 
+2.44.0.478.g7774cfed6261
 
-
-</p><p>
-<a href=3D"https://lists.yoctoproject.org/g/yocto-patches/message/88" targe=
-t=3D"_blank">View/Reply Online (#88)</a> |
-
-
-  <a href=3D"mailto:yocto-patches@lists.yoctoproject.org?subject=3DRe:%20Re=
-%3A%20%5Byocto-patches%5D%20%5Bptest-runner%201%2F2%5D%20utils.c%3A%20run-p=
-tests%20improve%20pseudo-terminal%20handling" target=3D"_blank">Reply To Gr=
-oup</a>
- =20
-    | <a href=3D"mailto:changqing.li@eng.windriver.com?subject=3DPrivate:%2=
-0Re:%20Re%3A%20%5Byocto-patches%5D%20%5Bptest-runner%201%2F2%5D%20utils.c%3=
-A%20run-ptests%20improve%20pseudo-terminal%20handling" target=3D"_blank">Re=
-ply To Sender</a>
- =20
-
-|
-
-  <a href=3D"https://lists.yoctoproject.org/mt/105941917/8181911" target=3D=
-"_blank">Mute This Topic</a>
-
-
-| <a href=3D"https://lists.yoctoproject.org/g/yocto-patches/post" target=3D=
-"_blank">New Topic</a>
-
-<br>
-
-
-
-
-<a href=3D"https://lists.yoctoproject.org/g/yocto-patches/editsub/8181911" =
-target=3D"_blank">Your Subscription</a> |
-<a href=3D"mailto:yocto-patches+owner@lists.yoctoproject.org" target=3D"_bl=
-ank">Contact Group Owner</a> |
-
-<a href=3D"https://lists.yoctoproject.org/g/yocto-patches/leave/13235916/81=
-81911/17931940/xyzzy" target=3D"_blank">Unsubscribe</a>
-
- [<a href=3D"mailto:anibal@limonsoftware.com" target=3D"_blank">anibal@limo=
-nsoftware.com</a>]<br>
-</p><div width=3D"1" style=3D"color:white;clear:both">_._,_._,_</div>
-
-<p></p><p></p></blockquote></div>
-
---00000000000047e3e9061808a36a--
 
