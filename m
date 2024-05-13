@@ -2,242 +2,301 @@ Return-Path: <ninette@thehoodiefirm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2BD3C25B7A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2BE7C25B7E
 	for <webhook@archiver.kernel.org>; Mon, 13 May 2024 14:59:40 +0000 (UTC)
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
- by mx.groups.io with SMTP id smtpd.web11.62820.1715612373912194628
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+ by mx.groups.io with SMTP id smtpd.web11.62826.1715612378493337889
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 13 May 2024 07:59:34 -0700
+ Mon, 13 May 2024 07:59:38 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@thehoodiefirm-com.20230601.gappssmtp.com header.s=20230601 header.b=lC4cMb5b;
- spf=neutral (domain: thehoodiefirm.com, ip: 209.85.167.52, mailfrom: ninette@thehoodiefirm.com)
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-51f1b378ca5so7653778e87.1
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 13 May 2024 07:59:33 -0700 (PDT)
+ dkim=pass header.i=@thehoodiefirm-com.20230601.gappssmtp.com header.s=20230601 header.b=uzIJVeCy;
+ spf=neutral (domain: thehoodiefirm.com, ip: 209.85.218.52, mailfrom: ninette@thehoodiefirm.com)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a599eedc8eeso1097855466b.1
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 13 May 2024 07:59:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=thehoodiefirm-com.20230601.gappssmtp.com; s=20230601; t=1715612372; x=1716217172; darn=lists.yoctoproject.org;
+        d=thehoodiefirm-com.20230601.gappssmtp.com; s=20230601; t=1715612377; x=1716217177; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:reply-to:references
          :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=PLYeAkIvCRLkBlcQwx9OfzW7UQlKanRuXEP1gc98rHI=;
-        b=lC4cMb5bAEpWCLwv1aXmFKwblyChRO//cQhp8eeQrRQ8w6XJImxNr041ZA8yfHIO1i
-         3txoYYyYVpI7jZEj2tTPn1hH93CE5aFtzMc+wf6Qw0qNdlPS+5RW18cJEdJ7HiemmJ2r
-         yLGkUDHD5lW+SW+h14fzBbBUdUjHNhBbJm9ZAeFQMjJoIMCyF1dVOgY8uCVhpz3OD3eN
-         BaMe/aIetrbLCfDCmSiliTkmPh6Ku96exixbyn/x53EeF0Q9WLA+VApHJNjWwBuQ64Tm
-         Z4fF3FmTs4zSeI4I4qVCyNPTeNUnRNw2kxkDoQqCSCXemIl5Nn17DrBshcqA7PoqcTWb
-         EYxg==
+        bh=0ZoCH81FCO1WxKZTq5NgRjokzb8CtBGX4/z6k5F1CjQ=;
+        b=uzIJVeCy4YieXNCGVWbkhGCcmYjuZwu70TtnbB6/asQNzDzXsyw5hn9E8XEm+qVBe4
+         dB7uUje35X3VKOPPdzij1mxH3HSIjhs8WeNkRMaRbzLNTHCxrOKG3XMxaRh2wSvQr46w
+         kp+0ojGpDle/YQ4e2KGo91ySIqqx6Bv3psB6L8AX4/yiGiZ6tgYeAbQXcL9Nb8ssC2B+
+         mrVmiAnkIEC+b4A2FxBMVbhaf+3wXI5mKzxTIUf0VVG3+x1zGU1DPFnlm3EykZfE35+f
+         KBwuQmSD+FsvKy+h8/cQW37DdWj3SvrSeXCc3vlOLB9OI1epufjTNQDtvwhI8UHDcSxP
+         NXzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715612372; x=1716217172;
+        d=1e100.net; s=20230601; t=1715612377; x=1716217177;
         h=content-transfer-encoding:mime-version:reply-to:references
          :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=PLYeAkIvCRLkBlcQwx9OfzW7UQlKanRuXEP1gc98rHI=;
-        b=GPvs/ZAm3byd2ABKmDjPM5yqp4LM+3P4Ie6bnLa3QEr3s9Vddz7OhmtmISy8Nl3Ztq
-         AGiJitl/MU5KDIrhv98HNdtupSf20NTfH2IJgqw5hinX5mWmaaxD4MTsQCYp6qjMBEgF
-         UTjuu5H3jTFwcrnYOZ2OTXiBBQXpcta2yq0hSzfYI10kuBAA8VasSskkKYzP/rSLqJoH
-         9ENcF67PdMo3A7hn65AVI4OFTYyUqEwQx1QlRtq58ny2JJpt4wmUEkgMaOe2ZAfceqRV
-         vPtj9xFDaP5Md3ZkB0EmA9mJMIeaF/3z05J4Ts1Fj1CiMWrM49SIifSZppe3o1a5EWq5
-         AsiA==
-X-Gm-Message-State: AOJu0Yx1tixLYxd8Lk8csqx/OG3Rx0yRpBIJRb7Wmb4fhbTVxcxBecgB
-	RE2j7Q9UQmluIEtu7sUBRY8uJbWW/iaKl0dkt4hJv6C4xcuSda802AVt/dXZc/Hzv3WCfRJuNhM
-	h
-X-Google-Smtp-Source: AGHT+IEaJTZJ63iAkc9JVTkohxO8nny+Ojset1iTUCN+td9a7885c+pBQ4f/mY+mjjRpsjKNelXaeg==
-X-Received: by 2002:a05:6512:149:b0:51d:4c8a:bbdb with SMTP id 2adb3069b0e04-5220fc7d133mr8030705e87.3.1715612372094;
-        Mon, 13 May 2024 07:59:32 -0700 (PDT)
+        bh=0ZoCH81FCO1WxKZTq5NgRjokzb8CtBGX4/z6k5F1CjQ=;
+        b=dGKa69VTF7KuOKk8noyxBmN96PBey9AOmSFTeFQDGKn2O7uCmYxv+L/i3LoN1z0Bvh
+         86rb7tgJFuCyHpg2Af3U+UpWW0bUsJVPcwXDC1rK+amdN0UeKvLdmvH7d+Qmouz3bJdW
+         63id2wXR4Ofc8xqxZ0UpjJkCw2tkvkAbao3V1lDKtVy8t6q/as0Ycrn1lQlom9mio1Nj
+         JDmLVxn3s1D7vb2/KrMNptBBkgLFByBjZFQcC+B8zwsrR6MK5K5dFCD84nyg5urE8QwJ
+         CKFBNahpXTUC3V/yNIQbsdTySAGu7EgEdSeKkK6W44rrtjQ76B1EHsKsD0gHry2jG576
+         ZQbQ==
+X-Gm-Message-State: AOJu0YyXEmqYQWF+CFp1UKKmDHSH2q85Mjp71MVFJ6OxHfLia6JF9w4b
+	niORkOYg9Dq7H6nGKUClw7Efs5/ATipyzZZcfS4Gg0HCYDfpIoJPMW1GpMBeMNAi9h73smcOsKZ
+	8
+X-Google-Smtp-Source: AGHT+IGl03kx7xUjRcexNK03T31O1wATZQ+x/IFARFE2T36FFCUJ3KqC13KIwjxluxihn/oaE85c1Q==
+X-Received: by 2002:a17:907:6d21:b0:a59:c62c:2127 with SMTP id a640c23a62f3a-a5a2d5815e5mr867460466b.17.1715612377004;
+        Mon, 13 May 2024 07:59:37 -0700 (PDT)
 Received: from localhost.localdomain ([95.90.235.164])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c81bfsm607518066b.129.2024.05.13.07.59.31
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c81bfsm607518066b.129.2024.05.13.07.59.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 07:59:31 -0700 (PDT)
+        Mon, 13 May 2024 07:59:36 -0700 (PDT)
 From: Ninette Adhikari <ninette@thehoodiefirm.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: engineering@neighbourhood.ie,
 	Alex Feyerke <hello@alexfeyerke.com>,
 	Ninette Adhikari <ninette@thehoodiefirm.com>
-Subject: [PATCH 07/12] index.html: add description to upstream status section
-Date: Mon, 13 May 2024 16:58:56 +0200
-Message-ID: <20240513145905.4167-8-ninette@thehoodiefirm.com>
+Subject: [PATCH 11/12] index.html: Add dark mode to charts, improve chart layout
+Date: Mon, 13 May 2024 16:59:00 +0200
+Message-ID: <20240513145905.4167-12-ninette@thehoodiefirm.com>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <20240513145905.4167-1-ninette@thehoodiefirm.com>
 References: <20240513145905.4167-1-ninette@thehoodiefirm.com>
 Reply-To: engineering@neighbourhood.ie
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Mon, 13 May 2024 14:59:40 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/127
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/131
 
 From: Alex Feyerke <hello@alexfeyerke.com>
 
-Adds a collapsible details section with explanations of each upstream status, moves chart out of section element as before.
+Improve dark mode to include charts. Also make line and area charts full width and remove animations.
 
 Signed-off-by: Ninette Adhikari <ninette@thehoodiefirm.com>
 ---
- patch-status/index.html | 138 ++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 134 insertions(+), 4 deletions(-)
+ patch-status/index.html        | 56 +++++++++++--------------
+ patch-status/resources/dark.js | 76 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 101 insertions(+), 31 deletions(-)
+ create mode 100644 patch-status/resources/dark.js
 
 diff --git a/patch-status/index.html b/patch-status/index.html
-index 30f1cef0..aacc6496 100644
+index a847a456..86e8c9db 100644
 --- a/patch-status/index.html
 +++ b/patch-status/index.html
-@@ -34,6 +34,31 @@ SPDX-License-Identifier: MIT
-       display: flex;
-     }
+@@ -8,6 +8,8 @@ SPDX-License-Identifier: MIT
+   <meta charset="UTF-8">
+   <meta title="Yocto Autobuilder Patch Metrics" <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <script src="resources/echarts.min.js"></script>
++  <!-- import dark theme -->
++  <script src="resources/dark.js"></script>
+   <link rel="stylesheet" href="resources/pico.fluid.classless.min.css">
+   <link rel="apple-touch-icon" sizes="144x144" href="/resources/apple-touch-icon.png">
+   <link rel="icon" type="image/png" sizes="32x32" href="/resources/favicon-32x32.png">
+@@ -426,6 +428,7 @@ SPDX-License-Identifier: MIT
  
-+    dl {
-+      display: grid;
-+      grid-template-columns: auto auto;
-+      color: var(--pico-h5-color);
-+      margin-inline-start: 1.75em;
-+      margin-block-start: 1em;
+   <!-- get the data -->
+   <script type="text/javascript">
++    const theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default'
+     const status_names = {
+       pending: 'Pending',
+       backport: 'Backport',
+@@ -554,11 +557,16 @@ SPDX-License-Identifier: MIT
+ 
+   <!-- cve_chart -->
+   <script type="text/javascript">
+-  if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+-    // dark mode
+-    var cveChart = echarts.init(document.getElementById('cve_chart'), 'dark');
+-  } else {
+-    var cveChart = echarts.init(document.getElementById('cve_chart'));
++  const cveChart = echarts.init(document.getElementById('cve_chart'), theme);
++
++  const optionsforAllLineCharts = {
++    grid: {
++      left: 60,
++      right: 60,
++      top: 75,
++      bottom: 90
++    },
++    animation: false
+   }
+ 
+   const cveSeries = []
+@@ -599,7 +607,8 @@ SPDX-License-Identifier: MIT
+       series: [
+         releases,
+         ...cveSeries,
+-      ]
++      ],
++      ...optionsforAllLineCharts
+     };
+ 
+     cveChart.setOption(cveOption);
+@@ -608,12 +617,7 @@ SPDX-License-Identifier: MIT
+ 
+   <!-- pie chart -->
+   <script>
+-    // dark mode
+-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+-      var pieChart = echarts.init(document.getElementById('pie_chart'), 'dark');
+-    } else {
+-      var pieChart = echarts.init(document.getElementById('pie_chart'));
+-    }
++    const pieChart = echarts.init(document.getElementById('pie_chart'), theme);
+ 
+     fetch('patch-status-pie.json')
+       .then(response => response.json())
+@@ -652,12 +656,7 @@ SPDX-License-Identifier: MIT
+ 
+   <!-- patch status -->
+   <script type="text/javascript">
+-    // dark mode
+-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+-      var upstreamStatusChart = echarts.init(document.getElementById('upstream_status_chart'), 'dark');
+-    } else {
+-      var upstreamStatusChart = echarts.init(document.getElementById('upstream_status_chart'));
+-    }
++    const upstreamStatusChart = echarts.init(document.getElementById('upstream_status_chart'), theme);
+ 
+     function generateUpstreamChart({ patch_data, releases }) {
+       releases.markLine.label.position = 'insideEndTop';
+@@ -678,7 +677,8 @@ SPDX-License-Identifier: MIT
+         series: [
+           releases,
+           ...upstreamSeries
+-        ]
++        ],
++        ...optionsforAllLineCharts
+       };
+ 
+       upstreamStatusChart.setOption(upstreamOption);
+@@ -687,11 +687,7 @@ SPDX-License-Identifier: MIT
+ 
+   <!-- malformed upstream -->
+   <script type="text/javascript">
+-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+-      var malformedChart = echarts.init(document.getElementById('malformed_chart'), 'dark');
+-    } else {
+-      var malformedChart = echarts.init(document.getElementById('malformed_chart'));
+-    }
++    const malformedChart = echarts.init(document.getElementById('malformed_chart'), theme);
+ 
+     function generateMalformedChart({ malformed_data, releases }) {
+       releases.markLine.label.position = 'insideEndTop';
+@@ -713,7 +709,8 @@ SPDX-License-Identifier: MIT
+         series: [
+           releases,
+           ...malformedSeries
+-        ]
++        ],
++        ...optionsforAllLineCharts
+       };
+ 
+       malformedChart.setOption(malformedOption);
+@@ -722,11 +719,7 @@ SPDX-License-Identifier: MIT
+ 
+   <!-- recipe count -->
+   <script type="text/javascript">
+-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+-      var recipeChart = echarts.init(document.getElementById('recipe_chart'), 'dark');
+-    } else {
+-      var recipeChart = echarts.init(document.getElementById('recipe_chart'));
+-    }
++    const recipeChart = echarts.init(document.getElementById('recipe_chart'), theme);
+ 
+     function generateRecipeChart({ recipe_data, releases }) {
+       releases.markLine.label.position = 'insideEndTop';
+@@ -742,7 +735,8 @@ SPDX-License-Identifier: MIT
+             name: 'Recipe Count',
+             areaStyle: {},
+           }
+-        ]
++        ],
++        ...optionsforAllLineCharts
+       };
+ 
+       recipeChart.setOption(recipeOption);
+diff --git a/patch-status/resources/dark.js b/patch-status/resources/dark.js
+new file mode 100644
+index 00000000..7f0fc92c
+--- /dev/null
++++ b/patch-status/resources/dark.js
+@@ -0,0 +1,76 @@
++/*
++ * Licensed to the Apache Software Foundation (ASF) under one
++ * or more contributor license agreements.  See the NOTICE file
++ * distributed with this work for additional information
++ * regarding copyright ownership.  The ASF licenses this file
++ * to you under the Apache License, Version 2.0 (the
++ * "License"); you may not use this file except in compliance
++ * with the License.  You may obtain a copy of the License at
++ *
++ *   http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing,
++ * software distributed under the License is distributed on an
++ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++ * KIND, either express or implied.  See the License for the
++ * specific language governing permissions and limitations
++ * under the License.
++ */
++
++(function(root, factory) {
++    if (typeof define === 'function' && define.amd) {
++        // AMD. Register as an anonymous module.
++        define(['exports', 'echarts'], factory);
++    } else if (
++        typeof exports === 'object' &&
++        typeof exports.nodeName !== 'string'
++    ) {
++        // CommonJS
++        factory(exports, require('echarts/lib/echarts'));
++    } else {
++        // Browser globals
++        factory({}, root.echarts);
 +    }
-+
-+    dt:hover,
-+    dt:hover+dd,
-+    dt:has(+ dd:hover),
-+    dd:hover {
-+      filter: brightness(15%);
++})(this, function(exports, echarts) {
++    var log = function(msg) {
++        if (typeof console !== 'undefined') {
++            console && console.error && console.error(msg);
++        }
++    };
++    if (!echarts) {
++        log('ECharts is not Loaded');
++        return;
 +    }
++    var axisCommon = function () {
++        return {
++            splitLine: {
++                lineStyle: {
++                    color: '#484753'
++                }
++            },
++        };
++    };
 +
-+    @media (prefers-color-scheme: dark) {
++    var theme = {
++        darkMode: true,
++        backgroundColor: '#13171f',
++        legend: {
++            textStyle: {
++                color: '#B9B8CE'
++            }
++        },
++        line: {
++            symbol: 'circle'
++        },
++        dataZoom: {
++            borderColor: '#71708A',
++            handleStyle: {
++                color: '#353450',
++                borderColor: '#C5CBE3'
++            },
++        },
++        valueAxis: axisCommon(),
++    };
 +
-+      dt:hover,
-+      dt:hover+dd,
-+      dt:has(+ dd:hover),
-+      dd:hover {
-+        filter: brightness(150%);
-+      }
-+    }
-+
-     details {
-       margin-bottom: 0;
-     }
-@@ -192,15 +217,120 @@ SPDX-License-Identifier: MIT
-     </section>
- 
-     <section>
--      <h3>Patch Upstream-Status Counts (OE-Core meta directory)</h3>
--      <div id="upstream_status_chart" style="height:400px;"></div>
-+      <h2>Patch Upstream-Status Counts (OE-Core meta directory)</h2>
-+      <p>
-+        The following two graphs provide insights into the status of patches in the OE-Core meta directory with respect to their upstream status.
-+        The upstream status of a patch refers to its relationship with the original source or upstream project from which the patch originates.
-+      </p>
-+
-+      <details>
-+        <summary>
-+          Upstream status categories explained
-+        </summary>
-+        <dl>
-+          <dt><strong>Accepted</strong>:</dt>
-+          <dd>
-+            <p>The patch has been accepted upstream, meaning it has been applied to the original source code repository from which it originated.</p>
-+            <p><em>A high count of accepted patches indicates successful contributions and integration of changes into the upstream project.</em></p>
-+          </dd>
-+
-+          <dt><strong>Backport</strong>:</dt>
-+          <dd>
-+            <p>The patch has been backported from a newer version of the software or a different branch to an older version or a specific branch.</p>
-+            <p><em>Backported patches show efforts to apply fixes or features from newer versions to older versions or specific branches.</em></p>
-+          </dd>
-+
-+          <dt><strong>Deferred</strong>:</dt>
-+          <dd>
-+            <p>The patch has been postponed or deferred for later consideration or implementation.</p>
-+            <p><em>Deferred patches might indicate areas where further review or discussion is needed before applying the patches upstream.</em></p>
-+          </dd>
-+
-+          <dt><strong>Inappropriate</strong>:</dt>
-+          <dd>
-+            <p>This status indicates that the patch is deemed inappropriate for upstream inclusion.</p>
-+            <p><em>High counts of inappropriate patches might indicate a need for better review processes or clearer guidelines for contributions.</em></p>
-+          </dd>
-+
-+          <dt><strong>Submitted</strong>:</dt>
-+          <dd>
-+            <p>
-+              The patch has been submitted upstream but hasn't received a definitive response yet.
-+              It’s a transitional state between "Pending" and "Accepted" or "Rejected". Patches in this state are awaiting review and acceptance or rejection by upstream maintainers.
-+            </p>
-+            <p><em>Submitted patches reflect ongoing contributions to upstream projects. A high number of submitted patches might indicate active engagement with upstream maintainers.</em></p>
-+          </dd>
-+
-+          <dt><strong>Pending</strong>:</dt>
-+          <dd>
-+            <p>The patch is pending review or has not yet been applied upstream.</p>
-+            <p><em>High counts of pending patches might suggest a backlog in the review process or challenges in getting patches accepted upstream.</em></p>
-+          </dd>
-+
-+          <dt><strong>Denied</strong>:</dt>
-+          <dd>
-+            <p>The patch has been rejected upstream, often due to conflicts, incompatibilities, or not meeting project standards.</p>
-+            <p><em> Rejected patches could signify issues with patch quality, conflicts, or discrepancies between the patch and upstream requirements.</em></p>
-+          </dd>
-+
-+          <dt><strong>Total</strong>:</dt>
-+          <dd>
-+            <p>The total count of patches in the OE-Core meta directory, regardless of their upstream status.</p>
-+            <p><em>This provides context for the distribution of patches across different statuses.</em></p>
-+          </dd>
-+        </dl>
-+      </details>
-     </section>
- 
-+    <div id="upstream_status_chart" style="height:400px;"></div>
-+
-     <section>
--      <h3>Patch Tag Error Counts (OE-Core meta directory)</h3>
--      <div id="malformed_chart" style="height:400px;"></div>
-+      <h2>Patch Tag Error Counts (OE-Core meta directory)</h2>
-+      <p>The Patch Tag Error Counts graph shows the statuses "Malformed Upstream-Status" and "Malformed Signed-off-by" to provide insight into the quality and completeness of patches in the OE-Core meta directory.</p>
-+      <details>
-+        <summary>
-+          Malformed status categories explained
-+        </summary>
-+        <dl>
-+          <dt><strong>Malformed Upstream-Status</strong>:</dt>
-+          <dd>
-+            <p>This category indicates patches with improperly formatted or missing upstream status tags.</p>
-+            <p>A malformed upstream status could be a result of missing or incorrectly formatted tags such as "Upstream-Status:", which is a common tag used to specify the status of the patch upstream.</p>
-+            <p>Patches with malformed upstream status might not be properly tracked or considered for upstream inclusion, as they lack necessary metadata for review.</p>
-+            <p>
-+              <em>
-+                High counts in this category might indicate issues with patch submission processes or lack of adherence to patch submission guidelines.
-+                These patches might be at risk of being overlooked or rejected during the review process due to incomplete metadata.
-+              </em>
-+            </p>
-+          </dd>
-+          <dt><strong>Malformed Signed-off-by</strong>:</dt>
-+          <dd>
-+            <p>
-+              This category represents patches with improperly formatted or missing "Signed-off-by" lines.
-+              The "Signed-off-by" line in a patch is a tag that signifies the authorship and acknowledgment of the patch.
-+              A malformed "Signed-off-by" line could be due to missing or incorrectly formatted authorship information.
-+              Properly formatted "Signed-off-by" lines are essential for maintaining authorship attribution and legal compliance.
-+            </p>
-+            <p>
-+              <em>
-+                This category reflects issues with patch authorship and acknowledgment.
-+                Patches with malformed "Signed-off-by" lines might lack proper attribution, which can lead to confusion about ownership and legal compliance.
-+                Such patches might require additional verification or correction before being considered for inclusion.
-+              </em>
-+            </p>
-+          </dd>
-+          <dt><strong>Total</strong>:</dt>
-+          <dd>
-+            <p>The total count of patches in the OE-Core meta directory, regardless of their upstream status.</p>
-+            <p><em>This provides context for the distribution of patches across different statuses.</em></p>
-+          </dd>
-+        </dl>
-+      </details>
-     </section>
- 
-+    <div id="malformed_chart" style="height:400px;"></div>
-+
-     <section>
-       <h3>Recipe Count (OE-Core meta directory)</h3>
-       <div id="recipe_chart" style="height:400px;"></div>
++    echarts.registerTheme('dark', theme);
++});
 -- 
 2.44.0
 
