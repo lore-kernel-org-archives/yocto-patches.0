@@ -1,368 +1,189 @@
-Return-Path: <twoerner@gmail.com>
+Return-Path: <ninette@thehoodiefirm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D857C04FFE
-	for <webhook@archiver.kernel.org>; Sun, 12 May 2024 02:28:30 +0000 (UTC)
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
- by mx.groups.io with SMTP id smtpd.web10.27933.1715480901280563911
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31626C25B10
+	for <webhook@archiver.kernel.org>; Mon, 13 May 2024 10:58:09 +0000 (UTC)
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+ by mx.groups.io with SMTP id smtpd.web11.57430.1715597882567199017
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 11 May 2024 19:28:21 -0700
+ Mon, 13 May 2024 03:58:02 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=dJzZULH2;
- spf=pass (domain: gmail.com, ip: 209.85.222.179, mailfrom: twoerner@gmail.com)
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-792b8d989e4so277948585a.2
-        for <yocto-patches@lists.yoctoproject.org>; Sat, 11 May 2024 19:28:21 -0700 (PDT)
+ dkim=pass header.i=@thehoodiefirm-com.20230601.gappssmtp.com header.s=20230601 header.b=JY9XBEIA;
+ spf=neutral (domain: thehoodiefirm.com, ip: 209.85.218.44, mailfrom: ninette@thehoodiefirm.com)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a599eedc8eeso1014929266b.1
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 13 May 2024 03:58:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715480899; x=1716085699; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z8VRRHp+q8aFfZbAumNWCvG2+FfnuYiu7VJ2Thj6Fys=;
-        b=dJzZULH2V0j//JbYM+1Tbms1Z7irrg5kNMnsnvgjEqwHVtc8B5xosz4NlcakgxUhUr
-         QmbvIKP9CfEJRg12BsiyUUn6KJloEYN4VH6qXFKn1tYTIQI4uX116ElIgb6vm+e89b5w
-         q5mPL+U+2x2i7ARDZLGB6sg2+arGIRePygnwAWE3nrF4so2Ut17rmmtmHTfRnDEn8KbC
-         XtRBj4FnLWRKHWbFX4RtgL/DxMu2KqBi5tEBp9013ae91imZPOasoz5UcVBSyVZFjeHK
-         9+xRhTsQsInL4KsanP4zB0vMW9llLSHhsxPB1YZtPoi2Nh2wdSbeZn0EOKDydUt1PMVa
-         d8cw==
+        d=thehoodiefirm-com.20230601.gappssmtp.com; s=20230601; t=1715597881; x=1716202681; darn=lists.yoctoproject.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=hzwW8sTQB+qSV6nWhykP6k2hQs/p1Mi5fY+70UwLZpM=;
+        b=JY9XBEIAZwbnPGMhJWRiR8FqM0JiYUPphRn9PXziAVtdi2L0af5CQrjqig1sZZX+tB
+         3PqW6Cg7Y1jtyTAALGD1UXsNAOHaneRRpql4KitvVOAU3xo+VOaDSIm+RiaUOX1lxSkL
+         5v0MIPh/a8nPzjcvJvNpkioTAyI/iFz+pxI/5Aig3kgPfRGwZwIiR9/gf1+1aSYlFPle
+         pAe+kfqqpGkBdEehYavKZggUhV21q62Gg3LzYybHcnCOUGyx6rPjLa3ovknbft5vI2bA
+         KN4cWkItVEudXftl2c4Pd6URQ92trZIu1pXW+nugKTMRqbCN//H4qLUvFi+mkB7NEdTT
+         O4Hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715480899; x=1716085699;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z8VRRHp+q8aFfZbAumNWCvG2+FfnuYiu7VJ2Thj6Fys=;
-        b=woFGJpZFL/nmu+R1vV3ik1xJPG4iMYVQex6T2UDxQUJwNPajlDkGkk6DSdFlWAGtL9
-         +MykLAMXLumuoY3oiEqQ8/qaYx6m3N6j/JnCZI44tOsigj4eRHA6D+S1LbrwMR0yHIu+
-         ecQuBpHpLOdBRhQWnrV/7WClQntmlSOmBETJkQah/mNwK/SZmCKw9w2zghQILD0fPj8m
-         QvuPBSZ1YGYDop6rRl4F+jcoRV389t8v1prIkncu4/oPi7Mj3EyiLRcoNtLtzE8W1XPS
-         fkkwASS48Ab1PDk0kkyQzEXJH9LKQ+x0QTSnIbNf1F1SV9jBRA4Dc3hvcqFKkSJpfc8c
-         I6+g==
-X-Gm-Message-State: AOJu0Yw2VcKanyemwshDBRn1K5O9Ejx9Qo6HsKBUFaakSS3jvj6TNquu
-	adudnb1Rv4HQWmEnLOsYJnxxr+6/YiNlNxXk75u3fo84DWaKzU1H5dY75w==
-X-Google-Smtp-Source: AGHT+IEzJhck4XxQbcDQwESei1aJExJ/fBoEhzJqBPyUNS7nDDwJ8soePEHzYBRXZvcfIeujOj7I6A==
-X-Received: by 2002:a05:620a:57d7:b0:792:b254:640f with SMTP id af79cd13be357-792c75f5636mr760618685a.57.1715480898742;
-        Sat, 11 May 2024 19:28:18 -0700 (PDT)
-Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-792bf2fc3dbsm325914385a.96.2024.05.11.19.28.17
-        for <yocto-patches@lists.yoctoproject.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 May 2024 19:28:17 -0700 (PDT)
-From: Trevor Woerner <twoerner@gmail.com>
-To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-rockchip][PATCH v6] enable stored U-Boot environment
-Date: Sat, 11 May 2024 22:28:15 -0400
-Message-ID: <20240512022815.39350-1-twoerner@gmail.com>
-X-Mailer: git-send-email 2.44.0.501.g19981daefd7c
+        d=1e100.net; s=20230601; t=1715597881; x=1716202681;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hzwW8sTQB+qSV6nWhykP6k2hQs/p1Mi5fY+70UwLZpM=;
+        b=iEG9WSexNbP0Ia6hapha/7js2qIO9oXPiuUnBY/jh/Utb6H9UlzO8uTMcFM+4tW4WG
+         nMB+kCzTuVFjF7T+0fcVC/a8AC40mYpiV5kW8dn5N2q3cLvaAoA5eS6qaxuUOx0tgVLj
+         oXASC+NpMbL2hmG5DPnVBQr5gz1qh+yoedKcuu+z7lEqOl39KtF2g0dIdgG9I6+6Dnbe
+         F8pF8LEJqse6L33ubHfC+HO1xYMHwdQMx3VnNP4BBEeBRO0oN4z0X7IPAwXA09sX/hP8
+         fR9Cz9/rYKFqJv6weMgGl1fvLb1Bcrzf5C+ECGKzvzKEdGPU5sr2Vs2gJf6h/W7jmCKb
+         OORw==
+X-Gm-Message-State: AOJu0YxHdAOVireRE1vmp01meIOlG9zfdhhpHdkrZX15mbJfLjXPlg5B
+	FvZBbbwUqI4BMwq2UGCChGVwgJA0dyjr9jmEJ7by3D9ISmQZhsfZBgVjK3uNLEkTHg5rFcu4Iof
+	Sb5im0GOGWVZ/jxDgkEfWVWLBCGWb/ci6JoYd+A==
+X-Google-Smtp-Source: AGHT+IGx67213C8MRMg+LFDLuQv9F6oWz2XgHpmabrFAz+AJxWq8GcsjasMe9jNA+9CoLWspZdFIhUWrkCYsLNvmJfQ=
+X-Received: by 2002:a17:906:7f8a:b0:a59:b6a8:4d7a with SMTP id
+ a640c23a62f3a-a5a2d5d3d22mr623731266b.43.1715597880657; Mon, 13 May 2024
+ 03:58:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240508153131.94270-1-ninette@thehoodiefirm.com>
+ <20240508153131.94270-3-ninette@thehoodiefirm.com> <3ebe931181412a352eb719d19cee95b0f2eebe23.camel@linuxfoundation.org>
+In-Reply-To: <3ebe931181412a352eb719d19cee95b0f2eebe23.camel@linuxfoundation.org>
+From: Ninette Adhikari <ninette@neighbourhood.ie>
+Date: Mon, 13 May 2024 12:57:49 +0200
+Message-ID: <CAG1aeW0ySPCCTd040nwjB0VEptrPdECrfLTCrG2OULEo7fChUA@mail.gmail.com>
+Subject: Re: [yocto-patches] [PATCH 02/12] patch-status: add README.md file
+To: Richard Purdie <richard.purdie@linuxfoundation.org>
+Cc: yocto-patches@lists.yoctoproject.org, engineering@neighbourhood.ie, 
+	Alex Feyerke <hello@alexfeyerke.com>
+Content-Type: multipart/alternative; boundary="0000000000004122ee061853c200"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sun, 12 May 2024 02:28:30 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/116
+ <yocto-patches@lists.yoctoproject.org>; Mon, 13 May 2024 10:58:09 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/117
 
-U-Boot has the ability to store its environment variables to a permanent
-storage device. Whether or not it does so for any one specific device
-depends on whatever settings are enabled in that specific device's
-defconfig. In order to definitively configure U-Boot to be able to store
-its environment into the device from which it boots, for any device
-supported in this BSP, simply add the following to MACHINE_FEATURES:
+--0000000000004122ee061853c200
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-	rk-u-boot-env
+Hi Richard,
 
-If enabled, there is now a second choice to make: should the build also
-include the U-Boot environment in the image or not? The default environment,
-as generated by U-Boot, can be included in the generated wic image. If it
-is included, then flashing the image will also flash the default U-Boot
-environment variables and settings, wiping out anything that might have been
-there already. If it is not included then your device will either continue
-using whatever environment happens to be there (if valid), or will not use any
-stored environment if the stored environment has not been set or is invalid.
-The variable which governs this behaviour is:
+This is really strange that the patches are coming through as empty for
+you. Sorry about that! Just to be sure that we understood correctly do you
+mean your email client actually doesn=E2=80=99t display the patches? becaus=
+e we can
+see them in the email you replied to.
+I followed this documentation
+<https://docs.yoctoproject.org/contributor-guide/submit-changes.html?highli=
+ght=3Dpull+request#sending-the-patches-via-email>
+to send the patches and it worked fine for previous patches. We have also
+pushed the patches to the yocto metrics contributors branch
+<https://git.yoctoproject.org/yocto-metrics/log/?h=3Dcontrib/jacobabrandner=
+/improve_chart_page>
+in case you can't view the email patches.
 
-	RK_IMAGE_INCLUDES_UBOOT_ENV
+Please let me know if there is any other way to share the patches or if I
+should rensend the patches. Thanks so much!
 
-By default this is set to "0", meaning that by default the image does not
-contain the U-Boot environment. To enable this behaviour, enable this
-variable. This variable only takes effect if rk-u-boot-env is listed in
-MACHINE_FEATURES, and has no effect otherwise.
+Best,
+Ninette
 
-The script:
+On Thu, May 9, 2024 at 12:53=E2=80=AFPM Richard Purdie <
+richard.purdie@linuxfoundation.org> wrote:
 
-	scripts/dump-uboot-env-from-yocto-image.sh
+> On Wed, 2024-05-08 at 17:31 +0200, Ninette Adhikari via
+> lists.yoctoproject.org wrote:
+> >
+> >
+> > -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+> > Links: You receive all messages sent to this group.
+> > View/Reply Online (#93):
+> > https://lists.yoctoproject.org/g/yocto-patches/message/93
+> > Mute This Topic: https://lists.yoctoproject.org/mt/105983324/1686473
+> > Group Owner: yocto-patches+owner@lists.yoctoproject.org
+> > Unsubscribe:
+> >
+> https://lists.yoctoproject.org/g/yocto-patches/leave/13162210/1686473/167=
+7322349/xyzzy
+> >  [richard.purdie@linuxfoundation.org]
+> > -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+>
+>
+> This patch and patches 4, 7 and 8 all appeared to come through as empty
+> unfortunately (messages with nothing in them other than the list
+> footer).
+>
+> Any idea what happened to them?
+>
+> Cheers,
+>
+> Richard
+>
+>
+>
+>
 
-can be used on a rockchip wic image to see the contents of the U-Boot
-environment partition at build time.
+--0000000000004122ee061853c200
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Tested by booting the same image on both eMMC and SDcard with the following
-devices, verifying the ability to read and write the U-Boot environment in
-both U-Boot and Linux user-space, and that changes made in one are seen in the
-other:
-	rock-3a
-	rock-5a
-	rock-5b
-	rock-pi-4b
-	rock-pi-e
-	rock64
+<div dir=3D"ltr"><div dir=3D"ltr"><div>Hi Richard,</div><div><br></div><div=
+>This is really strange that the patches are coming through as empty for yo=
+u. Sorry about that! Just to be sure that we understood correctly do you me=
+an your email client actually doesn=E2=80=99t display the patches? because =
+we can see them in the email you replied to.<br>I followed this <a href=3D"=
+https://docs.yoctoproject.org/contributor-guide/submit-changes.html?highlig=
+ht=3Dpull+request#sending-the-patches-via-email" target=3D"_blank">document=
+ation</a> to send the patches and it worked fine for previous patches. We h=
+ave also pushed the patches to the yocto metrics <a href=3D"https://git.yoc=
+toproject.org/yocto-metrics/log/?h=3Dcontrib/jacobabrandner/improve_chart_p=
+age" target=3D"_blank">contributors branch</a> in case you can&#39;t view t=
+he email patches.</div><div><br></div><div>Please let me know if there is a=
+ny other way to share the patches or if I should rensend the patches. Thank=
+s so much!</div><div><br></div><div>Best,</div><div>Ninette<br></div></div>=
+<br><div class=3D"gmail_quote"><div dir=3D"ltr" class=3D"gmail_attr">On Thu=
+, May 9, 2024 at 12:53=E2=80=AFPM Richard Purdie &lt;<a href=3D"mailto:rich=
+ard.purdie@linuxfoundation.org" target=3D"_blank">richard.purdie@linuxfound=
+ation.org</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=
+=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding=
+-left:1ex">On Wed, 2024-05-08 at 17:31 +0200, Ninette Adhikari via <a href=
+=3D"http://lists.yoctoproject.org" rel=3D"noreferrer" target=3D"_blank">lis=
+ts.yoctoproject.org</a> wrote:<br>
+&gt; <br>
+&gt; <br>
+&gt; -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-<br>
+&gt; Links: You receive all messages sent to this group.<br>
+&gt; View/Reply Online (#93):<br>
+&gt; <a href=3D"https://lists.yoctoproject.org/g/yocto-patches/message/93" =
+rel=3D"noreferrer" target=3D"_blank">https://lists.yoctoproject.org/g/yocto=
+-patches/message/93</a><br>
+&gt; Mute This Topic: <a href=3D"https://lists.yoctoproject.org/mt/10598332=
+4/1686473" rel=3D"noreferrer" target=3D"_blank">https://lists.yoctoproject.=
+org/mt/105983324/1686473</a><br>
+&gt; Group Owner: <a href=3D"mailto:yocto-patches%2Bowner@lists.yoctoprojec=
+t.org" target=3D"_blank">yocto-patches+owner@lists.yoctoproject.org</a><br>
+&gt; Unsubscribe:<br>
+&gt; <a href=3D"https://lists.yoctoproject.org/g/yocto-patches/leave/131622=
+10/1686473/1677322349/xyzzy" rel=3D"noreferrer" target=3D"_blank">https://l=
+ists.yoctoproject.org/g/yocto-patches/leave/13162210/1686473/1677322349/xyz=
+zy</a><br>
+&gt; =C2=A0[<a href=3D"mailto:richard.purdie@linuxfoundation.org" target=3D=
+"_blank">richard.purdie@linuxfoundation.org</a>]<br>
+&gt; -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-<br>
+<br>
+<br>
+This patch and patches 4, 7 and 8 all appeared to come through as empty<br>
+unfortunately (messages with nothing in them other than the list<br>
+footer).<br>
+<br>
+Any idea what happened to them?<br>
+<br>
+Cheers,<br>
+<br>
+Richard<br>
+<br>
+<br>
+<br>
+</blockquote></div><br></div>
 
-Signed-off-by: Trevor Woerner <twoerner@gmail.com>
----
-v6 changes:
-- separate out the MACHINEOVERRIDES handling into its own include so
-  that it can be included more flexibly into different scenarios; i.e.
-  rock2-square build was failing because it is not wic-based
-
-v5 changes:
-- fix a bug in v4 to handle RK_IMAGE_INCLUDES_UBOOT_ENV correctly in the
-  bash test in postfuncs of u-boot bbappend
-- add extra check in do_deploy() of u-boot bbappend to only copy the
-  environment if RK_IMAGE_INCLUDES_UBOOT_ENV is true
-
-v4 changes:
-- sort WICVARS alphabetically
-- tweak dump-uboot-env-from-yocto-image.sh script to not just check for
-  the existence of the user-supplied parameter, but that it is a file
-  specifically
-- u-boot bbappend:
-  - use a do_compile[postfuncs] for generating the fw_env.config instead of
-    a do_compile:append
-  - move the conversion of the U-Boot text-based environment to the
-    require binary representation from a do_deploy:append to the newly-created
-    do_compile[postfuncs] created above, this will allow the user to inject
-    any extra U-Boot environment variables they might wish as part of a
-    do_compile:append and have that occur before the binary is generated
-    so that those additional user-supplied values are included
-  - add a lot of extra checking (instead of assuming various resources exist)
-    before making use of said resources
-
-v3 changes:
-- switch from using a bbclass so the `rk-u-boot-env` override can be used
-  directly
-- add SPDX header to script
-- drop `inherit deploy` in U-Boot bbappend
-
-v2 changes:
-- re-word the commit message and README for clarity
-- use bash's built-in math handling instead of depending on `bc`
-- in anticipation of the upcoming feature in U-Boot whereby rockchip
-  devices can automatically select the environment storage device to be
-  the same as the boot device, use a more recent SRCREV for builds that do
-  environment handling, instead of hardcoding the environment storage device
-  by SoC family
-- handle RK_IMAGE_INCLUDES_UBOOT_ENV as a boolean
----
- README                                        | 20 ++++++++++
- .../include/rockchip-rk-u-boot-env.inc        |  4 ++
- conf/machine/include/rockchip-wic.inc         |  7 ++++
- conf/machine/rock2-square.conf                |  2 +-
- .../rockchip-enable-environment-mmc.cfg       |  6 +++
- recipes-bsp/u-boot/u-boot_%.bbappend          | 40 +++++++++++++++++++
- scripts/dump-uboot-env-from-yocto-image.sh    | 29 ++++++++++++++
- wic/rockchip.wks                              |  2 +-
- 8 files changed, 108 insertions(+), 2 deletions(-)
- create mode 100644 conf/machine/include/rockchip-rk-u-boot-env.inc
- create mode 100644 recipes-bsp/u-boot/files/rk-u-boot-env/rockchip-enable-environment-mmc.cfg
- create mode 100755 scripts/dump-uboot-env-from-yocto-image.sh
-
-diff --git a/README b/README
-index c76fc9131276..605773d4ecd3 100644
---- a/README
-+++ b/README
-@@ -67,6 +67,26 @@ Notes:
- 	
- 	in the configuration (e.g. conf/local.conf).
- 
-+U-Boot Environment:
-+------------------
-+	In order to configure U-Boot to be able to store its environment into the
-+	device from which it was booted, for any device supported in this BSP,
-+	simply add the following to MACHINE_FEATURES:
-+
-+		rk-u-boot-env
-+
-+	If enabled, to additionally have the U-Boot environment generated and
-+	stored in the image, also enable the following variable (default: off):
-+
-+		RK_IMAGE_INCLUDES_UBOOT_ENV
-+
-+	The script:
-+
-+		scripts/dump-uboot-env-from-yocto-image.sh
-+
-+	can be used on a rockchip wic image to see the contents of the U-Boot
-+	environment partition at build time.
-+
- Maintenance:
- -----------
- 	Please send pull requests, patches, comments, or questions to the
-diff --git a/conf/machine/include/rockchip-rk-u-boot-env.inc b/conf/machine/include/rockchip-rk-u-boot-env.inc
-new file mode 100644
-index 000000000000..4eb877f77c48
---- /dev/null
-+++ b/conf/machine/include/rockchip-rk-u-boot-env.inc
-@@ -0,0 +1,4 @@
-+# 'rk-u-boot-env' indicates the user wants to be able to save their U-Boot
-+# environment back to the drive from which the device was booted
-+MACHINEOVERRIDES .= "${@bb.utils.contains('MACHINE_FEATURES', 'rk-u-boot-env', ':rk-u-boot-env', '', d)}"
-+IMAGE_INSTALL:append:rk-u-boot-env = " u-boot-fw-utils u-boot-env"
-diff --git a/conf/machine/include/rockchip-wic.inc b/conf/machine/include/rockchip-wic.inc
-index 147a36685d7d..1f662116d7cf 100644
---- a/conf/machine/include/rockchip-wic.inc
-+++ b/conf/machine/include/rockchip-wic.inc
-@@ -1,6 +1,7 @@
- # common meta-rockchip wic/wks items
- 
- require conf/machine/include/rockchip-extlinux.inc
-+require conf/machine/include/rockchip-rk-u-boot-env.inc
- 
- SPL_BINARY ?= "idbloader.img"
- 
-@@ -11,7 +12,13 @@ WKS_FILE_DEPENDS ?= " \
- 	virtual/bootloader \
- 	"
- 
-+RK_IMAGE_INCLUDES_UBOOT_ENV ?= "no"
-+RK_UBOOT_ENV = " "
-+RK_UBOOT_ENV:rk-u-boot-env = "${@ '--source rawcopy --sourceparams=file=u-boot.env' if \
-+	bb.utils.to_boolean(d.getVar('RK_IMAGE_INCLUDES_UBOOT_ENV'), False) else ' '}"
-+
- WICVARS:append = " \
-+	RK_UBOOT_ENV \
- 	SPL_BINARY \
- 	UBOOT_SUFFIX \
- 	"
-diff --git a/conf/machine/rock2-square.conf b/conf/machine/rock2-square.conf
-index 9468b9a6b559..bd36b2ecfcc7 100644
---- a/conf/machine/rock2-square.conf
-+++ b/conf/machine/rock2-square.conf
-@@ -7,6 +7,7 @@
- #http://radxa.com/Rock2
- 
- require conf/machine/include/rk3288.inc
-+require conf/machine/include/rockchip-rk-u-boot-env.inc
- 
- SPL_BINARY = "u-boot-spl-dtb.bin"
- KERNEL_DEVICETREE = "rockchip/rk3288-rock2-square.dtb"
-@@ -16,4 +17,3 @@ UBOOT_MACHINE = "rock2_defconfig"
- # image class
- IMAGE_FSTYPES += "rockchip-gpt-img"
- IMAGE_CLASSES += "rockchip-gpt-img"
--
-diff --git a/recipes-bsp/u-boot/files/rk-u-boot-env/rockchip-enable-environment-mmc.cfg b/recipes-bsp/u-boot/files/rk-u-boot-env/rockchip-enable-environment-mmc.cfg
-new file mode 100644
-index 000000000000..778772d27767
---- /dev/null
-+++ b/recipes-bsp/u-boot/files/rk-u-boot-env/rockchip-enable-environment-mmc.cfg
-@@ -0,0 +1,6 @@
-+CONFIG_ENV_SIZE=0x8000
-+CONFIG_ENV_OFFSET=0x3f8000
-+# CONFIG_ENV_IS_NOWHERE is not set
-+CONFIG_ENV_IS_IN_MMC=y
-+CONFIG_DM_SEQ_ALIAS=y
-+CONFIG_SPL_DM_SEQ_ALIAS=y
-diff --git a/recipes-bsp/u-boot/u-boot_%.bbappend b/recipes-bsp/u-boot/u-boot_%.bbappend
-index a83179a9f007..32cb11939f77 100644
---- a/recipes-bsp/u-boot/u-boot_%.bbappend
-+++ b/recipes-bsp/u-boot/u-boot_%.bbappend
-@@ -1,7 +1,13 @@
-+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
-+
-+SRC_URI:append:rk-u-boot-env = " file://rockchip-enable-environment-mmc.cfg"
-+SRCREV:rk-u-boot-env = "cdfcc37428e06f4730ab9a17cc084eeb7676ea1a"
-+
- # various machines require the pyelftools library for parsing dtb files
- DEPENDS:append = " python3-pyelftools-native"
- DEPENDS:append:rk3308 = " u-boot-tools-native"
- DEPENDS:append:rock-pi-4 = " gnutls-native"
-+DEPENDS:append:rk-u-boot-env = " u-boot-mkenvimage-native"
- 
- EXTRA_OEMAKE:append:px30 = " BL31=${DEPLOY_DIR_IMAGE}/bl31-px30.elf"
- EXTRA_OEMAKE:append:rk3308 = " \
-@@ -34,3 +40,37 @@ do_compile:append:rock2-square () {
- 		cp ${B}/spl/${SPL_BINARY} ${B}
- 	fi
- }
-+
-+rk_generate_env() {
-+	if [ ! -f "${B}/.config" ]; then
-+		echo "U-Boot .config not found, can't determine environment size"
-+		return 1
-+	fi
-+	cat ${B}/.config | grep "^CONFIG_ENV_SIZE=" > /dev/null
-+	if [ $? -ne 0 ]; then
-+		echo "can not find CONFIG_ENV_SIZE value in U-Boot .config"
-+		return 1
-+	fi
-+
-+	UBOOT_ENV_SIZE="$(cat ${B}/.config | grep "^CONFIG_ENV_SIZE=" | cut -d'=' -f2)"
-+
-+	# linux user-space U-Boot env config file
-+	echo "/dev/disk/by-partlabel/uboot_env 0x0000 ${UBOOT_ENV_SIZE}" > ${WORKDIR}/fw_env.config
-+
-+	# convert text-based environment to binary suitable for image
-+	if [ "${@bb.utils.to_boolean(d.getVar('RK_IMAGE_INCLUDES_UBOOT_ENV'), False)}" = "True" ]; then
-+		if [ ! -f ${B}/u-boot-initial-env ]; then
-+			echo "initial, text-formatted U-Boot environment file \"${B}/u-boot-initial-env\" not found"
-+			return 1
-+		fi
-+		mkenvimage -s ${UBOOT_ENV_SIZE} ${B}/u-boot-initial-env -o ${WORKDIR}/u-boot.env
-+	fi
-+}
-+do_compile[postfuncs] += "${@bb.utils.contains('MACHINE_FEATURES', 'rk-u-boot-env', 'rk_generate_env', '', d)}"
-+
-+do_deploy:append:rk-u-boot-env() {
-+	if [ -f ${WORKDIR}/u-boot.env -a "${@bb.utils.to_boolean(d.getVar('RK_IMAGE_INCLUDES_UBOOT_ENV'),False)}" = "True" ]; then
-+		install -d ${DEPLOYDIR}
-+		install -m 0644 ${WORKDIR}/u-boot.env ${DEPLOYDIR}
-+	fi
-+}
-diff --git a/scripts/dump-uboot-env-from-yocto-image.sh b/scripts/dump-uboot-env-from-yocto-image.sh
-new file mode 100755
-index 000000000000..05b7048f1734
---- /dev/null
-+++ b/scripts/dump-uboot-env-from-yocto-image.sh
-@@ -0,0 +1,29 @@
-+#/bin/bash
-+# SPDX-License-Identifier: OSL-3.0
-+#
-+# a program that can take a wic file and dump out the contents
-+# of the U-Boot environment in canonical hex+ascii format
-+# (assuming the "rockchip" layout specified in this layer's wic file)
-+
-+# check for programs
-+check_pgm() {
-+	$1 --help > /dev/null 2>&1
-+	if [ $? -ne 0 ]; then
-+		echo "required program \"$1\" not found"
-+		exit 1
-+	fi
-+}
-+check_pgm dd
-+check_pgm hexdump
-+
-+if [ $# -ne 1 ]; then
-+	echo "required param missing: yocto wic image"
-+	exit 1
-+fi
-+if [ ! -f "$1" ]; then
-+	echo "specified file \"$1\" not found"
-+	exit 1
-+fi
-+
-+SKIP=$(( 8128 * 512 ))
-+dd if="$1" ibs=1 skip=$SKIP count=32k 2> /dev/null | hexdump -C
-diff --git a/wic/rockchip.wks b/wic/rockchip.wks
-index 9ba3352b51bb..bc65f73b0cf3 100644
---- a/wic/rockchip.wks
-+++ b/wic/rockchip.wks
-@@ -22,7 +22,7 @@ part loader1   --offset 64s    --fixed-size 3552K --fstype=none --part-name load
- part v_storage --offset 7168s  --fixed-size 256K  --fstype=none --part-name v_storage
- part reserved  --offset 7680s  --fixed-size 192K  --fstype=none --part-name reserved
- part reserved1 --offset 8064s  --fixed-size 32K   --fstype=none --part-name reserved1
--part uboot_env --offset 8128s  --fixed-size 32K   --fstype=none --part-name uboot_env
-+part uboot_env --offset 8128s  --fixed-size 32K   --fstype=none --part-name uboot_env ${RK_UBOOT_ENV}
- part reserved2 --offset 8192s  --fixed-size 4096K --fstype=none --part-name reserved2
- part loader2   --offset 16384s --fixed-size 4096K --fstype=none --part-name loader2   --source rawcopy --sourceparams="file=u-boot.${UBOOT_SUFFIX}"
- part atf       --offset 24576s --fixed-size 4096K --fstype=none --part-name atf
--- 
-2.44.0.478.g7774cfed6261
-
+--0000000000004122ee061853c200--
 
