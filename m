@@ -2,58 +2,62 @@ Return-Path: <ninette@thehoodiefirm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B558C25B10
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83DCAC25B74
 	for <webhook@archiver.kernel.org>; Mon, 13 May 2024 14:59:30 +0000 (UTC)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
- by mx.groups.io with SMTP id smtpd.web11.62813.1715612366145388189
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+ by mx.groups.io with SMTP id smtpd.web10.62669.1715612367710478458
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 13 May 2024 07:59:26 -0700
+ Mon, 13 May 2024 07:59:28 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@thehoodiefirm-com.20230601.gappssmtp.com header.s=20230601 header.b=PfSBbA1v;
- spf=neutral (domain: thehoodiefirm.com, ip: 209.85.218.48, mailfrom: ninette@thehoodiefirm.com)
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a59cdd185b9so943836666b.1
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 13 May 2024 07:59:25 -0700 (PDT)
+ dkim=pass header.i=@thehoodiefirm-com.20230601.gappssmtp.com header.s=20230601 header.b=fF2OMBoC;
+ spf=neutral (domain: thehoodiefirm.com, ip: 209.85.218.43, mailfrom: ninette@thehoodiefirm.com)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a5a552c8cbaso491693166b.2
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 13 May 2024 07:59:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=thehoodiefirm-com.20230601.gappssmtp.com; s=20230601; t=1715612364; x=1716217164; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:reply-to:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zxoeqR8W8B44TQWm3CgoMJL/I0+j814gzWP5IgIv1z4=;
-        b=PfSBbA1vy7eP+Nhqgen0nipmtYeUvsVcQVu9mCtMLHPC72YDTS5eOfhlKjOKiI2RJm
-         tmbYBmmy1cxNYbQETYYxXJImkmePoPfykoKBjw6A5fx+Bu+fEbtfLCbcdhUOItqF8qSF
-         rWCwTlcxVqSsVjCIou+R49kdaeikKF65pBZufXuPtnNhuBLNfbNtDbDlNThJdBERVNct
-         PRaIaVI49UvorljMyacCyhBrMlAv375rClHSrpoF6jjJyb/okFPsm+kM5Wmb+WAVEUd7
-         OK5ZaP3YwdRzcBWVXbC9Fk2o5thpQbowRakf0XrBjHKLTFMwoxBUGSSBgmNxPeGwkB4K
-         Yy2g==
+        d=thehoodiefirm-com.20230601.gappssmtp.com; s=20230601; t=1715612366; x=1716217166; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:reply-to:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=EhH7PZ2o0pmQrsAP433OuLq+9dfa+anm+PYgw8W2H1U=;
+        b=fF2OMBoCITochHrXllWMwCeI3hOFEuRhqiPEzCIfSdDhNvfHpkhtKTmGKBCJfFIgEF
+         e1RRkOuVe3c8hGpuRMfw5R16KFBEOi2+EGvmjpmrPV5C7jGjD183jfRbxOEqNbD6ft2j
+         JDA5Y6K09tdUCHypD3tSbCbhPtel7Lm9dRQ+p4axobDvTIXBlmS2zdUjUm5t+l2otjIn
+         R9tk+Utz1JlDr3Lbk/J4sYNv5eovrnDKUCyLAMu786VPju72ui8vwk0fGZNtaLzO56V8
+         HygfYoPcuHVHReRq5U43gvGE2staDaBvucJk+IVbJZ/h+v5uXLY5vSwYsx/0pfDG99C+
+         8X6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715612364; x=1716217164;
-        h=content-transfer-encoding:mime-version:reply-to:message-id:date
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zxoeqR8W8B44TQWm3CgoMJL/I0+j814gzWP5IgIv1z4=;
-        b=Q1ln+jFFr6dh5aOX+FBd6OAgHtlvywnTMIkQv8O4f8RLAwU7zt0s5/p+pGweLZZzxX
-         bSnFFsr5du77p0QtFBmkf+JhaDfdDZbPasXYx5Zv7kQRKN3am3yieJew8zwkBUxLFefb
-         wSmszk+0HkM8KskeWNRwVvm0xCUVETbVL4aJsAvIoF9hWLWu6sadBLknpa00P6btGopB
-         c6ZfoFn7LERR34o8pXbShCc8rCmcK6VtlFqv3lIZ7VP8GWMoDXmdfUqqz/lcqqFFtKs8
-         GFIMZ54itTt7v5os/U7FhHdBZV64xvMAPjwV+qNqhUGgiIgkmfCPhHAYAxZUAU+Nv21L
-         MPbQ==
-X-Gm-Message-State: AOJu0YyrQhUJrD3ehdzIatLIWN7Uc8iHWdaftjwxNL/k4nSBcnKREZeW
-	hON36/KeHiiyMZdlfR+ESvZ4r2RZEEpWSMVhi+V/4b6S46n8I2YlNw2yLR2MQ/8H65J7YWn7AmE
-	U
-X-Google-Smtp-Source: AGHT+IH5TqEsiTwdw1CDAWPEBrsbsgKK1EthR6e8KFHnePTTnoxN0a1tZ0auhO09gDzm9udbILllUg==
-X-Received: by 2002:a17:906:da8d:b0:a5a:7a1:5da3 with SMTP id a640c23a62f3a-a5a2d09e4b4mr989926266b.0.1715612363472;
-        Mon, 13 May 2024 07:59:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715612366; x=1716217166;
+        h=content-transfer-encoding:mime-version:reply-to:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EhH7PZ2o0pmQrsAP433OuLq+9dfa+anm+PYgw8W2H1U=;
+        b=K+mVTwFdzUNkYbjyWHMJTv+HSqw1Fr+hbUNe/dMhdR00bL/36qU/RcgzPBxoH9hnGg
+         zH84vqirsLSiwuMvIhP3GPACbODCmHrw3EJk0sy6jqC6P1+cx2rrB8BDbaUJCDmCwGmI
+         m0TTsRUSN8lNZdbQq45g/SZ5kAp08FYiiaSLneOOKBEng2d2BktMGrNpQpochEUZkY8/
+         lo7ovcLv/3YG8UrOh5QmAGhfRt/Jj7tF9obRDWg9dm+5RHG4Aui7FSppEQR2cosle0f0
+         Wy8a8qvjuRy6RqgyQDPUn3xD7gUXior6nevNpJe02PAnsUC+KKo5sbW5fnXQaNX+DuAh
+         09Nw==
+X-Gm-Message-State: AOJu0YziAXZzq6PcEYom8aDOO1LqXQ/tiuGih+8wQe3f2r0Vh0sI7ilS
+	/S6eyS6HCxC/hA+Ghb6JqakxxwA43K6dkP5WNXlBoxO62PhO2hkNH0GMjlDDpETkWOTN3MuBxWP
+	v
+X-Google-Smtp-Source: AGHT+IE4HkU4OMOOKcFWOl0vgMx5ncf0VfP0RnEiAQPViU9oM750YJV7IPbCPeCv/MyqF35h5C8Qbg==
+X-Received: by 2002:a17:906:7f8a:b0:a59:b6a8:4d7a with SMTP id a640c23a62f3a-a5a2d5d3d22mr666513866b.43.1715612366140;
+        Mon, 13 May 2024 07:59:26 -0700 (PDT)
 Received: from localhost.localdomain ([95.90.235.164])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c81bfsm607518066b.129.2024.05.13.07.59.23
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c81bfsm607518066b.129.2024.05.13.07.59.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 07:59:23 -0700 (PDT)
+        Mon, 13 May 2024 07:59:26 -0700 (PDT)
 From: Ninette Adhikari <ninette@thehoodiefirm.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: engineering@neighbourhood.ie,
+	Alex Feyerke <hello@alexfeyerke.com>,
 	Ninette Adhikari <ninette@thehoodiefirm.com>
-Subject: [PATCH 00/12] M12: Improve the Charts in the Metrics View
-Date: Mon, 13 May 2024 16:58:49 +0200
-Message-ID: <20240513145905.4167-1-ninette@thehoodiefirm.com>
+Subject: [PATCH 02/12] patch-status: add README.md file
+Date: Mon, 13 May 2024 16:58:51 +0200
+Message-ID: <20240513145905.4167-3-ninette@thehoodiefirm.com>
 X-Mailer: git-send-email 2.44.0
+In-Reply-To: <20240513145905.4167-1-ninette@thehoodiefirm.com>
+References: <20240513145905.4167-1-ninette@thehoodiefirm.com>
 Reply-To: engineering@neighbourhood.ie
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -62,49 +66,88 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Mon, 13 May 2024 14:59:30 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/120
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/122
 
-Yocto produces large amounts of statistical data measuring many aspects of project health over long periods of time. Making these more accessible, searchable, and understandable directly contributes to the project’s long-term usefulness and usability, saving maintainers and other consumers time and effort, as well as enabling more and better insights into the data, which in turn leads to more informed actions. Better display of stats also better communicates the effect of Yocto’s efforts. The work will reduce the time maintainers allocate to administrative and analytical tasks, enabling them to focus on core work and bug resolution.
+From: Alex Feyerke <hello@alexfeyerke.com>
 
-Technical Details:
+Add information on running locally for development, including generating test data from yocto-autobuilder-helper.
 
-- Improve the charts: Add descriptions to help users understand the data better, add dark theme styles for charts
-- Improve UX: Unify styles with other platforms for an overall cohesive look.
-- Improve typography, colours, accessibility, and styles
-- Improve the developer documentation: add README.md with local setup instructions
-
-The changes are also pushed to this branch here for review:
-https://git.yoctoproject.org/yocto-metrics/log/?h=contrib/jacobabrandner/improve_chart_page
-
-Alex Feyerke (12):
-  patch-status: add .gitignore file
-  patch-status: add README.md file
-  index.html: clean up html and head sections
-  index.html: Add general description to first section
-  index.html: Add description to CVE trends section
-  index.html: Add description to patch status metric pie chart
-  index.html: add description to upstream status section
-  index.html: Add description to recipe count section
-  index.html: Move raw data to own section element
-  index.html: add line numbers to CVE link lists
-  index.html: Add dark mode to charts, improve chart layout
-  index.html: linting and formatting
-
- .gitignore                                  |   4 +
- README                                      |  64 ++
- patch-status/index.html                     | 661 +++++++++++++-------
- patch-status/resources/apple-touch-icon.png | Bin 0 -> 7683 bytes
- patch-status/resources/dark.js              |  76 +++
- patch-status/resources/favicon-16x16.png    | Bin 0 -> 792 bytes
- patch-status/resources/favicon-32x32.png    | Bin 0 -> 1246 bytes
- 7 files changed, 595 insertions(+), 210 deletions(-)
- create mode 100644 .gitignore
+Signed-off-by: Ninette Adhikari <ninette@thehoodiefirm.com>
+---
+ README | 64 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
  create mode 100644 README
- create mode 100644 patch-status/resources/apple-touch-icon.png
- create mode 100644 patch-status/resources/dark.js
- create mode 100644 patch-status/resources/favicon-16x16.png
- create mode 100644 patch-status/resources/favicon-32x32.png
 
+diff --git a/README b/README
+new file mode 100644
+index 00000000..ac2ee186
+--- /dev/null
++++ b/README
+@@ -0,0 +1,64 @@
++# yocto-metrics
++Yocto Project autobuilder gathered metrics, CVEs etc.
++
++## Local setup
++1. Clone repositories
++
++  Clone both the report and data repo:
++
++  ```sh
++  # clone yocto-autobuilder-helper
++  git clone git://git.yoctoproject.org/yocto-autobuilder-helper.git
++
++  # clone yocto-metrics
++  git clone git://git.yoctoproject.org/yocto-metrics
++  ```
++
++2. Generate chart data
++  At first we have to generate the necessary data for the charts.
++  For this we have to go the autobuilder repository and generate chart data.
++
++  Go to your local clone of the autobuilder repository
++  Then run the following to generate the data and save it in your local yocto-metrics/patch-status directory:
++
++  _Possibly you have to adapt your local path to yocto-metrics._
++  ```sh
++  cd yocto-autobuilder-helper
++  ./scripts/patchmetrics-generate-chartdata --json "../yocto-metrics/patch-status.json" --outputdir "../yocto-metrics/patch-status/"
++  ```
++
++3. Generate CVE report data
++  We need to generate CVE report data for each branch.
++  The following is an example showing data generated for the master branch.
++  You will need to run this for _every branch you need CVE data_ for.
++
++  📣 Replace master for other relevant branch names and 1709622082 for respective json file names.
++  The branch names and data are listed at the `yocto-metrics/cve-check` directory.
++
++  ```sh
++  ./scripts/cve-report.py "../yocto-metrics/cve-check/master/<TIMESTAMP>.json" > "../yocto-metrics/patch-status/cve-status-master.txt"
++  ```
++
++4. Copy cve-count-byday.json
++  This file is located where the index.html cannot find it. Adapting the path, breakes the live environment.
++  So we copy it to the `patch-status` folder:
++  ```sh
++  # Go to your local clone of the yocto-metrics repo
++  cd yocto-metrics
++
++  cp cve-count-byday.json patch-status/cve-count-byday.json
++  ```
++
++5. View charts
++  Once the chart data is created you can run the index.html file in the yocto-metrics repository as follows:
++
++  ```sh
++  # open the chart html file in your browser
++  open ./patch-status/index.html
++  ```
++
++  **Note:** If the index.html throws a CORS error you can run the file through the Python SimpleHTTPServer, for example with:
++
++  ```
++  python3 -m http.server
++  ```
 -- 
 2.44.0
 
