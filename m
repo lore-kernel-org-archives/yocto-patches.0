@@ -2,114 +2,242 @@ Return-Path: <ninette@thehoodiefirm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C305EC25B7D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2BD3C25B7A
 	for <webhook@archiver.kernel.org>; Mon, 13 May 2024 14:59:40 +0000 (UTC)
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
- by mx.groups.io with SMTP id smtpd.web10.62674.1715612372508519908
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+ by mx.groups.io with SMTP id smtpd.web11.62820.1715612373912194628
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 13 May 2024 07:59:32 -0700
+ Mon, 13 May 2024 07:59:34 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@thehoodiefirm-com.20230601.gappssmtp.com header.s=20230601 header.b=x183LSqf;
- spf=neutral (domain: thehoodiefirm.com, ip: 209.85.218.50, mailfrom: ninette@thehoodiefirm.com)
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a59a64db066so1124433266b.3
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 13 May 2024 07:59:32 -0700 (PDT)
+ dkim=pass header.i=@thehoodiefirm-com.20230601.gappssmtp.com header.s=20230601 header.b=lC4cMb5b;
+ spf=neutral (domain: thehoodiefirm.com, ip: 209.85.167.52, mailfrom: ninette@thehoodiefirm.com)
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-51f1b378ca5so7653778e87.1
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 13 May 2024 07:59:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=thehoodiefirm-com.20230601.gappssmtp.com; s=20230601; t=1715612371; x=1716217171; darn=lists.yoctoproject.org;
+        d=thehoodiefirm-com.20230601.gappssmtp.com; s=20230601; t=1715612372; x=1716217172; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:reply-to:references
          :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=doYhzwA5vSIZcs0itlTf7G1d0CWKOLi9VQIqMho+mSo=;
-        b=x183LSqftPSkqt39FcFjbSUnTWKwYxBd+BPpuC+oSGKtnjBz/JqCmI93OS09zKDyhR
-         /pc6WBnXCCGycHIuKZvc6mpGAZITI51xwm3anDMPMN6PzloQMnEYuDz1g70D00O0V8nX
-         88JJSvQj1IRRyeZdu8psepwc7yrg7mIUYtkqUuXLVkppR6joH7R/puq2sRJwqY4rpzuh
-         oW3cQBrvj8q4fRqah4HbY23TbPNtp7D8p1sThttS6m/JPnZ+Mjp13Ua5hBvKnIMrUTNl
-         6YInFTo17SYcBeyOp0p9qWh6CfvHtQbF2LE0x85xDuiEPiv9PvLBvzlOwVnbOVk6c3aO
-         8yIg==
+        bh=PLYeAkIvCRLkBlcQwx9OfzW7UQlKanRuXEP1gc98rHI=;
+        b=lC4cMb5bAEpWCLwv1aXmFKwblyChRO//cQhp8eeQrRQ8w6XJImxNr041ZA8yfHIO1i
+         3txoYYyYVpI7jZEj2tTPn1hH93CE5aFtzMc+wf6Qw0qNdlPS+5RW18cJEdJ7HiemmJ2r
+         yLGkUDHD5lW+SW+h14fzBbBUdUjHNhBbJm9ZAeFQMjJoIMCyF1dVOgY8uCVhpz3OD3eN
+         BaMe/aIetrbLCfDCmSiliTkmPh6Ku96exixbyn/x53EeF0Q9WLA+VApHJNjWwBuQ64Tm
+         Z4fF3FmTs4zSeI4I4qVCyNPTeNUnRNw2kxkDoQqCSCXemIl5Nn17DrBshcqA7PoqcTWb
+         EYxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715612371; x=1716217171;
+        d=1e100.net; s=20230601; t=1715612372; x=1716217172;
         h=content-transfer-encoding:mime-version:reply-to:references
          :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=doYhzwA5vSIZcs0itlTf7G1d0CWKOLi9VQIqMho+mSo=;
-        b=J+AgdwNhzfHgJZwJMBRPC0omDIsfDj9I7bPoms2T0/Y62cgASRsG9KZom8KZYf+VT9
-         7ZULEzBzd+DM8uHl4TuD4zgc2yRT2kh38UQRCwtK9/pSYF2YqGG0tYI1KGp+4uZef34b
-         mVN5YRXUqzYpCTmJ7jShGhA6Qmqonp1ISngn1lG2zvRkfQHDN6rfTErLhHdc3AHAAQrB
-         bUTX/D96o+JkllhQ/cjSBnKY1wQs1Ggy8ovnzKVKQN2xHg0H9JBe/uCwrNV3VFwzfJFx
-         fwdG3rPlZyfr3MFZcyWrQZsfJvTf9IkWQeioD96pPAoCdxARLPcdpfTCOpf1FEVho4jP
-         YxLg==
-X-Gm-Message-State: AOJu0YwePGCre2NmThldERtNsb2pHewauTKbeuWXGu/+SXaLjIsuxDGI
-	rIxYpC4rJYA6oSxDm4A25ksI/s9vwJmjR3lG2jlA+TAknbkOFNmac6anwyGO8GOTi4FUnr9w3rx
-	U
-X-Google-Smtp-Source: AGHT+IEw3oaEbKWcJHaLqvctwpBe5Yy7mrO7XSDqT8adZH/VV8/SYvPMCq2fcdEonXX5K0MXO+N4ww==
-X-Received: by 2002:a17:907:552:b0:a59:a6b2:b898 with SMTP id a640c23a62f3a-a5a2d57b00dmr655558366b.27.1715612371100;
-        Mon, 13 May 2024 07:59:31 -0700 (PDT)
+        bh=PLYeAkIvCRLkBlcQwx9OfzW7UQlKanRuXEP1gc98rHI=;
+        b=GPvs/ZAm3byd2ABKmDjPM5yqp4LM+3P4Ie6bnLa3QEr3s9Vddz7OhmtmISy8Nl3Ztq
+         AGiJitl/MU5KDIrhv98HNdtupSf20NTfH2IJgqw5hinX5mWmaaxD4MTsQCYp6qjMBEgF
+         UTjuu5H3jTFwcrnYOZ2OTXiBBQXpcta2yq0hSzfYI10kuBAA8VasSskkKYzP/rSLqJoH
+         9ENcF67PdMo3A7hn65AVI4OFTYyUqEwQx1QlRtq58ny2JJpt4wmUEkgMaOe2ZAfceqRV
+         vPtj9xFDaP5Md3ZkB0EmA9mJMIeaF/3z05J4Ts1Fj1CiMWrM49SIifSZppe3o1a5EWq5
+         AsiA==
+X-Gm-Message-State: AOJu0Yx1tixLYxd8Lk8csqx/OG3Rx0yRpBIJRb7Wmb4fhbTVxcxBecgB
+	RE2j7Q9UQmluIEtu7sUBRY8uJbWW/iaKl0dkt4hJv6C4xcuSda802AVt/dXZc/Hzv3WCfRJuNhM
+	h
+X-Google-Smtp-Source: AGHT+IEaJTZJ63iAkc9JVTkohxO8nny+Ojset1iTUCN+td9a7885c+pBQ4f/mY+mjjRpsjKNelXaeg==
+X-Received: by 2002:a05:6512:149:b0:51d:4c8a:bbdb with SMTP id 2adb3069b0e04-5220fc7d133mr8030705e87.3.1715612372094;
+        Mon, 13 May 2024 07:59:32 -0700 (PDT)
 Received: from localhost.localdomain ([95.90.235.164])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c81bfsm607518066b.129.2024.05.13.07.59.30
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c81bfsm607518066b.129.2024.05.13.07.59.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 07:59:30 -0700 (PDT)
+        Mon, 13 May 2024 07:59:31 -0700 (PDT)
 From: Ninette Adhikari <ninette@thehoodiefirm.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: engineering@neighbourhood.ie,
 	Alex Feyerke <hello@alexfeyerke.com>,
 	Ninette Adhikari <ninette@thehoodiefirm.com>
-Subject: [PATCH 06/12] index.html: Add description to patch status metric pie chart
-Date: Mon, 13 May 2024 16:58:55 +0200
-Message-ID: <20240513145905.4167-7-ninette@thehoodiefirm.com>
+Subject: [PATCH 07/12] index.html: add description to upstream status section
+Date: Mon, 13 May 2024 16:58:56 +0200
+Message-ID: <20240513145905.4167-8-ninette@thehoodiefirm.com>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <20240513145905.4167-1-ninette@thehoodiefirm.com>
 References: <20240513145905.4167-1-ninette@thehoodiefirm.com>
 Reply-To: engineering@neighbourhood.ie
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Mon, 13 May 2024 14:59:40 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/126
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/127
 
 From: Alex Feyerke <hello@alexfeyerke.com>
 
+Adds a collapsible details section with explanations of each upstream status, moves chart out of section element as before.
+
 Signed-off-by: Ninette Adhikari <ninette@thehoodiefirm.com>
 ---
- patch-status/index.html | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+ patch-status/index.html | 138 ++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 134 insertions(+), 4 deletions(-)
 
 diff --git a/patch-status/index.html b/patch-status/index.html
-index 09299910..30f1cef0 100644
+index 30f1cef0..aacc6496 100644
 --- a/patch-status/index.html
 +++ b/patch-status/index.html
-@@ -29,6 +29,11 @@ SPDX-License-Identifier: MIT
-     h2 {
-       padding-top: 1em;
+@@ -34,6 +34,31 @@ SPDX-License-Identifier: MIT
+       display: flex;
      }
+ 
++    dl {
++      display: grid;
++      grid-template-columns: auto auto;
++      color: var(--pico-h5-color);
++      margin-inline-start: 1.75em;
++      margin-block-start: 1em;
++    }
 +
-+    .flex {
-+      display: flex;
++    dt:hover,
++    dt:hover+dd,
++    dt:has(+ dd:hover),
++    dd:hover {
++      filter: brightness(15%);
++    }
++
++    @media (prefers-color-scheme: dark) {
++
++      dt:hover,
++      dt:hover+dd,
++      dt:has(+ dd:hover),
++      dd:hover {
++        filter: brightness(150%);
++      }
 +    }
 +
      details {
        margin-bottom: 0;
      }
-@@ -173,8 +178,17 @@ SPDX-License-Identifier: MIT
-     <div id='cve_chart' style='height:400px;'></div>
- 
-     <section>
--      <h3>Current Patch Status Pie</h3>
--      <div id='pie_chart' style='height:300px; width: 600px;'></div>
-+      <h2>Current Patch Status Metrics</h2>
-+      <div class="flex">
-+        <div id='pie_chart' style='height:300px; width: 600px;'></div>
-+        <div>
-+          <p>
-+            This graph shows the latest patch breakdown metrics.</p>
-+          <p>
-+            <strong>Hover over a section</strong> to see the amount of patches with each status.
-+          </p>
-+        </div>
-+      </div>
+@@ -192,15 +217,120 @@ SPDX-License-Identifier: MIT
      </section>
  
      <section>
+-      <h3>Patch Upstream-Status Counts (OE-Core meta directory)</h3>
+-      <div id="upstream_status_chart" style="height:400px;"></div>
++      <h2>Patch Upstream-Status Counts (OE-Core meta directory)</h2>
++      <p>
++        The following two graphs provide insights into the status of patches in the OE-Core meta directory with respect to their upstream status.
++        The upstream status of a patch refers to its relationship with the original source or upstream project from which the patch originates.
++      </p>
++
++      <details>
++        <summary>
++          Upstream status categories explained
++        </summary>
++        <dl>
++          <dt><strong>Accepted</strong>:</dt>
++          <dd>
++            <p>The patch has been accepted upstream, meaning it has been applied to the original source code repository from which it originated.</p>
++            <p><em>A high count of accepted patches indicates successful contributions and integration of changes into the upstream project.</em></p>
++          </dd>
++
++          <dt><strong>Backport</strong>:</dt>
++          <dd>
++            <p>The patch has been backported from a newer version of the software or a different branch to an older version or a specific branch.</p>
++            <p><em>Backported patches show efforts to apply fixes or features from newer versions to older versions or specific branches.</em></p>
++          </dd>
++
++          <dt><strong>Deferred</strong>:</dt>
++          <dd>
++            <p>The patch has been postponed or deferred for later consideration or implementation.</p>
++            <p><em>Deferred patches might indicate areas where further review or discussion is needed before applying the patches upstream.</em></p>
++          </dd>
++
++          <dt><strong>Inappropriate</strong>:</dt>
++          <dd>
++            <p>This status indicates that the patch is deemed inappropriate for upstream inclusion.</p>
++            <p><em>High counts of inappropriate patches might indicate a need for better review processes or clearer guidelines for contributions.</em></p>
++          </dd>
++
++          <dt><strong>Submitted</strong>:</dt>
++          <dd>
++            <p>
++              The patch has been submitted upstream but hasn't received a definitive response yet.
++              It’s a transitional state between "Pending" and "Accepted" or "Rejected". Patches in this state are awaiting review and acceptance or rejection by upstream maintainers.
++            </p>
++            <p><em>Submitted patches reflect ongoing contributions to upstream projects. A high number of submitted patches might indicate active engagement with upstream maintainers.</em></p>
++          </dd>
++
++          <dt><strong>Pending</strong>:</dt>
++          <dd>
++            <p>The patch is pending review or has not yet been applied upstream.</p>
++            <p><em>High counts of pending patches might suggest a backlog in the review process or challenges in getting patches accepted upstream.</em></p>
++          </dd>
++
++          <dt><strong>Denied</strong>:</dt>
++          <dd>
++            <p>The patch has been rejected upstream, often due to conflicts, incompatibilities, or not meeting project standards.</p>
++            <p><em> Rejected patches could signify issues with patch quality, conflicts, or discrepancies between the patch and upstream requirements.</em></p>
++          </dd>
++
++          <dt><strong>Total</strong>:</dt>
++          <dd>
++            <p>The total count of patches in the OE-Core meta directory, regardless of their upstream status.</p>
++            <p><em>This provides context for the distribution of patches across different statuses.</em></p>
++          </dd>
++        </dl>
++      </details>
+     </section>
+ 
++    <div id="upstream_status_chart" style="height:400px;"></div>
++
+     <section>
+-      <h3>Patch Tag Error Counts (OE-Core meta directory)</h3>
+-      <div id="malformed_chart" style="height:400px;"></div>
++      <h2>Patch Tag Error Counts (OE-Core meta directory)</h2>
++      <p>The Patch Tag Error Counts graph shows the statuses "Malformed Upstream-Status" and "Malformed Signed-off-by" to provide insight into the quality and completeness of patches in the OE-Core meta directory.</p>
++      <details>
++        <summary>
++          Malformed status categories explained
++        </summary>
++        <dl>
++          <dt><strong>Malformed Upstream-Status</strong>:</dt>
++          <dd>
++            <p>This category indicates patches with improperly formatted or missing upstream status tags.</p>
++            <p>A malformed upstream status could be a result of missing or incorrectly formatted tags such as "Upstream-Status:", which is a common tag used to specify the status of the patch upstream.</p>
++            <p>Patches with malformed upstream status might not be properly tracked or considered for upstream inclusion, as they lack necessary metadata for review.</p>
++            <p>
++              <em>
++                High counts in this category might indicate issues with patch submission processes or lack of adherence to patch submission guidelines.
++                These patches might be at risk of being overlooked or rejected during the review process due to incomplete metadata.
++              </em>
++            </p>
++          </dd>
++          <dt><strong>Malformed Signed-off-by</strong>:</dt>
++          <dd>
++            <p>
++              This category represents patches with improperly formatted or missing "Signed-off-by" lines.
++              The "Signed-off-by" line in a patch is a tag that signifies the authorship and acknowledgment of the patch.
++              A malformed "Signed-off-by" line could be due to missing or incorrectly formatted authorship information.
++              Properly formatted "Signed-off-by" lines are essential for maintaining authorship attribution and legal compliance.
++            </p>
++            <p>
++              <em>
++                This category reflects issues with patch authorship and acknowledgment.
++                Patches with malformed "Signed-off-by" lines might lack proper attribution, which can lead to confusion about ownership and legal compliance.
++                Such patches might require additional verification or correction before being considered for inclusion.
++              </em>
++            </p>
++          </dd>
++          <dt><strong>Total</strong>:</dt>
++          <dd>
++            <p>The total count of patches in the OE-Core meta directory, regardless of their upstream status.</p>
++            <p><em>This provides context for the distribution of patches across different statuses.</em></p>
++          </dd>
++        </dl>
++      </details>
+     </section>
+ 
++    <div id="malformed_chart" style="height:400px;"></div>
++
+     <section>
+       <h3>Recipe Count (OE-Core meta directory)</h3>
+       <div id="recipe_chart" style="height:400px;"></div>
 -- 
 2.44.0
 
