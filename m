@@ -2,59 +2,59 @@ Return-Path: <ninette@thehoodiefirm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B39A6C25B78
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85FA8C25B10
 	for <webhook@archiver.kernel.org>; Mon, 13 May 2024 14:59:40 +0000 (UTC)
 Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
- by mx.groups.io with SMTP id smtpd.web10.62677.1715612374588383990
+ by mx.groups.io with SMTP id smtpd.web11.62817.1715612370431019505
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 13 May 2024 07:59:34 -0700
+ Mon, 13 May 2024 07:59:30 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@thehoodiefirm-com.20230601.gappssmtp.com header.s=20230601 header.b=WH9ANyZ/;
+ dkim=pass header.i=@thehoodiefirm-com.20230601.gappssmtp.com header.s=20230601 header.b=KhlLQf2g;
  spf=neutral (domain: thehoodiefirm.com, ip: 209.85.218.44, mailfrom: ninette@thehoodiefirm.com)
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a59a5f81af4so1136883566b.3
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 13 May 2024 07:59:34 -0700 (PDT)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a599c55055dso1149147566b.0
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 13 May 2024 07:59:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=thehoodiefirm-com.20230601.gappssmtp.com; s=20230601; t=1715612373; x=1716217173; darn=lists.yoctoproject.org;
+        d=thehoodiefirm-com.20230601.gappssmtp.com; s=20230601; t=1715612369; x=1716217169; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:reply-to:references
          :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=HYrHEF5nivEvSCnxAHYXnJh8k0q7iS8182Hshr5lq7E=;
-        b=WH9ANyZ/Hsou6Yh+A+ZrX7a4EE6SVDoUCQwQu5PpxYY38LZyNqCfmAUgx6r+dDFrYs
-         plNZYXHf8NlGke1zAiXohLV3jjQJKMcb4jBokJeVeluRJl0hYn8uat26T1gcz8m3BHDj
-         SkV+dO5nSWah7d7Y9dRs7/4YFMoSJyYIW4PDO0gs/tCtWYYLlnQ2e/2onrdwrM/MxGPE
-         FO2JqQ77s1U0LUL877l0x3iiXAfi2Yyr3nc4p38WH+Oe4ENy0ZkScLan5R/Rng3Ho/LH
-         Cz5koxC21vQZdTv6tbJ9Sio46wDA1i5bbGYO2/uI8uhugGMKFadvAFbid9XIn7DAZilS
-         hH7g==
+        bh=/dCmKfWK9IMdPYisuUeh6RQ+/OIU0tE6bKjVhdWb0T8=;
+        b=KhlLQf2gpex/uh+vCcPwFa/8DEWhjACqwJFreFlNsbnjXraRDkniairOSRm6gRpJvD
+         vvBBEtiiKiI3dTrLif5GpMwbMMqbOJ3sLpX19ifUMew+pDuKiyP16jjEF7ht3ivacJgl
+         ebuo5+8nWVpIPrlb3KDGvWlxwwaRjCbL6XMyHIcGToEv0PcR43ShMKa1jefvFcuSwxWt
+         iCwKjs5zKv5hctm6JWa4hldv+1s6zV4RGc9AQzCo3JvLJrDbM0fF6K57JYXT/JW3/dhl
+         gyC/KpNqjFId8bkyZDpQVKdcc7tCPVog8ES5ogHQaUzQfeqSoTfqcbroGCg7bguBXmDa
+         WTsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715612373; x=1716217173;
+        d=1e100.net; s=20230601; t=1715612369; x=1716217169;
         h=content-transfer-encoding:mime-version:reply-to:references
          :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=HYrHEF5nivEvSCnxAHYXnJh8k0q7iS8182Hshr5lq7E=;
-        b=GPjC2saQX2LYv9xNUrmXlNa6ZURlbA4RpRsFfknvdfo1bNHY5NMhggbP63+WB/Zngq
-         ykEFJWZV0hMjTQu5DhmVgDbzNilwygDkVte+c6fH7gpeV0zRKLHRupJNuGQx+8oUPOQF
-         RZpRicgxPJPSAP/6AUjgqRWmWR7wIVj6RqhNiCoWW8nUo7eiULAsCydLjqO3xL/jb2E9
-         re42zPgWHeaU5RJnlT1jbLL5r/DaFLR8hIQja4kfc/2SwiE1vxVCYNuDMkN3I7T8MnQe
-         f6pYRO+sg+3JtJ5LGdrHd1MXq1a9LQ2vMPzSLTEIll05xbOY07MeEBCNGU4djXPVs0V/
-         14vQ==
-X-Gm-Message-State: AOJu0Yyro2CH5hfQXUAKU2cEd8xsV1ZmaLUqziUMD4lY7zU2yI82Tspd
-	HzRtidsadqHQaHOBEaJ/P1PWit6+qfjcg2V5OHpkvJfKYO4S7FlWi/J0PRfeh5O2kwxXqKFjZlJ
-	u
-X-Google-Smtp-Source: AGHT+IGQaHHL114v2RA7hLPf16QrqRyD9cPUGWEKRzXdLePkKjsH3xml/miNh1HhmE8sVUEWYZz6rw==
-X-Received: by 2002:a17:906:d054:b0:a59:b1dc:57a8 with SMTP id a640c23a62f3a-a5a2d5ee320mr690518366b.33.1715612373131;
-        Mon, 13 May 2024 07:59:33 -0700 (PDT)
+        bh=/dCmKfWK9IMdPYisuUeh6RQ+/OIU0tE6bKjVhdWb0T8=;
+        b=tb7cpyDY6sn3qgH41YMC1Ks1SOFHModnFO+ngxT+wuD6qRU6uAItLCsZjqzEFUAobz
+         ngOO3ceQN5dB9Ss/kN64W7vCx9/3KXn7YW1W/wd7y5I4ufJFwvVao4WqX7jtm4PyvFvg
+         2cfmEqiTfzy1plA64fEC/HLqyldUh1/oFeLBxVbXmxmPssIm8aK2Fmr2wlVe+lekY403
+         WHMthHMEB9comrvj8Srj95fDJzXS/H027sf8Ojk7Os4GgDUaongtajeAvHPBnloC3FTN
+         dcQFcg6ElAbdmi7pGktCvxWfGGH0vVZZXIw6ZYbFzUTZBnonDh85gCVazVKT6LaB0FJ+
+         QqTA==
+X-Gm-Message-State: AOJu0YxLeR6N0cD8gzG7LWP/rfxoV59qiUaNjYaUzsU98pO8VpmI4tI3
+	/b/uQRq+MJtv1fnxN6fllHAYNBF9S+0zfuTmlLx2LjZMtm33cnhg+qtThkr6qFEjEGnaSXXguAe
+	b
+X-Google-Smtp-Source: AGHT+IHK+ZsJ+gBbp3U/M8DKAF97Uk+HoaNzuf6XYckQo1kfLN5Z4D4FlhBhTo6v+LNTDhoA0ZND2A==
+X-Received: by 2002:a17:906:f856:b0:a59:ab55:a58 with SMTP id a640c23a62f3a-a5a2d572b27mr657479166b.22.1715612368978;
+        Mon, 13 May 2024 07:59:28 -0700 (PDT)
 Received: from localhost.localdomain ([95.90.235.164])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c81bfsm607518066b.129.2024.05.13.07.59.32
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c81bfsm607518066b.129.2024.05.13.07.59.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 07:59:33 -0700 (PDT)
+        Mon, 13 May 2024 07:59:28 -0700 (PDT)
 From: Ninette Adhikari <ninette@thehoodiefirm.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: engineering@neighbourhood.ie,
 	Alex Feyerke <hello@alexfeyerke.com>,
 	Ninette Adhikari <ninette@thehoodiefirm.com>
-Subject: [PATCH 08/12] index.html: Add description to recipe count section
-Date: Mon, 13 May 2024 16:58:57 +0200
-Message-ID: <20240513145905.4167-9-ninette@thehoodiefirm.com>
+Subject: [PATCH 04/12] index.html: Add general description to first section
+Date: Mon, 13 May 2024 16:58:53 +0200
+Message-ID: <20240513145905.4167-5-ninette@thehoodiefirm.com>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <20240513145905.4167-1-ninette@thehoodiefirm.com>
 References: <20240513145905.4167-1-ninette@thehoodiefirm.com>
@@ -66,51 +66,211 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Mon, 13 May 2024 14:59:40 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/128
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/124
 
 From: Alex Feyerke <hello@alexfeyerke.com>
 
-Also moves chart out of section element.
+Explains purpose of entire page, how to read the charts, and how to use the CVE lists for the individual branches.
 
 Signed-off-by: Ninette Adhikari <ninette@thehoodiefirm.com>
 ---
- patch-status/index.html | 21 ++++++++++++---------
- 1 file changed, 12 insertions(+), 9 deletions(-)
+ patch-status/index.html | 161 +++++++++++++++++++++++++++++-----------
+ 1 file changed, 119 insertions(+), 42 deletions(-)
 
 diff --git a/patch-status/index.html b/patch-status/index.html
-index aacc6496..8089a1c0 100644
+index 86a6cf06..f95fb692 100644
 --- a/patch-status/index.html
 +++ b/patch-status/index.html
-@@ -332,17 +332,20 @@ SPDX-License-Identifier: MIT
-     <div id="malformed_chart" style="height:400px;"></div>
- 
-     <section>
--      <h3>Recipe Count (OE-Core meta directory)</h3>
--      <div id="recipe_chart" style="height:400px;"></div>
-+      <h2>Recipe Count (OE-Core meta directory)</h2>
-+      <p>
-+        This graph displays the number of recipes. It provides insights into the growth and evolution of the OE-Core meta directory by tracking the number of recipes over time.</p>
-+      <p>
-+        A recipe in the context of Yocto and the OE-Core meta directory refers to a set of instructions or metadata files that describe how to build a particular software package. These recipes typically include information about where to obtain the source code, how to configure it, and how to build and install it into the target system.</p>
-+      <p>
-+        <em>An increasing recipe count indicates the addition of new software packages or updates to existing ones. It reflects the growth of the OE-Core meta directory over time.
-+          A higher recipe count often means better software coverage, allowing users to build a wider range of software packages for their embedded systems.
-+          With more recipes, there’s increased maintenance effort to ensure that recipes are up-to-date, correctly configured, and build without errors.</em>
-+      </p>
-     </section>
- 
--    <h3>Raw Data</h3>
--    <ul>
--      <li><a href="patch-status-pie.json">patch-status-pie.json</a></li>
--      <li><a href="patch-status-byday.json">patch-status-byday.json</a></li>
--      <li><a href="cve-count-byday.json">cve-count-byday.json</a></li>
--      <li><a href="releases.csv">releases.csv</a></li>
--    </ul>
-+    <div id="recipe_chart" style="height:400px;"></div>
+@@ -13,14 +13,22 @@ SPDX-License-Identifier: MIT
+   <link rel="icon" type="image/png" sizes="32x32" href="/resources/favicon-32x32.png">
+   <link rel="icon" type="image/png" sizes="16x16" href="/resources/favicon-16x16.png">
+   <style>
+-    h3 {
+-      margin-left: 60px;
+-      padding-top: 20px;
+-    }
+-    ul {
+-      margin-left: 60px;
++    main {
+       font-size: 0.9em;
+     }
 +
-   </main>
++    section {
++      max-width: 55rem;
++      margin-inline: 3rem;
++    }
++
++    h1 {
++      padding-inline: 3rem;
++    }
++
++    h2 {
++      padding-top: 1em;
++    }
+     details {
+       margin-bottom: 0;
+     }
+@@ -32,23 +40,66 @@ SPDX-License-Identifier: MIT
+       list-style-type: none;
+       font-size: 0.8em;
+     }
+-    .cve-status {
+-      display: flex;
+-      margin: 0 60px;
+-      align-items: stretch;
++
++    details summary::before {
++      display: block;
++      width: 1rem;
++      height: 1rem;
++      margin-inline-end: calc(var(--pico-spacing, 1rem)* .5);
++      float: left;
++      transform: rotate(-90deg);
++      background-image: var(--pico-icon-chevron);
++      background-position: right center;
++      background-size: 1rem auto;
++      background-repeat: no-repeat;
++      content: "";
++      transition: transform var(--pico-transition);
+     }
+-    .cve-status > details {
+-      flex: 1;
++
++    details summary::after {
++      display: inline;
++      vertical-align: text-bottom;
++      width: auto;
++      background: none;
++      float: none;
++      font-weight: 600;
++      text-transform: uppercase;
++      font-size: 0.6em;
++      border: 2px solid;
++      border-radius: 1em;
++      padding-inline: 0.35em;
++      content: "Click to show";
+     }
+-    details > summary {
+-      padding: 13px 14px;
++
++    .cve-status>details {
++      margin-block-end: 1em;
+     }
+-    details > summary:hover {
+-      filter: invert(50%);
++
++    .cve-status details summary {
++      font-family: var(--pico-font-family-monospace);
+     }
+-    details[open] > summary {
++
++    .cve-status details summary:after {
++      display: none;
++    }
++
++    details[open]>summary {
+       margin-bottom: 6px;
+     }
++
++    details[open]>summary::before {
++      transform: rotate(0);
++    }
++
++    details[open]>summary::after {
++      transform: none;
++      content: "Click to hide";
++    }
++
++    details>summary:hover {
++      filter: invert(50%);
++    }
++
+     summary.sub {
+       font-size: 0.8em;
+       padding: 6px 18px;
+@@ -58,31 +109,57 @@ SPDX-License-Identifier: MIT
  
-   <script type="text/javascript">
+ <body>
+   <main>
+-    <h3>Current CVE status for OE-Core/Poky</h3>
+-    <div class="cve-status">
+-      <details>
+-        <summary>master</summary>
+-        <div id="cve_status_master"></div>
+-      </details>
+-      <details>
+-        <summary>scarthgap</summary>
+-        <div id="cve_status_scarthgap"></div>
+-      </details>
+-      <details>
+-        <summary>nanbield</summary>
+-        <div id="cve_status_nanbield"></div>
+-      </details>
+-      <details>
+-        <summary>kirkstone</summary>
+-        <div id="cve_status_kirkstone"></div>
+-      </details>
+-      <details>
+-        <summary>dunfell</summary>
+-        <div id="cve_status_dunfell"></div>
+-      </details>
+-    </div>
+-
+-    <!-- Prepare a DOM with a defined width and height for ECharts -->
++    <h1>yocto-metrics</h1>
++    <section>
++      <p>This page shows Common Vulnerabilities and Exposures (CVEs) metrics gathered from the Yocto Project autobuilder in graphs. It is updated daily to show the current status of the project.</p>
++      <p>
++        Each graph (except the pie chart) has an <strong>x-axis</strong> and a <strong>y-axis:</strong>
++      </p>
++      <ul>
++        <li>The <strong>x-axis</strong> represents time. You can filter by time-range using the zoom bar at the bottom.</li>
++        <li>The <strong>y-axis</strong> represents the amount of something (CVEs, patches, errors etc.) at a particular point in time. You can zoom here as well, using the bar on the right.</li>
++      </ul>
++      <p>
++        Click on the items in the <strong>legend</strong> to toggle the visibility of the corresponding line on the graph.</p>
++      <p>
++        Note the grey, vertical lines representing <strong>releases</strong>.
++        These lines are not part of the graph’s data but are added to highlight release points in time. They denote the release of new versions or updates of the software. This helps you correlate vulnerability trends with software releases, which can indicate whether vulnerabilities were addressed in a particular release.
++      </p>
++    </section>
++
++    <section>
++      <h2>Current CVE status for OE-Core/Poky</h2>
++      <p>
++        This section provides a detailed overview of the current status of CVEs for each branch in the <code>OE-Core/Poky</code> repository.</p>
++      <p>
++        When you click on a branch name, a summary count of CVEs related to that branch is displayed.
++        This count includes the total number of CVEs reported for that branch and so gives a quick overview of the security status of the branch.</p>
++      <p>
++        Below the summary count, you'll find links to more detailed information about CVEs for that branch. You can easily access more detailed information at the National Vulnerability Database (NVD), about CVEs for each branch by clicking on the provided links.</p>
++      <div class="cve-status">
++        <details>
++          <summary>master</summary>
++          <div id="cve_status_master"></div>
++        </details>
++        <details>
++          <summary>scarthgap</summary>
++          <div id="cve_status_scarthgap"></div>
++        </details>
++        <details>
++          <summary>nanbield</summary>
++          <div id="cve_status_nanbield"></div>
++        </details>
++        <details>
++          <summary>kirkstone</summary>
++          <div id="cve_status_kirkstone"></div>
++        </details>
++        <details>
++          <summary>dunfell</summary>
++          <div id="cve_status_dunfell"></div>
++        </details>
++      </div>
++    </section>
++
+     <section>
+       <h3>CVE Trends for OE-Core/Poky</h3>
+       <div id='cve_chart' style='height:400px;'></div>
 -- 
 2.44.0
 
