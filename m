@@ -1,411 +1,167 @@
-Return-Path: <akuster808@gmail.com>
+Return-Path: <yi.zhao@eng.windriver.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1640C25B75
-	for <webhook@archiver.kernel.org>; Sun, 19 May 2024 19:25:40 +0000 (UTC)
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
- by mx.groups.io with SMTP id smtpd.web10.44618.1716146733496736751
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC303C25B75
+	for <webhook@archiver.kernel.org>; Sun, 19 May 2024 22:57:51 +0000 (UTC)
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+ by mx.groups.io with SMTP id smtpd.web10.48207.1716159467464956623
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 19 May 2024 12:25:33 -0700
+ Sun, 19 May 2024 15:57:47 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=FrVYgJlp;
- spf=pass (domain: gmail.com, ip: 209.85.219.177, mailfrom: akuster808@gmail.com)
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-df4ada85a80so206972276.2
-        for <yocto-patches@lists.yoctoproject.org>; Sun, 19 May 2024 12:25:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716146732; x=1716751532; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ryCp+TRfpkNtNkzaKUWlmfYLtQF+b86GE34Wl7l2z/c=;
-        b=FrVYgJlp4pyzBFgk/rydwClI2lL5rHdrwA3nntn3buAOG3IXvjzntYAX9kXmjjgz6c
-         9zCRNDtX8u5NqYUHIOR80N6I+kXtHrVWCjC7FirHrjH2X4bko61Nhw4kYwj8ie6YUfXr
-         SXxwYviyzUPM3Roch9/RokK9959+cQWk0iVz9wvFihJEzX5CYVLTQSVG6wHou+d6coJz
-         vbZMsznBoOoxA8F2te2L7+bXnsMRadUIaW3Dm5uOuIdBXmPL7JorM/Wq72skxt8/dAzO
-         vg/2wUnrLUwT3reEeZ0AKOWcjen9KLYCxTUvEfv5HzEY8NwIHb8R7iqTQcrVGEycbO+R
-         MQ+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716146732; x=1716751532;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ryCp+TRfpkNtNkzaKUWlmfYLtQF+b86GE34Wl7l2z/c=;
-        b=GLLi58az6vWomgNcp9FVuV1GGKXnNBnZLmBcJyz9zPXPMlbBlVmcNx6+VaaVJOQ/+U
-         Jl4yb2Hk6gVjfDOPmp6ttOJd9GWH5iJ0EtWNT6TbCfUc9ic/bQVHGdjNythC7qzNJzHE
-         J3C8fP1Rnp8dpA3myT8VYqnTs0RwfgpnoqOBDUs8UOh8h3Tmc0OPxZgWjpslcQySIwgg
-         SfSwY/zV0DqT1yDIGUa2hMaKv7E1kyQSUJ8N26aSj/DbmKk8sn/8o/22lvpo+gCo7b5f
-         cOoIWPoluY6PfvCFD0YSdq9sSdetzjZwkQqDh6d3YddFMO5Yd6C9+cfBE7oaBazpqi48
-         e2zA==
-X-Gm-Message-State: AOJu0YwJvm9YzdnLXK6f7kcl3nx/S3uHAZwTEqL5kIYvvClGZp1NOiYv
-	p6igTh+qmGarN+xTg6aUJka5g8PpoUL9hHu5Eo6TTm11Twb9QH4039qsXg==
-X-Google-Smtp-Source: AGHT+IGTbrZxTdjgqlJJzZ+OJbmKgeueIfuAhE0zek/z8/rFtScRlLhkVusZjyl0VW+Ya/RT/jGwIA==
-X-Received: by 2002:a25:84c4:0:b0:df3:88ee:799c with SMTP id 3f1490d57ef6-df388ee85a4mr12156768276.7.1716146731995;
-        Sun, 19 May 2024 12:25:31 -0700 (PDT)
-Received: from [172.21.6.242] ([199.231.175.194])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-dee6eb8b567sm3680993276.49.2024.05.19.12.25.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 19 May 2024 12:25:31 -0700 (PDT)
-Message-ID: <d25d4de6-fc25-4519-9714-fce702453140@gmail.com>
-Date: Sun, 19 May 2024 15:25:30 -0400
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [meta-parsec][master,scarthgap][PATCH]
- meta-parsec: Update parsec-service to 1.4.1
+ dkim=none (message not signed); spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.166.238, mailfrom: prvs=58693ea910=yi.zhao@windriver.com)
+Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44JMqmEF008218
+	for <yocto-patches@lists.yoctoproject.org>; Sun, 19 May 2024 15:57:47 -0700
+Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2168.outbound.protection.outlook.com [104.47.57.168])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 3y7c738dvn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+	for <yocto-patches@lists.yoctoproject.org>; Sun, 19 May 2024 15:57:46 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=MzVAnClXLLq9JWwgIUWZ23AgoQ3VuAcRws9QStfxvxilEqro8it3+9crG6gWDQnVygwIYnFh+P+H6Orjb/U2O4LnQVTjHX4in8szsLIZ4Q0g85fYk2wx86D4KDW3DY6jkRbqaX6rlolKIwVRItlIBw9Ef7xZUIw/LSRnp95yFSKtnEkkJeTYFYq3dJEo9j/tcn0u1G1SJVW72K9leFJGdz/rrI4voDVSkKt1hLtXD6Ko7PUeCsrm37Cd3+eP6xN5YOcMMu130JJzsomjzsf7u5Q1Fj5XiYRhgFmGuuOaBLMuuRGh5LnMlsY93LbebsNrt/W5y6Oo86WNtagokMR1qQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oASgWe9kYXCYmzBUktDWVKjZ+aIFU/o5f6bwqWfjFKk=;
+ b=WTpW1It7JbZxUwOh8Igc+jaA+57/jE7h2rkh95f6oS6nKeRtrLpwb47Y27TpCcHO8I846uvFKrF/kif0RyMCgXFZVM2XXhpW4jTH5kg/bc3yWU+rf6nQcchao1a7GVUmTHvWVWGlo7tjOUiWis+qGJhKYCVL61z0R/j9hgg1iPxfLmV2H6Tsl6FsYapi0g43pw8Xrp0C3gcFdM5r2JzDJIlOzcxXuihAG3M9EFRKd3c7I+TyssAiaJL+pvSLHE/BJxI6e98zdSJyPSM6UPat3fh63XR/NFJQpm+sIqp4Bpao/V3u2M8bKvgnkwDhdb46KsMA4H0Zbg5obE7gzI0o3w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=windriver.com; dmarc=pass action=none
+ header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
+Received: from DS0PR11MB7484.namprd11.prod.outlook.com (2603:10b6:8:14c::10)
+ by PH7PR11MB6521.namprd11.prod.outlook.com (2603:10b6:510:213::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.28; Sun, 19 May
+ 2024 22:57:44 +0000
+Received: from DS0PR11MB7484.namprd11.prod.outlook.com
+ ([fe80::4e72:f734:5886:b658]) by DS0PR11MB7484.namprd11.prod.outlook.com
+ ([fe80::4e72:f734:5886:b658%4]) with mapi id 15.20.7587.030; Sun, 19 May 2024
+ 22:57:44 +0000
+From: Yi Zhao <yi.zhao@windriver.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Gowtham Suresh Kumar <gowtham.sureshkumar@arm.com>
-References: <20240516084228.2056637-1-gowtham.sureshkumar@arm.com>
-Content-Language: en-US
-From: akuster808 <akuster808@gmail.com>
-Autocrypt: addr=akuster808@gmail.com; keydata=
- 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
- ApZ86eOP
-In-Reply-To: <20240516084228.2056637-1-gowtham.sureshkumar@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [meta-security][PATCH] scap-security-guide: upgrade 0.1.72 -> 0.1.73
+Date: Mon, 20 May 2024 06:57:32 +0800
+Message-Id: <20240519225732.753130-1-yi.zhao@windriver.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCP286CA0023.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:263::10) To DS0PR11MB7484.namprd11.prod.outlook.com
+ (2603:10b6:8:14c::10)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7484:EE_|PH7PR11MB6521:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6849d341-133b-420d-b915-08dc7857183f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: 
+	BCL:0;ARA:13230031|366007|1800799015|52116005|376005|38350700005;
+X-Microsoft-Antispam-Message-Info: 
+	=?us-ascii?Q?UkhpAhXm1fbaAjYLRRFInk+siGmt6UoKXO6tT612cisEnZL5od9nQUqsVLZy?=
+ =?us-ascii?Q?WLsqizDA6oN2txDyv/FK8WCg8RE7v7Tr53HX7vdlgjja1lE9R60RNKk1TPdc?=
+ =?us-ascii?Q?ksgySGlZOkXNpqACz+UpxEf/q+6maTx21H28he75SCkLzhmKmbQSxdiKHnIl?=
+ =?us-ascii?Q?k0FSHJ5rsux5/gEC4ow3+CWb6dBgFahXRmlaC3tSH8MPST+ShtR37WoAMD+A?=
+ =?us-ascii?Q?PoBoyKMW9sIi6a+7IIRgvWhqvHt0NrU3rVKc/yVgGx3R1czS4OV3b7qMOKXL?=
+ =?us-ascii?Q?AbxLVujTkNSlEd6P1KJmnPY6rAmxJ8kKehSc4v8s2LsQT0Uf7wJEISzAh3Jt?=
+ =?us-ascii?Q?SOFF7akYCAke4nDTfggl9ERF4Df4oL51/vSo7QMK+z/qsqXC6ukLwNW7tlE/?=
+ =?us-ascii?Q?l11/de2Nuttb5UmLk7Ag/pj+w3qKVl1IR2Axm8wcoSbIFL93paFg5Bvll+7B?=
+ =?us-ascii?Q?XhwOurLTA/p+250lK9cpQRdcVNfTqGpsJ6c9djXVZJqzkCQKbQOsZvOAgOtS?=
+ =?us-ascii?Q?5lNBpJemM2vEOrhxZLJKZIpEBlJ+Vud0FOIhEbigrbjo0Z0GciL0uMuD111x?=
+ =?us-ascii?Q?50Cd7Dj6vrm6jbW5zGEuuSY0DFEOBxb4zsWJH3Tsu4gN3JaOwNDypgS3P4Z6?=
+ =?us-ascii?Q?n/6CcgH5i6W0qKwLxQa0Ve8z8Dw5j5HzLxcDKp3OCIgfWwtJQ4OHexVQZX60?=
+ =?us-ascii?Q?gnJ2koHdmWlpcR3Msoc6ksgkno5/UgDC5583ktpua5ab+9XrTxVLyNdtxbWm?=
+ =?us-ascii?Q?SirZzk/qjb155LjC/GA0leTDncU8ux4zfmBDsxQ85yYl52ULqJPm7Eg/2sbR?=
+ =?us-ascii?Q?0eIioYVbq0/f4mjxQJO32Mgk3OpsRCLHcEbMemkiL3zz7sMPe/GQ6qDXXuVw?=
+ =?us-ascii?Q?MK8efg3JBc0UxNVGZi9N5Kx37oh+jkiyg6dFI6pZh7g6E2y5o3522RC8MxYu?=
+ =?us-ascii?Q?5OI13fg5BpLrFAfWWugBKnZY9X/CXMaRlQ8A0HMLOrEv9WsHMhoYhhfgTtxT?=
+ =?us-ascii?Q?kmYR2SFRWtNCdZCYZ9cGg0ljr+Ql/M8YLCga6BVcokN6Cr58umOzMV04Aywi?=
+ =?us-ascii?Q?lliiHpfCRsUTzx+erAYDrtJlstS0RFE3vPG9iATAnBTts5PddveCDetKNX2o?=
+ =?us-ascii?Q?r/Vg+nvEEJbUmfphRbbUYtdVaC8DycpD2MSo8c4ZEUP6mclUltYE2PQglGhU?=
+ =?us-ascii?Q?CPilUorcq+hD/JfjUQSd91iaszSwyQZB7XRp34eI3TvRcKUKrwd7i9VfCESP?=
+ =?us-ascii?Q?67d/qNno6yWC1LqJzZGGHJB4HnZlj3vuEj7XNHrqDw=3D=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB7484.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(52116005)(376005)(38350700005);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?3T1xyTxq8POVqjEA+RcbRFLbpnA5dotxTMjAzCfiX8rrg6vpSAweUuM0c4+q?=
+ =?us-ascii?Q?7Hzy0tnv1UqRMeh11sTfghxn1VtFVjuhLWVeDi4ySWvq8EO0qrmpAwTtRmdM?=
+ =?us-ascii?Q?ockpe0LV6p72PZoHxomo1bFanJyv/xJPeNRAPP37T1F1X/bLIZhCo2iMk8Ne?=
+ =?us-ascii?Q?vQ6Upfh9LZxN7G5/7NHc0lVnBKbcIaUKoqBiYlt53H7gJq6v6TamGhkbGkhQ?=
+ =?us-ascii?Q?sSlpSsuvne3ebT4193s2+7pjan7LRnegLkAG13JT5CAvPzeF6jepFQTP2DYL?=
+ =?us-ascii?Q?ma5W5hpn4mVl5Zarqrc2dwV4JOqsQNNoXyynOE+gL9Yzd+W+srJVeDqVpvx3?=
+ =?us-ascii?Q?dNMRxGufLerH0oOCTpNLdDZmCxja9VNGaeURn8uo/anKPAf92WbPT925lXAK?=
+ =?us-ascii?Q?/n7URF32rsu5K+M2dRnueNCjQwkvBqqwvlSW28jdBj7gi2hHKKBJmwvWQ8bv?=
+ =?us-ascii?Q?rf5CSdNfLwD0lITy3mQ5LkoQtzb1kKd/4k8LE1JJOULIGAOZXt0dNxszaooA?=
+ =?us-ascii?Q?sT5bpJybUihe6PAzXUCaloe6BACml7IuOvRZwLUbf9el8PvHPNH9KBLao7hl?=
+ =?us-ascii?Q?cZ+N8v0jr41CVrvwNDP5oIU4HNuwvfL9v48wdLFbH/7gYcx+icwbOE6buKbu?=
+ =?us-ascii?Q?lsZyqBjl4r6K2rYAdloWsmhWjjM1yBC9z3Z5HUQwKG8BPRkZvmPKZN5gzHbr?=
+ =?us-ascii?Q?GQVaux5rrF3Z4jJcuxmu62jjZ0pBPwLGuxPxYflC5kmEUbyXn/0Vh45HBPhD?=
+ =?us-ascii?Q?9km1Rr0tIvA9V0Tt6bx8S1LasxKN97jkMn44wnta6ZHsD6Nf00CL3HrDBi9I?=
+ =?us-ascii?Q?Uf2z58Kog8BAEvyMm86YXEtKXcL8Wz44r/X+3g36yr4RnGAMBjOkKun5X9Ad?=
+ =?us-ascii?Q?VRP4vpJO78nthWz/Pcu4V1g3jwTWE4T/h2tYFTTzmxFGwzEMSFuO9d/e5frZ?=
+ =?us-ascii?Q?CCEXUgSKkoqTGAyf7CFb5SaaVK2/rfjyqV5QxtFirbynvj1RkOW8d5MdBkMA?=
+ =?us-ascii?Q?SltXdL1oRxhgKMbyr9qPh0ziErS68yPpNHCK9ci2P5l99ucOks+TOHOUuPwm?=
+ =?us-ascii?Q?ITV0ug67XIkuN73AhejA5oXmW6VRAo4lQP9YVmSd/WWi6s8dQrJTU6IuN7ix?=
+ =?us-ascii?Q?8ZMjevJB6TvG71WJh7PD7IvJIa9p6ULoerufu4Va/vzp0MizaQ7CaDjA4v7O?=
+ =?us-ascii?Q?3Zy/Xu7kGEhZSbAdP48TgTuBuQecd3Jw3V7CocQFWh6g2YSmuG/hp/HmCrA7?=
+ =?us-ascii?Q?mY0tHV7gD178sxzbaEHb+XQiDu4i0CY+Vbm8Wf80bP1ZW59ksMSTDXco9FuQ?=
+ =?us-ascii?Q?JVOH3wDdcBQsoWM1ZvWEVi3jVR46JnbmZhRd+kxKvza+HaziN4hqWkZkSNyQ?=
+ =?us-ascii?Q?t04clw248mujPsiErgFoVz5KniMBrDV+0boc1+kxwO5HO5MxQioOSi4O4xcZ?=
+ =?us-ascii?Q?8cxPjY9suQCiLa4EGJFPChOpGOIoq9FbIz1/1ShF6kWlIIST0u+rNfrsOEjL?=
+ =?us-ascii?Q?6qqq3Pfy3Xci0ubyrqjNoA/gPvdr8X2mUg9VdIze4COtro+AYHUQSLu7RKXI?=
+ =?us-ascii?Q?T7mfZnkYyI7nNUUHNH3q+4HorYn6bcoc2aKLgbbI?=
+X-OriginatorOrg: windriver.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6849d341-133b-420d-b915-08dc7857183f
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7484.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 May 2024 22:57:44.6846
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Jw3cFABkCGFdR7oQ7Mp00wOLNknBgq+Fbved41ghhVeToh33YJzeaXg9Qxy/oIIcX5dk2qzEAIohoBz90TJang==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB6521
+X-Proofpoint-ORIG-GUID: aOnXFMYnfiOxN39-D60FomlaAdxIfRk_
+X-Proofpoint-GUID: aOnXFMYnfiOxN39-D60FomlaAdxIfRk_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-19_11,2024-05-17_03,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
+ malwarescore=0 suspectscore=0 mlxscore=0 spamscore=0 phishscore=0
+ mlxlogscore=999 clxscore=1011 priorityscore=1501 impostorscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405190201
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sun, 19 May 2024 19:25:40 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/160
+ <yocto-patches@lists.yoctoproject.org>; Sun, 19 May 2024 22:57:51 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/161
 
+ChangeLog:
+https://github.com/ComplianceAsCode/content/releases/tag/v0.1.73
 
+Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
+---
+ ...p-security-guide_0.1.72.bb => scap-security-guide_0.1.73.bb} | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+ rename recipes-compliance/scap-security-guide/{scap-security-guide_0.1.72.bb => scap-security-guide_0.1.73.bb} (98%)
 
-On 5/16/24 4:42 AM, Gowtham Suresh Kumar via lists.yoctoproject.org wrote:
-> Signed-off-by: Gowtham Suresh Kumar <gowtham.sureshkumar@arm.com>
-> ---
->   .../parsec-service/parsec-service-crates.inc  | 78 +++++++++++--------
->   ...rvice_1.3.0.bb => parsec-service_1.4.1.bb} |  2 +-
->   2 files changed, 47 insertions(+), 33 deletions(-)
->   rename meta-parsec/recipes-parsec/parsec-service/{parsec-service_1.3.0.bb => parsec-service_1.4.1.bb} (97%)
-
-I can take this for Master but am having an issue see justification for 
-scarthgap.
-
-Why should I take this for scarthgap?
-
-BR,
-Armin
->
-> diff --git a/meta-parsec/recipes-parsec/parsec-service/parsec-service-crates.inc b/meta-parsec/recipes-parsec/parsec-service/parsec-service-crates.inc
-> index bf2c7d4..2677e3c 100644
-> --- a/meta-parsec/recipes-parsec/parsec-service/parsec-service-crates.inc
-> +++ b/meta-parsec/recipes-parsec/parsec-service/parsec-service-crates.inc
-> @@ -2,9 +2,14 @@
->   
->   # from Cargo.lock
->   SRC_URI += " \
-> -    crate://crates.io/ahash/0.8.3 \
-> +    crate://crates.io/ahash/0.8.7 \
->       crate://crates.io/aho-corasick/1.1.2 \
->       crate://crates.io/allocator-api2/0.2.16 \
-> +    crate://crates.io/anstream/0.3.2 \
-> +    crate://crates.io/anstyle/1.0.2 \
-> +    crate://crates.io/anstyle-parse/0.2.1 \
-> +    crate://crates.io/anstyle-query/1.0.0 \
-> +    crate://crates.io/anstyle-wincon/1.0.2 \
->       crate://crates.io/anyhow/1.0.75 \
->       crate://crates.io/asn1-rs/0.3.1 \
->       crate://crates.io/asn1-rs-derive/0.1.0 \
-> @@ -17,7 +22,7 @@ SRC_URI += " \
->       crate://crates.io/bindgen/0.66.1 \
->       crate://crates.io/bitfield/0.14.0 \
->       crate://crates.io/bitflags/1.3.2 \
-> -    crate://crates.io/bitflags/2.4.0 \
-> +    crate://crates.io/bitflags/2.4.1 \
->       crate://crates.io/bumpalo/3.14.0 \
->       crate://crates.io/bytes/1.5.0 \
->       crate://crates.io/cc/1.0.83 \
-> @@ -25,8 +30,12 @@ SRC_URI += " \
->       crate://crates.io/cexpr/0.6.0 \
->       crate://crates.io/cfg-if/1.0.0 \
->       crate://crates.io/clang-sys/1.6.1 \
-> -    crate://crates.io/clap/2.34.0 \
-> +    crate://crates.io/clap/4.3.24 \
-> +    crate://crates.io/clap_builder/4.3.24 \
-> +    crate://crates.io/clap_derive/4.3.12 \
-> +    crate://crates.io/clap_lex/0.5.0 \
->       crate://crates.io/cmake/0.1.45 \
-> +    crate://crates.io/colorchoice/1.0.0 \
->       crate://crates.io/const-oid/0.7.1 \
->       crate://crates.io/cryptoauthlib-sys/0.2.2 \
->       crate://crates.io/cryptoki/0.6.0 \
-> @@ -34,7 +43,6 @@ SRC_URI += " \
->       crate://crates.io/data-encoding/2.4.0 \
->       crate://crates.io/der/0.5.1 \
->       crate://crates.io/der-parser/7.0.0 \
-> -    crate://crates.io/deranged/0.3.8 \
->       crate://crates.io/derivative/2.2.0 \
->       crate://crates.io/displaydoc/0.2.4 \
->       crate://crates.io/either/1.9.0 \
-> @@ -58,13 +66,14 @@ SRC_URI += " \
->       crate://crates.io/futures-task/0.3.28 \
->       crate://crates.io/futures-util/0.3.28 \
->       crate://crates.io/generic-array/0.14.7 \
-> -    crate://crates.io/getrandom/0.2.10 \
-> +    crate://crates.io/getrandom/0.2.12 \
->       crate://crates.io/glob/0.3.1 \
->       crate://crates.io/grpcio/0.9.1 \
->       crate://crates.io/grpcio-sys/0.9.1+1.38.0 \
->       crate://crates.io/hashbrown/0.14.1 \
->       crate://crates.io/hashlink/0.8.4 \
->       crate://crates.io/heck/0.3.3 \
-> +    crate://crates.io/heck/0.4.1 \
->       crate://crates.io/hermit-abi/0.3.3 \
->       crate://crates.io/hex/0.4.3 \
->       crate://crates.io/home/0.5.5 \
-> @@ -124,8 +133,6 @@ SRC_URI += " \
->       crate://crates.io/pkg-config/0.3.27 \
->       crate://crates.io/ppv-lite86/0.2.17 \
->       crate://crates.io/prettyplease/0.2.15 \
-> -    crate://crates.io/proc-macro-error/1.0.4 \
-> -    crate://crates.io/proc-macro-error-attr/1.0.4 \
->       crate://crates.io/proc-macro2/1.0.69 \
->       crate://crates.io/prost/0.9.0 \
->       crate://crates.io/prost-build/0.9.0 \
-> @@ -149,7 +156,7 @@ SRC_URI += " \
->       crate://crates.io/rustc-hash/1.1.0 \
->       crate://crates.io/rustc_version/0.3.3 \
->       crate://crates.io/rusticata-macros/4.1.0 \
-> -    crate://crates.io/rustix/0.38.18 \
-> +    crate://crates.io/rustix/0.38.21 \
->       crate://crates.io/ryu/1.0.15 \
->       crate://crates.io/same-file/1.0.6 \
->       crate://crates.io/scopeguard/1.2.0 \
-> @@ -173,8 +180,7 @@ SRC_URI += " \
->       crate://crates.io/spin/0.5.2 \
->       crate://crates.io/spki/0.5.4 \
->       crate://crates.io/stable_deref_trait/1.2.0 \
-> -    crate://crates.io/structopt/0.3.26 \
-> -    crate://crates.io/structopt-derive/0.4.18 \
-> +    crate://crates.io/strsim/0.10.0 \
->       crate://crates.io/strum_macros/0.21.1 \
->       crate://crates.io/syn/1.0.109 \
->       crate://crates.io/syn/2.0.38 \
-> @@ -182,19 +188,18 @@ SRC_URI += " \
->       crate://crates.io/target-lexicon/0.12.11 \
->       crate://crates.io/tempfile/3.8.0 \
->       crate://crates.io/termcolor/1.3.0 \
-> -    crate://crates.io/textwrap/0.11.0 \
->       crate://crates.io/thiserror/1.0.49 \
->       crate://crates.io/thiserror-impl/1.0.49 \
->       crate://crates.io/threadpool/1.8.1 \
-> -    crate://crates.io/time/0.3.29 \
-> -    crate://crates.io/time-core/0.1.2 \
-> -    crate://crates.io/time-macros/0.2.15 \
-> +    crate://crates.io/time/0.3.23 \
-> +    crate://crates.io/time-core/0.1.1 \
-> +    crate://crates.io/time-macros/0.2.10 \
->       crate://crates.io/tinyvec/1.6.0 \
->       crate://crates.io/tinyvec_macros/0.1.1 \
->       crate://crates.io/toml/0.8.2 \
->       crate://crates.io/toml_datetime/0.6.3 \
->       crate://crates.io/toml_edit/0.20.2 \
-> -    crate://crates.io/tss-esapi/7.4.0 \
-> +    crate://crates.io/tss-esapi/7.5.0 \
->       crate://crates.io/tss-esapi-sys/0.5.0 \
->       crate://crates.io/typenum/1.17.0 \
->       crate://crates.io/ucd-trie/0.1.6 \
-> @@ -202,10 +207,10 @@ SRC_URI += " \
->       crate://crates.io/unicode-ident/1.0.12 \
->       crate://crates.io/unicode-normalization/0.1.22 \
->       crate://crates.io/unicode-segmentation/1.10.1 \
-> -    crate://crates.io/unicode-width/0.1.11 \
->       crate://crates.io/unicode-xid/0.2.4 \
->       crate://crates.io/untrusted/0.7.1 \
->       crate://crates.io/url/2.4.1 \
-> +    crate://crates.io/utf8parse/0.2.1 \
->       crate://crates.io/uuid/0.8.2 \
->       crate://crates.io/vcpkg/0.2.15 \
->       crate://crates.io/version_check/0.9.4 \
-> @@ -234,13 +239,20 @@ SRC_URI += " \
->       crate://crates.io/winnow/0.5.16 \
->       crate://crates.io/x509-parser/0.13.2 \
->       crate://crates.io/yasna/0.4.0 \
-> +    crate://crates.io/zerocopy/0.7.32 \
-> +    crate://crates.io/zerocopy-derive/0.7.32 \
->       crate://crates.io/zeroize/1.6.0 \
->       crate://crates.io/zeroize_derive/1.4.2 \
->   "
->   
-> -SRC_URI[ahash-0.8.3.sha256sum] = "2c99f64d1e06488f620f932677e24bc6e2897582980441ae90a671415bd7ec2f"
-> +SRC_URI[ahash-0.8.7.sha256sum] = "77c3a9648d43b9cd48db467b3f87fdd6e146bcc88ab0180006cef2179fe11d01"
->   SRC_URI[aho-corasick-1.1.2.sha256sum] = "b2969dcb958b36655471fc61f7e416fa76033bdd4bfed0678d8fee1e2d07a1f0"
->   SRC_URI[allocator-api2-0.2.16.sha256sum] = "0942ffc6dcaadf03badf6e6a2d0228460359d5e34b57ccdc720b7382dfbd5ec5"
-> +SRC_URI[anstream-0.3.2.sha256sum] = "0ca84f3628370c59db74ee214b3263d58f9aadd9b4fe7e711fd87dc452b7f163"
-> +SRC_URI[anstyle-1.0.2.sha256sum] = "15c4c2c83f81532e5845a733998b6971faca23490340a418e9b72a3ec9de12ea"
-> +SRC_URI[anstyle-parse-0.2.1.sha256sum] = "938874ff5980b03a87c5524b3ae5b59cf99b1d6bc836848df7bc5ada9643c333"
-> +SRC_URI[anstyle-query-1.0.0.sha256sum] = "5ca11d4be1bab0c8bc8734a9aa7bf4ee8316d462a08c6ac5052f888fef5b494b"
-> +SRC_URI[anstyle-wincon-1.0.2.sha256sum] = "c677ab05e09154296dd37acecd46420c17b9713e8366facafa8fc0885167cf4c"
->   SRC_URI[anyhow-1.0.75.sha256sum] = "a4668cab20f66d8d020e1fbc0ebe47217433c1b6c8f2040faf858554e394ace6"
->   SRC_URI[asn1-rs-0.3.1.sha256sum] = "30ff05a702273012438132f449575dbc804e27b2f3cbe3069aa237d26c98fa33"
->   SRC_URI[asn1-rs-derive-0.1.0.sha256sum] = "db8b7511298d5b7784b40b092d9e9dcd3a627a5707e4b5e507931ab0d44eeebf"
-> @@ -253,7 +265,7 @@ SRC_URI[bindgen-0.57.0.sha256sum] = "fd4865004a46a0aafb2a0a5eb19d3c9fc46ee5f063a
->   SRC_URI[bindgen-0.66.1.sha256sum] = "f2b84e06fc203107bfbad243f4aba2af864eb7db3b1cf46ea0a023b0b433d2a7"
->   SRC_URI[bitfield-0.14.0.sha256sum] = "2d7e60934ceec538daadb9d8432424ed043a904d8e0243f3c6446bce549a46ac"
->   SRC_URI[bitflags-1.3.2.sha256sum] = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
-> -SRC_URI[bitflags-2.4.0.sha256sum] = "b4682ae6287fcf752ecaabbfcc7b6f9b72aa33933dc23a554d853aea8eea8635"
-> +SRC_URI[bitflags-2.4.1.sha256sum] = "327762f6e5a765692301e5bb513e0d9fef63be86bbc14528052b1cd3e6f03e07"
->   SRC_URI[bumpalo-3.14.0.sha256sum] = "7f30e7476521f6f8af1a1c4c0b8cc94f0bee37d91763d0ca2665f299b6cd8aec"
->   SRC_URI[bytes-1.5.0.sha256sum] = "a2bd12c1caf447e69cd4528f47f94d203fd2582878ecb9e9465484c4148a8223"
->   SRC_URI[cc-1.0.83.sha256sum] = "f1174fb0b6ec23863f8b971027804a42614e347eafb0a95bf0b12cdae21fc4d0"
-> @@ -261,8 +273,12 @@ SRC_URI[cexpr-0.4.0.sha256sum] = "f4aedb84272dbe89af497cf81375129abda4fc0a9e7c5d
->   SRC_URI[cexpr-0.6.0.sha256sum] = "6fac387a98bb7c37292057cffc56d62ecb629900026402633ae9160df93a8766"
->   SRC_URI[cfg-if-1.0.0.sha256sum] = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
->   SRC_URI[clang-sys-1.6.1.sha256sum] = "c688fc74432808e3eb684cae8830a86be1d66a2bd58e1f248ed0960a590baf6f"
-> -SRC_URI[clap-2.34.0.sha256sum] = "a0610544180c38b88101fecf2dd634b174a62eef6946f84dfc6a7127512b381c"
-> +SRC_URI[clap-4.3.24.sha256sum] = "fb690e81c7840c0d7aade59f242ea3b41b9bc27bcd5997890e7702ae4b32e487"
-> +SRC_URI[clap_builder-4.3.24.sha256sum] = "5ed2e96bc16d8d740f6f48d663eddf4b8a0983e79210fd55479b7bcd0a69860e"
-> +SRC_URI[clap_derive-4.3.12.sha256sum] = "54a9bb5758fc5dfe728d1019941681eccaf0cf8a4189b692a0ee2f2ecf90a050"
-> +SRC_URI[clap_lex-0.5.0.sha256sum] = "2da6da31387c7e4ef160ffab6d5e7f00c42626fe39aea70a7b0f1773f7dd6c1b"
->   SRC_URI[cmake-0.1.45.sha256sum] = "eb6210b637171dfba4cda12e579ac6dc73f5165ad56133e5d72ef3131f320855"
-> +SRC_URI[colorchoice-1.0.0.sha256sum] = "acbf1af155f9b9ef647e42cdc158db4b64a1b61f743629225fde6f3e0be2a7c7"
->   SRC_URI[const-oid-0.7.1.sha256sum] = "e4c78c047431fee22c1a7bb92e00ad095a02a983affe4d8a72e2a2c62c1b94f3"
->   SRC_URI[cryptoauthlib-sys-0.2.2.sha256sum] = "da232dd4f06ee4600b33a455bb17fcc6c2c3a54ee7fd60496d3a73668a6cb6e4"
->   SRC_URI[cryptoki-0.6.0.sha256sum] = "e08651cefd925cd83d8d1b4f96276c18fe5ee148ab8c8a47f462316d36bc01af"
-> @@ -270,7 +286,6 @@ SRC_URI[cryptoki-sys-0.1.7.sha256sum] = "7a978e5e226446ac68eded4f92796947130f0d2
->   SRC_URI[data-encoding-2.4.0.sha256sum] = "c2e66c9d817f1720209181c316d28635c050fa304f9c79e47a520882661b7308"
->   SRC_URI[der-0.5.1.sha256sum] = "6919815d73839e7ad218de758883aae3a257ba6759ce7a9992501efbb53d705c"
->   SRC_URI[der-parser-7.0.0.sha256sum] = "fe398ac75057914d7d07307bf67dc7f3f574a26783b4fc7805a20ffa9f506e82"
-> -SRC_URI[deranged-0.3.8.sha256sum] = "f2696e8a945f658fd14dc3b87242e6b80cd0f36ff04ea560fa39082368847946"
->   SRC_URI[derivative-2.2.0.sha256sum] = "fcc3dd5e9e9c0b295d6e1e4d811fb6f157d5ffd784b8d202fc62eac8035a770b"
->   SRC_URI[displaydoc-0.2.4.sha256sum] = "487585f4d0c6655fe74905e2504d8ad6908e4db67f744eb140876906c2f3175d"
->   SRC_URI[either-1.9.0.sha256sum] = "a26ae43d7bcc3b814de94796a5e736d4029efb0ee900c12e2d54c993ad1a1e07"
-> @@ -294,13 +309,14 @@ SRC_URI[futures-sink-0.3.28.sha256sum] = "f43be4fe21a13b9781a69afa4985b0f6ee0e1a
->   SRC_URI[futures-task-0.3.28.sha256sum] = "76d3d132be6c0e6aa1534069c705a74a5997a356c0dc2f86a47765e5617c5b65"
->   SRC_URI[futures-util-0.3.28.sha256sum] = "26b01e40b772d54cf6c6d721c1d1abd0647a0106a12ecaa1c186273392a69533"
->   SRC_URI[generic-array-0.14.7.sha256sum] = "85649ca51fd72272d7821adaf274ad91c288277713d9c18820d8499a7ff69e9a"
-> -SRC_URI[getrandom-0.2.10.sha256sum] = "be4136b2a15dd319360be1c07d9933517ccf0be8f16bf62a3bee4f0d618df427"
-> +SRC_URI[getrandom-0.2.12.sha256sum] = "190092ea657667030ac6a35e305e62fc4dd69fd98ac98631e5d3a2b1575a12b5"
->   SRC_URI[glob-0.3.1.sha256sum] = "d2fabcfbdc87f4758337ca535fb41a6d701b65693ce38287d856d1674551ec9b"
->   SRC_URI[grpcio-0.9.1.sha256sum] = "24d99e00eed7e0a04ee2705112e7cfdbe1a3cc771147f22f016a8cd2d002187b"
->   SRC_URI[grpcio-sys-0.9.1+1.38.0.sha256sum] = "9447d1a926beeef466606cc45717f80897998b548e7dc622873d453e1ecb4be4"
->   SRC_URI[hashbrown-0.14.1.sha256sum] = "7dfda62a12f55daeae5015f81b0baea145391cb4520f86c248fc615d72640d12"
->   SRC_URI[hashlink-0.8.4.sha256sum] = "e8094feaf31ff591f651a2664fb9cfd92bba7a60ce3197265e9482ebe753c8f7"
->   SRC_URI[heck-0.3.3.sha256sum] = "6d621efb26863f0e9924c6ac577e8275e5e6b77455db64ffa6c65c904e9e132c"
-> +SRC_URI[heck-0.4.1.sha256sum] = "95505c38b4572b2d910cecb0281560f54b440a19336cbbcb27bf6ce6adc6f5a8"
->   SRC_URI[hermit-abi-0.3.3.sha256sum] = "d77f7ec81a6d05a3abb01ab6eb7590f6083d08449fe5a1c8b1e620283546ccb7"
->   SRC_URI[hex-0.4.3.sha256sum] = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
->   SRC_URI[home-0.5.5.sha256sum] = "5444c27eef6923071f7ebcc33e3444508466a76f7a2b93da00ed6e19f30c1ddb"
-> @@ -360,8 +376,6 @@ SRC_URI[pkcs8-0.8.0.sha256sum] = "7cabda3fb821068a9a4fab19a683eac3af12edf0f34b94
->   SRC_URI[pkg-config-0.3.27.sha256sum] = "26072860ba924cbfa98ea39c8c19b4dd6a4a25423dbdf219c1eca91aa0cf6964"
->   SRC_URI[ppv-lite86-0.2.17.sha256sum] = "5b40af805b3121feab8a3c29f04d8ad262fa8e0561883e7653e024ae4479e6de"
->   SRC_URI[prettyplease-0.2.15.sha256sum] = "ae005bd773ab59b4725093fd7df83fd7892f7d8eafb48dbd7de6e024e4215f9d"
-> -SRC_URI[proc-macro-error-1.0.4.sha256sum] = "da25490ff9892aab3fcf7c36f08cfb902dd3e71ca0f9f9517bea02a73a5ce38c"
-> -SRC_URI[proc-macro-error-attr-1.0.4.sha256sum] = "a1be40180e52ecc98ad80b184934baf3d0d29f979574e439af5a55274b35f869"
->   SRC_URI[proc-macro2-1.0.69.sha256sum] = "134c189feb4956b20f6f547d2cf727d4c0fe06722b20a0eec87ed445a97f92da"
->   SRC_URI[prost-0.9.0.sha256sum] = "444879275cb4fd84958b1a1d5420d15e6fcf7c235fe47f053c9c2a80aceb6001"
->   SRC_URI[prost-build-0.9.0.sha256sum] = "62941722fb675d463659e49c4f3fe1fe792ff24fe5bbaa9c08cd3b98a1c354f5"
-> @@ -385,7 +399,7 @@ SRC_URI[rust-cryptoauthlib-0.4.5.sha256sum] = "adab07508c090715a5cd3d072f2b8ab60
->   SRC_URI[rustc-hash-1.1.0.sha256sum] = "08d43f7aa6b08d49f382cde6a7982047c3426db949b1424bc4b7ec9ae12c6ce2"
->   SRC_URI[rustc_version-0.3.3.sha256sum] = "f0dfe2087c51c460008730de8b57e6a320782fbfb312e1f4d520e6c6fae155ee"
->   SRC_URI[rusticata-macros-4.1.0.sha256sum] = "faf0c4a6ece9950b9abdb62b1cfcf2a68b3b67a10ba445b3bb85be2a293d0632"
-> -SRC_URI[rustix-0.38.18.sha256sum] = "5a74ee2d7c2581cd139b42447d7d9389b889bdaad3a73f1ebb16f2a3237bb19c"
-> +SRC_URI[rustix-0.38.21.sha256sum] = "2b426b0506e5d50a7d8dafcf2e81471400deb602392c7dd110815afb4eaf02a3"
->   SRC_URI[ryu-1.0.15.sha256sum] = "1ad4cc8da4ef723ed60bced201181d83791ad433213d8c24efffda1eec85d741"
->   SRC_URI[same-file-1.0.6.sha256sum] = "93fc1dc3aaa9bfed95e02e6eadabb4baf7e3078b0bd1b4d7b6b0b68378900502"
->   SRC_URI[scopeguard-1.2.0.sha256sum] = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
-> @@ -409,8 +423,7 @@ SRC_URI[spiffe-0.2.1.sha256sum] = "f30161ecb25b9acc06eb61d750aaf1c4b3a536e22ff19
->   SRC_URI[spin-0.5.2.sha256sum] = "6e63cff320ae2c57904679ba7cb63280a3dc4613885beafb148ee7bf9aa9042d"
->   SRC_URI[spki-0.5.4.sha256sum] = "44d01ac02a6ccf3e07db148d2be087da624fea0221a16152ed01f0496a6b0a27"
->   SRC_URI[stable_deref_trait-1.2.0.sha256sum] = "a8f112729512f8e442d81f95a8a7ddf2b7c6b8a1a6f509a95864142b30cab2d3"
-> -SRC_URI[structopt-0.3.26.sha256sum] = "0c6b5c64445ba8094a6ab0c3cd2ad323e07171012d9c98b0b15651daf1787a10"
-> -SRC_URI[structopt-derive-0.4.18.sha256sum] = "dcb5ae327f9cc13b68763b5749770cb9e048a99bd9dfdfa58d0cf05d5f64afe0"
-> +SRC_URI[strsim-0.10.0.sha256sum] = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
->   SRC_URI[strum_macros-0.21.1.sha256sum] = "d06aaeeee809dbc59eb4556183dd927df67db1540de5be8d3ec0b6636358a5ec"
->   SRC_URI[syn-1.0.109.sha256sum] = "72b64191b275b66ffe2469e8af2c1cfe3bafa67b529ead792a6d0160888b4237"
->   SRC_URI[syn-2.0.38.sha256sum] = "e96b79aaa137db8f61e26363a0c9b47d8b4ec75da28b7d1d614c2303e232408b"
-> @@ -418,19 +431,18 @@ SRC_URI[synstructure-0.12.6.sha256sum] = "f36bdaa60a83aca3921b5259d5400cbf5e90fc
->   SRC_URI[target-lexicon-0.12.11.sha256sum] = "9d0e916b1148c8e263850e1ebcbd046f333e0683c724876bb0da63ea4373dc8a"
->   SRC_URI[tempfile-3.8.0.sha256sum] = "cb94d2f3cc536af71caac6b6fcebf65860b347e7ce0cc9ebe8f70d3e521054ef"
->   SRC_URI[termcolor-1.3.0.sha256sum] = "6093bad37da69aab9d123a8091e4be0aa4a03e4d601ec641c327398315f62b64"
-> -SRC_URI[textwrap-0.11.0.sha256sum] = "d326610f408c7a4eb6f51c37c330e496b08506c9457c9d34287ecc38809fb060"
->   SRC_URI[thiserror-1.0.49.sha256sum] = "1177e8c6d7ede7afde3585fd2513e611227efd6481bd78d2e82ba1ce16557ed4"
->   SRC_URI[thiserror-impl-1.0.49.sha256sum] = "10712f02019e9288794769fba95cd6847df9874d49d871d062172f9dd41bc4cc"
->   SRC_URI[threadpool-1.8.1.sha256sum] = "d050e60b33d41c19108b32cea32164033a9013fe3b46cbd4457559bfbf77afaa"
-> -SRC_URI[time-0.3.29.sha256sum] = "426f806f4089c493dcac0d24c29c01e2c38baf8e30f1b716ee37e83d200b18fe"
-> -SRC_URI[time-core-0.1.2.sha256sum] = "ef927ca75afb808a4d64dd374f00a2adf8d0fcff8e7b184af886c3c87ec4a3f3"
-> -SRC_URI[time-macros-0.2.15.sha256sum] = "4ad70d68dba9e1f8aceda7aa6711965dfec1cac869f311a51bd08b3a2ccbce20"
-> +SRC_URI[time-0.3.23.sha256sum] = "59e399c068f43a5d116fedaf73b203fa4f9c519f17e2b34f63221d3792f81446"
-> +SRC_URI[time-core-0.1.1.sha256sum] = "7300fbefb4dadc1af235a9cef3737cea692a9d97e1b9cbcd4ebdae6f8868e6fb"
-> +SRC_URI[time-macros-0.2.10.sha256sum] = "96ba15a897f3c86766b757e5ac7221554c6750054d74d5b28844fce5fb36a6c4"
->   SRC_URI[tinyvec-1.6.0.sha256sum] = "87cc5ceb3875bb20c2890005a4e226a4651264a5c75edb2421b52861a0a0cb50"
->   SRC_URI[tinyvec_macros-0.1.1.sha256sum] = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
->   SRC_URI[toml-0.8.2.sha256sum] = "185d8ab0dfbb35cf1399a6344d8484209c088f75f8f68230da55d48d95d43e3d"
->   SRC_URI[toml_datetime-0.6.3.sha256sum] = "7cda73e2f1397b1262d6dfdcef8aafae14d1de7748d66822d3bfeeb6d03e5e4b"
->   SRC_URI[toml_edit-0.20.2.sha256sum] = "396e4d48bbb2b7554c944bde63101b5ae446cff6ec4a24227428f15eb72ef338"
-> -SRC_URI[tss-esapi-7.4.0.sha256sum] = "de234df360c349f78ecd33f0816ab3842db635732212b5cfad67f2638336864e"
-> +SRC_URI[tss-esapi-7.5.0.sha256sum] = "d36722a0888ff29225d11ea205f10319d6cb4d072ef3c91bf3509f7f476d89e3"
->   SRC_URI[tss-esapi-sys-0.5.0.sha256sum] = "535cd192581c2ec4d5f82e670b1d3fbba6a23ccce8c85de387642051d7cad5b5"
->   SRC_URI[typenum-1.17.0.sha256sum] = "42ff0bf0c66b8238c6f3b578df37d0b7848e55df8577b3f74f92a69acceeb825"
->   SRC_URI[ucd-trie-0.1.6.sha256sum] = "ed646292ffc8188ef8ea4d1e0e0150fb15a5c2e12ad9b8fc191ae7a8a7f3c4b9"
-> @@ -438,10 +450,10 @@ SRC_URI[unicode-bidi-0.3.13.sha256sum] = "92888ba5573ff080736b3648696b70cafad7d2
->   SRC_URI[unicode-ident-1.0.12.sha256sum] = "3354b9ac3fae1ff6755cb6db53683adb661634f67557942dea4facebec0fee4b"
->   SRC_URI[unicode-normalization-0.1.22.sha256sum] = "5c5713f0fc4b5db668a2ac63cdb7bb4469d8c9fed047b1d0292cc7b0ce2ba921"
->   SRC_URI[unicode-segmentation-1.10.1.sha256sum] = "1dd624098567895118886609431a7c3b8f516e41d30e0643f03d94592a147e36"
-> -SRC_URI[unicode-width-0.1.11.sha256sum] = "e51733f11c9c4f72aa0c160008246859e340b00807569a0da0e7a1079b27ba85"
->   SRC_URI[unicode-xid-0.2.4.sha256sum] = "f962df74c8c05a667b5ee8bcf162993134c104e96440b663c8daa176dc772d8c"
->   SRC_URI[untrusted-0.7.1.sha256sum] = "a156c684c91ea7d62626509bce3cb4e1d9ed5c4d978f7b4352658f96a4c26b4a"
->   SRC_URI[url-2.4.1.sha256sum] = "143b538f18257fac9cad154828a57c6bf5157e1aa604d4816b5995bf6de87ae5"
-> +SRC_URI[utf8parse-0.2.1.sha256sum] = "711b9620af191e0cdc7468a8d14e709c3dcdb115b36f838e601583af800a370a"
->   SRC_URI[uuid-0.8.2.sha256sum] = "bc5cf98d8186244414c848017f0e2676b3fcb46807f6668a97dfe67359a3c4b7"
->   SRC_URI[vcpkg-0.2.15.sha256sum] = "accd4ea62f7bb7a82fe23066fb0957d48ef677f6eeb8215f372f52e48bb32426"
->   SRC_URI[version_check-0.9.4.sha256sum] = "49874b5167b65d7193b8aba1567f5c7d93d001cafc34600cee003eda787e483f"
-> @@ -470,5 +482,7 @@ SRC_URI[windows_x86_64_msvc-0.48.5.sha256sum] = "ed94fce61571a4006852b7389a063ab
->   SRC_URI[winnow-0.5.16.sha256sum] = "037711d82167854aff2018dfd193aa0fef5370f456732f0d5a0c59b0f1b4b907"
->   SRC_URI[x509-parser-0.13.2.sha256sum] = "9fb9bace5b5589ffead1afb76e43e34cff39cd0f3ce7e170ae0c29e53b88eb1c"
->   SRC_URI[yasna-0.4.0.sha256sum] = "e262a29d0e61ccf2b6190d7050d4b237535fc76ce4c1210d9caa316f71dffa75"
-> +SRC_URI[zerocopy-0.7.32.sha256sum] = "74d4d3961e53fa4c9a25a8637fc2bfaf2595b3d3ae34875568a5cf64787716be"
-> +SRC_URI[zerocopy-derive-0.7.32.sha256sum] = "9ce1b18ccd8e73a9321186f97e46f9f04b778851177567b1975109d26a08d2a6"
->   SRC_URI[zeroize-1.6.0.sha256sum] = "2a0956f1ba7c7909bfb66c2e9e4124ab6f6482560f6628b5aaeba39207c9aad9"
->   SRC_URI[zeroize_derive-1.4.2.sha256sum] = "ce36e65b0d2999d2aafac989fb249189a141aee1f53c612c1f37d72631959f69"
-> diff --git a/meta-parsec/recipes-parsec/parsec-service/parsec-service_1.3.0.bb b/meta-parsec/recipes-parsec/parsec-service/parsec-service_1.4.1.bb
-> similarity index 97%
-> rename from meta-parsec/recipes-parsec/parsec-service/parsec-service_1.3.0.bb
-> rename to meta-parsec/recipes-parsec/parsec-service/parsec-service_1.4.1.bb
-> index 477988e..2d55c24 100644
-> --- a/meta-parsec/recipes-parsec/parsec-service/parsec-service_1.3.0.bb
-> +++ b/meta-parsec/recipes-parsec/parsec-service/parsec-service_1.4.1.bb
-> @@ -12,7 +12,7 @@ SRC_URI += "crate://crates.io/parsec-service/${PV} \
->               file://systemd.patch \
->               file://parsec-tmpfiles.conf \
->   "
-> -SRC_URI[parsec-service-1.3.0.sha256sum] = "6e171f6394f900e0356947fb7ee42f825fba7ad8cada44b520b4bec5f1c853c8"
-> +SRC_URI[parsec-service-1.4.1.sha256sum] = "06ad906fb13d6844ad676d4203a1096ae4efc87fe1abcea0481c507df56d8c98"
->   
->   B = "${CARGO_VENDORING_DIRECTORY}/${BP}"
->   
+diff --git a/recipes-compliance/scap-security-guide/scap-security-guide_0.1.72.bb b/recipes-compliance/scap-security-guide/scap-security-guide_0.1.73.bb
+similarity index 98%
+rename from recipes-compliance/scap-security-guide/scap-security-guide_0.1.72.bb
+rename to recipes-compliance/scap-security-guide/scap-security-guide_0.1.73.bb
+index 549f04a..84f5a11 100644
+--- a/recipes-compliance/scap-security-guide/scap-security-guide_0.1.72.bb
++++ b/recipes-compliance/scap-security-guide/scap-security-guide_0.1.73.bb
+@@ -6,7 +6,7 @@ HOME_URL = "https://www.open-scap.org/security-policies/scap-security-guide/"
+ LIC_FILES_CHKSUM = "file://LICENSE;md5=9bfa86579213cb4c6adaffface6b2820"
+ LICENSE = "BSD-3-Clause"
+ 
+-SRCREV = "7fb44f78bf33232aad587e87a799afcf576f9b47"
++SRCREV = "2bf9d43840d3ed36a25262d4f45a4015f9b77d8d"
+ SRC_URI = "git://github.com/ComplianceAsCode/content.git;branch=stable;protocol=https \
+            file://run_eval.sh \
+            file://run-ptest \
+-- 
+2.25.1
 
 
