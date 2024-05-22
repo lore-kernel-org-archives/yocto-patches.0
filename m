@@ -1,62 +1,375 @@
-Return-Path: <foss@0leil.net>
+Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6A35C41513
-	for <webhook@archiver.kernel.org>; Wed, 22 May 2024 18:27:06 +0000 (UTC)
-Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [83.166.143.169])
- by mx.groups.io with SMTP id smtpd.web10.2124.1716402419103582384
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E85D0C25B78
+	for <webhook@archiver.kernel.org>; Wed, 22 May 2024 22:54:06 +0000 (UTC)
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+ by mx.groups.io with SMTP id smtpd.web10.2695.1716418445493570055
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 22 May 2024 11:26:59 -0700
+ Wed, 22 May 2024 15:54:05 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: 0leil.net, ip: 83.166.143.169, mailfrom: foss+yocto@0leil.net)
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Vl0Bn29dHzq3B;
-	Wed, 22 May 2024 20:26:57 +0200 (CEST)
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Vl0Bm5nVnzMB6;
-	Wed, 22 May 2024 20:26:56 +0200 (CEST)
-From: Quentin Schulz <foss+yocto@0leil.net>
-Subject: [PATCH meta-rockchip 0/2] fix 2+ DTB in KERNEL_DEVICETREE and
- empty /boot without kernel-modules
-Date: Wed, 22 May 2024 20:26:42 +0200
-Message-Id: <20240522-nonfitdt-multi-dt-v1-0-c75dffd3aa7c@cherry.de>
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=CWrmTP0B;
+ spf=pass (domain: gmail.com, ip: 209.85.160.43, mailfrom: twoerner@gmail.com)
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-24c894a1d96so11958fac.3
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 22 May 2024 15:54:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716418443; x=1717023243; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rPK/ELBxrpzuq8V6R9Al37aXIZuCqGgyyg7uyp3+r68=;
+        b=CWrmTP0BPDCLdwKX64rJkEs7eOz/sTfYrfupQPxXtwizBuOqRb/jpkaBOGExibL68n
+         YUVd0Vw+tLQ+8t60ftGGe3NH0Vu3H8MjE4/DUP3DjH1W6/Q6dysGJeTcTiyCme3a7Ewk
+         Nf/5dlh6axjPZw160MUHtCUjMM3xRGGoOBxl0ODRDyIjG3h4gW+owRGdoXlsntElW3oU
+         E/OuW3ePfG9JuIG1DPFO9r2ADfoUbMoTYA5lyxkk1JiqOmt/5fxV3W2bkkTQpgioA1+i
+         it/yfSUG4Gyn6bfuDnnHjLZOm6WZAW1b8Edqz1Dh1Z/CNujUOU2oTzQ8IXJ1uqrX3zqz
+         JQoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716418443; x=1717023243;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rPK/ELBxrpzuq8V6R9Al37aXIZuCqGgyyg7uyp3+r68=;
+        b=nb14CI91Bb4pAisyL5Unjb3bxnAFqM2uun1OnaG3D4fLkJpcON1BbLNRyrw72sdTnZ
+         jXYwhvrH5MFqJkg1twjl2ZA916YsDLjrFNNQlP4s4Ov7oh9GcnIWcWojoAFI9NgJJ4sX
+         93FQG8oZQ0o2oaTXAyzMkEcrqYQlEsc8vZX0k4vSPtXtcekB/j0uPrkbUD3kT81gRjr0
+         9bMAb3VdkRNaifFQz7yZYjnTLRAdx20TJgollYkqcG43tvkoGg5LBMUZTQQT+w1Em8QX
+         hp0Yq6iZly9kGwVBApkx7axSWPLiuoJmPP6wGqiKScvKM9Sj9GY2A4fTBLgR4u6rJpFA
+         u+Zg==
+X-Gm-Message-State: AOJu0YyVdLCCuh6gQE1bps2t3xU7ykyt1fPR5DmF25p1O2B/uyyrFk5e
+	lJKQikbkcdarJTwWXUF79ArrbA47TM2XXtgv9wEfLAUJQFF94jkef9lJnQ==
+X-Google-Smtp-Source: AGHT+IHWn3a+FcXhUQDIpLhJ+wXGitariNDr0XXwHuweDJti5+TssPz1FcmZGNkwBWUvUWVbxmXjAg==
+X-Received: by 2002:a05:6870:3321:b0:23f:9d1b:fe49 with SMTP id 586e51a60fabf-24c68bac669mr3887250fac.11.1716418442803;
+        Wed, 22 May 2024 15:54:02 -0700 (PDT)
+Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43df97d2c3csm172197071cf.78.2024.05.22.15.54.01
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 May 2024 15:54:02 -0700 (PDT)
+From: Trevor Woerner <twoerner@gmail.com>
+To: yocto-patches@lists.yoctoproject.org
+Subject: [meta-rockchip][PATCH v7] enable stored U-Boot environment
+Date: Wed, 22 May 2024 18:53:45 -0400
+Message-ID: <20240522225345.13339-1-twoerner@gmail.com>
+X-Mailer: git-send-email 2.44.0.501.g19981daefd7c
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAOI4TmYC/x2MQQqAIBAAvxJ7biGXpOgr0UFsq6XSUIsg+nvSb
- eYw80DkIByhKx4IfEkU77KosgC7GDczypgdqKK60kTovJskjQn3c0uCGQy1ZLVqG60U5O4IPMn
- 9P3vYORkM3q52kQOG9/0AAx0rXnIAAAA=
-To: Quentin Schulz <quentin.schulz@cherry.de>, 
- yocto-patches@lists.yoctoproject.org
-X-Mailer: b4 0.13.0
-X-Infomaniak-Routing: alpha
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 22 May 2024 18:27:06 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/164
+ <yocto-patches@lists.yoctoproject.org>; Wed, 22 May 2024 22:54:06 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/167
 
-This fixes NONFITDT/UBOOT_EXTLINUX_FDT when KERNEL_DEVICETREE contains
-more than one DTB (which is a valid use-case).
+U-Boot has the ability to store its environment variables to a permanent
+storage device. Whether or not it does so for any one specific device
+depends on whatever settings are enabled in that specific device's
+defconfig. In order to definitively configure U-Boot to be able to store
+its environment into the device from which it boots, for any device
+supported in this BSP, simply add the following to MACHINE_FEATURES:
 
-This also fixes an empty /boot directly when no kernel-modules are
-installed in the image, by explicitly adding kernel-image and
-kernel-devicetree packages (the latter only if building !fitImage).
+	rk-u-boot-env
 
-Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+If enabled, there is now a second choice to make: should the build also
+include the U-Boot environment in the image or not? The default environment,
+as generated by U-Boot, can be included in the generated wic image. If it
+is included, then flashing the image will also flash the default U-Boot
+environment variables and settings, wiping out anything that might have been
+there already. If it is not included then your device will either continue
+using whatever environment happens to be there (if valid), or will not use any
+stored environment if the stored environment has not been set or is invalid.
+The variable which governs this behaviour is:
+
+	RK_IMAGE_INCLUDES_UBOOT_ENV
+
+By default this is set to "0", meaning that by default the image does not
+contain the U-Boot environment. To enable this behaviour, enable this
+variable. This variable only takes effect if rk-u-boot-env is listed in
+MACHINE_FEATURES, and has no effect otherwise.
+
+The script:
+
+	scripts/dump-uboot-env-from-yocto-image.sh
+
+can be used on a rockchip wic image to see the contents of the U-Boot
+environment partition at build time.
+
+Tested by booting the same image on both eMMC and SDcard with the following
+devices, verifying the ability to read and write the U-Boot environment in
+both U-Boot and Linux user-space, and that changes made in one are seen in the
+other:
+	rock-3a
+	rock-5a
+	rock-5b
+	rock-pi-4b
+	rock-pi-e
+	rock64
+
+Signed-off-by: Trevor Woerner <twoerner@gmail.com>
 ---
-Quentin Schulz (2):
-      rockchip-extlinux.inc: handle multiple DTs in KERNEL_DEVICETREE
-      rockchip-extlinux.inc: add kernel and dtb packages to the image
+v7 changes:
+- move u-boot's extra image install to machine/include (it wasn't having
+  any effect)
+- only call u-boot's rk_generate_env() postfunc if the feature is in
+  MACHINEOVERRIDES (in which it is only *conditionally* found, unlike its
+  presence in MACHINE_FEATURES)
+- add a warning if the user is trying to build an image whereby they've
+  enabled the rk-u-boot-env mechanism but it isn't supported in a given
+  specific build
 
- conf/machine/include/rockchip-extlinux.inc | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+v6 changes:
+- separate out the MACHINEOVERRIDES handling into its own include so
+  that it can be included more flexibly into different scenarios; i.e.
+  rock2-square build was failing because it is not wic-based
+
+v5 changes:
+- fix a bug in v4 to handle RK_IMAGE_INCLUDES_UBOOT_ENV correctly in the
+  bash test in postfuncs of u-boot bbappend
+- add extra check in do_deploy() of u-boot bbappend to only copy the
+  environment if RK_IMAGE_INCLUDES_UBOOT_ENV is true
+
+v4 changes:
+- sort WICVARS alphabetically
+- tweak dump-uboot-env-from-yocto-image.sh script to not just check for
+  the existence of the user-supplied parameter, but that it is a file
+  specifically
+- u-boot bbappend:
+  - use a do_compile[postfuncs] for generating the fw_env.config instead of
+    a do_compile:append
+  - move the conversion of the U-Boot text-based environment to the
+    required binary representation from a do_deploy:append to the newly-created
+    do_compile[postfuncs] created above, this will allow the user to inject
+    any extra U-Boot environment variables they might wish as part of a
+    do_compile:append and have that occur before the binary is generated
+    so that those additional user-supplied values are included
+  - add a lot of extra checking (instead of assuming various resources exist)
+    before making use of said resources
+
+v3 changes:
+- switch from using a bbclass so the `rk-u-boot-env` override can be used
+  directly
+- add SPDX header to script
+- drop `inherit deploy` in U-Boot bbappend
+
+v2 changes:
+- re-word the commit message and README for clarity
+- use bash's built-in math handling instead of depending on `bc`
+- in anticipation of the upcoming feature in U-Boot whereby rockchip
+  devices can automatically select the environment storage device to be
+  the same as the boot device, use a more recent SRCREV for builds that do
+  environment handling, instead of hardcoding the environment storage device
+  by SoC family
+- handle RK_IMAGE_INCLUDES_UBOOT_ENV as a boolean
 ---
-base-commit: 88f2064ca2b83b42a7c8a59616ab80b763ef2485
-change-id: 20240522-nonfitdt-multi-dt-a282c5187511
+ README                                        | 20 +++++++++
+ .../include/rockchip-rk-u-boot-env.inc        |  4 ++
+ conf/machine/include/rockchip-wic.inc         |  7 +++
+ conf/machine/rock2-square.conf                |  1 -
+ .../rockchip-enable-environment-mmc.cfg       |  6 +++
+ recipes-bsp/u-boot/u-boot_%.bbappend          | 45 +++++++++++++++++++
+ scripts/dump-uboot-env-from-yocto-image.sh    | 29 ++++++++++++
+ wic/rockchip.wks                              |  2 +-
+ 8 files changed, 112 insertions(+), 2 deletions(-)
+ create mode 100644 conf/machine/include/rockchip-rk-u-boot-env.inc
+ create mode 100644 recipes-bsp/u-boot/files/rk-u-boot-env/rockchip-enable-environment-mmc.cfg
+ create mode 100755 scripts/dump-uboot-env-from-yocto-image.sh
 
-Best regards,
+diff --git a/README b/README
+index c76fc9131276..605773d4ecd3 100644
+--- a/README
++++ b/README
+@@ -67,6 +67,26 @@ Notes:
+ 	
+ 	in the configuration (e.g. conf/local.conf).
+ 
++U-Boot Environment:
++------------------
++	In order to configure U-Boot to be able to store its environment into the
++	device from which it was booted, for any device supported in this BSP,
++	simply add the following to MACHINE_FEATURES:
++
++		rk-u-boot-env
++
++	If enabled, to additionally have the U-Boot environment generated and
++	stored in the image, also enable the following variable (default: off):
++
++		RK_IMAGE_INCLUDES_UBOOT_ENV
++
++	The script:
++
++		scripts/dump-uboot-env-from-yocto-image.sh
++
++	can be used on a rockchip wic image to see the contents of the U-Boot
++	environment partition at build time.
++
+ Maintenance:
+ -----------
+ 	Please send pull requests, patches, comments, or questions to the
+diff --git a/conf/machine/include/rockchip-rk-u-boot-env.inc b/conf/machine/include/rockchip-rk-u-boot-env.inc
+new file mode 100644
+index 000000000000..4eb877f77c48
+--- /dev/null
++++ b/conf/machine/include/rockchip-rk-u-boot-env.inc
+@@ -0,0 +1,4 @@
++# 'rk-u-boot-env' indicates the user wants to be able to save their U-Boot
++# environment back to the drive from which the device was booted
++MACHINEOVERRIDES .= "${@bb.utils.contains('MACHINE_FEATURES', 'rk-u-boot-env', ':rk-u-boot-env', '', d)}"
++IMAGE_INSTALL:append:rk-u-boot-env = " u-boot-fw-utils u-boot-env"
+diff --git a/conf/machine/include/rockchip-wic.inc b/conf/machine/include/rockchip-wic.inc
+index 147a36685d7d..b5ee6e0c2724 100644
+--- a/conf/machine/include/rockchip-wic.inc
++++ b/conf/machine/include/rockchip-wic.inc
+@@ -1,6 +1,7 @@
+ # common meta-rockchip wic/wks items
+ 
+ require conf/machine/include/rockchip-extlinux.inc
++require conf/machine/include/rockchip-rk-u-boot-env.inc
+ 
+ SPL_BINARY ?= "idbloader.img"
+ 
+@@ -11,7 +12,13 @@ WKS_FILE_DEPENDS ?= " \
+ 	virtual/bootloader \
+ 	"
+ 
++RK_IMAGE_INCLUDES_UBOOT_ENV ?= "no"
++RK_UBOOT_ENV = " "
++RK_UBOOT_ENV:rk-u-boot-env = "${@ '--source rawcopy --sourceparams=file=u-boot.env' \
++	if bb.utils.to_boolean(d.getVar('RK_IMAGE_INCLUDES_UBOOT_ENV'), False) else ' '}"
++
+ WICVARS:append = " \
++	RK_UBOOT_ENV \
+ 	SPL_BINARY \
+ 	UBOOT_SUFFIX \
+ 	"
+diff --git a/conf/machine/rock2-square.conf b/conf/machine/rock2-square.conf
+index 9468b9a6b559..b31eb574015f 100644
+--- a/conf/machine/rock2-square.conf
++++ b/conf/machine/rock2-square.conf
+@@ -16,4 +16,3 @@ UBOOT_MACHINE = "rock2_defconfig"
+ # image class
+ IMAGE_FSTYPES += "rockchip-gpt-img"
+ IMAGE_CLASSES += "rockchip-gpt-img"
+-
+diff --git a/recipes-bsp/u-boot/files/rk-u-boot-env/rockchip-enable-environment-mmc.cfg b/recipes-bsp/u-boot/files/rk-u-boot-env/rockchip-enable-environment-mmc.cfg
+new file mode 100644
+index 000000000000..778772d27767
+--- /dev/null
++++ b/recipes-bsp/u-boot/files/rk-u-boot-env/rockchip-enable-environment-mmc.cfg
+@@ -0,0 +1,6 @@
++CONFIG_ENV_SIZE=0x8000
++CONFIG_ENV_OFFSET=0x3f8000
++# CONFIG_ENV_IS_NOWHERE is not set
++CONFIG_ENV_IS_IN_MMC=y
++CONFIG_DM_SEQ_ALIAS=y
++CONFIG_SPL_DM_SEQ_ALIAS=y
+diff --git a/recipes-bsp/u-boot/u-boot_%.bbappend b/recipes-bsp/u-boot/u-boot_%.bbappend
+index a83179a9f007..33b521021a1c 100644
+--- a/recipes-bsp/u-boot/u-boot_%.bbappend
++++ b/recipes-bsp/u-boot/u-boot_%.bbappend
+@@ -1,7 +1,13 @@
++FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
++
++SRC_URI:append:rk-u-boot-env = " file://rockchip-enable-environment-mmc.cfg"
++SRCREV:rk-u-boot-env = "cdfcc37428e06f4730ab9a17cc084eeb7676ea1a"
++
+ # various machines require the pyelftools library for parsing dtb files
+ DEPENDS:append = " python3-pyelftools-native"
+ DEPENDS:append:rk3308 = " u-boot-tools-native"
+ DEPENDS:append:rock-pi-4 = " gnutls-native"
++DEPENDS:append:rk-u-boot-env = " u-boot-mkenvimage-native"
+ 
+ EXTRA_OEMAKE:append:px30 = " BL31=${DEPLOY_DIR_IMAGE}/bl31-px30.elf"
+ EXTRA_OEMAKE:append:rk3308 = " \
+@@ -34,3 +40,42 @@ do_compile:append:rock2-square () {
+ 		cp ${B}/spl/${SPL_BINARY} ${B}
+ 	fi
+ }
++
++python rk_no_env() {
++    if bb.utils.contains('MACHINE_FEATURES', 'rk-u-boot-env', True, False, d):
++        bb.warn("the rk-u-boot-env MACHINE_FEATURE is not supported for this build")
++}
++
++rk_generate_env() {
++	if [ ! -f "${B}/.config" ]; then
++		echo "U-Boot .config not found, can't determine environment size"
++		return 1
++	fi
++	cat ${B}/.config | grep "^CONFIG_ENV_SIZE=" > /dev/null
++	if [ $? -ne 0 ]; then
++		echo "can not find CONFIG_ENV_SIZE value in U-Boot .config"
++		return 1
++	fi
++
++	UBOOT_ENV_SIZE="$(cat ${B}/.config | grep "^CONFIG_ENV_SIZE=" | cut -d'=' -f2)"
++
++	# linux user-space U-Boot env config file
++	echo "/dev/disk/by-partlabel/uboot_env 0x0000 ${UBOOT_ENV_SIZE}" > ${WORKDIR}/fw_env.config
++
++	# convert text-based environment to binary suitable for image
++	if [ "${@bb.utils.to_boolean(d.getVar('RK_IMAGE_INCLUDES_UBOOT_ENV'), False)}" = "True" ]; then
++		if [ ! -f ${B}/u-boot-initial-env ]; then
++			echo "initial, text-formatted U-Boot environment file \"${B}/u-boot-initial-env\" not found"
++			return 1
++		fi
++		mkenvimage -s ${UBOOT_ENV_SIZE} ${B}/u-boot-initial-env -o ${WORKDIR}/u-boot.env
++	fi
++}
++do_compile[postfuncs] += "${@'rk_generate_env' if 'rk-u-boot-env' in d.getVar('MACHINEOVERRIDES').split(':') else 'rk_no_env'}"
++
++do_deploy:append:rk-u-boot-env() {
++	if [ -f ${WORKDIR}/u-boot.env -a "${@bb.utils.to_boolean(d.getVar('RK_IMAGE_INCLUDES_UBOOT_ENV'),False)}" = "True" ]; then
++		install -d ${DEPLOYDIR}
++		install -m 0644 ${WORKDIR}/u-boot.env ${DEPLOYDIR}
++	fi
++}
+diff --git a/scripts/dump-uboot-env-from-yocto-image.sh b/scripts/dump-uboot-env-from-yocto-image.sh
+new file mode 100755
+index 000000000000..05b7048f1734
+--- /dev/null
++++ b/scripts/dump-uboot-env-from-yocto-image.sh
+@@ -0,0 +1,29 @@
++#/bin/bash
++# SPDX-License-Identifier: OSL-3.0
++#
++# a program that can take a wic file and dump out the contents
++# of the U-Boot environment in canonical hex+ascii format
++# (assuming the "rockchip" layout specified in this layer's wic file)
++
++# check for programs
++check_pgm() {
++	$1 --help > /dev/null 2>&1
++	if [ $? -ne 0 ]; then
++		echo "required program \"$1\" not found"
++		exit 1
++	fi
++}
++check_pgm dd
++check_pgm hexdump
++
++if [ $# -ne 1 ]; then
++	echo "required param missing: yocto wic image"
++	exit 1
++fi
++if [ ! -f "$1" ]; then
++	echo "specified file \"$1\" not found"
++	exit 1
++fi
++
++SKIP=$(( 8128 * 512 ))
++dd if="$1" ibs=1 skip=$SKIP count=32k 2> /dev/null | hexdump -C
+diff --git a/wic/rockchip.wks b/wic/rockchip.wks
+index 9ba3352b51bb..bc65f73b0cf3 100644
+--- a/wic/rockchip.wks
++++ b/wic/rockchip.wks
+@@ -22,7 +22,7 @@ part loader1   --offset 64s    --fixed-size 3552K --fstype=none --part-name load
+ part v_storage --offset 7168s  --fixed-size 256K  --fstype=none --part-name v_storage
+ part reserved  --offset 7680s  --fixed-size 192K  --fstype=none --part-name reserved
+ part reserved1 --offset 8064s  --fixed-size 32K   --fstype=none --part-name reserved1
+-part uboot_env --offset 8128s  --fixed-size 32K   --fstype=none --part-name uboot_env
++part uboot_env --offset 8128s  --fixed-size 32K   --fstype=none --part-name uboot_env ${RK_UBOOT_ENV}
+ part reserved2 --offset 8192s  --fixed-size 4096K --fstype=none --part-name reserved2
+ part loader2   --offset 16384s --fixed-size 4096K --fstype=none --part-name loader2   --source rawcopy --sourceparams="file=u-boot.${UBOOT_SUFFIX}"
+ part atf       --offset 24576s --fixed-size 4096K --fstype=none --part-name atf
 -- 
-Quentin Schulz <quentin.schulz@cherry.de>
+2.44.0.478.g7774cfed6261
 
 
