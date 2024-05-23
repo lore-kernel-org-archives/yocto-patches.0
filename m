@@ -1,628 +1,378 @@
-Return-Path: <ninette@thehoodiefirm.com>
+Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6119BC41513
-	for <webhook@archiver.kernel.org>; Thu, 23 May 2024 14:53:47 +0000 (UTC)
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
- by mx.groups.io with SMTP id smtpd.web10.595.1716476026490132048
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AD33C25B7A
+	for <webhook@archiver.kernel.org>; Thu, 23 May 2024 19:21:26 +0000 (UTC)
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+ by mx.groups.io with SMTP id smtpd.web11.1712.1716492081386814102
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 23 May 2024 07:53:46 -0700
+ Thu, 23 May 2024 12:21:21 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@thehoodiefirm-com.20230601.gappssmtp.com header.s=20230601 header.b=QradZLBY;
- spf=neutral (domain: thehoodiefirm.com, ip: 209.85.208.47, mailfrom: ninette@thehoodiefirm.com)
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-56e69888a36so12969941a12.3
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 23 May 2024 07:53:46 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=aqrsqtEN;
+ spf=pass (domain: gmail.com, ip: 209.85.222.175, mailfrom: twoerner@gmail.com)
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-794ab0065e4so3906785a.1
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 23 May 2024 12:21:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=thehoodiefirm-com.20230601.gappssmtp.com; s=20230601; t=1716476025; x=1717080825; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=S4lpPe0UFClaodcxvB70T8RmSHyDYRqy/PirT9zFX7g=;
-        b=QradZLBYjb9MxSqzT7aGYbitwuHcnNkfOVWOleejff9Ni0mJHPVjI2TUh2pFB/eZUN
-         t6FMRfRTfSRkNUtG1fpXcFnt9S4OMGCKed7tfXw65sKy0mRIYz+oSTpSzGFtlQsD34mg
-         VvYLrm0cF5VZrdyqxSOTHmhBsqVgqH2GubxHp1GQGKVcw470R14kODHN0ii3WNlLn6su
-         PTrz0y+0t+1zf4nMMzM3pscXZXlZXLce0XsO3p8ZG5HT6q0SBkq4jUanls+rmnVDVf3j
-         fQ4+CejJ/fA25L5RbGSA2S2NKhhnZ7F+J6/xygNUFeIAAxffZZzmD8ycOAJl+JQhv/0z
-         iWKg==
+        d=gmail.com; s=20230601; t=1716492080; x=1717096880; darn=lists.yoctoproject.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Tf6V1Cc4WxdUdq34n9zi49cf4FyHqz0oD2K/K+zJjeg=;
+        b=aqrsqtENmc2pD/TGZmnd6QYux2aaqD1x0HK49msw4iPl7Q/TfefaXilQaF0y+ZRKxX
+         3m3O9CI80PDGh2nA6w9p4sjzpdUyw+FzIWDIc80Fa59FybHCVwW99B6dDkkYBvLgQCuz
+         GfH+k9jKs8rbP5bso9lEzsn46R4BRr10DR4c98/JWKhPWSt7XzqiJ+531TLjG0DFpuBO
+         y8gvGrp/nbsSMmgs+4VyneQstHKWtBgCKjc5NP+IL71if0NOiAe5UA9mBh4xJS+COUQw
+         OmJ9jW2e3HyIvFehYShzfTEu4IpwnGNDn+XK8uJeUYo5GSsudRkVqLg0012QlZxf2yWp
+         BmzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716476025; x=1717080825;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=S4lpPe0UFClaodcxvB70T8RmSHyDYRqy/PirT9zFX7g=;
-        b=Vm5It4sSOLH0XafXS0lxRrRrK/fjtIJlqNb+Y8POtcSrBXb3HIrNWFvn/3lOO+RPZx
-         gPvrGaR2u17+vxtxQW0LhFjeUcfkr70Stae7cL+4N7y0oDGYTcdLGM2PkghCF1dnGPhM
-         Hx1/qOMshc7pbHa8zk+ljW7B1h7i37AK9uRuJli3rfOvAOuUMLNDW2hc0+sTYASAZy76
-         QveQpNPOIfaDroKnbYmAjGZBj557t9ZwlODvIrGuwuULSYXud6BBxg3BAbYvKnLs6OyV
-         uOkdKZmxIOiY1z6KRYohzg0no6DH5vNZIktiydFoaiTdznIZ6f3kQ6b0ht1Pnwtqabb1
-         fK7w==
-X-Gm-Message-State: AOJu0YybSr1pi5wg5ZkRn0wv2d/kMEUZY8syFoNK9QXKVmLISEgdOvlY
-	0tsUoP6qPa6AxAlZrCZBCHXCjnUBS8Di9NtfBe7NIhVaCXBTR2lyLJOZstaIUPHletJbGe6Rfhh
-	j5y0=
-X-Google-Smtp-Source: AGHT+IF6Bxef2jRt5iXYNXBCFU8xu/9mbNxMDgiUUIPjP+/44uLCtnmTVD4eQ6/Oth27zCzwwbY1OA==
-X-Received: by 2002:a50:9e2d:0:b0:572:9962:7f0 with SMTP id 4fb4d7f45d1cf-57832c51110mr3053398a12.34.1716476024760;
-        Thu, 23 May 2024 07:53:44 -0700 (PDT)
-Received: from localhost.localdomain ([62.72.77.226])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733c322c06sm20394959a12.85.2024.05.23.07.53.44
+        d=1e100.net; s=20230601; t=1716492080; x=1717096880;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Tf6V1Cc4WxdUdq34n9zi49cf4FyHqz0oD2K/K+zJjeg=;
+        b=OJIt4FPbb+OdKYlPmkke4oF6wdaw6YYFkoItH+GNDkpmYUmtSeLTA1hXwDo86HR0RF
+         xwmAbiZAIFm2IwdbRzOMAAw0MNRGf/KN33l0/DIlfYSAsOUGuIdlKr7lpLG0X+ysRGjn
+         G02TMQWrjPxSFpx2vujGtj16jlLDBwtXaNIiqDh2mR0IlbgvYhx3b80sSNeiFIwPF3lC
+         ogwYvESTj0M7YxPX74N/Pcfij7OK9d1T8AyGwDmpPWKeLNnzJ0da8P3vQCB3UueIeSsU
+         s/ZhzcM+U+f1jNCvMJrtLcz2XkWtQhzyx/SKwVHDFdorfXX32wJ8zmSWEi4LAaUYV/qe
+         /Aug==
+X-Gm-Message-State: AOJu0Yy2QI1Y/PUL76J8NcapDKAGhOEfSpSYzYpvCoYqCjEEpJCLyoYz
+	Wpu71qhDXRwbMte5/wJMmJberwnw56hwBNt3GDxjdD+IoOVthO9CyM9A4g==
+X-Google-Smtp-Source: AGHT+IHPWFBqtdL05bQi0Tuwgp/Qk4T6ZApj5R9yYrr3hDaLD3wtotVBRvw2LwHK0TLL7BRf6lXiuw==
+X-Received: by 2002:a05:620a:8017:b0:793:6cf:d311 with SMTP id af79cd13be357-794ab0921ecmr19091585a.31.1716492079382;
+        Thu, 23 May 2024 12:21:19 -0700 (PDT)
+Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-792bf2fc57asm1519090785a.81.2024.05.23.12.21.17
+        for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 07:53:44 -0700 (PDT)
-From: Ninette Adhikari <ninette@thehoodiefirm.com>
+        Thu, 23 May 2024 12:21:18 -0700 (PDT)
+Date: Thu, 23 May 2024 15:21:16 -0400
+From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: engineering@neighbourhood.ie,
-	=?UTF-8?q?Alba=20Herrer=C3=ADas?= <albaherreriasdev@gmail.com>,
-	Ninette Adhikari <13760198+ninetteadhikari@users.noreply.github.com>
-Subject: [PATCH 1/1] scripts/generate-testresult-index.py: index of autobuilder test results improvements
-Date: Thu, 23 May 2024 16:53:31 +0200
-Message-ID: <20240523145331.49565-2-ninette@thehoodiefirm.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240523145331.49565-1-ninette@thehoodiefirm.com>
-References: <20240523145331.49565-1-ninette@thehoodiefirm.com>
-Reply-To: engineering@neighbourhood.ie
+Subject: Re: [yocto-patches] [meta-rockchip][PATCH v7] enable stored U-Boot
+ environment
+Message-ID: <20240523192116.GA22785@localhost>
+References: <20240522225345.13339-1-twoerner@gmail.com>
+ <0eceea59-17f3-4e7d-bb90-f23304b896a4@cherry.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <0eceea59-17f3-4e7d-bb90-f23304b896a4@cherry.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 23 May 2024 14:53:47 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/181
+ <yocto-patches@lists.yoctoproject.org>; Thu, 23 May 2024 19:21:26 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/182
 
-From: Alba Herrerías <albaherreriasdev@gmail.com>
+On Thu 2024-05-23 @ 03:03:53 PM, Quentin Schulz via lists.yoctoproject.org wrote:
+> Hi Trevor,
+> 
+> On 5/23/24 12:53 AM, Trevor Woerner via lists.yoctoproject.org wrote:
+> > U-Boot has the ability to store its environment variables to a permanent
+> > storage device. Whether or not it does so for any one specific device
+> > depends on whatever settings are enabled in that specific device's
+> > defconfig. In order to definitively configure U-Boot to be able to store
+> > its environment into the device from which it boots, for any device
+> > supported in this BSP, simply add the following to MACHINE_FEATURES:
+> > 
+> > 	rk-u-boot-env
+> > 
+> > If enabled, there is now a second choice to make: should the build also
+> > include the U-Boot environment in the image or not? The default environment,
+> > as generated by U-Boot, can be included in the generated wic image. If it
+> > is included, then flashing the image will also flash the default U-Boot
+> > environment variables and settings, wiping out anything that might have been
+> > there already. If it is not included then your device will either continue
+> > using whatever environment happens to be there (if valid), or will not use any
+> > stored environment if the stored environment has not been set or is invalid.
+> > The variable which governs this behaviour is:
+> > 
+> > 	RK_IMAGE_INCLUDES_UBOOT_ENV
+> > 
+> > By default this is set to "0", meaning that by default the image does not
+> > contain the U-Boot environment. To enable this behaviour, enable this
+> > variable. This variable only takes effect if rk-u-boot-env is listed in
+> > MACHINE_FEATURES, and has no effect otherwise.
+> > 
+> > The script:
+> > 
+> > 	scripts/dump-uboot-env-from-yocto-image.sh
+> > 
+> > can be used on a rockchip wic image to see the contents of the U-Boot
+> > environment partition at build time.
+> > 
+> > Tested by booting the same image on both eMMC and SDcard with the following
+> > devices, verifying the ability to read and write the U-Boot environment in
+> > both U-Boot and Linux user-space, and that changes made in one are seen in the
+> > other:
+> > 	rock-3a
+> > 	rock-5a
+> > 	rock-5b
+> > 	rock-pi-4b
+> > 	rock-pi-e
+> > 	rock64
+> > 
+> > Signed-off-by: Trevor Woerner <twoerner@gmail.com>
+> > ---
+> > v7 changes:
+> > - move u-boot's extra image install to machine/include (it wasn't having
+> >    any effect)
+> 
+> Couldn't find this in the diff between v6 and v7, are you sure you sent the
+> proper version or is this outdated? You did add the inc file to the
+> rock2-square though, is that what you meant?
 
-- Added pico.css to make CSS improvements
-- Added filters to the table for better readability of the test results. Filters were added for build type, branch and date
-- Added pagination, which improved the performance of the website
-- The html index template has been added as a separate file for better maintainability
+Oops, sorry. I have about 4 different versions of v7 and I probably got
+confused between some of them. In any case the extra packages are listed in
+the feature's inc file and it works there.
 
-Co-Authored-By: Ninette Adhikari <13760198+ninetteadhikari@users.noreply.github.com>
----
- scripts/generate-testresult-index.py | 103 +++----
- scripts/index-table.html             | 401 +++++++++++++++++++++++++++
- 2 files changed, 439 insertions(+), 65 deletions(-)
- create mode 100644 scripts/index-table.html
+> > - only call u-boot's rk_generate_env() postfunc if the feature is in
+> >    MACHINEOVERRIDES (in which it is only *conditionally* found, unlike its
+> >    presence in MACHINE_FEATURES)
+> > - add a warning if the user is trying to build an image whereby they've
+> >    enabled the rk-u-boot-env mechanism but it isn't supported in a given
+> >    specific build
+> > 
+> > v6 changes:
+> > - separate out the MACHINEOVERRIDES handling into its own include so
+> >    that it can be included more flexibly into different scenarios; i.e.
+> >    rock2-square build was failing because it is not wic-based
+> > 
+> > v5 changes:
+> > - fix a bug in v4 to handle RK_IMAGE_INCLUDES_UBOOT_ENV correctly in the
+> >    bash test in postfuncs of u-boot bbappend
+> > - add extra check in do_deploy() of u-boot bbappend to only copy the
+> >    environment if RK_IMAGE_INCLUDES_UBOOT_ENV is true
+> > 
+> > v4 changes:
+> > - sort WICVARS alphabetically
+> > - tweak dump-uboot-env-from-yocto-image.sh script to not just check for
+> >    the existence of the user-supplied parameter, but that it is a file
+> >    specifically
+> > - u-boot bbappend:
+> >    - use a do_compile[postfuncs] for generating the fw_env.config instead of
+> >      a do_compile:append
+> >    - move the conversion of the U-Boot text-based environment to the
+> >      required binary representation from a do_deploy:append to the newly-created
+> >      do_compile[postfuncs] created above, this will allow the user to inject
+> >      any extra U-Boot environment variables they might wish as part of a
+> >      do_compile:append and have that occur before the binary is generated
+> >      so that those additional user-supplied values are included
+> >    - add a lot of extra checking (instead of assuming various resources exist)
+> >      before making use of said resources
+> > 
+> > v3 changes:
+> > - switch from using a bbclass so the `rk-u-boot-env` override can be used
+> >    directly
+> > - add SPDX header to script
+> > - drop `inherit deploy` in U-Boot bbappend
+> > 
+> > v2 changes:
+> > - re-word the commit message and README for clarity
+> > - use bash's built-in math handling instead of depending on `bc`
+> > - in anticipation of the upcoming feature in U-Boot whereby rockchip
+> >    devices can automatically select the environment storage device to be
+> >    the same as the boot device, use a more recent SRCREV for builds that do
+> >    environment handling, instead of hardcoding the environment storage device
+> >    by SoC family
+> > - handle RK_IMAGE_INCLUDES_UBOOT_ENV as a boolean
+> > ---
+> >   README                                        | 20 +++++++++
+> >   .../include/rockchip-rk-u-boot-env.inc        |  4 ++
+> >   conf/machine/include/rockchip-wic.inc         |  7 +++
+> >   conf/machine/rock2-square.conf                |  1 -
+> >   .../rockchip-enable-environment-mmc.cfg       |  6 +++
+> >   recipes-bsp/u-boot/u-boot_%.bbappend          | 45 +++++++++++++++++++
+> >   scripts/dump-uboot-env-from-yocto-image.sh    | 29 ++++++++++++
+> >   wic/rockchip.wks                              |  2 +-
+> >   8 files changed, 112 insertions(+), 2 deletions(-)
+> >   create mode 100644 conf/machine/include/rockchip-rk-u-boot-env.inc
+> >   create mode 100644 recipes-bsp/u-boot/files/rk-u-boot-env/rockchip-enable-environment-mmc.cfg
+> >   create mode 100755 scripts/dump-uboot-env-from-yocto-image.sh
+> > 
+> > diff --git a/README b/README
+> > index c76fc9131276..605773d4ecd3 100644
+> > --- a/README
+> > +++ b/README
+> > @@ -67,6 +67,26 @@ Notes:
+> >   	
+> >   	in the configuration (e.g. conf/local.conf).
+> > +U-Boot Environment:
+> > +------------------
+> > +	In order to configure U-Boot to be able to store its environment into the
+> > +	device from which it was booted, for any device supported in this BSP,
+> > +	simply add the following to MACHINE_FEATURES:
+> > +
+> > +		rk-u-boot-env
+> > +
+> > +	If enabled, to additionally have the U-Boot environment generated and
+> > +	stored in the image, also enable the following variable (default: off):
+> > +
+> > +		RK_IMAGE_INCLUDES_UBOOT_ENV
+> > +
+> > +	The script:
+> > +
+> > +		scripts/dump-uboot-env-from-yocto-image.sh
+> > +
+> > +	can be used on a rockchip wic image to see the contents of the U-Boot
+> > +	environment partition at build time.
+> > +
+> >   Maintenance:
+> >   -----------
+> >   	Please send pull requests, patches, comments, or questions to the
+> > diff --git a/conf/machine/include/rockchip-rk-u-boot-env.inc b/conf/machine/include/rockchip-rk-u-boot-env.inc
+> > new file mode 100644
+> > index 000000000000..4eb877f77c48
+> > --- /dev/null
+> > +++ b/conf/machine/include/rockchip-rk-u-boot-env.inc
+> > @@ -0,0 +1,4 @@
+> > +# 'rk-u-boot-env' indicates the user wants to be able to save their U-Boot
+> > +# environment back to the drive from which the device was booted
+> > +MACHINEOVERRIDES .= "${@bb.utils.contains('MACHINE_FEATURES', 'rk-u-boot-env', ':rk-u-boot-env', '', d)}"
+> > +IMAGE_INSTALL:append:rk-u-boot-env = " u-boot-fw-utils u-boot-env"
+> > diff --git a/conf/machine/include/rockchip-wic.inc b/conf/machine/include/rockchip-wic.inc
+> > index 147a36685d7d..b5ee6e0c2724 100644
+> > --- a/conf/machine/include/rockchip-wic.inc
+> > +++ b/conf/machine/include/rockchip-wic.inc
+> > @@ -1,6 +1,7 @@
+> >   # common meta-rockchip wic/wks items
+> >   require conf/machine/include/rockchip-extlinux.inc
+> > +require conf/machine/include/rockchip-rk-u-boot-env.inc
+> >   SPL_BINARY ?= "idbloader.img"
+> > @@ -11,7 +12,13 @@ WKS_FILE_DEPENDS ?= " \
+> >   	virtual/bootloader \
+> >   	"
+> > +RK_IMAGE_INCLUDES_UBOOT_ENV ?= "no"
+> > +RK_UBOOT_ENV = " "
+> > +RK_UBOOT_ENV:rk-u-boot-env = "${@ '--source rawcopy --sourceparams=file=u-boot.env' \
+> > +	if bb.utils.to_boolean(d.getVar('RK_IMAGE_INCLUDES_UBOOT_ENV'), False) else ' '}"
+> > +
+> >   WICVARS:append = " \
+> > +	RK_UBOOT_ENV \
+> >   	SPL_BINARY \
+> >   	UBOOT_SUFFIX \
+> >   	"
+> > diff --git a/conf/machine/rock2-square.conf b/conf/machine/rock2-square.conf
+> > index 9468b9a6b559..b31eb574015f 100644
+> > --- a/conf/machine/rock2-square.conf
+> > +++ b/conf/machine/rock2-square.conf
+> > @@ -16,4 +16,3 @@ UBOOT_MACHINE = "rock2_defconfig"
+> >   # image class
+> >   IMAGE_FSTYPES += "rockchip-gpt-img"
+> >   IMAGE_CLASSES += "rockchip-gpt-img"
+> > -
+> > diff --git a/recipes-bsp/u-boot/files/rk-u-boot-env/rockchip-enable-environment-mmc.cfg b/recipes-bsp/u-boot/files/rk-u-boot-env/rockchip-enable-environment-mmc.cfg
+> > new file mode 100644
+> > index 000000000000..778772d27767
+> > --- /dev/null
+> > +++ b/recipes-bsp/u-boot/files/rk-u-boot-env/rockchip-enable-environment-mmc.cfg
+> > @@ -0,0 +1,6 @@
+> > +CONFIG_ENV_SIZE=0x8000
+> > +CONFIG_ENV_OFFSET=0x3f8000
+> > +# CONFIG_ENV_IS_NOWHERE is not set
+> > +CONFIG_ENV_IS_IN_MMC=y
+> > +CONFIG_DM_SEQ_ALIAS=y
+> > +CONFIG_SPL_DM_SEQ_ALIAS=y
+> > diff --git a/recipes-bsp/u-boot/u-boot_%.bbappend b/recipes-bsp/u-boot/u-boot_%.bbappend
+> > index a83179a9f007..33b521021a1c 100644
+> > --- a/recipes-bsp/u-boot/u-boot_%.bbappend
+> > +++ b/recipes-bsp/u-boot/u-boot_%.bbappend
+> > @@ -1,7 +1,13 @@
+> > +FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
+> > +
+> > +SRC_URI:append:rk-u-boot-env = " file://rockchip-enable-environment-mmc.cfg"
+> > +SRCREV:rk-u-boot-env = "cdfcc37428e06f4730ab9a17cc084eeb7676ea1a"
+> > +
+> >   # various machines require the pyelftools library for parsing dtb files
+> >   DEPENDS:append = " python3-pyelftools-native"
+> >   DEPENDS:append:rk3308 = " u-boot-tools-native"
+> >   DEPENDS:append:rock-pi-4 = " gnutls-native"
+> > +DEPENDS:append:rk-u-boot-env = " u-boot-mkenvimage-native"
+> >   EXTRA_OEMAKE:append:px30 = " BL31=${DEPLOY_DIR_IMAGE}/bl31-px30.elf"
+> >   EXTRA_OEMAKE:append:rk3308 = " \
+> > @@ -34,3 +40,42 @@ do_compile:append:rock2-square () {
+> >   		cp ${B}/spl/${SPL_BINARY} ${B}
+> >   	fi
+> >   }
+> > +
+> > +python rk_no_env() {
+> > +    if bb.utils.contains('MACHINE_FEATURES', 'rk-u-boot-env', True, False, d):
+> > +        bb.warn("the rk-u-boot-env MACHINE_FEATURE is not supported for this build")
+> > +}
+> > +
+> > +rk_generate_env() {
+> > +	if [ ! -f "${B}/.config" ]; then
+> > +		echo "U-Boot .config not found, can't determine environment size"
+> > +		return 1
+> > +	fi
+> > +	cat ${B}/.config | grep "^CONFIG_ENV_SIZE=" > /dev/null
+> > +	if [ $? -ne 0 ]; then
+> > +		echo "can not find CONFIG_ENV_SIZE value in U-Boot .config"
+> > +		return 1
+> > +	fi
+> > +
+> > +	UBOOT_ENV_SIZE="$(cat ${B}/.config | grep "^CONFIG_ENV_SIZE=" | cut -d'=' -f2)"
+> > +
+> > +	# linux user-space U-Boot env config file
+> > +	echo "/dev/disk/by-partlabel/uboot_env 0x0000 ${UBOOT_ENV_SIZE}" > ${WORKDIR}/fw_env.config
+> > +
+> > +	# convert text-based environment to binary suitable for image
+> > +	if [ "${@bb.utils.to_boolean(d.getVar('RK_IMAGE_INCLUDES_UBOOT_ENV'), False)}" = "True" ]; then
+> > +		if [ ! -f ${B}/u-boot-initial-env ]; then
+> > +			echo "initial, text-formatted U-Boot environment file \"${B}/u-boot-initial-env\" not found"
+> > +			return 1
+> > +		fi
+> > +		mkenvimage -s ${UBOOT_ENV_SIZE} ${B}/u-boot-initial-env -o ${WORKDIR}/u-boot.env
+> > +	fi
+> > +}
+> > +do_compile[postfuncs] += "${@'rk_generate_env' if 'rk-u-boot-env' in d.getVar('MACHINEOVERRIDES').split(':') else 'rk_no_env'}"
+> > +
+> 
+> Could be simplified with:
+> 
+> """
+> rk_generate_env() {
+>     if bb.utils.contains('MACHINE_FEATURES', 'rk-u-boot-env', True, False,
+> d):
+>         bb.warn("the rk-u-boot-env MACHINE_FEATURE is not supported for this
+> build")
+> }
+> 
+> rk_generate_env:rk-u-boot-env() {
+> [content of rk_generate_env in v7]
+> }
+> 
+> do_compile[postfuncs] += "rk_generate_env;"
+> """
 
-diff --git a/scripts/generate-testresult-index.py b/scripts/generate-testresult-index.py
-index 61b684a..568154d 100755
---- a/scripts/generate-testresult-index.py
-+++ b/scripts/generate-testresult-index.py
-@@ -13,68 +13,6 @@ import re
- import subprocess
- from jinja2 import Template
- 
--index_template = """
--<!DOCTYPE html>
--<html>
--<head>
--  <meta charset="utf-8">
--  <meta name="viewport" content="width=device-width, initial-scale=1">
--  <title>Index of autobuilder test results</title>
--  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
--</head>
--<body>
-- 
--<table class="table is-narrow is-striped">
--<thead>
--<tr>
--  <th>Build</th>
--  <th>Type</th>
--  <th>Branch</th>
--  <th>Test Results Report</th>
--  <th>Performance Reports</th>
--  <th>ptest Logs</th>
--  <th>Buildhistory</th>
--  <th>Host Data</th>
--</tr>
--</thead>
--<tdata>
--{% for entry in entries %}
--<tr>
--   <td><a href="{{entry[1]}}">{{entry[0]}}</a></td>
--   <td>{% if entry[2] %} {{entry[2]}}{% endif %}</td>
--   <td>{% if entry[4] %} {{entry[4]}}{% endif %}</td>
--   <td>
--     {% if entry[3] %}<a href="{{entry[3]}}">Report</a>{% endif -%}
--     {% if entry[9] %}<br><a href="{{entry[9]}}">Regressions</a>{% endif %}
--   </td>
--   <td>
--   {% for perfrep in entry[6] %}
--     <a href="{{perfrep[0]}}">{{perfrep[1]}}</a>
--   {% endfor %}
--   </td>
--   <td>
--   {% for ptest in entry[7] %}
--     <a href="{{ptest[0]}}">{{ptest[1]}}</a>
--   {% endfor %}
--   </td>
--   <td>
--   {% for bh in entry[5] %}
--     <a href="{{bh[0]}}">{{bh[1]}}</a>
--   {% endfor %}
--   </td>
--   <td>
--   {% for hd in entry[8] %}
--     <a href="{{hd[0]}}">{{hd[1]}}</a>
--   {% endfor %}
--   </td>
--</tr>
--{% endfor %}
--</tdata>
--</table>
--</body>
--</html>
--"""
--
- def parse_args(argv=None):
-     """Parse command line arguments"""
-     parser = argparse.ArgumentParser(
-@@ -88,6 +26,9 @@ def parse_args(argv=None):
- args = parse_args()
- path = os.path.abspath(args.path)
- entries = []
-+filter_items = dict()
-+build_types = set()
-+branch_list= set()
- 
- def get_build_branch(p):
-     for root, dirs, files in os.walk(p):
-@@ -175,7 +116,34 @@ for build in sorted(os.listdir(path), key=keygen, reverse=True):
- 
-     branch = get_build_branch(buildpath)
- 
--    entries.append((build, reldir, btype, testreport, branch, buildhistory, perfreports, ptestlogs, hd, regressionreport))
-+    build_types.add(btype)
-+    if branch: branch_list.add(branch)
-+    # Creates a dictionary of items to be filtered for build types and branch
-+    filter_items["build_types"] = build_types
-+    filter_items["branch_list"] = branch_list
-+
-+    entry = {
-+        'build': build, 
-+        'btype': btype,
-+        'reldir': reldir 
-+    }
-+
-+    if testreport:
-+        entry['testreport'] = testreport
-+    if branch:
-+        entry['branch'] = branch
-+    if buildhistory:
-+        entry['buildhistory'] = buildhistory
-+    if perfreports:
-+        entry['perfreports'] = perfreports
-+    if ptestlogs:
-+        entry['ptestlogs'] = ptestlogs
-+    if hd:
-+        entry['hd'] = hd
-+    if regressionreport:
-+        entry['regressionreport'] = regressionreport
-+
-+    entries.append(entry)
- 
-     # Also ensure we have saved out log data for ptest runs to aid debugging
-     if "ptest" in btype or btype in ["full", "quick"]:
-@@ -191,6 +159,11 @@ for build in sorted(os.listdir(path), key=keygen, reverse=True):
-                     with open(f + "/resulttool-done.log", "a+") as tf:
-                         tf.write("\n")
- 
--t = Template(index_template)
-+with open("./index-table.html") as file_:
-+    t = Template(file_.read())
-+
-+with open(os.path.join(path, "data.json"), 'w') as f:
-+    json.dump(entries, f)
-+
- with open(os.path.join(path, "index.html"), 'w') as f:
--    f.write(t.render(entries = entries))
-+    f.write(t.render(entries = entries, filter_items = filter_items))
-diff --git a/scripts/index-table.html b/scripts/index-table.html
-new file mode 100644
-index 0000000..e0d819d
---- /dev/null
-+++ b/scripts/index-table.html
-@@ -0,0 +1,401 @@
-+<!DOCTYPE html>
-+<html>
-+  <head>
-+    <meta charset="utf-8" />
-+    <meta name="viewport" content="width=device-width, initial-scale=1" />
-+    <title>Index of autobuilder test results</title>
-+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
-+    <style>
-+      :root {
-+        font-size: 16px;
-+      }
-+      .no-wrap {
-+        white-space: nowrap;
-+      }
-+      .type-select {
-+        align-items: center;
-+        background-color: white;
-+        display: flex;
-+        position: sticky;
-+        top: 0px;
-+      }
-+      .type-select label {
-+        margin-right: 20px;
-+        flex-shrink: 0;
-+      }
-+      .type-select select {
-+        max-width: 300px;
-+      }
-+      table tr:nth-child(even) td {
-+        background-color: rgba(111, 120, 135, 0.0375);
-+      }
-+      table tr td:not(:last-child) {
-+        border-right: 0.0625rem solid #e7eaf0;
-+      }
-+      a {
-+        cursor: pointer;
-+      }
-+      .hide {
-+        visibility: hidden;
-+      }
-+    </style>
-+  </head>
-+
-+  <body onload="mount()">
-+    <header class="container">
-+      <h1>Index of autobuilder test results</h1>
-+      <p>The table below lists the test results of all the builds and branch from the yocto autobuilder repository.</p>
-+      <p>The filters for showing build types and branch helps to navigate the table.</p>
-+    </header>
-+    <main class="container">
-+    <nav class="type-select">
-+      <ul>
-+        <li>
-+          <label for="build-type-select">Filter by type:</label>
-+            <select id="build-type-select" class="hide" onchange="setFilterParams()">
-+              <option value="all">Type (all)</option>
-+              {% for type in filter_items.build_types %}
-+                <option value="{{type}}">{{type}}</option>
-+              {% endfor %}
-+            </select>
-+        </li>
-+        <li>
-+          <label for="branch-select">Filter by branch:</label>
-+          <select id="branch-select" class="hide" onchange="setFilterParams()">
-+            <option value="all">Branch (all)</option>
-+            {% for branch in filter_items.branch_list %}
-+              <option value="{{branch}}">{{branch}}</option>
-+            {% endfor %}
-+          </select>
-+        </li>
-+        <li>
-+          <label for="date-filter">Filter by date:</label>
-+          <input id="date-filter" type="date" name="date" aria-label="Date" onchange="setFilterParams()" />
-+        </li>
-+      </ul>
-+      <ul class="pagination-nav"></ul>
-+    </nav>
-+
-+    <table class="test-table hide">
-+      <thead>
-+      <tr>
-+        <th>Build</th>
-+        <th>Type</th>
-+        <th>Branch</th>
-+        <th>Test Results Report</th>
-+        <th>Performance Reports</th>
-+        <th>ptest Logs</th>
-+        <th>Buildhistory</th>
-+        <th>Host Data</th>
-+      </tr>
-+      </thead>
-+      <tbody></tbody>
-+    </table>
-+
-+    <p id="error-message"></p>
-+  </main>
-+</body>
-+</html>
-+
-+<script type="text/javascript">
-+  let entries = []
-+  let rowsPerPage = 50
-+  let currentPage = 0
-+  const pageWidth = 6
-+  const tbody = document.getElementsByTagName('tbody')[0]
-+  let params
-+
-+  async function loadEntries() {
-+    try {
-+      const response = await fetch('data.json')
-+      const data = await response.json()
-+      if (areFiltersSet()) {
-+        entries = setFilteredData(data)
-+      } else {
-+        entries = data
-+      }
-+    } catch (error) {
-+      console.error('Error loading entries', error)
-+    }
-+  }
-+
-+  function setFilteredData(data) {
-+    const { type, branch, date } = getParams()
-+
-+    return data.filter(entry => {
-+      return (entry.btype === type || !type) && (entry.branch === branch || !branch) && (!date || areDatesEqual(entry.build, date))
-+    })
-+  }
-+
-+  function getParams() {
-+    let params = new URL(document.location.toString()).searchParams
-+    let page = params.get('page')
-+    let type = params.get('type')
-+    let branch = params.get('branch')
-+    let date = params.get('date')
-+    if (!page) {
-+      page = 0
-+    }
-+    currentPage = parseInt(page)
-+    return { page, type, branch, date }
-+  }
-+
-+  function areFiltersSet() {
-+    const { type, branch, date } = getParams()
-+    if (!type && !branch && !date) {
-+      return false
-+    }
-+    return true
-+  }
-+
-+  async function setFilterParams() {
-+    const build_type_value = document.getElementById('build-type-select').value
-+    const branch_value = document.getElementById('branch-select').value
-+    const date_value = document.getElementById('date-filter').value
-+
-+    if (build_type_value) {
-+      if (build_type_value === 'all') {
-+        params.delete('type')
-+      } else {
-+        params.set('type', build_type_value)
-+      }
-+    }
-+    if (branch_value) {
-+      if (branch_value === 'all') {
-+        params.delete('branch')
-+      } else {
-+        params.set('branch', branch_value)
-+      }
-+    }
-+    if (date_value) {
-+      params.set('date', date_value)
-+    } else {
-+      params.delete('date')
-+    }
-+
-+    window.location.search = params
-+  }
-+
-+  function areDatesEqual(build, inputDate) {
-+    if (!inputDate) {
-+      return false
-+    }
-+    const buildDate = build.substring(0, build.indexOf('-'))
-+    const date = inputDate.replaceAll('-', '')
-+
-+    if (buildDate === date) {
-+      return true
-+    }
-+
-+    return false
-+  }
-+
-+  function displayTable() {
-+    // delete current rows
-+    let tbody = document.getElementsByTagName('tbody')[0]
-+    while (tbody.rows.length > 0) {
-+      tbody.deleteRow(0)
-+    }
-+
-+    if (entries.length === 0) {
-+      const p = document.getElementById('error-message')
-+      p.innerHTML = 'No entries available'
-+  
-+      const paginationNav = document.querySelector('.pagination-nav')
-+      paginationNav.classList.add('hide')
-+    }
-+
-+    const start = currentPage * rowsPerPage
-+    let end = (currentPage + 1) * rowsPerPage
-+    end = end <= entries.length ? end : entries.length
-+
-+    for (var i = start; i < end; i++) {
-+      insertRow(tbody, entries[i])
-+    }
-+  }
-+
-+  function insertRow(tbody, entry, index) {
-+    const row = tbody.insertRow()
-+
-+    let html = '<tr>'
-+    html += `<td><a class="no-wrap" href="${entry['reldir']}">${entry['build']}</a></td>`
-+    html += '</tr>'
-+    html += `<td class="no-wrap">`
-+    if (entry['btype']) {
-+        html += `${entry['btype']}`
-+    }
-+    html += `<td class="no-wrap">`
-+    if (entry['branch']) {
-+        html += `${entry['branch']}`
-+    }
-+    html += `</td>`
-+    html += `<td>`
-+    if (entry['testreport']) {
-+        html += `<a href="${entry['testreport']}">Report</a>`
-+    }
-+    if (entry['regressionreport']) {
-+        html += `<br><a href="${entry['regressionreport']}">Regressions</a>`
-+    }
-+    html += `</td>`
-+
-+    html += `<td>`
-+    if (entry['perfreports']) {
-+      entry['perfreports'].forEach((r) => {
-+        html += `<a href="${r[0]}">${r[1]}</a> `
-+      })
-+    }
-+    html += `</td>`
-+
-+    html += `<td>`
-+    if (entry['ptestlogs']) {
-+      entry['ptestlogs'].forEach((r) => {
-+        html += `<a href="${r[0]}">${r[1]}</a> `
-+      })
-+    }
-+    html += `</td>`
-+
-+    html += `<td>`
-+    if (entry['buildhistory']){
-+      entry['buildhistory'].forEach((bh) => {
-+        html += `<a href="${bh[0]}">${bh[1]}</a> `
-+      })
-+    }
-+    html += `</td>`
-+
-+    html += `<td>`
-+    if(entry['hd']) {
-+      entry['hd'].forEach((hd) => {
-+        html += `<small><a href="${hd[0]}">${hd[1]}</a></small> `
-+      })
-+    }
-+    html += `</td>`
-+
-+    html += `</tr>`
-+    row.innerHTML = html
-+  }
-+
-+  function updateActiveButtonStates() {
-+    const pageButtons = document.querySelectorAll('.pagination-nav button')
-+    pageButtons.forEach(button => {
-+      if (button.textContent == currentPage+1) {
-+        button.classList.remove('outline')
-+      } else {
-+        button.classList.add('outline')
-+      }
-+    })
-+  }
-+
-+  function setCurrentPage(page) {
-+    params.set('page', page)
-+    setFilterParams()
-+  }
-+
-+  function generatePageItems(totalPages, current, pageWidth) {
-+    // See https://gist.github.com/kottenator/9d936eb3e4e3c3e02598
-+    if (totalPages < pageWidth) {
-+      return [...new Array(totalPages).keys()];
-+    }
-+    const left = Math.max(0, Math.min(totalPages - pageWidth, current - Math.floor(pageWidth / 2)));
-+    const items = new Array(pageWidth);
-+    for (let i = 0; i < pageWidth; i += 1) {
-+      items[i] = i + left;
-+    }
-+    // replace non-ending items with placeholders
-+    if (items[0] > 0) {
-+      items[0] = 0;
-+      items[1] = 'prev-more';
-+    }
-+    if (items[items.length - 1] < totalPages - 1) {
-+      items[items.length - 1] = totalPages - 1;
-+      items[items.length - 2] = 'next-more';
-+    }
-+    return items;
-+  }
-+
-+  function createPageButtons() {
-+    const totalPages = Math.ceil(entries.length / rowsPerPage)
-+    const paginationNav = document.querySelector('.pagination-nav')
-+
-+    // Add page navigation buttons
-+    const previousLi = document.createElement('li')
-+    const previousBtn = document.createElement('a')
-+    previousBtn.textContent = '<'
-+    previousLi.appendChild(previousBtn)
-+    paginationNav.appendChild(previousLi)
-+    previousBtn.addEventListener('click', () => {
-+      if (currentPage > 0) {
-+        setCurrentPage(currentPage - 1)
-+      }
-+    })
-+
-+    const nextLi = document.createElement('li')
-+    const nextBtn = document.createElement('a')
-+    nextBtn.textContent = '>'
-+    nextLi.appendChild(nextBtn)
-+    nextBtn.addEventListener('click', () => {
-+      if (currentPage < totalPages - 1) {
-+        setCurrentPage(currentPage + 1)
-+      }
-+    })
-+
-+    const pageItems = generatePageItems(totalPages, currentPage, pageWidth)
-+
-+    // Add page buttons
-+    pageItems.forEach(item => {
-+      const pageLi = document.createElement('li')
-+      if(typeof item === 'number') {
-+        const pageButton = document.createElement('button')
-+        pageButton.classList.add('outline')
-+        pageButton.textContent = item + 1
-+        pageButton.addEventListener('click', () => {
-+          currentPage = item
-+          setCurrentPage(currentPage)
-+        })
-+        pageLi.appendChild(pageButton)
-+      } else {
-+        const pageEllipsis = document.createElement('span')
-+        pageEllipsis.textContent = '...'
-+        pageLi.appendChild(pageEllipsis)
-+      }
-+      paginationNav.appendChild(pageLi)
-+    })
-+    paginationNav.appendChild(nextLi)
-+  }
-+
-+  function showPage() {
-+    createPageButtons()
-+    updateActiveButtonStates()
-+    displayTable()
-+  }
-+
-+  async function mount() {
-+    const url = window.location.href
-+    params = new URLSearchParams(url.search)
-+
-+    await loadEntries()
-+
-+    // Call this function to create the page buttons initially
-+    showPage(currentPage)
-+
-+    const hiddenItem = document.querySelector('.test-table')
-+    hiddenItem.classList.remove('hide')
-+
-+    // Set the select value in the dropdown
-+    let { type, branch, date } = getParams()
-+
-+    const buildType = document.getElementById('build-type-select')
-+    const branchSelect = document.getElementById('branch-select')
-+    const dateFilter = document.getElementById('date-filter')
-+    if (type) {
-+      buildType.value = type
-+    }
-+    if (branch) {
-+      branchSelect.value = branch
-+    }
-+    if (date) {
-+      dateFilter.value = date
-+    }
-+    buildType.classList.remove('hide')
-+    branchSelect.classList.remove('hide')
-+  }
-+</script>
--- 
-2.44.0
+"...eye of the beholder..." I guess. You've suggested this before as a
+simplification, but I guess I've never quite gotten accustomed to bitbake's
+override mechanism. To this day I still find it odd... and unique.
 
+What I've proposed is a simple: "IF <string> IN <object> THEN <generate_env>
+ELSE <no_env>", which is mostly plain English.
+
+With overrides you're saying "always call this function... oh
+wait! unless overrides are in place, then call this one or this other one...
+wait! are overrides in place? what are the overrides?..."
+
+In any case what you've proposed doesn't work. The non-override
+rk_generate_env() function would need a "python" prefix and try as I might, it
+seems you can't have a set of override functions with one being python and the
+other one not. Without the "python" bitbake chokes if the non-override one is
+called. With the "python" bitbake will still choke if the overridden version
+is called:
+
+Try making the change you suggest, both with and without the "python"
+qualifier for the non-overridden version, then try building with both
+MACHINE=rock2-square and MACHINE=rock-5a; one or the other won't work with or
+without the "python".
+
+In any case I like my version :-)
+I'm going to apply it. If you can change my mind we can always take a later
+patch.
+
+Thanks for the review and the discussion!!
 
