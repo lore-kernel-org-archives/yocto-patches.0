@@ -2,56 +2,56 @@ Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC854C25B7D
-	for <webhook@archiver.kernel.org>; Fri, 24 May 2024 02:37:37 +0000 (UTC)
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
- by mx.groups.io with SMTP id smtpd.web10.7258.1716518256372710377
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7843FC25B75
+	for <webhook@archiver.kernel.org>; Fri, 24 May 2024 02:37:47 +0000 (UTC)
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+ by mx.groups.io with SMTP id smtpd.web11.7336.1716518258329144533
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 23 May 2024 19:37:36 -0700
+ Thu, 23 May 2024 19:37:38 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=hdBPzkhk;
- spf=pass (domain: gmail.com, ip: 209.85.222.182, mailfrom: twoerner@gmail.com)
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7931a0a4d8fso540873285a.1
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 23 May 2024 19:37:36 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=MWben/5q;
+ spf=pass (domain: gmail.com, ip: 209.85.222.177, mailfrom: twoerner@gmail.com)
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-792d65cd7a8so345621385a.1
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 23 May 2024 19:37:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716518254; x=1717123054; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1716518257; x=1717123057; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4iJamAmmRWrwV6kI0fPsFgADYhzoKl9bl+JKsq/Fnyc=;
-        b=hdBPzkhkODODYR04JYP5wY2VHgaP4/L5WJ3de27zQ/2URooLHTeSEFmQxdZOppaJX7
-         mrjOtYUiPMleootlnhaJuAzI83WSlZt8ghB6V9Dn5ANxn3kNx2VDGzxshC/Eaf/tj3iP
-         3yw28O4XY8BFEneLaaFZVZTb+pGRaCQMxTEalG0O1aCOTT51WKgdW8EmHS4L4GUpgvyG
-         x8WbQoBdi6k5d4ibVEUXQI7Z4oXSCNEU++MbcYCpwzwh/PC1HpgZvk0EwG5n2OvaZUII
-         k925Ro3wcLvceLTGgMUnxeidrz8014f2vOjh6weewwOl6fYWOR/rT5ZuYWP5LK03p0Tf
-         c9YQ==
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9W1nmeMNRigqjZUejhutH2j96GZPEnF1samUuchFJdw=;
+        b=MWben/5qY3yDq6ziwUpyG/3nT8qiD8803Fh1Eb9hmxebkWMlirWJnQrXO/GLkF3rPy
+         0O7EADYvyMDmT+txZfDXgqdYwvshqByhDhv4rESSoA6We4ULPXynzQCYuafAPnXyQ/M3
+         iwqpXqvf21FAS7L81Au4NE9JSvJomzQOizgkGlpSPNXJByo8Q/AV/fhK1Ht5aORfF6sU
+         FoxDCeeC3NkCA0jUUwNSnDA89knYzQyv/pkJ9cGfYcA6YM3eRdqlS9H4k3WTkaKnDOFU
+         k6Pg4YXQiNuwOXnhCVMw16I/n9Hd75Zk0gWivR4/9uxDrJikO+NFPgcC/XFuiM2tkRHh
+         0pYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716518254; x=1717123054;
+        d=1e100.net; s=20230601; t=1716518257; x=1717123057;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=4iJamAmmRWrwV6kI0fPsFgADYhzoKl9bl+JKsq/Fnyc=;
-        b=TD5xSNTEbmyl0Tbpwyk5/MWtIGr9sCjpc+4KDYL7otoaoZJnfjiNUV80Q1KIYzKxOq
-         Z567DBBLh9wBdWNeEk4RqmA4QDFWNgb30Ohw3MFJtptBr6bVzW79f3iVcWB0IBly3FV6
-         kvFNWb6atC2borxJpS3MyjaaQORatVwVMfuJ5FXxMmWhcF3qeHZsFokQrSkuOn4/vZxf
-         vbTzfUlcwOgzWFM49kEHcpvzRnqcUM+rTJrkGu5b6Kn3eU6s7/p0TGLszoWYZGM4G0A5
-         oTl9Ko/a6NNGg5zdRYbFns65SBfy0cm/PYTp5S52H6Hsl+SudjMIldSJCcXHu8UrQBrA
-         hzjA==
-X-Gm-Message-State: AOJu0Yx6mxxW60Wvv2ndIOduQS3bQEEhA3gGbUoIsuQzha5f3YvbnCoc
-	q5PWZrEbFtg4vpPYTOmar1JJ7l1pIKlGT/0hYDENyrIxZuogPfrRV2s5tw==
-X-Google-Smtp-Source: AGHT+IEyhrJzzfIn3zi699Os2Ao+EP+2rpWHNBu33DO2/LYcAsZTLAbR0nvWsQvIijvSoEEBpTskNQ==
-X-Received: by 2002:a05:620a:4787:b0:790:98ba:67c5 with SMTP id af79cd13be357-794ab0acf2emr109055685a.33.1716518253833;
-        Thu, 23 May 2024 19:37:33 -0700 (PDT)
+        bh=9W1nmeMNRigqjZUejhutH2j96GZPEnF1samUuchFJdw=;
+        b=uTNZI2cV8ZAVkVjrtKi/k4TOZETU8ZRWdDaPwfiIuibQC9eW8SWjbNh5Uvsg/slnAU
+         Z5+rC4nCnCTbbYKiWD8w7Q6AKAnLoHT5pb82mcaFlPT3dUgM5MQ+pkX4l/DaneHQvWuR
+         NakJA5PkEebZnTybr2vDxD9VRrfa5bailbF3rIadtpM2nOMg014uGbvJeSZotudkfKdX
+         HNb9xO3EJbDW5q+26E2nLsbpzVwohsoLiY+8IcAbdiAhuX/zDZ7BA+nobhnC5GGRcWI6
+         5KVYRbTpFxSBZts3nMMg14dPJ5izryMWHsmmaYGsWPGg1xBzsyUzuBsFVQKrZ5OdJKoE
+         LFYg==
+X-Gm-Message-State: AOJu0Yxqc9OZRhOXYDFA6dSBx3nZqxxD3jN9T7N7VHteJapAailoqvQv
+	TlR8vnyMqXiF91ctrf2Sc7RresqhLke9yCqNMZRBorUllJAKLEDDNyLx0Q==
+X-Google-Smtp-Source: AGHT+IHhQDV/nv+jOi8PsyWkkyPbQrWh4eXVWjdMLxd4bMq+74Z9s8Emv005+LKHKKkuwbSpZdXC6A==
+X-Received: by 2002:a05:620a:56d9:b0:792:bf91:3d41 with SMTP id af79cd13be357-794ab048955mr97571785a.15.1716518256727;
+        Thu, 23 May 2024 19:37:36 -0700 (PDT)
 Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-794abca6357sm23285485a.15.2024.05.23.19.37.32
-        for <yocto-patches@lists.yoctoproject.org>
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-794abca6357sm23285485a.15.2024.05.23.19.37.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 19:37:33 -0700 (PDT)
+        Thu, 23 May 2024 19:37:34 -0700 (PDT)
 From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-rockchip][PATCH v2 2/3] specify root partition type
-Date: Thu, 23 May 2024 22:37:23 -0400
-Message-ID: <20240524023724.20109-2-twoerner@gmail.com>
+Cc: Quentin Schulz <quentin.schulz@cherry.de>
+Subject: [meta-rockchip][PATCH v2 3/3] u-boot: remove upstreamed dependency
+Date: Thu, 23 May 2024 22:37:24 -0400
+Message-ID: <20240524023724.20109-3-twoerner@gmail.com>
 X-Mailer: git-send-email 2.44.0.501.g19981daefd7c
 In-Reply-To: <20240524023724.20109-1-twoerner@gmail.com>
 References: <20240524023724.20109-1-twoerner@gmail.com>
@@ -60,64 +60,37 @@ Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 24 May 2024 02:37:37 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/185
+ <yocto-patches@lists.yoctoproject.org>; Fri, 24 May 2024 02:37:47 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/186
 
-Specify the root partition's type according to the Discoverable Partitions
-Specification:
+The dependency on pyelftools is now in upstream oe-core making this one
+redundant.
 
-	32-bit ARM: 69dad710-2ce4-4e3c-b16c-21a1d49abed3
-	64-bit ARM: b921b045-1df0-41c3-af44-4c6f280d3fae
-
-Link: https://uapi-group.org/specifications/specs/discoverable_partitions_specification/
+oe-core: 70eca6a5ccf4 ("u-boot: add missing dependency on pyelftools-native")
+Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
 Signed-off-by: Trevor Woerner <twoerner@gmail.com>
 ---
 v2 changes:
-- use lower-case for both partition identifiers (in code and in commit msg)
-- use Arm overrides instead of MACHINE overrides to identify which identifiers
-  are used for which builds, this clarifies why the 2 identifiers are needed
+- add a git fixes-style link pointing to the upstream oe-core commit mentioned
+  in the commit message
+- added Reviewed-by tag
 ---
- conf/machine/include/rockchip-defaults.inc | 4 ++++
- conf/machine/include/rockchip-wic.inc      | 1 +
- wic/rockchip.wks                           | 2 +-
- 3 files changed, 6 insertions(+), 1 deletion(-)
+ recipes-bsp/u-boot/u-boot_%.bbappend | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/conf/machine/include/rockchip-defaults.inc b/conf/machine/include/rockchip-defaults.inc
-index 2387eb909934..e33a25c07b5a 100644
---- a/conf/machine/include/rockchip-defaults.inc
-+++ b/conf/machine/include/rockchip-defaults.inc
-@@ -21,3 +21,7 @@ XSERVER = " \
- SERIAL_CONSOLES ?= "1500000;ttyS2"
- RK_CONSOLE_BAUD ?= "${@d.getVar('SERIAL_CONSOLES').split(';')[0]}"
- RK_CONSOLE_DEVICE ?= "${@d.getVar('SERIAL_CONSOLES').split(';')[1].split()[0]}"
-+
-+# Discoverable Partitions Specification (DPS)
-+ROOT_DPS:arm = "69dad710-2ce4-4e3c-b16c-21a1d49abed3"
-+ROOT_DPS:aarch64 = "b921b045-1df0-41c3-af44-4c6f280d3fae"
-diff --git a/conf/machine/include/rockchip-wic.inc b/conf/machine/include/rockchip-wic.inc
-index b5ee6e0c2724..dab61d83ed2c 100644
---- a/conf/machine/include/rockchip-wic.inc
-+++ b/conf/machine/include/rockchip-wic.inc
-@@ -19,6 +19,7 @@ RK_UBOOT_ENV:rk-u-boot-env = "${@ '--source rawcopy --sourceparams=file=u-boot.e
+diff --git a/recipes-bsp/u-boot/u-boot_%.bbappend b/recipes-bsp/u-boot/u-boot_%.bbappend
+index 33b521021a1c..5c9e442cca8d 100644
+--- a/recipes-bsp/u-boot/u-boot_%.bbappend
++++ b/recipes-bsp/u-boot/u-boot_%.bbappend
+@@ -3,8 +3,6 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
+ SRC_URI:append:rk-u-boot-env = " file://rockchip-enable-environment-mmc.cfg"
+ SRCREV:rk-u-boot-env = "cdfcc37428e06f4730ab9a17cc084eeb7676ea1a"
  
- WICVARS:append = " \
- 	RK_UBOOT_ENV \
-+	ROOT_DPS \
- 	SPL_BINARY \
- 	UBOOT_SUFFIX \
- 	"
-diff --git a/wic/rockchip.wks b/wic/rockchip.wks
-index e1d74d9983ab..cabdb6559550 100644
---- a/wic/rockchip.wks
-+++ b/wic/rockchip.wks
-@@ -26,6 +26,6 @@ part uboot_env --offset 8128s  --fixed-size 32K   --fstype=none --part-name uboo
- part reserved2 --offset 8192s  --fixed-size 4096K --fstype=none --part-name reserved2
- part loader2   --offset 16384s --fixed-size 4096K --fstype=none --part-name loader2   --source rawcopy --sourceparams="file=u-boot.${UBOOT_SUFFIX}"
- part atf       --offset 24576s --fixed-size 4096K --fstype=none --part-name atf
--part /         --label rootfsA --active           --fstype=ext4 --part-name rootfsA   --source rootfs
-+part /         --label rootfsA --active           --fstype=ext4 --part-name rootfsA   --source rootfs  --part-type ${ROOT_DPS}
- 
- bootloader --ptable gpt
+-# various machines require the pyelftools library for parsing dtb files
+-DEPENDS:append = " python3-pyelftools-native"
+ DEPENDS:append:rk3308 = " u-boot-tools-native"
+ DEPENDS:append:rock-pi-4 = " gnutls-native"
+ DEPENDS:append:rk-u-boot-env = " u-boot-mkenvimage-native"
 -- 
 2.44.0.478.g7774cfed6261
 
