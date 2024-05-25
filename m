@@ -1,83 +1,111 @@
-Return-Path: <foss@0leil.net>
+Return-Path: <richard.purdie@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4C25C25B74
-	for <webhook@archiver.kernel.org>; Fri, 24 May 2024 13:42:51 +0000 (UTC)
-Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [84.16.66.175])
- by mx.groups.io with SMTP id smtpd.web10.16046.1716558167965653153
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB632C25B78
+	for <webhook@archiver.kernel.org>; Sat, 25 May 2024 19:49:27 +0000 (UTC)
+Received: from cordonneriepedica.ca (cordonneriepedica.ca [64.118.86.28])
+ by mx.groups.io with SMTP id smtpd.web10.3221.1716661560532241544
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 24 May 2024 06:42:48 -0700
+ Sat, 25 May 2024 11:26:00 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: 0leil.net, ip: 84.16.66.175, mailfrom: foss+yocto@0leil.net)
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Vm5ny0Zssz3k9;
-	Fri, 24 May 2024 15:42:46 +0200 (CEST)
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Vm5nx4hWDzKlM;
-	Fri, 24 May 2024 15:42:45 +0200 (CEST)
-From: Quentin Schulz <foss+yocto@0leil.net>
-Date: Fri, 24 May 2024 15:42:32 +0200
-Subject: [PATCH meta-rockchip] add basic b4 config file
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240524-b4-support-v1-1-2e6e5d84781c@cherry.de>
-X-B4-Tracking: v=1; b=H4sIAEeZUGYC/x3MQQ5AMBBA0avIrE0yqixcRSyowURoM0Uk4u4ay
- 7f4/4HIKhyhyR5QviSK3xOKPAO39PvMKGMyGDKWKmNxsBjPELweONY1ceXIlGQhBUF5kvuftbD
- x0aN6t7pFAnTv+wFuPziPawAAAA==
+ dkim=pass header.i=@beroset.com header.s=default header.b=FktaE6ug;
+ spf=permerror, err=parse error for token &{10 18 _spf.google.com}: parse error for token &{10 18 _netblocks3.google.com}: limit exceeded (domain: ieee.org, ip: 64.118.86.28, mailfrom: beroset@ieee.org)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=beroset.com
+	; s=default; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject
+	:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=+yc3uuGslW2TxXBVWWmouopH5B8P8tDjzPXsnLu/zm8=; b=FktaE6ugJazNxX4DKJIL/ncoho
+	8TLAuHC8u+m2F2/1ngYG4CcvnGBEpkNyVZTBLCx/vrT1SBBqjemscCXLWg3gIOxZtPbXYnWvuJ5Hf
+	sHOvxMrTr8UG2pFTlnA5aw31r7sjGUDv/b9YUig/JBvycplhygljYKZludzB7xvA/vODOyBFqqs60
+	WRaknmoP2h/WsCRTMkfVScXTXm2770zrWatBkGnZbdM9o+LKeGLzoLHMo5ABBMQIxFZZy5ysCnCjk
+	DJb6NT8L/mpATuHV6Blzj6fCiSyvOEZEyGfwLO3Dr52ESA4IfxO5FGab/YSfynQRCt57juGRfNyrP
+	VENIfDpQ==;
+Received: from 104-185-76-86.lightspeed.rlghnc.sbcglobal.net ([104.185.76.86]:34942 helo=flash.attlocal.net)
+	by drive300.trustyservers.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <beroset@ieee.org>)
+	id 1sAw5i-0000000Cp4Z-1PCF;
+	Sat, 25 May 2024 14:25:59 -0400
+From: "Ed Beroset" <beroset@ieee.org>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Quentin Schulz <quentin.schulz@cherry.de>
-X-Mailer: b4 0.13.0
-X-Infomaniak-Routing: alpha
+Cc: Ed Beroset <beroset@ieee.org>
+Subject: [pseudo] [PATCH] Use raw strings for regex with backslash-char pair
+Date: Sat, 25 May 2024 14:25:53 -0400
+Message-ID: <20240525182553.1901029-1-beroset@ieee.org>
+X-Mailer: git-send-email 2.45.0
+MIME-Version: 1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - drive300.trustyservers.com
+X-AntiAbuse: Original Domain - lists.yoctoproject.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - ieee.org
+X-Get-Message-Sender-Via: drive300.trustyservers.com: authenticated_id: eddieieee@beroset.com
+X-Authenticated-Sender: drive300.trustyservers.com: eddieieee@beroset.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 24 May 2024 13:42:51 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/188
+ <yocto-patches@lists.yoctoproject.org>; Sat, 25 May 2024 19:49:27 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/189
 
-From: Quentin Schulz <quentin.schulz@cherry.de>
+From: Ed Beroset <beroset@ieee.org>
 
-b4[1] is a very nice tool for mail-based contribution. A config[2] file
-exists to set up a few defaults. We can use it to set the To recipients
-to always add, in our case the mailing list.
+As per
+https://docs.python.org/dev/whatsnew/3.12.html#other-language-changes
+this removes some SyntaxWarnings that occurred because of using
+backslash-char pairs in regex strings.  This simply changes those
+strings to be raw strings instead.
 
-This shouldn't be necessary if we had a script that b4 prep --auto-to-cc
-could call to find the mail address(es) to send to. While we could do
-that, this opens the door to people trying to add a way to notify some
-people (e.g. a MAINTAINERS file) which is not somewhere the project
-wants to go right now, and this also makes sure the address is always
-added even if one forgets to run b4 prep --auto-to-cc (which is part of
-the typical workflow for U-Boot and Linux kernel, but is not necessary
-thanks to this patch).
-
-Additionally, automatically provide a default prefix so that one doesn't
-need to not forget to run `b4 prep --set-prefixes meta-rockchip` for
-each series.
-
-[1] https://pypi.org/project/b4/
-[2] https://b4.docs.kernel.org/en/latest/config.html
-
-Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+Signed-off-by: Ed Beroset <beroset@ieee.org>
 ---
- .b4-config | 3 +++
- 1 file changed, 3 insertions(+)
+ makewrappers | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/.b4-config b/.b4-config
-new file mode 100644
-index 0000000..9410efd
---- /dev/null
-+++ b/.b4-config
-@@ -0,0 +1,3 @@
-+[b4]
-+  send-series-to = yocto-patches@lists.yoctoproject.org
-+  send-prefixes = meta-rockchip
-
----
-base-commit: 1f8a8d917b9715acf97fae23bb9bff8bc80b723b
-change-id: 20240524-b4-support-d660e5c02304
-
-Best regards,
+diff --git a/makewrappers b/makewrappers
+index cf5ad60..1e80e30 100755
+--- a/makewrappers
++++ b/makewrappers
+@@ -127,7 +127,7 @@ class Argument:
+             self.vararg = False
+ 
+         # try for a function pointer
+-        match = re.match('(.*)\(\*([a-zA-Z0-9$_]*)\)\((.*)\)', text)
++        match = re.match(r'(.*)\(\*([a-zA-Z0-9$_]*)\)\((.*)\)', text)
+         if match:
+             self.function_pointer = True
+             self.args = match.group(3)
+@@ -135,7 +135,7 @@ class Argument:
+             self.name = match.group(2).rstrip()
+         else:
+             # plain declaration
+-            match = re.match('(.*[ *])\(?\*?([a-zA-Z0-9$_]*)\)?', text)
++            match = re.match(r'(.*[ *])\(?\*?([a-zA-Z0-9$_]*)\)?', text)
+             # there may not be a match, say in the special case
+             # where an arg is '...'
+             if match:
+@@ -237,13 +237,13 @@ class Function:
+         self.date = datetime.date.today().year
+     
+         function, comments = line.split(';')
+-        comment = re.search('/\* *(.*) *\*/', comments)
++        comment = re.search(r'/\* *(.*) *\*/', comments)
+         if comment:
+             self.comments = comment.group(1)
+         else:
+             self.comments = None
+     
+-        bits = re.match('([^(]*)\((.*)\)', function)
++        bits = re.match(r'([^(]*)\((.*)\)', function)
+         type_and_name = Argument(bits.group(1))
+         self.type, self.name = type_and_name.type, type_and_name.name
+         # convenient to have this declared here so we can use its .decl later
 -- 
-Quentin Schulz <quentin.schulz@cherry.de>
+2.45.0
 
 
