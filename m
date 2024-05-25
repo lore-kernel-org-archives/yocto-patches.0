@@ -2,14 +2,14 @@ Return-Path: <beroset@ieee.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3DDDC25B78
-	for <webhook@archiver.kernel.org>; Sat, 25 May 2024 20:24:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3CDDC25B78
+	for <webhook@archiver.kernel.org>; Sat, 25 May 2024 20:36:47 +0000 (UTC)
 Received: from cordonneriepedica.ca (cordonneriepedica.ca [64.118.86.28])
- by mx.groups.io with SMTP id smtpd.web11.5327.1716668652540728454
+ by mx.groups.io with SMTP id smtpd.web10.5459.1716669402365653790
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 25 May 2024 13:24:13 -0700
+ Sat, 25 May 2024 13:36:42 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@beroset.com header.s=default header.b=lHS/D60M;
+ dkim=pass header.i=@beroset.com header.s=default header.b=MwUDLWH5;
  spf=permerror, err=parse error for token &{10 18 _spf.google.com}: parse error for token &{10 18 _netblocks3.google.com}: limit exceeded (domain: ieee.org, ip: 64.118.86.28, mailfrom: beroset@ieee.org)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=beroset.com
 	; s=default; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject
@@ -17,24 +17,24 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=beroset.com
 	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
 	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=+yc3uuGslW2TxXBVWWmouopH5B8P8tDjzPXsnLu/zm8=; b=lHS/D60MKvGdR5zyhJ3PEzVIvr
-	3+6BfwozPCVmFgdyR/37qgQaBP9wBBjRAbJCS8vuYrzEswsK//UyM0IN1qgTJC65oDU4+/QbOg+Ba
-	Ys2vPqZ1Wbnum0crWnhqmmnVQKYL5M1hxp2oIbrt2LZ6BZJtHi6/SPCOe7nFDH5kr7J/a8gC2BRgi
-	WaS9US/f9pL2CLFdi04HI0yNjMZgUjKCU0znvcXx2lcemHFFC2G82fEYnX4Dhho+8h9Ii0DnDZZCa
-	nIPUN9h5GNjIom8f80h/sCRwPZ8MoXhPwyiHRpzNa7LRBunBHQzkp/klV62Q5qd5TX3c3HeI+iLJg
-	+E9R27wA==;
-Received: from 104-185-76-86.lightspeed.rlghnc.sbcglobal.net ([104.185.76.86]:52408 helo=flash.attlocal.net)
+	bh=+yc3uuGslW2TxXBVWWmouopH5B8P8tDjzPXsnLu/zm8=; b=MwUDLWH5cDrdfaAlOqQdpwyufj
+	NRsnZd4KDTTjNB+YBOFIQfv3+/Oqpp4I8Hq18px2qHDH/z63KM2RDOHBrNyqjwP1mrcsOv1SFGkqw
+	78anRketaiPFGXZLQlJYw0FzYtD/TLsiTsCoXYP7MmsbjK3aWpEJEIPkatCkexqlq6L8JktI7lBKN
+	N6E5X7+T9vvLadf8MgyptFKjbqzT36ZEbYJuJmgusw0sqBFOGG4ZxTeVfLFLpWcmIWKO0GqBof9aB
+	//MWK1xMr7dSe/xVTyaUOgJeB4JUl3RqhFlaQArGfcPWkOar+HWfDOV2ENvXBsNJnvSC+of8nwqJH
+	tJocqPFg==;
+Received: from 104-185-76-86.lightspeed.rlghnc.sbcglobal.net ([104.185.76.86]:45012 helo=flash.attlocal.net)
 	by drive300.trustyservers.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
 	(Exim 4.97.1)
 	(envelope-from <beroset@ieee.org>)
-	id 1sAxw6-0000000D6Jy-2v9M;
-	Sat, 25 May 2024 16:24:11 -0400
+	id 1sAy8C-0000000D86Q-26Sr;
+	Sat, 25 May 2024 16:36:41 -0400
 From: beroset@ieee.org
 To: yocto-patches@lists.yoctoproject.org
 Cc: Ed Beroset <beroset@ieee.org>
 Subject: [pseudo] [PATCH] Use raw strings for regex with backslash-char pair
-Date: Sat, 25 May 2024 16:24:01 -0400
-Message-ID: <20240525202401.1908193-1-beroset@ieee.org>
+Date: Sat, 25 May 2024 16:36:34 -0400
+Message-ID: <20240525203634.1909136-1-beroset@ieee.org>
 X-Mailer: git-send-email 2.45.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -51,8 +51,8 @@ X-Source-Dir:
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sat, 25 May 2024 20:24:17 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/191
+ <yocto-patches@lists.yoctoproject.org>; Sat, 25 May 2024 20:36:47 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/192
 
 From: Ed Beroset <beroset@ieee.org>
 
