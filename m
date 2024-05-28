@@ -1,88 +1,86 @@
-Return-Path: <richard.purdie@linuxfoundation.org>
+Return-Path: <changqing.li@eng.windriver.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 999A0C25B74
-	for <webhook@archiver.kernel.org>; Mon, 27 May 2024 21:48:17 +0000 (UTC)
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
- by mx.groups.io with SMTP id smtpd.web11.4990.1716836763995550002
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EA60C41513
+	for <webhook@archiver.kernel.org>; Tue, 28 May 2024 02:54:19 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+ by mx.groups.io with SMTP id smtpd.web10.13645.1716864857049307296
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 27 May 2024 12:06:04 -0700
+ Mon, 27 May 2024 19:54:17 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@rtone.fr header.s=google header.b=GxhmdS/B;
- spf=pass (domain: rtone.fr, ip: 209.85.221.46, mailfrom: gael.portay@rtone.fr)
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-35507a3a038so40920f8f.0
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 27 May 2024 12:06:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rtone.fr; s=google; t=1716836761; x=1717441561; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nkF1Nti28fkqxAUWG7orbnnXgdf0eP5BSEnJaQ05zqM=;
-        b=GxhmdS/BHk4fsj4fIJEqFb15Q5hd9bkAN9MuVOua8g+Bdk5VnNa317yKrn/ZMmkzil
-         oeAyQDy36+L7jEryQ71Ep+Lvm7iRtfi+swhQ6j86qXqNOELRd2ygErXEv8XRX/k4xTDD
-         Ok23v0nex9WG+Tg3bt4aJfsDe7apgtJdKKTG8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716836761; x=1717441561;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nkF1Nti28fkqxAUWG7orbnnXgdf0eP5BSEnJaQ05zqM=;
-        b=PvDTrrQRyvriVNXv2L3/5Qa7EV+hly8GAtzPBOnP87i1XjofqXuW9MQGWW4JmtShK+
-         ydaQJe4f+Yu/MbRKARsgOKlIr0RgAETwjEQag0xOLpbTcv4IgAmlRR283bWTB1VD3cuC
-         SBwE+RxpSvnccQlgc+uwSlVR+ZlE7sAEqJKsNZLw4OD8E0F0kpxY1J0cD89tik5CcSU6
-         Jts7SdBHOLgIEoeWf9Wo8Rc+RLPiVxvnaftG35/3wP1yyzdIxzbmY4NJ5GWJ8GWr8sUn
-         vGE77Q87f83jmhGTAO8wNeSJNjofd5EzezW1noyE4a2aWoWu8SDAV80ivnz8Di8ON9+V
-         llVQ==
-X-Gm-Message-State: AOJu0YxrcMu3FgKe7VRMmvjAQkIaUSO9sxhr+h6caZvxRGXa6Z+doqIg
-	whautMKlkLLAILehtMqYA4i3DT+CytOq6Tmnq1MlFof0jcnpLGZ5t98TKSlsfCo01BMqWihSDVI
-	kNfA=
-X-Google-Smtp-Source: AGHT+IG4tMPoXvA7IpFf0ddBE84B6Q/+l/HmQi6pIHh7kfqsoNjAa8OjA+ijbwj9aWbMSoo+LOUbiA==
-X-Received: by 2002:a5d:64c4:0:b0:347:3037:188d with SMTP id ffacd0b85a97d-35526c5b6a5mr11217067f8f.34.1716836761361;
-        Mon, 27 May 2024 12:06:01 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:e0a:ce:f2f0:3a7c:76ff:fe01:6f05])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3557a1c9303sm9789167f8f.88.2024.05.27.12.06.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 12:06:01 -0700 (PDT)
-From: "Gael PORTAY" <gael.portay@rtone.fr>
-To: yocto-patches@lists.yoctoproject.org
-Cc: =?UTF-8?q?Ga=C3=ABl=20PORTAY?= <gael.portay@rtone.fr>
-Subject: [meta-security][PATCH] sssd: remove duplicate option --without-python2-bindings
-Date: Mon, 27 May 2024 21:05:29 +0200
-Message-ID: <20240527190530.1894157-1-gael.portay@rtone.fr>
-X-Mailer: git-send-email 2.44.0
+ dkim=none (message not signed); spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.178.238, mailfrom: prvs=5878445e50=changqing.li@windriver.com)
+Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44S2eNkv028656
+	for <yocto-patches@lists.yoctoproject.org>; Tue, 28 May 2024 02:54:16 GMT
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 3yb56xahbk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <yocto-patches@lists.yoctoproject.org>; Tue, 28 May 2024 02:54:16 +0000 (GMT)
+Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 27 May 2024 19:54:14 -0700
+Received: from pek-lpg-core2.wrs.com (128.224.153.41) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
+ 15.1.2507.39 via Frontend Transport; Mon, 27 May 2024 19:54:14 -0700
+From: <changqing.li@windriver.com>
+To: <yocto-patches@lists.yoctoproject.org>
+Subject: [meta-raspberrypi][PATCH 2/7] rpi-u-boot-scr: Switch away from S = WORKDIR
+Date: Tue, 28 May 2024 10:54:07 +0800
+Message-ID: <20240528025412.2417168-2-changqing.li@windriver.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240528025412.2417168-1-changqing.li@windriver.com>
+References: <20240528025412.2417168-1-changqing.li@windriver.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: Pr_bjl5PVbjmtFy-eMcHzNwaDEN-BXgr
+X-Proofpoint-GUID: Pr_bjl5PVbjmtFy-eMcHzNwaDEN-BXgr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-27_06,2024-05-27_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 suspectscore=0 spamscore=0 phishscore=0 malwarescore=0
+ lowpriorityscore=0 adultscore=0 impostorscore=0 bulkscore=0
+ mlxlogscore=781 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405280021
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 27 May 2024 21:48:17 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/222
+ <yocto-patches@lists.yoctoproject.org>; Tue, 28 May 2024 02:54:19 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/224
 
-The option --without-python2-bindings was added twice, by the commit
-4375507f39ed4bc62e1304838870be65f3a81460, and then after python2 was
-deprecated with the commit 96737082ad20eabcbbaa82b0cacee0d05d50eaab.
+From: Changqing Li <changqing.li@windriver.com>
 
-This removes the latter.
-
-Signed-off-by: Gaël PORTAY <gael.portay@rtone.fr>
+Signed-off-by: Changqing Li <changqing.li@windriver.com>
 ---
- .../networking-layer/recipes-security/sssd/sssd_2.9.2.bb         | 1 -
- 1 file changed, 1 deletion(-)
+ recipes-bsp/rpi-u-boot-scr/rpi-u-boot-scr.bb | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9.2.bb b/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9.2.bb
-index d61471c..4c76bd9 100644
---- a/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9.2.bb
-+++ b/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9.2.bb
-@@ -66,7 +66,6 @@ EXTRA_OECONF += " \
-     --without-ipa-getkeytab \
-     --without-python2-bindings \
-     --enable-pammoddir=${base_libdir}/security \
--    --without-python2-bindings \
-     --with-xml-catalog-path=${STAGING_ETCDIR_NATIVE}/xml/catalog \
-     --with-pid-path=/run \
- "
+diff --git a/recipes-bsp/rpi-u-boot-scr/rpi-u-boot-scr.bb b/recipes-bsp/rpi-u-boot-scr/rpi-u-boot-scr.bb
+index 1dff808..c263bb9 100644
+--- a/recipes-bsp/rpi-u-boot-scr/rpi-u-boot-scr.bb
++++ b/recipes-bsp/rpi-u-boot-scr/rpi-u-boot-scr.bb
+@@ -9,13 +9,16 @@ INHIBIT_DEFAULT_DEPS = "1"
+ 
+ SRC_URI = "file://boot.cmd.in"
+ 
++S = "${WORKDIR}/sources"
++UNPACKDIR = "${S}"
++
+ BOOT_MEDIA ?= "mmc"
+ 
+ do_compile() {
+     sed -e 's/@@KERNEL_IMAGETYPE@@/${KERNEL_IMAGETYPE}/' \
+         -e 's/@@KERNEL_BOOTCMD@@/${KERNEL_BOOTCMD}/' \
+         -e 's/@@BOOT_MEDIA@@/${BOOT_MEDIA}/' \
+-        "${WORKDIR}/boot.cmd.in" > "${WORKDIR}/boot.cmd"
++        "${S}/boot.cmd.in" > "${WORKDIR}/boot.cmd"
+     mkimage -A ${UBOOT_ARCH} -T script -C none -n "Boot script" -d "${WORKDIR}/boot.cmd" boot.scr
+ }
+ 
 -- 
-2.44.0
+2.25.1
 
 
