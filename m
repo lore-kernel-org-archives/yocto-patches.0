@@ -2,59 +2,59 @@ Return-Path: <akuster808@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CCB8C25B7C
-	for <webhook@archiver.kernel.org>; Tue, 28 May 2024 18:14:44 +0000 (UTC)
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
- by mx.groups.io with SMTP id smtpd.web11.29845.1716920080318190046
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11353C25B78
+	for <webhook@archiver.kernel.org>; Tue, 28 May 2024 18:16:14 +0000 (UTC)
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+ by mx.groups.io with SMTP id smtpd.web10.29631.1716920168837432651
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 28 May 2024 11:14:40 -0700
+ Tue, 28 May 2024 11:16:08 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=hJN18fwZ;
- spf=pass (domain: gmail.com, ip: 209.85.128.171, mailfrom: akuster808@gmail.com)
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-627dfbcf42aso11472057b3.1
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 28 May 2024 11:14:40 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=Gh0Ra11+;
+ spf=pass (domain: gmail.com, ip: 209.85.128.181, mailfrom: akuster808@gmail.com)
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-62a2424ec50so10494987b3.3
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 28 May 2024 11:16:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716920079; x=1717524879; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1716920168; x=1717524968; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:cc
          :content-language:references:to:subject:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=PiMB9cg9SbFdfXosJgYmRGUN5BlCxjkxybDUenXFowE=;
-        b=hJN18fwZ9sxqlkzKenUCz+ORhSNl7BhTAnw5TXeaLpdJOLXOvw8MjyWEciGtRC8Za9
-         PMKYZsNZlJNQGlNjeLSopuoMEaI/lV+4EvzNNwOhYcbK5JXSQL6COanIN2k39Pdjbrvo
-         miMx2OPEQszFw5We9mYXE7S9HZG6cEghsCJT4JKrw0IrFZDg9yzDW8jGl7bJFr+NFAD4
-         g18qRtRdpryxNRLVjrGcOCgFgVbMUFRCUW1xjLXQZWecKjSs5DqEVu2xwMD3xH3a0wjL
-         wFkaDnmVQBjyJjpRiccFYDk49zDCYRC8xvg/LZFFnHw9kaukdTATFmQg/rcVCpVbajkR
-         9b7w==
+        bh=fmZtAv51RF+hsOpla7ydgMQaJiBRhBkCbc+jePIUyko=;
+        b=Gh0Ra11+Ul/61b3i2T9ELVPprpr5h3bQc431cNskeC2OanqbhlZ6nJ9Nggazt1ADrX
+         IIyLepk+pOpDcHCkypA35+mNrQVqIsMUKmLJleKgPD84JHTg5iQMqVgD+FFqGVd6yo1Q
+         3IaFVLzOFQwKYH/pfdMURDWhWHsyVBzjdZtTWTB1yvdcjNBdsZwD+Ltph/CNzCttaSmQ
+         tcuvKUKiOkuu/dg/XKLbmvT5yNhnpCRnOQzYDj18Q4D9IseNb2EbYzc9PSlbU9fmtuos
+         qGXFvNMwbof3l1tavVXybRciWbypvjN/xpPNTLxdd9ltsf0bz0p4svdsAYQK2Gwbvcg0
+         CMcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716920079; x=1717524879;
+        d=1e100.net; s=20230601; t=1716920168; x=1717524968;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:cc
          :content-language:references:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=PiMB9cg9SbFdfXosJgYmRGUN5BlCxjkxybDUenXFowE=;
-        b=JoyYEpXLsT77BTe0MunjA6uYfZ3WgXsFxZOEPaJgNsOHCaMh639E5zQiTdc+pcJyx2
-         pqbklVxnCxypOR82JY2QRFzmhRPsabkAZ9D8v6ONmpdA+19TTLFXUBA7uU/InRxi9VAY
-         PrxOViPt26sSie3RTvX+tlmTg0RqBbyPMyTu0KaQy4UJOk5Zbktlo7Q/5WA/CzkKMEj8
-         /+27WDCMHEybS2p51ENprAZ0sFUXGvMBO8YEPReCbQD18tJIQBTAUMscnrQXBvVUFq/M
-         +Pt1fxdkDiMS3uEVC8zboxr/R9MtfSqx/hJUHPgk8qaJA4d4V+E1qiNB9uovpeVQfvdv
-         Kl+w==
-X-Gm-Message-State: AOJu0YyCe6be0a1I8fchHjOi4D4u1rcHs5/ce6VeHUpkeIrH7SWB+jfH
-	n1m4IUizOJbz1i08tTvDOp1SeT7tNtg4YDkX2G8K2vJBoH0qzele
-X-Google-Smtp-Source: AGHT+IFf3UXJrnFXfKLAtkR+9MWruFJbnU7TkRNLxEE5L9lIvGyBtXx3PSmYlBoda7ymLi/aqxfYvQ==
-X-Received: by 2002:a81:b662:0:b0:628:c1f0:d8fd with SMTP id 00721157ae682-62a08f33ecemr127837277b3.52.1716920079118;
-        Tue, 28 May 2024 11:14:39 -0700 (PDT)
+        bh=fmZtAv51RF+hsOpla7ydgMQaJiBRhBkCbc+jePIUyko=;
+        b=ZTxCMxI08+E0ZhW3ZPCEriDl/whQTUC/LHO+PtbvMxskzABEdIjpzg7E7gBL+vw+TY
+         Q1NBM3GjTcSauE0xP5+w1mbE/AF0wpFRu26QaZFtUF1umbFPui1RoH+Kd4J9/pNyKM0q
+         +sfFbOzxs5qorAk81Lkzf0ubwHlLeJW3lAVnCVD5TwrvgWqq9NjZ+sk3+AkaFiFWZ9BQ
+         vylarg91gePvwLAihSppTZKB4RYBFG4mumJvP9zCNlNIJ/+bMlpDCkdXsGz+yIOphirz
+         QI6ir8Dq2uOkhz1vHxyPepCvF9FdIt4mqvUDHdfw+5ntFQo3e4NVRzYTFFm6VdQd42H5
+         16ow==
+X-Gm-Message-State: AOJu0YzfhiAOzNCThWKlmAao7CmPy8i2k+TYbzFnhfbAvXxSv0+cOqNe
+	Yux3x0Dx01lwKg3HZphEMEJ2rrNPoe53pdtxVy+4piXcMUb/CuD2Fg3Eiw==
+X-Google-Smtp-Source: AGHT+IF0FqkShgGt6zYiNSWQlIldtY9CnZ+/RWrcvqrXFgiV/+5lBiQ9DalP6IqZRX1eZSvaANXMEw==
+X-Received: by 2002:a81:a04d:0:b0:611:9622:46e7 with SMTP id 00721157ae682-62a08f22ac0mr115629237b3.48.1716920167875;
+        Tue, 28 May 2024 11:16:07 -0700 (PDT)
 Received: from ?IPV6:2600:1700:45dd:7000:9f87:6ec9:14e6:1b94? ([2600:1700:45dd:7000:9f87:6ec9:14e6:1b94])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-62a0a37cda2sm21514047b3.9.2024.05.28.11.14.38
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-62a0a534d03sm21541467b3.122.2024.05.28.11.16.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 May 2024 11:14:38 -0700 (PDT)
-Message-ID: <348e3fd7-76d0-404e-881c-604433956c7c@gmail.com>
-Date: Tue, 28 May 2024 14:14:38 -0400
+        Tue, 28 May 2024 11:16:07 -0700 (PDT)
+Message-ID: <ac164a4c-c5be-4b19-ab48-546c0cc269c0@gmail.com>
+Date: Tue, 28 May 2024 14:16:07 -0400
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [meta-security][PATCH] recipes: WORKDIR ->
- UNPACKDIR transition
+Subject: Re: [yocto-patches] [meta-security][PATCH]
+ tcp-smack-test/udp-smack-test: fix do_compile failure
 To: changqing.li@windriver.com
-References: <20240528054406.4031866-1-changqing.li@windriver.com>
+References: <20240528054424.4037114-1-changqing.li@windriver.com>
 Content-Language: en-US
 Cc: yocto-patches@lists.yoctoproject.org
 From: akuster808 <akuster808@gmail.com>
@@ -92,286 +92,100 @@ Autocrypt: addr=akuster808@gmail.com; keydata=
  itDSpYIEGrZObj82rX1wvxf/ZQ8VXS+owIR2F4yeeqPH/CyrPA1ASdtt+Am28/dJ2krr72at
  J++uLxA0cein1kjcosFDpQscnDcPzohnGyyjgEd6VwelZboIS1jt4lIa1badtV+cWMGMgM8W
  ApZ86eOP
-In-Reply-To: <20240528054406.4031866-1-changqing.li@windriver.com>
+In-Reply-To: <20240528054424.4037114-1-changqing.li@windriver.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 28 May 2024 18:14:44 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/237
+ <yocto-patches@lists.yoctoproject.org>; Tue, 28 May 2024 18:16:14 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/238
 
+  Hello Changging,
 
+Martin sent a patch to fix this earlier.
+
+thanks.
+Armin
 
 On 5/28/24 1:44 AM, Changqing Li via lists.yoctoproject.org wrote:
 > From: Changqing Li <changqing.li@windriver.com>
 >
-> * WORKDIR -> UNPACKDIR transition
-> * Switch away from S = WORKDIR
+> Include proper headers to fix following errors:
+> | udp_client.c:41:16: error: implicit declaration of function 'atoi' [-Wimplicit-function-declaration]
+> |    41 |         port = atoi(argv[1]);
+> | udp_client.c:52:12: error: implicit declaration of function 'fsetxattr' [-Wimplicit-function-declaration]
+> |    52 |         if(fsetxattr(sock, attr, label, strlen(label),0) < 0)
+> |       |            ^~~~~~~~~
+> | udp_client.c:67:9: error: implicit declaration of function 'close'; did you mean 'pclose'? [-Wimplicit-function-declaration]
+> |    67 |         close(sock);
+> |       |         ^~~~~
+> |       |         pclose
+> | tcp_client.c:55:16: error: implicit declaration of function 'atoi' [-Wimplicit-function-declaration]
+> |    55 |         port = atoi(argv[1]);
+> ...
 >
 > Signed-off-by: Changqing Li <changqing.li@windriver.com>
 > ---
->   .../recipes-security/sssd/sssd_2.9.2.bb       |  2 +-
->   .../recipes-core/systemd/systemd_%.bbappend   |  2 +-
->   .../tpm2-abrmd/tpm2-abrmd_3.0.0.bb            |  4 +--
->   .../initrdscripts/initramfs-framework.inc     |  2 +-
->   recipes-ids/samhain/samhain-server.bb         |  4 +--
->   recipes-ids/samhain/samhain.inc               | 14 ++++-----
->   recipes-mac/smack/mmap-smack-test_1.0.bb      |  4 ++-
->   recipes-mac/smack/smack-test_1.0.bb           |  3 +-
->   recipes-mac/smack/tcp-smack-test_1.0.bb       |  3 +-
->   recipes-mac/smack/udp-smack-test_1.0.bb       |  3 +-
-
-I dropped the 4 smack changes as Martin sent a patch earlier.
-
-thanks,
-Armin
->   .../ecryptfs-utils/ecryptfs-utils_111.bb      |  2 +-
->   recipes-security/libmhash/libmhash_0.9.9.9.bb |  4 +--
->   .../redhat-security/redhat-security_1.0.bb    | 29 ++++++++++---------
->   13 files changed, 41 insertions(+), 35 deletions(-)
+>   recipes-mac/smack/tcp-smack-test/tcp_client.c | 1 +
+>   recipes-mac/smack/tcp-smack-test/tcp_server.c | 3 +++
+>   recipes-mac/smack/udp-smack-test/udp_client.c | 3 +++
+>   recipes-mac/smack/udp-smack-test/udp_server.c | 3 +++
+>   4 files changed, 10 insertions(+)
 >
-> diff --git a/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9.2.bb b/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9.2.bb
-> index d61471c..c53ec58 100644
-> --- a/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9.2.bb
-> +++ b/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9.2.bb
-> @@ -91,7 +91,7 @@ do_install () {
->       install -d ${D}/${PYTHON_SITEPACKAGES_DIR}
->       mv ${D}/${BPN}  ${D}/${PYTHON_SITEPACKAGES_DIR}
->   
-> -    install -m 600 ${WORKDIR}/${BPN}.conf ${D}/${sysconfdir}/${BPN}
-> +    install -m 600 ${UNPACKDIR}/${BPN}.conf ${D}/${sysconfdir}/${BPN}
->   
->       # /var/log/sssd needs to be created in runtime. Use rmdir to catch if
->       # upstream stops creating /var/log/sssd, or adds something else in
-> diff --git a/meta-integrity/recipes-core/systemd/systemd_%.bbappend b/meta-integrity/recipes-core/systemd/systemd_%.bbappend
-> index 57b3684..f140f02 100644
-> --- a/meta-integrity/recipes-core/systemd/systemd_%.bbappend
-> +++ b/meta-integrity/recipes-core/systemd/systemd_%.bbappend
-> @@ -8,6 +8,6 @@ SRC_URI += " \
->   do_install:append () {
->       for i in machine-id-commit random-seed; do
->           install -d ${D}/${systemd_system_unitdir}/systemd-$i.service.d
-> -        install -m 0644 ${WORKDIR}/$i-sync.conf ${D}/${systemd_system_unitdir}/systemd-$i.service.d
-> +        install -m 0644 ${UNPACKDIR}/$i-sync.conf ${D}/${systemd_system_unitdir}/systemd-$i.service.d
->       done
->   }
-> diff --git a/meta-tpm/recipes-tpm2/tpm2-abrmd/tpm2-abrmd_3.0.0.bb b/meta-tpm/recipes-tpm2/tpm2-abrmd/tpm2-abrmd_3.0.0.bb
-> index ea2433c..24fd5b5 100644
-> --- a/meta-tpm/recipes-tpm2/tpm2-abrmd/tpm2-abrmd_3.0.0.bb
-> +++ b/meta-tpm/recipes-tpm2/tpm2-abrmd/tpm2-abrmd_3.0.0.bb
-> @@ -40,10 +40,10 @@ PACKAGECONFIG[systemd] = "--with-systemdsystemunitdir=${systemd_system_unitdir},
->   
->   do_install:append() {
->       install -d "${D}${sysconfdir}/init.d"
-> -    install -m 0755 "${WORKDIR}/tpm2-abrmd-init.sh" "${D}${sysconfdir}/init.d/tpm2-abrmd"
-> +    install -m 0755 "${UNPACKDIR}/tpm2-abrmd-init.sh" "${D}${sysconfdir}/init.d/tpm2-abrmd"
->   
->       install -d "${D}${sysconfdir}/default"
-> -    install -m 0644 "${WORKDIR}/tpm2-abrmd.default" "${D}${sysconfdir}/default/tpm2-abrmd"
-> +    install -m 0644 "${UNPACKDIR}/tpm2-abrmd.default" "${D}${sysconfdir}/default/tpm2-abrmd"
->   }
->   
->   FILES:${PN} += "${libdir}/systemd/system-preset \
-> diff --git a/recipes-core/initrdscripts/initramfs-framework.inc b/recipes-core/initrdscripts/initramfs-framework.inc
-> index 1a724d6..aa04348 100644
-> --- a/recipes-core/initrdscripts/initramfs-framework.inc
-> +++ b/recipes-core/initrdscripts/initramfs-framework.inc
-> @@ -6,7 +6,7 @@ SRC_URI:append = "\
->   
->   do_install:append() {
->       # dm-verity
-> -    install ${WORKDIR}/dmverity ${D}/init.d/80-dmverity
-> +    install ${S}/dmverity ${D}/init.d/80-dmverity
->   }
->   
->   PACKAGES:append = " initramfs-module-dmverity"
-> diff --git a/recipes-ids/samhain/samhain-server.bb b/recipes-ids/samhain/samhain-server.bb
-> index 8bae2d2..030ec2b 100644
-> --- a/recipes-ids/samhain/samhain-server.bb
-> +++ b/recipes-ids/samhain/samhain-server.bb
-> @@ -16,11 +16,11 @@ TARGET_CC_ARCH += "${LDFLAGS}"
->   do_install:append() {
->       if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
->           install -d ${D}${sysconfdir}/tmpfiles.d
-> -        install -m 0644 ${WORKDIR}/samhain-server-volatiles.conf \
-> +        install -m 0644 ${UNPACKDIR}/samhain-server-volatiles.conf \
->               ${D}${sysconfdir}/tmpfiles.d/samhain-server.conf
->       else
->           install -d ${D}${sysconfdir}/default/volatiles
-> -        install -m 0644 ${WORKDIR}/samhain-server-volatiles \
-> +        install -m 0644 ${UNPACKDIR}/samhain-server-volatiles \
->               ${D}${sysconfdir}/default/volatiles/samhain-server
->       fi
->   
-> diff --git a/recipes-ids/samhain/samhain.inc b/recipes-ids/samhain/samhain.inc
-> index f5bea1d..61ec0da 100644
-> --- a/recipes-ids/samhain/samhain.inc
-> +++ b/recipes-ids/samhain/samhain.inc
-> @@ -64,8 +64,8 @@ EXTRA_OEMAKE:append:aarch64 = " CPPFLAGS+=-DCONFIG_ARCH_AARCH64=1"
->   EXTRA_OEMAKE:append:mips64 = " CPPFLAGS+=-DCONFIG_ARCH_MIPS64=1"
->   
->   do_unpack_samhain() {
-> -    cd ${WORKDIR}
-> -    tar -xzvf samhain-${PV}.tar.gz
-> +    cd ${UNPACKDIR}
-> +    tar -xzvf samhain-${PV}.tar.gz -C ${WORKDIR}
->   }
->   
->   python do_unpack:append() {
-> @@ -129,19 +129,19 @@ do_compile:prepend:libc-musl () {
->   do_install:append () {
->   	oe_runmake install DESTDIR='${D}' INSTALL=install-boot
->   
-> -	install -D -m 755 ${WORKDIR}/${INITSCRIPT_NAME}.init \
-> +	install -D -m 755 ${UNPACKDIR}/${INITSCRIPT_NAME}.init \
->   		${D}${sysconfdir}/init.d/${INITSCRIPT_NAME}
->   
-> -	install -D -m 755 ${WORKDIR}/${INITSCRIPT_NAME}.default \
-> +	install -D -m 755 ${UNPACKDIR}/${INITSCRIPT_NAME}.default \
->   		${D}${sysconfdir}/default/${INITSCRIPT_NAME}
->   
->   	if ${@bb.utils.contains('DISTRO_FEATURES','systemd','true','false',d)}; then
->   		if [ "${SAMHAIN_MODE}" = "no" ]; then
-> -		    install -D -m 0644 ${WORKDIR}/samhain.service ${D}/${systemd_system_unitdir}/samhain.service
-> +		    install -D -m 0644 ${UNPACKDIR}/samhain.service ${D}/${systemd_system_unitdir}/samhain.service
->   		else
-> -		    install -D -m 0644 ${WORKDIR}/samhain.service ${D}/${systemd_system_unitdir}/${BPN}.service
-> +		    install -D -m 0644 ${UNPACKDIR}/samhain.service ${D}/${systemd_system_unitdir}/${BPN}.service
->   		fi
-> -		install -D -m 0755 ${WORKDIR}/${BPN}.init ${D}/${libexecdir}/${BPN}
-> +		install -D -m 0755 ${UNPACKDIR}/${BPN}.init ${D}/${libexecdir}/${BPN}
->   		sed -i -e 's,@LIBDIR@,${libexecdir},' \
->   		       -e 's,@SAMHAIN_HELPER@,${BPN},' \
->   		       -e 's,@MODE_NAME@,${MODE_NAME},' \
-> diff --git a/recipes-mac/smack/mmap-smack-test_1.0.bb b/recipes-mac/smack/mmap-smack-test_1.0.bb
-> index 9d11509..b11fbf3 100644
-> --- a/recipes-mac/smack/mmap-smack-test_1.0.bb
-> +++ b/recipes-mac/smack/mmap-smack-test_1.0.bb
-> @@ -5,7 +5,9 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda
->   
->   SRC_URI = "file://mmap.c"
->   
-> -S = "${WORKDIR}"
-> +S = "${WORKDIR}/sources"
-> +UNPACKDIR = "${S}"
+> diff --git a/recipes-mac/smack/tcp-smack-test/tcp_client.c b/recipes-mac/smack/tcp-smack-test/tcp_client.c
+> index 6c0a474..b82b575 100644
+> --- a/recipes-mac/smack/tcp-smack-test/tcp_client.c
+> +++ b/recipes-mac/smack/tcp-smack-test/tcp_client.c
+> @@ -18,6 +18,7 @@
+>   // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+>   // THE SOFTWARE.
+>   #include <stdio.h>
+> +#include <stdlib.h>
+>   #include <sys/socket.h>
+>   #include <sys/types.h>
+>   #include <errno.h>
+> diff --git a/recipes-mac/smack/tcp-smack-test/tcp_server.c b/recipes-mac/smack/tcp-smack-test/tcp_server.c
+> index 3c8921f..6de7ccd 100644
+> --- a/recipes-mac/smack/tcp-smack-test/tcp_server.c
+> +++ b/recipes-mac/smack/tcp-smack-test/tcp_server.c
+> @@ -24,6 +24,9 @@
+>   #include <netinet/in.h>
+>   #include <unistd.h>
+>   #include <string.h>
+> +#include <stdlib.h>
+> +#include <sys/xattr.h>
 > +
->   do_compile() {
->       ${CC} mmap.c ${LDFLAGS} -o mmap_test
->   }
-> diff --git a/recipes-mac/smack/smack-test_1.0.bb b/recipes-mac/smack/smack-test_1.0.bb
-> index 3ab57c6..cb5327a 100644
-> --- a/recipes-mac/smack/smack-test_1.0.bb
-> +++ b/recipes-mac/smack/smack-test_1.0.bb
-> @@ -10,7 +10,8 @@ SRC_URI = " \
->              file://test_smack_onlycap.sh \
->   "
 >   
-> -S = "${WORKDIR}"
-> +S = "${WORKDIR}/sources"
-> +UNPACKDIR = "${S}"
+>   int main(int argc, char* argv[])
+>   {
+> diff --git a/recipes-mac/smack/udp-smack-test/udp_client.c b/recipes-mac/smack/udp-smack-test/udp_client.c
+> index 23f3e00..3d2ee31 100644
+> --- a/recipes-mac/smack/udp-smack-test/udp_client.c
+> +++ b/recipes-mac/smack/udp-smack-test/udp_client.c
+> @@ -19,6 +19,9 @@
+>   // THE SOFTWARE.
+>   #include <sys/socket.h>
+>   #include <stdio.h>
+> +#include <stdlib.h>
+> +#include <unistd.h>
+> +#include <sys/xattr.h>
+>   #include <netinet/in.h>
+>   #include <netdb.h>
+>   #include <string.h>
+> diff --git a/recipes-mac/smack/udp-smack-test/udp_server.c b/recipes-mac/smack/udp-smack-test/udp_server.c
+> index 7d2fcf5..25ad1ef 100644
+> --- a/recipes-mac/smack/udp-smack-test/udp_server.c
+> +++ b/recipes-mac/smack/udp-smack-test/udp_server.c
+> @@ -22,6 +22,9 @@
+>   #include <netinet/in.h>
+>   #include <netdb.h>
+>   #include <string.h>
+> +#include <stdlib.h>
+> +#include <unistd.h>
+> +#include <sys/xattr.h>
 >   
->   inherit features_check
->   
-> diff --git a/recipes-mac/smack/tcp-smack-test_1.0.bb b/recipes-mac/smack/tcp-smack-test_1.0.bb
-> index d2b3f6b..020d4b4 100644
-> --- a/recipes-mac/smack/tcp-smack-test_1.0.bb
-> +++ b/recipes-mac/smack/tcp-smack-test_1.0.bb
-> @@ -8,7 +8,8 @@ SRC_URI = "file://tcp_server.c \
->              file://test_smack_tcp_sockets.sh \
->   "
->   
-> -S = "${WORKDIR}"
-> +S = "${WORKDIR}/sources"
-> +UNPACKDIR = "${S}"
->   
->   do_compile() {
->       ${CC} tcp_client.c ${LDFLAGS} -o tcp_client
-> diff --git a/recipes-mac/smack/udp-smack-test_1.0.bb b/recipes-mac/smack/udp-smack-test_1.0.bb
-> index 9193f89..edef801 100644
-> --- a/recipes-mac/smack/udp-smack-test_1.0.bb
-> +++ b/recipes-mac/smack/udp-smack-test_1.0.bb
-> @@ -7,8 +7,9 @@ SRC_URI = "file://udp_server.c \
->              file://udp_client.c \
->              file://test_smack_udp_sockets.sh \
->   "
-> +S = "${WORKDIR}/sources"
-> +UNPACKDIR = "${S}"
->   
-> -S = "${WORKDIR}"
->   do_compile() {
->       ${CC} udp_client.c ${LDFLAGS} -o udp_client
->       ${CC} udp_server.c ${LDFLAGS} -o udp_server
-> diff --git a/recipes-security/ecryptfs-utils/ecryptfs-utils_111.bb b/recipes-security/ecryptfs-utils/ecryptfs-utils_111.bb
-> index 00e8997..83d37d6 100644
-> --- a/recipes-security/ecryptfs-utils/ecryptfs-utils_111.bb
-> +++ b/recipes-security/ecryptfs-utils/ecryptfs-utils_111.bb
-> @@ -62,7 +62,7 @@ do_install:append() {
->              -e 's:-L${STAGING_LIBDIR}::' ${D}/${libdir}/pkgconfig/libecryptfs.pc
->       sed -i -e "s: ${base_sbindir}/cryptsetup: ${sbindir}/cryptsetup:" ${D}${bindir}/ecryptfs-setup-swap
->       if ${@bb.utils.contains('DISTRO_FEATURES','systemd','true','false',d)}; then
-> -        install -D -m 0644 ${WORKDIR}/ecryptfs.service ${D}${systemd_system_unitdir}/ecryptfs.service
-> +        install -D -m 0644 ${UNPACKDIR}/ecryptfs.service ${D}${systemd_system_unitdir}/ecryptfs.service
->       fi
->   }
->   
-> diff --git a/recipes-security/libmhash/libmhash_0.9.9.9.bb b/recipes-security/libmhash/libmhash_0.9.9.9.bb
-> index 49139d2..f725a26 100644
-> --- a/recipes-security/libmhash/libmhash_0.9.9.9.bb
-> +++ b/recipes-security/libmhash/libmhash_0.9.9.9.bb
-> @@ -31,8 +31,8 @@ do_install:append() {
->   
->   do_compile_ptest() {
->       if [ ! -d ${S}/demo ]; then mkdir ${S}/demo; fi
-> -    cp ${WORKDIR}/Makefile.test ${S}/demo/Makefile
-> -    cp ${WORKDIR}/mhash.c ${S}/demo/
-> +    cp ${UNPACKDIR}/Makefile.test ${S}/demo/Makefile
-> +    cp ${UNPACKDIR}/mhash.c ${S}/demo/
->       make -C ${S}/demo CFLAGS="${CFLAGS} -I${S}/include/" LDFLAGS="${LDFLAGS} -L${S}/lib/.libs"
->   }
->   
-> diff --git a/recipes-security/redhat-security/redhat-security_1.0.bb b/recipes-security/redhat-security/redhat-security_1.0.bb
-> index c47688f..1f0ba6c 100644
-> --- a/recipes-security/redhat-security/redhat-security_1.0.bb
-> +++ b/recipes-security/redhat-security/redhat-security_1.0.bb
-> @@ -18,23 +18,24 @@ SRC_URI = "file://find-chroot-py.sh \
->              file://selinux-check-devices.sh \
->              file://selinux-ls-unconfined.sh"
->   
-> -S = "${WORKDIR}"
-> +S = "${WORKDIR}/sources"
-> +UNPACKDIR = "${S}"
->   
->   do_install() {
->   	install -d ${D}${bindir}
-> -	install -m 0755 ${WORKDIR}/find-chroot-py.sh    ${D}${bindir}
-> -	install -m 0755 ${WORKDIR}/find-chroot.sh    ${D}${bindir}
-> -	install -m 0755 ${WORKDIR}/find-elf4tmp.sh    ${D}${bindir}
-> -	install -m 0755 ${WORKDIR}/find-execstack.sh    ${D}${bindir}
-> -	install -m 0755 ${WORKDIR}/find-hidden-exec.sh    ${D}${bindir}
-> -	install -m 0755 ${WORKDIR}/find-nodrop-groups.sh    ${D}${bindir}
-> -	install -m 0755 ${WORKDIR}/find-sh4errors.sh    ${D}${bindir}
-> -	install -m 0755 ${WORKDIR}/find-sh4tmp.sh    ${D}${bindir}
-> -	install -m 0755 ${WORKDIR}/lib-bin-check.sh    ${D}${bindir}
-> -	install -m 0755 ${WORKDIR}/rpm-chksec.sh    ${D}${bindir}
-> -	install -m 0755 ${WORKDIR}/rpm-drop-groups.sh    ${D}${bindir}
-> -	install -m 0755 ${WORKDIR}/selinux-check-devices.sh    ${D}${bindir}
-> -	install -m 0755 ${WORKDIR}/selinux-ls-unconfined.sh    ${D}${bindir}
-> +	install -m 0755 ${S}/find-chroot-py.sh    ${D}${bindir}
-> +	install -m 0755 ${S}/find-chroot.sh    ${D}${bindir}
-> +	install -m 0755 ${S}/find-elf4tmp.sh    ${D}${bindir}
-> +	install -m 0755 ${S}/find-execstack.sh    ${D}${bindir}
-> +	install -m 0755 ${S}/find-hidden-exec.sh    ${D}${bindir}
-> +	install -m 0755 ${S}/find-nodrop-groups.sh    ${D}${bindir}
-> +	install -m 0755 ${S}/find-sh4errors.sh    ${D}${bindir}
-> +	install -m 0755 ${S}/find-sh4tmp.sh    ${D}${bindir}
-> +	install -m 0755 ${S}/lib-bin-check.sh    ${D}${bindir}
-> +	install -m 0755 ${S}/rpm-chksec.sh    ${D}${bindir}
-> +	install -m 0755 ${S}/rpm-drop-groups.sh    ${D}${bindir}
-> +	install -m 0755 ${S}/selinux-check-devices.sh    ${D}${bindir}
-> +	install -m 0755 ${S}/selinux-ls-unconfined.sh    ${D}${bindir}
->   }
->   
->   RDEPENDS:${PN} = "file libcap-ng procps findutils"
+>   int main(int argc, char* argv[])
+>   {
 
 
