@@ -2,56 +2,57 @@ Return-Path: <richard.purdie@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 082DCC25B75
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09659C27C43
 	for <webhook@archiver.kernel.org>; Wed, 29 May 2024 09:48:29 +0000 (UTC)
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
- by mx.groups.io with SMTP id smtpd.web11.1302.1716940144557009256
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
+ by mx.groups.io with SMTP id smtpd.web11.1107.1716939632072223416
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 28 May 2024 16:49:04 -0700
+ Tue, 28 May 2024 16:40:32 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=ms/KRFz0;
- spf=pass (domain: gmail.com, ip: 209.85.215.174, mailfrom: geoffhp@gmail.com)
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-65c5a29f7f0so1156509a12.1
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 28 May 2024 16:49:04 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=fsoZeefj;
+ spf=pass (domain: gmail.com, ip: 209.85.160.46, mailfrom: geoffhp@gmail.com)
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-24cbb2b71b4so619586fac.2
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 28 May 2024 16:40:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716940144; x=1717544944; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1716939631; x=1717544431; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
         bh=0hf7yAr4LCGCs2wlrdSz/2UsCsCA+BAYkwnzyNa7Qvc=;
-        b=ms/KRFz0YuTEPlGKMIigULxEqTNU8tYrFDd8BlYGtUOV4dtoYi7fjTI8jc8xrkLUd9
-         DXfFiGNSjeAzc/YMLNrWn7OdCmkgImWfAKFmco8xh0SEh06w82e+aL83S8sW/1LxoriT
-         BF3uQKQfPuwbbsal2YdJrpiL7F6QvgeWI+SLnXImRvHO1Fffwbe9EGiJo4Z3UB47lK2e
-         HwvJ/n/3dzbnQ6fHbRyafjZPiSTC3MVv55OrRR4BbVZe+hlsbUnhxy/ty8804pWN4j0u
-         lG5NimMC8HOvDTEtk6ze8V4+rYfwzC7WuRzyLJo6DRgGNIooSf56KGwpahPR+r7041Fj
-         N81w==
+        b=fsoZeefj1QO1bLjuHvflIKziMZza3xjFBnEZu25ztKprHb0otEDlla3LzGny9yqrFN
+         mCX86ZJ7reP1o6ORMhFLQVJT8a/2GpxD8Fw0HqSkVY6RJaevBGwxxAlFMGLZUv9kVoZT
+         xhzKBIPPvP/uXiSXhSeBPy1LNd8h+cGonr3fXvpgsYYVzndzjikwSFjUNCm5TsXasfi7
+         hPer1cfOdL0ILzl/J9Z4Fj6SCSsn/jwsJ5Xv8N9iQLMMIi5dth5nBp+IEOv3gPHji1Ts
+         LLDscccMnBkEfG5aCjOCgQm+elZ4Is9iUMNPB5aX5oeshsrREXhMfRPra+tNCm6meqiE
+         LexA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716940144; x=1717544944;
+        d=1e100.net; s=20230601; t=1716939631; x=1717544431;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
         bh=0hf7yAr4LCGCs2wlrdSz/2UsCsCA+BAYkwnzyNa7Qvc=;
-        b=pJ6yE7BF7sw2LdHov6DWbHH5sgWkrYVhA0lEmm6O0BN4eGlO8rhPfdMc/j2fL3AlED
-         Gm7mM6wGBvOxih8sTr7x1P3Qq+HDdK715oRxOMQicmv0PQ2QGqnSLtqvVEX4R0Lipa4h
-         HoHVDIMLWNJ+MlCUjqiZ+UtZ8XOx7ow3kyBxiHG8hW1FWT31NAVhLnxK2hAfwz0SnywN
-         yAoNC9fTb1bFFwNGZPOVKexvmzponRoOc+dk1hlKcFywszJgfDSQaH9W6zWituyroziK
-         BQspAo3EVv4d17bT6FOYhHoebyYkogQe3nT6n1nx+1IxFINsMQyGZRtscAq87PGeNcS+
-         3k7A==
-X-Gm-Message-State: AOJu0YzWR0tgWsye1EBdf4jcF1rKRdiouov3J43nr2NuJ433V49n5WNZ
-	D0AEHg9hPT1T7iS8+v0V9ovuP5as+hqs2n514KwAExmIXjSoX5RWBKB3iqc7
-X-Google-Smtp-Source: AGHT+IGcqb3D7nTgzfowlvMNBQdkJwbXcP6jQhIczEXdHgGY3yD6C6kZD0ii42QWHDCuahTkqmgD9g==
-X-Received: by 2002:a05:6a20:d498:b0:1af:667c:38cc with SMTP id adf61e73a8af0-1b212cc76a0mr17088435637.5.1716940143512;
-        Tue, 28 May 2024 16:49:03 -0700 (PDT)
+        b=T0DqMWKu57+MfogS1cOhE/xhmHPTiLKJufhGQ/YqiejyvPumlXfftDTZ8Yp2ij7XYL
+         0/xu6eNFyNVojHRb61zZu+g6x8ATh/XBYcFCy2Uoj9PlaWaJCOclBlPr2LC1F7m3wTF1
+         MjagmbsDwhn2zv8sE/Oi/KzZZyuzFLS6hHUkhFEcK9ixvvmhLtqBeqfzx/WU9G6Vq0Do
+         tngtElH9wDMZcDQvKMMR6FRxstWz/oKjBkqTbSCKIQgtRLXsfucKUEPJyrKggBB1+EAM
+         A+DA3300tfswiadDSeDm5lA6JQnX8StFgNtrWDy6e0r1YX4DU/eFyeN3QE/GQqpNTJ2O
+         iTMg==
+X-Gm-Message-State: AOJu0Yw/y0pEYcHb9T/EWpBPUYD8Q5vxq5hqTfmW2ljnsoBmldcfOTAa
+	raUCLmR9ognm+PRj6cVZlMirHzAtplrZyDSE1/SugHKCAIdb9v/X4CHwHVIm
+X-Google-Smtp-Source: AGHT+IE+Kak1rAr+PrvlG6z2ZVWrca1hwgIQpPjZlmwtGC37h7KBtqTUncrlJvp6Sf9/CukFt/3Qzw==
+X-Received: by 2002:a05:6870:d248:b0:24c:b93d:a4d with SMTP id 586e51a60fabf-24cb93d4c09mr12670782fac.17.1716939630915;
+        Tue, 28 May 2024 16:40:30 -0700 (PDT)
 Received: from localhost.localdomain (syn-023-241-067-081.res.spectrum.com. [23.241.67.81])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f8fc36d274sm6939544b3a.81.2024.05.28.16.49.02
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-682227f1838sm8074148a12.46.2024.05.28.16.40.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 16:49:03 -0700 (PDT)
+        Tue, 28 May 2024 16:40:30 -0700 (PDT)
 From: "Geoff Parker" <geoffhp@gmail.com>
+X-Google-Original-From: geoffrey.parker@arthrex.com
 To: yocto-patches@lists.yoctoproject.org
 Cc: Geoff Parker <geoffrey.parker@arthrex.com>,
 	Geoff Parker <geoffhp@gmail.com>
 Subject: [meta-java][PATCH] Yocto 5.1 (styhead): S = ${WORKDIR} no longer supported
-Date: Tue, 28 May 2024 16:39:20 -0700
-Message-Id: <20240528233920.464989-1-geoffhp@gmail.com>
+Date: Tue, 28 May 2024 16:30:32 -0700
+Message-Id: <20240528233032.464865-1-geoffrey.parker@arthrex.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -59,7 +60,7 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Wed, 29 May 2024 09:48:29 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/246
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/245
 
 From: Geoff Parker <geoffrey.parker@arthrex.com>
 
