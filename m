@@ -2,110 +2,116 @@ Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30A7DC27C52
-	for <webhook@archiver.kernel.org>; Tue,  4 Jun 2024 18:04:23 +0000 (UTC)
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
- by mx.groups.io with SMTP id smtpd.web10.2905.1717524255836834343
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1724C27C52
+	for <webhook@archiver.kernel.org>; Wed,  5 Jun 2024 17:23:18 +0000 (UTC)
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+ by mx.groups.io with SMTP id smtpd.web10.21852.1717608196366233364
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 04 Jun 2024 11:04:15 -0700
+ Wed, 05 Jun 2024 10:23:16 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=e9pzduFm;
- spf=pass (domain: gmail.com, ip: 209.85.219.51, mailfrom: twoerner@gmail.com)
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6afbf5b88ecso11969346d6.1
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 04 Jun 2024 11:04:15 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=afga8VHB;
+ spf=pass (domain: gmail.com, ip: 209.85.160.178, mailfrom: twoerner@gmail.com)
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4402c88390dso14061cf.1
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 05 Jun 2024 10:23:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717524255; x=1718129055; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1717608195; x=1718212995; darn=lists.yoctoproject.org;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DVa6UtKvDheCLphEXDDOveMdvRVNDTqTM85i4GgQh3E=;
-        b=e9pzduFmm/UpIr3Pj1Tlwytu5Ndei6yXTKuohm+2rd8b2eu/ekXSdsuyrRf1QGA/Ya
-         nlJfDE7pG2HQkA5kg5VDW53SVErLDgKrW6DWDmfSBIIe+2plxwulZbESudedp5HmDFDJ
-         tXCAbgMlIXXvrSKaI3OBwBhg3W8SPoBoeyR/z2I/EKzhWHkp1tfKU9JXmNj8qorTZNCJ
-         l/MmwMVJbwXCSCq07142JqcVhv18Xp0vC4rXTB68LNmoQp1tJ+TihZ9mDA+zpvz7jSe0
-         AELuuloIv/QGBbsC/R+moN4q6Xzr0TXW6/CLOnFPl53HP/7/Eed/vQmTqA8VbgCAHlSi
-         peCg==
+        bh=F6+MAbflPzCDFAOK3FmJrKVC6Dbw7kTc/FFMjhFsrhw=;
+        b=afga8VHB9mYinG9k/L+I9Cng/DbhgnYRMfEIz5aeV97MB/wQkvaMm57I5nvVe7H0n0
+         +mKiHCGLrD8yhjQKxzKgj1Uk3HreQ3SgqWjq0jY3EdqKrx+v+YYPP9z90D4MpNctMvHN
+         5DplaN0eBJSk3bdk0LcCpEf/lsYRE76pyuxJ4+I9tNuZOTbYu0HJWnAHzrm2cpwxf2wi
+         qHb0F758qA79wgGHWtU7wHZZnldLhWgOa/m55pSlxFhky9EJpDHiW9ncx6gU4h9N/Oh0
+         QQjBzWilqYe31N23vPCX6MimtwbeEF/Mxd8C7KsbdxEWw1BKoAIfjfJzWKo66v1j4Cmv
+         QCWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717524255; x=1718129055;
+        d=1e100.net; s=20230601; t=1717608195; x=1718212995;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DVa6UtKvDheCLphEXDDOveMdvRVNDTqTM85i4GgQh3E=;
-        b=lmNHU8Qsu2ecpBDjsxB/Zn6k5SEH0zP6r0/oxw0e3OOAFf7FhQf44P5bJwno1f1wR0
-         m81QNqGVYwHxuOSUA2gNzzRCUQADs7x2WzDL4DxJjTHAsgS9856pKDqTsQGi+AUzRpEp
-         35EiaGy40hz7LuMBexPws54qTAHER2P4h4mR053OmHTK99NUEpb/S+dRbo+obsx8MfO5
-         nO9wdYx69Voycu6FWdC84dQwDkdc9ObKWFqG1xV7pbepaq2N1M3SnWVgBIpYrb9F3oAB
-         4Qk4Tg+lgDvKoRA15c9UQQpOVS2lwCOvTCd0WK9+o4tZjPuIveLVPSpC3Sv7kcH39re8
-         cC3g==
-X-Gm-Message-State: AOJu0YwjmE5tl7pIvpcFeXs4LM0JXE0POxRrFJ7G0I2HIVl+hmAc1VH3
-	Mw/TmnIABLhOGX90JvMmWHkJGqBuBpgTimwmyXnIKodA5H1xaY74
-X-Google-Smtp-Source: AGHT+IE5Wax74BKYeuPz1S0XcSlcNOnVIxQ+S9tlDqL1R4mE/jXLXyG2c7OKLd/rHulii7a5Ot6psw==
-X-Received: by 2002:a05:6214:3a87:b0:6ae:3c78:3f08 with SMTP id 6a1803df08f44-6b02bf93021mr1240906d6.36.1717524254616;
-        Tue, 04 Jun 2024 11:04:14 -0700 (PDT)
+        bh=F6+MAbflPzCDFAOK3FmJrKVC6Dbw7kTc/FFMjhFsrhw=;
+        b=V5NHMeEewCLVdx1RxngAg/SwWam0m2MztsN34WMWWU8fI2dnsG3isdindX0qw/y5vG
+         hF4+RVYC0WHXRxv5/1pmIsE6Uyom5OfL9LLkozCgxI3wuEdUWDbSOMYznMALpddJnV3P
+         uiVMLSbtSjcwdc9Lx3hs49RgrEfCyA44lqcy1jdwWWaFOtYdMiHNi+sVa2zprcwUtbSn
+         MGzjj4T7CpzP20p8rlWpv2BJr06lk2HUC6IFOkZyDx5qVx+zQN3EZM2CvmIKdJwirpf+
+         Ac3nazzoClxQdUqyPVS7s3KOrdasRpG1NIUr2mIl3yhW3uyt1SElrW7LjzRLL6Cw1Xcd
+         jBhA==
+X-Gm-Message-State: AOJu0YzEDnQJdOQiLbDn4Ae2BN1M8unNfxqa03XJU4jJieQHSzzvtwdH
+	nZwws5ezzTbEX1F5uOF2VODfxwMnt15fwKfXerrXrxoWYnzsa2A8AaLKcQ==
+X-Google-Smtp-Source: AGHT+IFJWqvYQP0CT9vIXhAilRcsmpJuWluOtMAjPB1M230pfVAibU437jHQseZ+mB/NR0Jzhna9XA==
+X-Received: by 2002:a05:622a:24f:b0:43a:cfc5:f0a0 with SMTP id d75a77b69052e-4402b462cbbmr32438931cf.13.1717608194653;
+        Wed, 05 Jun 2024 10:23:14 -0700 (PDT)
 Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6af38de6cf5sm30045976d6.145.2024.06.04.11.04.13
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-440076218acsm43362231cf.34.2024.06.05.10.23.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 11:04:13 -0700 (PDT)
-Date: Tue, 4 Jun 2024 14:04:11 -0400
+        Wed, 05 Jun 2024 10:23:13 -0700 (PDT)
+Date: Wed, 5 Jun 2024 13:23:12 -0400
 From: Trevor Woerner <twoerner@gmail.com>
-To: Quentin Schulz <quentin.schulz@cherry.de>
-Cc: yocto-patches@lists.yoctoproject.org
-Subject: Re: [yocto-patches] [PATCH meta-rockchip] rockchip-extlinux.inc: fix
- non-fit KERNEL_IMAGETYPE image boot
-Message-ID: <20240604180411.GA7175@localhost>
-References: <20240527-non-fit-fdt-boot-v1-1-72bf2530547d@cherry.de>
- <20240530141144.GA23102@localhost>
- <cf4c218b-e40a-4ba2-bef2-318997d4adc1@cherry.de>
+To: yocto-patches@lists.yoctoproject.org
+Cc: Quentin Schulz <quentin.schulz@cherry.de>
+Subject: Re: [yocto-patches] [PATCH meta-rockchip master scarthgap v3 00/16]
+ various reworks around u-boot and rkbin + fixes for MACHINEOVERRIDES
+Message-ID: <20240605172312.GA11530@localhost>
+References: <20240531-rk3588-family-v3-0-629586621c5d@cherry.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <cf4c218b-e40a-4ba2-bef2-318997d4adc1@cherry.de>
+In-Reply-To: <20240531-rk3588-family-v3-0-629586621c5d@cherry.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 04 Jun 2024 18:04:23 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/275
+ <yocto-patches@lists.yoctoproject.org>; Wed, 05 Jun 2024 17:23:18 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/276
 
-On Fri 2024-05-31 @ 10:50:43 AM, Quentin Schulz wrote:
-> Hi Trevor,
+On Fri 2024-05-31 @ 11:25:07 AM, Quentin Schulz via lists.yoctoproject.org wrote:
+> This does a few reworks of how we handle TF-A and DDR bin blob
+> dependencies, hopefully in a way that makes it much easier to add
+> support for new SoCs without having to touch too many files.
 > 
-> On 5/30/24 4:11 PM, Trevor Woerner wrote:
-> > On Mon 2024-05-27 @ 03:48:24 PM, Quentin Schulz via lists.yoctoproject.org wrote:
-> > > From: Quentin Schulz <quentin.schulz@cherry.de>
-> > > 
-> > > On systems where KERNEL_IMAGETYPE is not set to fitImage, one needs to
-> > > either pass an DTB or a path to a directory where DTBs are located on
-> > > the rootfs.
-> > > 
-> > > When FDT property in extlinux is provided, FDTDIR isn't used (and
-> > > actually u-boot-extlinux-config doesn't even write it to the
-> > > configuration file).
-> > > 
-> > > When relative paths are used, they are relative to the directory where
-> > > extlinux.conf is stored[1]. Since the DTBs are stored in /boot, just
-> > > providing the filename of the DTB won't work because extlinux in U-Boot
-> > > will search for it in /boot/extlinux. We should therefore either use ../
-> > > prefix for relative paths or use /boot to make it absolute. /boot is
-> > > more explicit and easily parseable, so let's use the latter.
-> > > 
-> > > [1] https://wiki.syslinux.org/wiki/index.php?title=Config#Working_directory
-> > > 
-> > > Fixes: d80fa46c42f2 ("rockchip-extlinux.inc: handle multiple DTs in KERNEL_DEVICETREE")
-> > > Fixes: 3b51866f2251 ("remove /boot partition")
-> > > Fixes: 13316b796814 ("KERNEL_DEVICETREE: 32-bit re-org")
-> > > Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
-> > > ---
-> > >   conf/machine/include/rockchip-extlinux.inc | 2 +-
-> > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > Reviewed-by: Trevor Woerner <twoerner@gmail.com>
-> > Applied to meta-rockchip, master branch. Thanks!
+> While at it, add an SOC_FAMILY entry for rk3588s/rk3588 boards.
 > 
-> Thanks!
+> Additionally, make rk3308 use the PREFERRED_PROVIDER mechanism to select
+> rk3308-rkbin instead of rockchip-rkbin.
 > 
-> Can we backport this to scarthgap too? How do you want to proceed? I send a
-> new patch with [scarthgap] in the title?
+> Finally, fix a few MACHINEOVERRIDES ordering issues.
 
-Done!
+Here are the new MACHINEOVERRIDES (with these patches applied) for all the
+MACHINEs we support (with rk-u-boot-env enabled):
+
+	MACHINEOVERRIDES="armv7ve:rockchip:rk3288:firefly-rk3288:rk-u-boot-env"
+	MACHINEOVERRIDES="armv7a:rockchip:rk3066:marsboard-rk3066"
+	MACHINEOVERRIDES="armv7a:rockchip:rk3188:radxarock"
+	MACHINEOVERRIDES="armv7ve:rockchip:rk3288:rock2-square"
+	MACHINEOVERRIDES="armv7ve:rockchip:rk3288:tinker-board:rk-u-boot-env"
+	MACHINEOVERRIDES="armv7ve:rockchip:rk3288:tinker-board-s:rk-u-boot-env"
+	MACHINEOVERRIDES="armv7ve:rockchip:rk3288:vyasa-rk3288:rk-u-boot-env"
+	MACHINEOVERRIDES="aarch64:cortexa72-cortexa53:rockchip:rk3399:nanopi-m4:nanopi-m4:rk-u-boot-env"
+	MACHINEOVERRIDES="aarch64:cortexa72-cortexa53:rockchip:rk3399:nanopi-m4:nanopi-m4-2gb:rk-u-boot-env"
+	MACHINEOVERRIDES="aarch64:cortexa72-cortexa53:rockchip:rk3399:nanopi-m4b:rk-u-boot-env"
+	MACHINEOVERRIDES="aarch64:rockchip:rk3328:nanopi-r2s:rk-u-boot-env"
+	MACHINEOVERRIDES="aarch64:cortexa72-cortexa53:rockchip:rk3399:nanopi-r4s:rk-u-boot-env"
+	MACHINEOVERRIDES="aarch64:cortexa76-cortexa55:rockchip:closed-tpl:rk3588s:rk3588:orangepi-5-plus:rk-u-boot-env"
+	MACHINEOVERRIDES="aarch64:rockchip:closed-tpl:rk3308:roc-rk3308-cc:rk-u-boot-env"
+	MACHINEOVERRIDES="aarch64:rockchip:rk3328:roc-rk3328-cc:rk-u-boot-env"
+	MACHINEOVERRIDES="aarch64:rockchip:closed-tpl:rk3568:rock-3a:rk-u-boot-env"
+	MACHINEOVERRIDES="aarch64:cortexa72-cortexa53:rockchip:rk3399:rock-pi-4:rock-4c-plus:rk-u-boot-env"
+	MACHINEOVERRIDES="aarch64:cortexa76-cortexa55:rockchip:closed-tpl:rk3588s:rock-5a:rk-u-boot-env"
+	MACHINEOVERRIDES="aarch64:cortexa76-cortexa55:rockchip:closed-tpl:rk3588s:rk3588:rock-5b:rk-u-boot-env"
+	MACHINEOVERRIDES="aarch64:cortexa72-cortexa53:rockchip:rk3399:rock-pi-4:rock-pi-4a:rk-u-boot-env"
+	MACHINEOVERRIDES="aarch64:cortexa72-cortexa53:rockchip:rk3399:rock-pi-4:rock-pi-4b:rk-u-boot-env"
+	MACHINEOVERRIDES="aarch64:cortexa72-cortexa53:rockchip:rk3399:rock-pi-4:rock-pi-4c:rk-u-boot-env"
+	MACHINEOVERRIDES="aarch64:rockchip:rk3328:rock-pi-e:rk-u-boot-env"
+	MACHINEOVERRIDES="aarch64:rockchip:closed-tpl:rk3308:rock-pi-s:rk-u-boot-env"
+	MACHINEOVERRIDES="aarch64:rockchip:rk3328:rock64:rk-u-boot-env"
+
+For uniformity, would it be nicer to have all MACHINEs include the SoC
+OVERRIDE?
+
+Other than that this patch set looks great!
+
+I'm not overly fond of the name "u-boot-rockchip.inc" since it sounds like
+it's an inc file for building the rockchip vendor fork of u-boot, but I can't
+really think of anything that is obviously nicer.
 
