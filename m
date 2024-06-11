@@ -2,94 +2,95 @@ Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14B27C25B76
-	for <webhook@archiver.kernel.org>; Tue, 11 Jun 2024 13:29:57 +0000 (UTC)
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
- by mx.groups.io with SMTP id smtpd.web10.9641.1718112588516998667
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32704C25B76
+	for <webhook@archiver.kernel.org>; Tue, 11 Jun 2024 13:43:27 +0000 (UTC)
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+ by mx.groups.io with SMTP id smtpd.web11.9923.1718113397686138866
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 11 Jun 2024 06:29:48 -0700
+ Tue, 11 Jun 2024 06:43:17 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=EJ9TSTIm;
- spf=pass (domain: gmail.com, ip: 209.85.128.169, mailfrom: twoerner@gmail.com)
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-62a08b250a2so52778077b3.3
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 11 Jun 2024 06:29:48 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=b78OtoEb;
+ spf=pass (domain: gmail.com, ip: 209.85.210.45, mailfrom: twoerner@gmail.com)
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-6f9866bd5ccso599031a34.3
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 11 Jun 2024 06:43:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718112587; x=1718717387; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1718113396; x=1718718196; darn=lists.yoctoproject.org;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CXxY1x4vcERWys7QKI1hTrtfLT58w7dXCiSV8CtF2Wo=;
-        b=EJ9TSTImqi3DsFZepjW9UNcUpGVr7cu7AlzJMmb5I7R1GRUbCR6Ztdf7L3CtQZYPnp
-         QHO/puxTi6QDThdhyLSKH+WFMgAB3PsUMua7ipaY/IDyp/34ygE6VtZdT88+ob9OTR/z
-         cVW5pIQ8Smc6h7zf8LFDQbMhe63rmrsnl6bizjvN6DAp4Z3P6/RQGAv7VflcQlXAdZan
-         SsyM6HYBgl66IbWa8I6ZKtGG4i9jR0zqig3jnVwiXsJrgza16NNPa1CnZPhHxbrnPQ8w
-         8YZF00x8uRNCStbDVTlHJ05VkrTz9DmXvDQJMzfoIxMMr5Qe8oVl5dhwb3jv9QzFBEgG
-         7xHw==
+        bh=DFblFEVBOjk00BxpssF30hU+T9/pDli+nJIvS+qwhJo=;
+        b=b78OtoEbzWTnYhycP6CYgNoBh4HrvKq6biuqn0Rq39qTTUPp4MnE1cHwCev2nORX/3
+         rj057VFYVBveG+TLMXe07HXJ8m696AS2TS2lurgnbGJvstc4rjBa/GkmiAheHdUEqIZo
+         XCRw/xQ9Z5kcAmWX0ma7MNrkUX80C3leL0B9GqIrmNmevwdc+6u2+uyCpMho8OToQJmk
+         +xXuWUQZnHdAnajS5sFxQveQRZqZDKCZrSpZknnD69y/NKeGJeHRRebAjP5eozQ1KiWR
+         MW6rWh1s3TX4arK/qNon/G6YusitMrdSCTpf9KS1HTvwpqWIjtob56Cyd8ijV5YcilR+
+         s+Fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718112587; x=1718717387;
+        d=1e100.net; s=20230601; t=1718113396; x=1718718196;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CXxY1x4vcERWys7QKI1hTrtfLT58w7dXCiSV8CtF2Wo=;
-        b=inYDA+6k+vB28U1xr7oKk7dSHExbA2riv3zMtEyKU7J/sTTANT966DXiEF/vqFhp9u
-         rSYlcZMQITtXqQqI0u9e3WxWk4MxsUwByn+yIeKxJUUSLaeqgf/YucYpZCWU1fN6SKRq
-         pwGQu8Jqa74qDA6ALKS2py+RLAWjFtBDCjrGZjH8J2PU0sB5XhEa9mMCvfUiQjV6kISP
-         YGSsJMO7aWVvB+9c7Pb4qb0xYlragwPz69kqmr0xZeirTU2x4f0Rs245YP7GqH7j3Mr/
-         L3gXA9DATRjLvmHrKfykkoqr+5GZV9ooTPmP5LMxdIPU3SFrHTphsp90BlzpIdary43i
-         BxTA==
-X-Gm-Message-State: AOJu0YzjN5enme+W9k0AFV9Z3XavYDIDqLb3YUdGEkn/V+z5zMLStq2s
-	Wj5wKd2eeDeXIv/38ebj6PtsViLyCv3kIFvzQ2nQQMgyS7X4vtY/qEYOQw==
-X-Google-Smtp-Source: AGHT+IEU6EWYEE+dP/Ai0tWjEbZTGEH8ygBSmA2tCbegDI4q1J8WhpPmsOayYxWXlGUF77+GXgZjPw==
-X-Received: by 2002:a0d:f906:0:b0:61b:1c6f:830e with SMTP id 00721157ae682-62cd5667c86mr112039147b3.43.1718112587007;
-        Tue, 11 Jun 2024 06:29:47 -0700 (PDT)
+        bh=DFblFEVBOjk00BxpssF30hU+T9/pDli+nJIvS+qwhJo=;
+        b=N5dbt2O0tMFieamKst6BHGJPZjKIYwbGM0nzj4axkIcQZzRx5B6ZUls7WWMQoseUJe
+         v2YrDP2xRRf0E3Q+sx9XO+yxM15XE2SU/fCJrUATzk5kv8jGtO8OXVbJ8q0/vIcnZGbK
+         k00tt4oNwO4/uvwvynAIBoTAqQSH5Z4+JBsSEQRsanXYnOu3kxFifAszEUqMWuT57pk4
+         8zg/IR2SwLcdBjYGhOmhnNja3/RoGZgGRDCmefmqFFzInN1f03uMh0pf+IqIOu5DSonQ
+         Sjin2ckIQKRCry9445VaTpLIY+7oXDP5GZU25XDS95H1Ur+F+TLF27Hqki8jxKDX0TNh
+         lJ9Q==
+X-Gm-Message-State: AOJu0YwJANWhu6myHpnpdS1J+UmhVu+0Fxuaf4RYcEIv+YqfwACuH+Pq
+	RjnjEAy8/scZk1rBEGDjLMqnLS83ua6nzacAlvBQwBMS5hzDy9TAY2swoQ==
+X-Google-Smtp-Source: AGHT+IFRs8Q3NWPnS0ZKQHPiE02TeDsrFLiU3CjwetDxhi8Up0bYs8sEECtRY+UkCIVzp1jHg62/Jw==
+X-Received: by 2002:a05:6830:1112:b0:6fa:25c:2e05 with SMTP id 46e09a7af769-6fa025c2ee1mr922277a34.15.1718113395938;
+        Tue, 11 Jun 2024 06:43:15 -0700 (PDT)
 Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b0634147b9sm42711566d6.145.2024.06.11.06.29.46
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7955ad3b9b5sm274209285a.85.2024.06.11.06.43.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 06:29:46 -0700 (PDT)
-Date: Tue, 11 Jun 2024 09:29:44 -0400
+        Tue, 11 Jun 2024 06:43:15 -0700 (PDT)
+Date: Tue, 11 Jun 2024 09:43:13 -0400
 From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Quentin Schulz <quentin.schulz@cherry.de>
-Subject: Re: [yocto-patches] [PATCH meta-rockchip 0/2] enable Panfrost on
- RK3328 and RK3568
-Message-ID: <20240611132944.GA39107@localhost>
-References: <20240531-mesa-panfrost-v1-0-84e23ae9a600@cherry.de>
+Subject: Re: [yocto-patches] [PATCH meta-rockchip RFC 0/2] add support for
+ Panthor
+Message-ID: <20240611134313.GB39107@localhost>
+References: <20240531-mesa-panthor-v1-0-8cfb4d17ad3a@cherry.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240531-mesa-panfrost-v1-0-84e23ae9a600@cherry.de>
+In-Reply-To: <20240531-mesa-panthor-v1-0-8cfb4d17ad3a@cherry.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 11 Jun 2024 13:29:57 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/294
+ <yocto-patches@lists.yoctoproject.org>; Tue, 11 Jun 2024 13:43:27 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/295
 
-On Fri 2024-05-31 @ 02:48:13 PM, Quentin Schulz via lists.yoctoproject.org wrote:
-> Note: I do not have access to any RK3328 or RK3568 device so I could
-> not test those patches.
+On Fri 2024-05-31 @ 05:30:24 PM, Quentin Schulz via lists.yoctoproject.org wrote:
+> Panthor is the open-source implementation for the Arm GPU Valhall series
+> both in the Linux kernel and Mesa userspace. In the latter, the panfrost
+> "driver" is actually handling this version of the Arm GPU. One therefore
+> needs to enable kmsro and panfrost in PACKAGECONFIG to be able to use
+> this open-source implementation.
 > 
-> Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
-> ---
-> Quentin Schulz (2):
->       mesa: enable lima on all rk3328 boards
->       mesa: build panfrost for RK3568 boards
+> The open-source implementation still requires a proprietary blob which
+> is running on the GPU: mali_csffw.bin. Note that the closed-source
+> implementation (libmali and vendor kernel drivers) also require this
+> blob.
 > 
->  recipes-graphics/mesa/mesa_%.bbappend | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> ---
-> base-commit: 3381d6af6eabfb532da16863b785a95abba6b9e8
-> change-id: 20240531-mesa-panfrost-f975f1251b6c
+> Right now, we're still missing a linux-yocto v6.10+ to be able to test
+> this with everything upstream in Yocto/OE, but I was able to
+> successfully test this with kmscube on a downstream kernel (6.6 +
+> backported patches for GPU and custom patches for DSI support) on an
+> RK3588 Tiger.
+> 
+> Additionally, the following patch series is required from OE-Core:
+> https://lore.kernel.org/openembedded-core/20240531-panthor-v1-0-1a76fd752c1b@cherry.de/T/#t
 
-I have a couple rk3328-based boards, but the rock64 is the only one of these
-that has a video output device (hdmi). So I guess if someone really wants to
-build a graphics-based image for an rk3328-based board that doesn't have a
-video dongle, then I guess they would want panfrost too (?)
+I would prefer to commit a working patch rather than pieces.
 
-It's been a long time since I've done any graphics stuff, I have a rock-3a
-that is rk3568-based but couldn't get x11 nor weston/wayland working. I
-probably need to do more fiddling.
+I.e. if you want to add the necessary patches indicated above into
+meta-rockchip so that a working image can be generated without any additional
+dependencies on other layers.
 
-Neither of these patches interfere with the build so I'm okay adding them.
-Would you also want them on scarthgap as well?
+Would that be possible?
 
