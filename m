@@ -1,182 +1,114 @@
-Return-Path: <quentin.schulz@cherry.de>
+Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 643C5C25B76
-	for <webhook@archiver.kernel.org>; Tue, 11 Jun 2024 14:31:37 +0000 (UTC)
-Received: from EUR02-DB5-obe.outbound.protection.outlook.com (EUR02-DB5-obe.outbound.protection.outlook.com [40.107.249.112])
- by mx.groups.io with SMTP id smtpd.web10.11176.1718116292166668445
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F039C27C75
+	for <webhook@archiver.kernel.org>; Tue, 11 Jun 2024 14:57:07 +0000 (UTC)
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+ by mx.groups.io with SMTP id smtpd.web10.11825.1718117821433339316
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 11 Jun 2024 07:31:32 -0700
+ Tue, 11 Jun 2024 07:57:01 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@cherry.de header.s=selector1 header.b=XvGMUzdr;
- spf=pass (domain: cherry.de, ip: 40.107.249.112, mailfrom: quentin.schulz@cherry.de)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IiTKY0ha5jzYZMEy/kI8ldUvF6cK4kk0pT7QdZ7kqkeAMAMG/4crW/sudpgobeuJLzDmijiSkThiNR77gBj4nbK+KLvzWSJ0r9aOo/DRK9akKm0wD9aZvywUHbHA1K6hud4PFf/eTOFiLkdong59KBg+uUOXQhqFcjD0+FjIQwvdATNCRhCWw8+zLnKVgbEyv0OoUvLZyXCZX2Z0A0qtlRF2MHG3/9DLC9l4U2jvfgmFl/fzgR5W18WwWRj3rUoM1f4hF9Owe1u1jU5wtFAMk2wgSNTNhGLw8ICidrBvJx0X8cKLvIFH2VrUCmjG8YJyWaumviG6qrBz967jpc6o4g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tIm58X6peEkvXXQ5wL7vE+kT2AyNhA6P+T5oVNpQZVk=;
- b=VB0vFOt7p31J2p5JbTp3oNPJpGgIoNXjFjV54umiPuaMpkYVyRc7aLMrje7aJ17mgZheStZLBvHgAaFZwgYvNaNlDl4PTNbQJeMLl2xR2KxNA4VcDtXHChCAeEO20qxk92LSd/1x+Gk6E0c38o5wesVxGnqDUNFukST72k92JOgj2RtWLnadHvSUkmYEU7KEHNrfwRl7KUPZ9fHFpClJdwxPBfndtlaGv8JgErbE5vdxbtAWlNqXqyH4BGXysfTH6nhEOyAURNBoAG+7oiP4xSmHpuqj1yqtWnrZAG2r0ScqpkXIlJ5OvWzoEJq9gupvYkZSJ1m/ak/0pmYcceinjA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tIm58X6peEkvXXQ5wL7vE+kT2AyNhA6P+T5oVNpQZVk=;
- b=XvGMUzdrQeGGNj25Cv98eDWIlbyBHfOUGCt7JxbG6LK5sdQY7enPMWJLY+cRlHFkMjQRmx9Xk3f3855UgD0Ov3ugnzVrBVyeutUzpwYoo/Cob1Nlg5wnwstvHczRItZ2KrmK0cpM622eihk3J/hdLSFY45Ye2zl3pGYGpZJ2q/Y=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from PA4PR04MB7982.eurprd04.prod.outlook.com (2603:10a6:102:c4::9)
- by AM9PR04MB8437.eurprd04.prod.outlook.com (2603:10a6:20b:3dd::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Tue, 11 Jun
- 2024 14:31:24 +0000
-Received: from PA4PR04MB7982.eurprd04.prod.outlook.com
- ([fe80::3c4:afd5:49ac:77af]) by PA4PR04MB7982.eurprd04.prod.outlook.com
- ([fe80::3c4:afd5:49ac:77af%4]) with mapi id 15.20.7633.036; Tue, 11 Jun 2024
- 14:31:28 +0000
-Message-ID: <61fc0c47-d17b-4254-832a-83c4c9d37c97@cherry.de>
-Date: Tue, 11 Jun 2024 16:31:26 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [meta-rockchip][PATCH] user-selectable wic format
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=Q1/Mx5EP;
+ spf=pass (domain: gmail.com, ip: 209.85.222.172, mailfrom: twoerner@gmail.com)
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-795a4fde8bfso64502185a.2
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 11 Jun 2024 07:57:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718117820; x=1718722620; darn=lists.yoctoproject.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jWBox+bokAaV4EOHVIh9UWIdVBg9xGLhmf86qwoVw94=;
+        b=Q1/Mx5EPaMFbrUWHIWdmSSRGVvLyrKb/3UTF6ts2PP62F+RFgtjI47MZKoyOjJxyu8
+         SSodYObVdQxn44jFcwlEEFjkrnSRjQtMJg1M6SpZgvYWyFZ7dv6jr9mwaQYJiKQrp23t
+         vkq1ECX60DSAGlWnxL9LEpXi+B8734kCCLO2JY05peJltqyfu94g91MtgVKmzcw+DNpn
+         fFDiIy8rTrA+RavldJCwyP+HysV7JL/o2r5GK22bbkdqMS93I7y2St34H9EncNrw/ycP
+         bADvWB3SfCpIXXJpl0s8H8TukP4ETA0btkb7tMXLnu5LEkvp9qGKZncCWpNjWMBbOOfx
+         kMjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718117820; x=1718722620;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jWBox+bokAaV4EOHVIh9UWIdVBg9xGLhmf86qwoVw94=;
+        b=jsES0unAEq7z4LkPtphVc5v/KvMkc6sySwABqBeHtNo+jqnbgf7Ga2pyIoYB+0XhHi
+         sZO52ICUIxHMg5G231K+6ouXxtmaLyW237xSlduzNGykcXCoa8fS0xGdHQDoPQ7DHEDn
+         QygfPROW3qBQzBlqD/WLdEL4kMCiu7HLvB8G/s6t+r0TklBi0LRQerq9tc8vxOqyhxXs
+         kfyIiqIy0NAVG/sEv15zhEAhIokPGrapgBlezEwx91XDdwqwYU5r7BqVafcVoJca8BfJ
+         QSV1f6DDXoSh45uwNrNN0pnq3fp8Ie0ZMWOCINPwyBqtc5TbApGmy5mXKwsTDrfjTGmF
+         8eTg==
+X-Gm-Message-State: AOJu0YyHnXL6IgmEwajQZttUILvyaQZNb058utrgDtuZKyjlBL2J/Nqs
+	pjKZzY0zE2CRME+mGXH6hQP/5UlAu5zB4LiZPDm64fR8eILGYHWR1TZ1Ag==
+X-Google-Smtp-Source: AGHT+IEd7TM1bMbRAgycemu4X2jI+QbBI5c86Cc3dfgVBT3wOnwFjGQyE1q5hzXAMs0XUU4DxDBvcw==
+X-Received: by 2002:a05:6214:5902:b0:6b0:86a7:cd36 with SMTP id 6a1803df08f44-6b086a7ce68mr44569236d6.35.1718117819466;
+        Tue, 11 Jun 2024 07:56:59 -0700 (PDT)
+Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b0860ffaafsm15016806d6.39.2024.06.11.07.56.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 07:56:58 -0700 (PDT)
+Date: Tue, 11 Jun 2024 10:56:56 -0400
+From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-References: <20240611141540.4209-1-twoerner@gmail.com>
-Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <20240611141540.4209-1-twoerner@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: WA1P291CA0023.POLP291.PROD.OUTLOOK.COM
- (2603:10a6:1d0:19::7) To PA4PR04MB7982.eurprd04.prod.outlook.com
- (2603:10a6:102:c4::9)
+Cc: bruce.ashfield@gmail.com
+Subject: Re: [yocto-patches] [meta-rockchip][PATCH] linux-yocto-dev: fix build
+Message-ID: <20240611145656.GA7654@localhost>
+References: <20240611140607.2719-1-twoerner@gmail.com>
+ <7c50adeb-c82b-4a7d-b663-8f73a63ae5b3@cherry.de>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PA4PR04MB7982:EE_|AM9PR04MB8437:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3c3ef8fd-1a0d-4503-b9e6-08dc8a232e5c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|366007|376005;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?d2dsL2VvK3FJV1lubkw0RDFMVHRsQ0xab2k0Wk9LaUtXb24zY3ZzMDRpNGxl?=
- =?utf-8?B?M1Q3MWdCT09BK2Y1a0hNUlBKYiszRTJBVThjL1I5Rzc3dldjb1FJdjhVR0l5?=
- =?utf-8?B?QUJ1TWNySmszQlpmOEo4eUNxRWV1dUxlajhxcGkzenhQanJ2T0Q2WU9wVUUz?=
- =?utf-8?B?NlErV3I4NmNUcjNEMzEyVzhHZ0p4NzAzQmNaZ0VxcVBoWVRMWndhMkg5WkY3?=
- =?utf-8?B?Tk1xamk2K2hoZjI3RlRnZHFIV3V1RXRnOHl1VEJiM3pCNndlTjl0OXY0amlI?=
- =?utf-8?B?Umdjblhsalg5VWV1QllLZGxISlpIUVVocjd1Q2V4VGpCYXRONmJZVjIycUdL?=
- =?utf-8?B?SGxuWU9lMGQ1VTIrOWFCYnBYZ293MFdxdk9rK3pLNkRYRHZUVzhISkkySkJP?=
- =?utf-8?B?MlNKV3lGMWM5TXZDY3ZkR2djOG9FQXlvQkhpblBlU2N1dkV3VGEvSEZOcUdt?=
- =?utf-8?B?WC80L2J0V05YcUNIL1lVYUtIdG4xWGRVQzdiU2UyRlZMT3JCQlowa0FrN29T?=
- =?utf-8?B?NGMxY0xZL0Q1enV0eVhGUENuTjhqNFVySW9OZ2tPSkVlQm43a3JSYlp4ODVU?=
- =?utf-8?B?MjFoTjBxQVN0RVJtdEJ0ODkzYXpCaDJKc2dtcHRQbWg5dzVMd2ZZRUZDR3Bn?=
- =?utf-8?B?VS9QQWpOdUROOW9XVnZtZVV1UjJ5ZDBUaTREV3lBaDZ4OWpGWHhLUU14a0ZK?=
- =?utf-8?B?NG1mZEh4NGUxbzhHZGx2MnVEUHNKbFJMbHdmL2FxaXE4ZEc5TGY0Mzdta1Iw?=
- =?utf-8?B?VUhheDZzYnFFR3N5dTZvQ3UrYklXRTNDajhrUGlzSk9DOFJubmpnQWFSMTBz?=
- =?utf-8?B?NnM1M04xWC92OXpYYnJHNldORFdERzdzWVRUMEp2MnhGZTVNenlIU204Uzls?=
- =?utf-8?B?NWJMUHZXZjljd0xxNGhvckh5WnlUdmo2WXlGdmdiNEpYRmc3S2FlRjJOeW9u?=
- =?utf-8?B?V0VyYjNUTGhOU0ROYjhnamtJL2tYTnpoeXJKcHVqQyt4bXI5UDQyMG42WXk5?=
- =?utf-8?B?b1poVG9FRU5DM1NNdm5vRzFsU1VFcXhPTzh6OVhIcTJCelpabjF3MGF5bU5o?=
- =?utf-8?B?ZUQ2RjZqQnRodFFuTXl6ZVNJVlQ5b2hBbkpVTGhwUDhkdWN4Y2FPR2xvTkZj?=
- =?utf-8?B?QXFEWDIxMStIVVk3MUErS2VRbTZiQU5JVUhCUVFycFNGeTFEZUlGQXBmQ1RW?=
- =?utf-8?B?SjlVRFpCZ2JleFp1V3RuOWp6YWs5bjBnUWhWRzB0NXRXRXV5VmRqODFBWmw4?=
- =?utf-8?B?YllCZlJYTmpVM0o0bW0wSlYzemtqSmhPUTFUbkhGaDFlUTNhSVhEdHp3djh1?=
- =?utf-8?B?clB5V0JYZTE1VTdBWXdjS2xRRldhbS93TjFFc2piVE1wZ2tPRDloaUZ6RHdS?=
- =?utf-8?B?bzhyOUlUQWVXRzZxUXJNVzZFbDY1azdVbmdEcVFvOEcrcGhCOE9uQ2UzVFJi?=
- =?utf-8?B?aFlOYzRsYlpFYTQ3dWJLUDFmQ1F2dnkzOFlrR0pXNEloVmUycjBySVlKYTRT?=
- =?utf-8?B?cGQyWTJBWFpNRlNyNjloWWZSbkdac1FPVEdyeDVadHRQRitucEhodEk3UXNr?=
- =?utf-8?B?NXIvTFE2K2Z4RnFMOENsRXlWZC8yaG1iamVJa2NsS2lIcHBuL2Z4eTBZbjVW?=
- =?utf-8?B?a0g1RE5mMUJna3NQTU9JQ3lSMjZJY05raTdrTWk2Qnd1MVAxd3BhT21TS2RE?=
- =?utf-8?B?QjUycGRDV2VuU2RHdFRtZXZzSyszV2xzZkZTNFhhZGZjT1htK0t3cWlKM0tt?=
- =?utf-8?Q?h7IzQEwOALoYadZQUI=3D?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB7982.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?TXEzdm1GQmkwMTgzdHJEMnBCWWtBSkhqVEZGK1RyRDBicm5zSUNNNU5yN1Y3?=
- =?utf-8?B?NGhqb1A3ZTJldnpxelQwZmgvWUxHTlNFQk0rTllHTnZubEVuL1hLaWNUdTBo?=
- =?utf-8?B?dW01dzBmaXpvellVSEQ5UjAwRnpDUk05QTdFL1duWlJKM2RPSEZLa3QwQzFF?=
- =?utf-8?B?QXdua3NJd3lmcUUvME80cEx4SlUyRCsvazFId252ZHZYZWIxbmpwNE5mZTZC?=
- =?utf-8?B?NWhIVHMxM0NER3lPQ3J1Y2l3c0tyV2NmdXMzTG1idmg1MHREdkhYNTNxbWRk?=
- =?utf-8?B?Z0xONUdmd1FKV0RXaGZBUmVtWUNlcjVzcXFrU3RPdnZWWC9Sc3BWQkRCOVA5?=
- =?utf-8?B?SkJOWU4rc1FtYy9odis1cVRQcEEyZ1NPbE5YNDVkdmRGZzAxMXY5RWZKTm0r?=
- =?utf-8?B?bFdSTmJlYU41U3B1RTIvSzRzUVBHZXZrQmRZYys3a3hDT0ZqUy9kK0hRazcx?=
- =?utf-8?B?VVJsUlVlYXpoaWlmRlEvYUxMRXI3cFd4dnVFbWpHRGU4citrSWpDVk8zdTdm?=
- =?utf-8?B?TXcrY05rbWgxU1gvbFFpdXRVRTBvNlVXV0JHZGxkd3FDZzVJbm1QVExVbnN6?=
- =?utf-8?B?R3haOVBVZWFUQjVML1FYRFJQRjY2aVFDRDd2NkgzZk9QOEhtbDFnRkZORGQx?=
- =?utf-8?B?U25EY0NIVm1XTzBPZ2lqTzVKdzNGMER1Ni9ieFRGdHVSUUNPMGJnT3dOS2tE?=
- =?utf-8?B?bWdweGpoTE9Gb1ZMSmxvMnVSUktzMTczN2daWm16K0pZaHNlY05Bd0Q4VS95?=
- =?utf-8?B?REJaY0JGU3VQRkJ6L0ZNQ05xNVNuY1ZrY0VyQ1I0MGF5MmdvZTlQREJrSnhk?=
- =?utf-8?B?SFNwOXdmWVNDNFFNVnl3U1F5dTU5VXRCazcybVJCOFppZWxRTFdnaEczb2s4?=
- =?utf-8?B?OEpFY0VyZTZYUndtaGhDNUFTSllNeUd6VEo1OUZrbW5QVDNLVURBNUg4Z3dF?=
- =?utf-8?B?eUJBUElERnRDOHlhenpBNnM2TzkvVS9GNll3aU1sdUYvYk5Idm9yYTRXVEpl?=
- =?utf-8?B?SGJUVDBVQlRyY2JuT29nUjdDUVdDYUxGT1ViZ1FXa0RJY2JGZVYzMzkwdFRP?=
- =?utf-8?B?RGk1ZEE3QzZFYUNCSnVYSTN6Y01UZmFHREJmZm9OZC9nbmFRVUhYOEpvbHFm?=
- =?utf-8?B?OFprcHBVWFB4L3Q0WDFia1kvVUNZdFZKTUlLc0U5Tm15QnZzNk5ndWJuRWp1?=
- =?utf-8?B?UlpoZkFBVGpqdGV5NWhMNGFycXd3WmxqOUwrbkNNd1Y4eU83MzBJQ1JycFdX?=
- =?utf-8?B?ZnU0ZUI2VjNLNjF0WmdwQkpmMmhBdXpidDVOMmgyRVhpc2s5QklldEVSOUxl?=
- =?utf-8?B?ZmVtVU9Jemc4SDI3UDhUeUhhUHppR2g3aEhOTGd0UmJxc296SW9zazRVWGly?=
- =?utf-8?B?TVFPS2N4U2pTMG5yMjNST1NZV3ZYb3ZTWWJucGFtU0JqeEdWQUV4WG1hVTJl?=
- =?utf-8?B?LzlRTG41cTNFc3VPTFZrWTFUR1cwYm5aWGhoYmJUNGt2Q0lIRVYxUTRQV1hV?=
- =?utf-8?B?RnJvcG1zekpMaWx5WVRjZ3hJWHhJeG1lTml0QzFYUWw4SkVmdmNzemxWVlhX?=
- =?utf-8?B?bkNXVmd2UFhrYWNiSmYxNFlwRGMxeDNYMVJqQm44VEhYd0owUDZwM2E5elZ4?=
- =?utf-8?B?TTdlUEFnbERHaGlBV29jWVV6QmtLQi9Vdm05cTdVOGpxYjBCcUZ3a1VHSnNT?=
- =?utf-8?B?bS9ycHQwSWgxRHQycm1kenhYNUhjR1RrVXlla2VHZTR5QldoeXdPNWVnR2Vs?=
- =?utf-8?B?MWdzeW1CSVhnRGR2V1BMQzJPL0Fsa0pvUzBLODdMVm9jaDdEaW1US0YwOFo2?=
- =?utf-8?B?amYzZVVBYWUyZklpWmtlczZUaVhZUkpBdkViM3RDeExOTld1Vkt5andoMjEy?=
- =?utf-8?B?d3ZMYXFHWlp6aGpiTHdRZVk3OTY5aC9CamgyZklVaEl6Rm1jbDliZkRvcXht?=
- =?utf-8?B?WkdRRE92Q1dmZjl4WVdWeHN1bkFhUkZSdm8xSTh0eW5iNm4vL2hZV25HQW5Q?=
- =?utf-8?B?L3BvT29Sdjl1ei9ieTRFMndERUJXeUNCWXlOdDd0dGFnaWcvRU02VTUwSldy?=
- =?utf-8?B?YXpCK0RlYmowNjVGbUkvRU91a3MrKzNCc3lYMnNUWHhyYTVHUENJc3dUdVFW?=
- =?utf-8?B?YjkyVHMrTDM3bmpwVENTOHZPcWdPZzVkTVl2TWUwMUZJWGFTalVQdU5WdUlp?=
- =?utf-8?B?c1E9PQ==?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3c3ef8fd-1a0d-4503-b9e6-08dc8a232e5c
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB7982.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jun 2024 14:31:28.6977
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DhPK4u61oBMf2qiVQ8gTscJBDiEciXqwy/YdDt1fuBuY3+LgyHU6lbb8rsDzIT4i+fNimJ/6Bq4QUk4YOz1k8jiMmI87kWFafe81818xtak=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8437
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <7c50adeb-c82b-4a7d-b663-8f73a63ae5b3@cherry.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 11 Jun 2024 14:31:37 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/301
+ <yocto-patches@lists.yoctoproject.org>; Tue, 11 Jun 2024 14:57:07 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/302
 
-Hi Trevor,
-
-On 6/11/24 4:15 PM, Trevor Woerner via lists.yoctoproject.org wrote:
-> Allow the user to choose their preferred wic image format.
+On Tue 2024-06-11 @ 04:29:35 PM, Quentin Schulz via lists.yoctoproject.org wrote:
+> Hi Trevor,
 > 
-
-Can you provide some use case for this?
-
-> Signed-off-by: Trevor Woerner <twoerner@gmail.com>
-> ---
->   conf/machine/include/rockchip-wic.inc | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
+> On 6/11/24 4:06 PM, Trevor Woerner via lists.yoctoproject.org wrote:
+> > The linux-yocto-dev build was failing with:
+> > 	| ERROR: modpost: vmlinux: local symbol 'security_path_rmdir' was exported
+> > 
+> > Disabling some filesystem-related security options fixes the build.
+> > 
 > 
-> diff --git a/conf/machine/include/rockchip-wic.inc b/conf/machine/include/rockchip-wic.inc
-> index dab61d83ed2c..eb895cd0b4ad 100644
-> --- a/conf/machine/include/rockchip-wic.inc
-> +++ b/conf/machine/include/rockchip-wic.inc
-> @@ -5,7 +5,8 @@ require conf/machine/include/rockchip-rk-u-boot-env.inc
->   
->   SPL_BINARY ?= "idbloader.img"
->   
-> -IMAGE_FSTYPES += "wic wic.bmap"
-> +WIC_FSTYPE ?= "wic"
-> +IMAGE_FSTYPES += "${WIC_FSTYPE} wic.bmap"
+> Is this the case for every board, including non-Rockchip ones?
 
-Would this be a way to NOT have wic in IMAGE_FSTYPES? What are we trying 
-to achieve here?
+This builds fine with qemuarm64, for example. Comparing the .config from the
+qemuarm64 build vs the rockchip build is what led me to the patch that I've
+presented. The qemuarm64 build doesn't try to build the file that causes the
+error since its .config doesn't ask it to. We're using the in-kernel
+defconfig for the rockchip build so:
+1) it's strange nobody else has seen/fixed this
+2) why doesn't the qemuarm64 build use the in-kernel defconfig (or if it does,
+why are these options not set in its .config)?
 
-If so, shouldn't we also not build wic.bmap there?
+> Is Bruce aware of those issues? Shouldn't this rather be fixed in oe-core
+> instead?
 
-Cheers,
-Quentin
+I guess I could give him a poke.
+
+> > Signed-off-by: Trevor Woerner <twoerner@gmail.com>
+> > ---
+> >   recipes-kernel/linux/linux-yocto-dev.bbappend                | 1 +
+> >   .../linux/linux-yocto-dev/disable-some-fs-security.cfg       | 5 +++++
+> >   2 files changed, 6 insertions(+)
+> >   create mode 100644 recipes-kernel/linux/linux-yocto-dev/disable-some-fs-security.cfg
+> > 
+> > diff --git a/recipes-kernel/linux/linux-yocto-dev.bbappend b/recipes-kernel/linux/linux-yocto-dev.bbappend
+> > index b6a63d7b7b29..94bf737c63bd 100644
+> > --- a/recipes-kernel/linux/linux-yocto-dev.bbappend
+> > +++ b/recipes-kernel/linux/linux-yocto-dev.bbappend
+> > @@ -2,4 +2,5 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
+> >   COMPATIBLE_MACHINE:orangepi-5-plus = "orangepi-5-plus"
+> > +SRC_URI:append = " file://disable-some-fs-security.cfg"
+> 
+> If it is Rockchip-specific, I would suggest using SRC_URI:append:rockchip
+> here, to make sure we do not modify other machines from other layers
+> whenever meta-rockchip is included?
+
+Oh right, thanks. I don't think of that use-case often enough.
 
