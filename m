@@ -1,146 +1,150 @@
-Return-Path: <bruce.ashfield@gmail.com>
+Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D14CC27C77
-	for <webhook@archiver.kernel.org>; Tue, 11 Jun 2024 15:03:57 +0000 (UTC)
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
- by mx.groups.io with SMTP id smtpd.web11.11891.1718118231549018134
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9F22C27C77
+	for <webhook@archiver.kernel.org>; Tue, 11 Jun 2024 15:13:27 +0000 (UTC)
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+ by mx.groups.io with SMTP id smtpd.web10.12262.1718118797978597208
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 11 Jun 2024 08:03:51 -0700
+ Tue, 11 Jun 2024 08:13:18 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=VMazDQ5+;
- spf=pass (domain: gmail.com, ip: 209.85.216.49, mailfrom: bruce.ashfield@gmail.com)
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2c2c6277ef3so3432833a91.3
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 11 Jun 2024 08:03:51 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=kcEcAvnu;
+ spf=pass (domain: gmail.com, ip: 209.85.160.174, mailfrom: twoerner@gmail.com)
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4405c2263eeso14620501cf.0
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 11 Jun 2024 08:13:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718118231; x=1718723031; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RRx5LtqVncXqbOFac446Y602k6exCJjlcrlSrGFqvBk=;
-        b=VMazDQ5+XBG5GyAxiofOx/zAGSl+BHjxrPLFeRi/YziSH+yCQ2NPkd/CEVoIs/E3CN
-         450NXY/f5/sQcCXmkIlW580b9TneQ3YgpblyxPxbLjTqoUQLjRkjW8QTsnI3L+C6/osI
-         L0+4EDeyi8mVhSOv3oSW+ACkF/W0tCqYV+QbzpZivgjI0MFPYTZh8KMjKakfvXxylGob
-         AD/f3d0XrKB9FU7gBhi54Lktz4ZGeYf2CwKD4Dcyh38cfS3XyX1VxqOtKyDwvBNkUgVn
-         TV+4JKm7xKDMrJ5AaLzKjLXdHTK6O2L7PyaeDXR3ZKwmLe3IdnE+/mxh6PY2agdvKhvj
-         jyOg==
+        d=gmail.com; s=20230601; t=1718118796; x=1718723596; darn=lists.yoctoproject.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UfRgN40GS0iyg6IU/K+0BTH8qNhzeYj2+GoZkMvoHVc=;
+        b=kcEcAvnufjrpoaWWYAabxg6n/Z8w2CvXDLz7o3oGx2zkd46rtHw3DMLbo6G+zsN4eD
+         FnvWBN4bypJglvG1hnIOjXjKAk/zBdUge8LHVD2c4f73BlEq598LDCtM/oMCoYHNf6/g
+         zjuIscHpXX66QnrS0+zyLVV22IvQ0wpVT55SlhTwYsmAdKuQZfCSlz+D1KVlLDRzS2Rz
+         liUGWN4unSyowz6D8GLyhabL5Ox0qif4+jD15aAhmNo4nhTb94vlNgYmgeOlDmCpgXWY
+         SfM4b0lx1Szk62x+0RE3GlTI6OZDdhy6rqI+8IiDUIu6dksQvlvTl/1QbV/0WctWwoOs
+         v11w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718118231; x=1718723031;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1718118796; x=1718723596;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RRx5LtqVncXqbOFac446Y602k6exCJjlcrlSrGFqvBk=;
-        b=KUDZ1Naiid27Qv5qXFxYblNayg6crILlibK0rH0iP30xW3cyxu+Eu9anYV17q8bEf4
-         aO0Kph1ImVUtZFV3AMDGLpfHkkuzMZwPxIABiWitg+5nID9PLioIt7Psi+LAs5wgBSGB
-         KwJgk1YU5rfItEeMN1v4fXzfSucsZsFH7IcElSAZoGfEfOEHqwErKfNHmc8bBqZ3kRQw
-         qsQfTjuC+HPL5bX/H/WnewmbwmrE8cIS/Vtce9HQqfCcfVCAZgw0b2XNkz0D/VW8NiGV
-         6LIGAN/Y6Oc6ihonDVTFx2P4RX9ZQhrQDYBZjbbMBSzG89iUpNxW4f6gVf5081Uri9/b
-         1urg==
-X-Gm-Message-State: AOJu0Yz2EWQzbd2GOd3XwVrt18JRwZmO6kG1Umqde69ElmNqek//m7pp
-	39cQTSzk+3pApzMpviIMD846Mv9JMO0EA1rfJo6Bm7R8eFcDrne6Y7jkAb9LoZ2G4gqAaqZpSHD
-	UtLZGCxy7J1vkj+pnQBG65HWKInA=
-X-Google-Smtp-Source: AGHT+IEhusfYLAUTEQC+IjyoCAJHSP/MqnDj6eUaJJsNKcBuHLLJhfADz/xX2YuA0ovlMp+kRLWa7jGw81obVdTAiC0=
-X-Received: by 2002:a17:90a:5b0b:b0:2c3:278b:1af with SMTP id
- 98e67ed59e1d1-2c3278b04ccmr3100176a91.7.1718118230728; Tue, 11 Jun 2024
- 08:03:50 -0700 (PDT)
+        bh=UfRgN40GS0iyg6IU/K+0BTH8qNhzeYj2+GoZkMvoHVc=;
+        b=OKvb0vHDqe+RAtY1eKuF5LHJ4vk8oTWclRgeXdO/mODTM4dHZUx7hgVlacipAMdzoz
+         Yr/x8TOK6iqkj2yl9001Xt+QjZLHyaZ0rvzPOpjnutNGwhoQwdK8l4Im2ZsURfF+MUtA
+         BLA56AC5ZKeltoxFArJ7vp/OmLxcnRDfWepd7iuJaEokazLRjBo3SnqzSyrkWCCqWVkw
+         ae4YiVGW7BbGI7UmYjwtdD7xIHykYsblUO2OKg6TPwas4QFIaHm8g3UD64dkNCeF9n00
+         +HHtzM+vM7gXmPivG0S1cvlpleWDFfgpOmVDpnjjjG8Nvrjle9rb30mBMqiFG9gnFcT7
+         pc3g==
+X-Gm-Message-State: AOJu0YzJ80s9N+ELhjppNwnXAkMl8Z+mqZQXlv10P1oUVyDU2ObyiFxZ
+	jrHsAiBrvw9JejBNioOMJ+KUH2rU0R3rPcyYNfIDQ/RwxX0ZFwgTlVDl4Q==
+X-Google-Smtp-Source: AGHT+IE6+o6JHznKDKQWYNCMqCa+ud4zwGXm8Kby0AAZRYFbtdcREQ7GSVbwh9M4sFh+AWJnUvc3rA==
+X-Received: by 2002:a05:622a:1307:b0:43e:404a:890c with SMTP id d75a77b69052e-44041c4b05dmr142950741cf.19.1718118796111;
+        Tue, 11 Jun 2024 08:13:16 -0700 (PDT)
+Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44048a85288sm38729861cf.51.2024.06.11.08.13.15
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 08:13:15 -0700 (PDT)
+Date: Tue, 11 Jun 2024 11:13:13 -0400
+From: Trevor Woerner <twoerner@gmail.com>
+To: yocto-patches@lists.yoctoproject.org
+Subject: Re: [yocto-patches] [meta-rockchip][PATCH] user-selectable wic format
+Message-ID: <20240611151313.GB7654@localhost>
+References: <20240611141540.4209-1-twoerner@gmail.com>
+ <61fc0c47-d17b-4254-832a-83c4c9d37c97@cherry.de>
 MIME-Version: 1.0
-References: <20240611140607.2719-1-twoerner@gmail.com> <7c50adeb-c82b-4a7d-b663-8f73a63ae5b3@cherry.de>
- <20240611145656.GA7654@localhost>
-In-Reply-To: <20240611145656.GA7654@localhost>
-From: Bruce Ashfield <bruce.ashfield@gmail.com>
-Date: Tue, 11 Jun 2024 11:03:40 -0400
-Message-ID: <CADkTA4Pk_Q01YNSAC04UG3g1WEeL+ZFL=GH=_avTkQu7=-6+Qg@mail.gmail.com>
-Subject: Re: [yocto-patches] [meta-rockchip][PATCH] linux-yocto-dev: fix build
-To: Trevor Woerner <twoerner@gmail.com>
-Cc: yocto-patches@lists.yoctoproject.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <61fc0c47-d17b-4254-832a-83c4c9d37c97@cherry.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 11 Jun 2024 15:03:57 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/304
+ <yocto-patches@lists.yoctoproject.org>; Tue, 11 Jun 2024 15:13:27 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/305
 
-On Tue, Jun 11, 2024 at 10:57=E2=80=AFAM Trevor Woerner <twoerner@gmail.com=
-> wrote:
->
-> On Tue 2024-06-11 @ 04:29:35 PM, Quentin Schulz via lists.yoctoproject.or=
-g wrote:
-> > Hi Trevor,
-> >
-> > On 6/11/24 4:06 PM, Trevor Woerner via lists.yoctoproject.org wrote:
-> > > The linux-yocto-dev build was failing with:
-> > >     | ERROR: modpost: vmlinux: local symbol 'security_path_rmdir' was=
- exported
-> > >
-> > > Disabling some filesystem-related security options fixes the build.
-> > >
-> >
-> > Is this the case for every board, including non-Rockchip ones?
->
-> This builds fine with qemuarm64, for example. Comparing the .config from =
-the
-> qemuarm64 build vs the rockchip build is what led me to the patch that I'=
-ve
-> presented. The qemuarm64 build doesn't try to build the file that causes =
-the
-> error since its .config doesn't ask it to. We're using the in-kernel
-> defconfig for the rockchip build so:
-> 1) it's strange nobody else has seen/fixed this
-> 2) why doesn't the qemuarm64 build use the in-kernel defconfig (or if it =
-does,
-> why are these options not set in its .config)?
+On Tue 2024-06-11 @ 04:31:26 PM, Quentin Schulz via lists.yoctoproject.org wrote:
+> Hi Trevor,
+> 
+> On 6/11/24 4:15 PM, Trevor Woerner via lists.yoctoproject.org wrote:
+> > Allow the user to choose their preferred wic image format.
+> > 
+> 
+> Can you provide some use case for this?
 
-Hah. Let's not start the in-tree defconfig bikeshed debate.
+In order to build a wic.xz image the build has to first create a wic image,
+then compress it as an extra step. On a slow machine this extra step takes
+a noticeable amount of time.
 
-There's a yocto reference configuration, it will not, and does not
-strictly follow anything in-tree. If someone does see things in a
-defconfig they want represented in the machine or base configuration,
-they are free to propose them as patches and they'll be considered
-on individual merit.
+On my local, slow build machine I prefer wic images since it saves build time
+not having to do the compression and since everything is local, there's no
+over-the-internet xfer time to consider.
 
->
-> > Is Bruce aware of those issues? Shouldn't this rather be fixed in oe-co=
-re
-> > instead?
->
-> I guess I could give him a poke.
+When I build using some remote, fast build machine, the extra time spent doing
+the extra step of compressing is recuperated by the savings in transfer time
+retrieving the image from the remote. Therefore I prefer to make wic.xz
+images. Building wic images on remote machines would lead to very long xfer
+times to download the image artifact.
 
-See my reply from just a few minutes ago.
+If I simply do:
 
-Bruce
+	IMAGE_FSTYPES += "wic.xz"
 
->
-> > > Signed-off-by: Trevor Woerner <twoerner@gmail.com>
-> > > ---
-> > >   recipes-kernel/linux/linux-yocto-dev.bbappend                | 1 +
-> > >   .../linux/linux-yocto-dev/disable-some-fs-security.cfg       | 5 ++=
-+++
-> > >   2 files changed, 6 insertions(+)
-> > >   create mode 100644 recipes-kernel/linux/linux-yocto-dev/disable-som=
-e-fs-security.cfg
-> > >
-> > > diff --git a/recipes-kernel/linux/linux-yocto-dev.bbappend b/recipes-=
-kernel/linux/linux-yocto-dev.bbappend
-> > > index b6a63d7b7b29..94bf737c63bd 100644
-> > > --- a/recipes-kernel/linux/linux-yocto-dev.bbappend
-> > > +++ b/recipes-kernel/linux/linux-yocto-dev.bbappend
-> > > @@ -2,4 +2,5 @@ FILESEXTRAPATHS:prepend :=3D "${THISDIR}/${PN}:"
-> > >   COMPATIBLE_MACHINE:orangepi-5-plus =3D "orangepi-5-plus"
-> > > +SRC_URI:append =3D " file://disable-some-fs-security.cfg"
-> >
-> > If it is Rockchip-specific, I would suggest using SRC_URI:append:rockch=
-ip
-> > here, to make sure we do not modify other machines from other layers
-> > whenever meta-rockchip is included?
->
-> Oh right, thanks. I don't think of that use-case often enough.
+in my conf/local.conf then MACHINEs that don't normally build wic images will
+fail. So the only way to build wic.xz images on remote builds is to tweak the
+meta-rockchip:conf/machine/include/rockchip-wic.inc file. So I'm always
+carrying this tweak for every remote build that I do.
 
+So I could simply modify conf/machine/includes/rockchip-wic.inc to set it to
+wic.xz but that wouldn't suit my use-case since I could then have to tweak it
+again for any local builds. Besides, I could never guess what preferred wic
+version others would prefer and I don't want to be changing it every other
+week.
 
+So this patch maintains the existing behaviour completely, and when I do a
+build on a remote machine I can simply set
 
---=20
-- Thou shalt not follow the NULL pointer, for chaos and madness await
-thee at its end
-- "Use the force Harry" - Gandalf, Star Trek II
+	WIC_FSTYPE = "wic.xz"
+
+in my conf/local.conf without having to tweak the layer.
+
+And if others want compression but would prefer bz2 or gzip (or whatever) then
+then can specify it however they wish.
+
+> > Signed-off-by: Trevor Woerner <twoerner@gmail.com>
+> > ---
+> >   conf/machine/include/rockchip-wic.inc | 3 ++-
+> >   1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/conf/machine/include/rockchip-wic.inc b/conf/machine/include/rockchip-wic.inc
+> > index dab61d83ed2c..eb895cd0b4ad 100644
+> > --- a/conf/machine/include/rockchip-wic.inc
+> > +++ b/conf/machine/include/rockchip-wic.inc
+> > @@ -5,7 +5,8 @@ require conf/machine/include/rockchip-rk-u-boot-env.inc
+> >   SPL_BINARY ?= "idbloader.img"
+> > -IMAGE_FSTYPES += "wic wic.bmap"
+> > +WIC_FSTYPE ?= "wic"
+> > +IMAGE_FSTYPES += "${WIC_FSTYPE} wic.bmap"
+> 
+> Would this be a way to NOT have wic in IMAGE_FSTYPES? What are we trying to
+> achieve here?
+> 
+> If so, shouldn't we also not build wic.bmap there?
+
+The goal isn't to not build a wic image, the point is to allow the user to
+specify which type of wic image (i.e. with or without compression and if with
+compression, which one?).
+
+I guess I could do:
+
+	WIC_COMPRESSION ?= ""
+	IMAGE_FSTYPES += "wic${WIC_COMPRESSION} wic.bmap"
+
+And then specify:
+
+	WIC_COMPRESSION = ".xz"
+
+in my conf/local.conf?
 
