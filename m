@@ -1,253 +1,169 @@
-Return-Path: <twoerner@gmail.com>
+Return-Path: <quentin.schulz@cherry.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4662C27C78
-	for <webhook@archiver.kernel.org>; Wed, 12 Jun 2024 02:01:35 +0000 (UTC)
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
- by mx.groups.io with SMTP id smtpd.web10.1582.1718157685854884157
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6C25C27C75
+	for <webhook@archiver.kernel.org>; Wed, 12 Jun 2024 08:36:29 +0000 (UTC)
+Received: from EUR03-VI1-obe.outbound.protection.outlook.com (EUR03-VI1-obe.outbound.protection.outlook.com [40.107.103.137])
+ by mx.groups.io with SMTP id smtpd.web11.6486.1718181377599961147
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 11 Jun 2024 19:01:26 -0700
+ Wed, 12 Jun 2024 01:36:19 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=DK/uRsfo;
- spf=pass (domain: gmail.com, ip: 209.85.160.181, mailfrom: twoerner@gmail.com)
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-43fdbe0f072so32012071cf.3
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 11 Jun 2024 19:01:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718157684; x=1718762484; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WxwchRDuRUxzVzwOkVlt337TC3Hxr9myRoZxYQWz6NQ=;
-        b=DK/uRsfonN1PGvnCQKmRDh8yLam/Cnzf6O6O4YKrVq99QfBkP2TWNTb3vNDXq4AwXd
-         6Tk1tqr+JFKrRkJC28y3iECW5ipiCSqKlifp6v9lCwJMepSDbjC6jdH8zIljajYlzVvC
-         3hrME4sHvzhAyVG7qq6mS/s2e5FT61lhuWCMyX9/iquL+qqBT8fm1hD5fUeKMkhBu/YW
-         YYNBSU06c0bR/S0OmI6AFl3RcUZ1IgWGe+DuzttscCUdLKwr1+s4zlnEVfOD0b+wAXW5
-         gdeAsmTkFQDwNEOd4qdcDZWr0pyNVpuiq/Wqn+405PJTw4Gfmgy3BuTzt0EefrkuCqdX
-         o2qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718157684; x=1718762484;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WxwchRDuRUxzVzwOkVlt337TC3Hxr9myRoZxYQWz6NQ=;
-        b=BWJxnyz0f+XVmi5x6p/xO3wVfLl3GSrty2lLcKy6MA4j5LwAER7cs4yAbstheVbKPs
-         yqnG/exDl59AM53/EOwMt0mR3O4spgyGYE0kYZmdnmv8ifW+8ZSKROPx21MLKprNn06Q
-         bz/UoQqq35n/1NXi1s3lr8YuwatBe2zpu5zEkbEOHvC4Yr9ZylVLIQ0q3Q0LD49pra4n
-         Ch1hkdd0QHdX7FokFI0q+7rtXQJznRpwWTSiMHbR4/HBK4D8l9euf4Gct6NbRlEsHmI3
-         0umN7RwDJu0zWCQLzUEbjTumoAH9e3hFpRbnhPqQP5g9T4OhHlFbnwYlC4SnTQNjTJpX
-         /SXw==
-X-Gm-Message-State: AOJu0Yyd7m7l2UcoPMMPY0g5UVf79aXdzcCdsns+Q+B3Uq0pcQrxoQhU
-	bVyjCjfvKnFzTnMqMQRJk5bSw8+iLiQ8UVQeMQam47tRctrqd1O9Urbf6w==
-X-Google-Smtp-Source: AGHT+IG2QJquV3rhJKpy0sKviDXtPxgkibD1EUSKJ0nkouV9S4LMpzj8hOirg78VX6gCiKibu0gt1g==
-X-Received: by 2002:ac8:7d43:0:b0:441:5481:9838 with SMTP id d75a77b69052e-4415ac65abamr4431541cf.57.1718157683173;
-        Tue, 11 Jun 2024 19:01:23 -0700 (PDT)
-Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44120f7a67esm16622581cf.86.2024.06.11.19.01.21
-        for <yocto-patches@lists.yoctoproject.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 19:01:22 -0700 (PDT)
-From: Trevor Woerner <twoerner@gmail.com>
+ dkim=pass header.i=@cherry.de header.s=selector1 header.b=XYpN1SYv;
+ spf=pass (domain: cherry.de, ip: 40.107.103.137, mailfrom: quentin.schulz@cherry.de)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=KAN7esDACSiIeUlZSxlJYtk0AvQ7WOvFZvN6QrSMNWB7h3Bd7d4QvRei22EpFKNZqcmnOP0puL2kBrb+tgm70wu6NPQuj6qRgexjkp/GkjacdRuj06PAydRB5RvepPE2//fhJUPJJQNRTY8SBtPREiPupXt1LAt8jXr1StlH+HzQ8ncp578SVcb9y++rkceJDyqcCY7Wg96JiXVXQNhoUh5ge2Ld5nsWM5GgX9SpIgx/5WAYyX2VZJN2sPaBCfnvK+RQNHu/K3S6y3BnNkyLKn7e+3U8PPdZxNreAwWSZfS5FVkoI3wLT2ETYaWFPPW25MGH8gg8z4Izxaha4SIxbw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9BRNvolXGXFs3v92rlnUF5m21DjHJrscRoIxjrR+pGk=;
+ b=Y/tzqIcIsB7WThldt+4OyKw7MPk6AEP4MIcj9miB9yEhpxRH8eFOAUp0C/DPk55aYmjlzh5P+R+1Ub8VfxnaSAdDJ5veisUMbLUCH2PzUPSPjBUmN4qQnAJj3379XOGFacHUXoYkrPdPA9tWX+QOib9b3/0ryq0qPTMz3vjDTudxWdQw0X85Dda0NN/eZ3z2RBHQwXhNV4D9OuBFFGkVr1EHmdPpIrZOi8Jj8rcMyv17lXf8b1UDRoWwXjf6YbVI67eTF+r5yguqUeeDutQjQ09OwYA9zXed1Fa3dlCXrnm3jw50x7gDe1ElLNGRuioC97ncH0OtOM/df7wmzeE+DQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
+ dkim=pass header.d=cherry.de; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9BRNvolXGXFs3v92rlnUF5m21DjHJrscRoIxjrR+pGk=;
+ b=XYpN1SYv2yN7rR/ndDqvHHiyKTbcIY1qWpWb1nP6ArbtH11TzNML/hpbLoP1hiBh5/5hXBchUgL9ZIzbNmwMiW9Zj1lJSFbPxCAS9iDtLz2k61jcgeP8B8dQqtSsTCPxNC5YyNvX8v8Bd7dWhTXwdzIm+bmFSiNQv164Icc3+x8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=cherry.de;
+Received: from PA4PR04MB7982.eurprd04.prod.outlook.com (2603:10a6:102:c4::9)
+ by AM0PR04MB6948.eurprd04.prod.outlook.com (2603:10a6:208:187::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Wed, 12 Jun
+ 2024 08:36:13 +0000
+Received: from PA4PR04MB7982.eurprd04.prod.outlook.com
+ ([fe80::3c4:afd5:49ac:77af]) by PA4PR04MB7982.eurprd04.prod.outlook.com
+ ([fe80::3c4:afd5:49ac:77af%4]) with mapi id 15.20.7677.019; Wed, 12 Jun 2024
+ 08:36:13 +0000
+Message-ID: <6e0f1d2a-911c-4ee6-bd4d-5dcb0824faa7@cherry.de>
+Date: Wed, 12 Jun 2024 10:36:11 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [yocto-patches] [meta-rockchip][PATCH v2] user-selectable wic
+ compression
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-rockchip][PATCH] radxa-zero-3e: add
-Date: Tue, 11 Jun 2024 22:01:16 -0400
-Message-ID: <20240612020116.40600-1-twoerner@gmail.com>
-X-Mailer: git-send-email 2.44.0.501.g19981daefd7c
+References: <20240611181742.1408-1-twoerner@gmail.com>
+Content-Language: en-US
+From: Quentin Schulz <quentin.schulz@cherry.de>
+In-Reply-To: <20240611181742.1408-1-twoerner@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: WA1P291CA0005.POLP291.PROD.OUTLOOK.COM
+ (2603:10a6:1d0:19::28) To PA4PR04MB7982.eurprd04.prod.outlook.com
+ (2603:10a6:102:c4::9)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PA4PR04MB7982:EE_|AM0PR04MB6948:EE_
+X-MS-Office365-Filtering-Correlation-Id: d1f81769-64eb-4440-f5db-08dc8abab7d6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230032|1800799016|366008|376006;
+X-Microsoft-Antispam-Message-Info: 
+	=?utf-8?B?TVZqQ1lUTTR5VFBidW9jSGhudEJRT3oxVVJTdTRQV1ZyREFtQlMxQStWZzVz?=
+ =?utf-8?B?TnMwOVZtS29OYVlDQUNvWWEzbk1zYm9MeE5NUkJEZXhjWVlnZUg2VVZ2Uzlz?=
+ =?utf-8?B?TUM2bHJCbUF5a0k5ZW5yZ1BnL0lJYXZQbFBVd3hnYWFRZGY1MFBlNTVpdFVZ?=
+ =?utf-8?B?MWRHUytLU25hYVpMdzVHcWdlTVF5RG01aFFFT0crL0cyUW9pcDJpNHJaenhq?=
+ =?utf-8?B?TDFjTmY2cUZKQW9pdjIyaVIrWFZBWkFyeU5jQ0s4ZVZ3UW9vTjhodjFVUVFC?=
+ =?utf-8?B?UDBuQmM4cjJkTE9LbS8wcmVjcHZFd1NsSHd5MGtVNVpIaHU1cW4rUVhHYkhD?=
+ =?utf-8?B?bjJaNHlQT3FkeE9ZNUZxRVF5b3cwTmptYlJwdzlFNE9ZUktKZFZOVlJQK0VQ?=
+ =?utf-8?B?cmxESWVpU1JHSDhwMkpKSlB1TTNyRDdWL1locjFycDJDeGFTOFUva2NoM2FR?=
+ =?utf-8?B?dU5xa3VNZXlURGEvenNUanVnOTUzY3l0YmdIZ0F1UXh6Z2pxZHJzeFBGcno2?=
+ =?utf-8?B?VEdZVzJXQ0RldWhjVUdSTExVS2V3WWV6YlptV3Y3ZzRGdGpvUm5lRG9aSjJa?=
+ =?utf-8?B?VmhLcm5PRWhNcC9JU1NIYzJPZVhiZ3I4czhFMnBPMEl3Sm1LNC9rdElza0J6?=
+ =?utf-8?B?U3czTTFCNUNIYVBBbDdCWlRoelRMNlhVeHpqUnVGVER1eTd5dGVLMVZ4QTFP?=
+ =?utf-8?B?STBieHJkREpLbEI0VWcxR3pZM0MzTytjNER4T25lYXJPSEpacEJUaTNrZ1ZK?=
+ =?utf-8?B?ak9JVm85M3F5VlliakxGQnlLVnh4NU1lN3RzUHF6ZlBiVjBWWkk1czE5K1RJ?=
+ =?utf-8?B?V2ZWeFE0NnNNSFFZbXREUmJoMzFiODdJNUg3UlBnRndlM1N6NkFDOUU5b1dM?=
+ =?utf-8?B?MEg0WCtkQVdzcEpIN1k0NkdHbHR0d1h2aWlUTXFCTTF3V0RIUWhDd0FZUVd0?=
+ =?utf-8?B?dzRxZmIyRHJ4N0VFZ3hiM0V6cEFKMW9OVmR0cmQyTUZDQWhTUVRHanBSK2Yw?=
+ =?utf-8?B?M2NCZnFEMHhLTHh4L1hGK2FJZU1tWU5nQ1hDRU9YT1NhTEpjYWtDZEdXWkw0?=
+ =?utf-8?B?VVBiVnRUQkUxL2g3NGNmbi9XeGpQTWVjYUZMeUMxdXljK1hvWFc4TDNPc1R1?=
+ =?utf-8?B?Y3cvcjdXMHFhWll3M1VSRjBEcncvemxhSHBnMWphcndjVDlQdjdkK0xudUxF?=
+ =?utf-8?B?TTBLL0VHNWcxSUhBTm0xQzBBbjZ4YU5XUzl4ZmEweTRtL21EbGUxSUdmZVVN?=
+ =?utf-8?B?U1QyQXVYcWJza3g3L1pwSW1IVzZLcDJUTWlzVFBaRkw3TXExdUlEQ0pVcC9k?=
+ =?utf-8?B?QVFubGgzQUozSXU5bWxIUEdPaS96bXpSVTk4dHI0RXJlbGZDK0g2cXJ2Z2Zk?=
+ =?utf-8?B?RWpyUmtaREk2T1VuTWlLMm04ZXArSkFGNjJhU010bHptM0YrTUhKbEU4SW4x?=
+ =?utf-8?B?YmQ2dzZFRFZoNFpQdUxWOWErRGVCaG1KUysxRHNtNDdxMzVpckJKNmxmUmZT?=
+ =?utf-8?B?UWFBVGhUQVhRNTd4TVdVcUx0ZittS016eFBtM3AyTTFJdjV2UkRRc2hxSUxp?=
+ =?utf-8?B?Z3FySEVIUE02V3R6K3k4NjJuL0V5R3ZacGxRS3NWaWFxMFFNNUNjTEVzUHVS?=
+ =?utf-8?B?UjVVUm52TFMvTmdDNjBXTGhKSk53cHRkT3FvRkNkWlZBQ1I4Nkl3cVB5WXU1?=
+ =?utf-8?B?dUxYRTBiMkRGVE5yVWV1amRvNXpGY1dFWUd2UXhzRTJGNUxIZm10QzhhNG90?=
+ =?utf-8?Q?BviFhpfEnoKwGkCA8f9nR+xoJQ6dAoAEnI9csMD?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB7982.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230032)(1800799016)(366008)(376006);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?WUxzNDNtY1l5dEVHdjRXQ1ZCK3N1VzRzbEI4T3J0dWlhenFBWm9jME14Y0I2?=
+ =?utf-8?B?NDVVOGNYNXZUbDVnamtUc3QwWnZlVzlkdWFWVHFnMXJaZXBhZ2o2eFRZTlNG?=
+ =?utf-8?B?L3dZR0toTVozcWI1cE1vSE8vMWp1REs1dXBLemszeUQvcFdESGFQbXB2ZlJV?=
+ =?utf-8?B?R01LRlRmSUFTeXJNK2Z1WGs2K3g1SDNtUnlhWU1NcXg5bkJFcmliMGlld0Mx?=
+ =?utf-8?B?aDJYS01TYVhyMWhjMXUvMm9jVTcvZlZrUGIvTncvN0toVjY4OGFBeVhMQ21D?=
+ =?utf-8?B?M0wwSEpYWFVsdmVCNWlyY2k3cGZicmpPVzV1Q1dVMTd2UnlodlNQL2lKbkl5?=
+ =?utf-8?B?ZnoxV3BiQzl4Q04vSlgvWW54Q0lTbVJNNFhRK21ZMlQwYUtHK3k3V1ZDTkJs?=
+ =?utf-8?B?bkwxVkZOMGM2WnlsNXZua2drcitwOTgvRmEwbEpWRXFpc0FZeEEzT2hkWUhr?=
+ =?utf-8?B?WVVFeE1VUWZqUWxIZHFUeGJHZGF3VEcxcllhTSt5S2F1b1FHVC9BcVhNVXFJ?=
+ =?utf-8?B?RUNOTnJoNldnN042eHJkb1J3Y0tQU1ZTMEc2RGJDS01ITXZtK0dvVkFuZ1l3?=
+ =?utf-8?B?bkJFWEtGaExITzczVXRFdjdTV3RReVdIbkU4NUszckpTeEhVR3RMM0wxNDlD?=
+ =?utf-8?B?VmVjbCtLa3p2aGJ5YjhOaXRMMGU0Y1VoWjlOR2F2L2hIUWV2RXZjVU5PT0Ry?=
+ =?utf-8?B?MVBKSUx1MmpaNVREbDJPbFdETFdma3FWR2FSczdveWEwNHgxVU85dXFCSUh2?=
+ =?utf-8?B?THZVSTN4RVhPRGVOL0NXZWNtYzFaMlBuREw0eXMvcDA0d2FzTGlRV2h6MGxY?=
+ =?utf-8?B?dkJWdlVJYk9GUE5YUG40TW1yRm1tRDNLR0FTeW5kTUM1TE9ZaVlMSjAyb25z?=
+ =?utf-8?B?eGdSKzNydmJGclk4eWFWaTBFQkNZaDFzL1lWL1J6eWpqWlV5OThpUjFUajk3?=
+ =?utf-8?B?aldSTytOY1ZmQmJTbWFIVkxBWUdka2pGLy9qa3JOaXFnRWx4MlZxU3FXMWxl?=
+ =?utf-8?B?QnI0THRWKzQ4TFdsVktGWSthT2NwQndnemtCYnRFL1FTZ3Y4SndYQXVPMmU5?=
+ =?utf-8?B?SGR3Tm95SmJTUGFWUVZGM1ZLUG9CRUxzZGpyZ1ZybnNnbkxXc3NXd2RwZ0xj?=
+ =?utf-8?B?OHBZWHZsdHNDamVHUnhUeWtGZ2lZQ2R0SmZZSUtLK3U4VXJCYWF3SzVoOEtx?=
+ =?utf-8?B?TFU2TkcwWHYyMXRPZXNBeEZrdVVCV3FOcmVWU3ovN1M3dHZha1NvZWsveHJh?=
+ =?utf-8?B?eHJRWkh5dmYzU3l6MnZoSFVzRDB5MXdtWlkrWG55bDVuRDgvMHAvWDc0MmJN?=
+ =?utf-8?B?djkzdGJwcjBYQTlXamhyUEFNazkvSTRXdTNjNlBBcEhmbWpDbTZBN0IxbUxp?=
+ =?utf-8?B?YVArdUswOUgya1U3eWxqMjVqSlVDcm03aE0zejJqZlJuVVI2TFhoUGVwUjJ3?=
+ =?utf-8?B?WS9FZzVacDA2US83ejF4R2l4THZKQXZhK1dEQ0Rpb1oyTWQyemR0a01RaFMx?=
+ =?utf-8?B?VmhZR0wzR3hOaHY5eVRGekRMNGxOL1YrYlJuNmRwaTVId1BPTGg1aEQxU1Vl?=
+ =?utf-8?B?anBLYXFldnVaWHczOFlkYis5anNtNVp0R1lyWXNlbm5GY3p5OXFSNzZ5ZXFu?=
+ =?utf-8?B?NVJXMU1FRE5IQ0xPY3FvRS9MTXNveDI2ZVpSMUxleDVUL3J5aEQvdG0zVm5O?=
+ =?utf-8?B?dHBpV3ZrMGpGbE8wbzNJUUszQUtsZ1J1T3UxT3pONHBRVnpDcm1RaWhaWDdW?=
+ =?utf-8?B?TFplcVRLSGFjZksxTk5aUjZZdkwzSnpSMUp2blhxekhLdkY0eTBqVkoyTVRL?=
+ =?utf-8?B?WGh2ZThsZ3lGNHFMRW9VTDJObllGcU0yVldCb1BJVnFCYmdNRDgwU0dDaHJG?=
+ =?utf-8?B?VnBPeW5yM04raDR2THUyQ1hqRFVDaHF5TkhxZHBLaGdQK3RQWmppalF6MlZa?=
+ =?utf-8?B?RzlIdDlwdDV2amJqR3U4SUtETWFiVFlucVpsamVsQkFFWGR6NTBaSlNmYUN4?=
+ =?utf-8?B?UkxPL1Vxako0ZVRINlRIMzFVOElsRy9hUVNXN1EyajdidE9EQm9mQ3drSGJu?=
+ =?utf-8?B?dzlURU9LTzZoamx0d2JBRFhiTHk0QjVpbG1jMHRhYllJYi9OZWx4WkIwUjZh?=
+ =?utf-8?B?cG1SSENVaGEyc1gzamlDaXpvMktjdGJ4YkMzbWY2ajYxVTJHbEtQdit0V2Zv?=
+ =?utf-8?B?VGc9PQ==?=
+X-OriginatorOrg: cherry.de
+X-MS-Exchange-CrossTenant-Network-Message-Id: d1f81769-64eb-4440-f5db-08dc8abab7d6
+X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB7982.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2024 08:36:13.4364
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9IJv9tLhbxxYjObau7Tf5mRbxmamlN9LYpDXdUs/0J0o6BnbNnjuwCpP3MUN3PXRIiS5N9tjr7R+WJc5eqFCMZpF62CbxzTGBMDoFDQcISo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6948
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 12 Jun 2024 02:01:35 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/312
+ <yocto-patches@lists.yoctoproject.org>; Wed, 12 Jun 2024 08:36:29 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/313
 
-The Radxa ZERO 3e is an ultra-small, high-performance single board computer
-based on the Rockchip RK3566, with a compact form factor, and rich interfaces.
+Hi Trevor,
 
-	http://radxa.com/products/zeros/zero3e/
+On 6/11/24 8:17 PM, Trevor Woerner via lists.yoctoproject.org wrote:
+> For boards which build and boot wic images, the user can optionally specify
+> a compression using the WIC_COMPRESSION_EXTENSION variable. By default "wic"
+> images are built, but if the user would prefer, say "wic.xz" images, simply
+> specify:
+> 
+> 	WIC_COMPRESSION_EXTENSION = ".xz"
+> 
+> in the configuration (e.g. conf/local.conf).
+> 
+> Signed-off-by: Trevor Woerner <twoerner@gmail.com>
 
-tech specs:
-- Rockchip RK3566 (4x Arm Cortex-A55 @ 1.6GHz)
-- Arm Mali-G52-2EE (OpenGL ES 1.1/2.0/3.0/3.1/3.2, Vulkan 1.1, OpenCL 2.0)
-- LPDDR4 RAM (1/2/3/8 GB)
-- µSD
-- GbE
-- 1x USB 2.0 Type C OTG, 1x USB 3.0 Type C Host
-- 1x µHDMI (1080p @ 60fps)
-- 1x MIPI CSI camera port
-- colour-coded 40-pin GPIO (uart, spi, i2c, pcm/i2s, pwm, gpio)
-- 72mm x 30mm
+Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
 
-NOTE: currently support for this board requires a U-Boot fork for the
-bootloader, and linux-next for the kernel. Support will probably come in linux
-kernel 6.11-ish, at which point U-Boot will then use that kernel's device tree
-which means U-Boot support will come after the release of whichever kernel
-includes support for this board.
-
-Signed-off-by: Trevor Woerner <twoerner@gmail.com>
----
- README                                        |  1 +
- conf/machine/include/rk3566.inc               | 21 ++++++++++++++++++
- conf/machine/radxa-zero-3e.conf               | 12 ++++++++++
- recipes-bsp/rkbin/rockchip-rkbin_git.bb       | 11 ++++++++++
- recipes-bsp/u-boot/u-boot-rockchip.inc        |  2 ++
- recipes-bsp/u-boot/u-boot_%.bbappend          |  5 +++++
- .../linux/linux-torvalds-next_git.bb          | 22 +++++++++++++++++++
- 7 files changed, 74 insertions(+)
- create mode 100644 conf/machine/include/rk3566.inc
- create mode 100644 conf/machine/radxa-zero-3e.conf
- create mode 100644 recipes-kernel/linux/linux-torvalds-next_git.bb
-
-diff --git a/README b/README
-index b21e92360dcc..a9a040a4308d 100644
---- a/README
-+++ b/README
-@@ -40,6 +40,7 @@ Status of supported boards:
- 		orangepi-5-plus
- 		rock-3a
- 		rock-4c-plus
-+		radxa-zero-3e
- 	builds:
- 		marsboard-rk3066
- 		radxarock
-diff --git a/conf/machine/include/rk3566.inc b/conf/machine/include/rk3566.inc
-new file mode 100644
-index 000000000000..41d0a227a988
---- /dev/null
-+++ b/conf/machine/include/rk3566.inc
-@@ -0,0 +1,21 @@
-+SOC_FAMILY = "rk3566"
-+
-+DEFAULTTUNE ?= "cortexa55"
-+
-+ROCKCHIP_CLOSED_TPL ?= "1"
-+
-+require conf/machine/include/soc-family.inc
-+require conf/machine/include/rockchip-defaults.inc
-+require conf/machine/include/arm/armv8-2a/tune-cortexa55.inc
-+require conf/machine/include/rockchip-wic.inc
-+
-+KBUILD_DEFCONFIG ?= "defconfig"
-+#KERNEL_FEATURES:append:rk3566 = " bsp/rockchip/remove-non-rockchip-arch-arm64.scc"
-+KERNEL_CLASSES = "kernel-fitimage"
-+KERNEL_IMAGETYPE ?= "fitImage"
-+
-+PREFERRED_PROVIDER_trusted-firmware-a = "rockchip-rkbin"
-+PREFERRED_PROVIDER_optee-os = "rockchip-rkbin"
-+
-+UBOOT_SUFFIX ?= "itb"
-+UBOOT_ENTRYPOINT ?= "0x06000000"
-diff --git a/conf/machine/radxa-zero-3e.conf b/conf/machine/radxa-zero-3e.conf
-new file mode 100644
-index 000000000000..3a39d6c12a1f
---- /dev/null
-+++ b/conf/machine/radxa-zero-3e.conf
-@@ -0,0 +1,12 @@
-+#@TYPE: Machine
-+#@NAME: Radxa Zero 3E
-+#@DESCRIPTION: The Radxa ZERO 3e is an ultra-small, high-performance single board computer based on the Rockchip RK3566, with a compact form factor, and rich interfaces.
-+#http://radxa.com/products/zeros/zero3e/
-+
-+require conf/machine/include/rk3566.inc
-+
-+PREFERRED_PROVIDER_virtual/kernel = "linux-torvalds-next"
-+KERNEL_DEVICETREE = "rockchip/rk3566-radxa-zero-3e.dtb"
-+MACHINE_EXTRA_RRECOMMENDS += "kernel-modules"
-+
-+UBOOT_MACHINE = "radxa-zero-3-rk3566_defconfig"
-diff --git a/recipes-bsp/rkbin/rockchip-rkbin_git.bb b/recipes-bsp/rkbin/rockchip-rkbin_git.bb
-index 7929c6ac3a10..6894558ef70c 100644
---- a/recipes-bsp/rkbin/rockchip-rkbin_git.bb
-+++ b/recipes-bsp/rkbin/rockchip-rkbin_git.bb
-@@ -4,6 +4,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=15faa4a01e7eb0f5d33f9f2bcc7bff62"
- 
- SRC_URI = "git://github.com/rockchip-linux/rkbin;protocol=https;branch=master"
- SRCREV = "b4558da0860ca48bf1a571dd33ccba580b9abe23"
-+SRCREV:radxa-zero-3e = "a2a0b89b6c8c612dca5ed9ed8a68db8a07f68bc0"
- 
- PROVIDES += "trusted-firmware-a"
- PROVIDES += "optee-os"
-@@ -15,6 +16,7 @@ S = "${WORKDIR}/git"
- COMPATIBLE_MACHINE = "^$"
- COMPATIBLE_MACHINE:rk3308 = "rk3308"
- COMPATIBLE_MACHINE:rk3568 = "rk3568"
-+COMPATIBLE_MACHINE:rk3566 = "rk3566"
- COMPATIBLE_MACHINE:rk3588s = "rk3588s"
- 
- PACKAGE_ARCH = "${MACHINE_ARCH}"
-@@ -36,6 +38,15 @@ do_deploy:rk3308() {
- 	install -m 644 ${S}/bin/rk33/rk3308_ddr_589MHz_uart?_m0_v*.bin ${DEPLOYDIR}/ddr-rk3308.bin
- }
- 
-+do_deploy:rk3566() {
-+	# Prebuilt TF-A
-+	install -m 644 ${S}/bin/rk35/rk3568_bl31_v*.elf ${DEPLOYDIR}/bl31-rk3568.elf
-+	# Prebuilt OPTEE-OS
-+	install -m 644 ${S}/bin/rk35/rk3568_bl32_v*.bin ${DEPLOYDIR}/tee-rk3568.bin
-+	# Prebuilt U-Boot TPL (DDR init)
-+	install -m 644 ${S}/bin/rk35/rk3566_ddr_1056MHz_v1.21.bin ${DEPLOYDIR}/ddr-rk3566.bin
-+}
-+
- do_deploy:rk3568() {
- 	# Prebuilt TF-A
- 	install -m 644 ${S}/bin/rk35/rk3568_bl31_v*.elf ${DEPLOYDIR}/bl31-rk3568.elf
-diff --git a/recipes-bsp/u-boot/u-boot-rockchip.inc b/recipes-bsp/u-boot/u-boot-rockchip.inc
-index d2267cc53a92..113190635bb5 100644
---- a/recipes-bsp/u-boot/u-boot-rockchip.inc
-+++ b/recipes-bsp/u-boot/u-boot-rockchip.inc
-@@ -1,6 +1,8 @@
- BL31:rockchip:aarch64 = "${DEPLOY_DIR_IMAGE}/bl31-${SOC_FAMILY}.elf"
- # SOC_FAMILY for RK3588S is rk3588s but it should use the binaries from rk3588
- BL31:rk3588s = "${DEPLOY_DIR_IMAGE}/bl31-rk3588.elf"
-+# rk3566 uses the rk3568 bl31
-+BL31:rk3566 = "${DEPLOY_DIR_IMAGE}/bl31-rk3568.elf"
- EXTRA_OEMAKE:append:rockchip:aarch64 = " BL31=${BL31}"
- 
- TFA_DEPENDS ??= ""
-diff --git a/recipes-bsp/u-boot/u-boot_%.bbappend b/recipes-bsp/u-boot/u-boot_%.bbappend
-index 1f5f63459627..dca43d2a4de0 100644
---- a/recipes-bsp/u-boot/u-boot_%.bbappend
-+++ b/recipes-bsp/u-boot/u-boot_%.bbappend
-@@ -2,6 +2,11 @@ require u-boot-rockchip.inc
- 
- FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
- 
-+SRC_URI:radxa-zero-3e = "git://github.com/Kwiboo/u-boot-rockchip.git;protocol=https;branch=rk3xxx-2024.07;name=Kwiboo"
-+SRC_URI[Kwiboo.sha256sum] = "5d102a658262f6d2d4ea0664fe58b77db4a9eb1ebc89dbd8d6f5e75c9e563810"
-+SRCREV:radxa-zero-3e = "8cdf606e616baa36751f3b4adcfaefc781126c8c"
-+SRCREV:radxa-zero-3e:rk-u-boot-env = "8cdf606e616baa36751f3b4adcfaefc781126c8c"
-+
- SRC_URI:append:rk-u-boot-env = " file://rockchip-enable-environment-mmc.cfg"
- SRCREV:rk-u-boot-env = "cdfcc37428e06f4730ab9a17cc084eeb7676ea1a"
- 
-diff --git a/recipes-kernel/linux/linux-torvalds-next_git.bb b/recipes-kernel/linux/linux-torvalds-next_git.bb
-new file mode 100644
-index 000000000000..bbe4689922a7
---- /dev/null
-+++ b/recipes-kernel/linux/linux-torvalds-next_git.bb
-@@ -0,0 +1,22 @@
-+inherit kernel
-+inherit kernel-yocto
-+require recipes-kernel/linux/linux-yocto.inc
-+
-+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
-+
-+DESCRIPTION = "Linux Kernel"
-+SECTION = "kernel"
-+LICENSE = "GPLv2"
-+LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
-+
-+
-+LINUX_VERSION = "6.10"
-+KERNEL_VERSION_SANITY_SKIP = "1"
-+SRCREV = "next-20240611"
-+PV = "${LINUX_VERSION}+git${SRCPV}"
-+SRC_URI = "git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git;protocol=https;branch=master"
-+SRC_URI[sha256sum] = "3a1c433c4ceffa52f8c3df3aab8c379ff91ca658021d409a528825e5e24580f4"
-+
-+do_compile:append() {
-+	touch ${B}/Module.symvers
-+}
--- 
-2.44.0.478.g7774cfed6261
-
+Thanks!
+Quentin
 
