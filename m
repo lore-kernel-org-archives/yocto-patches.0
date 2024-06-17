@@ -1,75 +1,86 @@
-Return-Path: <alexandre.belloni@bootlin.com>
+Return-Path: <mbober1@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3582EC27C6E
-	for <webhook@archiver.kernel.org>; Fri, 14 Jun 2024 22:03:06 +0000 (UTC)
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
- by mx.groups.io with SMTP id smtpd.web10.1569.1718402576711148781
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D695C27C79
+	for <webhook@archiver.kernel.org>; Mon, 17 Jun 2024 20:00:38 +0000 (UTC)
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+ by mx.groups.io with SMTP id smtpd.web10.67276.1718654429662140127
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 14 Jun 2024 15:02:57 -0700
+ Mon, 17 Jun 2024 13:00:29 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=gm1 header.b=J4kpQEJX;
- spf=pass (domain: bootlin.com, ip: 217.70.183.199, mailfrom: alexandre.belloni@bootlin.com)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id BCEC7FF804;
-	Fri, 14 Jun 2024 22:02:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1718402574;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=SM5nKWWjC1moUuAHGAEBYkyzqteXQwNVG3+VrrElMRI=;
-	b=J4kpQEJXw0DTZHBdUX4JVsDYsjIj9k67AA8MmGDLF7fDN3fSqaia3z0rTPcQQu+E8CGKEa
-	JnhRT6Szonx84/3hwwU5iVfdAK9L5nL9nguXxJ519LrOMJjDtxiAVMna3LF13d3/ZmivEX
-	ZoC98VOkZrxkuQzaeinlbGurGBQbJvTsaFFZtUWTJKc7kqOxmijzeGVdSx6dNnbvuPtDcb
-	9bI4l55CtGmmVXRMNJ1nUgXQriWXjlEv/BqE3UF3eYXyWMeOcaoWykZgaTAmqM7e7IRecj
-	3lBNpJuPpsCpk1O9e/FfX9JQOr+WZxqBZL6F1fhnFHWx7P6MlwNGoMi9xfkL1w==
-From: alexandre.belloni@bootlin.com
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=IzgX2KTk;
+ spf=pass (domain: gmail.com, ip: 209.85.208.41, mailfrom: mbober1@gmail.com)
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-57c5c51cb89so5600108a12.2
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 17 Jun 2024 13:00:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718654428; x=1719259228; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Db0lYnlth+PXeTlG9vMzTtKoUgoiDvTtG5CvRRAeYzA=;
+        b=IzgX2KTk1eoswK/4+9g6IogUVBUJxhT5gglBaXOypFGLsztQr0in9SRvQxoHxC9JFG
+         74QLE1xcHR9qcVPulHRICAVjaiHdWbczCtQ228go5kgzLM/UD/S1uIzUJ0FsbHYI+Gc7
+         /i9TXpr9DH18LMiC4DvC9MQqgTEQaawvNA8xz4Q2Sw6mr5bCu/xiK6rV3R+xAjjoTXjx
+         KHbfOGZlOnxpzZ8blaAR54AEAjh8tFeM+LuncAPHLHhOsOw4NeW+56JTXD54UT8YhDWS
+         oEKS3FBUSREcVXaJbPL7JhJepD/K9r8YxhH/n2trSyJ2N3UqzBBNyw08A771x9lr4GYZ
+         1xDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718654428; x=1719259228;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Db0lYnlth+PXeTlG9vMzTtKoUgoiDvTtG5CvRRAeYzA=;
+        b=Qi39OF73mQ6cxyqYf08//psXH0IG3xxLQQXvlFq8xEABnTta+jXDj6zMkIIhQgCqJq
+         CAFn7bGKCofOsXwDgYCXuHeCs5+CSRdA+eNAPplXYzNLVCNOjC883+SZYZWj+DYSemga
+         JTiN0zszEtJoaogkUMAWWVGX5iNOt2ifDXlaAqwjORopN6jA5qfscUR0bt7EHaegv1G+
+         oP1PagtyD3Yg/1JDNVSahfJMgQeGiiFXUNgGP7vJZD8ZbnYUN0glOvDGH22xE/mvlTRG
+         u18RBRRCH2JWdlsJazR8iZMTNy0Ny3k+NzMZHBEgbo1VODssJY6loUuHU6U1dhI0To7+
+         AdIg==
+X-Gm-Message-State: AOJu0YyrORi98Us7cLVv1eENSj7Ds8VX/NCHZkw1ysKtujfhkYVyee42
+	y70zZ/qh89lXplFw1YIVkv8zObfymAJSIAdhxPVkPve7OZargwZdfESIOIakhlE=
+X-Google-Smtp-Source: AGHT+IHZLWUSuiML2TrH/XZxuu/pxN/5cKQlVhoESuC4O7U1K/do+y3WU58LqzppWiuCe9Ra3KMKPg==
+X-Received: by 2002:a50:a6db:0:b0:57c:6004:4375 with SMTP id 4fb4d7f45d1cf-57cbd66dec9mr9119759a12.15.1718654427773;
+        Mon, 17 Jun 2024 13:00:27 -0700 (PDT)
+Received: from compiler.lan (dynamic-78-8-216-220.ssp.dialog.net.pl. [78.8.216.220])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb741e725sm6757933a12.69.2024.06.17.13.00.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 13:00:27 -0700 (PDT)
+From: Marcin Bober <mbober1@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [yocto-autobuilder2][PATCH] schedulers: switch meta-agl branches
-Date: Sat, 15 Jun 2024 00:02:50 +0200
-Message-ID: <20240614220250.997853-1-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.45.1
+Cc: mbober1@gmail.com
+Subject: [meta-rockchip] [PATCH] mesa: build panfrost for RK3566 boards
+Date: Mon, 17 Jun 2024 20:00:24 +0000
+Message-Id: <20240617200024.389206-1-mbober1@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: alexandre.belloni@bootlin.com
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 14 Jun 2024 22:03:06 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/332
+ <yocto-patches@lists.yoctoproject.org>; Mon, 17 Jun 2024 20:00:38 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/333
 
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+The RK356x SoC family (of which we currently only support RK3568) has a
+Bifrost GPU that is supported by open-source Panfrost Linux kernel and
+Mesa drivers, therefore let's build mesa with Panfrost support for
+RK3566.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Marcin Bober <mbober1@gmail.com>
 ---
- schedulers.py | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ recipes-graphics/mesa/mesa_%.bbappend | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/schedulers.py b/schedulers.py
-index efd049f547e8..e46428f91f78 100644
---- a/schedulers.py
-+++ b/schedulers.py
-@@ -68,7 +68,7 @@ branchdefaults = {
-         'branch_poky': 'scarthgap',
-         'branch_bitbake': '2.8',
-         'branch_meta-arm': 'scarthgap',
--        'branch_meta-agl': 'next',
-+        'branch_meta-agl': 'master',
-         'branch_meta-aws': 'scarthgap',
-         'branch_meta-gplv2': 'master',
-         'branch_meta-intel': 'scarthgap',
-@@ -129,7 +129,7 @@ branchdefaults = {
-         'branch_poky': 'kirkstone',
-         'branch_bitbake': '2.0',
-         'branch_meta-arm': 'kirkstone',
--        'branch_meta-agl': 'master',
-+        'branch_meta-agl': 'quillback',
-         'branch_meta-aws': 'kirkstone',
-         'branch_meta-gplv2': 'kirkstone',
-         'branch_meta-intel': 'kirkstone',
+diff --git a/recipes-graphics/mesa/mesa_%.bbappend b/recipes-graphics/mesa/mesa_%.bbappend
+index 2d9ec2e..ca1ad70 100644
+--- a/recipes-graphics/mesa/mesa_%.bbappend
++++ b/recipes-graphics/mesa/mesa_%.bbappend
+@@ -2,4 +2,5 @@ PACKAGECONFIG:append:rk3288 = " kmsro panfrost"
+ PACKAGECONFIG:append:rk3328 = " kmsro lima"
+ PACKAGECONFIG:append:rk3399 = " kmsro panfrost"
+ PACKAGECONFIG:append:rk3568 = " kmsro panfrost"
++PACKAGECONFIG:append:rk3566 = " kmsro panfrost"
+ PACKAGECONFIG:append:px30 = " kmsro panfrost"
 -- 
-2.45.1
+2.34.1
 
 
