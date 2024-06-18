@@ -1,177 +1,152 @@
-Return-Path: <quentin.schulz@cherry.de>
+Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95F27C27C4F
-	for <webhook@archiver.kernel.org>; Tue, 18 Jun 2024 10:05:02 +0000 (UTC)
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (EUR05-VI1-obe.outbound.protection.outlook.com [40.107.21.121])
- by mx.groups.io with SMTP id smtpd.web11.82537.1718705094132669031
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 671A5C27C4F
+	for <webhook@archiver.kernel.org>; Tue, 18 Jun 2024 12:08:33 +0000 (UTC)
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+ by mx.groups.io with SMTP id smtpd.web11.84452.1718712507880659829
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 18 Jun 2024 03:04:54 -0700
+ Tue, 18 Jun 2024 05:08:28 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@cherry.de header.s=selector1 header.b=Gb7K5dTq;
- spf=pass (domain: cherry.de, ip: 40.107.21.121, mailfrom: quentin.schulz@cherry.de)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YCUk5P9jQuG/a+qZ0CEFyFlLPzg+ZWa/FoO3VvNEH88kOlZ5j+0Kw1j/ejXROQ0l5XUhBlIIanCljkSsy126XNVjCLixNw5e02R0z/KvNfyEP/PWp4oGCTKA1gGhiS+zSg1bvUk9Jy8aki5Xdx6Niw4NnTpN+yHAOAW2JgT7T3VRAmCJeRABg5jST5lqVAvBTbQeV5JLnzzLicrRTNA3Cj3EIQyNLVG6bz9TTwPUn50mIYc5QkmILncbiwnFoNefo5GIMT/2QuZ7D1w596qswzKbB2Hcn6Cl/eew1l8Z6jxQ0gF+mI6JymEuzFIvhZSkuEN/RCxEZ8KGR3peJXsJDw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LR0sbuTYqCS/U1pfFTdgIiR0xV68+IGGUBXQUoGuUkk=;
- b=gsD2MfsBga7tftT0xvCEzh3vs9ZmgsUUTyUe2VpG3kdTacINo3hEVuAle9VgFGJoOIiLdKcgGAYXBFw8TkX3Blt+lZebt/i+nWTfMpOgVi9KIp1QEGpSv8vDUmF8H0vWep7B1YgRGmDVZL0M3fvmKxZfy/+MitTSM4o2a51NKPkfqGVErJhK/7gyLOtTgPA6n0qrcWa+rUjQ0Vy2ceBqnuAuANzztjtl/J969Czg+YYbIq1BZI2yBSmuNWKQnvCw81HE/a5z6gDSZZfhL0NOKRLsEU3sFiw1herK3UBMPnkVTFDtnX3Yf8Zz3NnTIJJjJ5ULC4QYVOaZf8enmW9HmQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LR0sbuTYqCS/U1pfFTdgIiR0xV68+IGGUBXQUoGuUkk=;
- b=Gb7K5dTqaVquWblbV2F2BhEaEa2kPSp4RBhf9dXZxsG2G2cjL3qDsPCm2/LDjeY+ODFykcdf2bASlDMRe8ip/LA+isdoQSFXnVWqoe6nWZ5xlm5cgBHc6Wol3OdnKRp5NSy5A2y9aQwLF2YgjeIIwIA6RtK5u8rZSzTh/2UO/fA=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from PA4PR04MB7982.eurprd04.prod.outlook.com (2603:10a6:102:c4::9)
- by AM7PR04MB7015.eurprd04.prod.outlook.com (2603:10a6:20b:117::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.18; Tue, 18 Jun
- 2024 10:04:49 +0000
-Received: from PA4PR04MB7982.eurprd04.prod.outlook.com
- ([fe80::3c4:afd5:49ac:77af]) by PA4PR04MB7982.eurprd04.prod.outlook.com
- ([fe80::3c4:afd5:49ac:77af%4]) with mapi id 15.20.7677.030; Tue, 18 Jun 2024
- 10:04:49 +0000
-Message-ID: <fb7d421b-9db5-461c-b89d-05cb9c5016ee@cherry.de>
-Date: Tue, 18 Jun 2024 12:04:48 +0200
-User-Agent: Mozilla Thunderbird
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=MdiiHA39;
+ spf=pass (domain: gmail.com, ip: 209.85.160.170, mailfrom: twoerner@gmail.com)
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4421c014b95so31303491cf.0
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 18 Jun 2024 05:08:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718712506; x=1719317306; darn=lists.yoctoproject.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=r0egok6CU+9MaqOoaHpEL4FgXEVRdLg9IzTp470ijPs=;
+        b=MdiiHA39Nk17zDXtDgovZVwsJf8GW1p3RwVQmTJWloM4eJ2QewrdfNWwjTHuTmbn0b
+         q7n+/ivwZavpIhoOJJ0Jtw//0E3OalM73OPa6OQTd4CpnEV1xwHp+aDSMH2YF3gSw0/t
+         4WiWph3V3NcwKynfjFo4EuNBlpCy6rK1+DcqVAUykMg6c6M29BJHwXVBKpxiO+/EiiDv
+         yEiPiJIscp+U6ufGkNAIVUKt00tULMBjCCt8Sh959bhbY0af9XpRiTiEWcIenpNuhK8a
+         zlfTu7xKU5fIBdcbwW3jjVvVhg2z5IyzepQ3LPsRpq4sMmjHckB/ZbpbUfZSVqAr4zc6
+         d95A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718712506; x=1719317306;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r0egok6CU+9MaqOoaHpEL4FgXEVRdLg9IzTp470ijPs=;
+        b=sM8h03+AGZxErXAHetXyPqrdfNY2spdnSBk9+jCqLPbcOppV1aQNYNitmMYsZVjDgM
+         qeMniP99hbFtdV7Ous3ip27luuE/RVX9CIA0xkDPHK+AWCh/iGov1pPA9hF6w3vj21rI
+         w3Apm7PbllBc+CcaEIdTluC7y41rcXwxRlMjfaDchWDtJ0Cdp3+pSd/ac20piAttH5OZ
+         knVOHIA/L42/w49Oxz8mqGEFhlKDYScN6fdWyhCRv25YpVw0KbvGkVOgW7cvLmJDns0Q
+         7SI7DEAmeD0W9DIsRdRiCMvuqMJ+rpv7kTVM4O0f5y6YzwNL4MCLP5v58xgeP7+gDBeo
+         3VjA==
+X-Gm-Message-State: AOJu0YzTxHN6uFst4Oh+cNh0rqXdNWNaFV4C9EJafD/WYRVCNtBVZK0N
+	daG4kAz63IsgysHOLNPKxWuguLYPXMVhQMQdK3cT7EES6Lw+rwpnw+w85g==
+X-Google-Smtp-Source: AGHT+IFDnhDH+/Qdk8s+1kduoSgd4ISwj6gX4Zgg0bsO6XM+C/QyBS8dMZk+V7/9oo98S/dyHjJONg==
+X-Received: by 2002:a05:6214:21ca:b0:6ad:753d:45cb with SMTP id 6a1803df08f44-6b2e23840femr40493896d6.20.1718712505514;
+        Tue, 18 Jun 2024 05:08:25 -0700 (PDT)
+Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a5c4663fsm65594896d6.66.2024.06.18.05.08.24
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jun 2024 05:08:24 -0700 (PDT)
+Date: Tue, 18 Jun 2024 08:08:22 -0400
+From: Trevor Woerner <twoerner@gmail.com>
+To: yocto-patches@lists.yoctoproject.org
 Subject: Re: [yocto-patches] [meta-rockchip][PATCH] linux-torvalds-next: use
  AUTOREV
-To: yocto-patches@lists.yoctoproject.org
+Message-ID: <20240618120822.GA40144@localhost>
 References: <20240617230735.13593-1-twoerner@gmail.com>
-Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <20240617230735.13593-1-twoerner@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: WA0P291CA0023.POLP291.PROD.OUTLOOK.COM
- (2603:10a6:1d0:1::10) To PA4PR04MB7982.eurprd04.prod.outlook.com
- (2603:10a6:102:c4::9)
+ <fb7d421b-9db5-461c-b89d-05cb9c5016ee@cherry.de>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PA4PR04MB7982:EE_|AM7PR04MB7015:EE_
-X-MS-Office365-Filtering-Correlation-Id: c1d943c7-ea6b-4558-0543-08dc8f7e1727
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230037|366013|376011|1800799021;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?RGxrMkxoWDZIZ0NkLzJBbHhxWHVJN1VMek56ZjdzdXRlM1RpdEZQTEcvWWdK?=
- =?utf-8?B?NlFLc2psVHp1VS85VnhoZTBJMkhiQTZBTndHZzFVR2FDcko3MGFVLzJ3NGtE?=
- =?utf-8?B?aG8wcnZjTDNUS01CMVprRFJFaDdSMzl6U282N09jMWdIcTFYQ3UrUlBkZnJL?=
- =?utf-8?B?SjMxaUxFZndsZVFxQitsb0MzSkhCSSttZzVhQzVxdkVBN0VFbjlON3VrQTkv?=
- =?utf-8?B?TExqdXJ0ZHNnNXlxMWF2cTNoTnFiRlhzVlRKTll1TlhhZ1JvbkoyU1Z2VThp?=
- =?utf-8?B?d0RrOFVYYUk4bFEyb0REL2ZyalRLcEZlYW1MTDVlbTU4Zi9UbE90RExjdmt1?=
- =?utf-8?B?MnIwZ3RTZkZFa3ZVNEVESlB2MVB5MkNQTDdvYkJidUZxckdWSEcvcU54a2h5?=
- =?utf-8?B?NTUrMmN2QUFnY2dZWElNNiszV3Z2UWd6ZDdQS3lRVnU5and5V3NsdjhHNzB2?=
- =?utf-8?B?TEFCSUw1N29iazlBY0E3Q3RuMWxRejhkZ3FsWjk0ZEtnR3pjc1lYWTJ6THNr?=
- =?utf-8?B?ZjUva1VoTXFvOE00bkhza0Q2Zi9PTDc2VkZFcnpJTjZUUzBOWjlMcjZ6SE8y?=
- =?utf-8?B?NlplZEJnVkpMYlVtVmo5QUJ0NG1ZbTMzWGZnZnlqRmVUME1jb3ExMUJES2xZ?=
- =?utf-8?B?aDZkUzFDOUVFdk1NQVdZSHlqTUFOYlpENzlKaFRwZkU4YnF3Z0dWbmZGdXRD?=
- =?utf-8?B?VjFwYnFnRjErcHo1OGl3ZlE2aW42eENnRlFzNnVpTnp3TytOZklWdkUya01O?=
- =?utf-8?B?Y21zVzJnMmlxWFg0SDhmbzdaZk5uK1NJdDBOdUNYYjVtZ2FrOWRlUy8zQmI4?=
- =?utf-8?B?T29FZ1ZBejM3WFFLeXhzcXJ5NnBaTndlaFE0UStJMUl6dTRoZEJGRUkwUjR5?=
- =?utf-8?B?OUFBenN2MksvRDFHNVZiUHF6R3FoRGZrT20vWWdWckVlbFI5N045d0d4WXdv?=
- =?utf-8?B?Y2VUamxTTDc5RHBOY1JhdElzaG1RR0pWVHpvT01YcVpiU2hiK1NQKzlnV2tI?=
- =?utf-8?B?TFBsTmVncUJONlc3eGVjSFRNdXNZTEp5eFlSV24rNTNnNVFDd21SQVdQWC84?=
- =?utf-8?B?WWprRDBFMnh4c2J1RC9PcTY3VVJoUmVjTlVROHdkMmFvRFpRRzBKT2xYN25O?=
- =?utf-8?B?YXZSR253UGczRC96SnBETHFBRXpoUjFEVnRNMzd0SjBSWnhZRmcycFhZRVZI?=
- =?utf-8?B?MC9aVDNTbHF6WTZLcFE3SnhrclRkOEErdGYzdUVmanI1YXFTZHZlSWUwNTdF?=
- =?utf-8?B?d1llZ1FOM2QxbTVzdi9zdUlkemRFNVBOQ0ZUZHh2MFg5WEdkUCtYK3JlaTZx?=
- =?utf-8?B?eU42cmhUdFBkQk13dFV2RUZuUDVLU0xTY1h5cWNrMUd3bENSUDBoUG9FT2RO?=
- =?utf-8?B?ZGZuNjZyM2J4UXVFNWpEV3grZUhVYS9uNjF5SS82SEtFWUxCd0ZZeG10ZURY?=
- =?utf-8?B?a2dyREZUZUN1YkZ5QXFESDZVVXc3RmlJVkpFYlZ5NTRKS3Fmakhza0o1MVNR?=
- =?utf-8?B?OVZSSUF3RCtiRHlST3lIc1NYZDhja1l0TmwzRlZxLzJvT1lKS21zQ21pclZj?=
- =?utf-8?B?aERGaHdPMWtJZjVqZHNVbEZKK2ZNWXZCTzBwV3BockFORFdvUk9mSUMvNXpT?=
- =?utf-8?B?VnZzNFAzT3U1ZWhwb1RxVDlFdmk5WXZ4Tm5RTm95RnptYzRZV0tmVk9nREZo?=
- =?utf-8?Q?gUczkbfqeEVW+CwjlOPG?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB7982.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(376011)(1800799021);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?TWhSWExEMnJjTGxRZjlrV24raUpIZm1FYk8yaU1xcHJRQ0YrMmZHdnNlaURm?=
- =?utf-8?B?Zm1sY1VkWHRPYU1BMUJ1c0VtcTdWU28xMXJQOHpaL1RHeC9GOTZiQ3kyemQ4?=
- =?utf-8?B?NzlzSUhGbE5ad3B5QzVMOHg1YmF1T0NHdVVEYXEydnU5NVBTSEw4TG5nL2wy?=
- =?utf-8?B?UjluaHBmNy8xQitNVFRXZ2NlQTRqcHZYTDBNWG1hSkw1U3RBdGNCSzdJbXdn?=
- =?utf-8?B?QmVIb2cveGNONjlPanA5K0ZVVzdqWE9LQWZTZW84UktzRmxIOHFrVGErS3R2?=
- =?utf-8?B?RE9Xd212U1FXNFpUZGNIM2lYR1pYUE5NY3pTUS9Nb242b2dwd1NLVkpHNlRK?=
- =?utf-8?B?UUhjUHgyODNhUUYva3ZRQTFFMmZ5YVIyMnpNdXpRTmxCeGhpbWMxNzR3SGV0?=
- =?utf-8?B?Yk9xRStkY09pMWlkMVdiT3ZsY1d2ZGl4OVRmQjVXdzhVMUlyNHVoQ29yNy93?=
- =?utf-8?B?QS9NZGtGQ2FsSTJhV0tZK3ZpUDVYeFplV1FaN3pZd3AzZklOQWNQWkxWbzVt?=
- =?utf-8?B?TkVhSENPMWVaMlNtWXpGMW9OdlBVYXFiWDVPUjhPMnNrRzkzQm5MTnp3YnN1?=
- =?utf-8?B?ZGpBQUtmWVdmR3prLzBFaUdBRVc1eXJjVUtCTnk0Qyt0b3VHMW9Fdjk3SDlK?=
- =?utf-8?B?K1hpangwZmNuZTB0TUhobzVEUSt4d1grNXhuWjNOa2tBVUx5WmZsaXVRZ3Yx?=
- =?utf-8?B?b25PYVBHY3NzTmFocW1DOG5oS1BpK0pMdDZ2WUM5ZkhneU5lTHU3TXlKRUdP?=
- =?utf-8?B?Q3NMRmtzOXowZlVhRm9tREo0MlMzSTc4cE0xRTZSdVU5K0FQbWVuZXhONTJR?=
- =?utf-8?B?RnV6amhLWE5IbUpPTnpMazBTUnJSRzJBWTBtTHBkenpnc2NmL1RkeWN3Uktn?=
- =?utf-8?B?cnU5Z2c1WGJEYnc4RFJ6SXVOKzVmWldjKzlFMjc3NzRRL2lCNTNQQlFxZ21k?=
- =?utf-8?B?VmlGTld5M0lCRWFtM3hCWmNBUkxhR3E3R0NPMTFuZkIrakVsK1FMZlJPS01m?=
- =?utf-8?B?eTJLOEFlNEpkVE83bUtlcjg5Tlh1U3BwWFFRRXhWNFRTRHVqQzFqdmlNYmlD?=
- =?utf-8?B?ek5LYzV1OEpXL0VyWklZSWtvUSt4MjFYdmZ2dWVHQ21HVFIvN1h4UXRHZEVz?=
- =?utf-8?B?Ky80UlJlVGEwMVJ0Wk9xdGtSUHJpTTRpRUFJTjhZelZSSWJWV2l2ZDNOV3JW?=
- =?utf-8?B?dEhXcnZBR1F2TnJnVzFtOHdqR2hxWG1BenNyTEc1bnBuYWtXQzFvd1RKOWJ0?=
- =?utf-8?B?OCt3N2pUK2Fibi9OSUtwWHJrYXUzUnVjazZoWFdmQ2YrWUc0VitmWlNIZy9m?=
- =?utf-8?B?SHpFM0V5VGd0M3ZVTUYwQk9lTEwxQ0Q3VHpYUG9SY2k2b2tNbXVpZGFPU0Ry?=
- =?utf-8?B?QTNXdmdtOUpHd252WXhQTVZuSHlwbHdxS0VhMXI2dzMyOHM2c1I0UkpEaDNQ?=
- =?utf-8?B?Zm0yWFl1cjNMS2RLS2FVekk1amc5UDRCNnVZam1KL1dSS21qUEVBM21RdjE5?=
- =?utf-8?B?bHUzSHRmWDNELzJ6Q3o2ZHlCdWRBWUpkOFcrMHpucjQzQVprUE5TekorYXlo?=
- =?utf-8?B?cXNUTllJN3pzS1dVTHRqenZiaWNQMFJCZDhlcjNPQnlsUDVpTnplZlVpQVZ5?=
- =?utf-8?B?ZUNJY285c2o3WHdsRS9hd056dEExQkZ4VVJIeXR0SmxpaUM1bDZDYTNXMlpn?=
- =?utf-8?B?MWt5RjlUSlR0QURnTG5IdDE3QStYWkZxN0w2S05VUkxGRGx3ZTkwaHd6YVUy?=
- =?utf-8?B?R0gxVnpVdnVNTThreEx4ekF5alFCWUdLdEZSUVhZZFhPbUhnUm5SbVJoNkQz?=
- =?utf-8?B?OWM2Y1FMaG85WnNISU1ybTVFektlOFZJUUtsb0owcWJDYXZzcGdTWDFwSi9x?=
- =?utf-8?B?OE9rWnBWaUk0Mk5YTFhVc2dadWoxdkh5TENXYXRlcDF2VkRwYnFqU3hwVW92?=
- =?utf-8?B?elBTZTU3N21WOXdTQzY2TWo0SWhrNnhLZ2JNUVd4cnppY1BDM2FETVJ3MXo4?=
- =?utf-8?B?VEZNclhCWjVHTVA0amc0WkdrUFJjZHhNeXJ3c2doOFo3Qm02QTBENG5SL0Q1?=
- =?utf-8?B?d3Jaa2hFVWtqNFM4NXEySWVBQ1JueFVoTzl2cXFVWWwyRWUyci9GdWJnRjNo?=
- =?utf-8?B?N25XekhuNXdIWUh2clVmNmJqREl2WGtYY1oyY0s4R2dVNGhONmdLRCs4MFE3?=
- =?utf-8?B?OGc9PQ==?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: c1d943c7-ea6b-4558-0543-08dc8f7e1727
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB7982.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2024 10:04:49.8049
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vcpgPmVIJiHc4JWzUUJv+sN6TSIquTZu53ItSmK7V7ifZpi/0dWUPG2+czWDuZhhzFoTm/R0j0+LWoP8nBC3EzIuORVnOgsKErERhY8+ONw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB7015
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <fb7d421b-9db5-461c-b89d-05cb9c5016ee@cherry.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 18 Jun 2024 10:05:02 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/337
+ <yocto-patches@lists.yoctoproject.org>; Tue, 18 Jun 2024 12:08:33 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/338
 
-Hi Trevor,
-
-On 6/18/24 1:07 AM, Trevor Woerner via lists.yoctoproject.org wrote:
-> Already the SRCREV that was used for -next has been rebased out of existence.
-
-Mmmm, no. It's still there, just not in the master branch.
-
-> Also that tag that was originally proposed no longer exists. With a repository
-
-It still exists. 
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/log/?h=next-20240611
-
-> that is rebased so regularly, the only thing we can safely use to hope for
-> valid builds that don't need to be tweaked every few days is AUTOREV.
+On Tue 2024-06-18 @ 12:04:48 PM, Quentin Schulz via lists.yoctoproject.org wrote:
+> Hi Trevor,
 > 
+> On 6/18/24 1:07 AM, Trevor Woerner via lists.yoctoproject.org wrote:
+> > Already the SRCREV that was used for -next has been rebased out of existence.
+> 
+> Mmmm, no. It's still there, just not in the master branch.
+> 
+> > Also that tag that was originally proposed no longer exists. With a repository
+> 
+> It still exists. https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/log/?h=next-20240611
 
-Or... use ;tag=next-20240611 in the git fetcher and force people to use 
-the network for radxa-zero-e boards.
+Yesterday at noon my time I cloned the linux-next repository on a machine I
+had never done this build on and that tag and commit ID were not there, and
+this is still true:
 
-I personally would vote for using the tag instead of AUTOREV. Kernel 
-maintainers rarely (have they ever done it?) move tags around so that 
-should be fine. Whereas using AUTOREV on linux-next is basically hoping 
-that nothing breaks from a development branch, maybe too much to ask for 
-right now?
+	$ git tag
+	...
+	next-20230310
+	next-20230314
+	next-20230315
+	next-20230316
+	next-20230317
+	next-20230829
+	next-20240613
+	v2.6.11
+	v2.6.11-tree
+	v2.6.12
+	v2.6.12-rc2
+	...
 
-Cheers,
-Quentin
+	$ git show a957267fa7e9159d3d2ee1421359ebf228570c68
+	fatal: bad object a957267fa7e9159d3d2ee1421359ebf228570c68
+
+	$ git pull
+	...
+
+	$ git tag
+	...
+	next-20230829
+	next-20240613
+	next-20240617
+	v2.6.11
+	v2.6.11-tree
+	v2.6.12
+	v2.6.12-rc2
+	...
+
+	$ git show a957267fa7e9159d3d2ee1421359ebf228570c68
+	fatal: bad object a957267fa7e9159d3d2ee1421359ebf228570c68
+
+> > that is rebased so regularly, the only thing we can safely use to hope for
+> > valid builds that don't need to be tweaked every few days is AUTOREV.
+> > 
+> 
+> Or... use ;tag=next-20240611 in the git fetcher and force people to use the
+> network for radxa-zero-e boards.
+> 
+> I personally would vote for using the tag instead of AUTOREV. Kernel
+> maintainers rarely (have they ever done it?) move tags around so that should
+> be fine. Whereas using AUTOREV on linux-next is basically hoping that
+> nothing breaks from a development branch, maybe too much to ask for right
+> now?
+
+When I click on the commit of the link you provided earlier it says: "Notice:
+this object is not reachable from any branch". If the tag is not accessible
+from any branch then I can't specify a branch to the fetcher. If I don't
+specify the branch to the fetcher then I get flooded with "...you didn't
+specify a branch, and we're going to make this mandatory soon..." messages,
+flooded!
+
+I also got an email from someone yesterday who had tried the radxa-zero-3w
+build and it failed for them. When I do the builds on my machine that I've
+been using for development, the build succeeds (because the repository
+predates the assumed rebasing). If I then go to the ${DL_DIR}/git2/ directory
+and delete the linux-next repository, then retry the build, it fails.
+
+When I try the build on a machine that has never done this build, it fails.
+
+I started my change yesterday by using the "tag=next-20240611" addition to the
+fetcher and was surprised when the build failed on a different build machine.
+
+I think AUTOREV is that safest bet here.
 
