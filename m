@@ -1,145 +1,168 @@
-Return-Path: <twoerner@gmail.com>
+Return-Path: <martin.jansa@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87026C2BA15
-	for <webhook@archiver.kernel.org>; Wed, 19 Jun 2024 12:20:53 +0000 (UTC)
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
- by mx.groups.io with SMTP id smtpd.web10.19552.1718799649425115379
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BDCFC27C53
+	for <webhook@archiver.kernel.org>; Wed, 19 Jun 2024 12:22:33 +0000 (UTC)
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+ by mx.groups.io with SMTP id smtpd.web11.19344.1718799747700168716
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 19 Jun 2024 05:20:49 -0700
+ Wed, 19 Jun 2024 05:22:28 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=XapELzLY;
- spf=pass (domain: gmail.com, ip: 209.85.160.179, mailfrom: twoerner@gmail.com)
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-44056295c8cso31033511cf.3
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 19 Jun 2024 05:20:49 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=YVktZn4h;
+ spf=pass (domain: gmail.com, ip: 209.85.167.49, mailfrom: martin.jansa@gmail.com)
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52cc10b5978so2885033e87.2
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 19 Jun 2024 05:22:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718799648; x=1719404448; darn=lists.yoctoproject.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/LwO5FTk9GSbActXjUX4qGgFU/NwFA9PMmBKNuW/Uaw=;
-        b=XapELzLYPLvSty1MwG0+M7TKGFfiUKUf6pugivT7VE6rc7xo7fF8d/1u8uWYljuMRx
-         uPruhEbL0FXzAXQD539WhCvhSeb1u9YR92/hsqpscJrET6NtNNZq8LdV/8Lhy8EOb81c
-         bis0XDbBXykxXHqFQ3vD+Kz/V2T1IvNZtUHD8hyjfhtaPVUuk4wIQ0UNQLJrzf2kU22w
-         ofCxG6WunFQKShaKM9pq1KqGHSiPatH6S68sxCLqUWieHq8GrGMp2MiPZ0hmXmBq1mwa
-         DPfLdfxa6Ua1wiIf/FKRJUMN5E4vfL9zf9ytwW1A2vlOAz8vqwESaD5jt0fZKQWUx2RS
-         XSuQ==
+        d=gmail.com; s=20230601; t=1718799746; x=1719404546; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Rrt1UU/DTSidEEjSXdbW5rN6D8Qa49P3oPsHZQaRrIE=;
+        b=YVktZn4hdRo47QQ/8LtAV9QZWaDTX6RzDlHzH/zHDvKrvnF/0z4Ewg3TMhzGRHn3mN
+         vpGDjMZTr36L7BIqLTnFdKn7gCxwBn6aNDek87cS2FxFPH8XdS9C3RJ245euPEDTYSrB
+         MzHysq8+NXD9EoPfQA7V8nel1Jt2WD9qISxDcdmpn4PGDwC1Z6YDJHy2u8XkUXdNQGsO
+         6frWXmNBaQ7ic26P4DznQcI7PsW2sOPp+Xz7oZ2lcngbnnIANVZ1Civ8CtS9DLQxzhwJ
+         QaXNuKO67Ph80y8AH4IVml7tJNofL5/twgHBWCHIsHfALc3ZYoWul6DE57QyZq4oOo/A
+         FtcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718799648; x=1719404448;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1718799746; x=1719404546;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/LwO5FTk9GSbActXjUX4qGgFU/NwFA9PMmBKNuW/Uaw=;
-        b=mH36173qIWx5hurMjqgtXNZjHIprQIECxA9qv6+Xrwf258ZPEQkGBvZp+umwWjtLJD
-         niecvmUtm2w9miSNOE9ucxNa6AcnGiSI9HfWrOQbX3cHtBt1Heb5jft5vfE9fYv5lS09
-         eE4Rzc94OskcAyFsa0gckT+ih2EsDDZbox1eWyfnUyiC0cxqiLEcttCRCjQKXBhkfsXA
-         FFMxdYTP0fPHbhqTDG7SXOijONr7+RamfXMhRo2UxOabJHwpb8PHP3w4bNBAJR6slq9F
-         ikMyoLxgWglIqbmDZ3Oa4RRj/4Ba/t+jTUNd2qwD6YKJB+20f3lqY4hRFv1o15LeRdiQ
-         EJdA==
-X-Gm-Message-State: AOJu0YxeH3/uGga4RW5qXzrWI2es73cGhsuMBOKxt4IpOHL8TNdnuvL9
-	piDojK20SphQNlkmGOg2ZYQ50/29f2GAxUisIKf9QcHPJ877VfHgYKhljA==
-X-Google-Smtp-Source: AGHT+IEhDUMw6rgxmNi31d+QCsOQu2dCbJTvBo87dvIY0NLoYmlO7m/5f8p71u+uiFQfWPi1rb0Yrw==
-X-Received: by 2002:ac8:5dd0:0:b0:43a:f1c7:4491 with SMTP id d75a77b69052e-444a7a6e01amr25272211cf.61.1718799647619;
-        Wed, 19 Jun 2024 05:20:47 -0700 (PDT)
-Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-441f2fcc2a2sm65272801cf.72.2024.06.19.05.20.46
-        for <yocto-patches@lists.yoctoproject.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 05:20:46 -0700 (PDT)
-Date: Wed, 19 Jun 2024 08:20:45 -0400
-From: Trevor Woerner <twoerner@gmail.com>
-To: yocto-patches@lists.yoctoproject.org
-Subject: Re: [yocto-patches] [meta-rockchip][PATCH 4/4] rauc demo: add
-Message-ID: <20240619122044.GA18676@localhost>
-References: <20240522230808.14409-1-twoerner@gmail.com>
- <20240522230808.14409-4-twoerner@gmail.com>
- <87a55431-aad6-44e5-a897-2b98f9bc77d2@cherry.de>
- <20240619045259.GA6665@localhost>
- <f08a3f8d-2928-4a00-8671-09f991ab55f0@cherry.de>
+        bh=Rrt1UU/DTSidEEjSXdbW5rN6D8Qa49P3oPsHZQaRrIE=;
+        b=htklGz5xam/l8xs37i+llH2petrB/T47q88Zb0PPfbAY+v8hQqMtPYPS1r/BiWm4k6
+         +5+mG4K+JJuEUkUn5PLfDuOXEv6je+XAOWHiSeA6gW/1I6ZaGp6iypf7lMXFmKfeFK2A
+         NTJJFIkk7HCRgAIm1ig+HP8eMwH3iHLfWaITv1vCZdIbZ6hLR4hvL4mrH0YAv4174fOU
+         EOEXlo/f3rHRJfRgisqRFYVdiwZ5EKjSWtDdzOw2SXGuG9yyabjzbhmw0Ckpg/g0m9OK
+         zCPY6mlvgF8tGZ1PLCKZ8q9Fcj09I+fWxIy94GNjukSLzfy06ICrUPn3lmb9pgCVENZ3
+         1F+Q==
+X-Gm-Message-State: AOJu0YxpPhmkuXhz+LlxnkIvi3/RPOk7IXMa04ypddRsoiR84KEH/GYS
+	H1XiFeMlBp5lu54BxbMZcUVlqFjffsuxa5+JjDFB9KQ3X+RGOCJAmj5G4rlGI9RC0x+wwmbe0VZ
+	710QhpQSA410YLiEUQl89pSP1BTTqJQ==
+X-Google-Smtp-Source: AGHT+IFeLIPYto5alx9c223yD60yml5bCVMX3oqgLGuoJLCPY7l+4me10Nk4NwshJppd/OUlmUbnD2Ez2YwYilIMbWA=
+X-Received: by 2002:a05:6512:124a:b0:52c:8a37:6cf4 with SMTP id
+ 2adb3069b0e04-52ccaa5576fmr1802892e87.14.1718799745394; Wed, 19 Jun 2024
+ 05:22:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <f08a3f8d-2928-4a00-8671-09f991ab55f0@cherry.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20240618171619.9303-1-twoerner@gmail.com> <d7838e2a-85e8-4308-82cc-36f9eb2b69c6@cherry.de>
+ <CA+chaQeUfaxfeuqSZEqxYVm6EcH8S9QqGe=1F=b2UgpmNaUPBg@mail.gmail.com> <20240619121738.GA16113@localhost>
+In-Reply-To: <20240619121738.GA16113@localhost>
+From: Martin Jansa <martin.jansa@gmail.com>
+Date: Wed, 19 Jun 2024 14:22:02 +0200
+Message-ID: <CA+chaQc1CL0O0WAuReDaPs=8bk=RJ=r0pCp9FGBpJcHf-PiqDg@mail.gmail.com>
+Subject: Re: [yocto-patches] [meta-rockchip][PATCH v2] linux-torvalds-next:
+ use tag
+To: yocto-patches@lists.yoctoproject.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 19 Jun 2024 12:20:53 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/353
+ <yocto-patches@lists.yoctoproject.org>; Wed, 19 Jun 2024 12:22:33 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/354
 
-On Wed 2024-06-19 @ 01:55:59 PM, Quentin Schulz via lists.yoctoproject.org wrote:
-> Hi Trevor,
-> 
-> On 6/19/24 6:52 AM, Trevor Woerner via lists.yoctoproject.org wrote:
-> [...]
-> > > > diff --git a/classes-recipe/rk-rauc-demo.bbclass b/classes-recipe/rk-rauc-demo.bbclass
-> > > > new file mode 100644
-> > > > index 000000000000..25e105b53d09
-> > > > --- /dev/null
-> > > > +++ b/classes-recipe/rk-rauc-demo.bbclass
-> > > > @@ -0,0 +1,8 @@
-> > > > +inherit features_check
-> > > > +
-> > > > +REQUIRED_DISTRO_FEATURES += "systemd rauc"
-> > > > +REQUIRED_MACHINE_FEATURES += "rk-u-boot-env"
-> > > > +
-> > > > +# 'RK_RAUC_DEMO' indicates the user wants to use the
-> > > > +# rauc demo configuration from this layer
-> > > > +OVERRIDES .= "${@ ':rk-rauc-demo' if bb.utils.to_boolean(d.getVar('RK_RAUC_DEMO'), False) else ''}"
-> > > 
-> > > This very much smells like we should have a DISTRO for this instead no? What
-> > > made you decide to go for a class?
-> > > 
-> > > Also, why is here and also in the global class just below? This should be in
-> > > the global class only to apply to all recipes?
-> > 
-> > I want the build to fail if the user doesn't enable "rk-u-boot-env" in
-> > MACHINE_FEATURES; you can't do RAUC if you can't save the U-Boot environment.
-> > Second I want the build to fail if the user doesn't specify "rauc" in
-> > DISTRO_FEATURES; the RAUC layer doens't work unless this is enabled. Therefore
-> > I want to do a features_check somewhere, and the way features_check is
-> > implemented means you need a class (?), specifically you need a classes-recipe
-> > bbclass.
-> > 
-> > If you do a features_check in classes/ it will fail because feature_check is
-> > is oe-core's classes-recipe and it won't be found from a bbclass in classes/.
-> > Perhaps I did it wrong, but this is what I found.
-> > 
-> > Secondly if you look in meta-rauc you see that they're using a similar class
-> > mechanism for the "rauc" override, is that not a common idiom? I'm simply
-> > following that example with meta-rockchip's "rk-rauc-demo" override. If
-> > there's a better way I'm happy to try it.
-> > 
-> 
-> Can you point at some files? git grep OVERRIDES and git grep features_check
-> returns nothing in the master branch of meta-rauc, so I probably am not
-> looking in the right places or with the right terms.
+On Wed, Jun 19, 2024 at 2:17=E2=80=AFPM Trevor Woerner via
+lists.yoctoproject.org <twoerner=3Dgmail.com@lists.yoctoproject.org>
+wrote:
+>
+> On Wed 2024-06-19 @ 01:56:14 PM, Martin Jansa via lists.yoctoproject.org =
+wrote:
+> > Why is this better?
+>
+> Because in a repository like linux-next
+> a957267fa7e9159d3d2ee1421359ebf228570c68 could be rebased out of existenc=
+e?
 
-Oops, I meant meta-rauc-community, and I was referring to just the overrides
-thing, not the features_check thing:
+Really? It shouldn't disappear while the tag is still referencing it
+and if the tag is deleted than this change won't help you as well
+after first gc in upstream repo.
 
-https://github.com/rauc/meta-rauc-community/blob/master/meta-rauc-raspberrypi/classes/rauc-integration.bbclass
+> Although now that makes we wonder what would happen to the tag in this
+> situation.
+>
+> Three days ago this hash was reachable from master, now it is not. That's=
+ a
+> lot of churn.
+>
+> > Now bitbake will always run git ls-remote to
+> > covert next-20240611 into a957267fa7e9159d3d2ee1421359ebf228570c68 and
+> > break parsing this recipe without network access.
+>
+> Is that how you're building with meta-rockchip?
 
-> [...]
-> > On the other hand, if you're trying to understand what the partitions are and
-> > what's available where and with what options, isn't /etc/fstab the first thing
-> > you look at?
-> > 
-> 
-> I run `mount` on my running target :)
-> 
-> Cheers,
-> Quentin
-> 
-> 
-> -=-=-=-=-=-=-=-=-=-=-=-
+I don't even use meta-rockchip, but I'm a bit allergic to ls-remote
+while parsing recipes I'm not using (and random build failures caused
+by that when there is a network glitch or something during re-parsing
+of the recipes), especially when I notice a change like this which
+IMHO made it worse.
+
+Regards,
+
+> > On Wed, Jun 19, 2024 at 10:59=E2=80=AFAM Quentin Schulz via
+> > lists.yoctoproject.org
+> > <quentin.schulz=3Dcherry.de@lists.yoctoproject.org> wrote:
+> > >
+> > > Hi Trevor,
+> > >
+> > > On 6/18/24 7:16 PM, Trevor Woerner via lists.yoctoproject.org wrote:
+> > > > Use the tag name specifically; note that it is no longer reachable =
+from any
+> > > > branch.
+> > > >
+> > > > Signed-off-by: Trevor Woerner <twoerner@gmail.com>
+> > > > ---
+> > > >   recipes-kernel/linux/linux-torvalds-next_git.bb | 5 ++---
+> > > >   1 file changed, 2 insertions(+), 3 deletions(-)
+> > > >
+> > > > diff --git a/recipes-kernel/linux/linux-torvalds-next_git.bb b/reci=
+pes-kernel/linux/linux-torvalds-next_git.bb
+> > > > index 9a95eb5bc4d8..1369ba1d707f 100644
+> > > > --- a/recipes-kernel/linux/linux-torvalds-next_git.bb
+> > > > +++ b/recipes-kernel/linux/linux-torvalds-next_git.bb
+> > > > @@ -10,13 +10,12 @@ COMPATIBLE_MACHINE =3D "^$"
+> > > >   COMPATIBLE_MACHINE:radxa-zero-3 =3D "radxa-zero-3"
+> > > >
+> > > >   LINUX_VERSION =3D "6.10-rc3"
+> > > > +KERNEL_VERSION_SANITY_SKIP =3D "1"
+> > > >   PV =3D "${LINUX_VERSION}+git${SRCPV}"
+> > > >   SRC_URI =3D " \
+> > > > -     git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next=
+.git;protocol=3Dhttps;branch=3Dmaster \
+> > > > +     git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next=
+.git;protocol=3Dhttps;nobranch=3D1;tag=3Dnext-20240611 \
+> > > >       file://rockchip-kmeta;type=3Dkmeta;name=3Drockchip-kmeta;dest=
+suffix=3Drockchip-kmeta \
+> > > >       "
+> > > > -# this is tag 'next-20240611'
+> > > > -SRCREV =3D "a957267fa7e9159d3d2ee1421359ebf228570c68"
+> > > >
+> > >
+> > > Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
+> > >
+> > > Thanks!
+> > > Quentin
+> > >
+> > >
+> > >
+> > >
+> > >
+> >
+> >
+> >
+> >
+> >
+>
+>
+> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 > Links: You receive all messages sent to this group.
-> View/Reply Online (#350): https://lists.yoctoproject.org/g/yocto-patches/message/350
-> Mute This Topic: https://lists.yoctoproject.org/mt/106253218/900817
+> View/Reply Online (#352): https://lists.yoctoproject.org/g/yocto-patches/=
+message/352
+> Mute This Topic: https://lists.yoctoproject.org/mt/106745214/3617156
 > Group Owner: yocto-patches+owner@lists.yoctoproject.org
-> Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/13168745/900817/63955952/xyzzy [twoerner@gmail.com]
-> -=-=-=-=-=-=-=-=-=-=-=-
-> 
-> 
+> Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/1338883=
+6/3617156/66960823/xyzzy [martin.jansa@gmail.com]
+> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+>
+>
 
