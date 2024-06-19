@@ -1,124 +1,143 @@
-Return-Path: <martin.jansa@gmail.com>
+Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69535C27C53
-	for <webhook@archiver.kernel.org>; Wed, 19 Jun 2024 11:56:43 +0000 (UTC)
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
- by mx.groups.io with SMTP id smtpd.web11.18815.1718798197940818213
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BD85C27C53
+	for <webhook@archiver.kernel.org>; Wed, 19 Jun 2024 12:17:53 +0000 (UTC)
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+ by mx.groups.io with SMTP id smtpd.web10.19494.1718799464542912325
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 19 Jun 2024 04:56:38 -0700
+ Wed, 19 Jun 2024 05:17:44 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=K0FPueiH;
- spf=pass (domain: gmail.com, ip: 209.85.167.52, mailfrom: martin.jansa@gmail.com)
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52c525257feso8155953e87.1
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 19 Jun 2024 04:56:37 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=hg80DGFq;
+ spf=pass (domain: gmail.com, ip: 209.85.222.176, mailfrom: twoerner@gmail.com)
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-795502843ccso355843885a.1
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 19 Jun 2024 05:17:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718798196; x=1719402996; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j5GAfwL1Lse6GXB1RaBMK0O/nESoFVWWNzdsH7mtIdE=;
-        b=K0FPueiHUcvj0iiu0A2iaZozHPilmOLaonuEKTh5zz6ASsZTQCprMaVQVUf1UiZQbw
-         ib9dQvJvJLxgU8poyKowMPAi+md5UQCaj/Cf+Hyef6ED2iBKHEl9nF1mAvfoTs9mKXKu
-         /hA2VN/GIsNJLlE/OctYpkiJNYScscrtNtOR/6+wEg28lfBkWpekU64k/83J0+c+H/m8
-         xhGgwvXsSRaGfKe6PRICBf8FoOM8K/poVmdc2At5ofKd4XRojke4rObf46M0v3NjhRYm
-         2iuIZMWRhy1J+KBfdKpL0AlhQTJTh68phKdSGW7SlX6s7lZzwsAv197r3s4c2e8v2xo3
-         JcbQ==
+        d=gmail.com; s=20230601; t=1718799462; x=1719404262; darn=lists.yoctoproject.org;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WFfn8Tpt2TK7LgPaajG861qFY8YwOa1Wz3fkg9BkctY=;
+        b=hg80DGFqkDiDtxlH9K5y30psqbx1fsMGCm+87shC6wAE4HE8opxBImYFLuhbvlLCRa
+         0yUpPPjTAsDfJI09n/p98thzzo3UDghZ2zrBbDsVXOR+LPQupaRKjCcvgArzSq67wuSt
+         Lqk8+FUrtU9/hovZ+2zx1zhvxdcWptJq9PIDJZ7xdrtNOBngjU38Al1luXyy3ebl1TWq
+         uygQ7NVsCwXntC+plfdsXENPmdiH2GsK/EvDliRm9fIULwuEORUj8iNw1WgT9lh2Ck4P
+         znebmUVk0ptEOeoCbGH3dNJqQKK/bidPeZRnfaEwahlvXayEoVj1OdPE6U6Jx3yL3z9P
+         HjoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718798196; x=1719402996;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j5GAfwL1Lse6GXB1RaBMK0O/nESoFVWWNzdsH7mtIdE=;
-        b=e8Mwtg5G/bwGEc3HCQUInj19rswXaImpaNoFaVQCa/gtVhMphfqZZ7q90ssBsEba66
-         iZYI6mAViuFunjS+2FyzmvdtZXK79TWzuvZ7ufWQCElQRFoJ09u4IJGniSxiafuvTamg
-         rxL8fZeCXxAtoXn/Tj0qgumg6r0V7LPKBa7NS8vd30gG0mDA5ab07A4UjHAshvawPAJq
-         7PLmQZg3524cJNqCiNEwusm1PerdoE0fPmcb0uXpBI8vgM7fi6WHb5PfXsGbFjcMmmp1
-         1LA+U/8XBli6qVS3BVt6k5hmgee6NNdnRILYeDzMulKWEg1YPs1QEFwzOPF8f1/wkAlB
-         l9mA==
-X-Gm-Message-State: AOJu0YxXEcERSfoqaULtZf+Skia9CUW++tpO5jpokicWp+d16t7XwkN4
-	8oxWMndz/r2SzNsh0vsCymjt0IFaUnre6pL7GEiiYBDco2NNlS8MpY7Dxsb1oNMZCy35Uzq49wI
-	odSKcGWQO79Huq3OotJXDnU1Nqn8F3JuU
-X-Google-Smtp-Source: AGHT+IHinqVIyP9Xq+Pqcc3x/4lIkNZX9BK4PKwJmBNkp/XIIpNqfBOuOZL6hX+GH0dTRIXiIYAddfJ92PT7ds+/OHU=
-X-Received: by 2002:a05:6512:1247:b0:52c:84bf:d1f9 with SMTP id
- 2adb3069b0e04-52ccaa2a879mr1493893e87.8.1718798195542; Wed, 19 Jun 2024
- 04:56:35 -0700 (PDT)
-MIME-Version: 1.0
-References: <20240618171619.9303-1-twoerner@gmail.com> <d7838e2a-85e8-4308-82cc-36f9eb2b69c6@cherry.de>
-In-Reply-To: <d7838e2a-85e8-4308-82cc-36f9eb2b69c6@cherry.de>
-From: Martin Jansa <martin.jansa@gmail.com>
-Date: Wed, 19 Jun 2024 13:56:14 +0200
-Message-ID: <CA+chaQeUfaxfeuqSZEqxYVm6EcH8S9QqGe=1F=b2UgpmNaUPBg@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1718799462; x=1719404262;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WFfn8Tpt2TK7LgPaajG861qFY8YwOa1Wz3fkg9BkctY=;
+        b=ZWBZ8F2mxecI3lXIwgwn/efFPUuz/jzI5FkT0YAq2OIA4uOAWkDBRXYraTG3fSzR7m
+         Ed9LCd0M1eFpi79AZte+F8P4hrGfGEcdGrQWc3RfK5Gc2VmWITvz4d4U6XVtt1+atbJK
+         mxA+2cqjA+mcvISrVnQH6aC2/S2idxebEpkw4kNLAT5ycrzfsibC9DYdROfnr4ai3YSk
+         lrB/JF706eg+0bUmg7eMlMV7mTdvdwyGO0D04kas6MKriUPvoMUpwT+SnoK2P2oGqkXf
+         v2xKt+wTGDMZ0ahFOIYUAD4OOrtxad35AyaMxElxWwmKTiyf7VIxvo2bNV/smyRwwFEs
+         Zang==
+X-Gm-Message-State: AOJu0YzEe6sD498rhNn7BiDA1khPHjyUClyhzgB/ydNIS+KCi+Ydn1ri
+	qSxAYG+IBG8WD9LDtTpE4EbMekJx3kSqVn9Socrdn+0TDMDh/e/a+zKMdw==
+X-Google-Smtp-Source: AGHT+IHdxAmNLi9D+RZTV9IjgxWB42O5fyCcQoFrCzEg8VlQqQVbV231QQAuUBt5J7/K8D3XKmpxjw==
+X-Received: by 2002:a0c:f005:0:b0:6b0:91a4:ece7 with SMTP id 6a1803df08f44-6b501ea349cmr28633296d6.46.1718799461648;
+        Wed, 19 Jun 2024 05:17:41 -0700 (PDT)
+Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a5eb49a8sm77081566d6.90.2024.06.19.05.17.40
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jun 2024 05:17:40 -0700 (PDT)
+Date: Wed, 19 Jun 2024 08:17:39 -0400
+From: Trevor Woerner <twoerner@gmail.com>
+To: yocto-patches@lists.yoctoproject.org
 Subject: Re: [yocto-patches] [meta-rockchip][PATCH v2] linux-torvalds-next:
  use tag
-To: yocto-patches@lists.yoctoproject.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <20240619121738.GA16113@localhost>
+References: <20240618171619.9303-1-twoerner@gmail.com>
+ <d7838e2a-85e8-4308-82cc-36f9eb2b69c6@cherry.de>
+ <CA+chaQeUfaxfeuqSZEqxYVm6EcH8S9QqGe=1F=b2UgpmNaUPBg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+chaQeUfaxfeuqSZEqxYVm6EcH8S9QqGe=1F=b2UgpmNaUPBg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 19 Jun 2024 11:56:43 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/351
+ <yocto-patches@lists.yoctoproject.org>; Wed, 19 Jun 2024 12:17:53 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/352
 
-Why is this better? Now bitbake will always run git ls-remote to
-covert next-20240611 into a957267fa7e9159d3d2ee1421359ebf228570c68 and
-break parsing this recipe without network access.
+On Wed 2024-06-19 @ 01:56:14 PM, Martin Jansa via lists.yoctoproject.org wrote:
+> Why is this better?
 
-On Wed, Jun 19, 2024 at 10:59=E2=80=AFAM Quentin Schulz via
-lists.yoctoproject.org
-<quentin.schulz=3Dcherry.de@lists.yoctoproject.org> wrote:
->
-> Hi Trevor,
->
-> On 6/18/24 7:16 PM, Trevor Woerner via lists.yoctoproject.org wrote:
-> > Use the tag name specifically; note that it is no longer reachable from=
- any
-> > branch.
+Because in a repository like linux-next
+a957267fa7e9159d3d2ee1421359ebf228570c68 could be rebased out of existence?
+Although now that makes we wonder what would happen to the tag in this
+situation.
+
+Three days ago this hash was reachable from master, now it is not. That's a
+lot of churn.
+
+> Now bitbake will always run git ls-remote to
+> covert next-20240611 into a957267fa7e9159d3d2ee1421359ebf228570c68 and
+> break parsing this recipe without network access.
+
+Is that how you're building with meta-rockchip?
+
+> On Wed, Jun 19, 2024 at 10:59 AM Quentin Schulz via
+> lists.yoctoproject.org
+> <quentin.schulz=cherry.de@lists.yoctoproject.org> wrote:
 > >
-> > Signed-off-by: Trevor Woerner <twoerner@gmail.com>
-> > ---
-> >   recipes-kernel/linux/linux-torvalds-next_git.bb | 5 ++---
-> >   1 file changed, 2 insertions(+), 3 deletions(-)
+> > Hi Trevor,
 > >
-> > diff --git a/recipes-kernel/linux/linux-torvalds-next_git.bb b/recipes-=
-kernel/linux/linux-torvalds-next_git.bb
-> > index 9a95eb5bc4d8..1369ba1d707f 100644
-> > --- a/recipes-kernel/linux/linux-torvalds-next_git.bb
-> > +++ b/recipes-kernel/linux/linux-torvalds-next_git.bb
-> > @@ -10,13 +10,12 @@ COMPATIBLE_MACHINE =3D "^$"
-> >   COMPATIBLE_MACHINE:radxa-zero-3 =3D "radxa-zero-3"
+> > On 6/18/24 7:16 PM, Trevor Woerner via lists.yoctoproject.org wrote:
+> > > Use the tag name specifically; note that it is no longer reachable from any
+> > > branch.
+> > >
+> > > Signed-off-by: Trevor Woerner <twoerner@gmail.com>
+> > > ---
+> > >   recipes-kernel/linux/linux-torvalds-next_git.bb | 5 ++---
+> > >   1 file changed, 2 insertions(+), 3 deletions(-)
+> > >
+> > > diff --git a/recipes-kernel/linux/linux-torvalds-next_git.bb b/recipes-kernel/linux/linux-torvalds-next_git.bb
+> > > index 9a95eb5bc4d8..1369ba1d707f 100644
+> > > --- a/recipes-kernel/linux/linux-torvalds-next_git.bb
+> > > +++ b/recipes-kernel/linux/linux-torvalds-next_git.bb
+> > > @@ -10,13 +10,12 @@ COMPATIBLE_MACHINE = "^$"
+> > >   COMPATIBLE_MACHINE:radxa-zero-3 = "radxa-zero-3"
+> > >
+> > >   LINUX_VERSION = "6.10-rc3"
+> > > +KERNEL_VERSION_SANITY_SKIP = "1"
+> > >   PV = "${LINUX_VERSION}+git${SRCPV}"
+> > >   SRC_URI = " \
+> > > -     git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git;protocol=https;branch=master \
+> > > +     git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git;protocol=https;nobranch=1;tag=next-20240611 \
+> > >       file://rockchip-kmeta;type=kmeta;name=rockchip-kmeta;destsuffix=rockchip-kmeta \
+> > >       "
+> > > -# this is tag 'next-20240611'
+> > > -SRCREV = "a957267fa7e9159d3d2ee1421359ebf228570c68"
+> > >
 > >
-> >   LINUX_VERSION =3D "6.10-rc3"
-> > +KERNEL_VERSION_SANITY_SKIP =3D "1"
-> >   PV =3D "${LINUX_VERSION}+git${SRCPV}"
-> >   SRC_URI =3D " \
-> > -     git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git=
-;protocol=3Dhttps;branch=3Dmaster \
-> > +     git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git=
-;protocol=3Dhttps;nobranch=3D1;tag=3Dnext-20240611 \
-> >       file://rockchip-kmeta;type=3Dkmeta;name=3Drockchip-kmeta;destsuff=
-ix=3Drockchip-kmeta \
-> >       "
-> > -# this is tag 'next-20240611'
-> > -SRCREV =3D "a957267fa7e9159d3d2ee1421359ebf228570c68"
+> > Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
 > >
->
-> Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
->
-> Thanks!
-> Quentin
->
->
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+> > Thanks!
+> > Quentin
+> >
+> >
+> > 
+> >
+> >
+> 
+> 
+> -=-=-=-=-=-=-=-=-=-=-=-
 > Links: You receive all messages sent to this group.
-> View/Reply Online (#348): https://lists.yoctoproject.org/g/yocto-patches/=
-message/348
-> Mute This Topic: https://lists.yoctoproject.org/mt/106745214/3617156
+> View/Reply Online (#351): https://lists.yoctoproject.org/g/yocto-patches/message/351
+> Mute This Topic: https://lists.yoctoproject.org/mt/106745214/900817
 > Group Owner: yocto-patches+owner@lists.yoctoproject.org
-> Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/1338883=
-6/3617156/66960823/xyzzy [martin.jansa@gmail.com]
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
->
->
+> Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/13168745/900817/63955952/xyzzy [twoerner@gmail.com]
+> -=-=-=-=-=-=-=-=-=-=-=-
+> 
+> 
 
