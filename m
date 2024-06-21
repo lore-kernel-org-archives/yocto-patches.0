@@ -1,95 +1,90 @@
-Return-Path: <ricardo@foundries.io>
+Return-Path: <ecordonnier@snap.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB34CC2BA18
-	for <webhook@archiver.kernel.org>; Fri, 21 Jun 2024 00:02:44 +0000 (UTC)
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
- by mx.groups.io with SMTP id smtpd.web11.61850.1718928163881594587
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E593C27C4F
+	for <webhook@archiver.kernel.org>; Fri, 21 Jun 2024 12:13:00 +0000 (UTC)
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+ by mx.groups.io with SMTP id smtpd.web10.71536.1718971970621707415
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 20 Jun 2024 17:02:43 -0700
+ Fri, 21 Jun 2024 05:12:51 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@foundries.io header.s=google header.b=Rdfeh6rY;
- spf=pass (domain: foundries.io, ip: 209.85.216.46, mailfrom: ricardo@foundries.io)
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2c7fe2dcdf6so792073a91.1
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 20 Jun 2024 17:02:43 -0700 (PDT)
+ dkim=pass header.i=@snap.com header.s=google header.b=KC605qEP;
+ spf=pass (domain: snapchat.com, ip: 209.85.208.177, mailfrom: ecordonnier@snapchat.com)
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ec50a5e230so5002641fa.0
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 21 Jun 2024 05:12:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=foundries.io; s=google; t=1718928163; x=1719532963; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=C7f6qYzp0YGN2KUQ/2Fzh8KKFiHCNivukAWHLX+52ak=;
-        b=Rdfeh6rYPAHL3quMZB4WsEHDsy4UGsotj1E73sxNlr7XowFZLTOwyh/+QWm505h5Ox
-         AgSUUxdiRTlEZ51DNZ+LwNwHQBbINXYT7FEdSH8MZFTfjpyrYvFMJa+AyPDjSeroHver
-         FCxzPnkgL8T3Xatu0k+rBlL5EI4743SjXWejdS9a3FodxUFCe2W3nGQyd5rwaAvSL9Jm
-         mqJoWyPrPt3Hes0BSAnB8DvMqZ3jg8hicZCAwrqsV/8t+jq1mVRjGRlgwSuG4BrzNpQq
-         Zgg77tr82hiDXrARwjdeHWMuD5Iyw6h8/LM53VgSHfThKkf8i3xUD3VMnlT6z7NQy/49
-         DSmA==
+        d=snap.com; s=google; t=1718971968; x=1719576768; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=W2admxA/Kdk7iMzmL3srZqmzMud3PefMibYneIsc5hY=;
+        b=KC605qEP54UtOeBrz19J6xNSeZF5m1v6kwZro2iLNktUWfJpcv4EHq17nokWOUHN+R
+         OZUj/ZABetKC64oNrV4uAB6mB0LKFjNx0S2BXSYUcaFX1nSvGbVkINpglH3LzKiZIc1J
+         EeOnYRUBKRaG1wNMAktW40ICtEjG5vzXYpzAE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718928163; x=1719532963;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=C7f6qYzp0YGN2KUQ/2Fzh8KKFiHCNivukAWHLX+52ak=;
-        b=NqLi8wpi2hkiEqw6qW3T1qeTRbLGEj8p7tcj6bpKelMsTsnjg2fZHERqtTniHaErXS
-         yrjRB7+J0F9vCm3YRVVC8xGIB1sN+TiHwZ40CpnQ2S63gHeq3bBBQYi+k8mWDTUF/YY2
-         jRi9GK30pUSSzDsaOxU9Xb2LZamxBHzj9YB+NQgua1Or/0QuqHTqvOufTZnc5SRL3OES
-         1N5hGChl5EyK/VUVu15e6nCnek3veyrc93UoXRF0GFu2OMbWvyuOpbqnZRKToRmlLcVZ
-         +2WsZN/h5IL7FQcFa3vqadSnHXEqnCSwNP/QIgiQ2vxmpQeN0xjvDIWGAg41ScVSnXh4
-         By2w==
-X-Gm-Message-State: AOJu0YxfKvfkI/j30bkLSLt9kc/A0QlpZLCFWXt81ZhyBm6h8VpK73qq
-	WfxXUHSHTDCVWt6gd+ZKDeCl4aDUfhig8ctFJRW6r75BdxgDFeWcAHHBsolrHEQLb88j+FGAwBM
-	=
-X-Google-Smtp-Source: AGHT+IGxuW1pkqqF16cx8nH5YrjXdZQnCJUb4CAcxfdhbw2VZjky9iKlATlnfdiWPVcM941R214KvQ==
-X-Received: by 2002:a17:90a:d58a:b0:2c7:c6a1:42d9 with SMTP id 98e67ed59e1d1-2c7c6a144d7mr5030654a91.49.1718928162347;
-        Thu, 20 Jun 2024 17:02:42 -0700 (PDT)
-Received: from evatuf.domocacupe ([179.117.98.12])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c7e4775ba4sm2337943a91.0.2024.06.20.17.02.40
-        for <yocto-patches@lists.yoctoproject.org>
+        d=1e100.net; s=20230601; t=1718971968; x=1719576768;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W2admxA/Kdk7iMzmL3srZqmzMud3PefMibYneIsc5hY=;
+        b=uB6ZANk2zZooLDLe+RjNooDJSCiCO8vpO20pjKOC1ZJme77KdJixHfTGBZTN5oui0f
+         Lx23zSq3/WK0Bf8FJ3upUo11pDKu/k/LWn104BbCGBRvGcdo0t9i9cPDF71z2cnWVLsT
+         uaJedBhm7aPbqli+IMSVR/Ue9xCFhh1w9we3he0quhb11XbVJdk0dCjRIWaD4sI8E+NP
+         tzkKfjrQRcdr5Sn/fFY/LDjuIPQuKC4BaiZ8bknbaHmJT02wp2DMferhLka4w8AASEUM
+         C2Tat1UGLxQ1c2zV7Hufg5Sh5vn1nLokL6N9hHmpco5y2gU+VObuZRZiDeY2b6PwDiEe
+         /xZw==
+X-Gm-Message-State: AOJu0YzMxP2vkk6fVtgJZJdpSAG4QSn1ArccEtinjsm576lTjwSE65qa
+	2FYfONeCGFsOkcEPpe3Or0BfbS9qo6EEjXeXVs1iCswOnZB/iBCYe5bn4Ms4zf2fAhSmaIP3t4U
+	q/bQ=
+X-Google-Smtp-Source: AGHT+IGhkhUfroGy0esm+ogMu/I8ApZP/ICkoqZLBJv9V80eECUut4LBlSuKEA/4NFsvpQCkMAu6pg==
+X-Received: by 2002:a2e:8555:0:b0:2eb:df39:232b with SMTP id 38308e7fff4ca-2ec3ceb8e3bmr52809801fa.20.1718971968062;
+        Fri, 21 Jun 2024 05:12:48 -0700 (PDT)
+Received: from lj8k2dq3.sc-core.net ([85.237.126.22])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d305616f5sm863931a12.80.2024.06.21.05.12.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 17:02:41 -0700 (PDT)
-From: Ricardo Salveti <ricardo@foundries.io>
+        Fri, 21 Jun 2024 05:12:47 -0700 (PDT)
+From: ecordonnier@snap.com
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-security] [PATCH] tpm2-tss: drop libgcrypt
-Date: Thu, 20 Jun 2024 21:02:36 -0300
-Message-Id: <20240621000236.2872164-1-ricardo@foundries.io>
-X-Mailer: git-send-email 2.34.1
+Cc: Etienne Cordonnier <ecordonnier@snap.com>
+Subject: [meta-selinux][PATCH 1/2] README: use simpler syntax to enable systemd
+Date: Fri, 21 Jun 2024 14:12:38 +0200
+Message-Id: <20240621121239.594152-1-ecordonnier@snap.com>
+X-Mailer: git-send-email 2.36.1.vfs.0.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 21 Jun 2024 00:02:44 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/361
+ <yocto-patches@lists.yoctoproject.org>; Fri, 21 Jun 2024 12:13:00 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/362
 
-Upstream removed gcrypt backend as part of the 3.0.0 release
-(https://github.com/tpm2-software/tpm2-tss/pull/1781), but it was not
-removed from the recipe during the update.
+From: Etienne Cordonnier <ecordonnier@snap.com>
 
-Signed-off-by: Ricardo Salveti <ricardo@foundries.io>
+The variable INIT_MANAGER was added in yocto version Zeus / 3.0 and makes the selection of systemd easier.
+See https://git.yoctoproject.org/poky/commit/?id=7508711b3835cc7890d46fda1b4a1c3da196ec9a for details.
+
+Signed-off-by: Etienne Cordonnier <ecordonnier@snap.com>
 ---
- meta-tpm/recipes-tpm2/tpm2-tss/tpm2-tss_4.1.2.bb | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ README | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/meta-tpm/recipes-tpm2/tpm2-tss/tpm2-tss_4.1.2.bb b/meta-tpm/recipes-tpm2/tpm2-tss/tpm2-tss_4.1.2.bb
-index 9a57308..a27acca 100644
---- a/meta-tpm/recipes-tpm2/tpm2-tss/tpm2-tss_4.1.2.bb
-+++ b/meta-tpm/recipes-tpm2/tpm2-tss/tpm2-tss_4.1.2.bb
-@@ -4,7 +4,7 @@ LICENSE = "BSD-2-Clause"
- LIC_FILES_CHKSUM = "file://LICENSE;md5=500b2e742befc3da00684d8a1d5fd9da"
- SECTION = "tpm"
+diff --git a/README b/README
+index 67708f7..ce91cc1 100644
+--- a/README
++++ b/README
+@@ -69,10 +69,7 @@ By default selinux enabled images coming up with "sysvinit" as init manager,
+ we can use "systemd" as an init manager using below changes to local.conf
  
--DEPENDS = "autoconf-archive-native libgcrypt openssl"
-+DEPENDS = "autoconf-archive-native openssl"
+ * enable systemd as init manager changes to local.conf
+-DISTRO_FEATURES:remove = " sysvinit"
+-DISTRO_FEATURES:append = " systemd"
+-VIRTUAL-RUNTIME_init_manager = "systemd"
+-DISTRO_FEATURES_BACKFILL_CONSIDERED = ""
++INIT_MANAGER = "systemd"
  
- SRC_URI = "https://github.com/tpm2-software/${BPN}/releases/download/${PV}/${BPN}-${PV}.tar.gz \
-            file://fixup_hosttools.patch \
-@@ -92,6 +92,4 @@ FILES:${PN} = "\
-     ${sysconfdir}/tpm2-tss \
-     ${sysconfdir}/sysusers.d"
  
--RDEPENDS:libtss2 = "libgcrypt"
--
- BBCLASSEXTEND = "native nativesdk"
+ Enable labeling on first boot
 -- 
-2.34.1
+2.36.1.vfs.0.0
 
 
