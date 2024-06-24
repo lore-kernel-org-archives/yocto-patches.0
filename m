@@ -1,110 +1,78 @@
-Return-Path: <alexis.lothore@bootlin.com>
+Return-Path: <Pascal.Weisser.ext@karlstorz.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2577C2BD09
-	for <webhook@archiver.kernel.org>; Fri, 21 Jun 2024 15:57:41 +0000 (UTC)
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
- by mx.groups.io with SMTP id smtpd.web10.76933.1718985455872376879
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D913FC2BD05
+	for <webhook@archiver.kernel.org>; Mon, 24 Jun 2024 09:02:50 +0000 (UTC)
+Received: from mx08-0040c702.pphosted.com (mx08-0040c702.pphosted.com [185.183.31.154])
+ by mx.groups.io with SMTP id smtpd.web11.136090.1719219758967483068
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 21 Jun 2024 08:57:36 -0700
+ Mon, 24 Jun 2024 02:02:40 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=gm1 header.b=N/E7V6ty;
- spf=pass (domain: bootlin.com, ip: 217.70.183.197, mailfrom: alexis.lothore@bootlin.com)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 3DC1C1C0003;
-	Fri, 21 Jun 2024 15:57:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1718985454;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ev9OeDLGskgXxvgrLClMsoxkzoex16MFvO0CMZ1RcKw=;
-	b=N/E7V6tyENy8Ewb5wpSelMRMuud+6sCP1sSA29OSV8mWXG6FP0V6OGsZO5g++EMpjtbtV6
-	Insk6wcuvGvD5GDeXfhLpIqqvAfph1ZrYpApoU/KZfkrhN1qCDaEqToNoCS9zf/iCvA5cK
-	DNy4O1tiAem50R1kZVbYlkCZnf+SialFRhb+8umSqYbnoWgBU5vXsgzbP1kMCL5l+VRgcw
-	BEZYbrdJi4+NDMxxZ2AHmLGRdWwceV6LB5z0gDbCU2Q+PYkUJBzv5juO7y/3wZG0ydMLmT
-	ZETC57rUUMj6FlM/0ukacsYU3fp1XMAOAFOyutfz8wf6vNpFwfjIPKpL4baAYA==
-From: =?UTF-8?q?Alexis=20Lothor=C3=A9?= <alexis.lothore@bootlin.com>
-To: yocto-patches@lists.yoctoproject.org
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [yocto-autobuilder-helper][PATCH 1/3] scripts: send_qa_email: fix invalid regex syntax warning
-Date: Fri, 21 Jun 2024 16:57:21 +0100
-Message-ID: <20240621155723.33600-2-alexis.lothore@bootlin.com>
+ dkim=pass header.i=@karlstorz.com header.s=S-DKIM-20210427 header.b=HE+xeEq+;
+ spf=pass (domain: karlstorz.com, ip: 185.183.31.154, mailfrom: pascal.weisser.ext@karlstorz.com)
+Received: from pps.filterd (m0267678.ppops.net [127.0.0.1])
+	by mx07-0040c702.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45O5TM88013307
+	for <yocto-patches@lists.yoctoproject.org>; Mon, 24 Jun 2024 09:02:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=karlstorz.com;
+	 h=cc:content-transfer-encoding:content-type:date:from
+	:message-id:mime-version:subject:to; s=S-DKIM-20210427; bh=f2f9Z
+	IUQvYSQcfFKUp6zUYsufRb6FKPRPgxMENLtTBc=; b=HE+xeEq+eRj6BRQapVpQZ
+	0zBkVlsppantmNyCDtvpUSUlu0v5oW/9vTX965SbaOq17wJ3s+n2JLNecly5dEcz
+	eyjniYSOPjaj4rSSt/osQ39JIfmG8Wh6izf9mUvL1hzzE7EPhS7X/IABnUEvjzag
+	RnmtSHh8mA/JYt3h1uk2mvaxPrdm8XPjcEKXHdiz1LLCtViVcoNCqieVaHxo3Es4
+	lP7nBgI5Mc9LV3wU30E4Wx3tcfoeZLAGP7wzxLEtquaUtw8cPWYCUBXH1gCWjdbG
+	Slb6kjpoy1JouPq7qYjXHIank9bBEmne4EX/1w+kGHr/3iurJqsqldz0IPxbUDVr
+	g==
+Received: from tut-ex23-pv.kstg.corp (62-134-76-232.business.static.de.bt.net [62.134.76.232])
+	by mx07-0040c702.pphosted.com (PPS) with ESMTPS id 3ywnhbnxew-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+	for <yocto-patches@lists.yoctoproject.org>; Mon, 24 Jun 2024 09:02:35 +0000 (GMT)
+Received: from TUT-EX20-PV.KSTG.corp (10.0.10.224) by TUT-EX23-PV.KSTG.corp
+ (10.0.10.227) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Jun
+ 2024 11:02:33 +0200
+Received: from TUT-EX23-PV.KSTG.corp (10.0.10.227) by TUT-EX20-PV.KSTG.corp
+ (10.0.10.224) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Jun
+ 2024 11:02:33 +0200
+Received: from tutn-bpfb5m3.kstg.corp (10.0.10.41) by
+ InternalSMTPRelay.KSTG.corp (10.0.10.227) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Mon, 24 Jun 2024 11:02:33 +0200
+From: "Weisser, Pascal" <pascal.weisser.ext@karlstorz.com>
+To: <yocto-patches@lists.yoctoproject.org>
+CC: "Weisser, Pascal" <pascal.weisser.ext@karlstorz.com>
+Subject: [meta-selinux][PATCH 0/1] Add SELinux specific configuration snippet for busybox.
+Date: Mon, 24 Jun 2024 11:01:59 +0200
+Message-ID: <20240624090200.1746755-1-pascal.weisser.ext@karlstorz.com>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240621155723.33600-1-alexis.lothore@bootlin.com>
-References: <20240621155723.33600-1-alexis.lothore@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: alexis.lothore@bootlin.com
+Content-Type: text/plain
+X-Proofpoint-GUID: SosHLEqop8D4OSK-PhVdjzySIx8v8sSc
+X-Proofpoint-ORIG-GUID: SosHLEqop8D4OSK-PhVdjzySIx8v8sSc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-24_07,2024-06-21_01,2024-05-17_01
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 21 Jun 2024 15:57:41 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/366
+ <yocto-patches@lists.yoctoproject.org>; Mon, 24 Jun 2024 09:02:50 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/369
 
-From: Alexis Lothoré <alexis.lothore@bootlin.com>
+This patch adds a SELinux specific configuration snippet
+for busybox to enable SELinux support in busybox out of
+the box. This is needed to enable SELinux specific
+command line options for certain commands like ps -Z.
 
-When send_qa_email is executed with python >= 3.12, the following warnings
-are emitted:
+Weisser, Pascal (1):
+  Add SELinux specific configuration snippet for busybox.
 
-/home/alexis/src/yocto_ci/yocto-autobuilder-helper/./scripts/send_qa_email.py:22: SyntaxWarning: invalid escape sequence '\d'
-  p = re.compile('\d{8}-\d+')
-/home/alexis/src/yocto_ci/yocto-autobuilder-helper/./scripts/send_qa_email.py:67: SyntaxWarning: invalid escape sequence '\/'
-  tested_revision = re.match('refs\/tags\/.*\/\d+-g([a-f0-9]+)\/\d', latest_test_tag).group(1)
+ recipes-core/busybox/busybox_selinux.inc | 6 ++++++
+ recipes-core/busybox/files/selinux.cfg   | 1 +
+ 2 files changed, 7 insertions(+)
+ create mode 100644 recipes-core/busybox/files/selinux.cfg
 
-This warning has been introduced to replace the DeprecationWarning
-initially raised on such escape code in string regex. Python 3.12 changelog
-([1]) states that raw string must be used in this case. Update both
-send_qa_email and its tests file.
-
-[1] https://docs.python.org/dev/whatsnew/3.12.html#other-language-changes
-
-Signed-off-by: Alexis Lothoré <alexis.lothore@bootlin.com>
----
- scripts/send_qa_email.py      | 4 ++--
- scripts/test_send_qa_email.py | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/scripts/send_qa_email.py b/scripts/send_qa_email.py
-index 8d9250d555d4..e258fa131fcb 100755
---- a/scripts/send_qa_email.py
-+++ b/scripts/send_qa_email.py
-@@ -19,7 +19,7 @@ TEST_RESULTS_REPOSITORY_URL="git@push.yoctoproject.org:yocto-testresults"
- TEST_RESULTS_DRY_RUN_REPOSITORY_URL="git://git.yoctoproject.org/yocto-testresults"
- 
- def is_release_version(version):
--    p = re.compile('\d{8}-\d+')
-+    p = re.compile(r'\d{8}-\d+')
-     return version is not None and p.match(version) is None
- 
- def get_previous_tag(targetrepodir, version):
-@@ -64,7 +64,7 @@ def get_last_tested_rev_on_branch(branch, test_results_url, log):
-     tags_list = subprocess.check_output(["git", "ls-remote", "--refs", "-t", test_results_url, "refs/tags/" + branch + "/*"]).decode('utf-8').strip()
-     latest_test_tag=tags_list.splitlines()[-1].split()[1]
-     # From test results tag, extract Poky revision
--    tested_revision = re.match('refs\/tags\/.*\/\d+-g([a-f0-9]+)\/\d', latest_test_tag).group(1)
-+    tested_revision = re.match(r'refs\/tags\/.*\/\d+-g([a-f0-9]+)\/\d', latest_test_tag).group(1)
-     log.info(f"Last tested revision on branch {branch} is {tested_revision}")
-     return tested_revision
- 
-diff --git a/scripts/test_send_qa_email.py b/scripts/test_send_qa_email.py
-index 415d8cbbbccd..64ae80a1852d 100755
---- a/scripts/test_send_qa_email.py
-+++ b/scripts/test_send_qa_email.py
-@@ -31,8 +31,8 @@ class TestVersion(unittest.TestCase):
-         {"input": {"version": "4.1_M1.rc1"}, "expected": "yocto-4.0"},
-         {"input": {"version": "4.1_M1.rc4"}, "expected": "yocto-4.0"},
-         {"input": {"version": "4.1.rc4"}, "expected": "yocto-4.0"},
--        {"input": {"version": "yocto-5.0_M1.rc1"}, "expected": "yocto-4.3(\.\d)?"},
--        {"input": {"version": "yocto-5.0_M1.rc2"}, "expected": "yocto-4.3(\.\d)?"},
-+        {"input": {"version": "yocto-5.0_M1.rc1"}, "expected": r"yocto-4.3(\.\d)?"},
-+        {"input": {"version": "yocto-5.0_M1.rc2"}, "expected": r"yocto-4.3(\.\d)?"},
-         {"input": {"version": "yocto-5.0_M2.rc1"}, "expected": "5.0_M1"},
-     ]
- 
 -- 
 2.45.2
 
