@@ -1,233 +1,708 @@
-Return-Path: <quentin.schulz@cherry.de>
+Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18F67C27C4F
-	for <webhook@archiver.kernel.org>; Wed, 26 Jun 2024 16:11:22 +0000 (UTC)
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (EUR05-AM6-obe.outbound.protection.outlook.com [40.107.22.123])
- by mx.groups.io with SMTP id smtpd.web11.31417.1719418278289811225
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 678B3C27C4F
+	for <webhook@archiver.kernel.org>; Wed, 26 Jun 2024 21:36:00 +0000 (UTC)
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+ by mx.groups.io with SMTP id smtpd.web11.1048.1719437757883274919
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 26 Jun 2024 09:11:19 -0700
+ Wed, 26 Jun 2024 14:35:58 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@cherry.de header.s=selector1 header.b=loPVAIw8;
- spf=pass (domain: cherry.de, ip: 40.107.22.123, mailfrom: quentin.schulz@cherry.de)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DWV6QXziX3P26itgfklZDmmlrxv9neFOvp1JBxZwEZ0ZCrbNYzNg48qFyhDoYcqTkYbTJbkbPynh/Cj7+8hXmWeEip83XsdBvPm+sCtMQeKK3APPFtQtGmmEgyYZJzM/n6DMawEtfFCAVJ/a+LIZbTCS5oRD41hN0nj18bvti1Xe7xGADPUnR4pPi0kXksJ4hxIxn8S3dufnT020U6B4zgiMX6RuGipUY26B5HCmSk8VgCZv/XqJVgGNG6d51EVHcTTYBa2zbB2JnDPIk5u4Qr1REMt9B8eKbCxQqQTLBNq9/A/nI4ScQFG3V1CNly/35R0T/bsVKFRJDFnRN28oLQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4UZec6YJIxs3WO7Dt8GJlnnX7PfISY8blamd9pROz9w=;
- b=oM3OeOkgwjYGFHV0Y10Sb+VWiSrYtrdNQisn1v+4sSDjBuEHOX5uQNOC8PUJ5MwGn0BUCTSnqMP/mlK3N+wXPJaq9ji0l9I5/XkfGoPAi2zZ0SnnvlK6875877uZERuAC6SrZmuRdNM7GxtExQM96S1zgsZVEPvMb8nq/9RU818VD5oMhu0cNCaAYJLRgMlKW9BeNr5drwh3kZE6nN/Odo3E+gEawZKO2+kFSt39G3U7I3JGSapk6EZYSmcOG9kFoJJcHYFKjsv/QZ0V85hWam7pAWb+4MT5YKFs+NuD/p2F+S/nyzOpTSQQ9yFVBB+ElBBbIMbBJrgjG6yceCpH4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4UZec6YJIxs3WO7Dt8GJlnnX7PfISY8blamd9pROz9w=;
- b=loPVAIw8ilIOw3YU4HpWxx2JqZdKcTFv4+Pq7GYiIMYIlUfdtwKTagFdRafiSSsrTuT85iyoTVZBKNj4Fc4MywSlTI2QpHSgqkMvzff13gmlN31g+hlg2xqwbNMBe7QQg4gKWxciGc6fO4jD9iTzaypRF+CCwNxibJL9DMJNUpM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from PA4PR04MB7982.eurprd04.prod.outlook.com (2603:10a6:102:c4::9)
- by VE1PR04MB7423.eurprd04.prod.outlook.com (2603:10a6:800:1a0::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.32; Wed, 26 Jun
- 2024 16:11:13 +0000
-Received: from PA4PR04MB7982.eurprd04.prod.outlook.com
- ([fe80::3c4:afd5:49ac:77af]) by PA4PR04MB7982.eurprd04.prod.outlook.com
- ([fe80::3c4:afd5:49ac:77af%4]) with mapi id 15.20.7698.025; Wed, 26 Jun 2024
- 16:11:13 +0000
-Message-ID: <476c7971-11b6-4a28-b731-afffefd0890b@cherry.de>
-Date: Wed, 26 Jun 2024 18:11:11 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [meta-rockchip][PATCH v3] rauc demo: add
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=E184HguQ;
+ spf=pass (domain: gmail.com, ip: 209.85.219.50, mailfrom: twoerner@gmail.com)
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6b505f11973so7775076d6.1
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 26 Jun 2024 14:35:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719437756; x=1720042556; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PwJ2q9X9ne5lHUJRW0/RW4EeLtsXj0ifpCgajdCVCLs=;
+        b=E184HguQJXN29xLf5+sDPCHxYzjkwq/YwFmZFcKDYcRGkMQx3UJwJmXL8LWOnJlUXq
+         1sHnUAhMtOaDr7Ij8UxsPahL7rE7idaPZQfskEEFBg2kIYi+vidNfLF/uqq5LmxEROhg
+         JXDpTeOc5agwS6glOsLBOeFVcAIZ+gDjuzNM6hMI9TRMcmtO7pDf7XmsJh+1Gp62WE/d
+         zvDf3rxLUHmZ0Gk/B9BO9t8y3PqNPy6/MQX2ZXFMiRJhEpXqYt3alp7guV6jsNCbEWrf
+         ObM8bWlXg6RjdGbL43vF8f6jQV2FWsSztjcOfSkznysvsEajLKd8bUF2MAMQDYNWE0RB
+         i94g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719437756; x=1720042556;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PwJ2q9X9ne5lHUJRW0/RW4EeLtsXj0ifpCgajdCVCLs=;
+        b=fsnRT3rWlDHPP6COiGR15OaQxvbOr9ZttAe0zQBJatd0vDIFce3eVG4RsdwtkXRM/J
+         ehm4lbsHcK3inAvjWnUPllUQz7XbdXb4W6ISkiMEbXSzHI3WUETE0iBPjSQnKRzKjvTy
+         e11cXmvU+bQLWWuq8EVp32XxMnd1Mueo4N0zbZTFNooA+bLag9SAmCP6ViqYHQZuCZaP
+         DwhDefSgWoSwPOgIdyT1BCqQpFMKo0OwNsXwMI6ToU0NPKE+wsSQ8mXWbPaJPTj8ebqn
+         eBkuy7+MnzXmPAg9UlQhYY/f8sPYoBtk13POZBVS4Ot4SI/SNjjbumyTMemvNnW/iXkh
+         x4gg==
+X-Gm-Message-State: AOJu0Yytb1WTqosnYqcl4Q3fJd2RfchbUwPB+ajlyE8zR3XXBS7UZOo7
+	E0cZTZGB6lgbTl8cJx5Wz6Xk85Ben3WoK05qFdPzs2L6oEPlYfsJNcWsfg==
+X-Google-Smtp-Source: AGHT+IEtj/2dc08x4Tdxeh++jNww++sn7FHIwDr3JxPJ5qKIvdurPFLXJNJ2CKUFN+AteImLz/O7EA==
+X-Received: by 2002:a0c:ec4a:0:b0:6af:33ed:87de with SMTP id 6a1803df08f44-6b56341ee5amr113337456d6.20.1719437755637;
+        Wed, 26 Jun 2024 14:35:55 -0700 (PDT)
+Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b58dc059eesm2266916d6.123.2024.06.26.14.35.54
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 14:35:54 -0700 (PDT)
+From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-References: <20240626135632.1623-1-twoerner@gmail.com>
- <daeccf50-cf37-4ca7-8f08-0daaccf33502@cherry.de>
- <20240626154644.GA22782@localhost> <20240626155309.GA24963@localhost>
-Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <20240626155309.GA24963@localhost>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-ClientProxiedBy: WA2P291CA0019.POLP291.PROD.OUTLOOK.COM
- (2603:10a6:1d0:1e::26) To PA4PR04MB7982.eurprd04.prod.outlook.com
- (2603:10a6:102:c4::9)
+Subject: [meta-rockchip][PATCH v4] rauc demo: add
+Date: Wed, 26 Jun 2024 17:35:36 -0400
+Message-ID: <20240626213536.12343-1-twoerner@gmail.com>
+X-Mailer: git-send-email 2.44.0.501.g19981daefd7c
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PA4PR04MB7982:EE_|VE1PR04MB7423:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7501ee4a-8da8-44b9-b420-08dc95fa99e1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230038|366014|1800799022|376012;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?SGxlSEhEVEVZWE9sMU85M0R2N0Z1RE53bjZNTXdxTUc5Q2FkdzJyQkhxdW8z?=
- =?utf-8?B?b1BnTlh5ZEJTdnBrc2I0eDhYTWZzQ2tqenhWMml4MGY1Y0hhNGY0c3BibE0r?=
- =?utf-8?B?dmVuM3RZRFUxQ0ZXc0lyUGthSWsyN0kremhGTHlZZEhIUkZNamkzUCtKdWdH?=
- =?utf-8?B?L3NqRlRhS2Zmc1M1RkFCdkxhYWlTc1ZXQXlFWDdOME5rL29BTHhtUFI5V2hF?=
- =?utf-8?B?dTRxOGovQWRVSVlXSVlobkxZVGNlNnVwcE9ENUVHU3hoQmlQRGVKdE1QN1ZP?=
- =?utf-8?B?Zkp0ejI3dDIyNlUwS1lFM0RCeVJ0aFNxa2ZuODFxOE1kdVFnRG13NzhsWjEv?=
- =?utf-8?B?L09TbE1MYWJ6U2l4SWhXOGkwWldmdHg3QzVWS2NOakgrOTFjMm9RcFRZQmRm?=
- =?utf-8?B?Sm1QKzdEdDMxVXN1dlZ6ekNrRzFtZ3dReVNSdE9abEZ6N09RMmVGNWJpbFR2?=
- =?utf-8?B?Y1N6RUJ0ZENBRklIWFJMYkk1ZXpja1dMaFhTaURKQmM4L0RRYnZscWI1NEk2?=
- =?utf-8?B?d01kRGFTZGROODB5RllGVm9uVENjQ0JnSkR2eGlsMGVZb1lmbEpOU0JTckRV?=
- =?utf-8?B?dDJMYlhHR3gvS0V1T2VkRWM5a1N6QXEzTDBBUHh5U3Bsd1pHRnVwREdZLzl4?=
- =?utf-8?B?eTk2SW16TVRTdzhZOEZ1WkNVcUZZM2tuSmRpYW0vR2VoRzlwUkpUUHIwQUJE?=
- =?utf-8?B?VDR1WWRFVE9aYlhRUlRaZXZCSTJFWDkxQ0lUcXhvYWFJdmlEM2FmbUlqb0k1?=
- =?utf-8?B?U2FBOVlkZ01uYTQ2SGRoazFHcEhFMU81MTFzTWhEM01DSlNyRlNNSkIxaDIv?=
- =?utf-8?B?ak5WOVJpKytGbjZtRWZpZHIxUXdISVd1cUVSbUNRMzFGQ0tNMXhtaEJqRnRR?=
- =?utf-8?B?SmJ2OXlQZ0pEdmhrcVl2S3MwYTlnaUkyMXd6NXJ0M003bENEb3IrdjFaRTRM?=
- =?utf-8?B?STVUenJRMGpvb3NwTGNPUnhaYkZKSjNiR1hCNnF2eVdsUytqSFRBdFp2QWxr?=
- =?utf-8?B?ZkI2UHhKa1F5Z3U2bmtnbVJxME5GNGhaNERYcy8wbGJraWtHOFVodVVocnRm?=
- =?utf-8?B?ZEM4ZVVPVEZ5TmNFUzVxM01pSnlKNmxYbmc1U0IzTTVOUUpVcWpPaXZDOVZ3?=
- =?utf-8?B?MFlGc3FyYTB4eUZ5QUR0eXVoMS92VWFUd211UlZkcW9XZEs2RTAzRUxraXlK?=
- =?utf-8?B?NXZuNXh5NXc4ZFJFK3BXeE1kUzVOQkFGWEE2cUJkUWhpSlNXcm5oM2c0SEN2?=
- =?utf-8?B?RHREOGFxYzJ6bGpVMXJodVVsa3YxY3BPOU9CYjdETjk3bks5eU92azlSbVdp?=
- =?utf-8?B?T0FCUG1jejl5NWdNdngxclhWRC93SHV5dUVuYndpTkVJRXlUTjVVc2RwY0pG?=
- =?utf-8?B?a1VTZ0N2UitubWcwdjBRK09ZVzlMaDRxS05GaTRvajhrWDNzZm9XdkFEOVc5?=
- =?utf-8?B?TWZUQ0xmUEx5R3NTVFR4QUtrSU1USmIxbGlJMU5vSE1MWGd4N3U1WXhTSlo1?=
- =?utf-8?B?d1FWM2Z1WTk1UWc2Ym9NUUlxQTNiYXNaUVlWdlUvalR4YVdtL0RkcTQ3cUNm?=
- =?utf-8?B?OVFTV1hJNnBramhkRDlkeTFkL04yL0dRVVBrWU54Ri8zT3ZmWmVReElFaDAv?=
- =?utf-8?B?WkFWb2J6UXZ1d1JyY21OQUJ4Q0NzWVE3dlplZ1JqclV1NFJYYTkrSkxrc2F0?=
- =?utf-8?B?ZmU3M2JqNVdwYWxnaHZzSVdaUWNuVXVxclFMbmhHbXZ3Nk1jb2xDMityOVdj?=
- =?utf-8?Q?47CjkoGHOop/AMxz6U=3D?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB7982.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230038)(366014)(1800799022)(376012);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?anM3MFhCT0VlcDRRZERkUVkySzRJamZEYWZlMk53bTFEYmtLTnlKcVJabjha?=
- =?utf-8?B?Y2VCWXA2RlZXVFVkeUU2QU5JeDdyY0tWYllaNWswVlZzRTJGR3ZMTkVGSjk0?=
- =?utf-8?B?UkJTL2tWQzlKWWwxRTA0a3RYQ3o0NG9ZeS9uUmFVa3MrOStuaWNHMEorMHc5?=
- =?utf-8?B?MkdJYVZMcVd4V2RoSGZDTkdTK21IZjhDY080QnB3NStqRFdyZ3ZCK1JuSHlX?=
- =?utf-8?B?U05xYlhJR1I1ZGFUQlF5RWZjS2svbnQyeExXdEdaY1RPMkU0RUNObnljZ203?=
- =?utf-8?B?N0dGQm4wSHVMQzB4T3RWNThKbTFueDI3THl2RC9MdnpZMHpRNE9hSGp6NnNj?=
- =?utf-8?B?NlhjNlZBclF3cm14WjJMTUo3OW5Ub3hkb28ybXBsdGwyMXBsREpObjMwaDhP?=
- =?utf-8?B?SUNCK0NSRVpYYnNhVFVhRGxzUDNlcnFpNytiOHk3L3dhbkZMa1cvSThMWHJL?=
- =?utf-8?B?UXRCSFZZK0I5bjlLbWZoZUlmWmQzdUZQMHhlTTBNUm5yZ0NvZmREdndYVCsr?=
- =?utf-8?B?VXRTTzdQaC9GR2ltbVppMllSK1M3ZzNHMm04ODNGcXpBOVVNRS91elQzT1ZY?=
- =?utf-8?B?eHB6MjJHcEhWRjNZbnV5NE1sRnllNGg0Si9IcE42ak1MY3RTQTA0a3JPZ2xG?=
- =?utf-8?B?TUFVNGpjNVdlbEVtTFFVYnM2NEo4K0VTdG5FTUNwcUtsUjZ3cEhlUHA2d1lq?=
- =?utf-8?B?VUFwckgvRjZaejZqNkdxaEJ6ZUEyU3BHUkJObVdyaGxFU3lUUW5CTi9MWEh5?=
- =?utf-8?B?TkFBTzkxd3BmWTJQYllvemZrYUV0S2FXcFcwSFY4VVlsQUM1VWhWak5zc1NH?=
- =?utf-8?B?cy9tWDFORjkrTUtTR3lDVkY1SmtRZE9WcGF3c2thQ2ZKenNxbUtsY0JvR1po?=
- =?utf-8?B?TUZhTlkwY2Fyb0lkbmFmdXNhb3pjaHRYenN5VC9wMk5NUlBVaXc4WHF3ZXpR?=
- =?utf-8?B?endzSGFwREpiS2dkS3ZBSmU1cWlrRUcrWkkyUkN5ZmNDUTJPUzhXVmZQMzBo?=
- =?utf-8?B?RUpjbnRod2dnU3RyWGNqR2hZVlRRZU9nMi8wRlpXZlM4TFJ3TVM3TEZxMml6?=
- =?utf-8?B?V0lTMlVocit2SVFPemxVSWVIdU1IZmZPbC9vMFhPQXMzZXNhdGM4SExiNURY?=
- =?utf-8?B?c0w5eXRKRjVtWGl5UW5xc214ZXdJcS9hbmgvNm9qRUhqeisrTFZMNDVYTWRa?=
- =?utf-8?B?USt3TThOdmVCSmgwWm4xYVRTMnl2SGRmL1JFdDFFM1lGUlliSjZDc1I3b2VB?=
- =?utf-8?B?N0FjUVlBOUtLRndzM0tXejdRS0xxU0dlT1JEdGhVL2FHYlRRSHhCS0JJUjIr?=
- =?utf-8?B?MUhWZWdxdXF4Zis2N2N4QXlVMTZ3aWczdWpXbWN5bGtYYTFMaW13SmlTaTNs?=
- =?utf-8?B?c0t2ZHNOZHUzSDlWRkR2enhjamxnWDU2eWhLd0hyeS91aGdnUHVWemc5NThs?=
- =?utf-8?B?NHBjOGNjSjRZZXlCOWxIZ2Fud0plZWk1ZG85M3pTWFhaNHY4SHlpOTVTcGdv?=
- =?utf-8?B?OTYxNHdrbXROSm5wN3BoUEhxVUVHdlhnTXJvOXJQalVSbUx4Z0g3YnFGVWZy?=
- =?utf-8?B?bHBoSCtpZjdkUThrUjFXeHFzaUF0bW9kdlE2a1VNNXNiYlJ0NGt2NEhjSnh5?=
- =?utf-8?B?cGtBVHhYME9IQ3J2NnZNT3JoKzBxNGg0SjRMbG1MV29HOUtSSk1icHp2cng4?=
- =?utf-8?B?TEx3ZUpqbDN6MTc0bDBER2crSVNTcnBnUXZCN1FCZWtOendPWXh6ZmNTemVn?=
- =?utf-8?B?bjNLeEwrRWVBL2dQVnJRS1Fka1h5YnRtbTNMVi95NFRFSE5Ba3k5ZDE2TW5h?=
- =?utf-8?B?Ni83aE9VbFNnM1Mxa3J6MHkxMWlNVnZnYm1zTzY2MVpNSzJqUVZ3cWppSDNF?=
- =?utf-8?B?b3VXZFJQaXFpQ3dTWGEwOVp0UVliTWlxbDhWNUcvd25xcElNdVhaVFZvdkYz?=
- =?utf-8?B?UExHZ3UxRGorVEdRUEtuWnArTGtVODVmcmY0Q1dYditoVEtjS1ZmZjlJZ0JH?=
- =?utf-8?B?VkZNVngrdE9RaUwxSnozTnhCbVpqNHRFV2VjMzlBbHpCcnEwYXRYcncrNmhl?=
- =?utf-8?B?UFFYcXZtdUx3cXhXT0pRdFp0TWN0SElPQ3VpWnBBRDI4OVlwa3I5ZjkrT0dh?=
- =?utf-8?B?SHViQkZma05tOGtOaWhTcVljbWJua2NEekNoSnh4S1dkWUtGclpzYUEza1I5?=
- =?utf-8?Q?ydueVsAPFZEWhO9kEWyGmSQ=3D?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7501ee4a-8da8-44b9-b420-08dc95fa99e1
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB7982.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2024 16:11:13.6964
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 1k1MF5JMRf9EI3IrQUlWWEYRkN+8Dfsp0VWi1N1/n7cIJtKTOuX3djqCVYsBKqYwFrm66aAgO365X/eDfwf45yrXHLrzHhY0fyuuF/vEI04=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB7423
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 26 Jun 2024 16:11:22 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/384
+ <yocto-patches@lists.yoctoproject.org>; Wed, 26 Jun 2024 21:36:00 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/385
 
-Hi Trevor,
+Add an example of implementing rauc on a rockchip board. Adding the meta-rauc
+layer, adding 'rauc' to DISTRO_FEATURES, and enabling RK_RAUC_DEMO will build
+an image using the example provided in dynamic-layers/rk-rauc-demo.
 
-On 6/26/24 5:53 PM, Trevor Woerner via lists.yoctoproject.org wrote:
-> On Wed 2024-06-26 @ 11:46:44 AM, Trevor Woerner wrote:
->> On Wed 2024-06-26 @ 05:09:14 PM, Quentin Schulz via lists.yoctoproject.org wrote:
->>> Hi Trevor,
->>>
->>> On 6/26/24 3:56 PM, Trevor Woerner via lists.yoctoproject.org wrote:
-[...]
->>>> +do_compile:append:rk-rauc-demo() {
->>>> +	# create boot script
->>>> +	sed -e 's|@@KERNEL_BOOTFILE@@|${UBOOT_EXTLINUX_KERNEL_IMAGE}|' \
->>>> +	    "${UNPACKDIR}/boot.cmd.in" > "${UNPACKDIR}/boot.cmd"
->>>> +	mkimage -A ${UBOOT_ARCH} -T script -C none -n "Boot script" -d "${UNPACKDIR}/boot.cmd" ${UNPACKDIR}/boot.scr
->>>> +
->>>
->>> Richard has said today he'd prefer we don't use UNPACKDIR for that kind of
->>> things, c.f. https://lore.kernel.org/openembedded-core/20240623213254.3215897-1-leon.anavi@konsulko.com/T/#md4b10cea4af07c1a2e5be43e4ee8c8b1fbc6e420
->>> (though we "agreed" later in the thread to use ${B} instead of the
->>> originally suggested ${WORKDIR}).
->>
->> Alright.
-> 
-> Actually... I have to do it that way so that the parent u-boot recipe picks up
-> this file "automatically". See the "install" line in u-boot.inc in oe-core.
-> 
+This example uses a simple A/B + D scheme (i.e. two root partitions and a
+non-updated /data partition). Repartitioning occurs automatically on first
+boot thanks to systemd's 'repart' mechanism.
 
-I only see it using UNPACKDIR for fw_env.config and I don't think we're 
-writing this here in this patch? Though we do write it in 
-rk_generate_env already (in a previous patch)...
+NOTE:
+- this example only works with systemd
 
-I think meta-rockchip is fine for now due to this code path only being 
-run whenever rk-u-boot-env OVERRIDE is there AND the fact that we have 
-an append for this OVERRIDE in SRC_URI. Which means if we unset it, 
-do_fetch will run again, and it should delete UNPACKDIR then. So no 
-poisoning **today**.
+If you wish to provide your own implementation, simply add the meta-rauc
+layer, add 'rauc' to DISTRO_FEATURES, don't enable RK_RAUC_DEMO, and provide
+your own implementation in a separate layer.
 
-It is an interesting question though... I'm wondering if recipes 
-shouldn't copy their files from UNPACKDIR to S/B before using them 
-instead of directly getting them from UNPACKDIR, so they could be 
-overridden by bbappend without poisoning UNPACKDIR between builds. It 
-feels like this WORKDIR->UNPACKDIR migration fixed one issue (patches in 
-SRC_URI being removed but still being applied) but not everything. I 
-don't have a suggestion right now though :/
+Signed-off-by: Trevor Woerner <twoerner@gmail.com>
+---
+v4 change:
+- remove OVERRIDE from the features-check class (left in by mistake)
 
-> Are our other uses of UNPACKDIR in meta-rockchip okay? If not I could submit
-> another patch to fix them up (and fixup any of the ones related to this patch
-> as part of a v4).
-> 
+v3 changes:
+- change the OVERRIDE mechanism from a class to a config
+- fix the required features check to include an OVERRIDE
+- use a systemd mount unit for the /data partition
+- abd-partition recipe cleanup:
+  - remove extraneous FILESEXTRAPATHS
+  - remove OVERRIDES, this recipe will only be used with rauc
+  - remove extraneous FILES:${PN} for ${sysconfdir}
 
-In the current state, I think it's fine. We should rather fix the 
-upstream u-boot recipe to fix the use of UNPACKDIR for getting 
-fw_env.config?
+v2 changes:
+- add information/instructions to README
+- rauc-conf cleanup:
+  - remove ca.cert.pem from SRC_URI, it's already in parent
+  - rename systemd.conf.in to system.conf so the parent handles it
+  - process the system.conf file as a prepend, leaving it for the parent to manage
+- use walrus operator with THISDIR
+- break out the systemd repart config files into their own recipe so they can
+  be updated without triggering a full rebuild of systemd (and its dependents)
+- class cleanup:
+  - update the classes so they have only 1 job (each)
+  - rename the classes to reflect their jobs
+  - update recipes/configs to use the new classes
+---
+ README                                        | 18 +++++
+ .../rk-rauc-demo-features-check.bbclass       |  4 +
+ conf/layer.conf                               |  4 +
+ conf/machine/include/rockchip-rauc.inc        |  4 +
+ conf/machine/include/rockchip-wic.inc         |  2 +
+ .../recipes-bsp/u-boot/files/boot.cmd.in      | 51 ++++++++++++
+ .../recipes-bsp/u-boot/files/uboot-rauc.cfg   |  8 ++
+ .../recipes-bsp/u-boot/u-boot_%.bbappend      | 26 ++++++
+ .../base-files/base-files_%.bbappend          |  2 +
+ .../recipes-core/base-files/files/fstab       |  5 ++
+ .../rauc-bundles/files/development-1.cert.pem | 80 +++++++++++++++++++
+ .../rauc-bundles/files/development-1.key.pem  | 28 +++++++
+ .../rauc-bundles/rockchip-rauc-bundle.bb      | 14 ++++
+ .../recipes-core/rauc/files/ca.cert.pem       | 80 +++++++++++++++++++
+ .../recipes-core/rauc/files/system.conf       | 17 ++++
+ .../recipes-core/rauc/rauc-conf.bbappend      |  7 ++
+ .../recipes-core/systemd/abd-partition.bb     | 26 ++++++
+ .../systemd/files/25-rootfsA.conf             |  4 +
+ .../systemd/files/35-rootfsB.conf             |  7 ++
+ .../recipes-core/systemd/files/45-data.conf   |  6 ++
+ .../recipes-core/systemd/files/data.mount     | 10 +++
+ .../recipes-core/systemd/systemd_%.bbappend   |  3 +
+ 22 files changed, 406 insertions(+)
+ create mode 100644 classes-recipe/rk-rauc-demo-features-check.bbclass
+ create mode 100644 conf/machine/include/rockchip-rauc.inc
+ create mode 100644 dynamic-layers/rk-rauc-demo/recipes-bsp/u-boot/files/boot.cmd.in
+ create mode 100644 dynamic-layers/rk-rauc-demo/recipes-bsp/u-boot/files/uboot-rauc.cfg
+ create mode 100644 dynamic-layers/rk-rauc-demo/recipes-bsp/u-boot/u-boot_%.bbappend
+ create mode 100644 dynamic-layers/rk-rauc-demo/recipes-core/base-files/base-files_%.bbappend
+ create mode 100644 dynamic-layers/rk-rauc-demo/recipes-core/base-files/files/fstab
+ create mode 100644 dynamic-layers/rk-rauc-demo/recipes-core/rauc-bundles/files/development-1.cert.pem
+ create mode 100644 dynamic-layers/rk-rauc-demo/recipes-core/rauc-bundles/files/development-1.key.pem
+ create mode 100644 dynamic-layers/rk-rauc-demo/recipes-core/rauc-bundles/rockchip-rauc-bundle.bb
+ create mode 100644 dynamic-layers/rk-rauc-demo/recipes-core/rauc/files/ca.cert.pem
+ create mode 100644 dynamic-layers/rk-rauc-demo/recipes-core/rauc/files/system.conf
+ create mode 100644 dynamic-layers/rk-rauc-demo/recipes-core/rauc/rauc-conf.bbappend
+ create mode 100644 dynamic-layers/rk-rauc-demo/recipes-core/systemd/abd-partition.bb
+ create mode 100644 dynamic-layers/rk-rauc-demo/recipes-core/systemd/files/25-rootfsA.conf
+ create mode 100644 dynamic-layers/rk-rauc-demo/recipes-core/systemd/files/35-rootfsB.conf
+ create mode 100644 dynamic-layers/rk-rauc-demo/recipes-core/systemd/files/45-data.conf
+ create mode 100644 dynamic-layers/rk-rauc-demo/recipes-core/systemd/files/data.mount
+ create mode 100644 dynamic-layers/rk-rauc-demo/recipes-core/systemd/systemd_%.bbappend
 
-[...]
+diff --git a/README b/README
+index 6003e7c652fe..8ff006e942b9 100644
+--- a/README
++++ b/README
+@@ -85,6 +85,24 @@ Notes:
+ 
+ 	in the configuration (e.g. conf/local.conf).
+ 
++  A/B updates with RAUC
++	This layer now contains one example of building an A/B update using RAUC.
++	Users are free to use/test this example, to optionally enable it, to build
++	their own update strategies based on this one, or to ignore it completely.
++	This example only works with
++
++		INIT_MANAGER = "systemd"
++
++	If you wish to use this example in your builds:
++	- enable 'systemd' as your init system
++	- add the meta-rauc layer to your build (with the corresponding branch)
++	- add 'rauc' to your DISTRO_FEATURES
++	- enable RK_RAUC_DEMO in your config
++
++	If you wish to implement your own RAUC update without using the example from
++	this layer, perform the same steps as above except for the step enabling
++	RK_RAUC_DEMO.
++
+ U-Boot Environment:
+ ------------------
+ 	In order to configure U-Boot to be able to store its environment into the
+diff --git a/classes-recipe/rk-rauc-demo-features-check.bbclass b/classes-recipe/rk-rauc-demo-features-check.bbclass
+new file mode 100644
+index 000000000000..f6bc4ebffbc1
+--- /dev/null
++++ b/classes-recipe/rk-rauc-demo-features-check.bbclass
+@@ -0,0 +1,4 @@
++inherit features_check
++
++REQUIRED_DISTRO_FEATURES:append:rk-rauc-demo = " systemd rauc"
++REQUIRED_MACHINE_FEATURES:append:rk-rauc-demo = " rk-u-boot-env"
+diff --git a/conf/layer.conf b/conf/layer.conf
+index 68205dd7ea4c..03914d2952e1 100644
+--- a/conf/layer.conf
++++ b/conf/layer.conf
+@@ -21,3 +21,7 @@ BBFILES_DYNAMIC += " \
+     qt5-layer:${LAYERDIR}/dynamic-layers/qt5-layer/*/*/*.bb \
+     qt5-layer:${LAYERDIR}/dynamic-layers/qt5-layer/*/*/*.bbappend \
+ "
++BBFILES_DYNAMIC += " \
++    rauc:${LAYERDIR}/dynamic-layers/rk-rauc-demo/*/*/*.bb \
++    rauc:${LAYERDIR}/dynamic-layers/rk-rauc-demo/*/*/*.bbappend \
++"
+diff --git a/conf/machine/include/rockchip-rauc.inc b/conf/machine/include/rockchip-rauc.inc
+new file mode 100644
+index 000000000000..a6f79503076b
+--- /dev/null
++++ b/conf/machine/include/rockchip-rauc.inc
+@@ -0,0 +1,4 @@
++# 'RK_RAUC_DEMO' indicates the user wants to use the
++# rauc demo configuration from this layer
++OVERRIDES .= "${@ ':rk-rauc-demo' if bb.utils.to_boolean(d.getVar('RK_RAUC_DEMO'), False) else ''}"
++IMAGE_INSTALL:append:rk-rauc-demo = " abd-partition"
+diff --git a/conf/machine/include/rockchip-wic.inc b/conf/machine/include/rockchip-wic.inc
+index ebfc0cb96507..0e0aa5d9b340 100644
+--- a/conf/machine/include/rockchip-wic.inc
++++ b/conf/machine/include/rockchip-wic.inc
+@@ -2,6 +2,7 @@
+ 
+ require conf/machine/include/rockchip-extlinux.inc
+ require conf/machine/include/rockchip-rk-u-boot-env.inc
++require conf/machine/include/rockchip-rauc.inc
+ 
+ SPL_BINARY ?= "idbloader.img"
+ 
+@@ -9,6 +10,7 @@ SPL_BINARY ?= "idbloader.img"
+ # WIC_COMPRESSION_EXTENSION = ".xz"
+ WIC_COMPRESSION_EXTENSION ?= ""
+ IMAGE_FSTYPES += "wic${WIC_COMPRESSION_EXTENSION} wic.bmap"
++IMAGE_FSTYPES:append:rk-rauc-demo = " ext4"
+ WKS_FILE ?= "rockchip.wks"
+ WKS_FILE_DEPENDS ?= " \
+ 	e2fsprogs-native \
+diff --git a/dynamic-layers/rk-rauc-demo/recipes-bsp/u-boot/files/boot.cmd.in b/dynamic-layers/rk-rauc-demo/recipes-bsp/u-boot/files/boot.cmd.in
+new file mode 100644
+index 000000000000..0887d2b5b812
+--- /dev/null
++++ b/dynamic-layers/rk-rauc-demo/recipes-bsp/u-boot/files/boot.cmd.in
+@@ -0,0 +1,51 @@
++echo "devtype: ${devtype}"
++echo "devnum: ${devnum}"
++echo "distro_bootpart: ${distro_bootpart}"
++
++test -n "${BOOT_ORDER}" || env set BOOT_ORDER "A B"
++test -n "${BOOT_A_LEFT}" || env set BOOT_A_LEFT 3
++test -n "${BOOT_B_LEFT}" || env set BOOT_B_LEFT 3
++test -n "${RAUC_BOOTDEV}" || env set RAUC_BOOTDEV "${devtype} ${devnum}:${distro_bootpart}"
++
++env set RAUC_BOOTPART
++env set RAUC_SLOT
++
++echo "BOOT_ORDER: ${BOOT_ORDER}"
++for RAUC_BOOTSLOT in "${BOOT_ORDER}"; do
++  if test "x${RAUC_BOOTPART}" != "x"; then
++    # skip remaining slots
++  elif test "x${RAUC_BOOTSLOT}" = "xA"; then
++    if test ${BOOT_A_LEFT} -gt 0; then
++      echo "using RAUC slot A"
++      setexpr BOOT_A_LEFT ${BOOT_A_LEFT} - 1
++      env set RAUC_BOOTPART "PARTLABEL=rootfsA"
++      env set RAUC_SLOT "A"
++      env set RAUC_BOOTDEV "${devtype} ${devnum}:${distro_bootpart}"
++      echo "RAUC_BOOTDEV: ${RAUC_BOOTDEV}"
++    fi
++  elif test "x${RAUC_BOOTSLOT}" = "xB"; then
++    if test ${BOOT_B_LEFT} -gt 0; then
++      echo "using RAUC slot B"
++      setexpr BOOT_B_LEFT ${BOOT_B_LEFT} - 1
++      env set RAUC_BOOTPART "PARTLABEL=rootfsB"
++      env set RAUC_SLOT "B"
++      setexpr BOOTPART1 ${distro_bootpart} + 1
++      env set RAUC_BOOTDEV "${devtype} ${devnum}:${BOOTPART1}"
++      echo "RAUC_BOOTDEV: ${RAUC_BOOTDEV}"
++    fi
++  fi
++done
++
++if test -n "${RAUC_BOOTPART}"; then
++  env set bootargs "${bootargsbase} root=${RAUC_BOOTPART} rauc.slot=${RAUC_SLOT}"
++  env save
++else
++  echo "No valid RAUC slot found. Resetting tries to 3"
++  env set BOOT_A_LEFT 3
++  env set BOOT_B_LEFT 3
++  env save
++  reset
++fi
++
++ext4load ${RAUC_BOOTDEV} ${kernel_addr_r} @@KERNEL_BOOTFILE@@
++bootm ${kernel_addr_r}
+diff --git a/dynamic-layers/rk-rauc-demo/recipes-bsp/u-boot/files/uboot-rauc.cfg b/dynamic-layers/rk-rauc-demo/recipes-bsp/u-boot/files/uboot-rauc.cfg
+new file mode 100644
+index 000000000000..77b7164e0192
+--- /dev/null
++++ b/dynamic-layers/rk-rauc-demo/recipes-bsp/u-boot/files/uboot-rauc.cfg
+@@ -0,0 +1,8 @@
++CONFIG_CMD_BOOTDEV=y
++CONFIG_CMD_BOOTMETH=y
++CONFIG_CMD_SETEXPR=y
++CONFIG_CMD_SETEXPR_FMT=y
++CONFIG_BOOTSTD_DEFAULTS=n
++CONFIG_BOOTMETH_EXTLINUX=n
++CONFIG_BOOTMETH_EXTLINUX_PXE=n
++CONFIG_BOOTMETH_VBE=n
+diff --git a/dynamic-layers/rk-rauc-demo/recipes-bsp/u-boot/u-boot_%.bbappend b/dynamic-layers/rk-rauc-demo/recipes-bsp/u-boot/u-boot_%.bbappend
+new file mode 100644
+index 000000000000..fa96b4dd18bf
+--- /dev/null
++++ b/dynamic-layers/rk-rauc-demo/recipes-bsp/u-boot/u-boot_%.bbappend
+@@ -0,0 +1,26 @@
++inherit rk-rauc-demo-features-check
++
++FILESEXTRAPATHS:prepend:rk-rauc-demo := "${THISDIR}/files:"
++
++DEPENDS:append:rk-rauc-demo = " u-boot-mkimage-native"
++SRC_URI:append:rk-rauc-demo = " \
++	file://uboot-rauc.cfg \
++	file://boot.cmd.in \
++	"
++
++do_compile:append:rk-rauc-demo() {
++	# create boot script
++	sed -e 's|@@KERNEL_BOOTFILE@@|${UBOOT_EXTLINUX_KERNEL_IMAGE}|' \
++	    "${UNPACKDIR}/boot.cmd.in" > "${UNPACKDIR}/boot.cmd"
++	mkimage -A ${UBOOT_ARCH} -T script -C none -n "Boot script" -d "${UNPACKDIR}/boot.cmd" ${UNPACKDIR}/boot.scr
++
++	# tweak environment
++	echo "bootmeths=script extlinux" >> ${B}/u-boot-initial-env
++	echo "bootargsbase=${UBOOT_EXTLINUX_KERNEL_ARGS} ${UBOOT_EXTLINUX_CONSOLE}" >> ${B}/u-boot-initial-env
++}
++
++do_install:append:rk-rauc-demo() {
++	install -d ${D}/boot
++	install -m 0644 ${UNPACKDIR}/boot.scr ${D}/boot
++}
++FILES:${PN}-extlinux += "/boot/boot.scr"
+diff --git a/dynamic-layers/rk-rauc-demo/recipes-core/base-files/base-files_%.bbappend b/dynamic-layers/rk-rauc-demo/recipes-core/base-files/base-files_%.bbappend
+new file mode 100644
+index 000000000000..705979a17c3e
+--- /dev/null
++++ b/dynamic-layers/rk-rauc-demo/recipes-core/base-files/base-files_%.bbappend
+@@ -0,0 +1,2 @@
++inherit rk-rauc-demo-features-check
++FILESEXTRAPATHS:prepend:rk-rauc-demo := "${THISDIR}/files:"
+diff --git a/dynamic-layers/rk-rauc-demo/recipes-core/base-files/files/fstab b/dynamic-layers/rk-rauc-demo/recipes-core/base-files/files/fstab
+new file mode 100644
+index 000000000000..3be093e457e9
+--- /dev/null
++++ b/dynamic-layers/rk-rauc-demo/recipes-core/base-files/files/fstab
+@@ -0,0 +1,5 @@
++/dev/root            /                    auto       x-systemd.growfs                   1  1
++proc                 /proc                proc       defaults                           0  0
++devpts               /dev/pts             devpts     mode=0620,ptmxmode=0666,gid=5      0  0
++tmpfs                /run                 tmpfs      mode=0755,nodev,nosuid,strictatime 0  0
++tmpfs                /var/volatile        tmpfs      defaults                           0  0
+diff --git a/dynamic-layers/rk-rauc-demo/recipes-core/rauc-bundles/files/development-1.cert.pem b/dynamic-layers/rk-rauc-demo/recipes-core/rauc-bundles/files/development-1.cert.pem
+new file mode 100644
+index 000000000000..92e71125d22f
+--- /dev/null
++++ b/dynamic-layers/rk-rauc-demo/recipes-core/rauc-bundles/files/development-1.cert.pem
+@@ -0,0 +1,80 @@
++Certificate:
++    Data:
++        Version: 3 (0x2)
++        Serial Number: 2 (0x2)
++        Signature Algorithm: sha256WithRSAEncryption
++        Issuer: O=Test Org, CN=Test Org rauc CA Development
++        Validity
++            Not Before: Jan  1 00:00:00 1970 GMT
++            Not After : Dec 31 23:59:59 9999 GMT
++        Subject: O=Test Org, CN=Test Org Development-1
++        Subject Public Key Info:
++            Public Key Algorithm: rsaEncryption
++                RSA Public-Key: (2048 bit)
++                Modulus:
++                    00:ac:2b:0f:05:02:d0:bb:b0:47:05:36:71:3c:20:
++                    0e:a7:76:8d:75:c1:23:5e:6c:7a:2d:94:ff:3c:17:
++                    d8:0b:44:48:2a:82:03:92:c5:fd:33:76:0c:42:cf:
++                    4d:8a:c9:47:7f:af:52:7c:15:6c:3b:e7:60:d1:04:
++                    97:24:7b:07:1f:56:7d:6c:3f:31:e8:f9:36:7b:33:
++                    5b:cf:54:ea:37:98:a6:b1:9a:1d:da:96:a1:07:14:
++                    9c:15:80:4d:db:0c:03:86:ce:c7:3d:72:57:a2:da:
++                    a0:c0:8c:b2:9a:a0:6a:e5:b8:5f:52:d2:f6:27:ca:
++                    48:f4:e3:86:eb:be:24:93:6a:af:60:68:7f:09:3b:
++                    81:96:ce:85:0c:63:93:d8:fa:91:dc:50:2e:77:bb:
++                    bc:38:42:e9:86:d8:ac:33:dd:e6:d4:37:69:e3:01:
++                    8d:21:8f:a9:4a:7f:15:a5:aa:a9:be:fc:36:93:a4:
++                    10:0c:18:33:30:06:7f:1c:13:b3:a9:c6:57:d7:6b:
++                    96:45:15:e7:f5:8f:3d:48:e0:08:46:4f:7f:ef:14:
++                    77:95:25:25:9b:14:21:84:25:eb:37:0b:01:48:e6:
++                    f5:c1:8b:61:c6:cb:8c:6b:a7:d8:d2:f9:31:e3:80:
++                    3f:78:ea:6a:41:6c:5d:4d:83:a6:54:0d:5b:c2:0e:
++                    f6:ef
++                Exponent: 65537 (0x10001)
++        X509v3 extensions:
++            X509v3 Subject Key Identifier:
++                89:4C:FE:8A:60:4D:C9:6D:F7:A8:C0:04:49:7F:AA:05:92:29:17:FB
++            X509v3 Authority Key Identifier:
++                keyid:44:0C:AF:4A:74:B4:C7:65:02:B2:95:F1:91:7C:A3:CC:E6:3E:99:E8
++                DirName:/O=Test Org/CN=Test Org rauc CA Development
++                serial:01
++
++            X509v3 Basic Constraints:
++                CA:FALSE
++    Signature Algorithm: sha256WithRSAEncryption
++         2c:d2:30:68:f5:84:52:1e:cf:ed:0d:fc:e7:02:69:0b:3b:f6:
++         c3:77:00:12:1d:2d:d0:8f:49:9e:5c:f1:00:7b:1d:4f:d5:a9:
++         46:a5:df:54:90:50:b4:8f:8e:ba:4b:2d:82:74:eb:5b:a8:f5:
++         45:7b:77:73:b1:9b:32:93:15:c0:5c:02:2a:ed:b0:1e:bb:d8:
++         4e:41:17:20:af:04:46:21:20:7b:86:9f:32:ab:54:71:26:e8:
++         0b:75:12:9c:63:53:4f:54:db:a7:f9:b2:fa:e9:ee:4a:9d:80:
++         ba:ae:3f:eb:ef:10:11:2d:4f:5a:34:fb:8b:45:10:63:0b:f8:
++         af:f3:8b:24:21:2a:e0:0b:44:38:44:b5:9d:6e:8a:ff:1f:bf:
++         6e:44:21:22:ec:8a:8d:73:63:e5:df:1a:ec:2a:64:1f:97:f9:
++         5c:3a:25:7f:03:80:4c:db:99:5e:f9:7d:2b:f1:d0:97:4d:95:
++         6f:29:47:7b:3f:29:e3:96:25:b0:1c:f1:0b:8b:8b:ba:de:3b:
++         3f:40:2e:bd:31:68:ea:a9:8f:dc:c9:09:22:df:76:69:08:5d:
++         5d:a4:09:62:80:20:83:9e:bd:d4:a6:35:ee:97:50:66:39:62:
++         66:1b:2e:75:f2:6d:e7:06:ae:67:5f:4b:63:5c:52:e7:5d:dd:
++         c9:0c:86:2b
++-----BEGIN CERTIFICATE-----
++MIIDfTCCAmWgAwIBAgIBAjANBgkqhkiG9w0BAQsFADA6MREwDwYDVQQKDAhUZXN0
++IE9yZzElMCMGA1UEAwwcVGVzdCBPcmcgcmF1YyBDQSBEZXZlbG9wbWVudDAgFw03
++MDAxMDEwMDAwMDBaGA85OTk5MTIzMTIzNTk1OVowNDERMA8GA1UECgwIVGVzdCBP
++cmcxHzAdBgNVBAMMFlRlc3QgT3JnIERldmVsb3BtZW50LTEwggEiMA0GCSqGSIb3
++DQEBAQUAA4IBDwAwggEKAoIBAQCsKw8FAtC7sEcFNnE8IA6ndo11wSNebHotlP88
++F9gLREgqggOSxf0zdgxCz02KyUd/r1J8FWw752DRBJckewcfVn1sPzHo+TZ7M1vP
++VOo3mKaxmh3alqEHFJwVgE3bDAOGzsc9clei2qDAjLKaoGrluF9S0vYnykj044br
++viSTaq9gaH8JO4GWzoUMY5PY+pHcUC53u7w4QumG2Kwz3ebUN2njAY0hj6lKfxWl
++qqm+/DaTpBAMGDMwBn8cE7OpxlfXa5ZFFef1jz1I4AhGT3/vFHeVJSWbFCGEJes3
++CwFI5vXBi2HGy4xrp9jS+THjgD946mpBbF1Ng6ZUDVvCDvbvAgMBAAGjgZEwgY4w
++HQYDVR0OBBYEFIlM/opgTclt96jABEl/qgWSKRf7MGIGA1UdIwRbMFmAFEQMr0p0
++tMdlArKV8ZF8o8zmPpnooT6kPDA6MREwDwYDVQQKDAhUZXN0IE9yZzElMCMGA1UE
++AwwcVGVzdCBPcmcgcmF1YyBDQSBEZXZlbG9wbWVudIIBATAJBgNVHRMEAjAAMA0G
++CSqGSIb3DQEBCwUAA4IBAQAs0jBo9YRSHs/tDfznAmkLO/bDdwASHS3Qj0meXPEA
++ex1P1alGpd9UkFC0j466Sy2CdOtbqPVFe3dzsZsykxXAXAIq7bAeu9hOQRcgrwRG
++ISB7hp8yq1RxJugLdRKcY1NPVNun+bL66e5KnYC6rj/r7xARLU9aNPuLRRBjC/iv
++84skISrgC0Q4RLWdbor/H79uRCEi7IqNc2Pl3xrsKmQfl/lcOiV/A4BM25le+X0r
++8dCXTZVvKUd7PynjliWwHPELi4u63js/QC69MWjqqY/cyQki33ZpCF1dpAligCCD
++nr3UpjXul1BmOWJmGy518m3nBq5nX0tjXFLnXd3JDIYr
++-----END CERTIFICATE-----
+diff --git a/dynamic-layers/rk-rauc-demo/recipes-core/rauc-bundles/files/development-1.key.pem b/dynamic-layers/rk-rauc-demo/recipes-core/rauc-bundles/files/development-1.key.pem
+new file mode 100644
+index 000000000000..80305f8291b1
+--- /dev/null
++++ b/dynamic-layers/rk-rauc-demo/recipes-core/rauc-bundles/files/development-1.key.pem
+@@ -0,0 +1,28 @@
++-----BEGIN PRIVATE KEY-----
++MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCsKw8FAtC7sEcF
++NnE8IA6ndo11wSNebHotlP88F9gLREgqggOSxf0zdgxCz02KyUd/r1J8FWw752DR
++BJckewcfVn1sPzHo+TZ7M1vPVOo3mKaxmh3alqEHFJwVgE3bDAOGzsc9clei2qDA
++jLKaoGrluF9S0vYnykj044brviSTaq9gaH8JO4GWzoUMY5PY+pHcUC53u7w4QumG
++2Kwz3ebUN2njAY0hj6lKfxWlqqm+/DaTpBAMGDMwBn8cE7OpxlfXa5ZFFef1jz1I
++4AhGT3/vFHeVJSWbFCGEJes3CwFI5vXBi2HGy4xrp9jS+THjgD946mpBbF1Ng6ZU
++DVvCDvbvAgMBAAECggEASphBYq9sltVyf/ytpRpSnxYLhmiPFXs0mIlE6Nl/3qnQ
++BrLcL3yfDuvntg6xjx9UXistNtvlUDMYzJcLkV/InzhPEVZ0HnfTth9zeOpWrI30
++M2EN7EZ1MGcqlVpI4U5cPM1cn+/proLBQYv0WnCEwFFY477JrkXDxG7MZ1mz6TaL
++IGcCCIUu1BxECngQ344eaKrSR5F2MtlxAl19Pt5QSPfmuMdmElrK6RtBjnKrDu1K
++fe6DCfObZ3nbG2fhFV4uTxhlTC9lUmfTQMKR79rLmHNKnbMx74kFNvy3XlT2l35I
++ZVfRMLPWph7yMom9v/Im3Q70uhJ1lxyqbbl/DFZVmQKBgQDVo19SqR/QeDIxPIPn
++XvVWzo5ml3KO/dVxA8sok6twr+G7yUeIUnuauYFA/tX/FS32azFRa/7GjUfoTx3q
++GHK43TBCMyEt0we6WwZb+FkWa/b/RBoyD/audrpmgDDi1+fXPs8bBvoO8/oju20D
++I6wOjSovcIMaeLo/+u3U6ShNQwKBgQDOTpoGMsQzXchZfDmxL61h3j4Gtjrl4BpU
++WhAkJ9U2BRpL8NSZLErn5ik8MwgK2ut+YdU7aogI0D6Gc+4zZoJDEbhhmPD9cprv
++LMyfAKoisR01OyU57mMSGQq0dfjmK6PfYJdX5sQJGkMFptNAJLTDoYtmXItSICoY
++1j5KTvwe5QKBgGytxmErjfakHoxzh3pdERuOylwgMPPS5xCt6FyE+pLBtmisFQqh
++QyXLtpgUy1IPOSmBED6mXJ4u4uSn0sTymPG3+8PBdOB12RmREqQYq2E/nQ/wWg8b
++ldbcqShZkATl5pfV6M+L9gtDS/1/bA5LyExCvbISX29I+R5xDSnhTlI3AoGBAJRK
++VVXtOa/+UhtYOpPMxGCbgZQLemxvWB2XmxCR/SRWKJ+7XOU4vCLSAoO93qMG1szB
++/6Y0ndFP9hFo1SfnH+ybmR+18ksLDKisV+xWavSCwI7Zk5l/a4C/tT0fqyeu6JyQ
++bliFjBVK5i/yyNfLSo9v16ZdENuYOQofPSjmezytAoGBALhwvtzgqvqGSXID2w5N
++ullK8ny3WRa1o5DLXuMV19CvknmrN/zmmjQLblKkdp9VBb7uo8czon+qL1ZZyywC
++W2BmHfGMPUyQHux4btsdJhlWcS7z7aYXM9QWiKlI+EKLHLILYk+LPIEf85sUcOZV
++eCBpViT7fv2iv/0L+mzjWtLA
++-----END PRIVATE KEY-----
+diff --git a/dynamic-layers/rk-rauc-demo/recipes-core/rauc-bundles/rockchip-rauc-bundle.bb b/dynamic-layers/rk-rauc-demo/recipes-core/rauc-bundles/rockchip-rauc-bundle.bb
+new file mode 100644
+index 000000000000..5a42f59b821e
+--- /dev/null
++++ b/dynamic-layers/rk-rauc-demo/recipes-core/rauc-bundles/rockchip-rauc-bundle.bb
+@@ -0,0 +1,14 @@
++DESCRIPTION = "Rockchip RAUC bundle generator"
++
++inherit bundle
++
++RAUC_BUNDLE_COMPATIBLE = "${MACHINE}"
++RAUC_BUNDLE_VERSION = "v20240512"
++RAUC_BUNDLE_DESCRIPTION = "RAUC Demo Bundle"
++RAUC_BUNDLE_FORMAT = "verity"
++RAUC_BUNDLE_SLOTS = "rootfs"
++RAUC_SLOT_rootfs = "core-image-base"
++RAUC_SLOT_rootfs[fstype] = "ext4"
++
++RAUC_KEY_FILE := "${THISDIR}/files/development-1.key.pem"
++RAUC_CERT_FILE := "${THISDIR}/files/development-1.cert.pem"
+diff --git a/dynamic-layers/rk-rauc-demo/recipes-core/rauc/files/ca.cert.pem b/dynamic-layers/rk-rauc-demo/recipes-core/rauc/files/ca.cert.pem
+new file mode 100644
+index 000000000000..46944a99df22
+--- /dev/null
++++ b/dynamic-layers/rk-rauc-demo/recipes-core/rauc/files/ca.cert.pem
+@@ -0,0 +1,80 @@
++Certificate:
++    Data:
++        Version: 3 (0x2)
++        Serial Number: 1 (0x1)
++        Signature Algorithm: sha256WithRSAEncryption
++        Issuer: O=Test Org, CN=Test Org rauc CA Development
++        Validity
++            Not Before: Jan  1 00:00:00 1970 GMT
++            Not After : Dec 31 23:59:59 9999 GMT
++        Subject: O=Test Org, CN=Test Org rauc CA Development
++        Subject Public Key Info:
++            Public Key Algorithm: rsaEncryption
++                RSA Public-Key: (2048 bit)
++                Modulus:
++                    00:c0:fe:7b:6c:c3:e3:47:cc:d4:15:e1:0c:b2:1c:
++                    c9:f7:61:3e:42:d7:f1:a4:30:f2:db:0e:49:95:49:
++                    70:ee:97:6d:fe:48:5d:b9:22:63:47:e0:be:63:d7:
++                    68:9b:38:04:7d:7f:d9:65:ef:1d:6c:26:cb:05:7f:
++                    59:45:15:9d:76:59:c4:8d:59:a0:38:a0:25:fa:86:
++                    1b:f4:85:ff:cf:7c:c7:57:a3:7e:56:71:7d:69:c3:
++                    69:a7:fb:e6:8e:bc:f9:49:e2:f5:9a:97:e5:2d:75:
++                    ef:f9:76:29:5f:76:11:1b:70:6f:4d:26:4f:e0:06:
++                    9b:8c:e3:76:91:81:4a:4e:98:5d:2e:f4:bd:23:4d:
++                    e7:5d:9b:ea:68:4d:03:9e:35:90:c5:f2:8d:ae:ed:
++                    44:4f:f3:50:dc:2b:ef:ae:44:35:79:78:3d:65:4b:
++                    d9:16:98:aa:be:08:47:25:af:68:1c:0b:8e:c1:aa:
++                    02:a7:61:4f:4d:15:1b:07:3c:4e:60:b3:9a:d5:c1:
++                    39:34:4e:8e:e7:93:46:f1:75:95:aa:16:9a:1d:e6:
++                    49:15:a5:ae:06:8a:45:16:a9:af:59:60:9b:c6:6d:
++                    3d:19:57:5d:de:31:d5:dc:96:0e:a4:25:fe:7a:07:
++                    71:c5:40:c0:a3:d0:d5:84:47:14:7a:5a:f1:07:75:
++                    79:35
++                Exponent: 65537 (0x10001)
++        X509v3 extensions:
++            X509v3 Subject Key Identifier:
++                44:0C:AF:4A:74:B4:C7:65:02:B2:95:F1:91:7C:A3:CC:E6:3E:99:E8
++            X509v3 Authority Key Identifier:
++                keyid:44:0C:AF:4A:74:B4:C7:65:02:B2:95:F1:91:7C:A3:CC:E6:3E:99:E8
++                DirName:/O=Test Org/CN=Test Org rauc CA Development
++                serial:01
++
++            X509v3 Basic Constraints:
++                CA:TRUE
++    Signature Algorithm: sha256WithRSAEncryption
++         30:07:51:4d:d6:2c:0c:2f:3e:6c:5c:34:1f:07:21:8d:50:77:
++         9a:a6:81:75:62:f0:fe:ff:3b:5b:d0:7c:d1:45:e7:e2:67:d4:
++         23:cb:af:9a:8b:f4:2b:d2:33:3d:45:bb:a7:7d:b4:9b:41:db:
++         fb:62:ac:83:fc:41:ae:e5:dc:2d:df:7d:72:7e:df:34:01:60:
++         94:7f:15:78:84:87:f0:23:e4:8e:b8:dc:71:cb:84:4b:25:bb:
++         62:8f:fd:7f:d3:3c:1d:85:45:fb:03:7c:a2:bc:c4:a8:fa:2b:
++         ec:79:67:8d:f4:5f:37:a8:5a:54:bc:b3:78:11:0b:8b:29:90:
++         8b:48:4a:d7:87:93:96:97:72:10:1d:70:29:f8:e4:c3:81:6d:
++         7d:c3:6e:d4:c8:1b:0b:0d:f9:c0:b9:7b:11:54:e2:af:8b:a0:
++         45:de:c2:67:81:8c:0c:9d:ba:a1:31:8b:f2:cc:da:c7:cc:6d:
++         21:92:2a:57:29:9c:48:92:75:d9:1a:6e:d3:ee:53:66:83:2e:
++         08:74:09:5d:78:13:99:34:7d:16:8c:ba:29:75:80:20:8b:ca:
++         91:19:29:64:ef:64:37:de:5b:22:18:99:5b:63:69:9a:a2:44:
++         21:70:30:41:f2:58:27:ab:4f:5c:d0:e1:94:5d:d1:5b:8d:fd:
++         bf:8f:a9:99
++-----BEGIN CERTIFICATE-----
++MIIDhjCCAm6gAwIBAgIBATANBgkqhkiG9w0BAQsFADA6MREwDwYDVQQKDAhUZXN0
++IE9yZzElMCMGA1UEAwwcVGVzdCBPcmcgcmF1YyBDQSBEZXZlbG9wbWVudDAgFw03
++MDAxMDEwMDAwMDBaGA85OTk5MTIzMTIzNTk1OVowOjERMA8GA1UECgwIVGVzdCBP
++cmcxJTAjBgNVBAMMHFRlc3QgT3JnIHJhdWMgQ0EgRGV2ZWxvcG1lbnQwggEiMA0G
++CSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDA/ntsw+NHzNQV4QyyHMn3YT5C1/Gk
++MPLbDkmVSXDul23+SF25ImNH4L5j12ibOAR9f9ll7x1sJssFf1lFFZ12WcSNWaA4
++oCX6hhv0hf/PfMdXo35WcX1pw2mn++aOvPlJ4vWal+Utde/5dilfdhEbcG9NJk/g
++BpuM43aRgUpOmF0u9L0jTeddm+poTQOeNZDF8o2u7URP81DcK++uRDV5eD1lS9kW
++mKq+CEclr2gcC47BqgKnYU9NFRsHPE5gs5rVwTk0To7nk0bxdZWqFpod5kkVpa4G
++ikUWqa9ZYJvGbT0ZV13eMdXclg6kJf56B3HFQMCj0NWERxR6WvEHdXk1AgMBAAGj
++gZQwgZEwHQYDVR0OBBYEFEQMr0p0tMdlArKV8ZF8o8zmPpnoMGIGA1UdIwRbMFmA
++FEQMr0p0tMdlArKV8ZF8o8zmPpnooT6kPDA6MREwDwYDVQQKDAhUZXN0IE9yZzEl
++MCMGA1UEAwwcVGVzdCBPcmcgcmF1YyBDQSBEZXZlbG9wbWVudIIBATAMBgNVHRME
++BTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQAwB1FN1iwMLz5sXDQfByGNUHeapoF1
++YvD+/ztb0HzRRefiZ9Qjy6+ai/Qr0jM9RbunfbSbQdv7YqyD/EGu5dwt331yft80
++AWCUfxV4hIfwI+SOuNxxy4RLJbtij/1/0zwdhUX7A3yivMSo+ivseWeN9F83qFpU
++vLN4EQuLKZCLSErXh5OWl3IQHXAp+OTDgW19w27UyBsLDfnAuXsRVOKvi6BF3sJn
++gYwMnbqhMYvyzNrHzG0hkipXKZxIknXZGm7T7lNmgy4IdAldeBOZNH0WjLopdYAg
++i8qRGSlk72Q33lsiGJlbY2maokQhcDBB8lgnq09c0OGUXdFbjf2/j6mZ
++-----END CERTIFICATE-----
+diff --git a/dynamic-layers/rk-rauc-demo/recipes-core/rauc/files/system.conf b/dynamic-layers/rk-rauc-demo/recipes-core/rauc/files/system.conf
+new file mode 100644
+index 000000000000..4945c67345c4
+--- /dev/null
++++ b/dynamic-layers/rk-rauc-demo/recipes-core/rauc/files/system.conf
+@@ -0,0 +1,17 @@
++[system]
++compatible=@MACHINE@
++bootloader=uboot
++data-directory=/data/
++
++[keyring]
++path=/etc/rauc/ca.cert.pem
++
++[slot.rootfs.0]
++device=/dev/disk/by-partlabel/rootfsA
++type=ext4
++bootname=A
++
++[slot.rootfs.1]
++device=/dev/disk/by-partlabel/rootfsB
++type=ext4
++bootname=B
+diff --git a/dynamic-layers/rk-rauc-demo/recipes-core/rauc/rauc-conf.bbappend b/dynamic-layers/rk-rauc-demo/recipes-core/rauc/rauc-conf.bbappend
+new file mode 100644
+index 000000000000..281eb2c4de91
+--- /dev/null
++++ b/dynamic-layers/rk-rauc-demo/recipes-core/rauc/rauc-conf.bbappend
+@@ -0,0 +1,7 @@
++inherit rk-rauc-demo-features-check
++
++FILESEXTRAPATHS:prepend:rk-rauc-demo := "${THISDIR}/files:"
++
++do_install:prepend:rk-rauc-demo() {
++	sed -ie 's!@MACHINE@!${MACHINE}!g' ${UNPACKDIR}/system.conf
++}
+diff --git a/dynamic-layers/rk-rauc-demo/recipes-core/systemd/abd-partition.bb b/dynamic-layers/rk-rauc-demo/recipes-core/systemd/abd-partition.bb
+new file mode 100644
+index 000000000000..1952805f4a6d
+--- /dev/null
++++ b/dynamic-layers/rk-rauc-demo/recipes-core/systemd/abd-partition.bb
+@@ -0,0 +1,26 @@
++SUMMARY = "A/B+D partition definition for systemd's repart mechanism"
++LICENSE = "OSL-3.0"
++LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/OSL-3.0;md5=438ec6d864bbb958a49df939a56511cf"
++
++inherit rk-rauc-demo-features-check systemd
++
++SYSTEMD_SERVICE:${PN} = "data.mount"
++
++S = "${UNPACKDIR}"
++
++SRC_URI = " \
++	file://data.mount \
++	file://25-rootfsA.conf \
++	file://35-rootfsB.conf \
++	file://45-data.conf \
++	"
++
++do_install() {
++	install -d ${D}${sysconfdir}/repart.d/
++	install -m 0644 ${UNPACKDIR}/25-rootfsA.conf ${D}${sysconfdir}/repart.d/
++	install -m 0644 ${UNPACKDIR}/35-rootfsB.conf ${D}${sysconfdir}/repart.d/
++	install -m 0644 ${UNPACKDIR}/45-data.conf ${D}${sysconfdir}/repart.d/
++
++	install -d ${D}${sysconfdir}/systemd/system
++	install -m 0644 ${UNPACKDIR}/data.mount ${D}${sysconfdir}/systemd/system/
++}
+diff --git a/dynamic-layers/rk-rauc-demo/recipes-core/systemd/files/25-rootfsA.conf b/dynamic-layers/rk-rauc-demo/recipes-core/systemd/files/25-rootfsA.conf
+new file mode 100644
+index 000000000000..dba01e1ff863
+--- /dev/null
++++ b/dynamic-layers/rk-rauc-demo/recipes-core/systemd/files/25-rootfsA.conf
+@@ -0,0 +1,4 @@
++[Partition]
++Type=root
++Weight=250
++SizeMaxBytes=5G
+diff --git a/dynamic-layers/rk-rauc-demo/recipes-core/systemd/files/35-rootfsB.conf b/dynamic-layers/rk-rauc-demo/recipes-core/systemd/files/35-rootfsB.conf
+new file mode 100644
+index 000000000000..31a7c06c17ff
+--- /dev/null
++++ b/dynamic-layers/rk-rauc-demo/recipes-core/systemd/files/35-rootfsB.conf
+@@ -0,0 +1,7 @@
++[Partition]
++Type=root
++Label=rootfsB
++Weight=250
++SizeMaxBytes=5G
++Format=ext4
++GrowFileSystem=yes
+diff --git a/dynamic-layers/rk-rauc-demo/recipes-core/systemd/files/45-data.conf b/dynamic-layers/rk-rauc-demo/recipes-core/systemd/files/45-data.conf
+new file mode 100644
+index 000000000000..1aac59addc26
+--- /dev/null
++++ b/dynamic-layers/rk-rauc-demo/recipes-core/systemd/files/45-data.conf
+@@ -0,0 +1,6 @@
++[Partition]
++Type=root-secondary
++Label=data
++Weight=500
++Format=ext4
++GrowFileSystem=yes
+diff --git a/dynamic-layers/rk-rauc-demo/recipes-core/systemd/files/data.mount b/dynamic-layers/rk-rauc-demo/recipes-core/systemd/files/data.mount
+new file mode 100644
+index 000000000000..c81a55be1d1a
+--- /dev/null
++++ b/dynamic-layers/rk-rauc-demo/recipes-core/systemd/files/data.mount
+@@ -0,0 +1,10 @@
++[Unit]
++Description=data partition
++
++[Mount]
++What=/dev/disk/by-partlabel/data
++Where=/data
++Type=ext4
++
++[Install]
++WantedBy=multi-user.target
+diff --git a/dynamic-layers/rk-rauc-demo/recipes-core/systemd/systemd_%.bbappend b/dynamic-layers/rk-rauc-demo/recipes-core/systemd/systemd_%.bbappend
+new file mode 100644
+index 000000000000..cf6c188277db
+--- /dev/null
++++ b/dynamic-layers/rk-rauc-demo/recipes-core/systemd/systemd_%.bbappend
+@@ -0,0 +1,3 @@
++inherit rk-rauc-demo-features-check
++
++PACKAGECONFIG:append:rk-rauc-demo = " repart openssl"
+-- 
+2.44.0.478.g7774cfed6261
 
->>>> diff --git a/dynamic-layers/rk-rauc-demo/recipes-core/rauc/rauc-conf.bbappend b/dynamic-layers/rk-rauc-demo/recipes-core/rauc/rauc-conf.bbappend
->>>> new file mode 100644
->>>> index 000000000000..281eb2c4de91
->>>> --- /dev/null
->>>> +++ b/dynamic-layers/rk-rauc-demo/recipes-core/rauc/rauc-conf.bbappend
->>>> @@ -0,0 +1,7 @@
->>>> +inherit rk-rauc-demo-features-check
->>>> +
->>>> +FILESEXTRAPATHS:prepend:rk-rauc-demo := "${THISDIR}/files:"
->>>> +
->>>
->>> I would recommend renaming the directory to rauc-conf here, but that's just
->>> up to one's preference.
->>
->> Hmm... the rauc-conf recipe is in the rauc diretory in meta-rauc so I followed
->> how the parent layer was doing it. I think I prefer it this way; makes it
->> slightly easier to find the thing the bbappend is appending when both the
->> parent and child layers use the same directory structure.
->>
-
-I usually try to avoid using files/ except when I want two recipes or 
-bbappends for different recipes to share the same files. But matching 
-the original recipe layout is a good justification :)
-
-Cheers,
-Quentin
 
