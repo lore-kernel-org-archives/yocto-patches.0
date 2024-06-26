@@ -2,58 +2,58 @@ Return-Path: <gael.portay@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5043FC41513
-	for <webhook@archiver.kernel.org>; Wed, 26 Jun 2024 13:40:00 +0000 (UTC)
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
- by mx.groups.io with SMTP id smtpd.web10.26803.1719409193971081300
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 485AFC27C4F
+	for <webhook@archiver.kernel.org>; Wed, 26 Jun 2024 13:40:01 +0000 (UTC)
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+ by mx.groups.io with SMTP id smtpd.web10.26800.1719409192089884505
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 26 Jun 2024 06:39:54 -0700
+ Wed, 26 Jun 2024 06:39:52 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=kuoneWNw;
- spf=pass (domain: gmail.com, ip: 209.85.167.53, mailfrom: gael.portay@gmail.com)
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52ce01403f6so4048979e87.0
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 26 Jun 2024 06:39:53 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=QBcW4IHT;
+ spf=pass (domain: gmail.com, ip: 209.85.167.41, mailfrom: gael.portay@gmail.com)
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52cdebf9f6fso5515198e87.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 26 Jun 2024 06:39:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719409192; x=1720013992; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1719409190; x=1720013990; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nDZpnszQ2LqFoGieADXDq5MVS5vEWsmeErLhwQGFBZA=;
-        b=kuoneWNwMWC5DTj5cowlEIwrjmgLao0DU0CXdvDJ2eKs2EsJ2eGxKjwc4rrSKdW/X3
-         RgT2NERGzRcxORYuABblqORi9ar0pMIjR50Qt83gYhdsb32HMRtWgHg/ZiGwBY40YjlW
-         NAaCJQYm0EbaaPLHdvsY5cFa7FrQf4x6ZWu+y6snpDG9txuq04iAiZ1ZSJE4ur7p72ZA
-         xa3WZn8uWh+BGiy7Qn7gBgcL0Q4q8o2RngmZA6GQ9FG/HN+xJSkB2uNUpHZbjGR1nFXM
-         FnVsRNDM80i0FmpskZh3QoTf8hx3Q17xTH2HUix/bd55BwZhL3+mKGm0icTMP2RDQwWB
-         N7Hw==
+        bh=6I0NZefWHyvAccPNvrXbtSSO1i4rXYG/swMM4oXYm+Q=;
+        b=QBcW4IHTnFsvP1KZKoTeqI4qrTGxmkbiqrmn/MpNVso91V85xGk4M2V0t/dL6OhJMj
+         DqjDp88AX93zNF41vP1fwQy9RbE5t0tXVfec9a8CCPagfcLOunYudqEtrmpQOExVXgrr
+         QPlaF6HLUfArgKOtOZ2m7wNMWpnUBUb5rADg2iWv0Te59HquMEqQ3VPVMy1W+vDuKcmV
+         qmWD/dC9DtxFu4g0pHxIbjEdwA3OynDGzR0YLpE77+laIO0wTJHxydvQa3za75EiPqcd
+         qUc70us2L1zgtoIcfDMc3Vx6tKWHgGWza/ZX7JXS2LPIjEccbVI5rqLJIvfcysFFjbD9
+         3+OA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719409192; x=1720013992;
+        d=1e100.net; s=20230601; t=1719409190; x=1720013990;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nDZpnszQ2LqFoGieADXDq5MVS5vEWsmeErLhwQGFBZA=;
-        b=RuZo8e70tChjbLSJXcVjHubmcqJAbON62GAdEoq0nuC7vVcOF3KB1kvCztjnJLdq6N
-         nd8+xgMpvOeTg2By/lrhCN2GgfhEVxzionhAH5MUp+sOmBVlPvROCRQoamG+LOKZG9Dq
-         5ZQvGXBd5mEHptRSawRDdklxvKKg2Q0cUigMH7c882I30bkVyJ4Ax3DJ3WnEELxv/GJn
-         L/InBvKeQRc7Qw79S8J5qnZSuXIkzTDXAraou8tMo+KHuXyP/wLo+EMhhbjQ7mRqIDJt
-         uDNCFnpEoZIC0dpFkZe05xCCv5AwA5XeY3PK/wolX2ZTpeeh9J3YYv7i6TjnSfi+LCD9
-         jRvA==
-X-Gm-Message-State: AOJu0YzHRC2Em2Oh47fQdRFBXBVNPYNPV9UhInaxRHrOa3iyLjXBxFV0
-	OLS9XkP/7x7En1DDR8wAtvyOFoVIbtIlVIavLc++qif11IrN+40VO73IK7+F
-X-Google-Smtp-Source: AGHT+IF8qtSAdskP0QC2ymnD7FIOO0qPBfGgyTJW46k1RvLQUhP38iIrQvtzVfsU1hGlGmQJJ5uCxA==
-X-Received: by 2002:ac2:4a78:0:b0:52c:da77:d71c with SMTP id 2adb3069b0e04-52ce185ecb4mr6187694e87.54.1719409191610;
-        Wed, 26 Jun 2024 06:39:51 -0700 (PDT)
+        bh=6I0NZefWHyvAccPNvrXbtSSO1i4rXYG/swMM4oXYm+Q=;
+        b=aZf9BPgpw2OHMzcnAzwXO4cDLCgFikVV4c/ROsYhYltHXlbc1TXcqqmw4Dbe7Y8Y8r
+         Gj5+nSrvVpMG88xi8QYacx/kSzpO6ZriN/5bkkWR0RvfKuyjul/d2evivIgeoMkmUYCV
+         4fuIx4C/5fwvyLfGtUVT3q/w++Yv4bIJjzuYGveCZK1GBV5Cu+mGIoSKE5r2ChG/9Mqx
+         nEL4IWZcvTrNPnsVcC5HluZD64KVjJagiqDyq3ENqE72rchc91eHqNt4wzGbYNq+j1RB
+         dojrxPfqJoBedIUPQ0tmK8B3jTWaywVBi0ySBAV7bkzfEVLBL5o+iYQ75jqd5V9DE2Zp
+         juiA==
+X-Gm-Message-State: AOJu0YyzJurjKXir7ql7oy+Oy0a/qzIG93ORURKYaQ9htasONk0nFr/5
+	YIzfDzRvDzgjvHDDkLJeA3MFuxavPyOLTdhDVUpHqgT6WZGZ6xOaTlyGYkis
+X-Google-Smtp-Source: AGHT+IGjz/68mYSyv1rVd46kmm6hof3+zezv3zlDpsp79fkvTw8MTyP1QCQ5HJMOIGbneD3zglr+wg==
+X-Received: by 2002:a05:6512:b0d:b0:52c:f3fa:86c with SMTP id 2adb3069b0e04-52cf3fa14famr4916294e87.18.1719409189494;
+        Wed, 26 Jun 2024 06:39:49 -0700 (PDT)
 Received: from localhost.localdomain ([2a01:e0a:ce:f2f0:2a6b:35ff:feb8:77d9])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663a8c7befsm15802533f8f.95.2024.06.26.06.39.50
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663a8c7befsm15802533f8f.95.2024.06.26.06.39.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 06:39:50 -0700 (PDT)
+        Wed, 26 Jun 2024 06:39:47 -0700 (PDT)
 From: "=?UTF-8?q?Ga=C3=ABl=20PORTAY?=" <gael.portay@gmail.com>
 X-Google-Original-From: =?UTF-8?q?Ga=C3=ABl=20PORTAY?= <gael.portay@rtone.fr>
 To: yocto-patches@lists.yoctoproject.org
 Cc: gael.portay+yocto@gmail.com,
 	=?UTF-8?q?Ga=C3=ABl=20PORTAY?= <gael.portay@rtone.fr>
-Subject: [meta-security,kirkstone][PATCH 3/5] sssd: fix issue if build machine is Debian
-Date: Wed, 26 Jun 2024 15:39:11 +0200
-Message-ID: <20240626133913.790145-4-gael.portay@rtone.fr>
+Subject: [meta-security,kirkstone][PATCH 1/5] sssd: fix missing python3.X-config script
+Date: Wed, 26 Jun 2024 15:39:09 +0200
+Message-ID: <20240626133913.790145-2-gael.portay@rtone.fr>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240626133913.790145-1-gael.portay@rtone.fr>
 References: <20240626133913.790145-1-gael.portay@rtone.fr>
@@ -63,63 +63,51 @@ Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 26 Jun 2024 13:40:00 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/377
+ <yocto-patches@lists.yoctoproject.org>; Wed, 26 Jun 2024 13:40:01 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/375
 
-The configure script guesses the target system from the host if no
---with-os= is set[1]. It is untrue if cross-compiling.
+The configure script checks for the utility python3.X-config to be in
+$PATH; that script is shipped by the package python3-native.
 
-The guessed host operating system is used then to do specific things
-fort target build.
+The recipe does not depend on the package python3-native which causes
+the task do_configure to fail.
 
-The commit[2] passes the downstream debian option --install-layout=deb
-to setup.py[3] if the host system is debian based, and thus, it raises
-the error attached below as that debian-specific option[4] is not part
-of the openembedded[5] world.
+The recipe inherits from the bbclass python3-dir that does not install
+the required script to the sysroot. The bbclass python3native inherits
+from (the already inherited bbclass) python3-dir and it adds the missing
+dependency to python3-native.
 
-This sets the Fedora operating system thanks to the existing configure
-option --with-os=fedora, that is relatively sain operating system for
-the needs of openembedded.
+This fixes the configure error by "upgrading" the inherit bbclass from
+python3-dir to python3-native.
 
 Fixes:
 
-	| (...)/build/tmp/work/aarch64-poky-linux/sssd/2.5.2-r0/build/src/config/setup.py:25: DeprecationWarning: The distutils package is deprecated and slated for removal in Python 3.12. Use setuptools or check PEP 632 for potential alternatives
-	|   from distutils.core import setup
-	| usage: setup.py [global_opts] cmd1 [cmd1_opts] [cmd2 [cmd2_opts] ...]
-	|    or: setup.py --help [cmd1 cmd2 ...]
-	|    or: setup.py --help-commands
-	|    or: setup.py cmd --help
-	|
-	| error: option --install-layout not recognized
-
-Note: Upstream has introduced the "unknown" operating systemd with the
-upcoming version 2.10.0[6][7]. The change can be backported.
-
-[1]: https://github.com/SSSD/sssd/blob/2.5.2/src/external/platform.m4#L1-L31
-[2]: https://github.com/SSSD/sssd/commit/e6ae55d5423434d5dc6c236e8647b33610d30e2e
-[3]: https://github.com/SSSD/sssd/blob/2.5.2/Makefile.am#L32-L35
-[4]: https://sources.debian.org/patches/setuptools/68.1.2-2/install-layout.diff/#L7
-[5]: https://git.openembedded.org/openembedded-core/tree/meta/recipes-devtools/python/python3-setuptools_59.5.0.bb?h=kirkstone
-[6]: https://github.com/SSSD/sssd/commit/7b32dc0ab877a9061b52868b8efe6866c3144b63
-[7]: https://github.com/SSSD/sssd/pull/7398
+	| checking for python3.10-config... no
+	| configure: error:
+	| The program python3.10-config was not found in search path.
+	| Please ensure that it is installed and its directory is included in the search
+	| path. If you want to build sssd without python3 bindings then specify
+	| --without-python3-bindings when running configure.
+	| NOTE: The following config.log files may provide further information.
 
 Signed-off-by: Gaël PORTAY <gael.portay@rtone.fr>
 ---
- recipes-security/sssd/sssd_2.5.2.bb | 1 +
- 1 file changed, 1 insertion(+)
+ recipes-security/sssd/sssd_2.5.2.bb | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/recipes-security/sssd/sssd_2.5.2.bb b/recipes-security/sssd/sssd_2.5.2.bb
-index 98a4b5e..9991667 100644
+index c07559c..fe82452 100644
 --- a/recipes-security/sssd/sssd_2.5.2.bb
 +++ b/recipes-security/sssd/sssd_2.5.2.bb
-@@ -73,6 +73,7 @@ EXTRA_OECONF += " \
-     --without-secrets \
-     --with-xml-catalog-path=${STAGING_ETCDIR_NATIVE}/xml/catalog \
-     --with-pid-path=/run \
-+    --with-os=fedora \
+@@ -33,7 +33,7 @@ CVE_CHECK_IGNORE += "\
+     CVE-2018-16838 \
  "
  
- do_configure:prepend() {
+-inherit autotools pkgconfig gettext python3-dir features_check systemd
++inherit autotools pkgconfig gettext python3native features_check systemd
+ 
+ REQUIRED_DISTRO_FEATURES = "pam"
+ 
 -- 
 2.45.2
 
