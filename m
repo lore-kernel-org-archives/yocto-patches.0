@@ -1,127 +1,239 @@
-Return-Path: <ecordonnier@snap.com>
+Return-Path: <yi.zhao@eng.windriver.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8441DC2BBCA
-	for <webhook@archiver.kernel.org>; Tue, 25 Jun 2024 14:33:29 +0000 (UTC)
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
- by mx.groups.io with SMTP id smtpd.web10.174897.1719326002284083164
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E12D5C27C4F
+	for <webhook@archiver.kernel.org>; Wed, 26 Jun 2024 12:59:29 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+ by mx.groups.io with SMTP id smtpd.web11.25908.1719406760527630292
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 25 Jun 2024 07:33:22 -0700
+ Wed, 26 Jun 2024 05:59:20 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@snap.com header.s=google header.b=BjRsUI5z;
- spf=pass (domain: snapchat.com, ip: 209.85.221.50, mailfrom: ecordonnier@snapchat.com)
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-362bc731810so5059541f8f.1
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 25 Jun 2024 07:33:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=snap.com; s=google; t=1719326000; x=1719930800; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5t3ONn3AN54O/KAWrOjsmi5vk4IyUrWIfuzacpJTBqU=;
-        b=BjRsUI5zb2o2fBkRkfWMx6kZ6henPk4tVKarU/z3LAmeAMbupOWCpnE6IMJbyEr2hh
-         idxS8OJ6rVkGuY3JvguIHSRbVZhYkztceY1A7qDZkMmox/AQH7hE0fW05A61I0sg2LJ9
-         MAG3fu5BmbY8dJVcxdIzHlytsGv27DP0KwTPw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719326000; x=1719930800;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5t3ONn3AN54O/KAWrOjsmi5vk4IyUrWIfuzacpJTBqU=;
-        b=t3YtDfJOuoLzzypqnFDLUNsKJWNufznrWeup/RNCcWdNeMfoE3PjHsML7Xea1TzG5j
-         95MMl+CYeUtdN7KD0Bhd5Qa3kztoBWxPb0el9QwWayzuvEZSy1zjO7rxErKFE5qEbCzH
-         4T83vHy/mFQpElnxtLbsTs/vieLS7XsXmAENOycY9pKHz4xmGbmL8XdrHLTSPKEFqRnd
-         +PW3k8zElDP46OgNeVvU1kbTHyzPE9smzlDLjRtLBSprrTiIyIcWthftKd7naORAq4P3
-         e8Vsy3LVF4Iqo9yqepBEvI8CbqUFgT/lZf9Bf15y0VxopguBcZIeIfM3bEU6P4INdpkU
-         j9hg==
-X-Gm-Message-State: AOJu0YxaJsfD9z/ce5Ux1ad7fYpONEtQerrn6Srn130wHDf0pqVs5/Ny
-	MHWdQ34S+fRIcr3rY3nGM7ekUC+Eug/cgwkNK+5FWebRsGEZk1xKc42/GgMOkyGrWj5MhI8ODaq
-	j9go=
-X-Google-Smtp-Source: AGHT+IFIm+kzfsZ2yP+WhqXZC1YDNANEjiOFnEtVm9PIr+/mkHXya3XQTrHGpbzLe1CBx7/zG0aygA==
-X-Received: by 2002:a5d:4523:0:b0:362:721a:fa2 with SMTP id ffacd0b85a97d-366e94d4a00mr6095036f8f.30.1719326000344;
-        Tue, 25 Jun 2024 07:33:20 -0700 (PDT)
-Received: from lj8k2dq3.sc-core.net ([85.237.126.22])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424817a9981sm179837055e9.17.2024.06.25.07.33.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 07:33:20 -0700 (PDT)
-From: ecordonnier@snap.com
+ dkim=none (message not signed); spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.178.238, mailfrom: prvs=6907bc8ff1=yi.zhao@windriver.com)
+Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45QCRnx9029972
+	for <yocto-patches@lists.yoctoproject.org>; Wed, 26 Jun 2024 12:59:19 GMT
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2171.outbound.protection.outlook.com [104.47.58.171])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 3ywnk5uuvu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+	for <yocto-patches@lists.yoctoproject.org>; Wed, 26 Jun 2024 12:59:19 +0000 (GMT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HX2LqSFynSlGe4zbaAzin1Ke3RKLRTjYh+P6ALfekIWXefVdFqB3jqO0h8Bhk335nK7EA7/0PMutrvSgg8FFJJ07ABXLCebolc72q4DEFoHdGUcJFxL/xtPbdr0ySu620WRXW33fc+tBCDNJ/0RefdX/E1igWqOe0Vq5KdXIHYkZ5oroksJ82vcMucONIt0NcoXtI1jKQ8xliHFLrmfpVI1m9GTfyb5cHBeUgRig8741bSQq/QvaTMd4UwRw2nFLubotnoALEkm72lW87GvZKXcfSzMHzVSFQruTqk70l7KJcPyovjZNfJSzfUfIWOBaA/iD1s1dNmWVg8PnyMI/lA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YTbcuu8IRc1E/OtD8MYzy+LqdlxgdaCyD+kINKguc58=;
+ b=iWGD2lbl3mIMD7sgw9EAc4Wr7c/M2M/sYW1/KmuK8RHQnCu+1+T/14Hn2+eK6HcQaK9oTy57RavBtiVDw6bPF3oETnCXMl7WBKBhM+uHOZR18j6AiAn42SDBdJe8Pthb+qD4m9BZOEXKkS6wABLFYEBcddlwFx6H3qB6f2wkQHM45aP4YVBC0GiaXJ4jL4p64RxfC4nqX+3Cx7llq8eoOPhJ/ZuDAahUWTNbaJfr0+tQs0S66fyYzj1eiqiO8+9i8fssuvYochm88/xuXa8+DzAwgKU3J878PTXAEbJjn7hHub71Yoo7Cfy6mRx1LVgyfYqOHGUwZib9x4+WxajSoQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=windriver.com; dmarc=pass action=none
+ header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
+Received: from DS0PR11MB6399.namprd11.prod.outlook.com (2603:10b6:8:c8::5) by
+ SN7PR11MB7438.namprd11.prod.outlook.com (2603:10b6:806:32b::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.30; Wed, 26 Jun
+ 2024 12:59:16 +0000
+Received: from DS0PR11MB6399.namprd11.prod.outlook.com
+ ([fe80::2b44:787c:e7ee:bfad]) by DS0PR11MB6399.namprd11.prod.outlook.com
+ ([fe80::2b44:787c:e7ee:bfad%3]) with mapi id 15.20.7698.025; Wed, 26 Jun 2024
+ 12:59:16 +0000
+From: Yi Zhao <yi.zhao@windriver.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Etienne Cordonnier <ecordonnier@snap.com>
-Subject: [meta-selinux][scarthgap][PATCH] refpolicy: backport build fix
-Date: Tue, 25 Jun 2024 16:33:17 +0200
-Message-Id: <20240625143317.1644238-1-ecordonnier@snap.com>
-X-Mailer: git-send-email 2.36.1.vfs.0.0
-MIME-Version: 1.0
+Subject: [meta-security][PATCH] openscap: fix PACKAGECONFIG[remediate_service]
+Date: Wed, 26 Jun 2024 20:59:06 +0800
+Message-Id: <20240626125906.2931268-1-yi.zhao@windriver.com>
+X-Mailer: git-send-email 2.25.1
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYWPR01CA0019.jpnprd01.prod.outlook.com
+ (2603:1096:400:aa::6) To DS0PR11MB6399.namprd11.prod.outlook.com
+ (2603:10b6:8:c8::5)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB6399:EE_|SN7PR11MB7438:EE_
+X-MS-Office365-Filtering-Correlation-Id: 875f6c8f-2b6e-481f-c180-08dc95dfc906
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: 
+	BCL:0;ARA:13230038|366014|52116012|376012|1800799022|38350700012;
+X-Microsoft-Antispam-Message-Info: 
+	=?us-ascii?Q?CwdSDiNfttdNo/Pv6pEP+yi9Mris9x0WPtepQF3LvpldZ0cxWu02KsovOjit?=
+ =?us-ascii?Q?tD4w/qqz7sHJGQGY5sLu6yT8jVWnRpVDI08+Agu3lzLauB6CXRdgCUj/LHl+?=
+ =?us-ascii?Q?YPs/DV4+BIm7MUOsiLFmDQqftaLoaHEWBN8zLUkKwgxgFFaJi5yoHOjvcEMi?=
+ =?us-ascii?Q?4QKGLwpTgFCoSWRfqdvHpzrUAJax0SXePu8Dm80xhj51NTlYI7TakYaYP9oV?=
+ =?us-ascii?Q?eeP7IYSCP03UusjeSCmgzJWkwnrdCPrcvN9alUOulI56Y89+bYjSwaHZN32L?=
+ =?us-ascii?Q?p1ZWYb3zKMxQBUEODw1jNdMjJ0+fWpFRKU2FRFy8/7g0dht9SaQnqeCGw88t?=
+ =?us-ascii?Q?zi5fkJ1F2iNljvFfOb6vhsU0TSSEDheFEbioIlN2AjMpmK4EotdgXq5XKc1Y?=
+ =?us-ascii?Q?ehGSMnRuiZKL1LylemfJrb/G4itnKKaYA+Wl/mkzo29G+8DLSrldGq3cGbM4?=
+ =?us-ascii?Q?Q23PUKI8fMK6sLeEbdNOaxiOdQJEdIzNggsFeglrGLHAleTt60LkvP63yF65?=
+ =?us-ascii?Q?A8VZTCGiQlHKTNaRQom7cjvDDrSCQfcFoD8ntwii0kLSnCrKiPddQvKYZ4u3?=
+ =?us-ascii?Q?elMoMjv0k6HtlpW174euDnn+FZKtGtAqZceyK6W7xMWmndoRYCfwMFL+ErKP?=
+ =?us-ascii?Q?cK7aV/Yz7zpEYoYxkqgSpTQ6GqpP4sspSFnTQ82c0J1W8EDbSM2UicCHik98?=
+ =?us-ascii?Q?LjYQPFoneXicIhino83YUCCAa44lPy8WNZsKpVRaYYX5mR6O/xKBpGNkUHm7?=
+ =?us-ascii?Q?/HnTm93WcBYb48mqp61TmpicrE4gpkOMCT5j7LaQWWx8tqpmDNFc2wWp5Itj?=
+ =?us-ascii?Q?QGjAk0xCxbyxcTlW2yUDGHNB7QVGTTwEn/RYQoe3Wca3hBKctH3jq54VQfUz?=
+ =?us-ascii?Q?bK1iRYO+ICcMXw2Q2QOR/yv3WQnyJ5PoBD3k+yRwcgXP8B0vFFwLZT9Qj1ME?=
+ =?us-ascii?Q?YKDQbZUDRnYZHGCyD03saXKr27mKnsO+dhS/h+yQWeTo3+PZBMVH9vfkgQJh?=
+ =?us-ascii?Q?Bo1VS3q9uhCy1HIueXuzhsFaYQyL1/M08erDYEUkIiS69HrNFqBqmT6k9wiU?=
+ =?us-ascii?Q?+icBYEqAHJ3U+/gOAv08oRzf9GKELEvyQBZhPY+zXxa35zkrYNPNc3F0wFv1?=
+ =?us-ascii?Q?K1gv9fq56MPUJw//sLgVhg2a6xKySZ9/seCVTTjFcthL2ZY3RBQm6qwz8n35?=
+ =?us-ascii?Q?CiiQsiMEgAP227mqe2xWoqhXNHz3xisgNLYrj8DBgF3gHeJ8K1/AGXn/V9Mn?=
+ =?us-ascii?Q?L35MdUejsbLsvM8bY5hl9UVB4YiE+Ny56kADA9gNhQ1L8KcJQYhgoViKQdiL?=
+ =?us-ascii?Q?gKx51WN0SFMdL5NFe1scVja/LTmTHpLu10VZdedlCf/4uVcbkodJvZxXWrmh?=
+ =?us-ascii?Q?JLdIGir9hBcuJVyBrBjxRBxGcTggTbdde/PFhC/4FfiKeTVIiQ=3D=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB6399.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230038)(366014)(52116012)(376012)(1800799022)(38350700012);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?7BLkjnyYZQT92Y18p2AfGCvZdVbEn/qUVWsQ/SlJiQexf4IZI0Oc4YR28dym?=
+ =?us-ascii?Q?Yr009AQzo5oJJTSrMMu3thvFCFiE0wM3wwcXG2Yfr3XReM2S8j3Rb6qk3v63?=
+ =?us-ascii?Q?SaBNv+vElRIN2VB1P5ZU8umHJfRypmnd4DkDo7i7iCUxt4eCH/bNpGV30avJ?=
+ =?us-ascii?Q?u7S3qQdA2AoMq/LpynY9WF+QOSU7AIz9dXbYq5RMZt7SmJE8GA4cA5vqHedJ?=
+ =?us-ascii?Q?/hlRg/SiYRnEjThUpP39sSqTdvPD9k8tqWawtSSdj+imru9E38L36bvb2o+b?=
+ =?us-ascii?Q?2R8a/B4C9hhVrf9mTKws0GC/16MScNHBPSMJXGKBsyMFUGplu6gAJE8YJbA3?=
+ =?us-ascii?Q?b6izv1FIfamXHxFS4ZYIyM/UsGVlE3+MXg3use5x0ydWIgfW8QOBX8Nof1VX?=
+ =?us-ascii?Q?rHfuSv/Hw+Pm9xyi727/EKkTAy63c2s+LOCFFXey2VdolduK0jwplvOHM0/O?=
+ =?us-ascii?Q?92BjIYHNfG0IVtIPsPMnqJraxdMikgKgRN3RbWyOvFY9HY+cyntNuNxT6wCl?=
+ =?us-ascii?Q?93Q/2Nret3EsJbjEU3ssuRzbowu8tq/DTwacjO01mSsZ9CEdt+eUzW8iKe/W?=
+ =?us-ascii?Q?GzXu1I/bqAXF6lJo/T30drD+0vgYcr8zt4LmYf7FUHJRB52u0vhMfJiyUHgW?=
+ =?us-ascii?Q?pvdW8cOmMYPZU9mwES+KOIVio+h6UuxokW2UBXONby6awJ5CMhNlwKeAtoPN?=
+ =?us-ascii?Q?O1YBf40f0EGmu5jKRK0f3RpDcv4mhr6g5Gz4fK1wL4xefPT0EozcUgxBe+a4?=
+ =?us-ascii?Q?nMhoWwHVZurktYTcU9Nn6cnLb/IkKyu4xmSWix/Udo5rn9SgkXKVFCZv9C2/?=
+ =?us-ascii?Q?9gF4N3pWyqbMq+YE03X5cjN1LPXlla7bQJhHYbfFc3Hzghj20qm9j7eEqqTU?=
+ =?us-ascii?Q?hRT/J4M8ssv7yFaqW7qeiJpIRCpM7duFzUD+SFahljiMScizKZHyi9DUFzn7?=
+ =?us-ascii?Q?0NnBVh1e3JGuvMMXFcdJWb94BkJdqAnUBeh7idXO5F5NxQaMMXlRRV4TMba6?=
+ =?us-ascii?Q?MyIfYkloDG4/3Q28S0fU+zzDsXtwYHdVUjdwsBaJaHgydk/3W3qhEpDP5N52?=
+ =?us-ascii?Q?FYMVohBPamRCmVgBgcteCdBGMa71JeUG6vvNEmq98lIL6R3KkFgm77TwdBHU?=
+ =?us-ascii?Q?a0YnM/YEgv2dTMDlVJcHlPusnMenUCTGDl3N1sdtnWg+PvbeS3rL7R/koKo+?=
+ =?us-ascii?Q?dWurhbav+kH0wapPd2IE/rDXAPzFvidZzpQ0EM9O7faPR6SMAv4BbME5h14h?=
+ =?us-ascii?Q?23rt+lRaD/GhSI0/dp3fDP0YS6qzSifwWc8I9iI7IeoU6WqBMRuRlpu7OllR?=
+ =?us-ascii?Q?QzNGAS2v5rgB1lIx7Ex5UE315EFpBTnOOfPbsoetfYrEJ/WbtRVsz6A0DTBn?=
+ =?us-ascii?Q?URJaxQLLvKGAq8ZsJWsj1cRkYkbjUiCse0vg2hXOw4uoMiBoX6yNVpFyF9Vl?=
+ =?us-ascii?Q?Y0mOFG3rJcO6mQL9rN7QixdiPnNTebBjsQQ/qBnooJlRWvQnSA6amVqVBNRP?=
+ =?us-ascii?Q?7nI8xy7zPaekBN2xPBF3xorC8jTIw7OY9+y31uyIUzFr0WEbhcEh2FneYKbm?=
+ =?us-ascii?Q?uMWJgDpoR0M7aAhhkIvPdS4yRrQ666WEQDcdhm/K?=
+X-OriginatorOrg: windriver.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 875f6c8f-2b6e-481f-c180-08dc95dfc906
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB6399.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2024 12:59:16.4243
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: yKq2AhQtjQdhF6gDk/eoJ0EPoIMMXtMzaEmsD3G0zlIlHv+9+57ELDobnkp9UH9sI0OaTCRCAeQFN6w5WNRIdg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB7438
+X-Proofpoint-ORIG-GUID: S0BBBcmd8iRLNpqXBRknyKHzq-zf7BA_
+X-Proofpoint-GUID: S0BBBcmd8iRLNpqXBRknyKHzq-zf7BA_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-26_07,2024-06-25_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
+ impostorscore=0 spamscore=0 adultscore=0 lowpriorityscore=0 malwarescore=0
+ phishscore=0 priorityscore=1501 clxscore=1015 mlxscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.21.0-2406140001
+ definitions=main-2406260097
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 25 Jun 2024 14:33:29 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/372
+ <yocto-patches@lists.yoctoproject.org>; Wed, 26 Jun 2024 12:59:29 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/373
 
-From: Etienne Cordonnier <ecordonnier@snap.com>
+* Fix typo: remdediate_service -> remediate_service
+* No need to manually install oscap-remediate.service, as it is already
+  installed when ENABLE_OSCAP_REMEDIATE_SERVICE=ON is set.
+* Add a patch to fix installation directory for systemd service file.
 
-Signed-off-by: Etienne Cordonnier <ecordonnier@snap.com>
+Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
 ---
- ...-selinuxutil-make-policykit-optional.patch | 36 +++++++++++++++++++
- .../refpolicy/refpolicy_common.inc            |  1 +
- 2 files changed, 37 insertions(+)
- create mode 100644 recipes-security/refpolicy/refpolicy/0057-selinuxutil-make-policykit-optional.patch
+ ...ix-installation-directory-for-system.patch | 29 +++++++++++++++++++
+ .../openscap/openscap_1.3.10.bb               | 16 ++++------
+ 2 files changed, 34 insertions(+), 11 deletions(-)
+ create mode 100644 recipes-compliance/openscap/files/0001-CMakeLists.txt-fix-installation-directory-for-system.patch
 
-diff --git a/recipes-security/refpolicy/refpolicy/0057-selinuxutil-make-policykit-optional.patch b/recipes-security/refpolicy/refpolicy/0057-selinuxutil-make-policykit-optional.patch
+diff --git a/recipes-compliance/openscap/files/0001-CMakeLists.txt-fix-installation-directory-for-system.patch b/recipes-compliance/openscap/files/0001-CMakeLists.txt-fix-installation-directory-for-system.patch
 new file mode 100644
-index 0000000..62b35d5
+index 0000000..87dd00b
 --- /dev/null
-+++ b/recipes-security/refpolicy/refpolicy/0057-selinuxutil-make-policykit-optional.patch
-@@ -0,0 +1,36 @@
-+From 0f997a134adb6c68d871a31ec27d63f02297c588 Mon Sep 17 00:00:00 2001
++++ b/recipes-compliance/openscap/files/0001-CMakeLists.txt-fix-installation-directory-for-system.patch
+@@ -0,0 +1,29 @@
++From 887bd1b60720f02e937c57568d7ef4d3df4b00e8 Mon Sep 17 00:00:00 2001
 +From: Yi Zhao <yi.zhao@windriver.com>
-+Date: Wed, 5 Jun 2024 10:32:34 +0800
-+Subject: [PATCH] selinuxutil: make policykit optional
++Date: Mon, 24 Jun 2024 11:27:30 +0800
++Subject: [PATCH] CMakeLists.txt: fix installation directory for systemd unit
++ file
 +
-+Make policykit optional to avoid a potential build error.
-+
-+Upstream-Status: Backport [https://github.com/SELinuxProject/refpolicy/commit/c6dd4087def22fa0f3e2b62bce5fc531bbf824a0]
++Upstream-Status: Inappropriate [oe specific]
 +
 +Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
-+Signed-off-by: Etienne Cordonnier <ecordonnier@snap.com>
 +---
-+ policy/modules/system/selinuxutil.te | 6 ++++--
-+ 1 file changed, 4 insertions(+), 2 deletions(-)
++ CMakeLists.txt | 2 +-
++ 1 file changed, 1 insertion(+), 1 deletion(-)
 +
-+diff --git a/policy/modules/system/selinuxutil.te b/policy/modules/system/selinuxutil.te
-+index 57c2e0e01..c65d5e8e6 100644
-+--- a/policy/modules/system/selinuxutil.te
-++++ b/policy/modules/system/selinuxutil.te
-+@@ -501,12 +501,14 @@ corecmd_exec_bin(selinux_dbus_t)
-+ files_read_etc_symlinks(selinux_dbus_t)
-+ files_list_usr(selinux_dbus_t)
-+ 
-+-policykit_dbus_chat(selinux_dbus_t)
-+-
-+ miscfiles_read_localization(selinux_dbus_t)
-+ 
-+ seutil_domtrans_semanage(selinux_dbus_t)
-+ 
-++optional_policy(`
-++	policykit_dbus_chat(selinux_dbus_t)
-++')
-++
-+ ########################################
-+ #
-+ # semodule local policy
-diff --git a/recipes-security/refpolicy/refpolicy_common.inc b/recipes-security/refpolicy/refpolicy_common.inc
-index 6ea1fc2..0f5fe1b 100644
---- a/recipes-security/refpolicy/refpolicy_common.inc
-+++ b/recipes-security/refpolicy/refpolicy_common.inc
-@@ -72,6 +72,7 @@ SRC_URI += " \
-         file://0054-policy-modules-system-setrans-allow-setrans_t-use-fd.patch \
-         file://0055-policy-modules-system-systemd-make-_systemd_t-MLS-tr.patch \
-         file://0056-policy-modules-system-logging-make-syslogd_runtime_t.patch \
-+        file://0057-selinuxutil-make-policykit-optional.patch \
-         "
++diff --git a/CMakeLists.txt b/CMakeLists.txt
++index fdeda6eb4..77645ecd4 100644
++--- a/CMakeLists.txt
+++++ b/CMakeLists.txt
++@@ -637,7 +637,7 @@ if(NOT WIN32)
++ 			configure_file("oscap-remediate.service.in" "oscap-remediate.service" @ONLY)
++ 			install(FILES
++ 				${CMAKE_CURRENT_BINARY_DIR}/oscap-remediate.service
++-				DESTINATION ${CMAKE_INSTALL_PREFIX}/${SYSTEMD_UNITDIR}
+++				DESTINATION ${SYSTEMD_UNITDIR}
++ 			)
++ 		endif()
++ 	endif()
++-- 
++2.25.1
++
+diff --git a/recipes-compliance/openscap/openscap_1.3.10.bb b/recipes-compliance/openscap/openscap_1.3.10.bb
+index d3e44a8..c439d71 100644
+--- a/recipes-compliance/openscap/openscap_1.3.10.bb
++++ b/recipes-compliance/openscap/openscap_1.3.10.bb
+@@ -11,7 +11,9 @@ DEPENDS:class-native = "pkgconfig-native swig-native curl-native libxml2-native
  
- S = "${WORKDIR}/refpolicy"
+ #March 18th, 2024
+ SRCREV = "6d008616978306ce5e68997dce554a1683064f8f"
+-SRC_URI = "git://github.com/OpenSCAP/openscap.git;branch=maint-1.3;protocol=https "
++SRC_URI = "git://github.com/OpenSCAP/openscap.git;branch=maint-1.3;protocol=https \
++           file://0001-CMakeLists.txt-fix-installation-directory-for-system.patch \
++          "
+ 
+ S = "${WORKDIR}/git"
+ 
+@@ -24,7 +26,7 @@ PACKAGECONFIG[rpm] = "-DENABLE_OSCAP_UTIL_AS_RPM=ON, ,rpm, rpm"
+ PACKAGECONFIG[gcrypt] = "-DWITH_CRYPTO=gcrypt, ,libgcrypt"
+ PACKAGECONFIG[nss3] = "-DWITH_CRYPTO=nss3, ,nss"
+ PACKAGECONFIG[selinux] = ", ,libselinux"
+-PACKAGECONFIG[remdediate_service] = "-DENABLE_OSCAP_REMEDIATE_SERVICE=ON,-DENABLE_OSCAP_REMEDIATE_SERVICE=NO,"
++PACKAGECONFIG[remediate_service] = "-DENABLE_OSCAP_REMEDIATE_SERVICE=ON,-DENABLE_OSCAP_REMEDIATE_SERVICE=OFF,"
+ 
+ EXTRA_OECMAKE += "-DENABLE_PROBES_LINUX=ON -DENABLE_PROBES_UNIX=ON \
+                   -DENABLE_PROBES_SOLARIS=OFF -DENABLE_PROBES_INDEPENDENT=ON \
+@@ -47,14 +49,6 @@ do_configure:append:class-native () {
+     sed -i 's:OSCAP_DEFAULT_XSLT_PATH.*$:OSCAP_DEFAULT_XSLT_PATH "${STAGING_OSCAP_BUILDDIR}${datadir_native}/openscap/xsl":' ${B}/config.h
+ }
+ 
+-do_install:append () {
+-    if ${@bb.utils.contains('DISTRO_FEATURES','systemd','true','false',d)}; then
+-        if ${@bb.utils.contains('PACKAGECONFIG','remdediate_service','true','false',d)}; then
+-            install -D -m 0644 ${B}/oscap-remediate.service ${D}${systemd_system_unitdir}/oscap-remediate.service
+-        fi
+-    fi
+-}
+-
+ do_install:class-native[cleandirs] += " ${STAGING_OSCAP_BUILDDIR}"
+ do_install:append:class-native () {
+     oscapdir=${STAGING_OSCAP_BUILDDIR}/${datadir_native}
+@@ -64,7 +58,7 @@ do_install:append:class-native () {
+ 
+ 
+ SYSTEMD_PACKAGES = "${PN}"
+-SYSTEMD_SERVICE:${PN} = "${@bb.utils.contains('PACKAGECONFIG','remdediate_service', 'oscap-remediate.service', '',d)}"
++SYSTEMD_SERVICE:${PN} = "${@bb.utils.contains('PACKAGECONFIG','remediate_service', 'oscap-remediate.service', '',d)}"
+ SYSTEMD_AUTO_ENABLE = "disable"
+ 
+ 
 -- 
-2.36.1.vfs.0.0
+2.25.1
 
 
