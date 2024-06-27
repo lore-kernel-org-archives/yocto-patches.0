@@ -1,380 +1,180 @@
-Return-Path: <ecordonnier@snap.com>
+Return-Path: <quentin.schulz@cherry.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8026FC2BD09
-	for <webhook@archiver.kernel.org>; Thu, 27 Jun 2024 08:36:31 +0000 (UTC)
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
- by mx.groups.io with SMTP id smtpd.web11.3426.1719477384306909576
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD73EC2BD09
+	for <webhook@archiver.kernel.org>; Thu, 27 Jun 2024 11:48:02 +0000 (UTC)
+Received: from EUR03-VI1-obe.outbound.protection.outlook.com (EUR03-VI1-obe.outbound.protection.outlook.com [40.107.103.102])
+ by mx.groups.io with SMTP id smtpd.web10.6009.1719488872648670239
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 27 Jun 2024 01:36:24 -0700
+ Thu, 27 Jun 2024 04:47:53 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@snap.com header.s=google header.b=b0V6Uf+R;
- spf=pass (domain: snapchat.com, ip: 209.85.218.44, mailfrom: ecordonnier@snapchat.com)
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a72510ebc3fso656361866b.2
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 27 Jun 2024 01:36:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=snap.com; s=google; t=1719477382; x=1720082182; darn=lists.yoctoproject.org;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RCqvkRKmjFmXHWksHk7LKVeUzdsaOg/l5H/Y88RoZmc=;
-        b=b0V6Uf+R0+mEJ4/tUxBNxkP2afXRSC1L/rz0iEPMO4iXKIhCz1RgtWcRz433Vxee+6
-         NYBIDC5mRlLs46DgTjCCf1lFFYr4XVAv02IBCybhscNUjibU1nBiKrRkZBWM+0FLwYuf
-         mfLRKBimc+zQtSu2TOvn+d6rATc7B/Rr+16tc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719477382; x=1720082182;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RCqvkRKmjFmXHWksHk7LKVeUzdsaOg/l5H/Y88RoZmc=;
-        b=MarJKrlmHDedRSyY/zP7reMRWQOdAXHICk9B7cx4tDzqm7yoBamJY3qkl/NKyqNVme
-         fDciBYB7tbLbqLrbqv9RXLXapy3d5WozVUL8wybc+M/EaG67obBnT+SMFFyS9JxlgHKM
-         r+nDsjvjxYTHNy+PXQA8R9DqJvgSzuWlCxJMH3L3H9lxoae9Adt5lqB8jv/F+cfeUCAS
-         EeFJHnMpRXecKx8kWOlwk388su+H7eNsC+MBFDc8YrtR5YzgMZ4BzLXbn7YT4Y0PrlZy
-         pYxb/9WSBJLss7Q4bZgIV+1g3jMA5x/i2GYAb4umXTlxO0W4bO/DHx/5pTGynsQBEtg/
-         4o2g==
-X-Gm-Message-State: AOJu0Yx+kO2q71RPasXqIAYlUzF0RVxdtCWB7inf9JPUbB780YC7zrM0
-	VmqHsR1MXdEjWvd0AN//dMxmp5zJ2xT8Jny90YqtILaW9YTDoVDEpdLoZjvG/I7OVdEsDuX36Fx
-	YMQfZEreQ5Bu+nIFBQZ9BUK9loRMuZ4owl8SS33u/a8xIvwlo+CHbWw==
-X-Google-Smtp-Source: AGHT+IF6OMHlB9OrynQv8blupCd3vK6UoMbo+xKVQJmA1ZOB2KHn/LeTMRw3B3s9oYd539C1nku2ZmxqWLsEnVTHLwc=
-X-Received: by 2002:a17:906:ca14:b0:a6f:b75f:3d46 with SMTP id
- a640c23a62f3a-a7242c4b89fmr1050589566b.43.1719477382097; Thu, 27 Jun 2024
- 01:36:22 -0700 (PDT)
-MIME-Version: 1.0
-References: <17D213B141A57C32.4692@lists.yoctoproject.org> <17D2140E51A07FE0.4692@lists.yoctoproject.org>
-In-Reply-To: <17D2140E51A07FE0.4692@lists.yoctoproject.org>
-From: Etienne Cordonnier <ecordonnier@snap.com>
-Date: Thu, 27 Jun 2024 10:36:11 +0200
-Message-ID: <CAHUKmYYbXydmQC78rJVRmrVOC1wQBrVzGbJNWDhTK11VOYUONQ@mail.gmail.com>
-Subject: Re: [yocto-patches] [meta-selinux][PATCH] selinux-python: make GPLv3
- dependency optional
+ dkim=pass header.i=@cherry.de header.s=selector1 header.b=QzON+l1g;
+ spf=pass (domain: cherry.de, ip: 40.107.103.102, mailfrom: quentin.schulz@cherry.de)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=NeMOixwU+J+0+k9C7ewhoC/O/FcTgx6rH7LSkl1h/nJNpYb01cJJ6VZuD5ZNjceGu2fdd5QlPvs0m7PbyV6eqLUNvdQCMJVtXChZThx4VC/WTPXHz6lpuOcOWeOtaJdmjOY/ox+a4eHGUQPVF02tmimKUrxuU7DOmZe0jlvUXn1fLFnibFVRQpwIPZuaH2fs+Mjorzg3blszxWMBHHbk0B6UD7lRCLfXPY5dc3Ypq29wV3u/K7p9f0SneXlP3FcupQK5jNTulmAJM0MWNvPdYg64mxipxLCxTLPJSAeDHhDqzITDa3qoKk62kPn7j+YJ5YhAPpgMGdRZUiSt2GIzIg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=q/h1cVr6qLt8vaSuQcJUi8GWh6hagafF58EBUQH3Axc=;
+ b=IG4zPbCjxU1ysgpMbGybes96NjJtbRqKI6akv+B/V9vGjQSG8s6Khp87z9VtYhFS8RMR9ci4JMKFVePM9yVr+fbIpDLd5XQMCRlVUtyoBfhB8Iy5wjHgdrerjrBmWQb3CvPEObO5kRdcdAPpo3dvjKnhLwvMrF5Q9yLfc3hZsMa23K46wQtOcgO9MjN5LoxbwVAwDISdomGwiq85UYn1RpiYNbDPvBaKePpRiIYH/r1PXrHxD2ocRNFRCtQfbcUiPRagMqVsIl/RnRcxbycA8KXA136ZUzZyuVnQWx2XiAvZQvz3jPiVOUKREwkxSAblioN4xMngaP07U/duln5dMA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
+ dkim=pass header.d=cherry.de; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=q/h1cVr6qLt8vaSuQcJUi8GWh6hagafF58EBUQH3Axc=;
+ b=QzON+l1gI+A55a0vQX45j9mIm9ZBilTP5NbeQkSGiwOp73iHbkSmfucydLxEBrqfYCUnsMykxRfVCFt/7S/qrxGYygjQj4ErPt2K84aACyNIHBnpfKE/mH9SuSqt1AkVnN5/iNNSpps4xzhXy3R8W8CI/2PzmE6j+HtSX6KXP8k=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=cherry.de;
+Received: from PA4PR04MB7982.eurprd04.prod.outlook.com (2603:10a6:102:c4::9)
+ by PAXPR04MB8925.eurprd04.prod.outlook.com (2603:10a6:102:20c::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.35; Thu, 27 Jun
+ 2024 11:47:48 +0000
+Received: from PA4PR04MB7982.eurprd04.prod.outlook.com
+ ([fe80::3c4:afd5:49ac:77af]) by PA4PR04MB7982.eurprd04.prod.outlook.com
+ ([fe80::3c4:afd5:49ac:77af%4]) with mapi id 15.20.7698.025; Thu, 27 Jun 2024
+ 11:47:48 +0000
+Message-ID: <912826d9-a007-41fe-8338-a70d552e0b61@cherry.de>
+Date: Thu, 27 Jun 2024 13:47:46 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [yocto-patches] [meta-rockchip][PATCH v4] rauc demo: add
 To: yocto-patches@lists.yoctoproject.org
-Content-Type: multipart/alternative; boundary="0000000000008f56c6061bdb06ae"
+References: <20240626213536.12343-1-twoerner@gmail.com>
+Content-Language: en-US
+From: Quentin Schulz <quentin.schulz@cherry.de>
+In-Reply-To: <20240626213536.12343-1-twoerner@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: WA2P291CA0012.POLP291.PROD.OUTLOOK.COM
+ (2603:10a6:1d0:1e::27) To PA4PR04MB7982.eurprd04.prod.outlook.com
+ (2603:10a6:102:c4::9)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PA4PR04MB7982:EE_|PAXPR04MB8925:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0971017b-2a20-499d-c9ca-08dc969ef764
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info: 
+	=?utf-8?B?RG94eEpqN1g2Ty9Tck1kVWVBbmJWdUxxL2dieWpGOEZhblhFcFNzV1lXY0U5?=
+ =?utf-8?B?Vk1vYWhJREUzcXozbmxEb3FEZWQxZThqdHg5elFGY29qS1RYaVo5Z0NqbC91?=
+ =?utf-8?B?RmtsSFFwd0tScldVNUgvdlVJQTFHNjUvcU9lVzhsV2s1VDEyM2k5QXdLTkU5?=
+ =?utf-8?B?cG9SZDB0SjRyZ3NqWGxOUHZKajJHb0VyZ2RkTjk0WXg1MGRPb21waHBoaFVI?=
+ =?utf-8?B?THVEenk3ZGVRQmd6UENQN3hKd3FPWnl4WU9UTm5ZZXVnNmJWYk1KSmtCZDFB?=
+ =?utf-8?B?d1M1bU82L2h3SFZIYU9tZGVXN2h0VDhtdWlzRlZFZHV0NlkxSzZrVEt6cmZR?=
+ =?utf-8?B?QXp6QlFRMHlKU1NSYitNZWlyNjByQldHRVpTTHJpektCTmZnSEh3UlpqS1BI?=
+ =?utf-8?B?NFBZMk0yb2N4NlRzVEVoeXZ2RFUzYnN1cWx2YkJMWVpHOVJRVktoQXNubndy?=
+ =?utf-8?B?RzNTU2ZwdWVxbWExWklvcjJMczNieFpCWnBEeUVvMEVla0tqSWR0MVMxRXZo?=
+ =?utf-8?B?R1lwOGhMcEk2NW5pWDYyZDlMcGZKZE1OS3Uyb3BvZXVCOWIyUkdVVjJOYk1s?=
+ =?utf-8?B?andrdFh2MVJtR0daeW5HeVZ0LyszZ2F3MTAvamhQNzY5ZmhoSUVwby9nTFht?=
+ =?utf-8?B?ZFQxZVhpSnNxVmhDZzlzYldBaGN5TmRGQnJwT1RKVVUvblJWSjhKdlVuQ2hN?=
+ =?utf-8?B?aksxR1V2MmdScE5sRXFabzV3MG1FbW5GSmdGSnpKaFVaTGxoZEQ1eTFEbGpE?=
+ =?utf-8?B?MndhVmZ4NEZycGt3NkVTT0VVY3hvMkh0VVNwclZMWElrT09zdHg0Wm54L0kz?=
+ =?utf-8?B?MkpWL3EyN29OSkFVZGJSaU0vdVczdjhOeXFUSWg2UnI0NWxHQmZZb2poQVVt?=
+ =?utf-8?B?dFhXQitYMG9pbVFCWVd6WmdyODhRVWxUOVJZbWc2OWM0NE1Zbld6WERpV01o?=
+ =?utf-8?B?UThtNGg1UWdQRUxwa2RNa0VnQnBRV0lDQzVwNDV0bEh5amlqQ2htTXkrOUZv?=
+ =?utf-8?B?em55NFZ2RlNDd0Q3aFNDWTRKNmZSdW81OGtDYmlhaXhBVlppNjdqVVdCNlhn?=
+ =?utf-8?B?TFlRNzFIZloyR2ZLYzBtNkZCb1o5eXE3RmpSV3Y0ZTF2WmVtaDQvKzEyclI2?=
+ =?utf-8?B?TkRBZlFtZ3cyOFpaRzhLSzk2a1NNUEYrT25SUnNrWDBMYXllWGd5cjFPOUZ1?=
+ =?utf-8?B?dklCaVlkdGJnMDBieWlCOHR5MnNqVU1MNGowVFUwN25qY2NrQWc1RVBScDlF?=
+ =?utf-8?B?ZW1YZVVUZmxoTk9PZkx0RUtpNUpqUnBkVEVtaWpsdGhJY012MUcvLzYvVFF5?=
+ =?utf-8?B?YmtiN0hDSEFYTFFDL2ZMYTIyTmZQUWdhbGhkZ1hpZkduSGIrbmxobDFQbVJa?=
+ =?utf-8?B?MWs0VUV6TGVDTjJGUm9heFBENzZISnpKRzA2LzBySGVhb2RkeHpUaStxUSs3?=
+ =?utf-8?B?R1hvWlBRazZFbm9VZ1hmNUFzTlVtUE02cFhTOWNZcldoRVp3ZFB2Nmd5akd3?=
+ =?utf-8?B?WDhKVFdkTk1NYVZRb2xVbCtWZkRLUlllcWM3aVBKbG5xTDhxa1dRbjFxb3g2?=
+ =?utf-8?B?Mm9tdXRRKzJ6SUlzM3JGbW5wQ0dURHZveWFUUmtCUGJ5c3pIRWZORC9RcEhs?=
+ =?utf-8?B?cXJLMS9STVlIOVdNWUlMQ0w0VmowN2w3K1EwRGVuenVoV01RK3Q1TUtKdGhC?=
+ =?utf-8?B?MTU0ZWhGeGJHY3Vvb09DeFRLS1lzMVlmd3BzdGxOZnA5RU5SdUljZFl5dDFO?=
+ =?utf-8?Q?2SeOUsUTLuN/KiLrA0=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB7982.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?QmZoeDZ5Qml3RHIyMmpSZFllanRDVzBkaGZtM2xvamdjNjdZa0tCYzJtOTVk?=
+ =?utf-8?B?dnVaYTVUb250Y3Y3TmN2NU05V2tyQzNITmZ6UXRYZHJnZEUrMW9GeS9xOHdX?=
+ =?utf-8?B?cWY4dTBKSFVRa0lPYW1hTHNJTnA0R2dyNXdodXNYM3YyUEkrMmh3QkdsMW1Q?=
+ =?utf-8?B?L0FJUi9zVEZUdWlEbFZSaWRTSVRJeGM1bnVYNVBCRTdUdHB2VmtsTnFuMUNK?=
+ =?utf-8?B?YTk4NTA4cnhuVnc2K0daQ1N3ZG5scWNGRlNjU3JOdFoxVHVBcEZ0d0pHancw?=
+ =?utf-8?B?dHpiMHU5YXZNTjhlQTJwYUsvNlU5eTl2bEhNUXdJL3kxM2M2UUZpMVRsMUdX?=
+ =?utf-8?B?bUVzTkZQUktCdVlmOGFuUnFhdXFLMVRma0dKNm9xVTNseU9sZXlNU1ROc0s4?=
+ =?utf-8?B?clBIMDdPQ2tIQlJhVnV3Y1hZT0Q3OEw0QzVKRStaSU9Tb1l0WHBrMGg0c1po?=
+ =?utf-8?B?cHFoM0lVbkl4T3ptbVJTRzVqY2FnU01vRzR6ekJML3FuM3hueUVHb25Ydkdz?=
+ =?utf-8?B?U0FjcWRGMnlJekYrSDAralQxaXFoUENjUXhneEllQk0vajA2SXNUN0hkZ0wv?=
+ =?utf-8?B?STRJMWo4Z04wQktpVkcycUJHVzRyMVArNjdlUXI2VkF1Y1ZURHlqTEVZdktz?=
+ =?utf-8?B?YjdkNlNaR2FKU0daZTVmSXFPWGRCalh5bnFZbk5wdmQ3YnBhSkNwRkVCeEpo?=
+ =?utf-8?B?M2NKK3BZc2FybE1hK3JEYkYrNUFyZ0JheVBuQ1ZPaDlCa3hybEdxcElZTzVH?=
+ =?utf-8?B?QVFYdmVLTWVCMlpuRlVSY2FmVG16MkVhZW9vMmF1SGFHWVVyU1JIN0pHcWl6?=
+ =?utf-8?B?T2dENk1QQXJLMlI4Y1BTYUF2Y3ZUWWcxdFBCUGs3M0dxaUJBQ3AwNFBPdlFX?=
+ =?utf-8?B?TnNUK3huMFhYdDVmWGY5TmdUVHV3QWNCeEJoam5zUUEvNGZRZHk1RkU3S1J1?=
+ =?utf-8?B?YnFjOFRuZTQvTHhZK1FDM09FMXhmemtKSlJDeFFTWitDTUtmdmNFZlNiTWtQ?=
+ =?utf-8?B?dE11RmprWjNaYksvc1BSUitsajVYYmxJWDJEaHlvR3lMTXh6YWNRUE5CMTR5?=
+ =?utf-8?B?RVZuRjlpRW5nZGgyaGZJRDZKUUlOYnFGTEJFYnRmbjBha3JSVTlJeXVEZmw5?=
+ =?utf-8?B?ZWFydHNwN1M3bTRIa2U3NUpUc05tV1BNUUdTemM2Rzc2V2MwQzVhcFhRVE9C?=
+ =?utf-8?B?TGQxeW9VdVhPRHJ6Z3poaHBzc0lVcjM5Zk1UUHpwUFQ4Z2dNWTlRbFRlblNC?=
+ =?utf-8?B?Q0FwVkFOd2tqU053RzE0OTFWY2FWdENQNEpKSVJqZXNib2h6cUIwR0hSU3dx?=
+ =?utf-8?B?aDhlSGgyM0E0VWdESTgwZGR3d3Y3VEw2ZzJTWlZOVWtUODJkZXdyKzl2M2VH?=
+ =?utf-8?B?Z01ROHdBUTNFNjNwWm5ham4rMWc1c0V1cnZFeUZhNmpDM1FYeUZ6ZldYcUR2?=
+ =?utf-8?B?UUd0a1hKWDBJMTZwamMwWlJpTXN3eXEwbHRHSjhTaE9ZRlErMnE0cWNXbHpk?=
+ =?utf-8?B?a3cyQWZGWHIwN1p4V2RHU3p3dXJtQ1cvSmF0SGVKU2dmT2VSV3dPYkw5VFV3?=
+ =?utf-8?B?dVZONFZzSTVsMHQzYVl2MGFxOWduZzF3RVdmcU5mZFlHSTJqbE1vd0lrSkg0?=
+ =?utf-8?B?a045MG9SK2k5bDlQVHhWZGN6WWJKajZuRHJscXFCZUo0elhIWVBNQUJtSEJR?=
+ =?utf-8?B?ZFpMZHk2VU5sOHZIWHluU1h6ckNmNUg2ZldvV2V4K0tmbnlWblpmbnBxTWV2?=
+ =?utf-8?B?S0xJU3c2Qk9BMkwrUDZCb3A0eGZZc2dpTmo1UHNMVTJaNnd4MjJQYmtPVUdV?=
+ =?utf-8?B?NURhOG0vSUpjeVVhSGNuWmhEdG11UlB3OTVRQUZhMjU4NkUzblNkckl6UlBJ?=
+ =?utf-8?B?dlMyWktoS0t0VGZOZXRQSmdxbXh1RjhMTGFUZ2VZTis1TFdRNXNvTnRXTExq?=
+ =?utf-8?B?WXk1M2F2cmJuTW9YWW10bzZQcHBydnhnMkpOemE4S0lTTkw2R2tHWURLaExI?=
+ =?utf-8?B?YzJ2VkZzQkpyS2srT3Z3Y0JvZjcwQTNaMFNpVEhXeWRsVnYzM1h0TVZDNnd0?=
+ =?utf-8?B?RlJaVGErb3oyR0l4OGQxZllZRU5rV1cwYzZOYVp4TnYwYi9Tejh4ekFDenJV?=
+ =?utf-8?B?Wk8xU2NML2k3cXJNU25DTDVWcXdUZkt5aUtuOHY2b21JMW1uRGpQMGtPYy8r?=
+ =?utf-8?B?ZGc9PQ==?=
+X-OriginatorOrg: cherry.de
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0971017b-2a20-499d-c9ca-08dc969ef764
+X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB7982.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jun 2024 11:47:48.1133
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: LuSFmEgk1M6t6i9YdDwWFzRJYNGWGToobKu9mk6rKqvEVHv8RK9YIkK5NDbvNcBdeCb6lL2OyIJKBkeozx7ZIrm4x8utTxxPwxs06XmglpI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8925
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 27 Jun 2024 08:36:31 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/387
+ <yocto-patches@lists.yoctoproject.org>; Thu, 27 Jun 2024 11:48:02 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/388
 
---0000000000008f56c6061bdb06ae
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Hi Trevor,
 
-Hi,
-what is the status of this patch?
+On 6/26/24 11:35 PM, Trevor Woerner via lists.yoctoproject.org wrote:
+> Add an example of implementing rauc on a rockchip board. Adding the meta-rauc
+> layer, adding 'rauc' to DISTRO_FEATURES, and enabling RK_RAUC_DEMO will build
+> an image using the example provided in dynamic-layers/rk-rauc-demo.
+> 
+> This example uses a simple A/B + D scheme (i.e. two root partitions and a
+> non-updated /data partition). Repartitioning occurs automatically on first
+> boot thanks to systemd's 'repart' mechanism.
+> 
+> NOTE:
+> - this example only works with systemd
+> 
+> If you wish to provide your own implementation, simply add the meta-rauc
+> layer, add 'rauc' to DISTRO_FEATURES, don't enable RK_RAUC_DEMO, and provide
+> your own implementation in a separate layer.
+> 
+> Signed-off-by: Trevor Woerner <twoerner@gmail.com>
 
-Thanks,
-=C3=89tienne
+I think it's fine now :)
 
-On Thu, May 23, 2024 at 11:27=E2=80=AFAM Etienne Cordonnier via
-lists.yoctoproject.org <ecordonnier=3Dsnap.com@lists.yoctoproject.org> wrot=
-e:
+Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
 
-> Hi, note that another way to implement this is  RRECOMMENDS=3D"binutils" =
-in
-> the recipe, and BAD_RECOMMENDATION+=3D"binutils" for users of the layer w=
-ho
-> want to disable the dependency. I used the PACKAGECONFIG way since it mak=
-es
-> it clearer which functionality gets disabled IMO:
-> PACKAGECONFIG:remove:pn-selinux-python-sepolicy =3D "sepolicy-generate"
->
-> =C3=89tienne
->
-> On Thu, May 23, 2024 at 11:21=E2=80=AFAM Etienne Cordonnier via
-> lists.yoctoproject.org
-> <https://urldefense.proofpoint.com/v2/url?u=3Dhttp-3A__lists.yoctoproject=
-.org&d=3DDwMFaQ&c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&r=3DAhkbNon=
-VuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&m=3DsvUiXAGWL-sVHk8x8ZsNqyXZUzlzLxFkZM=
-Ng7mIpG4kCNbCpjYWhGSSEhk43Xgxp&s=3DzCOxOsLdY4YpzCCow8OlIHj3Hm80Yh7Wa3HD1T2L=
-8Ok&e=3D>
-> <ecordonnier=3Dsnap.com@lists.yoctoproject.org> wrote:
->
->> From: Etienne Cordonnier <ecordonnier@snap.com>
->>
->> Signed-off-by: Etienne Cordonnier <ecordonnier@snap.com>
->> ---
->>  recipes-security/selinux/selinux-python_3.6.bb
->> <https://urldefense.proofpoint.com/v2/url?u=3Dhttp-3A__selinux-2Dpython-=
-5F3.6.bb&d=3DDwMFaQ&c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&r=3DAhk=
-bNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&m=3DsvUiXAGWL-sVHk8x8ZsNqyXZUzlzLx=
-FkZMNg7mIpG4kCNbCpjYWhGSSEhk43Xgxp&s=3DixJG_H5bJU1GGqRFcKTAK2WyQXKt0wsSdZPu=
-aCOJQKs&e=3D>
->> | 4 +++-
->>  1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/recipes-security/selinux/selinux-python_3.6.bb
->> <https://urldefense.proofpoint.com/v2/url?u=3Dhttp-3A__selinux-2Dpython-=
-5F3.6.bb&d=3DDwMFaQ&c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&r=3DAhk=
-bNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&m=3DsvUiXAGWL-sVHk8x8ZsNqyXZUzlzLx=
-FkZMNg7mIpG4kCNbCpjYWhGSSEhk43Xgxp&s=3DixJG_H5bJU1GGqRFcKTAK2WyQXKt0wsSdZPu=
-aCOJQKs&e=3D>
->> b/recipes-security/selinux/selinux-python_3.6.bb
->> <https://urldefense.proofpoint.com/v2/url?u=3Dhttp-3A__selinux-2Dpython-=
-5F3.6.bb&d=3DDwMFaQ&c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&r=3DAhk=
-bNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&m=3DsvUiXAGWL-sVHk8x8ZsNqyXZUzlzLx=
-FkZMNg7mIpG4kCNbCpjYWhGSSEhk43Xgxp&s=3DixJG_H5bJU1GGqRFcKTAK2WyQXKt0wsSdZPu=
-aCOJQKs&e=3D>
->> index 79125d0..faf5d28 100644
->> --- a/recipes-security/selinux/selinux-python_3.6.bb
->> <https://urldefense.proofpoint.com/v2/url?u=3Dhttp-3A__selinux-2Dpython-=
-5F3.6.bb&d=3DDwMFaQ&c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&r=3DAhk=
-bNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&m=3DsvUiXAGWL-sVHk8x8ZsNqyXZUzlzLx=
-FkZMNg7mIpG4kCNbCpjYWhGSSEhk43Xgxp&s=3DixJG_H5bJU1GGqRFcKTAK2WyQXKt0wsSdZPu=
-aCOJQKs&e=3D>
->> +++ b/recipes-security/selinux/selinux-python_3.6.bb
->> <https://urldefense.proofpoint.com/v2/url?u=3Dhttp-3A__selinux-2Dpython-=
-5F3.6.bb&d=3DDwMFaQ&c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&r=3DAhk=
-bNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&m=3DsvUiXAGWL-sVHk8x8ZsNqyXZUzlzLx=
-FkZMNg7mIpG4kCNbCpjYWhGSSEhk43Xgxp&s=3DixJG_H5bJU1GGqRFcKTAK2WyQXKt0wsSdZPu=
-aCOJQKs&e=3D>
->> @@ -53,8 +53,10 @@ RDEPENDS:${PN}-semanage =3D "\
->>          audit-python \
->>          ${PN} \
->>  "
->> +PACKAGECONFIG ??=3D "sepolicy-generate"
->> +PACKAGECONFIG[sepolicy-generate] =3D ",,,"
->>  RDEPENDS:${PN}-sepolicy =3D "\
->> -        binutils \
->> +        ${@bb.utils.contains('PACKAGECONFIG', 'sepolicy-generate',
->> 'binutils', '', d)} \
->>          python3-core \
->>          python3-codecs \
->>          python3-distro \
->> --
->> 2.36.1.vfs.0.0
->>
->>
->>
->>
->>
->>
->> _._,_._,_
-> ------------------------------
-> Links:
->
-> You receive all messages sent to this group.
->
-> View/Reply Online (#177)
-> <https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.yoctoprojec=
-t.org_g_yocto-2Dpatches_message_177&d=3DDwMFaQ&c=3DncDTmphkJTvjIDPh0hpF_4vC=
-HvabgGkICC2epckfdiw&r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&m=3DsvU=
-iXAGWL-sVHk8x8ZsNqyXZUzlzLxFkZMNg7mIpG4kCNbCpjYWhGSSEhk43Xgxp&s=3DDCVuET1XO=
-MUydX_uQyyQOOjB48wBdkv-iqH0Tl769-I&e=3D>
-> | Reply To Group
-> <yocto-patches@lists.yoctoproject.org?subject=3DRe:%20Re%3A%20%5Byocto-pa=
-tches%5D%20%5Bmeta-selinux%5D%5BPATCH%5D%20selinux-python%3A%20make%20GPLv3=
-%20dependency%20optional>
-> | Reply To Sender
-> <ecordonnier@snap.com?subject=3DPrivate:%20Re:%20Re%3A%20%5Byocto-patches=
-%5D%20%5Bmeta-selinux%5D%5BPATCH%5D%20selinux-python%3A%20make%20GPLv3%20de=
-pendency%20optional>
-> | Mute This Topic
-> <https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.yoctoprojec=
-t.org_mt_106259298_7048771&d=3DDwMFaQ&c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkIC=
-C2epckfdiw&r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&m=3DsvUiXAGWL-sV=
-Hk8x8ZsNqyXZUzlzLxFkZMNg7mIpG4kCNbCpjYWhGSSEhk43Xgxp&s=3D-iyNi9UljHjA5rLQs9=
-B3ZkRTOPuZcwAex9nV7q4-IEs&e=3D>
-> | New Topic
-> <https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.yoctoprojec=
-t.org_g_yocto-2Dpatches_post&d=3DDwMFaQ&c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGk=
-ICC2epckfdiw&r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&m=3DsvUiXAGWL-=
-sVHk8x8ZsNqyXZUzlzLxFkZMNg7mIpG4kCNbCpjYWhGSSEhk43Xgxp&s=3DiwjqA6svYEujPJBM=
-_rJg9RPBcVJZeggsqrlNmnxYBqE&e=3D>
-> Your Subscription
-> <https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.yoctoprojec=
-t.org_g_yocto-2Dpatches_editsub_7048771&d=3DDwMFaQ&c=3DncDTmphkJTvjIDPh0hpF=
-_4vCHvabgGkICC2epckfdiw&r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&m=
-=3DsvUiXAGWL-sVHk8x8ZsNqyXZUzlzLxFkZMNg7mIpG4kCNbCpjYWhGSSEhk43Xgxp&s=3DDIU=
-CI-n9Ij_gWQCIUAJM3gRqYNBYHEZmvUyKWHLjozY&e=3D>
-> | Contact Group Owner <yocto-patches+owner@lists.yoctoproject.org> |
-> Unsubscribe
-> <https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.yoctoprojec=
-t.org_g_yocto-2Dpatches_leave_13184993_7048771_1814342232_xyzzy&d=3DDwMFaQ&=
-c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&r=3DAhkbNonVuMIGRfPx_Qj9TsR=
-ih1DULJTKUkSGa66m67E&m=3DsvUiXAGWL-sVHk8x8ZsNqyXZUzlzLxFkZMNg7mIpG4kCNbCpjY=
-WhGSSEhk43Xgxp&s=3D-JmoyURmgnC4ffGLNj7jgar4IOYcaqnoBBLB20TCFv0&e=3D>
-> [ecordonnier@snap.com]
-> _._,_._,_
->
->
+BTW, I found https://www.konsulko.com/rauc-on-rockchip yesterday. Is 
+this something we want to discuss with Leon to see if he has some 
+feedback or if he plans on using this feature here?
 
---0000000000008f56c6061bdb06ae
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr">Hi,<br>what is the status of this patch?<br><br>Thanks,<br=
->=C3=89tienne</div><br><div class=3D"gmail_quote"><div dir=3D"ltr" class=3D=
-"gmail_attr">On Thu, May 23, 2024 at 11:27=E2=80=AFAM Etienne Cordonnier vi=
-a <a href=3D"http://lists.yoctoproject.org">lists.yoctoproject.org</a> &lt;=
-ecordonnier=3D<a href=3D"mailto:snap.com@lists.yoctoproject.org">snap.com@l=
-ists.yoctoproject.org</a>&gt; wrote:<br></div><blockquote class=3D"gmail_qu=
-ote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,20=
-4);padding-left:1ex"><div dir=3D"ltr">Hi, note that another way to implemen=
-t this is=C2=A0<span style=3D"color:rgb(31,35,40);font-family:-apple-system=
-,BlinkMacSystemFont,&quot;Segoe UI&quot;,&quot;Noto Sans&quot;,Helvetica,Ar=
-ial,sans-serif,&quot;Apple Color Emoji&quot;,&quot;Segoe UI Emoji&quot;;fon=
-t-size:14px">=C2=A0RRECOMMENDS=3D&quot;binutils&quot; in the recipe, and=C2=
-=A0</span><span style=3D"color:rgb(31,35,40);font-family:-apple-system,Blin=
-kMacSystemFont,&quot;Segoe UI&quot;,&quot;Noto Sans&quot;,Helvetica,Arial,s=
-ans-serif,&quot;Apple Color Emoji&quot;,&quot;Segoe UI Emoji&quot;;font-siz=
-e:14px">BAD_RECOMMENDATION+=3D&quot;binutils&quot; for users of the layer w=
-ho want to disable the dependency. I used the PACKAGECONFIG way since it ma=
-kes it clearer which functionality gets disabled IMO:<br></span>PACKAGECONF=
-IG:remove:pn-selinux-python-sepolicy =3D &quot;sepolicy-generate&quot;<br><=
-span style=3D"color:rgb(31,35,40);font-family:-apple-system,BlinkMacSystemF=
-ont,&quot;Segoe UI&quot;,&quot;Noto Sans&quot;,Helvetica,Arial,sans-serif,&=
-quot;Apple Color Emoji&quot;,&quot;Segoe UI Emoji&quot;;font-size:14px"><br=
->=C3=89tienne</span></div><br><div class=3D"gmail_quote"><div dir=3D"ltr" c=
-lass=3D"gmail_attr">On Thu, May 23, 2024 at 11:21=E2=80=AFAM Etienne Cordon=
-nier via <a href=3D"https://urldefense.proofpoint.com/v2/url?u=3Dhttp-3A__l=
-ists.yoctoproject.org&amp;d=3DDwMFaQ&amp;c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgG=
-kICC2epckfdiw&amp;r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3Ds=
-vUiXAGWL-sVHk8x8ZsNqyXZUzlzLxFkZMNg7mIpG4kCNbCpjYWhGSSEhk43Xgxp&amp;s=3DzCO=
-xOsLdY4YpzCCow8OlIHj3Hm80Yh7Wa3HD1T2L8Ok&amp;e=3D" target=3D"_blank">lists.=
-yoctoproject.org</a> &lt;ecordonnier=3D<a href=3D"mailto:snap.com@lists.yoc=
-toproject.org" target=3D"_blank">snap.com@lists.yoctoproject.org</a>&gt; wr=
-ote:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px=
- 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">From: Etien=
-ne Cordonnier &lt;<a href=3D"mailto:ecordonnier@snap.com" target=3D"_blank"=
->ecordonnier@snap.com</a>&gt;<br>
-<br>
-Signed-off-by: Etienne Cordonnier &lt;<a href=3D"mailto:ecordonnier@snap.co=
-m" target=3D"_blank">ecordonnier@snap.com</a>&gt;<br>
----<br>
-=C2=A0recipes-security/selinux/<a href=3D"https://urldefense.proofpoint.com=
-/v2/url?u=3Dhttp-3A__selinux-2Dpython-5F3.6.bb&amp;d=3DDwMFaQ&amp;c=3DncDTm=
-phkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DU=
-LJTKUkSGa66m67E&amp;m=3DsvUiXAGWL-sVHk8x8ZsNqyXZUzlzLxFkZMNg7mIpG4kCNbCpjYW=
-hGSSEhk43Xgxp&amp;s=3DixJG_H5bJU1GGqRFcKTAK2WyQXKt0wsSdZPuaCOJQKs&amp;e=3D"=
- rel=3D"noreferrer" target=3D"_blank">selinux-python_3.6.bb</a> | 4 +++-<br=
->
-=C2=A01 file changed, 3 insertions(+), 1 deletion(-)<br>
-<br>
-diff --git a/recipes-security/selinux/<a href=3D"https://urldefense.proofpo=
-int.com/v2/url?u=3Dhttp-3A__selinux-2Dpython-5F3.6.bb&amp;d=3DDwMFaQ&amp;c=
-=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhkbNonVuMIGRfPx_Qj9=
-TsRih1DULJTKUkSGa66m67E&amp;m=3DsvUiXAGWL-sVHk8x8ZsNqyXZUzlzLxFkZMNg7mIpG4k=
-CNbCpjYWhGSSEhk43Xgxp&amp;s=3DixJG_H5bJU1GGqRFcKTAK2WyQXKt0wsSdZPuaCOJQKs&a=
-mp;e=3D" rel=3D"noreferrer" target=3D"_blank">selinux-python_3.6.bb</a> b/r=
-ecipes-security/selinux/<a href=3D"https://urldefense.proofpoint.com/v2/url=
-?u=3Dhttp-3A__selinux-2Dpython-5F3.6.bb&amp;d=3DDwMFaQ&amp;c=3DncDTmphkJTvj=
-IDPh0hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkS=
-Ga66m67E&amp;m=3DsvUiXAGWL-sVHk8x8ZsNqyXZUzlzLxFkZMNg7mIpG4kCNbCpjYWhGSSEhk=
-43Xgxp&amp;s=3DixJG_H5bJU1GGqRFcKTAK2WyQXKt0wsSdZPuaCOJQKs&amp;e=3D" rel=3D=
-"noreferrer" target=3D"_blank">selinux-python_3.6.bb</a><br>
-index 79125d0..faf5d28 100644<br>
---- a/recipes-security/selinux/<a href=3D"https://urldefense.proofpoint.com=
-/v2/url?u=3Dhttp-3A__selinux-2Dpython-5F3.6.bb&amp;d=3DDwMFaQ&amp;c=3DncDTm=
-phkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DU=
-LJTKUkSGa66m67E&amp;m=3DsvUiXAGWL-sVHk8x8ZsNqyXZUzlzLxFkZMNg7mIpG4kCNbCpjYW=
-hGSSEhk43Xgxp&amp;s=3DixJG_H5bJU1GGqRFcKTAK2WyQXKt0wsSdZPuaCOJQKs&amp;e=3D"=
- rel=3D"noreferrer" target=3D"_blank">selinux-python_3.6.bb</a><br>
-+++ b/recipes-security/selinux/<a href=3D"https://urldefense.proofpoint.com=
-/v2/url?u=3Dhttp-3A__selinux-2Dpython-5F3.6.bb&amp;d=3DDwMFaQ&amp;c=3DncDTm=
-phkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DU=
-LJTKUkSGa66m67E&amp;m=3DsvUiXAGWL-sVHk8x8ZsNqyXZUzlzLxFkZMNg7mIpG4kCNbCpjYW=
-hGSSEhk43Xgxp&amp;s=3DixJG_H5bJU1GGqRFcKTAK2WyQXKt0wsSdZPuaCOJQKs&amp;e=3D"=
- rel=3D"noreferrer" target=3D"_blank">selinux-python_3.6.bb</a><br>
-@@ -53,8 +53,10 @@ RDEPENDS:${PN}-semanage =3D &quot;\<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0audit-python \<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0${PN} \<br>
-=C2=A0&quot;<br>
-+PACKAGECONFIG ??=3D &quot;sepolicy-generate&quot;<br>
-+PACKAGECONFIG[sepolicy-generate] =3D &quot;,,,&quot;<br>
-=C2=A0RDEPENDS:${PN}-sepolicy =3D &quot;\<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0 binutils \<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 ${@bb.utils.contains(&#39;PACKAGECONFIG&#39;, =
-&#39;sepolicy-generate&#39;, &#39;binutils&#39;, &#39;&#39;, d)} \<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0python3-core \<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0python3-codecs \<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0python3-distro \<br>
--- <br>
-2.36.1.vfs.0.0<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-</blockquote></div>
-
-
-<div width=3D"1" style=3D"color:white;clear:both">_._,_._,_</div>
-<hr>
-
-
-Links:<p>
-
-
- =20
-    You receive all messages sent to this group.
- =20
- =20
-
-
-</p><p>
-<a href=3D"https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.yoc=
-toproject.org_g_yocto-2Dpatches_message_177&amp;d=3DDwMFaQ&amp;c=3DncDTmphk=
-JTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJT=
-KUkSGa66m67E&amp;m=3DsvUiXAGWL-sVHk8x8ZsNqyXZUzlzLxFkZMNg7mIpG4kCNbCpjYWhGS=
-SEhk43Xgxp&amp;s=3DDCVuET1XOMUydX_uQyyQOOjB48wBdkv-iqH0Tl769-I&amp;e=3D" ta=
-rget=3D"_blank">View/Reply Online (#177)</a> |
-
-
-  <a href=3D"mailto:yocto-patches@lists.yoctoproject.org?subject=3DRe:%20Re=
-%3A%20%5Byocto-patches%5D%20%5Bmeta-selinux%5D%5BPATCH%5D%20selinux-python%=
-3A%20make%20GPLv3%20dependency%20optional" target=3D"_blank">Reply To Group=
-</a>
- =20
-    | <a href=3D"mailto:ecordonnier@snap.com?subject=3DPrivate:%20Re:%20Re%=
-3A%20%5Byocto-patches%5D%20%5Bmeta-selinux%5D%5BPATCH%5D%20selinux-python%3=
-A%20make%20GPLv3%20dependency%20optional" target=3D"_blank">Reply To Sender=
-</a>
- =20
-
-|
-
-  <a href=3D"https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.y=
-octoproject.org_mt_106259298_7048771&amp;d=3DDwMFaQ&amp;c=3DncDTmphkJTvjIDP=
-h0hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa6=
-6m67E&amp;m=3DsvUiXAGWL-sVHk8x8ZsNqyXZUzlzLxFkZMNg7mIpG4kCNbCpjYWhGSSEhk43X=
-gxp&amp;s=3D-iyNi9UljHjA5rLQs9B3ZkRTOPuZcwAex9nV7q4-IEs&amp;e=3D" target=3D=
-"_blank">Mute This Topic</a>
-
-
-| <a href=3D"https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.y=
-octoproject.org_g_yocto-2Dpatches_post&amp;d=3DDwMFaQ&amp;c=3DncDTmphkJTvjI=
-DPh0hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSG=
-a66m67E&amp;m=3DsvUiXAGWL-sVHk8x8ZsNqyXZUzlzLxFkZMNg7mIpG4kCNbCpjYWhGSSEhk4=
-3Xgxp&amp;s=3DiwjqA6svYEujPJBM_rJg9RPBcVJZeggsqrlNmnxYBqE&amp;e=3D" target=
-=3D"_blank">New Topic</a>
-
-<br>
-
-
-
-
-<a href=3D"https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.yoc=
-toproject.org_g_yocto-2Dpatches_editsub_7048771&amp;d=3DDwMFaQ&amp;c=3DncDT=
-mphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhkbNonVuMIGRfPx_Qj9TsRih1D=
-ULJTKUkSGa66m67E&amp;m=3DsvUiXAGWL-sVHk8x8ZsNqyXZUzlzLxFkZMNg7mIpG4kCNbCpjY=
-WhGSSEhk43Xgxp&amp;s=3DDIUCI-n9Ij_gWQCIUAJM3gRqYNBYHEZmvUyKWHLjozY&amp;e=3D=
-" target=3D"_blank">Your Subscription</a> |
-<a href=3D"mailto:yocto-patches+owner@lists.yoctoproject.org" target=3D"_bl=
-ank">Contact Group Owner</a> |
-
-<a href=3D"https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.yoc=
-toproject.org_g_yocto-2Dpatches_leave_13184993_7048771_1814342232_xyzzy&amp=
-;d=3DDwMFaQ&amp;c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhk=
-bNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3DsvUiXAGWL-sVHk8x8ZsNqyXZUz=
-lzLxFkZMNg7mIpG4kCNbCpjYWhGSSEhk43Xgxp&amp;s=3D-JmoyURmgnC4ffGLNj7jgar4IOYc=
-aqnoBBLB20TCFv0&amp;e=3D" target=3D"_blank">Unsubscribe</a>
-
- [<a href=3D"mailto:ecordonnier@snap.com" target=3D"_blank">ecordonnier@sna=
-p.com</a>]<br>
-</p><div width=3D"1" style=3D"color:white;clear:both">_._,_._,_</div>
-
-<p></p><p></p></blockquote></div>
-
---0000000000008f56c6061bdb06ae--
+Thanks!
+Quentin
 
