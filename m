@@ -2,54 +2,54 @@ Return-Path: <hprajapati@mvista.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29B56C2BBCA
-	for <webhook@archiver.kernel.org>; Fri, 28 Jun 2024 05:38:44 +0000 (UTC)
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
- by mx.groups.io with SMTP id smtpd.web10.10659.1719553118554810664
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFE00C2BBCA
+	for <webhook@archiver.kernel.org>; Fri, 28 Jun 2024 05:43:33 +0000 (UTC)
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+ by mx.groups.io with SMTP id smtpd.web10.10704.1719553404116254903
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 27 Jun 2024 22:38:38 -0700
+ Thu, 27 Jun 2024 22:43:24 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@mvista.com header.s=google header.b=QuYeWC5U;
- spf=pass (domain: mvista.com, ip: 209.85.128.169, mailfrom: hprajapati@mvista.com)
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-648260fe4bcso2253237b3.1
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 27 Jun 2024 22:38:38 -0700 (PDT)
+ dkim=pass header.i=@mvista.com header.s=google header.b=U7QP+tJp;
+ spf=pass (domain: mvista.com, ip: 209.85.219.173, mailfrom: hprajapati@mvista.com)
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e036105251eso13359276.0
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 27 Jun 2024 22:43:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mvista.com; s=google; t=1719553117; x=1720157917; darn=lists.yoctoproject.org;
+        d=mvista.com; s=google; t=1719553403; x=1720158203; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
         bh=YjWSwir7IkovKpXausDyMsTShinJyt4v8lr9Q+8rVEM=;
-        b=QuYeWC5U+OXcraT/BUz7YO2kT3rmVH4DJ0sBR8pKjjuoyoyGMXTxdfmZvuhtLUvM9J
-         NYTQQxVmd8/JOFk0myrAi3im2CLlcS5K/iD40T4lGf8G31vU5cnbtpgcrJOs+/fPSE/U
-         jIXKr1rlLibtG4sIVwWncUpp8WeL1SHNUIiY8=
+        b=U7QP+tJpPhI/Cw0nkGpT2n6mAdWVvDCoXnqTxFdDFxreLUHmNMa9ufo6FF3R47BMy0
+         V3wtvJX/jpPiqyqBQviFTf6q2LBcwDn5J0svI2mv9WhPooLOA5ND0UcmZUGMq+NxptK6
+         WrNfndrmQtI4uVxLEADRH+rm3n88CoM7wDrWo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719553117; x=1720157917;
+        d=1e100.net; s=20230601; t=1719553403; x=1720158203;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
         bh=YjWSwir7IkovKpXausDyMsTShinJyt4v8lr9Q+8rVEM=;
-        b=aHYOgy24CNxETQ1maqUu0yBdSzJFW9grHBBgaJfeRFXMsKU4CfVOTX3W52xzc8KXgk
-         WS7y/AAd2f/gL+uWKbqixr92BiiFMUi8nhkbhzDPpKasRu6RrYCdpfTGGBMTqfDCgn65
-         UUpJT30xMh0/CdJLGuafm3XcPnF61hOaycwLHpscXrHxg8/e61blWQBDYkwpecmWkkVw
-         2JdhFyGK4jKFNtNZ/sXpiM5Jqjfo5Veit+dYUjFawgqG8N8GaTmTJFMQF8WMzMiAFTmA
-         yECLxM/9MWI9gtA83kYIVFhlxeTBcUeAm+1Rer0JoOGOvtNkD3DXfh+hlsyYhA5SSVte
-         q5Yg==
-X-Gm-Message-State: AOJu0Yw6dXmvayj86e7UvctadBLp0xqfIRK05HjRJROZPL4umqZyKH2P
-	adu+0dVjc6zddCyxGA7plVMTSwBWqPNA8NL2xFUvwYcsKh3r7FLDfSYsNDngxof/Ny+svNnuiwa
-	u
-X-Google-Smtp-Source: AGHT+IFHq3uNcBxaeUY8TRvLIpRlUyhBleBUzPEpJiM9Sw++K/6gmUGhOlWtIbJB6ghoI6W1SrH+6A==
-X-Received: by 2002:a05:690c:f93:b0:633:8b49:f97c with SMTP id 00721157ae682-6429c6db0bcmr172364307b3.37.1719553117465;
-        Thu, 27 Jun 2024 22:38:37 -0700 (PDT)
+        b=AjCYeYdGIw1PPr64MOUP2cG8HzvNtdi7TqeX8Gb3upDtVhuP9uc5QC4xdxFVsP4mIL
+         vuvVlUkfk64vUTsfcj5+v8F9+9g6aeaMUXc6adWsKaEqNr+2IsWpWhBf/1rNkeQMAv7V
+         lRUGGEj5VV6rFDiCZHOpa61ShUltep/VKsv45RNoz27UCqmOTsPzCWsZKKxsF1d+rIjZ
+         v8rhIZMd7q10zxwiHR8OhymBMyRgYVHqFqguSAlW/vp75elbD4wssXhdAa6hAFR//U2P
+         YPNszOeoFrj/fUDfYncTMQi7spFVSZV7dlnwGXpWyCSU6z+/pe2JP1J/ux9AC6PKAqsK
+         nhfw==
+X-Gm-Message-State: AOJu0YytJeslI5lJ7INsgqkf3retqH7327yXrlufP3ncRUC+uzrkAg1x
+	gm4SsNq7kr2MiYy6l5Jwi3tFy0/pDQ96PtcWPVDXPDIZ5PXBmnsIg+8Ki4ZNilwG4ETFC7vDSa3
+	E
+X-Google-Smtp-Source: AGHT+IHUH2eUnQhlMSGKG9D72o9bCrXpuGG1/GlUwaLywUTKp7AhdpQrISdnQ+KVzdhEgHM2zOHcPw==
+X-Received: by 2002:a25:d384:0:b0:e03:46bf:b2da with SMTP id 3f1490d57ef6-e0346bfbf12mr4091789276.10.1719553403137;
+        Thu, 27 Jun 2024 22:43:23 -0700 (PDT)
 Received: from MVIN00016.mvista.com ([150.129.170.164])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-64a9c405c9csm2232867b3.128.2024.06.27.22.38.34
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e0353d5835csm222243276.8.2024.06.27.22.43.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 22:38:37 -0700 (PDT)
+        Thu, 27 Jun 2024 22:43:22 -0700 (PDT)
 From: Hitendra Prajapati <hprajapati@mvista.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: akuster808@gmail.com,
 	Hitendra Prajapati <hprajapati@mvista.com>
-Subject: [meta-security][scarthgap][PATCH] sssd: Fix CVE-2023-3758
-Date: Fri, 28 Jun 2024 11:08:17 +0530
-Message-Id: <20240628053817.50365-1-hprajapati@mvista.com>
+Subject: [meta-security][PATCH] sssd: Fix CVE-2023-3758
+Date: Fri, 28 Jun 2024 11:13:14 +0530
+Message-Id: <20240628054314.50608-1-hprajapati@mvista.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset=y
@@ -57,8 +57,8 @@ Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 28 Jun 2024 05:38:44 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/390
+ <yocto-patches@lists.yoctoproject.org>; Fri, 28 Jun 2024 05:43:33 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/391
 
 A race condition flaw was found in sssd where the GPO policy is
 not consistently applied for authenticated users. This may lead
