@@ -1,94 +1,323 @@
-Return-Path: <twoerner@gmail.com>
+Return-Path: <hprajapati@mvista.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA2CEC2BD09
-	for <webhook@archiver.kernel.org>; Thu, 27 Jun 2024 14:51:53 +0000 (UTC)
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
- by mx.groups.io with SMTP id smtpd.web11.9847.1719499909528802638
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29B56C2BBCA
+	for <webhook@archiver.kernel.org>; Fri, 28 Jun 2024 05:38:44 +0000 (UTC)
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+ by mx.groups.io with SMTP id smtpd.web10.10659.1719553118554810664
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 27 Jun 2024 07:51:49 -0700
+ Thu, 27 Jun 2024 22:38:38 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=eHGdyApW;
- spf=pass (domain: gmail.com, ip: 209.85.219.49, mailfrom: twoerner@gmail.com)
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6b5932383e0so5561996d6.0
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 27 Jun 2024 07:51:49 -0700 (PDT)
+ dkim=pass header.i=@mvista.com header.s=google header.b=QuYeWC5U;
+ spf=pass (domain: mvista.com, ip: 209.85.128.169, mailfrom: hprajapati@mvista.com)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-648260fe4bcso2253237b3.1
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 27 Jun 2024 22:38:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719499908; x=1720104708; darn=lists.yoctoproject.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8A7OtyqxQWEjAq1rD4sRP3o6Lf6KZ2aiPGI+X4isGjE=;
-        b=eHGdyApWNRqIk6d3Q+zY/VpCmdZXT29cIShgYsYQfa9LAuOo3sIJMLe4cQqNi/eiy0
-         2i/jki1tYh6nzCQFy8kC/ZWoqc4I1bcxKrTm8+uzc3Xeg+0lS7HbV/T7BFz2bKeecZCf
-         b05PS0PliZlNBStK0uJrQyhPTv123sa9aP080KGFKdaKSnlTaaYSzzaQXkavgP+8aRrF
-         JKRNjnpXPY19qO7Bchapje541N+XuJjDvRt77HVEHkoG7v8OHIxsmKCMCbmJwxqKQdcU
-         H4IuuoonHISVhZy9ScWb4RElwKskd1UL5SF4ggNaM2u0cXVeAD/JR1t74ApLOGGARkgd
-         QhwQ==
+        d=mvista.com; s=google; t=1719553117; x=1720157917; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YjWSwir7IkovKpXausDyMsTShinJyt4v8lr9Q+8rVEM=;
+        b=QuYeWC5U+OXcraT/BUz7YO2kT3rmVH4DJ0sBR8pKjjuoyoyGMXTxdfmZvuhtLUvM9J
+         NYTQQxVmd8/JOFk0myrAi3im2CLlcS5K/iD40T4lGf8G31vU5cnbtpgcrJOs+/fPSE/U
+         jIXKr1rlLibtG4sIVwWncUpp8WeL1SHNUIiY8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719499908; x=1720104708;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8A7OtyqxQWEjAq1rD4sRP3o6Lf6KZ2aiPGI+X4isGjE=;
-        b=AGZV+rxDYQBsjbRthPIoP78+bjYAFZh6t9Dx9xXXquSwh/ZiBYy3drOS4LbeEU0nE5
-         dHA2XzWpLK+ua2HTUsKzTh4QvAbWFp/So678hG7PwjrjswzYs7yrXUFhQi6rnIcu5i1c
-         Iwq0qE5c1/BQuSQA2PiG9EZVLEF+uz2O1uwrWZyNdwe3SJH9mfkciUmLpMu0KkIhQEN8
-         g1ryb1QTDQGVrw5XAnzDEjEEe8R+2s6gqBe58rpxfnLF/t0jk3yB8dndth/p9f/0OPr6
-         QgL8jnCdRIn1N9DJh7+uPs5y6KVW4igAkpr/2rk0TQsa5fV7n3fc2CL3s9WEZnHCoBEC
-         nIOg==
-X-Gm-Message-State: AOJu0Yxr5HLQ0PpecOi4WuOYBtd4akDJ/VJWOcr1s6MpFhGhVXVUXkrb
-	7xNoxQmjNEM/a21s90DmjMFOJcmXFVfDvztvazGY1NmpgHOWI8i/btjkIQ==
-X-Google-Smtp-Source: AGHT+IEvk4AhtAfpZDhywo64HlQnL8EzzeY8vZjD15isBHeVMzKQ1eZqThzAxnkPVnrjUEWG+frbPA==
-X-Received: by 2002:ad4:48cf:0:b0:6b5:335e:8ae4 with SMTP id 6a1803df08f44-6b5632e430bmr131105556d6.1.1719499907861;
-        Thu, 27 Jun 2024 07:51:47 -0700 (PDT)
-Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b5929287cesm5537526d6.142.2024.06.27.07.51.46
-        for <yocto-patches@lists.yoctoproject.org>
+        d=1e100.net; s=20230601; t=1719553117; x=1720157917;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YjWSwir7IkovKpXausDyMsTShinJyt4v8lr9Q+8rVEM=;
+        b=aHYOgy24CNxETQ1maqUu0yBdSzJFW9grHBBgaJfeRFXMsKU4CfVOTX3W52xzc8KXgk
+         WS7y/AAd2f/gL+uWKbqixr92BiiFMUi8nhkbhzDPpKasRu6RrYCdpfTGGBMTqfDCgn65
+         UUpJT30xMh0/CdJLGuafm3XcPnF61hOaycwLHpscXrHxg8/e61blWQBDYkwpecmWkkVw
+         2JdhFyGK4jKFNtNZ/sXpiM5Jqjfo5Veit+dYUjFawgqG8N8GaTmTJFMQF8WMzMiAFTmA
+         yECLxM/9MWI9gtA83kYIVFhlxeTBcUeAm+1Rer0JoOGOvtNkD3DXfh+hlsyYhA5SSVte
+         q5Yg==
+X-Gm-Message-State: AOJu0Yw6dXmvayj86e7UvctadBLp0xqfIRK05HjRJROZPL4umqZyKH2P
+	adu+0dVjc6zddCyxGA7plVMTSwBWqPNA8NL2xFUvwYcsKh3r7FLDfSYsNDngxof/Ny+svNnuiwa
+	u
+X-Google-Smtp-Source: AGHT+IFHq3uNcBxaeUY8TRvLIpRlUyhBleBUzPEpJiM9Sw++K/6gmUGhOlWtIbJB6ghoI6W1SrH+6A==
+X-Received: by 2002:a05:690c:f93:b0:633:8b49:f97c with SMTP id 00721157ae682-6429c6db0bcmr172364307b3.37.1719553117465;
+        Thu, 27 Jun 2024 22:38:37 -0700 (PDT)
+Received: from MVIN00016.mvista.com ([150.129.170.164])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-64a9c405c9csm2232867b3.128.2024.06.27.22.38.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 07:51:46 -0700 (PDT)
-Date: Thu, 27 Jun 2024 10:51:44 -0400
-From: Trevor Woerner <twoerner@gmail.com>
+        Thu, 27 Jun 2024 22:38:37 -0700 (PDT)
+From: Hitendra Prajapati <hprajapati@mvista.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: Re: [yocto-patches] [meta-rockchip][PATCH v4] rauc demo: add
-Message-ID: <20240627145144.GA38874@localhost>
-References: <20240626213536.12343-1-twoerner@gmail.com>
- <912826d9-a007-41fe-8338-a70d552e0b61@cherry.de>
+Cc: akuster808@gmail.com,
+	Hitendra Prajapati <hprajapati@mvista.com>
+Subject: [meta-security][scarthgap][PATCH] sssd: Fix CVE-2023-3758
+Date: Fri, 28 Jun 2024 11:08:17 +0530
+Message-Id: <20240628053817.50365-1-hprajapati@mvista.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <912826d9-a007-41fe-8338-a70d552e0b61@cherry.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=y
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 27 Jun 2024 14:51:53 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/389
+ <yocto-patches@lists.yoctoproject.org>; Fri, 28 Jun 2024 05:38:44 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/390
 
-On Thu 2024-06-27 @ 01:47:46 PM, Quentin Schulz via lists.yoctoproject.org wrote:
-> Hi Trevor,
-> 
-> On 6/26/24 11:35 PM, Trevor Woerner via lists.yoctoproject.org wrote:
-> > Add an example of implementing rauc on a rockchip board. Adding the meta-rauc
-> > layer, adding 'rauc' to DISTRO_FEATURES, and enabling RK_RAUC_DEMO will build
-> > an image using the example provided in dynamic-layers/rk-rauc-demo.
-> > 
-> > This example uses a simple A/B + D scheme (i.e. two root partitions and a
-> > non-updated /data partition). Repartitioning occurs automatically on first
-> > boot thanks to systemd's 'repart' mechanism.
-> > 
-> > NOTE:
-> > - this example only works with systemd
-> > 
-> > If you wish to provide your own implementation, simply add the meta-rauc
-> > layer, add 'rauc' to DISTRO_FEATURES, don't enable RK_RAUC_DEMO, and provide
-> > your own implementation in a separate layer.
-> > 
-> > Signed-off-by: Trevor Woerner <twoerner@gmail.com>
-> 
-> I think it's fine now :)
-> 
-> Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
+A race condition flaw was found in sssd where the GPO policy is
+not consistently applied for authenticated users. This may lead
+to improper authorization issues, granting or denying access to
+resources inappropriately.
 
-Thanks! Applied to meta-rockchip, master branch.
+References:
+https://nvd.nist.gov/vuln/detail/CVE-2023-3758
+
+Upstream-Status: Backport from https://github.com/SSSD/sssd/commit/e1bfbc2493c4194988acc3b2413df3dde0735ae3
+
+Signed-off-by: Hitendra Prajapati <hprajapati@mvista.com>
+---
+ .../sssd/files/CVE-2023-3758.patch            | 222 ++++++++++++++++++
+ .../recipes-security/sssd/sssd_2.9.2.bb       |   1 +
+ 2 files changed, 223 insertions(+)
+ create mode 100644 dynamic-layers/networking-layer/recipes-security/sssd/files/CVE-2023-3758.patch
+
+diff --git a/dynamic-layers/networking-layer/recipes-security/sssd/files/CVE-2023-3758.patch b/dynamic-layers/networking-layer/recipes-security/sssd/files/CVE-2023-3758.patch
+new file mode 100644
+index 0000000..15d8d7e
+--- /dev/null
++++ b/dynamic-layers/networking-layer/recipes-security/sssd/files/CVE-2023-3758.patch
+@@ -0,0 +1,222 @@
++From e1bfbc2493c4194988acc3b2413df3dde0735ae3 Mon Sep 17 00:00:00 2001
++From: Sumit Bose <sbose@redhat.com>
++Date: Wed, 8 Nov 2023 14:50:24 +0100
++Subject: [PATCH] ad-gpo: use hash to store intermediate results
++MIME-Version: 1.0
++Content-Type: text/plain; charset=UTF-8
++Content-Transfer-Encoding: 8bit
++
++Currently after the evaluation of a single GPO file the intermediate
++results are stored in the cache and this cache entry is updated until
++all applicable GPO files are evaluated. Finally the data in the cache is
++used to make the decision of access is granted or rejected.
++
++If there are two or more access-control request running in parallel one
++request might overwrite the cache object with intermediate data while
++another request reads the cached data for the access decision and as a
++result will do this decision based on intermediate data.
++
++To avoid this the intermediate results are not stored in the cache
++anymore but in hash tables which are specific to the request. Only the
++final result is written to the cache to have it available for offline
++authentication.
++
++Reviewed-by: Alexey Tikhonov <atikhono@redhat.com>
++Reviewed-by: Tomáš Halman <thalman@redhat.com>
++(cherry picked from commit d7db7971682da2dbf7642ac94940d6b0577ec35a)
++
++Upstream-Status: Backport [https://github.com/SSSD/sssd/commit/e1bfbc2493c4194988acc3b2413df3dde0735ae3]
++CVE: CVE-2023-3758
++Signed-off-by: Hitendra Prajapati <hprajapati@mvista.com>
++---
++ src/providers/ad/ad_gpo.c | 116 +++++++++++++++++++++++++++++++++-----
++ 1 file changed, 102 insertions(+), 14 deletions(-)
++
++diff --git a/src/providers/ad/ad_gpo.c b/src/providers/ad/ad_gpo.c
++index 44e9cbb..cec0cb4 100644
++--- a/src/providers/ad/ad_gpo.c
+++++ b/src/providers/ad/ad_gpo.c
++@@ -1317,6 +1317,33 @@ ad_gpo_extract_policy_setting(TALLOC_CTX *mem_ctx,
++     return ret;
++ }
++ 
+++static errno_t
+++add_result_to_hash(hash_table_t *hash, const char *key, char *value)
+++{
+++    int hret;
+++    hash_key_t k;
+++    hash_value_t v;
+++
+++    if (hash == NULL || key == NULL || value == NULL) {
+++        return EINVAL;
+++    }
+++
+++    k.type = HASH_KEY_CONST_STRING;
+++    k.c_str = key;
+++
+++    v.type = HASH_VALUE_PTR;
+++    v.ptr = value;
+++
+++    hret = hash_enter(hash, &k, &v);
+++    if (hret != HASH_SUCCESS) {
+++        DEBUG(SSSDBG_OP_FAILURE, "Failed to add [%s][%s] to hash: [%s].\n",
+++                                 key, value, hash_error_string(hret));
+++        return EIO;
+++    }
+++
+++    return EOK;
+++}
+++
++ /*
++  * This function parses the cse-specific (GP_EXT_GUID_SECURITY) filename,
++  * and stores the allow_key and deny_key of all of the gpo_map_types present
++@@ -1324,6 +1351,7 @@ ad_gpo_extract_policy_setting(TALLOC_CTX *mem_ctx,
++  */
++ static errno_t
++ ad_gpo_store_policy_settings(struct sss_domain_info *domain,
+++                             hash_table_t *allow_maps, hash_table_t *deny_maps,
++                              const char *filename)
++ {
++     struct ini_cfgfile *file_ctx = NULL;
++@@ -1457,14 +1485,14 @@ ad_gpo_store_policy_settings(struct sss_domain_info *domain,
++                 goto done;
++             } else if (ret != ENOENT) {
++                 const char *value = allow_value ? allow_value : empty_val;
++-                ret = sysdb_gpo_store_gpo_result_setting(domain,
++-                                                         allow_key,
++-                                                         value);
+++                ret = add_result_to_hash(allow_maps, allow_key,
+++                                         talloc_strdup(allow_maps, value));
++                 if (ret != EOK) {
++-                    DEBUG(SSSDBG_CRIT_FAILURE,
++-                          "sysdb_gpo_store_gpo_result_setting failed for key:"
++-                          "'%s' value:'%s' [%d][%s]\n", allow_key, allow_value,
++-                          ret, sss_strerror(ret));
+++                    DEBUG(SSSDBG_CRIT_FAILURE, "Failed to add key: [%s] "
+++                                               "value: [%s] to allow maps "
+++                                               "[%d][%s].\n",
+++                                               allow_key, value, ret,
+++                                               sss_strerror(ret));
++                     goto done;
++                 }
++             }
++@@ -1484,14 +1512,14 @@ ad_gpo_store_policy_settings(struct sss_domain_info *domain,
++                 goto done;
++             } else if (ret != ENOENT) {
++                 const char *value = deny_value ? deny_value : empty_val;
++-                ret = sysdb_gpo_store_gpo_result_setting(domain,
++-                                                         deny_key,
++-                                                         value);
+++                ret = add_result_to_hash(deny_maps, deny_key,
+++                                         talloc_strdup(deny_maps, value));
++                 if (ret != EOK) {
++-                    DEBUG(SSSDBG_CRIT_FAILURE,
++-                          "sysdb_gpo_store_gpo_result_setting failed for key:"
++-                          "'%s' value:'%s' [%d][%s]\n", deny_key, deny_value,
++-                          ret, sss_strerror(ret));
+++                    DEBUG(SSSDBG_CRIT_FAILURE, "Failed to add key: [%s] "
+++                                               "value: [%s] to deny maps "
+++                                               "[%d][%s].\n",
+++                                               deny_key, value, ret,
+++                                               sss_strerror(ret));
++                     goto done;
++                 }
++             }
++@@ -1784,6 +1812,8 @@ struct ad_gpo_access_state {
++     int num_cse_filtered_gpos;
++     int cse_gpo_index;
++     const char *ad_domain;
+++    hash_table_t *allow_maps;
+++    hash_table_t *deny_maps;
++ };
++ 
++ static void ad_gpo_connect_done(struct tevent_req *subreq);
++@@ -1906,6 +1936,19 @@ ad_gpo_access_send(TALLOC_CTX *mem_ctx,
++         goto immediately;
++     }
++ 
+++    ret = sss_hash_create(state, 0, &state->allow_maps);
+++    if (ret != EOK) {
+++        DEBUG(SSSDBG_FATAL_FAILURE, "Could not create allow maps "
+++              "hash table [%d]: %s\n", ret, sss_strerror(ret));
+++        goto immediately;
+++    }
+++
+++    ret = sss_hash_create(state, 0, &state->deny_maps);
+++    if (ret != EOK) {
+++        DEBUG(SSSDBG_FATAL_FAILURE, "Could not create deny maps "
+++              "hash table [%d]: %s\n", ret, sss_strerror(ret));
+++        goto immediately;
+++    }
++ 
++     subreq = sdap_id_op_connect_send(state->sdap_op, state, &ret);
++     if (subreq == NULL) {
++@@ -2725,6 +2768,43 @@ ad_gpo_cse_step(struct tevent_req *req)
++     return EAGAIN;
++ }
++ 
+++static errno_t
+++store_hash_maps_in_cache(struct sss_domain_info *domain,
+++                         hash_table_t *allow_maps, hash_table_t *deny_maps)
+++{
+++    int ret;
+++    struct hash_iter_context_t *iter;
+++    hash_entry_t *entry;
+++    size_t c;
+++    hash_table_t *hash_list[] = { allow_maps, deny_maps, NULL};
+++
+++
+++    for (c = 0; hash_list[c] != NULL; c++) {
+++        iter = new_hash_iter_context(hash_list[c]);
+++        if (iter == NULL) {
+++            DEBUG(SSSDBG_OP_FAILURE, "Failed to create hash iterator.\n");
+++            return EINVAL;
+++        }
+++
+++        while ((entry = iter->next(iter)) != NULL) {
+++            ret = sysdb_gpo_store_gpo_result_setting(domain,
+++                                                     entry->key.c_str,
+++                                                     entry->value.ptr);
+++            if (ret != EOK) {
+++                free(iter);
+++                DEBUG(SSSDBG_OP_FAILURE,
+++                      "sysdb_gpo_store_gpo_result_setting failed for key:"
+++                      "[%s] value:[%s] [%d][%s]\n", entry->key.c_str,
+++                      (char *) entry->value.ptr, ret, sss_strerror(ret));
+++                return ret;
+++            }
+++        }
+++        talloc_free(iter);
+++    }
+++
+++    return EOK;
+++}
+++
++ /*
++  * This cse-specific function (GP_EXT_GUID_SECURITY) increments the
++  * cse_gpo_index until the policy settings for all applicable GPOs have been
++@@ -2766,6 +2846,7 @@ ad_gpo_cse_done(struct tevent_req *subreq)
++      * (as part of the GPO Result object in the sysdb cache).
++      */
++     ret = ad_gpo_store_policy_settings(state->host_domain,
+++                                       state->allow_maps, state->deny_maps,
++                                        cse_filtered_gpo->policy_filename);
++     if (ret != EOK && ret != ENOENT) {
++         DEBUG(SSSDBG_OP_FAILURE,
++@@ -2779,6 +2860,13 @@ ad_gpo_cse_done(struct tevent_req *subreq)
++ 
++     if (ret == EOK) {
++         /* ret is EOK only after all GPO policy files have been downloaded */
+++        ret = store_hash_maps_in_cache(state->host_domain,
+++                                       state->allow_maps, state->deny_maps);
+++        if (ret != EOK) {
+++            DEBUG(SSSDBG_OP_FAILURE, "Failed to store evaluated GPO maps "
+++                                     "[%d][%s].\n", ret, sss_strerror(ret));
+++            goto done;
+++        }
++         ret = ad_gpo_perform_hbac_processing(state,
++                                              state->gpo_mode,
++                                              state->gpo_map_type,
++-- 
++2.25.1
++
+diff --git a/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9.2.bb b/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9.2.bb
+index d61471c..3e05858 100644
+--- a/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9.2.bb
++++ b/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9.2.bb
+@@ -25,6 +25,7 @@ SRC_URI = "https://github.com/SSSD/sssd/releases/download/${PV}/${BP}.tar.gz \
+            file://fix-ldblibdir.patch \
+            file://musl_fixup.patch \
+            file://0001-sssctl-add-error-analyzer.patch \
++           file://CVE-2023-3758.patch \
+            "
+ SRC_URI[sha256sum] = "827bc65d64132410e6dd3df003f04829d60387ec30e72b2d4e22d93bb6f762ba"
+ 
+-- 
+2.25.1
+
 
