@@ -1,257 +1,375 @@
-Return-Path: <yi.zhao@eng.windriver.com>
+Return-Path: <joe@deserted.net>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88C3CC30659
-	for <webhook@archiver.kernel.org>; Sat, 29 Jun 2024 13:37:00 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
- by mx.groups.io with SMTP id smtpd.web10.6021.1719668215297982318
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAB7AC27C4F
+	for <webhook@archiver.kernel.org>; Sat, 29 Jun 2024 14:27:00 +0000 (UTC)
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+ by mx.groups.io with SMTP id smtpd.web11.6756.1719671218566763182
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 29 Jun 2024 06:36:55 -0700
+ Sat, 29 Jun 2024 07:26:58 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.178.238, mailfrom: prvs=791001afd4=yi.zhao@windriver.com)
-Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45TDP163012571;
-	Sat, 29 Jun 2024 13:36:54 GMT
-Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2100.outbound.protection.outlook.com [104.47.58.100])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4029868apk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 29 Jun 2024 13:36:53 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=GTWAbKyayk6ceSpvTgR9kfXO9jnM4Nd/yl/fJC9ZU2fqDkVdMWQGlm4Df2pgZnsD7IrDaj8iGPbTdRTYBI7YPvrv69r+kPY6c7ovb/ttnnjBXFg48Ozl/A3A1tz4odRrmdzeKO3IWFGGuiZ+HsvV4wrYTfQoYi4tCWWauwfcHckE45HWnNSiukb544xBdu+AmIkQK6AlhPZ0EDS7fpqMyHw0BFbgaz6QdbVAvRHtcpmjFxeVAOiB5ioUKUx+AV0DzzTWxrLQOXydGYYrZBWChRa9Ww1QBmqxuX5cT1DB+rVoj/PU7fuFMiSWY25YldpaUsUnBatl592wnS7x+Rp9YQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=G7ENA5ieBULbrnT9mWxIK+x2EFSbzYYsUZlMjLZHnrY=;
- b=ayzQVZwK4piUAa7/GJO/FYRK4es0QOUEfKIg9ZX5RmU9TFql6py10R6xolJ6SSC/6kjhQu0OQs5am9Jfywop4V+sJWWzwODG6NgB470b4mp7E6BrPlSWtCJjVEegyyLVDy9mXcRnacsYYprEukEf8PWUdnwLWFdnRb0STIceOfKolzClCFaRLcoSZW0Lh/HpQ5DAMNhtFMVHTUkfICZAq8CgbF6lHbyHTyZONopwAFJde0XOvoaYnJ1zIlUqSGd3VvD63SpY8PSdyuvYN6tJi6ICmJL6fRwGOslcna9o3vCuUl673sKFvTjj1v1E8ErItiDXuI1XJP2MufpEv04/Ew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=windriver.com; dmarc=pass action=none
- header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
-Received: from DS0PR11MB6399.namprd11.prod.outlook.com (2603:10b6:8:c8::5) by
- DM4PR11MB7207.namprd11.prod.outlook.com (2603:10b6:8:111::18) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7719.26; Sat, 29 Jun 2024 13:36:51 +0000
-Received: from DS0PR11MB6399.namprd11.prod.outlook.com
- ([fe80::2b44:787c:e7ee:bfad]) by DS0PR11MB6399.namprd11.prod.outlook.com
- ([fe80::2b44:787c:e7ee:bfad%3]) with mapi id 15.20.7698.033; Sat, 29 Jun 2024
- 13:36:51 +0000
-From: Yi Zhao <yi.zhao@windriver.com>
-To: yocto-patches@lists.yoctoproject.org, joe@deserted.net
-Subject: [meta-selinux][PATCH 1/2] selinux: upgrade 3.6 -> 3.7
-Date: Sat, 29 Jun 2024 21:36:39 +0800
-Message-Id: <20240629133640.2377943-1-yi.zhao@windriver.com>
-X-Mailer: git-send-email 2.25.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI1PR02CA0009.apcprd02.prod.outlook.com
- (2603:1096:4:1f7::10) To DS0PR11MB6399.namprd11.prod.outlook.com
- (2603:10b6:8:c8::5)
+ dkim=pass header.i=@deserted-net.20230601.gappssmtp.com header.s=20230601 header.b=f6Cw12GE;
+ spf=none, err=permanent DNS error (domain: deserted.net, ip: 209.85.219.182, mailfrom: joe@deserted.net)
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e0365588ab8so1133939276.1
+        for <yocto-patches@lists.yoctoproject.org>; Sat, 29 Jun 2024 07:26:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=deserted-net.20230601.gappssmtp.com; s=20230601; t=1719671217; x=1720276017; darn=lists.yoctoproject.org;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6ZtQXgHvIZQyssjHH2XeLnd33/5UoEbjivoQhb74sHY=;
+        b=f6Cw12GEVeVNe7yhOfC3W5gzf+flHaxzN4B6UPo7V054baizZG9tz1s6e1/C8QSoG9
+         l93rRCn+ZOP7eK+aN29b36w+CIbwDvoB0HhLVS7ysgUF4j+sr/0C0reKAsDx0uyOiDHW
+         JHsTZk7dt3bs52l6odquoWA+Klmt05xVmIP+gI6B3gYZiuQT0IyawCZmDSzx7c+eBALH
+         /U0Ge1Co22WRZV7qaoxyumsoIElLTNLYQAJ5qYPpIuhH2CBuDBTb36xGAvnC1iYD/Afa
+         eP86ZkIPmeOcangKEc7oIiXgdx8l1eCo/sL3NSbJqARDovXkVXmjE6gwQBV20J6QAnga
+         RONg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719671217; x=1720276017;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6ZtQXgHvIZQyssjHH2XeLnd33/5UoEbjivoQhb74sHY=;
+        b=tcA3zCwWXGm0E8zgE5l5NV63ksQUhAFqhcEhaa0ietQck6uzcKIWA3VyLSrD/agiFy
+         Woh19IxI4PAxTwhx8fwyrKPqT+oZR2Obf2XE8yLsr7hUPO/r78sVERk5zmYWjZpXYEsA
+         tHJF6WWj7HBg1LxNoOZk3DTl2ZTkBKrrAf9GZRya3FjJQfDhDbngTz2Q9Ru1gqCpYtQI
+         NOnjs38UkhOcXPuY/O+juNtdHyZw6LgDhg9vu7+TXQR5/Qcs19n/8JgFCJR2naS6n1rf
+         H+PB4y9B7VTgY4ig3lvNCbrJhHHSoeEIC3dpdqEqYyYpmXSqQt1yg/MpOw6lFqXbuaZ9
+         64WA==
+X-Gm-Message-State: AOJu0YzMnz2BAGhCdChOIlpAh4LXCu0HdZx1fClNo6ddPPqdhZrQWHfL
+	J0uJYPtD8ZiWI+2pgzW3GZY0MG1+jQtUgOJfl+xUwXpRPiKEs69WyT291u4htm1R8hdnNttXU8O
+	T04ECEoqBZI7T1Da6dK2aMbcP2caZG0xuFH58AUXX3PODErru1g==
+X-Google-Smtp-Source: AGHT+IHxkT7aJpEqneNsN1z9Ahd+YTUfxKEOY8df70lOWELsF1tw8Flnbd4v1Kar9z1WkSoAkVBlAX/8vM3Lb2f6DKo=
+X-Received: by 2002:a5b:545:0:b0:dfa:57a2:3b10 with SMTP id
+ 3f1490d57ef6-e036ec8bd85mr812741276.61.1719671217072; Sat, 29 Jun 2024
+ 07:26:57 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB6399:EE_|DM4PR11MB7207:EE_
-X-MS-Office365-Filtering-Correlation-Id: 54d0c7ce-3e5c-4c04-657f-08dc98408886
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?cQe+r2qaebHQjmAed4zKLsC2nijQWWj2Bk0/rDQnGJN0AyGYbHo6kx0LkTQ9?=
- =?us-ascii?Q?IfbPZ6zTw8cry38pcda8aaUOB0ry8D79hGS6Rf8kNqioQqhNW46AbpYo+lcd?=
- =?us-ascii?Q?Uqm+WVgD4b086SbgXsIsdJrC/hhrCYlVJnoq34wPeoJvShJbcwvr9W59hEuQ?=
- =?us-ascii?Q?cbSrcOgRGXedl1wdoGKzZpjKhmz5SkbbZZnQx31Ubw7DVfMu1VVufY7ckuA8?=
- =?us-ascii?Q?OWKazxElh/BiuM1wROewvH6lzv5r9kEKuRGYLVmVE5lwNU8AwDXplD8R/OtV?=
- =?us-ascii?Q?cdPeh3fAH5Xep1UWxB5iEpt1fiM852cxGq7LgSPqVGzWiQaPjW38juwA7oLe?=
- =?us-ascii?Q?7bGwZG00fbFXoaKzSGdESf2VNxo1HUqSp8aosXry/BfnsmOA4ZBXTA45oVTX?=
- =?us-ascii?Q?3Yux6EGtnQvNYNtds0Rbv6/G6LwwOWq1sVz2SDSCNDLKMrcSjHZHJ4jqsWl3?=
- =?us-ascii?Q?qjeBaaaGfePXhaP+77ZplkR1ps1MOADyhXUuXO4+dYC66NpvRNEmf2gG9cQg?=
- =?us-ascii?Q?QVgpw1zMYmQxs7ONMfuTyPdjfF4IeNYsEzrBNDjv3HjqA22KoBywXRuJTFOl?=
- =?us-ascii?Q?pLlDMsoj5R9BxQ7yj9hjrc1LKpWtRfLY+qy7fczeWBObS2s0UnCDRZPJTrfE?=
- =?us-ascii?Q?w0N4ohHg7FDPg5Wjk2anqRvOvhmCh2oM9pNFWcghkI8NMXCSdNeDow4AHQqG?=
- =?us-ascii?Q?vXaePB0jlt33uPBF74CQDlZorp5HmSJe6T8ABmEnsaoLgptNCOQocLCuZyC1?=
- =?us-ascii?Q?R8fc/9dm8RurqmmKYqQCrWIHUXeultHYHnYGeaHi08AEttMUYH7PpskdnozW?=
- =?us-ascii?Q?PkLAVhJP3fh0VqZOtsYMo/AbjiwuN2wFqTH0CmLhDy4BnRD6AhN+TYuiHuLv?=
- =?us-ascii?Q?DzTeSLdNzW+Gx+zEq7tzLuYT/o/z6KK/8deeeFvR82nrJytWlHO5aBFO7Jnm?=
- =?us-ascii?Q?RMJ7JwDd650WGxoJA4XMQwYnqaMzob7NlowlrA8BYSO+khbZaIDxkrPUmLET?=
- =?us-ascii?Q?mf4Nzj0GQIx5FhdwMTGF/Xl+npQXjfFqMNRDdD6Zp/+rBamSbk+IJYKvX5Ah?=
- =?us-ascii?Q?FMj/CuypzhoU7971rsIa5ojv3QTRgpxblz4mvArSmrpQ2JX2IrcIM5zlRWuf?=
- =?us-ascii?Q?Nsy42e0np1AyvMM4rGTu0YCMWaKq/gLEI5Dk4lU7B5yG/fBlD19H1Pwlj8MD?=
- =?us-ascii?Q?ygQ6s63a3fJaH2hpxD9+gzsK3+vDwt/iDvrD2Rtz8+kVDD4iv7uemDZnXkmc?=
- =?us-ascii?Q?RYNzkrc1prnSiOt/hSHz2JEVgEGClF14+l/ZgdDOz2qHaIj81CiffmLzvQ1d?=
- =?us-ascii?Q?B/EaYYixx5vIE4dgMPwu/ztUew069br3m6gn1FjRBXBuy5ZKuVsT5dPavaNY?=
- =?us-ascii?Q?TLi1io4=3D?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB6399.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?uJ2sgTRwwS8IfsqCpbL+iHcCFmR6genbfxqu6fXPhPQk/C1skAX6BMp+Pujc?=
- =?us-ascii?Q?qYuwEfzly70k4uVhVbdd6OGz8lFYrCXA/lK/fS8nk3DVwqd8GbNPUVY/HR3R?=
- =?us-ascii?Q?MVAl2G7yrZkMqgO0uRbnDE05Aj6QYcQfN/EL2gIZTH0fj9D4jU92nO6EUDq+?=
- =?us-ascii?Q?dJmxXNX3JAqBtKJI9LjYZpNpnElZUmxSntkQ9MJqjYu6Swe4wBHlL0e45ZDl?=
- =?us-ascii?Q?myDJKZaYzVfnyYObZFeo0kM1lgwMkAjnUpx8+lHhsU47UwcItX4tvqyiCmkR?=
- =?us-ascii?Q?Uc1WuoJqQL6QvkVHxdmxP0gb/P1KTtBHD2M+zqSbb27ApDMR8MaExAhkUfs2?=
- =?us-ascii?Q?J/+zsNWIWnV99KZs0FgHZmIeCGfUQ6I/in9jfk89U5ErQ0PJl0WboFRJJ39Y?=
- =?us-ascii?Q?VGM90CuNzhaytnviHMCnH3R7+wUsHoIDnG0BpPKlEvJXN8KcS0Y4bjAsmcrd?=
- =?us-ascii?Q?8Rxi71gG/3Vdq6gFAZvbVFU+t06cRV1xd9QqwkeoHMIeRoQ6eiqlcDla+m5e?=
- =?us-ascii?Q?udEtSd3cLmcvU6/9gcAqWGDgtHnFDk7FWu1pvnKGUB3/IiRt5yJodhqK7kfy?=
- =?us-ascii?Q?85fk2p7s4rIjymtvHPDNJrS5O7vHSjFfwUS6RktW8nXlsEnlAejgD1R2o6BP?=
- =?us-ascii?Q?vUK+3Nizx72AsAu1lQ8QJefBfW9tAJeARlm7g0niNDlnyKZdAHVLsmqLxZ7z?=
- =?us-ascii?Q?22hR8kETR9/IFfdd+ZjapLuYAmVIdZ9QgQgZWutswvQDM/FS9fSICiKa818Z?=
- =?us-ascii?Q?m1MDqmBKaBVf4FOyc1NRO7eU4pq9BdkaYdmEBplq5NkhkQrBjJFZomWMysgY?=
- =?us-ascii?Q?qZy00R2XtEQlPsXgRi+c9eje5yIaFSgZU6WKP3tNg9DKbCBOFlfzqLQ10pQc?=
- =?us-ascii?Q?QF1oUHB+3rPMXQJsUN6qI0W2+dqok2kycDMy037VAemW4C3sE1W43yanvqME?=
- =?us-ascii?Q?lwwrvLlHVIb1XkZkpK+qU8nBoB/7asOwi8KEBMCumGS7B1VH0AcV6Okr+EgB?=
- =?us-ascii?Q?tL64EQi4Mf1vu38iXgRx01Cf2R/rzT0tvqCgh98Y9WviTzJdDeE2H5tFHkRG?=
- =?us-ascii?Q?MYWgN6M+1INFPqTadm8jX2+zaMwkTj//eNDsstzai/h5ZcL54ZPVTtH3njAO?=
- =?us-ascii?Q?JoyXmGM8AqHGQf4ZqSGx8fjvLKrGHti/5kJwTymwypgLlGeMakPYW4mf2R8J?=
- =?us-ascii?Q?zP+bVg8fq2C0M5fjauSNKpUIFEB884ni57RaOJCdaufdimUdtO9XEVZlpvoD?=
- =?us-ascii?Q?qUGo9ijUp5RRdnF/3CDEQR6xYN8cyA+9iHRtD+cmygSnJFVebF+AYhnE3q9o?=
- =?us-ascii?Q?nHSD7MFiHWw09LmBHd2UYSW19HsG0te4fALmAAwb8xbWTsgOzaNjnnCes1kA?=
- =?us-ascii?Q?oK9KDar+zmG9bKI7Sb3BWQo9mzHNusywiQWoo4Ew5O+qy03IR5bCSoS4Oanz?=
- =?us-ascii?Q?k/1qAKSzyUGbzO8pC/gyVXVwYhzFJ4JOZE0t+8UFEnT8n9qf8p2Oyg9lnjik?=
- =?us-ascii?Q?ivXEOU8+u1VfgwK1SDeNGOPFdOQGZrMeaaDy89/z82J7Kvnn+TTcarXi/ur9?=
- =?us-ascii?Q?/nH97APXkxpJZbe1ZeXfTp6AxnKW3LgpC0yCio/u?=
-X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 54d0c7ce-3e5c-4c04-657f-08dc98408886
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB6399.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jun 2024 13:36:51.7290
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Fr/rhfwyYL0JRKqnXJ/wb83exnyvdqHSEfzhBRbDhuJkbg2Ydq69n4EukuLgs4N6HpZbFOnh7oyOp84V64pyUg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB7207
-X-Proofpoint-GUID: 8yQcOmR3dFSgd7YZ7OuFKJUw4u_8FfLB
-X-Proofpoint-ORIG-GUID: 8yQcOmR3dFSgd7YZ7OuFKJUw4u_8FfLB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-29_04,2024-06-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 mlxlogscore=999 lowpriorityscore=0 spamscore=0
- phishscore=0 bulkscore=0 clxscore=1015 adultscore=0 suspectscore=0
- malwarescore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.21.0-2406140001 definitions=main-2406290095
+References: <17D213B141A57C32.4692@lists.yoctoproject.org> <17D2140E51A07FE0.4692@lists.yoctoproject.org>
+ <CAHUKmYYbXydmQC78rJVRmrVOC1wQBrVzGbJNWDhTK11VOYUONQ@mail.gmail.com>
+In-Reply-To: <CAHUKmYYbXydmQC78rJVRmrVOC1wQBrVzGbJNWDhTK11VOYUONQ@mail.gmail.com>
+From: Joe MacDonald <joe@deserted.net>
+Date: Sat, 29 Jun 2024 10:26:48 -0400
+Message-ID: <CANBf+V3ZL_LMru3JbcEe1dLZy6nZzzDDFCnZu+jCXJKGYY3Duw@mail.gmail.com>
+Subject: Re: [yocto-patches] [meta-selinux][PATCH] selinux-python: make GPLv3
+ dependency optional
+To: yocto-patches@lists.yoctoproject.org
+Content-Type: multipart/alternative; boundary="000000000000064d13061c0828d2"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sat, 29 Jun 2024 13:37:00 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/392
+ <yocto-patches@lists.yoctoproject.org>; Sat, 29 Jun 2024 14:27:00 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/394
 
-ChangeLog:
-https://github.com/SELinuxProject/selinux/releases/tag/3.7
+--000000000000064d13061c0828d2
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-* audit2allow -C for CIL output mode
-* sepolgen: adjust parse for refpolicy
-* semanage: Allow modifying records on "add"
-* semanage: Do not sort local fcontext definitions
-* Improved man pages
-* checkpolicy: support CIDR notation for nodecon statements
-* sandbox: Add support for Wayland
-* Code improvements and bug fixes
+Hi =C3=89tienne,
 
-Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
----
- .../selinux/{checkpolicy_3.6.bb => checkpolicy_3.7.bb}          | 0
- .../{libselinux-python_3.6.bb => libselinux-python_3.7.bb}      | 0
- .../selinux/{libselinux_3.6.bb => libselinux_3.7.bb}            | 0
- .../selinux/{libsemanage_3.6.bb => libsemanage_3.7.bb}          | 0
- recipes-security/selinux/{libsepol_3.6.bb => libsepol_3.7.bb}   | 0
- recipes-security/selinux/{mcstrans_3.6.bb => mcstrans_3.7.bb}   | 0
- .../selinux/{policycoreutils_3.6.bb => policycoreutils_3.7.bb}  | 0
- .../selinux/{restorecond_3.6.bb => restorecond_3.7.bb}          | 0
- recipes-security/selinux/{secilc_3.6.bb => secilc_3.7.bb}       | 0
- .../selinux/{selinux-dbus_3.6.bb => selinux-dbus_3.7.bb}        | 0
- .../selinux/{selinux-gui_3.6.bb => selinux-gui_3.7.bb}          | 0
- .../selinux/{selinux-python_3.6.bb => selinux-python_3.7.bb}    | 0
- .../selinux/{selinux-sandbox_3.6.bb => selinux-sandbox_3.7.bb}  | 0
- recipes-security/selinux/selinux_common.inc                     | 2 +-
- .../selinux/{semodule-utils_3.6.bb => semodule-utils_3.7.bb}    | 0
- 15 files changed, 1 insertion(+), 1 deletion(-)
- rename recipes-security/selinux/{checkpolicy_3.6.bb => checkpolicy_3.7.bb} (100%)
- rename recipes-security/selinux/{libselinux-python_3.6.bb => libselinux-python_3.7.bb} (100%)
- rename recipes-security/selinux/{libselinux_3.6.bb => libselinux_3.7.bb} (100%)
- rename recipes-security/selinux/{libsemanage_3.6.bb => libsemanage_3.7.bb} (100%)
- rename recipes-security/selinux/{libsepol_3.6.bb => libsepol_3.7.bb} (100%)
- rename recipes-security/selinux/{mcstrans_3.6.bb => mcstrans_3.7.bb} (100%)
- rename recipes-security/selinux/{policycoreutils_3.6.bb => policycoreutils_3.7.bb} (100%)
- rename recipes-security/selinux/{restorecond_3.6.bb => restorecond_3.7.bb} (100%)
- rename recipes-security/selinux/{secilc_3.6.bb => secilc_3.7.bb} (100%)
- rename recipes-security/selinux/{selinux-dbus_3.6.bb => selinux-dbus_3.7.bb} (100%)
- rename recipes-security/selinux/{selinux-gui_3.6.bb => selinux-gui_3.7.bb} (100%)
- rename recipes-security/selinux/{selinux-python_3.6.bb => selinux-python_3.7.bb} (100%)
- rename recipes-security/selinux/{selinux-sandbox_3.6.bb => selinux-sandbox_3.7.bb} (100%)
- rename recipes-security/selinux/{semodule-utils_3.6.bb => semodule-utils_3.7.bb} (100%)
+Sorry about that, Yi and I had a brief discussion about it, it'll be merged
+today with the other patches in the queue.
 
-diff --git a/recipes-security/selinux/checkpolicy_3.6.bb b/recipes-security/selinux/checkpolicy_3.7.bb
-similarity index 100%
-rename from recipes-security/selinux/checkpolicy_3.6.bb
-rename to recipes-security/selinux/checkpolicy_3.7.bb
-diff --git a/recipes-security/selinux/libselinux-python_3.6.bb b/recipes-security/selinux/libselinux-python_3.7.bb
-similarity index 100%
-rename from recipes-security/selinux/libselinux-python_3.6.bb
-rename to recipes-security/selinux/libselinux-python_3.7.bb
-diff --git a/recipes-security/selinux/libselinux_3.6.bb b/recipes-security/selinux/libselinux_3.7.bb
-similarity index 100%
-rename from recipes-security/selinux/libselinux_3.6.bb
-rename to recipes-security/selinux/libselinux_3.7.bb
-diff --git a/recipes-security/selinux/libsemanage_3.6.bb b/recipes-security/selinux/libsemanage_3.7.bb
-similarity index 100%
-rename from recipes-security/selinux/libsemanage_3.6.bb
-rename to recipes-security/selinux/libsemanage_3.7.bb
-diff --git a/recipes-security/selinux/libsepol_3.6.bb b/recipes-security/selinux/libsepol_3.7.bb
-similarity index 100%
-rename from recipes-security/selinux/libsepol_3.6.bb
-rename to recipes-security/selinux/libsepol_3.7.bb
-diff --git a/recipes-security/selinux/mcstrans_3.6.bb b/recipes-security/selinux/mcstrans_3.7.bb
-similarity index 100%
-rename from recipes-security/selinux/mcstrans_3.6.bb
-rename to recipes-security/selinux/mcstrans_3.7.bb
-diff --git a/recipes-security/selinux/policycoreutils_3.6.bb b/recipes-security/selinux/policycoreutils_3.7.bb
-similarity index 100%
-rename from recipes-security/selinux/policycoreutils_3.6.bb
-rename to recipes-security/selinux/policycoreutils_3.7.bb
-diff --git a/recipes-security/selinux/restorecond_3.6.bb b/recipes-security/selinux/restorecond_3.7.bb
-similarity index 100%
-rename from recipes-security/selinux/restorecond_3.6.bb
-rename to recipes-security/selinux/restorecond_3.7.bb
-diff --git a/recipes-security/selinux/secilc_3.6.bb b/recipes-security/selinux/secilc_3.7.bb
-similarity index 100%
-rename from recipes-security/selinux/secilc_3.6.bb
-rename to recipes-security/selinux/secilc_3.7.bb
-diff --git a/recipes-security/selinux/selinux-dbus_3.6.bb b/recipes-security/selinux/selinux-dbus_3.7.bb
-similarity index 100%
-rename from recipes-security/selinux/selinux-dbus_3.6.bb
-rename to recipes-security/selinux/selinux-dbus_3.7.bb
-diff --git a/recipes-security/selinux/selinux-gui_3.6.bb b/recipes-security/selinux/selinux-gui_3.7.bb
-similarity index 100%
-rename from recipes-security/selinux/selinux-gui_3.6.bb
-rename to recipes-security/selinux/selinux-gui_3.7.bb
-diff --git a/recipes-security/selinux/selinux-python_3.6.bb b/recipes-security/selinux/selinux-python_3.7.bb
-similarity index 100%
-rename from recipes-security/selinux/selinux-python_3.6.bb
-rename to recipes-security/selinux/selinux-python_3.7.bb
-diff --git a/recipes-security/selinux/selinux-sandbox_3.6.bb b/recipes-security/selinux/selinux-sandbox_3.7.bb
-similarity index 100%
-rename from recipes-security/selinux/selinux-sandbox_3.6.bb
-rename to recipes-security/selinux/selinux-sandbox_3.7.bb
-diff --git a/recipes-security/selinux/selinux_common.inc b/recipes-security/selinux/selinux_common.inc
-index cecb0b5..8dd6c2e 100644
---- a/recipes-security/selinux/selinux_common.inc
-+++ b/recipes-security/selinux/selinux_common.inc
-@@ -1,7 +1,7 @@
- HOMEPAGE = "https://github.com/SELinuxProject"
- 
- SRC_URI = "git://github.com/SELinuxProject/selinux.git;branch=main;protocol=https"
--SRCREV = "97fa708d867ecb26e8d1c766760947f8e3b9e59a"
-+SRCREV = "2eb286bc0841791043567437ba5413f3014fb94e"
- 
- UPSTREAM_CHECK_GITTAGREGEX = "(?P<pver>\d+(\.\d+)+)"
- 
-diff --git a/recipes-security/selinux/semodule-utils_3.6.bb b/recipes-security/selinux/semodule-utils_3.7.bb
-similarity index 100%
-rename from recipes-security/selinux/semodule-utils_3.6.bb
-rename to recipes-security/selinux/semodule-utils_3.7.bb
--- 
-2.25.1
+Thanks,
+-Joe.
 
+On Thu, Jun 27, 2024, 04:36 Etienne Cordonnier via lists.yoctoproject.org
+<ecordonnier=3Dsnap.com@lists.yoctoproject.org> wrote:
+
+> Hi,
+> what is the status of this patch?
+>
+> Thanks,
+> =C3=89tienne
+>
+> On Thu, May 23, 2024 at 11:27=E2=80=AFAM Etienne Cordonnier via
+> lists.yoctoproject.org <ecordonnier=3Dsnap.com@lists.yoctoproject.org>
+> wrote:
+>
+>> Hi, note that another way to implement this is  RRECOMMENDS=3D"binutils"
+>> in the recipe, and BAD_RECOMMENDATION+=3D"binutils" for users of the lay=
+er
+>> who want to disable the dependency. I used the PACKAGECONFIG way since i=
+t
+>> makes it clearer which functionality gets disabled IMO:
+>> PACKAGECONFIG:remove:pn-selinux-python-sepolicy =3D "sepolicy-generate"
+>>
+>> =C3=89tienne
+>>
+>> On Thu, May 23, 2024 at 11:21=E2=80=AFAM Etienne Cordonnier via
+>> lists.yoctoproject.org
+>> <https://urldefense.proofpoint.com/v2/url?u=3Dhttp-3A__lists.yoctoprojec=
+t.org&d=3DDwMFaQ&c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&r=3DAhkbNo=
+nVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&m=3DsvUiXAGWL-sVHk8x8ZsNqyXZUzlzLxFkZ=
+MNg7mIpG4kCNbCpjYWhGSSEhk43Xgxp&s=3DzCOxOsLdY4YpzCCow8OlIHj3Hm80Yh7Wa3HD1T2=
+L8Ok&e=3D>
+>> <ecordonnier=3Dsnap.com@lists.yoctoproject.org> wrote:
+>>
+>>> From: Etienne Cordonnier <ecordonnier@snap.com>
+>>>
+>>> Signed-off-by: Etienne Cordonnier <ecordonnier@snap.com>
+>>> ---
+>>>  recipes-security/selinux/selinux-python_3.6.bb
+>>> <https://urldefense.proofpoint.com/v2/url?u=3Dhttp-3A__selinux-2Dpython=
+-5F3.6.bb&d=3DDwMFaQ&c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&r=3DAh=
+kbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&m=3DsvUiXAGWL-sVHk8x8ZsNqyXZUzlzL=
+xFkZMNg7mIpG4kCNbCpjYWhGSSEhk43Xgxp&s=3DixJG_H5bJU1GGqRFcKTAK2WyQXKt0wsSdZP=
+uaCOJQKs&e=3D>
+>>> | 4 +++-
+>>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/recipes-security/selinux/selinux-python_3.6.bb
+>>> <https://urldefense.proofpoint.com/v2/url?u=3Dhttp-3A__selinux-2Dpython=
+-5F3.6.bb&d=3DDwMFaQ&c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&r=3DAh=
+kbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&m=3DsvUiXAGWL-sVHk8x8ZsNqyXZUzlzL=
+xFkZMNg7mIpG4kCNbCpjYWhGSSEhk43Xgxp&s=3DixJG_H5bJU1GGqRFcKTAK2WyQXKt0wsSdZP=
+uaCOJQKs&e=3D>
+>>> b/recipes-security/selinux/selinux-python_3.6.bb
+>>> <https://urldefense.proofpoint.com/v2/url?u=3Dhttp-3A__selinux-2Dpython=
+-5F3.6.bb&d=3DDwMFaQ&c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&r=3DAh=
+kbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&m=3DsvUiXAGWL-sVHk8x8ZsNqyXZUzlzL=
+xFkZMNg7mIpG4kCNbCpjYWhGSSEhk43Xgxp&s=3DixJG_H5bJU1GGqRFcKTAK2WyQXKt0wsSdZP=
+uaCOJQKs&e=3D>
+>>> index 79125d0..faf5d28 100644
+>>> --- a/recipes-security/selinux/selinux-python_3.6.bb
+>>> <https://urldefense.proofpoint.com/v2/url?u=3Dhttp-3A__selinux-2Dpython=
+-5F3.6.bb&d=3DDwMFaQ&c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&r=3DAh=
+kbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&m=3DsvUiXAGWL-sVHk8x8ZsNqyXZUzlzL=
+xFkZMNg7mIpG4kCNbCpjYWhGSSEhk43Xgxp&s=3DixJG_H5bJU1GGqRFcKTAK2WyQXKt0wsSdZP=
+uaCOJQKs&e=3D>
+>>> +++ b/recipes-security/selinux/selinux-python_3.6.bb
+>>> <https://urldefense.proofpoint.com/v2/url?u=3Dhttp-3A__selinux-2Dpython=
+-5F3.6.bb&d=3DDwMFaQ&c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&r=3DAh=
+kbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&m=3DsvUiXAGWL-sVHk8x8ZsNqyXZUzlzL=
+xFkZMNg7mIpG4kCNbCpjYWhGSSEhk43Xgxp&s=3DixJG_H5bJU1GGqRFcKTAK2WyQXKt0wsSdZP=
+uaCOJQKs&e=3D>
+>>> @@ -53,8 +53,10 @@ RDEPENDS:${PN}-semanage =3D "\
+>>>          audit-python \
+>>>          ${PN} \
+>>>  "
+>>> +PACKAGECONFIG ??=3D "sepolicy-generate"
+>>> +PACKAGECONFIG[sepolicy-generate] =3D ",,,"
+>>>  RDEPENDS:${PN}-sepolicy =3D "\
+>>> -        binutils \
+>>> +        ${@bb.utils.contains('PACKAGECONFIG', 'sepolicy-generate',
+>>> 'binutils', '', d)} \
+>>>          python3-core \
+>>>          python3-codecs \
+>>>          python3-distro \
+>>> --
+>>> 2.36.1.vfs.0.0
+>>>
+>>>
+>>>
+>>>
+>>>
+>>>
+>>> _._,_._,_
+> ------------------------------
+> Links:
+>
+> You receive all messages sent to this group.
+>
+> View/Reply Online (#387)
+> <https://lists.yoctoproject.org/g/yocto-patches/message/387> | Reply To
+> Group
+> <yocto-patches@lists.yoctoproject.org?subject=3DRe:%20Re%3A%20%5Byocto-pa=
+tches%5D%20%5Bmeta-selinux%5D%5BPATCH%5D%20selinux-python%3A%20make%20GPLv3=
+%20dependency%20optional>
+> | Reply To Sender
+> <ecordonnier@snap.com?subject=3DPrivate:%20Re:%20Re%3A%20%5Byocto-patches=
+%5D%20%5Bmeta-selinux%5D%5BPATCH%5D%20selinux-python%3A%20make%20GPLv3%20de=
+pendency%20optional>
+> | Mute This Topic <https://lists.yoctoproject.org/mt/106905395/1150288> |=
+ New
+> Topic <https://lists.yoctoproject.org/g/yocto-patches/post>
+> Your Subscription
+> <https://lists.yoctoproject.org/g/yocto-patches/editsub/1150288> | Contac=
+t
+> Group Owner <yocto-patches+owner@lists.yoctoproject.org> | Unsubscribe
+> <https://lists.yoctoproject.org/g/yocto-patches/leave/13405315/1150288/15=
+96567232/xyzzy>
+> [joe@deserted.net]
+> _._,_._,_
+>
+>
+
+--000000000000064d13061c0828d2
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"auto"><div>Hi =C3=89tienne,=C2=A0</div><div dir=3D"auto"><br></=
+div><div dir=3D"auto">Sorry about that, Yi and I had a brief discussion abo=
+ut it, it&#39;ll be merged today with the other patches in the queue.=C2=A0=
+</div><div dir=3D"auto"><br></div><div dir=3D"auto">Thanks,=C2=A0</div><div=
+ dir=3D"auto">-Joe.=C2=A0<br><br><div class=3D"gmail_quote" dir=3D"auto"><d=
+iv dir=3D"ltr" class=3D"gmail_attr">On Thu, Jun 27, 2024, 04:36 Etienne Cor=
+donnier via <a href=3D"http://lists.yoctoproject.org">lists.yoctoproject.or=
+g</a> &lt;ecordonnier=3D<a href=3D"mailto:snap.com@lists.yoctoproject.org">=
+snap.com@lists.yoctoproject.org</a>&gt; wrote:<br></div><blockquote class=
+=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padd=
+ing-left:1ex"><div dir=3D"ltr">Hi,<br>what is the status of this patch?<br>=
+<br>Thanks,<br>=C3=89tienne</div><br><div class=3D"gmail_quote"><div dir=3D=
+"ltr" class=3D"gmail_attr">On Thu, May 23, 2024 at 11:27=E2=80=AFAM Etienne=
+ Cordonnier via <a href=3D"http://lists.yoctoproject.org" target=3D"_blank"=
+ rel=3D"noreferrer">lists.yoctoproject.org</a> &lt;ecordonnier=3D<a href=3D=
+"mailto:snap.com@lists.yoctoproject.org" target=3D"_blank" rel=3D"noreferre=
+r">snap.com@lists.yoctoproject.org</a>&gt; wrote:<br></div><blockquote clas=
+s=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid r=
+gb(204,204,204);padding-left:1ex"><div dir=3D"ltr">Hi, note that another wa=
+y to implement this is=C2=A0<span style=3D"color:rgb(31,35,40);font-family:=
+-apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,&quot;Noto Sans&quot;=
+,Helvetica,Arial,sans-serif,&quot;Apple Color Emoji&quot;,&quot;Segoe UI Em=
+oji&quot;;font-size:14px">=C2=A0RRECOMMENDS=3D&quot;binutils&quot; in the r=
+ecipe, and=C2=A0</span><span style=3D"color:rgb(31,35,40);font-family:-appl=
+e-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,&quot;Noto Sans&quot;,Helv=
+etica,Arial,sans-serif,&quot;Apple Color Emoji&quot;,&quot;Segoe UI Emoji&q=
+uot;;font-size:14px">BAD_RECOMMENDATION+=3D&quot;binutils&quot; for users o=
+f the layer who want to disable the dependency. I used the PACKAGECONFIG wa=
+y since it makes it clearer which functionality gets disabled IMO:<br></spa=
+n>PACKAGECONFIG:remove:pn-selinux-python-sepolicy =3D &quot;sepolicy-genera=
+te&quot;<br><span style=3D"color:rgb(31,35,40);font-family:-apple-system,Bl=
+inkMacSystemFont,&quot;Segoe UI&quot;,&quot;Noto Sans&quot;,Helvetica,Arial=
+,sans-serif,&quot;Apple Color Emoji&quot;,&quot;Segoe UI Emoji&quot;;font-s=
+ize:14px"><br>=C3=89tienne</span></div><br><div class=3D"gmail_quote"><div =
+dir=3D"ltr" class=3D"gmail_attr">On Thu, May 23, 2024 at 11:21=E2=80=AFAM E=
+tienne Cordonnier via <a href=3D"https://urldefense.proofpoint.com/v2/url?u=
+=3Dhttp-3A__lists.yoctoproject.org&amp;d=3DDwMFaQ&amp;c=3DncDTmphkJTvjIDPh0=
+hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m=
+67E&amp;m=3DsvUiXAGWL-sVHk8x8ZsNqyXZUzlzLxFkZMNg7mIpG4kCNbCpjYWhGSSEhk43Xgx=
+p&amp;s=3DzCOxOsLdY4YpzCCow8OlIHj3Hm80Yh7Wa3HD1T2L8Ok&amp;e=3D" target=3D"_=
+blank" rel=3D"noreferrer">lists.yoctoproject.org</a> &lt;ecordonnier=3D<a h=
+ref=3D"mailto:snap.com@lists.yoctoproject.org" target=3D"_blank" rel=3D"nor=
+eferrer">snap.com@lists.yoctoproject.org</a>&gt; wrote:<br></div><blockquot=
+e class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px s=
+olid rgb(204,204,204);padding-left:1ex">From: Etienne Cordonnier &lt;<a hre=
+f=3D"mailto:ecordonnier@snap.com" target=3D"_blank" rel=3D"noreferrer">ecor=
+donnier@snap.com</a>&gt;<br>
+<br>
+Signed-off-by: Etienne Cordonnier &lt;<a href=3D"mailto:ecordonnier@snap.co=
+m" target=3D"_blank" rel=3D"noreferrer">ecordonnier@snap.com</a>&gt;<br>
+---<br>
+=C2=A0recipes-security/selinux/<a href=3D"https://urldefense.proofpoint.com=
+/v2/url?u=3Dhttp-3A__selinux-2Dpython-5F3.6.bb&amp;d=3DDwMFaQ&amp;c=3DncDTm=
+phkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DU=
+LJTKUkSGa66m67E&amp;m=3DsvUiXAGWL-sVHk8x8ZsNqyXZUzlzLxFkZMNg7mIpG4kCNbCpjYW=
+hGSSEhk43Xgxp&amp;s=3DixJG_H5bJU1GGqRFcKTAK2WyQXKt0wsSdZPuaCOJQKs&amp;e=3D"=
+ rel=3D"noreferrer noreferrer" target=3D"_blank">selinux-python_3.6.bb</a> =
+| 4 +++-<br>
+=C2=A01 file changed, 3 insertions(+), 1 deletion(-)<br>
+<br>
+diff --git a/recipes-security/selinux/<a href=3D"https://urldefense.proofpo=
+int.com/v2/url?u=3Dhttp-3A__selinux-2Dpython-5F3.6.bb&amp;d=3DDwMFaQ&amp;c=
+=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhkbNonVuMIGRfPx_Qj9=
+TsRih1DULJTKUkSGa66m67E&amp;m=3DsvUiXAGWL-sVHk8x8ZsNqyXZUzlzLxFkZMNg7mIpG4k=
+CNbCpjYWhGSSEhk43Xgxp&amp;s=3DixJG_H5bJU1GGqRFcKTAK2WyQXKt0wsSdZPuaCOJQKs&a=
+mp;e=3D" rel=3D"noreferrer noreferrer" target=3D"_blank">selinux-python_3.6=
+.bb</a> b/recipes-security/selinux/<a href=3D"https://urldefense.proofpoint=
+.com/v2/url?u=3Dhttp-3A__selinux-2Dpython-5F3.6.bb&amp;d=3DDwMFaQ&amp;c=3Dn=
+cDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhkbNonVuMIGRfPx_Qj9TsRi=
+h1DULJTKUkSGa66m67E&amp;m=3DsvUiXAGWL-sVHk8x8ZsNqyXZUzlzLxFkZMNg7mIpG4kCNbC=
+pjYWhGSSEhk43Xgxp&amp;s=3DixJG_H5bJU1GGqRFcKTAK2WyQXKt0wsSdZPuaCOJQKs&amp;e=
+=3D" rel=3D"noreferrer noreferrer" target=3D"_blank">selinux-python_3.6.bb<=
+/a><br>
+index 79125d0..faf5d28 100644<br>
+--- a/recipes-security/selinux/<a href=3D"https://urldefense.proofpoint.com=
+/v2/url?u=3Dhttp-3A__selinux-2Dpython-5F3.6.bb&amp;d=3DDwMFaQ&amp;c=3DncDTm=
+phkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DU=
+LJTKUkSGa66m67E&amp;m=3DsvUiXAGWL-sVHk8x8ZsNqyXZUzlzLxFkZMNg7mIpG4kCNbCpjYW=
+hGSSEhk43Xgxp&amp;s=3DixJG_H5bJU1GGqRFcKTAK2WyQXKt0wsSdZPuaCOJQKs&amp;e=3D"=
+ rel=3D"noreferrer noreferrer" target=3D"_blank">selinux-python_3.6.bb</a><=
+br>
++++ b/recipes-security/selinux/<a href=3D"https://urldefense.proofpoint.com=
+/v2/url?u=3Dhttp-3A__selinux-2Dpython-5F3.6.bb&amp;d=3DDwMFaQ&amp;c=3DncDTm=
+phkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DU=
+LJTKUkSGa66m67E&amp;m=3DsvUiXAGWL-sVHk8x8ZsNqyXZUzlzLxFkZMNg7mIpG4kCNbCpjYW=
+hGSSEhk43Xgxp&amp;s=3DixJG_H5bJU1GGqRFcKTAK2WyQXKt0wsSdZPuaCOJQKs&amp;e=3D"=
+ rel=3D"noreferrer noreferrer" target=3D"_blank">selinux-python_3.6.bb</a><=
+br>
+@@ -53,8 +53,10 @@ RDEPENDS:${PN}-semanage =3D &quot;\<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0audit-python \<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0${PN} \<br>
+=C2=A0&quot;<br>
++PACKAGECONFIG ??=3D &quot;sepolicy-generate&quot;<br>
++PACKAGECONFIG[sepolicy-generate] =3D &quot;,,,&quot;<br>
+=C2=A0RDEPENDS:${PN}-sepolicy =3D &quot;\<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 binutils \<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 ${@bb.utils.contains(&#39;PACKAGECONFIG&#39;, =
+&#39;sepolicy-generate&#39;, &#39;binutils&#39;, &#39;&#39;, d)} \<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0python3-core \<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0python3-codecs \<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0python3-distro \<br>
+-- <br>
+2.36.1.vfs.0.0<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+</blockquote></div>
+
+
+
+
+<p></p><p></p></blockquote></div>
+
+
+<div width=3D"1" style=3D"color:white;clear:both">_._,_._,_</div>
+<hr>
+
+
+Links:<p>
+
+
+ =20
+    You receive all messages sent to this group.
+ =20
+ =20
+
+
+</p><p>
+<a href=3D"https://lists.yoctoproject.org/g/yocto-patches/message/387" targ=
+et=3D"_blank" rel=3D"noreferrer">View/Reply Online (#387)</a> |
+
+
+  <a href=3D"mailto:yocto-patches@lists.yoctoproject.org?subject=3DRe:%20Re=
+%3A%20%5Byocto-patches%5D%20%5Bmeta-selinux%5D%5BPATCH%5D%20selinux-python%=
+3A%20make%20GPLv3%20dependency%20optional" target=3D"_blank" rel=3D"norefer=
+rer">Reply To Group</a>
+ =20
+    | <a href=3D"mailto:ecordonnier@snap.com?subject=3DPrivate:%20Re:%20Re%=
+3A%20%5Byocto-patches%5D%20%5Bmeta-selinux%5D%5BPATCH%5D%20selinux-python%3=
+A%20make%20GPLv3%20dependency%20optional" target=3D"_blank" rel=3D"noreferr=
+er">Reply To Sender</a>
+ =20
+
+|
+
+  <a href=3D"https://lists.yoctoproject.org/mt/106905395/1150288" target=3D=
+"_blank" rel=3D"noreferrer">Mute This Topic</a>
+
+
+| <a href=3D"https://lists.yoctoproject.org/g/yocto-patches/post" target=3D=
+"_blank" rel=3D"noreferrer">New Topic</a>
+
+<br>
+
+
+
+
+<a href=3D"https://lists.yoctoproject.org/g/yocto-patches/editsub/1150288" =
+target=3D"_blank" rel=3D"noreferrer">Your Subscription</a> |
+<a href=3D"mailto:yocto-patches+owner@lists.yoctoproject.org" target=3D"_bl=
+ank" rel=3D"noreferrer">Contact Group Owner</a> |
+
+<a href=3D"https://lists.yoctoproject.org/g/yocto-patches/leave/13405315/11=
+50288/1596567232/xyzzy" target=3D"_blank" rel=3D"noreferrer">Unsubscribe</a=
+>
+
+ [<a href=3D"mailto:joe@deserted.net" target=3D"_blank" rel=3D"noreferrer">=
+joe@deserted.net</a>]<br>
+</p><div width=3D"1" style=3D"color:white;clear:both">_._,_._,_</div>
+
+<p></p><p></p></blockquote></div></div></div>
+
+--000000000000064d13061c0828d2--
 
