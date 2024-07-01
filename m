@@ -2,165 +2,117 @@ Return-Path: <gael.portay@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4663C2BD09
-	for <webhook@archiver.kernel.org>; Mon,  1 Jul 2024 12:40:05 +0000 (UTC)
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
- by mx.groups.io with SMTP id smtpd.web10.18527.1719837601802190738
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3B5EC2BD09
+	for <webhook@archiver.kernel.org>; Mon,  1 Jul 2024 12:44:35 +0000 (UTC)
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+ by mx.groups.io with SMTP id smtpd.web11.18857.1719837870589404126
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 01 Jul 2024 05:40:02 -0700
+ Mon, 01 Jul 2024 05:44:30 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=HHyskss4;
- spf=pass (domain: gmail.com, ip: 209.85.128.45, mailfrom: gael.portay@gmail.com)
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42122ac2f38so17482845e9.1
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 01 Jul 2024 05:40:01 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=HiKerk0a;
+ spf=pass (domain: gmail.com, ip: 209.85.167.47, mailfrom: gael.portay@gmail.com)
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52e829086f3so2447233e87.3
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 01 Jul 2024 05:44:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719837600; x=1720442400; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1719837869; x=1720442669; darn=lists.yoctoproject.org;
         h=in-reply-to:references:to:from:subject:cc:message-id:date
          :content-transfer-encoding:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MUJ3aA/qkYGuOpAw63HwRlpJDS3h2zXU1Wc/b/IJ2AE=;
-        b=HHyskss4tlxFAwYTH4xxRM6XnBGveAryGnRbeT/9WvQoJ2yThNCuritqLKLN8PI2FQ
-         oHQwr+1aWdhslMy9EHHAcX6GdixdVGJK8oktP/J87BCrjaJlJBPghVhIUkqrbGXJrVxV
-         phbQ0ot1LwIw8d6r5WUuP9ir93k6FO+GOE9Nf1j6pOU10BAdlBiB12DoCFHDzlfE9r8u
-         OSKYfcv/gUy2uqUBXJdy9PKSA2nr3gqvi9bHu4Kx6pp3GegarGMyTV3t1xLCqrclZWuH
-         bp1d3tzke+QyhzI2HIdFT3UPaAr3vSpYDHOwiOPYjhPBH1/lYsRgT4HNPVhus2oVtMsv
-         OBKg==
+        bh=SMQXKGYIIllt48UB99A/rLX0cvb3OdwkiK3HSdRl/0c=;
+        b=HiKerk0aRCglEpHtuMpI48TeniTx3Nr45laeiRY3Z6GzDWv2wfqs2HULQi3ltRzSaA
+         EqznGgm+fVWOnWnu98Cp2kSWi7pAZXBDnOF5VX+SYjMcG023SbpROb6YyMeazs8KJ+8e
+         mt+8p5Iqn7KF1f4OW0uXNTbKiWvqDsxNO7Bf6khPXW9n9T+dGKHJDXRxM1uez6R7ulBK
+         N+4ubmJiSiX61xBMaRVCu3+y4onjUyDOpwreGIW4PAIYRsuL2IGD35PrRc7eIB+vTHa2
+         xbpu/iaNJABW1CoJ7hjQVnHIl0iJWhC0n4EwpcZ5OGvRcvT7Do0jsYGA94KDEoRAXKQj
+         6Pnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719837600; x=1720442400;
+        d=1e100.net; s=20230601; t=1719837869; x=1720442669;
         h=in-reply-to:references:to:from:subject:cc:message-id:date
          :content-transfer-encoding:mime-version:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=MUJ3aA/qkYGuOpAw63HwRlpJDS3h2zXU1Wc/b/IJ2AE=;
-        b=QJLpSydYZG2TlHgHLayDamL3nZ8yAfQR/QT/EOu7q6/Erq/Z/dhFtnBxBeSTZ9RAVF
-         lu4k032Rwy4LQ98KBIq4V6xmrbD133Sni/j0rTC3ntmuBu3GMYHHW2hmT6Yi4/hDnP9j
-         HxTcGU+ssh+QiHyjs0wUlGCBFsNE7I6y08jZa1aYQFQHeuEKY+MjWUE1IGrQ3gn4S6Vz
-         5vGwnoA+MB5F3wcpeFRpJwjboIZIb8snkNoTHilmqMWYDKqrxdVfzSKuVRt0+EDq/VUG
-         Q+5kjDbtgQzopTQ9K+VwqhedyAVNvtemkrBMp4ec81bMv0NVTRh+aZszQ2wwYqHZG9kv
-         wWsA==
-X-Forwarded-Encrypted: i=1; AJvYcCVGMDmJGHKpoSE70GSte8MivA/+TxlJl+SnWcQIPqNa5iCa+alLklLnWmejs8T3xiyytfwa+5h5nvB6Sm5XM31+wfReH7b7a6zm83Qidb7aipakiMA=
-X-Gm-Message-State: AOJu0YxIFahO/NMJNuIoVfdy4LeehrRJ/tERRoNDqLpOfXQqBT9vK/cA
-	85pOztFuv3x96fQxohTgeY+V41ymHbjhHrEGXyUfCrTRRFfgzd+kcCn865iS
-X-Google-Smtp-Source: AGHT+IGS5iweQ16wrdsJt6hI/zi82kXiJeB0K6uvzkgbVv5leGayUOcM+kDdLJe2l+LZWsUcjiLN5Q==
-X-Received: by 2002:a05:600c:3b88:b0:424:8acb:7d53 with SMTP id 5b1f17b1804b1-4257984deb1mr51818525e9.1.1719837599918;
-        Mon, 01 Jul 2024 05:39:59 -0700 (PDT)
+        bh=SMQXKGYIIllt48UB99A/rLX0cvb3OdwkiK3HSdRl/0c=;
+        b=dd2Sj1UvfVhKeKgIru40JJyQcNeuypXH0zn5dJtesJpEWRYGnX0a8z2DoGvHX0LPUA
+         jT10t1J8SO/1+AKZ/H8yXjLLqqJr+uyEYFPiu1u+wd278i30Z78JABF8KPM1ABTY7wlt
+         C9Z3SmbO1ELTezImoLXg5av9dgX6eXAm3c+GHmX9WdsE/CyVGJTYhTVDchAmzqY5L7D8
+         d7XODepk3d1DNuGbpEk2CFGLIeMTLgU9s2QI0qvY3cvBmV3w8UQkf9HdxAN5NX2eQPe2
+         IXyJLRK+JWYoXXN4TGtrS3Rtr/wxvCn1u9f+Zd2OGDQPFYNN/1c4nqdpLCtQzUVL/yM9
+         YmrA==
+X-Forwarded-Encrypted: i=1; AJvYcCV2kIoopCQHNyzfyKvtIkC6iH8jRmH52UaGU+PVYo29uiHkLw3OYNIxTtikxvi+ZNBUIXotrVhOg5SDj6lFIEBwfNTwG0gkW0TCV+8aw+zHr1KUSIk=
+X-Gm-Message-State: AOJu0YzWZwNWto3TLv18V+nD57ocDMMS50N0t3VFtYIxVFGU7E05x4ot
+	NvCUPZtJmiuYP48RQIWLEfwZcu8TmzitKJSIQDpYLVk/3NcYo+h9
+X-Google-Smtp-Source: AGHT+IEPkBRFM8sGAk1VftzqakhsM/ryasnqXCWAeUbsn+JgINAA0O14m7lAtOSb7siJ5ylUkJdpSw==
+X-Received: by 2002:a05:6512:1396:b0:52e:8b15:7c55 with SMTP id 2adb3069b0e04-52e8b157d70mr1371978e87.27.1719837868291;
+        Mon, 01 Jul 2024 05:44:28 -0700 (PDT)
 Received: from localhost ([2a01:e0a:ce:f2f0:3a7c:76ff:fe01:6f05])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0cd707sm10006420f8f.1.2024.07.01.05.39.59
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b0642acsm157565265e9.25.2024.07.01.05.44.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Jul 2024 05:39:59 -0700 (PDT)
+        Mon, 01 Jul 2024 05:44:27 -0700 (PDT)
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Mon, 01 Jul 2024 14:39:58 +0200
-Message-Id: <D2E7JPQ61HNG.3R2Z0KQWLZUJW@gmail.com>
+Date: Mon, 01 Jul 2024 14:44:27 +0200
+Message-Id: <D2E7N50PZ501.1BHUA6EVGOIGI@gmail.com>
 Cc: <gael.portay+yocto@gmail.com>, =?utf-8?q?Ga=C3=ABl_PORTAY?=
  <gael.portay@rtone.fr>
-Subject: Re: [yocto-patches] [meta-security,kirkstone][PATCH 1/5] sssd: fix
- missing python3.X-config script
+Subject: Re: [meta-security,kirkstone][PATCH 0/5] sssd: fix python3 support
 From: =?utf-8?q?Ga=C3=ABl_PORTAY?= <gael.portay@gmail.com>
-To: "akuster808" <akuster808@gmail.com>,
+To: =?utf-8?q?Ga=C3=ABl_PORTAY?= <gael.portay@gmail.com>,
  <yocto-patches@lists.yoctoproject.org>
 X-Mailer: aerc 0.17.0-0-g6ea74eb30457
 References: <20240626133913.790145-1-gael.portay@rtone.fr>
- <20240626133913.790145-2-gael.portay@rtone.fr>
- <d3296a3e-38f9-4ffc-bd16-4952e15e3b87@gmail.com>
-In-Reply-To: <d3296a3e-38f9-4ffc-bd16-4952e15e3b87@gmail.com>
+In-Reply-To: <20240626133913.790145-1-gael.portay@rtone.fr>
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 01 Jul 2024 12:40:05 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/401
+ <yocto-patches@lists.yoctoproject.org>; Mon, 01 Jul 2024 12:44:35 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/402
 
 Hello,
 
-On Mon Jul 1, 2024 at 1:14 PM CEST, akuster808 wrote:
+On Wed Jun 26, 2024 at 3:39 PM CEST, =3D?UTF-8?q?Ga=3DC3=3DABl=3D20PORTAY?=
+=3D wrote:
+> Dear Maintainers,
 >
+> This patch series brings several fixes to enable the support for python3
+> to the recipe sssd.
 >
-> On 6/26/24 9:39 AM, "Ga=C3=ABl PORTAY via lists.yoctoproject.org wrote:
-> > The configure script checks for the utility python3.X-config to be in
-> > $PATH; that script is shipped by the package python3-native.
-> >
-> > The recipe does not depend on the package python3-native which causes
-> > the task do_configure to fail.
-> >
-> > The recipe inherits from the bbclass python3-dir that does not install
-> > the required script to the sysroot. The bbclass python3native inherits
-> > from (the already inherited bbclass) python3-dir and it adds the missin=
-g
-> > dependency to python3-native.\
+> I have tested the build on the branch kirkstone with following change to
+> enable python3:
 >
-> Does this apply to master?
+> 	PACKAGECONFIG:append:pn-sssd =3D " python3"
 >
+> The command below runs successfully since then, however, I have not
+> tested it on scarthgap (yet?).
+>
+> 	$ bitbake sssd
+>
+> The patch series creates the new target package sssd-python; tell me if
+> is not misnamed (thinking about python-sssd?) or if the python script
+> and its modules should be part of the target package sssd instead.
+>
+> Also, tell me if you want me to apply these changes on top of master.
+>
+> Important: I am no expert in python packaging at all, so I have probably
+> made not-the-right choices in the first commit! Sorry...
+>
+> Kind Regards,
+> Ga=C3=ABl PORTAY (5):
+>   sssd: fix missing python3.X-config script
+>   sssd: fix ac_cv_prog_HAVE_PYTHON3 value
+>   sssd: fix issue if build machine is Debian
 
-The change does not apply as is because of the context has changed a
-bit: the two lines above have been modified since kirkstone.
+Armin, do you want me to send these three changes on top of master, even
+if they have not been tested on that branch?
 
-> - armin
-> >
-> > This fixes the configure error by "upgrading" the inherit bbclass from
-> > python3-dir to python3-native.
-> >
-> > Fixes:
-> >
-> > 	| checking for python3.10-config... no
-> > 	| configure: error:
-> > 	| The program python3.10-config was not found in search path.
-> > 	| Please ensure that it is installed and its directory is included in =
-the search
-> > 	| path. If you want to build sssd without python3 bindings then specif=
-y
-> > 	| --without-python3-bindings when running configure.
-> > 	| NOTE: The following config.log files may provide further information=
-.
-> >
-> > Signed-off-by: Ga=C3=ABl PORTAY <gael.portay@rtone.fr>
-> > ---
-> >   recipes-security/sssd/sssd_2.5.2.bb | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/recipes-security/sssd/sssd_2.5.2.bb b/recipes-security/sss=
-d/sssd_2.5.2.bb
-> > index c07559c..fe82452 100644
-> > --- a/recipes-security/sssd/sssd_2.5.2.bb
-> > +++ b/recipes-security/sssd/sssd_2.5.2.bb
-> > @@ -33,7 +33,7 @@ CVE_CHECK_IGNORE +=3D "\
-> >       CVE-2018-16838 \
+>   sssd: fix shipping python script and modules
+>   sssd: fix path to python3 interpreter
 
-The two lines are now:
-=20
- UPSTREAM_CHECK_URI =3D "https://github.com/SSSD/${BPN}/releases"
+(that change "cleanly" applies I guess).
 
-> >   "
-> >  =20
-> > -inherit autotools pkgconfig gettext python3-dir features_check systemd
-> > +inherit autotools pkgconfig gettext python3native features_check syste=
-md
-> >  =20
-> >   REQUIRED_DISTRO_FEATURES =3D "pam"
-> >  =20
+>
+>  recipes-security/sssd/sssd_2.5.2.bb | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
 
 Regards,
 Ga=C3=ABl
-
-Here is the change (untested):
-
------ >8 ---------------------------------------------------------------
-
- .../networking-layer/recipes-security/sssd/sssd_2.9.2.bb        | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9=
-.2.bb b/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9.2.bb
-index 0c75d8f..058d80d 100644
---- a/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9.2.bb
-+++ b/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9.2.bb
-@@ -30,7 +30,7 @@ SRC_URI[sha256sum] =3D "827bc65d64132410e6dd3df003f04829d=
-60387ec30e72b2d4e22d93bb6
-
- UPSTREAM_CHECK_URI =3D "https://github.com/SSSD/${BPN}/releases"
-
--inherit autotools pkgconfig gettext python3-dir features_check systemd
-+inherit autotools pkgconfig gettext python3native features_check systemd
-
- REQUIRED_DISTRO_FEATURES =3D "pam"
-
 
