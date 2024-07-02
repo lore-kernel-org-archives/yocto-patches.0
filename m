@@ -2,62 +2,62 @@ Return-Path: <rsangam@mvista.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90CD0C3064D
-	for <webhook@archiver.kernel.org>; Tue,  2 Jul 2024 07:05:27 +0000 (UTC)
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
- by mx.groups.io with SMTP id smtpd.web10.18698.1719903917705191555
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9D9FC30658
+	for <webhook@archiver.kernel.org>; Tue,  2 Jul 2024 07:39:57 +0000 (UTC)
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+ by mx.groups.io with SMTP id smtpd.web11.19339.1719905990447193245
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 02 Jul 2024 00:05:17 -0700
+ Tue, 02 Jul 2024 00:39:50 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@mvista.com header.s=google header.b=kmQKwbbl;
- spf=pass (domain: mvista.com, ip: 209.85.128.172, mailfrom: rsangam@mvista.com)
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-64a6bf15db9so32448587b3.0
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 02 Jul 2024 00:05:17 -0700 (PDT)
+ dkim=pass header.i=@mvista.com header.s=google header.b=hVs+asU2;
+ spf=pass (domain: mvista.com, ip: 209.85.219.171, mailfrom: rsangam@mvista.com)
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-dff17fd97b3so3939911276.2
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 02 Jul 2024 00:39:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mvista.com; s=google; t=1719903916; x=1720508716; darn=lists.yoctoproject.org;
+        d=mvista.com; s=google; t=1719905989; x=1720510789; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
         bh=AVEKoCNlORV05sgEZksE+Kr6SsHTAxVvlwxhBv56qMI=;
-        b=kmQKwbbl5sSHuOPXRh7gXRBa06xcnUcPY1hyPHrOs7C7gQT/yqpPu0re2xBaMaTUHp
-         WuwfN1RKzVZQ4JCzGAWg/sgMqi8yA3pCPAyN3H6g4JHLKYc8n1xQ9/eULvbCup507l5g
-         ReR3/YQen1WJSMerrjzlD+M5u9zGHzfPAAO2I=
+        b=hVs+asU2u0hakgJj6o/g4BDMZCXcDwvJ4rgURrM+7b93wf+gmMUzy9tffnHIb3wZUW
+         mAkODL2l1iqN9zX2wqy5728QklzTsrVU2HwkhOX5d1t6g+u+FfxmB8uF4e4dJDYGO27M
+         eoCQcYNdfQmO3dBTFM95q7Hw5yOU8QOV09gAk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719903916; x=1720508716;
+        d=1e100.net; s=20230601; t=1719905989; x=1720510789;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
         bh=AVEKoCNlORV05sgEZksE+Kr6SsHTAxVvlwxhBv56qMI=;
-        b=LclAB3bDZOy/Tb17YdObXGtdMDaXwuSOKqWHDLvPgNCJBZqjHKjnf+GkOtjAHgp3Zc
-         wEjcFvKWT/hdijnJsztgV2YCACFPw2SpsWDaYnc7/NkSq9/1zENq5k6MwVNg2k5ct5sf
-         cPWf6OixQDpLYAsoVfSqfZDe8wG9XpUAnMeHSOXo25VgFpfZGHvNnHNFuV99Aj12Gxgm
-         vJjSM4k9VlgCUAJyDTtoqjRS1gJjh07gdYXVS2dEyL1vLQ+wKmZO1/pozkkGFC/9zzx+
-         e7nwwD2Qk/QyC86Gt8BGZCHu8gIG/lb+Fp8htCz31lkT5pd/i8Fmo1qgtl2zZRqlF42Z
-         VGHg==
-X-Gm-Message-State: AOJu0YytylNlmQhiDWAhQgMmFaqKsfmYEc83tqftGEODmwENiPIzlGQQ
-	ibXNl8Sy6CY2VrGnO0JLD1Spz/Lm0Xnq6QztR1ywDj/SYUORfGIOilfikimfkADoSNsZCZCqMiK
-	G
-X-Google-Smtp-Source: AGHT+IF0NwaPVH9Hu5wZCI0HtcJeL9kHwaDQ5x9S1Yew7zzPhMNtLDEqyL0ERH61xkRJ01HtYNLMXg==
-X-Received: by 2002:a81:7c46:0:b0:632:7161:d16c with SMTP id 00721157ae682-64c71ec64d5mr73337427b3.28.1719903916205;
-        Tue, 02 Jul 2024 00:05:16 -0700 (PDT)
+        b=ald6QhhRJrhIHUrFrPWdJCQ5MtMMFMFubYFgdqY/8xyTAF/sdgUrB29qHW/uHFp+9f
+         mIS0UoPU/DGqera+8icBuf4qTWx7TkNFCaA4UmXkGgH7t6I4Ew52jKxTqkFFnSwMSRmP
+         8z0EqoJlH7qjx/ClHFHagNRiWjV+Koxb5dXisi74o3H8RXYAi3J3VUC3UMJXQQ6iWig1
+         /DZusuZGB+5xtfeFIqMRiS59+O34s5dbo0ItBVqvniQV/trRmRePhEsT/fatCdFJb3OO
+         3oVfVov87KUMT9CV+gyLxFOimiKpWSBiqf7XyBEuvEeQgXalSZLCXUYvOkXY8rrtg8oS
+         QxlA==
+X-Gm-Message-State: AOJu0YxlnnFoVYwcv1Z0ychPus12bGGryes2bkYSn5cy3CCkM2+6VWHu
+	DwBxa0Sfeutt9SoR5JssGiSLkRT/MHRLuFyLUgSjBzEAM7PiUks+SHJP7HYPRbEDJlCatWaxxc5
+	E
+X-Google-Smtp-Source: AGHT+IFW5CEBYhzALxXCksz+6erFGDbOmMO5OMbeY6g6XH537154GSrdZOTT0Qio7/F65yK3LXhxZg==
+X-Received: by 2002:a25:a128:0:b0:dff:2e22:a188 with SMTP id 3f1490d57ef6-e036eaf7d99mr9032705276.1.1719905988717;
+        Tue, 02 Jul 2024 00:39:48 -0700 (PDT)
 Received: from MVIN00040.mvista.com ([49.207.211.89])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-64a9bb50350sm16617767b3.90.2024.07.02.00.05.13
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e036346ef9csm1298939276.47.2024.07.02.00.39.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 00:05:15 -0700 (PDT)
+        Tue, 02 Jul 2024 00:39:47 -0700 (PDT)
 From: Rohini Sangam <rsangam@mvista.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Rohini Sangam <rsangam@mvista.com>,
 	Siddharth Doshi <sdoshi@mvista.com>
-Subject: [meta-java][kirkstone][PATCH] openjdk-8: Security fix for CVE-2024-21094
-Date: Tue,  2 Jul 2024 12:35:07 +0530
-Message-Id: <20240702070507.18385-1-rsangam@mvista.com>
+Subject: [meta-java][master][PATCH] openjdk-8: Security fix for CVE-2024-21094
+Date: Tue,  2 Jul 2024 13:09:34 +0530
+Message-Id: <20240702073934.21734-1-rsangam@mvista.com>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 02 Jul 2024 07:05:27 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/406
+ <yocto-patches@lists.yoctoproject.org>; Tue, 02 Jul 2024 07:39:57 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/407
 
 CVE fixed:
 -CVE-2024-21094 OpenJDK: C2 compilation fails with "Exceeded _node_regs array" (8317507)
