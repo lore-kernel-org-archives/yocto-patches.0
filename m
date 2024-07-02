@@ -1,245 +1,95 @@
-Return-Path: <richard.purdie@linuxfoundation.org>
+Return-Path: <vanusuri@mvista.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 576FDC30658
-	for <webhook@archiver.kernel.org>; Tue,  2 Jul 2024 06:44:17 +0000 (UTC)
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
- by mx.groups.io with SMTP id smtpd.web11.16028.1719889413936154987
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EE87C30658
+	for <webhook@archiver.kernel.org>; Tue,  2 Jul 2024 06:50:27 +0000 (UTC)
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+ by mx.groups.io with SMTP id smtpd.web11.18817.1719903005352411346
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 01 Jul 2024 20:03:34 -0700
+ Mon, 01 Jul 2024 23:50:05 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@mvista.com header.s=google header.b=dD0iFgYb;
- spf=pass (domain: mvista.com, ip: 209.85.128.176, mailfrom: vanusuri@mvista.com)
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-64a6bf15db9so31157107b3.0
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 01 Jul 2024 20:03:33 -0700 (PDT)
+ dkim=pass header.i=@mvista.com header.s=google header.b=DTFDxE3W;
+ spf=pass (domain: mvista.com, ip: 209.85.210.175, mailfrom: vanusuri@mvista.com)
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-70683d96d0eso2240423b3a.0
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 01 Jul 2024 23:50:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mvista.com; s=google; t=1719889412; x=1720494212; darn=lists.yoctoproject.org;
+        d=mvista.com; s=google; t=1719903004; x=1720507804; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IYmNEztYcdtN61eXGoacaAGdZRg87Dak9obwFto0l0Y=;
-        b=dD0iFgYbXBZ30FIYPp5clp099di+2OJ9z7g4EJ58mUFdWD3D5WoiRkPU1ElOABeU1t
-         upyKoB0u+aPlAVBt0wzJGqkTVK7vCjukTR0ZYMz10ln/a2whosBc+PBCYxSTi45K6pXJ
-         4Efmk8DFKfUORIL/tL8JKjbzrBCb0WOfq0bmM=
+        bh=E9H4VEuvSgeuWlQdJRFaipXQscKbeS9QwN9X8W4VGiI=;
+        b=DTFDxE3W6GKNXnrI8031WMRvQ8FK7XBOplvFrv7Wef/ftqUKlqxzlA0rB75TCOQ8eG
+         9WuJTQ/xNJ3BR9Zg6vDUUpZ/54v5W/B4arNGYaY2jRF+5mRewui/h880xd3LB2XxHusI
+         xDjlCTuXiweIprg0w/Cu+5X8/E5qLUab2xGUw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719889412; x=1720494212;
+        d=1e100.net; s=20230601; t=1719903004; x=1720507804;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=IYmNEztYcdtN61eXGoacaAGdZRg87Dak9obwFto0l0Y=;
-        b=B6nQi4cjdg+XH5A0vAzklfho+2sJRMLN7nW3qVD9fxN7CGBmoff1Oph2m7NEG4nPSW
-         4221z3C1Qa3VKXYp44Byzj4VsBVTjI80a6OUeI5t9hjgCjRm1U4mcHu4tgbVgf/F1h1y
-         aKgKw2/k4YajwcN4+0NLC5W3T7Ea7iFwIlYOcE1bwt2JJDglQLXdN7ikNkIwwTy/lBn9
-         obFUaJhf2rb27NKmDNpP/BmIJXp3Ro+Cf63bJ5zBZUCDG5c1rdZmq1lK4RhcLYJBTydJ
-         84kB4DpVMi9lMYBwMRp0I/L+3lo35ZsWAr/d+Bm3mkSSIG3gZv3cDkvtZCNj6qJLv7ca
-         A+SA==
-X-Gm-Message-State: AOJu0YzD48bzrC/uTmz7bt05aOGAL0iTuJPTnFBpOGRrg7jnzsLpdMhe
-	sk1b4pN24QlQnkfXJiviJmpwS7336Q174zSF3iVu7ceWNdRt0eRUwJZ9u/fGg7s4O5Sm2Z/l6jh
-	j0+U=
-X-Google-Smtp-Source: AGHT+IFL3pvwooqF3YXQb2OkQwopS7WKWUhXy0zrOM3pqbyoK7vTI+pVaIJzF7QYiFB/TVBCcYSNnQ==
-X-Received: by 2002:a81:9215:0:b0:64a:f40d:5fd2 with SMTP id 00721157ae682-64c7161905amr69016447b3.12.1719889412000;
-        Mon, 01 Jul 2024 20:03:32 -0700 (PDT)
-Received: from MVIN00020.mvista.com ([2401:4900:882d:b0a8:36a3:3a26:48c8:602d])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-64a99c71a76sm16106397b3.10.2024.07.01.20.03.30
+        bh=E9H4VEuvSgeuWlQdJRFaipXQscKbeS9QwN9X8W4VGiI=;
+        b=GXjJTbfnwNFjQt0vSPerUsmVTsFfOw/BYW8qQ6DyrH2ZvY54L4BM3Vz4XTzWpw3zD2
+         0ylMmm+IavnxGgL0Xktrdw5URYEns9k9FlmleSTfVd43olhnM3ZFiE1VnsoGzG4IGW73
+         HhzhXupanHhpJTHzrMuWi7nuRMRg7GO8WxgXgJgB53Ef3TpEtBP53ulsqhGo16W/H0Xe
+         QtW/h/RoXUvBJo/GmqwzrHmq70njx/EKGrjtMYcy+Y6BXu5I3GVXIW6iSVTOukU201ez
+         MCyiU0G48Ywo8xw+6Xd5lbluNRWwahpysu6rlBK9QoSH4yj5urHB+gYwt67Am8WRnwtD
+         WjKQ==
+X-Gm-Message-State: AOJu0YyiotiXGCV1eTZIxnRLfqgIH9pHiLqvIaDybSOOSgPhEkUQ7hzK
+	9cigut8yjEtVH3BNN+Fi5ufSmvRR0zTdLWDlUi6iAW5hO5cSgheZjJWLpeIAkNsy3/0lE9h9Lp3
+	2M0k=
+X-Google-Smtp-Source: AGHT+IGykTo/Hg77goXzcRMCm6B4f6m1jp+lkwSqlng1+5eKmZJTGRtHt3edUwFa5yg0qki1q9bGEQ==
+X-Received: by 2002:a05:6a00:1388:b0:705:ccec:5eb2 with SMTP id d2e1a72fcca58-70aaaf08de8mr7413207b3a.31.1719903003790;
+        Mon, 01 Jul 2024 23:50:03 -0700 (PDT)
+Received: from MVIN00020.mvista.com ([2401:4900:882f:8929:cdac:a43:d5de:ddd8])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-708044ae3a0sm7913364b3a.173.2024.07.01.23.50.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 20:03:31 -0700 (PDT)
-From: "Vijay Anusuri" <vanusuri@mvista.com>
+        Mon, 01 Jul 2024 23:50:03 -0700 (PDT)
+From: vanusuri@mvista.com
 To: yocto-patches@lists.yoctoproject.org
 Cc: Vijay Anusuri <vanusuri@mvista.com>
-Subject: [meta-security][kirkstone][PATCH] clamav: Fix for CVE-2024-20328
-Date: Tue,  2 Jul 2024 08:33:16 +0530
-Message-Id: <20240702030316.9697-1-vanusuri@mvista.com>
+Subject: [meta-security][master][PATCH] tpm2-tools: Upgrade 5.5 -> 5.7
+Date: Tue,  2 Jul 2024 12:19:49 +0530
+Message-Id: <20240702064949.1631187-1-vanusuri@mvista.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 02 Jul 2024 06:44:17 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/404
+ <yocto-patches@lists.yoctoproject.org>; Tue, 02 Jul 2024 06:50:27 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/405
 
 From: Vijay Anusuri <vanusuri@mvista.com>
 
-Upstream-Status: Backport [https://github.com/Cisco-Talos/clamav/commit/fe7638287bb11419474ea314652404e7e9b314b2]
+Include Security fixes:
+Fixed CVE-2024-29038
+Fixed CVE-2024-29039
+
+Changelog:
+https://github.com/tpm2-software/tpm2-tools/releases/tag/5.7
+https://github.com/tpm2-software/tpm2-tools/releases/tag/5.6
 
 Signed-off-by: Vijay Anusuri <vanusuri@mvista.com>
 ---
- recipes-scanners/clamav/clamav_0.104.0.bb     |   1 +
- .../clamav/files/CVE-2024-20328.patch         | 153 ++++++++++++++++++
- 2 files changed, 154 insertions(+)
- create mode 100644 recipes-scanners/clamav/files/CVE-2024-20328.patch
+ .../tpm2-tools/{tpm2-tools_5.5.bb => tpm2-tools_5.7.bb}         | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+ rename meta-tpm/recipes-tpm2/tpm2-tools/{tpm2-tools_5.5.bb => tpm2-tools_5.7.bb} (83%)
 
-diff --git a/recipes-scanners/clamav/clamav_0.104.0.bb b/recipes-scanners/clamav/clamav_0.104.0.bb
-index 18e8329..9e6693f 100644
---- a/recipes-scanners/clamav/clamav_0.104.0.bb
-+++ b/recipes-scanners/clamav/clamav_0.104.0.bb
-@@ -21,6 +21,7 @@ SRC_URI = "git://github.com/vrtadmin/clamav-devel;branch=rel/0.104;protocol=http
-     file://headers_fixup.patch \
-     file://oe_cmake_fixup.patch \
-     file://fix_systemd_socket.patch \
-+    file://CVE-2024-20328.patch \
- "
- S = "${WORKDIR}/git"
+diff --git a/meta-tpm/recipes-tpm2/tpm2-tools/tpm2-tools_5.5.bb b/meta-tpm/recipes-tpm2/tpm2-tools/tpm2-tools_5.7.bb
+similarity index 83%
+rename from meta-tpm/recipes-tpm2/tpm2-tools/tpm2-tools_5.5.bb
+rename to meta-tpm/recipes-tpm2/tpm2-tools/tpm2-tools_5.7.bb
+index 9bad758..bb422cf 100644
+--- a/meta-tpm/recipes-tpm2/tpm2-tools/tpm2-tools_5.5.bb
++++ b/meta-tpm/recipes-tpm2/tpm2-tools/tpm2-tools_5.7.bb
+@@ -8,7 +8,7 @@ DEPENDS = "tpm2-tss openssl curl"
  
-diff --git a/recipes-scanners/clamav/files/CVE-2024-20328.patch b/recipes-scanners/clamav/files/CVE-2024-20328.patch
-new file mode 100644
-index 0000000..2f422cf
---- /dev/null
-+++ b/recipes-scanners/clamav/files/CVE-2024-20328.patch
-@@ -0,0 +1,153 @@
-+From fe7638287bb11419474ea314652404e7e9b314b2 Mon Sep 17 00:00:00 2001
-+From: Micah Snyder <micasnyd@cisco.com>
-+Date: Wed, 10 Jan 2024 12:09:15 -0500
-+Subject: [PATCH] ClamD: Disable VirusEvent '%f' feature, use environment var
-+ instead
-+
-+The '%f' filename format character has been disabled and will no longer
-+be replaced with the file name, due to command injection security concerns.
-+Use the 'CLAM_VIRUSEVENT_FILENAME' environment variable instead.
-+
-+For the same reason, you should NOT use the environment variables in the
-+command directly, but should use it carefully from your executed script.
-+
-+Upstream-Status: Backport [https://github.com/Cisco-Talos/clamav/commit/fe7638287bb11419474ea314652404e7e9b314b2]
-+CVE: CVE-2024-20328
-+Signed-off-by: Vijay Anusuri <vanusuri@mvista.com>
-+---
-+ clamd/clamd_others.c                  |  8 +++++---
-+ common/optparser.c                    |  2 +-
-+ docs/man/clamd.conf.5.in              | 14 ++++++++++----
-+ etc/clamd.conf.sample                 | 18 ++++++++++++------
-+ win32/conf_examples/clamd.conf.sample | 18 ++++++++++++------
-+ 5 files changed, 40 insertions(+), 20 deletions(-)
-+
-+diff --git a/clamd/clamd_others.c b/clamd/clamd_others.c
-+index 23f3b022c7..32d0701a0d 100644
-+--- a/clamd/clamd_others.c
-++++ b/clamd/clamd_others.c
-+@@ -101,6 +101,8 @@ void virusaction(const char *filename, const char *virname,
-+ #define VE_FILENAME "CLAM_VIRUSEVENT_FILENAME"
-+ #define VE_VIRUSNAME "CLAM_VIRUSEVENT_VIRUSNAME"
-+ 
-++#define FILENAME_DISABLED_MESSAGE "The filename format character has been disabled due to security concerns, use the 'CLAM_VIRUSEVENT_FILENAME' environment variable instead."
-++
-+ void virusaction(const char *filename, const char *virname,
-+                  const struct optstruct *opts)
-+ {
-+@@ -145,7 +147,7 @@ void virusaction(const char *filename, const char *virname,
-+     }
-+     len = strlen(opt->strarg);
-+     buffer_cmd =
-+-        (char *)calloc(len + v * strlen(virname) + f * strlen(filename) + 1, sizeof(char));
-++        (char *)calloc(len + v * strlen(virname) + f * strlen(FILENAME_DISABLED_MESSAGE) + 1, sizeof(char));
-+     if (!buffer_cmd) {
-+         if (path)
-+             xfree(env[0]);
-+@@ -160,8 +162,8 @@ void virusaction(const char *filename, const char *virname,
-+             j += strlen(virname);
-+             i++;
-+         } else if (i + 1 < len && opt->strarg[i] == '%' && opt->strarg[i + 1] == 'f') {
-+-            strcat(buffer_cmd, filename);
-+-            j += strlen(filename);
-++            strcat(buffer_cmd, FILENAME_DISABLED_MESSAGE);
-++            j += strlen(FILENAME_DISABLED_MESSAGE);
-+             i++;
-+         } else {
-+             buffer_cmd[j++] = opt->strarg[i];
-+diff --git a/common/optparser.c b/common/optparser.c
-+index a7bdbee064..1be7afe867 100644
-+--- a/common/optparser.c
-++++ b/common/optparser.c
-+@@ -333,7 +333,7 @@ const struct clam_option __clam_options[] = {
-+ 
-+     {"DisableCache", "disable-cache", 0, CLOPT_TYPE_BOOL, MATCH_BOOL, 0, NULL, 0, OPT_CLAMD | OPT_CLAMSCAN, "This option allows you to disable clamd's caching feature.", "no"},
-+ 
-+-    {"VirusEvent", NULL, 0, CLOPT_TYPE_STRING, NULL, -1, NULL, 0, OPT_CLAMD, "Execute a command when a virus is found. In the command string %v will be\nreplaced with the virus name and %f will be replaced with the file name.\nAdditionally, two environment variables will be defined: $CLAM_VIRUSEVENT_FILENAME\nand $CLAM_VIRUSEVENT_VIRUSNAME.", "/usr/bin/mailx -s \"ClamAV VIRUS ALERT: %v\" alert < /dev/null"},
-++    {"VirusEvent", NULL, 0, CLOPT_TYPE_STRING, NULL, -1, NULL, 0, OPT_CLAMD, "Execute a command when virus is found.\nUse the following environment variables to identify the file and virus names:\n- $CLAM_VIRUSEVENT_FILENAME\n- $CLAM_VIRUSEVENT_VIRUSNAME\nIn the command string, '%v' will also be replaced with the virus name.\nNote: The '%f' filename format character has been disabled and will no longer\nbe replaced with the file name, due to command injection security concerns.\nUse the 'CLAM_VIRUSEVENT_FILENAME' environment variable instead.\nFor the same reason, you should NOT use the environment variables in the\ncommand directly, but should use it carefully from your executed script.", "/opt/send_virus_alert_sms.sh"},
-+ 
-+     {"ExitOnOOM", NULL, 0, CLOPT_TYPE_BOOL, MATCH_BOOL, 0, NULL, 0, OPT_CLAMD, "Stop the daemon when libclamav reports an out of memory condition.", "yes"},
-+ 
-+diff --git a/docs/man/clamd.conf.5.in b/docs/man/clamd.conf.5.in
-+index 2d9748a39e..a9926533b9 100644
-+--- a/docs/man/clamd.conf.5.in
-++++ b/docs/man/clamd.conf.5.in
-+@@ -240,10 +240,16 @@ Enable non-blocking (multi-threaded/concurrent) database reloads. This feature w
-+ Default: yes
-+ .TP
-+ \fBVirusEvent COMMAND\fR
-+-Execute a command when a virus is found. In the command string %v will be
-+-replaced with the virus name and %f will be replaced with the file name.
-+-Additionally, two environment variables will be defined: $CLAM_VIRUSEVENT_FILENAME
-+-and $CLAM_VIRUSEVENT_VIRUSNAME.
-++Execute a command when virus is found.
-++Use the following environment variables to identify the file and virus names:
-++- $CLAM_VIRUSEVENT_FILENAME
-++- $CLAM_VIRUSEVENT_VIRUSNAME
-++In the command string, '%v' will also be replaced with the virus name.
-++Note: The '%f' filename format character has been disabled and will no longer
-++be replaced with the file name, due to command injection security concerns.
-++Use the 'CLAM_VIRUSEVENT_FILENAME' environment variable instead.
-++For the same reason, you should NOT use the environment variables in the
-++command directly, but should use it carefully from your executed script.
-+ \fR
-+ .br
-+ Default: disabled
-+diff --git a/etc/clamd.conf.sample b/etc/clamd.conf.sample
-+index 37fb03bf20..54738128da 100644
-+--- a/etc/clamd.conf.sample
-++++ b/etc/clamd.conf.sample
-+@@ -209,12 +209,18 @@ Example
-+ # Default: yes
-+ #ConcurrentDatabaseReload no
-+ 
-+-# Execute a command when virus is found. In the command string %v will
-+-# be replaced with the virus name and %f will be replaced with the file name.
-+-# Additionally, two environment variables will be defined: $CLAM_VIRUSEVENT_FILENAME
-+-# and $CLAM_VIRUSEVENT_VIRUSNAME.
-+-# Default: no
-+-#VirusEvent /usr/local/bin/send_sms 123456789 "VIRUS ALERT: %v in %f"
-++# Execute a command when virus is found.
-++# Use the following environment variables to identify the file and virus names:
-++# - $CLAM_VIRUSEVENT_FILENAME
-++# - $CLAM_VIRUSEVENT_VIRUSNAME
-++# In the command string, '%v' will also be replaced with the virus name.
-++# Note: The '%f' filename format character has been disabled and will no longer
-++# be replaced with the file name, due to command injection security concerns.
-++# Use the 'CLAM_VIRUSEVENT_FILENAME' environment variable instead.
-++# For the same reason, you should NOT use the environment variables in the
-++# command directly, but should use it carefully from your executed script.
-++# Default: no
-++#VirusEvent /opt/send_virus_alert_sms.sh
-+ 
-+ # Run as another user (clamd must be started by root for this option to work)
-+ # Default: don't drop privileges
-+diff --git a/win32/conf_examples/clamd.conf.sample b/win32/conf_examples/clamd.conf.sample
-+index 5a8a9cfeae..a4813f99cb 100644
-+--- a/win32/conf_examples/clamd.conf.sample
-++++ b/win32/conf_examples/clamd.conf.sample
-+@@ -182,12 +182,18 @@ TCPAddr localhost
-+ # Default: yes
-+ #ConcurrentDatabaseReload no
-+ 
-+-# Execute a command when virus is found. In the command string %v will
-+-# be replaced with the virus name and %f will be replaced with the file name.
-+-# Additionally, two environment variables will be defined: $CLAM_VIRUSEVENT_FILENAME
-+-# and $CLAM_VIRUSEVENT_VIRUSNAME.
-+-# Default: no
-+-#VirusEvent "C:\example\SendEmail.ps1" email@addresscom "VIRUS ALERT: %v in %f"
-++# Execute a command when virus is found.
-++# Use the following environment variables to identify the file and virus names:
-++# - $CLAM_VIRUSEVENT_FILENAME
-++# - $CLAM_VIRUSEVENT_VIRUSNAME
-++# In the command string, '%v' will also be replaced with the virus name.
-++# Note: The '%f' filename format character has been disabled and will no longer
-++# be replaced with the file name, due to command injection security concerns.
-++# Use the 'CLAM_VIRUSEVENT_FILENAME' environment variable instead.
-++# For the same reason, you should NOT use the environment variables in the
-++# command directly, but should use it carefully from your executed script.
-++# Default: no
-++#VirusEvent "C:\example\SendVirusAlertEmail.ps1"
-+ 
-+ # Run as another user (clamd must be started by root for this option to work)
-+ # Default: don't drop privileges
+ SRC_URI = "https://github.com/tpm2-software/${BPN}/releases/download/${PV}/${BPN}-${PV}.tar.gz"
+ 
+-SRC_URI[sha256sum] = "1fdb49c730537bfdaed088884881a61e3bfd121e957ec0bdceeec0261236c123"
++SRC_URI[sha256sum] = "3810d36b5079256f4f2f7ce552e22213d43b1031c131538df8a2dbc3c570983a"
+ 
+ UPSTREAM_CHECK_URI = "https://github.com/tpm2-software/${BPN}/releases"
+ 
 -- 
 2.25.1
 
