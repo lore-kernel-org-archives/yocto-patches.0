@@ -1,62 +1,62 @@
-Return-Path: <vanusuri@mvista.com>
+Return-Path: <richard.purdie@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6842DC3064D
-	for <webhook@archiver.kernel.org>; Tue,  2 Jul 2024 06:28:17 +0000 (UTC)
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
- by mx.groups.io with SMTP id smtpd.web10.18263.1719901691548768034
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 576FDC30658
+	for <webhook@archiver.kernel.org>; Tue,  2 Jul 2024 06:44:17 +0000 (UTC)
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+ by mx.groups.io with SMTP id smtpd.web11.16028.1719889413936154987
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 01 Jul 2024 23:28:11 -0700
+ Mon, 01 Jul 2024 20:03:34 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@mvista.com header.s=google header.b=f3rJOKjQ;
- spf=pass (domain: mvista.com, ip: 209.85.210.179, mailfrom: vanusuri@mvista.com)
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-706b53ee183so3286150b3a.1
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 01 Jul 2024 23:28:11 -0700 (PDT)
+ dkim=pass header.i=@mvista.com header.s=google header.b=dD0iFgYb;
+ spf=pass (domain: mvista.com, ip: 209.85.128.176, mailfrom: vanusuri@mvista.com)
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-64a6bf15db9so31157107b3.0
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 01 Jul 2024 20:03:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mvista.com; s=google; t=1719901690; x=1720506490; darn=lists.yoctoproject.org;
+        d=mvista.com; s=google; t=1719889412; x=1720494212; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
         bh=IYmNEztYcdtN61eXGoacaAGdZRg87Dak9obwFto0l0Y=;
-        b=f3rJOKjQ9ZHN9C4cmFRSFmKYl8KvHG3q3MKyYQu543PRoq3MXWdztOE21lfhvk1vqF
-         liOihe/6+lC6JE3eFP1CoPRl9fRhhmWOJ0XtXRXraVdUkgYNHoJP/inXaAwzbWpAdeIk
-         3Obuzn0Rf/qN4cHZ4y19kcnU6aZjDwPaZWWp4=
+        b=dD0iFgYbXBZ30FIYPp5clp099di+2OJ9z7g4EJ58mUFdWD3D5WoiRkPU1ElOABeU1t
+         upyKoB0u+aPlAVBt0wzJGqkTVK7vCjukTR0ZYMz10ln/a2whosBc+PBCYxSTi45K6pXJ
+         4Efmk8DFKfUORIL/tL8JKjbzrBCb0WOfq0bmM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719901690; x=1720506490;
+        d=1e100.net; s=20230601; t=1719889412; x=1720494212;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
         bh=IYmNEztYcdtN61eXGoacaAGdZRg87Dak9obwFto0l0Y=;
-        b=hs0rK7ITwa24EhLhztuiTrxS3+tQzyH/XdoDveXINUmTzcL3IIlSim22sdn7B0BZRF
-         XRyyNVpWMt0kKWqhVn92GLXIFqexgel6VPFVbXaFefFMi260k0CL1DZBBVq5WhxPno1m
-         650Qwuz3GqVa4RWF6Z32JLaWbiMHkLDo2otrSTynWf4eo11itBPR6o3nCOpsVOB+VZJH
-         O7QkwvnURqubsd/sjjGDKKvrv391dH/c3SmQwWLKUPPSusTHM3MBwg4KjBlMwA1jyAz1
-         l9siCnKrisgctwYddFUbfXz2fDYdw8LI+6ij7bggxnqSCEubUNCOE4BnylGAlGwT6QvO
-         ygAA==
-X-Gm-Message-State: AOJu0YxNvedsM7jkH9FNJfjsjGV4efLWaYHLz9k/AXXjt5q7zH9i/tVa
-	uiITZo+Ot/8i5ijDYkUd1cqXGLKWMvuc1Gu4mLN51v+QQUyAm4rqBRyWubHMTobqAAh5ovID1+0
-	FHwk=
-X-Google-Smtp-Source: AGHT+IE+aGVMGHm1VOY3Ch6sdTxL21ksW1MijV9UyHDAwHhpA3bxdJ3B1IzyyKA5r85xfr1QuDXSXg==
-X-Received: by 2002:a05:6a20:729c:b0:1be:3546:4a92 with SMTP id adf61e73a8af0-1bef613802bmr12697827637.9.1719901689752;
-        Mon, 01 Jul 2024 23:28:09 -0700 (PDT)
-Received: from MVIN00020.mvista.com ([2401:4900:882f:8929:cdac:a43:d5de:ddd8])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-708044adb98sm7865945b3a.172.2024.07.01.23.28.07
+        b=B6nQi4cjdg+XH5A0vAzklfho+2sJRMLN7nW3qVD9fxN7CGBmoff1Oph2m7NEG4nPSW
+         4221z3C1Qa3VKXYp44Byzj4VsBVTjI80a6OUeI5t9hjgCjRm1U4mcHu4tgbVgf/F1h1y
+         aKgKw2/k4YajwcN4+0NLC5W3T7Ea7iFwIlYOcE1bwt2JJDglQLXdN7ikNkIwwTy/lBn9
+         obFUaJhf2rb27NKmDNpP/BmIJXp3Ro+Cf63bJ5zBZUCDG5c1rdZmq1lK4RhcLYJBTydJ
+         84kB4DpVMi9lMYBwMRp0I/L+3lo35ZsWAr/d+Bm3mkSSIG3gZv3cDkvtZCNj6qJLv7ca
+         A+SA==
+X-Gm-Message-State: AOJu0YzD48bzrC/uTmz7bt05aOGAL0iTuJPTnFBpOGRrg7jnzsLpdMhe
+	sk1b4pN24QlQnkfXJiviJmpwS7336Q174zSF3iVu7ceWNdRt0eRUwJZ9u/fGg7s4O5Sm2Z/l6jh
+	j0+U=
+X-Google-Smtp-Source: AGHT+IFL3pvwooqF3YXQb2OkQwopS7WKWUhXy0zrOM3pqbyoK7vTI+pVaIJzF7QYiFB/TVBCcYSNnQ==
+X-Received: by 2002:a81:9215:0:b0:64a:f40d:5fd2 with SMTP id 00721157ae682-64c7161905amr69016447b3.12.1719889412000;
+        Mon, 01 Jul 2024 20:03:32 -0700 (PDT)
+Received: from MVIN00020.mvista.com ([2401:4900:882d:b0a8:36a3:3a26:48c8:602d])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-64a99c71a76sm16106397b3.10.2024.07.01.20.03.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 23:28:09 -0700 (PDT)
-From: vanusuri@mvista.com
+        Mon, 01 Jul 2024 20:03:31 -0700 (PDT)
+From: "Vijay Anusuri" <vanusuri@mvista.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Vijay Anusuri <vanusuri@mvista.com>
 Subject: [meta-security][kirkstone][PATCH] clamav: Fix for CVE-2024-20328
-Date: Tue,  2 Jul 2024 11:57:59 +0530
-Message-Id: <20240702062759.1557557-1-vanusuri@mvista.com>
+Date: Tue,  2 Jul 2024 08:33:16 +0530
+Message-Id: <20240702030316.9697-1-vanusuri@mvista.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 02 Jul 2024 06:28:17 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/403
+ <yocto-patches@lists.yoctoproject.org>; Tue, 02 Jul 2024 06:44:17 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/404
 
 From: Vijay Anusuri <vanusuri@mvista.com>
 
