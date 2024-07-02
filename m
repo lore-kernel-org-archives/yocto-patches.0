@@ -1,43 +1,57 @@
-Return-Path: <steve@sakoman.com>
+Return-Path: <ross.burton@arm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26671C3064D
-	for <webhook@archiver.kernel.org>; Tue,  2 Jul 2024 11:53:39 +0000 (UTC)
-Subject: Re: [yocto-autobuilder-helper][PATCH 0/3] scripts: send_qa_email: skip regression report when missing base or target
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D774AC3064D
+	for <webhook@archiver.kernel.org>; Tue,  2 Jul 2024 15:00:19 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+ by mx.groups.io with SMTP id smtpd.web11.27030.1719932416147842092
+ for <yocto-patches@lists.yoctoproject.org>;
+ Tue, 02 Jul 2024 08:00:16 -0700
+Authentication-Results: mx.groups.io;
+ dkim=none (message not signed); spf=pass (domain: arm.com, ip: 217.140.110.172, mailfrom: ross.burton@arm.com)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9B3B5339
+	for <yocto-patches@lists.yoctoproject.org>; Tue,  2 Jul 2024 08:00:40 -0700 (PDT)
+Received: from cesw-amp-gbt-1s-m12830-04.oss.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3F4A03F766
+	for <yocto-patches@lists.yoctoproject.org>; Tue,  2 Jul 2024 08:00:15 -0700 (PDT)
+From: Ross Burton <ross.burton@arm.com>
 To: yocto-patches@lists.yoctoproject.org
-From: "Steve Sakoman" <steve@sakoman.com>
-X-Originating-Location: US (98.142.47.158)
-X-Originating-Platform: Linux Chrome 126
-User-Agent: GROUPS.IO Web Poster
+Subject: [PATCH][yocto-autobuilder2] config.py: meta-webosose now depends on meta-security
+Date: Tue,  2 Jul 2024 16:00:10 +0100
+Message-Id: <20240702150010.1003898-1-ross.burton@arm.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Date: Tue, 02 Jul 2024 04:53:34 -0700
-References: <20240621155723.33600-1-alexis.lothore@bootlin.com>
-In-Reply-To: <20240621155723.33600-1-alexis.lothore@bootlin.com>
-Message-ID: <13008.1719921214270264486@lists.yoctoproject.org>
-Content-Type: multipart/alternative; boundary="xLKoaFl1gf3PEegLXlmZ"
+Content-Transfer-Encoding: quoted-printable
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 02 Jul 2024 11:53:39 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/409
+ <yocto-patches@lists.yoctoproject.org>; Tue, 02 Jul 2024 15:00:19 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/410
 
---xLKoaFl1gf3PEegLXlmZ
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Ross Burton <ross.burton@arm.com>
+---
+ config.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I've tested this series with stable/scarthgap-nut and can confirm that it f=
-ixes the persistent failures in send-qa-email that I've been seeing.
+diff --git a/config.py b/config.py
+index d25747c..6b23cda 100644
+--- a/config.py
++++ b/config.py
+@@ -33,7 +33,7 @@ buildertorepos =3D {
+     "auh":  ["poky", "auto-upgrade-helper"],
+     "auh-meta-oe":  ["poky", "meta-openembedded", "auto-upgrade-helper"]=
+,
+     "metrics":  ["poky", "meta-openembedded"],
+-    "meta-webosose":  ["poky", "meta-clang", "meta-openembedded", "meta-=
+qt6", "meta-webosose"],
++    "meta-webosose":  ["poky", "meta-clang", "meta-openembedded", "meta-=
+qt6", "meta-webosose", "meta-security"],
+     "default": ["poky"]
+ }
+=20
+--=20
+2.34.1
 
-Steve
-
---xLKoaFl1gf3PEegLXlmZ
-Content-Type: text/html; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-
-I've tested this series with stable/scarthgap-nut and can confirm that it f=
-ixes the persistent failures in send-qa-email that I've been seeing.<br /><=
-br />Steve&nbsp;
-
---xLKoaFl1gf3PEegLXlmZ--
 
