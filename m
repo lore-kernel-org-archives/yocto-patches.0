@@ -2,59 +2,115 @@ Return-Path: <ross.burton@arm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91A99C3DA42
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A689CC3DA45
 	for <webhook@archiver.kernel.org>; Wed, 10 Jul 2024 11:46:30 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mx.groups.io with SMTP id smtpd.web11.12401.1720611983008455889
+ by mx.groups.io with SMTP id smtpd.web11.12403.1720611983777278329
  for <yocto-patches@lists.yoctoproject.org>;
  Wed, 10 Jul 2024 04:46:23 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: arm.com, ip: 217.140.110.172, mailfrom: ross.burton@arm.com)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B9C68106F
-	for <yocto-patches@lists.yoctoproject.org>; Wed, 10 Jul 2024 04:46:47 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6F7A0106F
+	for <yocto-patches@lists.yoctoproject.org>; Wed, 10 Jul 2024 04:46:48 -0700 (PDT)
 Received: from cesw-amp-gbt-1s-m12830-04.oss.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 1F7F63F766
-	for <yocto-patches@lists.yoctoproject.org>; Wed, 10 Jul 2024 04:46:21 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id CEFB73F766
+	for <yocto-patches@lists.yoctoproject.org>; Wed, 10 Jul 2024 04:46:22 -0700 (PDT)
 From: Ross Burton <ross.burton@arm.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [PATCH][yocto-autobuilder-helper kirkstone 1/2] layer-config: Allow layer add to be disabled on a per target basis
-Date: Wed, 10 Jul 2024 12:46:15 +0100
-Message-Id: <20240710114616.1486962-1-ross.burton@arm.com>
+Subject: [PATCH][yocto-autobuilder-helper kirkstone 2/2] config.json: add a builder for meta-webose
+Date: Wed, 10 Jul 2024 12:46:16 +0100
+Message-Id: <20240710114616.1486962-2-ross.burton@arm.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240710114616.1486962-1-ross.burton@arm.com>
+References: <20240710114616.1486962-1-ross.burton@arm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Wed, 10 Jul 2024 11:46:30 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/419
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/420
 
-From: Richard Purdie <richard.purdie@linuxfoundation.org>
+Add a minimal (although still substantial) build of meta-webose for LG.
+Because meta-webose has complex layer appends and dependencies we need
+to manually set BBFILE_PRIORITY and rewrite bblayer.conf to match what
+their custom build scripts currently do.
 
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+Backported from master, with the target default branch changed to
+kirkstone-webos.
+
 Signed-off-by: Ross Burton <ross.burton@arm.com>
 ---
- scripts/layer-config | 3 +++
- 1 file changed, 3 insertions(+)
+ config.json | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-diff --git a/scripts/layer-config b/scripts/layer-config
-index bb1b681e..91d6200d 100755
---- a/scripts/layer-config
-+++ b/scripts/layer-config
-@@ -55,6 +55,9 @@ for repo in needrepos:
-     repo_basename =3D repo.split('/')[0]
-     if repo_basename in repos and "no-layer-add" in repos[repo_basename]=
- and repos[repo_basename]["no-layer-add"]:
-         continue
-+    nolayeradd =3D utils.getconfiglist("NOLAYERADD", ourconfig, args.tar=
-get, None)
-+    if repo_basename in nolayeradd:
-+        continue
-     try:
-         bitbakecmd(args.abworkdir, "bitbake-layers add-layer %s" % (args=
-.abworkdir + "/" + repo))
-     except subprocess.CalledProcessError as e:
+diff --git a/config.json b/config.json
+index cc6d45c1..d0e9fcbf 100644
+--- a/config.json
++++ b/config.json
+@@ -1199,6 +1199,32 @@
+                     "EXTRACMDS" : ["${SCRIPTSDIR}/checkvnc; DISPLAY=3D:1=
+ oe-selftest -r buildoptions.SourceMirroring.test_yocto_source_mirror"]
+             }
+         },
++        "meta-webosose" : {
++            "NEEDREPOS" : ["poky", "meta-webosose", "meta-clang", "meta-=
+openembedded", "meta-qt6"],
++            "DISTRO": "webos",
++            "MACHINE": "qemux86-64",
++            "NOLAYERADD": ["meta-clang", "meta-qt6", "meta-webosose", "m=
+eta-openembedded"],
++            "extravars" : [
++                "WEBOS_TARGET_DISTRO_VARIANT =3D 'minimal'",
++                "PACKAGE_CLASSES =3D 'package_ipk'",
++                "IMAGE_FEATURES:remove =3D 'webos-extract-ls2-api'",
++                "BBFILE_PRIORITY_openembedded-layer:forcevariable =3D '1=
+0'",
++                "BBFILE_PRIORITY_multimedia-layer:forcevariable =3D '11'=
+",
++                "BBFILE_PRIORITY_networking-layer:forcevariable =3D '12'=
+",
++                "BBFILE_PRIORITY_meta-python:forcevariable =3D '13'",
++                "BBFILE_PRIORITY_filesystems-layer:forcevariable =3D '14=
+'",
++                "BBFILE_PRIORITY_clang-layer:forcevariable =3D '15'",
++                "BBFILE_PRIORITY_qt6-layer:forcevariable =3D '20'"
++            ],
++            "step1": {
++                "shortname": "Fix bblayers.conf",
++                "EXTRACMDS": ["echo 'BBLAYERS =3D \" \\' >> conf/bblayer=
+s.conf; for i in meta-poky meta-yocto-bsp meta-webosose/meta-webos meta-w=
+ebosose/meta-webos-backports/meta-webos-backports-5.0 meta-webosose/meta-=
+webos-backports/meta-webos-backports-4.3 meta-webosose/meta-webos-backpor=
+ts/meta-webos-backports-4.2 meta-webosose/meta-webos-backports/meta-webos=
+-backports-4.1 meta-qt6 meta-clang meta-openembedded/meta-filesystems met=
+a-openembedded/meta-python meta-openembedded/meta-networking meta-openemb=
+edded/meta-multimedia meta-openembedded/meta-oe meta; do echo \" ${HELPER=
+BUILDDIR}/../$i \\ \" >> conf/bblayers.conf; done; echo '\"' >> conf/bbla=
+yers.conf"]
++            },
++            "step2" : {
++                "shortname" : "Build webos-image",
++                "BBTARGETS" : "webos-image"
++            }
++        },
+         "a-quick" : {
+             "TEMPLATE" : "trigger-build"
+         },
+@@ -1305,6 +1331,12 @@
+             "branch" : "master",
+             "revision" : "HEAD",
+             "no-layer-add" : true
++        },
++        "meta-webosose" : {
++            "url" : "https://github.com/webosose/meta-webosose.git",
++            "branch" : "kirkstone-webos",
++            "revision" : "HEAD",
++            "no-layer-add" : true
+         }
+     },
+     "buildtools" : {
 --=20
 2.34.1
 
