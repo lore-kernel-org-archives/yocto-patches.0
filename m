@@ -1,84 +1,114 @@
-Return-Path: <Jiaying.Song.CN@windriver.com>
+Return-Path: <ross.burton@arm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90852C38150
-	for <webhook@archiver.kernel.org>; Wed, 10 Jul 2024 05:56:37 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
- by mx.groups.io with SMTP id smtpd.web10.7567.1720590991698865414
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1131C3DA45
+	for <webhook@archiver.kernel.org>; Wed, 10 Jul 2024 11:46:10 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+ by mx.groups.io with SMTP id smtpd.web10.12430.1720611966520967798
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 09 Jul 2024 22:56:31 -0700
+ Wed, 10 Jul 2024 04:46:06 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.178.238, mailfrom: prvs=7921d6a311=jiaying.song.cn@windriver.com)
-Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46A3qXsM002105
-	for <yocto-patches@lists.yoctoproject.org>; Wed, 10 Jul 2024 05:56:31 GMT
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 406u4x3gsm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <yocto-patches@lists.yoctoproject.org>; Wed, 10 Jul 2024 05:56:30 +0000 (GMT)
-Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 9 Jul 2024 22:56:29 -0700
-Received: from pek-lpg-core3.wrs.com (128.224.153.232) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
- 15.1.2507.39 via Frontend Transport; Tue, 9 Jul 2024 22:56:28 -0700
-From: <jiaying.song.cn@windriver.com>
-To: <yocto-patches@lists.yoctoproject.org>
-Subject: [scarthgap][master][meta-xilinx-core][PATCH] boot-jtag.py: Remove unused 'yaml' import
-Date: Wed, 10 Jul 2024 13:56:27 +0800
-Message-ID: <20240710055627.2917807-1-jiaying.song.cn@windriver.com>
+ dkim=none (message not signed); spf=pass (domain: arm.com, ip: 217.140.110.172, mailfrom: ross.burton@arm.com)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 03599106F
+	for <yocto-patches@lists.yoctoproject.org>; Wed, 10 Jul 2024 04:46:31 -0700 (PDT)
+Received: from cesw-amp-gbt-1s-m12830-04.oss.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 5FFB53F766
+	for <yocto-patches@lists.yoctoproject.org>; Wed, 10 Jul 2024 04:46:05 -0700 (PDT)
+From: Ross Burton <ross.burton@arm.com>
+To: yocto-patches@lists.yoctoproject.org
+Subject: [PATCH][yocto-autobuilder-helper master] config.json: add a builder for meta-webose
+Date: Wed, 10 Jul 2024 12:45:58 +0100
+Message-Id: <20240710114558.1486869-1-ross.burton@arm.com>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-ORIG-GUID: YVmpwKIb8EfbRfbIXYy_4avhhbeLgKda
-X-Proofpoint-GUID: YVmpwKIb8EfbRfbIXYy_4avhhbeLgKda
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-10_02,2024-07-09_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
- malwarescore=0 bulkscore=0 clxscore=1015 spamscore=0 mlxlogscore=893
- priorityscore=1501 lowpriorityscore=0 suspectscore=0 phishscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.21.0-2406140001 definitions=main-2407100044
 Content-Transfer-Encoding: quoted-printable
-X-MIME-Autoconverted: from 8bit to quoted-printable by mx0a-0064b401.pphosted.com id 46A3qXsM002105
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 10 Jul 2024 05:56:37 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/417
+ <yocto-patches@lists.yoctoproject.org>; Wed, 10 Jul 2024 11:46:10 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/418
 
-From: Jiaying Song <jiaying.song.cn@windriver.com>
+Add a minimal (although still substantial) build of meta-webose for LG.
+Because meta-webose has complex layer appends and dependencies we need
+to manually set BBFILE_PRIORITY and rewrite bblayer.conf to match what
+their custom build scripts currently do.
 
-Due to the 'yaml' was not actually used in bootjtag.py and the following
-error was reported during construction, the 'import yaml' statement will
-be deleted.
+Builds against oe-core master are known to not work at present, but this
+will be backported to kirkstone which is the latest supported release.
 
-Error log=EF=BC=9A
-File "/layers/meta-xilinx/meta-xilinx-core/lib/devtool/boot-jtag.py", lin=
-e 14, in <module>\n    import yaml\nModuleNotFoundError: No module named =
-\'yaml\'\n')
-
-Signed-off-by: Jiaying Song <jiaying.song.cn@windriver.com>
+Signed-off-by: Ross Burton <ross.burton@arm.com>
 ---
- meta-xilinx-core/lib/devtool/boot-jtag.py | 1 -
- 1 file changed, 1 deletion(-)
+ config.json | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-diff --git a/meta-xilinx-core/lib/devtool/boot-jtag.py b/meta-xilinx-core=
-/lib/devtool/boot-jtag.py
-index 53d70262..51eb0dd4 100644
---- a/meta-xilinx-core/lib/devtool/boot-jtag.py
-+++ b/meta-xilinx-core/lib/devtool/boot-jtag.py
-@@ -11,7 +11,6 @@ import os
- import logging
- import argparse
- from devtool import setup_tinfoil, parse_recipe, DevtoolError
--import yaml
- import sys
- import glob
-=20
+diff --git a/config.json b/config.json
+index 4a7099a7..1acdbc91 100644
+--- a/config.json
++++ b/config.json
+@@ -1748,6 +1748,32 @@
+                     "EXTRACMDS" : ["${SCRIPTSDIR}/checkvnc; DISPLAY=3D:1=
+ oe-selftest -r buildoptions.SourceMirroring.test_yocto_source_mirror"]
+             }
+         },
++        "meta-webosose" : {
++            "NEEDREPOS" : ["poky", "meta-webosose", "meta-clang", "meta-=
+openembedded", "meta-qt6"],
++            "DISTRO": "webos",
++            "MACHINE": "qemux86-64",
++            "NOLAYERADD": ["meta-clang", "meta-qt6", "meta-webosose", "m=
+eta-openembedded"],
++            "extravars" : [
++                "WEBOS_TARGET_DISTRO_VARIANT =3D 'minimal'",
++                "PACKAGE_CLASSES =3D 'package_ipk'",
++                "IMAGE_FEATURES:remove =3D 'webos-extract-ls2-api'",
++                "BBFILE_PRIORITY_openembedded-layer:forcevariable =3D '1=
+0'",
++                "BBFILE_PRIORITY_multimedia-layer:forcevariable =3D '11'=
+",
++                "BBFILE_PRIORITY_networking-layer:forcevariable =3D '12'=
+",
++                "BBFILE_PRIORITY_meta-python:forcevariable =3D '13'",
++                "BBFILE_PRIORITY_filesystems-layer:forcevariable =3D '14=
+'",
++                "BBFILE_PRIORITY_clang-layer:forcevariable =3D '15'",
++                "BBFILE_PRIORITY_qt6-layer:forcevariable =3D '20'"
++            ],
++            "step1": {
++                "shortname": "Fix bblayers.conf",
++                "EXTRACMDS": ["echo 'BBLAYERS =3D \" \\' >> conf/bblayer=
+s.conf; for i in meta-poky meta-yocto-bsp meta-webosose/meta-webos meta-w=
+ebosose/meta-webos-backports/meta-webos-backports-5.0 meta-webosose/meta-=
+webos-backports/meta-webos-backports-4.3 meta-webosose/meta-webos-backpor=
+ts/meta-webos-backports-4.2 meta-webosose/meta-webos-backports/meta-webos=
+-backports-4.1 meta-qt6 meta-clang meta-openembedded/meta-filesystems met=
+a-openembedded/meta-python meta-openembedded/meta-networking meta-openemb=
+edded/meta-multimedia meta-openembedded/meta-oe meta; do echo \" ${HELPER=
+BUILDDIR}/../$i \\ \" >> conf/bblayers.conf; done; echo '\"' >> conf/bbla=
+yers.conf"]
++            },
++            "step2" : {
++                "shortname" : "Build webos-image",
++                "BBTARGETS" : "webos-image"
++            }
++        },
+         "a-quick" : {
+             "TEMPLATE" : "trigger-build"
+         },
+@@ -1894,6 +1920,12 @@
+             "revision" : "HEAD",
+             "no-layer-add" : true
+         },
++        "meta-webosose" : {
++            "url" : "https://github.com/webosose/meta-webosose.git",
++            "branch" : "master",
++            "revision" : "HEAD",
++            "no-layer-add" : true
++        },
+         "auto-upgrade-helper" : {
+             "url" : "git://git.yoctoproject.org/auto-upgrade-helper",
+             "branch" : "master",
 --=20
 2.34.1
 
