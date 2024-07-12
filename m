@@ -1,1216 +1,630 @@
-Return-Path: <rsangam@mvista.com>
+Return-Path: <hprajapati@mvista.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD5E0C3DA41
-	for <webhook@archiver.kernel.org>; Thu, 11 Jul 2024 07:07:59 +0000 (UTC)
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
- by mx.groups.io with SMTP id smtpd.web10.6262.1720681675234872002
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 299AAC3DA45
+	for <webhook@archiver.kernel.org>; Fri, 12 Jul 2024 06:05:40 +0000 (UTC)
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+ by mx.groups.io with SMTP id smtpd.web11.1607.1720764337597943419
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 11 Jul 2024 00:07:55 -0700
+ Thu, 11 Jul 2024 23:05:37 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@mvista.com header.s=google header.b=D9oX2GzR;
- spf=pass (domain: mvista.com, ip: 209.85.218.49, mailfrom: rsangam@mvista.com)
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a77baa87743so59612366b.3
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 11 Jul 2024 00:07:54 -0700 (PDT)
+ dkim=pass header.i=@mvista.com header.s=google header.b=bTn5yHXf;
+ spf=pass (domain: mvista.com, ip: 209.85.128.169, mailfrom: hprajapati@mvista.com)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6512866fa87so17818137b3.2
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 11 Jul 2024 23:05:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mvista.com; s=google; t=1720681673; x=1721286473; darn=lists.yoctoproject.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=f5S4FQJ+jbHFW6CayDUpMX8Bf4XFkg7BoYoB6RDtuAQ=;
-        b=D9oX2GzRZRqm9yuWbXPrc8Jpke+CEY9MWyA+m3G41uBP7eeCWy1EQmEYXMY48UT5Tm
-         KpyoRvvFWL7PrAMXLFvNSPNE7j6vlplLepSl+twoUpVI3ZnuyzAWG5SOpX06D66uI7WZ
-         wkMUYLGyE2/3OkPKZAyGGsMN6w2n+vKpGTCZo=
+        d=mvista.com; s=google; t=1720764336; x=1721369136; darn=lists.yoctoproject.org;
+        h=in-reply-to:from:content-language:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IsbhP+XzuaUdtzMGp+8V3HdrdteMiZicAYwl2D/Q5uw=;
+        b=bTn5yHXf0/pJnHF4Sh0z2to65Lnk3Xk2mV3mqGnVBxhAE0iFCxSsmkZ13d9vG8xNYE
+         ggbQLT+mlchZ5rcpSOwx90P8NfxTe+Va0tFtCYtdBebqo02j/N2tyzQ4MR/aqfie2VxF
+         rogsSuvjnFCd4Hd4XC3BjSs/70Cljh7HZnq9A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720681673; x=1721286473;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=f5S4FQJ+jbHFW6CayDUpMX8Bf4XFkg7BoYoB6RDtuAQ=;
-        b=Su+Esb/mw38D15ChRgiJXdzxWwAXvmH9YXppbUTTODrOMhMxsO1el8A0d81ruCegLd
-         /rXuBqj0FBBHhXQp/kSs05wsvin1OoRKizAqSdsm9+KfaWFsn7dkkIJtY7CINWWwZO+U
-         HaiGqNFKx99H/o6b0JS4ddd4myQ484X9+CeZQqoHE/LKPn0w/PN/FMFzZ/+QFw6CQHgl
-         c1KppzLaBIhuRNkakE4fnw58yeIX86RX8OIbbfFk0NMzGOc/2LV7shzT8sudzSic2Q0t
-         50Kfv6kycaXzE8zMRW0cGxeTB0aGrTW6IgN1R9d8D8mAabHScbu5o8PuToJybjgAo6qd
-         BZnQ==
-X-Gm-Message-State: AOJu0YzogpjUGN5wQtSYWq9uw1G9wQ85Z+ZIlnc1MPbes+NysdqJ7BXD
-	1iiX2xQ+cJxv2TWV518bIH7eE8vFVQcOD8ARK7lTZewQL+qUoqwOTyit0g3/83f1p4EnEr0rF8d
-	QUY+9DEG8cwBNSOhpEcOIdAm4qjHNVFDVd6paW2anXYjwb+bY
-X-Google-Smtp-Source: AGHT+IHKkzEbNg0hiwSRUR4zl37rYhbGuCNMbuPVbcY8IFY8MKI4zciZPOeeXOE1Q8qz6cOzhRlQLdqLzAqZ4vdy1So=
-X-Received: by 2002:a17:906:4118:b0:a77:e58d:d8db with SMTP id
- a640c23a62f3a-a780b6b35b9mr595201566b.32.1720681673204; Thu, 11 Jul 2024
- 00:07:53 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720764336; x=1721369136;
+        h=in-reply-to:from:content-language:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=IsbhP+XzuaUdtzMGp+8V3HdrdteMiZicAYwl2D/Q5uw=;
+        b=TmNSDOBSZVw9EATnfXbW98EhlZv/9YTw5RahRI57k1oltVTAgYEstaD+LqbhOY/f1Q
+         pBc2aopg8WghgW0hdQjCDRqYlpuN7wcsnyGkyGDyHXMAk8UAaSUPgyTfs8TQNXnphgaY
+         6xPukQNh/6hKir4W1Kyv9ElDJsINxqlLhvNlTYGlNyh0Nqq9LLvjYedu+nIZvVooVHKb
+         RqjLXgKfTzcaE1d7DGjcYo57NEYvs0uh2pOG2gGfpNA99xt+aV/G0Y9YKHIVRmlhCO8r
+         Pn1FEaSMucxlASMHMXbEg1q6Vjjv6J1d6qSa2KVVC/zEnmSkfKs+5I/pZCGVxk+FWInb
+         HEMA==
+X-Gm-Message-State: AOJu0Yz5thJETE8joFFp3euxBtGaVPYMqQlWUqk34Q9wfGV0EFauFMPV
+	eQD06pgdg6tkPgxHbeXU5Hp72DmsdH8lgz/yMVMyhD/TTnmNTqZsBBXpXt58pOYTEvpbeL9ZSXN
+	/
+X-Google-Smtp-Source: AGHT+IG+Swmo4DpMiF/twx+Wd+QDewTfnxQPT1aX7Ec6JuM2sZ9dcKvdlrSIBJwGAVGjmHrVzTeYTA==
+X-Received: by 2002:a05:690c:6c06:b0:619:da17:87be with SMTP id 00721157ae682-658f07d75a6mr146360517b3.42.1720764336256;
+        Thu, 11 Jul 2024 23:05:36 -0700 (PDT)
+Received: from [192.168.0.102] ([103.250.136.189])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-658e4d2ac80sm13965327b3.42.2024.07.11.23.05.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Jul 2024 23:05:35 -0700 (PDT)
+Content-Type: multipart/alternative;
+ boundary="------------WSb4BOIbQ7bV64scWWFeM4LT"
+Message-ID: <0695e387-f8ba-4f19-87ed-fd25154b9113@mvista.com>
+Date: Fri, 12 Jul 2024 11:35:31 +0530
 MIME-Version: 1.0
-References: <20240702073934.21734-1-rsangam@mvista.com>
-In-Reply-To: <20240702073934.21734-1-rsangam@mvista.com>
-From: Rohini Sangam <rsangam@mvista.com>
-Date: Thu, 11 Jul 2024 12:37:40 +0530
-Message-ID: <CAL7QmvCeuw71G0Y3AoeRwq8WbNApsMCpVbdMNfh6c8hWc8dGAQ@mail.gmail.com>
-Subject: Re: [meta-java][master][PATCH] openjdk-8: Security fix for CVE-2024-21094
+User-Agent: Mozilla Thunderbird
+Subject: Re: [meta-security][scarthgap][PATCH] sssd: Fix CVE-2023-3758
 To: yocto-patches@lists.yoctoproject.org
-Cc: Siddharth Doshi <sdoshi@mvista.com>
-Content-Type: multipart/alternative; boundary="000000000000e73cce061cf36b83"
+Cc: akuster808@gmail.com
+References: <20240628053817.50365-1-hprajapati@mvista.com>
+Content-Language: en-US
+From: Hitendra Prajapati <hprajapati@mvista.com>
+In-Reply-To: <20240628053817.50365-1-hprajapati@mvista.com>
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 11 Jul 2024 07:07:59 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/424
+ <yocto-patches@lists.yoctoproject.org>; Fri, 12 Jul 2024 06:05:40 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/425
 
---000000000000e73cce061cf36b83
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+This is a multi-part message in MIME format.
+--------------WSb4BOIbQ7bV64scWWFeM4LT
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Gentle reminder!!!
-Any update on this ??
+Hi Team,
+
+any update on this ??
 
 Regards,
-Rohini Sangam
 
-On Tue, Jul 2, 2024 at 1:09=E2=80=AFPM Rohini Sangam <rsangam@mvista.com> w=
-rote:
+Hitendra
 
-> CVE fixed:
-> -CVE-2024-21094 OpenJDK: C2 compilation fails with "Exceeded _node_regs
-> array" (8317507)
-> Upstream-Status: Backport from
-> https://github.com/openjdk/jdk8u/commit/43cb87550865a93c559c9e8eaa59fcb07=
-1301bd3
+On 28/06/24 11:08 am, Hitendra Prajapati wrote:
+> A race condition flaw was found in sssd where the GPO policy is
+> not consistently applied for authenticated users. This may lead
+> to improper authorization issues, granting or denying access to
+> resources inappropriately.
 >
-> Signed-off-by: Rohini Sangam <rsangam@mvista.com>
-> Signed-off-by: Siddharth Doshi <sdoshi@mvista.com>
+> References:
+> https://nvd.nist.gov/vuln/detail/CVE-2023-3758
+>
+> Upstream-Status: Backport fromhttps://github.com/SSSD/sssd/commit/e1bfbc2493c4194988acc3b2413df3dde0735ae3
+>
+> Signed-off-by: Hitendra Prajapati<hprajapati@mvista.com>
 > ---
->  .../openjdk/openjdk-8-release-common.inc      |   1 +
->  .../patches-openjdk-8/CVE-2024-21094.patch    | 637 ++++++++++++++++++
->  2 files changed, 638 insertions(+)
->  create mode 100644
-> recipes-core/openjdk/patches-openjdk-8/CVE-2024-21094.patch
+>   .../sssd/files/CVE-2023-3758.patch            | 222 ++++++++++++++++++
+>   .../recipes-security/sssd/sssd_2.9.2.bb       |   1 +
+>   2 files changed, 223 insertions(+)
+>   create mode 100644 dynamic-layers/networking-layer/recipes-security/sssd/files/CVE-2023-3758.patch
 >
-> diff --git a/recipes-core/openjdk/openjdk-8-release-common.inc
-> b/recipes-core/openjdk/openjdk-8-release-common.inc
-> index ff8d96e..f71eb10 100644
-> --- a/recipes-core/openjdk/openjdk-8-release-common.inc
-> +++ b/recipes-core/openjdk/openjdk-8-release-common.inc
-> @@ -21,6 +21,7 @@ PATCHES_URI =3D "\
->      file://2007-jdk-no-genx11-in-headless.patch \
->      file://2008-jdk-no-unused-deps.patch \
->
->  file://2009-jdk-make-use-gcc-instead-of-ld-for-genSocketOptionRe.patch \
-> +    file://CVE-2024-21094.patch \
->  "
->  HOTSPOT_UB_PATCH =3D "\
->      file://1001-hotspot-fix-crash-on-JNI_CreateJavaVM.patch \
-> diff --git a/recipes-core/openjdk/patches-openjdk-8/CVE-2024-21094.patch
-> b/recipes-core/openjdk/patches-openjdk-8/CVE-2024-21094.patch
+> diff --git a/dynamic-layers/networking-layer/recipes-security/sssd/files/CVE-2023-3758.patch b/dynamic-layers/networking-layer/recipes-security/sssd/files/CVE-2023-3758.patch
 > new file mode 100644
-> index 0000000..1852bd7
+> index 0000000..15d8d7e
 > --- /dev/null
-> +++ b/recipes-core/openjdk/patches-openjdk-8/CVE-2024-21094.patch
-> @@ -0,0 +1,637 @@
-> +From 43cb87550865a93c559c9e8eaa59fcb071301bd3 Mon Sep 17 00:00:00 2001
-> +From: Martin Balao <mbalao@openjdk.org>
-> +Date: Wed, 27 Mar 2024 03:21:25 +0000
-> +Subject: [PATCH] CVE-2024-21094: 8317507: C2 compilation fails with
-> "Exceeded _node_regs
-> + array"
+> +++ b/dynamic-layers/networking-layer/recipes-security/sssd/files/CVE-2023-3758.patch
+> @@ -0,0 +1,222 @@
+> +From e1bfbc2493c4194988acc3b2413df3dde0735ae3 Mon Sep 17 00:00:00 2001
+> +From: Sumit Bose<sbose@redhat.com>
+> +Date: Wed, 8 Nov 2023 14:50:24 +0100
+> +Subject: [PATCH] ad-gpo: use hash to store intermediate results
+> +MIME-Version: 1.0
+> +Content-Type: text/plain; charset=UTF-8
+> +Content-Transfer-Encoding: 8bit
 > +
-> +Upstream-Status: Backport from
-> https://github.com/openjdk/jdk8u/commit/43cb87550865a93c559c9e8eaa59fcb07=
-1301bd3
-> +CVE: CVE-2024-21094
+> +Currently after the evaluation of a single GPO file the intermediate
+> +results are stored in the cache and this cache entry is updated until
+> +all applicable GPO files are evaluated. Finally the data in the cache is
+> +used to make the decision of access is granted or rejected.
 > +
-> +Signed-off-by: Rohini Sangam <rsangam@mvista.com>
+> +If there are two or more access-control request running in parallel one
+> +request might overwrite the cache object with intermediate data while
+> +another request reads the cached data for the access decision and as a
+> +result will do this decision based on intermediate data.
+> +
+> +To avoid this the intermediate results are not stored in the cache
+> +anymore but in hash tables which are specific to the request. Only the
+> +final result is written to the cache to have it available for offline
+> +authentication.
+> +
+> +Reviewed-by: Alexey Tikhonov<atikhono@redhat.com>
+> +Reviewed-by: Tomáš Halman<thalman@redhat.com>
+> +(cherry picked from commit d7db7971682da2dbf7642ac94940d6b0577ec35a)
+> +
+> +Upstream-Status: Backport [https://github.com/SSSD/sssd/commit/e1bfbc2493c4194988acc3b2413df3dde0735ae3]
+> +CVE: CVE-2023-3758
+> +Signed-off-by: Hitendra Prajapati<hprajapati@mvista.com>
 > +---
-> + .../hotspot/src/share/vm/adlc/output_c.cpp    |   2 +
-> + .../regalloc/TestNodeRegArrayOverflow.java    | 599 ++++++++++++++++++
-> + 2 files changed, 601 insertions(+)
-> + create mode 100644
-> hotspot/test/compiler/regalloc/TestNodeRegArrayOverflow.java
+> + src/providers/ad/ad_gpo.c | 116 +++++++++++++++++++++++++++++++++-----
+> + 1 file changed, 102 insertions(+), 14 deletions(-)
 > +
-> +diff --git a/hotspot/src/share/vm/adlc/output_c.cpp
-> b/hotspot/src/share/vm/adlc/output_c.cpp
-> +index 19916904..b85123b4 100644
-> +--- a/hotspot/src/share/vm/adlc/output_c.cpp
-> ++++ b/hotspot/src/share/vm/adlc/output_c.cpp
-> +@@ -3023,6 +3023,8 @@ static void define_fill_new_machnode(bool used,
-> FILE *fp_cpp) {
-> +     fprintf(fp_cpp, "    if( i !=3D cisc_operand() ) \n");
-> +     fprintf(fp_cpp, "      to[i] =3D _opnds[i]->clone(C);\n");
-> +     fprintf(fp_cpp, "  }\n");
-> ++    fprintf(fp_cpp, "  // Do not increment node index counter, since
-> node reuses my index\n");
-> ++    fprintf(fp_cpp, "  C->set_unique(C->unique() - 1);\n");
-> +     fprintf(fp_cpp, "}\n");
-> +   }
-> +   fprintf(fp_cpp, "\n");
-> +diff --git a/hotspot/test/compiler/regalloc/TestNodeRegArrayOverflow.jav=
-a
-> b/hotspot/test/compiler/regalloc/TestNodeRegArrayOverflow.java
-> +new file mode 100644
-> +index 00000000..281524cc
-> +--- /dev/null
-> ++++ b/hotspot/test/compiler/regalloc/TestNodeRegArrayOverflow.java
-> +@@ -0,0 +1,599 @@
-> ++/*
-> ++ * Copyright (c) 2023, Oracle and/or its affiliates. All rights reserve=
-d.
-> ++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
-> ++ *
-> ++ * This code is free software; you can redistribute it and/or modify it
-> ++ * under the terms of the GNU General Public License version 2 only, as
-> ++ * published by the Free Software Foundation.
-> ++ *
-> ++ * This code is distributed in the hope that it will be useful, but
-> WITHOUT
-> ++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY o=
-r
-> ++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public Licens=
-e
-> ++ * version 2 for more details (a copy is included in the LICENSE file
-> that
-> ++ * accompanied this code).
-> ++ *
-> ++ * You should have received a copy of the GNU General Public License
-> version
-> ++ * 2 along with this work; if not, write to the Free Software Foundatio=
-n,
-> ++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
-> ++ *
-> ++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065
-> USA
-> ++ * or visit www.oracle.com if you need additional information or have
-> any
-> ++ * questions.
-> ++ */
+> +diff --git a/src/providers/ad/ad_gpo.c b/src/providers/ad/ad_gpo.c
+> +index 44e9cbb..cec0cb4 100644
+> +--- a/src/providers/ad/ad_gpo.c
+> ++++ b/src/providers/ad/ad_gpo.c
+> +@@ -1317,6 +1317,33 @@ ad_gpo_extract_policy_setting(TALLOC_CTX *mem_ctx,
+> +     return ret;
+> + }
+> +
+> ++static errno_t
+> ++add_result_to_hash(hash_table_t *hash, const char *key, char *value)
+> ++{
+> ++    int hret;
+> ++    hash_key_t k;
+> ++    hash_value_t v;
 > ++
-> ++package compiler.regalloc;
-> ++
-> ++/**
-> ++ * @test
-> ++ * @bug 8317507
-> ++ * @summary Test that C2's PhaseRegAlloc::_node_regs (a
-> post-register-allocation
-> ++ *          mapping from machine nodes to assigned registers) does not
-> overflow
-> ++ *          in the face of a program with a high-density of CISC spilli=
-ng
-> ++ *          candidate nodes.
-> ++ * @run main/othervm -Xcomp
-> -XX:CompileOnly=3Dcompiler.regalloc.TestNodeRegArrayOverflow::testWithCom=
-pilerUnrolling
-> ++
->  -XX:CompileCommand=3Ddontinline,compiler.regalloc.TestNodeRegArrayOverfl=
-ow::dontInline
-> ++                     compiler.regalloc.TestNodeRegArrayOverflow compile=
-r
-> ++ * @run main/othervm -Xcomp
-> -XX:CompileOnly=3Dcompiler.regalloc.TestNodeRegArrayOverflow::testWithMan=
-ualUnrolling
-> ++
->  -XX:CompileCommand=3Ddontinline,compiler.regalloc.TestNodeRegArrayOverfl=
-ow::dontInline
-> ++                     compiler.regalloc.TestNodeRegArrayOverflow manual
-> ++ */
-> ++
-> ++public class TestNodeRegArrayOverflow {
-> ++
-> ++    static int dontInline() {
-> ++        return 0;
+> ++    if (hash == NULL || key == NULL || value == NULL) {
+> ++        return EINVAL;
 > ++    }
 > ++
-> ++    static float testWithCompilerUnrolling(float inc) {
-> ++        int i =3D 0, j =3D 0;
-> ++        // This non-inlined method call causes 'inc' to be spilled.
-> ++        float f =3D dontInline();
-> ++        // This two-level reduction loop is unrolled 512 times, which i=
-s
-> ++        // requested by the SLP-specific unrolling analysis, but not
-> vectorized.
-> ++        // Because 'inc' is spilled, each of the unrolled AddF nodes is
-> ++        // CISC-spill converted (PhaseChaitin::fixup_spills()). Before
-> the fix,
-> ++        // this causes the unique node index counter (Compile::_unique)
-> to grow
-> ++        // beyond the size of the node register array
-> ++        // (PhaseRegAlloc::_node_regs), and leads to overflow when
-> accessed for
-> ++        // nodes that are created later (e.g. during the peephole phase=
-).
-> ++        while (i++ < 128) {
-> ++            for (j =3D 0; j < 16; j++) {
-> ++                f +=3D inc;
+> ++    k.type = HASH_KEY_CONST_STRING;
+> ++    k.c_str = key;
+> ++
+> ++    v.type = HASH_VALUE_PTR;
+> ++    v.ptr = value;
+> ++
+> ++    hret = hash_enter(hash, &k, &v);
+> ++    if (hret != HASH_SUCCESS) {
+> ++        DEBUG(SSSDBG_OP_FAILURE, "Failed to add [%s][%s] to hash: [%s].\n",
+> ++                                 key, value, hash_error_string(hret));
+> ++        return EIO;
+> ++    }
+> ++
+> ++    return EOK;
+> ++}
+> ++
+> + /*
+> +  * This function parses the cse-specific (GP_EXT_GUID_SECURITY) filename,
+> +  * and stores the allow_key and deny_key of all of the gpo_map_types present
+> +@@ -1324,6 +1351,7 @@ ad_gpo_extract_policy_setting(TALLOC_CTX *mem_ctx,
+> +  */
+> + static errno_t
+> + ad_gpo_store_policy_settings(struct sss_domain_info *domain,
+> ++                             hash_table_t *allow_maps, hash_table_t *deny_maps,
+> +                              const char *filename)
+> + {
+> +     struct ini_cfgfile *file_ctx = NULL;
+> +@@ -1457,14 +1485,14 @@ ad_gpo_store_policy_settings(struct sss_domain_info *domain,
+> +                 goto done;
+> +             } else if (ret != ENOENT) {
+> +                 const char *value = allow_value ? allow_value : empty_val;
+> +-                ret = sysdb_gpo_store_gpo_result_setting(domain,
+> +-                                                         allow_key,
+> +-                                                         value);
+> ++                ret = add_result_to_hash(allow_maps, allow_key,
+> ++                                         talloc_strdup(allow_maps, value));
+> +                 if (ret != EOK) {
+> +-                    DEBUG(SSSDBG_CRIT_FAILURE,
+> +-                          "sysdb_gpo_store_gpo_result_setting failed for key:"
+> +-                          "'%s' value:'%s' [%d][%s]\n", allow_key, allow_value,
+> +-                          ret, sss_strerror(ret));
+> ++                    DEBUG(SSSDBG_CRIT_FAILURE, "Failed to add key: [%s] "
+> ++                                               "value: [%s] to allow maps "
+> ++                                               "[%d][%s].\n",
+> ++                                               allow_key, value, ret,
+> ++                                               sss_strerror(ret));
+> +                     goto done;
+> +                 }
+> +             }
+> +@@ -1484,14 +1512,14 @@ ad_gpo_store_policy_settings(struct sss_domain_info *domain,
+> +                 goto done;
+> +             } else if (ret != ENOENT) {
+> +                 const char *value = deny_value ? deny_value : empty_val;
+> +-                ret = sysdb_gpo_store_gpo_result_setting(domain,
+> +-                                                         deny_key,
+> +-                                                         value);
+> ++                ret = add_result_to_hash(deny_maps, deny_key,
+> ++                                         talloc_strdup(deny_maps, value));
+> +                 if (ret != EOK) {
+> +-                    DEBUG(SSSDBG_CRIT_FAILURE,
+> +-                          "sysdb_gpo_store_gpo_result_setting failed for key:"
+> +-                          "'%s' value:'%s' [%d][%s]\n", deny_key, deny_value,
+> +-                          ret, sss_strerror(ret));
+> ++                    DEBUG(SSSDBG_CRIT_FAILURE, "Failed to add key: [%s] "
+> ++                                               "value: [%s] to deny maps "
+> ++                                               "[%d][%s].\n",
+> ++                                               deny_key, value, ret,
+> ++                                               sss_strerror(ret));
+> +                     goto done;
+> +                 }
+> +             }
+> +@@ -1784,6 +1812,8 @@ struct ad_gpo_access_state {
+> +     int num_cse_filtered_gpos;
+> +     int cse_gpo_index;
+> +     const char *ad_domain;
+> ++    hash_table_t *allow_maps;
+> ++    hash_table_t *deny_maps;
+> + };
+> +
+> + static void ad_gpo_connect_done(struct tevent_req *subreq);
+> +@@ -1906,6 +1936,19 @@ ad_gpo_access_send(TALLOC_CTX *mem_ctx,
+> +         goto immediately;
+> +     }
+> +
+> ++    ret = sss_hash_create(state, 0, &state->allow_maps);
+> ++    if (ret != EOK) {
+> ++        DEBUG(SSSDBG_FATAL_FAILURE, "Could not create allow maps "
+> ++              "hash table [%d]: %s\n", ret, sss_strerror(ret));
+> ++        goto immediately;
+> ++    }
+> ++
+> ++    ret = sss_hash_create(state, 0, &state->deny_maps);
+> ++    if (ret != EOK) {
+> ++        DEBUG(SSSDBG_FATAL_FAILURE, "Could not create deny maps "
+> ++              "hash table [%d]: %s\n", ret, sss_strerror(ret));
+> ++        goto immediately;
+> ++    }
+> +
+> +     subreq = sdap_id_op_connect_send(state->sdap_op, state, &ret);
+> +     if (subreq == NULL) {
+> +@@ -2725,6 +2768,43 @@ ad_gpo_cse_step(struct tevent_req *req)
+> +     return EAGAIN;
+> + }
+> +
+> ++static errno_t
+> ++store_hash_maps_in_cache(struct sss_domain_info *domain,
+> ++                         hash_table_t *allow_maps, hash_table_t *deny_maps)
+> ++{
+> ++    int ret;
+> ++    struct hash_iter_context_t *iter;
+> ++    hash_entry_t *entry;
+> ++    size_t c;
+> ++    hash_table_t *hash_list[] = { allow_maps, deny_maps, NULL};
+> ++
+> ++
+> ++    for (c = 0; hash_list[c] != NULL; c++) {
+> ++        iter = new_hash_iter_context(hash_list[c]);
+> ++        if (iter == NULL) {
+> ++            DEBUG(SSSDBG_OP_FAILURE, "Failed to create hash iterator.\n");
+> ++            return EINVAL;
+> ++        }
+> ++
+> ++        while ((entry = iter->next(iter)) != NULL) {
+> ++            ret = sysdb_gpo_store_gpo_result_setting(domain,
+> ++                                                     entry->key.c_str,
+> ++                                                     entry->value.ptr);
+> ++            if (ret != EOK) {
+> ++                free(iter);
+> ++                DEBUG(SSSDBG_OP_FAILURE,
+> ++                      "sysdb_gpo_store_gpo_result_setting failed for key:"
+> ++                      "[%s] value:[%s] [%d][%s]\n", entry->key.c_str,
+> ++                      (char *) entry->value.ptr, ret, sss_strerror(ret));
+> ++                return ret;
 > ++            }
 > ++        }
-> ++        return f;
+> ++        talloc_free(iter);
 > ++    }
 > ++
-> ++    // This test reproduces the same failure as
-> 'testWithCompilerUnrolling'
-> ++    // without relying on loop transformations.
-> ++    static float testWithManualUnrolling(float inc) {
-> ++        int i =3D 0, j =3D 0;
-> ++        float f =3D dontInline();
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        f +=3D inc;
-> ++        return f;
-> ++    }
-> ++
-> ++    public static void main(String[] args) {
-> ++        switch (args[0]) {
-> ++        case "compiler":
-> ++            testWithCompilerUnrolling(0);
-> ++            break;
-> ++        case "manual":
-> ++            testWithManualUnrolling(0);
-> ++            break;
-> ++        default:
-> ++            throw new IllegalArgumentException("Invalid mode: " +
-> args[0]);
-> ++        }
-> ++    }
+> ++    return EOK;
 > ++}
-> +--
-> +2.35.7
+> ++
+> + /*
+> +  * This cse-specific function (GP_EXT_GUID_SECURITY) increments the
+> +  * cse_gpo_index until the policy settings for all applicable GPOs have been
+> +@@ -2766,6 +2846,7 @@ ad_gpo_cse_done(struct tevent_req *subreq)
+> +      * (as part of the GPO Result object in the sysdb cache).
+> +      */
+> +     ret = ad_gpo_store_policy_settings(state->host_domain,
+> ++                                       state->allow_maps, state->deny_maps,
+> +                                        cse_filtered_gpo->policy_filename);
+> +     if (ret != EOK && ret != ENOENT) {
+> +         DEBUG(SSSDBG_OP_FAILURE,
+> +@@ -2779,6 +2860,13 @@ ad_gpo_cse_done(struct tevent_req *subreq)
 > +
-> --
-> 2.34.1
->
->
+> +     if (ret == EOK) {
+> +         /* ret is EOK only after all GPO policy files have been downloaded */
+> ++        ret = store_hash_maps_in_cache(state->host_domain,
+> ++                                       state->allow_maps, state->deny_maps);
+> ++        if (ret != EOK) {
+> ++            DEBUG(SSSDBG_OP_FAILURE, "Failed to store evaluated GPO maps "
+> ++                                     "[%d][%s].\n", ret, sss_strerror(ret));
+> ++            goto done;
+> ++        }
+> +         ret = ad_gpo_perform_hbac_processing(state,
+> +                                              state->gpo_mode,
+> +                                              state->gpo_map_type,
+> +--
+> +2.25.1
+> +
+> diff --git a/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9.2.bb b/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9.2.bb
+> index d61471c..3e05858 100644
+> --- a/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9.2.bb
+> +++ b/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9.2.bb
+> @@ -25,6 +25,7 @@ SRC_URI ="https://github.com/SSSD/sssd/releases/download/${PV}/${BP}.tar.gz \ 
+> file://fix-ldblibdir.patch \ file://musl_fixup.patch \ 
+> file://0001-sssctl-add-error-analyzer.patch \ + 
+> file://CVE-2023-3758.patch \ "
+>   SRC_URI[sha256sum] = "827bc65d64132410e6dd3df003f04829d60387ec30e72b2d4e22d93bb6f762ba"
+>   
+-- 
+Regards,
+Hitendra Prajapati
+MontaVista Software LLC
+Mo: +91 9998906483
+--------------WSb4BOIbQ7bV64scWWFeM4LT
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
---000000000000e73cce061cf36b83
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: base64
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+  <body>
+    <p><font size="2">Hi Team,</font></p>
+    <p><font size="2">any update on this ??</font></p>
+    <p><font size="2">Regards,</font></p>
+    <p><font size="2">Hitendra<br>
+      </font></p>
+    <div class="moz-cite-prefix">On 28/06/24 11:08 am, Hitendra
+      Prajapati wrote:<br>
+    </div>
+    <blockquote type="cite"
+      cite="mid:20240628053817.50365-1-hprajapati@mvista.com">
+      <pre class="moz-quote-pre" wrap="">A race condition flaw was found in sssd where the GPO policy is
+not consistently applied for authenticated users. This may lead
+to improper authorization issues, granting or denying access to
+resources inappropriately.
 
-PGRpdiBkaXI9Imx0ciI+PGRpdj48ZGl2PjxkaXY+R2VudGxlIHJlbWluZGVyISEhPGJyPjwvZGl2
-PkFueSB1cGRhdGUgb24gdGhpcyA/Pzxicj48YnI+PC9kaXY+UmVnYXJkcyw8YnI+PC9kaXY+Um9o
-aW5pIFNhbmdhbTxicj48L2Rpdj48YnI+PGRpdiBjbGFzcz0iZ21haWxfcXVvdGUiPjxkaXYgZGly
-PSJsdHIiIGNsYXNzPSJnbWFpbF9hdHRyIj5PbiBUdWUsIEp1bCAyLCAyMDI0IGF0IDE6MDnigK9Q
-TSBSb2hpbmkgU2FuZ2FtICZsdDs8YSBocmVmPSJtYWlsdG86cnNhbmdhbUBtdmlzdGEuY29tIj5y
-c2FuZ2FtQG12aXN0YS5jb208L2E+Jmd0OyB3cm90ZTo8YnI+PC9kaXY+PGJsb2NrcXVvdGUgY2xh
-c3M9ImdtYWlsX3F1b3RlIiBzdHlsZT0ibWFyZ2luOjBweCAwcHggMHB4IDAuOGV4O2JvcmRlci1s
-ZWZ0OjFweCBzb2xpZCByZ2IoMjA0LDIwNCwyMDQpO3BhZGRpbmctbGVmdDoxZXgiPkNWRSBmaXhl
-ZDo8YnI+DQotQ1ZFLTIwMjQtMjEwOTQgT3BlbkpESzogQzIgY29tcGlsYXRpb24gZmFpbHMgd2l0
-aCAmcXVvdDtFeGNlZWRlZCBfbm9kZV9yZWdzIGFycmF5JnF1b3Q7ICg4MzE3NTA3KTxicj4NClVw
-c3RyZWFtLVN0YXR1czogQmFja3BvcnQgZnJvbSA8YSBocmVmPSJodHRwczovL2dpdGh1Yi5jb20v
-b3Blbmpkay9qZGs4dS9jb21taXQvNDNjYjg3NTUwODY1YTkzYzU1OWM5ZThlYWE1OWZjYjA3MTMw
-MWJkMyIgcmVsPSJub3JlZmVycmVyIiB0YXJnZXQ9Il9ibGFuayI+aHR0cHM6Ly9naXRodWIuY29t
-L29wZW5qZGsvamRrOHUvY29tbWl0LzQzY2I4NzU1MDg2NWE5M2M1NTljOWU4ZWFhNTlmY2IwNzEz
-MDFiZDM8L2E+PGJyPg0KPGJyPg0KU2lnbmVkLW9mZi1ieTogUm9oaW5pIFNhbmdhbSAmbHQ7PGEg
-aHJlZj0ibWFpbHRvOnJzYW5nYW1AbXZpc3RhLmNvbSIgdGFyZ2V0PSJfYmxhbmsiPnJzYW5nYW1A
-bXZpc3RhLmNvbTwvYT4mZ3Q7PGJyPg0KU2lnbmVkLW9mZi1ieTogU2lkZGhhcnRoIERvc2hpICZs
-dDs8YSBocmVmPSJtYWlsdG86c2Rvc2hpQG12aXN0YS5jb20iIHRhcmdldD0iX2JsYW5rIj5zZG9z
-aGlAbXZpc3RhLmNvbTwvYT4mZ3Q7PGJyPg0KLS0tPGJyPg0KwqAuLi4vb3Blbmpkay9vcGVuamRr
-LTgtcmVsZWFzZS1jb21tb24uaW5jwqAgwqAgwqAgfMKgIMKgMSArPGJyPg0KwqAuLi4vcGF0Y2hl
-cy1vcGVuamRrLTgvQ1ZFLTIwMjQtMjEwOTQucGF0Y2jCoCDCoCB8IDYzNyArKysrKysrKysrKysr
-KysrKys8YnI+DQrCoDIgZmlsZXMgY2hhbmdlZCwgNjM4IGluc2VydGlvbnMoKyk8YnI+DQrCoGNy
-ZWF0ZSBtb2RlIDEwMDY0NCByZWNpcGVzLWNvcmUvb3Blbmpkay9wYXRjaGVzLW9wZW5qZGstOC9D
-VkUtMjAyNC0yMTA5NC5wYXRjaDxicj4NCjxicj4NCmRpZmYgLS1naXQgYS9yZWNpcGVzLWNvcmUv
-b3Blbmpkay9vcGVuamRrLTgtcmVsZWFzZS1jb21tb24uaW5jIGIvcmVjaXBlcy1jb3JlL29wZW5q
-ZGsvb3Blbmpkay04LXJlbGVhc2UtY29tbW9uLmluYzxicj4NCmluZGV4IGZmOGQ5NmUuLmY3MWVi
-MTAgMTAwNjQ0PGJyPg0KLS0tIGEvcmVjaXBlcy1jb3JlL29wZW5qZGsvb3Blbmpkay04LXJlbGVh
-c2UtY29tbW9uLmluYzxicj4NCisrKyBiL3JlY2lwZXMtY29yZS9vcGVuamRrL29wZW5qZGstOC1y
-ZWxlYXNlLWNvbW1vbi5pbmM8YnI+DQpAQCAtMjEsNiArMjEsNyBAQCBQQVRDSEVTX1VSSSA9ICZx
-dW90O1w8YnI+DQrCoCDCoCDCoGZpbGU6Ly8yMDA3LWpkay1uby1nZW54MTEtaW4taGVhZGxlc3Mu
-cGF0Y2ggXDxicj4NCsKgIMKgIMKgZmlsZTovLzIwMDgtamRrLW5vLXVudXNlZC1kZXBzLnBhdGNo
-IFw8YnI+DQrCoCDCoCDCoGZpbGU6Ly8yMDA5LWpkay1tYWtlLXVzZS1nY2MtaW5zdGVhZC1vZi1s
-ZC1mb3ItZ2VuU29ja2V0T3B0aW9uUmUucGF0Y2ggXDxicj4NCivCoCDCoCBmaWxlOi8vQ1ZFLTIw
-MjQtMjEwOTQucGF0Y2ggXDxicj4NCsKgJnF1b3Q7PGJyPg0KwqBIT1RTUE9UX1VCX1BBVENIID0g
-JnF1b3Q7XDxicj4NCsKgIMKgIMKgZmlsZTovLzEwMDEtaG90c3BvdC1maXgtY3Jhc2gtb24tSk5J
-X0NyZWF0ZUphdmFWTS5wYXRjaCBcPGJyPg0KZGlmZiAtLWdpdCBhL3JlY2lwZXMtY29yZS9vcGVu
-amRrL3BhdGNoZXMtb3Blbmpkay04L0NWRS0yMDI0LTIxMDk0LnBhdGNoIGIvcmVjaXBlcy1jb3Jl
-L29wZW5qZGsvcGF0Y2hlcy1vcGVuamRrLTgvQ1ZFLTIwMjQtMjEwOTQucGF0Y2g8YnI+DQpuZXcg
-ZmlsZSBtb2RlIDEwMDY0NDxicj4NCmluZGV4IDAwMDAwMDAuLjE4NTJiZDc8YnI+DQotLS0gL2Rl
-di9udWxsPGJyPg0KKysrIGIvcmVjaXBlcy1jb3JlL29wZW5qZGsvcGF0Y2hlcy1vcGVuamRrLTgv
-Q1ZFLTIwMjQtMjEwOTQucGF0Y2g8YnI+DQpAQCAtMCwwICsxLDYzNyBAQDxicj4NCitGcm9tIDQz
-Y2I4NzU1MDg2NWE5M2M1NTljOWU4ZWFhNTlmY2IwNzEzMDFiZDMgTW9uIFNlcCAxNyAwMDowMDow
-MCAyMDAxPGJyPg0KK0Zyb206IE1hcnRpbiBCYWxhbyAmbHQ7PGEgaHJlZj0ibWFpbHRvOm1iYWxh
-b0BvcGVuamRrLm9yZyIgdGFyZ2V0PSJfYmxhbmsiPm1iYWxhb0BvcGVuamRrLm9yZzwvYT4mZ3Q7
-PGJyPg0KK0RhdGU6IFdlZCwgMjcgTWFyIDIwMjQgMDM6MjE6MjUgKzAwMDA8YnI+DQorU3ViamVj
-dDogW1BBVENIXSBDVkUtMjAyNC0yMTA5NDogODMxNzUwNzogQzIgY29tcGlsYXRpb24gZmFpbHMg
-d2l0aCAmcXVvdDtFeGNlZWRlZCBfbm9kZV9yZWdzPGJyPg0KKyBhcnJheSZxdW90Ozxicj4NCis8
-YnI+DQorVXBzdHJlYW0tU3RhdHVzOiBCYWNrcG9ydCBmcm9tIDxhIGhyZWY9Imh0dHBzOi8vZ2l0
-aHViLmNvbS9vcGVuamRrL2pkazh1L2NvbW1pdC80M2NiODc1NTA4NjVhOTNjNTU5YzllOGVhYTU5
-ZmNiMDcxMzAxYmQzIiByZWw9Im5vcmVmZXJyZXIiIHRhcmdldD0iX2JsYW5rIj5odHRwczovL2dp
-dGh1Yi5jb20vb3Blbmpkay9qZGs4dS9jb21taXQvNDNjYjg3NTUwODY1YTkzYzU1OWM5ZThlYWE1
-OWZjYjA3MTMwMWJkMzwvYT48YnI+DQorQ1ZFOiBDVkUtMjAyNC0yMTA5NDxicj4NCis8YnI+DQor
-U2lnbmVkLW9mZi1ieTogUm9oaW5pIFNhbmdhbSAmbHQ7PGEgaHJlZj0ibWFpbHRvOnJzYW5nYW1A
-bXZpc3RhLmNvbSIgdGFyZ2V0PSJfYmxhbmsiPnJzYW5nYW1AbXZpc3RhLmNvbTwvYT4mZ3Q7PGJy
-Pg0KKy0tLTxicj4NCisgLi4uL2hvdHNwb3Qvc3JjL3NoYXJlL3ZtL2FkbGMvb3V0cHV0X2MuY3Bw
-wqAgwqAgfMKgIMKgMiArPGJyPg0KKyAuLi4vcmVnYWxsb2MvVGVzdE5vZGVSZWdBcnJheU92ZXJm
-bG93LmphdmHCoCDCoCB8IDU5OSArKysrKysrKysrKysrKysrKys8YnI+DQorIDIgZmlsZXMgY2hh
-bmdlZCwgNjAxIGluc2VydGlvbnMoKyk8YnI+DQorIGNyZWF0ZSBtb2RlIDEwMDY0NCBob3RzcG90
-L3Rlc3QvY29tcGlsZXIvcmVnYWxsb2MvVGVzdE5vZGVSZWdBcnJheU92ZXJmbG93LmphdmE8YnI+
-DQorPGJyPg0KK2RpZmYgLS1naXQgYS9ob3RzcG90L3NyYy9zaGFyZS92bS9hZGxjL291dHB1dF9j
-LmNwcCBiL2hvdHNwb3Qvc3JjL3NoYXJlL3ZtL2FkbGMvb3V0cHV0X2MuY3BwPGJyPg0KK2luZGV4
-IDE5OTE2OTA0Li5iODUxMjNiNCAxMDA2NDQ8YnI+DQorLS0tIGEvaG90c3BvdC9zcmMvc2hhcmUv
-dm0vYWRsYy9vdXRwdXRfYy5jcHA8YnI+DQorKysrIGIvaG90c3BvdC9zcmMvc2hhcmUvdm0vYWRs
-Yy9vdXRwdXRfYy5jcHA8YnI+DQorQEAgLTMwMjMsNiArMzAyMyw4IEBAIHN0YXRpYyB2b2lkIGRl
-ZmluZV9maWxsX25ld19tYWNobm9kZShib29sIHVzZWQsIEZJTEUgKmZwX2NwcCkgezxicj4NCivC
-oCDCoCDCoGZwcmludGYoZnBfY3BwLCAmcXVvdDvCoCDCoCBpZiggaSAhPSBjaXNjX29wZXJhbmQo
-KSApIFxuJnF1b3Q7KTs8YnI+DQorwqAgwqAgwqBmcHJpbnRmKGZwX2NwcCwgJnF1b3Q7wqAgwqAg
-wqAgdG9baV0gPSBfb3BuZHNbaV0tJmd0O2Nsb25lKEMpO1xuJnF1b3Q7KTs8YnI+DQorwqAgwqAg
-wqBmcHJpbnRmKGZwX2NwcCwgJnF1b3Q7wqAgfVxuJnF1b3Q7KTs8YnI+DQorK8KgIMKgIGZwcmlu
-dGYoZnBfY3BwLCAmcXVvdDvCoCAvLyBEbyBub3QgaW5jcmVtZW50IG5vZGUgaW5kZXggY291bnRl
-ciwgc2luY2Ugbm9kZSByZXVzZXMgbXkgaW5kZXhcbiZxdW90Oyk7PGJyPg0KKyvCoCDCoCBmcHJp
-bnRmKGZwX2NwcCwgJnF1b3Q7wqAgQy0mZ3Q7c2V0X3VuaXF1ZShDLSZndDt1bmlxdWUoKSAtIDEp
-O1xuJnF1b3Q7KTs8YnI+DQorwqAgwqAgwqBmcHJpbnRmKGZwX2NwcCwgJnF1b3Q7fVxuJnF1b3Q7
-KTs8YnI+DQorwqAgwqB9PGJyPg0KK8KgIMKgZnByaW50ZihmcF9jcHAsICZxdW90O1xuJnF1b3Q7
-KTs8YnI+DQorZGlmZiAtLWdpdCBhL2hvdHNwb3QvdGVzdC9jb21waWxlci9yZWdhbGxvYy9UZXN0
-Tm9kZVJlZ0FycmF5T3ZlcmZsb3cuamF2YSBiL2hvdHNwb3QvdGVzdC9jb21waWxlci9yZWdhbGxv
-Yy9UZXN0Tm9kZVJlZ0FycmF5T3ZlcmZsb3cuamF2YTxicj4NCituZXcgZmlsZSBtb2RlIDEwMDY0
-NDxicj4NCitpbmRleCAwMDAwMDAwMC4uMjgxNTI0Y2M8YnI+DQorLS0tIC9kZXYvbnVsbDxicj4N
-CisrKysgYi9ob3RzcG90L3Rlc3QvY29tcGlsZXIvcmVnYWxsb2MvVGVzdE5vZGVSZWdBcnJheU92
-ZXJmbG93LmphdmE8YnI+DQorQEAgLTAsMCArMSw1OTkgQEA8YnI+DQorKy8qPGJyPg0KKysgKiBD
-b3B5cmlnaHQgKGMpIDIwMjMsIE9yYWNsZSBhbmQvb3IgaXRzIGFmZmlsaWF0ZXMuIEFsbCByaWdo
-dHMgcmVzZXJ2ZWQuPGJyPg0KKysgKiBETyBOT1QgQUxURVIgT1IgUkVNT1ZFIENPUFlSSUdIVCBO
-T1RJQ0VTIE9SIFRISVMgRklMRSBIRUFERVIuPGJyPg0KKysgKjxicj4NCisrICogVGhpcyBjb2Rl
-IGlzIGZyZWUgc29mdHdhcmU7IHlvdSBjYW4gcmVkaXN0cmlidXRlIGl0IGFuZC9vciBtb2RpZnkg
-aXQ8YnI+DQorKyAqIHVuZGVyIHRoZSB0ZXJtcyBvZiB0aGUgR05VIEdlbmVyYWwgUHVibGljIExp
-Y2Vuc2UgdmVyc2lvbiAyIG9ubHksIGFzPGJyPg0KKysgKiBwdWJsaXNoZWQgYnkgdGhlIEZyZWUg
-U29mdHdhcmUgRm91bmRhdGlvbi48YnI+DQorKyAqPGJyPg0KKysgKiBUaGlzIGNvZGUgaXMgZGlz
-dHJpYnV0ZWQgaW4gdGhlIGhvcGUgdGhhdCBpdCB3aWxsIGJlIHVzZWZ1bCwgYnV0IFdJVEhPVVQ8
-YnI+DQorKyAqIEFOWSBXQVJSQU5UWTsgd2l0aG91dCBldmVuIHRoZSBpbXBsaWVkIHdhcnJhbnR5
-IG9mIE1FUkNIQU5UQUJJTElUWSBvcjxicj4NCisrICogRklUTkVTUyBGT1IgQSBQQVJUSUNVTEFS
-IFBVUlBPU0UuwqAgU2VlIHRoZSBHTlUgR2VuZXJhbCBQdWJsaWMgTGljZW5zZTxicj4NCisrICog
-dmVyc2lvbiAyIGZvciBtb3JlIGRldGFpbHMgKGEgY29weSBpcyBpbmNsdWRlZCBpbiB0aGUgTElD
-RU5TRSBmaWxlIHRoYXQ8YnI+DQorKyAqIGFjY29tcGFuaWVkIHRoaXMgY29kZSkuPGJyPg0KKysg
-Kjxicj4NCisrICogWW91IHNob3VsZCBoYXZlIHJlY2VpdmVkIGEgY29weSBvZiB0aGUgR05VIEdl
-bmVyYWwgUHVibGljIExpY2Vuc2UgdmVyc2lvbjxicj4NCisrICogMiBhbG9uZyB3aXRoIHRoaXMg
-d29yazsgaWYgbm90LCB3cml0ZSB0byB0aGUgRnJlZSBTb2Z0d2FyZSBGb3VuZGF0aW9uLDxicj4N
-CisrICogSW5jLiwgNTEgRnJhbmtsaW4gU3QsIEZpZnRoIEZsb29yLCBCb3N0b24sIE1BIDAyMTEw
-LTEzMDEgVVNBLjxicj4NCisrICo8YnI+DQorKyAqIFBsZWFzZSBjb250YWN0IE9yYWNsZSwgNTAw
-IE9yYWNsZSBQYXJrd2F5LCBSZWR3b29kIFNob3JlcywgQ0EgOTQwNjUgVVNBPGJyPg0KKysgKiBv
-ciB2aXNpdCA8YSBocmVmPSJodHRwOi8vd3d3Lm9yYWNsZS5jb20iIHJlbD0ibm9yZWZlcnJlciIg
-dGFyZ2V0PSJfYmxhbmsiPnd3dy5vcmFjbGUuY29tPC9hPiBpZiB5b3UgbmVlZCBhZGRpdGlvbmFs
-IGluZm9ybWF0aW9uIG9yIGhhdmUgYW55PGJyPg0KKysgKiBxdWVzdGlvbnMuPGJyPg0KKysgKi88
-YnI+DQorKzxicj4NCisrcGFja2FnZSBjb21waWxlci5yZWdhbGxvYzs8YnI+DQorKzxicj4NCisr
-LyoqPGJyPg0KKysgKiBAdGVzdDxicj4NCisrICogQGJ1ZyA4MzE3NTA3PGJyPg0KKysgKiBAc3Vt
-bWFyeSBUZXN0IHRoYXQgQzImIzM5O3MgUGhhc2VSZWdBbGxvYzo6X25vZGVfcmVncyAoYSBwb3N0
-LXJlZ2lzdGVyLWFsbG9jYXRpb248YnI+DQorKyAqwqAgwqAgwqAgwqAgwqAgbWFwcGluZyBmcm9t
-IG1hY2hpbmUgbm9kZXMgdG8gYXNzaWduZWQgcmVnaXN0ZXJzKSBkb2VzIG5vdCBvdmVyZmxvdzxi
-cj4NCisrICrCoCDCoCDCoCDCoCDCoCBpbiB0aGUgZmFjZSBvZiBhIHByb2dyYW0gd2l0aCBhIGhp
-Z2gtZGVuc2l0eSBvZiBDSVNDIHNwaWxsaW5nPGJyPg0KKysgKsKgIMKgIMKgIMKgIMKgIGNhbmRp
-ZGF0ZSBub2Rlcy48YnI+DQorKyAqIEBydW4gbWFpbi9vdGhlcnZtIC1YY29tcCAtWFg6Q29tcGls
-ZU9ubHk9Y29tcGlsZXIucmVnYWxsb2MuVGVzdE5vZGVSZWdBcnJheU92ZXJmbG93Ojp0ZXN0V2l0
-aENvbXBpbGVyVW5yb2xsaW5nPGJyPg0KKyvCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oC1YWDpDb21waWxlQ29tbWFuZD1kb250aW5saW5lLGNvbXBpbGVyLnJlZ2FsbG9jLlRlc3ROb2Rl
-UmVnQXJyYXlPdmVyZmxvdzo6ZG9udElubGluZTxicj4NCisrwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqBjb21waWxlci5yZWdhbGxvYy5UZXN0Tm9kZVJlZ0FycmF5T3ZlcmZsb3cgY29t
-cGlsZXI8YnI+DQorKyAqIEBydW4gbWFpbi9vdGhlcnZtIC1YY29tcCAtWFg6Q29tcGlsZU9ubHk9
-Y29tcGlsZXIucmVnYWxsb2MuVGVzdE5vZGVSZWdBcnJheU92ZXJmbG93Ojp0ZXN0V2l0aE1hbnVh
-bFVucm9sbGluZzxicj4NCisrwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAtWFg6Q29t
-cGlsZUNvbW1hbmQ9ZG9udGlubGluZSxjb21waWxlci5yZWdhbGxvYy5UZXN0Tm9kZVJlZ0FycmF5
-T3ZlcmZsb3c6OmRvbnRJbmxpbmU8YnI+DQorK8KgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgY29tcGlsZXIucmVnYWxsb2MuVGVzdE5vZGVSZWdBcnJheU92ZXJmbG93IG1hbnVhbDxicj4N
-CisrICovPGJyPg0KKys8YnI+DQorK3B1YmxpYyBjbGFzcyBUZXN0Tm9kZVJlZ0FycmF5T3ZlcmZs
-b3cgezxicj4NCisrPGJyPg0KKyvCoCDCoCBzdGF0aWMgaW50IGRvbnRJbmxpbmUoKSB7PGJyPg0K
-KyvCoCDCoCDCoCDCoCByZXR1cm4gMDs8YnI+DQorK8KgIMKgIH08YnI+DQorKzxicj4NCisrwqAg
-wqAgc3RhdGljIGZsb2F0IHRlc3RXaXRoQ29tcGlsZXJVbnJvbGxpbmcoZmxvYXQgaW5jKSB7PGJy
-Pg0KKyvCoCDCoCDCoCDCoCBpbnQgaSA9IDAsIGogPSAwOzxicj4NCisrwqAgwqAgwqAgwqAgLy8g
-VGhpcyBub24taW5saW5lZCBtZXRob2QgY2FsbCBjYXVzZXMgJiMzOTtpbmMmIzM5OyB0byBiZSBz
-cGlsbGVkLjxicj4NCisrwqAgwqAgwqAgwqAgZmxvYXQgZiA9IGRvbnRJbmxpbmUoKTs8YnI+DQor
-K8KgIMKgIMKgIMKgIC8vIFRoaXMgdHdvLWxldmVsIHJlZHVjdGlvbiBsb29wIGlzIHVucm9sbGVk
-IDUxMiB0aW1lcywgd2hpY2ggaXM8YnI+DQorK8KgIMKgIMKgIMKgIC8vIHJlcXVlc3RlZCBieSB0
-aGUgU0xQLXNwZWNpZmljIHVucm9sbGluZyBhbmFseXNpcywgYnV0IG5vdCB2ZWN0b3JpemVkLjxi
-cj4NCisrwqAgwqAgwqAgwqAgLy8gQmVjYXVzZSAmIzM5O2luYyYjMzk7IGlzIHNwaWxsZWQsIGVh
-Y2ggb2YgdGhlIHVucm9sbGVkIEFkZEYgbm9kZXMgaXM8YnI+DQorK8KgIMKgIMKgIMKgIC8vIENJ
-U0Mtc3BpbGwgY29udmVydGVkIChQaGFzZUNoYWl0aW46OmZpeHVwX3NwaWxscygpKS4gQmVmb3Jl
-IHRoZSBmaXgsPGJyPg0KKyvCoCDCoCDCoCDCoCAvLyB0aGlzIGNhdXNlcyB0aGUgdW5pcXVlIG5v
-ZGUgaW5kZXggY291bnRlciAoQ29tcGlsZTo6X3VuaXF1ZSkgdG8gZ3Jvdzxicj4NCisrwqAgwqAg
-wqAgwqAgLy8gYmV5b25kIHRoZSBzaXplIG9mIHRoZSBub2RlIHJlZ2lzdGVyIGFycmF5PGJyPg0K
-KyvCoCDCoCDCoCDCoCAvLyAoUGhhc2VSZWdBbGxvYzo6X25vZGVfcmVncyksIGFuZCBsZWFkcyB0
-byBvdmVyZmxvdyB3aGVuIGFjY2Vzc2VkIGZvcjxicj4NCisrwqAgwqAgwqAgwqAgLy8gbm9kZXMg
-dGhhdCBhcmUgY3JlYXRlZCBsYXRlciAoZS5nLiBkdXJpbmcgdGhlIHBlZXBob2xlIHBoYXNlKS48
-YnI+DQorK8KgIMKgIMKgIMKgIHdoaWxlIChpKysgJmx0OyAxMjgpIHs8YnI+DQorK8KgIMKgIMKg
-IMKgIMKgIMKgIGZvciAoaiA9IDA7IGogJmx0OyAxNjsgaisrKSB7PGJyPg0KKyvCoCDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIMKgIMKgIH08YnI+DQor
-K8KgIMKgIMKgIMKgIH08YnI+DQorK8KgIMKgIMKgIMKgIHJldHVybiBmOzxicj4NCisrwqAgwqAg
-fTxicj4NCisrPGJyPg0KKyvCoCDCoCAvLyBUaGlzIHRlc3QgcmVwcm9kdWNlcyB0aGUgc2FtZSBm
-YWlsdXJlIGFzICYjMzk7dGVzdFdpdGhDb21waWxlclVucm9sbGluZyYjMzk7PGJyPg0KKyvCoCDC
-oCAvLyB3aXRob3V0IHJlbHlpbmcgb24gbG9vcCB0cmFuc2Zvcm1hdGlvbnMuPGJyPg0KKyvCoCDC
-oCBzdGF0aWMgZmxvYXQgdGVzdFdpdGhNYW51YWxVbnJvbGxpbmcoZmxvYXQgaW5jKSB7PGJyPg0K
-KyvCoCDCoCDCoCDCoCBpbnQgaSA9IDAsIGogPSAwOzxicj4NCisrwqAgwqAgwqAgwqAgZmxvYXQg
-ZiA9IGRvbnRJbmxpbmUoKTs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAg
-wqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8Kg
-IMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvC
-oCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisr
-wqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQor
-K8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0K
-KyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4N
-CisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+
-DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJy
-Pg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxi
-cj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8
-YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7
-PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5j
-Ozxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGlu
-Yzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBp
-bmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0g
-aW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9
-IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiAr
-PSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYg
-Kz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBm
-ICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAg
-ZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKg
-IGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDC
-oCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAg
-wqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKg
-IMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDC
-oCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAg
-wqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKg
-IMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDC
-oCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAg
-wqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8Kg
-IMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvC
-oCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisr
-wqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQor
-K8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0K
-KyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4N
-CisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+
-DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJy
-Pg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxi
-cj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8
-YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7
-PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5j
-Ozxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGlu
-Yzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBp
-bmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0g
-aW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9
-IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiAr
-PSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYg
-Kz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBm
-ICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAg
-ZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKg
-IGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDC
-oCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAg
-wqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKg
-IMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDC
-oCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAg
-wqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKg
-IMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDC
-oCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAg
-wqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8Kg
-IMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvC
-oCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisr
-wqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQor
-K8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0K
-KyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4N
-CisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+
-DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJy
-Pg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxi
-cj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8
-YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7
-PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5j
-Ozxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGlu
-Yzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBp
-bmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0g
-aW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9
-IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiAr
-PSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYg
-Kz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBm
-ICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAg
-ZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKg
-IGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDC
-oCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAg
-wqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKg
-IMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDC
-oCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAg
-wqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKg
-IMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDC
-oCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAg
-wqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8Kg
-IMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvC
-oCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisr
-wqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQor
-K8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0K
-KyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4N
-CisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+
-DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJy
-Pg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxi
-cj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8
-YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7
-PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5j
-Ozxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGlu
-Yzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBp
-bmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0g
-aW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9
-IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiAr
-PSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYg
-Kz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBm
-ICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAg
-ZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKg
-IGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDC
-oCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAg
-wqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKg
-IMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDC
-oCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAg
-wqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKg
-IMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDC
-oCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAg
-wqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8Kg
-IMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvC
-oCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisr
-wqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQor
-K8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0K
-KyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4N
-CisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+
-DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJy
-Pg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxi
-cj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8
-YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7
-PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5j
-Ozxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGlu
-Yzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBp
-bmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0g
-aW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9
-IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiAr
-PSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYg
-Kz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBm
-ICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAg
-ZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKg
-IGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDC
-oCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAg
-wqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKg
-IMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDC
-oCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAg
-wqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKg
-IMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDC
-oCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAg
-wqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8Kg
-IMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvC
-oCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisr
-wqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQor
-K8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0K
-KyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4N
-CisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+
-DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJy
-Pg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxi
-cj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8
-YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7
-PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5j
-Ozxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGlu
-Yzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBp
-bmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0g
-aW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9
-IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiAr
-PSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYg
-Kz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBm
-ICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAg
-ZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKg
-IGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDC
-oCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAg
-wqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKg
-IMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDC
-oCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAg
-wqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKg
-IMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDC
-oCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAg
-wqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8Kg
-IMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvC
-oCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisr
-wqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQor
-K8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0K
-KyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4N
-CisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+
-DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJy
-Pg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxi
-cj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8
-YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7
-PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5j
-Ozxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGlu
-Yzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBp
-bmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0g
-aW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9
-IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiAr
-PSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYg
-Kz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBm
-ICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAg
-ZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKg
-IGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDC
-oCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAg
-wqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKg
-IMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDC
-oCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAg
-wqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKg
-IMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDC
-oCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAg
-wqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8Kg
-IMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvC
-oCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisr
-wqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQor
-K8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0K
-KyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4N
-CisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+
-DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJy
-Pg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxi
-cj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8
-YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7
-PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5j
-Ozxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGlu
-Yzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBp
-bmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0g
-aW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9
-IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiAr
-PSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYg
-Kz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBm
-ICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAg
-ZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKg
-IGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDC
-oCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAg
-wqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKg
-IMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDC
-oCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAg
-wqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKg
-IMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDC
-oCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAg
-wqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8Kg
-IMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvC
-oCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisr
-wqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQor
-K8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0K
-KyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4N
-CisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+
-DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJy
-Pg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxi
-cj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8
-YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7
-PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5j
-Ozxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGlu
-Yzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBp
-bmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0g
-aW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9
-IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiAr
-PSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYg
-Kz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBm
-ICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAg
-ZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKg
-IGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDC
-oCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAg
-wqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKg
-IMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDC
-oCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKgIMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAg
-wqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDCoCDCoCDCoCBmICs9IGluYzs8YnI+DQorK8KgIMKg
-IMKgIMKgIGYgKz0gaW5jOzxicj4NCisrwqAgwqAgwqAgwqAgZiArPSBpbmM7PGJyPg0KKyvCoCDC
-oCDCoCDCoCByZXR1cm4gZjs8YnI+DQorK8KgIMKgIH08YnI+DQorKzxicj4NCisrwqAgwqAgcHVi
-bGljIHN0YXRpYyB2b2lkIG1haW4oU3RyaW5nW10gYXJncykgezxicj4NCisrwqAgwqAgwqAgwqAg
-c3dpdGNoIChhcmdzWzBdKSB7PGJyPg0KKyvCoCDCoCDCoCDCoCBjYXNlICZxdW90O2NvbXBpbGVy
-JnF1b3Q7Ojxicj4NCisrwqAgwqAgwqAgwqAgwqAgwqAgdGVzdFdpdGhDb21waWxlclVucm9sbGlu
-ZygwKTs8YnI+DQorK8KgIMKgIMKgIMKgIMKgIMKgIGJyZWFrOzxicj4NCisrwqAgwqAgwqAgwqAg
-Y2FzZSAmcXVvdDttYW51YWwmcXVvdDs6PGJyPg0KKyvCoCDCoCDCoCDCoCDCoCDCoCB0ZXN0V2l0
-aE1hbnVhbFVucm9sbGluZygwKTs8YnI+DQorK8KgIMKgIMKgIMKgIMKgIMKgIGJyZWFrOzxicj4N
-CisrwqAgwqAgwqAgwqAgZGVmYXVsdDo8YnI+DQorK8KgIMKgIMKgIMKgIMKgIMKgIHRocm93IG5l
-dyBJbGxlZ2FsQXJndW1lbnRFeGNlcHRpb24oJnF1b3Q7SW52YWxpZCBtb2RlOiAmcXVvdDsgKyBh
-cmdzWzBdKTs8YnI+DQorK8KgIMKgIMKgIMKgIH08YnI+DQorK8KgIMKgIH08YnI+DQorK308YnI+
-DQorLS0gPGJyPg0KKzIuMzUuNzxicj4NCis8YnI+DQotLSA8YnI+DQoyLjM0LjE8YnI+DQo8YnI+
-DQo8L2Jsb2NrcXVvdGU+PC9kaXY+DQo=
---000000000000e73cce061cf36b83--
+References:
+<a class="moz-txt-link-freetext" href="https://nvd.nist.gov/vuln/detail/CVE-2023-3758">https://nvd.nist.gov/vuln/detail/CVE-2023-3758</a>
+
+Upstream-Status: Backport from <a class="moz-txt-link-freetext" href="https://github.com/SSSD/sssd/commit/e1bfbc2493c4194988acc3b2413df3dde0735ae3">https://github.com/SSSD/sssd/commit/e1bfbc2493c4194988acc3b2413df3dde0735ae3</a>
+
+Signed-off-by: Hitendra Prajapati <a class="moz-txt-link-rfc2396E" href="mailto:hprajapati@mvista.com">&lt;hprajapati@mvista.com&gt;</a>
+---
+ .../sssd/files/CVE-2023-3758.patch            | 222 ++++++++++++++++++
+ .../recipes-security/sssd/sssd_2.9.2.bb       |   1 +
+ 2 files changed, 223 insertions(+)
+ create mode 100644 dynamic-layers/networking-layer/recipes-security/sssd/files/CVE-2023-3758.patch
+
+diff --git a/dynamic-layers/networking-layer/recipes-security/sssd/files/CVE-2023-3758.patch b/dynamic-layers/networking-layer/recipes-security/sssd/files/CVE-2023-3758.patch
+new file mode 100644
+index 0000000..15d8d7e
+--- /dev/null
++++ b/dynamic-layers/networking-layer/recipes-security/sssd/files/CVE-2023-3758.patch
+@@ -0,0 +1,222 @@
++From e1bfbc2493c4194988acc3b2413df3dde0735ae3 Mon Sep 17 00:00:00 2001
++From: Sumit Bose <a class="moz-txt-link-rfc2396E" href="mailto:sbose@redhat.com">&lt;sbose@redhat.com&gt;</a>
++Date: Wed, 8 Nov 2023 14:50:24 +0100
++Subject: [PATCH] ad-gpo: use hash to store intermediate results
++MIME-Version: 1.0
++Content-Type: text/plain; charset=UTF-8
++Content-Transfer-Encoding: 8bit
++
++Currently after the evaluation of a single GPO file the intermediate
++results are stored in the cache and this cache entry is updated until
++all applicable GPO files are evaluated. Finally the data in the cache is
++used to make the decision of access is granted or rejected.
++
++If there are two or more access-control request running in parallel one
++request might overwrite the cache object with intermediate data while
++another request reads the cached data for the access decision and as a
++result will do this decision based on intermediate data.
++
++To avoid this the intermediate results are not stored in the cache
++anymore but in hash tables which are specific to the request. Only the
++final result is written to the cache to have it available for offline
++authentication.
++
++Reviewed-by: Alexey Tikhonov <a class="moz-txt-link-rfc2396E" href="mailto:atikhono@redhat.com">&lt;atikhono@redhat.com&gt;</a>
++Reviewed-by: Tomáš Halman <a class="moz-txt-link-rfc2396E" href="mailto:thalman@redhat.com">&lt;thalman@redhat.com&gt;</a>
++(cherry picked from commit d7db7971682da2dbf7642ac94940d6b0577ec35a)
++
++Upstream-Status: Backport [<a class="moz-txt-link-freetext" href="https://github.com/SSSD/sssd/commit/e1bfbc2493c4194988acc3b2413df3dde0735ae3">https://github.com/SSSD/sssd/commit/e1bfbc2493c4194988acc3b2413df3dde0735ae3</a>]
++CVE: CVE-2023-3758
++Signed-off-by: Hitendra Prajapati <a class="moz-txt-link-rfc2396E" href="mailto:hprajapati@mvista.com">&lt;hprajapati@mvista.com&gt;</a>
++---
++ src/providers/ad/ad_gpo.c | 116 +++++++++++++++++++++++++++++++++-----
++ 1 file changed, 102 insertions(+), 14 deletions(-)
++
++diff --git a/src/providers/ad/ad_gpo.c b/src/providers/ad/ad_gpo.c
++index 44e9cbb..cec0cb4 100644
++--- a/src/providers/ad/ad_gpo.c
+++++ b/src/providers/ad/ad_gpo.c
++@@ -1317,6 +1317,33 @@ ad_gpo_extract_policy_setting(TALLOC_CTX *mem_ctx,
++     return ret;
++ }
++ 
+++static errno_t
+++add_result_to_hash(hash_table_t *hash, const char *key, char *value)
+++{
+++    int hret;
+++    hash_key_t k;
+++    hash_value_t v;
+++
+++    if (hash == NULL || key == NULL || value == NULL) {
+++        return EINVAL;
+++    }
+++
+++    k.type = HASH_KEY_CONST_STRING;
+++    k.c_str = key;
+++
+++    v.type = HASH_VALUE_PTR;
+++    v.ptr = value;
+++
+++    hret = hash_enter(hash, &amp;k, &amp;v);
+++    if (hret != HASH_SUCCESS) {
+++        DEBUG(SSSDBG_OP_FAILURE, "Failed to add [%s][%s] to hash: [%s].\n",
+++                                 key, value, hash_error_string(hret));
+++        return EIO;
+++    }
+++
+++    return EOK;
+++}
+++
++ /*
++  * This function parses the cse-specific (GP_EXT_GUID_SECURITY) filename,
++  * and stores the allow_key and deny_key of all of the gpo_map_types present
++@@ -1324,6 +1351,7 @@ ad_gpo_extract_policy_setting(TALLOC_CTX *mem_ctx,
++  */
++ static errno_t
++ ad_gpo_store_policy_settings(struct sss_domain_info *domain,
+++                             hash_table_t *allow_maps, hash_table_t *deny_maps,
++                              const char *filename)
++ {
++     struct ini_cfgfile *file_ctx = NULL;
++@@ -1457,14 +1485,14 @@ ad_gpo_store_policy_settings(struct sss_domain_info *domain,
++                 goto done;
++             } else if (ret != ENOENT) {
++                 const char *value = allow_value ? allow_value : empty_val;
++-                ret = sysdb_gpo_store_gpo_result_setting(domain,
++-                                                         allow_key,
++-                                                         value);
+++                ret = add_result_to_hash(allow_maps, allow_key,
+++                                         talloc_strdup(allow_maps, value));
++                 if (ret != EOK) {
++-                    DEBUG(SSSDBG_CRIT_FAILURE,
++-                          "sysdb_gpo_store_gpo_result_setting failed for key:"
++-                          "'%s' value:'%s' [%d][%s]\n", allow_key, allow_value,
++-                          ret, sss_strerror(ret));
+++                    DEBUG(SSSDBG_CRIT_FAILURE, "Failed to add key: [%s] "
+++                                               "value: [%s] to allow maps "
+++                                               "[%d][%s].\n",
+++                                               allow_key, value, ret,
+++                                               sss_strerror(ret));
++                     goto done;
++                 }
++             }
++@@ -1484,14 +1512,14 @@ ad_gpo_store_policy_settings(struct sss_domain_info *domain,
++                 goto done;
++             } else if (ret != ENOENT) {
++                 const char *value = deny_value ? deny_value : empty_val;
++-                ret = sysdb_gpo_store_gpo_result_setting(domain,
++-                                                         deny_key,
++-                                                         value);
+++                ret = add_result_to_hash(deny_maps, deny_key,
+++                                         talloc_strdup(deny_maps, value));
++                 if (ret != EOK) {
++-                    DEBUG(SSSDBG_CRIT_FAILURE,
++-                          "sysdb_gpo_store_gpo_result_setting failed for key:"
++-                          "'%s' value:'%s' [%d][%s]\n", deny_key, deny_value,
++-                          ret, sss_strerror(ret));
+++                    DEBUG(SSSDBG_CRIT_FAILURE, "Failed to add key: [%s] "
+++                                               "value: [%s] to deny maps "
+++                                               "[%d][%s].\n",
+++                                               deny_key, value, ret,
+++                                               sss_strerror(ret));
++                     goto done;
++                 }
++             }
++@@ -1784,6 +1812,8 @@ struct ad_gpo_access_state {
++     int num_cse_filtered_gpos;
++     int cse_gpo_index;
++     const char *ad_domain;
+++    hash_table_t *allow_maps;
+++    hash_table_t *deny_maps;
++ };
++ 
++ static void ad_gpo_connect_done(struct tevent_req *subreq);
++@@ -1906,6 +1936,19 @@ ad_gpo_access_send(TALLOC_CTX *mem_ctx,
++         goto immediately;
++     }
++ 
+++    ret = sss_hash_create(state, 0, &amp;state-&gt;allow_maps);
+++    if (ret != EOK) {
+++        DEBUG(SSSDBG_FATAL_FAILURE, "Could not create allow maps "
+++              "hash table [%d]: %s\n", ret, sss_strerror(ret));
+++        goto immediately;
+++    }
+++
+++    ret = sss_hash_create(state, 0, &amp;state-&gt;deny_maps);
+++    if (ret != EOK) {
+++        DEBUG(SSSDBG_FATAL_FAILURE, "Could not create deny maps "
+++              "hash table [%d]: %s\n", ret, sss_strerror(ret));
+++        goto immediately;
+++    }
++ 
++     subreq = sdap_id_op_connect_send(state-&gt;sdap_op, state, &amp;ret);
++     if (subreq == NULL) {
++@@ -2725,6 +2768,43 @@ ad_gpo_cse_step(struct tevent_req *req)
++     return EAGAIN;
++ }
++ 
+++static errno_t
+++store_hash_maps_in_cache(struct sss_domain_info *domain,
+++                         hash_table_t *allow_maps, hash_table_t *deny_maps)
+++{
+++    int ret;
+++    struct hash_iter_context_t *iter;
+++    hash_entry_t *entry;
+++    size_t c;
+++    hash_table_t *hash_list[] = { allow_maps, deny_maps, NULL};
+++
+++
+++    for (c = 0; hash_list[c] != NULL; c++) {
+++        iter = new_hash_iter_context(hash_list[c]);
+++        if (iter == NULL) {
+++            DEBUG(SSSDBG_OP_FAILURE, "Failed to create hash iterator.\n");
+++            return EINVAL;
+++        }
+++
+++        while ((entry = iter-&gt;next(iter)) != NULL) {
+++            ret = sysdb_gpo_store_gpo_result_setting(domain,
+++                                                     entry-&gt;key.c_str,
+++                                                     entry-&gt;value.ptr);
+++            if (ret != EOK) {
+++                free(iter);
+++                DEBUG(SSSDBG_OP_FAILURE,
+++                      "sysdb_gpo_store_gpo_result_setting failed for key:"
+++                      "[%s] value:[%s] [%d][%s]\n", entry-&gt;key.c_str,
+++                      (char *) entry-&gt;value.ptr, ret, sss_strerror(ret));
+++                return ret;
+++            }
+++        }
+++        talloc_free(iter);
+++    }
+++
+++    return EOK;
+++}
+++
++ /*
++  * This cse-specific function (GP_EXT_GUID_SECURITY) increments the
++  * cse_gpo_index until the policy settings for all applicable GPOs have been
++@@ -2766,6 +2846,7 @@ ad_gpo_cse_done(struct tevent_req *subreq)
++      * (as part of the GPO Result object in the sysdb cache).
++      */
++     ret = ad_gpo_store_policy_settings(state-&gt;host_domain,
+++                                       state-&gt;allow_maps, state-&gt;deny_maps,
++                                        cse_filtered_gpo-&gt;policy_filename);
++     if (ret != EOK &amp;&amp; ret != ENOENT) {
++         DEBUG(SSSDBG_OP_FAILURE,
++@@ -2779,6 +2860,13 @@ ad_gpo_cse_done(struct tevent_req *subreq)
++ 
++     if (ret == EOK) {
++         /* ret is EOK only after all GPO policy files have been downloaded */
+++        ret = store_hash_maps_in_cache(state-&gt;host_domain,
+++                                       state-&gt;allow_maps, state-&gt;deny_maps);
+++        if (ret != EOK) {
+++            DEBUG(SSSDBG_OP_FAILURE, "Failed to store evaluated GPO maps "
+++                                     "[%d][%s].\n", ret, sss_strerror(ret));
+++            goto done;
+++        }
++         ret = ad_gpo_perform_hbac_processing(state,
++                                              state-&gt;gpo_mode,
++                                              state-&gt;gpo_map_type,
++-- 
++2.25.1
++
+diff --git a/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9.2.bb b/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9.2.bb
+index d61471c..3e05858 100644
+--- a/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9.2.bb
++++ b/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9.2.bb
+@@ -25,6 +25,7 @@ SRC_URI = <a class="moz-txt-link-rfc2396E" href="https://github.com/SSSD/sssd/releases/download/${PV}/${BP}.tar.gz\file://fix-ldblibdir.patch\file://musl_fixup.patch\file://0001-sssctl-add-error-analyzer.patch\+file://CVE-2023-3758.patch\">"https://github.com/SSSD/sssd/releases/download/${PV}/${BP}.tar.gz \
+            file://fix-ldblibdir.patch \
+            file://musl_fixup.patch \
+            file://0001-sssctl-add-error-analyzer.patch \
++           file://CVE-2023-3758.patch \
+            "</a>
+ SRC_URI[sha256sum] = "827bc65d64132410e6dd3df003f04829d60387ec30e72b2d4e22d93bb6f762ba"
+ 
+</pre>
+    </blockquote>
+    <div class="moz-signature">-- <br>
+      <font color="#0000FF">
+        Regards,<br>
+        Hitendra Prajapati<br>
+        MontaVista Software LLC<br>
+        Mo: +91 9998906483 <br>
+      </font></div>
+  </body>
+</html>
+
+--------------WSb4BOIbQ7bV64scWWFeM4LT--
 
