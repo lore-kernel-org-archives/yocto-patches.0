@@ -1,103 +1,86 @@
-Return-Path: <mhalstead@linuxfoundation.org>
+Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48A97C3DA45
-	for <webhook@archiver.kernel.org>; Sat, 13 Jul 2024 20:17:44 +0000 (UTC)
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
- by mx.groups.io with SMTP id smtpd.web11.4297.1720901861048913243
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0474FC3DA59
+	for <webhook@archiver.kernel.org>; Mon, 15 Jul 2024 14:32:09 +0000 (UTC)
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+ by mx.groups.io with SMTP id smtpd.web10.39590.1721053919537070739
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 13 Jul 2024 13:17:41 -0700
+ Mon, 15 Jul 2024 07:31:59 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=be+ipgj6;
- spf=pass (domain: linuxfoundation.org, ip: 209.85.167.172, mailfrom: mhalstead@linuxfoundation.org)
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3d9de9f8c8dso1786715b6e.1
-        for <yocto-patches@lists.yoctoproject.org>; Sat, 13 Jul 2024 13:17:40 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=VggGHr0f;
+ spf=pass (domain: gmail.com, ip: 209.85.160.174, mailfrom: twoerner@gmail.com)
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-44f5df38e64so11864631cf.3
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 15 Jul 2024 07:31:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1720901860; x=1721506660; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NX3rcgTzXGskVC0xY4uc7iHvifSH0ec4q89mDYIY+9g=;
-        b=be+ipgj6NijXY3BPj42ULOAol+S6FsZDuCschWAlLNxwyFyZPbNe0Vfy2EBT6OffgB
-         jjhF61cZJgmqU4apkprc6tA4cbmjP7Jd/uEcJAnXCoSLS+ti17aoB65zmc1FfbfpqcVu
-         GIgo9bSZcG41e9QYMTxRrfp44BTHz4WTUsv/Q=
+        d=gmail.com; s=20230601; t=1721053918; x=1721658718; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DiFXDz2bKfo7TYC3kixDOqAYCwnxuB63zMWzk+fybFo=;
+        b=VggGHr0f6kc+wP4iRdVF/SGgq6ERowlb3oRTrZFSlIzd2Arx+UMV5kFNH6VqeZXtC3
+         lbl5waLxtum1zJraAgjYLPIWmsYVxjt8RN/9LO7QEIb2YUqKWQLorJDR5hrkmwAffNVO
+         vLabLdbYGzHToEAMAcOaDROrOcDvm7nnCstocuT/L94dpgAahIz0GG8FpG58y4YT4paS
+         TQGyGuP/CKrIshianfZy/h0XqolPAQ644VjzO6Zywy5BB/+ueAyMeI5XcvXIAQPE5UFc
+         aqjom+/iy9J3temFY34e52PL+us6q3eme9H9oas/lRLTZ1w6Ke3qxY0ROF074b8/3sl5
+         NvLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720901860; x=1721506660;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NX3rcgTzXGskVC0xY4uc7iHvifSH0ec4q89mDYIY+9g=;
-        b=TgRtplpQVTkm1z27dhssn00Bd0oDO9ei85Pm9iO4keLjbdCCixhfGeADwqp5BNYPnb
-         jpc8s0K+PcIrMMNAfwfvMYHIJNybPlrzRBpAbRQfDMigiXN6iwlnc9R/mdHUfE1Ol+kg
-         FWeSZ2nU0wQTcDyalfRcwcgkkd7ykkBG4nkEV55ZaB4OJhphWYKduX01KjuCLUtfi7Yx
-         2oJb9z84wquqYcESfLveKFQAq6qLUvZbEDifwDLC0PMRhNIqNPyy9KCtslp86RaKB306
-         9D70BPgNCyCPtyy/0uxNFxNAemran7ZyQgWMsh3+IrCmw9fNnmUcXtmv0SH0bNSn84Qa
-         5bRg==
-X-Forwarded-Encrypted: i=1; AJvYcCXrmwa8wFYyWxf58toCpNmI2Q4l73vasDeYvOYJViCOwsh7f6KZZdfHQCxzFxnnJad7qTumujp/aN0YEdoyk44h9j3mBkl9OekdwJDZEX39wrnTidM=
-X-Gm-Message-State: AOJu0YxELTvDHzBpP7uLMAzIj+CGs5V150MQ55Omz1TTbR525WPjUgPd
-	KdPMrdmPLdPXybrvcX0gTO2T2ZTs0QR4ZVBCm07w5/bY5e2o2C7rOxuNwHY1Vsk=
-X-Google-Smtp-Source: AGHT+IHsiDqTmoMrEufqrHSwPdyRMpyWrhMUmlQGpS1P521MEtFb/j6EKvwNMy/K0WSqRVg0z3I2kA==
-X-Received: by 2002:a05:6808:1306:b0:3d9:324a:3db with SMTP id 5614622812f47-3d93bdd181bmr18326530b6e.6.1720901859985;
-        Sat, 13 Jul 2024 13:17:39 -0700 (PDT)
-Received: from hd-yct-laptop.pdx.yoctoproject.org (97-115-81-219.ptld.qwest.net. [97.115.81.219])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bc28835sm13836035ad.148.2024.07.13.13.17.38
+        d=1e100.net; s=20230601; t=1721053918; x=1721658718;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DiFXDz2bKfo7TYC3kixDOqAYCwnxuB63zMWzk+fybFo=;
+        b=JkTf5pvTSaIe9hnPbKP8dTQI8n6iC6yKMBK22FFOr26yFbKPLfTvvJIv3IHhtUFjU/
+         DM2jEkjHg2yiesRYMhl14s6OIreWJTMLLm4WXNOuVSSZvtPqRKSNUH9S4eEkpH7QSOGA
+         20yKVnuAyKLWTKZ8M260S4ZvI5MxeJdlPXJvqIDTuxOFlC1956Z0M2eN7706qSIQhH0A
+         do5d9YCzkyRAGIPk3T34QD1wnUNemyMFZTDm9CCZ5Y7uACYcI4Nr8Say18znhOwDvyph
+         DFWJKjBrG1w1X9sZ1C1Gdt9lJlDwY8qZpI+nqGolZCsc0cdZcI8H0VhtnTyFZ2B4sHds
+         WagQ==
+X-Gm-Message-State: AOJu0YzME27vy3KmF0pSjblkFFXpzh9AxAlQxlNEGduJ/g6qiCQDrs88
+	wVkUzuzSwyG5QsuW63yu0GxQrHgVWYXxxOVxUz7uU50u8zvSP6AXnnI/qw==
+X-Google-Smtp-Source: AGHT+IEXSyO7s0p6DYbdtOCVtpxxC4onofpoxuwqEqQmavdgy0VaWc2+sm9gS/1DLUdE4uOXLqv28w==
+X-Received: by 2002:a05:622a:553:b0:447:e14d:ab10 with SMTP id d75a77b69052e-447faaca507mr249720271cf.56.1721053916973;
+        Mon, 15 Jul 2024 07:31:56 -0700 (PDT)
+Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44f5b7eded2sm25247431cf.39.2024.07.15.07.31.55
+        for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Jul 2024 13:17:38 -0700 (PDT)
-From: Michael Halstead <mhalstead@linuxfoundation.org>
-To: yocto@lists.yoctoproject.org,
-	yocto-patches@lists.yoctoproject.org
-Cc: richard.purdie@linuxfoundation.org,
-	Michael Halstead <mhalstead@linuxfoundation.org>
-Subject: [yocto-autobuilder-helper][PATCH] scripts/release-parser: Update release generator for 5.1
-Date: Sat, 13 Jul 2024 13:16:39 -0700
-Message-ID: <20240713201638.390039-2-mhalstead@linuxfoundation.org>
-X-Mailer: git-send-email 2.45.2
+        Mon, 15 Jul 2024 07:31:55 -0700 (PDT)
+From: Trevor Woerner <twoerner@gmail.com>
+To: yocto-patches@lists.yoctoproject.org
+Subject: [meta-rockchip][PATCH] linux-torvalds-next: ignore TMPDIR issues
+Date: Mon, 15 Jul 2024 10:31:49 -0400
+Message-ID: <20240715143149.16336-1-twoerner@gmail.com>
+X-Mailer: git-send-email 2.44.0.501.g19981daefd7c
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sat, 13 Jul 2024 20:17:44 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/427
+ <yocto-patches@lists.yoctoproject.org>; Mon, 15 Jul 2024 14:32:09 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/428
 
-Comment out future stable branch for easy updating.
+oe-core has raised the status of some checks from warnings to errors. Ignore
+the "...contains references to TMPDIR..." error when building the
+torvalds-next kernel.
 
-Signed-off-by: Michael Halstead <mhalstead@linuxfoundation.org>
+Signed-off-by: Trevor Woerner <twoerner@gmail.com>
 ---
- scripts/release-parser.py | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ recipes-kernel/linux/linux-torvalds-next_git.bb | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/scripts/release-parser.py b/scripts/release-parser.py
-index 7ae3c0b..0463667 100755
---- a/scripts/release-parser.py
-+++ b/scripts/release-parser.py
-@@ -84,8 +84,10 @@ def get_git_tags():
-             status = "LTS until Apr. 2024"
-         if branch == "yocto-4.0":
-             status = "LTS until Apr. 2026"
--        if branch == "yocto-4.3":
--            status = "Stable Release"
-+        if branch == "yocto-5.0":
-+            status = "LTS until Apr. 2028"
-+#        if branch == "yocto-5.1":
-+#            status = "Stable Release"
+diff --git a/recipes-kernel/linux/linux-torvalds-next_git.bb b/recipes-kernel/linux/linux-torvalds-next_git.bb
+index c0ac1de22005..6f3db7c61bdf 100644
+--- a/recipes-kernel/linux/linux-torvalds-next_git.bb
++++ b/recipes-kernel/linux/linux-torvalds-next_git.bb
+@@ -5,6 +5,7 @@ SECTION = "kernel"
+ LICENSE = "GPL-2.0-only"
+ LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
  
-         # Create a dictionary for the tag
-         tag_dict = {
-@@ -108,10 +110,10 @@ tags = sorted(get_git_tags(), key=lambda x: x["original_release_date"], reverse=
- 
- tags.append(
-     {
--        "series_version": "5.0",
-+        "series_version": "5.1",
-         "original_release_date": "",
-         "latest_release_date": "",
--        "release_codename": "Scarthgap",
-+        "release_codename": "Styhead",
-         "latest_tag": "",
-         "status": "Active Development",
-         "download": "",
++ERROR_QA:remove = "buildpaths"
+ DEFAULT_PREFERENCE = "-1"
+ COMPATIBLE_MACHINE = "^$"
+ COMPATIBLE_MACHINE:radxa-zero-3 = "radxa-zero-3"
 -- 
-2.45.2
+2.44.0.478.g7774cfed6261
 
 
