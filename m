@@ -1,78 +1,96 @@
-Return-Path: <twoerner@gmail.com>
+Return-Path: <tim.orling@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5C93C3DA49
-	for <webhook@archiver.kernel.org>; Tue, 16 Jul 2024 15:07:20 +0000 (UTC)
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
- by mx.groups.io with SMTP id smtpd.web11.13109.1721142431343398874
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2634CC3DA49
+	for <webhook@archiver.kernel.org>; Wed, 17 Jul 2024 01:06:01 +0000 (UTC)
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+ by mx.groups.io with SMTP id smtpd.web10.5281.1721178351371714374
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 16 Jul 2024 08:07:11 -0700
+ Tue, 16 Jul 2024 18:05:51 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=mxJZbl2K;
- spf=pass (domain: gmail.com, ip: 209.85.219.53, mailfrom: twoerner@gmail.com)
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6b5f128b18bso31299016d6.0
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 16 Jul 2024 08:07:11 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=oMwCvdzu;
+ spf=pass (domain: konsulko.com, ip: 209.85.210.172, mailfrom: tim.orling@konsulko.com)
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-70b1207bc22so5241386b3a.3
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 16 Jul 2024 18:05:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721142430; x=1721747230; darn=lists.yoctoproject.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=maMcWR/GQZGmDf2qDwpX/vhBr6cJTJ7+oF9V4Err98I=;
-        b=mxJZbl2KwQrJOg8I7Tep3d2M5sJgeCn1RJQ1aSdPzUypG9BKbmEgmRZWwiPQvSXDf+
-         3vIxmV0ky97QPQdQsaPXa/U4Nik7DTc0TELMPXLltwnNmZEHQogqxZtZG4Qts4JWV2Bv
-         0rBsAIfWEDDip4fhQg3wCZ5e4zaAlW+5T8opypaEbXU5rMxWvCwrtZDoma9Hcdr5cfRx
-         k+ldw8AMpEWS13N9lAhYsntiljdwkQ+b4s1SrmtgBB9U0PxQaRSEMRfXi3LXziuOf9jr
-         18MgJvH7XjXirNt+eGTGiUsBNBOQFtiul37h0guHdLcfHx3JN3h0CSUcksJS69b3TOsr
-         q30A==
+        d=konsulko.com; s=google; t=1721178350; x=1721783150; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LlQFEXhOtLr7+q8MEVNRwJ0PLkSdE9C0+Qp0wpfWwA4=;
+        b=oMwCvdzuFlskmpETg0TJplz7/MRT5M9/0k5QK+32HrcAXw1HaAsBGc4ppmbDmNNHqJ
+         UAPTADqMpYt4gt60sDz1tk6oDHmylUiPcN+I0BVfHwei8czQho8FvthTs84+PTx0+upb
+         F0j/VhJD7s4nohr/yGHQuxdmIMsGZ5KaeaETE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721142430; x=1721747230;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=maMcWR/GQZGmDf2qDwpX/vhBr6cJTJ7+oF9V4Err98I=;
-        b=qugjENlEzcZ6wRskOrYww4iN/kmTxq0BJj8BRBLbbcFLmFBbREpBBzRglOH0OmKyjP
-         91Gc4H+xlYFtRng//l1I6LC57FOhOGEKKqm8RXiCz2uIj5qpEMoRjvOFMUanuU2JiqKi
-         D8Ezk4J6aJJ8vWg2twanTwAuySan1130cJdIjCIxeU6GDJNIqydyFf/hhGUwc/A2Jex1
-         Hzkz9UBHZE1IGoKP6oQs7IKZ8YxFInhzTRiXVd8W82j80HChg3py2Ebp28hRJqLymWro
-         bloyAsl5CCkxOPbmDxF1fswQDDTd7toyh5exapZ9qjAdJZRw+XRsBiLNqz1cQAr/zwhF
-         Xxpw==
-X-Gm-Message-State: AOJu0YwUZiF7rSy8QluowNGFN4q78/ZiLPmXE6NrrE1s+MVPnwKR/GxO
-	Agy9ObUVXwSXpymP4X2fIO5sHDqvz1Xta0eGWqftm6DlvXF80RPTIYKB1g==
-X-Google-Smtp-Source: AGHT+IFxSm4b4PVxmbjlXTqc8grySdax+NKckrVMiHvofhU5KpobAhQ1zUxHv3HVsIOcYgm3iFst4A==
-X-Received: by 2002:ad4:5dcb:0:b0:6b5:e6b3:72fd with SMTP id 6a1803df08f44-6b77f52cfbfmr31522106d6.29.1721142429536;
-        Tue, 16 Jul 2024 08:07:09 -0700 (PDT)
-Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b76194fe1bsm31485346d6.11.2024.07.16.08.07.08
-        for <yocto-patches@lists.yoctoproject.org>
+        d=1e100.net; s=20230601; t=1721178350; x=1721783150;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LlQFEXhOtLr7+q8MEVNRwJ0PLkSdE9C0+Qp0wpfWwA4=;
+        b=i5KGdRS1wKRAYb8UJ1uMm3b1012TC0iNvp5NcbbLXQDa2aoVmlPXy202XdyjkrJhhf
+         zeauXiqYtLIYwMpCmX4ZHH1AoHXwrmZelypp87cnzc3x3j3M28iEADqYitwfAtKyQ2OR
+         xhSVMuvvMiAnib/qcfP697gTbdXs4mzt/LDSlkzBuAsSmDl26A/cJy2XsTMcgvlThMgs
+         hmgbtdt0GEK60UI2c7fpt86Q276WFWirwXXOLZd6sm13+p2ZXPfY63mWt4EVqRSThtpB
+         asFqKbegoMnszfUhgQMV0r9Ay2hCKBU6FRVviAle7e0at/eF2piW8/bU7I/Asa86qL5A
+         fEFQ==
+X-Gm-Message-State: AOJu0YwH8f8KyrFKnUuhU6tJm/VlRjwJtdt6BtPB+KrFm0r/gYD41moh
+	xzEALrYs7r6/vfy6b8XdXthBGpbyZrVGBk68UJ/2EGQitoREr6wx1Kksl8hHzLiFDtVikEW3jth
+	be5c=
+X-Google-Smtp-Source: AGHT+IHD1Oqi5G1ikzjwO/QoRhhnH2kuazNBQ1aQ/IDLdAEBKJh2maihs+KSznInMvPSOqRFL5Hm1Q==
+X-Received: by 2002:a05:6a21:9a01:b0:1bd:27fd:ff56 with SMTP id adf61e73a8af0-1c3fddfc8a7mr241095637.58.1721178349641;
+        Tue, 16 Jul 2024 18:05:49 -0700 (PDT)
+Received: from localhost (c-98-232-159-17.hsd1.or.comcast.net. [98.232.159.17])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bb6ffdesm66709255ad.53.2024.07.16.18.05.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jul 2024 08:07:08 -0700 (PDT)
-Date: Tue, 16 Jul 2024 11:07:06 -0400
-From: Trevor Woerner <twoerner@gmail.com>
+        Tue, 16 Jul 2024 18:05:49 -0700 (PDT)
+From: tim.orling@konsulko.com
 To: yocto-patches@lists.yoctoproject.org
-Subject: Re: [meta-rockchip][PATCH] linux-torvalds-next: ignore TMPDIR issues
-Message-ID: <20240716150706.GA21168@localhost>
-References: <20240715143149.16336-1-twoerner@gmail.com>
+Cc: "dependabot [bot]" <support@github.com>,
+	Tim Orling <tim.orling@konsulko.com>
+Subject: [layerindex-web][PATCH 1/2] build(deps): bump djangorestframework from 3.15.1 to 3.15.2
+Date: Tue, 16 Jul 2024 18:05:06 -0700
+Message-ID: <20240717010514.3386182-2-tim.orling@konsulko.com>
+X-Mailer: git-send-email 2.45.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240715143149.16336-1-twoerner@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 16 Jul 2024 15:07:20 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/432
+ <yocto-patches@lists.yoctoproject.org>; Wed, 17 Jul 2024 01:06:01 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/433
 
-On Mon 2024-07-15 @ 10:31:49 AM, Trevor Woerner wrote:
-> oe-core has raised the status of some checks from warnings to errors. Ignore
-> the "...contains references to TMPDIR..." error when building the
-> torvalds-next kernel.
-> 
-> Signed-off-by: Trevor Woerner <twoerner@gmail.com>
-> ---
->  recipes-kernel/linux/linux-torvalds-next_git.bb | 1 +
->  1 file changed, 1 insertion(+)
+From: "dependabot[bot]" <49699333+dependabot[bot]@users.noreply.github.com>
 
-Applied to meta-rockchip, master branch.
+Bumps [djangorestframework](https://github.com/encode/django-rest-framework) from 3.15.1 to 3.15.2.
+- [Release notes](https://github.com/encode/django-rest-framework/releases)
+- [Commits](https://github.com/encode/django-rest-framework/compare/3.15.1...3.15.2)
+
+---
+updated-dependencies:
+- dependency-name: djangorestframework
+  dependency-type: direct:production
+...
+
+Signed-off-by: dependabot[bot] <support@github.com>
+Signed-off-by: Tim Orling <tim.orling@konsulko.com>
+---
+ requirements.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/requirements.txt b/requirements.txt
+index 8ab5e56..e4610e5 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -19,7 +19,7 @@ django-registration==3.4
+ django-reversion==5.0.12
+ django-reversion-compare==0.17.0
+ django-simple-captcha==0.6.0
+-djangorestframework==3.15.1
++djangorestframework==3.15.2
+ gitdb==4.0.11
+ GitPython==3.1.43
+ kombu==5.3.7
+-- 
+2.45.2
+
 
