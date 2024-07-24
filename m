@@ -1,124 +1,100 @@
-Return-Path: <joe@deserted.net>
+Return-Path: <jpuhlman@mvista.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99BE8C3DA61
-	for <webhook@archiver.kernel.org>; Wed, 24 Jul 2024 15:26:10 +0000 (UTC)
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
- by mx.groups.io with SMTP id smtpd.web10.13468.1721834764327890925
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07452C3DA63
+	for <webhook@archiver.kernel.org>; Wed, 24 Jul 2024 22:35:43 +0000 (UTC)
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+ by mx.groups.io with SMTP id smtpd.web10.23404.1721860537667054751
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 24 Jul 2024 08:26:04 -0700
+ Wed, 24 Jul 2024 15:35:37 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@deserted-net.20230601.gappssmtp.com header.s=20230601 header.b=ntS9G9kD;
- spf=none, err=permanent DNS error (domain: deserted.net, ip: 209.85.222.174, mailfrom: joe@deserted.net)
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7a1a6af9401so307193285a.0
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 24 Jul 2024 08:26:04 -0700 (PDT)
+ dkim=pass header.i=@mvista.com header.s=google header.b=aqMIOhJJ;
+ spf=pass (domain: mvista.com, ip: 209.85.210.177, mailfrom: jpuhlman@mvista.com)
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70d2d7e692eso257249b3a.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 24 Jul 2024 15:35:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=deserted-net.20230601.gappssmtp.com; s=20230601; t=1721834763; x=1722439563; darn=lists.yoctoproject.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7SsVunqNvTLAtVKLhDyFtHTlPXonnJtr1myaP/K4Anc=;
-        b=ntS9G9kDfvR0mT2duHipsgMusLukvaD7ltWnItkTkqrUxM9B6jKUKTeUXyn7cqfKHC
-         5wieO9TVwIez7nlJkSfamZ43RERIQFk79OFD/LuKLaUd809inOQKCtFGnYWArnS+ZSe/
-         wAn1M5w2p8lPwfx/zzkIMH+IZZpOF0HxiWFq3OrDZxEzUnxywPB1M4fptW9hCdTCtelM
-         W1W3DZb8hhJrv7iWVfI+y30PpgwReVMPHGSiRgkobwR2AxhGrR6MeCQreknm2vDquV70
-         3K4uINoogBbYUF4i4HeS3Q9Xm/FAexEI04v5rKEIcMFvOJ15uH8198Y7z9C05/QJi9PD
-         UgVw==
+        d=mvista.com; s=google; t=1721860535; x=1722465335; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=/kt9i3ThVWeHCeHY9wdYB9lQnCHB6U5F2Vy7daY8R/E=;
+        b=aqMIOhJJH06d0pDNvYZy8mcDO3UFLVk67lQtXPPRL9TuPKe6uFjRKof01XTcA3oCqK
+         GbSfPXi/LTdmu8EZ4kTYrKYsCkuR2yHeOOIyvQAcwQxIxuxWOxn4AvsP6mw+vkei6cTM
+         NB0s3C+Jp6jUsLqnpJzPBHQSCVV7PeEzwq/iw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721834763; x=1722439563;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7SsVunqNvTLAtVKLhDyFtHTlPXonnJtr1myaP/K4Anc=;
-        b=SQNcX/r1/zhKAnUmYZFG5VevhzykeFaMXHx5guw7dCvlOO5Q+9YshN8okVsadmNYnk
-         Pv0QE/zC7DKSvEfn2zejvQQCEnWKitq0IqwPNE2VWPEFx9UVqccA4NDq7Xr6EdpL7q23
-         Td4LLc6oLQj5ECDdLnxfVaXHiBQNbc7tP5YAsAg4Q+bU6tqrD2unBd9ZHdCUP/d5boZi
-         p3SrBw3A1pK470WBKCFY9J1Js/RZyA/8h2YvRai24Tf12XhlSSD84Am0qWKYWGYTh97G
-         /7JHSGT7XOcyOOD26wzHCjcL3RNtQ1VQb+egomynqbHdmRwPd3+ON2BAmS6IeH8IINg7
-         WzCg==
-X-Gm-Message-State: AOJu0YwbZIRXHok3P5b1F5JxIxUNjPNVp94Z+kuUudx7itCqH9z+KeGn
-	ULqfMUCtcVLiQamXaheEWuQtY3+ITjAdqSZoW1m2mHj3Va9kBA1DmqCvR1GLaw==
-X-Google-Smtp-Source: AGHT+IE/5l3AMGgJuie0UYLLTqlEoq5iCZJTVE1q36u6mwP21rhDaqhl0fDFp78/5VZTYSsno2fxkw==
-X-Received: by 2002:a05:620a:4304:b0:79f:f85:e82 with SMTP id af79cd13be357-7a1d455dcbcmr1094485a.10.1721834763241;
-        Wed, 24 Jul 2024 08:26:03 -0700 (PDT)
-Received: from nightwinge.deserted.net (bras-base-jkvlon0513w-grc-21-76-64-181-148.dsl.bell.ca. [76.64.181.148])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a198fba3b9sm588295985a.29.2024.07.24.08.26.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 08:26:02 -0700 (PDT)
-Date: Wed, 24 Jul 2024 11:26:01 -0400
-From: Joe MacDonald <joe@deserted.net>
-To: Yi Zhao <yi.zhao@windriver.com>
-Cc: yocto-patches@lists.yoctoproject.org, joe.macdonald@siemens.com
-Subject: Re: [meta-selinux][PATCH] shadow: comment out pam_lastlog line in
- login pam file
-Message-ID: <20240724152601.2ti6auxh3mfpptnt@nightwinge.deserted.net>
-References: <20240724141329.3326073-1-yi.zhao@windriver.com>
- <20240724145353.7yxqlbaetvims2tz@nightwinge.deserted.net>
- <df0f4afd-77cc-4cb9-9b84-2f385be71527@windriver.com>
+        d=1e100.net; s=20230601; t=1721860535; x=1722465335;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/kt9i3ThVWeHCeHY9wdYB9lQnCHB6U5F2Vy7daY8R/E=;
+        b=UscCe02WOHpP/H0AEo9R2rZLs+pVqxoqEzEuCx4/7Q6cgkibWnssDw3R60Fv7Gznz1
+         fktnzkXRSTAr6XIiMULq+hDFqlV5UNIyXA18+DlXkE0xbkMvgWlwEBns1WaatPmxm/o1
+         A9i7pOCmVrHP8htfrXHs3AKzbrnq0vM5cxxV50bmcFvUlctJaHC4g98KR5uX6XlPQp86
+         dGB3Gp66UfZiH6ESJ+XFoetFY3ROHRY1hedcKGV37iEE5rpXVWPUQlffywDgX35yk7ol
+         X0bP2/Vdzt1h/5U/TuvV7y6wVxYEO3OzylqC2XN+prbaTjcPlkJ4cLB7cIn1h4UWIc7U
+         8cZQ==
+X-Gm-Message-State: AOJu0Yz+x/d4nzGCA7n2n2yBBDaov1EJXwDHgUQdqgHklaEBU1j+WJek
+	QdsY5aQHuVBeVj9vbcq8mD31lu/ijBfWW+FhdOjcsePz5RUs/XnUi2Yg9slvVzLoVkF9cmcF3On
+	X
+X-Google-Smtp-Source: AGHT+IFVvjSasAOzN91vaOukJIeoV4oS2Jqasg7ojviLsgD9o1k2tvYWDsw9RYPexL5162qL7pUGOg==
+X-Received: by 2002:a05:6a00:4616:b0:706:65f6:3ab9 with SMTP id d2e1a72fcca58-70eaa90a183mr1063148b3a.20.1721860535236;
+        Wed, 24 Jul 2024 15:35:35 -0700 (PDT)
+Received: from [192.168.1.9] (99-14-97-149.lightspeed.frokca.sbcglobal.net. [99.14.97.149])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead712f1asm67521b3a.61.2024.07.24.15.35.34
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Jul 2024 15:35:34 -0700 (PDT)
+Message-ID: <da18e2d9-48a1-45ca-b5bc-5b96304b2816@mvista.com>
+Date: Wed, 24 Jul 2024 15:35:33 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <df0f4afd-77cc-4cb9-9b84-2f385be71527@windriver.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [yocto-patches] [meta-cgl][PATCH] pacemaker: remove remote
+ resource agent from pacemaker-remote
+To: yocto-patches@lists.yoctoproject.org
+References: <20240723155945.1705212-1-mathieu.dupre@savoirfairelinux.com>
+Content-Language: en-US
+From: Jeremy Puhlman <jpuhlman@mvista.com>
+In-Reply-To: <20240723155945.1705212-1-mathieu.dupre@savoirfairelinux.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 24 Jul 2024 15:26:10 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/453
+ <yocto-patches@lists.yoctoproject.org>; Wed, 24 Jul 2024 22:35:42 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/454
 
-[Re: [meta-selinux][PATCH] shadow: comment out pam_lastlog line in login pam file] On 24.07.24 (Wed 23:16) Yi Zhao wrote:
+Merged.
+Mathieu you need to fix your sendemail.from. I fixed it, but
+the yocto git server rejects the list default from line.
 
-> 
-> On 7/24/24 22:53, Joe MacDonald wrote:
-> > Given that this is deprecated and disabled by default, is there any
-> > reason to keep this in at all, rather than just removing lines 67-70?
-> 
-> Although lastlog is disabled by default, the code is still there and
-> users can enable it via configure option --enable-lastlog. So I did not
-> delete these lines. In addition, keeping this line will allow users to
-> easily switch to lastlog2. Just change pam_lastlog.so to pam_lastlog2.so
-> in the line.
+Thanks!
 
-What about commenting it out but also changing pam_lastlog to pam_lastlog2
-since that is part of util-linux 2.40+ and that's the version in Yocto
-today, then?
-
--J.
-
-> //Yi
-> 
-> 
-> > 
-> > [[meta-selinux][PATCH] shadow: comment out pam_lastlog line in login pam file] On 24.07.24 (Wed 22:13) Yi Zhao wrote:
-> > 
-> > > The pam_lastlog module is deprecated and disabled by default in
-> > > linux-pam since 1.5.3[1]. Comment out this line to avoid loading
-> > > pam_lastlog module by default. Users can use lastlog2 provided by
-> > > util-linux as an alternative[2].
-> > > 
-> > > [1] https://github.com/linux-pam/linux-pam/commit/357a4ddbe9b4b10ebd805d2af3e32f3ead5b8816
-> > > [2] https://git.kernel.org/pub/scm/utils/util-linux/util-linux.git/commit/?id=c2e299d0acb2fa4ad1691452fa0eae76520bbdb0
-> > > 
-> > > Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
-> > > ---
-> > >   recipes-extended/shadow/files/pam.d/login | 2 +-
-> > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/recipes-extended/shadow/files/pam.d/login b/recipes-extended/shadow/files/pam.d/login
-> > > index ec5bba9..eb43f3b 100644
-> > > --- a/recipes-extended/shadow/files/pam.d/login
-> > > +++ b/recipes-extended/shadow/files/pam.d/login
-> > > @@ -66,7 +66,7 @@ session    required   pam_limits.so
-> > >   # Prints the last login info upon succesful login
-> > >   # (Replaces the `LASTLOG_ENAB' option from login.defs)
-> > > -session    optional   pam_lastlog.so
-> > > +#session    optional   pam_lastlog.so
-> > >   # Prints the motd upon succesful login
-> > >   # (Replaces the `MOTD_FILE' option in login.defs)
-> > > -- 
-> > > 2.25.1
-> > > 
+On 7/23/2024 8:59 AM, Mathieu Dupré via lists.yoctoproject.org wrote:
+> The remote resource agent should be packaged with the other ocf files
+> in the pacemaker package. This file is not used by pacemaker-remote but
+> by pacemaker to connect to the remote.
+>
+> Signed-off-by: Mathieu Dupré <mathieu.dupre@savoirfairelinux.com>
+> ---
+>   meta-cgl-common/recipes-cgl/pacemaker/pacemaker_2.0.5.bb | 1 -
+>   1 file changed, 1 deletion(-)
+>
+> diff --git a/meta-cgl-common/recipes-cgl/pacemaker/pacemaker_2.0.5.bb b/meta-cgl-common/recipes-cgl/pacemaker/pacemaker_2.0.5.bb
+> index c3fdff3..49d741e 100644
+> --- a/meta-cgl-common/recipes-cgl/pacemaker/pacemaker_2.0.5.bb
+> +++ b/meta-cgl-common/recipes-cgl/pacemaker/pacemaker_2.0.5.bb
+> @@ -111,7 +111,6 @@ FILES:${PN}-cluster-libs = "${libdir}/libcrmcluster.so.*"
+>   RDEPENDS:${PN}-cluster-libs += "libqb"
+>   FILES:${PN}-remote = "${sysconfdir}/init.d/pacemaker_remote \
+>                         ${sbindir}/pacemaker_remoted \
+> -                      ${libdir}/ocf/resource.d/pacemaker/remote \
+>                        "
+>   RDEPENDS:${PN}-remote += "libqb bash"
+>   FILES:${PN} += " ${datadir}/snmp                             \
 
 -- 
--Joe MacDonald.
-:wq
+Jeremy Puhlman
+jpuhlman@mvista.com
+
 
