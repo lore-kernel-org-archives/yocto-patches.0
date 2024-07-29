@@ -2,91 +2,96 @@ Return-Path: <akuster808@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90E9DC3DA64
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92777C3DA70
 	for <webhook@archiver.kernel.org>; Mon, 29 Jul 2024 01:06:40 +0000 (UTC)
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
- by mx.groups.io with SMTP id smtpd.web10.46509.1722215198760231618
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+ by mx.groups.io with SMTP id smtpd.web11.46854.1722215196279075163
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 28 Jul 2024 18:06:38 -0700
+ Sun, 28 Jul 2024 18:06:36 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=Yd5Kmdlp;
- spf=pass (domain: gmail.com, ip: 209.85.128.182, mailfrom: akuster808@gmail.com)
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-654cf0a069eso12912387b3.1
-        for <yocto-patches@lists.yoctoproject.org>; Sun, 28 Jul 2024 18:06:38 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=K/SoHS26;
+ spf=pass (domain: gmail.com, ip: 209.85.128.170, mailfrom: akuster808@gmail.com)
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-661369ff30aso12989687b3.2
+        for <yocto-patches@lists.yoctoproject.org>; Sun, 28 Jul 2024 18:06:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722215198; x=1722819998; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dnG6WiVTx7KINQfPBncy8OO8Ud4T8KWAFeOcqUzAygM=;
-        b=Yd5KmdlpyYl9X6c/PFfMbF/ZQJ3I0FXDfKySLT5wJQKa5Wcy/fL9IPF/bJOhblnI61
-         0SGgGJllR8nTs797KvvTcVtXHqCMToCe2OMcmhfZzh6GZo6vttd1inuTttpw9e2ja/aU
-         mfgsahJQfEGO8nG7u4Yr+4swbR6fRAmZ7/w2u6miYV9s7tRQhX+9zMmF+IhqUG9ennh7
-         763eNUk3s1Qv5uMgIO42TBbC5jETCV53+swTQSl0/tjkHVddNV4C8x1POVu8daCBB4LL
-         MrCrfwKODUX+LovBB+D93z4O5cWpRSXS22dWsBia/zRllAcMnKIW5XC8CVxkceF0u/xS
-         ioBw==
+        d=gmail.com; s=20230601; t=1722215195; x=1722819995; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5t7mSfFBpJJtic5iavgHTLUQCyqjtNIwwCZoT4aQ7gY=;
+        b=K/SoHS26pMxi6FC1DsqY5jxN0UbFz3iErOXBf3Wk4yn/U5ctHoNVk8Hu9+ISzV8h+V
+         rS5h/iaBIeDIHn1+1Ph7b2ZUjl2X2CeS55MglPspcfrTP4XKj+bBBYnjSkrGbhX8o+2Q
+         XW55fo4s9iWJ5sM1bhwaiPidhReV/bdS1AHwxVi/T2B46IlLo68wVX4CJ/HOqyBEXoTl
+         6O08r66A6Zux44MRedeRl23xGJrsGxoQJUQ7Qlf8p5MjNhCU1mQg/oMxMnq8uSAqp9gn
+         8ONxPcpoDyDbrnmGsRKwCwQDx2lpp0XXhHkgjK7pksBrNf/SjFwHMEEirtkA7cS4f9I5
+         eG8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722215198; x=1722819998;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dnG6WiVTx7KINQfPBncy8OO8Ud4T8KWAFeOcqUzAygM=;
-        b=uuYhStVjs7T2u7LaohluQaGbjyM11cQXR266hJ0S4H3Vn1I5bxIBAsOP52dW5N6Qk5
-         WIDccIhPLg/CmSDIvoUwMJQGF3cl1d33O7NnmWj5tbtMTwBRKAl3EtTkrjNGXyztHTSG
-         7yOdWmkoONczCBniOAYOJFQ5Y8+9Z2NwZZH/QaJ6VMwzzLCwGMFB970fwUjGSkRzJuPT
-         Ag3Teth8kOrPPnzVfVfw04tkI9uJYrQWWxk6h4johVQ6KY3bA0Rh/bej4AicmGJgdoOW
-         b8ACpkmiR6YW8SYI+egL+mUAucFXNiOeiEFICSq2IozRPbeKSemFiIhHxAzrhiapNX7F
-         Ty5w==
-X-Gm-Message-State: AOJu0Yz9MzuGmsPUlNWxf8nTCypgiAw6IlZlsfteQyugYrvmcVQXV/7O
-	WvuUr/dQPbOgob3a0oyt61M1STgqPVRZ+8E+rYrk5RvRGowuxNMIVhsHAg==
-X-Google-Smtp-Source: AGHT+IHS7m2b6PraF1r1fdkP91wfWeH6nlYuZTZzAm/wscQQFVG/EEj593oj3tR6eCuEq3RifcRl+w==
-X-Received: by 2002:a05:690c:ec4:b0:619:5176:5e34 with SMTP id 00721157ae682-67a06b021cbmr69058587b3.18.1722215197830;
-        Sun, 28 Jul 2024 18:06:37 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722215195; x=1722819995;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5t7mSfFBpJJtic5iavgHTLUQCyqjtNIwwCZoT4aQ7gY=;
+        b=jgNKyyjG1AFgNov7GtBAzYPF3cx91DGKbMprrV5zLAY68zm1oVM8yl7tvXY3Uoe3aO
+         R2WdPzDqiaiY87YA6eX97sGsoD0PQTGYIlXJa5rZcCXHxv53tiP8OWre0WtM0+sJ57tS
+         XMfQZmeWWF/319nJFTmj5TchORlThqiquBEH/1ZxONhdiiI1IC0fHtL6w2C6Y0Rr30f3
+         QnBvSAZZB5YxxBogw7/6klGuCBBjZeBx7NuN0mRpVv3OCIDR2Eqcqt0xrlSzx18EZOF5
+         MMSYiCyCQlMErYHEt3Buj6K7LgvpFgMszweNySPQZ1CsTKaCtl4R8BdbV/zHJCxQKQDX
+         iTCQ==
+X-Gm-Message-State: AOJu0YyXmDO0uen/8JuJ4g9v4P0BoZDzDxYMRj3v+bKhBB10EHLRiDcB
+	01TO4k0toEFz6HFoDFVW8b3dgnMJvrrYFW1vhT4SdtvujGK8a7Chg2ZS1A==
+X-Google-Smtp-Source: AGHT+IE8RrRDKcP/RGKxitXGIKoNfDNN43RMIVFKJVr30JRjOOxNCTGUQGjXyAg0SD+ithaI8oXMQg==
+X-Received: by 2002:a81:7c82:0:b0:632:12b:8315 with SMTP id 00721157ae682-67a072bac7cmr62235297b3.22.1722215195180;
+        Sun, 28 Jul 2024 18:06:35 -0700 (PDT)
 Received: from keaua.attlocal.net ([2600:1700:45dd:7000:47bc:453d:d517:b47])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6756bc9edd8sm18543157b3.130.2024.07.28.18.06.37
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6756bc9edd8sm18543157b3.130.2024.07.28.18.06.34
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Jul 2024 18:06:37 -0700 (PDT)
+        Sun, 28 Jul 2024 18:06:34 -0700 (PDT)
 From: Armin Kuster <akuster808@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-security][PATCH 6/6] arpwatch: Fix compile error
-Date: Sun, 28 Jul 2024 21:06:34 -0400
-Message-Id: <20240729010634.1991558-6-akuster808@gmail.com>
+Subject: [meta-security][PATCH 1/6] apparmor: fix QA Warnings
+Date: Sun, 28 Jul 2024 21:06:29 -0400
+Message-Id: <20240729010634.1991558-1-akuster808@gmail.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240729010634.1991558-1-akuster808@gmail.com>
-References: <20240729010634.1991558-1-akuster808@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Mon, 29 Jul 2024 01:06:40 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/486
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/481
 
-| ./dns.c:118:24: error: implicit declaration of function '_getshort'; did you mean '__putshort'? [-Wimplicit-function-declaration]
-
-upon others
+RROR: apparmor-3.1.3-r0 do_package_qa: QA Issue: File /usr/src/debug/apparmor/3.1.3/libraries/libapparmor/swig/perl/libapparmor_wrap.c in package apparmor-src contains reference to TMPDIR [buildpaths]
+ERROR: apparmor-3.1.3-r0 do_package_qa: QA Issue: File /usr/lib/python3.12/site-packages/LibAppArmor/.debug/_LibAppArmor.cpython-312-aarch64-linux-gnu.so in package apparmor-dbg contains reference to TMPDIR [buildpaths]
+ERROR: apparmor-3.1.3-r0 do_package_qa: QA Issue: File /usr/lib/perl5/vendor_perl/5.38.2/aarch64-linux/auto/LibAppArmor/.packlist in package apparmor contains reference to TMPDIR [buildpaths]
+ERROR: apparmor-3.1.3-r0 do_package_qa: Fatal QA errors were found, failing task.
 
 Signed-off-by: Armin Kuster <akuster808@gmail.com>
 ---
- recipes-scanners/arpwatch/arpwatch_3.3.bb | 4 ++++
- 1 file changed, 4 insertions(+)
+ recipes-mac/AppArmor/apparmor_3.1.3.bb | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/recipes-scanners/arpwatch/arpwatch_3.3.bb b/recipes-scanners/arpwatch/arpwatch_3.3.bb
-index cacfea7..84f93da 100644
---- a/recipes-scanners/arpwatch/arpwatch_3.3.bb
-+++ b/recipes-scanners/arpwatch/arpwatch_3.3.bb
-@@ -21,6 +21,10 @@ ARPWATCH_GID ?= "arpwatch"
- APRWATCH_FROM ?= "root "
- ARPWATH_REPLY ?= "${ARPWATCH_UID}"
+diff --git a/recipes-mac/AppArmor/apparmor_3.1.3.bb b/recipes-mac/AppArmor/apparmor_3.1.3.bb
+index 27c518c..49ab7a7 100644
+--- a/recipes-mac/AppArmor/apparmor_3.1.3.bb
++++ b/recipes-mac/AppArmor/apparmor_3.1.3.bb
+@@ -74,6 +74,8 @@ do_compile () {
+ }
  
-+# many configure tests are failing with gcc-14
-+CFLAGS += "-Wno-error=implicit-int -Wno-error=implicit-function-declaration"
-+BUILD_CFLAGS += "-Wno-error=implicit-int -Wno-error=implicit-function-declaration"
+ do_install () {
++    sed -i -e 's#${RECIPE_SYSROOT}##g' ${B}/libraries/libapparmor/swig/perl/libapparmor_wrap.c
 +
- PACKAGECONFIG ??= ""
+     oe_runmake -C ${B}/libraries/libapparmor DESTDIR="${D}" install
+     oe_runmake -C ${B}/binutils DESTDIR="${D}" install
+     oe_runmake -C ${B}/utils DESTDIR="${D}" install
+@@ -102,6 +104,9 @@ do_install () {
+     fi
+     chown root:root -R ${D}/${sysconfdir}/apparmor.d
+     chown root:root -R ${D}/${datadir}/apparmor
++
++    find ${D}${libdir}/perl5/ -type f -name ".packlist" -delete
++    find ${D}${PYTHON_SITEPACKAGES_DIR}/LibAppArmor/ -type f -name "_LibAppArmor*.so" -delete
+ }
  
- PACKAGECONFIG[email] = "-with-watcher=email=${APRWATCH_FROM} --with-watchee=email=${ARPWATH_REPLY}, , postfix, postfix postfix-cfg"
+ #Building ptest on arm fails.
 -- 
 2.34.1
 
