@@ -2,46 +2,46 @@ Return-Path: <akuster808@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C556CC3DA49
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6966C52CDC
 	for <webhook@archiver.kernel.org>; Mon, 29 Jul 2024 01:06:40 +0000 (UTC)
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
- by mx.groups.io with SMTP id smtpd.web10.46506.1722215197597103986
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+ by mx.groups.io with SMTP id smtpd.web11.46856.1722215198137665758
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 28 Jul 2024 18:06:37 -0700
+ Sun, 28 Jul 2024 18:06:38 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=mb8Svfxg;
- spf=pass (domain: gmail.com, ip: 209.85.128.173, mailfrom: akuster808@gmail.com)
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-66526e430e0so14436617b3.2
-        for <yocto-patches@lists.yoctoproject.org>; Sun, 28 Jul 2024 18:06:37 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=X+lmdj5/;
+ spf=pass (domain: gmail.com, ip: 209.85.128.179, mailfrom: akuster808@gmail.com)
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-66493332ebfso14414667b3.3
+        for <yocto-patches@lists.yoctoproject.org>; Sun, 28 Jul 2024 18:06:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722215196; x=1722819996; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1722215197; x=1722819997; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=8VX7ESJZSJ+ruHr+2rQCLvMbWOjfCmx3vRkprKOJP/Y=;
-        b=mb8SvfxgIFgsyDfdP7DBAnUB2iva8GbmPjfw07oGhnlKzcogCwe2M8ZZG32RItdZsa
-         axy0dJRgE/Fpd1mVSzWGwvfH4LXCMUharn9jZxU6amrUWKa45khVPWsDX3Y/cxmMIdSs
-         szpqJMdAIkaa7vwR3rGUIzemXJTxR4bZ4IkuN4ZBI996fnQWYUG2o/VJPM7qlozf53e4
-         d8/aQUscD5aso+M8kUaB34Cte2TNa5/AA+dyWockl0v0bId4sVUVL4fFntZcKsi6sO52
-         d6HmanTWN5XdVL9yEbbfOpFNuceFmOp4/XIWiS0p/bV0/gKgkb1BbYqnyXvDU9wyNpcG
-         qnxQ==
+        bh=ReE02gsRsLDdLVLXdegxbTLkHkrqUI9MohPGEHOtrSE=;
+        b=X+lmdj5/dysSsIfBECQokXBMGpHBReCupnm9f6GIW2lFpb4+x/ayVcZ1pVDApszpbn
+         HCWlQ5L7GuORnCP1Moc5RJvd2vb4495fP73l/fKb4zi/4i1sHP1rafRbGCEwH1x3SMV9
+         evCEBmlOXQSoTg5273uIJOKMHHpSwvJbVYgwOb8Q82xYqr2P9HItRfQajtCoQafut/Zc
+         qMha026Myd9+qevr3P0nTokIdz/pu50fkEzjM6sjQZMEHiJZCzCwY5ast8p58SZXCBOT
+         xMPz/qbmmUv+W89UyP9kV8IOJRgGthOPrdTZGzI0VfEPsGUNOEk3HNjgIILFtLFY3yKI
+         Jh9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722215196; x=1722819996;
+        d=1e100.net; s=20230601; t=1722215197; x=1722819997;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8VX7ESJZSJ+ruHr+2rQCLvMbWOjfCmx3vRkprKOJP/Y=;
-        b=Snr/Plk8eC7HfMn/KYb38Txx3Ckh6g12dIkMXTjSYo+AsNYXD34y+UOgMfIP339g63
-         Ip3WIGb5glJpmiVya4oU+qXHdnTLbBU0XiSqAQ7yDM2mKzNx2pdP7iYK6yA2TDUsixD6
-         hLrLOGwME5uSbSORWcbz9tF+/JkxM+Zco98rB+JXEcC1x3JJrPNquyKXuGPaCkwvxE9r
-         xAV6+f0G8upQZRDc4idAxMMI2SmaVaF/MFm6QjB0RxKvvn9wJYCW5r1UDlc6LiJvGDxn
-         85lUpSxAXtSmbo+FdKeuoZoWPeGfgjsNbz3LbdPRbrRg2IMlJO1pBidswduNHoprDxtw
-         ocog==
-X-Gm-Message-State: AOJu0YxIfRSaamCagP1q2vF8cA4qaRWfcVwKlg5+jxIX3L9ymrcQN+pO
-	9FF/mhpGdYGWzu1OEEA0BVEJPxgZCw0Pq5nrySiTuHiO1zQPPn6KXReShA==
-X-Google-Smtp-Source: AGHT+IEMLDd5y5/5NAKJhx+ysqkFn/pYtUD5zjfEwqzN+VOgzpX+2ya75ETp1WgRCiJMt12AgNs75g==
-X-Received: by 2002:a05:690c:3811:b0:64a:5f5a:b38c with SMTP id 00721157ae682-67a075a67d6mr76122357b3.26.1722215196629;
-        Sun, 28 Jul 2024 18:06:36 -0700 (PDT)
+        bh=ReE02gsRsLDdLVLXdegxbTLkHkrqUI9MohPGEHOtrSE=;
+        b=s1QWwiz9TbedCDHMEXPX9KCg1Q8yF0+h67Ee/cr7RuYiNGzqa9cM5aHpPe1y5YUgyp
+         I9r3wEDuLoD0I/xAAaa5uUs1/lDn4EyI6IdRiE+IkdmFkTgD1n1xotOgRi1Mr8U4Cjgz
+         NPjzuruXc3HtZag70WuiTFLsB3mtaraIG4oUfM1R8k8tM9FM3HKNvJDXTUse/eeO+4g4
+         /gcwdBw/F0A9EqGcoGAmUTsXwM4+8v3OraPNFOMPf8zyfRWCGFWF/uRwiBeU9UY3H+gL
+         Wx3DgQmcHXYFdx0t/ApBptv7MF/aWwY7KMvbj7URMyZPVwxKVelrK5ATClrRkf8tfE5P
+         o2ZQ==
+X-Gm-Message-State: AOJu0YyQnUG4R7QSqd6GxaQ371odM6+s0GiYU8v6bf64emEEWMyKt5XO
+	YeZL+tmfdbwcwuNND+JXSycRxXTH0/uYzHVmH3VpuGh2J9r/OEgv7DcRWA==
+X-Google-Smtp-Source: AGHT+IFqwGHyEa7WZ9eXEl+IPmPmKgj3J60jjQhLXXBmUQ4nxFc2O42wv23y1gTqgIW0E74+YrPmvw==
+X-Received: by 2002:a81:8682:0:b0:643:93dc:731c with SMTP id 00721157ae682-67a06ede635mr80232527b3.17.1722215197038;
+        Sun, 28 Jul 2024 18:06:37 -0700 (PDT)
 Received: from keaua.attlocal.net ([2600:1700:45dd:7000:47bc:453d:d517:b47])
         by smtp.gmail.com with ESMTPSA id 00721157ae682-6756bc9edd8sm18543157b3.130.2024.07.28.18.06.36
         for <yocto-patches@lists.yoctoproject.org>
@@ -49,9 +49,9 @@ Received: from keaua.attlocal.net ([2600:1700:45dd:7000:47bc:453d:d517:b47])
         Sun, 28 Jul 2024 18:06:36 -0700 (PDT)
 From: Armin Kuster <akuster808@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-security][PATCH 3/6] krill: Fix QA warnings
-Date: Sun, 28 Jul 2024 21:06:31 -0400
-Message-Id: <20240729010634.1991558-3-akuster808@gmail.com>
+Subject: [meta-security][PATCH 4/6] suricata: fix QA warnings
+Date: Sun, 28 Jul 2024 21:06:32 -0400
+Message-Id: <20240729010634.1991558-4-akuster808@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240729010634.1991558-1-akuster808@gmail.com>
 References: <20240729010634.1991558-1-akuster808@gmail.com>
@@ -61,36 +61,35 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Mon, 29 Jul 2024 01:06:40 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/483
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/484
 
-ERROR: krill-0.12.3-r0 do_package_qa: QA Issue: File /usr/bin/.debug/krill in package krill-dbg contains reference to TMPDIR
-File /usr/bin/.debug/krillc in package krill-dbg contains reference to TMPDIR
-File /usr/bin/.debug/krillup in package krill-dbg contains reference to TMPDIR [buildpaths]
+ERROR: suricata-7.0.0-r0 do_package: QA Issue: File '/usr/bin/suricata' from suricata was already stripped, this will prevent future debugging! [already-stripped]
 
 Signed-off-by: Armin Kuster <akuster808@gmail.com>
 ---
- recipes-security/krill/krill_0.12.3.bb | 2 ++
- 1 file changed, 2 insertions(+)
+ recipes-ids/suricata/suricata_7.0.0.bb | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/recipes-security/krill/krill_0.12.3.bb b/recipes-security/krill/krill_0.12.3.bb
-index 2e200dd..d5917a1 100644
---- a/recipes-security/krill/krill_0.12.3.bb
-+++ b/recipes-security/krill/krill_0.12.3.bb
-@@ -26,6 +26,7 @@ do_install:append () {
- 
-     install -m 664 ${S}/defaults/krill.conf ${D}${sysconfdir}/.
-     install ${S}/defaults/* ${D}${datadir}/krill/.
-+    find  ${D}${bindir}/ -name "krill*"  -exec sed -i -e 's#${CARGO_HOME}/bitbake##g' {} +
+diff --git a/recipes-ids/suricata/suricata_7.0.0.bb b/recipes-ids/suricata/suricata_7.0.0.bb
+index a137498..9795e95 100644
+--- a/recipes-ids/suricata/suricata_7.0.0.bb
++++ b/recipes-ids/suricata/suricata_7.0.0.bb
+@@ -114,6 +114,10 @@ do_install () {
+     sed -i -e "s:#!.*$:#!${USRBINPATH}/env python3:g" ${D}${bindir}/suricatasc
+     sed -i -e "s:#!.*$:#!${USRBINPATH}/env python3:g" ${D}${bindir}/suricatactl
+     sed -i -e "s:#!.*$:#!${USRBINPATH}/env python3:g" ${D}${libdir}/suricata/python/suricata/sc/suricatasc.py
++    # The build process dumps config logs into the binary, remove them.
++    sed -i -e 's#${RECIPE_SYSROOT}##g' ${D}${bindir}/suricata
++    sed -i -e 's#${RECIPE_SYSROOT_NATIVE}##g' ${D}${bindir}/suricata
++    sed -i -e 's#CFLAGS.*##g' ${D}${bindir}/suricata
  }
  
- KRILL_UID ?= "krill"
-@@ -38,5 +39,6 @@ USERADD_PARAM:${PN} = "--system -g ${KRILL_GID} --home-dir  \
-                        --shell /sbin/nologin ${BPN}"
+ pkg_postinst_ontarget:${PN} () {
+@@ -131,3 +135,4 @@ FILES:${PN} += "${systemd_unitdir} ${sysconfdir}/tmpfiles.d"
+ FILES:${PN}-python = "${bindir}/suricatasc ${PYTHON_SITEPACKAGES_DIR}"
  
- FILES:${PN} += "{sysconfdir}/defaults ${datadir}"
+ CONFFILES:${PN} = "${sysconfdir}/suricata/suricata.yaml"
 +INSANE_SKIP:${PN} = "already-stripped"
- 
- COMPATIBLE_HOST = "(i.86|x86_64|aarch64).*-linux"
 -- 
 2.34.1
 
