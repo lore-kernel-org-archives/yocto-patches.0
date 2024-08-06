@@ -1,125 +1,326 @@
-Return-Path: <scott.murray@konsulko.com>
+Return-Path: <vanusuri@mvista.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9B5DC3DA4A
-	for <webhook@archiver.kernel.org>; Thu,  1 Aug 2024 14:57:07 +0000 (UTC)
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
- by mx.groups.io with SMTP id smtpd.web10.70496.1722524218939001359
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7226FC3DA4A
+	for <webhook@archiver.kernel.org>; Tue,  6 Aug 2024 02:01:38 +0000 (UTC)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+ by mx.groups.io with SMTP id smtpd.web11.7957.1722909693643396582
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 01 Aug 2024 07:56:59 -0700
+ Mon, 05 Aug 2024 19:01:36 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=T7Fb67Nr;
- spf=pass (domain: konsulko.com, ip: 209.85.160.178, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-44ff7bdb5a6so36448301cf.3
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 01 Aug 2024 07:56:58 -0700 (PDT)
+ dkim=pass header.i=@mvista.com header.s=google header.b=QalzCYLa;
+ spf=pass (domain: mvista.com, ip: 209.85.208.169, mailfrom: vanusuri@mvista.com)
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f1798eaee6so1788251fa.0
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 05 Aug 2024 19:01:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1722524218; x=1723129018; darn=lists.yoctoproject.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GSlYd+gKqJwNrw8tVMLlm4BVvveP+w44Rpr4TwvUXHQ=;
-        b=T7Fb67NrZmd6Abrbukn37jFUNOStJ62ySF0wnvmeOPOaIcdEZowK93viyqzFp1YTuA
-         P6swR5XkFZRHYAIDqNs97rj8BKv7TWI+BF9WTzYVGaFdUEYil7xG8vzx9V01rdFMP2ua
-         jmTHV0D8G7x2yS4p/v+WZAF33fE9i7s/Ab6iI=
+        d=mvista.com; s=google; t=1722909691; x=1723514491; darn=lists.yoctoproject.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=cNkbvdq5wr05q3vqy8n7MOqQq7/rB/lUz/GdyedTT6s=;
+        b=QalzCYLaP2uSes6L1SmkvlIvAoNKC1C12zcB3/mv7ZUA0KcHkyucn6Xze7eBoyXLmO
+         luckrlLl63i9WJNUR3pjcXr46VZxuFU7ABZ8QCH0X/XuSwhUsWj2OWesLYR2anE//0qR
+         O+gtGybQEaGykLuGYRpN9pkejKP4E8bNDp0EY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722524218; x=1723129018;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GSlYd+gKqJwNrw8tVMLlm4BVvveP+w44Rpr4TwvUXHQ=;
-        b=D7ABfzvuqGNICZ9xMbEVuA1dgFo7+FuxKrWk75bkaCN2ABFP26yFJZTFgZOEfr7wtc
-         ZBzhV+X1iCt93/6JrnurjdTM1P/xUZZhzzKM/Y1eIKjCxg0/aHDCLLIOxHp4b/BLrV6i
-         NFJi/+WWfTH8LFG7xUmFg+h02ogsh2LmqrhGViMoAqqLS6acimcnVNjIeOmyX8y45dLJ
-         NIcoRDVzaU4xDcfLO6M+fGH6CMtvSnWxzT3K/6tzevqmkzTu77WQiJ5m0k8rcfj1g+Gi
-         lK4VV4BKjXt0TD0uXREXA322LNDrfYVeBK8Bytcb6W+CPKDt0bYJGpxO3JUWhgOSjt2q
-         yjIg==
-X-Gm-Message-State: AOJu0YxDqT5yOZGtv/yimRn3r+UEMOk46/vknVFj6SIpOopsAV8jm60u
-	ldYwwCienlPsHVhaAOYDjPpEdIPLlaCI3wIF3Esl+EQQ3sWm+4gYloLpkx9gWlY=
-X-Google-Smtp-Source: AGHT+IGjNHcXPmjBGYIHFhsxJg8TnRzVaTxfU+nyBUAiopmk3nRoMSB2HQBCeJE1o1BKES6i4yoqfg==
-X-Received: by 2002:a05:622a:15d0:b0:44f:9ae7:c883 with SMTP id d75a77b69052e-45189342942mr2805091cf.63.1722524217889;
-        Thu, 01 Aug 2024 07:56:57 -0700 (PDT)
-Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44fe81721bdsm69322241cf.45.2024.08.01.07.56.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 07:56:57 -0700 (PDT)
-Date: Thu, 1 Aug 2024 10:56:34 -0400 (EDT)
-From: Scott Murray <scott.murray@konsulko.com>
-To: Quentin Schulz <quentin.schulz@cherry.de>
-cc: yocto-patches@lists.yoctoproject.org
-Subject: Re: [yocto-patches] [meta-lts-mixins][kirkstone/rust][PATCH] rust:
- Add new varaible RUST_ENABLE_EXTRA_TOOLS
-In-Reply-To: <9390f93f-5267-410a-8ce6-3d2cf3d00b0b@cherry.de>
-Message-ID: <fa71e03e-a028-b802-1968-d4e98ee27799@konsulko.com>
-References: <20240801054452.57965-1-ranjitsinh.rathod@kpit.com> <7208a42b-4309-4216-ab64-16a5a82eced8.a73bd9c8-8cbe-42e2-876b-4c548d837fba.d5bb5bdf-1b28-48ec-b886-7c4fe3dbdc1e@emailsignatures365.codetwo.com> <9390f93f-5267-410a-8ce6-3d2cf3d00b0b@cherry.de>
+        d=1e100.net; s=20230601; t=1722909691; x=1723514491;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cNkbvdq5wr05q3vqy8n7MOqQq7/rB/lUz/GdyedTT6s=;
+        b=xI/q0S8rPhcofQWOc4pNMJ0RkGBow6KGhfXA2uM63jVhpLoGpZRupNpjBePMjaVDen
+         btiYZ+3OFCYAohnqBwE5H2+49O4977877qD/dSABMWfgGU5zh6ZUkC1gSVvRxl+cpWGW
+         AcWCL2/H9J+xtsgwwG9RCBhXKRlWz4hrZNacyVYI6YzGYjnjDl0rgDoWyfN5xnSQEp8V
+         XBCiqmWOqj9Sc9F1YJB06gtOQGpE2o042ktk5ssRWQvH+qbKHFTu9d/LAvwz+NXpcZAM
+         pdju25u1NnFZGmi3YRgjt/vhfzUDEVxeb1loI+pMcNOEvFlXNnZY1dbzRhcRM2osutwv
+         Z/cw==
+X-Gm-Message-State: AOJu0YxKG/SkbPceZw31axHVWEgcvYBX7h6doTwFHGfKAdLnyBhFy3DA
+	934Sth+bG1BcxCQzZlBQLDUEww51VdgUTl7VBj7OaK5MNBqs7vvJJ4rYmCbIl+1hr0Utip6ErzR
+	kezy0po29GvSS9FgaBs9kMtCArkQ79MnzD7jsUim4iCafBbqNBN0=
+X-Google-Smtp-Source: AGHT+IE2wbsfwGxLcnIunjswLpio0Jc++Iv/U0eYDnZJT6lanCbDMjUXZmdCL8zwlL6XB4S8RHIEtEmeuAc4sjCKhck=
+X-Received: by 2002:a2e:94cf:0:b0:2ef:2c27:6680 with SMTP id
+ 38308e7fff4ca-2f15aa91245mr84853051fa.12.1722909690955; Mon, 05 Aug 2024
+ 19:01:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="-1463811583-1692820133-1722524217=:9538"
+References: <20240702064949.1631187-1-vanusuri@mvista.com> <17E33DB5416A0169.25516@lists.yoctoproject.org>
+ <17E6AA7CBD366DBC.683@lists.yoctoproject.org>
+In-Reply-To: <17E6AA7CBD366DBC.683@lists.yoctoproject.org>
+From: Vijay Anusuri <vanusuri@mvista.com>
+Date: Tue, 6 Aug 2024 07:31:19 +0530
+Message-ID: <CANQUz1-AGObjVteduoV=vj60PWuyJSOCDJmStdSnqXN_v7_9rA@mail.gmail.com>
+Subject: Re: [yocto-patches] [meta-security][master][PATCH] tpm2-tools:
+ Upgrade 5.5 -> 5.7
+To: yocto-patches@lists.yoctoproject.org
+Cc: Armin Kuster <akuster808@gmail.com>, Armin Kuster <akuster@mvista.com>
+Content-Type: multipart/alternative; boundary="0000000000001c234e061efa2c9b"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 01 Aug 2024 14:57:07 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/510
+ <yocto-patches@lists.yoctoproject.org>; Tue, 06 Aug 2024 02:01:38 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/511
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+--0000000000001c234e061efa2c9b
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
----1463811583-1692820133-1722524217=:9538
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: 8BIT
+Hi Team,
 
-On Thu, 1 Aug 2024, Quentin Schulz wrote:
+Any Update on this ?
 
-> Hi Ranjitsinh,
-[snip]
+Thanks & Regards,
+Vijay
+
+On Mon, Jul 29, 2024 at 4:39=E2=80=AFPM Vijay Anusuri via lists.yoctoprojec=
+t.org
+<vanusuri=3Dmvista.com@lists.yoctoproject.org> wrote:
+
+> Hi Team,
 >
-> On 8/1/24 7:44 AM, Ranjitsinh Rathod via lists.yoctoproject.org wrote:
-> > [You don't often get email from ranjitsinh.rathod=kpit.com@lists.yoctoproject.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
-> >
-> > There is a need to enable some extra tools from the rust for the build
-> > and so this new variable will help for that
-> >
-> > This varaible then we can use during do_configure task to add overall
-> > values as per json format in build -> tools
-> >
-> > Signed-off-by: Ranjitsinh Rathod <ranjitsinh.rathod@kpit.com>
-> > ---
-> >�� recipes-devtools/rust/rust_1.75.0.bb | 6 +++++-
-> >�� 1 file changed, 5 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/recipes-devtools/rust/rust_1.75.0.bb b/recipes-devtools/rust/rust_1.75.0.bb
-> > index 76e1fe2..c33f31d 100644
-> > --- a/recipes-devtools/rust/rust_1.75.0.bb
-> > +++ b/recipes-devtools/rust/rust_1.75.0.bb
-> > @@ -70,6 +70,10 @@ addtask do_test_compile after do_configure do_rust_gen_targets
-> >�� do_rust_setup_snapshot[dirs] += "${WORKDIR}/rust-snapshot"
-> >�� do_rust_setup_snapshot[vardepsexclude] += "UNINATIVE_LOADER"
-> >
-> > +# there is a need to enable some more rust tools for the project
-> > +# We can extend a list of more tools via this variable
-> > +RUST_ENABLE_EXTRA_TOOLS ?= "rust-demangler"
-> > +
-> >�� python do_configure() {
-> >������ import json
-> >������ import configparser
-> > @@ -141,7 +145,7 @@ python do_configure() {
-> >������ config.add_section("build")
-> >������ config.set("build", "submodules", e(False))
-> >������ config.set("build", "docs", e(False))
-> > -��� config.set("build", "tools", ["rust-demangler",])
-> > +��� config.set("build", "tools", e(d.getVar("RUST_ENABLE_EXTRA_TOOLS").split()))
+> Gentle Reminder ...!!!
 >
-> It seems like the demangler has been removed in master branch of
-> oe-core, see
-> https://git.openembedded.org/openembedded-core/commit/meta/recipes-devtools/rust/rust_1.75.0.bb?id=58eaf2ee6c0809bf0a0d3c1d177e62bda7241651
+> Any update on this?
 >
-> I don't know the policy for this layer or branch, but it's possible that
-> a change that would benefit the latest branches of OE-Core/Yocto should
-> first land there and then be backported to meta-lts-mixin? I'll let the
-> maintainer confirm or not :)
+> Thanks & Regards,
+> Vijay
+>
+> On Thu, Jul 18, 2024 at 12:52=E2=80=AFPM Vijay Anusuri via lists.yoctopro=
+ject.org
+> <vanusuri=3Dmvista.com@lists.yoctoproject.org> wrote:
+>
+>> Hi Armin,
+>>
+>> Any update on this?
+>>
+>> Thanks & Regards,
+>> Vijay
+>>
+>> On Tue, Jul 2, 2024 at 12:20=E2=80=AFPM <vanusuri@mvista.com> wrote:
+>>
+>>> From: Vijay Anusuri <vanusuri@mvista.com>
+>>>
+>>> Include Security fixes:
+>>> Fixed CVE-2024-29038
+>>> Fixed CVE-2024-29039
+>>>
+>>> Changelog:
+>>> https://github.com/tpm2-software/tpm2-tools/releases/tag/5.7
+>>> https://github.com/tpm2-software/tpm2-tools/releases/tag/5.6
+>>>
+>>> Signed-off-by: Vijay Anusuri <vanusuri@mvista.com>
+>>> ---
+>>>  .../tpm2-tools/{tpm2-tools_5.5.bb =3D> tpm2-tools_5.7.bb}         | 2 =
++-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>  rename meta-tpm/recipes-tpm2/tpm2-tools/{tpm2-tools_5.5.bb =3D>
+>>> tpm2-tools_5.7.bb} (83%)
+>>>
+>>> diff --git a/meta-tpm/recipes-tpm2/tpm2-tools/tpm2-tools_5.5.bb
+>>> b/meta-tpm/recipes-tpm2/tpm2-tools/tpm2-tools_5.7.bb
+>>> similarity index 83%
+>>> rename from meta-tpm/recipes-tpm2/tpm2-tools/tpm2-tools_5.5.bb
+>>> rename to meta-tpm/recipes-tpm2/tpm2-tools/tpm2-tools_5.7.bb
+>>> index 9bad758..bb422cf 100644
+>>> --- a/meta-tpm/recipes-tpm2/tpm2-tools/tpm2-tools_5.5.bb
+>>> +++ b/meta-tpm/recipes-tpm2/tpm2-tools/tpm2-tools_5.7.bb
+>>> @@ -8,7 +8,7 @@ DEPENDS =3D "tpm2-tss openssl curl"
+>>>
+>>>  SRC_URI =3D "
+>>> https://github.com/tpm2-software/${BPN}/releases/download/${PV}/${BPN}-=
+${PV}.tar.gz
+>>> "
+>>>
+>>> -SRC_URI[sha256sum] =3D
+>>> "1fdb49c730537bfdaed088884881a61e3bfd121e957ec0bdceeec0261236c123"
+>>> +SRC_URI[sha256sum] =3D
+>>> "3810d36b5079256f4f2f7ce552e22213d43b1031c131538df8a2dbc3c570983a"
+>>>
+>>>  UPSTREAM_CHECK_URI =3D "https://github.com/tpm2-software/${BPN}/releas=
+es"
+>>>
+>>> --
+>>> 2.25.1
+>>>
+>>> _._,_._,_
+> ------------------------------
+> Links:
+>
+> You receive all messages sent to this group.
+>
+> View/Reply Online (#492)
+> <https://lists.yoctoproject.org/g/yocto-patches/message/492> | Reply To
+> Group
+> <yocto-patches@lists.yoctoproject.org?subject=3DRe:%20Re%3A%20%5Byocto-pa=
+tches%5D%20%5Bmeta-security%5D%5Bmaster%5D%5BPATCH%5D%20tpm2-tools%3A%20Upg=
+rade%205.5%20-%3E%205.7>
+> | Reply To Sender
+> <vanusuri@mvista.com?subject=3DPrivate:%20Re:%20Re%3A%20%5Byocto-patches%=
+5D%20%5Bmeta-security%5D%5Bmaster%5D%5BPATCH%5D%20tpm2-tools%3A%20Upgrade%2=
+05.5%20-%3E%205.7>
+> | Mute This Topic <https://lists.yoctoproject.org/mt/106995604/7301997> |=
+ New
+> Topic <https://lists.yoctoproject.org/g/yocto-patches/post>
+> Your Subscription
+> <https://lists.yoctoproject.org/g/yocto-patches/editsub/7301997> | Contac=
+t
+> Group Owner <yocto-patches+owner@lists.yoctoproject.org> | Unsubscribe
+> <https://lists.yoctoproject.org/g/yocto-patches/leave/13419208/7301997/13=
+35553898/xyzzy>
+> [vanusuri@mvista.com]
+> _._,_._,_
+>
+>
 
-Indeed, I won't take this change without it going through master first,
-as I'm trying to avoid carrying extra changes that could complicate
-backporting future Rust upgrades.
+--0000000000001c234e061efa2c9b
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Scott
+<div dir=3D"ltr"><div><div>Hi Team,<br><br></div>Any Update on this ?<br><b=
+r></div><div>Thanks &amp; Regards,</div><div>Vijay<br></div></div><br><div =
+class=3D"gmail_quote"><div dir=3D"ltr" class=3D"gmail_attr">On Mon, Jul 29,=
+ 2024 at 4:39=E2=80=AFPM Vijay Anusuri via <a href=3D"http://lists.yoctopro=
+ject.org">lists.yoctoproject.org</a> &lt;vanusuri=3D<a href=3D"mailto:mvist=
+a.com@lists.yoctoproject.org">mvista.com@lists.yoctoproject.org</a>&gt; wro=
+te:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px =
+0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex"><div dir=3D"=
+ltr"><div>Hi Team,</div><div><br></div><div>Gentle Reminder ...!!!<br><br><=
+/div><div>Any update on this?<br><br></div><div>Thanks &amp; Regards,</div>=
+<div>Vijay<br></div></div><br><div class=3D"gmail_quote"><div dir=3D"ltr" c=
+lass=3D"gmail_attr">On Thu, Jul 18, 2024 at 12:52=E2=80=AFPM Vijay Anusuri =
+via <a href=3D"http://lists.yoctoproject.org" target=3D"_blank">lists.yocto=
+project.org</a> &lt;vanusuri=3D<a href=3D"mailto:mvista.com@lists.yoctoproj=
+ect.org" target=3D"_blank">mvista.com@lists.yoctoproject.org</a>&gt; wrote:=
+<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8=
+ex;border-left:1px solid rgb(204,204,204);padding-left:1ex"><div dir=3D"ltr=
+"><div>Hi Armin,<br><br></div><div>Any update on this?</div><div><br></div>=
+<div>Thanks &amp; Regards,</div><div>Vijay<br></div></div><br><div class=3D=
+"gmail_quote"><div dir=3D"ltr" class=3D"gmail_attr">On Tue, Jul 2, 2024 at =
+12:20=E2=80=AFPM &lt;<a href=3D"mailto:vanusuri@mvista.com" target=3D"_blan=
+k">vanusuri@mvista.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_q=
+uote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,2=
+04);padding-left:1ex">From: Vijay Anusuri &lt;<a href=3D"mailto:vanusuri@mv=
+ista.com" target=3D"_blank">vanusuri@mvista.com</a>&gt;<br>
+<br>
+Include Security fixes:<br>
+Fixed CVE-2024-29038<br>
+Fixed CVE-2024-29039<br>
+<br>
+Changelog:<br>
+<a href=3D"https://github.com/tpm2-software/tpm2-tools/releases/tag/5.7" re=
+l=3D"noreferrer" target=3D"_blank">https://github.com/tpm2-software/tpm2-to=
+ols/releases/tag/5.7</a><br>
+<a href=3D"https://github.com/tpm2-software/tpm2-tools/releases/tag/5.6" re=
+l=3D"noreferrer" target=3D"_blank">https://github.com/tpm2-software/tpm2-to=
+ols/releases/tag/5.6</a><br>
+<br>
+Signed-off-by: Vijay Anusuri &lt;<a href=3D"mailto:vanusuri@mvista.com" tar=
+get=3D"_blank">vanusuri@mvista.com</a>&gt;<br>
+---<br>
+=C2=A0.../tpm2-tools/{<a href=3D"http://tpm2-tools_5.5.bb" rel=3D"noreferre=
+r" target=3D"_blank">tpm2-tools_5.5.bb</a> =3D&gt; <a href=3D"http://tpm2-t=
+ools_5.7.bb" rel=3D"noreferrer" target=3D"_blank">tpm2-tools_5.7.bb</a>}=C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0| 2 +-<br>
+=C2=A01 file changed, 1 insertion(+), 1 deletion(-)<br>
+=C2=A0rename meta-tpm/recipes-tpm2/tpm2-tools/{<a href=3D"http://tpm2-tools=
+_5.5.bb" rel=3D"noreferrer" target=3D"_blank">tpm2-tools_5.5.bb</a> =3D&gt;=
+ <a href=3D"http://tpm2-tools_5.7.bb" rel=3D"noreferrer" target=3D"_blank">=
+tpm2-tools_5.7.bb</a>} (83%)<br>
+<br>
+diff --git a/meta-tpm/recipes-tpm2/tpm2-tools/<a href=3D"http://tpm2-tools_=
+5.5.bb" rel=3D"noreferrer" target=3D"_blank">tpm2-tools_5.5.bb</a> b/meta-t=
+pm/recipes-tpm2/tpm2-tools/<a href=3D"http://tpm2-tools_5.7.bb" rel=3D"nore=
+ferrer" target=3D"_blank">tpm2-tools_5.7.bb</a><br>
+similarity index 83%<br>
+rename from meta-tpm/recipes-tpm2/tpm2-tools/<a href=3D"http://tpm2-tools_5=
+.5.bb" rel=3D"noreferrer" target=3D"_blank">tpm2-tools_5.5.bb</a><br>
+rename to meta-tpm/recipes-tpm2/tpm2-tools/<a href=3D"http://tpm2-tools_5.7=
+.bb" rel=3D"noreferrer" target=3D"_blank">tpm2-tools_5.7.bb</a><br>
+index 9bad758..bb422cf 100644<br>
+--- a/meta-tpm/recipes-tpm2/tpm2-tools/<a href=3D"http://tpm2-tools_5.5.bb"=
+ rel=3D"noreferrer" target=3D"_blank">tpm2-tools_5.5.bb</a><br>
++++ b/meta-tpm/recipes-tpm2/tpm2-tools/<a href=3D"http://tpm2-tools_5.7.bb"=
+ rel=3D"noreferrer" target=3D"_blank">tpm2-tools_5.7.bb</a><br>
+@@ -8,7 +8,7 @@ DEPENDS =3D &quot;tpm2-tss openssl curl&quot;<br>
+<br>
+=C2=A0SRC_URI =3D &quot;<a href=3D"https://github.com/tpm2-software/$%7BBPN=
+%7D/releases/download/$%7BPV%7D/$%7BBPN%7D-$%7BPV%7D.tar.gz" rel=3D"norefer=
+rer" target=3D"_blank">https://github.com/tpm2-software/${BPN}/releases/dow=
+nload/${PV}/${BPN}-${PV}.tar.gz</a>&quot;<br>
+<br>
+-SRC_URI[sha256sum] =3D &quot;1fdb49c730537bfdaed088884881a61e3bfd121e957ec=
+0bdceeec0261236c123&quot;<br>
++SRC_URI[sha256sum] =3D &quot;3810d36b5079256f4f2f7ce552e22213d43b1031c1315=
+38df8a2dbc3c570983a&quot;<br>
+<br>
+=C2=A0UPSTREAM_CHECK_URI =3D &quot;<a href=3D"https://github.com/tpm2-softw=
+are/$%7BBPN%7D/releases" rel=3D"noreferrer" target=3D"_blank">https://githu=
+b.com/tpm2-software/${BPN}/releases</a>&quot;<br>
+<br>
+-- <br>
+2.25.1<br>
+<br>
+</blockquote></div>
 
----1463811583-1692820133-1722524217=:9538--
+
+
+
+<p></p><p></p></blockquote></div>
+
+
+<div width=3D"1" style=3D"color:white;clear:both">_._,_._,_</div>
+<hr>
+
+
+Links:<p>
+
+
+ =20
+    You receive all messages sent to this group.
+ =20
+ =20
+
+
+</p><p>
+<a href=3D"https://lists.yoctoproject.org/g/yocto-patches/message/492" targ=
+et=3D"_blank">View/Reply Online (#492)</a> |
+
+
+  <a href=3D"mailto:yocto-patches@lists.yoctoproject.org?subject=3DRe:%20Re=
+%3A%20%5Byocto-patches%5D%20%5Bmeta-security%5D%5Bmaster%5D%5BPATCH%5D%20tp=
+m2-tools%3A%20Upgrade%205.5%20-%3E%205.7" target=3D"_blank">Reply To Group<=
+/a>
+ =20
+    | <a href=3D"mailto:vanusuri@mvista.com?subject=3DPrivate:%20Re:%20Re%3=
+A%20%5Byocto-patches%5D%20%5Bmeta-security%5D%5Bmaster%5D%5BPATCH%5D%20tpm2=
+-tools%3A%20Upgrade%205.5%20-%3E%205.7" target=3D"_blank">Reply To Sender</=
+a>
+ =20
+
+|
+
+  <a href=3D"https://lists.yoctoproject.org/mt/106995604/7301997" target=3D=
+"_blank">Mute This Topic</a>
+
+
+| <a href=3D"https://lists.yoctoproject.org/g/yocto-patches/post" target=3D=
+"_blank">New Topic</a>
+
+<br>
+
+
+
+
+<a href=3D"https://lists.yoctoproject.org/g/yocto-patches/editsub/7301997" =
+target=3D"_blank">Your Subscription</a> |
+<a href=3D"mailto:yocto-patches+owner@lists.yoctoproject.org" target=3D"_bl=
+ank">Contact Group Owner</a> |
+
+<a href=3D"https://lists.yoctoproject.org/g/yocto-patches/leave/13419208/73=
+01997/1335553898/xyzzy" target=3D"_blank">Unsubscribe</a>
+
+ [<a href=3D"mailto:vanusuri@mvista.com" target=3D"_blank">vanusuri@mvista.=
+com</a>]<br>
+</p><div width=3D"1" style=3D"color:white;clear:both">_._,_._,_</div>
+
+<p></p><p></p></blockquote></div>
+
+--0000000000001c234e061efa2c9b--
 
