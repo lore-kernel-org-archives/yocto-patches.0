@@ -1,164 +1,96 @@
-Return-Path: <akuster808@gmail.com>
+Return-Path: <vanusuri@mvista.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A461AC49EA1
-	for <webhook@archiver.kernel.org>; Tue,  6 Aug 2024 13:31:50 +0000 (UTC)
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
- by mx.groups.io with SMTP id smtpd.web10.7314.1722951101561893920
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50837C52D6F
+	for <webhook@archiver.kernel.org>; Wed,  7 Aug 2024 04:18:46 +0000 (UTC)
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+ by mx.groups.io with SMTP id smtpd.web11.25795.1723004321504751052
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 06 Aug 2024 06:31:41 -0700
+ Tue, 06 Aug 2024 21:18:41 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=TQ2pN3sv;
- spf=pass (domain: gmail.com, ip: 209.85.128.176, mailfrom: akuster808@gmail.com)
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-65f7bd30546so6455107b3.1
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 06 Aug 2024 06:31:41 -0700 (PDT)
+ dkim=pass header.i=@mvista.com header.s=google header.b=GXGTsoV7;
+ spf=pass (domain: mvista.com, ip: 209.85.215.182, mailfrom: vanusuri@mvista.com)
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7a23fbb372dso1080734a12.0
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 06 Aug 2024 21:18:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722951100; x=1723555900; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ablWwM8IMngF9fgr1rbx5/iQydt6RLHPNVESsx1ko7E=;
-        b=TQ2pN3svHUgzK4Ghs+VLg4RNuAQnb1bVd708ThX5SgmTfxq/1cqEX9JtIxCTvZhSVa
-         tvfuSNTJbiQXfde/jM6jLEp+zYSPW2nlZmgRoYs5uujTXy3KEVoqUjIPKah2t3KSxl1m
-         U/VL8fr5wVzgRkL6yvtONuOgfLcGw5Z413w8qvBQK8m62My9Nxr8hBldVGKTUy82X/I0
-         OoFp+nHNqhs3csFo5RJ0+qPKj1XPwgkMFkOnYzcM/Qb9XS8s+fvQQlsxXLlIzBVCghAa
-         D1iOj11tSyafp4POOrWFCy5No6qk5N32lngTEBWMzV/qMe9LHSgpmtp+HZT1gugSedgk
-         MUFg==
+        d=mvista.com; s=google; t=1723004320; x=1723609120; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6kfb/9BMjJFzAie6Q6/2AkUMeXzcDgDoOZVAgWh/vXE=;
+        b=GXGTsoV7w5HxjjktrkG10R7q9afMXkLnwgxsFVANp+9xOHYFwWD5JM9JO9bf+58zn9
+         DLVoj6SilVZ9FzGzIDW96zNuDgyTUHqno831YBbyf1zhRs8U/r1p3ipNtKAUJ5rOVxvG
+         MkWOxTydHVGafVrClIwdJ/G9wYrWNIcbfNf4Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722951100; x=1723555900;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ablWwM8IMngF9fgr1rbx5/iQydt6RLHPNVESsx1ko7E=;
-        b=i+hSeQcsHL0G76Xi/4uNEiQcqruP537zHcjVL0JCvbOU5ujF1eXjOLRMxKsJUxPLSa
-         /zVEIIdUURJDD7Bf84px265bdOqiYNRUhyOz18UUXzCaTU6gmQzLzOzhgAgegYM67MBQ
-         TTXdxd3kk4YB2B9mFHQ+cHOiijfcC5aQK+YblImReeoWqZUry9humiGsNJfYxCUFz75r
-         fT0YUYdqjzvmGDCIhEyp+kV6wVSSw+TeWbHfDLIrG+zSWl5A/Ovurz1Q3hfPYz3KYgDf
-         9JG9UlNouLAR/eFbDdsq48XzVo6nrq+j/92iyza5SqOMWHpBaaMYOhAeythczICfBadg
-         7vSg==
-X-Gm-Message-State: AOJu0YzneENpOG1WfQo4uz3F4ivgXBmMVkkr4/yHd3a7wYJrGhdYylrt
-	Oc1TQHAY0fh9uxfyB3iNjGX2nvGs0J0//g6u/Xhkxtaa9MPugPP/fu1SJA==
-X-Google-Smtp-Source: AGHT+IF/Ke2vQ8iFvHSQVso0Woty45W/SRSTCxs2AdwBqbeMj9DBYljHTt8CSbw7PlNoNj47qupcpQ==
-X-Received: by 2002:a81:bb45:0:b0:65c:8dfb:fa04 with SMTP id 00721157ae682-68960c5007cmr117617117b3.14.1722951100475;
-        Tue, 06 Aug 2024 06:31:40 -0700 (PDT)
-Received: from keaua.attlocal.net ([2600:1700:45dd:7000:4300:30cd:ed94:a289])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-68a136bfbb0sm15397517b3.124.2024.08.06.06.31.40
-        for <yocto-patches@lists.yoctoproject.org>
+        d=1e100.net; s=20230601; t=1723004320; x=1723609120;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6kfb/9BMjJFzAie6Q6/2AkUMeXzcDgDoOZVAgWh/vXE=;
+        b=Vwb1Bayq+bloXte6+wS/ovUIhSs7+2OAZF8X0aXlcIsCfxhu2fBS3UzkT0Fiw5Pcbh
+         j9wIo40OJ8WgFDnuCPVE0sYEsvzx4tMn116NmcrGTOyuKPeSPGAVm1PjuYXdwuhJYiTN
+         imVgcES3T7wahZQhNO4+klLBl6oZBljdYhFTWXGyQVo6ShASzhP3izILNxt7XpbCyaL6
+         T5VjRfPV8upPYA2nhNnzBVLlmCh6N8Ur05LYyL/qcVhdOpLM61akitFKwjs0Q+iNQQ4x
+         mSEAF70ogbzuZpDzEumE8Ehada+qel0x90DsTkI856GipaOM+HncULfKRRl243j9H0MS
+         veXg==
+X-Gm-Message-State: AOJu0YwBHz4eukBRyOdx/PgdS3Q6oGiX4S/bnPefkF0GXWL+IqQlY0xT
+	2Gmg1qX/3oLZ8qevBMvCFxj1xQtzQ5xmylHHQdeUK+VpW38aW4jHvA/kcFHMAEWT+Gy0NoSj52e
+	6TVk=
+X-Google-Smtp-Source: AGHT+IEvBep+oFfLgDZ/pK95u4SUkpC15J6gH7mZfgpzQwrD5P60NUsdrZe8H3WLk3IoQY2/C4JiRg==
+X-Received: by 2002:a17:90a:788a:b0:2cf:f3e9:d5c9 with SMTP id 98e67ed59e1d1-2cff94581b3mr16069240a91.21.1723004320338;
+        Tue, 06 Aug 2024 21:18:40 -0700 (PDT)
+Received: from MVIN00020.mvista.com ([2401:4900:882d:87fe:c334:1c3f:e700:16b1])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1b36bb52csm367592a91.20.2024.08.06.21.18.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 06:31:40 -0700 (PDT)
-From: Armin Kuster <akuster808@gmail.com>
+        Tue, 06 Aug 2024 21:18:39 -0700 (PDT)
+From: vanusuri@mvista.com
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-security][PATCH] aide: update to latest stable.
-Date: Tue,  6 Aug 2024 09:31:39 -0400
-Message-Id: <20240806133139.786953-1-akuster808@gmail.com>
-X-Mailer: git-send-email 2.34.1
+Cc: Vijay Anusuri <vanusuri@mvista.com>
+Subject: [meta-security][scarthgap][PATCH] tpm2-tools: Upgrade 5.5 -> 5.7
+Date: Wed,  7 Aug 2024 09:48:30 +0530
+Message-Id: <20240807041830.189812-1-vanusuri@mvista.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 06 Aug 2024 13:31:50 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/512
+ <yocto-patches@lists.yoctoproject.org>; Wed, 07 Aug 2024 04:18:46 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/513
 
-address new configure error.
-Enable pthread always
-mhash is being dropped in the next release so switch to gcrypt for now.
+From: Vijay Anusuri <vanusuri@mvista.com>
 
-Signed-off-by: Armin Kuster <akuster808@gmail.com>
+Include Security fixes:
+Fixed CVE-2024-29038
+Fixed CVE-2024-29039
+
+Changelog:
+https://github.com/tpm2-software/tpm2-tools/releases/tag/5.7
+https://github.com/tpm2-software/tpm2-tools/releases/tag/5.6
+
+Signed-off-by: Vijay Anusuri <vanusuri@mvista.com>
 ---
- recipes-ids/aide/aide/m4_allow.patch          | 40 +++++++++++++++++++
- .../aide/{aide_0.17.4.bb => aide_0.18.8.bb}   | 12 +++---
- 2 files changed, 47 insertions(+), 5 deletions(-)
- create mode 100644 recipes-ids/aide/aide/m4_allow.patch
- rename recipes-ids/aide/{aide_0.17.4.bb => aide_0.18.8.bb} (88%)
+ .../tpm2-tools/{tpm2-tools_5.5.bb => tpm2-tools_5.7.bb}         | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+ rename meta-tpm/recipes-tpm2/tpm2-tools/{tpm2-tools_5.5.bb => tpm2-tools_5.7.bb} (82%)
 
-diff --git a/recipes-ids/aide/aide/m4_allow.patch b/recipes-ids/aide/aide/m4_allow.patch
-new file mode 100644
-index 0000000..6f0b97b
---- /dev/null
-+++ b/recipes-ids/aide/aide/m4_allow.patch
-@@ -0,0 +1,40 @@
-+Fixes build issues
-+
-+Upstream-Status: Inappropriate [next version has many changes to configure.ac]
-+Signed-off-by: Armin Kuster <akuster@mvista.com>
-+
-+Index: aide-0.18.8/configure.ac
-+===================================================================
-+--- aide-0.18.8.orig/configure.ac
-++++ aide-0.18.8/configure.ac
-+@@ -14,6 +14,7 @@ dnl The name of the configure h-file.
-+ AC_CONFIG_HEADERS(include/config.h)
-+ 
-+ dnl Checks for programs.
-++m4_pattern_allow([AC_MSG_ERROR])
-+ AC_PROG_CC
-+ if test "x$ac_cv_prog_cc_c99" = xno; then
-+     AC_MSG_ERROR([AIDE needs a C99 compatible compiler])
-+@@ -246,6 +247,7 @@ if test "$aide_static_choice" != "yes";
-+ fi
-+ 
-+ dnl This macro is new in autoconf-2.13
-++m4_pattern_allow([AC_DEFINE])
-+ AC_SEARCH_LIBS(syslog, bsd socket inet, [AC_DEFINE(HAVE_SYSLOG,1,[syslog available?])])
-+ AC_CHECK_FUNCS(vsyslog)
-+ 
-+@@ -320,14 +322,10 @@ fi
-+ AC_CHECK_HEADERS(syslog.h inttypes.h fcntl.h ctype.h)
-+ 
-+ AIDE_PKG_CHECK_MANDATORY(pcre2, PCRE2, libpcre2-8)
-+-
-+ AC_MSG_CHECKING(for pthread for multithreading)
-+ AC_ARG_WITH([pthread], AS_HELP_STRING([--with-pthread], [use pthread for multithreading (default: yes)]), [with_pthread=$withval], [with_pthread=yes])
-+ AC_MSG_RESULT([$with_pthread])
-+ compoptionstring="${compoptionstring}use pthread: $with_pthread\\n"
-+-AS_IF([test x"$with_pthread" = xyes], [
-+-    AX_PTHREAD([AC_DEFINE(WITH_PTHREAD,1,[use pthread])], [AC_MSG_ERROR([AIDE requires pthread])])
-+-])
-+ 
-+ AIDE_PKG_CHECK(zlib, zlib compression, yes, ZLIB, zlib)
-+ 
-diff --git a/recipes-ids/aide/aide_0.17.4.bb b/recipes-ids/aide/aide_0.18.8.bb
-similarity index 88%
-rename from recipes-ids/aide/aide_0.17.4.bb
-rename to recipes-ids/aide/aide_0.18.8.bb
-index 9d998cc..e2014a1 100644
---- a/recipes-ids/aide/aide_0.17.4.bb
-+++ b/recipes-ids/aide/aide_0.18.8.bb
-@@ -3,18 +3,20 @@ HOMEPAGE = "https://aide.github.io"
- LIC_FILES_CHKSUM = "file://COPYING;md5=b234ee4d69f5fce4486a80fdaf4a4263"
- LICENSE = "GPL-2.0-only"
+diff --git a/meta-tpm/recipes-tpm2/tpm2-tools/tpm2-tools_5.5.bb b/meta-tpm/recipes-tpm2/tpm2-tools/tpm2-tools_5.7.bb
+similarity index 82%
+rename from meta-tpm/recipes-tpm2/tpm2-tools/tpm2-tools_5.5.bb
+rename to meta-tpm/recipes-tpm2/tpm2-tools/tpm2-tools_5.7.bb
+index 8119bb1..859b3b4 100644
+--- a/meta-tpm/recipes-tpm2/tpm2-tools/tpm2-tools_5.5.bb
++++ b/meta-tpm/recipes-tpm2/tpm2-tools/tpm2-tools_5.7.bb
+@@ -8,7 +8,7 @@ DEPENDS = "tpm2-tss openssl curl"
  
--DEPENDS = "bison-native libpcre"
-+DEPENDS = "bison-native libpcre2"
+ SRC_URI = "https://github.com/tpm2-software/${BPN}/releases/download/${PV}/${BPN}-${PV}.tar.gz"
  
- SRC_URI = "https://github.com/aide/aide/releases/download/v${PV}/${BPN}-${PV}.tar.gz \
--           file://aide.conf"
-+           file://aide.conf \
-+           file://m4_allow.patch \
-+           "
+-SRC_URI[sha256sum] = "1fdb49c730537bfdaed088884881a61e3bfd121e957ec0bdceeec0261236c123"
++SRC_URI[sha256sum] = "3810d36b5079256f4f2f7ce552e22213d43b1031c131538df8a2dbc3c570983a"
  
--SRC_URI[sha256sum] = "c81505246f3ffc2e76036d43a77212ae82895b5881d9b9e25c1361b1a9b7a846"
-+SRC_URI[sha256sum] = "16662dc632d17e2c5630b801752f97912a8e22697c065ebde175f1cc37b83a60"
- 
- UPSTREAM_CHECK_URI = "https://github.com/${BPN}/${BPN}/releases"
- 
- inherit autotools pkgconfig aide-base
- 
--PACKAGECONFIG ??=" mhash zlib e2fsattrs posix capabilities curl \
-+PACKAGECONFIG ??=" gcrypt zlib e2fsattrs posix capabilities curl pthread \
-                  ${@bb.utils.contains('DISTRO_FEATURES', 'selinux', 'selinux audit', '', d)} \
-                  ${@bb.utils.contains('DISTRO_FEATURES', 'xattr', 'xattr', '', d)} \
-                  "
-@@ -28,7 +30,7 @@ PACKAGECONFIG[mhash] = "--with-mhash, --without-mhash, libmhash, libmhash"
- PACKAGECONFIG[e2fsattrs] = "--with-e2fsattrs, --without-e2fsattrs, e2fsprogs, e2fsprogs"
- PACKAGECONFIG[capabilities] = "--with-capabilities, --without-capabilities, libcap, libcap"
- PACKAGECONFIG[posix] = "--with-posix-acl, --without-posix-acl, acl, acl"
--
-+PACKAGECONFIG[pthread] = "--with-pthread,"
- 
- do_install[nostamp] = "1"
+ UPSTREAM_CHECK_URI = "https://github.com/tpm2-software/${BPN}/releases"
  
 -- 
-2.34.1
+2.25.1
 
 
