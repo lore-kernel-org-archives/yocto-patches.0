@@ -2,27 +2,27 @@ Return-Path: <foss@0leil.net>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6713EC5472C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AB20C5472D
 	for <webhook@archiver.kernel.org>; Tue, 20 Aug 2024 12:57:01 +0000 (UTC)
-Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [84.16.66.168])
- by mx.groups.io with SMTP id smtpd.web11.18666.1724158611580560031
+Received: from smtp-42ab.mail.infomaniak.ch (smtp-42ab.mail.infomaniak.ch [84.16.66.171])
+ by mx.groups.io with SMTP id smtpd.web11.18665.1724158611240836170
  for <yocto-patches@lists.yoctoproject.org>;
  Tue, 20 Aug 2024 05:56:51 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: 0leil.net, ip: 84.16.66.168, mailfrom: foss+yocto@0leil.net)
+ dkim=none (message not signed); spf=pass (domain: 0leil.net, ip: 84.16.66.171, mailfrom: foss+yocto@0leil.net)
 Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Wp8cL0BXYzHZh;
-	Tue, 20 Aug 2024 14:56:50 +0200 (CEST)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Wp8cK5Dv1ztqC;
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Wp8cK5M7Zzjvc;
+	Tue, 20 Aug 2024 14:56:49 +0200 (CEST)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Wp8cK3HGpzw2s;
 	Tue, 20 Aug 2024 14:56:49 +0200 (CEST)
 From: Quentin Schulz <foss+yocto@0leil.net>
-Date: Tue, 20 Aug 2024 14:56:29 +0200
-Subject: [meta-rockchip PATCH 6/9] rk3288: enable gstreamer v4l2codecs
+Date: Tue, 20 Aug 2024 14:56:28 +0200
+Subject: [meta-rockchip PATCH 5/9] rk3188: enable gstreamer v4l2codecs
  support
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240820-gst-hantro-v1-6-335c4eaf8e8b@cherry.de>
+Message-Id: <20240820-gst-hantro-v1-5-335c4eaf8e8b@cherry.de>
 References: <20240820-gst-hantro-v1-0-335c4eaf8e8b@cherry.de>
 In-Reply-To: <20240820-gst-hantro-v1-0-335c4eaf8e8b@cherry.de>
 To: yocto-patches@lists.yoctoproject.org
@@ -33,28 +33,28 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Tue, 20 Aug 2024 12:57:01 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/529
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/528
 
 From: Quentin Schulz <quentin.schulz@cherry.de>
 
-RK3288 has a Hantro VPU, so let's set HAS_HANTRO so that gstreamer
+RK3188 has a Hantro VPU, so let's set HAS_HANTRO so that gstreamer
 v4l2codecs plugin can be built.
 
 This was not tested.
 
 Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
 ---
- conf/machine/include/rk3288.inc | 2 ++
+ conf/machine/include/rk3188.inc | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/conf/machine/include/rk3288.inc b/conf/machine/include/rk3288.inc
-index 684e864..8fc3a06 100644
---- a/conf/machine/include/rk3288.inc
-+++ b/conf/machine/include/rk3288.inc
-@@ -14,3 +14,5 @@ KERNEL_FEATURES:append:rk3288 = " bsp/rockchip/remove-non-rockchip-arch-arm.scc"
+diff --git a/conf/machine/include/rk3188.inc b/conf/machine/include/rk3188.inc
+index 0120e2f..9593c6d 100644
+--- a/conf/machine/include/rk3188.inc
++++ b/conf/machine/include/rk3188.inc
+@@ -12,3 +12,5 @@ SERIAL_CONSOLES = "115200;ttyFIQ0"
+ KBUILD_DEFCONFIG = "multi_v7_defconfig"
+ KERNEL_FEATURES:append:rk3188 = " bsp/rockchip/remove-non-rockchip-arch-arm.scc"
  KERNEL_IMAGETYPE ?= "zImage"
- 
- UBOOT_SUFFIX ?= "bin"
 +
 +HAS_HANTRO = "1"
 
