@@ -1,205 +1,165 @@
-Return-Path: <quentin.schulz@cherry.de>
+Return-Path: <joerg.sommer@navimatix.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9046BC52D6F
-	for <webhook@archiver.kernel.org>; Wed, 21 Aug 2024 08:32:12 +0000 (UTC)
-Received: from DUZPR83CU001.outbound.protection.outlook.com (DUZPR83CU001.outbound.protection.outlook.com [52.101.67.46])
- by mx.groups.io with SMTP id smtpd.web11.15440.1724229127191225550
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80F66C52D6F
+	for <webhook@archiver.kernel.org>; Wed, 21 Aug 2024 11:35:43 +0000 (UTC)
+Received: from DUZPR83CU001.outbound.protection.outlook.com (DUZPR83CU001.outbound.protection.outlook.com [52.101.67.139])
+ by mx.groups.io with SMTP id smtpd.web11.17696.1724240139401996987
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 21 Aug 2024 01:32:07 -0700
+ Wed, 21 Aug 2024 04:35:40 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@cherry.de header.s=selector1 header.b=RIOzzAW2;
- spf=pass (domain: cherry.de, ip: 52.101.67.46, mailfrom: quentin.schulz@cherry.de)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@navimatix.de header.s=selector1 header.b=sTi2HZoa;
+ spf=pass (domain: navimatix.de, ip: 52.101.67.139, mailfrom: joerg.sommer@navimatix.de)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZHqfUr6bt3EzSZZVdoh7UXJMQxj8JRme+W0BTeuZ3dmu3HT2fOy7d9iNDPuXUtKhaQ7hu5OPiKtMu/zlqk+KkJrRjSHJhOA8Q3DXtAPPkr/dCq3ArEbL0dDbENuqX6pSby+C1R6s5PIqi0K4QG3uGHS9sm57nyDbON/eIlvfYhcNzVn5tvjsK8WA30Bxf/X1W8owtmJ67VA50YtFuPwRCCjopvi8y7oOVJ2PHdh7Xq9dyC5Vgnnh9EQGdgw9XD6QpdE4oaR8dvwFD9NurXqFYnNoggNW+mevNc4ziBgJfCXbhUvPqb9nr8HytyqAcmAoWwe6nHfymd/D+r+Uc35WGg==
+ b=CJkIzMZ5s8nPIEqi8Lp0veSvw4qYTFUnzATcLAQElyvaYBySBkcC09SF5cy7zHf8poAkATj9ymoprwnw1aHymfSE6/V4cCMT+BVOkufijAhIq9Ri5+gRgKvh0retUqyqI6oqYUdtM2srFO9UZL/cd0mF5ikCpZ8cq2pQoboMa3MrDmk4EZqX3Dj2XOC7RuefQXYFHxFd2NU4MQx+tzVDcxQCJ+Y/k0CaJENple0SaECggpH/GtPbSC6YJ9wRFRnmJUZn00sWkJ6QWW6KkcY+qKOfF6qUWjTbz8YXDB2FShgqLk9FJ0rOQLHiEHamGKJv5Iyufo/7vg7o/p4NNnOXzg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=B07lBo7Hy8seJG8Uc9Qk+KsfUjrBv0Kx2gbqbxaLaUU=;
- b=ojEL0YYe0MxryVmwj9NFruB1+HAVD9e5WRrwVaOYRkpeoKrKWQG8zG8W4Ng21MSPbwx3q4j5Moy4bhWTgfyrx8nDirswvp/deVGwZqwc9YSokINA1P3HldoVuABwtrE+oIfSMofJQhdDN4cqIfERlDfsbiLqZJrGqrtF3YgNr4Cx1GmLiY0uRP11vktT1q9lpxF7gtoMKlTNh8VVjHBcUVznONtXlHY6mV5WBlLF6752qEa1BEaQmKRHcZ55/tmDplsi6PaF4dCm9Z5uGptzs+HRSFmPs/QCk/pG6PZcaeTRIddoJAlCZ100N/N0lIXEonHjSQFF68jvn/+KLXsflw==
+ bh=5VF1vPBmX3PLjJZ4/Gbc8T/c1R/wrJYYw7SKVEd6BhQ=;
+ b=y+TVRYsu7d3vqomdlP7C4QiZH4v3hdd8EygP5Cgu6guPbmAcJnwEcshNavGL2KHun9hnv8ZOQDVE7nUuV1hr5jAHAh014uZVFRyYQ76PtEpDj5jTuu1BrCEoQwNovNTR5Jey2+d0iDBFJ1f4exTDcdCuHQuAYpxXUmb6q0rSaP0flrmQ/+5PLlA+iqibwa3ocMR2htpO7OiwBS1ulx4sm61wcyc7g4Ol9mmdFLmAsAJ8+ZCoaOZ6R3tKLdUlYE7QDwYSUmbqjPFkGUHX7oPn2maUUcM2pwbC3utgx4oRF03fcw5f6T7SeyK9/ir7iKK5w3Z1vfcml5XmcneZWretWA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
+ smtp.mailfrom=navimatix.de; dmarc=pass action=none header.from=navimatix.de;
+ dkim=pass header.d=navimatix.de; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=navimatix.de;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=B07lBo7Hy8seJG8Uc9Qk+KsfUjrBv0Kx2gbqbxaLaUU=;
- b=RIOzzAW2jTpFcj+C8lIpna0NfgyuuOmAHYANVtVrJIa+pklyeOPoBAGaJhveZ7XyHcevvCPgowm45kn6DH73QQXqMfsJxpMQD6C+skeAHssrrayaEsGsLldIw6Ian1jaWG3OsM7lt749fTiY0kL65aW5su3h3zNvmy+2Fb4LJpc=
+ bh=5VF1vPBmX3PLjJZ4/Gbc8T/c1R/wrJYYw7SKVEd6BhQ=;
+ b=sTi2HZoa+IjjXhbYCIPerVS5lELv7+MpGr3WhEyID6Kca6qfxSmrHjpfwbZraFLkxbP5gNYLJYPo4IcJpp/l8LjOSU3dn8wxISDMUhgLkHke+2vS34Vr/RDfYxA2jxwXyiwlUu1G6M6xUQFHvlxC010TIdxqIlVvcbfB9x7+jKs=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com (2603:10a6:20b:42c::20)
- by GV1PR04MB10895.eurprd04.prod.outlook.com (2603:10a6:150:20b::14) with
- Microsoft SMTP Server (version=TLS1_2,
+ header.d=none;dmarc=none action=none header.from=navimatix.de;
+Received: from DU2PR01MB8293.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:2d4::5) by AM7PR01MB6577.eurprd01.prod.exchangelabs.com
+ (2603:10a6:20b:1ac::23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.25; Wed, 21 Aug
- 2024 08:31:42 +0000
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::35f6:bc7d:633:369a]) by AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::35f6:bc7d:633:369a%5]) with mapi id 15.20.7875.019; Wed, 21 Aug 2024
- 08:31:42 +0000
-Message-ID: <9aa9a649-1310-40ed-a5d1-ad59e6c016de@cherry.de>
-Date: Wed, 21 Aug 2024 10:31:41 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [meta-rockchip][PATCH] rk3328: fix SPI
-To: yocto-patches@lists.yoctoproject.org
-References: <20240821044419.2792-1-twoerner@gmail.com>
-Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <20240821044419.2792-1-twoerner@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BE0P281CA0035.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:b10:14::22) To AS8PR04MB8897.eurprd04.prod.outlook.com
- (2603:10a6:20b:42c::20)
+ 2024 11:35:36 +0000
+Received: from DU2PR01MB8293.eurprd01.prod.exchangelabs.com
+ ([fe80::d520:1b9e:a30e:69a7]) by DU2PR01MB8293.eurprd01.prod.exchangelabs.com
+ ([fe80::d520:1b9e:a30e:69a7%4]) with mapi id 15.20.7897.014; Wed, 21 Aug 2024
+ 11:35:35 +0000
+Date: Wed, 21 Aug 2024 13:35:34 +0200
+From: =?utf-8?B?SsO2cmc=?= Sommer <joerg.sommer@navimatix.de>
+To: yocto-patches@lists.yoctoproject.org, joerg.sommer@navimatix.de
+CC: =?utf-8?B?SsO2cmc=?= Sommer <joerg.sommer@navimatix.de>
+Subject: [ptest-runner][PATCH] README: Update mailing list address for
+ patches + add git command
+Message-ID: <23f3f3e4c8010e7f1b2322976ded709912863ca9.1724240133.git.joerg.sommer@navimatix.de>
+X-Mailer: git-send-email 2.34.1
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: BE1P281CA0320.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:b10:87::10) To DU2PR01MB8293.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:2d4::5)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|GV1PR04MB10895:EE_
-X-MS-Office365-Filtering-Correlation-Id: 944bd958-f381-4f2c-ac4e-08dcc1bbaf62
+X-MS-TrafficTypeDiagnostic: DU2PR01MB8293:EE_|AM7PR01MB6577:EE_
+X-MS-Office365-Filtering-Correlation-Id: ee0b6884-32e0-40aa-c2fe-08dcc1d55fad
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
 X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?Nlk4aXBxZGNoblRGcExXK2U4U3lmTUlqOTFWQTFHMFdlVHBlM3BwMHQxS1l6?=
- =?utf-8?B?Wi9WNVMxUGxHRUFycUs1NXltcE9qT2p6cExNdXFlVXpmSWJidjNsbm9TTHVO?=
- =?utf-8?B?UEJlQ01RdVR0citrN3p3MWJYbHdHd3hxU0V3VzhEZlVkd1BKa2YzZE9JbHMv?=
- =?utf-8?B?RlRqREYxNlMwNjQ0SGVPRDY2cmNjQlE5aUhPS2d2Rm9BektMSUZvdkVsWFNl?=
- =?utf-8?B?b0w1T2pDS3ExYnVQWUZvZWdTV0NjV0s0c2Z3bmxyNlYrWTZ1Mm5ncDRBYkxI?=
- =?utf-8?B?M0JQWi9jMmQrUXRzd1NlSStMaGxCRkJncU9BYTA4RGllUkJWZU01ZTE2K2pG?=
- =?utf-8?B?Q0JPK0tGL1BEcGJVYjRNUStjbUdPeExZUEV3WEp2MFZmSVNQYkpHa2Rqc2VN?=
- =?utf-8?B?MHZLUHpqMFNlRjBTY2NTOVpKMU9lNGZreUZQNHpGa0ZWNi9teE42VGlmR1hG?=
- =?utf-8?B?QmNaUUREUVRYYkJnSlhJOVJjc3VqaFNZd29Hdld6WTlhTjNkcnJnQlp4VDQr?=
- =?utf-8?B?bGxNUUtveS9CaGtjQnF5Z1h4dmdtRjdKd1VqaTBqaU1DWWE5eDdrUXgydTJG?=
- =?utf-8?B?Mkd2eFVueGY0emF5bkV0ekpyTDVQVmp1Yy9mdHV0cEE1RU1qYWI4dFNydFAy?=
- =?utf-8?B?WDhuTUQ2SE1nR3FtVmlvbm40Wld0bEJZanh6VHZXcFZUcFR2dXh0UzhRSUJv?=
- =?utf-8?B?UERPQXYzUU9ZRC9sNFg3MFh1ME5TcHd4SDNYRVlGekJpK0ZPc1lPanVuRHZN?=
- =?utf-8?B?blNzT1drRWNPS0g0TG1WYjUvYUtGaWFwa1FHc2NVYmxkRElNYmxCd21JaDhq?=
- =?utf-8?B?ck5FYzVEeUpUK29id0Mvb2M3MVdyS3JmcTdpczBPOUdadlowNHdiSVhDNkJq?=
- =?utf-8?B?Yk1UaDg1d25lbXh2ZWFqd2g2N3hyWDNWZitwc05wRnc5NENLbzYxd2ZnUUpT?=
- =?utf-8?B?V2htVCtHM21YNUFHSTFGZkwzKzVjYjVYVUljek1Qbkd5NWsySGxFVlV0czUw?=
- =?utf-8?B?d0RFUWgvMElvKzhuRFNSL3JLZVhjYWVSY1JYZmwvQmFySCtmWmZzMll0QVhr?=
- =?utf-8?B?YUxZYVM5YUR3WmUwem4wUkkwMVJhekNNek1nckE2UFIxNlViU3lyVUJoaWlG?=
- =?utf-8?B?K3ZEWkZTZXIxOWRsOHVsbGNJdTJlQWdPV2gwOVI3THkzYUpTTjJObmtMTVEr?=
- =?utf-8?B?cGpneGhtQjJuRFNkNnhrOEdKK0RMWEpaL2RrVmhCZ2ViL0VTOXhERWxSVVVx?=
- =?utf-8?B?MENxOVhOamhteWhiVUt5Vm53MUZ4K21EeGhXV25iZytoWWdWRzNWMTRCZnUx?=
- =?utf-8?B?dEljd1VCZFZaU1R0MWU3eXdIbWZuZjVocTZOWGk5cW9jamszRlc3anZ2YnRX?=
- =?utf-8?B?d3dQYmt3R2Z5b2JPQTdGY0NtOTBRNDNBZmRWRXBlWXFXOTVVSTFIaXBvUnhv?=
- =?utf-8?B?V1lJdkJkZnpRK213WHNHelZSQk5FSXJkc0hGOVZYODA5cjhEUThTNUczV0dF?=
- =?utf-8?B?NzJWYVp0OFdVMitHNHhWZTl2OXhlbTJZWlFwQkw5NmhiRktIcFJaVlFSTXkw?=
- =?utf-8?B?cG5lSGhZMjRSa0g0Uml5ZXVmZmlMVm9LQW9pU2R1TDRVSFE0OW1KQU5MVFlK?=
- =?utf-8?B?cS9KVDE3dmNoL1hOZkNLVWRZaDd6ai93OVFFZlVtQ1o0WDl0UXU2cThNeVpI?=
- =?utf-8?B?LzdmK1FxbExqenoxalRlaHJsZ2NHYVZQeU8vM1U3QkcxbUxtWVZ6YWxkSTlQ?=
- =?utf-8?B?MXJzWGtHSW01a0t2TGtrd3ZQQXh5ckZ1L0RGbkVrbHRHMXJyeit1TTZaSG1Z?=
- =?utf-8?B?L2UzNDVKR3FZUm9yU09BQT09?=
+	=?us-ascii?Q?domQjTZkwxn7UGde7diekUmnfw0MuNmiN4QjsOt+iwLURV2KXTrOLvp0yMZ3?=
+ =?us-ascii?Q?0qh68JDFuyw8FZsVWeZQSmSKkB5UbgUBRkxQIkCoCFBeQqaWj1E6mW7j9u3v?=
+ =?us-ascii?Q?iaWt9JC+hSiAstglXeLg7jN54E2J0qq49CLsXwbCfZgN1EBhSPV5Zl9MDZXV?=
+ =?us-ascii?Q?H7R/0xILv6sL7JiGV18FjgO0traCVQaG9eNnCnIWqrQlJQ87eylD3VuEV8G0?=
+ =?us-ascii?Q?ecLyz2c3Xojw6Emq9hmWSYXm4nCdRHpj7XNOB9uhlO84F/3AZP8TRiNjTk85?=
+ =?us-ascii?Q?paA2fakKiKbeFLeueMBmzHxTHF3/BcrT9Fsxup+qzB0OleazdeHyxVTWZmNL?=
+ =?us-ascii?Q?TDgD+mHl0pQ/kFuxrdFuKToCT6X3zu6K312jFNPnTmTJzjtfpyHRb+ZId3mF?=
+ =?us-ascii?Q?qGxcz2Kc9SDKab4yQB2VT59/IRy5+t1igoZ57Yd5WOfeKkf8zWw03tZgPVKT?=
+ =?us-ascii?Q?bs9tGrZih2T/jjuN0TAt75ITwEr7TO93XuhSl4o6anm6sBpoID5kcYAfH3Dv?=
+ =?us-ascii?Q?kJ72LglN4PevMDvcs2AY8mzto7hyNGPin7H91Z3vsSzDi97fhHQ2jtfZ2Ex8?=
+ =?us-ascii?Q?j7EZLvILlwJ/QyGck+Rxm2KONEPp5wJZV9XCfSHyQ6PgNTswFDdKzq39u9zO?=
+ =?us-ascii?Q?wDJXX1PwTH+pmIrghuRgJTmxSlGMtN7Q3kH8AWU8BEDzDRPXSNAamSMK/Q7d?=
+ =?us-ascii?Q?nX63NfbSEUjpgopsCj0fZSTLVZ2wWF9E3zhFw3o0Vv+C1335BMYiGhUsUZ/F?=
+ =?us-ascii?Q?/yDRbO98fEXxBeq92THSptqx5xpIwJrfMxqTAyT4A2IvOhp29SHtro2ff7At?=
+ =?us-ascii?Q?qmC64MZK1MRaJdOPa9Ljn/0oP04D3PkKphQMP7WjL3vBLux3GXGj/wNmqQ4C?=
+ =?us-ascii?Q?o8htEiU+qklWZ/BJr5jofmUF+c3O1+yEqeM1wHG+jj8SKaUXcmlMRw2sMuOE?=
+ =?us-ascii?Q?tAiLc//TJCuTT7STFDp1S1K4ahP+w3yP6Oe61+bw5+Qm0oaLu1/tEXxRKmE8?=
+ =?us-ascii?Q?lhQBnaJ28Kp+MPWg+Mpf5MLfF/vZG0Mlgh/ZUoFElXN77NlvNbL9F/MYHuz+?=
+ =?us-ascii?Q?DqliQrio5VNqkA1VtObG2FRi1UGL8h4rltCDZf0UEOz/0b5iVaMGwPo/mKXh?=
+ =?us-ascii?Q?7bn+ksRmQAzR6evNYhMRq0yBL80OdxMqTBLznkpFyjpDZnf4Oals6siInso2?=
+ =?us-ascii?Q?Uj1cjzFvLKVpW50xve4AQTj7DYztnJA6covg/mDf0KZYK7uKK/VfLkPeZ6v2?=
+ =?us-ascii?Q?8GNWuwCH/YlBuHGAxSKj2x1HsFx2szDbQ7ZzP61YYW/5xsJ0R7b8dbC2ubGK?=
+ =?us-ascii?Q?poQGRHf2sQk38AJBOemuGUgWsjV3GFmd236i9Lgg2NBW4A=3D=3D?=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR01MB8293.eurprd01.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?bksxOWFDT0trUUdWR1JvNzFqTGVRdUVYY09zU3lQdnBFdXB4STA2VytNOEpm?=
- =?utf-8?B?ZVVoT3R6OTdGOG1CM3E1SVlUMTN3WkFNVkxRbERaaVpDK09URWFKL3dxQUw4?=
- =?utf-8?B?WFZEaFlQK3pnZ3VnVy9NR0F4QkZqelBQQXUzZHlObDdaS0xDL2ZnMHZpSktB?=
- =?utf-8?B?SGk5OTBpUXdBdWtPenpzcWdGb3kxZkFxMEZ0ZjM2eTVSRFRZNVBYSCtUd3hh?=
- =?utf-8?B?R1NUMkN0NDZGMEtWOHNOeTJaN20zN2JhSVVlWVNrYlZvMExWaENyT0wxYUpX?=
- =?utf-8?B?MlhxbEtaQXVnUXhlMmc0a3VSK0lRRUhFYnVYZm0vTmtPbXptOWtzMjQrRFpp?=
- =?utf-8?B?TDY1c3hTZE54dzJVbytwcTlNNnRFeEE1d1dpVFh0MkVuNEwwcjZCSXZVaGJ6?=
- =?utf-8?B?TndxUHhQNC9GT05oLzQ1VGc4WHpXR2tHSXhyQmJtY1Q1NEJpNXR6d242Nmxh?=
- =?utf-8?B?a3lIQ2pKYWNmOEtBallyRkI5bXFYOUNtMkhmaGQxOUdkWEZlK1ZjZUtPOTJM?=
- =?utf-8?B?Q1lsa0ZVcUR5QmhJcEp5Tmw1d3ZRVks4Y2N3UVdiYVMvb0t5azBURUJxM2tu?=
- =?utf-8?B?YlJqcXFCOERpSHoxZCtqSkdHQ09Sc05TZ2lqVytPaFhYbmRCZXI3VVR5OXd1?=
- =?utf-8?B?NXdoekE4K0dHT1hEK0g1aThMb0JNMkhTVW05TVVBYVhwTDdwN0k2YjhMdGVT?=
- =?utf-8?B?THZsRGlDYTRidldPTy9ENExuZCt1cEUvL0krd0FOTVpzOGFvaUZBR2MyY2xR?=
- =?utf-8?B?MWRld0tLVVA1bUl0MVFhbFlCNjkrQ0N4ZEcyNlJtOXc1WDI0ams0aTdGb0hU?=
- =?utf-8?B?U1BxZDRpRWlsSDJDVXRxOW50RHRVQ2FRUXVwZDZUSzVoUWhia2VXcDlIVVBE?=
- =?utf-8?B?cUJRQzBLMjlHenpraWVDVFZ4b1AyTXBPNTE4TTBFMFdPaCt6c2VHNTlRYzhR?=
- =?utf-8?B?U2NRQk5iYUtrb01RRTQ2KzdRZDJ3SmZRaWZjRjJ6RlFucXV5UUxFdXB3aXA4?=
- =?utf-8?B?SnN4MHBLa3E0R3VFeWF5eTN2bzNGZ01naTZIakpzYTFreC9BRGM5SnJpSytV?=
- =?utf-8?B?dU1VWi9oUGJ2V0U4OEZFRFhuQ3QzcSt1UGxVeVA4NW5KOUxVU0hWRmJFME5Z?=
- =?utf-8?B?YStXcmYwbDRiWXhlcDhFZWovanRONlFERUJ3TGFwTHh6SFQzUVRoVUFjUjR5?=
- =?utf-8?B?cEMzdjlDRzU2UkdRaXhjR0JjdlgwWndsVDF2aGsxbS85TUpBV0swTlkzN1E1?=
- =?utf-8?B?eGdheFFFQ3FmQ1JtNUJvcjdaUjdwUEhkRFRWSDdBTHZUMmRmdGNqMmhQbVU5?=
- =?utf-8?B?Yk4zemNvcG9Ia2dkUi94bER2TmJsTlZzK2l1VkhVVE1OTUh3K1p6M3NwdHF4?=
- =?utf-8?B?SEx4NW5zRng5dWJqamhHcE40M0VkUkp4OUw0NmNCMm9SMFdRd2F3dm9GM29x?=
- =?utf-8?B?R1JpL0M3dkFINGZjdzVvd1RlRkp2YVNEOFE1eG4wTk44a0FoU1UxbWRDdk5a?=
- =?utf-8?B?WEE5UVJROExZK3FnYjdmVHpRaGtaMHpUQ1k0bi9CdFZ1cWVEejZRUmhWT2lu?=
- =?utf-8?B?ZkxwblFnSWlWb0VBUUo2cXRUajAzUVhFaWJ3cUVEY1J6ZkhqM0Z4U3E0M00w?=
- =?utf-8?B?S3ZtRG0rL3VjWGlHYWlSa2k2SVI3YVFaSlk1N3Bxdi9hNkxob3NoenA5Q00z?=
- =?utf-8?B?dm04L1dWU3F0NUEySmJkOHhIOG5ObHFhMmsvdlU2QWlCL1REOUlsZktyK0Iv?=
- =?utf-8?B?cUtoR2xjcEcvakxxdEZsT2k5L2NKOHo3YnUwUmg2djBTSUt6NzR0SmNFbmJP?=
- =?utf-8?B?TzNrbE96WGxqMDhLVmRVSnU3d2ZQYjhyT0FLbzlKbkM0M2JzYlBlY0xqZ2Ix?=
- =?utf-8?B?WHVmVUZYR20zYkJ1QmJ6OFRaZVpiVkV3cWRNeWlYM2tHUmJJWXlHU1lCbnBV?=
- =?utf-8?B?bjV0S2x2ZHY1VFRpRnBXSWFXajRBRmkrcHdDN3lsWTdndTBpMkx1S2tqSHpI?=
- =?utf-8?B?R0xMck1yTFg0NDhrSWFVVjVGdjJ0bkZocjNQaG9vRFhZaEk4dml3TEQvelBx?=
- =?utf-8?B?M0pTdXM0OU5xUW81YUlrZjVHNXdvUkJuUW5TYUljdk5lblV5ZHhvVHk1YlQr?=
- =?utf-8?B?S2U3Nm83aFZUaGUydTE3UGRubE5PT2J5Z1hENzBMR3o5TCtTMEpXallKWFpn?=
- =?utf-8?B?dVE9PQ==?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: 944bd958-f381-4f2c-ac4e-08dcc1bbaf62
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8897.eurprd04.prod.outlook.com
+	=?us-ascii?Q?hQzkF7BFdfSIaq2yhx2WCrZFwyxW/jICe/Wwbx8993aVJsElaDZydS0QEpb1?=
+ =?us-ascii?Q?2TYq8S1diVOgHMTG0KSYx150uYX7nlj3OTLABSPmBGJ1+qgsQ9kJEKSZ5t4v?=
+ =?us-ascii?Q?UUDdOPk5XEf+kRiw0zmE+CEO7xPtoT71Z24eMsVxnI+Z3Bg16AoTeAQLonez?=
+ =?us-ascii?Q?UJFqU6f2M9Jqek1CEaq3neejgTTdWsb4FVDmwiDKq8zFf9EgDVuqA+dB0hpP?=
+ =?us-ascii?Q?ZFVoERmD/QblgbzN0mNj/c7M58/tPJrbcYHJQGKB3Qz4C9x0cKz/DoYbp2ee?=
+ =?us-ascii?Q?4EMwgqCYV8Ei3UcO0O1QroqstYDd9gIGQGcO1l+Jj0T3Y4xLJCtt1+SQQnTW?=
+ =?us-ascii?Q?D0ANa5z8kdSaeWRsSJv48e6gHg0yho7XUks/SoAhizjcTCzIsKi6UxIOpN7g?=
+ =?us-ascii?Q?ArkJXyUVBgdiZS89HbH8+pUKOC1jSH7QKA2lncgYraq2Upnl0qlxwHGWs8WC?=
+ =?us-ascii?Q?ruc+pmvsqVnScsZHUWYqv7fKhr8S7dOeYzNM3c21+vnxxeRb7plogmQU26TD?=
+ =?us-ascii?Q?UrWXSgsMc08Y23jornrfmRCXtQYsEqYDbiAyTiX/s/9yzZ6a4GhEWsyweRxO?=
+ =?us-ascii?Q?DIhIOHf0w9FFZ4Xshkm35uUKEe6DtelWeHjzDGf8y4JnBT5MZIOrfysmVaXu?=
+ =?us-ascii?Q?kv1//xFu0tVAXyFO1L6PMiwgcqNRLWHBMK5cSCMIPmQ3dmgnkQuxsDHVlQJ6?=
+ =?us-ascii?Q?lfYbTMnetcbW7oxj4xXl7Xmhc1djype6y2xYx0rt1Kfc41KI4d3BqRsCCLAe?=
+ =?us-ascii?Q?ANGwdM0+0h85vf8F3QskbzGjI3GJDAWzNPo4UgRz9lm/k/lnJHJJlxUEzqdQ?=
+ =?us-ascii?Q?9iPHSQO1Q8QlNju2E9btTkOseIGDsD/ehckBM6Z+tmyytvp6HPPtA4v5/xg6?=
+ =?us-ascii?Q?auknP8GOF8p28ShLR9cY1WuEZRFmDJOjWDncHshjkFSbtxftL/5Qnw9YQoQx?=
+ =?us-ascii?Q?Ea0tfvRJ4OlBfYzwd1/2GqYDFoEILeg4jEXEw/5KiLly4krLnO1rMQzymXyy?=
+ =?us-ascii?Q?eHw7xvfXLLYDOi0igAAGJbuS/fpmq3wD9uokxU6NCyeEyYQguM48jnOMwcyI?=
+ =?us-ascii?Q?N0ZwC9wJ1UHY/y6uAiRFDxCdpa9UUsnvisFVIGp2MC5xM5jAzgACJd+hlH8O?=
+ =?us-ascii?Q?2TfsTdayAq+NJBx4+jL5UVHJQrcadYv19Ux7V97E1hj8UsI7wr4R1rQeCy6T?=
+ =?us-ascii?Q?1ZXKhXk8S7J7CDyQBXvmlPQ1NIrtO4kXwjkzNx2UHMT0iOQ2mK6ggijxNPLi?=
+ =?us-ascii?Q?NK9TvDqcDnrWeQv47/dVesIRMRtuCpx5mdyHzSsGfWmnRVBjmyS35TcGeSC+?=
+ =?us-ascii?Q?yrCD+8jpHGxDlAEZ1Ncs5FKU+aa1Vu+3d0wHxyVPtjwjdkFw1gfUCR3LoyqY?=
+ =?us-ascii?Q?OKIbcqshBIVymB4BAdUG0aEW2POwa/yMkuG5+2ZenAM77xjjR39CizX3DHW5?=
+ =?us-ascii?Q?0RDv/T9h5k/YJM06CcwlO/zB+R4/ABgqqy3xPuP3X1ZBE4Y/oEAh7D6wvllj?=
+ =?us-ascii?Q?3RlS2xrKpPbp4rRhECIxk6kXYdnVyznM3bTdtYkV3bcWDEn0r+9Z5FVd6Xyi?=
+ =?us-ascii?Q?N/UWeKBSX7VRZI97Pr0zta6OTu9dPxBMntmYywGY8odxZMFJuRoK3ChTKLEy?=
+ =?us-ascii?Q?4w=3D=3D?=
+X-OriginatorOrg: navimatix.de
+X-MS-Exchange-CrossTenant-Network-Message-Id: ee0b6884-32e0-40aa-c2fe-08dcc1d55fad
+X-MS-Exchange-CrossTenant-AuthSource: DU2PR01MB8293.eurprd01.prod.exchangelabs.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2024 08:31:42.6177
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2024 11:35:35.8279
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
+X-MS-Exchange-CrossTenant-Id: c87b4f54-b992-4813-8f3f-4a876324197f
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OexT2jN4E+JaZZ9IkZpdqa9gbuIrRT0J4ObSVuCZnNpo5s8nMnwLeIuQkQYg/Ow6G+bJidT4xb+vD1GzBohp0nFfDUeQ0AkWD4EgHNvmpLw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10895
+X-MS-Exchange-CrossTenant-UserPrincipalName: Gk3Hj9T+RbkajQdcKEjVxg0On7ABxTWrziWBoa3/n46Onh5mncl877LjsukK27GG5ZpSSNHJ86KFRUJrZy5JP0jhvNV7Oo6415zVA/j7tts=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR01MB6577
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 21 Aug 2024 08:32:12 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/539
+ <yocto-patches@lists.yoctoproject.org>; Wed, 21 Aug 2024 11:35:43 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/540
 
-Hi Trevor,
+From: J=F6rg Sommer <joerg.sommer@navimatix.de>
 
-On 8/21/24 6:44 AM, Trevor Woerner via lists.yoctoproject.org wrote:
-> The latest linux-yocto broke SPI for RK3328 devices. Add the submitted fix.
-> 
-> Signed-off-by: Trevor Woerner <twoerner@gmail.com>
-> ---
->   ...-correct-RK3328-iomux-width-flag-for.patch | 50 +++++++++++++++++++
->   recipes-kernel/linux/linux-yocto_%.bbappend   |  1 +
->   2 files changed, 51 insertions(+)
->   create mode 100644 recipes-kernel/linux/linux-yocto/rk3328/0001-pinctrl-rockchip-correct-RK3328-iomux-width-flag-for.patch
-> 
-> diff --git a/recipes-kernel/linux/linux-yocto/rk3328/0001-pinctrl-rockchip-correct-RK3328-iomux-width-flag-for.patch b/recipes-kernel/linux/linux-yocto/rk3328/0001-pinctrl-rockchip-correct-RK3328-iomux-width-flag-for.patch
-> new file mode 100644
-> index 000000000000..36071511c2a8
-> --- /dev/null
-> +++ b/recipes-kernel/linux/linux-yocto/rk3328/0001-pinctrl-rockchip-correct-RK3328-iomux-width-flag-for.patch
-> @@ -0,0 +1,50 @@
-> +From ed875ae5b8ca511c11d227c0d9c6d2d13a2e6c15 Mon Sep 17 00:00:00 2001
-> +From: Huang-Huang Bao <i@eh5.me>
-> +Date: Tue,  9 Jul 2024 18:54:28 +0800
-> +Subject: [PATCH] pinctrl: rockchip: correct RK3328 iomux width flag for
-> + GPIO2-B pins
-> +
-> +The base iomux offsets for each GPIO pin line are accumulatively
-> +calculated based off iomux width flag in rockchip_pinctrl_get_soc_data.
-> +If the iomux width flag is one of IOMUX_WIDTH_4BIT, IOMUX_WIDTH_3BIT or
-> +IOMUX_WIDTH_2BIT, the base offset for next pin line would increase by 8
-> +bytes, otherwise it would increase by 4 bytes.
-> +
-> +Despite most of GPIO2-B iomux have 2-bit data width, which can be fit
-> +into 4 bytes space with write mask, it actually take 8 bytes width for
-> +whole GPIO2-B line.
-> +
-> +Commit e8448a6c817c ("pinctrl: rockchip: fix pinmux bits for RK3328
-> +GPIO2-B pins") wrongly set iomux width flag to 0, causing all base
-> +iomux offset for line after GPIO2-B to be calculated wrong. Fix the
-> +iomux width flag to IOMUX_WIDTH_2BIT so the offset after GPIO2-B is
-> +correctly increased by 8, matching the actual width of GPIO2-B iomux.
-> +
-> +Upstream-Status: Submitted
+Signed-off-by: J=F6rg Sommer <joerg.sommer@navimatix.de>
+---
+ README.md | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-Please provide the link to the patch (between square brackets I believe?).
+diff --git a/README.md b/README.md
+index e6f548e..8afb161 100644
+--- a/README.md
++++ b/README.md
+@@ -48,8 +48,12 @@ $ mtrace ./ptest-runner $MALLOC_TRACE
+=20
+ ## Contributions
+=20
+-For contribute please send a patch with subject prefix "[ptest-runner]" to=
+=20
+-yocto@lists.yoctoproject.org.
++For contribute please send a patch with subject prefix "[ptest-runner]" to
++yocto-patches@lists.yoctoproject.org.
++
++```
++git send-email --to=3Dyocto-patches@lists.yoctoproject.org --subject-prefi=
+x=3D'ptest-runner][PATCH' ...
++```
+=20
+ ## Links
+=20
+--=20
+2.34.1
 
-I personally like to have the original commit log only appended with 
-stuff we add, e.g. Upstream-Status: tag after the last Signed-off-by? 
-But that's really just a matter of taste :)
-
-Looks good to me otherwise,
-
-Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
-
-Thanks!
-Quentin
 
