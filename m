@@ -2,54 +2,54 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90A90C7112F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 909E3C7112E
 	for <webhook@archiver.kernel.org>; Wed, 28 Aug 2024 20:10:26 +0000 (UTC)
-Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
- by mx.groups.io with SMTP id smtpd.web11.5865.1724875816487258184
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+ by mx.groups.io with SMTP id smtpd.web11.5867.1724875819292212258
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 28 Aug 2024 13:10:16 -0700
+ Wed, 28 Aug 2024 13:10:19 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=lsHCKNOq;
- spf=pass (domain: konsulko.com, ip: 209.85.166.54, mailfrom: scott.murray@konsulko.com)
-Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-81f86fd9305so385148239f.0
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 28 Aug 2024 13:10:16 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=W4CuUqt5;
+ spf=pass (domain: konsulko.com, ip: 209.85.166.53, mailfrom: scott.murray@konsulko.com)
+Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-81f96ea9ff7so355592439f.3
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 28 Aug 2024 13:10:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1724875815; x=1725480615; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1724875818; x=1725480618; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=PVxfLQIaFX+zgimxFS/oOtBmFl9m6iv6Y4PdjIEcnFM=;
-        b=lsHCKNOqOSVobBhLwjXVURTqQWA+a7eHlI/tLsK9KgJ80FKDrcsnMI41CP6nodaMCN
-         PAH8bZSrnnKYTJJFjcFCsMk3J3dyyiL6Ovj2QiKbEm/EmyNwM7s3fgZQdHjKo6lV7HLC
-         X6BvxsOsC+RBWwj8yodjm8f4zjBdpkS7Hvxx0=
+        bh=qplhQZvhZqqEO9AH/2vR6Ctmz+chmg/ZztA+eYOfSb4=;
+        b=W4CuUqt58vxRtBp399k/h1W8W7EOI2URZpKS5totD/VhXfPRXWsn+8fOkjMaARYzzh
+         5gdBk8uD6XhRJIhTsLqW/2AaWX5dgn0mg8y3eeBNBgJUOqT6eV7nAYkLteb/svh+pi9S
+         sSMiZFNLb8YiEawqvl95MPwzy4wyFcNWapCig=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724875815; x=1725480615;
+        d=1e100.net; s=20230601; t=1724875818; x=1725480618;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PVxfLQIaFX+zgimxFS/oOtBmFl9m6iv6Y4PdjIEcnFM=;
-        b=BR2+iE6yVMQ976B0ERDEmuZRl63P8+Xhb4PNeTmx5GG7vxoNzFgu1tp9GtpapmoP5i
-         5dXvuUPr8qHML1DCs40Bwzu9MVpgZrd1IhmJz3NuFichiX4+2PH5mZOs66eWm0ZrS1mF
-         BhMLoN1Js68enJgX5MoqbfesD6i7DivLhTKiXzhx00tEZoJgbetYaL9DvYugmA3tVQjI
-         yrpgCtcQGaOgioJIwn357FzY6Dan6kN5maGgczQZfgXPXs79W2W1zAWs87r6j2ChXASB
-         JolhJyZO+cECGrwKnoVvbIhURUppT+k5HBxWQpwi0kZGn0TFKeC3sLhFVZlCzc+1GHNA
-         LbCQ==
-X-Gm-Message-State: AOJu0YwYx/cLJqsE/sT1b3TcUrvywMpDyzQR3aYoo8t9LH3RWiS/b+1Q
-	bexwwDMw5tCqFN7UsZvGGMOEPAvhMgRAC4DlkUI7/cyIMtc1xMZ51sDkg8Is4f1WCLjRBpX/dGX
-	8
-X-Google-Smtp-Source: AGHT+IGB0JgRPY2/8oqbNiQHel4Hd8NlMamntaNEMxdnZFzGseZDieCqMVMaKZU7nNSUBPH5XLbr6w==
-X-Received: by 2002:a05:6602:619a:b0:824:d9c0:3fc6 with SMTP id ca18e2360f4ac-82a10e16c0dmr94798139f.3.1724875815341;
-        Wed, 28 Aug 2024 13:10:15 -0700 (PDT)
+        bh=qplhQZvhZqqEO9AH/2vR6Ctmz+chmg/ZztA+eYOfSb4=;
+        b=duqUFiOBR9TXL1HjeEQIdQL62S3gYxoAYvmYnM9oLV81Cno+kb2qObJWcqn8tQTVcb
+         9izz5xSk2SmsHz2vXK3AdiMEfrHq4FPNYlYsCchYqfTL/uIpGCWYnYk+/7kFagXjG+E6
+         lRavIoXmpAL7NJmPA9TK66UlqKBMNSInbIikLYUKCjzuNSR9+goPa6v92O5/cWY2tgbw
+         /TAhS++GaRJLMbrunaFggmWmGqvsQ+BnwujzNvFodpXO/X7n179Mc1+Srmp0qef51KLq
+         OXPckvzzcQ/hABMGyRzuAageVz3fpegnMz+HBbZ+JiLe5SDjD3/tLNhJQgHlQLzaUD8k
+         7Gfw==
+X-Gm-Message-State: AOJu0YxrRXo/iaL5JQTqNpzEBjbdvwDyzL8svyAh5E0CR56Rn8+Dx7Ir
+	uR7KIjmXvf0v3bCyubuGQdXH/dNAFwp07e5bFoDMuAO0KWp7H/UNg0/vLgJUW5o7my4qlFvOKwL
+	t
+X-Google-Smtp-Source: AGHT+IHEt+0jOCdstvzrwI1DCjXy3w0tqjKuCp0Daw/tuw8c/nCsp6nZ87ktcZBJaF7wfn/TJ4ykXw==
+X-Received: by 2002:a05:6602:29c6:b0:7f9:1b3b:8465 with SMTP id ca18e2360f4ac-82a1108c99dmr95264339f.11.1724875818186;
+        Wed, 28 Aug 2024 13:10:18 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ced0da0e2csm25431173.109.2024.08.28.13.10.14
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ced0da0e2csm25431173.109.2024.08.28.13.10.17
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 13:10:14 -0700 (PDT)
+        Wed, 28 Aug 2024 13:10:17 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][kirkstone/rust][PATCH 31/33] rust: Oe-selftest changes for rust v1.78
-Date: Wed, 28 Aug 2024 16:09:17 -0400
-Message-ID: <77fc94da83d46ef74e03cb6ffdd40d4512002232.1724874972.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][kirkstone/rust][PATCH 33/33] Rework and update README
+Date: Wed, 28 Aug 2024 16:09:19 -0400
+Message-ID: <6a13fff3bd2945dee63e9515db11ef69cbe9daec.1724874972.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <cover.1724874972.git.scott.murray@konsulko.com>
 References: <cover.1724874972.git.scott.murray@konsulko.com>
@@ -59,101 +59,167 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Wed, 28 Aug 2024 20:10:26 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/598
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/599
 
-From: Yash Shinde <Yash.Shinde@windriver.com>
+Convert README to markdown and rename to README.md.  Update its
+content to include:
+- clarification with respect to testing done (i.e. not done) for
+  all interim Rust version updates
+- dependencies section
+- contribution section with pointer to yocto-patches mailing list
+- note on patch policy to clarify that changes other than backports
+  or demonstrated build fixes are unlikely to be accepted
+- comments about cairo backport addition
+- current policy with respect to handling UNPACKDIR changes
 
-Add some of the upsupported/failing tests to the exclude list
-and ignore the failing unit tests.
-
-Signed-off-by: Yash Shinde <Yash.Shinde@windriver.com>
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(adapted from oe-core commit 81bbd6db47f45628ff4be400e1f2fa5b09ccd0bb)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- .../rust/files/rust-oe-selftest.patch         | 64 ++++++++++++++++++-
- 1 file changed, 62 insertions(+), 2 deletions(-)
+ README    | 40 -------------------------
+ README.md | 88 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 88 insertions(+), 40 deletions(-)
+ delete mode 100644 README
+ create mode 100644 README.md
 
-diff --git a/recipes-devtools/rust/files/rust-oe-selftest.patch b/recipes-devtools/rust/files/rust-oe-selftest.patch
-index 1d28733..a69c1e5 100644
---- a/recipes-devtools/rust/files/rust-oe-selftest.patch
-+++ b/recipes-devtools/rust/files/rust-oe-selftest.patch
-@@ -223,9 +223,9 @@ index 1a9d3d3f12f..0a9cfc48806 100644
-  fn test_rw_arc_no_poison_rr() {
-      let arc = Arc::new(RwLock::new(1));
-      let arc2 = arc.clone();
--@@ -82,6 +85,7 @@ fn test_rw_arc_no_poison_rr() {
--     assert_eq!(*lock, 1);
-+@@ -127,6 +127,7 @@
-  }
+diff --git a/README b/README
+deleted file mode 100644
+index c79d73e..0000000
+--- a/README
++++ /dev/null
+@@ -1,40 +0,0 @@
+-"Mixin" layer for adding current Rust toolchain into the Yocto Project LTS.
+-
+-At the time Kirkstone was released in May 2022 it included Rust 1.59.0,
+-and officially Kirkstone supports only that. This thin special-purpose
+-mixin layer is meant to provide a current Rust toolchain for Kirkstone
+-by backporting the appropriate recipes from the master branch of
+-openembedded-core.
+-
+-Notes:
+-- cargo-update-recipe-crates.bbclass has been backported with a tweak to
+-  use host rather than native Python since kirkstone does not have a new
+-  enough Python (3.11 is required).  Using the update task in the class
+-  will fail unless the host environment contains Python 3.11 or newer.
+-- The newer version of librsvg from master has been backported since
+-  there is not a straightforward way to update the existing one via
+-  bbappend.  Backporting a working recipe should be easier to maintain
+-  than developing an update of the older recipe in kirkstone.
+-- python3-cryptography has been left alone since the recipe in kirkstone
+-  still works with the newer toolchain, and updating it seems to have
+-  more potential impact due to upstream API changes and its known to be
+-  finicky build.  This may change if sufficient rationale for doing the
+-  backport becomes apparent.
+-- While changes to Rust recipe and class files related to oe-selftest
+-  support are included by necessity, no effort has been made to backport
+-  the actual addition of Rust to oe-selftest, as that is considered too
+-  invasive and maintenance heavy.
+-- To include Rust support in a SDK, do the following in e.g. local.conf:
+-
+-  TOOLCHAIN_HOST_TASK:append = " packagegroup-rust-cross-canadian-${MACHINE}"
+-  TOOLCHAIN_TARGET_TASK:append = " ${@multilib_pkg_extend(d, 'libstd-rs')}"
+-
+-  Overriding populate_sdk_base.bbclass to avoid needing to do this seems
+-  too invasive for this layer.
+-- The intent is to track any further upgrades that occur in the master
+-  branch of oe-core, with an expected end of support in April 2026, the
+-  same as Yocto Project's planned EOL for Kirkstone (per
+-  https://wiki.yoctoproject.org/wiki/Releases).
+-
+-Maintainers:
+-Scott Murray <scott.murray@konsulko.com>
+diff --git a/README.md b/README.md
+new file mode 100644
+index 0000000..047d647
+--- /dev/null
++++ b/README.md
+@@ -0,0 +1,88 @@
++meta-mixins-lts - kirkstone/rust
++================================
 +
-  #[test]
- +#[ignore]
-  fn test_rw_arc_no_poison_rw() {
-@@ -330,3 +330,63 @@ diff --git a/library/alloc/src/slice/tests.rs b/library/alloc/src/slice/tests.rs
-  #[cfg_attr(target_os = "emscripten", ignore)] // no threads
-  #[cfg_attr(not(panic = "unwind"), ignore = "test requires unwinding support")]
-  fn panic_safe() {
-+diff --git a/library/test/src/tests.rs b/library/test/src/tests.rs
-+--- a/library/test/src/tests.rs
-++++ b/library/test/src/tests.rs
-+@@ -424,6 +424,7 @@
-+ }
++A "mixin" layer for adding current Rust toolchain into the Yocto Project LTS.
++At the time Kirkstone was released in May 2022 it included Rust 1.59.0, and
++officially Kirkstone supports only that. This thin special-purpose mixin
++layer is meant to provide a current Rust toolchain for Kirkstone by
++backporting the appropriate recipes from the master branch of
++openembedded-core.
 +
-+ #[test]
-++#[ignore]
-+ fn test_time_options_threshold() {
-+     let unit = TimeThreshold::new(Duration::from_millis(50), Duration::from_millis(100));
-+     let integration = TimeThreshold::new(Duration::from_millis(500), Duration::from_millis(1000));
-+diff --git a/library/std/src/sync/mutex/tests.rs b/library/std/src/sync/mutex/tests.rs
-+--- a/library/std/src/sync/mutex/tests.rs
-++++ b/library/std/src/sync/mutex/tests.rs
-+@@ -193,6 +193,7 @@
-+ }
++Notes
++-----
 +
-+ #[test]
-++#[ignore]
-+ fn test_mutex_arc_poison_mapped() {
-+     let arc = Arc::new(Mutex::new(1));
-+     assert!(!arc.is_poisoned());
-+diff --git a/library/std/src/sync/mutex/tests.rs b/library/std/src/sync/mutex/tests.rs
-+--- a/library/std/src/sync/mutex/tests.rs
-++++ b/library/std/src/sync/mutex/tests.rs
-+@@ -272,6 +272,7 @@
-+ }
++- **Not all Rust version updates carried here have been individually tested!**
++  Care has been taken to keep backported changes in the same order as they
++  have been applied to oe-core, so the various older Rust versions should
++  be buildable, but that is not guaranteed.  It is highly recommended that
++  you perform your own tests for correctness when using this layer.  The
++  cargo-ptests bbclass has been backported to potentially assist with
++  doing so.
++- cargo-update-recipe-crates.bbclass has been backported with a tweak to
++  use host rather than native Python since kirkstone does not have a new
++  enough Python (3.11 is required).  Using the update task in the class
++  will fail unless the host environment contains Python 3.11 or newer.
++- The newer version of librsvg from master has been backported since
++  there is not a straightforward way to update the existing one via
++  bbappend.  Backporting a working recipe should be easier to maintain
++  than developing an update of the older recipe in kirkstone.
++- A newer cairo recipe (1.18.0 as of August 2024) has been backported
++  to enable building librsvg 2.57.1 and newer.  It is believed this has
++  minimal impact on other cairo users.
++- python3-cryptography has been left alone since the recipe in kirkstone
++  still works with the newer toolchain, and updating it seems to have
++  more potential impact due to upstream API changes and its known to be
++  finicky build.  This may change if sufficient rationale for doing the
++  backport becomes apparent.
++- While changes to Rust recipe and class files related to oe-selftest
++  support are included by necessity, no effort has been made to backport
++  the actual addition of Rust to oe-selftest, as that is considered too
++  invasive and maintenance heavy.
++- To include Rust support in a SDK, do the following in e.g. local.conf:
++  ```
++  TOOLCHAIN_HOST_TASK:append = " packagegroup-rust-cross-canadian-${MACHINE}"  
++  TOOLCHAIN_TARGET_TASK:append = " ${@multilib_pkg_extend(d, 'libstd-rs')}"
++  ```
++  Overriding populate_sdk_base.bbclass to avoid needing to do this seems
++  too invasive for this layer.
++- The intent is to track any further upgrades that occur in the master
++  branch of oe-core, with an expected end of support in April 2026, the
++  same as Yocto Project's planned EOL for Kirkstone (per
++  https://wiki.yoctoproject.org/wiki/Releases).
++- At present, no changes related to the addition of UNPACKDIR for the YP
++  styhead release have been backported, as it presently looks like trying to
++  accommodate them will be more effort than not.  That may change in the
++  future.
 +
-+ #[test]
-++#[ignore]
-+ fn panic_while_mapping_unlocked_poison() {
-+     let lock = Mutex::new(());
++Dependencies
++------------
 +
-+diff --git a/
-+--- a/library/std/src/sync/rwlock/tests.rs
-++++ b/library/std/src/sync/rwlock/tests.rs
-+@@ -60,6 +60,7 @@
-+ }
++This layer depends on:
 +
-+ #[test]
-++#[ignore]
-+ fn test_rw_arc_poison_mapped_w_r() {
-+     let arc = Arc::new(RwLock::new(1));
-+     let arc2 = arc.clone();
-+@@ -88,6 +89,7 @@
-+ }
++- URI: git://github.com/openembedded/openembedded-core.git  
++  layers: meta  
++  branch: kirkstone
 +
-+ #[test]
-++#[ignore]
-+ fn test_rw_arc_poison_mapped_w_w() {
-+     let arc = Arc::new(RwLock::new(1));
-+     let arc2 = arc.clone();
-+@@ -438,6 +440,7 @@
-+ }
++Contributing
++------------
 +
-+ #[test]
-++#[ignore]
-+ fn panic_while_mapping_write_unlocked_poison() {
-+     let lock = RwLock::new(());
++The yocto-patches mailinglist (yocto-patches@lists.yoctoproject.org) is used
++for questions, comments and patch review. It is subscriber only, so please
++register before posting.
 +
++Send pull requests to yocto-patches@lists.yoctoproject.org with
++'[meta-lts-mixins][kirkstone/rust]' in the subject.
++
++When sending single patches, please use something like:
++git send-email -M -1 --to=yocto-patches@lists.yoctoproject.org --subject-prefix='meta-lts-mixins][kirkstone/rust][PATCH'
++
++Note that changes that are not direct backports from oe-core master branch, or
++are not fixes for a demonstrated build breakage against Kirkstone are unlikely
++to be accepted.  Functional changes should be submitted and merged to oe-core
++master branch first.
++
++Maintenance
++-----------
++
++Layer maintainers:
++Scott Murray <scott.murray@konsulko.com>
 -- 
 2.46.0
 
