@@ -2,54 +2,54 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1949C7112F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF4C1C71133
 	for <webhook@archiver.kernel.org>; Wed, 28 Aug 2024 20:10:05 +0000 (UTC)
-Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
- by mx.groups.io with SMTP id smtpd.web11.5853.1724875804432988655
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+ by mx.groups.io with SMTP id smtpd.web11.5848.1724875800925506547
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 28 Aug 2024 13:10:04 -0700
+ Wed, 28 Aug 2024 13:10:01 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=gKw9KJ2r;
- spf=pass (domain: konsulko.com, ip: 209.85.166.43, mailfrom: scott.murray@konsulko.com)
-Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-829e856a173so134150839f.1
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 28 Aug 2024 13:10:04 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=We+tfMff;
+ spf=pass (domain: konsulko.com, ip: 209.85.166.172, mailfrom: scott.murray@konsulko.com)
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-39d46ae7863so3366395ab.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 28 Aug 2024 13:10:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1724875803; x=1725480603; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1724875800; x=1725480600; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=S3KDaVMNVIASFZBoSQ5Zi81ZR/c7gekuzERD9hHPl/A=;
-        b=gKw9KJ2r0dTyZKjKvImmcKEgx/mmwVvmE55MY5615rWuq2yz4JQuA9X/9HTR+TOz7X
-         hQ+vb1lZWY0rYe61WY1pSeNLNhs3nqdfGz4Joa/CwpkGLuIf8Wa+likCoMvxjFNvJDpg
-         KrYnFlUDm56cRlyAbgJFsf2pKtej0jJy6W8no=
+        bh=IdGof6vDkmIppdLOy9FziuZU8qeiL0/LoB/ORxkm3Vk=;
+        b=We+tfMffhr6YvJ/bgyBK9vQ79/kqsq0mDw/RZJejXzh8px+ZyNTqnasfMIwU4o7AUq
+         3uF1SeaWuuyMl/1qdjKAsqtHzpnVhbCYIs7cHpuxlFYwGIF1qVJe4FVoigqBW8nwo3mX
+         1QIwmJpAatb8MdFuzbe202z8EXvQmbVuftiI8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724875803; x=1725480603;
+        d=1e100.net; s=20230601; t=1724875800; x=1725480600;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=S3KDaVMNVIASFZBoSQ5Zi81ZR/c7gekuzERD9hHPl/A=;
-        b=NBgEjHtT3ICy4T6ixL2WTBv8c+gnrMItj930YNQPpbTRFa4h9HH3L82b2eu0JEfaiq
-         yxJ/PbEiTJi7UneKZxH+VvvJSepp4Dqb0qtNwRPb2FuvRVIBoIrXvPE/c7KcqjxWAvsW
-         d6H8pJJ5v1pTLLYRQtYnEQ3A3jk49V57GATNQ64/hCdrTfxmAKQeP2Ii7kEIoVIh9zNT
-         6TXdn3B61ISXZ1wxdaQ+6pNORhmdyCdhMpgHVLh1tkr2JUahQn1Q9HoUGO8YD/cUmG0l
-         k0ol/w425Y25XTaP2LfHoPnUBBVVN19uxVtm0dOT/Sed36p3lys5tqVlUixeIsK4J1z/
-         4wag==
-X-Gm-Message-State: AOJu0YyfsuRUEWsGVYPyFs88s8Eu1vsG84BKcfM+0HdOUI/K6BR1hk/X
-	68DrpldwF6pLtxRsDdqnK0Ap+/OMA5sw/cYBNdYJJwgdOZzOXHpqSNrwgpzBLORtC6SxNWHlZTT
-	7
-X-Google-Smtp-Source: AGHT+IF1qzSUGWqvkGxElTydFn62KYRTqU7LnYRMcTJZ2XtgcwiSxEjKFNC4NgMcZtve86jiqqEDRA==
-X-Received: by 2002:a05:6602:148a:b0:81f:c103:3e5d with SMTP id ca18e2360f4ac-82a1109b8e8mr67989739f.15.1724875803277;
-        Wed, 28 Aug 2024 13:10:03 -0700 (PDT)
+        bh=IdGof6vDkmIppdLOy9FziuZU8qeiL0/LoB/ORxkm3Vk=;
+        b=kWBT6o63e0Vtdr6VjEsZhuxORoiF2/S46TaX8YT7o19GUkuss6pYT6C8qLLngEWswN
+         vYzAegjPR/5vIBOcfRVrWIoU+BrZtgMkM49jydHd1CZyE2HC5Vy8CTiZndfoKiNDElZB
+         4fcGInpa+NQQsBOCDa8jcp4UbVSfI1nmdPdEstSFLhyZw30T51A0gxHVA/F5xnppkd7J
+         QfkSzQJOl+1SAqfqftqxwN6IOoJ3G2ShN1P+BNBBZ3nsjKtJ02Mw22l8EU9lwAUM7Q1k
+         od8f0QURN06vpP+iqRQC+wwZGLclTgdeyNxnPzXLhjf0B72IHEm+o5Ny1MN2yE3OZEU3
+         7dyA==
+X-Gm-Message-State: AOJu0YzlzfhkFqaFxdGXISdKC5EsFt8XJkfaTqT3VTs8SJfA0ft/hMIi
+	Dmo5QyVNN8XhT3ZV/Kj+jUlN5/QUePjPAuCHPpCLRteX+/a/zgazDe4xts+30SYywYSf7BAlTim
+	S
+X-Google-Smtp-Source: AGHT+IEYEBiKqEeEX2IeLz4lc5alMN7WWLgjQ4XOCyRgC3P9f9f14Q7hWcxwiLzgk2VctstRIPMwLQ==
+X-Received: by 2002:a05:6e02:1d9c:b0:39d:24af:aff8 with SMTP id e9e14a558f8ab-39f38b0c090mr2212785ab.7.1724875799749;
+        Wed, 28 Aug 2024 13:09:59 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ced0da0e2csm25431173.109.2024.08.28.13.10.02
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ced0da0e2csm25431173.109.2024.08.28.13.09.59
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 13:10:03 -0700 (PDT)
+        Wed, 28 Aug 2024 13:09:59 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][kirkstone/rust][PATCH 19/33]  libstd-rs,rust-cross-canadian: set CVE_PRODUCT to rust
-Date: Wed, 28 Aug 2024 16:09:05 -0400
-Message-ID: <294b35b405ba8865333935bfb7aa5adca063d600.1724874972.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][kirkstone/rust][PATCH 14/33] rust-target-config: Update data layouts for 32-bit arm targets
+Date: Wed, 28 Aug 2024 16:09:00 -0400
+Message-ID: <9aca8385d61134b01ddaff0bd46d32b9f94ca10e.1724874972.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <cover.1724874972.git.scott.murray@konsulko.com>
 References: <cover.1724874972.git.scott.murray@konsulko.com>
@@ -59,78 +59,53 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Wed, 28 Aug 2024 20:10:05 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/585
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/581
 
-From: Peter Marko <peter.marko@siemens.com>
+From: Tronje Krabbe <tkrabbe@jusst.de>
 
-These recipes come from rust sources and CVEs are reported for them
-under rust-lang:rust vendor:product touple.
-Especially libstd-rs needs correct CVE_PRODUCT as is it installed on
-target devices (being statically linked to rust compiled binaries).
+update the rust data layout to sync with LLVM [1]
+fixes the following build
+error:
 
-before:
-cargo: CVE_PRODUCT="cargo"
-cargo-c-native: CVE_PRODUCT="cargo-c"
-libstd-rs: CVE_PRODUCT="libstd-rs"
-rust: CVE_PRODUCT="rust"
-rust-cross-canadian: CVE_PRODUCT="rust-cross-canadian-<arch>"
-rust-llvm: CVE_PRODUCT="rust-llvm"
+error: data-layout for target `arm-poky-linux-gnueabi`, `e-m:e-p:32:32-i64:64-v128:64:128-a:0:32-n32-S64`, differs from LLVM target's `armv7-unknown-linux-gnueabihf` default layout, `e-m:e-p:32:32-Fi8-i64:64-v128:64:128-a:0:32-n32-S64`
 
-after:
-cargo: CVE_PRODUCT="cargo"
-cargo-c-native: CVE_PRODUCT="cargo-c"
-libstd-rs: CVE_PRODUCT="rust"
-rust: CVE_PRODUCT="rust"
-rust-cross-canadian-x86-64: CVE_PRODUCT="rust"
-rust-llvm: CVE_PRODUCT="rust-llvm"
+meta-rust issue report with rust 1.76 [2]
 
-Product for rust-llvm is uncertain and, should be handled in another
-commit if it is desired to align it, too.
+[1] https://github.com/llvm/llvm-project/commit/308e82ecebeef1342004637db9fdf11567a299b3
+[2]: https://github.com/meta-rust/meta-rust/issues/444
 
-sqlite> select vendor, product, count(product) from products where vendor="rust-lang" group by product;
-rust-lang|async-h1|2
-rust-lang|cargo|5
-rust-lang|future-utils|2
-rust-lang|futures-task|2
-rust-lang|mdbook|1
-rust-lang|regex|2
-rust-lang|rsa|2
-rust-lang|rust|45
-rust-lang|socket2|1
-
-Signed-off-by: Peter Marko <peter.marko@siemens.com>
+Signed-off-by: Tronje Krabbe <tkrabbe@jusst.de>
+Signed-off-by: Khem Raj <raj.khem@gmail.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(adapted from oe-core commit e8cf1df16a6ec2785cacaf608bec5cd8496103af)
+(adapted from oe-core commit 802376953ed9f1b3e64b3cf57374c58d7ac68d88)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- recipes-devtools/rust/libstd-rs_1.75.0.bb     | 2 ++
- recipes-devtools/rust/rust-cross-canadian.inc | 1 +
- 2 files changed, 3 insertions(+)
+ classes/rust-target-config.bbclass | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/recipes-devtools/rust/libstd-rs_1.75.0.bb b/recipes-devtools/rust/libstd-rs_1.75.0.bb
-index d2bf266..fe016e7 100644
---- a/recipes-devtools/rust/libstd-rs_1.75.0.bb
-+++ b/recipes-devtools/rust/libstd-rs_1.75.0.bb
-@@ -15,6 +15,8 @@ S = "${RUSTSRC}/library/sysroot"
- RUSTLIB_DEP = ""
- inherit cargo
+diff --git a/classes/rust-target-config.bbclass b/classes/rust-target-config.bbclass
+index 38fa761..e293272 100644
+--- a/classes/rust-target-config.bbclass
++++ b/classes/rust-target-config.bbclass
+@@ -130,7 +130,7 @@ def llvm_features(d):
+ llvm_features[vardepvalue] = "${@llvm_features(d)}"
  
-+CVE_PRODUCT = "rust"
-+
- DEPENDS:append:libc-musl = " libunwind"
- # rv32 does not have libunwind ported yet
- DEPENDS:remove:riscv32 = "libunwind"
-diff --git a/recipes-devtools/rust/rust-cross-canadian.inc b/recipes-devtools/rust/rust-cross-canadian.inc
-index 3096448..45cb402 100644
---- a/recipes-devtools/rust/rust-cross-canadian.inc
-+++ b/recipes-devtools/rust/rust-cross-canadian.inc
-@@ -1,5 +1,6 @@
- SUMMARY = "Rust compiler and runtime libaries (cross-canadian for ${TARGET_ARCH} target)"
- PN = "rust-cross-canadian-${TRANSLATED_TARGET_ARCH}"
-+CVE_PRODUCT = "rust"
+ ## arm-unknown-linux-gnueabihf
+-DATA_LAYOUT[arm-eabi] = "e-m:e-p:32:32-i64:64-v128:64:128-a:0:32-n32-S64"
++DATA_LAYOUT[arm-eabi] = "e-m:e-p:32:32-Fi8-i64:64-v128:64:128-a:0:32-n32-S64"
+ TARGET_ENDIAN[arm-eabi] = "little"
+ TARGET_POINTER_WIDTH[arm-eabi] = "32"
+ TARGET_C_INT_WIDTH[arm-eabi] = "32"
+@@ -138,7 +138,7 @@ MAX_ATOMIC_WIDTH[arm-eabi] = "64"
+ FEATURES[arm-eabi] = "+v6,+vfp2"
  
- inherit rust-target-config
- inherit rust-common
+ ## armv7-unknown-linux-gnueabihf
+-DATA_LAYOUT[armv7-eabi] = "e-m:e-p:32:32-i64:64-v128:64:128-a:0:32-n32-S64"
++DATA_LAYOUT[armv7-eabi] = "e-m:e-p:32:32-Fi8-i64:64-v128:64:128-a:0:32-n32-S64"
+ TARGET_ENDIAN[armv7-eabi] = "little"
+ TARGET_POINTER_WIDTH[armv7-eabi] = "32"
+ TARGET_C_INT_WIDTH[armv7-eabi] = "32"
 -- 
 2.46.0
 
