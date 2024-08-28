@@ -2,54 +2,54 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06F9BC71123
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6572BC71143
 	for <webhook@archiver.kernel.org>; Wed, 28 Aug 2024 20:10:16 +0000 (UTC)
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
- by mx.groups.io with SMTP id smtpd.web10.5980.1724875815518196492
+Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+ by mx.groups.io with SMTP id smtpd.web11.5858.1724875808003138353
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 28 Aug 2024 13:10:15 -0700
+ Wed, 28 Aug 2024 13:10:08 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=Uhbxt8EV;
- spf=pass (domain: konsulko.com, ip: 209.85.166.49, mailfrom: scott.murray@konsulko.com)
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-82521c46feaso264348839f.2
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 28 Aug 2024 13:10:15 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=cpVFUtBp;
+ spf=pass (domain: konsulko.com, ip: 209.85.166.46, mailfrom: scott.murray@konsulko.com)
+Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-81fd9251d99so268477539f.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 28 Aug 2024 13:10:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1724875814; x=1725480614; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1724875807; x=1725480607; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=76KYmRudZ9nNusekrty2vJ+avw96ZEybT9pFYZteKig=;
-        b=Uhbxt8EVx+OZuTNghzVzncaHaOSQEknHBldWOx3TL660/4OKVO/U4wLAUC/lcmQbAG
-         zghdvndDdl1+w8t0/Ym2GOR+mUcFiGDNeJ4EFoIX9rGgCD9CcdenWyExXHVALmB2432p
-         hRRZBzVr47Oi3vzuDos/RsvfRFl5BRsPGBGCc=
+        bh=M1wEIW+QKad4FMJnnZRD3qPnKiKYoPM3uYz8HMnSu/M=;
+        b=cpVFUtBpEK77FAxHU/KiTsINKLsrQ/4WL7BHDKdg3wPnzsBvyF62zWoQ3LRQEFORj/
+         pZO8sgbOVHF+0IV3G51+mx92r4+Xe3nmtzgCQaI1YDJFeumSGWy6bqJbKcOMBQq1DokG
+         StEnCrK3xcPrpVUQTY0ks0L3PS7+JFl7dZxm0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724875814; x=1725480614;
+        d=1e100.net; s=20230601; t=1724875807; x=1725480607;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=76KYmRudZ9nNusekrty2vJ+avw96ZEybT9pFYZteKig=;
-        b=HX7U8xuiK1E+czUKEcLs6vKJ5iAymahrcpKcR9Furg3LPCo5mRd9j4N2BULD9MUaPR
-         nlEJ7Bod0yKPD+jGRcXuMg9aoS0zzDOoWTFoZvahOM5RCVz5mmjcSQce0MkyXVWflvAF
-         U1s16SvFIX1173ixppB0uIzuFvMndgQMSpuP1m0DVembChODL5bUOG9dhm9XgSWPucOw
-         9E3Yd/uCzyq+l4wB6nia0WB8GjFdEIwJIUo5+ANyvko7B4G8LCMqmDg8aQKLmCEIWknc
-         9+JeNzau5WMQdOmK/QqQt3kf9rVBfcO6v2VJZa5ibuNtd5xDCixr51K6tgo1/rdRElBv
-         Aj5g==
-X-Gm-Message-State: AOJu0Yy6nDddrNC4EHmoYWUTS6d9BXR2o0BZJMXDLLLOFTIP2wjbwH7F
-	1xz7v07vZhCb/fCizWvcQNLki8onixP7VALOdLgbbozgNK9W4xIwQ0fN5HQ5FCc+qte3TW9zEIc
-	d
-X-Google-Smtp-Source: AGHT+IFAb8VNvLRqlVQuQchqWA+hROBMyJh+QN7/pSN9A+xpIKtxdcmra6g1cznDUgzwQM61rasEkA==
-X-Received: by 2002:a05:6602:2b08:b0:825:2a43:27e7 with SMTP id ca18e2360f4ac-82a10e18e4emr123771439f.4.1724875814528;
-        Wed, 28 Aug 2024 13:10:14 -0700 (PDT)
+        bh=M1wEIW+QKad4FMJnnZRD3qPnKiKYoPM3uYz8HMnSu/M=;
+        b=MsguqTPS3EUSoapYMbg0b7eHUVugn/CtkXs6dLbnv7r3VpebxVAB9VHIesztHNYn7K
+         X4lFFHTK3Zc5HBvXsxjnbgR0cy0eWJ5afJeV4kmrqR8mmmi9hq4p2aJNmsi7b9kgZrPL
+         KAYAJXR+U/6KnhgYStXlQuTF+5VU7iEWCOF/YIpSS7OoyuFQogyerapDeCXbGp43dJFX
+         AqSiPSmn1Fzvu7DpRWimYdSVaNISXPITR24ebfXaOSARE/z86B5DEtLDwk+gFkmb9FxE
+         lT+oXcagovZBPWBGbsLTJVDDHsV4pcM7Qb+0ft9QDzo+SKl94X+9UxWWXLZgBccL3ZBV
+         JjnQ==
+X-Gm-Message-State: AOJu0Ywtsq58spFpHsDVuUdhcxQs6s56Vl6iEZeMDB9rkUGvnk2opK7h
+	icyODEY17fa5cdq6fFgVhWQNSdfAdBgt1JvR7yVnzzb3QTGMTQJkR5bEc+EAhSAa+JKO9iGcv9O
+	L
+X-Google-Smtp-Source: AGHT+IFXjLIMzunp1OXmoDvDRznYxTJZ3jabP8nQivgTMYq922VtrP1tc6WJzE7U1S6p2bAAd6+qkA==
+X-Received: by 2002:a05:6602:6215:b0:803:cc64:e0d4 with SMTP id ca18e2360f4ac-82a10e15774mr83545439f.3.1724875806959;
+        Wed, 28 Aug 2024 13:10:06 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ced0da0e2csm25431173.109.2024.08.28.13.10.13
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ced0da0e2csm25431173.109.2024.08.28.13.10.06
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 13:10:14 -0700 (PDT)
+        Wed, 28 Aug 2024 13:10:06 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][kirkstone/rust][PATCH 30/33] rust: Upgrade 1.77.1->1.77.2
-Date: Wed, 28 Aug 2024 16:09:16 -0400
-Message-ID: <b1cfa357ba4f046c9f739ceb357fe8a7971cc0d3.1724874972.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][kirkstone/rust][PATCH 23/33] cargo_common.bbclass: Support git repos with submodules
+Date: Wed, 28 Aug 2024 16:09:09 -0400
+Message-ID: <9ce8fea7891c6d82293b10caa6a22ed83903e8a3.1724874972.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <cover.1724874972.git.scott.murray@konsulko.com>
 References: <cover.1724874972.git.scott.murray@konsulko.com>
@@ -59,63 +59,35 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Wed, 28 Aug 2024 20:10:16 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/596
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/590
 
-From: Yash Shinde <Yash.Shinde@windriver.com>
+From: Chris Spencer <spencercw@gmail.com>
 
-    https://blog.rust-lang.org/2024/04/09/Rust-1.77.2.html
+This is useful for cargo dependencies specified as git repositories, where
+those repositories themselves have submodules that need to be checked out.
 
-Signed-off-by: Yash Shinde <Yash.Shinde@windriver.com>
+Signed-off-by: Chris Spencer <spencercw@gmail.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(adapted from oe-core commit c3a996c3b06b11a5e2b07dbf820f3e3eb1e28782)
+(adapted from oe-core commit f871d9d6094ec0001d826e4b5b3395c1842631bb)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- recipes-devtools/rust/{cargo_1.77.1.bb => cargo_1.77.2.bb}      | 0
- .../rust/{libstd-rs_1.77.1.bb => libstd-rs_1.77.2.bb}           | 0
- ...t-cross-canadian_1.77.1.bb => rust-cross-canadian_1.77.2.bb} | 0
- .../rust/{rust-llvm_1.77.1.bb => rust-llvm_1.77.2.bb}           | 0
- recipes-devtools/rust/rust-source.inc                           | 2 +-
- recipes-devtools/rust/{rust_1.77.1.bb => rust_1.77.2.bb}        | 0
- 6 files changed, 1 insertion(+), 1 deletion(-)
- rename recipes-devtools/rust/{cargo_1.77.1.bb => cargo_1.77.2.bb} (100%)
- rename recipes-devtools/rust/{libstd-rs_1.77.1.bb => libstd-rs_1.77.2.bb} (100%)
- rename recipes-devtools/rust/{rust-cross-canadian_1.77.1.bb => rust-cross-canadian_1.77.2.bb} (100%)
- rename recipes-devtools/rust/{rust-llvm_1.77.1.bb => rust-llvm_1.77.2.bb} (100%)
- rename recipes-devtools/rust/{rust_1.77.1.bb => rust_1.77.2.bb} (100%)
+ classes/cargo_common.bbclass | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/recipes-devtools/rust/cargo_1.77.1.bb b/recipes-devtools/rust/cargo_1.77.2.bb
-similarity index 100%
-rename from recipes-devtools/rust/cargo_1.77.1.bb
-rename to recipes-devtools/rust/cargo_1.77.2.bb
-diff --git a/recipes-devtools/rust/libstd-rs_1.77.1.bb b/recipes-devtools/rust/libstd-rs_1.77.2.bb
-similarity index 100%
-rename from recipes-devtools/rust/libstd-rs_1.77.1.bb
-rename to recipes-devtools/rust/libstd-rs_1.77.2.bb
-diff --git a/recipes-devtools/rust/rust-cross-canadian_1.77.1.bb b/recipes-devtools/rust/rust-cross-canadian_1.77.2.bb
-similarity index 100%
-rename from recipes-devtools/rust/rust-cross-canadian_1.77.1.bb
-rename to recipes-devtools/rust/rust-cross-canadian_1.77.2.bb
-diff --git a/recipes-devtools/rust/rust-llvm_1.77.1.bb b/recipes-devtools/rust/rust-llvm_1.77.2.bb
-similarity index 100%
-rename from recipes-devtools/rust/rust-llvm_1.77.1.bb
-rename to recipes-devtools/rust/rust-llvm_1.77.2.bb
-diff --git a/recipes-devtools/rust/rust-source.inc b/recipes-devtools/rust/rust-source.inc
-index aafb595..efbfa72 100644
---- a/recipes-devtools/rust/rust-source.inc
-+++ b/recipes-devtools/rust/rust-source.inc
-@@ -14,7 +14,7 @@ SRC_URI += "https://static.rust-lang.org/dist/rustc-${RUST_VERSION}-src.tar.xz;n
-             file://rust-oe-selftest.patch;patchdir=${RUSTSRC} \
-             file://repro-issue-fix-with-cc-crate-hashmap.patch;patchdir=${RUSTSRC} \
- "
--SRC_URI[rust.sha256sum] = "2ddc6f5e01df1bd6c7ff94d9931574181795a231b199ca6948d433fa5e795873"
-+SRC_URI[rust.sha256sum] = "4d214c4189e4dd934d47e869fa5721b2c33dbbbdea21f2fc7fa6df3f38c1dea2"
- 
- RUSTSRC = "${WORKDIR}/rustc-${RUST_VERSION}-src"
- 
-diff --git a/recipes-devtools/rust/rust_1.77.1.bb b/recipes-devtools/rust/rust_1.77.2.bb
-similarity index 100%
-rename from recipes-devtools/rust/rust_1.77.1.bb
-rename to recipes-devtools/rust/rust_1.77.2.bb
+diff --git a/classes/cargo_common.bbclass b/classes/cargo_common.bbclass
+index 92731c2..15f848c 100644
+--- a/classes/cargo_common.bbclass
++++ b/classes/cargo_common.bbclass
+@@ -142,7 +142,7 @@ python cargo_common_do_patch_paths() {
+     fetcher = bb.fetch2.Fetch(src_uri, d)
+     for url in fetcher.urls:
+         ud = fetcher.ud[url]
+-        if ud.type == 'git':
++        if ud.type == 'git' or ud.type == 'gitsm':
+             name = ud.parm.get('name')
+             destsuffix = ud.parm.get('destsuffix')
+             if name is not None and destsuffix is not None:
 -- 
 2.46.0
 
