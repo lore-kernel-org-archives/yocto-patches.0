@@ -2,54 +2,54 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C3BC7112B
-	for <webhook@archiver.kernel.org>; Wed, 28 Aug 2024 20:10:05 +0000 (UTC)
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
- by mx.groups.io with SMTP id smtpd.web11.5846.1724875797180901766
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C500C71134
+	for <webhook@archiver.kernel.org>; Wed, 28 Aug 2024 20:10:06 +0000 (UTC)
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
+ by mx.groups.io with SMTP id smtpd.web10.5968.1724875798495946780
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 28 Aug 2024 13:09:57 -0700
+ Wed, 28 Aug 2024 13:09:58 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=TK1e1WVQ;
- spf=pass (domain: konsulko.com, ip: 209.85.166.48, mailfrom: scott.murray@konsulko.com)
-Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-8252bc7b00bso256030939f.1
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 28 Aug 2024 13:09:57 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=uL95kwZ/;
+ spf=pass (domain: konsulko.com, ip: 209.85.166.43, mailfrom: scott.murray@konsulko.com)
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-829e8718502so137511339f.3
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 28 Aug 2024 13:09:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1724875796; x=1725480596; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1724875797; x=1725480597; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=2uCA5TJD8CldVJiYg5JpRK0xJgHekStiP5XnmsGvxZQ=;
-        b=TK1e1WVQhZ0iGaq60J0dPCYpSPDkC1FHJkUCH8JJSNC8xfVT1M6lxHn0CRFEbIaSli
-         1vAU26rDfcEKJINhwmS0Lp6R2ayP+lszZ+9KHp+JjgSinwsqj3lpugqDVWSjyjQBruzy
-         fzehHBrJHk8e7vCDkapiELGW2G8no8MB65E/k=
+        bh=MQ1BOrVPCxbcofBdDQCr1/eCB8x16Q1WdHxzd2phCFs=;
+        b=uL95kwZ/MItX65CD6GU9ILElZSdgkMwKuVdV1/P8eIljtp/3NqtZ/XblEUmKMHEXp6
+         J8R7ABJl4Ck+Fotla9Z77Wx4wkn9eVvFYh+LhZg56XfgVcDxkc9agvXGE8jvtZjyofPT
+         STfB5kqPZ2xt4BUv+qG5L4dVuqVQ9ZckhAKnE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724875796; x=1725480596;
+        d=1e100.net; s=20230601; t=1724875797; x=1725480597;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2uCA5TJD8CldVJiYg5JpRK0xJgHekStiP5XnmsGvxZQ=;
-        b=SwxRRDJnpo1nU13CZdyI+OwEePFIgUxV4/2Vv2Thj8E7Vss2M0EP9Jp7ii6RR9ExrU
-         XLOn4S1yp0DYUtr1KKiuzceG3ACYzHivAdqjyyyyIMHj4GMg3T1Jjrb4b91pSGyKN7iR
-         o5798+u0S5+IWhQdx/WrJyFU/HJg5n0k1/i3XV8isKpW1L09ia7mXb0h1+n2cIYyTJwt
-         xknVzvzMCD9qE7Pd+/OmCaqI6RSxRnbSg+Jn3Od17DExbt73vFo3MqL6KX4jYlO3VOkg
-         NEqWk890/LrHoWI3Wh9K/XHI9c1w8/KLuuEnrteg3xndxt8lSdg4gE2sjHQgW3NVqzd7
-         WshA==
-X-Gm-Message-State: AOJu0Yy/ASCLzrRJSU5rewjPfCZkQQfIvDEPtM5GD/Y1DCVnIgxOMERY
-	9AaJZXkp1Vsuhu35rehVq9v46F8BzHCiVYtgCiSU/Z2mIuBr+QU36SlPff6zjZ/FF2gdf7/+KNe
-	o
-X-Google-Smtp-Source: AGHT+IEImA0kEDOWmrQh/W6RTtH6fH5p25/5JXUrnXt8P0Ol+mmlag9PL4FYyhn6s0Mxes+4wI9mDw==
-X-Received: by 2002:a05:6602:6c1c:b0:82a:10c0:700 with SMTP id ca18e2360f4ac-82a11012eb5mr81357739f.5.1724875795945;
-        Wed, 28 Aug 2024 13:09:55 -0700 (PDT)
+        bh=MQ1BOrVPCxbcofBdDQCr1/eCB8x16Q1WdHxzd2phCFs=;
+        b=nPGEt1SYc8HehpK9CwMvxvSVgIwdLqNz17nyBtP2MhdnLcvSiI0vLsuJDaOvf1jQln
+         EjIDAFmOc7yOw/RIj0kjSZQgmx01GINZhLONNfGtJG1e3B5+FG45acqYIuTIPWrz7BVO
+         lDowqxsofmTunvuPwqZXvyuFgruC1fWwdHEQa+EYy4ARcq6Zx47W37UL8MQYrfz+OAVl
+         6Maw6fXQmXtdv8REOsWW0dQD+1fB6AqSAhi9/Iesz6TQCAHxywoC3Srp+iDPuEm6F/3A
+         3nXh1zGKdmIMrZsmAM0ExtEEu/aG3GfcAN2rEgEdgdhBwQ5++Nl7aHQL1GfprTymlPp0
+         a6Nw==
+X-Gm-Message-State: AOJu0YwclMP7L1OvTjpgnj/dpPbb4Nx6JCmwRVxUHN0+vxgkGjKz6dsi
+	PtjYlXhThkAxxbjn3ffjMenxeXdT9gzte36hlVBbJTo/YcEUQfebvmkM5yQxh+83u4vw8iR22l7
+	n
+X-Google-Smtp-Source: AGHT+IHTEigygDmMzVONjtS+ft5C2MKXwTiRz/NGfWqfMZn87CeHnegkoiZbWjmiy3dyk8CIiqaYeQ==
+X-Received: by 2002:a05:6602:6d8c:b0:81f:9f79:2b37 with SMTP id ca18e2360f4ac-82a110a23ebmr86224939f.16.1724875797509;
+        Wed, 28 Aug 2024 13:09:57 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ced0da0e2csm25431173.109.2024.08.28.13.09.55
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ced0da0e2csm25431173.109.2024.08.28.13.09.56
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 13:09:55 -0700 (PDT)
+        Wed, 28 Aug 2024 13:09:56 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][kirkstone/rust][PATCH 09/33] rust: correctly link rust-snapshot into build/stage0
-Date: Wed, 28 Aug 2024 16:08:55 -0400
-Message-ID: <adb491e29d025f8295e7e9988214988b9dc53ec6.1724874972.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][kirkstone/rust][PATCH 11/33] rust: use rust-snapshot binaries only in rust-native
+Date: Wed, 28 Aug 2024 16:08:57 -0400
+Message-ID: <542e03174adedf82202c9ac254c3a2463e13a777.1724874972.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <cover.1724874972.git.scott.murray@konsulko.com>
 References: <cover.1724874972.git.scott.murray@konsulko.com>
@@ -58,112 +58,73 @@ Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 28 Aug 2024 20:10:05 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/576
+ <yocto-patches@lists.yoctoproject.org>; Wed, 28 Aug 2024 20:10:06 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/578
 
 From: Alexander Kanavin <alex@linutronix.de>
 
-This does not seem to be used in regular builds, but is beneficial
-in rust selftest, where it allows dropping a custom patch
-that is unsuitable for upstream (and was rejected by them).
+Otherwise, use rust-native and cargo-native binaries as that allows
+our native tweaks in them to be used for target/nativesdk rust -
+same as for everything else written in rust.
 
-Also remove an obsolete comment that seems related to the code
-but describes something that was resolved long time ago.
+In particular, this allows building target rust with
+cargo-native that includes important reproducibility tweaks.
 
-I have confirmed that the rust selftest continues to pass with just
-this one commit on top of master (as the following changes do break
-the selftest).
+Unfortunately, this also breaks rust selftest, and that
+is partially addressed by the following commit.
+
+[YOCTO #15185]
 
 Signed-off-by: Alexander Kanavin <alex@linutronix.de>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(adapted from oe-core commit bf5732e2b235ce06fa1f24fe8f0dbcbc068500e3)
+(adapted from oe-core commit 8f2230cb51fe22ef4711a56fecfab4858c04e35b)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- recipes-devtools/rust/files/cargo-path.patch | 37 --------------------
- recipes-devtools/rust/rust-source.inc        |  1 -
- recipes-devtools/rust/rust_1.75.0.bb         |  6 ++--
- 3 files changed, 2 insertions(+), 42 deletions(-)
- delete mode 100644 recipes-devtools/rust/files/cargo-path.patch
+ recipes-devtools/rust/rust_1.75.0.bb | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/recipes-devtools/rust/files/cargo-path.patch b/recipes-devtools/rust/files/cargo-path.patch
-deleted file mode 100644
-index 9a50c40..0000000
---- a/recipes-devtools/rust/files/cargo-path.patch
-+++ /dev/null
-@@ -1,37 +0,0 @@
--Fix the cargo binary path error and ensure that it is fetched
--during rustc bootstrap in rust oe-selftest.
--
--======================================================================
--ERROR: test_cargoflags (bootstrap_test.BuildBootstrap)
------------------------------------------------------------------------
--Traceback (most recent call last):
--  File "/home/build-st/tmp/work/cortexa57-poky-linux/rust/1.74.1/rustc-1.74.1-src/src/bootstrap/bootstrap_test.py", line 157, in test_cargoflags
--    args, _ = self.build_args(env={"CARGOFLAGS": "--timings"})
--  File "/home/build-st/tmp/work/cortexa57-poky-linux/rust/1.74.1/rustc-1.74.1-src/src/bootstrap/bootstrap_test.py", line 154, in build_args
--    return build.build_bootstrap_cmd(env), env
--  File "/home/build-st/tmp/work/cortexa57-poky-linux/rust/1.74.1/rustc-1.74.1-src/src/bootstrap/bootstrap.py", line 960, in build_bootstrap_cmd
--    raise Exception("no cargo executable found at `{}`".format(
--Exception: no cargo executable found at `/home/build-st/tmp/work/cortexa57-poky-linux/rust/1.74.1/rustc-1.74.1-src/build/x86_64-unknown-linux-gnu/stage0/bin/cargo`
--
--Upstream-Status: Submitted [https://github.com/rust-lang/rust/pull/120125]
--
--Signed-off-by: Yash Shinde <Yash.Shinde@windriver.com>
-----
--diff --git a/src/bootstrap/bootstrap.py b/src/bootstrap/bootstrap.py
----- a/src/bootstrap/bootstrap.py
--+++ b/src/bootstrap/bootstrap.py
--@@ -954,9 +954,11 @@
--         if "RUSTFLAGS_BOOTSTRAP" in env:
--             env["RUSTFLAGS"] += " " + env["RUSTFLAGS_BOOTSTRAP"]
--
---        env["PATH"] = os.path.join(self.bin_root(), "bin") + \
---            os.pathsep + env["PATH"]
---        if not os.path.isfile(self.cargo()):
--+        cargo_bin_path = os.path.join(self.bin_root(), "bin", "cargo")
--+        if not os.path.isfile(cargo_bin_path):
--+            cargo_bin_path = os.getenv("RUST_TARGET_PATH") + "rust-snapshot/bin/cargo"
--+            env["PATH"] = os.path.dirname(cargo_bin_path) + os.pathsep + env["PATH"]
--+        else:
--             raise Exception("no cargo executable found at `{}`".format(
--                 self.cargo()))
--         args = [self.cargo(), "build", "--manifest-path",
-diff --git a/recipes-devtools/rust/rust-source.inc b/recipes-devtools/rust/rust-source.inc
-index b14221b..c83c8ec 100644
---- a/recipes-devtools/rust/rust-source.inc
-+++ b/recipes-devtools/rust/rust-source.inc
-@@ -7,7 +7,6 @@ SRC_URI += "https://static.rust-lang.org/dist/rustc-${RUST_VERSION}-src.tar.xz;n
-             file://rv32-missing-syscalls.patch;patchdir=${RUSTSRC} \
-             file://rv32-rustix-libc-backend.patch;patchdir=${RUSTSRC} \
-             file://rv32-cargo-rustix-0.38.19-fix.patch;patchdir=${RUSTSRC} \
--            file://cargo-path.patch;patchdir=${RUSTSRC} \
-             file://custom-target-cfg.patch;patchdir=${RUSTSRC} \
-             file://rustc-bootstrap.patch;patchdir=${RUSTSRC} \
-             file://target-build-value.patch;patchdir=${RUSTSRC} \
 diff --git a/recipes-devtools/rust/rust_1.75.0.bb b/recipes-devtools/rust/rust_1.75.0.bb
-index 76e1fe2..8ef838e 100644
+index 8ef838e..e82a739 100644
 --- a/recipes-devtools/rust/rust_1.75.0.bb
 +++ b/recipes-devtools/rust/rust_1.75.0.bb
-@@ -35,8 +35,6 @@ RUST_ALTERNATE_EXE_PATH_NATIVE = "${STAGING_LIBDIR_NATIVE}/llvm-rust/bin/llvm-co
- # own vendoring.
- CARGO_DISABLE_BITBAKE_VENDORING = "1"
+@@ -11,6 +11,11 @@ DEPENDS += "file-native python3-native"
+ DEPENDS:append:class-native = " rust-llvm-native"
+ DEPENDS:append:class-nativesdk = " nativesdk-rust-llvm"
  
--# We can't use RUST_BUILD_SYS here because that may be "musl" if
--# TCLIBC="musl". Snapshots are always -unknown-linux-gnu
- setup_cargo_environment () {
-     # The first step is to build bootstrap and some early stage tools,
-     # these are build for the same target as the snapshot, e.g.
-@@ -54,8 +52,8 @@ do_rust_setup_snapshot () {
++# native rust uses cargo/rustc from binary snapshots to bootstrap
++# but everything else should use our native builds
++DEPENDS:append:class-target = " cargo-native rust-native"
++DEPENDS:append:class-nativesdk = " cargo-native rust-native"
++
+ DEPENDS += "rust-llvm (=${PV})"
  
-     # Some versions of rust (e.g. 1.18.0) tries to find cargo in stage0/bin/cargo
-     # and fail without it there.
--    mkdir -p ${RUSTSRC}/build/${BUILD_SYS}
--    ln -sf ${WORKDIR}/rust-snapshot/ ${RUSTSRC}/build/${BUILD_SYS}/stage0
-+    mkdir -p ${RUSTSRC}/build/${RUST_BUILD_SYS}
-+    ln -sf ${WORKDIR}/rust-snapshot/ ${RUSTSRC}/build/${RUST_BUILD_SYS}/stage0
+ RDEPENDS:${PN}:append:class-target = " gcc g++ binutils"
+@@ -68,6 +73,11 @@ addtask do_test_compile after do_configure do_rust_gen_targets
+ do_rust_setup_snapshot[dirs] += "${WORKDIR}/rust-snapshot"
+ do_rust_setup_snapshot[vardepsexclude] += "UNINATIVE_LOADER"
  
-     # Need to use uninative's loader if enabled/present since the library paths
-     # are used internally by rust and result in symbol mismatches if we don't
++RUSTC_BOOTSTRAP = "${STAGING_BINDIR_NATIVE}/rustc"
++CARGO_BOOTSTRAP = "${STAGING_BINDIR_NATIVE}/cargo"
++RUSTC_BOOTSTRAP:class-native = "${WORKDIR}/rust-snapshot/bin/rustc"
++CARGO_BOOTSTRAP:class-native = "${WORKDIR}/rust-snapshot/bin/cargo"
++
+ python do_configure() {
+     import json
+     import configparser
+@@ -141,10 +151,10 @@ python do_configure() {
+     config.set("build", "docs", e(False))
+     config.set("build", "tools", ["rust-demangler",])
+ 
+-    rustc = d.expand("${WORKDIR}/rust-snapshot/bin/rustc")
++    rustc = d.getVar('RUSTC_BOOTSTRAP')
+     config.set("build", "rustc", e(rustc))
+ 
+-    cargo = d.expand("${WORKDIR}/rust-snapshot/bin/cargo")
++    cargo = d.getVar('CARGO_BOOTSTRAP')
+     config.set("build", "cargo", e(cargo))
+ 
+     config.set("build", "vendor", e(True))
 -- 
 2.46.0
 
