@@ -2,54 +2,54 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C500C71134
-	for <webhook@archiver.kernel.org>; Wed, 28 Aug 2024 20:10:06 +0000 (UTC)
-Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
- by mx.groups.io with SMTP id smtpd.web10.5968.1724875798495946780
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF48BC7112E
+	for <webhook@archiver.kernel.org>; Wed, 28 Aug 2024 20:10:05 +0000 (UTC)
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+ by mx.groups.io with SMTP id smtpd.web11.5850.1724875802205380225
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 28 Aug 2024 13:09:58 -0700
+ Wed, 28 Aug 2024 13:10:02 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=uL95kwZ/;
- spf=pass (domain: konsulko.com, ip: 209.85.166.43, mailfrom: scott.murray@konsulko.com)
-Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-829e8718502so137511339f.3
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 28 Aug 2024 13:09:58 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=uitB0sL7;
+ spf=pass (domain: konsulko.com, ip: 209.85.166.50, mailfrom: scott.murray@konsulko.com)
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-829e856a14eso135528639f.2
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 28 Aug 2024 13:10:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1724875797; x=1725480597; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1724875801; x=1725480601; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=MQ1BOrVPCxbcofBdDQCr1/eCB8x16Q1WdHxzd2phCFs=;
-        b=uL95kwZ/MItX65CD6GU9ILElZSdgkMwKuVdV1/P8eIljtp/3NqtZ/XblEUmKMHEXp6
-         J8R7ABJl4Ck+Fotla9Z77Wx4wkn9eVvFYh+LhZg56XfgVcDxkc9agvXGE8jvtZjyofPT
-         STfB5kqPZ2xt4BUv+qG5L4dVuqVQ9ZckhAKnE=
+        bh=YzkGUrha+x8l/gB4mQbRDmVU1SlV0Nw7PXqaAPbmHQs=;
+        b=uitB0sL7WW31GW/u8SoObSSTK9/23IbjeYTKfr0AxFs3UVxKzV6MHmZ47n04CFKB2d
+         ixcw4RHH5RdT+F+HbnfKccVCJxJ2dEQ5dSXmQCbS9EsNWog4SBCmVxFmlidVxGqF09Uo
+         fQ1LjHbO2EXDWbXWdeSBOFsDJmWwCZPU8Xvp4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724875797; x=1725480597;
+        d=1e100.net; s=20230601; t=1724875801; x=1725480601;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MQ1BOrVPCxbcofBdDQCr1/eCB8x16Q1WdHxzd2phCFs=;
-        b=nPGEt1SYc8HehpK9CwMvxvSVgIwdLqNz17nyBtP2MhdnLcvSiI0vLsuJDaOvf1jQln
-         EjIDAFmOc7yOw/RIj0kjSZQgmx01GINZhLONNfGtJG1e3B5+FG45acqYIuTIPWrz7BVO
-         lDowqxsofmTunvuPwqZXvyuFgruC1fWwdHEQa+EYy4ARcq6Zx47W37UL8MQYrfz+OAVl
-         6Maw6fXQmXtdv8REOsWW0dQD+1fB6AqSAhi9/Iesz6TQCAHxywoC3Srp+iDPuEm6F/3A
-         3nXh1zGKdmIMrZsmAM0ExtEEu/aG3GfcAN2rEgEdgdhBwQ5++Nl7aHQL1GfprTymlPp0
-         a6Nw==
-X-Gm-Message-State: AOJu0YwclMP7L1OvTjpgnj/dpPbb4Nx6JCmwRVxUHN0+vxgkGjKz6dsi
-	PtjYlXhThkAxxbjn3ffjMenxeXdT9gzte36hlVBbJTo/YcEUQfebvmkM5yQxh+83u4vw8iR22l7
-	n
-X-Google-Smtp-Source: AGHT+IHTEigygDmMzVONjtS+ft5C2MKXwTiRz/NGfWqfMZn87CeHnegkoiZbWjmiy3dyk8CIiqaYeQ==
-X-Received: by 2002:a05:6602:6d8c:b0:81f:9f79:2b37 with SMTP id ca18e2360f4ac-82a110a23ebmr86224939f.16.1724875797509;
-        Wed, 28 Aug 2024 13:09:57 -0700 (PDT)
+        bh=YzkGUrha+x8l/gB4mQbRDmVU1SlV0Nw7PXqaAPbmHQs=;
+        b=ExuQYvcepHlTTOePNvZ7fueLEpcKeNxg5lmn/ZI6xur9/UtEOmXSjfXRRxPqQBCJcV
+         48bInxQDSPh/n7rUciyHyh9cDSIbEUubjOVaFyAHXxbnumnVdx7QijlYKyvS6ZglChty
+         kbLXP0LO43wrJD9e3sLfJutM7qlI4ynJjOYifzaDZCSbo+D5i/E1JoXMPhiclHpRBZ5/
+         F68iXRKDJRKrqv4Egf/ZvkUT/3b/CRL9SNjv8rvLvmcr+XH3eH0ggfKeIWDUsvQiLVfH
+         egLEsvxex7Pjkhjh03n3LpfWTzs2P5ANbhLXpE9Sq146WNYnG5Tk4qxm0pUMWVAv/FJv
+         9SgQ==
+X-Gm-Message-State: AOJu0YxD6g7NJthiCdjUTQumnOJGVvDgkwdIjyuD+6hW88qDeWYF/Ixd
+	SjoDp5XSzObal89oQoSFNnV5SGhlnFoHlsHEmDfGzSWMN0Leu4gCxPspmNpJKjo8pWXb5l3EutA
+	a
+X-Google-Smtp-Source: AGHT+IGkbWj+jAKA9nNIB/TpspHD0d1Si4Iaeb/CyAjWBUDHTPpJwckuxyZW8rvyojl1yOfCLIBlPw==
+X-Received: by 2002:a05:6602:26c6:b0:803:5e55:ecb2 with SMTP id ca18e2360f4ac-82a10d7fa0amr86168439f.0.1724875800990;
+        Wed, 28 Aug 2024 13:10:00 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ced0da0e2csm25431173.109.2024.08.28.13.09.56
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ced0da0e2csm25431173.109.2024.08.28.13.10.00
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 13:09:56 -0700 (PDT)
+        Wed, 28 Aug 2024 13:10:00 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][kirkstone/rust][PATCH 11/33] rust: use rust-snapshot binaries only in rust-native
-Date: Wed, 28 Aug 2024 16:08:57 -0400
-Message-ID: <542e03174adedf82202c9ac254c3a2463e13a777.1724874972.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][kirkstone/rust][PATCH 16/33] librsvg: don't try to run target code at build time
+Date: Wed, 28 Aug 2024 16:09:02 -0400
+Message-ID: <6ee488b1b5ad8d45acdf562042b7e62a83886674.1724874972.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <cover.1724874972.git.scott.murray@konsulko.com>
 References: <cover.1724874972.git.scott.murray@konsulko.com>
@@ -58,73 +58,83 @@ Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 28 Aug 2024 20:10:06 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/578
+ <yocto-patches@lists.yoctoproject.org>; Wed, 28 Aug 2024 20:10:05 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/583
 
-From: Alexander Kanavin <alex@linutronix.de>
+From: Ross Burton <ross.burton@arm.com>
 
-Otherwise, use rust-native and cargo-native binaries as that allows
-our native tweaks in them to be used for target/nativesdk rust -
-same as for everything else written in rust.
+The rsvg-loader test binary isn't installed but building it causes a mix
+of build host and target code to be executed.  As we don't install the
+test, don't build it.
 
-In particular, this allows building target rust with
-cargo-native that includes important reproducibility tweaks.
-
-Unfortunately, this also breaks rust selftest, and that
-is partially addressed by the following commit.
-
-[YOCTO #15185]
-
-Signed-off-by: Alexander Kanavin <alex@linutronix.de>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Ross Burton <ross.burton@arm.com>
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(adapted from oe-core commit 8f2230cb51fe22ef4711a56fecfab4858c04e35b)
+(adapted from oe-core commit 78667e67a77df39c2af417e56ebf480962ff2e42)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- recipes-devtools/rust/rust_1.75.0.bb | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ .../librsvg/disable-rsvg-loader-test.patch    | 40 +++++++++++++++++++
+ recipes-gnome/librsvg/librsvg_2.57.1.bb       |  1 +
+ 2 files changed, 41 insertions(+)
+ create mode 100644 recipes-gnome/librsvg/librsvg/disable-rsvg-loader-test.patch
 
-diff --git a/recipes-devtools/rust/rust_1.75.0.bb b/recipes-devtools/rust/rust_1.75.0.bb
-index 8ef838e..e82a739 100644
---- a/recipes-devtools/rust/rust_1.75.0.bb
-+++ b/recipes-devtools/rust/rust_1.75.0.bb
-@@ -11,6 +11,11 @@ DEPENDS += "file-native python3-native"
- DEPENDS:append:class-native = " rust-llvm-native"
- DEPENDS:append:class-nativesdk = " nativesdk-rust-llvm"
- 
-+# native rust uses cargo/rustc from binary snapshots to bootstrap
-+# but everything else should use our native builds
-+DEPENDS:append:class-target = " cargo-native rust-native"
-+DEPENDS:append:class-nativesdk = " cargo-native rust-native"
+diff --git a/recipes-gnome/librsvg/librsvg/disable-rsvg-loader-test.patch b/recipes-gnome/librsvg/librsvg/disable-rsvg-loader-test.patch
+new file mode 100644
+index 0000000..e56772a
+--- /dev/null
++++ b/recipes-gnome/librsvg/librsvg/disable-rsvg-loader-test.patch
+@@ -0,0 +1,40 @@
++From df94cfa4a637c229fef32c349b5c2dfee2dca3fc Mon Sep 17 00:00:00 2001
++From: Ross Burton <ross.burton@arm.com>
++Date: Thu, 27 Jun 2024 17:09:11 +0100
++Subject: [PATCH] Don't build rsvg-loader in cross builds
 +
- DEPENDS += "rust-llvm (=${PV})"
- 
- RDEPENDS:${PN}:append:class-target = " gcc g++ binutils"
-@@ -68,6 +73,11 @@ addtask do_test_compile after do_configure do_rust_gen_targets
- do_rust_setup_snapshot[dirs] += "${WORKDIR}/rust-snapshot"
- do_rust_setup_snapshot[vardepsexclude] += "UNINATIVE_LOADER"
- 
-+RUSTC_BOOTSTRAP = "${STAGING_BINDIR_NATIVE}/rustc"
-+CARGO_BOOTSTRAP = "${STAGING_BINDIR_NATIVE}/cargo"
-+RUSTC_BOOTSTRAP:class-native = "${WORKDIR}/rust-snapshot/bin/rustc"
-+CARGO_BOOTSTRAP:class-native = "${WORKDIR}/rust-snapshot/bin/cargo"
++This binary is a non-installed test binary that isn't any use in cross builds, and
++causes problems because it generates a gdk-pixbuf loader cache at build time using
++a mix of host and target libraries.
 +
- python do_configure() {
-     import json
-     import configparser
-@@ -141,10 +151,10 @@ python do_configure() {
-     config.set("build", "docs", e(False))
-     config.set("build", "tools", ["rust-demangler",])
++As we don't install the binary, we can just not build it.
++
++Upstream-Status: Inappropriate [upstream has moved to Meson]
++Signed-off-by: Ross Burton <ross.burton@arm.com>
++---
++ gdk-pixbuf-loader/Makefile.am | 2 ++
++ 1 file changed, 2 insertions(+)
++
++diff --git a/gdk-pixbuf-loader/Makefile.am b/gdk-pixbuf-loader/Makefile.am
++index 44df9c6c..fb417d24 100644
++--- a/gdk-pixbuf-loader/Makefile.am
+++++ b/gdk-pixbuf-loader/Makefile.am
++@@ -30,6 +30,7 @@ if PLATFORM_WIN32
++ libpixbufloader_svg_la_LDFLAGS += -no-undefined
++ endif
++ 
+++if !CROSS_COMPILING
++ noinst_PROGRAMS = rsvg-loader
++ 
++ rsvg_loader_SOURCES = \
++@@ -52,6 +53,7 @@ EXTRA_rsvg_loader_DEPENDENCIES = libpixbufloader-svg.la gdk-pixbuf-loaders
++ 
++ gdk-pixbuf-loaders: Makefile
++ 	$(AM_V_GEN) ( $(GDK_PIXBUF_QUERYLOADERS) ./libpixbufloader-svg.la && GDK_PIXBUF_MODULEDIR=$(gdk_pixbuf_moduledir) $(GDK_PIXBUF_QUERYLOADERS)) > gdk-pixbuf.loaders 2>/dev/null
+++endif
++ 
++ if CROSS_COMPILING
++ RUN_QUERY_LOADER_TEST=false
++-- 
++2.34.1
++
+diff --git a/recipes-gnome/librsvg/librsvg_2.57.1.bb b/recipes-gnome/librsvg/librsvg_2.57.1.bb
+index 0a883dd..81a328f 100644
+--- a/recipes-gnome/librsvg/librsvg_2.57.1.bb
++++ b/recipes-gnome/librsvg/librsvg_2.57.1.bb
+@@ -20,6 +20,7 @@ require ${BPN}-crates.inc
  
--    rustc = d.expand("${WORKDIR}/rust-snapshot/bin/rustc")
-+    rustc = d.getVar('RUSTC_BOOTSTRAP')
-     config.set("build", "rustc", e(rustc))
+ SRC_URI += " \
+            file://0001-Makefile.am-pass-rust-target-to-cargo-also-when-not-.patch \
++           file://disable-rsvg-loader-test.patch \
+            "
  
--    cargo = d.expand("${WORKDIR}/rust-snapshot/bin/cargo")
-+    cargo = d.getVar('CARGO_BOOTSTRAP')
-     config.set("build", "cargo", e(cargo))
- 
-     config.set("build", "vendor", e(True))
+ SRC_URI[archive.sha256sum] = "074671a3ed6fbcd67cae2a40e539107f4f097ca8a4ab1a894c05e2524ff340ef"
 -- 
 2.46.0
 
