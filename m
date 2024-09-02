@@ -1,29 +1,29 @@
-Return-Path: <richard.purdie@linuxfoundation.org>
+Return-Path: <jamin_lin@aspeedtech.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 161FCCA0ED3
-	for <webhook@archiver.kernel.org>; Mon,  2 Sep 2024 06:40:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14C17CD13CF
+	for <webhook@archiver.kernel.org>; Mon,  2 Sep 2024 06:47:37 +0000 (UTC)
 Received: from TWMBX01.aspeed.com (TWMBX01.aspeed.com [211.20.114.72])
- by mx.groups.io with SMTP id smtpd.web11.31133.1725249630289595922
+ by mx.groups.io with SMTP id smtpd.web11.32913.1725259656237768048
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 01 Sep 2024 21:00:30 -0700
+ Sun, 01 Sep 2024 23:47:36 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: aspeedtech.com, ip: 211.20.114.72, mailfrom: jamin_lin@aspeedtech.com)
 Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
  (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Mon, 2 Sep
- 2024 12:00:28 +0800
+ 2024 14:47:33 +0800
 Received: from localhost.localdomain (192.168.10.10) by TWMBX01.aspeed.com
  (192.168.0.62) with Microsoft SMTP Server id 15.2.1258.12 via Frontend
- Transport; Mon, 2 Sep 2024 12:00:28 +0800
-From: "Jamin Lin" <jamin_lin@aspeedtech.com>
+ Transport; Mon, 2 Sep 2024 14:47:33 +0800
+From: Jamin Lin <jamin_lin@aspeedtech.com>
 To: <yocto-patches@lists.yoctoproject.org>
 CC: <troy_lee@aspeedtech.com>, <jamin_lin@aspeedtech.com>,
 	<jaminlin1207@gmail.com>, <vince_chang@aspeedtech.com>
-Subject: [meta-zephyr][PATCH v1 1/2] zephyr-kernel: Add source version to support v3.7.0
-Date: Mon, 2 Sep 2024 12:00:26 +0800
-Message-ID: <20240902040027.1197998-1-jamin_lin@aspeedtech.com>
+Subject: [meta-zephyr][PATCH v2 1/2] zephyr-kernel: Add source version to support v3.7.0
+Date: Mon, 2 Sep 2024 14:47:32 +0800
+Message-ID: <20240902064733.651635-1-jamin_lin@aspeedtech.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -31,15 +31,18 @@ Content-Type: text/plain
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 02 Sep 2024 06:40:47 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/604
+ <yocto-patches@lists.yoctoproject.org>; Mon, 02 Sep 2024 06:47:37 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/605
 
 This inc file is created by generate-version.py
+The generate-version.py did not create
+a 0001-3.7-x86-fix-efi-binary-generation-issue-in-cross-compila.patch,
+, set SRC_URI_PATCHES empty.
 
 Signed-off-by: Jamin Lin <jamin_lin@aspeedtech.com>
 ---
- .../zephyr-kernel/zephyr-kernel-src-3.7.0.inc | 274 ++++++++++++++++++
- 1 file changed, 274 insertions(+)
+ .../zephyr-kernel/zephyr-kernel-src-3.7.0.inc | 273 ++++++++++++++++++
+ 1 file changed, 273 insertions(+)
  create mode 100644 meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-ke=
 rnel-src-3.7.0.inc
 
@@ -47,11 +50,11 @@ diff --git a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-kernel-sr=
 c-3.7.0.inc b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-kernel-s=
 rc-3.7.0.inc
 new file mode 100644
-index 0000000..1cf87a2
+index 0000000..00436f9
 --- /dev/null
 +++ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-kernel-src-3.7.0=
 .inc
-@@ -0,0 +1,274 @@
+@@ -0,0 +1,273 @@
 +# Auto-generated from zephyr-kernel-src.inc.jinja
 +
 +SRCREV_FORMAT =3D "default"
@@ -261,8 +264,6 @@ score-uedhoc;protocol=3Dhttps"
 col=3Dhttps"
 +
 +SRC_URI_PATCHES ?=3D "\
-+    file://0001-3.7-x86-fix-efi-binary-generation-issue-in-cross-compila.p=
-atch;patchdir=3Dzephyr \
 +"
 +
 +SRC_URI =3D "\
