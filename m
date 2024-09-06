@@ -2,62 +2,62 @@ Return-Path: <hprajapati@mvista.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6B09CE7AE2
-	for <webhook@archiver.kernel.org>; Fri,  6 Sep 2024 08:17:03 +0000 (UTC)
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
- by mx.groups.io with SMTP id smtpd.web11.29992.1725610615098051603
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1C78CE7AE8
+	for <webhook@archiver.kernel.org>; Fri,  6 Sep 2024 08:20:03 +0000 (UTC)
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+ by mx.groups.io with SMTP id smtpd.web10.30375.1725610794366295742
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 06 Sep 2024 01:16:55 -0700
+ Fri, 06 Sep 2024 01:19:54 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@mvista.com header.s=google header.b=Uq0SYVCj;
- spf=pass (domain: mvista.com, ip: 209.85.214.181, mailfrom: hprajapati@mvista.com)
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2053a0bd0a6so18758395ad.3
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 06 Sep 2024 01:16:55 -0700 (PDT)
+ dkim=pass header.i=@mvista.com header.s=google header.b=hE9VSOj8;
+ spf=pass (domain: mvista.com, ip: 209.85.215.179, mailfrom: hprajapati@mvista.com)
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7d666fb3fb9so448808a12.0
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 06 Sep 2024 01:19:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mvista.com; s=google; t=1725610614; x=1726215414; darn=lists.yoctoproject.org;
+        d=mvista.com; s=google; t=1725610793; x=1726215593; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
         bh=cPrEcOu2QYl/sJy22pkLVlEUcdUEWQNNVJFjZwX/tJc=;
-        b=Uq0SYVCj7oyDKpfEetyuGSUoaAck8mShJlHc/nSn9goAJ3d64IokerummJZpSZuBO8
-         AdXy5V5yAFvMjYBBpCUnj7e8iPKj3TpoBJR93ehFPpuFuZ7VpCa4JF2vNaMpvNwlR7Zw
-         ttYWuQLuopHyNmqYpJJuXlGgH9yRLxOIsF5y0=
+        b=hE9VSOj8Jy48yEWVj2K9tJPvYGUUTxojrsSIp22YzDxHwcrYYzIv7chzFAXOAJJ1Hj
+         9WO4AQycq1eFtiKyWAgkjtVGrd046x9XNHC6Nv3aPK/Qnz6kuJeNFHr1LAp6P8qvp7sL
+         dD4xbQRZDG/ruHY22S7tG8GUfbpXVS6P19xCo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725610614; x=1726215414;
+        d=1e100.net; s=20230601; t=1725610793; x=1726215593;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
         bh=cPrEcOu2QYl/sJy22pkLVlEUcdUEWQNNVJFjZwX/tJc=;
-        b=btkTy2jEbRIJWqXToP1aVeHGaDihFTcnlDK9OITjCghv2vlgowblugGEAAuvd3n31q
-         B8yR4wwdhKko9ufMQUILeXOByXG7CmqEhJjldWLfXumfaHBNPCjkAQ1nP5Pw9ENtWK/q
-         B0wKgNdmS54uv9RGgG3HIhtAq9H7HbfRKLCu1cHoH49LvgEIKG1vUbDpytHZkFQUldO7
-         ohOiNtZG3FwbvDqJlaKujhzj6jYLLRDSDF/OE2Wjm3EdFVs1HQnTWHuO4o1P+l80hwnf
-         m6DTTBvhMGFIGjjMt/5PJymgxJKXZ4p4Dgit/Tq+KRg3k42CvOQrlsdu8QzPb39IhVJh
-         wYZQ==
-X-Gm-Message-State: AOJu0YxNvvUr8uAsYtxsjrF1jkxCLwvVpbwTXqMxfYrB0Nnkbrezxozp
-	VHht4i6GlQEMNyEPWlC1YHMcUwQeqtJad0AK55EcoQiT2uLViKL8DyLLmBJBDORJjqZMzKHDDE5
-	n
-X-Google-Smtp-Source: AGHT+IHI7xnRfgm5aor11gCdrQGcjv/2ND862OGG0xanTJ9olVHxWoWEf46k5iPZLg8p45sdbBVlEw==
-X-Received: by 2002:a17:902:c94b:b0:202:330f:1512 with SMTP id d9443c01a7336-206f05f6772mr16419255ad.44.1725610613902;
-        Fri, 06 Sep 2024 01:16:53 -0700 (PDT)
+        b=dng8w8chuDegAimQ7qrLeWesWEAVb/V6Swdqz6GBOvy5I/NBEQasddaDc3E3pN4ojB
+         JDWN6TgNMw2y+i/JdV0ca5Qkvh6Vza9MnfahBgXKiAzvQrB4HyQaSmCKhEdbBKtWYzFh
+         XZYWBVgdD7yON8FO2RIT/HKzdMKe9iGoLPZPMUdw6dC60y3peGCS+tfyY6OsLLmiu0sr
+         2vOtoE1O6X31PbygfvGc4Ht1zwiEWTViuOm1Ma5fY58AZFZjMgfF8TAjaaz2pW7wTHpy
+         QOEOO0M0vszM7tAhUp3whgaPlzVR2HG6g2Sj2lQC7xRUjFGEgMstiRlB6P9U9JYPRVAa
+         +SIQ==
+X-Gm-Message-State: AOJu0YwY0Sg6XxB+IZ5e5Hju69SjhHyTAU0wu2g1MnU3TW9B/jTX6FhP
+	Z5rmuikJW/Sxm65ypIkdOgNecQ5LrpkJ3Ab/MtXQ44bykn7cQB2nt01MSWJqZTPFL8eRlbB16hK
+	w
+X-Google-Smtp-Source: AGHT+IHIG3rrkpM64gRTr5Hi+9n16fHKF6iL9WtIK2EA/ST2hHsInXrWOoduVC2o76RUvg1svIFHFA==
+X-Received: by 2002:a05:6a21:3213:b0:1cf:1a90:fa6f with SMTP id adf61e73a8af0-1cf1c10bd3fmr3034317637.20.1725610793185;
+        Fri, 06 Sep 2024 01:19:53 -0700 (PDT)
 Received: from MVIN00016.mvista.com ([43.249.234.170])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206d6cddf2bsm20782695ad.236.2024.09.06.01.16.51
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-718d64a5cdfsm848356b3a.91.2024.09.06.01.19.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2024 01:16:53 -0700 (PDT)
+        Fri, 06 Sep 2024 01:19:52 -0700 (PDT)
 From: Hitendra Prajapati <hprajapati@mvista.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: akuster808@gmail.com,
 	Hitendra Prajapati <hprajapati@mvista.com>
-Subject: [meta-security][scarthgap][PATCH] clamav: fix CVE-2024-20505 & CVE-2024-20508
-Date: Fri,  6 Sep 2024 13:46:45 +0530
-Message-Id: <20240906081645.71963-1-hprajapati@mvista.com>
+Subject: [meta-security][scarthgap][PATCHv2] clamav: fix CVE-2024-20505 & CVE-2024-20506
+Date: Fri,  6 Sep 2024 13:49:40 +0530
+Message-Id: <20240906081940.72172-1-hprajapati@mvista.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 06 Sep 2024 08:17:03 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/612
+ <yocto-patches@lists.yoctoproject.org>; Fri, 06 Sep 2024 08:20:03 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/613
 
 Backport fixes for:
 
