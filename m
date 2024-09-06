@@ -2,63 +2,64 @@ Return-Path: <martin.jansa@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B331E6FE2F
-	for <webhook@archiver.kernel.org>; Fri,  6 Sep 2024 16:39:46 +0000 (UTC)
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
- by mx.groups.io with SMTP id smtpd.web10.3553.1725640782751777717
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EB9DE6FE33
+	for <webhook@archiver.kernel.org>; Fri,  6 Sep 2024 16:59:26 +0000 (UTC)
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+ by mx.groups.io with SMTP id smtpd.web10.4015.1725641962205546641
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 06 Sep 2024 09:39:43 -0700
+ Fri, 06 Sep 2024 09:59:22 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=euShrm7x;
- spf=pass (domain: gmail.com, ip: 209.85.208.41, mailfrom: martin.jansa@gmail.com)
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c3d209db94so1969110a12.3
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 06 Sep 2024 09:39:42 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=aCPQWHOr;
+ spf=pass (domain: gmail.com, ip: 209.85.208.180, mailfrom: martin.jansa@gmail.com)
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2f4f2868710so24067461fa.1
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 06 Sep 2024 09:59:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725640781; x=1726245581; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1725641960; x=1726246760; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZVR4qpJy5cT3+XR8uPiJQXUqSBf8mcOa9ZpF7QBdcB0=;
-        b=euShrm7x0VVkQXUmrG6EkWRiyyO69/Eyi8T0jzqPiKoyWoMCMVMngp8gYy4RIGBfay
-         VgdkOTeLuPeYbnJdsPq9M4KMr7guW1ORUeYBCEnHe5l4ib8Pf3yzXXGpwJPw0BH1j6Jm
-         3l7ipdj3gkSQnwDLIRw6OpSaYi3x+YEzB3gCey6Ml8QtI1m1/TyPbetAvaiWKKJhvopW
-         C9FHZzzk8hlingiPp3GbOqheFU3p3ZO5vdlJWWgmRaKvVemsKnmNaEGKY8hbACr38hwu
-         J4Vz/w8KekGce0qKmBHfxeKlT8TkssePk/VK+CmUZ85br6xCoYA2zjjzMhQpQqGkr3g1
-         JMgQ==
+        bh=9tYC/+0BHLnQ0kL04keOdpPtj5KuHs2StvvEMipLmI0=;
+        b=aCPQWHOrpvkg1lzWbEjLz3evcRTq4KvpT2r8Um3GRZnYyfuO5wxdNVIrEGkwTqrace
+         Hh8RgINcBDMigvw93DoKfQ8ZYfszE7g/v0njhXqZdkXfTDDjfub+XKeOGmYMpoonW3y/
+         PamqY5M5M+13LI5IHqdoRmv+VsSLuAJqsHCTENUQLMPD7On8FE/C2zOZWYSwcIImQ6fJ
+         4JQeeCJJeoXc2L+ectzp7SjsOmnibMOfQG2cgiFiCE2vM08N2z3joAs4DglGqiYgpD1q
+         xQy4Kgt7/DP1NkTCXkvv8V61gmNlHSEsgO5SKG26NrExlclYwn78xRDEpMlFw84d7h9i
+         QDKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725640781; x=1726245581;
+        d=1e100.net; s=20230601; t=1725641960; x=1726246760;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ZVR4qpJy5cT3+XR8uPiJQXUqSBf8mcOa9ZpF7QBdcB0=;
-        b=kc1aGWaV0gCeXX3KB778B2OCEPOXXMy9wbXPYR91DqOtOTSJpNENpYZHZbKvLNie9A
-         +NbRsLxBLgnpk3HKRbMcXhpDnUVU3MWXdBAzePpzNGkUeICa7RZBfuKwxmTHLJY+PtW1
-         wr5iBOzS2q5nK4Jl4W7175EyRv0/MJgh+JTkkx+FlcXv4vmEc23O3hgcec+RSHm4vXrd
-         YrvOYzR0fE3K1g7yIuH4an1xYLthRdWq/WL34TJepTkyvMcdvk1L97pxE9F6Ns40QHne
-         kRbUZQdspxIM6V40xUwwvZCFJh49enR94bNPc94lRXWx9WJ6qOuk0ZrKu36QKUwJIzac
-         mC7A==
-X-Gm-Message-State: AOJu0Yw2KuMfV9F4+chy8aYBUnGx/U41tF5Ex7QdaQVYReY44mWRenzr
-	uMmBgN3DR15yYTmI0HWH4TCjIy2bCFt1EoNJc8VJHh/OvnzpIFYmOupTrA==
-X-Google-Smtp-Source: AGHT+IFRg8l1XbRRTOSrma7jlvcjucpFkTyQX5mPjqWiFtKRUhG5c5NnmN0gO+VgGaX9iGq81FfKvQ==
-X-Received: by 2002:a05:6402:50d0:b0:5c2:4ad9:6d9f with SMTP id 4fb4d7f45d1cf-5c24ad97198mr15722536a12.1.1725640780313;
-        Fri, 06 Sep 2024 09:39:40 -0700 (PDT)
+        bh=9tYC/+0BHLnQ0kL04keOdpPtj5KuHs2StvvEMipLmI0=;
+        b=nAdIHwMY/q+oycnY6q6fTurG89rH9GjGvNz3gdBkty3PDx3ytc30p0kXYKJ/MtkBPq
+         3LcxWQQ+Mi9yQ6U367HOHQdv/+EuaCdp8tDmPvTCzGmW9enydXOtCB6C1PTIQsjQP8b1
+         g0M97jMIluYK/mmqhqtYNIaxYWBLP5q+y0PZcJaYejNRfY5V6UQaNcAT36ub3qOKxi0Y
+         zn1xNX2m44dC86CYS/RrGqFGvElRFjQchZXThQCKWYuAgatS5Y1j+7Ew11lmXrln1m0o
+         aPzRdfbjLST3i3MbxyYYbEYOCIg95LtA4gzag5YVfXIDn8e2hLzDEJc9tjowXKTNDMzO
+         tHRQ==
+X-Gm-Message-State: AOJu0YxpyrsmZB3GzW2ELm4y5yVmZXz5LwMC/CtRK32ARUbmL6/XvDEp
+	qHSELIuhCbFYeqeM1p2s04ssJ8eOyQdwAZE7HKSkbXFCXvv+eDb6ERT65Q==
+X-Google-Smtp-Source: AGHT+IER6YAIaJ5o6neHK+RG+Ydt+xvqLsM92SE+EZGi5Kb9HxllhSoYqkttEbTt9gFvJbYWGgHucQ==
+X-Received: by 2002:a2e:be1f:0:b0:2f3:d032:4489 with SMTP id 38308e7fff4ca-2f751ea776fmr22876271fa.8.1725641959425;
+        Fri, 06 Sep 2024 09:59:19 -0700 (PDT)
 Received: from localhost (ip-109-238-218-228.aim-net.cz. [109.238.218.228])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3cc56a876sm2590517a12.51.2024.09.06.09.39.39
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3cc551397sm2641519a12.38.2024.09.06.09.59.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2024 09:39:39 -0700 (PDT)
+        Fri, 06 Sep 2024 09:59:18 -0700 (PDT)
 From: Martin Jansa <martin.jansa@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Martin Jansa <martin.jansa@gmail.com>
-Subject: [meta-security][PATCH] layer.conf: Update to styhead release name series
-Date: Fri,  6 Sep 2024 18:39:30 +0200
-Message-ID: <20240906163930.3167870-1-martin.jansa@gmail.com>
+Cc: twoerner@gmail.com,
+	Martin Jansa <martin.jansa@gmail.com>
+Subject: [meta-rockchip] [PATCH] layer.conf: Update to styhead release name series
+Date: Fri,  6 Sep 2024 18:59:11 +0200
+Message-ID: <20240906165911.3777945-1-martin.jansa@gmail.com>
 X-Mailer: git-send-email 2.46.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 06 Sep 2024 16:39:46 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/615
+ <yocto-patches@lists.yoctoproject.org>; Fri, 06 Sep 2024 16:59:26 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/616
 
 oe-core switched to styhead only in:
 https://git.openembedded.org/openembedded-core/commit/?h=styhead&id=b4cf6d5236a3eacaf56ca2f805b006efac65b26c
@@ -69,18 +70,18 @@ Signed-off-by: Martin Jansa <martin.jansa@gmail.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/conf/layer.conf b/conf/layer.conf
-index 471674c..c57c8b9 100644
+index 03914d2..9e89132 100644
 --- a/conf/layer.conf
 +++ b/conf/layer.conf
-@@ -9,7 +9,7 @@ BBFILE_COLLECTIONS += "security"
- BBFILE_PATTERN_security = "^${LAYERDIR}/"
- BBFILE_PRIORITY_security = "8"
+@@ -14,7 +14,7 @@ BBFILE_PRIORITY_rockchip = "1"
+ # This should only be incremented on significant changes that will
+ # cause compatibility issues with other layers
+ LAYERVERSION_rockchip = "1"
+-LAYERSERIES_COMPAT_rockchip = "scarthgap"
++LAYERSERIES_COMPAT_rockchip = "styhead"
+ LAYERDEPENDS_rockchip = "core meta-arm"
  
--LAYERSERIES_COMPAT_security = "nanbield scarthgap"
-+LAYERSERIES_COMPAT_security = "styhead"
- 
- LAYERDEPENDS_security = "core openembedded-layer"
- 
+ BBFILES_DYNAMIC += " \
 -- 
 2.46.0
 
