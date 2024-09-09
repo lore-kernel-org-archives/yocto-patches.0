@@ -2,56 +2,56 @@ Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E33B6ECE586
-	for <webhook@archiver.kernel.org>; Mon,  9 Sep 2024 14:55:54 +0000 (UTC)
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
- by mx.groups.io with SMTP id smtpd.web11.55122.1725893744760274597
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF7C8ECE57E
+	for <webhook@archiver.kernel.org>; Mon,  9 Sep 2024 14:56:04 +0000 (UTC)
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+ by mx.groups.io with SMTP id smtpd.web10.55098.1725893764479184786
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 09 Sep 2024 07:55:44 -0700
+ Mon, 09 Sep 2024 07:56:04 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=kp/zDkxS;
- spf=pass (domain: gmail.com, ip: 209.85.210.44, mailfrom: twoerner@gmail.com)
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-710d5d9aac1so1703285a34.3
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 09 Sep 2024 07:55:44 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=RcGSRoNj;
+ spf=pass (domain: gmail.com, ip: 209.85.160.176, mailfrom: twoerner@gmail.com)
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-456954d0396so25164831cf.3
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 09 Sep 2024 07:56:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725893743; x=1726498543; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1725893763; x=1726498563; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ji5EQlPvSQa4KxrEh/weHYXQpnJGnD65gniEaQM5bYs=;
-        b=kp/zDkxS/0uKhrCDyCB9E7cenzTQahi9nOJ89l5yUf9AGpeUBup/TGRVjC2hdYMri8
-         T07jVcmqB65WCpK8PAxOfuFRC8Ng/SCO0WSFniNZx8WAsoQOU4niYi8L0wXTIaP3ybcC
-         YiaaatyshIS/BRfSN1BAKMrf351PD6ctfiYSgSASTjzQQwh3MSppVU1NGCw0B4GBKwTh
-         v4XtBW6FfmO/D7gLfPdk5xtuQ9k3d/vd5Er/r97n2jBsmKR29NVY/4v+zVPIxlgwUbpf
-         VIBpk8FmD+lmMSZf0wQ/6oUn1C9U3N4gN5pOZH5MgatImzbbQ023bsGDoqJhXRwlPH0Z
-         miIg==
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yl5z0j2JadkX4VI+nDZGTts0fxvG+EZ1wyzBRJpnEJU=;
+        b=RcGSRoNjYRRlwA6PL6oS8nBdJzNxWXwG57tHfCtrIr3cPaBGOvMVpURwdMzeLdyVYp
+         fTRLQdRpuIIJv77i9HLbVG06HHWzJ3pG3O7jlcDGAFU3st+p0BpFLFop63tw7XKnubjv
+         zLwfsPfzt+mbfMKhrAEngPLadmvX6Irl5hMxzJf1uJSvWvDEKdLwjLRJ8Mm7w/M5+EXm
+         tP8fGwI8jzoZtv8SpJ6m37BepC8aAvHbUapx9PhVuiIjYwTYb/DGCq25Voszlf/SYIR+
+         q2eJ0skVfogSlT45Y7z25AL2ghtBC6m8no11CZIIfGsQh17kN4n41w0FzqGyh2/dPwTI
+         8DaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725893743; x=1726498543;
+        d=1e100.net; s=20230601; t=1725893763; x=1726498563;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ji5EQlPvSQa4KxrEh/weHYXQpnJGnD65gniEaQM5bYs=;
-        b=U+vnl+9rOzmABVKPWklfwM67Y8ml3rI3tBz2Mg6BBicBeFbsVrtI+d0pa6wybuNtJg
-         gj/EAmd86hJT1rceJWJPgxSk/Dc6lGS/EK6E9KRgTDkl03+NXHI1Ea7f3rIt1pAcdK0D
-         TTnK+Oi6mqLLei9gjpdu2lu654tdEAA9hbmI8FMWdLcp9kl7IZwNQ4lfIdtT6A/HNt9a
-         d14ekKzkC3OZzySLii7x0OGIeo3iyi7JvFFM4k4W7isl32+3KeQGNjcvtm9xwXV//Au6
-         k3/rUxT9QmarMnfgcM1fZZ1tJJ5ugouB3HFwn6pp8t2VXGEbT6Gett5+EgUb2MqdJTkO
-         cuqQ==
-X-Gm-Message-State: AOJu0YzFZY2vZi88mqXcTe3pWWgIrqyMqKu2DbGpaIGi8wGTmU6e7gd9
-	2awKy2NHtGYwixBbLe8HW7IPijti/lNCQiuNtipf9cg97+kzxPtb/46nIEuD
-X-Google-Smtp-Source: AGHT+IGZNVDFXNGetvdAEhVfFyC8fXjbhfOm7O0SrFim4Zo3RTP8lzeA3yp+HRmtrv8KQcGqGGlIow==
-X-Received: by 2002:a05:6830:6310:b0:70c:9c66:af53 with SMTP id 46e09a7af769-710cc25d760mr13457266a34.25.1725893743274;
-        Mon, 09 Sep 2024 07:55:43 -0700 (PDT)
+        bh=yl5z0j2JadkX4VI+nDZGTts0fxvG+EZ1wyzBRJpnEJU=;
+        b=AZNBT8llAgj2CyuXbXh7cvjy0rns6AMdCM9VA+UXzk17155BTYK79XG+LvNAic4XO7
+         ClvDwxgKLXfI+ZG4sv5FlqxEkBIucT/p1njuipk9+uxh+tdAVNQGYetUbK1yiF/919Iy
+         iTYATfqJd25pS5/VqwWChu7+RtjOwHqG8/aMDlYSodtRKWKBuRak0P1NQQYqDY9IAtVK
+         wZqV0/SwtmkZONChB8v4HrVrb/QgbNbYDQ+RZFpI1i9VTwhPi+LB8ub9x/ycWyYGhr63
+         DmadrVdjmK3Sj2DEd6OjvANo87VISVsExfe3Dz8NTZOth07GAIhGrJCr0lUFl5vI9I98
+         WVJQ==
+X-Gm-Message-State: AOJu0YzU7wMNfHDLhVVNkpuYUSlMtK3pLT9WJYi5/G9E7EGdOYDie2SR
+	ung1srE+Do2g86VOGIOrEtj7+O0CLRoqerXl6dnoldqmcMSalmheDgggBrmi
+X-Google-Smtp-Source: AGHT+IGrdZVXjvoOh7kg/2eGp8+0w8MEES2/f1pFYaQ3HCnN6Zk9AYiiWUgspO+JzeNN8lKREQoi+g==
+X-Received: by 2002:ac8:7fc6:0:b0:458:2e21:e422 with SMTP id d75a77b69052e-4582e21e5f6mr61523961cf.50.1725893762757;
+        Mon, 09 Sep 2024 07:56:02 -0700 (PDT)
 Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45822e772a2sm21050231cf.27.2024.09.09.07.55.42
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45822e772a2sm21050231cf.27.2024.09.09.07.56.00
+        for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 07:55:42 -0700 (PDT)
+        Mon, 09 Sep 2024 07:56:02 -0700 (PDT)
 From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Quentin Schulz <quentin.schulz@cherry.de>
-Subject: [meta-rockchip][scarthgap][PATCH 01/10] mesa: enable lima on all rk3328 boards
-Date: Mon,  9 Sep 2024 10:55:21 -0400
-Message-ID: <20240909145530.25301-2-twoerner@gmail.com>
+Subject: [meta-rockchip][scarthgap][PATCH 10/10] linux-torvalds-next: bump to next-20240904
+Date: Mon,  9 Sep 2024 10:55:30 -0400
+Message-ID: <20240909145530.25301-11-twoerner@gmail.com>
 X-Mailer: git-send-email 2.44.0.501.g19981daefd7c
 In-Reply-To: <20240909145530.25301-1-twoerner@gmail.com>
 References: <20240909145530.25301-1-twoerner@gmail.com>
@@ -60,30 +60,39 @@ Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 09 Sep 2024 14:55:54 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/627
+ <yocto-patches@lists.yoctoproject.org>; Mon, 09 Sep 2024 14:56:04 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/636
 
-From: Quentin Schulz <quentin.schulz@cherry.de>
+Bump kernel to tag "next-20240904".
 
-lima is the open-source implementation for the GPU found on RK3328, it
-is therefore not specific to the Rock64 but all boards based on the
-RK3328.
-
-Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+Signed-off-by: Trevor Woerner <twoerner@gmail.com>
 ---
- recipes-graphics/mesa/mesa_%.bbappend | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ recipes-kernel/linux/linux-torvalds-next_git.bb | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/recipes-graphics/mesa/mesa_%.bbappend b/recipes-graphics/mesa/mesa_%.bbappend
-index 58c25e7d61bf..a31d99b5c65b 100644
---- a/recipes-graphics/mesa/mesa_%.bbappend
-+++ b/recipes-graphics/mesa/mesa_%.bbappend
-@@ -1,4 +1,4 @@
- PACKAGECONFIG:append:rk3288 = " kmsro panfrost"
-+PACKAGECONFIG:append:rk3328 = " kmsro lima"
- PACKAGECONFIG:append:rk3399 = " kmsro panfrost"
--PACKAGECONFIG:append:rock64 = " kmsro lima"
- PACKAGECONFIG:append:px30 = " kmsro panfrost"
+diff --git a/recipes-kernel/linux/linux-torvalds-next_git.bb b/recipes-kernel/linux/linux-torvalds-next_git.bb
+index 6f3db7c61bdf..b961b1408f09 100644
+--- a/recipes-kernel/linux/linux-torvalds-next_git.bb
++++ b/recipes-kernel/linux/linux-torvalds-next_git.bb
+@@ -10,15 +10,15 @@ DEFAULT_PREFERENCE = "-1"
+ COMPATIBLE_MACHINE = "^$"
+ COMPATIBLE_MACHINE:radxa-zero-3 = "radxa-zero-3"
+ 
+-LINUX_VERSION = "6.10-rc3"
++LINUX_VERSION = "6.11-rc6"
+ KERNEL_VERSION_SANITY_SKIP = "1"
+ PV = "${LINUX_VERSION}+git${SRCPV}"
+ SRC_URI = " \
+ 	git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git;protocol=https;nobranch=1 \
+ 	file://rockchip-kmeta;type=kmeta;name=rockchip-kmeta;destsuffix=rockchip-kmeta \
+ 	"
+-# this is tag 'next-20240611'
+-SRCREV = "a957267fa7e9159d3d2ee1421359ebf228570c68"
++# this is tag 'next-20240904'
++SRCREV = "fdadd93817f124fd0ea6ef251d4a1068b7feceba"
+ 
+ inherit kernel
+ inherit kernel-yocto
 -- 
 2.44.0.478.g7774cfed6261
 
