@@ -2,123 +2,88 @@ Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB3EFECE57A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E33B6ECE586
 	for <webhook@archiver.kernel.org>; Mon,  9 Sep 2024 14:55:54 +0000 (UTC)
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
- by mx.groups.io with SMTP id smtpd.web10.55090.1725893751808404907
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+ by mx.groups.io with SMTP id smtpd.web11.55122.1725893744760274597
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 09 Sep 2024 07:55:51 -0700
+ Mon, 09 Sep 2024 07:55:44 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=FsLAqzlQ;
- spf=pass (domain: gmail.com, ip: 209.85.160.179, mailfrom: twoerner@gmail.com)
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-456954d0396so25163111cf.3
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 09 Sep 2024 07:55:51 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=kp/zDkxS;
+ spf=pass (domain: gmail.com, ip: 209.85.210.44, mailfrom: twoerner@gmail.com)
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-710d5d9aac1so1703285a34.3
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 09 Sep 2024 07:55:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725893750; x=1726498550; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1725893743; x=1726498543; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GPcnU7Dxl2Sxxoi8FieL3tZGd6JlC7wVLN9S+JbKShs=;
-        b=FsLAqzlQiOfUh6vvBuem43S3XmzMUQSqoIkwWNURI+tYdXWLDosfQRLluACF23/WZc
-         6laWhXfJ0i0Ue0hKmoBIkfEicnXrGqhNOWc+9SzSHy6Dld6gIxxEfZW8cbkwT0tscuy+
-         QDrjBH6mHedR3C2SdPVi3YaADw5dj5HZMiIYR0cbsINBd6RxHfxf2UDlVZftLxUhySfb
-         9IzNzyHmHbQASUy9eGBkD63oXvjEWi/F/WVAZZuUg0MKHvhojPb5O5gs90Aof658aKdm
-         4p9U3ILMiHSBaomoK4wd8PjLJbQK0F99DxU4Ds7cTZYNRd4NgLnLq9h7a469811gVsWW
-         k27w==
+        bh=ji5EQlPvSQa4KxrEh/weHYXQpnJGnD65gniEaQM5bYs=;
+        b=kp/zDkxS/0uKhrCDyCB9E7cenzTQahi9nOJ89l5yUf9AGpeUBup/TGRVjC2hdYMri8
+         T07jVcmqB65WCpK8PAxOfuFRC8Ng/SCO0WSFniNZx8WAsoQOU4niYi8L0wXTIaP3ybcC
+         YiaaatyshIS/BRfSN1BAKMrf351PD6ctfiYSgSASTjzQQwh3MSppVU1NGCw0B4GBKwTh
+         v4XtBW6FfmO/D7gLfPdk5xtuQ9k3d/vd5Er/r97n2jBsmKR29NVY/4v+zVPIxlgwUbpf
+         VIBpk8FmD+lmMSZf0wQ/6oUn1C9U3N4gN5pOZH5MgatImzbbQ023bsGDoqJhXRwlPH0Z
+         miIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725893750; x=1726498550;
+        d=1e100.net; s=20230601; t=1725893743; x=1726498543;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=GPcnU7Dxl2Sxxoi8FieL3tZGd6JlC7wVLN9S+JbKShs=;
-        b=rhlmK5K7pjn5gmNRvrN9GKcx/TUHUwGkL4u8ywDrnFSIK4Hyxtcw0Mu+L+1aT19m/y
-         Ntdwle9/lyzLdRE3nJuXIcvyfKPjU9a31oR7hoLtu7KWmjnZEQ99R4EWII+crKObwZXM
-         b4DBF46VvhZn+upATmDdkBD/1aDdjmAAV6rl1OnYYHIE8Nc9F5foDbI+ZKXbh2pknjbf
-         Ld+8JgQ/wgvOlgLlzVT82A48YADGRG1B5y+ioe28Cj5CHAgNco8I7m1liclxlyDBFo4W
-         voX0w48MwqT9T9kLgWSwnnRUTck34iUqtyQ//2JZ+6C44x4/TKti8ELIuWlXW/Gwnqc7
-         HvEw==
-X-Gm-Message-State: AOJu0Yz5BSs68bEg6gFo65a4CbMkh2grdI71jZM0qK+PnlMJ2Lk4CZFb
-	5TwqlBlGyfnGjUdEJFnwitjviE7Za2LS6F9SWZWhtgwfZqhqvgWDUmGlHPom
-X-Google-Smtp-Source: AGHT+IH8bcMGlHk3hZxw4xM29f7OjgW1qKeQUTi9VVV+1JU6kLagxBE2k/uQmMPfXPEkk60+jzQzpw==
-X-Received: by 2002:a05:622a:13d3:b0:43f:edde:7a55 with SMTP id d75a77b69052e-4580c6e1f22mr167220061cf.28.1725893749993;
-        Mon, 09 Sep 2024 07:55:49 -0700 (PDT)
+        bh=ji5EQlPvSQa4KxrEh/weHYXQpnJGnD65gniEaQM5bYs=;
+        b=U+vnl+9rOzmABVKPWklfwM67Y8ml3rI3tBz2Mg6BBicBeFbsVrtI+d0pa6wybuNtJg
+         gj/EAmd86hJT1rceJWJPgxSk/Dc6lGS/EK6E9KRgTDkl03+NXHI1Ea7f3rIt1pAcdK0D
+         TTnK+Oi6mqLLei9gjpdu2lu654tdEAA9hbmI8FMWdLcp9kl7IZwNQ4lfIdtT6A/HNt9a
+         d14ekKzkC3OZzySLii7x0OGIeo3iyi7JvFFM4k4W7isl32+3KeQGNjcvtm9xwXV//Au6
+         k3/rUxT9QmarMnfgcM1fZZ1tJJ5ugouB3HFwn6pp8t2VXGEbT6Gett5+EgUb2MqdJTkO
+         cuqQ==
+X-Gm-Message-State: AOJu0YzFZY2vZi88mqXcTe3pWWgIrqyMqKu2DbGpaIGi8wGTmU6e7gd9
+	2awKy2NHtGYwixBbLe8HW7IPijti/lNCQiuNtipf9cg97+kzxPtb/46nIEuD
+X-Google-Smtp-Source: AGHT+IGZNVDFXNGetvdAEhVfFyC8fXjbhfOm7O0SrFim4Zo3RTP8lzeA3yp+HRmtrv8KQcGqGGlIow==
+X-Received: by 2002:a05:6830:6310:b0:70c:9c66:af53 with SMTP id 46e09a7af769-710cc25d760mr13457266a34.25.1725893743274;
+        Mon, 09 Sep 2024 07:55:43 -0700 (PDT)
 Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45822e772a2sm21050231cf.27.2024.09.09.07.55.47
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45822e772a2sm21050231cf.27.2024.09.09.07.55.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 07:55:47 -0700 (PDT)
+        Mon, 09 Sep 2024 07:55:42 -0700 (PDT)
 From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Quentin Schulz <quentin.schulz@cherry.de>
-Subject: [meta-rockchip][scarthgap][PATCH 04/10] rockchip-rkbin: bump SRCREV
-Date: Mon,  9 Sep 2024 10:55:24 -0400
-Message-ID: <20240909145530.25301-5-twoerner@gmail.com>
+Subject: [meta-rockchip][scarthgap][PATCH 01/10] mesa: enable lima on all rk3328 boards
+Date: Mon,  9 Sep 2024 10:55:21 -0400
+Message-ID: <20240909145530.25301-2-twoerner@gmail.com>
 X-Mailer: git-send-email 2.44.0.501.g19981daefd7c
 In-Reply-To: <20240909145530.25301-1-twoerner@gmail.com>
 References: <20240909145530.25301-1-twoerner@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Mon, 09 Sep 2024 14:55:54 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/630
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/627
 
-Update to a newer release.
+From: Quentin Schulz <quentin.schulz@cherry.de>
 
-rk3568:
-- update DDR init from version 1.18 → 1.21
+lima is the open-source implementation for the GPU found on RK3328, it
+is therefore not specific to the Rock64 but all boards based on the
+RK3328.
 
-rk3588/s:
-- the name of the DDR init changed due to upstream adjusting
-  the frequency of the LPDDR5 to 2400MHz to "improve stability" [1]
-- reference an exact version instead of using an '*'
-- update DDR init from version 1.12 → 1.16
-
-Boot tested on:
-- rock-3a
-- rock-5a
-- rock-5b
-
-Link [1]: https://github.com/rockchip-linux/rkbin/commit/f02d10e468d8c783c45137d230ff33d42ca670b4
-Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
-Tested-by: Quentin Schulz <quentin.schulz@cherry.de> #RK3588 Jaguar, manual U-Boot compilation
-Signed-off-by: Trevor Woerner <twoerner@gmail.com>
+Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
 ---
- recipes-bsp/rkbin/rockchip-rkbin_git.bb | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ recipes-graphics/mesa/mesa_%.bbappend | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/recipes-bsp/rkbin/rockchip-rkbin_git.bb b/recipes-bsp/rkbin/rockchip-rkbin_git.bb
-index 7929c6ac3a10..f9724ddd5cd5 100644
---- a/recipes-bsp/rkbin/rockchip-rkbin_git.bb
-+++ b/recipes-bsp/rkbin/rockchip-rkbin_git.bb
-@@ -3,7 +3,7 @@ LICENSE = "Proprietary"
- LIC_FILES_CHKSUM = "file://LICENSE;md5=15faa4a01e7eb0f5d33f9f2bcc7bff62"
- 
- SRC_URI = "git://github.com/rockchip-linux/rkbin;protocol=https;branch=master"
--SRCREV = "b4558da0860ca48bf1a571dd33ccba580b9abe23"
-+SRCREV = "a2a0b89b6c8c612dca5ed9ed8a68db8a07f68bc0"
- 
- PROVIDES += "trusted-firmware-a"
- PROVIDES += "optee-os"
-@@ -42,7 +42,7 @@ do_deploy:rk3568() {
- 	# Prebuilt OPTEE-OS
- 	install -m 644 ${S}/bin/rk35/rk3568_bl32_v*.bin ${DEPLOYDIR}/tee-rk3568.bin
- 	# Prebuilt U-Boot TPL (DDR init)
--	install -m 644 ${S}/bin/rk35/rk3568_ddr_1560MHz_v1.18.bin ${DEPLOYDIR}/ddr-rk3568.bin
-+	install -m 644 ${S}/bin/rk35/rk3568_ddr_1560MHz_v1.21.bin ${DEPLOYDIR}/ddr-rk3568.bin
- }
- 
- do_deploy:rk3588s() {
-@@ -51,7 +51,7 @@ do_deploy:rk3588s() {
- 	# Prebuilt OPTEE-OS
- 	install -m 644 ${S}/bin/rk35/rk3588_bl32_v*.bin ${DEPLOYDIR}/tee-rk3588.bin
- 	# Prebuilt U-Boot TPL (DDR init)
--	install -m 644 ${S}/bin/rk35/rk3588_ddr_lp4_2112MHz_lp5_2736MHz_v*.bin ${DEPLOYDIR}/ddr-rk3588.bin
-+	install -m 644 ${S}/bin/rk35/rk3588_ddr_lp4_2112MHz_lp5_2400MHz_v1.16.bin ${DEPLOYDIR}/ddr-rk3588.bin
- }
- 
- do_deploy() {
+diff --git a/recipes-graphics/mesa/mesa_%.bbappend b/recipes-graphics/mesa/mesa_%.bbappend
+index 58c25e7d61bf..a31d99b5c65b 100644
+--- a/recipes-graphics/mesa/mesa_%.bbappend
++++ b/recipes-graphics/mesa/mesa_%.bbappend
+@@ -1,4 +1,4 @@
+ PACKAGECONFIG:append:rk3288 = " kmsro panfrost"
++PACKAGECONFIG:append:rk3328 = " kmsro lima"
+ PACKAGECONFIG:append:rk3399 = " kmsro panfrost"
+-PACKAGECONFIG:append:rock64 = " kmsro lima"
+ PACKAGECONFIG:append:px30 = " kmsro panfrost"
 -- 
 2.44.0.478.g7774cfed6261
 
