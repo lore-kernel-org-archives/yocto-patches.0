@@ -1,289 +1,143 @@
-Return-Path: <foss@0leil.net>
+Return-Path: <joe@deserted.net>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7250C369C9
-	for <webhook@archiver.kernel.org>; Wed, 25 Sep 2024 10:14:46 +0000 (UTC)
-Received: from smtp-bc0f.mail.infomaniak.ch (smtp-bc0f.mail.infomaniak.ch [45.157.188.15])
- by mx.groups.io with SMTP id smtpd.web10.12341.1727259277247681289
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 413ABC369D5
+	for <webhook@archiver.kernel.org>; Wed, 25 Sep 2024 11:55:47 +0000 (UTC)
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+ by mx.groups.io with SMTP id smtpd.web11.14061.1727265338870446358
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 25 Sep 2024 03:14:37 -0700
+ Wed, 25 Sep 2024 04:55:39 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: 0leil.net, ip: 45.157.188.15, mailfrom: foss+yocto@0leil.net)
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XDCJW1N7ZzKlr;
-	Wed, 25 Sep 2024 12:14:35 +0200 (CEST)
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4XDCJV1hmtzGcf;
-	Wed, 25 Sep 2024 12:14:34 +0200 (CEST)
-From: Quentin Schulz <foss+yocto@0leil.net>
-Date: Wed, 25 Sep 2024 12:13:51 +0200
-Subject: [meta-rockchip PATCH scarthgap] enable HW VPU decoding for SoCs
- that have stateless VPUs
+ dkim=pass header.i=@deserted-net.20230601.gappssmtp.com header.s=20230601 header.b=re109nma;
+ spf=none, err=permanent DNS error (domain: deserted.net, ip: 209.85.222.182, mailfrom: joe@deserted.net)
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7a9ac2d50ffso69779385a.1
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 25 Sep 2024 04:55:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=deserted-net.20230601.gappssmtp.com; s=20230601; t=1727265338; x=1727870138; darn=lists.yoctoproject.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Jp516UPtWJL/4DnPIrUq5SwPvhx7aA+RpTM/zy6EQig=;
+        b=re109nmaxP5PT0aWUXKEqA+Mqv6b0X2X+M8sxZuuwVx9+8xxcDwPv+BQbyLjyuFrBg
+         qxWKmeFW/K4+folwjS9h+YutulozyrkmIXIS8r53hfYJzMVTQjRPe6uSqfNfKmpo8qJJ
+         Nq8yvIKEkttuGINAoe/4VmV2TKwZkMECCa+S8V/ICPhx/tUDttTYkBt7Vt0OwuWHKd1f
+         q+U990iQfNRS05/OHQ47iylLgYp0OYjkYOkfm9gn1JPLoqMmz5R3uYThOUspEUN6xxxK
+         Pzo1oQmkAKqCmjQ1CC+fGW+FRV2rXTgfW11EzNXaHtX4iZeNthSaFn9d7u2nqtrzBJ14
+         Fv/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727265338; x=1727870138;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jp516UPtWJL/4DnPIrUq5SwPvhx7aA+RpTM/zy6EQig=;
+        b=Km1c9jLiH0fzB/yr8WaM8BNwCKIeknaJ2UcF3Vs4piVmV9fB61CTQL9EfEjxcw+Sfr
+         EBBw50vbOetXgNekcPSKUlNtxkAtIv0o5Da3LNsMPhXaS0wLF0oq4vpGBxK8PyBxYHVF
+         bh5KRabUwB51gwBW1+daMDoFhIqgNpyzGY3l/BanxtpyS7TmYN8U37oiI8igYcNASgUx
+         5OV+4EuXNHWcBG20msw64tLz0R8X+TmmdxLfFzqQm+UbLbAdayTD0l+tPbDjJfpbOL8C
+         +3P4AEuHDbYo2QmuuuiGu9aqro1/xDTJcZVTC7GmhCN/Wwtxj/rbQxSTAyEarIa/z6gF
+         jK2g==
+X-Gm-Message-State: AOJu0YwO5UaZyOxFEXxkgSlfXZ3PiauM0FSxbrcWLV5ttlQ5ry1eNHEq
+	9RuYk5CY3GQ5n6yUBp7fbxwTtt6EcV8MAiKwcu6l4PY9YFomqQ4PL3Uzev8JlA==
+X-Google-Smtp-Source: AGHT+IGup35fIvV9yYAnkx6bqr1OthEOsCVscWg5fNS6wAf6T2+g3DEGfzwywdrWN4jKS3aYgwq/+w==
+X-Received: by 2002:a05:620a:19a1:b0:7a9:b82e:723a with SMTP id af79cd13be357-7ace7544c0dmr416589485a.31.1727265337831;
+        Wed, 25 Sep 2024 04:55:37 -0700 (PDT)
+Received: from nightwinge.deserted.net (bras-base-jkvlon0513w-grc-11-70-54-131-55.dsl.bell.ca. [70.54.131.55])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7acde5445b4sm163558885a.52.2024.09.25.04.55.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2024 04:55:36 -0700 (PDT)
+Date: Wed, 25 Sep 2024 07:55:35 -0400
+From: Joe MacDonald <joe@deserted.net>
+To: "Mingyu Wang (Fujitsu)" <wangmy@fujitsu.com>
+Cc: "yocto-patches@lists.yoctoproject.org" <yocto-patches@lists.yoctoproject.org>
+Subject: Re: [yocto-patches] [meta-selinux] [PATCH] layer.conf: set
+ LAYERSERIES_COMPAT with styhead
+Message-ID: <20240925115535.2nr2hpiue5tz6pcy@nightwinge.deserted.net>
+References: <17F693837DCF4DA2.31299@lists.yoctoproject.org>
+ <TYWPR01MB11861C0221FAAFA6391AD0D5BDC692@TYWPR01MB11861.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240925-gst-stateless-scarthga-v1-1-7b78e4575e26@cherry.de>
-X-B4-Tracking: v=1; b=H4sIAF7i82YC/zWMywrCQAwAf6XkbGC7+KD+iniIadwNartsQhFK/
- 91V8DgMMyuYVBWDc7dClUVN56lBv+uAM01JUMfGEEPchyEeMJmjObk8xQyNqXpOhD0fB6EwCt9
- O0OJS5a7v3/gCL3HCOvODs5av/WcFrtv2ASRjziuEAAAA
-To: yocto-patches@lists.yoctoproject.org
-Cc: Quentin Schulz <quentin.schulz@cherry.de>, 
- Trevor Woerner <twoerner@gmail.com>
-X-Mailer: b4 0.14.0
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <TYWPR01MB11861C0221FAAFA6391AD0D5BDC692@TYWPR01MB11861.jpnprd01.prod.outlook.com>
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 25 Sep 2024 10:14:46 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/672
+ <yocto-patches@lists.yoctoproject.org>; Wed, 25 Sep 2024 11:55:47 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/673
 
-From: Quentin Schulz <quentin.schulz@cherry.de>
+I don't think this is applicable, there was an earlier patch that made
+this change:
 
-v4l2codecs is the gstreamer plugin for V4L2 stateless video hardware
-decoding. The Rockchip SoCs that have a VPU all seems to be based on
-Hantro, RKVDEC or RKVDECv2, all stateless encoding/decoding VPUs.
+	https://git.yoctoproject.org/meta-selinux/commit/?id=7886cda8a505886fd9532d9585f7e9eae78cb52e
 
-Therefore, let's enable VPU decoding in Gstreamer whenever possible,
-when the SoC supports it.
+Thanks,
+-Joe.
 
-PX30, RK3066, RK3188, RK3288, RK3328, RK3399, RK356x and RK3588(s) all
-have at least one Hantro VPU.
+[RE: [yocto-patches] [meta-selinux] [PATCH] layer.conf: set LAYERSERIES_COMPAT with styhead] On 24.09.25 (Wed 07:16) Mingyu Wang (Fujitsu) wrote:
 
-RK3328, RK3399, RK356x and RK3588(s) all have at least one
-RKVDEC/RKVDECv2 VPU (though not necessarily supported in the upstream
-kernel just yet).
+> 
+> ping
+>   --
+> Best Regards
+> ---------------------------------------------------
+> Wang Mingyu
+> FUJITSU NANJING SOFTWARE TECHNOLOGY CO., LTD. (FNST)
+> No.6 Wenzhu Road, Nanjing, 210012, China
+> TEL：+86+25-86630566--8568
+> COINS: 79988548
+> FAX: +86+25-83317685
+> MAIL: wangmy@fujitsu.com
+> 
+> > -----Original Message-----
+> > From: yocto-patches@lists.yoctoproject.org
+> > <yocto-patches@lists.yoctoproject.org> On Behalf Of wangmy via
+> > lists.yoctoproject.org
+> > Sent: Thursday, September 19, 2024 3:08 PM
+> > To: yocto-patches@lists.yoctoproject.org
+> > Cc: Wang, Mingyu/王 鸣瑜 <wangmy@fujitsu.com>
+> > Subject: [yocto-patches] [meta-selinux] [PATCH] layer.conf: set
+> > LAYERSERIES_COMPAT with styhead
+> > 
+> > From: Wang Mingyu <wangmy@fujitsu.com>
+> > 
+> > Set LAYERSERIES_COMPAT with styhead in layer.conf which aligns with oe-core.
+> > 
+> > Signed-off-by: Wang Mingyu <wangmy@fujitsu.com>
+> > ---
+> >  conf/layer.conf | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/conf/layer.conf b/conf/layer.conf index 4e04e5c..c7f8dfb 100644
+> > --- a/conf/layer.conf
+> > +++ b/conf/layer.conf
+> > @@ -17,7 +17,7 @@ BBFILE_PRIORITY_selinux = "5"
+> >  # cause compatibility issues with other layers  LAYERVERSION_selinux = "1"
+> > 
+> > -LAYERSERIES_COMPAT_selinux = "scarthgap"
+> > +LAYERSERIES_COMPAT_selinux = "styhead"
+> > 
+> >  LAYERDEPENDS_selinux = " \
+> >      core \
+> > --
+> > 2.34.1
+> > 
+> > 
+> > 
+> > -=-=-=-=-=-=-=-=-=-=-=-
+> > Links: You receive all messages sent to this group.
+> > View/Reply Online (#659):
+> > https://lists.yoctoproject.org/g/yocto-patches/message/659
+> > Mute This Topic: https://lists.yoctoproject.org/mt/108535475/5974946
+> > Group Owner: yocto-patches+owner@lists.yoctoproject.org
+> > Unsubscribe:
+> > https://lists.yoctoproject.org/g/yocto-patches/leave/13614271/5974946/19028
+> > 31066/xyzzy [wangmy@fujitsu.com]
+> > -=-=-=-=-=-=-=-=-=-=-=-
+> > 
+> 
 
-=== PX30
-Tested on PX30 Ringneck with with Haikou+Haikou Video Demo adapter:
-
-$ gst-launch-1.0 filesrc location=$FILE ! parsebin ! v4l2slh264dec ! fakesink
-
-with FILE storing the path to any h264 file, e.g.
-https://download.blender.org/peach/bigbuckbunny_movies/big_buck_bunny_720p_h264.mov
-https://download.blender.org/peach/bigbuckbunny_movies/big_buck_bunny_1080p_h264.mov
-
-Needed packages are:
-- gstreamer1.0-plugins-bad (for fakesink and v4l2slh264dec)
-- gstreamer1.0-plugins-base (for parsebin)
-
-waylandsink isn't used with weston because of rendering glitches, c.f.
-https://gitlab.freedesktop.org/wayland/weston/-/issues/839. While the
-link specifies it is for RK3399, PX30 is also impacted, albeit
-differently since a different kind of glitch can be seen (like seeing
-the image through a negative filter).
-This is fixed in Styhead.
-
-=== RK3399
-Tested on RK3399 Puma with Haikou:
-
-$ gst-launch-1.0 filesrc location=$FILE ! parsebin ! v4l2slh264dec ! fakesink
-
-with FILE storing the path to any h264 file, e.g.
-https://download.blender.org/peach/bigbuckbunny_movies/big_buck_bunny_1080p_h264.mov
-https://download.blender.org/demo/movies/BBB/bbb_sunflower_2160p_30fps_normal.mp4.zip
-
-Needed packages are:
-- gstreamer1.0-plugins-bad (for fakesink and v4l2codecs)
-- gstreamer1.0-plugins-base (for parsebin)
-
-waylandsink isn't used with weston because of rendering glitches, c.f.
-https://gitlab.freedesktop.org/wayland/weston/-/issues/839.
-This is fixed in Styhead.
-
-=== RK3588
-
-Tested on a RK3588 Jaguar with HDMI - on a downstream v6.11-rc6
-(upstream-based, not Rockchip BSP-based) with a bunch of patches - :
-
-$ gst-launch-1.0 filesrc location=$FILE ! parsebin ! v4l2slh264dec ! fakesink
-
-with FILE storing the path to any h264 file, e.g.
-https://download.blender.org/peach/bigbuckbunny_movies/big_buck_bunny_1080p_h264.mov
-
-$ gst-launch-1.0 filesrc location=$FILE ! parsebin ! v4l2slmpeg2dec ! fakesink
-
-with FILE storing the path to any MPEG2 file, e.g.
-https://drive.google.com/file/d/0BwxFVkl63-lETXlOa3hEMmVyZGM/view?resourcekey=0-FG5JbjCsd8QduRhkZ2aT8A
-
-$ gst-launch-1.0 filesrc location=$FILE ! parsebin ! v4l2slvp8dec ! fakesink
-
-with FILE storing the path to any VP8 file, e.g.
-https://test-videos.co.uk/vids/bigbuckbunny/webm/vp8/1080/Big_Buck_Bunny_1080_10s_30MB.webm
-
-Needed packages are:
-- gstreamer1.0-plugins-bad (for fakesink and v4l2codecs)
-- gstreamer1.0-plugins-base (for parsebin)
-
-waylandsink isn't used with weston because starting gst-launch makes
-weston segfault.
-
-(cherry picked from commit 91a694e250a050ac77acab94521a80faac822aa1)
-[adapt commit log to Scarthgap]
-[replace waylandsink with fakesink as weston has glitches or segfaults]
-[no av1 decoding in gst 1.22 in Scarthgap]
-[rk3588 has gained h264, mpeg2 and vp8 decoding, added to the commit log]
-[update setup for RK3588]
-[note: only RK3588 was tested for this commit in Scarthgap]
-[note: use fpsdisplaysink gst plugin with gst-launch in verbose mode for
- more information on on-going decoding session:
- $ gst-launch-1.0 -v filesrc location=$FILE ! parsebin ! v4l2slvp8dec ! fpsdisplaysink signal-fps-measurements=true text-overlay=false video-sink=fakesink
- /GstPipeline:pipeline0/GstFPSDisplaySink:fpsdisplaysink0: last-message = rendered: 287, dropped: 0, current: 30.02, average: 30.17
-]
-
-Reviewed-by: Trevor Woerner <twoerner@gmail.com>
-Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
-Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
----
- README                                             | 22 ++++++++++++++++++++++
- conf/machine/include/px30.inc                      |  2 ++
- conf/machine/include/rk3066.inc                    |  2 ++
- conf/machine/include/rk3188.inc                    |  2 ++
- conf/machine/include/rk3288.inc                    |  2 ++
- conf/machine/include/rk3328.inc                    |  2 ++
- conf/machine/include/rk3399.inc                    |  2 ++
- conf/machine/include/rk3566.inc                    |  2 ++
- conf/machine/include/rk3568.inc                    |  2 ++
- conf/machine/include/rk3588s.inc                   |  2 ++
- .../gstreamer/gstreamer1.0-plugins-bad_%.bbappend  |  1 +
- 11 files changed, 41 insertions(+)
-
-diff --git a/README b/README
-index 8ff006e..09f8691 100644
---- a/README
-+++ b/README
-@@ -103,6 +103,28 @@ Notes:
- 	this layer, perform the same steps as above except for the step enabling
- 	RK_RAUC_DEMO.
- 
-+  HW video decoding with gstreamer
-+
-+	Most Rockchip SoCs have some integrated VPU, either Hantro, RKVDEC or
-+	RKVDECv2. Those are called stateless VPUs and they require tools to be
-+	adapted so they can be used. Upstream ffmpeg doesn't support them (yet)
-+	but gstreamer does, via the v4l2sl* plugins. However, by default those
-+	aren't built in OE-Core. This layer enables these plugins by default for
-+	all SoCs that have at least one VPU (at the time of writing, all SoCs
-+	supported by this layer to the exception of RK3308).
-+
-+	If you wish to NOT build those plugins anymore, you can set
-+
-+		ENABLE_STATELESS_VPU_GST = "0"
-+
-+	in any appropriate conf file (or in a
-+	gstreamer1.0-plugins-bad_%.bbappend in your own layer).
-+
-+	Note that this is only relevant for upstream-based Linux kernels as
-+	Rockchip have developed their own ABI for their own kernel that isn't
-+	compatible (see Rockchip Media Process Platform (MPP) and
-+	downstream gstreamer-rockchip plugin for those kernels).
-+
- U-Boot Environment:
- ------------------
- 	In order to configure U-Boot to be able to store its environment into the
-diff --git a/conf/machine/include/px30.inc b/conf/machine/include/px30.inc
-index d78409e..8173cb1 100644
---- a/conf/machine/include/px30.inc
-+++ b/conf/machine/include/px30.inc
-@@ -19,3 +19,5 @@ TFA_BUILD_TARGET = "bl31"
- 
- UBOOT_SUFFIX ?= "itb"
- UBOOT_ENTRYPOINT ?= "0x06000000"
-+
-+ENABLE_STATELESS_VPU_GST ?= "1"
-diff --git a/conf/machine/include/rk3066.inc b/conf/machine/include/rk3066.inc
-index 026d5b5..a898309 100644
---- a/conf/machine/include/rk3066.inc
-+++ b/conf/machine/include/rk3066.inc
-@@ -12,3 +12,5 @@ SERIAL_CONSOLES = "115200;ttyS2"
- KBUILD_DEFCONFIG = "multi_v7_defconfig"
- KERNEL_FEATURES:append:rk3066 = " bsp/rockchip/remove-non-rockchip-arch-arm.scc"
- KERNEL_IMAGETYPE ?= "zImage"
-+
-+ENABLE_STATELESS_VPU_GST ?= "1"
-diff --git a/conf/machine/include/rk3188.inc b/conf/machine/include/rk3188.inc
-index 0120e2f..554d4f1 100644
---- a/conf/machine/include/rk3188.inc
-+++ b/conf/machine/include/rk3188.inc
-@@ -12,3 +12,5 @@ SERIAL_CONSOLES = "115200;ttyFIQ0"
- KBUILD_DEFCONFIG = "multi_v7_defconfig"
- KERNEL_FEATURES:append:rk3188 = " bsp/rockchip/remove-non-rockchip-arch-arm.scc"
- KERNEL_IMAGETYPE ?= "zImage"
-+
-+ENABLE_STATELESS_VPU_GST ?= "1"
-diff --git a/conf/machine/include/rk3288.inc b/conf/machine/include/rk3288.inc
-index 684e864..06fda69 100644
---- a/conf/machine/include/rk3288.inc
-+++ b/conf/machine/include/rk3288.inc
-@@ -14,3 +14,5 @@ KERNEL_FEATURES:append:rk3288 = " bsp/rockchip/remove-non-rockchip-arch-arm.scc"
- KERNEL_IMAGETYPE ?= "zImage"
- 
- UBOOT_SUFFIX ?= "bin"
-+
-+ENABLE_STATELESS_VPU_GST ?= "1"
-diff --git a/conf/machine/include/rk3328.inc b/conf/machine/include/rk3328.inc
-index 4ecd681..e6f810d 100644
---- a/conf/machine/include/rk3328.inc
-+++ b/conf/machine/include/rk3328.inc
-@@ -20,3 +20,5 @@ TFA_BUILD_TARGET = "bl31"
- 
- UBOOT_SUFFIX ?= "itb"
- UBOOT_ENTRYPOINT ?= "0x06000000"
-+
-+ENABLE_STATELESS_VPU_GST ?= "1"
-diff --git a/conf/machine/include/rk3399.inc b/conf/machine/include/rk3399.inc
-index 47f0560..cd1be49 100644
---- a/conf/machine/include/rk3399.inc
-+++ b/conf/machine/include/rk3399.inc
-@@ -20,3 +20,5 @@ TFA_BUILD_TARGET = "bl31"
- 
- UBOOT_SUFFIX ?= "itb"
- UBOOT_ENTRYPOINT ?= "0x06000000"
-+
-+ENABLE_STATELESS_VPU_GST ?= "1"
-diff --git a/conf/machine/include/rk3566.inc b/conf/machine/include/rk3566.inc
-index 586d688..2522851 100644
---- a/conf/machine/include/rk3566.inc
-+++ b/conf/machine/include/rk3566.inc
-@@ -19,3 +19,5 @@ PREFERRED_PROVIDER_optee-os = "rockchip-rkbin"
- 
- UBOOT_SUFFIX ?= "itb"
- UBOOT_ENTRYPOINT ?= "0x06000000"
-+
-+ENABLE_STATELESS_VPU_GST ?= "1"
-diff --git a/conf/machine/include/rk3568.inc b/conf/machine/include/rk3568.inc
-index 1da212a..db188a3 100644
---- a/conf/machine/include/rk3568.inc
-+++ b/conf/machine/include/rk3568.inc
-@@ -19,3 +19,5 @@ PREFERRED_PROVIDER_optee-os = "rockchip-rkbin"
- 
- UBOOT_SUFFIX ?= "itb"
- UBOOT_ENTRYPOINT ?= "0x06000000"
-+
-+ENABLE_STATELESS_VPU_GST ?= "1"
-diff --git a/conf/machine/include/rk3588s.inc b/conf/machine/include/rk3588s.inc
-index cd84461..d349108 100644
---- a/conf/machine/include/rk3588s.inc
-+++ b/conf/machine/include/rk3588s.inc
-@@ -18,3 +18,5 @@ PREFERRED_PROVIDER_optee-os = "rockchip-rkbin"
- 
- UBOOT_SUFFIX ?= "itb"
- UBOOT_ENTRYPOINT ?= "0x06000000"
-+
-+ENABLE_STATELESS_VPU_GST ?= "1"
-diff --git a/recipes-multimedia/gstreamer/gstreamer1.0-plugins-bad_%.bbappend b/recipes-multimedia/gstreamer/gstreamer1.0-plugins-bad_%.bbappend
-new file mode 100644
-index 0000000..2762304
---- /dev/null
-+++ b/recipes-multimedia/gstreamer/gstreamer1.0-plugins-bad_%.bbappend
-@@ -0,0 +1 @@
-+PACKAGECONFIG:append:rockchip = "${@' v4l2codecs' if bb.utils.to_boolean(d.getVar('ENABLE_STATELESS_VPU_GST'), False) else ''}"
-
----
-base-commit: 6adc7a5bfec3ec7dca6418719bb9cb74fb2f8427
-change-id: 20240925-gst-stateless-scarthga-1c69ea0decb7
-
-Best regards,
 -- 
-Quentin Schulz <quentin.schulz@cherry.de>
-
+-Joe MacDonald.
+:wq
 
