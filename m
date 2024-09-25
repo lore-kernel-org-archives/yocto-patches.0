@@ -1,309 +1,289 @@
-Return-Path: <ross.burton@arm.com>
+Return-Path: <foss@0leil.net>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9089BC369C7
-	for <webhook@archiver.kernel.org>; Wed, 25 Sep 2024 10:05:06 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mx.groups.io with SMTP id smtpd.web11.11453.1727257013982709839
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7250C369C9
+	for <webhook@archiver.kernel.org>; Wed, 25 Sep 2024 10:14:46 +0000 (UTC)
+Received: from smtp-bc0f.mail.infomaniak.ch (smtp-bc0f.mail.infomaniak.ch [45.157.188.15])
+ by mx.groups.io with SMTP id smtpd.web10.12341.1727259277247681289
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 25 Sep 2024 02:36:54 -0700
+ Wed, 25 Sep 2024 03:14:37 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: arm.com, ip: 217.140.110.172, mailfrom: ben.cownley@arm.com)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D396712FC;
-	Wed, 25 Sep 2024 02:37:22 -0700 (PDT)
-Received: from e125927.manchester.arm.com (unknown [10.32.102.186])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8FA053F64C;
-	Wed, 25 Sep 2024 02:36:52 -0700 (PDT)
-From: "Ben Cownley" <ben.cownley@arm.com>
-To: yocto-patches@lists.yoctoproject.org
-Cc: Ben Cownley <ben.cownley@arm.com>
-Subject: [meta-zephyr][PATCH 1/2] topics/baicow01/zephyr-ARCH-remove: Remove ARCH from meta-zephyr
-Date: Wed, 25 Sep 2024 10:36:39 +0100
-Message-Id: <20240925093640.17353-1-Ben.Cownley@arm.com>
-X-Mailer: git-send-email 2.34.1
+ dkim=none (message not signed); spf=pass (domain: 0leil.net, ip: 45.157.188.15, mailfrom: foss+yocto@0leil.net)
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XDCJW1N7ZzKlr;
+	Wed, 25 Sep 2024 12:14:35 +0200 (CEST)
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4XDCJV1hmtzGcf;
+	Wed, 25 Sep 2024 12:14:34 +0200 (CEST)
+From: Quentin Schulz <foss+yocto@0leil.net>
+Date: Wed, 25 Sep 2024 12:13:51 +0200
+Subject: [meta-rockchip PATCH scarthgap] enable HW VPU decoding for SoCs
+ that have stateless VPUs
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240925-gst-stateless-scarthga-v1-1-7b78e4575e26@cherry.de>
+X-B4-Tracking: v=1; b=H4sIAF7i82YC/zWMywrCQAwAf6XkbGC7+KD+iniIadwNartsQhFK/
+ 91V8DgMMyuYVBWDc7dClUVN56lBv+uAM01JUMfGEEPchyEeMJmjObk8xQyNqXpOhD0fB6EwCt9
+ O0OJS5a7v3/gCL3HCOvODs5av/WcFrtv2ASRjziuEAAAA
+To: yocto-patches@lists.yoctoproject.org
+Cc: Quentin Schulz <quentin.schulz@cherry.de>, 
+ Trevor Woerner <twoerner@gmail.com>
+X-Mailer: b4 0.14.0
+X-Infomaniak-Routing: alpha
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 25 Sep 2024 10:05:06 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/671
+ <yocto-patches@lists.yoctoproject.org>; Wed, 25 Sep 2024 10:14:46 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/672
 
-meta-zephyr current passes an ARCH variable to the CMake build
-It's widely believed this is no longer necessary as it is
-inferred from the BOARD variable
+From: Quentin Schulz <quentin.schulz@cherry.de>
 
-Signed-off-by: Ben Cownley <ben.cownley@arm.com>
+v4l2codecs is the gstreamer plugin for V4L2 stateless video hardware
+decoding. The Rockchip SoCs that have a VPU all seems to be based on
+Hantro, RKVDEC or RKVDECv2, all stateless encoding/decoding VPUs.
+
+Therefore, let's enable VPU decoding in Gstreamer whenever possible,
+when the SoC supports it.
+
+PX30, RK3066, RK3188, RK3288, RK3328, RK3399, RK356x and RK3588(s) all
+have at least one Hantro VPU.
+
+RK3328, RK3399, RK356x and RK3588(s) all have at least one
+RKVDEC/RKVDECv2 VPU (though not necessarily supported in the upstream
+kernel just yet).
+
+=== PX30
+Tested on PX30 Ringneck with with Haikou+Haikou Video Demo adapter:
+
+$ gst-launch-1.0 filesrc location=$FILE ! parsebin ! v4l2slh264dec ! fakesink
+
+with FILE storing the path to any h264 file, e.g.
+https://download.blender.org/peach/bigbuckbunny_movies/big_buck_bunny_720p_h264.mov
+https://download.blender.org/peach/bigbuckbunny_movies/big_buck_bunny_1080p_h264.mov
+
+Needed packages are:
+- gstreamer1.0-plugins-bad (for fakesink and v4l2slh264dec)
+- gstreamer1.0-plugins-base (for parsebin)
+
+waylandsink isn't used with weston because of rendering glitches, c.f.
+https://gitlab.freedesktop.org/wayland/weston/-/issues/839. While the
+link specifies it is for RK3399, PX30 is also impacted, albeit
+differently since a different kind of glitch can be seen (like seeing
+the image through a negative filter).
+This is fixed in Styhead.
+
+=== RK3399
+Tested on RK3399 Puma with Haikou:
+
+$ gst-launch-1.0 filesrc location=$FILE ! parsebin ! v4l2slh264dec ! fakesink
+
+with FILE storing the path to any h264 file, e.g.
+https://download.blender.org/peach/bigbuckbunny_movies/big_buck_bunny_1080p_h264.mov
+https://download.blender.org/demo/movies/BBB/bbb_sunflower_2160p_30fps_normal.mp4.zip
+
+Needed packages are:
+- gstreamer1.0-plugins-bad (for fakesink and v4l2codecs)
+- gstreamer1.0-plugins-base (for parsebin)
+
+waylandsink isn't used with weston because of rendering glitches, c.f.
+https://gitlab.freedesktop.org/wayland/weston/-/issues/839.
+This is fixed in Styhead.
+
+=== RK3588
+
+Tested on a RK3588 Jaguar with HDMI - on a downstream v6.11-rc6
+(upstream-based, not Rockchip BSP-based) with a bunch of patches - :
+
+$ gst-launch-1.0 filesrc location=$FILE ! parsebin ! v4l2slh264dec ! fakesink
+
+with FILE storing the path to any h264 file, e.g.
+https://download.blender.org/peach/bigbuckbunny_movies/big_buck_bunny_1080p_h264.mov
+
+$ gst-launch-1.0 filesrc location=$FILE ! parsebin ! v4l2slmpeg2dec ! fakesink
+
+with FILE storing the path to any MPEG2 file, e.g.
+https://drive.google.com/file/d/0BwxFVkl63-lETXlOa3hEMmVyZGM/view?resourcekey=0-FG5JbjCsd8QduRhkZ2aT8A
+
+$ gst-launch-1.0 filesrc location=$FILE ! parsebin ! v4l2slvp8dec ! fakesink
+
+with FILE storing the path to any VP8 file, e.g.
+https://test-videos.co.uk/vids/bigbuckbunny/webm/vp8/1080/Big_Buck_Bunny_1080_10s_30MB.webm
+
+Needed packages are:
+- gstreamer1.0-plugins-bad (for fakesink and v4l2codecs)
+- gstreamer1.0-plugins-base (for parsebin)
+
+waylandsink isn't used with weston because starting gst-launch makes
+weston segfault.
+
+(cherry picked from commit 91a694e250a050ac77acab94521a80faac822aa1)
+[adapt commit log to Scarthgap]
+[replace waylandsink with fakesink as weston has glitches or segfaults]
+[no av1 decoding in gst 1.22 in Scarthgap]
+[rk3588 has gained h264, mpeg2 and vp8 decoding, added to the commit log]
+[update setup for RK3588]
+[note: only RK3588 was tested for this commit in Scarthgap]
+[note: use fpsdisplaysink gst plugin with gst-launch in verbose mode for
+ more information on on-going decoding session:
+ $ gst-launch-1.0 -v filesrc location=$FILE ! parsebin ! v4l2slvp8dec ! fpsdisplaysink signal-fps-measurements=true text-overlay=false video-sink=fakesink
+ /GstPipeline:pipeline0/GstFPSDisplaySink:fpsdisplaysink0: last-message = rendered: 287, dropped: 0, current: 30.02, average: 30.17
+]
+
+Reviewed-by: Trevor Woerner <twoerner@gmail.com>
+Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
 ---
- meta-zephyr-bsp/conf/machine/96b-avenger96.conf                  | 1 -
- meta-zephyr-bsp/conf/machine/96b-nitrogen.conf                   | 1 -
- meta-zephyr-bsp/conf/machine/arduino-nano-33-ble.conf            | 1 -
- meta-zephyr-bsp/conf/machine/frdm-kw41z.conf                     | 1 -
- meta-zephyr-bsp/conf/machine/intel-x86-64.conf                   | 1 -
- meta-zephyr-bsp/conf/machine/mps2-an385.conf                     | 1 -
- meta-zephyr-bsp/conf/machine/mps2-an521.conf                     | 1 -
- meta-zephyr-bsp/conf/machine/mps3-an547.conf                     | 1 -
- meta-zephyr-bsp/conf/machine/nrf52840-mdk-usb-dongle.conf        | 1 -
- meta-zephyr-bsp/conf/machine/nrf52840dk-nrf52840.conf            | 1 -
- meta-zephyr-bsp/conf/machine/qemu-cortex-a53.conf                | 1 -
- meta-zephyr-bsp/conf/machine/qemu-cortex-a9.conf                 | 1 -
- meta-zephyr-bsp/conf/machine/qemu-cortex-m0.conf                 | 1 -
- meta-zephyr-bsp/conf/machine/qemu-cortex-m3.conf                 | 1 -
- meta-zephyr-bsp/conf/machine/qemu-cortex-r5.conf                 | 1 -
- meta-zephyr-bsp/conf/machine/qemu-nios2.conf                     | 1 -
- meta-zephyr-bsp/conf/machine/qemu-x86.conf                       | 1 -
- meta-zephyr-bsp/conf/machine/stm32mp157c-dk2.conf                | 1 -
- meta-zephyr-bsp/conf/machine/v2m-beetle.conf                     | 1 -
- meta-zephyr-bsp/conf/machine/v2m-musca-b1.conf                   | 1 -
- meta-zephyr-bsp/conf/machine/v2m-musca-s1.conf                   | 1 -
- .../recipes-kernel/zephyr-kernel/zephyr-kernel-common.inc        | 1 -
- 22 files changed, 22 deletions(-)
+ README                                             | 22 ++++++++++++++++++++++
+ conf/machine/include/px30.inc                      |  2 ++
+ conf/machine/include/rk3066.inc                    |  2 ++
+ conf/machine/include/rk3188.inc                    |  2 ++
+ conf/machine/include/rk3288.inc                    |  2 ++
+ conf/machine/include/rk3328.inc                    |  2 ++
+ conf/machine/include/rk3399.inc                    |  2 ++
+ conf/machine/include/rk3566.inc                    |  2 ++
+ conf/machine/include/rk3568.inc                    |  2 ++
+ conf/machine/include/rk3588s.inc                   |  2 ++
+ .../gstreamer/gstreamer1.0-plugins-bad_%.bbappend  |  1 +
+ 11 files changed, 41 insertions(+)
 
-diff --git a/meta-zephyr-bsp/conf/machine/96b-avenger96.conf b/meta-zephy=
-r-bsp/conf/machine/96b-avenger96.conf
-index ae6f972..5c493b1 100644
---- a/meta-zephyr-bsp/conf/machine/96b-avenger96.conf
-+++ b/meta-zephyr-bsp/conf/machine/96b-avenger96.conf
-@@ -5,4 +5,3 @@
-=20
- require conf/machine/include/stm32mp1-cortex-m4.inc
-=20
--ARCH:96b-avenger96 =3D "arm"
-diff --git a/meta-zephyr-bsp/conf/machine/96b-nitrogen.conf b/meta-zephyr=
--bsp/conf/machine/96b-nitrogen.conf
-index affe9eb..65bdfbf 100644
---- a/meta-zephyr-bsp/conf/machine/96b-nitrogen.conf
-+++ b/meta-zephyr-bsp/conf/machine/96b-nitrogen.conf
-@@ -5,4 +5,3 @@
-=20
- require conf/machine/include/nrf52.inc
- ZEPHYR_INHERIT_CLASSES +=3D "zephyr-flash-pyocd"
--ARCH:96b-nitrogen =3D "arm"
-diff --git a/meta-zephyr-bsp/conf/machine/arduino-nano-33-ble.conf b/meta=
--zephyr-bsp/conf/machine/arduino-nano-33-ble.conf
-index ebf4155..c6ffa67 100644
---- a/meta-zephyr-bsp/conf/machine/arduino-nano-33-ble.conf
-+++ b/meta-zephyr-bsp/conf/machine/arduino-nano-33-ble.conf
-@@ -5,5 +5,4 @@
-=20
- require conf/machine/include/nrf52.inc
- ZEPHYR_INHERIT_CLASSES +=3D "zephyr-flash-bossac"
--ARCH:arduino-nano-33-ble =3D "arm"
-=20
-diff --git a/meta-zephyr-bsp/conf/machine/frdm-kw41z.conf b/meta-zephyr-b=
-sp/conf/machine/frdm-kw41z.conf
-index 464e83a..46b1e0e 100755
---- a/meta-zephyr-bsp/conf/machine/frdm-kw41z.conf
-+++ b/meta-zephyr-bsp/conf/machine/frdm-kw41z.conf
-@@ -6,6 +6,5 @@
-=20
- require conf/machine/include/arm/armv6m/tune-cortexm0plus.inc
-=20
--ARCH:frdm-kw41z =3D "arm"
-=20
- DEFAULTUNE ?=3D "cortexm0plus"
-diff --git a/meta-zephyr-bsp/conf/machine/intel-x86-64.conf b/meta-zephyr=
--bsp/conf/machine/intel-x86-64.conf
-index 5112f28..4bda0cd 100644
---- a/meta-zephyr-bsp/conf/machine/intel-x86-64.conf
-+++ b/meta-zephyr-bsp/conf/machine/intel-x86-64.conf
-@@ -4,7 +4,6 @@
-=20
- require conf/machine/include/tune-corei7-common.inc
-=20
--ARCH:intel-x86-64 =3D "x86"
-=20
- # Supported Boards:
- # ZEPHYR_BOARD ?=3D "acrn"
-diff --git a/meta-zephyr-bsp/conf/machine/mps2-an385.conf b/meta-zephyr-b=
-sp/conf/machine/mps2-an385.conf
-index 159e1bd..bb67972 100644
---- a/meta-zephyr-bsp/conf/machine/mps2-an385.conf
-+++ b/meta-zephyr-bsp/conf/machine/mps2-an385.conf
-@@ -16,4 +16,3 @@ QB_OPT_APPEND =3D "-icount shift=3D7,align=3Doff,sleep=3D=
-off -rtc clock=3Dvm"
-=20
- # Zephyr RTOS settings
- ZEPHYR_INHERIT_CLASSES +=3D "zephyr-qemuboot"
--ARCH:mps2-an385 =3D "arm"
-diff --git a/meta-zephyr-bsp/conf/machine/mps2-an521.conf b/meta-zephyr-b=
-sp/conf/machine/mps2-an521.conf
-index acd02be..fb763ea 100644
---- a/meta-zephyr-bsp/conf/machine/mps2-an521.conf
-+++ b/meta-zephyr-bsp/conf/machine/mps2-an521.conf
-@@ -18,4 +18,3 @@ QB_OPT_APPEND =3D "-icount shift=3D7,align=3Doff,sleep=3D=
-off -rtc clock=3Dvm"
-=20
- # Zephyr RTOS settings
- ZEPHYR_INHERIT_CLASSES +=3D "zephyr-qemuboot"
--ARCH:mps2-an521 =3D "arm"
-diff --git a/meta-zephyr-bsp/conf/machine/mps3-an547.conf b/meta-zephyr-b=
-sp/conf/machine/mps3-an547.conf
-index 185c425..c3ebd2c 100644
---- a/meta-zephyr-bsp/conf/machine/mps3-an547.conf
-+++ b/meta-zephyr-bsp/conf/machine/mps3-an547.conf
-@@ -17,4 +17,3 @@ QB_OPT_APPEND =3D "-icount shift=3D7,align=3Doff,sleep=3D=
-off -rtc clock=3Dvm"
-=20
- # Zephyr RTOS settings
- ZEPHYR_INHERIT_CLASSES +=3D "zephyr-qemuboot"
--ARCH:mps3-an547 =3D "arm"
-diff --git a/meta-zephyr-bsp/conf/machine/nrf52840-mdk-usb-dongle.conf b/=
-meta-zephyr-bsp/conf/machine/nrf52840-mdk-usb-dongle.conf
-index 67e407a..448f1ed 100644
---- a/meta-zephyr-bsp/conf/machine/nrf52840-mdk-usb-dongle.conf
-+++ b/meta-zephyr-bsp/conf/machine/nrf52840-mdk-usb-dongle.conf
-@@ -4,4 +4,3 @@
- #@DESCRIPTION: Machine configuration for makerdiary's nrf52840-mdk-usb-d=
-ongle
-=20
- require conf/machine/include/nrf52.inc
--ARCH:nrf52840-mdk-usb-dongle =3D "arm"
-diff --git a/meta-zephyr-bsp/conf/machine/nrf52840dk-nrf52840.conf b/meta=
--zephyr-bsp/conf/machine/nrf52840dk-nrf52840.conf
-index 258aa7a..bd99878 100644
---- a/meta-zephyr-bsp/conf/machine/nrf52840dk-nrf52840.conf
-+++ b/meta-zephyr-bsp/conf/machine/nrf52840dk-nrf52840.conf
-@@ -5,4 +5,3 @@
-=20
- require conf/machine/include/nrf52.inc
- ZEPHYR_INHERIT_CLASSES +=3D "zephyr-flash-pyocd"
--ARCH:nrf52840dk-nrf52840 =3D "arm"
-diff --git a/meta-zephyr-bsp/conf/machine/qemu-cortex-a53.conf b/meta-zep=
-hyr-bsp/conf/machine/qemu-cortex-a53.conf
-index e21f3da..4a511f9 100644
---- a/meta-zephyr-bsp/conf/machine/qemu-cortex-a53.conf
-+++ b/meta-zephyr-bsp/conf/machine/qemu-cortex-a53.conf
-@@ -17,4 +17,3 @@ QB_OPT_APPEND =3D "-icount shift=3D4,align=3Doff,sleep=3D=
-on -rtc clock=3Dvm"
- # Zephyr RTOS settings
- ZEPHYR_BOARD =3D "qemu_cortex_a53"
- ZEPHYR_INHERIT_CLASSES +=3D "zephyr-qemuboot"
--ARCH:qemu-cortex-a53 =3D "aarch64"
-diff --git a/meta-zephyr-bsp/conf/machine/qemu-cortex-a9.conf b/meta-zeph=
-yr-bsp/conf/machine/qemu-cortex-a9.conf
-index 9dfee42..4ce6e56 100644
---- a/meta-zephyr-bsp/conf/machine/qemu-cortex-a9.conf
-+++ b/meta-zephyr-bsp/conf/machine/qemu-cortex-a9.conf
-@@ -17,4 +17,3 @@ QB_OPT_APPEND =3D "-icount shift=3D3,align=3Doff,sleep=3D=
-off -rtc clock=3Dvm"
-=20
- # Zephyr RTOS settings
- ZEPHYR_INHERIT_CLASSES +=3D "zephyr-qemuboot"
--ARCH:qemu-cortex-a9 =3D "arm"
-diff --git a/meta-zephyr-bsp/conf/machine/qemu-cortex-m0.conf b/meta-zeph=
-yr-bsp/conf/machine/qemu-cortex-m0.conf
-index 736579e..9a01efd 100644
---- a/meta-zephyr-bsp/conf/machine/qemu-cortex-m0.conf
-+++ b/meta-zephyr-bsp/conf/machine/qemu-cortex-m0.conf
-@@ -21,4 +21,3 @@ QB_OPT_APPEND =3D "-icount shift=3D6,align=3Doff,sleep=3D=
-off -rtc clock=3Dvm"
- # Zephyr RTOS settings
- ZEPHYR_BOARD =3D "qemu_cortex_m0"
- ZEPHYR_INHERIT_CLASSES +=3D "zephyr-qemuboot"
--ARCH:qemu-cortex-m0 =3D "arm"
-diff --git a/meta-zephyr-bsp/conf/machine/qemu-cortex-m3.conf b/meta-zeph=
-yr-bsp/conf/machine/qemu-cortex-m3.conf
-index 904a79b..2314dc5 100644
---- a/meta-zephyr-bsp/conf/machine/qemu-cortex-m3.conf
-+++ b/meta-zephyr-bsp/conf/machine/qemu-cortex-m3.conf
-@@ -15,4 +15,3 @@ QB_CPU =3D "-cpu cortex-m3"
- QB_RNG =3D ""
- QB_OPT_APPEND =3D "-icount shift=3D6,align=3Doff,sleep=3Doff -rtc clock=3D=
-vm"
-=20
--ARCH:qemu-cortex-m3 =3D "arm"
-diff --git a/meta-zephyr-bsp/conf/machine/qemu-cortex-r5.conf b/meta-zeph=
-yr-bsp/conf/machine/qemu-cortex-r5.conf
-index 5a0ea69..e85a42c 100644
---- a/meta-zephyr-bsp/conf/machine/qemu-cortex-r5.conf
-+++ b/meta-zephyr-bsp/conf/machine/qemu-cortex-r5.conf
-@@ -19,4 +19,3 @@ QB_RNG =3D ""
- # Zephyr RTOS settings
- ZEPHYR_BOARD =3D "qemu_cortex_r5"
- ZEPHYR_INHERIT_CLASSES +=3D "zephyr-qemuboot"
--ARCH:qemu-cortex-r5 =3D "arm"
-diff --git a/meta-zephyr-bsp/conf/machine/qemu-nios2.conf b/meta-zephyr-b=
-sp/conf/machine/qemu-nios2.conf
-index c41f505..e9420b5 100644
---- a/meta-zephyr-bsp/conf/machine/qemu-nios2.conf
-+++ b/meta-zephyr-bsp/conf/machine/qemu-nios2.conf
-@@ -13,6 +13,5 @@ QB_MACHINE =3D "-machine altera_10m50_zephyr"
- QB_OPT_APPEND =3D "-nographic"
- QB_CPU =3D "-cpu nios2"
-=20
--ARCH:qemu-nios2 =3D "nios2"
-=20
- TCLIBC =3D "glibc"
-diff --git a/meta-zephyr-bsp/conf/machine/qemu-x86.conf b/meta-zephyr-bsp=
-/conf/machine/qemu-x86.conf
-index d21de35..3535a4c 100644
---- a/meta-zephyr-bsp/conf/machine/qemu-x86.conf
-+++ b/meta-zephyr-bsp/conf/machine/qemu-x86.conf
-@@ -14,4 +14,3 @@ QB_GRAPHICS =3D "-nographic -no-acpi"
- QB_CPU:x86 =3D "-cpu qemu32,+nx,+pae"
- QB_CPU_KVM:x86 =3D "-cpu kvm32"
-=20
--ARCH:qemu-x86 =3D "x86"
-diff --git a/meta-zephyr-bsp/conf/machine/stm32mp157c-dk2.conf b/meta-zep=
-hyr-bsp/conf/machine/stm32mp157c-dk2.conf
-index 52c1819..c81b30e 100644
---- a/meta-zephyr-bsp/conf/machine/stm32mp157c-dk2.conf
-+++ b/meta-zephyr-bsp/conf/machine/stm32mp157c-dk2.conf
-@@ -5,4 +5,3 @@
-=20
- require conf/machine/include/stm32mp1-cortex-m4.inc
-=20
--ARCH:stm32mp157c-dk2 =3D "arm"
-diff --git a/meta-zephyr-bsp/conf/machine/v2m-beetle.conf b/meta-zephyr-b=
-sp/conf/machine/v2m-beetle.conf
-index 37895c6..4065496 100644
---- a/meta-zephyr-bsp/conf/machine/v2m-beetle.conf
-+++ b/meta-zephyr-bsp/conf/machine/v2m-beetle.conf
-@@ -9,4 +9,3 @@ require conf/machine/include/arm/armv7m/tune-cortexm3.inc
- # GLIBC will not work with Cortex-M.
- TCLIBC =3D "newlib"
-=20
--ARCH:beetle =3D "arm"
-diff --git a/meta-zephyr-bsp/conf/machine/v2m-musca-b1.conf b/meta-zephyr=
--bsp/conf/machine/v2m-musca-b1.conf
-index 171e899..af5ae5e 100644
---- a/meta-zephyr-bsp/conf/machine/v2m-musca-b1.conf
-+++ b/meta-zephyr-bsp/conf/machine/v2m-musca-b1.conf
-@@ -22,4 +22,3 @@ QB_MEM =3D "512k"
- # Zephyr RTOS settings
- ZEPHYR_BOARD =3D "v2m_musca_b1"
- ZEPHYR_INHERIT_CLASSES +=3D "zephyr-qemuboot"
--ARCH:musca-b1 =3D "arm"
-diff --git a/meta-zephyr-bsp/conf/machine/v2m-musca-s1.conf b/meta-zephyr=
--bsp/conf/machine/v2m-musca-s1.conf
-index c43d560..be7a42b 100644
---- a/meta-zephyr-bsp/conf/machine/v2m-musca-s1.conf
-+++ b/meta-zephyr-bsp/conf/machine/v2m-musca-s1.conf
-@@ -20,4 +20,3 @@ QB_MEM =3D "512k"
-=20
- # Zephyr RTOS settings
- ZEPHYR_INHERIT_CLASSES +=3D "zephyr-qemuboot"
--ARCH:musca-s1 =3D "arm"
-diff --git a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-kernel-=
-common.inc b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-kernel-=
-common.inc
-index 8a1638d..6544475 100644
---- a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-kernel-common.=
-inc
-+++ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-kernel-common.=
-inc
-@@ -19,7 +19,6 @@ ZEPHYR_MAKE_OUTPUT ?=3D "\
- EXTRA_OECMAKE =3D "\
-     -DZEPHYR_BASE=3D${ZEPHYR_BASE} \
-     -DBOARD=3D${BOARD} \
--    -DARCH=3D${ARCH} \
-     -DZEPHYR_TOOLCHAIN_VARIANT=3D${ZEPHYR_TOOLCHAIN_VARIANT} \
-     -DZEPHYR_MODULES=3D${ZEPHYR_MODULES} \
-     "
---=20
-2.34.1
+diff --git a/README b/README
+index 8ff006e..09f8691 100644
+--- a/README
++++ b/README
+@@ -103,6 +103,28 @@ Notes:
+ 	this layer, perform the same steps as above except for the step enabling
+ 	RK_RAUC_DEMO.
+ 
++  HW video decoding with gstreamer
++
++	Most Rockchip SoCs have some integrated VPU, either Hantro, RKVDEC or
++	RKVDECv2. Those are called stateless VPUs and they require tools to be
++	adapted so they can be used. Upstream ffmpeg doesn't support them (yet)
++	but gstreamer does, via the v4l2sl* plugins. However, by default those
++	aren't built in OE-Core. This layer enables these plugins by default for
++	all SoCs that have at least one VPU (at the time of writing, all SoCs
++	supported by this layer to the exception of RK3308).
++
++	If you wish to NOT build those plugins anymore, you can set
++
++		ENABLE_STATELESS_VPU_GST = "0"
++
++	in any appropriate conf file (or in a
++	gstreamer1.0-plugins-bad_%.bbappend in your own layer).
++
++	Note that this is only relevant for upstream-based Linux kernels as
++	Rockchip have developed their own ABI for their own kernel that isn't
++	compatible (see Rockchip Media Process Platform (MPP) and
++	downstream gstreamer-rockchip plugin for those kernels).
++
+ U-Boot Environment:
+ ------------------
+ 	In order to configure U-Boot to be able to store its environment into the
+diff --git a/conf/machine/include/px30.inc b/conf/machine/include/px30.inc
+index d78409e..8173cb1 100644
+--- a/conf/machine/include/px30.inc
++++ b/conf/machine/include/px30.inc
+@@ -19,3 +19,5 @@ TFA_BUILD_TARGET = "bl31"
+ 
+ UBOOT_SUFFIX ?= "itb"
+ UBOOT_ENTRYPOINT ?= "0x06000000"
++
++ENABLE_STATELESS_VPU_GST ?= "1"
+diff --git a/conf/machine/include/rk3066.inc b/conf/machine/include/rk3066.inc
+index 026d5b5..a898309 100644
+--- a/conf/machine/include/rk3066.inc
++++ b/conf/machine/include/rk3066.inc
+@@ -12,3 +12,5 @@ SERIAL_CONSOLES = "115200;ttyS2"
+ KBUILD_DEFCONFIG = "multi_v7_defconfig"
+ KERNEL_FEATURES:append:rk3066 = " bsp/rockchip/remove-non-rockchip-arch-arm.scc"
+ KERNEL_IMAGETYPE ?= "zImage"
++
++ENABLE_STATELESS_VPU_GST ?= "1"
+diff --git a/conf/machine/include/rk3188.inc b/conf/machine/include/rk3188.inc
+index 0120e2f..554d4f1 100644
+--- a/conf/machine/include/rk3188.inc
++++ b/conf/machine/include/rk3188.inc
+@@ -12,3 +12,5 @@ SERIAL_CONSOLES = "115200;ttyFIQ0"
+ KBUILD_DEFCONFIG = "multi_v7_defconfig"
+ KERNEL_FEATURES:append:rk3188 = " bsp/rockchip/remove-non-rockchip-arch-arm.scc"
+ KERNEL_IMAGETYPE ?= "zImage"
++
++ENABLE_STATELESS_VPU_GST ?= "1"
+diff --git a/conf/machine/include/rk3288.inc b/conf/machine/include/rk3288.inc
+index 684e864..06fda69 100644
+--- a/conf/machine/include/rk3288.inc
++++ b/conf/machine/include/rk3288.inc
+@@ -14,3 +14,5 @@ KERNEL_FEATURES:append:rk3288 = " bsp/rockchip/remove-non-rockchip-arch-arm.scc"
+ KERNEL_IMAGETYPE ?= "zImage"
+ 
+ UBOOT_SUFFIX ?= "bin"
++
++ENABLE_STATELESS_VPU_GST ?= "1"
+diff --git a/conf/machine/include/rk3328.inc b/conf/machine/include/rk3328.inc
+index 4ecd681..e6f810d 100644
+--- a/conf/machine/include/rk3328.inc
++++ b/conf/machine/include/rk3328.inc
+@@ -20,3 +20,5 @@ TFA_BUILD_TARGET = "bl31"
+ 
+ UBOOT_SUFFIX ?= "itb"
+ UBOOT_ENTRYPOINT ?= "0x06000000"
++
++ENABLE_STATELESS_VPU_GST ?= "1"
+diff --git a/conf/machine/include/rk3399.inc b/conf/machine/include/rk3399.inc
+index 47f0560..cd1be49 100644
+--- a/conf/machine/include/rk3399.inc
++++ b/conf/machine/include/rk3399.inc
+@@ -20,3 +20,5 @@ TFA_BUILD_TARGET = "bl31"
+ 
+ UBOOT_SUFFIX ?= "itb"
+ UBOOT_ENTRYPOINT ?= "0x06000000"
++
++ENABLE_STATELESS_VPU_GST ?= "1"
+diff --git a/conf/machine/include/rk3566.inc b/conf/machine/include/rk3566.inc
+index 586d688..2522851 100644
+--- a/conf/machine/include/rk3566.inc
++++ b/conf/machine/include/rk3566.inc
+@@ -19,3 +19,5 @@ PREFERRED_PROVIDER_optee-os = "rockchip-rkbin"
+ 
+ UBOOT_SUFFIX ?= "itb"
+ UBOOT_ENTRYPOINT ?= "0x06000000"
++
++ENABLE_STATELESS_VPU_GST ?= "1"
+diff --git a/conf/machine/include/rk3568.inc b/conf/machine/include/rk3568.inc
+index 1da212a..db188a3 100644
+--- a/conf/machine/include/rk3568.inc
++++ b/conf/machine/include/rk3568.inc
+@@ -19,3 +19,5 @@ PREFERRED_PROVIDER_optee-os = "rockchip-rkbin"
+ 
+ UBOOT_SUFFIX ?= "itb"
+ UBOOT_ENTRYPOINT ?= "0x06000000"
++
++ENABLE_STATELESS_VPU_GST ?= "1"
+diff --git a/conf/machine/include/rk3588s.inc b/conf/machine/include/rk3588s.inc
+index cd84461..d349108 100644
+--- a/conf/machine/include/rk3588s.inc
++++ b/conf/machine/include/rk3588s.inc
+@@ -18,3 +18,5 @@ PREFERRED_PROVIDER_optee-os = "rockchip-rkbin"
+ 
+ UBOOT_SUFFIX ?= "itb"
+ UBOOT_ENTRYPOINT ?= "0x06000000"
++
++ENABLE_STATELESS_VPU_GST ?= "1"
+diff --git a/recipes-multimedia/gstreamer/gstreamer1.0-plugins-bad_%.bbappend b/recipes-multimedia/gstreamer/gstreamer1.0-plugins-bad_%.bbappend
+new file mode 100644
+index 0000000..2762304
+--- /dev/null
++++ b/recipes-multimedia/gstreamer/gstreamer1.0-plugins-bad_%.bbappend
+@@ -0,0 +1 @@
++PACKAGECONFIG:append:rockchip = "${@' v4l2codecs' if bb.utils.to_boolean(d.getVar('ENABLE_STATELESS_VPU_GST'), False) else ''}"
+
+---
+base-commit: 6adc7a5bfec3ec7dca6418719bb9cb74fb2f8427
+change-id: 20240925-gst-stateless-scarthga-1c69ea0decb7
+
+Best regards,
+-- 
+Quentin Schulz <quentin.schulz@cherry.de>
 
 
