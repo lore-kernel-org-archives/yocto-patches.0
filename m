@@ -2,29 +2,28 @@ Return-Path: <foss@0leil.net>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AED06CDD1A1
-	for <webhook@archiver.kernel.org>; Fri, 27 Sep 2024 12:37:14 +0000 (UTC)
-Received: from smtp-bc0c.mail.infomaniak.ch (smtp-bc0c.mail.infomaniak.ch [45.157.188.12])
- by mx.groups.io with SMTP id smtpd.web10.67859.1727440624851777569
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78C47CDD1A4
+	for <webhook@archiver.kernel.org>; Fri, 27 Sep 2024 12:59:24 +0000 (UTC)
+Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
+ by mx.groups.io with SMTP id smtpd.web11.68402.1727441960255820797
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 27 Sep 2024 05:37:05 -0700
+ Fri, 27 Sep 2024 05:59:20 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: 0leil.net, ip: 45.157.188.12, mailfrom: foss+yocto@0leil.net)
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XFVMz1QKfzg4j;
-	Fri, 27 Sep 2024 14:37:03 +0200 (CEST)
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4XFVMy6RGLzlMC;
-	Fri, 27 Sep 2024 14:37:02 +0200 (CEST)
+ dkim=none (message not signed); spf=pass (domain: 0leil.net, ip: 185.125.25.10, mailfrom: foss+yocto@0leil.net)
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XFVsf5HL5ztbJ;
+	Fri, 27 Sep 2024 14:59:18 +0200 (CEST)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4XFVsf2r2Qz4K7;
+	Fri, 27 Sep 2024 14:59:18 +0200 (CEST)
 From: Quentin Schulz <foss+yocto@0leil.net>
-Date: Fri, 27 Sep 2024 14:36:51 +0200
-Subject: [meta-rockchip PATCH 1/3] bsp: rkbin: add .inc for factoring out
- reusable pieces
+Date: Fri, 27 Sep 2024 14:59:04 +0200
+Subject: [meta-rockchip PATCH 2/2] rk3588(s): add support for upstream TF-A
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240927-rkbin-split-recipes-v1-1-0f4a9b0cbf56@cherry.de>
-References: <20240927-rkbin-split-recipes-v1-0-0f4a9b0cbf56@cherry.de>
-In-Reply-To: <20240927-rkbin-split-recipes-v1-0-0f4a9b0cbf56@cherry.de>
+Message-Id: <20240927-rk35-upstream-tf-a-v1-2-e3911342113f@cherry.de>
+References: <20240927-rk35-upstream-tf-a-v1-0-e3911342113f@cherry.de>
+In-Reply-To: <20240927-rk35-upstream-tf-a-v1-0-e3911342113f@cherry.de>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Quentin Schulz <quentin.schulz@cherry.de>
 X-Mailer: b4 0.14.0
@@ -32,111 +31,58 @@ X-Infomaniak-Routing: alpha
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 27 Sep 2024 12:37:14 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/679
+ <yocto-patches@lists.yoctoproject.org>; Fri, 27 Sep 2024 12:59:24 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/684
 
 From: Quentin Schulz <quentin.schulz@cherry.de>
 
-In future commits, the rkbin recipe will be split into multiple ones:
-- one for TPL DRAM init
-- one for TF-A blob (BL31)
-- one for OP-TEE OS blob (BL32)
+Upstream TF-A > 2.11 (no release available yet) has initial support for
+the RK3588 (and thus RK3588S).
 
-Since in most cases those three blobs will be coming from the exact same
-commit hash and repo, let's have a .inc so some duplication can be
-avoided.
+This was boot tested on an RK3588 Jaguar, the modified baudrate is taken
+into account as well.
 
 Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
 ---
- recipes-bsp/rkbin/rockchip-rkbin.inc    | 30 ++++++++++++++++++++++++++++++
- recipes-bsp/rkbin/rockchip-rkbin_git.bb | 31 +------------------------------
- 2 files changed, 31 insertions(+), 30 deletions(-)
+ conf/machine/include/rk3588s.inc                             | 3 +++
+ recipes-bsp/trusted-firmware-a/trusted-firmware-a_%.bbappend | 5 +++++
+ 2 files changed, 8 insertions(+)
 
-diff --git a/recipes-bsp/rkbin/rockchip-rkbin.inc b/recipes-bsp/rkbin/rockchip-rkbin.inc
-new file mode 100644
-index 0000000..abd2e30
---- /dev/null
-+++ b/recipes-bsp/rkbin/rockchip-rkbin.inc
-@@ -0,0 +1,30 @@
-+SRC_URI = "git://github.com/rockchip-linux/rkbin;protocol=https;branch=master"
-+SRCREV = "a2a0b89b6c8c612dca5ed9ed8a68db8a07f68bc0"
-+LICENSE = "Proprietary"
-+LIC_FILES_CHKSUM = "file://LICENSE;md5=15faa4a01e7eb0f5d33f9f2bcc7bff62"
-+
-+inherit bin_package deploy
-+
-+S = "${WORKDIR}/git"
-+
-+COMPATIBLE_MACHINE = "^$"
-+COMPATIBLE_MACHINE:rk3308 = "rk3308"
-+COMPATIBLE_MACHINE:rk3566 = "rk3566"
-+COMPATIBLE_MACHINE:rk3568 = "rk3568"
-+COMPATIBLE_MACHINE:rk3588s = "rk3588s"
-+
-+PACKAGE_ARCH = "${MACHINE_ARCH}"
-+
-+do_install() {
-+	# Nothing in this recipe is useful in a filesystem
-+	:
-+}
-+
-+PACKAGES = "${PN}"
-+ALLOW_EMPTY:${PN} = "1"
-+
-+do_deploy() {
-+	bbfatal "COMPATIBLE_MACHINE requires a corresponding do_deploy:<MACHINE>() override"
-+}
-+
-+addtask deploy after do_install
-diff --git a/recipes-bsp/rkbin/rockchip-rkbin_git.bb b/recipes-bsp/rkbin/rockchip-rkbin_git.bb
-index 1b71414..a841c2e 100644
---- a/recipes-bsp/rkbin/rockchip-rkbin_git.bb
-+++ b/recipes-bsp/rkbin/rockchip-rkbin_git.bb
-@@ -1,33 +1,10 @@
- DESCRIPTION = "Rockchip Firmware and Tool Binaries"
--LICENSE = "Proprietary"
--LIC_FILES_CHKSUM = "file://LICENSE;md5=15faa4a01e7eb0f5d33f9f2bcc7bff62"
+diff --git a/conf/machine/include/rk3588s.inc b/conf/machine/include/rk3588s.inc
+index d349108..07cde03 100644
+--- a/conf/machine/include/rk3588s.inc
++++ b/conf/machine/include/rk3588s.inc
+@@ -19,4 +19,7 @@ PREFERRED_PROVIDER_optee-os = "rockchip-rkbin"
+ UBOOT_SUFFIX ?= "itb"
+ UBOOT_ENTRYPOINT ?= "0x06000000"
  
--SRC_URI = "git://github.com/rockchip-linux/rkbin;protocol=https;branch=master"
--SRCREV = "a2a0b89b6c8c612dca5ed9ed8a68db8a07f68bc0"
-+require rockchip-rkbin.inc
++TFA_PLATFORM = "rk3588"
++TFA_BUILD_TARGET = "bl31"
++
+ ENABLE_STATELESS_VPU_GST ?= "1"
+diff --git a/recipes-bsp/trusted-firmware-a/trusted-firmware-a_%.bbappend b/recipes-bsp/trusted-firmware-a/trusted-firmware-a_%.bbappend
+index 7e155d7..ecd6cb3 100644
+--- a/recipes-bsp/trusted-firmware-a/trusted-firmware-a_%.bbappend
++++ b/recipes-bsp/trusted-firmware-a/trusted-firmware-a_%.bbappend
+@@ -7,6 +7,7 @@ COMPATIBLE_MACHINE:append:rk3328 = "|rk3328"
+ COMPATIBLE_MACHINE:append:px30 = "|px30"
+ COMPATIBLE_MACHINE:append:rk3566 = "|rk3566"
+ COMPATIBLE_MACHINE:append:rk3568 = "|rk3568"
++COMPATIBLE_MACHINE:append:rk3588s = "|rk3588s"
  
- PROVIDES += "trusted-firmware-a"
- PROVIDES += "optee-os"
- 
--inherit bin_package deploy
--
--S = "${WORKDIR}/git"
--
--COMPATIBLE_MACHINE = "^$"
--COMPATIBLE_MACHINE:rk3308 = "rk3308"
--COMPATIBLE_MACHINE:rk3566 = "rk3566"
--COMPATIBLE_MACHINE:rk3568 = "rk3568"
--COMPATIBLE_MACHINE:rk3588s = "rk3588s"
--
--PACKAGE_ARCH = "${MACHINE_ARCH}"
--
--do_install() {
--	# Nothing in this recipe is useful in a filesystem
--	:
--}
--
--PACKAGES = "${PN}"
--ALLOW_EMPTY:${PN} = "1"
--
- do_deploy:rk3308() {
- 	# Prebuilt TF-A
- 	install -m 644 ${S}/bin/rk33/rk3308_bl31_v*.elf ${DEPLOYDIR}/bl31-rk3308.elf
-@@ -65,9 +42,3 @@ do_deploy:rk3588s() {
- 	# Prebuilt U-Boot TPL (DDR init)
- 	install -m 644 ${S}/bin/rk35/rk3588_ddr_lp4_2112MHz_lp5_2400MHz_v1.16.bin ${DEPLOYDIR}/ddr-rk3588.bin
+ FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
+ SRC_URI += "\
+@@ -42,6 +43,10 @@ fixup_baudrate:rk3568() {
+ 	sed -i "s/#define FPGA_BAUDRATE\s\+.*/#define FPGA_BAUDRATE ${RK_CONSOLE_BAUD}/" ${S}/plat/rockchip/rk3568/rk3568_def.h
  }
--
--do_deploy() {
--	bbfatal "COMPATIBLE_MACHINE requires a corresponding do_deploy:<MACHINE>() override"
--}
--
--addtask deploy after do_install
+ 
++fixup_baudrate:rk3588s() {
++	sed -i "s/#define RK_DBG_UART_BAUDRATE\s\+.*/#define RK_DBG_UART_BAUDRATE ${RK_CONSOLE_BAUD}/" ${S}/plat/rockchip/rk3588/rk3588_def.h
++}
++
+ # Only required for U-Boot configuration for which SPL_ATF_NO_PLATFORM_PARAM
+ # symbol is enabled. This symbol is required for TF-A < 2.4-rc0, which is
+ # unfortunately what Rockchip is using for their blob.
 
 -- 
 2.46.1
