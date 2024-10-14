@@ -2,40 +2,40 @@ Return-Path: <ranjitsinh.rathod@kpit.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CBA6D1625E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F3F7D1625F
 	for <webhook@archiver.kernel.org>; Mon, 14 Oct 2024 12:44:06 +0000 (UTC)
-Received: from PNYPR01CU001.outbound.protection.outlook.com (PNYPR01CU001.outbound.protection.outlook.com [52.101.225.116])
- by mx.groups.io with SMTP id smtpd.web10.54099.1728909839833402677
+Received: from PNYPR01CU001.outbound.protection.outlook.com (PNYPR01CU001.outbound.protection.outlook.com [52.101.225.114])
+ by mx.groups.io with SMTP id smtpd.web10.54102.1728909845043964609
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 14 Oct 2024 05:44:00 -0700
+ Mon, 14 Oct 2024 05:44:05 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kpit.com header.s=selector1 header.b=StkwJUOr;
- spf=pass (domain: kpit.com, ip: 52.101.225.116, mailfrom: ranjitsinh.rathod@kpit.com)
+ dkim=pass header.i=@kpit.com header.s=selector1 header.b=Rr5smC1b;
+ spf=pass (domain: kpit.com, ip: 52.101.225.114, mailfrom: ranjitsinh.rathod@kpit.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vjD4AyUlABwErxquH1yIb5e5xQ1VXOT8ChTqqnaOGwDYAHAouaQYor6/+6qA2wuV31BggfjRabOX93l4uXwP8ig39LeCMYZmX2IpdT5MtxXmQczsxTJkqUMs8CUm8EiqZoLfdNrvT+h0S21M+TcgWL1kGo8fiFghSUH8hy44JzflXBKKdMR8wzeSeogEDs3z6THnycj/QrnudRIgdvMgyIhVHs1b34QgXXcjgUGoEQ0UHPi+P8fFBqemx0YjMwvYK9hw7zkeV5gyqYxN/SJBlkWBYvOH5tCi7meoW5J6YKItn6hxRZRaGUp4EDMZvKNDGZvq/jb25R+FQZ6ZUp/7Ow==
+ b=JepgapV5c2oYGazbMs1Z3+5uH6Pc0rlkhcp6jw7saix0G1cv/GaLJUCLplafA2qQATAwKw1i2y+JJ2SVZdgq42ivWnIfmt+476/ZiEHRDTQCp/f6z0p0RT7Rqw/IlpVddOqSZWP+6mQGk3g1dxRGAk5UmF5pT3yvCP12fL3SHBoHeDzzEPeXuYsuxIhwoPpVD0C6bacbNWvrEw04MxnoERGFO4nJA7e03nI7zeMjRDXwN8doAkmKtOhFLuRlchECqKwt3VR+KSVJYHG1P8RUc8aOp+tMawihi74KW0LtUbauGZE9KDS7NIU/z+EWeOYqU6RYOKT5kJGuZareVkClTQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vMW7hKYXverMf1PTd+mKv/lD9MEGw8rh1LS5QD8qxfY=;
- b=XOnd249Sm9V+01rAYvwyZuo1y5Aw7YIuEJrE4mGOO5Y5C4X7xwE9muEoLXiCkA9S8n68RE4ag2Uu8yWPstYFaKa3YYaXn4mIimVqUT2ocnAVvfKOKAIarGUiYlatrfwKzh9WLk3dz6q2DgHOMxs+ZRKRTL3jXFRTiOjmkG2SpCGoxEPtFa5KuAHviGClnupVaCogDtJodkjXJmi9DPE42fcTmizhj8zy7LRhpqU5cnx1ilCQO/Tj1cmMZxS3h318Fk2Mr40VMumegBjq5bF5NtHui9dhnVhFRZDdo7zi4dj1AC4tqHW46sNb87HeTwKCdy4WOulsbKGP1y0slJaMag==
+ bh=zAOHLiO0Q583IRmqVjQznzV7hbdO5+iHX/xDzCAntYo=;
+ b=eoTKK4OctDwRxqm7rYxNkIgY6nRkxaNBHHDbDLN6hGyLkXcWW+bXBDEZ4V1c9GXy+98NlShSvirNOMzsPu1qZZtz2mdAMMAA2KK6kotPvVYvbqW0RaMIgqhsZdGBgtL4I0RtRv7zwREKRqOxDRo7HW5b/7EQWkmNJhxIT9JMkjDdyRRTqXfrTk8SsGN4nWgH/1CRYhMW0ZtfNcDZ4heBrOF0+/xpvCoquQ0euXu3/fYVvzblFQDzkr8pWMlCKA3ZwDSwecayPZTx6Q+4YpXp08F9Lp+SH0qFmq1QGQCMv/wrW6W7QjiifAlrCPRBcGOrzBdYjqVFY6FDsWSE8k9MUA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  103.243.227.16) smtp.rcpttodomain=lists.yoctoproject.org
  smtp.mailfrom=kpit.com; dmarc=fail (p=reject sp=none pct=100) action=oreject
  header.from=kpit.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kpit.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vMW7hKYXverMf1PTd+mKv/lD9MEGw8rh1LS5QD8qxfY=;
- b=StkwJUOrnH1MSpdET81h/dPclQ8xc+t/i+1RK6Fwr0Sv1nsy9/Dz+OoQAHmNVXgs3FRi30uzHqNGG7OJqcq36sGo1AHdgui5GEP9tpYQdIh29E+fnrukf6PABIVb2fHG18Grikc5pue4vsPXWgzpCX9VgTEpNesmWUfGsdkP+GY=
-Received: from SI1PR02CA0060.apcprd02.prod.outlook.com (2603:1096:4:1f5::17)
- by PN0PR01MB9301.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:10b::12) with
- Microsoft SMTP Server (version=TLS1_2,
+ bh=zAOHLiO0Q583IRmqVjQznzV7hbdO5+iHX/xDzCAntYo=;
+ b=Rr5smC1b7tddqpiKjRII29E9GSQlrivNoTJQp8ZNLAKOVZD7L662j5i5TLZhXBgQx2t321o5ghKoM9RkxkOC/8TAaeS1mbqLVRIqxdSTvu3NAek4kd3XbQWYpjpQ2lKEbJUSIQ4BY2ximhUKxH/Kvf3J3JbXEKc0tXyQpSWCVXI=
+Received: from PU1PR01CA0003.apcprd01.prod.exchangelabs.com
+ (2603:1096:803:15::15) by MA0PR01MB8771.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:ca::10) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.26; Mon, 14 Oct
- 2024 12:43:50 +0000
-Received: from HK2PEPF00006FB2.apcprd02.prod.outlook.com
- (2603:1096:4:1f5:cafe::38) by SI1PR02CA0060.outlook.office365.com
- (2603:1096:4:1f5::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.34 via Frontend
- Transport; Mon, 14 Oct 2024 12:43:50 +0000
+ 2024 12:43:59 +0000
+Received: from HK2PEPF00006FB0.apcprd02.prod.outlook.com
+ (2603:1096:803:15:cafe::97) by PU1PR01CA0003.outlook.office365.com
+ (2603:1096:803:15::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.26 via Frontend
+ Transport; Mon, 14 Oct 2024 12:43:56 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 103.243.227.16)
  smtp.mailfrom=kpit.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=oreject header.from=kpit.com;
@@ -44,19 +44,21 @@ Received-SPF: Fail (protection.outlook.com: domain of kpit.com does not
  receiver=protection.outlook.com; client-ip=103.243.227.16;
  helo=mail.kpit.com;
 Received: from mail.kpit.com (103.243.227.16) by
- HK2PEPF00006FB2.mail.protection.outlook.com (10.167.8.8) with Microsoft SMTP
+ HK2PEPF00006FB0.mail.protection.outlook.com (10.167.8.6) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7918.13 via Frontend Transport; Mon, 14 Oct 2024 12:43:48 +0000
+ 15.20.7918.13 via Frontend Transport; Mon, 14 Oct 2024 12:43:58 +0000
 Received: from LL-1259L.kpit.com (10.52.130.22) by PH3EXCH01.kpit.com
  (10.52.16.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 14 Oct
- 2024 18:13:47 +0530
+ 2024 18:13:56 +0530
 From: Ranjitsinh Rathod <ranjitsinh.rathod@kpit.com>
 To: <yocto-patches@lists.yoctoproject.org>
-Subject: [meta-lts-mixins][kirkstone/rust][PATCH 1/2] rust: set CVE_STATUS for CVE-2024-43402
-Date: Mon, 14 Oct 2024 18:13:29 +0530
-Message-ID: <20241014124330.155888-1-ranjitsinh.rathod@kpit.com>
+Subject: [meta-lts-mixins][kirkstone/rust][PATCH 2/2] rust: Use CVE_CHECK_IGNORE instead CVE_STATUS for kirkstone
+Date: Mon, 14 Oct 2024 18:13:30 +0530
+Message-ID: <20241014124330.155888-2-ranjitsinh.rathod@kpit.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20241014124330.155888-1-ranjitsinh.rathod@kpit.com>
+References: <20241014124330.155888-1-ranjitsinh.rathod@kpit.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
@@ -65,76 +67,79 @@ X-ClientProxiedBy: PH3ExchFE01.kpit.com (10.52.16.111) To PH3EXCH01.kpit.com
  (10.52.16.25)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: HK2PEPF00006FB2:EE_|PN0PR01MB9301:EE_
-X-MS-Office365-Filtering-Correlation-Id: f627190d-1684-4680-8497-08dcec4dd9ca
+X-MS-TrafficTypeDiagnostic: HK2PEPF00006FB0:EE_|MA0PR01MB8771:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3d4794cd-002a-4e79-899a-08dcec4ddf51
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|376014|36860700013|82310400026|1800799024;
+	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?rVwU2V34e2qBOOZtXrOTpSR5dtJ52sniYuyE2660UV1apCwFveQS7FH2BryJ?=
- =?us-ascii?Q?a/zofP5yvMSXDMYx9ut5tcuq9tasHSNQqegDBCZXyR79TUNCNKuKE4kOd0V9?=
- =?us-ascii?Q?cpQCulOXbk4soA4rwleEy3x26xdUcn/5WJQr+O3zyh9k2CXUY52iDBw3Af0a?=
- =?us-ascii?Q?Z5dwmkBScYK9ekyxbtXoKNlCoUw9WEKU6awIsj6nedERdyMnlUDT6mGIDB9S?=
- =?us-ascii?Q?TBordpy5PAIelZ3B/8nQcSHwcCwgox0ggZ741xI3I7oDNFGwVvriWFalk25/?=
- =?us-ascii?Q?S/y1Sh6qY4lZZPd6QB5LtbMtut8yTbeA1k7FjqobLO2o3i444QKh13y0xsYz?=
- =?us-ascii?Q?zpf81Pm+BnQ4v2Z5xV+K6u2gaFEKyUnyUvtktitykHQcgEHy1GcokmLLzeq6?=
- =?us-ascii?Q?UpZhz80QnMIzTHKoKtXlWzPLNUf9COY/FYbomp/BR4dIsDwK6reqGghK4F5g?=
- =?us-ascii?Q?qD5zkarTnS20hAb98YbTtklwYVGOwc5Xij5XHXmcYS8nigR6CoeD6nln9Rqd?=
- =?us-ascii?Q?lYvpukAFRK7zgw9Jg7mxiorlGnxXhcmtpPrdBYABCoAMmrtA3Tqu+8ug63Q+?=
- =?us-ascii?Q?LreVRldz4zlTJSrxVpaTgb82+ZHL1LBdaCVpFUjzlYr1oV5GZS/rWZyOUsTe?=
- =?us-ascii?Q?OKOXeSnXueT/a6TZGxuTEEsIL3iGVpsxitvahbbEpuci86P6SQnCcLxFEEB0?=
- =?us-ascii?Q?IzOnCEpkQHq5HlBM0mFv3rRn3dhrtbRD5k+5TxwZJUgDhpKb7caf9LnoMTNO?=
- =?us-ascii?Q?ZRaRv5NAzCPUQGGif1Hnt25o9k5iFlh4QlW9Bk+KbcTGDErKoeVOWuv0xi5B?=
- =?us-ascii?Q?IVzFupydPwkz4rmV20bbOsj8cFBNWMwyBmrAUPDUhrLAyYkcfZZVHzLAqcuY?=
- =?us-ascii?Q?agkY1UWD8eMnorb++jJDeILH6MlGt0ezUxY140bVpdvpLe9B+P8VHx/MfuHC?=
- =?us-ascii?Q?OW3Shv5q5SGu5nqM6t0rAmLt2UDJnXKgmtQ4qTd+/AwNZ5RhzvztrP/UeQsj?=
- =?us-ascii?Q?mcV6tqbKJLeNIVpimiX+7dyVcyKVufb61SJV03G9FxY9htcXkhIi2AidqBNP?=
- =?us-ascii?Q?bWRDz6bLS6L78hQ+Yib7BMwaw59UB4YdE1fbyVK/OkRGz+2M0XeB6knVM321?=
- =?us-ascii?Q?O2o+VGWQfA7OcCyuZdu9fdcHVErxia5KpS0BuiBU3sFYOy3TZNDJGtLpQJm0?=
- =?us-ascii?Q?28u42dDgnMleDt+15ORM3zGKTnDR1Y0eWuhh42WF3YVb+eO+4EUjCKbLnjzq?=
- =?us-ascii?Q?2JFGTw3YCQh7tNyn0qfXedt5WpC8fzCHh3t4r4RSBte3RA1Wet3K5Y8sbyVW?=
- =?us-ascii?Q?mr+MONS826735EEYQixDzlrH?=
+	=?us-ascii?Q?eepqpFWG+Xd/kykOF/fLCG7Sq3IF5jTyIF4h9UsK57X20YmJH4C29ZM/3ssh?=
+ =?us-ascii?Q?/XFN4M7XJmsC6pigQiTD+la8wIEYDeohAo5Cmdj1Z3Gzd22CpQPPhxx9G3gC?=
+ =?us-ascii?Q?rGf97vjiyun7bv66R1rHaQg4gLumaE9RUhCoFKa9akgOf1KSns0bmczlR3rK?=
+ =?us-ascii?Q?LnE55+2VFbR03IIIKMPVm5M6Rukbdw8fRHzBx2nm8nnMF1hqGOToFkKKrnOs?=
+ =?us-ascii?Q?U1uqqRvFQj7/fx1sfurMiHSIwMOsN97GCCdUTkx1QNhQKNCPMWlTnjSPSaAc?=
+ =?us-ascii?Q?yyyxx5mMfG9+pwPJYN9DJbqfQI9OkXxaGQ9xD3PGbdZ3FVjt3c5mwfX9AQWS?=
+ =?us-ascii?Q?OVRxqr++oKV0MWJbjOGAgwx+MHnr7QhyLWOuwcrGij6JCBJO9dlhqtv/o0UC?=
+ =?us-ascii?Q?MtPafiinsuqQLxUg8FIeVAPS+qjhVkFnM6m9Afb9iUc+QihaRYjnUH8KzeSX?=
+ =?us-ascii?Q?HX1aaFocv3Et88UaR8cK4H6zPEcgErAITkGgz23hB6xmxtviEs6mXqJANhEP?=
+ =?us-ascii?Q?VUviEXfbl85f5wwjCmJ2ErWWkkpxTKqzvC7Tw59dEcuUmu1numbSG3WWon7d?=
+ =?us-ascii?Q?umI3CQIvmC26kKTQ0JEhmNraSTTOJcovqzK2DdQDIFob5iyo3qxpURmLB3+i?=
+ =?us-ascii?Q?j7gqks+We1z7VMDNNRWrpg5eZZUd9QE+ZNIDHnYSQI0TBSGzDbJQYZEV93N2?=
+ =?us-ascii?Q?C6pKQwc/wx4G8sgwllRe0IojmJ+OEevXgIfPYWFqSp+zUHpQg3uOigsAnqYp?=
+ =?us-ascii?Q?+aYdLEpBHIMcfEq16H3xBQytMYoFbwbk7Q12Gym3ONv/bKunxLvjbysDi2bu?=
+ =?us-ascii?Q?QC+Y6kmyfHjjShicgl4VSzdXAYJyiKVSplq9J913Q3jrjUc9hC02HvBe4ag1?=
+ =?us-ascii?Q?D7jrKme0WvcGFu8aBBOCA/odgyR3t/WycAJZjWFzDPQnh+v7fBbI2SZ1+Inc?=
+ =?us-ascii?Q?YJt0nsazLA1xO9ESSUSCu7y1WL6KnevvIhrMgLdySgGzEPL/l3q9gWOcfLCc?=
+ =?us-ascii?Q?4pX0BSwuannnwqqJQzs5mg0kI8JczyM+i5l1L0/z+gsO2iUPVaQ3sAW7Gwtk?=
+ =?us-ascii?Q?YIMDyuWsBiwn39HVzUDBqFUw0PSqTCKsL8Hr5qrvwf7MI40VOPun/tOeDsLs?=
+ =?us-ascii?Q?O9EjB8qjj8VpYnmSNPoujr0BmNOhOirWn3Ke5VDl0xB1bc6L0eT33A/Kqnf9?=
+ =?us-ascii?Q?rYIW5po+mC1U4jH6aDMIhjdXpfiUSKpC3N5212qbnNog8A1JXG8Nh7DVrU8a?=
+ =?us-ascii?Q?Df9nqEfV9RyhYRdwwb9jJq6O3puKcNM+DLkZ73MM5q2pqlwwt5GisZsIwFws?=
+ =?us-ascii?Q?CojPPepLdMH36ZCZEGcRyCep?=
 X-Forefront-Antispam-Report: 
-	CIP:103.243.227.16;CTRY:IN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.kpit.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(82310400026)(1800799024);DIR:OUT;SFP:1102;
+	CIP:103.243.227.16;CTRY:IN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.kpit.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1102;
 X-OriginatorOrg: kpit.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2024 12:43:48.8457
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2024 12:43:58.1192
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f627190d-1684-4680-8497-08dcec4dd9ca
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3d4794cd-002a-4e79-899a-08dcec4ddf51
 X-MS-Exchange-CrossTenant-Id: 3539451e-b46e-4a26-a242-ff61502855c7
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3539451e-b46e-4a26-a242-ff61502855c7;Ip=[103.243.227.16];Helo=[mail.kpit.com]
 X-MS-Exchange-CrossTenant-AuthSource: 
-	HK2PEPF00006FB2.apcprd02.prod.outlook.com
+	HK2PEPF00006FB0.apcprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0PR01MB9301
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0PR01MB8771
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Mon, 14 Oct 2024 12:44:06 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/703
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/704
 
-As per NVD, this CVE only affects to Windows platform
-Link: https://nvd.nist.gov/vuln/detail/CVE-2024-43402
+As kirkstone uses CVE_CHECK_IGNORE variable, we need to use it instead
+of CVE_STATUS to successful ignore
 
 Signed-off-by: Ranjitsinh Rathod <ranjitsinh.rathod@kpit.com>
 ---
- recipes-devtools/rust/rust-source.inc | 1 +
- 1 file changed, 1 insertion(+)
+ recipes-devtools/rust/rust-source.inc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/recipes-devtools/rust/rust-source.inc b/recipes-devtools/rust/=
 rust-source.inc
-index d0bc899..cb405b7 100644
+index cb405b7..7a2bbf1 100644
 --- a/recipes-devtools/rust/rust-source.inc
 +++ b/recipes-devtools/rust/rust-source.inc
-@@ -19,3 +19,4 @@ UPSTREAM_CHECK_URI =3D "https://forge.rust-lang.org/infra=
-/other-installation-metho
+@@ -18,5 +18,5 @@ RUSTSRC =3D "${WORKDIR}/rustc-${RUST_VERSION}-src"
+ UPSTREAM_CHECK_URI =3D "https://forge.rust-lang.org/infra/other-installati=
+on-methods.html"
  UPSTREAM_CHECK_REGEX =3D "rustc-(?P<pver>\d+(\.\d+)+)-src"
 
- CVE_STATUS[CVE-2024-24576] =3D "not-applicable-platform: Issue only applie=
+-CVE_STATUS[CVE-2024-24576] =3D "not-applicable-platform: Issue only applie=
 s on Windows"
-+CVE_STATUS[CVE-2024-43402] =3D "not-applicable-platform: Issue only applie=
+-CVE_STATUS[CVE-2024-43402] =3D "not-applicable-platform: Issue only applie=
 s on Windows"
++# These CVEs are specific to Microsoft Windows
++CVE_CHECK_IGNORE +=3D "CVE-2024-24576 CVE-2024-43402"
 --
 2.25.1
 
