@@ -2,58 +2,45 @@ Return-Path: <ben.cownley@arm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A3BD216BA
-	for <webhook@archiver.kernel.org>; Tue, 15 Oct 2024 14:38:46 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mx.groups.io with SMTP id smtpd.web11.15255.1729003116115652420
- for <yocto-patches@lists.yoctoproject.org>;
- Tue, 15 Oct 2024 07:38:36 -0700
-Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: arm.com, ip: 217.140.110.172, mailfrom: ben.cownley@arm.com)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6D267FEC;
-	Tue, 15 Oct 2024 07:39:05 -0700 (PDT)
-Received: from e125927.manchester.arm.com (e125927.arm.com [10.32.102.160])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BB6C73F71E;
-	Tue, 15 Oct 2024 07:38:34 -0700 (PDT)
-From: Ben <Ben.Cownley@arm.com>
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B24ED216BE
+	for <webhook@archiver.kernel.org>; Tue, 15 Oct 2024 14:45:46 +0000 (UTC)
+Subject: Re: [PATCH 1/3] arm-systemready/linux-distros: Implement unattended openSUSE
 To: yocto-patches@lists.yoctoproject.org
-Cc: Ben Cownley <ben.cownley@arm.com>
-Subject: [PATCH scarthgap 3/3] kas: Include unattended openSUSE test
-Date: Tue, 15 Oct 2024 15:38:17 +0100
-Message-Id: <20241015143817.64520-3-Ben.Cownley@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241015143817.64520-1-Ben.Cownley@arm.com>
-References: <20241015143817.64520-1-Ben.Cownley@arm.com>
+From: "Ben Cownley" <ben.cownley@arm.com>
+X-Originating-Location: Cambridge, England, GB (217.140.106.32)
+X-Originating-Platform: Linux Firefox 131
+User-Agent: GROUPS.IO Web Poster
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Date: Tue, 15 Oct 2024 07:45:40 -0700
+References: <20241015142335.62987-1-Ben.Cownley@arm.com>
+In-Reply-To: <20241015142335.62987-1-Ben.Cownley@arm.com>
+Message-ID: <25476.1729003540325814335@lists.yoctoproject.org>
+Content-Type: multipart/alternative; boundary="Sanl8lH0s7ZT9N6cMEi8"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 15 Oct 2024 14:38:46 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/710
+ <yocto-patches@lists.yoctoproject.org>; Tue, 15 Oct 2024 14:45:46 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/711
 
-Add unattended installation class to openSUSE target
+--Sanl8lH0s7ZT9N6cMEi8
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Ben Cownley <ben.cownley@arm.com>
----
- kas/arm-systemready-linux-distros-opensuse.yml | 1 +
- 1 file changed, 1 insertion(+)
+Accident: Please disregard immediately
 
-diff --git a/kas/arm-systemready-linux-distros-opensuse.yml b/kas/arm-sys=
-temready-linux-distros-opensuse.yml
-index cffbdb92..d2d75fa2 100644
---- a/kas/arm-systemready-linux-distros-opensuse.yml
-+++ b/kas/arm-systemready-linux-distros-opensuse.yml
-@@ -2,6 +2,7 @@ header:
-   version: 13
-   includes:
-     - kas/arm-systemready-firmware.yml
-+    - kas/arm-systemready-linux-distros-unattended-installation.yml
-=20
- target:
-   - arm-systemready-linux-distros-opensuse
---=20
-2.34.1
+--Sanl8lH0s7ZT9N6cMEi8
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
+<div><span style=3D"color: #d1d2d3; font-family: Slack-Lato, Slack-Fraction=
+s, appleLogo, sans-serif; font-size: 15px; font-style: normal; font-variant=
+-ligatures: common-ligatures; font-variant-caps: normal; font-weight: 400; =
+letter-spacing: normal; orphans: 2; text-align: left; text-indent: 0px; tex=
+t-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width:=
+ 0px; white-space: normal; background-color: #1a1d21; text-decoration-thick=
+ness: initial; text-decoration-style: initial; text-decoration-color: initi=
+al; display: inline !important; float: none;">Accident: Please disregard im=
+mediately</span></div>
+
+--Sanl8lH0s7ZT9N6cMEi8--
 
