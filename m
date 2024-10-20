@@ -1,243 +1,84 @@
-Return-Path: <hprajapati@mvista.com>
+Return-Path: <dixitparmar19@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C67DD3C54D
-	for <webhook@archiver.kernel.org>; Fri, 18 Oct 2024 05:31:46 +0000 (UTC)
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
- by mx.groups.io with SMTP id smtpd.web10.15735.1729229495438007085
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A62CD3C92A
+	for <webhook@archiver.kernel.org>; Sun, 20 Oct 2024 09:01:59 +0000 (UTC)
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+ by mx.groups.io with SMTP id smtpd.web11.21587.1729414911170378493
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 17 Oct 2024 22:31:35 -0700
+ Sun, 20 Oct 2024 02:01:51 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@mvista.com header.s=google header.b=LZd6jE8P;
- spf=pass (domain: mvista.com, ip: 209.85.214.169, mailfrom: hprajapati@mvista.com)
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20cceb8d8b4so10865925ad.1
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 17 Oct 2024 22:31:35 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=V2CctIzB;
+ spf=pass (domain: gmail.com, ip: 209.85.214.181, mailfrom: dixitparmar19@gmail.com)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20bb39d97d1so32498165ad.2
+        for <yocto-patches@lists.yoctoproject.org>; Sun, 20 Oct 2024 02:01:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mvista.com; s=google; t=1729229495; x=1729834295; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1729414910; x=1730019710; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ij5mo3nwebidCs7fqx78TinFTzUxX75Q3VygGxvZvsM=;
-        b=LZd6jE8P6LzAp85qf4dJmzRfQ5hkk2tMxq5jv0YwkCjHSlQwdrjxJ4HF4OGpyv9WLb
-         /TA4I4fYtS5fZsnUHby/WrEOw2zRSAzV26THHaqoduYI0+Zmfd9F9ihgloPmHdd77s66
-         aIZnauFtP6Ak7XfKPjiqvEbJunWFeEn9jNy6U=
+        bh=KEEYSK42wfhSjsurKYaYhK9G8WEGPtmXL884rTbhMWg=;
+        b=V2CctIzB/qikxK1EOebGbdIwpRQvyNwsW/scoOfKqhpbL6b43v9WGP+A8n4h39EmIV
+         BvRp9u5fyAV+HW9uc30cn6E+M9QCZrzYmVZrEMVN2pWLT3HfeXFxCtRHSE1xe4FYpgPS
+         Dkb3dLQAxQ63HCgLgv9MFYSv8mJ5AgB5oumctM8E0uTJ4955bOTbhwMgWn9q82Lw0jiM
+         tC8nWecTqa5yfQEfCX2MLTuu9sUseKyygoKKUUHyz5CJ/if2pVCJ8GuR4H17BjpJC/Et
+         uMrWLHYKkchQKwfiW8gDLFhuixRBL/mtNah4Fiv1t54IM1sJ5a7EKDom0Tb+htZaYFV6
+         i8vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729229495; x=1729834295;
+        d=1e100.net; s=20230601; t=1729414910; x=1730019710;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ij5mo3nwebidCs7fqx78TinFTzUxX75Q3VygGxvZvsM=;
-        b=pYFnpWPdBv5BITZtUfi5i/rWed5DxQ9SRCvgXR3QGVoW+oRRjlURRTsh00ZhjB67Pe
-         gAAfx3n8qzc5FB43r6gW2E6teCM7p50mn4nVzqGOaysOFfgfPmyEq4GYmu6Y8cq6qmjL
-         IJ1EQHBG9Qmho4NQpkGEWCSsaiCFa9I54T7lGm4z95xnwMO/27wJ8uDEF2hmXcBxBHuY
-         YDqtuBj3550/BODA5dNwa4jWrLEz/H920K42AzLCE75oga9oQCgBMIwhiQCzbCcfCFZ8
-         bBw6ldf/1PPMpH9poUAgsFWrFX+ubA6VaDyoTTb3tmmD+ok9xh4ug03O8ynsn4wYgiqq
-         0oLg==
-X-Gm-Message-State: AOJu0Ywywej74TtKrUsrOqy8rjKKNthpArvz7wWCXJxxEMMOok3Mug76
-	XZOpuAQqM0pvs5yHIXOV/ZHCW8TfMQtn0H0qKfhkFVWsGDMHC1RNAaPUAHkyxYUXof3u4XFbQWm
-	j
-X-Google-Smtp-Source: AGHT+IHh5pLp9C6wVus1JaA0HBw9iI8c1Pa84Ec4rUAMpNdcTZ7Dpjj2nE0GlWN4fYOH+CyljKNzGA==
-X-Received: by 2002:a17:902:d2cd:b0:20c:72e8:4eb7 with SMTP id d9443c01a7336-20d47990054mr82061935ad.25.1729229494497;
-        Thu, 17 Oct 2024 22:31:34 -0700 (PDT)
-Received: from MVIN00016.mvista.com ([150.129.170.254])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e5a8f9832sm5145615ad.230.2024.10.17.22.31.31
+        bh=KEEYSK42wfhSjsurKYaYhK9G8WEGPtmXL884rTbhMWg=;
+        b=VfPTKz1ulkekt+bMYPbHSPiE9zOt6vZehh/umtAYU3XGHE38VAEh6LpHpPJfV4HJbn
+         t8hpMzkLYdx+ppNzUQgOtcXa2/tXe/bITIWlmGwgliChoDwiP9csB/553Yp+uUePr7TJ
+         yWy0n+bQDoroZYtVB13zX6/uyLwPVGvvc4QAubzdXMv1Us+IrQ9pDoRPJlBuN+YCodEK
+         PtrAVvkK1jxz0W7cVbXp9OyiE644wKapOj078Gy+T8XBH0IKyVWrFxK6nXVMQjnw+FIU
+         PN8Nm23tOeVj6kG8Js00LZMQjkh0U63rMcSq9V8NPFihD/oiBsp+59tDyo7fvh61uKY5
+         /xtA==
+X-Gm-Message-State: AOJu0YwGW2tI/yMlHxSd4Sv4yrJTJ7V/ezb3y7fXDbfoU3NQZqEHJrtk
+	wrJgnrbhRNuPNpWqJjJYEJRTA7a/gZ+5k9Ay2z1lT/Z33WVHOs/t4Tsl6w==
+X-Google-Smtp-Source: AGHT+IFRnv2dpy/kcF8JqBd7QcbXxUisvjHw6qhGwwWJ3ASZixLl5Q8u7AQ4gJ9l5rFwhuBJZrZN2A==
+X-Received: by 2002:a17:903:32cb:b0:20c:9da6:65af with SMTP id d9443c01a7336-20e5a9581d1mr115671685ad.57.1729414910197;
+        Sun, 20 Oct 2024 02:01:50 -0700 (PDT)
+Received: from dixit.. ([2401:4900:1c45:9bd8:a0fb:7820:67f4:49b1])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7eee62dcsm7281055ad.27.2024.10.20.02.01.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 22:31:34 -0700 (PDT)
-From: Hitendra Prajapati <hprajapati@mvista.com>
+        Sun, 20 Oct 2024 02:01:49 -0700 (PDT)
+From: Dixit Parmar <dixitparmar19@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: akuster808@gmail.com,
-	Hitendra Prajapati <hprajapati@mvista.com>
-Subject: [meta-security][scarthgap][PATCH] libhtp: fix CVE-2024-45797
-Date: Fri, 18 Oct 2024 11:01:18 +0530
-Message-Id: <20241018053118.27569-1-hprajapati@mvista.com>
-X-Mailer: git-send-email 2.25.1
+Cc: Dixit Parmar <dixitparmar19@gmail.com>
+Subject: [matchbox-panel-2 1/1] add mailing-list to README
+Date: Sun, 20 Oct 2024 14:31:40 +0530
+Message-ID: <20241020090140.451403-1-dixitparmar19@gmail.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 18 Oct 2024 05:31:46 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/719
+ <yocto-patches@lists.yoctoproject.org>; Sun, 20 Oct 2024 09:01:59 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/720
 
-Upstream-Status: Backport from https://github.com/OISF/libhtp/commit/0d550de551b91d5e57ba23e2b1e2c6430fad6818
-
-Signed-off-by: Hitendra Prajapati <hprajapati@mvista.com>
+Signed-off-by: Dixit Parmar <dixitparmar19@gmail.com>
 ---
- .../suricata/files/CVE-2024-45797.patch       | 148 ++++++++++++++++++
- recipes-ids/suricata/libhtp_0.5.45.bb         |   4 +-
- 2 files changed, 151 insertions(+), 1 deletion(-)
- create mode 100644 recipes-ids/suricata/files/CVE-2024-45797.patch
+ README | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/recipes-ids/suricata/files/CVE-2024-45797.patch b/recipes-ids/suricata/files/CVE-2024-45797.patch
-new file mode 100644
-index 0000000..3db4625
---- /dev/null
-+++ b/recipes-ids/suricata/files/CVE-2024-45797.patch
-@@ -0,0 +1,148 @@
-+From 0d550de551b91d5e57ba23e2b1e2c6430fad6818 Mon Sep 17 00:00:00 2001
-+From: Philippe Antoine <contact@catenacyber.fr>
-+Date: Mon, 12 Aug 2024 14:06:40 +0200
-+Subject: [PATCH] headers: put a configurable limit on their numbers
+diff --git a/README b/README
+index 2e6e402..91eb547 100644
+--- a/README
++++ b/README
+@@ -1 +1,8 @@
+ A simple GTK+ based panel for handheld devices.
 +
-+So as to avoid quadratic complexity
++Where to Send Patches
++---------------------
 +
-+Ticket: 7191
-+
-+Upstream-Status: Backport [https://github.com/OISF/libhtp/commit/0d550de551b91d5e57ba23e2b1e2c6430fad6818]
-+CVE: CVE-2024-45797
-+Signed-off-by: Hitendra Prajapati <hprajapati@mvista.com>
-+---
-+ htp/htp_config.c           |  8 ++++++++
-+ htp/htp_config.h           |  8 ++++++++
-+ htp/htp_config_private.h   |  6 ++++++
-+ htp/htp_core.h             |  1 +
-+ htp/htp_request_generic.c  | 11 +++++++++++
-+ htp/htp_response_generic.c | 10 ++++++++++
-+ 6 files changed, 44 insertions(+)
-+
-+diff --git a/htp/htp_config.c b/htp/htp_config.c
-+index 767458f..9e0eee3 100644
-+--- a/htp/htp_config.c
-++++ b/htp/htp_config.c
-+@@ -145,6 +145,8 @@ static unsigned char bestfit_1252[] = {
-+     0xff, 0x5d, 0x7d, 0xff, 0x5e, 0x7e, 0x00, 0x00, 0x00
-+ };
-+ 
-++#define HTP_HEADERS_LIMIT 1024
-++
-+ htp_cfg_t *htp_config_create(void) {
-+     htp_cfg_t *cfg = calloc(1, sizeof (htp_cfg_t));
-+     if (cfg == NULL) return NULL;
-+@@ -163,6 +165,7 @@ htp_cfg_t *htp_config_create(void) {
-+     cfg->response_lzma_layer_limit = 1; // default is only one layer
-+     cfg->compression_bomb_limit = HTP_COMPRESSION_BOMB_LIMIT;
-+     cfg->compression_time_limit = HTP_COMPRESSION_TIME_LIMIT_USEC;
-++    cfg->number_headers_limit = HTP_HEADERS_LIMIT;
-+     cfg->allow_space_uri = 0;
-+ 
-+     // Default settings for URL-encoded data.
-+@@ -542,6 +545,11 @@ void htp_config_set_compression_time_limit(htp_cfg_t *cfg, size_t useclimit) {
-+     }
-+ }
-+ 
-++void htp_config_set_number_headers_limit(htp_cfg_t *cfg, uint32_t limit) {
-++    if (cfg == NULL) return;
-++    cfg->number_headers_limit = limit;
-++}
-++
-+ void htp_config_set_log_level(htp_cfg_t *cfg, enum htp_log_level_t log_level) {
-+     if (cfg == NULL) return;
-+     cfg->log_level = log_level;
-+diff --git a/htp/htp_config.h b/htp/htp_config.h
-+index d1365dc..ed0eaeb 100644
-+--- a/htp/htp_config.h
-++++ b/htp/htp_config.h
-+@@ -466,6 +466,14 @@ void htp_config_set_compression_time_limit(htp_cfg_t *cfg, size_t useclimit);
-+  */
-+ void htp_config_set_log_level(htp_cfg_t *cfg, enum htp_log_level_t log_level);
-+ 
-++/**
-++ * Configures the maximum number of headers LibHTP will accept per request or response.
-++ *
-++ * @param[in] cfg
-++ * @param[in] limit
-++ */
-++void htp_config_set_number_headers_limit(htp_cfg_t *cfg, uint32_t limit);
-++
-+ /**
-+  * Configures how the server reacts to encoded NUL bytes. Some servers will stop at
-+  * at NUL, while some will respond with 400 or 404. When the termination option is not
-+diff --git a/htp/htp_config_private.h b/htp/htp_config_private.h
-+index 5f1d60d..ecc8717 100644
-+--- a/htp/htp_config_private.h
-++++ b/htp/htp_config_private.h
-+@@ -360,6 +360,12 @@ struct htp_cfg_t {
-+ 
-+     /** Whether to decompress compressed request bodies. */
-+     int request_decompression_enabled;
-++
-++    /** Maximum number of transactions. */
-++    uint32_t max_tx;
-++
-++    /** Maximum number of headers. */
-++    uint32_t number_headers_limit;
-+ };
-+ 
-+ #ifdef	__cplusplus
-+diff --git a/htp/htp_core.h b/htp/htp_core.h
-+index e4c933e..7c23212 100644
-+--- a/htp/htp_core.h
-++++ b/htp/htp_core.h
-+@@ -235,6 +235,7 @@ enum htp_file_source_t {
-+ #define HTP_REQUEST_INVALID                0x100000000ULL
-+ #define HTP_REQUEST_INVALID_C_L            0x200000000ULL
-+ #define HTP_AUTH_INVALID                   0x400000000ULL
-++#define HTP_HEADERS_TOO_MANY               0x800000000ULL
-+ 
-+ #define HTP_MAX_HEADERS_REPETITIONS 64
-+ 
-+diff --git a/htp/htp_request_generic.c b/htp/htp_request_generic.c
-+index 435cf0a..1350e57 100644
-+--- a/htp/htp_request_generic.c
-++++ b/htp/htp_request_generic.c
-+@@ -120,6 +120,17 @@ htp_status_t htp_process_request_header_generic(htp_connp_t *connp, unsigned cha
-+         bstr_free(h->value);
-+         free(h);
-+     } else {
-++        if (htp_table_size(connp->in_tx->request_headers) > connp->cfg->number_headers_limit) {
-++            if (!(connp->in_tx->flags & HTP_HEADERS_TOO_MANY)) {
-++                connp->in_tx->flags |= HTP_HEADERS_TOO_MANY;
-++                htp_log(connp, HTP_LOG_MARK, HTP_LOG_WARNING, 0, "Too many request headers");
-++            }
-++            bstr_free(h->name);
-++            bstr_free(h->value);
-++            free(h);
-++            // give up on what comes next
-++            return HTP_ERROR;
-++        }
-+         // Add as a new header.
-+         if (htp_table_add(connp->in_tx->request_headers, h->name, h) != HTP_OK) {
-+             bstr_free(h->name);
-+diff --git a/htp/htp_response_generic.c b/htp/htp_response_generic.c
-+index f5fa59e..69da625 100644
-+--- a/htp/htp_response_generic.c
-++++ b/htp/htp_response_generic.c
-+@@ -321,6 +321,16 @@ htp_status_t htp_process_response_header_generic(htp_connp_t *connp, unsigned ch
-+         bstr_free(h->value);
-+         free(h);       
-+     } else {
-++        if (htp_table_size(connp->out_tx->response_headers) > connp->cfg->number_headers_limit) {
-++            if (!(connp->out_tx->flags & HTP_HEADERS_TOO_MANY)) {
-++                connp->out_tx->flags |= HTP_HEADERS_TOO_MANY;
-++                htp_log(connp, HTP_LOG_MARK, HTP_LOG_WARNING, 0, "Too many response headers");
-++            }
-++            bstr_free(h->name);
-++            bstr_free(h->value);
-++            free(h);
-++            return HTP_ERROR;
-++        }
-+         // Add as a new header.
-+         if (htp_table_add(connp->out_tx->response_headers, h->name, h) != HTP_OK) {
-+             bstr_free(h->name);
-+-- 
-+2.25.1
-+
-diff --git a/recipes-ids/suricata/libhtp_0.5.45.bb b/recipes-ids/suricata/libhtp_0.5.45.bb
-index cc8285c..604a0ca 100644
---- a/recipes-ids/suricata/libhtp_0.5.45.bb
-+++ b/recipes-ids/suricata/libhtp_0.5.45.bb
-@@ -4,7 +4,9 @@ require suricata.inc
- 
- LIC_FILES_CHKSUM = "file://LICENSE;beginline=1;endline=2;md5=596ab7963a1a0e5198e5a1c4aa621843"
- 
--SRC_URI = "git://github.com/OISF/libhtp.git;protocol=https;branch=0.5.x"
-+SRC_URI = "git://github.com/OISF/libhtp.git;protocol=https;branch=0.5.x \
-+           file://CVE-2024-45797.patch \
-+          "
- SRCREV = "8bdfe7b9d04e5e948c8fbaa7472e14d884cc00af"
- 
- DEPENDS = "zlib"
++- Git repository: <https://git.yoctoproject.org/matchbox-panel-2>
++- Mailing list: yocto-patches@lists.yoctoproject.org
++	use --subject-prefix to put "matchbox-panel-2" in subject.
 -- 
-2.25.1
+2.43.0
 
 
