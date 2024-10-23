@@ -1,98 +1,80 @@
-Return-Path: <richard.purdie@linuxfoundation.org>
+Return-Path: <alex.kanavin@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B1F9CDDE5B
-	for <webhook@archiver.kernel.org>; Wed, 23 Oct 2024 10:14:20 +0000 (UTC)
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
- by mx.groups.io with SMTP id smtpd.web11.5513.1729678455812321263
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AC43CDDE5D
+	for <webhook@archiver.kernel.org>; Wed, 23 Oct 2024 10:24:30 +0000 (UTC)
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+ by mx.groups.io with SMTP id smtpd.web11.5644.1729679066702543471
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 23 Oct 2024 03:14:16 -0700
+ Wed, 23 Oct 2024 03:24:27 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=dXT7jhCQ;
- spf=pass (domain: linuxfoundation.org, ip: 209.85.221.45, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-37d4ac91d97so6285464f8f.2
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 23 Oct 2024 03:14:15 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=kKrMD1xU;
+ spf=pass (domain: gmail.com, ip: 209.85.167.45, mailfrom: alex.kanavin@gmail.com)
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539e5c15fd3so5950865e87.3
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 23 Oct 2024 03:24:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1729678454; x=1730283254; darn=lists.yoctoproject.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=I8Se1nqhM+qYuVuXWZT60pz227fMk9cY34C0kkovtXM=;
-        b=dXT7jhCQd1N+UVtnQ0P75wuAkgL3USTTqKWOrtTgOvhMRjW84Dsd2rlD+1srrQEioM
-         bVahbOPWucv/0yWi+UMRG8DxJ6kf2BtjtnvQKDbg6icwr2FzHvwxhie4BGQQp0jdBFDB
-         U6vmJwfIoyPa0Ugv43C8OxqdBmWjDQmGLP+Q8=
+        d=gmail.com; s=20230601; t=1729679065; x=1730283865; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zE/1JH9mu286yarSyEcBv7X1w8j2SGBSN1Vax2g16Ms=;
+        b=kKrMD1xU1v3d/Ey+LolHj49psDFN/bQsBSn8Gz1t/MIgU+/0zykIL0z99gIa8ezabK
+         pLvUtn18OP8zenUvVRuDCTAp4iDhP3hw0WirCqWAJOD76ZPtGC9MxKhzqOSTmeqaGG4d
+         3232fU8nFBfrYnRTX735RUq3q0hIORBMTnzuAThHhhd7xZLJTGMxRW47+Xd0+mhL/b6H
+         DZdo1XeGGxH7FtBaqbsR+UjlzXEjyRN2arfldACsY5vosdjiXxbkA/RdKJY0X8eYQM57
+         TrHF7L6b+ZDhFf18oOKgsES/Vhh64ddC3+5cxYQvI02xpV2cIgLwr0uUvuPDEVigRLDb
+         OqTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729678454; x=1730283254;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=I8Se1nqhM+qYuVuXWZT60pz227fMk9cY34C0kkovtXM=;
-        b=g21Si2J37iV3F0fJjL2oM1wTd4CwKgZJcYXW7uA42WKed2hiGD+xbdGjj+WAtQOrx2
-         jHCVk6izUhzqZ7sGhlolU6m3nS4K0hyw02LhCxpzPrC+2Tlsaa7e8D+PFMqUhyXuO0Br
-         isLcg6PrRfOfzpPN3EJSskvmXvzbb0rPBOxtGEEskekLKDL6jmMkfL0Hh//LlD4Vp8OB
-         r3fu17Y00xZTMZEwB+LUw35iBBi2xR/BFAin6InPneDgkTF4IQoMPLvXql+ySMg88C3X
-         ajlsF6JKGw3K9eJjQQANwrmBfgL8JPJYX3794N1XSoqdEdmMr2Pb4jwX3Sc1YzSG3Twf
-         j9ig==
-X-Gm-Message-State: AOJu0Yw14yXRhCeY4O9Ejj/CHJ7YFX1+RbtpXmCuzofPBYiZQqsn+YT9
-	1hWLG0SJ1TX4HZD8knS4l7TmjaCihJ9HTQnYx3qcxzpnBd+jiE+lvro19uPWonLYt3e7emZRv+/
-	X
-X-Google-Smtp-Source: AGHT+IGBwYtDe7HvA3ZsQJUUNsDlYYoliyRSy1bQBRp0LaXqpxLB+GxxD+S02oNdTkXNBbH2+2wDfQ==
-X-Received: by 2002:a5d:680a:0:b0:37d:4f69:c9b with SMTP id ffacd0b85a97d-37efcf33a99mr1514210f8f.35.1729678453899;
-        Wed, 23 Oct 2024 03:14:13 -0700 (PDT)
-Received: from ?IPv6:2001:8b0:aba:5f3c:ad34:30ba:19ab:e41f? ([2001:8b0:aba:5f3c:ad34:30ba:19ab:e41f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0b93dfesm8501225f8f.66.2024.10.23.03.14.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 03:14:13 -0700 (PDT)
-Message-ID: <636e764f8709d1ffc9dec1f1b3fa304b9ed13839.camel@linuxfoundation.org>
-Subject: Re: [yocto-patches] [yocto-autobuilder2][PATCH] Add branch selector
- for Mathieu
-From: Richard Purdie <richard.purdie@linuxfoundation.org>
+        d=1e100.net; s=20230601; t=1729679065; x=1730283865;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zE/1JH9mu286yarSyEcBv7X1w8j2SGBSN1Vax2g16Ms=;
+        b=H1CMXM+cC3mMJk3vJZFwmmuYeEk85dvW+fqUwZG1xbGp33G0Q0qKOKtx+QwxorTkMj
+         zZ/nS0N/Q2wXj8avVSKOsJ+YUqXxuqio/N/pCfuqkuCtUJGiF39QqEVH5+QxbJxF1QV9
+         TK8Cff9qMGn5skqugEPqUmgL8hGDb9nzCceQeLK27ksv6V5uzpssJagDflCIGhx7/Hcc
+         7fduyszqU76Qc8jmD7/aVZ7+cJc+kAW8QGUACoGxcK6wf3et43QaFVqzPUNt3hzqZUAG
+         WNwkoqbt8/WwpIviPrFxSa98fBOgHq0fvpb31k50b2KxDzdXBj+KknQzhYpT4SQTGXZi
+         rChQ==
+X-Gm-Message-State: AOJu0Yyji3xKhxFQ08rOtR9rjy/3Ew+j0t5eZh5H/24UfWt7aN/2csD0
+	zV3NDJzOZGLAuKVgCZDTO4QnCrh7eOdaHj7P4AWp7fDrrPiF974ZbIv25uRdHqQZgzShe8C0ILx
+	2Jdqsy0D/6CdzuUFg+JTXH+HhRYDfhg==
+X-Google-Smtp-Source: AGHT+IFWzMssZQpIDd9pOQYaKYbuRl4pNrPzCfkzikBEcn0bKWe2YcLQqwS/Y1WwdmomPa4/veofx01dYNc5RD2nYqY=
+X-Received: by 2002:a05:6512:3da1:b0:539:fd75:2b88 with SMTP id
+ 2adb3069b0e04-53b1a3735c7mr1064368e87.60.1729679064400; Wed, 23 Oct 2024
+ 03:24:24 -0700 (PDT)
+MIME-Version: 1.0
+References: <CANNYZj-YHx0Hw_GGPWMruF2+vp5CWe6yyxPMqPGBSx-S6Mk=Yg@mail.gmail.com>
+ <17198.1729678370250194557@lists.yoctoproject.org>
+In-Reply-To: <17198.1729678370250194557@lists.yoctoproject.org>
+From: Alexander Kanavin <alex.kanavin@gmail.com>
+Date: Wed, 23 Oct 2024 12:24:13 +0200
+Message-ID: <CANNYZj8CNhBQeKm+=RZggx60cfDnN-17Gx9goCq__+D-Nvj--w@mail.gmail.com>
+Subject: Re: [yocto-patches] [matchbox-panel-2 v2] panel: added sysfs support
 To: yocto-patches@lists.yoctoproject.org
-Cc: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>, Ross Burton
-	 <ross.burton@arm.com>
-Date: Wed, 23 Oct 2024 11:14:13 +0100
-In-Reply-To: <CANNYZj8B3jKqA4EDrVS2jwfTH8Dn1BbVK=3TAaBVB3VA_6DPQg@mail.gmail.com>
-References: <20241023100242.3953188-1-mathieu.dubois-briand@bootlin.com>
-	 <CANNYZj8B3jKqA4EDrVS2jwfTH8Dn1BbVK=3TAaBVB3VA_6DPQg@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
-MIME-Version: 1.0
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 23 Oct 2024 10:14:20 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/733
+ <yocto-patches@lists.yoctoproject.org>; Wed, 23 Oct 2024 10:24:30 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/734
 
-On Wed, 2024-10-23 at 12:08 +0200, Alexander Kanavin via lists.yoctoproject=
-.org wrote:
-> I wonder if we should give this branch a generic, stable name? It
-> would also help when we need to point to people that, no, their
-> patches aren't ignored, and are in fact being tested in a staging
-> branch.
->=20
-> Ideas for the name? 'master-next-next'?
+On Wed, 23 Oct 2024 at 12:12, Dixit Parmar via lists.yoctoproject.org
+<dixitparmar19=3Dgmail.com@lists.yoctoproject.org> wrote:
+> Thank you for review. from what I understood from your comment,
+> The file[battery-sysfs.c] was created solely by me as an individual contr=
+ibutor, out of my work duties with my employer.
+> The file header(along with copyright details) is copied straight away fro=
+m the same codebase's existing file: https://git.yoctoproject.org/matchbox-=
+panel-2/tree/applets/battery/battery-acpi.c. I am not good with the licensi=
+ng terms, so I am not exactly sure what the correct one should be. Pls guid=
+e me for correct header.
 
-master-next-under-testing
-master-next-ab-testing
+I think
+(C) Dixit Parmar
+is fine. No need for the year.
 
-?
-
-We should probably move from the contrib repos into the main repo at the sa=
-me time?
-
-If Ross were doing it would this be:
-
-master-next-ab-testing-ross
-
-?
-
-There is probably only a small number of people doing this. I'll
-probably merge the branch selector change since it just helps people
-run builds but we should resolve the bigger question.
-
-Cheers,
-
-Richard
+Alex
 
