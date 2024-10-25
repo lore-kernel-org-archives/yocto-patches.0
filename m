@@ -2,57 +2,57 @@ Return-Path: <gael.portay+rtone@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68068D0C5E3
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65064D0C5E0
 	for <webhook@archiver.kernel.org>; Fri, 25 Oct 2024 08:22:56 +0000 (UTC)
 Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
- by mx.groups.io with SMTP id smtpd.web11.7397.1729844573042529200
+ by mx.groups.io with SMTP id smtpd.web11.7396.1729844571827448695
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 25 Oct 2024 01:22:53 -0700
+ Fri, 25 Oct 2024 01:22:52 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=ciEtk/bl;
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=L+M/rnDW;
  spf=pass (domain: gmail.com, ip: 209.85.128.54, mailfrom: gael.portay+rtone@gmail.com)
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4315549c4d5so2623825e9.0
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 25 Oct 2024 01:22:52 -0700 (PDT)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43152fa76aaso1696815e9.1
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 25 Oct 2024 01:22:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729844571; x=1730449371; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1729844570; x=1730449370; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=m1AP4gcWy6KMj/mrX6sWpKYQXadpf1z7Mq3kc514bSU=;
-        b=ciEtk/blRlVS0Y9BMaq/wrCjrGy1mw6UishYL/GSHX9XYi/lf8YkPVhwyGlY3pJVOJ
-         p0aHAPRtKB/ec0mdKhSIFo/XCRzfKY8GIFT6NzojVHs0BuEhrrpH3cbYzzzhkWPL0Mm1
-         MvE9Zkgc+ackeQIQWoFLMWvm3YqtWQF6C9+BdIwYDZgUYce4pZ+dqAe64WZH/cGf9wAr
-         g+ZNzB0yMq4EgnSQ9N8vkgUg9Ghup5+UbeQci7yemzxcBuCapiAGXPgcbReQei8VxbVX
-         jV5vHbwEyx+O3dxBQwmWkDkNJhNwX6qRvAoqIV9CT4aoaaIekzgS4727E8enC7vpyYfc
-         JWfg==
+        bh=29fBmAmNDh6174whbVpxpcipTREYv++TD4sf/MESwQk=;
+        b=L+M/rnDWsspnVfkCHNMa3JqrAHksAprTx5uUChtYzKwXUglHXfuTC+4NGeFEZPgB3C
+         z3lxKS8nM6Qzgns9hTbacPP3wF4MvvftLX/f86pflH6Rop8IJZ8mVTcZNWLZq3iuRnHW
+         vK8nS9NQeQL3rpDQs6fHEC1yYUiV/TWlOVFfiD0m3RpysFwXNps0rZP/55HSWnMjWKvy
+         h2tx1jl7OMSjGVXRTtssUmu8fUqiDxH1Tj1XY/ul2eMYGOpkvPmU0fV7Xol7Hjxhuwx3
+         A4fEeIhOkvurtxrTq9oeCkM+xSidcg1hEkpydvh1DE/+VFInzLJjrCAHHHgJ/QUn4sl5
+         5UBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729844571; x=1730449371;
+        d=1e100.net; s=20230601; t=1729844570; x=1730449370;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=m1AP4gcWy6KMj/mrX6sWpKYQXadpf1z7Mq3kc514bSU=;
-        b=Q6/4+BHypN1Iff3QDo7nHlhLN8YX1qJAvMvsXO+ssbV0dfnrBVCjKBraNU7J3peDzp
-         kxEuEsfurPxprPrD/QGfgHeL+mBi+fatZTB10N3QNvHDsRWfjvor+HL6U2798BZ0SF0Z
-         u6XYVfHMLq6yDGTW4YPxlt+k0/8tLPGovP+jGZ6qeN22HzBc4+ZLRlnbk5mxQbIfDvsl
-         7J2noe9f7QvYTI369IcPTsmumiKYP8kBUxWm+IVuGAHt3kEGH4X8lY33l9jFlCrmNTVY
-         dnlKH0MWUk8GxS0JGyBiEGNU6Bze520CXgDIsFrN6mWQgVnuql9A/maiQ1Sgt9LpUxUg
-         dxIQ==
-X-Gm-Message-State: AOJu0YwZBFkXCYIhO08govwOhyeAtwWDhNCoTuDNpjkcP5OErXsVa98o
-	3GeRjzTrtO0DMGRMVaITar0xZ9YEDjgbt7oNEllQzllEyT/mvT3tIR7XKosM
-X-Google-Smtp-Source: AGHT+IH9Lpoyq8MimM1YdDJqyaruw5fxDhBK9/Pc+LOAI/fWbjDrPLpiKh6owKaHn1h7zJY+Z0Ygnw==
-X-Received: by 2002:a5d:6da5:0:b0:37d:4517:acd0 with SMTP id ffacd0b85a97d-3805b4ab13bmr273105f8f.9.1729844570901;
-        Fri, 25 Oct 2024 01:22:50 -0700 (PDT)
-Received: from archlinux.. ([2a01:e0a:ce:f2f0:2a6b:35ff:feb8:77d9])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b70bc1sm907904f8f.70.2024.10.25.01.22.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        bh=29fBmAmNDh6174whbVpxpcipTREYv++TD4sf/MESwQk=;
+        b=AFWKUdEjfmoJh0Zcqb4aYujkx1+Zph/s6T6JAOS6KcCpor8VmUrZCooIANo7uBoAVa
+         Er2IvKMmOOwUQhA/it3wBavtfX9AZyf/JdnBXSGMoGpT17AZVrfkFlkYAQiPX7YklDWu
+         a9SfQwIjilin+V7/Pcthii66TM5X16BYeTF8RFpD0URQeT9KDAQPAz7QBZFTIjY46VCH
+         /978dWazVKtay4fROrZo004dCjoagrVbzWEQJKGjapof0etfmgX1UDLREoSyGiRF57sK
+         fU3TXh5lpROIF4lwVT7BVFDh1ghewT0oglt7eFPr5MLowLFrrjGuLn9P9A+O/vLM6fx9
+         LD9Q==
+X-Gm-Message-State: AOJu0YyagkLr+/WWQqaDWYWCAu6RCRRucKGVTvl2SfZ4JbgGYR4uABhw
+	6B66Dg185JtrPCJAXzRnlTMPQGUUMnZzJ8xeyzzsVbbo6Gz1E/rCf3CMtwOF
+X-Google-Smtp-Source: AGHT+IF798tgOVeewQLQ3+o0z7fUkw7nAlBZM9GR4qtHHonnXpvY5cZ8L9mNCABZSTc9Tcau5YQ6CA==
+X-Received: by 2002:a5d:5f94:0:b0:37c:df55:c1a5 with SMTP id ffacd0b85a97d-37efcf49d6cmr3222492f8f.6.1729844569719;
         Fri, 25 Oct 2024 01:22:49 -0700 (PDT)
+Received: from archlinux.. ([2a01:e0a:ce:f2f0:2a6b:35ff:feb8:77d9])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b70bc1sm907904f8f.70.2024.10.25.01.22.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 01:22:48 -0700 (PDT)
 Sender: =?UTF-8?B?R2HDq2wgUE9SVEFZ?= <gael.portay@gmail.com>
 From: =?UTF-8?q?Ga=C3=ABl=20PORTAY?= <gael.portay+rtone@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: =?UTF-8?q?Ga=C3=ABl=20PORTAY?= <gael.portay+rtone@gmail.com>
-Subject: [meta-security][PATCH 06/10] sssd: fix missing python3.X-config script
-Date: Fri, 25 Oct 2024 10:22:35 +0200
-Message-ID: <20241025082239.3468351-7-gael.portay+rtone@gmail.com>
+Subject: [meta-security][PATCH 05/10] sssd: fix ac_cv_prog_HAVE_PYTHON3 value
+Date: Fri, 25 Oct 2024 10:22:34 +0200
+Message-ID: <20241025082239.3468351-6-gael.portay+rtone@gmail.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241025082239.3468351-1-gael.portay+rtone@gmail.com>
 References: <20241025082239.3468351-1-gael.portay+rtone@gmail.com>
@@ -63,31 +63,30 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Fri, 25 Oct 2024 08:22:56 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/754
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/753
 
-The configure script checks for the utility python3.X-config to be in
-$PATH; that script is shipped by the package python3-native.
+The variable HAVE_PYTHON3 expects a boolean value[1] and the configure
+script raises an error if the option --with-python3-bindings is set and
+if the value HAVE_PYTHON3 is not "yes"[2].
 
-The recipe does not depend on the package python3-native which causes
-the task do_configure to fail.
+The recipe sets a non-boolean value to ac_cv_prog_HAVE_PYTHON3 and thus
+causes the task do_configure to fail.
 
-The recipe inherits from the bbclass python3-dir that does not install
-the required script to the sysroot. The bbclass python3native inherits
-from (the already inherited bbclass) python3-dir and it adds the missing
-dependency to python3-native.
-
-This fixes the configure error by "upgrading" the inherit bbclass from
-python3-dir to python3-native.
+This fixes the value set to ac_cv_prog_HAVE_PYTHON3 by setting it to yes
+instead of $(PYTHON_DIR).
 
 Fixes:
 
-	| checking for python3.12-config... no
+	| checking for python3... (cached) python3.12
 	| configure: error:
-	| The program python3.12-config was not found in search path.
+	| The program python3 was not found in search path.
 	| Please ensure that it is installed and its directory is included in the search
-	| path. If you want to build sssd without python3 bindings then specify
-	| --without-python3-bindings when running configure.
+	| path. It is required for building python3 bindings. If you do not want to build
+	| them please use argument --without-python3-bindings when running configure.
 	| NOTE: The following config.log files may provide further information.
+
+[1]: https://github.com/SSSD/sssd/blob/2.5.2/configure.ac#L323-L325
+[2]: https://github.com/SSSD/sssd/blob/2.5.2/configure.ac#L353-L377
 
 Signed-off-by: Gaël PORTAY <gael.portay+rtone@gmail.com>
 ---
@@ -95,18 +94,18 @@ Signed-off-by: Gaël PORTAY <gael.portay+rtone@gmail.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9.2.bb b/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9.2.bb
-index 2717e4e..16e1c24 100644
+index 2035cd0..2717e4e 100644
 --- a/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9.2.bb
 +++ b/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9.2.bb
-@@ -31,7 +31,7 @@ SRC_URI[sha256sum] = "827bc65d64132410e6dd3df003f04829d60387ec30e72b2d4e22d93bb6
+@@ -39,7 +39,7 @@ SSSD_UID ?= "root"
+ SSSD_GID ?= "root"
  
- UPSTREAM_CHECK_URI = "https://github.com/SSSD/${BPN}/releases"
+ CACHED_CONFIGUREVARS = "ac_cv_member_struct_ldap_conncb_lc_arg=no \
+-    ac_cv_prog_HAVE_PYTHON3=${PYTHON_DIR} \
++    ac_cv_prog_HAVE_PYTHON3=yes \
+     "
  
--inherit autotools pkgconfig gettext python3-dir features_check systemd
-+inherit autotools pkgconfig gettext python3native features_check systemd
- 
- REQUIRED_DISTRO_FEATURES = "pam"
- 
+ PACKAGECONFIG ?= "nss autofs sudo infopipe"
 -- 
 2.47.0
 
