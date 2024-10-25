@@ -1,138 +1,129 @@
-Return-Path: <gael.portay+rtone@gmail.com>
+Return-Path: <richard.purdie@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8757AD0C5E3
-	for <webhook@archiver.kernel.org>; Fri, 25 Oct 2024 08:23:06 +0000 (UTC)
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
- by mx.groups.io with SMTP id smtpd.web11.7400.1729844576536733764
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70FF1D0C600
+	for <webhook@archiver.kernel.org>; Fri, 25 Oct 2024 11:07:47 +0000 (UTC)
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+ by mx.groups.io with SMTP id smtpd.web10.8939.1729851188447484453
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 25 Oct 2024 01:22:56 -0700
+ Fri, 25 Oct 2024 03:13:08 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=Rpgm6T3E;
- spf=pass (domain: gmail.com, ip: 209.85.128.51, mailfrom: gael.portay+rtone@gmail.com)
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4315b957ae8so2296085e9.1
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 25 Oct 2024 01:22:56 -0700 (PDT)
+ dkim=pass header.i=@linaro.org header.s=google header.b=MBgifnQL;
+ spf=pass (domain: linaro.org, ip: 209.85.215.179, mailfrom: ilias.apalodimas@linaro.org)
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7db908c9c83so1112371a12.2
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 25 Oct 2024 03:13:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729844574; x=1730449374; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ADahBH2a9jmL6wWgGmLVa2bh23t+gUfsvyzgcPdkuUM=;
-        b=Rpgm6T3ExenXhbFLrpU9tm687tI7X87qWFDr+A0VvOvVktaBj7rP6hfJhLvkROVPyS
-         N+uxFaNBUFgzn/Qn0wnE4XBR4u4YrUzmTAgO7lDApF918R2N03/3cubVoSfpN4fmtuvd
-         7SPpFNHUbv5nvqbS35MyWUAHbb+O4adInthjMmzxCzzdm2NO/+WBykG6Ei3i/z4V3UXp
-         ma4YWi7LlqXZUTbH6CeGIQeq6XTl6OBIYSiL2DylVVl5H71T36M/Cl7PPD5HVicWFmeW
-         V9co11m4A6bFBtA4keJniPt/cG9k+4OZm8f5NS+/AqcY+WaL7Dq7/O3sIsDPP/Ax9uyY
-         zA5Q==
+        d=linaro.org; s=google; t=1729851187; x=1730455987; darn=lists.yoctoproject.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=N1+kG9GEsDYxUpTVKNe7jXlp3KmHockqzx2LDbCDIfc=;
+        b=MBgifnQLf4btkRMo1i3kn+rZcSf5ktXRENEsqHnhqQFG2wjGRSYZ7Uy2lhhxGuuEW/
+         iMnEoCvZKLM6znSCHtliyErSg2ysd4R+bKZKQ33keEW21A/g4/ZATCk5v2dQPpmeFZwP
+         54huO/8+3BfJgtUVxSN8D2rNootaeD7401iIT9F5P4eNq0QmxSOGDP47W+2BKyzRcOQX
+         B6eYMHDVg16Jn0l6GVz/o1uBcKJXZp/bb/wqzv21xIFgiKhhvHTazJCMuGioQU2jCojF
+         oHCz6k+Gp1njhbjV90L2iVkCZ71MnDvHAanXDcYgZJBL5dHLLO2jHMOES7powJiQCyR/
+         VWvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729844574; x=1730449374;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=ADahBH2a9jmL6wWgGmLVa2bh23t+gUfsvyzgcPdkuUM=;
-        b=dU/nfpT+Qfd9CfhNPSBhyqjn9e8seDKsI88JvXZMqti2ZXqXECBl4FhhxeUyYMy+oL
-         07GESfy5trXViUmuY8LjjNVi85DAhIRuKhYkmKkX62wvq1Ki/wr2S9XS9N11MdD2z92x
-         H036XG3zbSigiN47X52jUe8SuJL2amCpqWkNBvDLPBohJ9V61pfMKXeE5KJZPoM/rmcB
-         T0VPGNzD55SyF+zaX2WkwWmuWl+83qUsZI9Ml355CVpV0xG1/zQlmvlDUR953T81FLQo
-         vPHkSpjeyCOQWm7cj7jsx+oXAs6vdgf2yDSPAqZw2CrE6C/Ds7bOCD6igQy49tpjPSCF
-         nC0A==
-X-Gm-Message-State: AOJu0YzxZUqxsdMHsn1roA1AhByyEaJes8UV6xlu2Onl+dbFGK0jjbNW
-	1PT06a/O+zYgQagCDZToFjqZYtewNY/pynCogYbWfFZdb2A5nDuyV+kOB3A2
-X-Google-Smtp-Source: AGHT+IFy5DDgX5eVRvIoFO+RYYt5r3yg3BW1VEMz901Stt/4WYiHwRMZRNpW0J1u77dBJaShMZ8AEQ==
-X-Received: by 2002:a5d:64e5:0:b0:37d:4864:39a2 with SMTP id ffacd0b85a97d-3805b3fd077mr244415f8f.7.1729844574448;
-        Fri, 25 Oct 2024 01:22:54 -0700 (PDT)
-Received: from archlinux.. ([2a01:e0a:ce:f2f0:2a6b:35ff:feb8:77d9])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b70bc1sm907904f8f.70.2024.10.25.01.22.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 01:22:53 -0700 (PDT)
-Sender: =?UTF-8?B?R2HDq2wgUE9SVEFZ?= <gael.portay@gmail.com>
-From: =?UTF-8?q?Ga=C3=ABl=20PORTAY?= <gael.portay+rtone@gmail.com>
-To: yocto-patches@lists.yoctoproject.org
-Cc: =?UTF-8?q?Ga=C3=ABl=20PORTAY?= <gael.portay+rtone@gmail.com>
-Subject: [meta-security][PATCH 09/10] sssd: fix shipping python script and modules
-Date: Fri, 25 Oct 2024 10:22:38 +0200
-Message-ID: <20241025082239.3468351-10-gael.portay+rtone@gmail.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241025082239.3468351-1-gael.portay+rtone@gmail.com>
-References: <20241025082239.3468351-1-gael.portay+rtone@gmail.com>
+        d=1e100.net; s=20230601; t=1729851187; x=1730455987;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=N1+kG9GEsDYxUpTVKNe7jXlp3KmHockqzx2LDbCDIfc=;
+        b=QfiEzlyIZ3kPHZEsqOGVbcrBzZENokPo06tVKtDShsjI/0bwFXC+ThT4k3kPs2xfO/
+         C2Mgea2IK/43SJC47W4m2Jk90tnW39aWR2FlShPnkwscSBOEYyxEZvkEhOPhKXi+tY5b
+         ieUL9/SNGUkykweoHQ6DauLwX2P6dtmzcgNxA7fs+CDBSFih0Jkr6Lp69o9nsrz7147/
+         68Pc7un8sXI5m8x1bJpD49uyAxsFhsxjeCYF8qj1o7RPQA7iF0XeIKz0jhaTHG8o2LcQ
+         /X8ddHZZvAdfKxeqXDJx7emaJuMSva3aN5mETgXgwo0s+iKrpFjT9O6Gwd5kFK+a+Vr+
+         2z7Q==
+X-Gm-Message-State: AOJu0Yy984kPaVcLmo3JIiYcyjXiFMnD0Xx96auk941vPZQolO1k6NXM
+	DE9CcDix7Miw6OiaQqWb5riQyayy5KpfWSNZ8yA3mJN8VwD+BTkkhMs9Q69jjliL8B1vmiYPCZn
+	hyw7K9TBHDGWk4wLsXHl4LyE48rDqoUd3uzcMFw==
+X-Google-Smtp-Source: AGHT+IFx4q141kIUnPkHAg8z/olnQ8+0eW+krUlGLn8mAOXllHus3MrVo3h7GvMz6sUAPPPgC6iCzr+IgwxmBzV9THA=
+X-Received: by 2002:a05:6a21:1798:b0:1d2:eb91:c0c1 with SMTP id
+ adf61e73a8af0-1d978bb2bacmr11553220637.42.1729851187610; Fri, 25 Oct 2024
+ 03:13:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20241024212301.3304651-1-javier.tia@linaro.org>
+In-Reply-To: <20241024212301.3304651-1-javier.tia@linaro.org>
+From: "Ilias Apalodimas" <ilias.apalodimas@linaro.org>
+Date: Fri, 25 Oct 2024 13:12:30 +0300
+Message-ID: <CAC_iWjLiV4PDQHKT7me3Z52jFU8PqQ6=uGXdym1aByEx0AS8bw@mail.gmail.com>
+Subject: Re: [meta-security][PATCH] tpm: Enable Measured Boot in U-Boot
+To: Javier Tia <javier.tia@linaro.org>
+Cc: yocto-patches@lists.yoctoproject.org, 
+	Mikko Rapeli <mikko.rapeli@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 25 Oct 2024 08:23:06 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/757
+ <yocto-patches@lists.yoctoproject.org>; Fri, 25 Oct 2024 11:07:47 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/759
 
-The project installs the python script sss_obfuscate to the /usr/sbin
-directory and the modules to the /usr/lib/python3.X directory.
+On Fri, 25 Oct 2024 at 00:23, Javier Tia <javier.tia@linaro.org> wrote:
+>
+> Measured Boot is the term used to describe the process of securely
+> recording and computing hashes of code and critical data at each stage
+> in the boot chain prior to their use.
+>
+> These measurements can be employed by other system components to
+> establish a comprehensive attestation system. For example, they could be
+> employed to enforce local attestation policies (such as the release of
+> specific platform keys) or to securely transmit them to a remote
+> challenger, also known as a verifier, post-boot to verify the condition
+> of the code and critical data.
+>
+> Measured launch does not authenticate the code or critical data; rather,
+> it records the code or critical data that was present on the system
+> during boot.
+>
+> Initially, the TPM measures the BIOS/EFI layer in the fundamental flow.
+> This measurement involves the generation of a cryptographic hash of the
+> binary image and the verification of the binary instructions that this
+> layer will execute. The TPM stores the generated hash in one of the
+> numerous "slots" in the Platform Configuration Register (PCR). The TPM
+> or entities external to the TPM can read these portions of memory at a
+> later time; however, they are unalterable once they have been written.
+> These memory pieces are protected by integrity protection from the
+> instant they are first written. This guarantees that the value written
+> to a PCR by the TPM will remain constant for the duration of the system,
+> unless the system is powered off or rebooted.
+>
+> Signed-off-by: Javier Tia <javier.tia@linaro.org>
+> ---
+>  meta-tpm/recipes-bsp/u-boot/u-boot/measured-boot.cfg | 6 ++++++
+>  meta-tpm/recipes-bsp/u-boot/u-boot_%.bbappend        | 3 +++
+>  2 files changed, 9 insertions(+)
+>  create mode 100644 meta-tpm/recipes-bsp/u-boot/u-boot/measured-boot.cfg
+>  create mode 100644 meta-tpm/recipes-bsp/u-boot/u-boot_%.bbappend
+>
+> diff --git a/meta-tpm/recipes-bsp/u-boot/u-boot/measured-boot.cfg b/meta-tpm/recipes-bsp/u-boot/u-boot/measured-boot.cfg
+> new file mode 100644
+> index 0000000..76c51ea
+> --- /dev/null
+> +++ b/meta-tpm/recipes-bsp/u-boot/u-boot/measured-boot.cfg
+> @@ -0,0 +1,6 @@
+> +CONFIG_TPM=y
+> +CONFIG_TPM_RNG=y
+> +CONFIG_CMD_TPM=y
+> +CONFIG_TPM2_MMIO=y
+> +CONFIG_TPM2_TIS_SPI=y
+> +CONFIG_TPM2_FTPM_TEE=y
+> \ No newline at end of file
+> diff --git a/meta-tpm/recipes-bsp/u-boot/u-boot_%.bbappend b/meta-tpm/recipes-bsp/u-boot/u-boot_%.bbappend
+> new file mode 100644
+> index 0000000..c5d2923
+> --- /dev/null
+> +++ b/meta-tpm/recipes-bsp/u-boot/u-boot_%.bbappend
+> @@ -0,0 +1,3 @@
+> +FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
+> +
+> +SRC_URI += "${@bb.utils.contains("MACHINE_FEATURES", "measured-boot", "file://measured-boot.cfg", "", d)}"
+> \ No newline at end of file
+> --
+> 2.47.0
+>
 
-The recipe does not ship the python modules to the package sssd, and
-thus, it raises the QA issue attached below.
-
-This adds the python artifacts (sss_obfuscate script and module files)
-to the dedicated package sssd-python.
-
-Fixes:
-
-	NOTE: Executing Tasks
-	ERROR: sssd-2.9.2-r0 do_package: QA Issue: sssd: Files/directories were installed but not shipped in any package:
-	  /usr/lib/python3.12/site-packages/pysss.so
-	  /usr/lib/python3.12/site-packages/pyhbac.so
-	  /usr/lib/python3.12/site-packages/pysss_murmur.so
-	  /usr/lib/python3.12/site-packages/pysss_nss_idmap.so
-	  /usr/lib/python3.12/site-packages/SSSDConfig
-	  /usr/lib/python3.12/site-packages/SSSDConfig-2.9.2-py3.12.egg-info
-	  /usr/lib/python3.12/site-packages/SSSDConfig/__init__.py
-	  /usr/lib/python3.12/site-packages/SSSDConfig/ipachangeconf.py
-	  /usr/lib/python3.12/site-packages/SSSDConfig/sssdoptions.py
-	  /usr/lib/python3.12/site-packages/SSSDConfig/__pycache__
-	  /usr/lib/python3.12/site-packages/SSSDConfig/__pycache__/__init__.cpython-312.pyc
-	  /usr/lib/python3.12/site-packages/SSSDConfig/__pycache__/ipachangeconf.cpython-312.pyc
-	  /usr/lib/python3.12/site-packages/SSSDConfig/__pycache__/sssdoptions.cpython-312.pyc
-	  /usr/lib/python3.12/site-packages/SSSDConfig-2.9.2-py3.12.egg-info/dependency_links.txt
-	  /usr/lib/python3.12/site-packages/SSSDConfig-2.9.2-py3.12.egg-info/top_level.txt
-	  /usr/lib/python3.12/site-packages/SSSDConfig-2.9.2-py3.12.egg-info/SOURCES.txt
-	  /usr/lib/python3.12/site-packages/SSSDConfig-2.9.2-py3.12.egg-info/PKG-INFO
-	Please set FILES such that these items are packaged. Alternatively if they are unneeded, avoid installing them or delete them within do_install.
-	sssd: 17 installed and not shipped files. [installed-vs-shipped]
-	ERROR: sssd-2.9.2-r0 do_package: Fatal QA errors were found, failing task.
-
-Signed-off-by: Gaël PORTAY <gael.portay+rtone@gmail.com>
----
- .../networking-layer/recipes-security/sssd/sssd_2.9.2.bb    | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9.2.bb b/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9.2.bb
-index a3b1659..e5cd4d8 100644
---- a/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9.2.bb
-+++ b/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9.2.bb
-@@ -139,7 +139,7 @@ SYSTEMD_SERVICE:${PN} = " \
- "
- SYSTEMD_AUTO_ENABLE = "disable"
- 
--PACKAGES =+ "libsss-sudo"
-+PACKAGES =+ "sssd-python libsss-sudo"
- ALLOW_EMPTY:libsss-sudo = "1"
- 
- FILES:${PN} += "${base_libdir}/security/pam_sss*.so  \
-@@ -151,6 +151,9 @@ FILES:${PN} += "${base_libdir}/security/pam_sss*.so  \
-                 ${PYTHON_SITEPACKAGES_DIR}/sssd \
-                 "
- 
-+FILES:${PN}-python = "${sbindir}/sss_obfuscate \
-+                      ${PYTHON_SITEPACKAGES_DIR} \
-+                      "
- FILES:libsss-sudo = "${libdir}/libsss_sudo.so"
- 
- RDEPENDS:${PN} = "bind \
-@@ -162,3 +165,4 @@ RDEPENDS:${PN} = "bind \
-                   python3-core \
-                   python3-logging \
-                   "
-+RDEPENDS:${PN}-python = "python3-core"
--- 
-2.47.0
-
+FWIW
+Acked-by: Ilias Apalodimas <ilias.apalodimas@linaro.org>
 
