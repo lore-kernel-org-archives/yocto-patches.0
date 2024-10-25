@@ -2,57 +2,57 @@ Return-Path: <gael.portay+rtone@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83AD6D0C5E5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E0D7D0C5E8
 	for <webhook@archiver.kernel.org>; Fri, 25 Oct 2024 08:22:56 +0000 (UTC)
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
- by mx.groups.io with SMTP id smtpd.web11.7394.1729844570653067891
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+ by mx.groups.io with SMTP id smtpd.web10.7376.1729844569032579393
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 25 Oct 2024 01:22:50 -0700
+ Fri, 25 Oct 2024 01:22:49 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=HRYmszUW;
- spf=pass (domain: gmail.com, ip: 209.85.128.41, mailfrom: gael.portay+rtone@gmail.com)
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4315b0bd4ddso2595955e9.3
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 25 Oct 2024 01:22:50 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=ejLBKKGv;
+ spf=pass (domain: gmail.com, ip: 209.85.128.43, mailfrom: gael.portay+rtone@gmail.com)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43160c5bad8so2284555e9.3
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 25 Oct 2024 01:22:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729844569; x=1730449369; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1729844566; x=1730449366; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=j6VdBHnb5CKD1AfTY2gxXaX1I1R3P3rf4TrdTQZy+4E=;
-        b=HRYmszUWEmm3iikKUDHMcn7gCGbrxewwK94CFwRGpDhks8NL5cpS9/uDM0WO9ZtY5a
-         sncecFOHC/WAjPhE9y7ypkfu8643OM3ioEaa8nVwIuuhSbHbYGb/sQIsB/y9aGK2x7TS
-         9uAVdX9QpED0bi4LLpn9Yf95Oi2o2TrffmVN6ZulyQr5xWski5B2nhY0bTdt44c2cnz4
-         U1uPgdHc5nWg26krvvOVlk79L4THTu/56TKXayvbbJnmSOzzQYfGmsB47tpYBo4vpubj
-         Ki1HKC5Zq+K71whmCWwdaQL95U7i8y8l+Izz+H/N499E7kHhLzxl1tMEVCQwMArIVbMB
-         hFyA==
+        bh=XJiDyb7y08ZD9dtuF18zy9lt6+qGojlyvNXzQn11cMA=;
+        b=ejLBKKGv6IRUGWrC+NUdcYH7uVc1uS4SIaxmk+39DLtDzGNdg7Qu2SPmnmNulHK1Mb
+         HyRGcCBBkPVFxC03x6t7HRCot1vhTgmUOBA36D+3jGhRpzqy9uwO7sDhG19H21WuEJwp
+         fs3b5cJxDeqCu4NvWeYsChPJXmomGYWExVQoPbb/UBxtKppq4Jne/FfFMdCn2X2xaDlb
+         6NuKZMZ+lOBgOTZNHGsMMT2DGdSEpRxbMXOQxGMVDrLrnTaj9zGpVIgSWz7eNkzyygU3
+         iPdTW3VhcHySwDIwuqOuTMWjn3ZTaEjDb2vO6Rla11xBWHEwykTpRim7AhtXn2oN+dAN
+         Mwlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729844569; x=1730449369;
+        d=1e100.net; s=20230601; t=1729844566; x=1730449366;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=j6VdBHnb5CKD1AfTY2gxXaX1I1R3P3rf4TrdTQZy+4E=;
-        b=MvifPpJJ3xO2nzfb+Qd35J+cHaw4aN0NXXZvtW6H+6SAuQO2wqUyzM1HBBFHGDpkxz
-         xckD6TYxHsbUTHKKCeTj9Q882zgx7XW5T8x3qhAMhTcMiY+7RnL8nN9KRh8uRYqZPgFR
-         w+x26hAyLDqrDaJnAD3reLZUkUdZYZ9wxhPOSKWJZx2aShUyVYFVxMwNibU8tjCQCI+v
-         kF+4yUlu+AjH6C/RlksYUUvS30Ve/+WnB7bLB4vNM84Rp9EIoFBgtayHacKwwISp5V/Y
-         ubKTUPPr5TFdciHXmHg16eMvi8IamBdFBTE4Wlzjji3/NPeaZ3SVy1BkN8k0afTyyaRD
-         v5Vw==
-X-Gm-Message-State: AOJu0YypsbTiCeYBiMV8e+LC4jMgob8N9wTB5qDhGtlk8E1sl1ZUCGvm
-	+4bJ7BuoBpKd2dCSMg2pt2lSFBjBywuL0aH2obRJ6VfraR5PQozT67RPTJeX
-X-Google-Smtp-Source: AGHT+IH3rehyyeUe3LbBY1LtaPfmPOfSi/VXDeMu88ExheS4lpAIqK4KDEimD66mmr3BRLLDeOBavA==
-X-Received: by 2002:a05:6000:1f8f:b0:37d:4548:2d70 with SMTP id ffacd0b85a97d-3805b4ab1d9mr259558f8f.11.1729844568450;
-        Fri, 25 Oct 2024 01:22:48 -0700 (PDT)
-Received: from archlinux.. ([2a01:e0a:ce:f2f0:2a6b:35ff:feb8:77d9])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b70bc1sm907904f8f.70.2024.10.25.01.22.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        bh=XJiDyb7y08ZD9dtuF18zy9lt6+qGojlyvNXzQn11cMA=;
+        b=kWP0iBV1cEJP7RAW6Dld2rDvdmZTJCgt/y/gJRn/hgPNKeekTI4fZlemL85DKVV9Mj
+         oHHJD9yu7muVm2IKReCRasHgi6gEH7rl4Idy1iQWMQdtm9jK+ISLu17Z4HrNPo+PWcIL
+         LdXhAZiCwNKSvR+qHPWkE4Kkhkpim3fWb7NQiHyXMpp9fenqEiHeLvHLIWWiE/fJbbBc
+         5eV24sH1XG3qc2cBb9enUdFok4SBbzAK5D2LVoMUT6D/E47NTgzOKi9ewv4BJNYrARl5
+         +dYDZQNkOBOT5+ON6DGCorVzKmhRSoAwmC42H8kIOTKA+dwSZPlLAZYoIbd4LRTaT/qd
+         bnBA==
+X-Gm-Message-State: AOJu0Yw0FBXUI2LQYfMudcOwBle6wXzGQjOtvwPqxzUyZzOAw0J/8+gE
+	sVd0lplQlN6zjayzYBLjCs0e1uALYRKKB78Cn4FeuUCK5iznpsjO6GWRQ/ld
+X-Google-Smtp-Source: AGHT+IEcndjYT8ClWyg2Y7LxKm7HjJl5IM+8fbKXLnZfO6Z4TEIGAdhuIr82wxrDJybgy3SzcSK9kA==
+X-Received: by 2002:a5d:64e5:0:b0:37d:4864:39a2 with SMTP id ffacd0b85a97d-3805b3fd077mr244283f8f.7.1729844566379;
         Fri, 25 Oct 2024 01:22:46 -0700 (PDT)
+Received: from archlinux.. ([2a01:e0a:ce:f2f0:2a6b:35ff:feb8:77d9])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b70bc1sm907904f8f.70.2024.10.25.01.22.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 01:22:45 -0700 (PDT)
 Sender: =?UTF-8?B?R2HDq2wgUE9SVEFZ?= <gael.portay@gmail.com>
 From: =?UTF-8?q?Ga=C3=ABl=20PORTAY?= <gael.portay+rtone@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: =?UTF-8?q?Ga=C3=ABl=20PORTAY?= <gael.portay+rtone@gmail.com>
-Subject: [meta-security][PATCH 04/10] sssd: fix installation sss_analyze python3 files
-Date: Fri, 25 Oct 2024 10:22:33 +0200
-Message-ID: <20241025082239.3468351-5-gael.portay+rtone@gmail.com>
+Subject: [meta-security][PATCH 03/10] sssd: fix missing python3-logging run-time dependency
+Date: Fri, 25 Oct 2024 10:22:32 +0200
+Message-ID: <20241025082239.3468351-4-gael.portay+rtone@gmail.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241025082239.3468351-1-gael.portay+rtone@gmail.com>
 References: <20241025082239.3468351-1-gael.portay+rtone@gmail.com>
@@ -63,109 +63,56 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Fri, 25 Oct 2024 08:22:56 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/752
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/751
 
-SSSD has introduced the internal tool sss_analyze since 2.6.0[1].
+The internal tool sss_analyze is a python script run by the sssctl
+command analyze.
 
-	Add log parsing tool which can be used to track requests across
-	responder and backend logs.
+The script sss_analyze imports the python module logging[1].
 
-sss_analyze is a python3 script[2] with modules[3] that is run by the
-sssctl command analyze[4][5][6].
+However, the package sssd lacks installing this python module that is
+required to run the script.
 
-The autotools installs the files to ${libexec} and ${python3dir}[7]. The
-latter is set if the configure option --with-python3-bindings is set
-only.
+This adds the missing run-time dependency python3-logging to ensure this
+module comes along the package sssd.
 
-As a consequence, the Makefile installs the python3 files to /sssd
-instead of /usr/lib/python3.12/site-packages/sssd if the option
---with-python3-bindings is unset:
+Fixes:
 
-	gportay@archlinux ~/src $ find build/tmp/work/core2-64-poky-linux/sssd/2.9.2/image/sssd
-	build/tmp/work/core2-64-poky-linux/sssd/2.9.2/image/sssd
-	build/tmp/work/core2-64-poky-linux/sssd/2.9.2/image/sssd/modules
-	build/tmp/work/core2-64-poky-linux/sssd/2.9.2/image/sssd/modules/__init__.py
-	build/tmp/work/core2-64-poky-linux/sssd/2.9.2/image/sssd/modules/request.py
-	build/tmp/work/core2-64-poky-linux/sssd/2.9.2/image/sssd/modules/error.py
-	build/tmp/work/core2-64-poky-linux/sssd/2.9.2/image/sssd/__init__.py
-	build/tmp/work/core2-64-poky-linux/sssd/2.9.2/image/sssd/source_files.py
-	build/tmp/work/core2-64-poky-linux/sssd/2.9.2/image/sssd/source_journald.py
-	build/tmp/work/core2-64-poky-linux/sssd/2.9.2/image/sssd/source_reader.py
-	build/tmp/work/core2-64-poky-linux/sssd/2.9.2/image/sssd/parser.py
-	build/tmp/work/core2-64-poky-linux/sssd/2.9.2/image/sssd/sss_analyze.py
-	build/tmp/work/core2-64-poky-linux/sssd/2.9.2/image/sssd/util.py
+	root@qemux86-64:~# sssctl analyze
+	Traceback (most recent call last):
+	  File "/usr/libexec/sssd/sss_analyze", line 3, in <module>
+	    from sssd import sss_analyze
+	  File "/usr/lib/python3.12/site-packages/sssd/sss_analyze.py", line 3, in <module>
+	    from sssd.modules import request
+	  File "/usr/lib/python3.12/site-packages/sssd/modules/request.py", line 2, in <module>
+	    import logging
+	ModuleNotFoundError: No module named 'logging'
 
-The sss_analyze tool is unrelated to the python3 bindings; the sssctl
-does not condition its code if the python3 bindings are unset.
-
-Therefore, sss_analyze has to be installed even if the python3 bindings
-are unset.
-
-This ensures the variable python3dir is set to the expected location by
-adding it to --without-python3-bindings if the python3 feature is
-disabled.
-
-	gportay@archlinux ~/src $ find build/tmp/work/core2-64-poky-linux/sssd/2.9.2/image/usr/lib/python3.12
-	build/tmp/work/core2-64-poky-linux/sssd/2.9.2/image/usr/lib/python3.12
-	build/tmp/work/core2-64-poky-linux/sssd/2.9.2/image/usr/lib/python3.12/site-packages
-	build/tmp/work/core2-64-poky-linux/sssd/2.9.2/image/usr/lib/python3.12/site-packages/sssd
-	build/tmp/work/core2-64-poky-linux/sssd/2.9.2/image/usr/lib/python3.12/site-packages/sssd/modules
-	build/tmp/work/core2-64-poky-linux/sssd/2.9.2/image/usr/lib/python3.12/site-packages/sssd/modules/__init__.py
-	build/tmp/work/core2-64-poky-linux/sssd/2.9.2/image/usr/lib/python3.12/site-packages/sssd/modules/request.py
-	build/tmp/work/core2-64-poky-linux/sssd/2.9.2/image/usr/lib/python3.12/site-packages/sssd/modules/error.py
-	build/tmp/work/core2-64-poky-linux/sssd/2.9.2/image/usr/lib/python3.12/site-packages/sssd/__init__.py
-	build/tmp/work/core2-64-poky-linux/sssd/2.9.2/image/usr/lib/python3.12/site-packages/sssd/source_files.py
-	build/tmp/work/core2-64-poky-linux/sssd/2.9.2/image/usr/lib/python3.12/site-packages/sssd/source_journald.py
-	build/tmp/work/core2-64-poky-linux/sssd/2.9.2/image/usr/lib/python3.12/site-packages/sssd/source_reader.py
-	build/tmp/work/core2-64-poky-linux/sssd/2.9.2/image/usr/lib/python3.12/site-packages/sssd/parser.py
-	build/tmp/work/core2-64-poky-linux/sssd/2.9.2/image/usr/lib/python3.12/site-packages/sssd/sss_analyze.py
-	build/tmp/work/core2-64-poky-linux/sssd/2.9.2/image/usr/lib/python3.12/site-packages/sssd/util.py
-
-[1]: https://github.com/SSSD/sssd/commit/82e051e1f15060554ecacc07107c82675369e0bb
-[2]: https://github.com/SSSD/sssd/blob/2.9.2/src/tools/analyzer/sss_analyze#L1
-[3]: https://github.com/SSSD/sssd/tree/2.9.2/src/tools/analyzer
-[4]: https://github.com/SSSD/sssd/blob/2.9.2/src/tools/sssctl/sssctl_logs.c#L47
-[5]: https://github.com/SSSD/sssd/blob/2.9.2/src/tools/sssctl/sssctl_logs.c#L605
-[6]: https://github.com/SSSD/sssd/blob/2.9.2/src/tools/sssctl/sssctl.c#L337
-[7]: https://github.com/SSSD/sssd/blob/2.9.2/src/tools/analyzer/Makefile.am#L7
-[8]: https://github.com/SSSD/sssd/blob/2.9.2/configure.ac#L394
+[1]: https://github.com/SSSD/sssd/blob/2.9.2/src/tools/analyzer/source_files.py#L2
 
 Signed-off-by: Gaël PORTAY <gael.portay+rtone@gmail.com>
 ---
- .../networking-layer/recipes-security/sssd/sssd_2.9.2.bb    | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ .../recipes-security/sssd/sssd_2.9.2.bb                | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
 diff --git a/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9.2.bb b/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9.2.bb
-index e8f3031..2035cd0 100644
+index f6bbac3..e8f3031 100644
 --- a/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9.2.bb
 +++ b/dynamic-layers/networking-layer/recipes-security/sssd/sssd_2.9.2.bb
-@@ -54,7 +54,7 @@ PACKAGECONFIG[manpages] = "--with-manpages, --with-manpages=no, libxslt-native d
- PACKAGECONFIG[nl] = "--with-libnl, --with-libnl=no, libnl"
- PACKAGECONFIG[nss] = ", ,nss,"
- PACKAGECONFIG[oidc_child] = "--with-oidc-child, --without-oidc-child"
--PACKAGECONFIG[python3] = "--with-python3-bindings, --without-python3-bindings"
-+PACKAGECONFIG[python3] = "--with-python3-bindings, --without-python3-bindings python3dir=${PYTHON_SITEPACKAGES_DIR}"
- PACKAGECONFIG[samba] = "--with-samba, --with-samba=no, samba"
- PACKAGECONFIG[selinux] = "--with-selinux, --with-selinux=no --with-semanage=no, libselinux"
- PACKAGECONFIG[ssh] = "--with-ssh, --with-ssh=no, "
-@@ -88,9 +88,6 @@ do_install () {
-     rmdir --ignore-fail-on-non-empty "${D}/${bindir}"
+@@ -156,4 +156,12 @@ FILES:${PN} += "${base_libdir}/security/pam_sss*.so  \
  
-     install -d ${D}/${sysconfdir}/${BPN}
--    install -d ${D}/${PYTHON_SITEPACKAGES_DIR}
--    mv ${D}/${BPN}  ${D}/${PYTHON_SITEPACKAGES_DIR}
--
-     install -m 600 ${UNPACKDIR}/${BPN}.conf ${D}/${sysconfdir}/${BPN}
+ FILES:libsss-sudo = "${libdir}/libsss_sudo.so"
  
-     # /var/log/sssd needs to be created in runtime. Use rmdir to catch if
-@@ -112,7 +109,6 @@ do_install () {
-     # Remove /run as it is created on startup
-     rm -rf ${D}/run
- 
--#    rm -fr ${D}/sssd
-     rm -f ${D}${systemd_system_unitdir}/sssd-secrets.*
- }
- 
+-RDEPENDS:${PN} = "bind bind-utils dbus libldb libpam libsss-sudo python3-core"
++RDEPENDS:${PN} = "bind \
++                  bind-utils \
++                  dbus \
++                  libldb \
++                  libpam \
++                  libsss-sudo \
++                  python3-core \
++                  python3-logging \
++                  "
 -- 
 2.47.0
 
