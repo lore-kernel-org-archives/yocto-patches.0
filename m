@@ -1,198 +1,208 @@
-Return-Path: <quentin.schulz@cherry.de>
+Return-Path: <foss@0leil.net>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40918D33989
-	for <webhook@archiver.kernel.org>; Mon, 28 Oct 2024 14:10:41 +0000 (UTC)
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com (EUR03-AM7-obe.outbound.protection.outlook.com [40.107.105.88])
- by mx.groups.io with SMTP id smtpd.web10.52769.1730124633717978949
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65FB2D3398C
+	for <webhook@archiver.kernel.org>; Mon, 28 Oct 2024 14:19:21 +0000 (UTC)
+Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
+ by mx.groups.io with SMTP id smtpd.web10.52977.1730125153401689962
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 28 Oct 2024 07:10:34 -0700
+ Mon, 28 Oct 2024 07:19:14 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@cherry.de header.s=selector1 header.b=b1iwez/f;
- spf=pass (domain: cherry.de, ip: 40.107.105.88, mailfrom: quentin.schulz@cherry.de)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=M0ja3UBzHaBtSQK13VOIDLpOmXrl4KurJwUrEwDuj8gbVqSTkK7fohU8NbzNMtl396tfbjAyX60e+9b895wov2wkZNF+SBVX760YF57cuBDjAmO0jlLwWJT42VO6ljxHcHZXw+txSvJt0HM2yxXcHDJtm+LrnO3mDIpw2AivI7cjR75vd5NkrCWv7CZs4pwOKLfiwbSKEKP0I6VKL96muwWtVcBpaFnwbVbE6rgiEqcxhUyPyMtqS1fC7U9mKeKyfUCl4nGoJMm9J4bqzUP5IE8Az+kwcaqJNG9774EaKUiwHnokD0RhY4z03wxnzjZftitnrIPBhPRpsEjTCg4+wA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=z8eeWTCFc+ogN91jXWcGxxCL1dnKbeO6lRaEa2L8HHc=;
- b=m4U7fFbmJldnZYKPZGqpHWTVJAYy4cICgBZOaj//59fR30WbNNgOjUvsRNX55Zq9QK4pskGcuv7XML1b+SoT8egGauQiFqzT12z6PUIVNR81LpBeJEGUawto3/c1EsyuGogIIJQobHVhaR2XOQfvHpoxkPDmG5WG2/VhhQxZ/OERQmjJ3xpuph356g7J4YOGbGGyueaErEvHzUu2VJ4fKDGs3f0zyBLAzPH1Xor6tOBIaYuxQX+2Tv0M6IbJFjep5CUhz0CtMmvcnifJOUoYyQNJtAs9wBeRzfCj3bqsWSvm+PA7/LWSnIWpxC6JRuODe2LrjWDhVSGEKF5OS7o15Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=z8eeWTCFc+ogN91jXWcGxxCL1dnKbeO6lRaEa2L8HHc=;
- b=b1iwez/f8X2YT+9c7bQr6AuHHVjOHJiB77FVzLn77CDgQpvF2KAsNnc5dkzBAX5DFAR7XQE5ziyJ0YV0Wu7AXqulair5cp/61ZbWLWLDURyvR4nMoPl7afCIIpiBffQNdMObLp7Ru1kHSN6I7P3E7aM/2kui1p6OOSCEEXB+gDs=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com (2603:10a6:20b:42c::20)
- by DB9PR04MB9235.eurprd04.prod.outlook.com (2603:10a6:10:371::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.21; Mon, 28 Oct
- 2024 14:10:29 +0000
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::35f6:bc7d:633:369a]) by AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::35f6:bc7d:633:369a%7]) with mapi id 15.20.8093.025; Mon, 28 Oct 2024
- 14:10:29 +0000
-Message-ID: <2c055b48-6dc4-40b9-a269-7353963b3f70@cherry.de>
-Date: Mon, 28 Oct 2024 15:10:28 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [meta-rockchip PATCH 0/2] rk35xx: add support for upstream TF-A
-To: Quentin Schulz <foss+yocto@0leil.net>,
- yocto-patches@lists.yoctoproject.org
-References: <20240927-rk35-upstream-tf-a-v1-0-e3911342113f@cherry.de>
-Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <20240927-rk35-upstream-tf-a-v1-0-e3911342113f@cherry.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-ClientProxiedBy: FR0P281CA0104.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a9::15) To AS8PR04MB8897.eurprd04.prod.outlook.com
- (2603:10a6:20b:42c::20)
+ dkim=none (message not signed); spf=pass (domain: 0leil.net, ip: 185.125.25.15, mailfrom: foss+yocto@0leil.net)
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Xcb9W4nsKzD4g;
+	Mon, 28 Oct 2024 15:19:11 +0100 (CET)
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Xcb9W0gTlzL1T;
+	Mon, 28 Oct 2024 15:19:11 +0100 (CET)
+From: Quentin Schulz <foss+yocto@0leil.net>
+Date: Mon, 28 Oct 2024 15:18:47 +0100
+Subject: [meta-rockchip PATCH] bsp: trusted-firmware-a: update patches'
+ upstream status
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|DB9PR04MB9235:EE_
-X-MS-Office365-Filtering-Correlation-Id: cc663d2d-7771-4d04-ef80-08dcf75a471c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?cGtqa0x2cllzUHdoUjJ4aVF1V3Z6eXhCaXBHYmxNc0FweVYzY1dzZXQyanh4?=
- =?utf-8?B?S2cyRUZwTndhQmtGN01aUURxSFA1YlNHQ1BoN1lWeHVOODNRcGhHVGFyVXVS?=
- =?utf-8?B?MnhoR2pHbVZqSlJRa3VSSGFCUVl3bGhOOU8xbC82VTdNdUJOM3UvcWJaYkd2?=
- =?utf-8?B?UjVQRXA5NmtpOVlFdkp2V1IzdUhLcDR2NWtqY2FHK3VsRG0wU0QzWHpla3I1?=
- =?utf-8?B?OWhWVHc0NFY0RTFuTG9hTWswOGZsRmVid0VxbGFzK2F5R1BkODNhSDNWNk5t?=
- =?utf-8?B?b01qZmpGM2Q3dWlXYnFwK253Z3d5SnRCZDNqUFJFMzZESHJrQXAyb2FIN2tL?=
- =?utf-8?B?cUYySk9jRE5wRDlyZU9hclh0WklmOTNpaDF2MVhPdk1CTjFwQjJoRzE5Y2lX?=
- =?utf-8?B?ekE0NktvWHNQNzVLc3pyTHNTWDdFb2ZrdEt4VWM5RGk3NFZicEZTWFNXRDdl?=
- =?utf-8?B?bGk0SHA2Mm50QVk5WThyQm9SWEYvZ0sxMjRLbjBRMFA3aWFRRkQxczAyQ3hC?=
- =?utf-8?B?bEZJWmdFZjZSSkxHMFh0OVJIaFNtRUJ4ek1WVkU0MDI5MmdmdHdGR0M4WUJu?=
- =?utf-8?B?TWZGZE1JcHdhcTc4UE1adG12enlncmpFMHdobGM1WVpLcXFhNTF3WmVMcnRw?=
- =?utf-8?B?dTJIWDNMaWZBYmhNQ3lyaGJ6a0t3YkdaOFdDek5weEJQL0daTSs1Unp4RlJI?=
- =?utf-8?B?cWJ4QzBjMm5VL3F5TGVEY3FzNkV3V2ZNc3VKYzhrQnNnL2Foc1daZU4zVzBy?=
- =?utf-8?B?NXRsdDd4ZHFyOWszYlIwaHVwZnEvK1ZmVWR1Z1lqcHo3VzhuK3JyUGtXVXNn?=
- =?utf-8?B?Ly9JNm00UEZpUG5tWi9ZM0F0V1JrZjhzNm43aDA1Z2orYjlCVk1yVU90RUNi?=
- =?utf-8?B?czFNZmk1QXdaM0grWnVKVGg0MjNGY2tpZ2M5Sy9uMFdWb3BqUFk5cUM0ejgy?=
- =?utf-8?B?T3R1eTloVTdPL3FUNlBFSlgwbE9IVmVqRGZiR1dtZU1hMFRESTVnME1ESEhC?=
- =?utf-8?B?ODdoRzJibVllWVcyWCtTMzBxTUtRNkcvWkUvazM1R3FLOWlZTTZDdTZ3LzhM?=
- =?utf-8?B?VEM5SzJOTFBzV1g3OUIzZHJxWkp1dFcvQStFNUpxdzAyYml3eGpMV2M0dWhC?=
- =?utf-8?B?WkEzelVjdUR0aFZxdUY5dkx1eWg0ditOUTdDL3NyWnlYcXJ2RE5mY3Zmb0Zo?=
- =?utf-8?B?aE15WmlpZlNOUHU5dDFFcGRpbk1Fd2FiaWtHTkUyNisxVFUwblByMEg3Y2FP?=
- =?utf-8?B?dWlJWjFtdkdnTHdzdzBhNUlvTzF6S2JiZEt3UUl2T2FVOEU5eDFENkNkQnpx?=
- =?utf-8?B?eG5yQW1paWRWWERSMys1clQ0cDJuTSsvR0ZKU2hqUVQrTDlPL1VVSnViNkkv?=
- =?utf-8?B?Vyt0Q3FMcndDUHdWVFJVRFNBaTN4ME5RbW0rV0c4c0pBY3BhQXlxZGkvS1oy?=
- =?utf-8?B?dTJBZS9sTEtVczBEWm5ra2VHTkYyZ1V4S0cweGVveHdtczlRaUQ2TE1iQk5h?=
- =?utf-8?B?SG04Yy9jWDRENkMxOWdIdUNvK1FsQkNDb3BINVlzb1QwSjArQUdjaVB6LzFE?=
- =?utf-8?B?ZjV6RTIwK1FLOWNtVVVZcms0RXV3SkVLSWJBcHk2N3VmZTJ3NkxFNjhjYVZk?=
- =?utf-8?B?bExKdjV5VzFONkgrOFZHTHBUV2hwV3lEb1BqWnF6bGZZdFU0aWIwblljUW5y?=
- =?utf-8?B?TDdsNnhYc0ZJWlRCa21HN0FOT3BRaVc5LzU1SFNDVzVMS2pvdFMrb2NyTy8y?=
- =?utf-8?Q?/VWJPCF8jhT+gEfl8ki439G5OQDs+F33JskZz5m?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?M29IeHUzVGN4bHJpNVdDc0wyTnBudStEMDNTM09abmpqeFREVlc0dmt5VVgy?=
- =?utf-8?B?N3IyRmw4eFJEZWZIOCtiZGRYNHhGOGJjRDZVK21uWUVtK3JhcWVrckZVRU1a?=
- =?utf-8?B?ZEhuYkN2TWs2OEdHSUluZTRoOS9nL09qclFiTUw5VDNDZkw5Wm9CZDZMUTV3?=
- =?utf-8?B?dDlkNElENmdmVksrSkNJUi9vWUJxYnF1NmkxKzBuZ2hNTHpZQXFtUjU4TkhJ?=
- =?utf-8?B?TDdBRUhubC9QQW5ZTnE0L2FOa0ZhZ3BUM1RFVExNcUg3ZzcrQnRCY0dpNFFD?=
- =?utf-8?B?clMwTEVLanc5MUlSa2l3c2tSOWl1cUFNM3NuOUNFd3hsY1h1aU9EakQ4cFp2?=
- =?utf-8?B?eTZsS1lMQ0hBSGtDeUxhTXZublI4eWZleDdQckttS1pZeDRtbmpvUHhvckJU?=
- =?utf-8?B?NXNFeGErWGNFeTNtNEE0ZDRleTdVU2Q1dlBON3BUbyt0N1VobzVtck1yUVhZ?=
- =?utf-8?B?ODU3ckhmd0ZZdE54M1VnZlh5YzBBVTFzK0l1a3ZNWkZQVDRBVWFsU042VTJ2?=
- =?utf-8?B?N2pjSFdFR1pCZnRsbTQrWE9PN3c2RVVoRUNGNGZaZDY5R3JkZENYdGF5NFZY?=
- =?utf-8?B?b0R3dUl4V2JoVXNldkk3eXR0dUl0NHRMTVo3SllaQXdUdUtzVnA2dWQ3aUEv?=
- =?utf-8?B?S25vYzRUUFJIOTA4akpHMkNrU1owaERDZVdJK2NkRDAwZ3JzejVKTmlaWGVE?=
- =?utf-8?B?OW1yaVFIUDFabFFicHBEeVR1UkZ6d3o4czFRdGdqT0lEdFU2b3F6NzlxNm1a?=
- =?utf-8?B?N0VsSytjSEpoOVZMU2RLTXk2eWJhWkF4UjhJRDNnVzZSTC83WDBnalhURktW?=
- =?utf-8?B?VG9FRGtsZkZKSEx2QlRvQkVFMkFRN21QRGp3bytJd2t2aTRkOVZrQ1NpYnVX?=
- =?utf-8?B?Q041b21WWDY4T1E3SDdHQXpIeXhCelVNRjdqdjVwcFdIcjQ2QXVyR0ZGbWFU?=
- =?utf-8?B?RzBndWFxRExiSUJvSFB6SDBOektnRFdvUlBHWWduazk5OGJpT1FRbzZGMVpJ?=
- =?utf-8?B?aHpoU3V5Z0ZGK2pkOXVtZWRwNHlWOHdNWlBXVTdTVFBkd3BmRmkrK1dYOTdG?=
- =?utf-8?B?TDRCRVh5SUlvL3c3ditKVWoxcFd1YlYxbnNUc2EyZ0dpeUdzOHYwQndQYVRO?=
- =?utf-8?B?SzlyWnpuS2cyUDBieEJxa0NQeGs0TGh1bERtdkNLQUdvYk9NUitJWFdFT0NY?=
- =?utf-8?B?ditacERLU1FsVGFIcVBuWW1POEg3dWtDOEIxV1BFMEhqaWNWVzZYSXNDNUpD?=
- =?utf-8?B?VDVxbnhuU3M1d1JGREtJc3ZoeHgrZGhoQTQ2ckNvbzhYWE1EK2U2b3QxM2pq?=
- =?utf-8?B?dmpiak1vRTdGcHRXemxyRk5kSk8rdDgwalZWSm1ZWnMzbC9YMU9SblZnNUNt?=
- =?utf-8?B?TjBMLy91STlrZ0U2RUU0dFN5SVJpd083V1Z4T2ZzQTh6YVk5VXlINVYvUGlR?=
- =?utf-8?B?VlMyY2xCeDkrbUZtUVVkSFdlTGV1akhhOHdlMDltM2hGRWZjdFRoc3IrOXBz?=
- =?utf-8?B?YTlKNnRCQ1BPL0RFZzcrbStQSDNWY2JEV2dSck1oamJCOStoL2dNbUdSajBa?=
- =?utf-8?B?NmFQbktiSEFJdVVOVG0rSGZHQ0Y5dlVVVjFORnRCTWxOcndtVk1Wd1dyV3Z0?=
- =?utf-8?B?aUNuZzlGbklJanVzTXowSk5FS0JRcHdpcDl0N2l1TU1RSDVFcFU4YXcwNzdx?=
- =?utf-8?B?RlpPQWxzdzkyMVUzbHp5TU96NlRGOFpPam81UFBEYzV1SVpRc1B3NHMzNCth?=
- =?utf-8?B?aFY5SnFYeVhxbFRTM1c1SkkxNW9GT2tIeWFKbTR1SEprNDl3V0dGcmVubEJr?=
- =?utf-8?B?Y0hKUTBZdGZhWWdCNGdnMm12RkRoeGkrRzZKVTc4RFZMaGUzakZWMTByem9D?=
- =?utf-8?B?bnBLV2RXTFpKUjkzQWgrTjZ1UXd2NnN6Zy9hZ1V2Mkg0dXc5QVk4OFkvNyt0?=
- =?utf-8?B?MnZKRm1uaVZhRk9TbUtibFkxb2lmT1ArSjdReGJybDlIazNLcHFYYm9jYjdT?=
- =?utf-8?B?L2xwcGpGQUhDTzdXblUyUGVTLzNUN2JzbWo1cWFBV2VXWHJSVGlncnE1VU9D?=
- =?utf-8?B?WSszS3J1SGZDYmd6UlRlbEFNVWhaRDF2eVpYYWl5aWp4ckVYSkJhNTBQSkdT?=
- =?utf-8?B?NlIwbkdPdXNYeTRUVlFKYTdQVnI1S0pvWTNOTlRmSWVXRzdXcHNhSkVkNlVO?=
- =?utf-8?B?Znc9PQ==?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: cc663d2d-7771-4d04-ef80-08dcf75a471c
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8897.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2024 14:10:29.3313
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mnZXdueakkuwjOAxsx1PfVM9pWnPqTuDLGQSrZjI3aAZ7KZ+pxgE/F1mi/F1raEO9Pa5hrz/p2tI9ouPEFbtIOqcQ5S04ABIBAI/Qw3njMM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9235
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241028-tf-a-patch-submitted-v1-1-4a4543c3331b@cherry.de>
+X-B4-Tracking: v=1; b=H4sIAEadH2cC/x3MwQqDMAyA4VeRnBewQXHuVcYOWY1rELW0UQTx3
+ Vc8fof/PyFLUsnwqk5IsmvWdSlwjwp84OUnqEMxUE2Nq+mJNiJjZPMB8/ad1UwGFG6pdx05ajo
+ oaUwy6nFv3zCLMabVTz5ohM91/QEs32IGdQAAAA==
+X-Change-ID: 20241028-tf-a-patch-submitted-ea5291721247
+To: yocto-patches@lists.yoctoproject.org
+Cc: raj.khem@gmail.com, Quentin Schulz <quentin.schulz@cherry.de>
+X-Mailer: b4 0.14.2
+X-Infomaniak-Routing: alpha
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 28 Oct 2024 14:10:41 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/766
+ <yocto-patches@lists.yoctoproject.org>; Mon, 28 Oct 2024 14:19:21 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/767
 
-Hi Trevor,
+From: Quentin Schulz <quentin.schulz@cherry.de>
 
-Gentle ping to make sure this does get forgotten :)
+The patches were sent upstream for review, so let's update their
+upstream status to point at the patchset in the appropriate Gerrit.
 
-Anything I can do to make the review easier for you?
+Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+---
+ ...01-fix-rk3399-dram-Fix-build-with-gcc-11.patch} | 14 ++++++++------
+ ...-plat_macros.S-Use-compatible-.asciz-asm.patch} | 15 +++++++++------
+ ...-pmu-Do-not-mark-already-defined-functio.patch} | 22 ++++++++++++++--------
+ .../trusted-firmware-a_%.bbappend                  |  6 +++---
+ 4 files changed, 34 insertions(+), 23 deletions(-)
 
-Cheers,
-Quentin
+diff --git a/recipes-bsp/trusted-firmware-a/files/0001-dram-Fix-build-with-gcc-11.patch b/recipes-bsp/trusted-firmware-a/files/0001-fix-rk3399-dram-Fix-build-with-gcc-11.patch
+similarity index 71%
+rename from recipes-bsp/trusted-firmware-a/files/0001-dram-Fix-build-with-gcc-11.patch
+rename to recipes-bsp/trusted-firmware-a/files/0001-fix-rk3399-dram-Fix-build-with-gcc-11.patch
+index 120ea0bd363577ed8ed3ce39f93b2561b841e20e..de287c3ef3b3fe2701f3ddb5b3accbdcccca280f 100644
+--- a/recipes-bsp/trusted-firmware-a/files/0001-dram-Fix-build-with-gcc-11.patch
++++ b/recipes-bsp/trusted-firmware-a/files/0001-fix-rk3399-dram-Fix-build-with-gcc-11.patch
+@@ -1,7 +1,7 @@
+-From a09a1de53aba422249a8376b0d95024200021317 Mon Sep 17 00:00:00 2001
++From 300856a62de723e9a04376172e26fb01fa210f6f Mon Sep 17 00:00:00 2001
+ From: Khem Raj <raj.khem@gmail.com>
+ Date: Tue, 11 May 2021 11:55:31 -0700
+-Subject: [PATCH] dram: Fix build with gcc 11
++Subject: [PATCH 1/3] fix(rk3399): dram: Fix build with gcc 11
+ 
+ This is a redundant assignment which GCC warns about.
+ 
+@@ -11,8 +11,13 @@ plat/rockchip/rk3399/drivers/dram/dram_spec_timing.c:781:11: error: explicitly a
+                 twr_tmp = twr_tmp;
+                 ~~~~~~~ ^ ~~~~~~~
+ 
+-Upstream-Status: Pending
+ Signed-off-by: Khem Raj <raj.khem@gmail.com>
++[add fix(rk3399): prefix to commit title]
++Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
++Change-Id: Ib12281e0720346ffe68e81a24ea772ddc89d4f83
++
++Upstream-Status: Submitted [https://review.trustedfirmware.org/c/TF-A/trusted-firmware-a/+/33082]
++Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+ ---
+  plat/rockchip/rk3399/drivers/dram/dram_spec_timing.c | 2 +-
+  1 file changed, 1 insertion(+), 1 deletion(-)
+@@ -30,6 +35,3 @@ index 3cdb7a296..76bc5ee96 100644
+  	else if (twr_tmp <= 14)
+  		twr_tmp = 14;
+  	else
+--- 
+-2.31.1
+-
+diff --git a/recipes-bsp/trusted-firmware-a/files/0001-plat_macros.S-Use-compatible-.asciz-asm-directive.patch b/recipes-bsp/trusted-firmware-a/files/0002-fix-rockchip-plat_macros.S-Use-compatible-.asciz-asm.patch
+similarity index 64%
+rename from recipes-bsp/trusted-firmware-a/files/0001-plat_macros.S-Use-compatible-.asciz-asm-directive.patch
+rename to recipes-bsp/trusted-firmware-a/files/0002-fix-rockchip-plat_macros.S-Use-compatible-.asciz-asm.patch
+index 8807fcaabc0598d9c92b038fa6b443d2d1063945..a6b1522289dc6a12abfa956b3070ea1c01a6cecf 100644
+--- a/recipes-bsp/trusted-firmware-a/files/0001-plat_macros.S-Use-compatible-.asciz-asm-directive.patch
++++ b/recipes-bsp/trusted-firmware-a/files/0002-fix-rockchip-plat_macros.S-Use-compatible-.asciz-asm.patch
+@@ -1,13 +1,19 @@
+-From 5f78ce7eb9ab6bf5af682a715a9264d2a5ee7666 Mon Sep 17 00:00:00 2001
++From 1dcf6b1f6f50396c503c9506629c7a9371f8118b Mon Sep 17 00:00:00 2001
+ From: Khem Raj <raj.khem@gmail.com>
+ Date: Tue, 11 May 2021 12:06:34 -0700
+-Subject: [PATCH] plat_macros.S: Use compatible .asciz asm directive
++Subject: [PATCH 2/3] fix(rockchip): plat_macros.S: Use compatible .asciz asm
++ directive
+ 
+ clang asm does not like two strings to .asciz therefore make it single
+ string which works on clang too.
+ 
+-Upstream-Status: Pending
+ Signed-off-by: Khem Raj <raj.khem@gmail.com>
++[added fix(rockchip): prefix to commit title]
++Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
++Change-Id: I5bbc71b3d78c479d0f8099ee0a95ed77287c2bc2
++
++Upstream-Status: Submitted [https://review.trustedfirmware.org/c/TF-A/trusted-firmware-a/+/33083]
++Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+ ---
+  plat/rockchip/common/include/plat_macros.S | 3 +--
+  1 file changed, 1 insertion(+), 2 deletions(-)
+@@ -26,6 +32,3 @@ index 691beeb44..c07be9ca9 100644
+  newline:
+  	.asciz "\n"
+  spacer:
+--- 
+-2.31.1
+-
+diff --git a/recipes-bsp/trusted-firmware-a/files/0001-pmu-Do-not-mark-already-defined-functions-as-weak.patch b/recipes-bsp/trusted-firmware-a/files/0003-fix-rockchip-pmu-Do-not-mark-already-defined-functio.patch
+similarity index 59%
+rename from recipes-bsp/trusted-firmware-a/files/0001-pmu-Do-not-mark-already-defined-functions-as-weak.patch
+rename to recipes-bsp/trusted-firmware-a/files/0003-fix-rockchip-pmu-Do-not-mark-already-defined-functio.patch
+index bd4d2b594e4440024822ea23da49fb8bb2614527..7d9d8a986f790ae09a017f9cc8582baf69d5ddb3 100644
+--- a/recipes-bsp/trusted-firmware-a/files/0001-pmu-Do-not-mark-already-defined-functions-as-weak.patch
++++ b/recipes-bsp/trusted-firmware-a/files/0003-fix-rockchip-pmu-Do-not-mark-already-defined-functio.patch
+@@ -1,24 +1,33 @@
+-From 9d963cd69faf94bdcb80624132fd10392f57875b Mon Sep 17 00:00:00 2001
++From ba25a5bb2641feeacadbd7ec01ab03169aa0da6e Mon Sep 17 00:00:00 2001
+ From: Khem Raj <raj.khem@gmail.com>
+ Date: Tue, 11 May 2021 12:11:51 -0700
+-Subject: [PATCH] pmu: Do not mark already defined functions as weak
++Subject: [PATCH 3/3] fix(rockchip): pmu: Do not mark already defined functions
++ as weak
+ 
+ These functions are already defined as static functions in same header
+ Fixes
+ 
+-| plat/rockchip/common/drivers/pmu/pmu_com.h:35:14: error: weak identifier 'pmu_power_domain_ctr' never declared [-Werror]                                                                                      | #pragma weak pmu_power_domain_ctr                                                                                                                                                                             |              ^
++| plat/rockchip/common/drivers/pmu/pmu_com.h:35:14: error: weak identifier 'pmu_power_domain_ctr' never declared [-Werror]
++| #pragma weak pmu_power_domain_ctr
++|              ^
+ | plat/rockchip/common/drivers/pmu/pmu_com.h:36:14: error: weak identifier 'check_cpu_wfie' never declared [-Werror]
+ | #pragma weak check_cpu_wfie
+ |              ^
+ 
+-Upstream-Status: Pending
+ Signed-off-by: Khem Raj <raj.khem@gmail.com>
++[fixed alignment in commit log]
++[added fix(rockchip): prefix in commit title]
++Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
++Change-Id: I96d4acbe743ba4b8996f0be0fa713b341bd4903c
++
++Upstream-Status: Submitted [https://review.trustedfirmware.org/c/TF-A/trusted-firmware-a/+/33084]
++Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+ ---
+  plat/rockchip/common/drivers/pmu/pmu_com.h | 2 --
+  1 file changed, 2 deletions(-)
+ 
+ diff --git a/plat/rockchip/common/drivers/pmu/pmu_com.h b/plat/rockchip/common/drivers/pmu/pmu_com.h
+-index 5359f73b4..3f9ce7df9 100644
++index 022bb024a..259c8c006 100644
+ --- a/plat/rockchip/common/drivers/pmu/pmu_com.h
+ +++ b/plat/rockchip/common/drivers/pmu/pmu_com.h
+ @@ -32,8 +32,6 @@ enum pmu_pd_state {
+@@ -30,6 +39,3 @@ index 5359f73b4..3f9ce7df9 100644
+  
+  static inline uint32_t pmu_power_domain_st(uint32_t pd)
+  {
+--- 
+-2.31.1
+-
+diff --git a/recipes-bsp/trusted-firmware-a/trusted-firmware-a_%.bbappend b/recipes-bsp/trusted-firmware-a/trusted-firmware-a_%.bbappend
+index c9ad84c248578cd93aeb368f064e58ecf08ca383..8eca63a7a78cc96052455875ce75135a7219abaf 100644
+--- a/recipes-bsp/trusted-firmware-a/trusted-firmware-a_%.bbappend
++++ b/recipes-bsp/trusted-firmware-a/trusted-firmware-a_%.bbappend
+@@ -8,9 +8,9 @@ COMPATIBLE_MACHINE:append:px30 = "|px30"
+ 
+ FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
+ SRC_URI += "\
+-    file://0001-dram-Fix-build-with-gcc-11.patch \
+-    file://0001-plat_macros.S-Use-compatible-.asciz-asm-directive.patch \
+-    file://0001-pmu-Do-not-mark-already-defined-functions-as-weak.patch \
++    file://0001-fix-rk3399-dram-Fix-build-with-gcc-11.patch \
++    file://0002-fix-rockchip-plat_macros.S-Use-compatible-.asciz-asm.patch \
++    file://0003-fix-rockchip-pmu-Do-not-mark-already-defined-functio.patch \
+ "
+ 
+ 
 
-On 9/27/24 2:59 PM, Quentin Schulz wrote:
-> Upstream TF-A (> 2.11; no release yet) has gained initial support for
-> the RK356x and RK3588 so one may be interested in using it.
-> 
-> The default still is to use the downstream blob but the option is now
-> given to the user who can simply change the value of
-> PREFERRED_PROVIDER_trusted-firmware-a in their own configuration file in
-> order to use upstream TF-A.
-> 
-> This depends on two different patch series that have yet to be merged:
-> - https://lore.kernel.org/yocto-patches/20240927-rkbin-split-recipes-v1-0-0f4a9b0cbf56@cherry.de/
->    for meta-rockchip
-> - https://lore.kernel.org/yocto-meta-arm/20240927-tf-a-master-v1-1-733c925c80e4@cherry.de/
->    for meta-arm
-> 
-> Only the RK3588 support was build and boot tested as I don't own any
-> RK356x board.
-> 
-> Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
-> ---
-> Quentin Schulz (2):
->        rk356x: add support for upstream TF-A
->        rk3588(s): add support for upstream TF-A
-> 
->   conf/machine/include/rk3566.inc                    |  3 +++
->   conf/machine/include/rk3568.inc                    |  3 +++
->   conf/machine/include/rk3588s.inc                   |  3 +++
->   .../trusted-firmware-a_%.bbappend                  | 23 ++++++++++++++++++++++
->   4 files changed, 32 insertions(+)
-> ---
-> base-commit: 24a411a17f389650c4cea38bef1f9279117fab8e
-> change-id: 20240927-rk35-upstream-tf-a-356760495fc1
-> prerequisite-change-id: 20240927-rkbin-split-recipes-61503f078ab6:v1
-> prerequisite-patch-id: 852459a4ef85dcfa74407f5455af93ac5e2ab3ee
-> prerequisite-patch-id: 0ed848000063d5b8b9dbc02f63e09a199e90bd64
-> prerequisite-patch-id: f665b620ee911de701142439dd00566dd12131d2
-> 
-> Best regards,
+---
+base-commit: 24a411a17f389650c4cea38bef1f9279117fab8e
+change-id: 20241028-tf-a-patch-submitted-ea5291721247
+
+Best regards,
+-- 
+Quentin Schulz <quentin.schulz@cherry.de>
 
 
