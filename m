@@ -1,136 +1,95 @@
-Return-Path: <peter.marko@siemens.com>
+Return-Path: <richard.purdie@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41564D3A696
-	for <webhook@archiver.kernel.org>; Tue, 29 Oct 2024 19:18:04 +0000 (UTC)
-Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
- by mx.groups.io with SMTP id smtpd.web11.2478.1730229474539825888
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AB99D7494B
+	for <webhook@archiver.kernel.org>; Tue, 29 Oct 2024 22:32:48 +0000 (UTC)
+Received: from 4.mo584.mail-out.ovh.net (4.mo584.mail-out.ovh.net [178.32.98.131])
+ by mx.groups.io with SMTP id smtpd.web11.297.1730237604470899419
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 29 Oct 2024 12:17:54 -0700
+ Tue, 29 Oct 2024 14:33:26 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=peter.marko@siemens.com header.s=fm1 header.b=W3Li5Ng9;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.226, mailfrom: fm-256628-202410291917527273dbab4f510dfc82-2yeosm@rts-flowmailer.siemens.com)
-Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 202410291917527273dbab4f510dfc82
-        for <yocto-patches@lists.yoctoproject.org>;
-        Tue, 29 Oct 2024 20:17:52 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=peter.marko@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=OI9VOv6QNrdRoYzxuou7RZsBLJq873LQDwOcmisFBDI=;
- b=W3Li5Ng9By3P1U0fDsMv3NV77HswZyxn81UnfDLN0POpwpRoVN4dCAcKgCK06FSNtOOPPu
- E5ScX8odCxt39Ho2BIHBZk0sd2jAKgSy1AT1K0VJfRabqNhEymarUbZE4lscU2WES8zMNRS2
- IYLw2nhG4UWr/e9V+LAzqqns2h2gR7tF0WvL0VvQJUDjZeqw951UyRqCr4JdsJLe4UYkI6kO
- I9HNcLbYuipVbuH7lAjtZV8LnYxgrF1XSk6MtLmfzc2uNxrOKF5esyyuznNJT+wvRLe4AUua
- dnld9vwSQWSiNDTGI0jl40/4SWkcLkUn/r2K7DOJQ8QYjBTFWBliubLg==;
-From: Peter Marko <peter.marko@siemens.com>
-To: yocto-patches@lists.yoctoproject.org
-Cc: jose.quaresma@foundries.io,
-	Peter Marko <peter.marko@siemens.com>,
-	Richard Purdie <richard.purdie@linuxfoundation.org>
-Subject: [meta-lts-mixins][kirkstone/go][PATCH 2/2] go: upgrade 1.22.7 -> 1.22.8
-Date: Tue, 29 Oct 2024 20:16:42 +0100
-Message-Id: <20241029191642.38027-2-peter.marko@siemens.com>
-In-Reply-To: <20241029191642.38027-1-peter.marko@siemens.com>
-References: <20241029191642.38027-1-peter.marko@siemens.com>
+ dkim=pass header.i=@syslinbit.com header.s=ovhmo4479509-selector1 header.b=fDTw+BZk;
+ spf=softfail (domain: syslinbit.com, ip: 178.32.98.131, mailfrom: louis.rannou@syslinbit.com)
+Received: from director4.ghost.mail-out.ovh.net (unknown [10.109.148.103])
+	by mo584.mail-out.ovh.net (Postfix) with ESMTP id 4XdNm25MLDz1RkG
+	for <yocto-patches@lists.yoctoproject.org>; Tue, 29 Oct 2024 21:33:22 +0000 (UTC)
+Received: from ghost-submission-5b5ff79f4f-thc2g (unknown [10.110.101.69])
+	by director4.ghost.mail-out.ovh.net (Postfix) with ESMTPS id 1D4EE1FDBD;
+	Tue, 29 Oct 2024 21:33:21 +0000 (UTC)
+Received: from syslinbit.com ([37.59.142.107])
+	by ghost-submission-5b5ff79f4f-thc2g with ESMTPSA
+	id vRvkHaFUIWehMAIA4SpeVQ
+	(envelope-from <louis.rannou@syslinbit.com>); Tue, 29 Oct 2024 21:33:21 +0000
+Authentication-Results: garm.ovh; auth=pass (GARM-107S0014a14265f-122b-4f8d-9b62-d075f5ba4841,
+                    C49D0803718654D6FFB59F9CA7D9CF2B2A9C5111) smtp.auth=louis.rannou@syslinbit.com
+X-OVh-ClientIp: 45.81.62.9
+Message-ID: <6004347f-19fa-4d83-a73f-ba127ea9c2a4@syslinbit.com>
+Date: Tue, 29 Oct 2024 22:33:20 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-256628:519-21489:flowmailer
+User-Agent: Mozilla Thunderbird
+Subject: Re: [meta-security][PATCH] dm-verity: set staging correctly in case basename has changed
+To: yocto-patches@lists.yoctoproject.org
+Cc: Louis Rannou <louis.rannou@non.se.com>
+References: <20240520193347.2271954-1-louis.rannou@syslinbit.com>
+From: "Louis Rannou" <louis.rannou@syslinbit.com>
+In-Reply-To: <20240520193347.2271954-1-louis.rannou@syslinbit.com>
+X-Ovh-Tracer-Id: 6098436847568477505
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: 0
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekuddgudeghecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecunecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpefnohhuihhsucftrghnnhhouhcuoehlohhuihhsrdhrrghnnhhouhesshihshhlihhnsghithdrtghomheqnecuggftrfgrthhtvghrnhepleettddvveekgeejtdefvefhteeftedvueetgeffgeegiefhgeffhfehkefgveetnecuffhomhgrihhnpeifkhhsrdhinhenucfkphepuddvjedrtddrtddruddpgeehrdekuddriedvrdelpdefjedrheelrddugedvrddutdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepuddvjedrtddrtddruddpmhgrihhlfhhrohhmpehlohhuihhsrdhrrghnnhhouhesshihshhlihhnsghithdrtghomhdpnhgspghrtghpthhtohepuddprhgtphhtthhopeihohgtthhoqdhprghttghhvghssehlihhsthhsrdihohgtthhophhrohhjvggtthdrohhrghdpoffvtefjohhsthepmhhoheekgedpmhhouggvpehsmhhtphhouhht
+DKIM-Signature: a=rsa-sha256; bh=STmvKM3jKAJAltdrWx+ns5UU1WxDoOLmv99ClAr/xKk=;
+ c=relaxed/relaxed; d=syslinbit.com; h=From; s=ovhmo4479509-selector1;
+ t=1730237602; v=1;
+ b=fDTw+BZkXHImfbAncTFf9lO4lklTGPzEgvoubuUKRjV5Es8gieCZdMky3TMbSoWzynKfe7ET
+ mApe7ickHyXF2xNRjePMZ7UtFziEJujTSbR/fwPc0fFQwdoaC/m4C08xbRk8qi04v+SyNzaoOmk
+ Geezm1UAi47lmxJJ2AhpIoIopfTvg2rxrtJ5M9+vyPfIenwd+hWszRM1DsOGS3RBTMY03Mqn8t8
+ Imc4PNYS7jECC+oc0CxjlWf+mKvae0ol2AoX72QI1ilsQNl6j5RH+URiX4bPmgyoEHRFuWFpSHL
+ xygHtPiFeum8CyIrxcJx+yBIty2KU0izs1xI2hA4Y1Lhw==
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 29 Oct 2024 19:18:04 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/771
+ <yocto-patches@lists.yoctoproject.org>; Tue, 29 Oct 2024 22:32:48 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/772
 
-From: Peter Marko <peter.marko@siemens.com>
+Hello,
 
-Upgrade to latest 1.22.x release [1]:
+Could you consider this patch which fix an issue in dm-verity ? Can I do 
+anything for help ?
 
-$ git --no-pager log --oneline go1.22.7..go1.22.8
-aeccd613c8 (tag: go1.22.8) [release-branch.go1.22] go1.22.8
-b4086b7c16 [release-branch.go1.22] syscall: skip TestAmbientCapsUserns when restricted, document
-6fab4b9a9e [release-branch.go1.22] runtime: size maps.Clone destination bucket array safely
-71655f14ce [release-branch.go1.22] cmd/cgo: correct padding required by alignment
+Regards,
+Louis
 
-[1] https://github.com/golang/go/compare/go1.22.7...go1.22.8
-
-(From OE-Core rev: 552b9913b25107d7a34611b499b7811896b5f098)
-
-Signed-off-by: Peter Marko <peter.marko@siemens.com>
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-Signed-off-by: Peter Marko <peter.marko@siemens.com>
----
- recipes-devtools/go/{go-1.22.7.inc => go-1.22.8.inc}        | 2 +-
- ...o-binary-native_1.22.7.bb => go-binary-native_1.22.8.bb} | 6 +++---
- ...cross-canadian_1.22.7.bb => go-cross-canadian_1.22.8.bb} | 0
- .../go/{go-cross_1.22.7.bb => go-cross_1.22.8.bb}           | 0
- .../go/{go-crosssdk_1.22.7.bb => go-crosssdk_1.22.8.bb}     | 0
- .../go/{go-runtime_1.22.7.bb => go-runtime_1.22.8.bb}       | 0
- recipes-devtools/go/{go_1.22.7.bb => go_1.22.8.bb}          | 0
- 7 files changed, 4 insertions(+), 4 deletions(-)
- rename recipes-devtools/go/{go-1.22.7.inc => go-1.22.8.inc} (89%)
- rename recipes-devtools/go/{go-binary-native_1.22.7.bb => go-binary-native_1.22.8.bb} (78%)
- rename recipes-devtools/go/{go-cross-canadian_1.22.7.bb => go-cross-canadian_1.22.8.bb} (100%)
- rename recipes-devtools/go/{go-cross_1.22.7.bb => go-cross_1.22.8.bb} (100%)
- rename recipes-devtools/go/{go-crosssdk_1.22.7.bb => go-crosssdk_1.22.8.bb} (100%)
- rename recipes-devtools/go/{go-runtime_1.22.7.bb => go-runtime_1.22.8.bb} (100%)
- rename recipes-devtools/go/{go_1.22.7.bb => go_1.22.8.bb} (100%)
-
-diff --git a/recipes-devtools/go/go-1.22.7.inc b/recipes-devtools/go/go-1.22.8.inc
-similarity index 89%
-rename from recipes-devtools/go/go-1.22.7.inc
-rename to recipes-devtools/go/go-1.22.8.inc
-index e54a902..542519b 100644
---- a/recipes-devtools/go/go-1.22.7.inc
-+++ b/recipes-devtools/go/go-1.22.8.inc
-@@ -15,4 +15,4 @@ SRC_URI += "\
-     file://0008-src-cmd-dist-buildgo.go-do-not-hardcode-host-compile.patch \
-     file://0009-go-Filter-build-paths-on-staticly-linked-arches.patch \
- "
--SRC_URI[main.sha256sum] = "66432d87d85e0cfac3edffe637d5930fc4ddf5793313fe11e4a0f333023c879f"
-+SRC_URI[main.sha256sum] = "df12c23ebf19dea0f4bf46a22cbeda4a3eca6f474f318390ce774974278440b8"
-diff --git a/recipes-devtools/go/go-binary-native_1.22.7.bb b/recipes-devtools/go/go-binary-native_1.22.8.bb
-similarity index 78%
-rename from recipes-devtools/go/go-binary-native_1.22.7.bb
-rename to recipes-devtools/go/go-binary-native_1.22.8.bb
-index aba317f..98799eb 100644
---- a/recipes-devtools/go/go-binary-native_1.22.7.bb
-+++ b/recipes-devtools/go/go-binary-native_1.22.8.bb
-@@ -9,9 +9,9 @@ PROVIDES = "go-native"
- 
- # Checksums available at https://go.dev/dl/
- SRC_URI = "https://dl.google.com/go/go${PV}.${BUILD_GOOS}-${BUILD_GOARCH}.tar.gz;name=go_${BUILD_GOTUPLE}"
--SRC_URI[go_linux_amd64.sha256sum] = "fc5d49b7a5035f1f1b265c17aa86e9819e6dc9af8260ad61430ee7fbe27881bb"
--SRC_URI[go_linux_arm64.sha256sum] = "ed695684438facbd7e0f286c30b7bc2411cfc605516d8127dc25c62fe5b03885"
--SRC_URI[go_linux_ppc64le.sha256sum] = "a6441d5da40a961039ec22b0aadbc8b513f52b31bb8919c359a7e2c3c5bcf26a"
-+SRC_URI[go_linux_amd64.sha256sum] = "5f467d29fc67c7ae6468cb6ad5b047a274bae8180cac5e0b7ddbfeba3e47e18f"
-+SRC_URI[go_linux_arm64.sha256sum] = "5c616b32dab04bb8c4c8700478381daea0174dc70083e4026321163879278a4a"
-+SRC_URI[go_linux_ppc64le.sha256sum] = "c546f27866510bf8e54e86fe6f58c705af0e894341e5572c91f197a734152c27"
- 
- UPSTREAM_CHECK_URI = "https://golang.org/dl/"
- UPSTREAM_CHECK_REGEX = "go(?P<pver>\d+(\.\d+)+)\.linux"
-diff --git a/recipes-devtools/go/go-cross-canadian_1.22.7.bb b/recipes-devtools/go/go-cross-canadian_1.22.8.bb
-similarity index 100%
-rename from recipes-devtools/go/go-cross-canadian_1.22.7.bb
-rename to recipes-devtools/go/go-cross-canadian_1.22.8.bb
-diff --git a/recipes-devtools/go/go-cross_1.22.7.bb b/recipes-devtools/go/go-cross_1.22.8.bb
-similarity index 100%
-rename from recipes-devtools/go/go-cross_1.22.7.bb
-rename to recipes-devtools/go/go-cross_1.22.8.bb
-diff --git a/recipes-devtools/go/go-crosssdk_1.22.7.bb b/recipes-devtools/go/go-crosssdk_1.22.8.bb
-similarity index 100%
-rename from recipes-devtools/go/go-crosssdk_1.22.7.bb
-rename to recipes-devtools/go/go-crosssdk_1.22.8.bb
-diff --git a/recipes-devtools/go/go-runtime_1.22.7.bb b/recipes-devtools/go/go-runtime_1.22.8.bb
-similarity index 100%
-rename from recipes-devtools/go/go-runtime_1.22.7.bb
-rename to recipes-devtools/go/go-runtime_1.22.8.bb
-diff --git a/recipes-devtools/go/go_1.22.7.bb b/recipes-devtools/go/go_1.22.8.bb
-similarity index 100%
-rename from recipes-devtools/go/go_1.22.7.bb
-rename to recipes-devtools/go/go_1.22.8.bb
--- 
-2.30.2
+On 20/05/2024 21:33, Louis Rannou wrote:
+> From: Louis Rannou <louis.rannou@non.se.com>
+> 
+> Fix the verity class when the IMAGE_BASENAME has changed. Prefer DM_VERITY_IMAGE
+> for staging env and wic fragment so it matchs what is used in the
+> dm-verity-image-initramfs and the base wks systemd-bootdisk-dmverity.wks.in.
+> 
+> Signed-off-by: Louis Rannou <louis.rannou@non.se.com>
+> Signed-off-by: Louis Rannou <louis.rannou@syslinbit.com>
+> ---
+>   classes/dm-verity-img.bbclass | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/classes/dm-verity-img.bbclass b/classes/dm-verity-img.bbclass
+> index 7f79548..1a34b4e 100644
+> --- a/classes/dm-verity-img.bbclass
+> +++ b/classes/dm-verity-img.bbclass
+> @@ -60,8 +60,8 @@ DEPENDS += "bc-native"
+>   # convert it to some better format. Let's drop the first line (doesn't contain
+>   # any useful info) and feed the rest to a script.
+>   process_verity() {
+> -    local ENV="${STAGING_VERITY_DIR}/${IMAGE_BASENAME}.$TYPE.verity.env"
+> -    local WKS_INC="${STAGING_VERITY_DIR}/${IMAGE_BASENAME}.$TYPE.wks.in"
+> +    local ENV="${STAGING_VERITY_DIR}/${DM_VERITY_IMAGE}.$TYPE.verity.env"
+> +    local WKS_INC="${STAGING_VERITY_DIR}/${DM_VERITY_IMAGE}.$TYPE.wks.in"
+>       rm -f $ENV
+>   
+>       # Each line contains a key and a value string delimited by ':'. Read the
 
 
