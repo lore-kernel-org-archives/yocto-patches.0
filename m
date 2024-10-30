@@ -1,102 +1,155 @@
-Return-Path: <richard.purdie@linuxfoundation.org>
+Return-Path: <steve@sakoman.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85321D5CCB3
-	for <webhook@archiver.kernel.org>; Wed, 30 Oct 2024 15:01:29 +0000 (UTC)
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
- by mx.groups.io with SMTP id smtpd.web10.17192.1730300482943939120
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C808AD2AB15
+	for <webhook@archiver.kernel.org>; Wed, 30 Oct 2024 15:35:49 +0000 (UTC)
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+ by mx.groups.io with SMTP id smtpd.web11.17873.1730302548192199170
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 30 Oct 2024 08:01:23 -0700
+ Wed, 30 Oct 2024 08:35:48 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=PGxl6BFg;
- spf=pass (domain: linuxfoundation.org, ip: 209.85.128.44, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4314c452180so6743525e9.0
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 30 Oct 2024 08:01:22 -0700 (PDT)
+ dkim=pass header.i=@sakoman-com.20230601.gappssmtp.com header.s=20230601 header.b=FgmjEaGP;
+ spf=softfail (domain: sakoman.com, ip: 209.85.160.45, mailfrom: steve@sakoman.com)
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-288661760d3so3891439fac.3
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 30 Oct 2024 08:35:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1730300481; x=1730905281; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jBogyL24XsA48m4DKRHJHjRD3rIzMHABvCnBlmmACBQ=;
-        b=PGxl6BFgm4h6y2FGZfAP8WH0K52rjF44EWiDbb7lnkikPkVS8lEmanlDamkViau3Xn
-         +LeW/7vmzCETQwK47qtYnoeM4ZW00Swx0OYvVQpEfdiAHYEgowV3gNDK/qlQTqrQwhn3
-         dB5JwGeyXoZmG3XLIB1BvqobI5crOf59RT86M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730300481; x=1730905281;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=sakoman-com.20230601.gappssmtp.com; s=20230601; t=1730302547; x=1730907347; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=jBogyL24XsA48m4DKRHJHjRD3rIzMHABvCnBlmmACBQ=;
-        b=ErlVNvqcwPFChJ46t230C1d3wGtHyoXxriKrxsk9YzgeNR51CpIAI3G6p8vbkijd6g
-         aU9kxWxmBqHSPEmSe7fSuzBs0J+427+O7Z0ALgqIc2tMdFk0XorD1cKFJitlzBygB30u
-         wXFUY+8RKuW+0B03EIux3GUwy7UQW9ob/nfo3cUUndtyDNZwcokxnwzTThFbIuWqlkxC
-         //g2lwwYxDL9KkqozT22hcQt+TqQPxWu5pN2uNJXdOQvtHrcTERQqEL75c104FmZ6T1V
-         VgLDMAT7qh+az+76+GSHXHPnSHyjW8aPts/p374hjo6JdyycDpGDiZRwwzKq3nr0EfLe
-         tklQ==
-X-Gm-Message-State: AOJu0Yw2XhnT3XQzS/6PUuCdp7k1JBcLWt+MkQmG0aDydMO9aQ8VUUzV
-	QUfl2HKuAPLAcey3tc6iSUWIcndD34xviRSNSFhclyDkRJfWSwASaBwm1+SzKcp72vz5Jz7rQu+
-	YGCQ=
-X-Google-Smtp-Source: AGHT+IHsxkYVJZGlVcuPUwxmUNSGyPlOiYhto7GSjGpiykvlQ8mzITATjBs06bRXRa28gCBGEBFgfA==
-X-Received: by 2002:a05:600c:3c9f:b0:42c:b67b:816b with SMTP id 5b1f17b1804b1-431bd6d5a9bmr24372845e9.1.1730300480970;
-        Wed, 30 Oct 2024 08:01:20 -0700 (PDT)
-Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:65f1:8463:55dd:142d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b70c52sm15540693f8f.74.2024.10.30.08.01.20
+        bh=uvPpvqkUYdP3i0KdZDwrJP2bscr92iFXfl70fvDvOXo=;
+        b=FgmjEaGPmE72dmuTyTUfbYzvLDuLBsE5Avly2RexC7OtjS3aKfiPKm3aPm10oSpyVW
+         QMiKp4i3SG8HH4Uje3T+5aS2d53tmU518T16GeFD4pawSfcLahskc4nksZq8xGwwrL0U
+         f8F1Yjrvl5l2+Sg/VxyiXcb4HVPNdwikvUyBFbVeQjk1iqBwYxMlsHS+EaJolpsRlA5s
+         Z9gtskALhra9urLlrZg3ai+1voqTl4E0xQNDCMStcs6WYtkSFK40cgdqauK5ZPFCJECt
+         Fi5VKBD+sqlnvqibgYhehJwXk1go9+kNsk7vQxoaKzCBST566AOihRUji5Y1jCGnSIe6
+         PL1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730302547; x=1730907347;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uvPpvqkUYdP3i0KdZDwrJP2bscr92iFXfl70fvDvOXo=;
+        b=q981iYZvjex1XTYbhhQu+VRGDEwTsKEcRngdgj22fdZbhO0OVwC24nl8av5nZMxApi
+         2B28j8lLSECueaQFWzmb3pS7Q/woBZo2ZBGey/2J/Sr48ajs8xsSAgmcK4OkYlPO/op2
+         hunpHfA+N8z56dxlyJN00jfOGr2+pDUmVV7Zann/MDCAS64e0HzIr6CZU0l+u0uaxl+O
+         a0KqCkJBF9Aqgiji8fj6M/yfhnBjhZXJqoUW+k6dCV+F3ex8gDb54l8g1i+Zx6q5rG9C
+         RHOkGpbyMbog/lxKzY67mehj1M0STg+cpkR8PYl0BSkYGaKLcLo+4JUBALpYTXE67vlq
+         rVHg==
+X-Gm-Message-State: AOJu0Yw2DBpPtoKPx+z3V9m4cGbgpU6KyrOAUz/nJ8JoeP6zV/coYh0T
+	/XuzRH79XcWguKvBZPiSB+we/GQStU0vHmmhYHzb8E3C0ItpKKDBJXXoP/G2y3os8cZU4CIHYW/
+	Y
+X-Google-Smtp-Source: AGHT+IFkffgC7hbcgaTq1p3xZnbdKBamUMgaP5RmZtWII2K9BvpJN9zUIemBBRp11pEDbHTKF1w7aw==
+X-Received: by 2002:a05:6870:3310:b0:255:2e14:3d9d with SMTP id 586e51a60fabf-29051adb328mr14392944fac.5.1730302547272;
+        Wed, 30 Oct 2024 08:35:47 -0700 (PDT)
+Received: from hexa.. ([98.142.47.158])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7edc8667c6bsm9300439a12.19.2024.10.30.08.35.46
+        for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 08:01:20 -0700 (PDT)
-From: Richard Purdie <richard.purdie@linuxfoundation.org>
+        Wed, 30 Oct 2024 08:35:46 -0700 (PDT)
+From: Steve Sakoman <steve@sakoman.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: docs@lists.yoctoproject.org
-Subject: [yocto-autobuilder-helper] [PATCH] scripts/run-docs-build: Add support for installing texlive for pdf generation
-Date: Wed, 30 Oct 2024 15:01:18 +0000
-Message-ID: <20241030150118.421857-1-richard.purdie@linuxfoundation.org>
-X-Mailer: git-send-email 2.45.2
+Subject: [yocto-autobuilder-helper][styhead] config-json: skip meta-agl-core testing on styhead
+Date: Wed, 30 Oct 2024 08:35:35 -0700
+Message-Id: <b71d0caa34e7d1f608bdefe5e1b3c0245f74e837.1730302455.git.steve@sakoman.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1730302455.git.steve@sakoman.com>
+References: <cover.1730302455.git.steve@sakoman.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 30 Oct 2024 15:01:29 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/773
+ <yocto-patches@lists.yoctoproject.org>; Wed, 30 Oct 2024 15:35:49 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/774
 
-To build the latexpdf output for the docs, we need Xetex (which can handle
-international characters). Rather than require it on all autobuilder workers,
-along with dependencies, we install a copy onto NFS which the workers can
-use. The full install is 6GB so just install the pieces we've found we
-need via tlmgr on top of a small install. This script creates the install
-if it isn't present.
+meta-agl only supports master and LTS branches
 
-For local docs builds, we assume the user has the tools available from
-the host OS. It is unlikely most users using this script would have the
-NAS path present so this seems like a reasonable compromise.
-
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+Signed-off-by: Steve Sakoman <steve@sakoman.com>
 ---
- scripts/run-docs-build | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ config.json | 37 ++++++++-----------------------------
+ 1 file changed, 8 insertions(+), 29 deletions(-)
 
-diff --git a/scripts/run-docs-build b/scripts/run-docs-build
-index 2e7298e..ad8fece 100755
---- a/scripts/run-docs-build
-+++ b/scripts/run-docs-build
-@@ -42,6 +42,20 @@ mkdir buildtools
- ${buildtools_localpath} -y -d $builddir/buildtools
- . $builddir/buildtools/environment-setup*
- 
-+textooldir=/srv/autobuilder/valkyrie.yocto.io/docs-build-tex-tools
-+if [ -e /srv/autobuilder/valkyrie.yocto.io/ -a ! -e ${textooldir} ]; then
-+    mkdir -p /tmp/textemp
-+    pushd /tmp/textemp
-+    wget https://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
-+    zcat < install-tl-unx.tar.gz | tar xf -
-+    cd install-tl-*/
-+    ./install-tl --scheme=small --texdir=${textooldir} --no-interaction
-+    PATH=$PATH:${textooldir}/bin/x86_64-linux tlmgr install titlesec varwidth tabulary needspace upquote framed capt-of wrapfig fncychap gnu-freefont ctex
-+    popd
-+fi
-+
-+PATH=$PATH:${textooldir}/bin/x86_64-linux
-+
- # Getting the old docbook built docs from an archive. Not rebuilding them.
- docbookarchive_localpath=${sharedir}/cluster-downloads-cache/`basename ${docbookarchive_url}`
- if [ ! -e ${docbookarchive_localpath} ]; then
+diff --git a/config.json b/config.json
+index 6881452..3147bee 100644
+--- a/config.json
++++ b/config.json
+@@ -684,23 +684,6 @@
+                 "SANITYTARGETS" : "core-image-minimal:do_testimage core-image-sato:do_testimage core-image-weston:do_testimage"
+             }
+         },
+-        "meta-agl-core" : {
+-            "NEEDREPOS" : ["poky", "meta-agl"],
+-            "ADDLAYER" : [
+-                "${BUILDDIR}/../meta-agl/meta-agl-core"
+-            ],
+-            "DISTRO" : "poky-agl",
+-            "BUILDINFO" : true,
+-            "BUILDHISTORY" : true,
+-            "PACKAGE_CLASSES" : "package_rpm",
+-            "extravars" : [
+-                "AGL_FEATURES = 'aglcore'"
+-            ],
+-            "step1" : {
+-                "MACHINE": "qemux86-64",
+-                "BBTARGETS": "agl-image-core-autobuilder"
+-            }
+-        },
+         "meta-aws" : {
+             "NEEDREPOS" : ["poky", "meta-openembedded", "meta-aws"],
+             "ADDLAYER" : [
+@@ -1245,41 +1228,37 @@
+             }
+         },
+         "check-layer-nightly" : {
+-            "NEEDREPOS" : ["poky", "meta-agl", "meta-arm", "meta-aws", "meta-intel", "meta-ti", "meta-openembedded", "meta-virtualization", "meta-clang", "meta-exein"],
++            "NEEDREPOS" : ["poky", "meta-arm", "meta-aws", "meta-intel", "meta-ti", "meta-openembedded", "meta-virtualization", "meta-clang", "meta-exein"],
+             "step1" : {
+-                "shortname" : "Test meta-agl YP Compatibility",
+-                "EXTRACMDS" : ["yocto-check-layer-wrapper ../meta-agl/meta-agl-core ../meta-agl/meta-netboot --dependency ../meta-openembedded/meta-oe ../meta-openembedded/meta-networking ../meta-openembedded/meta-python --no-auto-dependency"]
+-            },
+-            "step2" : {
+                 "shortname" : "Test meta-arm YP Compatibility",
+                 "MACHINE" : "qemuarm64",
+                 "EXTRACMDS" : ["yocto-check-layer-wrapper ../meta-arm/meta-arm ../meta-arm/meta-arm-toolchain ../meta-arm/meta-arm-bsp ../meta-arm/meta-gem5 ../meta-arm/meta-arm-autonomy --dependency ../meta-openembedded/meta-oe ../meta-openembedded/meta-networking ../meta-openembedded/meta-python ../meta-poky ../meta-openembedded/meta-filesystems ../meta-virtualization --no-auto-dependency"]
+             },
+-            "step3" : {
++            "step2" : {
+                 "shortname" : "Test meta-aws YP Compatibility",
+                 "EXTRACMDS" : ["yocto-check-layer-wrapper ../meta-aws --dependency ../meta-openembedded/meta-oe ../meta-openembedded/meta-networking ../meta-openembedded/meta-multimedia ../meta-openembedded/meta-python -n --no-auto-dependency"]
+             },
+-            "step4" : {
++            "step3" : {
+                 "shortname" : "Test meta-intel YP Compatibility",
+                 "EXTRACMDS" : ["yocto-check-layer-wrapper ../meta-intel --no-auto-dependency"]
+             },
+-            "step5" : {
++            "step4" : {
+                 "shortname" : "Test meta-ti YP Compatibility",
+                 "EXTRACMDS" : ["yocto-check-layer-wrapper ../meta-ti/meta-ti-bsp ../meta-ti/meta-ti-extras --dependency ../meta-arm --no-auto-dependency"]
+             },
+-            "step6" : {
++            "step5" : {
+                 "shortname" : "Test meta-oe YP Compatibility",
+                 "EXTRACMDS" : ["yocto-check-layer-wrapper ../meta-openembedded --no-auto-dependency"]
+             },
+-            "step7" : {
++            "step6" : {
+                 "shortname" : "Test meta-virtualization YP Compatibility",
+                 "EXTRACMDS" : ["yocto-check-layer-wrapper ../meta-virtualization --dependency ../meta-openembedded/meta-oe ../meta-openembedded/meta-networking ../meta-openembedded/meta-python ../meta-openembedded/meta-filesystems --no-auto-dependency"]
+             },
+-            "step8" : {
++            "step7" : {
+                 "shortname" : "Test meta-clang YP Compatibility",
+                 "EXTRACMDS" : ["yocto-check-layer-wrapper ../meta-clang --no-auto-dependency"]
+             },
+-            "step9" : {
++            "step8" : {
+                 "shortname" : "Test meta-exein YP Compatibility",
+                 "extravars" : [
+                     "HOSTTOOLS:remove = 'clang llvm-strip'"
+-- 
+2.34.1
+
 
