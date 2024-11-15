@@ -1,163 +1,253 @@
-Return-Path: <pbe@trifork.com>
+Return-Path: <quentin.schulz@cherry.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2991BD68BC4
-	for <webhook@archiver.kernel.org>; Fri, 15 Nov 2024 14:51:23 +0000 (UTC)
-Received: from mxout02.netic.dk (mxout02.netic.dk [77.243.50.218])
- by mx.groups.io with SMTP id smtpd.web11.22381.1731682271116007535
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3545FD68BC6
+	for <webhook@archiver.kernel.org>; Fri, 15 Nov 2024 14:59:53 +0000 (UTC)
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (EUR05-VI1-obe.outbound.protection.outlook.com [40.107.21.62])
+ by mx.groups.io with SMTP id smtpd.web11.22558.1731682782715528945
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 15 Nov 2024 06:51:13 -0800
+ Fri, 15 Nov 2024 06:59:43 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: message contains an insecure body length tag" header.i=@trifork.com header.s=dkim header.b=PYB+0YtY;
- spf=pass (domain: trifork.com, ip: 77.243.50.218, mailfrom: pbe@trifork.com)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=trifork.com; i=@trifork.com; l=5518; q=dns/txt;
-  s=dkim; t=1731682271; x=1763218271;
-  h=from:to:cc:subject:date:message-id:content-id:
-   content-transfer-encoding:mime-version;
-  z=From:=20"Paul=20M.=20Bendixen"=20<pbe@trifork.com>|To:
-   =20"yocto-patches@lists.yoctoproject.org"=0D=0A=09<yocto-
-   patches@lists.yoctoproject.org>|CC:=20Trevor=20Woerner=20
-   <twoerner@gmail.com>|Subject:=20[meta-rockchip]=20[PATCH]
-   =20SOQuartz:=20add|Date:=20Fri,=2015=20Nov=202024=2014:51
-   :08=20+0000|Message-ID:=20<3608313a-2d69-435d-807f-3dceb6
-   326ca8@trifork.com>|Content-ID:=20<52E4B857A99E404FBA71D3
-   A96C27E00B@trifork.com>|Content-Transfer-Encoding:=20base
-   64|MIME-Version:=201.0;
-  bh=WUnAsH9bZxn5ictAU/P7nLSHjRa+Ll2UNKsxZEnNvuo=;
-  b=PYB+0YtYJxo2LYwUlvFlSHTEo6AZCfAL+5Sz7GD0tSdlFQLyEvIXkJb9
-   yPioBCiYCkGaW1ff4yUMynjwoV7IairNQZlrI5MtVvMZM0pajZn+Dvpnw
-   hYBxC6lZL9VxsHwiik5XrDQvlxFQnUVyqkrO92h0fPVkYHVDAR3EwaTyB
-   c=;
-X-CSE-ConnectionGUID: MIm1TRaJSICUO2SmAkCaAQ==
-X-CSE-MsgGUID: 1KU1tEirTQi/GPiQTN4beQ==
-IronPort-Data: A9a23:X3wFB69iHf4zmsR3O/pBDrUD63+TJUtcMsCJ2f8bNWPcYEJGY0x3z
- GVOUGuOP//ZNjbzKNF3Odzl9k5Q78fcmIVmTQc+ryoxFiIbosf7XtnIdU2Y0wF+jiHgoOCLy
- +1EN7Es+ehtFie0Si+Fa+an9T8kk/nVHtIQMcacUghpXwhoVSw9vhxqnu89k+ZAjMOwa++3k
- YqaT/b3Zhn8gVaYDkpOs/jf8Uo24ayo0N8llgdWic5j7Qa2e0Y9XMp3yZGZdxPQXoRSF+imc
- OfPpJnR1n/Z5RokFuS+mb/9dEAQKpaKVeRZoiMLM0QKqkEqSh0ais7XBtJFAatko2zhc+RK9
- Tl4ncfYpTHFnkH7sL91vxFwS0mSNEDdkVPNCSDXXce7lyUqf5ZwqhljJBleAGEWxgp4KURv8
- KUkEjkvVTGousXs+7eSScJlr/12eaEHPKtH0p1h5R36KN8HZciSBaTM+dJCxC0xnc0IEfW2i
- 8gxM2I3NUaZP0EfaA1LWMA1zLX63CGnIWIJwL6WjfNfD2z71AZ8+KT3MdTSYN/MTsJQ9qqdj
- jKfpjihX0BFXDCZ4WOmzyuwq+7VoRr6H60qFYSE0KJgjWTGkwT/DzVTDzNXu8KRm0m1R9UaM
- 0UI8SojtoA29Ve3VZ/sWBakp2aeuRwRUMYWFPc1gCmR1a3Z+QCUHEALSzdAbJots8peeNAx/
- lOKmtroAWQ+9ryTVX+H7q2Vtj70NSt9wXI+WBLohDAtu7HLyLzfRDqWJjq/OMZZVuHIJAw=
-IronPort-HdrOrdr: A9a23:OOhyAaEjVAVBmZjEpLqFn5HXdLJyesId70hD6qkmc20kTiX+rb
- HIoB17726RtN9/YhwdcLy7VJVoBEm9yXde2/hrAV7aZnidhILwFvAe0WKB+Vzd8lzFh4tgPM
- 5bGsAUYuEYT2IK7voShjPWLz9K+qjkzEnHv4njJl5WPHJXQpAlwQdlLw6RVml7XwdLPpYgCJ
- aH+45milObCAgqR/X+KHkZeuDJ4/nGj5zrWhIfGxI89U2vrR7A0s+ELzGomjkfThZGyvMH/X
- PKnzf0/rmuqez+8ALVymO71eUppPLRjvVCGemFgYwtMTPuhgy0Db4RPYGqjXQaoPyL4F1vqc
- LLoBsrIoBS5hrqDxiIiCqo9Qn89T4kr0b4z1yVi2ammMTlRVsBerJ8rLMcXBvFzkIq+Opxya
- dam0CUp/NsfGL9oBg=
-X-Talos-CUID: 9a23:Tj93vW7yVz8pytnGx9ss0W8RQ/wfe1/m7VztBBWDDE9qY7S8cArF
-X-Talos-MUID: 9a23:HbyCgAhVKFMfFWQ8UZ4SLMMpbeRVuriDCVoxqJRBlPGFDBBWZz2QtWHi
-X-IronPort-AV: E=Sophos;i="6.12,157,1728943200"; 
-   d="scan'208";a="81140597"
-Received: from DKMAIL03.interprise.dk (2001:1448:248:6e::110:72) by
- DKMAIL09.interprise.dk (2001:1448:248:c8::200:79) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 15 Nov 2024 15:51:06 +0100
-Received: from DKMAIL03.interprise.dk (2001:1448:248:6e::110:72) by
- DKMAIL03.interprise.dk (2001:1448:248:6e::110:72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 15 Nov 2024 15:51:08 +0100
-Received: from DKMAIL03.interprise.dk ([fe80::7100:ad8c:7536:e0a]) by
- DKMAIL03.interprise.dk ([fe80::7100:ad8c:7536:e0a%4]) with mapi id
- 15.02.1544.011; Fri, 15 Nov 2024 15:51:08 +0100
-From: "Paul M. Bendixen" <pbe@trifork.com>
-To: "yocto-patches@lists.yoctoproject.org"
-	<yocto-patches@lists.yoctoproject.org>
+ dkim=fail reason="dkim: body hash did not verify" header.i=@cherry.de header.s=selector1 header.b=ZNM27NAI;
+ spf=pass (domain: cherry.de, ip: 40.107.21.62, mailfrom: quentin.schulz@cherry.de)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Zk6dPMjLDQoKfuwFZaOxz/wT58nBdEm13hPYOjDtT8O0Lhryu1kWR7qfeGuF2RHR63lhwcbmCBNIHBGhrIH/TaM4VR7QTgLiv85s/EB0OQ49OvfVXKlpu6iZSL2Zy1ttygzqSw0/mBAiiuMt9OCbXXuO068tdk9UuuEXyoIiEn0RZ8ulGu2Y+OtLrE6nHBFUTPFknF0ES8wX1Lxsz8ngFXs5ptTdY5SMvhJVoc5gcLkVCRosiIaR7mZNJ+jetnqUwx5zDWFDFY2lIg6lo3hJ2hmRT4IBcBDtNshUbNc/438MzSaNdWKbeSAFrbngQU0InWtpQw6cNU5w6VjV3Ge1GA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HEy7PZWNlAT0FVjNFlt80yj3F6SBYVx0pPjtqQ7Ag0g=;
+ b=R4e1/chQqZ6Df7kJo0I4LyTj4drTDnGJHG+/gfdUthfN5R9coQagxn8Xgun+1OWYQvau/MgsIZqNHnmqCo2kj5/L0iuTYIHJDrS+FT2IeFMtiQ4gLdLNk10OaYFrdf5MnsAIuSPLARggHoM+fSDPi93RPffrLZoQtmHwIL5VNhotfCz++8z4o7wlcnd3RqvIzg8w4pNCeTRld+WVR2metiBO7bh9vCVMmKixKtyJEPHjdEQWQ8A/Z1gr2991WCgFiaCiCQW1hnbM3kUE7hXM1wNyQAvWq2e1VkF4+0rQlrduFHbylVVL+YlfXtt/S49e7+ajVsiN92mPL9z09pIvLA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
+ dkim=pass header.d=cherry.de; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HEy7PZWNlAT0FVjNFlt80yj3F6SBYVx0pPjtqQ7Ag0g=;
+ b=ZNM27NAISjmb9qZsyPwaSCL0AQBsTcywoKoqUMGXK+milL+6S4W+GNK5stz2nPqBOTDZozb4eh9VPa5JmnYgfDvq3n0YfGYoySmlZ4EAtBEvWlCvIrBlaCrjzYg0xDds2ozYy0R6WA1Q31CPo9o92UzdmPP9Mr9fBGS/XD82R5M=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=cherry.de;
+Received: from AS8PR04MB8897.eurprd04.prod.outlook.com (2603:10a6:20b:42c::20)
+ by AS8PR04MB7976.eurprd04.prod.outlook.com (2603:10a6:20b:2af::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.19; Fri, 15 Nov
+ 2024 14:59:38 +0000
+Received: from AS8PR04MB8897.eurprd04.prod.outlook.com
+ ([fe80::35f6:bc7d:633:369a]) by AS8PR04MB8897.eurprd04.prod.outlook.com
+ ([fe80::35f6:bc7d:633:369a%7]) with mapi id 15.20.8158.017; Fri, 15 Nov 2024
+ 14:59:38 +0000
+Message-ID: <fb559dfd-97a7-43ff-812f-ed20952fc526@cherry.de>
+Date: Fri, 15 Nov 2024 15:59:37 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [yocto-patches] [meta-rockchip] [PATCH] SOQuartz: add
+To: yocto-patches@lists.yoctoproject.org
 CC: Trevor Woerner <twoerner@gmail.com>
-Subject: [meta-rockchip] [PATCH] SOQuartz: add
-Thread-Topic: [meta-rockchip] [PATCH] SOQuartz: add
-Thread-Index: AQHbN23NEDLD8uWkm06mFwemOD4h9Q==
-Date: Fri, 15 Nov 2024 14:51:08 +0000
-Message-ID: <3608313a-2d69-435d-807f-3dceb6326ca8@trifork.com>
-Accept-Language: da-DK, en-US
-Content-Language: da-DK
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [152.115.32.67]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <52E4B857A99E404FBA71D3A96C27E00B@trifork.com>
-Content-Transfer-Encoding: base64
+References: <3608313a-2d69-435d-807f-3dceb6326ca8@trifork.com>
+Content-Language: en-US
+From: Quentin Schulz <quentin.schulz@cherry.de>
+In-Reply-To: <3608313a-2d69-435d-807f-3dceb6326ca8@trifork.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: FR4P281CA0294.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:e7::15) To AS8PR04MB8897.eurprd04.prod.outlook.com
+ (2603:10a6:20b:42c::20)
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|AS8PR04MB7976:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8b05389d-7793-4098-7c6b-08dd05862042
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: 
+	=?us-ascii?Q?fplp0ciaD4RO5CWuwXQ7O0W4B/jdGo0Lq/sS0LQlFFyBHZ/tPpELdHhAntyb?=
+ =?us-ascii?Q?dRMQlFNfhN05NVtldEkAEu4ux7Yjvh2YhWijhmByqFdcgIhQJeQ+vzO/r1NI?=
+ =?us-ascii?Q?TLgdgvRlPezMAZ/UPOPFiZwI18bCsVHUc7POZi1gpLexn5dKpqaCxkX0nz1K?=
+ =?us-ascii?Q?y5rkDaP/zKKcfgUuQ6ciwdxjHID/D0ZtjKAN70TCN/fIKW98Fv4uU5FIPvIb?=
+ =?us-ascii?Q?0mRPJEmqOYunbCO8Lf8aJYEplP8M9gpZQbD0keVDw7PqfVei91ugA4AIekHt?=
+ =?us-ascii?Q?9TultGHmsq6K+kxqaU0gJtFysnW8ySdc5AhgT3X3j6dddaQ7Nmug623SpzKD?=
+ =?us-ascii?Q?JVfpzgO6c+EAfqrLhv93+8tmUs7p5CtYazEvUO65rEXHScYnpBn1FvO69v5m?=
+ =?us-ascii?Q?K1dM93J6IyCopTP6tPNj8jX09BEydYCTS7LcJGRVGOme5Ee3eDZ83xEF6olj?=
+ =?us-ascii?Q?YYcuDjMd8Tf7q5weJTX2oT95qFucW6cy4GP2J/6AhGjoz6p2S0Y4/413q7b4?=
+ =?us-ascii?Q?Dz3bn4VZtxVwgNuXtAvqLrCFpRE+PIDrbbMp0ZpmUkVgpErb462gfTFatEAP?=
+ =?us-ascii?Q?/06W4bDF2ZFRerB2nzIi33N1Bt+I/xPj/DGwxXcp7dfQewERcjatAcB7wYHn?=
+ =?us-ascii?Q?eo7PmqIUgRRiZn8/T3cpj17S9qFO+gOY5RHvjLSThWe4jYCetWzP+knIwj0t?=
+ =?us-ascii?Q?xG1EfIhk4cGgju3yADhMzbTKrtMsaMCiYFJjDz3q9/N+kMtEvSiZ8Dp2X0WI?=
+ =?us-ascii?Q?d5Aoft2eiPv5Ka+oWzb7nGgyVrBgR9WDNXhDxUflAms1FDQL7Yi/8EDNq507?=
+ =?us-ascii?Q?Ql/IX49a1gDrhAe16tqK9cnY8FQwaeJUj8HzrN6u2dqHh3E1D51cb962rtfW?=
+ =?us-ascii?Q?uIK2hw2NIC6DPPpSAkuSCuYcoAlazrulYlL6AxdLVVHzuAqxHdh9RZAqkNC9?=
+ =?us-ascii?Q?wGCeBS/+orYEkCGSuiaeirElH1x1fSogEmoR1AiJnnl53OKtsRNVK8W/wM7O?=
+ =?us-ascii?Q?BkuMKWYlHKDLBxMdW0NLkCUNLVqu/OKKA2Mxhs9NLMJphwKKsn/GkZm+MG9o?=
+ =?us-ascii?Q?Wr09MT10X04Zf07yC2/yh0/ZIe+/ZY6IcrGMpEnUn0l0vZ4C20aKFWYSJYpM?=
+ =?us-ascii?Q?+k0CoFrNV9cFM0I5EuKWipGUByaqSu5K5zxV3J44xxmLlFJRaWIWPcDjxbzY?=
+ =?us-ascii?Q?7IMoU1Znw6dXQA8T4/8XC3VknvXZxSGEBx129eIXOinFtEMcP12S0jbX/OrD?=
+ =?us-ascii?Q?1QgIozfuB1qjJ9tLi+mw?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?nao7gHuGmxqsS+VGOQnBjiP24f7BcqiH7sxLkS6Fxs0lF9zZJlrImFylOSf0?=
+ =?us-ascii?Q?9Ph5ZIccS/Eas9iLlm0XoKfLescc9DoJeYSuzWwBGCQi5Nu5ZTCZppjMbDOT?=
+ =?us-ascii?Q?8eTAlDtu2P3OSE+E9GzHbRQOS/+2ocTsWGBV6QEM8vgXRNf5QJJjZvDuZJ8p?=
+ =?us-ascii?Q?V7WM+1PBHgErPmnDtKE39+JoeKvsYiSpd3advow7nPhe1CrCzLV+XJukYXTx?=
+ =?us-ascii?Q?ZIyLCRmSRzpHPk2GLxkdETZKY3FevgqGeB66gtZSCE7i1g1sDloz8eG7Mpzj?=
+ =?us-ascii?Q?NScCYbOl0v8yFtHHXbceOmWY961omLPYvY8cGJzqlwRzlmOmxp4CefsAdDI3?=
+ =?us-ascii?Q?sV4aOAmHnnngLHF8ySuSk+G+8ddC8PEiqGUDpiy6P81ScNfigjbXI1XW227w?=
+ =?us-ascii?Q?yQ5iKidntBFoyGCPwJG6yVZBMoUNSBg3E0ZqFhCIkvIBy9QZRo1cSzkg9uEQ?=
+ =?us-ascii?Q?AWPFI+LItx5neRp9MHNvwgkeSyunlTEr3JQJ+knOEMLbJo/PP/JAzBxoxh+P?=
+ =?us-ascii?Q?I2bUNFo+my//4SHwlVEBSZ3QeTwLGwoN45dPjeiHEZOyZ9kxAGkrBHstoq7R?=
+ =?us-ascii?Q?n4gZpO0XqBXGvSQ9dT26XkAwlMA7Bho4W7I1ED5kPHqeykl8cwgzaVQdQGzn?=
+ =?us-ascii?Q?TYTb/BpeCFORcvpZCvAlTFBrQ4LfCMTzuIv4pxpPUNRIlXv53Pv2k3I0YBmj?=
+ =?us-ascii?Q?m0q/aLZ8eSn+B1e99Xu0tOtHZ9oZf5XDjfqKXdaC67Ofv8L3465r2bP8syqF?=
+ =?us-ascii?Q?Sy3wZjq++uGHrE8Jk2lDGdHlFlAfc3Pa3H3kXVLsjn+u0ZAQk3wCUs4K/loP?=
+ =?us-ascii?Q?xyYcNDOJ66cWalxCk8mxrLSIKBV2PDc5rz1/+FtdKsgBRAqC572E9jCnNWB9?=
+ =?us-ascii?Q?JsIxI+srhaLFFzdenNLok1AmiSN76+jv7PemqCsZlhVTCqVk7E1rW4TqTxlZ?=
+ =?us-ascii?Q?KJhhWyQjlKrwRTan+0hDecx+ZLkO8NroSNJeOVv7ZYkO9IWzusgWvR6lDV2q?=
+ =?us-ascii?Q?+zLHboBLSun/rNzbWYXqXQjYm1jF97DZZDUB+8yPvZkyk8XCLpkH0YgCybJt?=
+ =?us-ascii?Q?0JtE1EoaKbn+IHVwKi1i9vqndEzxW8RsTB+63ZLJ1PHbh3g0jp13pGQWJEBV?=
+ =?us-ascii?Q?r0aZetqoSnz9ZngTFMyjEclcIEogs6+gnt4pzbc/rx6rsSP56bOUZUfxYv4P?=
+ =?us-ascii?Q?arA8vaidEZETww0s+5m2RnTic23D4POq2Cjh9VMh+DQlzVHZAPxQdS03IbV4?=
+ =?us-ascii?Q?pQlWIHNVR+Loiz5vuPCUR2JNtAzY1zJaVH2jsWnsAsrVRe2fY0qT1NBNfvw6?=
+ =?us-ascii?Q?ZRNmgZBIfl7MEnq2hEE0Inf9rMpbdOnd5fAGlXUgmDBRHWEkWij5U6EWqCGg?=
+ =?us-ascii?Q?Of91y5muI04fBBQWzw7a6/2JwiQ50VjOlmUBJq23OWUe8EuMIEeJVi3L8xzA?=
+ =?us-ascii?Q?jO7NzrGwmncbfnaGwKDrJ6N6u9M4A7y7pxz2w1bOLMISXH7N4KszH63M+OA5?=
+ =?us-ascii?Q?4uSa8HxmPGmeMz77CSrgvfTC1/kCm4xoJH+ZApbKhKWaDmQr+3yP6L2D1vb8?=
+ =?us-ascii?Q?XLsUQ80QT4mi8q3wyLgSvzvpsiy/40ypeyvfTmKnKRa+GYWBdYN4zP/ejp2u?=
+ =?us-ascii?Q?KA=3D=3D?=
+X-OriginatorOrg: cherry.de
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8b05389d-7793-4098-7c6b-08dd05862042
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8897.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Nov 2024 14:59:38.3024
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Bn0rqWLGIkkFLBVv+4iwS6htzRaMUucuOH60USQcvZ7SOLjX2J6kcmD/CwS6XtMx5G+OYJayh+ahztL56NZ0xJSryDisfqz8TcZIjdKVzng=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7976
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 15 Nov 2024 14:51:23 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/809
+ <yocto-patches@lists.yoctoproject.org>; Fri, 15 Nov 2024 14:59:53 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/810
 
-VGhlIFNPUXVhcnR6IGlzIGEgUkszNTY2IGJhc2VkIGNvbXB1dGUgbW9kdWxlIGFuZCBwYXJ0cyBv
-ZiBRdWFydHo2NCBzZXJpZXMNClRoZSBNb2RlbC1BIGJhc2UgYm9hcmQgaXMgb25lIHBvc3NpYmxl
-IGJvYXJkIHRoYXQgc3VwcG9ydHMgaXQNCg0KV2Vic2l0ZToNCiDCoMKgwqAgaHR0cHM6Ly9waW5l
-NjQub3JnL2RldmljZXMvc29xdWFydHovDQpXaWtpOg0KIMKgwqDCoCBodHRwczovL3dpa2kucGlu
-ZTY0Lm9yZy93aWtpL1NPUXVhcnR6DQoNClNwZWNzOg0KLSBSb2NrY2hpcCBSSzM1NjYgUXVhZC1j
-b3JlIEFSTSBDb3J0ZXgtQTU1QDEuOEdIeg0KLSBNYWxpLUc1MiAyRUUgQmlmcm9zdCBHUFVAODAw
-TUh6DQotIFJhc3BiZXJyeSBQaSA0IENNIGZvcm0gZmFjdG9yDQotIFJBTSBNZW1vcnkgVmFyaWFu
-dHM6IDJHQiwgNEdCLCA4R0IgTFBERFI0Lg0KLSBvcHRpb25hbCBlTU1DIGZyb20gOEdCIHRvIDEy
-OEdCDQotIG9wdGlvbmFsIDEyOE1iIFNQSSBGbGFzaA0KLSAxMC8xMDAvMTAwME1icHMgRXRoZXJu
-ZXQNCi0gV2lGaSA4MDIuMTEgYi9nL24vYWMgd2l0aCBCbHVldG9vdGggNS4wDQoNCkV4cG9zZWQg
-cHJlcmlwaGVyYWxzOg0KLSAxeCBIRE1JDQotIDJ4IERTSQ0KLSAxeCBlRFANCi0gMXggTFZEUw0K
-LSAxeCBDU0kgNC1saW5lDQotIDF4IEV0aGVybmV0DQotIDF4IFVTQiAyLjAgT1RHDQotIDF4IFNE
-DQotIDF4IFBDSWUgMS1saW5lDQotIDI4eCBHUElPDQoNCk1vZGVsLUEgYmFzZWJvYXJkOg0KLSAx
-eCBtaWNyb1NEIC0gYm9vdGFibGUNCi0gMXggSERNSSBQb3J0DQotIDJ4IFVTQiBBIDIuMCBIb3N0
-DQotIDF4IFVTQiBDIDIuMCBIb3N0DQotIDF4IDUgcGluIFVTQiBleHBhbnNpb24NCi0gMXggRXRo
-ZXJuZXQgdy4gUG9FDQotIDF4IDQwIHBvbGUgUGkyIGNvbXBhdGlibGUgR1BJTw0KLSAxeCBNaVBp
-LUNTSSAyIGxhbmVzDQotIDF4IE1pUGktQ1NJIDQgbGFuZXMNCi0gMXggTWlQaS1EU0kgMiBsYW5l
-cw0KLSAxeCBNaVBpLURTSSA0IGxhbmVzDQotIDF4IFBDSWUgb3BlbiBlbmRlZA0KDQpTaWduZWQt
-b2ZmLWJ5OiBQYXVsIE0uIEIuIEJlbmRpeGVuIDxwYmVAdHJpZm9yay5jb20+DQotLS0NCiDCoFJF
-QURNRcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgIHzCoCAxICsNCiDCoGNvbmYvbWFjaGluZS9pbmNsdWRlL3Nv
-cXVhcnR6LmluY8KgwqDCoMKgwqDCoMKgwqDCoMKgIHwgMTUgKysrKysrKysrKysrKysrDQogwqBj
-b25mL21hY2hpbmUvc29xdWFydHotbW9kZWwtYS5jb25mwqDCoMKgwqDCoMKgwqDCoMKgIHwgMTIg
-KysrKysrKysrKysrDQogwqByZWNpcGVzLWtlcm5lbC9saW51eC9saW51eC15b2N0b18lLmJiYXBw
-ZW5kIHzCoCAxICsNCiDCoDQgZmlsZXMgY2hhbmdlZCwgMjkgaW5zZXJ0aW9ucygrKQ0KIMKgY3Jl
-YXRlIG1vZGUgMTAwNjQ0IGNvbmYvbWFjaGluZS9pbmNsdWRlL3NvcXVhcnR6LmluYw0KIMKgY3Jl
-YXRlIG1vZGUgMTAwNjQ0IGNvbmYvbWFjaGluZS9zb3F1YXJ0ei1tb2RlbC1hLmNvbmYNCg0KZGlm
-ZiAtLWdpdCBhL1JFQURNRSBiL1JFQURNRQ0KaW5kZXggMDlmODY5MS4uODVhYjJlYyAxMDA2NDQN
-Ci0tLSBhL1JFQURNRQ0KKysrIGIvUkVBRE1FDQpAQCAtNDUsNiArNDUsNyBAQCBTdGF0dXMgb2Yg
-c3VwcG9ydGVkIGJvYXJkczoNCiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcm9jay1waS1lDQog
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHJvY2stcGktcw0KIMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoCByb2NrNjQNCivCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHNvcXVhcnR6IChvbiBtb2RlbCBB
-IGJhc2UgYm9hcmQpDQoNCiDCoMKgwqDCoCBidWlsZHM6DQogwqDCoMKgwqDCoMKgwqDCoCAzMi1i
-aXQ6DQpkaWZmIC0tZ2l0IGEvY29uZi9tYWNoaW5lL2luY2x1ZGUvc29xdWFydHouaW5jIA0KYi9j
-b25mL21hY2hpbmUvaW5jbHVkZS9zb3F1YXJ0ei5pbmMNCm5ldyBmaWxlIG1vZGUgMTAwNjQ0DQpp
-bmRleCAwMDAwMDAwLi42NzE0ZWZjDQotLS0gL2Rldi9udWxsDQorKysgYi9jb25mL21hY2hpbmUv
-aW5jbHVkZS9zb3F1YXJ0ei5pbmMNCkBAIC0wLDAgKzEsMTUgQEANCisjQ29weXJpZ2h0IChDKSBU
-cmlmb3JrIEEvUyAyMDI0DQorIyBSZWxlYXNlZCB1bmRlciB0aGUgTUlUIGxpY2Vuc2UgKHNlZSBD
-T1BZSU5HLk1JVCBmb3IgdGhlIHRlcm1zKQ0KKw0KKyMgQ29tbW9uIG92ZXJyaWRlIGZvciBiYXNp
-bmcgYSBTT1F1YXJ0eiBkZXNpZ24gb24NCisjIGh0dHBzOi8vd2lraS5waW5lNjQub3JnL3dpa2kv
-U09RdWFydHoNCisNCitNQUNISU5FT1ZFUlJJREVTID0uICJzb3F1YXJ0ejoiDQorDQorcmVxdWly
-ZSBjb25mL21hY2hpbmUvaW5jbHVkZS9yazM1NjYuaW5jDQorDQorIyBBIG1hY2hpbmUgdXNpbmcg
-dGhpcyBiYXNlYm9hcmQgY291bGQgdXNlIHRoZXNlIG9wdGlvbnMgb3Igb3ZlcmxvYWQgdGhlbQ0K
-KyMgVUJPT1RfTUFDSElORSA/PSAic29xdWFydHotY200LXJrMzU2Nl9kZWZjb25maWciDQorIyBL
-RVJORUxfREVWSUNFVFJFRSA/PSAicm9ja2NoaXAvcmszNTY2LXNvcXVhcnR6LWNtNC5kdGIiDQor
-DQorTUFDSElORV9FWFRSQV9SUkVDT01NRU5EUyArPSAia2VybmVsLW1vZHVsZXMiDQpkaWZmIC0t
-Z2l0IGEvY29uZi9tYWNoaW5lL3NvcXVhcnR6LW1vZGVsLWEuY29uZiANCmIvY29uZi9tYWNoaW5l
-L3NvcXVhcnR6LW1vZGVsLWEuY29uZg0KbmV3IGZpbGUgbW9kZSAxMDA2NDQNCmluZGV4IDAwMDAw
-MDAuLmI4YmU0Y2ENCi0tLSAvZGV2L251bGwNCisrKyBiL2NvbmYvbWFjaGluZS9zb3F1YXJ0ei1t
-b2RlbC1hLmNvbmYNCkBAIC0wLDAgKzEsMTIgQEANCisjQ29weXJpZ2h0IChDKSBUcmlmb3JrIEEv
-UyAyMDI0DQorIyBSZWxlYXNlZCB1bmRlciB0aGUgTUlUIGxpY2Vuc2UgKHNlZSBDT1BZSU5HLk1J
-VCBmb3IgdGhlIHRlcm1zKQ0KKw0KKyNAVFlQRTogTWFjaGluZQ0KKyNATkFNRTogU09RdWFydHog
-b24gTW9kZWwgQSBiYXNlIGJvYXJkDQorI0BERVNDUklQVElPTjogU09RdWFydHogaXMgYSBzZXJp
-ZXMgb2YgQ29tcHV0ZSBNb2R1bGUgYnkgUGluZTY0LCB0aGUgDQpNb2RlbC1BIGJhc2Vib2FyZCBw
-cm92aWRlcyBzdGFuZGFyZCBjb25uZWN0b3JzIGZvciB0aGUgY29tcHV0ZSBtb2R1bGUNCisjaHR0
-cHM6Ly93aWtpLnBpbmU2NC5vcmcvd2lraS9TT1F1YXJ0eiNTT1F1YXJ0el9Nb2RlbC1BX0Jhc2Vi
-b2FyZF9GZWF0dXJlcw0KKw0KK3JlcXVpcmUgY29uZi9tYWNoaW5lL2luY2x1ZGUvc29xdWFydHou
-aW5jDQorDQorS0VSTkVMX0RFVklDRVRSRUUgPSAicm9ja2NoaXAvcmszNTY2LXNvcXVhcnR6LW1v
-ZGVsLWEuZHRiIg0KK1VCT09UX01BQ0hJTkUgPSAic29xdWFydHotbW9kZWwtYS1yazM1NjZfZGVm
-Y29uZmlnIg0KZGlmZiAtLWdpdCBhL3JlY2lwZXMta2VybmVsL2xpbnV4L2xpbnV4LXlvY3RvXyUu
-YmJhcHBlbmQgDQpiL3JlY2lwZXMta2VybmVsL2xpbnV4L2xpbnV4LXlvY3RvXyUuYmJhcHBlbmQN
-CmluZGV4IDU1MjhiYWIuLjU2ZWM5ZDcgMTAwNjQ0DQotLS0gYS9yZWNpcGVzLWtlcm5lbC9saW51
-eC9saW51eC15b2N0b18lLmJiYXBwZW5kDQorKysgYi9yZWNpcGVzLWtlcm5lbC9saW51eC9saW51
-eC15b2N0b18lLmJiYXBwZW5kDQpAQCAtMjIsNiArMjIsNyBAQCBDT01QQVRJQkxFX01BQ0hJTkU6
-cm9jay0zYSA9ICJyb2NrLTNhIg0KIMKgQ09NUEFUSUJMRV9NQUNISU5FOnJvY2stNGMtcGx1cyA9
-ICJyb2NrLTRjLXBsdXMiDQogwqBDT01QQVRJQkxFX01BQ0hJTkU6cm9jay01YSA9ICJyb2NrLTVh
-Ig0KIMKgQ09NUEFUSUJMRV9NQUNISU5FOnJvY2stNWIgPSAicm9jay01YiINCitDT01QQVRJQkxF
-X01BQ0hJTkU6c29xdWFydHogPSAic29xdWFydHoiDQoNCiDCoFNSQ19VUkk6YXBwZW5kID0gIiAN
-CmZpbGU6Ly9yb2NrY2hpcC1rbWV0YTt0eXBlPWttZXRhO25hbWU9cm9ja2NoaXAta21ldGE7ZGVz
-dHN1ZmZpeD1yb2NrY2hpcC1rbWV0YSINCiDCoFNSQ19VUkk6YXBwZW5kOm5hbm9waS1yNHMgPSAi
-IGZpbGU6Ly9uYW5vcGktcjRzLnNjYyINCi0tIA0KMi40My4wDQoNCg0K
+Hi Paul,
+
+Please version your patches when sending (usually -v N with N being the=20
+proper version number should be enough), a vN will then appear next to=20
+[PATCH in the mail subject. That is necessary for maintainers and=20
+reviewers to not have to figure out which one mail is the latest and=20
+greatest patch you've sent and they should review or merge.
+
+I can also recommend using b4 which does a lot of things automatically=20
+for you :)
+
+See comment inline.
+
+On 11/15/24 3:51 PM, Paul M. Bendixen via lists.yoctoproject.org wrote:
+> [You don't often get email from pbe=3Dtrifork.com@lists.yoctoproject.org.=
+ Learn why this is important at https://aka.ms/LearnAboutSenderIdentificati=
+on ]
+>=20
+> The SOQuartz is a RK3566 based compute module and parts of Quartz64 serie=
+s
+> The Model-A base board is one possible board that supports it
+>=20
+> Website:
+>       https://pine64.org/devices/soquartz/
+> Wiki:
+>       https://wiki.pine64.org/wiki/SOQuartz
+>=20
+> Specs:
+> - Rockchip RK3566 Quad-core ARM Cortex-A55@1.8GHz
+> - Mali-G52 2EE Bifrost GPU@800MHz
+> - Raspberry Pi 4 CM form factor
+> - RAM Memory Variants: 2GB, 4GB, 8GB LPDDR4.
+> - optional eMMC from 8GB to 128GB
+> - optional 128Mb SPI Flash
+> - 10/100/1000Mbps Ethernet
+> - WiFi 802.11 b/g/n/ac with Bluetooth 5.0
+>=20
+> Exposed preripherals:
+> - 1x HDMI
+> - 2x DSI
+> - 1x eDP
+> - 1x LVDS
+> - 1x CSI 4-line
+> - 1x Ethernet
+> - 1x USB 2.0 OTG
+> - 1x SD
+> - 1x PCIe 1-line
+> - 28x GPIO
+>=20
+> Model-A baseboard:
+> - 1x microSD - bootable
+> - 1x HDMI Port
+> - 2x USB A 2.0 Host
+> - 1x USB C 2.0 Host
+> - 1x 5 pin USB expansion
+> - 1x Ethernet w. PoE
+> - 1x 40 pole Pi2 compatible GPIO
+> - 1x MiPi-CSI 2 lanes
+> - 1x MiPi-CSI 4 lanes
+> - 1x MiPi-DSI 2 lanes
+> - 1x MiPi-DSI 4 lanes
+> - 1x PCIe open ended
+>=20
+> Signed-off-by: Paul M. B. Bendixen <pbe@trifork.com>
+> ---
+>    README                                      |=C2=A0 1 +
+>    conf/machine/include/soquartz.inc           | 15 +++++++++++++++
+>    conf/machine/soquartz-model-a.conf          | 12 ++++++++++++
+>    recipes-kernel/linux/linux-yocto_%.bbappend |=C2=A0 1 +
+>    4 files changed, 29 insertions(+)
+>    create mode 100644 conf/machine/include/soquartz.inc
+>    create mode 100644 conf/machine/soquartz-model-a.conf
+>=20
+> diff --git a/README b/README
+> index 09f8691..85ab2ec 100644
+> --- a/README
+> +++ b/README
+> @@ -45,6 +45,7 @@ Status of supported boards:
+>                rock-pi-e
+>                rock-pi-s
+>                rock64
+> +            soquartz (on model A base board)
+>=20
+>        builds:
+>            32-bit:
+> diff --git a/conf/machine/include/soquartz.inc
+> b/conf/machine/include/soquartz.inc
+> new file mode 100644
+> index 0000000..6714efc
+> --- /dev/null
+> +++ b/conf/machine/include/soquartz.inc
+> @@ -0,0 +1,15 @@
+> +#Copyright (C) Trifork A/S 2024
+> +# Released under the MIT license (see COPYING.MIT for the terms)
+> +
+> +# Common override for basing a SOQuartz design on
+> +# https://wiki.pine64.org/wiki/SOQuartz
+> +
+> +MACHINEOVERRIDES =3D. "soquartz:"
+> +
+> +require conf/machine/include/rk3566.inc
+> +
+> +# A machine using this baseboard could use these options or overload the=
+m
+
+I think it is actually required to set those variables in a machine=20
+configuration file since nothing else defines a default? And since those=20
+are now commented out (as they should).
+
+So I'm just nitpicking on the phrasing here. I wouldn't necessarily send=20
+a new version just for that, but maybe Trevor will have a different=20
+opinion (or fix it when merging).
+
+Looks good to me otherwise!
+
+Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
+
+Thanks!
+Quentin
 
