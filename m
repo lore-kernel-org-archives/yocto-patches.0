@@ -1,92 +1,163 @@
-Return-Path: <mathieu.dubois-briand@bootlin.com>
+Return-Path: <pbe@trifork.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A3CAD6A25E
-	for <webhook@archiver.kernel.org>; Fri, 15 Nov 2024 14:27:13 +0000 (UTC)
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
- by mx.groups.io with SMTP id smtpd.web10.22117.1731680830453019740
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2991BD68BC4
+	for <webhook@archiver.kernel.org>; Fri, 15 Nov 2024 14:51:23 +0000 (UTC)
+Received: from mxout02.netic.dk (mxout02.netic.dk [77.243.50.218])
+ by mx.groups.io with SMTP id smtpd.web11.22381.1731682271116007535
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 15 Nov 2024 06:27:10 -0800
+ Fri, 15 Nov 2024 06:51:13 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=gm1 header.b=dfxnErdV;
- spf=pass (domain: bootlin.com, ip: 217.70.183.199, mailfrom: mathieu.dubois-briand@bootlin.com)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 686A1FF803;
-	Fri, 15 Nov 2024 14:27:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731680828;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8M+sLiiUY466cAF2hCeX1teEw8o/MJ8cx8I24afJsIs=;
-	b=dfxnErdVdMJCoAbbaiTDxGTY6duyFzCfnrM1sxseALqxApeclfpCWo57uP2cOtb0rMtP0/
-	JLH2H8ho+ZeGHwojbHF8+F6C89PPn0it3b7iErr+0a5F5C52yG6gYfMMrA+rtqm0+lZjlO
-	GCxC7PZ0pJtAs+cccukgNqWiLwq02+oS8gkanwJ032l07WEaA6anWLsVktm3bXZGVWUmxC
-	fKuQLySyFvIH4bztsz+IIozEdy6GTSwl6pQBiwoCzbGGInr1NR5Y98dAT9ZwduaTwLyhoT
-	cqD2emh8pOAu5NgyktNwoB4w4nVLLquaA1QpTI95W9VYnQuivBLtiz/ayGECUg==
-Date: Fri, 15 Nov 2024 15:27:07 +0100
-From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-To: Quentin Schulz <quentin.schulz@cherry.de>
-Cc: yocto-patches@lists.yoctoproject.org
-Subject: Re: [yocto-patches] [yocto-autobuilder-helper][PATCH]
- prepare-shared-repos: Allow to tag poky git
-Message-ID: <ZzdaO5pl5BIVCwN_@bootlin-mathieu>
-References: <20241115140249.176032-1-mathieu.dubois-briand@bootlin.com>
- <a6d0d2b5-9d8a-47ae-89ed-f332765c37ae@cherry.de>
+ dkim=fail reason="dkim: message contains an insecure body length tag" header.i=@trifork.com header.s=dkim header.b=PYB+0YtY;
+ spf=pass (domain: trifork.com, ip: 77.243.50.218, mailfrom: pbe@trifork.com)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=trifork.com; i=@trifork.com; l=5518; q=dns/txt;
+  s=dkim; t=1731682271; x=1763218271;
+  h=from:to:cc:subject:date:message-id:content-id:
+   content-transfer-encoding:mime-version;
+  z=From:=20"Paul=20M.=20Bendixen"=20<pbe@trifork.com>|To:
+   =20"yocto-patches@lists.yoctoproject.org"=0D=0A=09<yocto-
+   patches@lists.yoctoproject.org>|CC:=20Trevor=20Woerner=20
+   <twoerner@gmail.com>|Subject:=20[meta-rockchip]=20[PATCH]
+   =20SOQuartz:=20add|Date:=20Fri,=2015=20Nov=202024=2014:51
+   :08=20+0000|Message-ID:=20<3608313a-2d69-435d-807f-3dceb6
+   326ca8@trifork.com>|Content-ID:=20<52E4B857A99E404FBA71D3
+   A96C27E00B@trifork.com>|Content-Transfer-Encoding:=20base
+   64|MIME-Version:=201.0;
+  bh=WUnAsH9bZxn5ictAU/P7nLSHjRa+Ll2UNKsxZEnNvuo=;
+  b=PYB+0YtYJxo2LYwUlvFlSHTEo6AZCfAL+5Sz7GD0tSdlFQLyEvIXkJb9
+   yPioBCiYCkGaW1ff4yUMynjwoV7IairNQZlrI5MtVvMZM0pajZn+Dvpnw
+   hYBxC6lZL9VxsHwiik5XrDQvlxFQnUVyqkrO92h0fPVkYHVDAR3EwaTyB
+   c=;
+X-CSE-ConnectionGUID: MIm1TRaJSICUO2SmAkCaAQ==
+X-CSE-MsgGUID: 1KU1tEirTQi/GPiQTN4beQ==
+IronPort-Data: A9a23:X3wFB69iHf4zmsR3O/pBDrUD63+TJUtcMsCJ2f8bNWPcYEJGY0x3z
+ GVOUGuOP//ZNjbzKNF3Odzl9k5Q78fcmIVmTQc+ryoxFiIbosf7XtnIdU2Y0wF+jiHgoOCLy
+ +1EN7Es+ehtFie0Si+Fa+an9T8kk/nVHtIQMcacUghpXwhoVSw9vhxqnu89k+ZAjMOwa++3k
+ YqaT/b3Zhn8gVaYDkpOs/jf8Uo24ayo0N8llgdWic5j7Qa2e0Y9XMp3yZGZdxPQXoRSF+imc
+ OfPpJnR1n/Z5RokFuS+mb/9dEAQKpaKVeRZoiMLM0QKqkEqSh0ais7XBtJFAatko2zhc+RK9
+ Tl4ncfYpTHFnkH7sL91vxFwS0mSNEDdkVPNCSDXXce7lyUqf5ZwqhljJBleAGEWxgp4KURv8
+ KUkEjkvVTGousXs+7eSScJlr/12eaEHPKtH0p1h5R36KN8HZciSBaTM+dJCxC0xnc0IEfW2i
+ 8gxM2I3NUaZP0EfaA1LWMA1zLX63CGnIWIJwL6WjfNfD2z71AZ8+KT3MdTSYN/MTsJQ9qqdj
+ jKfpjihX0BFXDCZ4WOmzyuwq+7VoRr6H60qFYSE0KJgjWTGkwT/DzVTDzNXu8KRm0m1R9UaM
+ 0UI8SojtoA29Ve3VZ/sWBakp2aeuRwRUMYWFPc1gCmR1a3Z+QCUHEALSzdAbJots8peeNAx/
+ lOKmtroAWQ+9ryTVX+H7q2Vtj70NSt9wXI+WBLohDAtu7HLyLzfRDqWJjq/OMZZVuHIJAw=
+IronPort-HdrOrdr: A9a23:OOhyAaEjVAVBmZjEpLqFn5HXdLJyesId70hD6qkmc20kTiX+rb
+ HIoB17726RtN9/YhwdcLy7VJVoBEm9yXde2/hrAV7aZnidhILwFvAe0WKB+Vzd8lzFh4tgPM
+ 5bGsAUYuEYT2IK7voShjPWLz9K+qjkzEnHv4njJl5WPHJXQpAlwQdlLw6RVml7XwdLPpYgCJ
+ aH+45milObCAgqR/X+KHkZeuDJ4/nGj5zrWhIfGxI89U2vrR7A0s+ELzGomjkfThZGyvMH/X
+ PKnzf0/rmuqez+8ALVymO71eUppPLRjvVCGemFgYwtMTPuhgy0Db4RPYGqjXQaoPyL4F1vqc
+ LLoBsrIoBS5hrqDxiIiCqo9Qn89T4kr0b4z1yVi2ammMTlRVsBerJ8rLMcXBvFzkIq+Opxya
+ dam0CUp/NsfGL9oBg=
+X-Talos-CUID: 9a23:Tj93vW7yVz8pytnGx9ss0W8RQ/wfe1/m7VztBBWDDE9qY7S8cArF
+X-Talos-MUID: 9a23:HbyCgAhVKFMfFWQ8UZ4SLMMpbeRVuriDCVoxqJRBlPGFDBBWZz2QtWHi
+X-IronPort-AV: E=Sophos;i="6.12,157,1728943200"; 
+   d="scan'208";a="81140597"
+Received: from DKMAIL03.interprise.dk (2001:1448:248:6e::110:72) by
+ DKMAIL09.interprise.dk (2001:1448:248:c8::200:79) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 15 Nov 2024 15:51:06 +0100
+Received: from DKMAIL03.interprise.dk (2001:1448:248:6e::110:72) by
+ DKMAIL03.interprise.dk (2001:1448:248:6e::110:72) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 15 Nov 2024 15:51:08 +0100
+Received: from DKMAIL03.interprise.dk ([fe80::7100:ad8c:7536:e0a]) by
+ DKMAIL03.interprise.dk ([fe80::7100:ad8c:7536:e0a%4]) with mapi id
+ 15.02.1544.011; Fri, 15 Nov 2024 15:51:08 +0100
+From: "Paul M. Bendixen" <pbe@trifork.com>
+To: "yocto-patches@lists.yoctoproject.org"
+	<yocto-patches@lists.yoctoproject.org>
+CC: Trevor Woerner <twoerner@gmail.com>
+Subject: [meta-rockchip] [PATCH] SOQuartz: add
+Thread-Topic: [meta-rockchip] [PATCH] SOQuartz: add
+Thread-Index: AQHbN23NEDLD8uWkm06mFwemOD4h9Q==
+Date: Fri, 15 Nov 2024 14:51:08 +0000
+Message-ID: <3608313a-2d69-435d-807f-3dceb6326ca8@trifork.com>
+Accept-Language: da-DK, en-US
+Content-Language: da-DK
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [152.115.32.67]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <52E4B857A99E404FBA71D3A96C27E00B@trifork.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a6d0d2b5-9d8a-47ae-89ed-f332765c37ae@cherry.de>
-X-GND-Sasl: mathieu.dubois-briand@bootlin.com
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 15 Nov 2024 14:27:13 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/808
+ <yocto-patches@lists.yoctoproject.org>; Fri, 15 Nov 2024 14:51:23 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/809
 
-On Fri, Nov 15, 2024 at 03:21:15PM +0100, Quentin Schulz wrote:
-> Hi Mathieu,
-> 
-> Apparently git-push supports pushing without a remote, c.f. the manpage:
-> 
->        git push [--all | --branches | --mirror | --tags] [--follow-tags]
-> [--atomic] [-n | --dry-run] [--receive-pack=<git-receive-pack>]
->                   [--repo=<repository>] [-f | --force] [-d | --delete]
-> [--prune] [-q | --quiet] [-v | --verbose]
->                   [-u | --set-upstream] [-o <string> |
-> --push-option=<string>]
->                   [--[no-]signed|--signed=(true|false|if-asked)]
->                   [--force-with-lease[=<refname>[:<expect>]]
-> [--force-if-includes]]
->                   [--no-verify] [<repository> [<refspec>...]]
-> 
-> [...]
-> 
->        <repository>
->            The "remote" repository that is the destination of a push
-> operation. This parameter can be either a URL (see the section GIT URLS
-> below) or the name of a remote (see the section REMOTES below).
-
-Oh, that's nice! I was definitely not aware of this possibility. I will
-send a new version.
-
-> 
-> This would avoid leftovers from stopped/interrupted/broken runs to mess with
-> the git remote addition which could fail if the remote already exists.
-> 
-
-Um right, I did not think about builds potentially interrupted in the
-mean time, thanks.
-
-> Either don't use an explicit local remote, or remove it beforehand. Except
-> that removing a non-existing remote will fail check_call, so you probably
-> want to simply run the command and ignore the return code.
-> 
-> Cheers,
-> Quentin
-
--- 
-Mathieu Dubois-Briand, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+VGhlIFNPUXVhcnR6IGlzIGEgUkszNTY2IGJhc2VkIGNvbXB1dGUgbW9kdWxlIGFuZCBwYXJ0cyBv
+ZiBRdWFydHo2NCBzZXJpZXMNClRoZSBNb2RlbC1BIGJhc2UgYm9hcmQgaXMgb25lIHBvc3NpYmxl
+IGJvYXJkIHRoYXQgc3VwcG9ydHMgaXQNCg0KV2Vic2l0ZToNCiDCoMKgwqAgaHR0cHM6Ly9waW5l
+NjQub3JnL2RldmljZXMvc29xdWFydHovDQpXaWtpOg0KIMKgwqDCoCBodHRwczovL3dpa2kucGlu
+ZTY0Lm9yZy93aWtpL1NPUXVhcnR6DQoNClNwZWNzOg0KLSBSb2NrY2hpcCBSSzM1NjYgUXVhZC1j
+b3JlIEFSTSBDb3J0ZXgtQTU1QDEuOEdIeg0KLSBNYWxpLUc1MiAyRUUgQmlmcm9zdCBHUFVAODAw
+TUh6DQotIFJhc3BiZXJyeSBQaSA0IENNIGZvcm0gZmFjdG9yDQotIFJBTSBNZW1vcnkgVmFyaWFu
+dHM6IDJHQiwgNEdCLCA4R0IgTFBERFI0Lg0KLSBvcHRpb25hbCBlTU1DIGZyb20gOEdCIHRvIDEy
+OEdCDQotIG9wdGlvbmFsIDEyOE1iIFNQSSBGbGFzaA0KLSAxMC8xMDAvMTAwME1icHMgRXRoZXJu
+ZXQNCi0gV2lGaSA4MDIuMTEgYi9nL24vYWMgd2l0aCBCbHVldG9vdGggNS4wDQoNCkV4cG9zZWQg
+cHJlcmlwaGVyYWxzOg0KLSAxeCBIRE1JDQotIDJ4IERTSQ0KLSAxeCBlRFANCi0gMXggTFZEUw0K
+LSAxeCBDU0kgNC1saW5lDQotIDF4IEV0aGVybmV0DQotIDF4IFVTQiAyLjAgT1RHDQotIDF4IFNE
+DQotIDF4IFBDSWUgMS1saW5lDQotIDI4eCBHUElPDQoNCk1vZGVsLUEgYmFzZWJvYXJkOg0KLSAx
+eCBtaWNyb1NEIC0gYm9vdGFibGUNCi0gMXggSERNSSBQb3J0DQotIDJ4IFVTQiBBIDIuMCBIb3N0
+DQotIDF4IFVTQiBDIDIuMCBIb3N0DQotIDF4IDUgcGluIFVTQiBleHBhbnNpb24NCi0gMXggRXRo
+ZXJuZXQgdy4gUG9FDQotIDF4IDQwIHBvbGUgUGkyIGNvbXBhdGlibGUgR1BJTw0KLSAxeCBNaVBp
+LUNTSSAyIGxhbmVzDQotIDF4IE1pUGktQ1NJIDQgbGFuZXMNCi0gMXggTWlQaS1EU0kgMiBsYW5l
+cw0KLSAxeCBNaVBpLURTSSA0IGxhbmVzDQotIDF4IFBDSWUgb3BlbiBlbmRlZA0KDQpTaWduZWQt
+b2ZmLWJ5OiBQYXVsIE0uIEIuIEJlbmRpeGVuIDxwYmVAdHJpZm9yay5jb20+DQotLS0NCiDCoFJF
+QURNRcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgIHzCoCAxICsNCiDCoGNvbmYvbWFjaGluZS9pbmNsdWRlL3Nv
+cXVhcnR6LmluY8KgwqDCoMKgwqDCoMKgwqDCoMKgIHwgMTUgKysrKysrKysrKysrKysrDQogwqBj
+b25mL21hY2hpbmUvc29xdWFydHotbW9kZWwtYS5jb25mwqDCoMKgwqDCoMKgwqDCoMKgIHwgMTIg
+KysrKysrKysrKysrDQogwqByZWNpcGVzLWtlcm5lbC9saW51eC9saW51eC15b2N0b18lLmJiYXBw
+ZW5kIHzCoCAxICsNCiDCoDQgZmlsZXMgY2hhbmdlZCwgMjkgaW5zZXJ0aW9ucygrKQ0KIMKgY3Jl
+YXRlIG1vZGUgMTAwNjQ0IGNvbmYvbWFjaGluZS9pbmNsdWRlL3NvcXVhcnR6LmluYw0KIMKgY3Jl
+YXRlIG1vZGUgMTAwNjQ0IGNvbmYvbWFjaGluZS9zb3F1YXJ0ei1tb2RlbC1hLmNvbmYNCg0KZGlm
+ZiAtLWdpdCBhL1JFQURNRSBiL1JFQURNRQ0KaW5kZXggMDlmODY5MS4uODVhYjJlYyAxMDA2NDQN
+Ci0tLSBhL1JFQURNRQ0KKysrIGIvUkVBRE1FDQpAQCAtNDUsNiArNDUsNyBAQCBTdGF0dXMgb2Yg
+c3VwcG9ydGVkIGJvYXJkczoNCiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcm9jay1waS1lDQog
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHJvY2stcGktcw0KIMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoCByb2NrNjQNCivCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHNvcXVhcnR6IChvbiBtb2RlbCBB
+IGJhc2UgYm9hcmQpDQoNCiDCoMKgwqDCoCBidWlsZHM6DQogwqDCoMKgwqDCoMKgwqDCoCAzMi1i
+aXQ6DQpkaWZmIC0tZ2l0IGEvY29uZi9tYWNoaW5lL2luY2x1ZGUvc29xdWFydHouaW5jIA0KYi9j
+b25mL21hY2hpbmUvaW5jbHVkZS9zb3F1YXJ0ei5pbmMNCm5ldyBmaWxlIG1vZGUgMTAwNjQ0DQpp
+bmRleCAwMDAwMDAwLi42NzE0ZWZjDQotLS0gL2Rldi9udWxsDQorKysgYi9jb25mL21hY2hpbmUv
+aW5jbHVkZS9zb3F1YXJ0ei5pbmMNCkBAIC0wLDAgKzEsMTUgQEANCisjQ29weXJpZ2h0IChDKSBU
+cmlmb3JrIEEvUyAyMDI0DQorIyBSZWxlYXNlZCB1bmRlciB0aGUgTUlUIGxpY2Vuc2UgKHNlZSBD
+T1BZSU5HLk1JVCBmb3IgdGhlIHRlcm1zKQ0KKw0KKyMgQ29tbW9uIG92ZXJyaWRlIGZvciBiYXNp
+bmcgYSBTT1F1YXJ0eiBkZXNpZ24gb24NCisjIGh0dHBzOi8vd2lraS5waW5lNjQub3JnL3dpa2kv
+U09RdWFydHoNCisNCitNQUNISU5FT1ZFUlJJREVTID0uICJzb3F1YXJ0ejoiDQorDQorcmVxdWly
+ZSBjb25mL21hY2hpbmUvaW5jbHVkZS9yazM1NjYuaW5jDQorDQorIyBBIG1hY2hpbmUgdXNpbmcg
+dGhpcyBiYXNlYm9hcmQgY291bGQgdXNlIHRoZXNlIG9wdGlvbnMgb3Igb3ZlcmxvYWQgdGhlbQ0K
+KyMgVUJPT1RfTUFDSElORSA/PSAic29xdWFydHotY200LXJrMzU2Nl9kZWZjb25maWciDQorIyBL
+RVJORUxfREVWSUNFVFJFRSA/PSAicm9ja2NoaXAvcmszNTY2LXNvcXVhcnR6LWNtNC5kdGIiDQor
+DQorTUFDSElORV9FWFRSQV9SUkVDT01NRU5EUyArPSAia2VybmVsLW1vZHVsZXMiDQpkaWZmIC0t
+Z2l0IGEvY29uZi9tYWNoaW5lL3NvcXVhcnR6LW1vZGVsLWEuY29uZiANCmIvY29uZi9tYWNoaW5l
+L3NvcXVhcnR6LW1vZGVsLWEuY29uZg0KbmV3IGZpbGUgbW9kZSAxMDA2NDQNCmluZGV4IDAwMDAw
+MDAuLmI4YmU0Y2ENCi0tLSAvZGV2L251bGwNCisrKyBiL2NvbmYvbWFjaGluZS9zb3F1YXJ0ei1t
+b2RlbC1hLmNvbmYNCkBAIC0wLDAgKzEsMTIgQEANCisjQ29weXJpZ2h0IChDKSBUcmlmb3JrIEEv
+UyAyMDI0DQorIyBSZWxlYXNlZCB1bmRlciB0aGUgTUlUIGxpY2Vuc2UgKHNlZSBDT1BZSU5HLk1J
+VCBmb3IgdGhlIHRlcm1zKQ0KKw0KKyNAVFlQRTogTWFjaGluZQ0KKyNATkFNRTogU09RdWFydHog
+b24gTW9kZWwgQSBiYXNlIGJvYXJkDQorI0BERVNDUklQVElPTjogU09RdWFydHogaXMgYSBzZXJp
+ZXMgb2YgQ29tcHV0ZSBNb2R1bGUgYnkgUGluZTY0LCB0aGUgDQpNb2RlbC1BIGJhc2Vib2FyZCBw
+cm92aWRlcyBzdGFuZGFyZCBjb25uZWN0b3JzIGZvciB0aGUgY29tcHV0ZSBtb2R1bGUNCisjaHR0
+cHM6Ly93aWtpLnBpbmU2NC5vcmcvd2lraS9TT1F1YXJ0eiNTT1F1YXJ0el9Nb2RlbC1BX0Jhc2Vi
+b2FyZF9GZWF0dXJlcw0KKw0KK3JlcXVpcmUgY29uZi9tYWNoaW5lL2luY2x1ZGUvc29xdWFydHou
+aW5jDQorDQorS0VSTkVMX0RFVklDRVRSRUUgPSAicm9ja2NoaXAvcmszNTY2LXNvcXVhcnR6LW1v
+ZGVsLWEuZHRiIg0KK1VCT09UX01BQ0hJTkUgPSAic29xdWFydHotbW9kZWwtYS1yazM1NjZfZGVm
+Y29uZmlnIg0KZGlmZiAtLWdpdCBhL3JlY2lwZXMta2VybmVsL2xpbnV4L2xpbnV4LXlvY3RvXyUu
+YmJhcHBlbmQgDQpiL3JlY2lwZXMta2VybmVsL2xpbnV4L2xpbnV4LXlvY3RvXyUuYmJhcHBlbmQN
+CmluZGV4IDU1MjhiYWIuLjU2ZWM5ZDcgMTAwNjQ0DQotLS0gYS9yZWNpcGVzLWtlcm5lbC9saW51
+eC9saW51eC15b2N0b18lLmJiYXBwZW5kDQorKysgYi9yZWNpcGVzLWtlcm5lbC9saW51eC9saW51
+eC15b2N0b18lLmJiYXBwZW5kDQpAQCAtMjIsNiArMjIsNyBAQCBDT01QQVRJQkxFX01BQ0hJTkU6
+cm9jay0zYSA9ICJyb2NrLTNhIg0KIMKgQ09NUEFUSUJMRV9NQUNISU5FOnJvY2stNGMtcGx1cyA9
+ICJyb2NrLTRjLXBsdXMiDQogwqBDT01QQVRJQkxFX01BQ0hJTkU6cm9jay01YSA9ICJyb2NrLTVh
+Ig0KIMKgQ09NUEFUSUJMRV9NQUNISU5FOnJvY2stNWIgPSAicm9jay01YiINCitDT01QQVRJQkxF
+X01BQ0hJTkU6c29xdWFydHogPSAic29xdWFydHoiDQoNCiDCoFNSQ19VUkk6YXBwZW5kID0gIiAN
+CmZpbGU6Ly9yb2NrY2hpcC1rbWV0YTt0eXBlPWttZXRhO25hbWU9cm9ja2NoaXAta21ldGE7ZGVz
+dHN1ZmZpeD1yb2NrY2hpcC1rbWV0YSINCiDCoFNSQ19VUkk6YXBwZW5kOm5hbm9waS1yNHMgPSAi
+IGZpbGU6Ly9uYW5vcGktcjRzLnNjYyINCi0tIA0KMi40My4wDQoNCg0K
 
