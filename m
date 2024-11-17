@@ -2,63 +2,64 @@ Return-Path: <gael.portay+rtone@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A592AD10F2F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2FD3D10F2B
 	for <webhook@archiver.kernel.org>; Sun, 17 Nov 2024 20:41:52 +0000 (UTC)
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
- by mx.groups.io with SMTP id smtpd.web11.25884.1731876110270223112
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+ by mx.groups.io with SMTP id smtpd.web10.25499.1731876110974451435
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 17 Nov 2024 12:41:50 -0800
+ Sun, 17 Nov 2024 12:41:51 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=L7H/xE1t;
- spf=pass (domain: gmail.com, ip: 209.85.221.51, mailfrom: gael.portay+rtone@gmail.com)
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-38233152c8fso90933f8f.0
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=lZ+WFXzq;
+ spf=pass (domain: gmail.com, ip: 209.85.221.42, mailfrom: gael.portay+rtone@gmail.com)
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37ece998fe6so250142f8f.1
         for <yocto-patches@lists.yoctoproject.org>; Sun, 17 Nov 2024 12:41:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1731876108; x=1732480908; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=M40cu4B7ijwbB66p8JmJyH9o7H0vJ2YEALdwh8rmK0A=;
-        b=L7H/xE1tapavInnfqiB6GPJLCfC7KeHMXv2NxzeVnSQOBJ52QlZo3EQkzi1479RNMk
-         KzeDeq90yLru4H+bw2UVYPBf+7i58njwk1c7QcV2LtJq4FsVQtVj52p7y4c5OIIl4eEu
-         RKGrG6VBZU7s4OO0NB/rZ41dFth56ZujN5H+p5KryubX0s+VdZXR2xabWCD1HIseLi8R
-         ZXxeXLtaUh1QJt7TxcOsqtONXoLlOPaMal7HFPVEoRgXPBHVCpXIAmlN8ICKf/cAyq9V
-         chQsKRFmEeD+VH29SorhrKB77aoCSITKvAJe79Km/v85MDA8Vs2hP6iBdPXozDhnp6Om
-         GlQg==
+        bh=immcWI+mq4cRRuxjKMcWPv9jStLxl/iDIb/SnEpefCg=;
+        b=lZ+WFXzql27mIQ13cREQ4hG4Ye+AteLx4dAajyQaEcvfkWH8mrWqsQm2zBfXywWk7Y
+         5klDvimGRhAAvD7rEOvv/mXxyr88NHWyv1vSyZ0sUTPo4g+V33vSFYW0k3FEK0e1EvCs
+         zE91ZErO3weTleDBTwQQl8UY3Tgd5o6jHqGHfLL+qDpJXiK2pTXSpwh0oNJ8vnCCVpzb
+         jxzoYQ9Imw9Q42ZYeD+4Pmvvaiye6Tn8zXCZ1dYcU84fr0IqhahykhA9xPmU3LE6bXC/
+         svCllAGpeokLVic6Bd1qIPgQ7U7w2cU95aXPQrXUWIrVVTtE9nc5jui35Qa2+8bB4n/5
+         uqVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1731876108; x=1732480908;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=M40cu4B7ijwbB66p8JmJyH9o7H0vJ2YEALdwh8rmK0A=;
-        b=Ne1KLLnTTe2tLtQWCKUIO/syrxTmrM2YSOd2rOQ9YPgtxa2foQt8PqqKAe6TNcCWMt
-         At1fdU82qCFmKPKMFNODjqt1inVKakj6bwpindx+lcFjcAr3Egpo7DMb5sE0K0mAIz0w
-         ACR+yXLR1R0qR2sZX+41tdZ4OHxZdfxBEa6STZWJ3yR7cvVr8W6p/3nboYeTpJtEjkva
-         EG/j+XTUr/xeblqlVu/XrVaBb59RmpbnPZxoYGw4iIP6i5kRzRS4scPD5RXGvOwUqTFB
-         aW2awcUuLyNlnFd7Mz6c5JQmAejcT/yRf3PnPEjZddYCFO+YqvhAPDsMAFcBvttIv8Uf
-         HJbA==
-X-Gm-Message-State: AOJu0YzK33yoDdquXKTmFNriEkEpt9iR4ggHbDQOJKN4R7/lqABa97dc
-	wykFIKkRhrSoIcercGcugLx1o+hSJZIq2jdn/15EdVh2YFaDZpaIFurWyqLk
-X-Gm-Gg: ASbGncsAxMgQNG6xH8zIrZU0wXAWyg5YWcnP0VU2U5Gncel7yINwaDNHxKti+Az7I6H
-	mx8EpmZqTgP/d37xCsA7xAcjszXPrOvGvFNe+KfjGjSQ32aNw3d+Nl6bfeJMmFvYlSrnQiCiJph
-	2/0isLpXZJ/sU2XMeEsaOSrAWKwqULqm3dUM70EiigXdwOpXJ7GGLTBTHMDXW+LS+NYxj9eWGkd
-	RHwLidwQcI9kZO6+sR0VP3/Ns87oxM7JRmQgQgF5oZp4DZo64rO0o51eFmw
-X-Google-Smtp-Source: AGHT+IH2s8UpRIuqsJSsqngQ4LVAU6qPzS4yxb1JRlJ7xPk2mic70/w76UT1FH4w/fjkDOwDIO+NLA==
-X-Received: by 2002:a05:600c:2318:b0:42c:bfd6:9d1f with SMTP id 5b1f17b1804b1-432df71af6emr36149365e9.1.1731876107411;
-        Sun, 17 Nov 2024 12:41:47 -0800 (PST)
+        bh=immcWI+mq4cRRuxjKMcWPv9jStLxl/iDIb/SnEpefCg=;
+        b=M+0vEdtllacYeCpjGtQ8wjnv7ZRk5dH8HoGXsFCddxGPUv2a4icgYQ4hnkjhbzAJsR
+         XxHrBiWMhTZ5EiBRY1vI2iDmaAUu1A0ha5LiiGOFW3NDjhP8uA9G61i2UxEwcAuNOl0H
+         MFeciGEFjocpwLrMTnyUdJdr6KY6FmVjwIvQQ6or1otpdleERMJEwMltF+yqv9f6Et9t
+         9TZqKoy2EBY7RbTkEIy1AVz2UTjVIwrO8Hsx0Y0F8GHQkIqgYgJPitOpoRhY3nWeBXVY
+         qRID+hwl+Fa0SSHw0VlkanMNMqyvvJGvIHxvrql7zw/9rxRBMyDhXwB70ykYu5bV/jLU
+         UZUA==
+X-Gm-Message-State: AOJu0YxWyksmuxi6RrTYVqIwsJMy0itbzySmoYyRpn//EjSBJeBBZLE1
+	I6l4PDa3mM+QrVu+YhXDfuFq8aDXVKjcTUmNoiofllw4l0/YKTz3uhF6ZpjR
+X-Gm-Gg: ASbGnctYrNcpoiYiXQ5T/nQ95DcjccUflCwxdAEboP7f5aO97DVMPqZ1svbsL75lZly
+	smy0vFY9e3Izd0/Df/EUXjAPtXhNunwXNm+mtuWhf0dtDs09RxRKj0eh8YE3AHjyYsIwz2l5zJe
+	9OqEDUdfR4VUzKphRkfC06T2vlkOqbTqyIm2zCBSuT0iwpLZ5mnpz9iEHZz67KU+5YButw9yj8T
+	UTYo4PFq7uudelVJVkBPxuVC9sdpBgQ0z3XUaSnt1lm5zhqOIfD5j+vLovQ
+X-Google-Smtp-Source: AGHT+IExgiryOabVpxACTltKzuGtYVadTYhBJprNMYURSv9KYPuWQe6itfB62yDFA8xfkRIQ3hjOIw==
+X-Received: by 2002:a05:600c:4f06:b0:42c:c0d8:bf49 with SMTP id 5b1f17b1804b1-432df677e91mr36068315e9.0.1731876108299;
+        Sun, 17 Nov 2024 12:41:48 -0800 (PST)
 Received: from archlinux.. ([2a01:e0a:ce:f2f0:2a6b:35ff:feb8:77d9])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da2658a8sm136607955e9.9.2024.11.17.12.41.45
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da2658a8sm136607955e9.9.2024.11.17.12.41.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Nov 2024 12:41:46 -0800 (PST)
+        Sun, 17 Nov 2024 12:41:47 -0800 (PST)
 Sender: =?UTF-8?B?R2HDq2wgUE9SVEFZ?= <gael.portay@gmail.com>
 From: =?UTF-8?q?Ga=C3=ABl=20PORTAY?= <gael.portay+rtone@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Richard Purdie <richard.purdie@linuxfoundation.org>,
+Cc: =?UTF-8?q?Eil=C3=ADs=20=27pidge=27=20N=C3=AD=20Fhlannag=C3=A1in?= <pidge@baylibre.com>,
+	Richard Purdie <richard.purdie@linuxfoundation.org>,
 	Thibaud Dufour <thibaudd@rtone.fr>,
 	=?UTF-8?q?Ga=C3=ABl=20PORTAY?= <gael.portay+rtone@gmail.com>
-Subject: [poky] [kirkstone] [BACKPORT 1/3] bitbake: runqueue: Improve inter setscene task dependency handling
-Date: Sun, 17 Nov 2024 21:41:16 +0100
-Message-ID: <20241117204118.3405309-2-gael.portay+rtone@gmail.com>
+Subject: [poky] [kirkstone] [BACKPORT 2/3] useradd: Fix issues with useradd dependencies
+Date: Sun, 17 Nov 2024 21:41:17 +0100
+Message-ID: <20241117204118.3405309-3-gael.portay+rtone@gmail.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241117204118.3405309-1-gael.portay+rtone@gmail.com>
 References: <20241117204118.3405309-1-gael.portay+rtone@gmail.com>
@@ -69,160 +70,160 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Sun, 17 Nov 2024 20:41:52 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/812
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/813
 
-From: Richard Purdie <richard.purdie@linuxfoundation.org>
+From: Eilís 'pidge' Ní Fhlannagáin <pidge@baylibre.com>
 
-The way the code currently handles dependencies between setscene tasks is fairly
-poor, basically by deleting chunks of dependencies and adding reversed dependency
-relationships.
+If recipe A requires the useradd actions of recipe B we need to
+ensure that recipe B is part of the recipe A dependancy chain. In
+order to do that, we introduce USERADD_DEPENDS. This makes sure
+that the do_populate_sysroot_setscene of recipe B exists for
+recipe A in case of a missing TMPDIR. This requires changes made in
+runqueue.py by RP.
 
-This was once the best way to handle things but now a lot of the surrounding code
-has changed and this approach is suboptimal and can be improved.
+This commit along with the runqueue fixes effects:
+Bug 13419 - recipes that add users to groups cannot rely on other recipes creating those groups (when population from sstate happens)
+Bug 13904 - do_prepare_recipe_sysroot: postinst-useradd-* does not run in order of dependency and sometimes fails
+Bug 13279 - Make sure users/groups exist for package_write_* tasks
+Bug 15084 - For some reason using of same user in two recipes does not work properly
 
-This change firstly adds debug logging for "hard" setscene task dependencies since
-previously the codepaths were missing from logs making them very hard to read.
+I've included the start of self-testing for useradd by adding tests for
+13419 (which ends up testing 13904, 13279, 15084 by virtue of them all
+      having the same root cause)
 
-The changes to the setscene dependency graph are removed entirely this these altered
-graphs were a significant source of problems. Instead, if a hard dependency is run
-into, we mark the hard dependency as buildable and defer the task until the hard
-dependencies are met.
+(From OE-Core rev: b47f2352376bd16b7e7087b4dab143403e67e094)
 
-The code now also skips the check_dependencies() code for hard dependencies since
-previously that code was having to list all possible hard dependencies. We don't
-need to do that as we can safely assume hard dependencies are required.
-
-With these changes to runqueue's behaviour, we stand some chance of being able to
-fix other bugs in OE-Core related to useradd for example.
-
-(Bitbake rev: 367789b53c1c22ec26e0f4836cdf2bdd9c7d84fa)
-
+Signed-off-by: Eilís 'pidge' Ní Fhlannagáin <pidge@baylibre.com>
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
 Signed-off-by: Thibaud Dufour <thibaudd@rtone.fr>
 Signed-off-by: Gaël PORTAY <gael.portay+rtone@gmail.com>
 ---
- bitbake/lib/bb/runqueue.py | 42 ++++++++++++++++++++++++++------------
- 1 file changed, 29 insertions(+), 13 deletions(-)
+ .../selftest-users/creategroup1.bb            | 32 ++++++++++++++++++
+ .../selftest-users/creategroup2.bb            | 33 +++++++++++++++++++
+ meta/classes/useradd.bbclass                  |  4 ++-
+ .../lib/oeqa/selftest/cases/usergrouptests.py | 17 ++++++++++
+ 4 files changed, 85 insertions(+), 1 deletion(-)
+ create mode 100644 meta-selftest/recipes-test/selftest-users/creategroup1.bb
+ create mode 100644 meta-selftest/recipes-test/selftest-users/creategroup2.bb
+ create mode 100644 meta/lib/oeqa/selftest/cases/usergrouptests.py
 
-diff --git a/bitbake/lib/bb/runqueue.py b/bitbake/lib/bb/runqueue.py
-index 0b6eddd45c..b0cd15d323 100644
---- a/bitbake/lib/bb/runqueue.py
-+++ b/bitbake/lib/bb/runqueue.py
-@@ -1787,6 +1787,7 @@ class RunQueueExecute:
-         self.build_stamps2 = []
-         self.failed_tids = []
-         self.sq_deferred = {}
-+        self.sq_needed_harddeps = set()
- 
-         self.stampcache = {}
- 
-@@ -2104,7 +2105,10 @@ class RunQueueExecute:
-             # Find the next setscene to run
-             for nexttask in self.sorted_setscene_tids:
-                 if nexttask in self.sq_buildable and nexttask not in self.sq_running and self.sqdata.stamps[nexttask] not in self.build_stamps.values():
--                    if nexttask not in self.sqdata.unskippable and self.sqdata.sq_revdeps[nexttask] and self.sqdata.sq_revdeps[nexttask].issubset(self.scenequeue_covered) and self.check_dependencies(nexttask, self.sqdata.sq_revdeps[nexttask]):
-+                    if nexttask not in self.sqdata.unskippable and self.sqdata.sq_revdeps[nexttask] and \
-+                            nexttask not in self.sq_needed_harddeps and \
-+                            self.sqdata.sq_revdeps[nexttask].issubset(self.scenequeue_covered) and \
-+                            self.check_dependencies(nexttask, self.sqdata.sq_revdeps[nexttask]):
-                         if nexttask not in self.rqdata.target_tids:
-                             logger.debug2("Skipping setscene for task %s" % nexttask)
-                             self.sq_task_skip(nexttask)
-@@ -2112,6 +2116,18 @@ class RunQueueExecute:
-                             if nexttask in self.sq_deferred:
-                                 del self.sq_deferred[nexttask]
-                             return True
-+                    if nexttask in self.sqdata.sq_harddeps_rev and not self.sqdata.sq_harddeps_rev[nexttask].issubset(self.scenequeue_covered | self.scenequeue_notcovered):
-+                        logger.debug2("Deferring %s due to hard dependencies" % nexttask)
-+                        updated = False
-+                        for dep in self.sqdata.sq_harddeps_rev[nexttask]:
-+                            if dep not in self.sq_needed_harddeps:
-+                                logger.debug2("Enabling task %s as it is a hard dependency" % dep)
-+                                self.sq_buildable.add(dep)
-+                                self.sq_needed_harddeps.add(dep)
-+                                updated = True
-+                        if updated:
-+                            return True
-+                        continue
-                     # If covered tasks are running, need to wait for them to complete
-                     for t in self.sqdata.sq_covered_tasks[nexttask]:
-                         if t in self.runq_running and t not in self.runq_complete:
-@@ -2532,8 +2548,8 @@ class RunQueueExecute:
-         update_tasks2 = []
-         for tid in update_tasks:
-             harddepfail = False
--            for t in self.sqdata.sq_harddeps:
--                if tid in self.sqdata.sq_harddeps[t] and t in self.scenequeue_notcovered:
-+            for t in self.sqdata.sq_harddeps_rev[tid]:
-+                if t in self.scenequeue_notcovered:
-                     harddepfail = True
-                     break
-             if not harddepfail and self.sqdata.sq_revdeps[tid].issubset(self.scenequeue_covered | self.scenequeue_notcovered):
-@@ -2564,12 +2580,13 @@ class RunQueueExecute:
- 
-         if changed:
-             self.stats.updateCovered(len(self.scenequeue_covered), len(self.scenequeue_notcovered))
-+            self.sq_needed_harddeps = set()
-             self.holdoff_need_update = True
- 
-     def scenequeue_updatecounters(self, task, fail=False):
- 
--        for dep in sorted(self.sqdata.sq_deps[task]):
--            if fail and task in self.sqdata.sq_harddeps and dep in self.sqdata.sq_harddeps[task]:
-+        if fail and task in self.sqdata.sq_harddeps:
-+            for dep in sorted(self.sqdata.sq_harddeps[task]):
-                 if dep in self.scenequeue_covered or dep in self.scenequeue_notcovered:
-                     # dependency could be already processed, e.g. noexec setscene task
-                     continue
-@@ -2579,6 +2596,7 @@ class RunQueueExecute:
-                 logger.debug2("%s was unavailable and is a hard dependency of %s so skipping" % (task, dep))
-                 self.sq_task_failoutright(dep)
-                 continue
-+        for dep in sorted(self.sqdata.sq_deps[task]):
-             if self.sqdata.sq_revdeps[dep].issubset(self.scenequeue_covered | self.scenequeue_notcovered):
-                 if dep not in self.sq_buildable:
-                     self.sq_buildable.add(dep)
-@@ -2714,6 +2732,7 @@ class SQData(object):
-         self.sq_revdeps = {}
-         # Injected inter-setscene task dependencies
-         self.sq_harddeps = {}
-+        self.sq_harddeps_rev = {}
-         # Cache of stamp files so duplicates can't run in parallel
-         self.stamps = {}
-         # Setscene tasks directly depended upon by the build
-@@ -2835,6 +2854,8 @@ def build_scenequeue_data(sqdata, rqdata, rq, cooker, stampcache, sqrq):
-         realtid = tid + "_setscene"
-         idepends = rqdata.taskData[mc].taskentries[realtid].idepends
-         sqdata.stamps[tid] = bb.build.stampfile(taskname + "_setscene", rqdata.dataCaches[mc], taskfn, noextra=True)
+diff --git a/meta-selftest/recipes-test/selftest-users/creategroup1.bb b/meta-selftest/recipes-test/selftest-users/creategroup1.bb
+new file mode 100644
+index 0000000000..ebbbfaa83d
+--- /dev/null
++++ b/meta-selftest/recipes-test/selftest-users/creategroup1.bb
+@@ -0,0 +1,32 @@
++SUMMARY = "creategroup pt 1"
++LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 +
-+        sqdata.sq_harddeps_rev[tid] = set()
-         for (depname, idependtask) in idepends:
- 
-             if depname not in rqdata.taskData[mc].build_targets:
-@@ -2847,20 +2868,15 @@ def build_scenequeue_data(sqdata, rqdata, rq, cooker, stampcache, sqrq):
-             if deptid not in rqdata.runtaskentries:
-                 bb.msg.fatal("RunQueue", "Task %s depends upon non-existent task %s:%s" % (realtid, depfn, idependtask))
- 
-+            logger.debug2("Adding hard setscene dependency %s for %s" % (deptid, tid))
++LICENSE = "MIT"
 +
-             if not deptid in sqdata.sq_harddeps:
-                 sqdata.sq_harddeps[deptid] = set()
-             sqdata.sq_harddeps[deptid].add(tid)
--
--            sq_revdeps_squash[tid].add(deptid)
--            # Have to zero this to avoid circular dependencies
--            sq_revdeps_squash[deptid] = set()
-+            sqdata.sq_harddeps_rev[tid].add(deptid)
++DEPENDS = "coreutils-native"
++
++S = "${WORKDIR}"
++
++inherit useradd allarch
++
++USERADD_PACKAGES = "${PN}"
++USERADD_PARAM:${PN} = "-u 5555 --gid grouptest gt1"
++GROUPADD_PARAM:${PN} = "-r grouptest"
++
++TESTDIR = "${D}${sysconfdir}/creategroup"
++
++do_install() {
++	install -d   ${TESTDIR}
++	install -d   ${TESTDIR}/dir
++	touch        ${TESTDIR}/file
++	ln -s ./file ${TESTDIR}/symlink
++	install -d   ${TESTDIR}/fifotest
++	mkfifo       ${TESTDIR}/fifotest/fifo
++
++	chown    gt1:grouptest ${TESTDIR}/file
++	chown -R gt1:grouptest ${TESTDIR}/dir
++	chown -h gt1:grouptest ${TESTDIR}/symlink
++	chown -R gt1:grouptest ${TESTDIR}/fifotest
++}
++
++FILES:${PN} = "${sysconfdir}/creategroup/*"
+diff --git a/meta-selftest/recipes-test/selftest-users/creategroup2.bb b/meta-selftest/recipes-test/selftest-users/creategroup2.bb
+new file mode 100644
+index 0000000000..ef697f09b4
+--- /dev/null
++++ b/meta-selftest/recipes-test/selftest-users/creategroup2.bb
+@@ -0,0 +1,33 @@
++SUMMARY = "creategroup pt 2"
++LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
++
++LICENSE = "MIT"
++
++DEPENDS = "coreutils-native"
++USERADD_DEPENDS = "creategroup1"
++
++S = "${WORKDIR}"
++
++inherit useradd allarch
++
++USERADD_PACKAGES = "${PN}"
++USERADD_PARAM:${PN} = "-u 5556 --gid grouptest gt2"
++
++TESTDIR = "${D}${sysconfdir}/creategroup"
++
++do_install() {
++	install -d   ${TESTDIR}
++	install -d   ${TESTDIR}/dir
++	touch        ${TESTDIR}/file
++	ln -s ./file ${TESTDIR}/symlink
++	install -d   ${TESTDIR}/fifotest
++	mkfifo       ${TESTDIR}/fifotest/fifo
++
++	chown    gt2:grouptest ${TESTDIR}/file
++	chown -R gt2:grouptest ${TESTDIR}/dir
++	chown -h gt2:grouptest ${TESTDIR}/symlink
++	chown -R gt2:grouptest ${TESTDIR}/fifotest
++}
++
++FILES:${PN} = "${sysconfdir}/creategroup/*"
++
+diff --git a/meta/classes/useradd.bbclass b/meta/classes/useradd.bbclass
+index 20771a0ce5..e179c1039b 100644
+--- a/meta/classes/useradd.bbclass
++++ b/meta/classes/useradd.bbclass
+@@ -171,9 +171,11 @@ SYSROOT_PREPROCESS_FUNCS += "${SYSROOTFUNC}"
  
-     rqdata.init_progress_reporter.next_stage()
+ SSTATEPREINSTFUNCS:append:class-target = " useradd_sysroot_sstate"
  
--    for task in sqdata.sq_harddeps:
--        for dep in sqdata.sq_harddeps[task]:
--            sq_revdeps_squash[dep].add(task)
--
-     rqdata.init_progress_reporter.next_stage()
++USERADD_DEPENDS ??= ""
++DEPENDS += "${USERADD_DEPENDS}"
+ do_package_setscene[depends] += "${USERADDSETSCENEDEPS}"
+ do_populate_sysroot_setscene[depends] += "${USERADDSETSCENEDEPS}"
+-USERADDSETSCENEDEPS:class-target = "${MLPREFIX}base-passwd:do_populate_sysroot_setscene pseudo-native:do_populate_sysroot_setscene shadow-native:do_populate_sysroot_setscene ${MLPREFIX}shadow-sysroot:do_populate_sysroot_setscene"
++USERADDSETSCENEDEPS:class-target = "${MLPREFIX}base-passwd:do_populate_sysroot_setscene pseudo-native:do_populate_sysroot_setscene shadow-native:do_populate_sysroot_setscene ${MLPREFIX}shadow-sysroot:do_populate_sysroot_setscene ${@' '.join(['%s:do_populate_sysroot_setscene' % pkg for pkg in d.getVar("USERADD_DEPENDS").split()])}"
+ USERADDSETSCENEDEPS = ""
  
-     #for tid in sq_revdeps_squash:
+ # Recipe parse-time sanity checks
+diff --git a/meta/lib/oeqa/selftest/cases/usergrouptests.py b/meta/lib/oeqa/selftest/cases/usergrouptests.py
+new file mode 100644
+index 0000000000..98e8102590
+--- /dev/null
++++ b/meta/lib/oeqa/selftest/cases/usergrouptests.py
+@@ -0,0 +1,17 @@
++#
++# Copyright OpenEmbedded Contributors
++#
++# SPDX-License-Identifier: MIT
++#
++
++from oeqa.selftest.case import OESelftestTestCase
++from oeqa.utils.commands import bitbake
++
++class UserGroupTests(OESelftestTestCase):
++    def test_group_from_dep_package(self):
++        self.logger.info("Building creategroup2")
++        bitbake(' creategroup2 creategroup1')
++        bitbake(' creategroup2 creategroup1 -c clean')
++        self.logger.info("Packaging creategroup2")
++        self.assertTrue(bitbake(' creategroup2 -c package'))
++
 -- 
 2.47.0
 
