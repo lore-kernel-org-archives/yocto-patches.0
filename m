@@ -1,93 +1,213 @@
-Return-Path: <ryosuke.saito@linaro.org>
+Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E46F5D49237
-	for <webhook@archiver.kernel.org>; Mon, 18 Nov 2024 15:31:28 +0000 (UTC)
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
- by mx.groups.io with SMTP id smtpd.web11.44337.1731943882753352680
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1D2ED591AC
+	for <webhook@archiver.kernel.org>; Mon, 18 Nov 2024 18:03:27 +0000 (UTC)
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+ by mx.groups.io with SMTP id smtpd.web11.1644.1731953001707457489
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 18 Nov 2024 07:31:22 -0800
+ Mon, 18 Nov 2024 10:03:21 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linaro.org header.s=google header.b=g8hTkwBf;
- spf=pass (domain: linaro.org, ip: 209.85.216.45, mailfrom: ryosuke.saito@linaro.org)
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2ea1bc2a9c5so2069014a91.0
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 18 Nov 2024 07:31:22 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=HhGIllRJ;
+ spf=pass (domain: gmail.com, ip: 209.85.222.169, mailfrom: twoerner@gmail.com)
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7b15467f383so225677985a.3
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 18 Nov 2024 10:03:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731943882; x=1732548682; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SL26rYsrtN4hmxA848OOs2L0AxWw3nY8w+G/tYjnXyE=;
-        b=g8hTkwBfzN8/7XZXHLYMjznqnk+fRTipDiG4nNpRbLftrHxEixZbJoGYOF//9ReGvk
-         brV0IJqiII+b8INPeWWPMMfISuAUGY5T5OY7+pLzjG+h+24rbtl+w6cyUypcZ4/XDd2n
-         kuNuf6tsV41Z85kYwuzuzORcivi2/mxevcEOS0DNdmPsiL2OBC6VGDgINpop0JJbho7C
-         WxtMdhnp+mGB4pyJzrmDNV9Op/GKGwhA4NHuv3288hJiye+nHrsdZpkaG19WaeSy6ewM
-         +Q5HzbMVS0ytG8ZAompPoeKx9Zmch0rkRH+oL4s+mPXyL8vWJ5VWySd2KxRFGCtdkIwm
-         mxoQ==
+        d=gmail.com; s=20230601; t=1731953001; x=1732557801; darn=lists.yoctoproject.org;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hIVcoMyESb3cMzbuIuoYh7E2O4mOG5GoSMT7Am0BKGQ=;
+        b=HhGIllRJcXfzy42Ybb5XUnvi7D66WT03hzK4KgGLOIljoX1lkrsbQFn0lbVmmttWKu
+         GVA8WgG8mYTMJvF0vZe2thAcgf237Yv7ro1fMGt0ICRO9tLGYBtI/qNqnOjVuZEdAyBr
+         LN4sXVz0LFIQH4IlLopj+VreeF361oT/mir9TpSFrr9PtM3EPX5LBEcc5aRUiNkAALMU
+         YSOLsySKwV06HqOYevFcz31+opmUpl7u3j97tDAbt1qTYbzZJFoyQs3cB70ir6VCfz7u
+         n3e7svcUWYqGK+AdYRDS0H0vgFk5N/CXi0wLtbP0GNCCvqu/zGii3pg9j8ZEQWADR8bV
+         7ANA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731943882; x=1732548682;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1731953001; x=1732557801;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=SL26rYsrtN4hmxA848OOs2L0AxWw3nY8w+G/tYjnXyE=;
-        b=VN8b4afzmaWB8+tmpQjVvN4s+mMPOCXrc4zo7goPI1qr/bQjywigCIrXxgR0HiIMbe
-         0kjtsE+T5wwavTr1Fjt5xgXE+VFrYubiInh/yl7t9/x8iaIGDNBg3MLw2uv+eQCozRXX
-         28rvQIWQ1cWSQDFvqQYm5DuU+au/W8iuZpu1vHtA6FTkczxIscwxo8RBUXCthNmVFP9H
-         E7vQRxi+eg1jrhlvzpaTsoInm9TKzOUrHiD+Ork1hFLyEY9P4dnuzbUqQicOUXyYZcuY
-         Fu4orGTfmBwKj/q99lfdPNKfnEwVZIL6gvcrz0NYHc3exxZrryc/wi6Xsd6+QJqMZJn5
-         8JLA==
-X-Gm-Message-State: AOJu0YxMCU7jTC1RWeWO333LfQI2DDnP2U5Rbo0iIv1iGT9P1HwT9H3Y
-	qUgh383YBvg+BsfIPK9mff4ya4yk8GkqWGh6qUu99GOFGxbVxnn8HswD5wD07OvpaYcd4bo4BwM
-	x
-X-Google-Smtp-Source: AGHT+IHiPdMgpJOayUT2w8e9vZ6X9qxQaXqp2lOJfpXOHyOMIcTx/4ORKyjdxY9asKMhc0rUQ+t+NA==
-X-Received: by 2002:a17:90b:35cd:b0:2ea:49a8:9169 with SMTP id 98e67ed59e1d1-2ea49a891b6mr11340031a91.7.1731943880523;
-        Mon, 18 Nov 2024 07:31:20 -0800 (PST)
-Received: from fedora.. ([240d:1a:3a7:a400:9a57:aa11:487a:b54f])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ea89d3678csm1483118a91.43.2024.11.18.07.31.19
+        bh=hIVcoMyESb3cMzbuIuoYh7E2O4mOG5GoSMT7Am0BKGQ=;
+        b=kPZyma/fJVa3WPc4Tnr1tFP1umNaLaR8gKf2Wmu7q1poQ5/HAPt67uDV7DHG09w2E3
+         /+kidKTeXBgr00CXPu85GCqQSJVWXFMOGT9hfl1eLFqTYcjomEEMj89F/OhX9HA3MXaG
+         jMUstXi3iq4DY06tV/smbUY0nasxj+zohHd8+tDHTU46qBHPNo4U5aXXDkZErQeqIUws
+         2hLfkgF2d3v0a5UFX1BNaBe6CaeXVDMYN5oYpO+U71sEHw0UX+Wu3UNMYFSrcXNxNR7J
+         ZFKJlPmPl3Fiw1rd2zVxs4vl8vBa4XM0IB2T2BH92xxozr0CaHVNhYs4T1F1j5lZlyvU
+         6YTQ==
+X-Gm-Message-State: AOJu0YywJ2izfBZnSQW7kJbcBp79gkY6Vlsubu3KcaM2oFAV7LJgEonf
+	XmWkRlOGUNzqmRbRgWokLbUTTu6yz+mYivcLbLrpIuEvAL1XwLOi
+X-Google-Smtp-Source: AGHT+IHh+GFnPVxAFhqqgPHL6PYHfZBT8hRajJNosVMuJ0CDnUFwGE5301qgFUqx2hOfseP8T7E8CQ==
+X-Received: by 2002:a05:620a:472c:b0:7b1:4f5c:6e86 with SMTP id af79cd13be357-7b3622ddd0amr1959355385a.17.1731953000562;
+        Mon, 18 Nov 2024 10:03:20 -0800 (PST)
+Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d40dc18062sm38822566d6.48.2024.11.18.10.03.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2024 07:31:20 -0800 (PST)
-From: Ryosuke Saito <ryosuke.saito@linaro.org>
-To: yocto-patches@lists.yoctoproject.org
-Cc: raitosyo@gmail.com
-Subject: [meta-cgl] [PATCH] ocfs2-tools: Add missing readline dependency
-Date: Tue, 19 Nov 2024 00:31:17 +0900
-Message-ID: <20241118153117.307424-1-ryosuke.saito@linaro.org>
-X-Mailer: git-send-email 2.47.0
+        Mon, 18 Nov 2024 10:03:19 -0800 (PST)
+Date: Mon, 18 Nov 2024 13:03:17 -0500
+From: Trevor Woerner <twoerner@gmail.com>
+To: "Paul M. Bendixen" <pbe@trifork.com>
+Cc: "yocto-patches@lists.yoctoproject.org" <yocto-patches@lists.yoctoproject.org>
+Subject: Re: [meta-rockchip] [PATCH] SOQuartz: add
+Message-ID: <20241118180317.GA17525@localhost>
+References: <3608313a-2d69-435d-807f-3dceb6326ca8@trifork.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <3608313a-2d69-435d-807f-3dceb6326ca8@trifork.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 18 Nov 2024 15:31:28 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/819
+ <yocto-patches@lists.yoctoproject.org>; Mon, 18 Nov 2024 18:03:27 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/820
 
-This patch fixes a build error during the ./configure phase:
+Hi Paul,
 
-| checking for readline in -lreadline... no
-| configure: error: Unable to find readline library
+Thanks for your patch!
 
-Adds readline to DEPENDS to resolve the issue, enabling proper linking
-during the build process.
+Are you using "git send-email ..." to send your patches? The patch itself
+appears to be base64 encoded. It looks fine in email readers, but using mutt
+to save the patch then try to apply it is running into issues.
 
-Signed-off-by: Ryosuke Saito <ryosuke.saito@linaro.org>
----
- meta-cgl-common/recipes-cgl/ocfs2-tools/ocfs2-tools_1.8.6.bb | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I'll see if I can figure out the magic to decode (done) in a way that makes
+"git am ..." happy (not working).
 
-diff --git a/meta-cgl-common/recipes-cgl/ocfs2-tools/ocfs2-tools_1.8.6.bb b/meta-cgl-common/recipes-cgl/ocfs2-tools/ocfs2-tools_1.8.6.bb
-index 28b82c2cda94..69daff031a04 100644
---- a/meta-cgl-common/recipes-cgl/ocfs2-tools/ocfs2-tools_1.8.6.bb
-+++ b/meta-cgl-common/recipes-cgl/ocfs2-tools/ocfs2-tools_1.8.6.bb
-@@ -31,7 +31,7 @@ inherit autotools-brokensep pkgconfig systemd
- 
- DEPENDS = "corosync pacemaker \
-     libxml2 linux-libc-headers libaio \
--    e2fsprogs e2fsprogs-native \
-+    e2fsprogs e2fsprogs-native readline \
- "
- 
- 
--- 
-2.47.0
+Thanks, Quentin and Ross, for your help :-)
 
+Best regards,
+	Trevor
+
+
+On Fri 2024-11-15 @ 02:51:08 PM, Paul M. Bendixen wrote:
+> The SOQuartz is a RK3566 based compute module and parts of Quartz64 series
+> The Model-A base board is one possible board that supports it
+> 
+> Website:
+>      https://pine64.org/devices/soquartz/
+> Wiki:
+>      https://wiki.pine64.org/wiki/SOQuartz
+> 
+> Specs:
+> - Rockchip RK3566 Quad-core ARM Cortex-A55@1.8GHz
+> - Mali-G52 2EE Bifrost GPU@800MHz
+> - Raspberry Pi 4 CM form factor
+> - RAM Memory Variants: 2GB, 4GB, 8GB LPDDR4.
+> - optional eMMC from 8GB to 128GB
+> - optional 128Mb SPI Flash
+> - 10/100/1000Mbps Ethernet
+> - WiFi 802.11 b/g/n/ac with Bluetooth 5.0
+> 
+> Exposed preripherals:
+> - 1x HDMI
+> - 2x DSI
+> - 1x eDP
+> - 1x LVDS
+> - 1x CSI 4-line
+> - 1x Ethernet
+> - 1x USB 2.0 OTG
+> - 1x SD
+> - 1x PCIe 1-line
+> - 28x GPIO
+> 
+> Model-A baseboard:
+> - 1x microSD - bootable
+> - 1x HDMI Port
+> - 2x USB A 2.0 Host
+> - 1x USB C 2.0 Host
+> - 1x 5 pin USB expansion
+> - 1x Ethernet w. PoE
+> - 1x 40 pole Pi2 compatible GPIO
+> - 1x MiPi-CSI 2 lanes
+> - 1x MiPi-CSI 4 lanes
+> - 1x MiPi-DSI 2 lanes
+> - 1x MiPi-DSI 4 lanes
+> - 1x PCIe open ended
+> 
+> Signed-off-by: Paul M. B. Bendixen <pbe@trifork.com>
+> ---
+>   README                                      |  1 +
+>   conf/machine/include/soquartz.inc           | 15 +++++++++++++++
+>   conf/machine/soquartz-model-a.conf          | 12 ++++++++++++
+>   recipes-kernel/linux/linux-yocto_%.bbappend |  1 +
+>   4 files changed, 29 insertions(+)
+>   create mode 100644 conf/machine/include/soquartz.inc
+>   create mode 100644 conf/machine/soquartz-model-a.conf
+> 
+> diff --git a/README b/README
+> index 09f8691..85ab2ec 100644
+> --- a/README
+> +++ b/README
+> @@ -45,6 +45,7 @@ Status of supported boards:
+>               rock-pi-e
+>               rock-pi-s
+>               rock64
+> +            soquartz (on model A base board)
+> 
+>       builds:
+>           32-bit:
+> diff --git a/conf/machine/include/soquartz.inc 
+> b/conf/machine/include/soquartz.inc
+> new file mode 100644
+> index 0000000..6714efc
+> --- /dev/null
+> +++ b/conf/machine/include/soquartz.inc
+> @@ -0,0 +1,15 @@
+> +#Copyright (C) Trifork A/S 2024
+> +# Released under the MIT license (see COPYING.MIT for the terms)
+> +
+> +# Common override for basing a SOQuartz design on
+> +# https://wiki.pine64.org/wiki/SOQuartz
+> +
+> +MACHINEOVERRIDES =. "soquartz:"
+> +
+> +require conf/machine/include/rk3566.inc
+> +
+> +# A machine using this baseboard could use these options or overload them
+> +# UBOOT_MACHINE ?= "soquartz-cm4-rk3566_defconfig"
+> +# KERNEL_DEVICETREE ?= "rockchip/rk3566-soquartz-cm4.dtb"
+> +
+> +MACHINE_EXTRA_RRECOMMENDS += "kernel-modules"
+> diff --git a/conf/machine/soquartz-model-a.conf 
+> b/conf/machine/soquartz-model-a.conf
+> new file mode 100644
+> index 0000000..b8be4ca
+> --- /dev/null
+> +++ b/conf/machine/soquartz-model-a.conf
+> @@ -0,0 +1,12 @@
+> +#Copyright (C) Trifork A/S 2024
+> +# Released under the MIT license (see COPYING.MIT for the terms)
+> +
+> +#@TYPE: Machine
+> +#@NAME: SOQuartz on Model A base board
+> +#@DESCRIPTION: SOQuartz is a series of Compute Module by Pine64, the 
+> Model-A baseboard provides standard connectors for the compute module
+> +#https://wiki.pine64.org/wiki/SOQuartz#SOQuartz_Model-A_Baseboard_Features
+> +
+> +require conf/machine/include/soquartz.inc
+> +
+> +KERNEL_DEVICETREE = "rockchip/rk3566-soquartz-model-a.dtb"
+> +UBOOT_MACHINE = "soquartz-model-a-rk3566_defconfig"
+> diff --git a/recipes-kernel/linux/linux-yocto_%.bbappend 
+> b/recipes-kernel/linux/linux-yocto_%.bbappend
+> index 5528bab..56ec9d7 100644
+> --- a/recipes-kernel/linux/linux-yocto_%.bbappend
+> +++ b/recipes-kernel/linux/linux-yocto_%.bbappend
+> @@ -22,6 +22,7 @@ COMPATIBLE_MACHINE:rock-3a = "rock-3a"
+>   COMPATIBLE_MACHINE:rock-4c-plus = "rock-4c-plus"
+>   COMPATIBLE_MACHINE:rock-5a = "rock-5a"
+>   COMPATIBLE_MACHINE:rock-5b = "rock-5b"
+> +COMPATIBLE_MACHINE:soquartz = "soquartz"
+> 
+>   SRC_URI:append = " 
+> file://rockchip-kmeta;type=kmeta;name=rockchip-kmeta;destsuffix=rockchip-kmeta"
+>   SRC_URI:append:nanopi-r4s = " file://nanopi-r4s.scc"
+> -- 
+> 2.43.0
+> 
+> 
 
