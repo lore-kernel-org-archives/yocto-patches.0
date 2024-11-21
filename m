@@ -1,262 +1,164 @@
-Return-Path: <hprajapati@mvista.com>
+Return-Path: <dorum@noisolation.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31641D75BCB
-	for <webhook@archiver.kernel.org>; Thu, 21 Nov 2024 07:01:21 +0000 (UTC)
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
- by mx.groups.io with SMTP id smtpd.web10.5430.1732172477754231425
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03E11D6ED17
+	for <webhook@archiver.kernel.org>; Thu, 21 Nov 2024 12:29:23 +0000 (UTC)
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+ by mx.groups.io with SMTP id smtpd.web10.9551.1732192154909951442
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 20 Nov 2024 23:01:17 -0800
+ Thu, 21 Nov 2024 04:29:15 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@mvista.com header.s=google header.b=NW3fi0za;
- spf=pass (domain: mvista.com, ip: 209.85.214.169, mailfrom: hprajapati@mvista.com)
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-211fd6a0a9cso4224245ad.3
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 20 Nov 2024 23:01:17 -0800 (PST)
+ dkim=pass header.i=@noisolation.com header.s=google header.b=aof0PosI;
+ spf=pass (domain: noisolation.com, ip: 209.85.167.45, mailfrom: dorum@noisolation.com)
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53da2140769so883960e87.3
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 21 Nov 2024 04:29:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mvista.com; s=google; t=1732172477; x=1732777277; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yXt+GXZSVsq5Nn1K4cR03KUC+hJj+mj6bqCQ9D1IDgM=;
-        b=NW3fi0zatKa8HCovt2FwERvjCwayGidPpzKtron8hu11UQ6PA4mihZhdT+N8IXOb6q
-         kc4y6BTwMsKI0s5nx7Jss5sDOTzAkEzI5jB7T5YXCtiFEM5f/BHS976VrwmADdZB/X2s
-         85RTvqL6w3uDt856ZyMqitEMlSeE3V9Teq4OM=
+        d=noisolation.com; s=google; t=1732192153; x=1732796953; darn=lists.yoctoproject.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jJweWKaCKni/T7IUzZab2Kf+G1KLzD+9tCgCqYNKGiU=;
+        b=aof0PosI3BkAqlski05Qr3t9Nx7Dd+34IcK/+YcCrOEonS4dc9IrkUQlj3/dib9q02
+         xtAs3SPzEW8Jyu/2h7YB3Ke7PPXAE7nEtiOYl192WOmmZuBm29e07ASD7sx5C02yhdGH
+         L6HA6TNLZDw6kQ0+Ik4+Vy2L5pn6V3DeXEan02QXKp+G0saAquFwkbg7DSYe7ZfcZqJ4
+         h9rUXTeU/qsey8CbFxcKC0rqinRzMm6ugw3d3JUxM2qNOzvEB2SpZWkSx3tMK+mJR5UX
+         4yDiOc3dB+cP/7E7EB9ow26m36P51fKefqklIIixGBfXPSV6qcnMHKIHlYy4Y3FyDnjz
+         tmCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732172477; x=1732777277;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yXt+GXZSVsq5Nn1K4cR03KUC+hJj+mj6bqCQ9D1IDgM=;
-        b=gKmJNeGmGpOyhDFxfBTp1jDMbYbQLFOCi4uJXhn71ParKlw289qsEXyf6ky4wXeiH+
-         8/JPSdNpNXDxuwrzu1lrALhJozOrdroRx0GiD3WV52cc/1Ti6xJBbGkQqvqXn+isyLEC
-         xMqsCLqCtmow+pqPtB1rag9Qnkr9YvQDwnba1TDx8SyzBPTrDl9B5b4uLYvSK33WXLgL
-         lqBewuO/I9FA3X/UMn4DV6e4TItNyNoqZSWtth0HddfAGwmLcBuwi/hYssCAAVlsCM7n
-         UPfb0IMgKEP8G5+oW8QhyaPUMBmXytFui8www3QtP5kywlOPkTrjmNHIzMoJP4sVEpp6
-         YGNg==
-X-Gm-Message-State: AOJu0YwbdG81xnkTZFhcYVzxFkL8ETlzx9QQfJvhxv8ip1wGhGhuKwMT
-	og9O0aVhuqyBePzoPzBHoyI1Xy5Sg3pODayqVy/BxxjwICHRsWjx07IlbxZRlog/6A+6LMfYaR6
-	e
-X-Gm-Gg: ASbGnct7N68DqR/7EvAq+LxFxr2o2P4aP18T+2o2zk3VxscYa0MMN3Hp3tAYOrMW985
-	3ugtJ1os1tc4Ir5Nbp9e8RqUNn6/863u1CdV+zgHY5Tc0DK6ZjW29JGmqSXj4D8o5O2E65tvYeI
-	OtgJ6bvW9fpzafhLzaMifVeKT1wV8mYkuvL6qcnPjT6aUm43fg+8d3jFf3u+7BxW36t1i95YVNP
-	DmlihP9Pp3BTlw7lDGl4g5Xa1Reyp5zVeo30JUopHvxBTq51eTZFlID4IO58iY=
-X-Google-Smtp-Source: AGHT+IEwoLVRZcRduVT1DFBscY7x1gRDlg0+oLBZ5h66D2HnxnXjkntDnR/V2xkqVCTghnrMptj3jw==
-X-Received: by 2002:a17:903:41c2:b0:20c:3d9e:5f2b with SMTP id d9443c01a7336-2126a492d30mr66495455ad.57.1732172476866;
-        Wed, 20 Nov 2024 23:01:16 -0800 (PST)
-Received: from MVIN00016.mvista.com ([43.249.234.225])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-212882d3b8csm6544545ad.194.2024.11.20.23.01.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2024 23:01:16 -0800 (PST)
-From: Hitendra Prajapati <hprajapati@mvista.com>
-To: yocto-patches@lists.yoctoproject.org
-Cc: akuster808@gmail.com,
-	Hitendra Prajapati <hprajapati@mvista.com>
-Subject: [meta-security][scarthgap][PATCH] suricata: fix CVE-2024-45795 & CVE-2024-45796
-Date: Thu, 21 Nov 2024 12:31:07 +0530
-Message-Id: <20241121070107.67563-1-hprajapati@mvista.com>
-X-Mailer: git-send-email 2.25.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        d=1e100.net; s=20230601; t=1732192153; x=1732796953;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jJweWKaCKni/T7IUzZab2Kf+G1KLzD+9tCgCqYNKGiU=;
+        b=uikIvT6kZyh36Y4PfUc7Sm+6hTdvBM4tbv+t3j8K+qZgPTfuQmZDF07eZkJKQw9CEc
+         gAppayFQbfZYsf+W5uR7HC9fQXyqoPV6z18rjIr03s9/cL10EPbpZ5hVCeHlgh4OfpJi
+         WVxfloxn+igWX6uF9aiNl30y/Uag1iXH5zFcsTpXyWZyElL7ts2GA8ZduVOQTpFA67na
+         +Itb8XoNC4UrBD1HQESttivgzEAe6pixWSvrnJ3UdcXp2HrydsyB6Jo1bIGZ2zdmsSLO
+         xXRTqjddBfSlRDTcC7RPxbf6Xptpz+fDJ92TtkdxqbOfPH0jFnRtS7/YnDQri5yIWpL2
+         HvPA==
+X-Gm-Message-State: AOJu0YwqwKZQoqKx+G6VwjvK/uN2IXWWeBm8a0fUmcLhFiD0saFqqD/Y
+	P3nKCso+K2zX7qm9r0aeOeyB3y0na1zv1duI37lyi8qd7fV1Ge3/4LHk53ArTQI=
+X-Google-Smtp-Source: AGHT+IGHw/aUMcc3Cdr+fzxLAzlc6ZN2lksxutekRRIGE0m348u+rRJT4zLAbAaDISOHYepyUpy+QA==
+X-Received: by 2002:a05:6512:124f:b0:533:d3e:16f5 with SMTP id 2adb3069b0e04-53dc1368c6amr3359271e87.38.1732192152928;
+        Thu, 21 Nov 2024 04:29:12 -0800 (PST)
+Received: from smtpclient.apple (203.237.92.62.static.cust.telenor.net. [62.92.237.203])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dbd47b542sm971454e87.253.2024.11.21.04.29.10
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Nov 2024 04:29:11 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
+Subject: Re: [yocto-patches] [meta-lts-mixins] Create scarthgap/rust branch to
+ backport Rust 1.80 to Scarthgap
+From: =?utf-8?Q?Martin_D=C3=B8rum?= <dorum@noisolation.com>
+In-Reply-To: <fa7168a8-5e96-9025-8fcf-c13df18e54a8@konsulko.com>
+Date: Thu, 21 Nov 2024 13:29:00 +0100
+Cc: yocto-patches@lists.yoctoproject.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <9FBDF944-527C-499A-A6C7-FFFD49B6B458@noisolation.com>
+References: <C9A737D5-315E-444F-8D89-1B190D13D3AC@noisolation.com>
+ <fa7168a8-5e96-9025-8fcf-c13df18e54a8@konsulko.com>
+To: Scott Murray <scott.murray@konsulko.com>
+X-Mailer: Apple Mail (2.3826.200.121)
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 21 Nov 2024 07:01:21 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/829
+ <yocto-patches@lists.yoctoproject.org>; Thu, 21 Nov 2024 12:29:23 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/830
 
-* CVE-2024-45795 - Upstream-Status: Backport from https://github.com/OISF/suricata/commit/72456d359bf3064306b62024c809bb30b162f18c && https://github.com/OISF/suricata/commit/96d5c81aed01f2bc0cd3e2e60057d0deb38caa99
-* CVE-2024-45796 - Upstream-Status: Backport from https://github.com/OISF/suricata/commit/9203656496c4081260817cce018a0d8fd57869b5
 
-Signed-off-by: Hitendra Prajapati <hprajapati@mvista.com>
----
- .../suricata/files/CVE-2024-45795.patch       | 123 ++++++++++++++++++
- .../suricata/files/CVE-2024-45796.patch       |  33 +++++
- recipes-ids/suricata/suricata_7.0.0.bb        |   2 +
- 3 files changed, 158 insertions(+)
- create mode 100644 recipes-ids/suricata/files/CVE-2024-45795.patch
- create mode 100644 recipes-ids/suricata/files/CVE-2024-45796.patch
+> On 20 Nov 2024, at 23:02, Scott Murray <scott.murray@konsulko.com> =
+wrote:
+>=20
+> On Wed, 20 Nov 2024, Martin D=C3=B8rum via lists.yoctoproject.org =
+wrote:
+>=20
+>> We encountered this issue as we tried to upgrade from Kirkstone
+>> to Scarthgap and were unable to build code which depends on Rust =
+1.78.
+>>=20
+>> To enable our upgrade from Kirkstone to Scarthgap, I created a
+>> meta-lts-mixins scarthgap/rust branch myself, with backports from
+>> the current Poky master branch, in the style of meta-lts-mixins
+>> kirkstone/rust.
+>=20
+> It has been my plan to create a scarthgap/rust when required, and
+> similarly track the latest versions from master as with =
+kirkstone/rust.
+> I have not had a strong need for it yet, but had mentioned on the YP
+> call yesterday that I was going to work it up for next week.  If you
+> don't really want to maintain a branch for the next 3.5 years, would
+> you be open to waiting for that and my doing it instead?
 
-diff --git a/recipes-ids/suricata/files/CVE-2024-45795.patch b/recipes-ids/suricata/files/CVE-2024-45795.patch
-new file mode 100644
-index 0000000..10363c5
---- /dev/null
-+++ b/recipes-ids/suricata/files/CVE-2024-45795.patch
-@@ -0,0 +1,123 @@
-+From 72456d359bf3064306b62024c809bb30b162f18c Mon Sep 17 00:00:00 2001
-+From: Philippe Antoine <pantoine@oisf.net>
-+Date: Mon, 12 Aug 2024 09:54:43 +0200
-+Subject: [PATCH] detect/datasets: implement unset command
-+
-+Ticket: 7195
-+
-+Otherwise, Suricata aborted on such a rule
-+
-+(cherry picked from commit e47598110a557bb9f87ea498d85ba91a45bb0cb6)
-+
-+Upstream-Status: Backport [https://github.com/OISF/suricata/commit/72456d359bf3064306b62024c809bb30b162f18c && https://github.com/OISF/suricata/commit/96d5c81aed01f2bc0cd3e2e60057d0deb38caa99]
-+CVE: CVE-2024-45795
-+Signed-off-by: Hitendra Prajapati <hprajapati@mvista.com>
-+---
-+ doc/userguide/rules/datasets.rst |  2 +-
-+ src/datasets.c                   | 20 ++++++++++++++++++++
-+ src/datasets.h                   |  1 +
-+ src/detect-dataset.c             | 11 +++++++++++
-+ src/detect-dataset.h             |  5 -----
-+ 5 files changed, 33 insertions(+), 6 deletions(-)
-+
-+diff --git a/doc/userguide/rules/datasets.rst b/doc/userguide/rules/datasets.rst
-+index 647b12e..dd9ecd2 100644
-+--- a/doc/userguide/rules/datasets.rst
-++++ b/doc/userguide/rules/datasets.rst
-+@@ -78,7 +78,7 @@ Syntax::
-+ 
-+     dataset:<cmd>,<name>,<options>;
-+ 
-+-    dataset:<set|isset|isnotset>,<name> \
-++    dataset:<set|unset|isset|isnotset>,<name> \
-+         [, type <string|md5|sha256|ipv4|ip>, save <file name>, load <file name>, state <file name>, memcap <size>, hashsize <size>];
-+ 
-+ type <type>
-+diff --git a/src/datasets.c b/src/datasets.c
-+index d89ed8d..32bcf6e 100644
-+--- a/src/datasets.c
-++++ b/src/datasets.c
-+@@ -1741,3 +1741,23 @@ int DatasetRemoveSerialized(Dataset *set, const char *string)
-+     return DatasetOpSerialized(set, string, DatasetRemoveString, DatasetRemoveMd5,
-+             DatasetRemoveSha256, DatasetRemoveIPv4, DatasetRemoveIPv6);
-+ }
-++
-++int DatasetRemove(Dataset *set, const uint8_t *data, const uint32_t data_len)
-++{
-++    if (set == NULL)
-++        return -1;
-++
-++    switch (set->type) {
-++        case DATASET_TYPE_STRING:
-++            return DatasetRemoveString(set, data, data_len);
-++        case DATASET_TYPE_MD5:
-++            return DatasetRemoveMd5(set, data, data_len);
-++        case DATASET_TYPE_SHA256:
-++            return DatasetRemoveSha256(set, data, data_len);
-++        case DATASET_TYPE_IPV4:
-++            return DatasetRemoveIPv4(set, data, data_len);
-++        case DATASET_TYPE_IPV6:
-++            return DatasetRemoveIPv6(set, data, data_len);
-++    }
-++    return -1;
-++}
-+diff --git a/src/datasets.h b/src/datasets.h
-+index af4fc17..0f28a9f 100644
-+--- a/src/datasets.h
-++++ b/src/datasets.h
-+@@ -56,6 +56,7 @@ Dataset *DatasetFind(const char *name, enum DatasetTypes type);
-+ Dataset *DatasetGet(const char *name, enum DatasetTypes type, const char *save, const char *load,
-+         uint64_t memcap, uint32_t hashsize);
-+ int DatasetAdd(Dataset *set, const uint8_t *data, const uint32_t data_len);
-++int DatasetRemove(Dataset *set, const uint8_t *data, const uint32_t data_len);
-+ int DatasetLookup(Dataset *set, const uint8_t *data, const uint32_t data_len);
-+ DataRepResultType DatasetLookupwRep(Dataset *set, const uint8_t *data, const uint32_t data_len,
-+         const DataRepType *rep);
-+diff --git a/src/detect-dataset.c b/src/detect-dataset.c
-+index 3d29646..aad5cf0 100644
-+--- a/src/detect-dataset.c
-++++ b/src/detect-dataset.c
-+@@ -41,6 +41,11 @@
-+ #include "util-path.h"
-+ #include "util-conf.h"
-+ 
-++#define DETECT_DATASET_CMD_SET      0
-++#define DETECT_DATASET_CMD_UNSET    1
-++#define DETECT_DATASET_CMD_ISNOTSET 2
-++#define DETECT_DATASET_CMD_ISSET    3
-++
-+ int DetectDatasetMatch (ThreadVars *, DetectEngineThreadCtx *, Packet *,
-+         const Signature *, const SigMatchCtx *);
-+ static int DetectDatasetSetup (DetectEngineCtx *, Signature *, const char *);
-+@@ -91,6 +96,12 @@ int DetectDatasetBufferMatch(DetectEngineThreadCtx *det_ctx,
-+                 return 1;
-+             break;
-+         }
-++        case DETECT_DATASET_CMD_UNSET: {
-++            int r = DatasetRemove(sd->set, data, data_len);
-++            if (r == 1)
-++                return 1;
-++            break;
-++        }
-+         default:
-+             abort();
-+     }
-+diff --git a/src/detect-dataset.h b/src/detect-dataset.h
-+index ca83267..d243552 100644
-+--- a/src/detect-dataset.h
-++++ b/src/detect-dataset.h
-+@@ -26,11 +26,6 @@
-+ 
-+ #include "datasets.h"
-+ 
-+-#define DETECT_DATASET_CMD_SET      0
-+-#define DETECT_DATASET_CMD_UNSET    1
-+-#define DETECT_DATASET_CMD_ISNOTSET 2
-+-#define DETECT_DATASET_CMD_ISSET    3
-+-
-+ typedef struct DetectDatasetData_ {
-+     Dataset *set;
-+     uint8_t cmd;
-+-- 
-+2.25.1
-+
-diff --git a/recipes-ids/suricata/files/CVE-2024-45796.patch b/recipes-ids/suricata/files/CVE-2024-45796.patch
-new file mode 100644
-index 0000000..ae00a5f
---- /dev/null
-+++ b/recipes-ids/suricata/files/CVE-2024-45796.patch
-@@ -0,0 +1,33 @@
-+From 9203656496c4081260817cce018a0d8fd57869b5 Mon Sep 17 00:00:00 2001
-+From: Philippe Antoine <pantoine@oisf.net>
-+Date: Mon, 15 Jul 2024 09:52:00 +0200
-+Subject: [PATCH] defrag: fix off by one
-+
-+Ticket: 7067
-+
-+This off by one could lead to an empty fragment being inserted
-+in the rb tree, which led to integer underflow.
-+
-+Upstream-Status: Backport [https://github.com/OISF/suricata/commit/9203656496c4081260817cce018a0d8fd57869b5]
-+CVE: CVE-2024-45796
-+Signed-off-by: Hitendra Prajapati <hprajapati@mvista.com>
-+---
-+ src/defrag.c | 2 +-
-+ 1 file changed, 1 insertion(+), 1 deletion(-)
-+
-+diff --git a/src/defrag.c b/src/defrag.c
-+index 71cf420..38704c9 100644
-+--- a/src/defrag.c
-++++ b/src/defrag.c
-+@@ -808,7 +808,7 @@ DefragInsertFrag(ThreadVars *tv, DecodeThreadVars *dtv, DefragTracker *tracker,
-+         }
-+     }
-+ 
-+-    if (ltrim > data_len) {
-++    if (ltrim >= data_len) {
-+         /* Full packet has been trimmed due to the overlap policy. Overlap
-+          * already set. */
-+         goto done;
-+-- 
-+2.25.1
-+
-diff --git a/recipes-ids/suricata/suricata_7.0.0.bb b/recipes-ids/suricata/suricata_7.0.0.bb
-index a01b3d9..e5d6ed1 100644
---- a/recipes-ids/suricata/suricata_7.0.0.bb
-+++ b/recipes-ids/suricata/suricata_7.0.0.bb
-@@ -16,6 +16,8 @@ SRC_URI += " \
-     file://suricata.service \
-     file://run-ptest \
-     file://fixup.patch \
-+    file://CVE-2024-45795.patch \
-+    file://CVE-2024-45796.patch \
-     "
- 
- inherit autotools pkgconfig python3native systemd ptest cargo cargo-update-recipe-crates
--- 
-2.25.1
+I didn't know it was coming up so soon, that's great news!
+We just encountered the need now and made our own mixins layer,
+and I figured we might as well share it.
 
+It was never my intendion to become the maintainer of a new layer,
+I viewed this as a contribution to the existing meta-lts-mixins project
+(That's why I retained the maintenance section as it was written
+in the other branches).
+I probably should've made that more clear.
+
+> Also, there has been a request for a kirkstone/rust-1.75 to have
+> a kirkstone -> scarthgap correspondence, and I am aiming to get that
+> pushed to meta-lts-mixins this week.  =46rom what you describe, that
+> seems like it might be a better fit unless you explicitly need newer
+> Rust.
+
+Our goal is to track Rust as closely as possible. Using Rust 1.80 from
+Poky master is perfect. We currently have dependencies which require
+at least Rust 1.78, but the Rust ecosystem moves fairly quickly.
+
+>> I kept the recipes as unchanged from master as possible,
+>> but I had to replace ${UNPACKDIR} with ${WORKDIR},
+>> as that change turned out to be incompatible with Scarthgap.
+>> The Scarthgap version of the recipes uses ${WORKDIR}.
+>=20
+> With kirkstone/rust I've tried to avoid changing recipes as much as
+> possible to ease future backports, so I would suggest not doing this,
+> and setting UNPACKDIR =3D WORKDIR in the layer.conf or in just a =
+minimal
+> number of places in the bbclass's if possible.  The former has been my
+> plan for scarthgap/rust myself.
+>=20
+>> I kept the master branch's Rust 1.78 recipes,
+>> even though they don't work.
+>> They could be made to work by setting different shasums for different
+>> Rust versions in 'rust-source.inc'.
+>> I kept it as-is because if this should be fixed at all,
+>> it should probably be fixed in the master branch first
+>> and then backported.
+>=20
+> I would just drop the 1.78 recipes, as you do not want the hassle of
+> someone seeing them and trying to make them work.  If you're keen to
+> make a go of maintaining the branch, I'd suggest taking the alternate
+> approach of starting with the first post-scarthgap update commit and
+> working forward.  This is more work, but has the benefits of:
+> - establishing and testing the workflow for updates for the life of
+>  the branch
+> - allowing downstreams to potentially pick out the various
+>  intermediate Rust versions.  I do not make guarantees this works
+>  for kirkstone/rust, but it should in practice.
+>=20
+>> I haven't tested this extremely thoroughly,
+>> but I've verified that a basic Yocto project with Poky Scarthgap +
+>> scarthgap/rust can build librsvg (a Rust library).
+>> I've also tested it with our real-world Yocto setup which
+>> has some application software written in Rust.
+>=20
+> Note that unlike with kirkstone, there is some potential to keep the
+> Rust selftests working with the mixin layer, so if you want to run
+> with maintaining this, I would suggest looking into that.
+
+All of this is good feedback, but seeing as you're already planning
+to make a scarthgap/rust mixin soon, I think I'll leave this as is.
+Feel free to use as much or as little of my patch as you want
+(though seeing as this all more or less just worked when copying from
+the master branch (with the exception of the ${UNPACKDIR} thing),
+I'm guessing most of this won't be too useful).
+
+Regards,
+Martin=
 
