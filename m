@@ -2,59 +2,59 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC9BD6554F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62547D65548
 	for <webhook@archiver.kernel.org>; Tue, 26 Nov 2024 18:12:24 +0000 (UTC)
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
- by mx.groups.io with SMTP id smtpd.web11.53412.1732644740660967886
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+ by mx.groups.io with SMTP id smtpd.web11.53410.1732644739213136700
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 26 Nov 2024 10:12:20 -0800
+ Tue, 26 Nov 2024 10:12:19 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=ZklmqRhN;
- spf=pass (domain: konsulko.com, ip: 209.85.219.48, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6d846307673so21372946d6.3
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 26 Nov 2024 10:12:20 -0800 (PST)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=kpTswX+U;
+ spf=pass (domain: konsulko.com, ip: 209.85.128.172, mailfrom: scott.murray@konsulko.com)
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6ee8e894deeso57255697b3.0
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 26 Nov 2024 10:12:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1732644739; x=1733249539; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1732644738; x=1733249538; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=GnJvkNDdYp1qgTsgyYP5I7zMimz2YAbhtdprmWQRZRs=;
-        b=ZklmqRhNlCoQ8rhnNBqgVhoXXBTdJKk75RSClByStsj9iF8QkBvW2xbCS8Wvvv/3rU
-         izosra2MchQWLfugCIe4uDEn5U+Bj6kNpXpu32Y1kHXe9ep1T5kjMXstreqpeokaKzd+
-         IQDo4eF4cbBOwDNDowQfx1KdgkqsMPQdclaU8=
+        bh=/+dXhoBxLUdnkEvxpNwR814Pm9EUO2cKpEEjXmgGR7U=;
+        b=kpTswX+UtpnRfkGV4dmyBc8ZLYYY/2pULzsFsPCtW/U2TlySkWFrbkQC2cpklpsnwg
+         w10IQ4XKhKX6ZCoQ3wbdMzny4hatgE3ZL2VG27vU3GO0bO6ke4JuBlFsCxUZTUqFgN5Y
+         PRoR9tf07gIPL1iggnx6SWpy8WLglT651KBTQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732644739; x=1733249539;
+        d=1e100.net; s=20230601; t=1732644738; x=1733249538;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=GnJvkNDdYp1qgTsgyYP5I7zMimz2YAbhtdprmWQRZRs=;
-        b=N7L35c1wuI4AoGC2UdTlJehPRsFiWmN7q9InsoaRFpHSzPvxoC4XVsPrJOZ7hyvAbY
-         JxRIVDf4FVAxcaTftGXXn8Ht/F+JyIj4oAbXisOlMIcEOD8ANzrN75ji1mA99xbcB2hl
-         1/TqjFhnQR9b6LDfkyU+vMkVJg+IfMeN7/mroSChl/+v+u/X/ciDWSSbM9JxZWsPSRoB
-         3KE8XcL/wDGJgSh0ieIJUlyWXT0PaWaELrgn9IASuEBnDUaGK/hvjQhHfXQCDrayJecQ
-         jOCrNvR3da4i/DJ8qyTVUpoN/vPSj7dxA+Lov7laJwOQpwA8Jdd+FLfyAo6QvGP3MuBs
-         3eFQ==
-X-Gm-Message-State: AOJu0YyzH1SF679vsHLAh+HhQRWucqsy32d67tQWd8BizAqq3CEsFsZ9
-	iz8LrEryGpPcwrbCaB+iANtDI3B/+OO009t1iCfYPsdutHeHP01imwygW5GADVotbmWYsiEP8Cx
-	f
-X-Gm-Gg: ASbGncvdOD5LogFZqwNjtg8AB8qKUIvD5Mh57BHQ1BLF76gcXbRCalR61U1MUrLpZyz
-	IyzkbpNMnJoR0SqOSYZ6gwFlIsxyhf76Hfk2ro5HZTiVUm/LEgWRLCgOWFGm72uEOsAcssmfFz+
-	1/0jHZOl9VZS8mhwqfB6sq5lGQdhf3D7Dwm81xKBmhVtd+3BseGzhTEUxZff0O5xTjEtEH8wNca
-	wquWRZSm46w2viiPbAuNR6s+n4b/BP+9k+a/yvW5CGVR+7dj2wTWqv85JMMo86Yl3z1CS4PX6YG
-	2zOC+MiRhzqwcaJPNc2iTe7vQA==
-X-Google-Smtp-Source: AGHT+IGuQbLGHh8D0d/B3Wd19Vih8Zaaj/mQmZbmjJSphJ9AYM252y41lF6J9QYRxX07ZxDVmJJryw==
-X-Received: by 2002:a05:6214:c83:b0:6d4:238e:35ba with SMTP id 6a1803df08f44-6d864d5b1d4mr351616d6.21.1732644739309;
-        Tue, 26 Nov 2024 10:12:19 -0800 (PST)
+        bh=/+dXhoBxLUdnkEvxpNwR814Pm9EUO2cKpEEjXmgGR7U=;
+        b=CXmH1Y7EXvfbbiu2hWk5Hh3/G7j9yVBzcInX3INoPwA1ruBuuHrF9OiB4djs5rpiW5
+         8jJEtnleDuKI4x5Oz3LCoepk4gVcXItBsJxw8BQ2VEIxUHMzlzsUL7qdszNLnT1qm8k9
+         es0yWpxsu0Q0T1eUdeLqRD/8jbdw4H9iqDfHgrfGOQCzAbBX0E0i9DKdbxIm+y/wsgRQ
+         ujDMN08qgx7LpASkbYaDW42M4hRbiZprfXFSnlPVML4IsGYEJbaemT1QdUGhGWn3ZDnS
+         bRnad2JfG0mslyIEiOg3Qld+5zZ7gD4e4n7AVpAXE1ey1p4OI82tMpqg38WEGf3zJnCt
+         9S1w==
+X-Gm-Message-State: AOJu0YzqqUoyKqG6YMTJboVklxD2FqkorEkOUZDOjRs4pL0Q7QzOOWh9
+	+MzSItYiqcU5qV8yIN04Tc9YPImLS1VNE/iXdwTxrPJPKt7oOh5oxVZHaKObSJg5ZBCO7XGfM3s
+	Z
+X-Gm-Gg: ASbGncuUFX1JjrXlWUV5YqWyUlhcGTFMgbS/rsPulWG818mCVGgXX/bW5sDQEEQnv+s
+	a1Um7brHlWN99Eb2Dp9WGtRqVYJXJgJvD6YWZL81TF8N8zSWlbO0bfGCwmTsyJvXmJSss2uDIAj
+	83+h5I8KsnTswk8CONkphYrSCZvgkyM41uD27USGD8+yVB0zSPv4fKbyegkuZebXqcho+PeIccf
+	9sVjXtRxc/Q3SQt2IBWoRwCQ/CrBggDupoxklnB0P7M6BiEhfHvN04xWDMIwZ94IzOvqvioyrJ6
+	hKeFXbmAod5LBQ+/GqoDr/d//Q==
+X-Google-Smtp-Source: AGHT+IFkntkTu91x+tRBuW5iteSrs0bubYWbU3CVY/Fb8jbtXnik8fzItRNS05g0uV/GBgdMPO2Z4g==
+X-Received: by 2002:a05:690c:7083:b0:6ee:86da:3a49 with SMTP id 00721157ae682-6ef371f3e30mr2024097b3.8.1732644738190;
+        Tue, 26 Nov 2024 10:12:18 -0800 (PST)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d451a83ea2sm58171276d6.22.2024.11.26.10.12.18
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d451a83ea2sm58171276d6.22.2024.11.26.10.12.17
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2024 10:12:18 -0800 (PST)
+        Tue, 26 Nov 2024 10:12:17 -0800 (PST)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][kirkstone/rust][PATCH 8/9] rust-target-config: Fix TARGET_C_INT_WIDTH with correct size
-Date: Tue, 26 Nov 2024 13:11:39 -0500
-Message-ID: <20241126181152.407253-9-scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][kirkstone/rust][PATCH 7/9] rust: Upgrade 1.80.0->1.80.1
+Date: Tue, 26 Nov 2024 13:11:38 -0500
+Message-ID: <20241126181152.407253-8-scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241126181152.407253-1-scott.murray@konsulko.com>
 References: <20241126181152.407253-1-scott.murray@konsulko.com>
@@ -64,75 +64,72 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Tue, 26 Nov 2024 18:12:24 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/841
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/840
 
-From: Harish Sadineni <Harish.Sadineni@windriver.com>
+From: Deepthi Hemraj <Deepthi.Hemraj@windriver.com>
 
-[YOCTO #15600]
+https://blog.rust-lang.org/2024/08/08/Rust-1.80.1.html
 
-The TARGET_C_INT_WIDTH value was incorrectly set to 64 instead of 32.
-It is updated for PPC, Mips, and riscv64 architectures.
+Testing Summary for rust_1.80.1
 
-Discussion links for solution:
- https://lists.openembedded.org/g/openembedded-core/message/207486
- https://lists.openembedded.org/g/openembedded-core/message/207496
+Target       pass       skipped
+x86_64       18254         434
+x86          18084         604
+ARM64        18111         577
+ARM          18067         621
+ppc          18035         653
 
-Signed-off-by: Harish Sadineni <Harish.Sadineni@windriver.com>
+Signed-off-by: Sunil Dora <SunilKumar.Dora@windriver.com>
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(adapted from oe-core commit b9df8cd8b29064d115dab3bfd1ea14f94a5c0238)
+(adapted from oe-core commit 41da52480931c5ff90884c9d658075b8885abe8c)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- classes/rust-target-config.bbclass | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ recipes-devtools/rust/{cargo_1.80.0.bb => cargo_1.80.1.bb}      | 0
+ .../rust/{libstd-rs_1.80.0.bb => libstd-rs_1.80.1.bb}           | 0
+ ...t-cross-canadian_1.80.0.bb => rust-cross-canadian_1.80.1.bb} | 0
+ .../rust/{rust-llvm_1.80.0.bb => rust-llvm_1.80.1.bb}           | 0
+ recipes-devtools/rust/rust-source.inc                           | 2 +-
+ recipes-devtools/rust/{rust_1.80.0.bb => rust_1.80.1.bb}        | 0
+ 6 files changed, 1 insertion(+), 1 deletion(-)
+ rename recipes-devtools/rust/{cargo_1.80.0.bb => cargo_1.80.1.bb} (100%)
+ rename recipes-devtools/rust/{libstd-rs_1.80.0.bb => libstd-rs_1.80.1.bb} (100%)
+ rename recipes-devtools/rust/{rust-cross-canadian_1.80.0.bb => rust-cross-canadian_1.80.1.bb} (100%)
+ rename recipes-devtools/rust/{rust-llvm_1.80.0.bb => rust-llvm_1.80.1.bb} (100%)
+ rename recipes-devtools/rust/{rust_1.80.0.bb => rust_1.80.1.bb} (100%)
 
-diff --git a/classes/rust-target-config.bbclass b/classes/rust-target-config.bbclass
-index 993706c..e44252b 100644
---- a/classes/rust-target-config.bbclass
-+++ b/classes/rust-target-config.bbclass
-@@ -198,7 +198,7 @@ MAX_ATOMIC_WIDTH[mipsel] = "32"
- DATA_LAYOUT[mips64] = "E-m:e-i8:8:32-i16:16:32-i64:64-n32:64-S128"
- TARGET_ENDIAN[mips64] = "big"
- TARGET_POINTER_WIDTH[mips64] = "64"
--TARGET_C_INT_WIDTH[mips64] = "64"
-+TARGET_C_INT_WIDTH[mips64] = "32"
- MAX_ATOMIC_WIDTH[mips64] = "64"
+diff --git a/recipes-devtools/rust/cargo_1.80.0.bb b/recipes-devtools/rust/cargo_1.80.1.bb
+similarity index 100%
+rename from recipes-devtools/rust/cargo_1.80.0.bb
+rename to recipes-devtools/rust/cargo_1.80.1.bb
+diff --git a/recipes-devtools/rust/libstd-rs_1.80.0.bb b/recipes-devtools/rust/libstd-rs_1.80.1.bb
+similarity index 100%
+rename from recipes-devtools/rust/libstd-rs_1.80.0.bb
+rename to recipes-devtools/rust/libstd-rs_1.80.1.bb
+diff --git a/recipes-devtools/rust/rust-cross-canadian_1.80.0.bb b/recipes-devtools/rust/rust-cross-canadian_1.80.1.bb
+similarity index 100%
+rename from recipes-devtools/rust/rust-cross-canadian_1.80.0.bb
+rename to recipes-devtools/rust/rust-cross-canadian_1.80.1.bb
+diff --git a/recipes-devtools/rust/rust-llvm_1.80.0.bb b/recipes-devtools/rust/rust-llvm_1.80.1.bb
+similarity index 100%
+rename from recipes-devtools/rust/rust-llvm_1.80.0.bb
+rename to recipes-devtools/rust/rust-llvm_1.80.1.bb
+diff --git a/recipes-devtools/rust/rust-source.inc b/recipes-devtools/rust/rust-source.inc
+index 0cd329f..c39c954 100644
+--- a/recipes-devtools/rust/rust-source.inc
++++ b/recipes-devtools/rust/rust-source.inc
+@@ -11,7 +11,7 @@ SRC_URI += "https://static.rust-lang.org/dist/rustc-${RUST_VERSION}-src.tar.xz;n
+             file://repro-issue-fix-with-cc-crate-hashmap.patch;patchdir=${RUSTSRC} \
+             file://oeqa-selftest-Increase-timeout-in-process-sigpipe-ru.patch;patchdir=${RUSTSRC} \
+ "
+-SRC_URI[rust.sha256sum] = "0b9ca1e2e45b8a5f0b58db140af0dc92f8311faeb0ad883c5b71a72c02dc6e80"
++SRC_URI[rust.sha256sum] = "6ab79b70dc57737a1de378f212fcf8852d67fe6cf272d122a15b3ea13be77947"
  
- ## mips64-n32-unknown-linux-{gnu, musl}
-@@ -212,7 +212,7 @@ MAX_ATOMIC_WIDTH[mips64-n32] = "64"
- DATA_LAYOUT[mips64el] = "e-m:e-i8:8:32-i16:16:32-i64:64-n32:64-S128"
- TARGET_ENDIAN[mips64el] = "little"
- TARGET_POINTER_WIDTH[mips64el] = "64"
--TARGET_C_INT_WIDTH[mips64el] = "64"
-+TARGET_C_INT_WIDTH[mips64el] = "32"
- MAX_ATOMIC_WIDTH[mips64el] = "64"
+ RUSTSRC = "${WORKDIR}/rustc-${RUST_VERSION}-src"
  
- ## powerpc-unknown-linux-{gnu, musl}
-@@ -226,14 +226,14 @@ MAX_ATOMIC_WIDTH[powerpc] = "32"
- DATA_LAYOUT[powerpc64] = "E-m:e-i64:64-n32:64-S128-v256:256:256-v512:512:512"
- TARGET_ENDIAN[powerpc64] = "big"
- TARGET_POINTER_WIDTH[powerpc64] = "64"
--TARGET_C_INT_WIDTH[powerpc64] = "64"
-+TARGET_C_INT_WIDTH[powerpc64] = "32"
- MAX_ATOMIC_WIDTH[powerpc64] = "64"
- 
- ## powerpc64le-unknown-linux-{gnu, musl}
- DATA_LAYOUT[powerpc64le] = "e-m:e-i64:64-n32:64-v256:256:256-v512:512:512"
- TARGET_ENDIAN[powerpc64le] = "little"
- TARGET_POINTER_WIDTH[powerpc64le] = "64"
--TARGET_C_INT_WIDTH[powerpc64le] = "64"
-+TARGET_C_INT_WIDTH[powerpc64le] = "32"
- MAX_ATOMIC_WIDTH[powerpc64le] = "64"
- 
- ## riscv32gc-unknown-linux-{gnu, musl}
-@@ -247,7 +247,7 @@ MAX_ATOMIC_WIDTH[riscv32gc] = "32"
- DATA_LAYOUT[riscv64gc] = "e-m:e-p:64:64-i64:64-i128:128-n64-S128"
- TARGET_ENDIAN[riscv64gc] = "little"
- TARGET_POINTER_WIDTH[riscv64gc] = "64"
--TARGET_C_INT_WIDTH[riscv64gc] = "64"
-+TARGET_C_INT_WIDTH[riscv64gc] = "32"
- MAX_ATOMIC_WIDTH[riscv64gc] = "64"
- 
- ## loongarch64-unknown-linux-{gnu, musl}
+diff --git a/recipes-devtools/rust/rust_1.80.0.bb b/recipes-devtools/rust/rust_1.80.1.bb
+similarity index 100%
+rename from recipes-devtools/rust/rust_1.80.0.bb
+rename to recipes-devtools/rust/rust_1.80.1.bb
 -- 
 2.47.0
 
