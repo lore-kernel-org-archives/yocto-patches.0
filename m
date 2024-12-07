@@ -2,106 +2,104 @@ Return-Path: <oleksii.kurochko@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1742E7717B
-	for <webhook@archiver.kernel.org>; Sat,  7 Dec 2024 15:32:48 +0000 (UTC)
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
- by mx.groups.io with SMTP id smtpd.web10.62051.1733585563972291709
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13CA0E7717B
+	for <webhook@archiver.kernel.org>; Sat,  7 Dec 2024 16:23:49 +0000 (UTC)
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+ by mx.groups.io with SMTP id smtpd.web10.63032.1733588627656636535
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 07 Dec 2024 07:32:44 -0800
+ Sat, 07 Dec 2024 08:23:48 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=YkV/I1BN;
- spf=pass (domain: gmail.com, ip: 209.85.167.45, mailfrom: oleksii.kurochko@gmail.com)
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53f22fd6832so402959e87.1
-        for <yocto-patches@lists.yoctoproject.org>; Sat, 07 Dec 2024 07:32:43 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=UgxM4Joc;
+ spf=pass (domain: gmail.com, ip: 209.85.208.173, mailfrom: oleksii.kurochko@gmail.com)
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-3003943288bso13578111fa.0
+        for <yocto-patches@lists.yoctoproject.org>; Sat, 07 Dec 2024 08:23:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733585561; x=1734190361; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1733588625; x=1734193425; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lOOBna5kueN0iL+XRnlM3rOf7KkVu9PHFs6GpjxCd88=;
-        b=YkV/I1BNYgiL+DRoOiqg7JBIxEme4pJ5Rzt9GojUf7GC7ZkX79sIB87X169Q9zAUF0
-         NWQdRhOGLjEj9dhhE+Zv0HDOxcaE+FqU5bs181dypyBu65K5C1Cpav+de2ZZC5lPUhNW
-         IUrq7eAYDjoFdKx2GZ+UzK2nLHXbptC+ZWh8Pm4DUoLbT/yBLCh3tAbWP98Fd5xSqeEo
-         l4+O29mQAPXpq3vKqHSrvnj4Z/S8AvB2bZppNyRUyAPgjFlzlLaYJIon9BRzy/A4KtUL
-         PYsM0X2t4/nrBVEdQrESXnDFrHMwz+4gLM/Ye4bJ2yff0hICrQE+h6kQxi1kLDWme9bC
-         7s4A==
+        bh=k9RzY1PbK6RsIcjWW7PgwkO5mL5mRTTdKx3FU7v+2+c=;
+        b=UgxM4JocgMZt8UMPpYO+wR5bg5R4X3kEhusJaJMbQXVBTJwtSNI5rbhi4d6B8qdc0T
+         wFG2tFfq8DqG/mcWCmWIk1V5/SyuXr2Gb0AEL7YSNMhfvnbnWbAgt1A5I+yN2VjDlrRC
+         ZaVd6WIrF6pmIzt0Uspvj3Dq4pZFTQML4a9IYLRcrV05LSk1wDc+SdIXp17Z6HCe/jzN
+         lfzrgw8C5YVouFmaEF1Su/KvjAODiTB4u6keg5UsKGLruew8A4QaCJO+FkU0+jzOTQyh
+         6mGAK9/BLLFWWBSPvXIluSEKjrlBUh7ZMems+0XNYJBUATfpd1T7z/COduvGSLHExhTx
+         YpIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733585561; x=1734190361;
+        d=1e100.net; s=20230601; t=1733588625; x=1734193425;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=lOOBna5kueN0iL+XRnlM3rOf7KkVu9PHFs6GpjxCd88=;
-        b=muiD/8micxjhkexzwAD8WDFCyaEibKFuHnAhIKHwCXqhjVcL/MaRLO3Pi/Uz7FH4Is
-         NV7UWIYkMi62SpKHIqqeIfKodu9hjyK8nB2aP4hOP3j3/osdWDQkrDfkSxj5F6GA4ShH
-         1DibC/jX+iD/VyIzWudTVNVc8Zjos5Vc/vaZKDt9XcKtqWregMU9Pzey2dfpPpvt5IJI
-         LuVu6hVRTVd5LquB7nx5l90w3pw97YiqjePYkyYtlZs/zb0AjZZs8u1E60bIPaBgsAIf
-         xm1gI9MZkk0E8Hlqld6gkQGpG9OqVJZr7hcgPaO/E9E9/jwNn+xDg+aUG/HUDlS8NOAa
-         R2EQ==
-X-Gm-Message-State: AOJu0Yy6QkNKygBQSMgaguZCwbRWTx3YgeLk66Zx/7Mh55etLLqutOaU
-	1R7bsvCnkObF17ZVfOB4gnrbtPyVteFBec0UTtg772FwVXdg+EuDhJV/cw==
-X-Gm-Gg: ASbGncvHC5rTH0yrAvRvT+8dHinpPTywqHu2JVMIShYQfBlKR3CG11vg1eggmCHzUjf
-	jsA2Wbw55cri9nzci/mOrrEf/ZPzhA3wScNtMLvR33sRBrD8K07yyFTdQpJaEUy94Mtsf8nJunj
-	hiKxhcER2cweJdeHzoAMKIOmDpGnUb+PhLsqcN0LQHY8Bf0OQ5ndTFY4OehQdLvrxpnXp+IpuQ8
-	BNH03MVLytFzDevjTykYOXI5JSJm9kg8OgGUp7eSs8ccmaUCmQ=
-X-Google-Smtp-Source: AGHT+IFLpHX/k59zssSgJ1T1Z2+pzpmAGBpjQFBrHfFsoohXfUR2aN5VBJncXz6y723kCeMB9nuS6A==
-X-Received: by 2002:a05:6512:39d1:b0:53e:27d5:85db with SMTP id 2adb3069b0e04-53e2c2b1ab8mr2229886e87.12.1733585561034;
-        Sat, 07 Dec 2024 07:32:41 -0800 (PST)
+        bh=k9RzY1PbK6RsIcjWW7PgwkO5mL5mRTTdKx3FU7v+2+c=;
+        b=iOPugMJQ3K1bsPlZFLZERwi4PNc2gR+Iv21BbeOZ3OcwI9C1wMYxc0/Ix8VMYT2SaW
+         lTJCG7Yt5oT254XKFoh8lAeoH9ubE8yfLhfRcPxV/iyndFNFfkAbe4Glcf/adofHlsBr
+         jSeDi/Tojis05CJnCtwXJxzC15cghHtPhqMObXlea4QGXHsPJ0ycaJnK1IWOoohmSbE5
+         cAETY4LGjGmcFSUzu6GICOinGs3ueNMthkyIqC8eTpUabiVRVWTm1zQKOlmnmGoV9GZ0
+         Jsjt/VHQ/w86MS6dQmGYLzruZVBRH+YDLhN18J4/qt4pBc0QAgdiceR3Q1cVl3e8gyLS
+         0DXQ==
+X-Gm-Message-State: AOJu0YxF69kgjARGRDDoqGy3jDYCJJK4vI6xOLVZUjVTMNxtaVoROBZK
+	ond1eJ3WFm/4Zav9QJCfvuY06jxnh9SGBOJFCkuQozas5QxFXwgJyXxzAg==
+X-Gm-Gg: ASbGncunys/Wiis5xRN6Cr+1+q97pkFcla80smjeWyCw1kg28QCHj4Zn4Fd7EdK1IZM
+	lEMBXNDLEmNcnhfV9VNf0d+CXqOk1Nh0LqMDQBlgFWmdseUJCn/uQCbwDlahTp67YD6ggrGM+/p
+	G62e2TrouazaxVYS3meHu/Pphz1/gthLYUJv+oVuiBpILlzP6hE3cpCLwpoXxDE2FQ+aZzmZmb8
+	0Ju3mh5AEzUZEbb7wUnm3OX2qy6m/38wSUsBmOcno+NrZ+JsLc=
+X-Google-Smtp-Source: AGHT+IFMcO3C8dCfzyUdh5jZiJ2RVMgyytCy85mZuh3H8QD6zdjIYXnqIQBOigcKAI62ydt4qEUrgg==
+X-Received: by 2002:a2e:a98b:0:b0:302:1861:6df4 with SMTP id 38308e7fff4ca-3021861726emr1673991fa.35.1733588624972;
+        Sat, 07 Dec 2024 08:23:44 -0800 (PST)
 Received: from fedora.. ([94.75.70.14])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-302192f2c7dsm148371fa.29.2024.12.07.07.32.30
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3003e55a81bsm2398671fa.59.2024.12.07.08.23.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Dec 2024 07:32:40 -0800 (PST)
+        Sat, 07 Dec 2024 08:23:44 -0800 (PST)
 From: Oleksii Kurochko <oleksii.kurochko@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Oleksii Kurochko <oleksii.kurochko@gmail.com>,
 	Trevor Woerner <twoerner@gmail.com>
-Subject: [meta-rockchip][PATCH] linux-torvalds-next: update SRCREV
-Date: Sat,  7 Dec 2024 16:31:53 +0100
-Message-ID: <20241207153154.9125-1-oleksii.kurochko@gmail.com>
+Subject: [meta-rockchip][PATCH] u-boot: Update SRCREV for radxa-zero-3
+Date: Sat,  7 Dec 2024 17:23:37 +0100
+Message-ID: <20241207162339.10677-1-oleksii.kurochko@gmail.com>
 X-Mailer: git-send-email 2.47.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sat, 07 Dec 2024 15:32:48 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/867
+ <yocto-patches@lists.yoctoproject.org>; Sat, 07 Dec 2024 16:23:49 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/868
 
-During the fetch process, the following issue occurs:
- Unable to find revision fdadd93817f124fd0ea6ef251d4a1068b7feceba in branch
- even from upstream
+During the fetch stage of u-boot for radxa-zero-3, the following issue occurs:
+  Unable to find revision 8cdf606e616baa36751f3b4adcfaefc781126c8c in branch
+  rk3xxx-2024.07 even from upstream
 
-This issue arises because the tag next-20240904 and the commit hash
-fdadd93817f124fd0ea6ef251d4a1068b7feceba do not exist. This can be verified
-by running the following commands in
-<yocto>/build/tmp/work-shared/radxa-zero-3e/kernel-source:
-  $ git tag | grep next-20240904
-  $ git branch --contains fdadd93817f124fd0ea6ef251d4a1068b7feceba
-    error: no such commit fdadd93817f124fd0ea6ef251d4a1068b7feceba
+This happens because the hash of the head commit for the rk3xxx-2024.07 branch
+is different from the one specified in the recipe.
+This can be verified by running the following command in
+<yocto>/build/tmp/work/radxa_zero_3e-poky-linux/u-boot/2024.01/git:
+  $ git rev-list -n 1 rk3xxx-2024.07
+    2e2ae1fb69a25217640bfe2fb9abaf9f4fbacead
 
-The head commit of v6.11-rc6 is:
-  $ git rev-list -n 1 v6.11-rc6
-    431c1646e1f86b949fa3685efc50b660a364c2b6
+Update the SRCREV to the hash of the current head commit corresponding to
+the rk3xxx-2024.07 branch.
 
-Update the SRCREV to the head commit corresponding to the hash of v6.11-rc6.
-
-Fixes: 7f91ebf5c17ce ("linux-torvalds-next: bump to next-20240904")
+Fixes: e0b13fe834b5("radxa-zero-3{e|w}: add")
 Signed-off-by: Oleksii Kurochko <oleksii.kurochko@gmail.com>
 ---
- recipes-kernel/linux/linux-torvalds-next_git.bb | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ recipes-bsp/u-boot/u-boot_%.bbappend | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/recipes-kernel/linux/linux-torvalds-next_git.bb b/recipes-kernel/linux/linux-torvalds-next_git.bb
-index b961b14..34bb9d7 100644
---- a/recipes-kernel/linux/linux-torvalds-next_git.bb
-+++ b/recipes-kernel/linux/linux-torvalds-next_git.bb
-@@ -18,7 +18,7 @@ SRC_URI = " \
- 	file://rockchip-kmeta;type=kmeta;name=rockchip-kmeta;destsuffix=rockchip-kmeta \
- 	"
- # this is tag 'next-20240904'
--SRCREV = "fdadd93817f124fd0ea6ef251d4a1068b7feceba"
-+SRCREV = "431c1646e1f86b949fa3685efc50b660a364c2b6"
+diff --git a/recipes-bsp/u-boot/u-boot_%.bbappend b/recipes-bsp/u-boot/u-boot_%.bbappend
+index c939a48..9432e2b 100644
+--- a/recipes-bsp/u-boot/u-boot_%.bbappend
++++ b/recipes-bsp/u-boot/u-boot_%.bbappend
+@@ -3,8 +3,8 @@ require u-boot-rockchip.inc
+ FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
  
- inherit kernel
- inherit kernel-yocto
+ SRC_URI:radxa-zero-3 = "git://github.com/Kwiboo/u-boot-rockchip.git;protocol=https;branch=rk3xxx-2024.07;name=Kwiboo"
+-SRCREV:radxa-zero-3 = "8cdf606e616baa36751f3b4adcfaefc781126c8c"
+-SRCREV:radxa-zero-3:rk-u-boot-env = "8cdf606e616baa36751f3b4adcfaefc781126c8c"
++SRCREV:radxa-zero-3 = "2e2ae1fb69a25217640bfe2fb9abaf9f4fbacead"
++SRCREV:radxa-zero-3:rk-u-boot-env = "2e2ae1fb69a25217640bfe2fb9abaf9f4fbacead"
+ 
+ SRC_URI:append:rk-u-boot-env = " file://rockchip-enable-environment-mmc.cfg"
+ SRCREV:rk-u-boot-env = "cdfcc37428e06f4730ab9a17cc084eeb7676ea1a"
 -- 
 2.47.1
 
