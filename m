@@ -1,198 +1,108 @@
-Return-Path: <grembeter@gmail.com>
+Return-Path: <oleksii.kurochko@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B25FEE7717B
-	for <webhook@archiver.kernel.org>; Sat,  7 Dec 2024 08:08:56 +0000 (UTC)
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
- by mx.groups.io with SMTP id smtpd.web10.56763.1733558926886389864
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1742E7717B
+	for <webhook@archiver.kernel.org>; Sat,  7 Dec 2024 15:32:48 +0000 (UTC)
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+ by mx.groups.io with SMTP id smtpd.web10.62051.1733585563972291709
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 07 Dec 2024 00:08:47 -0800
+ Sat, 07 Dec 2024 07:32:44 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=Y2JdssY+;
- spf=pass (domain: gmail.com, ip: 209.85.218.46, mailfrom: grembeter@gmail.com)
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aa647af6804so137261066b.1
-        for <yocto-patches@lists.yoctoproject.org>; Sat, 07 Dec 2024 00:08:46 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=YkV/I1BN;
+ spf=pass (domain: gmail.com, ip: 209.85.167.45, mailfrom: oleksii.kurochko@gmail.com)
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53f22fd6832so402959e87.1
+        for <yocto-patches@lists.yoctoproject.org>; Sat, 07 Dec 2024 07:32:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733558925; x=1734163725; darn=lists.yoctoproject.org;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YSfCkmyTsx4pg+mn4/1Kga8Vu63RrPiwHko1P8BXbiA=;
-        b=Y2JdssY+u+pvRt/V12Gthk59xTjZJFePPJWi1RdiepCt0/CJ77y5aANAMffX4za6Zb
-         vGpHZns/HrKO082Yl+gfHkEooKwAgJOpQPLJt3QFrTGsAzJtkRx+mmcOBkxNwdhS3NV6
-         AleR6GfkQMa2/BzwY8vpJw9/RVqWzcXDaFR/LW6pL2hIoXTcoHDBCMZZunxY2JXG/Ico
-         557KrUPsLRzo4cp2S4+fcP0ojCdgqPNooi6VyDZPNF1jZFSGzVvJQioRujoQdSm2jm55
-         OzEx4SBus3VXY6cORZ4/lGsuEZRy4GNeYdCstKVA2AofyVvRzABfH7f5/4SeNhXjlTAo
-         N+OQ==
+        d=gmail.com; s=20230601; t=1733585561; x=1734190361; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lOOBna5kueN0iL+XRnlM3rOf7KkVu9PHFs6GpjxCd88=;
+        b=YkV/I1BNYgiL+DRoOiqg7JBIxEme4pJ5Rzt9GojUf7GC7ZkX79sIB87X169Q9zAUF0
+         NWQdRhOGLjEj9dhhE+Zv0HDOxcaE+FqU5bs181dypyBu65K5C1Cpav+de2ZZC5lPUhNW
+         IUrq7eAYDjoFdKx2GZ+UzK2nLHXbptC+ZWh8Pm4DUoLbT/yBLCh3tAbWP98Fd5xSqeEo
+         l4+O29mQAPXpq3vKqHSrvnj4Z/S8AvB2bZppNyRUyAPgjFlzlLaYJIon9BRzy/A4KtUL
+         PYsM0X2t4/nrBVEdQrESXnDFrHMwz+4gLM/Ye4bJ2yff0hICrQE+h6kQxi1kLDWme9bC
+         7s4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733558925; x=1734163725;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YSfCkmyTsx4pg+mn4/1Kga8Vu63RrPiwHko1P8BXbiA=;
-        b=FAi6pGgwrBsJfwKiTV27gwNcJE70+1G0L6K3KtPC0R3xSC+/bDKWvCxvUVwF3aEgy6
-         0ElOZnzEy55YUDhZXmrkv+NPqBBvNt9oipBVymLl85v2ZX4H0ECU0jsnitqzN5MdOlQq
-         GRagy3zCVN2jJrmX7/yNvlEdSJ449+nkkwhThEpFIlcPnWhOMQ1Cs+rLCXp4kdomzgcC
-         +zGZ/Y+hYq4I/RBjsXVo31+Ax5nNiz4U1o5Q+Hcc4fiKF1MtDYBKNmtY48E1I6xSxSng
-         u5DNnCwy1utbP5+DLm0woF7YysSh36vbRRysbYs+2eNO4xkOyiuinhbSq1/6j10HNs3A
-         S/6w==
-X-Gm-Message-State: AOJu0YxKb6H0ltmNKiM6Yv5eurwzoArwtbpQAgI0cIB8AMfZwrRB92Wp
-	gol5kh5oRjZFG8oIqVIfTUdWchB6haI3IXl2K2JYymyMDYic/AWrfYdyZyD1aRi2O/prQIOUup9
-	fMzksaS6PMcQgmn8DSwke3OMmpmjKBA==
-X-Gm-Gg: ASbGnctgfIMguy+n0Y1eVfeoEy+QOjZ331Pk0cyWd6DYRx58Pq4GsNij4rqHDmiGrQT
-	09J2EfkUGmt16ohk2BBoj7IYvtHPooxbCGqVEf9YTERqsldU9BOtyAgxre05mMLs=
-X-Google-Smtp-Source: AGHT+IGof3veqOaws8nHt0gePdYXpdM7nLqnQMDBy1ouik0uOcAuNTNyE+Sd17KSxCXW4VA6UoAmqg3qhQ66xHS6hdM=
-X-Received: by 2002:a17:906:1da9:b0:aa6:50ee:d44c with SMTP id
- a640c23a62f3a-aa650eed58cmr96081266b.15.1733558924535; Sat, 07 Dec 2024
- 00:08:44 -0800 (PST)
-MIME-Version: 1.0
-References: <180649620E332603.19665@lists.yoctoproject.org>
-In-Reply-To: <180649620E332603.19665@lists.yoctoproject.org>
-From: grygorii tertychnyi <grembeter@gmail.com>
-Date: Sat, 7 Dec 2024 09:08:33 +0100
-Message-ID: <CAGFuAuw2ByKHpwE2gUFjRLzTrD1B4pB2m6nXCo6tpbDeHOW4=g@mail.gmail.com>
-Subject: Re: [yocto-patches] [meta-security][PATCH] dm-verity-img.bbclass: add DM_VERITY_SETUP_ARGS
+        d=1e100.net; s=20230601; t=1733585561; x=1734190361;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lOOBna5kueN0iL+XRnlM3rOf7KkVu9PHFs6GpjxCd88=;
+        b=muiD/8micxjhkexzwAD8WDFCyaEibKFuHnAhIKHwCXqhjVcL/MaRLO3Pi/Uz7FH4Is
+         NV7UWIYkMi62SpKHIqqeIfKodu9hjyK8nB2aP4hOP3j3/osdWDQkrDfkSxj5F6GA4ShH
+         1DibC/jX+iD/VyIzWudTVNVc8Zjos5Vc/vaZKDt9XcKtqWregMU9Pzey2dfpPpvt5IJI
+         LuVu6hVRTVd5LquB7nx5l90w3pw97YiqjePYkyYtlZs/zb0AjZZs8u1E60bIPaBgsAIf
+         xm1gI9MZkk0E8Hlqld6gkQGpG9OqVJZr7hcgPaO/E9E9/jwNn+xDg+aUG/HUDlS8NOAa
+         R2EQ==
+X-Gm-Message-State: AOJu0Yy6QkNKygBQSMgaguZCwbRWTx3YgeLk66Zx/7Mh55etLLqutOaU
+	1R7bsvCnkObF17ZVfOB4gnrbtPyVteFBec0UTtg772FwVXdg+EuDhJV/cw==
+X-Gm-Gg: ASbGncvHC5rTH0yrAvRvT+8dHinpPTywqHu2JVMIShYQfBlKR3CG11vg1eggmCHzUjf
+	jsA2Wbw55cri9nzci/mOrrEf/ZPzhA3wScNtMLvR33sRBrD8K07yyFTdQpJaEUy94Mtsf8nJunj
+	hiKxhcER2cweJdeHzoAMKIOmDpGnUb+PhLsqcN0LQHY8Bf0OQ5ndTFY4OehQdLvrxpnXp+IpuQ8
+	BNH03MVLytFzDevjTykYOXI5JSJm9kg8OgGUp7eSs8ccmaUCmQ=
+X-Google-Smtp-Source: AGHT+IFLpHX/k59zssSgJ1T1Z2+pzpmAGBpjQFBrHfFsoohXfUR2aN5VBJncXz6y723kCeMB9nuS6A==
+X-Received: by 2002:a05:6512:39d1:b0:53e:27d5:85db with SMTP id 2adb3069b0e04-53e2c2b1ab8mr2229886e87.12.1733585561034;
+        Sat, 07 Dec 2024 07:32:41 -0800 (PST)
+Received: from fedora.. ([94.75.70.14])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-302192f2c7dsm148371fa.29.2024.12.07.07.32.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 07 Dec 2024 07:32:40 -0800 (PST)
+From: Oleksii Kurochko <oleksii.kurochko@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Content-Type: multipart/alternative; boundary="000000000000e4f9db0628a9a351"
+Cc: Oleksii Kurochko <oleksii.kurochko@gmail.com>,
+	Trevor Woerner <twoerner@gmail.com>
+Subject: [meta-rockchip][PATCH] linux-torvalds-next: update SRCREV
+Date: Sat,  7 Dec 2024 16:31:53 +0100
+Message-ID: <20241207153154.9125-1-oleksii.kurochko@gmail.com>
+X-Mailer: git-send-email 2.47.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sat, 07 Dec 2024 08:08:56 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/866
+ <yocto-patches@lists.yoctoproject.org>; Sat, 07 Dec 2024 15:32:48 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/867
 
---000000000000e4f9db0628a9a351
-Content-Type: text/plain; charset="UTF-8"
+During the fetch process, the following issue occurs:
+ Unable to find revision fdadd93817f124fd0ea6ef251d4a1068b7feceba in branch
+ even from upstream
 
-ping
+This issue arises because the tag next-20240904 and the commit hash
+fdadd93817f124fd0ea6ef251d4a1068b7feceba do not exist. This can be verified
+by running the following commands in
+<yocto>/build/tmp/work-shared/radxa-zero-3e/kernel-source:
+  $ git tag | grep next-20240904
+  $ git branch --contains fdadd93817f124fd0ea6ef251d4a1068b7feceba
+    error: no such commit fdadd93817f124fd0ea6ef251d4a1068b7feceba
 
-On Sat, 9 Nov 2024 at 12:29, gr embeter via lists.yoctoproject.org
-<grembeter=gmail.com@lists.yoctoproject.org> wrote:
+The head commit of v6.11-rc6 is:
+  $ git rev-list -n 1 v6.11-rc6
+    431c1646e1f86b949fa3685efc50b660a364c2b6
 
-> Useful to pass additional arguments to veritysetup, for example
-> '--no-superblock' to make system less vulnerable to certain types of
-> attacks and data maniputaion on the disk.
->
-> Signed-off-by: Grygorii Tertychnyi <grembeter@gmail.com>
-> ---
->  classes/dm-verity-img.bbclass | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/classes/dm-verity-img.bbclass b/classes/dm-verity-img.bbclass
-> index 7f79548353b0..9a3a97ec6c26 100644
-> --- a/classes/dm-verity-img.bbclass
-> +++ b/classes/dm-verity-img.bbclass
-> @@ -46,6 +46,9 @@ DM_VERITY_IMAGE_HASH_BLOCK_SIZE ?= "4096"
->  # Should we store the hash data on a separate device/partition?
->  DM_VERITY_SEPARATE_HASH ?= "0"
->
-> +# Additional arguments for veritysetup
-> +DM_VERITY_SETUP_ARGS ?= ""
-> +
->  # These are arch specific.  We could probably intelligently auto-assign
-> these?
->  # Take x86-64 values as defaults. No impact on functionality currently.
->  # See SD_GPT_ROOT_X86_64 and SD_GPT_ROOT_X86_64_VERITY in the spec.
-> @@ -146,6 +149,7 @@ verity_setup() {
->      cp -a $INPUT $OUTPUT
->
->      SETUP_ARGS=" \
-> +        ${DM_VERITY_SETUP_ARGS} \
->          --data-block-size=${DM_VERITY_IMAGE_DATA_BLOCK_SIZE} \
->          --hash-block-size=${DM_VERITY_IMAGE_HASH_BLOCK_SIZE} \
->          $HASH_OFFSET format $OUTPUT $OUTPUT_HASH \
-> --
-> 2.39.5
->
->
->
-> -=-=-=-=-=-=-=-=-=-=-=-
-> Links: You receive all messages sent to this group.
-> View/Reply Online (#791):
-> https://lists.yoctoproject.org/g/yocto-patches/message/791
-> Mute This Topic: https://lists.yoctoproject.org/mt/109479783/4926536
-> Group Owner: yocto-patches+owner@lists.yoctoproject.org
-> Unsubscribe:
-> https://lists.yoctoproject.org/g/yocto-patches/leave/13733539/4926536/1016200526/xyzzy
-> [grembeter@gmail.com]
-> -=-=-=-=-=-=-=-=-=-=-=-
->
->
->
+Update the SRCREV to the head commit corresponding to the hash of v6.11-rc6.
 
---000000000000e4f9db0628a9a351
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Fixes: 7f91ebf5c17ce ("linux-torvalds-next: bump to next-20240904")
+Signed-off-by: Oleksii Kurochko <oleksii.kurochko@gmail.com>
+---
+ recipes-kernel/linux/linux-torvalds-next_git.bb | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-<div dir=3D"auto">ping</div><div><br><div class=3D"gmail_quote"><div dir=3D=
-"ltr" class=3D"gmail_attr">On Sat, 9 Nov 2024 at 12:29, gr embeter via <a h=
-ref=3D"http://lists.yoctoproject.org">lists.yoctoproject.org</a> &lt;grembe=
-ter=3D<a href=3D"mailto:gmail.com@lists.yoctoproject.org">gmail.com@lists.y=
-octoproject.org</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" s=
-tyle=3D"margin:0px 0px 0px 0.8ex;border-left-width:1px;border-left-style:so=
-lid;padding-left:1ex;border-left-color:rgb(204,204,204)">Useful to pass add=
-itional arguments to veritysetup, for example<br>
-&#39;--no-superblock&#39; to make system less vulnerable to certain types o=
-f<br>
-attacks and data maniputaion on the disk.<br>
-<br>
-Signed-off-by: Grygorii Tertychnyi &lt;<a href=3D"mailto:grembeter@gmail.co=
-m" target=3D"_blank">grembeter@gmail.com</a>&gt;<br>
----<br>
-=C2=A0classes/dm-verity-img.bbclass | 4 ++++<br>
-=C2=A01 file changed, 4 insertions(+)<br>
-<br>
-diff --git a/classes/dm-verity-img.bbclass b/classes/dm-verity-img.bbclass<=
-br>
-index 7f79548353b0..9a3a97ec6c26 100644<br>
---- a/classes/dm-verity-img.bbclass<br>
-+++ b/classes/dm-verity-img.bbclass<br>
-@@ -46,6 +46,9 @@ DM_VERITY_IMAGE_HASH_BLOCK_SIZE ?=3D &quot;4096&quot;<br>
-=C2=A0# Should we store the hash data on a separate device/partition?<br>
-=C2=A0DM_VERITY_SEPARATE_HASH ?=3D &quot;0&quot;<br>
-<br>
-+# Additional arguments for veritysetup<br>
-+DM_VERITY_SETUP_ARGS ?=3D &quot;&quot;<br>
-+<br>
-=C2=A0# These are arch specific.=C2=A0 We could probably intelligently auto=
--assign these?<br>
-=C2=A0# Take x86-64 values as defaults. No impact on functionality currentl=
-y.<br>
-=C2=A0# See SD_GPT_ROOT_X86_64 and SD_GPT_ROOT_X86_64_VERITY in the spec.<b=
-r>
-@@ -146,6 +149,7 @@ verity_setup() {<br>
-=C2=A0 =C2=A0 =C2=A0cp -a $INPUT $OUTPUT<br>
-<br>
-=C2=A0 =C2=A0 =C2=A0SETUP_ARGS=3D&quot; \<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 ${DM_VERITY_SETUP_ARGS} \<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0--data-block-size=3D${DM_VERITY_IMAGE_DAT=
-A_BLOCK_SIZE} \<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0--hash-block-size=3D${DM_VERITY_IMAGE_HAS=
-H_BLOCK_SIZE} \<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0$HASH_OFFSET format $OUTPUT $OUTPUT_HASH =
-\<br>
--- <br>
-2.39.5<br>
-<br>
-<br>
-<br>
--=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-<br>
-Links: You receive all messages sent to this group.<br>
-View/Reply Online (#791): <a href=3D"https://lists.yoctoproject.org/g/yocto=
--patches/message/791" rel=3D"noreferrer" target=3D"_blank">https://lists.yo=
-ctoproject.org/g/yocto-patches/message/791</a><br>
-Mute This Topic: <a href=3D"https://lists.yoctoproject.org/mt/109479783/492=
-6536" rel=3D"noreferrer" target=3D"_blank">https://lists.yoctoproject.org/m=
-t/109479783/4926536</a><br>
-Group Owner: <a href=3D"mailto:yocto-patches%2Bowner@lists.yoctoproject.org=
-" target=3D"_blank">yocto-patches+owner@lists.yoctoproject.org</a><br>
-Unsubscribe: <a href=3D"https://lists.yoctoproject.org/g/yocto-patches/leav=
-e/13733539/4926536/1016200526/xyzzy" rel=3D"noreferrer" target=3D"_blank">h=
-ttps://lists.yoctoproject.org/g/yocto-patches/leave/13733539/4926536/101620=
-0526/xyzzy</a> [<a href=3D"mailto:grembeter@gmail.com" target=3D"_blank">gr=
-embeter@gmail.com</a>]<br>
--=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-<br>
-<br>
-<br>
-</blockquote></div></div>
+diff --git a/recipes-kernel/linux/linux-torvalds-next_git.bb b/recipes-kernel/linux/linux-torvalds-next_git.bb
+index b961b14..34bb9d7 100644
+--- a/recipes-kernel/linux/linux-torvalds-next_git.bb
++++ b/recipes-kernel/linux/linux-torvalds-next_git.bb
+@@ -18,7 +18,7 @@ SRC_URI = " \
+ 	file://rockchip-kmeta;type=kmeta;name=rockchip-kmeta;destsuffix=rockchip-kmeta \
+ 	"
+ # this is tag 'next-20240904'
+-SRCREV = "fdadd93817f124fd0ea6ef251d4a1068b7feceba"
++SRCREV = "431c1646e1f86b949fa3685efc50b660a364c2b6"
+ 
+ inherit kernel
+ inherit kernel-yocto
+-- 
+2.47.1
 
---000000000000e4f9db0628a9a351--
 
