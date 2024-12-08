@@ -1,106 +1,90 @@
-Return-Path: <oleksii.kurochko@gmail.com>
+Return-Path: <akuster808@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13CA0E7717B
-	for <webhook@archiver.kernel.org>; Sat,  7 Dec 2024 16:23:49 +0000 (UTC)
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
- by mx.groups.io with SMTP id smtpd.web10.63032.1733588627656636535
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D82F3E77180
+	for <webhook@archiver.kernel.org>; Sun,  8 Dec 2024 17:53:26 +0000 (UTC)
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+ by mx.groups.io with SMTP id smtpd.web11.82923.1733680401022880349
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 07 Dec 2024 08:23:48 -0800
+ Sun, 08 Dec 2024 09:53:21 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=UgxM4Joc;
- spf=pass (domain: gmail.com, ip: 209.85.208.173, mailfrom: oleksii.kurochko@gmail.com)
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-3003943288bso13578111fa.0
-        for <yocto-patches@lists.yoctoproject.org>; Sat, 07 Dec 2024 08:23:47 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=aAbv97VT;
+ spf=pass (domain: gmail.com, ip: 209.85.128.174, mailfrom: akuster808@gmail.com)
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6eff4f0d9fcso13258757b3.3
+        for <yocto-patches@lists.yoctoproject.org>; Sun, 08 Dec 2024 09:53:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733588625; x=1734193425; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=k9RzY1PbK6RsIcjWW7PgwkO5mL5mRTTdKx3FU7v+2+c=;
-        b=UgxM4JocgMZt8UMPpYO+wR5bg5R4X3kEhusJaJMbQXVBTJwtSNI5rbhi4d6B8qdc0T
-         wFG2tFfq8DqG/mcWCmWIk1V5/SyuXr2Gb0AEL7YSNMhfvnbnWbAgt1A5I+yN2VjDlrRC
-         ZaVd6WIrF6pmIzt0Uspvj3Dq4pZFTQML4a9IYLRcrV05LSk1wDc+SdIXp17Z6HCe/jzN
-         lfzrgw8C5YVouFmaEF1Su/KvjAODiTB4u6keg5UsKGLruew8A4QaCJO+FkU0+jzOTQyh
-         6mGAK9/BLLFWWBSPvXIluSEKjrlBUh7ZMems+0XNYJBUATfpd1T7z/COduvGSLHExhTx
-         YpIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733588625; x=1734193425;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1733680400; x=1734285200; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=k9RzY1PbK6RsIcjWW7PgwkO5mL5mRTTdKx3FU7v+2+c=;
-        b=iOPugMJQ3K1bsPlZFLZERwi4PNc2gR+Iv21BbeOZ3OcwI9C1wMYxc0/Ix8VMYT2SaW
-         lTJCG7Yt5oT254XKFoh8lAeoH9ubE8yfLhfRcPxV/iyndFNFfkAbe4Glcf/adofHlsBr
-         jSeDi/Tojis05CJnCtwXJxzC15cghHtPhqMObXlea4QGXHsPJ0ycaJnK1IWOoohmSbE5
-         cAETY4LGjGmcFSUzu6GICOinGs3ueNMthkyIqC8eTpUabiVRVWTm1zQKOlmnmGoV9GZ0
-         Jsjt/VHQ/w86MS6dQmGYLzruZVBRH+YDLhN18J4/qt4pBc0QAgdiceR3Q1cVl3e8gyLS
-         0DXQ==
-X-Gm-Message-State: AOJu0YxF69kgjARGRDDoqGy3jDYCJJK4vI6xOLVZUjVTMNxtaVoROBZK
-	ond1eJ3WFm/4Zav9QJCfvuY06jxnh9SGBOJFCkuQozas5QxFXwgJyXxzAg==
-X-Gm-Gg: ASbGncunys/Wiis5xRN6Cr+1+q97pkFcla80smjeWyCw1kg28QCHj4Zn4Fd7EdK1IZM
-	lEMBXNDLEmNcnhfV9VNf0d+CXqOk1Nh0LqMDQBlgFWmdseUJCn/uQCbwDlahTp67YD6ggrGM+/p
-	G62e2TrouazaxVYS3meHu/Pphz1/gthLYUJv+oVuiBpILlzP6hE3cpCLwpoXxDE2FQ+aZzmZmb8
-	0Ju3mh5AEzUZEbb7wUnm3OX2qy6m/38wSUsBmOcno+NrZ+JsLc=
-X-Google-Smtp-Source: AGHT+IFMcO3C8dCfzyUdh5jZiJ2RVMgyytCy85mZuh3H8QD6zdjIYXnqIQBOigcKAI62ydt4qEUrgg==
-X-Received: by 2002:a2e:a98b:0:b0:302:1861:6df4 with SMTP id 38308e7fff4ca-3021861726emr1673991fa.35.1733588624972;
-        Sat, 07 Dec 2024 08:23:44 -0800 (PST)
-Received: from fedora.. ([94.75.70.14])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3003e55a81bsm2398671fa.59.2024.12.07.08.23.44
+        bh=mbk8TNm5IfqoA39xvgn8DQTVHRlBQ6ZQJvr2s6GBeXQ=;
+        b=aAbv97VTKRxZQfqLZ6uiBz3PPDLQ3XKsX92Y2K0S6n97q1lg+BRUoeAGN/UkoBxSPB
+         X+f660iFkGqlPyIbuj4GS/oAwUhro8ggMcg+lJJ0u1EHvV0cWqkORB8BOwOIugetvABv
+         7//V7Ixv8uyve7M4F0eEe0FSXAsU/qFzcssBQDKJkFId0Ap/LDE/5riTnAzB5VRu8U7v
+         eDSGsDnGX3X3hLvMcnWUd7e5qf/b7O+R4SfMgzstEuWTOPolE4FCJ/eHax1jniZrODLU
+         YslbttZBjnssFQT1I5cSzqHXL1rcdHZDWDvc3T4MbMiPoPtNM4z9/1oN+ArSVFpO27Yw
+         gkfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733680400; x=1734285200;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mbk8TNm5IfqoA39xvgn8DQTVHRlBQ6ZQJvr2s6GBeXQ=;
+        b=E2imXRaekYx+ud9DfZ0oXdrlLG0q5PMxvYDMozwxHvukKc2jtZDs7/evjH4K+ddMCA
+         BV0Ui6xinIs8wTucHKwiO0gM+RfOPz5H0rDwC/0UZrVEDbvTKGoH4f1wgTgYYcH8pKNw
+         2eh7FlZ+JNIgjoR/4w249ubjE/YMiVjPz+gxclnvYN2Ak4/GerAIe73Ojwhx0xyvh1xE
+         332gFZKYRexnOP87JZ4nBDhyTZLYZkGuPJiqUte51DCzPSSA93CdhiO1i6hwNmV6+wCB
+         0eMcTDU+dRpKB+EcxcOn4L/FFuuRGtaFvmKqspKWqy4nmNnHt/otxtUb4VOJL226LUCy
+         j8zw==
+X-Gm-Message-State: AOJu0YxB/rMPXXrlv73ByNsj44SW5b6/MNP58kQGp6k01+hNn26UVWuH
+	2WN92c3zT6AH8I1wkVeTNT2WZUmhQ1p25VPNEp3wl3SbMGjauuNjdeZWJzaH
+X-Gm-Gg: ASbGncvxnCi3P6s2I9fzx/S3S9kpPJe+R/2W5S5wWIH1bmJLn2MIWdO7dp5R2ZV/KCt
+	2jRc0Zz4IYkcID0cPU+qS99BK5khQpgKBVf87rUZsvt5beFc7YmKyHG0zCdjycuzkQGAasLv1S3
+	0xAUa0mV/3fF9jdfAakaDiey7q15EViFOYWfDZRpBDETs469Fe7L3+JippUc86w0mbA2NeJ63Ma
+	el78CYDav66E1RZThTyQdojWMKVu2ZV8k4tmTQgmQ==
+X-Google-Smtp-Source: AGHT+IHCy9iL99fG2ycCrRsS49kP/Mm6b5prjpAcr0s+GBQwitiffRvJIcwGpmqhRobD19JbudwdsQ==
+X-Received: by 2002:a05:690c:450c:b0:6ef:458f:284a with SMTP id 00721157ae682-6efe3c0ee99mr110209407b3.22.1733680400117;
+        Sun, 08 Dec 2024 09:53:20 -0800 (PST)
+Received: from keaua.attlocal.net ([2600:1700:45dd:7000::d])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6efd384eadesm19103777b3.26.2024.12.08.09.53.19
+        for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Dec 2024 08:23:44 -0800 (PST)
-From: Oleksii Kurochko <oleksii.kurochko@gmail.com>
+        Sun, 08 Dec 2024 09:53:19 -0800 (PST)
+From: Armin Kuster <akuster808@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Oleksii Kurochko <oleksii.kurochko@gmail.com>,
-	Trevor Woerner <twoerner@gmail.com>
-Subject: [meta-rockchip][PATCH] u-boot: Update SRCREV for radxa-zero-3
-Date: Sat,  7 Dec 2024 17:23:37 +0100
-Message-ID: <20241207162339.10677-1-oleksii.kurochko@gmail.com>
-X-Mailer: git-send-email 2.47.1
+Subject: [meta-security][PATCH 2/2] drop: debug-tweaks from ci
+Date: Sun,  8 Dec 2024 12:53:18 -0500
+Message-ID: <20241208175318.833015-2-akuster808@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241208175318.833015-1-akuster808@gmail.com>
+References: <20241208175318.833015-1-akuster808@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sat, 07 Dec 2024 16:23:49 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/868
+ <yocto-patches@lists.yoctoproject.org>; Sun, 08 Dec 2024 17:53:26 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/870
 
-During the fetch stage of u-boot for radxa-zero-3, the following issue occurs:
-  Unable to find revision 8cdf606e616baa36751f3b4adcfaefc781126c8c in branch
-  rk3xxx-2024.07 even from upstream
-
-This happens because the hash of the head commit for the rk3xxx-2024.07 branch
-is different from the one specified in the recipe.
-This can be verified by running the following command in
-<yocto>/build/tmp/work/radxa_zero_3e-poky-linux/u-boot/2024.01/git:
-  $ git rev-list -n 1 rk3xxx-2024.07
-    2e2ae1fb69a25217640bfe2fb9abaf9f4fbacead
-
-Update the SRCREV to the hash of the current head commit corresponding to
-the rk3xxx-2024.07 branch.
-
-Fixes: e0b13fe834b5("radxa-zero-3{e|w}: add")
-Signed-off-by: Oleksii Kurochko <oleksii.kurochko@gmail.com>
+Signed-off-by: Armin Kuster <akuster808@gmail.com>
 ---
- recipes-bsp/u-boot/u-boot_%.bbappend | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kas/kas-security-base.yml | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/recipes-bsp/u-boot/u-boot_%.bbappend b/recipes-bsp/u-boot/u-boot_%.bbappend
-index c939a48..9432e2b 100644
---- a/recipes-bsp/u-boot/u-boot_%.bbappend
-+++ b/recipes-bsp/u-boot/u-boot_%.bbappend
-@@ -3,8 +3,8 @@ require u-boot-rockchip.inc
- FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
+diff --git a/kas/kas-security-base.yml b/kas/kas-security-base.yml
+index fa7915c..bdd74b1 100644
+--- a/kas/kas-security-base.yml
++++ b/kas/kas-security-base.yml
+@@ -43,7 +43,6 @@ local_conf_header:
+     BB_TASK_IONICE_LEVEL = '2.7'
+     BB_TASK_IONICE_LEVEL_task-testimage = '2.1'
+     TEST_QEMUBOOT_TIMEOUT = "1500"
+-    EXTRA_IMAGE_FEATURES ?= "debug-tweaks"
+     PACKAGE_CLASSES = "package_ipk"
  
- SRC_URI:radxa-zero-3 = "git://github.com/Kwiboo/u-boot-rockchip.git;protocol=https;branch=rk3xxx-2024.07;name=Kwiboo"
--SRCREV:radxa-zero-3 = "8cdf606e616baa36751f3b4adcfaefc781126c8c"
--SRCREV:radxa-zero-3:rk-u-boot-env = "8cdf606e616baa36751f3b4adcfaefc781126c8c"
-+SRCREV:radxa-zero-3 = "2e2ae1fb69a25217640bfe2fb9abaf9f4fbacead"
-+SRCREV:radxa-zero-3:rk-u-boot-env = "2e2ae1fb69a25217640bfe2fb9abaf9f4fbacead"
- 
- SRC_URI:append:rk-u-boot-env = " file://rockchip-enable-environment-mmc.cfg"
- SRCREV:rk-u-boot-env = "cdfcc37428e06f4730ab9a17cc084eeb7676ea1a"
+     DISTRO_FEATURES:append = " security pam apparmor smack ima tpm tpm2"
 -- 
-2.47.1
+2.43.0
 
 
