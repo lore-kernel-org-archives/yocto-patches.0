@@ -1,85 +1,113 @@
-Return-Path: <akuster808@gmail.com>
+Return-Path: <mikko.rapeli@linaro.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5F46E77173
-	for <webhook@archiver.kernel.org>; Sun,  8 Dec 2024 17:53:26 +0000 (UTC)
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
- by mx.groups.io with SMTP id smtpd.web11.82922.1733680400462111524
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABB07E77173
+	for <webhook@archiver.kernel.org>; Mon,  9 Dec 2024 07:52:50 +0000 (UTC)
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+ by mx.groups.io with SMTP id smtpd.web10.96011.1733730761016739223
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 08 Dec 2024 09:53:20 -0800
+ Sun, 08 Dec 2024 23:52:41 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=e8b4XES8;
- spf=pass (domain: gmail.com, ip: 209.85.128.178, mailfrom: akuster808@gmail.com)
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6f006748fd1so4139877b3.3
-        for <yocto-patches@lists.yoctoproject.org>; Sun, 08 Dec 2024 09:53:20 -0800 (PST)
+ dkim=pass header.i=@linaro.org header.s=google header.b=iIw5v4jF;
+ spf=pass (domain: linaro.org, ip: 209.85.167.45, mailfrom: mikko.rapeli@linaro.org)
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53df19bf6a9so4714909e87.1
+        for <yocto-patches@lists.yoctoproject.org>; Sun, 08 Dec 2024 23:52:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733680399; x=1734285199; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hwbFmYIDwLNBy3TmIydM0/o2K44vW3QOuQBFoRyIUAQ=;
-        b=e8b4XES8CEHnOR66MnIDlM5JtR0bVkUT9cWHEvVYwubdeMrFBUfj+reseQxrnF6bm3
-         8WyMa7o7HIzcCkZYEAp/tevXCc6Eg7SIB6+lGjXzm/aBWBss4F7CvZYPnmhe64zGynk8
-         FsFj1FS59iJrecbO0DbBywo9W47GXXcqVpCUiAyH1Yxb5X4cqA+hDv2ZTrK2mpZz0NoN
-         +Y7jkfHsQlfvLnsuvP54A34sAbswjT/vngMTPjPD1tagjjmr9m9yleSpz4p3iceSWpUt
-         rKDQ4QL+JxwRrTkyyKa/FmO97lHg9xmymR5SQV8mn2Z6UwsD65jJh/vO+A/DjfP4E5lz
-         syZA==
+        d=linaro.org; s=google; t=1733730759; x=1734335559; darn=lists.yoctoproject.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JXMYCcOUmpeO81LBqNRfTAWfWLtqhWJkTKLr1XNtR5k=;
+        b=iIw5v4jFN2RW37MYEtCRv49A52+FYCUuQuUAnt70L0ulCSFmrvvyHkIJ55numsY/YY
+         o3+MTCSYDieArFrNbl5MUopDGGiMeUYNZ0mr1DW8FCubVTzaNIrSlVCIpRMDlnidW2p2
+         uqeROxdM4bPEQkToVPQ/xPAqHxUpRms0F7Jb1sBGqM9mrM6IjiBZxJBmYjBkwbardnTI
+         Kz5osRG7dBh9q8s2T1wUA96hrCumjXXDcOmrHVGiVSkXHYuNynxhgJ0Zb3TgIFDkp0b6
+         T8mNP2k/UfNbbCeSlGPv8NNy4M76wMPevXkkoNH+6N+isqo+uM2MwIWzOoFbUAhdOfCe
+         ydMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733680399; x=1734285199;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hwbFmYIDwLNBy3TmIydM0/o2K44vW3QOuQBFoRyIUAQ=;
-        b=GpY/VIDzgy+QxkgHOblSlY6F+tn+ePKAodncwQcAB9zh9dtgfg+L1x0YwOMb5Rw6lg
-         ATmzuJGvDlq2KqTsC8dReRaIUlYHxnWZUotUYJg27kjHvU7f0XE6EV8aCxVe3oUbz0dr
-         fosIe6LOA7SkKAdOSEUQ10gzEZyju5sjre9axEMKaX1SF/wUqcJZaB+PNdS/9GP8rUeq
-         VDRK9l0oDch+Lr6fAP+fpvn75d8F5cDzfOIphbc59vnZJYDyKG9IAkWXWnDTH+2t1O/o
-         GnznX+ME0gXveCZWloudKhlRomhgi0DYFXaskLpBSztXitkU7bHXoEJeNm7WWuOvX2Q8
-         8ztQ==
-X-Gm-Message-State: AOJu0YybGdlrJqdrE1468IsoT8/IhXSF0FEnTtibEio1/8D/NcgUklFW
-	8EzJq0TjYUTKIiiuXt3khOTTChDJ236/0FbCzS4NffU5D6x7KaNB2/4BwXFu
-X-Gm-Gg: ASbGncvjCI8eMRluG+UYPWlEG8Plf+K6yH2IR0uGNpdBd+1hIr430z0NrU2Hnhf+7vV
-	yAggMgHVr5iV0YKukIiO0qCoD9LKWjRknK9zadmHn/foDuLI8g7sM/5Z5aaD0mOefNSpWIos6gD
-	xwNTKblO5c6KVF8Hhpv4Jj8TVy2rQGoMjoWjlIHyNxzpnqMyO+p86OO1t7Ee1l8TujCNpEflqAp
-	hftv6jcGheyiAOIfQU991t1hScXdFBYAdd5jhImXg==
-X-Google-Smtp-Source: AGHT+IGio1MEqhsGX7A6kxOM4ZgC16GPkbba+vr66TM5NmS1Y8LqaL074TGOtcTXbKQovJiePdxTxQ==
-X-Received: by 2002:a05:690c:6f05:b0:6ea:8a73:c0b with SMTP id 00721157ae682-6efe3bceb08mr111745607b3.7.1733680399380;
-        Sun, 08 Dec 2024 09:53:19 -0800 (PST)
-Received: from keaua.attlocal.net ([2600:1700:45dd:7000::d])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6efd384eadesm19103777b3.26.2024.12.08.09.53.18
+        d=1e100.net; s=20230601; t=1733730759; x=1734335559;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JXMYCcOUmpeO81LBqNRfTAWfWLtqhWJkTKLr1XNtR5k=;
+        b=EyLFA6iKKNr9w6Pd4j+cCoWD+VWYCo2NoRxWdr7aVDPTZdsDgaE5iuQPlbad4Ky6xn
+         V9hcQauM1SicqApozC5sBii4kAWxlUb8IIGevftgvDQDPN+FkXT68/Vvx+2D+4vCDnSR
+         Vqa5JF2XeFXvfflu42BRjwMoE8inxYtKzdIAvpNnLtGshksYam3Dn+jqTAfyv4LYqdYx
+         D/93e1i+S7iwc3A49cPxfxQHI+TU98VjV8scGXiSz8HTUpod/Mu0b8wWVZp/jKZKRyDZ
+         6Buec6pPTctfVSTZVe2fb8YPYAe891STH59M+NvYoXaAE+vO66oCNAybHuTMCSAq/+E6
+         yCrg==
+X-Gm-Message-State: AOJu0YyflZQtgor2YRQ2AU44LcFfNyjpiFz9iq2s3GpaQxZwe1G+4I+Y
+	sTI99RdOC0O82a7lMUQ7d7PsKV7Ojuy5I8q56lEzKZn3FYz0CCaLIimZFEHE/96N0r43lCpTt7X
+	wr0s=
+X-Gm-Gg: ASbGncv+xetpVwh4dG9jzn+hJviakc6D1zvHGErZ4H0gZPOTujvf8ByN8o99V4jIpp0
+	qfMCYVnsZn0pG9t6TmJNptn2uqvjK8OlkKk1A9hO7KQVlFMda3y1BxDx5R/6ygYY3B/lJSSNrp0
+	bcqb5Z/6AI00ptY1KKFNaHJ7+mYAJwW5uY8CPfdywhHlnDzPObb4HIhkraTL/+OcZCqArFBcxuU
+	PVQrVJxhWTrJifUrZhcmuNua0wphcyN5l0zkghLuQoiFiQl6nK88ae5rd03eibEdG+ZTsFAK69A
+	CQ==
+X-Google-Smtp-Source: AGHT+IH9l3t90zDaawVUYge/nX6+UIpCqIFjR5jrY70tnzk9T5ImtHKck/I6kKRaQvE/2zz4GqvZMQ==
+X-Received: by 2002:a05:6512:e84:b0:53f:232e:31db with SMTP id 2adb3069b0e04-53f232e3726mr2067193e87.16.1733730758827;
+        Sun, 08 Dec 2024 23:52:38 -0800 (PST)
+Received: from nuoska (89-27-108-43.bb.dnainternet.fi. [89.27.108.43])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e3ac318a8sm709952e87.177.2024.12.08.23.52.35
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Dec 2024 09:53:18 -0800 (PST)
-From: Armin Kuster <akuster808@gmail.com>
+        Sun, 08 Dec 2024 23:52:36 -0800 (PST)
+Date: Mon, 9 Dec 2024 09:52:33 +0200
+From: Mikko Rapeli <mikko.rapeli@linaro.org>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-security][PATCH 1/2] harden.conf: drop debug-tweaks
-Date: Sun,  8 Dec 2024 12:53:17 -0500
-Message-ID: <20241208175318.833015-1-akuster808@gmail.com>
-X-Mailer: git-send-email 2.43.0
+Subject: Re: [yocto-patches] [meta-security][PATCH 2/2] drop: debug-tweaks
+ from ci
+Message-ID: <Z1ahwRtEYmWRsJ5H@nuoska>
+References: <20241208175318.833015-1-akuster808@gmail.com>
+ <20241208175318.833015-2-akuster808@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241208175318.833015-2-akuster808@gmail.com>
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sun, 08 Dec 2024 17:53:26 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/869
+ <yocto-patches@lists.yoctoproject.org>; Mon, 09 Dec 2024 07:52:50 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/871
 
-Signed-off-by: Armin Kuster <akuster808@gmail.com>
----
- meta-hardening/conf/distro/harden.conf | 1 -
- 1 file changed, 1 deletion(-)
+Hi,
 
-diff --git a/meta-hardening/conf/distro/harden.conf b/meta-hardening/conf/distro/harden.conf
-index 1a5eb3d..fe87270 100644
---- a/meta-hardening/conf/distro/harden.conf
-+++ b/meta-hardening/conf/distro/harden.conf
-@@ -6,6 +6,5 @@ DISTRO_FEATURES = " acl xattr pci ext2 pam ipv4 ipv6 ipsec largefile usbhost"
+On Sun, Dec 08, 2024 at 12:53:18PM -0500, Armin Kuster via lists.yoctoproject.org wrote:
+> Signed-off-by: Armin Kuster <akuster808@gmail.com>
+> ---
+>  kas/kas-security-base.yml | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/kas/kas-security-base.yml b/kas/kas-security-base.yml
+> index fa7915c..bdd74b1 100644
+> --- a/kas/kas-security-base.yml
+> +++ b/kas/kas-security-base.yml
+> @@ -43,7 +43,6 @@ local_conf_header:
+>      BB_TASK_IONICE_LEVEL = '2.7'
+>      BB_TASK_IONICE_LEVEL_task-testimage = '2.1'
+>      TEST_QEMUBOOT_TIMEOUT = "1500"
+> -    EXTRA_IMAGE_FEATURES ?= "debug-tweaks"
+
+For testing purposes this is needed:
+
+--- a/kas/kas-security-base.yml
++++ b/kas/kas-security-base.yml
+@@ -43,7 +43,7 @@ local_conf_header:
+     BB_TASK_IONICE_LEVEL = '2.7'
+     BB_TASK_IONICE_LEVEL_task-testimage = '2.1'
+     TEST_QEMUBOOT_TIMEOUT = "1500"
+-    EXTRA_IMAGE_FEATURES ?= "debug-tweaks"
++    EXTRA_IMAGE_FEATURES += "allow-empty-password empty-root-password allow-root-login"
+     PACKAGE_CLASSES = "package_ipk"
  
- VIRTUAL-RUNTIME_base-utils-syslog ?= "rsyslog"
- IMAGE_ROOTFS_EXTRA_SPACE = "524288"
--EXTRA_IMAGE_FEATURES:remove = "debug-tweaks"
- 
- DISABLE_ROOT ?= "True"
--- 
-2.43.0
+     DISTRO_FEATURES:append = " security pam apparmor smack ima tpm tpm2"
 
+
+Or is this to be replaced by something else?
+
+I'm trying come up with a set of patches which pass some of the runtime tests again.
+
+Cheers,
+
+-Mikko
 
