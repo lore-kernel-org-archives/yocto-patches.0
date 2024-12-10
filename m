@@ -2,45 +2,45 @@ Return-Path: <yi.zhao@eng.windriver.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85F36E77183
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 700DEE7717F
 	for <webhook@archiver.kernel.org>; Tue, 10 Dec 2024 13:13:29 +0000 (UTC)
 Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
- by mx.groups.io with SMTP id smtpd.web10.9950.1733836405568368164
+ by mx.groups.io with SMTP id smtpd.web11.10060.1733836404718499343
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 10 Dec 2024 05:13:25 -0800
+ Tue, 10 Dec 2024 05:13:24 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.178.238, mailfrom: prvs=20745f6cf3=yi.zhao@windriver.com)
 Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BAAAEmo003066;
-	Tue, 10 Dec 2024 13:13:24 GMT
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BAAAEmn003066;
+	Tue, 10 Dec 2024 13:13:23 GMT
 Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2171.outbound.protection.outlook.com [104.47.55.171])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 43cx4xaqpg-2
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 43cx4xaqpg-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Tue, 10 Dec 2024 13:13:23 +0000 (GMT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=G7oRQgvIGCwuah2zFt6U5rhqxJ2tdPkl/pYRivG3r5xWdK91ZGOdTbIN8ECQnSeLqsjcFBjrfw5BXL2ZLFtBOjgSM52e+n7nKsp6v1i/sBrZcTAdiGXpH0XD/y4hHYRBD+K0axnz8A3tetY3SN+isizqQHWrZFa+ing1ifwwkDUtGasq7pSuTxC1Q9QGPmxbXRgVrVG5d83Jo56nMCAuspn/f+1ai6tibAgFiKWc6nMlNXy4yxNbHPachHqtvfS1eZv8ZvpTd7Eyg36u+k4BrrQImtrBm1BSJtYs2S8kxB8mLwCs8nB3ho9VFK6iDKFsHcJT5x/W/MQQ2Hww1lQCfQ==
+ b=l7Y/r9/3SpixgUoxmUW9zsQAJv916yBpqZ5APHzwUQFwV3BWehXPy7c143HDA8D3PBKuMEC4Cf2u8jZt4eGtDLcessY/Rs3XkaNzjkpHzUJ1uoCKkNm6Le8360X/6+jVVkHOW6JNGb5qLFehxdV0D97Rsmu8XcTMIZhx8jh+RCdy0UDGXzn8GDOQbkjOc7UzBJ2RwXHXCLjDsZBUmzlpCfhZWL+EeqXD7iXKvHU2CNPbQb4zw3miSNh28pFtuULf0A+ToTbiMjbHEuvsFetbONcM1csab5rbPJIDlwTWtVUpNSbwPh0C1ywhidk/+RrupgWwtOYlwYFvanMCtntDwA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nR2wCpekwqxGyJwyhjQ1yTY22NDvdYwTz1F3+iODqYU=;
- b=mqY+b2ch24PRsoxVB4uwlWcU4aCsB6U714zmrmiCduvWz6sBM3uvFLwlsN+xiojmcHomhAhGDjYjOqM4+Pox9DV5hE3kipFyEdVA2BEe6Wbu0HZ9n9fGUwgvDQTpOQjZK53ff84hJfndRYKdJdDmq1T7+YwIfX7A56LDW0783Bm1wgQMg99DivKVTMKjnKRXShhjC1vWWJ6Lm/NLi28Wmjhffbd0EuQ+kpUDShMCLBFfcStgAjS6CsHrZYpv+56lqFxFMEvyJ2ciTswHWoLW5qsIZJKORFuvKAT4bq7BWdOuLlVVClUs5bu1EYfiW2e+Enm201vZa4qnknrb6eDwsQ==
+ bh=6qfE2G+RISYsahYFHxOrRrHyoPFLOUnUZsc/mtKPAsE=;
+ b=nzgNgWjO5OOx/71xkHInqacJABvHYLcyO0bFXqqqmEPxtR9PYIDjt4DLCXhA/lkdh3BIUl+O3ZkLXkm4dqzhaS755WU1EXIla3//l23eihIYIn0BKLvz4ebjSxDRwHN2/DpBMaJOirNDKI/zdMVyU1L2L4F7bS+EQRandtMiJLHvA0sjcWBqx/ajvnWZOai/HtBafl/nHXPJTMr6XBEUhUAohax83/iyQtENrRGA6lzBLB9Bq10CpdfbMar8Y3Kc/QuiR9OzN/AlDo2a1HhSAfiz4QJvhTaV6elZ6VN+HhbJzvMQIEBqRVJ4FkSsgfjCcrp+V0nxrptiP8P78bElxw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=windriver.com; dmarc=pass action=none
  header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
 Received: from DS0PR11MB6399.namprd11.prod.outlook.com (2603:10b6:8:c8::5) by
  SJ2PR11MB8403.namprd11.prod.outlook.com (2603:10b6:a03:53c::8) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8251.15; Tue, 10 Dec 2024 13:13:19 +0000
+ 15.20.8251.15; Tue, 10 Dec 2024 13:13:20 +0000
 Received: from DS0PR11MB6399.namprd11.prod.outlook.com
  ([fe80::2b44:787c:e7ee:bfad]) by DS0PR11MB6399.namprd11.prod.outlook.com
  ([fe80::2b44:787c:e7ee:bfad%7]) with mapi id 15.20.8207.017; Tue, 10 Dec 2024
- 13:13:18 +0000
+ 13:13:20 +0000
 From: Yi Zhao <yi.zhao@windriver.com>
 To: yocto-patches@lists.yoctoproject.org, joe@deserted.net,
         joe.macdonald@siemens.com
-Subject: [meta-selinux][PATCH 3/4] libsemanage: fix build with swig 4.3
-Date: Tue, 10 Dec 2024 21:12:55 +0800
-Message-Id: <20241210131256.2393366-3-yi.zhao@windriver.com>
+Subject: [meta-selinux][PATCH 4/4] SELinux-FAQ: drop debug-tweaks
+Date: Tue, 10 Dec 2024 21:12:56 +0800
+Message-Id: <20241210131256.2393366-4-yi.zhao@windriver.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20241210131256.2393366-1-yi.zhao@windriver.com>
 References: <20241210131256.2393366-1-yi.zhao@windriver.com>
@@ -51,83 +51,82 @@ X-ClientProxiedBy: SGXP274CA0006.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::18)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DS0PR11MB6399:EE_|SJ2PR11MB8403:EE_
-X-MS-Office365-Filtering-Correlation-Id: 01843d4a-36e1-4b7c-5ae8-08dd191c69e4
+X-MS-Office365-Filtering-Correlation-Id: 6bc4fa53-11b0-4d64-9a28-08dd191c6b02
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
 	BCL:0;ARA:13230040|52116014|376014|1800799024|366016|38350700014;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?/SF5TzPDHai/TcudUhfKpW58b0vzTc52OtYjbQO1IXWgDDdQUIJgA4BwEDCq?=
- =?us-ascii?Q?Zv4gq8mU1sMJhdUElStXCQQuunsUVARddj5R/o9N86RF6d8uLb2IMkJyu5M9?=
- =?us-ascii?Q?GuFVvr4E4V85noy9DG0Z2c4HwCGTEu4U2njeQ02gFmOmI6a1pLa8XnSOjN7w?=
- =?us-ascii?Q?S8JOxArSq6KN2/x0V3p9iXfUaGm8/mpTKr7pRo0tyV1bl9aYQnYgE46luczi?=
- =?us-ascii?Q?r+uET0i5dRG3/vMQYons830A75SfajihrZcoBIgGM0HFfgRI7NPAhBlZAtxA?=
- =?us-ascii?Q?2j4z/rXQ1ZDtlUkSFMUOJcflSdEP8Bi6XsA5DUSOUKmoWZ/ieKRJG6/MY5QP?=
- =?us-ascii?Q?+0hHJhZMOkLpildgK//C/TdonWm0+kS7nQQoEQBVRxcgHo7gzz5QA+slAE09?=
- =?us-ascii?Q?z/fVnV168u9IYwD55qltDaAEr8ldsJaNvXvTlEkz0higr7IgvTKN6Lv41nRA?=
- =?us-ascii?Q?tOGESxMfUq57wQNxQhDaoS575ScdSHqBej8m8tAlqolr13entFSagrgOnPhS?=
- =?us-ascii?Q?6CjhHRAuTzKOyQntdBEvc2zGGGYziEwav3Fm/ZhNLjNJ+zcK+DwxtKz7JaKQ?=
- =?us-ascii?Q?xnLShCbjO/5MDm2MBeJJ5bozuM1GJTsqp0ieVBzIqCcjxmpCPKqwayUnQw+c?=
- =?us-ascii?Q?eRm4Tf1yTpiSbUZWnr8oe1Aa40R/k4JjoBeL53op0rX5Ko4AB4GWXhI8TgIR?=
- =?us-ascii?Q?8Kw1qRMSUh8McIdEtV4da9kzyFeVCHI2q5kV+zS3tAmd8kkVV3dF7iTnEf51?=
- =?us-ascii?Q?qNM/T4D181++l+AG1R/G69XHLjgvl8IrNHs/g1mCfXMOu5W8kPK8RekZ9M0+?=
- =?us-ascii?Q?4yczjDODiKwlejoQ7E6E9qq9WKwNhdOlsPH2Tbw1EIqWA4xrkftdWLuwe5Ay?=
- =?us-ascii?Q?kR52nzxRB4ifJ/jfzBwLZr3sN0Oh2gHAAev2sRpWTeOjzerYtQ/WOjN45fPJ?=
- =?us-ascii?Q?6yVpEKntHIXcEqqNz1DZbnoY9dAg7C7ycpmMTQrL8CRRI3a4S9dzaRi6GaUO?=
- =?us-ascii?Q?QFbWugn492vm6SamqTHjxijnMLjwrwDDT0n5ZqAshvw45E/HIXjGPDRSHJ61?=
- =?us-ascii?Q?NIiMnziEo4k3zMfbfT8C1V82Y34nnA4OFWPKMlGN9P63KLJp8yl8wb9+j/ot?=
- =?us-ascii?Q?lVRBpIipGr8M2BnLKGpr4pECcpl83+SyEb2TNpvgzE205gaUBePtNal+ADnR?=
- =?us-ascii?Q?py+ibAGp+FzRDGt8Jr05/5kxiAGFTtbfHSRJksePQRitHUVPoW8LZlLxkMgT?=
- =?us-ascii?Q?XLwCzY7fqnerhCUzp1bVpFxcztS8L2cH63y/RuPqShBKbIdOJCNKcW9zIKdJ?=
- =?us-ascii?Q?tnh2SsCxGW3b1C4ltW3vH/layPggXgQFw1Rrg0Spqd30LNY/0WgdFMaJiJqe?=
- =?us-ascii?Q?70quG16kSVOipU/KZrzYgWMFC1BoFZD0TABJRKtDth/19AFVxHvUIUzYFT6g?=
- =?us-ascii?Q?oUI9dsjKFTQ=3D?=
+	=?us-ascii?Q?gX1t9jk7JScrrSqfaZQPfUlHj0q5XgPH5Gjg3zrz2ToPXLV2yiNrY+F3ZmID?=
+ =?us-ascii?Q?DQH0vaLsEuXfTcGHQQoyp5j6LPYdfGmd/T++QM+JzSL5TrlAG2rhfw9sihFf?=
+ =?us-ascii?Q?Zaz9cTmaGCT0VwlxTAn3gNcjDPDJpz1Asd0KeTTQkd3SIOBJY5B5rWK4mDct?=
+ =?us-ascii?Q?9oO+o4ermBlNaSxm76q0kPLRmdQedUMhoccDc9Lg+ghjNFRbCGicQfAy0Cd6?=
+ =?us-ascii?Q?bTDEcVWetuEH4xZMDU6ljHc7B2b4AMZHmPZnBiZqde1t2V43L5CqqA7Nh5eJ?=
+ =?us-ascii?Q?ETDdVoIkMTS8FCb+3Vfu81QyCjNWYkB4qGDrgkQZqPRaqgP7gzF1K+FF3f5k?=
+ =?us-ascii?Q?rhn+dKh+2eboqYeYPegS/tn9kYygGN2zNgRbBV7ZUJliB0BA6VRzZlC/3gTA?=
+ =?us-ascii?Q?C9ZS+SWXJ5XB7C/CkivVEohklfqkNzlTHHPuWae4l5d1Rlukz9EI4h3wE9n9?=
+ =?us-ascii?Q?tsXxG1z5haewbGscRJWMEYL81lnYXb4DHV4zsrxy/iSmeDVl7cjV3s0PBSqK?=
+ =?us-ascii?Q?WzHMTUZh+QtzHs26NOuaZ8It6UUamiPCuBnGJeDEbI+iYeCaNU/W5ZmrjMai?=
+ =?us-ascii?Q?IZ4ljIEN8worLsYW2aMAoG0rt1BA0MBjxR2/K7ZpXgy3cJLWryz77cnKV6UK?=
+ =?us-ascii?Q?EX61Clh0XoOre91RIpJ1pDjvDryGzNzZ8u1chRdardqwMbTMMRfmFeq56SVc?=
+ =?us-ascii?Q?tgsoTnOpXvp0nVJ9yMT0K7OfcMKUydmP6/rRRXcuporjn3tQQ63arwPkIU+Q?=
+ =?us-ascii?Q?babxhTIp9jXvenpBQkCHqiXbBEqqqRsssHv2cgGS4Q6PPCzyxtXeDc5XmzCI?=
+ =?us-ascii?Q?+3qFwFslVBo8uzR6yCibwqx6sMK9tRUA8Z9W8K2ZvVKKLF4r8a1y1aza3/vi?=
+ =?us-ascii?Q?Dvr18WR/2ZLn98CMzAtpGLpItwfa56GbLn0VTCEgpzeX5phVJkGlNb8bD795?=
+ =?us-ascii?Q?PLR6HhtTZDAloWUQk2GkAmh+bJwPZy1iFn2C5aFLDJTA250iUj6ulzNAFOPe?=
+ =?us-ascii?Q?PnnWw20E4vNHTrfZM1bBE+wAX1yMEwnqPAiENqqI7zzoddwGTKL2tu90d/RP?=
+ =?us-ascii?Q?li46/nESYKBkP7tNPSpNSo71ixzX/CVuofDS4lGFZQ3FWki0AEuJwpwvysov?=
+ =?us-ascii?Q?+BveaevY4E3LJrF64qI7hKeAVS68QxY/XSKiVdQI5FL49MEzi07lW5NfO6ba?=
+ =?us-ascii?Q?b9UYxSLNtt9uMnmE3L2wYroCE2Any0ipT4xPwp+ljj7F7iRn65zvJD2xv/wX?=
+ =?us-ascii?Q?xgQv2c1Q3W3k1uRfK29KIuQxTRXf6z99JbA1diKAeZ4cHd0zyvQs2MIssUQw?=
+ =?us-ascii?Q?DDNsMQlrk7SHy8IUh3sJWBSyEeMvgk8/aIFsL9H2KLGNfEbc0/9xz4AaHRPO?=
+ =?us-ascii?Q?IVGzW0zjFpmRs0LE1+6U4KTdw4b9GMCPXMVCDoLJh+qjfNT4ew=3D=3D?=
 X-Forefront-Antispam-Report: 
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB6399.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?aCaxy3woWcoxvuZGTCIoDTk6J6074RHdx0pGadm0egmBlJ9Qd1zUfdsQbNVF?=
- =?us-ascii?Q?kyi+hRm8eRMtG+5RSfiFq9pENXIqrWbOudD5ddNgnk7TfdHptcVBcbTZelMZ?=
- =?us-ascii?Q?Y9GXMosUM9u7seWbLWwBv1t4LOVd2cZ5y8Mz8v3acHbWUJt49TvB0iO0vr1m?=
- =?us-ascii?Q?yv3ZthGLO1An4kB+STyP/l5LFGcW4GDCZpwKGxuTbJvhvjuHnDbE43iIHFMG?=
- =?us-ascii?Q?KIk3osr0+rpk+OrbFXoTfsitBA5wIOnn+92WjkzSAwaO6WkNMBOHZrejIiaL?=
- =?us-ascii?Q?VLOVorhMWoumHy8vkRT7qy9igO/eVTMSnzgiLSbxctkVx3zo8LF10KvONtQm?=
- =?us-ascii?Q?w/QufET6bbhZaKYw/W+wKWMWagdWd2iOf7ZcWR2f5F3gWdhzSlM45dqmM6ti?=
- =?us-ascii?Q?yaIgbzeAo14Ii48RzMjR6GpBypkZ9CG46YMlPHr40QXjaBj0yhNx1LyLGV3h?=
- =?us-ascii?Q?+n70dsEkEi9tD5zrkLIYxH0Vf1aqZIEUXMVT7ZFbJebFfYHDxDADGID6C7ZG?=
- =?us-ascii?Q?M8aDTPryl8Qgi7U9i5J/U/j4wmXJ2wgZLh3CzWGdi+OFa8PLGIwy6tTbGO+K?=
- =?us-ascii?Q?PohmbmldNmAA4fu/ucWud/fjXZMGuvDP/H/o3Ley4fMvDECsMhHRZy+EKri0?=
- =?us-ascii?Q?5r8yYkm9tcAgUP5eVTkWnTp+XB6oHZFs5WhUQFHIoC2URJiS+NLICfF1aK2B?=
- =?us-ascii?Q?u/g1TLa7BAmnGA4CVEAyG5DrNTxhw3URWDVy9jIUPcH7Ij7chvskQT98jXLG?=
- =?us-ascii?Q?rU+4q3lKEwB+0TJx97JQxmAQTKFs8DNbr7CZlx2LG1i1A4oAwwZsVETBIqN9?=
- =?us-ascii?Q?Pi8H6LeL22vFqYmkUeGY01hshp+jiaOxSUQwz9Wk0fqCbspXEbf6vm6LunLG?=
- =?us-ascii?Q?Fw0STpWsG8oOjxxesaFoF/ElQVDfmuxxDS8sBE6u2nmIN8s2NK/Znd4tZXgI?=
- =?us-ascii?Q?bhYllisOEr2IjTN9OdmZEcQCpGxFZPgsecn5hfVlBeNSQovVXSasFTS1YOml?=
- =?us-ascii?Q?ii/BfIhj7BxO3g43mgsx6C+c5hxgWXGAMSztw0oI82XKOWUxpNwRILeAcCDz?=
- =?us-ascii?Q?8jqfB4O8fJvalvgMrysibZTeyYWY9OpsG+WKru367kpf25c2+rjFl/BSyf7a?=
- =?us-ascii?Q?1BaYboyftbilL/6m1mKDSuqjLeXc8avMoThHIBQT2NYC+VJJp2zgb9yk9GVy?=
- =?us-ascii?Q?VRT1VYQ7LL2DeRjY2nlZKCBlFh0WKhN9Qmtcn4WjmQCLBsTLkPDcWy2UEdxu?=
- =?us-ascii?Q?C+1XGT5Sypb2BhmNOvjrG073N2J7jFzhaR4pSG2f3FQPfm6zrnzYa1Ebq1zP?=
- =?us-ascii?Q?7QFT7+VXBx9GvRs/rHLYlFj8EyHYXFGcN4vHLBJZBpzC9BwOYx6kDHkdA4Ct?=
- =?us-ascii?Q?lys3izEdZbzB6CgnF76X1gv93VVeFFoAItjB9+eGYkizrj9J4ynK3lf6ayZS?=
- =?us-ascii?Q?3DXasNHAIJChfzFhedWKkZUAHwudbqaYEado+CmXqjyYxgTvBDSr3hExg86a?=
- =?us-ascii?Q?5VVVYPfPsu7+bICPkqFyGUkHj3t34QRc1rHQiuWRuxukezf6IvmDV/2klc61?=
- =?us-ascii?Q?Rm+F72wrdfFrTAfFIVjC9GCRX8OgwUHSzkXaBK85?=
+	=?us-ascii?Q?S/y8zrCHv2//ljQf55zDv3j0hC+hDy6/xTAY4VnaoFk1dYrr/jbR1mQH4Dvh?=
+ =?us-ascii?Q?bfltzfKFwOOVEwm2VDinKYGRXxyRctqRjQxYAkxh8E2afQfmfHs6eYalOMLq?=
+ =?us-ascii?Q?u0Ij3JSoMgH6SLnbLIJ4cryvs1I6LkV6U1tSFcFyDRuHbdaQEeeuAZ2OLBsr?=
+ =?us-ascii?Q?65qx3911v6Ca1nt434DGzfDlnYkI6yjVuqe9MMa89eq6ddgdIWjYDyjZJ4Bd?=
+ =?us-ascii?Q?TUUcetWQzyhFRTxv4YoOvg6bUr1Hkd4FNHcIyvfXXC8nGLcfCnjd1kpzQKzt?=
+ =?us-ascii?Q?atbhpSQF82OrO7qs2pUmQ4X+hSk/rm99f5Y6Rjvg/XLkLgguiEL+f9e0pTqZ?=
+ =?us-ascii?Q?jjXS6YQfvUDIsQOqazOGpTPXVNEOw+QxkiUS6K3bWK65lCa0XF7nnjRrI4eo?=
+ =?us-ascii?Q?M+vRrEC8C3cNKmiTEQnIjkmzuDb+SireAJuUQEFtVvjY1Iaqqzn7IqyCA1xO?=
+ =?us-ascii?Q?7p/WHf8BRRejP9whu5qwJ4xXNwmpdgBlQf1GDILqs1oe2d8C7fma/8qrHQWY?=
+ =?us-ascii?Q?cHGzZXe8DfFAiGroj2Ak9DZmNT5sVQxWGRguvuPxDGkWIDWyi4/n7p9Vhj7i?=
+ =?us-ascii?Q?7blJw0K2OlQXzFPtKzSzCRmEGQgUdAS4dYi4W8wtqEN/yrevUgDOBAaHHFTY?=
+ =?us-ascii?Q?HEYE4HWGltVn73sVKdDn3vH+j0nUGz/T8UVXEhrKJWlTyObU1n5QhQh5y4xj?=
+ =?us-ascii?Q?6ERf3WH+G6XS9F9muqjVgzLlVrveL3DPJZbo9XZkuXQ+f/ltBenQj5klfhRh?=
+ =?us-ascii?Q?Q3lCa6d/lZl/UrLjvFhag7GdhH42yURantO6cREEafwocKJoYLpqx+NBl9xZ?=
+ =?us-ascii?Q?+6og0/Zq3E62YrZXDdrDEQ0OvKLcZSwOgP9n+2cAAMQfeaG6VHMyE2rc945r?=
+ =?us-ascii?Q?UxrvP3AyDptiPCMGDJO61iNIuPpGcpNR7tt9u5S3KhE8QfLJBRdxWv0z/Ux5?=
+ =?us-ascii?Q?uyQhEGO1/co3v1uno16NA14CPqqWVzBCF/wl/rNEVpayyZcBeSTB1FqPvnuF?=
+ =?us-ascii?Q?VXV+83BPjuUbI7zb4BKrvAw8FpLyWzDr90sliOVhxoz/vuMwPXrLSHQonv1W?=
+ =?us-ascii?Q?VF6e5n2Njff/ERS0jV5PcdCzva+REhA+KZGMlVzYZ3yunDPFy+qUVJzcKimE?=
+ =?us-ascii?Q?0wwy92pIlqLL/mRUh8GOjkO+l619T1Cv2zndESITJitVMw4zITvZxYm+5sK5?=
+ =?us-ascii?Q?1tIshz8RZHui2iAuzCpQUQusiMwc6HVakBFLud7EPf+O1Xh4tGmp7jInYVRv?=
+ =?us-ascii?Q?h68rJK7og5/DpvtuYBWsG+imrVoMGaT9xs+crSumeZp6mtlgQaDvljlaW55N?=
+ =?us-ascii?Q?7Chv3g6f/Wclr+aB1M6/IArJ6TDEetsfPlg82ik17iisveyoz4h+XgXEbi/u?=
+ =?us-ascii?Q?/R7ukgA426s4GIIjpyYvXQ+VWmAuvDsG4dLdc9+C+pqgZwFZk+xV3lxW1Nsz?=
+ =?us-ascii?Q?gKwPjSvbGF/FMmz6VaD7DqrNaaI1Qc/FeZeG55distsDgAIiW++HVKctKzmg?=
+ =?us-ascii?Q?0cx0hiVhdjwa3oPZXKRXkQkzPXCZXEX8e5dgBO5SnCRD8VtDBexdlIpKZvMM?=
+ =?us-ascii?Q?qfMlvLyESV+QBtBkvtOuK7jH5CZCWSB8IhSMEF70?=
 X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 01843d4a-36e1-4b7c-5ae8-08dd191c69e4
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6bc4fa53-11b0-4d64-9a28-08dd191c6b02
 X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB6399.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Dec 2024 13:13:18.4857
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Dec 2024 13:13:20.5533
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9nvIHzdcuEmiC6PmhdKtQuUxuCOHWj7S4NL35Pc/0elE+tlmQ1Nejbv1OJ11+m04eH1I3CCKXdJiA8FfkF/4aA==
+X-MS-Exchange-CrossTenant-UserPrincipalName: PLG7HMpohJJUQ4v6578KpGMXpdrL8DMC+bCcf3Rqbid8A4jCguhAEV26oN4uLOFleqyj4tU6Y0sZOpudqD9Ntw==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB8403
-X-Proofpoint-GUID: YkM9OAJvQz3Lwk1jAnKqZcpzUd-Q3Uzb
-X-Proofpoint-ORIG-GUID: YkM9OAJvQz3Lwk1jAnKqZcpzUd-Q3Uzb
-X-Authority-Analysis: v=2.4 cv=Y/UCsgeN c=1 sm=1 tr=0 ts=67583e73 cx=c_pps a=98TgpmV4a5moxWevO5qy4g==:117 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=RZcAm9yDv7YA:10 a=bRTqI5nwn0kA:10 a=NEAV23lmAAAA:8
- a=t7CeM3EgAAAA:8 a=20KFwNOVAAAA:8 a=pGLkceISAAAA:8 a=_a8wGqok5QfCM0N-IlwA:9 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-GUID: JcOciisHlnPa8JJOw6VbA1fm-CoAOzH4
+X-Proofpoint-ORIG-GUID: JcOciisHlnPa8JJOw6VbA1fm-CoAOzH4
+X-Authority-Analysis: v=2.4 cv=Y/UCsgeN c=1 sm=1 tr=0 ts=67583e73 cx=c_pps a=98TgpmV4a5moxWevO5qy4g==:117 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=RZcAm9yDv7YA:10 a=bRTqI5nwn0kA:10 a=t7CeM3EgAAAA:8
+ a=_Nka1VkREi1miMkW4ZsA:9 a=FdTzh2GWekK77mhwV6Dw:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2024-12-10_06,2024-12-10_01,2024-11-22_01
@@ -140,459 +139,29 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Tue, 10 Dec 2024 13:13:29 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/880
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/879
 
-Backport a patch to fix build with swig 4.3[1].
-
-[1] https://github.com/SELinuxProject/selinux/issues/447
+The debug-tweaks IMAGE_FEATURE has been removed in oe-core. Replace it
+with allow-empty-password.
 
 Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
 ---
- ...semanage-fix-swig-bindings-for-4.3.0.patch | 422 ++++++++++++++++++
- recipes-security/selinux/libsemanage_3.7.bb   |   1 +
- 2 files changed, 423 insertions(+)
- create mode 100644 recipes-security/selinux/libsemanage/0001-libsemanage-fix-swig-bindings-for-4.3.0.patch
+ SELinux-FAQ | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/recipes-security/selinux/libsemanage/0001-libsemanage-fix-swig-bindings-for-4.3.0.patch b/recipes-security/selinux/libsemanage/0001-libsemanage-fix-swig-bindings-for-4.3.0.patch
-new file mode 100644
-index 0000000..cba77c9
---- /dev/null
-+++ b/recipes-security/selinux/libsemanage/0001-libsemanage-fix-swig-bindings-for-4.3.0.patch
-@@ -0,0 +1,422 @@
-+From e38815d7b44cac435195c82a54d2bf2517bc4b1a Mon Sep 17 00:00:00 2001
-+From: Petr Lautrbach <lautrbach@redhat.com>
-+Date: Wed, 16 Oct 2024 20:48:12 +0200
-+Subject: [PATCH] libsemanage: fix swig bindings for 4.3.0
-+
-+https://github.com/swig/swig/blob/master/CHANGES.current
-+
-+"[Python] #2907 Fix returning null from functions with output
-+parameters.  Ensures OUTPUT and INOUT typemaps are handled
-+consistently wrt return type.
-+
-+New declaration of SWIG_Python_AppendOutput is now:
-+
-+  SWIG_Python_AppendOutput(PyObject* result, PyObject* obj, int is_void);
-+
-+The 3rd parameter is new and the new $isvoid special variable
-+should be passed to it, indicating whether or not the wrapped
-+function returns void.
-+
-+Also consider replacing with:
-+
-+  SWIG_AppendOutput(PyObject* result, PyObject* obj);
-+
-+which calls SWIG_Python_AppendOutput with same parameters but adding $isvoid
-+for final parameter."
-+
-+Fixes: https://github.com/SELinuxProject/selinux/issues/447
-+
-+Suggested-by: Jitka Plesnikova <jplesnik@redhat.com>
-+Signed-off-by: Petr Lautrbach <lautrbach@redhat.com>
-+Acked-by: James Carter <jwcart2@gmail.com>
-+
-+Upstream-Status: Backport
-+[https://github.com/SELinuxProject/selinux/commit/e38815d7b44cac435195c82a54d2bf2517bc4b1a]
-+
-+Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
-+---
-+ src/semanageswig_python.i | 64 +++++++++++++--------------
-+ src/semanageswig_ruby.i   | 32 +++++++-------
-+ 2 files changed, 48 insertions(+), 48 deletions(-)
-+
-+diff --git a/src/semanageswig_python.i b/src/semanageswig_python.i
-+index 5f011396..0e27424f 100644
-+--- a/src/semanageswig_python.i
-++++ b/src/semanageswig_python.i
-+@@ -111,7 +111,7 @@
-+ }
-+ 
-+ %typemap(argout) char** {
-+-	$result = SWIG_Python_AppendOutput($result, SWIG_FromCharPtr(*$1));
-++	$result = SWIG_AppendOutput($result, SWIG_FromCharPtr(*$1));
-+ 	free(*$1);
-+ }
-+ 
-+@@ -134,7 +134,7 @@
-+                         	NULL, NULL, &plist) < 0)
-+ 				$result = SWIG_From_int(STATUS_ERR);
-+ 			else
-+-				$result = SWIG_Python_AppendOutput($result, plist);
-++				$result = SWIG_AppendOutput($result, plist);
-+ 		}
-+ 	}
-+ }
-+@@ -148,7 +148,7 @@
-+ }
-+ 
-+ %typemap(argout) semanage_module_info_t ** {
-+-	$result = SWIG_Python_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++	$result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ /** module key typemaps **/
-+@@ -160,7 +160,7 @@
-+ }
-+ 
-+ %typemap(argout) semanage_module_key_t ** {
-+-	$result = SWIG_Python_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++	$result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ /** context typemaps **/
-+@@ -172,7 +172,7 @@
-+ }
-+ 
-+ %typemap(argout) semanage_context_t** {
-+-	$result = SWIG_Python_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++	$result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ /** boolean typemaps **/
-+@@ -197,7 +197,7 @@
-+ 				(void (*) (void*)) &semanage_bool_free, &plist) < 0)
-+ 				$result = SWIG_From_int(STATUS_ERR);
-+ 			else
-+-		   	        $result = SWIG_Python_AppendOutput($result, plist);
-++				$result = SWIG_AppendOutput($result, plist);
-+ 		}
-+ 	}
-+ }
-+@@ -207,11 +207,11 @@
-+ }
-+ 
-+ %typemap(argout) semanage_bool_t ** {
-+-	$result = SWIG_Python_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++	$result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ %typemap(argout) semanage_bool_key_t ** {
-+-	$result = SWIG_Python_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++	$result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ %typemap(in, numinputs=0) semanage_bool_key_t **(semanage_bool_key_t *temp=NULL) {
-+@@ -240,7 +240,7 @@
-+ 				(void (*) (void*)) &semanage_fcontext_free, &plist) < 0)
-+ 				$result = SWIG_From_int(STATUS_ERR);
-+ 			else
-+-				$result = SWIG_Python_AppendOutput($result, plist);
-++				$result = SWIG_AppendOutput($result, plist);
-+ 		}
-+ 	}
-+ }
-+@@ -250,11 +250,11 @@
-+ }
-+ 
-+ %typemap(argout) semanage_fcontext_t ** {
-+-	$result = SWIG_Python_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++	$result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ %typemap(argout) semanage_fcontext_key_t ** {
-+-        $result = SWIG_Python_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++        $result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ %typemap(in, numinputs=0) semanage_fcontext_key_t **(semanage_fcontext_key_t *temp=NULL) {
-+@@ -284,7 +284,7 @@
-+ 				(void (*) (void*)) &semanage_iface_free, &plist) < 0)
-+ 				$result = SWIG_From_int(STATUS_ERR);
-+ 			else
-+-				$result = SWIG_Python_AppendOutput($result, plist);
-++				$result = SWIG_AppendOutput($result, plist);
-+ 		}
-+ 	}
-+ }
-+@@ -294,11 +294,11 @@
-+ }
-+ 
-+ %typemap(argout) semanage_iface_t ** {
-+-	$result = SWIG_Python_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++	$result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ %typemap(argout) semanage_iface_key_t ** {
-+-	$result = SWIG_Python_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++	$result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ %typemap(in, numinputs=0) semanage_iface_key_t **(semanage_iface_key_t *temp=NULL) {
-+@@ -328,7 +328,7 @@
-+ 				(void (*) (void*)) &semanage_seuser_free, &plist) < 0)
-+ 				$result = SWIG_From_int(STATUS_ERR);
-+ 			else
-+-				$result = SWIG_Python_AppendOutput($result, plist);
-++				$result = SWIG_AppendOutput($result, plist);
-+ 		}
-+ 	}
-+ }
-+@@ -338,11 +338,11 @@
-+ }
-+ 
-+ %typemap(argout) semanage_seuser_t ** {
-+-	$result = SWIG_Python_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++	$result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ %typemap(argout) semanage_seuser_key_t ** {
-+-	$result = SWIG_Python_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++	$result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ %typemap(in, numinputs=0) semanage_seuser_key_t **(semanage_seuser_key_t *temp=NULL) {
-+@@ -371,7 +371,7 @@
-+ 				(void (*) (void*)) &semanage_user_free, &plist) < 0)
-+ 				$result = SWIG_From_int(STATUS_ERR);
-+ 			else
-+-				$result = SWIG_Python_AppendOutput($result, plist);
-++				$result = SWIG_AppendOutput($result, plist);
-+ 		}
-+ 	}
-+ }
-+@@ -381,11 +381,11 @@
-+ }
-+ 
-+ %typemap(argout) semanage_user_t ** {
-+-	$result = SWIG_Python_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++	$result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ %typemap(argout) semanage_user_key_t ** {
-+-	$result = SWIG_Python_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++	$result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ %typemap(in, numinputs=0) semanage_user_key_t **(semanage_user_key_t *temp=NULL) {
-+@@ -414,7 +414,7 @@
-+ 				(void (*) (void*)) &semanage_port_free, &plist) < 0)
-+ 				$result = SWIG_From_int(STATUS_ERR);
-+ 			else
-+-				$result = SWIG_Python_AppendOutput($result, plist);
-++				$result = SWIG_AppendOutput($result, plist);
-+ 		}
-+ 	}
-+ }
-+@@ -424,11 +424,11 @@
-+ }
-+ 
-+ %typemap(argout) semanage_port_t ** {
-+-	$result = SWIG_Python_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++	$result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ %typemap(argout) semanage_port_key_t ** {
-+-	$result = SWIG_Python_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++	$result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ %typemap(in, numinputs=0) semanage_port_key_t **(semanage_port_key_t *temp=NULL) {
-+@@ -457,7 +457,7 @@
-+ 				(void (*) (void*)) &semanage_ibpkey_free, &plist) < 0)
-+ 				$result = SWIG_From_int(STATUS_ERR);
-+ 			else
-+-				$result = SWIG_Python_AppendOutput($result, plist);
-++				$result = SWIG_AppendOutput($result, plist);
-+ 		}
-+ 	}
-+ }
-+@@ -467,11 +467,11 @@
-+ }
-+ 
-+ %typemap(argout) semanage_ibpkey_t ** {
-+-	$result = SWIG_Python_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++	$result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ %typemap(argout) semanage_ibpkey_key_t ** {
-+-	$result = SWIG_Python_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++	$result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ %typemap(in, numinputs=0) semanage_ibpkey_key_t **(semanage_ibpkey_key_t *temp=NULL) {
-+@@ -500,7 +500,7 @@
-+ 				(void (*) (void*)) &semanage_ibendport_free, &plist) < 0)
-+ 				$result = SWIG_From_int(STATUS_ERR);
-+ 			else
-+-				$result = SWIG_Python_AppendOutput($result, plist);
-++				$result = SWIG_AppendOutput($result, plist);
-+ 		}
-+ 	}
-+ }
-+@@ -510,11 +510,11 @@
-+ }
-+ 
-+ %typemap(argout) semanage_ibendport_t ** {
-+-	$result = SWIG_Python_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++	$result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ %typemap(argout) semanage_ibendport_key_t ** {
-+-	$result = SWIG_Python_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++	$result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ %typemap(in, numinputs=0) semanage_ibendport_key_t **(semanage_ibendport_key_t *temp=NULL) {
-+@@ -543,7 +543,7 @@
-+ 				(void (*) (void*)) &semanage_node_free, &plist) < 0)
-+ 				$result = SWIG_From_int(STATUS_ERR);
-+ 			else
-+-				$result = SWIG_Python_AppendOutput($result, plist);
-++				$result = SWIG_AppendOutput($result, plist);
-+ 		}
-+ 	}
-+ }
-+@@ -553,12 +553,12 @@
-+ }
-+ 
-+ %typemap(argout) semanage_node_t ** {
-+-	$result = SWIG_Python_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++	$result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ 
-+ %typemap(argout) semanage_node_key_t ** {
-+-	$result = SWIG_Python_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++	$result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ %typemap(in, numinputs=0) semanage_node_key_t **(semanage_node_key_t *temp=NULL) {
-+diff --git a/src/semanageswig_ruby.i b/src/semanageswig_ruby.i
-+index e030e4ae..9010b545 100644
-+--- a/src/semanageswig_ruby.i
-++++ b/src/semanageswig_ruby.i
-+@@ -38,7 +38,7 @@
-+ }
-+ 
-+ %typemap(argout) semanage_module_info_t ** {
-+-        $result = SWIG_Ruby_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++        $result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ /** context typemaps **/
-+@@ -50,7 +50,7 @@
-+ }
-+ 
-+ %typemap(argout) semanage_context_t** {
-+-        $result = SWIG_Ruby_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++        $result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ /** boolean typemaps **/
-+@@ -66,11 +66,11 @@
-+ }
-+ 
-+ %typemap(argout) semanage_bool_t ** {
-+-        $result = SWIG_Ruby_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++        $result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ %typemap(argout) semanage_bool_key_t ** {
-+-        $result = SWIG_Ruby_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++        $result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ %typemap(in, numinputs=0) semanage_bool_key_t **(semanage_bool_key_t *temp=NULL) {
-+@@ -90,11 +90,11 @@
-+ }
-+ 
-+ %typemap(argout) semanage_fcontext_t ** {
-+-        $result = SWIG_Ruby_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++        $result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ %typemap(argout) semanage_fcontext_key_t ** {
-+-        $result = SWIG_Ruby_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++        $result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ %typemap(in, numinputs=0) semanage_fcontext_key_t **(semanage_fcontext_key_t *temp=NULL) {
-+@@ -114,11 +114,11 @@
-+ }
-+ 
-+ %typemap(argout) semanage_iface_t ** {
-+-        $result = SWIG_Ruby_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++        $result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ %typemap(argout) semanage_iface_key_t ** {
-+-        $result = SWIG_Ruby_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++        $result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ %typemap(in, numinputs=0) semanage_iface_key_t **(semanage_iface_key_t *temp=NULL) {
-+@@ -138,11 +138,11 @@
-+ }
-+ 
-+ %typemap(argout) semanage_seuser_t ** {
-+-        $result = SWIG_Ruby_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++        $result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ %typemap(argout) semanage_seuser_key_t ** {
-+-        $result = SWIG_Ruby_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++        $result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ %typemap(in, numinputs=0) semanage_seuser_key_t **(semanage_seuser_key_t *temp=NULL) {
-+@@ -162,11 +162,11 @@
-+ }
-+ 
-+ %typemap(argout) semanage_user_t ** {
-+-        $result = SWIG_Ruby_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++        $result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ %typemap(argout) semanage_user_key_t ** {
-+-        $result = SWIG_Ruby_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++        $result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ %typemap(in, numinputs=0) semanage_user_key_t **(semanage_user_key_t *temp=NULL) {
-+@@ -186,11 +186,11 @@
-+ }
-+ 
-+ %typemap(argout) semanage_port_t ** {
-+-        $result = SWIG_Ruby_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++        $result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ %typemap(argout) semanage_port_key_t ** {
-+-        $result = SWIG_Ruby_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++        $result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ %typemap(in, numinputs=0) semanage_port_key_t **(semanage_port_key_t *temp=NULL) {
-+@@ -210,12 +210,12 @@
-+ }
-+ 
-+ %typemap(argout) semanage_node_t ** {
-+-        $result = SWIG_Ruby_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++        $result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ 
-+ %typemap(argout) semanage_node_key_t ** {
-+-        $result = SWIG_Ruby_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-++        $result = SWIG_AppendOutput($result, SWIG_NewPointerObj(*$1, $*1_descriptor, 0));
-+ }
-+ 
-+ %typemap(in, numinputs=0) semanage_node_key_t **(semanage_node_key_t *temp=NULL) {
-+-- 
-+2.25.1
-+
-diff --git a/recipes-security/selinux/libsemanage_3.7.bb b/recipes-security/selinux/libsemanage_3.7.bb
-index 93eb870..7e6c91f 100644
---- a/recipes-security/selinux/libsemanage_3.7.bb
-+++ b/recipes-security/selinux/libsemanage_3.7.bb
-@@ -14,6 +14,7 @@ inherit lib_package python3native
- SRC_URI += "file://libsemanage-Fix-execve-segfaults-on-Ubuntu.patch \
-             file://libsemanage-allow-to-disable-audit-support.patch \
-             file://libsemanage-disable-expand-check-on-policy-load.patch \
-+            file://0001-libsemanage-fix-swig-bindings-for-4.3.0.patch \
-            "
+diff --git a/SELinux-FAQ b/SELinux-FAQ
+index 2ae6649..21387a1 100644
+--- a/SELinux-FAQ
++++ b/SELinux-FAQ
+@@ -146,7 +146,7 @@ Please check "PermitEmptyPasswords" in /etc/ssh/sshd_config. If it is set to
+ "yes", set to "no" then restart sshd. That's because pam_selinux module does 
+ not allow sshd to set PermitEmptyPasswords to "yes".
  
- DEPENDS = "libsepol libselinux python3 bison-native swig-native"
+-Note: If both IMAGE_FEATURES debug-tweaks ssh-server-openssh are enabled, this 
++Note: If both IMAGE_FEATURES allow-empty-password and ssh-server-openssh are enabled, this
+ "PermitEmptyPasswords" will be set to "yes" by default for Poky images.
+ 
+ 
 -- 
 2.25.1
 
