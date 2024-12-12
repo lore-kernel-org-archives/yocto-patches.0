@@ -2,148 +2,193 @@ Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C8E1E7717F
-	for <webhook@archiver.kernel.org>; Thu, 12 Dec 2024 19:57:48 +0000 (UTC)
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
- by mx.groups.io with SMTP id smtpd.web10.390.1734033458869417819
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 445A1E77180
+	for <webhook@archiver.kernel.org>; Thu, 12 Dec 2024 20:11:48 +0000 (UTC)
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+ by mx.groups.io with SMTP id smtpd.web10.712.1734034302991309945
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 12 Dec 2024 11:57:39 -0800
+ Thu, 12 Dec 2024 12:11:43 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=fn15o+Fk;
- spf=pass (domain: gmail.com, ip: 209.85.222.176, mailfrom: twoerner@gmail.com)
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7b6eeff1fdfso77706785a.2
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 12 Dec 2024 11:57:38 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=BPTydADn;
+ spf=pass (domain: gmail.com, ip: 209.85.160.179, mailfrom: twoerner@gmail.com)
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-46772a0f8fbso8905191cf.3
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 12 Dec 2024 12:11:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734033457; x=1734638257; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1734034301; x=1734639101; darn=lists.yoctoproject.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2ahBA3hKjDAXs3BEnyfW/tdHk16Mj1yZa8e67I1k8Pc=;
-        b=fn15o+FkKiv3B1lgYephAWfD+On2GfYmzvaXlnHoq2eBFKLjiSByvVu0f0/FQUBjfm
-         Es7qGrZpcn/Pk2kpH4Mj1SHmHV1wZJiLtiY91ysnWZgjnxeTVS6pqD8Slb12XKioXNEp
-         nWBsZ5E3AktarpwbFzMvjKB9WbLQg8vnxTAfEXLfOhW197JkDPNcuaM2cGSihl0tuXlS
-         4n4Fh1CFYEgxQoCC14RMqRKEc09qEAZPTFUrJVTieW/iWcP5HoqcA0+oAgGhhLmJk2ge
-         aXo/0YL8UkXos5IanqIHZ+TwnMNZtJRDRh+U4oYxgIe+x+mpBBA2J52U5CbGOP4om3M8
-         GvPw==
+        bh=VgsMSr1sPvSQdNaROaSv9c9Kn7hgBxyA3sqBI4C/Shw=;
+        b=BPTydADnkMsOwAUWui7n+rTCzHnxhll9kiz6Dii8flrRRIK5nN9Zz2xskhNfes+61O
+         WJxfgR6oxGTgjFCSLbjOh8j6N0xqnuy+zVa4MyXaCqz3Z3wKmnOauMZExJgcInTKwGjl
+         p/uBppaJY8RPR+DqxhbkrOCABbBwVu/y3YgRk2t42/i09+kaH+DuLnU8QbwKzJH2LIVE
+         K3AGy/KdhsvI7EGlyNrO/5qEmyw8xhMW5feCiA8a5eKsqsAAtjyDpBn2yUDuqvDUCbc7
+         dAl98HQiIsHsFK6MFFV5djX9/fMXzFaEIKGoHEILFhlija9DJ/87zK9eQvZSuqZJ3eSq
+         1jIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734033457; x=1734638257;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1734034301; x=1734639101;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2ahBA3hKjDAXs3BEnyfW/tdHk16Mj1yZa8e67I1k8Pc=;
-        b=eZM6AfFTvFuEUaEv6i3aljgxBI2NJasxhGAC0csCvxS5ulasZ5PMk8eOVRJczCTKkp
-         DhGIsNK18Sn4lexlVakz+2gql67EVTOocdoGO3hGebWq17p36nVvNDGZouebjYexymmG
-         a2Xf/ehRGWXvqQyMdCMwZ4JOiyf+WHmu0LUMx462aA27GCRFECR5XMDBEQjzfWkaWLAt
-         hU7rOzk/IRHBdd/7D9NPCeZrnaGBU3mR604bsOcbIEHpyL2DnonwIwFz0YuyIXrKaDhX
-         Hx4R4Q+qLyFaUmVRhT0BShPkDjwKDjmBinc+4yf066mVUirzryoU9H+cCl2nuxneV2Pc
-         4k3g==
-X-Gm-Message-State: AOJu0YziddckKv06P0TB2UftTXE53NEwXDWeCJLrue5hCsHS3DTdMaPi
-	3uH+9s2HEAPLigYjcTZheq+iZMqB/NmUHUIrV9dr27oOEPP3EBA0H9VIvA==
-X-Gm-Gg: ASbGnct1rXcFbH9SABbciOSt+xFAVBhePtGPY349DnwotmV2JHUy8U1w83aOYydpdFa
-	lbfFEXXbxpxaGeCgtIn86vPYvgiH4Jxbr70t19myJlQppY1EUXoToS/qn3sgz4hx2a+Ey/ODbxX
-	XPMyD6tycPB+/7UoJiKz/wmbGInYn1XMsCQ/y/LNNQpIey4NLVqNSrRX5pDD3DDStq3leyYsgdK
-	UoV2eRtv2UCFPC0dkBzejXHcq1jDHnjwv27Gy9jbYAfxnNM0N9a7O0ZizqNK6eQpWTbPWckEtzy
-	XklNC78dFWpAsorMavTwvCZ9
-X-Google-Smtp-Source: AGHT+IHe8mmu2zB0ZzL/6N7zWtCuCGzK6BlbUbjPSwRkg9I11Rf3ajGlWOehQ6hGtkaCCWHMm1y+LA==
-X-Received: by 2002:a05:620a:7186:b0:7b6:d6e5:ac63 with SMTP id af79cd13be357-7b6f88df0fbmr239791685a.12.1734033457091;
-        Thu, 12 Dec 2024 11:57:37 -0800 (PST)
-Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b6f16ead8fsm133406185a.39.2024.12.12.11.57.34
+        bh=VgsMSr1sPvSQdNaROaSv9c9Kn7hgBxyA3sqBI4C/Shw=;
+        b=N293DzJARr5B2FOR8t6cZk711UPuro+Tmrupo9FXP1bTyToRjvs31L+j6azXktptOm
+         SEIL4apQo/ooLVnUmU7L0YTMBqIkgeYP34lHhNQ5QjvvV9G1bmy7h0fGURPFn2kZqPmr
+         PyO2HV3OcKz/RkWupT/76CJ/JsuUswg0k9/F+Ht41giKNvWQAwQIE/C53/l+AA4SYwv2
+         C6s34OBhZH6y4ZLR/fe751hSXNuHWjoOT+j9e6GmJCV/F33pCptHXPZ3mq+vHH7P1qSm
+         b1tX2svB4p2WFeZ7B5MZuweGAxr43Fm/1Bizk12DkrOqM0BQg+zUEwPSKXBPW6WV2qlF
+         BV5w==
+X-Gm-Message-State: AOJu0YwCpHvz9B80YCqC/5ESUDHQfTeDHEkviMt1sY3iglxgtIDYXqFt
+	Ilv27Yv/yrzdSi3npmCMfAvra1lvmugvdFkpMadjhUtZnFkwy+OfgyrZUw==
+X-Gm-Gg: ASbGncuhmxJD3AwUnxzV4RmdDx724SuUbh7D53qLPYVmfBeJzH2cVqWB86CJRqvEtuK
+	S9mFK9AR2nz3uupmTq8EKXp4MBxA8UEgH4geUPR3HPhmnuUcPdIIlDQv4F5x54kruH80ysHi+Ax
+	FiGeMzD56DP2+yhW/eNZMYD4HQNGpw4eZ4UV8wrp/KVZgSzF+4XqrMgS13M5wSc62IiaghXdkEB
+	mRauEnRc7A3/r0KDWEZBnGwg5XbXJKc730ESSV4VVkdntbeHqs+a4xK8jJcTj6rsWcacCmYT7Ml
+	dVpLgl9R
+X-Google-Smtp-Source: AGHT+IE4WnJZ5syp4F5tPnz5mJuHS7FZGP5iWCiwxlDRcU0ElOlsZZwRk4x1fnCw5azvkL9mbee3Ow==
+X-Received: by 2002:a05:6214:509e:b0:6cb:d1ae:27a6 with SMTP id 6a1803df08f44-6db0f789448mr24652296d6.24.1734034300736;
+        Thu, 12 Dec 2024 12:11:40 -0800 (PST)
+Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d931956e66sm26089916d6.12.2024.12.12.12.11.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 11:57:35 -0800 (PST)
+        Thu, 12 Dec 2024 12:11:39 -0800 (PST)
+Date: Thu, 12 Dec 2024 15:11:37 -0500
 From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Oleksii Kurochko <oleksii.kurochko@gmail.com>
-Subject: [PATCH 3/3] radxa-zero-3: switch to yocto-dev kernel
-Date: Thu, 12 Dec 2024 14:57:18 -0500
-Message-ID: <20241212195718.25203-3-twoerner@gmail.com>
-X-Mailer: git-send-email 2.44.0.501.g19981daefd7c
-In-Reply-To: <20241212195718.25203-1-twoerner@gmail.com>
-References: <20241212195718.25203-1-twoerner@gmail.com>
+Cc: Quentin Schulz <quentin.schulz@cherry.de>
+Subject: Re: [yocto-patches] [meta-rockchip PATCH v2 0/2] bsp: rkbin: bump to
+ latest commit in master
+Message-ID: <20241212201137.GA26940@localhost>
+References: <20241128-rkbin-bump-v2-0-a194385aad7a@cherry.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241128-rkbin-bump-v2-0-a194385aad7a@cherry.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 12 Dec 2024 19:57:48 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/890
+ <yocto-patches@lists.yoctoproject.org>; Thu, 12 Dec 2024 20:11:48 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/891
 
-The radxa-zero-3{e|w} devices are not supported in the current yocto kernel,
-but they are supported in the yocto-dev kernel. Switch to yocto-dev until
-support is available in the yocto kernel.
+On Thu 2024-11-28 @ 04:58:48 PM, Quentin Schulz via lists.yoctoproject.org wrote:
+> We've been hit by random RCU stalls, system hangs or resets on some (not
+> all) of our RK3588-based products running some old BL31/DDR init
+> binaries.
+> 
+> Upgrading to latest commit in master branch seems to mitigate those
+> issues, so let's do that.
+> 
+> Only build tested.
 
-Reported-by: Oleksii Kurochko <oleksii.kurochko@gmail.com>
-Signed-off-by: Trevor Woerner <twoerner@gmail.com>
----
- conf/machine/include/radxa-zero-3.inc         |  2 +-
- ...xt_%.bbappend => linux-yocto-dev.bbappend} |  0
- .../linux/linux-torvalds-next_git.bb          | 25 -------------------
- recipes-kernel/linux/linux-yocto-dev.bbappend |  2 ++
- 4 files changed, 3 insertions(+), 26 deletions(-)
- rename dynamic-layers/rk-rauc-demo/recipes-kernel/linux/{linux-torvalds-next_%.bbappend => linux-yocto-dev.bbappend} (100%)
- delete mode 100644 recipes-kernel/linux/linux-torvalds-next_git.bb
+I have finally gotten around to testing before and after images of your
+patchset. This was complicated by the fact that the u-boot and kernel for the
+radxa-zero-3 stopped working recently, so I needed updates for that in order
+to test everything.
 
-diff --git a/conf/machine/include/radxa-zero-3.inc b/conf/machine/include/radxa-zero-3.inc
-index 1c6f972c1e31..b351afae8c0f 100644
---- a/conf/machine/include/radxa-zero-3.inc
-+++ b/conf/machine/include/radxa-zero-3.inc
-@@ -2,7 +2,7 @@ MACHINEOVERRIDES =. "radxa-zero-3:"
- 
- require conf/machine/include/rk3566.inc
- 
--PREFERRED_PROVIDER_virtual/kernel = "linux-torvalds-next"
-+PREFERRED_PROVIDER_virtual/kernel = "linux-yocto-dev"
- MACHINE_EXTRA_RRECOMMENDS += "kernel-modules"
- 
- UBOOT_MACHINE = "radxa-zero-3-rk3566_defconfig"
-diff --git a/dynamic-layers/rk-rauc-demo/recipes-kernel/linux/linux-torvalds-next_%.bbappend b/dynamic-layers/rk-rauc-demo/recipes-kernel/linux/linux-yocto-dev.bbappend
-similarity index 100%
-rename from dynamic-layers/rk-rauc-demo/recipes-kernel/linux/linux-torvalds-next_%.bbappend
-rename to dynamic-layers/rk-rauc-demo/recipes-kernel/linux/linux-yocto-dev.bbappend
-diff --git a/recipes-kernel/linux/linux-torvalds-next_git.bb b/recipes-kernel/linux/linux-torvalds-next_git.bb
-deleted file mode 100644
-index b961b1408f09..000000000000
---- a/recipes-kernel/linux/linux-torvalds-next_git.bb
-+++ /dev/null
-@@ -1,25 +0,0 @@
--FILESEXTRAPATHS:prepend := "${THISDIR}/linux-yocto-dev:"
--
--DESCRIPTION = "Linux Kernel"
--SECTION = "kernel"
--LICENSE = "GPL-2.0-only"
--LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
--
--ERROR_QA:remove = "buildpaths"
--DEFAULT_PREFERENCE = "-1"
--COMPATIBLE_MACHINE = "^$"
--COMPATIBLE_MACHINE:radxa-zero-3 = "radxa-zero-3"
--
--LINUX_VERSION = "6.11-rc6"
--KERNEL_VERSION_SANITY_SKIP = "1"
--PV = "${LINUX_VERSION}+git${SRCPV}"
--SRC_URI = " \
--	git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git;protocol=https;nobranch=1 \
--	file://rockchip-kmeta;type=kmeta;name=rockchip-kmeta;destsuffix=rockchip-kmeta \
--	"
--# this is tag 'next-20240904'
--SRCREV = "fdadd93817f124fd0ea6ef251d4a1068b7feceba"
--
--inherit kernel
--inherit kernel-yocto
--require recipes-kernel/linux/linux-yocto.inc
-diff --git a/recipes-kernel/linux/linux-yocto-dev.bbappend b/recipes-kernel/linux/linux-yocto-dev.bbappend
-index b6a63d7b7b29..f738d1357d6c 100644
---- a/recipes-kernel/linux/linux-yocto-dev.bbappend
-+++ b/recipes-kernel/linux/linux-yocto-dev.bbappend
-@@ -1,5 +1,7 @@
- FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
- 
- COMPATIBLE_MACHINE:orangepi-5-plus = "orangepi-5-plus"
-+COMPATIBLE_MACHINE:radxa-zero-3 = "radxa-zero-3"
- 
- SRC_URI:append:orangepi-5-plus = " file://rockchip-kmeta;type=kmeta;name=rockchip-kmeta;destsuffix=rockchip-kmeta"
-+SRC_URI:append:radxa-zero-3 = " file://rockchip-kmeta;type=kmeta;name=rockchip-kmeta;destsuffix=rockchip-kmeta"
--- 
-2.44.0.478.g7774cfed6261
+I was able to confirm all of the changes work on hardware except for the
+rk3308.
 
+	in order to test		i have a
+	^^^^^^^^^^^^^^^^		^^^^^^^^
+	rk3308				rock-pi-s
+	rk3566				radxa-zero-3e
+	rk3568				rock-3a
+	rk3588s				rock-5a
+	rk3588				rock-5b
+
+In all cases but the rk3308 I have nice before and after captures, clearly
+showing the old version numbers then the new version numbers.
+
+In the case of the rk3308 this patch set is moving from v2.07 to v2.10, but
+here's what the before looks like on the rock-pi-s:
+
+
+	DDR Version V1.26
+	REGFB: 0x00000032, 0x00000032
+	In
+	589MHz
+	DDR3
+	 Col=10 Bank=8 Row=14 Size=256MB
+	msch:1
+	Returning to boot ROM...
+
+	U-Boot SPL 2024.04 (Apr 03 2024 - 02:37:23 +0000)
+	Trying to boot from MMC2
+
+
+	U-Boot 2024.04 (Apr 03 2024 - 02:37:23 +0000)
+
+	Model: Radxa ROCK Pi S
+	DRAM:  256 MiB (effective 254 MiB)
+	Core:  281 devices, 21 uclasses, devicetree: separate
+	MMC:   mmc@ff480000: 1, mmc@ff490000: 0, mmc@ff4a0000: 2
+	Loading Environment from MMC... OK
+
+and the after:
+
+
+	DDR Version V1.26
+	REGFB: 0x00000032, 0x00000033
+	In
+	589MHz
+	DDR3
+	 Col=10 Bank=8 Row=14 Size=256MB
+	msch:1
+	Returning to boot ROM...
+
+	U-Boot SPL 2024.10-dirty (Oct 07 2024 - 14:54:35 +0000)
+	Trying to boot from MMC2
+	## Checking hash(es) for config config-1 ... OK
+	## Checking hash(es) for Image atf-1 ... sha256+ OK
+	## Checking hash(es) for Image u-boot ... sha256+ OK
+	## Checking hash(es) for Image fdt-1 ... sha256+ OK
+	## Checking hash(es) for Image atf-2 ... sha256+ OK
+
+
+	U-Boot 2024.10-dirty (Oct 07 2024 - 14:54:35 +0000)
+
+	Model: Radxa ROCK Pi S
+	DRAM:  256 MiB (effective 254 MiB)
+	Core:  293 devices, 30 uclasses, devicetree: separate
+	MMC:   mmc@ff480000: 1, mmc@ff490000: 0, mmc@ff4a0000: 2
+	Loading Environment from MMC... Reading from MMC(1)... OK
+
+So I'm not sure what's going on here. But I'm happy with the patchset
+otherwise.
+
+> Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+> ---
+> Changes in v2:
+> - use version and filename variables instead of using glob pattern for
+>   path matching the DDR init binaries,
+> - Link to v1: https://lore.kernel.org/r/20241127-rkbin-bump-v1-0-b90b6c04a88f@cherry.de
+> 
+> ---
+> Quentin Schulz (2):
+>       bsp: rkbin: rkbin-ddr: use version and file variables for path matching
+>       bsp: rkbin: bump to latest commit in master branch
+> 
+>  README                                      | 15 +++++++++++++++
+>  recipes-bsp/rkbin/rockchip-rkbin-ddr_git.bb | 20 ++++++++++++++++----
+>  recipes-bsp/rkbin/rockchip-rkbin.inc        |  4 ++--
+>  3 files changed, 33 insertions(+), 6 deletions(-)
+> ---
+> base-commit: 3a8be31581651ced6c27f5bad1333064e513a8f0
+> change-id: 20241127-rkbin-bump-4cdfb23aa49f
+> 
+> Best regards,
+> -- 
+> Quentin Schulz <quentin.schulz@cherry.de>
+> 
+> 
+> 
+> -=-=-=-=-=-=-=-=-=-=-=-
+> Links: You receive all messages sent to this group.
+> View/Reply Online (#857): https://lists.yoctoproject.org/g/yocto-patches/message/857
+> Mute This Topic: https://lists.yoctoproject.org/mt/109823578/900817
+> Group Owner: yocto-patches+owner@lists.yoctoproject.org
+> Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/13168745/900817/63955952/xyzzy [twoerner@gmail.com]
+> -=-=-=-=-=-=-=-=-=-=-=-
+> 
+> 
 
