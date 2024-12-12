@@ -1,135 +1,171 @@
-Return-Path: <twoerner@gmail.com>
+Return-Path: <oleksii.kurochko@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5298E7717D
-	for <webhook@archiver.kernel.org>; Wed, 11 Dec 2024 20:07:25 +0000 (UTC)
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
- by mx.groups.io with SMTP id smtpd.web11.4131.1733947641704930939
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8A32E77180
+	for <webhook@archiver.kernel.org>; Thu, 12 Dec 2024 09:21:59 +0000 (UTC)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+ by mx.groups.io with SMTP id smtpd.web11.16036.1733995312522436785
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 11 Dec 2024 12:07:21 -0800
+ Thu, 12 Dec 2024 01:21:52 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=Dk0juLhv;
- spf=pass (domain: gmail.com, ip: 209.85.166.170, mailfrom: twoerner@gmail.com)
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3a9cdcec53fso28810595ab.1
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 11 Dec 2024 12:07:21 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=eQm72i+Q;
+ spf=pass (domain: gmail.com, ip: 209.85.208.171, mailfrom: oleksii.kurochko@gmail.com)
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-300392cc4caso3508371fa.3
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 12 Dec 2024 01:21:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733947641; x=1734552441; darn=lists.yoctoproject.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MND3QxDwC4JVfzii8WbMaMBSX8Zt/SAtOMEWtelw1kg=;
-        b=Dk0juLhvEqc1jLD6+/ev8cDYtfLLZghVp7BAC3niOvGRndxxWhedu0gRS6931CbDia
-         twgw2iGYMbgeESK4b0AZartviJ32az42liDUGwM8/+LJsUc0iWzY1olcz9rdbsnIvGKF
-         B0igQFz8kRaCW7EKh40X1mvjx1Tcw450j6HG2qhTWBVMLZHvAltbFaVTCPi9ELH498Dl
-         H7v4OvVOfZRwBFOvjoWX8M9XXcNpSfcyDKcRyeE/xoSH5KawS3i2vn8EToehH3bwwe2+
-         GxPjsHwwDVl00pcxN1wT6XKYOVWUyTLLIBclp80ELR40GUXLJjsNFUzkFKUG1mV/SgWT
-         DUaw==
+        d=gmail.com; s=20230601; t=1733995310; x=1734600110; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Im4MtcDj3tt2N7cPiQTgtu5bFowKXlwi+3VMPVXwmk8=;
+        b=eQm72i+Q9CWCzMKfBbFANyBbqw+IgbvB7P+T0P+5etYpJ2uGoVhTx0Kbn9Vu9/jNMp
+         LuAdCXSSGMpYu5hti6MGfZXq2umhhkZOAeBvOSvqchq9x6Qn0q6GpN75q5V2WVYQE+bm
+         vZU85Bw3MY6onZ2prDfktcc9jXxKpjwjig3YZn34g368P5ukpVPCKFyXoa+S2GlJ/Cir
+         cvBbTROSbJrQz7EJXF6QNEYKnZvCJt+AIMi5VZDGKl/mq+2W6bPUDjqFCfUxO+hoc1bu
+         i3VnYjPocEG49Ic4CmNk6IDYlh6O+YgYFGP/0XjP6S5LSGxaD5Fpr0i484eL2/7XmU9a
+         AUSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733947641; x=1734552441;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MND3QxDwC4JVfzii8WbMaMBSX8Zt/SAtOMEWtelw1kg=;
-        b=K3aZeOiOWgpW+TQku7SP7dF0knSFspBBHb9jFTvCUPWfUaI4tcnLD9zgZoiw5qGZW2
-         lutgJaJdxhz5I/MLCqo3AUbEoKbzduSHzk5SsKAYV30uRH9mtHm960jLi2QTWytElbxW
-         DkMBQb+AA56ERZhFHfVNUrkFzIa899znpVlyWoFz49T6yLzPilwTkZ9TeY8NOsoArxMO
-         D8cOQHsjN5FHRiYrTppI6sx6J6UwAleXu+hlmklZ3iIH/JfYzQhGhHBu/2RukV0S6Cqg
-         FCDFYkqkzwqP9ZJQFbJu5Mq/96lwvAl7sYmmXuaSH1uT094/lQ7wKAB4soHm5twwjI57
-         m1vQ==
-X-Gm-Message-State: AOJu0YxKdxzIHOGmP8W7qxM3qY6MRLFSQIxOmwOTcvumGax0Hcv4qdo7
-	1AUigpIW965aIvRSQpTSeEe1Daxyotz/bQwXL8GcYfKSQamKmXZb
-X-Gm-Gg: ASbGncvNt3KWn+oac8+/VVyTi3bq1PC0YUMdy1rrbqvT1i/wlzod+XjYIFMcOoDTXBA
-	4tPDdx3DHeFlfoJ0RjsiQ8w+GDcJDkWhdUw3TNEkhZEO7cnu2NtlMBUuZMUujvEsL4yRMwtwuPR
-	IkmWqemXMbEwNb6wP/cRtV9HP+2Wcxs9vWVleNGemeGZRGxuUMGtFEZBlSy5QVYrcZgnmnn2yJj
-	5gxzQaNgOeHujHNb2tE4wrd8y6sV+wyTxR9RSpoAPTrYINktdh2mSzTte+lnX0ZOusG/NKHKCxU
-	aMf8NA==
-X-Google-Smtp-Source: AGHT+IGgFMAQFYLos2Lejywqj7b2iL5hmKU2aHCLqcjHdArSCP6tgkfGTkJaN8n91i9g9pEKQ2O/yw==
-X-Received: by 2002:a05:6e02:1a2f:b0:3a7:81a4:a557 with SMTP id e9e14a558f8ab-3ac4bfc1543mr9391085ab.24.1733947640911;
-        Wed, 11 Dec 2024 12:07:20 -0800 (PST)
-Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a817752b3dsm31043045ab.66.2024.12.11.12.07.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 12:07:18 -0800 (PST)
-Date: Wed, 11 Dec 2024 15:07:15 -0500
-From: Trevor Woerner <twoerner@gmail.com>
-To: Quentin Schulz <quentin.schulz@cherry.de>
-Cc: yocto-patches@lists.yoctoproject.org,
-	Oleksii Kurochko <oleksii.kurochko@gmail.com>
+        d=1e100.net; s=20230601; t=1733995310; x=1734600110;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Im4MtcDj3tt2N7cPiQTgtu5bFowKXlwi+3VMPVXwmk8=;
+        b=vvlCghYruidliZi8c+EkcrtQI+xdRUSJ94+qxdGtlptuhvMQy4HO0y5lNr073d/bLh
+         5wOlN2hU+gnzwhNXHT/WdCOoK2K+LR2nA0QtMKmDtAJfuTv8mLDYHdBusaPcYPD4NMtJ
+         rwIsSZH1TbQZSKDBKPUwr86BhM9VyeSpmSp6WlW7oB9soFZ2fALOyw2K1GTPI8xaPO2k
+         dd7pkG49UZ+hpR1Z4CiqixaBZVpqX5XLm8nPexOxO9bYJowVSClrmVMaRRSeCR4XeBNo
+         XWrfAfZUbC7YGLAkDsdmo45IFYzXC+N4YwLCxgGwdhxjk6EN3SVCF7ek+PEQy8sEMuSw
+         7Dlw==
+X-Forwarded-Encrypted: i=1; AJvYcCWD3mz48mEm4Jtlmq2lV3GwB0d+fQvRCf/3CqJ/Hu/3VQ11xfkozm434bkHq5gSCLKetkYCjgWnWU95mzRa@lists.yoctoproject.org
+X-Gm-Message-State: AOJu0YwvTjpelHS3+iY/JgBOKBi62hzYwgbIfO1RYAa1ikQJJhTTTlHb
+	2VfYqHRYT8k1kbzTeZ7MwAOEmGag0CS7rBZA7OvZPy3YMv96zPSQ
+X-Gm-Gg: ASbGnctGhw/6casgBR4VoqqsuiV4M96zkfR/S/ZvZvOFKUpBtPdfdXp8HuN2aG+qbQi
+	p943ad3W5jv5kZ0ypYJJocmv0aoxq5/2OM6ViitIxfe1zVd2t/AAohF983sO7R4M+mcPkesLnhY
+	aSk1YHNEwPSCRfexGeB29R0fOJmbPkyuY7GV9dOvVq4TaG0SivtVM99Nwj1sEvxxgdqTR+YtZsh
+	CrPWjqOghrZxOF5mfLSEdIHyjkPn/W2UcohZPqYyMLwlwRL1eo4+e8b7ieOnUBkiX375w==
+X-Google-Smtp-Source: AGHT+IHHlEGifr3xddVO55ezHHqcXZIx7EZCIf/6g/ryJH27sZu4zCXGCbFymjqjaKRdP9BWVKAngw==
+X-Received: by 2002:a05:651c:1503:b0:302:3355:f756 with SMTP id 38308e7fff4ca-30249e9df19mr7590821fa.35.1733995310065;
+        Thu, 12 Dec 2024 01:21:50 -0800 (PST)
+Received: from [192.168.219.191] ([94.75.70.14])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-300398d55e6sm17254501fa.107.2024.12.12.01.21.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Dec 2024 01:21:49 -0800 (PST)
+Message-ID: <b7b4200d-7771-43af-9bc5-9e2ea5dd2ce3@gmail.com>
+Date: Thu, 12 Dec 2024 10:21:49 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
 Subject: Re: [yocto-patches] [meta-rockchip][PATCH] u-boot: Update SRCREV for
  radxa-zero-3
-Message-ID: <20241211200715.GA12655@localhost>
+To: Quentin Schulz <quentin.schulz@cherry.de>,
+ yocto-patches@lists.yoctoproject.org
+Cc: Trevor Woerner <twoerner@gmail.com>
 References: <20241207162339.10677-1-oleksii.kurochko@gmail.com>
  <4e53cd8a-0607-4816-830b-ae2ed81e5875@cherry.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <4e53cd8a-0607-4816-830b-ae2ed81e5875@cherry.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+ <de2a1774-cdad-440b-be04-7eed6207c741@gmail.com>
+ <94a3c953-0c60-4d28-a496-51f94ec6c501@cherry.de>
+ <ff3ea231-b311-4058-ae7c-484b6d2d6feb@gmail.com>
+ <9a6b9edc-b8a3-466f-9f20-391544773555@cherry.de>
+Content-Language: en-US
+From: Oleksii Kurochko <oleksii.kurochko@gmail.com>
+In-Reply-To: <9a6b9edc-b8a3-466f-9f20-391544773555@cherry.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 11 Dec 2024 20:07:25 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/886
+ <yocto-patches@lists.yoctoproject.org>; Thu, 12 Dec 2024 09:21:59 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/887
 
-On Mon 2024-12-09 @ 04:22:47 PM, Quentin Schulz wrote:
+Hi Quentin,
+
+On 12/11/24 10:25 AM, Quentin Schulz wrote:
 > Hi Oleksii,
-> 
-> On 12/7/24 5:23 PM, Oleksii Kurochko via lists.yoctoproject.org wrote:
-> > [You don't often get email from oleksii.kurochko=gmail.com@lists.yoctoproject.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
-> > 
-> > During the fetch stage of u-boot for radxa-zero-3, the following issue occurs:
-> >    Unable to find revision 8cdf606e616baa36751f3b4adcfaefc781126c8c in branch
-> >    rk3xxx-2024.07 even from upstream
-> > 
-> > This happens because the hash of the head commit for the rk3xxx-2024.07 branch
-> > is different from the one specified in the recipe.
-> > This can be verified by running the following command in
-> > <yocto>/build/tmp/work/radxa_zero_3e-poky-linux/u-boot/2024.01/git:
-> >    $ git rev-list -n 1 rk3xxx-2024.07
-> >      2e2ae1fb69a25217640bfe2fb9abaf9f4fbacead
-> > 
-> > Update the SRCREV to the hash of the current head commit corresponding to
-> > the rk3xxx-2024.07 branch.
-> > 
-> > Fixes: e0b13fe834b5("radxa-zero-3{e|w}: add")
-> > Signed-off-by: Oleksii Kurochko <oleksii.kurochko@gmail.com>
-> > ---
-> >   recipes-bsp/u-boot/u-boot_%.bbappend | 4 ++--
-> >   1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/recipes-bsp/u-boot/u-boot_%.bbappend b/recipes-bsp/u-boot/u-boot_%.bbappend
-> > index c939a48..9432e2b 100644
-> > --- a/recipes-bsp/u-boot/u-boot_%.bbappend
-> > +++ b/recipes-bsp/u-boot/u-boot_%.bbappend
-> > @@ -3,8 +3,8 @@ require u-boot-rockchip.inc
-> >   FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
-> > 
-> >   SRC_URI:radxa-zero-3 = "git://github.com/Kwiboo/u-boot-rockchip.git;protocol=https;branch=rk3xxx-2024.07;name=Kwiboo"
-> > -SRCREV:radxa-zero-3 = "8cdf606e616baa36751f3b4adcfaefc781126c8c"
-> > -SRCREV:radxa-zero-3:rk-u-boot-env = "8cdf606e616baa36751f3b4adcfaefc781126c8c"
-> > +SRCREV:radxa-zero-3 = "2e2ae1fb69a25217640bfe2fb9abaf9f4fbacead"
-> > +SRCREV:radxa-zero-3:rk-u-boot-env = "2e2ae1fb69a25217640bfe2fb9abaf9f4fbacead"
-> > 
-> 
-> Master poky now has v2024.10 and at a glance it seems the Zero 3E/W is
-> supported, so maybe we could simply ditch those overrides for master branch
-> in meta-rockchip?
+>
+> On 12/10/24 8:03 PM, Oleksii Kurochko wrote:
+>>
+>> On 12/10/24 5:37 PM, Quentin Schulz wrote:
+>>> Hi Oleksii,
+>>>
+>>> On 12/10/24 5:16 PM, Oleksii Kurochko wrote:
+>>>> Hello Quentin,
+>>>>
+>>>> On 12/9/24 4:22 PM, Quentin Schulz wrote:
+>>>>> Hi Oleksii,
+>>>>>
+>>>>> On 12/7/24 5:23 PM, Oleksii Kurochko via lists.yoctoproject.org 
+>>>>> wrote:
+> [...]
+>>>
+>>> I would recommend getting familiar with compiling and flashing the 
+>>> kernel and U-Boot manually on your RV1103 device before trying to 
+>>> compile them within Yocto, especially if there are patches to write 
+>>> for both to be able to boot upstream. For downstream (vendor kernel 
+>>> for example), that's a different topic :)
+>>
+>> I started to play with their build system ( https://github.com/ 
+>> LuckfoxTECH/luckfox-pico/blob/main/project/build.sh ) but I am not 
+>> really like it ( at least, sometimes I have to build several times to 
+>> get finally compiled something ) and it is the reason why I decided 
+>> to start Yocto port.
+>>
+>
+> 3000 lines of shell script, what could go wrong.
 
-Yes, and it looks like it's time to also ditch the overrides for rk-u-boot-env
-as well. When I added that recipe from Jonas, he warned me at that time that
-switching to upstream would be a better option, but it worked, so I left it
-for the time-being.
+Yes, I was surprised about that too... And it was one of the reason why 
+I decided to switch to Yocto and add support for Yocto instead of using 
+this script.
 
-> Other release branches should probably get a fix similar to the one in this
-> patch though. Or ideally just download the patches from that tree and apply
-> them on top of v2024.07 for styhead (we would need a new release branch for
-> that though). Scarthgap has v2024.01 so that's a bit too old to apply
-> patches destined to 2024.07. But we could maybe point to v2024.07
-> upstream+patches instead of pointing to Jonas (Kwiboo)'s personal git repo.
-> 
-> What do you think? Trevor, an opinion here?
-> 
-> Cheers,
-> Quentin
+
+>
+>> My first step is to come up with recipes which repeat the way how 
+>> they are building U-boot and kernel ( based on the source code 
+>> available in their SDK ) as I am not understand at the moment how big 
+>> difference is with upstream. Does it make sense to do in that way?
+>>
+>
+> I would still recommend to build the kernel and U-boot and whatever 
+> else this monstrosity builds that you need, outside of any build 
+> system. It'll help you figure out what is necessary to get your source 
+> to build AND be functional. Which will help you writing recipes as 
+> clean as possible.
+>
+> Building with Yocto (or any build system) may introduce unnecessary 
+> friction when developing low-level BSP code.
+>
+>> And only after that start to look at how to optimize everything and 
+>> make it looks closer to upstream.
+>>
+>
+> Not sure what you mean by "optimize everything".
+>
+> For what it's worth, Rockchip's U-Boot vendor tree is absolute garbage 
+> and I'm a strong believer that it's a waste of time to try to support 
+> your board or fix broken stuff. It is usually not TOO difficult to add 
+> support for a new SoC even porting most from Rockchip's vendor tree. 
+> You can have a look at the support for the RK3576 on the U-Boot 
+> mailing list for example, that should give you some idea of the amount 
+> of work to do and which files to pick.
+>
+> But if you have some U-Boot that can already boot a Linux kernel, then 
+> maybe start with that instead, baby steps.
+>
+> The kernel is an old Rockchip's vendor kernel based on 5.10. I believe 
+> even Rockchip doesn't maintain that anymore (they switched to 6.1 a 
+> year ago).
+>
+> U-Boot is 2017.09, from Rockchip's vendor tree as well.
+>
+> I would highly recommend getting rid of this downstream U-Boot as soon 
+> as possible. It actually took me more time to support our board on 
+> Rockchip's U-Boot than upstream for our RK3588 Jaguar and it was only 
+> half working.
+>
+> The faster you can get yourself out of Rockchip assumptions about 
+> storage medium partitioning, naming, etc... the better off you'll be.
+
+
+Thanks for recommendations! I will try to follow them.
+
+~ Oleksii
 
