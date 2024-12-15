@@ -2,183 +2,177 @@ Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51CECE7716A
-	for <webhook@archiver.kernel.org>; Sun, 15 Dec 2024 16:08:33 +0000 (UTC)
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
- by mx.groups.io with SMTP id smtpd.web11.37913.1734278907599801696
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EAAAE7716A
+	for <webhook@archiver.kernel.org>; Sun, 15 Dec 2024 16:11:03 +0000 (UTC)
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+ by mx.groups.io with SMTP id smtpd.web10.38035.1734279062288985355
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 15 Dec 2024 08:08:27 -0800
+ Sun, 15 Dec 2024 08:11:02 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=gvQzsH1G;
- spf=pass (domain: gmail.com, ip: 209.85.160.172, mailfrom: twoerner@gmail.com)
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-467a0a6c9fcso51050801cf.3
-        for <yocto-patches@lists.yoctoproject.org>; Sun, 15 Dec 2024 08:08:27 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=XvAzEykN;
+ spf=pass (domain: gmail.com, ip: 209.85.160.179, mailfrom: twoerner@gmail.com)
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-46772a0f8fbso30254641cf.3
+        for <yocto-patches@lists.yoctoproject.org>; Sun, 15 Dec 2024 08:11:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734278906; x=1734883706; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1734279061; x=1734883861; darn=lists.yoctoproject.org;
         h=user-agent:in-reply-to:content-transfer-encoding
          :content-disposition:mime-version:references:message-id:subject:cc
          :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DbsSHFIGVlBr9RvHcWqISb6zcHWZpydLCmAUWEqEpk8=;
-        b=gvQzsH1GOUC5D9Muha7LicKZV6h8sTVOGyz+ggxyw6jTvDdfaIbD26bmO2FpC3WShe
-         DYvQ6skmkFhP3fhKW94NXbJrfbC5IgUQLf8Wpf5LJAjM2jgaa1N6ia5Z+wUEPZ0qER0N
-         qfNaB9i3MoRovRvQ8yzAXgKrssTPRcd7zqlY3eJfTeTaGxNA83iNlvbCk0Geo1LZ8AsN
-         bpYs5Hif4eDDiTFE2pkdu0cdWri1Qvz9hYTSrFKoBYXEQ9a4ySnBFGRhQ9jhc7mv/u21
-         u9zZ/7oE6yOdYYAZyUe/blajGK9CSebvLB1Nl0HnNOKevrad9apRqXch3j3DEewdlx/E
-         UOWQ==
+        bh=IJj3Lf4m21AhDCcga/L3oSG5SyWfxceNwoY7rjJxozE=;
+        b=XvAzEykNbu/WPKb+4+XbWxQdiqTtnRtRJMUGHHCquZce13tqdAgLUH2l1MkYTEeeL5
+         rk2ktYfc80mc+DpDdefE6xKubPBB11S6wz9DsOVoJdwptqw/aIlipz7xC4K7N/bBNYWV
+         9UiLcYFWBbqYySlgIF/KY+xeBQ44yc09UUsnNHcUdr6bNJzExf4zWvHP+i6O/q0yeNLy
+         gsIWuJruk1ws4LjeGe64aFxqkkSpEfTAD+ug4PApt07PnJcEyGCHIkODMNla2zkQw3mz
+         ba40XgZvVBZ93DfAtHpSFFORLd5+00AW5ymRSQVO48XZ8iHosi2xP/t7shl1EkILP77U
+         Tkrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734278906; x=1734883706;
+        d=1e100.net; s=20230601; t=1734279061; x=1734883861;
         h=user-agent:in-reply-to:content-transfer-encoding
          :content-disposition:mime-version:references:message-id:subject:cc
          :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=DbsSHFIGVlBr9RvHcWqISb6zcHWZpydLCmAUWEqEpk8=;
-        b=LLTwdxexvGRO2zgC2eXCrxm4DZyjUN175/Q0kGB/AUhNnEQES3eoZ5Zhfn714nbQS5
-         +rwGZGva8KHnRefXSEDAeLinTYBulGIfI5ZX7vlx0ScgIg+iCz5w30ijk4XUK7hyy44H
-         +SzA91vPcsiU/ev5q9MEqLF9xnVgKHZkgj6TTMJnyXWmC1eRkXuajVDwnrVFJvh+z+48
-         YjqdUbqJj7f0XIMEsGkDewt4raFY97RJjMYj21B+D5SiU4URpKNQYxEoIf9sD+thqGu7
-         i7kITIvURN073JthweVFlyY6a8XiPR0bjoBp/tk3ODpQB5ReUkrN2OeWnecmdhBdbyy0
-         wzLQ==
-X-Gm-Message-State: AOJu0YzV3WiZwVwe0fHAJtlmXpaxvzNw+wj/uX41ilenBVcGY7KJF5Sk
-	Z09CIpiLZC2VUQFxX7oPSUbXWrPxehtVJMz/9BYu1CN1aZjOlz6k
-X-Gm-Gg: ASbGncu3T1Jsi85W3Y5v65Vhp/o9mGxg9As7OtiFXb9rH+e0ugsupnA22D5TMKz/6Tk
-	gqOnN9TT2E4Y1NebizVb2sbD0qc+j8WPpnajekiywiO+HK/5pBTox35sST/SVPiA4HIaYtlCIi0
-	yEITWlTyv7XxbxbevxhgB75gF4DrG97St+b1AHIQTAfoSaDB450yuaVDHfelGurdjc/nYncdeoi
-	xemCSoyPmkMNbJAJFdiPVmCtOHFXFTJoHRWjjSGBr+ThXwSu5FwnA7zg+MthFzPAuSzciUT2+fb
-	pCkVZfJC
-X-Google-Smtp-Source: AGHT+IEzyUaDFnd5CV9DS014w1RUCFLKKZ76azzKg7xrrOEmjJAs2uehQCQm499igXFE/Mg95L1tIw==
-X-Received: by 2002:a05:622a:149:b0:467:6692:c18a with SMTP id d75a77b69052e-467a574ab61mr199402621cf.13.1734278906621;
-        Sun, 15 Dec 2024 08:08:26 -0800 (PST)
+        bh=IJj3Lf4m21AhDCcga/L3oSG5SyWfxceNwoY7rjJxozE=;
+        b=C0Q7ZLXIgmiT+GP+ShYcBFCSxu/wpFGY2AJvCQVhKA1qy/niBDRKqqc+5OfEfMz147
+         LQjUbDrmHfUXiNtlIclM2sN6a4v/ja3YvtyETGzrGREk8c3DOzhDOQl5j17myLJGQmnU
+         AqWsCBnnNdbKGWfiCq6bERXRVd4i7pNOPfwMHZshWWwRtbBUQl3JTx9MP7DJKKd/DxnC
+         IuOGGSS5Ks0IPAqKg2T70/QcLVmEEv3CdlGHYweIvshBlAaUDPm3oRoXE7uFjwAiOT7U
+         Ult6a+dF92uLVRGkqO13G8jVKxJaYYpRxc96CWEpZ97R/XB/7M48Rmj9zYZYeKvX39rZ
+         y/zQ==
+X-Gm-Message-State: AOJu0YwXe5RAbvAwbQmrOKx4yMRFxryebCjXy2YpItVs8Hih1x5BWCyQ
+	b7337Ayw3qyUthvprI7VMisC479Opnf07JIRyxmC15CF0ZyTCzC6
+X-Gm-Gg: ASbGncujPnPfeo4f0yT8N44FFJ6tT7XWLBicaJYNXuCAQJoyC//CgJttToRsqPNscUC
+	MXFXkK156TiqmBpRVPB2xQ8bUpcgNcIS6eFn4wo1G40PhBZO5//UKJqGBarGMl8grDvSVzc0B1i
+	CvYVeR14dmTbdL5Y1HpN0WAHSzV9cBSLjVEdgd3uu1XuwboW7Mh2pouUe7dbPRrOwejJmgzZVPm
+	LuydlWi4cCj/50FgJjH6nd/3c4Cu04qkR7z9BteUq9Zs8r2yBd9RpsoU0C4KYRzyKBsHWB9b+1N
+	3jb3D0nD
+X-Google-Smtp-Source: AGHT+IFYg0QMF9m8hPA2ddyZAXGVRPdJRoOQH/iTKAZexLkwQrO836BCmQH08rzhXcmSg0lNkl5VIw==
+X-Received: by 2002:a05:622a:1187:b0:466:9bc4:578 with SMTP id d75a77b69052e-467a5793512mr165886541cf.22.1734279061207;
+        Sun, 15 Dec 2024 08:11:01 -0800 (PST)
 Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-467b2e83169sm18124371cf.61.2024.12.15.08.08.24
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-467b2a8447asm18379171cf.0.2024.12.15.08.10.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Dec 2024 08:08:25 -0800 (PST)
-Date: Sun, 15 Dec 2024 11:08:22 -0500
+        Sun, 15 Dec 2024 08:10:59 -0800 (PST)
+Date: Sun, 15 Dec 2024 11:10:56 -0500
 From: Trevor Woerner <twoerner@gmail.com>
 To: Oleksii Kurochko <oleksii.kurochko@gmail.com>
 Cc: yocto-patches@lists.yoctoproject.org
-Subject: Re: [yocto-patches] [PATCH 2/3] u-boot: use upstream for
- radxa-zero-3{e|w}
-Message-ID: <20241215160822.GA2090@localhost>
+Subject: Re: [PATCH 3/3] radxa-zero-3: switch to yocto-dev kernel
+Message-ID: <20241215161056.GA2613@localhost>
 References: <20241212195718.25203-1-twoerner@gmail.com>
- <20241212195718.25203-2-twoerner@gmail.com>
- <7a0bed0a-d85a-42ae-8756-77df1be8efcd@gmail.com>
- <181161B988FC6012.23577@lists.yoctoproject.org>
- <e704a2e3-0f7c-4565-8a25-837f98fdab74@gmail.com>
+ <20241212195718.25203-3-twoerner@gmail.com>
+ <ef1b59d8-a018-44fc-8f0c-e58db58380d9@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <e704a2e3-0f7c-4565-8a25-837f98fdab74@gmail.com>
+In-Reply-To: <ef1b59d8-a018-44fc-8f0c-e58db58380d9@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sun, 15 Dec 2024 16:08:33 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/912
+ <yocto-patches@lists.yoctoproject.org>; Sun, 15 Dec 2024 16:11:03 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/913
 
-On Sun 2024-12-15 @ 04:15:53 PM, Oleksii Kurochko wrote:
-> 
-> On 12/15/24 3:59 PM, Oleksii Kurochko via lists.yoctoproject.org wrote:
-> > 
-> > On 12/15/24 3:49 PM, Oleksii Kurochko wrote:
-> > > Hi Trevor,
-> > > 
-> > > On 12/12/24 8:57 PM, Trevor Woerner wrote:
-> > > > Upstream U-Boot 2024.10 (the latest release supported by Yocto)
-> > > > has support
-> > > > for radxa-zero-3{e|w}. Therefore switch away from the fork where
-> > > > the initial
-> > > > U-Boot development for this board had been added.
-> > > > 
-> > > > Reported-by: Oleksii Kurochko <oleksii.kurochko@gmail.com>
-> > > > Signed-off-by: Trevor Woerner <twoerner@gmail.com>
-> > > > ---
-> > > >   recipes-bsp/u-boot/u-boot_%.bbappend | 4 ----
-> > > >   1 file changed, 4 deletions(-)
-> > > > 
-> > > > diff --git a/recipes-bsp/u-boot/u-boot_%.bbappend
-> > > > b/recipes-bsp/u-boot/u-boot_%.bbappend
-> > > > index 06ba6d54de8e..08e1730b5d3d 100644
-> > > > --- a/recipes-bsp/u-boot/u-boot_%.bbappend
-> > > > +++ b/recipes-bsp/u-boot/u-boot_%.bbappend
-> > > > @@ -2,10 +2,6 @@ require u-boot-rockchip.inc
-> > > >     FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
-> > > >   -SRC_URI:radxa-zero-3 = "git://github.com/Kwiboo/u-boot-rockchip.git;protocol=https;branch=rk3xxx-2024.07;name=Kwiboo"
-> > > > -SRCREV:radxa-zero-3 = "8cdf606e616baa36751f3b4adcfaefc781126c8c"
-> > > > -SRCREV:radxa-zero-3:rk-u-boot-env =
-> > > > "8cdf606e616baa36751f3b4adcfaefc781126c8c"
-> > > > -
-> > > >   SRC_URI:append:rk-u-boot-env = "
-> > > > file://rockchip-enable-environment-mmc.cfg"
-> > > >     DEPENDS:append:rk3308 = " u-boot-tools-native"
-> > > I have a compilation issue after applying of this patch series:
-> > >     | scripts/kconfig/conf
-> > > --defconfig=arch/../configs/radxa-zero-3-rk3566_defconfig Kconfig
-> > >     | ***
-> > >     | *** Can't find default configuration
-> > > "arch/../configs/radxa-zero-3-rk3566_defconfig"!
-> > >     | ***
-> > >     | make[2]: *** [/home/ok/Projects/yocto/build/tmp/work/radxa_zero_3e-poky-linux/u-boot/2024.01/git/scripts/kconfig/Makefile:96:
-> > > radxa-zero-3-rk3566_defconfig] Error 1
-> > > 
-> > > 
-> > > And it seems like there is not defconfig for radxa-zero-3 at all:
-> > > 
-> > > ok@fedora:~/Projects/yocto/build/tmp/work/radxa_zero_3e-poky-linux/u-boot/2024.01/git/configs$
-> > > ls -la radxa-
-> > >     radxa-cm3-io-rk3566_defconfig  radxa-e25-rk3568_defconfig
-> > > radxa-zero2_defconfig          radxa-zero_defconfig
-> > 
-> > But it is present in the master:
-> > 
-> > https://source.denx.de/u-boot/u-boot/-/blob/master/configs/radxa-zero-3-rk3566_defconfig?ref_type=heads
-> > 
-> > 
-> > And It seems we need or cherry-pick the patch ( 5d199ad9a6b("board:
-> > rockchip: Add Radxa ZERO 3W/3E") ) or switch to newer tag:
-> >    git tag --contains 5d199ad9a6b
-> >    v2024.10
-> >    v2024.10-rc3
-> >    v2024.10-rc4
-> >    v2024.10-rc5
-> >    v2024.10-rc6
-> >    v2025.01-rc1
-> >    v2025.01-rc2
-> >    v2025.01-rc3
-> >    v2025.01-rc4
-> 
-> Sorry for flooding but I think it is needed to note that it is needed for
-> scarthgap branch.
+Is this also a styhead-specific issue?
 
-These patches are targeting master, not styhead.
-
+On Sun 2024-12-15 @ 04:10:51 PM, Oleksii Kurochko wrote:
+> Hello Trevor,
 > 
-> ~ Oleksii
+> On 12/12/24 8:57 PM, Trevor Woerner wrote:
+> > The radxa-zero-3{e|w} devices are not supported in the current yocto kernel,
+> > but they are supported in the yocto-dev kernel. Switch to yocto-dev until
+> > support is available in the yocto kernel.
+> > 
+> > Reported-by: Oleksii Kurochko<oleksii.kurochko@gmail.com>
+> > Signed-off-by: Trevor Woerner<twoerner@gmail.com>
+> > ---
+> >   conf/machine/include/radxa-zero-3.inc         |  2 +-
+> >   ...xt_%.bbappend => linux-yocto-dev.bbappend} |  0
+> >   .../linux/linux-torvalds-next_git.bb          | 25 -------------------
+> >   recipes-kernel/linux/linux-yocto-dev.bbappend |  2 ++
+> >   4 files changed, 3 insertions(+), 26 deletions(-)
+> >   rename dynamic-layers/rk-rauc-demo/recipes-kernel/linux/{linux-torvalds-next_%.bbappend => linux-yocto-dev.bbappend} (100%)
+> >   delete mode 100644 recipes-kernel/linux/linux-torvalds-next_git.bb
+> > 
+> > diff --git a/conf/machine/include/radxa-zero-3.inc b/conf/machine/include/radxa-zero-3.inc
+> > index 1c6f972c1e31..b351afae8c0f 100644
+> > --- a/conf/machine/include/radxa-zero-3.inc
+> > +++ b/conf/machine/include/radxa-zero-3.inc
+> > @@ -2,7 +2,7 @@ MACHINEOVERRIDES =. "radxa-zero-3:"
+> >   require conf/machine/include/rk3566.inc
+> > -PREFERRED_PROVIDER_virtual/kernel = "linux-torvalds-next"
+> > +PREFERRED_PROVIDER_virtual/kernel = "linux-yocto-dev"
+> >   MACHINE_EXTRA_RRECOMMENDS += "kernel-modules"
+> >   UBOOT_MACHINE = "radxa-zero-3-rk3566_defconfig"
+> > diff --git a/dynamic-layers/rk-rauc-demo/recipes-kernel/linux/linux-torvalds-next_%.bbappend b/dynamic-layers/rk-rauc-demo/recipes-kernel/linux/linux-yocto-dev.bbappend
+> > similarity index 100%
+> > rename from dynamic-layers/rk-rauc-demo/recipes-kernel/linux/linux-torvalds-next_%.bbappend
+> > rename to dynamic-layers/rk-rauc-demo/recipes-kernel/linux/linux-yocto-dev.bbappend
+> > diff --git a/recipes-kernel/linux/linux-torvalds-next_git.bb b/recipes-kernel/linux/linux-torvalds-next_git.bb
+> > deleted file mode 100644
+> > index b961b1408f09..000000000000
+> > --- a/recipes-kernel/linux/linux-torvalds-next_git.bb
+> > +++ /dev/null
+> > @@ -1,25 +0,0 @@
+> > -FILESEXTRAPATHS:prepend := "${THISDIR}/linux-yocto-dev:"
+> > -
+> > -DESCRIPTION = "Linux Kernel"
+> > -SECTION = "kernel"
+> > -LICENSE = "GPL-2.0-only"
+> > -LIC_FILES_CHKSUM ="file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
+> > -
+> > -ERROR_QA:remove = "buildpaths"
+> > -DEFAULT_PREFERENCE = "-1"
+> > -COMPATIBLE_MACHINE = "^$"
+> > -COMPATIBLE_MACHINE:radxa-zero-3 = "radxa-zero-3"
+> > -
+> > -LINUX_VERSION = "6.11-rc6"
+> > -KERNEL_VERSION_SANITY_SKIP = "1"
+> > -PV = "${LINUX_VERSION}+git${SRCPV}"
+> > -SRC_URI = " \
+> > -	git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git;protocol=https;nobranch=1 \
+> > -	file://rockchip-kmeta;type=kmeta;name=rockchip-kmeta;destsuffix=rockchip-kmeta \
+> > -	"
+> > -# this is tag 'next-20240904'
+> > -SRCREV = "fdadd93817f124fd0ea6ef251d4a1068b7feceba"
+> > -
+> > -inherit kernel
+> > -inherit kernel-yocto
+> > -require recipes-kernel/linux/linux-yocto.inc
+> > diff --git a/recipes-kernel/linux/linux-yocto-dev.bbappend b/recipes-kernel/linux/linux-yocto-dev.bbappend
+> > index b6a63d7b7b29..f738d1357d6c 100644
+> > --- a/recipes-kernel/linux/linux-yocto-dev.bbappend
+> > +++ b/recipes-kernel/linux/linux-yocto-dev.bbappend
+> > @@ -1,5 +1,7 @@
+> >   FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
+> >   COMPATIBLE_MACHINE:orangepi-5-plus = "orangepi-5-plus"
+> > +COMPATIBLE_MACHINE:radxa-zero-3 = "radxa-zero-3"
+> >      SRC_URI:append:orangepi-5-plus =" file://rockchip-kmeta;type=kmeta;name=rockchip-kmeta;destsuffix=rockchip-kmeta"
+> > +SRC_URI:append:radxa-zero-3 = "file://rockchip-kmeta;ty
+> After applying of this patch series I see the following compilation issue
+> for kernel:
+>     | ERROR: modpost: vmlinux: local symbol 'security_path_rmdir' was
+> exported
+>     | make[2]: *** [/home/ok/Projects/yocto/build/tmp/work-shared/radxa-zero-3e/kernel-source/scripts/Makefile.modpost:145:
+> vmlinux.symvers] Error 1
+>     | make[1]: *** [/home/ok/Projects/yocto/build/tmp/work-shared/radxa-zero-3e/kernel-source/Makefile:1871:
+> modpost] Error 2
 > 
-> > 
-> > ~ Oleksii
-> > 
-> > 
-> > > 
-> > > 
-> > > Should I apply something else except the current patch series?
-> > > 
-> > > 
-> > > Best regards,
-> > > 
-> > >  Oleksii
-> > > 
-> > 
-> > 
-> > -=-=-=-=-=-=-=-=-=-=-=-
-> > Links: You receive all messages sent to this group.
-> > View/Reply Online (#909):
-> > https://lists.yoctoproject.org/g/yocto-patches/message/909
-> > Mute This Topic: https://lists.yoctoproject.org/mt/110086429/7609514
-> > Group Owner: yocto-patches+owner@lists.yoctoproject.org
-> > Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/13794076/7609514/1776480132/xyzzy
-> > [oleksii.kurochko@gmail.com]
-> > -=-=-=-=-=-=-=-=-=-=-=-
-> > 
-> > 
+>     | make: *** [/home/ok/Projects/yocto/build/tmp/work-shared/radxa-zero-3e/kernel-source/Makefile:240:
+> __sub-make] Error 2
+> 
+> 
+> Should I apply something except the patches from these patch series?
+> Otherwise I think we should disable some security things ( as a workaround
+> ):
+> 
+> CONFIG_SECURITYFS=n CONFIG_SECURITY_NETWORK=y CONFIG_SECURITY_NETWORK_XFRM=n
+> CONFIG_SECURITY_PATH=y CONFIG_SECURITY_LANDLOCK=y
+> 
+> Best regards,
+> 
+>  Oleksii
+> 
+> 
+> > pe=kmeta;name=rockchip-kmeta;destsuffix=rockchip-kmeta"
 
