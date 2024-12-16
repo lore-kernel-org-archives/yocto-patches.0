@@ -2,88 +2,83 @@ Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5979E77183
-	for <webhook@archiver.kernel.org>; Mon, 16 Dec 2024 03:54:46 +0000 (UTC)
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
- by mx.groups.io with SMTP id smtpd.web10.49499.1734321283094183241
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA55AE77180
+	for <webhook@archiver.kernel.org>; Mon, 16 Dec 2024 04:00:16 +0000 (UTC)
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+ by mx.groups.io with SMTP id smtpd.web10.49558.1734321608144433422
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 15 Dec 2024 19:54:43 -0800
+ Sun, 15 Dec 2024 20:00:08 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=MUUGFLtm;
- spf=pass (domain: gmail.com, ip: 209.85.160.169, mailfrom: twoerner@gmail.com)
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-467a1ee7ff2so27876951cf.0
-        for <yocto-patches@lists.yoctoproject.org>; Sun, 15 Dec 2024 19:54:42 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=ZM3r3Xwm;
+ spf=pass (domain: gmail.com, ip: 209.85.219.44, mailfrom: twoerner@gmail.com)
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6d8e773ad77so31415376d6.2
+        for <yocto-patches@lists.yoctoproject.org>; Sun, 15 Dec 2024 20:00:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734321281; x=1734926081; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1734321606; x=1734926406; darn=lists.yoctoproject.org;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JolqbguS30Afv2m/KoRqmG1ytGdWP0IF3sijWySbMtk=;
-        b=MUUGFLtmO76X7lN0O2humQCHit08Oqp6L8HsORx3EevX1K5WH4mqmy8P3oOraztJ7W
-         U0iGy0QzEP4ylUh9JfT/ARNPRau+idSobRbdHxjxc8JN+dLj4yE5/rLU+xOTCZwE75KU
-         rYuLe8LOAyr3ix1agnpCnIUoaNVoSwGlNb0W5V068gTaGuHMj2pr3OZ5DqRBZNY6scpD
-         7uREkGeXtfumVZ6pie7bpkPIdcO+0mF1tQ3M45rI6e0O0el1YDH1wHKKs4pfwVBsm6R3
-         Y3IEfj1rDFBxdpFbYHfi9p4eTZ+3j+DTFn70CZUWtfzKRaB+EVUuro1hE4Jd56qrpPKE
-         Du6Q==
+         :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tKudAxTKspGQR9j8hyI9Ig8nJBI0tFIffAeoNe37Jzg=;
+        b=ZM3r3XwmZO+F7PQ5B7cIO5ITMPO09W548TNt6gr5y4/FL/xZ7eyhrTvT7+Ns8ppb1Q
+         L0pTTNjThZwKRoDkfR9z7heayCm7Oi7BO5shgCapCfpv8+hy8gk+NArPgH3hjhX2effg
+         GG4ePo0u7KfEGkSx82A7Nr8S5GxZF+JurUiug6ZL+3mDgAS5EUvx1tjZ3A3FKWG+cUTu
+         UdL0QwAtUrH1joLXzj5ii/fRTc0q5wX/oOKH4aI+3vu6kCKTXybKr8jb4NRCNh0xK5dY
+         pbNSrzvtJykcjKP/OlEllqXZnFe3WLJAMkv3QGNtxyBvOPpp4tbX66+JTlw8sx8T0PH5
+         p00w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734321281; x=1734926081;
+        d=1e100.net; s=20230601; t=1734321606; x=1734926406;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :message-id:subject:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JolqbguS30Afv2m/KoRqmG1ytGdWP0IF3sijWySbMtk=;
-        b=Z/0YRWLu3jNkIkkPGyEndFMhyzprA4Prc/UjJVNzgeYYj0DEn32jN4zHi3hvOsvlP2
-         qmNLRvnqBjgqd5UrYLuqIKT3kHx0zOU9xElWLf6OaVSAU0EPJED6e/czXqNRmZXsQRxn
-         mXTseOXu0fsDI1N8cDhnDURQclkCCtgl9ukIx2goQkAk3iOSoqdXXqaWIkAgKWdH9m2/
-         ykXAg10o/Yq33q5jyNBU2g7tnAxZqH9B6wYqbIVzVOpzfyg9UDr1wK2XhLo+cpgx168b
-         Fv/kHoiCKQ5iqSFpVx0OTOXemu+dAdbtpbBJW0THZxbJW2U4miZfj7D/RqEc9aP2DYL9
-         yt/A==
-X-Gm-Message-State: AOJu0Yyq78qZ7HSZEVMco7e/kv3qsFqpuNBONBkwnx9Eo5JPyrYvekAi
-	Q+sYLkTrq+92paRUC6tz2o/FpniauEK3OY8752jOt+fXugkVJE6DIiRmbg==
-X-Gm-Gg: ASbGncsrmBeCPlC2V5I/lachKkBuo3w5EzjcaK8JSAo3B/jcFKkPyo05cCi5gnNqwLC
-	B9QtJeXKdjNqdzmPIYF9ULpqnlV3K/W5CsOn928WZ7eUCIdmdp0mq2Fb0Gr4NmtVA4QauJplGB1
-	e4fWPBNXF59x6eK7Gdkuh5XpLWyUmixnzNAu7pAWM8RL6SDv5p8WmT5Jppr8DMZcMreh1AV+pjg
-	keIMhCSdJ6p5b9i7y4B8QMNW404ZNqRgGJw9eJG7fwI/v+mKeApps49ltDKiktGZ7irof2ogClM
-	qezhX+yy
-X-Google-Smtp-Source: AGHT+IFKZnljgw5cPZX/CBTFUNBXFaGgbHSUhketvmR0TDywtyqFMPCcO7k9S47dJTSsam5aZ6f74w==
-X-Received: by 2002:a05:622a:1444:b0:467:699e:2527 with SMTP id d75a77b69052e-467a57a8846mr172194951cf.25.1734321281516;
-        Sun, 15 Dec 2024 19:54:41 -0800 (PST)
+        bh=tKudAxTKspGQR9j8hyI9Ig8nJBI0tFIffAeoNe37Jzg=;
+        b=qQEl6cyAvrfE1nmrDbBNHqtMJe99aV8P8uzXn77feqPkKDII2OPu4l9JUSBZOpmzOz
+         Tr+bydBcfYdRD/Rjv0cY5N701O3PoHsB17ExqffXzeAHG9RmlBXkUsGcUl4X6YZ9tzIR
+         J446IxgQhzI93PG3dh/4BK0IPAzc250pbPRHASuqV0MKHqMEVeozXdzVGlA4JmDswG8g
+         H546OYiVCcMIlxNGqXHlP88qqmq5UoF8ciqTEu/cFDnU6suMvJrZ0YM++Laub0zrLyS+
+         hGq9dkS9XYYmqM1Ziuv21gLO+tcvpJZ7QSJpu0R22vlfM8QRB+ikNMZnHbhW9UxUrKNR
+         13iA==
+X-Gm-Message-State: AOJu0YxHtXLS++JatwdNkMRMj2D1aMyyYr47jlQVmASzN+YPSSdrsGws
+	O1NmhIcyOk4b7ARiMePgZ9ekcu8YX2L1161aeKPZjOBbIvyR4AViv9TGFg==
+X-Gm-Gg: ASbGncvsrsqR3IJeIi/u98Mb6a6wWVSLC5P9yYhWwBJx210s44ZFTaTwTvG5ld4trKb
+	RyOZjRJ42UlyMxDkX9HNQuCOfWFV3zIs69pK5/MQUPxM11e1v+6iSgJlKZNj7O1UAzd75kVHIjU
+	oPH5yK067LjpvXHlwovobEiu0W+tQIxTrv+jY7q3o1bNwrXnuaaXoy6gPdHMAbRqFsxUWX9lv6F
+	jn95mhZ5Aj8Kjdn2oOrxKQFjTSHfur8YlZk4B6p7LBDzb6uZAbdqQ4Z9sNFKSiIclY+thUbmUms
+	f/ngxxEy
+X-Google-Smtp-Source: AGHT+IFgyLqC7vk8Z7Of3/nE4W4UvjKofZTgvxvYlKDmJbi1Uq1OTCQuXQfAjYZfWX94/tDyLkHQmg==
+X-Received: by 2002:a05:6214:1316:b0:6d8:8f14:2f5c with SMTP id 6a1803df08f44-6dc8ca93ca1mr189756056d6.23.1734321606519;
+        Sun, 15 Dec 2024 20:00:06 -0800 (PST)
 Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-467b2cbe814sm23462971cf.43.2024.12.15.19.54.39
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6dccd22f79esm23013926d6.1.2024.12.15.20.00.03
+        for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Dec 2024 19:54:40 -0800 (PST)
-Date: Sun, 15 Dec 2024 22:54:37 -0500
+        Sun, 15 Dec 2024 20:00:05 -0800 (PST)
+Date: Sun, 15 Dec 2024 23:00:02 -0500
 From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Quentin Schulz <quentin.schulz@cherry.de>
-Subject: Re: [yocto-patches] [meta-rockchip PATCH v2 2/2] bsp: rkbin: bump to
- latest commit in master branch
-Message-ID: <20241216035437.GC466@localhost>
-References: <20241128-rkbin-bump-v2-0-a194385aad7a@cherry.de>
- <20241128-rkbin-bump-v2-2-a194385aad7a@cherry.de>
+Subject: Re: [PATCH 1/3] u-boot: switch to upstream SRCREV for rk-u-boot-env
+Message-ID: <20241216040002.GD466@localhost>
+References: <20241212195718.25203-1-twoerner@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241128-rkbin-bump-v2-2-a194385aad7a@cherry.de>
+In-Reply-To: <20241212195718.25203-1-twoerner@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 16 Dec 2024 03:54:46 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/923
+ <yocto-patches@lists.yoctoproject.org>; Mon, 16 Dec 2024 04:00:16 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/924
 
-On Thu 2024-11-28 @ 04:58:50 PM, Quentin Schulz via lists.yoctoproject.org wrote:
-> From: Quentin Schulz <quentin.schulz@cherry.de>
+On Thu 2024-12-12 @ 02:57:16 PM, Trevor Woerner wrote:
+> When the rk-u-boot-env feature was implemented, in order for it to work the
+> build needed a version of U-Boot that was slightly newer than 2024.04 (the
+> current release supported by Yocto at that time). Now that 2024.10 is out,
+> remove the SRCREV pin since the necessary code is now part of this release.
 > 
-> This seems to be fixing random RCU stalls, system hangs or resets while
-> running upstream Linux kernel on RK3588 boards.
-> 
-> License-Update: Fixing typos c.f. 385bf9f1700c ("license: typo fix")
-> 
-> Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+> Signed-off-by: Trevor Woerner <twoerner@gmail.com>
 > ---
->  recipes-bsp/rkbin/rockchip-rkbin-ddr_git.bb | 8 ++++----
->  recipes-bsp/rkbin/rockchip-rkbin.inc        | 4 ++--
->  2 files changed, 6 insertions(+), 6 deletions(-)
+>  recipes-bsp/u-boot/u-boot_%.bbappend | 1 -
+>  1 file changed, 1 deletion(-)
 
-Applied to meta-rockchip, master and styhead branches. Thanks!
+Applied to meta-rockchip, master and styhead branches.
 
