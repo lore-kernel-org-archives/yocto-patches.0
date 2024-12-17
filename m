@@ -1,118 +1,93 @@
-Return-Path: <foss@0leil.net>
+Return-Path: <akuster808@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A8DFE77184
-	for <webhook@archiver.kernel.org>; Tue, 17 Dec 2024 15:20:39 +0000 (UTC)
-Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [45.157.188.13])
- by mx.groups.io with SMTP id smtpd.web11.84328.1734448829884033970
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F28FE7717F
+	for <webhook@archiver.kernel.org>; Tue, 17 Dec 2024 17:21:49 +0000 (UTC)
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+ by mx.groups.io with SMTP id smtpd.web11.87385.1734456107617854029
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 17 Dec 2024 07:20:30 -0800
+ Tue, 17 Dec 2024 09:21:47 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: 0leil.net, ip: 45.157.188.13, mailfrom: foss+yocto@0leil.net)
-Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:1])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4YCL980BqbzvmC;
-	Tue, 17 Dec 2024 16:20:28 +0100 (CET)
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4YCL9750VyzM8y;
-	Tue, 17 Dec 2024 16:20:27 +0100 (CET)
-From: Quentin Schulz <foss+yocto@0leil.net>
-Date: Tue, 17 Dec 2024 16:20:18 +0100
-Subject: [meta-rockchip PATCH] bsp: trusted-firmware-a: remove already
- merged patch
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241217-tf-a-2-12-v1-1-3c9073a3f773@cherry.de>
-X-B4-Tracking: v=1; b=H4sIALGWYWcC/yWNywqDMBBFf0Vm7UAyiKX+iriIyViHUh+TWArBf
- zfU5eEezs0QWYUjdFUG5a9EWZcCtq7Az255MUooDGSosWQfmCZ0SGgJiZ+hNS6Y1o9Q/E15kt+
- /1cOHk0Nd/dvPssFwz8r7UR7S7QzneQHznd4KfwAAAA==
-X-Change-ID: 20241217-tf-a-2-12-2e9d60ad06cb
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=MbmFciSn;
+ spf=pass (domain: gmail.com, ip: 209.85.219.175, mailfrom: akuster808@gmail.com)
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e3983f8ff40so3362266276.1
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 17 Dec 2024 09:21:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734456106; x=1735060906; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SvuP7Wb0zS6+me+H9QjHYfQE10YUu+Hsi10gUorDLwM=;
+        b=MbmFciSnyFShYCwZVhphjKFxWgnqOJpy0wXGPEh6EIh949+VgPgYPeTp6ilJWEaydM
+         BIFU5thEPnkOXPCWn5GUqsOatwehT4Q0JZlokpbW67uxqpUWejGLu+KW1iI/CBIHDzkk
+         jufIm+/Ksol7BGZDoeYkok0Ui+0W/9dIakgChJTG0bhK7AbzSuf/xKJ27gninEZlV3TT
+         xUBazE3bLL7ddB3PPMtSNA/LcU1OAsikmXbT5c01WbNe0s0Wa5z1ZU3o/Uej34eUj09/
+         G68nsNSmpcTO0xnGYFTCJB70vJO2Dnaa6sz/ilCNVe8KHFT/9UTVNAzL2yFkvnuQf8os
+         x+Hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734456106; x=1735060906;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SvuP7Wb0zS6+me+H9QjHYfQE10YUu+Hsi10gUorDLwM=;
+        b=GVQMneCY4F2kFRbdHpn/A9ECuAClgrRZiANRyPp3BbQ1IH9GIhxgpkl4JWcbJ0qcLt
+         53d8CuTz36ZEJlZj4o5jCCuT1ErCl0T/HesU5HTeYLwcoTntwQ5N1RCHHosXcDON3NDU
+         VB3AFpIMBc/z0wO2jl+QL7lG4qtc4G3NRXZ/TNKLi/eK2dE8XspP1yGyHCHCHufBzskP
+         B6gU40zPfTlCySqWPiu/a/f/DP7ZMi0YKcrqh0ixpeEsAFqUm73iNlI60Jd5LtGgYe3a
+         irstDhjaphrJoTB9Pd9A0Ulq2QdslrSMnmjWuA4dnFcfHFpRBY/Jl5/J7HuUd5RNYbEE
+         JXKQ==
+X-Gm-Message-State: AOJu0YxAMTlluYSAacgTZIra9CdzyJg4s+U8S+MiCt2ShgmJaAfleaHW
+	l0nNmovK4Co+gI6n1oVFUWd4CY7izv6WLn1yDHET5k88ItjTyyawfFWBCw==
+X-Gm-Gg: ASbGncvOSg4lBIxeUDMUjUbDfO/sRwlG20s+8VeKYgS6EBuSDBH4wno94nZwv+EELQ3
+	yCWD6kFS4zTaBQfGCbRenXZIoVz+z7PQgDvQKcOZMyc7G5JA6RtZT01FJ2KgVP1udTP8NetCXn0
+	qVgfE1a4VDQSHaRhoiOwDWD6+BRq4zVAMP6Hsn1yML3lOZ1Z6uGinWyUBNXKerL24tB3RYx1/S2
+	gN3THDMSxwScfo+LtDudd5DP+nRgDf+sTLhavOpu5GM9DRR5EbU6kr57r2DvGCbyObpLGk=
+X-Google-Smtp-Source: AGHT+IFwoZ31k+5hY3M5DEC+Qs466uPlDVtVXfn/2yi1TDI96x9WGw9j10u/dS4fWrpz+KGPIFfC9A==
+X-Received: by 2002:a05:6902:100e:b0:e39:8ff9:4f47 with SMTP id 3f1490d57ef6-e536069d50fmr383546276.27.1734456106681;
+        Tue, 17 Dec 2024 09:21:46 -0800 (PST)
+Received: from keaua.attlocal.net ([2600:1700:45dd:7000:f65c:cfa9:620b:bdab])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e4ae7df857dsm1439176276.36.2024.12.17.09.21.46
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Dec 2024 09:21:46 -0800 (PST)
+From: Armin Kuster <akuster808@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Quentin Schulz <quentin.schulz@cherry.de>
-X-Mailer: b4 0.14.2
-X-Infomaniak-Routing: alpha
+Subject: [meta-security][v2][PATCH] harden.conf: drop debug-tweaks
+Date: Tue, 17 Dec 2024 12:21:45 -0500
+Message-ID: <20241217172145.94592-1-akuster808@gmail.com>
+X-Mailer: git-send-email 2.43.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 17 Dec 2024 15:20:39 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/932
+ <yocto-patches@lists.yoctoproject.org>; Tue, 17 Dec 2024 17:21:49 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/933
 
-From: Quentin Schulz <quentin.schulz@cherry.de>
+Use the new root/pswd directives
 
-2.12.0 already has this patch, see 52cdebbcc5d1 ("fix(rockchip): fix
-"unexpected token" error with clang"), so let's remove it.
+Signed-off-by: Armin Kuster <akuster808@gmail.com>
 
-Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
 ---
-Prepare for 2.12.0 upgrade, when
-https://lore.kernel.org/yocto-meta-arm/20241217-tf-a-2-12-v1-1-cca762965260@cherry.de/
-is merged. meta-rockchip will then break building because it'll try to
-apply an already-applied patch.
 
-ONLY TO BE APPLIED AFTER
-https://lore.kernel.org/yocto-meta-arm/20241217-tf-a-2-12-v1-1-cca762965260@cherry.de/
-IS MERGED!!!!
+V2]
+use new primary definitions
 ---
- ...ros.S-Use-compatible-.asciz-asm-directive.patch | 31 ----------------------
- .../trusted-firmware-a_%.bbappend                  |  1 -
- 2 files changed, 32 deletions(-)
+ meta-hardening/conf/distro/harden.conf | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/recipes-bsp/trusted-firmware-a/files/0001-plat_macros.S-Use-compatible-.asciz-asm-directive.patch b/recipes-bsp/trusted-firmware-a/files/0001-plat_macros.S-Use-compatible-.asciz-asm-directive.patch
-deleted file mode 100644
-index 8807fcaabc0598d9c92b038fa6b443d2d1063945..0000000000000000000000000000000000000000
---- a/recipes-bsp/trusted-firmware-a/files/0001-plat_macros.S-Use-compatible-.asciz-asm-directive.patch
-+++ /dev/null
-@@ -1,31 +0,0 @@
--From 5f78ce7eb9ab6bf5af682a715a9264d2a5ee7666 Mon Sep 17 00:00:00 2001
--From: Khem Raj <raj.khem@gmail.com>
--Date: Tue, 11 May 2021 12:06:34 -0700
--Subject: [PATCH] plat_macros.S: Use compatible .asciz asm directive
--
--clang asm does not like two strings to .asciz therefore make it single
--string which works on clang too.
--
--Upstream-Status: Pending
--Signed-off-by: Khem Raj <raj.khem@gmail.com>
-----
-- plat/rockchip/common/include/plat_macros.S | 3 +--
-- 1 file changed, 1 insertion(+), 2 deletions(-)
--
--diff --git a/plat/rockchip/common/include/plat_macros.S b/plat/rockchip/common/include/plat_macros.S
--index 691beeb44..c07be9ca9 100644
----- a/plat/rockchip/common/include/plat_macros.S
--+++ b/plat/rockchip/common/include/plat_macros.S
--@@ -23,8 +23,7 @@ icc_regs:
-- 
-- /* Registers common to both GICv2 and GICv3 */
-- gicd_pend_reg:
---	.asciz "gicd_ispendr regs (Offsets 0x200 - 0x278)\n"	\
---		" Offset:\t\t\tvalue\n"
--+	.asciz "gicd_ispendr regs (Offsets 0x200 - 0x278)\n Offset:\t\t\tvalue\n"
-- newline:
-- 	.asciz "\n"
-- spacer:
---- 
--2.31.1
--
-diff --git a/recipes-bsp/trusted-firmware-a/trusted-firmware-a_%.bbappend b/recipes-bsp/trusted-firmware-a/trusted-firmware-a_%.bbappend
-index ecd6cb33c48b74c5523907986afc28cf14de1e8f..f2b666c127aed2747908fccea068bda5e6ac7def 100644
---- a/recipes-bsp/trusted-firmware-a/trusted-firmware-a_%.bbappend
-+++ b/recipes-bsp/trusted-firmware-a/trusted-firmware-a_%.bbappend
-@@ -12,7 +12,6 @@ COMPATIBLE_MACHINE:append:rk3588s = "|rk3588s"
- FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
- SRC_URI += "\
-     file://0001-dram-Fix-build-with-gcc-11.patch \
--    file://0001-plat_macros.S-Use-compatible-.asciz-asm-directive.patch \
-     file://0001-pmu-Do-not-mark-already-defined-functions-as-weak.patch \
- "
+diff --git a/meta-hardening/conf/distro/harden.conf b/meta-hardening/conf/distro/harden.conf
+index 1a5eb3d..2553152 100644
+--- a/meta-hardening/conf/distro/harden.conf
++++ b/meta-hardening/conf/distro/harden.conf
+@@ -6,6 +6,6 @@ DISTRO_FEATURES = " acl xattr pci ext2 pam ipv4 ipv6 ipsec largefile usbhost"
  
-
----
-base-commit: 1cdcb496037474cffd7b6a716eefc2814f1e105c
-change-id: 20241217-tf-a-2-12-2e9d60ad06cb
-
-Best regards,
+ VIRTUAL-RUNTIME_base-utils-syslog ?= "rsyslog"
+ IMAGE_ROOTFS_EXTRA_SPACE = "524288"
+-EXTRA_IMAGE_FEATURES:remove = "debug-tweaks"
++EXTRA_IMAGE_FEATURES:remove = "allow-empty-password empty-root-password allow-root-login"
+ 
+ DISABLE_ROOT ?= "True"
 -- 
-Quentin Schulz <quentin.schulz@cherry.de>
+2.43.0
 
 
