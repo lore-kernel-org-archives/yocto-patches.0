@@ -1,93 +1,116 @@
-Return-Path: <akuster808@gmail.com>
+Return-Path: <ross.burton@arm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F28FE7717F
-	for <webhook@archiver.kernel.org>; Tue, 17 Dec 2024 17:21:49 +0000 (UTC)
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
- by mx.groups.io with SMTP id smtpd.web11.87385.1734456107617854029
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B1FEE77188
+	for <webhook@archiver.kernel.org>; Wed, 18 Dec 2024 10:46:54 +0000 (UTC)
+Received: from 2.mo582.mail-out.ovh.net (2.mo582.mail-out.ovh.net [46.105.76.65])
+ by mx.groups.io with SMTP id smtpd.web10.102462.1734518761756104824
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 17 Dec 2024 09:21:47 -0800
+ Wed, 18 Dec 2024 02:46:02 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=MbmFciSn;
- spf=pass (domain: gmail.com, ip: 209.85.219.175, mailfrom: akuster808@gmail.com)
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e3983f8ff40so3362266276.1
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 17 Dec 2024 09:21:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734456106; x=1735060906; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SvuP7Wb0zS6+me+H9QjHYfQE10YUu+Hsi10gUorDLwM=;
-        b=MbmFciSnyFShYCwZVhphjKFxWgnqOJpy0wXGPEh6EIh949+VgPgYPeTp6ilJWEaydM
-         BIFU5thEPnkOXPCWn5GUqsOatwehT4Q0JZlokpbW67uxqpUWejGLu+KW1iI/CBIHDzkk
-         jufIm+/Ksol7BGZDoeYkok0Ui+0W/9dIakgChJTG0bhK7AbzSuf/xKJ27gninEZlV3TT
-         xUBazE3bLL7ddB3PPMtSNA/LcU1OAsikmXbT5c01WbNe0s0Wa5z1ZU3o/Uej34eUj09/
-         G68nsNSmpcTO0xnGYFTCJB70vJO2Dnaa6sz/ilCNVe8KHFT/9UTVNAzL2yFkvnuQf8os
-         x+Hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734456106; x=1735060906;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SvuP7Wb0zS6+me+H9QjHYfQE10YUu+Hsi10gUorDLwM=;
-        b=GVQMneCY4F2kFRbdHpn/A9ECuAClgrRZiANRyPp3BbQ1IH9GIhxgpkl4JWcbJ0qcLt
-         53d8CuTz36ZEJlZj4o5jCCuT1ErCl0T/HesU5HTeYLwcoTntwQ5N1RCHHosXcDON3NDU
-         VB3AFpIMBc/z0wO2jl+QL7lG4qtc4G3NRXZ/TNKLi/eK2dE8XspP1yGyHCHCHufBzskP
-         B6gU40zPfTlCySqWPiu/a/f/DP7ZMi0YKcrqh0ixpeEsAFqUm73iNlI60Jd5LtGgYe3a
-         irstDhjaphrJoTB9Pd9A0Ulq2QdslrSMnmjWuA4dnFcfHFpRBY/Jl5/J7HuUd5RNYbEE
-         JXKQ==
-X-Gm-Message-State: AOJu0YxAMTlluYSAacgTZIra9CdzyJg4s+U8S+MiCt2ShgmJaAfleaHW
-	l0nNmovK4Co+gI6n1oVFUWd4CY7izv6WLn1yDHET5k88ItjTyyawfFWBCw==
-X-Gm-Gg: ASbGncvOSg4lBIxeUDMUjUbDfO/sRwlG20s+8VeKYgS6EBuSDBH4wno94nZwv+EELQ3
-	yCWD6kFS4zTaBQfGCbRenXZIoVz+z7PQgDvQKcOZMyc7G5JA6RtZT01FJ2KgVP1udTP8NetCXn0
-	qVgfE1a4VDQSHaRhoiOwDWD6+BRq4zVAMP6Hsn1yML3lOZ1Z6uGinWyUBNXKerL24tB3RYx1/S2
-	gN3THDMSxwScfo+LtDudd5DP+nRgDf+sTLhavOpu5GM9DRR5EbU6kr57r2DvGCbyObpLGk=
-X-Google-Smtp-Source: AGHT+IFwoZ31k+5hY3M5DEC+Qs466uPlDVtVXfn/2yi1TDI96x9WGw9j10u/dS4fWrpz+KGPIFfC9A==
-X-Received: by 2002:a05:6902:100e:b0:e39:8ff9:4f47 with SMTP id 3f1490d57ef6-e536069d50fmr383546276.27.1734456106681;
-        Tue, 17 Dec 2024 09:21:46 -0800 (PST)
-Received: from keaua.attlocal.net ([2600:1700:45dd:7000:f65c:cfa9:620b:bdab])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e4ae7df857dsm1439176276.36.2024.12.17.09.21.46
-        for <yocto-patches@lists.yoctoproject.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 09:21:46 -0800 (PST)
-From: Armin Kuster <akuster808@gmail.com>
+ dkim=fail reason="dkim: body hash did not verify" header.i=@3mdeb.com header.s=ovhmo3617313-selector1 header.b=ViJF1GUc;
+ spf=softfail (domain: 3mdeb.com, ip: 46.105.76.65, mailfrom: daniil.klimuk@3mdeb.com)
+Received: from director10.ghost.mail-out.ovh.net (unknown [10.108.9.32])
+	by mo582.mail-out.ovh.net (Postfix) with ESMTP id 4YCr200178z1RZT
+	for <yocto-patches@lists.yoctoproject.org>; Wed, 18 Dec 2024 10:45:59 +0000 (UTC)
+Received: from ghost-submission-5b5ff79f4f-ww7cs (unknown [10.110.101.105])
+	by director10.ghost.mail-out.ovh.net (Postfix) with ESMTPS id 003E71FE8B;
+	Wed, 18 Dec 2024 10:45:58 +0000 (UTC)
+Received: from 3mdeb.com ([37.59.142.96])
+	by ghost-submission-5b5ff79f4f-ww7cs with ESMTPSA
+	id d8RmIuanYmdbfAAA6zOj7A
+	(envelope-from <daniil.klimuk@3mdeb.com>); Wed, 18 Dec 2024 10:45:58 +0000
+Authentication-Results: garm.ovh; auth=pass (GARM-96R001dc07e684-1402-40a5-97b7-802f9144c570,
+                    5C288CA946AEF4DDBB46030A318C0F4C5FE4FC4D) smtp.auth=daniil.klimuk@3mdeb.com
+X-OVh-ClientIp: 93.174.30.2
+From: "Danik" <daniil.klimuk@3mdeb.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-security][v2][PATCH] harden.conf: drop debug-tweaks
-Date: Tue, 17 Dec 2024 12:21:45 -0500
-Message-ID: <20241217172145.94592-1-akuster808@gmail.com>
-X-Mailer: git-send-email 2.43.0
+Cc: piotr.krol@3mdeb.com,
+	maciej.pijanowski@3mdeb.com,
+	twoerner@gmail.com
+Subject: [meta-rockchip] [PATCH] add Quartz64-A
+Date: Wed, 18 Dec 2024 11:45:57 +0100
+Message-ID: <20241218104557.45036-1-daniil.klimuk@3mdeb.com>
+X-Mailer: git-send-email 2.47.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 12098638926148113601
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: 0
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefuddrleekgddulecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecunecujfgurhephffvvefufffkofgggfestdekredtredttdenucfhrhhomhepffgrnhhiihhlucfmlhhimhhukhcuoegurghnihhilhdrkhhlihhmuhhkseefmhguvggsrdgtohhmqeenucggtffrrghtthgvrhhnpeetfeeijefhteekkefhvedttdejfeejgeeihfdtieegheeiieekhfeiueefvedugfenucffohhmrghinhepphhinhgvieegrdhorhhgnecukfhppeduvdejrddtrddtrddupdelfedrudejgedrfedtrddvpdefjedrheelrddugedvrdelieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepuggrnhhiihhlrdhklhhimhhukhesfehmuggvsgdrtghomhdpnhgspghrtghpthhtohepuddprhgtphhtthhopeihohgtthhoqdhprghttghhvghssehlihhsthhsrdihohgtthhophhrohhjvggtthdrohhrghdpoffvtefjohhsthepmhhoheekvdgmpdhmohguvgepshhmthhpohhuth
+DKIM-Signature: a=rsa-sha256; bh=E35Sw84SWeEW8Ftw4NWxcNFRLs9h7MX3zYI/9m91Q08=;
+ c=relaxed/relaxed; d=3mdeb.com; h=From; s=ovhmo3617313-selector1;
+ t=1734518760; v=1;
+ b=ViJF1GUcjnXgdaSJ/rXl/WM9cFRewdB59Q/s2W1xG+T2rK+vKcdHT+5vDlZWBGr1lQs5qzX3
+ KR5Ok4BPfId8RuZDzYXAeKQ29WkNXWx7Nxz04yCkZzwnh673HDlS5I3OzAg6nUklqQpfEjeufw2
+ RgC7C0ys15dEcpK46IFDeJ1E53zv4hlEFDHJkPgJKL4ujZm6AcIHiZkiqkjgJfjUoe2AQTDvS4w
+ 6hW08swe5h3oT9f3JEgKY7laIl/5aO/Kkp2IShpNavUzU/HSYFu1G5FPno0UhMQQ234/kjltgeG
+ rbkPCY69m1TNl0r9uBWo8madl1rM/Q8ZhsQTL3jFyOm8w==
+Content-Transfer-Encoding: quoted-printable
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 17 Dec 2024 17:21:49 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/933
+ <yocto-patches@lists.yoctoproject.org>; Wed, 18 Dec 2024 10:46:54 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/934
 
-Use the new root/pswd directives
+Add Quartz64-A support.
 
-Signed-off-by: Armin Kuster <akuster808@gmail.com>
-
+Signed-off-by: Daniil Klimuk <daniil.klimuk@3mdeb.com>
 ---
+ README                                      |  1 +
+ conf/machine/quartz64-a.conf                | 13 +++++++++++++
+ recipes-kernel/linux/linux-yocto_%.bbappend |  1 +
+ 3 files changed, 15 insertions(+)
+ create mode 100644 conf/machine/quartz64-a.conf
 
-V2]
-use new primary definitions
----
- meta-hardening/conf/distro/harden.conf | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/meta-hardening/conf/distro/harden.conf b/meta-hardening/conf/distro/harden.conf
-index 1a5eb3d..2553152 100644
---- a/meta-hardening/conf/distro/harden.conf
-+++ b/meta-hardening/conf/distro/harden.conf
-@@ -6,6 +6,6 @@ DISTRO_FEATURES = " acl xattr pci ext2 pam ipv4 ipv6 ipsec largefile usbhost"
- 
- VIRTUAL-RUNTIME_base-utils-syslog ?= "rsyslog"
- IMAGE_ROOTFS_EXTRA_SPACE = "524288"
--EXTRA_IMAGE_FEATURES:remove = "debug-tweaks"
-+EXTRA_IMAGE_FEATURES:remove = "allow-empty-password empty-root-password allow-root-login"
- 
- DISABLE_ROOT ?= "True"
--- 
-2.43.0
+diff --git a/README b/README
+index 4c75ac9d574d..4c50786433d5 100644
+--- a/README
++++ b/README
+@@ -47,6 +47,7 @@ Status of supported boards:
+ 			rock-pi-s
+ 			rock64
+ 			soquartz (on model A base board)
++			quartz64-a
+=20
+ 	builds:
+ 		32-bit:
+diff --git a/conf/machine/quartz64-a.conf b/conf/machine/quartz64-a.conf
+new file mode 100644
+index 000000000000..83190a10013d
+--- /dev/null
++++ b/conf/machine/quartz64-a.conf
+@@ -0,0 +1,13 @@
++#@TYPE: Machine
++#@NAME: Quartz64 Model A
++#@DESCRIPTION: The Quartz64 Model A is powered by a Rockchip RK3566 quad=
+-core
++# ARM Cortex A55 64-Bit Processor with a Mali G-52 GPU. It comes equippe=
+d with
++# 2GB, 4GB or 8GB LPDDR4 system memory, and a 128Mb SPI boot flash.
++# https://pine64.org/devices/quartz64_model_a/
++
++require conf/machine/include/rk3566.inc
++
++KERNEL_DEVICETREE =3D "rockchip/rk3566-quartz64-a.dtb"
++MACHINE_EXTRA_RRECOMMENDS +=3D "kernel-modules"
++
++UBOOT_MACHINE =3D "quartz64-a-rk3566_defconfig"
+diff --git a/recipes-kernel/linux/linux-yocto_%.bbappend b/recipes-kernel=
+/linux/linux-yocto_%.bbappend
+index 91a9b8e0abcb..8b47503fa3fa 100644
+--- a/recipes-kernel/linux/linux-yocto_%.bbappend
++++ b/recipes-kernel/linux/linux-yocto_%.bbappend
+@@ -24,6 +24,7 @@ COMPATIBLE_MACHINE:rock-5a =3D "rock-5a"
+ COMPATIBLE_MACHINE:rock-5b =3D "rock-5b"
+ COMPATIBLE_MACHINE:soquartz =3D "soquartz"
+ COMPATIBLE_MACHINE:radxa-cm3 =3D "radxa-cm3"
++COMPATIBLE_MACHINE:quartz64-a =3D "quartz64-a"
+=20
+ SRC_URI:append =3D " file://rockchip-kmeta;type=3Dkmeta;name=3Drockchip-=
+kmeta;destsuffix=3Drockchip-kmeta"
+ SRC_URI:append:nanopi-r4s =3D " file://nanopi-r4s.scc"
+--=20
+2.47.1
 
 
