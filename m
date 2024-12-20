@@ -2,62 +2,62 @@ Return-Path: <mikko.rapeli@linaro.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02D2BE7718D
-	for <webhook@archiver.kernel.org>; Fri, 20 Dec 2024 14:06:03 +0000 (UTC)
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
- by mx.groups.io with SMTP id smtpd.web10.152510.1734703558230291774
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5A84E7718C
+	for <webhook@archiver.kernel.org>; Fri, 20 Dec 2024 14:06:12 +0000 (UTC)
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+ by mx.groups.io with SMTP id smtpd.web11.152247.1734703571475722241
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 20 Dec 2024 06:05:58 -0800
+ Fri, 20 Dec 2024 06:06:11 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linaro.org header.s=google header.b=H28qLILS;
- spf=pass (domain: linaro.org, ip: 209.85.167.51, mailfrom: mikko.rapeli@linaro.org)
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53e28cf55cdso1604937e87.3
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 20 Dec 2024 06:05:57 -0800 (PST)
+ dkim=pass header.i=@linaro.org header.s=google header.b=Hp5Ls7By;
+ spf=pass (domain: linaro.org, ip: 209.85.208.173, mailfrom: mikko.rapeli@linaro.org)
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-3003c82c95cso15255901fa.3
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 20 Dec 2024 06:06:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734703556; x=1735308356; darn=lists.yoctoproject.org;
+        d=linaro.org; s=google; t=1734703570; x=1735308370; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=h93M3TjQt6wRySILXqHDY0XbIDeFd3dYymV+ay8S/yI=;
-        b=H28qLILSz8LrOQ4BrcfczAbf3mlojQy78IMMESsW3S+W/ozHu8DLXQR/1Q18ohPUgC
-         iAjB39fDKA0Q9sgMBk+2BJYfszIIO2fmvWt7IVSHdMAN6Pgcz0RfZecL+c7g/3V1DqYh
-         J4EUbcwk4PTWHlDRvrtKI//IbpUBZlg9KXytfgfRv/OTHOmAVZOTSG3d7PyFPajrHdWH
-         UKZfDexbeqLTiGGdhc7CPI3k2yFXi81c4CUwrx2i3143oI19lKG544sgUMjxQTniYAeo
-         E8UVjbYWcCNSs60TFnvxTNxAfzhQOq0OUNSIFnklrVzc92E6qjqwXCmOJnRstVDiEb6S
-         0IKw==
+        bh=u8rTihZkR9S82ppwgigbvVS0L1Ut/Q35dWi+fpOjMWE=;
+        b=Hp5Ls7ByZqo2TwrIIeyw7WgrTJNpsJVINRfsxQzOT9HbCEHd1ND4Iz52cj2pZT2KFv
+         OSQJ5iAhoIe8V4jVLiaklDUXtmyf6JPxGga+brBGFDWmRkvaXMxihJXipSwVXRU+UUek
+         csBnhJt5N9LgwawHvETqJ8sLh5YY8DnNdFixMssEeu1OVA9X/tbvUu93z60xQqKgaDED
+         1EaWqiu9bW2GkLWVp2gOuqg2AOOzA8Am2Cs+n9eJ3h42iOWul/IEbrgb8ykU9od0OiEI
+         Btug53yY6HuE7eWIbFYs86OFwRPctc2GXm7y9haVwbLhpgQEmEMk/rFBXEWcOAmyaXSh
+         eLKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734703556; x=1735308356;
+        d=1e100.net; s=20230601; t=1734703570; x=1735308370;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=h93M3TjQt6wRySILXqHDY0XbIDeFd3dYymV+ay8S/yI=;
-        b=CRp+pNcvBRU6USkt9vhEFo06ZOxOqkyocNM1jJ7T7/ELb6UNLaMgNR6PWwQkCs+2Mg
-         8CCGRameHKPbR/yT2u0+US6Yw5FmZDYVWHN1kOX3BnVk9wlTZXOywQobpF6BfIrXf5y+
-         3WVf/Q969H/yZGTlK4kIKD/pXu7pPrHW6Fiph0riVs+Np4wGwwyMzpxB1fMkl3d6wgGE
-         ceZbQPvntFWZIqxG1cpdV0GlBNqm2vpyX14Uxl1OSb5UAIUhn/ETBJgWH2ZggGSP5sQt
-         Td+z9DjXG+I+YJsfqFAmWgPppcUDkRCZAbwcVKAVX+RsAg1QrtVOH/1p0HipbyxE+8/k
-         GsAg==
-X-Gm-Message-State: AOJu0YyMcVP8JsUG4OytqorwkUwbbF05x1/XNd8006/H5a3jc/OvvWLw
-	ZK7SNgejU0i+BJ9y7nsIleSiMaeMokQaD0RvE/KPamwdgq9twDZ61Nit1pzr2PZXO0+KeRd1AmY
-	VVoE=
-X-Gm-Gg: ASbGncsnM7wmMX62nfCWFL7bisdI8kBDkfQMRBOINLuPTH2jCbjPYTxzb37kOJXiMr7
-	+A/ACdFVyBIrvSE/GWBk1Jus277C/3VmM0+0BrDaCX4fIubfry3WVLUON7DtOScxcWxt6u/AcAB
-	BBfv+NzqR6y3i/UFc7jlVamuX9SvdjL58YsAXimgxxLxxVC+1tmLIaqqE4bGWOtLzsbEPSaoNry
-	iEQw9iFxwHnFL3QcPtqLyTSKw+u9ItKd7daBboKPCUwxSMIn9huLzeqWO6U5ax3z2RB+rS7zS98
-	76B+/truZZcGHLIr8u7AO4XWLg==
-X-Google-Smtp-Source: AGHT+IH0yrCD1UxdQJAHakichVVMT6NLL9lnGRL3UEeVe2T7sKoUlz5DrqhZ5GJLFly+Mh3HfO7GOA==
-X-Received: by 2002:a05:6512:12d1:b0:540:263a:131f with SMTP id 2adb3069b0e04-5422957ae4bmr918244e87.50.1734703556351;
-        Fri, 20 Dec 2024 06:05:56 -0800 (PST)
+        bh=u8rTihZkR9S82ppwgigbvVS0L1Ut/Q35dWi+fpOjMWE=;
+        b=FZbIzBSxwjGl6+pn1CnVQxC/3qHudYo+GIyXGD6W1XDdQxbUo9lG7hvfo5xm0TQ3NI
+         QNQvtUxrg60ProB36k2UI5GSzWG9BGE2a1fSlWUgE6R+8J10AX3oryi6qef2WZL/gYgi
+         Tw3CcYb1KDtjgNwmJEj5uFn9fxGZa3OHCPrZpQ/vYVz/QGjHru7BpLe3dHDyNjR/szHp
+         UyZ8keBsW87OEukXXiS1tTCp8gKxBY4Uo2G/HPee8Bl1APWjAyFrEbuyd5LYplW+6jjx
+         SowjIIiPiXLU7o1Ro7PSAGGsWlEBEjxKs1dz4/Mc7qAlsWpoDbPXNpxwOAqGvs7Urxq0
+         6i/A==
+X-Gm-Message-State: AOJu0Yw2iwE96f7gwfcale2HkbMA9VWbPkfvwFpEovUw7NUImQl182fV
+	6K1l2+St0p3L6aLOtmIBO4ScmEA+Up/eyOYKIy7ONCOxthQVa8cl9x+L42kBb6B06JtM/zciFmP
+	aSHg=
+X-Gm-Gg: ASbGncu/3ZP2g07AHflK07b10jL2NnXS+tSLQHbVxtUOpvzmPGgXDtDbGCPiSeW7UF8
+	nfzcVXEKydV8VXz1s7mtJu555JV+T53Lq1ZsBTY9Eq42pZmCPHXsr+ByP29XuW6bO26OHmtgTej
+	NlOBoj7XhtSSLYVp0W7P5xQG48hZ9cDPxEnKrQ4lS20rST+wQwOA618xT1eGyeALN9ZCA4MdnHZ
+	46TJMoq36+5uV4VgaNVyAqy8EeKbxvmFKBtSuJWDdDjouIcD2OFTh7u/jPHssmEu6i6PlbAg8x5
+	YBXSH55Rzn7AsDg9WObDrzO1xA==
+X-Google-Smtp-Source: AGHT+IGjc8X9dYiJVGqj7xY004j16AGA5MzWlzOcg2Kf2MlzCj4F1VxxUqJ9nlJ6+HQe1yUbrvVWSA==
+X-Received: by 2002:a2e:b8cb:0:b0:300:1ea5:1655 with SMTP id 38308e7fff4ca-30468577a10mr9499161fa.15.1734703569667;
+        Fri, 20 Dec 2024 06:06:09 -0800 (PST)
 Received: from localhost.localdomain (78-27-76-97.bb.dnainternet.fi. [78.27.76.97])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3045ad6ca8fsm5227191fa.14.2024.12.20.06.05.53
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3045ad6ca8fsm5227191fa.14.2024.12.20.06.06.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Dec 2024 06:05:54 -0800 (PST)
+        Fri, 20 Dec 2024 06:06:07 -0800 (PST)
 From: Mikko Rapeli <mikko.rapeli@linaro.org>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Mikko Rapeli <mikko.rapeli@linaro.org>
-Subject: [meta-security][PATCH 14/18] harden.conf: exapand debug-tweaks
-Date: Fri, 20 Dec 2024 16:04:37 +0200
-Message-ID: <20241220140441.271395-15-mikko.rapeli@linaro.org>
+Subject: [meta-security][PATCH 18/18] oeqa runtime ima.py: skip without "integrity" in DISTRO_FEATURES
+Date: Fri, 20 Dec 2024 16:04:41 +0200
+Message-ID: <20241220140441.271395-19-mikko.rapeli@linaro.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241220140441.271395-1-mikko.rapeli@linaro.org>
 References: <20241220140441.271395-1-mikko.rapeli@linaro.org>
@@ -66,29 +66,28 @@ Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 20 Dec 2024 14:06:03 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/953
+ <yocto-patches@lists.yoctoproject.org>; Fri, 20 Dec 2024 14:06:12 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/957
 
-debug-tweaks was replaced with allow-empty-password empty-root-password
-and allow-root-login so remove them from build config.
+ima and meta-integrity are not enabled without and the test fails.
 
 Signed-off-by: Mikko Rapeli <mikko.rapeli@linaro.org>
 ---
- meta-hardening/conf/distro/harden.conf | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ meta-integrity/lib/oeqa/runtime/cases/ima.py | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/meta-hardening/conf/distro/harden.conf b/meta-hardening/conf/distro/harden.conf
-index 1a5eb3d..2553152 100644
---- a/meta-hardening/conf/distro/harden.conf
-+++ b/meta-hardening/conf/distro/harden.conf
-@@ -6,6 +6,6 @@ DISTRO_FEATURES = " acl xattr pci ext2 pam ipv4 ipv6 ipsec largefile usbhost"
+diff --git a/meta-integrity/lib/oeqa/runtime/cases/ima.py b/meta-integrity/lib/oeqa/runtime/cases/ima.py
+index 6b361ca..23d9b6a 100644
+--- a/meta-integrity/lib/oeqa/runtime/cases/ima.py
++++ b/meta-integrity/lib/oeqa/runtime/cases/ima.py
+@@ -27,6 +27,7 @@ class IMACheck(OERuntimeTestCase):
  
- VIRTUAL-RUNTIME_base-utils-syslog ?= "rsyslog"
- IMAGE_ROOTFS_EXTRA_SPACE = "524288"
--EXTRA_IMAGE_FEATURES:remove = "debug-tweaks"
-+EXTRA_IMAGE_FEATURES:remove = "allow-empty-password empty-root-password allow-root-login"
  
- DISABLE_ROOT ?= "True"
+     @OETestDepends(['ssh.SSHTest.test_ssh'])
++    @skipIfNotFeature('integrity','Test requires "integrity" in DISTRO_FEATURES')
+     def test_ima_enabled(self):
+         ''' Test if IMA policy is loaded before systemd starts'''
+ 
 -- 
 2.43.0
 
