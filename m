@@ -2,140 +2,102 @@ Return-Path: <akuster808@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9364E77188
-	for <webhook@archiver.kernel.org>; Sun, 22 Dec 2024 17:27:28 +0000 (UTC)
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
- by mx.groups.io with SMTP id smtpd.web10.28249.1734888439076640298
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14F14E77194
+	for <webhook@archiver.kernel.org>; Tue, 31 Dec 2024 03:12:36 +0000 (UTC)
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+ by mx.groups.io with SMTP id smtpd.web10.76564.1735614751946844282
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 22 Dec 2024 09:27:19 -0800
+ Mon, 30 Dec 2024 19:12:32 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=Y5ALTraj;
- spf=pass (domain: gmail.com, ip: 209.85.128.182, mailfrom: akuster808@gmail.com)
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6ef4b6719d1so28458887b3.2
-        for <yocto-patches@lists.yoctoproject.org>; Sun, 22 Dec 2024 09:27:18 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=Idrr/J7C;
+ spf=pass (domain: gmail.com, ip: 209.85.219.179, mailfrom: akuster808@gmail.com)
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e387ad7abdaso14049429276.0
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 30 Dec 2024 19:12:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734888438; x=1735493238; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=AO3+2FUZnmz27CwySljQUtIb/ej/N8/3ASHvV7ZroTw=;
-        b=Y5ALTrajXGb1/JEBlH9FW03ZcMDIc3PNmCWbT5N4VIbcdWiaSIAJ9FtRetO/1zckRi
-         lKK3egQ7lNGS9V6rEva9ADsT+FwGxD1k13o5oVJHZgnzxyPEnlgLg7M5lKVLSwqdabp8
-         iX5+Vd3ewOLAR0XVYOvjAiOTRboO9EOxprgdBedxSJ/uMDwxgzIu/R92DbYOUXnmOHNA
-         3Jjd0xV+dphQKOPW2fGPnqNCkv0rae4AfQUMV4LaQG0xmJQTKJ3NDSioabDTpJCR9dDK
-         N/cq8ljSYzU2WENCozvsUByUE+HVcbYMDsA3tpczVTJ+Cj9TfDonsmpH1pJY3Sm5db6M
-         UZ1g==
+        d=gmail.com; s=20230601; t=1735614751; x=1736219551; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vAa7Ih7nzJq9xZlz5r17eMKPYnm+CSXsXNmfwyoShE8=;
+        b=Idrr/J7CuzZqit/q6FEfbuYM7JZSheUUsx6Vb8CljCyGGVf0HJu5H0jJ5IyEJPbfcU
+         VSsPWrdy9wGQMya/XGSy3GHg6i+B+Bpa16/8ZHgkaI8KXuspVYcosSy8YxozEgr5RkA+
+         a3eeZX0mroNVF7lK5unX1kmir0/YgMDfGdYCkwLug9nFVLv58PAzX+vVChmMH7sTX7pe
+         jixS2R3oQnaW/QACPQaB3Fw6YK8YdjrpvtI2kS1e52t/ZmYh0LiiC96ezKKKTz2A6L3T
+         PCgBP3X2U5/IWadn+qQNB0W+vxDKh7qoZ0V2p+h3z8gKXmtWiEoeVm5K3poobpdzu1Ce
+         fcPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734888438; x=1735493238;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AO3+2FUZnmz27CwySljQUtIb/ej/N8/3ASHvV7ZroTw=;
-        b=fl+gx1BG6D1YYX9s47L+aH8kyahBIaHV2j6ZVSc0S4SGk8hjCUEdXX2tvehyh5SOw7
-         j/jri5S4xp87Ftf7BNKzQ1YOCzMZ6N70nWoO+TuTjZRJTZBpVWbx7DowpaiqhUQuDNrt
-         i66VB+430ZTBR+lwO0QoCkw9yKbxDP17HBLDbD/XbNQtu88N33sgEqd7gnDTP/5aBJCR
-         pwGzqxZKIjN/Q3jPN5bzWQ9eJuaNOqYQOlwpLScSOGtol62u5n+P/SsLoeC3hblbp3ba
-         M09Pm6yPdN7t44I1oZZ7fG0FychCmsgq+b+lipGRLzrfp4ylyo5kVtgGQRZvlZhFeqLH
-         ljbw==
-X-Gm-Message-State: AOJu0YzFDT19XKQpjRfjaQUV9lGOEdA0RJnf8LSnkAMfotZE1Ga1ZsuE
-	X3m70uMpmScQaTnAENakr50a8GAJXR3kTDF6pi5FkoIwMfrBgbJ2
-X-Gm-Gg: ASbGnctGzDiKPrBOY4N97HKg7fn7i3aNAeZh5bdNmTMxvpdhPxZz34HGG088Jnj8SnA
-	QBkRnSH56TWb3TIu5SY3VYC7s4qDuTNKf44b+UqxjmU4eaSFgL5MZ9+LgJmdWt0g2qAO+CiXg5A
-	O5qSWMAxYaUtHJrscchGdP3g5yit8YoSY1RK6INRRhbeC4Br7HotLeqNmk6rvHJ9W9+GoGQZU/n
-	OO7Q1TOAiLMHVSRqIXv09HzwlE4qU8KZq+clz6G7Fn52BigsW3qN8VIRhn9oxqMyUHWImT8labu
-	cJoASanlITffW5+0krE5IBBOKNfcqXCo
-X-Google-Smtp-Source: AGHT+IHLzeUtBX+OkbCVZ4hmxYsnjXNmAnp7vyoemSxXoNirnodtPQ+QFxfCWyqyhwJBG61C78yjfg==
-X-Received: by 2002:a05:690c:389:b0:6ef:7d1e:bffd with SMTP id 00721157ae682-6f3f8238c34mr68669027b3.37.1734888438241;
-        Sun, 22 Dec 2024 09:27:18 -0800 (PST)
-Received: from ?IPV6:2600:1700:45dd:7000:5d02:58f4:f953:6650? ([2600:1700:45dd:7000:5d02:58f4:f953:6650])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6f3e77ed619sm19608767b3.86.2024.12.22.09.27.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 22 Dec 2024 09:27:17 -0800 (PST)
-Message-ID: <af740159-d332-48fa-aafd-916abca7f127@gmail.com>
-Date: Sun, 22 Dec 2024 12:27:17 -0500
+        d=1e100.net; s=20230601; t=1735614751; x=1736219551;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vAa7Ih7nzJq9xZlz5r17eMKPYnm+CSXsXNmfwyoShE8=;
+        b=PcfUheRZMMaMbjGK+OAgt6pML8HK3l1r6n1LaL3VEme3XCP0Ga9GpzlQlKj9LmLItN
+         E0k6YCRflKzPb0okyQy8Neuel+Tp2b0b2/xrUy/2NNB9R8puw2JDloVDJIGM9qsZS5+S
+         jL+Q78iq3Ah90SHCyfum7yszNm4AN80g9agEqsEl4tHQ2BRX8XYKUPjkuXL8D2gEylWq
+         17McBeS/4BnLZfJWnhD+9D1F4u+yzAv8aHp8cdeOJcetngKNzYSx5lEoLUj/50PPgvS9
+         3LOtOXOP053xq3FZBQ3r5QzlluwI4bCIlzFV1gI2/i5vnf72fXALr8NNhM6JdjTNgEer
+         LzGg==
+X-Gm-Message-State: AOJu0YyDO95oeAcoUjqAGX+AVylDz1i7i/WWQIyAPqsBTGZop0sArInT
+	PgWu5llydQSmI/55hemsETDntq0zWP03WqzTGhMh+o++esUADXs/Ojy/EzIa
+X-Gm-Gg: ASbGnctpXS/rN70y28zceANk2nhPy/gH7mUzE/ybNwOh+IBrJ+I3ba5HqK8xDosmfTT
+	gI4gWE5RfRwVWv1uwxwTsa3xUMDVSzqvXGNczIyIerXh1cxG/m/Hn/pw0Bxx3YL+u6TFUsr1QZ1
+	JE8E03S2FQj5zs5cd2iBxuwOLiGSW5cr+7xzGQ4ONJVHhbgty+wOg7ZhNZc2RrZvynpMT0InX2t
+	zaeNK5qZhxy62Va+qVXHPezLi8D6H/p/hCju1sjXsWbU6UMMD7U4Af9u0Dxy9iI/7Qf
+X-Google-Smtp-Source: AGHT+IEiwiFVSJo4fuwFcqmNZFIRquY8125XnsibmzEFnZLv/RjikWpQUS760LsCG+cldQ3JY/4S0w==
+X-Received: by 2002:a05:6902:842:b0:e38:bf8b:e2d0 with SMTP id 3f1490d57ef6-e538c414d56mr24777408276.46.1735614750921;
+        Mon, 30 Dec 2024 19:12:30 -0800 (PST)
+Received: from keaua.attlocal.net ([2600:1700:45dd:7000:c83e:ad2:5c14:ece])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e537cbeb0b4sm6270546276.6.2024.12.30.19.12.30
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Dec 2024 19:12:30 -0800 (PST)
+From: Armin Kuster <akuster808@gmail.com>
+To: yocto-patches@lists.yoctoproject.org
+Subject: [meta-security][PATCH 1/2] kas: tweak to improve CI work flow
+Date: Mon, 30 Dec 2024 22:12:28 -0500
+Message-ID: <20241231031229.2640925-1-akuster808@gmail.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [meta-security][PATCH 03/18] chkrootkit: change
- download from Ubuntu to Debian
-To: Mikko Rapeli <mikko.rapeli@linaro.org>
-Cc: yocto-patches@lists.yoctoproject.org
-References: <20241220140441.271395-1-mikko.rapeli@linaro.org>
- <20241220140441.271395-4-mikko.rapeli@linaro.org>
-Content-Language: en-US
-From: akuster808 <akuster808@gmail.com>
-Autocrypt: addr=akuster808@gmail.com; keydata=
- xsDNBGNNaZMBDAC6/Mhpw3EGOOTPtIpcUHT4lI974zN/QqccMPxH4oyBPRJbjVImYs9avXwV
- Ae9xoWKMM/vocEZWm6SOESZSGf+7l05Eo6MxU50cIQh0/bcOcdDAtFRDk4pZIL6X7vGzvFe6
- 17tfNwKrTPgDFSSvq6XLUOqukInaVMHPeZum5GNnfuJswSDEQdxGTgudLWhCYwwoJ1AsVhg1
- nJXjQLOGUHFAZPYMhTak5jFXwG+CFzJ1OPpoAfcjQGYEYY5k5Yr1dESl/zgZSwwRLAAXo6JZ
- lm1rdd0c54XG4ah6fvZkd8r05uBVvbvmrdw5OohqqWzMq7RB9DAsszLvOaxN1epwUYnpkQ6x
- yYRBQxt766hLxtW6+bIXUZdinUsc0cD+MlLfynTzpT3eJPhvU9EtpTkA7hlFtHrhENRlT5rE
- F1ZCGykIhg5J/BL/JO3AISgliu0pPLg9r6tgZKu8r2LBf05LJ1vT2P1wVwlzpAdgHKAmTDF8
- MFEASfeJ4o9TrVFGbt8+cA0AEQEAAc0hYWt1c3RlcjgwOCA8YWt1c3RlcjgwOEBnbWFpbC5j
- b20+wsEHBBMBCAAxFiEEztCAddKAZuvtYngBeSnycbzrke8FAmNNaZQCGwMECwkIBwUVCAkK
- CwUWAgMBAAAKCRB5KfJxvOuR703oDAC4coUucV3gE+pNQAJcNWqIQwZHiwxbMy2fBgvTP0bx
- TQj6ZFl4tkiXGydUy9c2lcOj4XfaJuG85Z24IIJE0d8hWZMOZkSv5bmyB/NxbM5xRnPkHb6M
- n58wMSRCfNj/fsOoJE9nj5s41ktg1CA9QFBl9Dt0/8J/Mq+TxOKqYvzL4L8KEIw9nsi/yHQX
- ukXDwI2V01hTPZ6P7a4cZsjuvzCVN/WK2N3LzoVhQZHOOHGgx3h8XmsXMZ2ZxKjIdFTO2gFS
- 48zXa4+LW/ZyJIUlnBIUdSnpS826wSq6Zn3TyvLJrFD3KSviX0N48htIfiYFJmTcGdDU+Zqr
- wKnPQWdZXgWLsv+3deGZ8z0UCdt3n/OSwRML3gFfYd7QBLazXIkFyplFmgOLwXkf+YifwSbu
- P3KTOpYN9bcl1Og2zU1dPTEg7RndDAvRUUA+XWrp7VM5gZgc0UFRNkrf4CZhxuMwATCJQVPj
- aII+TOxThBkx6NJqXD3tvlNozjLy4fLNZd8sAsrOwM0EY01plAEMAJ5IoQo1AbOAoMYUytqx
- zi1uOQa+ak48yVg4llEs55D9h9ANFEY8C5CyEYyXYKjHCgepUUHDRKIMIMxxzYLKDkd8bgvt
- +cmi1Jj36Wrzrf9qGFq5SvGL66IoUBCTsN64UexxbnNWMDF8qO2aXLvJZtfFJfYGc1ATDw8i
- 96pv+FpjE3N76RdYRSFv5UGRqSKhT6jGlVMHb+Z/h1BOIsEBmbtgCozzJ45zhOY9635B4D7w
- i6CB2Aau3/FycPrKk/ZvkSq28tGYWwuhr/fvfvowg+IeClP1oCdKbaWsEwkGTN/PsRM8dPPe
- n07jesJUgpiHCUTF9oY3wJ1a86otszmWbvtJieM7vOxP3YnzF/VVFgDhTzRS0VqAjNRNOMoF
- E7ENS8o7uj7jrrGPuuM9cOhuDqqHwla3Rh0VX+W0//8qGZJ61oGV9paoGUb4PoRqC8ZpLrMB
- Z+f1VQ4iH7rzSQTOLEqGMZ+A34266TtKZKgmBxyqgNFd1HEeO4PD46ycLpnZAQARAQABwsD2
- BBgBCAAgFiEEztCAddKAZuvtYngBeSnycbzrke8FAmNNaZUCGwwACgkQeSnycbzrke+SWgv/
- QvvX84fAHEl7dkhla/oPdqY2bULh+hOxpo3WZmFhHi+41z2GhOJ78S3mY3yD+O7rdXkQIgIu
- bZDOIBMJc0lY/qKfXGpFOg5b8/hW3pYdjmUP1NQmdFK4XRLRL4OhLttgxVgO2yqDtlt9x1o3
- RLgTSJNsy/gQzUJw4m1zYs9qPRz7xglHwrn0OdDwgk6UofiS31cTZgz7txdNJ5pMNEOcjsaD
- KE+3jd6mAOz/VTG7mH3/5z0t+g9onQmfxBFpgxSM8HVtmjT4KWkqqUJzyXLtawbxhdv+fcUv
- 5qUSr9ktwA8NJHmIHHcXBqiZLtLWFMJrdsgTFvjCXmTpm3ncsHS9L+JLVwIVCmUQUUCN1LhG
- itDSpYIEGrZObj82rX1wvxf/ZQ8VXS+owIR2F4yeeqPH/CyrPA1ASdtt+Am28/dJ2krr72at
- J++uLxA0cein1kjcosFDpQscnDcPzohnGyyjgEd6VwelZboIS1jt4lIa1badtV+cWMGMgM8W
- ApZ86eOP
-In-Reply-To: <20241220140441.271395-4-mikko.rapeli@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sun, 22 Dec 2024 17:27:28 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/959
+ <yocto-patches@lists.yoctoproject.org>; Tue, 31 Dec 2024 03:12:36 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/960
 
+drop ptest from base builds.
+Enable ptest in test image only
 
-Hello Mikko,
+Signed-off-by: Armin Kuster <akuster808@gmail.com>
+---
+ kas/kas-security-base.yml | 1 +
+ kas/qemux86-test.yml      | 4 ++++
+ 2 files changed, 5 insertions(+)
 
-An pkg update was posted two days ago allowing ubuntu  still to be used.
-This will be used for the older branch.
-
-thanks,
-armin
-
-On 12/20/24 9:04 AM, Mikko Rapeli via lists.yoctoproject.org wrote:
-> Ubuntu server doesn't have the file anymore but Debian has.
->
-> Signed-off-by: Mikko Rapeli <mikko.rapeli@linaro.org>
-> ---
->   recipes-scanners/rootkits/chkrootkit_0.57.bb | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/recipes-scanners/rootkits/chkrootkit_0.57.bb b/recipes-scanners/rootkits/chkrootkit_0.57.bb
-> index d35f5f6..c71b45c 100644
-> --- a/recipes-scanners/rootkits/chkrootkit_0.57.bb
-> +++ b/recipes-scanners/rootkits/chkrootkit_0.57.bb
-> @@ -5,7 +5,7 @@ SECTION = "security"
->   LICENSE = "BSD-2-Clause"
->   LIC_FILES_CHKSUM = "file://COPYRIGHT;md5=fdbe53788f7081c63387d8087273f5ff"
->   
-> -SRC_URI = "http://archive.ubuntu.com/ubuntu/pool/universe/c/${BPN}/${BPN}_${PV}.orig.tar.gz \
-> +SRC_URI = "https://ftp.debian.org/debian/pool/main/c/${BPN}/${BPN}_${PV}.orig.tar.gz \
->              file://musl_fix.patch"
->   SRC_URI[sha256sum] = "06d1faee151aa3e3c0f91ac807ca92e60b75ed1c18268ccef2c45117156d253c"
->   
+diff --git a/kas/kas-security-base.yml b/kas/kas-security-base.yml
+index bdd74b1..6d53071 100644
+--- a/kas/kas-security-base.yml
++++ b/kas/kas-security-base.yml
+@@ -46,6 +46,7 @@ local_conf_header:
+     PACKAGE_CLASSES = "package_ipk"
+ 
+     DISTRO_FEATURES:append = " security pam apparmor smack ima tpm tpm2"
++    DISTRO_FEATURES:remove = "ptest"
+     MACHINE_FEATURES:append = " tpm tpm2"
+ 
+   diskmon: |
+diff --git a/kas/qemux86-test.yml b/kas/qemux86-test.yml
+index 83a5353..98f1e7f 100644
+--- a/kas/qemux86-test.yml
++++ b/kas/qemux86-test.yml
+@@ -3,4 +3,8 @@ header:
+   includes:
+     - kas-security-base.yml
+ 
++local_conf_header:
++  ptest: |
++      DISTRO_FEATURES:append = " ptest"
++
+ machine: qemux86
+-- 
+2.43.0
 
 
