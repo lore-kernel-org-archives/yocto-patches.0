@@ -1,112 +1,154 @@
-Return-Path: <antonin.godard@bootlin.com>
+Return-Path: <richard.purdie@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EDDFE7718F
-	for <webhook@archiver.kernel.org>; Fri,  3 Jan 2025 15:25:17 +0000 (UTC)
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
- by mx.groups.io with SMTP id smtpd.web10.33044.1735917915495143457
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B3FDE77188
+	for <webhook@archiver.kernel.org>; Mon,  6 Jan 2025 11:53:42 +0000 (UTC)
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+ by mx.groups.io with SMTP id smtpd.web10.57829.1736164416235883587
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 03 Jan 2025 07:25:15 -0800
+ Mon, 06 Jan 2025 03:53:36 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=gm1 header.b=me4nT7Du;
- spf=pass (domain: bootlin.com, ip: 217.70.183.201, mailfrom: antonin.godard@bootlin.com)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 71A851BF203;
-	Fri,  3 Jan 2025 15:25:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1735917913;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=H9axfQ3H2ZfPU63KHjfjxEcHieg/Z7g4mMD6BuvVuWk=;
-	b=me4nT7DuDj611xgOwXrDTofYw0NGhr5c1chAQuCMxNmClTG7E8Y0joAd8mb/25V9VYAdLC
-	eW5cHSpo4TiqNZWaOGytoki8skNDsh/mXU8AWPNl76Qkf2J0ntF7a6bGnyTE60e3qKqYgk
-	IuURaLSUH4WbRHouuHF+3YzOZyKcCYwm2oUkAvBLLUYtwW4goK7nU7klbHqm+ZDWBip7+z
-	QRgCHg4KhaTYOmFgf9C6zEfD9bKSWIf+Djg3p7ZnyIxU+66gIdu0EiDyNy6qCTXM+NBIuD
-	KDHV2Er+4aRtbyylX6peHxIDchi/Z441dZtjFRkqH4edh5gWdAMeob5T8CMcPA==
-From: Antonin Godard <antonin.godard@bootlin.com>
-Date: Fri, 03 Jan 2025 16:24:53 +0100
-Subject: [yocto-autobuilder-helper][PATCH] config.json: add docs build
- config
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250103-docs-config-v1-1-a0c3fd11ffbf@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAEQBeGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDQwNj3ZT85GLd5Py8tMx03eQ0M0MLi1Qzy2TzRCWgjoKi1LTMCrBp0bG
- 1tQBAoxGjXQAAAA==
-X-Change-ID: 20250103-docs-config-cf6188e69c7a
+ dkim=pass header.i=@linuxfoundation.org header.s=google header.b=ah962kbE;
+ spf=pass (domain: linuxfoundation.org, ip: 209.85.128.54, mailfrom: richard.purdie@linuxfoundation.org)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-436ce2ab251so16617775e9.1
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 06 Jan 2025 03:53:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1736164414; x=1736769214; darn=lists.yoctoproject.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=8njKXYVGu2HdYovoWoYVnRoC31MEDRuLZ6UXF5/cqqM=;
+        b=ah962kbE8vrWLpCOjrXAoi5GVomnh86OHQZ5xEgCKT9NjLr8WgbWpZVRzAr4HU3kyo
+         DSIV2YfAPdyRxOkuvRlWi/ndtQakNqvsFJ8DszgM7qQVdcRoF82f9E5B2czJJkBDxT+8
+         TreWyhLxOVcNQaOoH5/dUuu96K+7SjBBxYLq8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736164414; x=1736769214;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8njKXYVGu2HdYovoWoYVnRoC31MEDRuLZ6UXF5/cqqM=;
+        b=IFxRChXpFy3YQ3aM3jousTaPUvSI/d63RAR6ZFed4rRAHI1wqqgB3ehaY5SeT/lO1b
+         rCmqLIp959P5IzCVzb1rpJxOxnC5Tm/Zen5pSsED4EFOr2yFi0S4Hf0jmZmLDMZwPi4d
+         e3tFxoqWLlKm6dYYAyh5Jjh66F2U014rj4FLcMuUeUUVOUIBjTeaA7WQiD2FhHUZG42C
+         2EAWT4O2dnS16clVyzTwx6GYQMIUPo8tHLahg0jS6VhJSZokMzBpFSzsmaTaBon8i6tw
+         0gA73uppn85LECBJXlYicnT0PvxLiu8NLxQbNqJiwzsattz5JwMwnkWj5yDq9vAwR/gj
+         abEA==
+X-Gm-Message-State: AOJu0YyaJLg/wbHbWkRwiieRwWvbWgC1EoZWb9ZvUWCJQEimeWh6lgC4
+	9Tnebtglmg9qObkaEWXarb+rKzlJsl9nL4IbTt1HJbD46OCMm9oy2W4BqShwDTqVAKWOhFojcMQ
+	A33g=
+X-Gm-Gg: ASbGncs6b2BZOiVjgDdE60LoFuoK4jXMejNzIq31CkSb1UUbOy9Qpzx6GjRlItyY2BL
+	sBrNaaymhRkcE4Vb9PnuQNDHK0lDfmgfuIy5j+haL2CsL3QpIHPexGeE3Wg/ekgKkzgclJD68xK
+	RwUXkJRem4fLxnTWFYmbNsJUCMI8sn/BGETyV3q8iRLXETYMoY3zLVrBny8PbPxvNr4RMNJfVBn
+	c7fOLQptHKc9jsova5x8b8G3JvsaK4mm+rkAzdTkzF/UQQUq5/bZmfETDz/J6oQNUB2qFJl0+8l
+	m2RB3ryyhXaPlOuPI69hB/pAK0y4AB9cetMEudJnFtAGUg==
+X-Google-Smtp-Source: AGHT+IEmLUudN6Tcozex+IO1B/qp3V15s50T419g0UdAKl8t2nPTxzjRuAzAlK3vrafOYbFQCYZG2w==
+X-Received: by 2002:a05:600c:4ecc:b0:434:a386:6ae with SMTP id 5b1f17b1804b1-436685484c5mr425034895e9.7.1736164414046;
+        Mon, 06 Jan 2025 03:53:34 -0800 (PST)
+Received: from ?IPv6:2001:8b0:aba:5f3c:3607:7267:e27a:36e4? ([2001:8b0:aba:5f3c:3607:7267:e27a:36e4])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43656af6cbbsm599342855e9.3.2025.01.06.03.53.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Jan 2025 03:53:33 -0800 (PST)
+Message-ID: <98b2ba00fbade948c76214a77bb052389dd6ca63.camel@linuxfoundation.org>
+Subject: Re: [yocto-patches] [yocto-autobuilder2][PATCH] docs: fetch
+ yocto-docs and bitbake using *shared-repos scripts
+From: Richard Purdie <richard.purdie@linuxfoundation.org>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Antonin Godard <antonin.godard@bootlin.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1422;
- i=antonin.godard@bootlin.com; h=from:subject:message-id;
- bh=7TbMRJ3hMmqMJqBc/gwbaTdRkpoK5nMu2A/4bVBMwHk=;
- b=owEBbQKS/ZANAwAIAdGAQUApo6g2AcsmYgBneAFZOhTHhkUbw4ydtXWGrgIB4sXgkhL8qJq/3
- KoU1bRV5JaJAjMEAAEIAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCZ3gBWQAKCRDRgEFAKaOo
- Nj4ZD/486G6dPHWQrfr3pywzksX0hfNyxRMrk+rYSnOpR586yF74h7bqIaK6sinEH464TygQas5
- LBLkE8hBpjJhdKSjNNzqn+FScOBNEs/CG13Vla+TCHu2PD2rkm6rrYEeUic3n7SDIZVV8vVDTqS
- jZpHJnJr5BNk2G0WkvXSoQpVRSlZnF+fMWi/92oqDFN6jtLfTN+ReBzit5dn+fu2LyyzttAWQFV
- Z2lh2Oq6Y+X/cnnv5cao/jiewcreTzWhYMbXvoeoqB5srqz7QPs5waucgGHysOqXbpInYozcsB8
- /O14QrPVWUdIg2+9wbE1hzI+keYLe27qsRHF5DbE7CnyLVLFxDBRCo6lWWnRv8PN9MMq2iOdS8r
- 2SYi9Q0fSuJKrumWwZoVoINZ+PwW/0/JguOxb1s/gRCaYt0qBOMzleetvpRUXjRnrRcmn3cb/sv
- CYAN+KFRwG62U00BTPU0bUbTlb7aQcOngkotGcn7Y6gLUH/ExXV95WmGyMRUEmCZfhCFV41MRl5
- CIs0oi3RZKaaPPZfi8y7ChBXpv6H5KOppzxW3qcD1JYPeYAxz9/wemUrQNokkzNwAJQSKvxG7ZJ
- czli6w3AEluHIiWnd9hO09VTCstnZi7wfAHMvVcVoDlYLBh6OcV8YkjT0jiMwsRRyN3Cv0n/Bzk
- LMG0efHi32SkYWg==
-X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
- fpr=8648725188DD401BB9A0D3FFD180414029A3A836
-X-GND-Sasl: antonin.godard@bootlin.com
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Antonin Godard
+	 <antonin.godard@bootlin.com>
+Date: Mon, 06 Jan 2025 11:53:32 +0000
+In-Reply-To: <20250103-docs-build-shared-repos-v1-1-7b5705d895a1@bootlin.com>
+References: <20250103-docs-build-shared-repos-v1-1-7b5705d895a1@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.54.0-1 
+MIME-Version: 1.0
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 03 Jan 2025 15:25:17 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/966
+ <yocto-patches@lists.yoctoproject.org>; Mon, 06 Jan 2025 11:53:42 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/967
 
-Like other builds, declare the repos on which the docs build depends on
-here. This is needed by the patch "docs: fetch yocto-docs and bitbake
-using *shared-repos scripts" on yocto-autobuilder2.
-
-Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
----
- config.json | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/config.json b/config.json
-index a6a4332bbd77a952e1886de74c038566cfc2378b..bbe151882da3fbecc5da5def5f3abe1eaac586d7 100644
---- a/config.json
-+++ b/config.json
-@@ -1817,6 +1817,9 @@
-         "a-full-posttrigger" : {
-             "TEMPLATE" : "trigger-build-posttrigger"
-         },
-+        "docs": {
-+            "NEEDREPOS" : ["yocto-docs", "bitbake"]
-+        },
-         "patchtest" : {
-             "NEEDREPOS" : ["poky", "meta-patchtest", "meta-openembedded"],
-             "MACHINE" : "qemux86-64",
-@@ -1962,6 +1965,12 @@
-             "branch" : "master",
-             "revision" : "HEAD",
-             "no-layer-add" : true
-+        },
-+        "yocto-docs" : {
-+            "url" : "ssh://git@push.yoctoproject.org/yocto-docs",
-+            "branch" : "master",
-+            "revision" : "HEAD",
-+            "no-layer-add" : true
-         }
-     },
-     "buildtools" : {
-
----
-base-commit: e39db7b08eb81b012f2127f41dc1c2b8fa46c003
-change-id: 20250103-docs-config-cf6188e69c7a
-
-Best regards,
--- 
-Antonin Godard <antonin.godard@bootlin.com>
+T24gRnJpLCAyMDI1LTAxLTAzIGF0IDE2OjI0ICswMTAwLCBBbnRvbmluIEdvZGFyZCB2aWEgbGlz
+dHMueW9jdG9wcm9qZWN0Lm9yZyB3cm90ZToKPiBUaGUgZG9jcyBidWlsZCB3YXMgb25lIG9mIHRo
+ZSBvbmx5IGJ1aWxkZXIgbm90IHVzaW5nIHRoZSBzaGFyZWQtcmVwb3MKPiBzY3JpcHRzLiBUaGlz
+IHByZXZlbnRlZCBzb21lIG9mIHRoZSByZXBvc2l0b3J5IHByb3BlcnRpZXMgdG8gYmUKPiBvdmVy
+cmlkZW4sIHN1Y2ggYXMgdGhlIGJpdGJha2UveW9jdG8tZG9jcyByZXBvc2l0b3J5IFVSSS4gT3Zl
+cnJpZGluZyB0aGUKPiBiaXRiYWtlIFVSSSBpcyBlc3BlY2lhbGx5IHVzZWZ1bCB3aGVuIHVzaW5n
+IGJpdGJha2UtY29udHJpYiBpbnN0ZWFkIG9mCj4gYml0YmFrZSwgdG8gdGVzdCBjaGFuZ2VzLgo+
+IAo+IExlYXZlIHRoZSB5b2N0by1hdXRvYnVpbGRlci1oZWxwZXIgaW4gdGhlIGNvZGViYXNlcyAo
+bGlrZSBpbiB0aGUgb3RoZXIKPiBidWlsZGVycyksIGJ1dCBtb3ZlIHRoZSB5b2N0by1kb2NzL2Jp
+dGJha2UgcmVwb3NpdG9yaWVzIHRvIE5FRURSRVBPUyBpbgo+IHlvY3RvLWF1dG9idWlsZGVyLWhl
+bHBlci9jb25maWcuanNvbi4KPiAKPiBUaGlzIHBhdGNoIGRlcGVuZHMgb24gdGhlIHBhdGNoICJj
+b25maWcuanNvbjogYWRkIGRvY3MgYnVpbGQgY29uZmlnIiBvbgo+IHlvY3RvLWF1dG9idWlsZGVy
+LWhlbHBlci4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBBbnRvbmluIEdvZGFyZCA8YW50b25pbi5nb2Rh
+cmRAYm9vdGxpbi5jb20+Cj4gLS0tCj4gwqBidWlsZGVycy5wecKgwqAgfCAzNiArKysrKysrKysr
+KysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0KPiDCoGNvbmZpZy5wecKgwqDCoMKgIHzCoCAyICst
+Cj4gwqBzY2hlZHVsZXJzLnB5IHwgMTEgKy0tLS0tLS0tLS0KPiDCoDMgZmlsZXMgY2hhbmdlZCwg
+MjQgaW5zZXJ0aW9ucygrKSwgMjUgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2J1aWxk
+ZXJzLnB5IGIvYnVpbGRlcnMucHkKPiBpbmRleCA4OGZmMzI4YzdlYzZlY2YwZjI4ZGEyNjkzY2M5
+YzAyMTBlNzYwYjM1Li5lMTlmZTVhMTM4YjE4ZGVlYzc3NmYxOWM2YjBhZjUwN2UzMDIxYzg5IDEw
+MDY0NAo+IC0tLSBhL2J1aWxkZXJzLnB5Cj4gKysrIGIvYnVpbGRlcnMucHkKPiBAQCAtMzg5LDIy
+ICszODksMjYgQEAgZGVmIGNyZWF0ZV9kb2NfYnVpbGRlcl9mYWN0b3J5KCk6Cj4gwqDCoMKgwqDC
+oMKgwqDCoCBtb2RlPSdpbmNyZW1lbnRhbCcsCj4gwqDCoMKgwqDCoMKgwqDCoCBoYWx0T25GYWls
+dXJlPVRydWUsCj4gwqDCoMKgwqDCoMKgwqDCoCBuYW1lPSdGZXRjaCB5b2N0by1hdXRvYnVpbGRl
+ci1oZWxwZXInKSkKPiAtwqDCoMKgIGYuYWRkU3RlcChzdGVwcy5HaXQoCj4gLcKgwqDCoMKgwqDC
+oMKgIHJlcG91cmw9Y29uZmlnLnJlcG9zWyJ5b2N0by1kb2NzIl1bMF0sCj4gLcKgwqDCoMKgwqDC
+oMKgIGJyYW5jaD1jb25maWcucmVwb3NbInlvY3RvLWRvY3MiXVsxXSwKPiAtwqDCoMKgwqDCoMKg
+wqAgY29kZWJhc2U9J3lvY3RvLWRvY3MnLAo+IC3CoMKgwqDCoMKgwqDCoCB3b3JrZGlyPXV0aWwu
+SW50ZXJwb2xhdGUoIiUocHJvcDpidWlsZGRpcilzL3lvY3RvLWRvY3MiKSwKPiAtwqDCoMKgwqDC
+oMKgwqAgbW9kZT0naW5jcmVtZW50YWwnLAo+ICvCoMKgwqAgZi5hZGRTdGVwKFdyaXRlTGF5ZXJJ
+bmZvKG5hbWU9J1dyaXRlIG1haW4gbGF5ZXJpbmZvLmpzb24nLCBoYWx0T25GYWlsdXJlPVRydWUp
+KQo+ICvCoMKgwqAgZi5hZGRTdGVwKHN0ZXBzLlNoZWxsQ29tbWFuZCgKPiArwqDCoMKgwqDCoMKg
+wqAgY29tbWFuZD1bCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgdXRpbC5JbnRlcnBvbGF0ZSgi
+JShwcm9wOmJ1aWxkZGlyKXMveW9jdG8tYXV0b2J1aWxkZXItaGVscGVyL3NjcmlwdHMvcHJlcGFy
+ZS1zaGFyZWQtcmVwb3MiKSwKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB1dGlsLkludGVycG9s
+YXRlKCIlKHByb3A6YnVpbGRkaXIpcy9sYXllcmluZm8uanNvbiIpLAo+ICvCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgIHV0aWwuSW50ZXJwb2xhdGUoInt9LyUocHJvcDpidWlsZGVybmFtZSlzLSUocHJv
+cDpidWlsZG51bWJlcilzIi5mb3JtYXQoY29uZmlnLnNoYXJlZHJlcG9kaXIpKSwKPiArwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoCBdLAo+IMKgwqDCoMKgwqDCoMKgwqAgaGFsdE9uRmFpbHVyZT1UcnVl
+LAo+IC3CoMKgwqDCoMKgwqDCoCBuYW1lPSdGZXRjaCB5b2N0by1kb2NzJykpCj4gLcKgwqDCoCBm
+LmFkZFN0ZXAoc3RlcHMuR2l0KAo+IC3CoMKgwqDCoMKgwqDCoCByZXBvdXJsPWNvbmZpZy5yZXBv
+c1siYml0YmFrZSJdWzBdLAo+IC3CoMKgwqDCoMKgwqDCoCBicmFuY2g9Y29uZmlnLnJlcG9zWyJi
+aXRiYWtlIl1bMV0sCj4gLcKgwqDCoMKgwqDCoMKgIGNvZGViYXNlPSdiaXRiYWtlJywKPiAtwqDC
+oMKgwqDCoMKgwqAgd29ya2Rpcj11dGlsLkludGVycG9sYXRlKCIlKHByb3A6YnVpbGRkaXIpcy9i
+aXRiYWtlIiksCj4gLcKgwqDCoMKgwqDCoMKgIG1vZGU9J2luY3JlbWVudGFsJywKPiArwqDCoMKg
+wqDCoMKgwqAgbmFtZT0iUHJlcGFyZSBzaGFyZWQgcmVwb3NpdG9yaWVzIikpCj4gK8KgwqDCoCBm
+LmFkZFN0ZXAoc3RlcHMuU2hlbGxDb21tYW5kKAo+ICvCoMKgwqDCoMKgwqDCoCBjb21tYW5kPVsK
+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB1dGlsLkludGVycG9sYXRlKCIlKHByb3A6YnVpbGRk
+aXIpcy95b2N0by1hdXRvYnVpbGRlci1oZWxwZXIvc2NyaXB0cy9zaGFyZWQtcmVwby11bnBhY2si
+KSwKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB1dGlsLkludGVycG9sYXRlKCIlKHByb3A6YnVp
+bGRkaXIpcy9sYXllcmluZm8uanNvbiIpLAo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHV0aWwu
+SW50ZXJwb2xhdGUoIiUocHJvcDpidWlsZGRpcilzIiksCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAgdXRpbC5Qcm9wZXJ0eSgiYnVpbGRlcm5hbWUiKSwKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oCAiLWMiLCB1dGlsLkludGVycG9sYXRlKCJ7fS8lKHByb3A6YnVpbGRlcm5hbWUpcy0lKHByb3A6
+YnVpbGRudW1iZXIpcyIuZm9ybWF0KGNvbmZpZy5zaGFyZWRyZXBvZGlyKSksCj4gK8KgwqDCoMKg
+wqDCoMKgwqDCoMKgwqAgIi0td29ya2VybmFtZSIsIHV0aWwuSW50ZXJwb2xhdGUoIiUocHJvcDp3
+b3JrZXJuYW1lKXMiKSwKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBdLAo+IMKgwqDCoMKgwqDC
+oMKgwqAgaGFsdE9uRmFpbHVyZT1UcnVlLAo+IC3CoMKgwqDCoMKgwqDCoCBuYW1lPSdGZXRjaCBi
+aXRiYWtlJykpCj4gK8KgwqDCoMKgwqDCoMKgIG5hbWU9IlVucGFjayBzaGFyZWQgcmVwb3NpdG9y
+aWVzIikpCj4gwqDCoMKgwqAgZi5hZGRTdGVwKHN0ZXBzLlNoZWxsQ29tbWFuZCgKPiDCoMKgwqDC
+oMKgwqDCoMKgIGNvbW1hbmQ9W3V0aWwuSW50ZXJwb2xhdGUoIiUocHJvcDpidWlsZGRpcilzL3lv
+Y3RvLWF1dG9idWlsZGVyLWhlbHBlci9zY3JpcHRzL3J1bi1kb2NzLWJ1aWxkIiksCj4gwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB1dGlsLkludGVycG9sYXRlKCIlKHByb3A6YnVp
+bGRkaXIpcyIpLAo+IEBAIC00MTIsNiArNDE2LDEwIEBAIGRlZiBjcmVhdGVfZG9jX2J1aWxkZXJf
+ZmFjdG9yeSgpOgo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgdXRpbC5JbnRl
+cnBvbGF0ZSgiJShwcm9wOmJ1aWxkZGlyKXMvYml0YmFrZSIpXSwKPiDCoMKgwqDCoMKgwqDCoMKg
+IGhhbHRPbkZhaWx1cmU9VHJ1ZSwKPiDCoMKgwqDCoMKgwqDCoMKgIG5hbWU9IlJ1biBkb2N1bWVu
+dGF0aW9uIEJ1aWxkIikpCj4gK8KgwqDCoCBmLmFkZFN0ZXAoc3RlcHMuU2hlbGxDb21tYW5kKAo+
+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBjb21tYW5kPVsicm0iLCAi
+LWZyIiwgdXRpbC5JbnRlcnBvbGF0ZSgie30vJShwcm9wOmJ1aWxkZXJuYW1lKXMtJShwcm9wOmJ1
+aWxkbnVtYmVyKXMiLmZvcm1hdChjb25maWcuc2hhcmVkcmVwb2RpcikpXSwKPiArwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaGFsdE9uRmFpbHVyZT1UcnVlLAo+ICvCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBuYW1lPSJSZW1vdmUgc2hhcmVkIHJl
+cG8gZGlyIikpCj4gwqDCoMKgwqAgcmV0dXJuIGYKPiDCoAoKCkknbSB0b3JuIG9uIHRoaXMuIFdl
+IGNyZWF0ZSB0aGUgc2hhcmVkIHJlcG8gZGlyIGFzIHRoZXJlIGFyZSBtdWx0aXBsZQpidWlsZGVy
+cyBydW5uaW5nIG9uZSB0YXJnZXQgYnVpbGQgYW5kIHdlIHdhbnQgdGhlbSBhbGwgdG8gbWF0Y2gu
+IFRoZQpkb2NzIGJ1aWxkIGRvZXNuJ3QgaGF2ZSB0aGlzIGNvbnN0cmFpbnQgc28gaXQgZG9lc24n
+dCByZWFsbHkgbmVlZCB0bwpjcmVhdGUgYSBzaGFyZWQgcmVwby4KClRoZSBkb3duc2lkZXMgdG8g
+dGhhdCBhcmUgYnlwYXNzaW5nIHRoZSBjYWNoZSBtZWNoYW5pc20gYW5kIGl0IHNlZW1zCm1pc3Np
+bmcgb3V0IG9uIHNvbWUgb2YgdGhlIHJlcG8gY29uZmlnIHRvby4gSSB3b25kZXIgaWYgd2Ugc2hv
+dWxkCmNyZWF0ZSBhIHNlY29uZCB2ZXJzaW9uIG9mIHRoaXMgc2NyaXB0IHdoaWNoIGp1c3QgY3Jl
+YXRlcyBhIHNwZWNpZmljCmNoZWNrb3V0PwoKQ2hlZXJzLAoKUmljaGFyZAoKCgo=
 
 
