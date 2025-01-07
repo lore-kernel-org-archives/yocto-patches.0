@@ -1,116 +1,110 @@
-Return-Path: <antonin.godard@bootlin.com>
+Return-Path: <mikko.rapeli@linaro.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B481E77188
-	for <webhook@archiver.kernel.org>; Mon,  6 Jan 2025 13:31:12 +0000 (UTC)
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
- by mx.groups.io with SMTP id smtpd.web11.58990.1736170262162460150
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1339BE77198
+	for <webhook@archiver.kernel.org>; Tue,  7 Jan 2025 10:06:07 +0000 (UTC)
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+ by mx.groups.io with SMTP id smtpd.web11.17061.1736244362152340535
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 06 Jan 2025 05:31:02 -0800
+ Tue, 07 Jan 2025 02:06:02 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=gm1 header.b=WBSnh3jt;
- spf=pass (domain: bootlin.com, ip: 217.70.183.201, mailfrom: antonin.godard@bootlin.com)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 97EAF1BF208;
-	Mon,  6 Jan 2025 13:30:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1736170259;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YfNk9EGavN9ue2lsS8QgPgm1bngd6qN1/yDZhUqisQg=;
-	b=WBSnh3jt8QT3YxjDH3lfiypvyZZFJsGjQ43eQ0Eo556xcghwK+Hgu+g8DruZW1imiWsA0n
-	oyDIhvhTWku387cp6/tGeUrAC8ezQ/ioieOXbRNrHGHcLKZ0yP7msNt8EELNOQP/z143Fy
-	rINUVPB3KeqG+tY2Lc5rFEa8ckwOEkbU+4pwXU1fxV3d8AZyYZt0vmho2+zR+eV6L/m8qs
-	oYPe8LaDFoEYi+1/UUCdgjXnScujetE2VNN0O4VgfmvOvzHFp3KqNG+JUJG7OM/MR0dRz9
-	OGHLE+83QFIrNwlcXeAnoDgrGcg8P46UxsaOMF4YpFvf5IF04GAM+ypYxkkoTA==
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 06 Jan 2025 14:30:59 +0100
-Message-Id: <D6V0ZQB35QH0.1BHV3MUAN1O9J@bootlin.com>
-From: "Antonin Godard" <antonin.godard@bootlin.com>
-To: "Richard Purdie" <richard.purdie@linuxfoundation.org>,
- <yocto-patches@lists.yoctoproject.org>
-Subject: Re: [yocto-patches] [yocto-autobuilder2][PATCH] docs: fetch
- yocto-docs and bitbake using *shared-repos scripts
-Cc: "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>
-X-Mailer: aerc 0.18.2-100-gc2048ef30452-dirty
-References: <20250103-docs-build-shared-repos-v1-1-7b5705d895a1@bootlin.com>
- <6c886818b4a62a4d119e51604c046a0a4afc97b2.camel@linuxfoundation.org>
-In-Reply-To: <6c886818b4a62a4d119e51604c046a0a4afc97b2.camel@linuxfoundation.org>
-X-GND-Sasl: antonin.godard@bootlin.com
+ dkim=pass header.i=@linaro.org header.s=google header.b=ZUHsIh/L;
+ spf=pass (domain: linaro.org, ip: 209.85.167.51, mailfrom: mikko.rapeli@linaro.org)
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5401c68b89eso18552851e87.0
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 07 Jan 2025 02:06:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1736244360; x=1736849160; darn=lists.yoctoproject.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=GPGUufHQ0UPz3VhTxikpQ4+sruRQbw8B2zUR0lrygPY=;
+        b=ZUHsIh/LdavPkAucjXrY1rO089oIzujBOsWtR/kbURkspRVUkht5+KG5twdAlQm74f
+         7Q/YdijM/lNuOQNJmhh1yFYjhUZEFLBJQmLOFT7STFVvsgrOheA/m8R+YlOZD4DdcG0+
+         BYo77z4za9AvPCjhw9fo/8e4Ru6U44xC4+wx4l9/gfX4Y6AtdNwBOT21r3GYKka3Al5C
+         K/7T6RABuiPSxdNVzbjEHLlnQA/TY07yMdRcHXShQUtDojcs8Mx8OA4QTGs0WkOHlcdq
+         j6I4dKoKX09qPmLC0M2YR3NUI+n7r51u2jyEXZPFkGDimyQBRmmTEDS6xiqE5MB0r6bR
+         yJrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736244360; x=1736849160;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GPGUufHQ0UPz3VhTxikpQ4+sruRQbw8B2zUR0lrygPY=;
+        b=t9KbsOYzfgANQUDOsJRvsbdTSaiCRUdhh4t5xEEYTV1fBzbOcrP3KxLtpPauLdXI+C
+         529jEaqPmFpk/1JSQFGQPeC61FvWM95T1zG7GQDz7Wkuh+jqd7I5G5HujPfC3cKMfT20
+         U2MJxKi21d5WhEHwqYdmu1FKv3Cr5xYj/ajJbF2VfG/CD0hEC/jcvtTWc6fZxZEerHXk
+         SkydDRP3EgFFlP79mcNEFZncg1NKZnOTKIYNI0hwJT+7CaspA7xUvMSLSbSMiKgXUFij
+         3B8X30NqDUp68eYtCFxVYZFckJjriyWdBGVhnFKOeIX+IpJ5K4akdFyvOX3MmN1Fmx1V
+         cokw==
+X-Gm-Message-State: AOJu0Yzu8Fx/8yEiu/ICQ6lBZzR2hIKYOa+Bwg86XGPHLfqf9B/WJqFC
+	hFoiCBKgkHZWSaP54m11Rl4rTQ6e0B0gfgMEjQUD5hEdYEme8CfhHC+9w5XXWe8VOoz9KV13+kR
+	7
+X-Gm-Gg: ASbGnctDigtLv4zUiZCQt+7w6XoKqaZdg3VteHu0tCuRKRzlEKtSwoB2rRKwAStwbji
+	orAjUozLWFK686CSpUwDZGj02TKSwRwbabyXxdRHhOUCrnS1L7tOSU8bMo2Yn2opRvnn+0nrDBd
+	rWPTCQQx4/q+IspQn7nrLhgLJ2guPhJShRJ60ZRpRIKNFHVKZ/nvK6ykYltueQ/8lffME9HBx+D
+	/3IALwQ4fS49DFBN2N0uM/keynZG9taGp7on7bvPx8hNiNaNZ9j+lasZqfMNyOAcLzlwjUdKpEQ
+	iPf6Vg==
+X-Google-Smtp-Source: AGHT+IG1usRFW0nd/mwQWtauQ3OlNzZFzs97i5LHkD7omTiWTbcZTkyHN45nhlxiT+3xI3nSBQzxxQ==
+X-Received: by 2002:a05:6512:3512:b0:53d:f2e8:b37f with SMTP id 2adb3069b0e04-5427e96328amr511507e87.6.1736244360235;
+        Tue, 07 Jan 2025 02:06:00 -0800 (PST)
+Received: from nuoska (78-27-76-97.bb.dnainternet.fi. [78.27.76.97])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54223813848sm5226844e87.166.2025.01.07.02.05.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Jan 2025 02:05:58 -0800 (PST)
+Date: Tue, 7 Jan 2025 12:05:55 +0200
+From: Mikko Rapeli <mikko.rapeli@linaro.org>
+To: =?iso-8859-1?Q?J=F6rg?= Sommer <joerg.sommer@navimatix.de>
+Cc: yocto-patches@lists.yoctoproject.org
+Subject: Re: [yocto-patches] [meta-security][PATCH 12/18] systemd: enable TPM
+ support
+Message-ID: <Z3z8g79Tq7Sg80em@nuoska>
+References: <20241220140441.271395-1-mikko.rapeli@linaro.org>
+ <20241220140441.271395-13-mikko.rapeli@linaro.org>
+ <cdqveqfiivyicrtsjzbnlxopvohsbxuybabhwdntygisoc4pz2@tnbgemicyfef>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cdqveqfiivyicrtsjzbnlxopvohsbxuybabhwdntygisoc4pz2@tnbgemicyfef>
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 06 Jan 2025 13:31:12 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/969
+ <yocto-patches@lists.yoctoproject.org>; Tue, 07 Jan 2025 10:06:07 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/970
 
-Hi Richard,
+Hi,
 
-On Mon Jan 6, 2025 at 2:07 PM CET, Richard Purdie wrote:
-> On Fri, 2025-01-03 at 16:24 +0100, Antonin Godard via lists.yoctoproject.=
-org wrote:
->> The docs build was one of the only builder not using the shared-repos
->> scripts. This prevented some of the repository properties to be
->> overriden, such as the bitbake/yocto-docs repository URI. Overriding the
->> bitbake URI is especially useful when using bitbake-contrib instead of
->> bitbake, to test changes.
->>=20
->> Leave the yocto-autobuilder-helper in the codebases (like in the other
->> builders), but move the yocto-docs/bitbake repositories to NEEDREPOS in
->> yocto-autobuilder-helper/config.json.
->>=20
->> This patch depends on the patch "config.json: add docs build config" on
->> yocto-autobuilder-helper.
->>=20
->> Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
->> ---
->> =C2=A0builders.py=C2=A0=C2=A0 | 36 ++++++++++++++++++++++--------------
->> =C2=A0config.py=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 2 +-
->> =C2=A0schedulers.py | 11 +----------
->> =C2=A03 files changed, 24 insertions(+), 25 deletions(-)
->>=20
->> diff --git a/builders.py b/builders.py
->> index 88ff328c7ec6ecf0f28da2693cc9c0210e760b35..e19fe5a138b18deec776f19c=
-6b0af507e3021c89 100644
->> --- a/builders.py
->> +++ b/builders.py
->> @@ -389,22 +389,26 @@ def create_doc_builder_factory():
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mode=3D'incremental',
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 haltOnFailure=3DTrue,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 name=3D'Fetch yocto-aut=
-obuilder-helper'))
->> -=C2=A0=C2=A0=C2=A0 f.addStep(steps.Git(
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 repourl=3Dconfig.repos["yoct=
-o-docs"][0],
->
-> Since I looked at this a bit more, I think this should be:
->
-> self.getProperty("repo_yocto-docs") instead of config.repos["yocto-docs"]=
-[0]
->
-> (see steps/writelayerinfo.py)
->
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 branch=3Dconfig.repos["yocto=
--docs"][1],
->
-> similarly:
->
-> self.getProperty("branch_yocto-docs")
->
->
-> then we'd add=C2=A0properties=3Dparent_default_props('docs') to:
->
-> schedulers.append(sched.AnyBranchScheduler(name=3D"yocto-docs-changed"
+On Sun, Dec 22, 2024 at 08:37:05AM +0100, J�rg Sommer wrote:
+> Mikko Rapeli via lists.yoctoproject.org schrieb am Fr 20. Dez, 16:04 (+0200):
+> > Enable "tpm2" support if "tpm2" is in DISTRO_FEATURES.
+> > Also enable cryptsetup, openssl and repart features which
+> > are needed to use TPM device to encrypt filesystems with
+> > systemd configuration. See:
+> > 
+> > https://www.freedesktop.org/software/systemd/man/latest/systemd-repart.html#--tpm2-device=
+> > 
+> > Signed-off-by: Mikko Rapeli <mikko.rapeli@linaro.org>
+> > ---
+> >  .../recipes-core/systemd/systemd_%.bbappend     | 17 +++++++++++++++++
+> >  1 file changed, 17 insertions(+)
+> >  create mode 100644 meta-tpm/recipes-core/systemd/systemd_%.bbappend
+> > 
+> > diff --git a/meta-tpm/recipes-core/systemd/systemd_%.bbappend b/meta-tpm/recipes-core/systemd/systemd_%.bbappend
+> > new file mode 100644
+> > index 0000000..82b79ba
+> > --- /dev/null
+> > +++ b/meta-tpm/recipes-core/systemd/systemd_%.bbappend
+> > @@ -0,0 +1,17 @@
+> > +PACKAGECONFIG:append = " ${@bb.utils.contains('DISTRO_FEATURES', 'tpm2', 'tpm2', '', d)}"
+> 
+> How about using `bb.utils.filter('DISTRO_FEATURES', 'tmp2', d)` here?
 
-Thanks, this looks easier than using the scripts, I'll try this instead.
+Yes, this could be an improvement. The end effect is the same.
 
-Antonin
+This patch is already merged so I'll try to remember this in future updates.
 
---=20
-Antonin Godard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Cheers,
+
+-Mikko
 
