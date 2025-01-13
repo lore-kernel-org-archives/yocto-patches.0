@@ -1,95 +1,179 @@
-Return-Path: <twoerner@gmail.com>
+Return-Path: <antonin.godard@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C60BE7719A
-	for <webhook@archiver.kernel.org>; Sat, 11 Jan 2025 15:41:57 +0000 (UTC)
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
- by mx.groups.io with SMTP id smtpd.web10.17576.1736610113483389098
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E598E7719E
+	for <webhook@archiver.kernel.org>; Mon, 13 Jan 2025 08:37:25 +0000 (UTC)
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+ by mx.groups.io with SMTP id smtpd.web11.12761.1736757438720218781
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 11 Jan 2025 07:41:53 -0800
+ Mon, 13 Jan 2025 00:37:19 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=hC+eZZ9P;
- spf=pass (domain: gmail.com, ip: 209.85.222.179, mailfrom: twoerner@gmail.com)
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7b6fc3e9e4aso261180285a.2
-        for <yocto-patches@lists.yoctoproject.org>; Sat, 11 Jan 2025 07:41:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736610111; x=1737214911; darn=lists.yoctoproject.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NCnU58KMqfxbdIuskMaPKrTERzh5TA4JVqhzPQiOIbg=;
-        b=hC+eZZ9Psh1pG+gRmVRAlVhaRSqslhTEyWfo++8+D56rFCYlj3sqP7mfr/NNIuemZJ
-         yyoOnbgpb0U82aBaYGxP/hQWQGSzSIKR9o9JqXqis5OkIVpHylfyWNRIjfd9kTjXLhjY
-         G4/M4liVUnss6GSVIqptHhGsmUYqhY5y+aJsvKrqvy+6bE4kHuzymVHS+kZGlf2rljkj
-         r9NCyXpsCuE/fpAF9SMMQD1KDj8S7mKwiAA7wWAi6jJ3bQYM0cc7upXTwJm50rlVXQ9X
-         4O9iZALRKxVZPA1Tj9E6ebtpN4koyZ9Ddpz4nK55nVsbwx5Vfg5bH6MSFnfyhwmcM7yv
-         51Ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736610111; x=1737214911;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NCnU58KMqfxbdIuskMaPKrTERzh5TA4JVqhzPQiOIbg=;
-        b=jFq+kQpssKsUa32mJXcMQ+HL9etfNiyHn0LCMXGv0Q4we/mrPAESUvik0RO9hqsP8Y
-         uRagn/0r+TuZUdRYIR9iOLURg8B460JR/1abz3vFcnjB1Vnv98FxEV6Hn/ez6NGZlfMs
-         BZruZpobs6Qu2NZDy7jrdec+EZPqZZm69sQz944s33BVT4yS71Kxko2j4eWqgPEECgxM
-         XNGZmQLr+/EDjhAkJyKFFRRB9mJzFgcZEAnKzsCh9kJZ5ccatImXdZ9F2unAV8H1+MJz
-         2xqY9b0hQlP3kL+YudBMx0fFQe21JLp+JM2RFcbANHFe0Bv4/d7XE0ObqMtX8zCTmPAK
-         3wIQ==
-X-Gm-Message-State: AOJu0YwE8liuMqN8agjQd8QCz+66Vfau+z5tJLB2mu0MJedldP94RNaw
-	/hLD4MbQlzlCrEPUEs8Nx3E6VZsI8ThZ51To0ozVfMM5UZokteiPHYaWciL1
-X-Gm-Gg: ASbGncvpbdHoalPyHV1ISdAQQXqyUzt72FYHcpXhJF/jOCd6MDEJn8OPyuOfNP9FadI
-	j10fe2PKaFMN3AiJNrP0G1VJ0YVZFlbVQRgjXwI6IEeVa/bvMDVXc6U73Xj1lhgSN2Q5kWP4gvd
-	ztFAWDpAS6yhwEthLjvkIUGSN3RFNKA4s0IalkLlUCvfvhszZuwCp8fZdZHMWmfBLmpO6eebmqp
-	k5v19dwvKptQ5PR32C1dP91V6r2indzRSfWV20g68ZgbB7FF5OBOiIZsV16gKgAM0f0yszkLGQN
-	Mg8+vSQw
-X-Google-Smtp-Source: AGHT+IHQvY+H6e0TwgY/7tP3nDbcUqf0T1LgCOPahTUv6Rx3v1jM3O/Hbpa0DZTIxCNmmJG1D+PiDw==
-X-Received: by 2002:a05:620a:40d2:b0:7b6:cb84:8135 with SMTP id af79cd13be357-7bcd9758b24mr2553311385a.48.1736610110880;
-        Sat, 11 Jan 2025 07:41:50 -0800 (PST)
-Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6dfade885b0sm21085016d6.95.2025.01.11.07.41.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Jan 2025 07:41:49 -0800 (PST)
-Date: Sat, 11 Jan 2025 10:41:47 -0500
-From: Trevor Woerner <twoerner@gmail.com>
-To: yocto-patches@lists.yoctoproject.org
-Cc: Quentin Schulz <quentin.schulz@cherry.de>
-Subject: Re: [yocto-patches] [meta-rockchip PATCH] bsp: trusted-firmware-a:
- remove already merged patch
-Message-ID: <20250111154147.GA28637@localhost>
-References: <20241217-tf-a-2-12-v1-1-3c9073a3f773@cherry.de>
+ dkim=pass header.i=@bootlin.com header.s=gm1 header.b=RDrPkHMQ;
+ spf=pass (domain: bootlin.com, ip: 217.70.183.198, mailfrom: antonin.godard@bootlin.com)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A543BC000D;
+	Mon, 13 Jan 2025 08:37:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1736757437;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=EZlXlIHI0QC5tDVUoc+DXU2bLxV81qW07O/5KQ96r0o=;
+	b=RDrPkHMQnmUGk9PscudHJlPXuvHs3Av0iNXEAHFkVKH+RIv8fL2HwRIMV17lkZuKIrQg++
+	6QgQovG9yT6PV3TapJhytHQHxxvmg7pl5A35XGZ5pxYh9B8xim3WwspGIqDNXWxdRwXq0M
+	xc92HNODjeHOMFWLEjcRczVQkDoNZjslUbMBJDsh4OGuDiGvQ18KjEqK1TY7+va/WIVBOt
+	Kxdj6begPIRKjxmVU88OtJ7Bn8tu9fbafCaaH+MXBh+4pCyC8G91K0Jzcgdc9xXYh0PtEt
+	5qDYkxQDZUGVWOyNzdxbcLdBdlYRxWizQrVd+GcA473hksFX3JBmGnd0tVzLhg==
+From: Antonin Godard <antonin.godard@bootlin.com>
+Date: Mon, 13 Jan 2025 09:36:41 +0100
+Subject: [yocto-autobuilder2][PATCH] Fix overriding of the
+ yocto-autobuilder-helper parameters
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241217-tf-a-2-12-v1-1-3c9073a3f773@cherry.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250113-fix-autobuilder-dep-v1-1-52de04667ee5@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAJjQhGcC/x2M0QpAQBQFf0X32a27NpFfkYdlD24J7SIl/27zO
+ DUzD0UERaQmeyjg0qjbmsDkGQ2zWyew+sRUSFGKMcKj3uzOY+tPXTwCe+xcO4itrcBUnlK5ByT
+ tv7bd+35/By3hZQAAAA==
+X-Change-ID: 20250110-fix-autobuilder-dep-8ae03830e17d
+To: yocto-patches@lists.yoctoproject.org
+Cc: Richard Purdie <richard.purdie@linuxfoundation.org>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Antonin Godard <antonin.godard@bootlin.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5652;
+ i=antonin.godard@bootlin.com; h=from:subject:message-id;
+ bh=oBGrvnR26udHmYl/d2MuHQn8Cr7Na87dIhJT7Le/szQ=;
+ b=owEBbQKS/ZANAwAIAdGAQUApo6g2AcsmYgBnhNC7ObQ69G6eomujcNMDe/LK0SrfLMbQ+rdTU
+ hdhirhjBbeJAjMEAAEIAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCZ4TQuwAKCRDRgEFAKaOo
+ Nu0UEAClr3GLpYNoWsDuzDJC/ZUb4DIOUSpvzhbkFVv58YNLgLft1B1rosQaSnb7quu15Z/iUqD
+ 0vCoitT5xU0lDiO1MNIHMEcjEY4Bwn5X7Y/RwttMLa5W4dR2g0yI2Z/RhBnuBlsBujEVU3mKYzd
+ /kNLBslf8PR9tICYHByT4WczTWKjLMHVqPu8ukbWkODWsE6e6UmTlGiZgShgW0sKmrR3OjEHFjm
+ gSM6bZbb+1vizTr7aEiMmVPtrVd+9seU8b/V2EUKcHTzXDhU7J1P0DA866dp77OvYs/21UoGPIL
+ 0Mahgf8SWo0fXhyfB0rrxQoOEgFB1zkHW6FBnq2XA3XmQ9m9F4U/+z8hkemPLjV97gOTE3J30Ws
+ EniIN85IXqsDcKHBKIFnunT5UQKWv5bt0Gl9lt+ra4+kTgm7ToRyHllV9Hz1RjbmtIOXOLj07cV
+ aKoKkgimClwxrCMQT9e5f0P4SBzFSpVeIEebiSvyxk7ezDpsxZEbjs3vrMeyw8pnmJmmDlc1spl
+ XQPVg6C+AttUpCXGKGdYnXMPeGkF924nyo8vW42uGTB42KAOIHW6XVaWVhsjZNMrfJmj+U5d5t/
+ 7O1Hipv+x2eqNPnxf2uiSAXfSARPvNbLL0M7j2vArInIWmYWlNNw7wq8QkNOPehGIFQeQH+a4zO
+ R3PIgmczjMfGjrw==
+X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
+ fpr=8648725188DD401BB9A0D3FFD180414029A3A836
+X-GND-Sasl: antonin.godard@bootlin.com
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sat, 11 Jan 2025 15:41:57 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/980
+ <yocto-patches@lists.yoctoproject.org>; Mon, 13 Jan 2025 08:37:25 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/981
 
-On Tue 2024-12-17 @ 04:20:18 PM, Quentin Schulz via lists.yoctoproject.org wrote:
-> From: Quentin Schulz <quentin.schulz@cherry.de>
-> 
-> 2.12.0 already has this patch, see 52cdebbcc5d1 ("fix(rockchip): fix
-> "unexpected token" error with clang"), so let's remove it.
-> 
-> Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
-> ---
-> Prepare for 2.12.0 upgrade, when
-> https://lore.kernel.org/yocto-meta-arm/20241217-tf-a-2-12-v1-1-cca762965260@cherry.de/
-> is merged. meta-rockchip will then break building because it'll try to
-> apply an already-applied patch.
-> 
-> ONLY TO BE APPLIED AFTER
-> https://lore.kernel.org/yocto-meta-arm/20241217-tf-a-2-12-v1-1-cca762965260@cherry.de/
-> IS MERGED!!!!
-> ---
->  ...ros.S-Use-compatible-.asciz-asm-directive.patch | 31 ----------------------
->  .../trusted-firmware-a_%.bbappend                  |  1 -
->  2 files changed, 32 deletions(-)
+Like the docs build in commit afa838d962b7 ("docs build: make it
+possible to override repo settings") we can make the
+yocto-autobuilder-helper part of the repo dependencies in config.py, and
+then pass branch and uri information to the builders using util.Property
+and util.Interpolate. This allows overriding the
+yocto-autobuilder-helper URI/branch when starting a build manually.
 
-Applied to meta-rockchip, master branch. Thanks!
+Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
+---
+ builders.py   |  8 ++++----
+ config.py     |  6 +++++-
+ schedulers.py | 20 ++++++++++++++++++--
+ 3 files changed, 27 insertions(+), 7 deletions(-)
+
+diff --git a/builders.py b/builders.py
+index 4f2bf00e5387d910f23579028a410e250fccf588..81308211155f7ec71cfb559e40e68f8742a698c7 100644
+--- a/builders.py
++++ b/builders.py
+@@ -104,8 +104,8 @@ def create_builder_factory():
+         haltOnFailure=True,
+         name="Clobber build dir"))
+     f.addStep(steps.Git(
+-        repourl=config.repos["yocto-autobuilder-helper"][0],
+-        branch=config.repos["yocto-autobuilder-helper"][1],
++        repourl=util.Interpolate("%(prop:repo_yocto-autobuilder-helper)s"),
++        branch=util.Property('branch_yocto-autobuilder-helper'),
+         workdir=util.Interpolate("%(prop:builddir)s/yocto-autobuilder-helper"),
+         mode='incremental',
+         haltOnFailure=True,
+@@ -260,8 +260,8 @@ def create_parent_builder_factory(buildername, waitname):
+                     name="Clobber build dir"))
+     # check out the source
+     factory.addStep(steps.Git(
+-        repourl=config.repos["yocto-autobuilder-helper"][0],
+-        branch=config.repos["yocto-autobuilder-helper"][1],
++        repourl=util.Interpolate("%(prop:repo_yocto-autobuilder-helper)s"),
++        branch=util.Property('branch_yocto-autobuilder-helper'),
+         workdir=util.Interpolate("%(prop:builddir)s/yocto-autobuilder-helper"),
+         mode='incremental',
+         haltOnFailure=True,
+diff --git a/config.py b/config.py
+index 8e2797aaeed7e2c688983d3d1f3c4b1895d393b8..062eafd290c06a49cdb8a6d3e358bea748e15877 100644
+--- a/config.py
++++ b/config.py
+@@ -27,7 +27,7 @@ buildertorepos = {
+     "checkuri": ["poky"],
+     "check-layer": ["poky", "meta-mingw", "meta-gplv2"],
+     "check-layer-nightly": ["poky", "meta-agl", "meta-arm", "meta-aws", "meta-intel", "meta-openembedded", "meta-virtualization", "meta-ti", "meta-security", "meta-clang", "meta-exein"],
+-    "docs": ["yocto-autobuilder-helper", "yocto-docs", "bitbake"],
++    "docs": ["yocto-docs", "bitbake"],
+     "reproducible-meta-oe": ["poky", "meta-openembedded"],
+     "patchtest": ["poky", "meta-patchtest", "meta-openembedded"],
+     "meta-oe-mirror":  ["poky", "meta-openembedded"],
+@@ -38,6 +38,10 @@ buildertorepos = {
+     "default": ["poky"]
+ }
+ 
++# Add yocto-autobuilder-helper as a default repo dependency
++for builder in buildertorepos:
++    buildertorepos[builder] = ["yocto-autobuilder-helper"] + buildertorepos[builder]
++
+ # Repositories used that the scripts need to know about and should be buildbot
+ # user customisable
+ repos = {
+diff --git a/schedulers.py b/schedulers.py
+index e4760ed8bf1d02f4edca9af87725cf116630a14b..18ec236391c0f63a49e6b0503b3612eba24c4225 100644
+--- a/schedulers.py
++++ b/schedulers.py
+@@ -399,7 +399,15 @@ for builder in config.subbuilders:
+     schedulers.append(sched.ForceScheduler(
+         name=builder,
+         builderNames=[builder],
+-        codebases=[util.CodebaseParameter(codebase='', label="yocto-autobuilder-helper:", project=None)],
++        # Note: we pass FixedParameters here to hide these in the form, since
++        # entries to override the URL and branch are already created thanks to
++        # props_for_builder() below.
++        codebases=[util.CodebaseParameter(codebase='',
++                                          branch=util.FixedParameter(name="branch", default=""),
++                                          revision=util.FixedParameter(name="revision", default=""),
++                                          repository=util.FixedParameter(name="repository", default=""),
++                                          label="yocto-autobuilder-helper:",
++                                          project=None)],
+         reason=util.StringParameter(
+                 name="reason",
+                 label="""Reason (please note the reason for triggering the
+@@ -457,7 +465,15 @@ def parent_scheduler(target):
+     name=target,
+     builderNames=[target],
+     buttonName="Start " + target + " Build",
+-    codebases = [util.CodebaseParameter(codebase='', label="yocto-autobuilder-helper:", project=None)],
++    # Note: we pass FixedParameters here to hide these in the form, since
++    # entries to override the URL and branch are already created thanks to
++    # props_for_builder() below.
++    codebases = [util.CodebaseParameter(codebase='',
++                                        branch=util.FixedParameter(name="branch", default=""),
++                                        revision=util.FixedParameter(name="revision", default=""),
++                                        repository=util.FixedParameter(name="repository", default=""),
++                                        label="yocto-autobuilder-helper:",
++                                        project=None)],
+     reason=util.StringParameter(
+         name="reason",
+         label="""Reason (please note the reason for triggering the build and
+
+---
+base-commit: 8f6709cf0fad448ea87d80b50cd2ae375e5066b2
+change-id: 20250110-fix-autobuilder-dep-8ae03830e17d
+
+Best regards,
+-- 
+Antonin Godard <antonin.godard@bootlin.com>
+
 
