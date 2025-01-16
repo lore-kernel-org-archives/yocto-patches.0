@@ -1,179 +1,69 @@
-Return-Path: <antonin.godard@bootlin.com>
+Return-Path: <ross.burton@arm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E598E7719E
-	for <webhook@archiver.kernel.org>; Mon, 13 Jan 2025 08:37:25 +0000 (UTC)
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
- by mx.groups.io with SMTP id smtpd.web11.12761.1736757438720218781
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40B63C02183
+	for <webhook@archiver.kernel.org>; Thu, 16 Jan 2025 18:28:24 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+ by mx.groups.io with SMTP id smtpd.web10.138.1737052100980831214
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 13 Jan 2025 00:37:19 -0800
+ Thu, 16 Jan 2025 10:28:21 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=gm1 header.b=RDrPkHMQ;
- spf=pass (domain: bootlin.com, ip: 217.70.183.198, mailfrom: antonin.godard@bootlin.com)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A543BC000D;
-	Mon, 13 Jan 2025 08:37:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1736757437;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=EZlXlIHI0QC5tDVUoc+DXU2bLxV81qW07O/5KQ96r0o=;
-	b=RDrPkHMQnmUGk9PscudHJlPXuvHs3Av0iNXEAHFkVKH+RIv8fL2HwRIMV17lkZuKIrQg++
-	6QgQovG9yT6PV3TapJhytHQHxxvmg7pl5A35XGZ5pxYh9B8xim3WwspGIqDNXWxdRwXq0M
-	xc92HNODjeHOMFWLEjcRczVQkDoNZjslUbMBJDsh4OGuDiGvQ18KjEqK1TY7+va/WIVBOt
-	Kxdj6begPIRKjxmVU88OtJ7Bn8tu9fbafCaaH+MXBh+4pCyC8G91K0Jzcgdc9xXYh0PtEt
-	5qDYkxQDZUGVWOyNzdxbcLdBdlYRxWizQrVd+GcA473hksFX3JBmGnd0tVzLhg==
-From: Antonin Godard <antonin.godard@bootlin.com>
-Date: Mon, 13 Jan 2025 09:36:41 +0100
-Subject: [yocto-autobuilder2][PATCH] Fix overriding of the
- yocto-autobuilder-helper parameters
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250113-fix-autobuilder-dep-v1-1-52de04667ee5@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAJjQhGcC/x2M0QpAQBQFf0X32a27NpFfkYdlD24J7SIl/27zO
- DUzD0UERaQmeyjg0qjbmsDkGQ2zWyew+sRUSFGKMcKj3uzOY+tPXTwCe+xcO4itrcBUnlK5ByT
- tv7bd+35/By3hZQAAAA==
-X-Change-ID: 20250110-fix-autobuilder-dep-8ae03830e17d
+ dkim=none (message not signed); spf=pass (domain: arm.com, ip: 217.140.110.172, mailfrom: ross.burton@arm.com)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5C39C1063;
+	Thu, 16 Jan 2025 10:28:48 -0800 (PST)
+Received: from cesw-amp-gbt-1s-m12830-04.oss.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 71FA53F73F;
+	Thu, 16 Jan 2025 10:28:19 -0800 (PST)
+From: Ross Burton <ross.burton@arm.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Richard Purdie <richard.purdie@linuxfoundation.org>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Antonin Godard <antonin.godard@bootlin.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5652;
- i=antonin.godard@bootlin.com; h=from:subject:message-id;
- bh=oBGrvnR26udHmYl/d2MuHQn8Cr7Na87dIhJT7Le/szQ=;
- b=owEBbQKS/ZANAwAIAdGAQUApo6g2AcsmYgBnhNC7ObQ69G6eomujcNMDe/LK0SrfLMbQ+rdTU
- hdhirhjBbeJAjMEAAEIAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCZ4TQuwAKCRDRgEFAKaOo
- Nu0UEAClr3GLpYNoWsDuzDJC/ZUb4DIOUSpvzhbkFVv58YNLgLft1B1rosQaSnb7quu15Z/iUqD
- 0vCoitT5xU0lDiO1MNIHMEcjEY4Bwn5X7Y/RwttMLa5W4dR2g0yI2Z/RhBnuBlsBujEVU3mKYzd
- /kNLBslf8PR9tICYHByT4WczTWKjLMHVqPu8ukbWkODWsE6e6UmTlGiZgShgW0sKmrR3OjEHFjm
- gSM6bZbb+1vizTr7aEiMmVPtrVd+9seU8b/V2EUKcHTzXDhU7J1P0DA866dp77OvYs/21UoGPIL
- 0Mahgf8SWo0fXhyfB0rrxQoOEgFB1zkHW6FBnq2XA3XmQ9m9F4U/+z8hkemPLjV97gOTE3J30Ws
- EniIN85IXqsDcKHBKIFnunT5UQKWv5bt0Gl9lt+ra4+kTgm7ToRyHllV9Hz1RjbmtIOXOLj07cV
- aKoKkgimClwxrCMQT9e5f0P4SBzFSpVeIEebiSvyxk7ezDpsxZEbjs3vrMeyw8pnmJmmDlc1spl
- XQPVg6C+AttUpCXGKGdYnXMPeGkF924nyo8vW42uGTB42KAOIHW6XVaWVhsjZNMrfJmj+U5d5t/
- 7O1Hipv+x2eqNPnxf2uiSAXfSARPvNbLL0M7j2vArInIWmYWlNNw7wq8QkNOPehGIFQeQH+a4zO
- R3PIgmczjMfGjrw==
-X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
- fpr=8648725188DD401BB9A0D3FFD180414029A3A836
-X-GND-Sasl: antonin.godard@bootlin.com
+Cc: jpewhacker@gmail.com
+Subject: [meta-mingw] [PATCH] libiconv: tell autoreconf where to find supplementary macros
+Date: Thu, 16 Jan 2025 18:28:08 +0000
+Message-ID: <20250116182808.1180687-1-ross.burton@arm.com>
+X-Mailer: git-send-email 2.43.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 13 Jan 2025 08:37:25 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/981
+ <yocto-patches@lists.yoctoproject.org>; Thu, 16 Jan 2025 18:28:24 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/982
 
-Like the docs build in commit afa838d962b7 ("docs build: make it
-possible to override repo settings") we can make the
-yocto-autobuilder-helper part of the repo dependencies in config.py, and
-then pass branch and uri information to the builders using util.Property
-and util.Interpolate. This allows overriding the
-yocto-autobuilder-helper URI/branch when starting a build manually.
+The libiconv build is non-idiomatic, and most importantly doesn't use
+automake so there's no way to tell aclocal where to find macros.
 
-Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
+Currently that isn't an issue because our autotools class explicitly
+specifies any directories it can find containing macros but that will
+be removed shortly, so tell autoreconf where to find the macros as the
+upstream Makefile.devel does.
+
+Note that we need to pass absolute paths here because libiconv has a
+nested configure script which fails when autoreconf is used with
+relative paths.
+
+Signed-off-by: Ross Burton <ross.burton@arm.com>
 ---
- builders.py   |  8 ++++----
- config.py     |  6 +++++-
- schedulers.py | 20 ++++++++++++++++++--
- 3 files changed, 27 insertions(+), 7 deletions(-)
+ recipes-support/libiconv/libiconv_1.15.bb | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/builders.py b/builders.py
-index 4f2bf00e5387d910f23579028a410e250fccf588..81308211155f7ec71cfb559e40e68f8742a698c7 100644
---- a/builders.py
-+++ b/builders.py
-@@ -104,8 +104,8 @@ def create_builder_factory():
-         haltOnFailure=True,
-         name="Clobber build dir"))
-     f.addStep(steps.Git(
--        repourl=config.repos["yocto-autobuilder-helper"][0],
--        branch=config.repos["yocto-autobuilder-helper"][1],
-+        repourl=util.Interpolate("%(prop:repo_yocto-autobuilder-helper)s"),
-+        branch=util.Property('branch_yocto-autobuilder-helper'),
-         workdir=util.Interpolate("%(prop:builddir)s/yocto-autobuilder-helper"),
-         mode='incremental',
-         haltOnFailure=True,
-@@ -260,8 +260,8 @@ def create_parent_builder_factory(buildername, waitname):
-                     name="Clobber build dir"))
-     # check out the source
-     factory.addStep(steps.Git(
--        repourl=config.repos["yocto-autobuilder-helper"][0],
--        branch=config.repos["yocto-autobuilder-helper"][1],
-+        repourl=util.Interpolate("%(prop:repo_yocto-autobuilder-helper)s"),
-+        branch=util.Property('branch_yocto-autobuilder-helper'),
-         workdir=util.Interpolate("%(prop:builddir)s/yocto-autobuilder-helper"),
-         mode='incremental',
-         haltOnFailure=True,
-diff --git a/config.py b/config.py
-index 8e2797aaeed7e2c688983d3d1f3c4b1895d393b8..062eafd290c06a49cdb8a6d3e358bea748e15877 100644
---- a/config.py
-+++ b/config.py
-@@ -27,7 +27,7 @@ buildertorepos = {
-     "checkuri": ["poky"],
-     "check-layer": ["poky", "meta-mingw", "meta-gplv2"],
-     "check-layer-nightly": ["poky", "meta-agl", "meta-arm", "meta-aws", "meta-intel", "meta-openembedded", "meta-virtualization", "meta-ti", "meta-security", "meta-clang", "meta-exein"],
--    "docs": ["yocto-autobuilder-helper", "yocto-docs", "bitbake"],
-+    "docs": ["yocto-docs", "bitbake"],
-     "reproducible-meta-oe": ["poky", "meta-openembedded"],
-     "patchtest": ["poky", "meta-patchtest", "meta-openembedded"],
-     "meta-oe-mirror":  ["poky", "meta-openembedded"],
-@@ -38,6 +38,10 @@ buildertorepos = {
-     "default": ["poky"]
- }
- 
-+# Add yocto-autobuilder-helper as a default repo dependency
-+for builder in buildertorepos:
-+    buildertorepos[builder] = ["yocto-autobuilder-helper"] + buildertorepos[builder]
+diff --git a/recipes-support/libiconv/libiconv_1.15.bb b/recipes-support/=
+libiconv/libiconv_1.15.bb
+index b58abb4..2f2b473 100644
+--- a/recipes-support/libiconv/libiconv_1.15.bb
++++ b/recipes-support/libiconv/libiconv_1.15.bb
+@@ -19,6 +19,9 @@ S =3D "${WORKDIR}/libiconv-${PV}"
+=20
+ inherit autotools pkgconfig gettext
+=20
++# Need to use absolute paths as autoreconf will recurse into libchardet
++EXTRA_AUTORECONF +=3D "-I ${S}/m4 -I ${S}/srcm4"
 +
- # Repositories used that the scripts need to know about and should be buildbot
- # user customisable
- repos = {
-diff --git a/schedulers.py b/schedulers.py
-index e4760ed8bf1d02f4edca9af87725cf116630a14b..18ec236391c0f63a49e6b0503b3612eba24c4225 100644
---- a/schedulers.py
-+++ b/schedulers.py
-@@ -399,7 +399,15 @@ for builder in config.subbuilders:
-     schedulers.append(sched.ForceScheduler(
-         name=builder,
-         builderNames=[builder],
--        codebases=[util.CodebaseParameter(codebase='', label="yocto-autobuilder-helper:", project=None)],
-+        # Note: we pass FixedParameters here to hide these in the form, since
-+        # entries to override the URL and branch are already created thanks to
-+        # props_for_builder() below.
-+        codebases=[util.CodebaseParameter(codebase='',
-+                                          branch=util.FixedParameter(name="branch", default=""),
-+                                          revision=util.FixedParameter(name="revision", default=""),
-+                                          repository=util.FixedParameter(name="repository", default=""),
-+                                          label="yocto-autobuilder-helper:",
-+                                          project=None)],
-         reason=util.StringParameter(
-                 name="reason",
-                 label="""Reason (please note the reason for triggering the
-@@ -457,7 +465,15 @@ def parent_scheduler(target):
-     name=target,
-     builderNames=[target],
-     buttonName="Start " + target + " Build",
--    codebases = [util.CodebaseParameter(codebase='', label="yocto-autobuilder-helper:", project=None)],
-+    # Note: we pass FixedParameters here to hide these in the form, since
-+    # entries to override the URL and branch are already created thanks to
-+    # props_for_builder() below.
-+    codebases = [util.CodebaseParameter(codebase='',
-+                                        branch=util.FixedParameter(name="branch", default=""),
-+                                        revision=util.FixedParameter(name="revision", default=""),
-+                                        repository=util.FixedParameter(name="repository", default=""),
-+                                        label="yocto-autobuilder-helper:",
-+                                        project=None)],
-     reason=util.StringParameter(
-         name="reason",
-         label="""Reason (please note the reason for triggering the build and
-
----
-base-commit: 8f6709cf0fad448ea87d80b50cd2ae375e5066b2
-change-id: 20250110-fix-autobuilder-dep-8ae03830e17d
-
-Best regards,
--- 
-Antonin Godard <antonin.godard@bootlin.com>
+ python __anonymous() {
+     if d.getVar("TARGET_OS") !=3D "linux":
+         return
+--=20
+2.43.0
 
 
