@@ -1,100 +1,82 @@
-Return-Path: <enrico.scholz@sigma-chemnitz.de>
+Return-Path: <peter.marko@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD92C02181
-	for <webhook@archiver.kernel.org>; Mon, 20 Jan 2025 19:24:15 +0000 (UTC)
-Received: from smtpout.cvg.de (smtpout.cvg.de [87.128.211.67])
- by mx.groups.io with SMTP id smtpd.web11.44235.1737401046248431643
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14723C02185
+	for <webhook@archiver.kernel.org>; Mon, 20 Jan 2025 20:10:58 +0000 (UTC)
+Received: from mta-64-228.siemens.flowmailer.net (mta-64-228.siemens.flowmailer.net [185.136.64.228])
+ by mx.groups.io with SMTP id smtpd.web10.95.1737403856451399723
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 20 Jan 2025 11:24:09 -0800
+ Mon, 20 Jan 2025 12:10:57 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: message contains an insecure body length tag" header.i=@sigma-chemnitz.de header.s=v2022040800 header.b=zovZqiRi;
- spf=pass (domain: sigma-chemnitz.de, ip: 87.128.211.67, mailfrom: enrico.scholz@sigma-chemnitz.de)
-Received: from mail-mta-2.intern.sigma-chemnitz.de (mail-mta-2.intern.sigma-chemnitz.de [192.168.12.70])
-	by mail-out-2.intern.sigma-chemnitz.de (8.17.1/8.17.1) with ESMTPS id 50KJO2fv1859661
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK)
-	for <yocto-patches@lists.yoctoproject.org>; Mon, 20 Jan 2025 20:24:02 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sigma-chemnitz.de;
-	s=v2022040800; t=1737401042;
-	bh=n5iVHt/QpIhw4gsXlOHG/xVOvcfYtQ896QvylAf6ItI=; l=1098;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date;
-	b=zovZqiRi3gcSf9t84Yead8gUFXcvJvn34EScf7iY4+53lhXv3XocZNe+iWjedJIMO
-	 xa/5rHMuQRfT0EpOaAjtdIS3FNVtbB7/uX7tpo/tLEMhMdnCEmSzRAjmV2zJ/OtC+H
-	 ZpO2aDWe2eKYTneNMBJJX7E0aNV/qGZ4u2ChEPNSoCj+9z7botFT8l7MHY+zVvMxa/
-	 6kWJ8/Iq2DFshr2yWDoh/KDQOAjD/4eedKLPJLBtxBTsjtSuDVaig+a5xNKqE08mua
-	 8/iqkZYNnvnJWIL5n2JBvxuB57/lQEtE6kwYLdhLFedic4AsoIoo87U4nruDcH7RSL
-	 VZcgyRGjZlUew==
-Received: from reddoxx.intern.sigma-chemnitz.de (reddoxx.sigma.local [192.168.16.32])
-	by mail-mta-2.intern.sigma-chemnitz.de (8.18.1/8.18.1) with ESMTP id 50KJNxLx2314155
-	for <yocto-patches@lists.yoctoproject.org> from enrico.scholz@sigma-chemnitz.de; Mon, 20 Jan 2025 20:24:00 +0100
-Received: from mail-msa-2.intern.sigma-chemnitz.de ([192.168.12.72])
-	by reddoxx.intern.sigma-chemnitz.de with ESMTP
-	id H4F3XEJ1F0; Mon, 20 Jan 2025 20:23:59 +0100
-Received: from ensc-pc.intern.sigma-chemnitz.de (ensc-pc.intern.sigma-chemnitz.de [192.168.3.24])
-	by mail-msa-2.intern.sigma-chemnitz.de (8.17.1/8.17.1) with ESMTPS id 50KJNx8d1816282
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Mon, 20 Jan 2025 20:23:59 +0100
-Received: from ensc by ensc-pc.intern.sigma-chemnitz.de with local (Exim 4.98)
-	(envelope-from <ensc@sigma-chemnitz.de>)
-	id 1tZxNP-00000003GFO-0sHJ;
-	Mon, 20 Jan 2025 20:23:59 +0100
-From: Enrico Scholz <enrico.scholz@sigma-chemnitz.de>
-To: Scott Murray <scott.murray@konsulko.com>
-Cc: yocto-patches@lists.yoctoproject.org
-Subject: Re: [meta-lts-mixins][scarthgap/rust][PATCH] classes: rename to
- classes-recipes/
-In-Reply-To: <1f6cdeb4-c868-e32c-4372-123371eb4b12@konsulko.com> (Scott
-	Murray's message of "Mon, 20 Jan 2025 14:00:58 -0500 (EST)")
-References: <20250120165117.737681-1-enrico.scholz@sigma-chemnitz.de>
-	<1f6cdeb4-c868-e32c-4372-123371eb4b12@konsulko.com>
-Date: Mon, 20 Jan 2025 20:23:59 +0100
-Message-ID: <lybjw1ffw0.fsf@ensc-pc.intern.sigma-chemnitz.de>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+ dkim=pass header.i=peter.marko@siemens.com header.s=fm2 header.b=O44yn2z9;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.228, mailfrom: fm-256628-20250120201053fef669ccea82dc72dc-t6znkx@rts-flowmailer.siemens.com)
+Received: by mta-64-228.siemens.flowmailer.net with ESMTPSA id 20250120201053fef669ccea82dc72dc
+        for <yocto-patches@lists.yoctoproject.org>;
+        Mon, 20 Jan 2025 21:10:53 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
+ d=siemens.com; i=peter.marko@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=/tltfM+y6lxL3SmK11eqvXqDliotWSwUfFhG++MvEaE=;
+ b=O44yn2z9UMQsSEdPQYz4PS6wCDeHQJiucqhL7mB4WhYkAq8BqvnqoptofCC0nUfAjjOwEG
+ uHlobvhP3bQVDoPOUuArjKhwh9ZI/JdPDrIbRrs2pa50bKM9X856n3HGEkNZ3tFzGHi5G6fm
+ phx31hSONjtvGOfCeERcFXeInE2rdNB7boYEswqyjQ97Tk2lHguwiI6hsIInGMCJLHmnJX/y
+ or6X7+oPEDeL8TdWfH/+ed+JnjqH3VUnWvGTnE2hSCgemaG0A+17izmTqK3ozJSB1Ol6zUlm
+ O0QPwW+Tyd/cjoHUhmnxBKAry2FuPh+27GE/+809DTinsiUWPHkDiRQw==;
+From: Peter Marko <peter.marko@siemens.com>
+To: yocto-patches@lists.yoctoproject.org
+Cc: Peter Marko <peter.marko@siemens.com>
+Subject: [yocto-metrics][PATCH 1/2] patch-status: remove nanbield
+Date: Mon, 20 Jan 2025 21:10:00 +0100
+Message-Id: <20250120201001.13117-1-peter.marko@siemens.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: Enrico Scholz <enrico.scholz@sigma-chemnitz.de>
-X-REDDOXX-Id: 678ea2cf8c284250d7b37cf9
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-256628:519-21489:flowmailer
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 20 Jan 2025 19:24:15 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/990
+ <yocto-patches@lists.yoctoproject.org>; Mon, 20 Jan 2025 20:10:58 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/991
 
-Scott Murray <scott.murray@konsulko.com> writes:
+From: Peter Marko <peter.marko@siemens.com>
 
->> bitbake looks first in 'classes-recipes/' and then in 'classes/'.
->> Hence, content had no effect and was just ignored.
->>
->> Rename folder so that it overrides the OE-core classes.
->>
->> Signed-off-by: Enrico Scholz <enrico.scholz@sigma-chemnitz.de>
-> [snip]
->
-> I'm pretty sure this is incorrect.
+The reports are no longer generated, they are shown empty.
 
-Logic is in [1]
+Signed-off-by: Peter Marko <peter.marko@siemens.com>
+---
+ patch-status/index.html | 10 ----------
+ 1 file changed, 10 deletions(-)
 
---> first iterate (using $BBPATH) in 'recipes-%', then in 'recipes'
-
-
-For now, it does not matter because classes in OE core and meta-lts-mixins
-are very similar.  But 1.81 seems to introduce other data layouts so correct
-classes are probably important.
-
-I stumpled across it while fixing cargo-native build errors [2]
-
-
-
-Enrico
-
-Footnotes:
-[1]  https://github.com/openembedded/bitbake/blob/0329a7e3ac694737f2d2c1861f65492551360663/lib/bb/parse/parse_py/BBHandler.py#L53-L68
-
-[2]  https://lists.openembedded.org/g/openembedded-core/message/210043
-
+diff --git a/patch-status/index.html b/patch-status/index.html
+index e8f3dfb8..28ca07df 100644
+--- a/patch-status/index.html
++++ b/patch-status/index.html
+@@ -178,10 +178,6 @@ SPDX-License-Identifier: MIT
+           <summary>scarthgap</summary>
+           <div id="cve_status_scarthgap"></div>
+         </details>
+-        <details>
+-          <summary>nanbield</summary>
+-          <div id="cve_status_nanbield"></div>
+-        </details>
+         <details>
+           <summary>kirkstone</summary>
+           <div id="cve_status_kirkstone"></div>
+@@ -382,12 +378,6 @@ SPDX-License-Identifier: MIT
+         createCVEList('cve_status_scarthgap', data);
+       })
+ 
+-    fetch('cve-status-nanbield.txt')
+-      .then(response => response.text())
+-      .then(data => {
+-        createCVEList('cve_status_nanbield', data);
+-      })
+-
+     fetch('cve-status-kirkstone.txt')
+       .then(response => response.text())
+       .then(data => {
 -- 
-SIGMA Chemnitz GmbH       Registergericht:   Amtsgericht Chemnitz HRB 1750
-Am Erlenwald 13           Geschaeftsfuehrer: Grit Freitag, Frank Pyritz
-09128 Chemnitz
+2.30.2
+
 
