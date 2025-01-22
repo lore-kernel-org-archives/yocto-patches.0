@@ -1,101 +1,112 @@
-Return-Path: <ticotimo@gmail.com>
+Return-Path: <antonin.godard@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61D6DC0218B
-	for <webhook@archiver.kernel.org>; Tue, 21 Jan 2025 23:04:56 +0000 (UTC)
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
- by mx.groups.io with SMTP id smtpd.web11.29883.1737500691901753437
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F033C02181
+	for <webhook@archiver.kernel.org>; Wed, 22 Jan 2025 08:10:29 +0000 (UTC)
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+ by mx.groups.io with SMTP id smtpd.web10.38518.1737533422920244706
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 21 Jan 2025 15:04:52 -0800
+ Wed, 22 Jan 2025 00:10:23 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=aEIl35Vv;
- spf=pass (domain: gmail.com, ip: 209.85.208.176, mailfrom: ticotimo@gmail.com)
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-30227ccf803so52000201fa.2
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 21 Jan 2025 15:04:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737500690; x=1738105490; darn=lists.yoctoproject.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=idp2ccfv6vzfDb52aDcKOyQkMEKA557TdIJWjaVzR94=;
-        b=aEIl35VvGE0Tw6hslce6SuQ2YPYInmd/JDx720ZebGeo7l6Q0RCeQhkvP9uOoL/ops
-         fB6YKfUWMb7YZPmQJMbX59W7Le+4oDgxqK7fECQf/oVvK72JYZVHuD/P1uaKbYCXKY1T
-         08ERf78VHH9tCi0lnvHQ9+7bGGw96NX/ftEeSYsMrH3vWhfbFcJFsHq4fEfyDyTW7M6t
-         rq+9NAxgddsyc4JxIg7TeZPbIg06/sjpxRTsS9NpSPYxF9o15+EHHw9QMYq+4JopYiy1
-         QT2Mrez/UmvfSLIXZxgkslf3xIslOBO/jG+3nMi6jJBiQV1oA/lsgVdIKqbPhCwLcgtQ
-         tNFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737500690; x=1738105490;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=idp2ccfv6vzfDb52aDcKOyQkMEKA557TdIJWjaVzR94=;
-        b=Wc6aOlzDoLzgZPbW5J8NWxc7loa5VcNGw2PtJk4Zg+s74jBxRBgxTn7S3nM465xLVg
-         sZOVtSwUQ5ApwKUu2vfwlTEiDp13fexSkQBqOqgf6tq6U2z0Xtp0dmWWvQCIPHI/rB7A
-         XOdu6mDjiahO+n9waXSOYDVzfsWSQLjXajj6ReWDzQUvwwta8OWRUWBG9hQpXwEI8uX5
-         MGDlL/e6bVx1CzaG3lLdJQhvg2s4MpTtr87zgS1nibYJ7xdG89cVuF4rKXpn0rouPlzf
-         Xa8U7hFOJq+RioO4xDKWP9SFzUUHVo754nTinvVP0m2De45j0OkwGsQngYnIHWAxeMfa
-         14hA==
-X-Forwarded-Encrypted: i=1; AJvYcCXr9K6tJDncSnXJ+aujkFbq37SMstAo7G/GTlVhG6gEL75ouw6gM9mknvucYHyQqwabvtPDeIHWlU9YQaSW@lists.yoctoproject.org
-X-Gm-Message-State: AOJu0YxQa3UDknAeXD2s2z2yrYXfXu4Yltm3vsUFfhRoeZ7lDwyzPTVI
-	OA+oI38oe83tgsvLShd1UzyO2R018koMhTGoK0ooE6shD9+wWVQqar24gnLg06y9gUJWwtF2Rhu
-	ZEpWynck1kHiiYsfy/34lxRhyZ+I=
-X-Gm-Gg: ASbGncvBXp1bUtHrViOJOfKDUPZXWBp647AaoRClnzwXSzV0elPMjn43MGDwrReY5U0
-	pqUU440osK7m9BiJWXbHpzCs2NcRm4ieTUX+471lyIQVYruA3C+A=
-X-Google-Smtp-Source: AGHT+IGtl+m1mnahkssKzHYKpyON24RVpmUN7zKr9XDfDATl9KYwvtLOBKMKHQGbNurfxf5JXVOO8f+KL07axuHcT9M=
-X-Received: by 2002:a2e:be21:0:b0:302:1d24:8db7 with SMTP id
- 38308e7fff4ca-3072ca99e8dmr69950911fa.19.1737500689282; Tue, 21 Jan 2025
- 15:04:49 -0800 (PST)
-MIME-Version: 1.0
-From: Tim Orling <ticotimo@gmail.com>
-Date: Tue, 21 Jan 2025 15:04:37 -0800
-X-Gm-Features: AbW1kvbCNeX968mvfhzU-LeD-pgYmj7xTr7Brg85THIxtQZH_R-8rzHYhz8ecdM
-Message-ID: <CANx9H-CcvnJM3_pyMEonojr9A=TrkS11PLZJ5vXvqdQwCv5H2Q@mail.gmail.com>
-Subject: [meta-java] Intent to drop openjdk-7/openjre-7 support
-To: "openembedded-devel@lists.openembedded.org" <Openembedded-devel@lists.openembedded.org>, 
-	yocto-patches@lists.yoctoproject.org
-Content-Type: multipart/alternative; boundary="00000000000061bec7062c3f674b"
+ dkim=pass header.i=@bootlin.com header.s=gm1 header.b=kPMeXUE+;
+ spf=pass (domain: bootlin.com, ip: 217.70.183.198, mailfrom: antonin.godard@bootlin.com)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 6D003C0008;
+	Wed, 22 Jan 2025 08:10:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1737533421;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vzgoiqDxvls/0eJynYeJv4C+269G0rnom6zpPNK/AxQ=;
+	b=kPMeXUE+5wAQKEUSqqJHtMvwi6+0gOZX2NQ223TUh46VB54WmglPruhF1e67yroDRpQ/0N
+	u5U0J8gNc0SCv10euSOtikHykZkz7/+fcYoNj7luOVQC7oQ4P9zkjtS6UF7go/mitzEipZ
+	KTGUjXARNi2Bqggi7rKe1bkn3stQiyBmMsGkXJOJrpZpK9dPgTPy5TkO3XQvfXrdvjZB+G
+	PaSDmjqUnDrMWfstQPO1BWDB3bo063dokFXLZimXYTkW1qf4ORp4J4mPBCQioQYaPWB56b
+	FZlfji63jPNGOzk9bZ8rCiZPrFC9GlBVdcsCsUFe2e6MRR9956vUjwLrwjn1EA==
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 22 Jan 2025 09:10:19 +0100
+Message-Id: <D78G6XLG1PEU.I9ZF3M0NFRU2@bootlin.com>
+To: "Richard Purdie" <richard.purdie@linuxfoundation.org>,
+ <yocto-patches@lists.yoctoproject.org>, "Enrico Scholz"
+ <enrico.scholz@sigma-chemnitz.de>, "Scott Murray"
+ <scott.murray@konsulko.com>
+Subject: Re: [yocto-patches] [meta-lts-mixins][scarthgap/rust][PATCH]
+ classes: rename to classes-recipes/
+Cc: <openembedded-core@lists.openembedded.org>
+From: "Antonin Godard" <antonin.godard@bootlin.com>
+X-Mailer: aerc 0.18.2-100-gc2048ef30452-dirty
+References: <20250120165117.737681-1-enrico.scholz@sigma-chemnitz.de>
+ <1f6cdeb4-c868-e32c-4372-123371eb4b12@konsulko.com>
+ <lybjw1ffw0.fsf@ensc-pc.intern.sigma-chemnitz.de>
+ <a5630788-8f4a-faa2-7d6b-8dc87dd1642c@konsulko.com>
+ <648e69b6898d3f95bea785d1ee56e2ce500ae579.camel@linuxfoundation.org>
+In-Reply-To: <648e69b6898d3f95bea785d1ee56e2ce500ae579.camel@linuxfoundation.org>
+X-GND-Sasl: antonin.godard@bootlin.com
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 21 Jan 2025 23:04:56 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1000
+ <yocto-patches@lists.yoctoproject.org>; Wed, 22 Jan 2025 08:10:29 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1001
 
---00000000000061bec7062c3f674b
-Content-Type: text/plain; charset="UTF-8"
+Hi all,
 
-This is a heads up that we will be aggressively dropping openjdk-7 and
-openjre-7 support from meta-java in the next few weeks. OpenJDK 8 is still
-receiving updates, but 7 is long EOL.
+On Mon Jan 20, 2025 at 11:54 PM CET, Richard Purdie wrote:
+> On Mon, 2025-01-20 at 16:32 -0500, Scott Murray via lists.yoctoproject.or=
+g wrote:
+>> On Mon, 20 Jan 2025, Enrico Scholz wrote:
+>>=20
+>> > Scott Murray <scott.murray@konsulko.com> writes:
+>> >=20
+>> > > > bitbake looks first in 'classes-recipes/' and then in
+>> > > > 'classes/'.
+>> > > > Hence, content had no effect and was just ignored.
+>> > > >=20
+>> > > > Rename folder so that it overrides the OE-core classes.
+>> > > >=20
+>> > > > Signed-off-by: Enrico Scholz <enrico.scholz@sigma-chemnitz.de>
+>> > > [snip]
+>> > >=20
+>> > > I'm pretty sure this is incorrect.
+>> >=20
+>> > Logic is in [1]
+>> >=20
+>> > --> first iterate (using $BBPATH) in 'recipes-%', then in 'recipes'
+>>=20
+>> Hmm, the code I looked at was in lib/bblayers/query.py, and its logic is
+>> different AFAICT.=C2=A0 Can you confirm that "bitbake-layers show-overla=
+yed"
+>> shows it as being overlayed for you as it does for me?=C2=A0 That it doe=
+s
+>> would seem to indicate a bblayers bug, and there is perhaps some missing
+>> documentation of this behavior (change) (e.g. I don't see any mention of
+>> classes-global vs classes-recipe vs classes and how their prioritization
+>> works wrt layers in the docs).=C2=A0 I'm CC'ing oe-core just in case I'm
+>> really missing something here...
+>
+> I think bblayers needs fixing and we need to sort the docs too...
+>
+> Copying Antonin as we probably want a bug to track that.
 
-We will likely retroactively drop as far back as kirkstone, because to be
-brutally honest, we have been broken since before kirkstone. This is a
-policy decision to be made, with feedback accepted from the community, but
-as the only person actually maintaining the layer in the last few years, I
-reserve the right to make major sweeping changes. Many things are broken on
-a modern distro (Debian 12/Ubuntu 22.04+) even in kirkstone, so we need to
-fix things that far back.
+I've created a bug to track this:
+https://bugzilla.yoctoproject.org/show_bug.cgi?id=3D15724
 
-If you feel otherwise, speak up, contribute patches and approach my
-employer for paid support. Otherwise your silence is golden.
+Scott, I've assigned you to it, as you proposed to add this yesterday on th=
+e
+tech meeting. Let me know if you need any help for adding documentation (it
+should be part of bitbake/doc most likely).
 
---Tim
+Also let me know if I got it wrong yesterday and if I should re-assign this=
+.
 
---00000000000061bec7062c3f674b
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Thank you,
+Antonin
 
-<div dir=3D"ltr">This is a heads up that we will be aggressively dropping o=
-penjdk-7 and openjre-7 support from meta-java in the next few weeks. OpenJD=
-K 8 is still receiving updates, but 7 is long EOL.<br><br>We will likely re=
-troactively drop as far back as kirkstone, because to be brutally honest, w=
-e have been broken since before kirkstone. This is a policy decision to be =
-made, with feedback accepted from the community, but as the only person act=
-ually maintaining the layer in the last few years, I reserve the right to m=
-ake major sweeping changes. Many things are broken on a modern distro (Debi=
-an 12/Ubuntu 22.04+) even in kirkstone, so we need to fix things that far b=
-ack.<div><br></div><div>If you feel otherwise, speak up, contribute patches=
- and approach my employer for paid support. Otherwise your silence is golde=
-n.</div><div><br></div><div>--Tim</div></div>
-
---00000000000061bec7062c3f674b--
+--=20
+Antonin Godard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
