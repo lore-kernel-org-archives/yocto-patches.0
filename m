@@ -1,175 +1,109 @@
-Return-Path: <antonin.godard@bootlin.com>
+Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C93EC02181
-	for <webhook@archiver.kernel.org>; Wed, 22 Jan 2025 08:42:09 +0000 (UTC)
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
- by mx.groups.io with SMTP id smtpd.web10.38846.1737535322133201977
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04735C02181
+	for <webhook@archiver.kernel.org>; Wed, 22 Jan 2025 20:59:37 +0000 (UTC)
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+ by mx.groups.io with SMTP id smtpd.web10.4891.1737579568070211966
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 22 Jan 2025 00:42:02 -0800
+ Wed, 22 Jan 2025 12:59:28 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=gm1 header.b=f+v79NEo;
- spf=pass (domain: bootlin.com, ip: 217.70.183.194, mailfrom: antonin.godard@bootlin.com)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 709C640005;
-	Wed, 22 Jan 2025 08:41:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1737535319;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Gle/VVmwc0euqCFBq1GnQ0rMmCl0LBudGU2bG/mgMxg=;
-	b=f+v79NEoR6O/WAzwIIfrXMO+3eGI+A/3wTo1PJwGGkzRXL120+QG8coflq67SnZ4aJAkBD
-	AL7LfxUpe1qOtrhULQ64mp9YZuRIzaI3rSNNfHrroFkR+eG8V0sx7ySzgouBPAiUyo8JmT
-	YDa37Ef6sXX3eK5My6ti+GEgOiYeZRbUJYpHV0QWZHmQeLgFbAgJlH2hxv7wuhV8ddZTrN
-	bDq/Rs7eT4L1uez3TuzQwVQdyW/wx3rhxjRtsTYLU08qCKh93ABRWzdB2GVLlw8Lj/JRSG
-	TL2xVRCJGx3WGj0jGkSE1ZfO9GqlghsFTUJ1B731USeXARnDHohV6EPuCw8BMw==
-From: Antonin Godard <antonin.godard@bootlin.com>
-Date: Wed, 22 Jan 2025 09:41:45 +0100
-Subject: [yocto-autobuilder2][PATCH v2] Fix overriding of the
- yocto-autobuilder-helper parameters
+ dkim=pass header.i=@konsulko.com header.s=google header.b=iREMshHu;
+ spf=pass (domain: konsulko.com, ip: 209.85.166.179, mailfrom: scott.murray@konsulko.com)
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3a8165cfae8so597805ab.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 22 Jan 2025 12:59:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=konsulko.com; s=google; t=1737579567; x=1738184367; darn=lists.yoctoproject.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vnwgmtVW1e7UP/L57g4daOSFJfV5IgIlopSWotX6U8o=;
+        b=iREMshHu9NevSRhU0i9Ue1EQSLmBnlr7bMkpKeM4YOefro/jAeB/2X2+SP6flxMxCd
+         Joma0azs5FLUKWRynWN5aw6z4BaJfYMlcF6FhEArjbthHe6HHIPOkuwVrphHDtacHSEj
+         9S2s//9kmhEmOBXrz4CZncU0YiFu0QobHHE+k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737579567; x=1738184367;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vnwgmtVW1e7UP/L57g4daOSFJfV5IgIlopSWotX6U8o=;
+        b=EpnD5bK4hrCBPpXYY0qNvkbTKzDA95rixvNwpSjE9Y15DuI9U3PjwGUUXGvJ078b0N
+         uJ0lReMbU3YYOIyfgAs1N3X8ZefnyxT6/5iDdJJNq/ePo0ZgKzVwbUEg2HKCNaYvFvMO
+         zUwVriLR2PsPWUPIrSufINPVkmgdanbUwKL9p1EOO4aPpyAR5Tu9JUpQai6e+5Jhecj8
+         DtiVvkwLX7dM6GZN1Vpc/ATMyPRDxNf+3JZGNFaIbVHNURlcTQrT5JdsHygnLTw+yK0L
+         /ClqRt8RboBwDFHv11QvQSbL4fD4GtpaU4QtQkl1roJWKBqLMDbvnV2DOFsA7s6HaZTu
+         A+Bg==
+X-Gm-Message-State: AOJu0Yx6L0OFkoxohSoR2MVdnLBeuamfvZ86zx4hcT7qSHWjCg3/9CZt
+	kwVXvWGA3g2iYn1zX15BJDKCB7dtrY2fC+geg6f7P6FQbedHrKyAt5e9zwa2mC2kVSIPCJISl1R
+	J
+X-Gm-Gg: ASbGncsz9QehDI+UjcRG1LS9Jl45YnraSSWineltKubukcxRQwn6vcDd5m12yssGzQ2
+	8b858EU0rwY9uu2U3ElZ0qFUev+hgIRznwPrfpzFCQZE6DBSKMGGocEC2Xkl3XdeIMONbHidITV
+	xsr3azlgNkV2m5CRcc8Lcw9z/2OKQGgWI1+mOy86KjlPCTCVJZDFonD2Umzyr+0NlgXu6dhhuxv
+	gyxjZaxToaes1RN0dWPmqUwAtrTkzu20UE4bcctnZU8OWviMew5cyO5ksC9+/cc1qTsuv0kww6s
+	HfNBb01TVqLe7Uz3VG7WWkPpHMeM
+X-Google-Smtp-Source: AGHT+IECBXGd/GkjX5KriSVLHns87VGk/mlLI2ja4XJdpWyILdzRgfe5AxX6dBYZFgk4j0MUZyppEw==
+X-Received: by 2002:a05:6e02:b24:b0:3ce:7ae7:a8bb with SMTP id e9e14a558f8ab-3cf743e9870mr159372495ab.6.1737579567181;
+        Wed, 22 Jan 2025 12:59:27 -0800 (PST)
+Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ea7549a1c1sm4371704173.73.2025.01.22.12.59.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Jan 2025 12:59:26 -0800 (PST)
+Date: Wed, 22 Jan 2025 15:59:25 -0500 (EST)
+From: Scott Murray <scott.murray@konsulko.com>
+To: Enrico Scholz <enrico.scholz@sigma-chemnitz.de>
+cc: yocto-patches@lists.yoctoproject.org
+Subject: Re: [meta-lts-mixins][scarthgap/rust][PATCH] rust-cross-canadian:
+ use correct ${S}
+In-Reply-To: <20250121092252.1123704-1-enrico.scholz@sigma-chemnitz.de>
+Message-ID: <5ff6d7ed-be55-be22-817a-7996b7c8f338@konsulko.com>
+References: <20250121092252.1123704-1-enrico.scholz@sigma-chemnitz.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250122-fix-autobuilder-dep-v2-1-84e8c0f623e5@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAEivkGcC/22NzQ6CMBCEX4Xs2TX9sUA88R6GA9BVNkFKWmg0p
- O9uJfHm8ZvMfLNDIM8U4Frs4ClyYDdnUKcChrGbH4RsM4MSyggpBd75hd22un7jyZJHSwvWHQl
- da0GyspCXi6dcO6y3NvPIYXX+fZxE+U1/Pv3XFyVKNMqSuJRlRWSa3rl14vk8uCe0KaUPfMCo7
- LgAAAA=
-X-Change-ID: 20250110-fix-autobuilder-dep-8ae03830e17d
-To: yocto-patches@lists.yoctoproject.org
-Cc: Richard Purdie <richard.purdie@linuxfoundation.org>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Antonin Godard <antonin.godard@bootlin.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4939;
- i=antonin.godard@bootlin.com; h=from:subject:message-id;
- bh=IQIhUOztvOWWHWu1c3XQTy+++YMCr+h1CI6E5eK6ENQ=;
- b=owEBbQKS/ZANAwAIAdGAQUApo6g2AcsmYgBnkK9XXZtcTXzMarOF+Xx/F3/VvWjqxmGE11qU0
- LoT8P/mVCKJAjMEAAEIAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCZ5CvVwAKCRDRgEFAKaOo
- NgdaD/9dw+mP/Rib9ob2j++LWNLfAlL+0XFLtcXYIbqrRJlsw9WekZ8W7S+AG5LyTufUKgqvNnr
- o2sHu2nH8W+PgiJdFp78bld75Z92MhykiCII0PH9tKKP2PWWGhLSwfUx+bvItIu+YC2PabRP/fF
- d8F4EjdnrK7Aqvs1UCLmhGz0kkItU3SC9H+kLbCs8d58kYEhaYEBbcZlYdzalwtY3hqm3aPPHlh
- Tb9c/n8jalAZCD2Auz7BU6yD8+SMprvzVfZO8t9IReYTLQ18NAjGiulMosD2pA7rq34/QJY3M/R
- bf2naK0ERTlMQlnfkgGLMoFOy4hFJGvbxm/7PKPm7DgvxXpEx8AqZVP59JwZquIRW2IOm8uV03F
- hV4hzikfL+ZEub5IgS/7FjSi1m74tgMUybLu/FpD3JZTzoEii/DB4O5+27GbhyJ67VMgp0/GV3P
- SjkYkdt9nLC/NlKZb2I3f1KIhrHdj6hZch5TJt+me7EVP9Ohx2V6W4VBwS2Z1kOnJpUV5tNwypX
- qyrqtWi0DtV/eOZwY/KZWkpvIEXT7/SuNBW4lYALgnEVdvlXsUbLtf83AgnHoeKWvEVIZXTK/pE
- KY7SO6c6WkJ+2v69R2XizC/2h+ie3KwVTtGOInJyRRPL25KOp2KuG2SrDsQzQmw9eqCdiezdvzt
- YbzNE8l9c3FLBag==
-X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
- fpr=8648725188DD401BB9A0D3FFD180414029A3A836
-X-GND-Sasl: antonin.godard@bootlin.com
+Content-Type: text/plain; charset=US-ASCII
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 22 Jan 2025 08:42:09 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1002
+ <yocto-patches@lists.yoctoproject.org>; Wed, 22 Jan 2025 20:59:37 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1003
 
-Like the docs build in commit afa838d962b7 ("docs build: make it
-possible to override repo settings") we can make the
-yocto-autobuilder-helper part of the repo dependencies in config.py, and
-then pass branch and uri information to the builders using util.Property
-and util.Interpolate. This allows overriding the
-yocto-autobuilder-helper URI/branch when starting a build manually.
+On Tue, 21 Jan 2025, Enrico Scholz wrote:
 
-The codebases arguments of ForceScheduler remain here because this is
-how the ReleaseSelector sets the "branch" property, which are in turn
-used by the triggered builds. We remove the "label" property as in
-reality this codebase has nothing to do with the
-yocto-autobuilder-helper repository.
+> From: Enrico Scholz <enrico.scholz@sigma-chemnitz.de>
+>
+> Porting back the UNPACKDIR changes broke do_install()
+>
+> | + x86_64-oesdk-linux-gcc .../rust-cross-canadian-arm/1.80.1/rust-cross-canadian-arm-1.80.1/target-rust-ccld.c: No such file or directory
+> | compilation terminated.
+>
+> Set $S to the expected value.
 
-Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
----
-Changes in v2:
-- Add the codebases argument back, since ReleaseSelector uses it to set
-  the "branch" property, used by the triggered builds.
-- Link to v1: https://lore.kernel.org/r/20250113-fix-autobuilder-dep-v1-1-52de04667ee5@bootlin.com
----
- builders.py   | 8 ++++----
- config.py     | 6 +++++-
- schedulers.py | 4 ++--
- 3 files changed, 11 insertions(+), 7 deletions(-)
+I remember looking at this, and thought I'd addressed it, but seems not,
+good catch.  I have merged this and the classes-recipe fix to
+scarthgap/rust, as well as re-enabling the one selftest that I had
+disabled, as it now passes with the backported rust-target-config.bbclass
+actually getting picked up.  I plan to look at backporting 1.81.0
+tomorrow.
 
-diff --git a/builders.py b/builders.py
-index 4f2bf00e5387d910f23579028a410e250fccf588..81308211155f7ec71cfb559e40e68f8742a698c7 100644
---- a/builders.py
-+++ b/builders.py
-@@ -104,8 +104,8 @@ def create_builder_factory():
-         haltOnFailure=True,
-         name="Clobber build dir"))
-     f.addStep(steps.Git(
--        repourl=config.repos["yocto-autobuilder-helper"][0],
--        branch=config.repos["yocto-autobuilder-helper"][1],
-+        repourl=util.Interpolate("%(prop:repo_yocto-autobuilder-helper)s"),
-+        branch=util.Property('branch_yocto-autobuilder-helper'),
-         workdir=util.Interpolate("%(prop:builddir)s/yocto-autobuilder-helper"),
-         mode='incremental',
-         haltOnFailure=True,
-@@ -260,8 +260,8 @@ def create_parent_builder_factory(buildername, waitname):
-                     name="Clobber build dir"))
-     # check out the source
-     factory.addStep(steps.Git(
--        repourl=config.repos["yocto-autobuilder-helper"][0],
--        branch=config.repos["yocto-autobuilder-helper"][1],
-+        repourl=util.Interpolate("%(prop:repo_yocto-autobuilder-helper)s"),
-+        branch=util.Property('branch_yocto-autobuilder-helper'),
-         workdir=util.Interpolate("%(prop:builddir)s/yocto-autobuilder-helper"),
-         mode='incremental',
-         haltOnFailure=True,
-diff --git a/config.py b/config.py
-index 8e2797aaeed7e2c688983d3d1f3c4b1895d393b8..062eafd290c06a49cdb8a6d3e358bea748e15877 100644
---- a/config.py
-+++ b/config.py
-@@ -27,7 +27,7 @@ buildertorepos = {
-     "checkuri": ["poky"],
-     "check-layer": ["poky", "meta-mingw", "meta-gplv2"],
-     "check-layer-nightly": ["poky", "meta-agl", "meta-arm", "meta-aws", "meta-intel", "meta-openembedded", "meta-virtualization", "meta-ti", "meta-security", "meta-clang", "meta-exein"],
--    "docs": ["yocto-autobuilder-helper", "yocto-docs", "bitbake"],
-+    "docs": ["yocto-docs", "bitbake"],
-     "reproducible-meta-oe": ["poky", "meta-openembedded"],
-     "patchtest": ["poky", "meta-patchtest", "meta-openembedded"],
-     "meta-oe-mirror":  ["poky", "meta-openembedded"],
-@@ -38,6 +38,10 @@ buildertorepos = {
-     "default": ["poky"]
- }
- 
-+# Add yocto-autobuilder-helper as a default repo dependency
-+for builder in buildertorepos:
-+    buildertorepos[builder] = ["yocto-autobuilder-helper"] + buildertorepos[builder]
-+
- # Repositories used that the scripts need to know about and should be buildbot
- # user customisable
- repos = {
-diff --git a/schedulers.py b/schedulers.py
-index e4760ed8bf1d02f4edca9af87725cf116630a14b..cb4ac2b6c8042e03899551bb42e1ff7e72824717 100644
---- a/schedulers.py
-+++ b/schedulers.py
-@@ -399,7 +399,7 @@ for builder in config.subbuilders:
-     schedulers.append(sched.ForceScheduler(
-         name=builder,
-         builderNames=[builder],
--        codebases=[util.CodebaseParameter(codebase='', label="yocto-autobuilder-helper:", project=None)],
-+        codebases=[util.CodebaseParameter(codebase='', project=None)],
-         reason=util.StringParameter(
-                 name="reason",
-                 label="""Reason (please note the reason for triggering the
-@@ -457,7 +457,7 @@ def parent_scheduler(target):
-     name=target,
-     builderNames=[target],
-     buttonName="Start " + target + " Build",
--    codebases = [util.CodebaseParameter(codebase='', label="yocto-autobuilder-helper:", project=None)],
-+    codebases = [util.CodebaseParameter(codebase='', project=None)],
-     reason=util.StringParameter(
-         name="reason",
-         label="""Reason (please note the reason for triggering the build and
+Thanks,
 
----
-base-commit: 8f6709cf0fad448ea87d80b50cd2ae375e5066b2
-change-id: 20250110-fix-autobuilder-dep-8ae03830e17d
+Scott
 
-Best regards,
--- 
-Antonin Godard <antonin.godard@bootlin.com>
 
+>
+> Signed-off-by: Enrico Scholz <enrico.scholz@sigma-chemnitz.de>
+> ---
+>  recipes-devtools/rust/rust-cross-canadian.inc | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/recipes-devtools/rust/rust-cross-canadian.inc b/recipes-devtools/rust/rust-cross-canadian.inc
+> index ea21e8a..af9f2d6 100644
+> --- a/recipes-devtools/rust/rust-cross-canadian.inc
+> +++ b/recipes-devtools/rust/rust-cross-canadian.inc
+> @@ -13,6 +13,7 @@ DEPENDS += "virtual/${SDK_PREFIX}gcc virtual/nativesdk-libc virtual/nativesdk-${
+>
+>  SRC_URI += "file://target-rust-ccld.c"
+>  LIC_FILES_CHKSUM = "file://target-rust-ccld.c;md5=af4e0e29f81a34cffe05aa07c89e93e9;endline=7"
+> +S = "${WORKDIR}"
+>
+>  # Need to use our SDK's sh here, see #14878
+>  create_sdk_wrapper () {
+>
 
