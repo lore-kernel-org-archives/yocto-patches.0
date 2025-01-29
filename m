@@ -1,92 +1,110 @@
-Return-Path: <akuster808@gmail.com>
+Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38F76C0218D
-	for <webhook@archiver.kernel.org>; Wed, 29 Jan 2025 15:11:37 +0000 (UTC)
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
- by mx.groups.io with SMTP id smtpd.web10.14724.1738163488295272050
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24500C02194
+	for <webhook@archiver.kernel.org>; Wed, 29 Jan 2025 18:09:18 +0000 (UTC)
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+ by mx.groups.io with SMTP id smtpd.web10.19467.1738174156840942844
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 29 Jan 2025 07:11:28 -0800
+ Wed, 29 Jan 2025 10:09:16 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=nbcrzqsQ;
- spf=pass (domain: gmail.com, ip: 209.85.214.169, mailfrom: akuster808@gmail.com)
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-21644aca3a0so7587695ad.3
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 29 Jan 2025 07:11:28 -0800 (PST)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=YG26IGg3;
+ spf=pass (domain: konsulko.com, ip: 209.85.166.176, mailfrom: scott.murray@konsulko.com)
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3ce873818a3so62010775ab.1
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 29 Jan 2025 10:09:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738163487; x=1738768287; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uQ6O8R/aZwtqq+MKoZF3RJmUZ0yDbwVwHey8MVePGaA=;
-        b=nbcrzqsQFa586qm2s2ke6wskvayVQsTkTBhxLIXpCyQbtWtrfpyG0Blhs6zkIfiaI2
-         SRq1GCmwFRoxYfbonBSzY+NVhBaJzwfMUbYTFJ1edxeWJYlU3ktGt0iLQo/+CYD3tDPQ
-         mqTEPoIHExqy4Df1dsr9XujF1BsijL4C2JVWnWoZ/gUECmahuVQU3oQnPwPyJjMuFfJw
-         VNeIfnIWZ7ePBEAk7ws69Y2lFWepxfu+H24vwPUtaib7VKOg9yP7vm9X4S8XrpaP9MzA
-         Lw+zh64wl4tozJO/Ch5qI0lAiIPkbFODRosYp2uB91KPqPrEwZ2xLWIP/kyvLTdPcuFC
-         acQA==
+        d=konsulko.com; s=google; t=1738174156; x=1738778956; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dXgzVBMp+OSyKu0EDvTN0AvQDJmnMtJAc8yoIqvX/tE=;
+        b=YG26IGg30K9GZQ2Qcxg+8YQPSf77+qjuwhv/XIpHdKikLy1PA3GYSMDPsRx09wMBcg
+         k8cPay8EQVP8u6cbWlLiPPy4PNCyjrLQgiBSV9R+5+vQWYYeULr4vcak2mDHM3l1Z4P/
+         zJ6V1qyJD7INoWSLQj3JWK78opmuKFkRFYqko=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738163487; x=1738768287;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uQ6O8R/aZwtqq+MKoZF3RJmUZ0yDbwVwHey8MVePGaA=;
-        b=RNXHnmguXb/Fk8tAJaLvtitZYVXBPpCDdWVaCkylqyuXXFHu8FObFCwPHBj/JZysqZ
-         lhzufawW4sAvL0pWXqtuvTjwFrcmP0RZIdIueuUxxsXZQnW/l6lVdsBX9DCdVt1N3WEF
-         7+aIGOeH/fqN3gjeAofpJ+Xm7/ajuI/pGf0fra0C9EeniVVzu7zgavutVTpWjfoYagAN
-         7BixKLDVwe5Pbe7o9AN61qidWt75ZYsrSOW2P1cTQGoLgY6ZKCSPx7tzI54GadwGdVgx
-         0e82JbBeDYlx97dfgVoL995hYtRj+hn3GF08RwveJGXp52+m1gK1OGLIynjngQaXl0rp
-         /IMw==
-X-Gm-Message-State: AOJu0YzTtRG/I5lhXfaHAOlpy9m02WZdrN+nTezmSIpcxRtS4Podhym7
-	3RhW3rId0t2V70q52PWOCC15GCSBFU94cJLnIDUKSnzDw+F55I8hyjEfPQ==
-X-Gm-Gg: ASbGncuff3xDPxFTgGmpML29/0CuPyP5rXIUF806I2Q+rccQ89Q4WqBsv29Y0gSOL+U
-	1j7UBzmonQ1lcrL/aFnTpnLHs2n9T6Btu6Q7c0WuUSNPrzbEcJlqCnczY61W6u0hx+O/umH++RA
-	RUbpPTGXBwTul75TDVl2xiThUtmyL2P98ql6US/+bQ/5ZD1Ep2b7fkP6i7kiwXReKBBwrzP2q46
-	Yg19p42ilIx/r8V1UpJBWKE02mK9lOJ8tPDMp7mblaxwKc8mf6568PbH3vAMEfysv1HyJIjMd0I
-	g9w7MbMzaqk=
-X-Google-Smtp-Source: AGHT+IGar6lT+X0bQTS+nXr1qfTT1v1SqaRgXpE+8zvnK5mvLto8mOvrhaXuMHxSWge4QYdhIuv0bg==
-X-Received: by 2002:a05:6a21:498:b0:1e1:a647:8a54 with SMTP id adf61e73a8af0-1ed7a640d32mr6268957637.20.1738163487142;
-        Wed, 29 Jan 2025 07:11:27 -0800 (PST)
-Received: from keaua.. ([50.240.203.141])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72f8a760e2asm11308762b3a.88.2025.01.29.07.11.26
+        d=1e100.net; s=20230601; t=1738174156; x=1738778956;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dXgzVBMp+OSyKu0EDvTN0AvQDJmnMtJAc8yoIqvX/tE=;
+        b=lIKXKhuj8+1EafLnB4UexCrVr6ltF6ytfffVsgKDnZ5Ysz4TB3JJnKV9TAyH6x+IYL
+         Nb8iFOsuPEVWs7NA49LVIMHlZnkkXf0CEOYJhHbOUvLBwOrD8aApvcdiFOqedEwA498h
+         NacKsoJ+bhH9sUKv9nIvg/kFtvtsM/qvLT1GiUBiAByzLET5bWxQogz5iO4h+CqG06vH
+         G+DEs5VfHciaHbxgTjcKP2Q3BHPBRhiK+TjAADrbNKM3dMs+4XMjFXyWecPQCv3QYBHg
+         O/ocd4elMLooM0hwZ2cd6dGgRlKyhQzHsACJIPzPHi/x3DhZbj/IeYuhF2UkXuyfTsUm
+         Ar/A==
+X-Gm-Message-State: AOJu0Yz0pZyz0t8jqc5/6siWlVxl3Ky8CcX/LtUq4ekMSqFxoaJNv4Hm
+	ETt27/Znp0PZwz+G65oSTNh9KSm8ncq/6mJ8aBY1hdn2YLppv1L0g5GEvVzmFV4LOp8RYhhhXUX
+	F
+X-Gm-Gg: ASbGnctpw1sqlWlP6xZ86+DmZjs7MCvpQRxVItohqO0RktQCD+lVEVPrNFveR63XW2+
+	UlEjKDWkX2aFQxx1sPJgnnhsfGgdvdkRWlDT0UbrEEfQBYVhE0DzzWlc1ZakeOTWKyf0X2QzYhM
+	f894rmrtaHlRuhn94r48mV14auvEPByerZwhQfFDzr4zAW7ya5Gi/UPukV6ZH9ZqG5FWS4gU9f/
+	bsIgr490FbFKUA06w3MqK+V2059qLgaPz5s+qg4I4ZEF1TEm1b7psMErLAmGLHuwMSsySVQKakp
+	NtL5EzhGIl21I/zhaVYHQ60dLQ7K+f3+uhzxRdL4aJPBQQ0XoTY5zpSjBS5cA/zXxFQ=
+X-Google-Smtp-Source: AGHT+IFDCEA7Wg7Pe61y1OT65q71uL/e2rFjBl29FxfdQ0n0inr0nt6W50r8VBHGil7ep+A/XMgHUA==
+X-Received: by 2002:a05:6e02:3101:b0:3ce:69ca:ef99 with SMTP id e9e14a558f8ab-3cffe3e5e4amr41069165ab.6.1738174155816;
+        Wed, 29 Jan 2025 10:09:15 -0800 (PST)
+Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ec1da4462asm3903034173.55.2025.01.29.10.09.15
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Jan 2025 07:11:26 -0800 (PST)
-From: Armin Kuster <akuster808@gmail.com>
+        Wed, 29 Jan 2025 10:09:15 -0800 (PST)
+From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-security][PATCH] lynis: update to 3.1.4
-Date: Wed, 29 Jan 2025 07:11:24 -0800
-Message-ID: <20250129151124.292270-1-akuster808@gmail.com>
-X-Mailer: git-send-email 2.43.0
+Subject: [meta-lts-mixins][scarthgap/rust][PATCH 3/9] cargo-c: convert to target recipe
+Date: Wed, 29 Jan 2025 13:08:54 -0500
+Message-ID: <029a7a82d9e134c39ae47cc154245ce59c06e5d9.1738173519.git.scott.murray@konsulko.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <cover.1738173519.git.scott.murray@konsulko.com>
+References: <cover.1738173519.git.scott.murray@konsulko.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 29 Jan 2025 15:11:37 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1012
+ <yocto-patches@lists.yoctoproject.org>; Wed, 29 Jan 2025 18:09:18 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1015
 
-Signed-off-by: Armin Kuster <akuster808@gmail.com>
+From: Alexander Kanavin <alex@linutronix.de>
+
+This was prompted by sstatetests.SStateHashSameSigs2.test_sstate_allarch_samesigs
+where adwaita-icon-theme would fail due to new librsvg introducing
+cargo-c-native into dependency path.
+
+Rather than look into why is that, I simply converted the recipe
+into the standard 'target + BBCLASSEXTEND' approach.
+
+Signed-off-by: Alexander Kanavin <alex@linutronix.de>
+Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+(adapted from oe-core commit 80a2673a3081e623f30f25cc773ac9217e717958)
+Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- recipes-compliance/lynis/{lynis_3.1.1.bb => lynis_3.1.4.bb} | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
- rename recipes-compliance/lynis/{lynis_3.1.1.bb => lynis_3.1.4.bb} (93%)
+ ...e_0.10.5+cargo-0.83.0.bb => cargo-c_0.10.5+cargo-0.83.0.bb} | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+ rename recipes-devtools/rust/{cargo-c-native_0.10.5+cargo-0.83.0.bb => cargo-c_0.10.5+cargo-0.83.0.bb} (86%)
 
-diff --git a/recipes-compliance/lynis/lynis_3.1.1.bb b/recipes-compliance/lynis/lynis_3.1.4.bb
-similarity index 93%
-rename from recipes-compliance/lynis/lynis_3.1.1.bb
-rename to recipes-compliance/lynis/lynis_3.1.4.bb
-index f6fddd0..4059662 100644
---- a/recipes-compliance/lynis/lynis_3.1.1.bb
-+++ b/recipes-compliance/lynis/lynis_3.1.4.bb
-@@ -8,7 +8,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=3edd6782854304fd11da4975ab9799c1"
+diff --git a/recipes-devtools/rust/cargo-c-native_0.10.5+cargo-0.83.0.bb b/recipes-devtools/rust/cargo-c_0.10.5+cargo-0.83.0.bb
+similarity index 86%
+rename from recipes-devtools/rust/cargo-c-native_0.10.5+cargo-0.83.0.bb
+rename to recipes-devtools/rust/cargo-c_0.10.5+cargo-0.83.0.bb
+index 728b875..c6e88e6 100644
+--- a/recipes-devtools/rust/cargo-c-native_0.10.5+cargo-0.83.0.bb
++++ b/recipes-devtools/rust/cargo-c_0.10.5+cargo-0.83.0.bb
+@@ -9,9 +9,10 @@ SRC_URI = "crate://crates.io/cargo-c/${PV};name=cargo-c"
+ SRC_URI[cargo-c.sha256sum] = "5bfa9ba93806384d940e71dafbc185316e0a6a47561b33b7105fcf67f99df70a"
+ S = "${CARGO_VENDORING_DIRECTORY}/cargo-c-${PV}"
  
- SRC_URI = "https://downloads.cisofy.com/lynis/${BPN}-${PV}.tar.gz"
+-inherit cargo cargo-update-recipe-crates pkgconfig native
++inherit cargo cargo-update-recipe-crates pkgconfig
  
--SRC_URI[sha256sum] = "d72f4ee7325816bb8dbfcf31eb104207b9fe58a2493c2a875373746a71284cc3"
-+SRC_URI[sha256sum] = "c4dbcddd429624d5b2319cd3b19728e18a7885b70b8eb0a9fdd3ca5f0ae28eb6"
+ DEPENDS = "openssl curl"
  
- #UPSTREAM_CHECK = "https://downloads.cisofy.com/lynis"
+ require ${BPN}-crates.inc
  
++BBCLASSEXTEND = "native"
 -- 
-2.43.0
+2.48.1
 
 
