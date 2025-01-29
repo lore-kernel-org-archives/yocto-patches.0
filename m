@@ -2,59 +2,59 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BEC4C0218D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C70FC0218F
 	for <webhook@archiver.kernel.org>; Wed, 29 Jan 2025 18:09:28 +0000 (UTC)
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
- by mx.groups.io with SMTP id smtpd.web11.19377.1738174164102846388
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+ by mx.groups.io with SMTP id smtpd.web11.19375.1738174162568278386
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 29 Jan 2025 10:09:24 -0800
+ Wed, 29 Jan 2025 10:09:22 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=QZdV2rYF;
- spf=pass (domain: konsulko.com, ip: 209.85.166.42, mailfrom: scott.murray@konsulko.com)
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-844e1020253so188963039f.3
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 29 Jan 2025 10:09:24 -0800 (PST)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=lKmSD680;
+ spf=pass (domain: konsulko.com, ip: 209.85.166.54, mailfrom: scott.murray@konsulko.com)
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-84a1ce51187so193289239f.1
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 29 Jan 2025 10:09:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1738174163; x=1738778963; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1738174161; x=1738778961; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=go4j396iuzLzLshqIeUliAKcswmPd3VfeaZ/OOF4N5g=;
-        b=QZdV2rYFJNALuojoqEimiKxo7raoYD+BTxshhySzvwkq5DQFEmQLS5x/yPusRcQuq8
-         qyLRAGomFdLZW6I+IpqmBGJvxIFxbhHHYiiLoCVNrT2YDD0s6vV87MVEHxSe+EOYpV7q
-         TmJsWW++Venk10URZShK3rhBSn77aULesxd18=
+        bh=QElZKMwfqyqw9kgeOafKEf3rn9vyW8TGMNMY65R+vQM=;
+        b=lKmSD680Ko2vcpU20Okl3b1INbqbXmo47XIvGhokfGQD51+XDTfKzphtREcJuNc9Mb
+         GCs3EeDrBDwtWRmqXYPtEG+vERMRhA78Avof5iDTfkvpw33QooriCCSXKSetu/6VRjer
+         upCs3Zpi6QSm3rmli6g2VcAco92mpJC5Fout0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738174163; x=1738778963;
+        d=1e100.net; s=20230601; t=1738174161; x=1738778961;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=go4j396iuzLzLshqIeUliAKcswmPd3VfeaZ/OOF4N5g=;
-        b=LV3iI1LR99dQziAQVKX/rFVsWjOV7U1628yT0Fy1IkPJPG0vaJu14saxby2I8z1qm6
-         Hp4Hl4+49fnuahEogHVy7ZY/mxMQJ3Wt53FLMSEXr20RY1E6vbchSnIDIC98PqznFbjH
-         F1bTI1Gn+gQqrUwv/wabX14mp1dbqku8/Trpx7hLnrVC9W8V37wgIfj3rmOcQa4hGmh7
-         Spv6VX9ZO5t7W1+qn3ohBsLkXdbgLz9cJLB1uUPeeZSaH56d0SPZ3scr4UCnP9A6Qbln
-         q8sX5QqgJSfh+A9ovTdGo/d8/2hpHYjreo67RtMiCH/qapOjxQRjJ41NvvcreYN74SEu
-         dvtg==
-X-Gm-Message-State: AOJu0YzszreX0SqkTpuEvBDRXKIT5WRWynXBRNQYdgLCARZoyMF8/PK2
-	pzS6/jNtu/m6DGkZOplnWJPtVNU17tYCgXWAHC+yv5nh3cSQO0CnVpAvty4ItxOyw9ejEvZqSG9
-	C
-X-Gm-Gg: ASbGncvkAG8m2zZqQlPwXOE1pTIoXooLa3mM+Gnh1kY1uPzWjNBdyiQEbO8RAs4SjyT
-	vTmo90GbtszmzRQ/LjIDpv4pQTTLnf3KEXnKUuZwyPXs1OxaUHZ+7LHKs6GrjXi3UjP9hfHnzBY
-	KvzVpVfEdblHm1ZbObrf2u4+abknJuaG+IhcuCsQaayRoCPmEqGk4bU4/5tNZnnvij0LaAxpSR2
-	SRRsAbFPQok+8P9KlUenWrKJBmEpln/H4YUax6R4juFRQ0pjommXLKG49w1GB8E4nmF8i1Rlc9+
-	lwH4aorrfK1I7K6ynh3/z2hISOaJ2X/qiJpfVRmtrrghifQco1hh75XC0Nf/lcHSEeE=
-X-Google-Smtp-Source: AGHT+IFpsdPzgk+6Pf13Gy49bfiRjKKA6Le9KObVI1V79+sh9ynz80lfXDp1WCeBA7sZSA14UGKi2Q==
-X-Received: by 2002:a05:6602:2cc4:b0:84f:41e2:8087 with SMTP id ca18e2360f4ac-85427d78792mr445225839f.8.1738174162714;
-        Wed, 29 Jan 2025 10:09:22 -0800 (PST)
+        bh=QElZKMwfqyqw9kgeOafKEf3rn9vyW8TGMNMY65R+vQM=;
+        b=FNuOQ7cSQdkOIxgQZYPepi43ZQ5NhoZNWikKHQzlgtxPW9uW9ntfRri13HXmi9CViE
+         UXwD64OMzc3Y82nWg0LHIAjxPNuVNIIBsIpiCK91uVChmHWwWTC4Jxua9z/THRGXfMmS
+         Lj+UGPVOZc8VWNv2itZWbtxD6z/OCABiooH5+ojK9j1NQxfklYwyolKGeTyE8877109l
+         15a7X9WsUddgI0yvgPm6kVeFVKNdnFzrO4AiejOa8mu4vhWzjvO8uReV/NGIqHNj1YFH
+         T8O5nZaJzzCUa1x2uLNuu5wQtvWiZnyDgvzpa8TV1OtkipzcBpE72Rc7enbvUgYsUeNv
+         MSxw==
+X-Gm-Message-State: AOJu0Yxkhom68XYsPPX1Bt+8ff4XI2EK/OsMdW4wM2zegZv2EsYB/+pw
+	w2pAzqfvyFFhyQrzjqZ7rmqZJuDWBy/9NDWDwQkwAGb7wAvjp3++iJ8Uc99ukktaGd2aAxdN6j1
+	3
+X-Gm-Gg: ASbGncvQt87GuPCLFoafcSP1h64Xb7SkM0vbs07Ud9t9XYZQXl8S4TjJP/QC0jVLZIj
+	ySwaiFvd9udC8xjme38ypXB64skcZwakN6Nogi90pdnww36OmTG/NqKVusDja/F0SgeT07P2DFR
+	1lSU6SgoGTkDBW2PxAFHIVdyPWfce2/H+pYPRsZjVuIJeth3Pj78GSi3SIH+AQETjeZc2yijojC
+	6nDq9eaUF9EhEkXLJhXwUgire2x52Kop8utxzg3EYt1DUvqEmMJtCFO1m+az+9ko5+GZsiyajxQ
+	ZX6EiNEQ2xg1JANpioSPlmXEMo0YEsOEuyNOgsXzHecUFtrqgwAd8zPwscFJRnk1feM=
+X-Google-Smtp-Source: AGHT+IF7ot7m8hMfTyJ3VQLFUQLFHwwepgZ48ICjzv031ePAaAspbJX1uygbTSG0He5bE3EJoxh4PA==
+X-Received: by 2002:a05:6602:3d6:b0:843:f261:60e0 with SMTP id ca18e2360f4ac-85427e05892mr468708339f.5.1738174161505;
+        Wed, 29 Jan 2025 10:09:21 -0800 (PST)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ec1da4462asm3903034173.55.2025.01.29.10.09.21
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ec1da4462asm3903034173.55.2025.01.29.10.09.20
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Jan 2025 10:09:21 -0800 (PST)
+        Wed, 29 Jan 2025 10:09:20 -0800 (PST)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][scarthgap/rust][PATCH 9/9] rust-common: add LDFLAGS to 'build-rust-cc' wrapper
-Date: Wed, 29 Jan 2025 13:09:00 -0500
-Message-ID: <1793a1b8fc92cf8688c72b7fd4181e3a2f5ade55.1738173519.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][scarthgap/rust][PATCH 8/9] rust: increase test timeout again
+Date: Wed, 29 Jan 2025 13:08:59 -0500
+Message-ID: <cc6dd2e91467fc9bb7dd919a42de69e6b8a256ba.1738173519.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <cover.1738173519.git.scott.murray@konsulko.com>
 References: <cover.1738173519.git.scott.murray@konsulko.com>
@@ -64,53 +64,38 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Wed, 29 Jan 2025 18:09:28 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1021
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1019
 
-From: Enrico Scholz <enrico.scholz@sigma-chemnitz.de>
+From: Adrian Freihofer <adrian.freihofer@gmail.com>
 
-Although rust differs between compiling (--> 'rust-cc' wrapper) and
-linking (--> 'rust-ccld' wrapper), some core crates are using only the
-'rust-cc' wrapper to check for available compiler options [1] and
-libraries [2].
+Fixes [YOCTO #15625]
 
-Not having LDFLAGS can break the build in subtle ways.  E.g. 'cargo-native'
-can fail to build with
+The first attempt to get around the timeout was to double it from 5000
+to 10000, which doesn't seem to be enough. Let's try to fix this by
+extending the timeout by a factor of 10.
 
-|   = note: .../hosttools/ld: .../liblibz_sys-....rlib(deflate.o):
-|     relocation R_X86_64_32S against hidden symbol `_length_code' can not be used when making a PIE object
-
-because it does not find '-lz' (added by "DEPENDS = zlib") and builds
-a static libz.a with missing PIC flags.
-
-Add LDFLAGS to the 'build-rust-cc' wrapper as it is done already for
-the target one.
-
-[1] https://github.com/rust-lang/cc-rs/pull/1322
-
-[2] https://github.com/rust-lang/libz-sys/blob/12a32798c6bd18986cb5cd603359b03c96f0eb4c/build.rs#L228-L234
-
-Signed-off-by: Enrico Scholz <enrico.scholz@sigma-chemnitz.de>
+Signed-off-by: Adrian Freihofer <adrian.freihofer@siemens.com>
 Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Signed-off-by: Ross Burton <ross.burton@arm.com>
-(adapted from oe-core commit 49b37575b548f0ab082c700f91fdd856740dc829)
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+(adapted from oe-core commit fb19e038582a2bfc414465ef396c30197f67128f)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- classes-recipe/rust-common.bbclass | 2 +-
+ .../oeqa-selftest-Increase-timeout-in-process-sigpipe-ru.patch  | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/classes-recipe/rust-common.bbclass b/classes-recipe/rust-common.bbclass
-index 6940093..baa3869 100644
---- a/classes-recipe/rust-common.bbclass
-+++ b/classes-recipe/rust-common.bbclass
-@@ -173,7 +173,7 @@ do_rust_create_wrappers () {
- 	mkdir -p "${WRAPPER_DIR}"
- 
- 	# Yocto Build / Rust Host C compiler
--	create_wrapper_rust "${RUST_BUILD_CC}" "" "${CRATE_CC_FLAGS}" "${BUILD_CC}"
-+	create_wrapper_rust "${RUST_BUILD_CC}" "" "${CRATE_CC_FLAGS}" "${BUILD_CC}" "${BUILD_LDFLAGS}"
- 	# Yocto Build / Rust Host C++ compiler
- 	create_wrapper_rust "${RUST_BUILD_CXX}" "" "${CRATE_CC_FLAGS}" "${BUILD_CXX}"
- 	# Yocto Build / Rust Host linker
+diff --git a/recipes-devtools/rust/files/oeqa-selftest-Increase-timeout-in-process-sigpipe-ru.patch b/recipes-devtools/rust/files/oeqa-selftest-Increase-timeout-in-process-sigpipe-ru.patch
+index b42dda8..bb27ca3 100644
+--- a/recipes-devtools/rust/files/oeqa-selftest-Increase-timeout-in-process-sigpipe-ru.patch
++++ b/recipes-devtools/rust/files/oeqa-selftest-Increase-timeout-in-process-sigpipe-ru.patch
+@@ -25,7 +25,7 @@ index 11f363d62..c12d66016 100644
+      // Just in case `yes` doesn't check for EPIPE...
+      thread::spawn(|| {
+ -        thread::sleep_ms(5000);
+-+        thread::sleep_ms(10000);
+++        thread::sleep_ms(50000);
+          process::exit(1);
+      });
+      let output = process::Command::new("sh")
 -- 
 2.48.1
 
