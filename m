@@ -2,59 +2,60 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43C7DC02194
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C94CC02195
 	for <webhook@archiver.kernel.org>; Wed, 29 Jan 2025 18:09:28 +0000 (UTC)
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
- by mx.groups.io with SMTP id smtpd.web10.19470.1738174162946468009
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+ by mx.groups.io with SMTP id smtpd.web10.19468.1738174159057317070
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 29 Jan 2025 10:09:23 -0800
+ Wed, 29 Jan 2025 10:09:19 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=brREcCTT;
- spf=pass (domain: konsulko.com, ip: 209.85.166.170, mailfrom: scott.murray@konsulko.com)
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3cfcf8b7455so37966265ab.3
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 29 Jan 2025 10:09:22 -0800 (PST)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=Mt9KduZD;
+ spf=pass (domain: konsulko.com, ip: 209.85.166.175, mailfrom: scott.murray@konsulko.com)
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3a7dd54af4bso16132105ab.2
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 29 Jan 2025 10:09:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1738174162; x=1738778962; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1738174158; x=1738778958; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Kb276M34XeM05aPkrNhaWBkFyNp2pm4y1ZRfj7JQovo=;
-        b=brREcCTTTA4g6khHQDlnqXwRxNiI02S3ZxGgBPQAIMRFpJAHzScyuq0tQxE1spH+Pt
-         vXAstgp7tWhp6Fm2S5pZ62A3DcQ239T21PxtHyoVaWJnAz0RptZocQa/ndsomuZM3uPq
-         Zazj1OldUPsHA3zI5Fjzh+H0PXhv9fg6Tn7yg=
+        bh=WUib8dztQ9zPTKQJeHmix/XQQlLXb+hSmNfY9eYLHg0=;
+        b=Mt9KduZDLQ15Jk6kClz+yPcc7X0fFmWsCPRrP0jCIcRPLlhaI+O7KcrG8iKv7hLQC/
+         RvlltpGpt/cL3wCaiEpSOUapiiv2RuE7VZjiJbWXzd2Dg28yIzJPXWnSHlbar9C+qNFW
+         FilRhOczfh9NjSq+ZGwkLN8dIQU8h3JuwsUes=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738174162; x=1738778962;
+        d=1e100.net; s=20230601; t=1738174158; x=1738778958;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Kb276M34XeM05aPkrNhaWBkFyNp2pm4y1ZRfj7JQovo=;
-        b=pwhk37c47GQjHE4IMaO6eA2WUOLNjFesMRjqFRHoAYdYUA/iB7n5MdcNmDDojzbfi/
-         GkdA6h5jOYc7DWprq8jw56IRbygTEJCh1fDMtDveuYKRHk92k5ZY/iCSL5kva60e51sk
-         GjuTWHZQ+7g72AdibseXg7aNkJU14MTOMNk4CC/xHoHu2gMW5+IBVYyR9KKKrcf+WbTH
-         /SpFVzCv6xOrvqDB0fBKb5GDTQ0uKo8z54IuilBdxKs6GK5j/OrpCRPiMJ7GnBAGLkoa
-         JwkXfRvKh4BNCj/pwlzZzFF07YVEgI1z/vrXA4R8ma8bfujiaivDR0k3PQTev9t18qj/
-         CCAw==
-X-Gm-Message-State: AOJu0Yzz3l+CobzKzKjJ4Ldj7rRETwatoGluhjgMR+wiy7p16dZBHsle
-	QxBsaZli/kUJskOJ/3gzjqCb4WJ2nDSqLn2jljwsqSBNB39sVzzNbdEh81QB2Z8Bi1YGJQq12SD
-	F
-X-Gm-Gg: ASbGnctTu1ZhC4GKRVG3ENOj7urT6jVn9P3GkosoJSdJcpyVPzujGjdW5jKhM5tu3Bd
-	eHqDBAG6+vIe3G6+/CULepvY2c4VaGFHCBaHp+Tw7A0ml2zLJrpeytmhA5wFdpaUNvGryttjZQo
-	goef1eo3YQAqHXgC3ZQN/jsbxf6uzOn3cTtINNSyNFNurkzx6keHUNG1QFX8tpfsde8cHITGblR
-	+EZFXmlJKweETa0jwQtvMKc/vYvZmuV9NW30El/KLbCWCzz6lQGNpnvyXw9Kmjf6C50GWo3oz0w
-	vwb44BZO/xJt+LSPWuoFPL41xHCZiEEgCx8QuOfwEyJQu6B7yw5LGXWMuCAt8IAcwLI=
-X-Google-Smtp-Source: AGHT+IHsq4RV3b0dGvtfxgkhoDEeHUgGvwF7wKUQKacTBzk0VCvzp/OpA5cS5Z3ted09dZiFZPTD3Q==
-X-Received: by 2002:a05:6e02:3f02:b0:3cf:b6c9:5fc9 with SMTP id e9e14a558f8ab-3cffe3e5b58mr39640765ab.8.1738174160597;
-        Wed, 29 Jan 2025 10:09:20 -0800 (PST)
+        bh=WUib8dztQ9zPTKQJeHmix/XQQlLXb+hSmNfY9eYLHg0=;
+        b=Mcrvh3Mm47zcdbkgNLEE0crlOsAVCjLfTSSREXY+hoHtRfABgA3i99evOU/0I+IBEz
+         9uqHHeBkk8+G8nvQUCLBG996iLMnDTB2+KnsM3fjR129a4DKCgMiTMCQy2lLkeFrOHV1
+         nTgP9jqOQO4DoGqAiuZ5mkM1jpjAH0bt8M+T0jiKZV61xtLxLN7k3JIBCWwQfZ8gryVV
+         I0xFEwG94WbptU4x/QAkqnbduXbs38CPplS6k5q2UwXlp7uilPcpssOi89T+mCMk0Jh+
+         Fa6eUig9/An4HzPruWmwYh+DFobaYxBae9+wLxYGAAbAyLR/yXQc0yKZ+hHnWEg5xdi6
+         cQ0g==
+X-Gm-Message-State: AOJu0YzuGDDBJGp7lmgKO9CFm3/QuXm2L7+S1NQ4sItdN/GPFGbpiXvm
+	sBMtQYZFsTcZTxpB4vJ6Doj5p8bPLTY7eSoRDx9LRWyWaR0x33wJsuGjcinWI+irY/OWI0/Q0RA
+	w
+X-Gm-Gg: ASbGncvwWgjMCjM7MjVJvhxznlvPJIWo/8umA2LHdbV0giZNltYhx3ZVSxzb2/yYFnq
+	dbWhsdxQEwrcmLt3kiTBEjvmTyZPvg2RhqhLJCWyvkZgJR8UDfcRgd0xJhzUjeymbu8PiTY7N3l
+	QAdmexPSzUcJdNUCqUrAa7Y0wpGAs8jMyaDehbH+Jd1w/z+VhKtXDxveH+SKHC+K3BMprPv/jP2
+	ksBf7XU8i0u8rnO7gerCaGP8v4MNMCtwY8igoamx8ffna8+AyIGdJR8TWRe+7WAkRxY+WfCvhwz
+	4XNtjp3oodzXDvFzoaBYY0Nni8omBwgLhZWPRYcJwXDj92orgi/dbO7v1wGxeoU79J92b648eH5
+	X8Q==
+X-Google-Smtp-Source: AGHT+IHOR63saF09LJ0t3gVeVHeBwGxYcPm5mPKSDtNH4GiQDp1SXB5nFxnZTlwFdq5DWrUIHyfMSw==
+X-Received: by 2002:a92:c56f:0:b0:3cf:cc08:6165 with SMTP id e9e14a558f8ab-3cffe3bd21dmr39332985ab.12.1738174157207;
+        Wed, 29 Jan 2025 10:09:17 -0800 (PST)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ec1da4462asm3903034173.55.2025.01.29.10.09.19
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ec1da4462asm3903034173.55.2025.01.29.10.09.15
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Jan 2025 10:09:19 -0800 (PST)
+        Wed, 29 Jan 2025 10:09:16 -0800 (PST)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][scarthgap/rust][PATCH 7/9] rust: Upgrade 1.80.1->1.81.0
-Date: Wed, 29 Jan 2025 13:08:58 -0500
-Message-ID: <d735ef67b9228940b7305d3007a8c9fd8a41a3d5.1738173519.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][scarthgap/rust][PATCH 4/9] librsvg: update 2.58.2 -> 2.59.2
+Date: Wed, 29 Jan 2025 13:08:55 -0500
+Message-ID: <834e12521bd93e14ba305462c39ba5ebd96710f5.1738173519.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <cover.1738173519.git.scott.murray@konsulko.com>
 References: <cover.1738173519.git.scott.murray@konsulko.com>
@@ -64,1418 +65,1708 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Wed, 29 Jan 2025 18:09:28 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1020
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1017
 
-From: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
+From: Alexander Kanavin <alex@linutronix.de>
 
-https://blog.rust-lang.org/2024/09/05/Rust-1.81.0.html
+Upstream has moved from autotools to meson, which requires a substantial
+amount of tweaks to the recipe.
 
-Drop the following backported patches which is addressed
-with rust v1.81.0 upgrade.
-
-0001-cargo-do-not-write-host-information-into-compilation.patch
-https://github.com/rust-lang/cargo/commit/2db0bab16139d094f689587b73539aae3=
-86a1919
-
-hardcodepaths.patch
-https://github.com/rust-lang/rust/commit/28503d69ac204ff208d115aea30dc09d6f=
-ca8728
-
-Signed-off-by: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(adapted from oe-core commit 611ec9ffbac974f472a828277ba7f3e344e99ca3)
+Signed-off-by: Alexander Kanavin <alex@linutronix.de>
+Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+(adapted from oe-core commit ae4824f4f6234884a245bce314d6305ad8eb982d)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- conf/layer.conf                               |  2 +-
- .../rust/{cargo_1.80.1.bb =3D> cargo_1.81.0.bb} |  0
- ...te-host-information-into-compilation.patch | 51 ------------
- .../rust/files/hardcodepaths.patch            | 46 -----------
- ...epro-issue-fix-with-cc-crate-hashmap.patch | 53 ++++++++++++-
- .../rust/files/zlib-off64_t.patch             | 14 ++--
- ...ibstd-rs_1.80.1.bb =3D> libstd-rs_1.81.0.bb} |  0
- ....80.1.bb =3D> rust-cross-canadian_1.81.0.bb} |  0
- ...ust-llvm_1.80.1.bb =3D> rust-llvm_1.81.0.bb} |  0
- recipes-devtools/rust/rust-snapshot.inc       | 78 +++++++++----------
- recipes-devtools/rust/rust-source.inc         |  4 +-
- .../rust/{rust_1.80.1.bb =3D> rust_1.81.0.bb}   |  0
- 12 files changed, 99 insertions(+), 149 deletions(-)
- rename recipes-devtools/rust/{cargo_1.80.1.bb =3D> cargo_1.81.0.bb} (100%)
- delete mode 100644 recipes-devtools/rust/files/0001-cargo-do-not-write-hos=
-t-information-into-compilation.patch
- delete mode 100644 recipes-devtools/rust/files/hardcodepaths.patch
- rename recipes-devtools/rust/{libstd-rs_1.80.1.bb =3D> libstd-rs_1.81.0.bb=
-} (100%)
- rename recipes-devtools/rust/{rust-cross-canadian_1.80.1.bb =3D> rust-cros=
-s-canadian_1.81.0.bb} (100%)
- rename recipes-devtools/rust/{rust-llvm_1.80.1.bb =3D> rust-llvm_1.81.0.bb=
-} (100%)
- rename recipes-devtools/rust/{rust_1.80.1.bb =3D> rust_1.81.0.bb} (100%)
+ recipes-gnome/librsvg/librsvg-crates.inc      | 682 +++++++++---------
+ ...-rust-target-to-cargo-also-when-not-.patch |  44 --
+ ...r-meson.build-do-not-look-for-gdk-pi.patch |  28 +
+ ...ot-force-disable-introspection-and-v.patch |  34 +
+ .../librsvg/disable-rsvg-loader-test.patch    |  40 -
+ .../{librsvg_2.58.2.bb =3D> librsvg_2.59.2.bb}  |  38 +-
+ 6 files changed, 439 insertions(+), 427 deletions(-)
+ delete mode 100644 recipes-gnome/librsvg/librsvg/0001-Makefile.am-pass-rus=
+t-target-to-cargo-also-when-not-.patch
+ create mode 100644 recipes-gnome/librsvg/librsvg/0001-gdk-pixbuf-loader-me=
+son.build-do-not-look-for-gdk-pi.patch
+ create mode 100644 recipes-gnome/librsvg/librsvg/0001-meson.build-do-not-f=
+orce-disable-introspection-and-v.patch
+ delete mode 100644 recipes-gnome/librsvg/librsvg/disable-rsvg-loader-test.=
+patch
+ rename recipes-gnome/librsvg/{librsvg_2.58.2.bb =3D> librsvg_2.59.2.bb} (6=
+7%)
 
-diff --git a/conf/layer.conf b/conf/layer.conf
-index 3f76a94..b22a7f4 100644
---- a/conf/layer.conf
-+++ b/conf/layer.conf
-@@ -13,4 +13,4 @@ LAYERSERIES_COMPAT_scarthgap-rust-mixin =3D "scarthgap"
+diff --git a/recipes-gnome/librsvg/librsvg-crates.inc b/recipes-gnome/librs=
+vg/librsvg-crates.inc
+index 0ab8076..54cd1c6 100644
+--- a/recipes-gnome/librsvg/librsvg-crates.inc
++++ b/recipes-gnome/librsvg/librsvg-crates.inc
+@@ -3,76 +3,84 @@
+ # from Cargo.lock
+ SRC_URI +=3D " \
+     crate://crates.io/adler/1.0.2 \
+-    crate://crates.io/aho-corasick/1.1.2 \
++    crate://crates.io/ahash/0.8.11 \
++    crate://crates.io/aho-corasick/1.1.3 \
+     crate://crates.io/android-tzdata/0.1.1 \
+     crate://crates.io/android_system_properties/0.1.5 \
+     crate://crates.io/anes/0.1.6 \
+-    crate://crates.io/anstream/0.6.11 \
+-    crate://crates.io/anstyle/1.0.6 \
+-    crate://crates.io/anstyle-parse/0.2.3 \
+-    crate://crates.io/anstyle-query/1.0.2 \
+-    crate://crates.io/anstyle-wincon/3.0.2 \
+-    crate://crates.io/anyhow/1.0.79 \
++    crate://crates.io/anstream/0.6.15 \
++    crate://crates.io/anstyle/1.0.8 \
++    crate://crates.io/anstyle-parse/0.2.5 \
++    crate://crates.io/anstyle-query/1.1.1 \
++    crate://crates.io/anstyle-wincon/3.0.4 \
++    crate://crates.io/anyhow/1.0.86 \
+     crate://crates.io/approx/0.5.1 \
+-    crate://crates.io/assert_cmd/2.0.13 \
+-    crate://crates.io/autocfg/1.1.0 \
++    crate://crates.io/assert_cmd/2.0.15 \
++    crate://crates.io/autocfg/1.3.0 \
++    crate://crates.io/av-data/0.4.2 \
+     crate://crates.io/bit-set/0.5.3 \
+     crate://crates.io/bit-vec/0.6.3 \
+-    crate://crates.io/bit_field/0.10.2 \
+     crate://crates.io/bitflags/1.3.2 \
+-    crate://crates.io/bitflags/2.4.2 \
++    crate://crates.io/bitflags/2.6.0 \
++    crate://crates.io/bitreader/0.3.8 \
+     crate://crates.io/block/0.1.6 \
+-    crate://crates.io/bstr/1.9.0 \
+-    crate://crates.io/bumpalo/3.14.0 \
+-    crate://crates.io/bytemuck/1.14.2 \
++    crate://crates.io/block-buffer/0.10.4 \
++    crate://crates.io/bstr/1.10.0 \
++    crate://crates.io/bumpalo/3.16.0 \
++    crate://crates.io/byte-slice-cast/1.2.2 \
++    crate://crates.io/bytemuck/1.16.3 \
+     crate://crates.io/byteorder/1.5.0 \
+-    crate://crates.io/cairo-rs/0.19.1 \
+-    crate://crates.io/cairo-sys-rs/0.19.1 \
++    crate://crates.io/byteorder-lite/0.1.0 \
++    crate://crates.io/bytes/1.7.1 \
++    crate://crates.io/cairo-rs/0.20.0 \
++    crate://crates.io/cairo-sys-rs/0.20.0 \
+     crate://crates.io/cast/0.3.0 \
+-    crate://crates.io/cc/1.0.83 \
+-    crate://crates.io/cfg-expr/0.15.6 \
++    crate://crates.io/cc/1.1.8 \
++    crate://crates.io/cfg-expr/0.15.8 \
+     crate://crates.io/cfg-if/1.0.0 \
+-    crate://crates.io/chrono/0.4.33 \
++    crate://crates.io/chrono/0.4.38 \
+     crate://crates.io/ciborium/0.2.2 \
+     crate://crates.io/ciborium-io/0.2.2 \
+     crate://crates.io/ciborium-ll/0.2.2 \
+-    crate://crates.io/clap/4.4.18 \
+-    crate://crates.io/clap_builder/4.4.18 \
+-    crate://crates.io/clap_complete/4.4.10 \
+-    crate://crates.io/clap_derive/4.4.7 \
+-    crate://crates.io/clap_lex/0.6.0 \
++    crate://crates.io/clap/4.5.13 \
++    crate://crates.io/clap_builder/4.5.13 \
++    crate://crates.io/clap_complete/4.5.12 \
++    crate://crates.io/clap_derive/4.5.13 \
++    crate://crates.io/clap_lex/0.7.2 \
+     crate://crates.io/color_quant/1.1.0 \
+-    crate://crates.io/colorchoice/1.0.0 \
+-    crate://crates.io/const-cstr/0.3.0 \
++    crate://crates.io/colorchoice/1.0.2 \
+     crate://crates.io/core-foundation-sys/0.8.6 \
+-    crate://crates.io/crc32fast/1.3.2 \
++    crate://crates.io/crc32fast/1.4.2 \
+     crate://crates.io/criterion/0.5.1 \
+     crate://crates.io/criterion-plot/0.5.0 \
+     crate://crates.io/crossbeam-deque/0.8.5 \
+     crate://crates.io/crossbeam-epoch/0.9.18 \
+-    crate://crates.io/crossbeam-utils/0.8.19 \
++    crate://crates.io/crossbeam-utils/0.8.20 \
+     crate://crates.io/crunchy/0.2.2 \
++    crate://crates.io/crypto-common/0.1.6 \
+     crate://crates.io/cssparser/0.31.2 \
+     crate://crates.io/cssparser-macros/0.6.1 \
+-    crate://crates.io/cstr/0.2.11 \
+     crate://crates.io/data-url/0.3.1 \
++    crate://crates.io/dav1d/0.10.3 \
++    crate://crates.io/dav1d-sys/0.8.2 \
++    crate://crates.io/dcv-color-primitives/0.6.1 \
+     crate://crates.io/deranged/0.3.11 \
+-    crate://crates.io/derive_more/0.99.17 \
++    crate://crates.io/derive_more/0.99.18 \
+     crate://crates.io/difflib/0.4.0 \
++    crate://crates.io/digest/0.10.7 \
+     crate://crates.io/dlib/0.5.2 \
+     crate://crates.io/doc-comment/0.3.3 \
+     crate://crates.io/dtoa/1.0.9 \
+-    crate://crates.io/dtoa-short/0.3.4 \
+-    crate://crates.io/either/1.9.0 \
+-    crate://crates.io/encoding_rs/0.8.33 \
++    crate://crates.io/dtoa-short/0.3.5 \
++    crate://crates.io/either/1.13.0 \
++    crate://crates.io/encoding_rs/0.8.34 \
+     crate://crates.io/equivalent/1.0.1 \
+-    crate://crates.io/errno/0.3.8 \
+-    crate://crates.io/exr/1.72.0 \
+-    crate://crates.io/fastrand/2.0.1 \
++    crate://crates.io/errno/0.3.9 \
++    crate://crates.io/fallible_collections/0.4.9 \
++    crate://crates.io/fastrand/2.1.0 \
+     crate://crates.io/fdeflate/0.3.4 \
+-    crate://crates.io/flate2/1.0.28 \
++    crate://crates.io/flate2/1.0.31 \
+     crate://crates.io/float-cmp/0.9.0 \
+-    crate://crates.io/flume/0.11.0 \
+     crate://crates.io/fnv/1.0.7 \
+     crate://crates.io/form_urlencoded/1.2.1 \
+     crate://crates.io/futf/0.1.5 \
+@@ -84,278 +92,289 @@ SRC_URI +=3D " \
+     crate://crates.io/futures-task/0.3.30 \
+     crate://crates.io/futures-util/0.3.30 \
+     crate://crates.io/fxhash/0.2.1 \
+-    crate://crates.io/gdk-pixbuf/0.19.0 \
+-    crate://crates.io/gdk-pixbuf-sys/0.19.0 \
+-    crate://crates.io/getrandom/0.2.12 \
+-    crate://crates.io/gif/0.12.0 \
+-    crate://crates.io/gio/0.19.0 \
+-    crate://crates.io/gio-sys/0.19.0 \
+-    crate://crates.io/glib/0.19.0 \
+-    crate://crates.io/glib-macros/0.19.0 \
+-    crate://crates.io/glib-sys/0.19.0 \
+-    crate://crates.io/gobject-sys/0.19.0 \
+-    crate://crates.io/half/2.3.1 \
+-    crate://crates.io/hashbrown/0.14.3 \
+-    crate://crates.io/heck/0.4.1 \
+-    crate://crates.io/hermit-abi/0.3.5 \
++    crate://crates.io/gdk-pixbuf/0.20.0 \
++    crate://crates.io/gdk-pixbuf-sys/0.20.0 \
++    crate://crates.io/generic-array/0.14.7 \
++    crate://crates.io/getrandom/0.2.15 \
++    crate://crates.io/gif/0.13.1 \
++    crate://crates.io/gio/0.20.0 \
++    crate://crates.io/gio-sys/0.20.0 \
++    crate://crates.io/glib/0.20.0 \
++    crate://crates.io/glib-macros/0.20.0 \
++    crate://crates.io/glib-sys/0.20.0 \
++    crate://crates.io/gobject-sys/0.20.0 \
++    crate://crates.io/half/2.4.1 \
++    crate://crates.io/hashbrown/0.13.2 \
++    crate://crates.io/hashbrown/0.14.5 \
++    crate://crates.io/heck/0.5.0 \
++    crate://crates.io/hermit-abi/0.3.9 \
+     crate://crates.io/iana-time-zone/0.1.60 \
+     crate://crates.io/iana-time-zone-haiku/0.1.2 \
+     crate://crates.io/idna/0.5.0 \
+-    crate://crates.io/image/0.24.8 \
+-    crate://crates.io/indexmap/2.2.2 \
+-    crate://crates.io/is-terminal/0.4.10 \
++    crate://crates.io/image/0.25.2 \
++    crate://crates.io/image-webp/0.1.3 \
++    crate://crates.io/indexmap/2.3.0 \
++    crate://crates.io/is-terminal/0.4.12 \
++    crate://crates.io/is_terminal_polyfill/1.70.1 \
+     crate://crates.io/itertools/0.10.5 \
+-    crate://crates.io/itertools/0.12.1 \
+-    crate://crates.io/itoa/1.0.10 \
+-    crate://crates.io/jpeg-decoder/0.3.1 \
+-    crate://crates.io/js-sys/0.3.68 \
++    crate://crates.io/itertools/0.13.0 \
++    crate://crates.io/itoa/1.0.11 \
++    crate://crates.io/js-sys/0.3.69 \
+     crate://crates.io/language-tags/0.3.2 \
+-    crate://crates.io/lazy_static/1.4.0 \
+-    crate://crates.io/lebe/0.5.2 \
+-    crate://crates.io/libc/0.2.153 \
+-    crate://crates.io/libloading/0.8.1 \
++    crate://crates.io/lazy_static/1.5.0 \
++    crate://crates.io/libc/0.2.155 \
++    crate://crates.io/libloading/0.8.5 \
+     crate://crates.io/libm/0.2.8 \
+     crate://crates.io/linked-hash-map/0.5.6 \
+-    crate://crates.io/linux-raw-sys/0.4.13 \
++    crate://crates.io/linux-raw-sys/0.4.14 \
+     crate://crates.io/locale_config/0.3.0 \
+-    crate://crates.io/lock_api/0.4.11 \
+-    crate://crates.io/log/0.4.20 \
+-    crate://crates.io/lopdf/0.32.0 \
++    crate://crates.io/lock_api/0.4.12 \
++    crate://crates.io/log/0.4.22 \
++    crate://crates.io/lopdf/0.33.0 \
+     crate://crates.io/mac/0.1.1 \
+     crate://crates.io/malloc_buf/0.0.6 \
+-    crate://crates.io/markup5ever/0.11.0 \
++    crate://crates.io/markup5ever/0.12.1 \
+     crate://crates.io/matches/0.1.10 \
+-    crate://crates.io/matrixmultiply/0.3.8 \
+-    crate://crates.io/md5/0.7.0 \
+-    crate://crates.io/memchr/2.7.1 \
++    crate://crates.io/matrixmultiply/0.3.9 \
++    crate://crates.io/md-5/0.10.6 \
++    crate://crates.io/memchr/2.7.4 \
+     crate://crates.io/minimal-lexical/0.2.1 \
+-    crate://crates.io/miniz_oxide/0.7.2 \
+-    crate://crates.io/nalgebra/0.32.3 \
+-    crate://crates.io/nalgebra-macros/0.2.1 \
+-    crate://crates.io/new_debug_unreachable/1.0.4 \
++    crate://crates.io/miniz_oxide/0.7.4 \
++    crate://crates.io/mp4parse/0.17.0 \
++    crate://crates.io/nalgebra/0.33.0 \
++    crate://crates.io/nalgebra-macros/0.2.2 \
++    crate://crates.io/new_debug_unreachable/1.0.6 \
+     crate://crates.io/nom/7.1.3 \
+     crate://crates.io/normalize-line-endings/0.3.0 \
+-    crate://crates.io/num-complex/0.4.5 \
++    crate://crates.io/num-bigint/0.4.6 \
++    crate://crates.io/num-complex/0.4.6 \
+     crate://crates.io/num-conv/0.1.0 \
++    crate://crates.io/num-derive/0.4.2 \
+     crate://crates.io/num-integer/0.1.46 \
+-    crate://crates.io/num-rational/0.4.1 \
+-    crate://crates.io/num-traits/0.2.18 \
++    crate://crates.io/num-rational/0.4.2 \
++    crate://crates.io/num-traits/0.2.19 \
+     crate://crates.io/objc/0.2.7 \
+     crate://crates.io/objc-foundation/0.1.1 \
+     crate://crates.io/objc_id/0.1.1 \
+     crate://crates.io/once_cell/1.19.0 \
+-    crate://crates.io/oorandom/11.1.3 \
+-    crate://crates.io/pango/0.19.0 \
+-    crate://crates.io/pango-sys/0.19.0 \
+-    crate://crates.io/pangocairo/0.19.1 \
+-    crate://crates.io/pangocairo-sys/0.19.0 \
+-    crate://crates.io/parking_lot/0.12.1 \
+-    crate://crates.io/parking_lot_core/0.9.9 \
+-    crate://crates.io/paste/1.0.14 \
++    crate://crates.io/oorandom/11.1.4 \
++    crate://crates.io/pango/0.20.0 \
++    crate://crates.io/pango-sys/0.20.0 \
++    crate://crates.io/pangocairo/0.20.0 \
++    crate://crates.io/pangocairo-sys/0.20.0 \
++    crate://crates.io/parking_lot/0.12.3 \
++    crate://crates.io/parking_lot_core/0.9.10 \
++    crate://crates.io/paste/1.0.15 \
+     crate://crates.io/percent-encoding/2.3.1 \
+     crate://crates.io/phf/0.10.1 \
+     crate://crates.io/phf/0.11.2 \
+     crate://crates.io/phf_codegen/0.10.0 \
++    crate://crates.io/phf_codegen/0.11.2 \
+     crate://crates.io/phf_generator/0.10.0 \
+     crate://crates.io/phf_generator/0.11.2 \
+     crate://crates.io/phf_macros/0.11.2 \
+     crate://crates.io/phf_shared/0.10.0 \
+     crate://crates.io/phf_shared/0.11.2 \
+-    crate://crates.io/pin-project-lite/0.2.13 \
++    crate://crates.io/pin-project-lite/0.2.14 \
+     crate://crates.io/pin-utils/0.1.0 \
+-    crate://crates.io/pkg-config/0.3.29 \
+-    crate://crates.io/plotters/0.3.5 \
+-    crate://crates.io/plotters-backend/0.3.5 \
+-    crate://crates.io/plotters-svg/0.3.5 \
+-    crate://crates.io/png/0.17.11 \
++    crate://crates.io/pkg-config/0.3.30 \
++    crate://crates.io/plotters/0.3.6 \
++    crate://crates.io/plotters-backend/0.3.6 \
++    crate://crates.io/plotters-svg/0.3.6 \
++    crate://crates.io/png/0.17.13 \
+     crate://crates.io/powerfmt/0.2.0 \
+-    crate://crates.io/ppv-lite86/0.2.17 \
++    crate://crates.io/ppv-lite86/0.2.20 \
+     crate://crates.io/precomputed-hash/0.1.1 \
+-    crate://crates.io/predicates/3.1.0 \
+-    crate://crates.io/predicates-core/1.0.6 \
+-    crate://crates.io/predicates-tree/1.0.9 \
++    crate://crates.io/predicates/3.1.2 \
++    crate://crates.io/predicates-core/1.0.8 \
++    crate://crates.io/predicates-tree/1.0.11 \
+     crate://crates.io/proc-macro-crate/3.1.0 \
+-    crate://crates.io/proc-macro2/1.0.78 \
+-    crate://crates.io/proptest/1.4.0 \
+-    crate://crates.io/qoi/0.4.1 \
++    crate://crates.io/proc-macro2/1.0.86 \
++    crate://crates.io/proptest/1.5.0 \
+     crate://crates.io/quick-error/1.2.3 \
+     crate://crates.io/quick-error/2.0.1 \
+-    crate://crates.io/quote/1.0.35 \
++    crate://crates.io/quote/1.0.36 \
+     crate://crates.io/rand/0.8.5 \
+     crate://crates.io/rand_chacha/0.3.1 \
+     crate://crates.io/rand_core/0.6.4 \
+     crate://crates.io/rand_xorshift/0.3.0 \
+     crate://crates.io/rawpointer/0.2.1 \
+-    crate://crates.io/rayon/1.8.1 \
++    crate://crates.io/rayon/1.10.0 \
+     crate://crates.io/rayon-core/1.12.1 \
+     crate://crates.io/rctree/0.6.0 \
+-    crate://crates.io/redox_syscall/0.4.1 \
+-    crate://crates.io/regex/1.10.3 \
+-    crate://crates.io/regex-automata/0.4.5 \
+-    crate://crates.io/regex-syntax/0.8.2 \
+-    crate://crates.io/rgb/0.8.37 \
+-    crate://crates.io/rustix/0.38.31 \
++    crate://crates.io/redox_syscall/0.5.3 \
++    crate://crates.io/regex/1.10.6 \
++    crate://crates.io/regex-automata/0.4.7 \
++    crate://crates.io/regex-syntax/0.8.4 \
++    crate://crates.io/rgb/0.8.48 \
++    crate://crates.io/rustix/0.38.34 \
+     crate://crates.io/rusty-fork/0.3.0 \
+-    crate://crates.io/ryu/1.0.16 \
+-    crate://crates.io/safe_arch/0.7.1 \
++    crate://crates.io/ryu/1.0.18 \
++    crate://crates.io/safe_arch/0.7.2 \
+     crate://crates.io/same-file/1.0.6 \
+     crate://crates.io/scopeguard/1.2.0 \
+     crate://crates.io/selectors/0.25.0 \
+-    crate://crates.io/serde/1.0.196 \
+-    crate://crates.io/serde_derive/1.0.196 \
+-    crate://crates.io/serde_json/1.0.113 \
+-    crate://crates.io/serde_spanned/0.6.5 \
++    crate://crates.io/serde/1.0.204 \
++    crate://crates.io/serde_derive/1.0.204 \
++    crate://crates.io/serde_json/1.0.122 \
++    crate://crates.io/serde_spanned/0.6.7 \
+     crate://crates.io/servo_arc/0.3.0 \
+-    crate://crates.io/simba/0.8.1 \
++    crate://crates.io/shell-words/1.1.0 \
++    crate://crates.io/simba/0.9.0 \
+     crate://crates.io/simd-adler32/0.3.7 \
+     crate://crates.io/siphasher/0.3.11 \
+     crate://crates.io/slab/0.4.9 \
+-    crate://crates.io/smallvec/1.13.1 \
+-    crate://crates.io/spin/0.9.8 \
++    crate://crates.io/smallvec/1.13.2 \
+     crate://crates.io/stable_deref_trait/1.2.0 \
++    crate://crates.io/static_assertions/1.1.0 \
+     crate://crates.io/string_cache/0.8.7 \
+     crate://crates.io/string_cache_codegen/0.5.2 \
+-    crate://crates.io/strsim/0.10.0 \
+-    crate://crates.io/syn/1.0.109 \
+-    crate://crates.io/syn/2.0.48 \
+-    crate://crates.io/system-deps/6.2.0 \
+-    crate://crates.io/target-lexicon/0.12.13 \
+-    crate://crates.io/tempfile/3.10.0 \
++    crate://crates.io/strsim/0.11.1 \
++    crate://crates.io/syn/2.0.72 \
++    crate://crates.io/system-deps/6.2.2 \
++    crate://crates.io/system-deps/7.0.1 \
++    crate://crates.io/target-lexicon/0.12.16 \
++    crate://crates.io/tempfile/3.12.0 \
+     crate://crates.io/tendril/0.4.3 \
+     crate://crates.io/termtree/0.4.1 \
+-    crate://crates.io/thiserror/1.0.56 \
+-    crate://crates.io/thiserror-impl/1.0.56 \
+-    crate://crates.io/tiff/0.9.1 \
+-    crate://crates.io/time/0.3.34 \
++    crate://crates.io/thiserror/1.0.63 \
++    crate://crates.io/thiserror-impl/1.0.63 \
++    crate://crates.io/time/0.3.36 \
+     crate://crates.io/time-core/0.1.2 \
+-    crate://crates.io/time-macros/0.2.17 \
++    crate://crates.io/time-macros/0.2.18 \
+     crate://crates.io/tinytemplate/1.2.1 \
+-    crate://crates.io/tinyvec/1.6.0 \
++    crate://crates.io/tinyvec/1.8.0 \
+     crate://crates.io/tinyvec_macros/0.1.1 \
+-    crate://crates.io/toml/0.8.10 \
+-    crate://crates.io/toml_datetime/0.6.5 \
++    crate://crates.io/toml/0.8.19 \
++    crate://crates.io/toml_datetime/0.6.8 \
+     crate://crates.io/toml_edit/0.21.1 \
+-    crate://crates.io/toml_edit/0.22.4 \
++    crate://crates.io/toml_edit/0.22.20 \
+     crate://crates.io/typenum/1.17.0 \
+     crate://crates.io/unarray/0.1.4 \
+     crate://crates.io/unicode-bidi/0.3.15 \
+     crate://crates.io/unicode-ident/1.0.12 \
+-    crate://crates.io/unicode-normalization/0.1.22 \
+-    crate://crates.io/url/2.5.0 \
++    crate://crates.io/unicode-normalization/0.1.23 \
++    crate://crates.io/url/2.5.2 \
+     crate://crates.io/utf-8/0.7.6 \
+-    crate://crates.io/utf8parse/0.2.1 \
+-    crate://crates.io/version-compare/0.1.1 \
++    crate://crates.io/utf8parse/0.2.2 \
++    crate://crates.io/version-compare/0.2.0 \
++    crate://crates.io/version_check/0.9.5 \
+     crate://crates.io/wait-timeout/0.2.0 \
+-    crate://crates.io/walkdir/2.4.0 \
++    crate://crates.io/walkdir/2.5.0 \
+     crate://crates.io/wasi/0.11.0+wasi-snapshot-preview1 \
+-    crate://crates.io/wasm-bindgen/0.2.91 \
+-    crate://crates.io/wasm-bindgen-backend/0.2.91 \
+-    crate://crates.io/wasm-bindgen-macro/0.2.91 \
+-    crate://crates.io/wasm-bindgen-macro-support/0.2.91 \
+-    crate://crates.io/wasm-bindgen-shared/0.2.91 \
+-    crate://crates.io/web-sys/0.3.68 \
++    crate://crates.io/wasm-bindgen/0.2.92 \
++    crate://crates.io/wasm-bindgen-backend/0.2.92 \
++    crate://crates.io/wasm-bindgen-macro/0.2.92 \
++    crate://crates.io/wasm-bindgen-macro-support/0.2.92 \
++    crate://crates.io/wasm-bindgen-shared/0.2.92 \
++    crate://crates.io/web-sys/0.3.69 \
+     crate://crates.io/weezl/0.1.8 \
+-    crate://crates.io/wide/0.7.15 \
++    crate://crates.io/wide/0.7.26 \
+     crate://crates.io/winapi/0.3.9 \
+     crate://crates.io/winapi-i686-pc-windows-gnu/0.4.0 \
+-    crate://crates.io/winapi-util/0.1.6 \
++    crate://crates.io/winapi-util/0.1.9 \
+     crate://crates.io/winapi-x86_64-pc-windows-gnu/0.4.0 \
+     crate://crates.io/windows-core/0.52.0 \
+-    crate://crates.io/windows-sys/0.48.0 \
+     crate://crates.io/windows-sys/0.52.0 \
+-    crate://crates.io/windows-targets/0.48.5 \
+-    crate://crates.io/windows-targets/0.52.0 \
+-    crate://crates.io/windows_aarch64_gnullvm/0.48.5 \
+-    crate://crates.io/windows_aarch64_gnullvm/0.52.0 \
+-    crate://crates.io/windows_aarch64_msvc/0.48.5 \
+-    crate://crates.io/windows_aarch64_msvc/0.52.0 \
+-    crate://crates.io/windows_i686_gnu/0.48.5 \
+-    crate://crates.io/windows_i686_gnu/0.52.0 \
+-    crate://crates.io/windows_i686_msvc/0.48.5 \
+-    crate://crates.io/windows_i686_msvc/0.52.0 \
+-    crate://crates.io/windows_x86_64_gnu/0.48.5 \
+-    crate://crates.io/windows_x86_64_gnu/0.52.0 \
+-    crate://crates.io/windows_x86_64_gnullvm/0.48.5 \
+-    crate://crates.io/windows_x86_64_gnullvm/0.52.0 \
+-    crate://crates.io/windows_x86_64_msvc/0.48.5 \
+-    crate://crates.io/windows_x86_64_msvc/0.52.0 \
+-    crate://crates.io/winnow/0.5.39 \
+-    crate://crates.io/xml5ever/0.17.0 \
+-    crate://crates.io/yeslogic-fontconfig-sys/4.0.1 \
+-    crate://crates.io/zune-inflate/0.2.54 \
++    crate://crates.io/windows-sys/0.59.0 \
++    crate://crates.io/windows-targets/0.52.6 \
++    crate://crates.io/windows_aarch64_gnullvm/0.52.6 \
++    crate://crates.io/windows_aarch64_msvc/0.52.6 \
++    crate://crates.io/windows_i686_gnu/0.52.6 \
++    crate://crates.io/windows_i686_gnullvm/0.52.6 \
++    crate://crates.io/windows_i686_msvc/0.52.6 \
++    crate://crates.io/windows_x86_64_gnu/0.52.6 \
++    crate://crates.io/windows_x86_64_gnullvm/0.52.6 \
++    crate://crates.io/windows_x86_64_msvc/0.52.6 \
++    crate://crates.io/winnow/0.5.40 \
++    crate://crates.io/winnow/0.6.18 \
++    crate://crates.io/xml5ever/0.18.1 \
++    crate://crates.io/yeslogic-fontconfig-sys/6.0.0 \
++    crate://crates.io/zerocopy/0.7.35 \
++    crate://crates.io/zerocopy-derive/0.7.35 \
++    crate://crates.io/zune-core/0.4.12 \
++    crate://crates.io/zune-jpeg/0.4.13 \
+ "
 =20
- LAYERDEPENDS_scarthgap-rust-mixin =3D "core"
-=20
--RUSTVERSION ?=3D "1.80%"
-+RUSTVERSION ?=3D "1.81%"
-diff --git a/recipes-devtools/rust/cargo_1.80.1.bb b/recipes-devtools/rust/=
-cargo_1.81.0.bb
-similarity index 100%
-rename from recipes-devtools/rust/cargo_1.80.1.bb
-rename to recipes-devtools/rust/cargo_1.81.0.bb
-diff --git a/recipes-devtools/rust/files/0001-cargo-do-not-write-host-infor=
-mation-into-compilation.patch b/recipes-devtools/rust/files/0001-cargo-do-n=
-ot-write-host-information-into-compilation.patch
+ SRC_URI[adler-1.0.2.sha256sum] =3D "f26201604c87b1e01bd3d98f8d5d9a8fcbb815=
+e8cedb41ffccbeb4bf593a35fe"
+-SRC_URI[aho-corasick-1.1.2.sha256sum] =3D "b2969dcb958b36655471fc61f7e416f=
+a76033bdd4bfed0678d8fee1e2d07a1f0"
++SRC_URI[ahash-0.8.11.sha256sum] =3D "e89da841a80418a9b391ebaea17f5c112ffaa=
+a96f621d2c285b5174da76b9011"
++SRC_URI[aho-corasick-1.1.3.sha256sum] =3D "8e60d3430d3a69478ad0993f19238d2=
+df97c507009a52b3c10addcd7f6bcb916"
+ SRC_URI[android-tzdata-0.1.1.sha256sum] =3D "e999941b234f3131b00bc13c22d06=
+e8c5ff726d1b6318ac7eb276997bbb4fef0"
+ SRC_URI[android_system_properties-0.1.5.sha256sum] =3D "819e7219dbd41043ac=
+279b19830f2efc897156490d7fd6ea916720117ee66311"
+ SRC_URI[anes-0.1.6.sha256sum] =3D "4b46cbb362ab8752921c97e041f5e366ee6297b=
+d428a31275b9fcf1e380f7299"
+-SRC_URI[anstream-0.6.11.sha256sum] =3D "6e2e1ebcb11de5c03c67de28a7df593d32=
+191b44939c482e97702baaaa6ab6a5"
+-SRC_URI[anstyle-1.0.6.sha256sum] =3D "8901269c6307e8d93993578286ac0edf7f19=
+5079ffff5ebdeea6a59ffb7e36bc"
+-SRC_URI[anstyle-parse-0.2.3.sha256sum] =3D "c75ac65da39e5fe5ab759307499dda=
+d880d724eed2f6ce5b5e8a26f4f387928c"
+-SRC_URI[anstyle-query-1.0.2.sha256sum] =3D "e28923312444cdd728e4738b3f9c9c=
+ac739500909bb3d3c94b43551b16517648"
+-SRC_URI[anstyle-wincon-3.0.2.sha256sum] =3D "1cd54b81ec8d6180e24654d0b371a=
+d22fc3dd083b6ff8ba325b72e00c87660a7"
+-SRC_URI[anyhow-1.0.79.sha256sum] =3D "080e9890a082662b09c1ad45f567faeeb47f=
+22b5fb23895fbe1e651e718e25ca"
++SRC_URI[anstream-0.6.15.sha256sum] =3D "64e15c1ab1f89faffbf04a634d5e1962e9=
+074f2741eef6d97f3c4e322426d526"
++SRC_URI[anstyle-1.0.8.sha256sum] =3D "1bec1de6f59aedf83baf9ff929c98f2ad654=
+b97c9510f4e70cf6f661d49fd5b1"
++SRC_URI[anstyle-parse-0.2.5.sha256sum] =3D "eb47de1e80c2b463c735db5b217a0d=
+dc39d612e7ac9e2e96a5aed1f57616c1cb"
++SRC_URI[anstyle-query-1.1.1.sha256sum] =3D "6d36fc52c7f6c869915e99412912f2=
+2093507da8d9e942ceaf66fe4b7c14422a"
++SRC_URI[anstyle-wincon-3.0.4.sha256sum] =3D "5bf74e1b6e971609db8ca7a9ce79f=
+d5768ab6ae46441c572e46cf596f59e57f8"
++SRC_URI[anyhow-1.0.86.sha256sum] =3D "b3d1d046238990b9cf5bcde22a3fb3584ee5=
+cf65fb2765f454ed428c7a0063da"
+ SRC_URI[approx-0.5.1.sha256sum] =3D "cab112f0a86d568ea0e627cc1d6be74a1e9cd=
+55214684db5561995f6dad897c6"
+-SRC_URI[assert_cmd-2.0.13.sha256sum] =3D "00ad3f3a942eee60335ab4342358c161=
+ee296829e0d16ff42fc1d6cb07815467"
+-SRC_URI[autocfg-1.1.0.sha256sum] =3D "d468802bab17cbc0cc575e9b053f41e72aa3=
+6bfa6b7f55e3529ffa43161b97fa"
++SRC_URI[assert_cmd-2.0.15.sha256sum] =3D "bc65048dd435533bb1baf2ed9956b9a2=
+78fbfdcf90301b39ee117f06c0199d37"
++SRC_URI[autocfg-1.3.0.sha256sum] =3D "0c4b4d0bd25bd0b74681c0ad21497610ce1b=
+7c91b1022cd21c80c6fbdd9476b0"
++SRC_URI[av-data-0.4.2.sha256sum] =3D "d75b98a3525d00f920df9a2d44cc99b9cc5b=
+7dc70d7fbb612cd755270dbe6552"
+ SRC_URI[bit-set-0.5.3.sha256sum] =3D "0700ddab506f33b20a03b13996eccd309a48=
+e5ff77d0d95926aa0210fb4e95f1"
+ SRC_URI[bit-vec-0.6.3.sha256sum] =3D "349f9b6a179ed607305526ca489b34ad0a41=
+aed5f7980fa90eb03160b69598fb"
+-SRC_URI[bit_field-0.10.2.sha256sum] =3D "dc827186963e592360843fb5ba4b973e1=
+45841266c1357f7180c43526f2e5b61"
+ SRC_URI[bitflags-1.3.2.sha256sum] =3D "bef38d45163c2f1dde094a7dfd33ccf595c=
+92905c8f8f4fdc18d06fb1037718a"
+-SRC_URI[bitflags-2.4.2.sha256sum] =3D "ed570934406eb16438a4e976b1b45007740=
+99c13b8cb96eec99f620f05090ddf"
++SRC_URI[bitflags-2.6.0.sha256sum] =3D "b048fb63fd8b5923fc5aa7b340d8e156aec=
+7ec02f0c78fa8a6ddc2613f6f71de"
++SRC_URI[bitreader-0.3.8.sha256sum] =3D "bdd859c9d97f7c468252795b35aeccc412=
+bdbb1e90ee6969c4fa6328272eaeff"
+ SRC_URI[block-0.1.6.sha256sum] =3D "0d8c1fef690941d3e7788d328517591fecc684=
+c084084702d6ff1641e993699a"
+-SRC_URI[bstr-1.9.0.sha256sum] =3D "c48f0051a4b4c5e0b6d365cd04af53aeaa209e3=
+cc15ec2cdb69e73cc87fbd0dc"
+-SRC_URI[bumpalo-3.14.0.sha256sum] =3D "7f30e7476521f6f8af1a1c4c0b8cc94f0be=
+e37d91763d0ca2665f299b6cd8aec"
+-SRC_URI[bytemuck-1.14.2.sha256sum] =3D "ea31d69bda4949c1c1562c1e6f042a1cae=
+fac98cdc8a298260a2ff41c1e2d42b"
++SRC_URI[block-buffer-0.10.4.sha256sum] =3D "3078c7629b62d3f0439517fa394996=
+acacc5cbc91c5a20d8c658e77abd503a71"
++SRC_URI[bstr-1.10.0.sha256sum] =3D "40723b8fb387abc38f4f4a37c09073622e41dd=
+12327033091ef8950659e6dc0c"
++SRC_URI[bumpalo-3.16.0.sha256sum] =3D "79296716171880943b8470b5f8d03aa55eb=
+2e645a4874bdbb28adb49162e012c"
++SRC_URI[byte-slice-cast-1.2.2.sha256sum] =3D "c3ac9f8b63eca6fd385229b3675f=
+6cc0dc5c8a5c8a54a59d4f52ffd670d87b0c"
++SRC_URI[bytemuck-1.16.3.sha256sum] =3D "102087e286b4677862ea56cf8fc58bb2cd=
+fa8725c40ffb80fe3a008eb7f2fc83"
+ SRC_URI[byteorder-1.5.0.sha256sum] =3D "1fd0f2584146f6f2ef48085050886acf35=
+3beff7305ebd1ae69500e27c67f64b"
+-SRC_URI[cairo-rs-0.19.1.sha256sum] =3D "bc1c415b7088381c53c575420899c34c9e=
+6312df5ac5defd05614210e9fd6e1b"
+-SRC_URI[cairo-sys-rs-0.19.1.sha256sum] =3D "75b6a5fefce2eadb8333e3c604ac96=
+4ba6573ec4f28bdd17f67032c4a2831831"
++SRC_URI[byteorder-lite-0.1.0.sha256sum] =3D "8f1fe948ff07f4bd06c30984e69f5=
+b4899c516a3ef74f34df92a2df2ab535495"
++SRC_URI[bytes-1.7.1.sha256sum] =3D "8318a53db07bb3f8dca91a600466bdb3f2eaad=
+eedfdbcf02e1accbad9271ba50"
++SRC_URI[cairo-rs-0.20.0.sha256sum] =3D "797fd5a634dcb0ad0d7d583df794deb0a2=
+36d88e759cd34b7da20198c6c9d145"
++SRC_URI[cairo-sys-rs-0.20.0.sha256sum] =3D "428290f914b9b86089f60f5d8a9f6e=
+440508e1bcff23b25afd51502b0a2da88f"
+ SRC_URI[cast-0.3.0.sha256sum] =3D "37b2a672a2cb129a2e41c10b1224bb368f9f37a=
+2b16b612598138befd7b37eb5"
+-SRC_URI[cc-1.0.83.sha256sum] =3D "f1174fb0b6ec23863f8b971027804a42614e347e=
+afb0a95bf0b12cdae21fc4d0"
+-SRC_URI[cfg-expr-0.15.6.sha256sum] =3D "6100bc57b6209840798d95cb2775684849=
+d332f7bd788db2a8c8caf7ef82a41a"
++SRC_URI[cc-1.1.8.sha256sum] =3D "504bdec147f2cc13c8b57ed9401fd8a147cc66b67=
+ad5cb241394244f2c947549"
++SRC_URI[cfg-expr-0.15.8.sha256sum] =3D "d067ad48b8650848b989a59a86c6c36a99=
+5d02d2bf778d45c3c5d57bc2718f02"
+ SRC_URI[cfg-if-1.0.0.sha256sum] =3D "baf1de4339761588bc0619e3cbc0120ee582e=
+bb74b53b4efbf79117bd2da40fd"
+-SRC_URI[chrono-0.4.33.sha256sum] =3D "9f13690e35a5e4ace198e7beea2895d29f3a=
+9cc55015fcebe6336bd2010af9eb"
++SRC_URI[chrono-0.4.38.sha256sum] =3D "a21f936df1771bf62b77f047b726c4625ff2=
+e8aa607c01ec06e5a05bd8463401"
+ SRC_URI[ciborium-0.2.2.sha256sum] =3D "42e69ffd6f0917f5c029256a24d0161db17=
+cea3997d185db0d35926308770f0e"
+ SRC_URI[ciborium-io-0.2.2.sha256sum] =3D "05afea1e0a06c9be33d539b876f1ce36=
+92f4afea2cb41f740e7743225ed1c757"
+ SRC_URI[ciborium-ll-0.2.2.sha256sum] =3D "57663b653d948a338bfb3eeba9bb2fd5=
+fcfaecb9e199e87e1eda4d9e8b240fd9"
+-SRC_URI[clap-4.4.18.sha256sum] =3D "1e578d6ec4194633722ccf9544794b71b1385c=
+3c027efe0c55db226fc880865c"
+-SRC_URI[clap_builder-4.4.18.sha256sum] =3D "4df4df40ec50c46000231c91496827=
+8b1eb05098cf8f1b3a518a95030e71d1c7"
+-SRC_URI[clap_complete-4.4.10.sha256sum] =3D "abb745187d7f4d76267b37485a65e=
+0149edd0e91a4cfcdd3f27524ad86cee9f3"
+-SRC_URI[clap_derive-4.4.7.sha256sum] =3D "cf9804afaaf59a91e75b022a30fb7229=
+a7901f60c755489cc61c9b423b836442"
+-SRC_URI[clap_lex-0.6.0.sha256sum] =3D "702fc72eb24e5a1e48ce58027a675bc24ed=
+d52096d5397d4aea7c6dd9eca0bd1"
++SRC_URI[clap-4.5.13.sha256sum] =3D "0fbb260a053428790f3de475e304ff84cdbc4f=
+ace759ea7a3e64c1edd938a7fc"
++SRC_URI[clap_builder-4.5.13.sha256sum] =3D "64b17d7ea74e9f833c7dbf2cbe4fb1=
+2ff26783eda4782a8975b72f895c9b4d99"
++SRC_URI[clap_complete-4.5.12.sha256sum] =3D "a8670053e87c316345e384ca1f3eb=
+a3006fc6355ed8b8a1140d104e109e3df34"
++SRC_URI[clap_derive-4.5.13.sha256sum] =3D "501d359d5f3dcaf6ecdeee48833ae73=
+ec6e42723a1e52419c79abf9507eec0a0"
++SRC_URI[clap_lex-0.7.2.sha256sum] =3D "1462739cb27611015575c0c11df5df76011=
+41071f07518d56fcc1be504cbec97"
+ SRC_URI[color_quant-1.1.0.sha256sum] =3D "3d7b894f5411737b7867f4827955924d=
+7c254fc9f4d91a6aad6b097804b1018b"
+-SRC_URI[colorchoice-1.0.0.sha256sum] =3D "acbf1af155f9b9ef647e42cdc158db4b=
+64a1b61f743629225fde6f3e0be2a7c7"
+-SRC_URI[const-cstr-0.3.0.sha256sum] =3D "ed3d0b5ff30645a68f35ece8cea4556ca=
+14ef8a1651455f789a099a0513532a6"
++SRC_URI[colorchoice-1.0.2.sha256sum] =3D "d3fd119d74b830634cea2a0f58bbd0d5=
+4540518a14397557951e79340abc28c0"
+ SRC_URI[core-foundation-sys-0.8.6.sha256sum] =3D "06ea2b9bc92be3c2baa9334a=
+323ebca2d6f074ff852cd1d7b11064035cd3868f"
+-SRC_URI[crc32fast-1.3.2.sha256sum] =3D "b540bd8bc810d3885c6ea91e2018302f68=
+baba2129ab3e88f32389ee9370880d"
++SRC_URI[crc32fast-1.4.2.sha256sum] =3D "a97769d94ddab943e4510d138150169a27=
+58b5ef3eb191a9ee688de3e23ef7b3"
+ SRC_URI[criterion-0.5.1.sha256sum] =3D "f2b12d017a929603d80db1831cd3a24082=
+f8137ce19c69e6447f54f5fc8d692f"
+ SRC_URI[criterion-plot-0.5.0.sha256sum] =3D "6b50826342786a51a89e2da3a28f1=
+c32b06e387201bc2d19791f622c673706b1"
+ SRC_URI[crossbeam-deque-0.8.5.sha256sum] =3D "613f8cc01fe9cf1a3eb3d7f488fd=
+2fa8388403e97039e2f73692932e291a770d"
+ SRC_URI[crossbeam-epoch-0.9.18.sha256sum] =3D "5b82ac4a3c2ca9c3460964f020e=
+1402edd5753411d7737aa39c3714ad1b5420e"
+-SRC_URI[crossbeam-utils-0.8.19.sha256sum] =3D "248e3bacc7dc6baa3b21e405ee0=
+45c3047101a49145e7e9eca583ab4c2ca5345"
++SRC_URI[crossbeam-utils-0.8.20.sha256sum] =3D "22ec99545bb0ed0ea7bb9b8e1e9=
+122ea386ff8a48c0922e43f36d45ab09e0e80"
+ SRC_URI[crunchy-0.2.2.sha256sum] =3D "7a81dae078cea95a014a339291cec439d2f2=
+32ebe854a9d672b796c6afafa9b7"
++SRC_URI[crypto-common-0.1.6.sha256sum] =3D "1bfb12502f3fc46cca1bb51ac28df9=
+d618d813cdc3d2f25b9fe775a34af26bb3"
+ SRC_URI[cssparser-0.31.2.sha256sum] =3D "5b3df4f93e5fbbe73ec01ec8d3f68bba7=
+3107993a5b1e7519273c32db9b0d5be"
+ SRC_URI[cssparser-macros-0.6.1.sha256sum] =3D "13b588ba4ac1a99f7f2964d24b3=
+d896ddc6bf847ee3855dbd4366f058cfcd331"
+-SRC_URI[cstr-0.2.11.sha256sum] =3D "8aa998c33a6d3271e3678950a22134cd7dd27c=
+ef86dee1b611b5b14207d1d90b"
+ SRC_URI[data-url-0.3.1.sha256sum] =3D "5c297a1c74b71ae29df00c3e22dd9534821=
+d60eb9af5a0192823fa2acea70c2a"
++SRC_URI[dav1d-0.10.3.sha256sum] =3D "0d4b54a40baf633a71c6f0fb49494a7e4ee7b=
+c26f3e727212b6cb915aa1ea1e1"
++SRC_URI[dav1d-sys-0.8.2.sha256sum] =3D "6ecb1c5e8f4dc438eedc1b534a54672fb0=
+e0a56035dae6b50162787bd2c50e95"
++SRC_URI[dcv-color-primitives-0.6.1.sha256sum] =3D "07ad62edfed069700a5b33a=
+f6babd29c498d7e33eb01d96ffa8841ee1841634c"
+ SRC_URI[deranged-0.3.11.sha256sum] =3D "b42b6fa04a440b495c8b04d0e71b707c58=
+5f83cb9cb28cf8cd0d976c315e31b4"
+-SRC_URI[derive_more-0.99.17.sha256sum] =3D "4fb810d30a7c1953f91334de724473=
+1fc3f3c10d7fe163338a35b9f640960321"
++SRC_URI[derive_more-0.99.18.sha256sum] =3D "5f33878137e4dafd7fa914ad4e259e=
+18a4e8e532b9617a2d0150262bf53abfce"
+ SRC_URI[difflib-0.4.0.sha256sum] =3D "6184e33543162437515c2e2b48714794e378=
+45ec9851711914eec9d308f6ebe8"
++SRC_URI[digest-0.10.7.sha256sum] =3D "9ed9a281f7bc9b7576e61468ba615a66a5c8=
+cfdff42420a70aa82701a3b1e292"
+ SRC_URI[dlib-0.5.2.sha256sum] =3D "330c60081dcc4c72131f8eb70510f1ac07223e5=
+d4163db481a04a0befcffa412"
+ SRC_URI[doc-comment-0.3.3.sha256sum] =3D "fea41bba32d969b51399775273560505=
+4bc0dfa92b4c56bf1189f2e174be7a10"
+ SRC_URI[dtoa-1.0.9.sha256sum] =3D "dcbb2bf8e87535c23f7a8a321e364ce21462d0f=
+f10cb6407820e8e96dfff6653"
+-SRC_URI[dtoa-short-0.3.4.sha256sum] =3D "dbaceec3c6e4211c79e7b1800fb968052=
+7106beb2f9c51904a3210c03a448c74"
+-SRC_URI[either-1.9.0.sha256sum] =3D "a26ae43d7bcc3b814de94796a5e736d4029ef=
+b0ee900c12e2d54c993ad1a1e07"
+-SRC_URI[encoding_rs-0.8.33.sha256sum] =3D "7268b386296a025e474d5140678f75d=
+6de9493ae55a5d709eeb9dd08149945e1"
++SRC_URI[dtoa-short-0.3.5.sha256sum] =3D "cd1511a7b6a56299bd043a9c167a6d2bf=
+b37bf84a6dfceaba651168adfb43c87"
++SRC_URI[either-1.13.0.sha256sum] =3D "60b1af1c220855b6ceac025d3f6ecdd2b7c4=
+894bfe9cd9bda4fbb4bc7c0d4cf0"
++SRC_URI[encoding_rs-0.8.34.sha256sum] =3D "b45de904aa0b010bce2ab45264d0631=
+681847fa7b6f2eaa7dab7619943bc4f59"
+ SRC_URI[equivalent-1.0.1.sha256sum] =3D "5443807d6dff69373d433ab9ef5378ad8=
+df50ca6298caf15de6e52e24aaf54d5"
+-SRC_URI[errno-0.3.8.sha256sum] =3D "a258e46cdc063eb8519c00b9fc845fc47bcfca=
+4130e2f08e88665ceda8474245"
+-SRC_URI[exr-1.72.0.sha256sum] =3D "887d93f60543e9a9362ef8a21beedd0a833c5d9=
+610e18c67abe15a5963dcb1a4"
+-SRC_URI[fastrand-2.0.1.sha256sum] =3D "25cbce373ec4653f1a01a31e8a5e5ec0c62=
+2dc27ff9c4e6606eefef5cbbed4a5"
++SRC_URI[errno-0.3.9.sha256sum] =3D "534c5cf6194dfab3db3242765c03bbe257cf92=
+f22b38f6bc0c58d59108a820ba"
++SRC_URI[fallible_collections-0.4.9.sha256sum] =3D "a88c69768c0a15262df2189=
+9142bc6df9b9b823546d4b4b9a7bc2d6c448ec6fd"
++SRC_URI[fastrand-2.1.0.sha256sum] =3D "9fc0510504f03c51ada170672ac806f1f10=
+5a88aa97a5281117e1ddc3368e51a"
+ SRC_URI[fdeflate-0.3.4.sha256sum] =3D "4f9bfee30e4dedf0ab8b422f03af778d961=
+2b63f502710fc500a334ebe2de645"
+-SRC_URI[flate2-1.0.28.sha256sum] =3D "46303f565772937ffe1d394a4fac6f411c60=
+13172fadde9dcdb1e147a086940e"
++SRC_URI[flate2-1.0.31.sha256sum] =3D "7f211bbe8e69bbd0cfdea405084f128ae8b4=
+aaa6b0b522fc8f2b009084797920"
+ SRC_URI[float-cmp-0.9.0.sha256sum] =3D "98de4bbd547a563b716d8dfa9aad1cb19b=
+fab00f4fa09a6a4ed21dbcf44ce9c4"
+-SRC_URI[flume-0.11.0.sha256sum] =3D "55ac459de2512911e4b674ce33cf20befaba3=
+82d05b62b008afc1c8b57cbf181"
+ SRC_URI[fnv-1.0.7.sha256sum] =3D "3f9eec918d3f24069decb9af1554cad7c880e2da=
+24a9afd88aca000531ab82c1"
+ SRC_URI[form_urlencoded-1.2.1.sha256sum] =3D "e13624c2627564efccf4934284bd=
+d98cbaa14e79b0b5a141218e507b3a823456"
+ SRC_URI[futf-0.1.5.sha256sum] =3D "df420e2e84819663797d1ec6544b13c5be84629=
+e7bb00dc960d6917db2987843"
+@@ -367,202 +386,205 @@ SRC_URI[futures-macro-0.3.30.sha256sum] =3D "87750c=
+f4b7a4c0625b1529e4c543c2182106e
+ SRC_URI[futures-task-0.3.30.sha256sum] =3D "38d84fa142264698cdce1a9f9172cf=
+383a0c82de1bddcf3092901442c4097004"
+ SRC_URI[futures-util-0.3.30.sha256sum] =3D "3d6401deb83407ab3da39eba7e3398=
+7a73c3df0c82b4bb5813ee871c19c41d48"
+ SRC_URI[fxhash-0.2.1.sha256sum] =3D "c31b6d751ae2c7f11320402d34e41349dd101=
+6f8d5d45e48c4312bc8625af50c"
+-SRC_URI[gdk-pixbuf-0.19.0.sha256sum] =3D "c311c47800051b87de1335e8792774d7=
+cec551c91a0a3d109ab21d76b36f208f"
+-SRC_URI[gdk-pixbuf-sys-0.19.0.sha256sum] =3D "3dcbd04c1b2c4834cc008b4828bc=
+917d062483b88d26effde6342e5622028f96"
+-SRC_URI[getrandom-0.2.12.sha256sum] =3D "190092ea657667030ac6a35e305e62fc4=
+dd69fd98ac98631e5d3a2b1575a12b5"
+-SRC_URI[gif-0.12.0.sha256sum] =3D "80792593675e051cf94a4b111980da2ba60d4a8=
+3e43e0048c5693baab3977045"
+-SRC_URI[gio-0.19.0.sha256sum] =3D "b3d1aaa2d926710a27f3b35822806b1513b393b=
+71174dd2601c9d02fdab0cb82"
+-SRC_URI[gio-sys-0.19.0.sha256sum] =3D "bcf8e1d9219bb294636753d307b030c1e8a=
+032062cba74f493c431a5c8b81ce4"
+-SRC_URI[glib-0.19.0.sha256sum] =3D "170ee82b9b44b3b5fd1cf4971d6cf0eadec383=
+03bb84c7bcc4e6b95a18934e71"
+-SRC_URI[glib-macros-0.19.0.sha256sum] =3D "2ff52fff7e4d1bb8598ae744e9bb90c=
+8c76271712483c3f0ce931bee9814de85"
+-SRC_URI[glib-sys-0.19.0.sha256sum] =3D "630f097773d7c7a0bb3258df4e8157b47d=
+c98bbfa0e60ad9ab56174813feced4"
+-SRC_URI[gobject-sys-0.19.0.sha256sum] =3D "c85e2b1080b9418dd0c58b498da3a5c=
+826030343e0ef07bde6a955d28de54979"
+-SRC_URI[half-2.3.1.sha256sum] =3D "bc52e53916c08643f1b56ec082790d1e86a32e5=
+8dc5268f897f313fbae7b4872"
+-SRC_URI[hashbrown-0.14.3.sha256sum] =3D "290f1a1d9242c78d09ce40a5e87e7554e=
+e637af1351968159f4952f028f75604"
+-SRC_URI[heck-0.4.1.sha256sum] =3D "95505c38b4572b2d910cecb0281560f54b440a1=
+9336cbbcb27bf6ce6adc6f5a8"
+-SRC_URI[hermit-abi-0.3.5.sha256sum] =3D "d0c62115964e08cb8039170eb33c1d0e2=
+388a256930279edca206fff675f82c3"
++SRC_URI[gdk-pixbuf-0.20.0.sha256sum] =3D "28bb53ecb56857c683c9ec859908e076=
+dd3969c7d67598bd8b1ce095d211304a"
++SRC_URI[gdk-pixbuf-sys-0.20.0.sha256sum] =3D "9f6681a0c1330d1d3968bec1529f=
+7172d62819ef0bdbb0d18022320654158b03"
++SRC_URI[generic-array-0.14.7.sha256sum] =3D "85649ca51fd72272d7821adaf274a=
+d91c288277713d9c18820d8499a7ff69e9a"
++SRC_URI[getrandom-0.2.15.sha256sum] =3D "c4567c8db10ae91089c99af84c68c38da=
+3ec2f087c3f82960bcdbf3656b6f4d7"
++SRC_URI[gif-0.13.1.sha256sum] =3D "3fb2d69b19215e18bb912fa30f7ce15846e3014=
+08695e44e0ef719f1da9e19f2"
++SRC_URI[gio-0.20.0.sha256sum] =3D "398e3da68749fdc32783cbf7521ec3f65c9cf94=
+6db8c7774f8460af49e52c6e2"
++SRC_URI[gio-sys-0.20.0.sha256sum] =3D "e4feb96b31c32730ea3e1e89aecd2e4e37e=
+cb1c473ad8f685e3430a159419f63"
++SRC_URI[glib-0.20.0.sha256sum] =3D "fee90a615ce05be7a32932cfb8adf2c4bbb470=
+0e80d37713c981fb24c0c56238"
++SRC_URI[glib-macros-0.20.0.sha256sum] =3D "4da558d8177c0c8c54368818b508a42=
+44e1286fce2858cef4e547023f0cfa5ef"
++SRC_URI[glib-sys-0.20.0.sha256sum] =3D "4958c26e5a01c9af00dea669a97369eccb=
+ec29a8e6d125c24ea2d85ee7467b60"
++SRC_URI[gobject-sys-0.20.0.sha256sum] =3D "c6908864f5ffff15b56df7e90346863=
+904f49b949337ed0456b9287af61903b8"
++SRC_URI[half-2.4.1.sha256sum] =3D "6dd08c532ae367adf81c312a4580bc67f1d0fe8=
+bc9c460520283f4c0ff277888"
++SRC_URI[hashbrown-0.13.2.sha256sum] =3D "43a3c133739dddd0d2990f9a4bdf8eb4b=
+21ef50e4851ca85ab661199821d510e"
++SRC_URI[hashbrown-0.14.5.sha256sum] =3D "e5274423e17b7c9fc20b6e7e208532f9b=
+19825d82dfd615708b70edd83df41f1"
++SRC_URI[heck-0.5.0.sha256sum] =3D "2304e00983f87ffb38b55b444b5e3b60a884b5d=
+30c0fca7d82fe33449bbe55ea"
++SRC_URI[hermit-abi-0.3.9.sha256sum] =3D "d231dfb89cfffdbc30e7fc41579ed6066=
+ad03abda9e567ccafae602b97ec5024"
+ SRC_URI[iana-time-zone-0.1.60.sha256sum] =3D "e7ffbb5a1b541ea2561f8c41c087=
+286cc091e21e556a4f09a8f6cbf17b69b141"
+ SRC_URI[iana-time-zone-haiku-0.1.2.sha256sum] =3D "f31827a206f56af32e590ba=
+56d5d2d085f558508192593743f16b2306495269f"
+ SRC_URI[idna-0.5.0.sha256sum] =3D "634d9b1461af396cad843f47fdba5597a4f9e6d=
+dd4bfb6ff5d85028c25cb12f6"
+-SRC_URI[image-0.24.8.sha256sum] =3D "034bbe799d1909622a74d1193aa5014776944=
+0040ff36cb2baa947609b0a4e23"
+-SRC_URI[indexmap-2.2.2.sha256sum] =3D "824b2ae422412366ba479e8111fd301f7b5=
+faece8149317bb81925979a53f520"
+-SRC_URI[is-terminal-0.4.10.sha256sum] =3D "0bad00257d07be169d870ab665980b0=
+6cdb366d792ad690bf2e76876dc503455"
++SRC_URI[image-0.25.2.sha256sum] =3D "99314c8a2152b8ddb211f924cdae532d8c5e4=
+c8bb54728e12fff1b0cd5963a10"
++SRC_URI[image-webp-0.1.3.sha256sum] =3D "f79afb8cbee2ef20f59ccd477a218c12a=
+93943d075b492015ecb1bb81f8ee904"
++SRC_URI[indexmap-2.3.0.sha256sum] =3D "de3fc2e30ba82dd1b3911c8de1ffc143c74=
+a914a14e99514d7637e3099df5ea0"
++SRC_URI[is-terminal-0.4.12.sha256sum] =3D "f23ff5ef2b80d608d61efee834934d8=
+62cd92461afc0560dedf493e4c033738b"
++SRC_URI[is_terminal_polyfill-1.70.1.sha256sum] =3D "7943c866cc5cd64cbc25b2=
+e01621d07fa8eb2a1a23160ee81ce38704e97b8ecf"
+ SRC_URI[itertools-0.10.5.sha256sum] =3D "b0fd2260e829bddf4cb6ea802289de2f8=
+6d6a7a690192fbe91b3f46e0f2c8473"
+-SRC_URI[itertools-0.12.1.sha256sum] =3D "ba291022dbbd398a455acf126c1e34195=
+4079855bc60dfdda641363bd6922569"
+-SRC_URI[itoa-1.0.10.sha256sum] =3D "b1a46d1a171d865aa5f83f92695765caa047a9=
+b4cbae2cbf37dbd613a793fd4c"
+-SRC_URI[jpeg-decoder-0.3.1.sha256sum] =3D "f5d4a7da358eff58addd2877a458651=
+58f0d78c911d43a5784ceb7bbf52833b0"
+-SRC_URI[js-sys-0.3.68.sha256sum] =3D "406cda4b368d531c842222cf9d2600a9a4ac=
+ce8d29423695379c6868a143a9ee"
++SRC_URI[itertools-0.13.0.sha256sum] =3D "413ee7dfc52ee1a4949ceeb7dbc8a33f2=
+d6c088194d9f922fb8318faf1f01186"
++SRC_URI[itoa-1.0.11.sha256sum] =3D "49f1f14873335454500d59611f1cf4a4b0f786=
+f9ac11f4312a78e4cf2566695b"
++SRC_URI[js-sys-0.3.69.sha256sum] =3D "29c15563dc2726973df627357ce0c9ddddbe=
+a194836909d655df6a75d2cf296d"
+ SRC_URI[language-tags-0.3.2.sha256sum] =3D "d4345964bb142484797b161f473a50=
+3a434de77149dd8c7427788c6e13379388"
+-SRC_URI[lazy_static-1.4.0.sha256sum] =3D "e2abad23fbc42b3700f2f279844dc832=
+adb2b2eb069b2df918f455c4e18cc646"
+-SRC_URI[lebe-0.5.2.sha256sum] =3D "03087c2bad5e1034e8cace5926dec053fb37902=
+48370865f5117a7d0213354c8"
+-SRC_URI[libc-0.2.153.sha256sum] =3D "9c198f91728a82281a64e1f4f9eeb25d82cb3=
+2a5de251c6bd1b5154d63a8e7bd"
+-SRC_URI[libloading-0.8.1.sha256sum] =3D "c571b676ddfc9a8c12f1f3d3085a7b163=
+966a8fd8098a90640953ce5f6170161"
++SRC_URI[lazy_static-1.5.0.sha256sum] =3D "bbd2bcb4c963f2ddae06a2efc7e9f359=
+1312473c50c6685e1f298068316e66fe"
++SRC_URI[libc-0.2.155.sha256sum] =3D "97b3888a4aecf77e811145cadf6eef5901f47=
+82c53886191b2f693f24761847c"
++SRC_URI[libloading-0.8.5.sha256sum] =3D "4979f22fdb869068da03c9f7528f8297c=
+6fd2606bc3a4affe42e6a823fdb8da4"
+ SRC_URI[libm-0.2.8.sha256sum] =3D "4ec2a862134d2a7d32d7983ddcdd1c492353083=
+3c9f2ea1a44fc5fa473989058"
+ SRC_URI[linked-hash-map-0.5.6.sha256sum] =3D "0717cef1bc8b636c6e1c1bbdefc0=
+9e6322da8a9321966e8928ef80d20f7f770f"
+-SRC_URI[linux-raw-sys-0.4.13.sha256sum] =3D "01cda141df6706de531b6c46c3a33=
+ecca755538219bd484262fa09410c13539c"
++SRC_URI[linux-raw-sys-0.4.14.sha256sum] =3D "78b3ae25bc7c8c38cec158d1f2757=
+ee79e9b3740fbc7ccf0e59e4b08d793fa89"
+ SRC_URI[locale_config-0.3.0.sha256sum] =3D "08d2c35b16f4483f6c26f0e4e95507=
+17a2f6575bcd6f12a53ff0c490a94a6934"
+-SRC_URI[lock_api-0.4.11.sha256sum] =3D "3c168f8615b12bc01f9c17e2eb0cc07dca=
+e1940121185446edc3744920e8ef45"
+-SRC_URI[log-0.4.20.sha256sum] =3D "b5e6163cb8c49088c2c36f57875e58ccd8c87c7=
+427f7fbd50ea6710b2f3f2e8f"
+-SRC_URI[lopdf-0.32.0.sha256sum] =3D "e775e4ee264e8a87d50a9efef7b67b4aa988c=
+f94e75630859875fc347e6c872b"
++SRC_URI[lock_api-0.4.12.sha256sum] =3D "07af8b9cdd281b7915f413fa73f29ebd5d=
+55d0d3f0155584dade1ff18cea1b17"
++SRC_URI[log-0.4.22.sha256sum] =3D "a7a70ba024b9dc04c27ea2f0c0548feb474ec5c=
+54bba33a7f72f873a39d07b24"
++SRC_URI[lopdf-0.33.0.sha256sum] =3D "b5c14afa083a906d49e1bda105ddbf8175016=
+e2658954e6d0c3e612f886df3db"
+ SRC_URI[mac-0.1.1.sha256sum] =3D "c41e0c4fef86961ac6d6f8a82609f55f31b05e4f=
+ce149ac5710e439df7619ba4"
+ SRC_URI[malloc_buf-0.0.6.sha256sum] =3D "62bb907fe88d54d8d9ce32a3cceab4218=
+ed2f6b7d35617cafe9adf84e43919cb"
+-SRC_URI[markup5ever-0.11.0.sha256sum] =3D "7a2629bb1404f3d34c2e921f21fd34b=
+a00b206124c81f65c50b43b6aaefeb016"
++SRC_URI[markup5ever-0.12.1.sha256sum] =3D "16ce3abbeba692c8b8441d036ef91ae=
+a6df8da2c6b6e21c7e14d3c18e526be45"
+ SRC_URI[matches-0.1.10.sha256sum] =3D "2532096657941c2fea9c289d370a250971c=
+689d4f143798ff67113ec042024a5"
+-SRC_URI[matrixmultiply-0.3.8.sha256sum] =3D "7574c1cf36da4798ab73da5b215bb=
+f444f50718207754cb522201d78d1cd0ff2"
+-SRC_URI[md5-0.7.0.sha256sum] =3D "490cc448043f947bae3cbee9c203358d62dbee0d=
+b12107a74be5c30ccfd09771"
+-SRC_URI[memchr-2.7.1.sha256sum] =3D "523dc4f511e55ab87b694dc30d0f820d60906=
+ef06413f93d4d7a1385599cc149"
++SRC_URI[matrixmultiply-0.3.9.sha256sum] =3D "9380b911e3e96d10c1f415da08763=
+89aaf1b56759054eeb0de7df940c456ba1a"
++SRC_URI[md-5-0.10.6.sha256sum] =3D "d89e7ee0cfbedfc4da3340218492196241d89e=
+efb6dab27de5df917a6d2e78cf"
++SRC_URI[memchr-2.7.4.sha256sum] =3D "78ca9ab1a0babb1e7d5695e3530886289c18c=
+f2f87ec19a575a0abdce112e3a3"
+ SRC_URI[minimal-lexical-0.2.1.sha256sum] =3D "68354c5c6bd36d73ff3feceb05ef=
+a59b6acb7626617f4962be322a825e61f79a"
+-SRC_URI[miniz_oxide-0.7.2.sha256sum] =3D "9d811f3e15f28568be3407c8e7fdb651=
+4c1cda3cb30683f15b6a1a1dc4ea14a7"
+-SRC_URI[nalgebra-0.32.3.sha256sum] =3D "307ed9b18cc2423f29e83f84fd23a8e736=
+28727990181f18641a8b5dc2ab1caa"
+-SRC_URI[nalgebra-macros-0.2.1.sha256sum] =3D "91761aed67d03ad966ef783ae962=
+ef9bbaca728d2dd7ceb7939ec110fffad998"
+-SRC_URI[new_debug_unreachable-1.0.4.sha256sum] =3D "e4a24736216ec316047a1f=
+c4252e27dabb04218aa4a3f37c6e7ddbf1f9782b54"
++SRC_URI[miniz_oxide-0.7.4.sha256sum] =3D "b8a240ddb74feaf34a79a7add65a741f=
+3167852fba007066dcac1ca548d89c08"
++SRC_URI[mp4parse-0.17.0.sha256sum] =3D "63a35203d3c6ce92d5251c77520acb2e57=
+108c88728695aa883f70023624c570"
++SRC_URI[nalgebra-0.33.0.sha256sum] =3D "3c4b5f057b303842cf3262c27e465f4c30=
+3572e7f6b0648f60e16248ac3397f4"
++SRC_URI[nalgebra-macros-0.2.2.sha256sum] =3D "254a5372af8fc138e36684761d3c=
+0cdb758a4410e938babcff1c860ce14ddbfc"
++SRC_URI[new_debug_unreachable-1.0.6.sha256sum] =3D "650eef8c711430f1a879fd=
+d01d4745a7deea475becfb90269c06775983bbf086"
+ SRC_URI[nom-7.1.3.sha256sum] =3D "d273983c5a657a70a3e8f2a01329822f3b8c8172=
+b73826411a55751e404a0a4a"
+ SRC_URI[normalize-line-endings-0.3.0.sha256sum] =3D "61807f77802ff30975e01=
+f4f071c8ba10c022052f98b3294119f3e615d13e5be"
+-SRC_URI[num-complex-0.4.5.sha256sum] =3D "23c6602fda94a57c990fe0df199a035d=
+83576b496aa29f4e634a8ac6004e68a6"
++SRC_URI[num-bigint-0.4.6.sha256sum] =3D "a5e44f723f1133c9deac646763579fdb3=
+ac745e418f2a7af9cd0c431da1f20b9"
++SRC_URI[num-complex-0.4.6.sha256sum] =3D "73f88a1307638156682bada9d7604135=
+552957b7818057dcef22705b4d509495"
+ SRC_URI[num-conv-0.1.0.sha256sum] =3D "51d515d32fb182ee37cda2ccdcb92950d6a=
+3c2893aa280e540671c2cd0f3b1d9"
++SRC_URI[num-derive-0.4.2.sha256sum] =3D "ed3955f1a9c7c0c15e092f9c887db08b1=
+fc683305fdf6eb6684f22555355e202"
+ SRC_URI[num-integer-0.1.46.sha256sum] =3D "7969661fd2958a5cb096e56c8e1ad04=
+44ac2bbcd0061bd28660485a44879858f"
+-SRC_URI[num-rational-0.4.1.sha256sum] =3D "0638a1c9d0a3c0914158145bc76cff3=
+73a75a627e6ecbfb71cbe6f453a5a19b0"
+-SRC_URI[num-traits-0.2.18.sha256sum] =3D "da0df0e5185db44f69b44f26786fe401=
+b6c293d1907744beaa7fa62b2e5a517a"
++SRC_URI[num-rational-0.4.2.sha256sum] =3D "f83d14da390562dca69fc84082e73e5=
+48e1ad308d24accdedd2720017cb37824"
++SRC_URI[num-traits-0.2.19.sha256sum] =3D "071dfc062690e90b734c0b2273ce72ad=
+0ffa95f0c74596bc250dcfd960262841"
+ SRC_URI[objc-0.2.7.sha256sum] =3D "915b1b472bc21c53464d6c8461c9d3af805ba1e=
+f837e1cac254428f4a77177b1"
+ SRC_URI[objc-foundation-0.1.1.sha256sum] =3D "1add1b659e36c9607c7aab864a76=
+c7a4c2760cd0cd2e120f3fb8b952c7e22bf9"
+ SRC_URI[objc_id-0.1.1.sha256sum] =3D "c92d4ddb4bd7b50d730c215ff871754d0da6=
+b2178849f8a2a2ab69712d0c073b"
+ SRC_URI[once_cell-1.19.0.sha256sum] =3D "3fdb12b2476b595f9358c5161aa467c24=
+38859caa136dec86c26fdd2efe17b92"
+-SRC_URI[oorandom-11.1.3.sha256sum] =3D "0ab1bc2a289d34bd04a330323ac98a1b4b=
+c82c9d9fcb1e66b63caa84da26b575"
+-SRC_URI[pango-0.19.0.sha256sum] =3D "78d7f779b957728c74fd1a060dfa6d89a0bea=
+792ebc50cc2da80e4e87282d69e"
+-SRC_URI[pango-sys-0.19.0.sha256sum] =3D "f52ef6a881c19fbfe3b1484df5cad411a=
+caaba29dbec843941c3110d19f340ea"
+-SRC_URI[pangocairo-0.19.1.sha256sum] =3D "9615c6294903a6ea26fa63984b18e512=
+75354d1fa91bbde68eeb7fa3ab61a72f"
+-SRC_URI[pangocairo-sys-0.19.0.sha256sum] =3D "01bd0597ae45983f9e8b7f73afc4=
+2238426cd3fbb44a9cf14fd881a4ae08f1e4"
+-SRC_URI[parking_lot-0.12.1.sha256sum] =3D "3742b2c103b9f06bc9fff0a37ff4912=
+935851bee6d36f3c02bcc755bcfec228f"
+-SRC_URI[parking_lot_core-0.9.9.sha256sum] =3D "4c42a9226546d68acdd9c0a280d=
+17ce19bfe27a46bf68784e4066115788d008e"
+-SRC_URI[paste-1.0.14.sha256sum] =3D "de3145af08024dea9fa9914f381a17b8fc603=
+4dfb00f3a84013f7ff43f29ed4c"
++SRC_URI[oorandom-11.1.4.sha256sum] =3D "b410bbe7e14ab526a0e86877eb47c6996a=
+2bd7746f027ba551028c925390e4e9"
++SRC_URI[pango-0.20.0.sha256sum] =3D "54768854025df6903061d0084fd9702a253dd=
+fd60db7d9b751d43b76689a7f0a"
++SRC_URI[pango-sys-0.20.0.sha256sum] =3D "b07cc57d10cee4ec661f718a6902cee18=
+c2f4cfae08e87e5a390525946913390"
++SRC_URI[pangocairo-0.20.0.sha256sum] =3D "902cd6e53493a475f4524e7b3f4c09ef=
+60ee87c7be16f08f1b41882fc74dac46"
++SRC_URI[pangocairo-sys-0.20.0.sha256sum] =3D "bc23a5ea756e709ab1598f8446a6=
+4c799b10c99ec59aa2310965218bc1915853"
++SRC_URI[parking_lot-0.12.3.sha256sum] =3D "f1bf18183cf54e8d6059647fc306364=
+6a1801cf30896933ec2311622cc4b9a27"
++SRC_URI[parking_lot_core-0.9.10.sha256sum] =3D "1e401f977ab385c9e4e3ab3062=
+7d6f26d00e2c73eef317493c4ec6d468726cf8"
++SRC_URI[paste-1.0.15.sha256sum] =3D "57c0d7b74b563b49d38dae00a0c37d4d6de9b=
+432382b2892f0574ddcae73fd0a"
+ SRC_URI[percent-encoding-2.3.1.sha256sum] =3D "e3148f5046208a5d56bcfc03053=
+e3ca6334e51da8dfb19b6cdc8b306fae3283e"
+ SRC_URI[phf-0.10.1.sha256sum] =3D "fabbf1ead8a5bcbc20f5f8b939ee3f5b0f6f281=
+b6ad3468b84656b658b455259"
+ SRC_URI[phf-0.11.2.sha256sum] =3D "ade2d8b8f33c7333b51bcf0428d37e217e9f321=
+92ae4772156f65063b8ce03dc"
+ SRC_URI[phf_codegen-0.10.0.sha256sum] =3D "4fb1c3a8bc4dd4e5cfce29b44ffc14b=
+edd2ee294559a294e2a4d4c9e9a6a13cd"
++SRC_URI[phf_codegen-0.11.2.sha256sum] =3D "e8d39688d359e6b34654d328e262234=
+662d16cc0f60ec8dcbe5e718709342a5a"
+ SRC_URI[phf_generator-0.10.0.sha256sum] =3D "5d5285893bb5eb82e6aaf5d59ee90=
+9a06a16737a8970984dd7746ba9283498d6"
+ SRC_URI[phf_generator-0.11.2.sha256sum] =3D "48e4cc64c2ad9ebe670cb8fd69dd5=
+0ae301650392e81c05f9bfcb2d5bdbc24b0"
+ SRC_URI[phf_macros-0.11.2.sha256sum] =3D "3444646e286606587e49f3bcf1679b8c=
+ef1dc2c5ecc29ddacaffc305180d464b"
+ SRC_URI[phf_shared-0.10.0.sha256sum] =3D "b6796ad771acdc0123d2a88dc428b5e3=
+8ef24456743ddb1744ed628f9815c096"
+ SRC_URI[phf_shared-0.11.2.sha256sum] =3D "90fcb95eef784c2ac79119d1dd819e16=
+2b5da872ce6f3c3abe1e8ca1c082f72b"
+-SRC_URI[pin-project-lite-0.2.13.sha256sum] =3D "8afb450f006bf6385ca15ef45d=
+71d2288452bc3683ce2e2cacc0d18e4be60b58"
++SRC_URI[pin-project-lite-0.2.14.sha256sum] =3D "bda66fc9667c18cb2758a2ac84=
+d1167245054bcf85d5d1aaa6923f45801bdd02"
+ SRC_URI[pin-utils-0.1.0.sha256sum] =3D "8b870d8c151b6f2fb93e84a13146138f05=
+d02ed11c7e7c54f8826aaaf7c9f184"
+-SRC_URI[pkg-config-0.3.29.sha256sum] =3D "2900ede94e305130c13ddd391e0ab7cb=
+aeb783945ae07a279c268cb05109c6cb"
+-SRC_URI[plotters-0.3.5.sha256sum] =3D "d2c224ba00d7cadd4d5c660deaf2098e5e8=
+0e07846537c51f9cfa4be50c1fd45"
+-SRC_URI[plotters-backend-0.3.5.sha256sum] =3D "9e76628b4d3a7581389a35d5b6e=
+2139607ad7c75b17aed325f210aa91f4a9609"
+-SRC_URI[plotters-svg-0.3.5.sha256sum] =3D "38f6d39893cca0701371e3c27294f09=
+797214b86f1fb951b89ade8ec04e2abab"
+-SRC_URI[png-0.17.11.sha256sum] =3D "1f6c3c3e617595665b8ea2ff95a86066be38fb=
+121ff920a9c0eb282abcd1da5a"
++SRC_URI[pkg-config-0.3.30.sha256sum] =3D "d231b230927b5e4ad203db57bbcbee28=
+02f6bce620b1e4a9024a07d94e2907ec"
++SRC_URI[plotters-0.3.6.sha256sum] =3D "a15b6eccb8484002195a3e44fe65a4ce8e9=
+3a625797a063735536fd59cb01cf3"
++SRC_URI[plotters-backend-0.3.6.sha256sum] =3D "414cec62c6634ae900ea1c56128=
+dfe87cf63e7caece0852ec76aba307cebadb7"
++SRC_URI[plotters-svg-0.3.6.sha256sum] =3D "81b30686a7d9c3e010b84284bdd26a2=
+9f2138574f52f5eb6f794fc0ad924e705"
++SRC_URI[png-0.17.13.sha256sum] =3D "06e4b0d3d1312775e782c86c91a111aa1f910c=
+bb65e1337f9975b5f9a554b5e1"
+ SRC_URI[powerfmt-0.2.0.sha256sum] =3D "439ee305def115ba05938db6eb1644ff941=
+65c5ab5e9420d1c1bcedbba909391"
+-SRC_URI[ppv-lite86-0.2.17.sha256sum] =3D "5b40af805b3121feab8a3c29f04d8ad2=
+62fa8e0561883e7653e024ae4479e6de"
++SRC_URI[ppv-lite86-0.2.20.sha256sum] =3D "77957b295656769bb8ad2b6a6b09d897=
+d94f05c41b069aede1fcdaa675eaea04"
+ SRC_URI[precomputed-hash-0.1.1.sha256sum] =3D "925383efa346730478fb4838dbe=
+9137d2a47675ad789c546d150a6e1dd4ab31c"
+-SRC_URI[predicates-3.1.0.sha256sum] =3D "68b87bfd4605926cdfefc1c3b5f8fe560=
+e3feca9d5552cf68c466d3d8236c7e8"
+-SRC_URI[predicates-core-1.0.6.sha256sum] =3D "b794032607612e7abeb4db69adb4=
+e33590fa6cf1149e95fd7cb00e634b92f174"
+-SRC_URI[predicates-tree-1.0.9.sha256sum] =3D "368ba315fb8c5052ab692e68a0ee=
+fec6ec57b23a36959c14496f0b0df2c0cecf"
++SRC_URI[predicates-3.1.2.sha256sum] =3D "7e9086cc7640c29a356d1a29fd134380b=
+ee9d8f79a17410aa76e7ad295f42c97"
++SRC_URI[predicates-core-1.0.8.sha256sum] =3D "ae8177bee8e75d6846599c6b9ff6=
+79ed51e882816914eec639944d7c9aa11931"
++SRC_URI[predicates-tree-1.0.11.sha256sum] =3D "41b740d195ed3166cd147c8047e=
+c98db0e22ec019eb8eeb76d343b795304fb13"
+ SRC_URI[proc-macro-crate-3.1.0.sha256sum] =3D "6d37c51ca738a55da99dc0c4a34=
+860fd675453b8b36209178c2249bb13651284"
+-SRC_URI[proc-macro2-1.0.78.sha256sum] =3D "e2422ad645d89c99f8f3e6b88a9fdec=
+a7fabeac836b1002371c4367c8f984aae"
+-SRC_URI[proptest-1.4.0.sha256sum] =3D "31b476131c3c86cb68032fdc5cb6d5a1045=
+e3e42d96b69fa599fd77701e1f5bf"
+-SRC_URI[qoi-0.4.1.sha256sum] =3D "7f6d64c71eb498fe9eae14ce4ec935c555749aef=
+511cca85b5568910d6e48001"
++SRC_URI[proc-macro2-1.0.86.sha256sum] =3D "5e719e8df665df0d1c8fbfd23801574=
+4736151d4445ec0836b8e628aae103b77"
++SRC_URI[proptest-1.5.0.sha256sum] =3D "b4c2511913b88df1637da85cc8d96ec8e43=
+a3f8bb8ccb71ee1ac240d6f3df58d"
+ SRC_URI[quick-error-1.2.3.sha256sum] =3D "a1d01941d82fa2ab50be1e79e6714289=
+dd7cde78eba4c074bc5a4374f650dfe0"
+ SRC_URI[quick-error-2.0.1.sha256sum] =3D "a993555f31e5a609f617c12db6250ded=
+cac1b0a85076912c436e6fc9b2c8e6a3"
+-SRC_URI[quote-1.0.35.sha256sum] =3D "291ec9ab5efd934aaf503a6466c5d5251535d=
+108ee747472c3977cc5acc868ef"
++SRC_URI[quote-1.0.36.sha256sum] =3D "0fa76aaf39101c457836aec0ce2316dbdc3ab=
+723cdda1c6bd4e6ad4208acaca7"
+ SRC_URI[rand-0.8.5.sha256sum] =3D "34af8d1a0e25924bc5b7c43c079c942339d8f0a=
+8b57c39049bef581b46327404"
+ SRC_URI[rand_chacha-0.3.1.sha256sum] =3D "e6c10a63a0fa32252be49d21e7709d4d=
+4baf8d231c2dbce1eaa8141b9b127d88"
+ SRC_URI[rand_core-0.6.4.sha256sum] =3D "ec0be4795e2f6a28069bec0b5ff3e2ac9b=
+afc99e6a9a7dc3547996c5c816922c"
+ SRC_URI[rand_xorshift-0.3.0.sha256sum] =3D "d25bf25ec5ae4a3f1b92f929810509=
+a2f53d7dca2f50b794ff57e3face536c8f"
+ SRC_URI[rawpointer-0.2.1.sha256sum] =3D "60a357793950651c4ed0f3f52338f53b2=
+f809f32d83a07f72909fa13e4c6c1e3"
+-SRC_URI[rayon-1.8.1.sha256sum] =3D "fa7237101a77a10773db45d62004a272517633=
+fbcc3df19d96455ede1122e051"
++SRC_URI[rayon-1.10.0.sha256sum] =3D "b418a60154510ca1a002a752ca9714984e21e=
+4241e804d32555251faf8b78ffa"
+ SRC_URI[rayon-core-1.12.1.sha256sum] =3D "1465873a3dfdaa8ae7cb14b4383657ca=
+ab0b3e8a0aa9ae8e04b044854c8dfce2"
+ SRC_URI[rctree-0.6.0.sha256sum] =3D "e03e7866abec1101869ffa8e2c8355c4c2419=
+d0214ece0cc3e428e5b94dea6e9"
+-SRC_URI[redox_syscall-0.4.1.sha256sum] =3D "4722d768eff46b75989dd134e5c353=
+f0d6296e5aaa3132e776cbdb56be7731aa"
+-SRC_URI[regex-1.10.3.sha256sum] =3D "b62dbe01f0b06f9d8dc7d49e05a0785f153b0=
+0b2c227856282f671e0318c9b15"
+-SRC_URI[regex-automata-0.4.5.sha256sum] =3D "5bb987efffd3c6d0d8f5f89510bb4=
+58559eab11e4f869acb20bf845e016259cd"
+-SRC_URI[regex-syntax-0.8.2.sha256sum] =3D "c08c74e62047bb2de4ff487b251e4a9=
+2e24f48745648451635cec7d591162d9f"
+-SRC_URI[rgb-0.8.37.sha256sum] =3D "05aaa8004b64fd573fc9d002f4e632d51ad4f02=
+6c2b5ba95fcb6c2f32c2c47d8"
+-SRC_URI[rustix-0.38.31.sha256sum] =3D "6ea3e1a662af26cd7a3ba09c0297a31af21=
+5563ecf42817c98df621387f4e949"
++SRC_URI[redox_syscall-0.5.3.sha256sum] =3D "2a908a6e00f1fdd0dfd9c0eb08ce85=
+126f6d8bbda50017e74bc4a4b7d4a926a4"
++SRC_URI[regex-1.10.6.sha256sum] =3D "4219d74c6b67a3654a9fbebc4b419e22126d1=
+3d2f3c4a07ee0cb61ff79a79619"
++SRC_URI[regex-automata-0.4.7.sha256sum] =3D "38caf58cc5ef2fed281f89292ef23=
+f6365465ed9a41b7a7754eb4e26496c92df"
++SRC_URI[regex-syntax-0.8.4.sha256sum] =3D "7a66a03ae7c801facd77a29370b4fae=
+c201768915ac14a721ba36f20bc9c209b"
++SRC_URI[rgb-0.8.48.sha256sum] =3D "0f86ae463694029097b846d8f99fd5536740602=
+ae00022c0c50c5600720b2f71"
++SRC_URI[rustix-0.38.34.sha256sum] =3D "70dc5ec042f7a43c4a73241207cecc9873a=
+06d45debb38b329f8541d85c2730f"
+ SRC_URI[rusty-fork-0.3.0.sha256sum] =3D "cb3dcc6e454c328bb824492db107ab7c0=
+ae8fcffe4ad210136ef014458c1bc4f"
+-SRC_URI[ryu-1.0.16.sha256sum] =3D "f98d2aa92eebf49b69786be48e4477826b25691=
+6e84a57ff2a4f21923b48eb4c"
+-SRC_URI[safe_arch-0.7.1.sha256sum] =3D "f398075ce1e6a179b46f51bd88d0598b92=
+b00d3551f1a2d4ac49e771b56ac354"
++SRC_URI[ryu-1.0.18.sha256sum] =3D "f3cb5ba0dc43242ce17de99c180e96db90b235b=
+8a9fdc9543c96d2209116bd9f"
++SRC_URI[safe_arch-0.7.2.sha256sum] =3D "c3460605018fdc9612bce72735cba0d27e=
+fbcd9904780d44c7e3a9948f96148a"
+ SRC_URI[same-file-1.0.6.sha256sum] =3D "93fc1dc3aaa9bfed95e02e6eadabb4baf7=
+e3078b0bd1b4d7b6b0b68378900502"
+ SRC_URI[scopeguard-1.2.0.sha256sum] =3D "94143f37725109f92c262ed2cf5e59bce=
+7498c01bcc1502d7b9afe439a4e9f49"
+ SRC_URI[selectors-0.25.0.sha256sum] =3D "4eb30575f3638fc8f6815f448d50cb1a2=
+e255b0897985c8c59f4d37b72a07b06"
+-SRC_URI[serde-1.0.196.sha256sum] =3D "870026e60fa08c69f064aa766c10f10b1d62=
+db9ccd4d0abb206472bee0ce3b32"
+-SRC_URI[serde_derive-1.0.196.sha256sum] =3D "33c85360c95e7d137454dc81d9a4e=
+d2b8efd8fbe19cee57357b32b9771fccb67"
+-SRC_URI[serde_json-1.0.113.sha256sum] =3D "69801b70b1c3dac963ecb03a364ba0c=
+eda9cf60c71cfe475e99864759c8b8a79"
+-SRC_URI[serde_spanned-0.6.5.sha256sum] =3D "eb3622f419d1296904700073ea6cc2=
+3ad690adbd66f13ea683df73298736f0c1"
++SRC_URI[serde-1.0.204.sha256sum] =3D "bc76f558e0cbb2a839d37354c575f1dc3fdc=
+6546b5be373ba43d95f231bf7c12"
++SRC_URI[serde_derive-1.0.204.sha256sum] =3D "e0cd7e117be63d3c3678776753929=
+474f3b04a43a080c744d6b0ae2a8c28e222"
++SRC_URI[serde_json-1.0.122.sha256sum] =3D "784b6203951c57ff748476b126ccb5e=
+8e2959a5c19e5c617ab1956be3dbc68da"
++SRC_URI[serde_spanned-0.6.7.sha256sum] =3D "eb5b1b31579f3811bf615c14439341=
+7496f152e12ac8b7663bf664f4a815306d"
+ SRC_URI[servo_arc-0.3.0.sha256sum] =3D "d036d71a959e00c77a63538b90a6c23909=
+69f9772b096ea837205c6bd0491a44"
+-SRC_URI[simba-0.8.1.sha256sum] =3D "061507c94fc6ab4ba1c9a0305018408e312e17=
+c041eb63bef8aa726fa33aceae"
++SRC_URI[shell-words-1.1.0.sha256sum] =3D "24188a676b6ae68c3b2cb3a01be17fbf=
+7240ce009799bb56d5b1409051e78fde"
++SRC_URI[simba-0.9.0.sha256sum] =3D "b3a386a501cd104797982c15ae17aafe8b9261=
+315b5d07e3ec803f2ea26be0fa"
+ SRC_URI[simd-adler32-0.3.7.sha256sum] =3D "d66dc143e6b11c1eddc06d5c423cfc9=
+7062865baf299914ab64caa38182078fe"
+ SRC_URI[siphasher-0.3.11.sha256sum] =3D "38b58827f4464d87d377d175e90bf58eb=
+00fd8716ff0a62f80356b5e61555d0d"
+ SRC_URI[slab-0.4.9.sha256sum] =3D "8f92a496fb766b417c996b9c5e57daf2f7ad3b0=
+bebe1ccfca4856390e3d3bb67"
+-SRC_URI[smallvec-1.13.1.sha256sum] =3D "e6ecd384b10a64542d77071bd64bd7b231=
+f4ed5940fba55e98c3de13824cf3d7"
+-SRC_URI[spin-0.9.8.sha256sum] =3D "6980e8d7511241f8acf4aebddbb1ff938df5eeb=
+e98691418c4468d0b72a96a67"
++SRC_URI[smallvec-1.13.2.sha256sum] =3D "3c5e1a9a646d36c3599cd173a41282daf4=
+7c44583ad367b8e6837255952e5c67"
+ SRC_URI[stable_deref_trait-1.2.0.sha256sum] =3D "a8f112729512f8e442d81f95a=
+8a7ddf2b7c6b8a1a6f509a95864142b30cab2d3"
++SRC_URI[static_assertions-1.1.0.sha256sum] =3D "a2eb9349b6444b326872e140eb=
+1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
+ SRC_URI[string_cache-0.8.7.sha256sum] =3D "f91138e76242f575eb1d3b38b4f1362=
+f10d3a43f47d182a5b359af488a02293b"
+ SRC_URI[string_cache_codegen-0.5.2.sha256sum] =3D "6bb30289b722be4ff74a408=
+c3cc27edeaad656e06cb1fe8fa9231fa59c728988"
+-SRC_URI[strsim-0.10.0.sha256sum] =3D "73473c0e59e6d5812c5dfe2a064a6444949f=
+089e20eec9a2e5506596494e4623"
+-SRC_URI[syn-1.0.109.sha256sum] =3D "72b64191b275b66ffe2469e8af2c1cfe3bafa6=
+7b529ead792a6d0160888b4237"
+-SRC_URI[syn-2.0.48.sha256sum] =3D "0f3531638e407dfc0814761abb7c00a5b54992b=
+849452a0646b7f65c9f770f3f"
+-SRC_URI[system-deps-6.2.0.sha256sum] =3D "2a2d580ff6a20c55dfb86be5f9c238f6=
+7835d0e81cbdea8bf5680e0897320331"
+-SRC_URI[target-lexicon-0.12.13.sha256sum] =3D "69758bda2e78f098e4ccb393021=
+a0963bb3442eac05f135c30f61b7370bbafae"
+-SRC_URI[tempfile-3.10.0.sha256sum] =3D "a365e8cd18e44762ef95d87f284f4b5cd0=
+4107fec2ff3052bd6a3e6069669e67"
++SRC_URI[strsim-0.11.1.sha256sum] =3D "7da8b5736845d9f2fcb837ea5d9e2628564b=
+3b043a70948a3f0b778838c5fb4f"
++SRC_URI[syn-2.0.72.sha256sum] =3D "dc4b9b9bf2add8093d3f2c0204471e951b22855=
+80335de42f9d2534f3ae7a8af"
++SRC_URI[system-deps-6.2.2.sha256sum] =3D "a3e535eb8dded36d55ec13eddacd30de=
+c501792ff23a0b1682c38601b8cf2349"
++SRC_URI[system-deps-7.0.1.sha256sum] =3D "6c81f13d9a334a6c242465140bd262fa=
+e382b752ff2011c4f7419919a9c97922"
++SRC_URI[target-lexicon-0.12.16.sha256sum] =3D "61c41af27dd6d1e27b1b16b489d=
+b798443478cef1f06a660c96db617ba5de3b1"
++SRC_URI[tempfile-3.12.0.sha256sum] =3D "04cbcdd0c794ebb0d4cf35e88edd2f7d2c=
+4c3e9a5a6dab322839b321c6a87a64"
+ SRC_URI[tendril-0.4.3.sha256sum] =3D "d24a120c5fc464a3458240ee02c299ebcb9d=
+67b5249c8848b09d639dca8d7bb0"
+ SRC_URI[termtree-0.4.1.sha256sum] =3D "3369f5ac52d5eb6ab48c6b4ffdc8efbcad6=
+b89c765749064ba298f2c68a16a76"
+-SRC_URI[thiserror-1.0.56.sha256sum] =3D "d54378c645627613241d077a3a79db965=
+db602882668f9136ac42af9ecb730ad"
+-SRC_URI[thiserror-impl-1.0.56.sha256sum] =3D "fa0faa943b50f3db30a20aa7e265=
+dbc66076993efed8463e8de414e5d06d3471"
+-SRC_URI[tiff-0.9.1.sha256sum] =3D "ba1310fcea54c6a9a4fd1aad794ecc02c31682f=
+6bfbecdf460bf19533eed1e3e"
+-SRC_URI[time-0.3.34.sha256sum] =3D "c8248b6521bb14bc45b4067159b9b6ad792e2d=
+6d754d6c41fb50e29fefe38749"
++SRC_URI[thiserror-1.0.63.sha256sum] =3D "c0342370b38b6a11b6cc11d6a80556995=
+8d54cfa061a29969c3b5ce2ea405724"
++SRC_URI[thiserror-impl-1.0.63.sha256sum] =3D "a4558b58466b9ad7ca0f102865ec=
+cc95938dca1a74a856f2b57b6629050da261"
++SRC_URI[time-0.3.36.sha256sum] =3D "5dfd88e563464686c916c7e46e623e520ddc6d=
+79fa6641390f2e3fa86e83e885"
+ SRC_URI[time-core-0.1.2.sha256sum] =3D "ef927ca75afb808a4d64dd374f00a2adf8=
+d0fcff8e7b184af886c3c87ec4a3f3"
+-SRC_URI[time-macros-0.2.17.sha256sum] =3D "7ba3a3ef41e6672a2f0f001392bb5dc=
+d3ff0a9992d618ca761a11c3121547774"
++SRC_URI[time-macros-0.2.18.sha256sum] =3D "3f252a68540fde3a3877aeea552b832=
+b40ab9a69e318efd078774a01ddee1ccf"
+ SRC_URI[tinytemplate-1.2.1.sha256sum] =3D "be4d6b5f19ff7664e8c98d03e2139cb=
+510db9b0a60b55f8e8709b689d939b6bc"
+-SRC_URI[tinyvec-1.6.0.sha256sum] =3D "87cc5ceb3875bb20c2890005a4e226a46512=
+64a5c75edb2421b52861a0a0cb50"
++SRC_URI[tinyvec-1.8.0.sha256sum] =3D "445e881f4f6d382d5f27c034e25eb92edd7c=
+784ceab92a0937db7f2e9471b938"
+ SRC_URI[tinyvec_macros-0.1.1.sha256sum] =3D "1f3ccbac311fea05f86f61904b462=
+b55fb3df8837a366dfc601a0161d0532f20"
+-SRC_URI[toml-0.8.10.sha256sum] =3D "9a9aad4a3066010876e8dcf5a8a06e70a55875=
+1117a145c6ce2b82c2e2054290"
+-SRC_URI[toml_datetime-0.6.5.sha256sum] =3D "3550f4e9685620ac18a50ed434eb3a=
+ec30db8ba93b0287467bca5826ea25baf1"
++SRC_URI[toml-0.8.19.sha256sum] =3D "a1ed1f98e3fdc28d6d910e6737ae6ab1a93bf1=
+985935a1193e68f93eeb68d24e"
++SRC_URI[toml_datetime-0.6.8.sha256sum] =3D "0dd7358ecb8fc2f8d014bf86f6f638=
+ce72ba252a2c3a2572f2a795f1d23efb41"
+ SRC_URI[toml_edit-0.21.1.sha256sum] =3D "6a8534fd7f78b5405e860340ad6575217=
+ce99f38d4d5c8f2442cb5ecb50090e1"
+-SRC_URI[toml_edit-0.22.4.sha256sum] =3D "0c9ffdf896f8daaabf9b66ba8e77ea1ed=
+5ed0f72821b398aba62352e95062951"
++SRC_URI[toml_edit-0.22.20.sha256sum] =3D "583c44c02ad26b0c3f3066fe629275e5=
+0627026c51ac2e595cca4c230ce1ce1d"
+ SRC_URI[typenum-1.17.0.sha256sum] =3D "42ff0bf0c66b8238c6f3b578df37d0b7848=
+e55df8577b3f74f92a69acceeb825"
+ SRC_URI[unarray-0.1.4.sha256sum] =3D "eaea85b334db583fe3274d12b4cd1880032b=
+eab409c0d774be044d4480ab9a94"
+ SRC_URI[unicode-bidi-0.3.15.sha256sum] =3D "08f95100a766bf4f8f28f90d77e0a5=
+461bbdb219042e7679bebe79004fed8d75"
+ SRC_URI[unicode-ident-1.0.12.sha256sum] =3D "3354b9ac3fae1ff6755cb6db53683=
+adb661634f67557942dea4facebec0fee4b"
+-SRC_URI[unicode-normalization-0.1.22.sha256sum] =3D "5c5713f0fc4b5db668a2a=
+c63cdb7bb4469d8c9fed047b1d0292cc7b0ce2ba921"
+-SRC_URI[url-2.5.0.sha256sum] =3D "31e6302e3bb753d46e83516cae55ae196fc0c309=
+407cf11ab35cc51a4c2a4633"
++SRC_URI[unicode-normalization-0.1.23.sha256sum] =3D "a56d1686db2308d901306=
+f92a263857ef59ea39678a5458e7cb17f01415101f5"
++SRC_URI[url-2.5.2.sha256sum] =3D "22784dbdf76fdde8af1aeda5622b546b422b6fc5=
+85325248a2bf9f5e41e94d6c"
+ SRC_URI[utf-8-0.7.6.sha256sum] =3D "09cc8ee72d2a9becf2f2febe0205bbed8fc661=
+5b7cb429ad062dc7b7ddd036a9"
+-SRC_URI[utf8parse-0.2.1.sha256sum] =3D "711b9620af191e0cdc7468a8d14e709c3d=
+cdb115b36f838e601583af800a370a"
+-SRC_URI[version-compare-0.1.1.sha256sum] =3D "579a42fc0b8e0c63b76519a339be=
+31bed574929511fa53c1a3acae26eb258f29"
++SRC_URI[utf8parse-0.2.2.sha256sum] =3D "06abde3611657adf66d383f00b093d7fae=
+cc7fa57071cce2578660c9f1010821"
++SRC_URI[version-compare-0.2.0.sha256sum] =3D "852e951cb7832cb45cb1169900d1=
+9760cfa39b82bc0ea9c0e5a14ae88411c98b"
++SRC_URI[version_check-0.9.5.sha256sum] =3D "0b928f33d975fc6ad9f86c8f283853=
+ad26bdd5b10b7f1542aa2fa15e2289105a"
+ SRC_URI[wait-timeout-0.2.0.sha256sum] =3D "9f200f5b12eb75f8c1ed65abd4b2db8=
+a6e1b138a20de009dacee265a2498f3f6"
+-SRC_URI[walkdir-2.4.0.sha256sum] =3D "d71d857dc86794ca4c280d616f7da00d2dbf=
+d8cd788846559a6813e6aa4b54ee"
++SRC_URI[walkdir-2.5.0.sha256sum] =3D "29790946404f91d9c5d06f9874efddea1dc0=
+6c5efe94541a7d6863108e3a5e4b"
+ SRC_URI[wasi-0.11.0+wasi-snapshot-preview1.sha256sum] =3D "9c8d87e72b64a3b=
+4db28d11ce29237c246188f4f51057d65a7eab63b7987e423"
+-SRC_URI[wasm-bindgen-0.2.91.sha256sum] =3D "c1e124130aee3fb58c5bdd6b639a05=
+09486b0338acaaae0c84a5124b0f588b7f"
+-SRC_URI[wasm-bindgen-backend-0.2.91.sha256sum] =3D "c9e7e1900c352b609c8488=
+ad12639a311045f40a35491fb69ba8c12f758af70b"
+-SRC_URI[wasm-bindgen-macro-0.2.91.sha256sum] =3D "b30af9e2d358182b5c744942=
+4f017eba305ed32a7010509ede96cdc4696c46ed"
+-SRC_URI[wasm-bindgen-macro-support-0.2.91.sha256sum] =3D "642f325be6301eb8=
+107a83d12a8ac6c1e1c54345a7ef1a9261962dfefda09e66"
+-SRC_URI[wasm-bindgen-shared-0.2.91.sha256sum] =3D "4f186bd2dcf04330886ce82=
+d6f33dd75a7bfcf69ecf5763b89fcde53b6ac9838"
+-SRC_URI[web-sys-0.3.68.sha256sum] =3D "96565907687f7aceb35bc5fc03770a8a047=
+1d82e479f25832f54a0e3f4b28446"
++SRC_URI[wasm-bindgen-0.2.92.sha256sum] =3D "4be2531df63900aeb2bca0daaaddec=
+08491ee64ceecbee5076636a3b026795a8"
++SRC_URI[wasm-bindgen-backend-0.2.92.sha256sum] =3D "614d787b966d3989fa7bb9=
+8a654e369c762374fd3213d212cfc0251257e747da"
++SRC_URI[wasm-bindgen-macro-0.2.92.sha256sum] =3D "a1f8823de937b71b9460c0c3=
+4e25f3da88250760bec0ebac694b49997550d726"
++SRC_URI[wasm-bindgen-macro-support-0.2.92.sha256sum] =3D "e94f17b526d0a461=
+a191c78ea52bbce64071ed5c04c9ffe424dcb38f74171bb7"
++SRC_URI[wasm-bindgen-shared-0.2.92.sha256sum] =3D "af190c94f2773fdb3729c55=
+b007a722abb5384da03bc0986df4c289bf5567e96"
++SRC_URI[web-sys-0.3.69.sha256sum] =3D "77afa9a11836342370f4817622a2f0f418b=
+134426d91a82dfb48f532d2ec13ef"
+ SRC_URI[weezl-0.1.8.sha256sum] =3D "53a85b86a771b1c87058196170769dd264f66c=
+0782acf1ae6cc51bfd64b39082"
+-SRC_URI[wide-0.7.15.sha256sum] =3D "89beec544f246e679fc25490e3f8e08003bc4b=
+f612068f325120dad4cea02c1c"
++SRC_URI[wide-0.7.26.sha256sum] =3D "901e8597c777fa042e9e245bd56c0dc4418c5d=
+b3f845b6ff94fbac732c6a0692"
+ SRC_URI[winapi-0.3.9.sha256sum] =3D "5c839a674fcd7a98952e593242ea400abe939=
+92746761e38641405d28b00f419"
+ SRC_URI[winapi-i686-pc-windows-gnu-0.4.0.sha256sum] =3D "ac3b87c63620426dd=
+9b991e5ce0329eff545bccbbb34f3be09ff6fb6ab51b7b6"
+-SRC_URI[winapi-util-0.1.6.sha256sum] =3D "f29e6f9198ba0d26b4c9f07dbe6f9ed6=
+33e1f3d5b8b414090084349e46a52596"
++SRC_URI[winapi-util-0.1.9.sha256sum] =3D "cf221c93e13a30d793f7645a0e7762c5=
+5d169dbb0a49671918a2319d289b10bb"
+ SRC_URI[winapi-x86_64-pc-windows-gnu-0.4.0.sha256sum] =3D "712e227841d057c=
+1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
+ SRC_URI[windows-core-0.52.0.sha256sum] =3D "33ab640c8d7e35bf8ba19b884ba838=
+ceb4fba93a4e8c65a9059d08afcfc683d9"
+-SRC_URI[windows-sys-0.48.0.sha256sum] =3D "677d2418bec65e3338edb076e806bc1=
+ec15693c5d0104683f2efe857f61056a9"
+ SRC_URI[windows-sys-0.52.0.sha256sum] =3D "282be5f36a8ce781fad8c8ae18fa3f9=
+beff57ec1b52cb3de0789201425d9a33d"
+-SRC_URI[windows-targets-0.48.5.sha256sum] =3D "9a2fa6e2155d7247be68c096456=
+083145c183cbbbc2764150dda45a87197940c"
+-SRC_URI[windows-targets-0.52.0.sha256sum] =3D "8a18201040b24831fbb9e4eb208=
+f8892e1f50a37feb53cc7ff887feb8f50e7cd"
+-SRC_URI[windows_aarch64_gnullvm-0.48.5.sha256sum] =3D "2b38e32f0abccf9987a=
+4e3079dfb67dcd799fb61361e53e2882c3cbaf0d905d8"
+-SRC_URI[windows_aarch64_gnullvm-0.52.0.sha256sum] =3D "cb7764e35d4db8a7921=
+e09562a0304bf2f93e0a51bfccee0bd0bb0b666b015ea"
+-SRC_URI[windows_aarch64_msvc-0.48.5.sha256sum] =3D "dc35310971f3b2dbbf3f06=
+90a219f40e2d9afcf64f9ab7cc1be722937c26b4bc"
+-SRC_URI[windows_aarch64_msvc-0.52.0.sha256sum] =3D "bbaa0368d4f1d2aaefc55b=
+6fcfee13f41544ddf36801e793edbbfd7d7df075ef"
+-SRC_URI[windows_i686_gnu-0.48.5.sha256sum] =3D "a75915e7def60c94dcef72200b=
+9a8e58e5091744960da64ec734a6c6e9b3743e"
+-SRC_URI[windows_i686_gnu-0.52.0.sha256sum] =3D "a28637cb1fa3560a16915793af=
+b20081aba2c92ee8af57b4d5f28e4b3e7df313"
+-SRC_URI[windows_i686_msvc-0.48.5.sha256sum] =3D "8f55c233f70c4b27f66c52358=
+0f78f1004e8b5a8b659e05a4eb49d4166cca406"
+-SRC_URI[windows_i686_msvc-0.52.0.sha256sum] =3D "ffe5e8e31046ce6230cc72157=
+07b816e339ff4d4d67c65dffa206fd0f7aa7b9a"
+-SRC_URI[windows_x86_64_gnu-0.48.5.sha256sum] =3D "53d40abd2583d23e4718fddf=
+1ebec84dbff8381c07cae67ff7768bbf19c6718e"
+-SRC_URI[windows_x86_64_gnu-0.52.0.sha256sum] =3D "3d6fa32db2bc4a2f5abeacf2=
+b69f7992cd09dca97498da74a151a3132c26befd"
+-SRC_URI[windows_x86_64_gnullvm-0.48.5.sha256sum] =3D "0b7b52767868a23d5bab=
+768e390dc5f5c55825b6d30b86c844ff2dc7414044cc"
+-SRC_URI[windows_x86_64_gnullvm-0.52.0.sha256sum] =3D "1a657e1e9d3f514745a5=
+72a6846d3c7aa7dbe1658c056ed9c3344c4109a6949e"
+-SRC_URI[windows_x86_64_msvc-0.48.5.sha256sum] =3D "ed94fce61571a4006852b73=
+89a063ab983c02eb1bb37b47f8272ce92d06d9538"
+-SRC_URI[windows_x86_64_msvc-0.52.0.sha256sum] =3D "dff9641d1cd4be8d1a070da=
+f9e3773c5f67e78b4d9d42263020c057706765c04"
+-SRC_URI[winnow-0.5.39.sha256sum] =3D "5389a154b01683d28c77f8f68f49dea75f0a=
+4da32557a58f68ee51ebba472d29"
+-SRC_URI[xml5ever-0.17.0.sha256sum] =3D "4034e1d05af98b51ad7214527730626f01=
+9682d797ba38b51689212118d8e650"
+-SRC_URI[yeslogic-fontconfig-sys-4.0.1.sha256sum] =3D "ec657fd32bbcbeaef5c7=
+bc8e10b3db95b143fab8db0a50079773dbf936fd4f73"
+-SRC_URI[zune-inflate-0.2.54.sha256sum] =3D "73ab332fe2f6680068f3582b16a24f=
+90ad7096d5d39b974d1c0aff0125116f02"
++SRC_URI[windows-sys-0.59.0.sha256sum] =3D "1e38bc4d79ed67fd075bcc251a1c39b=
+32a1776bbe92e5bef1f0bf1f8c531853b"
++SRC_URI[windows-targets-0.52.6.sha256sum] =3D "9b724f72796e036ab90c1021d47=
+80d4d3d648aca59e491e6b98e725b84e99973"
++SRC_URI[windows_aarch64_gnullvm-0.52.6.sha256sum] =3D "32a4622180e7a0ec044=
+bb555404c800bc9fd9ec262ec147edd5989ccd0c02cd3"
++SRC_URI[windows_aarch64_msvc-0.52.6.sha256sum] =3D "09ec2a7bb152e2252b53fa=
+7803150007879548bc709c039df7627cabbd05d469"
++SRC_URI[windows_i686_gnu-0.52.6.sha256sum] =3D "8e9b5ad5ab802e97eb8e295ac6=
+720e509ee4c243f69d781394014ebfe8bbfa0b"
++SRC_URI[windows_i686_gnullvm-0.52.6.sha256sum] =3D "0eee52d38c090b3caa76c5=
+63b86c3a4bd71ef1a819287c19d586d7334ae8ed66"
++SRC_URI[windows_i686_msvc-0.52.6.sha256sum] =3D "240948bc05c5e7c6dabba28bf=
+89d89ffce3e303022809e73deaefe4f6ec56c66"
++SRC_URI[windows_x86_64_gnu-0.52.6.sha256sum] =3D "147a5c80aabfbf0c7d901cb5=
+895d1de30ef2907eb21fbbab29ca94c5b08b1a78"
++SRC_URI[windows_x86_64_gnullvm-0.52.6.sha256sum] =3D "24d5b23dc41741267968=
+1396f2b49f3de8c1473deb516bd34410872eff51ed0d"
++SRC_URI[windows_x86_64_msvc-0.52.6.sha256sum] =3D "589f6da84c646204747d127=
+0a2a5661ea66ed1cced2631d546fdfb155959f9ec"
++SRC_URI[winnow-0.5.40.sha256sum] =3D "f593a95398737aeed53e489c785df13f3618=
+e41dbcd6718c6addbf1395aa6876"
++SRC_URI[winnow-0.6.18.sha256sum] =3D "68a9bda4691f099d435ad181000724da8e58=
+99daa10713c2d432552b9ccd3a6f"
++SRC_URI[xml5ever-0.18.1.sha256sum] =3D "9bbb26405d8e919bc1547a5aa9abc95cbf=
+a438f04844f5fdd9dc7596b748bf69"
++SRC_URI[yeslogic-fontconfig-sys-6.0.0.sha256sum] =3D "503a066b4c037c440169=
+d995b869046827dbc71263f6e8f3be6d77d4f3229dbd"
++SRC_URI[zerocopy-0.7.35.sha256sum] =3D "1b9b4fd18abc82b8136838da5d50bae7bd=
+ea537c574d8dc1a34ed098d6c166f0"
++SRC_URI[zerocopy-derive-0.7.35.sha256sum] =3D "fa4f8080344d4671fb4e831a13a=
+d1e68092748387dfc4f55e356242fae12ce3e"
++SRC_URI[zune-core-0.4.12.sha256sum] =3D "3f423a2c17029964870cfaabb1f13dfab=
+7d092a62a29a89264f4d36990ca414a"
++SRC_URI[zune-jpeg-0.4.13.sha256sum] =3D "16099418600b4d8f028622f73ff6e3dea=
+abdff330fb9a2a131dea781ee8b0768"
+diff --git a/recipes-gnome/librsvg/librsvg/0001-Makefile.am-pass-rust-targe=
+t-to-cargo-also-when-not-.patch b/recipes-gnome/librsvg/librsvg/0001-Makefi=
+le.am-pass-rust-target-to-cargo-also-when-not-.patch
 deleted file mode 100644
-index 7579ea0..0000000
---- a/recipes-devtools/rust/files/0001-cargo-do-not-write-host-information-=
-into-compilation.patch
+index 8051eb6..0000000
+--- a/recipes-gnome/librsvg/librsvg/0001-Makefile.am-pass-rust-target-to-ca=
+rgo-also-when-not-.patch
 +++ /dev/null
-@@ -1,51 +0,0 @@
--From 065d7c263091118437465d714d8a29dbb6296921 Mon Sep 17 00:00:00 2001
+@@ -1,44 +0,0 @@
+-From 6e2cff10a4f24e89e6aee8250a9ac5527fdaa910 Mon Sep 17 00:00:00 2001
 -From: Alexander Kanavin <alex@linutronix.de>
--Date: Mon, 13 May 2024 14:57:54 +0200
--Subject: [PATCH] cargo: do not write host information into compilation unit
-- hashes
+-Date: Tue, 21 Sep 2021 16:27:14 +0200
+-Subject: [PATCH] Makefile.am: pass rust target to cargo also when not cross
+- compiling
 -
--This breaks reproducibility in cross-builds where the cross-target
--can be the same, but build hosts are different, as seen with
--"rustc --version -v":
--...
--host: x86_64-unknown-linux-gnu
+-Otherwise oe-core's native build doesn't work either.
 -
--vs.
--
--host: aarch64-unknown-linux-gnu
--
--This can possibly be improved by only hashing host info if the build
--is a native one (e.g. there's no --target option passed to cargo
--invocation) but I'm not sure how.
--
--Upstream-Status: Inappropriate [reported at https://github.com/rust-lang/c=
-argo/issues/13922]
+-Upstream-Status: Inappropriate [oe-core specific]
 -Signed-off-by: Alexander Kanavin <alex@linutronix.de>
 ----
-- .../src/cargo/core/compiler/context/compilation_files.rs      | 4 ++--
-- 1 file changed, 2 insertions(+), 2 deletions(-)
+- Makefile.am  | 2 --
+- configure.ac | 4 +---
+- 2 files changed, 1 insertion(+), 5 deletions(-)
 -
--diff --git a/src/tools/cargo/src/cargo/core/compiler/build_runner/compilat=
-ion_files.rs b/src/tools/cargo/src/cargo/core/compiler/build_runner/compila=
-tion_files.rs
--index d83dbf10c..b2ad8d9f3 100644
----- a/src/tools/cargo/src/cargo/core/compiler/build_runner/compilation_fil=
-es.rs
--+++ b/src/tools/cargo/src/cargo/core/compiler/build_runner/compilation_fil=
-es.rs
--@@ -652,7 +652,7 @@ fn hash_rustc_version(bcx: &BuildContext<'_, '_>, hash=
-er: &mut StableHasher) {
--     if vers.pre.is_empty() || bcx.gctx.cli_unstable().separate_nightlies {
--         // For stable, keep the artifacts separate. This helps if someone=
- is
--         // testing multiple versions, to avoid recompiles.
---        bcx.rustc().verbose_version.hash(hasher);
--+        //bcx.rustc().verbose_version.hash(hasher);
--         return;
--     }
--     // On "nightly"/"beta"/"dev"/etc, keep each "channel" separate. Don't=
- hash
--@@ -665,7 +665,7 @@ fn hash_rustc_version(bcx: &BuildContext<'_, '_>, hash=
-er: &mut StableHasher) {
--     // Keep "host" since some people switch hosts to implicitly change
--     // targets, (like gnu vs musl or gnu vs msvc). In the future, we may =
-want
--     // to consider hashing `unit.kind.short_name()` instead.
---    bcx.rustc().host.hash(hasher);
--+    //bcx.rustc().host.hash(hasher);
--     // None of the other lines are important. Currently they are:
--     // binary: rustc  <-- or "rustdoc"
--     // commit-hash: 38114ff16e7856f98b2b4be7ab4cd29b38bed59a
----=20
--2.39.2
--
-diff --git a/recipes-devtools/rust/files/hardcodepaths.patch b/recipes-devt=
-ools/rust/files/hardcodepaths.patch
-deleted file mode 100644
-index 6966542..0000000
---- a/recipes-devtools/rust/files/hardcodepaths.patch
-+++ /dev/null
-@@ -1,46 +0,0 @@
--When building for the target, some build paths end up embedded in the bina=
-ries.
--These changes remove that. Further investigation is needed to work out the=
- way
--to resolve these issues properly upstream.
--
--Upstream-Status: Inappropriate [patches need rework]
--Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
--Signed-off-by: Alex Kiernan <alex.kiernan@gmail.com>
--
--diff --git a/compiler/rustc_codegen_llvm/src/context.rs b/compiler/rustc_c=
-odegen_llvm/src/context.rs
--index b4b2ab1e1f8a..8bb3e3f0557c 100644
----- a/compiler/rustc_codegen_llvm/src/context.rs
--+++ b/compiler/rustc_codegen_llvm/src/context.rs
--@@ -34,7 +34,6 @@
-- use smallvec::SmallVec;
--
-- use libc::c_uint;
---use std::borrow::Borrow;
-- use std::cell::{Cell, RefCell};
-- use std::ffi::CStr;
-- use std::str;
--@@ -155,25 +154,6 @@
--         }
--     }
+-diff --git a/Makefile.am b/Makefile.am
+-index b1cd889..9d33432 100644
+---- a/Makefile.am
+-+++ b/Makefile.am
+-@@ -170,9 +170,7 @@ else
+- CARGO_RELEASE_ARGS=3D--release
+- endif
 -=20
---    // Ensure the data-layout values hardcoded remain the defaults.
---    {
---        let tm =3D crate::back::write::create_informational_target_machin=
-e(tcx.sess);
---        llvm::LLVMRustSetDataLayoutFromTargetMachine(llmod, &tm);
---
---        let llvm_data_layout =3D llvm::LLVMGetDataLayoutStr(llmod);
---        let llvm_data_layout =3D str::from_utf8(CStr::from_ptr(llvm_data_=
-layout).to_bytes())
---            .expect("got a non-UTF8 data-layout from LLVM");
---
---        if target_data_layout !=3D llvm_data_layout {
---            tcx.dcx().emit_err(crate::errors::MismatchedDataLayout {
---                rustc_target: sess.opts.target_triple.to_string().as_str(=
-),
---                rustc_layout: target_data_layout.as_str(),
---                llvm_target: sess.target.llvm_target.borrow(),
---                llvm_layout: llvm_data_layout,
---            });
---        }
---    }
---
--     let data_layout =3D SmallCStr::new(&target_data_layout);
--     llvm::LLVMSetDataLayout(llmod, data_layout.as_ptr());
--
-diff --git a/recipes-devtools/rust/files/repro-issue-fix-with-cc-crate-hash=
-map.patch b/recipes-devtools/rust/files/repro-issue-fix-with-cc-crate-hashm=
-ap.patch
-index e3f57e7..e052c32 100644
---- a/recipes-devtools/rust/files/repro-issue-fix-with-cc-crate-hashmap.pat=
-ch
-+++ b/recipes-devtools/rust/files/repro-issue-fix-with-cc-crate-hashmap.pat=
-ch
-@@ -1,4 +1,4 @@
--rust: reproducibility issue fix with v1.80
-+rust: reproducibility issue fix with v1.81
-=20
- A few crates are using the updated version of the 'cc' crate and this is c=
-ausing the generated object file names containing a unique hashmap id.
- By the following changes same hash values will be genarted even for diffre=
-nt build paths.
-@@ -49,6 +49,57 @@ Signed-off-by: Harish Sadineni <Harish.Sadineni@windrive=
-r.com>
-          let obj =3D dst
-              .join(format!("{:016x}-{}", hasher.finish(), basename))
-              .with_extension("o");
-+diff --git a/vendor/cc-1.0.99/src/command_helpers.rs b/vendor/cc-1.0.99/sr=
-c/command_helpers.rs
-+index fe919a5239..2b1f442019 100644
-+--- a/vendor/cc-1.0.99/src/command_helpers.rs
-++++ b/vendor/cc-1.0.99/src/command_helpers.rs
-+@@ -257,6 +257,7 @@ fn wait_on_child(
-+ /// and store them in the output Object.
-+ pub(crate) fn objects_from_files(files: &[Arc<Path>], dst: &Path) -> Resu=
-lt<Vec<Object>, Error> {
-+     let mut objects =3D Vec::with_capacity(files.len());
-++    let target_substring =3D ["rustc"];
-+     for file in files {
-+         let basename =3D file
-+             .file_name()
-+@@ -277,10 +278,29 @@ pub(crate) fn objects_from_files(files: &[Arc<Path>]=
-, dst: &Path) -> Result<Vec<
-+             })?
-+             .to_string_lossy();
+--if CROSS_COMPILING
+- CARGO_TARGET_ARGS=3D--target=3D$(RUST_TARGET)
+--endif
+-=20
+- CARGO_VERBOSE =3D $(cargo_verbose_$(V))
+- cargo_verbose_ =3D $(cargo_verbose_$(AM_DEFAULT_VERBOSITY))
+-diff --git a/configure.ac b/configure.ac
+-index 2c4995e..1370a36 100644
+---- a/configure.ac
+-+++ b/configure.ac
+-@@ -291,9 +291,7 @@ AC_ARG_VAR(RUST_TARGET, [Set rust target (default=3D$h=
+ost)])
+- : ${RUST_TARGET:=3D$host}
+-=20
+- AM_CONDITIONAL([CROSS_COMPILING], [test "x$cross_compiling" =3D xyes])
+--AS_IF([test "x$cross_compiling" =3D "xyes"], [
+--	RUST_TARGET_SUBDIR=3D"$RUST_TARGET/$RUST_TARGET_SUBDIR"
+--])
+-+RUST_TARGET_SUBDIR=3D"$RUST_TARGET/$RUST_TARGET_SUBDIR"
+- AC_SUBST([RUST_TARGET_SUBDIR])
+-=20
+- dnl =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+diff --git a/recipes-gnome/librsvg/librsvg/0001-gdk-pixbuf-loader-meson.bui=
+ld-do-not-look-for-gdk-pi.patch b/recipes-gnome/librsvg/librsvg/0001-gdk-pi=
+xbuf-loader-meson.build-do-not-look-for-gdk-pi.patch
+new file mode 100644
+index 0000000..9b8468f
+--- /dev/null
++++ b/recipes-gnome/librsvg/librsvg/0001-gdk-pixbuf-loader-meson.build-do-n=
+ot-look-for-gdk-pi.patch
+@@ -0,0 +1,28 @@
++From 57f98688e46b128f7767479ef373e8cb5e3304b8 Mon Sep 17 00:00:00 2001
++From: Alexander Kanavin <alex@linutronix.de>
++Date: Wed, 27 Nov 2024 16:34:06 +0100
++Subject: [PATCH] gdk-pixbuf-loader/meson.build: do not look for
++ gdk-pixbuf-query-loaders
 +
-++        // Function to find the position of the first occurrence of the t=
-arget substring
-++        fn find_target_position(s: &str, targets: &[&str]) -> Option<usiz=
-e> {
-++            let mut pos =3D None;
-++            for target in targets {
-++                if let Some(index) =3D s.rfind(target) {
-++                    //If a target is found and pos is None, set it
-++                        if pos.is_none() || index < pos.unwrap() {
-++                            pos =3D Some(index);
-++                        }
-++                }
-++            }
-++            pos
-++        }
-++
-++        let filtered_dirname =3D if let Some(pos) =3D find_target_positio=
-n(&dirname, &target_substring) {
-++            dirname[pos..].to_string()  //Keep everything from the target=
- substring onwards
-++        }  else {
-++            dirname.to_string()  //If target substring is not found, keep=
- the original dirname
-++        };
-+         // Hash the dirname. This should prevent conflicts if we have mul=
-tiple
-+         // object files with the same filename in different subfolders.
-+         let mut hasher =3D hash_map::DefaultHasher::new();
-+-        hasher.write(dirname.to_string().as_bytes());
-++        hasher.write(filtered_dirname.as_bytes());
-+         let obj =3D dst
-+             .join(format!("{:016x}-{}", hasher.finish(), basename))
-+             .with_extension("o");
-+diff --git a/vendor/cc-1.0.99/.cargo-checksum.json b/vendor/cc-1.0.99/.car=
-go-checksum.json
-+index b070eeb322..ba768ff86f 100644
-+--- a/vendor/cc-1.0.99/.cargo-checksum.json
-++++ b/vendor/cc-1.0.99/.cargo-checksum.json
-+@@ -1 +1 @@
-+-{"files":{"Cargo.toml":"3c555dbe1a698f12b66c8a5748ed52ff26ff7b8ebb12237c1=
-a72a1cbe4b9392e","LICENSE-APACHE":"a60eea817514531668d7e00765731449fe14d059=
-d3249e0bc93b36de45f759f2","LICENSE-MIT":"378f5840b258e2779c39418f3f2d7b2ba9=
-6f1c7917dd6be0713f88305dbda397","README.md":"f1ddbede208a5b78333a25dac0a759=
-8e678e9b601a7d99a791069bddaf180dfe","src/command_helpers.rs":"15afbc35930a5=
-a53f00d74a8910cff35caeb5511c26642cffe5630377aced901","src/detect_compiler_f=
-amily.c":"72903b91d7a28f49b39e7d730f4c9c4bb39fb901948fa1279cd08abf392f5a29"=
-,"src/lib.rs":"92440d3adb5cb6ea05596d9ca860a205d3937dbf0fc959e524bac5f2b748=
-c1af","src/parallel/async_executor.rs":"4ce24435fff6b6555b43fee042c16bd65d4=
-150d0346567f246b9190d85b45983","src/parallel/job_token.rs":"352a0295c965c68=
-4904329d334f3b9889db3a9c3f201701f8db44e4d00e00515","src/parallel/mod.rs":"b=
-d9c1334d17d138c281961c690b8d8118a2d6295a7d6cd7296826255436fa063","src/paral=
-lel/stderr.rs":"a2d18ba3f2e04deb9047ece9ab7ca5452d9a76b515afbe20a76307e3159=
-7f34b","src/target_info.rs":"342be00f6215e161d8163e272a2945bb9f52f171648e15=
-e11d46800a73186955","src/tempfile.rs":"47a58e904ac07da6682004b5b615dc83250b=
-253a8d3e8ba1b9bcaf6cdf4fd142","src/tool.rs":"e13c439a96d8311ba8d37b9d5522cd=
-6997d94261cbb95517c82df70525acaa7f","src/windows/com.rs":"a2800ddb81215fff2=
-bf618336f5c4ff8e8bdb746dd18b795873c7304b3f2a5e3","src/windows/find_tools.rs=
-":"4c350cddbce1557682b7f40cd917cc4f131ad89ff2e34c23d629014ed8d7203e","src/w=
-indows/mod.rs":"42f1ad7fee35a17686b003e6aa520d3d1940d47d2f531d626e9ae0c48ba=
-49005","src/windows/registry.rs":"c521b72c825e8095843e73482ffa810ed066ad8bb=
-9f86e6db0c5c143c171aba1","src/windows/setup_config.rs":"754439cbab492afd44c=
-9755abcbec1a41c9b2c358131cee2df13c0e996dbbec8","src/windows/vs_instances.rs=
-":"76e3cee74b5fd38ddaf533bba11fe401667c50dda5f9d064099840893eaa7587","src/w=
-indows/winapi.rs":"250d51c1826d1a2329e9889dd9f058cfce253dbf2a678b076147c6cd=
-b5db046c","src/windows/windows_sys.rs":"5a440eb39d8a0c176b66177e87531867977=
-93bc5d7896292c408fb44c12dfed3"},"package":"96c51067fd44124faa7f870b4b1c9693=
-79ad32b2ba805aa959430ceaa384f695"}
-+\ No newline at end of file
-++{"files":{"Cargo.toml":"3c555dbe1a698f12b66c8a5748ed52ff26ff7b8ebb12237c1=
-a72a1cbe4b9392e","LICENSE-APACHE":"a60eea817514531668d7e00765731449fe14d059=
-d3249e0bc93b36de45f759f2","LICENSE-MIT":"378f5840b258e2779c39418f3f2d7b2ba9=
-6f1c7917dd6be0713f88305dbda397","README.md":"f1ddbede208a5b78333a25dac0a759=
-8e678e9b601a7d99a791069bddaf180dfe","src/command_helpers.rs":"4c4a9ea55a109=
-dbeada9e23d4ec963c257a56451b5fd16c7e4e8b97374f1a2ff","src/detect_compiler_f=
-amily.c":"72903b91d7a28f49b39e7d730f4c9c4bb39fb901948fa1279cd08abf392f5a29"=
-,"src/lib.rs":"92440d3adb5cb6ea05596d9ca860a205d3937dbf0fc959e524bac5f2b748=
-c1af","src/parallel/async_executor.rs":"4ce24435fff6b6555b43fee042c16bd65d4=
-150d0346567f246b9190d85b45983","src/parallel/job_token.rs":"352a0295c965c68=
-4904329d334f3b9889db3a9c3f201701f8db44e4d00e00515","src/parallel/mod.rs":"b=
-d9c1334d17d138c281961c690b8d8118a2d6295a7d6cd7296826255436fa063","src/paral=
-lel/stderr.rs":"a2d18ba3f2e04deb9047ece9ab7ca5452d9a76b515afbe20a76307e3159=
-7f34b","src/target_info.rs":"342be00f6215e161d8163e272a2945bb9f52f171648e15=
-e11d46800a73186955","src/tempfile.rs":"47a58e904ac07da6682004b5b615dc83250b=
-253a8d3e8ba1b9bcaf6cdf4fd142","src/tool.rs":"e13c439a96d8311ba8d37b9d5522cd=
-6997d94261cbb95517c82df70525acaa7f","src/windows/com.rs":"a2800ddb81215fff2=
-bf618336f5c4ff8e8bdb746dd18b795873c7304b3f2a5e3","src/windows/find_tools.rs=
-":"4c350cddbce1557682b7f40cd917cc4f131ad89ff2e34c23d629014ed8d7203e","src/w=
-indows/mod.rs":"42f1ad7fee35a17686b003e6aa520d3d1940d47d2f531d626e9ae0c48ba=
-49005","src/windows/registry.rs":"c521b72c825e8095843e73482ffa810ed066ad8bb=
-9f86e6db0c5c143c171aba1","src/windows/setup_config.rs":"754439cbab492afd44c=
-9755abcbec1a41c9b2c358131cee2df13c0e996dbbec8","src/windows/vs_instances.rs=
-":"76e3cee74b5fd38ddaf533bba11fe401667c50dda5f9d064099840893eaa7587","src/w=
-indows/winapi.rs":"250d51c1826d1a2329e9889dd9f058cfce253dbf2a678b076147c6cd=
-b5db046c","src/windows/windows_sys.rs":"5a440eb39d8a0c176b66177e87531867977=
-93bc5d7896292c408fb44c12dfed3"},"package":"96c51067fd44124faa7f870b4b1c9693=
-79ad32b2ba805aa959430ceaa384f695"}
- --- a/vendor/cc-1.0.97/.cargo-checksum.json
- +++ b/vendor/cc-1.0.97/.cargo-checksum.json
- @@ -1 +1 @@
-diff --git a/recipes-devtools/rust/files/zlib-off64_t.patch b/recipes-devto=
-ols/rust/files/zlib-off64_t.patch
-index 030c6c2..6fbca66 100644
---- a/recipes-devtools/rust/files/zlib-off64_t.patch
-+++ b/recipes-devtools/rust/files/zlib-off64_t.patch
-@@ -5,10 +5,9 @@ it needs 64 bit off_t
++Upstream-Status: Submitted [https://gitlab.gnome.org/GNOME/librsvg/-/merge=
+_requests/1061]
++Signed-off-by: Alexander Kanavin <alex@linutronix.de>
++---
++ gdk-pixbuf-loader/meson.build | 2 --
++ 1 file changed, 2 deletions(-)
++
++diff --git a/gdk-pixbuf-loader/meson.build b/gdk-pixbuf-loader/meson.build
++index 5081844..4ae58c6 100644
++--- a/gdk-pixbuf-loader/meson.build
+++++ b/gdk-pixbuf-loader/meson.build
++@@ -36,8 +36,6 @@ pixbuf_thumbnailer =3D configure_file(
++   install_dir: get_option('datadir') / 'thumbnailers'=0D
++ )=0D
++ =0D
++-gdk_pixbuf_query_loaders =3D find_program(pixbuf_dep.get_variable(pkgconf=
+ig: 'gdk_pixbuf_query_loaders', default_value: 'gdk-pixbuf-query-loaders'))=
+=0D
++-=0D
++ pixbufloader_svg_install_args =3D [=0D
++   '--gdk-pixbuf-moduledir',=0D
++   pixbuf_dep.get_variable(pkgconfig: 'gdk_pixbuf_moduledir', pkgconfig_de=
+fine: ['prefix', prefix]),=0D
++--=20
++2.39.5
++
+diff --git a/recipes-gnome/librsvg/librsvg/0001-meson.build-do-not-force-di=
+sable-introspection-and-v.patch b/recipes-gnome/librsvg/librsvg/0001-meson.=
+build-do-not-force-disable-introspection-and-v.patch
+new file mode 100644
+index 0000000..f33e90a
+--- /dev/null
++++ b/recipes-gnome/librsvg/librsvg/0001-meson.build-do-not-force-disable-i=
+ntrospection-and-v.patch
+@@ -0,0 +1,34 @@
++From 57d02c05184ae565ef8182c7151c1faa97d45b2b Mon Sep 17 00:00:00 2001
++From: Alexander Kanavin <alex@linutronix.de>
++Date: Wed, 27 Nov 2024 16:28:49 +0100
++Subject: [PATCH] meson.build: do not force-disable introspection and vala =
+in
++ cross builds
++
++It is entirely possible to make them work through qemu wrappers
++(and g-i has upstream support for it).
++
++Upstream-Status: Submitted [https://gitlab.gnome.org/GNOME/librsvg/-/merge=
+_requests/1062]
++Signed-off-by: Alexander Kanavin <alex@linutronix.de>
++---
++ meson.build | 4 ++--
++ 1 file changed, 2 insertions(+), 2 deletions(-)
++
++diff --git a/meson.build b/meson.build
++index 12cb44f..2dae10c 100644
++--- a/meson.build
+++++ b/meson.build
++@@ -160,9 +160,9 @@ endif
++ if host_system =3D=3D 'windows'
++   build_gir =3D get_option('introspection').require(get_option('default_l=
+ibrary') !=3D 'static' and not meson.is_cross_build() and gi_dep.found())
++ else
++-  build_gir =3D get_option('introspection').require(not meson.is_cross_bu=
+ild() and gi_dep.found())
+++  build_gir =3D get_option('introspection').require(gi_dep.found())
++ endif
++-build_vala =3D get_option('vala').require(not meson.is_cross_build() and =
+vapigen_dep.found())
+++build_vala =3D get_option('vala').require(vapigen_dep.found())
++=20
++ build_pixbuf_loader =3D get_option('pixbuf-loader').require(pixbuf_dep.fo=
+und())
++=20
++--=20
++2.39.5
++
+diff --git a/recipes-gnome/librsvg/librsvg/disable-rsvg-loader-test.patch b=
+/recipes-gnome/librsvg/librsvg/disable-rsvg-loader-test.patch
+deleted file mode 100644
+index e56772a..0000000
+--- a/recipes-gnome/librsvg/librsvg/disable-rsvg-loader-test.patch
++++ /dev/null
+@@ -1,40 +0,0 @@
+-From df94cfa4a637c229fef32c349b5c2dfee2dca3fc Mon Sep 17 00:00:00 2001
+-From: Ross Burton <ross.burton@arm.com>
+-Date: Thu, 27 Jun 2024 17:09:11 +0100
+-Subject: [PATCH] Don't build rsvg-loader in cross builds
+-
+-This binary is a non-installed test binary that isn't any use in cross bui=
+lds, and
+-causes problems because it generates a gdk-pixbuf loader cache at build ti=
+me using
+-a mix of host and target libraries.
+-
+-As we don't install the binary, we can just not build it.
+-
+-Upstream-Status: Inappropriate [upstream has moved to Meson]
+-Signed-off-by: Ross Burton <ross.burton@arm.com>
+----
+- gdk-pixbuf-loader/Makefile.am | 2 ++
+- 1 file changed, 2 insertions(+)
+-
+-diff --git a/gdk-pixbuf-loader/Makefile.am b/gdk-pixbuf-loader/Makefile.am
+-index 44df9c6c..fb417d24 100644
+---- a/gdk-pixbuf-loader/Makefile.am
+-+++ b/gdk-pixbuf-loader/Makefile.am
+-@@ -30,6 +30,7 @@ if PLATFORM_WIN32
+- libpixbufloader_svg_la_LDFLAGS +=3D -no-undefined
+- endif
+-=20
+-+if !CROSS_COMPILING
+- noinst_PROGRAMS =3D rsvg-loader
+-=20
+- rsvg_loader_SOURCES =3D \
+-@@ -52,6 +53,7 @@ EXTRA_rsvg_loader_DEPENDENCIES =3D libpixbufloader-svg.l=
+a gdk-pixbuf-loaders
+-=20
+- gdk-pixbuf-loaders: Makefile
+- 	$(AM_V_GEN) ( $(GDK_PIXBUF_QUERYLOADERS) ./libpixbufloader-svg.la && GDK=
+_PIXBUF_MODULEDIR=3D$(gdk_pixbuf_moduledir) $(GDK_PIXBUF_QUERYLOADERS)) > g=
+dk-pixbuf.loaders 2>/dev/null
+-+endif
+-=20
+- if CROSS_COMPILING
+- RUN_QUERY_LOADER_TEST=3Dfalse
+---=20
+-2.34.1
+-
+diff --git a/recipes-gnome/librsvg/librsvg_2.58.2.bb b/recipes-gnome/librsv=
+g/librsvg_2.59.2.bb
+similarity index 67%
+rename from recipes-gnome/librsvg/librsvg_2.58.2.bb
+rename to recipes-gnome/librsvg/librsvg_2.59.2.bb
+index 19e2699..7718f2b 100644
+--- a/recipes-gnome/librsvg/librsvg_2.58.2.bb
++++ b/recipes-gnome/librsvg/librsvg_2.59.2.bb
+@@ -11,20 +11,21 @@ LIC_FILES_CHKSUM =3D "file://COPYING.LIB;md5=3D4fbd6538=
+0cdd255951079008b364516c \
+                    "
 =20
- Upstream-Status: Submitted [https://github.com/madler/zlib/pull/764]
- Signed-off-by: Khem Raj <raj.khem@gmail.com>
--Index: rustc-1.79.0-src/vendor/libz-sys-1.1.16/src/zlib/gzguts.h
--=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
----- rustc-1.79.0-src.orig/vendor/libz-sys-1.1.16/src/zlib/gzguts.h
--+++ rustc-1.79.0-src/vendor/libz-sys-1.1.16/src/zlib/gzguts.h
-+diff --git a/vendor/libz-sys-1.1.16/src/zlib/gzguts.h b/vendor/libz-sys-1.=
-1.16/src/zlib/gzguts.h
-+--- a/vendor/libz-sys-1.1.16/src/zlib/gzguts.h
-++++ b/vendor/libz-sys-1.1.16/src/zlib/gzguts.h
- @@ -3,13 +3,6 @@
-   * For conditions of distribution and use, see copyright notice in zlib.h
-   */
-@@ -23,10 +22,9 @@ Index: rustc-1.79.0-src/vendor/libz-sys-1.1.16/src/zlib/=
-gzguts.h
-=20=20
-  #ifdef HAVE_HIDDEN
-  #  define ZLIB_INTERNAL __attribute__((visibility ("hidden")))
--Index: rustc-1.79.0-src/vendor/libz-sys-1.1.16/.cargo-checksum.json
--=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
----- rustc-1.79.0-src.orig/vendor/libz-sys-1.1.16/.cargo-checksum.json
--+++ rustc-1.79.0-src/vendor/libz-sys-1.1.16/.cargo-checksum.json
-+diff --git a/vendor/libz-sys-1.1.16/.cargo-checksum.json b/vendor/libz-sys=
--1.1.16/.cargo-checksum.json
-+--- a/vendor/libz-sys-1.1.16/.cargo-checksum.json
-++++ b/vendor/libz-sys-1.1.16/.cargo-checksum.json
- @@ -1 +1 @@
- -{"files":{"Cargo.toml":"b4ed89b98aea5ea05fa475a9ba6f824dc6e759ea7a4c358e7=
-fcecc7423e44777","LICENSE-APACHE":"a60eea817514531668d7e00765731449fe14d059=
-d3249e0bc93b36de45f759f2","LICENSE-MIT":"34c467b6945a22696d060b8fdd2379d464=
-acb3408d4c599d3dc5fe4fa1b4c84f","README-zng.md":"438ab65416835d72c7dd168338=
-af3db6f1a3d8ccee455af4e1d75438a781eb71","README.md":"62fa314f90fdc5430c6446=
-ddb212b782ad69721cd5363983820261a41b53890e","build.rs":"b139f25e59a8cc78a9f=
-ff8bdc25b34f6ba926ddf410bac65bfb7f279f1a92d76","build_zng.rs":"059da8bf3ed5=
-f2bfa613874b8f6720643ae948a811fefaff8237e95e0771cbc3","src/lib.rs":"8f9f42e=
-8c80e134fa6f5724c677a341689e2e16cbe93a15495a1b4d8bfa90c49","src/smoke.c":"1=
-0607c81b73811bfcb9718767312bf97ba2ccf7048ea2f18a2085aa06ad7f91b","src/zlib-=
-ng/CMakeLists.txt":"6b7d83767c0fe0b98e2d5321a2c35339e04bf314f6bf650f4716a74=
-34a3e164c","src/zlib-ng/FAQ.zlib":"c524f4f86d336b3de71dd6977afddffa9c02fda5=
-c26db4dfefae44959e7614a2","src/zlib-ng/INDEX.md":"989545e90d8e9ac149034f762=
-ce78ed8976ebf9324326228dea37ca190154609","src/zlib-ng/LICENSE.md":"d3c80be0=
-55d94d798eaa786116e84fa0b010bc11420b5d2060d978ea77845436","src/zlib-ng/Make=
-file.in":"3c46b870035b795f4e9c365a1688392377dbfef90cbb814294d4d33d3ead1f4e"=
-,"src/zlib-ng/PORTING.md":"097591000d86f6265fea6cfcd22635984eb6c9f54e8690ca=
-2667cfb92a11919d","src/zlib-ng/README.md":"5e1032d7f44647ce88475872a4fff9bd=
-1671e3bedf8bdca43925dd8fde97c8b3","src/zlib-ng/adler32.c":"b96656d1fc0133c4=
-4caeb3509d545d0b68580e77157b8c6f0fd6dcf681726ea5","src/zlib-ng/adler32_fold=
-.c":"66b32963c96e43c84b53eff737d11186bf165e04a48e9c3328faa5c86ce8128c","src=
-/zlib-ng/adler32_fold.h":"c40114c2c742b6410e54b58ea02533fe6e9ae0ca62d3453e5=
-d2a1725d33e2be4","src/zlib-ng/adler32_p.h":"fa8b96371128c54ed9c2a0617500673=
-8d395d380672b4894c32fece37b8a96a0","src/zlib-ng/arch/arm/Makefile.in":"67e9=
-06298f31bf83feeb526c9d09a65c1d39517423ded8f50cfc369f05a1d629","src/zlib-ng/=
-arch/arm/acle_intrins.h":"313646b741417269d175b2620c7bd2cf1cb5bfc940c5bb3dd=
-600189fce27cd79","src/zlib-ng/arch/arm/adler32_neon.c":"bce2fe7d3a5f663ba28=
-94d3c9b13151c5cd4c16bcc1d31ac32a85713ecc20f8c","src/zlib-ng/arch/arm/arm_fe=
-atures.c":"dc2fa2e5593f0ff1f837138b99f26d1f805f82f69d2721cc2b2a386b5dac7b1a=
-","src/zlib-ng/arch/arm/arm_features.h":"0667e8baaba1edfa60ec6faa5ce35eb35f=
-5e91c85633e831f397a9af3c220b9e","src/zlib-ng/arch/arm/chunkset_neon.c":"042=
-d3e6f865b5b0bfec8b5196288cce2ec47e9ca2c8a5e075580dd302238e421","src/zlib-ng=
-/arch/arm/compare256_neon.c":"7eec4ca0415dec895a461a4d1fcd3068e0d68482d0482=
-57022511b3490372ca3","src/zlib-ng/arch/arm/crc32_acle.c":"3fa85db742ee584f3=
-787e3d131d92d6196e44f9df5f3034d804abc78cbf81d3f","src/zlib-ng/arch/arm/inse=
-rt_string_acle.c":"5ca256a6f796d8bff478671ae5b0d7cfe236b58abffd6a99bb2cac09=
-7fe7935b","src/zlib-ng/arch/arm/neon_intrins.h":"22262195cbd668a11953449c9e=
-1be3b9b3374469d21f3e73ab34c6ea0dcf275f","src/zlib-ng/arch/arm/slide_hash_ar=
-mv6.c":"9abacab94d74e7d8b1d863f20aa97fb5380059f08b91480a14377d3ed2d1f768","=
-src/zlib-ng/arch/arm/slide_hash_neon.c":"7c4927c0dc8b28c5fba1efb30273653e71=
-172ce051a0341ce2f1d2c0bbfa418c","src/zlib-ng/arch/generic/Makefile.in":"932=
-55a212569673a3ce9e7fbaba789b3cd82375e7f6459c22c84bcb7a12097c7","src/zlib-ng=
-/arch/generic/chunk_permute_table.h":"3f1e09e697a9b2dff4395aca356e61765c445=
-11a9dc653abb6998671afd20ae6","src/zlib-ng/arch/power/Makefile.in":"015cb563=
-5da6dbcd54c6bcef5d8958c6ea5369b55797e342a2632b0bf03bc4ab","src/zlib-ng/arch=
-/power/adler32_power8.c":"e5a5bfdd9963e8f906e36978f1a655139908740559da2b382=
-ddd5f3e2ffe6f56","src/zlib-ng/arch/power/adler32_vmx.c":"841a7e3792d1f68a09=
-25969d6f9737cfb2b650b3a82721a88f1e5648f7b0a58a","src/zlib-ng/arch/power/chu=
-nkset_power8.c":"569a7dc686a0d80686e516ec8fb7c2331225f706b37ccbf0874e6d822e=
-82f806","src/zlib-ng/arch/power/compare256_power9.c":"cfdc33f5e605fd4135142=
-3fda0eaf7692f9e9f0083d6c4ac870c6e467d534f48","src/zlib-ng/arch/power/crc32_=
-constants.h":"d73e3b9025de9fade7fa3ba2bbf5f56a1499a84c53d8ca7f5e744a0714d85=
-99b","src/zlib-ng/arch/power/crc32_power8.c":"add20ee86ff5c28396ee2e7f77d82=
-5d7e425b89467331953690c40f40b5dba41","src/zlib-ng/arch/power/fallback_built=
-ins.h":"78a8da60bad8ba01278e495482108adabf9e96bdb214e869b61ab1f63f518c9b","=
-src/zlib-ng/arch/power/power_features.c":"4dc4c14dfa2d3333c73fad7b1f7a79d3f=
-ff68c1d1fd643012faf82bd4114553e","src/zlib-ng/arch/power/power_features.h":=
-"c9c47cfcfff347e79f83f56a0677565d40299e03ffbeb918c4ae69518d290ada","src/zli=
-b-ng/arch/power/slide_hash_power8.c":"58d93cee1a2cf14f13a8e9e31ba5149fe2b1e=
-069846f52ac1f11c42cfcbd49a4","src/zlib-ng/arch/power/slide_hash_vmx.c":"1b6=
-297a9616456ba534bc1d93afcb99e36dac357be68aed106bb71dfea621a86","src/zlib-ng=
-/arch/power/slide_ppc_tpl.h":"c8900c594591e1aba3188f97c374e5561fe1e96f653c6=
-68352b25647e449f4c0","src/zlib-ng/arch/riscv/README.md":"7a3e00ab7fe5a66cf5=
-cfe5671e9e8367e6c655a3b72d12de18d840538c506ef0","src/zlib-ng/arch/riscv/adl=
-er32_rvv.c":"e2472cf46b376a0ed8b7545a3192d195659353e093772216f0d28ae7d75afb=
-1a","src/zlib-ng/arch/riscv/chunkset_rvv.c":"d5b0fd27dcc8d4b3773caae1629001=
-4fdbc0011cf62e7f63a4e5d897149b165e","src/zlib-ng/arch/riscv/compare256_rvv.=
-c":"4ed8d6b39ef2218c1d474ab586fc19d7e0821445241e5ccd6a75992cb17b3bb7","src/=
-zlib-ng/arch/riscv/riscv_features.c":"a117eada0164dd92c06e9804a70fd2f434b8d=
-14a6d443f0b3513330fe08c18a3","src/zlib-ng/arch/riscv/riscv_features.h":"269=
-53a09f72edb0e66978044d75e054e40d36d2b62244359b5e5e4ab936d2c9c","src/zlib-ng=
-/arch/riscv/slide_hash_rvv.c":"87c1a2acf51af38f2d337b482fcb72d080b0897e48ab=
-c9753b51d40facd9a1a1","src/zlib-ng/arch/s390/Makefile.in":"8cb582f8e6ccd914=
-6f64214a513e546122976c60e782cede19b282bf3b519235","src/zlib-ng/arch/s390/RE=
-ADME.md":"0dae0e510935c5f91e00dfe0d57a9b7a82891ff59edbd14b64b54c950327d708"=
-,"src/zlib-ng/arch/s390/crc32-vx.c":"c5250cb1df20eadcf0c56ba68e0dd7cf43d936=
-f92f245aad2bfb519988f902a1","src/zlib-ng/arch/s390/dfltcc_common.c":"9a701d=
-5f973c07e054797ed030851171abaf20a40a4ab2359914c737b0ab9671","src/zlib-ng/ar=
-ch/s390/dfltcc_common.h":"1d042b79da6bbcf4e1f5b32ca017bc49fa89129c7a925ea17=
-b931de34012ef18","src/zlib-ng/arch/s390/dfltcc_deflate.c":"146569d921d68fd9=
-af7b67a74bcf0aa41108a4072564629db7ad6c2dc8a429ef","src/zlib-ng/arch/s390/df=
-ltcc_deflate.h":"309d7c9bc4e5de3196ebe61a2e5c17e07bfb66bb8a170562e90e9105e6=
-8ab302","src/zlib-ng/arch/s390/dfltcc_detail.h":"6ba837c1522d85df599d5baeb5=
-e0076d67355979a9768da9b6a095d65e645d41","src/zlib-ng/arch/s390/dfltcc_infla=
-te.c":"b1eb56def7acf39aabb7abea8249a48c4af0dfea7a63ac380e5437d432ff9d9e","s=
-rc/zlib-ng/arch/s390/dfltcc_inflate.h":"06dc026f991022a7be73865a554785b31d1=
-67261c4006ca6438de7ca31893ceb","src/zlib-ng/arch/s390/s390_features.c":"fd9=
-9ba0abc73a37168a5c369a0714e3f35816a792438bcb1e8e60f5dd2983293","src/zlib-ng=
-/arch/s390/s390_features.h":"f65396333635e937634dff42a43a8bfa272f53ac88e763=
-d52d4c56241b1eaab9","src/zlib-ng/arch/s390/self-hosted-builder/actions-runn=
-er.Dockerfile":"5d4c45e9929fd9736640aea294f1d13f346fd52a4f4771073be32abe96a=
-da971","src/zlib-ng/arch/s390/self-hosted-builder/actions-runner.service":"=
-62a19075adeddb3bee57bbac81c7acadacbf9c288e2b497e36ff7f2b3daa7558","src/zlib=
--ng/arch/s390/self-hosted-builder/fs/usr/bin/actions-runner":"f647e18728ea1=
-5fe927ac9f8cba83a5b343654a0e91b5ebe653bae7af7375110","src/zlib-ng/arch/s390=
-/self-hosted-builder/fs/usr/bin/entrypoint":"add4ebdc4f06ed15bb1de12a8c9ceb=
-370a60baebb0932a1026a75433940ad3df","src/zlib-ng/arch/s390/self-hosted-buil=
-der/qemu-user-static.service":"54551049f6181da88700a2a944a72b0af3b8abde876f=
-a28e1348deb5eb96c91b","src/zlib-ng/arch/x86/Makefile.in":"ad6e71fe6e42005b6=
-5db8454b0ea0a6c9ee91664698c08729c01e6b00d0df933","src/zlib-ng/arch/x86/adle=
-r32_avx2.c":"cc0598333eff9110b5e8c0dc38ba543bfdd3ca5a66825f440909ba7a8923fd=
-d3","src/zlib-ng/arch/x86/adler32_avx2_p.h":"45e6264edffc737081f55a5b5e85b2=
-8d9db0b27b63183ffbb492f8c11bc670a2","src/zlib-ng/arch/x86/adler32_avx512.c"=
-:"7a949d8ad2d15709d33872ee97e70a2e0cc2c6c375d7064cbc02b87e70905d1e","src/zl=
-ib-ng/arch/x86/adler32_avx512_p.h":"1b4beda11693ac03e4b20e054a765df427f845a=
-279bce547b8208d20f5a302bb","src/zlib-ng/arch/x86/adler32_avx512_vnni.c":"9d=
-11d2049df211f11a48a91e340e20686763c1eac20463dcd27dd7bfaa159f76","src/zlib-n=
-g/arch/x86/adler32_sse42.c":"1d2dc53b05ac75667c6d1c625c8c391e4851b28cff9e97=
-ebfdb774767581fff2","src/zlib-ng/arch/x86/adler32_ssse3.c":"7666f99b2e53026=
-5cb9848c1047ccc150da0add19b41aa2d7756c617377622c6","src/zlib-ng/arch/x86/ad=
-ler32_ssse3_p.h":"5aab2f802ba6bdebc63b411018e5116fe26d38e90adf353646b65af4e=
-be7fa40","src/zlib-ng/arch/x86/chunkset_avx2.c":"ac300f37fbc99ab2d3bf47a640=
-bdf2d87ad8358ef081eea21c541966830281b3","src/zlib-ng/arch/x86/chunkset_sse2=
-.c":"a400a128a84185c945f9ac9303e17c944f2008085d7a4402d279bd59893dc89a","src=
-/zlib-ng/arch/x86/chunkset_ssse3.c":"1f69ef9ae20cca1e4fc6924462255b89696853=
-87c10694ef1dda28b3098d6f6d","src/zlib-ng/arch/x86/compare256_avx2.c":"2516d=
-00faa6939e61dbb0978a9c4c81f9e3a42fd053b2a2241673da7cf4fc781","src/zlib-ng/a=
-rch/x86/compare256_sse2.c":"3b983708034f33b5da49f6f5041351a2e66358c76645c55=
-2f6e4dc37fb890a80","src/zlib-ng/arch/x86/crc32_fold_pclmulqdq_tpl.h":"1b3b7=
-9dabff0bf7ecc3b07356c5aeb6ae1fece0fd70ac7e235aacce3da77ea19","src/zlib-ng/a=
-rch/x86/crc32_fold_vpclmulqdq_tpl.h":"7eddba31e3d1b1808fc6df9f96ada03c59952=
-961af895d8538f5a8292392b5cc","src/zlib-ng/arch/x86/crc32_pclmulqdq.c":"f247=
-408c353bbd0fcafff23fb97aeb4d9a72e0a416effea566183b9b5dbedf7c","src/zlib-ng/=
-arch/x86/crc32_pclmulqdq_tpl.h":"5fedffe4b853cabfef09cfcebb501cd53a97c212e4=
-70bdfc65c28dc998840e05","src/zlib-ng/arch/x86/crc32_vpclmulqdq.c":"870d06ca=
-9fa7b48db4b720d2fd6262094200cf6180fa76a601d17c722bf0e406","src/zlib-ng/arch=
-/x86/insert_string_sse42.c":"28a6d418a9563d464414c3880d6053c656aab40c6ebe21=
-947cf17687d82e547a","src/zlib-ng/arch/x86/slide_hash_avx2.c":"9740a36bb4dd9=
-0f40394344026be9a13f3acb6e85e6b7681c30fd7f7cbf8e28e","src/zlib-ng/arch/x86/=
-slide_hash_sse2.c":"fa009305a1c82708638dff25e037067656350303b25f5774489417e=
-096c30ecb","src/zlib-ng/arch/x86/x86_features.c":"b755befa09a56ed27d70f2be9=
-3b0a72a355fe8b490827b55fce60ab51693c70d","src/zlib-ng/arch/x86/x86_features=
-.h":"6429fa7345a9892633c884f7fc26f9558d86c77df9e8589ba9623a27e1d9fd57","src=
-/zlib-ng/arch/x86/x86_intrins.h":"707b836360628cb34a0fb7fa675b5e8674d146f55=
-b1f60fd739b85aa5dc935cf","src/zlib-ng/chunkset.c":"531f58c77c184b225304888d=
-df1930a76beefbe4a7974edf0efeee7b6662520e","src/zlib-ng/chunkset_tpl.h":"991=
-9e10e9c2244316e13de41b66dc333d9b0413af6265fa860768eefa39ce033","src/zlib-ng=
-/cmake/detect-arch.c":"1af38707fadc192c8e4a28715c896148a0909be821fb443919e1=
-91ff2374ffdb","src/zlib-ng/cmake/detect-arch.cmake":"85a2eed469fc7765e51c38=
-2f475868a644036f057f5b749d3ef59eec2b4b2748","src/zlib-ng/cmake/detect-cover=
-age.cmake":"4664d51152d51282ae50621f4d510ab72cf8978b266c614b7c5361750db6d1a=
-9","src/zlib-ng/cmake/detect-install-dirs.cmake":"4c8e72cee23ce9c6db02566a3=
-1fc7a78f0beeac6f09c61c2d90a1cff3c083db1","src/zlib-ng/cmake/detect-intrinsi=
-cs.cmake":"cfad619b863adf57132434f7b9c36c4f1a0466e5fdb11ac673e703ed5e471cd0=
-","src/zlib-ng/cmake/detect-sanitizer.cmake":"a40650743dfd0b56c2afbfadb53e5=
-d1470ef48852f2fcdf51084b6485534f87a","src/zlib-ng/cmake/fallback-macros.cma=
-ke":"a8c8f70e5483177280cbebf99f929a7cf5ffe2b79fedb79eed570ecafc78effc","src=
-/zlib-ng/cmake/toolchain-aarch64.cmake":"46be0bf580a49a528c72005484655afad1=
-de3705b39a66a7b0c213b0fa81cee6","src/zlib-ng/cmake/toolchain-arm.cmake":"05=
-e38076fd6ffb9785ff9844ccecd26436c9dc4c25b7777b62e5f52e788c3882","src/zlib-n=
-g/cmake/toolchain-armhf.cmake":"1a2029163a57415eec9a5dd5f45d3254d349e97b1be=
-b5d16876b741717673341","src/zlib-ng/cmake/toolchain-llvm-mingw-aarch64.cmak=
-e":"4deffb541ecd21ade019daa2e96e832ead8c2c62b633bedb8688d0e7c7012d33","src/=
-zlib-ng/cmake/toolchain-llvm-mingw-armv7.cmake":"3e95adbade93ec162478de3339=
-427ed88b12c922f4975c2918977859325f5459","src/zlib-ng/cmake/toolchain-llvm-m=
-ingw-i686.cmake":"1064a1ff2bab21489c184c1cc2b07181ebbbcc32e45c13cf8ed6b9ec6=
-0560c2e","src/zlib-ng/cmake/toolchain-llvm-mingw-x86_64.cmake":"577d333ad70=
-cf27ededc75554428368e84c334cc7b716e18113620f5e7edf305","src/zlib-ng/cmake/t=
-oolchain-mingw-i686.cmake":"df9000354b820d3713d1469edc9f94cd095389b0cca8396=
-5730b8e64857fdf3f","src/zlib-ng/cmake/toolchain-mingw-x86_64.cmake":"ee316e=
-6e3202919da5d497f9e246466fd715fcf079cb5b4afc4774089d1fefad","src/zlib-ng/cm=
-ake/toolchain-mips.cmake":"0d0d00b809a30021bb4b9e3ace7371200bb4bfa6509813c8=
-29ca0cb569c7af68","src/zlib-ng/cmake/toolchain-mips64.cmake":"f19574aa068ca=
-4374b657ce7bd0517b9297c622144814a095e26db05f0a1cd20","src/zlib-ng/cmake/too=
-lchain-powerpc.cmake":"9bd6fc58ce5b70603657f2c195c4a5cf52fae96ad63ac7879788=
-31c5858f762c","src/zlib-ng/cmake/toolchain-powerpc64-clang.cmake":"aab0b9e0=
-f19a281dc99f4dfa5675976c40b5fb7f8139dd2eb0901fdf3cedc952","src/zlib-ng/cmak=
-e/toolchain-powerpc64-power9.cmake":"57c789c468e733971c2654faf34f7dfc9dd1e0=
-e5bcabbd609dcd01dcbd25c487","src/zlib-ng/cmake/toolchain-powerpc64.cmake":"=
-917fc5eef84921d8b38f43c2b4f60870965b4eecc8f018c7b3499e1142c715af","src/zlib=
--ng/cmake/toolchain-powerpc64le-clang.cmake":"47ac4a05b61210a83c7845a5522b9=
-1740bc8a7bb897312cc37131f85bae9e1b5","src/zlib-ng/cmake/toolchain-powerpc64=
-le-power9.cmake":"b295b61ea248d8ef98d9276fad3db143a6fb80ab738c54bf88cb594d8=
-2c70a8d","src/zlib-ng/cmake/toolchain-powerpc64le.cmake":"5b2edd36d62de513d=
-b2d32bfbf779979d81ac527b981cc3379a4e933fc5a94d1","src/zlib-ng/cmake/toolcha=
-in-riscv.cmake":"d7b4ac4be3651aec2e55788d815141482d4fe92713713fdaba9215dbbb=
-c9b88a","src/zlib-ng/cmake/toolchain-s390x.cmake":"cf52cecea7bd2a9d1ff5fd8e=
-dcb03c531e3b404bbcd15a15dec2e0e19936f2ac","src/zlib-ng/cmake/toolchain-spar=
-c64.cmake":"e543062485d06a7e0fec8135887c5e73363517fa4babc23ef7b780916d75afd=
-a","src/zlib-ng/compare256.c":"4890f97239f63dfbbc986ddd05039798752ec0ad530f=
-f7d25978deb44f774ad5","src/zlib-ng/compare256_rle.h":"30fca191b0474e1549d3c=
-e292bb11ee90dc3dc9fc685932cec3971c1d0e8f652","src/zlib-ng/compress.c":"f7c6=
-9a4d2f3b87ff0094115977dde1cd17703cc9856ba19489dd94e0ed16b646","src/zlib-ng/=
-configure":"5778b60178bd2cf770fc01c5ce2562e50c1859a0cc67f8b522deb38ae4dbab7=
-7","src/zlib-ng/cpu_features.c":"aec359d85d64c2ff88132a123406726bd966e0d56d=
-0dc8ce1d5c3f25e1801440","src/zlib-ng/cpu_features.h":"21c43d2a8375e73abea63=
-082e08d9279eaf457970d34f877830bb31575498a8d","src/zlib-ng/crc32_braid.c":"8=
-a33cffb026b82a027b45e041935836b36b2d075796e5498e33ce64ec0cf93e8","src/zlib-=
-ng/crc32_braid_comb.c":"217741d3c1c0018bb12ab22c987804634605f5b7ad6bd243e25=
-eb0499c80af5d","src/zlib-ng/crc32_braid_comb_p.h":"6c8035e05d30a6241be55467=
-fc59e4d7deda6b618b955a11339ffee08a39c75a","src/zlib-ng/crc32_braid_p.h":"95=
-1cbd948664498dd8a56393bc88debdad8b21dcc8e1f16d883c07170e4adb4e","src/zlib-n=
-g/crc32_braid_tbl.h":"e22af112e3c1c8bb4065d39fe678eba71dd08893eb06f9414b02f=
-4cf5a6f46de","src/zlib-ng/crc32_fold.c":"f6363abbd1e167bc7a6fa8f92e5211f4fa=
-3e70d30fa5e10fa6f416f5db372678","src/zlib-ng/crc32_fold.h":"42412c502905757=
-9148a2238b0bc882f294f661d2af102bd9213531894302f29","src/zlib-ng/deflate.c":=
-"70c72cdbf88987660e787a99658641bce36fff4848f9bf395f3727df9543664b","src/zli=
-b-ng/deflate.h":"f45a609710150fb758ca89b36a7f5a029b525fe70f0e3296a4847d7387=
-2db2ca","src/zlib-ng/deflate_fast.c":"52648097b16070c156c27d38566720eca08d4=
-8e35cd89a80f196f0e77951112a","src/zlib-ng/deflate_huff.c":"923d316676c00f30=
-7a7d6a58d77f9364f06607afcc686b464b557ff5478f8b6d","src/zlib-ng/deflate_medi=
-um.c":"d3172c1ea0ae1bc2e3b7691b005bbae35e84b7588ef2f5805b9dd0c4ccecbd67","s=
-rc/zlib-ng/deflate_p.h":"2eaac98e9232959c730d84a408bed641be817dc3468aeb4270=
-62d06b02eb80b4","src/zlib-ng/deflate_quick.c":"3825eb4d22a150f9cdaba93db890=
-d95b8d9e9d0f3f10524fb27a9a1289aa4c0f","src/zlib-ng/deflate_rle.c":"5dcc0496=
-f74b5ce677ab5a58ea232d0ba653102d2f71cf35daa6069ef88b7af6","src/zlib-ng/defl=
-ate_slow.c":"5449816c381138eb07cd54ec7c0c77fb811f4f274c27bf15d26e008de6a9eb=
-5c","src/zlib-ng/deflate_stored.c":"89b81c09be2ffd84138940ac6c4e9688f956603=
-b45eec6d0d52d579cac3f15e5","src/zlib-ng/doc/algorithm.txt":"0d21a0a4c47e512=
-743389628d1385a831a5e5ff716491095a382b923287f4223","src/zlib-ng/doc/crc-doc=
-.1.0.pdf":"064f9252d6e2e15ea56c2bd18e160e5c9c84bcd137c11a7af497aaa511ace998=
-","src/zlib-ng/doc/crc-pclmulqdq.pdf":"3cf18f738dd0da7e5a28ff999d987bb61ac4=
-2cce354bbee1364d06fb3944f7fc","src/zlib-ng/doc/rfc1950.txt":"8f0475a5c98465=
-7bf26277f73df9456c9b97f175084f0c1748f1eb1f0b9b10b9","src/zlib-ng/doc/rfc195=
-1.txt":"5ebf4b5b7fe1c3a0c0ab9aa3ac8c0f3853a7dc484905e76e03b0b0f301350009","=
-src/zlib-ng/doc/rfc1952.txt":"f7c810fd9d719d002d605207a9b880600f71d039b9626=
-c5b4b03f2122438dd2d","src/zlib-ng/doc/txtvsbin.txt":"47c273bb22c9773248d380=
-549a330e5c262266b1292154b0d3014f731cc73f47","src/zlib-ng/fallback_builtins.=
-h":"c02e559d19f351f2f9371ee2042ca6a725d14f17862dff2414fd2ab3d7984875","src/=
-zlib-ng/functable.c":"d7ac98c7def281c707796a4317e2dd6754d654bc8d833ae67a77f=
-47a7c1dd5bd","src/zlib-ng/functable.h":"64fbabaa8459898d14cb88078676c42fce1=
-2a951b4b1d83f9085e104ad407a47","src/zlib-ng/gzguts.h":"d9a4e984bb6c2ebe5c85=
-8b37b1c6411af1edc21c3c15d63b6588016b71369b71","src/zlib-ng/gzlib.c":"91011b=
-dfaa99bb5e49aece64fdee995207b1ce5a96227990f16f9aea55026c8e","src/zlib-ng/gz=
-read.c.in":"3501e5124923207b2603d9695c3bad1815ca2dc8f18b6525bdd5dfea60313ac=
-d","src/zlib-ng/gzwrite.c":"9f474aeefaf0150d8871eb9202ebd43a28f18bdf39eaca4=
-f35cfb52227e74c63","src/zlib-ng/infback.c":"db99c5b105c34c7c2967bd97e16f976=
-217530c22d6545e61cbf657522e24de87","src/zlib-ng/inffast_tpl.h":"51622f34e88=
-08798a43412b4fde62ebd58ba012f5452bf2ad9a8001c98539166","src/zlib-ng/inffixe=
-d_tbl.h":"a94225335396245e9f0ccb2e9b4b334fe7ee0111ed8e32a26bcd52187f364314"=
-,"src/zlib-ng/inflate.c":"2c1bd0f4939c372e49a9ee0ec8a8cdee369d9c6c10124b4e1=
-1cd197f44ce3a36","src/zlib-ng/inflate.h":"1750ab33be4461f2e6b8e43bef5da11f3=
-db49d5d2a3eacd03d881d33c1df7def","src/zlib-ng/inflate_p.h":"4a31088faf818d2=
-615de31b099e8f55ee8463166477d6cb5d6763c913b6acef9","src/zlib-ng/inftrees.c"=
-:"206fa4c762203823151dcd3b1a5b389fb40efd4c88aeb2bc302aa1d5cfd6d6d5","src/zl=
-ib-ng/inftrees.h":"2ba1beb76d7922fcb37708809e31f62ee366827da80faf09a7e461b4=
-39afd291","src/zlib-ng/insert_string.c":"7a9455cbb3ca8fe6e7111471b9f4c0a32f=
-b49a6d0ec589b027dc2cb2b65c8dce","src/zlib-ng/insert_string_roll.c":"4d05f19=
-591a5c29d2da398e10e9d0b050d738cc8838d8dda4beb1cc7281ede07","src/zlib-ng/ins=
-ert_string_tpl.h":"972e69808ce5e74d0c54af4ee447b996b2d0563eb861b90856693037=
-ce8cca9f","src/zlib-ng/match_tpl.h":"1e20d0ef73a5826606240f4efd2a8e993d203f=
-376017397342b9899b1f919276","src/zlib-ng/slide_hash.c":"74adb34a4a35331db81=
-0dbb5d740af10cc1db7d24a89ea387aa2dec956a05b2b","src/zlib-ng/test/CMakeLists=
-.txt":"d9c0e5c87fef7b26826f8acc84fb34df0c90cf8804818f93fc12edf91d92d744","s=
-rc/zlib-ng/test/CVE-2002-0059/test.gz":"60bf96b8f433bd7e057ce3496aceaccd70e=
-c80f596a4aa8bcc7786056705ce66","src/zlib-ng/test/CVE-2004-0797/test.gz":"38=
-caae524705f676bde13a8df9fc8c7d2fe105ba6bdbab62a405b0276fd3aa2e","src/zlib-n=
-g/test/CVE-2005-1849/test.gz":"e4d5a60617df4b5dd44eda94751ce1eacdb325792bba=
-6e3cc4676719a3adf742","src/zlib-ng/test/CVE-2005-2096/test.gz":"8f702d4861a=
-a3ec98ac03a59ff26b430939630cb5cd4266d2658d3b836d576f9","src/zlib-ng/test/CV=
-E-2018-25032/default.txt":"d7f8278db331c47bd1208bf41e7903cbddee4f7b47c666c4=
-0afdd3c96237752e","src/zlib-ng/test/CVE-2018-25032/fixed.txt":"3b27a98edd2f=
-3f580033f9add11d3469d7808c969a1128ee00c18ac7a12cef57","src/zlib-ng/test/GH-=
-1600/packobj.gz":"372ba8e7aa3bf258e85c793abe1268965765a9f1bc6e2a0e77d3b723a=
-4a019a3","src/zlib-ng/test/GH-361/test.txt":"358497d0a7251ea42101dc77b02337=
-f46fd89af09643a8288e2a3082e5d24128","src/zlib-ng/test/GH-364/test.bin":"af5=
-570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc","src/zlib-ng=
-/test/GH-382/defneg3.dat":"b22bef6b7392401c9e7b079402c4a4074053d7a914d05040=
-0e37fd7af6fe26d5","src/zlib-ng/test/GH-751/test.txt":"b83d833803b7bc3124fb2=
-a0034081f0b999ad10c33a8dfa3bfd181dc078ae3ee","src/zlib-ng/test/GH-979/pigz-=
-2.6.tar.gz":"2eed7b0d7449d1d70903f2a62cd6005d262eb3a8c9e98687bc8cbb5809db2a=
-7d","src/zlib-ng/test/Makefile.in":"2eed5e763754e1f0f0ee1908e2f8080a2fa9e5f=
-2770b3fc8d74b9975b4cd2bb5","src/zlib-ng/test/README.md":"6a34f8fc7a0144958c=
-c9a0cded46fc38a7e15aba3dfa5bf56d8d86c3fb72d82c","src/zlib-ng/test/abi/ignor=
-e":"36e1928ffa34c21c1d2fd783633c9975e1ff282682ba2eca14b61b87650a2e13","src/=
-zlib-ng/test/abi/zlib-04f42ceca40f73e2978b50e93806c2a18c1281fc-aarch64-unkn=
-own-linux-gnu.abi":"e55ef93145cb4ceb2e22562ab5c18a2e26f8330862ed9468df7ada6=
-6a47dfe08","src/zlib-ng/test/abi/zlib-04f42ceca40f73e2978b50e93806c2a18c128=
-1fc-arm-unknown-linux-gnueabi.abi":"d45ec6ff3f41ce11713a39aaad08e4ed9d21a16=
-5754a1c5a5e5f123c4daf8241","src/zlib-ng/test/abi/zlib-04f42ceca40f73e2978b5=
-0e93806c2a18c1281fc-arm-unknown-linux-gnueabihf.abi":"2cef33db7275ba069bfa3=
-a929299dcb8f1529f3d0ad344c1e0ef483905e996c7","src/zlib-ng/test/abi/zlib-04f=
-42ceca40f73e2978b50e93806c2a18c1281fc-mips-unknown-linux-gnu.abi":"25cf82ce=
-8d5afde37456ce22943358e6d5f4dec31c1d1f732a1b07f34d7003f0","src/zlib-ng/test=
-/abi/zlib-04f42ceca40f73e2978b50e93806c2a18c1281fc-mips64-unknown-linux-gnu=
-abi64.abi":"59e435fa42a1aacd30d24d184d1ae505392123a8f16eaa0ca55e061ff2c427c=
-b","src/zlib-ng/test/abi/zlib-04f42ceca40f73e2978b50e93806c2a18c1281fc-powe=
-rpc-unknown-linux-gnu.abi":"5b4c5724c018d4e5820cfd9f94526ae41101fbcfa960ca9=
-8efcc06ed33a5b7ed","src/zlib-ng/test/abi/zlib-04f42ceca40f73e2978b50e93806c=
-2a18c1281fc-powerpc64-unknown-linux-gnu.abi":"e4d05062bbbace98c02f297585ac6=
-9a88e6b4f34122de6a854e5176d6d81ef9d","src/zlib-ng/test/abi/zlib-04f42ceca40=
-f73e2978b50e93806c2a18c1281fc-powerpc64le-unknown-linux-gnu.abi":"bc41acbb1=
-e207e8dfbf0f4bd628a0d32b94e288d324f924dc353898c3ae3bd37","src/zlib-ng/test/=
-abi/zlib-04f42ceca40f73e2978b50e93806c2a18c1281fc-x86_64-pc-linux-gnu-m32.a=
-bi":"5b79e86fc4f99e7d5c38b08e63ee347f29ed5312ac7dac16459b3d4562c04a50","src=
-/zlib-ng/test/abi/zlib-04f42ceca40f73e2978b50e93806c2a18c1281fc-x86_64-pc-l=
-inux-gnu.abi":"568cdd3893cd364fcdfdb1536f394dda4d237a03a0a7fe80938763b73739=
-092c","src/zlib-ng/test/abi/zlib-ng-e4614ebcb9b3e5b108dc983c155e4baf8088231=
-1-aarch64-unknown-linux-gnu.abi":"af41851f1b97ccb94e534cf3e54985fda0700c94d=
-8fa850ec021f4b7d907f480","src/zlib-ng/test/abi/zlib-ng-e4614ebcb9b3e5b108dc=
-983c155e4baf80882311-arm-unknown-linux-gnueabi.abi":"b2197b5aa7145c62c39775=
-e7e97ce8de4d00b44f4f2ecded47aec8e725cf4563","src/zlib-ng/test/abi/zlib-ng-e=
-4614ebcb9b3e5b108dc983c155e4baf80882311-arm-unknown-linux-gnueabihf.abi":"a=
-037a1494a5f724462b6fb34d595b7d1517cdd60af1d890d00fa557394c0d923","src/zlib-=
-ng/test/abi/zlib-ng-e4614ebcb9b3e5b108dc983c155e4baf80882311-mips-unknown-l=
-inux-gnu.abi":"8cf1dd6da2c8fadb53748687e7cae304cef025f490cd8a9d1970bdff04f1=
-3ddd","src/zlib-ng/test/abi/zlib-ng-e4614ebcb9b3e5b108dc983c155e4baf8088231=
-1-mips64-unknown-linux-gnuabi64.abi":"38549f6d4efc5a4e60e83dfee03f727b426ed=
-969b6e476acf11ab1d5f562eb1d","src/zlib-ng/test/abi/zlib-ng-e4614ebcb9b3e5b1=
-08dc983c155e4baf80882311-powerpc-unknown-linux-gnu.abi":"09e7feffa1d24cf68c=
-fd7d0c1a5a80a5d9d5df5bbda383b2a7d5f99f194a06fc","src/zlib-ng/test/abi/zlib-=
-ng-e4614ebcb9b3e5b108dc983c155e4baf80882311-powerpc64-unknown-linux-gnu.abi=
-":"cb360745c650e62db182932ed37e7648d1fe939caa50eccf7f9068e653ce9a11","src/z=
-lib-ng/test/abi/zlib-ng-e4614ebcb9b3e5b108dc983c155e4baf80882311-powerpc64l=
-e-unknown-linux-gnu.abi":"75170876a3b207c383889bac021ae0ff710e2915ad8c6b5f0=
-2c38d6e3ef731cd","src/zlib-ng/test/abi/zlib-ng-e4614ebcb9b3e5b108dc983c155e=
-4baf80882311-x86_64-pc-linux-gnu-m32.abi":"023ad5584f431bd2985d7231581058c2=
-49dcc0544b21fbb678ab04417c5e8103","src/zlib-ng/test/abi/zlib-ng-e4614ebcb9b=
-3e5b108dc983c155e4baf80882311-x86_64-pc-linux-gnu.abi":"f072336d8a54a31ae4e=
-991ecd2e0482b3c8102e0256da5f020112aeb5a9d68d4","src/zlib-ng/test/abicheck.m=
-d":"d960023cd80e04b2d4dcec8cdd3315c7292229d45a3301a5dc5213058ba22185","src/=
-zlib-ng/test/abicheck.sh":"293af1e5c1e18133d1f27c9e34bdeb0f8b0123cf3c825562=
-a11a31e87d2b544e","src/zlib-ng/test/add-subdirectory-project/CMakeLists.txt=
-":"0d5d9bcb4aac1e17b5146eb727ca95e4fb91fb098fe567925befd7a88f8cf677","src/z=
-lib-ng/test/add-subdirectory-project/main.c":"0f84f056ddc067fa1374bea36c45c=
-516b5ce1b4a78e8a381c06cce03320e66dc","src/zlib-ng/test/benchmarks/CMakeList=
-s.txt":"3a9207269ce3ceb3b9351c8b68681cb316be79a686ac99becd27df7f0bc69601","=
-src/zlib-ng/test/benchmarks/README.md":"f44de30583886085f4a3158040c795284ce=
-f19e32c50a80fff54608ab735e5aa","src/zlib-ng/test/benchmarks/benchmark_adler=
-32.cc":"d2de7d69b94aa6447804e3d42ed7c889b2d6a5e1d4c9f595a8eff2f919f1716e","=
-src/zlib-ng/test/benchmarks/benchmark_adler32_copy.cc":"7c5617b6d014b4f1e0c=
-116439fb4a6e0e720b4fcd132c68b8f1f49ea8aa06af9","src/zlib-ng/test/benchmarks=
-/benchmark_compare256.cc":"2ffcc22f1fd7df9db92c9d97302e46f83811f5cadf353273=
-87ff22f27d09ee22","src/zlib-ng/test/benchmarks/benchmark_compare256_rle.cc"=
-:"3631acf6fc6bca5a4028cf58dd25347bbe448e19bd9cae1d4456ae30dfeccf74","src/zl=
-ib-ng/test/benchmarks/benchmark_crc32.cc":"cc1c6119ff9bd112999d0cd6ae62b1ab=
-d95268d8671cc9ee5abb7f6659496a74","src/zlib-ng/test/benchmarks/benchmark_ma=
-in.cc":"67270b2efb97c24af9358220cd642cf0c8ed393d07f61abca31bc0c103b1bab7","=
-src/zlib-ng/test/benchmarks/benchmark_png_decode.cc":"e9485de5e722ef1b62131=
-a27a98d2cfe668ee8becbd5fc9938972022e07c8d60","src/zlib-ng/test/benchmarks/b=
-enchmark_png_encode.cc":"4b2203af2ef58f95773ca6d82569f747f2cfb3c4116334871c=
-fb255a0d7741e1","src/zlib-ng/test/benchmarks/benchmark_png_shared.h":"2a02e=
-f2aa7b7b60afd5e474ca729498c8e6a7873e968634fd0c43d10d1506ca5","src/zlib-ng/t=
-est/benchmarks/benchmark_slidehash.cc":"d239dfced67f85fb2dcea7a6a03b2649a59=
-a63948e9e6af8c2bd3653d73f8130","src/zlib-ng/test/cmake/compress-and-verify.=
-cmake":"0dd1712183a15dd79bd2501dfacef681a402493d23aa3439a9293c1ec5aca863","=
-src/zlib-ng/test/cmake/run-and-compare.cmake":"13d85c12c9d6c7b1b148bd0c5a5b=
-4faa6a4b56f3823bf03c4f8d914c9c5949d8","src/zlib-ng/test/cmake/run-and-redir=
-ect.cmake":"7f08d18c09aa58113882ec760735a62a1723a5bfcae9f73bd3713a4dbaeab89=
-8","src/zlib-ng/test/cmake/test-cves.cmake":"c526d10727275eda6a6e5912a000e5=
-f2ee369f904f923001f196b69eae7cf5cb","src/zlib-ng/test/cmake/test-data.cmake=
-":"4b4e003f000fe15dc57052faf5637a85c9c7f3a6d07592184b87ea508b6fc0dd","src/z=
-lib-ng/test/cmake/test-issues.cmake":"258d8453dcea579d47abbedbe8e7d4f13d004=
-8642ea3ab53880245998de4f22b","src/zlib-ng/test/cmake/test-tools.cmake":"d6c=
-dc83cf1b5c6c342b461bed6c87d57c2b78bcac3f6b3e357bffba2181d49c8","src/zlib-ng=
-/test/data/fireworks.jpg":"93b986ce7d7e361f0d3840f9d531b5f40fb6ca8c14d6d743=
-64150e255f126512","src/zlib-ng/test/data/lcet10.txt":"1eb5d7bddb1c3cb68064d=
-5b5f7f27814949674b6702564ff7025ced60795a6d9","src/zlib-ng/test/data/paper-1=
-00k.pdf":"60f73a051b7ca35bfec44734b2eed7736cb5c0b7f728beb7b97ade6c5e44849b"=
-,"src/zlib-ng/test/example.c":"5c2d07af5ecf874823ca73e6ff0d292c5d3c5370104d=
-87526169b6f222182dcd","src/zlib-ng/test/fuzz/CMakeLists.txt":"395049b7625f1=
-20abee1e118487c55a8bd3288d0974081ecaa8baf33f60e80c8","src/zlib-ng/test/fuzz=
-/fuzzer_checksum.c":"68ed79ec1d7fefa548f4d32ab7885479442520cdf53ad59eadfae1=
-3e4b15efe0","src/zlib-ng/test/fuzz/fuzzer_compress.c":"3f507a18710fb2a1d87f=
-de5cf3affc74b53a689e9d2ce6f887ee64eb778e568b","src/zlib-ng/test/fuzz/fuzzer=
-_example_dict.c":"46541ed3ef9bb7378120d47133f18b4194e955e7a84a439647205de68=
-e745c08","src/zlib-ng/test/fuzz/fuzzer_example_flush.c":"393e7872825bb1ca36=
-6d0d8552b94442511ed4a557db6ece16540b79b7e9cbdf","src/zlib-ng/test/fuzz/fuzz=
-er_example_large.c":"e3b91b1ced83dfe538e8ae5262f1756181a7785e8c2ab38ac28814=
-56bd562277","src/zlib-ng/test/fuzz/fuzzer_example_small.c":"de9f5dc31824057=
-50341a0f44c37bd8ba4f21d993284456ba8e6ce3e36d6b9b3","src/zlib-ng/test/fuzz/f=
-uzzer_minigzip.c":"dbc35b317935ba7cd2dfbacc067b5b17534488dc9ac1daa2bb28b67b=
-1b850aa3","src/zlib-ng/test/fuzz/standalone_fuzz_target_runner.c":"e6170b74=
-4faa68bf2a414e99fc87accf4db2a5e0eb58b17aded5c692ea493604","src/zlib-ng/test=
-/gh1235.c":"057934cf585b9998478e3d77ecd0782d941e20ebe50688ef32b961559d6dfe2=
-a","src/zlib-ng/test/infcover.c":"82ccdf5b2bb081b9da18c55c0078ff030ae145a49=
-43dc90bb85c4cce00e9deb5","src/zlib-ng/test/minideflate.c":"1b2d38cdbcb8e2c3=
-99b7dc9db59fe95b19f0c052a79dddf91fcc0733c898d389","src/zlib-ng/test/minigzi=
-p.c":"154131d41a881ef3264abb9eb70f7cdc6782718a2164f4f16b63b4e5363ca313","sr=
-c/zlib-ng/test/pigz/CMakeLists.txt":"e55880cb8b15839774f2387c07aaf42df680ce=
-c0305522ddecbe5f638e5af2d9","src/zlib-ng/test/pkgcheck.sh":"61a6ebf6ef9fe05=
-935467b29e25669fc44bb6240ea0ca87e9c066d982032f4b3","src/zlib-ng/test/switch=
-levels.c":"1c726e63cbe24fc12c88e9928db5a1515c18364987dfe588daabef4f8b1a321f=
-","src/zlib-ng/test/test_adler32.cc":"aeb9533ae9be0f76879100d038980f3731ff4=
-c249b4de105f2df6f371a7990a5","src/zlib-ng/test/test_aligned_alloc.cc":"bebd=
-d6dba3c7452e7d8557c47b14226209175fb5fe313b176cf752848117536e","src/zlib-ng/=
-test/test_compare256.cc":"4362eccf7b473d82778fc4171552f8160b54b6fc6195bf930=
-cd0e988dff5a093","src/zlib-ng/test/test_compare256_rle.cc":"8428d8204d0598c=
-d1071f3db9176b42fd423e532051cd14fd91e5835a01ba203","src/zlib-ng/test/test_c=
-ompress.cc":"32d3bb507a95d56d0441280a04569164d19a8241d85084a9fcf49f51afb82f=
-cf","src/zlib-ng/test/test_compress_bound.cc":"21f71385edd73f92f40a9451673b=
-db9ea3f82a49e7f4d4bdcc4b74b086320b12","src/zlib-ng/test/test_compress_dual.=
-cc":"a76759d3d5c54315a4ee3197109a4517dfae9931eb65ae8cbaffd8a58bb562e9","src=
-/zlib-ng/test/test_cpu_features.h":"28bbb2bdf56ee7988d4fdfccf4c6ad584bb8b39=
-c4ae80fdab12effcc33c4d8ae","src/zlib-ng/test/test_crc32.cc":"57a428c33f3158=
-f1b78840b779dfb46f55a943fb5e7d2c23541b9ca7090d7264","src/zlib-ng/test/test_=
-cve-2003-0107.cc":"629f1fe659558c9deb767b3fbbb615539b0458f8b67a405ece924cac=
-6bebb531","src/zlib-ng/test/test_deflate_bound.cc":"eecbc494f22282bfd94a254=
-5fc142b8fdb5582991c22b6e50fd46c40885ad81e","src/zlib-ng/test/test_deflate_c=
-oncurrency.cc":"27a91c74cf9811921bc2424c235e540a18ed63853d37e29814a60ed21f1=
-a8654","src/zlib-ng/test/test_deflate_copy.cc":"1a286ba7772bb1a6d06233b075a=
-83f3f1814bab2fd7d3757c090f5db25db90f1","src/zlib-ng/test/test_deflate_dict.=
-cc":"3395afdc925059faa1b334bf8a497803132f9ca7703d48dff0ab0264f5292f73","src=
-/zlib-ng/test/test_deflate_hash_head_0.cc":"2d0b7bb7dcd00a630358e6c3cd79676=
-a838efc262794b751b42d030d949e7587","src/zlib-ng/test/test_deflate_header.cc=
-":"643763a811a3673a05959eb6dfeffa3ff25dc3672f67dc8a9f1406a31812068f","src/z=
-lib-ng/test/test_deflate_params.cc":"7c747362cac9f74b2bb8e8d276539807e8222b=
-18db172b81ccbaf96235b8be61","src/zlib-ng/test/test_deflate_pending.cc":"1a0=
-e700d3a2863b6087041fef379bd683e882d5932840fbecb3e0b91e74565cf","src/zlib-ng=
-/test/test_deflate_prime.cc":"d98d4aee8c240f5bc3b3b83f828917586b846850ed82a=
-de6f5f728a4281a1321","src/zlib-ng/test/test_deflate_quick_bi_valid.cc":"970=
-6d0bf9d844b21f1655498bf0f9901c7dfc272cdef37f2d1af238c71df611c","src/zlib-ng=
-/test/test_deflate_quick_block_open.cc":"7edb512a287542f83ee448fbcafc3d654b=
-62a36440b6474e9cae3bb5d36577ab","src/zlib-ng/test/test_deflate_tune.cc":"da=
-d52ad7941aca761ff177877a0d60f1b68b3a6d28a8f4bd382005f3c04bad64","src/zlib-n=
-g/test/test_dict.cc":"2bb6c32ec0ea76561172e0b5e8c6a7bf4f64efc2b41534b42ec1d=
-6c3d0990897","src/zlib-ng/test/test_gzio.cc":"337f711eb6e80e77fd28963c89a64=
-6f6528d635036cd0367c398387e0a72cfde","src/zlib-ng/test/test_inflate_adler32=
-.cc":"0967f8e72388a8232bcc1436196214ea1a13dd0fbd5e7633e24a9246abc2a950","sr=
-c/zlib-ng/test/test_inflate_sync.cc":"fbb1121ea5b5448723c6d6d8692110c7362e6=
-833fae22afcd46909d4ecb1289b","src/zlib-ng/test/test_large_buffers.cc":"0c76=
-a002071e6280d6e6b380db5e1ada00730b0534722ba5c208cb1e51de0b7b","src/zlib-ng/=
-test/test_main.cc":"884dcbfb7207f541ef82bc9fe6f657fbe1918b0917fa3e5eda124ad=
-042ce732e","src/zlib-ng/test/test_raw.cc":"0ac0c7c63777d4278a36e087b2060a36=
-9be16150d40a6963d3a0d60a7efb1740","src/zlib-ng/test/test_shared.h":"cc6a7f3=
-dd115edd5de50da2da266e615464e2d5ae41d102e117b09215889a2c4","src/zlib-ng/tes=
-t/test_shared_ng.h":"4570992f5ba61d2cf9e502d3aac163945d5d2f65883ce29f3a0797=
-052c779b91","src/zlib-ng/test/test_small_buffers.cc":"680ba24dc58c7dd05e8da=
-b2e430a8e0c99b946cbc341a5fb39c4b4b921b6fb33","src/zlib-ng/test/test_small_w=
-indow.cc":"0f784eae1977ee62d56f6280b269aa9edc42a5f3d20502c39abcb6cf126ec5ea=
-","src/zlib-ng/test/test_version.cc":"8599eca8dd63a96962a5c8ac01a3172d203f9=
-065e228867928ed4bce61cf6009","src/zlib-ng/tools/config.sub":"32186cfeb5db62=
-c99e1dfbfb07f24c1a50977447b4c26d2907021c74422a70d2","src/zlib-ng/tools/make=
-crct.c":"73acdb94f73dfea474927a9e1be33e0f2cb015d97831bc2718106141adbc1d05",=
-"src/zlib-ng/tools/makefixed.c":"bffd02540231304f9bcc755b8cb9ae5cfbc4897585=
-7bbb4547f1d6acce21ef57","src/zlib-ng/tools/maketrees.c":"48a3e4ee246b1fb061=
-d8e643efbd4b80e45f9c3814e21170a5893a9f4ca9619b","src/zlib-ng/trees.c":"310f=
-e64c50fb313773c2058c606b1a3cc085b8af7771eba325ad5c9355659100","src/zlib-ng/=
-trees.h":"24174f3543b01ee1ef370bbf6d15551a21871cded18b2aadf09a71e7904b6f99"=
-,"src/zlib-ng/trees_emit.h":"6c541dcf01eecf393d4eab7800bc558ad524114bb5a8de=
-b86f13376fbef88754","src/zlib-ng/trees_tbl.h":"022736ff3362ef3591d1f8fc3b7f=
-ede5927c0d25ab0813d7ef8cd95efd6ea242","src/zlib-ng/uncompr.c":"bb03a6ae65e1=
-395f3cb2fba1dee63246a1fcd30683fd3348e320e789521055a6","src/zlib-ng/win32/Ma=
-kefile.a64":"f1feaed8da22e6e1470689186db22946ccb67019a87edd34e9ed25b438b626=
-db","src/zlib-ng/win32/Makefile.arm":"a952ff273854b6b025760ed6c841c450d298c=
-da462dae3163f6d7288ad2cf55f","src/zlib-ng/win32/Makefile.msc":"f299f7987ec2=
-66ac35d9383f4c7459da02094a10c877a4c471ee2df1ec44caf9","src/zlib-ng/win32/re=
-place.vbs":"0ecd6d2f42f4f49d835acbf7b89a79cbdf17fed29d5931eeb3b40da6d313394=
-6","src/zlib-ng/win32/zlib-ng.def.in":"0b75299a93ef3af54ab37f1282f254ccf2f6=
-35fec9b2691edc3840d851bbc20a","src/zlib-ng/win32/zlib-ng1.rc":"91f28a6930d6=
-a376a1057a73ea5613bc13717028c89fdd0b4c8015059295fcd2","src/zlib-ng/win32/zl=
-ib.def.in":"ec69c79c2a5612a5c4dc9de08c930c9b251f2455e4bca8781f70c05f7170fb3=
-a","src/zlib-ng/win32/zlib1.rc":"5644cee99821019a7d541d5587376236cb5b99e98d=
-66c904a25f9b69d1d56062","src/zlib-ng/win32/zlibcompat.def.in":"c4dff5ac2cfe=
-629155c7de5b0f139fb1c962fb01addbc032c3cf35110921eb27","src/zlib-ng/zbuild.h=
-":"e6f34c26bd82dd7650a664d7b336d1e4c83b871bded79e05602e779ffa69993b","src/z=
-lib-ng/zconf-ng.h.in":"83514b2e2858b0d6647159e9aa47fa84bb625ed2ac6117284f51=
-4cacc42a993d","src/zlib-ng/zconf.h.in":"6768f84c439683b4a590338a9be40c3bd7a=
-9702b25e8e546c705fac08674c3bc","src/zlib-ng/zendian.h":"5be3e2989524198f13b=
-68cc083b1502747effe92325edee59e3c4ad93cc3c62f","src/zlib-ng/zlib-ng.h.in":"=
-3bafbff2b78a88c1f0de4195a17b8fcd1fb12fcf2d40ffe1970415f6778bf9df","src/zlib=
--ng/zlib-ng.map":"111f656dfdf4da285621a909fecd0532be37f83b49f6e18f357fc8d2a=
-22a726f","src/zlib-ng/zlib.h.in":"9f74dd9f3244ac1152639c5ad5dd1995914b7362a=
-db1f3890698da377cf26c3f","src/zlib-ng/zlib.map":"f746610758741f042f8025502b=
-4c0c04f9bcd48864004cc6e502b99d3754d78f","src/zlib-ng/zlib.pc.cmakein":"a974=
-86fcab3f191d807ec04d4487d6a428053ab452b59687ee1f71cf52b02a31","src/zlib-ng/=
-zlib.pc.in":"848e017a079b14853df8d19699f4edac2304767ef4eb2cf525a06ceb60d301=
-b3","src/zlib-ng/zlib_name_mangling-ng.h.in":"a829fd869339579afe7ce8c1f8a54=
-73598c608f3427c3cbbc1800088d6640e7a","src/zlib-ng/zlib_name_mangling.h.empt=
-y":"38e51a846d6c2bd6100298c55328dba4437c08fa1dceda4eb2e06ecb1d142058","src/=
-zlib-ng/zlib_name_mangling.h.in":"16e9ede4821d873647bf105b12e71245d3b7cb79e=
-d318fed0a8ab5aa63b2b4da","src/zlib-ng/zutil.c":"fce8e83d2040be8bc389ec61a8d=
-6c7b32c0b3cd208599c01c5a58ef6418de87b","src/zlib-ng/zutil.h":"618641510d899=
-36fcbca382dc60aea97b5fe35aa010386df0a8ec3ed1b1602ea","src/zlib-ng/zutil_p.h=
-":"6ca034b9d3f6a702b03a71a1f3fd61a0fe6bfb3442156cbdca090adea8eb3f2d","src/z=
-lib/CMakeLists.txt":"ab5f3afca6fe38983dc30a28da4877706e3a690a564eda3d4929ff=
-f39dab190e","src/zlib/ChangeLog":"f3bc368fd1722570d25411fece6b0e026ab95a9e2=
-0ccf39c4395aa41a956a4f0","src/zlib/FAQ":"e18aaaae6d7d8acd15c1f439306ef55437=
-2bc39db7e19258836708362a0b7cca","src/zlib/INDEX":"3b4e325d47ae66456d43fcf14=
-3ba21ab67a02a4f81be7ef2da480ba30d774266","src/zlib/LICENSE":"845efc77857d48=
-5d91fb3e0b884aaa929368c717ae8186b66fe1ed2495753243","src/zlib/Makefile":"ef=
-23b08ce01239843f1ded3f373bfc432627a477d62f945cbf63b2ac03db118a","src/zlib/M=
-akefile.in":"a6d202a2ac158f8fbd1fa7361e1f2c7adfd1b7b80c1f6515a4203925c2c0f2=
-4a","src/zlib/README":"d106dcdb2a0b3087cb3a2380b9f00a0bbadc7eb835cd80408f94=
-a2d78d69727d","src/zlib/adler32.c":"9cd1443a24ff2a3053961695bd432035c583473=
-86a420d3388232376ebabe211","src/zlib/amiga/Makefile.pup":"a65cb3cd40b1b8ec7=
-7e288974dd9dc53d91ed78bbe495e94ccc84ddd423edf1f","src/zlib/amiga/Makefile.s=
-as":"0e63cf88b505a1a04327bb666af3a985c5e11835c0c00aed4058c0dcc315d60e","src=
-/zlib/compress.c":"86f802c16a965e7a28737e3730b4e576c5ba40981753967e3e30916f=
-4dc1b4b1","src/zlib/configure":"f7c0050f218691ee1cae28311144a703bfa3515df90=
-3d537d6a5cb4bd3dcd8cd","src/zlib/contrib/README.contrib":"b925ae08d371b33c4=
-b5ffd67c707150729a476caf47cfe2eafc002291f23f931","src/zlib/contrib/ada/buff=
-er_demo.adb":"469cf566a6965767fee6b987a239ed8cedcc66614940d45a9b434331fbb43=
-5ce","src/zlib/contrib/ada/mtest.adb":"41b6f31684770334afdc4375871eb1408542=
-f37a823a073556fdbfdb63753160","src/zlib/contrib/ada/read.adb":"fa5b989aef0c=
-5715a3fcb15de93985f7f10aeb0a7f5716745c95ed820eb9af9c","src/zlib/contrib/ada=
-/readme.txt":"2cb6c99547bf527648342723a2183f503ef64182bc19a506976815725a207=
-438","src/zlib/contrib/ada/test.adb":"ad2b2f61e0603044065887849e2cca394cfe3=
-7d3ba08d3cd368f670462b9296e","src/zlib/contrib/ada/zlib-streams.adb":"f4598=
-8e2bac76eb25a0dc981f46576e7432c35dde1790bbc2b650f0090b7fa72","src/zlib/cont=
-rib/ada/zlib-streams.ads":"2dae2309e863a6ea44731773aabac5fd5f5436b6dcfcf53f=
-d7e6389556ca8c3c","src/zlib/contrib/ada/zlib-thin.adb":"03d89244ee5ec9771d9=
-b5050e586c609f851af551b2e64eb151f1d5be0b63ae9","src/zlib/contrib/ada/zlib-t=
-hin.ads":"631ef170bde16c3ca8d412b54a0e519815b80197d208f8f393e6fe017bb0968e"=
-,"src/zlib/contrib/ada/zlib.adb":"8168ac962cd775e1f3dc35dc95a038eb370034c9b=
-1f8cb1511d4bcd6b297a1f5","src/zlib/contrib/ada/zlib.ads":"9340f4cfaeafca0ef=
-ce7a649ef5e9b42a8bcafc5dbdc4abff41f9a19ee08c3cc","src/zlib/contrib/ada/zlib=
-.gpr":"859bb69dce38dbe9dca06753cf7ae7bd16d48f4fece8b87582dab8e30681d3de","s=
-rc/zlib/contrib/blast/Makefile":"17d5d26c24bf51cad51045a38ffb73cc3539d29e89=
-885aa249fcfd45a8659d5c","src/zlib/contrib/blast/README":"baa763ae03d88ef7ec=
-e6eb80d9a099b43d0b57639d6d281e1c7c6ca79d81daba","src/zlib/contrib/blast/bla=
-st.c":"1ab3e479d342bfc144167b808fb00142264bc50f24a110ca88cc774e351c218e","s=
-rc/zlib/contrib/blast/blast.h":"9c1c422b76311d4cb06863ffc056668b6240f3dd998=
-bc02e89ee590d482bfdc2","src/zlib/contrib/blast/test.pk":"5f5c262c545574a5c2=
-21132d5ef832478d222d70b015341795b3860204140d7c","src/zlib/contrib/blast/tes=
-t.txt":"9679b2c98e1283222d0782b25a1c198dc64ba9ebd1addd6dc6f643a45947cda3","=
-src/zlib/contrib/delphi/ZLib.pas":"0a3ea9e7e6644df99dda9c275f5a7be7cbaa96f8=
-333f0467bd007141496dff17","src/zlib/contrib/delphi/ZLibConst.pas":"84bcc580=
-bdf397e570f86f3f5a5b8c7bf537828f30b4b72648b81911f6bf5095","src/zlib/contrib=
-/delphi/readme.txt":"f7420ed2de77d4b498eefbbe6402a1d17dc2d411735289c78a265c=
-7f10fdaee5","src/zlib/contrib/delphi/zlibd32.mak":"850e91b6c9ea05de61a411cb=
-da16fa0f10118cd88bb32c4b7226988776f8d511","src/zlib/contrib/dotzlib/DotZLib=
-.build":"b96137097669644ecb9f42cdd3399d1fce9c512788374609303f7e50abf597f0",=
-"src/zlib/contrib/dotzlib/DotZLib.chm":"20d0e3edd57f849143255a7f0df1cd59d41=
-db464a72c0d5ab42846438a729579","src/zlib/contrib/dotzlib/DotZLib.sln":"a979=
-198c5b8d144c1ac8f993bfb6f4085d135aa58ca9dcf63ebabf52b5c695f7","src/zlib/con=
-trib/dotzlib/DotZLib/AssemblyInfo.cs":"314afcfb339ea95f5431047b7ab24631b11c=
-3532c7ce5dc2094ed0cf80a7c16d","src/zlib/contrib/dotzlib/DotZLib/ChecksumImp=
-l.cs":"871fc7b34a095dde13cf4505800d4edc9f40b033d5e840c597ad8ada599d26ed","s=
-rc/zlib/contrib/dotzlib/DotZLib/CircularBuffer.cs":"be84c9736fe7bdc2bfae704=
-66d8fff582504e928d5b5e110fd758090090c8cb7","src/zlib/contrib/dotzlib/DotZLi=
-b/CodecBase.cs":"b373f1f0c08565bf362c41969881a2f25be449eb894a477659231d6d3b=
-86c07a","src/zlib/contrib/dotzlib/DotZLib/Deflater.cs":"06ba6696a3c15c53ba5=
-fd5a1c2bf50b51f217010228fc1e4c8495ee578f480de","src/zlib/contrib/dotzlib/Do=
-tZLib/DotZLib.cs":"9837fe993fd631233cc5e53ff084d86754b97f05ec77c54b0764c270=
-6f186134","src/zlib/contrib/dotzlib/DotZLib/DotZLib.csproj":"21606db31dfef6=
-410dd438b73f1db68856eacabcce6c0f0411fc4f17e17001f3","src/zlib/contrib/dotzl=
-ib/DotZLib/GZipStream.cs":"7c4e8bf7e0b51f04bd3f457bead842aee133388d18ec8e21=
-0295899ad2327cbf","src/zlib/contrib/dotzlib/DotZLib/Inflater.cs":"9016ca738=
-18f5b6a28791abc3af6da7c4d2773b6a3804f593f6d5737a62b99ad","src/zlib/contrib/=
-dotzlib/DotZLib/UnitTests.cs":"3f22cb690bd38fa151a944afa5a1844499fe30df5b41=
-0edfd769b7e2a41ddc94","src/zlib/contrib/dotzlib/LICENSE_1_0.txt":"36266a8fd=
-073568394cb81cdb2b124f7fdae2c64c1a7ed09db34b4d22efa2951","src/zlib/contrib/=
-dotzlib/readme.txt":"bdb18e0114d3b5683749cf08cedbdf6b502e5abd344418b858e339=
-839561e66c","src/zlib/contrib/gcc_gvmat64/gvmat64.S":"22ff411b8b1d1b04aeaa8=
-418b68245400267dc43c6f44104f6ccd37f0daee89f","src/zlib/contrib/infback9/REA=
-DME":"890288f02bb3b1f9cc654b87a07fcea695f90f6b9bd672d25bf6be1da2ec1688","sr=
-c/zlib/contrib/infback9/infback9.c":"c236f4e5ef216f5ebc66f95ccbf9d399a19ad3=
-838444065308b8d859cb42dc74","src/zlib/contrib/infback9/infback9.h":"c89d926=
-607c1afa1830c17f807de368d2f1afe2d1e7df426763f6d4bf5950379","src/zlib/contri=
-b/infback9/inffix9.h":"84a2ba4727767c18af6505f0e81d9c814489c8b9ed330a25dad4=
-33db72997e43","src/zlib/contrib/infback9/inflate9.h":"32a907676cc36e27d0fdc=
-0d99adb83a0b23f20ab61896269216d40fecf08d349","src/zlib/contrib/infback9/inf=
-tree9.c":"9e739f5735d3cd77ca1b0d46d2a43371acf2afd64c9c0889e737da369ccd92d0"=
-,"src/zlib/contrib/infback9/inftree9.h":"4ecd9db884bf43e33fbd34273c81402902=
-2477e1597676129f9c98e09d8cef56","src/zlib/contrib/iostream/test.cpp":"0f3c7=
-7e013949eb9c91e6b690ea894e19d97944d6b0885b82806fc3ad99680cf","src/zlib/cont=
-rib/iostream/zfstream.cpp":"8ebb9b3d521cc3392953f27658cf1f6dcb763216079f69a=
-1518ec5ca0e42a63b","src/zlib/contrib/iostream/zfstream.h":"4369c35e66f63f52=
-ca4a5e1759bf720507ccabb8f3f132e2f18e68686c812401","src/zlib/contrib/iostrea=
-m2/zstream.h":"d0343e0c57ff58008b6f29643d289c72713aa2d653fe3dcd2e939fc77e7e=
-20b6","src/zlib/contrib/iostream2/zstream_test.cpp":"f789df183cc58b78751985=
-466380c656308490a9036eb48a7ef79704c3d3f229","src/zlib/contrib/iostream3/REA=
-DME":"43ec48ecbd95a8c45db20b107fac73b740bb11595a4737329188f06b713972cc","sr=
-c/zlib/contrib/iostream3/TODO":"af5ebc83fb88f69706c8af896733784753dead14768=
-7e1c046f410c0997fd88b","src/zlib/contrib/iostream3/test.cc":"8e17fc48dfdbc6=
-e268838b8b427491b5843b6d18bc97caa6924de9fad7abe3da","src/zlib/contrib/iostr=
-eam3/zfstream.cc":"8cdd67ed0b13c192c11e5ea90e9d5782d6627eb303fbc4aa5ebda253=
-1ec00ff8","src/zlib/contrib/iostream3/zfstream.h":"d89587b446f928351565d099=
-decd006a06b7a420cb1ff8ee9bb82e4d8c7235dd","src/zlib/contrib/minizip/Makefil=
-e":"b95eb8b05baef661a18ca90fa72f43e76f1bc987f9199197fe283e2860060e0a","src/=
-zlib/contrib/minizip/Makefile.am":"2313a3480a2c3745fa7ce216829cd0367058907d=
-3a0902e5832c66c84a2fdfc6","src/zlib/contrib/minizip/MiniZip64_Changes.txt":=
-"c371d1672b1ec23c6fe0c600543e0c96374400b4d434447ff2596f21255079f1","src/zli=
-b/contrib/minizip/MiniZip64_info.txt":"122719c32ef1763a5f6ba9c8cdefc1d78a76=
-f7156b09e7b6f69b73f968e0dac3","src/zlib/contrib/minizip/configure.ac":"99a4=
-8f7b786cf192a778aae2af30836b0d2aaaec6e84c3a89a2edcbe77b46e1a","src/zlib/con=
-trib/minizip/crypt.h":"5c978923cff1e80f76baf437eed699d5b4ad1bf515008d669475=
-d3dd0d89ef70","src/zlib/contrib/minizip/ioapi.c":"6dff11ded396f5e3147c632a6=
-39423e80ced6705bf7bf75d21cda0c571fdf86b","src/zlib/contrib/minizip/ioapi.h"=
-:"6d2f2c3520dfc3061ea9128a1afb843f5cfe8d7317adcefe3a45884bc06e06a1","src/zl=
-ib/contrib/minizip/iowin32.c":"882383d1ee9df8c5f236411734b51e96f5e29c38496d=
-4e531f2beb3d07f682ef","src/zlib/contrib/minizip/iowin32.h":"4feed64c3c5f5cf=
-f2d8a0431233766b61d4e06a9f232482cb41272ed1ca487df","src/zlib/contrib/minizi=
-p/make_vms.com":"65736d9c4888f2373d3db0a13864d150c5040453f5bc2a5c8784379a7e=
-a67590","src/zlib/contrib/minizip/miniunz.c":"c60f2c68be981464ff02dfbe01da2=
-a8e66692416bdda2144fc75df3420b4107f","src/zlib/contrib/minizip/miniunzip.1"=
-:"66d8684392167091ef0fe01598d6a0daa26e7e448e2df6c3cb257487735b83f7","src/zl=
-ib/contrib/minizip/minizip.1":"5404596e8e5587a52f563906119f32ceee30a6d97a96=
-6afa5c7afbe4d373e210","src/zlib/contrib/minizip/minizip.c":"6d7d7daffc713ba=
-15a9768143471902c5bfd661a19287172f3870bc9ed2d5665","src/zlib/contrib/minizi=
-p/minizip.pc.in":"8b6670b42d8e5e519e1cc89db093efc07ba23cb1ddfedd3c93ff2df08=
-c3ce8ac","src/zlib/contrib/minizip/mztools.c":"3d6027270a2b6ed5ca19a339d748=
-8f682c69798e3977d2278d379b7f14f17b63","src/zlib/contrib/minizip/mztools.h":=
-"6f82c52279e8f79165f4446be652e5741a49992ac58632470335aa34c564072a","src/zli=
-b/contrib/minizip/unzip.c":"10881ab576f49fe0825a21f77e322ece6ee88d34ed66fb3=
-a3ce7a22f4b6cd2d9","src/zlib/contrib/minizip/unzip.h":"2ff9df0b1da7499adc80=
-6bc0ec098ef1c7b9d361a8fd5b08a98299a1a4e88399","src/zlib/contrib/minizip/zip=
-.c":"213f853d71266ebe8d8335740cfe94b0731009d8fb3f7e6ae01a627398732ec8","src=
-/zlib/contrib/minizip/zip.h":"99ad45c0b546b5fd0ee3d0819ff057840a892a3d6dbac=
-c85b757a35a43047398","src/zlib/contrib/nuget/nuget.csproj":"a6cf81c9a9b8be6=
-6fae032193ac6282a4ceae93c8a25a9245d7eaf477d532471","src/zlib/contrib/nuget/=
-nuget.sln":"074a80c6c3898ea4f7935734d81fe81d3c15f5dae5b17806fa7a036b69ad5c3=
-3","src/zlib/contrib/pascal/example.pas":"d842d456ecb6ff80e34cee2da31deb207=
-2cc69ca837497bea8b8bee203403474","src/zlib/contrib/pascal/readme.txt":"02f9=
-97c37991ddae0cb986039f7b4f6fc816b3fd0ffd332cad371d04c12cf1b9","src/zlib/con=
-trib/pascal/zlibd32.mak":"850e91b6c9ea05de61a411cbda16fa0f10118cd88bb32c4b7=
-226988776f8d511","src/zlib/contrib/pascal/zlibpas.pas":"c5559b148a9dcdd3284=
-3e6920b4d2a2b030f7d32979dfd253aeaa9a4ed31770f","src/zlib/contrib/puff/Makef=
-ile":"d9d738030464aaae354196c14fd928adf591832fce7d71ac1977c1d8d4923a4b","sr=
-c/zlib/contrib/puff/README":"c5b9852fb11e0d6b6e916e5134cf034524d901b9536897=
-2133e0381e480eb479","src/zlib/contrib/puff/puff.c":"5b9d75aeb5baf3575415bc6=
-ade3f2a02e50b6b971b3f8b4fda2b03543bc6e52f","src/zlib/contrib/puff/puff.h":"=
-969b7be2a930db0cdcb19b0e5b29ae6741f5a8f663b6dba6d647e12ec60cfa8e","src/zlib=
-/contrib/puff/pufftest.c":"d24e31c1d277d07c268f34e9490050c6b53c68b128da3efb=
-b1d05fc5b31004f7","src/zlib/contrib/puff/zeros.raw":"b7b0887089f7af1f6d1e0b=
-4c0a1e8eddd10223b23554299455c6c9be71b653a3","src/zlib/contrib/testzlib/test=
-zlib.c":"753dbb39c5d2f0fffac0406c1c94fd1da7b0251d679e4d137b0708901dfd61d8",=
-"src/zlib/contrib/testzlib/testzlib.txt":"2359bbdc84eb8a04e0f1cd16cd81a2896=
-e957f2ad58dab3ca78ef55b7d0dc577","src/zlib/contrib/untgz/Makefile":"8f5ab15=
-64813e091cea8f1bb63da32fd80ac763d029277b0cabf50f60aceefe1","src/zlib/contri=
-b/untgz/Makefile.msc":"d0f537de11d9e0e36e2a98b3971c537265f4b533b4c487970943=
-65ad9ae8388b","src/zlib/contrib/untgz/untgz.c":"f96c1e8529eb10d723b4547aa96=
-5741d72a46f2b1d5c9a2c193bd3f5e2c2a45e","src/zlib/contrib/vstudio/readme.txt=
-":"ee95a52d9d2a16aceb070a54dd2c45a1f861178351baf8ea03c2f80328691974","src/z=
-lib/contrib/vstudio/vc10/miniunz.vcxproj":"dd607d43c64581172c20c22112821924=
-dfe862f56b2e5eb8780bdd0714d9527b","src/zlib/contrib/vstudio/vc10/miniunz.vc=
-xproj.filters":"4b8466bf00c70b81c31cc903e756e04151fd90fdcbe102f3568a2c8b619=
-0ea27","src/zlib/contrib/vstudio/vc10/minizip.vcxproj":"af73f2cf8ae51e65e85=
-342faeb40849a2310c97bc77def42b38d7070460a6cf0","src/zlib/contrib/vstudio/vc=
-10/minizip.vcxproj.filters":"f2815f9e3386c393d0a351632823b221ef9689da1f422e=
-caa561dba2a612fb0a","src/zlib/contrib/vstudio/vc10/testzlib.vcxproj":"c21e6=
-4259bf9efe97e1103212e7a6e1b7372b50067b4ba14cfa678e1f491095f","src/zlib/cont=
-rib/vstudio/vc10/testzlib.vcxproj.filters":"a7caddbac3ba90b5d482e6d926ef35c=
-c40dc3553ed3776ef6b68a528fd5b0631","src/zlib/contrib/vstudio/vc10/testzlibd=
-ll.vcxproj":"3f317d8964f17901c3e68bff5deaec10b6ccc50a572235999e809729269298=
-4c","src/zlib/contrib/vstudio/vc10/testzlibdll.vcxproj.filters":"29c9535775=
-aa76320ee4efd001d41961faf6c58cedd8b29d3986e85f73d2f6fb","src/zlib/contrib/v=
-studio/vc10/zlib.rc":"7aa6cfd50ac67821504304eb4a28668b3aaf78f4c792c389d1fb8=
-ea23a5d3ef6","src/zlib/contrib/vstudio/vc10/zlibstat.vcxproj":"50402ab8c63f=
-746c034d6ce51d9612aff5b6af9aa27790cffa4b7deed4b30eb8","src/zlib/contrib/vst=
-udio/vc10/zlibstat.vcxproj.filters":"eeb1de64c252c46b822f73f272127f6f9f0570=
-ef22d234e093070ba95a4dde24","src/zlib/contrib/vstudio/vc10/zlibvc.def":"40c=
-8e74194874b8c1a288edb9c6fbf32283df77afef7e520790def28a2e5b0d5","src/zlib/co=
-ntrib/vstudio/vc10/zlibvc.sln":"e659860f705f31b87ea9139a3cb4ebe1561e120bce4=
-95383a54614fc82b49990","src/zlib/contrib/vstudio/vc10/zlibvc.vcxproj":"efad=
-8cb150c0e5122f8c700d95c5de659dff92b171917c66bdbd082fff500b58","src/zlib/con=
-trib/vstudio/vc10/zlibvc.vcxproj.filters":"c801732b7c7017796add50d2b71a228f=
-99f95a46650baad307ff7e8358a2bfb0","src/zlib/contrib/vstudio/vc11/miniunz.vc=
-xproj":"746e4c11fb8af4bcd6a9d68ba81ed1dc366a5de3bed56b291ee969ad733a7bb0","=
-src/zlib/contrib/vstudio/vc11/minizip.vcxproj":"340617cae9cf4fcb003308021d3=
-782ec3639e60d62d79a3aafc0a50bb55b061e","src/zlib/contrib/vstudio/vc11/testz=
-lib.vcxproj":"99eadfdf2e41bc036141c174c4d0035d87572ce5795dcc28f39133f818a79=
-d08","src/zlib/contrib/vstudio/vc11/testzlibdll.vcxproj":"583bdef522b017682=
-9f0d8139ea2a88b9cbc14379d1334f3a863989ed3df9b67","src/zlib/contrib/vstudio/=
-vc11/zlib.rc":"7aa6cfd50ac67821504304eb4a28668b3aaf78f4c792c389d1fb8ea23a5d=
-3ef6","src/zlib/contrib/vstudio/vc11/zlibstat.vcxproj":"b07f792843d05ac8833=
-91075bc3b9625437490d8d40944ad359aa2134a09a3aa","src/zlib/contrib/vstudio/vc=
-11/zlibvc.def":"40c8e74194874b8c1a288edb9c6fbf32283df77afef7e520790def28a2e=
-5b0d5","src/zlib/contrib/vstudio/vc11/zlibvc.sln":"27389b515997defd080519f9=
-5aff87e89fcbe8b26d73c5ebb73c544cfef4d60e","src/zlib/contrib/vstudio/vc11/zl=
-ibvc.vcxproj":"d02d014ef957119a6fd0ab243c892b74d1592b117750b95fed21097c8ed9=
-22d9","src/zlib/contrib/vstudio/vc12/miniunz.vcxproj":"1494af54570f6e938529=
-32956d49a8c25e57b5abc1ac979945605ca9143df9f8","src/zlib/contrib/vstudio/vc1=
-2/minizip.vcxproj":"9bf128ed6760ca5f019006f178b1c65f4c7ff122dba8d297b64b0eb=
-72feeb120","src/zlib/contrib/vstudio/vc12/testzlib.vcxproj":"be88bc1220c044=
-7c2379fdab3ac88055f58a8a788d3e9cec494342187e760eaf","src/zlib/contrib/vstud=
-io/vc12/testzlibdll.vcxproj":"93416510256935d79625dc9fd349cfce6968c062d42a1=
-38bec404a26b2f92f5e","src/zlib/contrib/vstudio/vc12/zlib.rc":"c0e44b6f99079=
-b298e0a11f013e7b1476402a49f19e4d892467abb4aa116f2c8","src/zlib/contrib/vstu=
-dio/vc12/zlibstat.vcxproj":"faa229a851c76b77d65bb4742d8369efe566652bb6a1447=
-d1e3539f289b5313d","src/zlib/contrib/vstudio/vc12/zlibvc.def":"40c8e7419487=
-4b8c1a288edb9c6fbf32283df77afef7e520790def28a2e5b0d5","src/zlib/contrib/vst=
-udio/vc12/zlibvc.sln":"162e0faa80a56d89eea71a0b89377708eec2faa0dc72091cc0ab=
-b07fbdea49a0","src/zlib/contrib/vstudio/vc12/zlibvc.vcxproj":"8ac8cb2d29b88=
-0a738011d29d0511af9b14f321bed90f674109c446f4108d442","src/zlib/contrib/vstu=
-dio/vc14/miniunz.vcxproj":"0312511d4a30cea979c4e36edf994a537ed8a9d924f6b5c5=
-36cbcd094773c11f","src/zlib/contrib/vstudio/vc14/minizip.vcxproj":"9e7bb7a6=
-ac723e4b2db900627c366f9bb93a351381995d9c69a50c0126f64233","src/zlib/contrib=
-/vstudio/vc14/testzlib.vcxproj":"88667873d9d61d65016b9501ca925532eb55f56230=
-e5911d3e2a01cd8a9fb2a4","src/zlib/contrib/vstudio/vc14/testzlibdll.vcxproj"=
-:"69f544898b4275cd3d8e19b8f1f8cb39c1cb98a30cdb033242e4b94c57bfa150","src/zl=
-ib/contrib/vstudio/vc14/zlib.rc":"c0e44b6f99079b298e0a11f013e7b1476402a49f1=
-9e4d892467abb4aa116f2c8","src/zlib/contrib/vstudio/vc14/zlibstat.vcxproj":"=
-5629eb0cc30674a39aa3636f1cdd190393b0dbd4c69a35e36ad85b6340055605","src/zlib=
-/contrib/vstudio/vc14/zlibvc.def":"40c8e74194874b8c1a288edb9c6fbf32283df77a=
-fef7e520790def28a2e5b0d5","src/zlib/contrib/vstudio/vc14/zlibvc.sln":"47a50=
-bbde8ca6336cecd8c0e4b65e515fc46ae84c7b61008ac9864162f777286","src/zlib/cont=
-rib/vstudio/vc14/zlibvc.vcxproj":"09f496a2ad3afdd5e3f36b7285440369dcac45596=
-56edc00ed7a74c7ec9fa10f","src/zlib/contrib/vstudio/vc17/miniunz.vcxproj":"a=
-a70a28fb573e98c0ef68ead2b875765de180e4c6f46c6135806244257fd918f","src/zlib/=
-contrib/vstudio/vc17/minizip.vcxproj":"43ab4593b3ea568dc9e6f78a46cbb0118503=
-49e9cf3337cfb91dfdc3e623b414","src/zlib/contrib/vstudio/vc17/testzlib.vcxpr=
-oj":"e596d1170c68c6c7912070293e74b794f6753afb1a6d42177dc3626fe1b0e0d4","src=
-/zlib/contrib/vstudio/vc17/testzlibdll.vcxproj":"c61f1f6e7e0625f283ac4f4e3c=
-a76f25773ada0da43c7c72ce003637f9892c3b","src/zlib/contrib/vstudio/vc17/zlib=
-.rc":"c0e44b6f99079b298e0a11f013e7b1476402a49f19e4d892467abb4aa116f2c8","sr=
-c/zlib/contrib/vstudio/vc17/zlibstat.vcxproj":"331effbbcf295912daff00fb3594=
-c2ee300824733897efc5df7d31b2d379a222","src/zlib/contrib/vstudio/vc17/zlibvc=
-.def":"1fa9a4d1624675b0181554ddd841d368a9cf39fe931b80737bfa21402f27a7d8","s=
-rc/zlib/contrib/vstudio/vc17/zlibvc.sln":"36da58a5377e65f446c95c7e4c04a915c=
-aac9873b94d0dab231e9862391bba78","src/zlib/contrib/vstudio/vc17/zlibvc.vcxp=
-roj":"f3222e055d4001f9ee04265a72b8f349f92bd27189ce51852c96dde58539c335","sr=
-c/zlib/contrib/vstudio/vc9/miniunz.vcproj":"7db9b2ef5ff05d3de4ba633feab10e8=
-5d45434c865d520ffa1974421904996f3","src/zlib/contrib/vstudio/vc9/minizip.vc=
-proj":"7797a9ad3c0056f3a3cf8fcde7618acd1d151c65d15f841fccd8d9d878ae7bb0","s=
-rc/zlib/contrib/vstudio/vc9/testzlib.vcproj":"8df405917800adccee6bad2116022=
-c2c82d661b37ea40ea16405fe4dbcb4b69f","src/zlib/contrib/vstudio/vc9/testzlib=
-dll.vcproj":"cde6806f5c81d1fc311f9921c17ba56f8e386d097783a6a90875d385837c47=
-e7","src/zlib/contrib/vstudio/vc9/zlib.rc":"7aa6cfd50ac67821504304eb4a28668=
-b3aaf78f4c792c389d1fb8ea23a5d3ef6","src/zlib/contrib/vstudio/vc9/zlibstat.v=
-cproj":"d393d418d827ad9fb9c6516f1a7620371d15e3f5afef8ba60b51e50acc7199e9","=
-src/zlib/contrib/vstudio/vc9/zlibvc.def":"40c8e74194874b8c1a288edb9c6fbf322=
-83df77afef7e520790def28a2e5b0d5","src/zlib/contrib/vstudio/vc9/zlibvc.sln":=
-"26e58d4b2cfcd941c367fb2a18537b3b9f002f2ac1278b700ea1129c50501452","src/zli=
-b/contrib/vstudio/vc9/zlibvc.vcproj":"eaca98fcf166738b59fcdbd179dac9f98f985=
-c6ba49212b186343a998816f081","src/zlib/crc32.c":"8fd16f0a7714d51c89c2eb37eb=
-98ec15e8a4dc57ba343e7b7398b19144039fda","src/zlib/crc32.h":"9a2223575183ac2=
-ee8a247f20bf3ac066e8bd0140369556bdbdffc777435749e","src/zlib/deflate.c":"3b=
-956337350f94c34987750f785587ef33d9c89ceaebb7c2afb189c956360cbe","src/zlib/d=
-eflate.h":"48baf016326d8d5e3e32ac8153cc7e22f854b8e6834830b167b998a7fb1e7989=
-","src/zlib/doc/algorithm.txt":"a2581ab546bf053e3e95d191a6accc3b06bbd4f08ad=
-2fb888eacbfb9773c1d30","src/zlib/doc/crc-doc.1.0.pdf":"064f9252d6e2e15ea56c=
-2bd18e160e5c9c84bcd137c11a7af497aaa511ace998","src/zlib/doc/rfc1950.txt":"8=
-f0475a5c984657bf26277f73df9456c9b97f175084f0c1748f1eb1f0b9b10b9","src/zlib/=
-doc/rfc1951.txt":"5ebf4b5b7fe1c3a0c0ab9aa3ac8c0f3853a7dc484905e76e03b0b0f30=
-1350009","src/zlib/doc/rfc1952.txt":"164ef0897b4cbec63abf1b57f069f3599bd0fb=
-7c72c2a4dee21bd7e03ec9af67","src/zlib/doc/txtvsbin.txt":"d1549fb75137f03102=
-798f70fd34ff76285e717ddd520dd82274c1c0510eacf0","src/zlib/examples/README.e=
-xamples":"1bc1c677bbebe1aa5e85015bb62f0cf3fcdbf95652d30494159bee6166c1854a"=
-,"src/zlib/examples/enough.c":"c14a257c60bbe0d65bb54746dd97774a1853ef9e3f78=
-db118a27d8bc0d26d738","src/zlib/examples/fitblk.c":"bec64da6fc0c9a2a37a9672=
-2e8b88ca09059148e5be5ecbb486bdba5339e228a","src/zlib/examples/gun.c":"3bfd3=
-6b06284ba97d6105b8a6a5d18b2b34b75b3a1285f16d018680fb174915f","src/zlib/exam=
-ples/gzappend.c":"6de91c8305e37560117bff44136abff72b16b028c0bda0bbac7ea07e4=
-988b0ce","src/zlib/examples/gzjoin.c":"90b9d6c39a5fc91cf1cc9b96b025a508a801=
-5dc502cd9374c754b44078593f57","src/zlib/examples/gzlog.c":"d9a2f9871e7f1724=
-f9f9359fd4851dc0eac7af10d8234bab66327badb33d1a38","src/zlib/examples/gzlog.=
-h":"681f280437f867820bf39880e2f4fc641d402879e399ba2e6a31d73feefe8edc","src/=
-zlib/examples/gznorm.c":"e5a8f5c3b107f27212f7d5fbfcf072a337a1b4ea32929ae31c=
-168997438a5cc0","src/zlib/examples/zlib_how.html":"bada2526c34e9da7c9682a72=
-16c0b0d7ac26f49195f98d3ef56f14ae9b438177","src/zlib/examples/zpipe.c":"6814=
-0a82582ede938159630bca0fb13a93b4bf1cb2e85b08943c26242cf8f3a6","src/zlib/exa=
-mples/zran.c":"f4bc94b710841b8412aee04c42ea522bd1687343d65f0c0d92b4dd5801d0=
-3956","src/zlib/examples/zran.h":"913158e13f6177224074cfa9b497438545054ac0d=
-54ab13a6ad4182df8d2ee99","src/zlib/gzclose.c":"35ea6e991a63095f797d8c4cc258=
-17fac7a7155c2ba7dcdbbf648f7871c7ea40","src/zlib/gzguts.h":"716fa648aca1bb06=
-c219d7b97ad4846d8479206143bc39557bfd8283f5783e04","src/zlib/gzlib.c":"042c2=
-be8ec67ad525a2812e508de7381c6766dde903acf5ae6ac4fa6b541946d","src/zlib/gzre=
-ad.c":"72e481aca07b0b85a9783237b85dc67ff3a4c1d19878d0cec69f58d38634867b","s=
-rc/zlib/gzwrite.c":"469b1e58932ea11bdda2a153f6655f7b3c13254240fae157181b49e=
-d1bc93b47","src/zlib/infback.c":"62df9a6dd3eef126f1d81d0ad7a534504610dec444=
-82b0a472b61c93cbab6554","src/zlib/inffast.c":"e6ef64ce5dc0a4cd5c7ad08ceeb2b=
-2a698b8447f6bd156057caeb2edab68c0cb","src/zlib/inffast.h":"05cc5dc9ff1da7b8=
-b52a4bd8bda0d8a5c236a2f39efe84b941516ea13857e6c5","src/zlib/inffixed.h":"23=
-7ba710f090e432b62ebf963bee8b302867e9691406b2d3f8ee89ee7bfef9b0","src/zlib/i=
-nflate.c":"34c998ce0037c0537c04b03b276f680b945f9b2c9d1e01b287605bd6879f7fd2=
-","src/zlib/inflate.h":"e8d4a51b07694bf48cb91979c19974cf6a5ab0b8a09d26ec0d1=
-4df349230673e","src/zlib/inftrees.c":"5d4f335221d2dc76f17abd2577d92c2d7baf6=
-8fa6d7f23373b360830493d1563","src/zlib/inftrees.h":"0a0fcaf2ae2fae57426bdc0=
-6637270e9bba974f35202cadbdba479d946e6409d","src/zlib/make_vms.com":"14ed54b=
-dd391c1648cedfb69d8a73a26dcc7f1187d59b0f18d944b7665cec85b","src/zlib/msdos/=
-Makefile.bor":"292ab363f7ffbc4ae84d37cd9bdffd2dac1003bee52d223a8489844870f2=
-0702","src/zlib/msdos/Makefile.dj2":"9208450c2ae6dcbfcc25560b5b9ca763f461e7=
-246e37b0552474edf8fa898906","src/zlib/msdos/Makefile.emx":"c749d6ec7f88e8e6=
-39d4f03bdbdcbbe9d1c304210be4c4be621ceb22961d3d64","src/zlib/msdos/Makefile.=
-msc":"0e021a6f42212415b060e4ad468eb415d0a8c1f343137fb9dff2cb8f9ead3027","sr=
-c/zlib/msdos/Makefile.tc":"2ae12ee2a3e62f7c5a0520d0fbe4adee772bc07fe816002b=
-07ccb43db3daa76a","src/zlib/nintendods/Makefile":"ea5823efe6830132294eddf2f=
-56dbd7db8712244c210bb4968c431b1a91bd066","src/zlib/nintendods/README":"e362=
-426c47b39ff6a7d6c75c6660b20abf076cdfa5e1e421716dc629a71aef95","src/zlib/old=
-/Makefile.emx":"d811f032272aae50123a889297af3a02fbd60d1e42bbef11466462f627f=
-f7b5b","src/zlib/old/Makefile.riscos":"d1a488b160fbfd53272b68a913283a4be08b=
-a9d490796b196dddb2ba535b41e0","src/zlib/old/README":"551a0f4d91fe0f827a31cb=
-dfbb4a71d1f3dc4d06564d80a3f526b749dd104d11","src/zlib/old/descrip.mms":"8ff=
-08c35c056df9c986f23c09cf8936db63ccf12c3c42f7d18a48b36f060cff7","src/zlib/ol=
-d/os2/Makefile.os2":"6ad247c00f00ff42fd2d62555e86251cef06e4079378241b5f320c=
-227507d51d","src/zlib/old/os2/zlib.def":"ea9c61876d2e20b67ef2d9495991a32798=
-eb40d13ede95859a2f4f03b65b9b61","src/zlib/old/visual-basic.txt":"04f39c86a8=
-894561498430ca169e9d6ca2c5cc99b43ee923081884065a0b2b1f","src/zlib/os400/REA=
-DME400":"96580d63002088615c4b5ea865cdbec234fef0c8471667d2dc66273398123743",=
-"src/zlib/os400/bndsrc":"3c36a17975eed5a8d33bc5443b39fead1e68c01393496be9c1=
-f4a61444bcb0f6","src/zlib/os400/make.sh":"143394d1e3876c61c29078c0e47310e72=
-6e1f5bd42739fe92df9ece65711655f","src/zlib/os400/zlib.inc":"c01ddd22689c281=
-066f2bd2e3a020fad4cd50c1e543f17fae963da89a0d69a29","src/zlib/qnx/package.qp=
-g":"6c499168c561fc08e2fc41b07fc7a43882a52ede30c1599ed9f6a4035e764225","src/=
-zlib/test/example.c":"b7aeca68f7585e29ca6572542e0ecbd9c3c9370035ae15152008b=
-3efbd4f84ac","src/zlib/test/infcover.c":"13a0d18d8bca440c4617d88c2236913f53=
-eedebc50e469be472edd4280c697e5","src/zlib/test/minigzip.c":"57e4a1b9bb1bdb5=
-9ac9e5ac1dc9132183e8740cec2f6b5c5f2476aac08a2375f","src/zlib/treebuild.xml"=
-:"7d1cb70609017f6f22079af7569c8d8be2ae51e9524fc173719a487181d60860","src/zl=
-ib/trees.c":"f63c68c16c05fcd196050529d1a0e7657960e4136b9987d90a6ac3e58a964b=
-0f","src/zlib/trees.h":"bb0a9d3ca88ee00c81adb7c636e73b97085f6ef1b52d6d58edb=
-e2b6dc3adeb4d","src/zlib/uncompr.c":"04dca5e31b3b8a17d1806426f66f0c539f4184=
-d657e149d40be07070c6227b52","src/zlib/watcom/watcom_f.mak":"7e039b912f9cffa=
-a40835281430bb284fa9042b0a0d12f6b34700a06bca6576e","src/zlib/watcom/watcom_=
-l.mak":"d11b4064604a034725860e63e3f6d347056372e4b1675b183e20a93533b20cc9","=
-src/zlib/win32/DLL_FAQ.txt":"539adcdcea4dcab44d0e788febd217a6f192bc0758dc78=
-13cd5f5d8474d9b428","src/zlib/win32/Makefile.bor":"7d73a0d2c3e38b7c610bbc9c=
-22f683a4fe1ab9b8b65649a3a8ac4ff7fcc14ba6","src/zlib/win32/Makefile.gcc":"97=
-140c30506a8f6b2edb6b3d8a1b6b539d7929d4b957deba9950301090f579bf","src/zlib/w=
-in32/Makefile.msc":"235529bd529d4690d5d4b7871fdd0a1f118f2fe18862cbdec5f5ac6=
-74c55a60d","src/zlib/win32/README-WIN32.txt":"508bee0ef1a34892281517919970e=
-b337e017503671d0fa0f139523b44b4d0eb","src/zlib/win32/VisualC.txt":"9ec0babd=
-46eaa012371dee2d3a8a55d9c7130f7895512c3371c737e4a7f6a997","src/zlib/win32/z=
-lib.def":"c00693a5c825f8bfbdb68124fd03cb2fa5269338071147bdaa14434aaf3962b9"=
-,"src/zlib/win32/zlib1.rc":"54e161029b59e99a4f9cb2281b956f00ecfb1814318ddef=
-9c741ff4f832c5c1d","src/zlib/zconf.h":"f5134250a67d57459234b63858f0d9d3ef8d=
-cc48e9e1028d3f4fdcf6eae677ae","src/zlib/zconf.h.cmakein":"350fb02462487a3e8=
-612c18ad279053996ce0c85ebfece25a959baea9db86562","src/zlib/zconf.h.in":"f51=
-34250a67d57459234b63858f0d9d3ef8dcc48e9e1028d3f4fdcf6eae677ae","src/zlib/zl=
-ib.3":"5aadb3f129c4c7e29f28bb6c5954dea061df3046d0fe3e134aff2ef4a217b1d6","s=
-rc/zlib/zlib.3.pdf":"434e8d80e43ed24ed58a7dad0867a1136035864ad3e5fd4cc2c69e=
-0715628c66","src/zlib/zlib.h":"8a5579af72ea4f427ff00a4150f0ccb3fc5c1e4379f7=
-26e101133b1ab9fc600c","src/zlib/zlib.map":"e83d883a3f7bb93b3dcfab28f5300a56=
-9bc7586ded2e067c0639d0697d13fe1e","src/zlib/zlib.pc.cmakein":"2f1d0b18ce37c=
-2af415a469857f02aee2c41a58877aff21d29e9c6db32b55cb7","src/zlib/zlib.pc.in":=
-"04c01cc2e1a0ed123518b5855f585c93a24526dd88982c414111ea1fc9f07997","src/zli=
-b/zutil.c":"8ced40d8c88588811edd2bdb35b7439983d5e1f8e9e32b8a3b244731f3c317b=
-7","src/zlib/zutil.h":"dddb2dc7a1dc339ecf2c8e089b366f08bb731c0839c7110240d1=
-7ce731bb4fea"},"package":"5e143b5e666b2695d28f6bca6497720813f699c9602dd7f5c=
-ac91008b8ada7f9"}
- \ No newline at end of file
-diff --git a/recipes-devtools/rust/libstd-rs_1.80.1.bb b/recipes-devtools/r=
-ust/libstd-rs_1.81.0.bb
-similarity index 100%
-rename from recipes-devtools/rust/libstd-rs_1.80.1.bb
-rename to recipes-devtools/rust/libstd-rs_1.81.0.bb
-diff --git a/recipes-devtools/rust/rust-cross-canadian_1.80.1.bb b/recipes-=
-devtools/rust/rust-cross-canadian_1.81.0.bb
-similarity index 100%
-rename from recipes-devtools/rust/rust-cross-canadian_1.80.1.bb
-rename to recipes-devtools/rust/rust-cross-canadian_1.81.0.bb
-diff --git a/recipes-devtools/rust/rust-llvm_1.80.1.bb b/recipes-devtools/r=
-ust/rust-llvm_1.81.0.bb
-similarity index 100%
-rename from recipes-devtools/rust/rust-llvm_1.80.1.bb
-rename to recipes-devtools/rust/rust-llvm_1.81.0.bb
-diff --git a/recipes-devtools/rust/rust-snapshot.inc b/recipes-devtools/rus=
-t/rust-snapshot.inc
-index 66d777f..4446863 100644
---- a/recipes-devtools/rust/rust-snapshot.inc
-+++ b/recipes-devtools/rust/rust-snapshot.inc
-@@ -4,56 +4,56 @@
- ## The exact (previous) version that has been used is specified in the sou=
-rce tarball.
- ## The version is replicated here.
+ SECTION =3D "x11/utils"
+-DEPENDS =3D "cairo gdk-pixbuf glib-2.0 libxml2 pango python3-docutils-nati=
+ve"
++DEPENDS =3D "cairo gdk-pixbuf glib-2.0 libxml2 pango python3-docutils-nati=
+ve cargo-c-native"
+ BBCLASSEXTEND =3D "native nativesdk"
 =20
--SNAPSHOT_VERSION =3D "1.79.0"
-+SNAPSHOT_VERSION =3D "1.80.1"
+-GNOMEBASEBUILDCLASS =3D "autotools"
+ inherit cargo_common gnomebase pixbufcache gobject-introspection rust vala=
+ gi-docgen cargo-update-recipe-crates
++GIR_MESON_ENABLE_FLAG =3D 'enabled'
++GIR_MESON_DISABLE_FLAG =3D 'disabled'
++GIDOCGEN_MESON_OPTION =3D 'docs'
++GIDOCGEN_MESON_ENABLE_FLAG =3D 'enabled'
++GIDOCGEN_MESON_DISABLE_FLAG =3D 'disabled'
 =20
--SRC_URI[cargo-snapshot-aarch64.sha256sum] =3D "4ca5e9bd141b0111387ea1aa035=
-5f87eb8d0da52fbc616cefa4ecde4997aa65b"
--SRC_URI[clippy-snapshot-aarch64.sha256sum] =3D "77803cfff2ea0342f26b59eabe=
-c353bc43a1791012aa70855ecfea0fb7ae76ac"
--SRC_URI[rust-std-snapshot-aarch64.sha256sum] =3D "519abf4757fbd8d7e3bb4e4c=
-fdc362ded972c1d95f04675684df2d31e8c0899b"
--SRC_URI[rustc-snapshot-aarch64.sha256sum] =3D "9c847b42b81325d25a9240e33bf=
-03fa8652f5dd321ae90a9a7a58b46bf124b17"
-+SRC_URI[cargo-snapshot-aarch64.sha256sum] =3D "a8c4f1ab2f65e7579eb80153fd1=
-ca9a0b365ca31ca6ae0ebd34156e0724dfc60"
-+SRC_URI[clippy-snapshot-aarch64.sha256sum] =3D "3d522172f9797e65c609a640af=
-7f4ac331525150c91f93e41798c5578e9523e9"
-+SRC_URI[rust-std-snapshot-aarch64.sha256sum] =3D "8fc4bfc3a5fe64f8530964a5=
-ea3bda95e39357eff14d6a8bb24f010ecc912923"
-+SRC_URI[rustc-snapshot-aarch64.sha256sum] =3D "fc21ca734504c3d0ccaf361f05c=
-b491142c365ce8a326f942206b0199c49bbb4"
+ require ${BPN}-crates.inc
 =20
--SRC_URI[cargo-snapshot-i686.sha256sum] =3D "57bd43f363ebd399a38aa4ac3b137e=
-9172706770f8b23479f9dd859c6ae779ab"
--SRC_URI[clippy-snapshot-i686.sha256sum] =3D "1d2612c829d946ca8ce32f2beacfd=
-e2c5ebed1fcacb720a58fb8e7786e4c82f2"
--SRC_URI[rust-std-snapshot-i686.sha256sum] =3D "158294f7c424ef75d84046b573f=
-225c15d531745cc79d416a18c11aa8253830e"
--SRC_URI[rustc-snapshot-i686.sha256sum] =3D "4695a6eb66252d519510ca0a859803=
-fff3a5041f71004404df0ccc9fbf0298d5"
-+SRC_URI[cargo-snapshot-i686.sha256sum] =3D "b0f6d95c8a292b1276f30b1bca1419=
-7b28297c2fcd51974ef320d05497be3ca3"
-+SRC_URI[clippy-snapshot-i686.sha256sum] =3D "a6899744ed734dd3a9f59631a9437=
-21bfe67ed6273e60dd67e8636820c1bfffd"
-+SRC_URI[rust-std-snapshot-i686.sha256sum] =3D "6547876dcf243aeeeadaa38dbdc=
-e02c316b6f83305a5337520e02eaffc90834b"
-+SRC_URI[rustc-snapshot-i686.sha256sum] =3D "b40c1437491d0a24756b6baabb14c2=
-d4d0def199bc652f16e417addb171ac977"
+-SRC_URI +=3D " \
+-           file://0001-Makefile.am-pass-rust-target-to-cargo-also-when-not=
+-.patch \
+-           file://disable-rsvg-loader-test.patch \
+-           "
+-
+-SRC_URI[archive.sha256sum] =3D "18e9d70c08cf25f50d610d6d5af571561d67cf4179=
+f962e04266475df6e2e224"
++SRC_URI +=3D "file://0001-meson.build-do-not-force-disable-introspection-a=
+nd-v.patch \
++            file://0001-gdk-pixbuf-loader-meson.build-do-not-look-for-gdk-=
+pi.patch"
++SRC_URI[archive.sha256sum] =3D "ecd293fb0cc338c170171bbc7bcfbea6725d041c95=
+f31385dc935409933e4597"
 =20
--SRC_URI[cargo-snapshot-loongarch64.sha256sum] =3D "354d498a8e36abe6ebd7bd8=
-59c8c7e7f02b029aa1897b9b60a87e9902ebb1079"
--SRC_URI[clippy-snapshot-loongarch64.sha256sum] =3D "88eab562705d56a246a09f=
-2897cbae9e37a66dc3cc2cab52c781cd78024f2b52"
--SRC_URI[rust-std-snapshot-loongarch64.sha256sum] =3D "88730b1b0d9c5252e041=
-ed1fc2375d7292dc45132bcc8b6214490c578de240d3"
--SRC_URI[rustc-snapshot-loongarch64.sha256sum] =3D "f39a604e1a5a5ba1c7342c9=
-d98c9952b5ba252cda4b55cc6ae7bd6fca72f3889"
-+SRC_URI[cargo-snapshot-loongarch64.sha256sum] =3D "843272f7ab9b2f8c24f1747=
-249275e0472fb2ede90f3a404e897559ddb898c18"
-+SRC_URI[clippy-snapshot-loongarch64.sha256sum] =3D "e4dba3b66bd8f811c8508f=
-d3be1bf136b714018768d9f16a96f601ebd375bcc6"
-+SRC_URI[rust-std-snapshot-loongarch64.sha256sum] =3D "68f30f3743b573e205ec=
-c1733e1250ffb8d8d81e131c3b2f4a819b7e1e610d62"
-+SRC_URI[rustc-snapshot-loongarch64.sha256sum] =3D "5ae96e69573690aa48ffb9f=
-ecc62826ffb5d2fc280d19d1e54ab36ff48e28b68"
+ UPSTREAM_CHECK_REGEX =3D "librsvg-(?P<pver>\d+\.\d+\.(?!9\d+)\d+)"
 =20
--SRC_URI[cargo-snapshot-powerpc.sha256sum] =3D "2a55e97ce512c27a012720bb2a0=
-cd86554c1d734b5cb91b98f58af167cc0fde1"
--SRC_URI[clippy-snapshot-powerpc.sha256sum] =3D "1ae0bbe5835d9461a12f22d509=
-787e6c11aac8335c677152a57a04f8d22cf755"
--SRC_URI[rust-std-snapshot-powerpc.sha256sum] =3D "6aa2f351bc7dccb544781f4f=
-ecddb5ef67e05bb310c84e0106d968231384d9f4"
--SRC_URI[rustc-snapshot-powerpc.sha256sum] =3D "3b9a8067e97dd269a27fe91be16=
-3e046e85b47973f5d512c3368c49d332dacb1"
-+SRC_URI[cargo-snapshot-powerpc.sha256sum] =3D "a88402d95f2959caaff20037144=
-d3109a69ce3310e1dfbb27231dacd50fa2988"
-+SRC_URI[clippy-snapshot-powerpc.sha256sum] =3D "ae1762dc8fd679d65154d5af95=
-00c7539f55ec9d049ab736a910893d382fd6c0"
-+SRC_URI[rust-std-snapshot-powerpc.sha256sum] =3D "88e8144c25ef8347471dd53e=
-ea7af62e5b31eadf0788f4a82be7560f5a0be255"
-+SRC_URI[rustc-snapshot-powerpc.sha256sum] =3D "5f435b48316a719c87fb27f49c0=
-b37884cef7dd3ecba76df9db2a4008cc03458"
+@@ -33,11 +34,10 @@ UPSTREAM_CHECK_REGEX =3D "librsvg-(?P<pver>\d+\.\d+\.(?=
+!9\d+)\d+)"
+ # for cargo to be happy
+ BASEDEPENDS:append =3D " cargo-native"
 =20
--SRC_URI[cargo-snapshot-powerpc64.sha256sum] =3D "1e2ffcc41a2083be2f4733d53=
-4d5ee0e05fc2ace1f21033792a4e2497cbbfbe4"
--SRC_URI[clippy-snapshot-powerpc64.sha256sum] =3D "0bceeb8dc5b48e5ea9cff67c=
-dcf8488fe2afe44d7e75ca04669c7c0c2e02a0df"
--SRC_URI[rust-std-snapshot-powerpc64.sha256sum] =3D "af95929af71494ee3e6988=
-ead07204ea05b6f2b729cdb1ffcc26db75e47bf318"
--SRC_URI[rustc-snapshot-powerpc64.sha256sum] =3D "2295d50425ed5dfb028560ac0=
-f9a611212d8deb43791a1d199419043157ab95e"
-+SRC_URI[cargo-snapshot-powerpc64.sha256sum] =3D "be2707eaa24f34775c98044f9=
-2c391a2c6037a2214adab9e83c62903001fb577"
-+SRC_URI[clippy-snapshot-powerpc64.sha256sum] =3D "a422a3b638c42f26ada441d2=
-940a44a8c0f1ade9459f86d48a3d8fcc866bc60b"
-+SRC_URI[rust-std-snapshot-powerpc64.sha256sum] =3D "cb5ad871a0a7efe7c270cb=
-f319d006a84e8f8526acb22ce941f2840fd0e368c2"
-+SRC_URI[rustc-snapshot-powerpc64.sha256sum] =3D "e3257dc0790728498cf2773c3=
-ca66d728381cc6d1f403969bd282223bd97aa3d"
++export EXTRA_NATIVE_PKGCONFIG_PATH =3D "${B}/meson-uninstalled:"
+ export RUST_BACKTRACE =3D "full"
+ export RUSTFLAGS
 =20
--SRC_URI[cargo-snapshot-powerpc64le.sha256sum] =3D "bec32adad9f2cd1650ed24e=
-e82fccf7329c68243cdef7cef1e720ccaea097dab"
--SRC_URI[clippy-snapshot-powerpc64le.sha256sum] =3D "6bb12041b6171e80598c0c=
-04eb7e9bd07ab4fb4d654a9289618e3288a4d2f6c8"
--SRC_URI[rust-std-snapshot-powerpc64le.sha256sum] =3D "3b5d53d70837d5ec942e=
-c41a8da37ed932bbdc1e53f78dc54e218db458701588"
--SRC_URI[rustc-snapshot-powerpc64le.sha256sum] =3D "3b144840f179114cde30789=
-09370bfb6928153d0ae303ac9848622c57cee3578"
-+SRC_URI[cargo-snapshot-powerpc64le.sha256sum] =3D "a523cf21d751be597a19830=
-136e3479b7f22d3642d95f53f78a11e770d971d28"
-+SRC_URI[clippy-snapshot-powerpc64le.sha256sum] =3D "93ce75f4edf2c3b792714d=
-33e279c5743d9d3ef841f8f2d8a7e76c9c7d74f952"
-+SRC_URI[rust-std-snapshot-powerpc64le.sha256sum] =3D "06633b26384cba594424=
-ec02acf0d64d4724033a856a2e039a18a518cacf1d3e"
-+SRC_URI[rustc-snapshot-powerpc64le.sha256sum] =3D "5f72f8723a2023b0bbd64cf=
-c3d10959c4210b68579ad8e174809d17e1e2ead36"
+-export RUST_TARGET =3D "${RUST_HOST_SYS}"
+-
+ RUSTFLAGS:append:mips =3D " --cfg crossbeam_no_atomic_64"
+ RUSTFLAGS:append:mipsel =3D " --cfg crossbeam_no_atomic_64"
+ RUSTFLAGS:append:powerpc =3D " --cfg crossbeam_no_atomic_64"
+@@ -56,13 +56,16 @@ do_compile:prepend() {
 =20
--SRC_URI[cargo-snapshot-riscv64gc.sha256sum] =3D "83e28f3e02cce4a9d19841bcb=
-40ec0c8ad4e9af9fb215c39876028e6e9e6baf1"
--SRC_URI[clippy-snapshot-riscv64gc.sha256sum] =3D "fbc978db4be2e6fdb1dbcb3c=
-a00ee54c44dafd08930738f1c6aa7ae249685a34"
--SRC_URI[rust-std-snapshot-riscv64gc.sha256sum] =3D "2b8af4060acb10f347c66a=
-3477ae92151beba12192590ea40723dcf9b1f7f5b2"
--SRC_URI[rustc-snapshot-riscv64gc.sha256sum] =3D "1b952b8cd597060ac07bbe99c=
-ea382651ca6eee4ac2abe0a90303ccf2278e60e"
-+SRC_URI[cargo-snapshot-riscv64gc.sha256sum] =3D "29e996af02293562f6ee79032=
-a5414fffbf77e75cb7f0ba89053849986cb6303"
-+SRC_URI[clippy-snapshot-riscv64gc.sha256sum] =3D "24465ce5fe8f04d9b54c31a2=
-c5bcaba6d702925ac3cdec0af5b954643013db90"
-+SRC_URI[rust-std-snapshot-riscv64gc.sha256sum] =3D "1fbbe8df7596682466ae2f=
-ca534d5f6bae8b3f32577450e2632955268a786a06"
-+SRC_URI[rustc-snapshot-riscv64gc.sha256sum] =3D "838d78ef8b9a11751b1dfb2cf=
-2abfdc845deca8f0002c11930d54577b433cb93"
+ CVE_STATUS[CVE-2018-1000041] =3D "not-applicable-platform: Issue only appl=
+ies on Windows"
 =20
--SRC_URI[cargo-snapshot-s390x.sha256sum] =3D "5663e6ea018a13f1c87ac74de2678=
-29952ea979fbe5f8ee5c1c3531e25d1749c"
--SRC_URI[clippy-snapshot-s390x.sha256sum] =3D "c00bd892e0f29bbc2514f87c7521=
-210ced8c175a41eee0a428e19a6ef157779f"
--SRC_URI[rust-std-snapshot-s390x.sha256sum] =3D "d70e710a5138871e8d972f195c=
-ed9f7aa639ccef23a87fa03cc527d2b9c3cd36"
--SRC_URI[rustc-snapshot-s390x.sha256sum] =3D "ef4b494fb7356b6e88a69b71378c0=
-4ae0f4a3c264adae84c9d4f3a1314eaa2b4"
-+SRC_URI[cargo-snapshot-s390x.sha256sum] =3D "0c22278b4e8afa79de0cae798575c=
-9ef258e73d0555b18a84efd5d042c69c6e2"
-+SRC_URI[clippy-snapshot-s390x.sha256sum] =3D "52c3368de0e01b07f89f74a4b362=
-79be1b7d2312b05253c7c9ccb50bc38f263a"
-+SRC_URI[rust-std-snapshot-s390x.sha256sum] =3D "e732ce690fd63e3c2576bfe83a=
-556031c4805c17b35b8a1c1a0ddde5cee31d46"
-+SRC_URI[rustc-snapshot-s390x.sha256sum] =3D "0c06439db686645be36390969b503=
-996608f25954eab2b7fd9a2915da6c0bd7b"
+-CACHED_CONFIGUREVARS =3D "ac_cv_path_GDK_PIXBUF_QUERYLOADERS=3D${STAGING_L=
+IBDIR_NATIVE}/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders"
++EXTRA_OEMESON =3D "-Dtriplet=3D${RUST_HOST_SYS}"
++LDFLAGS +=3D " -L${B}/rsvg"
++# needed on ubuntu 20.04/debian 11 to avoid 'undefined reference to `dlsym=
+'' errors
++BUILD_LDFLAGS +=3D " -ldl"
 =20
--SRC_URI[cargo-snapshot-x86_64.sha256sum] =3D "07fcadd27b645ad58ff4dae5ef16=
-6fd730311bbae8f25f6640fe1bfd2a1f3c3c"
--SRC_URI[clippy-snapshot-x86_64.sha256sum] =3D "3fb282ee97626e4f25c4f6faac3=
-997859b89f13983dd6fa111e25182dfcb91fa"
--SRC_URI[rust-std-snapshot-x86_64.sha256sum] =3D "2c914483c0882d44af2e50a18=
-1cbd2c953d672d50b31aa669ee2346cade1f108"
--SRC_URI[rustc-snapshot-x86_64.sha256sum] =3D "a04cf42022d0a5faf01c31082bfb=
-1dde9c38409f0ca6da90a3e40faa03e797ae"
-+SRC_URI[cargo-snapshot-x86_64.sha256sum] =3D "da9340b3249f08656cd4fe10e47a=
-a292c7cd79903870a5863064731a00b5b27e"
-+SRC_URI[clippy-snapshot-x86_64.sha256sum] =3D "e01d434e952821900f37824c797=
-f87ed16db79e54fcbd2f396b2f1b5cb2e3c55"
-+SRC_URI[rust-std-snapshot-x86_64.sha256sum] =3D "b793405538d8b6ec1632779ef=
-a8835b07b8987db2008c5c9c809bc4b17dcb121"
-+SRC_URI[rustc-snapshot-x86_64.sha256sum] =3D "0367f069b49560af5c61810530d4=
-721ad13eecfcb48952e67a2c32be903d5043"
+ PACKAGECONFIG ??=3D "gdkpixbuf"
+ PACKAGECONFIG:append:class-target =3D " ${@bb.utils.contains('GI_DATA_ENAB=
+LED', 'True', 'vala', '', d)}"
+ # The gdk-pixbuf loader
+-PACKAGECONFIG[gdkpixbuf] =3D "--enable-pixbuf-loader,--disable-pixbuf-load=
+er,gdk-pixbuf-native"
+-PACKAGECONFIG[vala] =3D "--enable-vala,--disable-vala"
++PACKAGECONFIG[gdkpixbuf] =3D "-Dpixbuf-loader=3Denabled,-Dpixbuf-loader=3D=
+disabled,gdk-pixbuf-native"
++PACKAGECONFIG[vala] =3D "-Dvala=3Denabled,-Dvala=3Ddisabled"
 =20
--SRC_URI[rust-std-snapshot-i586.sha256sum] =3D "9c38f2cd4c19196fcf113166237=
-ab03512bf19ce5a7f13c3bfe0e5cc3317eb44"
-+SRC_URI[rust-std-snapshot-i586.sha256sum] =3D "94927cdfa7cad391700b1a77730=
-bb17aa364831ff6a6c40ce6500a14c1314647"
+ do_install:append() {
+ 	# Loadable modules don't need .a or .la on Linux
+@@ -78,3 +81,12 @@ FILES:librsvg-gtk =3D "${libdir}/gdk-pixbuf-2.0/*/*/*.so=
+ \
+ RRECOMMENDS:librsvg-gtk =3D "gdk-pixbuf-bin"
 =20
--SRC_URI[rust-std-snapshot-sparc64.sha256sum] =3D "f7c7a73a8e5640f9d5aca6b2=
-6866b4da08cf3d3509ed1c4184309fb868acbff2"
-+SRC_URI[rust-std-snapshot-sparc64.sha256sum] =3D "ee7fa0104b019eec22750ac6=
-35e699d21dbb5430fc6982c495533900ec568d5b"
-=20
- SRC_URI +=3D " \
-     ${RUST_DIST_SERVER}/dist/${RUST_STD_SNAPSHOT}.tar.xz;name=3Drust-std-s=
-napshot-${RUST_BUILD_ARCH};subdir=3Drust-snapshot-components \
-diff --git a/recipes-devtools/rust/rust-source.inc b/recipes-devtools/rust/=
-rust-source.inc
-index c39c954..8484c94 100644
---- a/recipes-devtools/rust/rust-source.inc
-+++ b/recipes-devtools/rust/rust-source.inc
-@@ -1,17 +1,15 @@
- RUST_VERSION ?=3D "${@d.getVar('PV').split('-')[0]}"
-=20
- SRC_URI +=3D "https://static.rust-lang.org/dist/rustc-${RUST_VERSION}-src.=
-tar.xz;name=3Drust \
--            file://hardcodepaths.patch;patchdir=3D${RUSTSRC} \
-             file://zlib-off64_t.patch;patchdir=3D${RUSTSRC} \
-             file://rv32-rustix-libc-backend.patch;patchdir=3D${RUSTSRC} \
-             file://rv32-cargo-rustix-0.38.28-fix.patch;patchdir=3D${RUSTSR=
-C} \
--            file://0001-cargo-do-not-write-host-information-into-compilati=
-on.patch;patchdir=3D${RUSTSRC} \
-             file://rustdoc-repro-issue-fix-cargo-config-for-codegenunits.p=
-atch;patchdir=3D${RUSTSRC} \
-             file://rust-oe-selftest.patch;patchdir=3D${RUSTSRC} \
-             file://repro-issue-fix-with-cc-crate-hashmap.patch;patchdir=3D=
-${RUSTSRC} \
-             file://oeqa-selftest-Increase-timeout-in-process-sigpipe-ru.pa=
-tch;patchdir=3D${RUSTSRC} \
- "
--SRC_URI[rust.sha256sum] =3D "6ab79b70dc57737a1de378f212fcf8852d67fe6cf272d=
-122a15b3ea13be77947"
-+SRC_URI[rust.sha256sum] =3D "36217ef7e32f40a180e3d79bd666b4dfdaed49dd38102=
-3a5fb765fd12d0092ce"
-=20
- RUSTSRC =3D "${WORKDIR}/rustc-${RUST_VERSION}-src"
-=20
-diff --git a/recipes-devtools/rust/rust_1.80.1.bb b/recipes-devtools/rust/r=
-ust_1.81.0.bb
-similarity index 100%
-rename from recipes-devtools/rust/rust_1.80.1.bb
-rename to recipes-devtools/rust/rust_1.81.0.bb
+ PIXBUF_PACKAGES =3D "librsvg-gtk"
++
++SYSROOT_PREPROCESS_FUNCS:append:class-target =3D " pkgconfig_sysroot_prepr=
+ocess"
++
++# installed .pc file contains
++# prefix=3D${pcfiledir}/../..
++# which is expanded to an absolute path, and thus doesn't work when additi=
+onally prefixed with a sysroot directory
++pkgconfig_sysroot_preprocess() {
++        sed -i -e "s:^prefix=3D.*:prefix=3D${prefix}:g" ${SYSROOT_DESTDIR}=
+${libdir}/pkgconfig/librsvg-2.0.pc
++}
 --=20
 2.48.1
 
