@@ -2,114 +2,106 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 309B6C0218D
-	for <webhook@archiver.kernel.org>; Wed, 29 Jan 2025 18:09:38 +0000 (UTC)
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
- by mx.groups.io with SMTP id smtpd.web11.19383.1738174170563015873
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 864B2C0218F
+	for <webhook@archiver.kernel.org>; Wed, 29 Jan 2025 18:58:18 +0000 (UTC)
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+ by mx.groups.io with SMTP id smtpd.web10.20739.1738177090108584703
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 29 Jan 2025 10:09:30 -0800
+ Wed, 29 Jan 2025 10:58:10 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=rXAw+VWT;
- spf=pass (domain: konsulko.com, ip: 209.85.167.171, mailfrom: scott.murray@konsulko.com)
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3eb9bbcc936so4322890b6e.0
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 29 Jan 2025 10:09:30 -0800 (PST)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=nRagAfMv;
+ spf=pass (domain: konsulko.com, ip: 209.85.166.49, mailfrom: scott.murray@konsulko.com)
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-84a012f7232so29869739f.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 29 Jan 2025 10:58:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1738174169; x=1738778969; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3yG1Ft8KA2VXaEd8o6SOzkJpSvc2ThVPiZ/DF8s61Z0=;
-        b=rXAw+VWT3ifd8aUg1S1R0zBqdkbxl76GPx2eC8+a/meD9+LG8dsLnMuSdtcdnV8L/W
-         cFgbL5jOsfBOJrOEWv6DNO0EH5vfZfogB4dF89I2QlIA2SJFr64ANdgkN+Lz8iOhIicL
-         J9t6eDtex08SAKWgiW+lqTxSx9s6/7wWm51oY=
+        d=konsulko.com; s=google; t=1738177089; x=1738781889; darn=lists.yoctoproject.org;
+        h=mime-version:message-id:subject:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=/4KjogVT6BhzEIO9YBqKF4YffvG2xPu89ok7/PMbYvE=;
+        b=nRagAfMvukGWGjcPLLo5KaTiF49Wze37TvTt5auD38kXKGNJUsQNTEDn/B1PVFcWkO
+         slZPXh64tl/jjZOHjjKs5hBvA5cxEaEwyjs2VeXJUvrxwBH7MMaXVPb0RrrxSqs/wkjZ
+         tXWIbmhDmdR+NjHtUjABHhYFvCTpnRtLS0ATs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738174169; x=1738778969;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3yG1Ft8KA2VXaEd8o6SOzkJpSvc2ThVPiZ/DF8s61Z0=;
-        b=GKjdiFvf7kOiuNiYhKGQf9Y4XFV3vVkFDZPahQ8WrmGz/tKZPvkuebS05qfwJWVplU
-         pxhi+FUdR07j4uk8wM17DwPNqYtGPBkcmkyffPPuPDC0cwIEjpqMbC8yXogE019opq0D
-         vX02CvIm3swMm6rGm1UqwPO4/EqQoU7bdO7/5KOsJH60qDizikRj99x8R2HHF8QUzpQH
-         u1KE897Uoh5GHUm9U3XRZDSJkzmX38IOtb5V6nDhm18jT+hUUNo2XSiA1DhOAngRCYaI
-         8kbysXVzhQ1gp76hP6iYUCPPHDzbBfEuUq537TJvfD672ZeorKFFrTfDtcdPwg7jA5HG
-         CPAw==
-X-Gm-Message-State: AOJu0YyypbcM1U01Xuxz4i1w2VeOIBsSC4cBatyGajvXnx2/mLg0wuw/
-	G7LRp8eYciVnBZ2XRyU8utF+n1omCmJhffN+FDb782MXreGgJdFmX52vsddFwST8bPgUyjlzaXb
-	E
-X-Gm-Gg: ASbGnct+fAs0jzzoozmZCR7g+aAkfF2ke8c+mZN36mP/ocsSPeKBuRx0bC1NyvpxGok
-	0L2scNsX4GO+NA6pzVXkq/S43I+3VbQaxcDI734S/BM7KvZf8+9tu5A+bKuZ3BpS3rPnzsjumei
-	o837ijSU1WzxmYIvwLoIKe1dk8TpbwmYqZPqcAjaRD51SHr/DzoMN1G9Txb785VVDuzd3ZGUuGy
-	neAke90jLPzOr0pqYqCHfQwHud+qWOW6isqfAZR7v132OefN7H/CMlaeN2oO55qPKDOfBHYUMIk
-	cWMZ63NnDh6/40KJ1GOKpWUuL8tuiDE+F7FfdWL/waCtvRoeSyZBIUMEM/nwx8uZZkE=
-X-Google-Smtp-Source: AGHT+IG+mIBxVbup01GDyoOfOgeGXd7W/qTncocTSCQ7n604SSAVxGDmgWcmcs/DpntCfl1k2e5BgQ==
-X-Received: by 2002:a05:6e02:b:b0:3ce:7cca:7c0d with SMTP id e9e14a558f8ab-3cffe3d93edmr41215675ab.12.1738174159114;
-        Wed, 29 Jan 2025 10:09:19 -0800 (PST)
-Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ec1da4462asm3903034173.55.2025.01.29.10.09.18
-        for <yocto-patches@lists.yoctoproject.org>
+        d=1e100.net; s=20230601; t=1738177089; x=1738781889;
+        h=mime-version:message-id:subject:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/4KjogVT6BhzEIO9YBqKF4YffvG2xPu89ok7/PMbYvE=;
+        b=ZJw82LCahkAQa/9uNYem8jpfjUmgUJoYeF9uDUmRpmVL7y63eZqYtdrqSox94OsQpC
+         2cHI1y4glqwxWKmtrzFWcVWbFY3PpDEqZt8eSHuQPrr3Sd8xvx3tUJCxUwIQEu6O9vFV
+         LmQmE/D/ZlNDBxkOVV5uc0zN3TisQ8W+NSWlP5sw34eXA4nJJq8k76eWQtvRXfHP8ldw
+         Nf9gel/lDnCCwFeSrQD7kZkQQr45ky4DDkBblzjiPRCASPcEbEMbPXhK6SCfYuGfWK3a
+         hIm7YWRULNvu8vJyIOmJw/JRCKg1QsFLU7bXJdouv06W1THymfZ9ddAMGAcpOyr4giWf
+         xMlg==
+X-Gm-Message-State: AOJu0YyrPSvzNTat0EPBcqAp50m19F+jhy7A3r9xB6QOzR4YEewYxuKu
+	RngEcC4Zc33mEw6RT6jfBxdjBNj0Jq8xGz3OZB2BwsHNMwBXsi2hlTvS/hptzVSXxSVEXC1G6yL
+	0
+X-Gm-Gg: ASbGncsmRApXIvy7ZEpnixwGYDcFIsy2m4G+DITwf0nRPAs/Trjw+B9yiwsNaEYDT3R
+	dXq6grAC1sjRg2iOogCaYY9W8Bo+8Bbif+lL7Lgr2PSxm63ee7/aKpZT0OE7WTSIMiuHJnFnzoO
+	emGWhzmX6VA3+2koTzCUnKSSB8UTXoD3mE0S5lGEbznKWJ2O5WCQsVrcRG964mlGgPPQO6oeOuW
+	xkE4KuRm6FwEX2SRDa80+O9usi/KPfi4m6BAdI23jRb2B97GeqOsP8pAquYiDpAuBIwY9KhICxs
+	5dfT36sjTUlhReO7fV2fkiYAViZvO7+W89d4dKIGfxee//q6qA==
+X-Google-Smtp-Source: AGHT+IFKjqhUKum5+m8PO52QDSOXccVGC4XghB4Ha3RFhBp9zVfHg05/tK4v1NpausCGwWuP5ycvlQ==
+X-Received: by 2002:a05:6e02:1cad:b0:3cf:6ea9:9c0f with SMTP id e9e14a558f8ab-3d008f97f7bmr3880695ab.8.1738177088960;
+        Wed, 29 Jan 2025 10:58:08 -0800 (PST)
+Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ec5cceee79sm869035173.126.2025.01.29.10.58.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Jan 2025 10:09:18 -0800 (PST)
+        Wed, 29 Jan 2025 10:58:08 -0800 (PST)
+Date: Wed, 29 Jan 2025 13:58:07 -0500 (EST)
 From: Scott Murray <scott.murray@konsulko.com>
-To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][scarthgap/rust][PATCH 6/9] rust: Fix for duplicate libstd.so
-Date: Wed, 29 Jan 2025 13:08:57 -0500
-Message-ID: <dab9a7300ded07788082ddebc718b1e272082e9a.1738173519.git.scott.murray@konsulko.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <cover.1738173519.git.scott.murray@konsulko.com>
-References: <cover.1738173519.git.scott.murray@konsulko.com>
+To: yocto-patches@lists.yoctoproject.org, yocto@lists.yoctoproject.org
+Subject: [meta-lts-mixins][kirkstone/rust] RFC on librsvg support
+Message-ID: <5ed9ec27-cc24-f086-afe9-c77ead2f359e@konsulko.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 29 Jan 2025 18:09:38 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1022
+ <yocto-patches@lists.yoctoproject.org>; Wed, 29 Jan 2025 18:58:18 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1023
 
-From: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
+I have just pushed out the patch series to bump the scarthgap/rust mixin
+to Rust 1.81.0, and I have the same mostly in hand for kirkstone/rust, but
+there is an issue I wanted to get community feedback on before committing
+to a course of action.
 
-During the Rust build process, multiple copies of libstd-*.so are generated, as Rust copies the
-required files from the stage2 build artifacts to the target image directory. When these build
-binaries are copied to the image, Yocto's do_package step encounters an error. To resolve this,
-the redundant libstd-*.so files are removed during the do_install step.
+The issue stems from librsvg >= 2.59 now needing at least meson 1.2.0,
+which is a lot newer than what is available in kirkstone.  That rules
+out backporting the librsvg 2.59.2 upgrade from oe-core into the mixin,
+and dropping support of some kind is not feasible as the librsvg 2.52.10
+recipe in poky kirkstone does not build with the backported Rust toolchain
+changes (note I mean the various bbclasses here, I've not gotten to the
+point of trying to build it with Rust 1.81.0).  Another more general issue
+here for kirkstone branch users is that librsvg upstream have recently
+updated their supported release list to just 2.59.x due to the effort
+required to backport fixes[1].
 
------------------------------------------------------------------------------------------------
-ERROR: rust-1.81.0-r0 do_package: rust: Multiple shlib providers for libstd-20c3de2d9292cd03.so:..
-....
------------------------------------------------------------------------------------------------
+The upshot of the above is that is raises the question of how folks would
+like me to proceed with librsvg in the mixin.  I see the following options
+in order of likely increasing effort:
 
-Multiple copies of libstd-*.so are generated during the Rust build process.
-The redundant files are removed during the do_install step.
+1. I stick with the librsvg 2.58.2 recipe and leave things alone unless
+   it stops building on a future Rust upgrade.  This is effectively
+   sweeping the issue under the rug for now.
+2. I do upgrades to newer librsvg 2.58.x releases (currently 2.58.5)
+   in the mixin to perhaps provide a bit better story wrt security fixes.
+3. I drop the librsvg backports in the mixin in favor of attempting to
+   instead carry a replacement recipe that builds the same librsvg 2.52.x
+   (currently 2.52.10) that is in poky kirkstone with the newer Rust
+   toolchain.  As mentioned above, at the moment I'm currently unsure if
+   2.52.x will build with 1.81.0, so there is some more risk on that
+   front.  The argument for this would be matching what stock kirkstone
+   provides.
 
-Signed-off-by: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(adapted from oe-core commit effd4ba4c23cbf53b01116b5cc81d6a29ca3b1a6)
-Signed-off-by: Scott Murray <scott.murray@konsulko.com>
----
- recipes-devtools/rust/rust_1.80.1.bb | 2 ++
- 1 file changed, 2 insertions(+)
+I would appreciate input from users of the mixin on which approach they
+would like to see, especially options (2) vs (3).  I'm sort of ruling out
+significant hackery to enable using new meson for building librsvg, but if
+someone has already done similar without needing to carry a lot of
+baggage, I could maybe be convinced to try that approach...
 
-diff --git a/recipes-devtools/rust/rust_1.80.1.bb b/recipes-devtools/rust/rust_1.80.1.bb
-index 396ea9c..cc00053 100644
---- a/recipes-devtools/rust/rust_1.80.1.bb
-+++ b/recipes-devtools/rust/rust_1.80.1.bb
-@@ -271,6 +271,7 @@ rust_do_install:class-nativesdk() {
-     rm ${D}${libdir}/rustlib/uninstall.sh
-     rm ${D}${libdir}/rustlib/install.log
-     rm ${D}${libdir}/rustlib/manifest*
-+    rm ${D}${libdir}/rustlib/${RUST_HOST_SYS}/lib/libstd*.so
- }
- 
- EXTRA_TOOLS ?= "cargo-clippy clippy-driver rustfmt"
-@@ -294,6 +295,7 @@ rust_do_install:class-target() {
-     rm ${D}${libdir}/rustlib/uninstall.sh
-     rm ${D}${libdir}/rustlib/install.log
-     rm ${D}${libdir}/rustlib/manifest*
-+    rm ${D}${libdir}/rustlib/${RUST_HOST_SYS}/lib/libstd*.so
- }
- 
- addtask do_update_snapshot after do_patch
--- 
-2.48.1
+Thanks,
 
+Scott
+
+[1] https://gitlab.gnome.org/GNOME/librsvg/-/commit/7672fc63
 
