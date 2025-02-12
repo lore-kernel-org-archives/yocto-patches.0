@@ -1,193 +1,94 @@
-Return-Path: <richard.purdie@linuxfoundation.org>
+Return-Path: <ecordonnier@snap.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97F78C02198
-	for <webhook@archiver.kernel.org>; Wed, 12 Feb 2025 10:08:25 +0000 (UTC)
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
- by mx.groups.io with SMTP id smtpd.web10.11772.1739354896682714601
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96A84C021B5
+	for <webhook@archiver.kernel.org>; Wed, 12 Feb 2025 13:15:06 +0000 (UTC)
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+ by mx.groups.io with SMTP id smtpd.web10.15377.1739366100479411178
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 12 Feb 2025 02:08:17 -0800
+ Wed, 12 Feb 2025 05:15:00 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=LNWn7XWH;
- spf=pass (domain: linuxfoundation.org, ip: 209.85.221.41, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-38dd91c313bso2033916f8f.3
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 12 Feb 2025 02:08:16 -0800 (PST)
+ dkim=pass header.i=@snap.com header.s=google header.b=avK5dbdk;
+ spf=pass (domain: snapchat.com, ip: 209.85.218.43, mailfrom: ecordonnier@snapchat.com)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aaecf50578eso1331949466b.2
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 12 Feb 2025 05:15:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1739354895; x=1739959695; darn=lists.yoctoproject.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=qOxI2zNz7/aJrSEWxzQSi6N4Uza1wXnZ/0829U3Jhm8=;
-        b=LNWn7XWHWsg56d0DjEVUoagCiSLmV5SVOZbTW+pe1Ri4EnFh7S6PfxnAS18zrqBh/f
-         dMq8WrFzMaURJ1IXTXOfYmlrkpcXzPIUTVnK6srLkQTpiyQoMX5916iHu9VfnlcZsot2
-         gAit+xuhcvPvwrG05a4ONdv6OCGSLbh5G5aZM=
+        d=snap.com; s=google; t=1739366099; x=1739970899; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LH+o8//hws0+62lTexIHyOnLTS+vCMVVdVELlzXliNw=;
+        b=avK5dbdkQ2j0rgjxUEk2vU7HNRY7ke9w5wX9TcZ3najtgTNmnsy7eDvn/tdwnBxeQQ
+         ETAerGxCEGeAhMZbvTB+S4qZSp8lPwMrubydSfEd3E2vSD4E7zEGL/t8xxKpFlIgVc7N
+         VPyqcBvcBjyUvnGvg3BCCXoyOVycSiGJRrtXk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739354895; x=1739959695;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qOxI2zNz7/aJrSEWxzQSi6N4Uza1wXnZ/0829U3Jhm8=;
-        b=YjckzdYpMK1rfyAmTIfObXbXHWQRCXiZmC+7tutf/8oeZGBakLENEUalH5fzcmoYXQ
-         xooJ+dR+ll3jcsv5ZqcqxplW+UquwOA7ni4RFW7H9zaPp6y0HFM1B9SBHV7TGJFx8tuk
-         cHo8yorrXrZBNwDM1ZSFjScI7RXqrh+yF4I9o0cGL+eLaXl2i3YXfQWKC60iYJBAD0gc
-         jS7vXHVf+d4GnVeqgx2qbFJmcQzqDgUFlNAUymnuTIQmkz3sgMDo1km2Jqp0252u3PtB
-         laCXguf7OknKzAKTrLbvf8QHC9Dv67372glxo9ytgEZjW7H53cehepdEl4g13Hyx5mA/
-         kbPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVzgGhPp6JWGAi+6MRevv5ajxQAir2bFvvRkpcWMGLS1ttKE3kCfrQZRd2i3LFAKVeruzfQen0pvYM8U1Yj@lists.yoctoproject.org
-X-Gm-Message-State: AOJu0YwEZIzJ14ALgGiW5RLn+EmctYUmoLEWcM274+mJHZ8mSTA0pXIA
-	HxbutMKloYyUaqrsKa3JIUWxEZtLf2LpDGZS4/1QvUZVZwcHxLYVzdTGWHux0FA=
-X-Gm-Gg: ASbGncvV00O7QqDDtQPCH0sjYn79JdMKXUQjjxQc752JbddSVXAyMxjyCP4WmkCppBn
-	x7Ge7KtfaolmzXmtF4LmGuo9A4d+V0UagnTlOkJEJwemaluLJqTqr2sWLcAHDH0hhb003LMv+iX
-	s9PRdlwScVzhq1/V8VwG/wxOQnxhRHDPvC0ZViTfqp6QFJ0Kf1UIl6ZXLNRJHGmGYo05krVopvl
-	6j11il0+LAM8f3+lD4hrorUYxCfSdGXIsFjU8o8KLYJDqe1k/nwkQ3dnPifzReM9CnNMBYwOaee
-	axUZ8nhSS3P6xyNidMdkbyzNhrQp+Sgeidf+LyHAIALVvlT9xplxZxunItatfiCbeRzP5u/qg1n
-	cLA==
-X-Google-Smtp-Source: AGHT+IFcLY+de0UihynlEreVQmIp/gVIbRD7Z/EBGnqrUDlHud0wE/CFU8h1NViuBib11aUjSSNzCQ==
-X-Received: by 2002:a5d:5192:0:b0:38d:e411:ebbf with SMTP id ffacd0b85a97d-38dea604099mr1337575f8f.45.1739354894948;
-        Wed, 12 Feb 2025 02:08:14 -0800 (PST)
-Received: from ?IPv6:2001:8b0:aba:5f3c:af16:73ba:601:d9ae? ([2001:8b0:aba:5f3c:af16:73ba:601:d9ae])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4394dc1c2aasm31653265e9.0.2025.02.12.02.08.13
+        d=1e100.net; s=20230601; t=1739366099; x=1739970899;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LH+o8//hws0+62lTexIHyOnLTS+vCMVVdVELlzXliNw=;
+        b=eSPpK1hxJa+TvTrTKDDXXX8wPTrPBoTHldUmzksHj6HX3XjC9GIuPwByeUWI41PlEC
+         b9R2y+sokXZOO3ZHxzgJMq2PxK4xX/V1WZRsOkSLKvMqkFWDMTeR8xdKiKWdREY4PbH0
+         nZ1tSn+G8dg1Qw1F+GWVJzCx1BbK89jmCcNGEiDJUGUpE7BbiFl4UMcb0XmCZdekmKxR
+         eEQfmNl3CCLRVogMtCwTFi2SjLc05mw6CQqvLaGSU2NHORySpVfjixzezrDcALHoEwbX
+         03m/IHengzhP1yXcdJj7+3VlX1KI4bl6NNFABvfpSLam/SK4m7H7J9doI5nAxoZWhg5w
+         miGg==
+X-Gm-Message-State: AOJu0YykWgmgj9G+/QsCLqNANClq1c5elh9v0LGl3W7SUJjv3428fDsz
+	LI5f7+oGatqXGavycsq/DvViHA5t0EE20b8yt35DzzxvQ9ee4/3GZkNrGlKmZOD7ymWBh8wZhiL
+	9
+X-Gm-Gg: ASbGncsQQw6XpFba/K3VV/KMLsLG6eXshpB1wtZRyCO19VmTx9QPisfHS2tl0n2s67U
+	SBBEcVQWq7W4l4V637ToN1aBcL7cnOeUTaVvNJ/DJ+SOLySEyByMuuWg7Gphph8AzJvfD+Xg8J/
+	9fU9gXDY6AM7CPh+D8P1BjzOgzMABVkDowON9wmzZTKQKNr2fVqVufYvd9//hlUe7kkjR/ji8ub
+	8pcgHvxMcHLjig6+s5n5sTi8QdZ0eMydMa9r2zjX/Rwk0/huTlAeUi5VbLZe4UXTtfmr//WJSrr
+	HU+dLBV3fsPwLK0MgN+HTblaJrLZ
+X-Google-Smtp-Source: AGHT+IErRuiqLuqN2IucYakTYMJEfEwz0ewShPuX5sb4yjlaSrjZF5WfV4cuCTCve2YAcG0rKuwq5Q==
+X-Received: by 2002:a17:907:1909:b0:ab3:85f2:ff67 with SMTP id a640c23a62f3a-ab7f339c7f8mr332611366b.16.1739366098547;
+        Wed, 12 Feb 2025 05:14:58 -0800 (PST)
+Received: from lj8k2dq3.sc-core.net ([213.249.125.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7b4e96185sm715320966b.86.2025.02.12.05.14.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 02:08:13 -0800 (PST)
-Message-ID: <3409aa96b46408784992ece9c475a50e2e8a8be0.camel@linuxfoundation.org>
-Subject: Re: [yocto-patches] [PATCH yocto-autobuilder2 2/3]
- yocto_console_view: Keep known revision mappings
-From: Richard Purdie <richard.purdie@linuxfoundation.org>
-To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>, 
-	yocto-patches@lists.yoctoproject.org
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Date: Wed, 12 Feb 2025 10:08:13 +0000
-In-Reply-To: <D7QBFLDY4P2O.16N4AMK1DM3F5@bootlin.com>
-References: 
-	<20250211-mathieu-console_view_colspan-v1-0-d94a8c55acf9@bootlin.com>
-	 <20250211-mathieu-console_view_colspan-v1-2-d94a8c55acf9@bootlin.com>
-	 <410d2fa497ea2b0bcf194559ad6eba60799a8928.camel@linuxfoundation.org>
-	 <D7QBFLDY4P2O.16N4AMK1DM3F5@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.0-1 
+        Wed, 12 Feb 2025 05:14:58 -0800 (PST)
+From: ecordonnier@snap.com
+To: yocto-patches@lists.yoctoproject.org
+Cc: Etienne Cordonnier <ecordonnier@snap.com>
+Subject: [meta-darwin][PATCH] binutils: remove nativesdk-perl dependency
+Date: Wed, 12 Feb 2025 14:14:55 +0100
+Message-ID: <20250212131455.4094351-1-ecordonnier@snap.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 12 Feb 2025 10:08:25 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1078
+ <yocto-patches@lists.yoctoproject.org>; Wed, 12 Feb 2025 13:15:06 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1079
 
-On Wed, 2025-02-12 at 09:14 +0100, Mathieu Dubois-Briand wrote:
-> On Wed Feb 12, 2025 at 1:01 AM CET, Richard Purdie wrote:
-> > On Tue, 2025-02-11 at 15:48 +0100, Mathieu Dubois-Briand via
-> > lists.yoctoproject.org wrote:
-> > > The yp_build_revision property disappears from the build instance
-> > > once
-> > > the build is done. There is no reason for its value to change, so
-> > > keep
-> > > the last seen value in revision mapping. This will prevent
-> > > finished
-> > > builds to jump back to "Unresolved Revision".
-> > >=20
-> > > Signed-off-by: Mathieu Dubois-Briand
-> > > <mathieu.dubois-briand@bootlin.com>
-> > > ---
-> > > =C2=A0.../src/views/ConsoleView/ConsoleView.tsx=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 25 +++-----
-> > > --------------
-> > > =C2=A01 file changed, 3 insertions(+), 22 deletions(-)
-> > >=20
-> > > diff --git
-> > > a/yocto_console_view/src/views/ConsoleView/ConsoleView.tsx
-> > > b/yocto_console_view/src/views/ConsoleView/ConsoleView.tsx
-> > > index 973c26424233..93c51b340b17 100644
-> > > --- a/yocto_console_view/src/views/ConsoleView/ConsoleView.tsx
-> > > +++ b/yocto_console_view/src/views/ConsoleView/ConsoleView.tsx
-> > > @@ -208,6 +208,9 @@ function selectChangeForBuild(build: Build,
-> > > buildset: Buildset,
-> > > =C2=A0=C2=A0 return fakeChange
-> > > =C2=A0}
-> > > =C2=A0
-> > > +const revMapping =3D new Map<int, string>();
-> > > +const branchMapping =3D new Map<int, string>();
-> > > +
-> > > =C2=A0export const ConsoleView =3D observer(() =3D> {
-> > > =C2=A0=C2=A0 const accessor =3D useDataAccessor([]);
-> > > =C2=A0
-> > > @@ -263,8 +266,6 @@ export const ConsoleView =3D observer(() =3D> {
-> > > =C2=A0=C2=A0=C2=A0=C2=A0 builderIdsWithBuilds.add(build.builderid);
-> > > =C2=A0=C2=A0 }
-> > > =C2=A0
-> > > -=C2=A0 const revMapping =3D new Map<int, string>();
-> > > -=C2=A0 const branchMapping =3D new Map<int, string>();
-> > > =C2=A0=C2=A0 for (const build of buildsQuery.array) {
-> > > =C2=A0=C2=A0=C2=A0=C2=A0 let change =3D false;
-> > > =C2=A0=C2=A0=C2=A0=C2=A0 let {
-> > > @@ -278,26 +279,6 @@ export const ConsoleView =3D observer(() =3D> {
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 branchMapping[build.buildid] =3D
-> > > build.properties.yp_build_branch[0];
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 change =3D true;
-> > > =C2=A0=C2=A0=C2=A0=C2=A0 }
-> > > -=C2=A0=C2=A0=C2=A0 if ((!revMapping[buildid] || !branchMapping[build=
-id]) &&
-> > > !build.complete_at) {
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 build.getProperties().onChange =3D pr=
-operties =3D> {
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 change =3D false;
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 buildid =3D properties.en=
-dpoint.split('/')[1];
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!revMapping[buildid])=
- {
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const rev =3D=
- getBuildProperty(properties[0],
-> > > 'yp_build_revision');
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (rev !=3D =
-null) {
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 r=
-evMapping[buildid] =3D rev;
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 c=
-hange =3D true;
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!branchMapping[buildi=
-d]) {
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const branch =
-=3D getBuildProperty(properties[0],
-> > > 'yp_build_branch');
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (branch !=
-=3D null) {
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 b=
-ranchMapping[buildid] =3D branch;
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 c=
-hange =3D true;
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 };
-> > > -=C2=A0=C2=A0=C2=A0 }
-> > > =C2=A0=C2=A0 }
-> > > =C2=A0
-> > > =C2=A0=C2=A0 function getBuildProperty(properties, property) {
-> >=20
-> > When you start a build, it gets "Unresolved Revision" and I think
-> > by
-> > removing this code, it remains there even when the revision becomes
-> > known. The code would have allowed it to move to the correct line
-> > in
-> > the display. This therefore may fix one issue at the expense of
-> > another...
-> >=20
->=20
-> The issue is this part of the code actually did nothing. I believe I
-> imported this from the previous version of the plugin but never
-> really tested it.
->=20
-> I've been trying a few variations, yesterday but it looks like we
-> never get the property update.
+From: Etienne Cordonnier <ecordonnier@snap.com>
 
-I know it was one of the more problematic elements in the code in the
-past and can result in a lot more queries.=C2=A0The idea was that when the
-property became available, we'd update the UI. I'd probably have to
-replicate a test environment to be able to offer much help at this
-point...
+This was added in scarthgap 5.0.6 ( https://github.com/yoctoproject/poky/commit/e1958af36c9bb27f683b82a13e91f17f4cb64858 ).
+Add this workaround until there is a proper fix.
 
-Cheers,
+Signed-off-by: Etienne Cordonnier <ecordonnier@snap.com>
+---
+ recipes-devtools/binutils/binutils_%.bbappend | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Richard
+diff --git a/recipes-devtools/binutils/binutils_%.bbappend b/recipes-devtools/binutils/binutils_%.bbappend
+index 03e4ceb..e0868e9 100644
+--- a/recipes-devtools/binutils/binutils_%.bbappend
++++ b/recipes-devtools/binutils/binutils_%.bbappend
+@@ -15,3 +15,10 @@ INSANE_SKIP:nativesdk-binutils = "debug-files"
+ 
+ # nativesdk-binutils's libctf doesn't compile. disable it
+ PACKAGECONFIG[libctf] = "--enable-libctf=yes,--enable-libctf=no"
++
++# perl tries to call readelf, which does not exist on darwin (it would need
++# to call objdump instead but the detection logic does not work for some reason)
++RDEPENDS:gprofng:class-nativesdk:remove = " nativesdk-perl-module-bignum \
++                                     nativesdk-perl-module-bigint \
++                                     nativesdk-perl-module-math-bigint \
++"
+-- 
+2.43.0
+
 
