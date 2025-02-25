@@ -1,241 +1,239 @@
-Return-Path: <tkulkarni@identifeye.health>
+Return-Path: <wangmy@fujitsu.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D594C021A4
-	for <webhook@archiver.kernel.org>; Mon, 24 Feb 2025 19:21:28 +0000 (UTC)
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
- by mx.groups.io with SMTP id smtpd.web11.99099.1740424882710495256
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DF1EC021A4
+	for <webhook@archiver.kernel.org>; Tue, 25 Feb 2025 00:08:02 +0000 (UTC)
+Received: from esa11.fujitsucc.c3s2.iphmx.com (esa11.fujitsucc.c3s2.iphmx.com [216.71.156.121])
+ by mx.groups.io with SMTP id smtpd.web11.94.1740442074493871289
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 24 Feb 2025 11:21:22 -0800
+ Mon, 24 Feb 2025 16:07:55 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@identifeye.health header.s=google header.b=L3IhQ7Vd;
- spf=pass (domain: identifeye.health, ip: 209.85.216.50, mailfrom: tkulkarni@identifeye.health)
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2fc32756139so7432224a91.1
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 24 Feb 2025 11:21:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=identifeye.health; s=google; t=1740424882; x=1741029682; darn=lists.yoctoproject.org;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wirV7oy56ksHyM6ciMsyTyNSvxa+EKjk3rmIVRM33dQ=;
-        b=L3IhQ7VdfJ3ryC+qHXcPsTGbrYV23kETuLwNWakoC4C/+9IM/OcFBeShL//NUNOxOj
-         5qKyBi82qD4pQ6wTd2mcjKmR7OSXMl+Y7/Ov36aFHuqB+/d+9Vhkh84dhhEBCnwguKM0
-         hHOP6GrD21Zx0dYgnVX7XU6cWeSMpgZTpez0jvmlxOWXycK7NXAhzAhUgfP43/cCGbz8
-         codaOaNrHWBlVSLfLqNoT89WcSBw4pzvezp2BxosDqazOcyCliSe9aY45BqvFnWMCfKU
-         e4RfGfbiRLdQ/8SPmrDxwdcMN+TG6JSg4eeb4NEnJ55vOdwS0RL5xewVEEz1a0YsK4gC
-         2nyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740424882; x=1741029682;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wirV7oy56ksHyM6ciMsyTyNSvxa+EKjk3rmIVRM33dQ=;
-        b=JNHL4okTxvom7vhRbiW3PiRx2+orZwDA80EABR2PYY0v1vDBQBbE6tNZl0j7iVOXcV
-         TfFvYxRXJDouajU7UBpedUrAjdY/wad/m+Ov9AT5SdVDnoIZ/V2riSCrpFfpIjUH1vcI
-         mmpuvifGjeCpIKdUa0Za6bRNe3Wfdrda0Z7fiOUxq+YQIQGWRslVucBtsV4lE+bBuHe8
-         0WjJJhtbis0W/6Al19xUFZsvTyl3PpHyRRC3hVVYpVhYFR/VUk5kair4DO5YTf4Jl2MI
-         98XVVeAnX+04GQp2vFlEqQc6NNxow4or5IO0lBaEzWl21TlCQYy8lBWHGdOkpoBPoDx/
-         Wn5w==
-X-Gm-Message-State: AOJu0YwNGtqgpRpK3vyP2NXAHCDR6L2ziqccb2iWptGBCQDSrC4S6CD1
-	JOy8ZaxbMRXxiAFc7JL9Gg4ExPft959PBXjW8fIFOcP5cLeELfW907RPR2Mh6YV7YvAEeob+9NX
-	ZB5w1U42nECZPTFCCJF1xFNZbfnrfUKBO5+irTqhufvuIqhl6
-X-Gm-Gg: ASbGnctIuLlqlxjAQr25lE5N9RTKnx4MLn4BgmKY+jZmkiXDvVENHepRfRnArk+KoGX
-	+FLJ+6iVCIhe1w9S6oSCXblxq6wezM0Ce0vgv2xWKz4bbRUuCWC6dYbUTehOY484YpqlbXE+QVQ
-	r2Us7e2bE=
-X-Google-Smtp-Source: AGHT+IFdJGIle2pJ69wfVSM7fV4k0I8YjYkkgwOGtnS2fXOZ8zXE3sYZDlpHCgi80JlRgIH+9MhWMb/I3MxIjgbWe9c=
-X-Received: by 2002:a17:90b:2d4d:b0:2ee:f80c:687c with SMTP id
- 98e67ed59e1d1-2fce875d5b4mr21842702a91.31.1740424881808; Mon, 24 Feb 2025
- 11:21:21 -0800 (PST)
+ dkim=pass header.i=@fujitsu.com header.s=fj1 header.b=HGbT+vod;
+ spf=neutral (domain: fujitsu.com, ip: 216.71.156.121, mailfrom: wangmy@fujitsu.com)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj1;
+  t=1740442074; x=1771978074;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=bMX78e8jXgzTpbGF30Gjx40iKdVuD24BydJDnxozRoc=;
+  b=HGbT+vodm9q5CiSLnlyqJKcKWopojSpzibidHNCeagKR4UzJ20Wn59os
+   DQD7yKOElrWsZnfhN1aFj3EfYOHNWHzOwQB6GHoxU+f08GcNWy4cvYbyW
+   NJr9OzFq8aPJFdRy9l6gY3f6qxwAx7R94xLCggIqsOaopk7EHZlEPnOXS
+   zIcc3NvHl4eB2/5ECw8V2csrLbTOTtDLtawE8RuB+pAIu/bpvuNgI7T5z
+   kzqYtJmc/RQFKMjXUB90WltmsrC/egrztDs4pdzLdxj6K6QsHIsLW4aLx
+   wgPyXffIxse9jOFWBP/ZWQM7A32FOoyQPNcOgSQIZAdNaUCI+Xyzy75R6
+   A==;
+X-CSE-ConnectionGUID: L4syk6CfQKeaNxgGlR/bUw==
+X-CSE-MsgGUID: Gt/1RsqYRguVRKR0GecGHA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="148272727"
+X-IronPort-AV: E=Sophos;i="6.13,312,1732546800"; 
+   d="scan'208";a="148272727"
+Received: from mail-japaneastazlp17010004.outbound.protection.outlook.com (HELO TY3P286CU002.outbound.protection.outlook.com) ([40.93.73.4])
+  by ob1.fujitsucc.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 09:07:50 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=u4TAx/PIw1Iz4a30rg0Pd57DVQ+qSzsa0MmSBlbsfU6HpGo/8ZHMuuaQ9F7Yqjw2XfG6ey9DrX+2Qa4BYRstU4B1P4f3dZqPnc1hdMEPHYw7ZhIII2T8OzW4WEmQSjd/IQKoTCrsrNtN25pQ88T3yW9YXVQ+hPNLDBqR6qCF23MQdd0v4GkbWsH0jN1WooH/fj6Pw4d+vzcgxDMk7i+cSidzRa0LK1v3cyRa7PVEwF4RbGwolTFsAJcvivK0i4NXh4iqW5FKw15hoLPhuY9xgaODiHT1dFlDnxZtkDolNqMKQEJSkDzm7OdBjId+5mvtjlT8DgekTnwLY5zXBPcyxQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bMX78e8jXgzTpbGF30Gjx40iKdVuD24BydJDnxozRoc=;
+ b=UL2tycpzKDEmklg+iNUU3cUcbQCK4kZw7UIDVCDX71E74Cuy1yrapF42KeBAEKxQCBFz3eIfkxVRngHidfX8g35UUEbZtA/YBWbvhlSjTdk3xqx7bjQzdURDJSC3lRMFC3y6mLPHkJrdsWVLFA7Q4isUNG0HciPdN17R9SNMSY+Iqd/x/HzG7vvF7UE1LLe7tofrMd4d5KbXqwMzOnIp9uG8QPt1sl3volpuPg3T9+dOiitB+v0aQGk3kPGgDoFvkyBC1Z3NhY32HOQJzxGmTLjmt4+nWMI7Wpsyhlud0aKfQ/M/QdTvUNpzVfaqYr2J1wffJ+dUrTAZzcbt+HlOZw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
+ dkim=pass header.d=fujitsu.com; arc=none
+Received: from TYWPR01MB11861.jpnprd01.prod.outlook.com
+ (2603:1096:400:3fb::13) by OS9PR01MB12511.jpnprd01.prod.outlook.com
+ (2603:1096:604:2f7::6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.19; Tue, 25 Feb
+ 2025 00:07:47 +0000
+Received: from TYWPR01MB11861.jpnprd01.prod.outlook.com
+ ([fe80::e0dd:28e5:6a6e:2342]) by TYWPR01MB11861.jpnprd01.prod.outlook.com
+ ([fe80::e0dd:28e5:6a6e:2342%4]) with mapi id 15.20.8466.016; Tue, 25 Feb 2025
+ 00:07:47 +0000
+From: "Mingyu Wang (Fujitsu)" <wangmy@fujitsu.com>
+To: "yocto-patches@lists.yoctoproject.org"
+	<yocto-patches@lists.yoctoproject.org>
+CC: "douglas.royds=taitcommunications.com@lists.yoctoproject.org"
+	<douglas.royds=taitcommunications.com@lists.yoctoproject.org>
+Subject: FW: [yocto-patches] [meta-java] QA Issue: Missing Upstream-Status in
+ patch
+Thread-Topic: [yocto-patches] [meta-java] QA Issue: Missing Upstream-Status in
+ patch
+Thread-Index: AduEDy+sEghkbMChQESqJcifNyWPJgAAxogAAAnxstAAAafPAAAASvSAALWo+0A=
+Date: Tue, 25 Feb 2025 00:07:46 +0000
+Message-ID: 
+ <TYWPR01MB1186165529189A686A024207ADCC32@TYWPR01MB11861.jpnprd01.prod.outlook.com>
+References: 
+ <TYWPR01MB1186118665B16406BD0571151DCC72@TYWPR01MB11861.jpnprd01.prod.outlook.com>
+ <CAMKF1sqJ3MS8gnN8gv1AMLNNZt=UEXtzXyQim-5TA+H9funFUw@mail.gmail.com>
+ <TYWPR01MB11861B276559403A8AA76A8EFDCC72@TYWPR01MB11861.jpnprd01.prod.outlook.com>
+ <49dec7e116d95938712d10e4d76b78ed2df01ca9.camel@linuxfoundation.org>
+ <CANNYZj-RPuuU+Ub5d0VBz7gmqg-LEB-yKN9dkJL8Qp-2UY2K1A@mail.gmail.com>
+In-Reply-To: 
+ <CANNYZj-RPuuU+Ub5d0VBz7gmqg-LEB-yKN9dkJL8Qp-2UY2K1A@mail.gmail.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+ MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_ActionId=6cb49864-0a6d-4502-b64f-5e6c396f7c1f;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_ContentBits=0;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_Enabled=true;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_Method=Privileged;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_Name=FUJITSU-PUBLIC?;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_SetDate=2025-02-25T00:02:08Z;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_SiteId=a19f121d-81e1-4858-a9d8-736e267fd4c7;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_Tag=10,
+ 0, 1, 1;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=fujitsu.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYWPR01MB11861:EE_|OS9PR01MB12511:EE_
+x-ms-office365-filtering-correlation-id: 00ff3ad1-c654-4346-da4c-08dd55306f4e
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|4022899009|376014|1800799024|366016|1580799027|7053199007|38070700018;
+x-microsoft-antispam-message-info: 
+ =?gb2312?B?OVI0Wjh3RUV3QXU1bm1sNWdheHlVVHRPdndGRDcvTmdLWWtFM3V0bzA1OXha?=
+ =?gb2312?B?UUhZKzVmRkFWSkpidEdZTlAwU2ZjZkcyT0kxR0w3MjFMYmhyaUVSZ09FY3Zw?=
+ =?gb2312?B?cklvbG0zU1AzSzlpTkMvTng5eXJsY2Z4cGpBQkhmOWVKMmhZWnluSEIwdEpJ?=
+ =?gb2312?B?TDhleVM2a0RmRVVvWEZ2NTdVdDFFYkxZVW9pckZoREFnTHZhR3cvTDR1UWpa?=
+ =?gb2312?B?MElOVkoxSTVCcDlJanAxd3JacTZnVC9yL3dDT2VHcjU1bnhDY3cxbjU4Z0h3?=
+ =?gb2312?B?dUNjaUpHaTNmTjdSam9XS1UraEtOTFpZc2pmSTR3anlBTGZJWEt2OHNOK25B?=
+ =?gb2312?B?VjBrRVdDWlVIY0pwK1JZdERNaU44c2ZWa0dxUWNJSytsS3hHSjhRdktuSnFD?=
+ =?gb2312?B?bkxHZ2lXQ2lQdm51eEpPM2FSSzRBRElneTQvbWJaSHJ3UldDRXFLNWdoaTRp?=
+ =?gb2312?B?VWxtdTRjbDB5M2JrdDdJSUp1ZzVYcUszZ09xMVlWTm5xQTdMNkNoOHcyM2N6?=
+ =?gb2312?B?OG9iSjVhU2xZNXZFMkpacWltS3BnVHFRbXZmdHB5SnJ6ckprRk5nYzNScHFU?=
+ =?gb2312?B?QkJtQ0Rlb21mSGg1THJjdUNwV0ZXWVdHT0wwbnA2bmNMY1FvRE1Tb2xKdGR5?=
+ =?gb2312?B?bHNlSTg4NU82bUZjTmh0eS95cFgxZHVwTm1iU0dUNWJjWDVJUWcwRWhtcjdt?=
+ =?gb2312?B?OHJaLzhITFUySVJKWlRSQ2RveGRmWjJJS2RzSmdBNDgweVlGRm80TTRPSDVW?=
+ =?gb2312?B?dCtIWldjMnhjWk1FcVFRbWFQQnZDZ3cyZEx3b3dzRzJ3TEVCc2tibi9LTXYz?=
+ =?gb2312?B?TlgwYjlxTjB6ZmxNaWw2NjVIL05sMW1oMWtXaHMxTWMxaUZsdG9PVEtWazdw?=
+ =?gb2312?B?RTFrUVdNaWdMVVFYbE13T29QMzBlM1FVS2Q3VFZkcS9PQUlMK1RQOTFBMmhH?=
+ =?gb2312?B?d2tZR2hCNlJyelI1Vmc1aFM4TzBMamxucDQrN2JHVVU5eHlXc09Zci9ybnZY?=
+ =?gb2312?B?NVRpS1l5ZDluSngva1V2ellDeGFFWHRRSmtZMzVQNmV6UCtqTDFyYzdldmRY?=
+ =?gb2312?B?NzVHbzVkYmZ1d3BZV2lRZUNmcFJxRXl5V21NekppWFZXQTF6b2hiZWljNUli?=
+ =?gb2312?B?UENGcGRSQ2p1d3N4Lzlvam9pWndvZE5VTm1NRGdNN1BSNmJOWk5BMWp0NDZB?=
+ =?gb2312?B?b2FVVDdVVVZCY1Y1N2xnVkc5RHNINXFpQW9IWXR0RHZpWGdWL0xOcUdLOXRj?=
+ =?gb2312?B?akNFdUJUQllFWUxKWk9Qayt0czI2cVZJK1RUVXNFU3R2Q0ZlUU8xeXM1cmFX?=
+ =?gb2312?B?RHlVckUzZDFVL2V6ekFaR1VKZnZIeDIvT3FKWG5pd2swWlJOeU9wVVo5cU45?=
+ =?gb2312?B?KzB2VUpCbkFaTXNxcFV6RXczWGZXMTFkUktVYmNDM2hvWk1qQkZ2S2twTmJG?=
+ =?gb2312?B?aWQrSE9leGxKVVZBU3RLdGErQXJTamlveDZ6RGtsVEkyd2NDMzZxTjJUZzFU?=
+ =?gb2312?B?dlRHV2N1SHQ4WHh5aytaYkdHYldHQmNsWGtPUUFoeW81bVhnUzdmRktMNkJ6?=
+ =?gb2312?B?QlZEMmV1RUNWVi9yU0ZwVUdyQng0ODUzQi85NzdDSkhMSlRPRFdyS2NLK3Ax?=
+ =?gb2312?B?SkpScG9NNFNYcE5WSmtmQ0w3R0hBemtlZHcwdTlaZmYrak9hSzN1SGJwK1NJ?=
+ =?gb2312?B?bkF2RWpKNUxDTEhVZjNwNnR4MGNVVTRCYi9zSGtreHpZNzZOMnhXNm8zbi9U?=
+ =?gb2312?B?eHZkeXN6b2VmeUVXK1lwTTY2amJWR3ZjcWkxK2IxRXpkV3FtcDVFQUZHdFN4?=
+ =?gb2312?B?WW4vVE5RK0tkNkV2ZVdpQjRaa1NvOWsvUDQ2ZDYrdnBmV3RybHVCakVnYVhp?=
+ =?gb2312?B?TjU0QzFRcnNmQ2hKSDZrMFowT3NCb1VFQ1hYaFBQbEhHZmRtNlhiKzA2V1Vw?=
+ =?gb2312?Q?IL1+/UgQGEI=3D?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYWPR01MB11861.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(4022899009)(376014)(1800799024)(366016)(1580799027)(7053199007)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?gb2312?B?Zk9teFFNNW14eXgrK0dHajRadVY3eWpXY1djbWhEYU1zYWxXMm14Z2Vnc0lX?=
+ =?gb2312?B?QlpRc1Nuc0VhenN5NzB5cVkrT2pkR2cxMHpweWtkQ1o4YjZzVFlVbDJSUUEr?=
+ =?gb2312?B?YUl6YXYvY0lOcEFTUnNra0t3SHZXSUo2Zjc3TE9RbS9xb2U0czRnQy9iem1F?=
+ =?gb2312?B?ZFpUSlkrR2Y2MEFvcHR6NDM2SXMrb1BtK3F6dmtCVkJIZkxCaEpJWXdMY01q?=
+ =?gb2312?B?UXBPQUJkUzF3OHV6a3R6em9sYW5ueG4zcXlmUTJzVFJFRnVpSHB2ZVhqUGYw?=
+ =?gb2312?B?SVA2VFpXNW9qQ0luS0hYVE9Ia2t3ZjQ4c3pGeFgva21QdTZrL0hHbVJDb3JT?=
+ =?gb2312?B?aG1NUFdwNnIxajVvWjZRS21oQ3doSWx0a0NDc1FyYWpGQ2ZiQ1luc3JFS3Fz?=
+ =?gb2312?B?SWNnV3RTR0MyWWk2UkNRTFc0OXE1bHlpZldOaTc0SW5aMEVndnIxMlpoMmVU?=
+ =?gb2312?B?aTBUZzh2M1I5TS9IcnNLRERBa0JmS0xhSG9paXhYbWFvWUdCKzh4VjVRd0pZ?=
+ =?gb2312?B?RndUVmhnclI2OEc3V1k1L2tKc2hpbU5kaXo4L0k5TTNqNjFHdEhwa1dyK0tC?=
+ =?gb2312?B?OUI0TWNuc05LNzdpUWo4M0dMaDRFTWRadVBjN3ZtK2x2cE53b2tMVDBIcWp1?=
+ =?gb2312?B?ODRZSTk3TlkzL1EvclVQL2t2aFgxWWNrSXZxZ1BhUENzaWtyNVJkTjRMQk9U?=
+ =?gb2312?B?N0xJRjZtbG5RblJZSW04Z015Q21mekFZWnpLNllqWTVrL1VsOGZrTVR1VmR6?=
+ =?gb2312?B?QXRrb2lNR0c2VjR3WFNqSkIzV2VGMlYzakZ2eVRjTHJnaTZLY1pQZjNOYk9L?=
+ =?gb2312?B?TW1WVFYxR2pGemF1WWVNdXRzaGxmTVFOVFppVmRWUFRPYXY0WmVFQlU4S2xt?=
+ =?gb2312?B?UTRnWWc1Rk9yeVhOOWhCMWtDVnd1elM4aDZVSFpUNk5XdWhxN0xCNzhOWm5P?=
+ =?gb2312?B?ZDJwYmIwQ2NEWkpCM1huZnA3a0xYaFZTRGdJbzY2MVkwRTVTakxacUs1cGxM?=
+ =?gb2312?B?ZzA3MWJpRnl6cFNkL2k2Y0UwYVVFVzhiMmduS1p4UlJxU01rY3l2eWYzV0hB?=
+ =?gb2312?B?UmIvS1lDMUpBZy8zMEJ2L3hqSGF3QmJmbXdRR1V2Z0hnS25oWUh3bkNUVTIy?=
+ =?gb2312?B?SVB1K2F4S1pjaTVDWkxvUXJIb212RkFYUVNQQkRKYlV0T1RpamJPeXE4cHd1?=
+ =?gb2312?B?STU0YkpOTTRJR08rNkVsZGtyR0dsM2RqTjZaNnlsTzA5a1ZnRDg3cXFEWUcr?=
+ =?gb2312?B?NDBxeDlLblBvSWw2Sk9MZ0x3MTUvUVRsNFNGMEk2TEJRUHMyNzhwaUJLVlVF?=
+ =?gb2312?B?WHVFVmlSLzFMK3lzYUdNU2xjdXFNMU9pSCttcVV1RHZkNnNJSGgvWnU3VDQ3?=
+ =?gb2312?B?bXVoV1U0REk2WkhLTVBHMGRYYzRKTS9qM21JTUc3SDZXQlUxTlVPYVhUay8y?=
+ =?gb2312?B?UjluSk91MEZqbEpzTUZVNXdYVjRUdHF5T1lMWldyYUVJYWRGZFFUc1FTdTBs?=
+ =?gb2312?B?TEYwRm1YMjhxTGtjcFIxQ0VsRVFJUmx2MU5lbVlJUkNHWk1kVVRGWU1YQmNq?=
+ =?gb2312?B?dGNKQ3hzWG01eWczVFFSWENub2o3OG43NXliQVYrRm9ra0VDTm5SRURjbE9S?=
+ =?gb2312?B?VSszL0t2VGRwWE1td2NuMnNwdXNKQytOOXlTK1BuUUhZTnoxYVozMjlsUnBH?=
+ =?gb2312?B?Y3hlOWxERUhzMkEwQ2trOTdCemlTM1FkNitZZ3lEVll6cG1uSVE1N2JMeGxr?=
+ =?gb2312?B?dlFwVnJOdUttNVU3VHNhVnY4bTZIUzdiSVZ0bm5TVzlQNzlxMHZJcmtGTXdN?=
+ =?gb2312?B?eG85ekNvSTZ5RnJ2VEJqVHA1UTJTeERMNHdNYmpaU3ErWHhMd0ZaOWpTYmJ5?=
+ =?gb2312?B?Q2hIbDk4REdxc0wxZ3dISThOY0sxQ1g3U2pRMXB4OWxUS2xsUy90NUVwd3Y4?=
+ =?gb2312?B?U2VWRE1pZ3U2WmQ4cnNodW5qeXJ5NDlja3ZNalFrV3lWOFV0a1poT0FRMmJM?=
+ =?gb2312?B?SngzcHBpaExyQjZCcllnY1Vsa3BtZFJxdE1UTTNQbkp6b1VTRVpsY21GQmJk?=
+ =?gb2312?B?K1k3Z1N5R3JLWmlaSEE4NDNrUCszdGZHQm5hSGJPanpocmdKV1VGUU9lOWpR?=
+ =?gb2312?Q?UjWY=3D?=
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <CAAp=Uw_v_p_XdOn2wHf6bkv72DdK7mpiejJsYfvDRPE_mBj3Pg@mail.gmail.com>
- <CAAp=Uw_xZQHkQuMeS=c3RaS7QRNtT-sdc0iVQ2GTzZ4FdKKZog@mail.gmail.com>
-In-Reply-To: <CAAp=Uw_xZQHkQuMeS=c3RaS7QRNtT-sdc0iVQ2GTzZ4FdKKZog@mail.gmail.com>
-From: Tushar Kulkarni <tkulkarni@identifeye.health>
-Date: Mon, 24 Feb 2025 14:21:10 -0500
-X-Gm-Features: AWEUYZnWaIHKWpO9sIgN8qtsHr_iA87ylNN3q1EM5NiuEoL3eZ5-t1fcBFECDSc
-Message-ID: <CAAp=Uw-TKrP1JZ944ZvRkAZwhxH6EZxoNq5jG2DzpKbnxehq-A@mail.gmail.com>
-Subject: Fwd: meta-security/recipes-security/fscrypt/fscrypt_1.1.0.bb
-To: yocto-patches@lists.yoctoproject.org
-Content-Type: multipart/alternative; boundary="000000000000d6c008062ee83ec5"
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	txk02CIa9uhu2WsVN2jtKHJSKcGlsF9aG9SND26c5MENIMknr05EwKsyHEWpKZeokzrXgw1C7oDKGD73z6oWsFOA0IXaJ2RUbiWVDIUEUT+ZcNXg6X0isnAAJsSMJ88hgnC9rXNMcsy86z7hJNx+ot86PGloThaWWBimlLHI7bNP+/ElUcf4dLy+KSyVmWjiR56mtL3KDAcY7Xs8RPLpvvz1iX+iIIzb0qy8Rsk0aZeQIFcnIIfLuM6BErgFjJqqye9S6Fsypzdtuaugx8Cs/0v4Asx538xk7VO4cTnMV2I2qN8+mqB7OnlmanuzfORLHWWwZ8b4KWAkfZD+1jH8PlYQ20h1rG83xVSYMbwuOyX/oWvgNRZH0jl+K+xTVUO5JfwXGRoZcvMu7quRA18nXL4djwR6gUV+jh0kfqLO0g/Ilqg2TuTQTpAlZOBWUL2WQWkbJqe498Im6uMTSpB3v2ZeZ+VDgwySevmFcp2cWHW3V9KWcCY/DDzPqvyun9YkJ/3GWAp95B1ixud7GNme1RQS3kzQ9CrK6W0ewpt/KeRsWxNIdxfYvGrhFWwRNnl3I491SXeMnp/0Xvtfr0DXdPd5uhLjK45jbrtGU6iKnWiNfzUZBikuNYB01r3SEcTt
+X-OriginatorOrg: fujitsu.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYWPR01MB11861.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 00ff3ad1-c654-4346-da4c-08dd55306f4e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Feb 2025 00:07:47.0122
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: zj/+gRmm2OHUPbEfm/JU+t7TON6luRg/KY4Zo55I8s4o02i2tsSv5OewRFcssDVhdklNavYNRKV5tmk0WksAsA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS9PR01MB12511
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 24 Feb 2025 19:21:28 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1124
+ <yocto-patches@lists.yoctoproject.org>; Tue, 25 Feb 2025 00:08:02 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1125
 
---000000000000d6c008062ee83ec5
-Content-Type: text/plain; charset="UTF-8"
-
-> Hello,
->  The default recipe does not build in kirsktone branch.  Here is the log
-> of the error.  Please suggest any workarounds.
-> Regards
->
-> NOTE: Executing Tasks
-> ERROR: fscrypt-1.0.0-r0 do_compile: oe_runmake failed
-> ERROR: fscrypt-1.0.0-r0 do_compile:
-> ExecutionError('/home/tkulkarni/tess/tessie-oe4t-yocto/build_tess_seeed/tmp/work/armv8a-oe4t-linux/fscrypt/1.0.0-r0/temp/run.do_compile.2218562',
-> 1, None, None)
-> ERROR: Logfile of failure stored in:
-> /home/tkulkarni/tess/tessie-oe4t-yocto/build_tess_seeed/tmp/work/armv8a-oe4t-linux/fscrypt/1.0.0-r0/temp/log.do_compile.2218562
-> Log data follows:
-> | DEBUG: Executing shell function do_compile
-> | NOTE: make -j4
-> | go build --ldflags '-s -w -X "main.version=v0.3.0-26-g92b1e9a"
-> -extldflags "-Wl,-O1 -Wl,--hash-style=gnu -Wl,--as-needed
-> -fmacro-prefix-map=/home/tkulkarni/tess/tessie-oe4t-yocto/build_tess_seeed/tmp/work/armv8a-oe4t-linux/fscrypt/1.0.0-r0=/usr/src/debug/fscrypt/1.0.0-r0
->
->  -fdebug-prefix-map=/home/tkulkarni/tess/tessie-oe4t-yocto/build_tess_seeed/tmp/work/armv8a-oe4t-linux/fscrypt/1.0.0-r0=/usr/src/debug/fscrypt/1.0.0-r0
->
->  -fdebug-prefix-map=/home/tkulkarni/tess/tessie-oe4t-yocto/build_tess_seeed/tmp/work/armv8a-oe4t-linux/fscrypt/1.0.0-r0/recipe-sysroot=
->
->  -fdebug-prefix-map=/home/tkulkarni/tess/tessie-oe4t-yocto/build_tess_seeed/tmp/work/armv8a-oe4t-linux/fscrypt/1.0.0-r0/recipe-sysroot-native=
->  -Wl,-z,relro,-z,now"' -trimpath -o bin/fscrypt ./cmd/fscrypt
-> | go build --ldflags '-s -w -X "main.version=v0.3.0-26-g92b1e9a"
-> -extldflags "-Wl,-O1 -Wl,--hash-style=gnu -Wl,--as-needed
-> -fmacro-prefix-map=/home/tkulkarni/tess/tessie-oe4t-yocto/build_tess_seeed/tmp/work/armv8a-oe4t-linux/fscrypt/1.0.0-r0=/usr/src/debug/fscrypt/1.0.0-r0
->
->  -fdebug-prefix-map=/home/tkulkarni/tess/tessie-oe4t-yocto/build_tess_seeed/tmp/work/armv8a-oe4t-linux/fscrypt/1.0.0-r0=/usr/src/debug/fscrypt/1.0.0-r0
->
->  -fdebug-prefix-map=/home/tkulkarni/tess/tessie-oe4t-yocto/build_tess_seeed/tmp/work/armv8a-oe4t-linux/fscrypt/1.0.0-r0/recipe-sysroot=
->
->  -fdebug-prefix-map=/home/tkulkarni/tess/tessie-oe4t-yocto/build_tess_seeed/tmp/work/armv8a-oe4t-linux/fscrypt/1.0.0-r0/recipe-sysroot-native=
->  -Wl,-z,relro,-z,now"' -trimpath -buildmode=c-shared -o bin/pam_fscrypt.so
-> ./pam_fscrypt
-> | go: github.com/client9/misspell@v0.3.4: Get "
-> https://proxy.golang.org/github.com/client9/misspell/@v/v0.3.4.mod": dial
-> tcp: lookup proxy.golang.org: no such host
-> | go: github.com/client9/misspell@v0.3.4: Get "
-> https://proxy.golang.org/github.com/client9/misspell/@v/v0.3.4.mod": dial
-> tcp: lookup proxy.golang.org: no such host
-> | go: downloading github.com/pkg/errors v0.8.0
-> | go: downloading golang.org/x/sys v0.0.0-20201119102817-f84b799fce68
-> | go: downloading github.com/golang/protobuf v1.2.0
-> | go: downloading github.com/pkg/errors v0.8.0
-> | go: downloading github.com/urfave/cli v1.20.0
-> | go: downloading golang.org/x/sys v0.0.0-20201119102817-f84b799fce68
-> | go: downloading golang.org/x/crypto v0.0.0-20190510104115-cbcb75029529
-> | go: downloading golang.org/x/term v0.0.0-20210422114643-f5beecf764ed
-> | go: downloading golang.org/x/crypto v0.0.0-20190510104115-cbcb75029529
-> | go: downloading github.com/golang/protobuf v1.2.0
-> | go: github.com/client9/misspell@v0.3.4: Get "
-> https://proxy.golang.org/github.com/client9/misspell/@v/v0.3.4.mod": dial
-> tcp: lookup proxy.golang.org: no such host
-> | go: github.com/client9/misspell@v0.3.4: Get "
-> https://proxy.golang.org/github.com/client9/misspell/@v/v0.3.4.mod": dial
-> tcp: lookup proxy.golang.org: no such host
-> | make: *** [Makefile:99: bin/pam_fscrypt.so] Error 1
-> | make: *** Waiting for unfinished jobs....
-> | make: *** [Makefile:96: bin/fscrypt] Error 1
-> | ERROR: oe_runmake failed
-> | WARNING: exit code 1 from a shell command.
-> ERROR: Task
-> (/home/tkulkarni/tess/tessie-oe4t-yocto/layers/meta-security/recipes-security/fscrypt/fscrypt_1.0.0.bb:do_compile)
-> failed with exit code '1'
-> NOTE: Tasks Summary: Attempted 844 tasks of which 841 didn't need to be
-> rerun and 1 failed.
-> NOTE: Writing buildhistory
-> NOTE: Writing buildhistory took: 9 seconds
->
-> Summary: 1 task failed:
->
-
---000000000000d6c008062ee83ec5
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div class=3D"gmail_quote gmail_quote_container"><div dir=
-=3D"ltr" class=3D"gmail_attr"><br></div><br><br><div dir=3D"ltr"><div class=
-=3D"gmail_quote"><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px =
-0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex"><div dir=
-=3D"ltr"><div dir=3D"ltr"><br>Hello,<div>=C2=A0The default recipe=C2=A0does=
- not build in kirsktone=C2=A0branch.=C2=A0 Here is the log of the error.=C2=
-=A0 Please suggest any workarounds.</div><div>Regards</div><div><br></div><=
-div>NOTE: Executing Tasks<br>ERROR: fscrypt-1.0.0-r0 do_compile: oe_runmake=
- failed</div><div>ERROR: fscrypt-1.0.0-r0 do_compile: ExecutionError(&#39;/=
-home/tkulkarni/tess/tessie-oe4t-yocto/build_tess_seeed/tmp/work/armv8a-oe4t=
--linux/fscrypt/1.0.0-r0/temp/run.do_compile.2218562&#39;, 1, None, None)<br=
->ERROR: Logfile of failure stored in: /home/tkulkarni/tess/tessie-oe4t-yoct=
-o/build_tess_seeed/tmp/work/armv8a-oe4t-linux/fscrypt/1.0.0-r0/temp/log.do_=
-compile.2218562<br>Log data follows:<br>| DEBUG: Executing shell function d=
-o_compile<br>| NOTE: make -j4<br>| go build --ldflags &#39;-s -w -X &quot;m=
-ain.version=3Dv0.3.0-26-g92b1e9a&quot; -extldflags &quot;-Wl,-O1 -Wl,--hash=
--style=3Dgnu -Wl,--as-needed -fmacro-prefix-map=3D/home/tkulkarni/tess/tess=
-ie-oe4t-yocto/build_tess_seeed/tmp/work/armv8a-oe4t-linux/fscrypt/1.0.0-r0=
-=3D/usr/src/debug/fscrypt/1.0.0-r0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0-fdebug-prefix-map=3D/home/tkulkarni/=
-tess/tessie-oe4t-yocto/build_tess_seeed/tmp/work/armv8a-oe4t-linux/fscrypt/=
-1.0.0-r0=3D/usr/src/debug/fscrypt/1.0.0-r0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0-fdebug-prefix-map=3D/home/tku=
-lkarni/tess/tessie-oe4t-yocto/build_tess_seeed/tmp/work/armv8a-oe4t-linux/f=
-scrypt/1.0.0-r0/recipe-sysroot=3D =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0-fdebug-prefix-map=3D/home/tkulkarni/tes=
-s/tessie-oe4t-yocto/build_tess_seeed/tmp/work/armv8a-oe4t-linux/fscrypt/1.0=
-.0-r0/recipe-sysroot-native=3D =C2=A0-Wl,-z,relro,-z,now&quot;&#39; -trimpa=
-th -o bin/fscrypt ./cmd/fscrypt<br>| go build --ldflags &#39;-s -w -X &quot=
-;main.version=3Dv0.3.0-26-g92b1e9a&quot; -extldflags &quot;-Wl,-O1 -Wl,--ha=
-sh-style=3Dgnu -Wl,--as-needed -fmacro-prefix-map=3D/home/tkulkarni/tess/te=
-ssie-oe4t-yocto/build_tess_seeed/tmp/work/armv8a-oe4t-linux/fscrypt/1.0.0-r=
-0=3D/usr/src/debug/fscrypt/1.0.0-r0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0-fdebug-prefix-map=3D/home/tkulkarni/=
-tess/tessie-oe4t-yocto/build_tess_seeed/tmp/work/armv8a-oe4t-linux/fscrypt/=
-1.0.0-r0=3D/usr/src/debug/fscrypt/1.0.0-r0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0-fdebug-prefix-map=3D/home/tku=
-lkarni/tess/tessie-oe4t-yocto/build_tess_seeed/tmp/work/armv8a-oe4t-linux/f=
-scrypt/1.0.0-r0/recipe-sysroot=3D =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0-fdebug-prefix-map=3D/home/tkulkarni/tes=
-s/tessie-oe4t-yocto/build_tess_seeed/tmp/work/armv8a-oe4t-linux/fscrypt/1.0=
-.0-r0/recipe-sysroot-native=3D =C2=A0-Wl,-z,relro,-z,now&quot;&#39; -trimpa=
-th -buildmode=3Dc-shared -o bin/pam_fscrypt.so ./pam_fscrypt<br>| go: <a hr=
-ef=3D"http://github.com/client9/misspell@v0.3.4" target=3D"_blank">github.c=
-om/client9/misspell@v0.3.4</a>: Get &quot;<a href=3D"https://proxy.golang.o=
-rg/github.com/client9/misspell/@v/v0.3.4.mod" target=3D"_blank">https://pro=
-xy.golang.org/github.com/client9/misspell/@v/v0.3.4.mod</a>&quot;: dial tcp=
-: lookup <a href=3D"http://proxy.golang.org" target=3D"_blank">proxy.golang=
-.org</a>: no such host<br>| go: <a href=3D"http://github.com/client9/misspe=
-ll@v0.3.4" target=3D"_blank">github.com/client9/misspell@v0.3.4</a>: Get &q=
-uot;<a href=3D"https://proxy.golang.org/github.com/client9/misspell/@v/v0.3=
-.4.mod" target=3D"_blank">https://proxy.golang.org/github.com/client9/missp=
-ell/@v/v0.3.4.mod</a>&quot;: dial tcp: lookup <a href=3D"http://proxy.golan=
-g.org" target=3D"_blank">proxy.golang.org</a>: no such host<br>| go: downlo=
-ading <a href=3D"http://github.com/pkg/errors" target=3D"_blank">github.com=
-/pkg/errors</a> v0.8.0<br>| go: downloading <a href=3D"http://golang.org/x/=
-sys" target=3D"_blank">golang.org/x/sys</a> v0.0.0-20201119102817-f84b799fc=
-e68<br>| go: downloading <a href=3D"http://github.com/golang/protobuf" targ=
-et=3D"_blank">github.com/golang/protobuf</a> v1.2.0<br>| go: downloading <a=
- href=3D"http://github.com/pkg/errors" target=3D"_blank">github.com/pkg/err=
-ors</a> v0.8.0<br>| go: downloading <a href=3D"http://github.com/urfave/cli=
-" target=3D"_blank">github.com/urfave/cli</a> v1.20.0<br>| go: downloading =
-<a href=3D"http://golang.org/x/sys" target=3D"_blank">golang.org/x/sys</a> =
-v0.0.0-20201119102817-f84b799fce68<br>| go: downloading <a href=3D"http://g=
-olang.org/x/crypto" target=3D"_blank">golang.org/x/crypto</a> v0.0.0-201905=
-10104115-cbcb75029529<br>| go: downloading <a href=3D"http://golang.org/x/t=
-erm" target=3D"_blank">golang.org/x/term</a> v0.0.0-20210422114643-f5beecf7=
-64ed<br>| go: downloading <a href=3D"http://golang.org/x/crypto" target=3D"=
-_blank">golang.org/x/crypto</a> v0.0.0-20190510104115-cbcb75029529<br>| go:=
- downloading <a href=3D"http://github.com/golang/protobuf" target=3D"_blank=
-">github.com/golang/protobuf</a> v1.2.0<br>| go: <a href=3D"http://github.c=
-om/client9/misspell@v0.3.4" target=3D"_blank">github.com/client9/misspell@v=
-0.3.4</a>: Get &quot;<a href=3D"https://proxy.golang.org/github.com/client9=
-/misspell/@v/v0.3.4.mod" target=3D"_blank">https://proxy.golang.org/github.=
-com/client9/misspell/@v/v0.3.4.mod</a>&quot;: dial tcp: lookup <a href=3D"h=
-ttp://proxy.golang.org" target=3D"_blank">proxy.golang.org</a>: no such hos=
-t<br>| go: <a href=3D"http://github.com/client9/misspell@v0.3.4" target=3D"=
-_blank">github.com/client9/misspell@v0.3.4</a>: Get &quot;<a href=3D"https:=
-//proxy.golang.org/github.com/client9/misspell/@v/v0.3.4.mod" target=3D"_bl=
-ank">https://proxy.golang.org/github.com/client9/misspell/@v/v0.3.4.mod</a>=
-&quot;: dial tcp: lookup <a href=3D"http://proxy.golang.org" target=3D"_bla=
-nk">proxy.golang.org</a>: no such host<br>| make: *** [Makefile:99: bin/pam=
-_fscrypt.so] Error 1<br>| make: *** Waiting for unfinished jobs....<br>| ma=
-ke: *** [Makefile:96: bin/fscrypt] Error 1<br>| ERROR: oe_runmake failed<br=
->| WARNING: exit code 1 from a shell command.<br>ERROR: Task (/home/tkulkar=
-ni/tess/tessie-oe4t-yocto/layers/meta-security/recipes-security/fscrypt/fsc=
-rypt_1.0.0.bb:do_compile) failed with exit code &#39;1&#39;<br>NOTE: Tasks =
-Summary: Attempted 844 tasks of which 841 didn&#39;t need to be rerun and 1=
- failed.<br>NOTE: Writing buildhistory<br>NOTE: Writing buildhistory took: =
-9 seconds<br><br>Summary: 1 task failed:<br></div></div>
-</div>
-</blockquote></div></div>
-</div></div>
-
---000000000000d6c008062ee83ec5--
+VGhlcmUncmUgbWFueSBwYXRjaGVzIHRoYXQgaGF2ZSB0aGUgZm9sbG93aW5nIGVycm9yIHdoZW4g
+YnVpbGQgdGhlbToNCmRvX3BhdGNoOiBRQSBJc3N1ZTogTWlzc2luZyBVcHN0cmVhbS1TdGF0dXMg
+aW4gcGF0Y2gNCg0KRG8geW91IGhhdmUgYW55IHN1Z2dlc3Rpb25zIHJlZ2FyZGluZyB0aGUgVXBz
+dHJlYW0tU3RhdHVzIGVycm9yPw0KU2hvdWxkIEkgZml4IHRoZW0gYnkgYWRkaW5nICJVcHN0cmVt
+LVN0YXR1cyIgdG8gdGhlIHBhdGNoIGZpbGUsIG9yIGFkZCAiIEVSUk9SX1FBOnJlbW92ZSA9ICJw
+YXRjaC1zdGF0dXMiICIgdG8gY29uZi9sYXllci5jb25mIHRvIGlnbm9yZSB0aGUgZXJyb3IuDQpP
+ZiBjb3Vyc2UsIHRoZSBsYXR0ZXIgcmVxdWlyZXMgYSBsb3Qgb2YgdGltZSB0byBmaWd1cmUgb3V0
+IHRoZSByZWFzb25zIGZvciB0aGUgZXhpc3RlbmNlIG9mIHRoZXNlIHBhdGNoZXMgYW5kIHRoZWly
+IGxhdGVzdCBzdGF0dXMsIGFuZCBwcm9ncmVzcyBtYXkgYmUgc2xvdw0KDQogIC0tDQpCZXN0IFJl
+Z2FyZHMNCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LQ0KV2FuZyBNaW5neXUNCkZVSklUU1UgTkFOSklORyBTT0ZUV0FSRSBURUNITk9MT0dZIENPLiwg
+TFRELiAoRk5TVCkNCk5vLjYgV2Vuemh1IFJvYWQsIE5hbmppbmcsIDIxMDAxMiwgQ2hpbmENClRF
+TKO6Kzg2KzI1LTg2NjMwNTY2LS04NTY4DQpDT0lOUzogNzk5ODg1NDgNCkZBWDogKzg2KzI1LTgz
+MzE3Njg1DQpNQUlMOiB3YW5nbXlAZnVqaXRzdS5jb20NCg0KLS0tLS1PcmlnaW5hbCBNZXNzYWdl
+LS0tLS0NCkZyb206IHlvY3RvLXBhdGNoZXNAbGlzdHMueW9jdG9wcm9qZWN0Lm9yZyA8eW9jdG8t
+cGF0Y2hlc0BsaXN0cy55b2N0b3Byb2plY3Qub3JnPiBPbiBCZWhhbGYgT2YgQWxleGFuZGVyIEth
+bmF2aW4gdmlhIGxpc3RzLnlvY3RvcHJvamVjdC5vcmcNClNlbnQ6IEZyaWRheSwgRmVicnVhcnkg
+MjEsIDIwMjUgNToyMSBQTQ0KVG86IHlvY3RvLXBhdGNoZXNAbGlzdHMueW9jdG9wcm9qZWN0Lm9y
+ZzsgV2FuZywgTWluZ3l1L831IMP56KQgPHdhbmdteUBmdWppdHN1LmNvbT4NClN1YmplY3Q6IFJl
+OiBbeW9jdG8tcGF0Y2hlc10gW21ldGEtamF2YV0gUUEgSXNzdWU6IE1pc3NpbmcgVXBzdHJlYW0t
+U3RhdHVzIGluIHBhdGNoDQoNCk9uIEZyaSwgMjEgRmViIDIwMjUgYXQgMTA6MTIsIFJpY2hhcmQg
+UHVyZGllIHZpYSBsaXN0cy55b2N0b3Byb2plY3Qub3JnIDxyaWNoYXJkLnB1cmRpZT1saW51eGZv
+dW5kYXRpb24ub3JnQGxpc3RzLnlvY3RvcHJvamVjdC5vcmc+IHdyb3RlOg0KPiA+IEl0J3MgZGVm
+aW5pdGVseSB0aGUgYmVzdCB0aGluZyB0byBiZSBhYmxlIHRvIGRvIHRoaXMNCj4gPg0KPiA+IEJ1
+dCB0aGVyZSBhcmUgbWFueSBwYXRjaGVzIHdpdGggdGhpcyBwcm9ibGVtLCBhbmQgaXQgaXMgdW5j
+ZXJ0YWluIA0KPiA+IHdoYXQgdGhlIHB1cnBvc2Ugb2YgdGhlIHBhdGNoIHdhcyBhdCB0aGF0IHRp
+bWUgKG1hbnkgcGF0Y2hlcyBkbyBub3QgDQo+ID4gaGF2ZSBjb21taXQgaW5mb3JtYXRpb24pLg0K
+PiA+IEluIGFkZGl0aW9uLCBtb3N0IHVwc3RyZWFtIGhhdmUgbm90IGJlZW4gbWFpbnRhaW5lZCBv
+ciB1cGRhdGVkIGZvciBhIA0KPiA+IGxvbmcgdGltZSwgc28gdGhlIGZlYXNpYmlsaXR5IG9mIG1v
+ZGlmeWluZyB0aGVtIGFsbCBzZWVtcyBub3QgdmVyeSANCj4gPiBoaWdoLg0KPiA+DQo+ID4gSXQg
+aXMgYmVzdCBmb3IgdGhlIGF1dGhvciBvZiB0aGUgcGF0Y2ggdG8gbWFrZSB0aGUgbW9kaWZpY2F0
+aW9ucy4NCj4NCj4gVGhhdCBsYXllciBpcyBzdHJ1Z2dsaW5nIGZvciBtYWludGFpbmVyIHRpbWUg
+YW5kIHRoZSBhdXRob3JzIG9mIHRoZSANCj4gcGF0Y2hlcyBoYXZlIG1vdmVkIG9uIHRvIG90aGVy
+IHRoaW5ncyBhIGxvbmcgdGltZSBhZ28uIEkgdGhlcmVmb3JlIA0KPiBkb24ndCB0aGluayBpdCB3
+aWxsIGhhcHBlbiBieSB0aGUgYXV0aG9yIG9yIHRoZSBsYXllciBtYWludGFpbmVyLg0KPg0KPiBX
+ZSBkbyByZWFsbHkgbmVlZCB0byB3b3JrIG91dCB0aGF0IGluZm9ybWF0aW9uIGJ1dCBpdCBpc24n
+dCBhbiBlYXN5IA0KPiBqb2IuIFRoaXMgaXMgd2h5IHdlIG5vdyByZXF1aXJlIGl0IGJ1dCB0aGVz
+ZSBwYXRjaGVzIGRhdGUgZnJvbSBiZWZvcmUgDQo+IHdlIGRpZCB0aGF0LiBJdCB3aWxsIG5lZWQg
+c29tZW9uZSB0byBzcGVuZCB0aW1lIG9uIGl0Lg0KDQpUaGlzIGlzIHRoZSBzaXR1YXRpb24gd2l0
+aCBtZXRhLWphdmE6DQpodHRwczovL2xpc3RzLm9wZW5lbWJlZGRlZC5vcmcvZy9vcGVuZW1iZWRk
+ZWQtZGV2ZWwvbWVzc2FnZS8xMTQ5NTgNCg0KSSdkIHNheSB5b3UgV2FuZyBuZWVkIHRvIGNvbW1p
+dCB0byBtYWludGFpbmluZyB0aGF0IGxheWVyIGlmIHlvdSB3YW50IHRvIGtlZXAgaXQgaW4gc29t
+ZSBraW5kIG9mIHdvcmtpbmcgc3RhdGUuIFRoZXJlJ3MganVzdCBubyBvbmUgZWxzZSB3aG8gaGFz
+IGFuIGludGVyZXN0IGluIGl0IGFueW1vcmUuDQoNCkFsZXgNCg0KDQotPS09LT0tPS09LT0tPS09
+LT0tPS09LQ0KTGlua3M6IFlvdSByZWNlaXZlIGFsbCBtZXNzYWdlcyBzZW50IHRvIHRoaXMgZ3Jv
+dXAuDQpWaWV3L1JlcGx5IE9ubGluZSAoIzExMTMpOiBodHRwczovL2xpc3RzLnlvY3RvcHJvamVj
+dC5vcmcvZy95b2N0by1wYXRjaGVzL21lc3NhZ2UvMTExMw0KTXV0ZSBUaGlzIFRvcGljOiBodHRw
+czovL2xpc3RzLnlvY3RvcHJvamVjdC5vcmcvbXQvMTExMzAyNzE1LzU5NzQ5NDYNCkdyb3VwIE93
+bmVyOiB5b2N0by1wYXRjaGVzK293bmVyQGxpc3RzLnlvY3RvcHJvamVjdC5vcmcNClVuc3Vic2Ny
+aWJlOiBodHRwczovL2xpc3RzLnlvY3RvcHJvamVjdC5vcmcvZy95b2N0by1wYXRjaGVzL2xlYXZl
+LzEzNjE0MjcxLzU5NzQ5NDYvMTkwMjgzMTA2Ni94eXp6eSBbd2FuZ215QGZ1aml0c3UuY29tXQ0K
+LT0tPS09LT0tPS09LT0tPS09LT0tPS0NCg0KDQo=
 
