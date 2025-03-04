@@ -1,154 +1,123 @@
-Return-Path: <martin.jansa@gmail.com>
+Return-Path: <richard.purdie@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86BF3C282CD
-	for <webhook@archiver.kernel.org>; Mon,  3 Mar 2025 15:59:56 +0000 (UTC)
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
- by mx.groups.io with SMTP id smtpd.web11.56965.1741017587234582464
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 068D9C282D2
+	for <webhook@archiver.kernel.org>; Tue,  4 Mar 2025 15:18:56 +0000 (UTC)
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+ by mx.groups.io with SMTP id smtpd.web10.24142.1741101529084374306
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 03 Mar 2025 07:59:47 -0800
+ Tue, 04 Mar 2025 07:18:49 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=ThZ18Xj4;
- spf=pass (domain: gmail.com, ip: 209.85.128.43, mailfrom: martin.jansa@gmail.com)
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43aac0390e8so29566005e9.2
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 03 Mar 2025 07:59:47 -0800 (PST)
+ dkim=pass header.i=@linuxfoundation.org header.s=google header.b=BMEvrnxk;
+ spf=pass (domain: linuxfoundation.org, ip: 209.85.128.52, mailfrom: richard.purdie@linuxfoundation.org)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43948021a45so52912285e9.1
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 04 Mar 2025 07:18:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741017586; x=1741622386; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/jX9O7LpLUIH/W9CK58aEHaYup65i8ISW+l5IT8Ohj8=;
-        b=ThZ18Xj4XK/RunoFJ/jutWkHtEL8I5BRh/Di2j3VN/4daR5ehmviwfHYlayODjkHnU
-         blO0PJ/U+0rNwC1uYxQASce4kVb6q8D67hyMsyn57m0yVb8z9a6whimfU6VD5+PkxGlf
-         GM0fJnBHPbn0Q4imm/gKtjr2bpZtuD5KHnq2Vh+7hlcJAY5fVH/W8OPKOv3rLP4Sj0JC
-         BKuJdBtmUQ7rijpNHGGyHDJVPLQmx/XSpe9pdj9oLR00qjhEPR2ABZlSLAeukLg1y64Q
-         Tg7NCpWJqZMs8Qix7JhHB24H4mHi6dHT1OvcQcIwif44JIPYp+5kf8OzFu7EXqAWXKgD
-         dEGQ==
+        d=linuxfoundation.org; s=google; t=1741101526; x=1741706326; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qQOb6oAcBkQMPI7XbLgqiG4sy3/IxceLQtXtWPvyGUs=;
+        b=BMEvrnxkREk2bWkN5/Q3YkQWPvsxmdfC7Hqf4RdboQljm0UqeBnTPaK8cy+4nasa8i
+         zy4ge/I2BLkFjp1QQbLxntTJlHMK6aKPbmoel+PaInbhMlglRFB+uG/Jf3A8Yks5sxrs
+         8wIctw3/KMmA+I2pyaiDAhKx0HWBb0AiPCZFQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741017586; x=1741622386;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/jX9O7LpLUIH/W9CK58aEHaYup65i8ISW+l5IT8Ohj8=;
-        b=uzlywtVaCVM33Nt9e4ZfbACn9nwzRxFAsAjjcWMPCK1p+0/lFVnTjTpljBnNslb+UI
-         CfwQDK1DsYRA8Mx2BTv4vvW3im5sLgKzyLhcjKW9XdswQZ3HKlvj2KtWAKEjGmKf1Rfu
-         i3fdi9BDSWDEOmXHiuxpTrxSm9Wr9mI0leDc+0LiZfxS/W/WHY26i3so6N7xORBSIHyD
-         j/gtuM/inQ47JcuzO5KMfWPIJkWijAXrggf33r6aZ1GSmfqyWGoWoBFXsA5xTwau66hZ
-         FR64rmdQvVUPWOvRCeH9PMub6nK5BtE6CFXmHf9vw25VIe1hqN0mVq+VUnvdYYwVvtcK
-         ZZqw==
-X-Gm-Message-State: AOJu0YzaLvhFMxJa0ODVt2uFz3QUCipZC9Ix5V78IrnMGlEGotDGwBJJ
-	79iNGXaTSTclMnwoau91uW4wN/WN+YyFbbQIH4IDuRViB0mnFLPl8peXjuEi
-X-Gm-Gg: ASbGncvjp1yK0RqJhQUQdlS8geDUmpeVHLyTwk7ejLaDGmRzY1qK2c+52E2IvucDk94
-	/OPnFu5SGoSQu/XYCCyjyhbWYU2FbK62YN3KEdKOBBlzXyquRrHa7wOOw1A0vb0z9W4EAEmZ8+7
-	v+VK8CmcWUKftXe13pdd6sFTUBbfVyM+LcxmOpVvK3asRf+0J9b09+4sARwCPR3UiUxJT6bEl6Y
-	CS5R+tD237eRVZuO/RhOT9ppBlf3C0jLsENjCp9GxP2jilr1EkY1mGI03vXAICfUpmHiU+135N6
-	yqTxurWcCJCJ5wv8d+Ymz3fWruIm5J4azgU5YQ9d2+HqKNg7Y5t9LeLYKrTBYimvwHrskNDAD0Y
-	dnA==
-X-Google-Smtp-Source: AGHT+IGiw5LYBvbnwYK5k9LPDq9hpGhnvk1wxJXT+r6facMIHJFFdJB8tgDOc35R2ZnDGcMf3CoETQ==
-X-Received: by 2002:a05:600c:1384:b0:439:9192:f088 with SMTP id 5b1f17b1804b1-43ba66e6f80mr115710145e9.8.1741017585285;
-        Mon, 03 Mar 2025 07:59:45 -0800 (PST)
-Received: from localhost (ip-109-238-218-228.aim-net.cz. [109.238.218.228])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-390e47960b6sm15224776f8f.17.2025.03.03.07.59.44
+        d=1e100.net; s=20230601; t=1741101526; x=1741706326;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qQOb6oAcBkQMPI7XbLgqiG4sy3/IxceLQtXtWPvyGUs=;
+        b=eXWc0S1j2fwxgAJ285Cv/ZQQkpgFXDxOs1Yr8pMLoKjEAEyKhi8ccLMIc7xJ0znUPM
+         RlgWeIVjuNFu77I2laHCFF1lHdTQUVP3mS4+K7QDHCR9xDxipxbGXdOvLslx2BJUAV2b
+         3aisIq/iTOh03k0KrGXT6/FRDcfsursIsLsmeN6YuZF4gBXFFewQv/4zXa3E2zq1IFui
+         eufCX6VHSvubtEFNJGmvswDT25PjpK9GRfFYuUFJLYyU4ayKJcCT25KHnpZUrO5MRfj9
+         WEL4KHPs1CbrYbVgCQOQxreIPxbJDyU0lCFFT8retQXFbnNP2/+VMS65xqwqYOriJbgU
+         I3ZA==
+X-Gm-Message-State: AOJu0YzlDCMcGrGLDzscrTCTF4qH+2kCmnc+jVW1xW7O2ksiQ0In3FhK
+	r3LlNnb2oUqN16DAgn50BjUDeiZyIRnsKbPzxSG8ZVjt8Pd+/ARFkexnoThoZEAnGw3BlSv/2Iz
+	f
+X-Gm-Gg: ASbGncvxZXyzipHr5VbphQih7ZSphgMGKukm0gghbgg7R+sqfR9bXdZTTBZBpCEecx2
+	XeBY9h6qdt4thXpHWEx+UHuJ71W1g4CF78RWvlMxZfSHP5OSxHQ+zwsxH3JX+M/ddh+426XQjM/
+	wfdpFZ6ivlBG/nL3bz6OBuoMrT+4z0U+bh3uOir8eYaE2BFkKeqVcsEc9HDRFz0KCaM7aIbOQVI
+	nNvcq28Ol+c/HC5/6NRDdP6njVo9nKLUnC3t2u0e8rd+QLrQuDCfN2RbzzQPL16WXZ6Gy9HLufR
+	eszinLrOpYIBQ/yZCYxGZD/i/cr1ydlEcSVeeb5/BpL8jQcqfu54SKGxSKaJmR80jKzfw6B86Q=
+	=
+X-Google-Smtp-Source: AGHT+IFabE/ZsYtPAgRrODUUoakrGTwfAjLRrMOT/U2VMunxcuj2WZCetHbX3FZn+d+il62iEhSnwg==
+X-Received: by 2002:a05:600c:44d6:b0:43b:c0fa:f9c9 with SMTP id 5b1f17b1804b1-43bc0fb002cmr74751355e9.7.1741101526358;
+        Tue, 04 Mar 2025 07:18:46 -0800 (PST)
+Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:bea3:48e1:f1c0:6abe])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bc596eb90sm60738905e9.17.2025.03.04.07.18.45
+        for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 07:59:44 -0800 (PST)
-From: Martin Jansa <martin.jansa@gmail.com>
+        Tue, 04 Mar 2025 07:18:45 -0800 (PST)
+From: Richard Purdie <richard.purdie@linuxfoundation.org>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Martin Jansa <martin.jansa@gmail.com>
-Subject: [meta-tensorflow][master][PATCH] tensorflow.inc: add write permission to 2 more directories
-Date: Mon,  3 Mar 2025 16:59:40 +0100
-Message-ID: <20250303155940.2697475-1-martin.jansa@gmail.com>
-X-Mailer: git-send-email 2.48.1
+Subject: [yocto-autobuilder-helper] [PATCH] scripts/yocto-supported-distros: Better integrate for autobuilder use
+Date: Tue,  4 Mar 2025 15:18:44 +0000
+Message-ID: <20250304151844.1930074-1-richard.purdie@linuxfoundation.org>
+X-Mailer: git-send-email 2.45.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 03 Mar 2025 15:59:56 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1139
+ <yocto-patches@lists.yoctoproject.org>; Tue, 04 Mar 2025 15:18:56 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1140
 
-Missing write permission prevents the WORKDIR to be deleted, e.g. when recipe becames unreachable
+For autobuilder use, it will be more helpful to print warnings for the issues found
+which will show up in the autobuilder UI in this format. We can then save the error
+exit code for actual script failures which should improve usability from the autobuilder
+perspective.
 
-Removing 41 recipes from the core2-64 sysroot: 100% |##########################################################################################################################################################################| Time: 0:00:21
-Removing 35 recipes from the qemux86_64 sysroot: 100% |########################################################################################################################################################################| Time: 0:00:00
-ERROR: Execution of event handler 'sstate_eventhandler_reachablestamps' failed                                                                                                                                                 | ETA:  0:00:07
-Traceback (most recent call last):
-  File "/OE/build/oe-core/openembedded-core/meta/classes-global/sstate.bbclass", line 1293, in sstate_eventhandler_reachablestamps
-    bb.utils.remove(workdir, recurse = True)
-    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/OE/build/oe-core/bitbake/lib/bb/utils.py", line 751, in remove
-    subprocess.check_call(cmd + ['rm', '-rf'] + glob.glob(path))
-    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.13/subprocess.py", line 421, in check_call
-    raise CalledProcessError(retcode, cmd)
-subprocess.CalledProcessError: Command '['rm', '-rf', '/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0']' returned non-zero exit status 1.
-
-ERROR: Command execution failed: Traceback (most recent call last):
-  File "/OE/build/oe-core/bitbake/lib/bb/command.py", line 123, in runAsyncCommand
-    self.cooker.updateCache()
-    ~~~~~~~~~~~~~~~~~~~~~~~^^
-  File "/OE/build/oe-core/bitbake/lib/bb/cooker.py", line 1646, in updateCache
-    bb.event.fire(event, self.databuilder.mcdata[mc])
-    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/OE/build/oe-core/bitbake/lib/bb/event.py", line 224, in fire
-    fire_class_handlers(event, d)
-    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
-  File "/OE/build/oe-core/bitbake/lib/bb/event.py", line 131, in fire_class_handlers
-    execute_handler(name, handler, event, d)
-    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/OE/build/oe-core/bitbake/lib/bb/event.py", line 102, in execute_handler
-    ret = handler(event, d)
-  File "/OE/build/oe-core/openembedded-core/meta/classes-global/sstate.bbclass", line 1293, in sstate_eventhandler_reachablestamps
-    bb.utils.remove(workdir, recurse = True)
-    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/OE/build/oe-core/bitbake/lib/bb/utils.py", line 751, in remove
-    subprocess.check_call(cmd + ['rm', '-rf'] + glob.glob(path))
-    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.13/subprocess.py", line 421, in check_call
-    raise CalledProcessError(retcode, cmd)
-subprocess.CalledProcessError: Command '['rm', '-rf', '/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0']' returned non-zero exit status 1.
-
-Summary: There were 2 ERROR messages, returning a non-zero exit code.
-
-OE qemux86-64@ /OE/build/oe-core $ find /OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/
-/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/
-/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/bazel
-/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/bazel/output_base
-/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/bazel/output_base/execroot
-/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/bazel/output_base/execroot/org_tensorflow
-/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/bazel/output_base/execroot/org_tensorflow/bazel-out
-/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/bazel/output_base/execroot/org_tensorflow/bazel-out/k8-opt
-/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/bazel/output_base/execroot/org_tensorflow/bazel-out/k8-opt/bin
-/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/bazel/output_base/execroot/org_tensorflow/bazel-out/k8-opt/bin/tensorflow
-/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/bazel/output_base/execroot/org_tensorflow/bazel-out/k8-opt/bin/tensorflow/lite
-/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/bazel/output_base/execroot/org_tensorflow/bazel-out/k8-opt/bin/tensorflow/lite/python
-/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/bazel/output_base/execroot/org_tensorflow/bazel-out/k8-opt/bin/tensorflow/lite/python/schema_py_srcs_no_include_all
-/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/bazel/output_base/execroot/org_tensorflow/bazel-out/k8-opt/bin/tensorflow/lite/python/schema_py_srcs_no_include_all/schema_generated.py
-/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/bazel/output_base/execroot/org_tensorflow/bazel-out/k8-opt/bin/tensorflow/lite/python/schema_py_srcs_no_include_all/__init__.py
-/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/bazel/output_base/execroot/org_tensorflow/bazel-out/k8-opt/bin/tensorflow/tools
-/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/bazel/output_base/execroot/org_tensorflow/bazel-out/k8-opt/bin/tensorflow/tools/pip_package
-/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/bazel/output_base/execroot/org_tensorflow/bazel-out/k8-opt/bin/tensorflow/tools/pip_package/wheel_house
-/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/bazel/output_base/execroot/org_tensorflow/bazel-out/k8-opt/bin/tensorflow/tools/pip_package/wheel_house/tensorflow-2.17.0-cp312-cp312-linux_x86_64.whl
-
-Signed-off-by: Martin Jansa <martin.jansa@gmail.com>
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
 ---
- recipes-framework/tensorflow/tensorflow.inc | 3 +++
- 1 file changed, 3 insertions(+)
+ scripts/yocto-supported-distros | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
-diff --git a/recipes-framework/tensorflow/tensorflow.inc b/recipes-framework/tensorflow/tensorflow.inc
-index 15464b9..36657a8 100644
---- a/recipes-framework/tensorflow/tensorflow.inc
-+++ b/recipes-framework/tensorflow/tensorflow.inc
-@@ -63,6 +63,9 @@ export TS_DL_DIR
+diff --git a/scripts/yocto-supported-distros b/scripts/yocto-supported-distros
+index da5399d..e0550eb 100755
+--- a/scripts/yocto-supported-distros
++++ b/scripts/yocto-supported-distros
+@@ -107,6 +107,14 @@ def _print_worker_list(worker_list: List, indent=2):
+         print(" " * indent + w)
  
- do_compile[network] = "1"
  
-+# Missing write permission prevents the WORKDIR to be deleted, e.g. when recipe becames unreachable
- do_compile:append() {
-     chmod a+w ${BAZEL_DIR}/output_base/execroot/org_tensorflow/bazel-out/*/bin/tensorflow/lite/python/conversion_metadata_schema_py_srcs_no_include_all || true
-+    chmod a+w ${BAZEL_DIR}/output_base/execroot/org_tensorflow/bazel-out/*/bin/tensorflow/lite/python/schema_py_srcs_no_include_all || true
-+    chmod a+w ${BAZEL_DIR}/output_base/execroot/org_tensorflow/bazel-out/*/bin/tensorflow/tools/pip_package/wheel_house || true
- }
--- 
-2.48.1
-
++def _print_worker_list_warning(worker_list: List, warning):
++    """
++    Helper to print a set nicely.
++    """
++    for w in worker_list:
++        print("WARNING: " + warning + ": " + w)
++
++
+ def _print_workers(possible_workers: Dict[str, List]):
+     """
+     Helper to print the workers nicely.
+@@ -204,15 +212,13 @@ def _compare(ab_workers: set, poky_workers: set):
+ 
+     poky_missing = ab_workers.difference(sorted(list(poky_workers)))
+     if poky_missing:
+-        print("Missing in poky.conf but configured on the autobuilder:")
+-        _print_worker_list(poky_missing)
++        _print_worker_list_warning(poky_missing, "Missing in poky.conf but configured on the autobuilder")
+         print()
+         ok = False
+ 
+     ab_missing = poky_workers.difference(sorted(list(ab_workers)))
+     if ab_missing:
+-        print("Missing on the autobuilder but listed in poky.conf:")
+-        _print_worker_list(sorted(list(ab_missing)))
++        _print_worker_list_warning(sorted(list(ab_missing)), "Missing on the autobuilder but listed in poky.conf")
+         print()
+         ok = False
+ 
+@@ -286,8 +292,7 @@ def main():
+                 ab_workers.add(mangled_w)
+ 
+         if not _compare(ab_workers, poky_workers):
+-            print("Errors were found")
+-            exit(1)
++            print("Mismatches were found")
+         else:
+             print("All good!")
+ 
 
