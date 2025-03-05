@@ -1,92 +1,98 @@
-Return-Path: <richard.purdie@linuxfoundation.org>
+Return-Path: <steve@sakoman.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20AFBC19F32
-	for <webhook@archiver.kernel.org>; Wed,  5 Mar 2025 10:25:32 +0000 (UTC)
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
- by mx.groups.io with SMTP id smtpd.web10.10382.1741170323134046847
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00144C19F32
+	for <webhook@archiver.kernel.org>; Wed,  5 Mar 2025 13:51:03 +0000 (UTC)
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+ by mx.groups.io with SMTP id smtpd.web10.13436.1741182653609346053
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 05 Mar 2025 02:25:23 -0800
+ Wed, 05 Mar 2025 05:50:53 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=cF7IyTlD;
- spf=pass (domain: linuxfoundation.org, ip: 209.85.128.41, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43bccfa7b89so12636655e9.2
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 05 Mar 2025 02:25:22 -0800 (PST)
+ dkim=pass header.i=@sakoman-com.20230601.gappssmtp.com header.s=20230601 header.b=dQgTQtjc;
+ spf=softfail (domain: sakoman.com, ip: 209.85.214.172, mailfrom: steve@sakoman.com)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-223959039f4so81072375ad.3
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 05 Mar 2025 05:50:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1741170321; x=1741775121; darn=lists.yoctoproject.org;
+        d=sakoman-com.20230601.gappssmtp.com; s=20230601; t=1741182653; x=1741787453; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=4LRSdb7W6bF/3xqHfxvSaRBCkGgivdW/NtiN9hl4VFg=;
-        b=cF7IyTlDWyufkmrvNPxakLQxhbIxZOq0BwyWfPdsMP1TcbWzsOUJexDGGcTCWed8Qq
-         REgC/75D/m0/VhUjt9GcbYOuFgiOBGGrTcImd2P9GORzJtFrpsMeQqly9aPApFO26dB4
-         jcHu2IWctTA7BAfl+ZUzW+aIeFXP0F2mnrOdA=
+        bh=pE99wS4Iiv2XIz8qn9/jirbL6F1xjtzg18pEkIc8f8Y=;
+        b=dQgTQtjcgtiRk2ag+6CTkSpU8tEtJc3zmJx4NTiFRqzHG7gtt7bvTwzwWfcZrb+skN
+         DD3+U7YgBjwv9W+o4zIGfFw0Ob2vePlfY9b7RcuzrO0YWAgttPFymUWT68UWheFHCWjd
+         oNhDl5BhA/CV5xXgzl3Q+3fXm8DKrCBDCInIzpAmhAYVIUbA9iiQxkNvU6wu7irDT+hb
+         GPRmmcuDtONIUcjx57XMDcDuhnspCsI7NeHbClIIxMPsy9r4KP2inPbPdSJ5hyh620Ac
+         q38T+MLpoaAC/XX2+CcLGadtvJ/hRMo2X9PAnhAPyIT3PYt5WyWNrDjG9DaF3k54UrCn
+         U7ZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741170321; x=1741775121;
+        d=1e100.net; s=20230601; t=1741182653; x=1741787453;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=4LRSdb7W6bF/3xqHfxvSaRBCkGgivdW/NtiN9hl4VFg=;
-        b=nKwx1+emeFw9TbgpoACpe0nyuBax3001YF2vXaOOiztWUIoB7uO2tXJ7GErGeP6/Jl
-         pSnL6MPi0x8Q7QBcbU2ohX0e1t51hIrS+E1sdd6ySaw5gd/aFCOxe/DFRx06TLHQmLFD
-         FgSSC28V8f58AB5dK34DnAlCKri2fADMHDEwamQdxlqC23/Ln/NXkvdsQfhObdU0kHBv
-         tD6Z27xDv19IA+3JQxfK2KjYednmyOu4gqZa3uMq9px7H15Sc1ddUrV50r246HO20B0U
-         YeC8eVMmWg3s1TU7WAc/SzVeW7sDjIsnLdBs/S1g5wA+PWWusqcr9DpHnoPpRua83p0e
-         M4tw==
-X-Gm-Message-State: AOJu0YzN3NpTKHEl5Qgr2h340b9DamLJ0O51FEBmyOe4Txk4N18VpMQB
-	zc1Ba430GUpaEWduLqcmhbIieKRAyB1kvyXslHYkW6OG3Q14dpUkcTnIIr0ry1a8D18xwb/IAUZ
-	b
-X-Gm-Gg: ASbGncs3KOgxO1jzNb8gJBUpxV3L5op7fV0TB3ZXqz+dV1/VqVwN06RlhhkF02Z7O2o
-	CvvDqBeVksNr7J1vDcnzt6IYDKatLcJGcxupLeblbTbYKu145yxzsxw4fSKifybq7lTtJYPbu5o
-	nsMygj/MDpjK5/66HJ2m5Z8+Fv6EWeokCZs/AISnF4qNrpr08b3eoXXmCQ8UBDX0OviRoN8ZEGn
-	Js/E5c7bWeqboY4eAnIX2YZaJLclsXO3vUninFvDO5IJQ1v6fnvDjbGgyDDBcUnjgmNBswGusHY
-	0CnBJcvBDO112g882sJKwfCnDFHDdHDucOagAn5uGpgcpjGf5rZWUEy4ISns4WTcQ0rJcd7Mbw=
-	=
-X-Google-Smtp-Source: AGHT+IEVThEUuvFP19JTldxCZ29sAHpwI9WjE9WQA2mMTLrZ/3WLm43k4U6UEIRao3Ftj6qa8m4YuA==
-X-Received: by 2002:a05:600c:511c:b0:43b:c0fa:f9cd with SMTP id 5b1f17b1804b1-43bd2972e1dmr18495265e9.7.1741170321093;
-        Wed, 05 Mar 2025 02:25:21 -0800 (PST)
-Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:939e:c44d:2366:e8da])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd4352eb1sm12973495e9.31.2025.03.05.02.25.19
+        bh=pE99wS4Iiv2XIz8qn9/jirbL6F1xjtzg18pEkIc8f8Y=;
+        b=reSbCH3noiMHxCp6rsP3N4V6TtnOweaHekYIoJxIIOu/1vkl49DvTWQnLBjUZEqMIN
+         TnGLPBcGICcUTXd17p4pUXuPcol7+xnDU3alt982TJlqN2qO/JWYccNGcWr6ZXQNO718
+         UhjTcTnviwGDVdRnnnfNs4bIAn72Qm0p6r3nKzXppK2mjdTysR519BXAXrQzK6wR/ZAF
+         8DtsFbUv1Wgq39mzCmB9qLYCQ9CULz8U/1WbDa8pKzvjZH0CBGMc/YqjyGxYJ/b3S8rs
+         QITpovVMQ4LIY4XCIyqTBCUtyC3+0uxYxsle+5bngUVWqjFBnc0luNT0YYSfycGhhnj/
+         93ZQ==
+X-Gm-Message-State: AOJu0YwGKAdD2o5r8wWGtpCx/xtP/2IU9LkgseLAW0IahWbqG/xnEuwP
+	fAG6FR0JaC9g+apDzR8Z/934uUODEZ7E54PycWhDwBBkX016+WQmpMldroIN7da+38yXSpBVQ+/
+	X
+X-Gm-Gg: ASbGncuRHIEPkUphN82Poid/q5BTbeNc3EOfL2+MYr2NzJ8KYAdzpocR6BvntWe4v2E
+	GymueBgK0tkvEyPg7Tw/PH44wxaxEFYes/8VT14ZnhHIQK4LZuSgqWALQnhLO7abIUaQCbRiMo0
+	bVvUccUacl5Z8k8phTBtPSp5CcwTuyE/PnrKJMdyds3Tss5xywEZ/Jx/IcDky6/EaH3lw0VS7tB
+	crbyFHlKYs7xsHd3IofHORVqObCnKdhgekuUHf4/3JtYl5o1GhmxKRDhj8LVhQzTB2tn3EEJoUx
+	FU8ZDRIYtY15MAZDuBSGVMC/biY3PPc+ySc=
+X-Google-Smtp-Source: AGHT+IEYg+N7JQRdbhZdkvqFsYvubpYsSGQWBRTq1hm6b998NXaU//xkp2135A7SNagcGfagW9Jgxw==
+X-Received: by 2002:a05:6a00:14d6:b0:736:53c5:33ba with SMTP id d2e1a72fcca58-73682c8ca64mr3886070b3a.16.1741182652514;
+        Wed, 05 Mar 2025 05:50:52 -0800 (PST)
+Received: from hexa.. ([2602:feb4:3b:2100:2308:d28:2350:a5eb])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73643b17286sm7299728b3a.157.2025.03.05.05.50.51
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 02:25:20 -0800 (PST)
-From: Richard Purdie <richard.purdie@linuxfoundation.org>
+        Wed, 05 Mar 2025 05:50:52 -0800 (PST)
+From: Steve Sakoman <steve@sakoman.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [yocto-autobuilder-helper] [PATCH 11/11] scripts/run-toaster-tests: Add check of toaster fixtures against current release data
-Date: Wed,  5 Mar 2025 10:25:06 +0000
-Message-ID: <20250305102506.2043524-11-richard.purdie@linuxfoundation.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250305102506.2043524-1-richard.purdie@linuxfoundation.org>
-References: <20250305102506.2043524-1-richard.purdie@linuxfoundation.org>
+Subject: [yocto-autobuilder2 1/1] config.py: enable ubuntu2404 for kirkstone, not honister
+Date: Wed,  5 Mar 2025 05:50:40 -0800
+Message-ID: <0a13e92c54d0f1433508906ce820994d6ca23853.1741182589.git.steve@sakoman.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1741182589.git.steve@sakoman.com>
+References: <cover.1741182589.git.steve@sakoman.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 05 Mar 2025 10:25:32 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1155
+ <yocto-patches@lists.yoctoproject.org>; Wed, 05 Mar 2025 13:51:03 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1156
 
-Add a check of the fixture data to try and ensure we don't release with
-incorrect configuration for toaster.
+A previous commit erroneously enabled ubuntu 2404 for honister instead
+of kirkstone.  Fix this.
 
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+Signed-off-by: Steve Sakoman <steve@sakoman.com>
 ---
- scripts/run-toaster-tests | 6 ++++++
- 1 file changed, 6 insertions(+)
+ config.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/scripts/run-toaster-tests b/scripts/run-toaster-tests
-index fbbdd51..014c714 100755
---- a/scripts/run-toaster-tests
-+++ b/scripts/run-toaster-tests
-@@ -31,3 +31,9 @@ source venv/bin/activate
- python3 -m pip install -r $pokydir/bitbake/toaster-requirements.txt -r $pokydir/bitbake/lib/toaster/tests/toaster-tests-requirements.txt
- 
- python3 -m pytest -c $pokydir/bitbake/lib/toaster/pytest.ini $pokydir/bitbake/lib/toaster/tests/
-+
-+if [ -e $pokydir/bitbake/lib/toaster/orm/fixtures/check_fixtures.py ]; then
-+    echo "Checking toaster fixtures"
-+    cd $pokydir/bitbake/lib/toaster/orm/fixtures/
-+    $pokydir/bitbake/lib/toaster/orm/fixtures/check_fixtures.py
-+fi
+diff --git a/config.py b/config.py
+index dc7d6c5..87244b3 100644
+--- a/config.py
++++ b/config.py
+@@ -194,8 +194,8 @@ workers_prev_releases = {
+     "nanbield" : ("alma8", "alma9", "debian11", "debian12", "fedora37", "fedora38", "opensuse153", "opensuse154", "rocky9", "stream8", "ubuntu1804", "ubuntu2004","ubuntu2204", "ubuntu2304", "perf-"),
+     "mickledore" : ("alma8", "alma9", "debian10", "debian11", "fedora35", "fedora36", "fedora37", "fedora38", "opensuse153", "opensuse154", "ubuntu1804", "ubuntu2004","ubuntu2204", "perf-"),
+     "langdale" : ("alma8", "alma9", "debian10", "debian11", "fedora35", "fedora36", "opensuse153", "opensuse154", "ubuntu1804", "ubuntu2004","ubuntu2204", "perf-"),
+-    "kirkstone" : ("alma8", "alma9", "centos7", "centos8", "debian8", "debian9", "debian10", "debian11", "fedora29", "fedora30", "fedora31", "fedora32", "fedora33", "fedora34", "fedora35", "fedora36", "fedora37", "fedora38", "fedora39", "fedora40", "opensuse150", "opensuse151", "opensuse152", "opensuse153", "ubuntu1604", "ubuntu1804", "ubuntu1904", "ubuntu2004", "ubuntu2110", "ubuntu2204", "perf-"),
+-    "honister" : ("alma8", "centos7", "centos8", "debian8", "debian9", "debian10", "debian11", "fedora29", "fedora30", "fedora31", "fedora32", "fedora33", "fedora34", "fedora35", "opensuse150", "opensuse151", "opensuse152", "opensuse153", "ubuntu1604", "ubuntu1804", "ubuntu1904", "ubuntu2004", "ubuntu2110", "ubuntu2204", "ubuntu2404", "perf-"),
++    "kirkstone" : ("alma8", "alma9", "centos7", "centos8", "debian8", "debian9", "debian10", "debian11", "fedora29", "fedora30", "fedora31", "fedora32", "fedora33", "fedora34", "fedora35", "fedora36", "fedora37", "fedora38", "fedora39", "fedora40", "opensuse150", "opensuse151", "opensuse152", "opensuse153", "ubuntu1604", "ubuntu1804", "ubuntu1904", "ubuntu2004", "ubuntu2110", "ubuntu2204", "ubuntu2404", "perf-"),
++    "honister" : ("alma8", "centos7", "centos8", "debian8", "debian9", "debian10", "debian11", "fedora29", "fedora30", "fedora31", "fedora32", "fedora33", "fedora34", "fedora35", "opensuse150", "opensuse151", "opensuse152", "opensuse153", "ubuntu1604", "ubuntu1804", "ubuntu1904", "ubuntu2004", "ubuntu2110", "ubuntu2204", "perf-"),
+     "hardknott" : ("centos7", "centos8", "debian8", "debian9", "debian10", "debian11", "fedora31", "fedora32", "fedora33", "fedora34", "opensuse152", "ubuntu1604", "ubuntu1804", "ubuntu2004", "perf-"),
+     "gatesgarth" : ("centos7", "centos8", "debian8", "debian9", "debian10", "fedora30", "fedora31", "fedora32", "opensuse150", "opensuse151", "opensuse152", "ubuntu1604", "ubuntu1804", "ubuntu1904", "ubuntu2004", "perf-"),
+     "dunfell" : ("alma8", "centos7", "centos8", "debian8", "debian9", "debian10", "debian11", "fedora29", "fedora30", "fedora31", "fedora32", "fedora33", "fedora34", "fedora35", "fedora36", "fedora37", "fedora38", "opensuse150", "opensuse151", "opensuse152", "opensuse153", "ubuntu1604", "ubuntu1804", "ubuntu1904", "ubuntu2004", "ubuntu2204", "perf-"),
+-- 
+2.43.0
+
 
