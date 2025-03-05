@@ -2,60 +2,60 @@ Return-Path: <richard.purdie@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A2A7C282D9
-	for <webhook@archiver.kernel.org>; Wed,  5 Mar 2025 10:25:22 +0000 (UTC)
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
- by mx.groups.io with SMTP id smtpd.web11.10288.1741170317688697569
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 272FCC282DC
+	for <webhook@archiver.kernel.org>; Wed,  5 Mar 2025 10:25:32 +0000 (UTC)
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+ by mx.groups.io with SMTP id smtpd.web10.10381.1741170321805090837
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 05 Mar 2025 02:25:17 -0800
+ Wed, 05 Mar 2025 02:25:22 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=hrCl6to7;
- spf=pass (domain: linuxfoundation.org, ip: 209.85.221.41, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-390fb1b987fso4626818f8f.1
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 05 Mar 2025 02:25:17 -0800 (PST)
+ dkim=pass header.i=@linuxfoundation.org header.s=google header.b=aTSNnHiC;
+ spf=pass (domain: linuxfoundation.org, ip: 209.85.128.52, mailfrom: richard.purdie@linuxfoundation.org)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43bc4b16135so18884375e9.1
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 05 Mar 2025 02:25:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1741170315; x=1741775115; darn=lists.yoctoproject.org;
+        d=linuxfoundation.org; s=google; t=1741170320; x=1741775120; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yP+8NIGM/2igLj17bN/qI3XSwCdDETnttDiixUnUFCU=;
-        b=hrCl6to7xWPrIo8iY1/bx06QoTs7TYAar2IuA+N5Bz0x8AJrwjqEi9TLFSN+oTEHgs
-         KtmA+fTb+5WGswyrSHwr+U2+ZVL+vLmqI0ryZwxZNA8+neLnn0j3wW4RmFlmbY0O/hh/
-         ncGObmfuftS2JHE/vhuTBnhmrlP4zRdDVJ8HE=
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0eg04w3vbnkTk5fL4VQwraFB5LVLLWgZMm+PF+J9RXA=;
+        b=aTSNnHiC9oiCkPsKdUQXIqtlKbocUXf3jBCPfFfGvJoPCosoSazvNTbZpv/MY2g0CH
+         +K1ssCSX4+q6/bfUle42PRzcpwcVeY36f+2H6bVZqM+qQOiSNLJh2gPM5xDYoV4+TmpA
+         SbX9ReTYKNmdPDzs9WaEuLnwXa8gRexizHQsw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741170315; x=1741775115;
+        d=1e100.net; s=20230601; t=1741170320; x=1741775120;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yP+8NIGM/2igLj17bN/qI3XSwCdDETnttDiixUnUFCU=;
-        b=dBttqtQPWHpaAgDSV6szNXRDu0wFNiSpizruuLeKa7RRmRchsw5mI5VOvvWmLyxv8/
-         WmhSuYQXSUaeeZlowO5yH/kGVu6hXTGhWSwFdsvgrpZKJRt2Mj5k0cJPtTkWxsQ+FnIB
-         1JAjtbvSLgSCPFS+kAgBoIWX5QAKuq4Ph9yQ7/IQf7blHHxdhZOyvOkUCs7qon3Isibu
-         tsqez6yvx/z2ZFzb73Hsy+mUCOiWygi16/cNGse0nH3XKpjR2ur/Ys4su1WEopsgpipx
-         AYuv3h7gZbCcOixRIc9heJNFlxNMX+/4ikrYYdgn1DhZJ/VVLbFkLpzlQzXOHrBPA42f
-         6biA==
-X-Gm-Message-State: AOJu0YwVevyzqoxPIVLBAGscRI6C7NNj9o+fkbyescMfYV6lefJSFWnh
-	xpioEvruzS93x6FuvUYJkXAsMo0tfh2DouD4vFfkUEO4CrzeE0b7F0P2IUGtn/SFJTvLg7K6t6Q
-	2
-X-Gm-Gg: ASbGncsIz+sqbr2y6XMWkqk7VKdvvN8zUFGsebht8uY+SOqpFB56qtNOaWhDGWuOM7Q
-	kehzVnAhTcMzUNxG5SZW+8Ht05LGBwseZ/NW+sAW+p5MgeFXYv05FIpyDTSt/l9IjTMC10PXosa
-	Sn7rc8tsQOi1cpGTDRfOcLzmoX8ecsVHrPlPqlAbSgSQqUhInDfXyn9gaev112Cg9k/9YcFAV1q
-	GAMyuEaTdquGPv9xU6y+OD2dzvJIHpcnSK/SX49hfabEDh7i2oQxtv/p6nmnug/YgAc8O8koyip
-	UApG4MF7eX/4Q/JjAMG3X5GBC5eDI0nCfhb3DRjEbGC/d/2R69jg/22o1EwR5SOzmHhYua+gUw=
+        bh=0eg04w3vbnkTk5fL4VQwraFB5LVLLWgZMm+PF+J9RXA=;
+        b=Z4AOMsKi/WYvx1ZGbg1hcuTO2Vx4j62uzGkx0yBbH+txj8f6I8f1tOKqRWURije1OB
+         RBqWc/uJdvyEI8r8cq5Y80AKWceOAKCQxDFJIwUk53Ci4MYNi3epdHFQAw4aY+qj4eoI
+         gJ6xlfvDMBg2SpM7suM3Kq5xy1H5x0P+5Rm4EpVRGu0flwurx72+p0CZsGp1b4LYui+B
+         9+gofJoOhcfQ7F4WUnXem1q9pvq6SBPXyk7XjTDxq1deO8IbFtEMP95u9Y48S7CGzoXK
+         PMoady4yDaI5n+1yzJjFGmNEBLvaD35wR4fPDBAMiXvRo/bRI/qFJZ1mfIeOC5LqQXQV
+         F6rw==
+X-Gm-Message-State: AOJu0YxoyeibWXXfOZ0PA4GToxrtf/QDV+RX1ilWYJecAacNv7j2IBIt
+	DMNndD3fq6sZ3OG3LS2WBmBpNi8kQYNDSlCCfxXrdSrLPR6bCUBY81DVggrDLYFXfSoGKQOV/zU
+	d
+X-Gm-Gg: ASbGnctGWHfoWDMBmmEiw4WUrR8bFWZedIwOddxL9Tpw/GLmU5vtu5UzUQgJL/WCfxR
+	46T9FtB8/WV5MG5HIawAeGUUP9veCbCOum6QiXZeDNnvo0a1V9H/pU2UuzazHwngX7whbamMgpM
+	BMIN11HYPTCKrGjVgsUHTW3q3xN2PGJtUyoBd0wQ8ri0Z3UHdFuE+9bBt6aIaoIwd1CqqHVQRkP
+	wZbqFumrERh/BG7KEaYz2bEIalRhdmQ4G3ts/3txlRIioYiUNDZheux3m1RDsvfP/3cCpWjKMFl
+	TkaMnDXg9SkZmn7iwqI2Ow85vY9rT/JibcWTrengQ9uXbGIwnmsOHWcr+WNcsoIDyfn7pPMBtA=
 	=
-X-Google-Smtp-Source: AGHT+IGYQkp5F/Aw1wtxa36XHqRA6Zz6Pvux0Udj8wvBCZ54O02fcB/8L/aJQ3KxWCrkHyYYuPpAhw==
-X-Received: by 2002:a05:6000:1886:b0:390:e8bf:55a8 with SMTP id ffacd0b85a97d-3911f7412f1mr1814069f8f.18.1741170315547;
-        Wed, 05 Mar 2025 02:25:15 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEDjcms7f8LBFHZUOdZEDA58saCnVp0KG63A8vWNBw7pyQ0EodT16iNAu/jOEPvytT/UY6AhA==
+X-Received: by 2002:a05:600c:468e:b0:43b:bdf4:1c9 with SMTP id 5b1f17b1804b1-43bd2af4b26mr16867515e9.29.1741170319783;
+        Wed, 05 Mar 2025 02:25:19 -0800 (PST)
 Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:939e:c44d:2366:e8da])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd4352eb1sm12973495e9.31.2025.03.05.02.25.14
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd4352eb1sm12973495e9.31.2025.03.05.02.25.18
+        for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 02:25:14 -0800 (PST)
+        Wed, 05 Mar 2025 02:25:18 -0800 (PST)
 From: Richard Purdie <richard.purdie@linuxfoundation.org>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Michael Halstead <mhalstead@linuxfoundation.org>
-Subject: [yocto-autobuilder-helper] [PATCH 07/11] scripts/release-parser.py: changed exceptions after tag clean up
-Date: Wed,  5 Mar 2025 10:25:02 +0000
-Message-ID: <20250305102506.2043524-7-richard.purdie@linuxfoundation.org>
+Subject: [yocto-autobuilder-helper] [PATCH 10/11] config.json/utils: Disable buildtools and poky repo for indexing
+Date: Wed,  5 Mar 2025 10:25:05 +0000
+Message-ID: <20250305102506.2043524-10-richard.purdie@linuxfoundation.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250305102506.2043524-1-richard.purdie@linuxfoundation.org>
 References: <20250305102506.2043524-1-richard.purdie@linuxfoundation.org>
@@ -64,29 +64,40 @@ Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 05 Mar 2025 10:25:22 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1151
+ <yocto-patches@lists.yoctoproject.org>; Wed, 05 Mar 2025 10:25:32 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1154
 
-From: Michael Halstead <mhalstead@linuxfoundation.org>
-
-Signed-off-by: Michael Halstead <mhalstead@linuxfoundation.org>
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
 ---
- scripts/release-parser.py | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ config.json        | 1 +
+ scripts/run-config | 4 +++-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/scripts/release-parser.py b/scripts/release-parser.py
-index e0de351..1e46315 100755
---- a/scripts/release-parser.py
-+++ b/scripts/release-parser.py
-@@ -32,9 +32,7 @@ def get_git_tags():
-     tag_list = []
-     branches = sorted(set([tag.name[:9] for tag in tags]))
-     # Remove bad tags
--    branches.remove("yocto-1.9")
--    branches.remove("yocto_1.5")
--    branches.remove("yocto-1.4")
-+    branches.remove("yocto-1.9") # To deal with milestone 1 before 1.9 was renamed 2.0.
+diff --git a/config.json b/config.json
+index adb85d1..cdcb2f8 100644
+--- a/config.json
++++ b/config.json
+@@ -1367,6 +1367,7 @@
+             }
+         },
+         "indexing" : {
++            "NEEDEDREPOS" : [],
+             "step1" : {
+                 "shortname" : "Generate non-release index",
+                 "EXTRACMDS" : ["${SCRIPTSDIR}/generate-testresult-index.py ${BASE_SHAREDDIR}/pub/non-release/"]
+diff --git a/scripts/run-config b/scripts/run-config
+index fb71721..bf2855f 100755
+--- a/scripts/run-config
++++ b/scripts/run-config
+@@ -136,7 +136,9 @@ def addstepentry(name, taskdesc, shortname, description, detail, phase, usepty=F
+         bbdesc = bbdesc + ": " + detail
+     jsonconfig.append({"name" : name, "bbname" : bbname[:46], "phase" : phase, "description" : bbdesc, "usepty" : usepty})
  
-     odd_commit_strings = ["rc", "final", "docs"]
-     for branch in branches:
+-if jcfg:
++if args.target == "indexing":
++    pass
++elif jcfg:
+     buildtools = utils.setup_buildtools_tarball(ourconfig, args.workername, None, checkonly=True)
+     if buildtools:
+         addentry("buildtools", "Setup buildtools tarball", "init")
 
