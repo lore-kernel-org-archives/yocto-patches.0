@@ -1,134 +1,152 @@
-Return-Path: <richard.purdie@linuxfoundation.org>
+Return-Path: <mathieu.dubois-briand@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD436C282EC
-	for <webhook@archiver.kernel.org>; Thu,  6 Mar 2025 12:50:52 +0000 (UTC)
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
- by mx.groups.io with SMTP id smtpd.web11.12302.1741265444794799281
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECB66C282D1
+	for <webhook@archiver.kernel.org>; Thu,  6 Mar 2025 13:20:22 +0000 (UTC)
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+ by mx.groups.io with SMTP id smtpd.web11.12911.1741267215223914001
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 06 Mar 2025 04:50:45 -0800
+ Thu, 06 Mar 2025 05:20:15 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=Kq728NsP;
- spf=pass (domain: linuxfoundation.org, ip: 209.85.221.41, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-38f403edb4eso356209f8f.3
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 06 Mar 2025 04:50:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1741265443; x=1741870243; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=M82MJpcSz+F9OOdu/6/Xyqfxco7FdqqiIGOBXUkwpU8=;
-        b=Kq728NsPsqhsfvEVb52p5h4GN6Z1HLwdNM8r1qYgdE5OrujLPiuMGuc+XhikdS983C
-         GohOJMWIaI1K5/9FZG1j3vC38HKp2ZgOHomc4++9OsSahx9nkMhsNo5HVNkEqnHI49OV
-         5JKzQ/+65TBJIGRkw4WvLWblE7W0fecP737l0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741265443; x=1741870243;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M82MJpcSz+F9OOdu/6/Xyqfxco7FdqqiIGOBXUkwpU8=;
-        b=W+iRQRp0gVRd9Rg/YJnQ08vz2NVJhHrAj8HtDzoHcpqxdpuaU26xHaAXxH8YI+dxkF
-         XowfXzXgpA4xJseooItlrUm2b8ybkonjLVyr8Xjqg1s2Tge2v3/xy+OLRMeWuhAFKCSV
-         5D8Ii/ZarHxKmWwZ5x3i5vyK51K0r2xf1v5QRwhdr9nFEBYcfJcfBu/woxVAZzG8SEyo
-         rh87xPsWUsA2vA2y9Gej4IZGsKBKvF1icrbOnjWUNNzw/6u3wAHSF4tNcRMh5wWBtkBs
-         L3d4VIyEdrRgCZZzlVIVQvqlNeg7LNib2+fsQaXJ4vqmQIrIyEjskh0Q9XOrfOIg8BY1
-         zl6A==
-X-Gm-Message-State: AOJu0YxDBrsbmgbdZawJAyk7JyOVAfbylgxVP1R1ps97fgGaV84+Z7cH
-	lE9FSwhTzkDHKW36zWq+ZmGu298K6zlLuX0eSS6kGApJ7T6NnHeHSvwNLRhcEnAyaDv1URRz21y
-	j
-X-Gm-Gg: ASbGnctnh+jOvZRZ6ICfpez1UbRZ3NNKfrFmsyZ1/e5PV+DRLKH8sOpfr1e0haSCzMG
-	3Rt+n+cL8uWw6Mrt/46Q2L7k+zu2Mq8DURSGrTLFdHkYsusYBNweO6O0T8yGi4EPArIv+oC9tlc
-	+HWK6b9bcv9s+3jfldTRazzbYpwatXI3+1Q9IPNHhgo1TqYcRSxSriNLvJfzKEQ4kz6NDS/wz9E
-	EqdZTUpJ8wsl4v8x7wm9w9iuzfRVDxOBhpjjnaflG9/6mUSXVvFuTJFsGUhvuWBM//pUAUhYyux
-	mACReQqe88GraX6GbUYq68xXYCr/cLrbMnXVsD1z0Ehbr48U8u2ABgi7ri216ZtfXubbN8G4Dw=
-	=
-X-Google-Smtp-Source: AGHT+IH23HKHUO3MbRbPQ3zVGM6YN29Lw9k8dvINgRH48QIHst/oFBEWUWH+kU0OMYVjfD1ob7N/6g==
-X-Received: by 2002:a05:6000:184d:b0:390:eacd:7009 with SMTP id ffacd0b85a97d-3911f7c3d8cmr5726180f8f.42.1741265442547;
-        Thu, 06 Mar 2025 04:50:42 -0800 (PST)
-Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:e869:4c46:3bba:1ea9])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfb79b9sm1955126f8f.3.2025.03.06.04.50.41
-        for <yocto-patches@lists.yoctoproject.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 04:50:42 -0800 (PST)
-From: Richard Purdie <richard.purdie@linuxfoundation.org>
-To: yocto-patches@lists.yoctoproject.org
-Subject: [yocto-autobuilder2] [PATCH] builders: Avoid giving jobs to workers that already have them
-Date: Thu,  6 Mar 2025 12:50:41 +0000
-Message-ID: <20250306125041.2399638-1-richard.purdie@linuxfoundation.org>
-X-Mailer: git-send-email 2.45.2
+ dkim=pass header.i=@bootlin.com header.s=gm1 header.b=hgQpZiAr;
+ spf=pass (domain: bootlin.com, ip: 217.70.183.195, mailfrom: mathieu.dubois-briand@bootlin.com)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 949C420454;
+	Thu,  6 Mar 2025 13:20:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741267213;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3ltoAdokyOmne4ddFy0Y5nm06O+RBETjqP4J1Ejd04U=;
+	b=hgQpZiAriYv9oYPCxXETDcMsZ5Q1x8aYzwJOF2sFWuLmAwiSNNFRGziWPKBYPI4SYXHvjG
+	jtsZ+XYmtvKus6/SFI8ymbuaBGURVzoZpkaKwqZqDkUsgQT5NDZnkSAi6ySGU4sktDZOFP
+	dMxjnecpZT4jFlD5f7LRI8wiHW68iDqqMtrVBEn5kgdyl/racj9tlSZhUOMfwV8XwExYgn
+	Jfm5Jz8OULIGmdW2trrk3fiu46KKlfU2Ld+y8Z/b5ttlDA6o7oe+gqG0hqlx0VtnzfncrI
+	VJu9/uwR2AX8D/f6xOGpsPzbEgOuHZ1Numlc0X7jO6k+OSL7hNL1o0VZJy86WQ==
+From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Date: Thu, 06 Mar 2025 14:19:45 +0100
+Subject: [PATCH yocto-autobuilder2 1/2] docker: Use current git version
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250306-contrib-mathieu-docker_multi_workers-v1-1-d208b643cfae@bootlin.com>
+References: <20250306-contrib-mathieu-docker_multi_workers-v1-0-d208b643cfae@bootlin.com>
+In-Reply-To: <20250306-contrib-mathieu-docker_multi_workers-v1-0-d208b643cfae@bootlin.com>
+To: yocto-patches@lists.yoctoproject.org
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1741267213; l=2883;
+ i=mathieu.dubois-briand@bootlin.com; s=20241219; h=from:subject:message-id;
+ bh=89w2mMVIuvintg7vDYncSj7IU3ru3Q0qwaLzMnxF5Qs=;
+ b=5h+gHwyevQowGB05MVaeXmb88Pmquzka0DnEF/5MuxLF1aq7uA/1wuOPLWifVxI67OfllTM1z
+ nZDwcPw7Sc6DkjKyKsUUvZmPGtPF8zWUkBNZlgHin0fwm65L5un3UYI
+X-Developer-Key: i=mathieu.dubois-briand@bootlin.com; a=ed25519;
+ pk=1PVTmzPXfKvDwcPUzG0aqdGoKZJA3b9s+3DqRlm0Lww=
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdejkeejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomhepofgrthhhihgvuhcuffhusghoihhsqdeurhhirghnugcuoehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeujeelueduheeujeelheejiefhffdtjeefgfduhfejudeuuddvgfdugeekjefhleenucffohhmrghinhephihotghtohhprhhojhgvtghtrdhorhhgpdhophgvnhgvmhgsvgguuggvugdrohhrghenucfkphepledtrdeifedrvddtvddrgedtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdeifedrvddtvddrgedtpdhhvghloheplgduvdejrddtrddurddungdpmhgrihhlfhhrohhmpehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeefpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepmhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomhdprhgtphhtthhop
+ eihohgtthhoqdhprghttghhvghssehlihhsthhsrdihohgtthhophhrohhjvggtthdrohhrgh
+X-GND-Sasl: mathieu.dubois-briand@bootlin.com
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 06 Mar 2025 12:50:52 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1159
+ <yocto-patches@lists.yoctoproject.org>; Thu, 06 Mar 2025 13:20:22 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1161
 
-When giving jobs to workers, we want to prioritise idle ones and only
-give them to the busiest ones when there are no others free.
+Use local git version instead of fetching remote master branch.
 
-This isn't entirely straight forward as there is no "idle" attribute
-for workers but we can use a query and work it out.
-
-Includes fixes from Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 ---
- builders.py | 30 +++++++++++++++++++++++++++++-
- 1 file changed, 29 insertions(+), 1 deletion(-)
+ docker/Dockerfile   |  8 +++++---
+ docker/compose.yaml | 30 ++++++++++++++----------------
+ 2 files changed, 19 insertions(+), 19 deletions(-)
 
-diff --git a/builders.py b/builders.py
-index 81b74ad3..667e491a 100644
---- a/builders.py
-+++ b/builders.py
-@@ -9,6 +9,7 @@ from yoctoabb.steps.writelayerinfo import WriteLayerInfo
- from yoctoabb.steps.runconfig import get_publish_dest, get_publish_resultdir, get_publish_name, RunConfigCheckSteps, TargetPresent
- from buildbot.process.results import Results, SUCCESS, FAILURE, CANCELLED, WARNINGS, SKIPPED, EXCEPTION, RETRY
- from buildbot.process.remotecommand import RemoteCommand
-+from buildbot.data import resultspec
+diff --git a/docker/Dockerfile b/docker/Dockerfile
+index e7d6f99827eb..e8aea69083f2 100644
+--- a/docker/Dockerfile
++++ b/docker/Dockerfile
+@@ -58,15 +58,17 @@ ENV LC_ALL en_US.UTF-8
+ RUN ssh-keyscan push.yoctoproject.org push.openembedded.org >> /etc/ssh/ssh_known_hosts
  
- from twisted.python import log
- from twisted.internet import defer
-@@ -150,6 +151,7 @@ def create_builder_factory():
+ # Setup buildbot
+-COPY yocto-autobuilder2_patches /yocto-autobuilder2_patches
++COPY docker/yocto-autobuilder2_patches /yocto-autobuilder2_patches
++COPY . /yocto-autobuilder2
+ RUN useradd -m --system pokybuild && \
+     cd /home/pokybuild && \
+     buildbot create-master -r yocto-controller && \
+     buildbot-worker create-worker -r --umask=0o22 yocto-worker controller example-worker pass && \
+     \
+     cd yocto-controller && \
+-    git clone https://git.yoctoproject.org/git/yocto-autobuilder2 yoctoabb && \
++    mv /yocto-autobuilder2 yoctoabb && \
+     git -C yoctoabb apply /yocto-autobuilder2_patches/*.patch && \
++    rm -rf /yocto-autobuilder2_patches && \
+     ln -rs yoctoabb/master.cfg master.cfg && \
+     \
+     cd /home/pokybuild && \
+@@ -108,7 +110,7 @@ RUN sed -i \
+     awk '/^schedulers.append\(sched.Nightly\(/{comment=1} /\(/{count+=gsub("\\(", "(")} /\)/{count-=gsub("\\)", ")")} {if (comment) {print "#" $0} else {print} if (count==0) comment=0}' \
+         /home/pokybuild/yocto-controller/yoctoabb/schedulers.py
  
-     return f
+-COPY entry.sh /
++COPY docker/entry.sh /
+ RUN chmod a+x /entry.sh
  
-+@defer.inlineCallbacks
- def nextWorker(bldr, workers, buildrequest):
-     forced_worker = buildrequest.properties.getProperty("worker", "*")
-     possible_workers = list(workers)
-@@ -170,7 +172,33 @@ def nextWorker(bldr, workers, buildrequest):
-                 break
+ ENTRYPOINT ["/entry.sh"]
+diff --git a/docker/compose.yaml b/docker/compose.yaml
+index 71758e9a6010..22191d5777e1 100644
+--- a/docker/compose.yaml
++++ b/docker/compose.yaml
+@@ -2,29 +2,27 @@
  
-     if forced_worker == "*":
--        return random.choice(possible_workers) if possible_workers else None
-+        # Query running builds so we can push builds away from those already running the most
-+        builds = yield bldr.master.data.get(
-+            ('builds',),
-+            [resultspec.Filter('complete', 'eq', [False])],
-+        )
+ ---
+ 
++x-base-service: &base-service
++  build:
++    context: ..
++    dockerfile: docker/Dockerfile
++  volumes:
++    - sharedrepo:/sharedrepo
++    - publish:/publish
++    - mirror:/home/pokybuild/git/mirror
++    - srvautobuilder:/srv/autobuilder
++  stdin_open: true
++  tty: true
 +
-+        active = {}
-+        maxbuilds = 0
-+        for build in builds:
-+            if build['workerid'] not in active:
-+                active[build['workerid']] = 1
-+            else:
-+                active[build['workerid']] += 1
-+                if maxbuilds > active[build['workerid']]:
-+                    maxbuilds = active[build['workerid']]
-+
-+        random.shuffle(possible_workers)
-+
-+        for worker in possible_workers:
-+            if worker.worker.workerid not in active:
-+                return worker
-+        for i in range(maxbuilds):
-+            for worker in possible_workers:
-+                if active[worker.worker.workerid] == i:
-+                    return worker
-+
-+        return None
-     for w in possible_workers:
-         if w.worker.workername == forced_worker:
-             return w
+ services:
+   controller:
+-    build: .
+-    volumes:
+-      - sharedrepo:/sharedrepo
+-      - publish:/publish
+-      - mirror:/home/pokybuild/git/mirror
+-      - srvautobuilder:/srv/autobuilder
++    <<: *base-service
+     ports:
+       - 8010:8010
+-    stdin_open: true
+-    tty: true
+     cpus: 4
+     command: controller
+   worker:
+-    build: .
+-    volumes:
+-      - sharedrepo:/sharedrepo
+-      - publish:/publish
+-      - mirror:/home/pokybuild/git/mirror
+-      - srvautobuilder:/srv/autobuilder
+-    stdin_open: true
+-    tty: true
++    <<: *base-service
+     cpus: 8
+     command: worker yocto-worker
+     mem_limit: 16gb
+
+-- 
+2.39.5
+
 
