@@ -1,191 +1,152 @@
-Return-Path: <mathieu.dubois-briand@bootlin.com>
+Return-Path: <martin.jansa@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE8EDC28B25
-	for <webhook@archiver.kernel.org>; Thu,  6 Mar 2025 13:20:22 +0000 (UTC)
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
- by mx.groups.io with SMTP id smtpd.web10.12980.1741267215254267426
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79F08C19F32
+	for <webhook@archiver.kernel.org>; Fri,  7 Mar 2025 07:56:27 +0000 (UTC)
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+ by mx.groups.io with SMTP id smtpd.web10.6407.1741334179652290201
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 06 Mar 2025 05:20:15 -0800
+ Thu, 06 Mar 2025 23:56:19 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=gm1 header.b=mpamIden;
- spf=pass (domain: bootlin.com, ip: 217.70.183.195, mailfrom: mathieu.dubois-briand@bootlin.com)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id C997C204D3;
-	Thu,  6 Mar 2025 13:20:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741267213;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FJ3tFbrOOY2poHqrW93wKx7+kwtL9GHsRZHJ5IEZmAw=;
-	b=mpamIdenSiXNaPlGZRUdiVPetczjv8YMcXrewF70OL8un7BvuyxRAr2XhfIUj03bPbGTZr
-	eSqbNuXnNak47qX9JdeqTI5VyQwqzljZ5bf1ePmITsaO3Wr1UcSpxXLRv94+PevRSRZjbw
-	C8re9A++gzeD5ZVt44t0UaZ5TW1N6Cm/F4m7pPHO9a1ktAQ6yTwUhRsp7UmH7R3eeyrIxM
-	vCZu5jnxvRixSzDigyZIo2EIIV73pWgfT+tzrx3jFDzT44Dcl+iDhl8uWwdR31KukE6g0+
-	saHcGtBYNgTfzGcV4VN3IbPtAGzvOcFqoJLcVH4L0SxoOM/YPDqlbFYT9EWpIQ==
-From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Date: Thu, 06 Mar 2025 14:19:46 +0100
-Subject: [PATCH yocto-autobuilder2 2/2] docker: Allow to add several local
- workers
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250306-contrib-mathieu-docker_multi_workers-v1-2-d208b643cfae@bootlin.com>
-References: <20250306-contrib-mathieu-docker_multi_workers-v1-0-d208b643cfae@bootlin.com>
-In-Reply-To: <20250306-contrib-mathieu-docker_multi_workers-v1-0-d208b643cfae@bootlin.com>
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=c8A/N8cj;
+ spf=pass (domain: gmail.com, ip: 209.85.128.45, mailfrom: martin.jansa@gmail.com)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43bc30adad5so9260345e9.1
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 06 Mar 2025 23:56:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741334178; x=1741938978; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=p+AphItEo80hxtuJNtn3XOdo/H/U5yfqrdZcuHpnwBw=;
+        b=c8A/N8cj6Jy0116FLEqAW3I1cUcD/iP2awbv732/9RbQvFmdU7GR01Bw28RDBMAvFL
+         V3aPFfMe0gRwmcRtg7cGvWhZIYFXhHSNUjDV/dOqv4B8onZ+7q9+tOnda00G7HkosXk+
+         6TR5lzJG3d6Icm2p0kIEaCWj/tnXwSpjaaF4HTPf100BtJVfuHoxJC/84UETYvhJTui2
+         xtn0lb7WFfrrFBckHJ3nCprN9cknI2cHpPQkXlpLZmPDuwh9TVwZE0BlEllBst7M113S
+         AlO9XbthkWBYLS2yLA+0nndCeDMbYRg7ATkZGiuG6nyHmArKOVeIHr8pRcra/lxeg1dl
+         yaMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741334178; x=1741938978;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=p+AphItEo80hxtuJNtn3XOdo/H/U5yfqrdZcuHpnwBw=;
+        b=fdLohrei5Gt8/hP8yYbzNzMcsuxJuaC0mIS02auFKq7Jt0zamlCPVgChkkTYiFKCuw
+         zADvS2A5zWQQJrnkJtX0Rwpz04cQp4mf7yrg16k8F0z9GrocKEr2wwmujhthkRa2fVYj
+         JgHdkTqhOXWRPa6WjOoLFfh00IE1uu1crCK4PhK6U5TBZnbb33LNjwVsvJBDWQCrUmB5
+         uvXXgIKkCF+0DODKWrs3ZjwEa8+lju5NAG7BS2aYp/p5zwGQ6kHXcYRRFpKz96df0mzt
+         UW/d/8kTDVGsu0Rr2oFfwpLSDASyGpSNKYur2/SomdSXTflxsREuOCTejrZeHxZJzU6K
+         +7kQ==
+X-Gm-Message-State: AOJu0Yy7yZdDt+Smw8HBt+YfHp/HJGYys7Itg9T3Xf1igLPT6sXg4oOi
+	FL8ZfLQHE7FPP+c4EdGaLIgj/GNEtLKLwaNYOMlBQAscH9ajdH+jyxhqTA==
+X-Gm-Gg: ASbGncvF3XJpnoh8pFKSnBJvVvHrQ9wXVQpa2DdbM5z13fT9q6DPlT3KPlKECn9kQvR
+	CdBf/hJTrlrcBolvSZi8Z2YmFXu8S1DHUM8AhEVS7wx4iq+xprWX08hnL2EcnyHC6gsUFoXjxfS
+	qg/eordL8Pw+LaM10B7XCcrCQuC4S8+EuSxyJP7oRtKGCSmThWjomaNUFbIz1fmw1FeIG2xaFxy
+	pcyi3cfBJB7Lg/bAY6M2i5cEZGrFFmJFHvkSmFQadIG1BzJO6YeuCx4uJVnhRtIotxHhT8OtPh3
+	qg70rF6gTe075iazbf+Fdfuz0f0OjtFRkeKpV9uiMJ3TiZw=
+X-Google-Smtp-Source: AGHT+IF6qrMC9uob7HMzki72Zg0D4kXvsyXwyjnGIci/kmja5xxzP7cX7i7R0IoKNwxvLhsCz9ZT8w==
+X-Received: by 2002:a05:600c:314f:b0:439:9a5b:87d4 with SMTP id 5b1f17b1804b1-43c5a60e966mr15120165e9.13.1741334177747;
+        Thu, 06 Mar 2025 23:56:17 -0800 (PST)
+Received: from localhost ([109.238.218.228])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43bdd948cd0sm42315095e9.38.2025.03.06.23.56.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 23:56:17 -0800 (PST)
+From: martin.jansa@gmail.com
 To: yocto-patches@lists.yoctoproject.org
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741267213; l=4896;
- i=mathieu.dubois-briand@bootlin.com; s=20241219; h=from:subject:message-id;
- bh=zLKZfe4wZSDDvIPZnWTBBddfzCzPgYIff975ffDqYeI=;
- b=xpqsY+SYQm3ONZFmIsn8v45q6hcMTzElh/ZnYFmp+GoK4o7YtLMM8Ht3XyVyzQ4b80k88VDol
- aTG95kjtAWKChJv3UCMxLSf+o6aooEe/Mc9ifEO2RBJCJYR9WZwI5AQ
-X-Developer-Key: i=mathieu.dubois-briand@bootlin.com; a=ed25519;
- pk=1PVTmzPXfKvDwcPUzG0aqdGoKZJA3b9s+3DqRlm0Lww=
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdejkeejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomhepofgrthhhihgvuhcuffhusghoihhsqdeurhhirghnugcuoehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpedthfegtedvvdehjeeiheehheeuteejleektdefheehgfefgeelhfetgedttdfhteenucfkphepledtrdeifedrvddtvddrgedtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdeifedrvddtvddrgedtpdhhvghloheplgduvdejrddtrddurddungdpmhgrihhlfhhrohhmpehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeefpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepmhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomhdprhgtphhtthhopeihohgtthhoqdhprghttghhvghssehlihhsthhsrdihohgtthhophhrohhjvggtthdrohhrgh
-X-GND-Sasl: mathieu.dubois-briand@bootlin.com
+Cc: Martin Jansa <martin.jansa@gmail.com>
+Subject: [meta-tensorflow][scarthgap][PATCH] tensorflow.inc: add write permission to 2 more directories
+Date: Fri,  7 Mar 2025 08:56:10 +0100
+Message-ID: <20250307075610.2235124-1-martin.jansa@gmail.com>
+X-Mailer: git-send-email 2.48.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 06 Mar 2025 13:20:22 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1162
+ <yocto-patches@lists.yoctoproject.org>; Fri, 07 Mar 2025 07:56:27 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1163
 
-Add more more workers to test more realistic setups.
+From: Martin Jansa <martin.jansa@gmail.com>
 
-The first one is still added as a Debian builder, additional ones are
-used as generic ones, allowing to test worker selection.
+Missing write permission prevents the WORKDIR to be deleted, e.g. when recipe becames unreachable
 
-Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Removing 41 recipes from the core2-64 sysroot: 100% |##########################################################################################################################################################################| Time: 0:00:21
+Removing 35 recipes from the qemux86_64 sysroot: 100% |########################################################################################################################################################################| Time: 0:00:00
+ERROR: Execution of event handler 'sstate_eventhandler_reachablestamps' failed                                                                                                                                                 | ETA:  0:00:07
+Traceback (most recent call last):
+  File "/OE/build/oe-core/openembedded-core/meta/classes-global/sstate.bbclass", line 1293, in sstate_eventhandler_reachablestamps
+    bb.utils.remove(workdir, recurse = True)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/OE/build/oe-core/bitbake/lib/bb/utils.py", line 751, in remove
+    subprocess.check_call(cmd + ['rm', '-rf'] + glob.glob(path))
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/subprocess.py", line 421, in check_call
+    raise CalledProcessError(retcode, cmd)
+subprocess.CalledProcessError: Command '['rm', '-rf', '/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0']' returned non-zero exit status 1.
+
+ERROR: Command execution failed: Traceback (most recent call last):
+  File "/OE/build/oe-core/bitbake/lib/bb/command.py", line 123, in runAsyncCommand
+    self.cooker.updateCache()
+    ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/OE/build/oe-core/bitbake/lib/bb/cooker.py", line 1646, in updateCache
+    bb.event.fire(event, self.databuilder.mcdata[mc])
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/OE/build/oe-core/bitbake/lib/bb/event.py", line 224, in fire
+    fire_class_handlers(event, d)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/OE/build/oe-core/bitbake/lib/bb/event.py", line 131, in fire_class_handlers
+    execute_handler(name, handler, event, d)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/OE/build/oe-core/bitbake/lib/bb/event.py", line 102, in execute_handler
+    ret = handler(event, d)
+  File "/OE/build/oe-core/openembedded-core/meta/classes-global/sstate.bbclass", line 1293, in sstate_eventhandler_reachablestamps
+    bb.utils.remove(workdir, recurse = True)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/OE/build/oe-core/bitbake/lib/bb/utils.py", line 751, in remove
+    subprocess.check_call(cmd + ['rm', '-rf'] + glob.glob(path))
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/subprocess.py", line 421, in check_call
+    raise CalledProcessError(retcode, cmd)
+subprocess.CalledProcessError: Command '['rm', '-rf', '/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0']' returned non-zero exit status 1.
+
+Summary: There were 2 ERROR messages, returning a non-zero exit code.
+
+OE qemux86-64@ /OE/build/oe-core $ find /OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/
+/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/
+/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/bazel
+/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/bazel/output_base
+/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/bazel/output_base/execroot
+/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/bazel/output_base/execroot/org_tensorflow
+/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/bazel/output_base/execroot/org_tensorflow/bazel-out
+/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/bazel/output_base/execroot/org_tensorflow/bazel-out/k8-opt
+/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/bazel/output_base/execroot/org_tensorflow/bazel-out/k8-opt/bin
+/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/bazel/output_base/execroot/org_tensorflow/bazel-out/k8-opt/bin/tensorflow
+/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/bazel/output_base/execroot/org_tensorflow/bazel-out/k8-opt/bin/tensorflow/lite
+/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/bazel/output_base/execroot/org_tensorflow/bazel-out/k8-opt/bin/tensorflow/lite/python
+/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/bazel/output_base/execroot/org_tensorflow/bazel-out/k8-opt/bin/tensorflow/lite/python/schema_py_srcs_no_include_all
+/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/bazel/output_base/execroot/org_tensorflow/bazel-out/k8-opt/bin/tensorflow/lite/python/schema_py_srcs_no_include_all/schema_generated.py
+/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/bazel/output_base/execroot/org_tensorflow/bazel-out/k8-opt/bin/tensorflow/lite/python/schema_py_srcs_no_include_all/__init__.py
+/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/bazel/output_base/execroot/org_tensorflow/bazel-out/k8-opt/bin/tensorflow/tools
+/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/bazel/output_base/execroot/org_tensorflow/bazel-out/k8-opt/bin/tensorflow/tools/pip_package
+/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/bazel/output_base/execroot/org_tensorflow/bazel-out/k8-opt/bin/tensorflow/tools/pip_package/wheel_house
+/OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/bazel/output_base/execroot/org_tensorflow/bazel-out/k8-opt/bin/tensorflow/tools/pip_package/wheel_house/tensorflow-2.17.0-cp312-cp312-linux_x86_64.whl
+
+Signed-off-by: Martin Jansa <martin.jansa@gmail.com>
 ---
- docker/Dockerfile   |  7 ++++---
- docker/README.md    |  8 +++++---
- docker/compose.yaml | 12 +++++++++---
- docker/entry.sh     | 16 ++++++++++++----
- 4 files changed, 30 insertions(+), 13 deletions(-)
+ recipes-framework/tensorflow/tensorflow.inc | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/docker/Dockerfile b/docker/Dockerfile
-index e8aea69083f2..fc6e6635a873 100644
---- a/docker/Dockerfile
-+++ b/docker/Dockerfile
-@@ -9,6 +9,7 @@ ENV DEBIAN_FRONTEND=noninteractive
- RUN apt update && \
-     apt full-upgrade -y && \
-     apt -y install \
-+        bind9-host \
-         build-essential \
-         chrpath \
-         cpio \
-@@ -63,7 +64,6 @@ COPY . /yocto-autobuilder2
- RUN useradd -m --system pokybuild && \
-     cd /home/pokybuild && \
-     buildbot create-master -r yocto-controller && \
--    buildbot-worker create-worker -r --umask=0o22 yocto-worker controller example-worker pass && \
-     \
-     cd yocto-controller && \
-     mv /yocto-autobuilder2 yoctoabb && \
-@@ -85,8 +85,9 @@ RUN useradd -m --system pokybuild && \
+diff --git a/recipes-framework/tensorflow/tensorflow.inc b/recipes-framework/tensorflow/tensorflow.inc
+index e48808c..83e2d1a 100644
+--- a/recipes-framework/tensorflow/tensorflow.inc
++++ b/recipes-framework/tensorflow/tensorflow.inc
+@@ -61,6 +61,9 @@ export TS_DL_DIR
  
- # Fix config files for local runner
- RUN sed -i \
--        # Add example-worker \
--        -e "s/^\(workers_debian *=.*\).*/\1 + [\"example-worker\"]/" \
-+        # Add local workers \
-+        -e "s/^\(workers_debian *=.*\).*/\1 + [f\"local-worker-debian\"]/" \
-+        -e "s/^\(workers *=.*\).*/\1 + [f\"local-worker-extra-{i}\" for i in range(1, 9)]/" \
-         # Remove workers_bringup from all_workers \
-         -e "/^all_workers *=/s/workers_bringup + //" \
-         # Switch from ssh:// URLS to git:// so we do not need any auth \
-diff --git a/docker/README.md b/docker/README.md
-index c75f48276cca..3b00ef4261be 100644
---- a/docker/README.md
-+++ b/docker/README.md
-@@ -8,7 +8,7 @@ buildbot controller, one acting as buildbot worker.
+ do_compile[network] = "1"
  
- The buildbot configuration will be modified in several ways from the
- configuration used in the public autobuilders. Main changes include:
-- - Only one worker will be used.
-+ - Only a few workers will be used.
-  - Git urls will be modified to use git protocol instead of ssh, removing needs
-    for authentication.
-  - All nightly schedulers will be disabled.
-@@ -17,7 +17,9 @@ configuration used in the public autobuilders. Main changes include:
- 
- The local autobuilder can be started by running `docker-compose up` in this
- folder. Once the dockers are started, buildbot web interface will be exposed on
--http://localhost:8010/.
-+http://localhost:8010/. Note that with the default profile, only one worker will
-+be started. You can start extra workers with `docker-compose --profile
-+manyworkers`.
- 
- You might want to modify the `compose.yaml` file first to suit your needs, such
--as the cpu count and memory limits.
-+as the cpu count, memory limits and number of extra workers.
-diff --git a/docker/compose.yaml b/docker/compose.yaml
-index 22191d5777e1..50034d90d52b 100644
---- a/docker/compose.yaml
-+++ b/docker/compose.yaml
-@@ -20,12 +20,18 @@ services:
-     ports:
-       - 8010:8010
-     cpus: 4
--    command: controller
--  worker:
-+  worker: &base-worker
-     <<: *base-service
-     cpus: 8
--    command: worker yocto-worker
-     mem_limit: 16gb
-+  extraworker:
-+    <<: *base-worker
-+    cpus: 1
-+    mem_limit: 2gb
-+    deploy:
-+      replicas: 8
-+    profiles:
-+      - manyworkers
- 
- volumes:
-   sharedrepo:
-diff --git a/docker/entry.sh b/docker/entry.sh
-index 3518eecb9a32..1aef2ba4025f 100644
---- a/docker/entry.sh
-+++ b/docker/entry.sh
-@@ -6,15 +6,23 @@ chown pokybuild:nogroup /home/pokybuild/git/mirror
- chown pokybuild:nogroup /srv/autobuilder
- cd /home/pokybuild/ || exit 1
- 
--role="$1"
-+docker_name=$(host "$(host "$(hostname)" | awk '{print $NF}')" | awk '{print $NF}' | awk -F . '{print $1}')
-+role=$(echo "${docker_name}" | cut -d_ -f 2)
-+instance=$(echo "${docker_name}" | cut -d_ -f 3)
- 
- if [ "${role}" = "controller" ]; then
-   su pokybuild -c "yocto-autobuilder-helper/janitor/ab-janitor" &
-   su pokybuild -c "buildbot start yocto-controller"
-   #tail -F yocto-controller/twistd.log &
--elif [ "${role}" = "worker" ]; then
--  workername="$2"
--  su pokybuild -c "buildbot-worker start ${workername}"
-+elif [ "${role}" = "worker" ] || [ "${role}" = "extraworker" ]; then
-+  if [ "${role}" = "extraworker" ]; then
-+      worker_name="local-worker-extra-${instance}"
-+  else
-+      worker_name=local-worker-debian
-+  fi
-+  buildbot-worker create-worker -r --umask=0o22 yocto-worker controller "${worker_name}" pass
-+  chown -R pokybuild:nogroup yocto-worker
-+  su pokybuild -c "buildbot-worker start yocto-worker"
- else
-   echo "Unexpected role: ${role}"
-   exit 2
-
--- 
-2.39.5
-
++# Missing write permission prevents the WORKDIR to be deleted, e.g. when recipe becames unreachable
+ do_compile:append() {
+     chmod a+w ${BAZEL_DIR}/output_base/execroot/org_tensorflow/bazel-out/*/bin/tensorflow/lite/python/conversion_metadata_schema_py_srcs_no_include_all || true
++    chmod a+w ${BAZEL_DIR}/output_base/execroot/org_tensorflow/bazel-out/*/bin/tensorflow/lite/python/schema_py_srcs_no_include_all || true
++    chmod a+w ${BAZEL_DIR}/output_base/execroot/org_tensorflow/bazel-out/*/bin/tensorflow/tools/pip_package/wheel_house || true
+ }
 
