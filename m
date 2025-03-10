@@ -1,99 +1,166 @@
-Return-Path: <majortomtosourcecontrol@gmail.com>
+Return-Path: <raj.khem@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85D57C282DE
-	for <webhook@archiver.kernel.org>; Mon, 10 Mar 2025 16:55:18 +0000 (UTC)
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
- by mx.groups.io with SMTP id smtpd.web10.43537.1741625713924620637
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97ED9C282DE
+	for <webhook@archiver.kernel.org>; Mon, 10 Mar 2025 22:08:03 +0000 (UTC)
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+ by mx.groups.io with SMTP id smtpd.web11.98.1741644475073392946
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 10 Mar 2025 09:55:14 -0700
+ Mon, 10 Mar 2025 15:07:55 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=NpkXuJra;
- spf=pass (domain: gmail.com, ip: 209.85.166.51, mailfrom: majortomtosourcecontrol@gmail.com)
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-85b4170f1f5so59713439f.3
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 10 Mar 2025 09:55:13 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=TY+Dc6ur;
+ spf=pass (domain: gmail.com, ip: 209.85.167.182, mailfrom: raj.khem@gmail.com)
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3fa1e694706so276978b6e.0
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 10 Mar 2025 15:07:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741625713; x=1742230513; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1741644474; x=1742249274; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IIkEJg0441IgtU0FpIujBpXdCcGGhVK81ZK7z5ov9FA=;
-        b=NpkXuJradRr/NZ8DsMNhL5MKeW1GniQ1KzYnsjE3blHWPy8s/xj/L5lktXGBo8T+FG
-         FCJ2P1UUzVLIr44fJWeZh6t4yOHcpd5VCvDDhwr1ZyWzYYUTt2NIekqqLdivDMYSNsUD
-         X5FcbIGYlFShOqSe0Bt44TPgOLgBVatyOnQiaMZ/H40ZlurtMiVLhEU0xV4Pxei0lCrA
-         wg4HYnE5k1Ls4ZBnlDmQRMZ3XDrRcfU1kaLgWLo9Y7ct/qg3S25mVpyVBkKS3ulUyWRf
-         HUGnWeN5k7/4RzdwWkHTdH9AzmTT9nhcIqmEjUZRxwFUqlHzPVJ/kTABKoWAmmMPLnN3
-         s2Gg==
+        bh=yH9NpdZ90DryDfljDhbFNId/uq9WS5V8iTqAwxUVl8E=;
+        b=TY+Dc6urXnfwPpUeMhGapnKLEuKJFfDBXodN+MtCL2C33RBCXi0G0OVMTGsCnjJtNc
+         4E9k2qEAsMwTyJH7y9hJ2Gbahb4xldg66MxBrwV4YeRmEwFVbR+ZBD7gvC2cNQfj/nCb
+         gl6tVprEOZmebbd5dr3ivSucGrsGPc6sxtNGoxeZVfDMpFCgDz8cqkm29l/wnurIeKaB
+         mqsMEbkeJGBiJ+Ex43IEiTmisU80B1SASYcQbriiQOxOXqpmg4ig+24QXm8vwggxtnBI
+         +k8i04qny1hGfLHs+dmkOMFQyZX6XdaOtPWxcVMFGUq+OHdVh8ja4SY7tHxIzXfn94Di
+         B48Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741625713; x=1742230513;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=IIkEJg0441IgtU0FpIujBpXdCcGGhVK81ZK7z5ov9FA=;
-        b=SbRhZom3Vu39t1WAzvCJb5RBigSAuGtLl49Vpe5Qf6M9UVB/y0f/LmO7umdo+o8w5K
-         j53/WSmI2u6kwiiI03CRvL3x3LTI+mMAlMTYEvti1YZKxhewdk06kAz272FoRS3JzMaF
-         SpQVK4yxyYn6ygyxdBTjC2CVrhvs6p4lf0xtFmA845wXvsDwH5XKcOnWHlT3OJbD2umz
-         xnnpUHokwUsSjp1bh0egqeTxSjHPKRbKy6K7Y1AQ+Dgoa2bZPkyFrVcc41OBkkgWGbuG
-         5kPChpti3Z39cjur4E9swCdKhKedYkHXvQFK0RTgeqG9iChbt+33mOHjnt1yJtAg2imh
-         GBfg==
-X-Gm-Message-State: AOJu0Yyb7XrE65LpFT+oAKGcrCJGUmGNc8J6cHDWE7WzyZYEB9N/6fVN
-	i69f8K6i5QMBmGpuV/uVZsrnKagByiLeKX+v9TtRjiLlBmjg5qGxZsGYDw==
-X-Gm-Gg: ASbGncstDGe8YPkiKLkdQDMzJnu96MapgNKrTSjcTAWGGkuUl9wjhJ0+EgEB5jX6gCN
-	M1iH4cwcBqy7crGcJT/BDZYa0GdKsJGIrif9RjGY9Zzkv7xF9ouh6w0sdilagA2TCAuSRe3BQq3
-	U9yTvWk16gE4yDBE1JF1DZpzsfpXYe2jK30XwgMCSAlD3IX4qyif5a1HmbWfPaW8bD4NwMGEhPz
-	nU6IvaTfb2L6YFFwDoImDLPDvYaJ56xrg9i0Nbv0jWD+qMkm9LV7meCLcaRYS8u0bdpuUyDJi6G
-	wFduRD5Blx3KHodlCKE8vaclI2QszSxwQEz9yyxqKwCGKHNItfD3/L2xCmm1Jo0jl/+xu8fjEhe
-	n0FUDSUUhU6osdZ88gg92Ww==
-X-Google-Smtp-Source: AGHT+IH2uhhwVyWzoQfaQpSddOTauLgRAlMdF1F9Ldcqzb2wLYbVDRgBzHPJxvxIWGD4A2V174uNbA==
-X-Received: by 2002:a05:6e02:1445:b0:3d0:2fcb:e7f with SMTP id e9e14a558f8ab-3d441735d9cmr167469725ab.0.1741625712721;
-        Mon, 10 Mar 2025 09:55:12 -0700 (PDT)
-Received: from [172.26.252.3] (174-29-216-122.hlrn.qwest.net. [174.29.216.122])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f216708f76sm1909926173.85.2025.03.10.09.55.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Mar 2025 09:55:12 -0700 (PDT)
-Message-ID: <b61a1919-a65d-4674-8604-69ebf661cc8a@gmail.com>
-Date: Mon, 10 Mar 2025 10:55:11 -0600
+        d=1e100.net; s=20230601; t=1741644474; x=1742249274;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yH9NpdZ90DryDfljDhbFNId/uq9WS5V8iTqAwxUVl8E=;
+        b=D9c5Wn/rY/UE0SCFuHVIs2jFMzbR/KwLpiMRyQNavLr27Pw2fy92h7NuCL9Dl8Jm0i
+         gpgY0WBLlPSwGcXgW0bUkalpvPPtaElEaWuRGVoFT1wKoodPSLPz7UyNWP6x1JxiKnDn
+         OIRbFT2QupHOr33wLZQmYYb1z5klDLVZwe+xNKWAkIWQDo0n36v2CsF7iJa6+b+R33ob
+         0q2QCWKWafjMUqSMyylPJZyd7YCSAl7cRB3rDDDnquoX4V/AzAHb9vLFVHdDKJVcuwnD
+         Cp2o/W355gZcMY+uW5oZhMDEAw9JeyhNjeHVB/5dDHa3OKaZLiYC3HpjcyvVq653clPu
+         RkWg==
+X-Gm-Message-State: AOJu0YylBwbGJ6ihNHkZ1oNDeWsqpb1Q1wSL4xWNA63TdQ7l2M9p3asw
+	7Z/WqOejI69bQ63XKYGQfujiksS8Oyn9EnSD87P2V/QHPpMAvM6JUeF+o0BCFGFJzIV8TZ+1eRC
+	IDAsrRTtYIPB5LAbpAB/e14VxSLwesy8b
+X-Gm-Gg: ASbGncvzf/DYAOMdUB7KgsTQ2rAaeyHpEdmQ3K/K1hy52Zirlf7Cv2+HiNcBf/w3fJo
+	19FDbYJZr2uF7kPQWyZLsPuOemWfeqj+aoR0y99O+RjU3SpEoT/J/IWAU9A5Ev208Pgl/a49fBk
+	/NJ4WB9x4rjr0Lz/YW8FzPvH3Vd8aPE5Hp2Rno9BjZOax714iUWmiacfI=
+X-Google-Smtp-Source: AGHT+IFdc5PZ3GAnRcU0at/2OIbHNr+rcdduDRPs1TLPItnwptEf156/8jgOymmeWUumDZY3Rb4xGIPEJBf8HGEJh2Q=
+X-Received: by 2002:a05:6808:4491:b0:3fa:7328:b9a8 with SMTP id
+ 5614622812f47-3fa7328bbe9mr39672b6e.18.1741644474123; Mon, 10 Mar 2025
+ 15:07:54 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: yocto-patches@lists.yoctoproject.org, akuster808@gmail.com
-Cc: sekine.shigeki@fujitsu.com
-From: Clayton Casciato <majortomtosourcecontrol@gmail.com>
-Subject: [meta-security][PATCH] smack: Use new CVE_STATUS variable
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <CAGNQujsSc1TpF3ZpmoQKpa0cBeqTdnY3tpKFZh9udwaA0ZQomw@mail.gmail.com>
+ <20250310154725.GA34977@localhost>
+In-Reply-To: <20250310154725.GA34977@localhost>
+From: Khem Raj <raj.khem@gmail.com>
+Date: Mon, 10 Mar 2025 15:07:28 -0700
+X-Gm-Features: AQ5f1JqfAa29yT7sTP2PIMK6WpGkhzxonwbbCWIR3llUMKVgE3yYAreZti8gqnQ
+Message-ID: <CAMKF1sps7Ui3SiER6Ck9S5FjYJfwi0UD3Jpp5hvPC8jRsceSqA@mail.gmail.com>
+Subject: Re: [yocto-patches] Kernel and u-boot version selection in meta-rockchip
+To: yocto-patches@lists.yoctoproject.org
+Cc: =?UTF-8?B?5YiY6Zm254S2?= <ltrsunny@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 10 Mar 2025 16:55:18 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1174
+ <yocto-patches@lists.yoctoproject.org>; Mon, 10 Mar 2025 22:08:03 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1175
 
-https://docs.yoctoproject.org/dev/ref-manual/variables.html#term-CVE_STATUS
+On Mon, Mar 10, 2025 at 8:47=E2=80=AFAM Trevor Woerner via
+lists.yoctoproject.org <twoerner=3Dgmail.com@lists.yoctoproject.org>
+wrote:
+>
+> Hi Taoran,
+>
+> On Mon 2025-03-10 @ 11:10:31 AM, =E5=88=98=E9=99=B6=E7=84=B6 wrote:
+> > Hi Trevor,
+> > I'm trying to build the scarthgap branch for meta-rockchip and got erro=
+rs
+> > in kernel and u-boot.
+> > I noticed it is because of the receipts in the branch. Just like
+> > https://git.yoctoproject.org/meta-rockchip/tree/recipes-kernel/linux/li=
+nux-torvalds-next_git.bb?h=3Dscarthgap
+> >
+> > it's using next-20240904 from linux-torvalds-next
+> > <https://git.yoctoproject.org/meta-rockchip/tree/recipes-kernel/linux/l=
+inux-torvalds-next_git.bb?h=3Dscarthgap>,
+> > but the branches in this repository are expired very frequently.
+> >
+> > For the LTS version like scarthgap, when the version is frozen, it shou=
+ld
+> > be set to stable(better to be LTS) versions of kernel and u-boot, isn't=
+ it?
+>
+> Yes it should, and it does... when it can.
+>
+> Yocto scarthgap is based on linux-6.6.y. All of the machines in
+> meta-rockchip's scarthgap branch use oe-core's linux-yocto_6.6, except th=
+e
+> radxa zero 3 machines and the orangepi-5-plus. The reason for this is bec=
+ause
+> linux-6.6.y does not support these devices.
+>
+> oe-core scarthgap also provides a linux-yocto-dev kernel based on linux-6=
+.9.y.
+> This supports the orangepi-5-plus machine (so this machine uses that kern=
+el in
+> scarthgap) but linux-6.9.y still does not have support for the radxa zero=
+ 3
+> devices.
+>
+> Yocto master currently supports linux-6.12.y with linux-yocto and linux-6=
+.14.y
+> with linux-yocto-dev. linux-6.12.y supports both the radxa zero 3 devices=
+ and
+> the orangepi-5-plus (which reminds me, I should update those machines sin=
+ce
+> they're still using linux-yocto-dev).
+>
+> So I assume you're probably using scarthgap to build for a radxa zero 3
+> device since your comments are only true for that device. During the
+> time-frame of scarthgap I was eager to be able to build for the radxa zer=
+o 3
+> since I had one and wanted to use it for a project. So I had to pull in w=
+hat
+> was (at that time) very experimental code to get it to work.
 
-Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
----
-Sponsor: 21SoftWare LLC
+I think it would be nice to mark which machines are stable/mature vs
+experimental
+at the time this could convey the message, as the releases are frozen
+in time this
+problem is bound to happen.
 
- recipes-mac/smack/smack_1.3.1.bb | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+>
+> I could back-port oe-core master's linux-yocto to scarthgap in order to
+> support the radxa zero 3 in a more stable way. But perhaps a better solut=
+ion
+> would be to remove radxa zero 3 support from scarthgap and simply ask tha=
+t
+> master be used for this device.
+>
+> Thoughts?
 
-diff --git a/recipes-mac/smack/smack_1.3.1.bb b/recipes-mac/smack/smack_1.3.1.bb
-index 6c52392..7b20e6b 100644
---- a/recipes-mac/smack/smack_1.3.1.bb
-+++ b/recipes-mac/smack/smack_1.3.1.bb
-@@ -13,10 +13,9 @@ SRC_URI = " \
- 
- PV = "1.3.1"
- 
--# CVE-2014-0363, CVE-2014-0364, CVE-2016-10027 is valnerble for other product.
--CVE_CHECK_IGNORE += "CVE-2014-0363"
--CVE_CHECK_IGNORE += "CVE-2014-0364"
--CVE_CHECK_IGNORE += "CVE-2016-10027"
-+CVE_STATUS[CVE-2014-0363] = "cpe-incorrect: different product"
-+CVE_STATUS[CVE-2014-0364] = "cpe-incorrect: different product"
-+CVE_STATUS[CVE-2016-10027] = "cpe-incorrect: different product"
- 
- inherit autotools update-rc.d pkgconfig ptest
- inherit ${@bb.utils.contains('VIRTUAL-RUNTIME_init_manager','systemd','systemd','', d)}
+If you want to stay close to stable policies then yes, but BSP layers have =
+taken
+kernel roadmap as it fits the given family of SOCs so I would not discourag=
+e you
+from considering backport if there is a need for it in the given BSP
+layer community.
+
+>
+> Best regards,
+>         Trevor
+>
+>
+> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+> Links: You receive all messages sent to this group.
+> View/Reply Online (#1173): https://lists.yoctoproject.org/g/yocto-patches=
+/message/1173
+> Mute This Topic: https://lists.yoctoproject.org/mt/111621524/1997914
+> Group Owner: yocto-patches+owner@lists.yoctoproject.org
+> Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/1334078=
+6/1997914/645821814/xyzzy [raj.khem@gmail.com]
+> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+>
+>
 
