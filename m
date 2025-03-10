@@ -1,130 +1,122 @@
-Return-Path: <majortomtosourcecontrol@gmail.com>
+Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08D06C282DE
-	for <webhook@archiver.kernel.org>; Mon, 10 Mar 2025 15:08:28 +0000 (UTC)
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
- by mx.groups.io with SMTP id smtpd.web11.40178.1741619300887139646
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 381F4C282EC
+	for <webhook@archiver.kernel.org>; Mon, 10 Mar 2025 15:47:38 +0000 (UTC)
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+ by mx.groups.io with SMTP id smtpd.web10.41651.1741621649791031092
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 10 Mar 2025 08:08:21 -0700
+ Mon, 10 Mar 2025 08:47:29 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=I6ZkRQS9;
- spf=pass (domain: gmail.com, ip: 209.85.166.179, mailfrom: majortomtosourcecontrol@gmail.com)
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3d44ce2b5d5so4916575ab.0
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 10 Mar 2025 08:08:20 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=nCzrXSyi;
+ spf=pass (domain: gmail.com, ip: 209.85.160.171, mailfrom: twoerner@gmail.com)
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-47662449055so11371031cf.1
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 10 Mar 2025 08:47:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741619300; x=1742224100; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PU5iHjhVqdNEHobGSY5drV1Ihu6CZTeds0bBPr11zP8=;
-        b=I6ZkRQS9MDpkaj2luVWshCr5UtbPgw/ApwmFFeTXac3XUA+/2PkdER8WCfpKp8Fspf
-         ERb/b8x16eytWRwQ/IL2NdfwRxxBpNP+32Cj9QC7ux3eYOIKjGK+Z8alFqQE1ykRcZgd
-         hI/Xxm0f2P+UbaFGvgak/cavjTIncgW5KyVNFuEU5ZZrqKr9TCSzyDcaOTcEc63zoSS3
-         tITYcCTlBF8LdotxiaU7vBSCbA4wssekNoD3GTIJXx2qSKRXOpkrx42EAAjzqJA6U/d4
-         hE/UShwYwfZ+iBgB+6nz3t/W1fBPHfMEYOyV4QqCh2rv/M5thZbDX2CaW2OQlleeGLnp
-         e1mQ==
+        d=gmail.com; s=20230601; t=1741621649; x=1742226449; darn=lists.yoctoproject.org;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4hdNZfkS1RqqRCAoeGuw1C+Kv+J4m9A0UHcsxoIADeM=;
+        b=nCzrXSyiXaWDcbtYsm3FLUA4qppjkLgq0vW/U8+R231HiOI+cHIoQanhGy5nlkS+qh
+         P6wvFoi+A0pdDFXj4rGRNG56c1INKl3Y9AT7xj8tUkAuoK/JVQ44olugTkFCPNkvBCqK
+         tjhT0JTEnE3gaj3axTFKyqwR+BFJiKgxTHHjynIK/KTJY1wucb8y2Jr0cjVII3Yxo94m
+         0KOjW+zKjUU55xGowOOwtC2fYnm2hiK1wXHMvE32b3S4HBJoXkx49hVSwYllOMG/HAx1
+         Ok33rU0HcQ8ORBjEQgJfpmzzDQyk1306YK1VgyGJbmCCb8kJhuLOP0V2mdQh0s4ZcOYo
+         6v5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741619300; x=1742224100;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=PU5iHjhVqdNEHobGSY5drV1Ihu6CZTeds0bBPr11zP8=;
-        b=pYAczSdN5Jch0Nl+7r1YX4Y1V7BkrMJ+KUL5VzngarMJa1JKn1ilZwCrGAXB6bVKtc
-         mu75MCt8D8JSPbvJeJWzMNibStSRD0jsSfgBEc+eY2HcMlTJLvXnKpCjnG4J0qi7WIfF
-         oyZ7XBsC+BA6WS/jeUpZnbEnDVAcY8tu8LNHbTAITzwVmpLDfDe887MPtVm2ObppBvE/
-         uhMajek55dMVn7lB69fLhU18RWZiKZWEbqQ2tZwRheiZ9EGo6juQqG4/3MGANXqtobN7
-         5Ow/cxEh667X8gP7GjET1WKPY7F2bsS5AHEp+vHlG0uLV4IRcR8F/6JOiTU6cgSAKYHr
-         1W1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUygNjz8m0cE4f+EWSz4nlGaGYoINm2n6cj2seHXVSFfkwH53yDMp+/q95Z4FhxOIK924y5y49uN6yMXFjr@lists.yoctoproject.org
-X-Gm-Message-State: AOJu0YyZb/uoC3RRaiZgRzEkvQ9AtpQYgRoltnS+n5LiB/JQkeYCBynR
-	+MQBssW1aMcV8IOYCpk30th0Vy9wnToE8mvB85E6WkPIiawAKOc+
-X-Gm-Gg: ASbGncscqsdp/AmdpfzceflzEDnaO/q6iSU0E8vjlzDpPe/AJPru47YZZQ5k0t/yd3S
-	5gAxmT+YF6qDeqcKnOv/dCtHlryUh3cI/EFnAY+SBKfHEljeiqe8wj4GM6nuV3fu28z8JdZljV8
-	4xNTJMYy54xLsJj+rL0V+zHTVaQm+fuiwAAQbFLXuLb/Kb/pavfGgCmtDyqe/5RPJwmAJmEqkcG
-	yx068LVFD0ovJjuEONdUZiS1C+RzOr3IzHLAp13mWrAGgGeAUEUbMKJMZ++/spgi6JG15F4IW7c
-	ygQfB54DXlPOhOtcBofV2VQvNmTGsxiqRL9NuPg113n6wPIvd2iaiiXlNo5jXhamKZLEXkEB/pX
-	GdH1UflPQnNrqHQqQNNEb+A==
-X-Google-Smtp-Source: AGHT+IGA4WyHkG+Dog0+RiM9sM+XS3a3RGqolDpEVbrzLCreEDBHZ7AHo2nEnWqaKBgNinFPfxpOIQ==
-X-Received: by 2002:a05:6e02:156d:b0:3d3:fdb8:1792 with SMTP id e9e14a558f8ab-3d441a39d87mr107457435ab.14.1741619299833;
-        Mon, 10 Mar 2025 08:08:19 -0700 (PDT)
-Received: from [172.26.252.3] (174-29-216-122.hlrn.qwest.net. [174.29.216.122])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d45bf4728dsm5241295ab.57.2025.03.10.08.08.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Mar 2025 08:08:19 -0700 (PDT)
-Message-ID: <85d754cb-489c-40fe-97af-d5a2452f068c@gmail.com>
-Date: Mon, 10 Mar 2025 09:08:18 -0600
+        d=1e100.net; s=20230601; t=1741621649; x=1742226449;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4hdNZfkS1RqqRCAoeGuw1C+Kv+J4m9A0UHcsxoIADeM=;
+        b=cC8BOY6qeZBX/g7wouwKG0uiDJLvYfwNIIjE+Q6xK9s8B+7+0r3YKSJ5Hrqg6XjJqU
+         CMQEDPSYHy9BGInaNSGl+0AayHA+D4ZnB93lu3wQ6sVuDSZz0hsGt8kxYpHk+LvzYNe/
+         Igyp0s4wsUJanRXx9cnMGIc+6v3oC7GVqHiBKgUH1tD3zOjNvsJxxtPpTtQARWfUumdB
+         Qplix9+xFqTMkkAKF1QwVz0WAIyujczUuMewtrmkRrWqSNHa7pzIF/CfbGjHYgRVw1eC
+         F0sRBO66h0AS/vzc7TxKth0jmoPWpI8sNN8rvXl4ET30i46cY5+s//w83BXQZTWVbMTs
+         SjPw==
+X-Gm-Message-State: AOJu0YyNbgE4te2G7N5m5nz9nDSqtQXJz0S6+Ij58TLnh1pORxGN5pj1
+	t45V4OIuPPdYdtm1nLTsWsboJ243fBUnQRq4A1GuaYiQJ0Q9hgbevXFUZs1I
+X-Gm-Gg: ASbGncv34XKYE6Qp3+KhczX7ADmGfCM4J9rvHH46Ce/KZxXF3/7o23cgFfrVH1PHbJI
+	GwPI3P4uDlWV6Xj8LlBr2uEI6LDj/SHoGjggXKfQF1NGBtTjSCORhhkuiK21MZvECTpa8okHYWh
+	sIZ9pFmzLRIpAx2kGfDRcK0yVwNCBlyIsSLVnQ/Cu4vA5SkdMdzxkjSN4nRE91yQPdDoFNICxeQ
+	56v3c3o0kUPDiGPeITWRMzIG0x4qPgYvOvB11Dav624KtRpYQmp6QEftuW3CjpIU83BBIsxRIfr
+	iAr8Ngac+Vp/pXSN2kys/nwqPhScgMt/Z+bFbqU5POhr6lr8aiuF2apsfaPY6ly5jdAjgLzt
+X-Google-Smtp-Source: AGHT+IFyol3Ep55C+qFL3Gf6P2+VuI0c6QJEABlozApXWH/Ah24vRA7yB5JFk9zq+bugMILoMT/1jA==
+X-Received: by 2002:a05:6214:e49:b0:6e8:f5db:d78d with SMTP id 6a1803df08f44-6e90067700amr152080746d6.23.1741621648648;
+        Mon, 10 Mar 2025 08:47:28 -0700 (PDT)
+Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e907100f62sm40209846d6.60.2025.03.10.08.47.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Mar 2025 08:47:27 -0700 (PDT)
+Date: Mon, 10 Mar 2025 11:47:25 -0400
+From: Trevor Woerner <twoerner@gmail.com>
+To: =?utf-8?B?5YiY6Zm254S2?= <ltrsunny@gmail.com>
+Cc: yocto-patches@lists.yoctoproject.org
+Subject: Re: Kernel and u-boot version selection in meta-rockchip
+Message-ID: <20250310154725.GA34977@localhost>
+References: <CAGNQujsSc1TpF3ZpmoQKpa0cBeqTdnY3tpKFZh9udwaA0ZQomw@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: joe.macdonald@siemens.com, yi.zhao@windriver.com,
- yocto-patches@lists.yoctoproject.org
-From: Clayton Casciato <majortomtosourcecontrol@gmail.com>
-Subject: [meta-selinux][scarthgap][PATCH] refpolicy: authlogin - allow
- unix_chkpwd to run
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGNQujsSc1TpF3ZpmoQKpa0cBeqTdnY3tpKFZh9udwaA0ZQomw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 10 Mar 2025 15:08:28 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1172
+ <yocto-patches@lists.yoctoproject.org>; Mon, 10 Mar 2025 15:47:38 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1173
 
-Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
----
-Sponsor: 21SoftWare LLC
+Hi Taoran,
 
- ...ystem-authlogin-chkpwd_t-dac_read_se.patch | 29 +++++++++++++++++++
- .../refpolicy/refpolicy_common.inc            |  1 +
- 2 files changed, 30 insertions(+)
- create mode 100644 recipes-security/refpolicy/refpolicy/0057-policy-modules-system-authlogin-chkpwd_t-dac_read_se.patch
+On Mon 2025-03-10 @ 11:10:31 AM, 刘陶然 wrote:
+> Hi Trevor,
+> I'm trying to build the scarthgap branch for meta-rockchip and got errors
+> in kernel and u-boot.
+> I noticed it is because of the receipts in the branch. Just like
+> https://git.yoctoproject.org/meta-rockchip/tree/recipes-kernel/linux/linux-torvalds-next_git.bb?h=scarthgap
+> 
+> it's using next-20240904 from linux-torvalds-next
+> <https://git.yoctoproject.org/meta-rockchip/tree/recipes-kernel/linux/linux-torvalds-next_git.bb?h=scarthgap>,
+> but the branches in this repository are expired very frequently.
+> 
+> For the LTS version like scarthgap, when the version is frozen, it should
+> be set to stable(better to be LTS) versions of kernel and u-boot, isn't it?
 
-diff --git a/recipes-security/refpolicy/refpolicy/0057-policy-modules-system-authlogin-chkpwd_t-dac_read_se.patch b/recipes-security/refpolicy/refpolicy/0057-policy-modules-system-authlogin-chkpwd_t-dac_read_se.patch
-new file mode 100644
-index 0000000..d631a28
---- /dev/null
-+++ b/recipes-security/refpolicy/refpolicy/0057-policy-modules-system-authlogin-chkpwd_t-dac_read_se.patch
-@@ -0,0 +1,29 @@
-+From 92091366d5beda7096a8845b822049372e57ca97 Mon Sep 17 00:00:00 2001
-+From: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-+Date: Mon, 30 Dec 2024 15:58:17 +0800
-+Subject: [PATCH] authlogin: allow unix_chkpwd to run
-+
-+denied  { dac_read_search } for  pid=27506 comm="unix_chkpwd" capability=2  scontext=system_u:system_r:chkpwd_t:s0-s15:c0.c1023 tcontext=system_u:system_r:chkpwd_t:s0-s15:c0.c1023 tclass=capability permissive=1
-+
-+Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-+
-+Upstream-Status: Backport [https://github.com/SELinuxProject/refpolicy/commit/796d0335f6b975c9d075525d62ec8e854ce5beef]
-+
-+Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
-+---
-+ policy/modules/system/authlogin.te | 2 +-
-+ 1 file changed, 1 insertion(+), 1 deletion(-)
-+
-+diff --git a/policy/modules/system/authlogin.te b/policy/modules/system/authlogin.te
-+index c8e2954cb..1c862bbab 100644
-+--- a/policy/modules/system/authlogin.te
-++++ b/policy/modules/system/authlogin.te
-+@@ -109,7 +109,7 @@ optional_policy(`
-+ # Check password local policy
-+ #
-+ 
-+-allow chkpwd_t self:capability { dac_override setuid };
-++allow chkpwd_t self:capability { dac_override dac_read_search setuid };
-+ dontaudit chkpwd_t self:capability sys_tty_config;
-+ allow chkpwd_t self:process { getattr signal };
-+ dontaudit chkpwd_t self:process getcap;
-diff --git a/recipes-security/refpolicy/refpolicy_common.inc b/recipes-security/refpolicy/refpolicy_common.inc
-index cc3bb4e..c8a8ac2 100644
---- a/recipes-security/refpolicy/refpolicy_common.inc
-+++ b/recipes-security/refpolicy/refpolicy_common.inc
-@@ -72,6 +72,7 @@ SRC_URI += " \
-         file://0054-policy-modules-system-setrans-allow-setrans_t-use-fd.patch \
-         file://0055-policy-modules-system-systemd-make-_systemd_t-MLS-tr.patch \
-         file://0056-policy-modules-system-logging-make-syslogd_runtime_t.patch \
-+        file://0057-policy-modules-system-authlogin-chkpwd_t-dac_read_se.patch \
-         "
- 
- S = "${WORKDIR}/refpolicy"
+Yes it should, and it does... when it can.
+
+Yocto scarthgap is based on linux-6.6.y. All of the machines in
+meta-rockchip's scarthgap branch use oe-core's linux-yocto_6.6, except the
+radxa zero 3 machines and the orangepi-5-plus. The reason for this is because
+linux-6.6.y does not support these devices.
+
+oe-core scarthgap also provides a linux-yocto-dev kernel based on linux-6.9.y.
+This supports the orangepi-5-plus machine (so this machine uses that kernel in
+scarthgap) but linux-6.9.y still does not have support for the radxa zero 3
+devices.
+
+Yocto master currently supports linux-6.12.y with linux-yocto and linux-6.14.y
+with linux-yocto-dev. linux-6.12.y supports both the radxa zero 3 devices and
+the orangepi-5-plus (which reminds me, I should update those machines since
+they're still using linux-yocto-dev).
+
+So I assume you're probably using scarthgap to build for a radxa zero 3
+device since your comments are only true for that device. During the
+time-frame of scarthgap I was eager to be able to build for the radxa zero 3
+since I had one and wanted to use it for a project. So I had to pull in what
+was (at that time) very experimental code to get it to work.
+
+I could back-port oe-core master's linux-yocto to scarthgap in order to
+support the radxa zero 3 in a more stable way. But perhaps a better solution
+would be to remove radxa zero 3 support from scarthgap and simply ask that
+master be used for this device.
+
+Thoughts?
+
+Best regards,
+	Trevor
 
