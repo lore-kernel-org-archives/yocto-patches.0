@@ -1,166 +1,130 @@
-Return-Path: <raj.khem@gmail.com>
+Return-Path: <antonin.godard@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97ED9C282DE
-	for <webhook@archiver.kernel.org>; Mon, 10 Mar 2025 22:08:03 +0000 (UTC)
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
- by mx.groups.io with SMTP id smtpd.web11.98.1741644475073392946
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29A7FC28B2E
+	for <webhook@archiver.kernel.org>; Tue, 11 Mar 2025 08:23:38 +0000 (UTC)
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+ by mx.groups.io with SMTP id smtpd.web11.3883.1741681411127980814
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 10 Mar 2025 15:07:55 -0700
+ Tue, 11 Mar 2025 01:23:31 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=TY+Dc6ur;
- spf=pass (domain: gmail.com, ip: 209.85.167.182, mailfrom: raj.khem@gmail.com)
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3fa1e694706so276978b6e.0
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 10 Mar 2025 15:07:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741644474; x=1742249274; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yH9NpdZ90DryDfljDhbFNId/uq9WS5V8iTqAwxUVl8E=;
-        b=TY+Dc6urXnfwPpUeMhGapnKLEuKJFfDBXodN+MtCL2C33RBCXi0G0OVMTGsCnjJtNc
-         4E9k2qEAsMwTyJH7y9hJ2Gbahb4xldg66MxBrwV4YeRmEwFVbR+ZBD7gvC2cNQfj/nCb
-         gl6tVprEOZmebbd5dr3ivSucGrsGPc6sxtNGoxeZVfDMpFCgDz8cqkm29l/wnurIeKaB
-         mqsMEbkeJGBiJ+Ex43IEiTmisU80B1SASYcQbriiQOxOXqpmg4ig+24QXm8vwggxtnBI
-         +k8i04qny1hGfLHs+dmkOMFQyZX6XdaOtPWxcVMFGUq+OHdVh8ja4SY7tHxIzXfn94Di
-         B48Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741644474; x=1742249274;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yH9NpdZ90DryDfljDhbFNId/uq9WS5V8iTqAwxUVl8E=;
-        b=D9c5Wn/rY/UE0SCFuHVIs2jFMzbR/KwLpiMRyQNavLr27Pw2fy92h7NuCL9Dl8Jm0i
-         gpgY0WBLlPSwGcXgW0bUkalpvPPtaElEaWuRGVoFT1wKoodPSLPz7UyNWP6x1JxiKnDn
-         OIRbFT2QupHOr33wLZQmYYb1z5klDLVZwe+xNKWAkIWQDo0n36v2CsF7iJa6+b+R33ob
-         0q2QCWKWafjMUqSMyylPJZyd7YCSAl7cRB3rDDDnquoX4V/AzAHb9vLFVHdDKJVcuwnD
-         Cp2o/W355gZcMY+uW5oZhMDEAw9JeyhNjeHVB/5dDHa3OKaZLiYC3HpjcyvVq653clPu
-         RkWg==
-X-Gm-Message-State: AOJu0YylBwbGJ6ihNHkZ1oNDeWsqpb1Q1wSL4xWNA63TdQ7l2M9p3asw
-	7Z/WqOejI69bQ63XKYGQfujiksS8Oyn9EnSD87P2V/QHPpMAvM6JUeF+o0BCFGFJzIV8TZ+1eRC
-	IDAsrRTtYIPB5LAbpAB/e14VxSLwesy8b
-X-Gm-Gg: ASbGncvzf/DYAOMdUB7KgsTQ2rAaeyHpEdmQ3K/K1hy52Zirlf7Cv2+HiNcBf/w3fJo
-	19FDbYJZr2uF7kPQWyZLsPuOemWfeqj+aoR0y99O+RjU3SpEoT/J/IWAU9A5Ev208Pgl/a49fBk
-	/NJ4WB9x4rjr0Lz/YW8FzPvH3Vd8aPE5Hp2Rno9BjZOax714iUWmiacfI=
-X-Google-Smtp-Source: AGHT+IFdc5PZ3GAnRcU0at/2OIbHNr+rcdduDRPs1TLPItnwptEf156/8jgOymmeWUumDZY3Rb4xGIPEJBf8HGEJh2Q=
-X-Received: by 2002:a05:6808:4491:b0:3fa:7328:b9a8 with SMTP id
- 5614622812f47-3fa7328bbe9mr39672b6e.18.1741644474123; Mon, 10 Mar 2025
- 15:07:54 -0700 (PDT)
+ dkim=pass header.i=@bootlin.com header.s=gm1 header.b=UenaXpHp;
+ spf=pass (domain: bootlin.com, ip: 217.70.183.193, mailfrom: antonin.godard@bootlin.com)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 32A17443B9;
+	Tue, 11 Mar 2025 08:23:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741681408;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=iyuUOjgIqCA3OmpEZnG0noPYaG55eU67FNU72J0en2g=;
+	b=UenaXpHpAliaJzAqYkNpbmbN25Y5xYaVjnFIuXNaSz2GUmwom+0oXsNRKjF9p0vRsVES7/
+	er3URM0ooOKX3ZTh9wY+N+uSIJbNP3NS99p8p+a8WKXxx8FIsnNAldYSk7p53fg6soPzpI
+	RWxf4TlF2HvAR6ReSRnAI5Vk8xj0DD/hryYhEtJd6RwNHD4txKS4A6SqbiJe11P4BQod1o
+	1WlPeHFVLflo35Ss+V8l8sahAuFLWL2GJ2xhPVtVbQOEfOZtuofsRVEojUZ+fMCqIBlNt5
+	+3FDOVpj4cYIVkw0nXQceCQHxzFxjmSnZs29+0/SQKUUxpXjZOMnGIhiHaAqYw==
+From: Antonin Godard <antonin.godard@bootlin.com>
+Date: Tue, 11 Mar 2025 09:22:33 +0100
+Subject: [yocto-autobuilder-helper PATCH] scripts/yocto-supported-distros:
+ catch intermittent HTTPError
 MIME-Version: 1.0
-References: <CAGNQujsSc1TpF3ZpmoQKpa0cBeqTdnY3tpKFZh9udwaA0ZQomw@mail.gmail.com>
- <20250310154725.GA34977@localhost>
-In-Reply-To: <20250310154725.GA34977@localhost>
-From: Khem Raj <raj.khem@gmail.com>
-Date: Mon, 10 Mar 2025 15:07:28 -0700
-X-Gm-Features: AQ5f1JqfAa29yT7sTP2PIMK6WpGkhzxonwbbCWIR3llUMKVgE3yYAreZti8gqnQ
-Message-ID: <CAMKF1sps7Ui3SiER6Ck9S5FjYJfwi0UD3Jpp5hvPC8jRsceSqA@mail.gmail.com>
-Subject: Re: [yocto-patches] Kernel and u-boot version selection in meta-rockchip
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250311-yocto-supported-distros-fixes-v1-1-eb6d143daab3@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAMjyz2cC/x3MwQqDMAyA4VeRnA20ysb0VcRDa+OWiylJlQ3x3
+ S07fvzwn2CkTAZjc4LSwcayVfi2geUTtjchp2roXPdwvff4k6UI2p6zaKGEia2oGK78JcM4RHr
+ GtIaX81AfWekf6mKar+sG3XTn+W8AAAA=
+X-Change-ID: 20250311-yocto-supported-distros-fixes-b9be6bdfa801
 To: yocto-patches@lists.yoctoproject.org
-Cc: =?UTF-8?B?5YiY6Zm254S2?= <ltrsunny@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Steve Sakoman <steve@sakoman.com>, 
+ Antonin Godard <antonin.godard@bootlin.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2107;
+ i=antonin.godard@bootlin.com; h=from:subject:message-id;
+ bh=7QTdOnZu50sFTuPYV3/97BzrE1uOjlPwUGvbvEEhXSc=;
+ b=owEBbQKS/ZANAwAIAdGAQUApo6g2AcsmYgBnz/MAWI00iCPSbfo4q70xDEVX7uHqUcv9DXpKy
+ ISAlnF2hgyJAjMEAAEIAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCZ8/zAAAKCRDRgEFAKaOo
+ NpENEAC5PDWOY92WE3qJnz9K1SUIIznEV2LseIrOPGK5f44kacVwOy/As1Atm7DLeCqb0EU/YoX
+ 6BlyOSJN9x9zEYkLf5Snaxj6VmXgy10XqXCZlr5AWVl5qtajQBt73etlnbAluivKhfCyXJq0LHu
+ m/4/6suMf7y8OLxqODXuXqlur3myXJEbNW4ddTZZhiVB0DdEvIhRJ3yfHb22KmuakJoBAHFbWRB
+ +x1J5l5DzdS7CpcGc4dBkfLg6bFFxuSs8fbk3y5cd6P9UXpyt/Jvoxnxj0DBZnPZouIjdQpM0b3
+ n8jynvR2QoAxpO0Us3zDScrfLc3LBhNtfunDrJHQQfgZKs1b5uYcddwuh3j3V1wf7HO0lmBpe6r
+ M5z9RH3s6KPT771aHEPHlzPYt9q4PPyg8f7M5QlZYCRJfJoI9VTllI53V5MXAI/2poQfEp1qP9w
+ 6Mtx68xPzHAvhbK3rtmdke3XKcuryEO7xyEkKoOsOUMSZDkz/LbgnEqorp/dLYp+Rtn6dZgH8i9
+ 8TZE/7VFjo01Q/BWaksYj5XLQRw+qP6QAW36y5gnpL7UVLXxzea1TIH6qJotszYqA5x4EfG9n7a
+ uNV+VF7vAj9pqCVa2NnQPV0RaXLFYO0jKUwUd+bBrUN6ItL2++LL36t9U5sP7FvzGBiDGISf293
+ BlW//Pngu43nWuQ==
+X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
+ fpr=8648725188DD401BB9A0D3FFD180414029A3A836
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvddujeegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkvfevofesthejredtredtjeenucfhrhhomheptehnthhonhhinhcuifhouggrrhguuceorghnthhonhhinhdrghhouggrrhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeikeegudfhheegheeifeegveejfffhvddtudfhhefhhfetleefuefhueeljedtfeenucffohhmrghinhephihotghtohhprhhojhgvtghtrdhorhhgpdgtohhnfhhighdrphihpdhhthhtphgvrhhrohhrfihhvghnthhrhihinhhgthhofhgvthgthhhthhgvtghonhhfihhgrdhphienucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeejtgehtgemiegruggvmeejleegkeemgedtheelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeejtgehtgemiegruggvmeejleegkeemgedtheelpdhhvghloheplgduvdejrddtrddurddungdpmhgrihhlfhhrohhmpegrnhhtohhnihhnrdhgohgurghrugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepgedprhgtphhtthhopegrnhhtohhnihhnrdhgohgurghrugess
+ ghoohhtlhhinhdrtghomhdprhgtphhtthhopeihohgtthhoqdhprghttghhvghssehlihhsthhsrdihohgtthhophhrohhjvggtthdrohhrghdprhgtphhtthhopehsthgvvhgvsehsrghkohhmrghnrdgtohhmpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhm
+X-GND-Sasl: antonin.godard@bootlin.com
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 10 Mar 2025 22:08:03 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1175
+ <yocto-patches@lists.yoctoproject.org>; Tue, 11 Mar 2025 08:23:38 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1176
 
-On Mon, Mar 10, 2025 at 8:47=E2=80=AFAM Trevor Woerner via
-lists.yoctoproject.org <twoerner=3Dgmail.com@lists.yoctoproject.org>
-wrote:
->
-> Hi Taoran,
->
-> On Mon 2025-03-10 @ 11:10:31 AM, =E5=88=98=E9=99=B6=E7=84=B6 wrote:
-> > Hi Trevor,
-> > I'm trying to build the scarthgap branch for meta-rockchip and got erro=
-rs
-> > in kernel and u-boot.
-> > I noticed it is because of the receipts in the branch. Just like
-> > https://git.yoctoproject.org/meta-rockchip/tree/recipes-kernel/linux/li=
-nux-torvalds-next_git.bb?h=3Dscarthgap
-> >
-> > it's using next-20240904 from linux-torvalds-next
-> > <https://git.yoctoproject.org/meta-rockchip/tree/recipes-kernel/linux/l=
-inux-torvalds-next_git.bb?h=3Dscarthgap>,
-> > but the branches in this repository are expired very frequently.
-> >
-> > For the LTS version like scarthgap, when the version is frozen, it shou=
-ld
-> > be set to stable(better to be LTS) versions of kernel and u-boot, isn't=
- it?
->
-> Yes it should, and it does... when it can.
->
-> Yocto scarthgap is based on linux-6.6.y. All of the machines in
-> meta-rockchip's scarthgap branch use oe-core's linux-yocto_6.6, except th=
-e
-> radxa zero 3 machines and the orangepi-5-plus. The reason for this is bec=
-ause
-> linux-6.6.y does not support these devices.
->
-> oe-core scarthgap also provides a linux-yocto-dev kernel based on linux-6=
-.9.y.
-> This supports the orangepi-5-plus machine (so this machine uses that kern=
-el in
-> scarthgap) but linux-6.9.y still does not have support for the radxa zero=
- 3
-> devices.
->
-> Yocto master currently supports linux-6.12.y with linux-yocto and linux-6=
-.14.y
-> with linux-yocto-dev. linux-6.12.y supports both the radxa zero 3 devices=
- and
-> the orangepi-5-plus (which reminds me, I should update those machines sin=
-ce
-> they're still using linux-yocto-dev).
->
-> So I assume you're probably using scarthgap to build for a radxa zero 3
-> device since your comments are only true for that device. During the
-> time-frame of scarthgap I was eager to be able to build for the radxa zer=
-o 3
-> since I had one and wanted to use it for a project. So I had to pull in w=
-hat
-> was (at that time) very experimental code to get it to work.
+From: Antonin Godard <antonin.godard@bootlin.com>
 
-I think it would be nice to mark which machines are stable/mature vs
-experimental
-at the time this could convey the message, as the releases are frozen
-in time this
-problem is bound to happen.
+Print a warning when we get an HTTPError and exit with 0. This can
+happen intermittently and there isn't much we can do about it. For
+example:
+https://autobuilder.yoctoproject.org/valkyrie/#/builders/29/builds/1158/steps/16/logs/stdio
 
->
-> I could back-port oe-core master's linux-yocto to scarthgap in order to
-> support the radxa zero 3 in a more stable way. But perhaps a better solut=
-ion
-> would be to remove radxa zero 3 support from scarthgap and simply ask tha=
-t
-> master be used for this device.
->
-> Thoughts?
+Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
+---
+ scripts/yocto-supported-distros | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
-If you want to stay close to stable policies then yes, but BSP layers have =
-taken
-kernel roadmap as it fits the given family of SOCs so I would not discourag=
-e you
-from considering backport if there is a need for it in the given BSP
-layer community.
+diff --git a/scripts/yocto-supported-distros b/scripts/yocto-supported-distros
+index db9928f..0cc314b 100755
+--- a/scripts/yocto-supported-distros
++++ b/scripts/yocto-supported-distros
+@@ -48,6 +48,7 @@ import tempfile
+ 
+ from pathlib import Path
+ from typing import List, Dict, Set
++from urllib.error import HTTPError
+ 
+ 
+ CONFIG_REMOTE_URL = "https://git.yoctoproject.org/yocto-autobuilder2/plain/config.py"
+@@ -250,12 +251,18 @@ def main():
+         exit(1)
+ 
+     if args.config_from_web:
+-        with urllib.request.urlopen(CONFIG_REMOTE_URL) as r:
+-            with tempfile.TemporaryDirectory() as tempdir:
+-                with open(Path(tempdir) / "config.py", "wb") as conf:
+-                    conf.write(r.read())
+-                sys.path.append(tempdir)
+-                import config
++        try:
++            with urllib.request.urlopen(CONFIG_REMOTE_URL) as r:
++                with tempfile.TemporaryDirectory() as tempdir:
++                    with open(Path(tempdir) / "config.py", "wb") as conf:
++                        conf.write(r.read())
++                    sys.path.append(tempdir)
++                    import config
++        except HTTPError as e:
++            print(f"WARNING: HTTPError when trying to fetch the config.py file from {CONFIG_REMOTE_URL}:")
++            print(e)
++            print("Safely exiting...")
++            exit(0)
+     else:
+         sys.path.append(os.path.dirname(args.config))
+         import config
 
->
-> Best regards,
->         Trevor
->
->
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-> Links: You receive all messages sent to this group.
-> View/Reply Online (#1173): https://lists.yoctoproject.org/g/yocto-patches=
-/message/1173
-> Mute This Topic: https://lists.yoctoproject.org/mt/111621524/1997914
-> Group Owner: yocto-patches+owner@lists.yoctoproject.org
-> Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/1334078=
-6/1997914/645821814/xyzzy [raj.khem@gmail.com]
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
->
->
+---
+base-commit: 38784f58056d8d0b5000463a611bce5e31aa076f
+change-id: 20250311-yocto-supported-distros-fixes-b9be6bdfa801
+
+Best regards,
+-- 
+Antonin Godard <antonin.godard@bootlin.com>
+
 
