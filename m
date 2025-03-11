@@ -1,84 +1,99 @@
-Return-Path: <richard.purdie@linuxfoundation.org>
+Return-Path: <foss@0leil.net>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43046C282EC
-	for <webhook@archiver.kernel.org>; Tue, 11 Mar 2025 11:13:20 +0000 (UTC)
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
- by mx.groups.io with SMTP id smtpd.web10.6348.1741691593398498183
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 465DEC28B2E
+	for <webhook@archiver.kernel.org>; Tue, 11 Mar 2025 11:26:50 +0000 (UTC)
+Received: from smtp-42ae.mail.infomaniak.ch (smtp-42ae.mail.infomaniak.ch [84.16.66.174])
+ by mx.groups.io with SMTP id smtpd.web11.6694.1741692403679720986
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 11 Mar 2025 04:13:13 -0700
+ Tue, 11 Mar 2025 04:26:44 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=BQPtwefv;
- spf=pass (domain: linuxfoundation.org, ip: 209.85.221.45, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3913fdd0120so1587575f8f.0
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 11 Mar 2025 04:13:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1741691591; x=1742296391; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iRoPHlncoPFu/uXiO6PNFvg3igCIPs0xPBm3L1x2l2M=;
-        b=BQPtwefvZyXTa2+2rpD619ULgSKvNvDJ/W8RjAXrSzvqDPTP/dpdnwQuygTf5RgEpV
-         LKKwVCKuKyqpYWwfRWBjlMiqtT7GhReZ5RKh6uCNUeN4naCWff2m4ErSyteh7ud9WRYy
-         xq4s+mTKhFN5Aci8cw9AIaP1af0r0DAs5l3Ow=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741691591; x=1742296391;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iRoPHlncoPFu/uXiO6PNFvg3igCIPs0xPBm3L1x2l2M=;
-        b=K8DXMpsuW81Rt1VwrzoA0UwAb8/3mA2t7CHw/RhrXhY4Ja5A8NULlsc94PD1BAgOC+
-         VWrqM/piNT6YaU2yFqaiJDPGYrfNJ3LKLik9WsGFW7s1Yy9BhThCOwyElWYTPg51CgSe
-         P0vHBV7EnqSK0U6npMz3dqMEGP9Y7y8lQAraiJqgerNttnqSRh2G9YUDv2gl7YJjnOo5
-         YilZuHyna5itEzK6tP6TsCIYIxLPVtyfDJG0qDjz/7vf85T0KPbNhThkaprKTEbWcqSV
-         wnjKyDReI7tpfyO8JwGIXw+Mev1pCb9v2dfTBkRxCIkyacaR/zXcaQzoGcYlZjawkfqW
-         An5w==
-X-Gm-Message-State: AOJu0YzFW+IZEXVruYgcWiR9ctbmV0W5OSLILa99OeKw2SrVgCdcrbnA
-	BMOS/8/+KnXhTX4pE2loRP8vsbsMIyKjk6aGWDHuICfbmo5HRSZLJe4VP1g652UYZncSbbPhvNx
-	V
-X-Gm-Gg: ASbGnculmQt7yeI3r8RVFAwM75dE9XlKucqT2d8uk+y5WY41Nb6S4kUnAbqg4tzlCDT
-	92VCe6x4KIAZYoLvQJlQmgbn5P5W0zclntzVnBO91bhPJT5GluWoPhx6aS8u+ecGeRN9SZujLEw
-	iaSAiYHOz0MlfQqUyh3KS8NAbWoU4BmbAQwKI0Qq37HJwffgLUjgwsoaQrYKAwtOxcuYqwO+VTp
-	nqKJaNXSLHUafOVP+sBy7dkuSGUj9l8Vp+9oLXmnFSPYDdbPIS3nByO02JUoSl8H5ZK7wHrA7KH
-	s6aTdSQD+PHhF7OVpLlN40YFRnvF7XGMqXdxgEqnYL6cPY9ERXOZReqm9NsMUyhfNZ4EFVBDMpZ
-	wi2dcCOk=
-X-Google-Smtp-Source: AGHT+IE6A6L+oZgwhOkn17DoOJqFQq8oG8dgzLgbHVl6Ju9Bg5fWC8D2uARUAvz+TdjdsybdtcrTVQ==
-X-Received: by 2002:a05:6000:18a3:b0:391:2e19:9ab with SMTP id ffacd0b85a97d-39132da8e5dmr13063836f8f.47.1741691590943;
-        Tue, 11 Mar 2025 04:13:10 -0700 (PDT)
-Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:98ce:619b:b74:b8c9])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c1031e3sm17550560f8f.82.2025.03.11.04.13.09
-        for <yocto-patches@lists.yoctoproject.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 04:13:10 -0700 (PDT)
-From: Richard Purdie <richard.purdie@linuxfoundation.org>
-To: yocto-patches@lists.yoctoproject.org
-Subject: [yocto-autobuilder2] [PATCH] master.cfg: Increase default number of builds shown on the worker page
-Date: Tue, 11 Mar 2025 11:13:09 +0000
-Message-ID: <20250311111309.2985268-1-richard.purdie@linuxfoundation.org>
-X-Mailer: git-send-email 2.45.2
+ dkim=none (message not signed); spf=pass (domain: 0leil.net, ip: 84.16.66.174, mailfrom: foss+yocto@0leil.net)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZBs0f1ClFz2Pr;
+	Tue, 11 Mar 2025 12:26:42 +0100 (CET)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZBs0d63nhz6RP;
+	Tue, 11 Mar 2025 12:26:41 +0100 (CET)
+From: Quentin Schulz <foss+yocto@0leil.net>
+Date: Tue, 11 Mar 2025 12:26:30 +0100
+Subject: [meta-rockchip PATCH 1/6] bsp: rkbin: ddr: store directory path
+ for the DDR bin blob in a variable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250311-ddrbin-custom-v1-1-e5c994ac25e1@cherry.de>
+References: <20250311-ddrbin-custom-v1-0-e5c994ac25e1@cherry.de>
+In-Reply-To: <20250311-ddrbin-custom-v1-0-e5c994ac25e1@cherry.de>
+To: yocto-patches@lists.yoctoproject.org
+Cc: Quentin Schulz <quentin.schulz@cherry.de>
+X-Mailer: b4 0.14.2
+X-Infomaniak-Routing: alpha
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 11 Mar 2025 11:13:20 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1181
+ <yocto-patches@lists.yoctoproject.org>; Tue, 11 Mar 2025 11:26:50 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1183
 
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+From: Quentin Schulz <quentin.schulz@cherry.de>
+
+This will be used in a later commit when an SoC-agnostic do_configure will
+call ddrbin_tool.py with the DDR bin blob as input.
+
+Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
 ---
- master.cfg | 2 ++
- 1 file changed, 2 insertions(+)
+ recipes-bsp/rkbin/rockchip-rkbin-ddr_git.bb | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/master.cfg b/master.cfg
-index b1d4fd9f..8ede1228 100644
---- a/master.cfg
-+++ b/master.cfg
-@@ -103,6 +103,8 @@ c['buildbotURL'] = "https://autobuilder.yoctoproject.org/main/"
- #c['www']['plugins']['profiler'] = True
+diff --git a/recipes-bsp/rkbin/rockchip-rkbin-ddr_git.bb b/recipes-bsp/rkbin/rockchip-rkbin-ddr_git.bb
+index 3227a53db22ba5906355e6925399aafe08813c9f..a88cfc10bb4404634671c7f193b4255405da6b21 100644
+--- a/recipes-bsp/rkbin/rockchip-rkbin-ddr_git.bb
++++ b/recipes-bsp/rkbin/rockchip-rkbin-ddr_git.bb
+@@ -2,34 +2,38 @@ DESCRIPTION = "Rockchip Firmware for DDR init (TPL in U-Boot terms)"
  
- # Clean up the default build display format to be neater
-+# Also show a more appropriate number of builds on the worker page
- c['www']['ui_default_config'] = {
-     'Links.build_link_template': "%(prop:branch) %(build_number)"
-+    'Workers.buildFetchLimit': 200,
+ require rockchip-rkbin.inc
+ 
++DDRBIN_DIR:rk3308 ?= "bin/rk33/"
+ DDRBIN_VERS:rk3308 ?= "v2.10"
+ DDRBIN_FILE:rk3308 ?= "rk3308_ddr_589MHz_uart4_m0_${DDRBIN_VERS}.bin"
+ 
+ do_deploy:rk3308() {
+ 	# Prebuilt U-Boot TPL (DDR init)
+-	install -m 644 ${S}/bin/rk33/${DDRBIN_FILE} ${DEPLOYDIR}/ddr-rk3308.bin
++	install -m 644 ${S}/${DDRBIN_DIR}${DDRBIN_FILE} ${DEPLOYDIR}/ddr-rk3308.bin
  }
+ 
++DDRBIN_DIR:rk3566 ?= "bin/rk35/"
+ DDRBIN_VERS:rk3566 ?= "v1.23"
+ DDRBIN_FILE:rk3566 ?= "rk3566_ddr_1056MHz_${DDRBIN_VERS}.bin"
+ 
+ do_deploy:rk3566() {
+ 	# Prebuilt U-Boot TPL (DDR init)
+-	install -m 644 ${S}/bin/rk35/${DDRBIN_FILE} ${DEPLOYDIR}/ddr-rk3566.bin
++	install -m 644 ${S}/${DDRBIN_DIR}${DDRBIN_FILE} ${DEPLOYDIR}/ddr-rk3566.bin
+ }
+ 
++DDRBIN_DIR:rk3568 ?= "bin/rk35/"
+ DDRBIN_VERS:rk3568 ?= "v1.23"
+ DDRBIN_FILE:rk3568 ?= "rk3568_ddr_1560MHz_${DDRBIN_VERS}.bin"
+ 
+ do_deploy:rk3568() {
+ 	# Prebuilt U-Boot TPL (DDR init)
+-	install -m 644 ${S}/bin/rk35/${DDRBIN_FILE} ${DEPLOYDIR}/ddr-rk3568.bin
++	install -m 644 ${S}/${DDRBIN_DIR}${DDRBIN_FILE} ${DEPLOYDIR}/ddr-rk3568.bin
+ }
+ 
++DDRBIN_DIR:rk3588s ?= "bin/rk35/"
+ DDRBIN_VERS:rk3588s ?= "v1.18"
+ DDRBIN_FILE:rk3588s ?= "rk3588_ddr_lp4_2112MHz_lp5_2400MHz_${DDRBIN_VERS}.bin"
+ 
+ do_deploy:rk3588s() {
+ 	# Prebuilt U-Boot TPL (DDR init)
+-	install -m 644 ${S}/bin/rk35/${DDRBIN_FILE} ${DEPLOYDIR}/ddr-rk3588.bin
++	install -m 644 ${S}/${DDRBIN_DIR}${DDRBIN_FILE} ${DEPLOYDIR}/ddr-rk3588.bin
+ }
+
+-- 
+2.48.1
+
 
