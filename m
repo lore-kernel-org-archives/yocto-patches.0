@@ -1,156 +1,242 @@
-Return-Path: <majortomtosourcecontrol@gmail.com>
+Return-Path: <quentin.schulz@cherry.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52C67C282DE
-	for <webhook@archiver.kernel.org>; Thu, 13 Mar 2025 04:10:47 +0000 (UTC)
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
- by mx.groups.io with SMTP id smtpd.web10.7162.1741839042965659934
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DFFCC282DE
+	for <webhook@archiver.kernel.org>; Thu, 13 Mar 2025 09:33:39 +0000 (UTC)
+Received: from DUZPR83CU001.outbound.protection.outlook.com (DUZPR83CU001.outbound.protection.outlook.com [52.101.67.44])
+ by mx.groups.io with SMTP id smtpd.web11.10377.1741858413918094653
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 12 Mar 2025 21:10:43 -0700
+ Thu, 13 Mar 2025 02:33:34 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=e/gFBMSK;
- spf=pass (domain: gmail.com, ip: 209.85.166.42, mailfrom: majortomtosourcecontrol@gmail.com)
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-85b43b60b6bso21874639f.0
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 12 Mar 2025 21:10:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741839042; x=1742443842; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uIAGZfFByHhcoq0G7d58ucFCzh+ANxKxoRqRUOilAIU=;
-        b=e/gFBMSKq9A4RI/fw+LXXhgauLPJfiscsGyGjSqzlti57IiF/2YC9k1qhJu7p+FmZV
-         brgjfYVyQLgCEE0MCz0n8c/CxchCv1q7r497rYSF2yNYA1Ol4oTJpNvfgp6Mk51PJB2A
-         cn4r9irCQtofPtjCwpvP12YmI+gz66dr55sPyFNon4z5zGebkA/aGk2ki9reCQSqyZ2i
-         UE1vQHh4MNYwyWLSOUlArctJ2TvjK+q2Ha3Kmp9kjkWcrviu5vG9pAfJt1i6a04ieMhN
-         PJyKaEMfg8RU1NVQ2T8JioN61AtWHIpIeguVgEXhWlgEtOzQEqOsyu5XJJaOgsal+cmM
-         a6zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741839042; x=1742443842;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=uIAGZfFByHhcoq0G7d58ucFCzh+ANxKxoRqRUOilAIU=;
-        b=OJCW2sKilfYzWvxvfn0kvx5jXNEpC8zVuxfCNyW/QP4oZPYrQSQpyu0iy3GzVgiRVK
-         AnNhyEx3um0hvcTa5QRp7VfjUhJnWah+s7Te4g0Vu6+xIPcVXJpVR0CpFXID8qvuUYob
-         6MjGkR55k0BsEv+GzebGpjcIlLaSUUW2Gos5vRoIeZCezGOwraWpuFm7emT7j7Kg8lfQ
-         26TI5hdRydyreDCmW62XC+k9UbU45qEYYrt1KAyvFfozDroo92J6ivB3ACt/p/AzXHvu
-         iJuv3ducECMwuBBVnVttbXspfebEDvMZk+H9aN9XC5V6Kmjhf30ZJFtKBziAgOaaBEHa
-         jTcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWL1aC+itcN4NSEV49iqe5D75G6KNpveMXDfPXOPnZv0JIAkEyPRd3qVq10V0aLuPERd2ppquCb0qYxWN4h@lists.yoctoproject.org
-X-Gm-Message-State: AOJu0YwR/Z4JqjmXFGt9cVe5SiLcqbN46SLyX78Ysq05GNERbWj+KIWD
-	poDu7CXBk6jN5f6NCQu+PtqKFlil+uOuUDw4BJAU1U6Ojg7IgsWJ
-X-Gm-Gg: ASbGncuV6xG1ySGM+DETMtalrKdP5sl42HcH9RIshiCOtpIFumzHlh2I2y2ZXHxRUsZ
-	xkslHQ8iX4EurIEcuGzVn9BFPSJkADumvxdat5qMsAnVxBQ6k6VYZ/z/o39m4iH6zRblej4oDHI
-	ui8ycIvOlp3JffpuRGUOJ6BwwZMKOk1GXHaJkqLAEe13xnfyO2rBvrHAOCe5qzx7vjyuP4OTrOT
-	SLRGi5o85baGfmgItGELQ9KmWXS+e+MDsV0jGzufCC/Cor6ER9GpgWMnJOBw9+zjvN1hIODLOZ4
-	9XuLVNH1Gf2WQzKfxj1/Cr3zoRCryG9vDBGR6lMClSbTQPBAUZz8mqp9L/aUuF72xvFBzJyElpN
-	/rOA+1253zNVU1fwcV0LnRw==
-X-Google-Smtp-Source: AGHT+IH34A5WG0Znx0twOEXbAiTRsV3c4n54OMtCVpDBl75JQiW3emjkGVQrAJOxU4Tz4o2FVW1LCw==
-X-Received: by 2002:a6b:dc08:0:b0:858:7b72:ec89 with SMTP id ca18e2360f4ac-85db85f8991mr93085639f.5.1741839042039;
-        Wed, 12 Mar 2025 21:10:42 -0700 (PDT)
-Received: from [172.26.252.3] (174-29-216-122.hlrn.qwest.net. [174.29.216.122])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f2637faa42sm131612173.81.2025.03.12.21.10.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Mar 2025 21:10:41 -0700 (PDT)
-Message-ID: <4a60bdcb-450c-460e-828d-ade3b6790921@gmail.com>
-Date: Wed, 12 Mar 2025 22:10:40 -0600
-MIME-Version: 1.0
+ dkim=fail reason="dkim: body hash did not verify" header.i=@cherry.de header.s=selector1 header.b=Hzx8EiNo;
+ spf=pass (domain: cherry.de, ip: 52.101.67.44, mailfrom: quentin.schulz@cherry.de)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rFswlIPU3xl4ivA8RmBY4wdcm0purvkdbabyKajEcSWuHM33VoKivI+etv8Oygt3uwcAqpsuaSUSSO1dFAuLhuKXcCma6Y8NBKIxopHLWsn3QS4QfB27XLHrM7OhH99DP6h6OprKLW4PBl9OpWNRRkf1OU77Ff3mzUI3oFmK8/i42eYc3pQtePXuTuTkXC8WZnOH+Cr0BsUmGyaFj28/X1B42tRsXa39Thzq7lwptQgNWluyQFs9BL0NZW9INsb4M6/VAzLv6F4UkoMmTLIozfayf59ReIRRe1RJc5ADV8kQHgn7925riXtfBizN/IAcVmGTJZaKHWDUvTqZ2zo8zg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+RLGg97I4QRt9DpRXTT4ndlMhiWu29S7GKmEi24Wa44=;
+ b=dEXE58j87CzKjlycHQFvlObE1EuJ/ze8r1vHw3OqQ5n8zFvXIplqNqVNjM7X6IcsAg1LHybx61XzlGTY5z/z9cYAyP+wGaCp4Gg5nKbhVsXnBUu18zrK/M4mpT31bNmwEGzwzJMThTjMw782frD/Y0F34Ac/sINvZuPertdPqjcar4gpP1aAwN7rg60VOQQV0jrxgEqIFDj+5N0Fw6HgEXTO2fTJudnIQfFlAXm7AOQBUr66Pz/jbyqPr3oCyHu6Mm/7tIoxzx9iqr6GAQpSQS6RvaMIsF/VBOOWSodfqbpk8iTC8l5jagZOT4RbLpkg/e3bQFRpOQ6twDCmzqiLVQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
+ dkim=pass header.d=cherry.de; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+RLGg97I4QRt9DpRXTT4ndlMhiWu29S7GKmEi24Wa44=;
+ b=Hzx8EiNoLeBR2dEAiTr5UzJapJkvDKqLhZHVYFEjHWKwvTHJ+xalHewfPrfxix1uWmJzD0Xdy+MiLXZ0/TIZNOTf+I2olwHCcV6/emNlX3LBgjVBU3NsWC1Q+ulYAySJDxLs8Agq4FFcYikTfuUzB+efO76hO0wxN/k0LiV8gTk=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=cherry.de;
+Received: from AM9PR04MB8906.eurprd04.prod.outlook.com (2603:10a6:20b:409::9)
+ by GVXPR04MB9830.eurprd04.prod.outlook.com (2603:10a6:150:113::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Thu, 13 Mar
+ 2025 09:33:29 +0000
+Received: from AM9PR04MB8906.eurprd04.prod.outlook.com
+ ([fe80::d379:5378:b1:cea]) by AM9PR04MB8906.eurprd04.prod.outlook.com
+ ([fe80::d379:5378:b1:cea%3]) with mapi id 15.20.8534.027; Thu, 13 Mar 2025
+ 09:33:28 +0000
+Message-ID: <a0071ede-5ea2-4900-938d-148e8d626d7c@cherry.de>
+Date: Thu, 13 Mar 2025 10:33:28 +0100
 User-Agent: Mozilla Thunderbird
+Subject: Re: [yocto-patches] Kernel and u-boot version selection in
+ meta-rockchip
+To: yocto-patches@lists.yoctoproject.org
+CC: =?UTF-8?B?5YiY6Zm254S2?= <ltrsunny@gmail.com>
+References: <CAGNQujsSc1TpF3ZpmoQKpa0cBeqTdnY3tpKFZh9udwaA0ZQomw@mail.gmail.com>
+ <20250310154725.GA34977@localhost>
+ <CAMKF1sps7Ui3SiER6Ck9S5FjYJfwi0UD3Jpp5hvPC8jRsceSqA@mail.gmail.com>
 Content-Language: en-US
-To: joe.macdonald@siemens.com, yi.zhao@windriver.com,
- yocto-patches@lists.yoctoproject.org
-From: Clayton Casciato <majortomtosourcecontrol@gmail.com>
-Subject: [meta-selinux][PATCH] refpolicy: fix chronyd dac_read_search denials
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Quentin Schulz <quentin.schulz@cherry.de>
+In-Reply-To: <CAMKF1sps7Ui3SiER6Ck9S5FjYJfwi0UD3Jpp5hvPC8jRsceSqA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: FR4P281CA0400.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:cf::20) To AM9PR04MB8906.eurprd04.prod.outlook.com
+ (2603:10a6:20b:409::9)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM9PR04MB8906:EE_|GVXPR04MB9830:EE_
+X-MS-Office365-Filtering-Correlation-Id: 96fd4d08-aaec-4926-cb1f-08dd62121ca1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|13003099007;
+X-Microsoft-Antispam-Message-Info: 
+	=?us-ascii?Q?CaFB+6hc3lP+iltRhyk7aTWIHzRHTn+TGK+BH4w+8ACM9Q4OP0dwss2IEbDQ?=
+ =?us-ascii?Q?ds4zJL9vR5PCxhZOrlEQLi6EgEZ9NER9LzyJnLrGoHJo0eooChy5zxmMK+YW?=
+ =?us-ascii?Q?Np9lIej7wT59Wz3fySudoUGXd5PUhPjiO0RTWcEN+dpj+AqVI0YBeRDp5SD1?=
+ =?us-ascii?Q?Vy6DJxx4fYHJQJtXA1cQGqNGyfEMh4bNOVqyApqca+PUlDNPV5i92txVszSe?=
+ =?us-ascii?Q?cGWj/Xy7CYynSIgUlXmsSx6UMgvUVcGm1dJe+zOjkScEop81IdtJ+UTM+xh0?=
+ =?us-ascii?Q?Ql6Du5FX+OXTjeE6YgjryQavbit1/48bnlC27hFYJZjG7Qx/VDUO517KQtk4?=
+ =?us-ascii?Q?4qlc6rZtt8DzoP1jJcsqJZM+cjAmJL5IFSPz7X81bbpMHeWZwO77U0UbG87p?=
+ =?us-ascii?Q?MTQcn8bCR3bo0WRJCgGZRCbYOLeHvsnMPbqW05exWGShOO1HuFZZY/luirTT?=
+ =?us-ascii?Q?ZWdFhaOgdm7JJ7CDJi6frUL9S2COUJ6DywWqhZQABMG3EcZC7cldpxZ+1nAs?=
+ =?us-ascii?Q?CEqhi8OL9I94BKPqTVlEZnazU/ZpfvonP+eCzuWtZ3r47WwL1Ies/alyHeu7?=
+ =?us-ascii?Q?KjHpyTDoQHCcWWIwVD/el3hfMORqPXMUuweq93Cm1a1Js0LPfCU2PdHtsG1D?=
+ =?us-ascii?Q?zuivy/3uQ24XzuOe2Ytn+L2Pb8xEPqOg+Ft7PqLV56lYeIWKj6ePe6uANYvI?=
+ =?us-ascii?Q?cGFS4ofhcXLn3DeW49BGz3nkBm1NoiGEBj+WIGwQaPVAYN3pg2EepttTc+4n?=
+ =?us-ascii?Q?6GFZfYRspc6rghLDW44uKR8DuuoESmzH9NagBZFE1epLO62zhRPBg+yDVMC6?=
+ =?us-ascii?Q?WPHMeFzWZEh2gygmQksKgtB95riGExthHcHk+/rjFjOlAyqb6WxPVe8Ceb4i?=
+ =?us-ascii?Q?wx2XT+9skBAyqC8f7XiAfKak1EmZouGzv2rauNK43L2g1MzPDglYavUxxRGa?=
+ =?us-ascii?Q?DyVJkF/iucnCO6QqYgUPXPWMCP1oARxosp5eURlVc0OvS1cYpJdhGmsUrTF9?=
+ =?us-ascii?Q?EnoFrNVmDHWGFXmJ5EuklGiEJ/JJJxTFlfMlliYSNz8MIfEevexYOKbJq2U5?=
+ =?us-ascii?Q?8Fpu60ApxoBszdMu5v8arayY4BbFjlUq3zGQNZisjIcpbe9jzDzicY2gnr8i?=
+ =?us-ascii?Q?KbCfRY8yO9vJ1PQZ/qqD0ypAvEdGfqPvCZgFmvB3+7Cie4d2LmFtN3CIlfUe?=
+ =?us-ascii?Q?G9vtKDX/vUEoR/K68Ah/NEgEmyU/pmGdocHYljeVFKRb/sOAgt2p7y9uEs8f?=
+ =?us-ascii?Q?RFAgfQGD0vZjX+pd/E5QceSVxTTVWjhWvRR6kSW2CvWJ8UsCujOrTkGGQOlo?=
+ =?us-ascii?Q?ZV4nHvlHUmkNuqOIVG8yTkRydiL6opjXqBHtFsrAphhRIg=3D=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8906.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(13003099007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?hShuj0tPJtKBxQxlH3W59kI/5Cgf3eem9YnnFzkuxD8NjJFoxjr1NrfdQfXf?=
+ =?us-ascii?Q?+jqVMj9Q2bpL96YtY5BXaiFnVTwFRcSVCvHXAbQSxMWxvxFUltgH2oIHTdHl?=
+ =?us-ascii?Q?M/+JNhaRhFXYGdFNHaftnBQ2tXBsGK/dFeX/dWudKkKbBYB4q7khaS2A8A/z?=
+ =?us-ascii?Q?UXf6X5kxSWRUOSLWMjFMXFtHXhPVc3mggw6mucKCKvBr5mTE/XAm6HhQpGu2?=
+ =?us-ascii?Q?nFnVf+Mv0LX0W9w8oZa0/FZ1o2nEDZ1M4QrjzvaGZR0GV3MoAW/F3BeiOkPe?=
+ =?us-ascii?Q?yG0mHjQ4EymmqPcRwiqxinDWeuqq+SCaJIXLqBvaZ80zaIHQr7hLQZRgSV7u?=
+ =?us-ascii?Q?2AJeTEEPfVWkP92xQA3y2uV/NAHTrktSWb+QOlfMYCnRA0gdcHB/EMktqbvL?=
+ =?us-ascii?Q?mZYncy/n5NJw03BcqIJnd6pwh1lav+wI535a3gRA5PJsn3uBNkwtp+HZ+el2?=
+ =?us-ascii?Q?5pA5yUQFkhNgkUSZExGD17cHnvzOtJbrUqWp2ACe2OwWVtua3us4KcUF4YKm?=
+ =?us-ascii?Q?RRNaugHujh6bBuU3U3z8n5d9qSkN+pKdpn6TEDPbPkrC6PAoMkxg2kCA9Tpi?=
+ =?us-ascii?Q?KD2e1QHyort7vW9gmBbrXo/HxfkwvWJ4dCqYBeAHeP/6vgveUIGCsu2wWIn+?=
+ =?us-ascii?Q?Y6REtz1/vjs0sBo1VVvbWhyp91KEL1P70maiu2B3YepBGLXWzQXZr9NDKDHm?=
+ =?us-ascii?Q?8iUO7i+LPLai7KMR+AwnW4TdZTMvsGcf4f0dUVAWnTFN1PDHZSSYleHVm35E?=
+ =?us-ascii?Q?ZE4CCSPH9rhD6i40zAYl7WekRwgKXdhlTFxOhPHC8Eg2UVARgM/MhHCTod/S?=
+ =?us-ascii?Q?l0N9WcPvqcAERWrM+8fchfmfD3hxflMiivP+sA/vyZMHl4TXHUwLApy/whRV?=
+ =?us-ascii?Q?fmE15FMFsxF+B5YAMEg6BnyNkKKTb+lIZpb/L8JYiDQe92Etbo5VvA7wnUVx?=
+ =?us-ascii?Q?vaztEZ8I8xaMdEmJ3avU60KnZiSb9yztmvs9OjMYYVRI56F7ok4YdC/7SPPS?=
+ =?us-ascii?Q?MjtGcNMGncDoVVaOQPVM+oJV3WaUNZKusEICYAQM++BMW2Frk8+jCnpI+t7q?=
+ =?us-ascii?Q?YdyRoJORKrvy3xpTGmuBKRj26JvD5vLq8zH5e2Z9dio6WECr6a9JjdPEztZU?=
+ =?us-ascii?Q?CtD57gFeTTLOS6cmoj5W2ceDvBE8jzqdgwP9xlaLnDUY7IxROePoJjoo4Yzb?=
+ =?us-ascii?Q?Fu4rmwFguABDAyAmeO8Wo7QrzBWSQD9g9suiN30vhxn1lI/ZriUoAaOB51ik?=
+ =?us-ascii?Q?jGzt3qEXsdxvDrdZvajtkij8s+2y0GwsubvNaGG8602ZKULFEQwAXqPjncWV?=
+ =?us-ascii?Q?z/EmnIzE7bkE5YwbxJshiWgOPzFymRq70/W+APH6YM4vk2WEVhDNkyXNCD94?=
+ =?us-ascii?Q?tn+X1QshgjJKYJKjZ8QkKI/ADSk0IdqHo+bGvDBX1WuWmMbCZRqIHNMgikLf?=
+ =?us-ascii?Q?jEbdpdzdEKUN/78BdWplT23K0FYnMQPugAhc43lXoS4Z51M1Ceo3EdS9ymjz?=
+ =?us-ascii?Q?kSqz+2+buLBmIyfiXHU5kawS3niEMX8ZTzWDoJJqlo3T1gOPY57CHzVFnhEQ?=
+ =?us-ascii?Q?P786nRt1VpklhN2U+dm29Q2fUFgYK17AGIju/vHHA7EzYUr+gc7vRhASYlPJ?=
+ =?us-ascii?Q?9w=3D=3D?=
+X-OriginatorOrg: cherry.de
+X-MS-Exchange-CrossTenant-Network-Message-Id: 96fd4d08-aaec-4926-cb1f-08dd62121ca1
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8906.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 09:33:28.7020
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jgRtoM+7iGTQ/LAei7fMsNKo74J7+wrNQtIa5FF/HEBts3YOgtKO+645fIwLiRMMCcV0rMbz5yUdyUUebQlN9vc9p+OsalDHKGGst5pEHcY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB9830
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 13 Mar 2025 04:10:47 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1198
+ <yocto-patches@lists.yoctoproject.org>; Thu, 13 Mar 2025 09:33:39 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1199
 
-Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
----
- ...ervices-chronyd-fix-dac_read_search-.patch | 58 +++++++++++++++++++
- .../refpolicy/refpolicy_common.inc            |  1 +
- 2 files changed, 59 insertions(+)
- create mode 100644 recipes-security/refpolicy/refpolicy/0058-policy-modules-services-chronyd-fix-dac_read_search-.patch
+Hi Trevor, Khem,
 
-diff --git a/recipes-security/refpolicy/refpolicy/0058-policy-modules-services-chronyd-fix-dac_read_search-.patch b/recipes-security/refpolicy/refpolicy/0058-policy-modules-services-chronyd-fix-dac_read_search-.patch
-new file mode 100644
-index 0000000..7d1743c
---- /dev/null
-+++ b/recipes-security/refpolicy/refpolicy/0058-policy-modules-services-chronyd-fix-dac_read_search-.patch
-@@ -0,0 +1,58 @@
-+From f892f5e254e26418213556f00badaf69d14ec16f Mon Sep 17 00:00:00 2001
-+From: Clayton Casciato <ccasciato@21sw.us>
-+Date: Thu, 27 Feb 2025 15:53:30 -0700
-+Subject: [PATCH] chronyd: fix dac_read_search denials
-+
-+avc:  denied  { dac_read_search }
-+comm=chronyd
-+capability=dac_read_search
-+scontext=system_u:system_r:chronyd_t:s0
-+tcontext=system_u:system_r:chronyd_t:s0
-+tclass=capability
-+
-+--
-+
-+Fedora
-+
-+chronyd_t
-+https://github.com/fedora-selinux/selinux-policy/blob/281599ec3a5f0cc0d423b98bb76c71c1a5d76870/policy/modules/contrib/chronyd.te#L55
-+
-+chronyc_t
-+https://github.com/fedora-selinux/selinux-policy/blob/281599ec3a5f0cc0d423b98bb76c71c1a5d76870/policy/modules/contrib/chronyd.te#L257
-+
-+--
-+
-+Reference:
-+https://danwalsh.livejournal.com/77140.html
-+
-+Signed-off-by: Clayton Casciato <ccasciato@21sw.us>
-+
-+Upstream-Status: Backport [https://github.com/SELinuxProject/refpolicy/commit/231960371da6ed49fdde1891dee3cf607791c76f]
-+
-+Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
-+---
-+ policy/modules/services/chronyd.te | 4 ++--
-+ 1 file changed, 2 insertions(+), 2 deletions(-)
-+
-+diff --git a/policy/modules/services/chronyd.te b/policy/modules/services/chronyd.te
-+index 9e6ba5bf1..3d4007a57 100644
-+--- a/policy/modules/services/chronyd.te
-++++ b/policy/modules/services/chronyd.te
-+@@ -54,7 +54,7 @@ logging_log_file(chronyd_var_log_t)
-+ # chronyd local policy
-+ #
-+ 
-+-allow chronyd_t self:capability { chown dac_override ipc_lock setgid setuid sys_resource sys_time };
-++allow chronyd_t self:capability { chown dac_override dac_read_search ipc_lock setgid setuid sys_resource sys_time };
-+ allow chronyd_t self:process { getcap setcap setrlimit signal };
-+ allow chronyd_t self:shm create_shm_perms;
-+ allow chronyd_t self:fifo_file rw_fifo_file_perms;
-+@@ -134,7 +134,7 @@ optional_policy(`
-+ # chronyc local policy
-+ #
-+ 
-+-allow chronyc_t self:capability { dac_override };
-++allow chronyc_t self:capability { dac_override dac_read_search };
-+ allow chronyc_t self:process { signal };
-+ allow chronyc_t self:udp_socket create_socket_perms;
-+ allow chronyc_t self:netlink_route_socket create_netlink_socket_perms;
-diff --git a/recipes-security/refpolicy/refpolicy_common.inc b/recipes-security/refpolicy/refpolicy_common.inc
-index 0661e6c..fca7034 100644
---- a/recipes-security/refpolicy/refpolicy_common.inc
-+++ b/recipes-security/refpolicy/refpolicy_common.inc
-@@ -73,6 +73,7 @@ SRC_URI += " \
-         file://0055-policy-modules-system-setrans-allow-setrans_t-use-fd.patch \
-         file://0056-policy-modules-system-systemd-make-_systemd_t-MLS-tr.patch \
-         file://0057-policy-modules-system-logging-make-syslogd_runtime_t.patch \
-+        file://0058-policy-modules-services-chronyd-fix-dac_read_search-.patch \
-         "
- 
- S = "${WORKDIR}/refpolicy"
+On 3/10/25 11:07 PM, Khem Raj via lists.yoctoproject.org wrote:
+> On Mon, Mar 10, 2025 at 8:47=E2=80=AFAM Trevor Woerner via
+> lists.yoctoproject.org <twoerner=3Dgmail.com@lists.yoctoproject.org>
+> wrote:
+>>
+>> Hi Taoran,
+>>
+>> On Mon 2025-03-10 @ 11:10:31 AM, =E5=88=98=E9=99=B6=E7=84=B6 wrote:
+>>> Hi Trevor,
+>>> I'm trying to build the scarthgap branch for meta-rockchip and got erro=
+rs
+>>> in kernel and u-boot.
+>>> I noticed it is because of the receipts in the branch. Just like
+>>> https://git.yoctoproject.org/meta-rockchip/tree/recipes-kernel/linux/li=
+nux-torvalds-next_git.bb?h=3Dscarthgap
+>>>
+>>> it's using next-20240904 from linux-torvalds-next
+>>> <https://git.yoctoproject.org/meta-rockchip/tree/recipes-kernel/linux/l=
+inux-torvalds-next_git.bb?h=3Dscarthgap>,
+>>> but the branches in this repository are expired very frequently.
+>>>
+>>> For the LTS version like scarthgap, when the version is frozen, it shou=
+ld
+>>> be set to stable(better to be LTS) versions of kernel and u-boot, isn't=
+ it?
+>>
+>> Yes it should, and it does... when it can.
+>>
+>> Yocto scarthgap is based on linux-6.6.y. All of the machines in
+>> meta-rockchip's scarthgap branch use oe-core's linux-yocto_6.6, except t=
+he
+>> radxa zero 3 machines and the orangepi-5-plus. The reason for this is be=
+cause
+>> linux-6.6.y does not support these devices.
+>>
+>> oe-core scarthgap also provides a linux-yocto-dev kernel based on linux-=
+6.9.y.
+>> This supports the orangepi-5-plus machine (so this machine uses that ker=
+nel in
+>> scarthgap) but linux-6.9.y still does not have support for the radxa zer=
+o 3
+>> devices.
+>>
+>> Yocto master currently supports linux-6.12.y with linux-yocto and linux-=
+6.14.y
+>> with linux-yocto-dev. linux-6.12.y supports both the radxa zero 3 device=
+s and
+>> the orangepi-5-plus (which reminds me, I should update those machines si=
+nce
+>> they're still using linux-yocto-dev).
+>>
+>> So I assume you're probably using scarthgap to build for a radxa zero 3
+>> device since your comments are only true for that device. During the
+>> time-frame of scarthgap I was eager to be able to build for the radxa ze=
+ro 3
+>> since I had one and wanted to use it for a project. So I had to pull in =
+what
+>> was (at that time) very experimental code to get it to work.
+>=20
+> I think it would be nice to mark which machines are stable/mature vs
+> experimental
+> at the time this could convey the message, as the releases are frozen
+> in time this
+> problem is bound to happen.
+>=20
+>>
+>> I could back-port oe-core master's linux-yocto to scarthgap in order to
+>> support the radxa zero 3 in a more stable way. But perhaps a better solu=
+tion
+>> would be to remove radxa zero 3 support from scarthgap and simply ask th=
+at
+>> master be used for this device.
+>>
+>> Thoughts?
+>=20
+> If you want to stay close to stable policies then yes, but BSP layers hav=
+e taken
+> kernel roadmap as it fits the given family of SOCs so I would not discour=
+age you
+> from considering backport if there is a need for it in the given BSP
+> layer community.
+>=20
+
+Considering we also have a very custom U-Boot for that board, I would=20
+simply recommend dropping support for it entirely from the scarthgap=20
+branch? Haven't checked styhead, but maybe from that one as well?
+
+Support for that board was added before we could use fully upstream=20
+recipes, so I guess it's bound to happen again for other boards (e.g.=20
+RK3576-based). Therefore I guess Khem's suggestion of listing the state=20
+of support for boards would be nice indeed. Essentially, anything that=20
+cannot use the upstream recipes (kernel, u-boot, ...) with the upstream=20
+source code with a couple of patches should be deemed=20
+"early/alpha/unstable support" and once upstream OE-Core has recipes=20
+that can be used with the aforementioned limitation, list it in the=20
+"supported" section or something like that. It'd probably be nice to say=20
+what we mean by "supported", I don't know exactly what and how you are=20
+testing so keeping people's expectations in check with the meta-rockchip=20
+layer would be nice.
+
+Cheers,
+Quentin
 
