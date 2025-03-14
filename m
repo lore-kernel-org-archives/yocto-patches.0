@@ -1,43 +1,43 @@
-Return-Path: <michael.haener@siemens.com>
+Return-Path: <ross.burton@arm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A98F5C282EC
-	for <webhook@archiver.kernel.org>; Fri, 14 Mar 2025 12:08:24 +0000 (UTC)
-Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
- by mx.groups.io with SMTP id smtpd.web10.12629.1741954098899925886
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6285C282EC
+	for <webhook@archiver.kernel.org>; Mon, 17 Mar 2025 09:37:58 +0000 (UTC)
+Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
+ by mx.groups.io with SMTP id smtpd.web11.10028.1741944214704906372
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 14 Mar 2025 05:08:20 -0700
+ Fri, 14 Mar 2025 02:23:35 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=michael.haener@siemens.com header.s=fm1 header.b=V380EAZS;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.226, mailfrom: fm-664519-20250314120814c93a29edd1bd3534b2-lvxix6@rts-flowmailer.siemens.com)
-Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 20250314120814c93a29edd1bd3534b2
+ dkim=pass header.i=michael.haener@siemens.com header.s=fm1 header.b=Cue7Vl3X;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.227, mailfrom: fm-664519-20250314092331768ee1487c6cbbd439-vdfngi@rts-flowmailer.siemens.com)
+Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 20250314092331768ee1487c6cbbd439
         for <yocto-patches@lists.yoctoproject.org>;
-        Fri, 14 Mar 2025 13:08:15 +0100
+        Fri, 14 Mar 2025 10:23:31 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=michael.haener@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
  bh=8n7zgLrMoxRFQicRGvJP/mQv+lvcrEfZKGJdFoCTlcY=;
- b=V380EAZSkOeos8nsaVFB8USA9jhv8FhaR6Hpnq/Kfv7ozrMe/fn/sFD8VTcmf1dL5ZLyjw
- ajFqozKiMR1axGmmb/+x/YIELpdIkSakYCzGc6fcovqeedyxLIFv9jUKc1knFmO34m/BAfSR
- /M0Y28/IRSmBpVGMaznntrHRCsErYtAZxwQJKNuhb3DiBnZXtX6wPgRHeKZwNJitFAjWlo28
- lUNW+WCh6uaxIFwOM+oAnyQPD81h9Y5SDqmZ9DCSXgtO1bk79+fcGiXK+7ygXn5XIMWHrLE3
- KkUnJIL/Z/8bxQOa+X5Vvx8K0+Z8eYidLk/nMRygc4deGMgaWjth3Q6Q==;
-From: Michael Haener <michael.haener@siemens.com>
+ b=Cue7Vl3XuWlZUEBSGIDGFeCRTGH7q/uvMjv191rw+XuFQnBx1QARXpr6RpKtRkXjmpF5MR
+ kzPxEG86viMOYqbnKLZqTQZrPUP+DB5Ex2ZSwA8BIh6iWEu7reJZaajScve0p8odF0tXGEh8
+ k3wx9wzfZm8rg3O1iv3nCIiiuMIHTdK5GcnQTLoL4AkFpgYa0g1vLUNME3TOQ7R+QAA6DX34
+ zSxskRtBcjvKJlvQEZYp7G6um/9qTiO4DUF+tGCkLpQisCc6RypWMedZU0H8kvs9OhCddffL
+ de6eat2gPMX3mLyhSp+sR//KJTccTvRVDx8fLIKtbNhgc/b0I9tptLZA==;
+From: "Michael Haener" <michael.haener@siemens.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Michael Haener <michael.haener@siemens.com>
 Subject: [meta-security][PATCH] tpm2-openssl: update to 1.3.0
-Date: Fri, 14 Mar 2025 13:08:08 +0100
-Message-Id: <20250314120808.39820-1-michael.haener@siemens.com>
+Date: Fri, 14 Mar 2025 10:23:23 +0100
+Message-Id: <20250314092323.8659-1-michael.haener@siemens.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 X-Flowmailer-Platform: Siemens
 Feedback-ID: 519:519-664519:519-21489:flowmailer
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 14 Mar 2025 12:08:24 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1205
+ <yocto-patches@lists.yoctoproject.org>; Mon, 17 Mar 2025 09:37:58 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1206
 
 Signed-off-by: Michael Haener <michael.haener@siemens.com>
 ---
