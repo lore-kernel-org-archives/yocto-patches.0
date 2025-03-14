@@ -1,116 +1,99 @@
-Return-Path: <richard.purdie@linuxfoundation.org>
+Return-Path: <wuxiaotian@loongson.cn>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1480AC282DE
-	for <webhook@archiver.kernel.org>; Thu, 13 Mar 2025 15:55:02 +0000 (UTC)
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
- by mx.groups.io with SMTP id smtpd.web10.18508.1741881297904689281
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F2CCC282DE
+	for <webhook@archiver.kernel.org>; Fri, 14 Mar 2025 01:17:51 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+ by mx.groups.io with SMTP id smtpd.web11.3659.1741915068987721275
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 13 Mar 2025 08:54:58 -0700
+ Thu, 13 Mar 2025 18:17:49 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=eRkB7ICS;
- spf=pass (domain: linuxfoundation.org, ip: 209.85.221.51, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3965c995151so402208f8f.1
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 13 Mar 2025 08:54:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1741881296; x=1742486096; darn=lists.yoctoproject.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=u+AzA+p8H87zQ3foCj10iqsUWSUaNDrxI/Qmlr25CCM=;
-        b=eRkB7ICSbov27doAonhp91Lrjocf0eUqewaJ0sY6aKzVNSRZe+yi53sdObeBOpY8+8
-         hFg5oAYgHo7MXl0ZpVeKpwXRixkHb1IHbHc8dcnxdUjxigHzBbMe8SU3A9pzbad6LCI+
-         Cr7wmLnCvsBMAqUPZc/9jULGDXjV34cKmL8w8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741881296; x=1742486096;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=u+AzA+p8H87zQ3foCj10iqsUWSUaNDrxI/Qmlr25CCM=;
-        b=cIH8B3IlndE/iKZsAOBbTwUKgJHyVjbHNDHDSOUlyepEcUBReQRF/VHCSt6+9eVWgr
-         Qf7Os0mRmN1eG6tQj2+OdTmCJlGQ10S7xGAicnt2naBNDn4ihpkfsL8n5xBFLf7QQYfd
-         BQ1V08W25VXG96aOyR4h4CYW7MO370D9urMHJc7miN+CooQQxwpEjmHiT9jqPNFR88SQ
-         ZjD7Q6DpIIK1wek10mB9+7D2jsCWK8rd+GZdaNKkglOm3gf9VGFIPS7fg1THtRFimsc/
-         aTjzmzchnLrlXXIJltYftHy6pfRB66+qDJjyWu+NdVy9VnSQ5DN1C541OgJjyCf/i/G6
-         AwBA==
-X-Gm-Message-State: AOJu0YyE4Ycxv2h7+x2zT0FUcbUoIj1qMtrtx0fH5bgabt8l1lJNiIEN
-	5aX+SW/69hC5HV66xcllkIeshxDWRHUhJn2XyahRWopwoAznhvvHBinlYZ2wA7pheKf+t65HHWS
-	x
-X-Gm-Gg: ASbGnctPRM7SmR24t8YWN+IgUsM30rI9ZtkOlyKH8vsayytwXyAHN3ajcwuKVSpzlYV
-	GeC7HpyGYgvxDd+Hm3iBOPl26NJNyu1n0HZuOw7BS3+jNueii1qa+fueheYUldPX5ETFMqpLuYt
-	y9Oreo+EO1HfSPpkBb5h+HXREnjBkWo+w2DE7lB0HJxAu0RZIy2W6tkn1IUOfXsW0PieYmu3lEm
-	++JERKtqWPYyNDw0zGf67ccZ+q1ekofV7gGVYntvJiLLFl2WnTWiHC8gPf8JR7TpPZTMtzSq+i2
-	UDZ82pfQS5/xwFR7Y6fpe+FIgRlkGv3P4hYF8l5lhiQtv3rlSErGqvFh5/zr79tVFXhpImXn5jG
-	4pQd/rYhbksd9qyiLCONPinUHcNUSZo8A1I/J1E7Secj8
-X-Google-Smtp-Source: AGHT+IEGaMqtO4T2btugQhOfK6yJLNDX/0g8r5DWI3O2AAg08PrMQfTJsw9CIur3TdTwOxgVq1xdGQ==
-X-Received: by 2002:a05:6000:184b:b0:391:23e6:f08c with SMTP id ffacd0b85a97d-3926c5a48c5mr10468407f8f.47.1741881295939;
-        Thu, 13 Mar 2025 08:54:55 -0700 (PDT)
-Received: from ?IPv6:2001:8b0:aba:5f3c:cc37:5f80:1a41:4bc8? ([2001:8b0:aba:5f3c:cc37:5f80:1a41:4bc8])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395cb7ebaedsm2554229f8f.90.2025.03.13.08.54.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 08:54:55 -0700 (PDT)
-Message-ID: <89631d665d97b77ad40924cd5abc003e77c8dcb1.camel@linuxfoundation.org>
-Subject: Re: [yocto-patches] [pseudo] [PATCH 2/3] Makefile.in: Use
- ARCH_FLAGS instead of -m32 and -m64
-From: Richard Purdie <richard.purdie@linuxfoundation.org>
-To: yocto-patches@lists.yoctoproject.org
-Cc: Xiaotian Wu <wuxiaotian@loongson.cn>
-Date: Thu, 13 Mar 2025 15:54:54 +0000
-In-Reply-To: <20250309060039.454124-3-wuxiaotian@loongson.cn>
-References: <20250309060039.454124-1-wuxiaotian@loongson.cn>
-	 <20250309060039.454124-3-wuxiaotian@loongson.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.2-0ubuntu1 
+ dkim=none (message not signed); spf=pass (domain: loongson.cn, ip: 114.242.206.163, mailfrom: wuxiaotian@loongson.cn)
+Received: from loongson.cn (unknown [192.168.100.1])
+	by gateway (Coremail) with SMTP id _____8AxDGuyg9Nn_rqVAA--.57997S3;
+	Fri, 14 Mar 2025 09:17:38 +0800 (CST)
+Received: from [10.40.24.15] (unknown [192.168.100.1])
+	by front1 (Coremail) with SMTP id qMiowMBxb8esg9NneNhJAA--.11525S3;
+	Fri, 14 Mar 2025 09:17:33 +0800 (CST)
+Message-ID: <b2f92374-8bf6-4b73-9c24-ddcbfc179c9a@loongson.cn>
+Date: Fri, 14 Mar 2025 09:17:32 +0800
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [yocto-patches] [pseudo] [PATCH 3/3] configure: Add support for
+ LoongArch
+To: Richard Purdie <richard.purdie@linuxfoundation.org>,
+ yocto-patches@lists.yoctoproject.org
+References: <20250309060039.454124-1-wuxiaotian@loongson.cn>
+ <20250309060039.454124-4-wuxiaotian@loongson.cn>
+ <cc8eb00a6f3790f6e66a6cc868dc3c56d18dd406.camel@linuxfoundation.org>
+Content-Language: en-US
+From: Xiaotian Wu <wuxiaotian@loongson.cn>
+In-Reply-To: <cc8eb00a6f3790f6e66a6cc868dc3c56d18dd406.camel@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: qMiowMBxb8esg9NneNhJAA--.11525S3
+X-CM-SenderInfo: 5zx0xtprwlt0o6or00hjvr0hdfq/1tbiAQEBCGfTX8wCRwABsq
+X-Coremail-Antispam: 1Uk129KBj93XoW7CF4ftw43Zw1kCr1fWryrKrX_yoW8JFy5pa
+	43AFy7GF97uw13GFs8uw48W390y34kKFs8WFs7t34UJF4DCw1xtr40krn5Kr97Zr1xAa1U
+	ZayrW3W7KanIyagCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
+	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v2
+	6r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCF04k20xvY0x0EwIxGrw
+	CFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE
+	14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2
+	IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxK
+	x2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI
+	0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8czVUUUUUU==
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 13 Mar 2025 15:55:02 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1202
+ <yocto-patches@lists.yoctoproject.org>; Fri, 14 Mar 2025 01:17:51 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1203
 
-On Sun, 2025-03-09 at 14:00 +0800, Xiaotian Wu via lists.yoctoproject.org w=
-rote:
-> Gcc on Loongarch does not support this -m32 and -m64 options.
-> we can use the $(ARCH_CLAGS) variable instead.
->=20
-> Signed-off-by: Xiaotian Wu <wuxiaotian@loongson.cn>
-> ---
-> =C2=A0Makefile.in | 4 ++--
-> =C2=A01 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/Makefile.in b/Makefile.in
-> index 48fdbd2..0bb8a88 100644
-> --- a/Makefile.in
-> +++ b/Makefile.in
-> @@ -157,10 +157,10 @@ pseudo_wrappers.o: $(GUTS) pseudo_wrappers.c pseudo=
-_wrapfuncs.c pseudo_wrapfuncs
-> =C2=A0	$(CC) -fno-strict-aliasing $(CFLAGS) $(CFLAGS_PSEUDO) -D_GNU_SOURC=
-E -c -o pseudo_wrappers.o pseudo_wrappers.c
-> =C2=A0
-> =C2=A0offsets32:
-> -	$(CC) -m32 -o offsets32 offsets.c
-> +	$(CC) $(ARCH_FLAGS) -o offsets32 offsets.c
-> =C2=A0
-> =C2=A0offsets64:
-> -	$(CC) -m64 -o offsets64 offsets.c
-> +	$(CC) $(ARCH_FLAGS) -o offsets64 offsets.c
-> =C2=A0
-> =C2=A0$(PSEUDO_PROFILE): pseudo_profile | $(BIN)
-> =C2=A0	cp pseudo_profile $(BIN)
 
-The whole point of those lines is to generate 64 and 32 bit versions of
-those files. A single ARCH_FLAGS value will not do that and it would
-break their existing usage.
+在 2025/3/13 23:48, Richard Purdie 写道:
+> On Sun, 2025-03-09 at 14:00 +0800, Xiaotian Wu via lists.yoctoproject.org wrote:
+>> Set the default architecture based on the current machine
+>>
+>> Signed-off-by: Xiaotian Wu <wuxiaotian@loongson.cn>
+>> ---
+>>   configure | 11 ++++++++++-
+>>   1 file changed, 10 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/configure b/configure
+>> index 39b5fbe..9fbba9a 100755
+>> --- a/configure
+>> +++ b/configure
+>> @@ -22,8 +22,17 @@ opt_xattrdb=false
+>>   opt_profile=false
+>>   opt_passwd_fallback='""'
+>>   
+>> +UNAME_MACHINE=`(uname -m) 2>/dev/null` || UNAME_MACHINE=x86
+>> +case $UNAME_MACHINE in
+>> +  i*86|x86_64) opt_arch=x86 ;;
+>> +  arm|arm64) opt_arch=arm ;;
+>> +  loongarch32|loongarch64) opt_arch=loongarch ;;
+>> +esac
+>> +
+> Using uname like this is not cross compile compatible and will break
+> pseudo from building in OpenEmbedded. We can't do this...
+Here the default arch parameter is just set based on uname, just like 
+opt_arch=x86 before, and there is still support for rewriting the actual 
+opt_arch with the --arch option, so the functionality hasn't actually 
+changed, and the expectation is that it will still work as before.
+>
+> Cheers,
+>
+> Richard
 
-Since these targets aren't actually referenced anywhere I can see, I'm
-wondering how you ran into this in the first place?
+-- 
+Best Regards
+Xiaotian Wu
 
-This wouldn't work on Arm either but we're not running into it in
-normal build usage.
-
-Cheers,
-
-Richard
 
