@@ -1,131 +1,94 @@
-Return-Path: <soumya.sambu@windriver.com>
+Return-Path: <raj.khem@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85DA8C282EC
-	for <webhook@archiver.kernel.org>; Tue, 18 Mar 2025 03:20:20 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
- by mx.groups.io with SMTP id smtpd.web10.3435.1742268009685301263
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98930C28B30
+	for <webhook@archiver.kernel.org>; Tue, 18 Mar 2025 03:39:10 +0000 (UTC)
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+ by mx.groups.io with SMTP id smtpd.web11.3654.1742269142128326111
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 17 Mar 2025 20:20:09 -0700
+ Mon, 17 Mar 2025 20:39:02 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.166.238, mailfrom: prvs=51723feb02=soumya.sambu@windriver.com)
-Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52I1w20q020345
-	for <yocto-patches@lists.yoctoproject.org>; Mon, 17 Mar 2025 20:20:09 -0700
-Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 45d92jtgku-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <yocto-patches@lists.yoctoproject.org>; Mon, 17 Mar 2025 20:20:09 -0700 (PDT)
-Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.43; Mon, 17 Mar 2025 20:20:08 -0700
-Received: from blr-linux-engg1.wrs.com (147.11.136.210) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
- 15.1.2507.43 via Frontend Transport; Mon, 17 Mar 2025 20:20:06 -0700
-From: ssambu <soumya.sambu@windriver.com>
-To: <yocto-patches@lists.yoctoproject.org>
-Subject: [meta-lts-mixins][kirkstone/rust][PATCH 1/1] mozjs: Use RUST_HOST_SYS and RUST_TARGET_SYS
-Date: Tue, 18 Mar 2025 03:20:01 +0000
-Message-ID: <20250318032001.2031160-1-soumya.sambu@windriver.com>
-X-Mailer: git-send-email 2.40.0
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=jG0lcTfQ;
+ spf=pass (domain: gmail.com, ip: 209.85.216.52, mailfrom: raj.khem@gmail.com)
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2ff797f8f1bso4160140a91.3
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 17 Mar 2025 20:39:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742269141; x=1742873941; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wk55SVNqyXiqtXuV2lD2Zx3K4awztggfA+j0KjEWqQY=;
+        b=jG0lcTfQytiVZULBL/a9HIYGqie6H+/c2orXjETJyFOyumXXiEcmPZDVgNNb0MJk2N
+         TnhACHVDXqaqxCRXweRGaD6OFAsHzbmtS0mVjh7L3xSPojC4jXyYI6wi7YQgVtR2ac/k
+         xzwbGsAzbRMoX7ajD+SagzMiND5QGnILs8LuX4A4erSORUsPNyLUWkDUUlS+6paTsvKc
+         y1o7pKEMT4aC2PvJ8bizNqqJbgN5rILpa2S2JN1zCtD/46XscWBrrjU0kQzu+wCxfbHv
+         /1STmME7UrGzpMf9aEVP6TQlC999047yfMK5REM6feyhraoOp2rL2iUJSO88kiNGpLvV
+         9zMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742269141; x=1742873941;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Wk55SVNqyXiqtXuV2lD2Zx3K4awztggfA+j0KjEWqQY=;
+        b=cx+tygZymeTkW1mZdaYW+wdMzOSyNFntctD+FJ0/f+9DGzNA2me+vlEeE4TgOsmPtW
+         jNX79PKCeFGrPG3V1HsrjUGi1BheCReEI6rFao1eS+Yd8BY88Vro5T5X8LBkRsZ2UNB7
+         ivgLWGfhp+yMJC7o82gIsZOTyHuFZHFoQ7ENdMlHqR+Cke5M9I5DevaCm1NOomCbaxWI
+         29N5oW9/oK7lUor5OF0ghE9s2uywYrd59ohS+UkU6BefMCJZs4L79Su3ph8/1MUjHWXT
+         FgH5UVgtPXwApPlKtRFLGnRCgf2vKCrE/qLwmNWxXmx2/6DdoRK3KuBKRxE3mHHCryro
+         T/Jw==
+X-Gm-Message-State: AOJu0YwZlNQkjJDUZI0ytDkc+y4BcCnR5NSLJbETvxWr9B77cDIsxb/a
+	U2NU5KCyFAcN4CupUR4FyeoPkXEJaLfWF0t2djsd3xM0hpn68LPDViev6K/T
+X-Gm-Gg: ASbGncty0LXfc90+4TRbW1cB1ESKTxMHQDnN+TcDvcmIfkVpdAkq2RiMHZSvOezgEJu
+	GkZxDzlXIgWaNehby+VRhyIXL5h5QSw5+mSeN8UTql2/jmHXmp/v4j/w3LlC8iDqB+6ZwIR9l1q
+	UOs/o/g3xNcTQMWeMrtIRbwfUfrDmL0tG8GFnFBoBvkHLoAKPcZKUBiZOwvPtlmJ/boW9JlnyL7
+	/nkPdEJuruieUv70isQMnyz5yccw82eEjS0tfPl7ovnyz5FZWjhLY+DKCz44KPVFLY3tU9jnoIt
+	T8xnZVZQOJYiAajxs7DDxBdmoR/8UYdcew04
+X-Google-Smtp-Source: AGHT+IFFX2AKV6lxzJqtr0FaJ35Wa0vvlt7S6ATEWdjbNUArfSfLxzXDYFY6GerHhk0GveIetIfdyA==
+X-Received: by 2002:a17:90b:4ac5:b0:301:9f62:a944 with SMTP id 98e67ed59e1d1-301a5b965bcmr1075226a91.33.1742269141137;
+        Mon, 17 Mar 2025 20:39:01 -0700 (PDT)
+Received: from apollo.localdomain ([2601:646:8201:fd20::6874])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301534f477csm7000408a91.5.2025.03.17.20.39.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Mar 2025 20:39:00 -0700 (PDT)
+From: Khem Raj <raj.khem@gmail.com>
+To: yocto-patches@lists.yoctoproject.org
+Cc: Khem Raj <raj.khem@gmail.com>
+Subject: [psplash][PATCH 1/2] psplash: Only define bool if using C standard older than C23
+Date: Mon, 17 Mar 2025 20:38:57 -0700
+Message-ID: <20250318033858.2400370-1-raj.khem@gmail.com>
+X-Mailer: git-send-email 2.49.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=QdRmvtbv c=1 sm=1 tr=0 ts=67d8e669 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=KuCMGVAfJcUA:10 a=Vs1iUdzkB0EA:10 a=t7CeM3EgAAAA:8 a=-MY5uQsLp-xdYS-G4fAA:9 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-ORIG-GUID: C-Ng3bWDw-4_wlraSnvKiSenMLMH32eh
-X-Proofpoint-GUID: C-Ng3bWDw-4_wlraSnvKiSenMLMH32eh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-18_01,2025-03-17_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
- malwarescore=0 priorityscore=1501 mlxlogscore=728 impostorscore=0
- mlxscore=0 clxscore=1011 suspectscore=0 lowpriorityscore=0 bulkscore=0
- adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.21.0-2502280000
- definitions=main-2503180021
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 18 Mar 2025 03:20:20 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1212
+ <yocto-patches@lists.yoctoproject.org>; Tue, 18 Mar 2025 03:39:10 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1213
 
-From: Soumya Sambu <soumya.sambu@windriver.com>
+gcc-15 switched to -std=c23 by default:
 
-The mozjs-91 and mozjs-78 recipe in meta-openembedded sets --target=${HOST_SYS} and
---target=${TARGET_SYS} respectively, which leads to an error when using Rust from meta-lts-mixins:
+https://gcc.gnu.org/git/?p=gcc.git;a=commitdiff;h=55e3bd376b2214e200fa76d12b67ff259b06c212
 
-error: Error loading target specification: Could not find specification for target "x86_64-poky-linux".
+only typedef int bool for __STDC_VERSION__ <= 201710L (C17)
 
-Updated target configuration to resolve this.
-
-Additionally, `mozjs-78` encountered "linker 'cc' not found" error. This was fixed by explicitly
-defining the linker for Rust.
-
-Signed-off-by: Soumya Sambu <soumya.sambu@windriver.com>
+Signed-off-by: Khem Raj <raj.khem@gmail.com>
 ---
- recipes-devtools/rust/rust_1.81.0.bb       |  3 +++
- recipes-extended/mozjs/mozjs-78_%.bbappend | 14 ++++++++++++++
- recipes-extended/mozjs/mozjs-91_%.bbappend | 13 +++++++++++++
- 3 files changed, 30 insertions(+)
- create mode 100644 recipes-extended/mozjs/mozjs-78_%.bbappend
- create mode 100644 recipes-extended/mozjs/mozjs-91_%.bbappend
+ psplash.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/recipes-devtools/rust/rust_1.81.0.bb b/recipes-devtools/rust/rust_1.81.0.bb
-index cc00053..2d91d68 100644
---- a/recipes-devtools/rust/rust_1.81.0.bb
-+++ b/recipes-devtools/rust/rust_1.81.0.bb
-@@ -146,6 +146,9 @@ python do_configure() {
-     # harness are debuggable just from logfiles
-     config.set("rust", "verbose-tests", e(True))
+diff --git a/psplash.h b/psplash.h
+index 1c42ec7..138e49d 100644
+--- a/psplash.h
++++ b/psplash.h
+@@ -37,7 +37,10 @@
  
-+    # Override default linker cc.
-+    config.set("rust", "default-linker", e(d.expand("${RUST_BUILD_CCLD}")))
+ typedef uint8_t  uint8;
+ typedef uint16_t uint16;
 +
-     # [build]
-     config.add_section("build")
-     config.set("build", "submodules", e(False))
-diff --git a/recipes-extended/mozjs/mozjs-78_%.bbappend b/recipes-extended/mozjs/mozjs-78_%.bbappend
-new file mode 100644
-index 0000000..8e8c24a
---- /dev/null
-+++ b/recipes-extended/mozjs/mozjs-78_%.bbappend
-@@ -0,0 +1,14 @@
-+EXTRA_OECONF = " \
-+    --target=${RUST_TARGET_SYS} \
-+    --host=${BUILD_SYS} \
-+    --prefix=${prefix} \
-+    --libdir=${libdir} \
-+    --x-includes=${STAGING_INCDIR} \
-+    --x-libraries=${STAGING_LIBDIR} \
-+    --without-system-icu \
-+    --disable-tests --disable-strip --disable-optimize \
-+    --disable-jemalloc \
-+    --with-system-icu \
-+    ${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', "--enable-gold", '--disable-gold', d)} \
-+    ${JIT} \
-+"
-diff --git a/recipes-extended/mozjs/mozjs-91_%.bbappend b/recipes-extended/mozjs/mozjs-91_%.bbappend
-new file mode 100644
-index 0000000..c0214b0
---- /dev/null
-+++ b/recipes-extended/mozjs/mozjs-91_%.bbappend
-@@ -0,0 +1,13 @@
-+do_configure() {
-+        cd ${B}
-+        python3 ${S}/configure.py \
-+        --enable-project=js \
-+        --target=${RUST_HOST_SYS} \
-+        --host=${BUILD_SYS} \
-+        --prefix=${prefix} \
-+        --libdir=${libdir} \
-+        --disable-jemalloc \
-+        --disable-strip \
-+        ${JIT} \
-+        ${ICU}
-+}
--- 
-2.40.0
-
++#if defined __STDC__ && defined __STDC_VERSION__ && __STDC_VERSION__ <= 201710L
+ typedef int            bool;
++#endif
+ 
+ #ifndef FALSE
+ #define FALSE 0
 
