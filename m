@@ -1,158 +1,94 @@
-Return-Path: <skandigraun@gmail.com>
+Return-Path: <adrian.freihofer@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4F60C28B30
-	for <webhook@archiver.kernel.org>; Thu, 20 Mar 2025 19:23:14 +0000 (UTC)
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
- by mx.groups.io with SMTP id smtpd.web11.3592.1742498587536987441
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FE24C28B30
+	for <webhook@archiver.kernel.org>; Thu, 20 Mar 2025 20:22:55 +0000 (UTC)
+Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
+ by mx.groups.io with SMTP id smtpd.web11.4944.1742502164052399092
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 20 Mar 2025 12:23:07 -0700
+ Thu, 20 Mar 2025 13:22:45 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=AQJbNm2e;
- spf=pass (domain: gmail.com, ip: 209.85.218.44, mailfrom: skandigraun@gmail.com)
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-abf3d64849dso210532366b.3
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 20 Mar 2025 12:23:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742498586; x=1743103386; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=ollW+L+eanQwDQpxHwBwNrx8ujqmsQGhvVxYfHk9klo=;
-        b=AQJbNm2eS4kNE0MzgNcuat4+bZ79gKWDf8HgPYdQVIoJHgzsQI5IqZ1mHCJPdQ2crL
-         gL+cdCIsnk27Vhp2LDEo43qE93Sxp4pEhYlHH0dCBRPeEDmvYIfyryxAzYomK0fKB0QL
-         cdmjvAYu7Rieob5lfGQk4NwljZqRL7LY3UuZXLNLBcuZpzW/JKt9UV9eUvXUa10r2Km5
-         EDjcJxtmtz8brSJoWoGcGDYZI7ewlx4ChndS3cwONImofO49nKUYt2vurXwqY7Coeiit
-         uA2k4goLtfu+ZfUvjNw80ayoCQT7a5HpcFgNdmo891KkC2M8mHFwglvRMDPFqtR+k+Po
-         1ryA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742498586; x=1743103386;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ollW+L+eanQwDQpxHwBwNrx8ujqmsQGhvVxYfHk9klo=;
-        b=br0Zi+qzQvD9KKcCmeecUQ5+2NzCtZs9AFCdfU0i5pYEM94jYf1+272GH5Rq84ryJo
-         kwdrceTDD1jbaEc80o118/o9uzfAt8jl+I4HK0V5jRqKhLSpIqMuRQJOqy4xfl+uB+N9
-         ehakHV+iifwU9E2OO7OQwqQh4sszOOMsSJidRI0Is32G8mrgawBjkhD+Z9qD3utKIxOY
-         HELprDI/IHKD5tGi7SJ8PmVgnU1GsdizBgPmbu8kM9/DzjE8VpEQHfoAkN7mrIHoNMkU
-         x0MFSRMPN1s6ANhKt8PKyWYL/qUBO9rApoFj8I4NscJmFzdXvLjaHpaGVq/catJb3tWm
-         pVDg==
-X-Gm-Message-State: AOJu0YwKH4e9k7fwuwWZvyXjuHsBbdoehmO1/ZKDm2G+jVK6lVfGRQlf
-	vGs8Ceac3JN+vDSU8o3qGUHg/MB2vIquQH0vqAfZf6z+7Y/XgCaayusv8A==
-X-Gm-Gg: ASbGncs+D8q1gRExc3EndREr/zyTKplb6wM5FW7ZeLZzMVUaWtTs8DzVWTf/xsFax+E
-	ZFNfwoVT9dKzNTjES8AAWhVfYcSQWw2ndWgpLELwY+mNWJYo2jPeGvCRfjISEUHACubfN6lsTk8
-	q1pH/C6P5ciwbfqzjwVPBAsFIy4i8WZyzk/QTfGvEY8QfIc4DJhVpc7wEJYFpBiG/RK+IQyj1Dr
-	ouG1Vu2KB6gJDg8MAmqcpjuZMREtTnrpEGtWj3hD93Dp0C/f43mV4gzC4vSFlBsyAN5x8cIJR2c
-	u14f3Wz14/oClBkE4haV85ERFN+U5xAAhc6ZbZhaORh6BhXpmw==
-X-Google-Smtp-Source: AGHT+IGiRKC2EksLEIsfJNQyN/d7y+YtOcZ30FrmozjUwthN8gx50w27hM6WmoiQgl/HDderJ7HIZA==
-X-Received: by 2002:a17:907:72c5:b0:ac3:2368:9a12 with SMTP id a640c23a62f3a-ac3f24f6d46mr31342366b.27.1742498585448;
-        Thu, 20 Mar 2025 12:23:05 -0700 (PDT)
-Received: from [192.168.1.2] ([51.154.145.205])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efd24f6esm24250666b.154.2025.03.20.12.23.04
-        for <yocto-patches@lists.yoctoproject.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Mar 2025 12:23:05 -0700 (PDT)
-Message-ID: <f9b09bf2-9e71-445c-93b9-8fe486a2d71f@gmail.com>
-Date: Thu, 20 Mar 2025 20:23:04 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [meta-lts-mixins][kirkstone/rust][PATCH 1/1]
- mozjs: Use RUST_HOST_SYS and RUST_TARGET_SYS
+ dkim=pass header.i=adrian.freihofer@siemens.com header.s=fm1 header.b=D8GRqu3R;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.227, mailfrom: fm-1329275-20250320202240ab51753eb7a491c9b2-0u14ty@rts-flowmailer.siemens.com)
+Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 20250320202240ab51753eb7a491c9b2
+        for <yocto-patches@lists.yoctoproject.org>;
+        Thu, 20 Mar 2025 21:22:41 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=adrian.freihofer@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=oXOQQ0JYXxnpVByfvU884VAmcLyS325vtScQC0qnzJI=;
+ b=D8GRqu3RuLiFemc9CJQVReoylbqd8vblMFbRoKrybh0jI6YCIqb8Hw9G/lEyiXVfqWJFuj
+ 9E8vdybf4wQapfFOc+cIRfTiG1USVccfGbkH1EuNZdq+t8eDvEQrIcJiwGTsxuHuZpfeEGjI
+ smEWhXbCCBdtkeTcTaT0ElHislSQrafBBzcDeGfGMMhlprOnLT3c6Eho4g53vOw6r6bLfK9i
+ 8yM8sS7I+sTEGjlcSlx/uKMq3IPcGTFKK0DfBaC4QsmVQqWf+FzFXZE3QixwnF32yV53lXLW
+ P6oRpgyM/aBmQ3J3/C0qaDCohXs3B2rB/qFmk0Fgsq5JnU8er1YZbVOw==;
+From: AdrianF <adrian.freihofer@siemens.com>
 To: yocto-patches@lists.yoctoproject.org
-References: <20250318032001.2031160-1-soumya.sambu@windriver.com>
-Content-Language: en-US
-From: Gyorgy Sarvari <skandigraun@gmail.com>
-In-Reply-To: <20250318032001.2031160-1-soumya.sambu@windriver.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Cc: Adrian Freihofer <adrian.freihofer@siemens.com>
+Subject: [meta-security][PATCH v2] tpm2-tss-engine: add .so symmlink to engines package
+Date: Thu, 20 Mar 2025 21:20:32 +0100
+Message-ID: <20250320202031.50796-2-adrian.freihofer@siemens.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1329275:519-21489:flowmailer
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 20 Mar 2025 19:23:14 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1236
+ <yocto-patches@lists.yoctoproject.org>; Thu, 20 Mar 2025 20:22:55 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1237
 
-I think these files should be in dynamic-layers folder, as rust-mixin
-depends only on oe-core. Otherwise it will complain about dangling
-bbappends if meta-oe and/or meta-python layers are not present.
+From: Adrian Freihofer <adrian.freihofer@siemens.com>
 
-Maybe meta-oe would be an even better place for these  bbappends, also
-in dynamic-layers folders, depending on this mixin layer. (Though that
-part is just an idea)
+Without the symlink, the engine is not found by openssl:
 
-On 3/18/25 04:20, Soumya via lists.yoctoproject.org wrote:
-> From: Soumya Sambu <soumya.sambu@windriver.com>
-> 
-> The mozjs-91 and mozjs-78 recipe in meta-openembedded sets --target=${HOST_SYS} and
-> --target=${TARGET_SYS} respectively, which leads to an error when using Rust from meta-lts-mixins:
-> 
-> error: Error loading target specification: Could not find specification for target "x86_64-poky-linux".
-> 
-> Updated target configuration to resolve this.
-> 
-> Additionally, `mozjs-78` encountered "linker 'cc' not found" error. This was fixed by explicitly
-> defining the linker for Rust.
-> 
-> Signed-off-by: Soumya Sambu <soumya.sambu@windriver.com>
-> ---
->  recipes-devtools/rust/rust_1.81.0.bb       |  3 +++
->  recipes-extended/mozjs/mozjs-78_%.bbappend | 14 ++++++++++++++
->  recipes-extended/mozjs/mozjs-91_%.bbappend | 13 +++++++++++++
->  3 files changed, 30 insertions(+)
->  create mode 100644 recipes-extended/mozjs/mozjs-78_%.bbappend
->  create mode 100644 recipes-extended/mozjs/mozjs-91_%.bbappend
-> 
-> diff --git a/recipes-devtools/rust/rust_1.81.0.bb b/recipes-devtools/rust/rust_1.81.0.bb
-> index cc00053..2d91d68 100644
-> --- a/recipes-devtools/rust/rust_1.81.0.bb
-> +++ b/recipes-devtools/rust/rust_1.81.0.bb
-> @@ -146,6 +146,9 @@ python do_configure() {
->      # harness are debuggable just from logfiles
->      config.set("rust", "verbose-tests", e(True))
->  
-> +    # Override default linker cc.
-> +    config.set("rust", "default-linker", e(d.expand("${RUST_BUILD_CCLD}")))
-> +
->      # [build]
->      config.add_section("build")
->      config.set("build", "submodules", e(False))
-> diff --git a/recipes-extended/mozjs/mozjs-78_%.bbappend b/recipes-extended/mozjs/mozjs-78_%.bbappend
-> new file mode 100644
-> index 0000000..8e8c24a
-> --- /dev/null
-> +++ b/recipes-extended/mozjs/mozjs-78_%.bbappend
-> @@ -0,0 +1,14 @@
-> +EXTRA_OECONF = " \
-> +    --target=${RUST_TARGET_SYS} \
-> +    --host=${BUILD_SYS} \
-> +    --prefix=${prefix} \
-> +    --libdir=${libdir} \
-> +    --x-includes=${STAGING_INCDIR} \
-> +    --x-libraries=${STAGING_LIBDIR} \
-> +    --without-system-icu \
-> +    --disable-tests --disable-strip --disable-optimize \
-> +    --disable-jemalloc \
-> +    --with-system-icu \
-> +    ${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', "--enable-gold", '--disable-gold', d)} \
-> +    ${JIT} \
-> +"
-> diff --git a/recipes-extended/mozjs/mozjs-91_%.bbappend b/recipes-extended/mozjs/mozjs-91_%.bbappend
-> new file mode 100644
-> index 0000000..c0214b0
-> --- /dev/null
-> +++ b/recipes-extended/mozjs/mozjs-91_%.bbappend
-> @@ -0,0 +1,13 @@
-> +do_configure() {
-> +        cd ${B}
-> +        python3 ${S}/configure.py \
-> +        --enable-project=js \
-> +        --target=${RUST_HOST_SYS} \
-> +        --host=${BUILD_SYS} \
-> +        --prefix=${prefix} \
-> +        --libdir=${libdir} \
-> +        --disable-jemalloc \
-> +        --disable-strip \
-> +        ${JIT} \
-> +        ${ICU}
-> +}
+openssl engine -t -c tpm2tss
+20F0C5BDFFFF0000:error:12800067:DSO support routines:dlfcn_load:could
+    not load the shared library:/usr/src/debug/openssl/3.2.4/crypto/dso/dso_dlfcn.c:118:
+    filename(/usr/lib/engines-3/tpm2tss.so): /usr/lib/engines-3/tpm2tss.so:
+    cannot open shared object file: No such file or directory
+...
+
+With sym-link it works (also without extra configuration for openssl)
+
+cd /usr/lib/engines-3/
+ln -s libtpm2tss.so tpm2tss.so
+openssl engine -t -c tpm2tss
+(tpm2tss) TPM2-TSS engine for OpenSSL
+    [RSA, RAND]
+        [ available ]
+
+For exmample also the Fedora package has the symlink.
+
+Signed-off-by: Adrian Freihofer <adrian.freihofer@siemens.com>
+---
+V1 -> V2:
+- Just realized that my first test did not show the sanity check
+  failure. I added the INSANE_SKIP line to the patch.
+
+ .../recipes-tpm2/tpm2-tss-engine/tpm2-tss-engine_1.2.0.bb | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/meta-tpm/recipes-tpm2/tpm2-tss-engine/tpm2-tss-engine_1.2.0.bb b/meta-tpm/recipes-tpm2/tpm2-tss-engine/tpm2-tss-engine_1.2.0.bb
+index 30865d2..af9dec8 100644
+--- a/meta-tpm/recipes-tpm2/tpm2-tss-engine/tpm2-tss-engine_1.2.0.bb
++++ b/meta-tpm/recipes-tpm2/tpm2-tss-engine/tpm2-tss-engine_1.2.0.bb
+@@ -29,7 +29,11 @@ do_configure:prepend() {
+ 
+ PACKAGES += "${PN}-engines ${PN}-engines-staticdev ${PN}-bash-completion"
+ 
+-FILES:${PN}-dev = "${libdir}/engines-3/tpm2tss.so ${includedir}/*"
+-FILES:${PN}-engines = "${libdir}/engines-3/lib*.so*"
++FILES:${PN}-dev = "${includedir}/*"
++FILES:${PN}-engines = "${libdir}/engines-3/*.so*"
+ FILES:${PN}-engines-staticdev = "${libdir}/engines-3/libtpm2tss.a"
+ FILES:${PN}-bash-completion += "${datadir}/bash-completion/completions"
++
++# The tpm2tss.so symlink is in the main package because OpenSSL
++# searches for the shared object via the symlink.
++INSANE_SKIP:${PN}-engines += "dev-so"
+-- 
+2.48.1
 
 
