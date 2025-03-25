@@ -1,156 +1,104 @@
-Return-Path: <scott.murray@konsulko.com>
+Return-Path: <antonin.godard@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B290AC36002
-	for <webhook@archiver.kernel.org>; Tue, 25 Mar 2025 00:04:16 +0000 (UTC)
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
- by mx.groups.io with SMTP id smtpd.web11.54600.1742861053400715674
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B129CC35FFC
+	for <webhook@archiver.kernel.org>; Tue, 25 Mar 2025 10:54:11 +0000 (UTC)
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+ by mx.groups.io with SMTP id smtpd.web11.62549.1742900048880924440
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 24 Mar 2025 17:04:13 -0700
+ Tue, 25 Mar 2025 03:54:09 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=H3hV89bQ;
- spf=pass (domain: konsulko.com, ip: 209.85.166.44, mailfrom: scott.murray@konsulko.com)
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-855bd88ee2cso128814439f.0
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 24 Mar 2025 17:04:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1742861052; x=1743465852; darn=lists.yoctoproject.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=o5trrRx6tYj1ViUzAbmVqQ9E/9UuYF6dJSxscAujA9w=;
-        b=H3hV89bQ6uvKU3ocQ9t8NaoZxJIkSaulH7KsnyZkxQ5ACJWT/o9+dh+0HLu4GDF6YD
-         NDr+wDyKxPkU1KeFlmzHULZvIKCfmi7cViWQOfkJ1n1u1UL2/KPy31Lg1JuynIOh3pMO
-         qY5bra0dudO13GYzlNLKJ/IZ+DrrHR2d2VM5k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742861052; x=1743465852;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o5trrRx6tYj1ViUzAbmVqQ9E/9UuYF6dJSxscAujA9w=;
-        b=cVubJSmNI0WrvFXuF1ZlKQHubVTo0N11MKrpusGahlz/rt1x/OJRPqUlEl26IWN9A3
-         52jxeFE7y83yr4jqqOESCYbvr4kC3IM0rk5Jl0OPklxo1VRCzewH/Rf5KfnSxBGL7Frr
-         qcFC2wGqXxPZPz3jfZHhxHeQojkXLdhvz9Nij+tZAVVwawV4MWQp/SHwvxxwi44Xw9PX
-         AS7r4yUerifBGS999Wc5/XzjljRcZz4SEo4wWxXy9XFmnA4+AXEONj2NjVkW91mVbPhH
-         OSS+dcKGQ9jIR4c0EDe2+bJgLWJkT29Q6xbV22r8ydiB4j1Vzz2cFZVL9oCO3nKImttS
-         iBoQ==
-X-Gm-Message-State: AOJu0YwO9lFcQAWs/zPbD8CYnXdXYNVP7Na/mtijk59Hr0SXYOwPjltl
-	AzR7U7OdRUmj1X7+K9aDxEwjzIdItMLYBMWwlGSiHv5ZK+rwljAop96t63kD9swuClV8LTw1yr+
-	5
-X-Gm-Gg: ASbGncuU0b2wSZWZwz+JMr4boIS4e6TgnDTCPSchX836WVJ9wsSLezMiqLhYFRnRe5b
-	r9z+u2NbqLtQHwt0WtavuVvEBmoyVaHaIHd91+zNTD1NgdHZzvCDjVgLO9iykQ8nEKpEljEmHNk
-	9N026RqeteZ7T7Zx15reDNsDvGF1bjLlUpRpkPCWwmCWqQ9AKWF+laVLqIyweTpIUaCaXb1Ss1C
-	LiFg3k6SWkwZ+NHPHXGmiK/xV1mi3w0TXGIdZ5RTinRdaK/qlDTjr9vsM9+dx9HI7Q2zfR4+a+i
-	XV+xPuasqSbgwL+IWE2V2wru9OiBdYfjoDNe+pbVosDJ1VxZcAPqBurxlx6TYTk/a1Z2Hesb1Ad
-	GFCU=
-X-Google-Smtp-Source: AGHT+IFA8C6uXcQ7ElscboNCj9OZK9R8u0VFJWLiiJEhYUpNA699TXcUpO+G76XVtH3oSKZ48Yq3Xg==
-X-Received: by 2002:a05:6602:4088:b0:85d:b054:6eb9 with SMTP id ca18e2360f4ac-85e2cb417c3mr1726084239f.14.1742861052142;
-        Mon, 24 Mar 2025 17:04:12 -0700 (PDT)
-Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f2cbe80a2fsm2050890173.84.2025.03.24.17.04.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 17:04:11 -0700 (PDT)
-Date: Mon, 24 Mar 2025 20:04:10 -0400 (EDT)
-From: Scott Murray <scott.murray@konsulko.com>
-To: yocto-patches@lists.yoctoproject.org
-cc: soumya.sambu@windriver.com
-Subject: Re: [yocto-patches] [meta-lts-mixins][kirkstone/rust][PATCH 1/1]
- mozjs: Use RUST_HOST_SYS and RUST_TARGET_SYS
-In-Reply-To: <20250318032001.2031160-1-soumya.sambu@windriver.com>
-Message-ID: <d8e7feba-e083-300f-a82f-c483162da8e0@konsulko.com>
-References: <20250318032001.2031160-1-soumya.sambu@windriver.com>
+ dkim=pass header.i=@bootlin.com header.s=gm1 header.b=DnftL0+d;
+ spf=pass (domain: bootlin.com, ip: 217.70.183.197, mailfrom: antonin.godard@bootlin.com)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id CF87C43315;
+	Tue, 25 Mar 2025 10:54:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742900047;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=mF09Ha9p9fY2alIZdRGd5deUYiqe2xP0DVt0b/Wcv0I=;
+	b=DnftL0+dLkke2dVMUFMgtUG1dZHrqR1ZzxXtVSZMKDx7tH3Vq5Nml5a85Uwa/1ag+QbN7g
+	O28ZBbIzGZ+wYwQJUKFsLGz49zkgQoq0remNNFHmrRSnykVubADB9MJf7Gtgj9mcZ8Fdnt
+	bLumRFs5luy45oXUlQX3uvDXj0LyezDgapaqsS4BACZAW/RvYQLzwuGx0sMYhvP9PF8rrB
+	2vA2q/rO0wxe9XRb5q/SeyFKmXldLalHMf2Do4zYFrjR46iGgpfmK3MkHxSG3llxeOv1bd
+	OQCicBbvMNx4DEcICt1uvNWp118lSb6m27o4uk4m79QCtpPJyivcMlRV4tXmzQ==
+From: Antonin Godard <antonin.godard@bootlin.com>
+Date: Tue, 25 Mar 2025 11:53:57 +0100
+Subject: [yocto-autobuilder-helper PATCH] scripts/yocto-supported-distros:
+ consider any *master* branch to be master
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250325-yocto-supported-distros-fix-v1-1-1a3abd4dc32b@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAESL4mcC/x3MQQqDQAxA0atI1gbGKSr0KuLCmozNxgzJtLSId
+ 3dw+f7iH+Bswg7P5gDjr7joXtG1DazvZd8YhaohhtiHR+zxr2tR9E/OaoUJSbyYOib5Ib1SoGF
+ MibsR6iEb13zfp/k8L8CHaGVtAAAA
+X-Change-ID: 20250325-yocto-supported-distros-fix-dbf0d67ffe17
+To: yocto-patches@lists.yoctoproject.org
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Antonin Godard <antonin.godard@bootlin.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1164;
+ i=antonin.godard@bootlin.com; h=from:subject:message-id;
+ bh=8r5lfrjeFXT39qtWLgb6s4PycGJ7xKVzqU4dv9ukgyg=;
+ b=owEBbQKS/ZANAwAIAdGAQUApo6g2AcsmYgBn4otOAC427+wbql9ULK4ZZ3wdUEx2Ct1v4cewF
+ ZMJQgTn93GJAjMEAAEIAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCZ+KLTgAKCRDRgEFAKaOo
+ Ni5tD/90uiN4X0xbYxQiCRkWi3YHhvCWfHwuhNgO22R+IK2EGweTYvZx29nq3rBAiQK7al5N7Q8
+ ibpHLRwnfSxv00WoxdqAEPjIvbiPtbC+NAQJCrjZ1dcSYLqoJKZ0QinEnsOZIqwuGVUPIh3cl9q
+ 45D1iLHl1ZoPGMFPMfIbUGPOf6uvrmaKykvza9KJiSlalFKFiZfApCSKEcdh5tkCoUGHpPUW69a
+ w8B95mhbw9h+8PtOj0LVPJx3/80k8Kh4oc2f4uIwC/2X4N6q05SjyhlDnIgWdFAF2yFMYg79quu
+ 3/eKWzHer4r+HQ8+4L52QihVGjMSEJxK3ONZ1NV6TnOv1oK2iOBRVKdLKvyC6dfVPvjhitaV3IS
+ sTnsWqHvG34h+HYwkQ6/hYp2ythdKTWZ41X8XGbjmfFKYmIHjp4LKFnxsEiZ8ruGlH6j6FwdCJT
+ l+5hrLUqIbFYadWv0kIEZ7mylACWPM3yZb5rMFFidsujUv9Lfagj5Kdvc9OKNmIi9/hms8UgThg
+ 9hAi1qMdkkA2ZVlU97JW3qYxR9yXqRzK5eX5NEsuX7oa1osbnqMMcMg4uUUHdGkVF7Thpn9rcW9
+ PBA3R9mbOOlKa0e7fyxMNGmatqgmvYzw5JQxl/7BbWvfkg/DKBXdiix71jiVf9OmJjWPjUZa5bY
+ GtxE+klFfa5cTeA==
+X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
+ fpr=8648725188DD401BB9A0D3FFD180414029A3A836
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedvgeeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkvfevofesthejredtredtjeenucfhrhhomheptehnthhonhhinhcuifhouggrrhguuceorghnthhonhhinhdrghhouggrrhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeduieejledtieeuteffveetleeuffeivdffjefgteehgfehleeiteehieeuieekueenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeejtgehtgemiegruggvmeejleegkeemgedtheelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeejtgehtgemiegruggvmeejleegkeemgedtheelpdhhvghloheplgduvdejrddtrddurddungdpmhgrihhlfhhrohhmpegrnhhtohhnihhnrdhgohgurghrugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepfedprhgtphhtthhopegrnhhtohhnihhnrdhgohgurghrugessghoohhtlhhinhdrtghomhdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopeihohgtthhoqdhprghttghhvghssehlihhsthhsr
+ dihohgtthhophhrohhjvggtthdrohhrgh
+X-GND-Sasl: antonin.godard@bootlin.com
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 25 Mar 2025 00:04:16 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1247
+ <yocto-patches@lists.yoctoproject.org>; Tue, 25 Mar 2025 10:54:11 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1248
 
-On Tue, 18 Mar 2025, Soumya via lists.yoctoproject.org wrote:
+Testing builds often run on branches <someone>/master[-next]. In these
+cases we are really testing "master", so return that. Instead of
+exiting with: "Release <future release> does not exist".
 
-> From: Soumya Sambu <soumya.sambu@windriver.com>
->
-> The mozjs-91 and mozjs-78 recipe in meta-openembedded sets --target=${HOST_SYS} and
-> --target=${TARGET_SYS} respectively, which leads to an error when using Rust from meta-lts-mixins:
->
-> error: Error loading target specification: Could not find specification for target "x86_64-poky-linux".
->
-> Updated target configuration to resolve this.
->
-> Additionally, `mozjs-78` encountered "linker 'cc' not found" error. This was fixed by explicitly
-> defining the linker for Rust.
->
-> Signed-off-by: Soumya Sambu <soumya.sambu@windriver.com>
+Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
+---
+ scripts/yocto-supported-distros | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I'm not planning to take this, since carrying bbappends for recipes
-outside of oe-core is outside of what I had planned to support with
-the mixin.  If I take it, I will be signing up to test building those
-recipes on every Rust update for at least the next year, and it would
-somewhat open the door for people advocating doing the same for
-scarthgap/rust, which has 3 more years to go.
+diff --git a/scripts/yocto-supported-distros b/scripts/yocto-supported-distros
+index 0cc314b..172a186 100755
+--- a/scripts/yocto-supported-distros
++++ b/scripts/yocto-supported-distros
+@@ -160,8 +160,8 @@ def _get_current_core_release() -> str:
+         ["bitbake-getvar", "--quiet", "--value", "METADATA_BRANCH"],
+         encoding="utf-8")
+     release = release.strip()
+-    if release == "master":
+-        return release
++    if "master" in release:
++        return "master"
+ 
+     release = subprocess.check_output(
+         ["bitbake-getvar", "--quiet", "--value", "LAYERSERIES_COMPAT_core"],
 
-Scott
+---
+base-commit: 40e3ac177d58484795b14cd1b9a18193bbdd4d2b
+change-id: 20250325-yocto-supported-distros-fix-dbf0d67ffe17
 
+Best regards,
+-- 
+Antonin Godard <antonin.godard@bootlin.com>
 
-> ---
->  recipes-devtools/rust/rust_1.81.0.bb       |  3 +++
->  recipes-extended/mozjs/mozjs-78_%.bbappend | 14 ++++++++++++++
->  recipes-extended/mozjs/mozjs-91_%.bbappend | 13 +++++++++++++
->  3 files changed, 30 insertions(+)
->  create mode 100644 recipes-extended/mozjs/mozjs-78_%.bbappend
->  create mode 100644 recipes-extended/mozjs/mozjs-91_%.bbappend
->
-> diff --git a/recipes-devtools/rust/rust_1.81.0.bb b/recipes-devtools/rust/rust_1.81.0.bb
-> index cc00053..2d91d68 100644
-> --- a/recipes-devtools/rust/rust_1.81.0.bb
-> +++ b/recipes-devtools/rust/rust_1.81.0.bb
-> @@ -146,6 +146,9 @@ python do_configure() {
->      # harness are debuggable just from logfiles
->      config.set("rust", "verbose-tests", e(True))
->
-> +    # Override default linker cc.
-> +    config.set("rust", "default-linker", e(d.expand("${RUST_BUILD_CCLD}")))
-> +
->      # [build]
->      config.add_section("build")
->      config.set("build", "submodules", e(False))
-> diff --git a/recipes-extended/mozjs/mozjs-78_%.bbappend b/recipes-extended/mozjs/mozjs-78_%.bbappend
-> new file mode 100644
-> index 0000000..8e8c24a
-> --- /dev/null
-> +++ b/recipes-extended/mozjs/mozjs-78_%.bbappend
-> @@ -0,0 +1,14 @@
-> +EXTRA_OECONF = " \
-> +    --target=${RUST_TARGET_SYS} \
-> +    --host=${BUILD_SYS} \
-> +    --prefix=${prefix} \
-> +    --libdir=${libdir} \
-> +    --x-includes=${STAGING_INCDIR} \
-> +    --x-libraries=${STAGING_LIBDIR} \
-> +    --without-system-icu \
-> +    --disable-tests --disable-strip --disable-optimize \
-> +    --disable-jemalloc \
-> +    --with-system-icu \
-> +    ${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', "--enable-gold", '--disable-gold', d)} \
-> +    ${JIT} \
-> +"
-> diff --git a/recipes-extended/mozjs/mozjs-91_%.bbappend b/recipes-extended/mozjs/mozjs-91_%.bbappend
-> new file mode 100644
-> index 0000000..c0214b0
-> --- /dev/null
-> +++ b/recipes-extended/mozjs/mozjs-91_%.bbappend
-> @@ -0,0 +1,13 @@
-> +do_configure() {
-> +        cd ${B}
-> +        python3 ${S}/configure.py \
-> +        --enable-project=js \
-> +        --target=${RUST_HOST_SYS} \
-> +        --host=${BUILD_SYS} \
-> +        --prefix=${prefix} \
-> +        --libdir=${libdir} \
-> +        --disable-jemalloc \
-> +        --disable-strip \
-> +        ${JIT} \
-> +        ${ICU}
-> +}
->
 
