@@ -1,121 +1,157 @@
-Return-Path: <martin.jansa@gmail.com>
+Return-Path: <majortomtosourcecontrol@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDDD2C36017
-	for <webhook@archiver.kernel.org>; Wed,  2 Apr 2025 16:00:21 +0000 (UTC)
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
- by mx.groups.io with SMTP id smtpd.web11.12739.1743609617365199145
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02811C3601A
+	for <webhook@archiver.kernel.org>; Thu,  3 Apr 2025 03:54:38 +0000 (UTC)
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+ by mx.groups.io with SMTP id smtpd.web11.5445.1743652477587868339
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 02 Apr 2025 09:00:17 -0700
+ Wed, 02 Apr 2025 20:54:37 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=F+88Yo+E;
- spf=pass (domain: gmail.com, ip: 209.85.218.44, mailfrom: martin.jansa@gmail.com)
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-abec8b750ebso1061516666b.0
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 02 Apr 2025 09:00:17 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=AnYGn3ZP;
+ spf=pass (domain: gmail.com, ip: 209.85.166.169, mailfrom: majortomtosourcecontrol@gmail.com)
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3d5ebc2459fso4114815ab.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 02 Apr 2025 20:54:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743609616; x=1744214416; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oM4Oj7lsPWApPv4suiiapt7k2OrNkef5RisbUuXkHx0=;
-        b=F+88Yo+EQiW1oMSh3MmIUfnmrTM9tgYlJFo3T7ECF23BDxcbit4Vd/HuCaiUP2RIC3
-         GnXnc9SRN9BhTZyBLNbrxrrKR4pPGx4nx/F/ofkrF+yz3UC70CmoCPjsVxT5SLlrNdX3
-         8jlD0tdDPfb810KqpI41UkZ8lYnw5Uoewa0krNAY6pdiwS99TvrE7RNSQtaZihldBp/V
-         hUakN41Fwin98aTIXz4YJfRHILSCBRRTkc25U0Wy32mTm/2HoZ8c4A0g22cUbF1/wPnp
-         prd+DczUV35GaLQKjrQQZFX3AK0CPxOjiWUsjGe6oApvvmImR1y6NdNY3Smql09Ck8rL
-         dIwQ==
+        d=gmail.com; s=20230601; t=1743652477; x=1744257277; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IrpQ2vtU3Nqj/BpRBNMURVgOC1ZziCAYyL9DfECUK6A=;
+        b=AnYGn3ZPvNfZGLKFYJ4dR/mp67n0pH3aGSdkoP8pIEF948Obtky83gLWOLKJuJy36D
+         nZakkzgN5+lWdDZN61UlOFYS7/l0p/03i+ZLM0qmecr2c5+39vCKmYrXYO0WOmYXnj3T
+         VBxQz+Hb1NtTtqlTkEdQ0TCD4SfPAgpKmCR9N+QfJjNQrcPusyWM84vlda2h86bxYQ49
+         Zv8YmOHxJwNrAlof/7DOg0LpD1OSILzOw+LFV29WTAqONuy57K+A7hl/UnQfUEhOl82p
+         Uw2gsPpnvT2WJocslukJk3WEk1eybC8ElDu4oVmFUiK3K6XIXG4dmnysRRIxMBwJU8Te
+         6MAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743609616; x=1744214416;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oM4Oj7lsPWApPv4suiiapt7k2OrNkef5RisbUuXkHx0=;
-        b=k6AUZ0Tm1YOs5PRe7ymTKfjMB5j9ren1EIAX1TvH6dd8nnvxde/mGHPcuimsjh12D3
-         C1PISUTwY91JOvP8cCXkgnsUW8vCCS9Ylw0hLRekVd+xMWWgIu5E+qpLQRCXKPcl/TMe
-         V+BLVmXhYGGKaOQLoyeccxBjksfEPjy6efvGYOdCflShQDo85JIQU3X8bhJlwwsv0/kG
-         yZqneBjfl4RVqJQdQq02iE2TdutGrm5po/0UhEXE64kHf0qKCAzwSrZcrAK/dSccr6Wp
-         4sWy/rASJu8LvnZkWSIyLam8XuhOc2/jGgFOfY53VlQzWvP5AklvNR8Dc/TJSP0pTbOZ
-         acCQ==
-X-Gm-Message-State: AOJu0Yx8qlWXdBrbdchLy4qWL6he0Pi7fe++gJpemJKvI/PndgauVn8x
-	kA7N5V+SQh7QPk9P5Bnp6jW7qmErpDBot+rR6E+kq7hyULrKiJiviOWR3cYZ
-X-Gm-Gg: ASbGncsK+IwBx6mSb7hafxheZVsNMC/bhpm8HEyF2rPjDmvQ/KbIhxECu4W3xafQbj5
-	Gvccd0SKb5G9DO1+UEnSdh3439G0I1wJEQ5MetkwsK3oogRtFwiv2++ns1kgM3CdlUJDrQh1xF7
-	GVeNSIwZzDMuEA4lcA+B7vKFigudoHCiJlv3ehodwenK15Zc0H5BUATbhLVJ6vAz+a5XencDTx7
-	SBBAyvI/oxghYeKHFV2J5Ax3dKszDziHCcX9iJ3l14XWeVtpeBVPOZHoys0eusLQESfyxzSZf3H
-	0UC+qw24SHgJXfvRZP8ZzqL8Ar1kaYXM7I7mfVREyfByxZE=
-X-Google-Smtp-Source: AGHT+IG5/ML4Dg9UOK3oS11HbkA4lcNi8N7Y2hQlKfhMnUT+bVUOWyDmwIPS0z7hcPqhIymXJplVxw==
-X-Received: by 2002:a17:907:868d:b0:ac3:2d47:f6af with SMTP id a640c23a62f3a-ac7a16c131fmr257116466b.20.1743609615596;
-        Wed, 02 Apr 2025 09:00:15 -0700 (PDT)
-Received: from localhost ([109.238.218.228])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ac7196dd9b0sm917673466b.169.2025.04.02.09.00.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Apr 2025 09:00:15 -0700 (PDT)
-From: martin.jansa@gmail.com
-To: yocto-patches@lists.yoctoproject.org
-Cc: Martin Jansa <martin.jansa@gmail.com>
-Subject: [meta-tensorflow][PATCH] bazel: add whitespace around assignments
-Date: Wed,  2 Apr 2025 18:00:08 +0200
-Message-ID: <20250402160008.3586728-1-martin.jansa@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        d=1e100.net; s=20230601; t=1743652477; x=1744257277;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=IrpQ2vtU3Nqj/BpRBNMURVgOC1ZziCAYyL9DfECUK6A=;
+        b=VN+2t/LZExL+PH2wpOzIfoqr2TGoU3shMvZBLzZ+YHdkf9RE3xPBb9+0L1c6oWyUn3
+         AFz0VIJgUpZCKRc91uF3smPJMFGO0xaX2kKd6Lsa/wEFxax3X0IjMiRnGMcKphZ0UDKO
+         jrGoS9QNcPrHxH4OAZmNP7oHKwjTwt4H7LSDEp4Uz5K4gpOIVZZ3y8s1nBtjNN0nc0aE
+         VRD9UMHDNPh/AgAGomTpRGCMYue3Xwft3m3E66tk64ii8H6iMJljn93jDjP8FKUctDPl
+         /EEM+uukJZQ4HpSuN3MdSD05J8LbxqOEq3+9b2nOCcp2tujzAcmH0iQYcxysnUA76/Nh
+         KV1A==
+X-Forwarded-Encrypted: i=1; AJvYcCXDcLcDftgRjs6C9okBxnnaSVcBfOQGFmPPyJ+Bp9HYlDbfYzdazL567yCOym6r44Nk+A3i1yoyjMYHT8rY@lists.yoctoproject.org
+X-Gm-Message-State: AOJu0YxGmc7hTO47gN9xhpfRWT+kxLnQJBwwY4cycw5x6K6HiGqIUZjG
+	8ZEuYIQr1aDeRg77T5WfC2muKKHps9ORZWykyqqNXiyZYA7qeG4X
+X-Gm-Gg: ASbGnctI271lTzIoyu1JNWHkztgiEpEPBsBkuZ6YsPZXDmzT7inLcfCLxY6hPA2ZouL
+	kgPPRw/Jz5IKLX0shAKSpujegzpE8v+4TDCf7xJ6Q18oaoqkVfIldNO5S2DuOKM/OjdJ2+kNfsq
+	8yA+LXJYj5GzfLciRvRy+P0n30I2d1wG7iMD2bC0k6TfxVCPvHjzUrVBqk7kn81/lsv/NPHEyzq
+	fS/WoYBK44aj1wD5pQSm3x9OWcaPsCruPnZIX7PtMcIs6DZUTJi4T+u4xLWUflx1ggPTwPjqAN2
+	fo81u5/kk73t0TvIcAgcxmbMxz4HP18+Oo8IIKORdfVJ5IMP17cYaen8Dz8aHNMVeLX4/2oGORQ
+	R8C6e2FAfOaTGfWBakGF/+Q==
+X-Google-Smtp-Source: AGHT+IF6aBZgqerPqNIqa1D8iUyc6Ii+HaamL4uPNmz1T292eHUhnHcUK610+1nTSsJDwsRK3XUw6A==
+X-Received: by 2002:a05:6e02:250e:b0:3d6:cc9e:6686 with SMTP id e9e14a558f8ab-3d6dd80a6c4mr15262725ab.17.1743652476755;
+        Wed, 02 Apr 2025 20:54:36 -0700 (PDT)
+Received: from [172.26.252.3] (174-29-216-122.hlrn.qwest.net. [174.29.216.122])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d6de79f156sm1076875ab.15.2025.04.02.20.54.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Apr 2025 20:54:36 -0700 (PDT)
+Message-ID: <0f977f66-e6a1-4d6f-a45d-3c90f49f06eb@gmail.com>
+Date: Wed, 2 Apr 2025 21:54:35 -0600
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: joe.macdonald@siemens.com, yi.zhao@windriver.com,
+ yocto-patches@lists.yoctoproject.org
+From: Clayton Casciato <majortomtosourcecontrol@gmail.com>
+Subject: [meta-selinux][styhead][PATCH] refpolicy: chronyd - fix
+ dac_read_search denials
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 02 Apr 2025 16:00:21 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1276
+ <yocto-patches@lists.yoctoproject.org>; Thu, 03 Apr 2025 03:54:38 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1277
 
-From: Martin Jansa <martin.jansa@gmail.com>
-
-With:
-https://lists.openembedded.org/g/bitbake-devel/message/17508
-there are many WARNINGs from this layer
-
-Fixes:
-WARNING: meta-tensorflow/classes/bazel.bbclass:10 has a lack of whitespace around the assignment: 'export USER="unused-bazel-user"'
-WARNING: meta-tensorflow/classes/bazel.bbclass:15 has a lack of whitespace around the assignment: 'export BAZEL_STARTUP_OPTIONS="--output_user_root=${BAZEL_DIR}/user_root                    --output_base=${BAZEL_OUTPUTBASE_DIR}                    --bazelrc=${S}/bazelrc                    --batch                    "'
-WARNING: meta-tensorflow/classes/bazel.bbclass:156 has a lack of whitespace around the assignment: 'export YOCTO_NATIVE_SYSROOT="${BAZEL_OUTPUTBASE_DIR}/external/yocto_compiler/recipe-sysroot-native"'
-WARNING: meta-tensorflow/classes/bazel-base.bbclass:1 has a lack of whitespace around the assignment: 'export JAVA_HOME="${STAGING_LIBDIR_NATIVE}/jvm/openjdk-11-native"'
-WARNING: meta-tensorflow/classes/bazel-base.bbclass:1 has a lack of whitespace around the assignment: 'export JAVA_HOME="${STAGING_LIBDIR_NATIVE}/jvm/openjdk-11-native"'
-
-Signed-off-by: Martin Jansa <martin.jansa@gmail.com>
+Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
 ---
- classes/bazel-base.bbclass | 2 +-
- classes/bazel.bbclass      | 6 +++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ ...ervices-chronyd-allow_dac_read_searc.patch | 58 +++++++++++++++++++
+ .../refpolicy/refpolicy_common.inc            |  1 +
+ 2 files changed, 59 insertions(+)
+ create mode 100644 recipes-security/refpolicy/refpolicy/0058-policy-modules-services-chronyd-allow_dac_read_searc.patch
 
-diff --git a/classes/bazel-base.bbclass b/classes/bazel-base.bbclass
-index 8d90e9b..4741f4e 100644
---- a/classes/bazel-base.bbclass
-+++ b/classes/bazel-base.bbclass
-@@ -1,4 +1,4 @@
--export JAVA_HOME="${STAGING_LIBDIR_NATIVE}/jvm/openjdk-11-native"
-+export JAVA_HOME = "${STAGING_LIBDIR_NATIVE}/jvm/openjdk-11-native"
+diff --git a/recipes-security/refpolicy/refpolicy/0058-policy-modules-services-chronyd-allow_dac_read_searc.patch b/recipes-security/refpolicy/refpolicy/0058-policy-modules-services-chronyd-allow_dac_read_searc.patch
+new file mode 100644
+index 0000000..2d4849f
+--- /dev/null
++++ b/recipes-security/refpolicy/refpolicy/0058-policy-modules-services-chronyd-allow_dac_read_searc.patch
+@@ -0,0 +1,58 @@
++From 1f96ee01c7325f30aa4fcf833f4c63338e214dc1 Mon Sep 17 00:00:00 2001
++From: Clayton Casciato <ccasciato@21sw.us>
++Date: Thu, 27 Feb 2025 15:53:30 -0700
++Subject: [PATCH] chronyd: fix dac_read_search denials
++
++avc:  denied  { dac_read_search }
++comm=chronyd
++capability=dac_read_search
++scontext=system_u:system_r:chronyd_t:s0
++tcontext=system_u:system_r:chronyd_t:s0
++tclass=capability
++
++--
++
++Fedora
++
++chronyd_t
++https://github.com/fedora-selinux/selinux-policy/blob/281599ec3a5f0cc0d423b98bb76c71c1a5d76870/policy/modules/contrib/chronyd.te#L55
++
++chronyc_t
++https://github.com/fedora-selinux/selinux-policy/blob/281599ec3a5f0cc0d423b98bb76c71c1a5d76870/policy/modules/contrib/chronyd.te#L257
++
++--
++
++Reference:
++https://danwalsh.livejournal.com/77140.html
++
++Signed-off-by: Clayton Casciato <ccasciato@21sw.us>
++
++Upstream-Status: Backport [https://github.com/SELinuxProject/refpolicy/commit/231960371da6ed49fdde1891dee3cf607791c76f]
++
++Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
++---
++ policy/modules/services/chronyd.te | 4 ++--
++ 1 file changed, 2 insertions(+), 2 deletions(-)
++
++diff --git a/policy/modules/services/chronyd.te b/policy/modules/services/chronyd.te
++index 9e6ba5bf1..3d4007a57 100644
++--- a/policy/modules/services/chronyd.te
+++++ b/policy/modules/services/chronyd.te
++@@ -54,7 +54,7 @@ logging_log_file(chronyd_var_log_t)
++ # chronyd local policy
++ #
++ 
++-allow chronyd_t self:capability { chown dac_override ipc_lock setgid setuid sys_resource sys_time };
+++allow chronyd_t self:capability { chown dac_override dac_read_search ipc_lock setgid setuid sys_resource sys_time };
++ allow chronyd_t self:process { getcap setcap setrlimit signal };
++ allow chronyd_t self:shm create_shm_perms;
++ allow chronyd_t self:fifo_file rw_fifo_file_perms;
++@@ -134,7 +134,7 @@ optional_policy(`
++ # chronyc local policy
++ #
++ 
++-allow chronyc_t self:capability { dac_override };
+++allow chronyc_t self:capability { dac_override dac_read_search };
++ allow chronyc_t self:process { signal };
++ allow chronyc_t self:udp_socket create_socket_perms;
++ allow chronyc_t self:netlink_route_socket create_netlink_socket_perms;
+diff --git a/recipes-security/refpolicy/refpolicy_common.inc b/recipes-security/refpolicy/refpolicy_common.inc
+index 0c3966d..cd04ef5 100644
+--- a/recipes-security/refpolicy/refpolicy_common.inc
++++ b/recipes-security/refpolicy/refpolicy_common.inc
+@@ -73,6 +73,7 @@ SRC_URI += " \
+         file://0055-policy-modules-system-systemd-make-_systemd_t-MLS-tr.patch \
+         file://0056-policy-modules-system-logging-make-syslogd_runtime_t.patch \
+         file://0057-policy-modules-system-authlogin-chkpwd_t-dac_read_se.patch \
++        file://0058-policy-modules-services-chronyd-allow_dac_read_searc.patch \
+         "
  
- # %25 of total number of local CPU cores
- BAZEL_JOBS ??= "HOST_CPUS*.25"
-diff --git a/classes/bazel.bbclass b/classes/bazel.bbclass
-index 160d50d..8fca205 100644
---- a/classes/bazel.bbclass
-+++ b/classes/bazel.bbclass
-@@ -7,8 +7,8 @@ inherit bazel-base
- 
- BAZEL_DIR ?= "${WORKDIR}/bazel"
- BAZEL_OUTPUTBASE_DIR ?= "${BAZEL_DIR}/output_base"
--export USER="unused-bazel-user"
--export BAZEL_STARTUP_OPTIONS="--output_user_root=${BAZEL_DIR}/user_root \
-+export USER = "unused-bazel-user"
-+export BAZEL_STARTUP_OPTIONS = "--output_user_root=${BAZEL_DIR}/user_root \
-                    --output_base=${BAZEL_OUTPUTBASE_DIR} \
-                    --bazelrc=${S}/bazelrc \
-                    --batch  \
-@@ -153,7 +153,7 @@ PSEUDO_IGNORE_PATHS .= ",${WORKDIR}/bazel"
- 
- inherit unsupportarch
- 
--export YOCTO_NATIVE_SYSROOT="${BAZEL_OUTPUTBASE_DIR}/external/yocto_compiler/recipe-sysroot-native"
-+export YOCTO_NATIVE_SYSROOT = "${BAZEL_OUTPUTBASE_DIR}/external/yocto_compiler/recipe-sysroot-native"
- 
- do_rm_work[prefuncs] += "clean_bazel"
- do_clean[prefuncs] += "clean_bazel"
+ S = "${WORKDIR}/refpolicy"
 
