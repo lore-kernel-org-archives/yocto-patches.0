@@ -2,74 +2,74 @@ Return-Path: <majortomtosourcecontrol@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02811C3601A
-	for <webhook@archiver.kernel.org>; Thu,  3 Apr 2025 03:54:38 +0000 (UTC)
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
- by mx.groups.io with SMTP id smtpd.web11.5445.1743652477587868339
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1AEEC3600C
+	for <webhook@archiver.kernel.org>; Thu,  3 Apr 2025 13:27:11 +0000 (UTC)
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+ by mx.groups.io with SMTP id smtpd.web11.13175.1743686827019116324
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 02 Apr 2025 20:54:37 -0700
+ Thu, 03 Apr 2025 06:27:07 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=AnYGn3ZP;
- spf=pass (domain: gmail.com, ip: 209.85.166.169, mailfrom: majortomtosourcecontrol@gmail.com)
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3d5ebc2459fso4114815ab.0
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 02 Apr 2025 20:54:37 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=lnwbPH2v;
+ spf=pass (domain: gmail.com, ip: 209.85.166.176, mailfrom: majortomtosourcecontrol@gmail.com)
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3d43c972616so2834335ab.0
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 03 Apr 2025 06:27:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743652477; x=1744257277; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1743686826; x=1744291626; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:subject:from:to:content-language
          :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IrpQ2vtU3Nqj/BpRBNMURVgOC1ZziCAYyL9DfECUK6A=;
-        b=AnYGn3ZPvNfZGLKFYJ4dR/mp67n0pH3aGSdkoP8pIEF948Obtky83gLWOLKJuJy36D
-         nZakkzgN5+lWdDZN61UlOFYS7/l0p/03i+ZLM0qmecr2c5+39vCKmYrXYO0WOmYXnj3T
-         VBxQz+Hb1NtTtqlTkEdQ0TCD4SfPAgpKmCR9N+QfJjNQrcPusyWM84vlda2h86bxYQ49
-         Zv8YmOHxJwNrAlof/7DOg0LpD1OSILzOw+LFV29WTAqONuy57K+A7hl/UnQfUEhOl82p
-         Uw2gsPpnvT2WJocslukJk3WEk1eybC8ElDu4oVmFUiK3K6XIXG4dmnysRRIxMBwJU8Te
-         6MAQ==
+        bh=9TS7mKlq69KAz2JBGEv+ip0mlLCaywKnTKq7LIC1UM0=;
+        b=lnwbPH2vGXEsuAKGN9UTZNSoqK8mMRPRvNtxNKRr1b75R2cw/ZA8O2WpTSeopGf171
+         ndRDhgwi6csDB9iEl/OeTFKEoeYkph5/GHXszrPIKbQyncZzjRV+lZ7UN3hTgpwccAE8
+         YwLELNhMsij6Z+h3d98htf1xwQbumcMsQK9jN0iDpFyBBco9XRfbTdTrutTexDrfZ02G
+         z/emPgls83U2/0yuCyXGBRF6+NHMnOtFt9yHJhpCl6d+JPzrvtlaDEV0g47mu+qjZNFw
+         MF5G63cJCfrGWZyhhTbOmheM2+4P+CGeDSRl+EwZjUHG/H0XFv7ihXBK9rX21yp9HxDO
+         wYnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743652477; x=1744257277;
+        d=1e100.net; s=20230601; t=1743686826; x=1744291626;
         h=content-transfer-encoding:subject:from:to:content-language
          :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=IrpQ2vtU3Nqj/BpRBNMURVgOC1ZziCAYyL9DfECUK6A=;
-        b=VN+2t/LZExL+PH2wpOzIfoqr2TGoU3shMvZBLzZ+YHdkf9RE3xPBb9+0L1c6oWyUn3
-         AFz0VIJgUpZCKRc91uF3smPJMFGO0xaX2kKd6Lsa/wEFxax3X0IjMiRnGMcKphZ0UDKO
-         jrGoS9QNcPrHxH4OAZmNP7oHKwjTwt4H7LSDEp4Uz5K4gpOIVZZ3y8s1nBtjNN0nc0aE
-         VRD9UMHDNPh/AgAGomTpRGCMYue3Xwft3m3E66tk64ii8H6iMJljn93jDjP8FKUctDPl
-         /EEM+uukJZQ4HpSuN3MdSD05J8LbxqOEq3+9b2nOCcp2tujzAcmH0iQYcxysnUA76/Nh
-         KV1A==
-X-Forwarded-Encrypted: i=1; AJvYcCXDcLcDftgRjs6C9okBxnnaSVcBfOQGFmPPyJ+Bp9HYlDbfYzdazL567yCOym6r44Nk+A3i1yoyjMYHT8rY@lists.yoctoproject.org
-X-Gm-Message-State: AOJu0YxGmc7hTO47gN9xhpfRWT+kxLnQJBwwY4cycw5x6K6HiGqIUZjG
-	8ZEuYIQr1aDeRg77T5WfC2muKKHps9ORZWykyqqNXiyZYA7qeG4X
-X-Gm-Gg: ASbGnctI271lTzIoyu1JNWHkztgiEpEPBsBkuZ6YsPZXDmzT7inLcfCLxY6hPA2ZouL
-	kgPPRw/Jz5IKLX0shAKSpujegzpE8v+4TDCf7xJ6Q18oaoqkVfIldNO5S2DuOKM/OjdJ2+kNfsq
-	8yA+LXJYj5GzfLciRvRy+P0n30I2d1wG7iMD2bC0k6TfxVCPvHjzUrVBqk7kn81/lsv/NPHEyzq
-	fS/WoYBK44aj1wD5pQSm3x9OWcaPsCruPnZIX7PtMcIs6DZUTJi4T+u4xLWUflx1ggPTwPjqAN2
-	fo81u5/kk73t0TvIcAgcxmbMxz4HP18+Oo8IIKORdfVJ5IMP17cYaen8Dz8aHNMVeLX4/2oGORQ
-	R8C6e2FAfOaTGfWBakGF/+Q==
-X-Google-Smtp-Source: AGHT+IF6aBZgqerPqNIqa1D8iUyc6Ii+HaamL4uPNmz1T292eHUhnHcUK610+1nTSsJDwsRK3XUw6A==
-X-Received: by 2002:a05:6e02:250e:b0:3d6:cc9e:6686 with SMTP id e9e14a558f8ab-3d6dd80a6c4mr15262725ab.17.1743652476755;
-        Wed, 02 Apr 2025 20:54:36 -0700 (PDT)
+        bh=9TS7mKlq69KAz2JBGEv+ip0mlLCaywKnTKq7LIC1UM0=;
+        b=Key6qsyaiNjES8xZiVcWLYi+dfvmHx4FaP04WlYyPXuuR5gs8aOInEEnrjpqOvG1J+
+         trp+tpuE84fwjPh1f/S9U/lKnjsm/CtZWhvXXgMEJ5NxfhNasm+1eCFs8W9YrxU9W+uv
+         h8XFoZR1vWS5+G83exPXKP8Nap1Om87DUV5OJbHPUN8gOLcK0/YVHr9+s9X3Bz7chSlv
+         brcM4TCQrDugx2pbG0b6gKaqif0CMMTrAESNjekjnf21KcKAlKwhy13uKlKN0YNsuOtR
+         dgZT5DodsU6oKbl0irrQUB/v0SoEaDq6511UYzq3Q3C1O+qOUaXDn2Kn5D4YbbDR/DBK
+         +Llg==
+X-Forwarded-Encrypted: i=1; AJvYcCVIKVeD4UQUswP/hGp6fIF9cDinVDpr6utSlth+GBH0JgJ5GY2UVhw/thRNeW0frIsVW1cPAkD3LNA+6a4v@lists.yoctoproject.org
+X-Gm-Message-State: AOJu0YzVjoZlWby104NZRbKaGPS9tWhG1ulztn5AShn1LjvdCw8W/4tD
+	40xQtcmigADqLZKyELLQEfv+dkqg11/7+uoE0Xj4BEvM0Oo+AKdx
+X-Gm-Gg: ASbGncs4KoBixYU4w3WUrkO8PruA2yn84ZmmMI/weOZi0OHalXJ5ALqWId8TCOHEEG+
+	eD8ziKbYlNYYjK8JUmxQXJ5y25lleBRrNs/Xc92vFNnHfuRdgFUWkFCHxQT0P/3nYBbjI1vzmoC
+	ZahWSq3BsD9QEoVHh6wTAKRknKszw8T+h+NZNrG0Z15UxUTJ3MuBq3dOFsE9HN9FEStmP+IlKis
+	GZKHLK5hn3D98calDpFEoj+PCrSRzIWnI2En6gE7kMm/mS9GR0WV5TMcLWGcQJh7CHOODVN1JEQ
+	54MTlROvywFlnacXEbhjV3RaDu9X1yQBYDMC9nhn9utHIGkq89zsqHinAttT6I5HdNk9/JdFw56
+	9mQHTrujERLlJ55QDx5tfoA==
+X-Google-Smtp-Source: AGHT+IHp4881p7jbCiovcdS0Zf35qtfhsP22b6v/GG3j2w/OyFyIs0xtdyZ1BjFdptG7z+1C9Qz60g==
+X-Received: by 2002:a05:6e02:6c1:b0:3d4:346e:8d49 with SMTP id e9e14a558f8ab-3d6dcb9864fmr31933355ab.9.1743686826122;
+        Thu, 03 Apr 2025 06:27:06 -0700 (PDT)
 Received: from [172.26.252.3] (174-29-216-122.hlrn.qwest.net. [174.29.216.122])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d6de79f156sm1076875ab.15.2025.04.02.20.54.36
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f4b5c4a566sm296900173.43.2025.04.03.06.27.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Apr 2025 20:54:36 -0700 (PDT)
-Message-ID: <0f977f66-e6a1-4d6f-a45d-3c90f49f06eb@gmail.com>
-Date: Wed, 2 Apr 2025 21:54:35 -0600
+        Thu, 03 Apr 2025 06:27:05 -0700 (PDT)
+Message-ID: <63cb7a33-6f46-4c7f-858c-db4cd0ec184c@gmail.com>
+Date: Thu, 3 Apr 2025 07:27:04 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Content-Language: en-US
 To: joe.macdonald@siemens.com, yi.zhao@windriver.com,
  yocto-patches@lists.yoctoproject.org
 From: Clayton Casciato <majortomtosourcecontrol@gmail.com>
-Subject: [meta-selinux][styhead][PATCH] refpolicy: chronyd - fix
+Subject: [meta-selinux][scarthgap][PATCH] refpolicy: chronyd - fix
  dac_read_search denials
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 03 Apr 2025 03:54:38 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1277
+ <yocto-patches@lists.yoctoproject.org>; Thu, 03 Apr 2025 13:27:11 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1278
 
 Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
 ---
@@ -80,11 +80,11 @@ Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
 
 diff --git a/recipes-security/refpolicy/refpolicy/0058-policy-modules-services-chronyd-allow_dac_read_searc.patch b/recipes-security/refpolicy/refpolicy/0058-policy-modules-services-chronyd-allow_dac_read_searc.patch
 new file mode 100644
-index 0000000..2d4849f
+index 0000000..8916aa6
 --- /dev/null
 +++ b/recipes-security/refpolicy/refpolicy/0058-policy-modules-services-chronyd-allow_dac_read_searc.patch
 @@ -0,0 +1,58 @@
-+From 1f96ee01c7325f30aa4fcf833f4c63338e214dc1 Mon Sep 17 00:00:00 2001
++From 385d7ea5347ecadacc97701aca0e859b3be09161 Mon Sep 17 00:00:00 2001
 +From: Clayton Casciato <ccasciato@21sw.us>
 +Date: Thu, 27 Feb 2025 15:53:30 -0700
 +Subject: [PATCH] chronyd: fix dac_read_search denials
@@ -143,7 +143,7 @@ index 0000000..2d4849f
 + allow chronyc_t self:udp_socket create_socket_perms;
 + allow chronyc_t self:netlink_route_socket create_netlink_socket_perms;
 diff --git a/recipes-security/refpolicy/refpolicy_common.inc b/recipes-security/refpolicy/refpolicy_common.inc
-index 0c3966d..cd04ef5 100644
+index c8a8ac2..9f536bb 100644
 --- a/recipes-security/refpolicy/refpolicy_common.inc
 +++ b/recipes-security/refpolicy/refpolicy_common.inc
 @@ -73,6 +73,7 @@ SRC_URI += " \
