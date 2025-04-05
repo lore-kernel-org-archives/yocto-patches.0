@@ -1,124 +1,221 @@
-Return-Path: <raj.khem@gmail.com>
+Return-Path: <majortomtosourcecontrol@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D941DC36010
-	for <webhook@archiver.kernel.org>; Sat,  5 Apr 2025 05:03:21 +0000 (UTC)
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
- by mx.groups.io with SMTP id smtpd.web10.1159.1743829397103382420
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A3BBC36010
+	for <webhook@archiver.kernel.org>; Sat,  5 Apr 2025 13:55:14 +0000 (UTC)
+Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+ by mx.groups.io with SMTP id smtpd.web11.6470.1743861307616662179
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 04 Apr 2025 22:03:17 -0700
+ Sat, 05 Apr 2025 06:55:07 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=GMR2BC0d;
- spf=pass (domain: gmail.com, ip: 209.85.210.180, mailfrom: raj.khem@gmail.com)
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-736aaeed234so2289165b3a.0
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 04 Apr 2025 22:03:17 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=LbEfyOR7;
+ spf=pass (domain: gmail.com, ip: 209.85.166.46, mailfrom: majortomtosourcecontrol@gmail.com)
+Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-855bd88ee2cso70852139f.0
+        for <yocto-patches@lists.yoctoproject.org>; Sat, 05 Apr 2025 06:55:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743829396; x=1744434196; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=C6B+0rjHWS3Hs5VfB+kN6W+4hbqSdTWjUNw7eeSXdUo=;
-        b=GMR2BC0d/5iQnlFyESFHMb5rHFcTh8D8mHASUbz/eIw+GjeDebkWlHEiZiNCVdp9mo
-         L139axQx889nIdtIrhsqEvSs7DSXFTJyrCdVknEUHZrZIxpzm1JE5TVrFLBURqmBdl0g
-         dd3SItHnojzf/Ak0cgOmtf8gsMyHxEZWRCHLNJPZ7YvT/LgB9aT1jxa8tYsCF3tov8w6
-         dZY8Uu+1HB3zmSkUh0T6qIC7Sy5RZ3UZy4f7JuawKZ8w4HSOoDhty6ybuETV9jZWn0Vf
-         X2/0RpAz5++RiVoVk8vS15uLW9JlpVv80uhJWM2ITaGJ719A2VcAo74KqEnYnop8yiGa
-         AoaA==
+        d=gmail.com; s=20230601; t=1743861307; x=1744466107; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ik5bMVLLourqH7H7EQ+X9Gn/nL8yRNvHtguGs9+KrHY=;
+        b=LbEfyOR7I+nGb/LhYINvVs5bLThF1RZ7xn4tEemPH0LbDbmRawx7iwnF0r/qT4/Z78
+         uQq5p+57onBHU987Tm4Fky3PMQW7LSc2cE/7qo3L5qS+1KAlB4jINAw7K2YMOTv0109X
+         c11qOtNl1Cxr18mGjNKGB9EPeTEseRs1awD5cIwC1eeBrTjuqUurO/qpaddSHzdTNJdI
+         mu19jk++iKGqge0NmWLHqHBq8QsNsgUjz1sV5LcYZXyRxR9sPuXur+RepzFPYgFOAhqQ
+         59G6PdQDWGT1Ws0blYkEb6z1psFIn0ie95R1rI3wGNBO2v9wmskAQiabm30Cd4M9d8uq
+         O7Zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743829396; x=1744434196;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=C6B+0rjHWS3Hs5VfB+kN6W+4hbqSdTWjUNw7eeSXdUo=;
-        b=Wq7FU5UfiCpoa0MSKEwG/DpAJvrfQ73Smus7mJRXxWSmHcWbBQcPVWlAKp37rbSy4L
-         QJfIIGsZm7S9iFKdyYNNo3SrXvgP9tob0BbAsKBZk85AqwaC46iU/V1wvzeqK6s9Uz0y
-         TMr93Ehoe4C9FES/blBYsICxFm4o4GNq9/y3HK1RXBXJeXIkABGOgrbtcHk+dqYTQQFH
-         07vm3WEnffwFoSmSZqy/Uc+ux4vurJlhA37yd+m8CJVam8k/6X5XaugVpry0nA/07VW7
-         jc6+8dQffxQ0VbC6/1eCVfRmvLWaZE+KPcHDkPY2uADU2OljKg8+rS3mQnocR4gzzzzI
-         PgWQ==
-X-Gm-Message-State: AOJu0YwONY/+4FsGjaeJQYFaWD7z+Vz5kbcCJ9B6VH45XFRblvjZz+u+
-	P0EY/LYv0Or3xC3Kl7j+oTh7/yeFat6LEFaqNhUHAbHNhylN3Du+Axnj1shZ
-X-Gm-Gg: ASbGncsRsQXdE2ZUpXuqdSNkzbDd2AiQ3RVXYrGyptb4mYGho0p3T3gnjKq+zhZ9zwX
-	0xBA1wf1TrQkI/AJubipHR6mfhwC2tou7KOXGRKeqf/0c0FkB+SR2aSAUd/gKL1KRiDFtrTnk6C
-	cIcSJ8O6jFhgOoz06CnIypTEm3p6Sp7oXarIf+4NsnurV2dSekSk3gTF1xhmDN0YSi7tNNG+Qcw
-	0AccX4h2WVLu50aOdLHScG04uE5kGWl4DrmRT7BbNMq0LqEuIQ63tihf9gwSB0bvqESh1spwJBr
-	4NfzoupDeR8rO4+RWr953uQyUxKp1uM7zgbvlsVhnU3MWs1LK/MnOOaBMehXdpQHxucDgte0b4f
-	/7WjoWp36OXvOV9V6iNfIwjOslfP83CF0
-X-Google-Smtp-Source: AGHT+IEFilpXoK2S8M9wWZzqqKOhj8v3eZNg7G+O6Ruvr7F5xV00tSbYbIwDGpVPi+4GoWVJuhxGqQ==
-X-Received: by 2002:a05:6a00:3009:b0:736:4abf:2961 with SMTP id d2e1a72fcca58-739e7120132mr6233857b3a.17.1743829395950;
-        Fri, 04 Apr 2025 22:03:15 -0700 (PDT)
-Received: from ?IPV6:2601:646:8201:fd20:ec3d:c567:e156:a268? ([2601:646:8201:fd20:ec3d:c567:e156:a268])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-739d97ee2b3sm4376980b3a.46.2025.04.04.22.03.15
-        for <yocto-patches@lists.yoctoproject.org>
+        d=1e100.net; s=20230601; t=1743861307; x=1744466107;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Ik5bMVLLourqH7H7EQ+X9Gn/nL8yRNvHtguGs9+KrHY=;
+        b=TP/nTV0tYGNl9B0aL6C3GhoAyYqgrG9MWQOWg268thF+X4nkm78uDH+Unx1jVBTD3v
+         Mh492Bs+Sfa6GAeulZ7NgDJZSFFHMtb21MVEIHYoi2bCfjdLc1j+4K0f1TjSn+YOGZe/
+         adtXDOwJKjzU7z9pGiYhjWom9lbqPtkM6UiWGkOKljTsaPUUkMpv7NiSLYSyWpHkpJqB
+         pwk1MhDpY2pCUsFc75KuMqE7zQC0Q7YFq//PGqk/gPA6JrPUY4T3EfeI7r3O5tWjvLpi
+         HbiEPsCCmcQDQBCgjBfrH9eKsVXF5KSjunRLULKh6/QiRbXCBAVByTQ0074BbJx7wtkF
+         cEUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX18Ej0ci2dGUZ0Z23mbquzU+2f9F5X2Jcdgwf8GnwTTy/pCDbZxdKsGulSvhdwiqUtgsP5lnjMGmwu0ygy@lists.yoctoproject.org
+X-Gm-Message-State: AOJu0YwO6UTw6zGI5LT4u3VgaJGhE3Sb0mHu/bghKm8KDmf7u+BuyPa8
+	YIsqBbezoBc6LhMfVmLnOqgrV/NGvxkBQI0YnQqZgT5zSmxqwV0L
+X-Gm-Gg: ASbGncunoFnYRFWsLlw9fcCh5SBkYcDaj+4PomM+NIFu0V34qKEO/+NfGHmcsVOmo3/
+	g2UHBZGrsNTexXBipNqlq9AGp4S0l8w+COvVLrwrrHASMFoN8NCAfH8xfJyctJZRZV9Vf6wwZ5P
+	gadd934qskOsnfnkNTtifGlMRAHtEok5FYbrvCO+rem9/3CkayXcznMIFP0Vg8aI6dS9WJ/WnNi
+	Z5YGaeii0wc13iQuHfGpIdGtq5ZnLWy4v1MI4s4VQjn8W+2o10xRVGioNvx0rXzbQh9SKEio1VI
+	tTQML6vkQUpNGUiDNH61GwRTrHc6NnlY2wwoQVHcPtBf4CgX75cXwX4meYtGBN1RM87Oojv8oVE
+	4Ha1EajKjBGFlA7tLn125MA==
+X-Google-Smtp-Source: AGHT+IGrIEGUA+FUnDrcahCwYGSd5tTIy0vqY6q5viWlVgPdk0fH4+R0n5sju3Bgs/S7tWdE1BkCoA==
+X-Received: by 2002:a05:6602:4c8c:b0:85e:2e83:52a5 with SMTP id ca18e2360f4ac-8612aa48cb3mr247298639f.4.1743861306720;
+        Sat, 05 Apr 2025 06:55:06 -0700 (PDT)
+Received: from [172.26.252.3] (174-29-216-122.hlrn.qwest.net. [174.29.216.122])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f4b5c6919asm1317760173.64.2025.04.05.06.55.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Apr 2025 22:03:15 -0700 (PDT)
-Message-ID: <d8508244-5fac-4264-8b10-e65ffb6db329@gmail.com>
-Date: Fri, 4 Apr 2025 22:03:14 -0700
+        Sat, 05 Apr 2025 06:55:06 -0700 (PDT)
+Message-ID: <2662ce7c-528c-4408-8b76-78a2537f5614@gmail.com>
+Date: Sat, 5 Apr 2025 07:55:05 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [meta-zephyr][PATCH] zephyr-core/zephyr-kernel:
- specify newlib capability with cross-compile toolchain
-To: yocto-patches@lists.yoctoproject.org
-References: <PH0PR10MB700766691D9D809FDAB3B7BEF3A92@PH0PR10MB7007.namprd10.prod.outlook.com>
 Content-Language: en-US
-From: Khem Raj <raj.khem@gmail.com>
-In-Reply-To: <PH0PR10MB700766691D9D809FDAB3B7BEF3A92@PH0PR10MB7007.namprd10.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: joe.macdonald@siemens.com, yi.zhao@windriver.com,
+ yocto-patches@lists.yoctoproject.org
+From: Clayton Casciato <majortomtosourcecontrol@gmail.com>
+Subject: [meta-selinux][scarthgap][PATCH] refpolicy: firewalld - fix lib_t
+ Python cache denial auditing
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sat, 05 Apr 2025 05:03:21 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1284
+ <yocto-patches@lists.yoctoproject.org>; Sat, 05 Apr 2025 13:55:14 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1285
 
-On 4/4/25 12:09 PM, Nicholas Lowell via lists.yoctoproject.org wrote:
-> Zephyr upstream reconfigurations now require either the CMake variable
-> TOOLCHAIN_HAS_NEWLIB or Kconfig NEWLIB_LIBC_SUPPORTED in order to build
-> with FULL_LIBC_SUPPORTED and NEWLIB.
-> 
-> This cross-compile toolchain does indeed have full newlib support available
-> so we need to now specify that so it can be used.
-> 
-> Signed-off-by: Nicholas Lowell <Nicholas.Lowell@lexmark.com>
-> ---
->   .../zephyr-kernel/zephyr-toolchain-cross-compile.inc             | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-toolchain-cross-compile.inc b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-toolchain-cross-compile.inc
-> index 2f1ea37..f26683e 100644
-> --- a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-toolchain-cross-compile.inc
-> +++ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-toolchain-cross-compile.inc
-> @@ -6,6 +6,7 @@ SYSROOT_DIR="${STAGING_DIR_TARGET}"
->   EXTRA_OECMAKE:append = " \
->       -DCROSS_COMPILE=${CROSS_COMPILE} \
->       -DSYSROOT_DIR=${SYSROOT_DIR} \
-> +    -DTOOLCHAIN_HAS_NEWLIB=ON \
+Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
+---
+ ...ervices-firewalld-fix-lib_t-python_c.patch | 122 ++++++++++++++++++
+ .../refpolicy/refpolicy_common.inc            |   1 +
+ 2 files changed, 123 insertions(+)
+ create mode 100644 recipes-security/refpolicy/refpolicy/0060-policy-modules-services-firewalld-fix-lib_t-python_c.patch
 
-Even if we do have full C library, should this be part of kconfig ? or a 
-packageconfig that is left for user to select ? does it impact the size 
-of final ELF file if this selection is enabled via CMake
-
->       "
-> 
->   OE_TERMINAL_EXPORTS += "CROSS_COMPILE"
-> --
-> 2.43.0
-> 
-> Lexmark Confidential
-> 
-> 
-> -=-=-=-=-=-=-=-=-=-=-=-
-> Links: You receive all messages sent to this group.
-> View/Reply Online (#1283): https://lists.yoctoproject.org/g/yocto-patches/message/1283
-> Mute This Topic: https://lists.yoctoproject.org/mt/112090624/1997914
-> Group Owner: yocto-patches+owner@lists.yoctoproject.org
-> Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/13340786/1997914/645821814/xyzzy [raj.khem@gmail.com]
-> -=-=-=-=-=-=-=-=-=-=-=-
-> 
-> 
-
-
--- 
--Khem
+diff --git a/recipes-security/refpolicy/refpolicy/0060-policy-modules-services-firewalld-fix-lib_t-python_c.patch b/recipes-security/refpolicy/refpolicy/0060-policy-modules-services-firewalld-fix-lib_t-python_c.patch
+new file mode 100644
+index 0000000..e2bc1d7
+--- /dev/null
++++ b/recipes-security/refpolicy/refpolicy/0060-policy-modules-services-firewalld-fix-lib_t-python_c.patch
+@@ -0,0 +1,122 @@
++From f53e48c7a68c28b66d20416ebf81217e4892104f Mon Sep 17 00:00:00 2001
++From: Clayton Casciato <ccasciato@21sw.us>
++Date: Tue, 4 Mar 2025 08:17:47 -0700
++Subject: [PATCH] firewalld: fix lib_t Python cache denial auditing
++
++type=PATH item=3 name=(null) inode=15343 dev=fe:00 mode=file,644
++ouid=root ogid=root rdev=00:00 obj=system_u:object_r:lib_t:s0
++nametype=CREATE cap_fp=none cap_fi=none cap_fe=0 cap_fver=0
++cap_frootid=0
++type=PATH item=2 name=(null) inode=3055 dev=fe:00 mode=dir,755 ouid=root
++ogid=root rdev=00:00 obj=system_u:object_r:lib_t:s0 nametype=PARENT
++cap_fp=none cap_fi=none cap_fe=0 cap_fver=0 cap_frootid=0
++type=PATH item=1 name=(null) nametype=CREATE cap_fp=none cap_fi=none
++cap_fe=0 cap_fver=0 cap_frootid=0
++type=PATH item=0 name=(null) inode=3055 dev=fe:00 mode=dir,755
++ouid=root ogid=root rdev=00:00 obj=system_u:object_r:lib_t:s0
++nametype=PARENT cap_fp=none cap_fi=none cap_fe=0 cap_fver=0
++cap_frootid=0
++type=CWD cwd=/
++type=SYSCALL arch=armeb syscall=openat per=PER_LINUX success=yes exit=3
++a0=AT_FDCWD a1=0xb6551ce8
++a2=O_WRONLY|O_CREAT|O_EXCL|O_NOFOLLOW|O_CLOEXEC a3=0x1a4 items=4 ppid=1
++pid=225 auid=unset uid=root gid=root euid=root suid=root fsuid=root
++egid=root sgid=root fsgid=root tty=(none) ses=unset comm=firewalld
++exe=/usr/bin/python3.12 subj=system_u:system_r:firewalld_t:s0 key=(null)
++type=AVC avc:  denied  { write } for  pid=225 comm=firewalld
++path=/usr/lib/python3.12/__pycache__/traceback.cpython-312.pyc.3059098912
++dev="vda" ino=15343 scontext=system_u:system_r:firewalld_t:s0
++tcontext=system_u:object_r:lib_t:s0 tclass=file
++type=AVC avc:  denied  { create } for  pid=225 comm=firewalld
++name=traceback.cpython-312.pyc.3059098912
++scontext=system_u:system_r:firewalld_t:s0
++tcontext=system_u:object_r:lib_t:s0 tclass=file
++type=AVC avc:  denied  { add_name } for  pid=225 comm=firewalld
++name=traceback.cpython-312.pyc.3059098912
++scontext=system_u:system_r:firewalld_t:s0
++tcontext=system_u:object_r:lib_t:s0 tclass=dir
++type=AVC avc:  denied  { write } for  pid=225 comm=firewalld
++name=__pycache__ dev="vda" ino=3055
++scontext=system_u:system_r:firewalld_t:s0
++tcontext=system_u:object_r:lib_t:s0 tclass=dir
++----
++type=PROCTITLE
++proctitle=/usr/bin/python3 /usr/sbin/firewalld --nofork --nopid
++type=PATH item=1 name=(null) inode=15343 dev=fe:00 mode=file,644
++ouid=root ogid=root rdev=00:00 obj=system_u:object_r:lib_t:s0
++nametype=CREATE cap_fp=none cap_fi=none cap_fe=0 cap_fver=0
++cap_frootid=0
++type=PATH item=0 name=(null) inode=3055 dev=fe:00 mode=dir,755
++ouid=root ogid=root rdev=00:00 obj=system_u:object_r:lib_t:s0
++nametype=PARENT cap_fp=none cap_fi=none cap_fe=0 cap_fver=0
++cap_frootid=0
++type=CWD cwd=/
++type=SYSCALL arch=armeb syscall=rename per=PER_LINUX success=yes
++exit=0 a0=0xb6551ce8 a1=0xb6562f80 a2=0x1 a3=0x0 items=2 ppid=1 pid=225
++auid=unset uid=root gid=root euid=root suid=root fsuid=root egid=root
++sgid=root fsgid=root tty=(none) ses=unset comm=firewalld
++exe=/usr/bin/python3.12 subj=system_u:system_r:firewalld_t:s0 key=(null)
++type=AVC avc:  denied  { rename } for  pid=225 comm=firewalld
++name=traceback.cpython-312.pyc.3059098912 dev="vda" ino=15343
++scontext=system_u:system_r:firewalld_t:s0
++tcontext=system_u:object_r:lib_t:s0 tclass=file
++type=AVC avc:  denied  { remove_name } for  pid=225 comm=firewalld
++name=traceback.cpython-312.pyc.3059098912 dev="vda" ino=15343
++scontext=system_u:system_r:firewalld_t:s0
++tcontext=system_u:object_r:lib_t:s0 tclass=dir
++----
++type=PROCTITLE
++proctitle=/usr/bin/python3 /usr/sbin/firewalld --nofork --nopid
++type=PATH item=1 name=(null) inode=15344 dev=fe:00 mode=dir,755
++ouid=root ogid=root rdev=00:00 obj=system_u:object_r:lib_t:s0
++nametype=CREATE cap_fp=none cap_fi=none cap_fe=0 cap_fver=0
++cap_frootid=0
++type=PATH item=0 name=(null) inode=7795 dev=fe:00 mode=dir,755
++ouid=root ogid=root rdev=00:00 obj=system_u:object_r:lib_t:s0
++nametype=PARENT cap_fp=none cap_fi=none cap_fe=0 cap_fver=0
++cap_frootid=0
++type=CWD cwd=/
++type=SYSCALL arch=armeb syscall=mkdir per=PER_LINUX success=yes exit=0
++a0=0xb64a46f0 a1=0777 a2=0x1 a3=0x0 items=2 ppid=1 pid=225 auid=unset
++uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root
++fsgid=root tty=(none) ses=unset comm=firewalld exe=/usr/bin/python3.12
++subj=system_u:system_r:firewalld_t:s0 key=(null)
++type=AVC avc:  denied  { create } for  pid=225 comm=firewalld
++name=__pycache__ scontext=system_u:system_r:firewalld_t:s0
++tcontext=system_u:object_r:lib_t:s0 tclass=dir
++
++--
++
++Fedora
++
++dontaudit firewalld_t lib_t:dir write;
++https://github.com/fedora-selinux/selinux-policy/commit/38c318fb0da5ffe99b6d1c599d8f0b9968efa640
++
++Other lib_t seems to be handled with:
++dontaudit firewalld_t filesystem_type:dir audit_access;
++dontaudit firewalld_t filesystem_type:file audit_access;
++
++https://github.com/fedora-selinux/selinux-policy/blob/1e6221cdad83095faff06774c600a308544d64b8/policy/modules/contrib/firewalld.te#L94
++
++Signed-off-by: Clayton Casciato <ccasciato@21sw.us>
++
++Upstream-Status: Backport [https://github.com/SELinuxProject/refpolicy/commit/8a4043060d847630170acfc588551311bb072966]
++
++Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
++---
++ policy/modules/services/firewalld.te | 2 ++
++ 1 file changed, 2 insertions(+)
++
++diff --git a/policy/modules/services/firewalld.te b/policy/modules/services/firewalld.te
++index e686270b1..f592cf4f6 100644
++--- a/policy/modules/services/firewalld.te
+++++ b/policy/modules/services/firewalld.te
++@@ -86,6 +86,8 @@ fs_getattr_xattr_fs(firewalld_t)
++ 
++ logging_send_syslog_msg(firewalld_t)
++ 
+++libs_dontaudit_manage_lib_dirs(firewalld_t)
+++libs_dontaudit_manage_lib_files(firewalld_t)
++ libs_watch_lib_dirs(firewalld_t)
++ 
++ miscfiles_read_generic_certs(firewalld_t)
+diff --git a/recipes-security/refpolicy/refpolicy_common.inc b/recipes-security/refpolicy/refpolicy_common.inc
+index f952fd4..c848039 100644
+--- a/recipes-security/refpolicy/refpolicy_common.inc
++++ b/recipes-security/refpolicy/refpolicy_common.inc
+@@ -75,6 +75,7 @@ SRC_URI += " \
+         file://0057-policy-modules-system-authlogin-chkpwd_t-dac_read_se.patch \
+         file://0058-policy-modules-services-chronyd-allow_dac_read_searc.patch \
+         file://0059-policy-modules-system-unconfined-fix-oddjob-security.patch \
++        file://0060-policy-modules-services-firewalld-fix-lib_t-python_c.patch \
+         "
+ 
+ S = "${WORKDIR}/refpolicy"
 
