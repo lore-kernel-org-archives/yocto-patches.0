@@ -1,219 +1,152 @@
-Return-Path: <scott.murray@konsulko.com>
+Return-Path: <majortomtosourcecontrol@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28347C36010
-	for <webhook@archiver.kernel.org>; Mon,  7 Apr 2025 15:30:22 +0000 (UTC)
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
- by mx.groups.io with SMTP id smtpd.web11.50341.1744039820443095166
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64DDEC36010
+	for <webhook@archiver.kernel.org>; Mon,  7 Apr 2025 16:47:02 +0000 (UTC)
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+ by mx.groups.io with SMTP id smtpd.web10.52917.1744044412461839737
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 07 Apr 2025 08:30:20 -0700
+ Mon, 07 Apr 2025 09:46:52 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=hpAjhbAA;
- spf=pass (domain: konsulko.com, ip: 209.85.219.48, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6f0cfbe2042so4365466d6.1
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 07 Apr 2025 08:30:20 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=SrKIbeHJ;
+ spf=pass (domain: gmail.com, ip: 209.85.166.175, mailfrom: majortomtosourcecontrol@gmail.com)
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3d5bb2ae4d3so15238065ab.0
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 07 Apr 2025 09:46:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1744039819; x=1744644619; darn=lists.yoctoproject.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mr5AqMCh5rC3ZLWe0JsgEJH7kpTf0vPiqlDEi3QNT8M=;
-        b=hpAjhbAA+a3tHPKmfgy8X+cdRNaa+p8Kw73LQDKcigOBu3iCrxo3AwNaD17RPsK2X5
-         +LmDN+TJ9cox+9LBcW9wRqeAucBo2KXlcGruGTAcTvIsaQBwuKHCQiRfvD0SsM3LpVo1
-         ++ldhTUvOmyzNfodNBA7qreZvOxzzmFgByt2w=
+        d=gmail.com; s=20230601; t=1744044412; x=1744649212; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Yu096giGqg1MGsoHTAVQI9e/V6pcZmOsYTloEcDTMwg=;
+        b=SrKIbeHJgHn4E9uKy3foAsd27FvUaSbUQ6xRc+Oxdv6o8fPnTwPw2oA2/JMl0l9Raw
+         /Zaz0zgiDXfO90rwI+4ZL26Zh96ARmhbkF1z4eyGfuJoev0EHhyfqrBD4NwEygQGm8rz
+         jiMA2GF5i2kgnKXVANzq3bASquKe1kZnx+iNPMtvc0zWaSSbxnXsOkik7FEwPeDDyotg
+         DYGOvZZ/7lN3oNFVVu7bUTCq9hAIAHdiQVA7GwEF+zYEJmoNLIKEHAKf0Gf3tCpc8DcJ
+         bFg4iO9Q41mWL5rUWNKasSA7mVTRZ/+JvcpiVz3uqTmSf9WFtYnkYkmBMfkck7tvaqF9
+         72cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744039819; x=1744644619;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mr5AqMCh5rC3ZLWe0JsgEJH7kpTf0vPiqlDEi3QNT8M=;
-        b=MkMTY6V7nwu7qr38NRbPD4jqhDbwdnRbfxElovUZHSsl1WOCJdP0qKfdBrFmIyrSmj
-         vARMCSZznwsSEmhfxp72UC/HsYyv8Yb+fs2ywPqUvKae8q8yblPwjhGtsIMhDyceQH+p
-         aO8kqwJKh8VEJpvbYTbBnwJD+qJwRDL1sKLF97maxsGJMMJogO2rPE71o3Kb5WQsAUP5
-         dG0xFWkXfepTcH3hevrRrGRrqIRmR+fWNnkvMd4sLMhXoYaYXO//UzE9XR+FWRAs3Sao
-         12ArvtVRvgkJfrSPQcO6PXnTeoj5ekh/k1GgK3syBRimcSg90PaAeJ9ZnCuLe3DKHC6U
-         KiCg==
-X-Gm-Message-State: AOJu0Yzm3ecizCTXqBQ8YQcaFDyRsOFpm0SbenhCD8YRdD4WR++YkBAi
-	njaasrTsED0uIl1isGNmhxTiIRUxAlGxpEDAvx3BJrAVx/bVBpo84skFUa6IXb0hO+E7qUPFD3A
-	j
-X-Gm-Gg: ASbGnctLo5d+hHkMy7REosLyLm7UFZt87va+3SsRlornoy9HizxUHBp6/kqnyZe7D4D
-	cE30QodESkIV88OsBZoTujtzgF+IfVvIMass39mnxxeL6hSbjxHbGF0TPAPMvkHg8lJoat2+MC8
-	xDmk7Zo3Uo5ZNWOjZG3+ibym8yqYLxIClzV/PXSxGtT6LWytkiQwiIHiB/4dzelNI2iRTq96ky1
-	3cxNeQC6/cE/xP7XHmcXBbfx1XAIbgotvJqKkR++bu2l5PAvhi7/orDo98M52wg6NZv5HaepGBe
-	ueyUfk5rI68OEAyOtxcXSar9FDWgxka2dtfPEYIRN9jiv8Fv3wyKL+IxKIrPVaM6IVsp5u96N84
-	wXJI=
-X-Google-Smtp-Source: AGHT+IGJqHkhAYKbHDXjGXIN9W68HJJWAlJDBZxb+vR8+OSvEN42Eg8NmhSiJvMIf9djIW9rxCPyOQ==
-X-Received: by 2002:ad4:5baa:0:b0:6e8:903c:6e5b with SMTP id 6a1803df08f44-6ef0be791d1mr264748866d6.9.1744039819121;
-        Mon, 07 Apr 2025 08:30:19 -0700 (PDT)
-Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c76ea58d71sm610953585a.89.2025.04.07.08.30.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 08:30:18 -0700 (PDT)
-Date: Mon, 7 Apr 2025 11:29:45 -0400 (EDT)
-From: Scott Murray <scott.murray@konsulko.com>
-To: "yocto-patches@lists.yoctoproject.org" <yocto-patches@lists.yoctoproject.org>
-cc: "Sambu, Soumya" <Soumya.Sambu@windriver.com>, 
-    Khem Raj <raj.khem@gmail.com>, "akuster@mvista.com" <akuster@mvista.com>, 
-    "MacLeod, Randy" <Randy.MacLeod@windriver.com>, 
-    "Yang, Liezhi" <Liezhi.Yang@windriver.com>
-Subject: Re: [yocto-patches] [meta-lts-mixins][kirkstone/rust][PATCH 1/1]
- mozjs: Use RUST_HOST_SYS and RUST_TARGET_SYS
-In-Reply-To: <CAMKF1soMKkj2j6RsRnj32P6BRCChr+4RV8UBvyYkqQPPbhA8Pw@mail.gmail.com>
-Message-ID: <5718125c-833e-4c55-7b2b-b5d381872933@konsulko.com>
-References: <20250318032001.2031160-1-soumya.sambu@windriver.com> <d8e7feba-e083-300f-a82f-c483162da8e0@konsulko.com> <CY8PR11MB7921603720483CCF392BC06C81A62@CY8PR11MB7921.namprd11.prod.outlook.com> <CY8PR11MB79218088835F33FAD84274B381AA2@CY8PR11MB7921.namprd11.prod.outlook.com>
- <CAMKF1soMKkj2j6RsRnj32P6BRCChr+4RV8UBvyYkqQPPbhA8Pw@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1744044412; x=1744649212;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Yu096giGqg1MGsoHTAVQI9e/V6pcZmOsYTloEcDTMwg=;
+        b=Fa+m9dNNh9xi7+/taPup+XjufvTV83BYtCQvQI0bYGfd90CaAIQFSqUWCfDy45opkc
+         q2Ld8OsITzGGNmJdYJSOprAlojV6RJvvs7sjltgfyDB9DQJqFhmYlukmQb3rRP3wdHYl
+         SP4762Dm+/agHUFFPBfCG+uxzOMrqcMOFdPINIdabBDdtb+9rdIIN4WEbhPzftPJXU6a
+         2ibWg6ydl02sG0SyW671EO399Ne3BmMYvRCKXbFw0xsmITsCVKslDPqU+uxNjXlGIpXC
+         r7piR2rx7VkoBklwRraPRqWeKNy1XKP4LJlVj8R/ikDlAGFQWpOsH/7V/3xi7RJrFF4g
+         06ow==
+X-Forwarded-Encrypted: i=1; AJvYcCUNwhTFoFRBOCfmi95aa/jqQu7U9xKL35f49AuWMza/ITABuywbYPARZV+YegVfFIw8qYr3i9HNNKi6Of/y@lists.yoctoproject.org
+X-Gm-Message-State: AOJu0YyEXwXJ+5T0bksL7vI/vTVJNAoNPIKOPXpIr3COOlysxF1Q2K/J
+	BRrtppSbrDldOFWhqyADr+jHcB67jGTN8vxDTqiLC8BBe8QsL2OP
+X-Gm-Gg: ASbGncvTGB1uNg8JXxgYSCswXgDec481qNaQdrLIpJlvIeLw2JKRCR5h5q3U16z+4so
+	K0vQEFf4hLiUmqykT/zW/yPo9JojiSdVMdxT8KLn+Dss69d+1kK2b2BbQASjqEE/NF7GsIk/Wy9
+	3P3KT3XT7CXkAqu1Ixz0vx0Qqbl3lPCQeZakiz6RfMuiPRs5tktROz14LIx9kum2VjCoEusUQs3
+	X+Dy/pfbdbSUbrBubMoy7HIefpumy50F+S07AVLKS/dP/4Uv5bqBX0NztXFMUzHGFq+Vgz+rbd0
+	RoeRrESAkUq1kpNrvaGu0+hYTtzgDx62O2/mB8ARIW0fcFEvoYhrPQ5QGdTbxysa1EXm0t5fI0F
+	/YpH7gFDoXUxMPGjSCpDoDg==
+X-Google-Smtp-Source: AGHT+IEaX1Cgc96X+L0Lnjb9xhJUF5I+J9iU72hC2gkDTjU7ZNyUqnwSAbYQmcuKM9HQIhETfoxkKA==
+X-Received: by 2002:a05:6e02:1a49:b0:3d4:276:9a1b with SMTP id e9e14a558f8ab-3d6e3f755b1mr114916745ab.16.1744044411539;
+        Mon, 07 Apr 2025 09:46:51 -0700 (PDT)
+Received: from [172.26.252.3] (174-29-216-122.hlrn.qwest.net. [174.29.216.122])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d6de7b9da6sm25705955ab.22.2025.04.07.09.46.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Apr 2025 09:46:51 -0700 (PDT)
+Message-ID: <c969c32f-49ba-4b71-a1a2-62297a573a9a@gmail.com>
+Date: Mon, 7 Apr 2025 10:46:50 -0600
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="-1463811583-1325704340-1744039818=:18999"
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: joe.macdonald@siemens.com, yi.zhao@windriver.com,
+ yocto-patches@lists.yoctoproject.org
+From: Clayton Casciato <majortomtosourcecontrol@gmail.com>
+Subject: [meta-selinux][styhead][PATCH] refpolicy: locallogin - dontaudit
+ sulogin_t checkpoint_restore
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 07 Apr 2025 15:30:22 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1293
+ <yocto-patches@lists.yoctoproject.org>; Mon, 07 Apr 2025 16:47:02 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1294
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
+---
+ ...ystem-locallogin-dontaudit-sulogin_t.patch | 53 +++++++++++++++++++
+ .../refpolicy/refpolicy_common.inc            |  1 +
+ 2 files changed, 54 insertions(+)
+ create mode 100644 recipes-security/refpolicy/refpolicy/0063-policy-modules-system-locallogin-dontaudit-sulogin_t.patch
 
----1463811583-1325704340-1744039818=:18999
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-
-On Mon, 7 Apr 2025, Khem Raj wrote:
-
-> On Mon, Apr 7, 2025 at 6:12 AM Sambu, Soumya <Soumya.Sambu@windriver.com> wrote:
-> >
-> > Just following up — @Khem Raj, @Armin Kuster. Does creating a mixins layer for meta-openembedded sound reasonable? Would really appreciate your input.
-> >
->
-> I think adding bbappends via dynamic layers inside meta-lts-mixins
-> layer for this rust branch would be
-> something to consider, that will keep it simple for end users of this layer.
-
-As I stated in a previous response, my issue with that approach is
-people's expectations of my testing whatever random packages in various
-layers they want me to carry patches for.  Debugging build failures of
-the in oe-core like librsvg and python3-cryptography has proven a bit
-of timesink as it is, there's no way I have time to build test and
-potentially fix issues with multiple flavors of mozjs, chromium, etc. on
-each Rust upgrade backport.  If Wind River absolutely needs this for
-their customers, I'll gladly hand over maintenance of the Rust mixin
-layers to them and they can do it...
-
-Scott
-
-
-> > Regards,
-> > Soumya
-> > ________________________________
-> > From: Sambu, Soumya <Soumya.Sambu@windriver.com>
-> > Sent: Wednesday, March 26, 2025 8:45 PM
-> > To: Scott Murray <scott.murray@konsulko.com>; yocto-patches@lists.yoctoproject.org <yocto-patches@lists.yoctoproject.org>
-> > Cc: MacLeod, Randy <Randy.MacLeod@windriver.com>; akuster@mvista.com <akuster@mvista.com>; raj.khem@gmail.com <raj.khem@gmail.com>
-> > Subject: Re: [yocto-patches] [meta-lts-mixins][kirkstone/rust][PATCH 1/1] mozjs: Use RUST_HOST_SYS and RUST_TARGET_SYS
-> >
-> > That makes sense.
-> > Should we create a mixins layer for meta-openembedded?
-> > So far, we only have mozjs, that needs a bbappend.
-> > @Khem Raj, @Armin Kuster - Does that make sense to you?
-> > Regards,
-> > Soumya
-> >
-> > ________________________________
-> > From: Scott Murray <scott.murray@konsulko.com>
-> > Sent: Tuesday, March 25, 2025 5:34 AM
-> > To: yocto-patches@lists.yoctoproject.org <yocto-patches@lists.yoctoproject.org>
-> > Cc: Sambu, Soumya <Soumya.Sambu@windriver.com>
-> > Subject: Re: [yocto-patches] [meta-lts-mixins][kirkstone/rust][PATCH 1/1] mozjs: Use RUST_HOST_SYS and RUST_TARGET_SYS
-> >
-> > CAUTION: This email comes from a non Wind River email account!
-> > Do not click links or open attachments unless you recognize the sender and know the content is safe.
-> >
-> > On Tue, 18 Mar 2025, Soumya via lists.yoctoproject.org wrote:
-> >
-> > > From: Soumya Sambu <soumya.sambu@windriver.com>
-> > >
-> > > The mozjs-91 and mozjs-78 recipe in meta-openembedded sets --target=${HOST_SYS} and
-> > > --target=${TARGET_SYS} respectively, which leads to an error when using Rust from meta-lts-mixins:
-> > >
-> > > error: Error loading target specification: Could not find specification for target "x86_64-poky-linux".
-> > >
-> > > Updated target configuration to resolve this.
-> > >
-> > > Additionally, `mozjs-78` encountered "linker 'cc' not found" error. This was fixed by explicitly
-> > > defining the linker for Rust.
-> > >
-> > > Signed-off-by: Soumya Sambu <soumya.sambu@windriver.com>
-> >
-> > I'm not planning to take this, since carrying bbappends for recipes
-> > outside of oe-core is outside of what I had planned to support with
-> > the mixin.  If I take it, I will be signing up to test building those
-> > recipes on every Rust update for at least the next year, and it would
-> > somewhat open the door for people advocating doing the same for
-> > scarthgap/rust, which has 3 more years to go.
-> >
-> > Scott
-> >
-> >
-> > > ---
-> > >  recipes-devtools/rust/rust_1.81.0.bb       |  3 +++
-> > >  recipes-extended/mozjs/mozjs-78_%.bbappend | 14 ++++++++++++++
-> > >  recipes-extended/mozjs/mozjs-91_%.bbappend | 13 +++++++++++++
-> > >  3 files changed, 30 insertions(+)
-> > >  create mode 100644 recipes-extended/mozjs/mozjs-78_%.bbappend
-> > >  create mode 100644 recipes-extended/mozjs/mozjs-91_%.bbappend
-> > >
-> > > diff --git a/recipes-devtools/rust/rust_1.81.0.bb b/recipes-devtools/rust/rust_1.81.0.bb
-> > > index cc00053..2d91d68 100644
-> > > --- a/recipes-devtools/rust/rust_1.81.0.bb
-> > > +++ b/recipes-devtools/rust/rust_1.81.0.bb
-> > > @@ -146,6 +146,9 @@ python do_configure() {
-> > >      # harness are debuggable just from logfiles
-> > >      config.set("rust", "verbose-tests", e(True))
-> > >
-> > > +    # Override default linker cc.
-> > > +    config.set("rust", "default-linker", e(d.expand("${RUST_BUILD_CCLD}")))
-> > > +
-> > >      # [build]
-> > >      config.add_section("build")
-> > >      config.set("build", "submodules", e(False))
-> > > diff --git a/recipes-extended/mozjs/mozjs-78_%.bbappend b/recipes-extended/mozjs/mozjs-78_%.bbappend
-> > > new file mode 100644
-> > > index 0000000..8e8c24a
-> > > --- /dev/null
-> > > +++ b/recipes-extended/mozjs/mozjs-78_%.bbappend
-> > > @@ -0,0 +1,14 @@
-> > > +EXTRA_OECONF = " \
-> > > +    --target=${RUST_TARGET_SYS} \
-> > > +    --host=${BUILD_SYS} \
-> > > +    --prefix=${prefix} \
-> > > +    --libdir=${libdir} \
-> > > +    --x-includes=${STAGING_INCDIR} \
-> > > +    --x-libraries=${STAGING_LIBDIR} \
-> > > +    --without-system-icu \
-> > > +    --disable-tests --disable-strip --disable-optimize \
-> > > +    --disable-jemalloc \
-> > > +    --with-system-icu \
-> > > +    ${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', "--enable-gold", '--disable-gold', d)} \
-> > > +    ${JIT} \
-> > > +"
-> > > diff --git a/recipes-extended/mozjs/mozjs-91_%.bbappend b/recipes-extended/mozjs/mozjs-91_%.bbappend
-> > > new file mode 100644
-> > > index 0000000..c0214b0
-> > > --- /dev/null
-> > > +++ b/recipes-extended/mozjs/mozjs-91_%.bbappend
-> > > @@ -0,0 +1,13 @@
-> > > +do_configure() {
-> > > +        cd ${B}
-> > > +        python3 ${S}/configure.py \
-> > > +        --enable-project=js \
-> > > +        --target=${RUST_HOST_SYS} \
-> > > +        --host=${BUILD_SYS} \
-> > > +        --prefix=${prefix} \
-> > > +        --libdir=${libdir} \
-> > > +        --disable-jemalloc \
-> > > +        --disable-strip \
-> > > +        ${JIT} \
-> > > +        ${ICU}
-> > > +}
-> > >
->
----1463811583-1325704340-1744039818=:18999--
+diff --git a/recipes-security/refpolicy/refpolicy/0063-policy-modules-system-locallogin-dontaudit-sulogin_t.patch b/recipes-security/refpolicy/refpolicy/0063-policy-modules-system-locallogin-dontaudit-sulogin_t.patch
+new file mode 100644
+index 0000000..7b086f4
+--- /dev/null
++++ b/recipes-security/refpolicy/refpolicy/0063-policy-modules-system-locallogin-dontaudit-sulogin_t.patch
+@@ -0,0 +1,53 @@
++From bff80ff5bd0d1a007c9eb0dd1fb51831be504069 Mon Sep 17 00:00:00 2001
++From: Clayton Casciato <ccasciato@21sw.us>
++Date: Mon, 17 Mar 2025 20:09:55 -0600
++Subject: [PATCH] locallogin: dontaudit sulogin_t checkpoint_restore
++
++type=PROCTITLE proctitle=/usr/sbin/sulogin
++
++type=SYSCALL arch=armeb syscall=ioctl per=PER_LINUX success=yes exit=0
++a0=0x3 a1=0x5457 a2=0xbec20a90 a3=0xbec20a40 items=0 ppid=277 pid=278
++auid=unset uid=root gid=root euid=root suid=root fsuid=root egid=root
++sgid=root fsgid=root tty=ttyS0 ses=unset comm=sulogin
++exe=/usr/sbin/sulogin.util-linux subj=system_u:system_r:sulogin_t:s0
++key=(null)
++
++type=AVC avc:  denied  { checkpoint_restore } for  pid=278 comm=sulogin
++capability=checkpoint_restore  scontext=system_u:system_r:sulogin_t:s0
++tcontext=system_u:system_r:sulogin_t:s0 tclass=capability2
++
++--
++
++Ref: https://criu.org/Main_Page
++
++--
++
++Fedora:
++
++$ sesearch --dontaudit --source sulogin_t --target sulogin_t --class capability2
++dontaudit sulogin_t sulogin_t:capability2 checkpoint_restore;
++
++https://github.com/fedora-selinux/selinux-policy/commit/853dc2b6436ca5f2d7cb984bde3b000358829109
++https://bugzilla.redhat.com/show_bug.cgi?id=2265391
++
++Signed-off-by: Clayton Casciato <ccasciato@21sw.us>
++
++Upstream-Status: Backport [https://github.com/SELinuxProject/refpolicy/commit/79dda56d3191b09b9f0cbafd4d1bd7056fd3975e]
++
++Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
++---
++ policy/modules/system/locallogin.te | 1 +
++ 1 file changed, 1 insertion(+)
++
++diff --git a/policy/modules/system/locallogin.te b/policy/modules/system/locallogin.te
++index 4ba131d29..02c7ff56d 100644
++--- a/policy/modules/system/locallogin.te
+++++ b/policy/modules/system/locallogin.te
++@@ -234,6 +234,7 @@ optional_policy(`
++ 
++ allow sulogin_t self:capability { dac_read_search sys_admin sys_tty_config };
++ dontaudit sulogin_t self:capability dac_override;
+++dontaudit sulogin_t self:capability2 checkpoint_restore;
++ allow sulogin_t self:process setexec;
++ allow sulogin_t self:fd use;
++ allow sulogin_t self:fifo_file rw_fifo_file_perms;
+diff --git a/recipes-security/refpolicy/refpolicy_common.inc b/recipes-security/refpolicy/refpolicy_common.inc
+index 7701023..21bfbb8 100644
+--- a/recipes-security/refpolicy/refpolicy_common.inc
++++ b/recipes-security/refpolicy/refpolicy_common.inc
+@@ -78,6 +78,7 @@ SRC_URI += " \
+         file://0060-policy-modules-services-firewalld-fix-lib_t-python_c.patch \
+         file://0061-policy-modules-services-firewalld-fix-firewalld_t-fi.patch \
+         file://0062-policy-modules-multiple-filetrans-run_machine_id-etc.patch \
++        file://0063-policy-modules-system-locallogin-dontaudit-sulogin_t.patch \
+         "
+ 
+ S = "${WORKDIR}/refpolicy"
 
