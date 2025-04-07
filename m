@@ -2,60 +2,60 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D77BC369A8
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CD7BC369A6
 	for <webhook@archiver.kernel.org>; Mon,  7 Apr 2025 21:31:04 +0000 (UTC)
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
- by mx.groups.io with SMTP id smtpd.web11.59613.1744061461936565908
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+ by mx.groups.io with SMTP id smtpd.web11.59614.1744061462934863897
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 07 Apr 2025 14:31:02 -0700
+ Mon, 07 Apr 2025 14:31:03 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=onOccelk;
- spf=pass (domain: konsulko.com, ip: 209.85.166.180, mailfrom: scott.murray@konsulko.com)
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3d57143ee39so39254615ab.1
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 07 Apr 2025 14:31:01 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=lQ4TWyx/;
+ spf=pass (domain: konsulko.com, ip: 209.85.166.51, mailfrom: scott.murray@konsulko.com)
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-85e73562577so395021339f.0
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 07 Apr 2025 14:31:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1744061461; x=1744666261; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1744061462; x=1744666262; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=6tbPZw3QHZCdVDpLYo+yrzab306eUWiEqYCoeWbyA2w=;
-        b=onOccelkXtARuevNjhIZ6uLDvNGJT7wtT5kxNVr8OBiMzJzz98Gk7KovSonaAFSoip
-         1BQ9EObxZAj9wLOOSHP/7j46NTkbEukv+S4BgCUsSDURvUJ6aCvzgTV9LtsdM8RvQRpM
-         jdZQua6JZVM6E4ZlUDg06imSVJgGTvNTEODz4=
+        bh=yoKtYm1yjnn8PKQslZtFa4a/UWdJBQ05JWTEVdwpPjI=;
+        b=lQ4TWyx//Ttaa1U+TU/4aCuX7mg1xkgScFcpjL/V8d9Mp9jHV6BsFnngsRQqSNMXZH
+         T8c9ARtLydh+QjlI7Q0W0NV8L2BtnwvHT6EZ0KL2EyCRUpWW66xA6Jul+IbwQgMhuDd/
+         s4pcJsfMtquaeItBE7kF73N5lUzd7KuFHP0l8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744061461; x=1744666261;
+        d=1e100.net; s=20230601; t=1744061462; x=1744666262;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6tbPZw3QHZCdVDpLYo+yrzab306eUWiEqYCoeWbyA2w=;
-        b=AZwPWdU4SL+T6VFo/icpjjkDP9AATAfqzKQOUH7RbbrSrxG8ht5+PBHvSMw3eRiODv
-         jo4AAo3uLvCIalZKdiUaRoqt+//pFiSsZvYlAYWaCC1h3JOzfp0tp+HrCNK0IBEXbqzM
-         JEduXaV7rgo7l4hmvQUhCj2UZ37/sMGX5rXzyxVSlvfOe0w8CuUcuzKFIMcA2uraTDr6
-         ygT9eOxd2I2re/A59IbSbMHCFcAPibUtnRGcJ3H+9B/Dvmn6O7dUUX2qwmd3+rJJhacT
-         R2aOntIng55uDQExjq3ZRTgMS9TOl+dKAo53gYnkRIfLQQgBeXWE0XG4gnWGvafd8O7p
-         ljhA==
-X-Gm-Message-State: AOJu0Yz8wXnYYaOSlL/2DNmoLh7EeL3nMWXpzl1bTP2b0GZhJcqQM46O
-	TuH4a0DrroC48f1u6ULYjPH8Nrm8dStjMXEe50HhgT39gSjyWcyw0IViwzlhiloRCvZpgUU9U6C
-	wmv0=
-X-Gm-Gg: ASbGncsy68cJiUmvI12WcwrYS83AMIkZQpxlsvoV/46qaL5xyZa54XCj44zwTIxgRQY
-	cZnmG/63G/ALjtHOUlmto0dCetadR756mGs3j/PLCHjgWXRvfW5JEvREvsHPYF9GShlCAGjMQWk
-	zdzYHz9ART8x8RgcjsYsnqL2KQEsXR6+lVZLYx6LqNOFL/dVscuhpllCdW6UNbrpMpE+zhHVQGj
-	UZN0TUNAXwWSQ7+hQNIlJ4K4O4j42XEA2wj4Pxi3v9TAlyPM9Ha0btVjgZgexRezFVtjrG9bHH0
-	6rSTXDZ5cxz/cS1KPcRqTtfQEOG3AwvM/nCwFT5lf9noLro5JoaXLUIyXuPmYxrqnHwLeg9T/b/
-	64QvkQZn84zn3MewDJMhXXR+Un8Pvdak=
-X-Google-Smtp-Source: AGHT+IFN0vp2bxyHZ3W0/LpC5fmptp4ibmwxolcWC7nKJQ5O95nofT3jqRQHsYKJZg8b2i7Ga8kE3A==
-X-Received: by 2002:a05:6e02:2701:b0:3d4:2409:ce6 with SMTP id e9e14a558f8ab-3d6e3ee1a2cmr128324565ab.5.1744061460914;
-        Mon, 07 Apr 2025 14:31:00 -0700 (PDT)
+        bh=yoKtYm1yjnn8PKQslZtFa4a/UWdJBQ05JWTEVdwpPjI=;
+        b=I2+GxgCmwoLvPU5VjjECiPZO15L5DNHSU8ClqDB+74rde8nhgnSB21FmGFEUyB8HNX
+         z9F3qc9k2Y5iTEwOye3ZWgDHgkQZLMTaZrHdiP0iB727NYRwfrRb/ZnV+3m/pS+g8p9L
+         mx2dVKn8ni0iWQBFKXtc8b9qCJZE4WZQIcM9a/z8dKaZVFaRKf7JaEkdBKv040FCBBWS
+         5rAL49fX1q9zsmFYuyAE0lXPvz5YaPXvgrMmA6Y748ZUvIxWRUy/WD9v/hRAOxhLho+2
+         LgVYwaPVBAqhO8k3P/+IE7ht0vbnvPlIN2p6d5skmF2BOtDCHvtn+k49cvonXpO96BQS
+         4KcA==
+X-Gm-Message-State: AOJu0Yw76tg4K3YgO1K4L55KSmi4OGa/G4RY+nEDlElpt8JcAqcRx3Hz
+	MM/xThpLNH+lBcm4xe7PdKjKS32VaSiOft6aPMKogWkg3UHgrKtzF9bXiZgcdHT9RHNwNKIQ3Nw
+	Jhp4=
+X-Gm-Gg: ASbGncvuFyb0olA5AHIAonqP8IA6hKxVlafSFph+8FGnLn8RWgQK9H53e5NfTw/NgNi
+	/09am3ms40WxthAAzc0MHLnTyc2OkT84BvG+6Wy51PVbJEropUySL4hREWCzD+2Sac1nnUMJVOG
+	7Xj1IV+imGQ6njP4XgeCOVibgTElUNi4Z08W6aoDcRlaquKUQYApITRDdow83Ag9aoJpTwB7LgQ
+	r2WFQ32K6mYcdgW+7+rXZxb+t4rvMc1JZ1STr4mJn0az33TcW1wZo2ZGvJwEElFhXI2nJS1w308
+	2pdzbSoxTQmU1oj5FROJzPuN8l3MxPfH36SRfY4TkE7VxeyY81IVFFde7Ebp+ZBZMjMLDy5gbVP
+	Yc9MsYbDKONvuAIwtE3lX
+X-Google-Smtp-Source: AGHT+IFoNlRJgeH520PK267fay4FcZ2NuDjma0CDImnqAzh4OkReq/3+bKNgHtwRbgio+DOqX0L+qQ==
+X-Received: by 2002:a05:6602:400a:b0:85d:f316:fabc with SMTP id ca18e2360f4ac-8611b4655e2mr1584404639f.8.1744061461770;
+        Mon, 07 Apr 2025 14:31:01 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f4f44ba91dsm132936173.79.2025.04.07.14.31.00
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f4f44ba91dsm132936173.79.2025.04.07.14.31.01
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 14:31:00 -0700 (PDT)
+        Mon, 07 Apr 2025 14:31:01 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][scarthgap/rust][PATCH 22/29] rust: Fix build failure when multilibs are enabled
-Date: Mon,  7 Apr 2025 17:30:11 -0400
-Message-ID: <0901b65272b370bae8d2a9cd1131e4016bf25de0.1744061149.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][scarthgap/rust][PATCH 23/29] rust: Oe-selftest changes for rust v1.84.1
+Date: Mon,  7 Apr 2025 17:30:12 -0400
+Message-ID: <956848f91ac9327087953b5fac0975297f0351ca.1744061149.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1744061149.git.scott.murray@konsulko.com>
 References: <cover.1744061149.git.scott.murray@konsulko.com>
@@ -65,74 +65,82 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Mon, 07 Apr 2025 21:31:04 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1321
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1322
 
 From: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
 
-When multilibs are enabled, building rust is failing because of the following commit
-https://github.com/rust-lang/rust/commit/68034f837a39387e49fc7d7c5b088f5372a1127e
-with stage1/rustc cannot able to find dependent *.so files. The issue is
-been fixed inrust-master with the following commit by passing the necessary library
-paths before executing stage1/rustc
+Ignore the failing unit test.
 
-Upstream-Status: Backport [https://github.com/rust-lang/rust/commit/139d6ba054a1a4cc5fe64981ad46fd5547bd4916]
+The tidy check failed due to a typo, which was already reported and
+fixed in the Rust upstream.
+
+Upstream-Status: Backport [https://github.com/rust-lang/rust/commit/8e7734978245522cbbd14e53e08e888faf031ded]
 
 Signed-off-by: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(adapted from oe-core commit ab29b970ba7e08eabca92018d103af5f249ed2c5)
+(adapted from oe-core commit 94a244a14075ead1b3b5e966c0fe713cd448cad8)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- .../Zdual-proc-macros-additional-check.patch  | 31 +++++++++++++++++++
+ .../rust/files/fix-tidy-check-failure.patch   | 19 +++++++++++++++++++
+ .../rust/files/rust-oe-selftest.patch         | 12 ++++++++++++
  recipes-devtools/rust/rust-source.inc         |  1 +
- 2 files changed, 32 insertions(+)
- create mode 100644 recipes-devtools/rust/files/Zdual-proc-macros-additional-check.patch
+ 3 files changed, 32 insertions(+)
+ create mode 100644 recipes-devtools/rust/files/fix-tidy-check-failure.patch
 
-diff --git a/recipes-devtools/rust/files/Zdual-proc-macros-additional-check.patch b/recipes-devtools/rust/files/Zdual-proc-macros-additional-check.patch
+diff --git a/recipes-devtools/rust/files/fix-tidy-check-failure.patch b/recipes-devtools/rust/files/fix-tidy-check-failure.patch
 new file mode 100644
-index 0000000..6bb1738
+index 0000000..54b4ee6
 --- /dev/null
-+++ b/recipes-devtools/rust/files/Zdual-proc-macros-additional-check.patch
-@@ -0,0 +1,31 @@
-+Fix bootstrap failure when multilibs are enabled.
++++ b/recipes-devtools/rust/files/fix-tidy-check-failure.patch
+@@ -0,0 +1,19 @@
++fix a comment with uneven number of backticks in rustc_mir_build
 +
-+Upstream-Status: Backport [https://github.com/rust-lang/rust/commit/139d6ba054a1a4cc5fe64981ad46fd5547bd4916]
++Upstream-Status: Backport [https://github.com/rust-lang/rust/commit/8e7734978245522cbbd14e53e08e888faf031ded]
 +
 +Signed-off-by: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
 +---
-+diff --git a/src/bootstrap/src/core/builder/cargo.rs b/src/bootstrap/src/core/builder/cargo.rs
-+index 066e6bf53f..a2f6fac4b1 100644
-+--- a/src/bootstrap/src/core/builder/cargo.rs
-++++ b/src/bootstrap/src/core/builder/cargo.rs
-+@@ -646,7 +646,10 @@ impl Builder<'_> {
-+                 // Build proc macros both for the host and the target unless proc-macros are not
-+                 // supported by the target.
-+                 if target != compiler.host && cmd_kind != Kind::Check {
-+-                    let error = command(self.rustc(compiler))
-++                    let mut rustc_cmd = command(self.rustc(compiler));
-++                    self.add_rustc_lib_path(compiler, &mut rustc_cmd);
-++
-++                    let error = rustc_cmd
-+                         .arg("--target")
-+                         .arg(target.rustc_target_arg())
-+                         .arg("--print=file-names")
-+@@ -654,6 +657,7 @@ impl Builder<'_> {
-+                         .arg("-")
-+                         .run_capture(self)
-+                         .stderr();
-++
-+                     let not_supported = error
-+                         .lines()
-+                         .any(|line| line.contains("unsupported crate type `proc-macro`"));
++diff --git a/compiler/rustc_mir_build/src/build/expr/as_rvalue.rs b/compiler/rustc_mir_build/src/build/expr/as_rvalue.rs
++index 3f89e33778..c66af11845 100644
++--- a/compiler/rustc_mir_build/src/build/expr/as_rvalue.rs
+++++ b/compiler/rustc_mir_build/src/build/expr/as_rvalue.rs
++@@ -231,7 +231,7 @@ impl<'a, 'tcx> Builder<'a, 'tcx> {
++                             if range.start <= range.end { BinOp::BitAnd } else { BinOp::BitOr };
 +
++                         let mut comparer = |range: u128, bin_op: BinOp| -> Place<'tcx> {
++-                            // We can use `ty::TypingEnv::fully_monomorphized()`` here
+++                            // We can use `ty::TypingEnv::fully_monomorphized()` here
++                             // as we only need it to compute the layout of a primitive.
++                             let range_val = Const::from_bits(
++                                 this.tcx,
+diff --git a/recipes-devtools/rust/files/rust-oe-selftest.patch b/recipes-devtools/rust/files/rust-oe-selftest.patch
+index dd22ced..7e5854a 100644
+--- a/recipes-devtools/rust/files/rust-oe-selftest.patch
++++ b/recipes-devtools/rust/files/rust-oe-selftest.patch
+@@ -469,3 +469,15 @@ index 14e6013f96..b670f27ab4 100644
+          #[cfg_attr(miri, ignore)]
+          fn $test_fn_name() {
+              $crate::sort::tests::$test_fn_name::<$sort_impl>();
++diff --git a/compiler/rustc_data_structures/src/vec_cache/tests.rs b/compiler/rustc_data_structures/src/vec_cache/tests.rs
++index a05f274136..0e69b4cb98 100644
++--- a/compiler/rustc_data_structures/src/vec_cache/tests.rs
+++++ b/compiler/rustc_data_structures/src/vec_cache/tests.rs
++@@ -17,6 +17,7 @@ fn vec_cache_insert_and_check() {
++ }
++
++ #[test]
+++#[ignore]
++ fn sparse_inserts() {
++     let cache: VecCache<u32, u8, u32> = VecCache::default();
++     let end = if cfg!(target_pointer_width = "64") && cfg!(target_os = "linux") {
 diff --git a/recipes-devtools/rust/rust-source.inc b/recipes-devtools/rust/rust-source.inc
-index 28f5aeb..ee23e5a 100644
+index ee23e5a..92bb5e4 100644
 --- a/recipes-devtools/rust/rust-source.inc
 +++ b/recipes-devtools/rust/rust-source.inc
-@@ -7,6 +7,7 @@ SRC_URI += "https://static.rust-lang.org/dist/rustc-${RUST_VERSION}-src.tar.xz;n
-             file://oeqa-selftest-Increase-timeout-in-process-sigpipe-ru.patch;patchdir=${RUSTSRC} \
+@@ -8,6 +8,7 @@ SRC_URI += "https://static.rust-lang.org/dist/rustc-${RUST_VERSION}-src.tar.xz;n
              file://0001-src-core-build_steps-tool.rs-switch-off-lto-for-rust.patch;patchdir=${RUSTSRC} \
  	    file://revert-link-std-statically-in-rustc_driver-feature.patch;patchdir=${RUSTSRC} \
-+	    file://Zdual-proc-macros-additional-check.patch;patchdir=${RUSTSRC} \
+ 	    file://Zdual-proc-macros-additional-check.patch;patchdir=${RUSTSRC} \
++	    file://fix-tidy-check-failure.patch;patchdir=${RUSTSRC} \
  "
  SRC_URI[rust.sha256sum] = "e23ec747a06ffd3e94155046f40b6664ac152c9ee3c2adfd90353a7ccff24226"
  
