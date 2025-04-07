@@ -2,60 +2,60 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86C6CC369A4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 845B4C36010
 	for <webhook@archiver.kernel.org>; Mon,  7 Apr 2025 21:31:04 +0000 (UTC)
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
- by mx.groups.io with SMTP id smtpd.web10.60126.1744061454462454431
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+ by mx.groups.io with SMTP id smtpd.web11.59617.1744061464122472432
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 07 Apr 2025 14:30:54 -0700
+ Mon, 07 Apr 2025 14:31:04 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=dAS0/3k7;
- spf=pass (domain: konsulko.com, ip: 209.85.166.52, mailfrom: scott.murray@konsulko.com)
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-85e15dc8035so125851239f.0
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 07 Apr 2025 14:30:54 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=UbEqB1O4;
+ spf=pass (domain: konsulko.com, ip: 209.85.166.172, mailfrom: scott.murray@konsulko.com)
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3d6d6d82633so14399155ab.0
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 07 Apr 2025 14:31:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1744061453; x=1744666253; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1744061463; x=1744666263; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=GynVCE9keBQk1dKDqQYBl4NeZ8S255moG90twPqKWQY=;
-        b=dAS0/3k7cScHr/8mifzvdh/1zBjGdXropQ+yuzo6NLcPVIjN2GikGqDnNMVd+b3pBq
-         8isp2wOWiXfYEp417+gqsATcn7yDj+QjStEeruiLu7vUGkg+ZC8ENBZBg4HBQu+kAQ1i
-         wFsq/V7GH3m8dVbztnquepPUxjDPUwKoBAMp8=
+        bh=F0FXbiGvtqONuDC1lYezRqUJRaM76ZoROCEWBfTSLdk=;
+        b=UbEqB1O4JQAb1dJ1Hvrzux1Ijx+oO3Q82FstxQZl7TAadNIhIC0XhQe2U0pVJsec5P
+         FDBhtVff5KrKHJ6MBmVGOa1M2LIUm/PqWxYkEKu6z5O4v/NNwTl2FjuKmJnUYEuNZJZ4
+         b50BAz2FO7y0mZhEzkIGmJU8e1WEbRaGu5o+Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744061453; x=1744666253;
+        d=1e100.net; s=20230601; t=1744061463; x=1744666263;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=GynVCE9keBQk1dKDqQYBl4NeZ8S255moG90twPqKWQY=;
-        b=CKdPlFe32RnY+6Qv7Y6qDuWYQCAuYSPTPlctcLWm1FtyTvkDlKUnrlH7jf9qMYcKuO
-         4vARCjPfuDPhqguc68p4PMUnRZQOjDTKiVSVVIExJ6LoRDkhO+7hCQUvxD55sAd6f4q7
-         LXMLOT5sWnYLa6r955YCM0k8vShr9GU1gmLL7NRHH92m8IBLNhpavJEi4F4S1GY8DoEF
-         iJhhbAvbWo5sWTjzTk/WDbEGLazZK4GxzXk1hGpzQ7kTP9J5HAF+9ZlNVlLmr1IDPJ8j
-         W+mF0W1qa92RqN8IOBxUWVVua/vtqrEuJpnbfY5vwmpnkidJ2K/KlWpioC/3hTfoXbND
-         8ksg==
-X-Gm-Message-State: AOJu0YxuGqQVuqIWJ8tzbuDfP6v3vL95jN45ES2OARulOiXiIZ9GVjw5
-	7PZHBeABTVnAyK/cveofSVhoHa1PgYRyQF1SCnF+AKJOMJPL3IAGYbMKtq4S0+jRkrtYAlPEPP1
-	C6LA=
-X-Gm-Gg: ASbGncvxjHYbypNq3CH7jPHM0/O5WBWEY7pfF9TGIBNmvT7NhHdSBzJDsGKydHaL/vn
-	ePHeby3LR4GiJ72T7nFvj5UN+Lha1dTR+BavjZ0zETEhV23alUk4/11+3qtU+ZnZjKXd6z9XUTb
-	I7DWTzj5VKJZ0TPTvMY+2Yt+zt6s3644Gjhtu9ePoEi6KPiE9W+C0LFJgorci6tUDOIrkXFW2eI
-	eGtGfY7j7tcyR7trtWEvU+W6L+7ykG9RUHbV/SV04de2nO30aLs4f08+wJIp8TbLOHy2An1ieZF
-	xuOqRSrys9E4cpy0D9GFViMiixdU6NnDI2g0G/RuvcYprAQWULyg8QEwRo1CBtvnIb/5ts1vuXG
-	i2tKHauNRf+jb0sYOqcPl
-X-Google-Smtp-Source: AGHT+IFjTIkeguwkGPtDdcNscUhBUDvUm92HQ7FRxBnMgkxL1JVvy5sXYBmLx9hxm6e7Q3ekgsDhTQ==
-X-Received: by 2002:a05:6602:4801:b0:85b:45c4:571e with SMTP id ca18e2360f4ac-8611b4e0648mr1627403239f.9.1744061453475;
-        Mon, 07 Apr 2025 14:30:53 -0700 (PDT)
+        bh=F0FXbiGvtqONuDC1lYezRqUJRaM76ZoROCEWBfTSLdk=;
+        b=w8SAgYC/dCGI0znBUwZaMFw0/b9EQ1cTx6vLR6Z++mQJZpiBj3znuaB8Z6LXbON9t1
+         K52Hqk8WrO1hrM2w+eIT3YhYsCuVhpiQML1U0vu4JCMTZLaDAmJ6c23zxdMAkMo7QA7J
+         MVtmQizOrK0TZz8Pikf7lVKWR3pyQE/5grgpC/VgiX6hRc2DBh2RtOZTP+h9s2u51bzT
+         0hgiHYebzffBOv4rn/8gEplbnPzN7RoiuPlDWnlFN4nz/2+8Fbqr37C48+PJBtl5bOKc
+         uyJ17x/gMo0g57pXGtUJEowt7GySnYOphyQZcFHPfxBZrORR8TmUM9e0g3Y2EmOOxkiv
+         0CMg==
+X-Gm-Message-State: AOJu0YwNw9SdcXFmlX/ylLyUXtr8cX9sEsc4+fqrziKSPAlB4uxT+Zo2
+	NiRNUx28A01bWZ1uXuQ+W4wA66LVRwF3kGAZ0QhdVOsnHMj9ooQaOlAY2zUkzbIUAyoeyuuss/e
+	+LxQ=
+X-Gm-Gg: ASbGncsu85l8AuhKngQ8YQiGTl71l1k5DmKG9fW9cLvLaTygqxF+gWcVWMp0yh+elL4
+	pf3XbybA049dkGu5vTnIbfNsrKqnLfcxEDTuL96OwnPTQ2fnzw8h6tCmSveQkey/RRVuJvck6C2
+	hdPSRA2UZn/5djw7iueX3Xj2fJxrE6cYJJW0SUGuPl4ZE4W+Kln11sYBdxrB+Lq+04UieDsac/d
+	HSSVps+Rx3V/KNjb0CD2dGJvTtpM49+FKw4fFqFbrlGLoiE0VQ4DXOGto3lkpwRXsLYJ6nLpfpF
+	hf/Jc2PRKqY4ewJ30fKtZPuB7noNQSSmMxvrbV4jCH9xci81G4udjOlOx3pJE3kmuFmuf4naeJh
+	SjBRjJOMKSfCBeIURvjHT
+X-Google-Smtp-Source: AGHT+IH3khGIgVK7zwnvkHKx56grRbN9egu9v2WAtTJjsxChi7al6vt02VTEZylDr/mJlY3IQpHZEg==
+X-Received: by 2002:a05:6e02:180a:b0:3d6:d838:8ba9 with SMTP id e9e14a558f8ab-3d6ec5252a3mr116675195ab.1.1744061462828;
+        Mon, 07 Apr 2025 14:31:02 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f4f44ba91dsm132936173.79.2025.04.07.14.30.52
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f4f44ba91dsm132936173.79.2025.04.07.14.31.01
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 14:30:53 -0700 (PDT)
+        Mon, 07 Apr 2025 14:31:02 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][scarthgap/rust][PATCH 15/29] rust: Fix build break because of download-ci-llvm
-Date: Mon,  7 Apr 2025 17:30:04 -0400
-Message-ID: <a6ff10b32cbf0fe4cf38935598f7d7479f9de7ce.1744061149.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][scarthgap/rust][PATCH 24/29] rust-source: Fix remove_gcc_directory
+Date: Mon,  7 Apr 2025 17:30:13 -0400
+Message-ID: <a3bcc50d7b3c6c074c702d6f0e92a69d80897606.1744061149.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1744061149.git.scott.murray@konsulko.com>
 References: <cover.1744061149.git.scott.murray@konsulko.com>
@@ -65,43 +65,34 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Mon, 07 Apr 2025 21:31:04 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1314
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1324
 
-From: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
+From: Richard Purdie <richard.purdie@linuxfoundation.org>
 
-Previously, download-ci-llvm was set to false. However, with the following commit:
-https://github.com/rust-lang/rust/commit/7d579046c80d3de3143dcb8b2db5640f95b5383c ,
-which has been present from rust_1.83, it was changed to true. As a result, after
-updating to rust_1.83, we encountered the following error during the build:
+The patch works for rust-native but not other recipes which change ${S}.
+Set it to use the correct path so it works for llvm-rust, cargo and others,
+maximising the space saving.
 
--------------------------------------------------------------------------------
-| thread 'main' panicked at src/core/config/config.rs:2047:13:
-| setting build-target.llvm-config is incompatible with download-ci-llvm.
-| note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
--------------------------------------------------------------------------------
-
-To resolve this issue, we are setting download-ci-llvm back to false.
-
-Signed-off-by: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(adapted from oe-core commit d43424cba7e93ee30b410d0a024be441e2336dbd)
+(adapted from oe-core commit 1aee0bc109c1457159440c279ddc1fe5a8d89586)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- recipes-devtools/rust/rust_1.83.0.bb | 1 +
- 1 file changed, 1 insertion(+)
+ recipes-devtools/rust/rust-source.inc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/recipes-devtools/rust/rust_1.83.0.bb b/recipes-devtools/rust/rust_1.83.0.bb
-index 06f48f1..41efcd6 100644
---- a/recipes-devtools/rust/rust_1.83.0.bb
-+++ b/recipes-devtools/rust/rust_1.83.0.bb
-@@ -129,6 +129,7 @@ python do_configure() {
-     # [llvm]
-     config.add_section("llvm")
-     config.set("llvm", "static-libstdcpp", e(False))
-+    config.set("llvm", "download-ci-llvm", e(False))
-     if "llvm" in (d.getVar('TC_CXX_RUNTIME') or ""):
-         config.set("llvm", "use-libcxx", e(True))
- 
+diff --git a/recipes-devtools/rust/rust-source.inc b/recipes-devtools/rust/rust-source.inc
+index 92bb5e4..820cdc1 100644
+--- a/recipes-devtools/rust/rust-source.inc
++++ b/recipes-devtools/rust/rust-source.inc
+@@ -17,7 +17,7 @@ RUSTSRC = "${WORKDIR}/rustc-${RUST_VERSION}-src"
+ #After updating to Rust 1.85 we can revert this removal of "src/gcc"
+ remove_gcc_directory() {
+     # Ensure the gcc directory exists
+-    gcc_dir="${S}/src/gcc"
++    gcc_dir="${RUSTSRC}/src/gcc"
+     if [ -d "$gcc_dir" ]; then
+         rm -rf "$gcc_dir"
+     fi
 -- 
 2.49.0
 
