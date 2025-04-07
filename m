@@ -2,61 +2,61 @@ Return-Path: <skandigraun@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BB56C36010
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61048C369A1
 	for <webhook@archiver.kernel.org>; Mon,  7 Apr 2025 19:14:23 +0000 (UTC)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
- by mx.groups.io with SMTP id smtpd.web11.56292.1744053259159296536
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+ by mx.groups.io with SMTP id smtpd.web10.56758.1744053259916990581
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 07 Apr 2025 12:14:19 -0700
+ Mon, 07 Apr 2025 12:14:20 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=IogH76rl;
- spf=pass (domain: gmail.com, ip: 209.85.208.45, mailfrom: skandigraun@gmail.com)
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5ec9d24acfbso10701730a12.0
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 07 Apr 2025 12:14:18 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=K7q/RbHJ;
+ spf=pass (domain: gmail.com, ip: 209.85.208.41, mailfrom: skandigraun@gmail.com)
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e61375c108so6753979a12.1
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 07 Apr 2025 12:14:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744053257; x=1744658057; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1744053258; x=1744658058; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=uByFGzjN4xZLlQrIhFPjuQheG2Rb3LBGPC9Kj8kWMNk=;
-        b=IogH76rluvkNyb8jpxzXPfCrSNVIxp4afN7wGrbhTANoQ/1ml7au5nHEylOK8o2B/2
-         VAANODr+2sp/QcQh/7kl3AnUdXxgYMkX6+tXC5KEzB4OimbOTf5gxWoeFkzISU0ENB2A
-         UZao1rOmEENwXj5ByGXt32LCxUfadKRzfJqXI8DP5/yDQ/vQdecgEakZOvIi3g2W6ZQ5
-         x6vrkrBRvCfq7sQM0oTRp2godQws1cGNh7n9jZh7EUHkGmlJi+2ZkrydR5v/2bs0y7Yl
-         iEgMYdsnekBqhbPBJ0Y7hNxJVEyqcTWRFe1vTBb+4AlDnNvdk40byMh/x1bMbTzlg1as
-         raVA==
+        bh=p07MbSWWmVIEtkORuLBPVUNnzgIdYGrEA6HTNC5hFEY=;
+        b=K7q/RbHJ8IyRFQ1W1D1tp6uS0TPccN4ShsB1Xlfz8pMpKGzddRk+yUjQdScTRln4vr
+         JctFkGkSyUNzEPayhTu+otif5qS941FHYgPCj0e3vf2UfWqeRpOKixybGHP3yYBiDm6j
+         oHtiBP38KTntwNNnNY/2X+bphlyENRwzznoRqSKerlk0T/T2xZ8Miifltj0uzFX9HJ+y
+         A5GfAF5sS0xzy9Z2CP5oSrJmdgC50cu4H+N4p3UHi413z6yZg0U5CnUSg1H3hLjPEyUz
+         9OpBqRwIPBYkHIj9hprQGLNRqjuK/m3L6gtX6paFzsCCjIw2Ziyv7aA9uAbcM/qZ+Ots
+         tL9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744053257; x=1744658057;
+        d=1e100.net; s=20230601; t=1744053258; x=1744658058;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=uByFGzjN4xZLlQrIhFPjuQheG2Rb3LBGPC9Kj8kWMNk=;
-        b=sF/ZvbXNx1tEH9cuUcFOtMc61J6JAAZVLP57jEigs0M86MPKG/tr5uwhRCYt6fJdlI
-         UCP28ZUpSeKDPJWlteOU/ZOcVBxu1oEbe6Q9VmhM6FZwLIoRFFzpLTVsyNZ25orB6NHQ
-         AB83wySMfpx/mt6eRD9OK73iBnjCJD2jXb8p84fEdVIRjn7o7pnl5VV2Uorex7IDwGQ3
-         mm7ZuXCN3oQjBlLK5WVrQCyK+DJSNiRcCgn/jOLTtThRxy9p+crudDopVGindfHqb1rm
-         wFtCMdpyd+3ZtA4lanx6a27l4sBr77aEIpBCYOIllkGSwjW9Du20ChhLSAenTe/kbast
-         p4TA==
-X-Gm-Message-State: AOJu0Ywr1jMmuxWd/ZSh9EUzvXr2+dAToWpTu9AwXPUJlEA+JYLwsfHH
-	ZHcd1ujI3n1DDf4qSbvXMJ4iPbUd80of7lIMZ0ucyrI+uGbwXndOWf2T7A==
-X-Gm-Gg: ASbGnctsqXibEGhv1FlIWFWcIA7JWqAqlO04JwZXl18AB9/kvdLA5YdyeoXAJDtSPsv
-	OsXAw7bE2G68VCObbHR0GsQqeUMN3w+BcUs4QXT5MEqevygQ6UBPwuk4tdFNqOsHqfqe8CBA8Jt
-	p7kFPosO3eLtoWBaZog4gNt2svMK9PXLF2gq2vNop0T4y9n9V8ZrXPVKnBPExKFrFB5LaB58cyx
-	blBwD/G10zB4rnnOytl4SrCTvZQNAs/DLvucQx7R4lZZ/3Oo9muBSjJMMPKJU7WfkaG/oBoV2JU
-	ehbBsJntgq1RcpuKz9is+2z3NnA67yDzylaeu4qHeARZ3tirhRXlf18HMuLK
-X-Google-Smtp-Source: AGHT+IGHFeh5njLcsxvnpJEWlnpFOZnsDFVB0/62w9zUptObTDzXJIEr4WJy6kS8YMGLyVTLF+5sYw==
-X-Received: by 2002:a05:6402:4415:b0:5e4:d52b:78a2 with SMTP id 4fb4d7f45d1cf-5f1f4808cb2mr473501a12.15.1744053256884;
-        Mon, 07 Apr 2025 12:14:16 -0700 (PDT)
+        bh=p07MbSWWmVIEtkORuLBPVUNnzgIdYGrEA6HTNC5hFEY=;
+        b=hK2aRslsxUcQbdJEYOOtpLli9rvtSR5iu3g5xlhR/eqXmaqi4cAhtFnwWnCoxw4z60
+         Pj25lZcqtkADlMC06MZo7Xruqv2udq7RncR3ri2cbDNnhw31JdSVfUf04AY91MHsnU5w
+         2X5OXjX3ihS0YWezUIIsnuWAsvWHlyC44V0kETSKI2IBzERyTOUbyV/SGbq9X9S3FtA3
+         HZLANXNKzR149uHT9YEAv/icdLarQmvY3GckIWf23/dz63EOBISs8+RzAQ/qcq7k21Wy
+         Psxj0hv1LbAZmK+GkBpmjh6tXcQME6iICQ8wfqiyDrlgbCLOmstwO0Bgulyt0v4oF5XK
+         CuFQ==
+X-Gm-Message-State: AOJu0YyOJTOSdb/6Oi2wHBYYd+pXDz3Vpe6gMKUho8JO/1982WPl5Wfw
+	iVl6PX2mNJKyr/GU4h3m2tDK0HHGO8qEZaHdAx5nxhvTwbbBySXpFrwafA==
+X-Gm-Gg: ASbGncvLHOTDQmd1DlnDCK0A61/J26pxrbMyYc7RST2KUjrc9kAsJ2X4b6iMl/6ANGK
+	y2Xcn/ZBMsylpu4u/KszE3ClgXYF7SSzO12qFvS21LljaBjt+JqmXjNXsBtu3W7kZEcOGtFRghJ
+	iwLayFNs9WlDIu5abn2mobiG7m8Q4UUizCHP0C2limM2pjT4enTh+fdzQc9LXuSKZEWzJk2ijIO
+	LxCtJKp21TcQzArxkgqx/OfyHnWfzH4g9uFPsUlsZz22x4GuRu4uNS5mYxeNkNymYjLiRJY7eEA
+	q+x6rl5E5gTkYrLmc6kTAEfeGoGSk2a777RM+TT6mvq3J4zNYmNdVqbfawml
+X-Google-Smtp-Source: AGHT+IGTNxCXLwxqiYJoemtdNIixOezCtScR53f92tVdGGZyzWhH0k4sG3iN8s2zCAibzKldbZ9D3Q==
+X-Received: by 2002:a05:6402:2807:b0:5e5:437c:1daf with SMTP id 4fb4d7f45d1cf-5f0b647cd9bmr9746493a12.16.1744053257603;
+        Mon, 07 Apr 2025 12:14:17 -0700 (PDT)
 Received: from localhost.localdomain ([51.154.145.205])
         by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f087eedf61sm6916078a12.32.2025.04.07.12.14.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 12:14:16 -0700 (PDT)
+        Mon, 07 Apr 2025 12:14:17 -0700 (PDT)
 From: Gyorgy Sarvari <skandigraun@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: landervanloock@gmail.com
-Subject: [pseudo][PATCH v2 1/2] nftw, ftw: add wrapper
-Date: Mon,  7 Apr 2025 21:14:13 +0200
-Message-ID: <20250407191414.2992785-2-skandigraun@gmail.com>
+Subject: [pseudo][PATCH v2 2/2] nftw, ftw: add tests
+Date: Mon,  7 Apr 2025 21:14:14 +0200
+Message-ID: <20250407191414.2992785-3-skandigraun@gmail.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250407191414.2992785-1-skandigraun@gmail.com>
 References: <20250407191414.2992785-1-skandigraun@gmail.com>
@@ -66,587 +66,653 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Mon, 07 Apr 2025 19:14:23 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1298
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1299
 
-Add a wrapper for nftw and ftw[1] calls (along with nftw64 and ftw64).
-
-The call in brief: it accepts a path, which it walks. For every
-entries it finds, it calls a user-specified callback function, and
-passes some information about the entry to this callback.
-
-The implementation saves the callback from the nftw call, and subtitutes
-it with its own "fake_callback". When the real nftw calls the fake_callback,
-it corrects the stat struct it received with information queried from pseudo.
-Afterwards it calls the original callback and passes the now corrected
-information to it.
-
-The 4 functions are very similar to each other: nftw-nftw64 and ftw-ftw64 are
-identical to their pair, except for the stat struct they use (stat vs stat64).
-
-nftw is a "superset" of ftw: nftw is backwards compatible with ftw, but it
-also accepts a number of extra flags to modify its behavior.
-
-Since all the 4 functions are so similar, the same codebase is used to
-implement all (which is also fairly similar to their implementation in
-glibc).
-
-[1]: https://linux.die.net/man/3/nftw
+Add tests for nftw, ftw, nftw64 and ftw64 calls.
 
 Signed-off-by: Gyorgy Sarvari <skandigraun@gmail.com>
 ---
- guts/README                            |   6 +-
- ports/linux/guts/ftw64.c               |  16 --
- ports/linux/nftw64/guts/ftw64.c        |  29 ++++
- ports/linux/{ => nftw64}/guts/nftw64.c |   7 +-
- ports/linux/nftw64/pseudo_wrappers.c   |  45 ++++++
- ports/linux/nftw64/wrapfuncs.in        |   2 +
- ports/linux/subports                   |  14 ++
- ports/linux/wrapfuncs.in               |   2 -
- ports/unix/guts/ftw.c                  |  13 +-
- ports/unix/guts/nftw.c                 |   7 +-
- ports/unix/guts/nftw_wrapper_base.c    | 211 +++++++++++++++++++++++++
- ports/unix/pseudo_wrappers.c           |  45 ++++++
- ports/unix/wrapfuncs.in                |   2 +-
- 13 files changed, 373 insertions(+), 26 deletions(-)
- delete mode 100644 ports/linux/guts/ftw64.c
- create mode 100644 ports/linux/nftw64/guts/ftw64.c
- rename ports/linux/{ => nftw64}/guts/nftw64.c (57%)
- create mode 100644 ports/linux/nftw64/pseudo_wrappers.c
- create mode 100644 ports/linux/nftw64/wrapfuncs.in
- create mode 100644 ports/unix/guts/nftw_wrapper_base.c
+ Makefile.in           |   4 +-
+ test/ftw-test-impl.c  | 226 ++++++++++++++++++++++++++++++++++++++++
+ test/nftw-test-impl.c | 236 ++++++++++++++++++++++++++++++++++++++++++
+ test/test-ftw.c       |   4 +
+ test/test-ftw64.c     |   4 +
+ test/test-nftw.c      |   4 +
+ test/test-nftw.sh     |  84 +++++++++++++++
+ test/test-nftw64.c    |   4 +
+ 8 files changed, 564 insertions(+), 2 deletions(-)
+ create mode 100644 test/ftw-test-impl.c
+ create mode 100644 test/nftw-test-impl.c
+ create mode 100644 test/test-ftw.c
+ create mode 100644 test/test-ftw64.c
+ create mode 100644 test/test-nftw.c
+ create mode 100755 test/test-nftw.sh
+ create mode 100644 test/test-nftw64.c
 
-diff --git a/guts/README b/guts/README
-index 0a1fe5f..5bcc198 100644
---- a/guts/README
-+++ b/guts/README
-@@ -54,6 +54,8 @@ other functions:
- 	__xmknod:		__xmknodat
- 	__xstat64:		__fxstatat64
- 	__xstat:		__fxstatat
-+	ftw:			nftw
-+	ftw64:			nftw64
+diff --git a/Makefile.in b/Makefile.in
+index 48fdbd2..27da831 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -55,7 +55,7 @@ GUTS=$(filter-out "$(GLOB_PATTERN)",$(wildcard $(GLOB_PATTERN)))
  
- The following functions are full implementations:
+ SOURCES=$(wildcard *.c)
+ OBJS=$(subst .c,.o,$(SOURCES))
+-TESTS=$(patsubst %.c,%,$(wildcard test/*.c))
++TESTS=$(patsubst %.c,%,$(wildcard test/test-*.c))
  
-@@ -129,15 +131,11 @@ calling the underlying routine.
- 	eaccess
- 	euidaccess
- 	fts_open
--	ftw64
--	ftw
- 	glob64
- 	glob
- 	lutimes
- 	mkdtemp
- 	mktemp
--	nftw64
--	nftw
- 	opendir
- 	pathconf
- 	readlinkat
-diff --git a/ports/linux/guts/ftw64.c b/ports/linux/guts/ftw64.c
-deleted file mode 100644
-index 48adb80..0000000
---- a/ports/linux/guts/ftw64.c
-+++ /dev/null
-@@ -1,16 +0,0 @@
--/* 
-- * Copyright (c) 2010 Wind River Systems; see
-- * guts/COPYRIGHT for information.
-- *
-- * SPDX-License-Identifier: LGPL-2.1-only
-- *
-- * static int
-- * wrap_ftw64(const char *path, int (*fn)(const char *, const struct stat64 *, int), int nopenfd) {
-- *	int rc = -1;
-- */
--
--	rc = real_ftw64(path, fn, nopenfd);
--
--/*	return rc;
-- * }
-- */
-diff --git a/ports/linux/nftw64/guts/ftw64.c b/ports/linux/nftw64/guts/ftw64.c
+ SHOBJS=pseudo_tables.o pseudo_util.o
+ DBOBJS=pseudo_db.o
+@@ -78,7 +78,7 @@ all: $(LIBPSEUDO) $(PSEUDO) $(PSEUDODB) $(PSEUDOLOG) $(PSEUDO_PROFILE)
+ test: all $(TESTS) | $(BIN) $(LIB)
+ 	./run_tests.sh -v
+ 
+-test/%: test/%.c
++test/test-%: test/test-%.c
+ 	$(CC) $(CFLAGS) $(CFLAGS_PSEUDO) -o $@ $<
+ 
+ install-lib: $(LIBPSEUDO)
+diff --git a/test/ftw-test-impl.c b/test/ftw-test-impl.c
 new file mode 100644
-index 0000000..1fe0868
+index 0000000..edd15eb
 --- /dev/null
-+++ b/ports/linux/nftw64/guts/ftw64.c
-@@ -0,0 +1,29 @@
-+/* 
-+ * Copyright (c) 2010 Wind River Systems; see
-+ * guts/COPYRIGHT for information.
-+ *
-+ * SPDX-License-Identifier: LGPL-2.1-only
-+ *
-+ * static int
-+ * wrap_ftw64(const char *path, int (*fn)(const char *, const struct stat64 *, int), int nopenfd) {
-+ *	int rc = -1;
-+ */
-+    typedef int (*pseudo_nftw64_func_t) (const char *filename,
-+                                        const struct stat64 *status, int flag,
-+                                        struct FTW *info);
-+
-+    // 1. Set the flag argument to 0, just like glibc does.
-+    // 2. The difference between ftw and nftw callback
-+    //    is only the last parameter: struct FTW is only used
-+    //    by nftw(), and it is missing from ftw().
-+    //    However since otherwise the stacklayout for the
-+    //    functions is the same, this cast should work just the
-+    //    way we want it. This is also borrowed from glibc.
-+
-+    // This, of course in turn will be captured by pseudo, and will be passed
-+    // to the respective wrapper of nftw64()
-+    rc = nftw64(path, (pseudo_nftw64_func_t)fn, nopenfd, 0);
-+
-+/*	return rc;
-+ * }
-+ */
-diff --git a/ports/linux/guts/nftw64.c b/ports/linux/nftw64/guts/nftw64.c
-similarity index 57%
-rename from ports/linux/guts/nftw64.c
-rename to ports/linux/nftw64/guts/nftw64.c
-index 816faba..0dac9d3 100644
---- a/ports/linux/guts/nftw64.c
-+++ b/ports/linux/nftw64/guts/nftw64.c
-@@ -9,7 +9,12 @@
-  *	int rc = -1;
-  */
- 
--	rc = real_nftw64(path, fn, nopenfd, flag);
-+/***********************************
-+ * This call has a custom wrapper
-+ * where all the logic happens just
-+ * around this single line.
-+ ***********************************/
-+    rc = real_nftw64(path, NFTW_CALLBACK_NAME, nopenfd, flag);
- 
- /*	return rc;
-  * }
-diff --git a/ports/linux/nftw64/pseudo_wrappers.c b/ports/linux/nftw64/pseudo_wrappers.c
-new file mode 100644
-index 0000000..2bd8227
---- /dev/null
-+++ b/ports/linux/nftw64/pseudo_wrappers.c
-@@ -0,0 +1,45 @@
-+#undef NFTW_NAME
-+#undef NFTW_WRAP_NAME
-+#undef NFTW_REAL_NAME
-+#undef NFTW_STAT_STRUCT
-+#undef NFTW_STAT_NAME
-+#undef NFTW_LSTAT_NAME
-+#undef NFTW_GUTS_INCLUDE
-+#undef NFTW_CALLBACK_NAME
-+#undef NFTW_STORAGE_STRUCT_NAME
-+#undef NFTW_STORAGE_ARRAY_SIZE
-+#undef NFTW_MUTEX_NAME
-+#undef NFTW_STORAGE_ARRAY_NAME
-+#undef NFTW_APPEND_FN_NAME
-+#undef NFTW_DELETE_FN_NAME
-+#undef NFTW_FIND_FN_NAME
-+
-+#define CONCAT_EXPANDED(prefix, value) prefix ## value
-+#define CONCAT(prefix, value) CONCAT_EXPANDED(prefix, value)
-+
-+#define NFTW_NAME nftw64
-+#define NFTW_WRAP_NAME CONCAT(wrap_, NFTW_NAME)
-+#define NFTW_REAL_NAME CONCAT(real_, NFTW_NAME)
-+#define NFTW_STAT_STRUCT stat64
-+#define NFTW_STAT_NAME stat64
-+#define NFTW_LSTAT_NAME lstat64
-+
-+// this file is in the same directory as this wrapper, but
-+// this path is relative to the nftw_wrapper_base file, where
-+// it gets included.
-+#define NFTW_GUTS_INCLUDE "../../linux/nftw64/guts/nftw64.c"
-+#define NFTW_CALLBACK_NAME CONCAT(wrap_callback_, NFTW_NAME)
-+#define NFTW_STORAGE_STRUCT_NAME CONCAT(storage_struct_, NFTW_NAME)
-+#define NFTW_STORAGE_ARRAY_SIZE CONCAT(storage_size_, NFTW_NAME)
-+#define NFTW_MUTEX_NAME CONCAT(mutex_, NFTW_NAME)
-+#define NFTW_STORAGE_ARRAY_NAME CONCAT(storage_array_, NFTW_NAME)
-+#define NFTW_APPEND_FN_NAME CONCAT(append_to_array_, NFTW_NAME)
-+#define NFTW_DELETE_FN_NAME CONCAT(delete_from_array_, NFTW_NAME)
-+#define NFTW_FIND_FN_NAME CONCAT(find_in_array_, NFTW_NAME)
-+
-+// nftw64() is identical to nftw() in all regards, except
-+// that it uses "stat64" structs instead of "stat", so
-+// the whole codebase can be reused, accounting for naming
-+// and type changes using the macros above.
-+
-+#include "../../unix/guts/nftw_wrapper_base.c"
-diff --git a/ports/linux/nftw64/wrapfuncs.in b/ports/linux/nftw64/wrapfuncs.in
-new file mode 100644
-index 0000000..3e2ed67
---- /dev/null
-+++ b/ports/linux/nftw64/wrapfuncs.in
-@@ -0,0 +1,2 @@
-+int nftw64(const char *path, int (*fn)(const char *, const struct stat64 *, int, struct FTW *), int nopenfd, int flag); /* noignore_path=1, hand_wrapped=1 */
-+int ftw64(const char *path, int (*fn)(const char *, const struct stat64 *, int), int nopenfd);
-diff --git a/ports/linux/subports b/ports/linux/subports
-index 099ea59..b55bea9 100755
---- a/ports/linux/subports
-+++ b/ports/linux/subports
-@@ -70,3 +70,17 @@ else
- fi
- rm -f dummy.c dummy.o
- 
-+# nftw64 (and its deprecated pair, ftw64) are only present in case large
-+# file support is present.
-+cat > dummy.c <<EOF
++++ b/test/ftw-test-impl.c
+@@ -0,0 +1,226 @@
 +#define _GNU_SOURCE
-+#include <features.h>
-+#ifndef __USE_LARGEFILE64
-+#error "no large file support"
-+#endif
-+int i;
-+EOF
-+if ${CC} -c -o dummy.o dummy.c >/dev/null 2>&1; then
-+        echo linux/nftw64
-+fi
-+rm -f dummy.c dummy.o
-diff --git a/ports/linux/wrapfuncs.in b/ports/linux/wrapfuncs.in
-index 60ce5f5..c4b06ae 100644
---- a/ports/linux/wrapfuncs.in
-+++ b/ports/linux/wrapfuncs.in
-@@ -34,9 +34,7 @@ int __lxstat64(int ver, const char *path, struct stat64 *buf); /* flags=AT_SYMLI
- int __fxstat64(int ver, int fd, struct stat64 *buf);
- int __fxstatat64(int ver, int dirfd, const char *path, struct stat64 *buf, int flags);
- FILE *fopen64(const char *path, const char *mode); /* noignore_path=1 */
--int nftw64(const char *path, int (*fn)(const char *, const struct stat64 *, int, struct FTW *), int nopenfd, int flag); /* noignore_path=1 */
- FILE *freopen64(const char *path, const char *mode, FILE *stream);  /* noignore_path=1 */
--int ftw64(const char *path, int (*fn)(const char *, const struct stat64 *, int), int nopenfd);
- int glob64(const char *pattern, int flags, int (*errfunc)(const char *, int), glob64_t *pglob);
- int scandir64(const char *path, struct dirent64 ***namelist, int (*filter)(const struct dirent64 *), int (*compar)());
- int truncate64(const char *path, off64_t length);
-diff --git a/ports/unix/guts/ftw.c b/ports/unix/guts/ftw.c
-index 58945a1..4b3f49f 100644
---- a/ports/unix/guts/ftw.c
-+++ b/ports/unix/guts/ftw.c
-@@ -9,7 +9,18 @@
-  *	int rc = -1;
-  */
- 
--	rc = real_ftw(path, fn, nopenfd);
-+    typedef int (*pseudo_nftw_func_t) (const char *filename,
-+                                      const struct stat *status, int flag,
-+                                      struct FTW *info);
++#include <stdio.h>
++#include <ftw.h>
++#include <string.h>
++#include <unistd.h>
++#include <stdlib.h>
 +
-+    // 1. Set the flag argument to 0, just like glibc does.
-+    // 2. The difference between ftw and nftw callback
-+    //    is only the last parameter: struct FTW is only used
-+    //    by nftw(), and it is missing from ftw().
-+    //    However since otherwise the stacklayout for the
-+    //    functions is the same, this cast should work just the
-+    //    way we want it. This is also borrowed from glibc.
-+    rc = nftw(path, (pseudo_nftw_func_t)fn, nopenfd, 0);
- 
- /*	return rc;
-  * }
-diff --git a/ports/unix/guts/nftw.c b/ports/unix/guts/nftw.c
-index dac3106..d22cd1c 100644
---- a/ports/unix/guts/nftw.c
-+++ b/ports/unix/guts/nftw.c
-@@ -9,7 +9,12 @@
-  *	int rc = -1;
-  */
- 
--	rc = real_nftw(path, fn, nopenfd, flag);
-+/***********************************
-+ * This call has a custom wrapper
-+ * where all the logic happens just
-+ * around this single line.
-+ ***********************************/
-+    rc = real_nftw(path, NFTW_CALLBACK_NAME, nopenfd, flag);
- 
- /*	return rc;
-  * }
-diff --git a/ports/unix/guts/nftw_wrapper_base.c b/ports/unix/guts/nftw_wrapper_base.c
-new file mode 100644
-index 0000000..7479b80
---- /dev/null
-+++ b/ports/unix/guts/nftw_wrapper_base.c
-@@ -0,0 +1,211 @@
-+int
-+NFTW_NAME(const char *path, int (*fn)(const char *, const struct NFTW_STAT_STRUCT *, int, struct FTW *), int nopenfd, int flag) {
-+        sigset_t saved;
++#define LAST_VAL 999
++#define LAST_PATH "LAST_SENTINEL"
 +
-+        int rc = -1;
++#define TEST_WITH_PSEUDO 1
++#define TEST_WITHOUT_PSEUDO 0
 +
-+        if (!pseudo_check_wrappers() || !NFTW_REAL_NAME) {
-+                /* rc was initialized to the "failure" value */
-+                pseudo_enosys("nftw");
-+                return rc;
-+        }
++static int current_idx = 0;
++static int* current_responses;
++static char** expected_fpaths;
 +
-+        if (pseudo_disabled) {
-+                rc = (*NFTW_REAL_NAME)(path, fn, nopenfd, flag);
++static int pseudo_active;
 +
-+                return rc;
-+        }
++static unsigned int expected_gid;
++static unsigned int expected_uid;
 +
-+        pseudo_debug(PDBGF_WRAPPER, "wrapper called: %s\n", __func__);
-+        pseudo_sigblock(&saved);
-+        pseudo_debug(PDBGF_WRAPPER | PDBGF_VERBOSE, "%s - signals blocked, obtaining lock\n", __func__);
-+        if (pseudo_getlock()) {
-+                errno = EBUSY;
-+                sigprocmask(SIG_SETMASK, &saved, NULL);
-+                pseudo_debug(PDBGF_WRAPPER, "%s failed to get lock, giving EBUSY.\n", __func__);
-+                return -1;
-+        }
++static int current_recursion_level = 0;
++static int max_recursion = 0;
 +
-+        int save_errno;
-+        if (antimagic > 0) {
-+                /* call the real syscall */
-+                pseudo_debug(PDBGF_SYSCALL, "%s calling real syscall.\n", __func__);
-+                rc = (*NFTW_REAL_NAME)(path, fn, nopenfd, flag);
-+        } else {
-+                path = pseudo_root_path(__func__, __LINE__, AT_FDCWD, path, 0);
-+                if (pseudo_client_ignore_path(path)) {
-+                        /* call the real syscall */
-+                        pseudo_debug(PDBGF_SYSCALL, "%s ignored path, calling real syscall.\n", __func__);
-+                        rc = (*NFTW_REAL_NAME)(path, fn, nopenfd, flag);
-+                } else {
-+                        /* exec*() use this to restore the sig mask */
-+                        pseudo_saved_sigmask = saved;
-+                        rc = NFTW_WRAP_NAME(path, fn, nopenfd, flag);
-+                }
-+        }
 +
-+        save_errno = errno;
-+        pseudo_droplock();
-+        sigprocmask(SIG_SETMASK, &saved, NULL);
-+        pseudo_debug(PDBGF_WRAPPER | PDBGF_VERBOSE, "%s - yielded lock, restored signals\n", __func__);
-+        pseudo_debug(PDBGF_WRAPPER, "wrapper completed: %s returns %d (errno: %d)\n", __func__, rc, save_errno);
-+        errno = save_errno;
-+        return rc;
-+}
-+
-+struct NFTW_STORAGE_STRUCT_NAME {
-+    int (*callback)(const char *, const struct NFTW_STAT_STRUCT *, int, struct FTW *);
-+    int flags;
-+    pthread_t tid;
-+};
-+
-+static struct NFTW_STORAGE_STRUCT_NAME *NFTW_STORAGE_ARRAY_NAME;
-+size_t NFTW_STORAGE_ARRAY_SIZE = 0;
-+static pthread_mutex_t NFTW_MUTEX_NAME = PTHREAD_MUTEX_INITIALIZER;
-+
-+static void NFTW_APPEND_FN_NAME(struct NFTW_STORAGE_STRUCT_NAME *data_to_append){
-+    NFTW_STORAGE_ARRAY_NAME = realloc(NFTW_STORAGE_ARRAY_NAME, ++NFTW_STORAGE_ARRAY_SIZE * sizeof(*data_to_append));
-+    memcpy(&NFTW_STORAGE_ARRAY_NAME[NFTW_STORAGE_ARRAY_SIZE - 1], data_to_append, sizeof(*data_to_append));
-+}
-+
-+int NFTW_FIND_FN_NAME(struct NFTW_STORAGE_STRUCT_NAME* target) {
-+    pthread_t tid = pthread_self();
-+
-+    // return the last one, not the first
-+    for (ssize_t i = NFTW_STORAGE_ARRAY_SIZE - 1; i >= 0; --i){
-+        if (NFTW_STORAGE_ARRAY_NAME[i].tid == tid){
-+            // need to dereference it, as next time this array
-+            // may be realloc'd, making the original pointer
-+            // invalid
-+            *target = NFTW_STORAGE_ARRAY_NAME[i];
-+            return 1;
++static int callback(const char* fpath, const struct FTW_STAT_STRUCT *sb, int typeflag){
++    if (current_recursion_level < max_recursion) {
++        ++current_recursion_level;
++        if (FTW_NAME("./walking/a1", callback, 10) != 0) {
++            printf("Recursive call failed\n");
++            exit(1);
 +        }
 +    }
 +
-+    return 0;
-+}
 +
-+static void NFTW_DELETE_FN_NAME() {
-+    pthread_t tid = pthread_self();
++    int ret = current_responses[current_idx];
++    // printf("idx: %d, path: %s, ret: %d\n", current_idx, fpath, ret);
 +
-+    if (NFTW_STORAGE_ARRAY_SIZE == 1) {
-+        if (NFTW_STORAGE_ARRAY_NAME[0].tid == tid) {
-+            free(NFTW_STORAGE_ARRAY_NAME);
-+            NFTW_STORAGE_ARRAY_NAME = NULL;
-+            --NFTW_STORAGE_ARRAY_SIZE;
-+        } else {
-+            pseudo_diag("%s: Invalid callback storage content, can't find corresponding data", __func__);
++    if (ret == LAST_VAL){
++        printf("Unexpected callback, it should have stopped already! fpath: %s\n", fpath);
++        return FTW_STOP;
++    }
++
++    char* expected_fpath_ending = expected_fpaths[current_idx];
++
++    if (strcmp(expected_fpath_ending, LAST_PATH) == 0){
++        printf("Unexpected fpath received: %s\n", fpath);
++        return FTW_STOP;
++    }
++
++    const char* actual_fpath_ending = fpath + strlen(fpath) - strlen(expected_fpath_ending);
++
++    if (strcmp(actual_fpath_ending, expected_fpath_ending) != 0){
++        printf("Incorrect fpath received. Expected: %s, actual: %s\n", expected_fpath_ending, actual_fpath_ending);
++        return FTW_STOP;
++    }
++
++    if (pseudo_active) {
++        if (sb->st_gid != 0 || sb->st_uid != 0) {
++            printf("Invalid uid/gid! Gid (act/exp): %d/%d, Uid (act/exp): %d/%d\n", sb->st_gid, 0, sb->st_uid, 0);
++            return FTW_STOP;
 +        }
-+        return;
++    } else if (sb->st_gid != expected_gid || sb->st_uid != expected_uid) {
++        printf("Invalid uid/gid! Gid (act/exp): %d/%d, Uid (act/exp): %d/%d\n", sb->st_gid, expected_gid, sb->st_uid, expected_uid);
++        return FTW_STOP;
 +    }
 +
-+    int found_idx = -1;
-+    for (ssize_t i = NFTW_STORAGE_ARRAY_SIZE - 1; i >= 0; --i) {
-+        if (NFTW_STORAGE_ARRAY_NAME[i].tid == tid) {
-+            found_idx = i;
-+            break;
-+        }
-+    }
-+
-+    if (found_idx == -1) {
-+        pseudo_diag("%s: Invalid callback storage content, can't find corresponding data", __func__);
-+        return;
-+    }
-+
-+    // delete the item we just found
-+    for (size_t i = found_idx + 1; i < NFTW_STORAGE_ARRAY_SIZE; ++i)
-+        NFTW_STORAGE_ARRAY_NAME[i - 1] = NFTW_STORAGE_ARRAY_NAME[i];
-+
-+    NFTW_STORAGE_ARRAY_NAME = realloc(NFTW_STORAGE_ARRAY_NAME, --NFTW_STORAGE_ARRAY_SIZE * sizeof(struct NFTW_STORAGE_STRUCT_NAME));
-+
-+}
-+
-+static int NFTW_CALLBACK_NAME(const char* fpath, const struct NFTW_STAT_STRUCT *sb, int typeflag, struct FTW *ftwbuf) {
-+    int orig_cwd_fd = -1;
-+    char *orig_cwd = NULL;
-+    char *target_dir = NULL;
-+    struct NFTW_STORAGE_STRUCT_NAME saved_details;
-+
-+    if (!NFTW_FIND_FN_NAME(&saved_details)) {
-+        pseudo_diag("%s: Could not find corresponding callback!", __func__);
-+        return -1;
-+    }
-+
-+    // This flag is handled by nftw, however the actual directory change happens
-+    // outside of pseudo, so it doesn't have any effect. To mitigate this, handle
-+    // it here also explicitly.
-+    //
-+    // This is very similar to what glibc is doing: keep an open FD for the
-+    // current working directory, process the entry (determine the flags, etc),
-+    // call the callback, and then switch back to the original folder - in the same
-+    // process. Glibc doesn't seem to take any further thread-safety measures nor
-+    // other special steps.
-+    // Error checking is not done here, as if real_nftw couldn't perform it,
-+    // then it has already returned an error, and this part isn't reached. This
-+    // just repeats the successful steps.
-+    //
-+    // See io/ftw.c in glibc source
-+    if (saved_details.flags & FTW_CHDIR) {
-+        orig_cwd_fd = open(".", O_RDONLY | O_DIRECTORY);
-+        if (orig_cwd_fd == -1) {
-+            orig_cwd = getcwd(NULL, 0);
-+        }
-+
-+        // If it is a folder that's content has been already walked with the
-+        // FTW_DEPTH flag, then switch into this folder, instead of the parent of
-+        // it. This matches the behavior of the real nftw in this special case.
-+        // This seems to be undocumented - it was derived by observing this behavior.
-+        if (typeflag == FTW_DP) {
-+            chdir(fpath);
-+        } else {
-+            target_dir = malloc(ftwbuf->base + 1);
-+            memset(target_dir, 0, ftwbuf->base + 1);
-+            strncpy(target_dir, fpath, ftwbuf->base);
-+            chdir(target_dir);
-+        }
-+    }
-+
-+    // This is the main point of this call. Instead of the stat that
-+    // came from real_nftw, use the stat returned by pseudo.
-+    // If the target can't be stat'd (DNR), then just forward whatever
-+    // is inside - no information can be retrieved of it anyway.
-+    if (typeflag != FTW_DNR) {
-+        (saved_details.flags & FTW_PHYS) ? NFTW_LSTAT_NAME(fpath, sb) : NFTW_STAT_NAME(fpath, sb);
-+    }
-+
-+    int ret = saved_details.callback(fpath, sb, typeflag, ftwbuf);
-+
-+    if (saved_details.flags & FTW_CHDIR) {
-+        if (orig_cwd_fd != -1) {
-+            fchdir(orig_cwd_fd);
-+            close(orig_cwd_fd);
-+        } else if (orig_cwd != NULL) {
-+            chdir(orig_cwd);
-+        }
-+        free(target_dir);
-+    }
-+
++    ++current_idx;
 +    return ret;
 +}
 +
-+static int
-+NFTW_WRAP_NAME(const char *path, int (*fn)(const char *, const struct NFTW_STAT_STRUCT *, int, struct FTW *), int nopenfd, int flag) {
-+    int rc = -1;
++static int run_test(int* responses, char** fpaths, int expected_retval, int with_pseudo) {
++    int ret;
++    current_responses = responses;
++    expected_fpaths = fpaths;
++    pseudo_active = with_pseudo;
 +
-+    struct NFTW_STORAGE_STRUCT_NAME saved_details;
++    ret = FTW_NAME("./walking", callback, 10);
++    current_responses = NULL;
++    expected_fpaths = NULL;
 +
-+    saved_details.tid = pthread_self();
-+    saved_details.flags = flag;
-+    saved_details.callback = fn;
++    if (ret != expected_retval){
++        printf("Incorrect return value. Expected: %d, actual: %d\n", expected_retval, ret);
++        return 1;
++    }
 +
-+    pthread_mutex_lock(&NFTW_MUTEX_NAME);
-+    NFTW_APPEND_FN_NAME(&saved_details);
-+    pthread_mutex_unlock(&NFTW_MUTEX_NAME);
-+
-+#include NFTW_GUTS_INCLUDE
-+
-+    pthread_mutex_lock(&NFTW_MUTEX_NAME);
-+    NFTW_DELETE_FN_NAME();
-+    pthread_mutex_unlock(&NFTW_MUTEX_NAME);
-+    return rc;
++    if (responses[current_idx] != LAST_VAL){
++        printf("Not all expected paths were walked!\n");
++        return 1;
++    }
++    return 0;
 +}
-diff --git a/ports/unix/pseudo_wrappers.c b/ports/unix/pseudo_wrappers.c
-index bf69aa9..5f15930 100644
---- a/ports/unix/pseudo_wrappers.c
-+++ b/ports/unix/pseudo_wrappers.c
-@@ -2,6 +2,10 @@
-  * SPDX-License-Identifier: LGPL-2.1-only
-  *
-  */
 +
-+/**********************************************
-+ * POPEN
-+ **********************************************/
- FILE *
- popen(const char *command, const char *mode) {
- 	sigset_t saved;
-@@ -52,3 +56,44 @@ wrap_popen(const char *command, const char *mode) {
- 	return rc;
- }
- 
++/*
++ * This test just walks the whole test directory structure, and verifies that
++ * all expected files are returned.
++ */
++static int test_walking(int with_pseudo){
++    int responses[] = {FTW_CONTINUE, FTW_CONTINUE, FTW_CONTINUE, FTW_CONTINUE,
++                       FTW_CONTINUE, FTW_CONTINUE, FTW_CONTINUE, FTW_CONTINUE,
++                       FTW_CONTINUE, FTW_CONTINUE, FTW_CONTINUE, LAST_VAL};
 +
-+/**********************************************
-+ * NFTW
-+ **********************************************/
++    char* fpaths[] = {"walking",
++                      "walking/a1",
++                      "walking/a1/b2",
++                      "walking/a1/b2/file5",
++                      "walking/a1/b2/file4",
++                      "walking/a1/b1",
++                      "walking/a1/b1/c1",
++                      "walking/a1/b1/c1/file",
++                      "walking/a1/b1/c1/file3",
++                      "walking/a1/b1/c1/file2",
++                      "walking/a1/b3",
++                      LAST_PATH};
 +
-+#define CONCAT_EXPANDED(prefix, value) prefix ## value
-+#define CONCAT(prefix, value) CONCAT_EXPANDED(prefix, value)
++    int expected_retval = 0;
 +
-+#undef NFTW_NAME
-+#undef NFTW_WRAP_NAME
-+#undef NFTW_REAL_NAME
-+#undef NFTW_STAT_STRUCT
-+#undef NFTW_STAT_NAME
-+#undef NFTW_LSTAT_NAME
-+#undef NFTW_GUTS_INCLUDE
-+#undef NFTW_CALLBACK_NAME
-+#undef NFTW_STORAGE_STRUCT_NAME
-+#undef NFTW_STORAGE_ARRAY_SIZE
-+#undef NFTW_MUTEX_NAME
-+#undef NFTW_STORAGE_ARRAY_NAME
-+#undef NFTW_APPEND_FN_NAME
-+#undef NFTW_DELETE_FN_NAME
-+#undef NFTW_FIND_FN_NAME
++    return run_test(responses, fpaths, expected_retval, with_pseudo);
++}
 +
++/*
++ * This test is very similar to test_walking(), but the callback at the
++ * start also calls ftw(), "max_recursion" times.
++ * It is trying to test pseudo's implementation of handling multiple
++ * concurrent (n)ftw calls in the same thread.
++ */
++static int test_walking_recursion(int with_pseudo){
++    max_recursion = 3;
++
++    int responses[] = {FTW_CONTINUE, FTW_CONTINUE, FTW_CONTINUE, FTW_CONTINUE,
++                       FTW_CONTINUE, FTW_CONTINUE, FTW_CONTINUE, FTW_CONTINUE,
++                       FTW_CONTINUE, FTW_CONTINUE, FTW_CONTINUE, FTW_CONTINUE,
++                       FTW_CONTINUE, FTW_CONTINUE, FTW_CONTINUE, FTW_CONTINUE,
++                       FTW_CONTINUE, FTW_CONTINUE, FTW_CONTINUE, FTW_CONTINUE,
++                       FTW_CONTINUE, FTW_CONTINUE, FTW_CONTINUE, FTW_CONTINUE,
++                       FTW_CONTINUE, FTW_CONTINUE, FTW_CONTINUE, FTW_CONTINUE,
++                       FTW_CONTINUE, FTW_CONTINUE, FTW_CONTINUE, FTW_CONTINUE,
++                       FTW_CONTINUE, FTW_CONTINUE, FTW_CONTINUE, FTW_CONTINUE,
++                       FTW_CONTINUE, FTW_CONTINUE, FTW_CONTINUE, FTW_CONTINUE,
++                       FTW_CONTINUE, LAST_VAL};
++
++    char* fpaths[] = {"walking/a1",
++                      "walking/a1/b2",
++                      "walking/a1/b2/file5",
++                      "walking/a1/b2/file4",
++                      "walking/a1/b1",
++                      "walking/a1/b1/c1",
++                      "walking/a1/b1/c1/file",
++                      "walking/a1/b1/c1/file3",
++                      "walking/a1/b1/c1/file2",
++                      "walking/a1/b3",
++                      "walking/a1",
++                      "walking/a1/b2",
++                      "walking/a1/b2/file5",
++                      "walking/a1/b2/file4",
++                      "walking/a1/b1",
++                      "walking/a1/b1/c1",
++                      "walking/a1/b1/c1/file",
++                      "walking/a1/b1/c1/file3",
++                      "walking/a1/b1/c1/file2",
++                      "walking/a1/b3",
++                      "walking/a1",
++                      "walking/a1/b2",
++                      "walking/a1/b2/file5",
++                      "walking/a1/b2/file4",
++                      "walking/a1/b1",
++                      "walking/a1/b1/c1",
++                      "walking/a1/b1/c1/file",
++                      "walking/a1/b1/c1/file3",
++                      "walking/a1/b1/c1/file2",
++                      "walking/a1/b3",
++                      "walking",
++                      "walking/a1",
++                      "walking/a1/b2",
++                      "walking/a1/b2/file5",
++                      "walking/a1/b2/file4",
++                      "walking/a1/b1",
++                      "walking/a1/b1/c1",
++                      "walking/a1/b1/c1/file",
++                      "walking/a1/b1/c1/file3",
++                      "walking/a1/b1/c1/file2",
++                      "walking/a1/b3",
++                      LAST_PATH};
++    int expected_retval = 0;
++
++    return run_test(responses, fpaths, expected_retval, with_pseudo);
++}
++
++/*
++ * Arguments:
++ * argv[1]: always the test name
++ * argv[2], argv[3]: in case the test name refers to a test without using
++ *                   pseudo (no_pseudo), then they should be the gid and uid
++ *                   of the current user. Otherwise these arguments are ignored.
++ *
++ * ftw64 call only exists on Linux in case __USE_LARGEFILE64 is defined.
++ * If this is not the case, just skip this test.
++ */
++int main(int argc, char* argv[])
++{
++#if !defined(__USE_LARGEFILE64) && FTW_NAME == ftw64
++return 0
++#endif
++    if (argc < 2) {
++        printf("Need a test name as argument\n");
++        return 1;
++    }
++    
++    if (strcmp(argv[1], "pseudo_no_recursion") == 0) {
++        return test_walking(TEST_WITH_PSEUDO);
++    } else if (strcmp(argv[1], "no_pseudo_no_recursion") == 0) {
++        expected_gid = atoi(argv[2]);
++        expected_uid = atoi(argv[3]);
++        return test_walking(TEST_WITHOUT_PSEUDO);
++    } if (strcmp(argv[1], "pseudo_recursion") == 0) {
++        return test_walking_recursion(TEST_WITH_PSEUDO);
++    } if (strcmp(argv[1], "no_pseudo_recursion") == 0) {
++        expected_gid = atoi(argv[2]);
++        expected_uid = atoi(argv[3]);
++        return test_walking_recursion(TEST_WITHOUT_PSEUDO);
++    } else {
++        printf("Unknown test name: %s\n", argv[1]);
++        return 1;
++    }
++}
+diff --git a/test/nftw-test-impl.c b/test/nftw-test-impl.c
+new file mode 100644
+index 0000000..5bef281
+--- /dev/null
++++ b/test/nftw-test-impl.c
+@@ -0,0 +1,236 @@
++#define _GNU_SOURCE
++#include <stdio.h>
++#include <ftw.h>
++#include <string.h>
++#include <unistd.h>
++#include <stdlib.h>
++
++#define PATH_MAX 1024
++#define LAST_VAL 999
++#define LAST_PATH "LAST_SENTINEL"
++
++#define TEST_WITH_PSEUDO 1
++#define TEST_WITHOUT_PSEUDO 0
++
++#define TEST_CHDIR 1
++#define TEST_NO_CHDIR 0
++
++static int current_idx = 0;
++static int* current_responses;
++static char** expected_fpaths;
++
++static int pseudo_active;
++static int verify_folder = 0;
++static char* base_dir = NULL;
++
++static unsigned int expected_gid;
++static unsigned int expected_uid;
++
++static int compare_paths(const char *path1, const char *path2){
++    char full_path1[PATH_MAX] = {0};
++    char full_path2[PATH_MAX] = {0};
++
++    if (path1[0] == '.'){
++        strcat(full_path1, base_dir);
++        strcat(full_path1, path1 + 1);
++    } else {
++        strcpy(full_path1, path1);
++    }
++
++    if (path2[0] == '.'){
++        strcat(full_path2, base_dir);
++        strcat(full_path2, path2 + 1);
++    } else {
++        strcpy(full_path2, path2);
++    }
++
++    return strcmp(full_path1, full_path2);
++}
++
++static int callback(const char* fpath, const struct NFTW_STAT_STRUCT *sb, int typeflag, struct FTW *ftwbuf){
++    int ret = current_responses[current_idx];
++//    printf("path: %s, ret: %d\n", fpath, ret);
++
++    if (ret == LAST_VAL){
++        printf("Unexpected callback, it should have stopped already! fpath: %s\n", fpath);
++        return FTW_STOP;
++    }
++
++    char* expected_fpath_ending = expected_fpaths[current_idx];
++
++    if (strcmp(expected_fpath_ending, LAST_PATH) == 0){
++        printf("Unexpected fpath received: %s\n", fpath);
++        return FTW_STOP;
++    }
++
++    const char* actual_fpath_ending = fpath + strlen(fpath) - strlen(expected_fpath_ending);
++
++    if (strcmp(actual_fpath_ending, expected_fpath_ending) != 0){
++        printf("Incorrect fpath received. Expected: %s, actual: %s\n", expected_fpath_ending, actual_fpath_ending);
++        return FTW_STOP;
++    }
++
++    if (pseudo_active) {
++        if (sb->st_gid != 0 || sb->st_uid != 0) {
++            printf("Invalid uid/gid! Gid (act/exp): %d/%d, Uid (act/exp): %d/%d\n", sb->st_gid, 0, sb->st_uid, 0);
++            return FTW_STOP;
++        }
++    } else if (sb->st_gid != expected_gid || sb->st_uid != expected_uid) {
++        printf("Invalid uid/gid! Gid (act/exp): %d/%d, Uid (act/exp): %d/%d\n", sb->st_gid, expected_gid, sb->st_uid, expected_uid);
++        return FTW_STOP;
++    }
++
++    if (verify_folder) {
++        int res;
++        char* cwd = NULL;
++        cwd = getcwd(NULL, 0);
++
++        char* exp_cwd = NULL;
++        if (typeflag == FTW_DP){
++            res = compare_paths(fpath, cwd);
++        } else {
++            char* exp_cwd = malloc(ftwbuf->base);
++            memset(exp_cwd, 0, ftwbuf->base);
++            strncpy(exp_cwd, fpath, ftwbuf->base - 1);
++            res = compare_paths(cwd, exp_cwd);
++        }
++
++        free(cwd);
++        free(exp_cwd);
++
++        if (res != 0) {
++            printf("Incorrect folder for %s\n", fpath);
++            return FTW_STOP;
++        }
++    }
++
++    ++current_idx;
++    return ret;
++}
++
++static int run_test(int* responses, char** fpaths, int expected_retval, int with_pseudo, int flags) {
++    int ret;
++    current_responses = responses;
++    expected_fpaths = fpaths;
++    pseudo_active = with_pseudo;
++
++    ret = NFTW_NAME("./walking", callback, 10, flags);
++    current_responses = NULL;
++    expected_fpaths = NULL;
++
++    if (ret != expected_retval){
++        printf("Incorrect return value. Expected: %d, actual: %d\n", expected_retval, ret);
++        return 1;
++    }
++
++    if (responses[current_idx] != LAST_VAL){
++        printf("Not all expected paths were walked!\n");
++        return 1;
++    }
++    return 0;
++}
++
++static int test_skip_siblings_file_depth_walking(int with_pseudo, int change_dir){
++    int responses[] = {FTW_SKIP_SIBLINGS, FTW_CONTINUE, FTW_SKIP_SIBLINGS, FTW_CONTINUE,
++                       FTW_CONTINUE, FTW_CONTINUE, FTW_CONTINUE, FTW_CONTINUE, LAST_VAL};
++    char* fpaths[] = {"walking/a1/b2/file5",
++                      "walking/a1/b2",
++                      "walking/a1/b1/c1/file",
++                      "walking/a1/b1/c1",
++                      "walking/a1/b1",
++                      "walking/a1/b3",
++                      "walking/a1",
++                      "walking",
++                      LAST_PATH};
++    int expected_retval = 0;
++    int flags = FTW_ACTIONRETVAL | FTW_DEPTH;
++
++    // store base_dir, because the fpath returned by (n)ftw can be relative to this
++    // folder - that way a full absolute path can be constructed and compared,
++    // if needed.
++    if (change_dir){
++        flags |= FTW_CHDIR;
++        base_dir = getcwd(NULL, 0);
++        verify_folder = 1;
++    }
++
++    return run_test(responses, fpaths, expected_retval, with_pseudo, flags);
++}
++
++/*
++ * Every time a folder entry is sent to the callback, respond with FTW_SKIP_SUBTREE.
++ * This should skip that particular folder completely, and continue processing
++ * with its siblings (or parent, if there are no siblings).
++ * Return value is expected to be 0, default walking order.
++ */
++static int test_skip_subtree_on_folder(int with_pseudo){
++    int responses[] = {FTW_CONTINUE, FTW_CONTINUE, FTW_SKIP_SUBTREE, FTW_SKIP_SUBTREE,
++                       FTW_SKIP_SUBTREE, LAST_VAL};
++    char* fpaths[] = {"walking",
++                      "walking/a1",
++                      "walking/a1/b2",
++                      "walking/a1/b1",
++                      "walking/a1/b3",
++                      LAST_PATH};
++    int expected_retval = 0;
++    int flags = FTW_ACTIONRETVAL;
++
++    return run_test(responses, fpaths, expected_retval, with_pseudo, flags);
++}
++
++/*
++ * Arguments:
++ * argv[1]: always the test name
++ * argv[2], argv[3]: in case the test name refers to a test without using
++ *                   pseudo (no_pseudo), then they should be the gid and uid
++ *                   of the current user. Otherwise these arguments are ignored.
++ *
++ * skip_subtree_pseudo/skip_subtree_no_pseudo: these tests are calling nftw()
++ * with the FTW_ACTIONRETVAL flag, which reacts based on the return value from the
++ * callback. These tests check the call's reaction to FTW_SKIP_SUBTREE call,
++ * upon which nftw() should stop processing the current folder, and continue
++ * with the next sibling of the folder.
++ *
++ * skip_siblings_pseudo/skip_siblings_no_pseudo: very similar to skip_subtree
++ * tests, but it verified FTW_SKIP_SIBLINGS response, which should stop processing
++ * the current folder, and continue in its parent.
++ *
++ * skip_siblings_chdir_pseudo/skip_siblings_chdir_no_pseudoL same as skip_siblings
++ * tests, but also pass the FTW_CHDIR flag and verify that the working directory
++ * is changed as expected between callback calls.
++ *
++ * nftw64 call only exists on Linux in case __USE_LARGEFILE64 is defined.
++ * If this is not the case, just skip this test.
++ */
++int main(int argc, char* argv[])
++{
++#if !defined(__USE_LARGEFILE64) && NFTW_NAME == nftw64
++return 0
++#endif
++    if (argc < 2) {
++        printf("Need a test name as argument\n");
++        return 1;
++    }
++
++    if (argc > 2) {
++        expected_gid = atoi(argv[2]);
++        expected_uid = atoi(argv[3]);
++    }
++    
++    if (strcmp(argv[1], "skip_subtree_pseudo") == 0) {
++        return test_skip_subtree_on_folder(TEST_WITH_PSEUDO);
++    } else if (strcmp(argv[1], "skip_subtree_no_pseudo") == 0) {
++        return test_skip_subtree_on_folder(TEST_WITHOUT_PSEUDO);
++    } else if (strcmp(argv[1], "skip_siblings_pseudo") == 0) {
++        return test_skip_siblings_file_depth_walking(TEST_WITH_PSEUDO, TEST_NO_CHDIR);
++    } else if (strcmp(argv[1], "skip_siblings_no_pseudo") == 0) {
++        return test_skip_siblings_file_depth_walking(TEST_WITHOUT_PSEUDO, TEST_NO_CHDIR);
++    } else if (strcmp(argv[1], "skip_siblings_chdir_pseudo") == 0) {
++        return test_skip_siblings_file_depth_walking(TEST_WITH_PSEUDO, TEST_CHDIR);
++    } else if (strcmp(argv[1], "skip_siblings_chdir_no_pseudo") == 0) {
++        return test_skip_siblings_file_depth_walking(TEST_WITHOUT_PSEUDO, TEST_CHDIR);
++    } else {
++        printf("Unknown test name\n");
++        return 1;
++    }
++}
+diff --git a/test/test-ftw.c b/test/test-ftw.c
+new file mode 100644
+index 0000000..5c47dd9
+--- /dev/null
++++ b/test/test-ftw.c
+@@ -0,0 +1,4 @@
++#define FTW_NAME ftw
++#define FTW_STAT_STRUCT stat
++
++#include "ftw-test-impl.c"
+diff --git a/test/test-ftw64.c b/test/test-ftw64.c
+new file mode 100644
+index 0000000..0b8f906
+--- /dev/null
++++ b/test/test-ftw64.c
+@@ -0,0 +1,4 @@
++#define FTW_NAME ftw64
++#define FTW_STAT_STRUCT stat64
++
++#include "ftw-test-impl.c"
+diff --git a/test/test-nftw.c b/test/test-nftw.c
+new file mode 100644
+index 0000000..ecadc1e
+--- /dev/null
++++ b/test/test-nftw.c
+@@ -0,0 +1,4 @@
 +#define NFTW_NAME nftw
-+#define NFTW_WRAP_NAME CONCAT(wrap_, NFTW_NAME)
-+#define NFTW_REAL_NAME CONCAT(real_, NFTW_NAME)
-+#define NFTW_STAT_NAME stat
 +#define NFTW_STAT_STRUCT stat
-+#define NFTW_LSTAT_NAME lstat
-+#define NFTW_CALLBACK_NAME CONCAT(wrap_callback_, NFTW_NAME)
-+#define NFTW_GUTS_INCLUDE "nftw.c"
-+#define NFTW_STORAGE_STRUCT_NAME CONCAT(storage_struct_, NFTW_NAME)
-+#define NFTW_STORAGE_ARRAY_SIZE CONCAT(storage_size_, NFTW_NAME)
-+#define NFTW_MUTEX_NAME CONCAT(mutex_, NFTW_NAME)
-+#define NFTW_STORAGE_ARRAY_NAME CONCAT(storage_array_, NFTW_NAME)
-+#define NFTW_APPEND_FN_NAME CONCAT(append_to_array_, NFTW_NAME)
-+#define NFTW_DELETE_FN_NAME CONCAT(delete_from_array_, NFTW_NAME)
-+#define NFTW_FIND_FN_NAME CONCAT(find_in_array_, NFTW_NAME)
 +
-+#include "guts/nftw_wrapper_base.c"
-diff --git a/ports/unix/wrapfuncs.in b/ports/unix/wrapfuncs.in
-index 7724fc7..5b1f557 100644
---- a/ports/unix/wrapfuncs.in
-+++ b/ports/unix/wrapfuncs.in
-@@ -14,7 +14,7 @@ int faccessat(int dirfd, const char *path, int mode, int flags);
- int faccessat2(int dirfd, const char *path, int mode, int flags);
- FTS *fts_open(char * const *path_argv, int options, int (*compar)(const FTSENT **, const FTSENT **)); /* inode64=1 */
- int ftw(const char *path, int (*fn)(const char *, const struct stat *, int), int nopenfd);
--int nftw(const char *path, int (*fn)(const char *, const struct stat *, int, struct FTW *), int nopenfd, int flag);
-+int nftw(const char *path, int (*fn)(const char *, const struct stat *, int, struct FTW *), int nopenfd, int flag); /* hand_wrapped=1 */
- int glob(const char *pattern, int flags, int (*errfunc)(const char *, int), glob_t *pglob);
- int lutimes(const char *path, const struct timeval *tv); /* flags=AT_SYMLINK_NOFOLLOW */
- char *mkdtemp(char *template);
++#include "nftw-test-impl.c"
+diff --git a/test/test-nftw.sh b/test/test-nftw.sh
+new file mode 100755
+index 0000000..c13e12b
+--- /dev/null
++++ b/test/test-nftw.sh
+@@ -0,0 +1,84 @@
++#!/bin/bash
++#
++# Test nftw call and its behavior modifying flags
++# SPDX-License-Identifier: LGPL-2.1-only
++#
++
++trap "rm -rf ./walking" 0
++
++check_retval_and_fail_if_needed(){
++  if [ $1 -ne 0 ]; then
++    echo $2
++    exit 1
++  fi
++}
++
++
++mkdir -p walking/a1/b1/c1
++touch walking/a1/b1/c1/file
++mkdir walking/a1/b2
++mkdir walking/a1/b3
++touch walking/a1/b1/c1/file2
++touch walking/a1/b1/c1/file3
++touch walking/a1/b2/file4
++touch walking/a1/b2/file5
++
++./test/test-nftw skip_subtree_pseudo
++check_retval_and_fail_if_needed $? "nftw subtree skipping with pseudo failed"
++
++./test/test-nftw skip_siblings_pseudo
++check_retval_and_fail_if_needed $? "nftw sibling skipping with pseudo failed"
++
++./test/test-nftw skip_siblings_chdir_pseudo
++check_retval_and_fail_if_needed $? "nftw sibling skipping chddir with pseudo failed"
++
++./test/test-nftw64 skip_subtree_pseudo
++check_retval_and_fail_if_needed $? "nftw64 subtree skipping with pseudo failed"
++
++./test/test-nftw64 skip_siblings_pseudo
++check_retval_and_fail_if_needed $? "nftw64 sibling skipping with pseudo failed"
++
++./test/test-ftw pseudo_no_recursion
++check_retval_and_fail_if_needed $? "ftw non-recursive walking with pseudo failed"
++
++./test/test-ftw pseudo_recursion
++check_retval_and_fail_if_needed $? "ftw recursive walking with pseudo failed"
++
++./test/test-ftw64 pseudo_no_recursion
++check_retval_and_fail_if_needed $? "ftw64 non-recursive walking with pseudo failed"
++
++./test/test-ftw64 pseudo_recursion
++check_retval_and_fail_if_needed $? "ftw64 recursive walking with pseudo failed"
++
++
++export PSEUDO_DISABLED=1
++
++uid=`env -i id -u`
++gid=`env -i id -g`
++
++./test/test-nftw skip_subtree_no_pseudo $gid $uid
++check_retval_and_fail_if_needed $? "nftw subtree skipping without pseudo failed"
++
++./test/test-nftw skip_siblings_no_pseudo $gid $uid
++check_retval_and_fail_if_needed $? "nftw sibling skipping without pseudo failed"
++
++./test/test-nftw skip_siblings_chdir_no_pseudo $gid $uid
++check_retval_and_fail_if_needed $? "nftw sibling skipping chdir without pseudo failed"
++
++./test/test-nftw64 skip_subtree_no_pseudo $gid $uid
++check_retval_and_fail_if_needed $? "nftw subtree skipping without pseudo failed"
++
++./test/test-nftw64 skip_siblings_no_pseudo $gid $uid
++check_retval_and_fail_if_needed $? "nftw sibling skipping without pseudo failed"
++
++./test/test-ftw no_pseudo_no_recursion $gid $uid
++check_retval_and_fail_if_needed $? "ftw non-recursive walking without pseudo failed"
++
++./test/test-ftw no_pseudo_recursion $gid $uid
++check_retval_and_fail_if_needed $? "ftw recursive walking without pseudo failed"
++
++./test/test-ftw64 no_pseudo_no_recursion $gid $uid
++check_retval_and_fail_if_needed $? "ftw non-recursive walking without pseudo failed"
++
++./test/test-ftw64 no_pseudo_recursion $gid $uid
++check_retval_and_fail_if_needed $? "ftw recursive walking without pseudo failed"
+diff --git a/test/test-nftw64.c b/test/test-nftw64.c
+new file mode 100644
+index 0000000..20f25af
+--- /dev/null
++++ b/test/test-nftw64.c
+@@ -0,0 +1,4 @@
++#define NFTW_NAME nftw64
++#define NFTW_STAT_STRUCT stat64
++
++#include "nftw-test-impl.c"
 
