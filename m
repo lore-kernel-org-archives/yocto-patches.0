@@ -1,156 +1,177 @@
-Return-Path: <skandigraun@gmail.com>
+Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61E83C369A3
-	for <webhook@archiver.kernel.org>; Mon,  7 Apr 2025 19:14:23 +0000 (UTC)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
- by mx.groups.io with SMTP id smtpd.web10.56756.1744053258303300634
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36B82C36010
+	for <webhook@archiver.kernel.org>; Mon,  7 Apr 2025 21:30:44 +0000 (UTC)
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+ by mx.groups.io with SMTP id smtpd.web10.60111.1744061438368329277
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 07 Apr 2025 12:14:18 -0700
+ Mon, 07 Apr 2025 14:30:38 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=P1Dn+/MM;
- spf=pass (domain: gmail.com, ip: 209.85.208.45, mailfrom: skandigraun@gmail.com)
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e5e22e6ed2so6952430a12.3
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 07 Apr 2025 12:14:18 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=SGQiUoWa;
+ spf=pass (domain: konsulko.com, ip: 209.85.166.53, mailfrom: scott.murray@konsulko.com)
+Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-8613f456960so41172439f.1
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 07 Apr 2025 14:30:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744053256; x=1744658056; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2Wor00SAvxgFXcef/ss+9aEsIbuhqyrkJMRHk09R/o4=;
-        b=P1Dn+/MMj1uF3uhgwsQDHyyCa/ywAM3elLxcJlQoT5Cd1ov8liANv8cu4XHvmodeb2
-         5Xj2ue9Xxnx0C1MoJXE5+NlcoXv9IvLq3qHsvroBDJCNm27QdDjf3xUY6U9YKUc/gqFC
-         iZ+pQyi4wiwSDF4gHSL4ve2VaPBs6zinQJ8UUiJsNw44FEkkeJzyZzHBP3uZ4jWUqGpm
-         +bVQcfuA3wnuQjjRzENY2t5mpSUFBo2YF3JL04M9/r8Q+IWCCJlxUea+09WP+YlsySkE
-         FIiNDX67/LwpMrvUiH+KlzUsRdWhPcWmbvxT+2g2oxMJiZe6qxnp3DWcwfyN/Ev7WbiV
-         +Hdw==
+        d=konsulko.com; s=google; t=1744061437; x=1744666237; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HSWKsn3Zki8sQmB6GhNa9m4bCVEkJLNDdnAbL0uesNY=;
+        b=SGQiUoWacGbuhrf3Wk8J3IIM6BPBg08f68rKu7hEqbtfyFMvXYlxePzMoSGuM6QhJB
+         +6y3OlGqyEpUjJdDV2IgDJ9gd6Lo/br5tBwzJh1ynqjVmcbcnBOm0Q2W4t69Njx7G4pt
+         DvX/hnLupoGcFHMXetzqsXA5OXuZS5yvOnb2I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744053256; x=1744658056;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2Wor00SAvxgFXcef/ss+9aEsIbuhqyrkJMRHk09R/o4=;
-        b=L5JAWfch0acjk5ZJdD94Pn8Sj/iLq34JN0oDx8vpG4XoFtoR1UbOXcbRiAM6YuBUWH
-         6X4QorC8j3yJ/XuuULaDbn+7wCYvoBwlOZLdCDl2tD9J1bpWmB3cFwuLxnVQTTumx2Yn
-         mu0c25gryVBKNG4qIWM4yb4yJmNAIsvnOEbpy0DimYX5FaejW/lPFFTUV/iWkTTn9qb7
-         r2yAv+cgFhKtgj9dgWakV9KbmGLd1oCo6UfdrQ6Cjqw3boHpJvSAz6+2UynE1QsIBrSh
-         4+LomT5LvtGqt6EVUEMCaEZ2Dcggt7Jbp2g3T+jBlCZraM0hFoO99cYFeVRH6Q9JXQ8p
-         8s6g==
-X-Gm-Message-State: AOJu0Yx3E52OEpumkVtQz4v5Z1yyLoHe1JJCnPrVLFR7hvWEstvRRU1/
-	uVmk6UDTPtiCQp5pOgyOUBB5TFqVdCLTBkFcO1PJTILoEYXwZ1ewvQye5A==
-X-Gm-Gg: ASbGncurUsKTVyHxdxmPXbZipT+trJwYT8b1DYs9dcqglz93xZkEQZ2sO4XPIt2K+jY
-	69IMRXXYGBkEKR3PwH5EwUNUS4dHMJ7hiQaMIBjo3FHxLZ6a9ydkwoI15vVhQNMsVzJ9jGE1Ucw
-	WHxq6uK4/jNl46psSodWB9aSqCJSqbJw52/mzffnrnfhQbCsJOLp3CKrx/zZ0MByDgtNGKw+07C
-	UrB0yi4QOm8U8PcXZs+O70Akm+/7f8gizLJ08SXFwzuCz3b/RZWbiLIXx3YbaG9p00UcYMnF+3B
-	ILiCPBfOQnZz2KTrjVo5P9IOmvn/zZH2wy9y5UsFUZ6XNzorwxLBD2r4LlJETBDnGkk3+VI=
-X-Google-Smtp-Source: AGHT+IHfDagyKF7rNwBtMIyJMEzihGJB9kDrF0uDL0L0Y2w/NIwBg3Mci841653RMmyb5qQJmBEiMg==
-X-Received: by 2002:a05:6402:1cc1:b0:5ed:9982:5484 with SMTP id 4fb4d7f45d1cf-5f0b661ac15mr10038790a12.23.1744053256164;
-        Mon, 07 Apr 2025 12:14:16 -0700 (PDT)
-Received: from localhost.localdomain ([51.154.145.205])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f087eedf61sm6916078a12.32.2025.04.07.12.14.15
+        d=1e100.net; s=20230601; t=1744061437; x=1744666237;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HSWKsn3Zki8sQmB6GhNa9m4bCVEkJLNDdnAbL0uesNY=;
+        b=OL3G6CrIW1/JeMJYdDMqn+0Y9Ncy0iVQSMwujQ1zmnFU86TyGdt0bpjuH7xAtOH/0G
+         64jghUqZL3yeRbbYeUBBd3iSfiyz9AWvG4m++vK5cA9Q6VFVnBsWnQkP0vRcElQ8SZuX
+         hvMidK5frqX02KTt8qak4ID/yEOmhu/1e6UTF9IKZwaIgnlw9C49QtMfbzbVtN9ztKnv
+         KqkCbM5dbc4A4ELbS22RmxJotIqTBL9LTTn4vYVNg20/jelK8gBXtO1OR9CEvdijctqC
+         BywJ0/gXyc3tvJDJm1PlfX42/XSTMVejD+teA/RDigcfxsSnsOdEXAahwrHw4bYOmpS+
+         x63w==
+X-Gm-Message-State: AOJu0Yxahk/93brPQUmYL7BFsO6SDGwXKt9m+UUnf3FsuOovcoRoZwoZ
+	M8LVLU5goVm9WDbocrAXOMcoCSLSF5QCtg+oRRCi2BUHX/BkL0K88+2UCM/T8zwiIRDKOJfSUO+
+	dhSc=
+X-Gm-Gg: ASbGncvvCoxj1+70yxo8g4n2UMgvK0SGTAt6skW3oCOJ4mt5z2KyvvqhnXhujv7HK7Y
+	rWv9KMSvwJkcjI+WwlTBT51GBsBPlcQCVfVxlbV1isbwUYlQrEwLsqmOcXPeeMQBFQb/sfJofzZ
+	Bv28HIkbo9nnIZpo1plAdfeeFDU245kpH3euSoWUlyWkDgPm4XxAYS+8LLgQA9n8zTPR6RsW11n
+	A+U3KkRiLLXILWihJw0/Je428sqf+7rgTfv8JLWYsAofROrxDUlKP1/nYHhEEugP6FSeu+qSmH8
+	vFxpePOXSFH+zZ8omnLe4kv70FQ/chWWE5LOy0Rp5vt4RZWBn+fFJZKjzNZUkr6ttV3Ygr7vfkS
+	bbErqH0mb9KHO5VZTnYCt
+X-Google-Smtp-Source: AGHT+IGfCMapBW0B6mL2QqY+25iYCXFk1F4bjXESatmeXHe3Rcjo4LcMa3cp8uvMtrICLOflnPjNmg==
+X-Received: by 2002:a05:6602:4009:b0:85e:201e:3e35 with SMTP id ca18e2360f4ac-8611c2a4dc8mr1587765039f.3.1744061437269;
+        Mon, 07 Apr 2025 14:30:37 -0700 (PDT)
+Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f4f44ba91dsm132936173.79.2025.04.07.14.30.36
+        for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 12:14:15 -0700 (PDT)
-From: Gyorgy Sarvari <skandigraun@gmail.com>
+        Mon, 07 Apr 2025 14:30:36 -0700 (PDT)
+From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: landervanloock@gmail.com
-Subject: [pseudo][PATCH v2 0/2] nftw, ftw: add wrappers
-Date: Mon,  7 Apr 2025 21:14:12 +0200
-Message-ID: <20250407191414.2992785-1-skandigraun@gmail.com>
+Subject: [meta-lts-mixins][scarthgap/rust][PATCH 00/29] Update to Rust 1.85.1
+Date: Mon,  7 Apr 2025 17:29:49 -0400
+Message-ID: <cover.1744061149.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.49.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 07 Apr 2025 19:14:23 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1297
+ <yocto-patches@lists.yoctoproject.org>; Mon, 07 Apr 2025 21:30:44 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1300
 
-This is an (attempt at the) implementation of the nftw and ftw[1] calls in pseudo.
+This patch series for the scarthgap/rust mixin layer backports the
+various Rust toolchain changes in oe-core master to to pull in the
+1.81.0 -> 1.85.1 updates that have landed in the last couple of months
+in oe-core.  At this point the backported selftest (as the "rust_mixin"
+module) is passing in my environment except on qemuriscv64, which
+is currently also failing on oe-core master based on my testing.
 
-The main motivation is a change in btrfs-tools[2], in which
-they have changed from walking the filetree and calling stat
-on each entries separately to using the nftw call. As a result,
-btrfs filesystem generation currently happens with incorrect
-ownership details, as the nftw calls go around pseudo.
+I intend to push this series to scarthgap/rust within 24 hours
+unless a serious showstopper is pointed out.
 
-See also the relevant report[3] on the Yocto mailing list.
+Changes:
 
-The main idea: with a custom wrapper capture the nftw call, and switch the callback
-to our own callback. When our own callback is called, fix the received
-stat struct, and call the original callback, this time with the correct
-stat struct.
+Alexander Kanavin (1):
+  rust: restore parallel builds, disable lto only for rustdoc
 
-Big thanks to Lander Van Loock, who not only reported the
-original issue, but also helped testing and reviewing the first version
-of the code.
+Deepesh Varatharajan (11):
+  rust: Upgrade 1.81.0->1.82.0
+  rust: oe-selftest issue fix with v1.82
+  rust: Oe-selftest changes for rust v1.82.0
+  rust: Upgrade 1.82.0->1.83.0
+  rust: Fix build break because of download-ci-llvm
+  rust: Oe-selftest changes for rust v1.83.0
+  rust: Fix bloat issue in recent rust updates
+  rust: Fix build break because of "download-rustc" and "llvm-tools"
+  rust: Upgrade 1.83.0->1.84.1
+  rust: Fix build failure when multilibs are enabled
+  rust: Oe-selftest changes for rust v1.84.1
 
-Please let me know what you think.
+Enrico Scholz (1):
+  cargo_common: use 'config.toml' instead of plain 'config'
 
-[1]: https://linux.die.net/man/3/nftw
-[2]: https://github.com/kdave/btrfs-progs/commit/c6464d3f99ed1dabceff1168eabb207492c37624
-[3]: https://lists.yoctoproject.org/g/yocto/message/64889
+Harish Sadineni (2):
+  rust: fix for rust multilib sdk configuration
+  rust: remove redundant cargo config file
 
+Igor Opaniuk (1):
+  rust/README-rust.md: fix markdown style issues
 
----
-v1: https://lore.kernel.org/yocto-patches/20250317113445.3855518-1-skandigraun@gmail.com/T/
+Jean-Pierre Geslin (1):
+  cargo: pass PACKAGECONFIG_CONFARGS to cargo build
 
-changes in v2:
-- Add wrapper for ftw, ftw64, nftw and nftw64 (instead of only nftw in v1). All of them
-  use the same wrapper file, using macros to account for the naming differences.
-- ftw64 and nftw64 depend on large file support of the system. To account for this, move
-  these implementations into their own subport folder, and compile them conditionally.
-- Move tests into separate commit (and add some tests for the new calls too)
-- The original implementation didn't consider multiple concurrent requests
-  when it was saving the original call's details (callback function pointer,
-  flags), and subsequent calls could overwrite data. This version stores
-  these details in an array that behaves similar to a LIFO proto-stack.
-- Fix one bug in FTW_CHDIR flag behavior in conjuction with FTW_DEPTH flag (it switched
-  to a folder, which didn't match glibc implementation's behavior)
-- Minor change in Makefile: since the tests between ftw/ftw64 and nftw/nftw64 are exactly
-  the same, they are also implemented in the same file, which however is expected to be
-  included in other files, and is not a compile-unit on its own. For this, the Makefile
-  looks for files with "test-" prefix in the test folder.
+Khem Raj (1):
+  rust-llvm: Fix build break found with clang
 
----
+Martin Jansa (1):
+  cargo.bbclass: show PACKAGECONFIG_CONFARGS in bbnote
 
-Gyorgy Sarvari (2):
-  nftw, ftw: add wrapper
-  nftw, ftw: add tests
+Pedro Ferreira (1):
+  rust-common.bbclass: soft assignment for RUSTLIB path
 
- Makefile.in                            |   4 +-
- guts/README                            |   6 +-
- ports/linux/guts/ftw64.c               |  16 --
- ports/linux/nftw64/guts/ftw64.c        |  29 +++
- ports/linux/{ => nftw64}/guts/nftw64.c |   7 +-
- ports/linux/nftw64/pseudo_wrappers.c   |  45 +++++
- ports/linux/nftw64/wrapfuncs.in        |   2 +
- ports/linux/subports                   |  14 ++
- ports/linux/wrapfuncs.in               |   2 -
- ports/unix/guts/ftw.c                  |  13 +-
- ports/unix/guts/nftw.c                 |   7 +-
- ports/unix/guts/nftw_wrapper_base.c    | 211 ++++++++++++++++++++++
- ports/unix/pseudo_wrappers.c           |  45 +++++
- ports/unix/wrapfuncs.in                |   2 +-
- test/ftw-test-impl.c                   | 226 +++++++++++++++++++++++
- test/nftw-test-impl.c                  | 236 +++++++++++++++++++++++++
- test/test-ftw.c                        |   4 +
- test/test-ftw64.c                      |   4 +
- test/test-nftw.c                       |   4 +
- test/test-nftw.sh                      |  84 +++++++++
- test/test-nftw64.c                     |   4 +
- 21 files changed, 937 insertions(+), 28 deletions(-)
- delete mode 100644 ports/linux/guts/ftw64.c
- create mode 100644 ports/linux/nftw64/guts/ftw64.c
- rename ports/linux/{ => nftw64}/guts/nftw64.c (57%)
- create mode 100644 ports/linux/nftw64/pseudo_wrappers.c
- create mode 100644 ports/linux/nftw64/wrapfuncs.in
- create mode 100644 ports/unix/guts/nftw_wrapper_base.c
- create mode 100644 test/ftw-test-impl.c
- create mode 100644 test/nftw-test-impl.c
- create mode 100644 test/test-ftw.c
- create mode 100644 test/test-ftw64.c
- create mode 100644 test/test-nftw.c
- create mode 100755 test/test-nftw.sh
- create mode 100644 test/test-nftw64.c
+Richard Purdie (5):
+  meta/meta-selftest: Fix variable assignment whitespace
+  recipes: Drop ld-is-gold support
+  rust-source: Fix remove_gcc_directory
+  rust-llvm: Compile llvm to use dynamic libraries
+  rust-llvm: Disable libedit
+
+Sean Nyekjaer (1):
+  rust-cross-canadian: set CC_<triple> for nativesdk
+
+Yash Shinde (3):
+  rust: Update "do_update_snapshot" task for rust-snapshot.inc
+  rust: Upgrade 1.84.1->1.85.0
+  rust: Upgrade 1.85.0->1.85.1
+
+ classes-recipe/cargo.bbclass                  |   6 +-
+ classes-recipe/cargo_common.bbclass           |  20 +-
+ classes-recipe/rust-common.bbclass            |   2 +-
+ classes-recipe/rust-target-config.bbclass     |   5 +
+ classes-recipe/rust.bbclass                   |   8 +-
+ conf/layer.conf                               |   4 +-
+ files/common-licenses/Unicode-3.0             |  39 +++
+ lib/oeqa/selftest/cases/rust_mixin.py         |   2 +
+ recipes-devtools/rust/README-rust.md          |  24 +-
+ .../rust/{cargo_1.81.0.bb => cargo_1.85.1.bb} |  13 +
+ ...teps-tool.rs-switch-off-lto-for-rust.patch |  46 ++++
+ .../Zdual-proc-macros-additional-check.patch  |  31 +++
+ ...epro-issue-fix-with-cc-crate-hashmap.patch |  90 +++++--
+ ...d-statically-in-rustc_driver-feature.patch | 228 +++++++++++++++++
+ .../rust/files/rust-oe-selftest.patch         | 152 ++++++++---
+ ...ue-fix-cargo-config-for-codegenunits.patch |  26 --
+ .../files/rv32-cargo-rustix-0.38.28-fix.patch |  70 ------
+ .../files/rv32-cargo-rustix-0.38.40-fix.patch | 236 ++++++++++++++++++
+ .../rust/files/rv32-rustix-libc-backend.patch |  33 ---
+ .../rust/files/zlib-off64_t.patch             |  31 ---
+ ...ibstd-rs_1.81.0.bb => libstd-rs_1.85.1.bb} |   9 +-
+ recipes-devtools/rust/rust-cross-canadian.inc |  24 +-
+ ....81.0.bb => rust-cross-canadian_1.85.1.bb} |   0
+ ...ust-llvm_1.81.0.bb => rust-llvm_1.85.1.bb} |   8 +-
+ recipes-devtools/rust/rust-snapshot.inc       |  81 +++---
+ recipes-devtools/rust/rust-source.inc         |  10 +-
+ .../rust/{rust_1.81.0.bb => rust_1.85.1.bb}   |  76 ++++--
+ 27 files changed, 931 insertions(+), 343 deletions(-)
+ create mode 100644 files/common-licenses/Unicode-3.0
+ rename recipes-devtools/rust/{cargo_1.81.0.bb => cargo_1.85.1.bb} (87%)
+ create mode 100644 recipes-devtools/rust/files/0001-src-core-build_steps-tool.rs-switch-off-lto-for-rust.patch
+ create mode 100644 recipes-devtools/rust/files/Zdual-proc-macros-additional-check.patch
+ create mode 100644 recipes-devtools/rust/files/revert-link-std-statically-in-rustc_driver-feature.patch
+ delete mode 100644 recipes-devtools/rust/files/rustdoc-repro-issue-fix-cargo-config-for-codegenunits.patch
+ delete mode 100644 recipes-devtools/rust/files/rv32-cargo-rustix-0.38.28-fix.patch
+ create mode 100644 recipes-devtools/rust/files/rv32-cargo-rustix-0.38.40-fix.patch
+ delete mode 100644 recipes-devtools/rust/files/rv32-rustix-libc-backend.patch
+ delete mode 100644 recipes-devtools/rust/files/zlib-off64_t.patch
+ rename recipes-devtools/rust/{libstd-rs_1.81.0.bb => libstd-rs_1.85.1.bb} (79%)
+ rename recipes-devtools/rust/{rust-cross-canadian_1.81.0.bb => rust-cross-canadian_1.85.1.bb} (100%)
+ rename recipes-devtools/rust/{rust-llvm_1.81.0.bb => rust-llvm_1.85.1.bb} (93%)
+ rename recipes-devtools/rust/{rust_1.81.0.bb => rust_1.85.1.bb} (81%)
+
+-- 
+2.49.0
 
 
