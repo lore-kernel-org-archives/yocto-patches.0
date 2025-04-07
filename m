@@ -2,60 +2,60 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 976E1C369A8
-	for <webhook@archiver.kernel.org>; Mon,  7 Apr 2025 21:30:54 +0000 (UTC)
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
- by mx.groups.io with SMTP id smtpd.web11.59599.1744061449122210248
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86C6CC369A4
+	for <webhook@archiver.kernel.org>; Mon,  7 Apr 2025 21:31:04 +0000 (UTC)
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+ by mx.groups.io with SMTP id smtpd.web10.60126.1744061454462454431
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 07 Apr 2025 14:30:49 -0700
+ Mon, 07 Apr 2025 14:30:54 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=YpjELP4A;
- spf=pass (domain: konsulko.com, ip: 209.85.166.46, mailfrom: scott.murray@konsulko.com)
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-85b40a5120eso116377039f.1
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 07 Apr 2025 14:30:49 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=dAS0/3k7;
+ spf=pass (domain: konsulko.com, ip: 209.85.166.52, mailfrom: scott.murray@konsulko.com)
+Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-85e15dc8035so125851239f.0
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 07 Apr 2025 14:30:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1744061448; x=1744666248; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1744061453; x=1744666253; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=LL3T88BcHr4kAVOp+cTy0/cKk41aYm/J4bnnUsKZPjw=;
-        b=YpjELP4A38WNfT9XlaGY9gRbSK2SnjXPtFbNKHR1xb5zTuRtZ36HL5lTjMc4Tm5xsE
-         ee+PXyI8Og5VLgNJoFOxam0V/TdT7nVh6WjNxGhNxa26MAARpF1L2zQLKfA6d5DBVjCT
-         s7vtpELgMCML5yvmiof6FZBM2ool0DoZX1lRk=
+        bh=GynVCE9keBQk1dKDqQYBl4NeZ8S255moG90twPqKWQY=;
+        b=dAS0/3k7cScHr/8mifzvdh/1zBjGdXropQ+yuzo6NLcPVIjN2GikGqDnNMVd+b3pBq
+         8isp2wOWiXfYEp417+gqsATcn7yDj+QjStEeruiLu7vUGkg+ZC8ENBZBg4HBQu+kAQ1i
+         wFsq/V7GH3m8dVbztnquepPUxjDPUwKoBAMp8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744061448; x=1744666248;
+        d=1e100.net; s=20230601; t=1744061453; x=1744666253;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LL3T88BcHr4kAVOp+cTy0/cKk41aYm/J4bnnUsKZPjw=;
-        b=PyEPg+x7dx1Jiai5xTL2Mvqlob4yVhx2jTfI7qR4OfHnpX5UtIi02li06Y6u7tRCHd
-         /7ZBSvQNNLMlJ8DEi0r8XNznhAXsE6uhAPmNzhr004tMCQgULwG0wH7rzrVyrjU0L9gV
-         ET+8J/8k2NYg2Osesvntmb4c05mGtOt9AGl8cm1WX6CyXBNnftE8MqUL40OFbGqTrKqC
-         FQIesQx9pTyGvyHvGLO3mpaeQfkqvf5B7t8RgtAbVJbOxDtT9iIKap0/TeQLn+eHP+zO
-         NilPIn8IO+MX6zws/edo06XQIUPCJTpJ7AioKfgYnJKUNQXQbooW4qc79lL4NEER8Q4J
-         zOYQ==
-X-Gm-Message-State: AOJu0YyKBVErRzNg087D+1WXgDyFIeyHrUJvK2HYTAkzLnotUy1YGH0F
-	2Y1N3WhnVmKkTpmP0rrW10WGgL/bX4dAK0db4tyNHoAPc2fe9um8eu/RPsTGqzS/to9QUcr+xqc
-	jnM0=
-X-Gm-Gg: ASbGncsiVokYJRLDuUaEq86ZxZzwV6QJtzEiuUnKfE2PMtq3EZStmBcqZqAyGSu+uRQ
-	3ipPfGkybvxq+Gu2xR7PrSqZwmILcSqWY206puVCMPhgRTrj+2XgOxGvWzE5kqM8wFfOCLEXTps
-	TNE1AQbUccZST+9M5FQKUQC+sSJLSxrui/QtnntJdIySqLmiSszQOqzBd5mjFU8Uk8rNYAzGW+8
-	E9bfWpQBMSB3zXWe/d1+Ve0Twd/bK7o4bY12FN8vEXtJSYusx6kfrdduB/nXy+yfvEtn4Dsa8gi
-	zWmD9fuSis6uLUq+GNdZroAJRX3BmcseP0C2/JtmCtWKnAzimRkdx9vD/jFeXN42cOID+aU1uVV
-	AQVIvcmqey7mCEVGVYSBV
-X-Google-Smtp-Source: AGHT+IH0U+nAMRWQX9SL/nl0PtZ3ZwO302XS4962arXsgfaIiX+Qvm4AlDqYgzndBRLsZBhNHvhBGA==
-X-Received: by 2002:a05:6602:4801:b0:85b:45c4:571e with SMTP id ca18e2360f4ac-8611b4e0648mr1627361139f.9.1744061447927;
-        Mon, 07 Apr 2025 14:30:47 -0700 (PDT)
+        bh=GynVCE9keBQk1dKDqQYBl4NeZ8S255moG90twPqKWQY=;
+        b=CKdPlFe32RnY+6Qv7Y6qDuWYQCAuYSPTPlctcLWm1FtyTvkDlKUnrlH7jf9qMYcKuO
+         4vARCjPfuDPhqguc68p4PMUnRZQOjDTKiVSVVIExJ6LoRDkhO+7hCQUvxD55sAd6f4q7
+         LXMLOT5sWnYLa6r955YCM0k8vShr9GU1gmLL7NRHH92m8IBLNhpavJEi4F4S1GY8DoEF
+         iJhhbAvbWo5sWTjzTk/WDbEGLazZK4GxzXk1hGpzQ7kTP9J5HAF+9ZlNVlLmr1IDPJ8j
+         W+mF0W1qa92RqN8IOBxUWVVua/vtqrEuJpnbfY5vwmpnkidJ2K/KlWpioC/3hTfoXbND
+         8ksg==
+X-Gm-Message-State: AOJu0YxuGqQVuqIWJ8tzbuDfP6v3vL95jN45ES2OARulOiXiIZ9GVjw5
+	7PZHBeABTVnAyK/cveofSVhoHa1PgYRyQF1SCnF+AKJOMJPL3IAGYbMKtq4S0+jRkrtYAlPEPP1
+	C6LA=
+X-Gm-Gg: ASbGncvxjHYbypNq3CH7jPHM0/O5WBWEY7pfF9TGIBNmvT7NhHdSBzJDsGKydHaL/vn
+	ePHeby3LR4GiJ72T7nFvj5UN+Lha1dTR+BavjZ0zETEhV23alUk4/11+3qtU+ZnZjKXd6z9XUTb
+	I7DWTzj5VKJZ0TPTvMY+2Yt+zt6s3644Gjhtu9ePoEi6KPiE9W+C0LFJgorci6tUDOIrkXFW2eI
+	eGtGfY7j7tcyR7trtWEvU+W6L+7ykG9RUHbV/SV04de2nO30aLs4f08+wJIp8TbLOHy2An1ieZF
+	xuOqRSrys9E4cpy0D9GFViMiixdU6NnDI2g0G/RuvcYprAQWULyg8QEwRo1CBtvnIb/5ts1vuXG
+	i2tKHauNRf+jb0sYOqcPl
+X-Google-Smtp-Source: AGHT+IFjTIkeguwkGPtDdcNscUhBUDvUm92HQ7FRxBnMgkxL1JVvy5sXYBmLx9hxm6e7Q3ekgsDhTQ==
+X-Received: by 2002:a05:6602:4801:b0:85b:45c4:571e with SMTP id ca18e2360f4ac-8611b4e0648mr1627403239f.9.1744061453475;
+        Mon, 07 Apr 2025 14:30:53 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f4f44ba91dsm132936173.79.2025.04.07.14.30.47
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f4f44ba91dsm132936173.79.2025.04.07.14.30.52
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 14:30:47 -0700 (PDT)
+        Mon, 07 Apr 2025 14:30:53 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][scarthgap/rust][PATCH 10/29] rust: oe-selftest issue fix with v1.82
-Date: Mon,  7 Apr 2025 17:29:59 -0400
-Message-ID: <bce120bea48fb8f4606742c0cb28cede96f93cd6.1744061149.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][scarthgap/rust][PATCH 15/29] rust: Fix build break because of download-ci-llvm
+Date: Mon,  7 Apr 2025 17:30:04 -0400
+Message-ID: <a6ff10b32cbf0fe4cf38935598f7d7479f9de7ce.1744061149.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1744061149.git.scott.murray@konsulko.com>
 References: <cover.1744061149.git.scott.murray@konsulko.com>
@@ -64,256 +64,43 @@ Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 07 Apr 2025 21:30:54 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1309
+ <yocto-patches@lists.yoctoproject.org>; Mon, 07 Apr 2025 21:31:04 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1314
 
 From: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
 
-A new feature "Link std statically in rustc_driver" was introduced
-in rust_1.82 [https://github.com/rust-lang/rust/pull/122362],and
-which is causing the below failure in oe-selftest.
+Previously, download-ci-llvm was set to false. However, with the following commit:
+https://github.com/rust-lang/rust/commit/7d579046c80d3de3143dcb8b2db5640f95b5383c ,
+which has been present from rust_1.83, it was changed to true. As a result, after
+updating to rust_1.83, we encountered the following error during the build:
 
-Running unittests src/main.rs (build/x86_64-unknown-linux-gnu/stage1-rustc/
-x86_64-poky-linux-gnu/release/deps/rustc_main-92223b15c9f2d827)
-uploaded ".../build/x86_64-unknown-linux-gnu/stage1-rustc/x86_64-poky-linux-gnu/
-release/deps/rustc_main-92223b15c9f2d827", waiting for result
-/tmp/work/test4056/rustc_main-92223b15c9f2d827: error while loading shared
-libraries: librustc_driver-fb0866b1cd913c20.so: cannot open shared object file: No
-such file or directory
+-------------------------------------------------------------------------------
+| thread 'main' panicked at src/core/config/config.rs:2047:13:
+| setting build-target.llvm-config is incompatible with download-ci-llvm.
+| note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+-------------------------------------------------------------------------------
 
-The rustc_main binary depends on the librustc_driver-*.so file. However,
-this file has not been copied to QEMU. If we manually copy the file into
-QEMU and export the LD_LIBRARY_PATH, the issue does not occur. Issue
-reprorted to upstream and reverted the buggy code as a workaround.
-
-Upstream-Status: Inappropriate [reported at https://github.com/rust-lang/rust/issues/136237]
+To resolve this issue, we are setting download-ci-llvm back to false.
 
 Signed-off-by: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(adapted from oe-core commit 977bd1a10771a6588e596e1bbfd49e9af659aa4a)
+(adapted from oe-core commit d43424cba7e93ee30b410d0a024be441e2336dbd)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- ...d-statically-in-rustc_driver-feature.patch | 199 ++++++++++++++++++
- recipes-devtools/rust/rust-source.inc         |   1 +
- 2 files changed, 200 insertions(+)
- create mode 100644 recipes-devtools/rust/files/revert-link-std-statically-in-rustc_driver-feature.patch
+ recipes-devtools/rust/rust_1.83.0.bb | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/recipes-devtools/rust/files/revert-link-std-statically-in-rustc_driver-feature.patch b/recipes-devtools/rust/files/revert-link-std-statically-in-rustc_driver-feature.patch
-new file mode 100644
-index 0000000..257883e
---- /dev/null
-+++ b/recipes-devtools/rust/files/revert-link-std-statically-in-rustc_driver-feature.patch
-@@ -0,0 +1,199 @@
-+rust: oe-selftest issue fix with v1.82
-+
-+A new feature "Link std statically in rustc_driver" was introduced 
-+in rust_1.82 [https://github.com/rust-lang/rust/pull/122362],and 
-+which is causing the below failure in oe-selftest.
-+
-+Running unittests src/main.rs (build/x86_64-unknown-linux-gnu/stage1-rustc/
-+x86_64-poky-linux-gnu/release/deps/rustc_main-92223b15c9f2d827)
-+uploaded ".../build/x86_64-unknown-linux-gnu/stage1-rustc/x86_64-poky-linux-gnu/
-+release/deps/rustc_main-92223b15c9f2d827", waiting for result
-+/tmp/work/test4056/rustc_main-92223b15c9f2d827: error while loading shared 
-+libraries: librustc_driver-fb0866b1cd913c20.so: cannot open shared object file: No 
-+such file or directory
-+
-+The rustc_main binary depends on the librustc_driver-*.so file. However, 
-+this file has not been copied to QEMU. If we manually copy the file into 
-+QEMU and export the LD_LIBRARY_PATH, the issue does not occur. Issue 
-+reprorted to upstream and reverted the buggy code as a workaround.
-+
-+Upstream-Status: Inappropriate [reported at https://github.com/rust-lang/rust/issues/136237]
-+
-+Signed-off-by: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
-+diff --git a/compiler/rustc/src/main.rs b/compiler/rustc/src/main.rs
-+index e9a7397557..29766fc9d8 100644
-+--- a/compiler/rustc/src/main.rs
-++++ b/compiler/rustc/src/main.rs
-+@@ -1,6 +1,3 @@
-+-// We need this feature as it changes `dylib` linking behavior and allows us to link to `rustc_driver`.
-+-#![feature(rustc_private)]
-+-
-+ // A note about jemalloc: rustc uses jemalloc when built for CI and
-+ // distribution. The obvious way to do this is with the `#[global_allocator]`
-+ // mechanism. However, for complicated reasons (see
-+diff --git a/compiler/rustc_metadata/src/dependency_format.rs b/compiler/rustc_metadata/src/dependency_format.rs
-+index 39fa23766b..51d86b4009 100644
-+--- a/compiler/rustc_metadata/src/dependency_format.rs
-++++ b/compiler/rustc_metadata/src/dependency_format.rs
-+@@ -51,7 +51,7 @@
-+ //! Additionally, the algorithm is geared towards finding *any* solution rather
-+ //! than finding a number of solutions (there are normally quite a few).
-+
-+-use rustc_data_structures::fx::{FxHashMap, FxHashSet};
-++use rustc_data_structures::fx::FxHashMap;
-+ use rustc_hir::def_id::CrateNum;
-+ use rustc_middle::bug;
-+ use rustc_middle::middle::dependency_format::{Dependencies, DependencyList, Linkage};
-+@@ -162,43 +162,18 @@ fn calculate_type(tcx: TyCtxt<'_>, ty: CrateType) -> DependencyList {
-+         Linkage::Dynamic | Linkage::IncludedFromDylib => {}
-+     }
-+
-+-    let all_dylibs = || {
-+-        tcx.crates(()).iter().filter(|&&cnum| {
-+-            !tcx.dep_kind(cnum).macros_only() && tcx.used_crate_source(cnum).dylib.is_some()
-+-        })
-+-    };
-+-
-+-    let mut upstream_in_dylibs = FxHashSet::default();
-+-
-+-    if tcx.features().rustc_private {
-+-        // We need this to prevent users of `rustc_driver` from linking dynamically to `std`
-+-        // which does not work as `std` is also statically linked into `rustc_driver`.
-+-
-+-        // Find all libraries statically linked to upstream dylibs.
-+-        for &cnum in all_dylibs() {
-+-            let deps = tcx.dylib_dependency_formats(cnum);
-+-            for &(depnum, style) in deps.iter() {
-+-                if let RequireStatic = style {
-+-                    upstream_in_dylibs.insert(depnum);
-+-                }
-+-            }
-+-        }
-+-    }
-+-
-+     let mut formats = FxHashMap::default();
-+
-+     // Sweep all crates for found dylibs. Add all dylibs, as well as their
-+     // dependencies, ensuring there are no conflicts. The only valid case for a
-+     // dependency to be relied upon twice is for both cases to rely on a dylib.
-+-    for &cnum in all_dylibs() {
-+-        if upstream_in_dylibs.contains(&cnum) {
-+-            info!("skipping dylib: {}", tcx.crate_name(cnum));
-+-            // If this dylib is also available statically linked to another dylib
-+-            // we try to use that instead.
-++    for &cnum in tcx.crates(()).iter() {
-++        if tcx.dep_kind(cnum).macros_only() {
-+             continue;
-+         }
-+-
-+         let name = tcx.crate_name(cnum);
-++        let src = tcx.used_crate_source(cnum);
-++        if src.dylib.is_some() {
-+         info!("adding dylib: {}", name);
-+         add_library(tcx, cnum, RequireDynamic, &mut formats, &mut unavailable_as_static);
-+         let deps = tcx.dylib_dependency_formats(cnum);
-+@@ -207,6 +182,7 @@ fn calculate_type(tcx: TyCtxt<'_>, ty: CrateType) -> DependencyList {
-+             add_library(tcx, depnum, style, &mut formats, &mut unavailable_as_static);
-+         }
-+     }
-++    }
-+
-+     // Collect what we've got so far in the return vector.
-+     let last_crate = tcx.crates(()).len();
-+diff --git a/src/bootstrap/src/bin/rustc.rs b/src/bootstrap/src/bin/rustc.rs
-+index d04e2fbeb7..011c289d93 100644
-+--- a/src/bootstrap/src/bin/rustc.rs
-++++ b/src/bootstrap/src/bin/rustc.rs
-+@@ -89,25 +89,6 @@ fn main() {
-+         rustc_real
-+     };
-+
-+-    // Get the name of the crate we're compiling, if any.
-+-    let crate_name = parse_value_from_args(&orig_args, "--crate-name");
-+-
-+-    // When statically linking `std` into `rustc_driver`, remove `-C prefer-dynamic`
-+-    if env::var("RUSTC_LINK_STD_INTO_RUSTC_DRIVER").unwrap() == "1"
-+-        && crate_name == Some("rustc_driver")
-+-        && stage != "0"
-+-    {
-+-        if let Some(pos) = args.iter().enumerate().position(|(i, a)| {
-+-            a == "-C" && args.get(i + 1).map(|a| a == "prefer-dynamic").unwrap_or(false)
-+-        }) {
-+-            args.remove(pos);
-+-            args.remove(pos);
-+-        }
-+-        if let Some(pos) = args.iter().position(|a| a == "-Cprefer-dynamic") {
-+-            args.remove(pos);
-+-        }
-+-    }
-+-
-+     let mut cmd = match env::var_os("RUSTC_WRAPPER_REAL") {
-+         Some(wrapper) if !wrapper.is_empty() => {
-+             let mut cmd = Command::new(wrapper);
-+@@ -118,6 +99,9 @@ fn main() {
-+     };
-+     cmd.args(&args).env(dylib_path_var(), env::join_paths(&dylib_path).unwrap());
-+
-++    // Get the name of the crate we're compiling, if any.
-++    let crate_name = parse_value_from_args(&orig_args, "--crate-name");
-++
-+     if let Some(crate_name) = crate_name {
-+         if let Some(target) = env::var_os("RUSTC_TIME") {
-+             if target == "all"
-+diff --git a/src/bootstrap/src/core/builder.rs b/src/bootstrap/src/core/builder.rs
-+index ff0d1f3a72..b2c9602e57 100644
-+--- a/src/bootstrap/src/core/builder.rs
-++++ b/src/bootstrap/src/core/builder.rs
-+@@ -2153,7 +2153,7 @@ impl<'a> Builder<'a> {
-+         // When we build Rust dylibs they're all intended for intermediate
-+         // usage, so make sure we pass the -Cprefer-dynamic flag instead of
-+         // linking all deps statically into the dylib.
-+-        if matches!(mode, Mode::Std) {
-++        if matches!(mode, Mode::Std | Mode::Rustc) {
-+             rustflags.arg("-Cprefer-dynamic");
-+         }
-+         if matches!(mode, Mode::Rustc) && !self.link_std_into_rustc_driver(target) {
-+diff --git a/src/tools/clippy/src/main.rs b/src/tools/clippy/src/main.rs
-+index c9853e53f3..c9af2138a7 100644
-+--- a/src/tools/clippy/src/main.rs
-++++ b/src/tools/clippy/src/main.rs
-+@@ -1,6 +1,3 @@
-+-// We need this feature as it changes `dylib` linking behavior and allows us to link to
-+-// `rustc_driver`.
-+-#![feature(rustc_private)]
-+ // warn on lints, that are included in `rust-lang/rust`s bootstrap
-+ #![warn(rust_2018_idioms, unused_lifetimes)]
-+
-+diff --git a/src/tools/clippy/tests/compile-test.rs b/src/tools/clippy/tests/compile-test.rs
-+index 9754254cdd..dd95cc71cd 100644
-+--- a/src/tools/clippy/tests/compile-test.rs
-++++ b/src/tools/clippy/tests/compile-test.rs
-+@@ -1,4 +1,4 @@
-+-#![feature(rustc_private, let_chains)]
-++#![feature(let_chains)]
-+ #![warn(rust_2018_idioms, unused_lifetimes)]
-+ #![allow(unused_extern_crates)]
-+
-+diff --git a/src/tools/rustdoc/main.rs b/src/tools/rustdoc/main.rs
-+index d4099cafe5..5b499a1fa1 100644
-+--- a/src/tools/rustdoc/main.rs
-++++ b/src/tools/rustdoc/main.rs
-+@@ -1,6 +1,3 @@
-+-// We need this feature as it changes `dylib` linking behavior and allows us to link to `rustc_driver`.
-+-#![feature(rustc_private)]
-+-
-+ fn main() {
-+     rustdoc::main()
-+ }
-+diff --git a/src/tools/rustfmt/src/git-rustfmt/main.rs b/src/tools/rustfmt/src/git-rustfmt/main.rs
-+index b8b0432aa9..b5bd71e015 100644
-+--- a/src/tools/rustfmt/src/git-rustfmt/main.rs
-++++ b/src/tools/rustfmt/src/git-rustfmt/main.rs
-+@@ -1,7 +1,3 @@
-+-// We need this feature as it changes `dylib` linking behavior and allows us to link to
-+-// `rustc_driver`.
-+-#![feature(rustc_private)]
-+-
-+ use std::env;
-+ use std::io::stdout;
-+ use std::path::{Path, PathBuf};
-diff --git a/recipes-devtools/rust/rust-source.inc b/recipes-devtools/rust/rust-source.inc
-index dc71661..0c0c9dc 100644
---- a/recipes-devtools/rust/rust-source.inc
-+++ b/recipes-devtools/rust/rust-source.inc
-@@ -7,6 +7,7 @@ SRC_URI += "https://static.rust-lang.org/dist/rustc-${RUST_VERSION}-src.tar.xz;n
-             file://repro-issue-fix-with-cc-crate-hashmap.patch;patchdir=${RUSTSRC} \
-             file://oeqa-selftest-Increase-timeout-in-process-sigpipe-ru.patch;patchdir=${RUSTSRC} \
-             file://0001-src-core-build_steps-tool.rs-switch-off-lto-for-rust.patch;patchdir=${RUSTSRC} \
-+	    file://revert-link-std-statically-in-rustc_driver-feature.patch;patchdir=${RUSTSRC} \
- "
- SRC_URI[rust.sha256sum] = "1276a0bb8fa12288ba6fa96597d28b40e74c44257c051d3bc02c2b049bb38210"
+diff --git a/recipes-devtools/rust/rust_1.83.0.bb b/recipes-devtools/rust/rust_1.83.0.bb
+index 06f48f1..41efcd6 100644
+--- a/recipes-devtools/rust/rust_1.83.0.bb
++++ b/recipes-devtools/rust/rust_1.83.0.bb
+@@ -129,6 +129,7 @@ python do_configure() {
+     # [llvm]
+     config.add_section("llvm")
+     config.set("llvm", "static-libstdcpp", e(False))
++    config.set("llvm", "download-ci-llvm", e(False))
+     if "llvm" in (d.getVar('TC_CXX_RUNTIME') or ""):
+         config.set("llvm", "use-libcxx", e(True))
  
 -- 
 2.49.0
