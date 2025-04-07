@@ -2,60 +2,60 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5154BC369A1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B21CC369A4
 	for <webhook@archiver.kernel.org>; Mon,  7 Apr 2025 21:30:54 +0000 (UTC)
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
- by mx.groups.io with SMTP id smtpd.web11.59597.1744061444353346701
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+ by mx.groups.io with SMTP id smtpd.web10.60121.1744061451236476252
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 07 Apr 2025 14:30:44 -0700
+ Mon, 07 Apr 2025 14:30:51 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=d9930r/y;
- spf=pass (domain: konsulko.com, ip: 209.85.166.181, mailfrom: scott.murray@konsulko.com)
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3d57143ee39so39252725ab.1
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 07 Apr 2025 14:30:44 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=sGypMuk4;
+ spf=pass (domain: konsulko.com, ip: 209.85.166.44, mailfrom: scott.murray@konsulko.com)
+Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-85b40a5120eso116378039f.1
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 07 Apr 2025 14:30:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1744061443; x=1744666243; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1744061450; x=1744666250; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=J7NItwXhvilrzp1DYYA0eBkBMCggf1Yo1ytrg+jVHek=;
-        b=d9930r/y4tJqD4Kjtu3+/9Xefo7xEyRJ3T+J+5b7jWsIxyA93uqfLOOThSvX1e576Z
-         yQSUyEHwwc4tVOdip1puMNwBWZY8zd3lGioZz7AX2wju7cZlfJGBG1ey7KCrou5MjkmU
-         3RD87UM2LiLPL04KEE3SXIR3pjg+hcFiOgWGk=
+        bh=x6ezu+2hGCU4c8UfKLqhaBCKXcACKeQOkocpoR85gHw=;
+        b=sGypMuk4Iju4jnHjgc1KCR6vu1mDORxxWmXVXaYVJ9W/scNjaj43mJ/iLXH8W/1jDB
+         N6mxmqpbrRsc294AUIGX4Isu0JQmVc2PzWjT/j6HbMYR+L3olsBk0QNHOg8+uM2n0pjf
+         zmQoKO/X5DVwihi1zRkg7zggzrlidiSRl+2a8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744061443; x=1744666243;
+        d=1e100.net; s=20230601; t=1744061450; x=1744666250;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=J7NItwXhvilrzp1DYYA0eBkBMCggf1Yo1ytrg+jVHek=;
-        b=QJ/RIqdgZcuf0NYJ9ohAnkpRHXxpuHP0bmhbyocdv1LZkYwqTDXwRH3R20JQ4bz700
-         buMwphZr2bqsKzPE/pfc+71TBMbqM8i+qjG+fojhA26x8RUyQNAOq07jxmkjnLoyViqB
-         IEuIKdF1IwevFRf/CxErSOnUq6CjporJ2dE6ljFeKl1OAeZPhmzzh6Lg23CbuLY/WsTt
-         PQQmWhmEZMUU93SRRyohaPd2Mhq5fR+Wk9iZSEicEIE65VN31YGul6/L6Qe2uPCGTLCp
-         OGRg3CIsMHJO+voDagCC9bgyMGblMxOe8/DNTq7KqTVk+UC4YNysZLFu8cyErsmaZHFP
-         kXQg==
-X-Gm-Message-State: AOJu0YznxJsTqKcP77eRxkFMl3WtMF9yNvwfi5o4RXx9/rQqnCrF294E
-	4IZojTqxfefLGiDMIjeJuu69Brw3ypF123ZPurcRpI13b/VfEVF78FG5QxpGxDfb0vFwL7EbXFE
-	2Jq4=
-X-Gm-Gg: ASbGncupZh7k7rTghOeL9r2RVNfqEd50nGS07Pgzs0powPp/sD+iYc4IQVXOdPzPz+4
-	dd9SQRGlovo7Sg7sE3BCCyxlk9znA4miFPx6z6GeNv13/GVZBYrkJ+s30RYcTCn5MlDj8URt2P4
-	bpLC22APJqJEpui+ijpe8vg7p7y0QfuZN9WURQ3V3MlzSnc765LHrnM4kl2RjngH0yJp8VKYaYN
-	Du0wsPpKFzX/MH1+sgdiGPyZjXmk8DhVyvWrFgdyTeoIHCOI6OMO+EY3tg75C05NmxQ6aUq1xBc
-	1NEI06oNdzfY7OcKbZbNd9dGaNdc74TEDR0k4U9O+TIjQvgcwwU5o24C5umtjpUh9QwO8LJaFfc
-	rnNgscSia1imEjatPOZNu30gKmUt8Qto=
-X-Google-Smtp-Source: AGHT+IHfErMHOEYEeXnrnXos5U3pcVI0Q14siiT+kv4SuoIJJRsZ2giYXxwJTBej20PbGsE7P1j1aA==
-X-Received: by 2002:a05:6e02:2199:b0:3d4:244b:db20 with SMTP id e9e14a558f8ab-3d6e3f653acmr157109175ab.16.1744061443318;
-        Mon, 07 Apr 2025 14:30:43 -0700 (PDT)
+        bh=x6ezu+2hGCU4c8UfKLqhaBCKXcACKeQOkocpoR85gHw=;
+        b=rs6fs28v5JcoJjo5Sc4JtEc7kf2r7CVFuUUTqQX1eAjx4P3vYFLhaTl/ZPAK8vGIlS
+         216XEnHM4vKY+LT/GWaqAdLvhJRtBZGI3p6wQBusjv3kNTqbAMajxs8cRCYsTalyHMJj
+         4qGoVrrugrsc0xu0RHkWl5RhDNi5l2JhSfQ9s0jHzHAllyrdjYE1j3rh/idTwYeWQnr1
+         eJwK2X98nNHs8x9oDh2va68jP1yKt5BnGKoEt5lbuPf/Jcy/avvKT8P/LXpONrdYNdk/
+         fyucKF0LkRCCtNG8hCCBgiNDkYEAB2Q9BJI4JebqJkf6Wkffqo0hvTO8mCOjsBON+ne6
+         PMvQ==
+X-Gm-Message-State: AOJu0YzzwlwEzUs/tSUtwWfNILlFugf4ZkmKgEro30QkGrWsgOmCrsLU
+	SmYiqIYHTk7dLSULsdTj0bQVMY4GZjUbSptWweAmh2oEEysldWj1V5uRVzKboOfNG7TN7SAB3sb
+	cmvw=
+X-Gm-Gg: ASbGncuQ5Z+CVz2mKhFbg6/1nO3qdSY97EDBjpxXsL38B0w+eSJBt+TDiARf4dgIiu9
+	v7z3rqTUohS/C4+JAx5pIujoa2QgeV9QWSB94+D+l34S26hUl9jNDTgctOhpYkUFhuS/gQQ0xFS
+	acGzktHFryRdMNBvUdsM/PP+ftJz5xnvObr2e7jiSulk+GchFux1lxsNorJpHaQ4w0vn6PHDw+T
+	DZ6ZBiHZroILW6KKhtt3X9VH4kEfdUH0TYP//uD13160mHBrr5qEujoSWecro0DAwOvzpI3Mw5b
+	Yn1J8SIaUCT6GLbDH6JTnA6WWzCTZfCUqG1NgICObg69ceG4EORtc4T9ksKb7RIacuAAE35a5/J
+	WF/lTKhqypYcLrnBWadid
+X-Google-Smtp-Source: AGHT+IFTOvDc6mFgk/nnpAR4h+91/55gnqKS4QoyR9PKSDbdsCRqKYzpU0DxO41V3uUXEutkAJff8A==
+X-Received: by 2002:a05:6602:4c87:b0:85b:4941:3fe2 with SMTP id ca18e2360f4ac-8611b465a37mr1533502339f.7.1744061449824;
+        Mon, 07 Apr 2025 14:30:49 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f4f44ba91dsm132936173.79.2025.04.07.14.30.42
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f4f44ba91dsm132936173.79.2025.04.07.14.30.48
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 14:30:42 -0700 (PDT)
+        Mon, 07 Apr 2025 14:30:49 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][scarthgap/rust][PATCH 06/29] rust/README-rust.md: fix markdown style issues
-Date: Mon,  7 Apr 2025 17:29:55 -0400
-Message-ID: <0f7f6548dfbf5c1bdc51b4713e60d63856ce3d71.1744061149.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][scarthgap/rust][PATCH 12/29] cargo_common: use 'config.toml' instead of plain 'config'
+Date: Mon,  7 Apr 2025 17:30:01 -0400
+Message-ID: <1589af24ef0f0cae625bb8f0f033ed7528cf3aa4.1744061149.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1744061149.git.scott.murray@konsulko.com>
 References: <cover.1744061149.git.scott.murray@konsulko.com>
@@ -65,81 +65,123 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Mon, 07 Apr 2025 21:30:54 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1306
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1312
 
-From: Igor Opaniuk <igor.opaniuk@foundries.io>
+From: Enrico Scholz <enrico.scholz@sigma-chemnitz.de>
 
-Fix markdown style issues using markdownlint tool [1]:
+cargo configuration has been renamed from plain 'config' to
+'config.toml' in rust-1.38.
 
-$ cat ./recipes-devtools/rust/README-rust.md | mdl
-(stdin):1: MD002 First header should be a top level header
-(stdin):25: MD006 Consider starting bulleted lists at the beginning of the line
-(stdin):3: MD009 Trailing spaces
-(stdin):11: MD009 Trailing spaces
-(stdin):26: MD009 Trailing spaces
-(stdin):39: MD012 Multiple consecutive blank lines
-(stdin):32: MD032 Lists should be surrounded by blank lines
-(stdin):36: MD032 Lists should be surrounded by blank lines
+Using the old name is still supported but creates warnings like
 
-[1] https://github.com/markdownlint/markdownlint
-Signed-off-by: Igor Opaniuk <igor.opaniuk@foundries.io>
+| $ cargo
+| warning: `/sdk.../home/cargo/config` is deprecated in favor of `config.toml`
+| note: if you need to support cargo 1.38 or earlier, you can symlink `config` to `config.toml`
+
+Use the new name.
+
+Signed-off-by: Enrico Scholz <enrico.scholz@sigma-chemnitz.de>
+Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(adapted from oe-core commit 62bade83dd6e021f11e9599a2699a1b202324f0f)
+(adapted from oe-core commit 94b7d1a6cdb44949f8a96213ff2e45fafd759442)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- recipes-devtools/rust/README-rust.md | 24 +++++++++++++-----------
- 1 file changed, 13 insertions(+), 11 deletions(-)
+ classes-recipe/cargo_common.bbclass | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/recipes-devtools/rust/README-rust.md b/recipes-devtools/rust/README-rust.md
-index 209836a..a7e19c5 100644
---- a/recipes-devtools/rust/README-rust.md
-+++ b/recipes-devtools/rust/README-rust.md
-@@ -1,14 +1,14 @@
--## Introduction
-+# Introduction
+diff --git a/classes-recipe/cargo_common.bbclass b/classes-recipe/cargo_common.bbclass
+index 26de947..c0f6544 100644
+--- a/classes-recipe/cargo_common.bbclass
++++ b/classes-recipe/cargo_common.bbclass
+@@ -47,14 +47,14 @@ CARGO_RUST_TARGET_CCLD ??= "${RUST_TARGET_CCLD}"
+ cargo_common_do_configure () {
+ 	mkdir -p ${CARGO_HOME}/bitbake
  
--This provides the Rust compiler, tools for building packages (cargo), and 
-+This provides the Rust compiler, tools for building packages (cargo), and
- a few example projects.
+-	cat <<- EOF > ${CARGO_HOME}/config
++	cat <<- EOF > ${CARGO_HOME}/config.toml
+ 	# EXTRA_OECARGO_PATHS
+ 	paths = [
+ 	$(for p in ${EXTRA_OECARGO_PATHS}; do echo \"$p\",; done)
+ 	]
+ 	EOF
  
- ## Building a rust package
+-	cat <<- EOF >> ${CARGO_HOME}/config
++	cat <<- EOF >> ${CARGO_HOME}/config.toml
  
- When building a rust package in bitbake, it's usually easiest to build with
- cargo using cargo.bbclass.  If the package already has a Cargo.toml file (most
--rust packages do), then it's especially easy.  Otherwise you should probably
--get the code building in cargo first. 
-+rust packages do), then it's especially easy. Otherwise you should probably
-+get the code building in cargo first.
+ 	# Local mirror vendored by bitbake
+ 	[source.bitbake]
+@@ -62,7 +62,7 @@ cargo_common_do_configure () {
+ 	EOF
  
- Once your package builds in cargo, you can use
- [cargo-bitbake](https://github.com/cardoe/cargo-bitbake) to generate a bitbake
-@@ -22,17 +22,19 @@ contained within it
+ 	if [ ${CARGO_DISABLE_BITBAKE_VENDORING} = "0" ]; then
+-		cat <<- EOF >> ${CARGO_HOME}/config
++		cat <<- EOF >> ${CARGO_HOME}/config.toml
  
- ## Pitfalls
+ 		[source.crates-io]
+ 		replace-with = "bitbake"
+@@ -70,7 +70,7 @@ cargo_common_do_configure () {
+ 		EOF
+ 	fi
  
-- - TARGET_SYS _must_ be different from BUILD_SYS. This is due to the way Rust
-- configuration options are tracked for different targets. This is the reason 
-- we use the Yocto triples instead of the native Rust triples. See rust-lang/cargo#3349.
-+`TARGET_SYS` _must_ be different from `BUILD_SYS`. This is due to the way Rust
-+configuration options are tracked for different targets. This is the reason
-+we use the Yocto triples instead of the native Rust triples. See
-+[Add the ability to provide build flags for the build-script-build #3349](https://github.com/rust-lang/cargo/issues/3349)
+-	cat <<- EOF >> ${CARGO_HOME}/config
++	cat <<- EOF >> ${CARGO_HOME}/config.toml
  
- ## Dependencies
+ 	[http]
+ 	# Multiplexing can't be enabled because http2 can't be enabled
+@@ -82,7 +82,7 @@ cargo_common_do_configure () {
  
- On the host:
-- - Any `-sys` packages your project might need must have RDEPENDs for
-- the native library.
-+
-+* Any `-sys` packages your project might need must have RDEPENDs for
-+  the native library.
+ 	EOF
  
- On the target:
-- - Any `-sys` packages your project might need must have RDEPENDs for
-- the native library.
+-	cat <<- EOF >> ${CARGO_HOME}/config
++	cat <<- EOF >> ${CARGO_HOME}/config.toml
  
-+* Any `-sys` packages your project might need must have RDEPENDs for
-+  the native library.
+ 	# HOST_SYS
+ 	[target.${RUST_HOST_SYS}]
+@@ -90,7 +90,7 @@ cargo_common_do_configure () {
+ 	EOF
+ 
+ 	if [ "${RUST_HOST_SYS}" != "${RUST_BUILD_SYS}" ]; then
+-		cat <<- EOF >> ${CARGO_HOME}/config
++		cat <<- EOF >> ${CARGO_HOME}/config.toml
+ 
+ 		# BUILD_SYS
+ 		[target.${RUST_BUILD_SYS}]
+@@ -99,7 +99,7 @@ cargo_common_do_configure () {
+ 	fi
+ 
+ 	if [ "${RUST_TARGET_SYS}" != "${RUST_BUILD_SYS}" -a "${RUST_TARGET_SYS}" != "${RUST_HOST_SYS}" ]; then
+-		cat <<- EOF >> ${CARGO_HOME}/config
++		cat <<- EOF >> ${CARGO_HOME}/config.toml
+ 
+ 		# TARGET_SYS
+ 		[target.${RUST_TARGET_SYS}]
+@@ -110,7 +110,7 @@ cargo_common_do_configure () {
+ 	# Put build output in build directory preferred by bitbake instead of
+ 	# inside source directory unless they are the same
+ 	if [ "${B}" != "${S}" ]; then
+-		cat <<- EOF >> ${CARGO_HOME}/config
++		cat <<- EOF >> ${CARGO_HOME}/config.toml
+ 
+ 		[build]
+ 		# Use out of tree build destination to avoid polluting the source tree
+@@ -118,7 +118,7 @@ cargo_common_do_configure () {
+ 		EOF
+ 	fi
+ 
+-	cat <<- EOF >> ${CARGO_HOME}/config
++	cat <<- EOF >> ${CARGO_HOME}/config.toml
+ 
+ 	[term]
+ 	progress.when = 'always'
+@@ -129,7 +129,7 @@ cargo_common_do_configure () {
+ python cargo_common_do_patch_paths() {
+     import shutil
+ 
+-    cargo_config = os.path.join(d.getVar("CARGO_HOME"), "config")
++    cargo_config = os.path.join(d.getVar("CARGO_HOME"), "config.toml")
+     if not os.path.exists(cargo_config):
+         return
+ 
 -- 
 2.49.0
 
