@@ -1,398 +1,539 @@
-Return-Path: <hongxu.jia@eng.windriver.com>
+Return-Path: <soumya.sambu@windriver.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B05F1C36010
-	for <webhook@archiver.kernel.org>; Mon,  7 Apr 2025 08:13:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E2A8C36010
+	for <webhook@archiver.kernel.org>; Mon,  7 Apr 2025 13:12:51 +0000 (UTC)
 Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
- by mx.groups.io with SMTP id smtpd.web11.41335.1744013611548864194
+ by mx.groups.io with SMTP id smtpd.web11.46597.1744031563593203977
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 07 Apr 2025 01:13:31 -0700
+ Mon, 07 Apr 2025 06:12:43 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.166.238, mailfrom: prvs=6192bc662b=hongxu.jia@windriver.com)
+ dkim=none (message not signed); spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.166.238, mailfrom: prvs=61920d6902=soumya.sambu@windriver.com)
 Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5374VAM4005017
-	for <yocto-patches@lists.yoctoproject.org>; Mon, 7 Apr 2025 01:13:31 -0700
-Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam02lp2048.outbound.protection.outlook.com [104.47.51.48])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 45tyt49sqb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <yocto-patches@lists.yoctoproject.org>; Mon, 07 Apr 2025 01:13:30 -0700 (PDT)
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5375wJFk001100;
+	Mon, 7 Apr 2025 06:12:41 -0700
+Received: from nam02-dm3-obe.outbound.protection.outlook.com (mail-dm3nam02lp2044.outbound.protection.outlook.com [104.47.56.44])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 45tyt4a38k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Apr 2025 06:12:41 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KAlpRR4dOOigqiUfvBywxntvkTujaEa9zBUl3EIGMpWkv6S7DtbIjAZ1MxibxtJ0PbRZ6GJ/czBQQ0g3I7nlAYg5r4fwp8/dFVZUlukKn96Q0Pbr4Ia1cv5v4T5SErOjvUQA6pbmEKrCA2pkclBfE8ZGynhr6lUpK/mcJKlVFv5BR1XdUZgdO7nIm51kHGeanuu9iX4byT4ZmgTGY65BFve4ePFfFMsMWnqm1TFEfoBTl2KE8xTWccL4twxBrY5TZFLbLdgPxGwO7MYdbasFCn5dSI7n2RItPuc+yUE5+luNpT0urDb8Gf4O614K9eF7IrW3xbjTYT1jqIf1Be1usg==
+ b=Zqgik5MKeuSerPd1jepWQmAvH/l1CxrffMSEmIObU2unX4dEiYXpJ5ab6G+22X4UYLhLx9AeKwveYF19sakxNYNGos33zqecQTYOOE+mVbsjZbRJ8M7JkKJqkEm1t67SQIYfjxoUjtkJgMRlcj+lhxsnvWCFnmEb3LP7ob34LL7dTkeDmiFe56mb1uUmUimr7rrQO8vuF+LnjxUGUKxfiFKae8qvl9Ppf/GWEXkDdXFUnDQv/tRSH17ifOTokQI3aHMG/qz6PNSW5eh6MPgrz65zFZYFMvk+bWgL0eF86Srwey5li79q7ZlB8U6IEI4VdGOyi2W5yUAxaMk8zwfdhw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7kYshy4ypF5SCR3XWdJKjnMN/dp1I5kpi0YrM6eorHM=;
- b=b9Nm4lXIQqxu40/U0jt8/5tPM/e3OGOPv1phWcAbrX5KmXcKHJNajGETUDv+lFIFIj+cF+XFoGrNQyl7PS3eBxhZI5lwYkwWUpRHmJzu1LxErcg2CES31CQyo7nRbJUGp0y9b6pinRSG8YtQjhArDac9nXs9Z+gndoj3LnaT4HU7XNfjbFRa7SAuZkS+P4s8hqeJm0hOLHhGP3VRK0Xa6XG1gkMS2x5iyE/shomVF7Hll/ija+WFS3HLzcKh4PHw4XCzstndfmVidgHv9rt+0CEq6K5WNgeXLyIMcYj1jthx+FneU8j2KjoRcUBLhKi6Zabxy7jiLoZ730GeYFLuUg==
+ bh=qM7fn34+dOHNlP8L/40Qa13/bc61thLrYwOV7m3UiYs=;
+ b=mxbQrCha68ooyPJM3Rg3PR7X/Lq9oNOkIBVmSM9x58lED1w0AL7eNzXhN5vkEuKgODau+DmGoUGDyVcSjLjFptnQqlmWMfue5xHr3iHnu0WpQzqysoqkthbpRG3OBKCyAqBHnNSdKtyTO41h9K27TkcSyfwWw0pyUAQ+Iv0kLtKUX+dc2hcu/aW66CL5NQCVyjRzGojU/Kupzj+gJMpnuqCCpB9DthJS8Wfvx43+38QUGNaMyJxYd2LGtuxs4kru/FMn8DclRn/+BUqvPCt+NWSHokfgz8gKLkIStOvpwAmbMq21drgm7s7S1N/b8+FuYTyipvft7YT+pO8J9Ztwgw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=windriver.com; dmarc=pass action=none
  header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
-Received: from PH7PR11MB7608.namprd11.prod.outlook.com (2603:10b6:510:269::20)
- by CY8PR11MB7827.namprd11.prod.outlook.com (2603:10b6:930:77::9) with
+Received: from CY8PR11MB7921.namprd11.prod.outlook.com (2603:10b6:930:7d::15)
+ by IA1PR11MB7295.namprd11.prod.outlook.com (2603:10b6:208:428::15) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.34; Mon, 7 Apr
- 2025 08:13:26 +0000
-Received: from PH7PR11MB7608.namprd11.prod.outlook.com
- ([fe80::ef64:bc9f:eb8c:e6e]) by PH7PR11MB7608.namprd11.prod.outlook.com
- ([fe80::ef64:bc9f:eb8c:e6e%6]) with mapi id 15.20.8606.029; Mon, 7 Apr 2025
- 08:13:26 +0000
-Message-ID: <272a255c-94db-490b-9362-d641fcfa031d@windriver.com>
-Date: Mon, 7 Apr 2025 16:13:20 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [meta-tensorflow][scarthgap][PATCH]
- tensorflow.inc: add write permission to 2 more directories
-To: yocto-patches@lists.yoctoproject.org
-References: <20250307075610.2235124-1-martin.jansa@gmail.com>
- <182A7B773A5ECF09.13616@lists.yoctoproject.org>
- <CA+chaQf4K+YGtwnxi6eKQ4vmUFeWWOZScNEfqcKKHa-7xNas_g@mail.gmail.com>
+ 2025 13:12:38 +0000
+Received: from CY8PR11MB7921.namprd11.prod.outlook.com
+ ([fe80::9050:ad4d:49e1:e11a]) by CY8PR11MB7921.namprd11.prod.outlook.com
+ ([fe80::9050:ad4d:49e1:e11a%4]) with mapi id 15.20.8606.033; Mon, 7 Apr 2025
+ 13:12:38 +0000
+From: "Sambu, Soumya" <Soumya.Sambu@windriver.com>
+To: "yocto-patches@lists.yoctoproject.org"
+	<yocto-patches@lists.yoctoproject.org>,
+        "raj.khem@gmail.com"
+	<raj.khem@gmail.com>,
+        "akuster@mvista.com" <akuster@mvista.com>
+CC: "MacLeod, Randy" <Randy.MacLeod@windriver.com>,
+        "Yang, Liezhi"
+	<Liezhi.Yang@windriver.com>,
+        Scott Murray <scott.murray@konsulko.com>
+Subject: Re: [yocto-patches] [meta-lts-mixins][kirkstone/rust][PATCH 1/1]
+ mozjs: Use RUST_HOST_SYS and RUST_TARGET_SYS
+Thread-Topic: [yocto-patches] [meta-lts-mixins][kirkstone/rust][PATCH 1/1]
+ mozjs: Use RUST_HOST_SYS and RUST_TARGET_SYS
+Thread-Index: AQHbl7SpLOOrZsFz+k2pVuA77y9NnbODA3QAgAKLCTKAEr4u2w==
+Date: Mon, 7 Apr 2025 13:12:38 +0000
+Message-ID: 
+ <CY8PR11MB79218088835F33FAD84274B381AA2@CY8PR11MB7921.namprd11.prod.outlook.com>
+References: <20250318032001.2031160-1-soumya.sambu@windriver.com>
+ <d8e7feba-e083-300f-a82f-c483162da8e0@konsulko.com>
+ <CY8PR11MB7921603720483CCF392BC06C81A62@CY8PR11MB7921.namprd11.prod.outlook.com>
+In-Reply-To: 
+ <CY8PR11MB7921603720483CCF392BC06C81A62@CY8PR11MB7921.namprd11.prod.outlook.com>
+Accept-Language: en-US
 Content-Language: en-US
-From: Hongxu Jia <hongxu.jia@windriver.com>
-In-Reply-To: <CA+chaQf4K+YGtwnxi6eKQ4vmUFeWWOZScNEfqcKKHa-7xNas_g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-ClientProxiedBy: SG2P153CA0026.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c7::13)
- To PH7PR11MB7608.namprd11.prod.outlook.com (2603:10b6:510:269::20)
+X-Mentions: raj.khem@gmail.com,akuster@mvista.com
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CY8PR11MB7921:EE_|IA1PR11MB7295:EE_
+x-ms-office365-filtering-correlation-id: 5d3f88f8-de75-4087-b978-08dd75d5dee7
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|376014|366016|1800799024|8096899003|7053199007|38070700018;
+x-microsoft-antispam-message-info: 
+ =?Windows-1252?Q?JnUGHiXZmfE3ehAhC1pJvaF9MnTvBDd+tQ9o9nWm6Mv3st9lbvQPphG9?=
+ =?Windows-1252?Q?5p/3VrloHnOf+TBJ7anlY4IEDRaQU/NPrvU6QOz945Z9aWIIXQsl/AFE?=
+ =?Windows-1252?Q?ueVXUcdFXPzlSUamdEMIbzQIEtJSVPkWADHAWkTlK4RbAMBlsOjXCDtQ?=
+ =?Windows-1252?Q?xzvMmglEDKSL/kEBpEhSdZ09Clu3ytvXR0Yqgd/xQmrr4hsYjZPTr5hC?=
+ =?Windows-1252?Q?PgxnBU0KUbxUHjM2yjgb6IBYFqlesqcEOZPy171r68hPmWvkjBsAQX2X?=
+ =?Windows-1252?Q?EIyvjaYg49B66bL11rvaHECs5x0rc+JJLLGbyTwbCm3hOAWDGX+6bW1J?=
+ =?Windows-1252?Q?f27ZACLWU4R0VIaSSarmIEyluGk0zN5n8sm7hCRu1OeFX2K3cnAMRZYS?=
+ =?Windows-1252?Q?bdroBlAMBHc7IGSkJl+yXbcFWQ3AovkAY4n/RXfJvrikzY8gGeL3ri4P?=
+ =?Windows-1252?Q?eSNSx0QAQFqT1XSRIKvvTl1xv3vd2IE6gUo1EWHRsNFb8nu9Mcfr5jR/?=
+ =?Windows-1252?Q?EXZLpTmd8pD8NQkQHhqcPq1mkN5adLWtA1oK2c9BmzTWTBqt9ZLL9qi4?=
+ =?Windows-1252?Q?ZmjYGwuGS8GF2bcmd97BB0GvV1B269BhTLLAI/sZybJngX936QGrbbTB?=
+ =?Windows-1252?Q?PzZZ96+7qu6s06dAX8Rl+eZ6M9MI+2BMmuZacN7cGFWK2Asy2GxBsgM/?=
+ =?Windows-1252?Q?z8XvSCFw5epk/PzDUg3kjfrpk0OI6IeK4WtKJAvI3rB/c2/bInRuNbSO?=
+ =?Windows-1252?Q?RoiCcy87dZC/TldcFStna+pDkK/j36o/ZZWGravTqjcAiMwnbnxrvIX6?=
+ =?Windows-1252?Q?KQjLFlzpvVKe09tA1ZEsWt3y2VrxMB8EigCvuy9T3ovztcEwcpINpAii?=
+ =?Windows-1252?Q?NR7jeSxhNPmP453A/kGjAASFBS5e1ZlyJXNa5RGYVbN6cdrmVT2PGNrH?=
+ =?Windows-1252?Q?uF2frCAmeePIKuuzQELXRCrBuNhkL93ynATE8cDIJEa8VfQWiOd4yBfY?=
+ =?Windows-1252?Q?gGMzL9BRu3WYnjRlLi2bUveX0PZhm+Bm8uC3UmXiNbORTnAXDmH5GoVC?=
+ =?Windows-1252?Q?15k15NhN8vSu/mYu7eO+a0oyAea2tExCiCcpioAW+bqr8YONP5gGO9Xf?=
+ =?Windows-1252?Q?Qe+n6Ftb/vQb1VAJB65m61M91gypxRrZyqUIq2teSWurcr6rLRTzq6st?=
+ =?Windows-1252?Q?RP7Z5sMam9+yQM7kveuMuFp6JKo0sr+T4FPyqsNbFhOf5io9JQJni8B2?=
+ =?Windows-1252?Q?RNcJzTbykattKeDUT+wlXurmqDwDGJDprJmXqF4elwTg0do4I8FmqGtR?=
+ =?Windows-1252?Q?hG+zhcUNG4HlDH50Shzp8t/DqQ82p740TMQTcL75AnnzoKxXeTRJ1l7I?=
+ =?Windows-1252?Q?1nkUJhWUrB/tAq06GgouDpRo7kpQUqCccEtGwPMl11MFB/s8Ep01NYUr?=
+ =?Windows-1252?Q?COLsdDh7vsVXi83LxUSpkmXhwGAj3efkoC5j1Oy3lUtkHOxlDs6IbXe8?=
+ =?Windows-1252?Q?gPM8c6elln9iUY4mnFTDUYmVHVTvWcDlqZiHeNCEh2jcK79LCvXasgMs?=
+ =?Windows-1252?Q?oQjP4JbJQdg6CzIf?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR11MB7921.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(8096899003)(7053199007)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?Windows-1252?Q?niVNshs92bOkKnqCQrB+Tiu2zMKJRQaEsZF1Qv2JIvEdd1hAMsV1oFag?=
+ =?Windows-1252?Q?qb0adD75a36ZUEEfr40XT2qBGaZsXJkwsVI1FQstdTP0uSV9pSLqGI4D?=
+ =?Windows-1252?Q?gMjOPeiwkX5dXhOVYaT1Gzm+yZgiz+85p9QbIYPTklFA9QxFzs1GLkr4?=
+ =?Windows-1252?Q?XXANegGwJo/laTUv7euNkjJcVqHM3sCCuZ4G5WZgkT6pWuu7wINQKfK7?=
+ =?Windows-1252?Q?4AEjLxIu5mFmca2kgMOKlLUkv9JVZr9psXK0gN+zHLMQl4EHZ1JLRJUA?=
+ =?Windows-1252?Q?AxrS1lL9LyVsv2HYbcjDLA3V900oF0By2MLSJTFGgn5L3dP4WUHW6ImG?=
+ =?Windows-1252?Q?Qg5UwnL3S/uPSiFmPXw87OjSPc5p44R1swRQxP92N2COndqSWYzaHYaC?=
+ =?Windows-1252?Q?6cy778ej3tDzlwqWbo3vv3/AnWtbvPQMiuMaHk2DUuqwmTipHieUKIbP?=
+ =?Windows-1252?Q?eVyrtUM45ZORT+eY/lyvALdk8CnRCS2YkC+HEL/+QesDWxwjWChLS6pp?=
+ =?Windows-1252?Q?GhZ7DtSdXbzw1atCYZcaj5vy19gqHBTTKJhAkoQvqkWbFfYAte37OpFg?=
+ =?Windows-1252?Q?ez7oLO9oHJxkmQr+PVAAE389fFuCEtRO0wq/7moz2KRBMW85k7UeeNeI?=
+ =?Windows-1252?Q?0upwqKVd1BzK2lLqAg6wp5BJybFTLpvsl6f0zuWSyZ/qQ6tWRh05P/Sz?=
+ =?Windows-1252?Q?DGTbsBe5HxAddGyRo/R6WRRkpS6hlHh6qrBfTHm7azk+dNSBzQAiZC5A?=
+ =?Windows-1252?Q?0dKJfXOJESLlEt5i42x4bt/CsoHSZs9C43AhMjy3h5MWguME87+xGPNA?=
+ =?Windows-1252?Q?V5wnBCNOQP6FnuF+I3xld8NY3eC4eLfF/4ye/naFe8GLUo7Nc8PLAcot?=
+ =?Windows-1252?Q?U8TjWu0wDDYYc6G12CcKlrN79iWE0DFiyRPmCdGGogdHoEIvBYDBbBpt?=
+ =?Windows-1252?Q?Z3UgMyTQyhusDyJB9s1PAltld6gOWEuf7cCAGqOfc5dw726AB769pAoG?=
+ =?Windows-1252?Q?i/BZ0hcR3hzQdWB510m5AD2eRKDADO9OqRdGhFvaEGbCmMo8s3IBYnmm?=
+ =?Windows-1252?Q?4zaVhpEuLHAFIggMjfQMo3fZnTJ4YIMiI3AFgsPl+iLekKU1NwIN1Fz+?=
+ =?Windows-1252?Q?qQlKcGA0kXme/P7hOm0LiL22crB80vt6r3zrLmJXOJtC5ieS4mV1KwDC?=
+ =?Windows-1252?Q?cIfoqsxUpUSzC+Wv3jq2zB73Z5qaq2dcu+Wyr3IkC2e7RmG7ntaYte07?=
+ =?Windows-1252?Q?ZXfvZQUBvOMddVaLsXxrmADTvC46l3kpiehJLChX2C9aGlzX3qB7L2Yv?=
+ =?Windows-1252?Q?XfMAUJA/x608eZA6eP6yjmeEu2D6lMqb9QS2pIDZrrrtddW2x1v1yWCV?=
+ =?Windows-1252?Q?LEYuRfjb62H6H55xEMayonRmMtLGlJKD4EIymdS/7MRuo1q5whioPVA2?=
+ =?Windows-1252?Q?IFf5iDmUNsP9G8rGSENKQoqOLcOp7QsTTdjcMduZHATFw+mwisj68IaV?=
+ =?Windows-1252?Q?mmuNMsRvthw7kUhfzwshdacQwa+hMLis7Hdu5UMetSaMPwyo9HPR4sOw?=
+ =?Windows-1252?Q?O+Bl1fzTPTUekGarQRZDnQX4Z8JmZQrM2mnGPpLiVpBihGcj3yf/c65p?=
+ =?Windows-1252?Q?Xm+RALjWxAtuOqyYxYnBw3QJcIqqeS2oOZ/NBuGcoTa6iUEo8cFrMf0D?=
+ =?Windows-1252?Q?e0ayZy5SUtOeJcl4dLUSP2qD1tywqzTCcFOz8mn2pVMtwkajawSMqQ?=
+ =?Windows-1252?Q?=3D=3D?=
+Content-Type: multipart/alternative;
+	boundary="_000_CY8PR11MB79218088835F33FAD84274B381AA2CY8PR11MB7921namp_"
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR11MB7608:EE_|CY8PR11MB7827:EE_
-X-MS-Office365-Filtering-Correlation-Id: 14307615-db74-4ac6-a96c-08dd75ac126e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|4022899009|366016|376014;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?OWFMQ1BBQkEzRmVsVXZnamhYZlNMS0F5ZDlFaGNVWjV4QzhRZ3hxcVFIWEVJ?=
- =?utf-8?B?SkZNa0R3ejBoV3pqd0kwV0pXSjRVR2JqY09KU2xraTdDaTlLdFJuZForMDJi?=
- =?utf-8?B?Q2ZhRnZsVXpKYUNsaVV5c01DNUFaUWMyTnRxMVJsa3lPZ0cxZWxnYVo1N1NO?=
- =?utf-8?B?ZGtrOVpjSG04cm9DT3k4V0tWK3ZoQWUzWEdPSnBuYkJpbnhCVGt1Zk5xQzRl?=
- =?utf-8?B?TGtNYjBYVXBoaUw2L0dyd2RVMGxURTRsQU14NXdRaEpvNXl4d1F5OW4wU2tT?=
- =?utf-8?B?REJPSW5Gck5jdmJnaUxZSzF0K2g2a2JIeDNsRHRiQjJrQWRWVlBZN0RGdFRR?=
- =?utf-8?B?UGp2aDloMTQ2RjNWZVJSeUFTYStrVTV0d2lPNzZUVXNHalYzSEpHMmlaVUF0?=
- =?utf-8?B?SGJJcUh3Y2pYdFczSlRXV0dlWml1RVNjNGkyR1JiK2JoTWgzRVFiOHVHa0tR?=
- =?utf-8?B?K0kyVEpEYkY1ekZmeUtHdDdwWWpmMTc4SWdLeHN3aEJCaEpIWUZzZkFINndo?=
- =?utf-8?B?ME5WaWJXUjVBcU13b1BQMXE2N2UyQVhGRWtuSldhc2RVZHE4MjRsTFo4MXVk?=
- =?utf-8?B?TDVLOXFYdVExYUVHQkZJZlNQU2ZtMTFhdGZQNmtrOXFQWU5qWSt5aWhtaTh2?=
- =?utf-8?B?WDdjRnkzekZqSm5ZaDRDMzRmWjZtdkMwZFY3THRDVnMwM2hFZGFqNFhnQ01T?=
- =?utf-8?B?eEFNZ2c1eTZFUjdCR3psemlNVE9sSUFUVUJDcDhBWmlJQWlqQzF5MDFmZ0hZ?=
- =?utf-8?B?L3hDYlM5cGxkOUFZS2ZMZ0FZdkJCQy9TR2h3aStKS05QVVZTK2lrc0VxbDZy?=
- =?utf-8?B?YTQzQ0U3R1lRdDJsRlZXd0xtMy9paytmeXNRTmNLaUtGaFU4Q3p3dUNmTERw?=
- =?utf-8?B?S255VG15TXIzbTF3cVdXc2Z4MEx1QkhzSnNBbnVmYXZZMlFCcS9HNDIzcnFK?=
- =?utf-8?B?eXV2YVpXbGpReUw4WnR2RzgwbzlHZDhUSFhGalNoeG1FRDl5dUlCd2RrUDRU?=
- =?utf-8?B?MjAzc2ZsVE1WOHQvU0RvT3BkZ2doOWEzODBMbFBOVFJVYVN5YmVHblQ2Rm5x?=
- =?utf-8?B?djAzWWYyUXlya1VDa3hFZGI3QS9oWEhqYm01S1RPdUJrYm5TVjBjZ0FEdEph?=
- =?utf-8?B?Q01VaERwR3ZrZHRCT0V1ZEhQTUZnZDRLT0tjK0JlUDdYZFIxYi9WTWFzWjND?=
- =?utf-8?B?NngwR25qbnBVM2Q4blRzWFdnTDU2UnEvS3NzODY3V1pscEJLQ1g1TVFjQzA2?=
- =?utf-8?B?Sk5sWmJXRTdRcjhpa0cxYnMza1lwUXVhUXhKd1ZEZFNZektCaG9tUGRta21z?=
- =?utf-8?B?SStnQzN3Z1pIY1dYL0Q3UVlnSU45OG9Fa3dwbS9IRXFDMHRLU0xrT2ZVZmJZ?=
- =?utf-8?B?RGVzUHYrS2pveWpldnhyek9uRkUzYW1ySDFidDA0enhYd0VhK3UxZTZlVDJR?=
- =?utf-8?B?YUdkOXhOZlRnZC8vZEc5Yk56Qngzc2o3ZDZBR1l5R1VxZHlhS2ExUTh1OUNh?=
- =?utf-8?B?MWNSbWpHbmdXUjQzWm5TNDVwRHpOREx0dDZtbGphT3VmL0dCT0tyaTlrUi9Y?=
- =?utf-8?B?bVhLeUptTG9kaytjaXRCZytidnV3UC94UzBtM1YzM0dWc3pGdmZtY1IxdEFY?=
- =?utf-8?B?Tmprc0xzdHB4SGF5TUJrbmYyYk9OUGMrblBZWkZoSzV6OGFjeWt4enJmOVYz?=
- =?utf-8?B?Vjc4TlBaNi92akZEclFCNEY4MXNGcjdsWFNhajZLT2U5dXo2aUljUmd1RUQ5?=
- =?utf-8?B?TXorcnZkd3A2YlBnSG50L0hQSUt6Y0xMRGZ6bGJha0YxUmgvWW96SEJ2SURC?=
- =?utf-8?B?SEs1WSt6bHY3OHYzazk1Zz09?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB7608.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(4022899009)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?cmp1d3ZxSEhVWGRkbkNyVjN2VlE4bktjTDFyRUNBTEpDdnpoTGJHL0Zha25I?=
- =?utf-8?B?SmxHUHp6MzUycTlFWFRoSzh1TC9SbmE5ajM1Zm5reFJodEpEQjE2V0xrSStW?=
- =?utf-8?B?RFlqSlBiUG9FOHFhK3dtL21FS01heDJUZ3pyTENUTE9nUThiVGVETkRzYTVw?=
- =?utf-8?B?TDkzQ3c0Rkt1dVhXOXRiYUt4S3NNTWZBVWlBcmVpb0dqZTErV0JQK1FKbExk?=
- =?utf-8?B?NnFta3I5dGVBdkQxR00wdGZUNzZQRmdsVUNra1QrV202MWxQbVhwdklHL3VI?=
- =?utf-8?B?MW5TS3cwRHkyb3hUOHFMRVNnSFhwdGRNNVQrVmx1NUJCdTRsblNvVHJsK0lq?=
- =?utf-8?B?bkFDZDB1TTVtNjdjM1VYRS9mVU82cGpUWUd0YWVNZ2xUOXN3TFJFVSsvSEZz?=
- =?utf-8?B?TnZaTWFKdXJoKzZ1bkphZFBFSkluWUxzU24rQ0VYVVp3UG91aVR3Ymp3eUVu?=
- =?utf-8?B?eEl1b2t6eHRkSXdjYUtFdVZMVlFmZ0dZT05qdVFPVWdrR0JidkRFaDA3YkZl?=
- =?utf-8?B?SVBLc0xHbUdNMHNaMHZCU09aYVZUK1pOamlYOGJJSlFVZ2Yvakc2UUc2VGZH?=
- =?utf-8?B?R0srWG9xM3hnTmRFb04yNnNZb1ZXRzd1QllBdlJEenl4SWEzTk9DQ0I4eWRy?=
- =?utf-8?B?enhhbnFFb1JJSzlhVDhnUHEvVXd1VXR6UitiWTJEM3EwRy9iKytQZU9UZWU2?=
- =?utf-8?B?TGZKd2JNUlc1aUpoZjZBcHk4ZU85akExMGtXNmJCR1YyYU1NYWk0eWRtbTNV?=
- =?utf-8?B?VVhidE13cEx6V0pydDNiUnNPeUxzMjYxUEJQZDBvNUpkMU1qTHBtRE5jNzkx?=
- =?utf-8?B?ZTVqZlJOK2pGdTZOVzY5WVhncUsvQlpWT2sxMzRMMHVRSU9NaENYTlVRRUs4?=
- =?utf-8?B?M0wvbmFobFFIZ2VLSnRJRHovNk9aWURudnpNMnhqdUVOOS9qeDJZK21MVys1?=
- =?utf-8?B?ZUlmejRxUDZqS3QvQlFoVWpvL1pmYW5xbUpjMUF2eWdNbmRNVmVaTFRtSnVP?=
- =?utf-8?B?czFMdmlSU2NGVE1RblBIZzhhZTNzczM3QnJyNEM1NXZ0azR0a1B6ZWZaZ2Ja?=
- =?utf-8?B?eDBFTnNtUmdiWUVQYm45OXpKTW9sSkNMZ3ZtUE9mMkhoWFlRK2tacG05QjVK?=
- =?utf-8?B?ejVIcGlJNnJBMHh5dWJ5ei9ydTE1VXN2bUgzYi9aRS9JY1NnZGtkQmg0SlRF?=
- =?utf-8?B?b1hoMGdUcldtSm9BaE5veDMraUxRb2EzOEtjY0lVYjJmMTlrK2pxRHkrMjJN?=
- =?utf-8?B?WURPVXBQWjY0bU9MZjhvYVBKOW8yQjJvbERGbE51ZG43TktkYW5LdkNrYmVR?=
- =?utf-8?B?RzhjZDR6bWh1bHkrQ3FubEJRUUZXc0NXUzNGalZFZE5qTDlTNW51czU2dnp5?=
- =?utf-8?B?V2s5T2tPSzBGLzNiNS9qcE8rQTF2cWpjR0V2eXo1ai9kREJBbUZPRDJ4RTFD?=
- =?utf-8?B?UEhyekkwKzZJWEh2WS9RVlpGOVY3bmtaangwN3hOcVZYTHpxYXFMNFlnVVkr?=
- =?utf-8?B?TlZCOGs4NFdDaEpPZmk1MEZYOXJqQXFQSVdja1dxV1RyaWxhbEJtdFFtWGNz?=
- =?utf-8?B?MTRjNElJbS9tQk4wRTY0SFFYYk8vd3l5Y01IM0tyYThYQW1hd3NjeTJhN0xx?=
- =?utf-8?B?Q1NzdStXZzVVUW95U3ZwUXJCeXZDYnJMOWRCMGk2b1ZCbHpJN2lzOW1tcmtF?=
- =?utf-8?B?dndhT0ZidDgrVlhsc0M3Tmp0cE5qS0J1LzM0QkRJNWt1Y3JaNFk4cHNId3pL?=
- =?utf-8?B?Q2hWWHM1YmRuc3kwYVZTdFVudW90TFVXM3VwckoyNFFoSUJ4aGVpOHc5VUp5?=
- =?utf-8?B?SEJQb00xdUFaL09udk5vSDlDdHR4Nm9pdXNJTzVmQ3EvRE9QVGNEaXZyR28z?=
- =?utf-8?B?Z0ZQcTIxU1hkVXNMVXR2Y2JycUZJcEcxRTJEem1pSk5PNkpwZ3kvMkR1cEpi?=
- =?utf-8?B?ZnFHVFhZQ0lGT21hbkRpYWpXaTk4TGZrbzNzeUxDbzlZV05Ha2Y3ckExSE5V?=
- =?utf-8?B?U3lUKzRmaFRSYkdUR2U5dEd1Q3NaanhlUWlzbUNsRDdGanR4V2tQWTgzZEVE?=
- =?utf-8?B?QWhQTUU2QzhreFVnTkJPbDczR3lpbGYvNE5pUitvMWRhclI3MmVWdDBDWnZT?=
- =?utf-8?B?RlF0aGZQeWhad1pSNTRGeUF0NFpBcG0rSGNXR0IvYlhTelhSUmZ5Nkxzc0o2?=
- =?utf-8?B?RlE9PQ==?=
 X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 14307615-db74-4ac6-a96c-08dd75ac126e
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB7608.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Apr 2025 08:13:26.1969
+X-MS-Exchange-CrossTenant-AuthSource: CY8PR11MB7921.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5d3f88f8-de75-4087-b978-08dd75d5dee7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Apr 2025 13:12:38.4117
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xiVkoe3poh1j0w+jAW5PqPSHrZQQiEufKdo+95IlF8GrBLhx+HTzVPi8mLU/ON/YILxPq2L/ytxFVGQ9aGG8uPcDdtM7T6qk/HuZl1+H7fo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7827
-X-Proofpoint-ORIG-GUID: nSGDJTVb51j5Z4zCGaOSBPN5wnyRD0bd
-X-Authority-Analysis: v=2.4 cv=RMSzH5i+ c=1 sm=1 tr=0 ts=67f3892a cx=c_pps a=r1LLKbupV3Dgd2n8fS09vg==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=XR8D0OoHHMoA:10 a=iGHA9ds3AAAA:8 a=pGLkceISAAAA:8 a=t7CeM3EgAAAA:8 a=J62WKlJcb4pkVYEW-ykA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=nM-MV4yxpKKO9kiQg6Ot:22 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-GUID: nSGDJTVb51j5Z4zCGaOSBPN5wnyRD0bd
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: W3WBRyzM0JRxHkJo+Vz9qvLkSFsYHPM33AXIfign7t2bQ9DGS7mFFK/Ey8DqkS4DFMZP0gAAHuDQFeUN9OSdGcCChDjPYO31hhLTwPseOzw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB7295
+X-Proofpoint-ORIG-GUID: 17PD-VRi0lHllEyWktbmWd_hs3_flHZ4
+X-Authority-Analysis: v=2.4 cv=RMSzH5i+ c=1 sm=1 tr=0 ts=67f3cf49 cx=c_pps a=kSx+wkOqrR7DBdLtetN7AQ==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=XR8D0OoHHMoA:10
+ a=pGLkceISAAAA:8 a=fk1lIlRQAAAA:8 a=t7CeM3EgAAAA:8 a=k-42gJp3AAAA:8 a=iGHA9ds3AAAA:8 a=UBFVfQAFWYhimOpKR3UA:9 a=pILNOxqGKmIA:10 a=NXX6MSoyfP1CK1lI:21 a=frz4AuCg-hUA:10 a=_W_S_7VecoQA:10 a=lqcHg5cX4UMA:10 a=U75ogvRika4pmaD_UPO0:22 a=FdTzh2GWekK77mhwV6Dw:22
+ a=uCSXFHLys93vLW5PjgO_:22 a=nM-MV4yxpKKO9kiQg6Ot:22
+X-Proofpoint-GUID: 17PD-VRi0lHllEyWktbmWd_hs3_flHZ4
 X-Sensitive_Customer_Information: Yes
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-07_02,2025-04-03_03,2024-11-22_01
+ definitions=2025-04-07_04,2025-04-03_03,2024-11-22_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
  lowpriorityscore=0 mlxscore=0 malwarescore=0 suspectscore=0
  mlxlogscore=999 spamscore=0 priorityscore=1501 adultscore=0 clxscore=1015
  bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
  adjust=0 reason=mlx scancount=1 engine=8.21.0-2502280000
- definitions=main-2504070058
-Content-Transfer-Encoding: quoted-printable
-X-MIME-Autoconverted: from 8bit to quoted-printable by mx0a-0064b401.pphosted.com id 5374VAM4005017
+ definitions=main-2504070093
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 07 Apr 2025 08:13:37 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1290
+ <yocto-patches@lists.yoctoproject.org>; Mon, 07 Apr 2025 13:12:51 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1291
 
-On 4/7/25 15:27, Martin Jansa via lists.yoctoproject.org wrote:
-> CAUTION: This email comes from a non Wind River email account!
-> Do not click links or open attachments unless you recognize the sender =
-and know the content is safe.
->
-> Hi,
->
-> in the last patch you've merged the author e-mail is OK now, but there
-> is still the notice from Wind River e-mail as well as second From:
->
-> meta-tensorflow $ git show -1 9e89de7 --pretty=3Dfuller
-> commit 9e89de7d5e4a7e58e3ffa4cf81a3b96f15ec5c30
-> Author:     Martin Jansa <martin.jansa@gmail.com>
-> AuthorDate: Wed Apr 2 18:00:08 2025 +0200
-> Commit:     Hongxu Jia <hongxu.jia@windriver.com>
-> CommitDate: Mon Apr 7 10:19:24 2025 +0800
->
->      bazel: add whitespace around assignments
->
->      CAUTION: This email comes from a non Wind River email account!
->      Do not click links or open attachments unless you recognize the
-> sender and know the content is safe.
+--_000_CY8PR11MB79218088835F33FAD84274B381AA2CY8PR11MB7921namp_
+Content-Type: text/plain; charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
 
-Sorry for the noisy message, it was added by my company's firewall,
+Just following up =97 @Khem Raj<mailto:raj.khem@gmail.com>, @Armin Kuster<m=
+ailto:akuster@mvista.com>. Does creating a mixins layer for meta-openembedd=
+ed sound reasonable? Would really appreciate your input.
 
-I need to clean it up more carefully at next time
+Regards,
+Soumya
+________________________________
+From: Sambu, Soumya <Soumya.Sambu@windriver.com>
+Sent: Wednesday, March 26, 2025 8:45 PM
+To: Scott Murray <scott.murray@konsulko.com>; yocto-patches@lists.yoctoproj=
+ect.org <yocto-patches@lists.yoctoproject.org>
+Cc: MacLeod, Randy <Randy.MacLeod@windriver.com>; akuster@mvista.com <akust=
+er@mvista.com>; raj.khem@gmail.com <raj.khem@gmail.com>
+Subject: Re: [yocto-patches] [meta-lts-mixins][kirkstone/rust][PATCH 1/1] m=
+ozjs: Use RUST_HOST_SYS and RUST_TARGET_SYS
 
-//Hongxu
+That makes sense.
+Should we create a mixins layer for meta-openembedded?
+So far, we only have mozjs, that needs a bbappend.
+@<mailto:raj.khem@gmail.com>Khem Raj, @Armin Kuster<mailto:akuster@mvista.c=
+om> - Does that make sense to you?
+Regards,
+Soumya
 
->      From: Martin Jansa <martin.jansa@gmail.com>
+________________________________
+From: Scott Murray <scott.murray@konsulko.com>
+Sent: Tuesday, March 25, 2025 5:34 AM
+To: yocto-patches@lists.yoctoproject.org <yocto-patches@lists.yoctoproject.=
+org>
+Cc: Sambu, Soumya <Soumya.Sambu@windriver.com>
+Subject: Re: [yocto-patches] [meta-lts-mixins][kirkstone/rust][PATCH 1/1] m=
+ozjs: Use RUST_HOST_SYS and RUST_TARGET_SYS
+
+CAUTION: This email comes from a non Wind River email account!
+Do not click links or open attachments unless you recognize the sender and =
+know the content is safe.
+
+On Tue, 18 Mar 2025, Soumya via lists.yoctoproject.org wrote:
+
+> From: Soumya Sambu <soumya.sambu@windriver.com>
 >
->      With:
-> ....
+> The mozjs-91 and mozjs-78 recipe in meta-openembedded sets --target=3D${H=
+OST_SYS} and
+> --target=3D${TARGET_SYS} respectively, which leads to an error when using=
+ Rust from meta-lts-mixins:
 >
-> Regards,
+> error: Error loading target specification: Could not find specification f=
+or target "x86_64-poky-linux".
 >
-> On Fri, Mar 7, 2025 at 10:32=E2=80=AFAM Martin Jansa via
-> lists.yoctoproject.org <martin.jansa=3Dgmail.com@lists.yoctoproject.org=
+> Updated target configuration to resolve this.
 >
-> wrote:
->> Hi,
->>
->> thank you for merging both, the way how you're applying the changes
->> from e-mail still mangles the author and commit message.
->>
->> I've tried to add explicit From: in the e-mail body in hope to avoid
->> "via lists.yoctoproject.org
->> <martin.jansa=3Dgmail.com@lists.yoctoproject.org>" but it didn't reall=
-y
->> help, instead the From: is still in the merged commit message together
->> with "CAUTION: .." message from your e-mail configuration.
->>
->> meta-tensorflow $ git show -1 --pretty=3Dfuller origin/scarthgap | hea=
-d -n 14
->> commit c382865206fe925a02a1cdbdd856e16310bc9dbc
->> Author:     Martin Jansa via lists.yoctoproject.org
->> <martin.jansa=3Dgmail.com@lists.yoctoproject.org>
->> AuthorDate: Fri Mar 7 08:56:10 2025 +0100
->> Commit:     Hongxu Jia <hongxu.jia@windriver.com>
->> CommitDate: Fri Mar 7 16:16:58 2025 +0800
->>
->>      tensorflow.inc: add write permission to 2 more directories
->>
->>      CAUTION: This email comes from a non Wind River email account!
->>      Do not click links or open attachments unless you recognize the
->> sender and know the content is safe.
->>
->>      From: Martin Jansa <martin.jansa@gmail.com>
->>
->>      Missing write permission prevents the WORKDIR to be deleted, e.g.
->> when recipe becomes unreachable
->> ....
->>
->> On Fri, Mar 7, 2025 at 8:56=E2=80=AFAM <martin.jansa@gmail.com> wrote:
->>> From: Martin Jansa <martin.jansa@gmail.com>
->>>
->>> Missing write permission prevents the WORKDIR to be deleted, e.g. whe=
-n recipe becames unreachable
->>>
->>> Removing 41 recipes from the core2-64 sysroot: 100% |################=
-#########################################################################=
-#########################################################################=
-########| Time: 0:00:21
->>> Removing 35 recipes from the qemux86_64 sysroot: 100% |##############=
-#########################################################################=
-#########################################################################=
-########| Time: 0:00:00
->>> ERROR: Execution of event handler 'sstate_eventhandler_reachablestamp=
-s' failed                                                                =
-                                                                         =
-        | ETA:  0:00:07
->>> Traceback (most recent call last):
->>>    File "/OE/build/oe-core/openembedded-core/meta/classes-global/ssta=
-te.bbclass", line 1293, in sstate_eventhandler_reachablestamps
->>>      bb.utils.remove(workdir, recurse =3D True)
->>>      ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
->>>    File "/OE/build/oe-core/bitbake/lib/bb/utils.py", line 751, in rem=
-ove
->>>      subprocess.check_call(cmd + ['rm', '-rf'] + glob.glob(path))
->>>      ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->>>    File "/usr/lib/python3.13/subprocess.py", line 421, in check_call
->>>      raise CalledProcessError(retcode, cmd)
->>> subprocess.CalledProcessError: Command '['rm', '-rf', '/OE/build/oe-c=
-ore/tmp/work/x86_64-linux/tensorflow-native/2.17.0']' returned non-zero e=
-xit status 1.
->>>
->>> ERROR: Command execution failed: Traceback (most recent call last):
->>>    File "/OE/build/oe-core/bitbake/lib/bb/command.py", line 123, in r=
-unAsyncCommand
->>>      self.cooker.updateCache()
->>>      ~~~~~~~~~~~~~~~~~~~~~~~^^
->>>    File "/OE/build/oe-core/bitbake/lib/bb/cooker.py", line 1646, in u=
-pdateCache
->>>      bb.event.fire(event, self.databuilder.mcdata[mc])
->>>      ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->>>    File "/OE/build/oe-core/bitbake/lib/bb/event.py", line 224, in fir=
-e
->>>      fire_class_handlers(event, d)
->>>      ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
->>>    File "/OE/build/oe-core/bitbake/lib/bb/event.py", line 131, in fir=
-e_class_handlers
->>>      execute_handler(name, handler, event, d)
->>>      ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
->>>    File "/OE/build/oe-core/bitbake/lib/bb/event.py", line 102, in exe=
-cute_handler
->>>      ret =3D handler(event, d)
->>>    File "/OE/build/oe-core/openembedded-core/meta/classes-global/ssta=
-te.bbclass", line 1293, in sstate_eventhandler_reachablestamps
->>>      bb.utils.remove(workdir, recurse =3D True)
->>>      ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
->>>    File "/OE/build/oe-core/bitbake/lib/bb/utils.py", line 751, in rem=
-ove
->>>      subprocess.check_call(cmd + ['rm', '-rf'] + glob.glob(path))
->>>      ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->>>    File "/usr/lib/python3.13/subprocess.py", line 421, in check_call
->>>      raise CalledProcessError(retcode, cmd)
->>> subprocess.CalledProcessError: Command '['rm', '-rf', '/OE/build/oe-c=
-ore/tmp/work/x86_64-linux/tensorflow-native/2.17.0']' returned non-zero e=
-xit status 1.
->>>
->>> Summary: There were 2 ERROR messages, returning a non-zero exit code.
->>>
->>> OE qemux86-64@ /OE/build/oe-core $ find /OE/build/oe-core/tmp/work/x8=
-6_64-linux/tensorflow-native/2.17.0/
->>> /OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/
->>> /OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/baze=
-l
->>> /OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/baze=
-l/output_base
->>> /OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/baze=
-l/output_base/execroot
->>> /OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/baze=
-l/output_base/execroot/org_tensorflow
->>> /OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/baze=
-l/output_base/execroot/org_tensorflow/bazel-out
->>> /OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/baze=
-l/output_base/execroot/org_tensorflow/bazel-out/k8-opt
->>> /OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/baze=
-l/output_base/execroot/org_tensorflow/bazel-out/k8-opt/bin
->>> /OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/baze=
-l/output_base/execroot/org_tensorflow/bazel-out/k8-opt/bin/tensorflow
->>> /OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/baze=
-l/output_base/execroot/org_tensorflow/bazel-out/k8-opt/bin/tensorflow/lit=
-e
->>> /OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/baze=
-l/output_base/execroot/org_tensorflow/bazel-out/k8-opt/bin/tensorflow/lit=
-e/python
->>> /OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/baze=
-l/output_base/execroot/org_tensorflow/bazel-out/k8-opt/bin/tensorflow/lit=
-e/python/schema_py_srcs_no_include_all
->>> /OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/baze=
-l/output_base/execroot/org_tensorflow/bazel-out/k8-opt/bin/tensorflow/lit=
-e/python/schema_py_srcs_no_include_all/schema_generated.py
->>> /OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/baze=
-l/output_base/execroot/org_tensorflow/bazel-out/k8-opt/bin/tensorflow/lit=
-e/python/schema_py_srcs_no_include_all/__init__.py
->>> /OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/baze=
-l/output_base/execroot/org_tensorflow/bazel-out/k8-opt/bin/tensorflow/too=
-ls
->>> /OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/baze=
-l/output_base/execroot/org_tensorflow/bazel-out/k8-opt/bin/tensorflow/too=
-ls/pip_package
->>> /OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/baze=
-l/output_base/execroot/org_tensorflow/bazel-out/k8-opt/bin/tensorflow/too=
-ls/pip_package/wheel_house
->>> /OE/build/oe-core/tmp/work/x86_64-linux/tensorflow-native/2.17.0/baze=
-l/output_base/execroot/org_tensorflow/bazel-out/k8-opt/bin/tensorflow/too=
-ls/pip_package/wheel_house/tensorflow-2.17.0-cp312-cp312-linux_x86_64.whl
->>>
->>> Signed-off-by: Martin Jansa <martin.jansa@gmail.com>
->>> ---
->>>   recipes-framework/tensorflow/tensorflow.inc | 3 +++
->>>   1 file changed, 3 insertions(+)
->>>
->>> diff --git a/recipes-framework/tensorflow/tensorflow.inc b/recipes-fr=
-amework/tensorflow/tensorflow.inc
->>> index e48808c..83e2d1a 100644
->>> --- a/recipes-framework/tensorflow/tensorflow.inc
->>> +++ b/recipes-framework/tensorflow/tensorflow.inc
->>> @@ -61,6 +61,9 @@ export TS_DL_DIR
->>>
->>>   do_compile[network] =3D "1"
->>>
->>> +# Missing write permission prevents the WORKDIR to be deleted, e.g. =
-when recipe becames unreachable
->>>   do_compile:append() {
->>>       chmod a+w ${BAZEL_DIR}/output_base/execroot/org_tensorflow/baze=
-l-out/*/bin/tensorflow/lite/python/conversion_metadata_schema_py_srcs_no_=
-include_all || true
->>> +    chmod a+w ${BAZEL_DIR}/output_base/execroot/org_tensorflow/bazel=
--out/*/bin/tensorflow/lite/python/schema_py_srcs_no_include_all || true
->>> +    chmod a+w ${BAZEL_DIR}/output_base/execroot/org_tensorflow/bazel=
--out/*/bin/tensorflow/tools/pip_package/wheel_house || true
->>>   }
->>
->>
->>
->>
+> Additionally, `mozjs-78` encountered "linker 'cc' not found" error. This =
+was fixed by explicitly
+> defining the linker for Rust.
 >
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-> Links: You receive all messages sent to this group.
-> View/Reply Online (#1289): https://lists.yoctoproject.org/g/yocto-patch=
-es/message/1289
-> Mute This Topic: https://lists.yoctoproject.org/mt/111564223/3617049
-> Group Owner: yocto-patches+owner@lists.yoctoproject.org
-> Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/13176=
-071/3617049/43253763/xyzzy [hongxu.jia@eng.windriver.com]
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+> Signed-off-by: Soumya Sambu <soumya.sambu@windriver.com>
+
+I'm not planning to take this, since carrying bbappends for recipes
+outside of oe-core is outside of what I had planned to support with
+the mixin.  If I take it, I will be signing up to test building those
+recipes on every Rust update for at least the next year, and it would
+somewhat open the door for people advocating doing the same for
+scarthgap/rust, which has 3 more years to go.
+
+Scott
+
+
+> ---
+>  recipes-devtools/rust/rust_1.81.0.bb       |  3 +++
+>  recipes-extended/mozjs/mozjs-78_%.bbappend | 14 ++++++++++++++
+>  recipes-extended/mozjs/mozjs-91_%.bbappend | 13 +++++++++++++
+>  3 files changed, 30 insertions(+)
+>  create mode 100644 recipes-extended/mozjs/mozjs-78_%.bbappend
+>  create mode 100644 recipes-extended/mozjs/mozjs-91_%.bbappend
 >
+> diff --git a/recipes-devtools/rust/rust_1.81.0.bb b/recipes-devtools/rust=
+/rust_1.81.0.bb
+> index cc00053..2d91d68 100644
+> --- a/recipes-devtools/rust/rust_1.81.0.bb
+> +++ b/recipes-devtools/rust/rust_1.81.0.bb
+> @@ -146,6 +146,9 @@ python do_configure() {
+>      # harness are debuggable just from logfiles
+>      config.set("rust", "verbose-tests", e(True))
+>
+> +    # Override default linker cc.
+> +    config.set("rust", "default-linker", e(d.expand("${RUST_BUILD_CCLD}"=
+)))
+> +
+>      # [build]
+>      config.add_section("build")
+>      config.set("build", "submodules", e(False))
+> diff --git a/recipes-extended/mozjs/mozjs-78_%.bbappend b/recipes-extende=
+d/mozjs/mozjs-78_%.bbappend
+> new file mode 100644
+> index 0000000..8e8c24a
+> --- /dev/null
+> +++ b/recipes-extended/mozjs/mozjs-78_%.bbappend
+> @@ -0,0 +1,14 @@
+> +EXTRA_OECONF =3D " \
+> +    --target=3D${RUST_TARGET_SYS} \
+> +    --host=3D${BUILD_SYS} \
+> +    --prefix=3D${prefix} \
+> +    --libdir=3D${libdir} \
+> +    --x-includes=3D${STAGING_INCDIR} \
+> +    --x-libraries=3D${STAGING_LIBDIR} \
+> +    --without-system-icu \
+> +    --disable-tests --disable-strip --disable-optimize \
+> +    --disable-jemalloc \
+> +    --with-system-icu \
+> +    ${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', "--enable-gold=
+", '--disable-gold', d)} \
+> +    ${JIT} \
+> +"
+> diff --git a/recipes-extended/mozjs/mozjs-91_%.bbappend b/recipes-extende=
+d/mozjs/mozjs-91_%.bbappend
+> new file mode 100644
+> index 0000000..c0214b0
+> --- /dev/null
+> +++ b/recipes-extended/mozjs/mozjs-91_%.bbappend
+> @@ -0,0 +1,13 @@
+> +do_configure() {
+> +        cd ${B}
+> +        python3 ${S}/configure.py \
+> +        --enable-project=3Djs \
+> +        --target=3D${RUST_HOST_SYS} \
+> +        --host=3D${BUILD_SYS} \
+> +        --prefix=3D${prefix} \
+> +        --libdir=3D${libdir} \
+> +        --disable-jemalloc \
+> +        --disable-strip \
+> +        ${JIT} \
+> +        ${ICU}
+> +}
 >
 
+--_000_CY8PR11MB79218088835F33FAD84274B381AA2CY8PR11MB7921namp_
+Content-Type: text/html; charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3DWindows-1=
+252">
+<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
+ttom:0;} </style>
+</head>
+<body dir=3D"ltr">
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Just following up =97 <a href=3D"mailto:raj.khem@gmail.com" id=3D"OWAAM4339=
+07" class=3D"tWKOu mention ms-bgc-nlr ms-fcl-b">
+@Khem Raj</a>, <a href=3D"mailto:akuster@mvista.com" id=3D"OWAAM721147" cla=
+ss=3D"tWKOu mention ms-bgc-nlr ms-fcl-b">
+@Armin Kuster</a>. Does creating a mixins layer for meta-openembedded sound=
+ reasonable? Would really appreciate your input.</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
+s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
+ize: 12pt; color: black;">
+Regards,</div>
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
+s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
+ize: 12pt; color: black;">
+Soumya</div>
+<div id=3D"appendonsend"></div>
+<hr style=3D"display:inline-block;width:98%" tabindex=3D"-1">
+<div id=3D"divRplyFwdMsg" dir=3D"ltr"><font face=3D"Calibri, sans-serif" st=
+yle=3D"font-size:11pt" color=3D"#000000"><b>From:</b> Sambu, Soumya &lt;Sou=
+mya.Sambu@windriver.com&gt;<br>
+<b>Sent:</b> Wednesday, March 26, 2025 8:45 PM<br>
+<b>To:</b> Scott Murray &lt;scott.murray@konsulko.com&gt;; yocto-patches@li=
+sts.yoctoproject.org &lt;yocto-patches@lists.yoctoproject.org&gt;<br>
+<b>Cc:</b> MacLeod, Randy &lt;Randy.MacLeod@windriver.com&gt;; akuster@mvis=
+ta.com &lt;akuster@mvista.com&gt;; raj.khem@gmail.com &lt;raj.khem@gmail.co=
+m&gt;<br>
+<b>Subject:</b> Re: [yocto-patches] [meta-lts-mixins][kirkstone/rust][PATCH=
+ 1/1] mozjs: Use RUST_HOST_SYS and RUST_TARGET_SYS</font>
+<div>&nbsp;</div>
+</div>
+<style type=3D"text/css" style=3D"display:none">
+<!--
+p
+	{margin-top:0;
+	margin-bottom:0}
+-->
+</style>
+<div dir=3D"ltr">
+<div class=3D"x_elementToProof" style=3D"margin-top:1em; margin-bottom:1em;=
+ font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Calibri,Helvetica=
+,sans-serif; font-size:12pt; color:rgb(0,0,0)">
+That makes sense.</div>
+<div class=3D"x_elementToProof" style=3D"margin-top:1em; margin-bottom:1em;=
+ font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Calibri,Helvetica=
+,sans-serif; font-size:12pt; color:rgb(0,0,0)">
+Should we create a mixins layer for meta-openembedded?<br>
+So far, we only have mozjs, that needs a bbappend.</div>
+<div class=3D"x_elementToProof" style=3D"margin-top:1em; margin-bottom:1em;=
+ font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Calibri,Helvetica=
+,sans-serif; font-size:12pt; color:rgb(0,0,0)">
+<a href=3D"mailto:raj.khem@gmail.com" id=3D"OWAAM301067" class=3D"x_tWKOu x=
+_mention x_ms-bgc-nlr x_ms-fcl-b x_elementToProof" style=3D"margin:0px; pad=
+ding-right:1px; padding-left:1px; border-radius:2px; text-align:left">@</a>=
+Khem Raj,
+<a href=3D"mailto:akuster@mvista.com" id=3D"LPlnkOWAAM576038" class=3D"x_tW=
+KOu x_mention x_ms-bgc-nlr x_ms-fcl-b x_elementToProof x_OWAAutoLink" style=
+=3D"margin:0px; padding-right:1px; padding-left:1px; border-radius:2px; tex=
+t-align:left">
+@Armin Kuster</a>&nbsp;- Does that make sense to you?</div>
+<div class=3D"x_elementToProof" style=3D"font-family:Aptos,Aptos_EmbeddedFo=
+nt,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:=
+rgb(0,0,0)">
+Regards,</div>
+<div class=3D"x_elementToProof" style=3D"font-family:Aptos,Aptos_EmbeddedFo=
+nt,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:=
+rgb(0,0,0)">
+Soumya</div>
+<div id=3D"x_appendonsend"></div>
+<div class=3D"x_elementToProof" style=3D"font-family:Aptos,Aptos_EmbeddedFo=
+nt,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:=
+rgb(0,0,0)">
+<br>
+</div>
+<hr style=3D"display:inline-block; width:98%">
+<div id=3D"x_divRplyFwdMsg" dir=3D"ltr"><span style=3D"font-family:Calibri,=
+sans-serif; font-size:11pt; color:rgb(0,0,0)"><b>From:</b>&nbsp;Scott Murra=
+y &lt;scott.murray@konsulko.com&gt;<br>
+<b>Sent:</b>&nbsp;Tuesday, March 25, 2025 5:34 AM<br>
+<b>To:</b>&nbsp;yocto-patches@lists.yoctoproject.org &lt;yocto-patches@list=
+s.yoctoproject.org&gt;<br>
+<b>Cc:</b>&nbsp;Sambu, Soumya &lt;Soumya.Sambu@windriver.com&gt;<br>
+<b>Subject:</b>&nbsp;Re: [yocto-patches] [meta-lts-mixins][kirkstone/rust][=
+PATCH 1/1] mozjs: Use RUST_HOST_SYS and RUST_TARGET_SYS</span>
+<div>&nbsp;</div>
+</div>
+<div style=3D"font-size:11pt">CAUTION: This email comes from a non Wind Riv=
+er email account!<br>
+Do not click links or open attachments unless you recognize the sender and =
+know the content is safe.<br>
+<br>
+On Tue, 18 Mar 2025, Soumya via lists.yoctoproject.org wrote:<br>
+<br>
+&gt; From: Soumya Sambu &lt;soumya.sambu@windriver.com&gt;<br>
+&gt;<br>
+&gt; The mozjs-91 and mozjs-78 recipe in meta-openembedded sets --target=3D=
+${HOST_SYS} and<br>
+&gt; --target=3D${TARGET_SYS} respectively, which leads to an error when us=
+ing Rust from meta-lts-mixins:<br>
+&gt;<br>
+&gt; error: Error loading target specification: Could not find specificatio=
+n for target &quot;x86_64-poky-linux&quot;.<br>
+&gt;<br>
+&gt; Updated target configuration to resolve this.<br>
+&gt;<br>
+&gt; Additionally, `mozjs-78` encountered &quot;linker 'cc' not found&quot;=
+ error. This was fixed by explicitly<br>
+&gt; defining the linker for Rust.<br>
+&gt;<br>
+&gt; Signed-off-by: Soumya Sambu &lt;soumya.sambu@windriver.com&gt;<br>
+<br>
+I'm not planning to take this, since carrying bbappends for recipes<br>
+outside of oe-core is outside of what I had planned to support with<br>
+the mixin.&nbsp; If I take it, I will be signing up to test building those<=
+br>
+recipes on every Rust update for at least the next year, and it would<br>
+somewhat open the door for people advocating doing the same for<br>
+scarthgap/rust, which has 3 more years to go.<br>
+<br>
+Scott<br>
+<br>
+<br>
+&gt; ---<br>
+&gt;&nbsp; recipes-devtools/rust/rust_1.81.0.bb&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp; |&nbsp; 3 +++<br>
+&gt;&nbsp; recipes-extended/mozjs/mozjs-78_%.bbappend | 14 ++++++++++++++<b=
+r>
+&gt;&nbsp; recipes-extended/mozjs/mozjs-91_%.bbappend | 13 +++++++++++++<br=
+>
+&gt;&nbsp; 3 files changed, 30 insertions(+)<br>
+&gt;&nbsp; create mode 100644 recipes-extended/mozjs/mozjs-78_%.bbappend<br=
+>
+&gt;&nbsp; create mode 100644 recipes-extended/mozjs/mozjs-91_%.bbappend<br=
+>
+&gt;<br>
+&gt; diff --git a/recipes-devtools/rust/rust_1.81.0.bb b/recipes-devtools/r=
+ust/rust_1.81.0.bb<br>
+&gt; index cc00053..2d91d68 100644<br>
+&gt; --- a/recipes-devtools/rust/rust_1.81.0.bb<br>
+&gt; +++ b/recipes-devtools/rust/rust_1.81.0.bb<br>
+&gt; @@ -146,6 +146,9 @@ python do_configure() {<br>
+&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # harness are debuggable just from logfi=
+les<br>
+&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; config.set(&quot;rust&quot;, &quot;verbo=
+se-tests&quot;, e(True))<br>
+&gt;<br>
+&gt; +&nbsp;&nbsp;&nbsp; # Override default linker cc.<br>
+&gt; +&nbsp;&nbsp;&nbsp; config.set(&quot;rust&quot;, &quot;default-linker&=
+quot;, e(d.expand(&quot;${RUST_BUILD_CCLD}&quot;)))<br>
+&gt; +<br>
+&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # [build]<br>
+&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; config.add_section(&quot;build&quot;)<br=
+>
+&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; config.set(&quot;build&quot;, &quot;subm=
+odules&quot;, e(False))<br>
+&gt; diff --git a/recipes-extended/mozjs/mozjs-78_%.bbappend b/recipes-exte=
+nded/mozjs/mozjs-78_%.bbappend<br>
+&gt; new file mode 100644<br>
+&gt; index 0000000..8e8c24a<br>
+&gt; --- /dev/null<br>
+&gt; +++ b/recipes-extended/mozjs/mozjs-78_%.bbappend<br>
+&gt; @@ -0,0 +1,14 @@<br>
+&gt; +EXTRA_OECONF =3D &quot; \<br>
+&gt; +&nbsp;&nbsp;&nbsp; --target=3D${RUST_TARGET_SYS} \<br>
+&gt; +&nbsp;&nbsp;&nbsp; --host=3D${BUILD_SYS} \<br>
+&gt; +&nbsp;&nbsp;&nbsp; --prefix=3D${prefix} \<br>
+&gt; +&nbsp;&nbsp;&nbsp; --libdir=3D${libdir} \<br>
+&gt; +&nbsp;&nbsp;&nbsp; --x-includes=3D${STAGING_INCDIR} \<br>
+&gt; +&nbsp;&nbsp;&nbsp; --x-libraries=3D${STAGING_LIBDIR} \<br>
+&gt; +&nbsp;&nbsp;&nbsp; --without-system-icu \<br>
+&gt; +&nbsp;&nbsp;&nbsp; --disable-tests --disable-strip --disable-optimize=
+ \<br>
+&gt; +&nbsp;&nbsp;&nbsp; --disable-jemalloc \<br>
+&gt; +&nbsp;&nbsp;&nbsp; --with-system-icu \<br>
+&gt; +&nbsp;&nbsp;&nbsp; ${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gol=
+d', &quot;--enable-gold&quot;, '--disable-gold', d)} \<br>
+&gt; +&nbsp;&nbsp;&nbsp; ${JIT} \<br>
+&gt; +&quot;<br>
+&gt; diff --git a/recipes-extended/mozjs/mozjs-91_%.bbappend b/recipes-exte=
+nded/mozjs/mozjs-91_%.bbappend<br>
+&gt; new file mode 100644<br>
+&gt; index 0000000..c0214b0<br>
+&gt; --- /dev/null<br>
+&gt; +++ b/recipes-extended/mozjs/mozjs-91_%.bbappend<br>
+&gt; @@ -0,0 +1,13 @@<br>
+&gt; +do_configure() {<br>
+&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cd ${B}<br>
+&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; python3 ${S}/configure.py =
+\<br>
+&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --enable-project=3Djs \<br=
+>
+&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --target=3D${RUST_HOST_SYS=
+} \<br>
+&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --host=3D${BUILD_SYS} \<br=
+>
+&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --prefix=3D${prefix} \<br>
+&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --libdir=3D${libdir} \<br>
+&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --disable-jemalloc \<br>
+&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --disable-strip \<br>
+&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ${JIT} \<br>
+&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ${ICU}<br>
+&gt; +}<br>
+&gt;</div>
+</div>
+</body>
+</html>
+
+--_000_CY8PR11MB79218088835F33FAD84274B381AA2CY8PR11MB7921namp_--
 
