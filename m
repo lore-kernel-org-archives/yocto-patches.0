@@ -2,146 +2,108 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54F99C369A7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A5CC369A1
 	for <webhook@archiver.kernel.org>; Mon,  7 Apr 2025 21:30:44 +0000 (UTC)
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
- by mx.groups.io with SMTP id smtpd.web10.60113.1744061441637380742
+Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+ by mx.groups.io with SMTP id smtpd.web11.59593.1744061442368396029
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 07 Apr 2025 14:30:41 -0700
+ Mon, 07 Apr 2025 14:30:42 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=K7tr6ktg;
- spf=pass (domain: konsulko.com, ip: 209.85.166.52, mailfrom: scott.murray@konsulko.com)
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-86135aeca58so60950539f.0
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 07 Apr 2025 14:30:41 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=CAeC5dE1;
+ spf=pass (domain: konsulko.com, ip: 209.85.166.178, mailfrom: scott.murray@konsulko.com)
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3ce886a2d5bso48032785ab.1
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 07 Apr 2025 14:30:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=konsulko.com; s=google; t=1744061441; x=1744666241; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Y6vZnnD/d90l/pDiHfGeIGmXdEh8x/mLPRHHvImReeI=;
-        b=K7tr6ktg+ma49dmY8wLRWFrIGXJ6LR4J7FNZcSTanIvPIgMhthSQkTvk8uN4cpSCrq
-         QOUbWgxn0g/zq8MZLXU+EdTqFI/yNN4PKBjGt/3oTS20W512+FlSw+JtARuH+pyZOzg0
-         zHXMht0O1DoZgExFOVyLQygULZOVZ5R9cYkJQ=
+        bh=dJ0ycxXa8ZtzrlkVuKAN09IZZEgtY+jN+4VdpcGeSaA=;
+        b=CAeC5dE1Shod6txXhhq1340OspimaXBQZHGqUQjyI6Y4DAOsHStfypHrE04j0ZyaHW
+         NENGD8Sj6+qoIUHMoByRXAAqxEdSU6AAj0nRr0wMDdPYJLxdnFymbgOKsOccfKBPyu9f
+         1mELC5AVzLF/YkYQmk2hRKa9ggjgS5ztznwCc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1744061441; x=1744666241;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Y6vZnnD/d90l/pDiHfGeIGmXdEh8x/mLPRHHvImReeI=;
-        b=HXpd/mXzmPeDlPcyB/CqUymhPVkXWn+RQAq8grzoZEQJqEs5LDwC2Gf9lej11vPQtm
-         y0xcTLLCatdBE0/dAL3mIx+ViWi5bPbxmdrT/VjtMsNtBn9tL3VuRJyrxWiEyte5dtla
-         uJjC9pAHRLSE3t1FbZR9dgf4EcHJ0FmkO7NSU5c7Pb1oDJR8QvdvjsxMeThXo/MDZ5mN
-         NYIBwZpN7wihcUKwWqgubop+j6YVGq2N8fEyATfbp7hfmSvWGB75X8PMsGv5sFi9wr/9
-         7gbmKjCl0S/YxrgPOCdW60Bgp9Rr1vwxwlK74GasdrQgZYU1BbSNDA4Ei+Pf9ae7y7g7
-         ZKCg==
-X-Gm-Message-State: AOJu0Yxw7/4gUWqzKjAtGiXMHw9Paw0fMS01WJ5k3jQk4LWVwLO+O1uP
-	LXgQA39V/g5xSEEDzhPOfQGAKIFF4hbEMZRvW2UgJv5OZrjnJ+6zNXjH5e0alWO9piGL05Jup9Q
-	lTAg=
-X-Gm-Gg: ASbGnctJaAc2dlktkVo1ZbgjytDc0hwO+PmjtLD2yfUOmHq/2L2hGvUIlWzQ0C3qkNo
-	4vVDAXCphrn10pVqsoRWMJv4GRk9nPh+6YuR3DqBo5f4/adAhE1iCsAUdxqbQIfmSDPotZfcuDS
-	rt4enLwg5OFMzXxpD5JIexaPEsM4PUg73NwjyjooyY+yzYt8mePZhu836Fn+HAsCtK/oUpLqZCv
-	HSMXnhlFC+MI811dCAldAts/fQT0nuOggLBaGGwNwQwr4H4XtmDe5qvMxQSYx4/X+xVMh0e+d9g
-	9MrG5SBO3Nn4fgdPcBvZOtw1+9PMWeIQ86IOwf05Ce7c6MHvH6YHHosSavf8UMU3dSSuAUdRzZN
-	0dQjIKR9iCjhpDy+yp/uNu4gS7/W7jUk=
-X-Google-Smtp-Source: AGHT+IH2dp4AJWArjlVIIU/chyew/o9wE/faTDJLfRHHkpsnsb+TRMbTKazQxQBeNjRrIES2+Pa0RQ==
-X-Received: by 2002:a05:6602:29a9:b0:85b:46b5:6fb5 with SMTP id ca18e2360f4ac-8611c3ba34cmr1390830639f.11.1744061440585;
-        Mon, 07 Apr 2025 14:30:40 -0700 (PDT)
+        bh=dJ0ycxXa8ZtzrlkVuKAN09IZZEgtY+jN+4VdpcGeSaA=;
+        b=VI1gbecI7n1EoujdloH4ICXPGUwLCi2yngxlBzt7yh4Bejk34UzHBXuYdH21rSTDeA
+         yBF/jCn9XbTCzytn37Om+cE6PR0dTjb5NgjczPHZwlIhq/DxnfdaaIqtqu7DenaopWQc
+         CM1rYtGMzmiHDS0blenjsTN4LHWF6UPlpJNJWSHw+7i975JwchC4vnvfWdGKRAk3rZxW
+         zTiVeXQhoWahIp4JvRd0+suvBDq2Q/5Edwy7LRsJGqAgnzoX0aDcnlnSWXztd9wRVF2a
+         pnc4UtPNHg+pXuIMnYa/q8gygN3DsrP/zs1iHySjHSlE1Ibm33OCWxZP1GXACjkBUmIO
+         J3VA==
+X-Gm-Message-State: AOJu0YzMwmQhKVzB1o4xNF0bBE/Cc2AMF8jVIwbk/tyIFU+FbdnrF2YS
+	pX95JXcH1ZHZORo9+ckd4FjA54enduyKCU0yRDM+eJEHo71Qma6AXGToybNus6vDrierNRqjFsr
+	izqE=
+X-Gm-Gg: ASbGncs9BZvKdVLBosOJ7kX/pLcEVnqJQWXGt1Z4MznXrddSIQk75mSZFuHkCoocCBV
+	2TVpHImShBTDFawzcCjqkhvmUXqQR2Icn4z553N4Ei3AcZ4b1qqRNsmWcFCm91wYYmnhCrk4bWb
+	LdckewPURycpMPVbeeTrBG8XibTU6sAnk0LJNXXsJ7GMrkLsVCRSOYVVat637dqAiTpAheYRbEe
+	UmQHHCdf+QDNmdTqQO/+LYXOanvQAr+ghqPv999CW9Gat3/ZHtHpjIs6U0meGKq2KOUD9J4jXb5
+	5+96HRXAzIe2RpCqyo7OpyOnD6V3E8c2SCpvUD0+aVAsTBspQkOA/iwKskNNjggAariA4UE+s/z
+	3IlfGg/LneFiA5z6pL16D8gbcwtkBhf4=
+X-Google-Smtp-Source: AGHT+IElkKHwDoaT53jLx3cC75ngOj/qytQ9B7SqcCM7uYVsS3kgyzurfB+EkHCD/yfbsUY06QCJ/w==
+X-Received: by 2002:a05:6e02:156e:b0:3d2:b509:af44 with SMTP id e9e14a558f8ab-3d6e53181c8mr172759305ab.8.1744061441427;
+        Mon, 07 Apr 2025 14:30:41 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f4f44ba91dsm132936173.79.2025.04.07.14.30.39
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f4f44ba91dsm132936173.79.2025.04.07.14.30.40
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 14:30:39 -0700 (PDT)
+        Mon, 07 Apr 2025 14:30:40 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][scarthgap/rust][PATCH 03/29] rust-cross-canadian: set CC_<triple> for nativesdk
-Date: Mon,  7 Apr 2025 17:29:52 -0400
-Message-ID: <2f64f98a144b64588096d8af6b1683ffc9cbe0ca.1744061149.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][scarthgap/rust][PATCH 04/29] rust-common.bbclass: soft assignment for RUSTLIB path
+Date: Mon,  7 Apr 2025 17:29:53 -0400
+Message-ID: <ba0b64c09c8b5de2faac2b5c84ccc3864bc57ef0.1744061149.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1744061149.git.scott.murray@konsulko.com>
 References: <cover.1744061149.git.scott.murray@konsulko.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Mon, 07 Apr 2025 21:30:44 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1303
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1304
 
-From: Sean Nyekjaer <sean@geanix.com>
+From: Pedro Ferreira <Pedro.Silva.Ferreira@criticaltechworks.com>
 
-This fixes build errors when building rust bindings for C dependencies
-for the sdk host.
-This will allow us to build and run rust programs on the sdk host.
+As a user i want to override `RUSTLIB` path on a bbclass, lets
+call it `XYZ.bbclass`.
 
-Before:
-% cargo build --target x86_64-oesdk-linux-gnu -vv
-[...]
-   Compiling zstd-sys v2.0.13+zstd.1.5.6 (zstd-rs/zstd-safe/zstd-sys)
-[zstd-sys 2.0.13+zstd.1.5.6] CC_x86_64-oesdk-linux-gnu =3D None
-[zstd-sys 2.0.13+zstd.1.5.6] CC =3D Some(arm-oe-linux-gnueabi-gcc  -mthumb =
--mfpu=3Dneon -mfloat-abi=3Dhard -mcpu=3Dcortex-a7 -D_TIME_BITS=3D64 -D_FILE=
-_OFFSET_BITS=3D64 --sysroot=3D/usr/local/sdk/sysroots/cortexa7t2hf-neon-oe-=
-linux-gnueabi)
-[zstd-sys 2.0.13+zstd.1.5.6] cargo:warning=3DToolExecError: Command LC_ALL=
-=3D"C" "arm-oe-linux-gnueabi-gcc" "-mthumb" "-mfpu=3Dneon" "-mfloat-abi=3Dh=
-ard" "-mcpu=3Dcortex-a7" "-D_TIME_BITS=3D64" "-D_FILE_OFFSET_BITS=3D64" "--=
-sysroot=3D/usr/local/cc-sdk/sysroots/cortexa7t2hf-neon-oe-linux-gnueabi" "-=
-O0" "-ffunction-sections" "-fdata-sections" "-fPIC" "-gdwarf-4" "-fno-omit-=
-frame-pointer" "-m64" "-I" "zstd/lib/" "-I" "zstd/lib/common" "-I" "zstd/li=
-b/legacy" "-O2" "-pipe" "-g" "-feliminate-unused-debug-types" "-flto" "-ffa=
-t-lto-objects" "-fuse-linker-plugin" "-fvisibility=3Dhidden" "-DZSTD_LIB_DE=
-PRECATED=3D0" "-DXXH_PRIVATE_API=3D" "-DZSTDLIB_VISIBILITY=3D" "-DZDICTLIB_=
-VISIBILITY=3D" "-DZSTDERRORLIB_VISIBILITY=3D" "-DZSTD_LEGACY_SUPPORT=3D1" "=
--o" "zstd-rs/target/x86_64-oesdk-linux-gnu/debug/build/zstd-sys-b2560022e17=
-2eec3/out/44ff4c55aa9e5133-debug.o" "-c" "zstd/lib/common/debug.c" with arg=
-s arm-oe-linux-gnueabi-gcc did not execute successfully (status code exit s=
-tatus: 1).cargo:warning=3Darm-oe-linux-gnueabi-gcc: error: unrecognized com=
-mand-line option '-m64'
+If a certain recipe inherits `cargo.bbclass` and `XYZ.bbclass` the
+value of `RUSTLIB` is dependent on the order of the inherit.
 
-After:
-% cargo build --target x86_64-oesdk-linux-gnu -vv
-[...]
-   Compiling zstd-sys v2.0.13+zstd.1.5.6 (zstd-rs/zstd-safe/zstd-sys)
-[zstd-sys 2.0.13+zstd.1.5.6] CC_x86_64_oesdk_linux_gnu =3D Some(x86_64-oesd=
-k-linux-gcc)
-[...]
-   Compiling zstd v0.13.2 (zstd-rs)
-    Finished dev [unoptimized + debuginfo] target(s) in 14.67s
+If `cargo.bbclass` is inherit before `XYZ.bbclass` this will reflect
+the desired value of `RUSTLIB`, on the oposite, if the `XYZ.bbclass`
+is inherit before `cargo.bbclass` then the `RUSTLIB` defined on
+`rust-common.bbclass` will prevail.
 
-Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+Changed definition of `RUSTLIB` to soft assignment to make it overridable.
+
+Signed-off-by: Pedro Silva Ferreira <Pedro.Silva.Ferreira@criticaltechworks.com>
 Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-(adapted from oe-core commit 3c8fedd6e5a3251b7a7a73cc92b153d8e68cb8e5)
+(adapted from oe-core commit 6eeb832f73ffb48f5f05dc47191f60e4599e640f)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- recipes-devtools/rust/rust_1.81.0.bb | 2 ++
- 1 file changed, 2 insertions(+)
+ classes-recipe/rust-common.bbclass | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/recipes-devtools/rust/rust_1.81.0.bb b/recipes-devtools/rust/r=
-ust_1.81.0.bb
-index 4efdcff..f54a497 100644
---- a/recipes-devtools/rust/rust_1.81.0.bb
-+++ b/recipes-devtools/rust/rust_1.81.0.bb
-@@ -277,10 +277,12 @@ rust_do_install:class-nativesdk() {
-     mkdir "${ENV_SETUP_DIR}"
-     RUST_ENV_SETUP_SH=3D"${ENV_SETUP_DIR}/rust.sh"
-     RUST_HOST_TRIPLE=3D`echo ${RUST_HOST_SYS} | tr '[:lower:]' '[:upper:]'=
- | sed 's/-/_/g'`
-+    RUST_HOST_CC=3D`echo ${RUST_HOST_SYS} | sed 's/-/_/g'`
-     SDKLOADER=3D${@bb.utils.contains('SDK_ARCH', 'x86_64', 'ld-linux-x86-6=
-4.so.2', '', d)}${@bb.utils.contains('SDK_ARCH', 'i686', 'ld-linux.so.2', '=
-', d)}${@bb.utils.contains('SDK_ARCH', 'aarch64', 'ld-linux-aarch64.so.1', =
-'', d)}${@bb.utils.contains('SDK_ARCH', 'ppc64le', 'ld64.so.2', '', d)}${@b=
-b.utils.contains('SDK_ARCH', 'riscv64', 'ld-linux-riscv64-lp64d.so.1', '', =
-d)}
-=20
-     cat <<- EOF > "${RUST_ENV_SETUP_SH}"
- 	export CARGO_TARGET_${RUST_HOST_TRIPLE}_RUNNER=3D"\$OECORE_NATIVE_SYSROOT=
-/lib/${SDKLOADER}"
-+	export CC_$RUST_HOST_CC=3D"${CCACHE}${HOST_PREFIX}gcc"
- 	EOF
- }
-=20
---=20
+diff --git a/classes-recipe/rust-common.bbclass b/classes-recipe/rust-common.bbclass
+index baa3869..31331c7 100644
+--- a/classes-recipe/rust-common.bbclass
++++ b/classes-recipe/rust-common.bbclass
+@@ -13,7 +13,7 @@ FILES:${PN} += "${rustlibdir}/*.so"
+ FILES:${PN}-dev += "${rustlibdir}/*.rlib ${rustlibdir}/*.rmeta"
+ FILES:${PN}-dbg += "${rustlibdir}/.debug"
+ 
+-RUSTLIB = "-L ${STAGING_DIR_HOST}${rustlibdir}"
++RUSTLIB ?= "-L ${STAGING_DIR_HOST}${rustlibdir}"
+ RUST_DEBUG_REMAP = "--remap-path-prefix=${WORKDIR}=${TARGET_DBGSRC_DIR}"
+ RUSTFLAGS += "${RUSTLIB} ${RUST_DEBUG_REMAP}"
+ RUSTLIB_DEP ??= "libstd-rs"
+-- 
 2.49.0
 
 
