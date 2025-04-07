@@ -2,60 +2,60 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48FFEC369A4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49586C369A6
 	for <webhook@archiver.kernel.org>; Mon,  7 Apr 2025 21:30:44 +0000 (UTC)
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
- by mx.groups.io with SMTP id smtpd.web10.60112.1744061440249674109
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+ by mx.groups.io with SMTP id smtpd.web11.59595.1744061443306917525
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 07 Apr 2025 14:30:40 -0700
+ Mon, 07 Apr 2025 14:30:43 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=iYIhy1kK;
- spf=pass (domain: konsulko.com, ip: 209.85.166.171, mailfrom: scott.murray@konsulko.com)
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3d57143ee39so39252195ab.1
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 07 Apr 2025 14:30:40 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=SfQxp1YD;
+ spf=pass (domain: konsulko.com, ip: 209.85.166.175, mailfrom: scott.murray@konsulko.com)
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3d57143ee39so39252585ab.1
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 07 Apr 2025 14:30:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1744061439; x=1744666239; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1744061442; x=1744666242; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=xRX/gcacX6N/aEDHN5vBB3ca/N8H3oftTETvkt28YBI=;
-        b=iYIhy1kK66jSU5tSiPMlbkiwzezDlRmfvC0gcfbGCYyfVLCd/ax8NBwXvo7F70/r5i
-         mHauoJZogsbgMR+4kaDUHKA6XzCEFln/k8N1oZSjGCYpXLllscU7EXRFggMQNYelPq4d
-         6CagDPZgVD0hidVpTAlTvZDGkeyh9jX7OV+g4=
+        bh=F3ZOIq3Gy+CyanC6ptd67GaUey65BH/utmTCtVpUJFs=;
+        b=SfQxp1YD04ju01xLmCRfBb8R9qQqyuT/hWXKcaernlvxXqNrWqEFL+C0HfhQJODPlh
+         OGIJCXz1G/DgRAOyFHjQPar7qRlaF73OE9XmBl/mTQcuBfA3D6pbq6a4fqjhP2v6+AoW
+         U/i7+dMBFjCrB0PMjFQ+T5LIkIgVdCkfJY5Xo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744061439; x=1744666239;
+        d=1e100.net; s=20230601; t=1744061442; x=1744666242;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xRX/gcacX6N/aEDHN5vBB3ca/N8H3oftTETvkt28YBI=;
-        b=gpxLvVCxq1vPp2/kkKoNhNAG0eEjCiAQPY+wIeMaGtJgGfV28lzze/wg/2+m7InohW
-         HXvmjD5Gek6rsHKE3yWN0K7EwYyKdLQRbsVQGHsMU7UhkhgQA3ugUcwkrdqgOSJJXDeR
-         x/+rx8i/g7IBakC3G4Xl+7JlVh+sjM2RXT/fc5tSPwc7TH14/BHfo1NgFd1VYryCdQIb
-         UvuErRcfdIsny4rfTYcFV/HSRAn8c6X1YX3wVBJxhla3+ecQsTb7R2SUaUeKP5SNqm4t
-         fQjatblgiRAM+VgPJbsDb13wiPlY/n0hnBmC8BOzUKyiqtC+/5Znezc6xNuGgMFdQSOj
-         c7Mg==
-X-Gm-Message-State: AOJu0Yy347Nm1TUR1xCwRtY6A4CdgXkzAXwiWuiUX4p9UxBstsFumWpQ
-	LJ0p70fHocD/vQ4vGI8to+S10H4ibjSM2oCXWLoVNREOPFsRJKHuBXzcGuJ/fNkbz+jgVqfqMtP
-	64Fw=
-X-Gm-Gg: ASbGncutxqG1O+q/FR08AhfwuZp5TX6jQuiTaoYfAXNVGaNKFTFowpoykKzCxICA/jy
-	WzvWIje+36DhmS8SFhnc1FWV3Z4A9fgCJcmi38k0m1veN6U08rozsaQ4gardNt/CGqEvVD/Mrni
-	cMIgVZT52c1EGbIX0OWGJdEA0OvrZZPsiLOH7/8f/vveuI7Au1d8HLbQfdmj0VVoH1hqHVB/9kF
-	7ik8PDEcTKLkqlyqaPAt4p7r/Gh6tzoxfFlrCgyZF6KmG6QSJqVJWL6RVHjUF8wjir233Id+6/j
-	HCa6J7Xl87F3avKm3p4muGu4m/s7H/Zv0xoqt8A0Wel4pfF41tMbP2byReMvG4x8eTiAHD+cFOA
-	BryVMTfTISh6g3GjNtJCTGZrHEFcKbIY=
-X-Google-Smtp-Source: AGHT+IG5YgUbP2EKBWTGht9mZRucsAjjADlRJslNAaQ+3aW+SALswAm8DFFvoie3i1cqLMseqKZ8cg==
-X-Received: by 2002:a05:6e02:3103:b0:3d4:3d63:e076 with SMTP id e9e14a558f8ab-3d6e3f65373mr180638185ab.18.1744061439254;
-        Mon, 07 Apr 2025 14:30:39 -0700 (PDT)
+        bh=F3ZOIq3Gy+CyanC6ptd67GaUey65BH/utmTCtVpUJFs=;
+        b=aOFDFEpEDTn0lt3CQbAt1ppXADbuBjMzDOnG8coUelP0D/I5JuxHkX3q4wig9hHu+M
+         TiMUn6T2/UqIIob/SY9cB3e/yn6j1OCiEy3qHWO6QpSbqBrZNvrFoeyFbN0nilcsuY6t
+         pti/DbiExcKzV+dzNlOcorbcz6UyrQinRbKV9C3Ybdv46mP4Cmf+nRP0rqHn1gczWtNV
+         /ITHgNV1l2tHMiD2YMqdpt+Wvg/8/dCZnFL/pcH8RO/G/zJEqEThfpVrr3z0edPpcquE
+         Bhr7BdclfWzjA/BugPbVGTf/16nm4K3V2OgMdGGJt9orp7Imq1OW6E2Xzbfkumodh75C
+         ULXg==
+X-Gm-Message-State: AOJu0YxK446ehVJBFfIMn1bgaZ9PM9fBGka3OG4T57fqSDdLcGnPLbhK
+	NdXrIrIMDoB8i6ujt4T5qt7wLsUsWLxr4pMjfLvG1nB2kUNoLBPhNcQG4L7rzV4k69CCQk9mj1W
+	NX4k=
+X-Gm-Gg: ASbGnctBPd6bPGfR0SUw7yyXgXSbaSaEzOv6DX4/U6YxfquYrN1i0UAQIrZ3gEyYDSQ
+	w8wd+Wn2ErOElV6/U9Mh5+va13GGKJJB/AmFlnpZtr/3tNGU95JBWkPAC6jWQpUhg6Pmsxl9Jj0
+	+lx4e7ClTGTBET6KHiWYGDd6lJOurd5lCAIYjPetB8LCpjP7iEOa3RoL/YWXTgelfma4lobYZOy
+	bVpGS1tT7q+UlQKY6e3yiN8731JW9piX61HZciJ2utNYaGqViASbkCLBUxCA3iBgEOw7uzlACTE
+	3E7C9C5sBxUBbYSwXRu7vO1P0fTJZ33ojrM6lCgQsVfNUCj7U3mp/82NFmnPY7R0HJ3p35P6eNV
+	p3dPiMf5MMUfykj16Sf0k
+X-Google-Smtp-Source: AGHT+IHXrHR+wwMYN91asH4eP29GHeUEr2I+pJ5PEY+hAnJ26mWlOMJ+A9o7cvvNzNeaISCevS/2EQ==
+X-Received: by 2002:a05:6e02:1a85:b0:3d4:3fbf:966e with SMTP id e9e14a558f8ab-3d6e3f653a1mr132825985ab.14.1744061442285;
+        Mon, 07 Apr 2025 14:30:42 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f4f44ba91dsm132936173.79.2025.04.07.14.30.38
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f4f44ba91dsm132936173.79.2025.04.07.14.30.41
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 14:30:38 -0700 (PDT)
+        Mon, 07 Apr 2025 14:30:41 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][scarthgap/rust][PATCH 02/29] rust: remove redundant cargo config file
-Date: Mon,  7 Apr 2025 17:29:51 -0400
-Message-ID: <5131ad23cbe3a70e403234bee726ba8f18709dec.1744061149.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][scarthgap/rust][PATCH 05/29] meta/meta-selftest: Fix variable assignment whitespace
+Date: Mon,  7 Apr 2025 17:29:54 -0400
+Message-ID: <9c27ba0d4bb4724ecd47ebf0a2cca77e40ad3431.1744061149.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1744061149.git.scott.murray@konsulko.com>
 References: <cover.1744061149.git.scott.murray@konsulko.com>
@@ -65,47 +65,67 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Mon, 07 Apr 2025 21:30:44 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1302
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1305
 
-From: Harish Sadineni <Harish.Sadineni@windriver.com>
+From: Richard Purdie <richard.purdie@linuxfoundation.org>
 
-YOCTO [#15061]
-The rust target and linker are getting setting from the sdk environment and
-so the config file is not needed. The redundant config file geneartion is removed.
+Recipes are much more readable with whitespace around the assignment operators.
+Fix various assignments in OE-Core to show this is definitely the preferred
+formatting.
 
-Signed-off-by: Harish Sadineni <Harish.Sadineni@windriver.com>
-Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-(adapted from oe-core commit d5f78816d2ad0f3e43ce883eef199d1683cfcbb4)
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+(adapted from oe-core commit 30ea609d3357fb3de911f2f6a5e6856c151b976a)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- recipes-devtools/rust/rust-cross-canadian.inc | 14 --------------
- 1 file changed, 14 deletions(-)
+ classes-recipe/cargo.bbclass         | 2 +-
+ classes-recipe/rust.bbclass          | 8 ++++----
+ recipes-devtools/rust/rust_1.81.0.bb | 2 +-
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/recipes-devtools/rust/rust-cross-canadian.inc b/recipes-devtools/rust/rust-cross-canadian.inc
-index e233861..4478a7e 100644
---- a/recipes-devtools/rust/rust-cross-canadian.inc
-+++ b/recipes-devtools/rust/rust-cross-canadian.inc
-@@ -64,20 +64,6 @@ do_install () {
+diff --git a/classes-recipe/cargo.bbclass b/classes-recipe/cargo.bbclass
+index b583f84..76a3966 100644
+--- a/classes-recipe/cargo.bbclass
++++ b/classes-recipe/cargo.bbclass
+@@ -42,7 +42,7 @@ CARGO_BUILD_FLAGS = "-v --frozen --target ${RUST_HOST_SYS} ${BUILD_MODE} --manif
+ # This is based on the content of CARGO_BUILD_FLAGS and generally will need to
+ # change if CARGO_BUILD_FLAGS changes.
+ BUILD_DIR = "${@['release', 'debug'][d.getVar('DEBUG_BUILD') == '1']}"
+-CARGO_TARGET_SUBDIR="${RUST_HOST_SYS}/${BUILD_DIR}"
++CARGO_TARGET_SUBDIR = "${RUST_HOST_SYS}/${BUILD_DIR}"
+ oe_cargo_build () {
+ 	export RUSTFLAGS="${RUSTFLAGS}"
+ 	bbnote "Using rust targets from ${RUST_TARGET_PATH}"
+diff --git a/classes-recipe/rust.bbclass b/classes-recipe/rust.bbclass
+index dae25ca..e727601 100644
+--- a/classes-recipe/rust.bbclass
++++ b/classes-recipe/rust.bbclass
+@@ -43,9 +43,9 @@ HOST_CFLAGS   ?= "${CFLAGS}"
+ HOST_CXXFLAGS ?= "${CXXFLAGS}"
+ HOST_CPPFLAGS ?= "${CPPFLAGS}"
  
-     chown -R root.root ${D}
+-rustlib_suffix="${TUNE_ARCH}${TARGET_VENDOR}-${TARGET_OS}/rustlib/${RUST_HOST_SYS}/lib"
++rustlib_suffix = "${TUNE_ARCH}${TARGET_VENDOR}-${TARGET_OS}/rustlib/${RUST_HOST_SYS}/lib"
+ # Native sysroot standard library path
+-rustlib_src="${prefix}/lib/${rustlib_suffix}"
++rustlib_src = "${prefix}/lib/${rustlib_suffix}"
+ # Host sysroot standard library path
+-rustlib="${libdir}/${rustlib_suffix}"
+-rustlib:class-native="${libdir}/rustlib/${BUILD_SYS}/lib"
++rustlib = "${libdir}/${rustlib_suffix}"
++rustlib:class-native = "${libdir}/rustlib/${BUILD_SYS}/lib"
+diff --git a/recipes-devtools/rust/rust_1.81.0.bb b/recipes-devtools/rust/rust_1.81.0.bb
+index f54a497..782c37f 100644
+--- a/recipes-devtools/rust/rust_1.81.0.bb
++++ b/recipes-devtools/rust/rust_1.81.0.bb
+@@ -31,7 +31,7 @@ S = "${RUSTSRC}"
+ RUST_CHANNEL ?= "stable"
+ PV .= "${@bb.utils.contains('RUST_CHANNEL', 'stable', '', '-${RUST_CHANNEL}', d)}"
  
--    CARGO_ENV_SETUP_SH="${ENV_SETUP_DIR}/cargo.sh"
--    cat <<- EOF > "${CARGO_ENV_SETUP_SH}"
--	export CARGO_HOME="\$OECORE_TARGET_SYSROOT/home/cargo"
--	mkdir -p "\$CARGO_HOME"
--        # Init the default target once, it might be otherwise user modified.
--	if [ ! -f "\$CARGO_HOME/config" ]; then
--		touch "\$CARGO_HOME/config"
--		echo "[build]" >> "\$CARGO_HOME/config"
--		echo 'target = "'${RUST_TARGET_SYS}'"' >> "\$CARGO_HOME/config"
--		echo '# TARGET_SYS' >> "\$CARGO_HOME/config"
--		echo '[target.'${RUST_TARGET_SYS}']' >> "\$CARGO_HOME/config"
--		echo 'linker = "target-rust-ccld"' >> "\$CARGO_HOME/config"
--    fi
--	EOF
- }
+-export FORCE_CRATE_HASH="${BB_TASKHASH}"
++export FORCE_CRATE_HASH = "${BB_TASKHASH}"
  
- FILES:${PN} += "${base_prefix}/environment-setup.d"
+ RUST_ALTERNATE_EXE_PATH ?= "${STAGING_LIBDIR}/llvm-rust/bin/llvm-config"
+ RUST_ALTERNATE_EXE_PATH_NATIVE = "${STAGING_LIBDIR_NATIVE}/llvm-rust/bin/llvm-config"
 -- 
 2.49.0
 
