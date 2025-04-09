@@ -1,87 +1,95 @@
-Return-Path: <skandigraun@gmail.com>
+Return-Path: <mathieu.dubois-briand@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6824C36002
-	for <webhook@archiver.kernel.org>; Wed,  9 Apr 2025 07:19:51 +0000 (UTC)
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
- by mx.groups.io with SMTP id smtpd.web10.2807.1744183190291056133
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 311C0C36002
+	for <webhook@archiver.kernel.org>; Wed,  9 Apr 2025 12:01:13 +0000 (UTC)
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+ by mx.groups.io with SMTP id smtpd.web10.6733.1744200067899125307
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 09 Apr 2025 00:19:50 -0700
+ Wed, 09 Apr 2025 05:01:08 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=UiNlskmo;
- spf=pass (domain: gmail.com, ip: 209.85.208.49, mailfrom: skandigraun@gmail.com)
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e6ff035e9aso12318715a12.0
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 09 Apr 2025 00:19:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744183188; x=1744787988; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=PK0xtqib3LN1CsWstTmPpL+daJoZklqafuCPZgX+BpI=;
-        b=UiNlskmo0rCJDxsCvfrgTlScFBa/eC/PsQGDZ133FbU1Q377Dp++2fXjrtMPYDfi/R
-         Npm52+J0NWkYQn6TODTjj1Pn+rf8BqLY8Ii0eUW4mK2NEVcuyZyWHg8tqIlPqHzzKbKR
-         WSrQORsYltHzh2KkhoNNcGPwp2+y2VKxpLtwq5nx3kjaySbN7LkZ8GZ+MGwpp0InhZvY
-         +DOvzJ0GVv+6kPf0FPCIjsJpMNFZfP84xgbjHh556mbSjV2nV5IVajPPScudmVNRpCau
-         i7FeZvTtM0qsNCQ+bjtN8SxYKs+nPWYlNniBzfUuNs48lPLxIx9qEr2cK2iYpD65DDck
-         dzcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744183188; x=1744787988;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PK0xtqib3LN1CsWstTmPpL+daJoZklqafuCPZgX+BpI=;
-        b=J5uTfRxVN2Zh/LARrXEKi35L0nEmdzP7aoO+5t/J9snlFtoW969ST6pk1obsawFfBl
-         DPIOFHT1/xg2/7z9QV/urSbnmx2Rriyv9WJwgmiEqMXFqYYKHx3MfgWex1rq0xnJ84JT
-         wc2/d8LZ8DQAWd7SwCU21x5cCDFk+1XUNdpusSU/Ou7uw6JhiNQqvXqKWSFGSTJbrdRt
-         9g5uUWRt+KEy52FWZl2yzCBjNfw6vV7nI3fzJnzG8E4QSqX84EfrdrJtXN6LuCltvl13
-         pT5b3hO7VSIJLM3QyNuz0kv7jax7fgzpYrtTXbo33MDOwrz3TVXl8R4k/JcQmkimrhnW
-         k/eA==
-X-Gm-Message-State: AOJu0Yyj/onivKXP512ZnxZkEDkQGH28pckhquSfNF9X4HygyE+QllIA
-	nzDHW1LmiTjzaINKuGK7jlu76xMdMabiwqrBn/GMmGYHYvt2vEflCcZL6Q==
-X-Gm-Gg: ASbGncuOcdYHwFluHFbdPT26d2/esS8VEQSeIBvCYWznE3fSpk+jISJFx0Z31owbeFl
-	T6eCYaNNtIpEg+M1SMYzvucYGuY7R/ODUl4dit4I+fN1C/waXe/0wNbgov63jz19LmDqR03+QcF
-	ZkplBd144EqHPBNEFLboR997iTrO+4pXrVPwvT45d6H4ScpomJ0i10R12pdfcosRjgPjAGNczLs
-	iE2T57qgnP5wLl6LzLVhw/VP9ldCc6WTjlO+Fo4fH0dmoOey4TSh0UybRUCpOoVqNLHDyeS6XSe
-	Oo9NAl1MzcWhFQqWbZ3LOxgiNk8s6tmweIYuGD8M2Eue+LAW
-X-Google-Smtp-Source: AGHT+IHzAHjrCBbLvbX8vBb0f0EchwCC6LDLct/R3lVZqD7jrMPgSMdiAa9OL3ItQlFENdpNDieIQw==
-X-Received: by 2002:a17:907:706:b0:ac7:95b0:d0fb with SMTP id a640c23a62f3a-aca9b6bc5f3mr197378266b.34.1744183188199;
-        Wed, 09 Apr 2025 00:19:48 -0700 (PDT)
-Received: from [192.168.1.106] ([51.154.145.205])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1cb42casm45374766b.88.2025.04.09.00.19.46
-        for <yocto-patches@lists.yoctoproject.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Apr 2025 00:19:46 -0700 (PDT)
-Message-ID: <13dca9e5-726b-486c-9067-62e58ae94184@gmail.com>
-Date: Wed, 9 Apr 2025 09:19:46 +0200
+ dkim=pass header.i=@bootlin.com header.s=gm1 header.b=PJMpsMcc;
+ spf=pass (domain: bootlin.com, ip: 217.70.183.196, mailfrom: mathieu.dubois-briand@bootlin.com)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B7A4B4435C;
+	Wed,  9 Apr 2025 12:01:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1744200066;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=+H/pFxi9y4XE8u4pFGVXmWj2aY1cK0djzx61Ws/KgSU=;
+	b=PJMpsMccBsVB1ILb0zVPNtd8Rpwilq7D0kJZ91G25n9WiTTuAmsbClnmMdTNh1Iu4St0u1
+	C/Au0Gkg4ivMb69/Rem97r7AtyZbhKPhXz5LukbDn06niRJRtc46RDZItl77HeZFECrjal
+	7gACr3xHEUCUBH1ViCHqHNSvwDOUgeLrL1f5uhG8xaya2qBFD57gS39c6UiV3Kn9DXIIYX
+	uikfInRockiaSoh3EyQ29mjQrYYjOI4HlrPMPr4Px2fYEvd3E9eh9nigeOaRgHisgxHpmo
+	XDYPk8RpaJPpk7i1t1w649AylRLGP/MPKxg0IyuukJ6YtAOOKcKzeL5o9tD3kg==
+From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Date: Wed, 09 Apr 2025 14:00:34 +0200
+Subject: [PATCH yocto-autobuilder2] schedulers: Fix meta-webosose scheduler
+ codebases
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [meta-lts-mixins][scarthgap/rust][PATCH 00/29]
- Update to Rust 1.85.1
-To: yocto-patches@lists.yoctoproject.org
-References: <cover.1744061149.git.scott.murray@konsulko.com>
-Content-Language: en-US
-From: Gyorgy Sarvari <skandigraun@gmail.com>
-In-Reply-To: <cover.1744061149.git.scott.murray@konsulko.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250409-contrib-mathieu-webosose-branches-v1-1-d7039069357a@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAGFh9mcC/x3NywoCMQxA0V8ZsjbQqQ/QXxEXTRptQBvpwwfD/
+ LvF5dncu0CVolLhNC1Q5KVVLQ/Mmwk4hXwT1DgM3vm927kjsuVWlPARWlLp+BayalWQSsicpGL
+ YMjEfaKboYXSeRa76+T/O8DVuhqE3o673KMXDZV1/dwtaq4cAAAA=
+To: yocto-patches@lists.yoctoproject.org
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744200065; l=1501;
+ i=mathieu.dubois-briand@bootlin.com; s=20241219; h=from:subject:message-id;
+ bh=v4nl5Gj3PxF2nsgggr6ddT4kASelIcQej5NbmuenWBQ=;
+ b=UYV2FGvssMKTzOJRXW/A1d3jANxNu2+9KTOQuVJ0xhCgTpuJwV48gptzQrDG0dZXkhTVprndD
+ YoB9Io7FXoYCLXHD3QEaQ5ins1oZGnsXvtYaJtbWIbbmaEkfeDT6M4z
+X-Developer-Key: i=mathieu.dubois-briand@bootlin.com; a=ed25519;
+ pk=1PVTmzPXfKvDwcPUzG0aqdGoKZJA3b9s+3DqRlm0Lww=
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtdehleegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkvfevofesthejredtredtjeenucfhrhhomhepofgrthhhihgvuhcuffhusghoihhsqdeurhhirghnugcuoehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeelledtieffheelveefueffkefgheevvdeugedutdekfeeghffhfffftdegudfhteenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeipdhhvghloheplgduvdejrddtrddurddungdpmhgrihhlfhhrohhmpehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeefpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepmhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghom
+ hdprhgtphhtthhopeihohgtthhoqdhprghttghhvghssehlihhsthhsrdihohgtthhophhrohhjvggtthdrohhrgh
+X-GND-Sasl: mathieu.dubois-briand@bootlin.com
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 09 Apr 2025 07:19:51 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1338
+ <yocto-patches@lists.yoctoproject.org>; Wed, 09 Apr 2025 12:01:13 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1339
 
-On 4/7/25 23:29, Scott Murray via lists.yoctoproject.org wrote:
-> This patch series for the scarthgap/rust mixin layer backports the
-> various Rust toolchain changes in oe-core master to to pull in the
-> 1.81.0 -> 1.85.1 updates that have landed in the last couple of months
-> in oe-core.  At this point the backported selftest (as the "rust_mixin"
-> module) is passing in my environment except on qemuriscv64, which
-> is currently also failing on oe-core master based on my testing.
->
-> I intend to push this series to scarthgap/rust within 24 hours
-> unless a serious showstopper is pointed out.
-If this comment is of any use: in the past 24-ish hours I have compiled
-Firefox in many ways using this patchset on Scarthgap, couldn't find any
-obvious issues - it seems to work for those recipes at the very least.
+Make sure to use the correct yocto-autobuilder-helper branch when
+building meta-webosose. Kirkstone builds should use kirkstone branch
+instead of master.
+
+Prepare for supporting build of other meta-webosose branches.
+
+Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+---
+Meta-webosose will have to be built both for kirkstone and scarthgap
+branches with different configurations. Prepare for this by making sure
+correct branch of yocto-autobuilder-helper git is used.
+---
+ schedulers.py | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/schedulers.py b/schedulers.py
+index 2cd2d9d22c3c..dd34363498de 100644
+--- a/schedulers.py
++++ b/schedulers.py
+@@ -644,4 +644,5 @@ schedulers.append(sched.AnyBranchScheduler(name="bitbake-docs-changed",
+ 
+ # Run meta-webosose for kirkstone once a week on weekends (2am on Friday)
+ schedulers.append(sched.Nightly(name='nightly-meta-webosose', branch='kirkstone', properties=parent_default_props('meta-webosose', 'kirkstone'),
+-                  builderNames=['meta-webosose'], hour=2, minute=0, dayOfWeek=4))
++                                codebases = {'' : {'branch' : 'kirkstone'}},
++                                builderNames=['meta-webosose'], hour=2, minute=0, dayOfWeek=4))
+
+---
+base-commit: 21b5aa780ea79c32b340d53aaef808520983b88b
+change-id: 20250409-contrib-mathieu-webosose-branches-a3cbcc6b1bd2
+
+Best regards,
+-- 
+Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+
 
