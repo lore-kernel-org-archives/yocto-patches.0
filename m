@@ -2,203 +2,306 @@ Return-Path: <quentin.schulz@cherry.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E48DBC369C2
-	for <webhook@archiver.kernel.org>; Wed, 16 Apr 2025 10:17:33 +0000 (UTC)
-Received: from EUR03-VI1-obe.outbound.protection.outlook.com (EUR03-VI1-obe.outbound.protection.outlook.com [40.107.103.41])
- by mx.groups.io with SMTP id smtpd.web10.15779.1744798644899215028
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AC08C369BD
+	for <webhook@archiver.kernel.org>; Wed, 16 Apr 2025 11:25:14 +0000 (UTC)
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com (EUR03-AM7-obe.outbound.protection.outlook.com [40.107.105.64])
+ by mx.groups.io with SMTP id smtpd.web11.16507.1744802705558607329
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 16 Apr 2025 03:17:25 -0700
+ Wed, 16 Apr 2025 04:25:06 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@cherry.de header.s=selector1 header.b=hzSrtiiL;
- spf=pass (domain: cherry.de, ip: 40.107.103.41, mailfrom: quentin.schulz@cherry.de)
+ dkim=pass header.i=@cherry.de header.s=selector1 header.b=Nyj6uwgh;
+ spf=pass (domain: cherry.de, ip: 40.107.105.64, mailfrom: quentin.schulz@cherry.de)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yJVODgMI5WbE6ld8t/XSSEJsgQZiZkPcR9Up5fLJ34sUULybhdOqbBUcYKBfP1ix0fFxWAp5kWvgLXR79iFfS4rRtfVqYr18dXqCw5/vrxn5aXHS8qGyuKefBgIiSd9XLST4I/jiBdEvdzFgzsEpRAD2p3P+QnjMvIy6VxAj4dQPRvneshUyQIeaX5UvvlTJ5u7uk9wqGfaSxRaZ3dtZjKNBXKrugzuZ7LNVWhKd3bN6MqWd0YrVbM/eEVlSRdZYne39LQs/sYq4/M7HRq0eqRmg892u9yyzPmd5SIOwY6WY0QIpXYRviSWcIR3ETwJz1dwrvyCyzGo0/60A8yzGPg==
+ b=C8sLyZ9XEkO1R04A06Z21SjChk3EW1pgl4uDBhyh4Ca96z/zXvAeECkb0AMBEP6roSOfILH08gTOHMGEr4te1UO4OUyA0abuqJ5ZpZZxGVKdyr4D8CjKzu/ClLlUoyEzRXA2R7mMkmkKDgS4ARFx4Krai4wgnT7JEsAzgLDeeUaStPhsqLaus+rto/TbYz1prMvvu15doR5Raxi/5wfCOBH9CE88JL7AUi0lWzsmhIxojQP0ofv/ARvMq8qKivhy1R6f2h20LapiKdrSPzYYHn3h8PMnaLmTUZZf7RCQgyb+mos3UR9rQU/oQriQzTlJagS2NKtKaI4Mgkl2Ij+fZA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WsSgWk7ViALFWWK4gqzDGCnSLFDvMX3DytIYizpV5Dc=;
- b=u6lHd4W7s6cE1tyccnx73L9EoHHAbT7UGwxRgEAwDJ2CclnVPR4mNLTpAVmfvc9zNQnTNltfkkCk7qmhwnd+5oW8mNW4cY0kgMpw2OZ7mFmJ4y48btmY9kpr57mLmpL/mWfymmLpQLTm7yJ2o2oSNPo7Q+BaaaJRx09hijZ6VMkiu10JO2anv8+wncvsC2jWUyKCuKXT1mtHRVWyf0O7GdU5o+cR/H8RR4TLEOen1GnA8WYIagNuvL1tOk6yMCpxRLJ+/CuSX2PE5rL4Imb8qBdcZgq4fDBM32NgpMITfwf0IyWFAIyRyRAwieEbdG3aS6mns3ZK09Mmyw7VmMkbkg==
+ bh=WbySSMOFZDmb7grorOIgjpdydqiz9rkhZJiHwpbU3UA=;
+ b=nyJGQz5mUrG+NXBa0Uega2FOT1K0g/TkLzSeALEBOAVG95CfJM7UVTJ7ze64xg3RPca5FvO4ZaBz1HEdc07RC8h4rOgpMlvUPbERu+RQkH9h+TjX7KJxtnanMyUyxiCOyaTvUQt/btID784O+QNCPhhP6nXRmRNQ852A2kvPzlJCYyu7PReMGYtpf2Z19LnB6ol1ajmowmgHCBIyNa9kVXN3oQOyWclgySqlPDObCpaecRX1B+spthsPI71YpFhsKztQrAc4RC/OjElZsxHYIvYVeMgcCsZcGPtNDnmZTXMU7aiU3DcL5ugvRApv85JOw9hUULiVh3YWiKrxVMKLBw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
  dkim=pass header.d=cherry.de; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WsSgWk7ViALFWWK4gqzDGCnSLFDvMX3DytIYizpV5Dc=;
- b=hzSrtiiLLGAYByahDelUmxxaxSsAsdHp3M5v1dPgEJxUGLMbiMSFTqgIxVU/8PlXUzBhW4D8pbpP5SpSQWEEJejNpc2cEUtwQy4CTXKxzygdNXeRnp4n3HsLLDcMXyosGLkTuP6KLR7zig0ROrDmxzSYeSzZwH+0s4mzrjeIZqs=
+ bh=WbySSMOFZDmb7grorOIgjpdydqiz9rkhZJiHwpbU3UA=;
+ b=Nyj6uwghcHAQxrASXbJ/KdWndXHFw3SwHq4WufbhDZnxAVZocLAyrAc9Eyo6HanBy8cf8tWIkB9DjHw5xITBTkUEdUuAv1A6tICe8TOlWTQZuodL4gNkwF0jkJpQXrR3JuJshjYdCyfwKNKq1lsDGnlEX2h7rF0GPHD9wcT0rVk=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=cherry.de;
 Received: from AS8PR04MB8897.eurprd04.prod.outlook.com (2603:10a6:20b:42c::20)
- by AS8PR04MB7638.eurprd04.prod.outlook.com (2603:10a6:20b:291::23) with
+ by AM7PR04MB7110.eurprd04.prod.outlook.com (2603:10a6:20b:119::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.34; Wed, 16 Apr
- 2025 10:17:20 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.22; Wed, 16 Apr
+ 2025 11:25:02 +0000
 Received: from AS8PR04MB8897.eurprd04.prod.outlook.com
  ([fe80::35f6:bc7d:633:369a]) by AS8PR04MB8897.eurprd04.prod.outlook.com
  ([fe80::35f6:bc7d:633:369a%6]) with mapi id 15.20.8632.030; Wed, 16 Apr 2025
- 10:17:20 +0000
-Message-ID: <706baf32-f9ae-4bb3-ac93-30eb9d7f8363@cherry.de>
-Date: Wed, 16 Apr 2025 12:17:19 +0200
+ 11:25:01 +0000
+Message-ID: <28e034c4-faf4-4b79-8058-70f68014c94c@cherry.de>
+Date: Wed, 16 Apr 2025 13:25:01 +0200
 User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [meta-rockchip PATCH 0/6] rkbin: factoring ddrbin
- do_deploy, customize ddrbin and bump rkbin
-To: yocto-patches@lists.yoctoproject.org
+Subject: Re: [yocto-patches] [meta-rockchip PATCH 5/6] bsp: rkbin: ddr: factor
+ out do_deploy to be SoC-agnostic
+To: Trevor Woerner <twoerner@gmail.com>, yocto-patches@lists.yoctoproject.org
 References: <20250311-ddrbin-custom-v1-0-e5c994ac25e1@cherry.de>
- <20250415181447.GB9633@localhost>
+ <20250311-ddrbin-custom-v1-5-e5c994ac25e1@cherry.de>
+ <20250415180709.GA9633@localhost>
 Content-Language: en-US
 From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <20250415181447.GB9633@localhost>
+In-Reply-To: <20250415180709.GA9633@localhost>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR3P281CA0006.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:1d::16) To AS8PR04MB8897.eurprd04.prod.outlook.com
+X-ClientProxiedBy: FR4P281CA0443.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:c6::17) To AS8PR04MB8897.eurprd04.prod.outlook.com
  (2603:10a6:20b:42c::20)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|AS8PR04MB7638:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4c1e2d9c-5cfe-4a5c-0797-08dd7ccfdf3d
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|AM7PR04MB7110:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6c579e33-86fc-4efb-7136-08dd7cd9541a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
 X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?RFJxQjd3YU9RTS9LekxhQTFOaFM3MlJ1bEpmMEx2MFptQStWdERGdC9lNnY5?=
- =?utf-8?B?ZDBjRm1LQmozQkJYOVhjZmN2Z1JQM1hqR29sem1UbkR2RGNVMEJGN1JqVyt5?=
- =?utf-8?B?YXZCYXhSeWdtRWUrTWZyTmdNK0ZVbDZOSjJSVDlYVnBrNzEyZWVPZHJvQ09w?=
- =?utf-8?B?UTNnL2czTG9LT3Z1N0xCVEhuUmlSdFE1NHFMLzlJQktSYUdpcTFqTlVQcERG?=
- =?utf-8?B?QmtuRUh3VHZrNXBNeG50dlY4eGZKL2tHSjkyOFRIWXpzOW82M3E5TCtLbkZo?=
- =?utf-8?B?OVd5NFp6Ky80V3pST2dmTmNXVUxHUm95Tk1RNGNFYVBhQ0ZxeFJoYlZDbUtG?=
- =?utf-8?B?ODV2bUYzczRoRGZnUlRkU0ZmbjhBWVdhc29Bczd3YXV1ZHBaZDRybDdnTjdx?=
- =?utf-8?B?cW9YeHI4ekpneDZ2bXRoL3Q5eUtSUHhzR0pBcUtjd2NMMDNsTkZTWVVTVlB4?=
- =?utf-8?B?MThlelNkMU04WUtjV20vRzFOaU5XcHhPU2QrNm9jdW5QUVVOdDJhekRBeEZ4?=
- =?utf-8?B?K2VmZStzQlYzaW5yK2c5dXpHVDhueXBHTjhGaUYzbkRBYnZkVU9aSE4wbGRa?=
- =?utf-8?B?SHphRFJVZWZZQ29VdDQ3eEJGUTBPU0w1ZGRySEh1clhjcnI0VU9OcXBySXRn?=
- =?utf-8?B?aHJiZlBqdXNEVjhNdG5zcC9PQi95RDhoUXZwMnBpdGo1eGJiQ1kvZ2tZMXJx?=
- =?utf-8?B?OWpQUHNTVythUnpvVmNITVpOQlFicG80OFFaY3dEWkMrRWFWZnEraU03VzhU?=
- =?utf-8?B?MnhIeEFLcGp6T2wxOW96NFlQNUljYWJyK1N1bnRraGNGZmlRRlRWN3Y1bTBD?=
- =?utf-8?B?T3dHd1hrY0R0djVod3cwbE9uai9PR1pRR3lscEpOeTYrYUdjVFc0d1ZOU28r?=
- =?utf-8?B?ZmRETFZ2VllhRFlzekVUbnNFNTBza1ZBUkpmSHZhZHNKVUFldWJ0SG5mUDhK?=
- =?utf-8?B?NFEwMlFZc2xHZG9ZZmhpUXh2VTl6eXZBMWRoYlE1NE1RTkVjSDRzNExyQ1pt?=
- =?utf-8?B?R1luc0M3R1VxcHVzL3UrTG0zRVFTR1NuVktZaHU0MXdKK3pyT0lqOG1JRi9R?=
- =?utf-8?B?aEFhM2pMeGFqbzdpRzJlWlM4aVJsYnZ2SXlneVBLTVdyOHA1cU9MMTVBaHc5?=
- =?utf-8?B?VUZWOC9VTFRyWjYzUGlsOXdWSjBMNW5tUWVoeVUwaS9HbXdXMXZNa1gzbWpP?=
- =?utf-8?B?U0FrV1cxUEtTS1BOQ3lXQWYxRnJiNnBhUy9sTHNoSnZ6alFZYTlWWUJrQ2xN?=
- =?utf-8?B?QkdyWDlOSkljMFkrNjZWK3lpQzlTQzBpNm91WnJPaUFVd1dJWlM1bzNYVGZF?=
- =?utf-8?B?eFVvQ1VDcFVDaGpkVGEyTnE4RkNGVE9BRS9HSmJBNTAyaTErMnY1dVJya0lr?=
- =?utf-8?B?T2ZqcWFpKy93TjFNWTdpdEI4dTg0TVlteVdPU1RJdkh3d2hyQ1c1REp6ZTN4?=
- =?utf-8?B?MnBUNnRzclZKSmIyakpjSGxtLzhHRHlZVkVHSElnb1FsOFhCVHhLRGhmendq?=
- =?utf-8?B?Ulp1dkhHZDV3NEtac0NienV1bkd1M2xnZHRSWVpsSmVOWDdnQ3hDWGNkVWkx?=
- =?utf-8?B?bTl5QTUwUDBmNGlqMCtTN2k0Y29qc2VKT2I3alpQL2dPSlBvSWQ1b203LzJM?=
- =?utf-8?B?RStsRGxsbzV4aGxCS2JkanVSY0dBbGI4N0xmT0ZuZS9vRlVra1hORnBoOWUw?=
- =?utf-8?B?WWFYWHFUZFNYbE0wY3N1WnQ0K05xdWk4NmRGOVhUUkI0emt6U21HclIwRHJO?=
- =?utf-8?B?NklUcGF1TDFCaHVtelB6T3FxSStLMHRLMmlrTVlYTnFJcU9KTFB4VVlEclU4?=
- =?utf-8?Q?MX3CeUe67aUaTodHOsiMDAGpyvIQM7XxZEk6A=3D?=
+	=?utf-8?B?WExzVFJiU0hmWE1CdmVNS3dmS2NSS3IwQU01TFZZSWh2R3Q5T1BmcmtvL3FE?=
+ =?utf-8?B?dG9LL04wNjdCTnJEYm1jQUw0TVNHNnRvRUtPbDBhUy92TFFYYnhmQ1pHZVdt?=
+ =?utf-8?B?aGhUY1ltNy9VWDdnYWZuNXZiTk1peTlkS2JhQTdpUXlUemg3dGVDQzc3Q3d2?=
+ =?utf-8?B?N1J3SGVxNUZtUStYKzdsUlBiL1lLeWxmR3VHQzM0ZVQ1RWNIUGFXWnE0aGJI?=
+ =?utf-8?B?ekF3ZmVqLzgrS1M2SXdZa0dhM0pIbVNPN1NHSXlzaUU5TUMvdHFFVC9iRmlE?=
+ =?utf-8?B?RERvVGlrV2NZSnFrK1ZuRVFGU3JMbm5zSjE4bjAwOWJPVExoVjhBWGI1eXVB?=
+ =?utf-8?B?VklPNzA4MHZTcVNlZitJNlNkZWJYeVRSWVdpMlN4SkpxYW1RNGNFV21EelhJ?=
+ =?utf-8?B?b29kZkh6UG1TQllDNGlzRnhnemM4Mit1ZUZtU3B2ZzBRR2F6QlJLeGZqY1M5?=
+ =?utf-8?B?N1BnY28rN25HVmlhWWM0QmRvQ3RyM3NKMGkwQXY5SGFYOXlrNWRoTXRBbFNi?=
+ =?utf-8?B?eVRveUE0SUV6cmpnSlRxbmJEWUQ5a0RCWDkrbzd1ejhpVy9YL1hYSXRlajhY?=
+ =?utf-8?B?YlJqNEw2NVhiWCtvby9QbTZQVXZDWmY3WGxTQ0RnaWd0dnBLRXVaVWNodWx0?=
+ =?utf-8?B?TGM4NFhqS044REEyMUw5RmZQMEFPenozLzJ4STJYREVYZkcvTVBGd0FWOEZx?=
+ =?utf-8?B?bEZmVm9XTUorUUp3bDJKOWxnMERIeTQ0REpnZjkrdW55ZXBWc3M2QlN6MlF0?=
+ =?utf-8?B?NWYrVEIrZ1NOOC9QMVp0a3hFemF0NU1lT3RIQlh6dHozOWxBR1U2R2lBb29z?=
+ =?utf-8?B?anR5M0NCMFVXTGpsUVB2UU13UjZXTTF6RUM5Y1VsWnhxTi9rWXRqWkx4RTRy?=
+ =?utf-8?B?UGdMWjZFMHNhMjkzK0swV3dPOFZGbzF2YzhiN2NuTmlLbXp6b1RYY1VzTmh6?=
+ =?utf-8?B?MGoyNWJ4Tm11UWtXT05XdWNqMCt6dGFoL1B0TUpsMDZSbjFGbnJtY1FZU3Bs?=
+ =?utf-8?B?SS9UUGZ3VTd0aWdHQzFOZDFqYnpiVS96U2dZb3J2MXhoU2FCcU5aS21QODFq?=
+ =?utf-8?B?UEZuNFVMK0pOZ040T29TbGxJQzhRTWpZb1ZBM3lETktoQmEvUFBiRnZaYmlS?=
+ =?utf-8?B?N1dRRTh4RzN5Y0JSNlBIdEkxRUdUeVNhSWxENjhiWXVkZXVBSkhHV1hMVGVO?=
+ =?utf-8?B?bWNhNnVmbUVSRTFZVHRLdTNPT3IzRlBkeUZYREZBaStweE11c1BqOG1iWTYx?=
+ =?utf-8?B?TzdIUkJMYlVPY1FweWpRVWEvTzBhZGk2WW16RDVxK3BSYTNIVzh2ZjRSaDVO?=
+ =?utf-8?B?WHczVmdOcmVlTzhsMUREMisyS2p6Y0FTWDBTWXk1TFZDT1MrWk8zNGpzRlhz?=
+ =?utf-8?B?SHNGNVA4WmlqaXlRNFZUUG1DcGc1UU5nZnZzaGlTQ1RlbnYyMWh1dlB6RkF3?=
+ =?utf-8?B?NFdycm1zZVdzVUJkTENVUHQzdnlSV014VXZpK2ZqM1dVQnpnRHNWb2o2bmh2?=
+ =?utf-8?B?U0x4SUgvNENDWXpVNmNQYk85TmI0a3Z1V0hzWEtWMEN0Y3FoTmh0RkkxMC8w?=
+ =?utf-8?B?eXgvQ0xhY2ZCNk5acmg5dEozVitBbUFKQ2ZZczVOS0tGdkk3UEh2S2F5bThX?=
+ =?utf-8?B?N1NYd0lZaW1UaXF0YzMza0I0NzJIdnN6UE15YXZsQ1JGOENVWU1MY3hPMDZv?=
+ =?utf-8?B?bWZFeDJsa1I0a3dWVzRTNUlJWEtnTWo2SmMzTUtybmNnNEQraTZNSDczL0kr?=
+ =?utf-8?B?VjdCei9YUWNZMzB3MXlHRjZON3ZyTjZYNlBPZVBFTEQ2Q2JEZjFVYm4yUHAx?=
+ =?utf-8?B?UytkU3A4MlBwY0taaFhySEQzVjhVTmJXa2gwZDJWdFpBTUFQdytudVhjQXpQ?=
+ =?utf-8?B?Z0lVN3VlNVJKTFVkdVpBNFhPYWRZMGdERHgrNFNrWGl2eTFZcUtLU1V2Tlov?=
+ =?utf-8?Q?12YvYfo2Ij0=3D?=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?K3RTaE1FRHlzWWlnZHpZOXMvRVdFZUhjdmJTRWFiNUlablNNc0dDNGZXZk9P?=
- =?utf-8?B?eUVybkpEd1BPM1dUUldVSS9EVmlKUUV1ZGFIR0tLVGVrOHFFZm9hSkFyZDR4?=
- =?utf-8?B?dkVaR1dMQWVvcmszUDJJTkswdWtjcVh3ZmEwUmFHV0lwYnJ6d2pPT1ZPcUNo?=
- =?utf-8?B?bkI5UURhNWswZUROMmtiekdiOU5SREJKSDlJbCtJQVFHdjkzSXZyVStOeHFP?=
- =?utf-8?B?UW5BQURoTG1GMHZUR29kUmt3MS95bkgrVG02UjFKNzJBV2I0TGV3dUlpM2lI?=
- =?utf-8?B?NXRhQngwL1ozWU9GVGRzSlM1amdoQWF0UUlGYnp0cjh6N0hpbmJ1SHJvNytG?=
- =?utf-8?B?TWxSR1MrWnBzOEpmMFNUbFZJaTlRMHZDeklrbVdPT1FjWDZpTHd6RkJwb2pq?=
- =?utf-8?B?NnVzYWFpNjltYzFscm1FeEs4bjZZeTRzUFdLeENITW9iMXNCeFpJeC9NN3pj?=
- =?utf-8?B?SWsyZnNKK3BTNUtpRm9XbDRzY3FrU1ZSelR6djdpb3ZOUUJ4UTdSNUM3V1Rj?=
- =?utf-8?B?M0RYVDl5bjFlNWIyVm9rY1ZxdHBhdHVja0kyalVmamVtcWUxUVlpNXdkWGJw?=
- =?utf-8?B?enNYblZqajJ6K1poNEg2OE5iQWhRVnRhZkVsR285WVltZnlDc28yTjJmY2E2?=
- =?utf-8?B?cDZYQnJ1Rm16RlllZzBnVWJYNE5HcDBIUEM3WnFReGZ1bXlZY1BickdOdlFV?=
- =?utf-8?B?endQa2RDYmFzY254VnN5SjlINzdFZ3JRZGNwdENaZVIyZHlONEkyV0ZSVmNE?=
- =?utf-8?B?Y0FrbTg1UFFCM2JHM0xPS1lTVklybHpjcTYwOWZXNDQvS2NMOVBIbVhURzZS?=
- =?utf-8?B?QTE2aUI2ZVd6VXhFTm83clNoQklhYWc5ZXZnWlpyQzQrdkZLdnRDSlZONjAv?=
- =?utf-8?B?WmxxRmFjUnN0MFpTVHh4a2lXa0s4U2FidDExWVljWm9HMFJocjlnbC9GMTNL?=
- =?utf-8?B?eXZ1YzlwZVMrZ25BaXFJMmY2M29zUUlPS3ZDZ20vMlFUVVVmaXplWHkxL2I0?=
- =?utf-8?B?YUJZcW1xdkkzM2hvWmNmZ3l5WFlWV1lCenkwb09JV0trWGdLZmZJK2krMkZ6?=
- =?utf-8?B?S1FrVE9EWXhnTDQyd0F0Z1p0Sk9TTElsNlh1czFTeEhabFdDcEVSOUhkTmtv?=
- =?utf-8?B?VWlmV3ErU2kwdzB3My9RbEgyWEowREEvZkRTVlp5QU9rdWxrdnpySTFHWFZS?=
- =?utf-8?B?L3JKL25xK2RyaTdVUFpTQUlYQ20xOUR2UDVlRnBKSlQ3cVFGY094NHZUK1FU?=
- =?utf-8?B?c1V6aVh4MXpNVm40NEUrWHhlK2l4VHN1eHBLdnppMzJ3a2xNTW53UlNoSXRr?=
- =?utf-8?B?aThOcmEzSlFxMXBWOTJRa3BYZitkQkczWDQ0S0dEbkU3clpSd2F2UmJsNktq?=
- =?utf-8?B?N1pEaHh6aDRyVS84TzE0SWNWQ2xGamtUeFFWRkJwMGk2SG53RWxJSnlSUmRZ?=
- =?utf-8?B?alRGTEpmdnVSenYvZ0pSWks4aXRZYTdON3gvbnVkbUQ3L0FWVStuUmJoa3VR?=
- =?utf-8?B?SGszSkNQWE5iUGFuMmlPQmVIeGF3TkNQb3F0OGpIdU9zUFRQZXNNdUZ0MEZi?=
- =?utf-8?B?ZEljWitiOUVNcG1aaVlPYjJlSENJazZyRW95NEtFUXhIWkRMVThPNjlOWnZD?=
- =?utf-8?B?WC9tY2dGejFMRDBJcDJkeFhseUJQaHpUbUVzUURQeFJlNUF3bjgxeEp1eVJs?=
- =?utf-8?B?UlFsQnEzM05ZWHN5UnNadHRKckkrd0E1NEdlTTJvTnBpYWRnVFBoczVrVDA1?=
- =?utf-8?B?elgyL1BoaXMxTjQrVW1wL1JIcDZIRFVGUVRLQWp2SCtjV0NtSUtFUTF5SklL?=
- =?utf-8?B?aldPS0NGSSt6QUVoc3ZLZldSTUo5Y1hlWGVTV0xZVWc4c25VQ2x3Ti9QVS9L?=
- =?utf-8?B?cm5hU3diTWhrRFRpUGtIY2Y4MXRCM2syemUyRjNOeVkrZlRFRGlzNDJnbXYw?=
- =?utf-8?B?UlMxUmttZVB0YVI4VmhxSzBJYktCNkdxNUtzQXdBS1hYVWNJSDBtS05lbUxZ?=
- =?utf-8?B?SjRRSzZISDNVVXZTNFZEL1dmdFJOaFlpbWdXT2JVbFhMNmQ2ZjRUYlo5VmE5?=
- =?utf-8?B?Y3FrYzRqdlVzd2ZsNlo0bkkxdEkzblJFT245NWhCeVl6ZFZUVURsVzFZNTl3?=
- =?utf-8?B?VGppUENRa3d6TTNSTEhGUlZxSmN1U3hReXdCU2JmbU0wbURqRlVzMW8wQWpp?=
- =?utf-8?B?Y0E9PQ==?=
+	=?utf-8?B?Rkx0N2Jqd0ducWZpb0JBOWRlTDduRVJDeVhobmJWY25JU1Vnd1VmUUh5MlR5?=
+ =?utf-8?B?U1cvZHlMQ0k2UzBsbmkrSDBFbzI5aitvWEE4OUJGREJIazlwV1VHKytqdXpN?=
+ =?utf-8?B?SnAwdnF0OFdaVkg1RGZhUlZLUEdGQUZENkJnd0F4bGorUjVsSGpiRUUyaksv?=
+ =?utf-8?B?QlNtbzdSNXZsOTlYaDNLSUo4VnNjN1UxaE9hekdQdW9RejFvcVNac205Z1ph?=
+ =?utf-8?B?b1RRcUl3L3hnMWJ5cUNuekdnOGl0dzhZZy9pM2FHTGRJbWZZOHZGK2t0SWRU?=
+ =?utf-8?B?WHhLR2kwSGlkREYyQUJKWWgrODltSkEyYkF4czJuNVQ4azAyRXVxMUlpRFkx?=
+ =?utf-8?B?T3l0RXpWbWxmU1hnbXFnNjBpM2x6b0I4akVMYVd3NXRkQjIxQ1RpVDd3VnhO?=
+ =?utf-8?B?WDVMbEhHT1gwZFJOTWsvUThsSUVHaVI3dHlKViszT2VWV0k5TnFIdnk3bmJ3?=
+ =?utf-8?B?Q3NPTWdhdTJaMVZ1QkgrVnZ1ZEJJUGVld3Z5S29aS2lQQjhiWXp3OFRsK3Bx?=
+ =?utf-8?B?MkN0R1g1VG03emN3UFNlcHpWZ3UwZ2xVVVZ6ZENKbCtUM2NURm55S3BHTFdh?=
+ =?utf-8?B?T3h0TmNHQW1xU0FQbjhoc1A5RmJSVFE4UURKNjdxNEhPUUdwM3FqbW9SeFl6?=
+ =?utf-8?B?MFpqQXpyOG5HYmtaeEJ3eDNmRXVpcHp3aXRCMWpuN2dDbVcwZlpNRTZLVEJV?=
+ =?utf-8?B?VkV0QzB3RE1sZytYbEVsK3F2T1h4SU54aXUrWGpGQWw2SC9kUHFrWlhHaVJ5?=
+ =?utf-8?B?Nzl3d1BxL1FFaGp2RG9HNG15ZVdKRVExNjdhbE84Zjk4b2YvYnRnMG9KNGVa?=
+ =?utf-8?B?TDlTT0h0Q2J6LzZ0NmNwUFlBZW9EOGFsVjVNd0lOdk1ZejlEdDc0aWh5cGxN?=
+ =?utf-8?B?NE1OZ2MxbkU5SjcrdS9QWDdlamhMWE9kQ1ZQYkNIK0h6dHZhdnZ3R2tsbUdC?=
+ =?utf-8?B?TTFocmtFcHlhQ1JiUGJNWWh5K1hscUV5YklPUzZsaCt6Ym1xaWk5UkVXTUQy?=
+ =?utf-8?B?OHNiZnhtQk1sMkpIL05rcGt4MGRIaEg2WWY2bWVzV3NyV0J5UnlMWXh4aDMv?=
+ =?utf-8?B?NzVYa2s0WlRPc2RHQzEwSlVqdVNhSFJBd2U3bUJvRG42RmMxa3hJeU5zc05l?=
+ =?utf-8?B?NExSc0hGOGd4dVFkUUM0S0lQenhBWC9WSTNENVRqWkk2VzlTaTlzSWg4Y0JP?=
+ =?utf-8?B?RVJNS1hDQUpvcElxRzFCVkxvQWw1VW9aVDlEZm9ISU1BWW5UWVcrL1Jtb1N0?=
+ =?utf-8?B?SC9CSFJlbENSYzZMemhhaEY1QUtqM0Yvc2ZyOGdxY2JUR0lrM1pLMXpyRm1N?=
+ =?utf-8?B?NWRNbUV5NURXTHlNbVRmbUhIWEpRQlZwcjYrKzk2cFVLcThSZUs0SEMzQWNS?=
+ =?utf-8?B?VUtqb1AxaEFuR0tEOFk0UGkvWlJtUkRLTFpNc0NLanBBRjhDY29ZTGxBamIv?=
+ =?utf-8?B?QzlzOTJ2WWwzZkZWVm5EaWNmMm04cjlqZzIvTEVOSWFuczc3OFNBSGViREsy?=
+ =?utf-8?B?T3hVVG9kUzI4eXI3T0M0QWhGZnliYVNJazFkSy9KbzZCc3NsMGwrRFZHcnor?=
+ =?utf-8?B?c1VUbU1Id1k5YTBiRk1LQXNta1c2c096TXpOZHlyY2pXWk90S2RjUkdhODhj?=
+ =?utf-8?B?LzdETVNuNlhnR1ozK2NTOTJ0ZmRpcC90NWVaL3QwSEdQbzVMWkJYUTNhYVlV?=
+ =?utf-8?B?ZnJRbmpGZHc4bkJBa0syNmc5K2pFZExJZWFRL0o1TDdNY3pmMVR6MCtORStK?=
+ =?utf-8?B?TzZ2b1V0VEtWejdtU1BHNUhGMU0rT2pNWGhUcWNPOEVrU1huU3ByNjNWS0k5?=
+ =?utf-8?B?ejNZejh2RjM0cG85ZmNxVjBqRG9iZWtKeEorMUcvVkRxZXY0bExSTDJ4Q2xP?=
+ =?utf-8?B?MWxjZitrYTJVZlNwWVZvdWp1R3BaNFJRcFExY3VUK3F1TFpGNnNsV0RaeHc3?=
+ =?utf-8?B?Q284SlR6K2IvaHE5V2lyK1ZZU1NjTGdobkptUXdRWGx1cjN0WTZKVzBuc3Js?=
+ =?utf-8?B?YVR3cThvRGsrQzNqWFNQTHlhMmJXMjBTUmVLcFhwa2kxM3ZXUGRNUjV2MmtQ?=
+ =?utf-8?B?SE5ETlFnY1NYS2R5MVZ3U2lGVGZ0QUNPZWdERk9TR3NUZ0tjQjYvWjY0MzB1?=
+ =?utf-8?B?QXl5bDBYYzR5TTdiR1dYeHFxV05tZlU0RHpuMUExUElaS3RiVHY0K3gxamkr?=
+ =?utf-8?B?Z2c9PQ==?=
 X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4c1e2d9c-5cfe-4a5c-0797-08dd7ccfdf3d
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6c579e33-86fc-4efb-7136-08dd7cd9541a
 X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8897.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Apr 2025 10:17:20.3281
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Apr 2025 11:25:01.8471
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aNLDXkXNJqQMXv3lx9eW321802rLz7OLT4YHONbQd+GbYwnUxblGEgBN2ST602nQK5awHOcF8tqR38fYIdFhRmqlVVH104C2vfSkfWk9AoU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7638
+X-MS-Exchange-CrossTenant-UserPrincipalName: t3A20rjgA2nk02ftSyRp/YT2GkVcIymdrzrHs/jMoEC13g4Y5BehA4B3xIZC2yoro3Lh+b49jV7L4APjC3Y1vQklU5B+IgEbdbeCFApBmmM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB7110
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 16 Apr 2025 10:17:33 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1375
+ <yocto-patches@lists.yoctoproject.org>; Wed, 16 Apr 2025 11:25:14 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1376
 
 Hi Trevor,
 
-On 4/15/25 8:14 PM, Trevor Woerner via lists.yoctoproject.org wrote:
-> On Tue 2025-03-11 @ 12:26:29 PM, Quentin Schulz via lists.yoctoproject.org wrote:
->> @Trevor, maybe you can check if that would fix your issue with the
->> RK3308 DDR blob you wanted to keep on that outdated version which is one
->> of the last versions where the UART you want to use exists? It'd be nice
->> to get rid of the rk3308-specific recipes I believe :)
+On 4/15/25 8:07 PM, Trevor Woerner wrote:
+> On Tue 2025-03-11 @ 12:26:34 PM, Quentin Schulz via lists.yoctoproject.org wrote:
+>> From: Quentin Schulz <quentin.schulz@cherry.de>
+>>
+>> The do_deploy task is essentially the same for all SoCs, install a file
+>> from a specific path to another one.
+>>
+>> No magic involved, so let's rather have one generic do_deploy task. For
+>> this to work nicely, we check that all necessary variables are set and
+>> notify the developer otherwise. This may be useful whenever a new SoC
+>> will be supported by this recipe.
+>>
+>> Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+>> ---
+>>   recipes-bsp/rkbin/rockchip-rkbin-ddr_git.bb | 33 +++++++++++++++--------------
+>>   1 file changed, 17 insertions(+), 16 deletions(-)
+>>
+>> diff --git a/recipes-bsp/rkbin/rockchip-rkbin-ddr_git.bb b/recipes-bsp/rkbin/rockchip-rkbin-ddr_git.bb
+>> index 193d0f00a6868f050a0ff4531278b3296d3eae94..17131b6d5a6b443409eacb5806e0613b292852d7 100644
+>> --- a/recipes-bsp/rkbin/rockchip-rkbin-ddr_git.bb
+>> +++ b/recipes-bsp/rkbin/rockchip-rkbin-ddr_git.bb
+>> @@ -8,40 +8,41 @@ DDRBIN_FILE:rk3308 ?= "rk3308_ddr_589MHz_uart4_m0_${DDRBIN_VERS}.bin"
+>>   DDRBIN_DEPLOY_FILENAME:rk3308 ?= "ddr-rk3308.bin"
+>>   DDRBIN_TOOL_SOC:rk3308 ?= "rk3308"
+>>   
+>> -do_deploy:rk3308() {
+>> -	# Prebuilt U-Boot TPL (DDR init)
+>> -	install -m 644 ${S}/${DDRBIN_DIR}${DDRBIN_FILE} ${DEPLOYDIR}/${DDRBIN_DEPLOY_FILENAME}
+>> -}
+>> -
+>>   DDRBIN_DIR:rk3566 ?= "bin/rk35/"
+>>   DDRBIN_VERS:rk3566 ?= "v1.23"
+>>   DDRBIN_FILE:rk3566 ?= "rk3566_ddr_1056MHz_${DDRBIN_VERS}.bin"
+>>   DDRBIN_DEPLOY_FILENAME:rk3566 ?= "ddr-rk3566.bin"
+>>   DDRBIN_TOOL_SOC:rk3566 ?= "rk356x"
+>>   
+>> -do_deploy:rk3566() {
+>> -	# Prebuilt U-Boot TPL (DDR init)
+>> -	install -m 644 ${S}/${DDRBIN_DIR}${DDRBIN_FILE} ${DEPLOYDIR}/${DDRBIN_DEPLOY_FILENAME}
+>> -}
+>> -
+>>   DDRBIN_DIR:rk3568 ?= "bin/rk35/"
+>>   DDRBIN_VERS:rk3568 ?= "v1.23"
+>>   DDRBIN_FILE:rk3568 ?= "rk3568_ddr_1560MHz_${DDRBIN_VERS}.bin"
+>>   DDRBIN_DEPLOY_FILENAME:rk3568 ?= "ddr-rk3568.bin"
+>>   DDRBIN_TOOL_SOC:rk3568 ?= "rk356x"
+>>   
+>> -do_deploy:rk3568() {
+>> -	# Prebuilt U-Boot TPL (DDR init)
+>> -	install -m 644 ${S}/${DDRBIN_DIR}${DDRBIN_FILE} ${DEPLOYDIR}/${DDRBIN_DEPLOY_FILENAME}
+>> -}
+>> -
+>>   DDRBIN_DIR:rk3588s ?= "bin/rk35/"
+>>   DDRBIN_VERS:rk3588s ?= "v1.18"
+>>   DDRBIN_FILE:rk3588s ?= "rk3588_ddr_lp4_2112MHz_lp5_2400MHz_${DDRBIN_VERS}.bin"
+>>   DDRBIN_DEPLOY_FILENAME:rk3588s ?= "ddr-rk3588.bin"
+>>   DDRBIN_TOOL_SOC:rk3588s ?= "rk3588"
+>>   
+>> -do_deploy:rk3588s() {
+>> +do_deploy() {
+>> +	if [ -z "${DDRBIN_DIR}" ]; then
+>> +		bbfatal "Non-empty DDRBIN_DIR:<MACHINE> required!"
+>> +	fi
+>> +
+>> +	if [ -z "${DDRBIN_VERS}" ]; then
+>> +		bbfatal "Non-empty DDRBIN_VERS:<MACHINE> required!"
+>> +	fi
+>> +
+>> +	if [ -z "${DDRBIN_FILE}" ]; then
+>> +		bbfatal "Non-empty DDRBIN_FILE:<MACHINE> required!"
+>> +	fi
+>> +
+>> +	if [ -z "${DDRBIN_DEPLOY_FILENAME}" ]; then
+>> +		bbfatal "Non-empty DDRBIN_DEPLOY_FILENAME:<MACHINE> required!"
+>> +	fi
+>> +
+>>   	# Prebuilt U-Boot TPL (DDR init)
+>>   	install -m 644 ${S}/${DDRBIN_DIR}${DDRBIN_FILE} ${DEPLOYDIR}/${DDRBIN_DEPLOY_FILENAME}
+>>   }
 > 
-> Yes, that would be nice!
+> This is nice, but the problem with this patch is that the rkbin handling
+> involves 4 files:
+> 	- rockchip-rkbin.inc
+> 	- rockchip-rkbin-ddr_git.bb
+> 	- rockchip-rkbin-optee-os_git.bb
+> 	- rockchip-rkbin-tf-a_git.bb
 > 
-> If I understand all of this correctly, I tried using the ddrbin_tool.py to
-> unpack the parameters of the latest version of the ddr.bin for the rk3308.
-> In other words, I applied this patchset, set RKBIN_RK3308_LATEST = "1", and
-> did a build. I then unpacked the parameters of the ddrbin that was in the
-> deploy directory. According to the values that were placed in the parameter
-> file by this tool, the baud rate of the uart is already set to 1,500,000. Yet
-> I'm still seeing gibberish with the latest version. So I don't think using
-> this tool to re-set the baud rate to 1,500,000 is going to work. For the
-> time-being I'll just leave things as they are.
+> In the *inc file it says:
 > 
-
-If I'm not mistaken, we kept the old rkbin for the RK3308 because it is 
-one of the latest ones that uses UART0 (M0) for its serial output and 
-the new ones only have either UART2 or UART4.
-
-I would recommend to set
-
-uart id=0
-uart iomux=0
-
-in a ddrbin_param.txt for your Rock Pi S provided you want to expose the 
-UART on pins listed here https://wiki.radxa.com/RockpiS/dev/serial-console
-
-For the ROC-3308-CC you have options as UART0, UART1 and UART2_M0 are 
-exposed on the headers. Considering we use the same rkbin, I would 
-assume you want it to be on UART0 so the same can be done in a 
-ddrbin_param.txt.
-
-Considering there are no iomux on UART0, you possibly could omit `uart 
-iomux=0` but eh, doesn't hurt probably?
-
-> Sorry for taking so long. I had wanted to play around with it and see if I
-> could get this working. I'm going to try anyway, if nothing else it would
-> prove that this mechanism is working correctly. But it does not look like it
-> will fix anything with respect to the rk3308.
+> 	 28 do_deploy() {
+> 	 29         bbfatal "COMPATIBLE_MACHINE requires a corresponding do_deploy:<MACHINE>() override"
+> 	 30 }
+> 
+> These machine-specific overrides are found in both:
+> 	- rockchip-rkbin-optee-os_git.bb and -
+> 	rockchip-rkbin-tf-a_git.bb
+> but, with this patch, not in rockchip-rkbin-ddr_git.bb.
 > 
 
-Did/Can you try with the uart id and uart iomux changed in ddrbin_param.txt?
+Which isn't an issue as do_deploy() is entirely overridden in 
+rockchip-rkbin-ddr_git.bb so this message would never be shown for that 
+recipe, but the others yes.
+
+> I like what you've done, but I would prefer they all follow the same
+> "template". Either:
+> 	1) modify rockchip-rkbin-optee-os_git.bb and
+> 	rockchip-rkbin-tf-a_git.bb to match and update the bbfatal in
+> 	rockchip-rkbin.inc so it makes sense, or
+> 
+
+I can agree with consistency across similar recipes.
+
+One of the issues is that we're using a shell glob at the moment to 
+avoid specifying the exact version number for OP-TEE OS and TF-A 
+binaries. If I remember correctly, I cannot have this pattern stored in 
+a variable, but I could hardcode the version (which will require us to 
+modify it for every rkbin bump we'll do) or use find with a glob stored 
+in a variable instead.
+
+If we want absolute consistency, we can simply hardcode the version 
+number as well.
+
+I could also move the whole do_deploy logic I added in 
+recipes-bsp/rkbin/rockchip-rkbin-ddr_git.bb to rockchip-rkbin.inc and 
+use recipe-agnostic variables. After all, we only ever install one 
+binary in rockchip-rkbin-ddr, rockchip-rkbin-optee-os and 
+rockchip-rkbin-tf-a so we would only need to specify the variables at 
+the top of the file and the .inc will take care of deploying the proper 
+file in the proper directory. What do you think? If we don't do that, 
+then it doesn't make much sense to keep a default do_deploy() in the 
+.inc, don't you think? And if we don't keep the default do_deploy() in 
+the .inc, then we should probably not inherit deploy either?
+
+I'll start working on a version that has hardcoded binary versions and 
+moves the new do_deploy logic into the .inc, lemme know if you would 
+rather have something different.
+
+> 	2) skip this patch
+> 
+> I don't have a strong preference either way, but I do have a strong desire
+> that they all match.
+
+Fair enough :)
+
+For what it's worth, you could skip the 5th patch and apply the others 
+if you want, and I could work on a v2 for the 5th patch alone instead of 
+making it a blocker for this series. I don't mind either way :)
 
 Cheers,
 Quentin
