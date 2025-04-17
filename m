@@ -1,83 +1,109 @@
-Return-Path: <richard.purdie@linuxfoundation.org>
+Return-Path: <oe@myspectrum.nl>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7CFDC369BA
-	for <webhook@archiver.kernel.org>; Wed, 16 Apr 2025 16:43:15 +0000 (UTC)
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
- by mx.groups.io with SMTP id smtpd.web10.24596.1744821786620728275
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C74AC369B2
+	for <webhook@archiver.kernel.org>; Thu, 17 Apr 2025 16:07:29 +0000 (UTC)
+Received: from outbound1.mail.transip.nl (outbound1.mail.transip.nl [149.210.149.72])
+ by mx.groups.io with SMTP id smtpd.web11.12866.1744906044349052562
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 16 Apr 2025 09:43:07 -0700
+ Thu, 17 Apr 2025 09:07:25 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=OogMmhLG;
- spf=pass (domain: linuxfoundation.org, ip: 209.85.221.45, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-38f2f391864so4244266f8f.3
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 16 Apr 2025 09:43:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1744821784; x=1745426584; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FZEJLTB+o0i1a4ZkiGPWF22+AMd92f24YYaMr0zniOE=;
-        b=OogMmhLGL8Z4NPNklcSRk5q6a6bk7nE+arfleFJKLCku2JefJqztugZ7EJXptIbH8J
-         mpCcaWbSHZ03C1t/oVZ8zXFNA7jG8dhHlBj62h7vQCDex4oLXWmVHDNhmXvAaNCzQ5dk
-         M+isVLSYgXIooI+SuJ7uwXcuupFW2LFWjA4KI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744821784; x=1745426584;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FZEJLTB+o0i1a4ZkiGPWF22+AMd92f24YYaMr0zniOE=;
-        b=t3oflxWD2Ufrtuxztfqqx2tJRyZAnG5R4c3U5YtzQy06pctr8SKLVgBnOuIphsJOro
-         hD3Zkbq7uUc0POUx8Sh/muczduwMylAtiQKo5E5hBqbyE9fNK8vxGqOkjawjdwrUEI/S
-         QqZSBbB2IUXm1+CL9LIvelcA+Jo1BKswzIxEPoDrX4b8xRp1/2+odB6E12B4ZzMen9Vl
-         CyNwwQG9YbvIdWLmhXZ6EeT8Cb6J/A8ZCVnuHIe9NlRXCO1Ew+0lZKDnzdXPi/KqzRwu
-         dpLgk867Cni/DFkzWSxYPUKUz1VqMmCqtzeDyteFPWoaDH7UNq5pf8MTivkSDBjVvz0i
-         rqOw==
-X-Gm-Message-State: AOJu0YyR6KIouA2NoJcr81TH4i+O4lLKz20GpkNrkS98kMKggqQwkdgZ
-	KmW/mSmms7h70Feb9ujSSRuPGCrZ0lRPsF/D5T9w47Cf7i5k4vK8sg23EMn0Z3Cpy/xKOJO5mlc
-	C
-X-Gm-Gg: ASbGncsH/WHoAe6QVAYz4BvnHCxqL9e0KnxkaRTqThvlVrX0yVmTKIBkFLZK3LJadTI
-	FuV/nTDZQYCsFp+mh+WfWLEGo0wKkb0mgBVJKKpHXnOG6oUy23X2mRNce8bEJVGnhmOmDlco4NG
-	ANDLv82e79r8MAU19MVGxAZh9qTxaagxlADfvMYRRPgExCXLnyC5JwSVhMnk5709V+TKUaPMfOk
-	AIU47MysYfol7t7Bv0Pc0MiEWjwNAJmePPPAevPTSYb1h+/pRrSxOX3E3Qtx6wFRjJbFoY1DbdW
-	S6g5NqujU3RGJpkqtWMh9BxUDu530QFixPNUFQCnbP5gALMFy50e2tz8nsZoIMTZVSckKQ==
-X-Google-Smtp-Source: AGHT+IEkhscPai4Dc1ymV5Srrb7JM/np9IL/3YElgDvhmGtiJJctMydeKcGaxJ/hVGK1+W9TxHJLuw==
-X-Received: by 2002:a5d:5c84:0:b0:391:29f:4f87 with SMTP id ffacd0b85a97d-39ee5badec6mr2095564f8f.49.1744821784625;
-        Wed, 16 Apr 2025 09:43:04 -0700 (PDT)
-Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:e3e1:10a8:f859:c922])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eaf43cf42sm17731638f8f.64.2025.04.16.09.43.03
-        for <yocto-patches@lists.yoctoproject.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Apr 2025 09:43:03 -0700 (PDT)
-From: Richard Purdie <richard.purdie@linuxfoundation.org>
+ dkim=fail reason="dkim: body hash did not verify" header.i=@myspectrum.nl header.s=transip-a header.b=q9rnpQYn;
+ spf=pass (domain: myspectrum.nl, ip: 149.210.149.72, mailfrom: oe@myspectrum.nl)
+Received: from submission8.mail.transip.nl (unknown [10.103.8.159])
+	by outbound1.mail.transip.nl (Postfix) with ESMTP id 4ZdjTQ1gPkzRjTn;
+	Thu, 17 Apr 2025 18:07:22 +0200 (CEST)
+Received: from yellow.myspectrum.nl (yellow.myspectrum.nl [136.144.146.76])
+	by submission8.mail.transip.nl (Postfix) with ESMTPSA id 4ZdjTP46Xpz2npc8w;
+	Thu, 17 Apr 2025 18:07:21 +0200 (CEST)
+Received: from yellow.myspectrum.nl (84-27-20-154.cable.dynamic.v4.ziggo.nl [84.27.20.154])
+	(Authenticated sender: sendmail@myspectrum.nl)
+	by yellow.myspectrum.nl (Postfix) with ESMTPSA id 19A59200E2;
+	Thu, 17 Apr 2025 16:07:19 +0000 (UTC)
+Authentication-Results: yellow.myspectrum.nl;
+	auth=pass smtp.auth=sendmail@myspectrum.nl smtp.mailfrom=oe@myspectrum.nl
+Received: by yellow.myspectrum.nl (sSMTP sendmail emulation); Thu, 17 Apr 2025 18:07:19 +0200
+From: oe@myspectrum.nl
 To: yocto-patches@lists.yoctoproject.org
-Subject: [yocto-autobuilder-helper] [PATCH] config.json: Update PACKAGECONFIG to match meta change
-Date: Wed, 16 Apr 2025 17:43:03 +0100
-Message-ID: <20250416164303.1448544-1-richard.purdie@linuxfoundation.org>
-X-Mailer: git-send-email 2.48.1
+Cc: Jose Quaresma <jose.quaresma@foundries.io>,
+	Jeroen Hofstee <jhofstee@victronenergy.com>
+Subject: [meta-lts-mixins][kirkstone/go][PATCH] conf/layer: add scarthgap as compatible
+Date: Thu, 17 Apr 2025 18:07:09 +0200
+Message-ID: <20250417160709.3581248-1-oe@myspectrum.nl>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Scanned-By: ClueGetter at submission8.mail.transip.nl
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=transip-a; d=myspectrum.nl; t=1744906041; h=from:subject:to:cc:date:
+ mime-version; bh=svxfxWYfh/npt3KIYTrmScKqQ/v5ofjBXusd5o7/hxk=;
+ b=q9rnpQYnE3CEXsgP0DvXjqzzr9s6mZ3I9YiaPEOOhcvniPNF8KEGT9oB6JwQ12VQCSWE0w
+ vK6juyJjiPadHLroxXfvVh07BSSOoxy1DDKpEVe9bBxNQPI+CC5y/4/xg5eSOF5m25iNXy
+ e6edI8It8GMwCjDqC1tSVSjDitOGq6HUIrKCPYXU4tF8UxEQeKyoeoiYt2kGl9JAgN5aN8
+ jTZ4GgoMguiLPHKCe1bbfqqLjiYyxAz+nMOQ8MF/O24uv4LgngljOKrmh0kvepVvCCwHPI
+ cjw4N4r8zgiUplCMHvBzkb8k2E4TPx2ZGO+KSbfhL9WoTkQcBaraZrROTt502A==
+X-Report-Abuse-To: abuse@transip.nl
+Content-Transfer-Encoding: quoted-printable
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 16 Apr 2025 16:43:15 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1377
+ <yocto-patches@lists.yoctoproject.org>; Thu, 17 Apr 2025 16:07:29 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1378
 
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+From: Jeroen Hofstee <jhofstee@victronenergy.com>
+
+Scarthgap shipped go 1.22, which is now EOL since the release of
+go 1.24. This adds scarthap as compatible to the kirkstone branch,
+so a newer version of go can be compiled for that release as well.
+While that is a bit mixing releases, that seems rather applicable
+to this repository. Add a note to README that the kirkstone/go
+branch is compatible with both.
+
+Signed-off-by: Jeroen Hofstee <jhofstee@victronenergy.com>
 ---
- config.json | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ README          | 7 +++++++
+ conf/layer.conf | 2 +-
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/config.json b/config.json
-index 03472a5..0631023 100644
---- a/config.json
-+++ b/config.json
-@@ -1531,7 +1531,7 @@
-                 "BBTARGETS" : "core-image-sato",
-                 "SANITYTARGETS" : "core-image-sato:do_testimage",
-                 "extravars" : [
--                    "PACKAGECONFIG:append:x86-64:pn-mesa = ' gallium-llvm gallium r600'"
-+                    "PACKAGECONFIG:append:x86-64:pn-mesa = ' gallium-llvm gallium amd'"
-                 ]
-             },
-             "step8" : {
+diff --git a/README b/README
+index d0b6bc4..b12c360 100644
+--- a/README
++++ b/README
+@@ -5,6 +5,13 @@ and officially Kirkstone supports only that. This thin s=
+pecial-purpose mixin
+ layer is meant to address this issue by backporting Go recipes from the =
+master
+ branch of openembedded-core.
+=20
++A the time Scarthgap was released in April 2024, Go 1.22 was the latest =
+version
++and officially Scarthgap supports only that. Since the branches for Kirk=
+stone
++and Scarthgap would be the same and they are supported till April 2026, =
+the
++kirkstone/go branch is marked as compatible with Scarthgap as well.
++
++NOTE: The branch name might be subject to change, especially after April=
+ 2026.
++
+ The patches can be backport from openembedded-core with:
+=20
+  git -C ../openembedded-core format-patch --stdout -1 origin/master meta=
+/recipes-devtools/go | \
+diff --git a/conf/layer.conf b/conf/layer.conf
+index 5d1b19f..30a0e00 100644
+--- a/conf/layer.conf
++++ b/conf/layer.conf
+@@ -8,7 +8,7 @@ BBFILE_COLLECTIONS +=3D "lts-go-mixin"
+ BBFILE_PATTERN_lts-go-mixin :=3D "^${LAYERDIR}/"
+ BBFILE_PRIORITY_lts-go-mixin =3D "6"
+=20
+-LAYERSERIES_COMPAT_lts-go-mixin =3D "kirkstone"
++LAYERSERIES_COMPAT_lts-go-mixin =3D "kirkstone scarthgap"
+=20
+ LAYERDEPENDS_lts-go-mixin =3D " \
+     core \
+--=20
+2.43.0
+
 
