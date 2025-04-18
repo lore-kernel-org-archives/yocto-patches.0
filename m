@@ -1,148 +1,186 @@
-Return-Path: <ecordonnier@snap.com>
+Return-Path: <foss@0leil.net>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11DCCC369AB
-	for <webhook@archiver.kernel.org>; Fri, 18 Apr 2025 14:43:10 +0000 (UTC)
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
- by mx.groups.io with SMTP id smtpd.web11.13456.1744987385122256162
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13543C369D0
+	for <webhook@archiver.kernel.org>; Fri, 18 Apr 2025 14:50:50 +0000 (UTC)
+Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
+ by mx.groups.io with SMTP id smtpd.web11.13630.1744987845176523052
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 18 Apr 2025 07:43:05 -0700
+ Fri, 18 Apr 2025 07:50:45 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@snap.com header.s=google header.b=N3aMvmHj;
- spf=pass (domain: snapchat.com, ip: 209.85.208.41, mailfrom: ecordonnier@snapchat.com)
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e61d91a087so2989555a12.0
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 18 Apr 2025 07:43:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=snap.com; s=google; t=1744987383; x=1745592183; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wJ2ILV5HrFohislroMG6JziS4YvU8A40692xDhdGYOE=;
-        b=N3aMvmHjypbZ2osiWhjE0mn3Kx4V9Yr/2++LEntnPZWsLeHjXgJc8RM77PcKn+6wkg
-         DMvXui9OCTlxnboWDFtf6Ekg6PYKcxeqALSdXooT8hXBEXQ/VoIUZF9YPB0OOA/ADWqf
-         dQiWApMbQNPQ4D4ta+UNO+udQsKEKF6jg3Tws=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744987383; x=1745592183;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wJ2ILV5HrFohislroMG6JziS4YvU8A40692xDhdGYOE=;
-        b=PgREje6KL/DXZd8l2+I0SzGx2qK3W9TB7llwONIuc1hoYJXUkMEQCzetWfhVJhOlrL
-         Urz3FaiwM7JBTz62N8CpIysHCi90PAI7DdrT5r6B6KfYuc3kEESbo5e2exg/m21SwheN
-         OcLZThAvPnagqTeNZqAD3b70q3vIffhjsEshLyrp37fUpSknvSuubiqbiPRlNiy2CERM
-         y3TYHZHDMw2pprSMIzEqwBQ0TcfaCGzgTa15sFmxwzt3qonWcrBMPp6nEmZ4vrCI4LJd
-         VK6JEi1GKK9hh0BX66axzTdsLC9Ce9UcsoWUB7pfU8Px/bz06fqwx1y5CD7SzRizl4FN
-         uFZg==
-X-Gm-Message-State: AOJu0YwlEcJOGwv1RJPbINhojmu1c7K1avSzuzry66r/QKHfNZaHNsGG
-	EfQh/5zGxQt994ZLIX1JLU1OLCoZVl7GvFWerdqAtZxronG6ngulLYNtBc114WENl64cDkl9ksD
-	XsbM=
-X-Gm-Gg: ASbGncuMaLVbuOo/SaU7netCP+SPtYqSc+721FkNo3JanueulKUDUD7fUo4F7SeLZdN
-	vnWiPLCkcEo8feYnyOtKoy4ftVrCp3rSAerUfsk5VLXfdhb4IjNicynCP8bn/Fh3cEJ2z+0UjBB
-	53nXt0XRA3n7is6r/plwY48Uo64HDurt24t/BRvx5UA8c3SCcZu+TLAFk5ZirrAZVfuKTOxTJZq
-	kuTRA/QJgnXlHX2IZ6/NLRFgNuwaQcsFO6zK/dvP01I5JaDyJjJsazyHc0tuvq3QtV57N+h/WMg
-	VIwISg/QeWWah3fz1e0PoOYkGBlc22nZTtezlvLQvdpRa2B5rXVF
-X-Google-Smtp-Source: AGHT+IEtZ4gPStkPDk3oiTTkkkKdu2fUrETcLxf198gjFmR5ykh4TrCYRdozObxwUEPMLA7rq2kscA==
-X-Received: by 2002:a05:6402:1d48:b0:5e6:1842:1346 with SMTP id 4fb4d7f45d1cf-5f62860e171mr2319894a12.30.1744987383234;
-        Fri, 18 Apr 2025 07:43:03 -0700 (PDT)
-Received: from lj8k2dq3.sc-core.net ([85.237.126.22])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f625a3e212sm1041281a12.78.2025.04.18.07.43.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Apr 2025 07:43:03 -0700 (PDT)
-From: ecordonnier@snap.com
-To: yocto-patches@lists.yoctoproject.org
-Cc: Etienne Cordonnier <ecordonnier@snap.com>
-Subject: [meta-darwin][PATCH] Fix libzstd error on MacOS>=15.4
-Date: Fri, 18 Apr 2025 16:42:53 +0200
-Message-ID: <20250418144253.780489-1-ecordonnier@snap.com>
-X-Mailer: git-send-email 2.43.0
+ dkim=none (message not signed); spf=pass (domain: 0leil.net, ip: 45.157.188.10, mailfrom: foss+yocto@0leil.net)
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZfHkW4R0KzXp;
+	Fri, 18 Apr 2025 16:50:43 +0200 (CEST)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZfHkV6qyrz3Ny;
+	Fri, 18 Apr 2025 16:50:42 +0200 (CEST)
+From: Quentin Schulz <foss+yocto@0leil.net>
+Date: Fri, 18 Apr 2025 16:50:16 +0200
+Subject: [meta-rockchip PATCH v2 4/9] bsp: rkbin: ddr: allow to customize
+ DDR bin blob
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250418-ddrbin-custom-v2-4-700828527faf@cherry.de>
+References: <20250418-ddrbin-custom-v2-0-700828527faf@cherry.de>
+In-Reply-To: <20250418-ddrbin-custom-v2-0-700828527faf@cherry.de>
+To: yocto-patches@lists.yoctoproject.org
+Cc: Quentin Schulz <quentin.schulz@cherry.de>
+X-Mailer: b4 0.14.2
+X-Infomaniak-Routing: alpha
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 18 Apr 2025 14:43:10 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1386
+ <yocto-patches@lists.yoctoproject.org>; Fri, 18 Apr 2025 14:50:50 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1391
 
-From: Etienne Cordonnier <ecordonnier@snap.com>
+From: Quentin Schulz <quentin.schulz@cherry.de>
 
-libzstd duplicates the LDFLAGS when compiling libzstd, and the dynamic loader of MacOS
-version 15.4 treats this duplicated LC_RPATH (two LC_RPATH pointing to the same path) as an error
-and refuses to load the library.
+Rockchip provides a tool to customize the DDR bin blob which can prove
+to be extremely useful, for example if your HW doesn't follow the HW
+reference design and uses a different UART controller or UART mux for
+the serial console, or use a different baudrate.
 
-Reported upstream as https://github.com/facebook/zstd/issues/4369
+If RKBIN_DDR_RECONFIGURE is set to 1 for a machine, a ddrbin_params.txt
+needs to be provided for said machine and ddrbin_tool.py will be run
+against it to generate a new custom binary with the desired config.
 
-Signed-off-by: Etienne Cordonnier <ecordonnier@snap.com>
+Note that future implementations may allow to provide configuration
+through a different mechanism than a simple and difficult to
+maintain/modify file. E.g. this doesn't really work well when one wants
+to have this in sync with SERIAL_CONSOLES for example. But that may be
+much harder to support as the serial controller index in
+SERIAL_CONSOLES does not necessarily match the hardware index expected
+by ddrbin_params.txt. It also doesn't provide the UART mux.
+
+In any case, I believe this is a decent start at allowing customization
+of the DDR bin blob without having to provide a blob directly in-tree.
+
+Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
 ---
- ...ix-duplicate-LC_RPATH-error-on-MacOS.patch | 48 +++++++++++++++++++
- recipes-extended/zstd/zstd_%.bbappend         |  2 +
- 2 files changed, 50 insertions(+)
- create mode 100644 recipes-extended/zstd/zstd/0001-Fix-duplicate-LC_RPATH-error-on-MacOS.patch
+ README                                      | 20 ++++++++++++-
+ recipes-bsp/rkbin/rockchip-rkbin-ddr_git.bb | 44 +++++++++++++++++++++++++++++
+ 2 files changed, 63 insertions(+), 1 deletion(-)
 
-diff --git a/recipes-extended/zstd/zstd/0001-Fix-duplicate-LC_RPATH-error-on-MacOS.patch b/recipes-extended/zstd/zstd/0001-Fix-duplicate-LC_RPATH-error-on-MacOS.patch
-new file mode 100644
-index 0000000..b765082
---- /dev/null
-+++ b/recipes-extended/zstd/zstd/0001-Fix-duplicate-LC_RPATH-error-on-MacOS.patch
-@@ -0,0 +1,48 @@
-+From 30a4af206739e37d6203747792a6b15bf952483d Mon Sep 17 00:00:00 2001
-+From: Etienne Cordonnier <ecordonnier@snap.com>
-+Date: Fri, 18 Apr 2025 14:37:50 +0200
-+Subject: [PATCH] Fix duplicate LC_RPATH error on MacOS
-+
-+After the update to MacOS 15.4, the dynamic loader dyld treats duplicated LC_RPATH as an error.
-+The `FLAGS` variable already contains `LDFLAGS`, thus using both `FLAGS` and `LDFLAGS`
-+duplicates all `LDFLAGS`, including `-Wl,rpath` parameters.
-+
-+The duplicate LC_RPATH causes this kind of errors:
-+
-+```
-+dyld[29361]: Library not loaded: @loader_path/../lib/libzstd.1.dylib
-+      Referenced from: <7131C877-3CF0-33AC-AA05-257BA4FDD770> /Users/foobar/...
-+      Reason: tried: '/Users/foobar/..../lib/libzstd.1.dylib' (duplicate LC_RPATH '/usr/mypath.../lib')
-+```
-+
-+Upstream-Status: Pending
-+Signed-off-by: Etienne Cordonnier <ecordonnier@snap.com>
-+---
-+ lib/Makefile | 4 ++--
-+ 1 file changed, 2 insertions(+), 2 deletions(-)
-+
-+diff --git a/lib/Makefile b/lib/Makefile
-+index a4cf61ab..e1ffba91 100644
-+--- a/lib/Makefile
-++++ b/lib/Makefile
-+@@ -160,7 +160,7 @@ $(ZSTD_DYNLIB): $(ZSTD_DYNLIB_OBJ)
-+ 	$(if $(filter -DZSTD_MULTITHREAD,$(CPPFLAGS)),\
-+     @echo compiling multi-threaded dynamic library $(LIBVER),\
-+     @echo compiling single-threaded dynamic library $(LIBVER))
-+-	$(CC) $(FLAGS) $^ $(LDFLAGS) $(SONAME_FLAGS) -o $@
-++	$(CC) $(FLAGS) $^ $(SONAME_FLAGS) -o $@
-+ 	@echo creating versioned links
-+ 	ln -sf $@ libzstd.$(SHARED_EXT_MAJOR)
-+ 	ln -sf $@ libzstd.$(SHARED_EXT)
-+@@ -236,7 +236,7 @@ libzstd-nomt: LDFLAGS += -shared
-+ libzstd-nomt: $(ZSTD_NOMT_FILES)
-+ 	@echo compiling single-thread dynamic library $(LIBVER)
-+ 	@echo files : $(ZSTD_NOMT_FILES)
-+-	$(CC) $(FLAGS) $^ $(LDFLAGS) $(SONAME_FLAGS) -o $@
-++	$(CC) $(FLAGS) $^ $(SONAME_FLAGS) -o $@
-+ 
-+ .PHONY: clean
-+ clean:
-+-- 
-+2.43.0
-+
-diff --git a/recipes-extended/zstd/zstd_%.bbappend b/recipes-extended/zstd/zstd_%.bbappend
-index bb583f6..8572d37 100644
---- a/recipes-extended/zstd/zstd_%.bbappend
-+++ b/recipes-extended/zstd/zstd_%.bbappend
-@@ -1,3 +1,5 @@
- FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
+diff --git a/README b/README
+index 6bceba0c9cf09cc0fc881c855fabeeb68aeb55fb..9672c6ab8d5b2ce004a33bfb825969ab958d8834 100644
+--- a/README
++++ b/README
+@@ -55,7 +55,7 @@ Status of supported boards:
  
- EXTRA_OEMAKE:append:darwin21 = " UNAME='Darwin'"
+ Notes:
+ -----
+-  Custom DDR rkbin version:
++  Customize DDR rkbin:
+ 	If you wish to use a different version of DDR binary provided by
+ 	rockchip-rkbin-ddr recipe than the one in this layer, you can create a
+ 	.bbappend in your own layer, and accordingly set SRCREV (possibly
+@@ -70,6 +70,24 @@ Notes:
+ 		DDRBIN_VERS:my-machine = "v2.07"
+ 		DDRBIN_FILE:my-machine = "rk3308_ddr_451MHz_uart4_m0_${DDRBIN_VERS}.bin"
+ 
++	If you wish to use a configuration for the DDR binary blob provided in
++	rockchip-rkbin-ddr recipe that differs from the default, you can set the
++	RKBIN_DDR_RECONFIGURE variable to 1 for your machine, e.g.:
 +
-+SRC_URI:append:class-nativesdk = " file://0001-Fix-duplicate-LC_RPATH-error-on-MacOS.patch"
++		RKBIN_DDR_RECONFIGURE:my-machine = "1"
++
++	You will need to provide your custom ddrbin_param.txt via your bbappend, e.g.
++	your ddrbin_param in
++	meta-my-layer/recipes-bsp/rkbin/rockchip-rkbin-ddr/my-machine/ddrbin_param.txt
++	and a bbappend, e.g. in meta-my-layer/recipes-bsp/rkbin/rockchip-rkbin-ddr_git.bbappend,
++	which contains:
++
++		FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
++
++	As for the content of ddrbin_param.txt,
++	https://github.com/rockchip-linux/rkbin/blob/master/tools/ddrbin_tool_user_guide.txt
++	may help.
++
+   rk3308 rkbin:
+ 	The latest ddr initializer for the rk3308 platform does not output
+ 	diagnostic messages to uart0. This causes a bunch of gibberish to
+diff --git a/recipes-bsp/rkbin/rockchip-rkbin-ddr_git.bb b/recipes-bsp/rkbin/rockchip-rkbin-ddr_git.bb
+index 546560cf58b0480efd0f89ff21639c7b78f70530..c368d3f59a39e73cb95ac0018ea93c013d1ebb3d 100644
+--- a/recipes-bsp/rkbin/rockchip-rkbin-ddr_git.bb
++++ b/recipes-bsp/rkbin/rockchip-rkbin-ddr_git.bb
+@@ -6,6 +6,7 @@ DDRBIN_DIR:rk3308 ?= "bin/rk33/"
+ DDRBIN_VERS:rk3308 ?= "v2.10"
+ DDRBIN_FILE:rk3308 ?= "rk3308_ddr_589MHz_uart4_m0_${DDRBIN_VERS}.bin"
+ DDRBIN_DEPLOY_FILENAME:rk3308 ?= "ddr-rk3308.bin"
++DDRBIN_TOOL_SOC:rk3308 ?= "rk3308"
+ 
+ do_deploy:rk3308() {
+ 	# Prebuilt U-Boot TPL (DDR init)
+@@ -16,6 +17,7 @@ DDRBIN_DIR:rk3566 ?= "bin/rk35/"
+ DDRBIN_VERS:rk3566 ?= "v1.23"
+ DDRBIN_FILE:rk3566 ?= "rk3566_ddr_1056MHz_${DDRBIN_VERS}.bin"
+ DDRBIN_DEPLOY_FILENAME:rk3566 ?= "ddr-rk3566.bin"
++DDRBIN_TOOL_SOC:rk3566 ?= "rk356x"
+ 
+ do_deploy:rk3566() {
+ 	# Prebuilt U-Boot TPL (DDR init)
+@@ -26,6 +28,7 @@ DDRBIN_DIR:rk3568 ?= "bin/rk35/"
+ DDRBIN_VERS:rk3568 ?= "v1.23"
+ DDRBIN_FILE:rk3568 ?= "rk3568_ddr_1560MHz_${DDRBIN_VERS}.bin"
+ DDRBIN_DEPLOY_FILENAME:rk3568 ?= "ddr-rk3568.bin"
++DDRBIN_TOOL_SOC:rk3568 ?= "rk356x"
+ 
+ do_deploy:rk3568() {
+ 	# Prebuilt U-Boot TPL (DDR init)
+@@ -36,8 +39,49 @@ DDRBIN_DIR:rk3588s ?= "bin/rk35/"
+ DDRBIN_VERS:rk3588s ?= "v1.18"
+ DDRBIN_FILE:rk3588s ?= "rk3588_ddr_lp4_2112MHz_lp5_2400MHz_${DDRBIN_VERS}.bin"
+ DDRBIN_DEPLOY_FILENAME:rk3588s ?= "ddr-rk3588.bin"
++DDRBIN_TOOL_SOC:rk3588s ?= "rk3588"
+ 
+ do_deploy:rk3588s() {
+ 	# Prebuilt U-Boot TPL (DDR init)
+ 	install -m 644 ${S}/${DDRBIN_DIR}${DDRBIN_FILE} ${DEPLOYDIR}/${DDRBIN_DEPLOY_FILENAME}
+ }
++
++# The following is only required if DDR bin blob needs to be modified
++# (e.g. different UART controller, UART mux, or baudrate)
++# RKBIN_DDR_RECONFIGURE = "1" if it needs to be modified, all below logic needs to
++# depend on that value be 1, and not run if 0.
++RKBIN_DDR_RECONFIGURE ?= "0"
++
++# The tool (ddrbin_tool.py) for modifying the DDR bin is from rockchip-rkbin-native...
++DEPENDS += "${@'rockchip-rkbin-native' if d.getVar('RKBIN_DDR_RECONFIGURE') == '1' else ''}"
++
++# ... and it expects a file as input, which is named ddrbin_param.txt in the tree.
++SRC_URI += "${@'file://ddrbin_param.txt' if d.getVar('RKBIN_DDR_RECONFIGURE') == '1' else ''}"
++
++python __anonymous() {
++    # Because rockchip-rkbin.inc inherits bin_package and we need to run some step before
++    # the install task re-enable do_configure task.
++    # We could use
++    #  do_configure[noexec] = "${@'0' if d.getVar('RKBIN_DDR_RECONFIGURE') == '1' else '1'}"
++    # but this spams the console with deprecation warnings, see
++    # https://bugzilla.yoctoproject.org/show_bug.cgi?id=13808
++    if d.getVar('RKBIN_DDR_RECONFIGURE') == '1':
++        d.delVarFlag("do_configure", "noexec")
++}
++
++do_configure() {
++	if [ "${RKBIN_DDR_RECONFIGURE}" = "1" ]; then
++		# ddrbin_tool.py always modifies a date in the DDR blob, based on current time.
++		# This is bad for reproducibility and hashequiv usage, so use the commit author
++		# date of the last change made to the DDR bin.
++		# DATE must be max 17-character long!
++		RKBIN_DDR_DATE=$(git log --pretty=format:"%ad" --date=format:"%Y%m%d-%H:%M:%S" -1 -- ${S}/${DDRBIN_DIR}${DDRBIN_FILE})
++		# DDRBIN_TOOL_SOC is mostly useless except for rk3528 for now. It needs to match one string in the global
++		# chip_list array in ddrbin_tool.py.
++		if [ -z "${DDRBIN_TOOL_SOC}" ]; then
++			bbfatal "Non-empty DDRBIN_TOOL_SOC:<MACHINE> required!"
++		fi
++		# Modify blob with appropriate settings stored in ddrbin_params.txt
++		ddrbin_tool.py ${DDRBIN_TOOL_SOC} ${UNPACKDIR}/ddrbin_param.txt ${S}/${DDRBIN_DIR}${DDRBIN_FILE} --verinfo_editable "${RKBIN_DDR_DATE}"
++	fi
++}
+
 -- 
-2.43.0
+2.49.0
 
 
