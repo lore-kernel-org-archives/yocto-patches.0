@@ -2,27 +2,27 @@ Return-Path: <foss@0leil.net>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AD45C369D4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12491C369CF
 	for <webhook@archiver.kernel.org>; Fri, 18 Apr 2025 14:50:50 +0000 (UTC)
-Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
- by mx.groups.io with SMTP id smtpd.web10.13439.1744987849409595125
+Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [45.157.188.14])
+ by mx.groups.io with SMTP id smtpd.web10.13438.1744987846073320776
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 18 Apr 2025 07:50:49 -0700
+ Fri, 18 Apr 2025 07:50:46 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: 0leil.net, ip: 185.125.25.10, mailfrom: foss+yocto@0leil.net)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZfHkb74Hkz2hY;
-	Fri, 18 Apr 2025 16:50:47 +0200 (CEST)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZfHkb39lzz190;
-	Fri, 18 Apr 2025 16:50:47 +0200 (CEST)
+ dkim=none (message not signed); spf=pass (domain: 0leil.net, ip: 45.157.188.14, mailfrom: foss+yocto@0leil.net)
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZfHkX3sCXztmg;
+	Fri, 18 Apr 2025 16:50:44 +0200 (CEST)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZfHkW6bBXz1tb;
+	Fri, 18 Apr 2025 16:50:43 +0200 (CEST)
 From: Quentin Schulz <foss+yocto@0leil.net>
-Date: Fri, 18 Apr 2025 16:50:21 +0200
-Subject: [meta-rockchip PATCH v2 9/9] bsp: rkbin: bump to latest commit in
- master branch
+Date: Fri, 18 Apr 2025 16:50:17 +0200
+Subject: [meta-rockchip PATCH v2 5/9] bsp: rkbin: ddr: factor out do_deploy
+ to be SoC-agnostic
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250418-ddrbin-custom-v2-9-700828527faf@cherry.de>
+Message-Id: <20250418-ddrbin-custom-v2-5-700828527faf@cherry.de>
 References: <20250418-ddrbin-custom-v2-0-700828527faf@cherry.de>
 In-Reply-To: <20250418-ddrbin-custom-v2-0-700828527faf@cherry.de>
 To: yocto-patches@lists.yoctoproject.org
@@ -33,68 +33,124 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Fri, 18 Apr 2025 14:50:50 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1396
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1392
 
 From: Quentin Schulz <quentin.schulz@cherry.de>
 
-This bumps rkbin to be using the last public blobs.
+The do_deploy task is essentially the same for all SoCs, install a file
+from a specific path to another one.
+
+No magic involved, so let's rather have one generic do_deploy task. For
+this to work nicely, we check that all necessary variables are set and
+notify the developer otherwise. This may be useful whenever a new SoC
+will be supported by this recipe.
 
 Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
 ---
- recipes-bsp/rkbin/rockchip-rkbin-optee-os_git.bb | 6 +++---
- recipes-bsp/rkbin/rockchip-rkbin-tf-a_git.bb     | 2 +-
- recipes-bsp/rkbin/rockchip-rkbin.inc             | 2 +-
- 3 files changed, 5 insertions(+), 5 deletions(-)
+ recipes-bsp/rkbin/rockchip-rkbin-ddr_git.bb | 70 ++++++++++++++---------------
+ 1 file changed, 34 insertions(+), 36 deletions(-)
 
-diff --git a/recipes-bsp/rkbin/rockchip-rkbin-optee-os_git.bb b/recipes-bsp/rkbin/rockchip-rkbin-optee-os_git.bb
-index b534e6359645cd7082c9ac69036de15ce8813b3a..0f3c9277a61ec9798f78107fb2f402b8a792f81d 100644
---- a/recipes-bsp/rkbin/rockchip-rkbin-optee-os_git.bb
-+++ b/recipes-bsp/rkbin/rockchip-rkbin-optee-os_git.bb
-@@ -4,11 +4,11 @@ require rockchip-rkbin.inc
+diff --git a/recipes-bsp/rkbin/rockchip-rkbin-ddr_git.bb b/recipes-bsp/rkbin/rockchip-rkbin-ddr_git.bb
+index c368d3f59a39e73cb95ac0018ea93c013d1ebb3d..5b049f9a2b77a77d8ea44268a1f47c60659e16d1 100644
+--- a/recipes-bsp/rkbin/rockchip-rkbin-ddr_git.bb
++++ b/recipes-bsp/rkbin/rockchip-rkbin-ddr_git.bb
+@@ -2,48 +2,46 @@ DESCRIPTION = "Rockchip Firmware for DDR init (TPL in U-Boot terms)"
  
- PROVIDES += "optee-os"
+ require rockchip-rkbin.inc
  
--RKBIN_BINVERS:rk3308 ?= "v2.08"
-+RKBIN_BINVERS:rk3308 ?= "v2.09"
- RKBIN_BINFILE:rk3308 ?= "rk3308_bl32_${RKBIN_BINVERS}.bin"
- RKBIN_DEPLOY_FILENAME:rk3308 ?= "tee-rk3308.bin"
+-DDRBIN_DIR:rk3308 ?= "bin/rk33/"
+-DDRBIN_VERS:rk3308 ?= "v2.10"
+-DDRBIN_FILE:rk3308 ?= "rk3308_ddr_589MHz_uart4_m0_${DDRBIN_VERS}.bin"
+-DDRBIN_DEPLOY_FILENAME:rk3308 ?= "ddr-rk3308.bin"
+-DDRBIN_TOOL_SOC:rk3308 ?= "rk3308"
++RKBIN_BINDIR:rk3308 ?= "bin/rk33/"
++RKBIN_BINVERS:rk3308 ?= "v2.10"
++RKBIN_BINFILE:rk3308 ?= "rk3308_ddr_589MHz_uart4_m0_${RKBIN_BINVERS}.bin"
++RKBIN_DEPLOY_FILENAME:rk3308 ?= "ddr-rk3308.bin"
  
--RKBIN_BINVERS_RK356x ?= "v2.14"
-+RKBIN_BINVERS_RK356x ?= "v2.15"
- RKBIN_BINVERS:rk3566 ?= "${RKBIN_BINVERS_RK356x}"
- # NOTE: the following are not typos
- #       the rk3566 uses the same bl32 as the rk3568
-@@ -19,6 +19,6 @@ RKBIN_BINVERS:rk3568 ?= "${RKBIN_BINVERS_RK356x}"
- RKBIN_BINFILE:rk3568 ?= "rk3568_bl32_${RKBIN_BINVERS}.bin"
- RKBIN_DEPLOY_FILENAME:rk3568 ?= "tee-rk3568.bin"
+-do_deploy:rk3308() {
+-	# Prebuilt U-Boot TPL (DDR init)
+-	install -m 644 ${S}/${DDRBIN_DIR}${DDRBIN_FILE} ${DEPLOYDIR}/${DDRBIN_DEPLOY_FILENAME}
+-}
++RKBIN_BINDIR:rk3566 ?= "bin/rk35/"
++RKBIN_BINVERS:rk3566 ?= "v1.23"
++RKBIN_BINFILE:rk3566 ?= "rk3566_ddr_1056MHz_${RKBIN_BINVERS}.bin"
++RKBIN_DEPLOY_FILENAME:rk3566 ?= "ddr-rk3566.bin"
  
--RKBIN_BINVERS:rk3588s ?= "v1.17"
-+RKBIN_BINVERS:rk3588s ?= "v1.19"
- RKBIN_BINFILE:rk3588s ?= "rk3588_bl32_${RKBIN_BINVERS}.bin"
- RKBIN_DEPLOY_FILENAME:rk3588s ?= "tee-rk3588.bin"
-diff --git a/recipes-bsp/rkbin/rockchip-rkbin-tf-a_git.bb b/recipes-bsp/rkbin/rockchip-rkbin-tf-a_git.bb
-index 94dfd229c3b92613d9e5313bb8d3296f74cee6d1..98cc28465b4d8ea209c4425d23e7e07e4b83d147 100644
---- a/recipes-bsp/rkbin/rockchip-rkbin-tf-a_git.bb
-+++ b/recipes-bsp/rkbin/rockchip-rkbin-tf-a_git.bb
-@@ -19,6 +19,6 @@ RKBIN_BINVERS:rk3568 ?= "${RKBIN_BINVERS_RK356x}"
- RKBIN_BINFILE:rk3568 ?= "rk3568_bl31_${RKBIN_BINVERS}.elf"
- RKBIN_DEPLOY_FILENAME:rk3568 ?= "tee-rk3568.elf"
+-DDRBIN_DIR:rk3566 ?= "bin/rk35/"
+-DDRBIN_VERS:rk3566 ?= "v1.23"
+-DDRBIN_FILE:rk3566 ?= "rk3566_ddr_1056MHz_${DDRBIN_VERS}.bin"
+-DDRBIN_DEPLOY_FILENAME:rk3566 ?= "ddr-rk3566.bin"
+-DDRBIN_TOOL_SOC:rk3566 ?= "rk356x"
++RKBIN_BINDIR:rk3568 ?= "bin/rk35/"
++RKBIN_BINVERS:rk3568 ?= "v1.23"
++RKBIN_BINFILE:rk3568 ?= "rk3568_ddr_1560MHz_${RKBIN_BINVERS}.bin"
++RKBIN_DEPLOY_FILENAME:rk3568 ?= "ddr-rk3568.bin"
  
--RKBIN_BINVERS:rk3588s ?= "v1.47"
-+RKBIN_BINVERS:rk3588s ?= "v1.48"
- RKBIN_BINFILE:rk3588s ?= "rk3588_bl31_${RKBIN_BINVERS}.elf"
- RKBIN_DEPLOY_FILENAME:rk3588s ?= "tee-rk3588.elf"
-diff --git a/recipes-bsp/rkbin/rockchip-rkbin.inc b/recipes-bsp/rkbin/rockchip-rkbin.inc
-index 8a6a9f44ce908934dd58fc3c37d338a43aa00bff..79149c5bebc3c59e337b303f24274ed1925da5ce 100644
---- a/recipes-bsp/rkbin/rockchip-rkbin.inc
-+++ b/recipes-bsp/rkbin/rockchip-rkbin.inc
-@@ -1,5 +1,5 @@
- SRC_URI = "git://github.com/rockchip-linux/rkbin;protocol=https;branch=master"
--SRCREV = "7c35e21a8529b3758d1f051d1a5dc62aae934b2b"
-+SRCREV = "f43a462e7a1429a9d407ae52b4745033034a6cf9"
- LICENSE = "Proprietary"
- LIC_FILES_CHKSUM = "file://LICENSE;md5=11e3673115959bf596feaaa6ea7ce9a5"
+-do_deploy:rk3566() {
+-	# Prebuilt U-Boot TPL (DDR init)
+-	install -m 644 ${S}/${DDRBIN_DIR}${DDRBIN_FILE} ${DEPLOYDIR}/${DDRBIN_DEPLOY_FILENAME}
+-}
++RKBIN_BINDIR:rk3588s ?= "bin/rk35/"
++RKBIN_BINVERS:rk3588s ?= "v1.18"
++RKBIN_BINFILE:rk3588s ?= "rk3588_ddr_lp4_2112MHz_lp5_2400MHz_${RKBIN_BINVERS}.bin"
++RKBIN_DEPLOY_FILENAME:rk3588s ?= "ddr-rk3588.bin"
  
+-DDRBIN_DIR:rk3568 ?= "bin/rk35/"
+-DDRBIN_VERS:rk3568 ?= "v1.23"
+-DDRBIN_FILE:rk3568 ?= "rk3568_ddr_1560MHz_${DDRBIN_VERS}.bin"
+-DDRBIN_DEPLOY_FILENAME:rk3568 ?= "ddr-rk3568.bin"
+ DDRBIN_TOOL_SOC:rk3568 ?= "rk356x"
+-
+-do_deploy:rk3568() {
+-	# Prebuilt U-Boot TPL (DDR init)
+-	install -m 644 ${S}/${DDRBIN_DIR}${DDRBIN_FILE} ${DEPLOYDIR}/${DDRBIN_DEPLOY_FILENAME}
+-}
+-
+-DDRBIN_DIR:rk3588s ?= "bin/rk35/"
+-DDRBIN_VERS:rk3588s ?= "v1.18"
+-DDRBIN_FILE:rk3588s ?= "rk3588_ddr_lp4_2112MHz_lp5_2400MHz_${DDRBIN_VERS}.bin"
+-DDRBIN_DEPLOY_FILENAME:rk3588s ?= "ddr-rk3588.bin"
++DDRBIN_TOOL_SOC:rk3308 ?= "rk3308"
++DDRBIN_TOOL_SOC:rk3566 ?= "rk356x"
+ DDRBIN_TOOL_SOC:rk3588s ?= "rk3588"
+ 
+-do_deploy:rk3588s() {
++do_deploy() {
++	if [ -z "${RKBIN_BINDIR}" ]; then
++		bbfatal "Non-empty RKBIN_BINDIR:<MACHINE> required!"
++	fi
++
++	if [ -z "${RKBIN_BINFILE}" ]; then
++		bbfatal "Non-empty RKBIN_BINFILE:<MACHINE> required!"
++	fi
++
++	if [ -z "${RKBIN_DEPLOY_FILENAME}" ]; then
++		bbfatal "Non-empty RKBIN_DEPLOY_FILENAME:<MACHINE> required!"
++	fi
++
+ 	# Prebuilt U-Boot TPL (DDR init)
+-	install -m 644 ${S}/${DDRBIN_DIR}${DDRBIN_FILE} ${DEPLOYDIR}/${DDRBIN_DEPLOY_FILENAME}
++	install -m 644 ${S}/${RKBIN_BINDIR}${RKBIN_BINFILE} ${DEPLOYDIR}/${RKBIN_DEPLOY_FILENAME}
+ }
+ 
+ # The following is only required if DDR bin blob needs to be modified
+@@ -75,13 +73,13 @@ do_configure() {
+ 		# This is bad for reproducibility and hashequiv usage, so use the commit author
+ 		# date of the last change made to the DDR bin.
+ 		# DATE must be max 17-character long!
+-		RKBIN_DDR_DATE=$(git log --pretty=format:"%ad" --date=format:"%Y%m%d-%H:%M:%S" -1 -- ${S}/${DDRBIN_DIR}${DDRBIN_FILE})
++		RKBIN_DDR_DATE=$(git log --pretty=format:"%ad" --date=format:"%Y%m%d-%H:%M:%S" -1 -- ${S}/${RKBIN_BINDIR}${RKBIN_BINFILE})
+ 		# DDRBIN_TOOL_SOC is mostly useless except for rk3528 for now. It needs to match one string in the global
+ 		# chip_list array in ddrbin_tool.py.
+ 		if [ -z "${DDRBIN_TOOL_SOC}" ]; then
+ 			bbfatal "Non-empty DDRBIN_TOOL_SOC:<MACHINE> required!"
+ 		fi
+ 		# Modify blob with appropriate settings stored in ddrbin_params.txt
+-		ddrbin_tool.py ${DDRBIN_TOOL_SOC} ${UNPACKDIR}/ddrbin_param.txt ${S}/${DDRBIN_DIR}${DDRBIN_FILE} --verinfo_editable "${RKBIN_DDR_DATE}"
++		ddrbin_tool.py ${DDRBIN_TOOL_SOC} ${UNPACKDIR}/ddrbin_param.txt ${S}/${RKBIN_BINDIR}${RKBIN_BINFILE} --verinfo_editable "${RKBIN_DDR_DATE}"
+ 	fi
+ }
 
 -- 
 2.49.0
