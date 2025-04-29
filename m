@@ -1,200 +1,301 @@
-Return-Path: <quentin.schulz@cherry.de>
+Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9F96C3ABA9
-	for <webhook@archiver.kernel.org>; Tue, 29 Apr 2025 08:40:15 +0000 (UTC)
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (EUR05-AM6-obe.outbound.protection.outlook.com [40.107.22.88])
- by mx.groups.io with SMTP id smtpd.web10.13613.1745916012149724770
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD934C369DC
+	for <webhook@archiver.kernel.org>; Tue, 29 Apr 2025 22:12:25 +0000 (UTC)
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+ by mx.groups.io with SMTP id smtpd.web10.3421.1745964738816472729
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 29 Apr 2025 01:40:13 -0700
+ Tue, 29 Apr 2025 15:12:19 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@cherry.de header.s=selector1 header.b=jar6gZbX;
- spf=pass (domain: cherry.de, ip: 40.107.22.88, mailfrom: quentin.schulz@cherry.de)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sHDwauhYFg831fxcGgjOA5flonnn1USjmwfyO6Twv/ZtT6voE3tg2gkDtZk9ZIwuRvE14mHBcnoID69IY5RvHk9eI1up4Jb+Y+nHuWnN/spCHdw9oRAoCqmO+SQC0mKyq+111HIvP6DIgCv+hrk4zVhXOx8j9Bl/Bu1SMgnggzSocbJuRcgxTiLC1N6LvY9lSZObog/ct5SVs5PgKGOMjppDAhWMx25WaEa5+aEL+Yu3F/wmPCSfq5DPD8sG+woNFOcO/vx5/F86axdw5IVf8Tk8SgJpaAIqh0Uc8iHmqI38L5Pz4ZKEerfYrz9u9mvaE0GJDtuG0iwv5Yh0hEpOuQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=48vsntABIuH/9myeff9i3NEuFcVfS1ZPVf9+lhKXP4I=;
- b=pFSAXnPXH8yoiznltKfS7P6Va/LUWxUDX6rSgiGUlquxXpxf1Cjpa3Q2xR2CvL7X2kLFJtgxvap8HVfOmMve3zEu8DVI/gPcxf9WTtklNp7b0v4l0d+w9NT6FHb869gHilojN+Tel2XXRxYt+wymammaWgGbs+KGxxnc2YFB2YWvkMdOgyr6kbr9bTN/5oho/Gl9oMX1PXggJa7JmyfoR2SGcIkkr2Ol6kLkcWx7fDKFnp+LT+9qVQCpq5cgblbDEVWo46HoM+eDLuZZdzUf/h+W9Y8BatKFp3LNJ32oHCpHdPkW2bk0hhp7TMPu6ddRFuRBU5oouSZi1GUTrX8rKg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=48vsntABIuH/9myeff9i3NEuFcVfS1ZPVf9+lhKXP4I=;
- b=jar6gZbX1JEcZGTKWbgqtywkpVXSFvwVmv6oOSZYnJaA4vVGJYw9qsaF8kB3oUC5qC/wUjWxiS3bjQH1wKaSR2Soy6d6djLsqwVtKE27tlZ2SqeYBRHgthrhyVGB8pyKFzjKW3/ewK+PNk384rF1oTRka6g2xg22Wykv25OOHKw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com (2603:10a6:20b:42c::20)
- by VI1PR04MB7086.eurprd04.prod.outlook.com (2603:10a6:800:121::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.35; Tue, 29 Apr
- 2025 08:40:07 +0000
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::35f6:bc7d:633:369a]) by AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::35f6:bc7d:633:369a%7]) with mapi id 15.20.8678.028; Tue, 29 Apr 2025
- 08:40:06 +0000
-Message-ID: <897c2e80-3df9-4be8-8996-47fcf7c56d3e@cherry.de>
-Date: Tue, 29 Apr 2025 10:40:05 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [meta-rockchip PATCH v2 7/9] bsp: rkbin: tf-a: factor out
- do_deploy to be SoC-agnostic
-To: Quentin Schulz <foss+yocto@0leil.net>,
- yocto-patches@lists.yoctoproject.org
-References: <20250418-ddrbin-custom-v2-0-700828527faf@cherry.de>
- <20250418-ddrbin-custom-v2-7-700828527faf@cherry.de>
-Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <20250418-ddrbin-custom-v2-7-700828527faf@cherry.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: WA2P291CA0040.POLP291.PROD.OUTLOOK.COM
- (2603:10a6:1d0:1f::24) To AS8PR04MB8897.eurprd04.prod.outlook.com
- (2603:10a6:20b:42c::20)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=eyc1sLNT;
+ spf=pass (domain: konsulko.com, ip: 209.85.219.50, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6ed0cc5eca4so3679886d6.1
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 29 Apr 2025 15:12:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=konsulko.com; s=google; t=1745964738; x=1746569538; darn=lists.yoctoproject.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jdw0GEgzHSOU8jgyvSoynccx/2NFjZqVmEbZNsKjIyM=;
+        b=eyc1sLNT59eqPFpDmVnLeGvkH5vJaWgMydL8k/sOy+6GXyDiT5iaWOfCla+TABTVwT
+         AgHGQhWT0sYlh/cB2IhjGpAx9rROcZ2DfDvVw4fWvPPUJx9+lGXg2amnS5QONisHc6PU
+         t2cPg8lL8rNKAgq6Lo3i3/E5xI/eBLLT8bZIQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745964738; x=1746569538;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jdw0GEgzHSOU8jgyvSoynccx/2NFjZqVmEbZNsKjIyM=;
+        b=CcSgkiJyzX3l8K2ocDdfZx/PePuJKrWShz7F6NpsSW3OqRDsO2101VMbMib2QiPvG/
+         c0GAJPEvmR9MT3+HiRes1MzeyJMJVwmP6RHoUvCuA9dWXjFzkb9vyOmmyIi62pQ+K+Ec
+         IBJ6uf8cnmngtQ1leXxwUKG8rDFEYtI7atOn6TT/BI1fWHVxpF5XVxNIckY7Pbx9tOsg
+         fTyZI22LPpJELyCnCJ585R24TrmJdll4daSOuD/ZyNaTE226kvOW4MGtD9qLPaXd6upf
+         JIfBGItVieU46mkQDuEF8TStlJ6c2SgsoVdqenOieeNERYLM3wgZviuBfx/L69TzyqHJ
+         ll6g==
+X-Forwarded-Encrypted: i=1; AJvYcCUHtqjf5fM+A2WnBt3+47pJaG6OuqSRo/b7jzoU7Pt9Yw0x1mNOD/QwNOpWB4bJntQLmvLSDOZKkFlbqTYm@lists.yoctoproject.org
+X-Gm-Message-State: AOJu0Yyt+hCkdab+QnASGBphp+YIJHk2qAIttvUHKfahV3VnZLaEIDhA
+	OnocgBWoBTN2ZHZk2dWmIchrhDh47C8iKATMb6z77uMziTIIJH9TrdPKqsu2tIM=
+X-Gm-Gg: ASbGncuBUPl4UP7pGSSuRHGJhA1eaGAvY/CQJL8bl0tXknLN4f+asOy7PI+g73KXFlk
+	MipgvL0ZvTHiCI8vM1wsLHB9+6/Fvjr50lT7evi0TCIFTU9eqm0qlVENhciDdrRGBfbNSgb8/4C
+	qYqtoCCpamhFaiODKw/X7ZeMl9lT8pMNdBBrwFjeX45IUkhf/dkcEa7/+CxfLA1nMBDbyu5+wcq
+	oZUArcNKbeuDgYLR5rzZ6tAukuaII9/3s2SLuFmvlpRTax/PdU9bFTnRpNAyzk0oD8Ua1WgtV+p
+	5kjjGD1mX3+LpdJxRk5O9sZ1/MT+qw3i0w+ssErbRvbUF8nr0rvFbk14aWDBP+RlzaA69RFFcRI
+	=
+X-Google-Smtp-Source: AGHT+IEwT2+lDzTB4hURHb1YrlZIaI2gPf531odS1kSbKApx1KtDPq79n8IVQKM2TJqCYb1yTrDGnw==
+X-Received: by 2002:ad4:5c8b:0:b0:6e4:5a38:dd0f with SMTP id 6a1803df08f44-6f4fdc8fc2fmr10095316d6.4.1745964737759;
+        Tue, 29 Apr 2025 15:12:17 -0700 (PDT)
+Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f4fe6abee3sm747296d6.13.2025.04.29.15.12.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Apr 2025 15:12:16 -0700 (PDT)
+Date: Tue, 29 Apr 2025 18:12:03 -0400 (EDT)
+From: Scott Murray <scott.murray@konsulko.com>
+To: "Sambu, Soumya" <Soumya.Sambu@windriver.com>
+cc: Khem Raj <raj.khem@gmail.com>, "akuster@mvista.com" <akuster@mvista.com>, 
+    "MacLeod, Randy" <Randy.MacLeod@windriver.com>, 
+    "Yang, Liezhi" <Liezhi.Yang@windriver.com>, 
+    "yocto-patches@lists.yoctoproject.org" <yocto-patches@lists.yoctoproject.org>
+Subject: Re: [yocto-patches] [meta-lts-mixins][kirkstone/rust][PATCH 1/1]
+ mozjs: Use RUST_HOST_SYS and RUST_TARGET_SYS
+In-Reply-To: <CY8PR11MB79216DC25AB00009E2C1BD9181802@CY8PR11MB7921.namprd11.prod.outlook.com>
+Message-ID: <7f70b6cc-1942-bf33-71e8-0cd1fca87e17@konsulko.com>
+References: <20250318032001.2031160-1-soumya.sambu@windriver.com> <d8e7feba-e083-300f-a82f-c483162da8e0@konsulko.com> <CY8PR11MB7921603720483CCF392BC06C81A62@CY8PR11MB7921.namprd11.prod.outlook.com> <CY8PR11MB79218088835F33FAD84274B381AA2@CY8PR11MB7921.namprd11.prod.outlook.com>
+ <CAMKF1soMKkj2j6RsRnj32P6BRCChr+4RV8UBvyYkqQPPbhA8Pw@mail.gmail.com> <183412FA0374DFBE.31078@lists.yoctoproject.org> <0ced6e87-1823-5a99-aa83-cc3ebdea6940@konsulko.com> <CY8PR11MB79216DC25AB00009E2C1BD9181802@CY8PR11MB7921.namprd11.prod.outlook.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|VI1PR04MB7086:EE_
-X-MS-Office365-Filtering-Correlation-Id: e7c6bde4-ae89-4084-f515-08dd86f97188
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?ZWgyeE5qcDgwVGhQRjR0S09zNDBPUHJLK1dLd29IVlNBeUZvckNzUzBtcUl1?=
- =?utf-8?B?eGNUeDZLMkJlcnpLcEcxVXVOSm1JUnRsTUNFNTVDZ0RpTDcwOWdNL3hoYUtK?=
- =?utf-8?B?ZGV0cHNDRDRkQlFqZEoyWkpndUVYUHVUWnhOcTcveEY4QkZxb1NxeC9sZlQ4?=
- =?utf-8?B?L1o3bEcvUSt1dzNUendmUEpsUTZyeHU1cSswa1lTL0JINkZxM0lLc1NaK2dz?=
- =?utf-8?B?dFR5VU1oQ2g4MW5nVWVhN3VENU1IMkxxVFdqUE5VVDRoOGNCTGNlbkFVWG5E?=
- =?utf-8?B?aDlqVVBJMjR6ZTNDUE1sZWNLR0RzM0xxVitzTU5IcitUVkdtVkJBWkZyejhv?=
- =?utf-8?B?TEoyWERlRW9GTmVDM2M4QzN2aFJLK3F0OHhGSS9ZbkdDcjFlKytRd3o1WW9j?=
- =?utf-8?B?RXlFWUFrSmZrSk1wZ2Z5eXN1RFlXeXBubUNsU0VlbGdQb1NHSGRCS3dycW0x?=
- =?utf-8?B?OVZnR0NaRUVPNitEMW5jVC9yTlFnMEw4Y0pTNGpyU3VaQ2NkV1Z2MGpycm00?=
- =?utf-8?B?czQwSVkxSHlpTEY4Rk1pY24rVWZTUC8rTVB5MU9NY2luNU5FaVJyeEgwTXVN?=
- =?utf-8?B?WjM3N1l0RmtEUmdVNVJ6SlpwZnZvYStOdXZ3M1JsM1h1MDZFd2lxNFB1VWl3?=
- =?utf-8?B?NklDQVlLTTljazVtV0ZiYVJvcjlnMWxWTU1UZWo1MWRJejlrRzNycjh3eHd4?=
- =?utf-8?B?WGVZdFVqcDlXQ1ZzNm5mWmNuR2d2TjJUQlhpVFZpVi84U1V6a0xhTzBOYVRI?=
- =?utf-8?B?TGNZUE1OMDJ3N3Z1VVdUNFEvbEQvZUJxQmtvRXhqWEZIeUhwMzRJUGdkRW1q?=
- =?utf-8?B?SmpHbnBqQTBNT3Z6aXYrL3l2aVZESHByR3dHRDBXTFBMejJZOGpNMWlvOW5P?=
- =?utf-8?B?QXFNYkdTaFZuem91UHB5MFJhbTY1VkpwaHRZYSthS3ExYlU4MWRjckhYa3FK?=
- =?utf-8?B?RWVWaGN5cHo0enBmM1JKOWRLSy9GQ290VWp6MVB3NUxidmQxWXFUcXpXNkhv?=
- =?utf-8?B?cllPR0puL1VLWEE3TWEyV1FldWtOK3IrTS9oTzZkWWc5RnAxdld5M0QrZmkv?=
- =?utf-8?B?YTJzaDc1Wnc3NDV6RzlRdkNwYmc2Ky9aTjFCWk8zeVArUnFIUzFDQ3dFK05i?=
- =?utf-8?B?dDZLZ2xXb1VTNE1Ta2RQZmxNSkFoZWt3S3UwZGFrTWlOVEdVbXNPM1NRcmhF?=
- =?utf-8?B?cDA5ai9TamlNRzd1OWJEZFBVSGxlYVFTM2ZLM0lRNHc2RGVOVkZKY21mV214?=
- =?utf-8?B?SFpudFN2R0U4RHNWamx5b3lEcHRMQXVuZVFpQXJYOFhiSXpMeDJwU1haZE5j?=
- =?utf-8?B?RHNudklPNy9HZUdETG9GWGRMN3JLZUtpV29nekorcTJ3UTlxZTVaWlI2b3p1?=
- =?utf-8?B?SUlSUXg4VGJEb0xJL2V4VlZHdjF4UlJOY1RRZ3pPZmlTTTRKTDV3THZlSHRw?=
- =?utf-8?B?QXcwQ0l5ajFyaVczODRvNCtQYVJ6V3NNL0tvOXNoOUk0NnpDQlgvWk03Q0s4?=
- =?utf-8?B?VHI0N1Z6a2tDai9jM1pPMmNoVWtwM1dZWFVwZjN4NnNhR2ZMenVMN3N1NU5R?=
- =?utf-8?B?bU1DaGpZazVPbUE0OHg0M1dLdFF3eU1acXZ0K3BDM2hNclVnSTNhWTArTXBN?=
- =?utf-8?B?ZUlqZnpUc0JoaWRMWVRMbGxwN2N4L0RTMmkxNzVZNk5WZW12UlkybDFQbDZ6?=
- =?utf-8?B?YmZtd2tkVnBRcjhxNThQdGZoY1gwLytqVStKdG5RdjNHVEU4dE13VGxFbGdq?=
- =?utf-8?B?TmdlM1RsL3laZlAxQ3hsbFJIMmVub3ZRODFCYXUzRGRrdTJkaHBKbnBkdnlk?=
- =?utf-8?B?QzRDTi9hRFlKMG1oN0pFSEM2cXVuSDZZMmFvZzEwMHhqTng5WHcwSk94Rncx?=
- =?utf-8?B?ZnZlRXRKaFJnL251bTJXdkNNT3VLTU5YMlR3UTRONDQzbHFaNDJ0REZ0QzFo?=
- =?utf-8?Q?tVZDPNdATQ0=3D?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?YmU0Z2tlMzFXemE0Q040bXh5N2o2bDd3Q2lSNzdjMkZrelZTajJ3enR0TG9w?=
- =?utf-8?B?UThtSCtoNjN3M0thUHVlcWszRUIzOTMwbCtYOEVoSndkMk84dm1RVTY0Z21i?=
- =?utf-8?B?ZFYwdnFNNEZDRHRicVJra0pqREV4dURFc29paHZvS21YbG5lcUdkTTBRQVE1?=
- =?utf-8?B?NnlTRUlJQ2lTNkJRaTUrYVgyK2tRTFZiRXNWa1VwN3pIelRrbnhvTUVoWlg5?=
- =?utf-8?B?ZDNyY1UweGtjaUx3aUtOdU5JTnNyY0tBMlBuNkdXUVJmYmZjS2Y3b3Z6UWVJ?=
- =?utf-8?B?N2lpSysvbFc0cHRmOURhbEdvV2JjTnJjd0FhYmNEUEdkcjRuWG1UK2t0TXo2?=
- =?utf-8?B?OHBqWTlFQ0xGZWQ1clMyUlRCSTlsRmdZNktNK3FrcnBkNktvWGN6YmUxTnR0?=
- =?utf-8?B?LzNtQjBUZFdPWEtRTTdpQThJMnZDc0h0U3d4NlNiUHRQVDgwMTZ2eXlXb1RP?=
- =?utf-8?B?Z2NsTnBrSUNPM1ZSSU1lYmV0bzhoamhoVm1QY3hNdm1XcCt1YmNtWEdBOU0r?=
- =?utf-8?B?NTg1WDFieUVTWVlvaGl3VjFUbG1ZT0dWQWMvbE44SU01MWU5Vnl0dXVGcUNV?=
- =?utf-8?B?dHhLZDU4cGV3TVRPV3NlZ0xDd2tNeG9HWEkvWkxMYmhqcjZ3V1M5R3pEeVN0?=
- =?utf-8?B?TVJ6bDFZMEJqU0N0MUNlbFBjNzhJMW9paXFCR2N4L0RURHNiYUV6cmtSMkRF?=
- =?utf-8?B?SGNRN0F0dWFOTW90cTVBR2l1UlZJcCtKZDdIYXM4eUFHUkFsM3kycmpuK0dP?=
- =?utf-8?B?bDAyR3JMbXlHL2w5VjlWcFJBMStkZHdzelFjQ3Z2bWcwQnlCUTkyMW9HT2tp?=
- =?utf-8?B?ZFQzL29RemNLaUhKc3A3T1c4NktpbDcvZUw3SmFteXpHSnhmUEJUclB3aEMz?=
- =?utf-8?B?SEVKTGtPNjJqVXd4d0YzaEk0U2ZwSzF2THZTbHJnOWVJWmx6Zno4bGtNR25w?=
- =?utf-8?B?VTRMUWNSV1doRWp5d09oaEcyeFJIZEVCODBjS3BrZm1Hb1prRzNPdnlWNWh5?=
- =?utf-8?B?NjFEa0NIakNSa0E1T0lzWVlTVWk3TmI4QjAvRFBOSDlQSmpORmdRenBsdWRW?=
- =?utf-8?B?QVlDaGpONE4rcklvTDA1V0xsb1lMbUJydVdPZ3hRZk54UUJzZGFmR1VtTEJh?=
- =?utf-8?B?bmFDd2NHaG1BZGJQTW91aFpaUDVOUTJvMVh3UHlGaHJaWXNRS1k1M0tOYzhE?=
- =?utf-8?B?ZWVuY2xrQnpDVVhySVZQbGY3NElzaWRiNmh2ZE02UmtSYU5WN3N6TW9iTDRm?=
- =?utf-8?B?T0FMOXZTMWpXR0hvSmJnQzduTXdxZytRWUtpOWhkNXlXMlZmWVdMU0xpb1d1?=
- =?utf-8?B?dUJMTE13dWwwZGEzaXhUd0NyRzYwV3B1TFgxK1AwSktiMEpsQ0xpSnhVMjJz?=
- =?utf-8?B?VGNCUHBRWWl4WXltNXo3Rm5uVks5bmR2cTdEVWtZbWUwaFI3NU9ndDRja3JE?=
- =?utf-8?B?bElwS2doMWJ3aXpMZzJYKyt0cDFndVhIVytsbjFMZ2tSZmd6R2VVK0VTeXEx?=
- =?utf-8?B?UTZ2VTN1VFVxcGJjVDdFcER0R21oRXZzZEhuYU9ReDBNbmRhMEI2UGkyczc3?=
- =?utf-8?B?aXQwNkVPVEc1RzdvWXB6RERRRWZjNllnUmdET2VhQUVuckdRZVRGRlkwNEtj?=
- =?utf-8?B?Z0FRQlE4MjRZbnNibHRXVjlhcEFPYXVMZkl0MXlJdlRtb0xzVkc4cCswOHlm?=
- =?utf-8?B?REs5NjlvenozV2wzenFnc1cyaTdNTUc0cDUvUXQyWXg5UEpwdm1XRmc5ck4x?=
- =?utf-8?B?RWN0dXpQYi9lRlVvQXA0cHh6dDR2TXE3Q0JGOG9aZVU1dUoxM2hjUFFvaGov?=
- =?utf-8?B?dk9oQ0QxbVNzMVgyNlkwMWgxWTVXZk5kcFpNU2x0S0p2cnJRUGJIUVhxemZp?=
- =?utf-8?B?Ky9YMEJXVk42WlF5MTd5bkJCcGMvcE13V2dWNTB0WWtBNHduQnBBUks2WWVt?=
- =?utf-8?B?UTJvU2VPQ09xeG1pUnZvVTFobDB3NjRKeEhadFM3RkQ0emMwNks5cXMxMU15?=
- =?utf-8?B?QjhLSmMxY3MrbGllUVJvYmsyR1dqenFCZVJ3R01CYm5INHhFOUwvNHg5KzNs?=
- =?utf-8?B?ejRaajZ1ZnRQVmM0U2tNamkwVnhycVRZRkE5dWRtOUhoWTBlUFRZRFJPMnVm?=
- =?utf-8?B?NHBKUWtDS2txSXhEc1ZyQWR2SlpDN3Q3ZXQ0ZXVQa1AvYmlUVXFMZm4ySCsr?=
- =?utf-8?B?UFE9PQ==?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: e7c6bde4-ae89-4084-f515-08dd86f97188
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8897.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Apr 2025 08:40:06.8998
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZkUrTdJMq2zfHJbRRc3E5JHzjFUDuQxsQ8l/zY3c/ZBOKPOxLACjkZIJTpB3IePxsEl/kRM83N6iYAxKfd/Y6FoTx25lz3nfY8l7np7jRnI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB7086
+Content-Type: multipart/mixed; boundary="-1463811583-1948647116-1745964736=:3578"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 29 Apr 2025 08:40:15 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1420
+ <yocto-patches@lists.yoctoproject.org>; Tue, 29 Apr 2025 22:12:25 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1421
 
-Hi Trevor,
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-On 4/18/25 4:50 PM, Quentin Schulz wrote:
-> From: Quentin Schulz <quentin.schulz@cherry.de>
-> 
-> The do_deploy task is essentially the same for all SoCs, install a file
-> from a specific path to another one.
-> 
-> No magic involved, so let's rather have one generic do_deploy task. For
-> this to work nicely, we check that all necessary variables are set and
-> notify the developer otherwise. This may be useful whenever a new SoC
-> will be supported by this recipe.
-> 
-> Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
-> ---
->   recipes-bsp/rkbin/rockchip-rkbin-tf-a_git.bb | 46 +++++++++++++++++++---------
->   1 file changed, 32 insertions(+), 14 deletions(-)
-> 
-> diff --git a/recipes-bsp/rkbin/rockchip-rkbin-tf-a_git.bb b/recipes-bsp/rkbin/rockchip-rkbin-tf-a_git.bb
-> index 0ed28a2f18daae280fe38e6939f1b4742b29a778..e6c3199c9fc06aa88173aaa42f2bc8cd365551a8 100644
-> --- a/recipes-bsp/rkbin/rockchip-rkbin-tf-a_git.bb
-> +++ b/recipes-bsp/rkbin/rockchip-rkbin-tf-a_git.bb
-> @@ -4,24 +4,42 @@ require rockchip-rkbin.inc
->   
->   PROVIDES += "trusted-firmware-a"
->   
-> -do_deploy:rk3308() {
-> -	# Prebuilt TF-A
-> -	install -m 644 ${S}/bin/rk33/rk3308_bl31_v*.elf ${DEPLOYDIR}/bl31-rk3308.elf
-> -}
-> +RKBIN_BINDIR:rk3308 ?= "bin/rk33/"
-> +RKBIN_BINVERS:rk3308 ?= "v2.26"
-> +RKBIN_BINFILE:rk3308 ?= "rk3308_bl31_${RKBIN_BINVERS}.elf"
-> +RKBIN_DEPLOY_FILENAME:rk3308 ?= "tee-rk3308.elf"
+---1463811583-1948647116-1745964736=:3578
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-Someone clearly made an oopsie there :)
+On Tue, 29 Apr 2025, Sambu, Soumya wrote:
 
-Should be bl31- instead of tee-.
+> Hi Scott,
+>
+> Just following up - do you have any updates on the documentation you mentioned earlier?
+>
+> Regards,
+> Soumya
 
-Will send a v3 fixing that, sorry for the noise. Will test build with 
-U-Boot now instead of simply building rockchip-rkbin-* recipes :)
+My apologies for the delay, I got wrapped up in some other things for AGL.
+I will be pushing some updates to the mixin layers in the next few days,
+and will include the doc update on the dynamic-layers requirements.
 
 Cheers,
-Quentin
+
+Scott
+
+
+> ________________________________
+> From: Scott Murray <scott.murray@konsulko.com>
+> Sent: Wednesday, April 9, 2025 2:21 AM
+> To: yocto-patches@lists.yoctoproject.org <yocto-patches@lists.yoctoproject.org>
+> Cc: Sambu, Soumya <Soumya.Sambu@windriver.com>; Khem Raj <raj.khem@gmail.com>; akuster@mvista.com <akuster@mvista.com>; MacLeod, Randy <Randy.MacLeod@windriver.com>; Yang, Liezhi <Liezhi.Yang@windriver.com>
+> Subject: Re: [yocto-patches] [meta-lts-mixins][kirkstone/rust][PATCH 1/1] mozjs: Use RUST_HOST_SYS and RUST_TARGET_SYS
+>
+> CAUTION: This email comes from a non Wind River email account!
+> Do not click links or open attachments unless you recognize the sender and know the content is safe.
+>
+> On Mon, 7 Apr 2025, Scott Murray via lists.yoctoproject.org wrote:
+>
+> > On Mon, 7 Apr 2025, Khem Raj wrote:
+> >
+> > > On Mon, Apr 7, 2025 at 6:12 AM Sambu, Soumya <Soumya.Sambu@windriver.com> wrote:
+> > > >
+> > > > Just following up — @Khem Raj, @Armin Kuster. Does creating a mixins layer for meta-openembedded sound reasonable? Would really appreciate your input.
+> > > >
+> > >
+> > > I think adding bbappends via dynamic layers inside meta-lts-mixins
+> > > layer for this rust branch would be
+> > > something to consider, that will keep it simple for end users of this layer.
+> >
+> > As I stated in a previous response, my issue with that approach is
+> > people's expectations of my testing whatever random packages in various
+> > layers they want me to carry patches for.  Debugging build failures of
+> > the in oe-core like librsvg and python3-cryptography has proven a bit
+> > of timesink as it is, there's no way I have time to build test and
+> > potentially fix issues with multiple flavors of mozjs, chromium, etc. on
+> > each Rust upgrade backport.  If Wind River absolutely needs this for
+> > their customers, I'll gladly hand over maintenance of the Rust mixin
+> > layers to them and they can do it...
+>
+> After thinking this over last night, and some discussion on the YP
+> call this morning, I'll walk the above back somewhat.  I'd be willing to
+> consider setting up minimal dynamic layers in the Rust LTS mixins for
+> recipe tweaks with something along the following documented guidelines:
+>
+> - Submissions would require the submitter committing to documentation of
+>   themselves as maintainer of the associated bbappends/recipes in either
+>   the top-level README or perhaps a new MAINTAINERS file.
+> - I will not commit to any testing of recipes supported by the dynamic
+>   layers bbappends, i.e. those maintainers need to be prepared to do their
+>   own testing on Rust upgrades, and having any complaints about breakage
+>   directed their way.  This will be documented in the layer README.
+> - dynamic layers will only be considered for layers from meta-openembedded.
+> - This may be more contentious, but I do not want to take non-backport
+>   changes to the Rust components in the mixin layers themselves if they
+>   can be carried in a bbappend in the dynamic layer.  As an example, the
+>   rust recipe tweak below is something I would prefer to see handled that
+>   way (i.e. with a rust bbappend in the meta-oe dynamic layer).  My
+>   reasoning is that such changes are likely to increase my backport
+>   effort over time.
+> - Straight backports of newer version recipes will generally be
+>   considered out of scope.  There is some potential for negotiation if a
+>   package on a LTS branch becomes impossible to compile with a newer Rust
+>   version, and patching proves extremely difficult compared to a bump to
+>   a newer version.  Note that such version bumps that require backports of
+>   other components from oe-core will default to being rejected since
+>   even in a dynamic layer the potential for side effects on downstream
+>   users can be very difficult to gauge.  An example of this from oe-core
+>   would be newer versions of python3-cryptography, which require maturin
+>   support (and a bunch of associated Python changes) unavailable in
+>   kirkstone.
+>
+> If this seems workable for folks, I can push some documentation updates in
+> the next day or two, and will consider refreshed patches after that.  As I
+> mentioned on the YP call this morning, I do have some more work to get
+> python3-cryptography building with Rust 1.85 working for kirkstone/rust,
+> so that may impact things a bit.
+>
+> Regards,
+>
+> Scott
+>
+> > > > Regards,
+> > > > Soumya
+> > > > ________________________________
+> > > > From: Sambu, Soumya <Soumya.Sambu@windriver.com>
+> > > > Sent: Wednesday, March 26, 2025 8:45 PM
+> > > > To: Scott Murray <scott.murray@konsulko.com>; yocto-patches@lists.yoctoproject.org <yocto-patches@lists.yoctoproject.org>
+> > > > Cc: MacLeod, Randy <Randy.MacLeod@windriver.com>; akuster@mvista.com <akuster@mvista.com>; raj.khem@gmail.com <raj.khem@gmail.com>
+> > > > Subject: Re: [yocto-patches] [meta-lts-mixins][kirkstone/rust][PATCH 1/1] mozjs: Use RUST_HOST_SYS and RUST_TARGET_SYS
+> > > >
+> > > > That makes sense.
+> > > > Should we create a mixins layer for meta-openembedded?
+> > > > So far, we only have mozjs, that needs a bbappend.
+> > > > @Khem Raj, @Armin Kuster - Does that make sense to you?
+> > > > Regards,
+> > > > Soumya
+> > > >
+> > > > ________________________________
+> > > > From: Scott Murray <scott.murray@konsulko.com>
+> > > > Sent: Tuesday, March 25, 2025 5:34 AM
+> > > > To: yocto-patches@lists.yoctoproject.org <yocto-patches@lists.yoctoproject.org>
+> > > > Cc: Sambu, Soumya <Soumya.Sambu@windriver.com>
+> > > > Subject: Re: [yocto-patches] [meta-lts-mixins][kirkstone/rust][PATCH 1/1] mozjs: Use RUST_HOST_SYS and RUST_TARGET_SYS
+> > > >
+> > > > CAUTION: This email comes from a non Wind River email account!
+> > > > Do not click links or open attachments unless you recognize the sender and know the content is safe.
+> > > >
+> > > > On Tue, 18 Mar 2025, Soumya via lists.yoctoproject.org wrote:
+> > > >
+> > > > > From: Soumya Sambu <soumya.sambu@windriver.com>
+> > > > >
+> > > > > The mozjs-91 and mozjs-78 recipe in meta-openembedded sets --target=${HOST_SYS} and
+> > > > > --target=${TARGET_SYS} respectively, which leads to an error when using Rust from meta-lts-mixins:
+> > > > >
+> > > > > error: Error loading target specification: Could not find specification for target "x86_64-poky-linux".
+> > > > >
+> > > > > Updated target configuration to resolve this.
+> > > > >
+> > > > > Additionally, `mozjs-78` encountered "linker 'cc' not found" error. This was fixed by explicitly
+> > > > > defining the linker for Rust.
+> > > > >
+> > > > > Signed-off-by: Soumya Sambu <soumya.sambu@windriver.com>
+> > > >
+> > > > I'm not planning to take this, since carrying bbappends for recipes
+> > > > outside of oe-core is outside of what I had planned to support with
+> > > > the mixin.  If I take it, I will be signing up to test building those
+> > > > recipes on every Rust update for at least the next year, and it would
+> > > > somewhat open the door for people advocating doing the same for
+> > > > scarthgap/rust, which has 3 more years to go.
+> > > >
+> > > > Scott
+> > > >
+> > > >
+> > > > > ---
+> > > > >  recipes-devtools/rust/rust_1.81.0.bb       |  3 +++
+> > > > >  recipes-extended/mozjs/mozjs-78_%.bbappend | 14 ++++++++++++++
+> > > > >  recipes-extended/mozjs/mozjs-91_%.bbappend | 13 +++++++++++++
+> > > > >  3 files changed, 30 insertions(+)
+> > > > >  create mode 100644 recipes-extended/mozjs/mozjs-78_%.bbappend
+> > > > >  create mode 100644 recipes-extended/mozjs/mozjs-91_%.bbappend
+> > > > >
+> > > > > diff --git a/recipes-devtools/rust/rust_1.81.0.bb b/recipes-devtools/rust/rust_1.81.0.bb
+> > > > > index cc00053..2d91d68 100644
+> > > > > --- a/recipes-devtools/rust/rust_1.81.0.bb
+> > > > > +++ b/recipes-devtools/rust/rust_1.81.0.bb
+> > > > > @@ -146,6 +146,9 @@ python do_configure() {
+> > > > >      # harness are debuggable just from logfiles
+> > > > >      config.set("rust", "verbose-tests", e(True))
+> > > > >
+> > > > > +    # Override default linker cc.
+> > > > > +    config.set("rust", "default-linker", e(d.expand("${RUST_BUILD_CCLD}")))
+> > > > > +
+> > > > >      # [build]
+> > > > >      config.add_section("build")
+> > > > >      config.set("build", "submodules", e(False))
+> > > > > diff --git a/recipes-extended/mozjs/mozjs-78_%.bbappend b/recipes-extended/mozjs/mozjs-78_%.bbappend
+> > > > > new file mode 100644
+> > > > > index 0000000..8e8c24a
+> > > > > --- /dev/null
+> > > > > +++ b/recipes-extended/mozjs/mozjs-78_%.bbappend
+> > > > > @@ -0,0 +1,14 @@
+> > > > > +EXTRA_OECONF = " \
+> > > > > +    --target=${RUST_TARGET_SYS} \
+> > > > > +    --host=${BUILD_SYS} \
+> > > > > +    --prefix=${prefix} \
+> > > > > +    --libdir=${libdir} \
+> > > > > +    --x-includes=${STAGING_INCDIR} \
+> > > > > +    --x-libraries=${STAGING_LIBDIR} \
+> > > > > +    --without-system-icu \
+> > > > > +    --disable-tests --disable-strip --disable-optimize \
+> > > > > +    --disable-jemalloc \
+> > > > > +    --with-system-icu \
+> > > > > +    ${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', "--enable-gold", '--disable-gold', d)} \
+> > > > > +    ${JIT} \
+> > > > > +"
+> > > > > diff --git a/recipes-extended/mozjs/mozjs-91_%.bbappend b/recipes-extended/mozjs/mozjs-91_%.bbappend
+> > > > > new file mode 100644
+> > > > > index 0000000..c0214b0
+> > > > > --- /dev/null
+> > > > > +++ b/recipes-extended/mozjs/mozjs-91_%.bbappend
+> > > > > @@ -0,0 +1,13 @@
+> > > > > +do_configure() {
+> > > > > +        cd ${B}
+> > > > > +        python3 ${S}/configure.py \
+> > > > > +        --enable-project=js \
+> > > > > +        --target=${RUST_HOST_SYS} \
+> > > > > +        --host=${BUILD_SYS} \
+> > > > > +        --prefix=${prefix} \
+> > > > > +        --libdir=${libdir} \
+> > > > > +        --disable-jemalloc \
+> > > > > +        --disable-strip \
+> > > > > +        ${JIT} \
+> > > > > +        ${ICU}
+> > > > > +}
+> > > > >
+> > >
+> >
+> >
+> > -=-=-=-=-=-=-=-=-=-=-=-
+> > Links: You receive all messages sent to this group.
+> > View/Reply Online (#1293): https://lists.yoctoproject.org/g/yocto-patches/message/1293
+> > Mute This Topic: https://lists.yoctoproject.org/mt/111764095/2167468
+> > Group Owner: yocto-patches+owner@lists.yoctoproject.org
+> > Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/13170805/2167468/856840347/xyzzy [scott.murray@konsulko.com]
+> > -=-=-=-=-=-=-=-=-=-=-=-
+> >
+> >
+> >
+>
+---1463811583-1948647116-1745964736=:3578--
 
