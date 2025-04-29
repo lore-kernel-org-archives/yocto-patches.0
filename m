@@ -2,65 +2,105 @@ Return-Path: <hieu2.nguyen@lge.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05FE3C369D5
-	for <webhook@archiver.kernel.org>; Tue, 29 Apr 2025 02:16:33 +0000 (UTC)
-Received: from lgeamrelo11.lge.com (lgeamrelo11.lge.com [156.147.23.52])
- by mx.groups.io with SMTP id smtpd.web11.4577.1745892988419238098
- for <yocto-patches@lists.yoctoproject.org>;
- Mon, 28 Apr 2025 19:16:29 -0700
-Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: lge.com, ip: 156.147.23.52, mailfrom: hieu2.nguyen@lge.com)
-Received: from unknown (HELO lgeamrelo04.lge.com) (156.147.1.127)
-	by 156.147.23.52 with ESMTP; 29 Apr 2025 11:16:25 +0900
-X-Original-SENDERIP: 156.147.1.127
-X-Original-MAILFROM: hieu2.nguyen@lge.com
-Received: from unknown (HELO vsl.LGE.NET) (10.218.140.120)
-	by 156.147.1.127 with ESMTP; 29 Apr 2025 11:16:25 +0900
-X-Original-SENDERIP: 10.218.140.120
-X-Original-MAILFROM: hieu2.nguyen@lge.com
-From: hieu2.nguyen@lge.com
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AFEEC369D5
+	for <webhook@archiver.kernel.org>; Tue, 29 Apr 2025 02:21:13 +0000 (UTC)
+Subject: Re: [yocto-autobuilder-helper][scarthgap][PATCH] config.json: add a builder for meta-webosose
 To: yocto-patches@lists.yoctoproject.org
-Cc: martin.jansa@gmail.com,
-	Hieu Van Nguyen <hieu2.nguyen@lge.com>
-Subject: [yocto-autobuilder2][PATCH] schedulers: add meta-webosose scheduled build for scarthgap
-Date: Tue, 29 Apr 2025 11:16:22 +0900
-Message-ID: <20250429021622.309740-1-hieu2.nguyen@lge.com>
-X-Mailer: git-send-email 2.48.1
+From: "Hieu Van Nguyen" <hieu2.nguyen@lge.com>
+X-Originating-Location: KR (203.247.149.151)
+X-Originating-Platform: Windows Chrome 122
+User-Agent: GROUPS.IO Web Poster
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date: Mon, 28 Apr 2025 19:21:06 -0700
+References: <D9I8V74MZOPK.3D7IBD96E1R3A@bootlin.com>
+In-Reply-To: <D9I8V74MZOPK.3D7IBD96E1R3A@bootlin.com>
+Message-ID: <18025.1745893266366300042@lists.yoctoproject.org>
+Content-Type: multipart/alternative; boundary="ds3AOWNXrhvzJnOEvCJI"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 29 Apr 2025 02:16:33 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1411
+ <yocto-patches@lists.yoctoproject.org>; Tue, 29 Apr 2025 02:21:13 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1412
 
-From: Hieu Van Nguyen <hieu2.nguyen@lge.com>
+--ds3AOWNXrhvzJnOEvCJI
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Support to build meta-webosose for both of kirkstone and scarthgap
-branches.
+On Mon, Apr 28, 2025 at 06:44 PM, Mathieu Dubois-Briand wrote:
 
-Signed-off-by: Hieu Van Nguyen <hieu2.nguyen@lge.com>
----
- schedulers.py | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+>=20
+> Yes, I know you had some bits of a patch a few weeks ago, so either you
+> can rebase it on the master branch and send it, or I can work on it on
+> my side.
+>=20
+> --
+> Mathieu Dubois-Briand, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
 
-diff --git a/schedulers.py b/schedulers.py
-index fd2cad6..1fead60 100644
---- a/schedulers.py
-+++ b/schedulers.py
-@@ -642,7 +642,10 @@ schedulers.append(sched.AnyBranchScheduler(name="bitbake-docs-changed",
-             properties=repos_dict_for_scheduler("docs"),
-             builderNames=["docs"]))
- 
--# Run meta-webosose for kirkstone once a week on weekends (2am on Friday)
-+# Run meta-webosose for kirkstone and scarthgap once a week on weekends (2am on Friday)
- schedulers.append(sched.Nightly(name='nightly-meta-webosose', branch='kirkstone', properties=parent_default_props('meta-webosose', 'kirkstone'),
-                                 codebases = {'' : {'branch' : 'kirkstone'}},
-                                 builderNames=['meta-webosose'], hour=2, minute=0, dayOfWeek=4))
-+schedulers.append(sched.Nightly(name='nightly-meta-webosose', branch='scarthgap', properties=parent_default_props('meta-webosose', 'scarthgap'),
-+                                codebases = {'' : {'branch' : 'scarthgap'}},
-+                                builderNames=['meta-webosose'], hour=2, minute=0, dayOfWeek=4))
--- 
-2.48.1
+Yes, I just submitted a patch here: https://lists.yoctoproject.org/g/yocto-=
+patches/message/1411
+however the schedule is the same as Kirkstone , please let me know if it ne=
+eds to be changed.
 
+Thanks and best regards,
+Hieu
+
+--ds3AOWNXrhvzJnOEvCJI
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div>On Mon, Apr 28, 2025 at 06:44 PM, Mathieu Dubois-Briand wrote:</div>
+<div>
+<blockquote>Yes, I know you had some bits of a patch a few weeks ago, so ei=
+ther you<br />can rebase it on the master branch and send it, or I can work=
+ on it on<br />my side.<br /><br />-- <br />Mathieu Dubois-Briand, Bootlin<=
+br />Embedded Linux and Kernel engineering<br /><a href=3D"https://bootlin.=
+com" target=3D"_blank" rel=3D"noopener">https://bootlin.com</a></blockquote=
+>
+Yes, I just submitted a patch here: https://lists.yoctoproject.org/g/yocto-=
+patches/message/1411<br />however the schedule is the same as <span style=
+=3D"color: #333333; font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica =
+Neue', 'Noto Sans', 'Liberation Sans', Arial, sans-serif, 'Apple Color Emoj=
+i', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'; font-size: 16p=
+x; font-style: normal; font-variant-ligatures: normal; font-variant-caps: n=
+ormal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: st=
+art; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; =
+-webkit-text-stroke-width: 0px; white-space: pre-wrap; background-color: #f=
+fffff; text-decoration-thickness: initial; text-decoration-style: initial; =
+text-decoration-color: initial; display: inline !important; float: none;">K=
+irkstone</span>, please let me know if it needs to be changed.</div>
+<div>&nbsp;</div>
+<div><span style=3D"color: #333333; font-family: system-ui, 'Segoe UI', Rob=
+oto, 'Helvetica Neue', 'Noto Sans', 'Liberation Sans', Arial, sans-serif, '=
+Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'=
+; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font=
+-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2=
+; text-align: start; text-indent: 0px; text-transform: none; widows: 2; wor=
+d-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: pre-wrap; back=
+ground-color: #ffffff; text-decoration-thickness: initial; text-decoration-=
+style: initial; text-decoration-color: initial; display: inline !important;=
+ float: none;">Thanks and best regards,</span><br style=3D"box-sizing: bord=
+er-box; overflow-wrap: break-word !important; color: #333333; font-family: =
+system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', 'Liberation S=
+ans', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI S=
+ymbol', 'Noto Color Emoji'; font-size: 16px; font-style: normal; font-varia=
+nt-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-s=
+pacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-trans=
+form: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; w=
+hite-space: pre-wrap; background-color: #ffffff; text-decoration-thickness:=
+ initial; text-decoration-style: initial; text-decoration-color: initial;" =
+/><span style=3D"color: #333333; font-family: system-ui, 'Segoe UI', Roboto=
+, 'Helvetica Neue', 'Noto Sans', 'Liberation Sans', Arial, sans-serif, 'App=
+le Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'; f=
+ont-size: 16px; font-style: normal; font-variant-ligatures: normal; font-va=
+riant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; t=
+ext-align: start; text-indent: 0px; text-transform: none; widows: 2; word-s=
+pacing: 0px; -webkit-text-stroke-width: 0px; white-space: pre-wrap; backgro=
+und-color: #ffffff; text-decoration-thickness: initial; text-decoration-sty=
+le: initial; text-decoration-color: initial; display: inline !important; fl=
+oat: none;">Hieu</span></div>
+<div>&nbsp;</div>
+
+--ds3AOWNXrhvzJnOEvCJI--
 
