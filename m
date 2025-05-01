@@ -1,161 +1,147 @@
-Return-Path: <majortomtosourcecontrol@gmail.com>
+Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 901F5C369DC
-	for <webhook@archiver.kernel.org>; Thu,  1 May 2025 20:08:51 +0000 (UTC)
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
- by mx.groups.io with SMTP id smtpd.web11.3929.1746130125582936893
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B00E1C3ABAA
+	for <webhook@archiver.kernel.org>; Thu,  1 May 2025 20:40:41 +0000 (UTC)
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+ by mx.groups.io with SMTP id smtpd.web11.4640.1746132040125087997
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 01 May 2025 13:08:45 -0700
+ Thu, 01 May 2025 13:40:40 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=AlKcMGqn;
- spf=pass (domain: gmail.com, ip: 209.85.166.46, mailfrom: majortomtosourcecontrol@gmail.com)
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-85e73562577so139459139f.0
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 01 May 2025 13:08:45 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=B7CQUxZv;
+ spf=pass (domain: konsulko.com, ip: 209.85.222.171, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7c9677cd6d7so164491685a.3
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 01 May 2025 13:40:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746130125; x=1746734925; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hWq2b+32A7TzdSh2d/b6qvR7vAKuqYYrqRhtwMotwiY=;
-        b=AlKcMGqnbzRB5sD0CuvG3s/nC+RQkU4/zINxzvEw9bMja/QGPG2F0bFcTyXr/Yst1g
-         KumsgJydH30ejMVof2zgx8AlUCzs8hqzEBOVzLHyx/u6QOAW5M450473i38B39XawdzG
-         ZXZW41MbARUA2SsitlPU3IHdIXO5lnKp9j3GcXInEEu5O1ASjQHYUNv9SD1beHhepvJi
-         Tz3WdLQevr7zhj4pdCwLYBNohyb/X1mjMu6bBawi4WDJiZq3Y/Noqp3UihToveVXEdKF
-         j4oJHcGzWRNfMlJ5BqzVNJuJYCyrMhcCiGtQaAuXhV/fmGxwEPqIzJZEOa1t074SPgiF
-         Jmkg==
+        d=konsulko.com; s=google; t=1746132039; x=1746736839; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Y6vZnnD/d90l/pDiHfGeIGmXdEh8x/mLPRHHvImReeI=;
+        b=B7CQUxZvM8nlXvboYeDmRNIYvncD2Ix5AcHyrwb/jIKRPD+u+OQlsWwigPwcugHYRG
+         x2vuwIYxSl34ylwUWaUg2A1L4azsJHuOa/hsXeVjP1SIaYqjfXSAKQLdt6tddz01BMSA
+         EuoJo+wDfV/KlVR9rcRadHzlfwMuA2jvhV83M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746130125; x=1746734925;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=hWq2b+32A7TzdSh2d/b6qvR7vAKuqYYrqRhtwMotwiY=;
-        b=CF6Q8YSi0N/k61bMPbM6XIrOZEUThGHtOU0UUP5R/ZkUbdJ3f13RZuBrq6NVfdIVBF
-         Hcqzv1WoeI4XV/MkFKtwcvN0iKDYObvX4khHbRKJf2K4X12wSIy3F+iCc47ftsQ8I5WP
-         NESwaHJTUaLy7VoiDzPw0oizszZINSVdJS7/lvj/2JHMIy/tv6UtuxSYsE6LMbHSZ48o
-         xktx41CHU/dVu3kF7B2TaZ93TfkhDEmMx5QS2wJyYrpw67dIWZJ2PNOYET1hC7wP8UrZ
-         iKr6ih+R+4LtF3eONSMChD7gfvJBspCGDULi/KUcPJwby/b3oHcF+noiwZLzly44VYy2
-         sMTg==
-X-Forwarded-Encrypted: i=1; AJvYcCUI0nbD3lYY1QzF26iBlno/kVK2JFlTjYSIFfYu5xs0VU10hBvbFRJi9fyrYGb3asGkczhgXqcyaD5N/QOb@lists.yoctoproject.org
-X-Gm-Message-State: AOJu0Yxbl28cxfHGVMdtwIw/kvv+VvEF1VAnvfw/KF3bbAuuiqUEkYbQ
-	CBqAUefdMn8oE+E3+qGstPkteC0VZuufibJ0rIurf6mv9DI+EMHX
-X-Gm-Gg: ASbGncvgopfaLN9ZFyjpvsPm0PxEkC8lu/6mynndm8hWp6fCKHiH4woqQnJ3Lg11YNk
-	dQ4eGWyVE6iuVJcQlbfoQGu9AiHGCjag+5MShTBYOjNzWzY+igzlbaNksYb9kETe6FaF7v8cL7k
-	wuTswg5X2cuTzs50GCEYkjHjb0i/dyaqwWZLOPdUedKgWpZ+ubH9DOESakGIogAgDjYgS551daZ
-	hY7Jo+vpr9hL/Bp61ZmFLYJIBjZv2sR7iZQznAhTMOFvayJ/vSyC3m/3u7d0QDfKXYoE24NrbF1
-	SdJgM+XIMDwVHCbSLjC7lR8pqS0/X11XAIiV4BUFMgFx23+Kn/+4dVWBf8X34iresVAtk2LEpjl
-	/zSsk682kLX/F9uVm7g==
-X-Google-Smtp-Source: AGHT+IGVxPHjHU6Ax2A2ukqw2jegLSb6HbLAkelbCvWwkgKVbCswli8MYF3GfOcUHIzUmWAV4EkBPA==
-X-Received: by 2002:a05:6602:4007:b0:864:4862:91a2 with SMTP id ca18e2360f4ac-866ab63b472mr66685439f.10.1746130124752;
-        Thu, 01 May 2025 13:08:44 -0700 (PDT)
-Received: from [172.26.252.3] (174-29-216-122.hlrn.qwest.net. [174.29.216.122])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-864aa2eb68esm23419439f.16.2025.05.01.13.08.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 May 2025 13:08:44 -0700 (PDT)
-Message-ID: <b834e5c5-7ab7-4d7a-9b8b-0671171834cf@gmail.com>
-Date: Thu, 1 May 2025 14:08:43 -0600
+        d=1e100.net; s=20230601; t=1746132039; x=1746736839;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Y6vZnnD/d90l/pDiHfGeIGmXdEh8x/mLPRHHvImReeI=;
+        b=GlNcLXthhtpOhaY6NaDScpiuqbOPubt45l7tU2LN1rVryw332zsY0y99GRzzI68LBN
+         l8dhDvRA+fX5jlBiUYaFL5MaZmw7zEyEohlr0VUFcffKshj68AXhO7zgS3BDI5xMblil
+         II+SerG9YCPgJjvxh/pfCyjaf7YCB9UaOhoEurRTaMPgj/gHoQFYC1F8W8YgN/ueN0/R
+         j6PZwwk5KQIYsUA0eOMEo7u3sOMBYsml/fGn71FpkrCI1TcYuiMiEd/LansrofTVy+4Z
+         Dl6HRo5Q2AFC9K3auJTHVnOp4xnwfN/8TEp8ad2sC/YB40w8yzq5+hlHHniVfZdtlMym
+         RVxg==
+X-Gm-Message-State: AOJu0Yykfvq36tx53wa+ohm7N9oaZnT+/6W+/R+nwYfboacDRiTQn6V0
+	nEYgDJdP/rHcE3J/R3J5ERDnH1zmI6evNC491KQsrHGr+toMLuiTzeLqkOHVRM/2lVuSkrYGNvC
+	o
+X-Gm-Gg: ASbGnct0hvC/7/zRWS45BJZNzyjb+IJnuZY09m3nxIKN2uagIeDlqqlou9pgE8BfgRT
+	zMQ8U24QuQVo2RuweLhFqOz7gqo9KPRJtxX1n5IDXCBCcgW4IcsSB7qH8gaAm137CtVKPIQcY0x
+	LdRCrJ9mOJzIHs6hGHknHqdrzE4vYLBoFYMzaiHAlwgjhHVzKVmJOpZAQQKRBOB+7Uj0vf+IXvQ
+	Lc6DvJhYgZTNUAMsMjpbCLIE/kcjNI3EFj3hxxTjslGXnI7Xjw4anvPY+XoW091d2Ia+fG1s2o5
+	YCchd0nt/75ZpH37tPeFjtcSBi4dxcq/3OeeWY5sKMFEg1CiHyTaTpw2eYl8deTaNk9pi3le36u
+	gZhraW0Kv0kQb7enFFtylXXdGmMQ=
+X-Google-Smtp-Source: AGHT+IHx8lGmIKZz6+cYDaGF6dGyPhHbUFyOM2B5Fg17I40t2Yt6z1xWYL1CesaJRjkzFdycjnY/kA==
+X-Received: by 2002:a05:620a:4414:b0:7c7:a55d:bd0 with SMTP id af79cd13be357-7cad5b263bbmr79701285a.5.1746132038888;
+        Thu, 01 May 2025 13:40:38 -0700 (PDT)
+Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f50f3b03ddsm9086216d6.7.2025.05.01.13.40.38
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 May 2025 13:40:38 -0700 (PDT)
+From: Scott Murray <scott.murray@konsulko.com>
+To: yocto-patches@lists.yoctoproject.org
+Subject: [meta-lts-mixins][kirkstone/rust][PATCH 04/38] rust-cross-canadian: set CC_<triple> for nativesdk
+Date: Thu,  1 May 2025 16:39:40 -0400
+Message-ID: <3a18322b3d6f57b3fab6cc5d77df233f607a6379.1746130391.git.scott.murray@konsulko.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <cover.1746130391.git.scott.murray@konsulko.com>
+References: <cover.1746130391.git.scott.murray@konsulko.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: joe.macdonald@siemens.com, yi.zhao@windriver.com,
- yocto-patches@lists.yoctoproject.org
-From: Clayton Casciato <majortomtosourcecontrol@gmail.com>
-Subject: [meta-selinux][scarthgap][PATCH] refpolicy: oddjob - allow
- oddjob_mkhomedir_t privfd:fd use
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 01 May 2025 20:08:51 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1426
+ <yocto-patches@lists.yoctoproject.org>; Thu, 01 May 2025 20:40:41 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1431
 
-Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
+From: Sean Nyekjaer <sean@geanix.com>
+
+This fixes build errors when building rust bindings for C dependencies
+for the sdk host.
+This will allow us to build and run rust programs on the sdk host.
+
+Before:
+% cargo build --target x86_64-oesdk-linux-gnu -vv
+[...]
+   Compiling zstd-sys v2.0.13+zstd.1.5.6 (zstd-rs/zstd-safe/zstd-sys)
+[zstd-sys 2.0.13+zstd.1.5.6] CC_x86_64-oesdk-linux-gnu =3D None
+[zstd-sys 2.0.13+zstd.1.5.6] CC =3D Some(arm-oe-linux-gnueabi-gcc  -mthumb =
+-mfpu=3Dneon -mfloat-abi=3Dhard -mcpu=3Dcortex-a7 -D_TIME_BITS=3D64 -D_FILE=
+_OFFSET_BITS=3D64 --sysroot=3D/usr/local/sdk/sysroots/cortexa7t2hf-neon-oe-=
+linux-gnueabi)
+[zstd-sys 2.0.13+zstd.1.5.6] cargo:warning=3DToolExecError: Command LC_ALL=
+=3D"C" "arm-oe-linux-gnueabi-gcc" "-mthumb" "-mfpu=3Dneon" "-mfloat-abi=3Dh=
+ard" "-mcpu=3Dcortex-a7" "-D_TIME_BITS=3D64" "-D_FILE_OFFSET_BITS=3D64" "--=
+sysroot=3D/usr/local/cc-sdk/sysroots/cortexa7t2hf-neon-oe-linux-gnueabi" "-=
+O0" "-ffunction-sections" "-fdata-sections" "-fPIC" "-gdwarf-4" "-fno-omit-=
+frame-pointer" "-m64" "-I" "zstd/lib/" "-I" "zstd/lib/common" "-I" "zstd/li=
+b/legacy" "-O2" "-pipe" "-g" "-feliminate-unused-debug-types" "-flto" "-ffa=
+t-lto-objects" "-fuse-linker-plugin" "-fvisibility=3Dhidden" "-DZSTD_LIB_DE=
+PRECATED=3D0" "-DXXH_PRIVATE_API=3D" "-DZSTDLIB_VISIBILITY=3D" "-DZDICTLIB_=
+VISIBILITY=3D" "-DZSTDERRORLIB_VISIBILITY=3D" "-DZSTD_LEGACY_SUPPORT=3D1" "=
+-o" "zstd-rs/target/x86_64-oesdk-linux-gnu/debug/build/zstd-sys-b2560022e17=
+2eec3/out/44ff4c55aa9e5133-debug.o" "-c" "zstd/lib/common/debug.c" with arg=
+s arm-oe-linux-gnueabi-gcc did not execute successfully (status code exit s=
+tatus: 1).cargo:warning=3Darm-oe-linux-gnueabi-gcc: error: unrecognized com=
+mand-line option '-m64'
+
+After:
+% cargo build --target x86_64-oesdk-linux-gnu -vv
+[...]
+   Compiling zstd-sys v2.0.13+zstd.1.5.6 (zstd-rs/zstd-safe/zstd-sys)
+[zstd-sys 2.0.13+zstd.1.5.6] CC_x86_64_oesdk_linux_gnu =3D Some(x86_64-oesd=
+k-linux-gcc)
+[...]
+   Compiling zstd v0.13.2 (zstd-rs)
+    Finished dev [unoptimized + debuginfo] target(s) in 14.67s
+
+Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+(adapted from oe-core commit 3c8fedd6e5a3251b7a7a73cc92b153d8e68cb8e5)
+Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- ...ervices-oddjob-allow-oddjob_mkhomedi.patch | 62 +++++++++++++++++++
- .../refpolicy/refpolicy_common.inc            |  1 +
- 2 files changed, 63 insertions(+)
- create mode 100644 recipes-security/refpolicy/refpolicy/0066-policy-modules-services-oddjob-allow-oddjob_mkhomedi.patch
+ recipes-devtools/rust/rust_1.81.0.bb | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/recipes-security/refpolicy/refpolicy/0066-policy-modules-services-oddjob-allow-oddjob_mkhomedi.patch b/recipes-security/refpolicy/refpolicy/0066-policy-modules-services-oddjob-allow-oddjob_mkhomedi.patch
-new file mode 100644
-index 0000000..b210be0
---- /dev/null
-+++ b/recipes-security/refpolicy/refpolicy/0066-policy-modules-services-oddjob-allow-oddjob_mkhomedi.patch
-@@ -0,0 +1,62 @@
-+From ad8e85e918b0312ebe1266d92b2ee862db28b767 Mon Sep 17 00:00:00 2001
-+From: Clayton Casciato <ccasciato@21sw.us>
-+Date: Wed, 9 Apr 2025 17:34:10 -0600
-+Subject: [PATCH] oddjob: allow oddjob_mkhomedir_t privfd:fd use
-+
-+type=PROCTITLE proctitle=mkhomedir_helper user123 0077
-+
-+type=EXECVE argc=3 a0=mkhomedir_helper a1=user123 a2=0077
-+
-+type=SYSCALL arch=armeb syscall=execve per=PER_LINUX success=yes exit=0
-+a0=0x5b79d8 a1=0x5a64d0 a2=0x5b0f10 a3=0x0 items=0 ppid=429 pid=1369
-+auid=unset uid=root gid=root euid=root suid=root fsuid=root egid=root
-+sgid=root fsgid=root tty=ttyAMA0 ses=unset comm=mkhomedir_helpe
-+exe=/usr/sbin/mkhomedir_helper
-+subj=unconfined_u:unconfined_r:oddjob_mkhomedir_t:s0-s0:c0.c1023
-+key=(null)
-+
-+type=AVC avc:  denied  { use } for  pid=1369 comm=mkhomedir_helpe
-+path=/dev/ttyAMA0 dev="devtmpfs" ino=2
-+scontext=unconfined_u:unconfined_r:oddjob_mkhomedir_t:s0-s0:c0.c1023
-+tcontext=system_u:system_r:getty_t:s0 tclass=fd
-+
-+--
-+
-+Ref:
-+https://github.com/SELinuxProject/refpolicy/blob/RELEASE_2_20250213/policy/modules/system/getty.te#L12
-+
-+https://danwalsh.livejournal.com/77728.html
-+https://github.com/SELinuxProject/selinux-notebook/blob/20240430/src/type_statements.md#typeattribute
-+
-+--
-+
-+Fedora:
-+$ sesearch -A --source oddjob_mkhomedir_t --target getty_t --class fd
-+allow application_domain_type privfd:fd use;
-+allow domain domain:fd use; [ domain_fd_use ]:True
-+
-+$ getsebool domain_fd_use
-+domain_fd_use --> on
-+
-+Signed-off-by: Clayton Casciato <ccasciato@21sw.us>
-+
-+Upstream-Status: Backport [https://github.com/SELinuxProject/refpolicy/commit/a3a6b17045412be07f63581f6e10310175e82ddf]
-+
-+Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
-+---
-+ policy/modules/services/oddjob.te | 2 ++
-+ 1 file changed, 2 insertions(+)
-+
-+diff --git a/policy/modules/services/oddjob.te b/policy/modules/services/oddjob.te
-+index 6ea785851..299077739 100644
-+--- a/policy/modules/services/oddjob.te
-++++ b/policy/modules/services/oddjob.te
-+@@ -79,6 +79,8 @@ kernel_read_system_state(oddjob_mkhomedir_t)
-+ 
-+ auth_use_nsswitch(oddjob_mkhomedir_t)
-+ 
-++domain_use_interactive_fds(oddjob_mkhomedir_t)
-++
-+ logging_send_syslog_msg(oddjob_mkhomedir_t)
-+ 
-+ miscfiles_read_localization(oddjob_mkhomedir_t)
-diff --git a/recipes-security/refpolicy/refpolicy_common.inc b/recipes-security/refpolicy/refpolicy_common.inc
-index 282fb6a..5cb44a8 100644
---- a/recipes-security/refpolicy/refpolicy_common.inc
-+++ b/recipes-security/refpolicy/refpolicy_common.inc
-@@ -81,6 +81,7 @@ SRC_URI += " \
-         file://0063-policy-modules-system-locallogin-dontaudit-sulogin_t.patch \
-         file://0064-policy-modules-system-locallogin-allow-sulogin_t-unc.patch \
-         file://0065-policy-modules-system-locallogin-allow-sulogin_t-use.patch \
-+        file://0066-policy-modules-services-oddjob-allow-oddjob_mkhomedi.patch \
-         "
- 
- S = "${WORKDIR}/refpolicy"
+diff --git a/recipes-devtools/rust/rust_1.81.0.bb b/recipes-devtools/rust/r=
+ust_1.81.0.bb
+index 4efdcff..f54a497 100644
+--- a/recipes-devtools/rust/rust_1.81.0.bb
++++ b/recipes-devtools/rust/rust_1.81.0.bb
+@@ -277,10 +277,12 @@ rust_do_install:class-nativesdk() {
+     mkdir "${ENV_SETUP_DIR}"
+     RUST_ENV_SETUP_SH=3D"${ENV_SETUP_DIR}/rust.sh"
+     RUST_HOST_TRIPLE=3D`echo ${RUST_HOST_SYS} | tr '[:lower:]' '[:upper:]'=
+ | sed 's/-/_/g'`
++    RUST_HOST_CC=3D`echo ${RUST_HOST_SYS} | sed 's/-/_/g'`
+     SDKLOADER=3D${@bb.utils.contains('SDK_ARCH', 'x86_64', 'ld-linux-x86-6=
+4.so.2', '', d)}${@bb.utils.contains('SDK_ARCH', 'i686', 'ld-linux.so.2', '=
+', d)}${@bb.utils.contains('SDK_ARCH', 'aarch64', 'ld-linux-aarch64.so.1', =
+'', d)}${@bb.utils.contains('SDK_ARCH', 'ppc64le', 'ld64.so.2', '', d)}${@b=
+b.utils.contains('SDK_ARCH', 'riscv64', 'ld-linux-riscv64-lp64d.so.1', '', =
+d)}
+=20
+     cat <<- EOF > "${RUST_ENV_SETUP_SH}"
+ 	export CARGO_TARGET_${RUST_HOST_TRIPLE}_RUNNER=3D"\$OECORE_NATIVE_SYSROOT=
+/lib/${SDKLOADER}"
++	export CC_$RUST_HOST_CC=3D"${CCACHE}${HOST_PREFIX}gcc"
+ 	EOF
+ }
+=20
+--=20
+2.49.0
+
 
