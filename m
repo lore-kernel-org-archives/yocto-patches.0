@@ -2,60 +2,60 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9748C3ABB0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7E06C3ABB6
 	for <webhook@archiver.kernel.org>; Thu,  1 May 2025 20:40:51 +0000 (UTC)
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
- by mx.groups.io with SMTP id smtpd.web10.4578.1746132042993075293
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+ by mx.groups.io with SMTP id smtpd.web10.4585.1746132048338215413
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 01 May 2025 13:40:43 -0700
+ Thu, 01 May 2025 13:40:48 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=m/+HIFOV;
- spf=pass (domain: konsulko.com, ip: 209.85.219.42, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6f2b05f87bcso15709086d6.3
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 01 May 2025 13:40:42 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=upF31iXc;
+ spf=pass (domain: konsulko.com, ip: 209.85.219.50, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6ecfc7fb2aaso14792336d6.0
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 01 May 2025 13:40:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1746132042; x=1746736842; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1746132047; x=1746736847; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=J7NItwXhvilrzp1DYYA0eBkBMCggf1Yo1ytrg+jVHek=;
-        b=m/+HIFOVUPZ2MxDseAoeifE8F54s+8egSZj2GsIfQ07UEKgDqaAXCeutP+4cT8P7x9
-         /K0c/D5tcQKjPJ1P3bLJWFONBlLeX7qq97f+dN/HGjjU3kbs3zxDurBFbgwXmgkPLtMV
-         1wxaA5Wy7kEC5lVlsGEaYiyoAa7EwjlGs04yU=
+        bh=71uNMFTcS2SWlBkZ+vUA7u6kkqjgQtAivFqSijEfze0=;
+        b=upF31iXc1F9TKEy8VKoMaaZoAdyVq1EbfFc3S8H8DnnUHdpg04AHiTxIhPzr+Zkk52
+         3e6dJaG5zhZOAVy0N0wlM50hm9hrNYWMX6LM+s9yy+nTg9ys153aqwPeS6Rb5FquE9HU
+         blqZQf7R3+dM4S5wox8BtoEJaWJu5HgBzDteI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746132042; x=1746736842;
+        d=1e100.net; s=20230601; t=1746132047; x=1746736847;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=J7NItwXhvilrzp1DYYA0eBkBMCggf1Yo1ytrg+jVHek=;
-        b=OahsEAFCYa6EAmy4OIbvMisQrjZBmaHG7dXlrvo3l18AgznJWY+LclF0iwtgxPDwLp
-         PRNOjeHNWWbzI6YzilwzAwr3or4iu6PZNMg1pKmANj6rwz3LGhcq1VfOcVh3VXpRWZyV
-         Ic6q2xro65jWcVWNyKu5GqarrMFmA+cezemDWe8plZVgFDgR1hV4Nz96vniLTOzi3q4U
-         9MS/+LXgcPrSKLusujBEisjZvrim6SeVA3FZiJOz/t9xEDOmxnjTmshpSF/6MUDPfht2
-         jvboYXs6O0JbrGP5ZBavZIdgNzRQnybAxRvBZXulTcX/+PDmURXjKfSCIFmjg84Wu1xP
-         zfGQ==
-X-Gm-Message-State: AOJu0YxqNGjEfCuvWa+rhwy5Ezw/6TIsdK57ph5NjbCasI8TOfR+OnnB
-	qavLoJlJ0MyZpqLkvOIhX1l6ogZ7AsR1NFJuvTOrEjrUNRTmdmfSTFuuegFeZFXVPR5AFN/cv8j
-	k
-X-Gm-Gg: ASbGncuJtG+3bOVtPWupzlEklw6FkYcvbUoMXZpLqJUvGkKdWfo2dmpag98bIsQwP6a
-	LOdt1tC8VU86jg/Leo5Z1OgBXNrR02tIhcOAsS8G71lMTfvdeNXnva4ksHQGfUXGiz232NUaeLP
-	+IVnNt5810yKkdVHRaadpu4Qfmz7/3qtepfSd+dHbtx6EkIPTnf8rOwTGIZNKtjk9OaN0xGC2n4
-	cQ67H5iczRhF0Yu1fd8ooVBdpRp77rKl92kqcv1BXabkKkFluVXYHXOSoKIOPlohIU5eJLx1d+9
-	Zrf88oeVWX6vb928n8nzpTtbjV6vL09d1o02Z8vIvewn0b0PeB0gqAGWZO/oI6YBiYt2B20TBu/
-	qKBWZ6mfjubU2Q2Q2
-X-Google-Smtp-Source: AGHT+IHOoSmdmJtkKBglWn059Ow9I50X9AUb4yEaE+fioCYBjmaAhcTpWDRtqirGRkQCkSqPhDaRhQ==
-X-Received: by 2002:a05:6214:21eb:b0:6f2:c94f:8cfe with SMTP id 6a1803df08f44-6f515278539mr12076936d6.23.1746132041692;
-        Thu, 01 May 2025 13:40:41 -0700 (PDT)
+        bh=71uNMFTcS2SWlBkZ+vUA7u6kkqjgQtAivFqSijEfze0=;
+        b=ThvxQSDNtLdHijEsBFHplSF61WYAcgAF2N1t9I3+8AIm3qRloFkB3qslWbvL6MURIU
+         i6GgpjZxNdUrbLNhFmHWtzAe8WNMyQNpoyjVvTUu2CJaTzBgGggawjP6raFLjvWbxma1
+         K6/fUEchl2L16uuOsT9YCxBL0uSBayKTusLjEYv/xtPmXADmHIRymTEn4POTt6sZfoQl
+         0tfpYgIf/mgVYwFpqVkW2rAtYyEm9HHCQ0Q0WjfyIXIoNdEKMSF1+Y4yPH9j982f8F7o
+         iX2HYEy8pJJ9NJ30AlHsRovk/QOXQuj93Pl+omS0qVX4W7NXr7iC7jkf65x2PWTxmkY2
+         hGuA==
+X-Gm-Message-State: AOJu0YyxjoKwK1uTlrDhO6td/o7iuEMwESbKdkqDF2pxo5PAZB9B93Fd
+	PLg28E3tGRan+b19kw+8JjUI0GovjQp+QJIXZaCQQLX6kDrF6U+JtRSmjc/AvGVOxlgIXN2rZUY
+	D
+X-Gm-Gg: ASbGncszrnkKO+vdKIyVsXNpckxZXRfNvgyoo6E03NyEHDKTMdMANdttUrp8MuAbvej
+	IfW9NrAb0HIA4AfEHBBok61+Fxar2a1Echv/0el8RNVFKzku20wOLp0q4TewbzrO2in2+vFnCbp
+	wPtUo504Bd/lIleROKiwqnoK20IO01kjBBS3ZM8ENVPK44ktkBF3nF9kJJWifPMOBJWs5nXwLf/
+	fgJAG9I3tJxO/XsOjPB7prJ9X2ww5yszPDvC00rsrfitwdk45uDlsF+vRg56cYpTBUPca9uYVCe
+	mxRNrcZTBhebxNzCk2QRNkoSO0Z3Uf13+PaQwmnQfj/AK3EYacT/EA7k4LwNjQjYl1G9HZzNich
+	9IqqqtuNAIPtuySJf
+X-Google-Smtp-Source: AGHT+IEMW6BR0VuA/N12IBhexh6wmUnK2m//dn5/VFfmQ8am2WtOuNYjwqawiub5juStAvvqBsHliA==
+X-Received: by 2002:ad4:5ca9:0:b0:6e8:fee2:aae6 with SMTP id 6a1803df08f44-6f5155e9843mr9347446d6.41.1746132047011;
+        Thu, 01 May 2025 13:40:47 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f50f3b03ddsm9086216d6.7.2025.05.01.13.40.40
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f50f3b03ddsm9086216d6.7.2025.05.01.13.40.46
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 May 2025 13:40:41 -0700 (PDT)
+        Thu, 01 May 2025 13:40:46 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][kirkstone/rust][PATCH 07/38] rust/README-rust.md: fix markdown style issues
-Date: Thu,  1 May 2025 16:39:43 -0400
-Message-ID: <d96cee28796fa4a9533d8c0c3e348cc8eb5798a4.1746130391.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][kirkstone/rust][PATCH 12/38] rust: Oe-selftest changes for rust v1.82.0
+Date: Thu,  1 May 2025 16:39:48 -0400
+Message-ID: <f56b6bf6fe4a01e3fbf6b58b511382e87bde23ef.1746130391.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1746130391.git.scott.murray@konsulko.com>
 References: <cover.1746130391.git.scott.murray@konsulko.com>
@@ -65,81 +65,100 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Thu, 01 May 2025 20:40:51 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1434
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1438
 
-From: Igor Opaniuk <igor.opaniuk@foundries.io>
+From: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
 
-Fix markdown style issues using markdownlint tool [1]:
+A few tests are getting failed with x86 arch.The unsupported/failing tests
+are added to the exclude list and ignore the failing unit tests.
 
-$ cat ./recipes-devtools/rust/README-rust.md | mdl
-(stdin):1: MD002 First header should be a top level header
-(stdin):25: MD006 Consider starting bulleted lists at the beginning of the line
-(stdin):3: MD009 Trailing spaces
-(stdin):11: MD009 Trailing spaces
-(stdin):26: MD009 Trailing spaces
-(stdin):39: MD012 Multiple consecutive blank lines
-(stdin):32: MD032 Lists should be surrounded by blank lines
-(stdin):36: MD032 Lists should be surrounded by blank lines
+Upstream-Status: Pending
 
-[1] https://github.com/markdownlint/markdownlint
-Signed-off-by: Igor Opaniuk <igor.opaniuk@foundries.io>
+Signed-off-by: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(adapted from oe-core commit 62bade83dd6e021f11e9599a2699a1b202324f0f)
+(adapted from oe-core commit b1340173be2a3a91fbb135eb0e24e50c3b996425)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- recipes-devtools/rust/README-rust.md | 24 +++++++++++++-----------
- 1 file changed, 13 insertions(+), 11 deletions(-)
+ lib/oeqa/selftest/cases/rust_mixin.py         |  2 +
+ .../rust/files/rust-oe-selftest.patch         | 48 +++++++++++++++++++
+ 2 files changed, 50 insertions(+)
 
-diff --git a/recipes-devtools/rust/README-rust.md b/recipes-devtools/rust/README-rust.md
-index 209836a..a7e19c5 100644
---- a/recipes-devtools/rust/README-rust.md
-+++ b/recipes-devtools/rust/README-rust.md
-@@ -1,14 +1,14 @@
--## Introduction
-+# Introduction
- 
--This provides the Rust compiler, tools for building packages (cargo), and 
-+This provides the Rust compiler, tools for building packages (cargo), and
- a few example projects.
- 
- ## Building a rust package
- 
- When building a rust package in bitbake, it's usually easiest to build with
- cargo using cargo.bbclass.  If the package already has a Cargo.toml file (most
--rust packages do), then it's especially easy.  Otherwise you should probably
--get the code building in cargo first. 
-+rust packages do), then it's especially easy. Otherwise you should probably
-+get the code building in cargo first.
- 
- Once your package builds in cargo, you can use
- [cargo-bitbake](https://github.com/cardoe/cargo-bitbake) to generate a bitbake
-@@ -22,17 +22,19 @@ contained within it
- 
- ## Pitfalls
- 
-- - TARGET_SYS _must_ be different from BUILD_SYS. This is due to the way Rust
-- configuration options are tracked for different targets. This is the reason 
-- we use the Yocto triples instead of the native Rust triples. See rust-lang/cargo#3349.
-+`TARGET_SYS` _must_ be different from `BUILD_SYS`. This is due to the way Rust
-+configuration options are tracked for different targets. This is the reason
-+we use the Yocto triples instead of the native Rust triples. See
-+[Add the ability to provide build flags for the build-script-build #3349](https://github.com/rust-lang/cargo/issues/3349)
- 
- ## Dependencies
- 
- On the host:
-- - Any `-sys` packages your project might need must have RDEPENDs for
-- the native library.
+diff --git a/lib/oeqa/selftest/cases/rust_mixin.py b/lib/oeqa/selftest/cases/rust_mixin.py
+index 42e0258..1098e90 100644
+--- a/lib/oeqa/selftest/cases/rust_mixin.py
++++ b/lib/oeqa/selftest/cases/rust_mixin.py
+@@ -64,6 +64,7 @@ class RustSelfTestSystemEmulated(OESelftestTestCase, OEPTestResultTestCase):
+                             'src/doc/rustc',
+                             'src/doc/rustdoc',
+                             'src/doc/unstable-book',
++                            'src/etc/test-float-parse',
+                             'src/librustdoc',
+                             'src/rustdoc-json-types',
+                             'src/tools/jsondoclint',
+@@ -86,6 +87,7 @@ class RustSelfTestSystemEmulated(OESelftestTestCase, OEPTestResultTestCase):
+                             'tests/ui/abi/stack-probes.rs',
+                             'tests/ui/codegen/mismatched-data-layouts.rs',
+                             'tests/ui/debuginfo/debuginfo-emit-llvm-ir-and-split-debuginfo.rs',
++                            'tests/ui/feature-gates/version_check.rs',
+                             'tests/ui-fulldeps/',
+                             'tests/ui/process/nofile-limit.rs',
+                             'tidyselftest'
+diff --git a/recipes-devtools/rust/files/rust-oe-selftest.patch b/recipes-devtools/rust/files/rust-oe-selftest.patch
+index 01c3634..0e952ef 100644
+--- a/recipes-devtools/rust/files/rust-oe-selftest.patch
++++ b/recipes-devtools/rust/files/rust-oe-selftest.patch
+@@ -401,3 +401,51 @@ index 3807cd5d76c..018c5c04456 100644
+          fn $geometric(bench: &mut Bencher) {
+              let bases: [$t; 16] = [2, 3, 4, 5, 7, 8, 9, 15, 16, 17, 31, 32, 33, 63, 64, 65];
+              let base_and_numbers: Vec<($t, Vec<$t>)> = bases
++diff --git a/compiler/rustc_data_structures/src/tagged_ptr/copy/tests.rs b/compiler/rustc_data_structures/src/tagged_ptr/copy/tests.rs
++index 160af8a65d..686f4607bb 100644
++--- a/compiler/rustc_data_structures/src/tagged_ptr/copy/tests.rs
+++++ b/compiler/rustc_data_structures/src/tagged_ptr/copy/tests.rs
++@@ -5,6 +5,7 @@ use crate::stable_hasher::{HashStable, StableHasher};
++ use crate::tagged_ptr::{CopyTaggedPtr, Pointer, Tag, Tag2};
 +
-+* Any `-sys` packages your project might need must have RDEPENDs for
-+  the native library.
- 
- On the target:
-- - Any `-sys` packages your project might need must have RDEPENDs for
-- the native library.
- 
-+* Any `-sys` packages your project might need must have RDEPENDs for
-+  the native library.
++ #[test]
+++#[ignore]
++ fn smoke() {
++     let value = 12u32;
++     let reference = &value;
++@@ -28,6 +29,7 @@ fn smoke() {
++ }
++
++ #[test]
+++#[ignore]
++ fn stable_hash_hashes_as_tuple() {
++     let hash_packed = {
++         let mut hasher = StableHasher::new();
++diff --git a/compiler/rustc_data_structures/src/tagged_ptr/drop/tests.rs b/compiler/rustc_data_structures/src/tagged_ptr/drop/tests.rs
++index 4d342c72cc..9a77f92616 100644
++--- a/compiler/rustc_data_structures/src/tagged_ptr/drop/tests.rs
+++++ b/compiler/rustc_data_structures/src/tagged_ptr/drop/tests.rs
++@@ -4,6 +4,7 @@ use std::sync::Arc;
++ use crate::tagged_ptr::{Pointer, Tag, Tag2, TaggedPtr};
++
++ #[test]
+++#[ignore]
++ fn smoke() {
++     let value = 12u32;
++     let reference = &value;
++@@ -28,6 +29,7 @@ fn smoke() {
++ }
++
++ #[test]
+++#[ignore]
++ fn boxed() {
++     let value = 12u32;
++     let boxed = Box::new(value);
++@@ -52,6 +54,7 @@ fn boxed() {
++ }
++
++ #[test]
+++#[ignore]
++ fn arclones() {
++     let value = 12u32;
++     let arc = Arc::new(value);
 -- 
 2.49.0
 
