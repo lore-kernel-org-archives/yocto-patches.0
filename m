@@ -2,60 +2,60 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 447E0C3ABB2
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5745EC3ABB6
 	for <webhook@archiver.kernel.org>; Thu,  1 May 2025 20:41:02 +0000 (UTC)
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
- by mx.groups.io with SMTP id smtpd.web10.4592.1746132055574025732
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+ by mx.groups.io with SMTP id smtpd.web10.4594.1746132057391141243
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 01 May 2025 13:40:55 -0700
+ Thu, 01 May 2025 13:40:57 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=lgxaysHq;
- spf=pass (domain: konsulko.com, ip: 209.85.222.175, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7c5e2fe5f17so150594485a.3
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 01 May 2025 13:40:55 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=pTOqKsGy;
+ spf=pass (domain: konsulko.com, ip: 209.85.219.42, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6ecfc7fb2aaso14793296d6.0
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 01 May 2025 13:40:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1746132054; x=1746736854; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1746132056; x=1746736856; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=rnfX9XsTkNrbOQSylDGA3q4f7Eg6bAgZxNknoYfw/iY=;
-        b=lgxaysHqs3HqVwCTNmPheY27zLZsTlddmLCMhrXLbhW7HgtIj5QJuL5RGCaDr1RWUn
-         kC9+ZQgAPrOo96xZBgy0RANoBynbolr2z3JVvhmrWYwdHGxYvf1oIO7Lxp6chozvKQZe
-         /B+OvzttplzGU74ri4Pvu0+0uWeXnoYq+dodg=
+        bh=EshWwHlK6IBp3xs8DjvtiCJZH8f8OSnPMOXCdgkj9q4=;
+        b=pTOqKsGyaQpxJOuo9y3YZHbAbAoYR5vFYKlpGX+8mVLO1SyGMGVf//o+rCObFyDPQM
+         3sTcPFCS9J40F9WmaxZvPzuaWNMTlavwG+jnIrKKuD0DiRoox1BW3oUe4APPIUArC+Hv
+         A9hBzy1JV2c+X0zn/MNiujyV5rk4GLru42bm8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746132054; x=1746736854;
+        d=1e100.net; s=20230601; t=1746132056; x=1746736856;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rnfX9XsTkNrbOQSylDGA3q4f7Eg6bAgZxNknoYfw/iY=;
-        b=LXdL62WsrJ8bHWD26EGZXA9mCQzslpPgOyHyimPESAi9/a0dqsNYIsXyszKpvTfSxj
-         T32yYPufgoLOvtN2WUe0MQdJFXpEAbfWOqKN20wQeIRBjydnBcsilDkRxyHjJjcJX3R+
-         hCEcSAiUoyOgDQYEmQVWGrIpp/SWNLZJ3DAegdqL03X2CYZQp1o3aJCUce8rSKmUj+ZR
-         o87f04adm5T3zq+TThl0S5k6/wnxHhFYzjSYqieFB6UjHGlOJPGmnvhg7HnC+vLKQxiY
-         baO2DIbSBOvrOWNHEXk3evVKE19JTVRi1fRt85sDdr6HllK/ITGXZDRghMRzBjGEt2vI
-         EhGA==
-X-Gm-Message-State: AOJu0Yz3U++l1BsmlOhFc4Y7JB77ZrtwgabdWkq14XosL58ZDS5+Hbe7
-	l16vYVVQZbbpZMJHUFIPY2cveWE8w16eNBduXpsW2P8RkqIdtAuap1+B/PU/W+w06IaqaWOqPi1
-	i
-X-Gm-Gg: ASbGnct53uUt5QqXaKei+slL3eA8nuydsZoPob+q6PhQ7I++Phe7R2Td57kAQKybJFX
-	U8rlSgvmh1yNwPigKWL2vKHJArBH5qWBvBW+tx7/cbTMwsSBiryEtdall8GCYiT2jZ1p+7KK4bR
-	WUMj4SD8Ne1xpZtdrp/nvgW0Hvc9E2/tHQMs4goKeRBGCcyiccIUMsKoiV5n/gZKSvWzWCiPOPY
-	mHoIcbTGFrJF/pHNWJoUcvlEntRffDTLEMgCSuFlqwY/DJP86/aJLm8i/KEr/NI8y4JR0zAhzjt
-	4TYQcgyRBK6xoOQWc6lLFExTuDHurX9LFCGWlox4KQYFCGeA0IwojohANZMUlzzRVvEwhV9zAiG
-	PoVxz3BZCK6lCZcYT
-X-Google-Smtp-Source: AGHT+IEeJ840wtP4Fzzn8DhXBBqo15/fH/DPSg4VqNaHmtz0EsBECN19vMIv9ISU1zyL2N7qQ2JbTA==
-X-Received: by 2002:ad4:5942:0:b0:6e6:684f:7f6f with SMTP id 6a1803df08f44-6f5152569c2mr11831276d6.7.1746132054349;
-        Thu, 01 May 2025 13:40:54 -0700 (PDT)
+        bh=EshWwHlK6IBp3xs8DjvtiCJZH8f8OSnPMOXCdgkj9q4=;
+        b=ceInPL7bwhB2kbBNGKLs8GMOhPfTLPm2UzANYXZnj6xlfcQexx8HxYmKmzt+xLp7BW
+         hFBr3rhvdFsB0xwxJZjB3Zmjle1s6t/XzVvWRGp3scmsZOwLMOEQuEuhjd+e0ixrjKAu
+         L4DYVrFZD5uTx2sETGKWmcbaeGLFdocONMl7KDcn6bZsVeaZaQeNKKfkxZuxp4iuuL4P
+         g6eLXwQPgrxQxz4mfSMNR9E8ubNiHYV912r98yaGnuuhrLheT8fDTqIz2d0Dtxogpxsc
+         OadMZokp1qJ2VLRMv96RAdTEI82GB8Qam2cQXdU+juA0tuEDvKgWvD7+RSsdTo50//Og
+         S+0g==
+X-Gm-Message-State: AOJu0Yx9NdBybeYiSDOcmXPPmSctKstJs9+9VK/PRsKukmo9SNaJV3d7
+	KUfSpOV8QHz9VHqZwa8p5sUSi13dJL6Dpya+inUSaVUhfgjJo3sR50ZLesKafdODbrWbyfdVXUN
+	1
+X-Gm-Gg: ASbGnct7mZQOTZdrDbVtZQI1mrWRAgJ4q/DWCKdfNDBq6VxChOOxJXCeaqcZwvwtQte
+	vGEfa9wd5p4L7FgxCGspBoTX1YtZapjDQjFp+bZUk4SBAcJm/730VE+EDtp3Js6fs+P7w1y2bNg
+	HPfSuRAnu9Q1i8AqOH7JDewYn50wppKiokVilfDkiuTJASPLBK2ZhQNdAZ4KXBohuZAZbhNBo6u
+	N+2ucEI4tMQLPuhqB15izaqTElWLGQrp4a0C6Vv15vOSm0Yo6sJP5xrRlBbxEzKJoDTEYI9jfRL
+	/JP5Z43n/urNhvZZthPbuMSvm0R0dFNF58DcH5zmUdlGCIssd6gmxvrxhPhPpPOUyNVkrgPq8mt
+	awZqBIVKZX46DegtB
+X-Google-Smtp-Source: AGHT+IEdjPTcgPJu2M9q8/IfRKStpP0Vy5nLvnqx8shTTG1kGYPRFUSXgg+r3XQ26s2Z41Mfuir+Gg==
+X-Received: by 2002:a05:6214:e89:b0:6f2:bcbf:101c with SMTP id 6a1803df08f44-6f5155bbcaemr11352996d6.33.1746132056053;
+        Thu, 01 May 2025 13:40:56 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f50f3b03ddsm9086216d6.7.2025.05.01.13.40.53
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f50f3b03ddsm9086216d6.7.2025.05.01.13.40.55
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 May 2025 13:40:53 -0700 (PDT)
+        Thu, 01 May 2025 13:40:55 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][kirkstone/rust][PATCH 20/38] cargo.bbclass: show PACKAGECONFIG_CONFARGS in bbnote
-Date: Thu,  1 May 2025 16:39:56 -0400
-Message-ID: <f15a06b83bc1163b927fa66f63867ba1f6f1ad4c.1746130391.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][kirkstone/rust][PATCH 22/38] rust: Fix build break because of "download-rustc" and "llvm-tools"
+Date: Thu,  1 May 2025 16:39:58 -0400
+Message-ID: <91730582ddd39796bbeeb0d83f0be6c73753953f.1746130391.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1746130391.git.scott.murray@konsulko.com>
 References: <cover.1746130391.git.scott.murray@konsulko.com>
@@ -65,48 +65,48 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Thu, 01 May 2025 20:41:02 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1447
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1449
 
-From: Martin Jansa <martin.jansa@gmail.com>
+From: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
 
-* PACKAGECONFIG_CONFARGS was added in:
-  https://git.openembedded.org/openembedded-core/commit/?id=16745b20452de60ae2474433cc1a2fb1ed9f6a64
-  but it wasn't added in bbnote above which might lead to confusing errors like I got now:
+>From Rust 1.84, the download-rustc and llvm-tools options were set to True
+(previously they were False)
 
-  NOTE: cargo build -v --frozen --target aarch64-webos-linux-gnu --release --manifest-path=.../git//Cargo.toml
-  error: unexpected argument '--cfg' found
+https://github.com/rust-lang/rust/commit/cce6f03754f096f8a2bdfb357e3739b855e29366
+(download-rustc)
 
-  Usage: cargo build --verbose... --frozen --target [<TRIPLE>] --release --manifest-path <PATH>
+https://github.com/rust-lang/rust/commit/38f0c099b2e684ea689633eb424d8737a1063a5e
+(llvm-tools)
 
-  and was wondering where --cfg came from.
+For tarball sources, the download-rustc option should be False, so it has been
+reverted back to False.
 
-* it was from recipe where we already use:
-  RUSTFLAGS:append = " ${PACKAGECONFIG_CONFARGS}"
-  it will be difficult to use PACKAGECONFIG for RUSTFLAGS and prevent
-  them to be used here for cargo as well, what about the recipes which
-  need them to explicitly append them to CARGO_BUILD_FLAGS ?
+Setting llvm-tools to True caused issues with finding llvm-objcopy, so this
+has been changed back to False.
 
-Signed-off-by: Martin Jansa <martin.jansa@gmail.com>
+Upstream-Status: https://github.com/rust-lang/rust/pull/134240/
+
+Signed-off-by: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(adapted from oe-core commit 38d953b2ffd4e0cee9e77f97988e44be105023c6)
+(adapted from oe-core commit 2eb952d839e72c24a4180a57631c77910a0da980)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- classes/cargo.bbclass | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ recipes-devtools/rust/rust_1.83.0.bb | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/classes/cargo.bbclass b/classes/cargo.bbclass
-index 461d100..2dd28e9 100644
---- a/classes/cargo.bbclass
-+++ b/classes/cargo.bbclass
-@@ -47,7 +47,7 @@ oe_cargo_build () {
- 	export RUSTFLAGS="${RUSTFLAGS}"
- 	bbnote "Using rust targets from ${RUST_TARGET_PATH}"
- 	bbnote "cargo = $(which ${CARGO})"
--	bbnote "${CARGO} build ${CARGO_BUILD_FLAGS} $@"
-+	bbnote "${CARGO} build ${CARGO_BUILD_FLAGS} ${PACKAGECONFIG_CONFARGS} $@"
- 	"${CARGO}" build ${CARGO_BUILD_FLAGS} ${PACKAGECONFIG_CONFARGS} "$@"
- }
+diff --git a/recipes-devtools/rust/rust_1.83.0.bb b/recipes-devtools/rust/rust_1.83.0.bb
+index 41efcd6..40b813b 100644
+--- a/recipes-devtools/rust/rust_1.83.0.bb
++++ b/recipes-devtools/rust/rust_1.83.0.bb
+@@ -137,6 +137,8 @@ python do_configure() {
+     config.add_section("rust")
+     config.set("rust", "rpath", e(True))
+     config.set("rust", "remap-debuginfo", e(True))
++    config.set("rust", "download-rustc", e(False))
++    config.set("rust", "llvm-tools", e(False))
+     config.set("rust", "channel", e(d.expand("${RUST_CHANNEL}")))
  
+     # Whether or not to optimize the compiler and standard library
 -- 
 2.49.0
 
