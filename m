@@ -2,60 +2,60 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C50BAC369DC
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C50EFC3ABAA
 	for <webhook@archiver.kernel.org>; Thu,  1 May 2025 20:40:51 +0000 (UTC)
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
- by mx.groups.io with SMTP id smtpd.web10.4577.1746132042111134386
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+ by mx.groups.io with SMTP id smtpd.web11.4646.1746132050103543621
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 01 May 2025 13:40:42 -0700
+ Thu, 01 May 2025 13:40:50 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=sJf3kWpj;
- spf=pass (domain: konsulko.com, ip: 209.85.219.41, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6e8f4c50a8fso15127536d6.1
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 01 May 2025 13:40:41 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=rdWHe5u1;
+ spf=pass (domain: konsulko.com, ip: 209.85.219.42, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6e8f06e13a4so31402466d6.0
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 01 May 2025 13:40:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1746132041; x=1746736841; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1746132049; x=1746736849; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=8et8Xv+NETWIb13qp4v3Vg//BHU4A1UZAAXpZrjRGQs=;
-        b=sJf3kWpj97FSBFGLhY4YbIr7+k+2VIgjMW7Xt7EYY148iPvJvYMsyX7WrLAKnV4aH5
-         abHCz/3tbLE4V3W1UNXghmgKNYJ0MR7hwC+V1N6m23w66sXWtNDlCJZWG3uEFiced6zy
-         og8WPkJyIfCUBqI2f6GrWybonARzHVz1AvWig=
+        bh=7LkLXRCGFSErUPzfmY30qggr2N4Lds8BSaXqlE4DwQQ=;
+        b=rdWHe5u17pnOwEbnnnCmpW1yNANSLC4XEMOgBgqXNGsx665Cqz6xCAQrP8mD9eGa2L
+         n48Vy4KKwjwNVQ4bkMqMuO11niFUgcT2S9slAV4drJEH6rthCC4Mz7+vjo3P2qBrlp6A
+         WK3hgPlpAdMBZzIx+BJCE1OH2u8MMKQmLc8DU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746132041; x=1746736841;
+        d=1e100.net; s=20230601; t=1746132049; x=1746736849;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8et8Xv+NETWIb13qp4v3Vg//BHU4A1UZAAXpZrjRGQs=;
-        b=HyR760Wk52CViGiJHHhQx709WQ6PbUsPPD5GA6H4Oy89E0wDdQWbrxeKhStqHjYZnc
-         XtOFZRKpva6eTID82p0keHO51dqMbXQzLaCRk/RaC1lXVtQd/tcQaeSD5wApsKtpX/pV
-         u9DLCoc91s4Y2WPKlu8/DrXb8yklXuW4a5o4JeT7uBe+AlwT02v7yOo6WM7mGE+Xrn6l
-         RcBoiZprjtyhpE9IUgmHa3yuL55wKqZf/t/EnnV0HfWYPVX5KHsH4mVGvQoFQom8W6Vz
-         VAnT0Z6sqOVkpOMOmIJ9tzK+rfZDja0hp0sIv7tZXuLS/zgR7PjtPAHa9qb7x010k4SL
-         Qvtw==
-X-Gm-Message-State: AOJu0Yx48uUyX+XzDJOKdMYMao2kOZzqfpLI/doFAtTA2rlBrGY9pI7s
-	fYYAiq1N5j19XhD4//bqO07GbMHWQOOnXMndYKFiSrPqQUQdmqcOHnNP7j1TPML8t10qzu+7W4K
-	6
-X-Gm-Gg: ASbGnctcWk7QOmKOHkN1RL517YEySTpghkGy1Iq6jey2HoXdxBp9s3l02ANXbgEX6bC
-	E9DsDIU+Hj9Fz7o0WxVw8nTKhQUksHT9c5klT2tMqsu0siXMrIlw9AwHX9ympayFxqgTKxB2VzL
-	syIK+lr4+C8NHX+25wKecBBZGVDYTbUC4SH/+w8ZZbDHikESEJkJ8MW3JfA4DG+B6D+kYaeu6NF
-	trNJ4SmPhZfXDWUvfTugqWZhz8XtXVcz72F5P3waMl+Fv83LKWaLPMzIqZSHJ08yrBpQ1afbrcM
-	RCX67zmJFM6miipHyN0lo0HaInbbeDzp0Ogrba9RJCKeZ3IPh8VOfYmNAWcGJpq9AXe8EC1nk0I
-	isyzfm78laoG+iaq9
-X-Google-Smtp-Source: AGHT+IGEhf/UfNFvOgaSYODPxLk9C5kR7r12Uw/TEy3tQSZLWqMx+92e7/ymUjCjq+vfQ+Bv8N5XOg==
-X-Received: by 2002:ad4:5d43:0:b0:6f5:113a:6901 with SMTP id 6a1803df08f44-6f51526dc0dmr9104816d6.21.1746132040855;
-        Thu, 01 May 2025 13:40:40 -0700 (PDT)
+        bh=7LkLXRCGFSErUPzfmY30qggr2N4Lds8BSaXqlE4DwQQ=;
+        b=D0JihC6o2bmE/o5VlJvqDZBSLuqeV6/tpMxB+ffEllEB1cqv9tmKmgf1qbbdz4c/TF
+         IiHS2KFyEYBgZxWF+oTd2zI/XruLkf9aI8Pm1N+BkfF9i5tjdDn7ApQx8tphalZpOdYR
+         IGElzHTEiDlaM6L8hO5+4zKiWGgSLoPoPNhkTAyM2ph108Z3w1XaDmvijVeYZf/pv2El
+         290W5ejybz+V1S3y8N/L6QX5FE4jR6Q7XDkK21bZn7wWPudvkJnzEvG4AzaVT8A0UGGL
+         aMBueZxQqyzqOGVib39CaTQB5LxP6YLhDIoFV/Ad3mUrR0q5HKj1wq+Sf9RFqK4Quh57
+         JnMQ==
+X-Gm-Message-State: AOJu0YzGORTm33G8Chr5+i+lJ6iWFes+eiku+ariuwFxDhy7a4sxywaN
+	mRfefSjZGLPv8UwNLt26EGnbTs38SYPY5fLrIq6QRQ+9Z3OzXckZ3sTSUF6YXuPdLtBySiFLTB8
+	d
+X-Gm-Gg: ASbGncuVQ8yQJ7o/okL43rYI7xD9uSkaNSds1w8PuJSXB905hdzL/IsENplFemDleDN
+	WrkAz+yyQ+o1RMxqz9ZdfKKWUqfdWp8JGPIsTpIvN3HAvi0ertqaNwnYyhHBp4IF5LZEVdA8RUc
+	YcoRSXhCYS2BxmVtFxTuPs03uEq9TaR4uAzjs6KtXAL7vBejRa137kgWgrfpYzQwarktmUoaVHL
+	TNaWvXy26kBgA358fW5BMT+8cTFq2sZH9HN8CCzttRqpNGmAdEWxZXjdLxVjzGxPa/j4+6mghoM
+	xntHv0Vtaa9S61qVvmY33C0AxIxwyiUE5oCriVsvYsB8hRUXZsWWeGmtrcDtrgt2R+e0zziKaOV
+	aDFdREWzqtQHA0OKU
+X-Google-Smtp-Source: AGHT+IEsQGstUFEQMU+Ln8iIe1xcqN4Qdpy/driEpvesg4iJAvgviZ0+zda5hQAnCTxER8tZt+ercw==
+X-Received: by 2002:a05:6214:528a:b0:6e1:715f:cdf5 with SMTP id 6a1803df08f44-6f5155fdbc6mr10245756d6.15.1746132048775;
+        Thu, 01 May 2025 13:40:48 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f50f3b03ddsm9086216d6.7.2025.05.01.13.40.39
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f50f3b03ddsm9086216d6.7.2025.05.01.13.40.48
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 May 2025 13:40:40 -0700 (PDT)
+        Thu, 01 May 2025 13:40:48 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][kirkstone/rust][PATCH 06/38] meta/meta-selftest: Fix variable assignment whitespace
-Date: Thu,  1 May 2025 16:39:42 -0400
-Message-ID: <5661c775518777419aa24edd1a21dca4413be04f.1746130391.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][kirkstone/rust][PATCH 14/38] rust-llvm: Fix build break found with clang
+Date: Thu,  1 May 2025 16:39:50 -0400
+Message-ID: <57c6703e609b197ab3a8cd531f89d9ef0c2d4cdf.1746130391.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1746130391.git.scott.murray@konsulko.com>
 References: <cover.1746130391.git.scott.murray@konsulko.com>
@@ -65,81 +65,74 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Thu, 01 May 2025 20:40:51 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1433
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1441
 
-From: Richard Purdie <richard.purdie@linuxfoundation.org>
+From: Khem Raj <raj.khem@gmail.com>
 
-Recipes are much more readable with whitespace around the assignment operators.
-Fix various assignments in OE-Core to show this is definitely the preferred
-formatting.
+call and callee have mismatched types, this patch fixes it
 
+Signed-off-by: Khem Raj <raj.khem@gmail.com>
+Cc: Randy MacLeod <Randy.MacLeod@windriver.com>
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(adapted from oe-core commit 30ea609d3357fb3de911f2f6a5e6856c151b976a)
+(adapted from oe-core commit 88e5970998fb4c72844056be19e3a9f77de3f4d6)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- classes/cargo.bbclass                                     | 2 +-
- classes/rust.bbclass                                      | 8 ++++----
- .../packagegroups/packagegroup-rust-cross-canadian.bb     | 2 +-
- recipes-devtools/rust/rust_1.81.0.bb                      | 2 +-
- 4 files changed, 7 insertions(+), 7 deletions(-)
+ .../0001-NFC-fix-build-failure-100993.patch   | 30 +++++++++++++++++++
+ recipes-devtools/rust/rust-llvm_1.82.0.bb     |  4 ++-
+ 2 files changed, 33 insertions(+), 1 deletion(-)
+ create mode 100644 recipes-devtools/rust/rust-llvm/0001-NFC-fix-build-failure-100993.patch
 
-diff --git a/classes/cargo.bbclass b/classes/cargo.bbclass
-index b583f84..76a3966 100644
---- a/classes/cargo.bbclass
-+++ b/classes/cargo.bbclass
-@@ -42,7 +42,7 @@ CARGO_BUILD_FLAGS = "-v --frozen --target ${RUST_HOST_SYS} ${BUILD_MODE} --manif
- # This is based on the content of CARGO_BUILD_FLAGS and generally will need to
- # change if CARGO_BUILD_FLAGS changes.
- BUILD_DIR = "${@['release', 'debug'][d.getVar('DEBUG_BUILD') == '1']}"
--CARGO_TARGET_SUBDIR="${RUST_HOST_SYS}/${BUILD_DIR}"
-+CARGO_TARGET_SUBDIR = "${RUST_HOST_SYS}/${BUILD_DIR}"
- oe_cargo_build () {
- 	export RUSTFLAGS="${RUSTFLAGS}"
- 	bbnote "Using rust targets from ${RUST_TARGET_PATH}"
-diff --git a/classes/rust.bbclass b/classes/rust.bbclass
-index dae25ca..e727601 100644
---- a/classes/rust.bbclass
-+++ b/classes/rust.bbclass
-@@ -43,9 +43,9 @@ HOST_CFLAGS   ?= "${CFLAGS}"
- HOST_CXXFLAGS ?= "${CXXFLAGS}"
- HOST_CPPFLAGS ?= "${CPPFLAGS}"
+diff --git a/recipes-devtools/rust/rust-llvm/0001-NFC-fix-build-failure-100993.patch b/recipes-devtools/rust/rust-llvm/0001-NFC-fix-build-failure-100993.patch
+new file mode 100644
+index 0000000..ed26de7
+--- /dev/null
++++ b/recipes-devtools/rust/rust-llvm/0001-NFC-fix-build-failure-100993.patch
+@@ -0,0 +1,30 @@
++From 40b4fd7a3e81d32b29364a1b15337bcf817659c0 Mon Sep 17 00:00:00 2001
++From: Chen Zheng <czhengsz@cn.ibm.com>
++Date: Tue, 30 Jul 2024 09:02:07 +0800
++Subject: [PATCH] [NFC] fix build failure (#100993)
++
++Fix the build failure caused by
++https://github.com/llvm/llvm-project/pull/94944
++
++Fixes https://github.com/llvm/llvm-project/issues/100296
++Upstream-Status: Backport [https://github.com/llvm/llvm-project/commit/40b4fd7a3e81d32b29364a1b15337bcf817659c0]
++Signed-off-by: Khem Raj <raj.khem@gmail.com>
++---
++ llvm/lib/Analysis/ConstantFolding.cpp | 4 ++--
++ 1 file changed, 2 insertions(+), 2 deletions(-)
++
++diff --git a/llvm/lib/Analysis/ConstantFolding.cpp b/llvm/lib/Analysis/ConstantFolding.cpp
++index 85ee231675d0..084647b1d9d9 100644
++--- a/llvm/lib/Analysis/ConstantFolding.cpp
+++++ b/llvm/lib/Analysis/ConstantFolding.cpp
++@@ -1782,8 +1782,8 @@ Constant *ConstantFoldFP(double (*NativeFP)(double), const APFloat &V,
++ }
++ 
++ #if defined(HAS_IEE754_FLOAT128) && defined(HAS_LOGF128)
++-Constant *ConstantFoldFP128(long double (*NativeFP)(long double),
++-                            const APFloat &V, Type *Ty) {
+++Constant *ConstantFoldFP128(float128 (*NativeFP)(float128), const APFloat &V,
+++                            Type *Ty) {
++   llvm_fenv_clearexcept();
++   float128 Result = NativeFP(V.convertToQuad());
++   if (llvm_fenv_testexcept()) {
+diff --git a/recipes-devtools/rust/rust-llvm_1.82.0.bb b/recipes-devtools/rust/rust-llvm_1.82.0.bb
+index 509b507..17d49be 100644
+--- a/recipes-devtools/rust/rust-llvm_1.82.0.bb
++++ b/recipes-devtools/rust/rust-llvm_1.82.0.bb
+@@ -10,7 +10,9 @@ require rust-source.inc
  
--rustlib_suffix="${TUNE_ARCH}${TARGET_VENDOR}-${TARGET_OS}/rustlib/${RUST_HOST_SYS}/lib"
-+rustlib_suffix = "${TUNE_ARCH}${TARGET_VENDOR}-${TARGET_OS}/rustlib/${RUST_HOST_SYS}/lib"
- # Native sysroot standard library path
--rustlib_src="${prefix}/lib/${rustlib_suffix}"
-+rustlib_src = "${prefix}/lib/${rustlib_suffix}"
- # Host sysroot standard library path
--rustlib="${libdir}/${rustlib_suffix}"
--rustlib:class-native="${libdir}/rustlib/${BUILD_SYS}/lib"
-+rustlib = "${libdir}/${rustlib_suffix}"
-+rustlib:class-native = "${libdir}/rustlib/${BUILD_SYS}/lib"
-diff --git a/recipes-core/packagegroups/packagegroup-rust-cross-canadian.bb b/recipes-core/packagegroups/packagegroup-rust-cross-canadian.bb
-index bb10a2d..7e220d2 100644
---- a/recipes-core/packagegroups/packagegroup-rust-cross-canadian.bb
-+++ b/recipes-core/packagegroups/packagegroup-rust-cross-canadian.bb
-@@ -5,7 +5,7 @@ inherit cross-canadian packagegroup
+ SRC_URI += "file://0002-llvm-allow-env-override-of-exe-path.patch;striplevel=2 \
+             file://0001-AsmMatcherEmitter-sort-ClassInfo-lists-by-name-as-we.patch;striplevel=2 \
+-	    file://0003-llvm-fix-include-benchmarks.patch;striplevel=2"
++            file://0003-llvm-fix-include-benchmarks.patch;striplevel=2 \
++            file://0001-NFC-fix-build-failure-100993.patch;striplevel=2 \
++           "
  
- PACKAGEGROUP_DISABLE_COMPLEMENTARY = "1"
+ S = "${RUSTSRC}/src/llvm-project/llvm"
  
--RUST="rust-cross-canadian-${TRANSLATED_TARGET_ARCH}"
-+RUST = "rust-cross-canadian-${TRANSLATED_TARGET_ARCH}"
- 
- RDEPENDS:${PN} = " \
-     ${@all_multilib_tune_values(d, 'RUST')} \
-diff --git a/recipes-devtools/rust/rust_1.81.0.bb b/recipes-devtools/rust/rust_1.81.0.bb
-index f54a497..782c37f 100644
---- a/recipes-devtools/rust/rust_1.81.0.bb
-+++ b/recipes-devtools/rust/rust_1.81.0.bb
-@@ -31,7 +31,7 @@ S = "${RUSTSRC}"
- RUST_CHANNEL ?= "stable"
- PV .= "${@bb.utils.contains('RUST_CHANNEL', 'stable', '', '-${RUST_CHANNEL}', d)}"
- 
--export FORCE_CRATE_HASH="${BB_TASKHASH}"
-+export FORCE_CRATE_HASH = "${BB_TASKHASH}"
- 
- RUST_ALTERNATE_EXE_PATH ?= "${STAGING_LIBDIR}/llvm-rust/bin/llvm-config"
- RUST_ALTERNATE_EXE_PATH_NATIVE = "${STAGING_LIBDIR_NATIVE}/llvm-rust/bin/llvm-config"
 -- 
 2.49.0
 
