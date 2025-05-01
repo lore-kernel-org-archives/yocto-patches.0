@@ -2,60 +2,60 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65F07C369DC
-	for <webhook@archiver.kernel.org>; Thu,  1 May 2025 22:16:04 +0000 (UTC)
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
- by mx.groups.io with SMTP id smtpd.web10.6711.1746137761584675752
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4352CC3ABAA
+	for <webhook@archiver.kernel.org>; Thu,  1 May 2025 22:16:14 +0000 (UTC)
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+ by mx.groups.io with SMTP id smtpd.web11.6813.1746137765429912714
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 01 May 2025 15:16:01 -0700
+ Thu, 01 May 2025 15:16:05 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=GJlItTbH;
- spf=pass (domain: konsulko.com, ip: 209.85.222.175, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7c9677cd6d7so171914685a.3
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 01 May 2025 15:16:01 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=r3/S1Ekr;
+ spf=pass (domain: konsulko.com, ip: 209.85.219.41, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6ecfbf8fa76so20298526d6.0
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 01 May 2025 15:16:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1746137760; x=1746742560; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1746137763; x=1746742563; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=pd453CkenvedzFQkRFuNe8U+1BbMXgrG12N3E8/KSbg=;
-        b=GJlItTbHTZ//H2XK1PAaOOMbEVyOeNLzTLfU/IiXfZ7yvipqRAPRFdtdujXcSasliA
-         kuuOsdwlc9FV7/PvUgXouI+Fth/m+g2s62g/BI1c9HR+9dBpjaLxZTOPxj4+h8BNVPTy
-         0otDqmK1cKTUQ3gYu6I8/fREuT4hyViXpVxlg=
+        bh=prXdiZGcqqob2erluRETq12LXjwvjOMots6AzZxVz8w=;
+        b=r3/S1EkrVl3WYaB0vk9oHq2+jvMAZ3lpv+BnhsKPzuB3QXDmlSnDDV0xaoSp38I3xi
+         w1evKiz7r7L8xWbvsKad8hiWW4cfZbFrTSKlzmeVXdFvgqjA4aghDawSdR0927AePqxN
+         TZ/GZv0QMYupvdbvwGym4NF4a2pxyn89gQPtY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746137760; x=1746742560;
+        d=1e100.net; s=20230601; t=1746137763; x=1746742563;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pd453CkenvedzFQkRFuNe8U+1BbMXgrG12N3E8/KSbg=;
-        b=sdDsgIc5HfBfT8kQQjNi41zpVHvWjv2MDmnsN+KgvoWyQuV5OHunGEGQ6CYk0YOt9X
-         oYa3O04gJ2ITsr1m4swFmJnY3MyeLXEDEdnYIujz3zy86DRzODvFy4Y6/mL6/6uoV8c/
-         Zyunc4/SSSry+ETOoqW2OVsM6o2N0fHJX1dZT41fRbNW/MOLQVF/slolOtBP8Zt5X1MU
-         K7Ra7j9cLh6VqZXSLYbqxELlepHAe6/cWf56wwCllNaO1TFPecT8PjcZX+geDi4wiTQe
-         3gSfiNk+2koluMUqKs8Vj+PEhHdVuczQsO9u+R/Q3DrtAEhgsG24w/FebfwZvW8VTJja
-         9zuw==
-X-Gm-Message-State: AOJu0YwjZ56pUQmkPHYFAwjYqcuBvt84CShSvWxfvCsh7T6pIRPtVfWv
-	U4JvrVOMd2wMB/5/ni6GZGS0KwfstSA1+yu8RE23EhxeGHl2XaZXmijIcO/g/rYfl2i6CN3UwUJ
-	W
-X-Gm-Gg: ASbGncuaFdA4sD9u6wiccKF27VaslrcMQ1wwjCHH32zDfHHzZp4mzStGiksF2FHIdi8
-	9T/OLXOAE5Yl77f4Umz0aRjh1JCDUe9D3pQICUWCEMHvPqnm5RgZX+8wg1BimvqJePly6KTNL6c
-	LamtbBYCaM2iBqij9UT4HKn5Z1/QANEdPAWm+oQl9rM2MbDTC+WoXVH+bctPeLjGMPcFmLFmQ2V
-	4Zd/c5xZdc3ZOT5Qw1KxZJYwjwnxY25oGqsdCmRyXhFfPPC1pk51TwyMt00CmzDZBGg5xeErvsb
-	XMeNsvw+dduIr4ECxRL8S1skTwflffpg/m6KiYoG8GLicc94KjoK4pTTxzvIyTBA16wSnVlsaUY
-	6SK3iDWrXqUVCQS3q
-X-Google-Smtp-Source: AGHT+IGM7osNBPPBAwRuN+uxWqkyQrCoAyAB8puohLv/i25Jwb2IJK+danj24X1D7Ro6UDOsYs2pFQ==
-X-Received: by 2002:a05:620a:2892:b0:7c5:6ef2:275d with SMTP id af79cd13be357-7cad5ba8617mr138732385a.52.1746137760124;
-        Thu, 01 May 2025 15:16:00 -0700 (PDT)
+        bh=prXdiZGcqqob2erluRETq12LXjwvjOMots6AzZxVz8w=;
+        b=s8b5JRKfdPjMOGePpn2BvCX/flcr6X0B0julHDkMpdPBf8Dv2dK7VXG6L/M5UMo/Hn
+         jNX47/MJ8mGZwTA/nHUsXKyA2hxnXRyUIbOsMP146Y5Eb/qLXVjQ97UMSIA2sDhSI2pD
+         +DmIMYtoF1p8r+gFqo5Hb+ohNIbM5lSn+WFPv61pUTxR/oLdQiwA++GSfhRJVo0oVWAK
+         Q35sqU1WxKvf1kgZ3f9nqqWZ1Go2KkM+I1UY9db+7I+VqL9R6CwhMDshQr83iqUsmu6n
+         j4D5O08ly1wH2Tfm9q7O594owyP1ntoOlUFKwapnkybEZmLrJRHFpD+q6cdRIjWePqVT
+         qrfA==
+X-Gm-Message-State: AOJu0YzQeBdmqrJGtGQ7erBtXqd/Ec1bt0wwQuw9S/ZDjU+EMd4jkT8z
+	1gI7dRDXVCPISo0EU0Ym64FFPjVMJ4TGAwLRKM8jQIQ/Ihgx/Sh1XHdAMCd5+oSjg6Nga4htY76
+	q
+X-Gm-Gg: ASbGncvUJ47nJgtt/NcGXuldxZgZJPKBJI+Yi42ueHLyFXYD49hkxXqJqgs3s1wb71n
+	vz8ePD50LwmiL/9AQdYfw2x4GTGS0DebaqnbEGQ+SGJKfJxWAaa6XQhvI81Kc44hiDC1fivv/t2
+	R2uHJ4CgNZ2pHrh2+lHw3RIAtVtxljFdBySrRNi71IFEZh8DecqUqSWtCNnbPRt7V74hplqo/WL
+	7fp5I6JS/wvUhzvVAZp+bCT5VnP+qaoyg24diMfNWVb/AxAXu7nIQzCCEQtvKBenuTvYXnFvnjF
+	vlxSDYHFLAL6DLjONVtm9+GjUNXtHITSTdM/IOilA1irzLuzuIA2KLBGoPj+6GvbYDXGt2loYCS
+	RXxzvj1F6sxPXSufE
+X-Google-Smtp-Source: AGHT+IHJk4VU047IsBorRVHsL/6pcHWeXtSCPRuXLM1Ud2jJu/R6qmjqd+f6hr4L8hMKOv6Xs1z7EQ==
+X-Received: by 2002:ad4:5ecb:0:b0:6e8:99bb:f061 with SMTP id 6a1803df08f44-6f51527858amr18458816d6.18.1746137763690;
+        Thu, 01 May 2025 15:16:03 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f50f3c3329sm9975366d6.28.2025.05.01.15.15.59
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f50f3c3329sm9975366d6.28.2025.05.01.15.16.02
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 May 2025 15:15:59 -0700 (PDT)
+        Thu, 01 May 2025 15:16:03 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][scarthgap/rust][PATCH 1/7] rust-llvm: Disable benchmarks by cmake options
-Date: Thu,  1 May 2025 18:15:37 -0400
-Message-ID: <efb8896e2492512bd4c4471cf9bedfd8c1a294cc.1746137462.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][scarthgap/rust][PATCH 4/7] cargo-c: Update patch Upstream-Status
+Date: Thu,  1 May 2025 18:15:40 -0400
+Message-ID: <1c1be22536881c7526c45a6a7265f21a5834a76d.1746137462.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1746137462.git.scott.murray@konsulko.com>
 References: <cover.1746137462.git.scott.murray@konsulko.com>
@@ -64,78 +64,35 @@ Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 01 May 2025 22:16:04 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1467
+ <yocto-patches@lists.yoctoproject.org>; Thu, 01 May 2025 22:16:14 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1470
 
-From: Khem Raj <raj.khem@gmail.com>
+From: Yoann Congal <yoann.congal@smile.fr>
 
-Drop patch to exclusively disable it in code
-It seems to be fixed upstream [1]
+https://github.com/rust-lang/libc/pull/4382 was merge as
+https://github.com/rust-lang/libc/commit/4b439b0953573e0383da7e092b1f516ba21f3398
 
-[1] https://github.com/rust-lang/cmake-rs/pull/158
-
-Signed-off-by: Khem Raj <raj.khem@gmail.com>
-Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Signed-off-by: Yoann Congal <yoann.congal@smile.fr>
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(adapted from oe-core commit 60b4b0808a3b961917ed8abe16b9f7df2a311952)
+(adapted from oe-core commit d34f49cc604733c7d714a72b3a3d66a99aa65c79)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- .../0003-llvm-fix-include-benchmarks.patch    | 25 -------------------
- recipes-devtools/rust/rust-llvm_1.85.1.bb     |  2 +-
- 2 files changed, 1 insertion(+), 26 deletions(-)
- delete mode 100644 recipes-devtools/rust/rust-llvm/0003-llvm-fix-include-benchmarks.patch
+ ...1-Define-more-ioctl-codes-on-riscv32gc-unknown-linux-g.patch | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/recipes-devtools/rust/rust-llvm/0003-llvm-fix-include-benchmarks.patch b/recipes-devtools/rust/rust-llvm/0003-llvm-fix-include-benchmarks.patch
-deleted file mode 100644
-index ff31c0b..0000000
---- a/recipes-devtools/rust/rust-llvm/0003-llvm-fix-include-benchmarks.patch
-+++ /dev/null
-@@ -1,25 +0,0 @@
--Subject: LLVM_INCLUDE_BENCHMARKS with llvm 14.0.1 failing to build
--
--https://github.com/llvm/llvm-project/issues/54941
--
--The LLVM_INCLUDE_BENCHMARKS is turned OFF to fix the build error as
--per the discussions in the above link. We will work on the issue and
--replace the workaround with actual fix once committed in LLVM.
--
--Please refer the following link for more discussions on the issue:-
--https://github.com/rust-lang/rust/issues/96054
--
--Upstream-Status: Pending
--Signed-off-by: Pgowda <pgowda.cve@gmail.com>
--
----- a/llvm/CMakeLists.txt	2022-04-22 00:45:30.543445478 -0700
--+++ b/llvm/CMakeLists.txt	2022-04-22 00:45:42.095232974 -0700
--@@ -615,7 +615,7 @@ option(LLVM_INCLUDE_GO_TESTS "Include th
-- 
-- option(LLVM_BUILD_BENCHMARKS "Add LLVM benchmark targets to the list of default
-- targets. If OFF, benchmarks still could be built using Benchmarks target." OFF)
---option(LLVM_INCLUDE_BENCHMARKS "Generate benchmark targets. If OFF, benchmarks can't be built." ON)
--+option(LLVM_INCLUDE_BENCHMARKS "Generate benchmark targets. If OFF, benchmarks can't be built." OFF)
-- 
-- option (LLVM_BUILD_DOCS "Build the llvm documentation." OFF)
-- option (LLVM_INCLUDE_DOCS "Generate build targets for llvm documentation." ON)
-diff --git a/recipes-devtools/rust/rust-llvm_1.85.1.bb b/recipes-devtools/rust/rust-llvm_1.85.1.bb
-index 12d7b2f..2ba37f0 100644
---- a/recipes-devtools/rust/rust-llvm_1.85.1.bb
-+++ b/recipes-devtools/rust/rust-llvm_1.85.1.bb
-@@ -10,7 +10,6 @@ require rust-source.inc
+diff --git a/recipes-devtools/rust/cargo-c/0001-Define-more-ioctl-codes-on-riscv32gc-unknown-linux-g.patch b/recipes-devtools/rust/cargo-c/0001-Define-more-ioctl-codes-on-riscv32gc-unknown-linux-g.patch
+index 3b99361..95dcb45 100644
+--- a/recipes-devtools/rust/cargo-c/0001-Define-more-ioctl-codes-on-riscv32gc-unknown-linux-g.patch
++++ b/recipes-devtools/rust/cargo-c/0001-Define-more-ioctl-codes-on-riscv32gc-unknown-linux-g.patch
+@@ -6,7 +6,7 @@ Subject: [PATCH] Define more ioctl codes on riscv32gc-unknown-linux-gnu
+ Define ioctl codes including `FICLONE` and `FS_IOC32_GETVERSION` on
+ riscv32gc-unknown-linux-gnu.
  
- SRC_URI += "file://0002-llvm-allow-env-override-of-exe-path.patch;striplevel=2 \
-             file://0001-AsmMatcherEmitter-sort-ClassInfo-lists-by-name-as-we.patch;striplevel=2 \
--            file://0003-llvm-fix-include-benchmarks.patch;striplevel=2 \
-            "
- 
- S = "${RUSTSRC}/src/llvm-project/llvm"
-@@ -50,6 +49,7 @@ EXTRA_OECMAKE = " \
-     -DLLVM_INCLUDE_EXAMPLES=OFF \
-     -DLLVM_BUILD_TESTS=OFF \
-     -DLLVM_INCLUDE_TESTS=OFF \
-+    -DLLVM_INCLUDE_BENCHMARKS=OFF \
-     -DLLVM_TARGET_ARCH=${TARGET_ARCH} \
-     -DCMAKE_INSTALL_PREFIX:PATH=${libdir}/llvm-rust \
- "
+-Upstream-Status: Submitted [https://github.com/rust-lang/libc/pull/4382]
++Upstream-Status: Backport [https://github.com/rust-lang/libc/commit/4b439b0953573e0383da7e092b1f516ba21f3398]
+ Signed-off-by: Khem Raj <raj.khem@gmail.com>
+ ---
+  src/unix/linux_like/linux/arch/generic/mod.rs | 6 +++++-
 -- 
 2.49.0
 
