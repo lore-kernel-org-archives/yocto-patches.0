@@ -2,60 +2,60 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5745EC3ABB6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C024C3ABBA
 	for <webhook@archiver.kernel.org>; Thu,  1 May 2025 20:41:02 +0000 (UTC)
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
- by mx.groups.io with SMTP id smtpd.web10.4594.1746132057391141243
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+ by mx.groups.io with SMTP id smtpd.web11.4659.1746132059602087971
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 01 May 2025 13:40:57 -0700
+ Thu, 01 May 2025 13:40:59 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=pTOqKsGy;
- spf=pass (domain: konsulko.com, ip: 209.85.219.42, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6ecfc7fb2aaso14793296d6.0
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 01 May 2025 13:40:57 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=ALAt2BHf;
+ spf=pass (domain: konsulko.com, ip: 209.85.222.177, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7c5b2472969so147313685a.1
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 01 May 2025 13:40:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1746132056; x=1746736856; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1746132058; x=1746736858; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=EshWwHlK6IBp3xs8DjvtiCJZH8f8OSnPMOXCdgkj9q4=;
-        b=pTOqKsGyaQpxJOuo9y3YZHbAbAoYR5vFYKlpGX+8mVLO1SyGMGVf//o+rCObFyDPQM
-         3sTcPFCS9J40F9WmaxZvPzuaWNMTlavwG+jnIrKKuD0DiRoox1BW3oUe4APPIUArC+Hv
-         A9hBzy1JV2c+X0zn/MNiujyV5rk4GLru42bm8=
+        bh=BrdJax7GMZx6GB0aDsbYK8t0M1/Ttde2UdA1TZn0aKc=;
+        b=ALAt2BHfTEv+xYWQYVf264P9sbILkLZ+oq3EP42neZHu3d3fkhKtbq8dv4xyYGf+hk
+         Iixvx/HgUVZe1O7zlH41nus4t8P2QbNkTSoutid3ihwMyxnqXuV6M8mXMaQgemyUzcpi
+         j6iFPCf355qUcKoCzTRfHoQIFjAzvKboXzeJc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746132056; x=1746736856;
+        d=1e100.net; s=20230601; t=1746132058; x=1746736858;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EshWwHlK6IBp3xs8DjvtiCJZH8f8OSnPMOXCdgkj9q4=;
-        b=ceInPL7bwhB2kbBNGKLs8GMOhPfTLPm2UzANYXZnj6xlfcQexx8HxYmKmzt+xLp7BW
-         hFBr3rhvdFsB0xwxJZjB3Zmjle1s6t/XzVvWRGp3scmsZOwLMOEQuEuhjd+e0ixrjKAu
-         L4DYVrFZD5uTx2sETGKWmcbaeGLFdocONMl7KDcn6bZsVeaZaQeNKKfkxZuxp4iuuL4P
-         g6eLXwQPgrxQxz4mfSMNR9E8ubNiHYV912r98yaGnuuhrLheT8fDTqIz2d0Dtxogpxsc
-         OadMZokp1qJ2VLRMv96RAdTEI82GB8Qam2cQXdU+juA0tuEDvKgWvD7+RSsdTo50//Og
-         S+0g==
-X-Gm-Message-State: AOJu0Yx9NdBybeYiSDOcmXPPmSctKstJs9+9VK/PRsKukmo9SNaJV3d7
-	KUfSpOV8QHz9VHqZwa8p5sUSi13dJL6Dpya+inUSaVUhfgjJo3sR50ZLesKafdODbrWbyfdVXUN
-	1
-X-Gm-Gg: ASbGnct7mZQOTZdrDbVtZQI1mrWRAgJ4q/DWCKdfNDBq6VxChOOxJXCeaqcZwvwtQte
-	vGEfa9wd5p4L7FgxCGspBoTX1YtZapjDQjFp+bZUk4SBAcJm/730VE+EDtp3Js6fs+P7w1y2bNg
-	HPfSuRAnu9Q1i8AqOH7JDewYn50wppKiokVilfDkiuTJASPLBK2ZhQNdAZ4KXBohuZAZbhNBo6u
-	N+2ucEI4tMQLPuhqB15izaqTElWLGQrp4a0C6Vv15vOSm0Yo6sJP5xrRlBbxEzKJoDTEYI9jfRL
-	/JP5Z43n/urNhvZZthPbuMSvm0R0dFNF58DcH5zmUdlGCIssd6gmxvrxhPhPpPOUyNVkrgPq8mt
-	awZqBIVKZX46DegtB
-X-Google-Smtp-Source: AGHT+IEdjPTcgPJu2M9q8/IfRKStpP0Vy5nLvnqx8shTTG1kGYPRFUSXgg+r3XQ26s2Z41Mfuir+Gg==
-X-Received: by 2002:a05:6214:e89:b0:6f2:bcbf:101c with SMTP id 6a1803df08f44-6f5155bbcaemr11352996d6.33.1746132056053;
-        Thu, 01 May 2025 13:40:56 -0700 (PDT)
+        bh=BrdJax7GMZx6GB0aDsbYK8t0M1/Ttde2UdA1TZn0aKc=;
+        b=KH0KF1yO0DB1JhdHgrx2j9HJoEyh4zTcMJuUxRcs9k3bn4eVmhxE35B60BM85ocrTh
+         VsNTJr+78rlK2Mw8EYTCKTg84+BCIptpP+Ld77D0pdabpJiW9GSl6bNva3YNlSnCrgRf
+         /ElaoqJbJUv3cffzsbDFF2tQQWhGh1XXFrJKDyosMIbdSjAXNHrTv1RKWQgnQvF5fpnU
+         NrxVkUQtTXbXlQKAP0wdv0GeKHZ92JAe+L1WDHy8XJyWjClYxKoTdAgS7RigEIHy66hG
+         4phjF4NNG+gStLzN+z8lDEnws+rCEeCxCqfZG7UzWCXIZOTAKPddCQImlmYmqpJOzE9X
+         B3dA==
+X-Gm-Message-State: AOJu0YzFmY7Z8kY8wi1c50xo2egJBU82sTO7OVhaGtFDLBNt1suDvy1z
+	cEP4+EUJOyDf0HXjW4GvRaES5gKYHKCCQwXf0Ko9xFaqcQtbkJO1CuACrOSnbxabYI+FCX64Nuv
+	0
+X-Gm-Gg: ASbGnctxG8htwF3VzpgHhcdckzDgl8GKkF71POoH+OvuUXQR5ehj93PeokkIUY50wS/
+	+kv/O23Hl/J3tLTjiktCsFoiP/cHc6J06XgPV4/175j6z8x6qGQp2cY78i1TcD2RpgqYOnvxJXI
+	3SbIRrnzvXw+imgFvuXfulE/jlhqdJYhqFA2naKkvZvEjmiSJJchNqjof3vh0Ap1SESlNymDgNE
+	ayulT2DYTNLNNKViBa4Ody2fVbBkHZIAb2KZ51vor4I5T2+6P8uXambIx9jgG8as07tnbeJ/Sqh
+	PISkuHOExXIFhBb5i0AN0YUSWpQSbSRc/aNSgDmpPrKFHv4rUvTGczg4xa+VnDl+u9qHsE529mp
+	LFswV6OT12Rj92FT4CMT7QypoXOw=
+X-Google-Smtp-Source: AGHT+IE1VL+rSUvKiblYxxKmqAvPEzteu5F/d1gSGccxPNbRlpuvC620WyipSgdMGxdH8yyDUvpCsw==
+X-Received: by 2002:a05:6214:124d:b0:6f2:b14e:46e6 with SMTP id 6a1803df08f44-6f51526d362mr11416026d6.17.1746132058274;
+        Thu, 01 May 2025 13:40:58 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f50f3b03ddsm9086216d6.7.2025.05.01.13.40.55
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f50f3b03ddsm9086216d6.7.2025.05.01.13.40.57
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 May 2025 13:40:55 -0700 (PDT)
+        Thu, 01 May 2025 13:40:57 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][kirkstone/rust][PATCH 22/38] rust: Fix build break because of "download-rustc" and "llvm-tools"
-Date: Thu,  1 May 2025 16:39:58 -0400
-Message-ID: <91730582ddd39796bbeeb0d83f0be6c73753953f.1746130391.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][kirkstone/rust][PATCH 24/38] rust: Fix build failure when multilibs are enabled
+Date: Thu,  1 May 2025 16:40:00 -0400
+Message-ID: <c57d00022e2abeeefcc518fe4808bf5739613659.1746130391.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1746130391.git.scott.murray@konsulko.com>
 References: <cover.1746130391.git.scott.murray@konsulko.com>
@@ -65,48 +65,77 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Thu, 01 May 2025 20:41:02 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1449
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1450
 
 From: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
 
->From Rust 1.84, the download-rustc and llvm-tools options were set to True
-(previously they were False)
+When multilibs are enabled, building rust is failing because of the following commit
+https://github.com/rust-lang/rust/commit/68034f837a39387e49fc7d7c5b088f5372a1127e
+with stage1/rustc cannot able to find dependent *.so files. The issue is
+been fixed inrust-master with the following commit by passing the necessary library
+paths before executing stage1/rustc
 
-https://github.com/rust-lang/rust/commit/cce6f03754f096f8a2bdfb357e3739b855e29366
-(download-rustc)
-
-https://github.com/rust-lang/rust/commit/38f0c099b2e684ea689633eb424d8737a1063a5e
-(llvm-tools)
-
-For tarball sources, the download-rustc option should be False, so it has been
-reverted back to False.
-
-Setting llvm-tools to True caused issues with finding llvm-objcopy, so this
-has been changed back to False.
-
-Upstream-Status: https://github.com/rust-lang/rust/pull/134240/
+Upstream-Status: Backport [https://github.com/rust-lang/rust/commit/139d6ba054a1a4cc5fe64981ad46fd5547bd4916]
 
 Signed-off-by: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(adapted from oe-core commit 2eb952d839e72c24a4180a57631c77910a0da980)
+(adapted from oe-core commit ab29b970ba7e08eabca92018d103af5f249ed2c5)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- recipes-devtools/rust/rust_1.83.0.bb | 2 ++
- 1 file changed, 2 insertions(+)
+ .../Zdual-proc-macros-additional-check.patch  | 31 +++++++++++++++++++
+ recipes-devtools/rust/rust-source.inc         |  1 +
+ 2 files changed, 32 insertions(+)
+ create mode 100644 recipes-devtools/rust/files/Zdual-proc-macros-additional-check.patch
 
-diff --git a/recipes-devtools/rust/rust_1.83.0.bb b/recipes-devtools/rust/rust_1.83.0.bb
-index 41efcd6..40b813b 100644
---- a/recipes-devtools/rust/rust_1.83.0.bb
-+++ b/recipes-devtools/rust/rust_1.83.0.bb
-@@ -137,6 +137,8 @@ python do_configure() {
-     config.add_section("rust")
-     config.set("rust", "rpath", e(True))
-     config.set("rust", "remap-debuginfo", e(True))
-+    config.set("rust", "download-rustc", e(False))
-+    config.set("rust", "llvm-tools", e(False))
-     config.set("rust", "channel", e(d.expand("${RUST_CHANNEL}")))
+diff --git a/recipes-devtools/rust/files/Zdual-proc-macros-additional-check.patch b/recipes-devtools/rust/files/Zdual-proc-macros-additional-check.patch
+new file mode 100644
+index 0000000..6bb1738
+--- /dev/null
++++ b/recipes-devtools/rust/files/Zdual-proc-macros-additional-check.patch
+@@ -0,0 +1,31 @@
++Fix bootstrap failure when multilibs are enabled.
++
++Upstream-Status: Backport [https://github.com/rust-lang/rust/commit/139d6ba054a1a4cc5fe64981ad46fd5547bd4916]
++
++Signed-off-by: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
++---
++diff --git a/src/bootstrap/src/core/builder/cargo.rs b/src/bootstrap/src/core/builder/cargo.rs
++index 066e6bf53f..a2f6fac4b1 100644
++--- a/src/bootstrap/src/core/builder/cargo.rs
+++++ b/src/bootstrap/src/core/builder/cargo.rs
++@@ -646,7 +646,10 @@ impl Builder<'_> {
++                 // Build proc macros both for the host and the target unless proc-macros are not
++                 // supported by the target.
++                 if target != compiler.host && cmd_kind != Kind::Check {
++-                    let error = command(self.rustc(compiler))
+++                    let mut rustc_cmd = command(self.rustc(compiler));
+++                    self.add_rustc_lib_path(compiler, &mut rustc_cmd);
+++
+++                    let error = rustc_cmd
++                         .arg("--target")
++                         .arg(target.rustc_target_arg())
++                         .arg("--print=file-names")
++@@ -654,6 +657,7 @@ impl Builder<'_> {
++                         .arg("-")
++                         .run_capture(self)
++                         .stderr();
+++
++                     let not_supported = error
++                         .lines()
++                         .any(|line| line.contains("unsupported crate type `proc-macro`"));
++
+diff --git a/recipes-devtools/rust/rust-source.inc b/recipes-devtools/rust/rust-source.inc
+index b32f9ac..6c35805 100644
+--- a/recipes-devtools/rust/rust-source.inc
++++ b/recipes-devtools/rust/rust-source.inc
+@@ -7,6 +7,7 @@ SRC_URI += "https://static.rust-lang.org/dist/rustc-${RUST_VERSION}-src.tar.xz;n
+             file://oeqa-selftest-Increase-timeout-in-process-sigpipe-ru.patch;patchdir=${RUSTSRC} \
+             file://0001-src-core-build_steps-tool.rs-switch-off-lto-for-rust.patch;patchdir=${RUSTSRC} \
+ 	    file://revert-link-std-statically-in-rustc_driver-feature.patch;patchdir=${RUSTSRC} \
++	    file://Zdual-proc-macros-additional-check.patch;patchdir=${RUSTSRC} \
+ "
+ SRC_URI[rust.sha256sum] = "e23ec747a06ffd3e94155046f40b6664ac152c9ee3c2adfd90353a7ccff24226"
  
-     # Whether or not to optimize the compiler and standard library
 -- 
 2.49.0
 
