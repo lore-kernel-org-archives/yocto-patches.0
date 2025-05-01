@@ -2,60 +2,60 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5902FC3ABB9
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 447E0C3ABB2
 	for <webhook@archiver.kernel.org>; Thu,  1 May 2025 20:41:02 +0000 (UTC)
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
- by mx.groups.io with SMTP id smtpd.web10.4593.1746132056455835938
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+ by mx.groups.io with SMTP id smtpd.web10.4592.1746132055574025732
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 01 May 2025 13:40:56 -0700
+ Thu, 01 May 2025 13:40:55 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=H8ommBmT;
- spf=pass (domain: konsulko.com, ip: 209.85.219.45, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6e8ec399427so14166256d6.2
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 01 May 2025 13:40:56 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=lgxaysHq;
+ spf=pass (domain: konsulko.com, ip: 209.85.222.175, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7c5e2fe5f17so150594485a.3
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 01 May 2025 13:40:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1746132055; x=1746736855; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1746132054; x=1746736854; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=LY49FMx6miwcjmLVQuEU/srG6sPdp1LChhhrd6zD/oE=;
-        b=H8ommBmTEy/QooRbt3Mh2WVC2HZ/ebgr5RCoQQpBY+eKFIzn8YnrS4xo8cFQqwcKPi
-         WqsJukkpPEKHoKrStzZTOTu6rhATQr4G1C8vT9StevYrRkOk5NEF2wLQidGAcfMZFE1E
-         pcBgcuwxdsbsTkqOy8I3j4RnGKt5mmGEc0bco=
+        bh=rnfX9XsTkNrbOQSylDGA3q4f7Eg6bAgZxNknoYfw/iY=;
+        b=lgxaysHqs3HqVwCTNmPheY27zLZsTlddmLCMhrXLbhW7HgtIj5QJuL5RGCaDr1RWUn
+         kC9+ZQgAPrOo96xZBgy0RANoBynbolr2z3JVvhmrWYwdHGxYvf1oIO7Lxp6chozvKQZe
+         /B+OvzttplzGU74ri4Pvu0+0uWeXnoYq+dodg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746132055; x=1746736855;
+        d=1e100.net; s=20230601; t=1746132054; x=1746736854;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LY49FMx6miwcjmLVQuEU/srG6sPdp1LChhhrd6zD/oE=;
-        b=brRBj/LfWtF41wE4Q2ZZl7/NWyRNMctvdc6lkGbZC4AOwEzy+ke63mjN2vbnD1nv+Z
-         8XyWA2HFhFM9W6vZU646b++MAhZpHu8L+YgrTpXRR4djpHjG1jD7oixNqUyFxbhQJvNc
-         HaIip5Af/xNgdagAo9lrhIGtw1ncHugEEr7BISWN7tz0YyhzFNld8RmV04i2FvTCJXMw
-         xoeddsctbeWiejValTnVmTD2bPwP+J+an6DXOOChoInjhrrPxXTMmMtTUgx4vrb7Q8zV
-         XdKC3MD5fd8dtJGPM1apHSKcO6+iZmvpUGavTTJWoovgeCbuU5ZF4xvYiXEiWTEJWTUo
-         D1mA==
-X-Gm-Message-State: AOJu0YzCokPR0CyHHXgmhyUZxYNT78a2H4ZesSzk0BmL/udpyB0LDvWN
-	fB/RHODixQfc3yoCgGKM3FcztTjSGQGdVQzoZ8mK7OaybdlEmTznuB3XyQqO5YGW9CzD6b2ByrS
+        bh=rnfX9XsTkNrbOQSylDGA3q4f7Eg6bAgZxNknoYfw/iY=;
+        b=LXdL62WsrJ8bHWD26EGZXA9mCQzslpPgOyHyimPESAi9/a0dqsNYIsXyszKpvTfSxj
+         T32yYPufgoLOvtN2WUe0MQdJFXpEAbfWOqKN20wQeIRBjydnBcsilDkRxyHjJjcJX3R+
+         hCEcSAiUoyOgDQYEmQVWGrIpp/SWNLZJ3DAegdqL03X2CYZQp1o3aJCUce8rSKmUj+ZR
+         o87f04adm5T3zq+TThl0S5k6/wnxHhFYzjSYqieFB6UjHGlOJPGmnvhg7HnC+vLKQxiY
+         baO2DIbSBOvrOWNHEXk3evVKE19JTVRi1fRt85sDdr6HllK/ITGXZDRghMRzBjGEt2vI
+         EhGA==
+X-Gm-Message-State: AOJu0Yz3U++l1BsmlOhFc4Y7JB77ZrtwgabdWkq14XosL58ZDS5+Hbe7
+	l16vYVVQZbbpZMJHUFIPY2cveWE8w16eNBduXpsW2P8RkqIdtAuap1+B/PU/W+w06IaqaWOqPi1
 	i
-X-Gm-Gg: ASbGncu/zB9FNNckeeCcJ2JxDlS4Ki6E88s9l+um7WeuyVIBvjgqhGZO5s+VGvnusU1
-	uh0yX69oQGYko8HBat7nabXA+eRaynuc1Tuq7ZAsyYAq3fFyCAR/PyeKVwQW3g+oNJzPA9YMSE7
-	fMknrkUMyeYwBfMBthWz1v8ZKU+zhsq3U65W+BI5Xldksy/KTJZDuoGNLu89VRs4kmxTPnyiYX/
-	3Cfyz0QEpOhXLKDP4KtLySTv4rdjdGmENMJjzYZPQu1CGCdQArtdehAo4qgnfTVEon7yI/25oAi
-	xsE6Pyx2BxPKugWM089f/fE9q1W25/VB5a3pa/mt/zCDMBdEMz5zmYweFFqOtRY9WUWntTbeMSH
-	s4FC9RroTV2gxVW/G
-X-Google-Smtp-Source: AGHT+IG9dYd37EiURZMGzMaplIJSWrZyLE5naZWIiWhtHwX9kLRJfOfsDocxG6M1R6huWAYYros6Tw==
-X-Received: by 2002:a05:6214:c2e:b0:6f5:436:9e46 with SMTP id 6a1803df08f44-6f515279a5bmr10984116d6.15.1746132055292;
-        Thu, 01 May 2025 13:40:55 -0700 (PDT)
+X-Gm-Gg: ASbGnct53uUt5QqXaKei+slL3eA8nuydsZoPob+q6PhQ7I++Phe7R2Td57kAQKybJFX
+	U8rlSgvmh1yNwPigKWL2vKHJArBH5qWBvBW+tx7/cbTMwsSBiryEtdall8GCYiT2jZ1p+7KK4bR
+	WUMj4SD8Ne1xpZtdrp/nvgW0Hvc9E2/tHQMs4goKeRBGCcyiccIUMsKoiV5n/gZKSvWzWCiPOPY
+	mHoIcbTGFrJF/pHNWJoUcvlEntRffDTLEMgCSuFlqwY/DJP86/aJLm8i/KEr/NI8y4JR0zAhzjt
+	4TYQcgyRBK6xoOQWc6lLFExTuDHurX9LFCGWlox4KQYFCGeA0IwojohANZMUlzzRVvEwhV9zAiG
+	PoVxz3BZCK6lCZcYT
+X-Google-Smtp-Source: AGHT+IEeJ840wtP4Fzzn8DhXBBqo15/fH/DPSg4VqNaHmtz0EsBECN19vMIv9ISU1zyL2N7qQ2JbTA==
+X-Received: by 2002:ad4:5942:0:b0:6e6:684f:7f6f with SMTP id 6a1803df08f44-6f5152569c2mr11831276d6.7.1746132054349;
+        Thu, 01 May 2025 13:40:54 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f50f3b03ddsm9086216d6.7.2025.05.01.13.40.54
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f50f3b03ddsm9086216d6.7.2025.05.01.13.40.53
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 May 2025 13:40:54 -0700 (PDT)
+        Thu, 01 May 2025 13:40:53 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][kirkstone/rust][PATCH 21/38] rust: Fix bloat issue in recent rust updates
-Date: Thu,  1 May 2025 16:39:57 -0400
-Message-ID: <b52b0f6a976207f6a2b9b008399e1f52cbe16be5.1746130391.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][kirkstone/rust][PATCH 20/38] cargo.bbclass: show PACKAGECONFIG_CONFARGS in bbnote
+Date: Thu,  1 May 2025 16:39:56 -0400
+Message-ID: <f15a06b83bc1163b927fa66f63867ba1f6f1ad4c.1746130391.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1746130391.git.scott.murray@konsulko.com>
 References: <cover.1746130391.git.scott.murray@konsulko.com>
@@ -65,49 +65,47 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Thu, 01 May 2025 20:41:02 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1448
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1447
 
-From: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
+From: Martin Jansa <martin.jansa@gmail.com>
 
-Remove the "src/gcc" directory from the Rust source code to reduce the
-filesystem build space.
+* PACKAGECONFIG_CONFARGS was added in:
+  https://git.openembedded.org/openembedded-core/commit/?id=16745b20452de60ae2474433cc1a2fb1ed9f6a64
+  but it wasn't added in bbnote above which might lead to confusing errors like I got now:
 
-In Rust 1.83 (and 1.84), a full GCC-14 tree was included, which caused
-the tar.xz archive to increase by 128 MB and the unpacked sources to
-grow by 1.3 GB. This was an upstream error that has been resolved in
-Rust 1.85.
+  NOTE: cargo build -v --frozen --target aarch64-webos-linux-gnu --release --manifest-path=.../git//Cargo.toml
+  error: unexpected argument '--cfg' found
 
-After updating to Rust 1.85 we can revert this removal of "src/gcc"
+  Usage: cargo build --verbose... --frozen --target [<TRIPLE>] --release --manifest-path <PATH>
 
-Signed-off-by: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
+  and was wondering where --cfg came from.
+
+* it was from recipe where we already use:
+  RUSTFLAGS:append = " ${PACKAGECONFIG_CONFARGS}"
+  it will be difficult to use PACKAGECONFIG for RUSTFLAGS and prevent
+  them to be used here for cargo as well, what about the recipes which
+  need them to explicitly append them to CARGO_BUILD_FLAGS ?
+
+Signed-off-by: Martin Jansa <martin.jansa@gmail.com>
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(adapted from oe-core commit 26a345adc8e050657bfa0b51ea92a3d89e698d9a)
+(adapted from oe-core commit 38d953b2ffd4e0cee9e77f97988e44be105023c6)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- recipes-devtools/rust/rust-source.inc | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ classes/cargo.bbclass | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/recipes-devtools/rust/rust-source.inc b/recipes-devtools/rust/rust-source.inc
-index dea744f..ec94949 100644
---- a/recipes-devtools/rust/rust-source.inc
-+++ b/recipes-devtools/rust/rust-source.inc
-@@ -13,6 +13,17 @@ SRC_URI[rust.sha256sum] = "7b11d4242dab0921a7d54758ad3fe805153c979c144625fecde11
- 
- RUSTSRC = "${WORKDIR}/rustc-${RUST_VERSION}-src"
- 
-+#After updating to Rust 1.85 we can revert this removal of "src/gcc"
-+remove_gcc_directory() {
-+    # Ensure the gcc directory exists
-+    gcc_dir="${S}/src/gcc"
-+    if [ -d "$gcc_dir" ]; then
-+        rm -rf "$gcc_dir"
-+    fi
-+}
-+# Add postfunc to the do_unpack task
-+do_unpack[postfuncs] += "remove_gcc_directory"
-+
- UPSTREAM_CHECK_URI = "https://forge.rust-lang.org/infra/other-installation-methods.html"
- UPSTREAM_CHECK_REGEX = "rustc-(?P<pver>\d+(\.\d+)+)-src"
+diff --git a/classes/cargo.bbclass b/classes/cargo.bbclass
+index 461d100..2dd28e9 100644
+--- a/classes/cargo.bbclass
++++ b/classes/cargo.bbclass
+@@ -47,7 +47,7 @@ oe_cargo_build () {
+ 	export RUSTFLAGS="${RUSTFLAGS}"
+ 	bbnote "Using rust targets from ${RUST_TARGET_PATH}"
+ 	bbnote "cargo = $(which ${CARGO})"
+-	bbnote "${CARGO} build ${CARGO_BUILD_FLAGS} $@"
++	bbnote "${CARGO} build ${CARGO_BUILD_FLAGS} ${PACKAGECONFIG_CONFARGS} $@"
+ 	"${CARGO}" build ${CARGO_BUILD_FLAGS} ${PACKAGECONFIG_CONFARGS} "$@"
+ }
  
 -- 
 2.49.0
