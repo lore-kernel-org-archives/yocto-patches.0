@@ -2,146 +2,228 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B00E1C3ABAA
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE1CAC369DC
 	for <webhook@archiver.kernel.org>; Thu,  1 May 2025 20:40:41 +0000 (UTC)
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
- by mx.groups.io with SMTP id smtpd.web11.4640.1746132040125087997
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+ by mx.groups.io with SMTP id smtpd.web11.4639.1746132037251332666
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 01 May 2025 13:40:40 -0700
+ Thu, 01 May 2025 13:40:37 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=B7CQUxZv;
- spf=pass (domain: konsulko.com, ip: 209.85.222.171, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7c9677cd6d7so164491685a.3
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 01 May 2025 13:40:40 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=YxBsLnnK;
+ spf=pass (domain: konsulko.com, ip: 209.85.219.45, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6ed0cc5eca4so28954266d6.1
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 01 May 2025 13:40:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1746132039; x=1746736839; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Y6vZnnD/d90l/pDiHfGeIGmXdEh8x/mLPRHHvImReeI=;
-        b=B7CQUxZvM8nlXvboYeDmRNIYvncD2Ix5AcHyrwb/jIKRPD+u+OQlsWwigPwcugHYRG
-         x2vuwIYxSl34ylwUWaUg2A1L4azsJHuOa/hsXeVjP1SIaYqjfXSAKQLdt6tddz01BMSA
-         EuoJo+wDfV/KlVR9rcRadHzlfwMuA2jvhV83M=
+        d=konsulko.com; s=google; t=1746132036; x=1746736836; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bAUJeK+qCc1kZE6d7MufW9oOvelgkC1j65rO1FcfQ18=;
+        b=YxBsLnnK1/Sa+AkYJs6PXAkftRVhs0Cf8jCfRhCy1FnemdKSnSI0favlyl3s4dRWr+
+         ea/W47SWOc8omtjwOS8U4EwELdcHN4RI2pvf9s7TgQRUUUgFPJxuF79bz/1wCHd2vATy
+         jnwSc3rJchbxWae4bviO8YvLVp5TqqqZTD8yY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746132039; x=1746736839;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y6vZnnD/d90l/pDiHfGeIGmXdEh8x/mLPRHHvImReeI=;
-        b=GlNcLXthhtpOhaY6NaDScpiuqbOPubt45l7tU2LN1rVryw332zsY0y99GRzzI68LBN
-         l8dhDvRA+fX5jlBiUYaFL5MaZmw7zEyEohlr0VUFcffKshj68AXhO7zgS3BDI5xMblil
-         II+SerG9YCPgJjvxh/pfCyjaf7YCB9UaOhoEurRTaMPgj/gHoQFYC1F8W8YgN/ueN0/R
-         j6PZwwk5KQIYsUA0eOMEo7u3sOMBYsml/fGn71FpkrCI1TcYuiMiEd/LansrofTVy+4Z
-         Dl6HRo5Q2AFC9K3auJTHVnOp4xnwfN/8TEp8ad2sC/YB40w8yzq5+hlHHniVfZdtlMym
-         RVxg==
-X-Gm-Message-State: AOJu0Yykfvq36tx53wa+ohm7N9oaZnT+/6W+/R+nwYfboacDRiTQn6V0
-	nEYgDJdP/rHcE3J/R3J5ERDnH1zmI6evNC491KQsrHGr+toMLuiTzeLqkOHVRM/2lVuSkrYGNvC
-	o
-X-Gm-Gg: ASbGnct0hvC/7/zRWS45BJZNzyjb+IJnuZY09m3nxIKN2uagIeDlqqlou9pgE8BfgRT
-	zMQ8U24QuQVo2RuweLhFqOz7gqo9KPRJtxX1n5IDXCBCcgW4IcsSB7qH8gaAm137CtVKPIQcY0x
-	LdRCrJ9mOJzIHs6hGHknHqdrzE4vYLBoFYMzaiHAlwgjhHVzKVmJOpZAQQKRBOB+7Uj0vf+IXvQ
-	Lc6DvJhYgZTNUAMsMjpbCLIE/kcjNI3EFj3hxxTjslGXnI7Xjw4anvPY+XoW091d2Ia+fG1s2o5
-	YCchd0nt/75ZpH37tPeFjtcSBi4dxcq/3OeeWY5sKMFEg1CiHyTaTpw2eYl8deTaNk9pi3le36u
-	gZhraW0Kv0kQb7enFFtylXXdGmMQ=
-X-Google-Smtp-Source: AGHT+IHx8lGmIKZz6+cYDaGF6dGyPhHbUFyOM2B5Fg17I40t2Yt6z1xWYL1CesaJRjkzFdycjnY/kA==
-X-Received: by 2002:a05:620a:4414:b0:7c7:a55d:bd0 with SMTP id af79cd13be357-7cad5b263bbmr79701285a.5.1746132038888;
-        Thu, 01 May 2025 13:40:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1746132036; x=1746736836;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bAUJeK+qCc1kZE6d7MufW9oOvelgkC1j65rO1FcfQ18=;
+        b=QGNbjXu5hLVAPdDoy3BsN2/yQN3eG1Am64A1NcB8lGh4pTTlx/mr2ciGvFvIBfWuPU
+         VQihbY9hdPreIq6MGN/PSZpbmeFLIhdv74R8E5H+xLQgWVNNZ5KUEszx0oVAsCl9M0cY
+         Ng7Tt7wcF+EUDRu1cstY22AJtY2M8qWNc1ZRzdLkp6MT163tokGoOLaYVZufHJGaTW0Y
+         jcZTJEW95Bv3L/1etulOFcmPYLrI5lOUqC8LDRPDQT8FsBHflb2ImsaanHXFvlLlkd3o
+         kgIRkXvhUkvXLVYN1ilF5UgPlYVlCxj8drkFdmgnqXlDocellcWme3JF9T8E//QRrwf5
+         WIoQ==
+X-Gm-Message-State: AOJu0YyTr4qhY8wXUGh8OjR+GvPAkQT0CfguLD2Ks6En3uN1n2F1TUIg
+	qTQFLypHew62uWI8Ztr7VBfqpJ9ePd5oXXM4vT7aOEO+X5UhRJmcqANiriRlfRpZcER7F/D8glK
+	2
+X-Gm-Gg: ASbGncsaBcgVWNkx1jA2z/YFp2Ai1rqboJV9P0HoqmjkM7nANUnaaxOVMpHczEDOrF1
+	QX9lg+i+8ySF9Ejn/F93OlkBqHFGCCtj24Ynv+8T5Iq+2/+OSpKqoHctadFm4+EY2oZtriYivcg
+	/fM7d2oOwX064+mxJFoOSfC08yCDH2DKruehdunIi1bsqQDCB5h13Z7yhlZT6IEJwatp5OLtkTP
+	xt7lJ8JJxuhLVAYjpc79ZrqHsz80NfQX5izu/yp6q2QlRe3p4LjBXKKROFq6WzwWA9rXeuJlcc0
+	gNWTv5CAEBURAAKPHL5zGAwRYrNcBfMNfp0t7cHeaAq1J/2XsE3fPnXnRde4AP45tJsyTCVbeus
+	cXrwljeTnCbcum2tw
+X-Google-Smtp-Source: AGHT+IEVpMHVwtaJ0JrnI2GHqeSWLvRjiX+1LHdb6JK/ucrR+8gXBirjgq6cbOts7X9PMQ9yHdWwUA==
+X-Received: by 2002:a05:6214:528a:b0:6e1:715f:cdf5 with SMTP id 6a1803df08f44-6f5155fdbc6mr10234796d6.15.1746132035651;
+        Thu, 01 May 2025 13:40:35 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f50f3b03ddsm9086216d6.7.2025.05.01.13.40.38
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f50f3b03ddsm9086216d6.7.2025.05.01.13.40.34
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 May 2025 13:40:38 -0700 (PDT)
+        Thu, 01 May 2025 13:40:34 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][kirkstone/rust][PATCH 04/38] rust-cross-canadian: set CC_<triple> for nativesdk
-Date: Thu,  1 May 2025 16:39:40 -0400
-Message-ID: <3a18322b3d6f57b3fab6cc5d77df233f607a6379.1746130391.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][kirkstone/rust][PATCH 00/38] Update to Rust 1.85.1
+Date: Thu,  1 May 2025 16:39:36 -0400
+Message-ID: <cover.1746130391.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1746130391.git.scott.murray@konsulko.com>
-References: <cover.1746130391.git.scott.murray@konsulko.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Thu, 01 May 2025 20:40:41 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1431
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1427
 
-From: Sean Nyekjaer <sean@geanix.com>
+After more of a delay than I would like, here is the patch series to
+backport the various Rust toolchain changes for the 1.81.0 -> 1.85.1
+updates that have landed in oe-core master branch in the last several
+months.
 
-This fixes build errors when building rust bindings for C dependencies
-for the sdk host.
-This will allow us to build and run rust programs on the sdk host.
+The likely most impactful change for users is that in order to fix being
+able to build python3-cryptography with Rust >= 1.83, I have had to
+backport newer versions of python3-setuptools-rust, and more importantly,
+python3-setuptools.  Extracting the required fixes in setuptools-rust
+seems potentially possible, but untangling the change history in it got
+to the point where I lost confidence in not accidentally breaking some
+behavior relied upon by downstream users.  As such, using the tested
+version from scarthgap branch seems a better solution for now.
+That said, if you are a heavy Python module user, there may be some
+potential for breakage due to the unexpected setuptools upgrade.  I have
+not seen issues in my testing with oe-core recipes, but have not yet tried
+a world build of all of meta-python.
 
-Before:
-% cargo build --target x86_64-oesdk-linux-gnu -vv
-[...]
-   Compiling zstd-sys v2.0.13+zstd.1.5.6 (zstd-rs/zstd-safe/zstd-sys)
-[zstd-sys 2.0.13+zstd.1.5.6] CC_x86_64-oesdk-linux-gnu =3D None
-[zstd-sys 2.0.13+zstd.1.5.6] CC =3D Some(arm-oe-linux-gnueabi-gcc  -mthumb =
--mfpu=3Dneon -mfloat-abi=3Dhard -mcpu=3Dcortex-a7 -D_TIME_BITS=3D64 -D_FILE=
-_OFFSET_BITS=3D64 --sysroot=3D/usr/local/sdk/sysroots/cortexa7t2hf-neon-oe-=
-linux-gnueabi)
-[zstd-sys 2.0.13+zstd.1.5.6] cargo:warning=3DToolExecError: Command LC_ALL=
-=3D"C" "arm-oe-linux-gnueabi-gcc" "-mthumb" "-mfpu=3Dneon" "-mfloat-abi=3Dh=
-ard" "-mcpu=3Dcortex-a7" "-D_TIME_BITS=3D64" "-D_FILE_OFFSET_BITS=3D64" "--=
-sysroot=3D/usr/local/cc-sdk/sysroots/cortexa7t2hf-neon-oe-linux-gnueabi" "-=
-O0" "-ffunction-sections" "-fdata-sections" "-fPIC" "-gdwarf-4" "-fno-omit-=
-frame-pointer" "-m64" "-I" "zstd/lib/" "-I" "zstd/lib/common" "-I" "zstd/li=
-b/legacy" "-O2" "-pipe" "-g" "-feliminate-unused-debug-types" "-flto" "-ffa=
-t-lto-objects" "-fuse-linker-plugin" "-fvisibility=3Dhidden" "-DZSTD_LIB_DE=
-PRECATED=3D0" "-DXXH_PRIVATE_API=3D" "-DZSTDLIB_VISIBILITY=3D" "-DZDICTLIB_=
-VISIBILITY=3D" "-DZSTDERRORLIB_VISIBILITY=3D" "-DZSTD_LEGACY_SUPPORT=3D1" "=
--o" "zstd-rs/target/x86_64-oesdk-linux-gnu/debug/build/zstd-sys-b2560022e17=
-2eec3/out/44ff4c55aa9e5133-debug.o" "-c" "zstd/lib/common/debug.c" with arg=
-s arm-oe-linux-gnueabi-gcc did not execute successfully (status code exit s=
-tatus: 1).cargo:warning=3Darm-oe-linux-gnueabi-gcc: error: unrecognized com=
-mand-line option '-m64'
+I have also included a README.me update to document my requirements /
+guidelines for submissions of bbappends in dynamic layers.  They are
+for the most part what I posted a few weeks back.
 
-After:
-% cargo build --target x86_64-oesdk-linux-gnu -vv
-[...]
-   Compiling zstd-sys v2.0.13+zstd.1.5.6 (zstd-rs/zstd-safe/zstd-sys)
-[zstd-sys 2.0.13+zstd.1.5.6] CC_x86_64_oesdk_linux_gnu =3D Some(x86_64-oesd=
-k-linux-gcc)
-[...]
-   Compiling zstd v0.13.2 (zstd-rs)
-    Finished dev [unoptimized + debuginfo] target(s) in 14.67s
+I intend to push this series to kirkstone/rust in about 48 hours
+unless a serious showstopper is pointed out.
 
-Signed-off-by: Sean Nyekjaer <sean@geanix.com>
-Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-(adapted from oe-core commit 3c8fedd6e5a3251b7a7a73cc92b153d8e68cb8e5)
-Signed-off-by: Scott Murray <scott.murray@konsulko.com>
----
- recipes-devtools/rust/rust_1.81.0.bb | 2 ++
- 1 file changed, 2 insertions(+)
+Changes:
 
-diff --git a/recipes-devtools/rust/rust_1.81.0.bb b/recipes-devtools/rust/r=
-ust_1.81.0.bb
-index 4efdcff..f54a497 100644
---- a/recipes-devtools/rust/rust_1.81.0.bb
-+++ b/recipes-devtools/rust/rust_1.81.0.bb
-@@ -277,10 +277,12 @@ rust_do_install:class-nativesdk() {
-     mkdir "${ENV_SETUP_DIR}"
-     RUST_ENV_SETUP_SH=3D"${ENV_SETUP_DIR}/rust.sh"
-     RUST_HOST_TRIPLE=3D`echo ${RUST_HOST_SYS} | tr '[:lower:]' '[:upper:]'=
- | sed 's/-/_/g'`
-+    RUST_HOST_CC=3D`echo ${RUST_HOST_SYS} | sed 's/-/_/g'`
-     SDKLOADER=3D${@bb.utils.contains('SDK_ARCH', 'x86_64', 'ld-linux-x86-6=
-4.so.2', '', d)}${@bb.utils.contains('SDK_ARCH', 'i686', 'ld-linux.so.2', '=
-', d)}${@bb.utils.contains('SDK_ARCH', 'aarch64', 'ld-linux-aarch64.so.1', =
-'', d)}${@bb.utils.contains('SDK_ARCH', 'ppc64le', 'ld64.so.2', '', d)}${@b=
-b.utils.contains('SDK_ARCH', 'riscv64', 'ld-linux-riscv64-lp64d.so.1', '', =
-d)}
-=20
-     cat <<- EOF > "${RUST_ENV_SETUP_SH}"
- 	export CARGO_TARGET_${RUST_HOST_TRIPLE}_RUNNER=3D"\$OECORE_NATIVE_SYSROOT=
-/lib/${SDKLOADER}"
-+	export CC_$RUST_HOST_CC=3D"${CCACHE}${HOST_PREFIX}gcc"
- 	EOF
- }
-=20
---=20
+Alexander Kanavin (1):
+  rust: restore parallel builds, disable lto only for rustdoc
+
+Deepesh Varatharajan (13):
+  rust: Upgrade 1.81.0->1.82.0
+  rust: oe-selftest issue fix with v1.82
+  rust: Oe-selftest changes for rust v1.82.0
+  rust: Upgrade 1.82.0->1.83.0
+  rust: Fix build break because of download-ci-llvm
+  rust: Oe-selftest changes for rust v1.83.0
+  rust: Fix bloat issue in recent rust updates
+  rust: Fix build break because of "download-rustc" and "llvm-tools"
+  rust: Upgrade 1.83.0->1.84.1
+  rust: Fix build failure when multilibs are enabled
+  rust: Oe-selftest changes for rust v1.84.1
+  rust: re-enable the unit tests that are ignored
+  rust: re-enable the unit tests that are ignored
+
+Enrico Scholz (1):
+  cargo_common: use 'config.toml' instead of plain 'config'
+
+Harish Sadineni (2):
+  rust: fix for rust multilib sdk configuration
+  rust: remove redundant cargo config file
+
+Igor Opaniuk (1):
+  rust/README-rust.md: fix markdown style issues
+
+Jean-Pierre Geslin (1):
+  cargo: pass PACKAGECONFIG_CONFARGS to cargo build
+
+Khem Raj (3):
+  rust-llvm: Fix build break found with clang
+  rust-llvm: Disable benchmarks by cmake options
+  cargo-c,rust: Fix build on risv32
+
+Martin Jansa (1):
+  cargo.bbclass: show PACKAGECONFIG_CONFARGS in bbnote
+
+Pedro Ferreira (1):
+  rust-common.bbclass: soft assignment for RUSTLIB path
+
+Peter Kjellerstedt (1):
+  libstd-rs: Correct the license to use Unicode-3.0
+
+Richard Purdie (5):
+  meta/meta-selftest: Fix variable assignment whitespace
+  recipes: Drop ld-is-gold support
+  rust-source: Fix remove_gcc_directory
+  rust-llvm: Compile llvm to use dynamic libraries
+  rust-llvm: Disable libedit
+
+Scott Murray (3):
+  Add selftest backport to ease maintenance
+  Backport newer Python setuptools-rust and setuptools
+  Update README.md wrt dynamic layer submissions
+
+Sean Nyekjaer (1):
+  rust-cross-canadian: set CC_<triple> for nativesdk
+
+Yash Shinde (3):
+  rust: Update "do_update_snapshot" task for rust-snapshot.inc
+  rust: Upgrade 1.84.1->1.85.0
+  rust: Upgrade 1.85.0->1.85.1
+
+Yoann Congal (1):
+  cargo-c: Update patch Upstream-Status
+
+ README.md                                     |  49 ++-
+ classes/cargo.bbclass                         |   6 +-
+ classes/cargo_common.bbclass                  |  20 +-
+ classes/rust-common.bbclass                   |   2 +-
+ classes/rust-target-config.bbclass            |   5 +
+ classes/rust.bbclass                          |   8 +-
+ conf/layer.conf                               |   8 +-
+ files/common-licenses/Unicode-3.0             |  39 +++
+ lib/oeqa/selftest/cases/rust_mixin.py         | 134 ++++++++
+ meta/lib/oeqa/selftest/cases/rust.py          |  85 -----
+ .../packagegroup-rust-cross-canadian.bb       |   2 +-
+ .../python/python3-setuptools-rust_1.9.0.bb   |  35 ++
+ .../python3-setuptools-scm_6.4.2.bbappend     |   2 +
+ ...nfig.py-make-it-possible-to-substite.patch |  58 ++++
+ ...ly-do-not-fetch-code-by-easy_install.patch |  31 ++
+ .../python3-setuptools/CVE-2024-6345.patch    | 312 ++++++++++++++++++
+ .../python/python3-setuptools_69.1.1.bb       |  58 ++++
+ recipes-devtools/rust/README-rust.md          |  24 +-
+ ...l-codes-on-riscv32gc-unknown-linux-g.patch |  38 +++
+ .../rust/cargo-c_0.10.5+cargo-0.83.0.bb       |   1 +
+ .../rust/{cargo_1.81.0.bb => cargo_1.85.1.bb} |  13 +
+ ...l-codes-on-riscv32gc-unknown-linux-g.patch | 112 +++++++
+ ...teps-tool.rs-switch-off-lto-for-rust.patch |  46 +++
+ .../Zdual-proc-macros-additional-check.patch  |  31 ++
+ ...epro-issue-fix-with-cc-crate-hashmap.patch |  90 ++++-
+ ...d-statically-in-rustc_driver-feature.patch | 228 +++++++++++++
+ .../rust/files/rust-oe-selftest.patch         | 279 +++++-----------
+ ...ue-fix-cargo-config-for-codegenunits.patch |  26 --
+ .../files/rv32-cargo-rustix-0.38.28-fix.patch |  70 ----
+ .../rust/files/rv32-rustix-libc-backend.patch |  33 --
+ .../rust/files/zlib-off64_t.patch             |  31 --
+ ...ibstd-rs_1.81.0.bb => libstd-rs_1.85.1.bb} |  11 +-
+ recipes-devtools/rust/rust-cross-canadian.inc |  24 +-
+ ....81.0.bb => rust-cross-canadian_1.85.1.bb} |   0
+ .../0003-llvm-fix-include-benchmarks.patch    |  25 --
+ ...ust-llvm_1.81.0.bb => rust-llvm_1.85.1.bb} |   8 +-
+ recipes-devtools/rust/rust-snapshot.inc       |  81 ++---
+ recipes-devtools/rust/rust-source.inc         |  10 +-
+ .../rust/{rust_1.81.0.bb => rust_1.85.1.bb}   |  76 +++--
+ 39 files changed, 1492 insertions(+), 619 deletions(-)
+ create mode 100644 files/common-licenses/Unicode-3.0
+ create mode 100644 lib/oeqa/selftest/cases/rust_mixin.py
+ delete mode 100644 meta/lib/oeqa/selftest/cases/rust.py
+ create mode 100644 recipes-devtools/python/python3-setuptools-rust_1.9.0.bb
+ create mode 100644 recipes-devtools/python/python3-setuptools-scm_6.4.2.bbappend
+ create mode 100644 recipes-devtools/python/python3-setuptools/0001-_distutils-sysconfig.py-make-it-possible-to-substite.patch
+ create mode 100644 recipes-devtools/python/python3-setuptools/0001-conditionally-do-not-fetch-code-by-easy_install.patch
+ create mode 100644 recipes-devtools/python/python3-setuptools/CVE-2024-6345.patch
+ create mode 100644 recipes-devtools/python/python3-setuptools_69.1.1.bb
+ create mode 100644 recipes-devtools/rust/cargo-c/0001-Define-more-ioctl-codes-on-riscv32gc-unknown-linux-g.patch
+ rename recipes-devtools/rust/{cargo_1.81.0.bb => cargo_1.85.1.bb} (87%)
+ create mode 100644 recipes-devtools/rust/files/0001-Define-more-ioctl-codes-on-riscv32gc-unknown-linux-g.patch
+ create mode 100644 recipes-devtools/rust/files/0001-src-core-build_steps-tool.rs-switch-off-lto-for-rust.patch
+ create mode 100644 recipes-devtools/rust/files/Zdual-proc-macros-additional-check.patch
+ create mode 100644 recipes-devtools/rust/files/revert-link-std-statically-in-rustc_driver-feature.patch
+ delete mode 100644 recipes-devtools/rust/files/rustdoc-repro-issue-fix-cargo-config-for-codegenunits.patch
+ delete mode 100644 recipes-devtools/rust/files/rv32-cargo-rustix-0.38.28-fix.patch
+ delete mode 100644 recipes-devtools/rust/files/rv32-rustix-libc-backend.patch
+ delete mode 100644 recipes-devtools/rust/files/zlib-off64_t.patch
+ rename recipes-devtools/rust/{libstd-rs_1.81.0.bb => libstd-rs_1.85.1.bb} (76%)
+ rename recipes-devtools/rust/{rust-cross-canadian_1.81.0.bb => rust-cross-canadian_1.85.1.bb} (100%)
+ delete mode 100644 recipes-devtools/rust/rust-llvm/0003-llvm-fix-include-benchmarks.patch
+ rename recipes-devtools/rust/{rust-llvm_1.81.0.bb => rust-llvm_1.85.1.bb} (94%)
+ rename recipes-devtools/rust/{rust_1.81.0.bb => rust_1.85.1.bb} (81%)
+
+-- 
 2.49.0
 
 
