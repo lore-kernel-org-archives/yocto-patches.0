@@ -2,60 +2,60 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA3E5C369DC
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B97DEC3ABAA
 	for <webhook@archiver.kernel.org>; Thu,  1 May 2025 20:41:22 +0000 (UTC)
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
- by mx.groups.io with SMTP id smtpd.web10.4606.1746132072588291034
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+ by mx.groups.io with SMTP id smtpd.web11.4675.1746132073452330785
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 01 May 2025 13:41:12 -0700
+ Thu, 01 May 2025 13:41:13 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=BObJgSA4;
- spf=pass (domain: konsulko.com, ip: 209.85.222.171, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7c55500d08cso152173885a.0
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 01 May 2025 13:41:12 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=Phh8DGPE;
+ spf=pass (domain: konsulko.com, ip: 209.85.219.54, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6e8f05acc13so19273146d6.2
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 01 May 2025 13:41:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1746132071; x=1746736871; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1746132072; x=1746736872; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=t+n/jI5C3O5f6mnbC8LXviTxW039ZYf4pH5mQ5n7J9I=;
-        b=BObJgSA4wgMP8oFbCK3ozWXLvyK4m4G1KbK5w1ylVehvGgzR/ajUirP2x+oZywWsl0
-         PO/5y1NnWMOLYdoQekMVfobgcMSmsK3kVjRo38OCYdLBK0IqZG5nekIQp6qtAvaaagXd
-         Yq1u6eoq6rjh9VEZw/GqWoxF9vcADGUk5StbE=
+        bh=11J57WJF9pHru0vPtMabVyiPFirX+FHDEUG6K7rfQrM=;
+        b=Phh8DGPEZSBrZYA+QcBP2qtlZzH7J/g2y+jl3blTHZovQQKBcEWdVrzLE6wra+H5LR
+         aZxjo7PZcARo7e5Lpg3xDuYjpXCu2k6U/0n1MLPk7bPW7QjGlqBbRsJ/Rymt66RXs9Jy
+         AlFZ+VWtqQVa7csuuLb7fgKr0X9IfACPqlAxw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746132071; x=1746736871;
+        d=1e100.net; s=20230601; t=1746132072; x=1746736872;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=t+n/jI5C3O5f6mnbC8LXviTxW039ZYf4pH5mQ5n7J9I=;
-        b=nw7DbTZ2cOPugDHKKoAMsXb2dOfp1xtz8Z6ekpJWdNfCrAnKo0r74AlVinENJDWeid
-         cLuvgQe6bM5FbjjzgzyWlgRgVsWLRySnzmkLx1saJQNnBcbebeGPj+MDyUg0Herv/XlS
-         ul3H0xE+/TsGAD+ni1fiyEnL8Ksq5tOgXDkqYl1UjN979Ey+iFgpwfIE0ne+UyhydIvw
-         ELAKIiH1Z0wk3h1FH3EEA4NwzjwG99aR/ad1ektubYie6k4H+OQMswe3RBaQmwZzn2Yr
-         y+crRaT87BQ7oRZfKlHouvFf7pmp/FAryg60WBoR5x/6xwkxdVC/JQ/9fmmaMhohylYZ
-         O7MA==
-X-Gm-Message-State: AOJu0Yzno6MDZl+i9iVuyhpihmOnAECih+4UvOxqcFnWLfU9DhjSB1lH
-	isT7zC7eGNM3MQ64UTQEkbHZhx6TzhwtZb126nRhF1ln4xp/NZB0vocsrcZQMwAXdD46WL6a7sI
-	/
-X-Gm-Gg: ASbGnct/LkNGOFIyhJqCxDSPw0py3Fr7CumOTkNlx00cnzP+p7m767z8LMITd3Nnx8/
-	wk8GlxWM3IC3bpkUdAzVOPiImgPD1KZshmRuGmprhCLTPnkoHCtwL7ZYxkeDnwI0MOHQES2S+4U
-	C8ECRzOmq7CJzYI//7+qlyzl62A5u2qJc2PeShZ2wr7hflxoD9rxuwZDb3zE/g7l6loAMOXgihq
-	JqRSs8+Qgj1MQ7Z+WTUZyuQ+jWOfQwbWScz3IBZzw81jZH/3CU98xGQ2NiuSELoWf2RErhFoIFh
-	2f5FHCYgu50K7fr9HMjkFQMcfGbZaBaGust7hXKhNVZm2wTFit17GVvUgWeMBhBgaSc2rPVWxte
-	EPLCno7Vs/Q1mzhGz
-X-Google-Smtp-Source: AGHT+IH9rjjN7YtrrpzCUhtJMDq4337Mgy5aMQJyfAmHbkrHbZn9jLpl++UteUE/JMU1+xZSn2ERuw==
-X-Received: by 2002:a05:620a:248a:b0:7c5:a55b:fa6c with SMTP id af79cd13be357-7cad5ba3d9emr66253785a.38.1746132071206;
-        Thu, 01 May 2025 13:41:11 -0700 (PDT)
+        bh=11J57WJF9pHru0vPtMabVyiPFirX+FHDEUG6K7rfQrM=;
+        b=WuQxBZZ7DbfC1GPJDOL/HPr9/Z0hp4RfbDXL0Ugvzi7JHdE22+FBQlRCcjNkfggZro
+         Rf2tTLknszE8gBq4WB6UnitYFVhsZ9+w1dLPnUMFSQ8ppeff1duZ9vkfrXkd2Xf4jt9+
+         /ipGrdoukpwStlO8jr/KXRRrF3ddLsqmnj8ObxMRqrs/5k92uIsjRUuDyBt2/ukd5VDN
+         flMIHb/dLOpb2iHMbanmei+MBufCxuk5KJAhlQAFMIJTfmdbzCaNNNbBmd0Ud/aSzeRE
+         A6yaI3qK9HL5sm92OziAIpngsqAyFh2Gn1hdGXZt3OKemH14TrEzFuqbJA2XlcYpq4yz
+         y/zA==
+X-Gm-Message-State: AOJu0YzSF6XjmQmFT//ydDnXtIng3YzuQtcYLBgvf7d/89dw4BsvfOKj
+	Y3ep1hobDmfIJzbtCFhQqYhqG8yrkV2fUsYioCzS/tUHC99SB7/Or7HJA7JoxpnwRZBlcjYSaFZ
+	M
+X-Gm-Gg: ASbGnctzc48LPDsUB1OGwpAHGLFMExFUtymuqgjJQ2QGASZwmG+GSWyJ0AktfSCbohk
+	lO6SREO5UgzE0Di9JBY7GreoHoP2imHHp9N9rJR8ae4dPqO4iVd2Qhi3X3YQOreEPuSA0DInf9U
+	BiemQWGoqFJS18IuNElSamF0DKwgSUJS5spmBeNRoMed4jC8EuLQaySdPDjjcqoBZ8hO23gx1Vw
+	isMYroHNxXfcnb/VHS+GWV68lBJKEVVq7ws/UkdASfhmPrwCLFKkHKEAm6gQP2n82XLrFJ72Ksl
+	S5MaUZ/ky5Rkjy5/1G4YDTMmF5+ZwPRbsqLkW7VMtKzDTEBc6YaPIe0wzZI03uQVFQZdUI32sqa
+	LkJCB23ZNpi2PSjhM
+X-Google-Smtp-Source: AGHT+IHLbFMtfdxe/SNZb04z4CFifY3c+Do1JXjjPSSIZ5CjJyOS1BM+CUIyuWBNBzCrrfWZcaY85w==
+X-Received: by 2002:ad4:5c6d:0:b0:6e4:3eb1:2bdb with SMTP id 6a1803df08f44-6f515632933mr9988206d6.43.1746132072152;
+        Thu, 01 May 2025 13:41:12 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f50f3b03ddsm9086216d6.7.2025.05.01.13.41.10
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f50f3b03ddsm9086216d6.7.2025.05.01.13.41.11
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 May 2025 13:41:10 -0700 (PDT)
+        Thu, 01 May 2025 13:41:11 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][kirkstone/rust][PATCH 36/38] rust: re-enable the unit tests that are ignored
-Date: Thu,  1 May 2025 16:40:12 -0400
-Message-ID: <a78ed8933a9169e570deabdaf697c5c4eac0f2a0.1746130391.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][kirkstone/rust][PATCH 37/38] rust: re-enable the unit tests that are ignored
+Date: Thu,  1 May 2025 16:40:13 -0400
+Message-ID: <03fe519d752c17b048bb9e7ee1c0fd74a9ef2347.1746130391.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1746130391.git.scott.murray@konsulko.com>
 References: <cover.1746130391.git.scott.murray@konsulko.com>
@@ -65,7 +65,7 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Thu, 01 May 2025 20:41:22 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1463
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1464
 
 From: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
 
@@ -75,62 +75,26 @@ consistently. They've been re-enabled and verified to run successfully on the
 latest version.
 
 Signed-off-by: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
-Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(adapted from oe-core commit 775108f131412122beb2b844dc5e2a4d47ce3b89)
+(adapted from oe-core commit 65c207fb034848f9ef0de8cf8725c5eded363aca)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- .../rust/files/rust-oe-selftest.patch         | 95 -------------------
- 1 file changed, 95 deletions(-)
+ .../rust/files/rust-oe-selftest.patch         | 100 ------------------
+ 1 file changed, 100 deletions(-)
 
 diff --git a/recipes-devtools/rust/files/rust-oe-selftest.patch b/recipes-devtools/rust/files/rust-oe-selftest.patch
-index 2cca850..4a8760a 100644
+index 4a8760a..909bc97 100644
 --- a/recipes-devtools/rust/files/rust-oe-selftest.patch
 +++ b/recipes-devtools/rust/files/rust-oe-selftest.patch
-@@ -43,77 +43,6 @@ diff --git a/compiler/rustc_interface/src/tests.rs b/compiler/rustc_interface/sr
+@@ -43,86 +43,6 @@ diff --git a/compiler/rustc_interface/src/tests.rs b/compiler/rustc_interface/sr
   fn test_can_print_warnings() {
       sess_and_cfg(&["-Awarnings"], |sess, _cfg| {
           assert!(!sess.dcx().can_emit_warnings());
--diff --git a/library/test/src/stats/tests.rs b/library/test/src/stats/tests.rs
----- a/library/test/src/stats/tests.rs
--+++ b/library/test/src/stats/tests.rs
--@@ -40,6 +40,7 @@
-- }
--
-- #[test]
--+#[ignore]
-- fn test_min_max_nan() {
--     let xs = &[1.0, 2.0, f64::NAN, 3.0, 4.0];
--     let summary = Summary::new(xs);
--diff --git a/library/std/src/io/buffered/tests.rs b/library/std/src/io/buffered/tests.rs
--index 35a5291a347..5f2858d2505 100644
----- a/library/std/src/io/buffered/tests.rs
--+++ b/library/std/src/io/buffered/tests.rs
--@@ -488,6 +488,7 @@ fn flush(&mut self) -> io::Result<()> {
-- }
--
-- #[test]
--+#[ignore]
-- #[cfg_attr(any(target_os = "emscripten", target_os = "wasi"), ignore)] // no threads
-- fn panic_in_write_doesnt_flush_in_drop() {
--     static WRITES: AtomicUsize = AtomicUsize::new(0);
--diff --git a/library/std/src/io/stdio/tests.rs b/library/std/src/io/stdio/tests.rs
--index f89fd27ce6c..79737f5b127 100644
----- a/library/std/src/io/stdio/tests.rs
--+++ b/library/std/src/io/stdio/tests.rs
--@@ -25,6 +25,7 @@ fn stderrlock_unwind_safe() {
-- fn assert_unwind_safe<T: UnwindSafe + RefUnwindSafe>() {}
--
-- #[test]
--+#[ignore]
-- #[cfg_attr(any(target_os = "emscripten", target_os = "wasi"), ignore)] // no threads
-- fn panic_doesnt_poison() {
--     thread::spawn(|| {
--diff --git a/library/std/src/sync/mpsc/sync_tests.rs b/library/std/src/sync/mpsc/sync_tests.rs
--index 945de280f40..1ac7eeabc5c 100644
----- a/library/std/src/sync/mpsc/sync_tests.rs
--+++ b/library/std/src/sync/mpsc/sync_tests.rs
--@@ -252,6 +252,7 @@ fn oneshot_single_thread_send_port_close() {
+-diff --git a/library/std/src/sync/mpsc/tests.rs b/library/std/src/sync/mpsc/tests.rs
+-index ac1a804cf9c..7c687982324 100644
+---- a/library/std/src/sync/mpsc/tests.rs
+-+++ b/library/std/src/sync/mpsc/tests.rs
+-@@ -233,6 +233,7 @@ fn oneshot_single_thread_send_port_close() {
 - }
 -
 - #[test]
@@ -138,71 +102,104 @@ index 2cca850..4a8760a 100644
 - fn oneshot_single_thread_recv_chan_close() {
 -     // Receiving on a closed chan will panic
 -     let res = thread::spawn(move || {
--@@ -347,6 +348,7 @@ fn oneshot_multi_task_recv_then_send() {
+-@@ -313,6 +314,7 @@ fn oneshot_multi_task_recv_then_send() {
 - }
 -
 - #[test]
 -+#[ignore]
 - fn oneshot_multi_task_recv_then_close() {
--     let (tx, rx) = sync_channel::<Box<i32>>(0);
+-     let (tx, rx) = channel::<Box<i32>>();
 -     let _t = thread::spawn(move || {
--@@ -371,6 +373,7 @@ fn oneshot_multi_thread_close_stress() {
+-@@ -337,6 +339,7 @@ fn oneshot_multi_thread_close_stress() {
 - }
 -
 - #[test]
 -+#[ignore]
 - fn oneshot_multi_thread_send_close_stress() {
 -     for _ in 0..stress_factor() {
--         let (tx, rx) = sync_channel::<i32>(0);
--@@ -385,6 +388,7 @@ fn oneshot_multi_thread_send_close_stress() {
+-         let (tx, rx) = channel::<i32>();
+-@@ -351,6 +354,7 @@ fn oneshot_multi_thread_send_close_stress() {
 - }
 -
 - #[test]
 -+#[ignore]
 - fn oneshot_multi_thread_recv_close_stress() {
 -     for _ in 0..stress_factor() {
--         let (tx, rx) = sync_channel::<i32>(0);
- diff --git a/library/std/src/sync/mpsc/tests.rs b/library/std/src/sync/mpsc/tests.rs
- index ac1a804cf9c..7c687982324 100644
- --- a/library/std/src/sync/mpsc/tests.rs
-@@ -402,14 +331,6 @@ index 160af8a65d..686f4607bb 100644
-  fn smoke() {
-      let value = 12u32;
-      let reference = &value;
--@@ -28,6 +29,7 @@ fn smoke() {
+-         let (tx, rx) = channel::<i32>();
+-diff --git a/library/std/src/sync/poison/mutex/tests.rs b/library/std/src/sync/poison/mutex/tests.rs
+-index 1786a3c09ff..9dcead7092b 100644
+---- a/library/std/src/sync/poison/mutex/tests.rs
+-+++ b/library/std/src/sync/poison/mutex/tests.rs
+-@@ -82,6 +82,7 @@ fn drop(&mut self) {
 - }
 -
 - #[test]
 -+#[ignore]
-- fn stable_hash_hashes_as_tuple() {
--     let hash_packed = {
--         let mut hasher = StableHasher::new();
- diff --git a/compiler/rustc_data_structures/src/tagged_ptr/drop/tests.rs b/compiler/rustc_data_structures/src/tagged_ptr/drop/tests.rs
- index 4d342c72cc..9a77f92616 100644
- --- a/compiler/rustc_data_structures/src/tagged_ptr/drop/tests.rs
-@@ -422,22 +343,6 @@ index 4d342c72cc..9a77f92616 100644
-  fn smoke() {
-      let value = 12u32;
-      let reference = &value;
--@@ -28,6 +29,7 @@ fn smoke() {
+- fn test_into_inner_poison() {
+-     let m = new_poisoned_mutex(NonCopy(10));
+-
+-@@ -106,6 +107,7 @@ fn test_get_mut() {
 - }
 -
 - #[test]
 -+#[ignore]
-- fn boxed() {
--     let value = 12u32;
--     let boxed = Box::new(value);
--@@ -52,6 +54,7 @@ fn boxed() {
+- fn test_get_mut_poison() {
+-     let mut m = new_poisoned_mutex(NonCopy(10));
+-
+-@@ -146,6 +148,7 @@ fn test_mutex_arc_condvar() {
 - }
 -
 - #[test]
 -+#[ignore]
-- fn arclones() {
--     let value = 12u32;
--     let arc = Arc::new(value);
- diff --git a/library/std/src/thread/local/tests.rs b/library/std/src/thread/local/tests.rs
- index 9d4f52a092..d425e5f7b7 100644
- --- a/library/std/src/thread/local/tests.rs
+- fn test_arc_condvar_poison() {
+-     let packet = Packet(Arc::new((Mutex::new(1), Condvar::new())));
+-     let packet2 = Packet(packet.0.clone());
+-@@ -175,6 +178,7 @@ fn test_arc_condvar_poison() {
+- }
+-
+- #[test]
+-+#[ignore]
+- fn test_mutex_arc_poison() {
+-     let arc = Arc::new(Mutex::new(1));
+-     assert!(!arc.is_poisoned());
+-@@ -220,6 +220,7 @@ fn test_mutex_arc_nested() {
+- }
+-
+- #[test]
+-+#[ignore]
+- fn test_mutex_arc_access_in_unwind() {
+-     let arc = Arc::new(Mutex::new(1));
+-     let arc2 = arc.clone();
+ diff --git a/library/std/src/sync/poison/rwlock/tests.rs b/library/std/src/sync/poison/rwlock/tests.rs
+ index 1a9d3d3f12f..0a9cfc48806 100644
+ --- a/library/std/src/sync/poison/rwlock/tests.rs
+@@ -183,26 +103,6 @@ index 1a9d3d3f12f..0a9cfc48806 100644
+  fn test_get_mut_poison() {
+      let mut m = new_poisoned_rwlock(NonCopy(10));
+ 
+-diff --git a/library/std/src/sys/pal/unix/process/process_unix/tests.rs b/library/std/src/sys/pal/unix/process/process_unix/tests.rs
+-index 0a6c6ec19fc..bec257bc630 100644
+---- a/library/std/src/sys/pal/unix/process/process_unix/tests.rs
+-+++ b/library/std/src/sys/pal/unix/process/process_unix/tests.rs
+-@@ -6,6 +6,7 @@
+- // safety etc., are tested in tests/ui/process/process-panic-after-fork.rs
+-
+- #[test]
+-+#[ignore]
+- fn exitstatus_display_tests() {
+-     // In practice this is the same on every Unix.
+-     // If some weird platform turns out to be different, and this test fails, use #[cfg].
+-@@ -37,6 +38,7 @@
+- }
+-
+- #[test]
+-+#[ignore]
+- #[cfg_attr(target_os = "emscripten", ignore)]
+- fn test_command_fork_no_unwind() {
+-     let got = catch_unwind(|| {
+ diff --git a/library/std/src/thread/tests.rs b/library/std/src/thread/tests.rs
+ index 5d6b9e94ee9..a5aacb2eb87 100644
+ --- a/library/std/src/thread/tests.rs
 -- 
 2.49.0
 
