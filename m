@@ -2,41 +2,48 @@ Return-Path: <mark.hatle@kernel.crashing.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EE51C369DC
-	for <webhook@archiver.kernel.org>; Fri,  2 May 2025 01:10:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59DD3C369DC
+	for <webhook@archiver.kernel.org>; Fri,  2 May 2025 01:19:35 +0000 (UTC)
 Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
- by mx.groups.io with SMTP id smtpd.web10.9708.1746148223225196719
+ by mx.groups.io with SMTP id smtpd.web10.9811.1746148772522283346
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 01 May 2025 18:10:23 -0700
+ Thu, 01 May 2025 18:19:32 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: kernel.crashing.org, ip: 63.228.1.57, mailfrom: mark.hatle@kernel.crashing.org)
 Received: from kernel.crashing.org (70-99-78-136.nuveramail.net [70.99.78.136] (may be forged))
-	by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 54218IhJ028628;
-	Thu, 1 May 2025 20:08:19 -0500
+	by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 5421HS3d029318;
+	Thu, 1 May 2025 20:17:29 -0500
 Received: from [192.168.2.37] ([192.168.2.37])
-	by kernel.crashing.org (8.14.7/8.14.7) with ESMTP id 54218H4p031008;
-	Thu, 1 May 2025 20:08:18 -0500
-Message-ID: <b2da6f4a-35ee-4f94-9260-65793b020686@kernel.crashing.org>
-Date: Thu, 1 May 2025 20:08:17 -0500
+	by kernel.crashing.org (8.14.7/8.14.7) with ESMTP id 5421HR7n031252;
+	Thu, 1 May 2025 20:17:28 -0500
+Message-ID: <74a087d4-076e-4caa-82a8-3bba4f5ef0e2@kernel.crashing.org>
+Date: Thu, 1 May 2025 20:17:27 -0500
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [pseudo][PATCH v2 0/2] nftw, ftw: add wrappers
-Content-Language: en-US
 From: Mark Hatle <mark.hatle@kernel.crashing.org>
-To: yocto-patches@lists.yoctoproject.org
-Cc: landervanloock@gmail.com,
-        Richard Purdie <richard.purdie@linuxfoundation.org>
+Subject: Re: [yocto-patches] [pseudo][PATCH v2 0/2] nftw, ftw: add wrappers
 Reply-To: yocto-patches@lists.yoctoproject.org
+To: yocto-patches@lists.yoctoproject.org, skandigraun@gmail.com
+Cc: landervanloock@gmail.com,
+        Richard Purdie <richard.purdie@linuxfoundation.org>, fntoth@gmail.com
 References: <20250407191414.2992785-1-skandigraun@gmail.com>
  <18342C3498EB800F.31078@lists.yoctoproject.org>
+Content-Language: en-US
 In-Reply-To: <18342C3498EB800F.31078@lists.yoctoproject.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 02 May 2025 01:10:25 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1474
+ <yocto-patches@lists.yoctoproject.org>; Fri, 02 May 2025 01:19:35 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1475
+
+[resend] my CC was incomplete and I want to make sure everyone interested is 
+aware of the review and status
+
++ skandigraun@gmail.com
++ fntoth@gmail.com
+
 
 I'm sorry this took as long as it did to review.  I've been able to rework some 
 things, but the test cases need to be reworked.  They don't work properly for me.
@@ -175,7 +182,7 @@ test-nftw: Failed.
 
 
 Can you take a look at the test cases, I don't really understand them very well. 
-  Some of this stuff looks like it could be off-by-1 errors both in the 
+   Some of this stuff looks like it could be off-by-1 errors both in the 
 'Expected' and 'Actual' side of things.  As for the other failures, I'm really 
 not sure everything that is going on here and I figured it might be more obvious 
 to someone else.
