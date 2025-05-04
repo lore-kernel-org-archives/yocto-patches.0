@@ -1,214 +1,364 @@
-Return-Path: <peter.marko@siemens.com>
+Return-Path: <richard.purdie@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 799D6C369DC
-	for <webhook@archiver.kernel.org>; Sun,  4 May 2025 16:42:30 +0000 (UTC)
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (DB3PR0202CU003.outbound.protection.outlook.com [52.101.65.29])
- by mx.groups.io with SMTP id smtpd.web11.32177.1746376939989352245
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C7AEC369DC
+	for <webhook@archiver.kernel.org>; Sun,  4 May 2025 16:45:30 +0000 (UTC)
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+ by mx.groups.io with SMTP id smtpd.web11.32239.1746377123625905077
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 04 May 2025 09:42:20 -0700
+ Sun, 04 May 2025 09:45:24 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=y8OWgjv8;
- spf=pass (domain: siemens.com, ip: 52.101.65.29, mailfrom: peter.marko@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yVOeOdIo4jZoui5jvsNq4Lp4FfbkMMfHyssoBp5yuCtrsL3XxavCOoqdC2wZZbLSbzi2KfQyMpx3Xy84nBJyjyeeGcmvRNF6ntD/+ujlhA3SHaLbdS31Nm03XIbU6Jwmr2Qljo7pbA+DYTYtJH2bYTZi9SoBo2GbLWsZOcAkDjUgsiNXIemiQWFohrmbHgBZ0CnuQfLHrC3UH5Jl5Ov7cRJZfw4DuVd6VFlhlWW4GJiw5s+4frB4HAR5iahpXTzMJ9zrag87EJ9qquMIoCqgciGPPHGvOgH+J4ah3Xgx3ArxNkicgLPZ33KFayx51mhIYYDj5MVkfQIaHmAx5rx2xw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lz2cnlkwmwQ8NUjAVi1JbC6FL/BH+oPbPumuSj5q8DA=;
- b=G5pLodeNmcYdEJRJX7+CQ0QW+9Qd1aAIyTbLENBk7d5FQO4JTV0s53SDLO5tQhnoXduambg4IOQXXEpJNaf5vjVsWkOFfhhBbEcb6dYw7PF8NeQ8p1o8tW4yVczChvADBN1e0PjDQuE6XnltpSNe1lpkO1GLJtmUvceeFETur3Uou/vII8xV39MteSTfOtnQZHmFb0ShxIfiifSWUndsua54Q7ilOgMhDw7uMct8P/xCuZzdFgK1C09yAGSkBSEW9NL+N1U3kCZVQH2MjmuIqW9QhemnR0UWwGxx3WeU3vCzH5yWCY+M/c+Gi+8rPz7pmTrnDw6uU57OhmjAbTAb8Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lz2cnlkwmwQ8NUjAVi1JbC6FL/BH+oPbPumuSj5q8DA=;
- b=y8OWgjv8+dK83WPNnLASGfrPh5h3dhPDuW5OSRRiv17qIApOARG6Eqcl5i5ymigc6hj5pwpy9V0pkzT5/4A8g3b2K14UGQOD66KYt5qHsYicAUJLfPhQ0nPuAkjlKUU5VrCfjq2ab/NUxRrYEzXN1Co6nq0PE3HvlphzSdESv6btheMUeTyvGPBFmlsSGJNVxjG+nrT3rWGu1bi5hl6GrUzA5Mf+t4ni8D5hyY9XhNdmtKV/k0ZCkBuqXwfD28F2LXA17RbaLvrCLVqbbPvNyUp32K3hk2WvbvhSN3oSNkb5UeD16Ksyq8JITS9jbQKGRjOEA91GNAExnD677BIjDw==
-Received: from AS1PR10MB5697.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:479::20)
- by PR3PR10MB3884.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:28::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.23; Sun, 4 May
- 2025 16:42:16 +0000
-Received: from AS1PR10MB5697.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::6c68:267b:6fd1:d3f2]) by AS1PR10MB5697.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::6c68:267b:6fd1:d3f2%4]) with mapi id 15.20.8699.019; Sun, 4 May 2025
- 16:42:16 +0000
-From: "Marko, Peter" <Peter.Marko@siemens.com>
-To: "yocto-patches@lists.yoctoproject.org"
-	<yocto-patches@lists.yoctoproject.org>, Scott Murray
-	<scott.murray@konsulko.com>
-Subject: RE: [yocto-patches] [meta-lts-mixins][kirkstone/rust][PATCH 19/38]
- cargo: pass PACKAGECONFIG_CONFARGS to cargo build
-Thread-Topic: [yocto-patches] [meta-lts-mixins][kirkstone/rust][PATCH 19/38]
- cargo: pass PACKAGECONFIG_CONFARGS to cargo build
-Thread-Index: AQHbutl9++bmKa+kcky/wvWumDo4kbPCr2kQ
-Date: Sun, 4 May 2025 16:42:15 +0000
-Message-ID: 
- <AS1PR10MB569727FD0B9979F109D1CD53FD8F2@AS1PR10MB5697.EURPRD10.PROD.OUTLOOK.COM>
-References: <cover.1746130391.git.scott.murray@konsulko.com>
- <e5d4f65414368beed7b69e2c94482075aa2a0d81.1746130391.git.scott.murray@konsulko.com>
-In-Reply-To: 
- <e5d4f65414368beed7b69e2c94482075aa2a0d81.1746130391.git.scott.murray@konsulko.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
- MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ActionId=452002a8-8642-419a-93b8-779601fe321d;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ContentBits=0;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Enabled=true;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Method=Standard;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Name=restricted;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SetDate=2025-05-04T16:35:33Z;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SiteId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Tag=10,
- 3, 0, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AS1PR10MB5697:EE_|PR3PR10MB3884:EE_
-x-ms-office365-filtering-correlation-id: b9c54d4d-b696-4248-3808-08dd8b2aa0df
-x-ms-exchange-atpmessageproperties: SA
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230040|1800799024|366016|376014|4022899009|38070700018|13003099007|7053199007;
-x-microsoft-antispam-message-info: 
- =?us-ascii?Q?8s0s/cEZ8DH+wX3gTJojKd1AqMIJrcr0mGAx3vPxi7RobBaTu240g9FoOWQ1?=
- =?us-ascii?Q?nlXUmssKioeJtMhfeubCpMaBmloNuRWZ16hWsv41ghleomoP0bCUV55VfxcG?=
- =?us-ascii?Q?MGOSROqZ9swxsdiHVnIlZKiNrOjIpYBDIhS3jOrjmEIolrQIB3UzaiL5S6hz?=
- =?us-ascii?Q?EwzQwhcqHPKMjP2ZH5WqY0AGscFCzRMJjLQrCscEDS82X5Bri59rVRu81Oyd?=
- =?us-ascii?Q?1KUbW5YQ0MPaiw2aulz0mzeOWC0pQ0zv3q+hHnYQ4IRKbSFpz1FyCH60DCAc?=
- =?us-ascii?Q?VOYnUrD2CvMTyV515Df/bLpGMLKKcMvobX/avrjN7xjPwDoEPQ8S0rguUm9u?=
- =?us-ascii?Q?PkamKncnMVeY0MAz2V+TymHKyFT3RvhGpXw+DpEnY7x6LzqLgGH0FyMHL5Yu?=
- =?us-ascii?Q?Jn3sBm9a7myQIAnh7RPk3smiMLZd6A/612N7d2vcp0HFxbC7nTvFdf380Zqu?=
- =?us-ascii?Q?DSRFwUdzFWPxvQVTf3Wq9gMe6bBlb+5kUAXLGgH9Btv7ErD3eVB4bV+pK+MA?=
- =?us-ascii?Q?adFfbo/Jg8PP+uj/JUMrxpKwoN0dAdA5jcav5BJug47Ku0pQ1oS7d4y82AxO?=
- =?us-ascii?Q?VsBxilQrjM7ZnHFK2BLbHnhc9sVLbWaWKbqBvXDA9jZzYbtc8Kcy8UZqZA81?=
- =?us-ascii?Q?YTREtAyxi9gsS9Qez+qT7LisrpdioXWNHkNdQaSsyR5IOoAGqwggHmly4/ld?=
- =?us-ascii?Q?nJ7kzs+p7CSEBxDmoMFcCT55MwWB83A2YRBGnEE69VqGiaCexX8qs1iCW6cw?=
- =?us-ascii?Q?Cos/isjqcU0Y/I0F0jJviLahmsKktJH9nJEMr487nbrUuG4W0cy5ZbuaHME0?=
- =?us-ascii?Q?j1suY6wxn5EU1GW4LAevCSTV1SWSeVaRk8vLQyDNhp++T//pF4BVjZScA2n9?=
- =?us-ascii?Q?Un/RAHpB/P/BD/8lnMJE+efdyWnZwXUzsMwzNQ5xlyq1X43LcINt6hf4KbVk?=
- =?us-ascii?Q?1WXpPtnDtsF4tZCqxN4w4ybaUqwn+bivLW37rGMcxNhvPRaGdpKJUNHQoiGO?=
- =?us-ascii?Q?/TkSEbsR8U3JV7zOW0kMboWIAJs4QUUArNDUMDU9nEQ1RUI03orRzDFV5r09?=
- =?us-ascii?Q?aiQUrlNi6wdj1plnxcElQoDyfSphWTH/YslAwUUUArhvfTEIXg3tArs5WO/e?=
- =?us-ascii?Q?EoISq0IXkBZM6NPXsH1WNOI8zS3scDlaIN6moI1QnI2N/NcbNiomWiHbBh20?=
- =?us-ascii?Q?xrUt1e1eiKb0IbLmVRjreEj304rm7F3H5S3hph098I2ZTus35f5gH+p/c8Ad?=
- =?us-ascii?Q?ZtI86kS3dofXM/aa8dV56LWCnuzXuPsDwPMThDYO1IPRbjL8V+RU/WG1ClmW?=
- =?us-ascii?Q?gdH1tOSqEWT6R4nMvCHe4dfTrIXdKqM5CdvqWZH+sw20wtIfVtMalu5XRne5?=
- =?us-ascii?Q?xbq7KiePNtyx/pYKalSZY1yJVmld/OaBVhq/u+o+mPM2p0eC1Cr6md+u4l3N?=
- =?us-ascii?Q?arDfx3FUKN4=3D?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS1PR10MB5697.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(4022899009)(38070700018)(13003099007)(7053199007);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?us-ascii?Q?yc0KuDa1Iw1cmsh/cp/dBmbD51lXfPldVzMJJYblHye6bTfhZqceYLNApE+u?=
- =?us-ascii?Q?j8dLBfLlYE9DG470Py11/Vpql1ew1Q4Gu299jy1vO7VLEcpAm046/W6bMR+r?=
- =?us-ascii?Q?y0nN8EJaV+m3E1sgCrOR/qk4Spsul2/nBqmD75dEu2OxKJa83LLDtE3PLiYl?=
- =?us-ascii?Q?/zAnGT0Z2B7xhN/wD9oboRs7SR6AVLnyJ48gvE01jn42WxllA8jl+JeUuw5N?=
- =?us-ascii?Q?c+rND1Vr2097zgh+q/zYsVLvnnam57JbnSZNr8Gcskiw/DZ9Yn3SXQfTNQao?=
- =?us-ascii?Q?WzLILUvG3VUsMuTM87dkX+9+E7Sy2BAGg5cArqgfDLi/5WKGdGhKV7XACPeg?=
- =?us-ascii?Q?0J1lbVINabSrzMeulMV2xyjTdQZ2MsPGyVJjGfg9cFSJVXvTRk3y/aMWM6Nj?=
- =?us-ascii?Q?FJeV+bA7/3NVvQb7qSV2K+akIlrlAzPWcigFox+j5JjecwfHmGvwKlOrWMX1?=
- =?us-ascii?Q?hfd6fvCVctJKenHHQDS2xKCKiOZHrpsBT6+tzT1T1HWAeY4uwBQhk/4dPF52?=
- =?us-ascii?Q?Vgmu1+ujiNeDtACYIXMUEqz1YlxZs/sCJ7C8ibCbLKaDs9vICSpJDCKE7izX?=
- =?us-ascii?Q?hTufYQ90Q+tZOgTI70LMVCGLY1KY7D5Z1oIMhomEnKeK4iNrMf7+BDaUUXhq?=
- =?us-ascii?Q?RwhJ2/RLxd8C9tYUYQS3Kqjv6TIaN+mylfNd/TU39104ztXreccxtihhMPGZ?=
- =?us-ascii?Q?Nh228nyVdYZ6k1qXWakV8MJxhNJCrL3+1VUmBbBP5S0qNv34W1a3maoag1D2?=
- =?us-ascii?Q?kBgFdJ1lkwUUcbEgF0t5aqYsIN9m8JrvDEG7iea3euzowM+b5mEiQb6r4a3m?=
- =?us-ascii?Q?7MjsgiiQ5/OoD551zESRs/z1rU4qO2jhdm+01C5q0faCjkCHFWfZuWyz3diy?=
- =?us-ascii?Q?d63Pkd1SjkV7pqWWHl1lKBo4znzFrjiGPprgVT1Z0ri3JyphjPWKYhJwpt5i?=
- =?us-ascii?Q?14zI8pTTYyI7s6n4VZOHMN4enCsJI8YagyhfMhr1h9FnC33F9BxEYYWDqGu2?=
- =?us-ascii?Q?5+FV+8OBPfHiOxCi4c2g0VqNH4RYaDiOT8xTUjrZZ/ZRQSYMgHBWHnr4Pb1S?=
- =?us-ascii?Q?cEGFWRsWfoL4cCpk3qOAadprniq97s00hZs+xar0hK1LEBUsNeobT7ehi1Lm?=
- =?us-ascii?Q?F/Jw3OzpAVMhI9YecxEfYQtQk5G3KIpjFy9A9Brg94avjcrDgqgyWyuBqOEu?=
- =?us-ascii?Q?9ssz83tDd8eQ3s/lAxPFfMrUxRXHVlNwfNivakyhXiiSEai6xm6NlfWdfMY7?=
- =?us-ascii?Q?NahxKKZ35Jmtc8VoOp8RSmR4MKmQdVlsMU1RwerTqsNT5KUl6+nurPeWMCTE?=
- =?us-ascii?Q?YLClMgftVbdzkCJc+32NKrfLin0rVvEUm+HRoAkESOQ9iDjz3A6l4A4rrZ2i?=
- =?us-ascii?Q?AY4GQ/Zivdsks+06xl61/p7QOwlI7hPme00+qVt4hCq5ZJ877Dq1qO1BHpzS?=
- =?us-ascii?Q?DCoWi2DdJNdiZzoeeKfC9v9Tt++a6KxAVXCtNOblQqrCd30MuW2oUtcxSt9s?=
- =?us-ascii?Q?6tQH8xpRo0yA7ZsXIp9EcmQrKlJQtBUsZ/aNZrykMefm8AKZwLtmaoWcYWeB?=
- =?us-ascii?Q?BoMdVqFv3corzkdjGGq9sn0tpHtq/RLsBCq/wtXu?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ dkim=pass header.i=@linuxfoundation.org header.s=google header.b=Ge47diS1;
+ spf=pass (domain: linuxfoundation.org, ip: 209.85.221.54, mailfrom: richard.purdie@linuxfoundation.org)
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-39ee57c0b8cso3297187f8f.0
+        for <yocto-patches@lists.yoctoproject.org>; Sun, 04 May 2025 09:45:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1746377121; x=1746981921; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xdZJHJIeVDgheT11aOur9e7qcITEwBsv9+Tg2fvEf+0=;
+        b=Ge47diS1jBinnigb5jV2SUZe2pc+9OBBntBmBMqPxoRGKlsGiISQTutDsBFTrskAn4
+         vbUTkYdU/PcGBFTwRRiWGvN5UpMJERCS9aiUZOG98d0PuNRL69xpLQDwfKLOe+tMmogZ
+         /pb3x+SrlPRvHC7+n3uagrKmhKAlis0xW+dDw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746377121; x=1746981921;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xdZJHJIeVDgheT11aOur9e7qcITEwBsv9+Tg2fvEf+0=;
+        b=fJahO/iEpeufFJzHe/mhAKzHTjzmbzJ6+f6KeY0r5QoA0HhaKzj+9jR9NsopTTAhxP
+         bWmy4Oj7+d9YkCR00ZemKCwLaODLjR54le5bf7/nKFpk8qaAFH2EXExBEjZ6wfGLuHlr
+         PXp+mzeXpECi2xqKaCukQAHghth52uAUof66RuNQWp59oFBNw78LZQGbCTES37GrJ12S
+         /nV5oTaZNxYMMG0U4U/B+TUhCsIxDyZeOkaTry+8VW7UDvjHBTIBk45Fg+LjnR5bmqOi
+         QXnI3hgrZKjdPXOfPt3jYDRAVh5q1H3pqwu0yymtFHNzt907UMqByKru2pS1Euh8THTb
+         vFqw==
+X-Gm-Message-State: AOJu0YwUvtby4jDBh3u1iyVBo29hK1G3KoQaCuzyKK5vwAeEpIWJRBq+
+	gy0piINMkFsEU6L+9BdlG4QTH8ws1rVYG2KKnuZ0x/5Tll7QuXF+6FZpt2LIlhUBKXJTL1y8271
+	g
+X-Gm-Gg: ASbGnct3GcwWwhS9p8U6vrZigx08DhnyU+JrbWzMle+sZrZafq6HSMFu3Y/Zsqa66Bc
+	TAL5hxXFbplWT5HaOpeyApLaV0XSeZdJnJYgIbiBysauMUWUXhI2fR3CFqPRDvV9gfuqD19k8uu
+	vMcBzB47QAfBxWz80ryC99lpAJYHEn+8T5lUgkfUvqZUCkjt10drZZ8Cc2JQVF82qyqywkqspC5
+	GNL2wg6qjvWUrRikl4e1vFcyU9Y9TCO13lnaZEIwKWdKyWwDNqfSWIIwIBlFlPedv1Fn8pKorHR
+	XriJDGbo1tGhPTZK9Xri3X/mUyq835Eh3z35t36YNUoC18htLZVAoZaJ8ngHxu0hlv1HOA==
+X-Google-Smtp-Source: AGHT+IE2qMsUxglU5AgwhTs4Y7xh9bYQ+KYKLBKP4SMQgt/Ci9yKMjdvM7HUmEiXqzjTrqfdwoBzEA==
+X-Received: by 2002:a05:6000:402b:b0:3a0:99e9:bc90 with SMTP id ffacd0b85a97d-3a09fd6df05mr3782935f8f.10.1746377121068;
+        Sun, 04 May 2025 09:45:21 -0700 (PDT)
+Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:994e:224d:4a8f:bee7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a099b170d0sm7902160f8f.99.2025.05.04.09.45.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 04 May 2025 09:45:20 -0700 (PDT)
+From: Richard Purdie <richard.purdie@linuxfoundation.org>
+To: yocto-patches@lists.yoctoproject.org
+Cc: seebs@seebs.net,
+	mark.hatle@kernel.crashing.org
+Subject: [pseudo] [PATCH] pseudo/pseudo_client: Add wrapper functions to operate correctly with glibc 2.38 onwards
+Date: Sun,  4 May 2025 17:45:19 +0100
+Message-ID: <20250504164519.65912-1-richard.purdie@linuxfoundation.org>
+X-Mailer: git-send-email 2.48.1
 MIME-Version: 1.0
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AS1PR10MB5697.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: b9c54d4d-b696-4248-3808-08dd8b2aa0df
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 May 2025 16:42:16.0318
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: nLYfftohmYV0BcaSySs+Ev90zqpzyTcJW639bnwxWcLBy/Tf3yDyEzcLkV9+1Ts5bYIGzADCqfb5lr0rXn1cmg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR10MB3884
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sun, 04 May 2025 16:42:30 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1489
+ <yocto-patches@lists.yoctoproject.org>; Sun, 04 May 2025 16:45:30 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1490
 
-This commit creates discrepancy between cargo.bbclass (from mixins) and pte=
-st-cargo.bbclass (from oe-core)
-It needs https://git.openembedded.org/openembedded-core/commit/?id=3D98d03d=
-31de4010534b1a00d29409d3486a0ab0b9
-Same is true for scarthgap/rust (which triggered me to send that patch when=
- testing last scarthgap/rust update).
-We probably need to copy ptest-cargo.bbclass into mixins to apply that chan=
-ge.
+glibc 2.38 would include  __isoc23_strtol and similar symbols. This is trggerd by
+_GNU_SOURCE but we have to set that for other definitions. Therefore add seperate
+wrapper functions so we can control the contexts correctly and avoid that include
+when using the problematic functions (strtol, strtoll, atoi, fscanf and sscanf).
 
-Peter
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+---
+ Makefile.in              | 16 +++++++++-------
+ ports/unix/guts/linkat.c |  2 +-
+ pseudo.c                 |  2 +-
+ pseudo.h                 |  4 ++++
+ pseudo_client.c          | 21 +++++----------------
+ pseudo_client.h          |  4 ++++
+ pseudo_client_scanf.c    | 39 +++++++++++++++++++++++++++++++++++++++
+ pseudo_util.c            |  2 +-
+ pseudolog.c              |  4 ++--
+ strtol.c                 | 26 ++++++++++++++++++++++++++
+ 10 files changed, 92 insertions(+), 28 deletions(-)
+ create mode 100644 pseudo_client_scanf.c
+ create mode 100644 strtol.c
 
-> -----Original Message-----
-> From: yocto-patches@lists.yoctoproject.org <yocto-
-> patches@lists.yoctoproject.org> On Behalf Of Scott Murray via
-> lists.yoctoproject.org
-> Sent: Thursday, May 1, 2025 22:40
-> To: yocto-patches@lists.yoctoproject.org
-> Subject: [yocto-patches] [meta-lts-mixins][kirkstone/rust][PATCH 19/38] c=
-argo:
-> pass PACKAGECONFIG_CONFARGS to cargo build
->=20
-> From: Jean-Pierre Geslin <jarsoper@gmail.com>
->=20
-> In order to allow rust packages to define PACKAGECONFIG options, append
-> the contents of PACKAGECONFIG_CONFARGS to the build command.
-> This patch was already submitted by Bartosz Golaszewski on older
-> version but was never merged. It will be really usefull for Rust recipes.
->=20
-> Signed-off-by: Jean-Pierre Geslin <jarsoper@gmail.com>
-> Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-> (adapted from oe-core commit 16745b20452de60ae2474433cc1a2fb1ed9f6a64)
-> Signed-off-by: Scott Murray <scott.murray@konsulko.com>
-> ---
->  classes/cargo.bbclass | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/classes/cargo.bbclass b/classes/cargo.bbclass
-> index 76a3966..461d100 100644
-> --- a/classes/cargo.bbclass
-> +++ b/classes/cargo.bbclass
-> @@ -48,7 +48,7 @@ oe_cargo_build () {
->  	bbnote "Using rust targets from ${RUST_TARGET_PATH}"
->  	bbnote "cargo =3D $(which ${CARGO})"
->  	bbnote "${CARGO} build ${CARGO_BUILD_FLAGS} $@"
-> -	"${CARGO}" build ${CARGO_BUILD_FLAGS} "$@"
-> +	"${CARGO}" build ${CARGO_BUILD_FLAGS}
-> ${PACKAGECONFIG_CONFARGS} "$@"
->  }
->=20
->  do_compile[progress] =3D "outof:\s+(\d+)/(\d+)"
-> --
-> 2.49.0
->=20
->=20
->=20
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-> Links: You receive all messages sent to this group.
-> View/Reply Online (#1446): https://lists.yoctoproject.org/g/yocto-
-> patches/message/1446
-> Mute This Topic: https://lists.yoctoproject.org/mt/112569359/4454441
-> Group Owner: yocto-patches+owner@lists.yoctoproject.org
-> Unsubscribe: https://lists.yoctoproject.org/g/yocto-
-> patches/leave/13703729/4454441/683413657/xyzzy [peter.marko@siemens.com]
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
->=20
-
+diff --git a/Makefile.in b/Makefile.in
+index 48fdbd2..7ecb325 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -57,7 +57,7 @@ SOURCES=$(wildcard *.c)
+ OBJS=$(subst .c,.o,$(SOURCES))
+ TESTS=$(patsubst %.c,%,$(wildcard test/*.c))
+ 
+-SHOBJS=pseudo_tables.o pseudo_util.o
++SHOBJS=pseudo_tables.o pseudo_util.o strtol.o
+ DBOBJS=pseudo_db.o
+ WRAPOBJS=pseudo_wrappers.o
+ 
+@@ -100,15 +100,15 @@ $(BIN) $(LIB):
+ 
+ pseudo: $(PSEUDO)
+ 
+-$(PSEUDO): pseudo.o $(SHOBJS) $(DBOBJS) pseudo_client.o pseudo_server.o pseudo_ipc.o | $(BIN)
++$(PSEUDO): pseudo.o $(SHOBJS) $(DBOBJS) pseudo_client.o pseudo_client_scanf.o pseudo_server.o pseudo_ipc.o | $(BIN)
+ 	$(CC) $(CFLAGS) $(CFLAGS_PSEUDO) -o $(PSEUDO) \
+-		pseudo.o pseudo_server.o pseudo_client.o pseudo_ipc.o \
++		pseudo.o pseudo_server.o pseudo_client.o pseudo_client_scanf.o pseudo_ipc.o \
+ 		$(DBOBJS) $(SHOBJS) $(LDFLAGS) $(DB_LDFLAGS) $(CLIENT_LDFLAGS)
+ 
+ pseudolog: $(PSEUDOLOG)
+ 
+-$(PSEUDOLOG): pseudolog.o $(SHOBJS) $(DBOBJS) pseudo_client.o pseudo_ipc.o | $(BIN)
+-	$(CC) $(CFLAGS) $(CFLAGS_PSEUDO) -o $(PSEUDOLOG) pseudolog.o pseudo_client.o pseudo_ipc.o \
++$(PSEUDOLOG): pseudolog.o $(SHOBJS) $(DBOBJS) pseudo_client.o pseudo_client_scanf.o pseudo_ipc.o | $(BIN)
++	$(CC) $(CFLAGS) $(CFLAGS_PSEUDO) -o $(PSEUDOLOG) pseudolog.o pseudo_client.o pseudo_client_scanf.o pseudo_ipc.o \
+ 		$(DBOBJS) $(SHOBJS) $(LDFLAGS) $(DB_LDFLAGS) $(CLIENT_LDFLAGS)
+ 
+ pseudodb: $(PSEUDODB)
+@@ -119,9 +119,9 @@ $(PSEUDODB): pseudodb.o $(SHOBJS) $(DBOBJS) pseudo_ipc.o | $(BIN)
+ 
+ libpseudo: $(LIBPSEUDO)
+ 
+-$(LIBPSEUDO): $(WRAPOBJS) pseudo_client.o pseudo_ipc.o $(SHOBJS) | $(LIB)
++$(LIBPSEUDO): $(WRAPOBJS) pseudo_client.o pseudo_client_scanf.o pseudo_ipc.o $(SHOBJS) | $(LIB)
+ 	$(CC) $(CFLAGS) $(CFLAGS_PSEUDO) -shared -o $(LIBPSEUDO) \
+-		pseudo_client.o pseudo_ipc.o \
++		pseudo_client.o pseudo_client_scanf.o pseudo_ipc.o \
+ 		$(WRAPOBJS) $(SHOBJS) $(LDFLAGS) $(CLIENT_LDFLAGS)
+ 
+ # *everything* now relies on stuff that's generated in the
+@@ -135,6 +135,8 @@ pseudo_client.o pseudo_server.o pseudo_ipc.o: pseudo_ipc.h
+ 
+ pseudo_client.o: pseudo_client.h
+ 
++pseudo_client_scanf.o: pseudo_client.h
++
+ pseudo_server.o: pseudo_server.h
+ 
+ tables: enums/*.in maketables templatefile.py $(TABLES)
+diff --git a/ports/unix/guts/linkat.c b/ports/unix/guts/linkat.c
+index 7d8dff4..e1712a9 100644
+--- a/ports/unix/guts/linkat.c
++++ b/ports/unix/guts/linkat.c
+@@ -55,7 +55,7 @@
+ 		errno = ENOSYS;
+ 		return -1;
+ #endif
+-		tmpfile_fd = atoi(oldpath + 14);
++		tmpfile_fd = pseudo_atoi_wrapper(oldpath + 14);
+ 		// call actual link
+ 		rc = real_linkat(AT_FDCWD, oldpath, AT_FDCWD, newpath, AT_SYMLINK_FOLLOW);
+ 	} else
+diff --git a/pseudo.c b/pseudo.c
+index e98e5d6..132d24a 100644
+--- a/pseudo.c
++++ b/pseudo.c
+@@ -212,7 +212,7 @@ main(int argc, char *argv[]) {
+ 			opt_S = 1;
+ 			break;
+ 		case 't': /* timeout */
+-			pseudo_server_timeout = strtol(optarg, &s, 10);
++			pseudo_server_timeout = pseudo_strtol_wrapper(optarg, &s, 10);
+ 			if (*s && !isspace(*s)) {
+ 				pseudo_diag("Timeout must be an integer value.\n");
+ 				usage(EXIT_FAILURE);
+diff --git a/pseudo.h b/pseudo.h
+index 4b5eaab..b6c13f2 100644
+--- a/pseudo.h
++++ b/pseudo.h
+@@ -85,6 +85,10 @@ extern int pseudo_etc_file(const char *filename, char *realname, int flags, cons
+ extern void pseudo_stat32_from64(struct stat *, const struct stat64 *);
+ extern void pseudo_stat64_from32(struct stat64 *, const struct stat *);
+ 
++extern long pseudo_strtol_wrapper(const char *, char **, int);
++extern long long pseudo_strtoll_wrapper(const char *, char **, int);
++extern int pseudo_atoi_wrapper(const char *);
++
+ extern char *pseudo_version;
+ 
+ #ifndef PSEUDO_BINDIR
+diff --git a/pseudo_client.c b/pseudo_client.c
+index a03d6b1..1cc7a92 100644
+--- a/pseudo_client.c
++++ b/pseudo_client.c
+@@ -614,7 +614,7 @@ pseudo_init_client(void) {
+ 			 * at all.
+ 			 */
+ 			if (*env) {
+-				pseudo_nosymlinkexp = strtol(env, &endptr, 10);
++				pseudo_nosymlinkexp = pseudo_strtol_wrapper(env, &endptr, 10);
+ 				if (*endptr)
+ 					pseudo_nosymlinkexp = 1;
+ 			} else {
+@@ -624,20 +624,9 @@ pseudo_init_client(void) {
+ 			pseudo_nosymlinkexp = 0;
+ 		}
+ 		free(env);
+-		env = pseudo_get_value("PSEUDO_UIDS");
+-		if (env)
+-			sscanf(env, "%d,%d,%d,%d",
+-				&pseudo_ruid, &pseudo_euid,
+-				&pseudo_suid, &pseudo_fuid);
+-		free(env);
+-
+-		env = pseudo_get_value("PSEUDO_GIDS");
+-		if (env)
+-			sscanf(env, "%d,%d,%d,%d",
+-				&pseudo_rgid, &pseudo_egid,
+-				&pseudo_sgid, &pseudo_fuid);
+-		free(env);
+ 
++		readenv_uids();
++		readenv_gids();
+ 		env = pseudo_get_value("PSEUDO_CHROOT");
+ 		if (env) {
+ 			pseudo_chroot = strdup(env);
+@@ -1030,7 +1019,7 @@ client_spawn_server(void) {
+ 			pseudo_pidfile = pseudo_localstatedir_path(PSEUDO_PIDFILE);
+ 			fp = fopen(pseudo_pidfile, "r");
+ 			if (fp) {
+-				if (fscanf(fp, "%d", &server_pid) != 1) {
++				if (read_pidfile(fp, &server_pid) != 1) {
+ 					pseudo_debug(PDBGF_CLIENT, "Opened server PID file, but didn't get a pid.\n");
+ 				}
+ 				fclose(fp);
+@@ -1295,7 +1284,7 @@ pseudo_client_setup(void) {
+ 	fp = fopen(pseudo_pidfile, "r");
+ 	free(pseudo_pidfile);
+ 	if (fp) {
+-		if (fscanf(fp, "%d", &server_pid) != 1) {
++		if (read_pidfile(fp, &server_pid) != 1) {
+ 			pseudo_debug(PDBGF_CLIENT, "Opened server PID file, but didn't get a pid.\n");
+ 		}
+ 		fclose(fp);
+diff --git a/pseudo_client.h b/pseudo_client.h
+index d7944ce..e963d95 100644
+--- a/pseudo_client.h
++++ b/pseudo_client.h
+@@ -74,6 +74,10 @@ extern int pseudo_nosymlinkexp;
+ 
+ extern int pseudo_umask;
+ 
++extern void readenv_uids(void);
++extern void readenv_gids(void);
++extern int read_pidfile(FILE *, int *);
++
+ /* Root can read and write files, and enter directories which have no
+  * read, write, or execute permissions.  (But can't execute files without
+  * execute permissions!)
+diff --git a/pseudo_client_scanf.c b/pseudo_client_scanf.c
+new file mode 100644
+index 0000000..4a55d5d
+--- /dev/null
++++ b/pseudo_client_scanf.c
+@@ -0,0 +1,39 @@
++#include <stdio.h>
++#include "pseudo.h"
++#include "pseudo_ipc.h"
++#include "pseudo_client.h"
++
++/*
++ * glibc 2.38 would include  __isoc23_strtol and similar symbols if _GNU_SOURCE
++ * is used. We have to set that for other definitions so delcare this wrapper
++ * in a context where we don't have that set.
++ *
++ * We need to wrap strtol, strtoll, atoi, fscanf and sscanf.
++ */
++
++void readenv_uids(void)
++{
++	char *env;
++	env = pseudo_get_value("PSEUDO_UIDS");
++	if (env)
++		sscanf(env, "%d,%d,%d,%d",
++			&pseudo_ruid, &pseudo_euid,
++			&pseudo_suid, &pseudo_fuid);
++	free(env);
++}
++
++void readenv_gids(void)
++{
++	char *env;
++	env = pseudo_get_value("PSEUDO_GIDS");
++	if (env)
++		sscanf(env, "%d,%d,%d,%d",
++			&pseudo_rgid, &pseudo_egid,
++			&pseudo_sgid, &pseudo_fuid);
++	free(env);
++}
++
++int read_pidfile(FILE *fp, int *server_pid)
++{
++	return fscanf(fp, "%d", server_pid);
++}
+diff --git a/pseudo_util.c b/pseudo_util.c
+index 24115ff..081b8d2 100644
+--- a/pseudo_util.c
++++ b/pseudo_util.c
+@@ -229,7 +229,7 @@ pseudo_init_util(void) {
+ 	env = pseudo_get_value("PSEUDO_DEBUG");
+ 	if (env) {
+ 		int i;
+-		int level = atoi(env);
++		int level = pseudo_atoi_wrapper(env);
+ 		if (level > 0) {
+ 			for (i = 0; i < level; ++i) {
+ 				pseudo_debug_verbose();
+diff --git a/pseudolog.c b/pseudolog.c
+index ad04753..44f7dbf 100644
+--- a/pseudolog.c
++++ b/pseudolog.c
+@@ -452,7 +452,7 @@ plog_trait(int opt, char *string) {
+ 	case PSQF_GID:
+ 	case PSQF_INODE:
+ 	case PSQF_UID:
+-		new_trait->data.ivalue = strtoll(string, &endptr, 0);
++		new_trait->data.ivalue = pseudo_strtoll_wrapper(string, &endptr, 0);
+ 		if (*endptr) {
+ 			pseudo_diag("Unexpected garbage after number (%llu): '%s'\n",
+ 				new_trait->data.ivalue, endptr);
+@@ -462,7 +462,7 @@ plog_trait(int opt, char *string) {
+ 		break;
+ 	case PSQF_MODE:
+ 	case PSQF_PERM:
+-		new_trait->data.ivalue = strtoll(string, &endptr, 8);
++		new_trait->data.ivalue = pseudo_strtoll_wrapper(string, &endptr, 8);
+ 		if (!*endptr) {
+ 			break;
+ 		}
+diff --git a/strtol.c b/strtol.c
+new file mode 100644
+index 0000000..258f02f
+--- /dev/null
++++ b/strtol.c
+@@ -0,0 +1,26 @@
++#include <stdio.h>
++#include <stdlib.h>
++#include "pseudo.h"
++
++/*
++ * glibc 2.38 would include  __isoc23_strtol and similar symbols if _GNU_SOURCE
++ * is used. We have to set that for other definitions so delcare this wrapper
++ * in a context where we don't have that set.
++ *
++ * We need to wrap strtol, strtoll, atoi, fscanf and sscanf.
++ */
++
++int pseudo_atoi_wrapper(const char *nptr)
++{
++	return atoi(nptr);
++}
++
++long pseudo_strtol_wrapper(const char *nptr, char **endptr, int base)
++{
++	return strtol(nptr, endptr, base);
++}
++
++long long pseudo_strtoll_wrapper(const char *nptr, char **endptr, int base)
++{
++	return strtoll(nptr, endptr, base);
++}
 
