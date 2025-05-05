@@ -1,142 +1,102 @@
-Return-Path: <scott.murray@konsulko.com>
+Return-Path: <foss@0leil.net>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0113C3ABB0
-	for <webhook@archiver.kernel.org>; Mon,  5 May 2025 14:08:17 +0000 (UTC)
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
- by mx.groups.io with SMTP id smtpd.web11.51283.1746454096781268477
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0BAFC3ABB8
+	for <webhook@archiver.kernel.org>; Mon,  5 May 2025 14:20:57 +0000 (UTC)
+Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [84.16.66.168])
+ by mx.groups.io with SMTP id smtpd.web10.51251.1746454856773703828
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 05 May 2025 07:08:16 -0700
+ Mon, 05 May 2025 07:20:57 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=PkkMhl7s;
- spf=pass (domain: konsulko.com, ip: 209.85.219.53, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6e8efefec89so45780676d6.3
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 05 May 2025 07:08:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1746454096; x=1747058896; darn=lists.yoctoproject.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8bWIWDSqLFNZa1LC9keaFIrvWH287oxknvsp82Ve3ck=;
-        b=PkkMhl7sPZUT423q4roQKJ6NEfoAi9QZuVHsAPqg7WoJwYoCU8rrMStFimTg44OS7n
-         1LSs4L9/FhZkYCQVALhEwIpWbpXezmBlPZjWNFq56bReom/AZTjy6/m3MfyhgAm+a2B9
-         gVPD4zPvmUUzE3VsHUyBA0pwGtamtmSyDALE0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746454096; x=1747058896;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8bWIWDSqLFNZa1LC9keaFIrvWH287oxknvsp82Ve3ck=;
-        b=Bj0VIiBoG0QJJ1S5YCaZSbxlGX0xfF9+48gSZyVlVSNGiIP7yY1Za2uxynTVs+9CsG
-         UFQYsZqieALTirBIwBwMpABFu5mSMoeF2U0y/irJe/ncXy2kHR1b3nPp0V4EDHwnEfuT
-         WMaxZmHunNx4D7NiYa13d2OvjBX8v1277G27FDFhqrsbSzXFNikMOzJRGEJXD71Tg/Ry
-         QjCZ+ebIAq8qZyLg9MS+HP9GjqgUnNyBP1cXSX6fxSA0LleoNgwEFa8npgE9eg1XcmiG
-         dZmWBZlilN3W7CO+nWM6CYa9tDB2Enl67mSt/HJbsuIpJrOUHSiFG+2+WhBq2+e1mQXS
-         HraQ==
-X-Gm-Message-State: AOJu0YxT+Lo45e/oqEG8nSbvSFqnkBOTCmLGu+msEfjAklH11RvPhb+p
-	ke6jav2zdqX4TZN9eDyvXTBByjIUkbC9GjPB9j+KXXWMiXaKpOyBq4HTNEOxx6Y=
-X-Gm-Gg: ASbGncvaiXVWDP9ONgYu7N7NB/EIe/Sk0h9efU3f6dUvR8lxp46Ljp90piN50YkkwjW
-	EDwbu/jfQbJ/KwiTNS1paIc6HF419DPYyR4RQRxE8zZGLhIcD054AL1Jcpeb9pvXAU3bSGN+iFR
-	EKQAbyUFxWCOdi+YDt4+MVGgo89eWSuWPgEsysrFJSB8z+gMTcxiKkNmmEMY1J2Xi1dSptmCr1H
-	c4xLd0mf4HG2EaAbTKMsS+WqR8DLfBuo9BkIhaMAsI8B54weizzL0q4DVTlYDlDoUmSh5BApMU2
-	tblP048YfATVbDnY6Q+dc5T9LVJr8M9SBr1ScOdTF1AmHBiVvNKsM5Q6aCgnkd0MQQqPzcV9eo0
-	=
-X-Google-Smtp-Source: AGHT+IG2KH6zazik4CzRG1+uByONvgpBrV48HLeH99URHnEgE5FgRiox0jU5f+f1nfSM+zXImxmryA==
-X-Received: by 2002:ad4:5c8a:0:b0:6e8:fe16:4d44 with SMTP id 6a1803df08f44-6f5157f11b8mr213041816d6.31.1746454095555;
-        Mon, 05 May 2025 07:08:15 -0700 (PDT)
-Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f50f480fb7sm56062486d6.112.2025.05.05.07.08.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 May 2025 07:08:14 -0700 (PDT)
-Date: Mon, 5 May 2025 10:08:06 -0400 (EDT)
-From: Scott Murray <scott.murray@konsulko.com>
-To: "Marko, Peter" <Peter.Marko@siemens.com>
-cc: "yocto-patches@lists.yoctoproject.org" <yocto-patches@lists.yoctoproject.org>
-Subject: RE: [yocto-patches] [meta-lts-mixins][kirkstone/rust][PATCH 19/38]
- cargo: pass PACKAGECONFIG_CONFARGS to cargo build
-In-Reply-To: <AS1PR10MB569727FD0B9979F109D1CD53FD8F2@AS1PR10MB5697.EURPRD10.PROD.OUTLOOK.COM>
-Message-ID: <a6380ec1-ff7a-68b6-25b7-021467d77acb@konsulko.com>
-References: <cover.1746130391.git.scott.murray@konsulko.com> <e5d4f65414368beed7b69e2c94482075aa2a0d81.1746130391.git.scott.murray@konsulko.com> <AS1PR10MB569727FD0B9979F109D1CD53FD8F2@AS1PR10MB5697.EURPRD10.PROD.OUTLOOK.COM>
+ dkim=none (message not signed); spf=pass (domain: 0leil.net, ip: 84.16.66.168, mailfrom: foss+yocto@0leil.net)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZrkGH3YxNzDVS;
+	Mon,  5 May 2025 16:20:55 +0200 (CEST)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZrkGG6zdmzslT;
+	Mon,  5 May 2025 16:20:54 +0200 (CEST)
+From: Quentin Schulz <foss+yocto@0leil.net>
+Date: Mon, 05 May 2025 16:20:45 +0200
+Subject: [meta-rockchip PATCH v3 9/9] bsp: rkbin: bump to latest commit in
+ master branch
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250505-ddrbin-custom-v3-9-577b94c72035@cherry.de>
+References: <20250505-ddrbin-custom-v3-0-577b94c72035@cherry.de>
+In-Reply-To: <20250505-ddrbin-custom-v3-0-577b94c72035@cherry.de>
+To: yocto-patches@lists.yoctoproject.org
+Cc: Quentin Schulz <quentin.schulz@cherry.de>
+X-Mailer: b4 0.14.2
+X-Infomaniak-Routing: alpha
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 05 May 2025 14:08:17 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1501
+ <yocto-patches@lists.yoctoproject.org>; Mon, 05 May 2025 14:20:57 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1510
 
-On Sun, 4 May 2025, Marko, Peter wrote:
+From: Quentin Schulz <quentin.schulz@cherry.de>
 
-> This commit creates discrepancy between cargo.bbclass (from mixins) and ptest-cargo.bbclass (from oe-core)
-> It needs https://git.openembedded.org/openembedded-core/commit/?id=98d03d31de4010534b1a00d29409d3486a0ab0b9
-> Same is true for scarthgap/rust (which triggered me to send that patch when testing last scarthgap/rust update).
-> We probably need to copy ptest-cargo.bbclass into mixins to apply that change.
->
-> Peter
+This bumps rkbin to be using the last public blobs.
 
-Thank you for mentioning this, it pointed out a lacking in my backporting
-scripting that resulted in it missing ptest-cargo.bbclass changes.  I'll
-try to get things fixed up in the next day or two.  Do you happen to know
-if python3-bcrypt on scarthgap branch would serve as a reasonable test of
-the class?  It's the only non-selftest user in oe-core that I see on first
-glance.
+Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+---
+ recipes-bsp/rkbin/rockchip-rkbin-optee-os_git.bb | 6 +++---
+ recipes-bsp/rkbin/rockchip-rkbin-tf-a_git.bb     | 2 +-
+ recipes-bsp/rkbin/rockchip-rkbin.inc             | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-Thanks,
+diff --git a/recipes-bsp/rkbin/rockchip-rkbin-optee-os_git.bb b/recipes-bsp/rkbin/rockchip-rkbin-optee-os_git.bb
+index b534e6359645cd7082c9ac69036de15ce8813b3a..0f3c9277a61ec9798f78107fb2f402b8a792f81d 100644
+--- a/recipes-bsp/rkbin/rockchip-rkbin-optee-os_git.bb
++++ b/recipes-bsp/rkbin/rockchip-rkbin-optee-os_git.bb
+@@ -4,11 +4,11 @@ require rockchip-rkbin.inc
+ 
+ PROVIDES += "optee-os"
+ 
+-RKBIN_BINVERS:rk3308 ?= "v2.08"
++RKBIN_BINVERS:rk3308 ?= "v2.09"
+ RKBIN_BINFILE:rk3308 ?= "rk3308_bl32_${RKBIN_BINVERS}.bin"
+ RKBIN_DEPLOY_FILENAME:rk3308 ?= "tee-rk3308.bin"
+ 
+-RKBIN_BINVERS_RK356x ?= "v2.14"
++RKBIN_BINVERS_RK356x ?= "v2.15"
+ RKBIN_BINVERS:rk3566 ?= "${RKBIN_BINVERS_RK356x}"
+ # NOTE: the following are not typos
+ #       the rk3566 uses the same bl32 as the rk3568
+@@ -19,6 +19,6 @@ RKBIN_BINVERS:rk3568 ?= "${RKBIN_BINVERS_RK356x}"
+ RKBIN_BINFILE:rk3568 ?= "rk3568_bl32_${RKBIN_BINVERS}.bin"
+ RKBIN_DEPLOY_FILENAME:rk3568 ?= "tee-rk3568.bin"
+ 
+-RKBIN_BINVERS:rk3588s ?= "v1.17"
++RKBIN_BINVERS:rk3588s ?= "v1.19"
+ RKBIN_BINFILE:rk3588s ?= "rk3588_bl32_${RKBIN_BINVERS}.bin"
+ RKBIN_DEPLOY_FILENAME:rk3588s ?= "tee-rk3588.bin"
+diff --git a/recipes-bsp/rkbin/rockchip-rkbin-tf-a_git.bb b/recipes-bsp/rkbin/rockchip-rkbin-tf-a_git.bb
+index 3ad0f7cffa077cfbc88b08a319c181e8a8c5a7c1..f51d9e934ab52b5ee7f356e7c3c5120513c2f0f1 100644
+--- a/recipes-bsp/rkbin/rockchip-rkbin-tf-a_git.bb
++++ b/recipes-bsp/rkbin/rockchip-rkbin-tf-a_git.bb
+@@ -19,6 +19,6 @@ RKBIN_BINVERS:rk3568 ?= "${RKBIN_BINVERS_RK356x}"
+ RKBIN_BINFILE:rk3568 ?= "rk3568_bl31_${RKBIN_BINVERS}.elf"
+ RKBIN_DEPLOY_FILENAME:rk3568 ?= "bl31-rk3568.elf"
+ 
+-RKBIN_BINVERS:rk3588s ?= "v1.47"
++RKBIN_BINVERS:rk3588s ?= "v1.48"
+ RKBIN_BINFILE:rk3588s ?= "rk3588_bl31_${RKBIN_BINVERS}.elf"
+ RKBIN_DEPLOY_FILENAME:rk3588s ?= "bl31-rk3588.elf"
+diff --git a/recipes-bsp/rkbin/rockchip-rkbin.inc b/recipes-bsp/rkbin/rockchip-rkbin.inc
+index 8a6a9f44ce908934dd58fc3c37d338a43aa00bff..79149c5bebc3c59e337b303f24274ed1925da5ce 100644
+--- a/recipes-bsp/rkbin/rockchip-rkbin.inc
++++ b/recipes-bsp/rkbin/rockchip-rkbin.inc
+@@ -1,5 +1,5 @@
+ SRC_URI = "git://github.com/rockchip-linux/rkbin;protocol=https;branch=master"
+-SRCREV = "7c35e21a8529b3758d1f051d1a5dc62aae934b2b"
++SRCREV = "f43a462e7a1429a9d407ae52b4745033034a6cf9"
+ LICENSE = "Proprietary"
+ LIC_FILES_CHKSUM = "file://LICENSE;md5=11e3673115959bf596feaaa6ea7ce9a5"
+ 
 
-Scott
+-- 
+2.49.0
 
-
-> > -----Original Message-----
-> > From: yocto-patches@lists.yoctoproject.org <yocto-
-> > patches@lists.yoctoproject.org> On Behalf Of Scott Murray via
-> > lists.yoctoproject.org
-> > Sent: Thursday, May 1, 2025 22:40
-> > To: yocto-patches@lists.yoctoproject.org
-> > Subject: [yocto-patches] [meta-lts-mixins][kirkstone/rust][PATCH 19/38] cargo:
-> > pass PACKAGECONFIG_CONFARGS to cargo build
-> >
-> > From: Jean-Pierre Geslin <jarsoper@gmail.com>
-> >
-> > In order to allow rust packages to define PACKAGECONFIG options, append
-> > the contents of PACKAGECONFIG_CONFARGS to the build command.
-> > This patch was already submitted by Bartosz Golaszewski on older
-> > version but was never merged. It will be really usefull for Rust recipes.
-> >
-> > Signed-off-by: Jean-Pierre Geslin <jarsoper@gmail.com>
-> > Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-> > (adapted from oe-core commit 16745b20452de60ae2474433cc1a2fb1ed9f6a64)
-> > Signed-off-by: Scott Murray <scott.murray@konsulko.com>
-> > ---
-> >  classes/cargo.bbclass | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/classes/cargo.bbclass b/classes/cargo.bbclass
-> > index 76a3966..461d100 100644
-> > --- a/classes/cargo.bbclass
-> > +++ b/classes/cargo.bbclass
-> > @@ -48,7 +48,7 @@ oe_cargo_build () {
-> >  	bbnote "Using rust targets from ${RUST_TARGET_PATH}"
-> >  	bbnote "cargo = $(which ${CARGO})"
-> >  	bbnote "${CARGO} build ${CARGO_BUILD_FLAGS} $@"
-> > -	"${CARGO}" build ${CARGO_BUILD_FLAGS} "$@"
-> > +	"${CARGO}" build ${CARGO_BUILD_FLAGS}
-> > ${PACKAGECONFIG_CONFARGS} "$@"
-> >  }
-> >
-> >  do_compile[progress] = "outof:\s+(\d+)/(\d+)"
-> > --
-> > 2.49.0
-> >
-> >
-> >
-> > -=-=-=-=-=-=-=-=-=-=-=-
-> > Links: You receive all messages sent to this group.
-> > View/Reply Online (#1446): https://lists.yoctoproject.org/g/yocto-
-> > patches/message/1446
-> > Mute This Topic: https://lists.yoctoproject.org/mt/112569359/4454441
-> > Group Owner: yocto-patches+owner@lists.yoctoproject.org
-> > Unsubscribe: https://lists.yoctoproject.org/g/yocto-
-> > patches/leave/13703729/4454441/683413657/xyzzy [peter.marko@siemens.com]
-> > -=-=-=-=-=-=-=-=-=-=-=-
-> >
->
 
