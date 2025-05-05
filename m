@@ -2,61 +2,61 @@ Return-Path: <emailaddress.ashish@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08AC9C3ABB6
-	for <webhook@archiver.kernel.org>; Mon,  5 May 2025 09:22:56 +0000 (UTC)
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
- by mx.groups.io with SMTP id smtpd.web11.46432.1746436970105121268
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E991EC3ABB0
+	for <webhook@archiver.kernel.org>; Mon,  5 May 2025 09:22:55 +0000 (UTC)
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+ by mx.groups.io with SMTP id smtpd.web10.46123.1746436972329982762
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 05 May 2025 02:22:50 -0700
+ Mon, 05 May 2025 02:22:52 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=a6HFpJl0;
- spf=pass (domain: gmail.com, ip: 209.85.210.171, mailfrom: emailaddress.ashish@gmail.com)
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-72d3b48d2ffso4211940b3a.2
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 05 May 2025 02:22:50 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=mVJOv80H;
+ spf=pass (domain: gmail.com, ip: 209.85.210.182, mailfrom: emailaddress.ashish@gmail.com)
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7399a2dc13fso5859102b3a.2
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 05 May 2025 02:22:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746436969; x=1747041769; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1746436971; x=1747041771; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JV//MsubayP8a2k4/bbRdSNjAVXtZ2pXGF7m5/BjpNI=;
-        b=a6HFpJl0uZlMd5EBTkK5lGnqpNi9Yny9XmUaeyojaZ6Lyxdf3hse37iqAEE6IQ3nst
-         uXXe2u0+kL4EseLjJZwyndEZWGJrIhKLqRau5w7A3sgwRZjfZWY1ppERUQ/4D9yIsnGS
-         K/3xLgIcm/ElyhNGdp8EG8vW99y3XmhcToTRBjQVVvIJMT23uDrJMyEDquUNtQBO8PRz
-         T8ryRN1MTqi0n03GFE/0vhTdRHDYT6dZMr44EnQLbOvnCIKFbWBH1fVYHoWOLSWxec9D
-         jEc/ZNcLDlHbXEDPDctWU/jaE7jdSuiMa/puHQzVuyuay8lFxJkoGUXeEIBMjRhx05Jj
-         HATQ==
+        bh=ZNzhkZxgprF8meM67E04MxVitR+DqzMECL2R0fXMy9E=;
+        b=mVJOv80HLbLDjhxoTEPiWYVfHLXIRGhcO+A3XfSrV6w8Wvh+7lBdeCjmimrjwdrlYo
+         GXA8knRoLZC/C0MMubiCBdEjiFJsIYxpFgvrRcP+yv9nSxzEvJ5CxX1fO+ajt2xxT1Mj
+         pT9wI9TJL/nJ0r2FbgTDTdz8wX76uG/qnvoAgdjnAHJzDZZFUhgneuOQBde14qAuPq8Q
+         xv4N1uUsYvXIBCH4zWq+fmKPuKacutgohrKHJloILTLnAW2ksVKCyPcy3PrFBDquCBZM
+         L/vww4D+3CapFgyXavhH4h7PRg3fRNrPPV8DbXNj/qrX2qjiwFyDleOWLUz+AKnSM8QH
+         dvxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746436969; x=1747041769;
+        d=1e100.net; s=20230601; t=1746436971; x=1747041771;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JV//MsubayP8a2k4/bbRdSNjAVXtZ2pXGF7m5/BjpNI=;
-        b=oJXtrB02cNP5M41/xwUCwB50vbyktq7TKQV5JM4IgTeIxqPrSwyog2f8qB+r0kUf6Z
-         Cn5erdjo+lNiYADuw3NyWdITxz2u+OUIcd4/bEKv+f0Ufsv22Xcrc9LlfvlRUtfbMHEs
-         nqtMRqmQRNNR4iez4xdKMz/LJXPstMtiqqhCiLHyLw10MGGT/15NpD7RYrOyQqMD0njv
-         sypQy9l/JzNRigRmdszvX2rd5divEDbguyH5eMea6TIiE4hkSFy1JTeZ9BmaW/eniGkb
-         BWbcoNjVJxnTTmyVOBTAv7y+FARwAOvbd5Ef0vbUZ9E/S6YS26fDxFK32C/EwrOFouuv
-         bzRg==
-X-Gm-Message-State: AOJu0Yyi+LooBlttEupMZew/rshVO58Wbes26TZMi96Bj4IJas0m1L+P
-	UE1UoCKDZoDztX9ZjXSwS9tv4NPTgB5P91dE3uTAf0wgbsE7ab89fdpqCA==
-X-Gm-Gg: ASbGncvEJdSZjzZpvR6u7Rn2BPWwVYQV18aKnQhGKNIkhX+/akm7PN9Ed2nLQRC1AV9
-	VdVGamv45eb8bmtJiI439JTKEZ6drQ+RfoTovg56M6Xy6YHZYT0BOHESo4CDWX1wqcS2GS7kIqE
-	KV+8aN1fNNNQzTnG8s/479aZj8SQLWBT4NmtuYrHx61+KP7Xt8lydnc+S/7CUGXiRZG4oxtaG2C
-	l8a7Pq9LZnyJwMhz788O1ZF8GSFfEAu9kk8EBhluaRH6a3waf66uhrg/id28/aklSN4/QIqu4B8
-	xoU0+RGLFO4cKVkUc0ogxapKCDHMkfVTCcrhoUOmT1K1GbsXWn6Z
-X-Google-Smtp-Source: AGHT+IEVmirGL1GP8e9oDvRmv5QxRWYqOPwvKPZlaWnYwHNd+T+4oqXLANrp5+vquSYqft1zluyg1Q==
-X-Received: by 2002:a05:6a00:438f:b0:73c:b86:b47f with SMTP id d2e1a72fcca58-7406f08cfefmr9413187b3a.4.1746436969367;
-        Mon, 05 May 2025 02:22:49 -0700 (PDT)
+        bh=ZNzhkZxgprF8meM67E04MxVitR+DqzMECL2R0fXMy9E=;
+        b=pDGRvYz1cWpHtnmdeAqRGIoMpAxRXI3JTXMym3C5joJP8zvYwsM9Z2Gw5SYpFWP6Z0
+         C5SemK/3n1CJuKlCoCVkrGD22REtYGQSQhmbIt5BUr3AeJDBbt1XTJRKob/KRWQuTjLG
+         Qq5HC7EQr4nT+UWJmhD71JEIb76K/kAdAF460D2h9AXdiMjzKzZN2iwGan7Cm14ZcP/o
+         yaFwNk22rPwV5IqpwLbG447GHYKVP706WstSp1mdxqfcPG5cb6GYppWWiIbhmKZSmqpO
+         RWYK5tzSGS6qCeONgGsvlJFqfYOE2CYrm1IsGAReZwj7eXY8+o9C9IA5D3HCS/488dCN
+         w1Bg==
+X-Gm-Message-State: AOJu0Yz54Y26NJg61+dNbBKaRMJkxC+4NcbMgZFA7tsbkfnoAdI3dYcF
+	lzisX8ge/3AIEulrgnMRZMpBb3qKQ72cIVBaw3mcu3jBBwxsqjYjFldTtg==
+X-Gm-Gg: ASbGncsKzoABVp/ub1u3jn6v0C9VgpeH/8XK04qZgSNHIZJ3mQWkzatQI79XBW+mjVR
+	flr1RWEYwyTXPW2xkyceDjqf/pom77jg3FfuybELLctOvCfG+UFYYLTjS83P+0V6reKplEsOGoS
+	OodEIZazooFU9qTBtSjR0LdjLgEwA6aB1d6YLCHxmC+fTWqwN92PGVW6HVbZ2imbcc2YB6HMuM0
+	7iXdSNrsEfW20oT84aKkx/FkWwc57IOW8YelBqWbgcIldCiFOt1+JpueOvWF+4T/pX90NWwQlX5
+	Sx6CciiQNBWOWfPPEc2t+YXJvRmo83H/ueq8uCFjVpY5mKfmHGbB
+X-Google-Smtp-Source: AGHT+IHp4mFJiGqvV7wclfp1cbfnCaDiadIAzjL3HhK1gmrAnmKipd+bvq1gRXR8HWWMuJxdv2oItA==
+X-Received: by 2002:a05:6a00:35cf:b0:736:546c:eb69 with SMTP id d2e1a72fcca58-7406f0a0a11mr8656264b3a.9.1746436971442;
+        Mon, 05 May 2025 02:22:51 -0700 (PDT)
 Received: from MVIN00210.. ([182.74.28.237])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7405902167csm6487611b3a.98.2025.05.05.02.22.48
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7405902167csm6487611b3a.98.2025.05.05.02.22.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 May 2025 02:22:49 -0700 (PDT)
+        Mon, 05 May 2025 02:22:51 -0700 (PDT)
 From: Ashish Mishra <emailaddress.ashish@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Ashish Mishra <emailaddress.ashish@gmail.com>
-Subject: [meta-java][PATCH 2/4] Updates the SRC_URI for xml-commons-resolver recipe
-Date: Mon,  5 May 2025 14:52:36 +0530
-Message-ID: <20250505092238.853811-3-emailaddress.ashish@gmail.com>
+Subject: [meta-java][PATCH 3/4] Updates the SRC_URI for avalon-framework-api recipe
+Date: Mon,  5 May 2025 14:52:37 +0530
+Message-ID: <20250505092238.853811-4-emailaddress.ashish@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250505092238.853811-1-emailaddress.ashish@gmail.com>
 References: <20250505092238.853811-1-emailaddress.ashish@gmail.com>
@@ -65,25 +65,25 @@ Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 05 May 2025 09:22:56 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1494
+ <yocto-patches@lists.yoctoproject.org>; Mon, 05 May 2025 09:22:55 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1495
 
 Signed-off-by: Ashish Mishra <emailaddress.ashish@gmail.com>
 ---
- recipes-core/xml-commons/xml-commons-resolver1.1_1.2.bb | 2 +-
+ recipes-core/jakarta-libs/avalon-framework-api_4.3.bb | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/recipes-core/xml-commons/xml-commons-resolver1.1_1.2.bb b/recipes-core/xml-commons/xml-commons-resolver1.1_1.2.bb
-index 0fafcea..790b2e7 100644
---- a/recipes-core/xml-commons/xml-commons-resolver1.1_1.2.bb
-+++ b/recipes-core/xml-commons/xml-commons-resolver1.1_1.2.bb
-@@ -4,7 +4,7 @@ LICENSE = "Apache-2.0"
+diff --git a/recipes-core/jakarta-libs/avalon-framework-api_4.3.bb b/recipes-core/jakarta-libs/avalon-framework-api_4.3.bb
+index 081cfe7..e7b4d55 100644
+--- a/recipes-core/jakarta-libs/avalon-framework-api_4.3.bb
++++ b/recipes-core/jakarta-libs/avalon-framework-api_4.3.bb
+@@ -5,7 +5,7 @@ LIC_FILES_CHKSUM = "file://LICENSE.txt;md5=1dece7821bf3fd70fe1309eaa37d52a2"
  PR = "r1"
- LIC_FILES_CHKSUM = "file://LICENSE.resolver.txt;md5=d229da563da18fe5d58cd95a6467d584"
  
--SRC_URI = "http://archive.apache.org/dist/xml/commons/xml-commons-resolver-${PV}.tar.gz"
-+SRC_URI = "https://archive.apache.org/dist/xml/commons/binaries/xml-commons-resolver-${PV}.tar.gz"
- 
- inherit java-library
+ SRC_URI = " \
+-	   http://archive.apache.org/dist/excalibur/avalon-framework/source/${BP}-src.tar.gz;name=archive \
++           https://archive.apache.org/dist/excalibur/excalibur-framework/source/${BP}-src.tar.gz;name=archive \
+ 	   http://archive.apache.org/dist/avalon/logkit/source/logkit-1.2.2-src.tar.gz;name=logkit \
+ 	  "
  
 
