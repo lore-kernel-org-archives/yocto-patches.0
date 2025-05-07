@@ -2,109 +2,102 @@ Return-Path: <mikko.rapeli@linaro.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 373AAC3ABC3
-	for <webhook@archiver.kernel.org>; Wed,  7 May 2025 15:03:21 +0000 (UTC)
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
- by mx.groups.io with SMTP id smtpd.web10.774.1746630193008898146
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14B1FC3ABC0
+	for <webhook@archiver.kernel.org>; Wed,  7 May 2025 15:05:21 +0000 (UTC)
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+ by mx.groups.io with SMTP id smtpd.web10.833.1746630311615587372
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 07 May 2025 08:03:13 -0700
+ Wed, 07 May 2025 08:05:11 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linaro.org header.s=google header.b=xaGR/+FB;
- spf=pass (domain: linaro.org, ip: 209.85.167.51, mailfrom: mikko.rapeli@linaro.org)
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-54993c68ba0so8967928e87.2
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 07 May 2025 08:03:12 -0700 (PDT)
+ dkim=pass header.i=@linaro.org header.s=google header.b=T1jzq6it;
+ spf=pass (domain: linaro.org, ip: 209.85.167.47, mailfrom: mikko.rapeli@linaro.org)
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5493b5bc6e8so8735687e87.2
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 07 May 2025 08:05:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746630191; x=1747234991; darn=lists.yoctoproject.org;
+        d=linaro.org; s=google; t=1746630310; x=1747235110; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fDjbm3g3Y2w+I9GI9GY3iJ+A5FTGHIS25XBiaHgm/q0=;
-        b=xaGR/+FBbOc7gX9p04dn+xvVeNJc2gwadMFkOPOSH1r9q2e3IFMiVEw0msVd1scFvl
-         k1lAf1CcaKeftrMqvFCWgNfzLPfD79LmecB59pu78K6LcImUgmBl9/RbTKZNFUoiOWAT
-         7PIKxI+3t0A4pYgT+uxBzh4FeOdEZHgPJyofwnboXZT+gxBfbR5D9egFWdlHSrpQlKS2
-         6ovm4GALaShlNmINnTKY1juv+fFEzC32g+WbNe5C4WzuSJKOa6sjA5z2WTidO8G1bjqR
-         TIpgLkb9Vi5IB8ZGjHSe9lEvPVtgSo+M/tLVVZR+4zO/3/kv4i7wFlLVc1+bl+hPscPw
-         9bLg==
+        bh=jA6lkt1KRdo02m2XZ5DJWDqRu5h0H88R0xDnJxhqX7E=;
+        b=T1jzq6it6CLzgLZf/r3J6n7zjT6IwSKRAkqz9beuxFi5ePs4yrJ6brkq1RJHk/c/yX
+         SeR+QmTy1CZ38nCLUJ+tNnHb26DIvqAr5/Grs4j8z3PLlryV2zY7+M1wAp3WhRE/oF/G
+         fejFpBGqgyKvZ9LrP4YBAuNbdvet7jO7pQza3AxbhT5PShTHMpFu1LLG6Z3cQJc6xRgN
+         F9Qen/u2dYnC6Pgm5qtxlK/7gS4hwncpnfhQl/yMuSM2NmNFxmt8Yzr3lvmhaTZLPEQ6
+         PZOeRefIpyezMcqSJrezSboV+NWDh+dK9XTbYTJigFH8p7KKS/AxZD4Tt82NmCE7aUfP
+         NpwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746630191; x=1747234991;
+        d=1e100.net; s=20230601; t=1746630310; x=1747235110;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=fDjbm3g3Y2w+I9GI9GY3iJ+A5FTGHIS25XBiaHgm/q0=;
-        b=WOGtt6lZWCFWH8H0Pi7T0NSeXN5ayhi8rnaz+Th6gKWn0Ik5m9BFagujIVfyJQ/O2c
-         pIcAtlIpI+PXPMjRGkTUUjHwGeKU9nKPezqTzfk+cYYhH4EojRews5vFaUne50wflP6z
-         R7zCWhHhnBfh4HWHzRNc0ljeDt2mpNGu5A0W5W3OudMfCswxSLYhopjfrAFZT5zCBhtF
-         NnYYOR7BzMrlKGVYcsC21p9PSv7EYH1pE+CLg2F2Aj8+EUBM9c8SjTTkkdTMF6SWEQp2
-         f7iNp9WJh/8N1AfH8zngfsZ5T3C1QhbMnwq0VQWDM9vJbY3i10QkNlIx4ZLTIz+e/xAh
-         Mr8g==
-X-Gm-Message-State: AOJu0YwOOneMBC9FvcXPOnHLOMjzYvW0gzHlW4CMTTvk5Teuy1F5dRGN
-	mva7pThbTG+8h2Cev8pphVn840yWMVbv59BAGspVHtxpa940H08DSFqfvRv6pklUuofU0xa+Z4I
-	NA80=
-X-Gm-Gg: ASbGncsgSSwQmZ5YkjmSHG3KuD9XpNbKNTYbjRSze7Isv81nHOOfJV2q9gW2ZTNqoFK
-	4VYAN0xqoUkTc4TbBac11BmNIC++iNILVgJtV2i+zUT7jiXe4KCfNyF+YNHJaDsFOHPnOIVve8X
-	SUJnEIZEDedmF7GX2k4d+oleLBByU/RbcEw2FfIm2NGAf+c0czAaIk3ZKwi1zCSEGnv1a1qfyNL
-	8J6yr8Of+6Cud6Cl2aA1Jf8AgdSB+lf6uIp0rnhHeQ3YXI0DjgfmX/xdIrn6oD42/vF03jz2gEI
-	pbXZfXKSIt4/rgMCYhifEu/aZylTkv51Vw2KJ+wLvFIseJH6KOJnrHkq2tVNed/JMO6qJslhsqq
-	qo3llLbBXuMOPEOlP3g==
-X-Google-Smtp-Source: AGHT+IF73vtnDvIsPXj3K51vnFQmhwhD5TZgo/6mKuUsf+oVkzQFB/rJzGCPjBwXyPBFIB48qJXq6A==
-X-Received: by 2002:a05:6512:3b13:b0:54e:85bc:d13e with SMTP id 2adb3069b0e04-54fb96503d6mr1353029e87.52.1746630189458;
-        Wed, 07 May 2025 08:03:09 -0700 (PDT)
+        bh=jA6lkt1KRdo02m2XZ5DJWDqRu5h0H88R0xDnJxhqX7E=;
+        b=wIdV1w9Dc1+7xxxKwLl7Fb4c8xbgCpNgYl8C1aK65xBEiI1Q8Y/CW+62l92QW5RLEE
+         /WQQsVUZLxKRuzkYcBRW5LuNHlwfmp9K6Ym6tEabgsxiEmup0zLo/L/mtwb1RTruhb0M
+         XnqU99TeEpvVtI+3wbaVW3VH3QndkTvpGnz2Q5P90/uNSj3ihtVe2jV0BDwFxkQUl2JR
+         FrMwDM7WolPBf9DvV3W2FGrRtyYTY+34XS1fTK5fiQs5NLJD7xNM20eAyqIez1Ar9dPr
+         NUkpIV6FWEF0jN2c6n0zN3hERmib22+RTZBXVwpsClNZthkJRKr2L4FR5dFadqbrZpkX
+         cutg==
+X-Gm-Message-State: AOJu0YzVDxjbYXozcCf4RS10MiTuWgqoMTRNomr6vOtmJnRZJEGSft/6
+	kdlwPIiYtWLbTj91AmoqbdOrRBEWNFUJBN/Dt9Me5X8l22H3BBsr8Tmajj36PRRJB9DuhYJg2Ho
+	jhNU=
+X-Gm-Gg: ASbGnctdLslZPSurTP+BxBsWBc4qqRSf9z14gO4ostamRiwE/VK7gju17ZeO406lxZh
+	xfpHkkvFkym0g9zF+9B5ntME30hD5kZHOLx9FWorQVig3a6+1L6njYvt07FIrUau7XzHOas1fUf
+	NWNzCV2npKJS+Jn7I7F7bMxLnNLwKoBgZG5gU47md9hCmxNjSCrwJ+qPRn33BhdaQUy0K2SxZJh
+	Zllv1u24vhWj5Hqk2wGJR2Zn3dy8tArFx3QjfVg7X7Cnqc+3P7DKDndNoAPhJF+gY95GnAAirPP
+	FbGHRt15uZznds36H2dduDqU3fIq7etUK58rgjpxjkENZZ6RjCOqD5aSwaj4JoqzG/+GFqqnMH/
+	S0LV+CLOYd9sQr8G55A==
+X-Google-Smtp-Source: AGHT+IF3JOArFuXgISnD4eEJBkC9ySJYd3y8MqH04D1kO1SnK+5F+kQga9BfIVtKm4VERoHK+lKR1A==
+X-Received: by 2002:a05:6512:15a8:b0:545:154:52b0 with SMTP id 2adb3069b0e04-54fb9293caemr1400200e87.22.1746630305998;
+        Wed, 07 May 2025 08:05:05 -0700 (PDT)
 Received: from localhost.localdomain (87-100-218-141.bb.dnainternet.fi. [87.100.218.141])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ea94b1784sm2392059e87.49.2025.05.07.08.03.08
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ea94c8ca7sm2367490e87.99.2025.05.07.08.05.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 08:03:09 -0700 (PDT)
+        Wed, 07 May 2025 08:05:05 -0700 (PDT)
 From: Mikko Rapeli <mikko.rapeli@linaro.org>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Mikko Rapeli <mikko.rapeli@linaro.org>,
-	Sathishkumar Duraisamy <sathishkumar.d.cbe@gmail.com>,
-	Khem Raj <raj.khem@gmail.com>,
-	Max Krummenacher <max.krummenacher@toradex.com>,
-	Trevor Woerner <twoerner@gmail.com>
-Subject: [meta-security][PATCH v2] systemd: disable linker GCS warning on aarch64
-Date: Wed,  7 May 2025 18:02:47 +0300
-Message-ID: <20250507150247.1408201-1-mikko.rapeli@linaro.org>
+Cc: Mikko Rapeli <mikko.rapeli@linaro.org>
+Subject: [meta-security][PATCH] swtpm: whitespace fixes
+Date: Wed,  7 May 2025 18:04:51 +0300
+Message-ID: <20250507150451.1409046-1-mikko.rapeli@linaro.org>
 X-Mailer: git-send-email 2.49.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 07 May 2025 15:03:21 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1529
+ <yocto-patches@lists.yoctoproject.org>; Wed, 07 May 2025 15:05:21 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1530
 
-openssl asm code is missing GCS branch protections and
-linker throws a warning which currently fails the build.
-Ignore the warning for now since some branch protection
-is still applied and only GCS is missing. Works around:
+New bitbake warns about these.
 
-.../recipe-sysroot/usr/lib/libcrypto.so: warning: GCS is required by -z gcs, but this shared library lacks the necessary property note. The dynamic loader might not enable GCS or refuse to load the program unless all the shared library dependencies have the GCS marking.
-collect2: error: ld returned 1 exit status
-
-Cc: Sathishkumar Duraisamy <sathishkumar.d.cbe@gmail.com>
-Cc: Khem Raj <raj.khem@gmail.com>
-Cc: Max Krummenacher <max.krummenacher@toradex.com>
-Cc: Trevor Woerner <twoerner@gmail.com>
 Signed-off-by: Mikko Rapeli <mikko.rapeli@linaro.org>
 ---
- meta-tpm/recipes-core/systemd/systemd_%.bbappend | 3 +++
- 1 file changed, 3 insertions(+)
+ meta-tpm/recipes-tpm/swtpm/swtpm_0.10.0.bb | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-v2: switched from meson.build patching to LDFLAGS since that works
-    as suggested by Khem Raj and tested correctly by Trevor Woerner,
-    tested on genericarm64 machine with swtpm on qemu
-
-v1: https://lists.yoctoproject.org/g/yocto-patches/message/1524
-
-diff --git a/meta-tpm/recipes-core/systemd/systemd_%.bbappend b/meta-tpm/recipes-core/systemd/systemd_%.bbappend
-index c53b1e8..deb9164 100644
---- a/meta-tpm/recipes-core/systemd/systemd_%.bbappend
-+++ b/meta-tpm/recipes-core/systemd/systemd_%.bbappend
-@@ -1,3 +1,6 @@
-+# workaround to GCS branch protection warning treated as error from openssl/libcrypto
-+LDFLAGS:append:aarch64 = " ${@bb.utils.contains('DISTRO_FEATURES', 'tpm2', '-Wl,-z,gcs-report-dynamic=none', '', d)}"
-+
- PACKAGECONFIG:append = " ${@bb.utils.contains('DISTRO_FEATURES', 'tpm2', 'tpm2', '', d)}"
+diff --git a/meta-tpm/recipes-tpm/swtpm/swtpm_0.10.0.bb b/meta-tpm/recipes-tpm/swtpm/swtpm_0.10.0.bb
+index 3e58c33..66a9dc3 100644
+--- a/meta-tpm/recipes-tpm/swtpm/swtpm_0.10.0.bb
++++ b/meta-tpm/recipes-tpm/swtpm/swtpm_0.10.0.bb
+@@ -15,8 +15,8 @@ S = "${WORKDIR}/git"
+ PARALLEL_MAKE = ""
+ inherit autotools pkgconfig perlnative
  
- # for encrypted filesystems
+-TSS_USER="tss"
+-TSS_GROUP="tss"
++TSS_USER = "tss"
++TSS_GROUP = "tss"
+ 
+ PACKAGECONFIG ?= "openssl gnutls"
+ PACKAGECONFIG += "${@bb.utils.contains('DISTRO_FEATURES', 'selinux', 'selinux', '', d)}"
+@@ -42,7 +42,7 @@ USERADD_PARAM:${PN} = "--system -g ${TSS_GROUP} --home-dir / \
+ PACKAGE_BEFORE_PN = "${PN}-cuse"
+ FILES:${PN}-cuse = "${bindir}/swtpm_cuse"
+ 
+-INSANE_SKIP:${PN}   += "dev-so"
++INSANE_SKIP:${PN} += "dev-so"
+ 
+ RDEPENDS:${PN} = "libtpms"
+ 
 -- 
 2.43.0
 
