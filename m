@@ -1,164 +1,92 @@
-Return-Path: <soumya.sambu@windriver.com>
+Return-Path: <mikko.rapeli@linaro.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31BA5C3ABC0
-	for <webhook@archiver.kernel.org>; Wed,  7 May 2025 06:11:41 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
- by mx.groups.io with SMTP id smtpd.web10.1879.1746598299915031395
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC28AC3ABC5
+	for <webhook@archiver.kernel.org>; Wed,  7 May 2025 08:27:41 +0000 (UTC)
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+ by mx.groups.io with SMTP id smtpd.web11.3808.1746606455132758169
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 06 May 2025 23:11:39 -0700
+ Wed, 07 May 2025 01:27:35 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.166.238, mailfrom: prvs=7222da6ce0=soumya.sambu@windriver.com)
-Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5474SpPk031888
-	for <yocto-patches@lists.yoctoproject.org>; Tue, 6 May 2025 23:11:39 -0700
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 46dee3byg7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <yocto-patches@lists.yoctoproject.org>; Tue, 06 May 2025 23:11:39 -0700 (PDT)
-Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.43; Tue, 6 May 2025 23:11:38 -0700
-Received: from blr-linux-engg1.wrs.com (147.11.136.210) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
- 15.1.2507.43 via Frontend Transport; Tue, 6 May 2025 23:11:36 -0700
-From: ssambu <soumya.sambu@windriver.com>
-To: <yocto-patches@lists.yoctoproject.org>
-CC: <Randy.MacLeod@windriver.com>
-Subject: [meta-lts-mixins][kirkstone/rust][PATCH v2 1/1] mozjs: Use RUST_HOST_SYS and RUST_TARGET_SYS
-Date: Wed, 7 May 2025 06:11:32 +0000
-Message-ID: <20250507061132.838447-1-soumya.sambu@windriver.com>
-X-Mailer: git-send-email 2.40.0
+ dkim=pass header.i=@linaro.org header.s=google header.b=VVotX5P6;
+ spf=pass (domain: linaro.org, ip: 209.85.167.53, mailfrom: mikko.rapeli@linaro.org)
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-54d6f933152so9024069e87.1
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 07 May 2025 01:27:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1746606453; x=1747211253; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AON9W7B2B9IdsWYTsVLe/gbcHHrXk1kbUEo+qu1I1Z4=;
+        b=VVotX5P6zUjSaPf30vEQ3f+SplGVIphHgJZTE05tLuHLA7/msyl5DeyHI65CFGSUiw
+         p7Y7xbYg2/PvzLUSWHi6D8Jxbeec3PfRPTDoCYbILljveUzIwgtmhVdHB9xYheLZJGSv
+         K1K++HjCN8FrK+29ynhZyPEvsw5sBNPgkJbGty4HknplVLuLJVqpJd0O4d9aErl76WCV
+         Vr3CpymEWayN5ezAWM8lb+Or+NcsNBCB5J3Tqip10m7RRvopCuh5VS89//3xIvXuNEFu
+         PlqsM5XOO+6WdXjwcH2q/aaZfCgGX6XKDOH8Oqriymc7kGo4S6IqC4W7ooDg0UUg8IWT
+         FB3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746606453; x=1747211253;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AON9W7B2B9IdsWYTsVLe/gbcHHrXk1kbUEo+qu1I1Z4=;
+        b=pNiMDTaPWOL1N2DOo2FVEriWUeiWarCIzca0ae7Xo5Wa4rQl3R5H+sOBV6CaWmHJOC
+         SRM9CnTxVvZ8jjsFUnqksx49t4gXNhdtJgDhD/ev6tgYi1krwFKupMymqsdDfDngorGL
+         01/02OM052MQ/g6sFiD5DQb+9+w53y9nmW0ZgZvYOAdBHy37/4nyVErmRk2lXeJ2K+gs
+         jwUSlog883kgKBwKEKo6B07AOqt3VzOy2omPHTjrMDFujDDCAvOhdWkgLxlITxC0GkIx
+         18QjJMTCTKqUnxmxuchPfntyEk5UMt4yuCaYyyEd3ybDrT6anYKDlulhMNLuutnF2XBS
+         Wljw==
+X-Gm-Message-State: AOJu0Yw4x1vxgemlcRKH38JdJv6vj0Ho0H5HJVZSBm7o0xTbvAl+sUBY
+	YV2aSmJK5duD3/uXB9bHKbqvPMBwX+5X1PLYDvfEZ4leJwLZGPxs6FZoIOpSRFMgWlMztNkFjyE
+	ZIGw=
+X-Gm-Gg: ASbGncuJGYYfeQUylVn2uLO4FlLn4ZaQpFAbxjJG0U1KEZLZ/+W0WJDx1GIWeGMrvPb
+	QkeAja7JV5hpDxhg1eNYloytuq650qTCK3POVCoOEChNAYLTCkQH60v9qLSC/NTwIV1su3rqMvZ
+	pwFVNnSppi7p6GqYZhVN6cZoAH/Vda6gMfy2DrGvtgDXf3FvTIDyt+GZRpAyggwWCDmIF4kgiTR
+	J3Tdkwf7xpmFsGKjUSqJvARcnYhBgr/5kveYw/W+kG6rhOecTnLwTqMEuN0tewb9yyZlLnu7+iK
+	PCOzWmUabFKG4SvgGYHQSQedqNgw+mcu7LSSdeVVTCfA6wGdq2A7N5/NiwUYtrbcYsXcxIDey4p
+	oZ3sMt+1sAUeOc/NE4w==
+X-Google-Smtp-Source: AGHT+IEUnDB/zN2Tb6xdH7CrkGzGTs97cx6RNkg7GB3I6s+KxoPzoRtZQ9z+k3kZxtmcyNS8zzhHyw==
+X-Received: by 2002:a05:6512:220c:b0:549:8d67:c48e with SMTP id 2adb3069b0e04-54fb96035b2mr752125e87.29.1746606453255;
+        Wed, 07 May 2025 01:27:33 -0700 (PDT)
+Received: from localhost.localdomain (87-100-218-141.bb.dnainternet.fi. [87.100.218.141])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ea94c8e7bsm2266719e87.101.2025.05.07.01.27.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 May 2025 01:27:33 -0700 (PDT)
+From: Mikko Rapeli <mikko.rapeli@linaro.org>
+To: yocto-patches@lists.yoctoproject.org
+Cc: Mikko Rapeli <mikko.rapeli@linaro.org>
+Subject: [meta-security][PATCH 1/3] systemd-boot: whitespace fix
+Date: Wed,  7 May 2025 11:27:17 +0300
+Message-ID: <20250507082719.1220303-1-mikko.rapeli@linaro.org>
+X-Mailer: git-send-email 2.49.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: EbeFfo7m6i87vaDReOC1CKX-RKuXqS_J
-X-Authority-Analysis: v=2.4 cv=Pd3/hjhd c=1 sm=1 tr=0 ts=681af99b cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=KuCMGVAfJcUA:10 a=dt9VzEwgFbYA:10 a=t7CeM3EgAAAA:8 a=k-42gJp3AAAA:8 a=owsoTai2-jRsMManM9EA:9 a=FdTzh2GWekK77mhwV6Dw:22
- a=uCSXFHLys93vLW5PjgO_:22
-X-Proofpoint-GUID: EbeFfo7m6i87vaDReOC1CKX-RKuXqS_J
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA3MDA1NiBTYWx0ZWRfX6Ag2ceVbVSXG Qv022eFCmpl7WOxt/VSZxHJ+4+YJG7ug21eL4BrkwRChYI+lc82SsIsHbe7Mze5Gd48onpfeqdC qe+urNnU04EXA9USV/3pCj95EEpdo0d9ApQFkriUBlqEF+h8RN3paE0ZhJDmdU1UJwQF5FwUUvi
- 8XFP67UB4cBI0P8LDNXZIi135F+9wHilCa/kDa5tbEjLEy7ycUgeROuWJq9ztgfUZ6MpCVkSKWS x+sZLr1ikOjY0SxICQNwknLRWHu9err4vyR0ZP+UzNE0+bgv+JTYwpIvKw2OJZtd6KKFhLxkHxV OZGtIwaUeRudT6UdE+kW/5SeD4XFoxyBXoXGPu8lhDUrYlLOOqdJlLiDW1/3glEfyKrsgPJQJrC
- 1wUXM4hhzT1f36PvOQh3Zl7N8h45JRJDmLVJahFvLLBXHbFxTuIKM0FO9S3KRI0bG5Zz1fxw
-X-Sensitive_Customer_Information: Yes
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-07_02,2025-05-06_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- priorityscore=1501 mlxscore=0 suspectscore=0 spamscore=0 malwarescore=0
- impostorscore=0 clxscore=1015 mlxlogscore=911 phishscore=0 bulkscore=0
- lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.21.0-2504070000
- definitions=main-2505070056
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 07 May 2025 06:11:41 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1521
+ <yocto-patches@lists.yoctoproject.org>; Wed, 07 May 2025 08:27:41 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1522
 
-From: Soumya Sambu <soumya.sambu@windriver.com>
+To fix warnings from new bitbake.
 
-The mozjs-91 and mozjs-78 recipe in meta-openembedded sets --target=${HOST_SYS} and
---target=${TARGET_SYS} respectively, which leads to an error when using Rust from meta-lts-mixins:
-
-error: Error loading target specification: Could not find specification for target "x86_64-poky-linux".
-
-Updated target configuration to resolve this.
-
-Additionally, `mozjs-78` encountered "linker 'cc' not found" error. This was fixed by explicitly
-defining the linker for Rust.
-
-Signed-off-by: Soumya Sambu <soumya.sambu@windriver.com>
+Signed-off-by: Mikko Rapeli <mikko.rapeli@linaro.org>
 ---
- README.md                                          |  2 +-
- conf/layer.conf                                    |  4 ++++
- .../recipes-devtools/rust/rust_1.85.1.bbappend     |  7 +++++++
- .../recipes-extended/mozjs/mozjs-78_%.bbappend     | 14 ++++++++++++++
- .../recipes-extended/mozjs/mozjs-91_%.bbappend     | 13 +++++++++++++
- 5 files changed, 39 insertions(+), 1 deletion(-)
- create mode 100644 dynamic-layers/meta-python/recipes-devtools/rust/rust_1.85.1.bbappend
- create mode 100644 dynamic-layers/meta-python/recipes-extended/mozjs/mozjs-78_%.bbappend
- create mode 100644 dynamic-layers/openembedded-layer/recipes-extended/mozjs/mozjs-91_%.bbappend
+ meta-tpm/recipes-core/systemd/systemd-boot_%.bbappend | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/README.md b/README.md
-index 482f0cd..f05accf 100644
---- a/README.md
-+++ b/README.md
-@@ -132,4 +132,4 @@ Layer maintainers:
- Scott Murray <scott.murray@konsulko.com>
+diff --git a/meta-tpm/recipes-core/systemd/systemd-boot_%.bbappend b/meta-tpm/recipes-core/systemd/systemd-boot_%.bbappend
+index 712a764..55323aa 100644
+--- a/meta-tpm/recipes-core/systemd/systemd-boot_%.bbappend
++++ b/meta-tpm/recipes-core/systemd/systemd-boot_%.bbappend
+@@ -2,6 +2,6 @@ DEPENDS += "\
+     ${@bb.utils.contains('DISTRO_FEATURES', 'tpm2', 'tpm2-tss libtss2 libtss2-tcti-device', '', d)} \
+ "
  
- Dynamic layer support maintainers:
--TBD
-+Soumya Sambu <soumya.sambu@windriver.com>
-diff --git a/conf/layer.conf b/conf/layer.conf
-index 281eeca..4fe4ec4 100644
---- a/conf/layer.conf
-+++ b/conf/layer.conf
-@@ -26,6 +26,10 @@ BBMASK:append = " meta/recipes-devtools/cargo/ meta/recipes-devtools/rust/ meta/
- # the newer BBCLASSEXTEND version that we carry.
- BBMASK:append = " meta/recipes-devtools/python/python3-setuptools-rust-native_%"
- 
-+BBFILES_DYNAMIC += " \
-+    meta-python:${LAYERDIR}/dynamic-layers/meta-python/recipes-*/*/*.bbappend \
-+    openembedded-layer:${LAYERDIR}/dynamic-layers/openembedded-layer/recipes-*/*/*.bbappend"
-+
- # These are in bitbake.conf in langdale and up, adding them here to make
- # using the layer more turn-key seems reasonable.
- BB_BASEHASH_IGNORE_VARS:append = " RUST_BUILD_SYS RUST_HOST_SYS RUST_TARGET_SYS"
-diff --git a/dynamic-layers/meta-python/recipes-devtools/rust/rust_1.85.1.bbappend b/dynamic-layers/meta-python/recipes-devtools/rust/rust_1.85.1.bbappend
-new file mode 100644
-index 0000000..9b09f9e
---- /dev/null
-+++ b/dynamic-layers/meta-python/recipes-devtools/rust/rust_1.85.1.bbappend
-@@ -0,0 +1,7 @@
-+python do_configure:append() {
-+    config.set("rust", "default-linker", e(d.expand("${RUST_BUILD_CCLD}")))
-+
-+    with open("config.toml", "w") as f:
-+        f.write("change-id = 116881\n\n")
-+        config.write(f)
-+}
-diff --git a/dynamic-layers/meta-python/recipes-extended/mozjs/mozjs-78_%.bbappend b/dynamic-layers/meta-python/recipes-extended/mozjs/mozjs-78_%.bbappend
-new file mode 100644
-index 0000000..8e8c24a
---- /dev/null
-+++ b/dynamic-layers/meta-python/recipes-extended/mozjs/mozjs-78_%.bbappend
-@@ -0,0 +1,14 @@
-+EXTRA_OECONF = " \
-+    --target=${RUST_TARGET_SYS} \
-+    --host=${BUILD_SYS} \
-+    --prefix=${prefix} \
-+    --libdir=${libdir} \
-+    --x-includes=${STAGING_INCDIR} \
-+    --x-libraries=${STAGING_LIBDIR} \
-+    --without-system-icu \
-+    --disable-tests --disable-strip --disable-optimize \
-+    --disable-jemalloc \
-+    --with-system-icu \
-+    ${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', "--enable-gold", '--disable-gold', d)} \
-+    ${JIT} \
-+"
-diff --git a/dynamic-layers/openembedded-layer/recipes-extended/mozjs/mozjs-91_%.bbappend b/dynamic-layers/openembedded-layer/recipes-extended/mozjs/mozjs-91_%.bbappend
-new file mode 100644
-index 0000000..c0214b0
---- /dev/null
-+++ b/dynamic-layers/openembedded-layer/recipes-extended/mozjs/mozjs-91_%.bbappend
-@@ -0,0 +1,13 @@
-+do_configure() {
-+        cd ${B}
-+        python3 ${S}/configure.py \
-+        --enable-project=js \
-+        --target=${RUST_HOST_SYS} \
-+        --host=${BUILD_SYS} \
-+        --prefix=${prefix} \
-+        --libdir=${libdir} \
-+        --disable-jemalloc \
-+        --disable-strip \
-+        ${JIT} \
-+        ${ICU}
-+}
+-EXTRA_OEMESON:append= "\
++EXTRA_OEMESON:append = "\
+     ${@bb.utils.contains('DISTRO_FEATURES', 'tpm2', '-Dtpm2=true', '', d)} \
+ "
 -- 
-2.40.0
+2.43.0
 
 
