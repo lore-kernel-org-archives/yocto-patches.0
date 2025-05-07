@@ -1,104 +1,121 @@
-Return-Path: <mikko.rapeli@linaro.org>
+Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14B1FC3ABC0
-	for <webhook@archiver.kernel.org>; Wed,  7 May 2025 15:05:21 +0000 (UTC)
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
- by mx.groups.io with SMTP id smtpd.web10.833.1746630311615587372
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C45FC3ABBF
+	for <webhook@archiver.kernel.org>; Wed,  7 May 2025 18:48:05 +0000 (UTC)
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+ by mx.groups.io with SMTP id smtpd.web11.3722.1746643679501603162
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 07 May 2025 08:05:11 -0700
+ Wed, 07 May 2025 11:47:59 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linaro.org header.s=google header.b=T1jzq6it;
- spf=pass (domain: linaro.org, ip: 209.85.167.47, mailfrom: mikko.rapeli@linaro.org)
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5493b5bc6e8so8735687e87.2
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 07 May 2025 08:05:11 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=meCdsRgR;
+ spf=pass (domain: gmail.com, ip: 209.85.160.178, mailfrom: twoerner@gmail.com)
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4766cb762b6so2963411cf.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 07 May 2025 11:47:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746630310; x=1747235110; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jA6lkt1KRdo02m2XZ5DJWDqRu5h0H88R0xDnJxhqX7E=;
-        b=T1jzq6it6CLzgLZf/r3J6n7zjT6IwSKRAkqz9beuxFi5ePs4yrJ6brkq1RJHk/c/yX
-         SeR+QmTy1CZ38nCLUJ+tNnHb26DIvqAr5/Grs4j8z3PLlryV2zY7+M1wAp3WhRE/oF/G
-         fejFpBGqgyKvZ9LrP4YBAuNbdvet7jO7pQza3AxbhT5PShTHMpFu1LLG6Z3cQJc6xRgN
-         F9Qen/u2dYnC6Pgm5qtxlK/7gS4hwncpnfhQl/yMuSM2NmNFxmt8Yzr3lvmhaTZLPEQ6
-         PZOeRefIpyezMcqSJrezSboV+NWDh+dK9XTbYTJigFH8p7KKS/AxZD4Tt82NmCE7aUfP
-         NpwA==
+        d=gmail.com; s=20230601; t=1746643678; x=1747248478; darn=lists.yoctoproject.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MRZ1E1FuIc0FBJoBySdbZ3zSpfu3uDGJTPKVFCW6Fwo=;
+        b=meCdsRgRS/tApjMSyzTsUP9+VIRxOnLxv5Z9FfZ2qW9GJslsl4venGKYU3GvmbYJxD
+         jeNGo2HlDRjCjw9Vq4EhmuOCoI6n1V1AgukXmPrxsH+iO2i8q4TiTuh4swGgLsnuqK/v
+         /Ve3vmGF6ySY2wtH2NjP1MFpdD+CBUFecKUTxHQp5T4iyX7RZs+wxV2kcm6y0pbL1Pip
+         /qpa6Z71IGPouuTFe8Or7tKUgpckv7HzjGFKPpz6K83/L5OOIu876oGe7yEZbLhjUmvz
+         n6bKKKq183zJnxfw9yvJaEmvD1DFx4xtxu/Zf0owE2Tbz+DWicP8n1qYkf4Q+ZEdKBEE
+         RmcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746630310; x=1747235110;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jA6lkt1KRdo02m2XZ5DJWDqRu5h0H88R0xDnJxhqX7E=;
-        b=wIdV1w9Dc1+7xxxKwLl7Fb4c8xbgCpNgYl8C1aK65xBEiI1Q8Y/CW+62l92QW5RLEE
-         /WQQsVUZLxKRuzkYcBRW5LuNHlwfmp9K6Ym6tEabgsxiEmup0zLo/L/mtwb1RTruhb0M
-         XnqU99TeEpvVtI+3wbaVW3VH3QndkTvpGnz2Q5P90/uNSj3ihtVe2jV0BDwFxkQUl2JR
-         FrMwDM7WolPBf9DvV3W2FGrRtyYTY+34XS1fTK5fiQs5NLJD7xNM20eAyqIez1Ar9dPr
-         NUkpIV6FWEF0jN2c6n0zN3hERmib22+RTZBXVwpsClNZthkJRKr2L4FR5dFadqbrZpkX
-         cutg==
-X-Gm-Message-State: AOJu0YzVDxjbYXozcCf4RS10MiTuWgqoMTRNomr6vOtmJnRZJEGSft/6
-	kdlwPIiYtWLbTj91AmoqbdOrRBEWNFUJBN/Dt9Me5X8l22H3BBsr8Tmajj36PRRJB9DuhYJg2Ho
-	jhNU=
-X-Gm-Gg: ASbGnctdLslZPSurTP+BxBsWBc4qqRSf9z14gO4ostamRiwE/VK7gju17ZeO406lxZh
-	xfpHkkvFkym0g9zF+9B5ntME30hD5kZHOLx9FWorQVig3a6+1L6njYvt07FIrUau7XzHOas1fUf
-	NWNzCV2npKJS+Jn7I7F7bMxLnNLwKoBgZG5gU47md9hCmxNjSCrwJ+qPRn33BhdaQUy0K2SxZJh
-	Zllv1u24vhWj5Hqk2wGJR2Zn3dy8tArFx3QjfVg7X7Cnqc+3P7DKDndNoAPhJF+gY95GnAAirPP
-	FbGHRt15uZznds36H2dduDqU3fIq7etUK58rgjpxjkENZZ6RjCOqD5aSwaj4JoqzG/+GFqqnMH/
-	S0LV+CLOYd9sQr8G55A==
-X-Google-Smtp-Source: AGHT+IF3JOArFuXgISnD4eEJBkC9ySJYd3y8MqH04D1kO1SnK+5F+kQga9BfIVtKm4VERoHK+lKR1A==
-X-Received: by 2002:a05:6512:15a8:b0:545:154:52b0 with SMTP id 2adb3069b0e04-54fb9293caemr1400200e87.22.1746630305998;
-        Wed, 07 May 2025 08:05:05 -0700 (PDT)
-Received: from localhost.localdomain (87-100-218-141.bb.dnainternet.fi. [87.100.218.141])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ea94c8ca7sm2367490e87.99.2025.05.07.08.05.05
+        d=1e100.net; s=20230601; t=1746643678; x=1747248478;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MRZ1E1FuIc0FBJoBySdbZ3zSpfu3uDGJTPKVFCW6Fwo=;
+        b=s4qF7vftNy5x3eJL2nuA2kCSAaCvwYwUPv19DYTCIDsvhxs8pCCnZvKWK4LJmYaDRb
+         tgQtlmNP03qmSFIvqN02htb4ezfabWtAfJgzSh/aqgjiUAPe50JnAnaaS9b+W0B0MPgU
+         YTevoSn2BMunUbz3yRJWT7jCZFkYYGKw7GaZTC4tUMl83b7FzSSEeIsd+SUA4mek7YAr
+         gpU3xQC0wktOWOPB6mymnT+5xTkqbtEwifZ68wIsCD13iFVjAVi5KHVNXhH5m+qv+rrS
+         FC5Bv96Ta8XAezT6Or+MJetlwyOXKvLDjPlrXVvQ3XdfFOzt+IVRXI98HSQ8LRXCOFHw
+         T1aw==
+X-Gm-Message-State: AOJu0YzzuziMRkfiQ51BPKkPLIKlY7NrXA9J8aiRZOxrenS6xkcKbb6J
+	A+BNC619vgaAO5v49nRqBPdniwifsdmYctbfk8Ltzc++qUD7xsB3
+X-Gm-Gg: ASbGncvaNk3dn1BbzG5JCHZGcwXknYDW+NgXIJmCPkIeHUrUEQxqDXOsZl8z/fvlgbd
+	CuWeOGJK5+PIBAbR4envnq/S7HxjfG7TJ9eip4qqw90s+mCvQhipncB4DCGdDvwKshFNDxvuOr0
+	CxgR0oxo3Vqsz9snQDZ0fSDU9ljpiC9VlDFBld9fdJYuPJIyHlY1qTHXivLrEIphqodoO6Rmy3m
+	paSQSKnlS29QBMDd2zOGKqvi58BTmJxyDndlEYwP03YV8qKG6pWdflCcXpiPA9rJrBQpRcDB7JQ
+	LlMlzbYgumcCBGol/egausOFsKP6oCRCAovdWwMwpmOGBrSS0//2ylnVbgcQ469ROZJWh5pdSJp
+	IHv4=
+X-Google-Smtp-Source: AGHT+IFwfZtqACl0YCnWmNqITeYaGr831cIaRw8TAgjPb9hRTvpu59sxW20PjyNszTS+WZipe94Pcg==
+X-Received: by 2002:a05:622a:1a8b:b0:48d:2fa6:3876 with SMTP id d75a77b69052e-4944924ec4emr9640781cf.8.1746643678364;
+        Wed, 07 May 2025 11:47:58 -0700 (PDT)
+Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-49223457c57sm17678661cf.70.2025.05.07.11.47.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 08:05:05 -0700 (PDT)
-From: Mikko Rapeli <mikko.rapeli@linaro.org>
-To: yocto-patches@lists.yoctoproject.org
-Cc: Mikko Rapeli <mikko.rapeli@linaro.org>
-Subject: [meta-security][PATCH] swtpm: whitespace fixes
-Date: Wed,  7 May 2025 18:04:51 +0300
-Message-ID: <20250507150451.1409046-1-mikko.rapeli@linaro.org>
-X-Mailer: git-send-email 2.49.0
+        Wed, 07 May 2025 11:47:57 -0700 (PDT)
+Date: Wed, 7 May 2025 14:47:55 -0400
+From: Trevor Woerner <twoerner@gmail.com>
+To: Mikko Rapeli <mikko.rapeli@linaro.org>
+Cc: yocto-patches@lists.yoctoproject.org,
+	Sathishkumar Duraisamy <sathishkumar.d.cbe@gmail.com>,
+	Khem Raj <raj.khem@gmail.com>,
+	Max Krummenacher <max.krummenacher@toradex.com>
+Subject: Re: [meta-security][PATCH v2] systemd: disable linker GCS warning on
+ aarch64
+Message-ID: <20250507184755.GA21647@localhost>
+References: <20250507150247.1408201-1-mikko.rapeli@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250507150247.1408201-1-mikko.rapeli@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 07 May 2025 15:05:21 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1530
+ <yocto-patches@lists.yoctoproject.org>; Wed, 07 May 2025 18:48:05 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1531
 
-New bitbake warns about these.
+On Wed 2025-05-07 @ 06:02:47 PM, Mikko Rapeli wrote:
+> openssl asm code is missing GCS branch protections and
+> linker throws a warning which currently fails the build.
+> Ignore the warning for now since some branch protection
+> is still applied and only GCS is missing. Works around:
 
-Signed-off-by: Mikko Rapeli <mikko.rapeli@linaro.org>
----
- meta-tpm/recipes-tpm/swtpm/swtpm_0.10.0.bb | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+This only solves the problem for one specific use-case (i.e. when someone is
+using meta-security) but leaves build issues for everyone else.
 
-diff --git a/meta-tpm/recipes-tpm/swtpm/swtpm_0.10.0.bb b/meta-tpm/recipes-tpm/swtpm/swtpm_0.10.0.bb
-index 3e58c33..66a9dc3 100644
---- a/meta-tpm/recipes-tpm/swtpm/swtpm_0.10.0.bb
-+++ b/meta-tpm/recipes-tpm/swtpm/swtpm_0.10.0.bb
-@@ -15,8 +15,8 @@ S = "${WORKDIR}/git"
- PARALLEL_MAKE = ""
- inherit autotools pkgconfig perlnative
- 
--TSS_USER="tss"
--TSS_GROUP="tss"
-+TSS_USER = "tss"
-+TSS_GROUP = "tss"
- 
- PACKAGECONFIG ?= "openssl gnutls"
- PACKAGECONFIG += "${@bb.utils.contains('DISTRO_FEATURES', 'selinux', 'selinux', '', d)}"
-@@ -42,7 +42,7 @@ USERADD_PARAM:${PN} = "--system -g ${TSS_GROUP} --home-dir / \
- PACKAGE_BEFORE_PN = "${PN}-cuse"
- FILES:${PN}-cuse = "${bindir}/swtpm_cuse"
- 
--INSANE_SKIP:${PN}   += "dev-so"
-+INSANE_SKIP:${PN} += "dev-so"
- 
- RDEPENDS:${PN} = "libtpms"
- 
--- 
-2.43.0
+A patch that solves the root cause of the issue (in systemd) would be better.
 
+> 
+> .../recipe-sysroot/usr/lib/libcrypto.so: warning: GCS is required by -z gcs, but this shared library lacks the necessary property note. The dynamic loader might not enable GCS or refuse to load the program unless all the shared library dependencies have the GCS marking.
+> collect2: error: ld returned 1 exit status
+> 
+> Cc: Sathishkumar Duraisamy <sathishkumar.d.cbe@gmail.com>
+> Cc: Khem Raj <raj.khem@gmail.com>
+> Cc: Max Krummenacher <max.krummenacher@toradex.com>
+> Cc: Trevor Woerner <twoerner@gmail.com>
+> Signed-off-by: Mikko Rapeli <mikko.rapeli@linaro.org>
+> ---
+>  meta-tpm/recipes-core/systemd/systemd_%.bbappend | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> v2: switched from meson.build patching to LDFLAGS since that works
+>     as suggested by Khem Raj and tested correctly by Trevor Woerner,
+>     tested on genericarm64 machine with swtpm on qemu
+> 
+> v1: https://lists.yoctoproject.org/g/yocto-patches/message/1524
+> 
+> diff --git a/meta-tpm/recipes-core/systemd/systemd_%.bbappend b/meta-tpm/recipes-core/systemd/systemd_%.bbappend
+> index c53b1e8..deb9164 100644
+> --- a/meta-tpm/recipes-core/systemd/systemd_%.bbappend
+> +++ b/meta-tpm/recipes-core/systemd/systemd_%.bbappend
+> @@ -1,3 +1,6 @@
+> +# workaround to GCS branch protection warning treated as error from openssl/libcrypto
+> +LDFLAGS:append:aarch64 = " ${@bb.utils.contains('DISTRO_FEATURES', 'tpm2', '-Wl,-z,gcs-report-dynamic=none', '', d)}"
+> +
+>  PACKAGECONFIG:append = " ${@bb.utils.contains('DISTRO_FEATURES', 'tpm2', 'tpm2', '', d)}"
+>  
+>  # for encrypted filesystems
+> -- 
+> 2.43.0
+> 
 
