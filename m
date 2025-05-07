@@ -1,81 +1,107 @@
-Return-Path: <hieu2.nguyen@lge.com>
+Return-Path: <steve@sakoman.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2815CC3ABBF
-	for <webhook@archiver.kernel.org>; Wed,  7 May 2025 13:06:53 +0000 (UTC)
-Subject: Re: [yocto-autobuilder2][PATCH] schedulers: add meta-webosose scheduled build for scarthgap
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5738FC3ABBF
+	for <webhook@archiver.kernel.org>; Wed,  7 May 2025 13:44:03 +0000 (UTC)
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+ by mx.groups.io with SMTP id smtpd.web11.9610.1746625442928046700
+ for <yocto-patches@lists.yoctoproject.org>;
+ Wed, 07 May 2025 06:44:03 -0700
+Authentication-Results: mx.groups.io;
+ dkim=pass header.i=@sakoman-com.20230601.gappssmtp.com header.s=20230601 header.b=Le3BzGmu;
+ spf=softfail (domain: sakoman.com, ip: 209.85.210.170, mailfrom: steve@sakoman.com)
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-736c277331eso877361b3a.1
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 07 May 2025 06:44:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sakoman-com.20230601.gappssmtp.com; s=20230601; t=1746625442; x=1747230242; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oHjtMiBD2ozqKpMhGWBASgmSn3L3cW5DPhDo8w85RQI=;
+        b=Le3BzGmuJpw7/tDoe/eoLzriOEqiFfbJw2J7YUQ+rmlD/yxgYQ0gzpsWjH7qQ7RBcv
+         J7hl0CMsqs2mJL33kEvJKTAIZWq0HhZUKfgRM5QDbgmUQlDgd6vXQvqVvZYGsy9JjGBW
+         NljTmPh9aTVF2uxUFAzp6IDZuaqNFA0+g8K9IoDFjzJ7HB93avFRi5NQjBYt30xfRNzO
+         Yo1VaZ3+gJc6ejb0USVjt4qhAyGrEDYOCk7guBG2aZCVc7tj4SUo9q5yN2lmF7CMAS9J
+         5EbQsXIQri+Xcm0MsHkhxrmrcoFIPeS1+FqaR3rDf2X/a00MSWERyvC8cmjnHB2Y7hse
+         9c+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746625442; x=1747230242;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oHjtMiBD2ozqKpMhGWBASgmSn3L3cW5DPhDo8w85RQI=;
+        b=q75n4wx275MX0hHp3+/ISr47mHJgMX61eG+hFznwZuIMVQSPG9W2SNEGt7JSQrRgWQ
+         j10qTbXCqE72HI9Dfd7fXnCLJmTF1a5SpCP7WSOt4VAq5+ybyhpHUdG+ZYCOWG32OGlh
+         9RoDOHR40rtT0s1DQ4o+jqOEjdj/kO+fPJqe2FR3gH/N5h/GrGxL+peaJKWyceN8PmC4
+         lwec3OS26ejZMOx0yHzVqHyzxgREhNbX/OliUAiLtfEm1nlGobgoQbj6v5mxt6DAt3Br
+         qt7Tpib+SToMRs6TwGzsfJityNQC5PQrm9VwLHX4Y1zTftVkZucZuEynZuOXAMc4f9jl
+         zraA==
+X-Gm-Message-State: AOJu0Yy8ykN4a6uDdVpS4aYO/Y8n/zzXy0PsD1VtOmo82UMd8ahAMRI6
+	RpZmbLGcccvlLffsjWMgqrmWMaQwM3w0JVD4CVodMa8AomdXn0Xcj2uum7RUUCDKkaWTLdPJj91
+	v
+X-Gm-Gg: ASbGncv4PwZIzHtEFB+LhkxXdKrgEglGNWxz1ZkaO2NEgLH9OrCZiYNmtb4Rrqt2p5U
+	9rF6Y5NZr6J/bWeIWSbwOIrShOD2zMzYxkx98GLYrX3AVtKjyby7/q1lWJeLfrPjCI8QfGTfqmL
+	cNOlfJ4cJFDRzEioSWgXu64bbZc6sFw1S9ttPTYDzOmfp/0xUhZY+i1N3mwIJZWvAac4J25yoa3
+	v7Ea6WW4G1VKA2T+n33WioULkjNwExwhTTVzPibfw5xOsVhsU4ZLVl1C9qp06gsiYYpSBGOQwk3
+	0sbBtfKJl1hs3x2Jkl/xceEPm6nFGqmG
+X-Google-Smtp-Source: AGHT+IFLzuISXBUaagJXMGjrgPGjxZ0sM7pEOwTib7XdmN2OcbT9n/i/mW2zWT6UonYqoGKtKuwf8w==
+X-Received: by 2002:a05:6a21:112:b0:1ee:ab52:b8cc with SMTP id adf61e73a8af0-2146b3c1edfmr5960023637.21.1746625441697;
+        Wed, 07 May 2025 06:44:01 -0700 (PDT)
+Received: from hexa.. ([2602:feb4:3b:2100:7681:5b3e:8acc:798e])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b1fbe65d9c3sm8098113a12.56.2025.05.07.06.44.01
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 May 2025 06:44:01 -0700 (PDT)
+From: Steve Sakoman <steve@sakoman.com>
 To: yocto-patches@lists.yoctoproject.org
-From: "Hieu Van Nguyen" <hieu2.nguyen@lge.com>
-X-Originating-Location: KR (203.247.149.151)
-X-Originating-Platform: Windows Chrome 122
-User-Agent: GROUPS.IO Web Poster
+Subject: [yocto-autobuilder2] schedulers: update branchdefaults for walnascar
+Date: Wed,  7 May 2025 06:43:57 -0700
+Message-ID: <fe6159a484d65b2d610e6c0f6cf42161cb2c2367.1746625332.git.steve@sakoman.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1746625332.git.steve@sakoman.com>
+References: <cover.1746625332.git.steve@sakoman.com>
 MIME-Version: 1.0
-Date: Wed, 07 May 2025 06:06:49 -0700
-References: <D9IZGTSK88IQ.3SW3K1MGF0SI6@bootlin.com>
-In-Reply-To: <D9IZGTSK88IQ.3SW3K1MGF0SI6@bootlin.com>
-Message-ID: <8617.1746623209255285087@lists.yoctoproject.org>
-Content-Type: multipart/alternative; boundary="FnCAUNUfPobTJ4MFLq9N"
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 07 May 2025 13:06:53 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1526
+ <yocto-patches@lists.yoctoproject.org>; Wed, 07 May 2025 13:44:03 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1527
 
---FnCAUNUfPobTJ4MFLq9N
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Steve Sakoman <steve@sakoman.com
+---
+ schedulers.py | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Hi Mathieu & Richard,
+diff --git a/schedulers.py b/schedulers.py
+index fd2cad6..9916d8b 100644
+--- a/schedulers.py
++++ b/schedulers.py
+@@ -70,17 +70,17 @@ branchdefaults = {
+         'branch': 'walnascar',
+         'branch_poky': 'walnascar',
+         'branch_bitbake': '2.12',
+-        'branch_meta-arm': 'master',
++        'branch_meta-arm': 'walnascar',
+         'branch_meta-agl': 'master',
+         'branch_meta-aws': 'master',
+-        'branch_meta-clang': 'master',
++        'branch_meta-clang': 'walnascar',
+         'branch_meta-gplv2': 'master',
+         'branch_meta-intel': 'master',
+         'branch_meta-mingw': 'walnascar',
+-        'branch_meta-openembedded': 'master',
+-        'branch_meta-security': 'master',
++        'branch_meta-openembedded': 'walnascar',
++        'branch_meta-security': 'walnascar',
+         'branch_meta-ti': 'master',
+-        'branch_meta-virtualization': 'master',
++        'branch_meta-virtualization': 'walnascar',
+         'branch_oecore': 'walnascar',
+     },
+     'styhead': {
+-- 
+2.43.0
 
-Could you please consider merging this patch? Let's see how the build goes,=
- and we'll make further updates if necessary.
-
-Thanks and best regards,
-
-Hieu
-
---FnCAUNUfPobTJ4MFLq9N
-Content-Type: text/html; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div>Hi <span style=3D"color: #333333; font-family: system-ui, 'Segoe UI', =
-Roboto, 'Helvetica Neue', 'Noto Sans', 'Liberation Sans', Arial, sans-serif=
-, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emo=
-ji'; font-size: 16px; font-style: normal; font-variant-ligatures: normal; f=
-ont-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans=
-: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; =
-word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: pre-wrap; b=
-ackground-color: #ffffff; text-decoration-thickness: initial; text-decorati=
-on-style: initial; text-decoration-color: initial; display: inline !importa=
-nt; float: none;">Mathieu &amp; <span style=3D"color: #333333; font-family:=
- system-ui, Roboto, Arial, sans-serif; font-size: 16px; font-style: normal;=
- font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 40=
-0; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px;=
- text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-wi=
-dth: 0px; white-space: normal; background-color: #ffffff; text-decoration-t=
-hickness: initial; text-decoration-style: initial; text-decoration-color: i=
-nitial; display: inline !important; float: none;">Richard,<br /><br />Could=
- you please consider merging this patch? Let's see how the build goes, and =
-we'll make further updates if necessary.<br /><br />Thanks and best regards=
-,<br /></span></span></div>
-<div><span style=3D"color: #333333; font-family: system-ui, 'Segoe UI', Rob=
-oto, 'Helvetica Neue', 'Noto Sans', 'Liberation Sans', Arial, sans-serif, '=
-Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'=
-; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font=
--variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2=
-; text-align: start; text-indent: 0px; text-transform: none; widows: 2; wor=
-d-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: pre-wrap; back=
-ground-color: #ffffff; text-decoration-thickness: initial; text-decoration-=
-style: initial; text-decoration-color: initial; display: inline !important;=
- float: none;"><span style=3D"color: #333333; font-family: system-ui, Robot=
-o, Arial, sans-serif; font-size: 16px; font-style: normal; font-variant-lig=
-atures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing=
-: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: =
-none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-s=
-pace: normal; background-color: #ffffff; text-decoration-thickness: initial=
-; text-decoration-style: initial; text-decoration-color: initial; display: =
-inline !important; float: none;">Hieu</span></span></div>
-
---FnCAUNUfPobTJ4MFLq9N--
 
