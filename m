@@ -1,125 +1,81 @@
-Return-Path: <richard.purdie@linuxfoundation.org>
+Return-Path: <majortomtosourcecontrol@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20542C3ABC3
-	for <webhook@archiver.kernel.org>; Sat, 10 May 2025 15:50:49 +0000 (UTC)
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
- by mx.groups.io with SMTP id smtpd.web11.13225.1746892242278326429
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 328EDC3ABC9
+	for <webhook@archiver.kernel.org>; Sat, 10 May 2025 15:53:59 +0000 (UTC)
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
+ by mx.groups.io with SMTP id smtpd.web10.13297.1746892429793946293
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 10 May 2025 08:50:43 -0700
+ Sat, 10 May 2025 08:53:49 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=XHNM3bBx;
- spf=pass (domain: linuxfoundation.org, ip: 209.85.128.45, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-441c99459e9so19830075e9.3
-        for <yocto-patches@lists.yoctoproject.org>; Sat, 10 May 2025 08:50:41 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=WkZysjMF;
+ spf=pass (domain: gmail.com, ip: 209.85.166.173, mailfrom: majortomtosourcecontrol@gmail.com)
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3da74959554so9140915ab.2
+        for <yocto-patches@lists.yoctoproject.org>; Sat, 10 May 2025 08:53:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1746892240; x=1747497040; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dFXzzPPWb4oCRc3diw4V8LAqtXamh/qwX0dZtGe6qys=;
-        b=XHNM3bBx4wcaRJ7RSWjKWRiYOrkdX50I4tUhMxxrR9i5s+Vtao5iIuiVlqkY5hv0Jd
-         g3gJ5dqkOwf9+Dn2CDiTxxYveS+k2H6nrhLWFAj9Cy8TpPY8STQcG8EayTEdNLuXt8g1
-         cvw6aXoyH+xr1ocPBYSpqQyM8tqyUtCbSlhas=
+        d=gmail.com; s=20230601; t=1746892429; x=1747497229; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=gpDHuapInU5Ub4WROPIdxhZns0LPtBrnB4G8bapz6zg=;
+        b=WkZysjMF9S2xdVuW882pL4vcDQNPA6mYnEz1Cq0vw7p7vZK47OSOVTh34GUly54epy
+         qrm0YizZsUcyprBmje3gpbi215XX8V/q72+BwaV2qHf7vl6NuCee3spbOdyX4eQ8Ox83
+         znEtQ4ZkZMhC4UnM4lZJLUW3Z6ion4npOM/CkzmSqdT0CTpO+LcyIN5mom55Wn4xL+BP
+         iClpfnwPimeMEZ5ha8WxaBQMYgq0l1mAQ+FlhNkRGEccTaVfm80Twaso0jtVCEj5ha7/
+         4NrYo/lp/iI4JAYOYXIPI+/IgGxZQZ+BU021lfthSM7BaZUlBY4XzarukjPN8G+RIrO8
+         gWeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746892240; x=1747497040;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dFXzzPPWb4oCRc3diw4V8LAqtXamh/qwX0dZtGe6qys=;
-        b=C98UwVa4C/8+ckWahFHZTIGa7k8SvgOBXJztTIGCr1bOUyOVZu7rYzcEOh5Ng1kjM2
-         lDQvC8HCy3HhM0vqNo9EcPxpooaPBrSn6V85yRAciSbBYB5XbU4XpCqdkSmYPAfJtiHY
-         4Q4lldP0rTDxbstDAtsV5ky9RPSs5Grb/EYzUGdBbHu1eL01evcYx83NhApKwNVn+T2K
-         /4S5F/kFTzihwqqoR90Nc1aRp90EblefaP+ZXFmyygf49A+j9nJpSwHtLKOBQhnjwoES
-         DkGxxo/oaLu9M1L52Zxqo4Oth+CRwvtSciZx1X7got0TJXbMDG0YBHapnE8nv6qaBEFI
-         V0gg==
-X-Gm-Message-State: AOJu0YxgbEkHhCD2KcjyfJYhtx8hitjhE3RaPpz/Dvw/e51L2cqxmrT7
-	zmi0r6aDWtD18otI5dutOupFVuNTjQoLDfK5ojGnyCJyqbrjKSLol/aZSwKocYq3/zWHJsgcIkX
-	S
-X-Gm-Gg: ASbGncs5JYxeQ80zeoCeUDzqHJCVh+HWHmokUKGaiGFDkl9mWXFB21UwPfK5+SvvSKq
-	R5ip8ARSgNQLFBq/Hmst49IfP3F/Y2ZqYzbCUOpn99w7V5lCTOpsjnrtb3GwMxNwFBUSqp9ToOK
-	UdMA6p38oF4S7EDigN+V4jhnTrfigpjlkBa7FhQquiX92q3M7a6ogY5srt2sp8ZkGSqZB72vOMF
-	GZgJd+ZBi1y2YYBgyHMxQMdwRR/L1sJ4TBq3CyxZJVr+HyclJ+TsgHkfc5mJBl1mUhKem4zWtiX
-	DWh6d7WpXzhU0gv3BJx6pT41xu1mdy1nDnxL50P2rAJazRHoACz8UyRU7enboSmsbvU+V7TTlyY
-	51C4=
-X-Google-Smtp-Source: AGHT+IE8OE6cYIvtW7sWvxmZsYWP36p1bVnhDSErSdRjTB1MqSPKWZTiKmuVFsIbWBx/a51ANtRS5g==
-X-Received: by 2002:a05:600c:6814:b0:43c:fbba:41ba with SMTP id 5b1f17b1804b1-442d6ddec51mr52779275e9.28.1746892239923;
-        Sat, 10 May 2025 08:50:39 -0700 (PDT)
-Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:a9b:4e3e:ebc0:91d3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f57dde0esm6850010f8f.18.2025.05.10.08.50.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 10 May 2025 08:50:39 -0700 (PDT)
-From: Richard Purdie <richard.purdie@linuxfoundation.org>
-To: yocto-patches@lists.yoctoproject.org
-Cc: seebs@seebs.net,
-	mark.hatle@kernel.crashing.org
-Subject: [pseudo] [PATCH] pseudo_client: Add support for PSEUDO_INCLUDE_PATHS
-Date: Sat, 10 May 2025 16:50:38 +0100
-Message-ID: <20250510155038.871646-1-richard.purdie@linuxfoundation.org>
-X-Mailer: git-send-email 2.48.1
+        d=1e100.net; s=20230601; t=1746892429; x=1747497229;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gpDHuapInU5Ub4WROPIdxhZns0LPtBrnB4G8bapz6zg=;
+        b=eFoMPjXhv6QaWcpXoWRIcy+Oe1ihP3Qv9zuuIsOtwcPEJFNNMDGi8iemEEjddnrQhO
+         rJe1fSgF1/dF119ufwVFgKNhFPhKKE32ifoQZa3bg6zlsNyZmRzkN+9OGuQkAxxdSZbK
+         lvcldkkUEoPb4NsSjocCl72SWoyhFrs//nuJmDJvtB96tVSctd5Co8KurV2WBLqF2vrS
+         HC7Ety7EK16Bro0GOv5KDUWLjkiKZdd8ZG9ngaXBj5mTcyEEmz9UvTqFm8ES1716cm25
+         T6rVhs9yzWWKAN6LlNLIUk96gtnZqLSPeHIg0QOt17gp9HsqPgM//qy2QSaTSHWBImxw
+         NA8w==
+X-Gm-Message-State: AOJu0YyFrw65U8OcQyFOVRlHugPRkO4AkklPRh9A/TNvH0CiPIpX/oXi
+	zeIW7U13Qg51siSXjqM62sXX13QLjkqIDSHWRK8Nug6fDNYPNXcZZqA6dA==
+X-Gm-Gg: ASbGnctti75jswQVbDG4ow9qXe9BLFvvykYH0fVVlN4D1MFZf16FL8mr2ew/HYD/43g
+	+74uW6VkfnweYVhbMwYOHek58eJQBoFu1FMeXOyvSQ5fWP1zXq9POktO2aiohSPr9n+RILbvB3S
+	LutYyOCFAksQold4sgiTfFnAW9C4BhApTtHHZSyzIhnkiV4m4Dz+tzUTUpxAbKFKkkJ2pWG1nFo
+	jI8wDmsOa5atlYsAHjQsiclOcNn1BNGLt9WwyXOr0Zec5IDBQ+DU+KRhYu100QPhRl7piC1E1M9
+	E4uqovhqa0AJXQyXB1ICyyvRLS1AnmZo4SIPhJ6XzxxjQkWvlutNPAshcEPWFFM4w+hMApMKNzj
+	5j+c0AesW1v7+/a5DLlSrcMFArj31
+X-Google-Smtp-Source: AGHT+IGLz6DXLTqZFp9Fq30HpYWKR0QOI1bf37P3S2viRgM8y5D32uCRvVu58eziTaTTYftvSApsqA==
+X-Received: by 2002:a05:6e02:1a68:b0:3d0:2fcb:e7f with SMTP id e9e14a558f8ab-3da7e163832mr97772005ab.0.1746892428947;
+        Sat, 10 May 2025 08:53:48 -0700 (PDT)
+Received: from [172.26.252.3] (174-29-216-122.hlrn.qwest.net. [174.29.216.122])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4fa22525266sm823985173.65.2025.05.10.08.53.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 10 May 2025 08:53:48 -0700 (PDT)
+Message-ID: <17faa9aa-cb15-4241-84d5-6b990fa90488@gmail.com>
+Date: Sat, 10 May 2025 09:53:48 -0600
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [meta-security][PATCH] smack: Use new CVE_STATUS variable
+From: Clayton Casciato <majortomtosourcecontrol@gmail.com>
+To: yocto-patches@lists.yoctoproject.org, akuster808@gmail.com
+Cc: sekine.shigeki@fujitsu.com
+References: <b61a1919-a65d-4674-8604-69ebf661cc8a@gmail.com>
+ <8b387520-36f6-4215-9dd0-ad7e4481da3c@gmail.com>
+Content-Language: en-US
+In-Reply-To: <8b387520-36f6-4215-9dd0-ad7e4481da3c@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sat, 10 May 2025 15:50:49 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1541
+ <yocto-patches@lists.yoctoproject.org>; Sat, 10 May 2025 15:53:59 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1542
 
-We've often wondered if things would be better with a path include
-list instead of an exclusion list. Add support for this so we can
-test that theory
+Hello!
 
-If set the include path takes precedence over the ignore path list.
+Was there any feedback?
 
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
----
- pseudo_client.c | 22 ++++++++++++++++++++++
- pseudo_util.c   |  1 +
- 2 files changed, 23 insertions(+)
-
-diff --git a/pseudo_client.c b/pseudo_client.c
-index 9fd68b5..8a07341 100644
---- a/pseudo_client.c
-+++ b/pseudo_client.c
-@@ -1566,6 +1566,28 @@ int pseudo_client_ignore_path_chroot(const char *path, int ignore_chroot) {
- 	if (ignore_chroot && pseudo_chroot && strncmp(path, pseudo_chroot, pseudo_chroot_len) == 0)
- 		return 0;
- 
-+	env = pseudo_get_value("PSEUDO_INCLUDE_PATHS");
-+	if (env) {
-+		char *p = env;
-+		if (*path == '\0') {
-+			free(env);
-+			return 0;
-+		}
-+		while (p) {
-+			char *next = strchr(p, ',');
-+			if (next)
-+				*next++ = '\0';
-+			if (*p && !strncmp(path, p, strlen(p))) {
-+				free(env);
-+				return 0;
-+			}
-+			p = next;
-+		}
-+		pseudo_debug(PDBGF_PATH | PDBGF_VERBOSE, "ignoring path: '%s'\n", path);
-+		free(env);
-+		return 1;
-+        }
-+
- 	env = pseudo_get_value("PSEUDO_IGNORE_PATHS");
- 	if (!env)
- 		return 0;
-diff --git a/pseudo_util.c b/pseudo_util.c
-index aa989cb..a94a4da 100644
---- a/pseudo_util.c
-+++ b/pseudo_util.c
-@@ -43,6 +43,7 @@ static struct pseudo_variables pseudo_env[] = {
- 	{ "PSEUDO_BINDIR", 13, NULL },
- 	{ "PSEUDO_LIBDIR", 13, NULL },
- 	{ "PSEUDO_LOCALSTATEDIR", 20, NULL },
-+	{ "PSEUDO_INCLUDE_PATHS", 20, NULL },
- 	{ "PSEUDO_IGNORE_PATHS", 19, NULL },
- 	{ "PSEUDO_PASSWD", 13, NULL },
- 	{ "PSEUDO_CHROOT", 13, NULL },
+--
+Clayton Casciato
 
