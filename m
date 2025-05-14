@@ -1,112 +1,129 @@
-Return-Path: <olivier.benjamin@bootlin.com>
+Return-Path: <richard.purdie@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BBB1C3ABD9
-	for <webhook@archiver.kernel.org>; Wed, 14 May 2025 09:14:29 +0000 (UTC)
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
- by mx.groups.io with SMTP id smtpd.web11.98278.1747214062885843087
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EB9DC3ABD9
+	for <webhook@archiver.kernel.org>; Wed, 14 May 2025 10:00:29 +0000 (UTC)
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+ by mx.groups.io with SMTP id smtpd.web11.98897.1747216822369739695
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 14 May 2025 02:14:23 -0700
+ Wed, 14 May 2025 03:00:22 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=gm1 header.b=O4fVuHt6;
- spf=pass (domain: bootlin.com, ip: 217.70.183.198, mailfrom: olivier.benjamin@bootlin.com)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id EDCEF41C84;
-	Wed, 14 May 2025 09:14:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1747214061;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DJmnzKagm2kP4aWRStN1gKrqIRoV/sXMLMFnfqP1Y0Y=;
-	b=O4fVuHt6fvbVPdi4QY/KH/ZJhSrf8R9bj9kPhXMuiG93LXvRb46iauUasZEphi6ayzCgQh
-	FRS5ruLnrPyaZ9KEy0YpQPI5eoCMY1Omxr1vp+m7vzMF6InCPNu3XSNjeJqn2V0QtvyiKm
-	ZCaR8bLS1jGbJ91057try7CJv/5TAWSsXKjeh4Vk5goGtc5pCiO36zCbPF5c8DB7Ck0QzV
-	llU7fDl6iZCjBZ2oO2tN/aaZhiYyhHQHLEnAqrs8GpmBC5pRRSedJRZpi3k0uhNBTMLV0L
-	Ee3ZLHMZaxg0c+f6WMWKkbnlKnIO3ht793prtbUQXDC1mM7YezSi/bzOu7m/SQ==
-From: Olivier Benjamin <olivier.benjamin@bootlin.com>
+ dkim=pass header.i=@linuxfoundation.org header.s=google header.b=VOtGvFdB;
+ spf=pass (domain: linuxfoundation.org, ip: 209.85.221.41, mailfrom: richard.purdie@linuxfoundation.org)
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a0b933f214so3152513f8f.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 14 May 2025 03:00:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1747216820; x=1747821620; darn=lists.yoctoproject.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=LioAyO2bN3OzHCI+HTeMaH7aO1e7VlGyo/DXF7D1DB4=;
+        b=VOtGvFdBDBLkT7UbDle1S2p1JWeQJwoRfB6VH382rsaoa9HeDIr1oIKWNyRVO3cBUU
+         XTXZBSl0/skNfeNyRnoVZDwwMMBbz0xftIzqgq2woP/D5/nXBOdmnM2u12tZCr67UIav
+         QytqKhMLVPyfY9KjdFpEvc8xEqWI0nAtuNTKM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747216820; x=1747821620;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LioAyO2bN3OzHCI+HTeMaH7aO1e7VlGyo/DXF7D1DB4=;
+        b=W1rALw4k1JYm/DHVgQOYaNiY0Jn1/E+O2AnrFG7Sj8flS7NHGQLU3/KaPrr0rYn2un
+         kvVvNPpH2KTKWdFsL2QTpKanfYYyakpWwPKb5Pn4OlqCXGJhBWSqflzJmTL1xkG8y+gG
+         lDXq2nSQxGzce9yWpILov/mJYGruRENwQhm0fYEgnN2eWyJhexJpJ9xjZrCqxR84bxO+
+         ONgnH8bQAnhHNQu7pA+uR8pdU9kiiO6523iT6S+6AGeI2QwBoAH49eUcoTuo3DIageSs
+         GM5ZZ+pPF0rjHArQiQHcav1qp14aXBxZXX4Y+gqtcS/NhMYjYGsvgLPuGlXJDN8wzAHS
+         wbvA==
+X-Gm-Message-State: AOJu0Yx5CP4Wrm/mTCD3bK9MCjiBT1fc7nA52GO25tqLl3PTvJyCJ6aE
+	52pex73Zlm3D364cj9FXe4uj2DIGkPJwGXp5xVVk8m8xY8flumK5gwM5KveJ/DrtvJXTPxRJCjh
+	B
+X-Gm-Gg: ASbGncsecuOGqwXIecJ9kyY3nWrhDQA54n7CCrpEUykX5wT9UFVgg+zCqo6IsEbi4K4
+	ocXJqIYHLxZzxb7Uygbjw7+6VoSF30Xh5iOWm3XII58sOpROYP63dlXYfvmlGnhrGLJ2A+nd8U/
+	s5TVbUX+rAoJGY0VQ8A0vkgzkTk2bk6ySU6GLcOvq+Hu99Yhi1P616Y1gVRQIcgTvpLVCtim8KT
+	FS7uYfKsfv9m2dZ3/4lF9rrpZCs5z/TNw+gcQgptrjfIADsvc4+YJrXIK3JOKFiC8iqp0Ni6CJ/
+	RAiL2e9UsGiR0wQa1JLaI1hCTCfFv2UFIhzZxB5hc7U2tzqZtvaNOIkJ21wvqDXP6014o978ONT
+	JEtU0isRQByFQ8JfvLNIyA7Gw5S2JxRcLcB1aLwcX
+X-Google-Smtp-Source: AGHT+IG+5zEi1UWV+SyQC1jNC/chKkeYHTitI7IJFF1S60+46mI+zm/L/GCYsZH1Moo5GJezLZeCTQ==
+X-Received: by 2002:a05:6000:1acf:b0:3a1:f653:85dc with SMTP id ffacd0b85a97d-3a349952f09mr2301443f8f.58.1747216819776;
+        Wed, 14 May 2025 03:00:19 -0700 (PDT)
+Received: from ?IPv6:2001:8b0:aba:5f3c:ac80:8bbf:3444:fa34? ([2001:8b0:aba:5f3c:ac80:8bbf:3444:fa34])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f57dde1asm18994780f8f.8.2025.05.14.03.00.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 May 2025 03:00:18 -0700 (PDT)
+Message-ID: <e4eb1e2b57f9d954d17a7c43252f7be7998d172e.camel@linuxfoundation.org>
+Subject: Re: [yocto-patches] [yocto-autobuilder2][PATCH] schedulers: add
+ meta-webosose scheduled build for scarthgap
+From: Richard Purdie <richard.purdie@linuxfoundation.org>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Olivier Benjamin <olivier.benjamin@bootlin.com>
-Subject: [psplash][PATCH v2] configure.ac: improve option handling logic
-Date: Wed, 14 May 2025 11:14:13 +0200
-Message-ID: <20250514091413.451634-1-olivier.benjamin@bootlin.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250513141757.397196-1-olivier.benjamin@bootlin.com>
-References: <20250513141757.397196-1-olivier.benjamin@bootlin.com>
+Cc: martin.jansa@gmail.com, Hieu Van Nguyen <hieu2.nguyen@lge.com>
+Date: Wed, 14 May 2025 11:00:17 +0100
+In-Reply-To: <20250429021622.309740-1-hieu2.nguyen@lge.com>
+References: <20250429021622.309740-1-hieu2.nguyen@lge.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.0-1 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeftdeiiedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefqlhhivhhivghruceuvghnjhgrmhhinhcuoeholhhivhhivghrrdgsvghnjhgrmhhinhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeejgeefieeuheeljeejfffhjeetkeehfedvvdffffelhfefvdetjefgvdfgiedvnecukfhppedvrgdtudemvgefgeemvggtfeekmedvgegvtdemfhehtggvmehffeegvdemieehkeejmehfieehieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemvgefgeemvggtfeekmedvgegvtdemfhehtggvmehffeegvdemieehkeejmehfieehiedphhgvlhhopehfvgguohhrrgdrrddpmhgrihhlfhhrohhmpeholhhivhhivghrrdgsvghnjhgrmhhinhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepfedprhgtphhtthhopeihohgtthhoqdhprghttghhvghssehlihhsthhsrdihohgtthhophhrohhjvggtthdrohhrghdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopeholhhivhhiv
- ghrrdgsvghnjhgrmhhinhessghoohhtlhhinhdrtghomh
-X-GND-Sasl: olivier.benjamin@bootlin.com
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 14 May 2025 09:14:29 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1551
+ <yocto-patches@lists.yoctoproject.org>; Wed, 14 May 2025 10:00:29 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1552
 
-The configure options currently use hardcoded values in the
-[action-if-given] branch of the AC_ARG_ENABLE autoconf macro
-to determine whether the behaviour by passing GCC flags.
-The issue is, that this branch is always taken when the option
-is specified on the configure command line, regardless of
-whether it is enabled or not.
-This means that the opposite option can never be explicitly set
-as passing it would match the branch, and result in the decision
-variable being set to the same hardcoded value as the other case.
+On Tue, 2025-04-29 at 11:16 +0900, Hieu Van Nguyen via lists.yoctoproject.o=
+rg wrote:
+> From: Hieu Van Nguyen <hieu2.nguyen@lge.com>
+>=20
+> Support to build meta-webosose for both of kirkstone and scarthgap
+> branches.
+>=20
+> Signed-off-by: Hieu Van Nguyen <hieu2.nguyen@lge.com>
+> ---
+> =C2=A0schedulers.py | 5 ++++-
+> =C2=A01 file changed, 4 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/schedulers.py b/schedulers.py
+> index fd2cad6..1fead60 100644
+> --- a/schedulers.py
+> +++ b/schedulers.py
+> @@ -642,7 +642,10 @@ schedulers.append(sched.AnyBranchScheduler(name=3D"b=
+itbake-docs-changed",
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+properties=3Drepos_dict_for_scheduler("docs"),
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+builderNames=3D["docs"]))
+> =C2=A0
+> -# Run meta-webosose for kirkstone once a week on weekends (2am on Friday=
+)
+> +# Run meta-webosose for kirkstone and scarthgap once a week on weekends =
+(2am on Friday)
+> =C2=A0schedulers.append(sched.Nightly(name=3D'nightly-meta-webosose', bra=
+nch=3D'kirkstone', properties=3Dparent_default_props('meta-webosose', 'kirk=
+stone'),
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 codebases =3D {'' : {'branch'=
+ : 'kirkstone'}},
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 builderNames=3D['meta-webosos=
+e'], hour=3D2, minute=3D0, dayOfWeek=3D4))
+> +schedulers.append(sched.Nightly(name=3D'nightly-meta-webosose', branch=
+=3D'scarthgap', properties=3Dparent_default_props('meta-webosose', 'scarthg=
+ap'),
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 codebases =3D {'' : {'branch' : 'sc=
+arthgap'}},
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 builderNames=3D['meta-webosose'], h=
+our=3D2, minute=3D0, dayOfWeek=3D4))
 
-Use $enableval to set the decision variable to "yes" or "no"
-depending on whether the option was enabled or disabled to make
-it possible to explicitly set the default case.
+The patch breaks things since it has two schedulers with the same name.
+I've tweaked the patch to fix that and applied it, sorry about the
+delay.
 
-Signed-off-by: Olivier Benjamin <olivier.benjamin@bootlin.com>
----
- configure.ac | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+Cheers,
 
-diff --git a/configure.ac b/configure.ac
-index 2a7da91..c66bc54 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -31,25 +31,25 @@ AC_SUBST([FONT_NAME])
- 
- AC_ARG_ENABLE([startup-msg],
-     AS_HELP_STRING([--disable-startup-msg], [Disable text banner output on startup]),
--    [disable_startup_msg=true],
--    [disable_startup_msg=false])
--AS_IF([test x$disable_startup_msg = xtrue], [
-+    [enable_startup_msg=$enableval],
-+    [enable_startup_msg=yes])
-+AS_IF([test x$enable_startup_msg != xyes], [
-     EXTRA_GCC_FLAGS="$EXTRA_GCC_FLAGS -DPSPLASH_DISABLE_STARTUP_MSG"
- ])
- 
- AC_ARG_ENABLE([progress-bar],
-     AS_HELP_STRING([--disable-progress-bar], [Disable progress bar]),
--    [disable_progress_bar=true],
--    [disable_progress_bar=false])
--AS_IF([test x$disable_progress_bar = xtrue], [
-+    [enable_progress_bar=$enableval],
-+    [enable_progress_bar=yes])
-+AS_IF([test x$enable_progress_bar != xyes], [
-     EXTRA_GCC_FLAGS="$EXTRA_GCC_FLAGS -DPSPLASH_DISABLE_PROGRESS_BAR"
- ])
- 
- AC_ARG_ENABLE([img-fullscreen],
-     AS_HELP_STRING([--enable-img-fullscreen], [Enable the logo image in fullscreen mode)]),
--    [img_fullscreen=true],
--    [img_fullscreen=false])
--AS_IF([test x$img_fullscreen = xtrue], [
-+    [enable_img_fullscreen=$enableval],
-+    [enable_img_fullscreen=no])
-+AS_IF([test x$enable_img_fullscreen = xyes], [
-     EXTRA_GCC_FLAGS="$EXTRA_GCC_FLAGS -DPSPLASH_IMG_FULLSCREEN=1"
- ])
- 
--- 
-2.43.0
-
+Richard
 
