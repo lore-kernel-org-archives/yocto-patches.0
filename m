@@ -1,99 +1,139 @@
-Return-Path: <martin.jansa@gmail.com>
+Return-Path: <peter.marko@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A434BC3ABD8
-	for <webhook@archiver.kernel.org>; Fri, 16 May 2025 13:54:35 +0000 (UTC)
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
- by mx.groups.io with SMTP id smtpd.web10.13817.1747403672248422513
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EA9AC3ABC9
+	for <webhook@archiver.kernel.org>; Fri, 16 May 2025 16:21:56 +0000 (UTC)
+Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
+ by mx.groups.io with SMTP id smtpd.web11.17515.1747412507125027439
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 16 May 2025 06:54:32 -0700
+ Fri, 16 May 2025 09:21:48 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=nEzYuGXJ;
- spf=pass (domain: gmail.com, ip: 209.85.221.49, mailfrom: martin.jansa@gmail.com)
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a0be50048eso2074812f8f.0
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 16 May 2025 06:54:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747403671; x=1748008471; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=D38l08rXNq/lbBy3q30dzIjF9rOne6As0lNv9T2r7jA=;
-        b=nEzYuGXJLFR8eqTnxH0Wa/piKSB9hiYs4Kr25D5/nL468NI1a94hGBV4H7ARxHRTUg
-         crN69OT0RADYbtDMgpqHgWLZ4KzbSt1CiAPbpwkima9If5k8NvvCF4ZYr4/vW8V7HTiB
-         dXa7+N9SIn13BpHjI8cTsko59msu7C4FPkA1YTglLw0W8R3vL9o//Lfw3zIJhqAquzuG
-         +7MHsXrHZJqcoXkzwk6IstYoZPqVvJtN2s0/4xDWYqbjNVJouDIVgCl/NfYRntbltu1b
-         UCCIU5ibxkugu/ZSerLrdd5gLc65sg5d4IX/N6CMrWWwHAzMo4GTKz6t1IfS/CNHXS8W
-         G6xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747403671; x=1748008471;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=D38l08rXNq/lbBy3q30dzIjF9rOne6As0lNv9T2r7jA=;
-        b=UWJzOFBEl6KIUp7Eq05UqBYAHTOA2Vav6Lr0032cpnKl44Lgg4glaLuAecWuP9YAmv
-         XxpRM6qMOmKtsU6l2kh4x+1rHXMhh0AiOPio3HmoHXdkOc+EOkhurX5KxPGwZg+zjDrr
-         rpwgNRpPrczSJkDK08rJr+cJayuxw5bV1VEfTWL4xrpfic2gyJtodz0Hyvjw/bTOaEyB
-         oefzDYM3Smaj3VbUjtxAeknuaDdg2Y/CDbFpNqA8HXRJZ4wxyr4NC9Jzl4ljK2URhHpK
-         HbnkUQ2Qj5U5K7zMcbRmn2u5L4JlGkKCpcID8MCEbfw7jH2h6F0+STL6Txy8ulN/7/1X
-         8ydg==
-X-Gm-Message-State: AOJu0YwhqnLPA0O68Jd/UDP9f3iZgtqpY7ALf7H8gc66Hqzd5X0UMgaF
-	p3YaZ3J6WU2Sr6QwYGLdD5vOKpBXQqRH1PtmCEwN9yYtP4sHG9XUmP70I7QVtQ==
-X-Gm-Gg: ASbGncunCjQQ5EVqepPqy1S32EdbyJBZdsCEIIxpoJgFu33jm8ZapCqDEDhRTCtZ0XO
-	lDkLwgtMbw0LoQ0NX0g1OMrGDmK+O7bbVg3CW9CNxq12UAMleQh+gK2C9QFg6XeKN9FDsG+tw3g
-	ydX5JFOfSPBY2pgJAVp0Z5jkkhTUJVZpdgYgyYhdO6DbxKBjmSrRdtS+WL53y+gMDxLeqLlg2qF
-	vbflVsd+ZOKZboX9XdP1KJrLFUXqsYS3c3S1A+UcpYuQqY07eVPaxa7i0udvAm1xXTMFBZfUxUT
-	fhx+OwRAHfJuzZ8wWKhwBg8QlQGMwTYixlC6jgnpZ7/M4UgAtMGxXHB1jKqqhYaQaPWGdkRUfdr
-	IJ86/vROq
-X-Google-Smtp-Source: AGHT+IFFg339EcqZyds9xdnrHBjmxADBeHqR4GYkbTnaJOURipImaXm2tcVGxyyEoKJK6gEtuKFqZw==
-X-Received: by 2002:a5d:5f56:0:b0:3a3:6282:693c with SMTP id ffacd0b85a97d-3a362826b2amr1951255f8f.42.1747403670443;
-        Fri, 16 May 2025 06:54:30 -0700 (PDT)
-Received: from localhost (ip-109-238-218-228.aim-net.cz. [109.238.218.228])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a35ca8caf0sm2898581f8f.82.2025.05.16.06.54.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 May 2025 06:54:30 -0700 (PDT)
-From: martin.jansa@gmail.com
+ dkim=pass header.i=peter.marko@siemens.com header.s=fm1 header.b=G+g2/a7c;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.226, mailfrom: fm-256628-20250516162143e6e6105942a5e8c1d7-h0dwsh@rts-flowmailer.siemens.com)
+Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 20250516162143e6e6105942a5e8c1d7
+        for <yocto-patches@lists.yoctoproject.org>;
+        Fri, 16 May 2025 18:21:43 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=peter.marko@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=9WZwrnYRkgyH6u6pUWzTbiMMxQ87dgTdJumVmxlboTc=;
+ b=G+g2/a7c+X+G+IF/Gb6jBtiFv96Hq+MOYxNvIe+Iiwhy0H30AmZ4DlgHCSb651hxItA27G
+ mlP7hkwN+fOlSbzEm3Ea6sedpyICS5U1QTt9eE7Jqa6YnJIRXgLrlZNRzXttBRWvctOzBT6D
+ 1tnCn3N4UElhTo/m8wYevFGi6IVZTrL4NBhNYZ6cXTISgtov3uMmBTv+yFxk+yyTeeZ5ok2Y
+ tdLqx17QfvlFKpWP4xtzgdk75WvWa+UoGFymejHZEb8dQDBK5aledkA3+n5xkBjhXbieemUh
+ fDDMBXCZAqXZL1P6YsRRsnBBtYCGrPz8uKW/grrNlpO52yj2OpCWd16Q==;
+From: Peter Marko <peter.marko@siemens.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Martin Jansa <martin.jansa@gmail.com>
-Subject: [yocto-autobuilder2][PATCH] schedulers: set meta-webosose branch to scarthgap-webos for scarthgap builds
-Date: Fri, 16 May 2025 15:54:27 +0200
-Message-ID: <20250516135427.2540564-1-martin.jansa@gmail.com>
-X-Mailer: git-send-email 2.49.0
+Cc: jose.quaresma@foundries.io,
+	Peter Marko <peter.marko@siemens.com>
+Subject: [meta-lts-mixins][kirkstone/go][PATCH] go: upgrade 1.24.2 -> 1.24.3
+Date: Fri, 16 May 2025 18:20:54 +0200
+Message-Id: <20250516162054.8214-1-peter.marko@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-256628:519-21489:flowmailer
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 16 May 2025 13:54:35 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1559
+ <yocto-patches@lists.yoctoproject.org>; Fri, 16 May 2025 16:21:56 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1560
 
-From: Martin Jansa <martin.jansa@gmail.com>
+From: Peter Marko <peter.marko@siemens.com>
 
-* scarthgap based build was triggered today:
-  https://autobuilder.yoctoproject.org/valkyrie/#/builders/51/builds/39
+Upgrade to latest 1.24.x release [1]:
 
-  but it failed, because it uses meta-webosose from master branch not scarthgap-webos, missing the 3 commits from:
-  https://github.com/webosose/meta-webosose/compare/master...scarthgap-webos
+$ git --no-pager log --oneline go1.24.2..go1.24.3
+34c8b14ca9 (release-branch.go1.24) [release-branch.go1.24] go1.24.3
+8947f3395e [release-branch.go1.24] os: avoid escape from Root via paths ending in ../
+06fd2f115b [release-branch.go1.24] cmd/compile: remove no-longer-necessary recursive inlining checks
+f66ab6521c [release-branch.go1.24] cmd/internal/obj/wasm: use i64 for large return addr
+c1f9c2c7b0 [release-branch.go1.24] cmd/go/internal/load: join incompatible and dirty build specifiers with .
+0ab64e2caa [release-branch.go1.24] runtime: cleanup M vgetrandom state before dropping P
+56eb99859d [release-branch.go1.24] internal/runtime/maps: pass proper func PC to race.WritePC/race.ReadPC
+43130aff52 [release-branch.go1.24] runtime: fix 9-arg syscall on darwin/amd64
+b2c005e7b2 [release-branch.go1.24] crypto/tls: fix ECH compatibility
+a9d9b55709 [release-branch.go1.24] cmd/link: choose one with larger size for duplicated BSS symbols
+fa7217f74d [release-branch.go1.24] os: avoid panic in Root when symlink references the root
 
-* adjust branch_meta-webosose
-* add entry for meta-qt6 like kirkstone build has (but this
-  isn't really necessary as the 6.8.1 is the default)
+Fixes CVE-2025-22873
 
-Signed-off-by: Martin Jansa <martin.jansa@gmail.com>
+[1] https://github.com/golang/go/compare/go1.24.2...go1.24.3
+
+(From OE-Core rev: b317570acf1e25a4cfaa0c66a2630d082b4d0bae)
+
+Signed-off-by: Peter Marko <peter.marko@siemens.com>
+Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
 ---
- schedulers.py | 2 ++
- 1 file changed, 2 insertions(+)
+ recipes-devtools/go/{go-1.24.2.inc => go-1.24.3.inc}        | 2 +-
+ ...o-binary-native_1.24.2.bb => go-binary-native_1.24.3.bb} | 6 +++---
+ ...cross-canadian_1.24.2.bb => go-cross-canadian_1.24.3.bb} | 0
+ .../go/{go-cross_1.24.2.bb => go-cross_1.24.3.bb}           | 0
+ .../go/{go-crosssdk_1.24.2.bb => go-crosssdk_1.24.3.bb}     | 0
+ .../go/{go-runtime_1.24.2.bb => go-runtime_1.24.3.bb}       | 0
+ recipes-devtools/go/{go_1.24.2.bb => go_1.24.3.bb}          | 0
+ 7 files changed, 4 insertions(+), 4 deletions(-)
+ rename recipes-devtools/go/{go-1.24.2.inc => go-1.24.3.inc} (91%)
+ rename recipes-devtools/go/{go-binary-native_1.24.2.bb => go-binary-native_1.24.3.bb} (78%)
+ rename recipes-devtools/go/{go-cross-canadian_1.24.2.bb => go-cross-canadian_1.24.3.bb} (100%)
+ rename recipes-devtools/go/{go-cross_1.24.2.bb => go-cross_1.24.3.bb} (100%)
+ rename recipes-devtools/go/{go-crosssdk_1.24.2.bb => go-crosssdk_1.24.3.bb} (100%)
+ rename recipes-devtools/go/{go-runtime_1.24.2.bb => go-runtime_1.24.3.bb} (100%)
+ rename recipes-devtools/go/{go_1.24.2.bb => go_1.24.3.bb} (100%)
 
-diff --git a/schedulers.py b/schedulers.py
-index 29e85ba..3f0289e 100644
---- a/schedulers.py
-+++ b/schedulers.py
-@@ -116,6 +116,8 @@ branchdefaults = {
-         'branch_meta-ti': 'scarthgap',
-         'branch_meta-virtualization': 'scarthgap',
-         'branch_oecore': 'scarthgap',
-+        'branch_meta-webosose': 'scarthgap-webos',
-+        'branch_meta-qt6': '6.8.1',
-     },
-     'nanbield': {
-         'branch': 'nanbield',
+diff --git a/recipes-devtools/go/go-1.24.2.inc b/recipes-devtools/go/go-1.24.3.inc
+similarity index 91%
+rename from recipes-devtools/go/go-1.24.2.inc
+rename to recipes-devtools/go/go-1.24.3.inc
+index cb4ae9e..78e2614 100644
+--- a/recipes-devtools/go/go-1.24.2.inc
++++ b/recipes-devtools/go/go-1.24.3.inc
+@@ -17,4 +17,4 @@ SRC_URI += "\
+     file://0010-cmd-go-clear-GOROOT-for-func-ldShared-when-trimpath-.patch \
+     file://6d265b008e3d106b2706645e5a88cd8e2fb98953.patch \
+ "
+-SRC_URI[main.sha256sum] = "9dc77ffadc16d837a1bf32d99c624cb4df0647cee7b119edd9e7b1bcc05f2e00"
++SRC_URI[main.sha256sum] = "229c08b600b1446798109fae1f569228102c8473caba8104b6418cb5bc032878"
+diff --git a/recipes-devtools/go/go-binary-native_1.24.2.bb b/recipes-devtools/go/go-binary-native_1.24.3.bb
+similarity index 78%
+rename from recipes-devtools/go/go-binary-native_1.24.2.bb
+rename to recipes-devtools/go/go-binary-native_1.24.3.bb
+index 690b854..af56dc9 100644
+--- a/recipes-devtools/go/go-binary-native_1.24.2.bb
++++ b/recipes-devtools/go/go-binary-native_1.24.3.bb
+@@ -9,9 +9,9 @@ PROVIDES = "go-native"
+ 
+ # Checksums available at https://go.dev/dl/
+ SRC_URI = "https://dl.google.com/go/go${PV}.${BUILD_GOOS}-${BUILD_GOARCH}.tar.gz;name=go_${BUILD_GOTUPLE}"
+-SRC_URI[go_linux_amd64.sha256sum] = "68097bd680839cbc9d464a0edce4f7c333975e27a90246890e9f1078c7e702ad"
+-SRC_URI[go_linux_arm64.sha256sum] = "756274ea4b68fa5535eb9fe2559889287d725a8da63c6aae4d5f23778c229f4b"
+-SRC_URI[go_linux_ppc64le.sha256sum] = "5fff857791d541c71d8ea0171c73f6f99770d15ff7e2ad979104856d01f36563"
++SRC_URI[go_linux_amd64.sha256sum] = "3333f6ea53afa971e9078895eaa4ac7204a8c6b5c68c10e6bc9a33e8e391bdd8"
++SRC_URI[go_linux_arm64.sha256sum] = "a463cb59382bd7ae7d8f4c68846e73c4d589f223c589ac76871b66811ded7836"
++SRC_URI[go_linux_ppc64le.sha256sum] = "341a749d168f47b1d4dad25e32cae70849b7ceed7c290823b853c9e6b0df0856"
+ 
+ UPSTREAM_CHECK_URI = "https://golang.org/dl/"
+ UPSTREAM_CHECK_REGEX = "go(?P<pver>\d+(\.\d+)+)\.linux"
+diff --git a/recipes-devtools/go/go-cross-canadian_1.24.2.bb b/recipes-devtools/go/go-cross-canadian_1.24.3.bb
+similarity index 100%
+rename from recipes-devtools/go/go-cross-canadian_1.24.2.bb
+rename to recipes-devtools/go/go-cross-canadian_1.24.3.bb
+diff --git a/recipes-devtools/go/go-cross_1.24.2.bb b/recipes-devtools/go/go-cross_1.24.3.bb
+similarity index 100%
+rename from recipes-devtools/go/go-cross_1.24.2.bb
+rename to recipes-devtools/go/go-cross_1.24.3.bb
+diff --git a/recipes-devtools/go/go-crosssdk_1.24.2.bb b/recipes-devtools/go/go-crosssdk_1.24.3.bb
+similarity index 100%
+rename from recipes-devtools/go/go-crosssdk_1.24.2.bb
+rename to recipes-devtools/go/go-crosssdk_1.24.3.bb
+diff --git a/recipes-devtools/go/go-runtime_1.24.2.bb b/recipes-devtools/go/go-runtime_1.24.3.bb
+similarity index 100%
+rename from recipes-devtools/go/go-runtime_1.24.2.bb
+rename to recipes-devtools/go/go-runtime_1.24.3.bb
+diff --git a/recipes-devtools/go/go_1.24.2.bb b/recipes-devtools/go/go_1.24.3.bb
+similarity index 100%
+rename from recipes-devtools/go/go_1.24.2.bb
+rename to recipes-devtools/go/go_1.24.3.bb
 
