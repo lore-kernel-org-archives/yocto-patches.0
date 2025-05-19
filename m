@@ -1,110 +1,108 @@
-Return-Path: <anton.antonov@arm.com>
+Return-Path: <mikko.rapeli@linaro.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F8FFC3DA6D
-	for <webhook@archiver.kernel.org>; Mon, 19 May 2025 08:46:22 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mx.groups.io with SMTP id smtpd.web10.46666.1747644374104563341
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8358C2D0CD
+	for <webhook@archiver.kernel.org>; Mon, 19 May 2025 14:18:24 +0000 (UTC)
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+ by mx.groups.io with SMTP id smtpd.web11.52040.1747664299997722891
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 19 May 2025 01:46:14 -0700
+ Mon, 19 May 2025 07:18:20 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: arm.com, ip: 217.140.110.172, mailfrom: anton.antonov@arm.com)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BCA361655;
-	Mon, 19 May 2025 01:46:00 -0700 (PDT)
-Received: from atg-devlab-kelpie.cambridge.arm.com (atg-devlab-kelpie.cambridge.arm.com [10.2.80.92])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 47B4A3F5A1;
-	Mon, 19 May 2025 01:46:13 -0700 (PDT)
-From: Anton Antonov <Anton.Antonov@arm.com>
+ dkim=pass header.i=@linaro.org header.s=google header.b=qcIfZTL9;
+ spf=pass (domain: linaro.org, ip: 209.85.128.52, mailfrom: mikko.rapeli@linaro.org)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cfa7e7f54so33846735e9.1
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 19 May 2025 07:18:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1747664298; x=1748269098; darn=lists.yoctoproject.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9ESlZ5wESC8CxqnKpqmBBhX4iTvVOa75HMHZbTBrD64=;
+        b=qcIfZTL9O4s4RCFH/BuYbVs/BiEoNWJF5gGJOV5CAn7xBYqVZzbm13maQ+YjRADRW+
+         UCV9R+BBnojcNfYPgjW9uy6DOkMj47z73wBGFNRDO0LSItpiNXwj4UiiF0djLV8J+URT
+         v1DlrpXiJYONpoFgWmEAbkAnqnTY5hZhI4dUuOo405mhNCTe+ZyUUjgI/eqfWPHMBrT5
+         U8AmL33KiKFoGLmLKh0R56zCDOO3KPzBspuPavmh5HeFbEV/DV52dtc+8TQFHi2ouQvj
+         qNlOnyVhzM2EfQejwa3b7MogTZjAeGLkeNRH0O1HLwvREgqb5HLwyJRHdLar4z/9L2Nu
+         W2wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747664298; x=1748269098;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9ESlZ5wESC8CxqnKpqmBBhX4iTvVOa75HMHZbTBrD64=;
+        b=s6L7kcV+11em2dCUXj43qQLXwfb7vdoM/Mi9mBPAdQbCn4EYQiHv0QhHRT1t9F+CUm
+         OmrgxnZv1rqJAfmHRfX2E2/KP4i+rSTcuDTSBGA9MG+0bed61lClZduEl75782cmDSaQ
+         Xz+pKA7N9EZe0iUkxn3loV1AL4OYnKkQy64sYTSjlpEbnFhKqa43/h9iFs/6fnmh1xRQ
+         2wlIFKIQRy11wGlIWyi9m08SkAujelL8h9Y3jjSaPnd8pidC/LA1Vc2RAEkphUtdAglY
+         xokT6k7z2RR+rtEBY2Ln8qFc02RF9Ohn2iEpNA5/fMgejK2kDokl9FOF6T15xDoi6s4K
+         CAnQ==
+X-Gm-Message-State: AOJu0YyJpj+ZOOtiEbbYlnGSoVSQBjNwsDOA3tDpjctRIJxsaShY2eHF
+	5Ixg6mK4nFrmgvmVOqXbkD47cRTKwOzr+E5RRXjgU9/aFUq/B40KJHnrhGU+66EH+MgzULfBmns
+	81id9Ta8=
+X-Gm-Gg: ASbGnctjkqHI/DT8sE29k67WOc4aSskJDYj3DN2Lg8koEbg712MSYftMJikEMX7zoOL
+	Zy42BrC+8HupTWYebMwEpazeIu/XiIO6VwPcn0h5OxuzvPp271LzNFjvBlDcKZYEmqpTIZzbjtr
+	yASDpiZFQfGo1E8xsAVlFJ4YgQiUPmZq8nUHKE6gqtZmmYqQwM0T4+rDGqsJDWXd7NsvXqQbuAX
+	SWwNXlbbDZCJ77RtY1QrmFKLKB4vmUR9sa6+hxOM0ebWilLhk27WYt/vQ2lsjHa479DZVfk9At0
+	LCv327hx/vVooirIcwwlW2x2x30hB44skfpTeeLD1/gsis4Q
+X-Google-Smtp-Source: AGHT+IGcF91h0xNS9n8AIWtXAFs39yuv0EFTdD7a1Xr4xrgQ33BGScnGC6iUwGBG4GW2dXuUK8djjA==
+X-Received: by 2002:a05:600c:3c99:b0:43b:4829:8067 with SMTP id 5b1f17b1804b1-442f84cb4famr154098475e9.6.1747664298014;
+        Mon, 19 May 2025 07:18:18 -0700 (PDT)
+Received: from nuoska ([62.48.241.198])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442eb85bb20sm146254955e9.0.2025.05.19.07.18.17
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 May 2025 07:18:17 -0700 (PDT)
+Date: Mon, 19 May 2025 15:18:16 +0100
+From: Mikko Rapeli <mikko.rapeli@linaro.org>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Anton Antonov <Anton.Antonov@arm.com>
-Subject: [meta-parsec][master,walnascar][PATCH] parsec-service: update PACKAGECONFIG options as lists of cargo build features
-Date: Mon, 19 May 2025 09:45:53 +0100
-Message-Id: <20250519084553.2027324-1-Anton.Antonov@arm.com>
-X-Mailer: git-send-email 2.34.1
+Subject: Re: [meta-security][PATCH 2/3] systemd: fix empty file list with sed
+Message-ID: <aCs9qGvep0KiLjZp@nuoska>
+References: <20250507082719.1220303-1-mikko.rapeli@linaro.org>
+ <20250507082719.1220303-2-mikko.rapeli@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250507082719.1220303-2-mikko.rapeli@linaro.org>
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 19 May 2025 08:46:22 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1561
+ <yocto-patches@lists.yoctoproject.org>; Mon, 19 May 2025 14:18:24 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1562
 
-After commit 7a2b9acef2 "cargo: pass PACKAGECONFIG_CONFARGS to cargo buil=
-d"
-we don't need to include Parsec cargo build features into CARGO_BUILD_FLA=
-GS.
-Let's update PACKAGECONFIG options as lists of features.
+Hi,
 
-A small fix in readme.md as well.
+On Wed, May 07, 2025 at 11:27:18AM +0300, Mikko Rapeli wrote:
+> If measured-uki support is not enabled or build is continuing
+> from previous stages, then the matching file list can be empty.
+> Fixes build failure where sed says no input files.
+> 
+> Signed-off-by: Mikko Rapeli <mikko.rapeli@linaro.org>
+> ---
+>  meta-tpm/recipes-core/systemd/systemd_%.bbappend | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/meta-tpm/recipes-core/systemd/systemd_%.bbappend b/meta-tpm/recipes-core/systemd/systemd_%.bbappend
+> index 82b79ba..c53b1e8 100644
+> --- a/meta-tpm/recipes-core/systemd/systemd_%.bbappend
+> +++ b/meta-tpm/recipes-core/systemd/systemd_%.bbappend
+> @@ -11,7 +11,10 @@ PACKAGECONFIG:append = " \
+>  # TODO: use swtpm-native to calculate TPM measurements
+>  do_install:append() {
+>      if "${@bb.utils.contains('DISTRO_FEATURES', 'tpm2', 'true', 'false', d)}"; then
+> -        sed -i -e "s/^ConditionSecurity=measured-uki/ConditionSecurity=tpm2/g" \
+> -            $( grep -rl ^ConditionSecurity=measured-uki ${D} )
+> +        FILES=$( grep -rl ^ConditionSecurity=measured-uki ${D} || true )
+> +        if [ "$FILES" != "" ]; then
+> +            sed -i -e "s/^ConditionSecurity=measured-uki/ConditionSecurity=tpm2/g" \
+> +                "$FILES"
 
-Signed-off-by: Anton Antonov <Anton.Antonov@arm.com>
----
- meta-parsec/README.md                             |  4 ++--
- .../parsec-service/parsec-service_1.4.1.bb        | 15 ++++++---------
- 2 files changed, 8 insertions(+), 11 deletions(-)
+This is wrong and breaks builds. Need to unquote the variable to get
+files seprately and not as a single argument. It is a bit odd that I
+did not always see the failures but only after rebase.
 
-diff --git a/meta-parsec/README.md b/meta-parsec/README.md
-index 785c932..90decaf 100644
---- a/meta-parsec/README.md
-+++ b/meta-parsec/README.md
-@@ -112,7 +112,7 @@ You might need to change permissions or add the accou=
-nt into `kvm` unix group.
-=20
- - Add into your `local.conf`:
- ```
--INHERIT +=3D "testimage"
-+IMAGE_CLASSES +=3D "testimage"
- TEST_SUITES =3D "ping ssh parsec"
- ```
- - Build your image
-@@ -129,7 +129,7 @@ bitbake <your-image> -c testimage
- - Add into your `local.conf`:
- ```
- DISTRO_FEATURES +=3D " tpm2"
--INHERIT +=3D "testimage"
-+IMAGE_CLASSES +=3D "testimage"
- TEST_SUITES =3D "ping ssh parsec"
- ```
- - Build security-parsec-image image
-diff --git a/meta-parsec/recipes-parsec/parsec-service/parsec-service_1.4=
-.1.bb b/meta-parsec/recipes-parsec/parsec-service/parsec-service_1.4.1.bb
-index 49467cd..baa02fb 100644
---- a/meta-parsec/recipes-parsec/parsec-service/parsec-service_1.4.1.bb
-+++ b/meta-parsec/recipes-parsec/parsec-service/parsec-service_1.4.1.bb
-@@ -21,15 +21,12 @@ PACKAGECONFIG ??=3D "PKCS11 MBED-CRYPTO"
- have_TPM =3D "${@bb.utils.contains('DISTRO_FEATURES', 'tpm2', 'TPM', '',=
- d)}"
- PACKAGECONFIG:append =3D " ${@bb.utils.contains('BBFILE_COLLECTIONS', 't=
-pm-layer', '${have_TPM}', '', d)}"
-=20
--PACKAGECONFIG[ALL] =3D "all-providers cryptoki/generate-bindings tss-esa=
-pi/generate-bindings,,tpm2-tss libts,tpm2-tss libtss2-tcti-device libts"
--PACKAGECONFIG[TPM] =3D "tpm-provider tss-esapi/generate-bindings,,tpm2-t=
-ss,tpm2-tss libtss2-tcti-device"
--PACKAGECONFIG[PKCS11] =3D "pkcs11-provider cryptoki/generate-bindings,"
--PACKAGECONFIG[MBED-CRYPTO] =3D "mbed-crypto-provider,"
--PACKAGECONFIG[CRYPTOAUTHLIB] =3D "cryptoauthlib-provider,"
--PACKAGECONFIG[TS] =3D "trusted-service-provider,,libts,libts"
--
--PARSEC_FEATURES =3D "${@d.getVar('PACKAGECONFIG_CONFARGS').strip().repla=
-ce(' ', ',')}"
--CARGO_BUILD_FLAGS +=3D " --features ${PARSEC_FEATURES}"
-+PACKAGECONFIG[ALL] =3D "-F all-providers -F cryptoki/generate-bindings -=
-F tss-esapi/generate-bindings,,tpm2-tss libts,tpm2-tss libtss2-tcti-devic=
-e libts"
-+PACKAGECONFIG[TPM] =3D "-F tpm-provider -F tss-esapi/generate-bindings,,=
-tpm2-tss,tpm2-tss libtss2-tcti-device"
-+PACKAGECONFIG[PKCS11] =3D "-F pkcs11-provider -F cryptoki/generate-bindi=
-ngs,"
-+PACKAGECONFIG[MBED-CRYPTO] =3D "-F mbed-crypto-provider,"
-+PACKAGECONFIG[CRYPTOAUTHLIB] =3D "-F cryptoauthlib-provider,"
-+PACKAGECONFIG[TS] =3D "-F trusted-service-provider,,libts,libts"
-=20
- export BINDGEN_EXTRA_CLANG_ARGS
- target =3D "${@d.getVar('TARGET_SYS').replace('-', ' ')}"
---=20
-2.34.1
+I'll send a v2.
 
+Cheers,
+
+-Mikko
 
