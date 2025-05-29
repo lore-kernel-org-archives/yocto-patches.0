@@ -2,184 +2,115 @@ Return-Path: <tim.orling@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65E2AC5B543
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76FE9C5B552
 	for <webhook@archiver.kernel.org>; Thu, 29 May 2025 02:42:23 +0000 (UTC)
-Received: from mail-pf1-f194.google.com (mail-pf1-f194.google.com [209.85.210.194])
- by mx.groups.io with SMTP id smtpd.web11.12380.1748486535828827846
+Received: from mail-pj1-f67.google.com (mail-pj1-f67.google.com [209.85.216.67])
+ by mx.groups.io with SMTP id smtpd.web11.12381.1748486539607064738
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 28 May 2025 19:42:15 -0700
+ Wed, 28 May 2025 19:42:19 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=DeoBcuSP;
- spf=pass (domain: konsulko.com, ip: 209.85.210.194, mailfrom: tim.orling@konsulko.com)
-Received: by mail-pf1-f194.google.com with SMTP id d2e1a72fcca58-7399a2dc13fso444512b3a.2
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 28 May 2025 19:42:15 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=GN+/+IbA;
+ spf=pass (domain: konsulko.com, ip: 209.85.216.67, mailfrom: tim.orling@konsulko.com)
+Received: by mail-pj1-f67.google.com with SMTP id 98e67ed59e1d1-3119822df05so416848a91.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 28 May 2025 19:42:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1748486534; x=1749091334; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1748486539; x=1749091339; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=G27VnDS9f032XVtef3svsE7ylQYmg5L4KPgji7my7s8=;
-        b=DeoBcuSPTxg3rSbCVCjUUC6JdT42/s8UBGe/nRgrt1J5tvL2Zl50d2FaNjidq5rr3d
-         h+F0UiETlm8GjD1sP5WH6CUIfYkqbVR4XWOzSFTwd6OJC50PN/BvsTlXx37CYE32Wba6
-         WL/vY7gmmIWMv6/hv48GjdqC1tOANaK5otiYI=
+        bh=jtFhq8bQ9uIfdumAAVywI9DPtPtGmWoXY7eYbpNrmHM=;
+        b=GN+/+IbAYMO+gQeMgzjPMUP9VFsS6CMaM05rCwR3sVwrrE1VSBH/VWJKNhbH9JIKdZ
+         ZjBjz8Ex4wPvcqKQHV/+TfYKXMS8PlGVtAbantkqivpxfK4WYuLX6d0YmFtmFwJRKMCa
+         /GKCAWtlY/sZ4am6s87t1gxAYEc9zT1y26DXo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748486534; x=1749091334;
+        d=1e100.net; s=20230601; t=1748486539; x=1749091339;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=G27VnDS9f032XVtef3svsE7ylQYmg5L4KPgji7my7s8=;
-        b=S+iK3La9Pe+VqHEVrLMgXY0xyDhZC2lwyrfHOMBIKud2mvpUPa7yRt8c2MkNulqj3C
-         YMHA8R3Ar1qLPuMvqYBZIi8Icay1uCbPcsrfXgb4Ednt0lauSB6cOCy48VbiNHdOkn39
-         k3IlcZgb8e9/RVbjHFiXLn2blbz/lIxDz59t6Z40dLre3kSvwmfryuw9ZXUvGokm2Edt
-         9izvjaQvgWB/TPpzwLw8/kB06oS0oP+WdRyOiBQ1Fh2ZwmP8w6xiZ7Tug/9+k1qedOJi
-         YM4aoO8CqQpM/utwAdtw/4LB44i1jGR4rkmEoLdPdOGHmFtj7woT3T6xvjdvdJgEVpLB
-         uwHA==
-X-Gm-Message-State: AOJu0YyTgM7Mc8sFViXB/JSWAvIE30zJmsZQP+wmDUQzRd7/ghj9A8vW
-	al6F/CT/YiDFeSHuKhQ3xJXjVnGKSRBZlunIAbVYIdjr1Dy6FzNcsV734/7/vEalfoWdfAGPEr8
-	UuR/vMz+X18VV
-X-Gm-Gg: ASbGncuvJ0wo0Z7i8YAv/C71d4FBgJQY6XMGU0EiSeVlqBeqHu0hi90/0lnLAbSF+ZZ
-	efuj8iifotYSgMUuNOWbMu5KDDckbJUSp8byTEj+mbEhWA5R1IaftPTdjg5R9Yh6VrmB7l9Fc5C
-	EL+VQpA51af7oPgZ3poqd00NkTQkK3B5RsSf3YbXfp9/DqOuL1itnBHT2Y2CF3wV9EUiL68Ig1m
-	91x/AUnPgaTnlP5ANqs3G9+Tc5LR7SYwlmeyFsY3q9Q/2blC3o8UADT9ANGiMACzfztSju3qTqD
-	5bTVCMynRgzVv472tr48RIzYYMA0Ou7jV67npLiaHdbCGF2y0gk+YJ68ZpxztIbc/1LC3ShXZhQ
-	SvIZC0XrIg82L/9E=
-X-Google-Smtp-Source: AGHT+IGhSC5GehuVXIGdMdwAr1CZik+6aB0vNI0q4PLoQbo/YyGKg1s9YtjNks+UbCSznTn8Fc+FPQ==
-X-Received: by 2002:a05:6a00:3996:b0:740:9331:78f0 with SMTP id d2e1a72fcca58-745fe0700c1mr23783225b3a.22.1748486534526;
-        Wed, 28 May 2025 19:42:14 -0700 (PDT)
+        bh=jtFhq8bQ9uIfdumAAVywI9DPtPtGmWoXY7eYbpNrmHM=;
+        b=gPH/g+Eu34HD2/cUrQvrdXKUea1DoaO5U4smSw2s6e/T6kiun0w5VpoNZnORqgkYRF
+         eiug3xNL26m9ptPi5iXhBCgpO9USCkYt7GiED0HsZ5/VW3Xx1wU7lZg1m/wlG/VuoO9/
+         mr2r34itTea9ALGekzUPlrTIWROlKA9yIvlo54jYQDzR8JDcQhUQz4y56FxF5beOfcuv
+         bsfRPzfHV5QShzOBEDJ6iryXGj/EvFd2EDiDUuRbCYjOI7zBS8zO9KgeeKYsnEif73q3
+         PtrxlloyWX0G7nOl7QLsRE05LaK21tayE/lAPXCi7+ehyY8gOT9W0NcNIQq+WNtIHIPu
+         /SBA==
+X-Gm-Message-State: AOJu0YyOcUQG2+iGbjU5COu+J/W8aberN+UvMcfcMh8v1GVVYRkr56Y7
+	JobE6xB7pg4LbEBF6DGxYgyLCgJzz3VtSg9gQ6DhSwl/UdIsBXMPNjt30pp2NxXyP/WDoCtF2LP
+	3/Y5tSc7KwPiP
+X-Gm-Gg: ASbGncvVcxoOjBindXZxKw9HaNL6n9SrhU9/6BZybmyfBgh4ZkEEa9W6gzqq7KdVHSr
+	rPOeh4CEBLQ96xprnvMBqlWgeAR/F8TkdbJda8f+WLMXA/zHPYztDO30a6oPGQ5HgIcX+mAX4if
+	LayHLkEGqzh+Onxgq0DLY6tXexAsNshSB+UUxBo5g+QaIBGHwqdir/8BnR5EPY55SYsf3k6Q9Jp
+	/l+OL+W/hp5vC67Wh6AYcY0LrG+JIWzBRXfr1BbDM6KoB7+X4O4dATAWd93NxovRhxH/i+mBiu1
+	5yXnYxOnnbs7uO8lhEJCI3TYuaL0V1TCjh6rJeeQaqijPlEJHaVyHIN8F0uGywZtol/DIA/sREB
+	jZg3S2qCh+CC2l8g=
+X-Google-Smtp-Source: AGHT+IFJxFKl8PqfssO1R5oDxUtjtNCJiy2aMwCEVMThDMzQuz9oNOG758cADfnM0GLAsGz1d2peNg==
+X-Received: by 2002:a17:90b:1910:b0:311:a314:c2d9 with SMTP id 98e67ed59e1d1-311a314c48bmr12514183a91.9.1748486538552;
+        Wed, 28 May 2025 19:42:18 -0700 (PDT)
 Received: from localhost (c-98-232-159-17.hsd1.or.comcast.net. [98.232.159.17])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-747affd4208sm309040b3a.140.2025.05.28.19.42.13
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3121b91c16asm352208a91.22.2025.05.28.19.42.17
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 May 2025 19:42:13 -0700 (PDT)
+        Wed, 28 May 2025 19:42:18 -0700 (PDT)
 From: tim.orling@konsulko.com
 To: yocto-patches@lists.yoctoproject.org
-Subject: [PATCH 09/11] u-boot: upgrade 2024.10 -> 2025.01
-Date: Wed, 28 May 2025 19:41:36 -0700
-Message-ID: <e9a44729f325a75bb11d45b106a06155aa1c3c36.1748486276.git.tim.orling@konsulko.com>
+Subject: [PATCH 11/11] u-boot: upgrade 2025.01 -> 2025.04
+Date: Wed, 28 May 2025 19:41:38 -0700
+Message-ID: <68856926465b56b98599ab2506fceb0d1bcfad5b.1748486276.git.tim.orling@konsulko.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1748486276.git.tim.orling@konsulko.com>
 References: <cover.1748486276.git.tim.orling@konsulko.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Thu, 29 May 2025 02:42:23 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1593
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1595
 
 From: Fabio Estevam <festevam@denx.de>
 
-Upgrade to U-Boot 2025.01.
+Upgrade to U-Boot 2025.04.
 
-Remove the patch as it has been upstreamed.
+While at it, pass the tag parameter in SRC_URI.
 
-(From OE-Core rev: e16a24f04b56ca3fec6509a3286e2e3bb5c21c1e)
+(From OE-Core rev: 4a1671159ec05e9b013a7fd31f65d50302e657e0)
 
 Signed-off-by: Fabio Estevam <festevam@denx.de>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
 Signed-off-by: Tim Orling <tim.orling@konsulko.com>
 ---
- ...bfdt-libfdt.i_shipped-Use-SWIG_Appen.patch | 60 -------------------
- recipes-bsp/u-boot/u-boot-common.inc          |  3 +-
- ...ols_2024.10.bb => u-boot-tools_2025.01.bb} |  0
- .../{u-boot_2024.10.bb => u-boot_2025.01.bb}  |  0
- 4 files changed, 1 insertion(+), 62 deletions(-)
- delete mode 100644 recipes-bsp/u-boot/files/0001-scripts-dtc-pylibfdt-libfdt.i_shipped-Use-SWIG_Appen.patch
- rename recipes-bsp/u-boot/{u-boot-tools_2024.10.bb => u-boot-tools_2025.01.bb} (100%)
- rename recipes-bsp/u-boot/{u-boot_2024.10.bb => u-boot_2025.01.bb} (100%)
+ recipes-bsp/u-boot/u-boot-common.inc                          | 4 ++--
+ .../{u-boot-tools_2025.01.bb => u-boot-tools_2025.04.bb}      | 0
+ recipes-bsp/u-boot/{u-boot_2025.01.bb => u-boot_2025.04.bb}   | 0
+ 3 files changed, 2 insertions(+), 2 deletions(-)
+ rename recipes-bsp/u-boot/{u-boot-tools_2025.01.bb => u-boot-tools_2025.04.bb} (100%)
+ rename recipes-bsp/u-boot/{u-boot_2025.01.bb => u-boot_2025.04.bb} (100%)
 
-diff --git a/recipes-bsp/u-boot/files/0001-scripts-dtc-pylibfdt-libfdt.i_shipped-Use-SWIG_Appen.patch b/recipes-bsp/u-boot/files/0001-scripts-dtc-pylibfdt-libfdt.i_shipped-Use-SWIG_Appen.patch
-deleted file mode 100644
-index 2eeef99..0000000
---- a/recipes-bsp/u-boot/files/0001-scripts-dtc-pylibfdt-libfdt.i_shipped-Use-SWIG_Appen.patch
-+++ /dev/null
-@@ -1,60 +0,0 @@
--From e093607e9a08e9c29b7bbaa6aeb137036db798a6 Mon Sep 17 00:00:00 2001
--From: Markus Volk <f_l_k@t-online.de>
--Date: Wed, 30 Oct 2024 05:46:00 +0100
--Subject: [PATCH] scripts/dtc/pylibfdt/libfdt.i_shipped: Use SWIG_AppendOutput
--MIME-Version: 1.0
--Content-Type: text/plain; charset=UTF-8
--Content-Transfer-Encoding: 8bit
--
--Swig has changed language specific AppendOutput functions. The helper
--macro SWIG_AppendOutput remains unchanged. Use that instead
--of SWIG_Python_AppendOutput, which would require an extra parameter
--since swig 4.3.0.
--
--/home/flk/poky/build-test/tmp/work/qemux86_64-poky-linux/u-boot/2024.10/git/arch/x86/cpu/u-boot-64.lds
--| scripts/dtc/pylibfdt/libfdt_wrap.c: In function ‘_wrap_fdt_next_node’:
--| scripts/dtc/pylibfdt/libfdt_wrap.c:5581:17: error: too few arguments to function ‘SWIG_Python_AppendOutput’
--|  5581 |     resultobj = SWIG_Python_AppendOutput(resultobj, val);
--|       |                 ^~~~~~~~~~~~~~~~~~~~~~~~
--
--Upstream-Status: Backport [https://github.com/u-boot/u-boot/commit/a63456b9191fae2fe49f4b121e025792022e3950]
--
--Signed-off-by: Markus Volk <f_l_k@t-online.de>
-----
-- scripts/dtc/pylibfdt/libfdt.i_shipped | 6 +++---
-- 1 file changed, 3 insertions(+), 3 deletions(-)
--
--diff --git a/scripts/dtc/pylibfdt/libfdt.i_shipped b/scripts/dtc/pylibfdt/libfdt.i_shipped
--index 56cc5d48f4..e4659489a9 100644
----- a/scripts/dtc/pylibfdt/libfdt.i_shipped
--+++ b/scripts/dtc/pylibfdt/libfdt.i_shipped
--@@ -1037,7 +1037,7 @@ typedef uint32_t fdt32_t;
-- 			fdt_string(fdt1, fdt32_to_cpu($1->nameoff)));
-- 		buff = PyByteArray_FromStringAndSize(
-- 			(const char *)($1 + 1), fdt32_to_cpu($1->len));
---		resultobj = SWIG_Python_AppendOutput(resultobj, buff);
--+		resultobj = SWIG_AppendOutput(resultobj, buff);
-- 	}
-- }
-- 
--@@ -1076,7 +1076,7 @@ typedef uint32_t fdt32_t;
-- 
-- %typemap(argout) int *depth {
--         PyObject *val = Py_BuildValue("i", *arg$argnum);
---        resultobj = SWIG_Python_AppendOutput(resultobj, val);
--+        resultobj = SWIG_AppendOutput(resultobj, val);
-- }
-- 
-- %apply int *depth { int *depth };
--@@ -1092,7 +1092,7 @@ typedef uint32_t fdt32_t;
--            if (PyTuple_GET_SIZE(resultobj) == 0)
--               resultobj = val;
--            else
---              resultobj = SWIG_Python_AppendOutput(resultobj, val);
--+              resultobj = SWIG_AppendOutput(resultobj, val);
--         }
-- }
-- 
---- 
--2.47.0
--
 diff --git a/recipes-bsp/u-boot/u-boot-common.inc b/recipes-bsp/u-boot/u-boot-common.inc
-index fe3afb3..fc86024 100644
+index fc86024..fd1eab5 100644
 --- a/recipes-bsp/u-boot/u-boot-common.inc
 +++ b/recipes-bsp/u-boot/u-boot-common.inc
-@@ -12,10 +12,9 @@ PE = "1"
+@@ -12,9 +12,9 @@ PE = "1"
  
  # We use the revision in order to avoid having to fetch it from the
  # repo during parse
--SRCREV = "f919c3a889f0ec7d63a48b5d0ed064386b0980bd"
-+SRCREV = "6d41f0a39d6423c8e57e92ebbe9f8c0333a63f72"
+-SRCREV = "6d41f0a39d6423c8e57e92ebbe9f8c0333a63f72"
++SRCREV = "34820924edbc4ec7803eb89d9852f4b870fa760a"
  
- SRC_URI = "git://source.denx.de/u-boot/u-boot.git;protocol=https;branch=master"
--SRC_URI += "file://0001-scripts-dtc-pylibfdt-libfdt.i_shipped-Use-SWIG_Appen.patch"
+-SRC_URI = "git://source.denx.de/u-boot/u-boot.git;protocol=https;branch=master"
++SRC_URI = "git://source.denx.de/u-boot/u-boot.git;protocol=https;branch=master;tag=v${PV}"
  
  S = "${WORKDIR}/git"
  B = "${WORKDIR}/build"
-diff --git a/recipes-bsp/u-boot/u-boot-tools_2024.10.bb b/recipes-bsp/u-boot/u-boot-tools_2025.01.bb
+diff --git a/recipes-bsp/u-boot/u-boot-tools_2025.01.bb b/recipes-bsp/u-boot/u-boot-tools_2025.04.bb
 similarity index 100%
-rename from recipes-bsp/u-boot/u-boot-tools_2024.10.bb
-rename to recipes-bsp/u-boot/u-boot-tools_2025.01.bb
-diff --git a/recipes-bsp/u-boot/u-boot_2024.10.bb b/recipes-bsp/u-boot/u-boot_2025.01.bb
+rename from recipes-bsp/u-boot/u-boot-tools_2025.01.bb
+rename to recipes-bsp/u-boot/u-boot-tools_2025.04.bb
+diff --git a/recipes-bsp/u-boot/u-boot_2025.01.bb b/recipes-bsp/u-boot/u-boot_2025.04.bb
 similarity index 100%
-rename from recipes-bsp/u-boot/u-boot_2024.10.bb
-rename to recipes-bsp/u-boot/u-boot_2025.01.bb
+rename from recipes-bsp/u-boot/u-boot_2025.01.bb
+rename to recipes-bsp/u-boot/u-boot_2025.04.bb
 -- 
 2.43.0
 
