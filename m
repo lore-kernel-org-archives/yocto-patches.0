@@ -2,60 +2,60 @@ Return-Path: <tim.orling@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48498C5B543
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51B63C5B552
 	for <webhook@archiver.kernel.org>; Thu, 29 May 2025 02:42:13 +0000 (UTC)
-Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
- by mx.groups.io with SMTP id smtpd.web11.12376.1748486531277819735
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+ by mx.groups.io with SMTP id smtpd.web11.12373.1748486525392667092
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 28 May 2025 19:42:11 -0700
+ Wed, 28 May 2025 19:42:05 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=OUk9kGZ9;
- spf=pass (domain: konsulko.com, ip: 209.85.214.193, mailfrom: tim.orling@konsulko.com)
-Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-234b9dfb842so4585145ad.1
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 28 May 2025 19:42:11 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=Rgre8Ton;
+ spf=pass (domain: konsulko.com, ip: 209.85.214.170, mailfrom: tim.orling@konsulko.com)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-22e16234307so4344215ad.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 28 May 2025 19:42:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1748486530; x=1749091330; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1748486524; x=1749091324; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=HqhtjyrS+M3o4+O5eJGz5Mg9LNrVYXN7HjTR/DsYrW4=;
-        b=OUk9kGZ99yW6pzXm2XngPCUxizvBmkMhmz9JKftwS0QuvzzOHx2bKtzQoXT7kCSa6h
-         wVWhVpX7FlCUlqEA0Fu+mRyKEnYqk3/Ct7UeoSdtxksvea6PK1CZIN3XmUnpFULWhJr7
-         wJvAXUaAzD0/0DfrgHDUdGaHKOX3Hqk/GgFsg=
+        bh=gky7hq0hMD2rSCMS84DYtN2E+ae7KB2HBXN4sYS0RK8=;
+        b=Rgre8TonBweqcM/Ekg0aq9+eEEDScjgxOoJdVaSEg+Mq99M15hGIE4gH6V6Zgvww0J
+         PJTvkKfAl1sHl72U7l7z9MLnFOWT9aGoL8yst6rgFO4LJ5k9IuKhH58kxEUz2r2NmltN
+         i23Glyuu4inYstrPXSYB467wdgQtx5NA++v+k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748486530; x=1749091330;
+        d=1e100.net; s=20230601; t=1748486524; x=1749091324;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HqhtjyrS+M3o4+O5eJGz5Mg9LNrVYXN7HjTR/DsYrW4=;
-        b=GASpFYzseDxGXx8ERaqm2bzdtHJG0+9XiHxnQ5qs+JcbD+/x1ZC7b+4WKgLhtWxWSB
-         8AaXfF1C2ewjhZWrjlws7vb2PVVMASn7Omj+ghhnKc6OUinrOW+Bx3w3vIYm3F4SD7Th
-         Z4YgObPYEVyAFR2xNQDnU9VBXg5/cw2mU6ri+8jcf86emT4KELmcigu7TjbTgXp0/KA5
-         S+EnaUo2algtm62C88t+9tixSaxDZSPwT1BbZCnmJHJyYU/VQe1tPXluKcajIhg73Lyd
-         BJ4LH1HO8WK9yeXAQXXh+U8EiJE4X7wjL3ERYonUD4MDL0ZsagHWPaW51C7sKJHfiKQj
-         nxFA==
-X-Gm-Message-State: AOJu0YzI593/+//BD9PwFyFjp1aRru0fDalh9K1ha7gdHIvne9wa4KMo
-	UGhcthHsqLoNrhEAgq5uMSzqyVgNgTmquXII99oLc5aqB2IiEBp0zsJDRVaslVkX52GBWY2ofU9
-	i0nja81DIVnTw
-X-Gm-Gg: ASbGncud5ClP7dymCQ0nLsoSpKq3SncSfOIVhAMAu+Ewb63SRN3SVGIbZ0zWzB//NFD
-	aT64D25nMAeKIgwQIQl3/D/mXLidXBis+OaCdg+dvmmJSirhn4k5F/k1XmehEtFzcIWoLnaLRgD
-	KQIveqgx6qw+96arQSd2Nl1z7aqtdfxcblfjnhOWFfdk9fR9znWFQf8NRyrkfLOJoEhjjqORrzY
-	GobrJcUDUmdteedlvIg5W8SX3T5rHZ90zui9Kk9HPMTLd8aPpfz5hFIyPY73XfhvDdzFAyylqOP
-	PCMP4MSNSzujbcbK0WbCUearCXlj/nsseLofS+YZUVdV2YttxZXrgt6XaKCY+xHsvCn3R748pQF
-	BTJUtJ6sLUowetGI=
-X-Google-Smtp-Source: AGHT+IFkIxHVR0olNpwf+5xRBw6Y3aI3YEnGDSlLB9hASz0M8vc5UF9AYuD1T5KW/dB6FscTS1cPPA==
-X-Received: by 2002:a17:902:cf01:b0:234:bca7:2920 with SMTP id d9443c01a7336-234bca735b4mr104064845ad.24.1748486530265;
-        Wed, 28 May 2025 19:42:10 -0700 (PDT)
+        bh=gky7hq0hMD2rSCMS84DYtN2E+ae7KB2HBXN4sYS0RK8=;
+        b=i92zK/aRRcN6ppI9JkCVwHCCb8VrWT6BZrQg3cdz5HFNuGa8oV9/WvVvokgz+y1JIl
+         jJ7AD1mb0n2/CM0IerCzBOpi/1H1XhXH+niEYPsA4cJZHa1sz7dPoBp8gEG8zu3wDyq7
+         AR/yB2TcZlBCcHxp34y7SrAfhA3g95HGNmKy/q8otW2aPjwA/kC+PdX26cpisNZfNGEp
+         6mThIvARTCiavvjSObhXG4fd0QgF1ggO+V9LGcQs9KVZiFFpZOxKmtv6IcVUjePA0Tj4
+         ym6lE8Vlk36Grc9oBQ3+8f5+3cDO3yNdM1aQIa0KT3DcNUsV/634KdUiGXjYIoSjDssy
+         Qjuw==
+X-Gm-Message-State: AOJu0YwIwrmd7DicqF4ltdSZ77mtlBtRoToSqxINsMSpNhz6jE3T5oi6
+	leMf5xJJqlrr2RxgSBYSLoIoGVJhkYOy3vByB2YA6BuCTjowmVgc26Axcc8ZIEyQ+VLULR8Z3AA
+	uBQiHM8IPig==
+X-Gm-Gg: ASbGnct/OvjIVoPSfvofD+/mhzvQhguupb8/gNCKocCet+bPV+4yvKekmqWr64ZilKW
+	/9QY/AafR8LvT3LTZRQvXKDOv837LE0hmKWl6o07eptn+JpMkfHn03s3u/zd/egLRpBlDrRvnYi
+	C6nPu+o9DuoWuo03ONZKIpibbBwRry5qvHIh+5VIbod6GXyjv4vLcyW8ZSSwOIBn6J0HLtFjPWo
+	nS3DCxXhjNGMncR4vFFcMBvv42MZXBbMUoUVYAMYGGYJ7sILQczotdi8fgaSkyaHmfzkkIjcOYl
+	PizvAv9Uoubd90TIthmVU6BfsJbuUq2Byc7LYUjLqbI8prZN+pgkLQizSMt9C0/I8kIOg3Akdkq
+	RU5LxWOXccmP0BTE=
+X-Google-Smtp-Source: AGHT+IF4iG4EKwrDpbFWmYCnhbXJCcxuMeLFjq/9suotXTdFW2g0YFjcVy35juuTcyj00+YPVfwMWA==
+X-Received: by 2002:a17:902:d50d:b0:233:d3e7:6fd6 with SMTP id d9443c01a7336-234f6a08ad2mr29560745ad.19.1748486524052;
+        Wed, 28 May 2025 19:42:04 -0700 (PDT)
 Received: from localhost (c-98-232-159-17.hsd1.or.comcast.net. [98.232.159.17])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23506cf5453sm2754385ad.183.2025.05.28.19.42.09
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23506bc8880sm2876045ad.22.2025.05.28.19.42.03
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 May 2025 19:42:09 -0700 (PDT)
+        Wed, 28 May 2025 19:42:03 -0700 (PDT)
 From: tim.orling@konsulko.com
 To: yocto-patches@lists.yoctoproject.org
-Subject: [PATCH 07/11] u-boot: Update Upstream-Status
-Date: Wed, 28 May 2025 19:41:34 -0700
-Message-ID: <7afb006c0749452e3e393e230460336cc4b10b3e.1748486276.git.tim.orling@konsulko.com>
+Subject: [PATCH 04/11] u-boot: Ensure we use BFD as linker even if using GCC for it
+Date: Wed, 28 May 2025 19:41:31 -0700
+Message-ID: <11e70fb42b3ad26b582a17291458a26adc7c7bb6.1748486276.git.tim.orling@konsulko.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1748486276.git.tim.orling@konsulko.com>
 References: <cover.1748486276.git.tim.orling@konsulko.com>
@@ -65,37 +65,40 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Thu, 29 May 2025 02:42:13 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1591
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1588
 
-From: Fabio Estevam <festevam@denx.de>
+From: Otavio Salvador <otavio@ossystems.com.br>
 
-0001-scripts-dtc-pylibfdt-libfdt.i_shipped-Use-SWIG_Appen.patch is now
-applied in U-Boot upstream.
+If we are using 'ld-is-gold' as DISTRO_FEATURE, the U-Boot Makefile has
+mechanisms to ensure that we use BFD as linker. However, this does not
+work for the GCC when it is used as linking tool.
 
-Update the Upstream-Status accordingly.
+To support that, we added explicit BFD use whenever we have the
+DISTRO_FEATURE feature enabled.
 
-(From OE-Core rev: 718f97d90b13c190e2b1852447764c31464ebdf1)
+(From OE-Core rev: d36ee7a87c0d89b2820eea4bfcdae342adc75019)
 
-Signed-off-by: Fabio Estevam <festevam@denx.de>
+Signed-off-by: Otavio Salvador <otavio@ossystems.com.br>
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
 Signed-off-by: Tim Orling <tim.orling@konsulko.com>
 ---
- ...1-scripts-dtc-pylibfdt-libfdt.i_shipped-Use-SWIG_Appen.patch | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ recipes-bsp/u-boot/u-boot.inc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/recipes-bsp/u-boot/files/0001-scripts-dtc-pylibfdt-libfdt.i_shipped-Use-SWIG_Appen.patch b/recipes-bsp/u-boot/files/0001-scripts-dtc-pylibfdt-libfdt.i_shipped-Use-SWIG_Appen.patch
-index 9cd2cee..2eeef99 100644
---- a/recipes-bsp/u-boot/files/0001-scripts-dtc-pylibfdt-libfdt.i_shipped-Use-SWIG_Appen.patch
-+++ b/recipes-bsp/u-boot/files/0001-scripts-dtc-pylibfdt-libfdt.i_shipped-Use-SWIG_Appen.patch
-@@ -17,7 +17,7 @@ since swig 4.3.0.
- |  5581 |     resultobj = SWIG_Python_AppendOutput(resultobj, val);
- |       |                 ^~~~~~~~~~~~~~~~~~~~~~~~
+diff --git a/recipes-bsp/u-boot/u-boot.inc b/recipes-bsp/u-boot/u-boot.inc
+index 6f1170f..9b612e1 100644
+--- a/recipes-bsp/u-boot/u-boot.inc
++++ b/recipes-bsp/u-boot/u-boot.inc
+@@ -9,7 +9,8 @@ inherit uboot-config uboot-extlinux-config uboot-sign deploy python3native kerne
  
--Upstream-Status: Submitted
-+Upstream-Status: Backport [https://github.com/u-boot/u-boot/commit/a63456b9191fae2fe49f4b121e025792022e3950]
+ DEPENDS += "swig-native"
  
- Signed-off-by: Markus Volk <f_l_k@t-online.de>
- ---
+-EXTRA_OEMAKE = 'CROSS_COMPILE=${TARGET_PREFIX} CC="${TARGET_PREFIX}gcc ${TOOLCHAIN_OPTIONS} ${DEBUG_PREFIX_MAP}" V=1'
++EXTRA_OEMAKE = 'CROSS_COMPILE=${TARGET_PREFIX} V=1'
++EXTRA_OEMAKE += 'CC="${TARGET_PREFIX}gcc ${TOOLCHAIN_OPTIONS} ${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', ' -fuse-ld=bfd ', '', d)} ${DEBUG_PREFIX_MAP}"'
+ EXTRA_OEMAKE += 'HOSTCC="${BUILD_CC} ${BUILD_CFLAGS} ${BUILD_LDFLAGS}"'
+ EXTRA_OEMAKE += 'STAGING_INCDIR=${STAGING_INCDIR_NATIVE} STAGING_LIBDIR=${STAGING_LIBDIR_NATIVE}'
+ 
 -- 
 2.43.0
 
