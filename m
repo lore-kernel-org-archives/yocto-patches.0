@@ -2,165 +2,288 @@ Return-Path: <quentin.schulz@cherry.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DF07C5AD49
-	for <webhook@archiver.kernel.org>; Mon,  2 Jun 2025 10:26:55 +0000 (UTC)
-Received: from PA4PR04CU001.outbound.protection.outlook.com (PA4PR04CU001.outbound.protection.outlook.com [40.107.162.14])
- by mx.groups.io with SMTP id smtpd.web10.46467.1748860009684630561
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64F33C5AD49
+	for <webhook@archiver.kernel.org>; Mon,  2 Jun 2025 12:22:26 +0000 (UTC)
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (DB3PR0202CU003.outbound.protection.outlook.com [52.101.84.38])
+ by mx.groups.io with SMTP id smtpd.web11.48358.1748866939589342643
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 02 Jun 2025 03:26:50 -0700
+ Mon, 02 Jun 2025 05:22:20 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@cherry.de header.s=selector1 header.b=D7mXNrrr;
- spf=pass (domain: cherry.de, ip: 40.107.162.14, mailfrom: quentin.schulz@cherry.de)
+ dkim=pass header.i=@cherry.de header.s=selector1 header.b=I3F+NmZm;
+ spf=pass (domain: cherry.de, ip: 52.101.84.38, mailfrom: quentin.schulz@cherry.de)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Q5E0Sgbtng1XvZ1nMJd8rEY8AVqsmTWM6Gerf0ArtFLaZQbP3b4F6R7dOcQKYLY2LNeMOfIG/C23KuHO2R4PcxPEtl0pIL2jiMIu9uXl4eZmZMx324sws+z0zoxXuJ3C43k7Ste9UBKWinZ2kzt3pCxRlxNq7zY7TX5IIPS8sXwaNtrrSke9npVvT891199dthJyjlrbfmkiJewoUmncBPeRrsJHvhxr5iNxD8AYRIpRdaEPKOVvWZ7dcC3yRrePdwK/F/k+YP0PXTmfZRdg1MpQbMIG5cz2sE3YA1MwciPnNPJgbyxqq5zo3t0pet/30BV03DkMc2IVcpGCiHvVxQ==
+ b=LqO3k7Z+OwyMk4XTCFRqNL+gmYnEn/42Fzx+rsCEy2AXsDtbOurcNP4DXNgHPMUM5Wd6Kp6yUfvKrfTCG+XN+0PSQRLa/7pj8h9BqW3qH3tfXTk2chbFWetFFtaAEo63O+TE6Fam22myfwYdhNCycu53x5Y3T8MstI9YCtWUKJrTQ5V0JggAqA65AciTNmdS9sf97LOvMMOG/JbJ4qktYuu/OnFx7z4j8f67MYWs0c9koO8yoRvgK8cAt09U112vklf61AnRZ/ON1cHohCH6349p6L5V8pVFgqMRuYH6VDBpk0H0ZcXHo+JtoPAUdDrM6eW3Fy6GGzLgr04BaJCKkw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZCgEmGNdg1TndpjTj7fzbbVLnISLxU31SzEikDcCej4=;
- b=G6d9ah3B312Hr+f6ppPJwlmhvwrNllmgv+8CJT/FQRSHbNX+ZvDxk8zKlyKN8gthdzP/apuV6QsCp0VQ+v35p7TfmfUB7sRiTc6YAdYgLk8nqyYGj/xhCqBFoFrP9KAt3GOPM6vIXp4K0Niepvj7rlDO382osytzqC3AsRRkiTAUEAd/rmpZh35KSZ/MjfVUDxiqdTeJAROIuktpW82eEk4/CyaJ5AT4ayPJQ2B6gBJOHB+Fe3MgwAVW2fFGHS8to0+me20gxeNFSM5noLywUgZ1/CsbYnnDahqd2nMKR1NEfzaa35kRZpc8eQjuVXIvU6Ul2gxLyBCi1+GRLcsqbQ==
+ bh=fv2JX77PRohDe6DRcjN/8Zq5NUh7OsJZXc1QPVfJvfY=;
+ b=ryRmO/Qc4zEbrOqTWeyFCghhEiDBZvSFqYUOpt72ZxYtDGcDfVry8HOZ6ugNgaAjZLofc0WoQDjeMsrHX/qxyK0U22aizg1I+rRTDbCQG+xh9sljlsKKNihoPP7mvUKleyEaaRBbNI9gOqGqz/QUUFNpAWRHZ7T7USgHb82+B0DwMwvoMr8KVSSwAIcS1v817ysnvrYvDDHq2qV93zY546ykrISo343lJQ6e+wyjZ68BM+6I+Wq0vqSKP6iU2dP9h3gkrm9Bshm02TFBQrh0jr1a7OgHNEBuwiLv5h7lQfXYnBdMXbAdikB08QRpOFWFnmfw1yXnsF5+wlq4u7f/gw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
  dkim=pass header.d=cherry.de; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZCgEmGNdg1TndpjTj7fzbbVLnISLxU31SzEikDcCej4=;
- b=D7mXNrrrlKjGCRp/PivjPHf2VFrgkGZ0Ngx8QY/gvjCyqBotBUsT30SnfHazt9/vn0qpwFRdJlfGvKOqcowdemLnxYXW//E4N9cKnzKbRa/ACNQVY4fMh/QGd+MIbyvXKgPisczsGXHtrThZmmPC5d9soqpHUoSfjgMShf+/Ngo=
+ bh=fv2JX77PRohDe6DRcjN/8Zq5NUh7OsJZXc1QPVfJvfY=;
+ b=I3F+NmZmn3FemYBK+U1WXA7J7ouR4rWFhNbvMVdC4GSSUE5g0b4Lvgt8oVHm48rgbM8+vcGsMDf+JxOhwH9WEVe9plL3dW7yKhSl2A74Vi3HkV2m8TGzSCK8FIW9t2B0zQ/N/9WRVhXyHovUm1eOKhiyIXFIenytK9JrgTzRFH8=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=cherry.de;
 Received: from AS8PR04MB8897.eurprd04.prod.outlook.com (2603:10a6:20b:42c::20)
- by AM9PR04MB7537.eurprd04.prod.outlook.com (2603:10a6:20b:282::23) with
+ by AS8PR04MB8721.eurprd04.prod.outlook.com (2603:10a6:20b:428::10) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.37; Mon, 2 Jun
- 2025 10:26:46 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.36; Mon, 2 Jun
+ 2025 12:22:15 +0000
 Received: from AS8PR04MB8897.eurprd04.prod.outlook.com
  ([fe80::35f6:bc7d:633:369a]) by AS8PR04MB8897.eurprd04.prod.outlook.com
  ([fe80::35f6:bc7d:633:369a%4]) with mapi id 15.20.8769.037; Mon, 2 Jun 2025
- 10:26:46 +0000
-Message-ID: <7f4205a2-49b8-40a8-9819-0047f891f8fa@cherry.de>
-Date: Mon, 2 Jun 2025 12:26:45 +0200
+ 12:22:15 +0000
+Message-ID: <8db48afc-fe3e-46fc-a733-1673548bb749@cherry.de>
+Date: Mon, 2 Jun 2025 14:22:12 +0200
 User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [meta-rockchip][scarthgap][PATCH 1/2] rauc-conf:
- adjust PACKAGE_ARCH only when using the demo
+Subject: Re: [yocto-patches] [PATCH 1/3] refactor mesa packageconfig
 To: yocto-patches@lists.yoctoproject.org
-References: <20250530172234.7393-1-twoerner@gmail.com>
+References: <20250530172156.7199-1-twoerner@gmail.com>
 Content-Language: en-US
 From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <20250530172234.7393-1-twoerner@gmail.com>
+In-Reply-To: <20250530172156.7199-1-twoerner@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0050.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:152::19) To AS8PR04MB8897.eurprd04.prod.outlook.com
+X-ClientProxiedBy: AS9P251CA0013.EURP251.PROD.OUTLOOK.COM
+ (2603:10a6:20b:50f::15) To AS8PR04MB8897.eurprd04.prod.outlook.com
  (2603:10a6:20b:42c::20)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|AM9PR04MB7537:EE_
-X-MS-Office365-Filtering-Correlation-Id: 751cd7d1-7c3b-4f17-651d-08dda1bff9de
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|AS8PR04MB8721:EE_
+X-MS-Office365-Filtering-Correlation-Id: 47dfb1b7-9285-482a-ed9c-08dda1d01be6
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
 X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?VkpySVhJcllxb0ZSaGphTTFsdVRXSWJ0RTVkNU15UjE2NGdHdkpmbExlVjZk?=
- =?utf-8?B?YmJmd3JBNjdIeEhqd3VnSzZhbW02a2Q2UDhONzhXNzcxY0dBK2NSamxFdjh2?=
- =?utf-8?B?OUp4TE9VM2I0dzdSTHMzbWo3YmRkNmxzT1VKR2xLV2paSHJGMkJDZ0h1YW1R?=
- =?utf-8?B?UzBIVWlJM2M3aTArMlY3SUxzTXRpb3lOYzdZWENkUDhJK3R2RThINDlzVzFl?=
- =?utf-8?B?WFJEODZpajdVelVFSkdPM1ZwbVhGSTVDSmdNUGFIZXZVb0ZUOEo1NDNra0Nw?=
- =?utf-8?B?STZlNlRRcSt3Rloxa3k0SENuOXlxeFpkUE1PcHNjUnp0NVBlbms0TEtCa2oz?=
- =?utf-8?B?TkQvYTNRT2JZZjRBL1FobW9QZlUxa2JyZWk0MnNjSWRjUEhoeTZNQ095SzRp?=
- =?utf-8?B?UGVrMDNqSE9ieG93aGp6TFJjanRoNkdqWHhiYVhGdmUyY3A0WkVBZGMyMG5M?=
- =?utf-8?B?K0dzbUZPNkJqUmNSZVpKdW1Xb1pqMXZnbmZqUkFWV0Q4QU9mSEpMc3FzaUNm?=
- =?utf-8?B?SmVVU0xkRC9WaEh5RUE0dTNqK1N3TnFhdmprdzBKc0FObS9WK1VIcExrS1Zl?=
- =?utf-8?B?M0p2aXZ3cGloZW9UN1pOWkhOT3IxNDBDemtzTTlwemlBZVNhY1phRVozbkd0?=
- =?utf-8?B?cnFLYXp5bVhFcnhnN25aMHVVWHN4WGQ1TytVN09sTHZPSGM1Z3pLK0YyY3pn?=
- =?utf-8?B?L21SczRUWTFaMDUycmRGb2RGeElGVTlQRCtESXBaZ1dlMEs4Y3RYT2RTU3ln?=
- =?utf-8?B?T1U2cDA2eE45L1VhV0thdDZlc2xPeEo2V2hab0Q1QXRvdjlpVk1XdmQrL3o1?=
- =?utf-8?B?MHBSRHNLTHZmcjM5NS9sZnZ4azJ2blFzZnVHUExlQzRsdG1MZmE0OXo3ajJ0?=
- =?utf-8?B?V1E1aFExUVBWaitvYUJWZTJ0QjdxMXdNaEV6dDJ6R0o0ZkRDN2YwVXFRWWhm?=
- =?utf-8?B?OGFIU1pmYy9RRGgyR2piaG9EZEdQa09FampzcWtvSzVMSHo1bHRiL2gvRWlU?=
- =?utf-8?B?aXU4R2dubi9ta3dPb1EwS3NKblRHQy9rVTdhNVBUT2tESFQ0WHdZczZXSTdv?=
- =?utf-8?B?czI1b0hRdkVVWWUwTzJlTVBGa3E1YnBiTjZ1Yjc1d2JDNFBvZFlSN1FjMXNp?=
- =?utf-8?B?RlN3Z0RBalpWOUpJR2RFMkRFNjNuS0pkaWFDcDBSNmpDYXJEYzBWbVBNaDUx?=
- =?utf-8?B?eG5OL0d2cW9Mc2hkUjFlMXVoWnJGaE4vVHJqZGIrQ21tY05HWkNJMWYzd3Fz?=
- =?utf-8?B?OCtRa0RJb3hpTFdJb05uUWNHMFhYYy9xTTR2RFRGaTI5MDRub01YUTVQSVY1?=
- =?utf-8?B?V0hveHdDZDU2RUJaL1Q3RGt4RUIvZmJ4czhGdld1ZGpuNnpXUVVlMmx1WWZ2?=
- =?utf-8?B?WWR1ZWxGTWFTUy9RdjNudy82dTdEZ1VQNkZRZFZTOTYrSGtEa0k1VFZGbkhE?=
- =?utf-8?B?Z29WZjZNTTdJdVR6VXgzU2Q4ako4eW1iTDZFMmsvbUxhZGRTTEM3WEJtMW5L?=
- =?utf-8?B?YitmdGhIVTZFVCt5VGVqdWwzbTViV1k5RzR3Ry9jVVRtbEZSTXpHVmNBK0hR?=
- =?utf-8?B?REFnd0VVNGRRMFR3djk3dDJCOXVPTVRrd213M1h3REtFcHhSU0xDcHk0YWNn?=
- =?utf-8?B?SXFCeE1pSjRpUlhmaGF1cGowNmpGdGtqQVNxRGJUb092dExZVkhuRDhpelBV?=
- =?utf-8?B?SVN0N1Eza0EzdVVFT3U0ZjFaelRMQmhrRlQzZ2U1MU5TSDNCQ0l0VFhpZkVL?=
- =?utf-8?B?ZC9oWE94c2dlUmZYUFZHcUExNElmcU1JOGRaL1FPRUozUEVOVWNVcGtTODB6?=
- =?utf-8?B?bEx5WFpiTDB5NWJSZU1MRW95UEZOcllDMVhZREM0T2NPQitqajVIUUZYSWlD?=
- =?utf-8?B?ZEtSZXFrOFJoK280aTRYNXFRN2NvSFZpQ1ZKRjJxam1Temd0RkU1d0hiczBm?=
- =?utf-8?Q?R45p3qVb8rg=3D?=
+	=?utf-8?B?MWlQVE92WE9ubVFab2N4UzJKTVlmM1NzN0tUcy9DRHZ3SHc2WXJUZG8yZFV3?=
+ =?utf-8?B?UGRkMDVMNTNEc3JiVm5kRlZSdkVZRjhUd3NNL25ITTZWSjJlM21MSU5ic2tT?=
+ =?utf-8?B?NkwzUG0vSFlBOHpnL3pmVFZwVThWWC82alMvdW5RY3diOUZPN1F4cTJFQlow?=
+ =?utf-8?B?bXRjSEl6dER5WEEvVnhoRElqZnNtRzdDa1ZOcEcyNXRSQWY5VFNRcjhzNStR?=
+ =?utf-8?B?d0VvZGhGbVVLU0IrOG1OQk56NEEzNGc3anBRb0VjdGQ4dDFYdXVQYWk3V2RE?=
+ =?utf-8?B?eDRxWHJGcHU2U2VranV2eForcW8vNDNLamIxUWtUUnV6TDZQSVo1T0JqbXhP?=
+ =?utf-8?B?dEdTL05FTXZ5eHRZOHd0NFEvMmo0Z3VMOWRrTjdKRnBTTUc3Z3QxQ1N5emRB?=
+ =?utf-8?B?ZkUwcXRaZC9tYUpqcEkrLzIzY0tac1JVdndLNHN1S2dhcVlqL0tvcDYzbHNJ?=
+ =?utf-8?B?WkVySENHZkZpeFc3a1dpYnJKT2JUVkZxcmxBWk9iRzB2ZXJ5TzJ2YXRWVmpG?=
+ =?utf-8?B?YlJIWWhjTG9HMVZNQWNLR2NQZ0RUYUVobjMvaFc5ZCtaMGJPbFp3NStSUVc0?=
+ =?utf-8?B?a0dSVFFhMmczd2lBWkt0b1hIM054eUxWclg5TDBXWnlSNDZyVHdFREhaNDF4?=
+ =?utf-8?B?OCtUMWN6MlNxdktTVm1YVjBqSGFlc0srVnlGakdXS2FUZ01TWWg5eEFnUzVy?=
+ =?utf-8?B?clZ3Rm9ZTGM1N0hQQVdyTFFUN3AzK1RtTnJHYkdSRmNYa2U4SFFPRksyYTVs?=
+ =?utf-8?B?R0lEKzhPUTU0dGZMZEcxRXM4dnBYUnNtTXNocEtqL0lkbjhtNHhTSkxpa3RN?=
+ =?utf-8?B?VzN3ZnhPMGlOZVk2ZmxJZmlTdml5akJhYzRzL3kwVTVQWHVYYU9CelZncUJa?=
+ =?utf-8?B?RGIxYy9lVEdOYisxSTlsTDM2RjRVclRsLytZTUhPd21mWEpTUnJEenJzSlhk?=
+ =?utf-8?B?MHl0UWl3bHJ3U3lZVHEvQ0syOXNGcVRlY010STJ0RlhIL0xVcytrbWp6cU9T?=
+ =?utf-8?B?ZWhGeXdxTlhtSDI0SUw5cW9ocnFWOTRDc3JjQVhBdDR1MTVBZHNJdGRyY0dt?=
+ =?utf-8?B?QVE4Q24xL0FONWNVRTVvWG9PRGZrT0dRMVJQT2hwaDJQMTI4SlpzeWQ1aTJ4?=
+ =?utf-8?B?aUdpMG83cHhZUmt0QmNqTlJZdWlCNTBVU29sbnI4TWUydk5CcWVTOE1WQzlo?=
+ =?utf-8?B?R0pnbmh0bk1NTEc2b0ZkYmk2SE9PdFFsSFUxRWxsR2xQZ280T1RZUkJmOGJr?=
+ =?utf-8?B?M0pocWdTaS80NEhNKzRyeU9WWkFCdzU2elFiZ1RRQVY5UFo5SmZOYkJkLzBR?=
+ =?utf-8?B?V0FsRTlvYVVnSXJLMythTFI2eXBPWUQwRzRnWlIxQ1JkNi96UlpCTFJZTnBu?=
+ =?utf-8?B?MnlSMTVyWmtOalRBWVJNakMzS0h2cC9ZRmdHYmw0SklQNWdwSVBDWUxnL1du?=
+ =?utf-8?B?MzF4b0NCMVhzM0lRN3pUNFRDQVBtaS9LcUE2L2sxbWNIS2dNMXBlZXN0T3BR?=
+ =?utf-8?B?RTgwTmlEb1lkZGV5NzBnR3huZjF1UUtXM3RDV0VoYUhrZTFKL3hUMEMzb1pE?=
+ =?utf-8?B?SWM4eFpaVWpYMklFK3B0SjJ1UDFVcmFmcFJlRTlRb0RnRGJ6djRpTEFpZnhm?=
+ =?utf-8?B?dzYxMFZWb1BzTUluNUxFNmJTVjFJalI0SHVoVEhraW1Hc1VSc3VMUFh6WkFa?=
+ =?utf-8?B?dU9CZW9Ob3B5K1VzVWNCRXJEbmMrVmNqazRZL1hnSEdtbkdlTHV5Ti9nZXdH?=
+ =?utf-8?B?NjFobWxqbFV1U2MvMFdjRW80U3poUytGbTJhc2JSZjBJaytqRFU2Z1ptMGp5?=
+ =?utf-8?B?ajQyZk1zOHZNeFdPSkhxTnZSQzh3QkpBVzQ4MWpLR2FWZW43aURYdFZzVkZs?=
+ =?utf-8?B?cVZPbFBpRjdpdEk2WXFSKzM1dVlJSWgzN0FCVW14cFYySEFmaXhadkV1RmpW?=
+ =?utf-8?Q?u0b1a470u6s=3D?=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?S0dCMWYwSjdoS2dVSHEyci83THpEcTY0ZGMrWldSL0hnMll1Vkd4cnRHeWtM?=
- =?utf-8?B?MytlSkJzYnNjUVNMOERsZG54UmdWRnJldUJ3U0lSTjUrd3NkVUU4SG5aUDli?=
- =?utf-8?B?ejRudVBJV2wvelpRNWZkWnNkTkZ5T1NKQ1NIakowZzdtWVRickZZYXQ4OTBQ?=
- =?utf-8?B?THBrRklQTWVwVXZra3pyNjZCR1ZHTXZSMU1iMEViNmRVQ0VOc1Bib1ZmbWxj?=
- =?utf-8?B?Vm16T05VOWcxRzQ0eUhkeUhlb0NrYSsxU3hwbWtQY1MzbXkyanVwZjFPSWt5?=
- =?utf-8?B?K2FQNUhSUTM1TjVleXI3dFRodi9aTVZVQVNnOWtXZTYxSUFOdlJGUWk5cjY3?=
- =?utf-8?B?UHJaTmpFYit0WU55K2NNaUJIVWJhakVBcVZiUkU0eSszdTZQUW1YZk51STFK?=
- =?utf-8?B?U3pDTTRwSlovVyszUy9TbWh0bUtyS1JraHBCbmNnZjVzdnhhMitSZy95UzNn?=
- =?utf-8?B?QmZwZGZRU0RGdStvaVB6Q2p4QWpYOC95a0VuTkNUbGUvKzZjb2dpMkUzRlVw?=
- =?utf-8?B?ejBiUFl5Ukh5OHEvQlFPV1NmTEVDVTc4YmtpdjFvTXRCWnZ2SVBIdEowSTBV?=
- =?utf-8?B?Mm5Zb0dyWHZodHpNbjdpR2JxdjdBclpFOE0rSlJ5QWhOekZWUnduL0d3dHo1?=
- =?utf-8?B?eTZvNUxFVTNhNDJEMDl1U3ZobFpjelFUQVYrMzhrekEybzIrWEZLZkZjWVpQ?=
- =?utf-8?B?Vk81dkpOV1lZVE9TaEl5V2VmY1haQlYySjhFY202OGdPeU4wZ0Z2QTRoUndX?=
- =?utf-8?B?cUNLeTlGaHEzS0Y0UFA4RE5JQU1XZUI1RS9mMjB2TTdsTkxrNkxROUxZcEpZ?=
- =?utf-8?B?YWJTZCt5bURVVkhWVDlQdDNVUXUvc0lTMzNkaEk3RVpIUkxWMG11bzVOd2p5?=
- =?utf-8?B?S0E1ZFhIOXN3SC9ISHlzMWJhemkxRlZyQ2NmODdPVy9pdVZoZ0hMWlNLN3Uw?=
- =?utf-8?B?ZFpwbDVaNkFlRUFEZEQrT0RKMjB6N0N5eTlSQXNPQko5QXNnR0lZd0ZqRWMz?=
- =?utf-8?B?WGpFWVR5N2ZBV2JsRzByMjNJdUVoTEg2VHd3ZlJxaWlXYk9Kd1NQR3VmUHJK?=
- =?utf-8?B?bTNlZWtMdUhGQlBmQWcvaCtWeUhGVE1jY0lmTTlvb0VReXlya1pRdWV5Q3Ju?=
- =?utf-8?B?Z3NZOHZ4cmxsaEV5WDNad0ZwYkpSWXE1QVByUXcvQmFMK1RuUTRqNkNoYkVN?=
- =?utf-8?B?ckZvZVBKN1FkMUh3SjZMWlV5MDJTQnNQYUIyNXBCZUsrRUZ4M3NCTmg2S0My?=
- =?utf-8?B?dmlKWk42WGtxY3BlcU1ndlRJdTFUUHVNZTJkRmNJUUMrbS8xeGJsMXZOZTFF?=
- =?utf-8?B?UmJaV0tWc1FSa0J3RXg4TXMrd3dwa1QwbVp1Skd4TVdmTzcrVFdhaVUya05i?=
- =?utf-8?B?d3VmWmdzNlpTZzRmUWdBOERYRkRyRmZnb080UEszVzJTY2RIcmRPdGJJMzlY?=
- =?utf-8?B?Vmc0eDNZYWNyc1hLamZnV3h3N09oc3hWdEJITEhJUWY1WnFXU0RBTmk4YUlC?=
- =?utf-8?B?RjNsd3hkTlAyMnZxeGJCOE9Ob3pGTnN1QVFCcXc2b2dxM3ZOYkZucVV3RUFt?=
- =?utf-8?B?WElFZFFTbEw1RUgxRkhOYTRPU2J5TVU5cW5GUzNILzFxbG1XcnIvNENSL0Fp?=
- =?utf-8?B?OTVPemxpb044akw1MStrNEQ5RG9MckhLK3ZpTmFEUDBwalFhY1VoRC9zSWZ4?=
- =?utf-8?B?cmw3eVd5d3o4Z2N0U1pPZi9qTm1pRTFPVE9uTWNJVFJpcnJTNlhpeU1Yb2ds?=
- =?utf-8?B?dCtUL2w3T1ZGdVNOTUdUbkxQdmNGejRIVFNyaUZjR2FXQTMvZ0xPZUQ2MktW?=
- =?utf-8?B?c2tIbjhmcHBVZks3eUVTdWVHK1dFWGRpU3dBS0ZtQjljSHV6aUpWd09jYnNx?=
- =?utf-8?B?THhGTDZoN2ljRG5PU284cmhCWUc1dVJZUUVlZTg2VzlZUjZDSFZWS0lWZUxj?=
- =?utf-8?B?RUtnYXMxYXVMSDFNSE1FdllRdEo5clBSbzVsNDZ3NmRNYVhyT0Q0ejlpb3ly?=
- =?utf-8?B?WWJDWGZObUhBTVdhSURXSWI0YitDbk14aHZvMEVnZVo2Qkp1RCttOEpVS1ZP?=
- =?utf-8?B?dEplbTQyMTFOc0J6dFdvdzBBS0JQUEdNOExoeS9nK3V6Q3VkQjh2OGxMZzB0?=
- =?utf-8?B?U1hkd01FdVBFOEJ5T3YwdVJab0F1bUZHYkNzOE84clVRV2lvdFJPR3pMcWZY?=
- =?utf-8?B?cXc9PQ==?=
+	=?utf-8?B?cEhZbjZLemVwaDgwZVNhMWhJWFVSemh6eTlHWGZuM255c29CNkhtVGlOMnM4?=
+ =?utf-8?B?U09LODRrN0JmVVFBNFFVUWlXWE1hdUtKOWpXdEFBaTNRc0xlY1RoUDVQT08x?=
+ =?utf-8?B?MEN5OXMyRkNoT2ZRSzdOUVRtaWd1NGN1dThGbUx0T1FTK1c0NE1oTUU3REo2?=
+ =?utf-8?B?VWNPOGJ5ejJ0YjVWV3pxUy9CeThPcmFaUmprTjBDc3FhbTg1UG41UFhNSlpw?=
+ =?utf-8?B?bTFuM0JncG9scW1OOWM5cmJsTlVTMGJBNjhadjNmNWhuemxZWjhlaDlBLzJN?=
+ =?utf-8?B?R212RE1rSTB3RUw2SnJpeEZFaFVteHkraDBuTFZOUmkvbDBBRC9YM1pwelhx?=
+ =?utf-8?B?TGxIY2FVUUNZc2JXWi9ocXJVNVEydUFjSUpXUFVYVG43N200RkhZMkI3My9O?=
+ =?utf-8?B?Uy9pYncxRUhKaVlQbEp0Y2wzTFdFRk5aUVJuUFphS242WHBENTVrcDNOZTFQ?=
+ =?utf-8?B?bkdPc0VlNFh5TWZoSlB1UnBtQVJiS1ZkbEJhMVZEQnFYM3lKUGZBOEU0bW9E?=
+ =?utf-8?B?WU93YldMRTZVYkU2aDhRRG45VGppYXhNbHVHM0NaYUt2YnRzY25wSkdIYkxP?=
+ =?utf-8?B?cmhibVB6K3dRVjdEQmRNS1RtNkU5RE9EekFwOFJtV2EzSStmT083dUMvTjQw?=
+ =?utf-8?B?REtxYk1MSWdOa0VaOWc2eGVEVGZQUk54c2U2Z0RXZmVYa0Fqd3BxOTV5eWpV?=
+ =?utf-8?B?bjZaRUZPTUZZZ1ZqQ053QnYwTXY3VGJac1Z6Sitxb2xBRjBFdXQ3a1U4blJZ?=
+ =?utf-8?B?RXIrdERxc0pDUEhoNUMwMmdlUStRUjZ2c1N3WStHTFV1MWF1WHdNTnFhYkJm?=
+ =?utf-8?B?b1lhOUhJdVhheWtWdzlrUXdBckRzSjRNK0w2Q3k4NlJVWVJpUHpvRVRKa3RX?=
+ =?utf-8?B?TkNFUk12dlpXbUliSUkya1hORTUxQXF1ekVlcDFqTlg4RzlTOHBoTDVubVJk?=
+ =?utf-8?B?RE5nOExRZmZpUkRXYUMrNGdpV1Mwb25hRjNUNUZRUURaSlB5YmFzdDRZdENK?=
+ =?utf-8?B?b2JaazVSWkgrNnR1VjltRDg0WmlVQlhVWXFYcDVpanVDaXVEMk8vbDFMM3o1?=
+ =?utf-8?B?eDVrbmVNQUgwZWlLM1ZzZ3dwY3VvQWdCdDYrdkt1ZFNmQzA5QXQxdEgxbjhr?=
+ =?utf-8?B?MlRyamh5REhHajZnSXNKUHZUcWxlNzRPMmtPUnA0YjFFd2hnMmVpclczdkV3?=
+ =?utf-8?B?ei9oRFhpOUMwRVN5K1pEVVBtL0pzL1dZSkpPSXVsdTZXNWVPc1F3cHlSaWo4?=
+ =?utf-8?B?K1IybzVyS00xeW1HNHNMVlc1RVZ5TjZYOXB5eVEwUUwxZExIWXBXOUxNaDl6?=
+ =?utf-8?B?NzEwU2tJdHRVdVFHQTgySlFkTmdpenRiS0F5cmZZWjhWbzJEdHNRalpQaVBY?=
+ =?utf-8?B?OXdxd0crblpVaFM2YWdrS3czMTkydUVhYXIrc1IxRXVBWHpORFVYZnpIMUJn?=
+ =?utf-8?B?UDF2MnV1MU8xR2RBYzJ4c08xdXVwbEFyUXpGV2hyVXNlTlpRM1dXYVVsSUVB?=
+ =?utf-8?B?Y2FYY2l6a0VRd0t6VzF5Znc4UndSY3JKSTB0R21aOEMwTWg2eDVjYVI3YkZo?=
+ =?utf-8?B?THBGa2ZWK0pIT2dwOHYweW5uTVZ1aDd6dlROMW1OazNxVXVsWDgrVW0vWFZV?=
+ =?utf-8?B?NjJkZTdBSmtBU1pnaFBnWGJqY2JJdjA4ZlRnTEJVVzMvckQ2NG9sQWUzWGtV?=
+ =?utf-8?B?VDhHOXR2Z1Q2bTFnelJObjA3bmxZNWFEbjhnOUtzemhOKzhzMEFyTGMrSUhv?=
+ =?utf-8?B?SE5nWFdvUmhFTUowR1ErcXJGVTdWSTQrZHRrKzQ3THRIeTFYaW0rbmRXR1NW?=
+ =?utf-8?B?dTRtMzgvNmpOanNneVZKcHlaQW83N25TZ2lPNHVkMGNTTS9aaGNIdGNrTHFB?=
+ =?utf-8?B?K1daTmI1d2srS05FRXJuZnBZa3kwL1JDVDZ2ZGhESm5RRE1Vd0ZlbXRuSFhT?=
+ =?utf-8?B?NDd3czB4S3IrazVqdlZhUmNkV0gxZG94REw3eFlsRlpDckZ2NGhmSGNnRmwx?=
+ =?utf-8?B?aHBxUmdEQUt4ejZ5Z1NCNFAvL1B6UzdoWWlFN3BMZ1ZZZUlkbjR5aG5FRUZL?=
+ =?utf-8?B?cXdmQUg1U2V1VlFhd1lsQ3UzWHYxVlg2b3ZlTS9JRTU2b1UwenJ4OUo4RmtK?=
+ =?utf-8?B?Vk5nUU03Sk5GWUtMNExSQjBYRFpaUWpFT0k3eWJhLy9mRlZOcTJDcm1MUkU2?=
+ =?utf-8?B?Tnc9PQ==?=
 X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: 751cd7d1-7c3b-4f17-651d-08dda1bff9de
+X-MS-Exchange-CrossTenant-Network-Message-Id: 47dfb1b7-9285-482a-ed9c-08dda1d01be6
 X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8897.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jun 2025 10:26:46.0918
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jun 2025 12:22:15.0930
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0LNrJ7BsdoYyj9i2tVO6pz/dILoq4TT+PPQNBLtcbitun8vqj+9jNpWo6K6LxTxcWxSjWyaEjnLd+/+Y19smZauvMIoqxJ+pxXXdzJyZsko=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB7537
+X-MS-Exchange-CrossTenant-UserPrincipalName: boqDDFQy3tzs6NSGjnqQI7kd2A7stX8tEl+XJPmckBCDs3blVmfKeC43FkOk4zVK42CkzjfheXxpAgfvflRDiqk6bHgxqc4j1nSeSeNrnSU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8721
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 02 Jun 2025 10:26:55 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1607
+ <yocto-patches@lists.yoctoproject.org>; Mon, 02 Jun 2025 12:22:26 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1608
 
 Hi Trevor,
 
-On 5/30/25 7:22 PM, Trevor Woerner via lists.yoctoproject.org wrote:
-> Make setting the PACKAGE_ARCH occur only when the user has enabled the
-> rk-rauc-demo feature.
+On 5/30/25 7:21 PM, Trevor Woerner via lists.yoctoproject.org wrote:
+> Add a new variable, RK_MESA_DRIVER, to allow the user to choose which mesa
+> "driver" they want to use for their mesa backend. By default set it to either
+> "panfrost" or "lima" depending on the SoC family being used.
 > 
 > Signed-off-by: Trevor Woerner <twoerner@gmail.com>
+> ---
+>   README                              | 5 +++++
+>   conf/machine/include/px30.inc       | 1 +
+>   conf/machine/include/rk3288.inc     | 1 +
+>   conf/machine/include/rk3328.inc     | 1 +
+>   conf/machine/include/rk3399.inc     | 1 +
+>   conf/machine/include/rk3566.inc     | 1 +
+>   conf/machine/include/rk3568.inc     | 1 +
+>   conf/machine/include/rk3588s.inc    | 1 +
+>   recipes-graphics/mesa/mesa.bbappend | 9 ++-------
+>   9 files changed, 14 insertions(+), 7 deletions(-)
+> 
+> diff --git a/README b/README
+> index 9672c6ab8d5b..97d06eaefd63 100644
+> --- a/README
+> +++ b/README
+> @@ -159,6 +159,11 @@ Notes:
+>   	compatible (see Rockchip Media Process Platform (MPP) and
+>   	downstream gstreamer-rockchip plugin for those kernels).
+>   
+> +  mesa backend
+> +	Use the variable RK_MESA_DRIVER to select which mesa backend to use
+> +	for mesa. By default it is set to either "panfrost" or "lima"
+> +	depending on SoC.
+> +
 
-Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
+I don't think it makes sense to make it user modifiable. You cannot pick 
+which driver you want to use as lima will only work with a specific 
+family and panfrost with another one, they don't intersect.
 
-Thanks!
+So I wouldn't actually document that at all.
+
+>   U-Boot Environment:
+>   ------------------
+>   	In order to configure U-Boot to be able to store its environment into the
+> diff --git a/conf/machine/include/px30.inc b/conf/machine/include/px30.inc
+> index 8173cb19be2c..4918ee45d1ab 100644
+> --- a/conf/machine/include/px30.inc
+> +++ b/conf/machine/include/px30.inc
+> @@ -21,3 +21,4 @@ UBOOT_SUFFIX ?= "itb"
+>   UBOOT_ENTRYPOINT ?= "0x06000000"
+>   
+>   ENABLE_STATELESS_VPU_GST ?= "1"
+> +RK_MESA_DRIVER ?= "panfrost"
+
+I would also make it = instead of ?= as there's no reason to override 
+it? (and you could anyway if you wanted from a confi machine file 
+including this SoC .inc file.
+
+> diff --git a/conf/machine/include/rk3288.inc b/conf/machine/include/rk3288.inc
+> index 06fda69a3eb7..0fccae7896aa 100644
+> --- a/conf/machine/include/rk3288.inc
+> +++ b/conf/machine/include/rk3288.inc
+> @@ -16,3 +16,4 @@ KERNEL_IMAGETYPE ?= "zImage"
+>   UBOOT_SUFFIX ?= "bin"
+>   
+>   ENABLE_STATELESS_VPU_GST ?= "1"
+> +RK_MESA_DRIVER ?= "panfrost"
+> diff --git a/conf/machine/include/rk3328.inc b/conf/machine/include/rk3328.inc
+> index e6f810dcd2ca..cdc2e2df2703 100644
+> --- a/conf/machine/include/rk3328.inc
+> +++ b/conf/machine/include/rk3328.inc
+> @@ -22,3 +22,4 @@ UBOOT_SUFFIX ?= "itb"
+>   UBOOT_ENTRYPOINT ?= "0x06000000"
+>   
+>   ENABLE_STATELESS_VPU_GST ?= "1"
+> +RK_MESA_DRIVER ?= "lima"
+> diff --git a/conf/machine/include/rk3399.inc b/conf/machine/include/rk3399.inc
+> index cd1be49064ed..06326946f1e3 100644
+> --- a/conf/machine/include/rk3399.inc
+> +++ b/conf/machine/include/rk3399.inc
+> @@ -22,3 +22,4 @@ UBOOT_SUFFIX ?= "itb"
+>   UBOOT_ENTRYPOINT ?= "0x06000000"
+>   
+>   ENABLE_STATELESS_VPU_GST ?= "1"
+> +RK_MESA_DRIVER ?= "panfrost"
+> diff --git a/conf/machine/include/rk3566.inc b/conf/machine/include/rk3566.inc
+> index 6386ec7eb51c..4d84bf8a11a2 100644
+> --- a/conf/machine/include/rk3566.inc
+> +++ b/conf/machine/include/rk3566.inc
+> @@ -24,3 +24,4 @@ TFA_PLATFORM = "rk3568"
+>   TFA_BUILD_TARGET = "bl31"
+>   
+>   ENABLE_STATELESS_VPU_GST ?= "1"
+> +RK_MESA_DRIVER ?= "panfrost"
+> diff --git a/conf/machine/include/rk3568.inc b/conf/machine/include/rk3568.inc
+> index bcf9dd8b0f44..dedda3b8f47e 100644
+> --- a/conf/machine/include/rk3568.inc
+> +++ b/conf/machine/include/rk3568.inc
+> @@ -24,3 +24,4 @@ TFA_PLATFORM = "rk3568"
+>   TFA_BUILD_TARGET = "bl31"
+>   
+>   ENABLE_STATELESS_VPU_GST ?= "1"
+> +RK_MESA_DRIVER ?= "panfrost"
+> diff --git a/conf/machine/include/rk3588s.inc b/conf/machine/include/rk3588s.inc
+> index 6ec344abae5b..5a085ab29ebc 100644
+> --- a/conf/machine/include/rk3588s.inc
+> +++ b/conf/machine/include/rk3588s.inc
+> @@ -23,3 +23,4 @@ TFA_PLATFORM = "rk3588"
+>   TFA_BUILD_TARGET = "bl31"
+>   
+>   ENABLE_STATELESS_VPU_GST ?= "1"
+> +RK_MESA_DRIVER ?= "panfrost"
+> diff --git a/recipes-graphics/mesa/mesa.bbappend b/recipes-graphics/mesa/mesa.bbappend
+> index f22280754a14..9e9bf9afc4a0 100644
+> --- a/recipes-graphics/mesa/mesa.bbappend
+> +++ b/recipes-graphics/mesa/mesa.bbappend
+> @@ -1,9 +1,4 @@
+> -PACKAGECONFIG:append:rk3288 = " panfrost"
+> -PACKAGECONFIG:append:rk3328 = " lima"
+> -PACKAGECONFIG:append:rk3399 = " panfrost"
+> -PACKAGECONFIG:append:rk3566 = " panfrost"
+> -PACKAGECONFIG:append:rk3568 = " panfrost"
+> -PACKAGECONFIG:append:rk3588s = " panfrost"
+> -PACKAGECONFIG:append:px30 = " panfrost"
+> +PACKAGECONFIG:append:rockchip = " ${@bb.utils.contains('RK_MESA_DRIVER', 'panfrost', 'panfrost', '', d)}"
+> +PACKAGECONFIG:append:rockchip = " ${@bb.utils.contains('RK_MESA_DRIVER', 'lima', 'lima', '', d)}"
+>   
+
+This is fine though :)
+
+I'm wondering if we shouldn't simply make panfrost the default for all 
+SoCs and only override it to lima for older SoCs (and I believe some 
+have some Imagination GPUs too (like the RK3368?)). I guess for GPU-less 
+systems we would need to unset the variable. Not sure what's best here :)
+
+Cheers,
 Quentin
 
