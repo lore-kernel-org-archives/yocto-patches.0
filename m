@@ -1,208 +1,305 @@
-Return-Path: <erik.schumacher@iris-sensing.com>
+Return-Path: <yoann.congal@smile.fr>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A90DC5AD49
-	for <webhook@archiver.kernel.org>; Fri,  6 Jun 2025 05:52:37 +0000 (UTC)
-Received: from FR5P281CU006.outbound.protection.outlook.com (FR5P281CU006.outbound.protection.outlook.com [40.107.149.76])
- by mx.groups.io with SMTP id smtpd.web11.27425.1749189151535879519
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0520C5AD49
+	for <webhook@archiver.kernel.org>; Fri,  6 Jun 2025 07:12:08 +0000 (UTC)
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+ by mx.groups.io with SMTP id smtpd.web10.28241.1749193926094003030
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 05 Jun 2025 22:52:31 -0700
+ Fri, 06 Jun 2025 00:12:06 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@iris-sensing.com header.s=selector1 header.b=iyiMheQ2;
- spf=pass (domain: iris-sensing.com, ip: 40.107.149.76, mailfrom: erik.schumacher@iris-sensing.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Y5nsxCAcVI90jiLmUbEXhqZdTWqp2e0hA6VLQS+bol3O5nXOwIH3YysAe8lcCM4FaW2BPnnLzEHh5yTv8ol3Hp7wLlikVXHT+/J6wnTqvWKEOP/Qr/uhnlPg2ccruDdxd3nbRLtnxm/v9tYELAHCwI6IGrIWIhuR0EtfTivMCQdaPzARauyBsj9dn52596WIJhJ4lk9KJoCVjTCZeaLdHY3s6XYbu64K5h907RrhbK5m2bBFlBz5g+tteHDpAGyml2/8qQ9rgur8TuawIskGBd3jHFdOfb1JZUnKIPPSvwbopLe8ihxwCszf+6jemoPz+RHC2zFFbm9z+QeAsROzwg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kd4gCNZGBeTD8k0NHt2l7j8TmH09U3MlP0h7Rz+l3VE=;
- b=PPUgVY5uq5gxPfWu8O5wqUH9Y3sU/eCo/yEzTB4F+MDYsukfZXkzwE9+TW6MK6fw3CRalO8ux4oTaCi41BV757WedpA2NLCASkzm872nhyviuvNxjCK7kC+E6FoJ8ySzzxZJX49j5mlCuMJrOsLiBvtkrHMnIvJU59iPT4E6BOLqicsL5O5m5MQdXdVYYQQSVe2h9AmTbBeXCkxUfpblRr3pZxONpDCTmuX0dEWB0sYpoq7XpCOBKjZjS21p1Xjmjsv6RqXUCh6xS3zLUgXvOdo8sAEOkbj1HOeoCUy0++6aTsXxHS6DSTHR7w5112e4bZ/T1sNqO2HNCqT2dn6s3Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=iris-sensing.com; dmarc=pass action=none
- header.from=iris-sensing.com; dkim=pass header.d=iris-sensing.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iris-sensing.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kd4gCNZGBeTD8k0NHt2l7j8TmH09U3MlP0h7Rz+l3VE=;
- b=iyiMheQ2Val1QHOcY0t1q0+EhKcHOA5wKkZrapUKIWUNMgSQmGwqTtDZa8/XYUbkW4u7VjZXBT0c2ZWhwYBV7C7zysOOgyYjv7Nd70fb62F2JrvfnF1mTrYKVA1HKROB6APOzK1BqPguIQI7AgC0aX5DERCQyJ9HYvweMGYmRXQW6GXtH+nQl8jVW698Bz3ttocb1SxcSZXAAeNLvF5GTQSbc0xvzc0088PVR8magUWWgA96IEiYNAf3oNPYGNxeR7Ponm1j9QDYSU8obLzqVYUasdEv+d9DFWNUB9dnXBTppNxVwQPI/flXWmF5Ya2+HGehFF8uOnLxlmStg31kbg==
-Received: from FR0P281MB2809.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10:23::8) by
- FR6P281MB5028.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10:176::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8813.22; Fri, 6 Jun 2025 05:52:27 +0000
-Received: from FR0P281MB2809.DEUP281.PROD.OUTLOOK.COM
- ([fe80::d685:f312:e114:519e]) by FR0P281MB2809.DEUP281.PROD.OUTLOOK.COM
- ([fe80::d685:f312:e114:519e%4]) with mapi id 15.20.8813.021; Fri, 6 Jun 2025
- 05:52:27 +0000
-From: Erik Schumacher <erik.schumacher@iris-sensing.com>
-To: "yocto-patches@lists.yoctoproject.org"
-	<yocto-patches@lists.yoctoproject.org>
-CC: Jasper Orschulko <Jasper.Orschulko@iris-sensing.com>,
-	"anibal@limonsoftware.com" <anibal@limonsoftware.com>
-Subject: [ptest-runner][RESEND] Documentation and behavior do not match
-Thread-Topic: [ptest-runner][RESEND] Documentation and behavior do not match
-Thread-Index: AQHb1qcuxjRMMkZHb0aMa1fkt/tPxg==
-Date: Fri, 6 Jun 2025 05:52:27 +0000
-Message-ID: <a0b99adcf8925e0462b9e9f77f1b51e7ede61d22.camel@iris-sensing.com>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=iris-sensing.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: FR0P281MB2809:EE_|FR6P281MB5028:EE_
-x-ms-office365-filtering-correlation-id: c0d18f12-7e74-48c7-cc9b-08dda4be5186
-x-ms-exchange-atpmessageproperties: SA
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230040|366016|376014|1800799024|10070799003|38070700018;
-x-microsoft-antispam-message-info: 
- =?utf-8?B?dHI0MlcwK1VUVnBGTC9WcWdRczBNQmtUeW83QWUrYVZwRGxHV0kwU1c1WGRI?=
- =?utf-8?B?eDg1MndmL1A1Z09TeUsxc2tPTGl3RzJ4K0JSUFNmRGk3NkhBRGNEeFpHcXFz?=
- =?utf-8?B?T0FLMUcxQUJtdUgzaUFBN1JuZ1JMUzBaRmZTVzF0VHM5T3ZhNUtjNmhOS2NW?=
- =?utf-8?B?UXRFOGNKbTlXUzc3aGx6SDhKWk10S3ZXaDVBQy9BTDJTUERVUkxmd0V4Qk1R?=
- =?utf-8?B?c28vYnJJMFkzV1NyWjh5K2M3ZjZra0IrQnZHNW96SGx2aFVLSm9NNGt6cWZy?=
- =?utf-8?B?RnkzMVVKZmZRYlFGaVI3S3BWLzZDMjFtUHBuZTY1ZzRMU0I1eW42czViYTRR?=
- =?utf-8?B?OWhBMktRaDI4dG5IcHlXSGNEVUFxWHgyT1hTZnZDdDltbjNSQUJvUmdxa2kw?=
- =?utf-8?B?Q0JMMUlFK1gwVXdVYkl2MkRQQTdidnBnTmtmSkQ5cVpVMmNsN1VMUXE2M0xa?=
- =?utf-8?B?b1lMSEdNR3A1dXpzRll5TEdEL3kvd09aWnpJRjJMb2tjVVFpcnhOenVNM0gx?=
- =?utf-8?B?bE9JcG04K3ZvcnZpQXdMS1ZlZXIvTGRkbGFLV1VEZndMYlBFNzBTK3kvOVUv?=
- =?utf-8?B?ZDc2UWxqZGpxcGo1U1lKQm5NRTROV1NLWnN3WGhwWjNoOHVBTXNLK1JwM1Vm?=
- =?utf-8?B?NWc2dGFudmI1Ujk3MVFaTkxRazJzR0JmNlg4TVlEb3VFYjdNS2U5ZVZyQVRx?=
- =?utf-8?B?L3NTOHNWVHJ1a0QwNTRHL1NSQU93bDVIRlpNbW5wYkZNQnYzWXZ2THAzbnFO?=
- =?utf-8?B?Zk9mTVdCSkxpdFQ3S1dkRkR4R3B5N2UvbGpMSmZGendETXIyQ2diaTZPRVFq?=
- =?utf-8?B?S2JvYVBNVVFXOFRldmRib1pYOUh0Y1EzME1JT0VmQ3ovc050NFZSSnJ5cEsy?=
- =?utf-8?B?NUdoL2NORXFDT2Jad2ZZK3NRd21hQUFHcFNDVk9VaHI5YUdIajR1c0dIRFpr?=
- =?utf-8?B?RGU3UmpIV29ZSEZWRlV4WUM1NW53Q1JLVjV3dVNqbDFFQ2owNHNwVXFSTTBF?=
- =?utf-8?B?ZUxoQWhoMWdmQVhUUnYzbUsyQms3T0NzUFgyVTMvbjA2UkZDdW00aEU3TEZu?=
- =?utf-8?B?SE56c3V4WkJOY0V4dWVzQ0ZYdG92eHFEelZtcmhTMXZ5UVptS3BhdzJVOWVz?=
- =?utf-8?B?Y3c3Z2tvL2dnRU11dWo1NTVVUVQ0Vng4bStMY2xmaHZiQ2lkSW9CN1FpSzZH?=
- =?utf-8?B?WEhkdWtERnM1R3Bqd3Nzam5neTlIZHhvek1kQ1p2Y3JBaTAyekU0RVZlcm1Q?=
- =?utf-8?B?UVN2ZEc3alM5dGhwVTNKd29vcFd5cEloRWZyOFFtMlBZSDkvVUJvVWVTR21W?=
- =?utf-8?B?MWhBTzJNVy9vZDVvY1MvN0VMbEhCSS9najc5UWJCQjkzSDE3Q2Nrak0rT2px?=
- =?utf-8?B?Uk1ZTHB5Y1pRNXN1QWxscnNUdlh0VE04U1AxUW1nZFJMUkJEZ1l0cXpWOHBk?=
- =?utf-8?B?bk1XbDZLeEV2VlpJeDBadlZ1TVlnZnMwRDMvSFFIK2JqSHQvenBGazg2U0l6?=
- =?utf-8?B?NlAzTTY1WktyRFBWME1lU3RGRFVNNDZhTkNna2JpK0pMamNiWERHRmcvcHVi?=
- =?utf-8?B?UlcvaGNpTng5N1FSUGhGVHlDbmV6WXd3RU04MHJPbm9waWhhK3FhUmNpbU92?=
- =?utf-8?B?YmNBNWlHVElFQWlGVC9sL0hVd0haMmhUY0UyT0wyNFdhZUVPWjhwMktZc0Vu?=
- =?utf-8?B?bVBlR0p1WkZVQm44U2FKY3gzdUwrR2sreUw4ZEgwRUJnaFl2RXN1WTlKZ1B5?=
- =?utf-8?B?b2JXK2FlbEYrK3ZFbzFxWjJZczducWVsdjg4bHB6QWJLZ01uMHlKOGJyZHlO?=
- =?utf-8?B?Ym9ZemFQM1hFL1FIZHNiV1dsdE1pMzdqckNrM1doZG8rZi8wY1JyNnE2RVZl?=
- =?utf-8?B?SFgrZ1RTM0Q0Vk84TFFRY0JzMzJobDRvY0pERk1FbWhhOUQwSThhRG8rdmJL?=
- =?utf-8?Q?PLugQNASHUQ=3D?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:FR0P281MB2809.DEUP281.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(10070799003)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?utf-8?B?V2ZybDVmdE55U2hiUVdQaDdDK3owQUY4QWpuWnZoK3l5QWdIemo1Tys0LzU1?=
- =?utf-8?B?dU9oQTE1VnBRNFU3UjBoQVI2TUw4akxvQlNib2Y1SytwMGQyaGpyTldiNk9r?=
- =?utf-8?B?ZURIRVZyRzFuc3MwMEl2UCtLVC9JV0FKaGZrdHpmQTR0NE1nSDlneDBwaG1M?=
- =?utf-8?B?YUtUMDYyQzJVU3Q0amJiMTkyUW1FaFFwblhSWDFqSml0TEpRNmhrbXlpTDkv?=
- =?utf-8?B?R2hHVVBZMyttYVFTS3dJb2lhSGlicWZ0Vzd4MUxZOWZoelFWeFFROXJCMWJh?=
- =?utf-8?B?am9BcHFsYTkrdGgwZitBTVBYNStxM3U2SDhSTXl0cjNMTFhDVVliWkJUWHB6?=
- =?utf-8?B?MWVCeFI5TzlOMkU5MklFcS96QzBQRWVxWnRjR01BYTgrRHh5QmJsd0hyQlU0?=
- =?utf-8?B?K3pwb3JKdHNRSkgyNTM4YkRITW5XT1ZhT2dDMjR2dElJWUlhWUxqWmdYWTVS?=
- =?utf-8?B?TmpSN1NRK2M4ak15OXVGSFpFaktMN2wrci9nZXRwUXBGcFhhejlqQWF2dUtN?=
- =?utf-8?B?ZVpjY3pEMlk4cndMaTlGSUxTcW1XblJjMitEbGJpZExyUSt3Nzhqck96TDA1?=
- =?utf-8?B?NUR2NGJyMGppUjEzTXU4QlBpdG0wM1lmNDFNRysxS2QvakhKbnlua3FWNFNr?=
- =?utf-8?B?cG1YT096Vk1rRmhrVVVOcFlNS3pqQUxuTDFRbnI1TkVaVmJRV2ZDQkVTZlls?=
- =?utf-8?B?MFJCaklrQkVnR08ybzlOSGRabXc2Z25zM1VmRmkwOHVmNGNVdE1aRUlDSDBa?=
- =?utf-8?B?d1VPVjdOVzVMZHpGUnU5dXMwWjh5U2orU0JIUVo5eE1NaXpDODJ5MFdpWWpr?=
- =?utf-8?B?dU9jbTJUaFAyL1RuQmM0OU5ESzJ3RUQwR1E2Y011YXpoVU51VjYwUTduRVJi?=
- =?utf-8?B?d1J2WGpkSGlQS0F5ejlBSzVzTWxSQXFnN0dFaVBqbk44MDEzN0g3Nk9HcmRX?=
- =?utf-8?B?WU9HOXlocjJaam41NWhsU3gwcEhXa1pVaDQ1Y2JpVnBJeVNIUjdVUHAxSHJy?=
- =?utf-8?B?eFlGVTgvVWNwUDI1Smkrczcxa0xFQ3FpaUkwWElPeUMxRUdXUVJaczh0NGZK?=
- =?utf-8?B?TGVNZXVhemJSZUc5V2dRTFFuQVNkdTc0UlIxVmJDbjFJckp0UXQzaERuVmFJ?=
- =?utf-8?B?bzZMR0poMW5KOVZ6aXZvUTMvNnA0RDBySEwvNGpYcitHQmtCdk5TS1VSU1Bh?=
- =?utf-8?B?ckxPcnltTm8xWHhsQjBoR3c5akVEYlVCK0h3Y3pjdkRBRjkrSWdLb0RweUFZ?=
- =?utf-8?B?bFBJRUp0MWFPaGRLbFdZVkZZb1pkTU1majRDQmZkNkVXUVJQejhKUUxoYzl5?=
- =?utf-8?B?dHM3R1dBcFVxY0Rsd1AvM3VUZnZYTk4zSXYwWlpNTUhoRUdkcXcxYklwTk1V?=
- =?utf-8?B?MG9halluK1ZJaHFlcC8vcFYzV041SFJkK0lNU2lkNEtMWFoxNkNMQzZaai9t?=
- =?utf-8?B?UnFqNFdLU0xXb2VtQlVXKzIwblczQnZwWjB6NDE1SkdvbVB0SDhEQXVQVTFW?=
- =?utf-8?B?R3ZWTWNqRVVwaStNWjF6Z2dvRnRqeFdySFFnaGpvQmRDVEVIQ296OUdrejJ3?=
- =?utf-8?B?Wm9oVjYyYXhMQjROVE5weDlzYjhyS3RqYVE0aC9QK3BHNGdtMFllczlVV2JJ?=
- =?utf-8?B?eTBhbkI3Z0V6RDFFNVZ6d1d3OUJleXdtbkVJVFpaV2lOT3RkUVhROE5rcTRF?=
- =?utf-8?B?RGxNcGdobHJPY3kzaUM3Qi9LaERVMU01SXRlQmQrZ1pWM2tpc1dxOGkwVE9z?=
- =?utf-8?B?MTRHdXM0aHdNMndXNXk1allDL0JUVVlLbWZ6YWJrNGpJdHF4ZzZRL2hoRXhj?=
- =?utf-8?B?dkRjS252RGlIZlhzOE9ib01TZUJKQ1JtRGhZaVRRVk1vclJkOEZqY2ZNd2hk?=
- =?utf-8?B?anAvSEQ4TUkybllIamlhOGRsaml4czNvVVNubmlJVHRSRjd3YVlPY1NoQkF2?=
- =?utf-8?B?R2FjK0pQeDNLZkhUQXJ5blNhRHRMSmVjQWlvQUVhZVZoSGcyOForVzJGci9u?=
- =?utf-8?B?OE9TQ1YzOVVlUlZobG9yd0RZY05VbzY1ZXlISzBNdG4ydW1NYU8rYXNIUTJ3?=
- =?utf-8?B?TmZPN3hwL1R1eVc2YWVIYVFKb2Q4K0xXQk5XbG94SmlpMFhXYno1SDRHWndl?=
- =?utf-8?B?a0xHSCttakhydmRTdXh6UzUyTWFDaWtVWVdFVDY5aTFNRnFqRWFMaFI3Smwx?=
- =?utf-8?B?T1pzc01TSFFMWlVFcjYwdXhjSmh4SldQbG9tbEZ1ZHNTN01VbXNiR0QwMldv?=
- =?utf-8?Q?cqsEA9b1h5u9SAHJJX/kGLYmArkZ1z0+gglOHnZV5k=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <26A750D85979C84BA002D9CC5F21572C@DEUP281.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+ dkim=pass header.i=@smile.fr header.s=google header.b=uKKwiW9B;
+ spf=pass (domain: smile.fr, ip: 209.85.128.47, mailfrom: yoann.congal@smile.fr)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-442f4a3a4d6so10129405e9.0
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 06 Jun 2025 00:12:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=smile.fr; s=google; t=1749193924; x=1749798724; darn=lists.yoctoproject.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=xieDuAQPit8Z6xwHGrzy1Xns606JKD57bwwnr4AX1bk=;
+        b=uKKwiW9BtEgnpRzeHyNOIMo4kXXTWWrzaYY433srlNy4DzruaI4w+OiCEBL4o8aYnt
+         hpFX5i3wq0mSAPlFTxCsHifMfSNRWzfDZtHOT1zpic/VLWKjFvAyvNt4Bey3fqq1njwH
+         +cbysH2Efc33u7GaC3OE2DUXkWoQ1hJzpTX5A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749193924; x=1749798724;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xieDuAQPit8Z6xwHGrzy1Xns606JKD57bwwnr4AX1bk=;
+        b=jhwPQM+EpuoCpO0mYm/FWvjKH9NpkmYz01mMqPxwTw7+GmGEQrsComqNekDvtm4ZaU
+         /7lPpfgnnjqOT7lYVGi+m8k+Lm/c0DtPkdxtLz3Jt7QZSRQiHsiuBujxdHcwIVwAXg4F
+         joF8thGtngrAtSrWOhcXYrHifaOib+KDZA62czbwvZ6X5lqKckIZWk4+G3KkNbJZgfh0
+         XPfrHxKI6TGWwK8q2uyOjEVMXJBGytQzNS+hqjs5tJFJtZxZu7ccpbz6cPKW2kF25apE
+         loxL24iivjkpI2JMAQvAc9nawIzCsqz5PvUYB7ya3D8IZLAyEOlZ77vOrx8jfqYT6Iqi
+         hj4A==
+X-Gm-Message-State: AOJu0Yw65NCnE4G37Ju/0asrcCvYtFyHkbZD4g63fxTdGrYUw4WZmdUT
+	smC8RwMw2N2tHGNiDtS0f/i60RUTLaYSMzPYjq1PaWLtw1Md0XnlQcp4KKOcD7zzvgA1c9jQQpW
+	nAnKJpzu2Xhlzx88+XX67otAdXW9IxC09lKKDasGY+AGtsJQ2z4yuEKqe3g==
+X-Gm-Gg: ASbGncv/WOvPnhbsD1MApzBOiFs4rL+nHLs27uURCJjRWHLDpFa3YANZHZ1EgTIUDYR
+	PIPwWvZ0PScqBPyGUDlaUzNk2usL42D3vyg1B6GjVZI/+GN6P0e2teSRiPZs8IwMKZCu4BPGwWu
+	b/IUEaPz9m6B1mMmRgcfqe+8gkQ5Qc2/t8xi263ovkYhPF5Zy+cntw7qmLs/sg8wRG2d12qDUIj
+	P2gaw==
+X-Google-Smtp-Source: AGHT+IHKsVoFB5A48bwTsO273jDeVwhOyicc7sxNDezhp8nopyOUbpAmm9G9Gh7OHH3MJkNl1VWmUcBzQ95pNI/M7U4=
+X-Received: by 2002:a05:600c:348f:b0:43b:c6a7:ac60 with SMTP id
+ 5b1f17b1804b1-452015837camr22786715e9.10.1749193924029; Fri, 06 Jun 2025
+ 00:12:04 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: iris-sensing.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: FR0P281MB2809.DEUP281.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: c0d18f12-7e74-48c7-cc9b-08dda4be5186
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jun 2025 05:52:27.4420
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 963f3913-ffae-43fd-856b-2dfd3f6604e3
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 1vYVlNlZC1DDKwOLjA7StVYiD1ngnwyY0uj/AwVtWdZRmSa5ABLIJ6SwUDLN4BSlHJsvhalyFRuVCHInIUy/cYaWX0oWVqR+IKLgFQvcn7JHU3WUH9jZuFYxLWUiV5qe
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: FR6P281MB5028
+References: <a0b99adcf8925e0462b9e9f77f1b51e7ede61d22.camel@iris-sensing.com>
+In-Reply-To: <a0b99adcf8925e0462b9e9f77f1b51e7ede61d22.camel@iris-sensing.com>
+From: Yoann Congal <yoann.congal@smile.fr>
+Date: Fri, 6 Jun 2025 09:11:37 +0200
+X-Gm-Features: AX0GCFvBO6IAklYA43RisT3kTPBsM5aJ0ULSqxqxkXrVf8irkFXQYeOg0jGetBU
+Message-ID: <CAMSfU+6M0pTE1X8g3N5xPz3Uu+qpRRVTBrzJ=qnGzst+GitBuA@mail.gmail.com>
+Subject: Re: [yocto-patches] [ptest-runner][RESEND] Documentation and behavior
+ do not match
+To: yocto-patches@lists.yoctoproject.org
+Cc: Jasper Orschulko <Jasper.Orschulko@iris-sensing.com>, 
+	"anibal@limonsoftware.com" <anibal@limonsoftware.com>
+Content-Type: multipart/alternative; boundary="0000000000007c431d0636e1f22e"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 06 Jun 2025 05:52:37 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1619
+ <yocto-patches@lists.yoctoproject.org>; Fri, 06 Jun 2025 07:12:08 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1620
 
-SGksDQoNCkkgaGF2ZSBjcmVhdGVkIHNvbWUgcHRlc3RzIGFuZCBleGVjdXRlZCB0aGVtIHdpdGgg
-dGhlIHB0ZXN0LXJ1bm5lciBhbmQNCnJlYWxpemVkIHRoYXQgdGhlIGRvY3VtZW50YXRpb24gYW5k
-IHRoZSBhY3R1YWwgYmVoYXZpb3Igb2YgdGhlIHB0ZXN0LQ0KcnVubmVyIGRvbid0IHJlYWxseSBm
-aXQgdG9nZXRoZXIuDQoNCldoYXQgSSBkaWQ6DQoNCkkgdXNlZCB0aGUgd2lraSBwYWdlcyBbMV0g
-YW5kIFsyXSBhcyBndWlkZWxpbmVzIGFuZCBhbHNvIGhhZCBhIGxvb2sgYXQNCnNvbWUgZXhpc3Rp
-bmcgcnVuLXB0ZXN0IHNjcmlwdHMgbGlrZSBbM10gYW5kIFs0XS4gSXQncyBub3QgZW50aXJlbHkN
-CmNsZWFyIGluIHRoZSBwaHJhc2luZywgYnV0IHRoZSBkb2N1bWVudGF0aW9uIGltcGxpZXMgdGhh
-dCBhIHJ1bi1wdGVzdA0Kc2NyaXB0IG11c3QgcHJpbnQgZWl0aGVyICJQQVNTIiwgIkZBSUwiIG9y
-ICJTS0lQIiBmb2xsb3dlZCBieSB0aGUNCnRlc3RuYW1lLiBUaGF0J3Mgd2hhdCBtb3N0IG9mIHRo
-ZSBleGlzdGluZyBydW4tcHRlc3Qgc2NyaXB0cyBkby4NClRoZW4gSSBjcmVhdGVkIG15IG93biBy
-dW4tcHRlc3Qgc2NyaXB0IHRoYXQgZGlkIHNvbWV0aGluZyBsaWtlOg0KL3BhdGgvdG8vbXliaW5h
-cnktZ3Rlc3QgJiYgZWNobyAiUEFTUzogbXliaW5hcnkiIHx8IGVjaG8gIkZBSUw6DQpteWJpbmFy
-eSINCg0KV2hhdCBJIGV4cGVjdGVkOg0KDQpUaGUgc2NyaXB0IGl0c2VsZiB3b3JrZWQgYW5kIHB0
-ZXN0LXJ1bm5lciB3YXMgYWJsZSB0byBydW4gaXQuIFNvIGZhciwNCnNvIGdvb2QuIEkgc3RhcnRl
-ZCB0byB3b25kZXIgd2hlbiBteSBzY3JpcHQgc2ltdWxhdGVkIGEgZmF1bHR5IHRlc3QuIE15DQpz
-Y3JpcHQgcHJpbnRlZCAiRkFJTDogbXliaW5hcnkiLCBidXQgcHRlc3QtcnVubmVyIGNvbXBsZXRl
-ZCB0aGUgdGVzdA0Kd2l0aG91dCBmYWlsdXJlcyAobGFzdCBsaW5lOiAiVE9UQUw6IDEgRkFJTDog
-MCIpLiBJIGV4cGVjdGVkICJGQUlMOiAxIg0KaGVyZS4gVGhlIHNhbWUgYXBwbGllcyB0byB0aGUg
-eG1sIG91dHB1dCwgd2hpY2ggY2FuIGJlIGNvbnN1bWVkIGJ5DQpHaXRsYWIgd2hlbiB0aGUgcHRl
-c3QtcnVubmVyIHJ1bnMgaW5zaWRlIGEgQ0kvQ0QgcGlwZWxpbmUuDQoNCldoYXQgSSBmb3VuZDoN
-Cg0KQnkgbG9va2luZyBhdCB0aGUgY29kZSBvZiBwdGVzdC1ydW5uZXIsIGl0IHF1aWNrbHkgYmVj
-YW1lIGNsZWFyIHRvIG1lDQp0aGF0IGEgZmFpbHVyZSBpcyBvbmx5IGRldGVybWluZWQgYnkgdGhl
-IGV4aXQgY29kZSBvZiBhIHJ1bi1wdGVzdA0Kc2NyaXB0LiBTZWUgWzVdLiBJdCBkb2Vzbid0IG1h
-dHRlciB3aGF0IHRoZSBzY3JpcHQgaXMgcHJpbnRpbmcuIEFzIGxvbmcNCmFzIHRoZSBleGl0IGNv
-ZGUgaXMgMCwgdGhlIHRlc3QgaGFzIHBhc3NlZC4gQW55IG90aGVyIGV4aXQgY29kZSBpcw0KdHJl
-YXRlZCBhcyBmYWlsLg0KDQpXaHkgSSB0aGluayB0aGlzIGlzIGEgcHJvYmxlbToNCg0KVGhlIGJl
-aGF2aW9yIG9mIHB0ZXN0LXJ1bm5lciBzb21laG93IGNvbnRyYWRpY3RzIHRoZSBkb2N1bWVudGF0
-aW9uLA0Kd2hpY2ggZGVzY3JpYmVzIHdoYXQgdGhlIG91dHB1dCBvZiB0aGUgc2NyaXB0IHNob3Vs
-ZCBsb29rIGxpa2UuIFRoZQ0KZG9jdW1lbnRhdGlvbiBzYXlzIG5vdGhpbmcgYWJvdXQgdGhlIGV4
-aXQgY29kZSBiZWluZyByZWxldmFudC4gVGhlcmUgaXMNCm5vIHJ1bi1wdGVzdCBzY3JpcHQgdGhh
-dCBleHBsaWNpdGx5IHJldHVybnMgdGhlIHJpZ2h0IGV4aXQgY29kZS4gVGhlcmUNCmFyZSBzb21l
-IHRoYXQgaW1wbGljaXRseSBwYXNzIHRoZSBleGl0IGNvZGUgb2YgdGhlIG9ubHkgLyBvciBsYXN0
-DQpjb21tYW5kLCBsaWtlIGd6aXAgWzZdLg0KVXNpbmcgdGhlIGdlbmVyYXRlZCB4bWwgZmlsZSBp
-biBhIEdpdGxhYiB0ZXN0aW5nIHBpcGVsaW5lIHdpbGwgbGVhZCB0bw0KYSBmYWxzZSBzZW5zZSBv
-ZiBzZWN1cml0eSB0aGF0IGFsbCB0ZXN0cyB3b3VsZCBoYXZlIGJlZW4gc3VjY2Vzc2Z1bCwNCmV2
-ZW4gaWYgdGhleSBtaWdodCBub3QgYmUuDQoNCkJ5IHJlbHlpbmcgb24gdGhlIGV4aXQgY29kZSwg
-cHRlc3QtcnVubmVyIGFsc28gdHJlYXRzIGEgcnVuLXB0ZXN0DQpzY3JpcHQgYXMgYSBzaW5nbGUg
-dW5pdCB3aGljaCBjYW4gZWl0aGVyIHBhc3Mgb3IgZmFpbCwgZXZlbiB0aG91Z2ggYQ0KcHRlc3Qg
-bWlnaHQgY29uc2lzdHMgb2YgbXVsdGlwbGUgdGVzdCBjYXNlcyAoWzNdIG9yIFs0XSkuDQoNCg0K
-WzFdIGh0dHBzOi8vd2lraS55b2N0b3Byb2plY3Qub3JnL3dpa2kvUHRlc3QNClsyXSBodHRwczov
-L2RvY3MueW9jdG9wcm9qZWN0Lm9yZy90ZXN0LW1hbnVhbC9wdGVzdC5odG1sDQpbM10NCmh0dHBz
-Oi8vZ2l0Lm9wZW5lbWJlZGRlZC5vcmcvb3BlbmVtYmVkZGVkLWNvcmUvdHJlZS9tZXRhL3JlY2lw
-ZXMtZXh0ZW5kZWQvYmMvYmMvcnVuLXB0ZXN0DQpbNF0NCmh0dHBzOi8vZ2l0Lm9wZW5lbWJlZGRl
-ZC5vcmcvb3BlbmVtYmVkZGVkLWNvcmUvdHJlZS9tZXRhL3JlY2lwZXMtY29ubmVjdGl2aXR5L2Js
-dWV6NS9ibHVlejUvcnVuLXB0ZXN0DQpbNV0gaHR0cHM6Ly9naXQueW9jdG9wcm9qZWN0Lm9yZy9w
-dGVzdC1ydW5uZXIyL3RyZWUvdXRpbHMuYyNuNTIyDQpbNl0NCmh0dHBzOi8vZ2l0Lm9wZW5lbWJl
-ZGRlZC5vcmcvb3BlbmVtYmVkZGVkLWNvcmUvdHJlZS9tZXRhL3JlY2lwZXMtZXh0ZW5kZWQvZ3pp
-cC9maWxlcy9ydW4tcHRlc3QNCg0KU2lnbmVkLW9mZi1ieTogRXJpayBTY2h1bWFjaGVyIDxlcmlr
-LnNjaHVtYWNoZXJAaXJpcy1zZW5zaW5nLmNvbT4NCg0KUmVzZW5kaW5nIHRoaXMgbWFpbCBhcyBJ
-IGZvcmdvdCB0byBzdWJzY3JpYmUgdG8gdGhlIG1haWxpbmcgbGlzdC4NCg==
+--0000000000007c431d0636e1f22e
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Le ven. 6 juin 2025 =C3=A0 07:52, Erik Schumacher via lists.yoctoproject.or=
+g
+<erik.schumacher=3Diris-sensing.com@lists.yoctoproject.org> a =C3=A9crit :
+
+> Hi,
+>
+> I have created some ptests and executed them with the ptest-runner and
+> realized that the documentation and the actual behavior of the ptest-
+> runner don't really fit together.
+>
+> What I did:
+>
+> I used the wiki pages [1] and [2] as guidelines and also had a look at
+> some existing run-ptest scripts like [3] and [4]. It's not entirely
+> clear in the phrasing, but the documentation implies that a run-ptest
+> script must print either "PASS", "FAIL" or "SKIP" followed by the
+> testname. That's what most of the existing run-ptest scripts do.
+> Then I created my own run-ptest script that did something like:
+> /path/to/mybinary-gtest && echo "PASS: mybinary" || echo "FAIL:
+> mybinary"
+>
+> What I expected:
+>
+> The script itself worked and ptest-runner was able to run it. So far,
+> so good. I started to wonder when my script simulated a faulty test. My
+> script printed "FAIL: mybinary", but ptest-runner completed the test
+> without failures (last line: "TOTAL: 1 FAIL: 0"). I expected "FAIL: 1"
+> here. The same applies to the xml output, which can be consumed by
+> Gitlab when the ptest-runner runs inside a CI/CD pipeline.
+>
+> What I found:
+>
+> By looking at the code of ptest-runner, it quickly became clear to me
+> that a failure is only determined by the exit code of a run-ptest
+> script. See [5]. It doesn't matter what the script is printing. As long
+> as the exit code is 0, the test has passed. Any other exit code is
+> treated as fail.
+>
+> Why I think this is a problem:
+>
+> The behavior of ptest-runner somehow contradicts the documentation,
+> which describes what the output of the script should look like. The
+> documentation says nothing about the exit code being relevant. There is
+> no run-ptest script that explicitly returns the right exit code. There
+> are some that implicitly pass the exit code of the only / or last
+> command, like gzip [6].
+> Using the generated xml file in a Gitlab testing pipeline will lead to
+> a false sense of security that all tests would have been successful,
+> even if they might not be.
+>
+> By relying on the exit code, ptest-runner also treats a run-ptest
+> script as a single unit which can either pass or fail, even though a
+> ptest might consists of multiple test cases ([3] or [4]).
+>
+
+Agreed, there is a difference between the documentation and the code
+around ptests.
+
+We stumbled upon it recently and I opened a bug to not forget :
+15832 =E2=80=93 Specify API between exit code of run-ptest and ptest-runner
+https://bugzilla.yoctoproject.org/show_bug.cgi?id=3D15832
+
+BTW, the "PASS,FAIL,...", while not used by ptest-runner itself, are
+used at a higher level: by testimage.
+
+
+> [1] https://wiki.yoctoproject.org/wiki/Ptest
+> [2] https://docs.yoctoproject.org/test-manual/ptest.html
+> [3]
+>
+> https://git.openembedded.org/openembedded-core/tree/meta/recipes-extended=
+/bc/bc/run-ptest
+> [4]
+>
+> https://git.openembedded.org/openembedded-core/tree/meta/recipes-connecti=
+vity/bluez5/bluez5/run-ptest
+> [5] https://git.yoctoproject.org/ptest-runner2/tree/utils.c#n522
+> [6]
+>
+> https://git.openembedded.org/openembedded-core/tree/meta/recipes-extended=
+/gzip/files/run-ptest
+>
+> Signed-off-by: Erik Schumacher <erik.schumacher@iris-sensing.com>
+>
+> Resending this mail as I forgot to subscribe to the mailing list.
+>
+>
+> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+> Links: You receive all messages sent to this group.
+> View/Reply Online (#1619):
+> https://lists.yoctoproject.org/g/yocto-patches/message/1619
+> Mute This Topic: https://lists.yoctoproject.org/mt/113499100/4316185
+> Group Owner: yocto-patches+owner@lists.yoctoproject.org
+> Unsubscribe:
+> https://lists.yoctoproject.org/g/yocto-patches/leave/13179410/4316185/929=
+767106/xyzzy
+> [yoann.congal@smile.fr]
+> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+>
+>
+>
+
+--=20
+Yoann Congal
+Smile ECS
+
+--0000000000007c431d0636e1f22e
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
+mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">Le=C2=A0ven. 6 =
+juin 2025 =C3=A0=C2=A007:52, Erik Schumacher via <a href=3D"http://lists.yo=
+ctoproject.org">lists.yoctoproject.org</a> &lt;erik.schumacher=3D<a href=3D=
+"mailto:iris-sensing.com@lists.yoctoproject.org">iris-sensing.com@lists.yoc=
+toproject.org</a>&gt; a =C3=A9crit=C2=A0:<br></div><blockquote class=3D"gma=
+il_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,2=
+04,204);padding-left:1ex">Hi,<br>
+<br>
+I have created some ptests and executed them with the ptest-runner and<br>
+realized that the documentation and the actual behavior of the ptest-<br>
+runner don&#39;t really fit together.<br>
+<br>
+What I did:<br>
+<br>
+I used the wiki pages [1] and [2] as guidelines and also had a look at<br>
+some existing run-ptest scripts like [3] and [4]. It&#39;s not entirely<br>
+clear in the phrasing, but the documentation implies that a run-ptest<br>
+script must print either &quot;PASS&quot;, &quot;FAIL&quot; or &quot;SKIP&q=
+uot; followed by the<br>
+testname. That&#39;s what most of the existing run-ptest scripts do.<br>
+Then I created my own run-ptest script that did something like:<br>
+/path/to/mybinary-gtest &amp;&amp; echo &quot;PASS: mybinary&quot; || echo =
+&quot;FAIL:<br>
+mybinary&quot;<br>
+<br>
+What I expected:<br>
+<br>
+The script itself worked and ptest-runner was able to run it. So far,<br>
+so good. I started to wonder when my script simulated a faulty test. My<br>
+script printed &quot;FAIL: mybinary&quot;, but ptest-runner completed the t=
+est<br>
+without failures (last line: &quot;TOTAL: 1 FAIL: 0&quot;). I expected &quo=
+t;FAIL: 1&quot;<br>
+here. The same applies to the xml output, which can be consumed by<br>
+Gitlab when the ptest-runner runs inside a CI/CD pipeline.<br>
+<br>
+What I found:<br>
+<br>
+By looking at the code of ptest-runner, it quickly became clear to me<br>
+that a failure is only determined by the exit code of a run-ptest<br>
+script. See [5]. It doesn&#39;t matter what the script is printing. As long=
+<br>
+as the exit code is 0, the test has passed. Any other exit code is<br>
+treated as fail.<br>
+<br>
+Why I think this is a problem:<br>
+<br>
+The behavior of ptest-runner somehow contradicts the documentation,<br>
+which describes what the output of the script should look like. The<br>
+documentation says nothing about the exit code being relevant. There is<br>
+no run-ptest script that explicitly returns the right exit code. There<br>
+are some that implicitly pass the exit code of the only / or last<br>
+command, like gzip [6].<br>
+Using the generated xml file in a Gitlab testing pipeline will lead to<br>
+a false sense of security that all tests would have been successful,<br>
+even if they might not be.<br>
+<br>
+By relying on the exit code, ptest-runner also treats a run-ptest<br>
+script as a single unit which can either pass or fail, even though a<br>
+ptest might consists of multiple test cases ([3] or [4]).<br></blockquote><=
+div><br></div><div>Agreed, there is a difference between=C2=A0the documenta=
+tion and the code around=C2=A0ptests.</div><div><br></div><div>We stumbled =
+upon it recently and I opened a bug to not forget :</div><div>15832 =E2=80=
+=93 Specify API between exit code of run-ptest and ptest-runner<br><a href=
+=3D"https://bugzilla.yoctoproject.org/show_bug.cgi?id=3D15832">https://bugz=
+illa.yoctoproject.org/show_bug.cgi?id=3D15832</a></div><div><br></div><div>=
+BTW, the &quot;PASS,FAIL,...&quot;, while not used by ptest-runner itself, =
+are used=C2=A0at a higher level: by testimage.</div><div>=C2=A0</div><block=
+quote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1=
+px solid rgb(204,204,204);padding-left:1ex">
+[1] <a href=3D"https://wiki.yoctoproject.org/wiki/Ptest" rel=3D"noreferrer"=
+ target=3D"_blank">https://wiki.yoctoproject.org/wiki/Ptest</a><br>
+[2] <a href=3D"https://docs.yoctoproject.org/test-manual/ptest.html" rel=3D=
+"noreferrer" target=3D"_blank">https://docs.yoctoproject.org/test-manual/pt=
+est.html</a><br>
+[3]<br>
+<a href=3D"https://git.openembedded.org/openembedded-core/tree/meta/recipes=
+-extended/bc/bc/run-ptest" rel=3D"noreferrer" target=3D"_blank">https://git=
+.openembedded.org/openembedded-core/tree/meta/recipes-extended/bc/bc/run-pt=
+est</a><br>
+[4]<br>
+<a href=3D"https://git.openembedded.org/openembedded-core/tree/meta/recipes=
+-connectivity/bluez5/bluez5/run-ptest" rel=3D"noreferrer" target=3D"_blank"=
+>https://git.openembedded.org/openembedded-core/tree/meta/recipes-connectiv=
+ity/bluez5/bluez5/run-ptest</a><br>
+[5] <a href=3D"https://git.yoctoproject.org/ptest-runner2/tree/utils.c#n522=
+" rel=3D"noreferrer" target=3D"_blank">https://git.yoctoproject.org/ptest-r=
+unner2/tree/utils.c#n522</a><br>
+[6]<br>
+<a href=3D"https://git.openembedded.org/openembedded-core/tree/meta/recipes=
+-extended/gzip/files/run-ptest" rel=3D"noreferrer" target=3D"_blank">https:=
+//git.openembedded.org/openembedded-core/tree/meta/recipes-extended/gzip/fi=
+les/run-ptest</a><br>
+<br>
+Signed-off-by: Erik Schumacher &lt;<a href=3D"mailto:erik.schumacher@iris-s=
+ensing.com" target=3D"_blank">erik.schumacher@iris-sensing.com</a>&gt;<br>
+<br>
+Resending this mail as I forgot to subscribe to the mailing list.<br>
+<br>
+<br>
+-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-<br>
+Links: You receive all messages sent to this group.<br>
+View/Reply Online (#1619): <a href=3D"https://lists.yoctoproject.org/g/yoct=
+o-patches/message/1619" rel=3D"noreferrer" target=3D"_blank">https://lists.=
+yoctoproject.org/g/yocto-patches/message/1619</a><br>
+Mute This Topic: <a href=3D"https://lists.yoctoproject.org/mt/113499100/431=
+6185" rel=3D"noreferrer" target=3D"_blank">https://lists.yoctoproject.org/m=
+t/113499100/4316185</a><br>
+Group Owner: <a href=3D"mailto:yocto-patches%2Bowner@lists.yoctoproject.org=
+" target=3D"_blank">yocto-patches+owner@lists.yoctoproject.org</a><br>
+Unsubscribe: <a href=3D"https://lists.yoctoproject.org/g/yocto-patches/leav=
+e/13179410/4316185/929767106/xyzzy" rel=3D"noreferrer" target=3D"_blank">ht=
+tps://lists.yoctoproject.org/g/yocto-patches/leave/13179410/4316185/9297671=
+06/xyzzy</a> [<a href=3D"mailto:yoann.congal@smile.fr" target=3D"_blank">yo=
+ann.congal@smile.fr</a>]<br>
+-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-<br>
+<br>
+<br>
+</blockquote></div><div><br clear=3D"all"></div><br><span class=3D"gmail_si=
+gnature_prefix">-- </span><br><div dir=3D"ltr" class=3D"gmail_signature"><d=
+iv dir=3D"ltr"><font face=3D"Raleway, regular">Yoann Congal</font><div><fon=
+t face=3D"Raleway, regular">Smile ECS</font></div></div></div></div>
+
+--0000000000007c431d0636e1f22e--
 
