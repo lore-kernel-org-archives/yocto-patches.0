@@ -1,515 +1,304 @@
-Return-Path: <skandigraun@gmail.com>
+Return-Path: <sandeep.gundlupet-raju@amd.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0875FC5AD49
-	for <webhook@archiver.kernel.org>; Sun,  8 Jun 2025 10:28:28 +0000 (UTC)
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
- by mx.groups.io with SMTP id smtpd.web11.35032.1749378505365263651
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A285C5B552
+	for <webhook@archiver.kernel.org>; Mon,  9 Jun 2025 16:00:07 +0000 (UTC)
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (NAM10-DM6-obe.outbound.protection.outlook.com [40.107.93.57])
+ by mx.groups.io with SMTP id smtpd.web11.62961.1749484803206239080
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 08 Jun 2025 03:28:25 -0700
+ Mon, 09 Jun 2025 09:00:03 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=l6Y8Zh3s;
- spf=pass (domain: gmail.com, ip: 209.85.218.41, mailfrom: skandigraun@gmail.com)
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ad89c32a7b5so550263466b.2
-        for <yocto-patches@lists.yoctoproject.org>; Sun, 08 Jun 2025 03:28:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749378503; x=1749983303; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tMQpg1qBLPCyHtAyHLZhycJUdAe9y1FTdXJr0zl4t7g=;
-        b=l6Y8Zh3s+gFcU4Hx0WeYq5pRDQX4BX/1MNxxRqRbxkAUF9Qoj0WJIB4ECsb48gPxkh
-         NWR2ol8KdSjU7U+muhj0N0C/0vHm9uTW7+y3H7lm1YnWCV6L3NfxXJf35g8HXl94C1kQ
-         yetbwxFE0Scee5WZeIQy0QSIWSpqMjjT0H2M+ug8Fbc6HlT1PFRonq5COfY59FTv4XTy
-         wSiS5rVeJRmscTeiMqwPRGyNvqF1nZHkMM6AoJwO8Aplrl9sAr7wphbOCXXM2RK6Pg+q
-         Bju9KbczP3kv0f4/KwCte6B6h+UApKozgJf/UUsJmncaD/2xTfG+pnz5GbWACDnsqYxw
-         LLWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749378503; x=1749983303;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tMQpg1qBLPCyHtAyHLZhycJUdAe9y1FTdXJr0zl4t7g=;
-        b=VUNInPTGUVaYzw18djh8sbRku9UWtFvJI1ysMslhvj2KsChWjPlRjcHqRqIZe2qXx/
-         rjqp3LCYt4gYScu9wBaawAshWGd3NGG7ecnYYO5qMqOG6NBOhQAbworo9nFqycOBuhSP
-         WWW9Twrpx93SKuXj+nWChxiLZlKIY9hWnYYxHjcfwXPxfJ0CAlU0LxYR7jHNkP4e6E/C
-         5Hf/ALA8QhBz/pqAeBIPtYpLNb79UFGSWCyT+7ivZgd3mO1VhMFZBHoxnSzDF8ClUaNq
-         MswVEeRaXGRuMPnaDyalvp8SY8+tQcNqp72uVDDiQklk9KAXmZ7Rozg5q7WuvsFTIM99
-         iGIQ==
-X-Gm-Message-State: AOJu0YwGKVo6GnTvSqVj7EmkFeuk/hxU8a/gJH2S7Kd+mF/NlX+AqXr+
-	Jc2h7H42vNP4/0fwvLmgf4RnYlEGCL60ZPdUUzqWlghrlMc8h896FScI7AIuQkxQ
-X-Gm-Gg: ASbGnctZfbHyyNAo3MSClfhhpqGYzv425k6BhT8QnTa+RLx2/B3+RbIDGf69njBY0XB
-	2uqtwp8yvKAVHR01UCarCzOClFWKEXhkhquv/45nQpZVDB3KTP9fOWVkD2F5xO+kgxHUjVzs77j
-	NpPCIE54PdBtIVvGhjp+9PSwtHHxuZBG5yjEpBq7jOXBHgBynY8ITGWNWaNg28YbftjkwXMyB5s
-	ixPEC9PJ+4qvJGepAcREli9+rDkgYNMruCVlhgL/EBLtIYY+GQ4nVuDkEw1cPhLIFr19wLNnGk/
-	ua28I4L+4YwoD1ZBZZtx3p7nSllo5yVSY5qnteg7DqeNk8C26Vuw91hNbXEyfqoH3IwgPQ==
-X-Google-Smtp-Source: AGHT+IGIET+zeAZERAyj/ddfYjtDcp3mOCjp/OOsTLQN9F6pQ2rIjDv6sUqwBdMjv+i9SGJXXQB57w==
-X-Received: by 2002:a17:907:da3:b0:add:f62e:a300 with SMTP id a640c23a62f3a-ade1a9c805amr884179766b.2.1749378502933;
-        Sun, 08 Jun 2025 03:28:22 -0700 (PDT)
-Received: from [192.168.1.106] ([51.154.145.205])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ade1dc379f6sm386135866b.110.2025.06.08.03.28.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 08 Jun 2025 03:28:21 -0700 (PDT)
-Message-ID: <d9f98882-e6f0-4ef0-b733-ee91965fc861@gmail.com>
-Date: Sun, 8 Jun 2025 12:28:19 +0200
-MIME-Version: 1.0
+ dkim=pass header.i=@amd.com header.s=selector1 header.b=RbS0Lz49;
+ spf=permerror, err=parse error for token &{10 18 %{i}._ip.%{h}._ehlo.%{d}._spf.vali.email}: invalid domain name (domain: amd.com, ip: 40.107.93.57, mailfrom: sandeep.gundlupet-raju@amd.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oRXglSOxSHU9FZhtAvMm5d72YQ8sRWj3KTgVX4W1yq049zkwR0FIpF2SImKx5Of/u62nXu3f1MOOYadGSDpx3IboEhq4rBgEWrGiqdvIP4ilrUzwgQFXe8nLvqjTv2017evIbCYMiEQBNZj1IoVmg3zKeXUAloCrtQ0aqXPxT1hMMVtIcX/ZO0xydZXRs9BCtcEPMzRjsIM/KHYbtVCvYTAQBTBpOhX/nbBJZjDr1E7OsUT8Z48MRzN1dNq3I2V772uSra8Xjy0aGcu+Y2teHelOzuTHuOKbDWK7qPccE2hLsuUwOakKrPyQVDWFyULlN3WA3uD5XQc4LaFhHsCblg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pe/envQ1gM31tDmj/QKNSjc6+HuYHn9xgYaHA5L3NGE=;
+ b=Sj31N3Ppg671MiNZv2HLV8uEGVzRsvjhmaBJpw4lqXvIyglzZrN505mlCiFmYbUm7OCU57P1zTW+dEM+2ASZ35rdZQRodtT35DBYmk9OcKl1glNSVeXRkFANVX0R9PQQkRpf8zx8lyX0NLg0/Op795uKMUGRzRZXbZDTrYnWbqfb52F/lCBU5Y/ipUvc+/NnpO9A13oSWqrXvb/ji6kqmgZe33Twp0Tzy6M7xSgrpcqq+OmSIhtUF9XDMMYG90byd4H+EfxrJf8qveisXWAqcz3p5WuuSrhWuySadi3lbmsEJ2FAKYmD1lSjhlAyR3ZjHvfQCclEe+DoB1O86rVvNQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pe/envQ1gM31tDmj/QKNSjc6+HuYHn9xgYaHA5L3NGE=;
+ b=RbS0Lz495wr78UWd6MM6IldHWgyn3+RgOzArYDF6w+V9r/na8HVL6YHod70gUKLoaZAJYmGJrHULQ0rXOwF69Ygmkfp6BGdUzoygLDO/JmABKCu0PCub4wTou4/TCxJkRdqMD/Y5bHmSzD56bYzIWpMFrbnOsjRCU3TAtWAo4RU=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN2PR12MB4357.namprd12.prod.outlook.com (2603:10b6:208:262::19)
+ by PH7PR12MB7871.namprd12.prod.outlook.com (2603:10b6:510:27d::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.38; Mon, 9 Jun
+ 2025 16:00:00 +0000
+Received: from MN2PR12MB4357.namprd12.prod.outlook.com
+ ([fe80::fb07:a830:460:38fe]) by MN2PR12MB4357.namprd12.prod.outlook.com
+ ([fe80::fb07:a830:460:38fe%7]) with mapi id 15.20.8792.040; Mon, 9 Jun 2025
+ 15:59:59 +0000
+Content-Type: multipart/alternative;
+ boundary="------------kYH7QvEIwM0cNRet4dHzhnlp"
+Message-ID: <63a0aa22-ccab-4032-a887-54d5e7d73ec2@amd.com>
+Date: Mon, 9 Jun 2025 09:59:57 -0600
 User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [meta-java][RFC PATCH] recipes-core: Fix download
- url for java package
-To: yocto-patches@lists.yoctoproject.org
-Cc: Henning Heinold <henning@itconsulting-heinold.de>,
- Otavio Salvador <otavio@ossystems.com.br>,
- Richard Leitner <richard.leitner@skidata.com>,
- linux-amarula@amarulasolutions.com
-References: <20250605051442.11141-1-michael@amarulasolutions.com>
- <CAOf5uw=nmwSR=aHrVAW+vhXT7DBcphO+o49rH3wYk5G-W4mP8Q@mail.gmail.com>
+Subject: Re: [yocto-patches] [meta-zephyr][walnascar,scarthgap,master][PATCH]
+ layer.conf: Add LAYERBASE_zephyrcore variable
+To: yocto-patches@lists.yoctoproject.org, will.lee@altera.com,
+ anuj.mittal@intel.com
+References: <20250605032306.3073101-1-sandeep.gundlupet-raju@amd.com>
+ <BL4PR11MB8797361F43C6718A631EC6DAB96EA@BL4PR11MB8797.namprd11.prod.outlook.com>
 Content-Language: en-US
-From: Gyorgy Sarvari <skandigraun@gmail.com>
-In-Reply-To: <CAOf5uw=nmwSR=aHrVAW+vhXT7DBcphO+o49rH3wYk5G-W4mP8Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: "Gundlupet Raju, Sandeep" <sandeep.gundlupet-raju@amd.com>
+In-Reply-To: <BL4PR11MB8797361F43C6718A631EC6DAB96EA@BL4PR11MB8797.namprd11.prod.outlook.com>
+X-ClientProxiedBy: SA9P221CA0008.NAMP221.PROD.OUTLOOK.COM
+ (2603:10b6:806:25::13) To MN2PR12MB4357.namprd12.prod.outlook.com
+ (2603:10b6:208:262::19)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR12MB4357:EE_|PH7PR12MB7871:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1f9e80f1-c5f0-4003-74e2-08dda76eafe0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: 
+	BCL:0;ARA:13230040|376014|366016|1800799024|4022899009|7053199007|13003099007|8096899003;
+X-Microsoft-Antispam-Message-Info: 
+	=?utf-8?B?OXBvRHlzbGtIRDhFUllIc2xVKy8rYzE2bHVmdEtPUmNkV2pGMldJTEltbnV1?=
+ =?utf-8?B?b2FvamdtQmdoenNGTUFLTzUrQlZTRXY4Nm8rUWY5Mk1hWHBiaUQ1cjZuRkU1?=
+ =?utf-8?B?RU1ucWg5cFJ5RHF0UnVuRzR4U29SMjhqdlE1cTBwTE5PQ2NwZitMWGk3Y3FC?=
+ =?utf-8?B?Z3NlcS9PYllpdXVaREM0L0J3MlNzUzF3SE5XazZ6TDREcVh1ZlJzU1I4WFA2?=
+ =?utf-8?B?cmMvWkxaSnhUaFk1ZEcyNnFXNG11UytEWDZlUjV0VzNDKzQxRGNsT2RRMmk1?=
+ =?utf-8?B?M3V1RGQzTkJPWjRTa0NIcitRaFRwMEEvUTZ3aWZvRXcvRUd3Mi94VFRXdXRR?=
+ =?utf-8?B?T0ZCaG1yajRBTitYL0l3VlJRWmQ4UzhoMjJURCtlb0dUWUJFd213ZzBRaURt?=
+ =?utf-8?B?Z29RVVdoTFM0Q3R4bDliOXVBZHlKamZUR0g2YXBpUjVCbERuOW40TUc5UzB5?=
+ =?utf-8?B?eG5UY0FSTE5VMmdGbVJQRXhXdHNKdGNLaGhhZFhsOWdNelAxMXFYS2UrU0M5?=
+ =?utf-8?B?U0VnbUhZL1ZYZjhFbFBXamxyYlJWV2pHaGQ1MURBZzdDUXQvVm1jNzNjZ3Fa?=
+ =?utf-8?B?RGhOSE1lOExWY3pRZ1JBYTNEaXNGaVZpOHdiQmY3bkRwWW14amkxYzl3a2dG?=
+ =?utf-8?B?RXJFaHFqN0QvOWovWkl1VWYxNU1aNEdwV0k4alIxUzg0R2prZy9SVWhvKzk1?=
+ =?utf-8?B?TzhkdUptS0tBMHp2ZHdvME5MQ0o0VUVuQklLQ0srdlRtL2R1WXdzRW9IZE1B?=
+ =?utf-8?B?UlJoak1Id3J2Qk9xNC9CVkJLb1NEbHZqMnoyVWk3RG5OWjVNNFhnSGNnNVMy?=
+ =?utf-8?B?L2VQVDFNOG1yeU9OWFZ4eDNMZk92MzNRQUErWmc2REo5S0IrWWQrNXRFQlYy?=
+ =?utf-8?B?TVVYQUdJZ2hPNGkxTW5VUUoxanlqMG52NDN6cWdqc0ZsTDdIOW96aXdxRGRq?=
+ =?utf-8?B?dEIraytXenprNzY0T2RCRU9LWWZxeTN4TVUvYVVSUUt5eFpYYUpId1VWQzdt?=
+ =?utf-8?B?SkNVMnUyWlpmSFVQZGRGTTMvVFp1TzhPYUJ5T3JIQnNXRVVOOVpjR3d1bWJ1?=
+ =?utf-8?B?dGRZWExiQ1UrUll2cXpualRwUGQzTzYrOE9XQzVUdVYwRDNEemdFTTQ3VXZr?=
+ =?utf-8?B?VTlEbXQ5K2IzMmpkK2I3eTcxSHdxOUxKdFdPbi9JYTdJazZ6QUNOTUdQYzN6?=
+ =?utf-8?B?eU53eFRjQXFrTjU0Z0dsRXJaSGZ1TGJZWEx6aFBZN2V5cjVwUkEwU1VwNmJu?=
+ =?utf-8?B?Vms4ZnNNVWtHZUMvYy8zTDJ0YlhxTzVSbzFBWmRHdnQ5MzBFSGlBaDQ0VE5J?=
+ =?utf-8?B?enRFSnU3bi8wTGRmSWFobk9XN1R3Q3NtTjBGRHZsMlZpSnpub0pmRFlsZ0tw?=
+ =?utf-8?B?RmIwNmJHTUs4QnMvV2VPVXh1dW92WXRMTG5yOGhjUHZieHc5WmF0dFVpS2hP?=
+ =?utf-8?B?Tzk5WHVaZjZ2djZWMlN3Z1BHZWw1T3pSei90ejB2VVd0dWdCanBKbHRkZmV5?=
+ =?utf-8?B?bWtJQi9tVFAzaHF6OHBqd3lkNlhLWGxDemJ2Qkk4RndHaGRneXFFWDBOWGFM?=
+ =?utf-8?B?VTdzcVB5K3pTOHVKelBrYzBUeXBPOWxVZ0tZcEJtKzI5bSs0eWV4MUZ6QzRv?=
+ =?utf-8?B?U0ZhOEkrNTBjeHQ0VlUxYVlFbjVsRVNDZHB4aFFiK3JyM2l5UWlzOXBZNmhr?=
+ =?utf-8?B?VXdKZlhJWENpMGFxcWJPVzcxSE1BY0N4cWVWZWJOTEVhbFh2cGFIelhWQnVJ?=
+ =?utf-8?B?VDRjWlNuSEluV3VqdmhSUUliNEh4bnhlYURXMUR4WHFlUUNaaHorVkdkeVdz?=
+ =?utf-8?B?eUdzNDFvUld3ZGxheTJ1L0tVUkgrKyt1UGlxTWVRZGZKZmwzcTdZRCtwNHRT?=
+ =?utf-8?Q?2CjpcTCBH652w?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB4357.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(4022899009)(7053199007)(13003099007)(8096899003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?UllXK2M2SjhYbm40c1grb2pzSFc2N0xlZDlyRFpiVG9KSGNtazV6a1loc0Zq?=
+ =?utf-8?B?ditrOFBzcnRxRTdBSnpJd3lRM2RrZEkzNDdkNUlrS1BtZU5VSHRBenJGOEpo?=
+ =?utf-8?B?a01UZGpIenBiRDZzbWkxeVN3emIySXBEaVlLMTZhajhpZmh0VVNQUUJ1T1VX?=
+ =?utf-8?B?SVR3cVd2bUh1LzhPSEJqaFZ2Vy8zTmJvRlVSL0FsV29uUmlHeGM1WDAveVly?=
+ =?utf-8?B?VktGRzVrTUlIRWNHTVV1dGpkRWt4T20zak43ZS9yMGxGS3A5ZHVtSnE4K1d5?=
+ =?utf-8?B?Q3ZwNGFCaXhhN1U0OWo1SUIyUVB4clNoV2dOckhBdnpwd1NCdlh0RHlQMnpm?=
+ =?utf-8?B?cTVkU0V3UW44US9ad1ppS3VVNitrN2k3a29iZzJIcUpvQ2UycG1sNWs4Szg1?=
+ =?utf-8?B?QTFxMnlYNHZwWGRnSytGUnJrY3VlanFuYm9IWmhydzk3aDFJWFJESG5pK0k1?=
+ =?utf-8?B?K0xvWmhBVUdNUmZRVFVtWHQvZ1B2bEwzd2ViYjBrKytTM3gvUFl4bDZQM0lw?=
+ =?utf-8?B?MFAxTGRtYXlmUjJmTDBSS0lFVk9oTFFUbDhRZ2ZrcGNvU1NjZ1lmdFZWV0do?=
+ =?utf-8?B?dkZtSlZpNmZtYmUwc2ZndHRyTWNwbCt1WG1TUlFlWEpKSEpwNFNTRHZCaEdk?=
+ =?utf-8?B?QkxUOW5vZGVadTlBMDMweS9OeHhsMWJOVGtmTnVHL1FQaEpXbmorT3ZvQXlr?=
+ =?utf-8?B?QmlTTkpKL0pJUjBUM1Y5UFBoaGcyVHdENVZ2M3IzMS8vVXZibmhuQmt2OHZu?=
+ =?utf-8?B?ejZ6THlVMFJPOHNmNk8vNis0cTJOMk1UU3ZWQWQrUHVhbStsbzE4K002dGJO?=
+ =?utf-8?B?N1VmM0hsWXJYbEJVTW02aVBld29uY3ZwTmhDSHd2U3dGNFlpaXcvaDZyMCtr?=
+ =?utf-8?B?Sk9CMXlKWlZwallTNldKZTdzTzlOMFlDUXlEVlZmNGhOdS9TV3VSYWc5SWVp?=
+ =?utf-8?B?SmplbjYwalh1clNuY0FYbUhscUVEeXBwbGZYVFB0QXp2QkF4RWxBQyttYThY?=
+ =?utf-8?B?WENYM0tEWHJKTXhla1ROMTNzdytWMzJ5TzFLa0JKUlpNYXlZbEpyVGJycVBG?=
+ =?utf-8?B?WVV1dFNYSzZvVWtQWHZjeDlZdUw5aTh1dkxQcHQ4WU90b0dOeVVoME9MWWIv?=
+ =?utf-8?B?OXVma3FjZDFSa3E5VXNodW5vQkRXZTBwM1pDZzg4UzhkdGlrdUxGcDVRRWxT?=
+ =?utf-8?B?V2xSMXRRUFZkNGhUUVRacGg1T1JNVzQ5eVgxempLdzd4aldOUGRXL2VqM3Fh?=
+ =?utf-8?B?dnN2WEZSUERIV0VWV0xWVkNlVEN3YW9OYTI1TlBuaytWQmhLVXFUTUFNdEJX?=
+ =?utf-8?B?ejR6dFJWVjVPVUJ6bmJ0dWZaUGZhT2dYV043aGV6cUJKTjRGOGRHSlM1OTVz?=
+ =?utf-8?B?SVk3OHErb2FjeDZKdnhzdzNpRkFTdmpUMng3czZmbXVhWndCaU1QbWF0azVm?=
+ =?utf-8?B?aERLaEtIMHkvOFlRTm45c3FsclVHUDZObFRMODZ1Z0NwaGNDcnNIVWxETWd0?=
+ =?utf-8?B?eEZjbDB1MDNQcmoxWmhWd3JNTWZmSzVWeXh2aDlpdnppQW1GK25BT2k2cERu?=
+ =?utf-8?B?SHNVTGJFYTV5a2RrWUxEc3lIazJ0bis2L2lEWTUzTGJGZnh4M1R5OVc5WTlG?=
+ =?utf-8?B?Z2d0TXU1Vmc3WjBaeU0zOThjK2xMQlBYYTI4dk9CZEdNU0Q5RS95MDIxQkhk?=
+ =?utf-8?B?TWRmTExJeS9qT1lZc3ovb0ZVaHllbjNPQlpEdzAzcHhEZVhEN0R0UkdkTWRO?=
+ =?utf-8?B?RC9RMTk2NmQ1REM1ZzZ3LzVybEtvSGVQbDY5U2VHNFE1dUgrY1VXQWI5cE10?=
+ =?utf-8?B?Y0c2ejB0Y0VRUEFzNUQ0ZjNQdEs5ZVNhVzFUN3plczkvRjNUem0rNk4xN0dy?=
+ =?utf-8?B?M3h5VStNNFJNMUlWSkZ4TlBwQzJVUkMwZnlmNGY3NXkxU2Z6TGNxVGpzSTF4?=
+ =?utf-8?B?TkpzZzhGUmtHcW9aQUc4T2VIbmhrT0U0SS9SVGxabzM2c0NCQmdxVlZqekFR?=
+ =?utf-8?B?VWRZcEZPR1NFUkFhZ1hvT0FubFZRd0pRZXhGVGgrS3VwMEpDVkdQeGo4WDBM?=
+ =?utf-8?B?Skl0Z0tWMTdBM0VjNGErOTUwSVZ0b3FEM0tvaWxIRDJSbkt4a0gxWWhUKzRa?=
+ =?utf-8?Q?1PFwp5/H4hwr46p03AoWxJkTS?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1f9e80f1-c5f0-4003-74e2-08dda76eafe0
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB4357.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2025 15:59:59.7763
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: K/GAMx+R5yU/QNh2vpoHBxFwWHyZRVw/ruA2WT9wRmsqH6bElAqgFqhxwb1J7a5KMqB8DNIOnlbbJU2jUchLrg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7871
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sun, 08 Jun 2025 10:28:28 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1624
+ <yocto-patches@lists.yoctoproject.org>; Mon, 09 Jun 2025 16:00:07 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1625
 
-On 6/8/25 12:19, Michael Nazzareno Trimarchi via lists.yoctoproject.org
-wrote:
-> Hi all
->
-> Anyone can provide some feedback?
+--------------kYH7QvEIwM0cNRet4dHzhnlp
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-meta-java has seen better days. Its maintainer has made some clear
-statements about it not so long ago:
-https://lists.openembedded.org/g/openembedded-devel/message/114958 - as
-far I know this hasn't changed much.
 
->
-> On Thu, Jun 5, 2025 at 7:14 AM Michael Trimarchi
-> <michael@amarulasolutions.com> wrote:
->> According to https://archive.apache.org/dist/
+On 6/6/2025 4:59 AM, Lee Chee Yang via lists.yoctoproject.org wrote:
+>> -----Original Message-----
+>> From:yocto-patches@lists.yoctoproject.org <yocto-
+>> patches@lists.yoctoproject.org> On Behalf Of Sandeep Gundlupet Raju via
+>> lists.yoctoproject.org
+>> Sent: Thursday, 5 June, 2025 11:23 AM
+>> To:yocto-patches@lists.yoctoproject.org
+>> Cc:naveen.kumar.saini@intel.com
+>> Subject: [yocto-patches] [meta-zephyr][walnascar,scarthgap,master][PATCH]
+>> layer.conf: Add LAYERBASE_zephyrcore variable
 >>
->> The directories and files linked below are a historical archive of
->> software released by Apache Software Foundation projects.
+>> Add LAYERBASE_zephyrcore variable so that files from meta-zephyr-core can be
+>> accessed from other layers.
 >>
->> THEY MAY BE UNSUPPORTED AND UNSAFE TO USE
->> Current releases can be found on our download server.
->>
->> Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
+>> Signed-off-by: Sandeep Gundlupet Raju<sandeep.gundlupet-raju@amd.com>
+>> Signed-off-by: Sandeep Gundlupet Raju<grsandeep85@gmail.com>
 >> ---
->>  recipes-core/ant/ant-native_1.8.1.bb                      | 2 +-
->>  recipes-core/bcel/bcel_5.2.bb                             | 2 +-
->>  recipes-core/jakarta-commons/commons-cli_1.1.bb           | 2 +-
->>  recipes-core/jakarta-commons/commons-codec_1.3.bb         | 2 +-
->>  recipes-core/jakarta-commons/commons-collections_2.1.1.bb | 2 +-
->>  recipes-core/jakarta-commons/commons-digester_1.8.bb      | 2 +-
->>  recipes-core/jakarta-commons/commons-discovery_0.4.bb     | 2 +-
->>  recipes-core/jakarta-commons/commons-el_1.0.bb            | 2 +-
->>  recipes-core/jakarta-commons/commons-fileupload_1.2.1.bb  | 2 +-
->>  recipes-core/jakarta-commons/commons-httpclient_3.1.bb    | 2 +-
->>  recipes-core/jakarta-commons/commons-io_1.4.bb            | 2 +-
->>  recipes-core/jakarta-commons/commons-lang_2.4.bb          | 2 +-
->>  recipes-core/jakarta-commons/commons-logging_1.1.1.bb     | 2 +-
->>  recipes-core/jakarta-commons/commons-net_1.4.1.bb         | 2 +-
->>  recipes-core/jakarta-commons/commons-pool_1.4.bb          | 2 +-
->>  recipes-core/jakarta-libs/avalon-framework-api_4.3.bb     | 4 ++--
->>  recipes-core/jakarta-libs/log4j1.2_1.2.17.bb              | 2 +-
->>  recipes-core/jakarta-libs/logkit_1.2.2.bb                 | 2 +-
->>  recipes-core/jakarta-libs/oro_2.0.8.bb                    | 2 +-
->>  recipes-core/jakarta-libs/poi_3.0.bb                      | 2 +-
->>  recipes-core/jakarta-libs/regexp_1.5.bb                   | 2 +-
->>  recipes-core/servlet-api/jsp2.0_5.5.26.bb                 | 2 +-
->>  recipes-core/servlet-api/servlet2.3_4.1.37.bb             | 2 +-
->>  recipes-core/servlet-api/servlet2.4_5.5.26.bb             | 2 +-
->>  recipes-core/xalan-j/xalan-j_2.7.1.bb                     | 2 +-
->>  recipes-core/xerces-j/xerces-j_2.11.0.bb                  | 2 +-
->>  recipes-core/xml-commons/dom4j_1.6.1.bb                   | 2 +-
->>  recipes-core/xml-commons/jaxp1.3_1.4.01.bb                | 2 +-
->>  recipes-core/xml-commons/xml-commons-resolver1.1_1.2.bb   | 2 +-
->>  29 files changed, 30 insertions(+), 30 deletions(-)
->>
->> diff --git a/recipes-core/ant/ant-native_1.8.1.bb b/recipes-core/ant/ant-native_1.8.1.bb
->> index b81f71d..75bfbdf 100644
->> --- a/recipes-core/ant/ant-native_1.8.1.bb
->> +++ b/recipes-core/ant/ant-native_1.8.1.bb
->> @@ -5,7 +5,7 @@ LICENSE = "Apache-2.0"
->>  LIC_FILES_CHKSUM = "file://LICENSE;md5=503bb72c4dd62dd216d6820d5b869442"
->>  PR = "r1"
->>
->> -SRC_URI = "http://archive.apache.org/dist/ant/source/apache-ant-${PV}-src.tar.gz \
->> +SRC_URI = "https://downloads.apache.org/ant/source/apache-ant-${PV}-src.tar.gz \
->>            file://ant \
->>           "
->>
->> diff --git a/recipes-core/bcel/bcel_5.2.bb b/recipes-core/bcel/bcel_5.2.bb
->> index 7a8f46f..a525add 100644
->> --- a/recipes-core/bcel/bcel_5.2.bb
->> +++ b/recipes-core/bcel/bcel_5.2.bb
->> @@ -3,7 +3,7 @@ AUTHOR = "Apache Software Foundation"
->>  LICENSE = "Apache-2.0"
->>  LIC_FILES_CHKSUM = "file://LICENSE.txt;md5=44030f19e8bad73725f39d16fd05ff12"
->>  PR = "r1"
->> -SRC_URI = "http://archive.apache.org/dist/jakarta/bcel/source/${BP}-src.tar.gz"
->> +SRC_URI = "https://downloads.apache.org/jakarta/bcel/source/${BP}-src.tar.gz"
->>
->>  inherit java-library
->>
->> diff --git a/recipes-core/jakarta-commons/commons-cli_1.1.bb b/recipes-core/jakarta-commons/commons-cli_1.1.bb
->> index 2b83a03..3e73cab 100644
->> --- a/recipes-core/jakarta-commons/commons-cli_1.1.bb
->> +++ b/recipes-core/jakarta-commons/commons-cli_1.1.bb
->> @@ -5,7 +5,7 @@ PR = "${INC_PR}.1"
->>
->>  SUMMARY = "Java argument parsing helper classes"
->>
->> -SRC_URI = "http://archive.apache.org/dist/commons/cli/source/${BP}-src.tar.gz"
->> +SRC_URI = "https://downloads.apache.org/commons/cli/source/${BP}-src.tar.gz"
->>
->>  SRC_URI[sha256sum] = "929eb140c136673e7f5029cd206c81b3c1f5e66bba0dfdcd021b9dd5596356d2"
->>
->> diff --git a/recipes-core/jakarta-commons/commons-codec_1.3.bb b/recipes-core/jakarta-commons/commons-codec_1.3.bb
->> index cfaada5..e638d54 100644
->> --- a/recipes-core/jakarta-commons/commons-codec_1.3.bb
->> +++ b/recipes-core/jakarta-commons/commons-codec_1.3.bb
->> @@ -5,7 +5,7 @@ PR = "${INC_PR}.1"
->>
->>  DESCRIPTION = "Java library with simple encoder and decoders for various formats such as Base64 and Hexadecimal"
->>
->> -SRC_URI = "http://archive.apache.org/dist/commons/codec/source/${BP}-src.tar.gz"
->> +SRC_URI = "https://downloads.apache.org/commons/codec/source/${BP}-src.tar.gz"
->>
->>  S = "${WORKDIR}/${BP}"
->>
->> diff --git a/recipes-core/jakarta-commons/commons-collections_2.1.1.bb b/recipes-core/jakarta-commons/commons-collections_2.1.1.bb
->> index 898a7df..566835d 100644
->> --- a/recipes-core/jakarta-commons/commons-collections_2.1.1.bb
->> +++ b/recipes-core/jakarta-commons/commons-collections_2.1.1.bb
->> @@ -4,7 +4,7 @@ PR = "${INC_PR}.1"
->>
->>  DESCRIPTION = "A set of abstract data type interfaces and implementations that offer a wealth of useful functionality and a solid foundation for extending that functionality"
->>
->> -SRC_URI = "http://archive.apache.org/dist/commons/collections/source/${BP}-src.tar.gz"
->> +SRC_URI = "https://downloads.apache.org/commons/collections/source/${BP}-src.tar.gz"
->>
->>
->>  SRC_URI[sha256sum] = "73eb5907a31c8770480c70f6a6a8d9a9a2ffe602e1b461c045cff51ace4cab2a"
->> diff --git a/recipes-core/jakarta-commons/commons-digester_1.8.bb b/recipes-core/jakarta-commons/commons-digester_1.8.bb
->> index 7e595ee..9c80860 100644
->> --- a/recipes-core/jakarta-commons/commons-digester_1.8.bb
->> +++ b/recipes-core/jakarta-commons/commons-digester_1.8.bb
->> @@ -4,7 +4,7 @@ PR = "${INC_PR}.1"
->>
->>  SUMMARY = "Converts XML to a Java object by a set of mapping rules."
->>
->> -SRC_URI = "http://archive.apache.org/dist/commons/digester/source/${BP}-src.tar.gz"
->> +SRC_URI = "https://downloads.apache.org/commons/digester/source/${BP}-src.tar.gz"
->>
->>  DEPENDS += "commons-logging commons-beanutils"
->>  RDEPENDS:${PN} = "libcommons-logging-java libcommons-beanutils-java"
->> diff --git a/recipes-core/jakarta-commons/commons-discovery_0.4.bb b/recipes-core/jakarta-commons/commons-discovery_0.4.bb
->> index 60cf683..8a64bb9 100644
->> --- a/recipes-core/jakarta-commons/commons-discovery_0.4.bb
->> +++ b/recipes-core/jakarta-commons/commons-discovery_0.4.bb
->> @@ -5,7 +5,7 @@ PR = "${INC_PR}.1"
->>
->>  SUMMARY = "discovering, or finding, implementations for pluggable interfaces"
->>
->> -SRC_URI = "http://archive.apache.org/dist/commons/discovery/source/${BP}-src.tar.gz"
->> +SRC_URI = "https://downloads.apache.org/commons/discovery/source/${BP}-src.tar.gz"
->>
->>  DEPENDS += "commons-logging"
->>  RDEPENDS:${PN} = "libcommons-logging-java"
->> diff --git a/recipes-core/jakarta-commons/commons-el_1.0.bb b/recipes-core/jakarta-commons/commons-el_1.0.bb
->> index b93b68f..94ca635 100644
->> --- a/recipes-core/jakarta-commons/commons-el_1.0.bb
->> +++ b/recipes-core/jakarta-commons/commons-el_1.0.bb
->> @@ -5,7 +5,7 @@ PR = "${INC_PR}.1"
->>
->>  SUMMARY = "Implementation of the JSP2.0 Expression Language API"
->>
->> -SRC_URI = "http://archive.apache.org/dist/commons/el/source/${BP}-src.tar.gz"
->> +SRC_URI = "https://downloads.apache.org/commons/el/source/${BP}-src.tar.gz"
->>
->>  DEPENDS += "jsp2.0 servlet2.4"
->>  RDEPENDS:${PN} = "libjsp2.0-java libservlet2.4-java"
->> diff --git a/recipes-core/jakarta-commons/commons-fileupload_1.2.1.bb b/recipes-core/jakarta-commons/commons-fileupload_1.2.1.bb
->> index 71a866b..36d2dde 100644
->> --- a/recipes-core/jakarta-commons/commons-fileupload_1.2.1.bb
->> +++ b/recipes-core/jakarta-commons/commons-fileupload_1.2.1.bb
->> @@ -5,7 +5,7 @@ PR = "${INC_PR}.1"
->>
->>  DESCRIPTION = "Robust, high-performance, file upload capability for Java servlets and web applications"
->>
->> -SRC_URI = "http://archive.apache.org/dist/commons/fileupload/source/${BP}-src.tar.gz"
->> +SRC_URI = "https://downloads.apache.org/commons/fileupload/source/${BP}-src.tar.gz"
->>
->>  DEPENDS += "commons-beanutils commons-io servlet2.3"
->>  RDEPENDS:${PN} = "libcommons-beanutils-java libcommons-io-java libservlet2.3-java"
->> diff --git a/recipes-core/jakarta-commons/commons-httpclient_3.1.bb b/recipes-core/jakarta-commons/commons-httpclient_3.1.bb
->> index b4e5e2a..89a2fce 100644
->> --- a/recipes-core/jakarta-commons/commons-httpclient_3.1.bb
->> +++ b/recipes-core/jakarta-commons/commons-httpclient_3.1.bb
->> @@ -5,7 +5,7 @@ PR = "${INC_PR}.1"
->>
->>  DESCRIPTION = "Efficient, up-to-date, and feature-rich package implementing the client side of the most recent HTTP standards and recommendations"
->>
->> -SRC_URI = "http://archive.apache.org/dist/httpcomponents/commons-httpclient/source/${BP}-src.tar.gz"
->> +SRC_URI = "https://downloads.apache.org/httpcomponents/commons-httpclient/source/${BP}-src.tar.gz"
->>
->>  S = "${WORKDIR}/${BP}"
->>
->> diff --git a/recipes-core/jakarta-commons/commons-io_1.4.bb b/recipes-core/jakarta-commons/commons-io_1.4.bb
->> index 799a9d4..bc92a24 100644
->> --- a/recipes-core/jakarta-commons/commons-io_1.4.bb
->> +++ b/recipes-core/jakarta-commons/commons-io_1.4.bb
->> @@ -5,6 +5,6 @@ PR = "${INC_PR}.1"
->>
->>  DESCRIPTION = "Java library with utility classes, stream implementations, file filters and endian classes"
->>
->> -SRC_URI = "http://archive.apache.org/dist/commons/io/source/${BP}-src.tar.gz"
->> +SRC_URI = "https://downloads.apache.org/commons/io/source/${BP}-src.tar.gz"
->>
->>  SRC_URI[sha256sum] = "eca986497f7b4d1b1ec41821b1b5df827bb31fc14833e4449cfa8bcd5d7f29bb"
->> diff --git a/recipes-core/jakarta-commons/commons-lang_2.4.bb b/recipes-core/jakarta-commons/commons-lang_2.4.bb
->> index e0c3736..bbb10e9 100644
->> --- a/recipes-core/jakarta-commons/commons-lang_2.4.bb
->> +++ b/recipes-core/jakarta-commons/commons-lang_2.4.bb
->> @@ -5,7 +5,7 @@ PR = "${INC_PR}.1"
->>
->>  DESCRIPTION = "Set of Java classes that provide helper methods for the standard java.lang classes"
->>
->> -SRC_URI = "http://archive.apache.org/dist/commons/lang/source/${BP}-src.tar.gz"
->> +SRC_URI = "https://downloads.apache.org/commons/lang/source/${BP}-src.tar.gz"
->>
->>
->>  SRC_URI[sha256sum] = "2445238cd0eb167e99a1147394f61325490559f3df7e7e8f628043fb70cbf2f4"
->> diff --git a/recipes-core/jakarta-commons/commons-logging_1.1.1.bb b/recipes-core/jakarta-commons/commons-logging_1.1.1.bb
->> index 6de3228..7045e9e 100644
->> --- a/recipes-core/jakarta-commons/commons-logging_1.1.1.bb
->> +++ b/recipes-core/jakarta-commons/commons-logging_1.1.1.bb
->> @@ -4,7 +4,7 @@ PR = "${INC_PR}.1"
->>
->>  SUMMARY = "Java Internet protocol suite library"
->>
->> -SRC_URI = "http://archive.apache.org/dist/commons/logging/source/${BP}-src.tar.gz"
->> +SRC_URI = "https://downloads.apache.org/commons/logging/source/${BP}-src.tar.gz"
->>
->>  DEPENDS += "log4j1.2 servlet2.3 logkit"
->>
->> diff --git a/recipes-core/jakarta-commons/commons-net_1.4.1.bb b/recipes-core/jakarta-commons/commons-net_1.4.1.bb
->> index bffbbae..a62d55b 100644
->> --- a/recipes-core/jakarta-commons/commons-net_1.4.1.bb
->> +++ b/recipes-core/jakarta-commons/commons-net_1.4.1.bb
->> @@ -5,7 +5,7 @@ PR = "${INC_PR}.1"
->>  SUMMARY = "Java Internet protocol suite library"
->>  LIC_FILES_CHKSUM = "file://LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57"
->>
->> -SRC_URI = "http://archive.apache.org/dist/commons/net/source/${BP}-src.tar.gz"
->> +SRC_URI = "https://downloads.apache.org/commons/net/source/${BP}-src.tar.gz"
->>
->>  S = "${WORKDIR}/${BP}"
->>
->> diff --git a/recipes-core/jakarta-commons/commons-pool_1.4.bb b/recipes-core/jakarta-commons/commons-pool_1.4.bb
->> index 824b772..9ca7171 100644
->> --- a/recipes-core/jakarta-commons/commons-pool_1.4.bb
->> +++ b/recipes-core/jakarta-commons/commons-pool_1.4.bb
->> @@ -5,6 +5,6 @@ PR = "${INC_PR}.1"
->>
->>  SUMMARY = "Java Object-pooling API"
->>
->> -SRC_URI = "http://archive.apache.org/dist/commons/pool/source/${BP}-src.tar.gz"
->> +SRC_URI = "https://downloads.apache.org/commons/pool/source/${BP}-src.tar.gz"
->>
->>  SRC_URI[sha256sum] = "ca4452f2a2ce2daf6eaa1743ded2d3b36013200c48e3f2117b65584ca5cc1d9b"
->> diff --git a/recipes-core/jakarta-libs/avalon-framework-api_4.3.bb b/recipes-core/jakarta-libs/avalon-framework-api_4.3.bb
->> index 081cfe7..d2bf3d7 100644
->> --- a/recipes-core/jakarta-libs/avalon-framework-api_4.3.bb
->> +++ b/recipes-core/jakarta-libs/avalon-framework-api_4.3.bb
->> @@ -5,8 +5,8 @@ LIC_FILES_CHKSUM = "file://LICENSE.txt;md5=1dece7821bf3fd70fe1309eaa37d52a2"
->>  PR = "r1"
->>
->>  SRC_URI = " \
->> -          http://archive.apache.org/dist/excalibur/avalon-framework/source/${BP}-src.tar.gz;name=archive \
->> -          http://archive.apache.org/dist/avalon/logkit/source/logkit-1.2.2-src.tar.gz;name=logkit \
->> +          https://downloads.apache.org/excalibur/avalon-framework/source/${BP}-src.tar.gz;name=archive \
->> +          https://downloads.apache.org/avalon/logkit/source/logkit-1.2.2-src.tar.gz;name=logkit \
->>           "
->>
->>  inherit java-library
->> diff --git a/recipes-core/jakarta-libs/log4j1.2_1.2.17.bb b/recipes-core/jakarta-libs/log4j1.2_1.2.17.bb
->> index bd8c9d8..9f52671 100644
->> --- a/recipes-core/jakarta-libs/log4j1.2_1.2.17.bb
->> +++ b/recipes-core/jakarta-libs/log4j1.2_1.2.17.bb
->> @@ -5,7 +5,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=f4ce41a6d1028498fcacde12f589bce7"
->>
->>  PR = "r2"
->>
->> -SRC_URI = "http://archive.apache.org/dist/logging/log4j/${PV}/log4j-${PV}.tar.gz"
->> +SRC_URI = "https://downloads.apache.org/logging/log4j/${PV}/log4j-${PV}.tar.gz"
->>
->>  inherit java-library
->>
->> diff --git a/recipes-core/jakarta-libs/logkit_1.2.2.bb b/recipes-core/jakarta-libs/logkit_1.2.2.bb
->> index c3d83a5..154d982 100644
->> --- a/recipes-core/jakarta-libs/logkit_1.2.2.bb
->> +++ b/recipes-core/jakarta-libs/logkit_1.2.2.bb
->> @@ -4,7 +4,7 @@ LICENSE = "Apache-2.0"
->>  LIC_FILES_CHKSUM = "file://LICENSE.txt;md5=f1a1c8e1996e51c4dbc73e592a2ecf05"
->>  PR = "r1"
->>
->> -SRC_URI = "http://archive.apache.org/dist/avalon/logkit/source/${BP}-src.tar.gz"
->> +SRC_URI = "https://downloads.apache.org/avalon/logkit/source/${BP}-src.tar.gz"
->>
->>  inherit java-library
->>
->> diff --git a/recipes-core/jakarta-libs/oro_2.0.8.bb b/recipes-core/jakarta-libs/oro_2.0.8.bb
->> index 80efd49..8e3a249 100644
->> --- a/recipes-core/jakarta-libs/oro_2.0.8.bb
->> +++ b/recipes-core/jakarta-libs/oro_2.0.8.bb
->> @@ -4,7 +4,7 @@ LICENSE = "Apache-2.0"
->>  LIC_FILES_CHKSUM = "file://LICENSE;md5=372b1e91335021ca74173b2ab4dc97dd"
->>  PR = "r1"
->>
->> -SRC_URI = "http://archive.apache.org/dist/jakarta/oro/source/jakarta-${BP}.tar.gz"
->> +SRC_URI = "https://downloads.apache.org/jakarta/oro/source/jakarta-${BP}.tar.gz"
->>
->>  inherit java-library
->>
->> diff --git a/recipes-core/jakarta-libs/poi_3.0.bb b/recipes-core/jakarta-libs/poi_3.0.bb
->> index 3733c3c..f67314b 100644
->> --- a/recipes-core/jakarta-libs/poi_3.0.bb
->> +++ b/recipes-core/jakarta-libs/poi_3.0.bb
->> @@ -3,7 +3,7 @@ LICENSE = "Apache-2.0"
->>  LIC_FILES_CHKSUM = "file://LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57"
->>  AUTHOR = "Apache Software Foundation"
->>
->> -SRC_URI = "http://archive.apache.org/dist/jakarta/poi/release/src/${BPN}-src-${PV}-FINAL-20070503.tar.gz"
->> +SRC_URI = "https://downloads.apache.org/jakarta/poi/release/src/${BPN}-src-${PV}-FINAL-20070503.tar.gz"
->>
->>  S = "${WORKDIR}/${BPN}-3.0-rc4"
->>
->> diff --git a/recipes-core/jakarta-libs/regexp_1.5.bb b/recipes-core/jakarta-libs/regexp_1.5.bb
->> index 40dec0a..60635b4 100644
->> --- a/recipes-core/jakarta-libs/regexp_1.5.bb
->> +++ b/recipes-core/jakarta-libs/regexp_1.5.bb
->> @@ -4,7 +4,7 @@ LICENSE = "Apache-2.0"
->>  LIC_FILES_CHKSUM = "file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327"
->>  PR = "r1"
->>
->> -SRC_URI = "http://archive.apache.org/dist/jakarta/regexp/source/jakarta-${BP}.tar.gz"
->> +SRC_URI = "https://downloads.apache.org/jakarta/regexp/source/jakarta-${BP}.tar.gz"
->>
->>  inherit java-library
->>
->> diff --git a/recipes-core/servlet-api/jsp2.0_5.5.26.bb b/recipes-core/servlet-api/jsp2.0_5.5.26.bb
->> index 3d9f4da..5f84249 100644
->> --- a/recipes-core/servlet-api/jsp2.0_5.5.26.bb
->> +++ b/recipes-core/servlet-api/jsp2.0_5.5.26.bb
->> @@ -3,7 +3,7 @@ LICENSE = "Apache-2.0"
->>  LIC_FILES_CHKSUM = "file://LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57"
->>  AUTHOR = "Apache Software Foundation"
->>
->> -SRC_URI = "http://archive.apache.org/dist/tomcat/tomcat-5/v${PV}/src/apache-tomcat-${PV}-src.tar.gz"
->> +SRC_URI = "https://downloads.apache.org/tomcat/tomcat-5/v${PV}/src/apache-tomcat-${PV}-src.tar.gz"
->>
->>  S = "${WORKDIR}/apache-tomcat-${PV}-src/servletapi/jsr152"
->>
->> diff --git a/recipes-core/servlet-api/servlet2.3_4.1.37.bb b/recipes-core/servlet-api/servlet2.3_4.1.37.bb
->> index dceece6..0bf8552 100644
->> --- a/recipes-core/servlet-api/servlet2.3_4.1.37.bb
->> +++ b/recipes-core/servlet-api/servlet2.3_4.1.37.bb
->> @@ -4,7 +4,7 @@ LICENSE = "Apache-2.0"
->>  LIC_FILES_CHKSUM = "file://LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57"
->>  PR = "r1"
->>
->> -SRC_URI = "http://archive.apache.org/dist/tomcat/tomcat-4/v${PV}/src/apache-tomcat-${PV}-src.tar.gz"
->> +SRC_URI = "https://downloads.apache.org/tomcat/tomcat-4/v${PV}/src/apache-tomcat-${PV}-src.tar.gz"
->>
->>  inherit java-library
->>
->> diff --git a/recipes-core/servlet-api/servlet2.4_5.5.26.bb b/recipes-core/servlet-api/servlet2.4_5.5.26.bb
->> index eb2f769..1cc8d6e 100644
->> --- a/recipes-core/servlet-api/servlet2.4_5.5.26.bb
->> +++ b/recipes-core/servlet-api/servlet2.4_5.5.26.bb
->> @@ -3,7 +3,7 @@ LICENSE = "Apache-2.0"
->>  LIC_FILES_CHKSUM = "file://LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57"
->>  AUTHOR = "Apache Software Foundation"
->>
->> -SRC_URI = "http://archive.apache.org/dist/tomcat/tomcat-5/v${PV}/src/apache-tomcat-${PV}-src.tar.gz"
->> +SRC_URI = "https://downloads.apache.org/tomcat/tomcat-5/v${PV}/src/apache-tomcat-${PV}-src.tar.gz"
->>
->>  S = "${WORKDIR}/apache-tomcat-${PV}-src/servletapi/jsr154"
->>
->> diff --git a/recipes-core/xalan-j/xalan-j_2.7.1.bb b/recipes-core/xalan-j/xalan-j_2.7.1.bb
->> index 5e72a34..b697da2 100644
->> --- a/recipes-core/xalan-j/xalan-j_2.7.1.bb
->> +++ b/recipes-core/xalan-j/xalan-j_2.7.1.bb
->> @@ -12,7 +12,7 @@ PR = "r2"
->>  DEPENDS = "xerces-j regexp jlex cup jaxp1.3 bcel"
->>
->>  SRC_URI = "\
->> -       http://archive.apache.org/dist/xml/${BPN}/${BPN}_2_7_1-src.tar.gz;name=archive \
->> +       https://downloads.apache.org/xml/${BPN}/${BPN}_2_7_1-src.tar.gz;name=archive \
->>         https://dlcdn.apache.org/commons/bsf/source/bsf-src-2.4.0.tar.gz;name=bsf \
->>         "
->>
->> diff --git a/recipes-core/xerces-j/xerces-j_2.11.0.bb b/recipes-core/xerces-j/xerces-j_2.11.0.bb
->> index 56ffe97..3b2a64d 100644
->> --- a/recipes-core/xerces-j/xerces-j_2.11.0.bb
->> +++ b/recipes-core/xerces-j/xerces-j_2.11.0.bb
->> @@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
->>                      file://LICENSE.serializer.txt;md5=d229da563da18fe5d58cd95a6467d584 \
->>                     "
->>
->> -SRC_URI = "http://archive.apache.org/dist/xerces/j/source/Xerces-J-src.${PV}.tar.gz"
->> +SRC_URI = "https://downloads.apache.org/xerces/j/source/Xerces-J-src.${PV}.tar.gz"
->>
->>  # CVE only applies to some Oracle Java SE and Red Hat Enterprise Linux versions.
->>  # Already fixed with updates and closed.
->> diff --git a/recipes-core/xml-commons/dom4j_1.6.1.bb b/recipes-core/xml-commons/dom4j_1.6.1.bb
->> index 0ba3f0e..ac8d02e 100644
->> --- a/recipes-core/xml-commons/dom4j_1.6.1.bb
->> +++ b/recipes-core/xml-commons/dom4j_1.6.1.bb
->> @@ -10,7 +10,7 @@ DEPENDS = "fastjar-native virtual/javac-native \
->>
->>  SRC_URI = "\
->>          ${SOURCEFORGE_MIRROR}/dom4j/${P}.tar.gz;name=archive \
->> -        http://archive.apache.org/dist/ws/jaxme/source/ws-jaxme-0.5.2-src.tar.gz;name=jaxme \
->> +        https://downloads.apache.org/ws/jaxme/source/ws-jaxme-0.5.2-src.tar.gz;name=jaxme \
->>          file://debian.patch \
->>  "
->>  SRC_URI[archive.md5sum] = "1e7ef6d20939315714de4a8502f27b2d"
->> diff --git a/recipes-core/xml-commons/jaxp1.3_1.4.01.bb b/recipes-core/xml-commons/jaxp1.3_1.4.01.bb
->> index 7965bb8..558f2c2 100644
->> --- a/recipes-core/xml-commons/jaxp1.3_1.4.01.bb
->> +++ b/recipes-core/xml-commons/jaxp1.3_1.4.01.bb
->> @@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = " \
->>                      file://LICENSE.sax.txt;md5=3534555610af53d4b5a8a0d2fb017d35 \
->>                     "
->>
->> -SRC_URI = "http://archive.apache.org/dist/xml/commons/source/xml-commons-external-${PV}-src.tar.gz;subdir=${BPN}-${PV}"
->> +SRC_URI = "https://downloads.apache.org/xml/commons/source/xml-commons-external-${PV}-src.tar.gz;subdir=${BPN}-${PV}"
->>
->>  inherit java-library
->>
->> diff --git a/recipes-core/xml-commons/xml-commons-resolver1.1_1.2.bb b/recipes-core/xml-commons/xml-commons-resolver1.1_1.2.bb
->> index 0fafcea..0174aeb 100644
->> --- a/recipes-core/xml-commons/xml-commons-resolver1.1_1.2.bb
->> +++ b/recipes-core/xml-commons/xml-commons-resolver1.1_1.2.bb
->> @@ -4,7 +4,7 @@ LICENSE = "Apache-2.0"
->>  PR = "r1"
->>  LIC_FILES_CHKSUM = "file://LICENSE.resolver.txt;md5=d229da563da18fe5d58cd95a6467d584"
->>
->> -SRC_URI = "http://archive.apache.org/dist/xml/commons/xml-commons-resolver-${PV}.tar.gz"
->> +SRC_URI = "https://downloads.apache.org/xerces/xml-commons/xml-commons-resolver-${PV}.tar.gz"
->>
->>  inherit java-library
->>
+>>   meta-zephyr-core/conf/layer.conf | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/meta-zephyr-core/conf/layer.conf b/meta-zephyr-core/conf/layer.conf
+>> index e1bb263..a4b3555 100644
+>> --- a/meta-zephyr-core/conf/layer.conf
+>> +++ b/meta-zephyr-core/conf/layer.conf
+>> @@ -20,3 +20,6 @@ LAYERSERIES_COMPAT_zephyrcore = "kirkstone scarthgap"
+>>   PYTHON3_NATIVE_SITEPACKAGES_DIR =
+>> "${libdir_native}/${PYTHON3_DIR}/site-packages"
+>>
+>>   addpylib ${LAYERDIR}/lib oeqa
+>> +
+>> +# Allow other layers to find the root of this layer if necessary.
+>> +LAYERBASE_zephyrcore = "${LAYERDIR}"[]
+>
+> can you please further explain the problem and the usage for this variable?
+> LAYERBASE doesn't seems like standard variable
+[Sandeep]: The problem is I need to access 
+https://git.yoctoproject.org/meta-zephyr/tree/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-image.inc 
+file from vendor layer to manipulate the do_configure:prepend to copy 
+files before the zephyr builds are started. Hence I requested to meet 
+you guys and walk through some of my proposals for this layer.
 >> --
->> 2.43.0
+>> 2.34.1
+>>
+>>
+>>
+>>
 >>
 >
+>
+> -=-=-=-=-=-=-=-=-=-=-=-
+> Links: You receive all messages sent to this group.
+> View/Reply Online (#1621):https://lists.yoctoproject.org/g/yocto-patches/message/1621
+> Mute This Topic:https://lists.yoctoproject.org/mt/113479750/8188369
+> Group Owner:yocto-patches+owner@lists.yoctoproject.org
+> Unsubscribe:https://lists.yoctoproject.org/g/yocto-patches/leave/14211927/8188369/518048116/xyzzy [santraju@amd.com]
+> -=-=-=-=-=-=-=-=-=-=-=-
+>
+>
+--------------kYH7QvEIwM0cNRet4dHzhnlp
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+<!DOCTYPE html><html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  </head>
+  <body>
+    <p><br>
+    </p>
+    <div class="moz-cite-prefix">On 6/6/2025 4:59 AM, Lee Chee Yang via
+      lists.yoctoproject.org wrote:<br>
+    </div>
+    <blockquote type="cite" cite="mid:BL4PR11MB8797361F43C6718A631EC6DAB96EA@BL4PR11MB8797.namprd11.prod.outlook.com">
+      <pre wrap="" class="moz-quote-pre">
+</pre>
+      <blockquote type="cite">
+        <pre wrap="" class="moz-quote-pre">-----Original Message-----
+From: <a class="moz-txt-link-abbreviated" href="mailto:yocto-patches@lists.yoctoproject.org">yocto-patches@lists.yoctoproject.org</a> &lt;yocto-
+<a class="moz-txt-link-abbreviated" href="mailto:patches@lists.yoctoproject.org">patches@lists.yoctoproject.org</a>&gt; On Behalf Of Sandeep Gundlupet Raju via
+lists.yoctoproject.org
+Sent: Thursday, 5 June, 2025 11:23 AM
+To: <a class="moz-txt-link-abbreviated" href="mailto:yocto-patches@lists.yoctoproject.org">yocto-patches@lists.yoctoproject.org</a>
+Cc: <a class="moz-txt-link-abbreviated" href="mailto:naveen.kumar.saini@intel.com">naveen.kumar.saini@intel.com</a>
+Subject: [yocto-patches] [meta-zephyr][walnascar,scarthgap,master][PATCH]
+layer.conf: Add LAYERBASE_zephyrcore variable
+
+Add LAYERBASE_zephyrcore variable so that files from meta-zephyr-core can be
+accessed from other layers.
+
+Signed-off-by: Sandeep Gundlupet Raju <a class="moz-txt-link-rfc2396E" href="mailto:sandeep.gundlupet-raju@amd.com">&lt;sandeep.gundlupet-raju@amd.com&gt;</a>
+Signed-off-by: Sandeep Gundlupet Raju <a class="moz-txt-link-rfc2396E" href="mailto:grsandeep85@gmail.com">&lt;grsandeep85@gmail.com&gt;</a>
+---
+ meta-zephyr-core/conf/layer.conf | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/meta-zephyr-core/conf/layer.conf b/meta-zephyr-core/conf/layer.conf
+index e1bb263..a4b3555 100644
+--- a/meta-zephyr-core/conf/layer.conf
++++ b/meta-zephyr-core/conf/layer.conf
+@@ -20,3 +20,6 @@ LAYERSERIES_COMPAT_zephyrcore = &quot;kirkstone scarthgap&quot;
+ PYTHON3_NATIVE_SITEPACKAGES_DIR =
+&quot;${libdir_native}/${PYTHON3_DIR}/site-packages&quot;
+
+ addpylib ${LAYERDIR}/lib oeqa
++
++# Allow other layers to find the root of this layer if necessary.
++LAYERBASE_zephyrcore = &quot;${LAYERDIR}&quot;[] 
+</pre>
+      </blockquote>
+      <pre wrap="" class="moz-quote-pre">
+
+can you please further explain the problem and the usage for this variable? 
+LAYERBASE doesn't seems like standard variable</pre>
+    </blockquote>
+    [Sandeep]: The problem is I need to access <span style="white-space: pre-wrap"><a class="moz-txt-link-freetext" href="https://git.yoctoproject.org/meta-zephyr/tree/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-image.inc">https://git.yoctoproject.org/meta-zephyr/tree/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-image.inc</a> file from vendor layer to manipulate the do_configure:prepend to copy files before the zephyr builds are started. Hence I requested to meet you guys and walk through some of my proposals for this layer.</span>
+    <blockquote type="cite" cite="mid:BL4PR11MB8797361F43C6718A631EC6DAB96EA@BL4PR11MB8797.namprd11.prod.outlook.com">
+      <pre wrap="" class="moz-quote-pre">
+</pre>
+      <blockquote type="cite">
+        <pre wrap="" class="moz-quote-pre">--
+2.34.1
+
+
+
+
+
+</pre>
+      </blockquote>
+      <pre wrap="" class="moz-quote-pre">
+
+
+-=-=-=-=-=-=-=-=-=-=-=-
+Links: You receive all messages sent to this group.
+View/Reply Online (#1621): <a class="moz-txt-link-freetext" href="https://lists.yoctoproject.org/g/yocto-patches/message/1621">https://lists.yoctoproject.org/g/yocto-patches/message/1621</a>
+Mute This Topic: <a class="moz-txt-link-freetext" href="https://lists.yoctoproject.org/mt/113479750/8188369">https://lists.yoctoproject.org/mt/113479750/8188369</a>
+Group Owner: <a class="moz-txt-link-abbreviated" href="mailto:yocto-patches+owner@lists.yoctoproject.org">yocto-patches+owner@lists.yoctoproject.org</a>
+Unsubscribe: <a class="moz-txt-link-freetext" href="https://lists.yoctoproject.org/g/yocto-patches/leave/14211927/8188369/518048116/xyzzy">https://lists.yoctoproject.org/g/yocto-patches/leave/14211927/8188369/518048116/xyzzy</a> [<a class="moz-txt-link-abbreviated" href="mailto:santraju@amd.com">santraju@amd.com</a>]
+-=-=-=-=-=-=-=-=-=-=-=-
+
+
+</pre>
+    </blockquote>
+  </body>
+</html>
+
+--------------kYH7QvEIwM0cNRet4dHzhnlp--
 
