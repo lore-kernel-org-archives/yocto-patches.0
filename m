@@ -2,103 +2,206 @@ Return-Path: <samuli.piippo@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A287C677C4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D319C61CE7
 	for <webhook@archiver.kernel.org>; Wed, 11 Jun 2025 10:09:47 +0000 (UTC)
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
- by mx.groups.io with SMTP id smtpd.web11.4186.1749636583815404809
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+ by mx.groups.io with SMTP id smtpd.web11.4184.1749636577691059240
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 11 Jun 2025 03:09:44 -0700
+ Wed, 11 Jun 2025 03:09:38 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=PLlLublt;
- spf=pass (domain: gmail.com, ip: 209.85.208.176, mailfrom: samuli.piippo@gmail.com)
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-310447fe59aso63259081fa.0
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 11 Jun 2025 03:09:43 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=g5dmYfht;
+ spf=pass (domain: gmail.com, ip: 209.85.208.169, mailfrom: samuli.piippo@gmail.com)
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-32addf54a01so52754891fa.3
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 11 Jun 2025 03:09:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749636581; x=1750241381; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DDmm8RHSWdreR9XAshCrZFFWTXJPJOOmSFwkBV4XWwI=;
-        b=PLlLubltbkSZRh4yuCmvJ0U08XhAtiF+WGQ44VFqj8Zzf4dv+9g6rfoJeHr3D/+DPW
-         FzLl562XXDnPjVdJ00+WieD4IUA3tveBKslhVUfqz6byoFnXvF1GwRq0MoMSs2RJVj8T
-         B1i8LNoTD5kOyHjcCb5ZO5dyKH/Ef1iCS6Kd/MuKU3ezocuyPdd6eiE6TuaM9pc+10rT
-         vhPvGHGKO4hUF8WqzMUvjU4v7/x1GECqslh0lRXQl7K3Rs7tGzl4ZD0EcrY7qEUqABM/
-         rqEVmiGkBM398ynOrAXn7fz9viIty+B4oD0JpzhYp8mkZSJbgrFLdB9jOgx6e3O5Bkxy
-         MiAA==
+        d=gmail.com; s=20230601; t=1749636575; x=1750241375; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wq83WhFLGzHuCVUrgarRIKZtnk0mAqC2VAeJxiYFNSA=;
+        b=g5dmYfhtFS5CBA3p78TkPWi8zclkvuErbzlkjGF31JDtFGV1gR6CCXLHePTFBiKMzs
+         7arylr1VkNgyt3OQFI/d2jfF8jnYK9wLY2rCengAoZCRmDdGd6S/yH1NyXSjH3ZoDUcd
+         tEr1I9aSWFLM2SbonMiYqKl4/v0SvdORmlWS7TQmZO60r4HNmrD6t9xji8fCyXS9AMQS
+         8f/hlvCg5BBYaoErHPbyK2y0jaJatIYQki8uq3nzQdYk5H/ZkaKoKnc6FPKYzu3726eg
+         t4dTvdf3ukBj5ZTHcEZSVIXPjt//MxynZjXjaRUe/JCy2ddLnnnf55b6s1d3Ga/neAZj
+         wNRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749636581; x=1750241381;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DDmm8RHSWdreR9XAshCrZFFWTXJPJOOmSFwkBV4XWwI=;
-        b=Ii1NiZG/NMdhNgIplKYLNBVGESXTJxSpCIbSrlX1rL7gFxdIOlexzpcfbSUT7cdtNe
-         6PPiHSXvc/CA7Sk2OjSqfumaTXVcrBFhjStuxj/8CJSC3gQN7ly871eW40umNMY+muUU
-         ZOw8azRKEa3nh1nENQ+yR2ZByGZmvWPmQxsaDoXeuTdV+/X2SVi4AxAbvAh4HHDjG6Nd
-         sRjhPtiCsOm/CuK2oR0wKkdMuchWwFL/nON3+oTAs2uC3CAMbw3op1J9/2OK9Z6ZqK0w
-         m9d4YVeW5DbjB86l2H+ON2MaI0/YHrAt5RtxHp76529X47e9UlgM1NvqWE+9Xd45WUEZ
-         FnSg==
-X-Gm-Message-State: AOJu0YxzzzHz8tKa9ZlATe1NW2XJh5X6fxmETETcs+05wbvaFg8xgcq7
-	Mf33cOS12J3VMC4CI7aVyf1DaLLkkozNtfYOKwvPs/5vh9klik3fqxjJwN+TiQ==
-X-Gm-Gg: ASbGnctH9LNIuLM9i3RLeUnXAzPvbmfIihM7TjcHeB9ejbpgwL/4QY2S6c4Fy70eVmI
-	NeJLwj8RAPY6j4vXyUr79VtPFLjgAZKl1r7yuw+VpCZiWRG+jNPLICttZ+3L8dwUcmDFIoso9qF
-	cYPo6thrPhddNywP+K1kJ7bV7qVKtcPSWd4CH0xcYM5MY0Hp3moXVZXcaRrbnA04isK4+LLLPiT
-	9yJO3Uck5Ilzw6PM4QVrWUdG/yhr0G4+OmfL/50w5uXPVzmkuodl4J9v0UJf5nVuGeFaSgEeppc
-	GZWyIBr0XUKSAeP+izx8gMwnTXEr3ad0Vf1ol6FgIkUmOfk7N4z8oIhFOlrNOnNV4NtQYIo=
-X-Google-Smtp-Source: AGHT+IGmwiUIQxFNPzR6UMTeMT4YgRCYUOOb0S9KFWQ39OZGOmczzAJlcSipD38CRAo/l+r1OGY4Xg==
-X-Received: by 2002:a05:651c:4104:20b0:32a:8101:bbd4 with SMTP id 38308e7fff4ca-32b21ba0b29mr3896191fa.14.1749636581110;
-        Wed, 11 Jun 2025 03:09:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1749636575; x=1750241375;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Wq83WhFLGzHuCVUrgarRIKZtnk0mAqC2VAeJxiYFNSA=;
+        b=R5+7ArVDvCOGynQkVpsg+RTzIkEWizcM2GUPV2eKZBTo5UdPcLbF6+1+ictkXsT8Oi
+         thNyH5P5yiMoT2fJMahaI7bJUnTM43YyPbyDDpVKJVQT6sFWrvJThU+f/wC81wQ2Fy4h
+         xJ5hQ668xaJYww1qhEQWQaXuimDCdwL42ITcGoUnQ2J/XhIEa7qGXKohC5kUz23G57pO
+         I3hiVmAdxjWvl/tYkB/b00+9HkS9dId7Yo1ydD1uxODwFmj7i9MSzT2EkSCDKLZN10E4
+         ot5yYxeTJ7/uGLY0zW5pIGkFMSPZfRPUMLvh5XyKI1VsInDYQEYm1wr+BSV+KP6GhuQo
+         aWpA==
+X-Gm-Message-State: AOJu0YyUak2dFD1kpGoHs8iHoqDR3OrMdXyRanY3caHx+Gbl/Z6nWndY
+	4SpDqdxzLs6YcS5LGiMDtZoABj86niE8jRGShkxVwQvsvxJCQ5Y2MEef+6KiGw==
+X-Gm-Gg: ASbGncu560GPmDDaELUkEcmb4Ri1ndxuExejm/Ixgk1jdfheMl/MvdduJ/X/3WoWewF
+	KDsaMQzDBT3BbYDda0b0uyKtX+TjrbZAWqHIr3Pbq5J/bz+zfdpO8NB/8IX2y8v67ky5L5fffMb
+	dQEbf3H3HrRVFlk65iK6WQygPggEJf+oJyCVUtQyooL6p2tKGWSwWDUgVgN9PJE09M1uYJa1s2M
+	FyIUTmFD4mBeazIVj0ec+VgqXu+3PY+FwYZfqePbSexvLACjDzsvM0IIRDA9AsfcM87TlEhY8h1
+	Qbtg7Tm+aeuOBOFhMvTli/bj1UBw712lIFsdkLFeEyYxOlQL6fv4DZVkQCIoMTZNnFN1RtY=
+X-Google-Smtp-Source: AGHT+IFpr2liKX10huMpl4hA188f+DNXYrCF7AJWpKn/sp1V8wY+EOwgPz5vBopWjGdmCkstgCO0Ew==
+X-Received: by 2002:a05:651c:1a0c:b0:32a:6a85:f298 with SMTP id 38308e7fff4ca-32b21dde5camr7959081fa.32.1749636575099;
+        Wed, 11 Jun 2025 03:09:35 -0700 (PDT)
 Received: from dcbuildsrv.ci.qt.io ([192.89.120.62])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32ae1b34761sm17392741fa.26.2025.06.11.03.09.40
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32ae1b34761sm17392741fa.26.2025.06.11.03.09.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jun 2025 03:09:40 -0700 (PDT)
+        Wed, 11 Jun 2025 03:09:34 -0700 (PDT)
 From: Samuli Piippo <samuli.piippo@gmail.com>
 X-Google-Original-From: Samuli Piippo <samuli.piippo@qt.io>
 To: yocto-patches@lists.yoctoproject.org
 Cc: jpewhacker@gmail.com
-Subject: [meta-mingw] [PATCH 2/2] openssl: enable build without perl
-Date: Wed, 11 Jun 2025 10:09:19 +0000
-Message-ID: <20250611100919.1067444-2-samuli.piippo@qt.io>
+Subject: [meta-mingw] [PATCH 1/2] Fix up openembedded bbappends
+Date: Wed, 11 Jun 2025 10:09:18 +0000
+Message-ID: <20250611100919.1067444-1-samuli.piippo@qt.io>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250611100919.1067444-1-samuli.piippo@qt.io>
-References: <20250611100919.1067444-1-samuli.piippo@qt.io>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Wed, 11 Jun 2025 10:09:47 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1631
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1630
 
-Remove runtime dependency to perl, it's the only dependency
-preventing openssl from building with mingw.
+Due to typo in the folder name, the bbappends in dynamic-layers for
+meta-openembedded were never actually used. Update all bbappends
+to work against latest recipes and patch protobuf to work with GCC 15.
 
 Signed-off-by: Samuli Piippo <samuli.piippo@qt.io>
 ---
- recipes-connectivity/openssl/openssl_%.bbappend | 2 ++
- recipes-support/curl/curl_%.bbappend            | 4 ----
- 2 files changed, 2 insertions(+), 4 deletions(-)
- create mode 100644 recipes-connectivity/openssl/openssl_%.bbappend
+ .../abseil-cpp/abseil-cpp_%.bbappend          |  0
+ .../recipes-devtools/grpc/grpc_%.bbappend     |  1 +
+ .../protobuf-c/protobuf-c_%.bbappend          |  0
+ .../0001-Disable-musttail-for-mingw.patch     | 43 +++++++++++++++++++
+ .../protobuf/protobuf_%.bbappend              |  4 ++
+ .../recipes-support/c-ares/c-ares_%.bbappend  |  1 +
+ .../recipes-support/re2/re2_%.bbappend}       |  0
+ .../protobuf/protobuf_%.bbappend              |  1 -
+ .../recipes-support/c-ares/c-ares_%.bbappend  |  2 -
+ .../recipes-support/re2/re2_%.bbappend        |  2 -
+ 10 files changed, 49 insertions(+), 5 deletions(-)
+ rename dynamic-layers/{openembedded-layers => openembedded-layer}/recipes-devtools/abseil-cpp/abseil-cpp_%.bbappend (100%)
+ create mode 100644 dynamic-layers/openembedded-layer/recipes-devtools/grpc/grpc_%.bbappend
+ rename dynamic-layers/{openembedded-layers => openembedded-layer}/recipes-devtools/protobuf-c/protobuf-c_%.bbappend (100%)
+ create mode 100644 dynamic-layers/openembedded-layer/recipes-devtools/protobuf/protobuf/0001-Disable-musttail-for-mingw.patch
+ create mode 100644 dynamic-layers/openembedded-layer/recipes-devtools/protobuf/protobuf_%.bbappend
+ create mode 100644 dynamic-layers/openembedded-layer/recipes-support/c-ares/c-ares_%.bbappend
+ rename dynamic-layers/{openembedded-layers/recipes-devtools/grpc/grpc_%.bbappend => openembedded-layer/recipes-support/re2/re2_%.bbappend} (100%)
+ delete mode 100644 dynamic-layers/openembedded-layers/recipes-devtools/protobuf/protobuf_%.bbappend
+ delete mode 100644 dynamic-layers/openembedded-layers/recipes-support/c-ares/c-ares_%.bbappend
+ delete mode 100644 dynamic-layers/openembedded-layers/recipes-support/re2/re2_%.bbappend
 
-diff --git a/recipes-connectivity/openssl/openssl_%.bbappend b/recipes-connectivity/openssl/openssl_%.bbappend
+diff --git a/dynamic-layers/openembedded-layers/recipes-devtools/abseil-cpp/abseil-cpp_%.bbappend b/dynamic-layers/openembedded-layer/recipes-devtools/abseil-cpp/abseil-cpp_%.bbappend
+similarity index 100%
+rename from dynamic-layers/openembedded-layers/recipes-devtools/abseil-cpp/abseil-cpp_%.bbappend
+rename to dynamic-layers/openembedded-layer/recipes-devtools/abseil-cpp/abseil-cpp_%.bbappend
+diff --git a/dynamic-layers/openembedded-layer/recipes-devtools/grpc/grpc_%.bbappend b/dynamic-layers/openembedded-layer/recipes-devtools/grpc/grpc_%.bbappend
 new file mode 100644
-index 0000000..32bd379
+index 0000000..b73a8ea
 --- /dev/null
-+++ b/recipes-connectivity/openssl/openssl_%.bbappend
-@@ -0,0 +1,2 @@
-+RDEPENDS:${PN}-misc:remove:mingw32 = "perl"
++++ b/dynamic-layers/openembedded-layer/recipes-devtools/grpc/grpc_%.bbappend
+@@ -0,0 +1 @@
++EXTRA_OECMAKE:remove:mingw32 = "-DBUILD_SHARED_LIBS=ON"
+diff --git a/dynamic-layers/openembedded-layers/recipes-devtools/protobuf-c/protobuf-c_%.bbappend b/dynamic-layers/openembedded-layer/recipes-devtools/protobuf-c/protobuf-c_%.bbappend
+similarity index 100%
+rename from dynamic-layers/openembedded-layers/recipes-devtools/protobuf-c/protobuf-c_%.bbappend
+rename to dynamic-layers/openembedded-layer/recipes-devtools/protobuf-c/protobuf-c_%.bbappend
+diff --git a/dynamic-layers/openembedded-layer/recipes-devtools/protobuf/protobuf/0001-Disable-musttail-for-mingw.patch b/dynamic-layers/openembedded-layer/recipes-devtools/protobuf/protobuf/0001-Disable-musttail-for-mingw.patch
+new file mode 100644
+index 0000000..0cd734a
+--- /dev/null
++++ b/dynamic-layers/openembedded-layer/recipes-devtools/protobuf/protobuf/0001-Disable-musttail-for-mingw.patch
+@@ -0,0 +1,43 @@
++From 321bfa7806f709ef6ab42a1c23aa1a44773ef5c2 Mon Sep 17 00:00:00 2001
++From: Samuli Piippo <samuli.piippo@qt.io>
++Date: Wed, 4 Jun 2025 07:07:42 +0000
++Subject: [PATCH] Disable musttail for mingw
 +
-diff --git a/recipes-support/curl/curl_%.bbappend b/recipes-support/curl/curl_%.bbappend
-index 10c234d..5577a29 100644
---- a/recipes-support/curl/curl_%.bbappend
-+++ b/recipes-support/curl/curl_%.bbappend
-@@ -1,7 +1,3 @@
--PACKAGECONFIG:remove:class-nativesdk:mingw32 = "openssl"
--EXTRA_OECONF:append:class-nativesdk:mingw32 = " --without-ssl"
--RRECOMMENDS:lib${BPN}:remove:mingw32 = "ca-certificates"
--
- # Configure tests for ioctlsocket FIONBIO fails with GCC-14
- # because gcc can now find warnings when compiling the test
- # and these warnings are treated as errors
++Workaround for GCC 15 build issue with mingw:
++
++In static member function 'static const char* google::protobuf::internal::TcParser::MiniParse(google::protobuf::MessageLite*, const char*, google::protobuf::internal::ParseContext*, google::protobuf::internal::TcFieldData, const google:
++:protobuf::internal::TcParseTableBase*, uint64_t) [with bool export_called_function = false]',
++    inlined from 'static const char* google::protobuf::internal::TcParser::MiniParse(google::protobuf::MessageLite*, const char*, google::protobuf::internal::ParseContext*, google::protobuf::internal::TcFieldData, const google::protobuf
++::internal::TcParseTableBase*, uint64_t)' at src/google/protobuf/generated_message_tctable_lite.cc:323:44:
++src/google/protobuf/generated_message_tctable_lite.cc:256:37: error: cannot tail-call: callee required more stack slots than the caller
++  256 |     PROTOBUF_MUSTTAIL return table->fallback(PROTOBUF_TC_PARAM_PASS);
++      |                              ~~~~~~~^~~~~~~~
++src/google/protobuf/generated_message_tctable_lite.cc:318:36: error: cannot tail-call: callee required more stack slots than the caller
++  318 |   PROTOBUF_MUSTTAIL return parse_fn(PROTOBUF_TC_PARAM_PASS);
++      |                            ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
++
++https://github.com/protocolbuffers/protobuf/issues/21625
++
++Upstream-Status: Pending
++---
++ src/google/protobuf/port_def.inc | 3 ++-
++ 1 file changed, 2 insertions(+), 1 deletion(-)
++
++diff --git a/src/google/protobuf/port_def.inc b/src/google/protobuf/port_def.inc
++index 56f995e45e..bc7a01e534 100644
++--- a/src/google/protobuf/port_def.inc
+++++ b/src/google/protobuf/port_def.inc
++@@ -228,11 +228,12 @@ static_assert(PROTOBUF_ABSL_MIN(20230125, 3),
++ #endif
++ #if ABSL_HAVE_CPP_ATTRIBUTE(clang::musttail) && !defined(__arm__) &&  \
++     !defined(_ARCH_PPC) && !defined(__wasm__) &&                      \
++-    !(defined(_MSC_VER) && defined(_M_IX86)) && !defined(__i386__)
+++    !(defined(_MSC_VER) && defined(_M_IX86)) && !defined(__i386__) && !defined(__MINGW32__)
++ // Compilation fails on ARM32: b/195943306
++ // Compilation fails on powerpc64le: b/187985113
++ // Compilation fails on X86 Windows:
++ // https://github.com/llvm/llvm-project/issues/53271
+++// Compilation fails on MINGW: https://github.com/protocolbuffers/protobuf/issues/21625
++ #define PROTOBUF_MUSTTAIL [[clang::musttail]]
++ #define PROTOBUF_TAILCALL true
++ #else
+diff --git a/dynamic-layers/openembedded-layer/recipes-devtools/protobuf/protobuf_%.bbappend b/dynamic-layers/openembedded-layer/recipes-devtools/protobuf/protobuf_%.bbappend
+new file mode 100644
+index 0000000..d80d3ce
+--- /dev/null
++++ b/dynamic-layers/openembedded-layer/recipes-devtools/protobuf/protobuf_%.bbappend
+@@ -0,0 +1,4 @@
++FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
++SRC_URI:append:mingw32 = " file://0001-Disable-musttail-for-mingw.patch"
++
++EXTRA_OECMAKE:remove:mingw32 = "-Dprotobuf_BUILD_SHARED_LIBS=ON"
+diff --git a/dynamic-layers/openembedded-layer/recipes-support/c-ares/c-ares_%.bbappend b/dynamic-layers/openembedded-layer/recipes-support/c-ares/c-ares_%.bbappend
+new file mode 100644
+index 0000000..94cd077
+--- /dev/null
++++ b/dynamic-layers/openembedded-layer/recipes-support/c-ares/c-ares_%.bbappend
+@@ -0,0 +1 @@
++EXTRA_OECMAKE:append:mingw32 = " -DCARES_SHARED=OFF"
+diff --git a/dynamic-layers/openembedded-layers/recipes-devtools/grpc/grpc_%.bbappend b/dynamic-layers/openembedded-layer/recipes-support/re2/re2_%.bbappend
+similarity index 100%
+rename from dynamic-layers/openembedded-layers/recipes-devtools/grpc/grpc_%.bbappend
+rename to dynamic-layers/openembedded-layer/recipes-support/re2/re2_%.bbappend
+diff --git a/dynamic-layers/openembedded-layers/recipes-devtools/protobuf/protobuf_%.bbappend b/dynamic-layers/openembedded-layers/recipes-devtools/protobuf/protobuf_%.bbappend
+deleted file mode 100644
+index d350e38..0000000
+--- a/dynamic-layers/openembedded-layers/recipes-devtools/protobuf/protobuf_%.bbappend
++++ /dev/null
+@@ -1 +0,0 @@
+-EXTRA_OECONF:append:mingw32 = " --disable-shared"
+diff --git a/dynamic-layers/openembedded-layers/recipes-support/c-ares/c-ares_%.bbappend b/dynamic-layers/openembedded-layers/recipes-support/c-ares/c-ares_%.bbappend
+deleted file mode 100644
+index 8ef58f9..0000000
+--- a/dynamic-layers/openembedded-layers/recipes-support/c-ares/c-ares_%.bbappend
++++ /dev/null
+@@ -1,2 +0,0 @@
+-EXTRA_OECMAKE:append:mingw32 = "-DCARES_SHARED=OFF"
+-EXTRA_OECMAKE:append:mingw32 = "-DCARES_STATIC=ON"
+diff --git a/dynamic-layers/openembedded-layers/recipes-support/re2/re2_%.bbappend b/dynamic-layers/openembedded-layers/recipes-support/re2/re2_%.bbappend
+deleted file mode 100644
+index 16bb5a0..0000000
+--- a/dynamic-layers/openembedded-layers/recipes-support/re2/re2_%.bbappend
++++ /dev/null
+@@ -1,2 +0,0 @@
+-EXTRA_OECMAKE:remove:mingw32 = "-DBUILD_SHARED_LIBS=ON"
+-EXTRA_OECMAKE:append:mingw32 = "-DBUILD_SHARED_LIBS=OFF"
 -- 
 2.43.0
 
