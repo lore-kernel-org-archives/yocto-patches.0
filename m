@@ -2,177 +2,417 @@ Return-Path: <quentin.schulz@cherry.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57462C71135
-	for <webhook@archiver.kernel.org>; Fri, 13 Jun 2025 12:11:21 +0000 (UTC)
-Received: from DU2PR03CU002.outbound.protection.outlook.com (DU2PR03CU002.outbound.protection.outlook.com [52.101.65.13])
- by mx.groups.io with SMTP id smtpd.web10.8839.1749816676368857804
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71671C61DB2
+	for <webhook@archiver.kernel.org>; Fri, 13 Jun 2025 12:32:11 +0000 (UTC)
+Received: from DUZPR83CU001.outbound.protection.outlook.com (DUZPR83CU001.outbound.protection.outlook.com [52.101.66.28])
+ by mx.groups.io with SMTP id smtpd.web10.9234.1749817926447446124
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 13 Jun 2025 05:11:16 -0700
+ Fri, 13 Jun 2025 05:32:07 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@cherry.de header.s=selector1 header.b=HJSSSCDG;
- spf=pass (domain: cherry.de, ip: 52.101.65.13, mailfrom: quentin.schulz@cherry.de)
+ dkim=pass header.i=@cherry.de header.s=selector1 header.b=DbnJlhHf;
+ spf=pass (domain: cherry.de, ip: 52.101.66.28, mailfrom: quentin.schulz@cherry.de)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ctjOCN8qjIn8eXEwgE+b95N/ZbErEEx8ui6Laqne7zBv3Dkm4Te9fTvk1ZObIezCN38i3cxRbE151dVF4L3/dvQw/UMCdKN8vFrVGaWPMHLbQgbZwTPlp5ReV3W0zHIerMlW8T5ZHTu8G8kpLKQGrUfbO2+Y6/oDi0VJhwOlKNj0G8Pee/oMV7YxfmZ26E1R0Uxh7D1er5fdoRnfYlotsrykIshvUiNTt5xvClzcirUaliAfxODzCKICCQsNZ6jYofDBYTFrxukbYvKj8KrBbE/4YWai9coIws8RIoe4wZONi7VKKYq99LlOh2NCoVdQ/NOBsR6B9Z2miFdeiakCpA==
+ b=HJpVGaUjaAltGsItkWb1kpHDSO0Swa79NL9mrfE8SthZy+Pu8SUKkmEec87P7/oGvXNY+iPBrfBh29Y22D1vVd9yB47tENjpR5iyKvM0TX/yw7YwMCKWr6aeUMQLnaLd+u9x2hrXL4zBb50S47X+LhOXrBE3e7ltSCdJU/RwRMQTU3npqOExut7NdXzQZNIwdWcM/TWQYZ7i5Fz/rUtBNUl1W3BzWPvbbByrWcVj5oYk3WyuqsxnNmVWqP50KFm+Bq957K8T0epHK5PynCWgvYddGfihnVZLGLXVGnh4CepWkv8d9JaS/+HD0Ll5g5NXxAfaiohTnmJ1FZ/DJ5a8yw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=e4+JQrX86VpoFEy3FOVv3VA/DvgReEu7C754wEVHSqc=;
- b=lzoyTgtWpWrCmZgbqKTntR8vwqG9F5JAzOvXsysEzLBBdQyM33KnIET6zKfqhgzBLYFxZWI2autHXOdumvBqQlfMGZodplNdnE6omVLYc9V/KEuNRHa4NvE/fR/S1pEsqBzd7IwUHLd7DSl6pPmXot6VoKp0Npk2xmc1/I3vHAJMGlOfUvisibvSnzXWY8ZL9yaj/8GD7F5w5oYv3qd22yIgYTUQ+rh5al9lZuQkzw/3qfjyh8O7ovRWD7B8pSIUSB/tVPikUUmBrthHJB+8zjTScGT6ZQX8X2aB0Kr4M1r5ehc3qOELQ8SMwXlqG2griZ4VfmbaAHQIx4XREdoOAw==
+ bh=vrhSEKzbz7tCCB0DTxyfSduLfQEJQM1jk8LtYwqD6FA=;
+ b=i9qY3RRfMYZ2kCmgLxp0dKCp6c4QgPT0zy8+1joVX0/8A60NZIRV3A4Kc/ek/i9eme94PXTeltjCBoVQpU3VKpWkDCsp+2+YBjkIdICmlYZfgN+g+5fl7Qo74vHfCha3H6MTxmhn5OOmDve0w1ONwIFJUYAOyd3+akrblG4DQbXRBMMkhzw/ffbGK7iDk/r09by8G7/+9l/0IwdbGvjrGQGUlrw9q0lSS9LXaZMFkwU1gKMcrcgeF4B7BkrzocxEgIXCSfuZdcHEyI1FEKIL7YnsvUR639iwXXSEt/9PtLy6ePK+cyoYue24f9Sb8XURQ5SiskPZmEWfJchgFDhfeg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
  dkim=pass header.d=cherry.de; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=e4+JQrX86VpoFEy3FOVv3VA/DvgReEu7C754wEVHSqc=;
- b=HJSSSCDGgLj74gtLZo6GlvR/VOHZDUMVeUVVHrlf18lSqZHKTtROMpy4T0QJgyWTxiN+wDZ+P//O9bIU1FuO9qKK4/zZqCjcZ7D5v4oHSKqsPO2gx6LvxioM6W9KUZhy1tMaFrhRW6lbNEGKOIzllUMVg8Jvstwrf2v2qQpLoDQ=
+ bh=vrhSEKzbz7tCCB0DTxyfSduLfQEJQM1jk8LtYwqD6FA=;
+ b=DbnJlhHfUJpW3z154hYGeoS5t25Wr1b8mOb7cRo3Fo94fm4NFOivZpGS1yRFopALmwA0Zdc2RfeyDIziu5jMJPJuKDq4tXkZH5Rq+MV/JjTytUPqj/QLfGHtxtDqyTSZJ3csyA17zUN26GIeaOjmuWWbU2ckR45gH4WygTWEeKg=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=cherry.de;
 Received: from AS8PR04MB8897.eurprd04.prod.outlook.com (2603:10a6:20b:42c::20)
- by DU2PR04MB8550.eurprd04.prod.outlook.com (2603:10a6:10:2d5::16) with
+ by DBAPR04MB7462.eurprd04.prod.outlook.com (2603:10a6:10:1a0::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.25; Fri, 13 Jun
- 2025 12:11:12 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.19; Fri, 13 Jun
+ 2025 12:32:02 +0000
 Received: from AS8PR04MB8897.eurprd04.prod.outlook.com
  ([fe80::35f6:bc7d:633:369a]) by AS8PR04MB8897.eurprd04.prod.outlook.com
  ([fe80::35f6:bc7d:633:369a%5]) with mapi id 15.20.8835.018; Fri, 13 Jun 2025
- 12:11:12 +0000
-Message-ID: <7d7b6604-a642-49ee-97fd-181a41072b0f@cherry.de>
-Date: Fri, 13 Jun 2025 14:11:07 +0200
+ 12:32:02 +0000
+Message-ID: <10a6a94d-2433-4517-9af5-5e78febfda79@cherry.de>
+Date: Fri, 13 Jun 2025 14:32:01 +0200
 User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [meta-rockchip][PATCH 1/2] trusted-firmware-a:
- remove no-longer-required patches
+Subject: Re: [yocto-patches] [meta-rockchip][PATCH 2/2] fitimage rework
 To: yocto-patches@lists.yoctoproject.org
 References: <20250613102357.1539-1-twoerner@gmail.com>
+ <20250613102357.1539-2-twoerner@gmail.com>
 Content-Language: en-US
 From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <20250613102357.1539-1-twoerner@gmail.com>
+In-Reply-To: <20250613102357.1539-2-twoerner@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DO3P289CA0024.QATP289.PROD.OUTLOOK.COM
- (2603:1096:790:1e::19) To AS8PR04MB8897.eurprd04.prod.outlook.com
+X-ClientProxiedBy: OL1P279CA0026.NORP279.PROD.OUTLOOK.COM
+ (2603:10a6:e10:13::13) To AS8PR04MB8897.eurprd04.prod.outlook.com
  (2603:10a6:20b:42c::20)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|DU2PR04MB8550:EE_
-X-MS-Office365-Filtering-Correlation-Id: 98450049-6784-4e67-2031-08ddaa736372
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|DBAPR04MB7462:EE_
+X-MS-Office365-Filtering-Correlation-Id: f6f0779a-34a8-4ce4-9553-08ddaa764c97
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
 X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?aVE2UHRibC9Ybk42c1M1V0NKRGtZc1RDeHM2MkJ1Sm4wZlFWNVdJT0gwRUl4?=
- =?utf-8?B?bllDSHdqUXdwNXJtSWt3OTJOM01VdnFGbGdSVEQyZkp1VFpOa3NqdUxOejZy?=
- =?utf-8?B?VVRHelVvcEdHSjM0Q0dyVXhnVjdQOTI3Ri9GT2RJT3RGQVpzOFY5dW1wU0ZY?=
- =?utf-8?B?RDh2TjRqSjl1ZTQyTUlsaWxoM3RNaG1Xb2E2NzRpekw1UmFPS0YzdE5RVDdR?=
- =?utf-8?B?MFFWOVdvQ3BxRXJIbis4YUprRXBDRklUN2ZqTW5RZXpvZkZyN3pLV0J6ZzlP?=
- =?utf-8?B?UnRhUEFHZ1pPUUhaRGJ5VEYzUVI3UGRQVU56SXVGL0wxRitaWEtOME13OWc2?=
- =?utf-8?B?N01oRlAwamwvQk5TQjBpWFM0eFJIMmxpcGpwZWhlOC9lbTNkNUJBWW1MSjk5?=
- =?utf-8?B?N0RKbGsxUktZVHBOaXgzbDNmS0JsL1ZELzNXMWJGQnljdFRITFdONmp2TFF1?=
- =?utf-8?B?QnFpcU0zdEI2elBONVB2Y1VjdDlOc3dlaG8yUElCbUV0d0ovVGxmT3ErVnh3?=
- =?utf-8?B?bm1UTjhRT3pqcllHSVVTM2tOWG1yZmRBajk4bkVMYWV0ODB3bkN6eWFzS245?=
- =?utf-8?B?K0xIRWJxUHBuNHVqTy9qREcvRDl4bFg3NWhBc2M5aC9GOERJaE1PNUF0a0c5?=
- =?utf-8?B?cWdKbGpLdmk3YW9JTnZRSWplZVRZYm1YOE5oZ09jRi9qMjhQNEZHYTlubktQ?=
- =?utf-8?B?ZTFFQlo4bWxTWG1YY0o1N1ZBZkJzeC81bCtldWU0TmtJRkNTYUwyandGYUJT?=
- =?utf-8?B?eDNFVFV0Z2F1bG9nN2hNZnJPTHYvS3VMSHZ1SnhUVlppMVdlYnVLQlNKQWZo?=
- =?utf-8?B?bkZtTVQ1eXhJeU5kcHlwd0UxUWgvMVk4S3VEQ3hNYXNHall5MlNSLzZQU2hQ?=
- =?utf-8?B?R1ZCSFhTeU1iL2MxTEV0Yjdja2xNVitzTk1zL3R3bW1Jc0FmWXNmVlJvVVdi?=
- =?utf-8?B?YVlucmFQd3lyc0hueTMrYkRmMzdxQ0dHNzM1allXY3NKVFBoM1ZoOWFzN25u?=
- =?utf-8?B?Ui95MkZYN2xNSGtScnZ2SFpnQUhISC9yYVBndUpqcDdacEJLaHg5N2tUOTYz?=
- =?utf-8?B?VzVyNmJQM3VUSkszeUQvT2tuMlVLRlk5VGY1U3plbjVIakczNVhKTFczbkFj?=
- =?utf-8?B?Z2xsOS9XcGRVbTFqQjRNd0tqUnRXQ3pDYXhMK2tNdWY4WTNoRW1qakdSTXhz?=
- =?utf-8?B?ZDNUbEEwZFdheEYyWWM4UEJIUUM5REFncmFZbjJVQlBMdWhQODNwOERCVnV5?=
- =?utf-8?B?K09EcEdER1JtTWwwRWdhQTBBTjRLajZiMnZTeUltN2o4ODZMenR2bnltMWNh?=
- =?utf-8?B?M0hmMU40aHZHQ3VRK2w3cjh5K0d0Wmk3WStqa2U4ZXJ3Ui9xd3lWN2RUM3Vu?=
- =?utf-8?B?WWVsYng4ZlZpZHpRRkc4bGVZVDVjSVorQ2F1Y3hQYVFSYlVlbEk4aXgvUzg2?=
- =?utf-8?B?NGhiMWtkNVdIODdVNEI5TVhKTkE5ZnRKQmsvdzRkZU1UbGpYV0xPSnJHSXRQ?=
- =?utf-8?B?ektxRE4wN3UramtJcnRNQ29UVDJiTUdVTHY3ZlU3QVpLYlNnRE1VOUNSTWxX?=
- =?utf-8?B?L3ZocFdEOHJ1NEJqQ1lXRmM5UkJzcDhpNkg0VTlodm8vS2ZkdktBUVJlQ2p6?=
- =?utf-8?B?UE5FZjMzNXVHVXN4UzRWUFB1aFRmS0hIRExKWnA3MW0wazJ4RVdIRWZYNE9r?=
- =?utf-8?B?dmlYSGlVMlJUdFkwT2ZmUHlkbFVkMEo5OWVzRXlSY09IeTNURHplTUVsVXox?=
- =?utf-8?B?bnk1Y1pVL0ZoQjEzNVpTeGZ3SnBIelowSS9MVnZxS0RBd2RrZHVkd0lHUmxv?=
- =?utf-8?B?WDNycDVLR1BmNGhUUXFYa3hVMUZ3dXM4eWVFTytVVFJlL2ZoeFNiODE4K2l1?=
- =?utf-8?B?WWsrMlJvUHFJOUlCTFhKSE0yRUlMYVM5NWtabURZU2kwSGNKQnAzYVhFSm1l?=
- =?utf-8?Q?MZs1Gux9MJE=3D?=
+	=?utf-8?B?Nk5uN3VGV0pHRVptSFVYbGJMRk53cVdZb3hra2pyTHQ5R0V2RkVhODNISU81?=
+ =?utf-8?B?eTBvV1BCK3ZuaDdIMGZZN1VKWmJmNHppZW9yZ3JISktNcFNQWVliNGw0SWpo?=
+ =?utf-8?B?TXdsUGlGcG0yTkJxTXROQ1IwWHZhaVZOVnpmUkFvRHFmMllCU3JiektOblkv?=
+ =?utf-8?B?SUpvQk1BMlhXVG4rT2FNS095Z3ZCMC82cG01UzVyc1dEWHpxeUFQY1kvWGZ0?=
+ =?utf-8?B?RThGK2FyM1ZZWnVnTVMrR1pTT2w3NkVFUzNBN2JCTGRSWHFSMlNkdnF5UDNq?=
+ =?utf-8?B?M1owV3psTkZFWS9yanVpTHlTdXJPSjRjVUtNYnlRRDZjOU1MRWpRVkF6bjFt?=
+ =?utf-8?B?cVhhSEtySE1XaThHamVadm5XdDUyR2VMZEk2UWhZZ1pOZEF4ZUZXc2d4cnBm?=
+ =?utf-8?B?cEhTWm1vb2p5TEQ5OUtEVUhtSWhaRGsyaTM1TUNUcllOV1F1TkNkRlRRYkFP?=
+ =?utf-8?B?NGFwQW5EbHQzUkNNMmlFb0tPTGJsTit1d2k3N3FLWHMwM3dqTUhkdkRwVGE5?=
+ =?utf-8?B?ZXJtdTJidWIzT3RwZ05mVnFnMXZtaEd5aVpqbk9FVk12WEMwZzZiT0NSUitF?=
+ =?utf-8?B?L20yYys2eFZiZFAzRUdoUm1NWlc1SFZRdGFnSnp3bDBqTkZESUxpcTRwcjlq?=
+ =?utf-8?B?cW4xSENpNUhNRTFGVTdCWmdMbHpkZVJETzl5VU1NM2gyR1QrU3k2REt6YTFB?=
+ =?utf-8?B?Sng1L0ZZQ0kzZGtHd3kxSlAxYStzTzNHVzIrS0RINVU0VUpTT1JJOUFYa3NR?=
+ =?utf-8?B?dkd6NU9IVk5SMWthRGJpVm9nMDhHMEEwL1Z0cEZsVEdiaGUzS0xvd09BU1Yz?=
+ =?utf-8?B?c3IxMjl1Q0xyc1QxcC9wMEVoNG82dDQ0L0oxcTJSTTZWMng5Qm95Y2JUOGhr?=
+ =?utf-8?B?QXNORU0wdHllWnVGclpCTlhvVjZBdjFGNVI5bUhsL05NOU1ISy83eTdsd1ly?=
+ =?utf-8?B?OWJQQXJzakxQNzJqTXVWVDdRS0VnTS9rNjBnUmZZMjZyblB3bWFHRU1lMXI0?=
+ =?utf-8?B?NWZMQXdPeFZURlUwOS90N055OWZZNGhxaGpnR3VDU2NWRGhHY3VTSU45UU9k?=
+ =?utf-8?B?TzhnNlA4Mmgzc2MrVEFlbU5tekppeHNLT3hIbHpNT0NTa0dxZFFoVVBTNWFG?=
+ =?utf-8?B?MnZNaVZ1cXAvT2RxYXBlWmxCQ0QxSnlxRHhzejZvcnhIUUJ2VEpWUWExLzgv?=
+ =?utf-8?B?Mk9nZTVuWmNLbzBNZzA4cmwwZEZtejYvbGJDemg3bGhOMjloTlJNeFYwWVVp?=
+ =?utf-8?B?WHVnTjh4NzBFcW0vRWY2T0RERm9TZURnWVlES0ZFQms2UStSazFkTng4Ty9m?=
+ =?utf-8?B?Z2VFOWpaSGZHMDAreGs1cXdIRFB0TXJBRVFjM3FzcUFJa0FncHdVQVRBMU80?=
+ =?utf-8?B?MUpuckdpdnlrcjRPTmJ1R1ZvWUJDeW1WMlBPL0hRWEpaVjFrMWZKUjBqMm1F?=
+ =?utf-8?B?RWpGTHpGeWtLZWxPWksvQXVsMENmQ0tlaWNwMEl4a200S3AvOTIrdFFLb3Ba?=
+ =?utf-8?B?V0ZDVmxONDBCTjBBaThFWDdTa1dFYWF1b2hJeGFhV1UxTmxxVFp0WkNpait4?=
+ =?utf-8?B?dUNVU1h1cjBhQ2sxWk5UMVdScy9VNTlLbXpTU0h2NGZJYi9PbkQ5dStOT2pY?=
+ =?utf-8?B?WGVFb0VoUVU0MmtHMTlodVVTZXhBMlVGcFA4SmdVSDlIeEJhVGFlbTMzNzAx?=
+ =?utf-8?B?Y0t0dmgzQXlFemNLUVorWlExVmpHR2Rack15UHJUR1ZhczdRTzBWbUwzMTNm?=
+ =?utf-8?B?NzVWTldUekVNNm9SSVliV1o5WXMxRHNLU2FHTUVPaEpEYWI0bTlNR2h5MzZa?=
+ =?utf-8?B?b21pZWw3VVhQZzNwaDhBbkRVMU12ZzJTZEdjS1BVYkxPU0tQWnFtR3J0MlFL?=
+ =?utf-8?B?M0gzbnlGV3RvUXc5Q0w5WElyd2ZHTE5DYUNJUnV6ZURIVC9YNkFIWnlkNmFi?=
+ =?utf-8?Q?c0TEZygrLV4=3D?=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?WVZJNXd1TWMyajNpWU9xOE9BQUZWZzZCdXlHakpYa0hRUE00RUxZOWFNa2Vh?=
- =?utf-8?B?b3pxSmRvTW9PL29maGNDNDljOXFRMlppSzZLbkR0aisvTVVzUHVDaTJFU1hW?=
- =?utf-8?B?UG1ROW51dms1REdyeEgxelJSOHpweGhGMTRXazB0QW5Ua09teWxJR1dmTllE?=
- =?utf-8?B?bEV5b2s0V3VQSjJka1FHR3dOeURYSFlWMTUyb2RMVSt1WWlWakwvZ01INytv?=
- =?utf-8?B?TFVRNFN3VTMyRmxjRzBpSHdxOHpQcFpCbWY4ZUlZb0FySWxXSGRvdEttT29J?=
- =?utf-8?B?M0pRM1BxOWdVdzNRT2RRdGdJZDBrb2RnVmtLbFFJZzl1UHRDd2xXL2dFVXJw?=
- =?utf-8?B?Tnp2SHF6RlRDMVJIYWpOR1ZYOFFKTzAyUlVvckpIcmxNdmR0eFZ4U0gvUW1F?=
- =?utf-8?B?bEFJMnJQZit2U0hrb000cmdDbDVvMU43eHMzTjdDMXhqOEpFVmhsMWJ4K0N5?=
- =?utf-8?B?ZUg5RmFDNDlYSTdha2VYNldLNXV0WGVpYncyenRxb0V3ZmtXNWJweTVoYnJs?=
- =?utf-8?B?MGpNL015ZE0xZllkRHNuZFdQb0lFeFg5b3NONzhnZFFWS1FXZktabUtxUkVG?=
- =?utf-8?B?QnBwYlIrTDhYSWJOR1dDRFhGU2ZnZUZFMFVoSjJteHBjZFdHV2FKbjZCcWJz?=
- =?utf-8?B?aFVUNUpGVmJ5REh3aFdIUVVrVCtsZVRFRWFNSEE2SmM5Q2pnVlhWTE1DZ1Ev?=
- =?utf-8?B?RG1zZURZcDNyZjduS3lCekhyVWI5RHZ4bDA3Skp5SmdoU3VnQmltcFZuaE8w?=
- =?utf-8?B?N25vdmVLTjRsU3REcXhlQmlvRzFBUUJWb2NRbXdTK1NkWVo4QnJCbzJ0eWgv?=
- =?utf-8?B?N0haWjAxMkNlTmlOenc5Q1ZQZXRHd2RmdTQ1Q2x0TXM2cVc3RTZFSy8wNVY4?=
- =?utf-8?B?aHpaaUhhOFozeFBnZU9uYVozbng3TmFQeS9qL1hCcjBXTU55R25sMlNySFpz?=
- =?utf-8?B?RDJRTHhDc01aWHlvdGxTZWNFS3pyTjMyeUJQWWQ2VExTaCtoN3RmMGpZd2tz?=
- =?utf-8?B?NzdYSzNTc2hZUW5GWXN4bUJsQnU4clJHTHE2dmttV0YwVEszT3FtUHNDNjNY?=
- =?utf-8?B?UkYrVTFFb2pxZWZLSjNoQk5GbWZ3UjNGRG1ia3JIRWJCMWxFenkxZkxUNFAr?=
- =?utf-8?B?bGQ1QkwwNnd2ckVRZU5ROTZvdUxTKzBrbVFpelNEV1NTZUFTeVdUenZ6eGpv?=
- =?utf-8?B?R0YycGhrcnpQbFh5RVMrVG9RRDgyazM4MzJJc2xsbW1GRGpISy85MjFIdnZX?=
- =?utf-8?B?ankwYUE5d0NpSVdxYllUNHpKNGdQT0ZLTVdmdFNtZHhrNGp6RkR1V1JJeExw?=
- =?utf-8?B?NzBlZ0tpVjVOYW56WmdUWmxtbmtjT3p6WHg4UDBxNHdEVDlPN1YxY2laMWFT?=
- =?utf-8?B?MnlUbkZwV1did25JMjd0QWhPTE9qUTVjelg1NDkwWUFrb3NjTFl1VmJ1NWZN?=
- =?utf-8?B?NXArMjlWLzlGbVIxTU5vZER5Z28xYnBwU3V6UEtUdllUZzd1MVo1M2dBNlN2?=
- =?utf-8?B?NXRtMTBkclZ3NFlNM2hWSjR3VnVrc2MydDZDaVFRNExSZ3U3aDdWcmNUTENU?=
- =?utf-8?B?dVdCb25aMmRmTmZUZXN1b0xXa0R1RHkrWVNKSit4TGV3N0hTL3hpZjhBVWdt?=
- =?utf-8?B?bC93NVRkQmNBU2tVZXpzaGFDOVJmUURqMGkwOTFxbGE4VFZ3azkybzU2bk1h?=
- =?utf-8?B?RkNvcHJYMnh3UlBSaGdyWDl4RjE0VVVrRzdJek1UMGtNVDg5aEhYN2JCSHdF?=
- =?utf-8?B?VkdJajdFYU5CVjk4QUFqOGM0Qm5jMy9heE0yZk12Ry8vOFRlV09TR29KTU5N?=
- =?utf-8?B?RmxWdS9RdGwwRjJNUDB5RGsyRVVmR2lHUzM3S1NFVHhoR1VSaVQrZ00xaEo3?=
- =?utf-8?B?cCtoL0RBclpWN1V3d1R0MkFaS3QzbVYyT0xBc1VSVUt2ZFVOaVhwcm5WZ2h4?=
- =?utf-8?B?SGNBWjR0M3BZOXc3d0oxTW41V2wyNGxodldpYk9tVUdTekE2ZUl5UG5RSUlI?=
- =?utf-8?B?a3RkSUthUTdYK0xLdjJRaDdub0xkdFgvaGZ4YURTeEFBVVRTSGpFSlNpMjFC?=
- =?utf-8?B?SmNlYm1odkJFRGtGc09xQS9NcG00T2YyR3F1T0VzMXlqcWRXeFdhbVBXOEJG?=
- =?utf-8?B?NG9LSlpYdzQ1ZGNUTVcwM0NBWkUvZHlvL3BONkUrRmdRZnFZOVdmL3lOVVpH?=
- =?utf-8?B?clE9PQ==?=
+	=?utf-8?B?dUFTdWErVzdnRFBaSE1ON1VYZU1ZaWt6ZzhtUEdVQnRqUncra3ZXWHh0Q25B?=
+ =?utf-8?B?c2NHdU9UQVF2U2JQQ01teitRcHd6SW9wdjVBaWhmSklrZ2QyQkJZUlhsYk8w?=
+ =?utf-8?B?WU9QWU96Z0NBN1cwR0FaclpOUENoRkcyb21QUWtlRmIzZ3JzRFZ2T3FESWx4?=
+ =?utf-8?B?bE9JZ3lEWEVpN2NqL2pzWmtDME4rYlg1UHRtOHZxWVh5M1RJUlh4S0ZzbDIy?=
+ =?utf-8?B?QXpNYzJVdlFjTGswTG9WKytVbFpST3JVRlF5bVJaRXRtUzRUVFR1Z3ZtZndO?=
+ =?utf-8?B?dG1pdm13TXJwLzBOankvR0hidXlnNStnL1FnTEtRcCtkVTFUckVrdmpTTDV6?=
+ =?utf-8?B?ZmdKQjFjalBLSlVzSUo0cFRuMEt6VURjZ1RFZThBVkl3WWRnUmQ0cnIzdkpO?=
+ =?utf-8?B?a0U4SUhPRFNkTCtUODcxcGhpVkJyUWR0cVpKL1VuT0tiZm51RG5yVU0ya3Nq?=
+ =?utf-8?B?V1kvZVFsTyt1VlJNb1dIK1JKcmJzcVJjYVJZcVNWRU5XNWdRV0JlT2tYbUNh?=
+ =?utf-8?B?MTVLVk84UXprdCtsam9Ha1EwSUM4U0ZsdGtXV1FGc3YvQUVRS0t4ZlhNUllh?=
+ =?utf-8?B?QVhFaVpQS2hIZHBGdTVsdEdGWkJsR3gxa1grUG1Ud2tIOEYyUWtITjBadW5p?=
+ =?utf-8?B?K1g2OStEMGlwdi80dEJWalRWcGpDaTJOTWNvdzQ4b09rZTJEelhEcEMrTC8y?=
+ =?utf-8?B?Vm82bW1TeUZJMjEzQkErRG1FV0syN1ZnUWh0YXhyOEhObE04N2liQmd4TkEz?=
+ =?utf-8?B?MWM2ZEpEcVU2Ry9WemIwSm43NTdXbk5nbE5uUURadDVBUHppZkNveVptTXpF?=
+ =?utf-8?B?Y3Y2bjB4WmpzcERCQit4QW5qT3lHQjhvRU1IS2VGQ0lUdDNFbVI5ejBOMlJr?=
+ =?utf-8?B?SDM5azllV0wySm5rZHFXZ2k2c3o4a0pPUWcySnBibWFuaEtsbkYzV2pLVFNT?=
+ =?utf-8?B?SE5ZU2hGdUpYM1huQVJwTGhDaHdiNVBheS85bUs0dUNjc1NmbUdaRWcvM09F?=
+ =?utf-8?B?UXE3R3RiY1RGT0RtQzBTSnlaWit6cGMzUVJVN2ZmRW8rZXdLcktBN1h0MWVR?=
+ =?utf-8?B?MXljR1BHRW1UUlRxN0I5WlUvdy9LM09KSU1DMGFORXlmQU15WGpucWZjYWtv?=
+ =?utf-8?B?QlhEdUg3aTl4S0dLUzdCalNCTG90MFF1eFFLRmNOS2s2RE9jSWRycW1td3Vo?=
+ =?utf-8?B?NFJqa2pqWWp5U1lYNkFXVlk4RUpxNWpSMkNZNVJWL2w0RWp5WU1Wam5sWmxO?=
+ =?utf-8?B?UTdoMlFYMHJRY0w4L3VsWCtJSENTem1WNXhJSStIMmpBU2pxQnZweXBIbkFC?=
+ =?utf-8?B?cjl6RHJLZXpzRVVCSEJLUjJsWnlKOC9BdGJtMm9jMC9WRnUvZ2xSa3ZzMkM4?=
+ =?utf-8?B?OUFxbXJJMC9zU1R4bTJNRTJRWmI3ZUNVRXIzZnJLb25XUmova3RRU1E1RDBL?=
+ =?utf-8?B?OXJiMlFlMnRtS2Y3VEVHZTZBQy9FckIwdUNUNEtnYVJpc1RkcHVmSXpzQWpX?=
+ =?utf-8?B?Q1JLeG0yaEd0Wk0vSjZLbVE4U0kxZFNidnRnaTF6bU9mNWpud0NkaDZVOEFU?=
+ =?utf-8?B?OVJvczF5a0taV1pzczZsZkVsMk0zT0pGbnpLRGtwZ0Z0SXBPdk5UQmRlVGFQ?=
+ =?utf-8?B?Ny9QR3g3eVF5SXdnc0ZxWWlscjcyZ0ZNSFhzQ3dLNUVTM014bHlYZjhobnBR?=
+ =?utf-8?B?cndFWTJJVnJyVGZaOUJwTzRHWkhGZzVSbGdvU1NRYndFRVJIYjRteVJmdmlv?=
+ =?utf-8?B?NkdkaWRlUGdPdThMZ1BSSTdRWGdHd1Zsc0pQVHBsRFBiNVRYbUhGYU5manQx?=
+ =?utf-8?B?WE9ucHdOSnAycGFaNjJUY2ZUa2t3dTFiMklUSmc2YVJxVHowRnY5Y1FiWnB5?=
+ =?utf-8?B?QmFKT1IzdzM2VjJXRlZrRWl2VFJxaEs0MHNCY1NlY3ZQcTM3SWZaWG8yNlJM?=
+ =?utf-8?B?dlNsOFlLdVpjMXZsOWxxdWtQRG1VT09CZXpQZ3cyS2ZuOGdUd3BzRlVUQ0Rm?=
+ =?utf-8?B?bmlUczAvaW1TUDBhcGhqRDhqYmRVeXIzQmNLSzVQTFBvUzlKT2YyMW5jY0RZ?=
+ =?utf-8?B?QXVzamtYY3lXL1praUdxZEYwZ1NLMm1GR1c0MHlQMXhxay9GdXZTZUxYc2p0?=
+ =?utf-8?B?ZWVtN3FUNnhhWFdzM0JqT2tkdGdJMlI5VnBUZEVvNFlEMGo0c2lBTkxjWVRH?=
+ =?utf-8?B?Znc9PQ==?=
 X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: 98450049-6784-4e67-2031-08ddaa736372
+X-MS-Exchange-CrossTenant-Network-Message-Id: f6f0779a-34a8-4ce4-9553-08ddaa764c97
 X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8897.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2025 12:11:12.6512
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2025 12:32:02.5514
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7R21IlJyif/sCjEpUi0hr+IxXWs+pF/u6F9ESroM9tVaX/bTrrRJgWFkHxtSwV3k+RVKnYmIjByneePVV/f6+tlN+jVMKsJPiORkvChgjlc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8550
+X-MS-Exchange-CrossTenant-UserPrincipalName: w1iDiZQjXmkqrpZD01HKCt0VM9HJGXx71JOZxGOTL4kXJey0cQ31R+1Cxijlr3be6AddvO0J/oKMEd6JOF9vv9Ys5fRqFZgG782oSCzWHNI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR04MB7462
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 13 Jun 2025 12:11:21 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1639
+ <yocto-patches@lists.yoctoproject.org>; Fri, 13 Jun 2025 12:32:11 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1640
 
 Hi Trevor,
 
 On 6/13/25 12:23 PM, Trevor Woerner via lists.yoctoproject.org wrote:
-> The two patches being carried in this layer for tf-a are no longer required
-> and can be dropped.
+> oe-core has completely re-written the fitImage support starting roughly at
+> commit [1], update meta-rockchip to match.
 > 
 
-Better even, they were merged :)
+Thanks for looking into that!
 
-f86c230ab02c ("fix(rk3399): dram: Fix build with gcc 11")
+> Most of the MACHINEs in meta-rockchip use a fitImage, but some don't. Create
+> a boolean variable (RK_FITIMAGE), enabled by default, to keep track of which
+> ones do and which ones don't. Use this variable to decide how to configure
+> various image-related fields.
+> 
+> Run tested on the following with RAUC configured:
+> 	- nanopi-m4b
+> 	- nanopi-r2s
+> 	- radxa-zero-3e
+> 	- rock-pi-4b
+> 	- rock-pi-e
+> 	- rock-pi-s
+> 
+> Run tested on the following without RAUC:
+> 	- radxa-zero-3e
+> 	- rock-pi-e
+> 	- rock-pi-s
+> 
+> [1] oe-core: 3442d9297dca ("oe-selftest: fitimage: test external dtb")
+> Signed-off-by: Trevor Woerner <twoerner@gmail.com>
+> ---
+>   conf/machine/include/px30.inc              | 3 +--
+>   conf/machine/include/rk3066.inc            | 1 +
+>   conf/machine/include/rk3188.inc            | 1 +
+>   conf/machine/include/rk3288.inc            | 1 +
+>   conf/machine/include/rk3308.inc            | 3 +--
+>   conf/machine/include/rk3328.inc            | 3 +--
+>   conf/machine/include/rk3399.inc            | 3 +--
+>   conf/machine/include/rk3566.inc            | 3 +--
+>   conf/machine/include/rk3568.inc            | 3 +--
+>   conf/machine/include/rk3588s.inc           | 3 +--
+>   conf/machine/include/rockchip-defaults.inc | 2 ++
+>   conf/machine/include/rockchip-extlinux.inc | 8 ++++----
+>   conf/machine/include/rockchip-fitimage.inc | 4 ++++
 
-for the first one, part of v2.13 (but maybe will be backported to lts 
-releases?)
+Missing info in the top README about this new variable I believe?
 
-7f25d3cc7823 ("fix(rockchip): pmu: Do not mark already defined functions 
-as weak")
+>   13 files changed, 20 insertions(+), 18 deletions(-)
+>   create mode 100644 conf/machine/include/rockchip-fitimage.inc
+> 
+> diff --git a/conf/machine/include/px30.inc b/conf/machine/include/px30.inc
+> index 8173cb19be2c..825c1fae76d7 100644
+> --- a/conf/machine/include/px30.inc
+> +++ b/conf/machine/include/px30.inc
+> @@ -11,8 +11,7 @@ require conf/machine/include/arm/armv8a/tune-cortexa35.inc
+>   require conf/machine/include/rockchip-wic.inc
+>   
+>   KBUILD_DEFCONFIG ?= "defconfig"
+> -KERNEL_CLASSES = "kernel-fitimage"
+> -KERNEL_IMAGETYPE ?= "fitImage"
+> +require conf/machine/include/rockchip-fitimage.inc
 
-for the second one, part of v2.13 (but maybe will be backport to lts 
-releases? watch out for Yocto branches with 2.12 release for example).
+question: should this be only included when RK_FITIMAGE = "True"?
 
-Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
+some sort of inherit_defer but for require? Or maybe we should set the 
+variables in rockchip-fitimage only if RK_FITIMAGE = "True" and leave 
+them as is if False?
 
-Thanks!
+It seems like SoCs with RK_FITIMAGE = "False" should not inherit 
+rockchip-fitimage.inc and those with True should? What happens if you 
+have a board outside of meta-rockchip with px30 which you don't want to 
+support fitImage by default (that's my case, so I guess I'll need to 
+build this to figure it out :) ).
+
+>   
+>   TFA_PLATFORM = "px30"
+>   TFA_BUILD_TARGET = "bl31"
+> diff --git a/conf/machine/include/rk3066.inc b/conf/machine/include/rk3066.inc
+> index a898309bbf88..dc0c7734812c 100644
+> --- a/conf/machine/include/rk3066.inc
+> +++ b/conf/machine/include/rk3066.inc
+> @@ -9,6 +9,7 @@ require conf/machine/include/arm/armv7a/tune-cortexa9.inc
+>   
+>   SERIAL_CONSOLES = "115200;ttyS2"
+>   
+> +RK_FITIMAGE = "False"
+>   KBUILD_DEFCONFIG = "multi_v7_defconfig"
+>   KERNEL_FEATURES:append:rk3066 = " bsp/rockchip/remove-non-rockchip-arch-arm.scc"
+>   KERNEL_IMAGETYPE ?= "zImage"
+> diff --git a/conf/machine/include/rk3188.inc b/conf/machine/include/rk3188.inc
+> index 554d4f1c904d..3e1fc7e70822 100644
+> --- a/conf/machine/include/rk3188.inc
+> +++ b/conf/machine/include/rk3188.inc
+> @@ -9,6 +9,7 @@ require conf/machine/include/arm/armv7a/tune-cortexa9.inc
+>   
+>   SERIAL_CONSOLES = "115200;ttyFIQ0"
+>   
+> +RK_FITIMAGE = "False"
+>   KBUILD_DEFCONFIG = "multi_v7_defconfig"
+>   KERNEL_FEATURES:append:rk3188 = " bsp/rockchip/remove-non-rockchip-arch-arm.scc"
+>   KERNEL_IMAGETYPE ?= "zImage"
+> diff --git a/conf/machine/include/rk3288.inc b/conf/machine/include/rk3288.inc
+> index 06fda69a3eb7..5cc117e633fc 100644
+> --- a/conf/machine/include/rk3288.inc
+> +++ b/conf/machine/include/rk3288.inc
+> @@ -9,6 +9,7 @@ require conf/machine/include/arm/armv7a/tune-cortexa17.inc
+>   
+>   SERIAL_CONSOLES = "115200;ttyS2"
+>   
+> +RK_FITIMAGE = "False"
+>   KBUILD_DEFCONFIG ?= "multi_v7_defconfig"
+>   KERNEL_FEATURES:append:rk3288 = " bsp/rockchip/remove-non-rockchip-arch-arm.scc"
+>   KERNEL_IMAGETYPE ?= "zImage"
+> diff --git a/conf/machine/include/rk3308.inc b/conf/machine/include/rk3308.inc
+> index d30901f15b4f..ce1cebee1aac 100644
+> --- a/conf/machine/include/rk3308.inc
+> +++ b/conf/machine/include/rk3308.inc
+> @@ -13,8 +13,7 @@ SERIAL_CONSOLES = "1500000;ttyS0"
+>   
+>   KBUILD_DEFCONFIG ?= "defconfig"
+>   KERNEL_FEATURES:append:rk3308 = " bsp/rockchip/remove-non-rockchip-arch-arm64.scc"
+> -KERNEL_CLASSES = "kernel-fitimage"
+> -KERNEL_IMAGETYPE ?= "fitImage"
+> +require conf/machine/include/rockchip-fitimage.inc
+>   
+>   UBOOT_SUFFIX ?= "itb"
+>   UBOOT_ENTRYPOINT ?= "0x06000000"
+> diff --git a/conf/machine/include/rk3328.inc b/conf/machine/include/rk3328.inc
+> index e6f810dcd2ca..4924b06f030a 100644
+> --- a/conf/machine/include/rk3328.inc
+> +++ b/conf/machine/include/rk3328.inc
+> @@ -12,8 +12,7 @@ require conf/machine/include/rockchip-wic.inc
+>   
+>   KBUILD_DEFCONFIG ?= "defconfig"
+>   KERNEL_FEATURES:append:rk3328 = " bsp/rockchip/remove-non-rockchip-arch-arm64.scc"
+> -KERNEL_CLASSES = "kernel-fitimage"
+> -KERNEL_IMAGETYPE ?= "fitImage"
+> +require conf/machine/include/rockchip-fitimage.inc
+>   
+>   TFA_PLATFORM = "rk3328"
+>   TFA_BUILD_TARGET = "bl31"
+> diff --git a/conf/machine/include/rk3399.inc b/conf/machine/include/rk3399.inc
+> index cd1be49064ed..eb23f49370fc 100644
+> --- a/conf/machine/include/rk3399.inc
+> +++ b/conf/machine/include/rk3399.inc
+> @@ -12,8 +12,7 @@ require conf/machine/include/rockchip-wic.inc
+>   
+>   KBUILD_DEFCONFIG ?= "defconfig"
+>   KERNEL_FEATURES:append:rk3399 = " bsp/rockchip/remove-non-rockchip-arch-arm64.scc"
+> -KERNEL_CLASSES = "kernel-fitimage"
+> -KERNEL_IMAGETYPE ?= "fitImage"
+> +require conf/machine/include/rockchip-fitimage.inc
+>   
+>   TFA_PLATFORM = "rk3399"
+>   TFA_BUILD_TARGET = "bl31"
+> diff --git a/conf/machine/include/rk3566.inc b/conf/machine/include/rk3566.inc
+> index 6386ec7eb51c..c9647a66aa42 100644
+> --- a/conf/machine/include/rk3566.inc
+> +++ b/conf/machine/include/rk3566.inc
+> @@ -11,8 +11,7 @@ require conf/machine/include/rockchip-wic.inc
+>   
+>   KBUILD_DEFCONFIG ?= "defconfig"
+>   KERNEL_FEATURES:append:rk3566 = " bsp/rockchip/remove-non-rockchip-arch-arm64.scc"
+> -KERNEL_CLASSES = "kernel-fitimage"
+> -KERNEL_IMAGETYPE ?= "fitImage"
+> +require conf/machine/include/rockchip-fitimage.inc
+>   
+>   PREFERRED_PROVIDER_trusted-firmware-a = "rockchip-rkbin-tf-a"
+>   PREFERRED_PROVIDER_optee-os = "rockchip-rkbin-optee-os"
+> diff --git a/conf/machine/include/rk3568.inc b/conf/machine/include/rk3568.inc
+> index bcf9dd8b0f44..e89aa388951a 100644
+> --- a/conf/machine/include/rk3568.inc
+> +++ b/conf/machine/include/rk3568.inc
+> @@ -11,8 +11,7 @@ require conf/machine/include/rockchip-wic.inc
+>   
+>   KBUILD_DEFCONFIG ?= "defconfig"
+>   KERNEL_FEATURES:append:rk3568 = " bsp/rockchip/remove-non-rockchip-arch-arm64.scc"
+> -KERNEL_CLASSES = "kernel-fitimage"
+> -KERNEL_IMAGETYPE ?= "fitImage"
+> +require conf/machine/include/rockchip-fitimage.inc
+>   
+>   PREFERRED_PROVIDER_trusted-firmware-a = "rockchip-rkbin-tf-a"
+>   PREFERRED_PROVIDER_optee-os = "rockchip-rkbin-optee-os"
+> diff --git a/conf/machine/include/rk3588s.inc b/conf/machine/include/rk3588s.inc
+> index 6ec344abae5b..265244753b5a 100644
+> --- a/conf/machine/include/rk3588s.inc
+> +++ b/conf/machine/include/rk3588s.inc
+> @@ -10,8 +10,7 @@ require conf/machine/include/rockchip-wic.inc
+>   
+>   KBUILD_DEFCONFIG ?= "defconfig"
+>   KERNEL_FEATURES:append:rk3588s = " bsp/rockchip/remove-non-rockchip-arch-arm64.scc"
+> -KERNEL_CLASSES = "kernel-fitimage"
+> -KERNEL_IMAGETYPE ?= "fitImage"
+> +require conf/machine/include/rockchip-fitimage.inc
+>   
+>   PREFERRED_PROVIDER_trusted-firmware-a = "rockchip-rkbin-tf-a"
+>   PREFERRED_PROVIDER_optee-os = "rockchip-rkbin-optee-os"
+> diff --git a/conf/machine/include/rockchip-defaults.inc b/conf/machine/include/rockchip-defaults.inc
+> index 85ec7b944d1d..3835408ed8d2 100644
+> --- a/conf/machine/include/rockchip-defaults.inc
+> +++ b/conf/machine/include/rockchip-defaults.inc
+> @@ -1,7 +1,9 @@
+>   # meta-rockchip default settings
+>   MACHINEOVERRIDES =. "${@bb.utils.contains('ROCKCHIP_CLOSED_TPL', '1', 'closed-tpl:', '', d)}"
+>   MACHINEOVERRIDES =. "rockchip:"
+> +
+>   # kernel
+> +RK_FITIMAGE ?= "True"
+
+What about using a more typical 0/1 like we do for other variables? 
+ENABLE_STATELESS_VPU_GST or RKBIN_DDR_RECONFIGURE for example?
+
+>   PREFERRED_PROVIDER_virtual/kernel ?= "linux-yocto"
+>   KCONFIG_MODE ?= "alldefconfig"
+>   
+> diff --git a/conf/machine/include/rockchip-extlinux.inc b/conf/machine/include/rockchip-extlinux.inc
+> index fddab735bbf7..95a38d4dad0c 100644
+> --- a/conf/machine/include/rockchip-extlinux.inc
+> +++ b/conf/machine/include/rockchip-extlinux.inc
+> @@ -13,13 +13,13 @@ NONFITDT ?= "${@d.getVar('KERNEL_DEVICETREE').split()[0].split('/')[1]}"
+>   
+>   UBOOT_EXTLINUX ?= "1"
+>   UBOOT_EXTLINUX_ROOT ?= "root=PARTLABEL=rootfsA"
+> -UBOOT_EXTLINUX_FDTDIR ?= "${@bb.utils.contains('KERNEL_IMAGETYPE', 'fitImage', '', '/boot', d)}"
+> -UBOOT_EXTLINUX_FDT ?= "${@bb.utils.contains('KERNEL_IMAGETYPE', 'fitImage', '', '/boot/${NONFITDT}', d)}"
+> +UBOOT_EXTLINUX_FDTDIR ?= "${@ '' if bb.utils.to_boolean(d.getVar('RK_FITIMAGE'),False) else '/boot'}"
+> +UBOOT_EXTLINUX_FDT ?= "${@ '' if bb.utils.to_boolean(d.getVar('RK_FITIMAGE'),False) else '/boot/${NONFITDT}'}"
+
+I guess you can avoid the ,False part as the default is None, which 
+should fail your if condition. Just a matter of taste though.
+
+>   UBOOT_EXTLINUX_CONSOLE ?= "earlycon console=tty1 console=${RK_CONSOLE_DEVICE},${RK_CONSOLE_BAUD}n8"
+>   UBOOT_EXTLINUX_KERNEL_ARGS ?= "rootwait rw rootfstype=ext4"
+> -UBOOT_EXTLINUX_KERNEL_IMAGE ?= "/boot/${KERNEL_IMAGETYPE}"
+> +UBOOT_EXTLINUX_KERNEL_IMAGE ?= "/boot/${@ 'fitImage' if bb.utils.to_boolean(d.getVar('RK_FITIMAGE'),False) else '${KERNEL_IMAGETYPE}'}"
+
+Ditto.
+
+>   UBOOT_EXTLINUX_LABELS ?= "default"
+>   UBOOT_EXTLINUX_MENU_DESCRIPTION:default ?= "${MACHINE}"
+>   
+>   MACHINE_ESSENTIAL_EXTRA_RDEPENDS += "u-boot-extlinux"
+> -MACHINE_ESSENTIAL_EXTRA_RDEPENDS += "kernel-image ${@bb.utils.contains('KERNEL_IMAGETYPE', 'fitImage', '', 'kernel-devicetree', d)}"
+> +MACHINE_ESSENTIAL_EXTRA_RDEPENDS += "${@ 'linux-yocto-fitimage' if bb.utils.to_boolean(d.getVar('RK_FITIMAGE'),False) else 'kernel-devicetree'}"
+> diff --git a/conf/machine/include/rockchip-fitimage.inc b/conf/machine/include/rockchip-fitimage.inc
+> new file mode 100644
+> index 000000000000..e275faf70349
+> --- /dev/null
+> +++ b/conf/machine/include/rockchip-fitimage.inc
+> @@ -0,0 +1,4 @@
+> +KERNEL_CLASSES += "kernel-fit-extra-artifacts"
+> +KERNEL_IMAGETYPE = "Image"
+> +RRECOMMENDS:${KERNEL_PACKAGE_NAME}-base = ""
+> +KERNEL_DEPLOY_DEPEND = "linux-yocto-fitimage:do_deploy"
+
+Should this be a ?= so that we can easily override/change it?
+
+Looks ok to me otherwise, I have px30, rk3399 and rk3588 boards which do 
+not use fit images so I'll try to check this next week. Considering 
+meta-rockchip doesn't build at all anymore, I guess you may want to fix 
+this ASAP your way and I can figure out a way to fix it up "further" for 
+non-fitimages scenario?).
+
+Cheers,
 Quentin
 
