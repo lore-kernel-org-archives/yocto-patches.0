@@ -1,96 +1,162 @@
-Return-Path: <majortomtosourcecontrol@gmail.com>
+Return-Path: <lepotoman@msn.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38DACC71136
-	for <webhook@archiver.kernel.org>; Thu, 12 Jun 2025 18:41:17 +0000 (UTC)
-Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
- by mx.groups.io with SMTP id smtpd.web11.2008.1749753672684125815
- for <yocto-patches@lists.yoctoproject.org>;
- Thu, 12 Jun 2025 11:41:12 -0700
-Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=aOxZ6gEW;
- spf=pass (domain: gmail.com, ip: 209.85.161.53, mailfrom: majortomtosourcecontrol@gmail.com)
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-60be827f2b7so1301120eaf.0
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 12 Jun 2025 11:41:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749753672; x=1750358472; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:cc:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ILpwRKsKmuRWYiu6TnCs7DzpcEryFWmHJ+3LksnGXSE=;
-        b=aOxZ6gEWO8LlVun1O0BP9lbcQlpVlHiAlcfQ1Qi3DW5M+6wVq0ia3fwSwlY3DZi4D/
-         u8UTRbLQuIE/p+Pv7APBCZcUdk6RvdUjnrpJoBoU9azE20S+rgXU5pWUvsezEebVxrRq
-         NnCXGtBPRxjUZzmb9AVy7f0Of/tvStUSjNqyQ7gpkTxwHCpJBZswPCCVjQ8PIE6Yd94p
-         K/pTcVm3myVhGuIakVE9pq3rjl8SCSe7GKYXAkIQcZ/T0pDXPR/ulufofTuFV8Bhf168
-         ikXm7D+xaL5PF9knszwyiEmkeWKjmHx4mVjlI/2kkrHmawAMgcy9+aoZVgfAxVlRDfpJ
-         LGDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749753672; x=1750358472;
-        h=content-transfer-encoding:cc:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ILpwRKsKmuRWYiu6TnCs7DzpcEryFWmHJ+3LksnGXSE=;
-        b=a7xDZuvS6M5RdCf45g5zHk5rIqYbVfkzB57mEU06Fprh5+cyguzhtwOTKadikrKg7m
-         R/fJ0wgAqk11p3kZQvEDiVlz3ezDVI4g+1KIq5Z925TxRpyLmvOAxAHWntXBDuoIsbO4
-         pAp71S1T7W0zzqmcum838RiyiXSquJkkxwGDyaRyEDRpefyCC7u9Rmo/zoUI05mwXxPv
-         FBmPGh1aWAv9L6WP2iWeld9v+kDWnJ+r6cDJOlhK7xzkE3vWIBaRDIeE+LPXwt4bjzWx
-         u1OIbxmYsM7ymt6UOAJHUB5pTwOwfeYwZjX6GVd70gqqPKW7W25YbtDqXEX1d7OInwEs
-         kwcw==
-X-Forwarded-Encrypted: i=1; AJvYcCUOmbhUZJvO8NVi/YAu5dSGsjXSAKQpvHO0v5500aqnqBGAd+vPF/AHxY/pWHZMmVzuLOzhORB04EN4hiDy@lists.yoctoproject.org
-X-Gm-Message-State: AOJu0YwonSa63uH6eKOjlHuyxoUVvUF0e59zL0D5WGxWgSRAbcQxTOdu
-	uBHd1KTHkG2Gzrh6utXDN+8XIRA8q9iUPi3cRTVeV7g9Ca8IYxaJfPyuoAM0Cg==
-X-Gm-Gg: ASbGnctdplif+RaQyZx0UcMAO8xiSllSRAS2sU1cAUMO7IdO1kLjlJPtZwbCOx4tyuL
-	hJbQ3BqVhUrYegtrtfkItTWmrRFB/S6HyqR0SVh4pEcOZilG6nBhg1NZSJYzjZKBeOQpLZiIczf
-	uFIrou+JwHf34gdCV6umW91VRuRtj0Xto+d8nBgvojWzHWjkjatnJHPDR1cUmm8p967ETPtu0L2
-	IMV0Cj+rGyRM8OuM2vOX+jzpdqdd27Hejro+oF+gDb+jr0WbWFNBbKrDtvPvHhN890NrKelrO85
-	n9so/t8p6DVQcKGKKxi1+CC66syhtVT3owanyJuNXqSg7pgggdJ18qraZ9b5MzPehrT1ulRDDTn
-	h+V+Q0H6U7XK6PihhNFzyOQZyF8wNKOTZP7byZQw=
-X-Google-Smtp-Source: AGHT+IFUYJT+zzz+JUZmkeMpl5Lhl5g/iwg2VdZnJeuKhfb4vDlIckI0C9MjMfYOmDWwbe0w1zHGzA==
-X-Received: by 2002:a05:6808:2e49:b0:406:69b5:36da with SMTP id 5614622812f47-40a72b17d7emr38713b6e.16.1749753671752;
-        Thu, 12 Jun 2025 11:41:11 -0700 (PDT)
-Received: from [172.26.252.3] (174-29-216-122.hlrn.qwest.net. [174.29.216.122])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-40a682fb580sm399439b6e.26.2025.06.12.11.41.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Jun 2025 11:41:11 -0700 (PDT)
-Message-ID: <743e11b4-2009-42e0-becd-32fbdda21061@gmail.com>
-Date: Thu, 12 Jun 2025 12:41:10 -0600
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0D83C71135
+	for <webhook@archiver.kernel.org>; Fri, 13 Jun 2025 04:24:57 +0000 (UTC)
+Subject: Re: [meta-lts-mixins][kirkstone/rust][Build error] Rust 1.80.0
+To: yocto-patches@lists.yoctoproject.org
+From: lepotoman@msn.com
+X-Originating-Location: Sakai, Osaka, JP (14.10.72.34)
+X-Originating-Platform: Windows Firefox 139
+User-Agent: GROUPS.IO Web Poster
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: akuster808@gmail.com, yocto-patches@lists.yoctoproject.org
-From: Clayton Casciato <majortomtosourcecontrol@gmail.com>
-Subject: [meta-security][RFC] scap-security-guide do_fetch resolution -
- upstream release process
-Cc: yi.zhao@windriver.com, changqing.li@windriver.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Thu, 12 Jun 2025 21:24:50 -0700
+References: <036a708b-c723-fe56-47c2-3574a0bdaa87@konsulko.com>
+In-Reply-To: <036a708b-c723-fe56-47c2-3574a0bdaa87@konsulko.com>
+Message-ID: <13355.1749788690158478865@lists.yoctoproject.org>
+Content-Type: multipart/alternative; boundary="2loIEujOc6IDiGnNOQq3"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 12 Jun 2025 18:41:17 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1635
+ <yocto-patches@lists.yoctoproject.org>; Fri, 13 Jun 2025 04:24:57 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1636
 
-Hi, all 
+--2loIEujOc6IDiGnNOQq3
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-I've noticed scap-security-guide's do_fetch regularly breaks.
+Hi Scott, sorry for the late, I want to come back with the maximum of infor=
+mation that could help us.
 
-Sample:
-"ERROR: scap-security-guide-0.1.76-r0 do_fetch: Fetcher failure: Unable
-to find revision 616d4363527acb61c6494a97f3ceb47ec90f65fd in branch
-stable even from upstream"
+>=20
+> Which specific commit on kirkstone/rust are you trying?
+>=20
 
-Something changes in the project's branch history, as the commit [1] is
-no longer on branch:
-"This commit does not belong to any branch on this repository, and may 
-belong to a fork outside of the repository."
+I test to build on these sha1 :
 
-I created an issue upstream [2] and received a positive response.
-I believe the tentative proposal will resolve the issue.
+a451591a2506811dced5124fc01687360e51d902 : rust: Add patch to increase time=
+out in process-sigpipe rust selftest
+Error encountered : tar: build/dist/rust-std-1.79.0-aarch64-poky-linux-gnu.=
+tar.xz: Cannot open: No such file or directory
 
-[1] https://github.com/ComplianceAsCode/content/commit/616d4363527acb61c6494a97f3ceb47ec90f65fd
-[2] https://github.com/ComplianceAsCode/content/issues/13543
+3d6c313be185352f65e8c928e0e29ab84cd4e955 : rust: Upgrade 1.79.0->1.80.0
+Error encountered : tar: build/dist/rust-std-1.80.0-aarch64-poky-linux-gnu.=
+tar.xz: Cannot open: No such file or directory
 
---
-Clayton Casciato
+194e3073d96077c77c0207809684348189de1c1e : rust: Upgrade 1.80.0->1.80.1
+Error encountered : tar: build/dist/rust-std-1.80.1-aarch64-poky-linux-gnu.=
+tar.xz: Cannot open: No such file or directory
+
+2c51da6c41614ae1132f1e9e5803fbf97905ab76 : rust: Upgrade 1.80.1->1.81.0
+Error encountered : tar : build/dist/rust-std-1.81.0-aarch64-poky-linux-gnu=
+.tar.xz: Cannot open: No such file or directory
+
+c0794922957a6e5df23e6f4922bd252adb5f5d80 : rust: Upgrade 1.85.0->1.85.1
+Error encountered : tar : build/dist/rust-std-1.85.1-aarch64-poky-linux-gnu=
+.tar.xz: Cannot open: No such file or directory
+
+dcc60f3115a8133c4013ce36cb6fe0969c07d6f5 : mozjs: Use RUST_HOST_SYS and RUS=
+T_TARGET_SYS
+Error encountered : tar: build/dist/rust-std-1.85.1-aarch64-poky-linux-gnu.=
+tar.xz: Cannot open: No such file or directory
+
+So I think I technically test your both version, ie 1.80.1 and 1.85.1. I di=
+dn't the last commit of the 1.80.1 (9a86110789eccdf15816a0c0c4ba116403eaac5=
+f) before switching to 1.81.0 and this is what I will to today.
+
+The most recent commit with a OK build is the b1cfa357ba4f046c9f739ceb357fe=
+8a7971cc0d3 : rust: Upgrade 1.77.1->1.77.2
+On this build, the rust-std-1.77.2-aarch64-poky-linux-gnu.tar.xz file is pr=
+esent here : <yocto_build_directory> /tmp/work/armv8a-poky-linux/rust/1.77.=
+2-r0/rustc-1.77.2-src/build/dist/rust-std-1.77.2-aarch64-poky-linux-gnu.tar=
+.xz
+
+I'm currently building the version 1.78.0 trying to know on which sha1 the =
+problem start to appear.
+
+I have some question :
+When I update my head on the meta-lts-mixins repository branch remotes/yoct=
+o/kirkstone/rust, does IU have to update the head of another repository on =
+my environment to have a build succeed ? Through this question I want to kn=
+ow if there are any depencency I have to update. I know that this layer dep=
+end on :
+- URI: git://github.com/openembedded/openembedded-core.git =20
+ layers: meta =20
+ branch: kirkstone So if I update meta-lts-mixins, does I have to update th=
+is my head on this repository too ?
+
+I'm sorry about this last question. I'm a newcommer in the Yocto world.
+
+Maxime.
+
+--2loIEujOc6IDiGnNOQq3
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div>Hi Scott, sorry for the late, I want to come back with the maximum of =
+information that could help us.</div>
+<div>&nbsp;</div>
+<blockquote>
+<div>Which specific commit on kirkstone/rust are you trying?</div>
+</blockquote>
+<div>I test to build on these sha1 :<br /><br />a451591a2506811dced5124fc01=
+687360e51d902 : rust: Add patch to increase timeout in process-sigpipe rust=
+ selftest<br />Error encountered : <span style=3D"font-size: 10pt; font-fam=
+ily: Arial; font-style: normal;" data-sheets-root=3D"1">tar: build/dist/rus=
+t-std-1.79.0-aarch64-poky-linux-gnu.tar.xz: Cannot open: No such file or di=
+rectory</span><br /><br />3d6c313be185352f65e8c928e0e29ab84cd4e955 : rust: =
+Upgrade 1.79.0-&gt;1.80.0<br />Error encountered : tar: <span style=3D"font=
+-size: 10pt; font-family: Arial; font-style: normal;" data-sheets-root=3D"1=
+">build/dist/rust-std-1.80.0-aarch64-poky-linux-gnu.tar.xz: Cannot open: No=
+ such file or directory</span><br /><br /></div>
+<div>194e3073d96077c77c0207809684348189de1c1e : rust: Upgrade 1.80.0-&gt;1.=
+80.1</div>
+<div>Error encountered : <span style=3D"font-size: 10pt; font-family: Arial=
+; font-style: normal;" data-sheets-root=3D"1">tar: build/dist/rust-std-1.80=
+.1-aarch64-poky-linux-gnu.tar.xz: Cannot open: No such file or directory<br=
+ /></span><br />2c51da6c41614ae1132f1e9e5803fbf97905ab76 : rust: Upgrade 1.=
+80.1-&gt;1.81.0<br />Error encountered : tar : <span style=3D"font-size: 10=
+pt; font-family: Arial; font-style: normal;" data-sheets-root=3D"1">build/d=
+ist/rust-std-1.81.0-aarch64-poky-linux-gnu.tar.xz: Cannot open: No such fil=
+e or directory</span><br /><br />c0794922957a6e5df23e6f4922bd252adb5f5d80 :=
+ rust: Upgrade 1.85.0-&gt;1.85.1<br />Error encountered : tar : <span style=
+=3D"font-size: 10pt; font-family: Arial; font-style: normal;" data-sheets-r=
+oot=3D"1">build/dist/rust-std-1.85.1-aarch64-poky-linux-gnu.tar.xz: Cannot =
+open: No such file or directory</span><br /><br />dcc60f3115a8133c4013ce36c=
+b6fe0969c07d6f5 : mozjs: Use RUST_HOST_SYS and RUST_TARGET_SYS<br />Error e=
+ncountered : <span style=3D"font-size: 10pt; font-family: Arial; font-style=
+: normal;" data-sheets-root=3D"1">tar: build/dist/rust-std-1.85.1-aarch64-p=
+oky-linux-gnu.tar.xz: Cannot open: No such file or directory</span></div>
+<div>&nbsp;</div>
+<div>So I think I technically test your both version, ie 1.80.1 and 1.85.1.=
+ I didn't the last commit of the 1.80.1 (9a86110789eccdf15816a0c0c4ba116403=
+eaac5f) before switching to 1.81.0 and this is what I will to today.</div>
+<div><br />The most recent commit with a OK build is the b1cfa357ba4f046c9f=
+739ceb357fe8a7971cc0d3 : rust: Upgrade 1.77.1-&gt;1.77.2<br />On this build=
+, the <span style=3D"font-size: 10pt; font-family: Arial; font-style: norma=
+l;" data-sheets-root=3D"1"><span style=3D"font-size: 10pt; font-family: Ari=
+al; font-style: normal;" data-sheets-root=3D"1">rust-std-1.77.2-aarch64-pok=
+y-linux-gnu.tar.xz file is present here : &lt;yocto_build_directory&gt;<spa=
+n style=3D"font-size: 10pt; font-family: Arial; font-style: normal;" data-s=
+heets-root=3D"1">/tmp/work/armv8a-poky-linux/rust/1.77.2-r0/rustc-1.77.2-sr=
+c/build/dist/rust-std-1.77.2-aarch64-poky-linux-gnu.tar.xz</span><br /><br =
+/>I'm currently building the version 1.78.0 trying to know on which sha1 th=
+e problem start to appear.<br /><br />I have some question :<br />When I up=
+date my head on the meta-lts-mixins repository branch remotes/yocto/kirksto=
+ne/rust, does IU have to update the head of another repository on my enviro=
+nment to have a build succeed ? Through this question I want to know if the=
+re are any depencency I have to update. I know that this layer depend on :<=
+br /></span></span>
+<pre><span class=3D"k">-</span> URI: git://github.com/openembedded/openembe=
+dded-core.git =20
+  layers: meta =20
+  branch: kirkstone</pre>
+<span style=3D"font-size: 10pt; font-family: Arial; font-style: normal;" da=
+ta-sheets-root=3D"1">So if I update meta-lts-mixins, does I have to update =
+this my head on this repository too ?<br /><br />I'm sorry about this last =
+question. I'm a newcommer in the Yocto world.<br /><br />Maxime.<br /><br /=
+><br /><br /></span></div>
+
+--2loIEujOc6IDiGnNOQq3--
 
