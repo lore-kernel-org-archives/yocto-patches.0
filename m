@@ -2,68 +2,68 @@ Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA3EC71148
-	for <webhook@archiver.kernel.org>; Fri, 13 Jun 2025 16:21:26 +0000 (UTC)
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
- by mx.groups.io with SMTP id smtpd.web11.1311.1749831682454734730
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E74A2C71148
+	for <webhook@archiver.kernel.org>; Fri, 13 Jun 2025 16:41:16 +0000 (UTC)
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+ by mx.groups.io with SMTP id smtpd.web11.1833.1749832869045803901
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 13 Jun 2025 09:21:22 -0700
+ Fri, 13 Jun 2025 09:41:09 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=iRSdARy9;
- spf=pass (domain: gmail.com, ip: 209.85.222.178, mailfrom: twoerner@gmail.com)
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7c5675dec99so271086285a.0
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 13 Jun 2025 09:21:22 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=O/zcAJoY;
+ spf=pass (domain: gmail.com, ip: 209.85.222.179, mailfrom: twoerner@gmail.com)
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7c5675dec99so273295385a.0
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 13 Jun 2025 09:41:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749831681; x=1750436481; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1749832867; x=1750437667; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:to
          :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DEU3p/VVd4YG0BnMR1ubCA4ZFz3bo4jyo/P+M5Z/wXo=;
-        b=iRSdARy9eGKB6LcA6rZRXIUkJTEu5xE7fUaLwroRVLzgflJRpnY+D2du7H8Cb9oEnw
-         5yhGEwv3lEqsxLvdZ+NkOXmV9DdCXdEM0Nwdo8GnvotQTb1vcEw81c/QadL/AfahDpnj
-         7cuNDO6IEANRoyr3uRDNZbU65D9YZ5qhXobJD4PR8tSxP/nNpnVtfYOJwCozj2n2litx
-         fYaNlUN1BD4j8Rp7mW7F3Au+xKEWvh2Qc+txVnEAH+WpfxgF27tyYShBalWTBh/1F4y2
-         QVi6fzaNGr5WysLN8d6rLeY3W1OQnWqoFOCpUq61qCBBhN8aD/GXxY8GudlV8+At9+qJ
-         Z04A==
+        bh=41ARKh9oF38mRrZH11oFSLCYhm4h1EuGUkMCXbw4nbM=;
+        b=O/zcAJoY8o7xNkMRUFy9GmBAX6v/lhkIfn3amQiCiUKZtcXNrYC+abxXP3zk4u5X6N
+         ZL+ei2kCPxIjK3FkXCCV2h4DMTQh2yvb6avdu9ldf1mVyd1M13rY2B3jfyljGzs6arkR
+         YBJZehOxr+GQxjdjvfTdZQHoIH9zxCxPP0CFj8cnMHZ2b0770js1qmcRaCqOJ+DrRHkl
+         pQhoJRq3BxfeDKzg9NkMAkHT0P5AoOPIUn36Lx6LIDDhOedde0lrim1pPt4cNpzvOMmV
+         kr4z8UuCFfpW7G+gTqxgO9oLtLRHcbW8V/xIDKClte9pDkyNVFtBd49QLce/Ih6jtf5n
+         1w4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749831681; x=1750436481;
+        d=1e100.net; s=20230601; t=1749832867; x=1750437667;
         h=content-transfer-encoding:mime-version:message-id:date:subject:to
          :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DEU3p/VVd4YG0BnMR1ubCA4ZFz3bo4jyo/P+M5Z/wXo=;
-        b=KAbmKVghp9bwfvRmJ2sG3W6LAZAmYuB8WdRJHmvne9czPBQOi7CZ8OGP9ghPhSe2tQ
-         zR/XewBz+gz7hKxce+C9PkFa4A14FL51YvcQ2txBaapUG3gUXA6Q+sSaxfcH0Kn7VNJU
-         EyTuZWvMlq+Vu/qQLlkGubnTbEb9QVtryVCKxC2HWf+0nmkfm3Wo/kA5rgwwIiQuKH+Y
-         tQ6K7AxF6R9fJF6WHl8bwSiYgLdvai6svfya7BJ0Tn0IO4ItjFdl8so5axFWcywRQXgJ
-         JnAeRf1wofmBqycchWk/WSO5LuJLvU4V7UQ2qdO7tvg+Ro6Je0OQFt35p0QJ+fuGnDZw
-         eBVQ==
-X-Gm-Message-State: AOJu0YwpkdPhmVdF0v2exefkzXYMYfHgdFgC8ocl1xJCXzr2ab1ULo+J
-	snLk1pIMifIHrpUzzwZ/f/nSxiWd5wza6nc+3EQzAP5oHfR3yr2VnXHVvPWly41E
-X-Gm-Gg: ASbGnctsAufnq/s0mbb8vWWlb0vUUwKQ+KcEMvwqz3btvwwoaDwl6o2N6i4jYksbo97
-	sjnWqREcBsjzncQMMauMbSsN1xnLrbnhU9RFT0vGJ8D0UPzqzBZet7k9JXjqyqqELnPSbllcsJh
-	6jW3hvN493XnPtVroVG8MQ8kkVANlcS36bpRD6ysvW6E86hIhlnz+YQV2PuOlVg9apxQ3f8rkso
-	GnpbLJEXJxJf07+wFAGmNH0y1IOHlvOjvCy+ZiyJJpOZxkgARKu91Bx/Fpm6fyYta06Gq1GXSE4
-	myBUt+NleMSUCtdQpjLWsFjWVH5BlHcLrpeXby3FeZ0vnXnw8dalMiqiyVq8aopdSRLOoQ4JD5o
-	ZKaqNUIRrA+6j/0SAj3q0iNKPNwG8nQ==
-X-Google-Smtp-Source: AGHT+IE+gzPssL3fx3ew5A96DVAYazL7LrH0HW91lkMNXHjZcq5dC2uDVQIsVniQ4cyx0hhaCyQSAg==
-X-Received: by 2002:a05:620a:4512:b0:7c7:bb07:af07 with SMTP id af79cd13be357-7d3c6c1ab2fmr11834485a.22.1749831680499;
-        Fri, 13 Jun 2025 09:21:20 -0700 (PDT)
+        bh=41ARKh9oF38mRrZH11oFSLCYhm4h1EuGUkMCXbw4nbM=;
+        b=wZcvIBoo3J+FBU4JXT7DGyf+uIZ2sieYPmDfVr3QMuC0oNbY/32oR2MghmVGSZ43mq
+         +khqfFoSb6zJHap+JAL4yZw94OTEic2eS5Im1rPcvYIm4He9JjQUecB2OIBl3nsG7WJZ
+         J9gImEVR++zHW2XfcBCap8D6yijQpV7iQ8cXMoBmAb8B+z4sI/fwdERat3ss2qreUlIR
+         CvwpTZ2tvDUMPIyH8CGZO/mZObhKMoX9jKyoaRySi0oaVK6suI6W/d70R8kyoUCDVM+S
+         UB6P9i1NJhiUAhO+CNaikTSBzXAkMJdDpslN6U988oZIcV/rF+2FeR4uU1L78k7J3bGW
+         2Phg==
+X-Gm-Message-State: AOJu0Yx7NsItmXqSCzclcb+iQupA4uI4BVipNTs/GITbwuUjGgvqxLQp
+	xXE2utuTRC6JhW1VARDJlxn2PnGIa+j0Pt+/C/EbTLP4u6QXw3QQJvqJCeW7umYB
+X-Gm-Gg: ASbGncuFudS2osiv7XnqXmtTPvIcQamQ0SkLqqUHTQcG4qAlB/d7HCt5uBG2ZEa1I6e
+	ezJUvX54qHhKNispoR2c8pjxcK8VbsS4S25oRZ6ZTsVXk1UvJtfaD4LVYAoRBJdC1o6X5i1Ncvq
+	NrsiCwHlCRwKgRPjEvU91EnshVl++Ue+Iqcw8pLuMJc0jZ4lrsE3GBR343dRY29q5zgWLev5Iuj
+	deDYwVD4wXspS9+O+ku+EbY8TyMELP6inQBpOjJHbSm4OjI/3jJWSiABqKK1oeCm2h5WpSlvALj
+	qnhlt9tz0YchbILT7wHzLVHBBfjuyNc98pmPKC2qiEu5ix2s1A9w0nqXl/HaNrKE963pqj1bW8e
+	55OCLaB2hVhv21v2I/KOB5NVfyN9QRof6YgWsvZsK
+X-Google-Smtp-Source: AGHT+IHPKOivjuU//I1ur8z91qUjSHV/9/MtxSwmOZkszt5ZT/VRfyEJwoKW/bxKBoXKLgfAoeDwLg==
+X-Received: by 2002:a05:620a:63c8:b0:7d3:8f6a:1276 with SMTP id af79cd13be357-7d3c6c1931dmr22393285a.19.1749832867115;
+        Fri, 13 Jun 2025 09:41:07 -0700 (PDT)
 Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d3b8dca1b2sm189594685a.11.2025.06.13.09.21.19
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d3b8ecf9d0sm190214885a.82.2025.06.13.09.41.05
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jun 2025 09:21:19 -0700 (PDT)
+        Fri, 13 Jun 2025 09:41:06 -0700 (PDT)
 From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-rockchip][PATCH v2] fitimage rework
-Date: Fri, 13 Jun 2025 12:21:00 -0400
-Message-ID: <20250613162100.23912-1-twoerner@gmail.com>
+Subject: [meta-rockchip][PATCH v3] fitimage rework
+Date: Fri, 13 Jun 2025 12:41:01 -0400
+Message-ID: <20250613164101.20700-1-twoerner@gmail.com>
 X-Mailer: git-send-email 2.44.0.501.g19981daefd7c
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 13 Jun 2025 16:21:26 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1644
+ <yocto-patches@lists.yoctoproject.org>; Fri, 13 Jun 2025 16:41:16 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1645
 
 oe-core has completely re-written the fitImage support starting roughly at
 commit [1], update meta-rockchip to match.
@@ -89,6 +89,12 @@ Run tested on the following without RAUC:
 [1] oe-core: 3442d9297dca ("oe-selftest: fitimage: test external dtb")
 Signed-off-by: Trevor Woerner <twoerner@gmail.com>
 ---
+changes in v3:
+- remove the 2nd MACHINE_ESSENTIAL_EXTRA_RDEPENDS from the
+  rockchip-extlinux.inc file and place the relevant portions into either
+  the rockchip-fitimage.inc or rockchip-unfitimage.inc files as
+  appropriate
+
 changes in v2:
 - remove the ",False" from the bb.utils.to_boolean() calls
 - add informaton on new param (RK_FITIMAGE) to README
@@ -107,10 +113,10 @@ changes in v2:
  conf/machine/include/rk3568.inc              | 2 --
  conf/machine/include/rk3588s.inc             | 2 --
  conf/machine/include/rockchip-defaults.inc   | 3 +++
- conf/machine/include/rockchip-extlinux.inc   | 8 ++++----
- conf/machine/include/rockchip-fitimage.inc   | 4 ++++
- conf/machine/include/rockchip-unfitimage.inc | 1 +
- 15 files changed, 22 insertions(+), 21 deletions(-)
+ conf/machine/include/rockchip-extlinux.inc   | 7 +++----
+ conf/machine/include/rockchip-fitimage.inc   | 5 +++++
+ conf/machine/include/rockchip-unfitimage.inc | 2 ++
+ 15 files changed, 23 insertions(+), 21 deletions(-)
  create mode 100644 conf/machine/include/rockchip-fitimage.inc
  create mode 100644 conf/machine/include/rockchip-unfitimage.inc
 
@@ -299,10 +305,10 @@ index 85ec7b944d1d..4e77a6291657 100644
  # xserver
  XSERVER = " \
 diff --git a/conf/machine/include/rockchip-extlinux.inc b/conf/machine/include/rockchip-extlinux.inc
-index fddab735bbf7..2e5b1b523c3c 100644
+index fddab735bbf7..5753d062579f 100644
 --- a/conf/machine/include/rockchip-extlinux.inc
 +++ b/conf/machine/include/rockchip-extlinux.inc
-@@ -13,13 +13,13 @@ NONFITDT ?= "${@d.getVar('KERNEL_DEVICETREE').split()[0].split('/')[1]}"
+@@ -13,13 +13,12 @@ NONFITDT ?= "${@d.getVar('KERNEL_DEVICETREE').split()[0].split('/')[1]}"
  
  UBOOT_EXTLINUX ?= "1"
  UBOOT_EXTLINUX_ROOT ?= "root=PARTLABEL=rootfsA"
@@ -319,24 +325,25 @@ index fddab735bbf7..2e5b1b523c3c 100644
  
  MACHINE_ESSENTIAL_EXTRA_RDEPENDS += "u-boot-extlinux"
 -MACHINE_ESSENTIAL_EXTRA_RDEPENDS += "kernel-image ${@bb.utils.contains('KERNEL_IMAGETYPE', 'fitImage', '', 'kernel-devicetree', d)}"
-+MACHINE_ESSENTIAL_EXTRA_RDEPENDS += "${@ 'linux-yocto-fitimage' if bb.utils.to_boolean(d.getVar('RK_FITIMAGE')) else 'kernel-devicetree'}"
 diff --git a/conf/machine/include/rockchip-fitimage.inc b/conf/machine/include/rockchip-fitimage.inc
 new file mode 100644
-index 000000000000..2777e1bed555
+index 000000000000..87c1334c7060
 --- /dev/null
 +++ b/conf/machine/include/rockchip-fitimage.inc
-@@ -0,0 +1,4 @@
+@@ -0,0 +1,5 @@
 +KERNEL_CLASSES += "kernel-fit-extra-artifacts"
 +KERNEL_IMAGETYPE ?= "Image"
 +RRECOMMENDS:${KERNEL_PACKAGE_NAME}-base = ""
 +KERNEL_DEPLOY_DEPEND ?= "linux-yocto-fitimage:do_deploy"
++MACHINE_ESSENTIAL_EXTRA_RDEPENDS += "linux-yocto-fitimage"
 diff --git a/conf/machine/include/rockchip-unfitimage.inc b/conf/machine/include/rockchip-unfitimage.inc
 new file mode 100644
-index 000000000000..1f0c5ec1285e
+index 000000000000..6d4f23c67a65
 --- /dev/null
 +++ b/conf/machine/include/rockchip-unfitimage.inc
-@@ -0,0 +1 @@
+@@ -0,0 +1,2 @@
 +KERNEL_IMAGETYPE ?= "zImage"
++MACHINE_ESSENTIAL_EXTRA_RDEPENDS += "kernel-devicetree"
 -- 
 2.44.0.501.g19981daefd7c
 
