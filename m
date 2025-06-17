@@ -2,36 +2,36 @@ Return-Path: <antonin.godard@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A71C7115B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43806C7115E
 	for <webhook@archiver.kernel.org>; Tue, 17 Jun 2025 15:04:42 +0000 (UTC)
 Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
- by mx.groups.io with SMTP id smtpd.web11.21506.1750172681610330688
+ by mx.groups.io with SMTP id smtpd.web11.21505.1750172681206160014
  for <yocto-patches@lists.yoctoproject.org>;
  Tue, 17 Jun 2025 08:04:41 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=gm1 header.b=GmT5kSYi;
+ dkim=pass header.i=@bootlin.com header.s=gm1 header.b=FJYCphrP;
  spf=pass (domain: bootlin.com, ip: 217.70.183.198, mailfrom: antonin.godard@bootlin.com)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 161AF44263;
-	Tue, 17 Jun 2025 15:04:40 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id CD2CE43981;
+	Tue, 17 Jun 2025 15:04:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
 	t=1750172680;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=+eNrB5GMuYw5qccQlm1FHMpIzAR0fs741grMNY21/zc=;
-	b=GmT5kSYiAg7IxNZ404IMN3d7M81zKm7uVqrI+kX6BUgMK6JF29ZqrE0q61+llSAGZ/ar3t
-	QiJhlddjVbBfhLRJz809fKC7Z4liw7zz6phXv5ssCDI9aYa8FWhm25ZhAPXWSpk8ZsYO5o
-	Ga0gcHaGq0NzWNRGctmXVpGg6IK7h4+Zq0/HVtUvfSUp7b5RBeliQp9eJGl4H63KAXDNRZ
-	8IrWJLOTidYxZRpmMJwt1OObjEBd5mtSkf9pUC/hrB8MfQyFgJo0wRRU4du3h5gUYKsAST
-	H7dzfdGPkesUoclMlSvQXOBCnyjZ6ZfLzlKyDKV/m0cTr/DKTOKNYcymV2C8Vw==
+	bh=YYoKJ65isAQM2G4EeZZvJSF9iyy9PxrkD0kxE+XSJl8=;
+	b=FJYCphrPQ3/Pd/eQU/DxILZ5LgATNWsmF6GeUDNGEmD5vTvdmmtTGUvFVf4g+RFCqMCXEp
+	6UMC0irehR9PG13Sb60CzfVXHKr6xjmEp0T4kYEE0DsECZqvKeifGCg+WQPMpW61aB4Mdd
+	MOF0hIjbz4/nsLriv1ZTvsXdHZ95MXLF5Exgh4j+XxU/jmVgDEaV5TBR/hSPcIFRkzV/2d
+	mUvBj4Y79Q3thM70e8viMU5vGrtwvSAQ6u95xrg9X54aP9iDrX+fWC8mZmBv39EcTCBfPh
+	oU7ZSGOV6ru6kEt/VPOlm7U3gHyMwSZYxe2M1O/ifVlm0LtLPsienYAmvd+bvw==
 From: Antonin Godard <antonin.godard@bootlin.com>
-Date: Tue, 17 Jun 2025 17:04:29 +0200
-Subject: [PATCH swat-tools 3/4] Add a b4 configuration file
+Date: Tue, 17 Jun 2025 17:04:28 +0200
+Subject: [PATCH swat-tools 2/4] pokyciarchive: fetch tags with --tags
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250617-improvements-v1-3-6125d17583fe@bootlin.com>
+Message-Id: <20250617-improvements-v1-2-6125d17583fe@bootlin.com>
 References: <20250617-improvements-v1-0-6125d17583fe@bootlin.com>
 In-Reply-To: <20250617-improvements-v1-0-6125d17583fe@bootlin.com>
 To: yocto-patches@lists.yoctoproject.org
@@ -39,21 +39,21 @@ Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
  Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>, 
  Antonin Godard <antonin.godard@bootlin.com>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=367;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=871;
  i=antonin.godard@bootlin.com; h=from:subject:message-id;
- bh=EgjnrAKST0PqXYYLQwHoXCXoIAtKTrVre1JVOXELOJk=;
- b=owEBbQKS/ZANAwAIAdGAQUApo6g2AcsmYgBoUYQGqFRch15IKBHDENzTJnBzT4FIHpXiLsJKz
- /Y7jEYf4cGJAjMEAAEIAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCaFGEBgAKCRDRgEFAKaOo
- NtnOD/wLQwDbRfUqlzajB+1j3KzwUjlmJea4X+E8d+O+7yA1WJKjM6poLAAD97dMMGxC/bIVFvN
- ZC7imC9ms9GytBldPJAm8hliI3168bK5FRULAxlHMMPs9UAq7+EbRVEG5wclrOTcfvlNJARGzKk
- JcybCh2IwwY0YkVfBHo6do3Tj9fU04+n/dqaUBQQ1XGJ1XVUtKxCvmhZmuVZZ/mMce/7jgBbCc+
- UGt+ZwhvmG+Y421FY1iMuLCk1il8FwPbg7WS7dsJlr077PZ+E1m/gqiSQ/mlLlYK4tHwEGIU1Lo
- 9m3d1sfioQvPKJ9RGKFtL8qlziQukQGaqf0A0mNHs7tS2I5XyDiwmjs9J1EV6yGsGyQja+vjPT2
- 6HqWxwX8VPZQs0bR1AkUTaKauwQAFVElpjL6/uEJMqezDxtaIG7v+r4WYjNGvYA4DD6k11hsbdD
- p3z25oaTurpVRLUD0knwC9KgPrZJouKW3lAaUBKYbGTRX8yM5beCk+wuC4WhTbO9kcPStNjBsCG
- /3R2UuHZMlL/LA8PZTM5gjerip+Y6uIXU1eDjGcq0Mi+XQWD0j8FE4ZJz9trGWvKSWtdJcHU+VI
- ZVrLJDTweRGXZSiKLH7JH2ZAiqmzSJFzCz5ingqCVtGb0Axi+6QkwLAha1nosuD55OSm0hfzgH1
- 9IWiN4aClohyWGA==
+ bh=tepz+SE1Qn507MjAlINH0kBznn2IntzYV96TJF8Cob4=;
+ b=owEBbQKS/ZANAwAIAdGAQUApo6g2AcsmYgBoUYQGhGkOLbzLnnQ+HY80BUV6sP/jpXDW5YH0R
+ DDisOrPwSKJAjMEAAEIAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCaFGEBgAKCRDRgEFAKaOo
+ NlKWD/0WCC1F6HX89osPriRmiYV7bP4hgTiF7SVW7tcwMDSjQ6EL8nj1QLOVNhlFohHAI2Ix4Ja
+ /VRrbgAci1wNBGzbpXE+xxLalmASLK8Xtqz9zi8EOnpw0NeFeAqAjZWA0Ykl27Sw3TnwQ2GIqHb
+ a2Znux+zXjJEhh61L4LTtZ1/uBZ+iWtyuQ+pbu9FrHAyo+qWPb9WyV7TLmA4v+sRX0lOVMd4Fvi
+ GfLX76nr+W67onzHcNnQgPZJAiEexoBlapJY2ff3jmrNMzg6ABRgEZhrgiUFuyP5QX/kBdseu8c
+ fOIgkzsnvoNbKc6YKKoEqLHzZf5yZBV6M65FwFdVKd7RDv7PSvRDV1CTS71DZRQfsFotJfK/3h2
+ y14zOnMvxNBtxsBlqZXD6gw2WvoHWuR0EXRsDT92p91/PF4uxG1v/whc7jTIY9woli49FWf2PaO
+ 1ilgNhngZPzjkoEVS8P8HFKqjqTFFucT7zvWhhSiGDMYbZES7wUCHRC0HsdndoxBxcAkVT6GtHo
+ 9pMlX5vDtisY8hahB4hB05zO9smWvyA8sxDh37UDav8hDEY/nYCNu++gpmls9gpeStu9OGCg2L+
+ BQvh5Fhz7vWO10XC80E4CRGrZsFX/26TYtrai8ashflkK+pnHtYUXLdDnwgKaR4GC+yWzrouY7v
+ zv5hvlAeDns1uIA==
 X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
  fpr=8648725188DD401BB9A0D3FFD180414029A3A836
 X-GND-State: clean
@@ -65,22 +65,30 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Tue, 17 Jun 2025 15:04:42 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1653
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1651
+
+Using 'refs/tags/*:refs/tags/*' for fetching the tags for a remote
+removes the previously fetched tags of the other remotes. '--tags' does
+not have that behavior.
 
 Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
 ---
- .b4-config | 3 +++
- 1 file changed, 3 insertions(+)
+ swattool/pokyciarchive.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/.b4-config b/.b4-config
-new file mode 100644
-index 0000000..5bb51f4
---- /dev/null
-+++ b/.b4-config
-@@ -0,0 +1,3 @@
-+[b4]
-+  send-series-to = yocto-patches@lists.yoctoproject.org
-+  send-prefixes = swat-tools
+diff --git a/swattool/pokyciarchive.py b/swattool/pokyciarchive.py
+index e464b37..93d8dc1 100644
+--- a/swattool/pokyciarchive.py
++++ b/swattool/pokyciarchive.py
+@@ -45,7 +45,7 @@ def update(min_age: Optional[int] = None) -> None:
+         repo.remotes.create("archive", ARCHIVE_GITURL)
+ 
+     for remote in repo.remotes:
+-        remote.fetch(remote.fetch_refspecs + ['refs/tags/*:refs/tags/*'])
++        remote.fetch(remote.fetch_refspecs + ['--tags'])
+ 
+ 
+ def get_build_commits(buildname: str, basebranch: str = "master",
 
 -- 
 2.49.0
