@@ -2,36 +2,36 @@ Return-Path: <antonin.godard@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43806C7115E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36343C71136
 	for <webhook@archiver.kernel.org>; Tue, 17 Jun 2025 15:04:42 +0000 (UTC)
 Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
- by mx.groups.io with SMTP id smtpd.web11.21505.1750172681206160014
+ by mx.groups.io with SMTP id smtpd.web10.21436.1750172681212361428
  for <yocto-patches@lists.yoctoproject.org>;
  Tue, 17 Jun 2025 08:04:41 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=gm1 header.b=FJYCphrP;
+ dkim=pass header.i=@bootlin.com header.s=gm1 header.b=lpaoGviR;
  spf=pass (domain: bootlin.com, ip: 217.70.183.198, mailfrom: antonin.godard@bootlin.com)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id CD2CE43981;
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 8EAAF44262;
 	Tue, 17 Jun 2025 15:04:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1750172680;
+	t=1750172679;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=YYoKJ65isAQM2G4EeZZvJSF9iyy9PxrkD0kxE+XSJl8=;
-	b=FJYCphrPQ3/Pd/eQU/DxILZ5LgATNWsmF6GeUDNGEmD5vTvdmmtTGUvFVf4g+RFCqMCXEp
-	6UMC0irehR9PG13Sb60CzfVXHKr6xjmEp0T4kYEE0DsECZqvKeifGCg+WQPMpW61aB4Mdd
-	MOF0hIjbz4/nsLriv1ZTvsXdHZ95MXLF5Exgh4j+XxU/jmVgDEaV5TBR/hSPcIFRkzV/2d
-	mUvBj4Y79Q3thM70e8viMU5vGrtwvSAQ6u95xrg9X54aP9iDrX+fWC8mZmBv39EcTCBfPh
-	oU7ZSGOV6ru6kEt/VPOlm7U3gHyMwSZYxe2M1O/ifVlm0LtLPsienYAmvd+bvw==
+	bh=khk1vPCkzmudH77U0yD84XvEYE+/BHico6ln2CmlqU4=;
+	b=lpaoGviRUaEhu9q50KyozFSMlwhNgOH9GdGrkoCgm7CMhQNw2CRRhzsokVOg2TNFYmqaNp
+	hHRcR3IkJWDYs/uxD+V9Iv9k5+LgI+eHUYtvDfcreprmGitbWY0akgLgbCFw+6lekYnHO/
+	j3n7mZokQnQJ7hMJsdfds7da8O7mydNDpixGDvVQ7Tf1Ukn8dKH6anr7hDjCcArfMLpmBL
+	14ZnkSogzO21f16vLJJsK6dVfaep2Yv7YvjLLrmibRsqRJmB0tFbiSGgOI97BDBX6o+WU1
+	sdwHfUvSL95yxxFcoP5O7Zebvu6/XV5C5CReXkQWahZgvjilnMzif7zAgDPBhg==
 From: Antonin Godard <antonin.godard@bootlin.com>
-Date: Tue, 17 Jun 2025 17:04:28 +0200
-Subject: [PATCH swat-tools 2/4] pokyciarchive: fetch tags with --tags
+Date: Tue, 17 Jun 2025 17:04:27 +0200
+Subject: [PATCH swat-tools 1/4] main: fix --yes short flag
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250617-improvements-v1-2-6125d17583fe@bootlin.com>
+Message-Id: <20250617-improvements-v1-1-6125d17583fe@bootlin.com>
 References: <20250617-improvements-v1-0-6125d17583fe@bootlin.com>
 In-Reply-To: <20250617-improvements-v1-0-6125d17583fe@bootlin.com>
 To: yocto-patches@lists.yoctoproject.org
@@ -39,21 +39,21 @@ Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
  Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>, 
  Antonin Godard <antonin.godard@bootlin.com>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=871;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=717;
  i=antonin.godard@bootlin.com; h=from:subject:message-id;
- bh=tepz+SE1Qn507MjAlINH0kBznn2IntzYV96TJF8Cob4=;
- b=owEBbQKS/ZANAwAIAdGAQUApo6g2AcsmYgBoUYQGhGkOLbzLnnQ+HY80BUV6sP/jpXDW5YH0R
- DDisOrPwSKJAjMEAAEIAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCaFGEBgAKCRDRgEFAKaOo
- NlKWD/0WCC1F6HX89osPriRmiYV7bP4hgTiF7SVW7tcwMDSjQ6EL8nj1QLOVNhlFohHAI2Ix4Ja
- /VRrbgAci1wNBGzbpXE+xxLalmASLK8Xtqz9zi8EOnpw0NeFeAqAjZWA0Ykl27Sw3TnwQ2GIqHb
- a2Znux+zXjJEhh61L4LTtZ1/uBZ+iWtyuQ+pbu9FrHAyo+qWPb9WyV7TLmA4v+sRX0lOVMd4Fvi
- GfLX76nr+W67onzHcNnQgPZJAiEexoBlapJY2ff3jmrNMzg6ABRgEZhrgiUFuyP5QX/kBdseu8c
- fOIgkzsnvoNbKc6YKKoEqLHzZf5yZBV6M65FwFdVKd7RDv7PSvRDV1CTS71DZRQfsFotJfK/3h2
- y14zOnMvxNBtxsBlqZXD6gw2WvoHWuR0EXRsDT92p91/PF4uxG1v/whc7jTIY9woli49FWf2PaO
- 1ilgNhngZPzjkoEVS8P8HFKqjqTFFucT7zvWhhSiGDMYbZES7wUCHRC0HsdndoxBxcAkVT6GtHo
- 9pMlX5vDtisY8hahB4hB05zO9smWvyA8sxDh37UDav8hDEY/nYCNu++gpmls9gpeStu9OGCg2L+
- BQvh5Fhz7vWO10XC80E4CRGrZsFX/26TYtrai8ashflkK+pnHtYUXLdDnwgKaR4GC+yWzrouY7v
- zv5hvlAeDns1uIA==
+ bh=lLniafjWjIHK9NkX8yXf552Uhra0ou95RbL/JnQedT4=;
+ b=owEBbQKS/ZANAwAIAdGAQUApo6g2AcsmYgBoUYQGKkjmUcNgWRtzqOuM/FXvHz3TqvDmJ8P1L
+ uMe+Aog6tSJAjMEAAEIAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCaFGEBgAKCRDRgEFAKaOo
+ NjQoD/9CLGhIoKqJHOiJseAUQCEB6puESOZ0bBBHIltGQrtBZdSr+atW49vEP/XGyUvnlDRbY8R
+ 3z399DItHAX4fs7w2B8zpXBuo+ovuLkXo+s5E+ULzVYY309NZ1oRo0IJj1cghU4MCDfjp582RYC
+ sfmRSbUnTvzwgAbvxnF/1SKX0KnKPwnKXhONAlIdUJXWmRLXEWEFj4loN3yL2i0TFx1m4pBMxvh
+ soYHdRZTUJ8/VFa5JnrbMa8knOYchNK8FrioIWXnvJp6smiIYLsuSteVkVA1zMkdhlSh26yEGKp
+ mPhG8vz3RgzzdWwwO8eA1B+GV5gfSK/d6Vtp2pdSbcqdiXJXsEwrWd9Zx4wsZ360+5iHJl0RXjH
+ zC2WI7F3HOZhaEeX2l9rN6QLH0YIn73JSDntll7amrbc6A0Jxv/rZBl7oR3Zsv6lpxlGS0DNJL2
+ p456gcNM8UquH2pPdTDUQdv6LSMzqMp57Ja2yJ8uiENMa1UVhqSboWN4mquawMsIXfWa8d1kpxx
+ ZRO+T1sYvLy/F9XQmh/HJOK1THl7W/QIMoZ5G6eZRNJnrfFgP4+4WTh38P9y4cUq91gEEPgTWXC
+ KHDgmvV3YEMGH96QvBs969eMWMdK5CViUE7wMKMpVVMqxpNsDk1qy1IfPY6+13tjDdMxs6i+RuB
+ NawMLmv0yXoEsew==
 X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
  fpr=8648725188DD401BB9A0D3FFD180414029A3A836
 X-GND-State: clean
@@ -65,30 +65,28 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Tue, 17 Jun 2025 15:04:42 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1651
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1652
 
-Using 'refs/tags/*:refs/tags/*' for fetching the tags for a remote
-removes the previously fetched tags of the other remotes. '--tags' does
-not have that behavior.
+Should be '-y' for yes, not '-n'.
 
 Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
 ---
- swattool/pokyciarchive.py | 2 +-
+ swattool/main.py | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/swattool/pokyciarchive.py b/swattool/pokyciarchive.py
-index e464b37..93d8dc1 100644
---- a/swattool/pokyciarchive.py
-+++ b/swattool/pokyciarchive.py
-@@ -45,7 +45,7 @@ def update(min_age: Optional[int] = None) -> None:
-         repo.remotes.create("archive", ARCHIVE_GITURL)
+diff --git a/swattool/main.py b/swattool/main.py
+index ce09bd5..a101340 100755
+--- a/swattool/main.py
++++ b/swattool/main.py
+@@ -383,7 +383,7 @@ def review_pending_failures(refresh: str,
  
-     for remote in repo.remotes:
--        remote.fetch(remote.fetch_refspecs + ['refs/tags/*:refs/tags/*'])
-+        remote.fetch(remote.fetch_refspecs + ['--tags'])
- 
- 
- def get_build_commits(buildname: str, basebranch: str = "master",
+ @maingroup.command()
+ @_add_options(failures_list_options)
+-@click.option('--yes', '-n', is_flag=True,
++@click.option('--yes', '-y', is_flag=True,
+               help="Do not ask for confirmation for each failure")
+ @click.argument('status',
+                 type=click.Choice([str(s) for s in swatbotrest.TriageStatus],
 
 -- 
 2.49.0
