@@ -1,88 +1,95 @@
-Return-Path: <akuster808@gmail.com>
+Return-Path: <richard.purdie@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB4E8C7EE2A
-	for <webhook@archiver.kernel.org>; Mon, 23 Jun 2025 20:27:10 +0000 (UTC)
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
- by mx.groups.io with SMTP id smtpd.web11.5130.1750710423321178964
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0780EC7115B
+	for <webhook@archiver.kernel.org>; Mon, 23 Jun 2025 20:38:31 +0000 (UTC)
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+ by mx.groups.io with SMTP id smtpd.web10.5511.1750711100756239176
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 23 Jun 2025 13:27:03 -0700
+ Mon, 23 Jun 2025 13:38:21 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=DzY1qOpM;
- spf=pass (domain: gmail.com, ip: 209.85.128.182, mailfrom: akuster808@gmail.com)
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-70e75f30452so33321397b3.2
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 23 Jun 2025 13:27:03 -0700 (PDT)
+ dkim=pass header.i=@linuxfoundation.org header.s=google header.b=aWM3J1wW;
+ spf=pass (domain: linuxfoundation.org, ip: 209.85.221.43, mailfrom: richard.purdie@linuxfoundation.org)
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a6e2d85705so758025f8f.0
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 23 Jun 2025 13:38:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750710422; x=1751315222; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CBTIh+QDwGvhlRHXaiAF2mCZCTDq42eTXpy+q7LaeK4=;
-        b=DzY1qOpMbT3ll10K+lwmyVQ7ArjMIpixYOOnqgEvFByyPEaCbCb0WdqP1dkzeCzpUo
-         RsCPgvfnXOBum2RGmUyizBcRfN6VFETW0e+I7P+WZi5nRoMTSz94UaXkB4pfjjSXNkOc
-         SXa8B0JxGkDlMGP09klnWbdZZP7dkmOp+8eGEeCSRZz45FCZg+ZjQBy7GN2CUCywyV9F
-         McoGdo5rJdl8MeEmfsHFmZcyutI+Md6+kgFDn+U2H7ZMLBRdU6a2ot9YXjprzZ0PV/9f
-         a2HOI62iv8UDhybeGD7e744Gt1dN/49U5Hv5M6rozqeI9fkV3wAlqWS4ciLjFePttbt3
-         /igA==
+        d=linuxfoundation.org; s=google; t=1750711099; x=1751315899; darn=lists.yoctoproject.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=vHhd4Dvxxb84dGyMeGtZaQsG05sI1JJSnUm0HwcCuDI=;
+        b=aWM3J1wWEoql5QWabKT4VRrN4NB9YNShUxNoR3OBl33sK7sIpEZLvGDMIPwVXRTKmC
+         /jhcrMw8zy7cEn6PWSbIHlGaKfUlcSDS2KsDKUH5ypDOZliRsbVoRbn2Him2E6CdiTfM
+         kEwU2X09cde3vyqbyKms+Y3KODO1fd1JpUzyU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750710422; x=1751315222;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CBTIh+QDwGvhlRHXaiAF2mCZCTDq42eTXpy+q7LaeK4=;
-        b=gnmmQ0WAyjVnJxLGAPP+nXsKQ8IvkDjDWGixGQiw0NPZmwFHSgpr32gbjDsIoN7qI6
-         3VXJGWKU81jPcM5LuCyAXjk0Q6hkRz2cSEQE2HOUoIM4MoPWSVHEEg6PwWMOnblKEn0U
-         dlgz16bbgoU9JsP4wMNFuSksDDsNN/vZVk0vMME98Yvhr56jb4Y/FXgnnhP4JQPWkVCu
-         f8tr0m9KIgT3y5pzTbxzf4JdKVqmk8LVIg4xkaNj0OfF1LwSsLIJva+oCsQdLMO3AGJB
-         mBbaRK+/PoEssMo165BokIpWv/ieWpAJfkj+/vPix5zhu1tzAXpHJVI2Z3+dzi4icVe9
-         uWpA==
-X-Gm-Message-State: AOJu0YwNsdhSDwsDuD8NCUzXofOOw4TBtkS6LZwZV8QxLsSki6Tuu1/Y
-	U7gV/etbaQuGn1KB1uHSQsuT7eqGjVZXGpzbkL+Q3ESZ1UVWlwq32ekT6afCdCLf
-X-Gm-Gg: ASbGncsmxG1DfWeqh6fdLbOkNXmrAc2ghHEMZcEif7vO9CiSIAcrZyfVcFDbsYt2qGg
-	TaRDtVW6Vylz+Cwr+1BAIxw3Iw9Tg9b6Cs4zjtYThuI2NY7t6n9BSZJTelGIgh9dPk+iUlvSs1K
-	/Tu3AresRJuHVcKukCUFA894FRkeb+cgKLM2B/VF+OQawUPssWeyjI0zrs2vxlTHl4fkgLNSUtI
-	h8PB9u/NV+b3xZWcBGi8fNGG2aevBNUNeGqPeTmtr0Yp52iYt7jUzYR26HWNZ4P3thly2emIXIM
-	Di3zNdsh0UgxkN1fBTe06YN8sgWuun0+VROTfIl/1jevqSwxaRuFnvJb3kO0FrZgWvzac5hl8d3
-	6
-X-Google-Smtp-Source: AGHT+IGcDHrkCH9sXZsvYZGndpqoEpgg+ClIRTKt5SWM6hjyqa0GDlRk8ZcTq8jyiDeZlco40aK1VA==
-X-Received: by 2002:a05:690c:3349:b0:6ef:5097:5daa with SMTP id 00721157ae682-712c679b226mr192758537b3.34.1750710422126;
-        Mon, 23 Jun 2025 13:27:02 -0700 (PDT)
-Received: from keaua.attlocal.net ([2600:1700:45dd:7000:e6c8:e7b0:d1b0:fa65])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-712d93f990csm11142037b3.50.2025.06.23.13.27.01
-        for <yocto-patches@lists.yoctoproject.org>
+        d=1e100.net; s=20230601; t=1750711099; x=1751315899;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vHhd4Dvxxb84dGyMeGtZaQsG05sI1JJSnUm0HwcCuDI=;
+        b=N6RiaUL2LHVNIThavOXn3Sr8MSPxRm6KTAOAsIluefHDKuN54BEUL0eMioELlmqNhq
+         lKWVjV9/JK76L6bNnb6I8bhqnBEhuWg2R22E8b4mHSEodvBfp94q+fihtC4ENuiGnJI4
+         +wH6hohQiNwWFGXertu5RfsaFTIva/PDOW0vsFUDZPjDq+PCULUmxF6pfUoRQajLiebJ
+         fcK0Jmy2f3vogk7Vec14SdDxp9VBlaQSrZ/KCc21e/Sk4VqQpt8sU+VfABcGjKxfjLAT
+         n2seUTXPCy/3BkeYLmIg0XxHeIB2Ek4Ag7vwQSykKcQomfH0yp+7erGC0TAH/xuhj6Ej
+         5fnA==
+X-Gm-Message-State: AOJu0YxFkEugss44mF1S1KwY6rpDZAC/eskXiS+Hpl23vJN0NP6Oo9Ey
+	+SfAn+bJ2a8yyOX0laYxv9//PuzLjwuN/L4hVQ0xvZVPcRv3m+GnG8sUIQNBPSkTgx/A7RWBMAj
+	ehTu+
+X-Gm-Gg: ASbGncuYhFh1Kqq9haHZBZ6czxCw0DSXn3E681GUjYTh4ZqML0ptolrFIV/PorsB4Qd
+	zgAjNqcCSnZ27zcQgsnOAdnSL1sTfNk/HlKyCgVnUjwu1G0N/rPFJiFhHE70PhIxNtGIMt/0HHR
+	TuDcG6qd9xbrZfK0PoUMMnyBaffU3Ded+n7F/NCGU7tjWJpE5QDxQtb/UlCh4JtdpA8KWFoguyP
+	YF3OQHMQmgGScN8y3jWhzQD1spwtswqBQnu+ZbqXuprsx3Ikrx9rOtV7l9zTbk58zVOw/RdcW4S
+	czD7VfaIYYrMa/XEVZGJ6PnN2S+vNg0oOmZlTHFy8bR3tibGPjCgedkY+12gO2V+YQORP6L5z4f
+	giZB2UhIl21lGq2272w5murnpOa0kjqyY/50Y9mn7LtSdox42+k8=
+X-Google-Smtp-Source: AGHT+IHcOIpUB5vV2TPEe4a4RwRHEX59Pn6JF9uxkUSIJmI2T5FiB++jDhoyxZVBMsB6QOZH5NiYvg==
+X-Received: by 2002:a05:6000:2405:b0:3a5:1410:71c0 with SMTP id ffacd0b85a97d-3a6d12e1329mr10491630f8f.38.1750711098679;
+        Mon, 23 Jun 2025 13:38:18 -0700 (PDT)
+Received: from ?IPv6:2001:8b0:aba:5f3c:8bf4:3d1b:6949:400a? ([2001:8b0:aba:5f3c:8bf4:3d1b:6949:400a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6e810010fsm65883f8f.74.2025.06.23.13.38.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jun 2025 13:27:01 -0700 (PDT)
-From: Armin Kuster <akuster808@gmail.com>
+        Mon, 23 Jun 2025 13:38:17 -0700 (PDT)
+Message-ID: <6e7dc22b840812a82fc74ba314826c0728786950.camel@linuxfoundation.org>
+Subject: Re: [yocto-patches] [meta-security][PATCH 0/1] Time to move on.
+From: Richard Purdie <richard.purdie@linuxfoundation.org>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-security][PATCH 0/1] Time to move on.
-Date: Mon, 23 Jun 2025 16:16:45 -0400
-Message-ID: <20250623202701.12590-1-akuster808@gmail.com>
-X-Mailer: git-send-email 2.43.0
+Cc: Armin Kuster <akuster808@gmail.com>
+Date: Mon, 23 Jun 2025 21:38:15 +0100
+In-Reply-To: <20250623202701.12590-1-akuster808@gmail.com>
+References: <20250623202701.12590-1-akuster808@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.0-1 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 23 Jun 2025 20:27:10 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1678
+ <yocto-patches@lists.yoctoproject.org>; Mon, 23 Jun 2025 20:38:31 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1680
 
-I have been maintaining this layer for over 12 years and
-I have had a blast being a layer mainter over those years.
-Thanks for giving me the opertunity.
-Its time to pass on the baton for maintanership of this layer. 
+Hi Armin,
 
-I'll let the The Yocto Project TSC decide who the suitable replacement(s) may be.
+On Mon, 2025-06-23 at 16:16 -0400, Armin Kuster via lists.yoctoproject.org =
+wrote:
+> I have been maintaining this layer for over 12 years and
+> I have had a blast being a layer mainter over those years.
+> Thanks for giving me the opertunity.
+> Its time to pass on the baton for maintanership of this layer.=20
 
-Armin Kuster (1):
-  Remove self as Maintainer
+Thanks for looking after it for all that time!
 
- README.md                | 2 +-
- meta-hardening/README.md | 2 +-
- meta-integrity/README.md | 2 +-
- meta-parsec/README.md    | 1 -
- meta-tpm/README.md       | 2 +-
- 5 files changed, 4 insertions(+), 5 deletions(-)
+> I'll let the The Yocto Project TSC decide who the suitable
+> replacement(s) may be.
 
--- 
-2.43.0
+I'm not sure we let you off that easily! Do you have any suggestions or
+preferences on who might make a good replacement?
 
+I ask since you're probably much more well placed to have an idea of
+who might have the right skills or who might not. Happy to take
+feedback publicly and/or privately.
+
+Cheers,
+
+Richard
 
