@@ -1,462 +1,97 @@
-Return-Path: <hprajapati@mvista.com>
+Return-Path: <steve@sakoman.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10603C77B7C
-	for <webhook@archiver.kernel.org>; Tue, 24 Jun 2025 16:11:08 +0000 (UTC)
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
- by mx.groups.io with SMTP id smtpd.web11.2442.1750781459227173944
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93257C77B7C
+	for <webhook@archiver.kernel.org>; Tue, 24 Jun 2025 16:27:51 +0000 (UTC)
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+ by mx.groups.io with SMTP id smtpd.web10.296.1750782470947370422
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 24 Jun 2025 09:10:59 -0700
+ Tue, 24 Jun 2025 09:27:51 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@mvista.com header.s=google header.b=PaDYG0Cq;
- spf=pass (domain: mvista.com, ip: 209.85.215.178, mailfrom: hprajapati@mvista.com)
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-879d2e419b9so708224a12.2
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 24 Jun 2025 09:10:59 -0700 (PDT)
+ dkim=pass header.i=@sakoman-com.20230601.gappssmtp.com header.s=20230601 header.b=N6k3ZwQO;
+ spf=softfail (domain: sakoman.com, ip: 209.85.215.170, mailfrom: steve@sakoman.com)
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b26f7d2c1f1so6055184a12.0
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 24 Jun 2025 09:27:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mvista.com; s=google; t=1750781458; x=1751386258; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6Qq7CWe52UNIkkQQhM227oVf/T8DmuaeZN/P1ePqjwc=;
-        b=PaDYG0CqJYKU5lyTBWgnvmB5to3QPRZekU5C0Rg4mO3D8znvupeLy9k8DWFk390Jly
-         dLj1VvXulNppZvWvjToTKQ2p35ISfWHyPr0uPzm3VAuI9gYzMqTO0e+044I7Azn7KYoL
-         NoQ6kOewG2bz386g+KUCt9hxxQpLEAKrdGnkE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750781458; x=1751386258;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=sakoman-com.20230601.gappssmtp.com; s=20230601; t=1750782470; x=1751387270; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=6Qq7CWe52UNIkkQQhM227oVf/T8DmuaeZN/P1ePqjwc=;
-        b=meutdYOGHcDQbkUvDdjb96iD9+o4f7Omb8hUEZgmezu43nWUF/K/5XxZlrhg47Xe1Q
-         gTn2rZx3HmwK5TA6l7H4QGhZUS7cMqA7Aduc3TRitAsOmz4343xAmECPJ7vu2drFlGiO
-         UEPDKKu0EMJsBZxLEBxEQFNIFaePnMLUuDiqa/PZShrWsAPUCKVyY1pxww3Kr5JJLTCE
-         kS+MeHz/hKPJI4fiemyZNrKHpUMDgZFPAt69o3vGHd3PyVckR2OZrF2m3X3gszkKaC65
-         aA3pULwsh7yLBjcLeVIUTQ8RgtFBwMat0VEAoIV7Gvqu2JMlKcpQKgnFfSrHaRK3jhfL
-         DRIA==
-X-Gm-Message-State: AOJu0YxUEjyrvmSvtjx7pNAytIEABGU8HNy1qMQEcc+QheN1i1ldESjq
-	zv0fZAGAjYzifQ6uG4N1sS/lNVTB2yJa5t2CQuQmQxnu2oKaajlT9/jZCzF1GKTBZZ0frUXJfMc
-	tV1cn
-X-Gm-Gg: ASbGncsWMWwK4FzWn//ZSEP0OsVU9MQOTeCipMDYV3GkX7NyXr210MzUeNg5CCs7gWc
-	7S5VDtLLThlcAGgPcaWwfgqiH+hth7cXGFmQFBpv70FP+M7VSTnlKEDzF+kAkwTmEmz2SjWTavE
-	gBYhNRAVnnpsNFF6gN32kvphtpMIFGt2119edLSiO99yjGHcqJfNi8VECshaZ/ERNSf+oFLFq2W
-	lvGR93sakAVaGCN0LKyHUbVD6ytm4MX7oDAbIPTd5g31X4SVJb5EjtezWhC55ok97ZPQVxN0gYX
-	GO6mlNDZll5cSqDyN01vF+pg0PoXoz3DRlSaaj9LdKkV3J8+lJaWNosEx6EHA5bMDq1W6i5tsVU
-	=
-X-Google-Smtp-Source: AGHT+IG42kUuLRK01upZ40CV5LVGWpJkAyGHS0PvAGdNdB3ZxUyp/E3SwqxKzIjGuty/VUhx6cdhKw==
-X-Received: by 2002:a05:6a00:8c04:b0:749:122f:5fe5 with SMTP id d2e1a72fcca58-749122f609bmr23590487b3a.18.1750781458263;
-        Tue, 24 Jun 2025 09:10:58 -0700 (PDT)
-Received: from localhost.localdomain ([27.121.101.94])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-749b5e2386esm2289536b3a.45.2025.06.24.09.10.54
+        bh=c+zm4FJ57QsMmo8UdwMBhji5s7FDUSWvQYWRA6bPnhU=;
+        b=N6k3ZwQOrUFP0gqtrd8LVwC+uRiK9c5/7bDPnD0I1BOQ3EZZIuMN9qBFBsvPJp86u5
+         UpYDmscXpf2uMOVPi/SpqMRarDQOQtH9SLu10lUlHY0eqL5bEf0+doQbLav9WdN6PeLD
+         bfKaN0LPZmFIZ+mOILdNwNhDYBZVUXpLWpHShdmlm5w8ZgUiKJL6Smt6gXtyN7ORnIvo
+         b6ZveLQmrA2hFGrR9wx63jGuOhXKCIdvs3zQOTvorB56vmL6yD+liUYHcIg72QvrBqyM
+         1zdXqtC2SIWfO0hYYmp+hhD3QGF0YoYjIKPUQW7MX4Obo+UO4es6EGqjES54SqC+xzlF
+         V/Bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750782470; x=1751387270;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=c+zm4FJ57QsMmo8UdwMBhji5s7FDUSWvQYWRA6bPnhU=;
+        b=hAXmxxxGn7diRRJoEUAiaFgTnPgYyctT6qL4xdzRHaupruSqkaMGloNGiq1tbKNFkF
+         vTVYN5vRmUsCblTI8xePHwYdET7xXvjiQtynCh9OXNMyh94mWQ+z7D6m/11fX9/oiU7t
+         mLNgEmxHbJjE9lPnLRO8C6xRGON9ZvPXfpHeq9ts6TVzx6ajGxJ6kAyPcXXLgDtXiIKI
+         Mc4m582ojw27O4/y57h8emXNHs/yjlxHcWpTrbqlmi+50rq/tOfwnaLZl73mmziLCB4B
+         Um6FULec00CjcjVZ6WMOIuE/JSIZNM/4gNyxnFw4wSi+kml2m0HiwszCsVgz7R492oxj
+         TfVw==
+X-Gm-Message-State: AOJu0YwPPctG5pgHdojd6egGYSr/VFb30QN4xnr4xYlcRns/qf/Zvx2p
+	IXV3ALrItjULrcDrCvyWObe1pLOxoBhJa+cHM8p75zi8/rJ3+7CGTZ8mvCbeJzqEiP/P51DJKHH
+	MdSDF
+X-Gm-Gg: ASbGncuQYXTvOUB4v3j5rZFvjTT8v2Lq0/mU8vfaj8HrapEznVMa8Sbyg2adSecbQgY
+	B3ehhDohyoJUAp+bTADvLs8XfNFiO2L1l9xGMXI5aSWQKbYu80WIer2ALummf3e+SAHlNidnggl
+	xDJ2aBKonybi48N3lfFfS+LLHE5YqNNYEYduqeQZKYELD6L4RIfIxvA0JzMcr0dNTTnI9DYB6yX
+	TGn4B2Xiqvgl2uf3rxatDhqfkNaS9lz3on/ZdwY9ZtML/TfZH071MoeLABwGoDKw0b3iY3cMlhZ
+	N6fHbpyWQNEx5/nWTkfxUacSeCP2n9T7EgSDKDjxzYJYPmrWBmZfAw==
+X-Google-Smtp-Source: AGHT+IFF61PfU9PE4oLGcz89OLDkLaD2VbCh8gP6JFMls4ZbeYhLgBc0iGDtcTxXoou7KdAb9e+fZA==
+X-Received: by 2002:a05:6a20:244a:b0:21a:de8e:5cbb with SMTP id adf61e73a8af0-22026f15aebmr27786672637.25.1750782469885;
+        Tue, 24 Jun 2025 09:27:49 -0700 (PDT)
+Received: from hexa.. ([2602:feb4:3b:2100:73a8:fac0:f9e5:82a1])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b31f12583c5sm10755072a12.63.2025.06.24.09.27.49
+        for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jun 2025 09:10:57 -0700 (PDT)
-From: Hitendra Prajapati <hprajapati@mvista.com>
+        Tue, 24 Jun 2025 09:27:49 -0700 (PDT)
+From: Steve Sakoman <steve@sakoman.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: akuster808@gmail.com,
-	Hitendra Prajapati <hprajapati@mvista.com>
-Subject: [meta-security][kirkstone][PATCH] clamav: fix CVE-2025-20260
-Date: Tue, 24 Jun 2025 21:40:46 +0530
-Message-ID: <20250624161046.497988-1-hprajapati@mvista.com>
-X-Mailer: git-send-email 2.49.0
+Subject: [yocto-autobuilder2 1/1] schedulers: update branchdefaults for walnascar
+Date: Tue, 24 Jun 2025 09:27:40 -0700
+Message-ID: <402aa545c0ac11f4d9fbfdbf785b42ee11c6a04a.1750779852.git.steve@sakoman.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1750779852.git.steve@sakoman.com>
+References: <cover.1750779852.git.steve@sakoman.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 24 Jun 2025 16:11:08 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1684
+ <yocto-patches@lists.yoctoproject.org>; Tue, 24 Jun 2025 16:27:51 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1685
 
-Signed-off-by: Hitendra Prajapati <hprajapati@mvista.com>
+Signed-off-by: Steve Sakoman <steve@sakoman.com
 ---
- recipes-scanners/clamav/clamav_0.104.0.bb     |   1 +
- .../clamav/files/CVE-2025-20260.patch         | 366 ++++++++++++++++++
- 2 files changed, 367 insertions(+)
- create mode 100644 recipes-scanners/clamav/files/CVE-2025-20260.patch
+ schedulers.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/recipes-scanners/clamav/clamav_0.104.0.bb b/recipes-scanners/clamav/clamav_0.104.0.bb
-index 0a6b92a..31a9d8a 100644
---- a/recipes-scanners/clamav/clamav_0.104.0.bb
-+++ b/recipes-scanners/clamav/clamav_0.104.0.bb
-@@ -23,6 +23,7 @@ SRC_URI = "git://github.com/vrtadmin/clamav-devel;branch=rel/0.104;protocol=http
-     file://fix_systemd_socket.patch \
-     file://CVE-2024-20505.patch \
-     file://CVE-2024-20506.patch \
-+    file://CVE-2025-20260.patch \
- "
- S = "${WORKDIR}/git"
- 
-diff --git a/recipes-scanners/clamav/files/CVE-2025-20260.patch b/recipes-scanners/clamav/files/CVE-2025-20260.patch
-new file mode 100644
-index 0000000..1d558ed
---- /dev/null
-+++ b/recipes-scanners/clamav/files/CVE-2025-20260.patch
-@@ -0,0 +1,366 @@
-+From 7fe290b573db66ffcf590902977b2b6043b30834 Mon Sep 17 00:00:00 2001
-+From: John Humlick <15677335+jhumlick@users.noreply.github.com>
-+Date: Mon, 21 Apr 2025 16:18:07 -0700
-+Subject: [PATCH] Fix integer overflow in PDF parser
-+
-+The ascii85decode function calculates the amount of memory to reserve as
-+a function of (4 * bytes) + 1. Since the result is stored in a uint32_t,
-+we need to make sure that this calculation will not overflow. If we
-+detect that an overflow would occur, return CL_EFORMAT and do not
-+proceed.
-+
-+Also check additional potential overflow conditions.
-+Other areas were identified that could potentially overflow.
-+This commit adds additional checks to prevent said overflows.
-+
-+Thank you Greg Walkup at Sandia National Labs for reporting this issue.
-+
-+CLAM-2752
-+CLAM-2757
-+CLAM-2759
-+
-+Upstream-Status: Backport [https://github.com/Cisco-Talos/clamav/commit/7fe290b573db66ffcf590902977b2b6043b30834]
-+CVE: CVE-2025-20260
-+Signed-off-by: Hitendra Prajapati <hprajapati@mvista.com>
-+---
-+ libclamav/pdf.c       | 42 +++++++++++------------
-+ libclamav/pdf.h       | 16 ++++-----
-+ libclamav/pdfdecode.c | 80 +++++++++++++++++++++++++++++++------------
-+ 3 files changed, 87 insertions(+), 51 deletions(-)
-+
-+diff --git a/libclamav/pdf.c b/libclamav/pdf.c
-+index a52833520..b5531e7aa 100644
-+--- a/libclamav/pdf.c
-++++ b/libclamav/pdf.c
-+@@ -441,7 +441,7 @@ int pdf_findobj_in_objstm(struct pdf_struct *pdf, struct objstm_struct *objstm,
-+ 
-+         if (CL_SUCCESS != cli_strntol_wrap(index, bytes_remaining, 0, 10, &temp_long)) {
-+             /* Failed to find obj offset for next obj */
-+-            cli_dbgmsg("pdf_findobj_in_objstm: Failed to find next obj offset for obj in object stream though there should be {%u} more.\n", objstm->n - objstm->nobjs_found);
-++            cli_dbgmsg("pdf_findobj_in_objstm: Failed to find next obj offset for obj in object stream though there should be {%zu} more.\n", objstm->n - objstm->nobjs_found);
-+             status = CL_EPARSE;
-+             goto done;
-+         } else if (temp_long < 0) {
-+@@ -1533,18 +1533,18 @@ cl_error_t pdf_extract_obj(struct pdf_struct *pdf, struct pdf_obj *obj, uint32_t
-+                 }
-+             }
-+ 
-+-            cli_dbgmsg("pdf_extract_obj: calculated length %lld\n", (long long)length);
-++            cli_dbgmsg("pdf_extract_obj: calculated length %zu\n", length);
-+         } else {
-+             if (obj->stream_size > (size_t)length + 2) {
-+                 cli_dbgmsg("cli_pdf: calculated length %zu < %zu\n",
-+-                           (size_t)length, obj->stream_size);
-++                           length, obj->stream_size);
-+                 length = obj->stream_size;
-+             }
-+         }
-+ 
-+-        if ((0 != orig_length) && (obj->stream_size > (size_t)orig_length + 20)) {
-+-            cli_dbgmsg("pdf_extract_obj: orig length: %lld, length: %lld, size: %zu\n",
-+-                       (long long)orig_length, (long long)length, obj->stream_size);
-++        if ((0 != orig_length) && (obj->stream_size > orig_length + 20)) {
-++            cli_dbgmsg("pdf_extract_obj: orig length: %zu, length: %zu, size: %zu\n",
-++                       orig_length, length, obj->stream_size);
-+             pdfobj_flag(pdf, obj, BAD_STREAMLEN);
-+         }
-+ 
-+@@ -1595,18 +1595,18 @@ cl_error_t pdf_extract_obj(struct pdf_struct *pdf, struct pdf_obj *obj, uint32_t
-+          */
-+         dict_len = obj->stream - start;
-+         if (NULL != (pstr = pdf_getdict(start, &dict_len, "/Type/ObjStm"))) {
-+-            int32_t objstm_first  = -1;
-+-            int32_t objstm_length = -1;
-+-            int32_t objstm_n      = -1;
-++            int objstm_first  = -1;
-++            int objstm_length = -1;
-++            int objstm_n      = -1;
-+ 
-+             cli_dbgmsg("pdf_extract_obj: Found /Type/ObjStm\n");
-+ 
-+             dict_len = obj->stream - start;
-+-            if ((-1 == (objstm_first = pdf_readint(start, dict_len, "/First")))) {
-++            if (-1 == (objstm_first = pdf_readint(start, dict_len, "/First"))) {
-+                 cli_warnmsg("pdf_extract_obj: Failed to find offset of first object in object stream\n");
-+-            } else if ((-1 == (objstm_length = pdf_readint(start, dict_len, "/Length")))) {
-++            } else if (-1 == (objstm_length = pdf_readint(start, dict_len, "/Length"))) {
-+                 cli_warnmsg("pdf_extract_obj: Failed to find length of object stream\n");
-+-            } else if ((-1 == (objstm_n = pdf_readint(start, dict_len, "/N")))) {
-++            } else if (-1 == (objstm_n = pdf_readint(start, dict_len, "/N"))) {
-+                 cli_warnmsg("pdf_extract_obj: Failed to find num objects in object stream\n");
-+             } else {
-+                 /* Add objstm to pdf struct, so it can be freed eventually */
-+@@ -1628,19 +1628,19 @@ cl_error_t pdf_extract_obj(struct pdf_struct *pdf, struct pdf_obj *obj, uint32_t
-+ 
-+                 memset(objstm, 0, sizeof(*objstm));
-+ 
-+-                objstm->first        = (uint32_t)objstm_first;
-+-                objstm->current      = (uint32_t)objstm_first;
-++                objstm->first        = (size_t)objstm_first;
-++                objstm->current      = (size_t)objstm_first;
-+                 objstm->current_pair = 0;
-+-                objstm->length       = (uint32_t)objstm_length;
-+-                objstm->n            = (uint32_t)objstm_n;
-++                objstm->length       = (size_t)objstm_length;
-++                objstm->n            = (size_t)objstm_n;
-+ 
-+-                cli_dbgmsg("pdf_extract_obj: ObjStm first obj at offset %d\n", objstm->first);
-+-                cli_dbgmsg("pdf_extract_obj: ObjStm length is %d bytes\n", objstm->length);
-+-                cli_dbgmsg("pdf_extract_obj: ObjStm should contain %d objects\n", objstm->n);
-++                cli_dbgmsg("pdf_extract_obj: ObjStm first obj at offset %zu\n", objstm->first);
-++                cli_dbgmsg("pdf_extract_obj: ObjStm length is %zu bytes\n", objstm->length);
-++                cli_dbgmsg("pdf_extract_obj: ObjStm should contain %zu objects\n", objstm->n);
-+             }
-+         }
-+ 
-+-        sum = pdf_decodestream(pdf, obj, dparams, obj->stream, (uint32_t)length, xref, fout, &rc, objstm);
-++        sum = pdf_decodestream(pdf, obj, dparams, obj->stream, length, xref, fout, &rc, objstm);
-+         if ((CL_SUCCESS != rc) && (CL_VIRUS != rc)) {
-+             cli_dbgmsg("Error decoding stream! Error code: %d\n", rc);
-+ 
-+@@ -3309,7 +3309,7 @@ cl_error_t pdf_find_and_parse_objs_in_objstm(struct pdf_struct *pdf, struct objs
-+         retval = pdf_findobj_in_objstm(pdf, objstm, &obj);
-+         if (retval != CL_SUCCESS) {
-+             if (retval != CL_BREAK) {
-+-                cli_dbgmsg("pdf_find_and_parse_objs_in_objstm: Fewer objects in stream than expected: %u found, %u expected.\n",
-++                cli_dbgmsg("pdf_find_and_parse_objs_in_objstm: Fewer objects in stream than expected: %zu found, %zu expected.\n",
-+                            objstm->nobjs_found, objstm->n);
-+                 badobjects++;
-+                 pdf->stats.ninvalidobjs++;
-+diff --git a/libclamav/pdf.h b/libclamav/pdf.h
-+index ca6de99dc..4356425a8 100644
-+--- a/libclamav/pdf.h
-++++ b/libclamav/pdf.h
-+@@ -25,14 +25,14 @@
-+ #define PDF_FILTERLIST_MAX 64
-+ 
-+ struct objstm_struct {
-+-    uint32_t first;        // offset of first obj
-+-    uint32_t current;      // offset of current obj
-+-    uint32_t current_pair; // offset of current pair describing id, location of object
-+-    uint32_t length;       // total length of all objects (starting at first)
-+-    uint32_t n;            // number of objects that should be found in the object stream
-+-    uint32_t nobjs_found;  // number of objects actually found in the object stream
-+-    char *streambuf;       // address of stream buffer, beginning with first obj pair
-+-    size_t streambuf_len;  // length of stream buffer, includes pairs followed by actual objects
-++    size_t first;         // offset of first obj
-++    size_t current;       // offset of current obj
-++    size_t current_pair;  // offset of current pair describing id, location of object
-++    size_t length;        // total length of all objects (starting at first)
-++    size_t n;             // number of objects that should be found in the object stream
-++    size_t nobjs_found;   // number of objects actually found in the object stream
-++    char *streambuf;      // address of stream buffer, beginning with first obj pair
-++    size_t streambuf_len; // length of stream buffer, includes pairs followed by actual objects
-+ };
-+ 
-+ struct pdf_obj {
-+diff --git a/libclamav/pdfdecode.c b/libclamav/pdfdecode.c
-+index e4d5450c4..76a60ce9f 100644
-+--- a/libclamav/pdfdecode.c
-++++ b/libclamav/pdfdecode.c
-+@@ -73,7 +73,7 @@
-+ struct pdf_token {
-+     uint32_t flags;   /* tracking flags */
-+     uint32_t success; /* successfully decoded filters */
-+-    uint32_t length;  /* length of current content; TODO: transition to size_t */
-++    size_t length;    /* length of current content; TODO: transition to size_t */
-+     uint8_t *content; /* content stream */
-+ };
-+ 
-+@@ -461,10 +461,16 @@ static cl_error_t filter_ascii85decode(struct pdf_struct *pdf, struct pdf_obj *o
-+     uint32_t declen = 0;
-+ 
-+     const uint8_t *ptr = (uint8_t *)token->content;
-+-    uint32_t remaining = token->length;
-++    size_t remaining   = token->length;
-+     int quintet = 0, rc = CL_SUCCESS;
-+     uint64_t sum = 0;
-+ 
-++    /* Check for overflow */
-++    if (remaining > (SIZE_MAX / 4)) {
-++        cli_dbgmsg("cli_pdf: ascii85decode: overflow detected\n");
-++        return CL_EFORMAT;
-++    }
-++
-+     /* 5:4 decoding ratio, with 1:4 expansion sequences => (4*length)+1 */
-+     if (!(dptr = decoded = (uint8_t *)cli_malloc((4 * remaining) + 1))) {
-+         cli_errmsg("cli_pdf: cannot allocate memory for decoded output\n");
-+@@ -851,8 +857,8 @@ static cl_error_t filter_asciihexdecode(struct pdf_struct *pdf, struct pdf_obj *
-+     uint8_t *decoded;
-+ 
-+     const uint8_t *content = (uint8_t *)token->content;
-+-    uint32_t length        = token->length;
-+-    uint32_t i, j;
-++    size_t length          = token->length;
-++    size_t i, j;
-+     cl_error_t rc = CL_SUCCESS;
-+ 
-+     if (!(decoded = (uint8_t *)cli_calloc(length / 2 + 1, sizeof(uint8_t)))) {
-+@@ -882,8 +888,8 @@ static cl_error_t filter_asciihexdecode(struct pdf_struct *pdf, struct pdf_obj *
-+     if (rc == CL_SUCCESS) {
-+         free(token->content);
-+ 
-+-        cli_dbgmsg("cli_pdf: deflated %lu bytes from %lu total bytes\n",
-+-                   (unsigned long)j, (unsigned long)(token->length));
-++        cli_dbgmsg("cli_pdf: deflated %zu bytes from %zu total bytes\n",
-++                   j, token->length);
-+ 
-+         token->content = decoded;
-+         token->length  = j;
-+@@ -891,8 +897,8 @@ static cl_error_t filter_asciihexdecode(struct pdf_struct *pdf, struct pdf_obj *
-+         if (!(obj->flags & ((1 << OBJ_IMAGE) | (1 << OBJ_TRUNCATED))))
-+             pdfobj_flag(pdf, obj, BAD_ASCIIDECODE);
-+ 
-+-        cli_dbgmsg("cli_pdf: error occurred parsing byte %lu of %lu\n",
-+-                   (unsigned long)i, (unsigned long)(token->length));
-++        cli_dbgmsg("cli_pdf: error occurred parsing byte %zu of %zu\n",
-++                   i, token->length);
-+         free(decoded);
-+     }
-+     return rc;
-+@@ -933,27 +939,29 @@ static cl_error_t filter_decrypt(struct pdf_struct *pdf, struct pdf_obj *obj, st
-+         return CL_EPARSE; /* TODO: what should this value be? CL_SUCCESS would mirror previous behavior */
-+     }
-+ 
-+-    cli_dbgmsg("cli_pdf: decrypted %zu bytes from %u total bytes\n",
-++    cli_dbgmsg("cli_pdf: decrypted %zu bytes from %zu total bytes\n",
-+                length, token->length);
-+ 
-+     free(token->content);
-+     token->content = (uint8_t *)decrypted;
-+-    token->length  = (uint32_t)length; /* this may truncate unfortunately, TODO: use 64-bit values internally? */
-++    token->length  = length;
-+     return CL_SUCCESS;
-+ }
-+ 
-+ static cl_error_t filter_lzwdecode(struct pdf_struct *pdf, struct pdf_obj *obj, struct pdf_dict *params, struct pdf_token *token)
-+ {
-+     uint8_t *decoded, *temp;
-+-    uint32_t declen = 0, capacity = 0;
-++    size_t declen = 0, capacity = 0;
-+ 
-+     uint8_t *content = (uint8_t *)token->content;
-+     uint32_t length  = token->length;
-+     lzw_stream stream;
-+     int echg = 1, lzwstat, rc = CL_SUCCESS;
-+ 
-+-    if (pdf->ctx && !(pdf->ctx->dconf->other & OTHER_CONF_LZW))
-+-        return CL_BREAK;
-++    if (pdf->ctx && !(pdf->ctx->dconf->other & OTHER_CONF_LZW)) {
-++        rc = CL_BREAK;
-++        goto done;
-++    }
-+ 
-+     if (params) {
-+         struct pdf_dict_node *node = params->nodes;
-+@@ -984,15 +992,18 @@ static cl_error_t filter_lzwdecode(struct pdf_struct *pdf, struct pdf_obj *obj,
-+          * Sample 0015315109, it has \r followed by zlib header.
-+          * Flag pdf as suspicious, and attempt to extract by skipping the \r.
-+          */
-+-        if (!length)
-+-            return CL_SUCCESS;
-++        if (!length) {
-++            rc = CL_SUCCESS;
-++            goto done;
-++        }
-+     }
-+ 
-+     capacity = INFLATE_CHUNK_SIZE;
-+ 
-+     if (!(decoded = (uint8_t *)cli_malloc(capacity))) {
-+         cli_errmsg("cli_pdf: cannot allocate memory for decoded output\n");
-+-        return CL_EMEM;
-++        rc = CL_EMEM;
-++        goto done;
-+     }
-+ 
-+     memset(&stream, 0, sizeof(stream));
-+@@ -1007,7 +1018,8 @@ static cl_error_t filter_lzwdecode(struct pdf_struct *pdf, struct pdf_obj *obj,
-+     if (lzwstat != Z_OK) {
-+         cli_warnmsg("cli_pdf: lzwInit failed\n");
-+         free(decoded);
-+-        return CL_EMEM;
-++        rc = CL_EMEM;
-++        goto done;
-+     }
-+ 
-+     /* initial inflate */
-+@@ -1022,16 +1034,23 @@ static cl_error_t filter_lzwdecode(struct pdf_struct *pdf, struct pdf_obj *obj,
-+             length -= q - content;
-+             content = q;
-+ 
-+-            stream.next_in   = (Bytef *)content;
-+-            stream.avail_in  = length;
-+-            stream.next_out  = (Bytef *)decoded;
-++            stream.next_in  = (Bytef *)content;
-++            stream.avail_in = length;
-++            stream.next_out = (Bytef *)decoded;
-++            /* Make sure we don't overflow during type conversion */
-++            if (capacity > UINT_MAX) {
-++                cli_dbgmsg("cli_pdf: lzwdecode: overflow detected\n");
-++                rc = CL_EFORMAT;
-++                goto done;
-++            }
-+             stream.avail_out = capacity;
-+ 
-+             lzwstat = lzwInit(&stream);
-+             if (lzwstat != Z_OK) {
-+                 cli_warnmsg("cli_pdf: lzwInit failed\n");
-+                 free(decoded);
-+-                return CL_EMEM;
-++                rc = CL_EMEM;
-++                goto done;
-+             }
-+ 
-+             pdfobj_flag(pdf, obj, BAD_FLATESTART);
-+@@ -1044,7 +1063,7 @@ static cl_error_t filter_lzwdecode(struct pdf_struct *pdf, struct pdf_obj *obj,
-+         /* extend output capacity if needed,*/
-+         if (stream.avail_out == 0) {
-+             if ((rc = cli_checklimits("pdf", pdf->ctx, capacity + INFLATE_CHUNK_SIZE, 0, 0)) != CL_SUCCESS) {
-+-                cli_dbgmsg("cli_pdf: required buffer size to inflate compressed filter exceeds maximum: %u\n", capacity + INFLATE_CHUNK_SIZE);
-++                cli_dbgmsg("cli_pdf: required buffer size to inflate compressed filter exceeds maximum: %zu\n", capacity + INFLATE_CHUNK_SIZE);
-+                 break;
-+             }
-+ 
-+@@ -1056,7 +1075,17 @@ static cl_error_t filter_lzwdecode(struct pdf_struct *pdf, struct pdf_obj *obj,
-+             decoded          = temp;
-+             stream.next_out  = decoded + capacity;
-+             stream.avail_out = INFLATE_CHUNK_SIZE;
-++            if (declen > (SIZE_MAX - INFLATE_CHUNK_SIZE)) {
-++                cli_dbgmsg("cli_pdf: lzwdecode: overflow detected\n");
-++                rc = CL_EFORMAT;
-++                goto done;
-++            }
-+             declen += INFLATE_CHUNK_SIZE;
-++            if (capacity > (SIZE_MAX - INFLATE_CHUNK_SIZE)) {
-++                cli_dbgmsg("cli_pdf: lzwdecode: overflow detected\n");
-++                rc = CL_EFORMAT;
-++                goto done;
-++            }
-+             capacity += INFLATE_CHUNK_SIZE;
-+         }
-+ 
-+@@ -1064,6 +1093,12 @@ static cl_error_t filter_lzwdecode(struct pdf_struct *pdf, struct pdf_obj *obj,
-+         lzwstat = lzwInflate(&stream);
-+     }
-+ 
-++    if (declen > (UINT32_MAX - (INFLATE_CHUNK_SIZE - stream.avail_out))) {
-++        cli_dbgmsg("cli_pdf: lzwdecode: overflow detected\n");
-++        rc = CL_EFORMAT;
-++        goto done;
-++    }
-++
-+     /* add stream end fragment to decoded length */
-+     declen += (INFLATE_CHUNK_SIZE - stream.avail_out);
-+ 
-+@@ -1104,6 +1139,7 @@ static cl_error_t filter_lzwdecode(struct pdf_struct *pdf, struct pdf_obj *obj,
-+ 
-+     (void)lzwInflateEnd(&stream);
-+ 
-++done:
-+     if (rc == CL_SUCCESS) {
-+         if (declen == 0) {
-+             cli_dbgmsg("cli_pdf: empty stream after inflation completed.\n");
-+-- 
-+2.49.0
-+
+diff --git a/schedulers.py b/schedulers.py
+index 122149c..08a9c20 100644
+--- a/schedulers.py
++++ b/schedulers.py
+@@ -72,10 +72,10 @@ branchdefaults = {
+         'branch_bitbake': '2.12',
+         'branch_meta-arm': 'walnascar',
+         'branch_meta-agl': 'master',
+-        'branch_meta-aws': 'master',
++        'branch_meta-aws': 'walnascar',
+         'branch_meta-clang': 'walnascar',
+         'branch_meta-gplv2': 'master',
+-        'branch_meta-intel': 'master',
++        'branch_meta-intel': 'walnascar',
+         'branch_meta-mingw': 'walnascar',
+         'branch_meta-openembedded': 'walnascar',
+         'branch_meta-security': 'walnascar',
 -- 
-2.49.0
+2.43.0
 
 
