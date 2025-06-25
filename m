@@ -1,100 +1,97 @@
-Return-Path: <twoerner@gmail.com>
+Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E52AAC77B7C
-	for <webhook@archiver.kernel.org>; Wed, 25 Jun 2025 15:53:20 +0000 (UTC)
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
- by mx.groups.io with SMTP id smtpd.web11.19024.1750866799041254302
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACA57C77B7C
+	for <webhook@archiver.kernel.org>; Wed, 25 Jun 2025 20:10:52 +0000 (UTC)
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+ by mx.groups.io with SMTP id smtpd.web11.25834.1750882249380026772
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 25 Jun 2025 08:53:19 -0700
+ Wed, 25 Jun 2025 13:10:49 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=i1qtbxKE;
- spf=pass (domain: gmail.com, ip: 209.85.219.54, mailfrom: twoerner@gmail.com)
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6faf66905adso664036d6.2
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 25 Jun 2025 08:53:18 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=F8sQyh/T;
+ spf=pass (domain: konsulko.com, ip: 209.85.219.51, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6fae04a3795so4100146d6.3
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 25 Jun 2025 13:10:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750866797; x=1751471597; darn=lists.yoctoproject.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q6zH/rZCQWu4glVJdQtYA4qtKx8rydGdfp/mxN6raX8=;
-        b=i1qtbxKEBdbFFuWB95eblaXZkhDj8WYhdSKgRU8QXuBCG+75KvaK5HoMkB7z8w3FDC
-         WoGvbIRAJtS5eZV2KAs9HXZ+HYryIsIaFiyifnC6sR+UaBQg7gLoC8gPt6NFsT7e1TN6
-         SW/IbFAY5CMod5wG86VGq1pdXSUAzL/FOxwgilLF2l7hNcP9pcsbQmTjL6iyzs6EhJID
-         O/BnbYN3Lu9W2Za6wUV3AMiu8UJXafBWfhB5pATlHyGgFKLclAH6nukQ2uzLYrbn6gKr
-         unKbAvs/+e3JH8fwlkQT3GqH5zHKlj6vv8KPes7vTvL+MTuR2DzlJhs2u5fy9H9FZXWC
-         QnJA==
+        d=konsulko.com; s=google; t=1750882248; x=1751487048; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=F8mKAsSM/aKMrtnKTvZ4l1h841fpfvIS16qba8U1DE8=;
+        b=F8sQyh/TuZ6pt58K0YcgCmOMpb/lEmPhB07c0XU3NZdw/N8ZjEAbAHgnDEguMosgV9
+         cmfitkJ7CKAA/gzMJkrngpyuNG4hXSl++JkHcvt9egTck5XeKAUaWY9la4vVgOar9h1i
+         O901TjWuCpUlfOA9ijrx9EIohqloxOYLvEjFU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750866797; x=1751471597;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q6zH/rZCQWu4glVJdQtYA4qtKx8rydGdfp/mxN6raX8=;
-        b=kHfQ0ELqX4qjzlZ3ZSiyZfDX67iJsvF38WICc2BPmyP5jmES4dBkau4Tp8tQRg2y8R
-         Ij0E4bVpEYueYlF7XaOBbx8IHLHB+aPywoI8vVFmp59q3WybBqHDRwn0amTuWMomiTbI
-         8DhfEMsLBST7JghiVre2xaAhHzAI5gosvgn8RpnR9pCNe6HxQgi5Ut4pkb9/wu0BqmMQ
-         Q65QitGXUQj+PhWP0ybRlUaSo/PzROU/GnDZzTUaXPOzOl8d2RGKf1xqT24d4NwZXb9f
-         DdAWmeeOfI4zIH8rMYwPvox0oU+vLpSk9LdpoPm0D/qrg/2nZsBcYQiridKErEIM0mem
-         gNRQ==
-X-Gm-Message-State: AOJu0Yyb237z6LFYCrNHcf543kAKip1svyB7bF1WUjLTDrVsfKjEG3K8
-	0oxhvhdO4NEt1vApta+D+nBoBotoxvYqsbRrsmdXUI8IL3bi1KUc1o1bDHqT5VKD
-X-Gm-Gg: ASbGncsZCNdjJMw9bqNCI57g0j6L8AFWBPZ53e3k8CbfBSdIy1l153gLAKBuSDhcBaB
-	kjzIIUox1zFLeoNUOmBO87Ci3+GWXlFr/ZSAPDNxbZUsX6EWoYlA/5t7dfbH5mLV6CrXmenAO9A
-	gBE1tRcHG7jpbuxvKcz5iFIlwqMfVRWez/0ki2fhd2tvklqbBaxkeDJmSTCh4DEIvSDFj/ScG1L
-	/khRYo4Cm9xIixfGBeYbeXXjpShYWX4JwUNUouQrQu4/wBToObH7qsANPIZcEQPeWbeZUKaMlbg
-	lWlkG60pplYBHNZlEEFgQcU8R7Reg4FZo6lPe5yaZst4mLwGNuZcwdWsJB6eiFZC5Oov++cLeu2
-	OADFyMOECDkpmcMFuQMC8P4zb
-X-Google-Smtp-Source: AGHT+IHUXLgfpcNEBxSYBPj7Ey3tVZd1sFRrhbNdGK5fOW+PNWxQGH3bClqwweTsNQhQ6+tLrvMgfQ==
-X-Received: by 2002:a05:6214:5405:b0:6fb:16a:da41 with SMTP id 6a1803df08f44-6fd5ee80286mr51703746d6.0.1750866797178;
-        Wed, 25 Jun 2025 08:53:17 -0700 (PDT)
-Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fd32b18d3csm30688816d6.94.2025.06.25.08.53.16
+        d=1e100.net; s=20230601; t=1750882248; x=1751487048;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=F8mKAsSM/aKMrtnKTvZ4l1h841fpfvIS16qba8U1DE8=;
+        b=E4tZNZx+mo7PFRFXPr8BPEOOoDhvHJTtV6U3gHilpgu81qd44iZbpjMolOWOKU2w+j
+         tJwa3K/MZaPKc9O8ye466HRA8ZG0ZwR6vc3OHtQwS9iWmLn1nV3HCQSeIK0jKrBavWHO
+         UFp060q82Rblgey77lcSrHS07xaXN1XL0/gks38USlSlF9+A45LKbnUGUV7APi6+wQ6r
+         FfeA4oDYeQrxvYR4nPpFKlzkqhhJXmwl6motJpwb35jze+uK8hRatLgW+Tbj9+m7OtVQ
+         PA837ToTVRJIhRXIzw/qQ3MMpCuIVuJV8QF3e7250h9qDvJ9eaNaXDhh/e5qCRydo8qZ
+         utyw==
+X-Gm-Message-State: AOJu0Yyx5rqm65qRIYn/hXFKT85tMs3pZalxuo7fxCCXSS+tZ4K+H5hM
+	fj3ma6LNuQkM6zknNZ7iQy2rgLAMqQrtRRu0jgOUlzq0F10RmMCd6LgShNlX2zGqcv4ioN0/E3e
+	SEP04
+X-Gm-Gg: ASbGncvLVrfEaQ1B1g6t860r8CAK1FsNL6lj06Es5WY4HsrGj1y5dCK+vykBQvRYgGI
+	FRhVYHSTj+TM3EPwXLJxf4rMbQdtAFGs9FuWu4wm3AI0wbFAGTvCNRZxMNFRwquZ+bXi38kNbqX
+	Q3pLkYWm/XXcHxmonTCUXvG38IAf+WGO3cpUYArMCuWUQ6AcGSVCm/fwQVNBUa5+SCwejsPG+nT
+	uq9MbbVw/mjgQs4V1WrJpeFeceKHv4OF9YStZpYrhJLNyKbDbbz0ANy7p1Mao6KiZC3YZ2VnMGN
+	BwKCA9wLl7FJCrx+xbwc4TafEjED/7n2d4D7MjDRD4nt8foZvMb0wz3sqg5UzHhMG6n4cFgLdIb
+	CPkQwfIb614QNXNMItCru/GprgBytoIz404xRDA==
+X-Google-Smtp-Source: AGHT+IEYRJSUN9cFfYiKLkvhLZ/EwcmM0hWwtcYikV8+ga9D2SjsrJY9yR+5OHOI0R1hxACE8cWSCA==
+X-Received: by 2002:ad4:560f:0:b0:6fd:7508:9c04 with SMTP id 6a1803df08f44-6fd75089e0cmr12927296d6.20.1750882247845;
+        Wed, 25 Jun 2025 13:10:47 -0700 (PDT)
+Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fd093e0578sm72299646d6.10.2025.06.25.13.10.47
+        for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 08:53:16 -0700 (PDT)
-Date: Wed, 25 Jun 2025 11:53:14 -0400
-From: Trevor Woerner <twoerner@gmail.com>
+        Wed, 25 Jun 2025 13:10:47 -0700 (PDT)
+From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Quentin Schulz <quentin.schulz@cherry.de>
-Subject: Re: [yocto-patches] [meta-rockchip PATCH 0/2] bsp: rkbin: fix build
- issues around S and WORKDIR
-Message-ID: <20250625155314.GA14662@localhost>
-References: <20250625-s-unpackdir-v1-0-6f45466478d8@cherry.de>
+Subject: [meta-selinux][PATCH 0/2] Updates to fix building with oe-core master branch
+Date: Wed, 25 Jun 2025 16:10:32 -0400
+Message-ID: <cover.1750882005.git.scott.murray@konsulko.com>
+X-Mailer: git-send-email 2.49.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250625-s-unpackdir-v1-0-6f45466478d8@cherry.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 25 Jun 2025 15:53:20 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1691
+ <yocto-patches@lists.yoctoproject.org>; Wed, 25 Jun 2025 20:10:52 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1692
 
-On Wed 2025-06-25 @ 02:07:12 PM, Quentin Schulz via lists.yoctoproject.org wrote:
-> Since commit 46480a5e6674 ("insane/do_qa_unpack: add checks that ensure
-> S is set correctly"), three recipes fail to build because they either:
-> 
-> - set S to WORKDIR/git which isn't allowed anymore for git-fetched
->   recipes,
-> - have WORKDIR in S which isn't allowed anymore, UNPACKDIR should be
->   used instead,
-> 
-> This fixes the build issues seen on master.
-> 
-> Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
-> ---
-> Quentin Schulz (2):
->       bsp: rkbin: fix build since S = "${WORKDIR}/git" is implied by OE-Core
->       bsp: rkbin-native: fix build since ${WORKDIR} isn't allowed in S anymore
-> 
->  recipes-bsp/rkbin/rk3308-rkbin_git.bb          | 2 --
->  recipes-bsp/rkbin/rockchip-rkbin-native_git.bb | 2 +-
->  recipes-bsp/rkbin/rockchip-rkbin.inc           | 2 --
->  3 files changed, 1 insertion(+), 5 deletions(-)
-> ---
-> base-commit: 961768ccd13630a4b98701f5821372a9ede86e85
-> change-id: 20250625-s-unpackdir-8fee740998d0
+A couple of patches to handle the switch to whinlatter and adapt
+the recipes for the subsequent S/UNPACKDIR changes.
 
-Applied to meta-rockchip, master branch. Thanks!
+Scott Murray (2):
+  Set compatible layers to whinlatter
+  Adapt to UNPACKDIR changes
+
+ conf/layer.conf                                     | 2 +-
+ recipes-security/refpolicy/refpolicy_common.inc     | 2 +-
+ recipes-security/selinux-scripts/selinux-initsh.inc | 3 +--
+ recipes-security/selinux/checkpolicy_3.8.1.bb       | 2 --
+ recipes-security/selinux/libselinux-python_3.8.1.bb | 2 +-
+ recipes-security/selinux/libselinux_3.8.1.bb        | 2 --
+ recipes-security/selinux/libsemanage_3.8.1.bb       | 2 --
+ recipes-security/selinux/libsepol_3.8.1.bb          | 2 --
+ recipes-security/selinux/mcstrans_3.8.1.bb          | 2 --
+ recipes-security/selinux/policycoreutils_3.8.1.bb   | 2 --
+ recipes-security/selinux/restorecond_3.8.1.bb       | 2 --
+ recipes-security/selinux/secilc_3.8.1.bb            | 2 --
+ recipes-security/selinux/selinux-dbus_3.8.1.bb      | 2 +-
+ recipes-security/selinux/selinux-gui_3.8.1.bb       | 2 +-
+ recipes-security/selinux/selinux-python_3.8.1.bb    | 2 +-
+ recipes-security/selinux/selinux-sandbox_3.8.1.bb   | 2 +-
+ recipes-security/selinux/selinux_common.inc         | 2 ++
+ recipes-security/selinux/semodule-utils_3.8.1.bb    | 2 --
+ recipes-security/setools/setools_4.5.1.bb           | 2 --
+ 19 files changed, 10 insertions(+), 29 deletions(-)
+
+-- 
+2.49.0
+
 
