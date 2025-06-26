@@ -1,163 +1,96 @@
-Return-Path: <rybczynska@gmail.com>
+Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6096FC7EE32
-	for <webhook@archiver.kernel.org>; Thu, 26 Jun 2025 11:48:32 +0000 (UTC)
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
- by mx.groups.io with SMTP id smtpd.web11.6076.1750938505595627075
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AFE2C7EE30
+	for <webhook@archiver.kernel.org>; Thu, 26 Jun 2025 14:19:53 +0000 (UTC)
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+ by mx.groups.io with SMTP id smtpd.web11.9248.1750947591348836713
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 26 Jun 2025 04:48:25 -0700
+ Thu, 26 Jun 2025 07:19:51 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=mZIZqiFt;
- spf=pass (domain: gmail.com, ip: 209.85.216.51, mailfrom: rybczynska@gmail.com)
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-31223a4cddeso654143a91.1
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 26 Jun 2025 04:48:25 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=IlS1oqjX;
+ spf=pass (domain: konsulko.com, ip: 209.85.219.48, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6f8aa9e6ffdso11247856d6.3
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 26 Jun 2025 07:19:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750938505; x=1751543305; darn=lists.yoctoproject.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=KcHx/HovNiEdDpe4h1yGR5EhxC6edFSkkoDazm4bMxU=;
-        b=mZIZqiFt0ZoTyJfBSP9HH3V7Nb16jpyMCHFj6E451pbD0F84Au3hGVVNm1INMyftXj
-         hyNsA1USknxwoVex82z6w/4yQQeaZiIczfHeSrKwhUgsuKqjeSZ9MGvSUFTCY2O+1myt
-         fJC31Om8aIEbRb1hpXWBQ8l85f081KM+Gl5hjI2y8buPOkUOnNfE1djmt+8uYe/ZmYxk
-         cifyonGGI4KJ0iRznH13GLkUPTiCEBV9WYTkqH4ABpVKrD1CgKEhPI4AmK4AUezjzcgL
-         Q57fZ5EdAOh9HPy+Y68ID/vDuFUJeo6Je2k9+3g4T3Q7vPcXr0rJDbok1P2C0yXNCXv1
-         f6JQ==
+        d=konsulko.com; s=google; t=1750947590; x=1751552390; darn=lists.yoctoproject.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0se/5/BW0PCEhIousUGh8U1PtIHchBpmcrp7ZL+h0r8=;
+        b=IlS1oqjXs13GGbmdivF0itPpFE5QMY3lYVVwW/GSwjU7h4EdUJciRg+1udhEKkGMVL
+         8aiPZ5u8YRaL28jxBHs3LKcB3Kh67nL4f+j3hIa9QZ9jjHYPO+YqX9+TB8wSjIMjNtNd
+         YgFsYdrywJ2EDSAxMlCtVjwKBZ4+brfoS+vk8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750938505; x=1751543305;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KcHx/HovNiEdDpe4h1yGR5EhxC6edFSkkoDazm4bMxU=;
-        b=kz2U80zrIdz1++R8ZG18Zg1u43WZ06iHEvkrS5zpnhaPHsZuy3+H33cWiAWZdrGDkm
-         lkWxZefS+/JHiDMuFgzZGJCAdfzWY9fCAuv7YeAcgXFUTid52wTtTNmXZnqBSoZE/bkV
-         nhujOkuvfGcGMwCLTRPaLYF9eFeK7GKM4q23vUWIBQJvGAKuKcMre3voRr35VRVEBt9+
-         KpVwILmXaZtealib3wDBxZs3kTPbW5dnIH5Vvj8MrYjg96lgxUiyyjkQsr1Vg0nGXwIh
-         p0Yqa3OjPcAT/6GTW+24xhMtbibJIqa1sgtCxL6yr9pxVyWefCJN5zrjG5hDrn7cb/gy
-         BN8Q==
-X-Gm-Message-State: AOJu0YyfQkRuy1dIis/4+M+Gnq5SkvtTRPinKZJdJzIyZBenlzQJDWma
-	NYM0WSyUAmTLwa4kloPtOnzLrX6Iutv7aWpqPdwMj1Z6erXj3Stia21zK8Zc08zbUEYKXBp6/to
-	ZlZEraLSqsvMPvRAnFbwdTL0YdwbfTGVTlg==
-X-Gm-Gg: ASbGncu7RDu53tDbk+w79QBFeAfBkXag/tmeLgRHnoJ5+VN02fOobU89Tw9h+diMEXh
-	jOq24SZGZsqRPRa6lu4ZG87Uh0EeIcU/mpS9gbjOrPWDws5ACeOXYYgKaLxjR5Q8eqWUXxLdqpE
-	uZsXFTysXptwUwSuniBdrZ8g18zHjiHaJsLAZg/KSC63H5
-X-Google-Smtp-Source: AGHT+IEExnIDpwbd7dS18M4Z8cFmrYVfE8A0CEZfCsAeYg+vn0P/+jnIxWrpqR+SR5UGzFjYUmILCAgsEVP+lVwft7Q=
-X-Received: by 2002:a17:90b:1f90:b0:311:ea13:2e61 with SMTP id
- 98e67ed59e1d1-315f26c1b74mr8307046a91.34.1750938504479; Thu, 26 Jun 2025
- 04:48:24 -0700 (PDT)
-MIME-Version: 1.0
-References: <20250623202701.12590-1-akuster808@gmail.com> <6e7dc22b840812a82fc74ba314826c0728786950.camel@linuxfoundation.org>
-In-Reply-To: <6e7dc22b840812a82fc74ba314826c0728786950.camel@linuxfoundation.org>
-From: Marta Rybczynska <rybczynska@gmail.com>
-Date: Thu, 26 Jun 2025 13:48:12 +0200
-X-Gm-Features: Ac12FXz2pVn3CGmBTHjRCmks33qbFv12VTz56-KvWFWirrFk1DfJIFNiGxYzo5M
-Message-ID: <CAApg2=TCLjAjM2Q+LASBYLm79dPW8Zioe2vBR8UiOn+mqBHBBw@mail.gmail.com>
-Subject: Re: [yocto-patches] [meta-security][PATCH 0/1] Time to move on.
+        d=1e100.net; s=20230601; t=1750947590; x=1751552390;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0se/5/BW0PCEhIousUGh8U1PtIHchBpmcrp7ZL+h0r8=;
+        b=U5jPfHy0XMqSKn902IF5pb2Sjs+c/b99xjO1UO0deAFs5ssKOQYRF/Qe4yybFAOGrC
+         NHJXz2LSqdncbJWbG/sAPRbRmCe9lrb2wD+W/rqlQi7bVNb3boKTBtNemE9EQGUuNjDk
+         jc6CqfS+aSjThz8xozg2lVxPlqOkSIxcqOSAROD5DobPg2bWMMAB70/vGPAEaTPvSB2u
+         qThtr3K2NVBj2EudiZAFuFR3pwuvVX0DQRQYB+kElCRos9StLfjv2Sg5z8Mlvqc3LPJ4
+         tQMMLZz1UAgbElj1kU9EAFXdWdu+o8/5LsZOMnTNDD0VsMe6Kj7o01CBQnA+Y9Mdz0vq
+         zhYQ==
+X-Gm-Message-State: AOJu0YxVYd/Jeb0FUy9dW5f6JSwJpnOpMiIwUEGHL1mBrpF+4McdeeqS
+	GQVXdKAeb2D6lqFvO7izEDkStqoRIakmp4HR+Mtg33kpCAe/vZoiE3GKKybqkJ4OZvi8pm3PlPe
+	0CG8s
+X-Gm-Gg: ASbGncvQoJ5YipWAfV53BU9+vewJ7Uun4kmulZaQWofBl5Z9nrUhJjyLWRri1a510+r
+	RBp9FdvKzl5jnAI5yzkarCJwyiVrW+yQ6GDWc9+NzjX4/ca+WFyjjH2PvFzq80S+P+U82Wex9hs
+	g/QZKhQhspTDuSjYz98uXNcXVmJVa6EtSSBoWbMqhozQnMcVEctQ8MsoAlwk8s1pwgioBphw282
+	SnA8KYIH0B3adftHhWIjRZRouYle2xQD3uqLr4TN5idHJpbLEekBrQuzOIV+hoklpXMTXpevo4C
+	gI+Gn8+NeybTfV2txoUw5WBHnYVNinFKonU0B85iVqzS5AAi/GiksnXg8y/fJXFeyAkPYjhMdLs
+	KOlCB3yS7uhY32NkCES6t
+X-Google-Smtp-Source: AGHT+IFiqwfwIWWQQ/8L+skluK/WSbdDy8iB9n4Ousy9HDaEoTvgvsIHYWDXWIqy81rbOnhb4vMG5g==
+X-Received: by 2002:a05:6214:4520:b0:6fa:c0ca:ba70 with SMTP id 6a1803df08f44-6fd74d0d183mr74830006d6.42.1750947589910;
+        Thu, 26 Jun 2025 07:19:49 -0700 (PDT)
+Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d443223d15sm4676785a.85.2025.06.26.07.19.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Jun 2025 07:19:49 -0700 (PDT)
+Date: Thu, 26 Jun 2025 10:19:39 -0400 (EDT)
+From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Armin Kuster <akuster808@gmail.com>
-Content-Type: multipart/alternative; boundary="0000000000009548f80638782340"
+cc: alex.kanavin@gmail.com
+Subject: Re: [yocto-patches] [meta-selinux][PATCH 2/2] Adapt to UNPACKDIR
+ changes
+In-Reply-To: <CANNYZj8hvFiu4774qYFkBUu1NCiX8wLtOPnXu8hFb3S-u4SnUA@mail.gmail.com>
+Message-ID: <fb5c3279-262d-2874-d537-6789688538b0@konsulko.com>
+References: <cover.1750882005.git.scott.murray@konsulko.com> <848dd8066de86d3feeb520ef49e902548743fcdd.1750882005.git.scott.murray@konsulko.com> <CANNYZj8hvFiu4774qYFkBUu1NCiX8wLtOPnXu8hFb3S-u4SnUA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 26 Jun 2025 11:48:32 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1699
+ <yocto-patches@lists.yoctoproject.org>; Thu, 26 Jun 2025 14:19:53 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1700
 
---0000000000009548f80638782340
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Thu, 26 Jun 2025, Alexander Kanavin via lists.yoctoproject.org wrote:
 
-On Mon, Jun 23, 2025 at 10:38=E2=80=AFPM Richard Purdie via lists.yoctoproj=
-ect.org
-<richard.purdie=3Dlinuxfoundation.org@lists.yoctoproject.org> wrote:
-
-> Hi Armin,
+> On Wed, 25 Jun 2025 at 22:10, Scott Murray via lists.yoctoproject.org
+> <scott.murray=konsulko.com@lists.yoctoproject.org> wrote:
+> > -S = "${WORKDIR}/git/libselinux"
+> > +S = "${UNPACKDIR}/${BP}/libselinux"
 >
-> On Mon, 2025-06-23 at 16:16 -0400, Armin Kuster via lists.yoctoproject.or=
-g
-> wrote:
-> > I have been maintaining this layer for over 12 years and
-> > I have had a blast being a layer mainter over those years.
-> > Thanks for giving me the opertunity.
-> > Its time to pass on the baton for maintanership of this layer.
+> This is correct...
 >
-> Thanks for looking after it for all that time!
+> > -S = "${WORKDIR}/git/libsemanage"
 >
-> > I'll let the The Yocto Project TSC decide who the suitable
-> > replacement(s) may be.
+> ...but how can this be correct? In the absence of S in the recipe,
+> default S from bitbake.conf is used, that default is set to
+> ${UNPACKDIR}/${BP}, which doesn't include the 'libsemanage' suffix.
 >
-> I'm not sure we let you off that easily! Do you have any suggestions or
-> preferences on who might make a good replacement?
->
-> I ask since you're probably much more well placed to have an idea of
-> who might have the right skills or who might not. Happy to take
-> feedback publicly and/or privately.
->
->
-Hello,
-Thank you Armin for the work over the years. As you guess meta-security is
-one
-of my main layers.
+> There are several other spots in the patch with the same inconsistency.
 
-I've been silent for a while (because we're preparing a bigger
-announcement), but
-volunteering to co-maintain the layer has been on my TODO for a while. This
-is
-the moment to do it now then.
+Those recipes all pull in selinux_common.inc, to which I've added:
 
-If there are no other people who would like to do it, I volunteer for this
-layer.
+S = "${UNPACKDIR}/${BP}/${BPN}"
 
-To say it clearly, my goal would be to make it the default layer everyone
-uses.
+to avoid the duplication for all the recipes where the subdirectory
+matches the recipe name.  If that seems too opaque, I can mention the
+change in the commit message, or if that doesn't seem enough, I can
+change all of those recipes back to defining S separately.
 
-Kind regards,
-Marta
+Scott
 
---0000000000009548f80638782340
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
-mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Mon, Jun 23,=
- 2025 at 10:38=E2=80=AFPM Richard Purdie via <a href=3D"http://lists.yoctop=
-roject.org">lists.yoctoproject.org</a> &lt;richard.purdie=3D<a href=3D"mail=
-to:linuxfoundation.org@lists.yoctoproject.org">linuxfoundation.org@lists.yo=
-ctoproject.org</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" st=
-yle=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padd=
-ing-left:1ex">Hi Armin,<br>
-<br>
-On Mon, 2025-06-23 at 16:16 -0400, Armin Kuster via <a href=3D"http://lists=
-.yoctoproject.org" rel=3D"noreferrer" target=3D"_blank">lists.yoctoproject.=
-org</a> wrote:<br>
-&gt; I have been maintaining this layer for over 12 years and<br>
-&gt; I have had a blast being a layer mainter over those years.<br>
-&gt; Thanks for giving me the opertunity.<br>
-&gt; Its time to pass on the baton for maintanership of this layer. <br>
-<br>
-Thanks for looking after it for all that time!<br>
-<br>
-&gt; I&#39;ll let the The Yocto Project TSC decide who the suitable<br>
-&gt; replacement(s) may be.<br>
-<br>
-I&#39;m not sure we let you off that easily! Do you have any suggestions or=
-<br>
-preferences on who might make a good replacement?<br>
-<br>
-I ask since you&#39;re probably much more well placed to have an idea of<br=
->
-who might have the right skills or who might not. Happy to take<br>
-feedback publicly and/or privately.<br>
-<br></blockquote><div><br></div><div>Hello,</div><div>Thank you Armin for t=
-he work over the years. As you guess meta-security is one</div><div>of my m=
-ain layers.</div><div><br></div><div>I&#39;ve been silent for a while (beca=
-use we&#39;re preparing a bigger announcement), but<br></div><div>volunteer=
-ing to co-maintain the layer has been on my TODO for a while. This is</div>=
-<div>the moment to do it now then.</div><div><br></div><div>If there are no=
- other people who would like to do it, I volunteer for this layer.</div><di=
-v><br></div><div>To say it clearly, my goal would be to make it the default=
- layer everyone uses.</div><div><br></div><div>Kind regards,</div><div>Mart=
-a<br></div></div></div>
-
---0000000000009548f80638782340--
 
