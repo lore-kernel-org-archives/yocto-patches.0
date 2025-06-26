@@ -1,83 +1,78 @@
-Return-Path: <alex.kanavin@gmail.com>
+Return-Path: <thune.a.tran@boeing.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B96CC7EE30
-	for <webhook@archiver.kernel.org>; Thu, 26 Jun 2025 16:43:40 +0000 (UTC)
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
- by mx.groups.io with SMTP id smtpd.web10.474.1750956214697141902
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3E32C7EE33
+	for <webhook@archiver.kernel.org>; Thu, 26 Jun 2025 20:58:21 +0000 (UTC)
+Received: from clt-mbsout-01.mbs.boeing.net (clt-mbsout-01.mbs.boeing.net [130.76.144.162])
+ by mx.groups.io with SMTP id smtpd.web11.6698.1750971498358606792
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 26 Jun 2025 09:43:34 -0700
+ Thu, 26 Jun 2025 13:58:18 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=ggecAjrJ;
- spf=pass (domain: gmail.com, ip: 209.85.219.47, mailfrom: alex.kanavin@gmail.com)
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6fb1be9ba89so11882726d6.2
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 26 Jun 2025 09:43:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750956214; x=1751561014; darn=lists.yoctoproject.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=3HIs7X8shMJPuPoTyNi/Op1jiU3p8FYHJREEf6yVF2w=;
-        b=ggecAjrJP+i2A3rO6keQlPrgeO7CdNDggBdyvUd5XQFlu/sKzCXJ7oyK3O6UADY7V7
-         jz0gyC2WPBcjY5CiyInOjLydL6XsaAcqB7C+aW4VzD2tck87nInFReMis9Y4Mmz+dRwU
-         xXPcLjWo7+M8/SnSckeDqk+fegthumSyaFvQUmNhz57TwKy/YKLU1qPhf0SATS2fwEj/
-         k1aGvKrHf5WsgssjPkb8VRvUgMqjD5+R6Lh0f9KyuesPfixHZlGPkUOUUZfENx9qJhpA
-         NCgmbzeTt1rsyfoyz9edy7q/91mM8EL2ZowxPww3yh3RW1s0ikThp5PU2b+F3mBj1ri2
-         fGVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750956214; x=1751561014;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3HIs7X8shMJPuPoTyNi/Op1jiU3p8FYHJREEf6yVF2w=;
-        b=YHQPMXTMTFRXSPilh9TdgN5gM4I7l7jn8CgmJuffNCXDd14Y72D3o9dFHsOvZANuOS
-         BS721MsvoPa05uOjrcjKxMEk6cfWsiy1z67+UBVbOaAzaV3KIVBzkOnhCBVH/2b0Mokn
-         E8G04qKe5yQTiVrG0l2CesaVPjA9HPgpcYFIycpA80qoHMHjScm94iN4y5xEe49lV8jP
-         sq/4KxM003aEHBorrZrqr+BDYObnho2uMzyLdmJXUPjGeN9cB8FqPprrSiClAH1XiwvN
-         qsqhuilWQeYPgKqk4/byMMkhJ1QLhNTBsn0q3lKsDrkzMcZuPsTB3QRkiC6HX/B6R/+1
-         /Fhg==
-X-Gm-Message-State: AOJu0Ywo/NB0cRszRI7kjiN4s4ob82lAfxS15DtV+hkseQDEMvWJ8++Y
-	oszNriu7+v/vousD0KHjC2aqIHYfFD95Zhpli9WuSBriFP+770uv3W1zVO2Yw1+/TQ6syAAYh+o
-	fUvGQOa4FPBha+2G9UKckJzmchUhUD9nakA==
-X-Gm-Gg: ASbGnctThEcUeMNrkbO1PJRdTUwbJsUMs857PtDdzaiDrOsrZTWtciiV1y4ShiEEZ15
-	ZuCwS6D8xwFQ7wPXc+gg+4FnMRCudJS1z0s+uEpAZ94tqZR8jUrd/dP8gqOQkmEB/rdpZr9WyTP
-	IPT3f7cV4dwVV+b0iohrTf2J4ftZ3yPV9Cf4puFOQsdEpLA9zrPqyq5zKb24drR6kNSQgYfqg8i
-	8PMdAD4SI/RvPbX
-X-Google-Smtp-Source: AGHT+IGtcNuY0Jg2TW5X8+qD8E83ww/78j6IIKbEyJ3QO+rwBxk/ROKXEGiFcqxwr8lcF6mincv6SQa9XZ2KrS4SCYw=
-X-Received: by 2002:a05:6214:e4a:b0:6ff:154a:aa4e with SMTP id
- 6a1803df08f44-6fffdcfc05emr3818466d6.7.1750956213554; Thu, 26 Jun 2025
- 09:43:33 -0700 (PDT)
+ dkim=pass header.i=@boeing.com header.s=boeing-s1912 header.b=I2gDOuvs;
+ spf=pass (domain: boeing.com, ip: 130.76.144.162, mailfrom: thune.a.tran@boeing.com)
+Received: from localhost (localhost [127.0.0.1])
+	by clt-mbsout-01.mbs.boeing.net (8.15.2/8.15.2/DOWNSTREAM_MBSOUT) with SMTP id 55QKwE3D012872;
+	Thu, 26 Jun 2025 16:58:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=boeing.com;
+	s=boeing-s1912; t=1750971497;
+	bh=OI1Nw2J4l5BRKCqWf2O9lRzBSte/YIc0NyNW/FkQ0HM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=I2gDOuvsmfPU7Wpzvu9SKO25u186Fl8zcqpT/osUfwl9o6gotiC6VA/W1mJ3rgmmH
+	 L19WJGfDkA88guwh8vNvnpvXubIMG+Y+T0J/5lG1PWOFiym+ITRAt6R+eLueHqG/wV
+	 LAYKes+HZGMzVowq8bst5QAstp7Yik1Ppknooq9R36dJl15GEIAj15Q+92ZExb3hFp
+	 +QLs6Wp2IY1xplrNaX5diaXzR9ZJXrMF0+x1D2zWoUD6JUEfRL9WE+EX803wvCr30r
+	 6RiEYswEFvsdAuj8E1it5iDMJtXooq5WpC0VcmHijVL4H20J0ove+WwIf1RPyY5Lc8
+	 iDbIDOEXNrjUw==
+Received: from ewa-av-01.mbs.boeing.net (ewa-av-01.mbs.boeing.net [137.137.51.75])
+	by clt-mbsout-01.mbs.boeing.net (8.15.2/8.15.2/8.15.2/UPSTREAM_MBSOUT) with ESMTPS id 55QKwBq1012858
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 26 Jun 2025 16:58:12 -0400
+Received: from localhost (localhost [127.0.0.1])
+	by ewa-av-01.mbs.boeing.net (8.15.2/8.15.2/DOWNSTREAM_RELAY) with SMTP id 55QKwAnw014135;
+	Thu, 26 Jun 2025 13:58:10 -0700
+Received: from A6360519.boeing.com (a6360519.nos.boeing.com [10.35.161.174])
+	by ewa-av-01.mbs.boeing.net (8.15.2/8.15.2/UPSTREAM_RELAY) with ESMTP id 55QKw4Zo013752;
+	Thu, 26 Jun 2025 13:58:04 -0700
+From: Thune Tran <thune.a.tran@boeing.com>
+To: yocto-patches@lists.yoctoproject.org
+Cc: jpewhacker@gmail.com, Thune Tran <thune.a.tran@boeing.com>
+Subject: [meta-mingw][PATCH] mingw32-common: set TESTSDK_CASE_DIRS to sdkmingw
+Date: Thu, 26 Jun 2025 20:58:02 +0000
+Message-Id: <20250626205802.1341-1-thune.a.tran@boeing.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <cover.1750882005.git.scott.murray@konsulko.com>
- <848dd8066de86d3feeb520ef49e902548743fcdd.1750882005.git.scott.murray@konsulko.com>
- <CANNYZj8hvFiu4774qYFkBUu1NCiX8wLtOPnXu8hFb3S-u4SnUA@mail.gmail.com> <fb5c3279-262d-2874-d537-6789688538b0@konsulko.com>
-In-Reply-To: <fb5c3279-262d-2874-d537-6789688538b0@konsulko.com>
-From: Alexander Kanavin <alex.kanavin@gmail.com>
-Date: Thu, 26 Jun 2025 18:43:22 +0200
-X-Gm-Features: Ac12FXzoU2Hr1Hm6yY-Awg7aneuqVdA7N8DuW88Jb_ST4Zd7m-GgCcjfxVXK_GU
-Message-ID: <CANNYZj_GQ79NGC8QOievKpsWZZRnbY9Nf55n8BcY69VvKUqSYg@mail.gmail.com>
-Subject: Re: [yocto-patches] [meta-selinux][PATCH 2/2] Adapt to UNPACKDIR changes
-To: Scott Murray <scott.murray@konsulko.com>
-Cc: yocto-patches@lists.yoctoproject.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 26 Jun 2025 16:43:40 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1702
+ <yocto-patches@lists.yoctoproject.org>; Thu, 26 Jun 2025 20:58:21 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1703
 
-On Thu, 26 Jun 2025 at 16:19, Scott Murray <scott.murray@konsulko.com> wrote:
-> Those recipes all pull in selinux_common.inc, to which I've added:
->
-> S = "${UNPACKDIR}/${BP}/${BPN}"
->
-> to avoid the duplication for all the recipes where the subdirectory
-> matches the recipe name.  If that seems too opaque, I can mention the
-> change in the commit message, or if that doesn't seem enough, I can
-> change all of those recipes back to defining S separately.
+Add TESTSDK_CASE_DIRS = "sdkmingw" for compatibility with the
+simplified SDK test specification in openembedded-core.
 
-Right, this just wasn't clear from reading the changes. Perhaps
-adjusting the commit message is fine.
+Signed-off-by: Thune Tran <thune.a.tran@boeing.com>
+---
+ conf/machine-sdk/include/mingw32-common.inc | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Alex
+diff --git a/conf/machine-sdk/include/mingw32-common.inc b/conf/machine-sdk/include/mingw32-common.inc
+index 909fc06..56b8052 100644
+--- a/conf/machine-sdk/include/mingw32-common.inc
++++ b/conf/machine-sdk/include/mingw32-common.inc
+@@ -35,6 +35,9 @@ MACHINEOVERRIDES .= ":sdkmingw32"
+ TESTSDK_CLASS_NAME = "oeqa.sdkmingw.testsdk.TestSDKMinGW"
+ TESTSDKEXT_CLASS_NAME = ""
+ 
++# Directory that contains testcases
++TESTSDK_CASE_DIRS = "sdkmingw"
++
+ WINDMC:mingw32 = "${HOST_PREFIX}windmc"
+ WINDRES:mingw32 = "${HOST_PREFIX}windres --include-dir=${STAGING_INCDIR}"
+ RC:mingw32 = "${WINDRES}"
+-- 
+2.34.1
+
 
