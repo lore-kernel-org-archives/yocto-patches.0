@@ -1,81 +1,115 @@
-Return-Path: <alex.kanavin@gmail.com>
+Return-Path: <soumya.sambu@windriver.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79D52C77B7F
-	for <webhook@archiver.kernel.org>; Thu, 26 Jun 2025 05:17:20 +0000 (UTC)
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
- by mx.groups.io with SMTP id smtpd.web10.1520.1750915037948536921
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9DB8C7115B
+	for <webhook@archiver.kernel.org>; Thu, 26 Jun 2025 05:46:00 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+ by mx.groups.io with SMTP id smtpd.web11.1760.1750916755431840937
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 25 Jun 2025 22:17:18 -0700
+ Wed, 25 Jun 2025 22:45:55 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=ayHYCzoJ;
- spf=pass (domain: gmail.com, ip: 209.85.222.181, mailfrom: alex.kanavin@gmail.com)
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7d20f79a00dso84027485a.0
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 25 Jun 2025 22:17:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750915037; x=1751519837; darn=lists.yoctoproject.org;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JoSMCB1ICvaaL/15e4s8Km2H0j3yBtCikTyAuIPOxj0=;
-        b=ayHYCzoJSHU/7UU8Sn94kR9ZEnfUOz5sNDf0FiYX9m9WMutSmv2VMYIJR9zG12iSC7
-         ET7szB3ibB/pM0Fsnt2l6dH+7bJyGSlQ4ypm4oa+X+LPrAUQECrRlL4SveD466C4cKWz
-         fVv/aDTBllLxw6QPnr4VcqZM9dj9ILBkvodlN9syViRi0x0tkzyDM0kzfcTZUXT/hH7c
-         ETKxZVdapGX0Q2yZ3/u7oO5JxN9VQ2O/rLY0dhfF/cM24bqmfziXer549dBaecOOAFKI
-         oIM2tFy2jKphnvctaCtYUAqx/0TTUFFCzpOmlT3v3FS36SgfFYwQwZhG8DQ8LRyv/zv5
-         pTBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750915037; x=1751519837;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JoSMCB1ICvaaL/15e4s8Km2H0j3yBtCikTyAuIPOxj0=;
-        b=rsaYVIwUjAlpx0bF7q0uWbfu5mQCHsMuQVaHFJFwdapSVKfc2kxLfJ7Hgj/T6OlmoL
-         46+KuaI3fXVxYlZWBwsuQKyw8JzNPPw8yUz00LNGIT2ygUF4pzZWTcBta79Nz+QIEL0O
-         FyKehFR9pcLP2zM4LSTC1He6aC7sCQ3jc/0lAUM7h0WmYQcfe8eK3V1lO39qH1Zlxfce
-         x6RlHJahvTpOBR4ZV8m1GUJEjY55sd7nl7rQSAsRxbrPGijp3wJ+CQim1KjSIgtKRrIQ
-         HQw8ShXS0DfrMzt0f34ce99d/zqF+P6Q2Yb7xQ3sH82eKFMefYDsmd9kpQ7Jv4YY5kM7
-         Zx3Q==
-X-Gm-Message-State: AOJu0Yz6snpH+rM6Fq9y7vS1dCBYPEXz2mtwqicrZmlQIWNGHCdZhSVD
-	VZvN2ehu7D4iOoFF+BMJCM355B9SrrFyfgafXEll5iVIq+XUpdRVCcz0d2It/+5q9sLHJowVFoS
-	eTYPiUKKntzWAdvkTwyon6m1q/gz/EKb8VB8m
-X-Gm-Gg: ASbGncsmQIbOJvuOifo08HV98SzWJDhrPXo3KBOXh0FTOR4454ufZOhbEimCM3G3uSM
-	LO724GUZHrbzk92ricfX/hmeH9/uqZker5y6fy/gehKElKQBXfySD4uUNnnnt04YJc8hmk18u/0
-	dnaEJp6YEMKXz22r43ctZ6kG9XYM4HbYZk9Rw4zd1E/RV9IliiPTW4Cyda5gvVF2v3MFaSlpHx1
-	1f3Cw==
-X-Google-Smtp-Source: AGHT+IFgsz7G4QOqXBpqPe/VMSrZtvdj/dl4JDQI3Nbb9aVH7wXloe9Ed6ju2jE1QUN5XGSlCyj+HimgkhccerFq4iU=
-X-Received: by 2002:a05:620a:410c:b0:7d4:2854:795d with SMTP id
- af79cd13be357-7d4297856cbmr687166785a.39.1750915036806; Wed, 25 Jun 2025
- 22:17:16 -0700 (PDT)
+ dkim=none (message not signed); spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.178.238, mailfrom: prvs=8272e65e7e=soumya.sambu@windriver.com)
+Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55Q5dllx013196
+	for <yocto-patches@lists.yoctoproject.org>; Thu, 26 Jun 2025 05:45:54 GMT
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 47dhy2n81p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <yocto-patches@lists.yoctoproject.org>; Thu, 26 Jun 2025 05:45:54 +0000 (GMT)
+Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.57; Wed, 25 Jun 2025 22:45:48 -0700
+Received: from blr-linux-engg1.wrs.com (147.11.136.210) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
+ 15.1.2507.57 via Frontend Transport; Wed, 25 Jun 2025 22:45:47 -0700
+From: ssambu <soumya.sambu@windriver.com>
+To: <yocto-patches@lists.yoctoproject.org>
+Subject: [meta-lts-mixins][kirkstone/rust][PATCH 1/1] python3-strict-rfc3339: fix invalid command 'bdist_wheel'
+Date: Thu, 26 Jun 2025 11:15:45 +0530
+Message-ID: <20250626054545.1237276-1-soumya.sambu@windriver.com>
+X-Mailer: git-send-email 2.40.0
 MIME-Version: 1.0
-References: <cover.1750882005.git.scott.murray@konsulko.com> <848dd8066de86d3feeb520ef49e902548743fcdd.1750882005.git.scott.murray@konsulko.com>
-In-Reply-To: <848dd8066de86d3feeb520ef49e902548743fcdd.1750882005.git.scott.murray@konsulko.com>
-From: Alexander Kanavin <alex.kanavin@gmail.com>
-Date: Thu, 26 Jun 2025 07:17:05 +0200
-X-Gm-Features: Ac12FXyg4XE8n3WYRsEhhmKMVPn2sgt9CcOVnr2spQ6s-xBg4TIbdIjj-hmephg
-Message-ID: <CANNYZj8hvFiu4774qYFkBUu1NCiX8wLtOPnXu8hFb3S-u4SnUA@mail.gmail.com>
-Subject: Re: [yocto-patches] [meta-selinux][PATCH 2/2] Adapt to UNPACKDIR changes
-To: yocto-patches@lists.yoctoproject.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI2MDA0NCBTYWx0ZWRfX4RZFCKbc0mix Z0D8Qx3IK5QijLcS24Q96443A4DUqcH1CsN2gzLbhyJs8eAedj3KgHYnHwCZPhlnP6PINLj9zZs aAovyM+WPgX03kUqJh401cZtG64Xhu+qYDtUJgMiY1OkxGlftYTlsJtiJ6aF3tUS7AO6fhUCTKl
+ zcxJh6WFYXkwyWVGqohrDq7WAhMR12j7JDUuCblHw800zbukWynvOBO3d7F5XXltA+cd1vUv1Ld 36P1PO1tHDvlviQrIYa/Pn3ja2ILaOwCmKlJao7+CUOS+j+sAl9MUcLF2mKgthQATwgy9/TWllB emehXfObPafj55ZZErU9zcbBSBG8N8rgphWFyK77NIRRbQlC/YhZ+Vf0p3dmiC7HYEWFPiHR82I
+ 7w+FT1+CHyFy02hT0TqPJsGg3vncGMNZBJkhhgLDCbx42zUOhNLDsa1brczsAUvI93c7ZLuI
+X-Authority-Analysis: v=2.4 cv=Qblmvtbv c=1 sm=1 tr=0 ts=685cde92 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=KuCMGVAfJcUA:10 a=6IFa9wvqVegA:10 a=t7CeM3EgAAAA:8 a=m__NNN433p-mM7ecbz8A:9 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-ORIG-GUID: OrvpeIq3EYDqsxqSXOmBbG2KnjkzKxN3
+X-Proofpoint-GUID: OrvpeIq3EYDqsxqSXOmBbG2KnjkzKxN3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-26_02,2025-06-25_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
+ bulkscore=0 lowpriorityscore=0 mlxlogscore=971 mlxscore=0
+ priorityscore=1501 clxscore=1015 impostorscore=0 malwarescore=0
+ phishscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.21.0-2505280000
+ definitions=main-2506260044
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 26 Jun 2025 05:17:20 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1696
+ <yocto-patches@lists.yoctoproject.org>; Thu, 26 Jun 2025 05:46:00 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1697
 
-On Wed, 25 Jun 2025 at 22:10, Scott Murray via lists.yoctoproject.org
-<scott.murray=konsulko.com@lists.yoctoproject.org> wrote:
-> -S = "${WORKDIR}/git/libselinux"
-> +S = "${UNPACKDIR}/${BP}/libselinux"
+From: Soumya Sambu <soumya.sambu@windriver.com>
 
-This is correct...
+With mixins setuptools, python3-strict-rfc3339 fails to compile with error:
+    error: invalid command 'bdist_wheel'
+    ERROR: 'python3 setup.py bdist_wheel ' execution failed.
 
-> -S = "${WORKDIR}/git/libsemanage"
+Switching setup import from setuptools._distutils.core to setuptools fixed the issue.
 
-...but how can this be correct? In the absence of S in the recipe,
-default S from bitbake.conf is used, that default is set to
-${UNPACKDIR}/${BP}, which doesn't include the 'libsemanage' suffix.
+Signed-off-by: Soumya Sambu <soumya.sambu@windriver.com>
+---
+ ...setup-from-setuptools-instead-of-dis.patch | 23 +++++++++++++++++++
+ .../python/python3-strict-rfc3339_%.bbappend  |  4 ++++
+ 2 files changed, 27 insertions(+)
+ create mode 100644 dynamic-layers/openembedded-layer/recipes-devtools/python/python3-strict-rfc3339/0001-setup.py-import-setup-from-setuptools-instead-of-dis.patch
+ create mode 100644 dynamic-layers/openembedded-layer/recipes-devtools/python/python3-strict-rfc3339_%.bbappend
 
-There are several other spots in the patch with the same inconsistency.
+diff --git a/dynamic-layers/openembedded-layer/recipes-devtools/python/python3-strict-rfc3339/0001-setup.py-import-setup-from-setuptools-instead-of-dis.patch b/dynamic-layers/openembedded-layer/recipes-devtools/python/python3-strict-rfc3339/0001-setup.py-import-setup-from-setuptools-instead-of-dis.patch
+new file mode 100644
+index 0000000..e424380
+--- /dev/null
++++ b/dynamic-layers/openembedded-layer/recipes-devtools/python/python3-strict-rfc3339/0001-setup.py-import-setup-from-setuptools-instead-of-dis.patch
+@@ -0,0 +1,23 @@
++From 1d583ecd2d6376252fcced66068a2482fec0dfbf Mon Sep 17 00:00:00 2001
++From: Soumya Sambu <soumya.sambu@windriver.com>
++Date: Wed, 25 Jun 2025 17:26:35 +0530
++Subject: [PATCH] setup.py: import setup from setuptools instead of distutils
++
++Signed-off-by: Soumya Sambu <soumya.sambu@windriver.com>
++---
++ setup.py | 2 +-
++ 1 file changed, 1 insertion(+), 1 deletion(-)
++
++diff --git a/setup.py b/setup.py
++index a49fb8e..5279707 100644
++--- a/setup.py
+++++ b/setup.py
++@@ -1,5 +1,5 @@
++ import os.path
++-from setuptools._distutils.core import setup
+++from setuptools import setup
++
++ readme_file = os.path.join(os.path.dirname(__file__), 'README.md')
++ readme = open(readme_file).read()
++--
++2.40.0
+diff --git a/dynamic-layers/openembedded-layer/recipes-devtools/python/python3-strict-rfc3339_%.bbappend b/dynamic-layers/openembedded-layer/recipes-devtools/python/python3-strict-rfc3339_%.bbappend
+new file mode 100644
+index 0000000..d694d20
+--- /dev/null
++++ b/dynamic-layers/openembedded-layer/recipes-devtools/python/python3-strict-rfc3339_%.bbappend
+@@ -0,0 +1,4 @@
++FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
++
++SRC_URI += "\
++            file://0001-setup.py-import-setup-from-setuptools-instead-of-dis.patch"
+-- 
+2.40.0
 
-Alex
 
