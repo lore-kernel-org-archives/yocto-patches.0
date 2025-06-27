@@ -1,143 +1,94 @@
-Return-Path: <twoerner@gmail.com>
+Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E41CC7EE31
-	for <webhook@archiver.kernel.org>; Fri, 27 Jun 2025 14:57:18 +0000 (UTC)
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
- by mx.groups.io with SMTP id smtpd.web10.15866.1751036230825009760
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58D19C7EE2A
+	for <webhook@archiver.kernel.org>; Fri, 27 Jun 2025 15:09:28 +0000 (UTC)
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+ by mx.groups.io with SMTP id smtpd.web10.16152.1751036967125429921
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 27 Jun 2025 07:57:10 -0700
+ Fri, 27 Jun 2025 08:09:27 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=GijrTJsv;
- spf=pass (domain: gmail.com, ip: 209.85.219.41, mailfrom: twoerner@gmail.com)
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6fad8b4c927so21047986d6.0
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 27 Jun 2025 07:57:10 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=UVRJuLQP;
+ spf=pass (domain: konsulko.com, ip: 209.85.219.44, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6facacf521eso21983986d6.3
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 27 Jun 2025 08:09:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751036229; x=1751641029; darn=lists.yoctoproject.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+HghWn2FMA2lG8ksWL0EoVnocAeOfcw11U7efL4mplU=;
-        b=GijrTJsvLvxBQ2JX8XS07l0v0ygZ7FBNx8QXnL+DMAIBb54UxpChoK19VvDzliuB39
-         4h2HMDJODXVE6/RIX9ncukssUL8HE+QUwLDoWnJCkmcZNtj1EgJfRPm6oMi0gWx68Hr8
-         YJlPy1Sp2+YAog8DvEU26ynn3JioU6TnZeGkmWXA9GnHe9YCMe0xZfc0Cc2MxK88twpm
-         Qde+wmwquX7vpRe64NbA3JD5+wZ5thstF5lUDR8bK4urASuC5CSr9uM2yvbZF4CiO/61
-         d6PP57Eh0hLF4NBDTYiVjkHKw5yyzwUgtu7Y0HP65UX3gLLJK4JNsQM8xwPV8NJBg8N6
-         LWmA==
+        d=konsulko.com; s=google; t=1751036966; x=1751641766; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9Yu9pj+MtCxzja40PWHUdCcFgxSM9C7XMK/cG1kn6T4=;
+        b=UVRJuLQPQXJGBdw2YpHspomzLH7Y9sWdzMJmpQtk/7TnATqVM9PG+h36BimMjxrjOh
+         jj7unXTJk93rf9FaUnSdR8zhdtmonhwLlMiyRTECd3kCAWi9Bk2B/QWhs7VfkcvuPAbC
+         +hudEU1ar0AjF64R5T7YZXS58OWLqVPr8K2Vc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751036229; x=1751641029;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1751036966; x=1751641766;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+HghWn2FMA2lG8ksWL0EoVnocAeOfcw11U7efL4mplU=;
-        b=OQzfmyqsduXZGnANODwq7+NLyngsQw4cdujeUxmIgsrHIRdNLkmX7tVHB4PbepxJum
-         vw2YYbEST+7UmiwJtXhl28j71PeHZys6i1IIebJj5T+hrcjQBEpGUNOTxPF2c5SvcfXw
-         OhpQW14d3qxYbMrL8pLnaagqHaEYALxkmWSUkX+/m5j8rxtA0q9FR47+3wR/laQT8hz/
-         DJ3lDYX19SyTcNWjfTaVtF25E7membhanf4kxSfYFVEFUwZbGMFiJ9qqOlUOxjAjqRVK
-         /CaB3sBvDm+qnH41FPAPPVYs/cDpbiy1kMmxtq27Xpk1YUHL1p/jLEhsNhQr63cWusZk
-         k8fQ==
-X-Gm-Message-State: AOJu0YyJ9OVG8mEZoL/VBRuam6yKfkOGhQgxn7N93jh9eoV4MmRbzlND
-	MI3TXJ//zZ43HPbJsnclywOrgM000/WbCBYxzQNVxQehyme1OlLhKXCRpEVwQ8v3
-X-Gm-Gg: ASbGncsuMcvIvASni0AqtJxFpweq96HUmORG3Um6lZzvAJ/a/Q/7nbx6dtcfyuVbLxK
-	LDn2Sf0AV+jAZkW2/hIIsjlf5e04yb7P66LW+Vty53J2cvsE7ABpfPFGBRZqsQUxeqqaLPfsZhV
-	n6XQ7YCoayEJdxvjxxLKlLVeJGg02x7rltquEeq91WXuJ4pV0kjQrxngsiwaz6FO7wtKGrZ3BWe
-	ckEOCopiem7mWhAk1eaEV3cc7Vd4O+Gr7a9j/xcOawCWWoAwu1p9b4P0GI2LAJxw0Q1unT9XHSd
-	wuSOQBq/SJGeAmE3NRJwvpO/NjdLR09tg1TCyk2Up+zt92b5ij/VbffsgD7kZcA/n0PIywULhid
-	B/kZCsGNoEBaiVQ==
-X-Google-Smtp-Source: AGHT+IGOfcm1IbInyLhebdl/+1uQ6VaqxOXi1mSKgoMz8o9iyNHb2itoPiU4uGC+1CmMiybo0sOcAQ==
-X-Received: by 2002:ad4:5b85:0:b0:6fa:c512:c401 with SMTP id 6a1803df08f44-70012fcf43bmr65659746d6.37.1751036229089;
-        Fri, 27 Jun 2025 07:57:09 -0700 (PDT)
-Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fd7718d327sm21725166d6.22.2025.06.27.07.57.08
-        for <yocto-patches@lists.yoctoproject.org>
+        bh=9Yu9pj+MtCxzja40PWHUdCcFgxSM9C7XMK/cG1kn6T4=;
+        b=koKGrHWpt+TzigX4XYtCZ5FKNI3hRpnf2xxnC9BkoBYntQbbjuzAbrEeX6t40v/zSU
+         2eoHRp11m91+9vFd29OYlqbbebtDdXM7XgMec1DAJRHQ+YixH6N3MrmoFpF4HPaNPSDE
+         qtpiUI6NBA5jz+KWmB4/2sQbFSKJiYapQ5oGTwBmduRGC3YoNTCvFR3gieuGQoyG6unv
+         JKPULnwtEDGiqz7WmkhWERkIfx1la2mZ+kqp2dXgdxCKBLjJ+WwSs9BoiKRsYB3au4Lj
+         mS4ErYRtTEt6kOX1G4ULCmadkb7qOhkYvLCOJphs0H4BleqrStakgMHTzbLBk/FT6Hhi
+         YiMA==
+X-Gm-Message-State: AOJu0YwGvBNBNPmlsoyLmCBRPjUKMVVX5u6v9sx8DNWcfW+ROEGL7H7p
+	zg/2o1GPC71UfiLLdlXCddUEGVSaYA89XPZDF0VFtW2ubrK/SIqhVvmJDya93ARuLxONfa0jMI/
+	xQw8y
+X-Gm-Gg: ASbGnctGOx8OWlcBPQ7ZJ3vtSt/c4X0UPJmXeyliHtiMMsP7KuD/EiPGbTYgau8Hb/y
+	2hOQo9LLGaH5sdRv5AAuZutbszPmnEnI8/6oL6XS5fVQfOGKa3ODCx+wK9pmyyZWJOYe/yvlPxp
+	ZyYt1uhIntherc8CjmWEe1YLyhEop97tGr3c8GRFW2E1+xd8ZHFm1SDSJpM5tRYOnPf83sSNcL6
+	mvbKNqL5dGC09gnxCpDQfxSE6tgquawPAxz0KYADWTgLZNdT9r85NbnoTFBBARzHvcxxl2vhV4W
+	degLx87ilHipNWw2syo0qOdLw2aa3WmSZPOohM7M4lXZ3f2k7J+mRJkDG/PyaEd3RkLteRoG2TP
+	LPLI6+oboztuBbdXwkbDUDaffSpxcNsvRoNr5CQ==
+X-Google-Smtp-Source: AGHT+IH9DEOFTu8LB/wXiSgAEVAQiewJup36xkVvrQkgvGY4Gcf5Vu1PrZe47BcX5fkIdiqFLC1C5A==
+X-Received: by 2002:a05:6214:2e86:b0:700:bad0:1c48 with SMTP id 6a1803df08f44-700bad02330mr31855516d6.20.1751036965722;
+        Fri, 27 Jun 2025 08:09:25 -0700 (PDT)
+Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fd7718e76esm22003636d6.12.2025.06.27.08.09.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Jun 2025 07:57:08 -0700 (PDT)
-Date: Fri, 27 Jun 2025 10:57:06 -0400
-From: Trevor Woerner <twoerner@gmail.com>
+        Fri, 27 Jun 2025 08:09:25 -0700 (PDT)
+From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: Re: [meta-rockchip][PATCH v4] fitimage rework
-Message-ID: <20250627145706.GA35399@localhost>
-References: <20250626031810.35828-1-twoerner@gmail.com>
+Cc: Alexander Kanavin <alex.kanavin@gmail.com>
+Subject: [meta-selinux][PATCH v2 1/2] Set compatible layers to whinlatter
+Date: Fri, 27 Jun 2025 11:09:14 -0400
+Message-ID: <5b172fccbfec3ae12326f438ce39e186657f5e6f.1751036759.git.scott.murray@konsulko.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <cover.1751036759.git.scott.murray@konsulko.com>
+References: <cover.1751036759.git.scott.murray@konsulko.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250626031810.35828-1-twoerner@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 27 Jun 2025 14:57:18 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1719
+ <yocto-patches@lists.yoctoproject.org>; Fri, 27 Jun 2025 15:09:28 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1721
 
-On Wed 2025-06-25 @ 11:18:10 PM, Trevor Woerner wrote:
-> oe-core has completely re-written the fitImage support starting roughly at
-> commit [1], update meta-rockchip to match.
-> 
-> Most of the MACHINEs in meta-rockchip use a fitImage for the kernel, but
-> some don't. Create a boolean variable (RK_KERNEL_FITIMAGE), enabled by
-> default, to keep track of which ones do and which ones don't. Use this
-> variable to decide how to configure various image-related fields.
-> 
-> Build tested with all meta-rockchip MACHINEs both with and without RAUC.
-> 
-> Run tested on the following with RAUC configured:
-> 	- nanopi-m4b
-> 	- nanopi-r2s
-> 	- radxa-zero-3e
-> 	- rock-pi-4b
-> 	- rock-pi-e
-> 	- rock-pi-s
-> 
-> Run tested on the following without RAUC:
-> 	- radxa-zero-3e
-> 	- rock-pi-e
-> 	- rock-pi-s
-> 
-> [1] oe-core: 3442d9297dca ("oe-selftest: fitimage: test external dtb")
-> Signed-off-by: Trevor Woerner <twoerner@gmail.com>
-> ---
-> changes in v4:
-> - rename the variable to RK_KERNEL_FITIMAGE
-> - update the README, variable name, and comments to emphasize the fitImage
->   is kernel-related (and does not pertain to other fit-able components)
-> - use ?= so the RK_KERNEL_FITIMAGE value can be changed by the user
-> - the location of the RK_KERNEL_FITIMAGE variable is not arbitrary (as
->   it may be for other variables) add a comment to this effect
-> - re-organize the fit and non-fit values to do away with adding two new
->   files (rockchip-fitimage.inc and rockchip-unfitimage.inc) so as to add
->   only one (rockchip-fitimage.inc); set all non-fit values as defaults
->   to be over-ridden in the rockchip-fitimage.inc file as required
-> 
-> changes in v3:
-> - remove the 2nd MACHINE_ESSENTIAL_EXTRA_RDEPENDS from the
->   rockchip-extlinux.inc file and place the relevant portions into either
->   the rockchip-fitimage.inc or rockchip-unfitimage.inc files as
->   appropriate
-> 
-> changes in v2:
-> - remove the ",False" from the bb.utils.to_boolean() calls
-> - add information on new param (RK_FITIMAGE) to README
-> - re-structure the fitimage require so it is less invasive in
->   MACHINE.conf files
-> ---
->  README                                     | 10 ++++++++++
->  conf/machine/include/px30.inc              |  2 --
->  conf/machine/include/rk3066.inc            |  2 +-
->  conf/machine/include/rk3188.inc            |  2 +-
->  conf/machine/include/rk3288.inc            |  2 +-
->  conf/machine/include/rk3308.inc            |  2 --
->  conf/machine/include/rk3328.inc            |  2 --
->  conf/machine/include/rk3399.inc            |  2 --
->  conf/machine/include/rk3566.inc            |  2 --
->  conf/machine/include/rk3568.inc            |  2 --
->  conf/machine/include/rk3588s.inc           |  2 --
->  conf/machine/include/rockchip-defaults.inc |  7 +++++++
->  conf/machine/include/rockchip-extlinux.inc |  7 +++----
->  conf/machine/include/rockchip-fitimage.inc |  5 +++++
->  14 files changed, 28 insertions(+), 21 deletions(-)
->  create mode 100644 conf/machine/include/rockchip-fitimage.inc
+whinlatter is the next release, set it as compatible layer since
+it is not backwards compatible.
 
-Applied (with some tweaks discussed on IRC) to meta-rockchip, master branch.
-Thanks for the review!
+Signed-off-by: Scott Murray <scott.murray@konsulko.com>
+---
+ conf/layer.conf | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/conf/layer.conf b/conf/layer.conf
+index b0dc48b..6ec4380 100644
+--- a/conf/layer.conf
++++ b/conf/layer.conf
+@@ -17,7 +17,7 @@ BBFILE_PRIORITY_selinux = "5"
+ # cause compatibility issues with other layers
+ LAYERVERSION_selinux = "1"
+ 
+-LAYERSERIES_COMPAT_selinux = "walnascar styhead"
++LAYERSERIES_COMPAT_selinux = "whinlatter"
+ 
+ LAYERDEPENDS_selinux = " \
+     core \
+-- 
+2.49.0
+
 
