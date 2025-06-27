@@ -1,93 +1,104 @@
-Return-Path: <richard.purdie@linuxfoundation.org>
+Return-Path: <majortomtosourcecontrol@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12EFCC77B7F
-	for <webhook@archiver.kernel.org>; Fri, 27 Jun 2025 21:20:52 +0000 (UTC)
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
- by mx.groups.io with SMTP id smtpd.web10.1741.1751059246228270778
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74046C77B7F
+	for <webhook@archiver.kernel.org>; Fri, 27 Jun 2025 22:49:02 +0000 (UTC)
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
+ by mx.groups.io with SMTP id smtpd.web10.3275.1751064541097760824
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 27 Jun 2025 14:20:46 -0700
+ Fri, 27 Jun 2025 15:49:01 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=BbfgY7wt;
- spf=pass (domain: linuxfoundation.org, ip: 209.85.128.54, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-453398e90e9so2465435e9.1
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 27 Jun 2025 14:20:46 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=bb+avzgZ;
+ spf=pass (domain: gmail.com, ip: 209.85.210.41, mailfrom: majortomtosourcecontrol@gmail.com)
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-735ae68cc78so1616254a34.1
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 27 Jun 2025 15:49:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1751059245; x=1751664045; darn=lists.yoctoproject.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1751064540; x=1751669340; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eFq1Yl8lHVCO6yrrRF/r65lEu3MJue/kxxcDnhjMKUY=;
-        b=BbfgY7wtn4hY6ApWTxXQ6/dscGx3iys706QRyYfJLngH+6z0UfaauBf8P22mQXj9d6
-         PxCK3rgKAZndjGJt9LyjRz4ttf6yYJR7S0kIquxnAkwp87iqi8LSbEhtj1bi5u7LVJUr
-         gBBXH8SJA01rzyv+6HXp/IP2e8bilXpJZv5xQ=
+        bh=9G3uQZxBREleeuA9XgGRZJpO8lthcxXNkjWei1UtmAg=;
+        b=bb+avzgZyfKugKU6+wUmRbrTJQNOWkQlJVOwnowIvtIHjXpKmKUexDGwVHE+iQcvp7
+         jbl47yCF60cZ7NWhYuAPJEarMTwnWv3qQyOZJ20jWAe9RPU28gJC/kngVEDSSFlkqQ7l
+         RTP66hXC15GfBSLkF7aJ8L/1sov4PBjdwgNirpGL5dg1W6mN2e8tpYQ+EWqFCCytV3hb
+         crlR/e9KXb2K5rdZdBEx7/85J+PCdjefgRncZPZ5MfPEJCLwEe/EKdU9oE76qDYsUh5H
+         OxYm9ljXt9PShqWbfgnAdMHOP/OPreZwjl41YYgpgH4DCWA2xi1qMIww16qy9Qi8mt7e
+         a7MA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751059245; x=1751664045;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=eFq1Yl8lHVCO6yrrRF/r65lEu3MJue/kxxcDnhjMKUY=;
-        b=KydzMGVumg2uyY69L8I7+w8SCCpAnkzTEycISuXIOF7Tu9RikHf9M6ft1ZmJYuYHnh
-         kgm5I+Ued+bpac3Sr/PkgGVi+s/JxQPDPy5VJGzHpi0GbFOnJC075Obpps0LqkgBAqdI
-         1Z5F2xsyHHGUzeZQ8JMQ5tWXsqtLr3Pn9z5AS0U3MEmKUZlfsF19KWxnQN1sKIOLJK/K
-         JB7Qzlnkz3aujZ8sIRpl5DrRyVxrilUywu3xTFdBwBTqu9UhrAj6EtiNX6OJ2MkzSsIv
-         t6WRt8LLGVDMyhFiVsE1eq8eMCcCrEgZuowrUr+waWh6slY1rYPntpM7zNnHPkk7Yw9K
-         WiPg==
-X-Forwarded-Encrypted: i=1; AJvYcCU2M0+7qIY8FLvif+daIwlbo0T1iDdLdFITl+euCGEDdjVRRmmlraGvX53Q7KZ/J//YKRlmgdAeuMA5+lKu@lists.yoctoproject.org
-X-Gm-Message-State: AOJu0Yz+1rJmJpH/69y4fxeWAEeE3FVJjDLKHpN3eu8ar+OyiAkerVh2
-	tjfM92p+VgDbsaLS+RG5W2xeBumHtfpALgrvrdZ/lY1495M1AtKTOoWItdO24Ijstfo=
-X-Gm-Gg: ASbGncvuqyheOMDF9zIz8FD9QR80GwMrm4tlVSRl1OqhYQGwA7C0hutWJk7MFFc3mze
-	SB/LYH3somZvUXlPPBac+WPG5xLHTp2/VqaVk1cFbs+/7v7o97ey8s8AeZBBw2FwfIQCsNRm1cf
-	fOGxyrPiJiWIWTMQFWMy7G7D0I9zex9bEmjJ+z5RZR18y4fRFPVwRWcQvaKCdY4+fEAxOEQWSsS
-	VsEeJDU2AQCw3jHefOyI9tih1Z/0PkB+YGoycsn2u6ucNEMMxADWlJVPP+4pq8P6K2pZkCu8LsL
-	8jXgwPg9kgtJaRxP4/ar2CVRXO5S1qEhIFkj/Xx3g7tmoZ+YdYtYmH3Vul9So6UG/Y75p4xgkbI
-	D92nLU/tV3QVmAniucAmGZc8Nbe1sgb+VxPGEW397HrR2NMJAAiE=
-X-Google-Smtp-Source: AGHT+IGuqx/g4fwQyzvi84vhCPzdkjKeAv5E4u9ynj95bID5E3vWrELdmHACBTC2+kl6wOwUYdcL7A==
-X-Received: by 2002:a05:600c:870b:b0:440:54ef:dfdc with SMTP id 5b1f17b1804b1-4538ee39982mr46793045e9.8.1751059244604;
-        Fri, 27 Jun 2025 14:20:44 -0700 (PDT)
-Received: from ?IPv6:2001:8b0:aba:5f3c:9b1d:fac1:a77f:a658? ([2001:8b0:aba:5f3c:9b1d:fac1:a77f:a658])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4538a3a5fd2sm61232465e9.15.2025.06.27.14.20.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Jun 2025 14:20:43 -0700 (PDT)
-Message-ID: <95225e9fe50d4f2873b672127a824ff993a2bfeb.camel@linuxfoundation.org>
-Subject: Re: [meta-security][PATCH 1/1] Update maintainers
-From: Richard Purdie <richard.purdie@linuxfoundation.org>
-To: Scott Murray <scott.murray@konsulko.com>, 
-	yocto-patches@lists.yoctoproject.org, Marta Rybczynska
- <rybczynska@gmail.com>
-Date: Fri, 27 Jun 2025 22:20:41 +0100
-In-Reply-To: <d362cdc5e05123ac1907f64d94ea604fdaab884f.1751049467.git.scott.murray@konsulko.com>
-References: <cover.1751049467.git.scott.murray@konsulko.com>
-	 <d362cdc5e05123ac1907f64d94ea604fdaab884f.1751049467.git.scott.murray@konsulko.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.56.0-1 
+        d=1e100.net; s=20230601; t=1751064540; x=1751669340;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=9G3uQZxBREleeuA9XgGRZJpO8lthcxXNkjWei1UtmAg=;
+        b=B+EfoyCoNK2hVVIlLwkZ9OJDl0OYELNH58l9ZRwl/BLxnAQ7P+QVOsYobkaCzXWY1q
+         QPaNuUZxM6nSkAxVQBzzGlSUfOxXxtzGLFy2gD7H4Z2yr26O4WpRzpzx3PHDt4T9Kw5O
+         /kGlX3ffRAfjlx9lUwynq4Cit0uO7GdsxaXEvEftHPNBKdAAGUPmQJJwqNDcXEs9C9wn
+         cQirSlfNTziAn5hkcJ2YrY69QAQN15fAqShlzXH5liMsEsWmK2MaBGoazEl8RGUSOMz7
+         TuLRp6EYmessMw+j4Yl82MTWxxGkMUIYF92B5f3lPkKpTt5UvLANd6J6FcF2ctgYE1rr
+         W4FA==
+X-Gm-Message-State: AOJu0YxAoH0v0cSkNiNCE1bUXSqnHC5s8Zc1CdhhIvxrtaAuonPJbbWW
+	zfY+0NRceJOQz/UakdIpt68Qh6+oHU9kMlDeHu1lGlJYXiJFby6cS8CbmL8LCA==
+X-Gm-Gg: ASbGncsOoQgE+BGsDAqf0GBF88t9mvAzFpzqsQHddts0YyzCiW0W2Jo7cA03uUgxzHS
+	Oxu0ZBKhKHWGJhEUK0RCCIb/QHgua+zv3g1TWvuQ16BzQS06nUehn13jdG3BCn8oU9O4Vehbtm4
+	iPef/pWBEmvwA72kZypWAliyufcCMZyV/W51IuNTGYl/Dz5tpIQ+BMEYUDf/na0qhIAu6cwT+ic
+	X/gadIzqW1nvmOlanSghmxwV1MyuhT/nag6VqUhk8uJdroEZlXmHkkST1uPVWNR+2XFmZEcbHPZ
+	u79Ii7WZelV7nO23JuWyeW6TH3CFQkpUlp+mE5xfbEsyPOeYH8DfyewHP4w1WEoGk1h0o70OvuY
+	Uq9hiF4cvG8/C0GyDOIaRrPYzZo/aCi2L1dRyJTw=
+X-Google-Smtp-Source: AGHT+IEgWt3YfOG4PGisCTel1sE6Pn+PFqYhPFd2NCow79PQdZOzl+w+YrBbb5t5pNx45oUivCZt3A==
+X-Received: by 2002:a05:6830:6501:b0:734:fcd4:d1f9 with SMTP id 46e09a7af769-73afc655594mr3106853a34.23.1751064540234;
+        Fri, 27 Jun 2025 15:49:00 -0700 (PDT)
+Received: from [172.26.252.3] (174-29-216-122.hlrn.qwest.net. [174.29.216.122])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73afb02bf67sm540245a34.30.2025.06.27.15.48.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Jun 2025 15:48:59 -0700 (PDT)
+Message-ID: <601934b3-5e3b-44ea-af40-36c4deaeef8a@gmail.com>
+Date: Fri, 27 Jun 2025 16:48:59 -0600
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: yocto-patches@lists.yoctoproject.org, scott.murray@konsulko.com,
+ rybczynska@gmail.com
+From: Clayton Casciato <majortomtosourcecontrol@gmail.com>
+Subject: [meta-security][PATCH v2] smack: Use new CVE_STATUS variable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 27 Jun 2025 21:20:52 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1725
+ <yocto-patches@lists.yoctoproject.org>; Fri, 27 Jun 2025 22:49:02 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1726
 
-T24gRnJpLCAyMDI1LTA2LTI3IGF0IDE0OjQ2IC0wNDAwLCBTY290dCBNdXJyYXkgd3JvdGU6Cj4g
-QWRkIE1hcnRhIGFuZCBteXNlbGYgYXMgbWFpbnRhaW5lcnMgZm9yIG1ldGEtc2VjdXJpdHkgYW5k
-IHRoZSBvdGhlcgo+IGVtYmVkZGVkIGxheWVycyB0aGF0IEFybWluIGhhZCBiZWVuIG1haW50YWlu
-aW5nLsKgIFRvIGF2b2lkIEFybWluCj4gZ2V0dGluZyBidWdnZWQgYWJvdXQgaW5kaXZpZHVhbCBy
-ZWNpcGVzLCBzZXQgdGhlIFJFQ0lQRV9NQUlOVEFJTkVSCj4gdmFyaWFibGVzIHRvIG15c2VsZiBm
-b3Igbm93IGFzIGEgc3RhcnRpbmcgcG9pbnQgdGhhdCBjYW4gYmUgYWRqdXN0ZWQKPiBhcyB0aGlu
-Z3MgZ2V0IG1vcmUgc2V0dGxlZC4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBTY290dCBNdXJyYXkgPHNj
-b3R0Lm11cnJheUBrb25zdWxrby5jb20+Cj4gLS0tCj4gwqBSRUFETUUubWTCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqAgfMKgIDQgKy0KPiDCoC4uLi9pbmNsdWRlL21haW50YWluZXJzLW1ldGEtc2VjdXJpdHkuaW5j
-wqDCoMKgwqAgfCA3MiArKysrKysrKystLS0tLS0tLS0tCj4gwqBtZXRhLWhhcmRlbmluZy9SRUFE
-TUUubWTCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgIDQgKy0K
-PiDCoG1ldGEtaW50ZWdyaXR5L1JFQURNRS5tZMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoCB8wqAgNCArLQo+IMKgbWV0YS10cG0vUkVBRE1FLm1kwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHzCoCAyICsKPiDCoC4u
-Li9kaXN0cm8vaW5jbHVkZS9tYWludGFpbmVycy1tZXRhLXRwbS5pbmPCoMKgIHwgMzIgKysrKy0t
-LS0tCj4gwqA2IGZpbGVzIGNoYW5nZWQsIDYzIGluc2VydGlvbnMoKyksIDU1IGRlbGV0aW9ucygt
-KQoKSSd2ZSBtZXJnZWQgdGhpcyBhbmQgbWFkZSBpdCBvZmZpY2lhbCwgdGhhbmtzIFNjb3R0IGFu
-ZCBNYXJ0YS4KCkNoZWVycywKClJpY2hhcmQK
+"CVE_CHECK_IGNORE is deprecated in favor of CVE_STATUS"
 
+https://docs.yoctoproject.org/dev/ref-manual/variables.html#term-CVE_STATUS
+
+Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
+---
+Sponsor: 21SoftWare LLC
+
+v2: add warning message to commit body
+v1: https://lists.yoctoproject.org/g/yocto-patches/topic/111623070
+
+ recipes-mac/smack/smack_1.3.1.bb | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/recipes-mac/smack/smack_1.3.1.bb b/recipes-mac/smack/smack_1.3.1.bb
+index 6c52392..7b20e6b 100644
+--- a/recipes-mac/smack/smack_1.3.1.bb
++++ b/recipes-mac/smack/smack_1.3.1.bb
+@@ -13,10 +13,9 @@ SRC_URI = " \
+ 
+ PV = "1.3.1"
+ 
+-# CVE-2014-0363, CVE-2014-0364, CVE-2016-10027 is valnerble for other product.
+-CVE_CHECK_IGNORE += "CVE-2014-0363"
+-CVE_CHECK_IGNORE += "CVE-2014-0364"
+-CVE_CHECK_IGNORE += "CVE-2016-10027"
++CVE_STATUS[CVE-2014-0363] = "cpe-incorrect: different product"
++CVE_STATUS[CVE-2014-0364] = "cpe-incorrect: different product"
++CVE_STATUS[CVE-2016-10027] = "cpe-incorrect: different product"
+ 
+ inherit autotools update-rc.d pkgconfig ptest
+ inherit ${@bb.utils.contains('VIRTUAL-RUNTIME_init_manager','systemd','systemd','', d)}
 
