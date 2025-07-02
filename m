@@ -2,227 +2,362 @@ Return-Path: <liuyd.fnst@fujitsu.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44C23C83013
-	for <webhook@archiver.kernel.org>; Wed,  2 Jul 2025 09:18:33 +0000 (UTC)
-Received: from esa6.fujitsucc.c3s2.iphmx.com (esa6.fujitsucc.c3s2.iphmx.com [68.232.159.83])
- by mx.groups.io with SMTP id smtpd.web10.19260.1751447905286657606
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51023C7EE30
+	for <webhook@archiver.kernel.org>; Wed,  2 Jul 2025 09:20:13 +0000 (UTC)
+Received: from esa6.hc1455-7.c3s2.iphmx.com (esa6.hc1455-7.c3s2.iphmx.com [68.232.139.139])
+ by mx.groups.io with SMTP id smtpd.web10.19289.1751448009217118728
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 02 Jul 2025 02:18:25 -0700
+ Wed, 02 Jul 2025 02:20:09 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@fujitsu.com header.s=fj1 header.b=PAMzWq7/;
- spf=neutral (domain: fujitsu.com, ip: 68.232.159.83, mailfrom: liuyd.fnst@fujitsu.com)
+ dkim=pass header.i=@fujitsu.com header.s=fj2 header.b=H8bytWpl;
+ spf=pass (domain: fujitsu.com, ip: 68.232.139.139, mailfrom: liuyd.fnst@fujitsu.com)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj1;
-  t=1751447906; x=1782983906;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=Vlz4QKOKPitvw0ZLxqvK2vHSyyaeKlVTAxxNnAeE/tQ=;
-  b=PAMzWq7/rx8J6ceEsmqQ3MQAOyNVQPsb1W1TXfykky41ecKvjWIx1w0Q
-   5KKghosklV6L4fs7z79/AXtQQFvQsg6XnuHyH7eGe1AAL+c3okBYjZQTE
-   OYp/jQqp8kzp/7ltS1ffTbjrqn5ea+C5JqD6CfVZyRZB1w+rjhaTUMsaP
-   w1EBnAjKBMi/eVnwd2PqK4UfEoUj9rddktMkVbaeuImfQpbkNQMR8I+dA
-   9abeMfFvrz9f8J0arT04T/owW5ejkUOZJP9R/G4mrunNR4tBWeo6LfBAC
-   v7/v/GnXcEzudZbDvPMfqZTYRaWgwzDzlh4BiYMc5qDiwzr7AHNEquBs/
-   g==;
-X-CSE-ConnectionGUID: jI62FgZvSEO57m5ZkAYQig==
-X-CSE-MsgGUID: rzlA4nOvTOq94P364WW+Lg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11481"; a="160332413"
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
+  t=1751448009; x=1782984009;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=vuFUyT046JLVDsBpgDVQN1EjX0KdZfPP/RSfsmUsayc=;
+  b=H8bytWpllKt4qf8u0rqHsWi0baz9YpbijaZuAo/bN1VuiUc+UjIvt3yQ
+   3vn1ra3HRy+FVNMrIQ68GT+vvE6YMXZ1BQe32PQOY3+sEDwNNzkarHB+P
+   5hg3cVI3sx7/z8R9l4qrrof3F1BLLUtXLJdKU/JVmiQxYwW6t3elUtIEp
+   GeJxxV5YsjOMR6UC7/TaWpoZNDV3/RkkoCmLpDcYXi/bKV7ZZOSlWs6hV
+   /BlM8r3UIbOX9iHf0ytn6loenoppV+k2rm6pIWwhHw9ahtUbwDXox4k8X
+   Jrkbp7SXBPPDAzoqr2HXtg3oh9q3iF5VYK5lU83HotiFibz8sTdKuwL/1
+   Q==;
+X-CSE-ConnectionGUID: foEIS4iZQxKHnIdtIVZd/A==
+X-CSE-MsgGUID: tlh4R4ASRp2+itleU5b5cw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11481"; a="208142281"
 X-IronPort-AV: E=Sophos;i="6.16,281,1744038000"; 
-   d="scan'208";a="160332413"
-Received: from mail-japaneastazon11010039.outbound.protection.outlook.com (HELO TY3P286CU002.outbound.protection.outlook.com) ([52.101.229.39])
-  by ob1.fujitsucc.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 18:18:23 +0900
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jPBHbB8BAH9Xp+CBU5lgBwMNbFNdfXtC8Bo+jt7FHN95xl6FjmTIGoKq+crQ4RrwwNittxwElZvmmeOxjAmYVIY8SMk+OMjStftzptbr9smvRnosua2jpCMldDoVnBS6yX02NgPIjP2R1k+0g5r4D21MHwsMf56oH60TftwMDf51YlUQ0FUK6C2kCQnEvGyQEDJoKzJueiKS1rUBtzT25NqvvgE/zZX8dnjyFcieRbcgXlRti/C1w0Zk58JdxvbBChdj+rglWhxoA0utX40IFKupF/SsFYudb+3PWzG79IxbbvXwrwBkb10zKMq879yWyV76fRmOED5+ep6YgWsDxw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Vlz4QKOKPitvw0ZLxqvK2vHSyyaeKlVTAxxNnAeE/tQ=;
- b=WDr9lRTNMhC/LGaXFNeSkS6U/GeXGo19FMg47ouu9JFBAiq1/FTEmv4/GpUWQ/LaAbZ/tGHlPMj0d267g6PDrtTleu12mDdAaPvc/uIIIJWklbPdvbzaGwBbs7k2OFKVHkN6DS4OQgVPSNUdlW20RQMJeH7V+AY2PhndeZT6v2s5j5ZvlU6Ye97lr59Ps1CK7h/+1IjWLsNvJmGhs41jqEROaimIrvD9VubShgmiV5bPvvIj4tcYAXguzhPigNQy4l8olSbvlhpOPABVqG3Rezq/JlsjJv2uuiHS1tbTHGyyCwAA6zDmzntB5lDUme1atR8GglVgCV3R9hIU76/j9w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
- dkim=pass header.d=fujitsu.com; arc=none
-Received: from OSRPR01MB11597.jpnprd01.prod.outlook.com
- (2603:1096:604:22f::12) by TYWPR01MB12127.jpnprd01.prod.outlook.com
- (2603:1096:400:43f::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.32; Wed, 2 Jul
- 2025 09:18:19 +0000
-Received: from OSRPR01MB11597.jpnprd01.prod.outlook.com
- ([fe80::cb27:d71e:9f8a:8014]) by OSRPR01MB11597.jpnprd01.prod.outlook.com
- ([fe80::cb27:d71e:9f8a:8014%4]) with mapi id 15.20.8880.029; Wed, 2 Jul 2025
- 09:18:19 +0000
-From: "Yiding Liu (Fujitsu)" <liuyd.fnst@fujitsu.com>
-To: Gyorgy Sarvari <skandigraun@gmail.com>,
-	"yocto-patches@lists.yoctoproject.org" <yocto-patches@lists.yoctoproject.org>
-CC: "Xinjian Ma (Fujitsu)" <maxj.fnst@fujitsu.com>
-Subject: 
- =?utf-8?B?5Zue5aSNOiBbeW9jdG8tcGF0Y2hlc10gW21ldGEtc2VjdXJpdHldW1BBVENI?=
- =?utf-8?Q?_1/2]_layer:_drop_styhead,_add_whinlatter?=
-Thread-Topic: [yocto-patches] [meta-security][PATCH 1/2] layer: drop styhead,
- add whinlatter
-Thread-Index: AQHb6m70tsZ1PvbN50Gp2IypncZ7yrQegHWAgAAMfaA=
-Date: Wed, 2 Jul 2025 09:18:19 +0000
-Message-ID: 
- <OSRPR01MB11597653BE0E2BCC218C1FEEB9B40A@OSRPR01MB11597.jpnprd01.prod.outlook.com>
-References: <20250701100013.826-1-liuyd.fnst@fujitsu.com>
- <12b9c28d-4432-46bb-ac7f-5edda2b481c4@gmail.com>
-In-Reply-To: <12b9c28d-4432-46bb-ac7f-5edda2b481c4@gmail.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
- =?utf-8?B?TVNJUF9MYWJlbF8xZTkyZWY3My0wYWQxLTQwYzUtYWQ1NS00NmRlMzM5Njgw?=
- =?utf-8?B?MmZfQWN0aW9uSWQ9MDI1ZDI3M2ItMjM3Mi00NjJiLWEzODktYTU0YTRkM2Ix?=
- =?utf-8?B?YWQwO01TSVBfTGFiZWxfMWU5MmVmNzMtMGFkMS00MGM1LWFkNTUtNDZkZTMz?=
- =?utf-8?B?OTY4MDJmX0NvbnRlbnRCaXRzPTA7TVNJUF9MYWJlbF8xZTkyZWY3My0wYWQx?=
- =?utf-8?B?LTQwYzUtYWQ1NS00NmRlMzM5NjgwMmZfRW5hYmxlZD10cnVlO01TSVBfTGFi?=
- =?utf-8?B?ZWxfMWU5MmVmNzMtMGFkMS00MGM1LWFkNTUtNDZkZTMzOTY4MDJmX01ldGhv?=
- =?utf-8?B?ZD1Qcml2aWxlZ2VkO01TSVBfTGFiZWxfMWU5MmVmNzMtMGFkMS00MGM1LWFk?=
- =?utf-8?B?NTUtNDZkZTMzOTY4MDJmX05hbWU9RlVKSVRTVS1QVUJMSUPigIs7TVNJUF9M?=
- =?utf-8?B?YWJlbF8xZTkyZWY3My0wYWQxLTQwYzUtYWQ1NS00NmRlMzM5NjgwMmZfU2V0?=
- =?utf-8?B?RGF0ZT0yMDI1LTA3LTAyVDA5OjA4OjQ5WjtNU0lQX0xhYmVsXzFlOTJlZjcz?=
- =?utf-8?B?LTBhZDEtNDBjNS1hZDU1LTQ2ZGUzMzk2ODAyZl9TaXRlSWQ9YTE5ZjEyMWQt?=
- =?utf-8?B?ODFlMS00ODU4LWE5ZDgtNzM2ZTI2N2ZkNGM3O01TSVBfTGFiZWxfMWU5MmVm?=
- =?utf-8?B?NzMtMGFkMS00MGM1LWFkNTUtNDZkZTMzOTY4MDJmX1RhZz0xMCwgMCwgMSwg?=
- =?utf-8?Q?1;?=
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=fujitsu.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OSRPR01MB11597:EE_|TYWPR01MB12127:EE_
-x-ms-office365-filtering-correlation-id: d844aac9-da5a-49fd-a931-08ddb949626a
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230040|366016|1800799024|376014|38070700018|1580799027;
-x-microsoft-antispam-message-info: 
- =?utf-8?B?TXYvOVdxcVEySHdiSmhpUFBWUE12ZTVwaHpiOFZTVGljZHJYVFdJbklkTkJp?=
- =?utf-8?B?OG9WR1B0b3A3WEpydUs1SWFvT3UzMEZkSC9UcmdhMHc5Zk5YNWdwem96WDZ6?=
- =?utf-8?B?ciszdytUS3p3RDRVNTR4UUphVk00eG00NXFzYmZ3RjcxVit4OUlvWXFsTU5q?=
- =?utf-8?B?TmFjQjc2dDFrR096N1BvVVFJUDRIZjhqYXFqZWlzSU9kZ2VXZVQ1U2w5NlEw?=
- =?utf-8?B?K04wckN0TitZbWNtTkU0NG1yRS9OcGM3amdXRFR5empQcDlOTThHeHBGTk1R?=
- =?utf-8?B?Q2tlczhDNm5WMll5THJ2V1RCcE01Q0R4Nnlwcm1sbDkwdUpWQ2Z6RUdlNHJv?=
- =?utf-8?B?eEQ0Y3pneERGbjFZRjRYQTdNMGdqSmVkb0hBYTllaGd0aGxwQm5hajVGcGg3?=
- =?utf-8?B?NkUvaGNaMEFLQStkNmN4NjBhei9oR1JRRjFOWWNtR1BsRUF0ajhtWGROY2VU?=
- =?utf-8?B?bHdXenpzcVhZS1oxb2dKaStkVTZucWRJdXFZU2psK25yQ1ZYaW1ueHlOdE1I?=
- =?utf-8?B?T0djNXQyL0R3MzMwUFplTjhMd2txTnlFUTFtRHRib0kwNW5UYVEzTjUwT1Bh?=
- =?utf-8?B?Y2NkN2JWRnpaeUIrckFFWnk1Q0lvSHFpQXI3Y3ZWbllhcmt0UVR5MEFGRUhR?=
- =?utf-8?B?bWl2ZTNKRmx1SUhuYlJPNEV1aXN3OGRqeVVIdkdvbTZVSU5pd3NJdlA0WXRS?=
- =?utf-8?B?UExEbVJuOWZyWW9ZUmZ4aE9uRmhxQm1EMmUzcjBuaDJJTlVPVXdkQm9Iamtk?=
- =?utf-8?B?a1BLOUYzbWtPQTUwZm80clVjVDI5eC81OEpZTzFQdTlWK28vL3VSd3ZXWVlP?=
- =?utf-8?B?RDF6SzgxRnZYUVdTMDlyY3hHd0YxN2RrcjEvU29TRHVFamhkRUFrRWk1c0J4?=
- =?utf-8?B?bkhVZ3JENm9NQnk4VE5ieDkzbmpYWEFIQzVvWVQ2UFpSeDNrT1pyb2ZCOFpq?=
- =?utf-8?B?RjN0NkhaeE9mSGFPbTBOMHNkdGE1M0h0OVJGVW1pbjY5czNPbE5QcVhCMTFt?=
- =?utf-8?B?UVQxNUZFb2daVjNqdGF6bUhOMVAzUzVYZ2tGdGN0WFMrOG81LzJvWlc5K3NK?=
- =?utf-8?B?WFloL0NMYlB6cks4VmNuSnZqYktGS0dVZjZ6dTgwQTBGMmM0aWlIN2UrTXBQ?=
- =?utf-8?B?ekNwRzRvblEvT1I1ZExZR3MvUlpHQTBoMU0vd1lmeVdpNjBxSS92RFFBTUEx?=
- =?utf-8?B?cWdiMXBXVzlkaCsvOElhQTkyOUI5SEdpVUJ3VGhTbFFrakFGbkswblNDWElw?=
- =?utf-8?B?bXVpcnJYN3FvbGVxZDd1L3VLY2JiWW9ML2ZORXl6YU9QUGpoc0JqbHBlRUtQ?=
- =?utf-8?B?blN3U05tckE0ZGxQOGdPekNVR3k3czkzYjBIeEVLbWF5UWRWZGRPU1V5cDJO?=
- =?utf-8?B?eUNSR3d6RWFvOFlXZWxvTmh0cktDQ0h4RXZaUVlZN0lKaGxUUFMyNWVkeUdz?=
- =?utf-8?B?NUw2Y0g4dEtJOHo1eEF2d0FOa25hQjMxRUh0TUMySm5kZEN3VHVrc2VNUjc1?=
- =?utf-8?B?by9QdHFOOEsySy9kemIreXdvS1lFVCtqN3VUMDllakk2Z2ZwNzVzOEZiN1VN?=
- =?utf-8?B?RlV5L1ZDdmYrSTJ0a0Nka1hiY3Z2ejhINkRnRHloU1NsZGRIM2RnZWNLTUdY?=
- =?utf-8?B?NWpUYm9TaDJjTW53TkwvMHA2YlloNE1KVFNvRVVKYnFUUm9BYXdrZTMyTVhS?=
- =?utf-8?B?TE1QQTRtTGdtUHkzeWlwUGF4OEdwckJGUmpQOGpvNUptVHB6WGw5cmhhRFdF?=
- =?utf-8?B?S3c5QThQdHhVTU1ja01wUUZSelFVM2hvc1I5RzVKdURaVWwrYkZyVlE2NnhI?=
- =?utf-8?B?bndlT3prbXhkOVhGcGxiS3Q0QWw0cWFTNWpQTWpGRlljb3NvL1d2VThuMjlU?=
- =?utf-8?B?aEE5Nm44cXpyRmV0YWVKb1E3MzAzTGx6c2grcm9MSWNoYlNNZXJhQWt1RXV6?=
- =?utf-8?B?ZU1HdGp3b3FLdHdHcGJleFhzWVJMTUdSbjJYUUV4bXJIM3JsUVp3cFdjNkpF?=
- =?utf-8?B?WDJNajdWR3JnOFNaRjhXbDdQdjRHNWRYTGtzWG8vUUVPcXlWalhma0trM05a?=
- =?utf-8?Q?OmBsxH?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSRPR01MB11597.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018)(1580799027);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?utf-8?B?ODZ5VENQRjdmcFo0QjdhSmJNTlFJMEZWWTVhTERwVlpjUm1PVXI3alV1aksw?=
- =?utf-8?B?K3lzQjVMMmwvYjNWU1A5Y2hickpRVHdieFZKZlduZlp6TSsrNDVBWStOa2xR?=
- =?utf-8?B?MnBkMG00MGMwWmRSZFZvamhmbStBaFErYmUzWFF1OVhNbGw3WkhabExOdktu?=
- =?utf-8?B?T2RzWkpBMHo1eWpSSllOYnJSWnR5NW5lMVUzTndmQ1NVbTlveFNFSkY2czBN?=
- =?utf-8?B?MGUvR0Z2OUxCRnVEb0RuR0xTcW9FQit2ZjAybmNNSUs5OERpUm8zekIzTXlz?=
- =?utf-8?B?dnhOTG9IeXYrZm9RVHFtc09KeDU5NTcwdUU2N0xaVTVXS1QvK3YvTzhxOGxu?=
- =?utf-8?B?S3JsRzhTUlE4VWdEdGJ3VmNUKzRNMlMzNStzcFdVaGR6dEFZbHIyTUQ5YWd3?=
- =?utf-8?B?OUNYeWpuLzBiaWNIejBNd0EvTDRGUVJRQ0lqTU5FQ080dzNzMzZiVHJyWmVK?=
- =?utf-8?B?dUZRYlVSNG50ekVhL0NkNjVQaTdhb3VJNTFtVHVVdk5DUnZLLy8zMUg1aUUz?=
- =?utf-8?B?eHBNbVRha0xSUE41K3hqREtuSGUzQy8rY2owUmN5TmdzaG1zNjdQR3QxZEFV?=
- =?utf-8?B?azRKZ3l1WHRrMkRoMnJuZVQ1S1JvS05VUFo4aDdhUG9STHpkOC9ZVmJhdEQw?=
- =?utf-8?B?akRiaTdQekxnWGUva1N2QjMzV1p4Q3ZwUEhwZU1rN1NvWmliNHFRemdTcXJN?=
- =?utf-8?B?dVA1UDdKdmEwRzZJcWh2L0k5SGZIVmFnc2RNZlNVcy9PSFdtcDk5VUhqVU9y?=
- =?utf-8?B?M1hBcU5pZUhTZ1RjcHVBOTNJVTNtSUVIbzVsTCtRY3gwUC8vYXgxY2ttaEkz?=
- =?utf-8?B?OWxKVitLQ0xmc1h3TU1lYTlXRnFCeUE5YUE5RXo0YnBGTHZDS3pvT3JvaU5C?=
- =?utf-8?B?ViszMlphK2h1cnRIeEI2MTBzWGhKWlhKYWlhem5zVXZkZmtiNnlDbGJWaGNY?=
- =?utf-8?B?Y1Vab1VBNFo4RDF3V3cvTld5eklERGN5NXJGWCtnWjJJbDVjNnI1dTZlMDFi?=
- =?utf-8?B?VVlySDdIa0R3OEd2QWxzMEJYWTNaSUp1N25ac09kamtneWw4bHJJTVZxTzlp?=
- =?utf-8?B?bk8xczI0SW5zbXdpYldHT2NCVFhIZlFEVDhWUWhtbFozU0lSZFVsazNMcjZQ?=
- =?utf-8?B?dTNvMkRETFAvMXFDZGNOTEcyNnBqd3JwQ2ZjYVREVDd4MWVremlmWVRSYWFF?=
- =?utf-8?B?aFd2YjE5UDVyTVVEdzhsZ21ncXdrcWRmdHVXbHVOZk1rVDJGUnpkblFVdzFP?=
- =?utf-8?B?ei9WSjVDbXhMb3BNTkRFemM4cUVuYlBWeTN0ME1vZ0syNmZZV1gwUklqVVRt?=
- =?utf-8?B?WTNSeU1rWEgvdEoyOEpVWEFXQXVZK1JFU2VJTHdvSklpaUhHSnhqQzd4L1dP?=
- =?utf-8?B?NFlUcFRza3J1VVVYRjRXT0tQbEFuclRHRmJWT08xay9SMXRGVTFHdnZwMWZ2?=
- =?utf-8?B?WmV0WnlNazRoUkJPL3V4NklDWXcyaU9XVEJuN2dUSUFBdVpqZWlTR1REQkJW?=
- =?utf-8?B?cVN1WENTclFSUVQ2VlU3OUlKQ0V3cVRqS0ZNZUd4VjJqakV2TUhJbEQ5TjV6?=
- =?utf-8?B?b29Cd2xDbkFiMTBXcDFlN2M2VEFBcGY5ajBaWjJKVEpydUJoMWxlQUo3eFI4?=
- =?utf-8?B?NmxYTUZhcisrSEhIQmdheWdqMXRMbkdYZFEzc0h5YjhmVlgwRDhyVjZCYU83?=
- =?utf-8?B?aXhNZkxxZk1SaER6dXFnbEZ6cmFtVEZVc3dLUVJZZyt5dEk1YkFMdUpiVmNp?=
- =?utf-8?B?U0xGTUIwNEdxbHRMU3RaWE1PSlE3aFU1ejROenduNVFBUkowOHF6RndPQWRu?=
- =?utf-8?B?azMvbHhhYmtmVXBXcFhSWnV2Uy9RVkVRVklsa2xqMjlVbTh3ZE9ZcUk3cWlq?=
- =?utf-8?B?VG54d040WXZBdHN6ZCtjU0p1OUlUdC9WWmtLaHVNUUdEOTIyN3ZBMTJsaXV4?=
- =?utf-8?B?VVRvbm5ocWZVNU5QbFpMK0lEbHZuM1ZTU0dLdk9DT3lkcGZGdmx2cGFna0Vo?=
- =?utf-8?B?R2tLQXJkeDdlYzV0MVVvOGFPd2N2bUlSUVY1akcvdGFxY3plVXc5blVHOW44?=
- =?utf-8?B?SVNWVkd1THN2b1ZFaFFSaFBJRnRmbEYrVExobDFKOVFldTdCMGhzU25GbXNa?=
- =?utf-8?Q?3pCYNabWUehHxbzvkV4Ylhu1V?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+   d="scan'208";a="208142281"
+Received: from unknown (HELO az2uksmgr1.o.css.fujitsu.com) ([52.151.125.128])
+  by esa6.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 18:20:07 +0900
+Received: from az2uksmgm3.o.css.fujitsu.com (unknown [10.151.22.200])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by az2uksmgr1.o.css.fujitsu.com (Postfix) with ESMTPS id 835711C0213E
+	for <yocto-patches@lists.yoctoproject.org>; Wed,  2 Jul 2025 09:20:07 +0000 (UTC)
+Received: from yto-m1.gw.nic.fujitsu.com (yto-m1.gw.nic.fujitsu.com [10.128.47.162])
+	by az2uksmgm3.o.css.fujitsu.com (Postfix) with ESMTP id C085EC008AE
+	for <yocto-patches@lists.yoctoproject.org>; Wed,  2 Jul 2025 09:20:06 +0000 (UTC)
+Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
+	by yto-m1.gw.nic.fujitsu.com (Postfix) with ESMTP id 3933EA6258
+	for <yocto-patches@lists.yoctoproject.org>; Wed,  2 Jul 2025 18:20:05 +0900 (JST)
+Received: from G08FNSTD190088.g08.fujitsu.local (unknown [10.167.135.33])
+	by edo.cn.fujitsu.com (Postfix) with ESMTP id 729251A000B;
+	Wed,  2 Jul 2025 17:20:04 +0800 (CST)
+From: Liu Yiding <liuyd.fnst@fujitsu.com>
+To: Alexander Kanavin <alex.kanavin@gmail.com>,
+	yocto-patches@lists.yoctoproject.org
+Cc: Liu Yiding <liuyd.fnst@fujitsu.com>
+Subject: [meta-security][PATCH v2] global: drop unneeded S assignment and update WORKDIR/UNPACKDIR
+Date: Wed,  2 Jul 2025 17:19:59 +0800
+Message-ID: <20250702091959.1022-1-liuyd.fnst@fujitsu.com>
+X-Mailer: git-send-email 2.49.0.windows.1
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	wxWSbnXDVui3b9GpIss6aO48MNsYVwQb/8CTgBeaCrMXUUgXSn3mrH0Gfgw936cg7ns2s5AfZ889jXBmIE0ChOAwoCp37GUSU5rQDgICbzDhztS6SXHYIdn8ShtnpO1x99NZjKs+Bpgv5KxrWrsvgBE3PpyQcB1wS/t1rvO63U1/+40raTZMp3xVBwHSKuqYEbuWJguHmsAcvoRFyAb7O9bGU21IB8vT0Izh+3tFvvYaHYSfg0Yb8iTXHQMlTVDSlEE4dVV38z+ZmP5rCXlbmjl4Oe1i/nq+ypSCw+2XfbpO4rXPUkGvAUnIviSB2TMXcZm/hwkp23ZGuYYsIN7m7qZQza93IHIA7KWV9kwHeoXefYsyEte2rZ9PGXMvToLEDlhHUY3e+U75GI+ZFkBa+8Gkg9fLccI3YuD3UH96flaUQn/dBt6WcXOWZB8iXiPcNA4ckaCgSawZadgpnhc0ujDfgkLY6+sJC68vvvKxmgAfl1PhOALKW9wx4rP/pBgv+jEXhSjmqa8XPFM4z+Q6la8YFVAUB49BjOHERNBnsqTsY8aB2rij8fnw7kNGopF/0BsIpVGPkfvXKggwvdKz5lhAjvkM8vmlCO64VW/GLosqhDC4BGTHXeIAYovb6THD
-X-OriginatorOrg: fujitsu.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OSRPR01MB11597.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d844aac9-da5a-49fd-a931-08ddb949626a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Jul 2025 09:18:19.1035
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: nW5zD1dO0qjU7kVw3UnjhBsyb9ct0zKTJkqtdXTeO6r2/3JsroMswixFg9A30pDkY+a/GlEvlpOdc1/Zl8y7iQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB12127
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 02 Jul 2025 09:18:33 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1734
+ <yocto-patches@lists.yoctoproject.org>; Wed, 02 Jul 2025 09:20:13 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1735
 
-DQoNCj4gLS0tLS3pgq7ku7bljp/ku7YtLS0tLQ0KPiDlj5Hku7bkuro6IEd5b3JneSBTYXJ2YXJp
-IDxza2FuZGlncmF1bkBnbWFpbC5jb20+DQo+IOWPkemAgeaXtumXtDogMjAyNeW5tDfmnIgy5pel
-IDE2OjI0DQo+IOaUtuS7tuS6ujogeW9jdG8tcGF0Y2hlc0BsaXN0cy55b2N0b3Byb2plY3Qub3Jn
-DQo+IOaKhOmAgTogTWEsIFhpbmppYW4v6amsIOaWsOW7uiA8bWF4ai5mbnN0QGZ1aml0c3UuY29t
-PjsgTGl1LCBZaWRpbmcv5YiYIOS5meS4gQ0KPiA8bGl1eWQuZm5zdEBmdWppdHN1LmNvbT4NCj4g
-5Li76aKYOiBSZTogW3lvY3RvLXBhdGNoZXNdIFttZXRhLXNlY3VyaXR5XVtQQVRDSCAxLzJdIGxh
-eWVyOiBkcm9wIHN0eWhlYWQsIGFkZA0KPiB3aGlubGF0dGVyDQo+IA0KPiBPbiA3LzEvMjUgMTI6
-MDAsIFlpZGluZyBMaXUgKEZ1aml0c3UpIHZpYSBsaXN0cy55b2N0b3Byb2plY3Qub3JnIHdyb3Rl
-Og0KPiA+IGZpeCB0aGUgaXNzdWU6DQo+ID4gRVJST1I6IExheWVyIHNlY3VyaXR5IGlzIG5vdCBj
-b21wYXRpYmxlIHdpdGggdGhlIGNvcmUgbGF5ZXIgd2hpY2ggb25seQ0KPiA+IHN1cHBvcnRzIHRo
-ZXNlIHNlcmllczogd2hpbmxhdHRlciAobGF5ZXIgaXMgY29tcGF0aWJsZSB3aXRoIHN0eWhlYWQN
-Cj4gPiB3YWxuYXNjYXIpDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBMaXUgWWlkaW5nIDxsaXV5
-ZC5mbnN0QGZ1aml0c3UuY29tPg0KPiA+IC0tLQ0KPiA+ICBjb25mL2xheWVyLmNvbmYgICAgICAg
-ICAgICAgICAgfCAyICstDQo+ID4gIG1ldGEtaGFyZGVuaW5nL2NvbmYvbGF5ZXIuY29uZiB8IDIg
-Ky0gIG1ldGEtaW50ZWdyaXR5L2NvbmYvbGF5ZXIuY29uZg0KPiA+IHwgMiArLQ0KPiA+ICBtZXRh
-LXBhcnNlYy9jb25mL2xheWVyLmNvbmYgICAgfCAyICstDQo+ID4gIG1ldGEtdHBtL2NvbmYvbGF5
-ZXIuY29uZiAgICAgICB8IDIgKy0NCj4gPiAgNSBmaWxlcyBjaGFuZ2VkLCA1IGluc2VydGlvbnMo
-KyksIDUgZGVsZXRpb25zKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvY29uZi9sYXllci5jb25m
-IGIvY29uZi9sYXllci5jb25mIGluZGV4IDg0ZDQwYTEuLjdjOGU0MDMNCj4gPiAxMDA2NDQNCj4g
-PiAtLS0gYS9jb25mL2xheWVyLmNvbmYNCj4gPiArKysgYi9jb25mL2xheWVyLmNvbmYNCj4gPiBA
-QCAtOSw3ICs5LDcgQEAgQkJGSUxFX0NPTExFQ1RJT05TICs9ICJzZWN1cml0eSINCj4gPiAgQkJG
-SUxFX1BBVFRFUk5fc2VjdXJpdHkgPSAiXiR7TEFZRVJESVJ9LyINCj4gPiAgQkJGSUxFX1BSSU9S
-SVRZX3NlY3VyaXR5ID0gIjgiDQo+ID4NCj4gPiAtTEFZRVJTRVJJRVNfQ09NUEFUX3NlY3VyaXR5
-ID0gInN0eWhlYWQgd2FsbmFzY2FyIg0KPiA+ICtMQVlFUlNFUklFU19DT01QQVRfc2VjdXJpdHkg
-PSAid2hpbmxhdHRlciB3YWxuYXNjYXIiDQo+IA0KPiBJJ20gbm90IHN1cmUgaWYgdGhpcyBjb21i
-aW5hdGlvbiBpcyB2YWxpZCwgaW4gY2FzZSB0aGUgbGF5ZXIgZmV0Y2hlcyBhbnkgc291cmNlIGZy
-b20NCj4gZ2l0IC0gSSBiZWxpZXZlIGl0IGNhbiBiZSBjb21wYXRpYmxlIHdpdGggd2hpbmxhdHRl
-ciwgb3Igd2l0aCBvdGhlcnMuDQoNCg0KVGhhbmsgeW91Lg0KQnV0IEkgZG9uJ3Qga25vdyBob3cg
-dG8gdGVzdCBpdC4NCkFkZCBuZXcgdmVyc2lvbiBhbmQgcmVtb3ZlIG9sZCB2ZXJzaW9uIGxpa2Ug
-b3RoZXJzIGRvLg0KDQpUaGVuIEkgd2lsbCBsZWF2ZSB0aGlzIHBhdGNoIGFzIGl0IGlzIGZvciBu
-b3csIGFuZCBzZW5kIGEgcGF0Y2ggVjIgZm9yIGFub3RoZXIgMi8yIHBhdGNoLiBTaW5jZSBXZSBu
-ZWVkIGl0IHVyZ2VudGx5DQoNCg0KWWlkaW5nDQo=
+The series [1] changed the way sources are fetched/unpacked and
+S needs to follow that.
+
+[1] https://lore.kernel.org/openembedded-core/20250616095000.2918921-1-alex.kanavin@gmail.com/
+
+Signed-off-by: Liu Yiding <liuyd.fnst@fujitsu.com>
+---
+ .../recipes-scanners/checksecurity/checksecurity_2.0.16.bb     | 2 +-
+ .../meta-perl/recipes-security/bastille/bastille_3.2.1.bb      | 2 +-
+ dynamic-layers/meta-perl/recipes-security/nikto/nikto_2.1.6.bb | 2 +-
+ meta-tpm/recipes-tpm/libtpm/libtpms_0.10.0.bb                  | 1 -
+ meta-tpm/recipes-tpm/swtpm/swtpm_0.10.0.bb                     | 2 --
+ meta-tpm/recipes-tpm1/hoth/libhoth_git.bb                      | 2 --
+ .../openssl-tpm-engine/openssl-tpm-engine_0.5.0.bb             | 2 --
+ meta-tpm/recipes-tpm1/pcr-extend/pcr-extend_git.bb             | 2 --
+ meta-tpm/recipes-tpm1/tpm-quote-tools/tpm-quote-tools_1.0.4.bb | 1 -
+ meta-tpm/recipes-tpm1/trousers/trousers_git.bb                 | 2 --
+ meta-tpm/recipes-tpm2/ibmswtpm2/ibmswtpm2_183-2024-03-27.bb    | 2 +-
+ meta-tpm/recipes-tpm2/ibmtpm2tss/ibmtpm2tss_2.2.0.bb           | 1 -
+ meta-tpm/recipes-tpm2/tpm2-tcti-uefi/tpm2-tcti-uefi_0.9.9.bb   | 2 --
+ meta-tpm/recipes-tpm2/tpm2-totp/tpm2-totp_0.3.0.bb             | 1 -
+ recipes-mac/smack/mmap-smack-test_1.0.bb                       | 3 +--
+ recipes-mac/smack/smack-test_1.0.bb                            | 3 +--
+ recipes-mac/smack/smack_1.3.1.bb                               | 2 --
+ recipes-mac/smack/tcp-smack-test_1.0.bb                        | 3 +--
+ recipes-mac/smack/udp-smack-test_1.0.bb                        | 3 +--
+ recipes-security/libgssglue/libgssglue_0.9.bb                  | 2 --
+ recipes-security/redhat-security/redhat-security_1.0.bb        | 3 +--
+ 21 files changed, 9 insertions(+), 34 deletions(-)
+
+diff --git a/dynamic-layers/meta-perl/recipes-scanners/checksecurity/checksecurity_2.0.16.bb b/dynamic-layers/meta-perl/recipes-scanners/checksecurity/checksecurity_2.0.16.bb
+index 8006c9f..7bd796f 100644
+--- a/dynamic-layers/meta-perl/recipes-scanners/checksecurity/checksecurity_2.0.16.bb
++++ b/dynamic-layers/meta-perl/recipes-scanners/checksecurity/checksecurity_2.0.16.bb
+@@ -10,7 +10,7 @@ SRC_URI = "http://ftp.de.debian.org/debian/pool/main/c/checksecurity/checksecuri
+ 
+ SRC_URI[sha256sum] = "9803b3760e9ec48e06ebaf48cec081db48c6fe72254a476224e4c5c55ed97fb0"
+ 
+-S = "${WORKDIR}/checksecurity-${PV}+nmu1"
++S = "${UNPACKDIR}/checksecurity-${PV}+nmu1"
+ 
+ 
+ # allow for anylocal, no need to patch
+diff --git a/dynamic-layers/meta-perl/recipes-security/bastille/bastille_3.2.1.bb b/dynamic-layers/meta-perl/recipes-security/bastille/bastille_3.2.1.bb
+index 7074f68..b95ec2d 100644
+--- a/dynamic-layers/meta-perl/recipes-security/bastille/bastille_3.2.1.bb
++++ b/dynamic-layers/meta-perl/recipes-security/bastille/bastille_3.2.1.bb
+@@ -35,7 +35,7 @@ SRC_URI = "http://sourceforge.net/projects/bastille-linux/files/bastille-linux/3
+ SRC_URI[md5sum] = "df803f7e38085aa5da79f85d0539f91b"
+ SRC_URI[sha256sum] = "0ea25191b1dc1c8f91e1b6f8cb5436a3aa1e57418809ef902293448efed5021a"
+ 
+-S = "${WORKDIR}/Bastille"
++S = "${UNPACKDIR}/Bastille"
+ 
+ do_install () {
+ 	install -d ${D}${sbindir}
+diff --git a/dynamic-layers/meta-perl/recipes-security/nikto/nikto_2.1.6.bb b/dynamic-layers/meta-perl/recipes-security/nikto/nikto_2.1.6.bb
+index 8c21b30..6d83265 100644
+--- a/dynamic-layers/meta-perl/recipes-security/nikto/nikto_2.1.6.bb
++++ b/dynamic-layers/meta-perl/recipes-security/nikto/nikto_2.1.6.bb
+@@ -10,7 +10,7 @@ SRCREV = "f1bbd1a8756c076c8fd4f4dd0bc34a8ef215ae79"
+ SRC_URI = "git://github.com/sullo/nikto.git;branch=master;protocol=https \
+            file://location.patch"
+ 
+-S = "${WORKDIR}/git/program"
++S = "${UNPACKDIR}/${BP}/program"
+ 
+ do_install() {
+     install -d ${D}${bindir}
+diff --git a/meta-tpm/recipes-tpm/libtpm/libtpms_0.10.0.bb b/meta-tpm/recipes-tpm/libtpm/libtpms_0.10.0.bb
+index 55a4c01..3727bb3 100644
+--- a/meta-tpm/recipes-tpm/libtpm/libtpms_0.10.0.bb
++++ b/meta-tpm/recipes-tpm/libtpm/libtpms_0.10.0.bb
+@@ -7,7 +7,6 @@ SRC_URI = "git://github.com/stefanberger/libtpms.git;branch=stable-0.10;protocol
+ 
+ PE = "2"
+ 
+-S = "${WORKDIR}/git"
+ inherit autotools-brokensep pkgconfig perlnative
+ 
+ PACKAGECONFIG ?= "openssl"
+diff --git a/meta-tpm/recipes-tpm/swtpm/swtpm_0.10.0.bb b/meta-tpm/recipes-tpm/swtpm/swtpm_0.10.0.bb
+index c7159e0..d5470f4 100644
+--- a/meta-tpm/recipes-tpm/swtpm/swtpm_0.10.0.bb
++++ b/meta-tpm/recipes-tpm/swtpm/swtpm_0.10.0.bb
+@@ -10,8 +10,6 @@ SRCREV = "54f4bb1e702a8b80d990ca00b6f72d5031dd131a"
+ SRC_URI = "git://github.com/stefanberger/swtpm.git;branch=stable-0.10;protocol=https"
+ PE = "2"
+ 
+-S = "${WORKDIR}/git"
+-
+ PARALLEL_MAKE = ""
+ inherit autotools pkgconfig perlnative
+ 
+diff --git a/meta-tpm/recipes-tpm1/hoth/libhoth_git.bb b/meta-tpm/recipes-tpm1/hoth/libhoth_git.bb
+index df1dc04..9d29f78 100644
+--- a/meta-tpm/recipes-tpm1/hoth/libhoth_git.bb
++++ b/meta-tpm/recipes-tpm1/hoth/libhoth_git.bb
+@@ -11,7 +11,5 @@ SRCREV = "e4827163741e0804f12ac96c81b8e97649be6795"
+ 
+ DEPENDS += "libusb1"
+ 
+-S = "${WORKDIR}/git"
+-
+ inherit pkgconfig meson
+ 
+diff --git a/meta-tpm/recipes-tpm1/openssl-tpm-engine/openssl-tpm-engine_0.5.0.bb b/meta-tpm/recipes-tpm1/openssl-tpm-engine/openssl-tpm-engine_0.5.0.bb
+index e3e643e..b792151 100644
+--- a/meta-tpm/recipes-tpm1/openssl-tpm-engine/openssl-tpm-engine_0.5.0.bb
++++ b/meta-tpm/recipes-tpm1/openssl-tpm-engine/openssl-tpm-engine_0.5.0.bb
+@@ -17,8 +17,6 @@ SRC_URI = "\
+ "
+ SRCREV = "b28de5065e6eb9aa5d5afe2276904f7624c2cbaf"
+ 
+-S = "${WORKDIR}/git"
+-
+ inherit autotools-brokensep pkgconfig
+ 
+ # The definitions below are used to decrypt the srk password.
+diff --git a/meta-tpm/recipes-tpm1/pcr-extend/pcr-extend_git.bb b/meta-tpm/recipes-tpm1/pcr-extend/pcr-extend_git.bb
+index 2e5814b..efd8181 100644
+--- a/meta-tpm/recipes-tpm1/pcr-extend/pcr-extend_git.bb
++++ b/meta-tpm/recipes-tpm1/pcr-extend/pcr-extend_git.bb
+@@ -14,8 +14,6 @@ SRC_URI = "git://github.com/flihp/pcr-extend.git;branch=master;protocol=https \
+ 
+ inherit autotools
+ 
+-S = "${WORKDIR}/git"
+-
+ do_configure[noexec] = "1"
+ 
+ do_compile() {
+diff --git a/meta-tpm/recipes-tpm1/tpm-quote-tools/tpm-quote-tools_1.0.4.bb b/meta-tpm/recipes-tpm1/tpm-quote-tools/tpm-quote-tools_1.0.4.bb
+index 4672bba..4b82faf 100644
+--- a/meta-tpm/recipes-tpm1/tpm-quote-tools/tpm-quote-tools_1.0.4.bb
++++ b/meta-tpm/recipes-tpm1/tpm-quote-tools/tpm-quote-tools_1.0.4.bb
+@@ -18,5 +18,4 @@ DEPENDS = "libtspi tpm-tools"
+ SRC_URI = "git://git.code.sf.net/p/tpmquotetools/tpm-quote-tools;branch=master"
+ SRCREV = "4511874d5c9b4504bb96e94f8a14bd6c39a36295"
+ 
+-S = "${WORKDIR}/git"
+ inherit autotools
+diff --git a/meta-tpm/recipes-tpm1/trousers/trousers_git.bb b/meta-tpm/recipes-tpm1/trousers/trousers_git.bb
+index 44a4ee6..abbb436 100644
+--- a/meta-tpm/recipes-tpm1/trousers/trousers_git.bb
++++ b/meta-tpm/recipes-tpm1/trousers/trousers_git.bb
+@@ -18,8 +18,6 @@ SRC_URI = " \
+         file://0001-build-don-t-override-localstatedir-mandir-sysconfdir.patch \
+     	"
+ 
+-S = "${WORKDIR}/git"
+-
+ inherit autotools pkgconfig useradd update-rc.d ${@bb.utils.contains('VIRTUAL-RUNTIME_init_manager','systemd','systemd','', d)}
+ 
+ PACKAGECONFIG ?= "gmp "
+diff --git a/meta-tpm/recipes-tpm2/ibmswtpm2/ibmswtpm2_183-2024-03-27.bb b/meta-tpm/recipes-tpm2/ibmswtpm2/ibmswtpm2_183-2024-03-27.bb
+index 7ed9569..64df708 100644
+--- a/meta-tpm/recipes-tpm2/ibmswtpm2/ibmswtpm2_183-2024-03-27.bb
++++ b/meta-tpm/recipes-tpm2/ibmswtpm2/ibmswtpm2_183-2024-03-27.bb
+@@ -23,7 +23,7 @@ SRCREV = "c37c74438429e1d5fe465232e7bf894b239a2cd4"
+ 
+ UPSTREAM_CHECK_GITTAGREGEX = "rev(?P<pver>\d+(\-\d+)+)"
+ 
+-S = "${WORKDIR}/git/src"
++S = "${UNPACKDIR}/${BP}/src"
+ 
+ CFLAGS += "-Wno-error=maybe-uninitialized"
+ 
+diff --git a/meta-tpm/recipes-tpm2/ibmtpm2tss/ibmtpm2tss_2.2.0.bb b/meta-tpm/recipes-tpm2/ibmtpm2tss/ibmtpm2tss_2.2.0.bb
+index 8e941d1..3ceda55 100644
+--- a/meta-tpm/recipes-tpm2/ibmtpm2tss/ibmtpm2tss_2.2.0.bb
++++ b/meta-tpm/recipes-tpm2/ibmtpm2tss/ibmtpm2tss_2.2.0.bb
+@@ -26,4 +26,3 @@ UPSTREAM_CHECK_GITTAGREGEX = "v(?P<pver>\d+(\.\d+)+)"
+ 
+ EXTRA_OECONF = "--disable-tpm-1.2"
+ 
+-S = "${WORKDIR}/git"
+diff --git a/meta-tpm/recipes-tpm2/tpm2-tcti-uefi/tpm2-tcti-uefi_0.9.9.bb b/meta-tpm/recipes-tpm2/tpm2-tcti-uefi/tpm2-tcti-uefi_0.9.9.bb
+index 9c60e2b..09bbef2 100644
+--- a/meta-tpm/recipes-tpm2/tpm2-tcti-uefi/tpm2-tcti-uefi_0.9.9.bb
++++ b/meta-tpm/recipes-tpm2/tpm2-tcti-uefi/tpm2-tcti-uefi_0.9.9.bb
+@@ -14,8 +14,6 @@ SRCREV = "0241b08f069f0fdb3612f5c1b938144dbe9be811"
+ 
+ UPSTREAM_CHECK_URI = "https://github.com/tpm2-software/${BPN}/releases"
+ 
+-S = "${WORKDIR}/git"
+-
+ inherit autotools pkgconfig
+ 
+ EFIDIR ?= "/EFI/BOOT"
+diff --git a/meta-tpm/recipes-tpm2/tpm2-totp/tpm2-totp_0.3.0.bb b/meta-tpm/recipes-tpm2/tpm2-totp/tpm2-totp_0.3.0.bb
+index d324e33..25c96eb 100644
+--- a/meta-tpm/recipes-tpm2/tpm2-totp/tpm2-totp_0.3.0.bb
++++ b/meta-tpm/recipes-tpm2/tpm2-totp/tpm2-totp_0.3.0.bb
+@@ -14,4 +14,3 @@ SRC_URI = "git://github.com/tpm2-software/tpm2-totp.git;branch=master;protocol=h
+ 
+ inherit autotools-brokensep pkgconfig
+ 
+-S = "${WORKDIR}/git"
+diff --git a/recipes-mac/smack/mmap-smack-test_1.0.bb b/recipes-mac/smack/mmap-smack-test_1.0.bb
+index b11fbf3..df2896c 100644
+--- a/recipes-mac/smack/mmap-smack-test_1.0.bb
++++ b/recipes-mac/smack/mmap-smack-test_1.0.bb
+@@ -5,8 +5,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda
+ 
+ SRC_URI = "file://mmap.c" 
+ 
+-S = "${WORKDIR}/sources"
+-UNPACKDIR = "${S}"
++S = "${UNPACKDIR}"
+ 
+ do_compile() {
+     ${CC} mmap.c ${LDFLAGS} -o mmap_test
+diff --git a/recipes-mac/smack/smack-test_1.0.bb b/recipes-mac/smack/smack-test_1.0.bb
+index 0949cd5..4a581ee 100644
+--- a/recipes-mac/smack/smack-test_1.0.bb
++++ b/recipes-mac/smack/smack-test_1.0.bb
+@@ -10,8 +10,7 @@ SRC_URI = " \
+            file://test_smack_onlycap.sh \
+ "
+ 
+-S = "${WORKDIR}/sources"
+-UNPACKDIR = "${S}"
++S = "${UNPACKDIR}"
+ 
+ inherit features_check
+ 
+diff --git a/recipes-mac/smack/smack_1.3.1.bb b/recipes-mac/smack/smack_1.3.1.bb
+index 6c52392..14b7c44 100644
+--- a/recipes-mac/smack/smack_1.3.1.bb
++++ b/recipes-mac/smack/smack_1.3.1.bb
+@@ -25,8 +25,6 @@ inherit features_check
+ REQUIRED_DISTRO_FEATURES = "smack"
+ 
+ 
+-S = "${WORKDIR}/git"
+-
+ PACKAGECONFIG ??= ""
+ PACKAGECONFIG:append = " ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'systemd', '', d)}"
+ 
+diff --git a/recipes-mac/smack/tcp-smack-test_1.0.bb b/recipes-mac/smack/tcp-smack-test_1.0.bb
+index 370905d..8b7704f 100644
+--- a/recipes-mac/smack/tcp-smack-test_1.0.bb
++++ b/recipes-mac/smack/tcp-smack-test_1.0.bb
+@@ -8,8 +8,7 @@ SRC_URI = "file://tcp_server.c \
+            file://test_smack_tcp_sockets.sh \
+ "
+ 
+-S = "${WORKDIR}/sources"
+-UNPACKDIR = "${S}"
++S = "${UNPACKDIR}"
+ 
+ do_compile() {
+     ${CC} tcp_client.c ${LDFLAGS} -o tcp_client
+diff --git a/recipes-mac/smack/udp-smack-test_1.0.bb b/recipes-mac/smack/udp-smack-test_1.0.bb
+index 861138d..1a2e011 100644
+--- a/recipes-mac/smack/udp-smack-test_1.0.bb
++++ b/recipes-mac/smack/udp-smack-test_1.0.bb
+@@ -8,8 +8,7 @@ SRC_URI = "file://udp_server.c \
+            file://test_smack_udp_sockets.sh \
+ "
+ 
+-S = "${WORKDIR}/sources"
+-UNPACKDIR = "${S}"
++S = "${UNPACKDIR}"
+ 
+ do_compile() {
+     ${CC} udp_client.c ${LDFLAGS} -o udp_client
+diff --git a/recipes-security/libgssglue/libgssglue_0.9.bb b/recipes-security/libgssglue/libgssglue_0.9.bb
+index 73e6dec..532227a 100644
+--- a/recipes-security/libgssglue/libgssglue_0.9.bb
++++ b/recipes-security/libgssglue/libgssglue_0.9.bb
+@@ -26,8 +26,6 @@ SRC_URI = "git://gitlab.com/gsasl/libgssglue.git;protocol=https;branch=master \
+           "
+ SRCREV = "ada76bdaec665f70505f0b3aefe871b873e7c4b6"
+ 
+-S = "${WORKDIR}/git"
+-
+ inherit autotools-brokensep ptest
+ 
+ do_configure:prepend() {
+diff --git a/recipes-security/redhat-security/redhat-security_1.0.bb b/recipes-security/redhat-security/redhat-security_1.0.bb
+index 1f0ba6c..edd34f7 100644
+--- a/recipes-security/redhat-security/redhat-security_1.0.bb
++++ b/recipes-security/redhat-security/redhat-security_1.0.bb
+@@ -18,8 +18,7 @@ SRC_URI = "file://find-chroot-py.sh \
+            file://selinux-check-devices.sh \
+            file://selinux-ls-unconfined.sh"
+ 
+-S = "${WORKDIR}/sources"
+-UNPACKDIR = "${S}"
++S = "${UNPACKDIR}"
+ 
+ do_install() {
+ 	install -d ${D}${bindir}
+-- 
+2.43.0
+
 
