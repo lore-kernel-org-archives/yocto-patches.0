@@ -2,82 +2,89 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E175C83F03
-	for <webhook@archiver.kernel.org>; Wed,  2 Jul 2025 23:08:42 +0000 (UTC)
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
- by mx.groups.io with SMTP id smtpd.web10.10053.1751497717566913104
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F71FC83F03
+	for <webhook@archiver.kernel.org>; Wed,  2 Jul 2025 23:19:52 +0000 (UTC)
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+ by mx.groups.io with SMTP id smtpd.web10.10219.1751498382062063734
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 02 Jul 2025 16:08:37 -0700
+ Wed, 02 Jul 2025 16:19:42 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=g4zIqJre;
- spf=pass (domain: konsulko.com, ip: 209.85.219.49, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6fad79433bbso46798816d6.0
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 02 Jul 2025 16:08:37 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=g47vDTzm;
+ spf=pass (domain: konsulko.com, ip: 209.85.222.173, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7d38b84984dso1218243285a.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 02 Jul 2025 16:19:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1751497716; x=1752102516; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1751498381; x=1752103181; darn=lists.yoctoproject.org;
         h=mime-version:references:message-id:in-reply-to:subject:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=T7I0M4SKkXrgi04Ue44Y+KT7NsEEZAYeLm5ZZgBQkl8=;
-        b=g4zIqJreCF/kPq+q8YuYCRHt0gs3Rt4vEnvA+peLEhY1gMfciGIy3EcYXNg7DLIGCj
-         iozotGY16gCn64UY8rolcBnehVBINv43uFwVTNUJT6GbZMs4ramDlZMmpsohO7ytnscL
-         5JdIcwBNQHwlAXj3g9PZKezYLGsiT0eJgSq00=
+        bh=jNGEHU7647fHvnxGRamZIqHxaAhG5SNu+N1WPOkXGIs=;
+        b=g47vDTzmLCXmkOEeYIA3ZGVUCG+Ln76XVz7W3AMH5HTRjIPYHE1dB+4vwiTlAC+6q4
+         nLmq82LQ7XL3itI9x6UNaycOMlO7PhiVDQdI4ODmzwyQkA/AFI0YvhwCywgvzF1Zob/h
+         pOt2YjSOW+Ofi+cB1C3gkSgWVV0nyOrahyZv8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751497716; x=1752102516;
+        d=1e100.net; s=20230601; t=1751498381; x=1752103181;
         h=mime-version:references:message-id:in-reply-to:subject:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=T7I0M4SKkXrgi04Ue44Y+KT7NsEEZAYeLm5ZZgBQkl8=;
-        b=ZwK9o5Cv/PAGEnr47H+dq96I9y+KjNxvbY1OGBEwesYkBA6mNm5gMGB0eC/9G6MhOH
-         K/dPeIjOGWKDD3QgjP0gavNFwotrz0BcAzakuofiJMZ73jD3uUaYnkjXrGY2q/JkQo5+
-         PgRZ/hViaAxlP48eCCjxy+TZo9FJXC+ReuHs9131+STAv+C/0c8wCH96gyXMv2KQnu0g
-         BrdfuCyidRLhy823bz5mMpFL2Urn61qBLC3MjwBdMnoZV6u9PH6Cit2cZcEYaVf+GvoG
-         yfSka9qeX6RebtcVwDEcthu+Vd57ICUvT9xa256UR2y71RDqgz4ocAp9ywnCOM/VJxiY
-         dDag==
-X-Gm-Message-State: AOJu0YzKWhbu7wRRpH8AjUNx6iFeVBdkvz/vp5ii2tKD84Gte/mrCppS
-	+psUyMSRu+DOUOPmjlE/2Atx7EjeGvMnkSeuCL65DPDVEOo7KFPRcmNA3rpD0qmM0gz42o3rO6K
-	fGFhS
-X-Gm-Gg: ASbGncv8+CsLX/s74XFnTBPBHdPAz7aB8SSh+TfwBcQluf5TDu1eaC8WwMlAob0IjoA
-	x2LBWiZ0UTtNLxP9+09P7Fa/yZ9/ut1h/ODADZJYJZnx9Dv+gcQjBjcx+J2JIt/tzWSSzEIAQx5
-	XfiIcBBNK2NyBnVAiweCdbRibOIpVaVRMVSIS4x6IVcgH/mHP6SLS2D8zamU291zG3d1fbmUjQ+
-	gFu6dhaRbpw0uOXAxRg/ioVQCGsXOpMFfJ3VMesndBQnLIJ/2jtjzSGt0vTS7Ad3gRQGfh8T7pV
-	fgUyB/JcuqP4+AD5VHhZ4k+nzZu1kyMxbic7CGTFVa041sP0yxNoglCxvMKDaVbH7aW1K2mDa6k
-	mSrCRhKnvoc2AtkYjrije
-X-Google-Smtp-Source: AGHT+IFNFgf3upPhl9g5U9FSD1JWPA7o1ZD/xH0wWXYw8ir0PUaRxyuJQCT7sn+PnFikT1FSyXKo6w==
-X-Received: by 2002:a05:6214:2524:b0:6fa:faf7:7545 with SMTP id 6a1803df08f44-702b1bdb68fmr72114796d6.31.1751497716281;
-        Wed, 02 Jul 2025 16:08:36 -0700 (PDT)
+        bh=jNGEHU7647fHvnxGRamZIqHxaAhG5SNu+N1WPOkXGIs=;
+        b=sjfNtcNMcCO0H4Q2o+iIPuAAWWZFrSA3kgfMpkbJmO+njCS3KHlZ8IkipYPgX0XgUR
+         VXBQEuZA1ZWojUq0Cx+Qk62aE5pEbi2n3PckB/+WnjnJpK7QJDbKdqj48PYh+mjSY+se
+         nO8VwlSjBBFBNTFeUOgYf9FDcEhEO2huC8bJ4D8ZCFSgVl+96LYlDQul/eGyIOU9Mz/p
+         Y7TFG1OkrriLjrt9HfbokYAVm3166haEN2QL3sgWfkFZG4IE54NJzVSTWxchZjlktQCA
+         pkZKEJlGT9GoBGhiZhDooZ1/kEHn5o5Nl3fyE4GVuHpFg/J8KILXq2Xk5JbEeD0fbZ4Z
+         KJ9w==
+X-Gm-Message-State: AOJu0Yyn7tpXuduFGmQepEL9KM/G+qAdgtqCRrTLpuMpIL2WE5J3wrhl
+	EEtlsvwOyCEVC2p4UkiHRePJWuhfnENe8XN91d4TNjDiLZgBmJL5RloKmJXlFIl4pbVahcajLTU
+	+YxZ0
+X-Gm-Gg: ASbGncscKRBzfZErUhnPRMLm2IiCmraajqzrpbaEFLMdFz3HCVZAhpTCnAvFpW75dpH
+	LE3o/vGr/5v3Cz3heUui7V9iEdCQW1vJpbDmeJXs5OhFxnA5MeuaMwQQb2p+7LExMPtFGWwwAnh
+	o/LkqAc1z3Id39mDbFAUSYZbFx+FUclDTrGW2IXHIkwhZveC62hWcEtLq0r2upftxwOeqzMrrxx
+	ReZa+jy9QZOl0EB/srF881mWQaZBhO1D0TeY64qK4DCQyg8ym/iZezQnud9/6R5PQnP0gtnz9iX
+	lgi9HebMFU4CSrTkVwhi3MKpF0nOD2k5Cgz4nn8PHvfjwkQV4aEcES0dOAq3R8VyaVuNrYLNlpj
+	+mI8VpKbFktG82S3Xu6mBl5K5vtfaOh8=
+X-Google-Smtp-Source: AGHT+IH8CszY5+p7J8rYBKtPvrmWSQ78n6iie04nYECeig1jdr3w7X8l9CeWRXzKBcMstAwrMsr9ag==
+X-Received: by 2002:a05:620a:2a10:b0:7d3:8d33:f550 with SMTP id af79cd13be357-7d5d146bcc1mr223841385a.42.1751498380706;
+        Wed, 02 Jul 2025 16:19:40 -0700 (PDT)
 Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fd771d9c00sm107476126d6.48.2025.07.02.16.08.35
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d443201b67sm1012572285a.61.2025.07.02.16.19.39
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 16:08:35 -0700 (PDT)
-Date: Wed, 2 Jul 2025 19:08:34 -0400 (EDT)
+        Wed, 02 Jul 2025 16:19:40 -0700 (PDT)
+Date: Wed, 2 Jul 2025 19:19:39 -0400 (EDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
 Subject: Re: [yocto-patches] [meta-security][PATCH 1/1] Update maintainers
-In-Reply-To: <6459.1751475911713660170@lists.yoctoproject.org>
-Message-ID: <76551a11-14cc-315e-7022-473d19462447@konsulko.com>
-References: <CAApg2=S8PUKMVSCcBdZazNDkxwMLMGjQ2UH4HoebymErpm4mZA@mail.gmail.com> <6459.1751475911713660170@lists.yoctoproject.org>
+In-Reply-To: <25294.1751202200711749103@lists.yoctoproject.org>
+Message-ID: <abc3e0a7-5355-1305-12bc-d0158ae3a51b@konsulko.com>
+References: <d362cdc5e05123ac1907f64d94ea604fdaab884f.1751049467.git.scott.murray@konsulko.com> <25294.1751202200711749103@lists.yoctoproject.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 02 Jul 2025 23:08:42 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1739
+ <yocto-patches@lists.yoctoproject.org>; Wed, 02 Jul 2025 23:19:52 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1740
 
-On Wed, 2 Jul 2025, Anton Antonov via lists.yoctoproject.org wrote:
+On Sun, 29 Jun 2025, Anton Antonov via lists.yoctoproject.org wrote:
 
-> Hello Martha,
+> Hi Scott, Marta,
 >
-> Thank you for checking the patch.
-> I don't know if you already started running pipelines for
-> meta-security. Armin used to have jobs building security-test-image
-> which also includes Parsec and OE QA test suites for it.
+> Thank you for taking maintainer roles for meta-security.
+> Armin also used to be a co-maintainer of meta-parsec. I don't know if you want to include yourselves there as well.
 
-The CI setup is still something we're discussing, but the plan is to keep
-doing that testing.  It is possible, however, that we may merge some of
-the more immediately required changes for whinlatter compatibility with
-just manual testing for expediency.
+Given the contents of the layer, that seems reasonable, we'll discuss
+making it official.
+
+> When you have access to all the repositories could you have a look at his PR: https://lore.kernel.org/all/20250519084553.2027324-1-Anton.Antonov@arm.com/
+> It's a breaking issue.
+
+Okay.  From looking at meta-parsec, I'm curious if your usecase for it is
+currentlty relying on the LAYERSERIES_COMPAT on master branch including
+scarthgap?  I can see that potentially working for the moment  with the
+recipes in the layer, but I'd prefer to drop it to simplify testing.
+
+Thanks,
 
 Scott
+
 
 
