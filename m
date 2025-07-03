@@ -1,168 +1,164 @@
-Return-Path: <joerg.sommer@navimatix.de>
+Return-Path: <anibal@limonsoftware.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFCA7C83F03
-	for <webhook@archiver.kernel.org>; Thu,  3 Jul 2025 14:15:46 +0000 (UTC)
-Received: from MRWPR03CU001.outbound.protection.outlook.com (MRWPR03CU001.outbound.protection.outlook.com [40.107.130.134])
- by mx.groups.io with SMTP id smtpd.web10.23812.1751552144618097014
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E6B8C83F03
+	for <webhook@archiver.kernel.org>; Thu,  3 Jul 2025 15:17:27 +0000 (UTC)
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+ by mx.groups.io with SMTP id smtpd.web10.25452.1751555838952140980
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 03 Jul 2025 07:15:45 -0700
+ Thu, 03 Jul 2025 08:17:19 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@navimatix.de header.s=selector1 header.b=zXLJyrq1;
- spf=pass (domain: navimatix.de, ip: 40.107.130.134, mailfrom: joerg.sommer@navimatix.de)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dtpuVjXt6Xqggz/Kruj+hjLg2c9D7zp0Oie+hmUBHpkgzgeXEirCKN7fbkdth6+p05tGiwl9zA7Zvq5ZW5lvsktlkliJkM2jlNzP4NISLK8p4S9LVrxjQ1Kuo6eNUEuMhk7zb30ZniZPHl2f03lDA2v18f+n4SbQc1HnR656ydaZI+lYOUFe6pd48l9Ge0X0/2h0LCtbkNfgWBYfwVvhOUaoWa2gHeOumiFaJjqCibiPY4a2Gid57Obdkop2Y5LzdpXOQh5UVuCBCGuXuL6o5cyJ8boUPFGFCr9+VMo/oHMz4i882YHoQQfrqaOvfLUiNxbKDrdfrinwNobml03yAQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lrwHZpFx2i/twuN75MPWTWXqa8h+Q+IGWa3NO+Tk1aM=;
- b=iQ4qGcYcAOkq3CrlNE1pKITokHOrbiYRgwbOq+r3agcRvE/RLW83ZRjUtp4DB4Rf+DRztkNXB2umWhC5tTPQeIaKBMxRqEioDPpDAmowpM373+JTldUVzRg+TudoPG5TU3YS7ynCOpwBf0/3mmvqaX5vTBvAcJE0nGsoPtJwev2SKmA6CQxJYC5FMnB//fwnl3Ik6DrZw6Wtjk5QlD6Jqs3kBn96znF6IoesSP269v/d9wc0wUzH1slFHLWrNY71hGEcmO65JXyUmDhAl5CkuYKJwSBgdRoWlrn4YnyAYWo35UswaTIngwQEoay4IDzDFL7x7TrO1U5rXa6T6Aod+A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=navimatix.de; dmarc=pass action=none header.from=navimatix.de;
- dkim=pass header.d=navimatix.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=navimatix.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lrwHZpFx2i/twuN75MPWTWXqa8h+Q+IGWa3NO+Tk1aM=;
- b=zXLJyrq1GVuWzM6FrkLeByNITfOiwHvt16L1AXjW7gZzRm8lKqtxiacFqr8SABBhA5nOGWemYH1hUosy27/d9+RyU5X1CupNY74Q/9LFxv3ZOP1AFMTLAGMz5NZbFuJuyZY3n8tbOhr144VgWR2EcOQUb1nfAdDTw5CwieT4S3A=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=navimatix.de;
-Received: from PA4PR01MB7726.eurprd01.prod.exchangelabs.com
- (2603:10a6:102:cb::18) by AS8PR01MB8044.eurprd01.prod.exchangelabs.com
- (2603:10a6:20b:377::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.20; Thu, 3 Jul
- 2025 14:15:38 +0000
-Received: from PA4PR01MB7726.eurprd01.prod.exchangelabs.com
- ([fe80::412e:7f2b:cbfe:3d07]) by PA4PR01MB7726.eurprd01.prod.exchangelabs.com
- ([fe80::412e:7f2b:cbfe:3d07%5]) with mapi id 15.20.8901.018; Thu, 3 Jul 2025
- 14:15:38 +0000
-Date: Thu, 3 Jul 2025 16:15:37 +0200
-From: =?utf-8?B?SsO2cmc=?= Sommer <joerg.sommer@navimatix.de>
-To: yocto-patches@lists.yoctoproject.org, anibal@limonsoftware.com, 
-	nata.dobrick@gmail.com, joerg.sommer@navimatix.de
-CC: anibal@limonsoftware.com, Natalie Dobrick <nata.dobrick@gmail.com>, 
-	=?utf-8?B?SsO2cmc=?= Sommer <joerg.sommer@navimatix.de>
-Subject: [ptest-runner][PATCH] main.print_usage: Remove unused argument list
- of -l
-Message-ID: <036b0e6d97c28f21acc8a3fa855240b24e2d850c.1751552135.git.joerg.sommer@navimatix.de>
-X-Mailer: git-send-email 2.48.1
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: FR4P281CA0450.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:c6::11) To PA4PR01MB7726.eurprd01.prod.exchangelabs.com
- (2603:10a6:102:cb::18)
+ dkim=pass header.i=@limonsoftware-com.20230601.gappssmtp.com header.s=20230601 header.b=08jP83pD;
+ spf=pass (domain: limonsoftware.com, ip: 209.85.128.170, mailfrom: anibal@limonsoftware.com)
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-714078015edso62143077b3.2
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 03 Jul 2025 08:17:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=limonsoftware-com.20230601.gappssmtp.com; s=20230601; t=1751555838; x=1752160638; darn=lists.yoctoproject.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=DCPTQaCKLHknCloxZgv6KYYggaemK38KKi1FdyGhilE=;
+        b=08jP83pDqu7Y19dDk/AA/F4Q1R3w24ki71S/kP/NHTIzW6FPH4NXeBYaZvMd3v7COI
+         8V+yI4QJMexSWIsrVCifKECtDxRUaI/TdQ1w9dE4Vl7IdnQ0m5bXyvJB0zNiJPw+lSj2
+         Ds1mNqWEVHEgwmwcQdgd3HyOPjhvhRirKOX53R7WuguENt7UbQrvhgq5z3B+jc2QjSrx
+         M/UYtOpT0VtMYH1v+yO/lhIvz8rMyRSGyDDhMNWLko3HRfmnfrPm/Vxmhecn6SZRbVf9
+         5G65IRLvlyVCRTqRtBbd63Dm4iFVEhgFRuhiyDwWWbBG1NFi8l620JdmxQ+44ZyS/n3x
+         HdZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751555838; x=1752160638;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DCPTQaCKLHknCloxZgv6KYYggaemK38KKi1FdyGhilE=;
+        b=U7X1exe+Hpihoap0KKLRdE3tcSFSoJOzTOO4v4X8++l1xPZxc+1IzNVkQTWhJrg2aJ
+         KHQSdLmZWes/PZ6k7c7YGmTVNg3BxwEwlqusIfzVVmdB0kERH1WAZdpvqiAIAhvGzMic
+         aWqOJNpAq+DXn8XbaeaHMJj0XyqZ84nJO++smw3vLSJOJS+i4K0mLeZQdJjVl0jG8/F5
+         +ug9j1DIRiBy89tRfWwqSVDcyyG7JL0FWSLEyettOaz4KwVy3R4H/R7Ib+VvFABJKh9U
+         LYXto9dYLxiayK6h8Kri3PfkiTR/DdVbooqq0UsEuUwiIVrceLFEorrbcITCKq+JgKlE
+         DXUw==
+X-Gm-Message-State: AOJu0YyXGqySfPypwBqOEPg4AiOhqlGc45+lkHvtCY9xA4K2xqA0Z9I0
+	5YUVFJQLZh8ffrTqF3Lgw+bG3PXgJ/qaJmp/biBKwMKgf5kjKwD1sZPMmC7yPbkB+VAgLKIY+3N
+	QnYJ+NWab/ZA6fcJyvfJdXo74cGwiCbqaa0rYmM2uBg==
+X-Gm-Gg: ASbGncsoRvsvXpspCjtYb3FvEMijIU4wVpLJQwjnc+gvKDPqD/V9/8Xw7TQy9/dIEHS
+	hY/lx8GM7Zw53qDgKwlH8bzAh+X1mE65VY2CzqVEtnxsM2BvQPTmujJSl+qPQCQrDt9h5rxgUng
+	eXQHa/+kihoeeNGK6z93Jptq8zuii3jsn9tigSdxSSd3eYLgN4X5Kngj8=
+X-Google-Smtp-Source: AGHT+IEp6N8Xb/GXfKm+qPD8dnCSGBVqP6ZC1kLX76quqyulKLsbPSpdhok8pHbhREIAdDDwfTZhP45XA1Mi29bxop0=
+X-Received: by 2002:a05:690c:4b12:b0:712:e2b5:e61b with SMTP id
+ 00721157ae682-7164d2c794amr113813697b3.13.1751555837747; Thu, 03 Jul 2025
+ 08:17:17 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PA4PR01MB7726:EE_|AS8PR01MB8044:EE_
-X-MS-Office365-Filtering-Correlation-Id: d74d4eaa-7c5b-4f92-c689-08ddba3c15aa
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?ghSIYOgner4xVATGOIYoTl+vrIRhwEzEnadqi0JkJYagKRQbxMYSEDK+K+dC?=
- =?us-ascii?Q?QJmO9oTTbSzlg202C51jnr3mw9Oq0sDXNfSlNhPxKfI1Fm1WrdC3fQGcqSDR?=
- =?us-ascii?Q?uW7xvkPgh3cbig3vCPtcO23OGVgg4xpdJ+gu0g27NLcOqBUSrnRmrzUZFEXk?=
- =?us-ascii?Q?vzKZ5YVEgnSvqkLQmflFcVIpM1y0Y0r3mETmz5GHoLqX3BCSjKUzGDZDAW45?=
- =?us-ascii?Q?G/aHL4cAZ8HvU7yLOEp0HjVjasziIsdjFMRTWpwhC3GBzLBxaVOmfy+Gc+xt?=
- =?us-ascii?Q?wNVHwDNLs9I3uzcuFbQBK6zKRRhcbVmggmMGoATDXYw/kONScbLALGk35vD0?=
- =?us-ascii?Q?8MzDmA5HUK7Nmm2Zv719Ls6/mUjnZgwv3sL7Pp1/wPluIoZna16DXY0+tohm?=
- =?us-ascii?Q?OsQy1dSDzUfuihzV5xSQQHlNlvcdOtBM6Dx3/tXJIwE+uAn3sxiIUqSQZJ1r?=
- =?us-ascii?Q?cwt5revQKEHLkqraZHl5yUZ6fD9SXA5zCa0U3FjbtmucX4eUn/u1EsrSH4iF?=
- =?us-ascii?Q?KIVH3R7VrfG/Gr0KVk4uKRiNqcgjZd1XDP1pFQ6XLBuxih+7P//Ug4C9gqqJ?=
- =?us-ascii?Q?rCJMrobSoILKaEz+hZLxZz2nHYzHzDxsE2/1asZX4z/x5oFEzOvBNUhUuCGK?=
- =?us-ascii?Q?LWFz80RR3mMpH0euoJR4B2I87UHOUgG+RnldPPWoQwD/sEWT+sEE5HqEEJHH?=
- =?us-ascii?Q?EKhcs0zbjSaOtl5Asro8HOBF1qAY0KuTpRdL27BbpD4iu5iJXYafd433Y+dc?=
- =?us-ascii?Q?EfBtgmEbAt5cs8DLeyn6gtLjAEgGfHOdYsTsDEcfUnxPSaAnXvHFZW5vKHah?=
- =?us-ascii?Q?vnJbkaOUELqobU2XXUfVdXqIAH8k2S0qI8qTkYPRp9oA/VtlR5q+U2yLTSm4?=
- =?us-ascii?Q?H6qraHe3L/9cm8lG+dP84cAnz27uQv9p1/5cLuXbLfe21n/zXDw2uMfvU8o6?=
- =?us-ascii?Q?LwHVNZqe0NLn1Kqq/dR1cFWsGQA6UkaqjVVciEtWtZgZ8WrDxYK7b6+COwgg?=
- =?us-ascii?Q?Bg7O3m/WD4swIgpG3oiZcPFI3Xtr+ohw9a2qf6m9euoz3loxtBkE4Wv0Ylv4?=
- =?us-ascii?Q?TcWtRmul6drkvRcRyMexUEL/qzF+lxeLQVynXaVtuzhlKS6bB8LF4kJozVzy?=
- =?us-ascii?Q?RKPkEzN7V/NJ38uG/Aibcf800s19u39zL2pgiOiK6M1IR3R4YEF+1ClgG8UT?=
- =?us-ascii?Q?TeQTpolphUy6SDete3NNWxGfnU9+Y1Hc1v8//nqn8eyekKAmEeLI5QaFtHV/?=
- =?us-ascii?Q?3Xi5EI8GYsS84o5p+IfY+TO4awb90YLfPg9DGu+viail8aHmSQOk1UCYtfut?=
- =?us-ascii?Q?qbCg4x9iqcwGe6L4YcJxI/L3kQMvmCPHqE1+5Laof+poau1wiD/WQtyPUPJb?=
- =?us-ascii?Q?mrIxP7qVXDuLww+U4J5G2IO5ybweKkFHUPBcCiuudmXkKKyR2fgPySWgBD/F?=
- =?us-ascii?Q?yuKHvbaM3bo=3D?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR01MB7726.eurprd01.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?HxYzgLKJBdi9GNiyIkA9zIHDcmHHewcCmWfHg8Mtb1XDkQd0CFSvxfpKisJQ?=
- =?us-ascii?Q?xZ9LbAGg7PweZXNNEHUTQTvw16LUPlezUpfoFWSgS13968cTI+H/XpAmyRoq?=
- =?us-ascii?Q?R3irX6PW1M00M5Pc1bnfaeQ5eHqytrtaXwp8zoPT9t6AaOgyKa0i/mziy9Qc?=
- =?us-ascii?Q?PDg2BuQos9nUgRLzeuAtRvspXgfuN/S64fpvR/E/POiA7/9zU/AyyvTwyiO1?=
- =?us-ascii?Q?0LGQ5KyLFZOdkfkDOksEq4Zr6dqzIvJs6fGXAxVrds6CeoFUILtQQKk07kOq?=
- =?us-ascii?Q?P8NpSJwerLbefqhI+eHM+M2cpsua6TW8yCKoTjgd2yGu4AFWXj+Dx6VNsOBZ?=
- =?us-ascii?Q?eChU9JpcNsBYx+5jZspRRvzcGtnRLGbqChL/gToUCDg7ugd2FaaeE5wGPIr9?=
- =?us-ascii?Q?eHQmtnadqesvP+ygwq172vGqytmXDvaxxMykz17gxoOmngGZ0LnYpMFTzJIY?=
- =?us-ascii?Q?ZPwu1iqTVjOVOl+QJRLJwAEDvlZQzNyNHZAz+vu8YOTUzTDMqDZZIARsbVW+?=
- =?us-ascii?Q?WDxLjH/w5zqbeXOkvSM0JgxTfew5DkYOKxuKqMTwO5NGv/lL1D7gP0YJ9Ll/?=
- =?us-ascii?Q?BYS868PFIxCcVVc0VNlpi/Vsk/c/zc9KYACAMtqorG8rYhmfbozo1ukD+HLB?=
- =?us-ascii?Q?2B7LXGw19f7IgbnMNSTahBuPsgYSbsGGvh7JMbhQxC8q0ky5BLPPMcWD7v2f?=
- =?us-ascii?Q?jE+1DnVIRfZ/U4HhmBwD5Ti8eDRafjGcm24TdyS5Kopjlc6UeElg5+nGMXIK?=
- =?us-ascii?Q?QG7u8F2AOGAp5uf0Rz7jiwKfNniHTaLPQqKdXN6g7Z98zLbtNYHy43/lfNNQ?=
- =?us-ascii?Q?FjRMViN5duo6pphYIhDZZ64niiJAfP+3BCaQiuNnP2xidi6fKsfFpJJaPHuf?=
- =?us-ascii?Q?JUT8EIgWmfT01I8vyXRpHqT407aMCNxowTmtWh9uEr7BdO4KIxYmce3+BSwo?=
- =?us-ascii?Q?/DpngRU34ndPKA0wdjEkq5PA3p1AseUlKtZh310wqDik0HsAS723GaWK75wL?=
- =?us-ascii?Q?StnU4oIBgw76/37xcy9jyv6h1SnuqFNtDhbJuu7Z6AYbJLgjEn6R5mcP/C61?=
- =?us-ascii?Q?8p1WdFNjVOfPvfmD94EkTewlOtRSqB5Ji/1ILYVxnx81FqObyHxLyzPDYT29?=
- =?us-ascii?Q?tKUR/tX+c8xsnYutmID1qdAbHTG12ggXAZyR9vhXPAYoktf0BsKsCkX78fKb?=
- =?us-ascii?Q?Gj63DqXkZ6vTD3eEVJi3eTom+kG4X1uhcefOrdn0GrUFj+CIQAKoATI+EnXI?=
- =?us-ascii?Q?TTEcpuEyDySmr+v2mrQyWdBGhdb4Oz5G0qW95VB7wS2jpC29WTaT64TtZLsx?=
- =?us-ascii?Q?XxBU/R4C4Bx6LOsy1WOC+ilvmfJ2vIjZ0wAkdqJY7zfKPFmhKtHeEwQNCYhQ?=
- =?us-ascii?Q?fSQHvKr9NLSXj3e7idmJHyB3hSa0eBZY0igzvViZ8DmIRKS5/S/AXxY858Sm?=
- =?us-ascii?Q?WJoKRoNAz0V4HvPuu1PdLZkCHMSmqwyCgxepsN3ijTuArnkovwtPQiZZD10A?=
- =?us-ascii?Q?mc9IJazbkU62OnT5Mvk0WbWZYF1tb6L/xcLV2YUYLZGL07kpt9fU171J5K/l?=
- =?us-ascii?Q?HymCnfRUpiI9mJXCQStXfB4L2tMGdBGVyfzNr0DCx9hVS7fOkl/SaftTtmdj?=
- =?us-ascii?Q?Pg=3D=3D?=
-X-OriginatorOrg: navimatix.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: d74d4eaa-7c5b-4f92-c689-08ddba3c15aa
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR01MB7726.eurprd01.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2025 14:15:38.2297
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: c87b4f54-b992-4813-8f3f-4a876324197f
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BURkn52QSdPuiR4qfM6QEoMnzQSxwWZVKtMpKIrJa5wzpZQ00MuIVl2i7ymnplOQ78oND5lOJgWLRUPzavkMapgN2a/+kEpdVLFBN2rpYIw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR01MB8044
+References: <036b0e6d97c28f21acc8a3fa855240b24e2d850c.1751552135.git.joerg.sommer@navimatix.de>
+In-Reply-To: <036b0e6d97c28f21acc8a3fa855240b24e2d850c.1751552135.git.joerg.sommer@navimatix.de>
+From: Anibal Limon <anibal@limonsoftware.com>
+Date: Thu, 3 Jul 2025 09:17:06 -0600
+X-Gm-Features: Ac12FXwWE1XVw0ShiC-HsT4GSL49q5IBOPFCqViYgfNLncfKjevtn9XdVsHK0x8
+Message-ID: <CAOU5ZMuv9eUJ+cB8ewmtfecLc7Y3Ri-CCS7RigEy=Nwx_JeSeQ@mail.gmail.com>
+Subject: Re: [ptest-runner][PATCH] main.print_usage: Remove unused argument
+ list of -l
+To: =?UTF-8?B?SsO2cmcgU29tbWVy?= <joerg.sommer@navimatix.de>
+Cc: yocto-patches@lists.yoctoproject.org, nata.dobrick@gmail.com
+Content-Type: multipart/alternative; boundary="000000000000836fbc063907df40"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 03 Jul 2025 14:15:46 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1744
+ <yocto-patches@lists.yoctoproject.org>; Thu, 03 Jul 2025 15:17:27 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1745
 
-From: Natalie Dobrick <nata.dobrick@gmail.com>
+--000000000000836fbc063907df40
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Removed unused argument 'list' from usage message because the
-option -l does not take an argument according to the *get_opt*
-specification and *print_list* gets nothing passed, too.
+Hi J=C3=B6rg,
 
-Signed-off-by: Natalie Dobrick <nata.dobrick@gmail.com>
-Signed-off-by: J=F6rg Sommer <joerg.sommer@navimatix.de>
----
- main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I will apply this patch!,
 
-diff --git a/main.c b/main.c
-index 31e4dd5..feb0685 100644
---- a/main.c
-+++ b/main.c
-@@ -47,7 +47,7 @@
- static inline void
- print_usage(FILE *stream, char *progname)
- {
--	fprintf(stream, "Usage: %s [-d directory directory2 ...] [-e exclude] [-l=
- list] [-t timeout]"
-+	fprintf(stream, "Usage: %s [-d directory directory2 ...] [-e exclude] [-l=
-] [-t timeout]"
- 			" [-x xml-filename] [-h] [ptest1 ptest2 ...]\n", progname);
- }
-=20
---=20
-2.48.1
+Cheers!,
+Anibal
 
+On Thu, Jul 3, 2025 at 8:15=E2=80=AFAM J=C3=B6rg Sommer <joerg.sommer@navim=
+atix.de>
+wrote:
+
+> From: Natalie Dobrick <nata.dobrick@gmail.com>
+>
+> Removed unused argument 'list' from usage message because the
+> option -l does not take an argument according to the *get_opt*
+> specification and *print_list* gets nothing passed, too.
+>
+> Signed-off-by: Natalie Dobrick <nata.dobrick@gmail.com>
+> Signed-off-by: J=C3=B6rg Sommer <joerg.sommer@navimatix.de>
+> ---
+>  main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/main.c b/main.c
+> index 31e4dd5..feb0685 100644
+> --- a/main.c
+> +++ b/main.c
+> @@ -47,7 +47,7 @@
+>  static inline void
+>  print_usage(FILE *stream, char *progname)
+>  {
+> -       fprintf(stream, "Usage: %s [-d directory directory2 ...] [-e
+> exclude] [-l list] [-t timeout]"
+> +       fprintf(stream, "Usage: %s [-d directory directory2 ...] [-e
+> exclude] [-l] [-t timeout]"
+>                         " [-x xml-filename] [-h] [ptest1 ptest2 ...]\n",
+> progname);
+>  }
+>
+> --
+> 2.48.1
+>
+>
+
+--000000000000836fbc063907df40
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Hi J=C3=B6rg,<div><br></div><div>I will apply this patch!,=
+</div><div><br></div><div>Cheers!,</div><div>Anibal</div></div><br><div cla=
+ss=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr" class=3D"gmail_at=
+tr">On Thu, Jul 3, 2025 at 8:15=E2=80=AFAM J=C3=B6rg Sommer &lt;<a href=3D"=
+mailto:joerg.sommer@navimatix.de">joerg.sommer@navimatix.de</a>&gt; wrote:<=
+br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8e=
+x;border-left:1px solid rgb(204,204,204);padding-left:1ex">From: Natalie Do=
+brick &lt;<a href=3D"mailto:nata.dobrick@gmail.com" target=3D"_blank">nata.=
+dobrick@gmail.com</a>&gt;<br>
+<br>
+Removed unused argument &#39;list&#39; from usage message because the<br>
+option -l does not take an argument according to the *get_opt*<br>
+specification and *print_list* gets nothing passed, too.<br>
+<br>
+Signed-off-by: Natalie Dobrick &lt;<a href=3D"mailto:nata.dobrick@gmail.com=
+" target=3D"_blank">nata.dobrick@gmail.com</a>&gt;<br>
+Signed-off-by: J=C3=B6rg Sommer &lt;<a href=3D"mailto:joerg.sommer@navimati=
+x.de" target=3D"_blank">joerg.sommer@navimatix.de</a>&gt;<br>
+---<br>
+=C2=A0main.c | 2 +-<br>
+=C2=A01 file changed, 1 insertion(+), 1 deletion(-)<br>
+<br>
+diff --git a/main.c b/main.c<br>
+index 31e4dd5..feb0685 100644<br>
+--- a/main.c<br>
++++ b/main.c<br>
+@@ -47,7 +47,7 @@<br>
+=C2=A0static inline void<br>
+=C2=A0print_usage(FILE *stream, char *progname)<br>
+=C2=A0{<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0fprintf(stream, &quot;Usage: %s [-d directory d=
+irectory2 ...] [-e exclude] [-l list] [-t timeout]&quot;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0fprintf(stream, &quot;Usage: %s [-d directory d=
+irectory2 ...] [-e exclude] [-l] [-t timeout]&quot;<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 &quot; [-x xml-filename] [-h] [ptest1 ptest2 ...]\n&quot;, progn=
+ame);<br>
+=C2=A0}<br>
+<br>
+-- <br>
+2.48.1<br>
+<br>
+</blockquote></div>
+
+--000000000000836fbc063907df40--
 
