@@ -2,62 +2,61 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B0FDC83F0C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41B70C83F0E
 	for <webhook@archiver.kernel.org>; Fri,  4 Jul 2025 17:11:58 +0000 (UTC)
 Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
- by mx.groups.io with SMTP id smtpd.web10.1067.1751649114584268993
+ by mx.groups.io with SMTP id smtpd.web11.1103.1751649111233915699
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 04 Jul 2025 10:11:54 -0700
+ Fri, 04 Jul 2025 10:11:51 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=Hfdhe5SK;
+ dkim=pass header.i=@konsulko.com header.s=google header.b=nteBE4Tw;
  spf=pass (domain: konsulko.com, ip: 209.85.160.175, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4a44b0ed780so13368501cf.3
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 04 Jul 2025 10:11:54 -0700 (PDT)
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4a43afb04a7so8855821cf.0
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 04 Jul 2025 10:11:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1751649113; x=1752253913; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1751649110; x=1752253910; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VrbDCebYBXx1OkEJTFVzKAx9LL7cbCFsZrF1YY4ZQpI=;
-        b=Hfdhe5SKdLdfvFFWcYCWhpJnbRPIcTrDLfjvgGVEv7ItoSL4YXYuC4MdsOq3mB8eNk
-         6LutCWWInsc0toIq9BYQ4hXu65nvQS3UumYYi6LdFyxcarcrVD6YsGUEnlA17wy9nMEX
-         6GV7DeSHCFzJQbkapa84+T7Q/WQp5bDOqPnL8=
+        bh=8gBWi0Quz5Fb13rYqXrwLeyu3nQB5rO5kgQuoA6jenA=;
+        b=nteBE4Twoza8xBDAeHcFgjOPxLh7R7U+4XV3/Qt6EdSblrZPvVatQfKOIvT9mcxOWe
+         tpYQqafOsmueVJisJd1Wbw7Mkb+qCfeJWJpjfaTTvhfXgGAtgAwT5saQSt+yaqtb+gwg
+         TdAxv2TbE0wM8r1a5Wo0TW7vxQnnD8qvak/QE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751649113; x=1752253913;
+        d=1e100.net; s=20230601; t=1751649110; x=1752253910;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VrbDCebYBXx1OkEJTFVzKAx9LL7cbCFsZrF1YY4ZQpI=;
-        b=npVOByUKl9NGhcv17ZNGKLFOu9QvlHceotkOyZgI93pBInEAyQQ5cIZWnLQXG37GCm
-         vYWj5EwwA36Dl907gPIk9TQXGMRcDqu9MX8suRXKL82KlsafRd9zav79z3OdywMOKY0S
-         X1UX9iL8mIQ8nR9n4pKgcfVrygmr7UroV9VEmjP//twnNGoeeSdV+g04wobo+l4qLk4e
-         krCLBHC5WjDg9L7y9hYuKnd5jW8lfAWEwheQjgLfG13JJ52aP4vEm2FcjN/1aOxo+BXc
-         ZweHvQWuIRiWimjE20sIpcPRUVlJUwx6EDGqcEkhHJKp5z1IoWggl0qmIObobyVC6bt8
-         ZxXg==
-X-Gm-Message-State: AOJu0YwSQc+6RZHI3yLdSbmAcRlZde6yaqJWa2brZR9cx650YGJkMxyw
-	CR1uIX9c/Y7cHTuSWs55Th3jazcYt0eMM+taQ00NwdwxXazsSciSPVp4KzSF2ksZCOkuRQanplx
-	hnagO
-X-Gm-Gg: ASbGncuNbx0FVvRcyjzRE183g44qM8jZLFawCIWVGcaQK97gW4LHPQRVAHY5XY7ADh3
-	Ddi9Xb7swsu6c61tv+bkqhNIDeXSTb/KdpP+sqAPhXKjAtEXzkYNd6PRQxBhctNFw1q+1pQwsM+
-	C5HVLxVc4itftrG3/KQ+fIlpWBy5iLh35Xk30b6nzUHSuVMelH/5sOyQVS8Hq8DqeqPxL/rIZkT
-	6OS+bcw/Md+9llZRykoUyAdDFjYvwgfPaPnrv5M0zyiQxktbOONr4GtH1A9bdx7cndOajmn5EOr
-	jaUtDpjQmQJm8X4IhU0XT5iRUQDa1wwlB7L08v8j26WBRiLRQrFESfYfUXxUxhDYEYW3XXdAud/
-	OHCCepK4wbxpE/aiG19EJnJuWJj8tERMfSCttH5rDIx44qlA9
-X-Google-Smtp-Source: AGHT+IHXbW7pWFXtVZzRSDA2+dVBYyN9UGLyhRQlIDqUk2+arUC/dV/5nYjteLbvY7TG4S2QzKhYbw==
-X-Received: by 2002:a05:622a:118e:b0:4a7:6586:8d9 with SMTP id d75a77b69052e-4a996460a98mr45954231cf.12.1751649113162;
-        Fri, 04 Jul 2025 10:11:53 -0700 (PDT)
+        bh=8gBWi0Quz5Fb13rYqXrwLeyu3nQB5rO5kgQuoA6jenA=;
+        b=W3tEmscSFkqdGQuU9gvDBfp5zsNJAbJEtwNFRMvtEoljeSQx5MLlg/TxxqvPGQN3kw
+         cJFmzkriXqBO7tvNEI3CAY5MXs0wKJrqK9XRV+0tOWqFvP9zVVRQ8WYTSzJ7XaEwkdoE
+         Y+WdlvK0uuC2exZfM26SSrsG1F14Al8cGSRRVVQU8ee+Af58Qjo8+W/n7Np8Zgf3ps+Z
+         wdivMZxbIV/HhrZFPPgz2fYMB9B+Nf0zp4VgHAmV4X17eiANeNHLgkBZdzRm/6W96pgF
+         dh90vEIpQq/id+1EqMIvgfGMUyqCXKKcEDQSqkGGgcT2UVWevkAjAGofQHM6ojmyMCu+
+         bndQ==
+X-Gm-Message-State: AOJu0YzJiKnmjXGIgqyJM7j/LBHj88gACj/T2at6JSvyqXwxxe2+g1bS
+	JIIUFCtGhd9f+8MFQTMBamdbWvTSk3JTck0tZIwt/btxlm2qFR0z2H8P9b7MuNZiueLkOsbXqD/
+	SIJFU
+X-Gm-Gg: ASbGncssPycAV1J1MNW9lgioxBe38DE1MWcIGOZxzoW/+nXHKanA/uO2dqCl9tRTWQu
+	ywwRu10Afe+KqU91eU9EFiCLx5AbbGuMc+yIhA0uic9nhynqLdk4ixZj4aWUQS97VotACzkGodN
+	Qe0vb/YH3P2wPmLFbxUrpRqyRAFPtWXoSttg8MpRaXemKcETWkYH41cI6jmbspMA5+8i+sby933
+	KIqDbf/w5bcRUXXnUzDsvAJ7EeeM1Up6LJTmMsefPda4i1Uy400jbWi9Ar7nFtmRYTTiWXwkEH2
+	LSsK9neZNWbyAhdpdMF4D7DaZgHrbxagrct9fC0NfTGQBicay1xF3zmKcDXUsxjQQXkm6bXgA/t
+	B0wDN05mUq1F2S6VfPBGN3lNmRLZNNdTz3A1jOw==
+X-Google-Smtp-Source: AGHT+IHtFIhEN0PC8vuYC03/piAsA+6pImgu5OxwNh8oV0+nokndeaBz5NUvtbdH1RmQhar91ifaQA==
+X-Received: by 2002:a05:622a:4d08:b0:4a9:80f6:19ad with SMTP id d75a77b69052e-4a99885a865mr37200411cf.45.1751649109897;
+        Fri, 04 Jul 2025 10:11:49 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a9949f99dcsm17249611cf.19.2025.07.04.10.11.52
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a9949f99dcsm17249611cf.19.2025.07.04.10.11.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Jul 2025 10:11:52 -0700 (PDT)
+        Fri, 04 Jul 2025 10:11:49 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Anton Antonov <anton.antonov@arm.com>,
-	Anton Antonov <Anton.Antonov@arm.com>,
+Cc: Clayton Casciato <majortomtosourcecontrol@gmail.com>,
 	Scott Murray <scott.murray@konsulko.com>
-Subject: [meta-security][PATCH 05/12] parsec-service: update PACKAGECONFIG options as lists of cargo build features
-Date: Fri,  4 Jul 2025 13:11:09 -0400
-Message-ID: <b1f1c7a304de33916040928ea7182c03580efb28.1751647559.git.scott.murray@konsulko.com>
+Subject: [meta-security][PATCH 02/12] smack: Use new CVE_STATUS variable
+Date: Fri,  4 Jul 2025 13:11:06 -0400
+Message-ID: <ef790621653f6b88adfe58be4a1f508408d48cd2.1751647559.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.50.0
 In-Reply-To: <cover.1751647559.git.scott.murray@konsulko.com>
 References: <cover.1751647559.git.scott.murray@konsulko.com>
@@ -67,71 +66,38 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Fri, 04 Jul 2025 17:11:58 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1757
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1754
 
-From: Anton Antonov <anton.antonov@arm.com>
+From: Clayton Casciato <majortomtosourcecontrol@gmail.com>
 
-After commit 7a2b9acef2 "cargo: pass PACKAGECONFIG_CONFARGS to cargo build"
-we don't need to include Parsec cargo build features into CARGO_BUILD_FLAGS.
-Let's update PACKAGECONFIG options as lists of features.
+Fix "CVE_CHECK_IGNORE is deprecated in favor of CVE_STATUS"
 
-A small fix in readme.md as well.
+https://docs.yoctoproject.org/dev/ref-manual/variables.html#term-CVE_STATUS
 
-Signed-off-by: Anton Antonov <Anton.Antonov@arm.com>
+Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- meta-parsec/README.md                             |  4 ++--
- .../parsec-service/parsec-service_1.4.1.bb        | 15 ++++++---------
- 2 files changed, 8 insertions(+), 11 deletions(-)
+ recipes-mac/smack/smack_1.3.1.bb | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/meta-parsec/README.md b/meta-parsec/README.md
-index 9dea718..a5472ae 100644
---- a/meta-parsec/README.md
-+++ b/meta-parsec/README.md
-@@ -112,7 +112,7 @@ You might need to change permissions or add the account into `kvm` unix group.
+diff --git a/recipes-mac/smack/smack_1.3.1.bb b/recipes-mac/smack/smack_1.3.1.bb
+index 6c52392..7b20e6b 100644
+--- a/recipes-mac/smack/smack_1.3.1.bb
++++ b/recipes-mac/smack/smack_1.3.1.bb
+@@ -13,10 +13,9 @@ SRC_URI = " \
  
- - Add into your `local.conf`:
- ```
--INHERIT += "testimage"
-+IMAGE_CLASSES += "testimage"
- TEST_SUITES = "ping ssh parsec"
- ```
- - Build your image
-@@ -129,7 +129,7 @@ bitbake <your-image> -c testimage
- - Add into your `local.conf`:
- ```
- DISTRO_FEATURES += " tpm2"
--INHERIT += "testimage"
-+IMAGE_CLASSES += "testimage"
- TEST_SUITES = "ping ssh parsec"
- ```
- - Build security-parsec-image image
-diff --git a/meta-parsec/recipes-parsec/parsec-service/parsec-service_1.4.1.bb b/meta-parsec/recipes-parsec/parsec-service/parsec-service_1.4.1.bb
-index 49467cd..baa02fb 100644
---- a/meta-parsec/recipes-parsec/parsec-service/parsec-service_1.4.1.bb
-+++ b/meta-parsec/recipes-parsec/parsec-service/parsec-service_1.4.1.bb
-@@ -21,15 +21,12 @@ PACKAGECONFIG ??= "PKCS11 MBED-CRYPTO"
- have_TPM = "${@bb.utils.contains('DISTRO_FEATURES', 'tpm2', 'TPM', '', d)}"
- PACKAGECONFIG:append = " ${@bb.utils.contains('BBFILE_COLLECTIONS', 'tpm-layer', '${have_TPM}', '', d)}"
+ PV = "1.3.1"
  
--PACKAGECONFIG[ALL] = "all-providers cryptoki/generate-bindings tss-esapi/generate-bindings,,tpm2-tss libts,tpm2-tss libtss2-tcti-device libts"
--PACKAGECONFIG[TPM] = "tpm-provider tss-esapi/generate-bindings,,tpm2-tss,tpm2-tss libtss2-tcti-device"
--PACKAGECONFIG[PKCS11] = "pkcs11-provider cryptoki/generate-bindings,"
--PACKAGECONFIG[MBED-CRYPTO] = "mbed-crypto-provider,"
--PACKAGECONFIG[CRYPTOAUTHLIB] = "cryptoauthlib-provider,"
--PACKAGECONFIG[TS] = "trusted-service-provider,,libts,libts"
--
--PARSEC_FEATURES = "${@d.getVar('PACKAGECONFIG_CONFARGS').strip().replace(' ', ',')}"
--CARGO_BUILD_FLAGS += " --features ${PARSEC_FEATURES}"
-+PACKAGECONFIG[ALL] = "-F all-providers -F cryptoki/generate-bindings -F tss-esapi/generate-bindings,,tpm2-tss libts,tpm2-tss libtss2-tcti-device libts"
-+PACKAGECONFIG[TPM] = "-F tpm-provider -F tss-esapi/generate-bindings,,tpm2-tss,tpm2-tss libtss2-tcti-device"
-+PACKAGECONFIG[PKCS11] = "-F pkcs11-provider -F cryptoki/generate-bindings,"
-+PACKAGECONFIG[MBED-CRYPTO] = "-F mbed-crypto-provider,"
-+PACKAGECONFIG[CRYPTOAUTHLIB] = "-F cryptoauthlib-provider,"
-+PACKAGECONFIG[TS] = "-F trusted-service-provider,,libts,libts"
+-# CVE-2014-0363, CVE-2014-0364, CVE-2016-10027 is valnerble for other product.
+-CVE_CHECK_IGNORE += "CVE-2014-0363"
+-CVE_CHECK_IGNORE += "CVE-2014-0364"
+-CVE_CHECK_IGNORE += "CVE-2016-10027"
++CVE_STATUS[CVE-2014-0363] = "cpe-incorrect: different product"
++CVE_STATUS[CVE-2014-0364] = "cpe-incorrect: different product"
++CVE_STATUS[CVE-2016-10027] = "cpe-incorrect: different product"
  
- export BINDGEN_EXTRA_CLANG_ARGS
- target = "${@d.getVar('TARGET_SYS').replace('-', ' ')}"
+ inherit autotools update-rc.d pkgconfig ptest
+ inherit ${@bb.utils.contains('VIRTUAL-RUNTIME_init_manager','systemd','systemd','', d)}
 -- 
 2.50.0
 
