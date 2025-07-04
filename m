@@ -2,60 +2,61 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A373C83F03
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE80C83F09
 	for <webhook@archiver.kernel.org>; Fri,  4 Jul 2025 17:11:58 +0000 (UTC)
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
- by mx.groups.io with SMTP id smtpd.web10.1066.1751649112497438320
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+ by mx.groups.io with SMTP id smtpd.web10.1070.1751649115528243175
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 04 Jul 2025 10:11:52 -0700
+ Fri, 04 Jul 2025 10:11:55 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=LqCbfthx;
- spf=pass (domain: konsulko.com, ip: 209.85.160.173, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4a7f61ea32aso21655471cf.3
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 04 Jul 2025 10:11:52 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=JG4eAqXj;
+ spf=pass (domain: konsulko.com, ip: 209.85.160.172, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4a44b0ed780so13368641cf.3
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 04 Jul 2025 10:11:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1751649111; x=1752253911; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1751649114; x=1752253914; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=itRlGvvNEJGATs6xK1+AGVVK3P+r40VAsoWppsxfPVw=;
-        b=LqCbfthx+MI8WowmgnS9SlV/YtS6zhLIQCXVnWiHtvL+KL/SnbUNbCblRf6CbZ32pV
-         lRnqjPAIFN4D2eL+uvyCdSFIy74waChuLcNYaQXuqXdjLs/+CHE6T82kJeu3MjAeUfT4
-         4zxgl/rLPT45PFysAFo97Sfn/32XiiD4Gp4Jw=
+        bh=zGf2RYiiySC/5mDRzwfx20QxCK8N7FWXFtnT1SjtCUI=;
+        b=JG4eAqXjZ8lz6qyQI3eHz6tGlVydOD1dwlCBFixx6Div4a5dS8qJSrtQQ9M46I2szx
+         rAgOiUEBmQrqiaZi5V4ZsSG2nKJQJO5g07N3yjwyFfiffzxemPsQwsQ2ZISGLE/dS6ig
+         XGS9FMjeK4GsV/C0br3c1I5oMr61Adc0qE3ao=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751649111; x=1752253911;
+        d=1e100.net; s=20230601; t=1751649114; x=1752253914;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=itRlGvvNEJGATs6xK1+AGVVK3P+r40VAsoWppsxfPVw=;
-        b=WXzXfoy8w/+Nt2/k/FupAFWh/zcfGeH22PKvZV9UvH11WZYGeOhdnF/8c19Y5+hXs2
-         QDqaIJUgW7UmPFoWnwCkjUL8/pJ8DnCumTh8fCUvy6q/Uwv/XcMtmL5UUDWkYMFpHAIJ
-         UG/wkOSoGwUk6oBAZwBf7TWazz9moNCcLC7OVKI4Wu6ykomLjHM4feKeOm6crWuwRCv6
-         glSj1M8YeuG0duRqy8wF5pzfMlbzOlWsug4q3PQ4NcUIU6L2oQiE/iSWNbAqeAJ7fex+
-         60UnhzVQ/bp5e5dtf9Ggf7VR4h7lVE+92kLB63cgNpw9oQpIa9G6s3icg2sIZ6h+5DTy
-         cH3g==
-X-Gm-Message-State: AOJu0YybSo7z5BWb3lZM2NT9XOiV0WYGmSNGLSDde2gvSjheXGjWo/0M
-	+jQOvtOuDLi/wX0jUTkDgESKsYLAWCaZcwm5W7LDauuJ2fCjX3kQGcJUyeXQnvXmVugD3SXoPDd
-	hXXSx
-X-Gm-Gg: ASbGncvfZPVWLAjNXycWKGx06YYsoTaEuWy41fODoxepI/LY91KkYrJYfIXcw8s2AdQ
-	lsdgs4Wezjg4c4dWFMF+dfXwWnULRDqiyZgOgDnmytDgWPlfhKqlFqdlpj08dKH371gQbwohreX
-	P0m86PVBc2u1XIESnFwjXFt8IRg3iX3zdHaLOYGDsNdZw0PsLF+2vK7570wlI4xDIO3BsNjtOsh
-	S4cp4SazbVJ3IWGmNZiuQOV9QG4zOKgnPJLaOvutZuXxqrGMCA02krAJkBi4H57h4BtXKW18Yao
-	L6dBaEafGS4pj4OS/3uWu0G7fn2e63aVqhVisIO8eMWgXlD1DDkLaO2V5339qLtOFlAJnHAkR22
-	T4j8OMJTkwq46ShG4pFQPuaMmwMKaQfXsoXrumP+hwlUophPZ
-X-Google-Smtp-Source: AGHT+IF/pbnGIWDJTGMD5Bfhj9ApBNW67NocAxyK/R0AGGoLihR2/Y2cstp4naaJNNuvAdWzq85dCw==
-X-Received: by 2002:ac8:5e4e:0:b0:4a5:a63b:4796 with SMTP id d75a77b69052e-4a9968344e4mr54715831cf.48.1751649111070;
-        Fri, 04 Jul 2025 10:11:51 -0700 (PDT)
+        bh=zGf2RYiiySC/5mDRzwfx20QxCK8N7FWXFtnT1SjtCUI=;
+        b=oP50xT2ItvjPqFFF4cnsoLI1KOfX3o5kspF4ZuVnqSsT6xXznX8LNsVkPKdzUle46P
+         TTtPePUPdV2KBLWdC8XfovDNNkzj5jsGKzW2V/FZ0UWNRovyilm2fWMGhX59h715gWg3
+         +8VOwnElnezLhE21ncbpY8PG6FxyWdrj0YKltCagErt+P0Ipob1u//m0mFkvcqKJp2v7
+         4ewRIIWzPta/aK+W4iIp3SC6S+ouCUXdsEOxGOk8PK117orLzT28UmHhUZSU9zsm2POh
+         xvCpPF9CgEiIdQM8IdowEn4TZskgv1R/mNxE9SRsSK2n/wbOT9TjQhCp2NuU198yYpqp
+         Ksog==
+X-Gm-Message-State: AOJu0YxlUS5r360antXg6HPfmM2EBwaLcD4PjYSX4+m5J8lARnPfnZEB
+	1j7PcSvHwCjg+Xvoy7IDITndRLCUjLmmJc3GTtMlM1ohQ4lZ19E3iTZTj2xhDMw9HuL9W+WGpMw
+	Q8MJx
+X-Gm-Gg: ASbGncuZAYXpKBdRuBH4WhukAujOeVlLPSzDo/BGScbamRyAaqJAVqUxHwrOnFVwbgu
+	C07bMKsZb17xdPzhymOUadZ6EgT5HNZGOy2RZrfZS4XUtGdsD6Ws65XFHky/CMiAcAEe22HDMGP
+	vXxHV+yRKvS+VcSnw73gjfHajwMDDRgTkphLOK43qhpDuJ2xmFms53zNedQ3KyUvK7dHYxl5mq9
+	WoS7AplGSupp86z8aWdZU8zmp88uy7EPt9lEIGH75BSbisEBWxKtmnjqdWrbWgg7ujwmQGfwjEB
+	/EJNzJwbWS8Z7nzAXTE7lA2Zc4dd53BILZ7mXdpKrZPnEKZgVi757WbKqtvf7KmUzeMRHzCQqh3
+	l0hDCSIq8KEJ3Y9mS9AjePd2eTf9eLYkDfIqFAg==
+X-Google-Smtp-Source: AGHT+IHpvnWsWdkrMM6NZzoU2ejMa+P2pZoVPD/3l58WLWWcQ8yS2Dq9O753I3egiQBzx0zZ7gKVQA==
+X-Received: by 2002:ac8:5a8f:0:b0:477:c04:b512 with SMTP id d75a77b69052e-4a99647de63mr53636551cf.16.1751649114339;
+        Fri, 04 Jul 2025 10:11:54 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a9949f99dcsm17249611cf.19.2025.07.04.10.11.50
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a9949f99dcsm17249611cf.19.2025.07.04.10.11.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Jul 2025 10:11:50 -0700 (PDT)
+        Fri, 04 Jul 2025 10:11:53 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Scott Murray <scott.murray@konsulko.com>
-Subject: [meta-security][PATCH 03/12] layer.conf: Update to whinlatter (5.3) release
-Date: Fri,  4 Jul 2025 13:11:07 -0400
-Message-ID: <ea67ceefdca42da806f3312c6703eff769463b8b.1751647559.git.scott.murray@konsulko.com>
+Cc: Marta Rybczynska <marta.rybczynska@ygreky.com>,
+	Scott Murray <scott.murray@konsulko.com>
+Subject: [meta-security][PATCH 06/12] scap-security-guide: fix fetch
+Date: Fri,  4 Jul 2025 13:11:10 -0400
+Message-ID: <4822b91ef5d662cd1a63dd24b0c36ab6da732ddb.1751647559.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.50.0
 In-Reply-To: <cover.1751647559.git.scott.murray@konsulko.com>
 References: <cover.1751647559.git.scott.murray@konsulko.com>
@@ -65,86 +66,39 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Fri, 04 Jul 2025 17:11:58 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1755
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1758
 
-Update LAYERSERIES_COMPAT in all layer.conf files with the exception
-of meta-parsec to whinlatter.  For meta-parsec, whinlatter has been
-added, and the EOL releases removed, as an initial update.
+From: Marta Rybczynska <marta.rybczynska@ygreky.com>
 
+The project does not use release branches; their release model currently
+rebases the stable branch each release and relies on the release tags to
+keep the commits referenced.  Until their release model changes, just
+use the release commit with nobranch.
+
+See upstream issue [1] for details.
+
+[1] https://github.com/ComplianceAsCode/content/issues/13543
+
+Signed-off-by: Marta Rybczynska <marta.rybczynska@ygreky.com>
+[tweaked commit message]
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- conf/layer.conf                | 2 +-
- meta-hardening/conf/layer.conf | 2 +-
- meta-integrity/conf/layer.conf | 2 +-
- meta-parsec/conf/layer.conf    | 2 +-
- meta-tpm/conf/layer.conf       | 2 +-
- 5 files changed, 5 insertions(+), 5 deletions(-)
+ .../scap-security-guide/scap-security-guide_0.1.76.bb           | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/conf/layer.conf b/conf/layer.conf
-index 84d40a1..7a86054 100644
---- a/conf/layer.conf
-+++ b/conf/layer.conf
-@@ -9,7 +9,7 @@ BBFILE_COLLECTIONS += "security"
- BBFILE_PATTERN_security = "^${LAYERDIR}/"
- BBFILE_PRIORITY_security = "8"
+diff --git a/recipes-compliance/scap-security-guide/scap-security-guide_0.1.76.bb b/recipes-compliance/scap-security-guide/scap-security-guide_0.1.76.bb
+index d5a9406..b9f7a70 100644
+--- a/recipes-compliance/scap-security-guide/scap-security-guide_0.1.76.bb
++++ b/recipes-compliance/scap-security-guide/scap-security-guide_0.1.76.bb
+@@ -7,7 +7,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=9bfa86579213cb4c6adaffface6b2820"
+ LICENSE = "BSD-3-Clause"
  
--LAYERSERIES_COMPAT_security = "styhead walnascar"
-+LAYERSERIES_COMPAT_security = "whinlatter"
- 
- LAYERDEPENDS_security = "core openembedded-layer"
- 
-diff --git a/meta-hardening/conf/layer.conf b/meta-hardening/conf/layer.conf
-index a7e32e5..367d3d7 100644
---- a/meta-hardening/conf/layer.conf
-+++ b/meta-hardening/conf/layer.conf
-@@ -8,7 +8,7 @@ BBFILE_COLLECTIONS += "harden-layer"
- BBFILE_PATTERN_harden-layer = "^${LAYERDIR}/"
- BBFILE_PRIORITY_harden-layer = "6"
- 
--LAYERSERIES_COMPAT_harden-layer = "styhead walnascar"
-+LAYERSERIES_COMPAT_harden-layer = "whinlatter"
- 
- LAYERDEPENDS_harden-layer = "core openembedded-layer"
- 
-diff --git a/meta-integrity/conf/layer.conf b/meta-integrity/conf/layer.conf
-index 33127c7..23d6848 100644
---- a/meta-integrity/conf/layer.conf
-+++ b/meta-integrity/conf/layer.conf
-@@ -20,7 +20,7 @@ INTEGRITY_BASE := '${LAYERDIR}'
- # interactive shell is enough.
- OE_TERMINAL_EXPORTS += "INTEGRITY_BASE"
- 
--LAYERSERIES_COMPAT_integrity = "styhead walnascar"
-+LAYERSERIES_COMPAT_integrity = "whinlatter"
- # ima-evm-utils depends on keyutils from meta-oe
- LAYERDEPENDS_integrity = "core openembedded-layer"
- 
-diff --git a/meta-parsec/conf/layer.conf b/meta-parsec/conf/layer.conf
-index 614c17e..29a8f11 100644
---- a/meta-parsec/conf/layer.conf
-+++ b/meta-parsec/conf/layer.conf
-@@ -8,7 +8,7 @@ BBFILE_COLLECTIONS += "parsec-layer"
- BBFILE_PATTERN_parsec-layer = "^${LAYERDIR}/"
- BBFILE_PRIORITY_parsec-layer = "5"
- 
--LAYERSERIES_COMPAT_parsec-layer = "walnascar styhead nanbield scarthgap"
-+LAYERSERIES_COMPAT_parsec-layer = "whinlatter walnascar scarthgap"
- 
- LAYERDEPENDS_parsec-layer = "core clang-layer"
- BBLAYERS_LAYERINDEX_NAME_parsec-layer = "meta-parsec"
-diff --git a/meta-tpm/conf/layer.conf b/meta-tpm/conf/layer.conf
-index 5f96114..582fe1e 100644
---- a/meta-tpm/conf/layer.conf
-+++ b/meta-tpm/conf/layer.conf
-@@ -8,7 +8,7 @@ BBFILE_COLLECTIONS += "tpm-layer"
- BBFILE_PATTERN_tpm-layer = "^${LAYERDIR}/"
- BBFILE_PRIORITY_tpm-layer = "6"
- 
--LAYERSERIES_COMPAT_tpm-layer = "styhead walnascar"
-+LAYERSERIES_COMPAT_tpm-layer = "whinlatter"
- 
- LAYERDEPENDS_tpm-layer = " \
-     core \
+ SRCREV = "616d4363527acb61c6494a97f3ceb47ec90f65fd"
+-SRC_URI = "git://github.com/ComplianceAsCode/content.git;branch=stable;protocol=https \
++SRC_URI = "git://github.com/ComplianceAsCode/content.git;nobranch=1;protocol=https \
+            file://run_eval.sh \
+            file://run-ptest \
+            "
 -- 
 2.50.0
 
