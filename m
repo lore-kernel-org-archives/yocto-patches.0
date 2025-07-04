@@ -1,198 +1,192 @@
-Return-Path: <joerg.sommer@navimatix.de>
+Return-Path: <richard.purdie@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A8F0C83F03
-	for <webhook@archiver.kernel.org>; Fri,  4 Jul 2025 17:41:58 +0000 (UTC)
-Received: from DU2PR03CU002.outbound.protection.outlook.com (DU2PR03CU002.outbound.protection.outlook.com [52.101.65.80])
- by mx.groups.io with SMTP id smtpd.web10.1643.1751650916956372411
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D3B3C8303D
+	for <webhook@archiver.kernel.org>; Fri,  4 Jul 2025 21:24:09 +0000 (UTC)
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+ by mx.groups.io with SMTP id smtpd.web10.1083.1751649169202916035
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 04 Jul 2025 10:41:57 -0700
+ Fri, 04 Jul 2025 10:12:49 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@navimatix.de header.s=selector1 header.b=WdpAA21X;
- spf=pass (domain: navimatix.de, ip: 52.101.65.80, mailfrom: joerg.sommer@navimatix.de)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=G2h/lYwhKbPEzY9iNesy1F/jP/kD5rcsnc3JJMyJQBJLQe5pqK0bP4IajogeGiUjzXRjoWcpYxhs5k0qXxJebu0g5+n0QIth7VBxYBjg4nmGw4F9yTdsc9fzpbvd8K3gHw28IRUrToyTUfHD2/NcdUjaVBB2hxsFCWUsIA41iAUjHsnU+o0+4VSG2bLD/1Gho6oy/sJRee1l3WiduZuesi5+JL6/e/xa/Yr4kE/ps6QHLJzoDEK29m0pSssFqJq8xXHblV3YrMIkn7+Z1gTgpynAOjF6tJ1ycdnW/c+Ic+jF81fUABIiIz0ef1CvhG160m2Q9RjEXhkbAUDovbh7aw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nmvYWdYwlA3aEO7kYAxEyHubu4il1G6pwyu2TypsXDI=;
- b=Trv4gfiEZ3JzGTovFWEoX6vQUswf1c1WV8/yOy1T1nVebB9Yl3OtV4ORrra1OyRbO028b6NmBODwL56iEJ51ujb8SSSXAOB9mC0AhW0UndRSEg1Wi06MznkxJ0ZzWHmaE+2zM56Pfmvbw3rYn7ZkKkqXn5QNbS081JZNHrM7PLey+g0nWsZZYQ0RPhSpkoeyZ3d8jgJf8uZHClT2MnkmRl5Ap1M657dzJiw+7uZ6no0RyGPOB33EEgmtiQCTMY7OClq0H8kFPSRVxwGAp1uxqhUBtt7bR3ii9wNflHLs9dh6rwlOcPLZsHgY9PB6JpKQBA3uZTqD9shcwYa5vQaVMQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=navimatix.de; dmarc=pass action=none header.from=navimatix.de;
- dkim=pass header.d=navimatix.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=navimatix.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nmvYWdYwlA3aEO7kYAxEyHubu4il1G6pwyu2TypsXDI=;
- b=WdpAA21XEhTwuREf7mW0EEDo/Y/OglmFQnWhJ2rh1T2UgvsPzxUVXGm0MM3fzaLteTUVoKvK11RkG/rhcIG6sJYV4TnBaYE0v5UBcak+h6BexKt6RIJI6fSMkHvM9M/CEGyBNcbXOIBL8Vi9uuiR95iNPYcQ0EVkFANDwEzxc14=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=navimatix.de;
-Received: from PA4PR01MB7726.eurprd01.prod.exchangelabs.com
- (2603:10a6:102:cb::18) by AM8PR01MB7636.eurprd01.prod.exchangelabs.com
- (2603:10a6:20b:24f::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.22; Fri, 4 Jul
- 2025 17:41:52 +0000
-Received: from PA4PR01MB7726.eurprd01.prod.exchangelabs.com
- ([fe80::412e:7f2b:cbfe:3d07]) by PA4PR01MB7726.eurprd01.prod.exchangelabs.com
- ([fe80::412e:7f2b:cbfe:3d07%5]) with mapi id 15.20.8901.018; Fri, 4 Jul 2025
- 17:41:52 +0000
-Date: Fri, 4 Jul 2025 19:41:51 +0200
-From: =?utf-8?B?SsO2cmc=?= Sommer <joerg.sommer@navimatix.de>
-To: yocto-patches@lists.yoctoproject.org, anibal@limonsoftware.com, 
-	nata.dobrick@gmail.com, joerg.sommer@navimatix.de
-CC: anibal@limonsoftware.com, Natalie Dobrick <nata.dobrick@gmail.com>, 
-	=?utf-8?B?SsO2cmc=?= Sommer <joerg.sommer@navimatix.de>
-Subject: [ptest-runner][PATCH] main.c: Add print_helptext() for detailed help
-Message-ID: <61615a15a0fbc852291cf2852972ce38b700ffd7.1751650751.git.joerg.sommer@navimatix.de>
-X-Mailer: git-send-email 2.48.1
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: FR4P281CA0283.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:e6::12) To PA4PR01MB7726.eurprd01.prod.exchangelabs.com
- (2603:10a6:102:cb::18)
+ dkim=pass header.i=@qualcomm.com header.s=qcppdkim1 header.b=JaPYMyCi;
+ spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: oss.qualcomm.com, ip: 205.220.180.131, mailfrom: nicolas.dechesne@oss.qualcomm.com)
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 564Bp8Ic013520
+	for <yocto-patches@lists.yoctoproject.org>; Fri, 4 Jul 2025 17:12:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=+83D0UzwU4TPnl4QkTR8FAjZjyMIMSs0m53
+	MCbDqXc0=; b=JaPYMyCilNXI8ajsHP0bk1n0LwAcoZMDs0JyJTaNxLN+6x5sj/2
+	VzEj2FdOc3fs6rT3tDz/UcZfXC3rBWTXju8FYFyXMJ//Fl0Idvz7nsvWERpy2+PJ
+	EcL8N3iivFNwe3bdIS6y7avSxpt2eWG+tOAwURykA3MNm19Ws5Koj2SB9WmRj2a4
+	L0YYFWl/cic1Z4VDl7SLbES+GcrOLxhTGYnBVAExC3qKuPF5eBcPGtz41gjjURDM
+	7aEKwrmznaKnzfi/fJTH7hFCjCljCP8cuTHZQvS1sq2tXC6va6/vjoFsm6EzrQ+d
+	mSB+X+t4jnenWkFxGVGN/EtvBEV7rmA8VWA==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j802c9up-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <yocto-patches@lists.yoctoproject.org>; Fri, 04 Jul 2025 17:12:48 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7d40185a630so178167985a.2
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 04 Jul 2025 10:12:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751649167; x=1752253967;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+83D0UzwU4TPnl4QkTR8FAjZjyMIMSs0m53MCbDqXc0=;
+        b=Ko3bN6inXj7/kJDJg1MEdOS7NU9uUNhr5QqpsINUzCendmX0s+9wIexhJejRr82iTB
+         jNpMwVLMMGXRNmWzlIMwC6pt61JuFKep5n9DczYJ4kzA79Hw9qtQLJj665jP9VJuxF3F
+         wA76JsiqwdO1K0e529AeMTo8lZAZ/Bh1aTe0CWLCuVQedxHEqH3uMq0Udk0fLzisCmQ0
+         ba6z6YKEO3jB9PpJOs+i7ZrcmjWj3tPPTw9Fe39W2xRVsXCBXQVSzVDoEKUtkAF2tya7
+         eRlQZC6hlBQscnxPrgmK/mtk4RKL6mN/7g9F9Gcu5AFsJSSLDvu9o7FVOm8tFykRqqr3
+         LARg==
+X-Gm-Message-State: AOJu0Yy0h0El1J84LM6BwayHTnjVQwXWuRsURfvMxgpCyKUzOdiLxNX0
+	ogBUVyCBmuMULXduX3/I+IHMQqaA+RC5JPI0+l4d1MQFn5Fznw4esnpkca8HPbuTT8YWNrrmS7w
+	7ycOeKTZRhRzynYaNJXX/qbIXKqMNxOBHlS/y8CaXFJWltF4tRKalfx1b286hm5VUr+/zJmj3eZ
+	3ykfthat0Lgg==
+X-Gm-Gg: ASbGncvPdjulnslZV1kpTALycnqgmdPbk/kyIKU9TOfYyI5k5u0czPE5Xs7hQvj9xTI
+	pHlWxpIUyLsYaYXy3qHkduOKJIQQiu1mGr6UkPE36aGlelNpHWlAJKA5GzD8r3RiqoT71sBntPZ
+	CtMW6ETlun859wNi6EPVN6tvPcVo24W0t3LuxRh7uks9E1N1eJ8TzN5PV4xWtAyO1hRWNNfIu7e
+	w3p0YSc12FoXi8N3ZzK5xWKwmLTaqdzCbx9IsYgJtwfKJGlNJTre+rSggsmFCqUzn/qDsYXcCiU
+	gqpBLZrlyzpmdCTKAQ9X2C8prMgjp//cfxu14UxAO6R7g3HVYhUt64RSTm4=
+X-Received: by 2002:a05:620a:2b95:b0:7d5:c26a:f24c with SMTP id af79cd13be357-7d5df0f9919mr380035685a.21.1751649166704;
+        Fri, 04 Jul 2025 10:12:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHdz/ScciouFE0Sx+5FKaa0B/SLvLblYUmeeobjI9dwAenWT9dWdj/8R5Qp9sb26ZtDtM9bdg==
+X-Received: by 2002:a05:620a:2b95:b0:7d5:c26a:f24c with SMTP id af79cd13be357-7d5df0f9919mr380031785a.21.1751649166205;
+        Fri, 04 Jul 2025 10:12:46 -0700 (PDT)
+Received: from hu-ndechesn-ams.qualcomm.com ([212.136.9.4])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f692a9fcsm200765166b.49.2025.07.04.10.12.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Jul 2025 10:12:45 -0700 (PDT)
+From: "Nicolas Dechesne" <nicolas.dechesne@oss.qualcomm.com>
+To: yocto-patches@lists.yoctoproject.org
+Cc: Nicolas Dechesne <nicolas.dechesne@oss.qualcomm.com>
+Subject: [yocto-autobuilder-helper][PATCH] config.json: add initial CI for meta-qcom
+Date: Fri,  4 Jul 2025 19:12:43 +0200
+Message-Id: <20250704171243.2201495-1-nicolas.dechesne@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PA4PR01MB7726:EE_|AM8PR01MB7636:EE_
-X-MS-Office365-Filtering-Correlation-Id: c7ee8338-0acb-444b-d3cd-08ddbb220fd3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?7mgRw/rULtxpj3esM84erlSbHGyYltZLUlFFfYsmtDAHxnG1q7mcvB5wzqwi?=
- =?us-ascii?Q?6K2J7vKF2JMr4r5V6xQprdjRJFR5Z9RaSZ8/feEoRi7gPFXx25cx045t2Cp+?=
- =?us-ascii?Q?cmScCjsgK6KJ9nH8Pp6o99LAoY0uOZBKX1ANZx0JHWRqSCAV7UtHzaiydIya?=
- =?us-ascii?Q?j4G3cY6Qj3OJcmwB7yKdqFLXRrFOlk+MxvIbgf2daIjvEPgZg5WmmR4ov7Vi?=
- =?us-ascii?Q?2N0rHyaJ36lNW0AqjOXM7NMIAFHhzn2cvHbrVSrhaiGoHymXkzmnWL8IgOdV?=
- =?us-ascii?Q?qX26xdOkX/kjPIle1UzwRR3abZ0qTnNPaRdT66BlWC89UXSNoUtE9J6+sUha?=
- =?us-ascii?Q?ouoj0fjmIzKRHaOBCYK3jZIF3mMh1v1gOatf2abohQmyljZDaFDvCCOPj1pv?=
- =?us-ascii?Q?ztLPzkzBJfhizp/z5kB0QwIYnNJ3I5nCB8UfYeGfnOoBlkYGXuysIyCgXVQo?=
- =?us-ascii?Q?0nk6XTMADIDvUDYnBoIMOS+K19CXy5irWWFgQDMBeu7Y8LNvFz6ydkWh3WMM?=
- =?us-ascii?Q?gr1DO/eL0Gk6AQsBPc41On3LjRxqKpVmAPmOho2CNFJkwC8MMHN+9B2zmmC/?=
- =?us-ascii?Q?SvCi+TB2mnVgeSuO00TWW5bK4RLDQ3ctefp2NUL8i1zSkfxVR5HsEjRJFYTa?=
- =?us-ascii?Q?tvpBHgzkcf5Fb+3ZK6VxMKSpiwZ0Rnx9+xllqfqbWU+4X2fPQSkpNt9Ieqjp?=
- =?us-ascii?Q?J6epT9do8uz+1GzQ8UH7N37EmxqKI2Wy/YkfY8qWq7qOEe2baFFVr+fMs0aL?=
- =?us-ascii?Q?ScQ/L2dtqc8Ue5skh1If/6Tv3WoKiMLxPXiSo8i4caYFIp4kPMnCCoATOgiG?=
- =?us-ascii?Q?8Cv4i++F38NqlPnouT+C1jJZf8Mub2YGfDUSvLbvUrtPoRseLzaWnT8GdsRU?=
- =?us-ascii?Q?LDCRtOUUXod7c5tVaXwYrL1vIvWx9T8u9YcR0SwpXjimitcwFf45zT1C2dSZ?=
- =?us-ascii?Q?jDjNrlT36UKLyPYWh7RBszmGmMZSTNC7WHaBGeHgOkHh+q5TM0uXu7WCsbEQ?=
- =?us-ascii?Q?a0DrO53OiW6shHbTbF4CigWfP03KHyFnTDTfJ+DFW9OosBa5POVrPZ9UUS02?=
- =?us-ascii?Q?KBNg2fQyP8InBi6CCnxidY2k0L2PqRZUnX4jBDX4LQuA8WMdFFlmxzPjFE3w?=
- =?us-ascii?Q?yrjbGYymyhZGL1F1camAY5P9KJ7WumtchJwifzx83/OALcZ7I1O9PqBYc1fQ?=
- =?us-ascii?Q?6aezRETkmWDJ9uo/EGC+lhIDGQA79dwiXPBZbQorXBVXm6NnsXKPnf126dbL?=
- =?us-ascii?Q?dKjqdVu5KyI+odnLekGN/EGdeDRT6W3eYVdONtaC4tYM1ZsefT3fI7VVokoO?=
- =?us-ascii?Q?ls+BMHYWBkjFzCTLD0t41KOgGPiAuZtCP8RCTf4mUJP6GeA7kDjfbpjTGYqW?=
- =?us-ascii?Q?zDNFaYcKMOlgS9ILYNH1WBBPT9aEwIW5EwuN62AqbDd53Mzg31fk/1thEAo4?=
- =?us-ascii?Q?EnL/euqek8E=3D?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR01MB7726.eurprd01.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?/luJmwGyUWaEDZFK61YEWPdH6/N396SHsSXSovQHEOhcRylLqyLDszovCJfb?=
- =?us-ascii?Q?e4IC7aCcH2XlKGgMssJJjfW7rSkpHFpGcPMku03fX1SbzwENhYD1Ridsgy0U?=
- =?us-ascii?Q?ju1hkIrO30WX0KsBJseXc1PvEQwMp049XGvSMKOwWaX8KANQGTNfMAl68vRy?=
- =?us-ascii?Q?h5Bdp4qH0ZTbQQLznRnzAHfrVToNJWPXoDHLYShg9+WomlBw2TCPKxcu3SXS?=
- =?us-ascii?Q?qoCR0sgzVtP8gknhMm1lvLtWc9k/kjV3flh16g6sz13BCXFOSaLXMkAOfhiI?=
- =?us-ascii?Q?AFjsheVkzNwbclMlYlZ6007En4UQxsAn/GMTxGR/JwaQ/iv4nKp9Iz/J18fH?=
- =?us-ascii?Q?O9xmYlc6icKuNY++39xnDgjG0OrKyjF+0x5mNpc9oAS56yScxJHCD0Uo7/lz?=
- =?us-ascii?Q?Fpa7zcVk3E8LG/kCkhBJJv6iq8xdZLuHP8eXmu+9KahKvNS3CJM8WdYyxwSu?=
- =?us-ascii?Q?cBkjrsp76XDpZ7WxJneb3WDjJw2FqMAZaP4qb/cSIlgpqhhDhTCmRPQqhBCA?=
- =?us-ascii?Q?Io1kKGLwPnhlRfrNRouBDfUyfCS0rKoCf0EsjICwfe/fQnVIJ7T4I54te7P2?=
- =?us-ascii?Q?yPBW14OlTYJ7sCv+Qk6vrEQz5URK35u1++n8rpNONYBvSjE9hZerXCOMt86+?=
- =?us-ascii?Q?v0I8E4KtJU5ex1Zx0IciZeY7/WjqYE+TZzbGXLOXfu23nJcwpfxCZLJU8A58?=
- =?us-ascii?Q?Ya2Ifpy9rhL0HoWP3nbywbB7lNWN0kFT2B46WOdZKbt/5zkgLZCXXx5LkWWc?=
- =?us-ascii?Q?AhhAjpCVG9hsdtFzhBBVIA/XEoxeC9NKiJM8v/LJktt+33yrZOmI55evEcQH?=
- =?us-ascii?Q?GhRa2IUtZ7k0dgcHsRdwn8cnF9DPLEJNs4Cl4AACH1LlQbQzLelFSFKpgdb7?=
- =?us-ascii?Q?+YTWCoKRr1Z5CpfrTBpU4ar17LdRAEJpqIC55XDTyvNQSPHviYzC0pm6CEPx?=
- =?us-ascii?Q?jGws+CZcJVLaR99H14TB2cPFrrLlG2c61toQsIvTJuCKRLh9NvgT5lx/yBDa?=
- =?us-ascii?Q?CXJZ+ez4JTIgZ1Vq/864xokXvuICQEDkdy4RXW+Ndkz+vmzvub4GVxbLmulb?=
- =?us-ascii?Q?SeeSzZS6LSq+cKBCqFLXDqmzCES9x3WP9MbnN/mdv83iciokvGxtmODlv+m3?=
- =?us-ascii?Q?UW6RmSO1FNnxTkl9AG0zqqM3Gc7OcETR4+MsCNqDCHaqAORxXGL6SgSdBEJV?=
- =?us-ascii?Q?/yCPt71J7InbMoc+1k1KjCjmCbyYGTUOBLB5lO8O3Y9FIDSyH+Kv5ubwkgu/?=
- =?us-ascii?Q?UsPzpwibc7/dfT7WIOUkFZXYnzZVI4Ctsv4+uwwTVk6gdpXfEByJXKxsRRr+?=
- =?us-ascii?Q?RSeejPejk3W4dotIg8m9jOmm8+QRZUh0swT9Mr22U6HjeI+FJfHxrrKTGED7?=
- =?us-ascii?Q?eTn911KM81k3Wxy1AcRgmzZRyU4JMsf8vlcd//eUiIqi/3MF3ozz8Q69nwGa?=
- =?us-ascii?Q?sszFIEnbLLH9zUo+4j5K1qCk4S3V1EuwOilLJ56FAPBkLTN86hjbP90NvH18?=
- =?us-ascii?Q?RN3k9+OvmFe/44ul3raycrdqWFlKVDufurFdZPzRJQEcnRSKI1khPGTRXF5j?=
- =?us-ascii?Q?vSiKq2D4FI2TNu5JQGzg476+dhCCwgsJIMBPdsZDkLYbZTYxrwJ24FLxGldz?=
- =?us-ascii?Q?UQ=3D=3D?=
-X-OriginatorOrg: navimatix.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: c7ee8338-0acb-444b-d3cd-08ddbb220fd3
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR01MB7726.eurprd01.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2025 17:41:52.6220
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: c87b4f54-b992-4813-8f3f-4a876324197f
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: sReC8s8ccLqtvFmnh/dWkHANg9sh6YvY8QFKlhG8EUYJ3vAMFAlqui1C4cmlkCQy29KxVcTO/VeEfSz0rurVyE83kFFtxY08OFaVz3Mfyts=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR01MB7636
+X-Proofpoint-GUID: YThfobfEebv2TO655HKzY_mK7bSU-hQE
+X-Authority-Analysis: v=2.4 cv=YPWfyQGx c=1 sm=1 tr=0 ts=68680b90 cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=dNlqnMcrdpbb+gQrTujlOQ==:17
+ a=Wb1JkmetP80A:10 a=NEAV23lmAAAA:8 a=EUspDBNiAAAA:8 a=iGHA9ds3AAAA:8
+ a=1vkyLKxHXoks7R1aka0A:9 a=bTQJ7kPSJx9SKPbeHEYW:22 a=nM-MV4yxpKKO9kiQg6Ot:22
+X-Proofpoint-ORIG-GUID: YThfobfEebv2TO655HKzY_mK7bSU-hQE
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA0MDEzMCBTYWx0ZWRfX/8DLYJ8APjkH
+ hLssnL3UAMzPwf6L0KDs6oTDuRHddnSWA17DMWJaJ2YesOn1YE5gDKG2QWlUsga3DEoulO1PjXx
+ ntnkZDe/r4BmCQhlradqlYOQ4gZB83HlAfGBlWnaKSBCKk+N+Op8697BKWmfp6m+i3hSOlsYcwD
+ gzuZuJtRoJJdBavG3DMOzxOdsjP2fhWJeCnJH0qiDu5m4d+fhkjurUzhPbs16Vsys9oSgs2NUsn
+ dQFBhqvKx+CbQyJSQYalZvHpsIQ7ancUuAWj6R61E8xP53lb68aZpKYBKMlm5XFqCiA+XJWbhJA
+ 6JSWVeYDNj5agAbU7E14QsBx6hrWCW92qJ4CYg8NkXN9iKBdNHcpJN9wRUQDmJksCU+xEqpxlV9
+ S+UMJ9uLP1oGQQui3492QEKCnJCCaT6yPaWcOQQHU+eQEq1fhtBT8Z2MQ6wi2Gzblaa1b3oe
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-04_06,2025-07-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 mlxlogscore=999 mlxscore=0 malwarescore=0 suspectscore=0
+ lowpriorityscore=0 clxscore=1031 impostorscore=0 adultscore=0
+ priorityscore=1501 bulkscore=0 phishscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507040130
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 04 Jul 2025 17:41:58 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1765
+ <yocto-patches@lists.yoctoproject.org>; Fri, 04 Jul 2025 21:24:09 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1766
 
-From: Natalie Dobrick <nata.dobrick@gmail.com>
+* add meta-qcom in repo-defaults, since it's used for the first time
+* add meta-qcom in check-layer-nightly
 
-The flag -h should give a more detailed message to understand the usage of
-the flags.
+Running yocto-check-layer right now, shows:
 
-Signed-off-by: Natalie Dobrick <nata.dobrick@gmail.com>
-Signed-off-by: J=F6rg Sommer <joerg.sommer@navimatix.de>
+INFO: Getting initial bitbake variables ...
+INFO: Getting initial signatures ...
+INFO: Adding layer meta-qcom
+INFO: Starting to analyze: meta-qcom
+INFO: ----------------------------------------------------------------------
+INFO: test_bsp_defines_machines (bsp.BSPCheckLayer)
+INFO:  ... ok
+INFO: test_bsp_no_set_machine (bsp.BSPCheckLayer)
+INFO:  ... ok
+INFO: test_machine_signatures (bsp.BSPCheckLayer)
+INFO:  ... skipped 'No machines set with --machines.'
+INFO: No machines set with --machines.
+INFO: test_machine_world (bsp.BSPCheckLayer)
+INFO:  ... skipped 'No machines set with --machines.'
+INFO: No machines set with --machines.
+INFO: test_layerseries_compat (common.CommonCheckLayer)
+INFO:  ... ok
+INFO: test_parse (common.CommonCheckLayer)
+INFO:  ... ok
+INFO: test_patches_upstream_status (common.CommonCheckLayer)
+INFO:  ... ok
+INFO: test_readme (common.CommonCheckLayer)
+INFO:  ... ok
+INFO: test_security (common.CommonCheckLayer)
+INFO:  ... ok
+INFO: test_show_environment (common.CommonCheckLayer)
+INFO:  ... ok
+INFO: test_signatures (common.CommonCheckLayer)
+INFO:  ... ok
+INFO: test_world (common.CommonCheckLayer)
+INFO:  ... ok
+INFO: test_world_inherit_class (common.CommonCheckLayer)
+INFO:  ... ok
+INFO: skipped "DistroCheckLayer: Layer meta-qcom isn't Distro one."
+INFO: ----------------------------------------------------------------------
+INFO: Ran 13 tests in 167.729s
+INFO: OK
+INFO:  (skipped=3)
+INFO:
+INFO: Summary of results:
+INFO:
+INFO: meta-qcom ... PASS
+
+Signed-off-by: Nicolas Dechesne <nicolas.dechesne@oss.qualcomm.com>
 ---
- main.c | 22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
+ config.json | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-
-Feel free to amend the help message. It's only a suggestion to give a bette=
-r user experience.
-
-
-diff --git a/main.c b/main.c
-index feb0685..594d198 100644
---- a/main.c
-+++ b/main.c
-@@ -51,6 +51,26 @@ print_usage(FILE *stream, char *progname)
- 			" [-x xml-filename] [-h] [ptest1 ptest2 ...]\n", progname);
- }
-=20
-+static inline void
-+print_help(FILE *stream, char *progname)
-+{
-+	print_usage(stream, progname);
-+	fprintf(stream,
-+		"\n  Runs all Yocto/Openembedded ptests installed in " DEFAULT_DIRECTORY
-+		"/*/ptest/run-ptest by default.\n\n"
-+		"Options:\n\n"
-+		"  -d DIRS              Load tests from one or more directories. (defaul=
-t: " DEFAULT_DIRECTORY ")\n"
-+		"                       DIRS must be a list separated by spaces.\n"
-+		"  -e NAMES             Exclude specified tests from execution.\n"
-+		"                       NAMES must be a list separated by spaces.\n"
-+		"  -h                   This help message.\n"
-+		"  -l                   List all available tests and exit.\n"
-+		"  -t SECONDS           Set a timeout (in seconds) for each test. (defau=
-lt: %d)\n"
-+		"  -x FILE              Write test results to an XML file.\n"
-+		"\n", DEFAULT_TIMEOUT
-+	);
-+}
-+
- static char **
- str2array(char *str, const char *delim, int *num)
- {
-@@ -148,7 +168,7 @@ main(int argc, char *argv[])
- 				opts.timeout =3D (unsigned int) atoi(optarg);
- 			break;
- 			case 'h':
--				print_usage(stdout, argv[0]);
-+				print_help(stdout, argv[0]);
- 				exit(0);
- 			/* break; not needed, not reachable after exit() */
- 			case 'x':
---=20
-2.48.1
+diff --git a/config.json b/config.json
+index 3e01da3..f62d294 100644
+--- a/config.json
++++ b/config.json
+@@ -1219,7 +1219,7 @@
+             }
+         },
+         "check-layer-nightly" : {
+-            "NEEDREPOS" : ["poky", "meta-agl", "meta-arm", "meta-aws", "meta-intel", "meta-ti", "meta-openembedded", "meta-virtualization", "meta-clang", "meta-exein"],
++            "NEEDREPOS" : ["poky", "meta-agl", "meta-arm", "meta-aws", "meta-intel", "meta-ti", "meta-openembedded", "meta-virtualization", "meta-clang", "meta-exein", "meta-qcom"],
+             "step1" : {
+                 "shortname" : "Test meta-agl YP Compatibility",
+                 "EXTRACMDS" : ["yocto-check-layer-wrapper ../meta-agl/meta-agl-core ../meta-agl/meta-netboot --dependency ../meta-openembedded/meta-oe ../meta-openembedded/meta-networking ../meta-openembedded/meta-python --no-auto-dependency"]
+@@ -1259,6 +1259,10 @@
+                     "HOSTTOOLS:remove = 'clang llvm-strip'"
+                 ],
+                 "EXTRACMDS" : ["export PATH=$PATH:${SCRIPTSDIR}/exein-path-intercepts; yocto-check-layer-wrapper ../meta-exein --dependency ../meta-openembedded/meta-oe --no-auto-dependency"]
++            },
++            "step10" : {
++                "shortname" : "Test meta-qcom YP Compatibility",
++                "EXTRACMDS" : ["yocto-check-layer-wrapper ../meta-qcom --no-auto-dependency"]
+             }
+         },
+         "metrics" : {
+@@ -1921,6 +1925,12 @@
+             "revision" : "HEAD",
+             "no-layer-add" : true
+         },
++        "meta-qcom" : {
++            "url" : "https://github.com/qualcomm-linux/meta-qcom",
++            "branch" : "master",
++            "revision" : "HEAD",
++            "no-layer-add" : true
++        },
+         "auto-upgrade-helper" : {
+             "url" : "git://git.yoctoproject.org/auto-upgrade-helper",
+             "branch" : "master",
+-- 
+2.34.1
 
 
