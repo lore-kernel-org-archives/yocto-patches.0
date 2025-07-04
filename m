@@ -1,101 +1,151 @@
-Return-Path: <richard.purdie@linuxfoundation.org>
+Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D641C8303D
-	for <webhook@archiver.kernel.org>; Fri,  4 Jul 2025 14:05:28 +0000 (UTC)
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
- by mx.groups.io with SMTP id smtpd.web11.13191.1751637925813410831
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A373C83F03
+	for <webhook@archiver.kernel.org>; Fri,  4 Jul 2025 17:11:58 +0000 (UTC)
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+ by mx.groups.io with SMTP id smtpd.web10.1066.1751649112497438320
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 04 Jul 2025 07:05:26 -0700
+ Fri, 04 Jul 2025 10:11:52 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=ZAQivaSp;
- spf=pass (domain: linuxfoundation.org, ip: 209.85.221.47, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3a5123c1533so448627f8f.2
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 04 Jul 2025 07:05:25 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=LqCbfthx;
+ spf=pass (domain: konsulko.com, ip: 209.85.160.173, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4a7f61ea32aso21655471cf.3
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 04 Jul 2025 10:11:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1751637924; x=1752242724; darn=lists.yoctoproject.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
+        d=konsulko.com; s=google; t=1751649111; x=1752253911; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zxGxu5y4Mi0pT3PRC8wm4sb+eAW4Fds3t1wJaaxYY+c=;
-        b=ZAQivaSpp47NUfCIjv3Lxl3AdhFdPZ8DbdhnZNkdJQz1CtJ/do1J/o7zqdpLHkh3n8
-         6qljmhvdKimk5XLO2ooy2SUjbYXY/y5H/ddoMoPoLCrlHcf7foXiN29AnGuK+9lJ3Ylj
-         g+H04NSOp562SQp6PoBnr96gapGxbkwdf9xKA=
+        bh=itRlGvvNEJGATs6xK1+AGVVK3P+r40VAsoWppsxfPVw=;
+        b=LqCbfthx+MI8WowmgnS9SlV/YtS6zhLIQCXVnWiHtvL+KL/SnbUNbCblRf6CbZ32pV
+         lRnqjPAIFN4D2eL+uvyCdSFIy74waChuLcNYaQXuqXdjLs/+CHE6T82kJeu3MjAeUfT4
+         4zxgl/rLPT45PFysAFo97Sfn/32XiiD4Gp4Jw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751637924; x=1752242724;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=zxGxu5y4Mi0pT3PRC8wm4sb+eAW4Fds3t1wJaaxYY+c=;
-        b=AF4fVj5r33b9MfelUB+h/CiOvLuKslmIhRpSYR7VIkT3I9xWsem4cH1fJAGkmNb/8l
-         xSDen77re/1mqOjalx9Yus2wfc4AjmF9DmIEq7ECvMipxsKzpBzxyicULbka0YryW/QC
-         hIKFOrFDnTNmJ5MGpn5eCUeZIzsrlq1ywDwHri+Hq62VxGu2JWDh3fn6C0J6dHmY/vsP
-         MtprhYgDn6uVHQ/o8VJm6d9JTDfG0tSuVDJ61EojXsd+ZAn4TaKduDRPun02VjrtVubP
-         koLuAREDoXDX2AuSi78l5kUqIA5bAeCGx7iBfpcr3pmZLa+/Tz6cOTq0AGDj6mbBefsp
-         9vbQ==
-X-Gm-Message-State: AOJu0YyG/I1cyCSttVPrwQwSOlFCJJR7gLQD2CJlUbKN0nxdH6fysctK
-	gE6y6QXtzZo/3rF7jbuW64LPTy0prJAZQcXGgQFlMs31Q73OULLxNZwTnnOW/RRTZgAGhxKzUts
-	Gumrz
-X-Gm-Gg: ASbGncsVn2jGRgf7soVN7agjQi6cXraj84asntofPy4UANY+a19dtA2unFpS0rinf2u
-	62BLjy0pUningLAitN7gXtmOD0CvWBg493U1IR1eS3/cgdz2P0A4Oatw8oj1VXogXhzZ7kYnY4y
-	BZ2euXRS2+nbwLTy4QBrYHmQRzEsm7vx4kUBZTDpO74tlXh/PL4nS/GVxg0EpaHkxsMD5X6VaiZ
-	BZp0lHjeBiRAYbKdMIFT6aDYCwNno/Oh3VxoP1BhxRgBwAO+nRSnufvsVll4C6pIwgNUXOxvSqY
-	gh5jNzFv6no6uM7AR5/ESpM6e5FrJ2a6g2LLL2IUPpQvMItMvMF+z25ACJDKKFeWiW4+o+pqa6P
-	nv/kyRp+nl2jhVqGFkfBNKRy52dbt0WPzIAU6f4awrkEgBB1aJpg=
-X-Google-Smtp-Source: AGHT+IGHyPRBnFpyhusqmg2nW/D8+1w/o45cbsyr14VhYmq+eYQaGCesyl6aZAKRi3PEJ5g5vcJ1xQ==
-X-Received: by 2002:a05:6000:2087:b0:3a4:ee3f:8e1e with SMTP id ffacd0b85a97d-3b4964e5281mr2414741f8f.39.1751637923314;
-        Fri, 04 Jul 2025 07:05:23 -0700 (PDT)
-Received: from ?IPv6:2001:8b0:aba:5f3c:6ff3:dcb5:7901:3609? ([2001:8b0:aba:5f3c:6ff3:dcb5:7901:3609])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b47285c6c9sm2538953f8f.89.2025.07.04.07.05.22
-        for <yocto-patches@lists.yoctoproject.org>
+        d=1e100.net; s=20230601; t=1751649111; x=1752253911;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=itRlGvvNEJGATs6xK1+AGVVK3P+r40VAsoWppsxfPVw=;
+        b=WXzXfoy8w/+Nt2/k/FupAFWh/zcfGeH22PKvZV9UvH11WZYGeOhdnF/8c19Y5+hXs2
+         QDqaIJUgW7UmPFoWnwCkjUL8/pJ8DnCumTh8fCUvy6q/Uwv/XcMtmL5UUDWkYMFpHAIJ
+         UG/wkOSoGwUk6oBAZwBf7TWazz9moNCcLC7OVKI4Wu6ykomLjHM4feKeOm6crWuwRCv6
+         glSj1M8YeuG0duRqy8wF5pzfMlbzOlWsug4q3PQ4NcUIU6L2oQiE/iSWNbAqeAJ7fex+
+         60UnhzVQ/bp5e5dtf9Ggf7VR4h7lVE+92kLB63cgNpw9oQpIa9G6s3icg2sIZ6h+5DTy
+         cH3g==
+X-Gm-Message-State: AOJu0YybSo7z5BWb3lZM2NT9XOiV0WYGmSNGLSDde2gvSjheXGjWo/0M
+	+jQOvtOuDLi/wX0jUTkDgESKsYLAWCaZcwm5W7LDauuJ2fCjX3kQGcJUyeXQnvXmVugD3SXoPDd
+	hXXSx
+X-Gm-Gg: ASbGncvfZPVWLAjNXycWKGx06YYsoTaEuWy41fODoxepI/LY91KkYrJYfIXcw8s2AdQ
+	lsdgs4Wezjg4c4dWFMF+dfXwWnULRDqiyZgOgDnmytDgWPlfhKqlFqdlpj08dKH371gQbwohreX
+	P0m86PVBc2u1XIESnFwjXFt8IRg3iX3zdHaLOYGDsNdZw0PsLF+2vK7570wlI4xDIO3BsNjtOsh
+	S4cp4SazbVJ3IWGmNZiuQOV9QG4zOKgnPJLaOvutZuXxqrGMCA02krAJkBi4H57h4BtXKW18Yao
+	L6dBaEafGS4pj4OS/3uWu0G7fn2e63aVqhVisIO8eMWgXlD1DDkLaO2V5339qLtOFlAJnHAkR22
+	T4j8OMJTkwq46ShG4pFQPuaMmwMKaQfXsoXrumP+hwlUophPZ
+X-Google-Smtp-Source: AGHT+IF/pbnGIWDJTGMD5Bfhj9ApBNW67NocAxyK/R0AGGoLihR2/Y2cstp4naaJNNuvAdWzq85dCw==
+X-Received: by 2002:ac8:5e4e:0:b0:4a5:a63b:4796 with SMTP id d75a77b69052e-4a9968344e4mr54715831cf.48.1751649111070;
+        Fri, 04 Jul 2025 10:11:51 -0700 (PDT)
+Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a9949f99dcsm17249611cf.19.2025.07.04.10.11.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Jul 2025 07:05:22 -0700 (PDT)
-Message-ID: <de08503fa719068700339deb279b538fc3a54abc.camel@linuxfoundation.org>
-Subject: Re: [yocto-patches] [ptest-runner][RFC] Implement ptest-runner to
- match previous documentation and current state of run-ptest scripts
-From: Richard Purdie <richard.purdie@linuxfoundation.org>
+        Fri, 04 Jul 2025 10:11:50 -0700 (PDT)
+From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Date: Fri, 04 Jul 2025 15:05:21 +0100
-In-Reply-To: <zPYp.1751544122388050827.FCRW@lists.yoctoproject.org>
-References: <zPYp.1751544122388050827.FCRW@lists.yoctoproject.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.0-1 
+Cc: Scott Murray <scott.murray@konsulko.com>
+Subject: [meta-security][PATCH 03/12] layer.conf: Update to whinlatter (5.3) release
+Date: Fri,  4 Jul 2025 13:11:07 -0400
+Message-ID: <ea67ceefdca42da806f3312c6703eff769463b8b.1751647559.git.scott.murray@konsulko.com>
+X-Mailer: git-send-email 2.50.0
+In-Reply-To: <cover.1751647559.git.scott.murray@konsulko.com>
+References: <cover.1751647559.git.scott.murray@konsulko.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 04 Jul 2025 14:05:28 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1751
+ <yocto-patches@lists.yoctoproject.org>; Fri, 04 Jul 2025 17:11:58 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1755
 
-On Thu, 2025-07-03 at 05:02 -0700, Erik Schumacher via lists.yoctoproject.o=
-rg wrote:
-> In my opinion, a ptest-runner should work with what is already there.
-> It should parse the output, looking for lines starting with "PASS:",
-> "FAIL:" or "SKIP:", keep track of the test cases inside a run-ptest
-> script and should output valid junit.xml files.
-> =C2=A0
-> Therefore, I implemented a proof-of-concept drop-in replacement in
-> Python3, using only built-in libraries. It's about 200 lines of code
-> and does all the above: Finding and selecting run-ptest scripts to
-> run, parsing and collecting stdout, analyzing the results and
-> creating a junit.xml file. Some work is still needed to fix minor
-> issues, but with this message I wanted to ask if you are interested
-> in this re-implementation of the ptest-runner? And if so, how to
-> proceed?
-> =C2=A0
-> [1] https://lists.yoctoproject.org/g/docs/topic/113728319
+Update LAYERSERIES_COMPAT in all layer.conf files with the exception
+of meta-parsec to whinlatter.  For meta-parsec, whinlatter has been
+added, and the EOL releases removed, as an initial update.
 
-One other data point to keep in mind is that ptest-runner was written
-in C to minimise dependencies. I appreciate you've only used built in
-python libraries but it does mean always installing python onto the
-test target, so missing dependencies on python would be difficult to
-detect after that.
+Signed-off-by: Scott Murray <scott.murray@konsulko.com>
+---
+ conf/layer.conf                | 2 +-
+ meta-hardening/conf/layer.conf | 2 +-
+ meta-integrity/conf/layer.conf | 2 +-
+ meta-parsec/conf/layer.conf    | 2 +-
+ meta-tpm/conf/layer.conf       | 2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
 
-I'm therefore a bit torn on which direction is best.
+diff --git a/conf/layer.conf b/conf/layer.conf
+index 84d40a1..7a86054 100644
+--- a/conf/layer.conf
++++ b/conf/layer.conf
+@@ -9,7 +9,7 @@ BBFILE_COLLECTIONS += "security"
+ BBFILE_PATTERN_security = "^${LAYERDIR}/"
+ BBFILE_PRIORITY_security = "8"
+ 
+-LAYERSERIES_COMPAT_security = "styhead walnascar"
++LAYERSERIES_COMPAT_security = "whinlatter"
+ 
+ LAYERDEPENDS_security = "core openembedded-layer"
+ 
+diff --git a/meta-hardening/conf/layer.conf b/meta-hardening/conf/layer.conf
+index a7e32e5..367d3d7 100644
+--- a/meta-hardening/conf/layer.conf
++++ b/meta-hardening/conf/layer.conf
+@@ -8,7 +8,7 @@ BBFILE_COLLECTIONS += "harden-layer"
+ BBFILE_PATTERN_harden-layer = "^${LAYERDIR}/"
+ BBFILE_PRIORITY_harden-layer = "6"
+ 
+-LAYERSERIES_COMPAT_harden-layer = "styhead walnascar"
++LAYERSERIES_COMPAT_harden-layer = "whinlatter"
+ 
+ LAYERDEPENDS_harden-layer = "core openembedded-layer"
+ 
+diff --git a/meta-integrity/conf/layer.conf b/meta-integrity/conf/layer.conf
+index 33127c7..23d6848 100644
+--- a/meta-integrity/conf/layer.conf
++++ b/meta-integrity/conf/layer.conf
+@@ -20,7 +20,7 @@ INTEGRITY_BASE := '${LAYERDIR}'
+ # interactive shell is enough.
+ OE_TERMINAL_EXPORTS += "INTEGRITY_BASE"
+ 
+-LAYERSERIES_COMPAT_integrity = "styhead walnascar"
++LAYERSERIES_COMPAT_integrity = "whinlatter"
+ # ima-evm-utils depends on keyutils from meta-oe
+ LAYERDEPENDS_integrity = "core openembedded-layer"
+ 
+diff --git a/meta-parsec/conf/layer.conf b/meta-parsec/conf/layer.conf
+index 614c17e..29a8f11 100644
+--- a/meta-parsec/conf/layer.conf
++++ b/meta-parsec/conf/layer.conf
+@@ -8,7 +8,7 @@ BBFILE_COLLECTIONS += "parsec-layer"
+ BBFILE_PATTERN_parsec-layer = "^${LAYERDIR}/"
+ BBFILE_PRIORITY_parsec-layer = "5"
+ 
+-LAYERSERIES_COMPAT_parsec-layer = "walnascar styhead nanbield scarthgap"
++LAYERSERIES_COMPAT_parsec-layer = "whinlatter walnascar scarthgap"
+ 
+ LAYERDEPENDS_parsec-layer = "core clang-layer"
+ BBLAYERS_LAYERINDEX_NAME_parsec-layer = "meta-parsec"
+diff --git a/meta-tpm/conf/layer.conf b/meta-tpm/conf/layer.conf
+index 5f96114..582fe1e 100644
+--- a/meta-tpm/conf/layer.conf
++++ b/meta-tpm/conf/layer.conf
+@@ -8,7 +8,7 @@ BBFILE_COLLECTIONS += "tpm-layer"
+ BBFILE_PATTERN_tpm-layer = "^${LAYERDIR}/"
+ BBFILE_PRIORITY_tpm-layer = "6"
+ 
+-LAYERSERIES_COMPAT_tpm-layer = "styhead walnascar"
++LAYERSERIES_COMPAT_tpm-layer = "whinlatter"
+ 
+ LAYERDEPENDS_tpm-layer = " \
+     core \
+-- 
+2.50.0
 
-Cheers,
-
-Richard
 
