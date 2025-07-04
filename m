@@ -1,134 +1,87 @@
-Return-Path: <twoerner@gmail.com>
+Return-Path: <wangmy@fujitsu.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62121C83F03
-	for <webhook@archiver.kernel.org>; Thu,  3 Jul 2025 19:34:08 +0000 (UTC)
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
- by mx.groups.io with SMTP id smtpd.web11.31307.1751571243303619247
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D21AFC83F03
+	for <webhook@archiver.kernel.org>; Fri,  4 Jul 2025 00:11:33 +0000 (UTC)
+Received: from esa2.hc1455-7.c3s2.iphmx.com (esa2.hc1455-7.c3s2.iphmx.com [207.54.90.48])
+ by mx.groups.io with SMTP id smtpd.web11.1887.1751587889801589683
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 03 Jul 2025 12:34:03 -0700
+ Thu, 03 Jul 2025 17:11:30 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=M38cDk04;
- spf=pass (domain: gmail.com, ip: 209.85.222.178, mailfrom: twoerner@gmail.com)
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7d5d1feca18so20590285a.2
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 03 Jul 2025 12:34:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751571242; x=1752176042; darn=lists.yoctoproject.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=thY4rjaQwX19CkOnvZMAFBlb655b1TgT+odZOhHlqss=;
-        b=M38cDk04dBPLTbLLrzgi0q0wPwL8EoQGajo4feXR3XYDgmG7SINkutF20O58ZUIsPo
-         Ma7y6KO0Q4pnMnJ2Vh9Lg/8d01D1WOtzUxRPIfEnNudjJQ7UzlG1KEE8TFx43UQBEnH1
-         vVbecQJZFm1zMCNx8pi3X5knQnxN5l0bUZQCGfOlenEFwU8D92oUrMckSOsLEBQWa5L/
-         wPh6+5TGhpPF1Lga+zao04THoMNR9eSuenmeRdX0bzDjfaHaLWDVFzopN+y61Tq9mcyN
-         IdIjPbDHEZ+MvIPhxWpa3D4QUYMgeIE+Wi3Xk+I5BbmUOHHQzOv9PyDMlzLGx2mLG6n0
-         /ilA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751571242; x=1752176042;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=thY4rjaQwX19CkOnvZMAFBlb655b1TgT+odZOhHlqss=;
-        b=XQ3qXB47Dl8pkAcISc6qKISrloRkXJBSx4F8WOFjuZhZ/lopKl1Jw3wL/2M7K1FOer
-         okI8aFjvr+hwL0+ujLvi5VcY7ndxjp5zYwIqXbI/RnR6uhu822ysluZwwJWcwIN0PWgU
-         0LX7QW8s8Lufj8JAqiGX/k6CSFlSMS9ubuBj88TlDVwAhQwwlF2X9+RyhCCdDfYYqfQ+
-         8qHQIDTXLFBEmJZaTxR276ueHneg3OS8aqzQLZALI6MPLl2atX5uhmvb1yL0++SDt4LH
-         sgmT/2qZXnXMp6GOlwenPd0RM0M/M1YDOIENc8cl/ogTTXql70NZ3CfpS/PpRBMnwmSB
-         2g0Q==
-X-Gm-Message-State: AOJu0Yzlq7znnkXUFeX0Qny0VY0mpy5hI7OZjWalMAYxXRkrmint5rxQ
-	cuak4XnwfDFkvjdaG3zm+TxgQl+5Hn1OZE3yrn2G5ZUleyZ+8OBC7N5j
-X-Gm-Gg: ASbGncuuYVx9ULTOODg3wtYiRMSuplwVwdte8Y6zXDmm61Opm6IfQPXx7HfmfMnTx1i
-	xPw8eupJISE6jNTz+zjx4aFtdMydQFcI4w0+jof9L87L81Z9gkIhB2TyROf66xbSKlER05yW5GB
-	uM3CQS0E5YiNbUrcmNFIKkmX04lZDyrgHrDHak65DWa2bFLkMmA1y1zm/6TBnz41zRTBHvzcS9o
-	4nzI3OqvQ5lVphNN8WVFm7Qm5gwputvsMqa0yI37GwquTkmZ7PejfQSfbJdF+I1WuBgNyuNoU9m
-	AWJNZJ9bTYQg1j585ymV6F4LfNxw3rqtLAydegGQNbHcjWTpf5ghm6UCU32MgJ+CnldjIrCtvHj
-	oBqh0OqjItjV5bg==
-X-Google-Smtp-Source: AGHT+IH67rbjeqz5rn6hYqGO6I25CnTxi8TCseTJzUwDYby5Eez9RzbHTDYoIkPD6R/nneljjM6eOA==
-X-Received: by 2002:a05:620a:170b:b0:7d4:3811:84b6 with SMTP id af79cd13be357-7d5dccf4a25mr24977085a.32.1751571242087;
-        Thu, 03 Jul 2025 12:34:02 -0700 (PDT)
-Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d5dbeaf6dasm37284285a.104.2025.07.03.12.34.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Jul 2025 12:34:00 -0700 (PDT)
-Date: Thu, 3 Jul 2025 15:33:59 -0400
-From: Trevor Woerner <twoerner@gmail.com>
-To: Quentin Schulz <foss+yocto@0leil.net>
-Cc: yocto-patches@lists.yoctoproject.org,
-	Quentin Schulz <quentin.schulz@cherry.de>
-Subject: Re: [meta-rockchip PATCH v3 0/6] mesa: build fixes, refactoring and
- adding support for RK3588(s), RK3066, RK3188
-Message-ID: <20250703193359.GA34355@localhost>
-References: <20250627-mesa-panthor-v3-0-798c24a9eef3@cherry.de>
+ dkim=pass header.i=@fujitsu.com header.s=fj2 header.b=VA3w6nIi;
+ spf=pass (domain: fujitsu.com, ip: 207.54.90.48, mailfrom: wangmy@fujitsu.com)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
+  t=1751587890; x=1783123890;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Gvk+b/QdCNfv11UF3KCWbuBdgknrjU1qEGEUJjhAPpk=;
+  b=VA3w6nIieoSP3fvMupxh/U9b8u/buVMrg1m8i/NhcX9v/+eK2e8/m+Gf
+   Z27/Sa02j0FqWh9Jv4Oc2Ey23cDMLPj0FK+aoz4DF317A9mDS+qLwLsnO
+   Pskxw2SAuEwNwWPdMDiFD7qVlxckXnQgra2CYBynAcZJFd0OmAgxrEkaW
+   YhFN88/I4Qeepg6FNP3sjDRYlGTyj0lFSbFk8uOfJYcn/0WIqTUbHOCz8
+   R9Hh73xWVouPMyge82zR0YqMEyUVx1JaqNv40uC/OW6POBznVOkok6O3s
+   J4gbl0yPcsbCMfpBzqyaPnTQoTNNPkg6xEvcMgGc4XGt/mbaHPd0KRJld
+   A==;
+X-CSE-ConnectionGUID: mybsZ+4hTDqrGwcUa49TVw==
+X-CSE-MsgGUID: P0vOU1x8Rj6/Of8FvrB7qg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="205121939"
+X-IronPort-AV: E=Sophos;i="6.16,285,1744038000"; 
+   d="scan'208";a="205121939"
+Received: from unknown (HELO az2nlsmgr3.o.css.fujitsu.com) ([20.61.8.234])
+  by esa2.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 09:11:28 +0900
+Received: from az2nlsmgm3.fujitsu.com (unknown [10.150.26.205])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by az2nlsmgr3.o.css.fujitsu.com (Postfix) with ESMTPS id CDE931000349
+	for <yocto-patches@lists.yoctoproject.org>; Fri,  4 Jul 2025 00:11:27 +0000 (UTC)
+Received: from oym-m1.gw.nic.fujitsu.com (oym-m1.gw.nic.fujitsu.com [10.85.9.161])
+	by az2nlsmgm3.fujitsu.com (Postfix) with ESMTP id 509C918009C4
+	for <yocto-patches@lists.yoctoproject.org>; Fri,  4 Jul 2025 00:11:27 +0000 (UTC)
+Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
+	by oym-m1.gw.nic.fujitsu.com (Postfix) with ESMTP id B3D58D4F40
+	for <yocto-patches@lists.yoctoproject.org>; Fri,  4 Jul 2025 09:11:25 +0900 (JST)
+Received: from G08FNSTD200057.g08.fujitsu.local (unknown [10.193.161.187])
+	by edo.cn.fujitsu.com (Postfix) with ESMTP id 059801A0071;
+	Fri,  4 Jul 2025 08:11:24 +0800 (CST)
+From: Wang Mingyu < wangmy@fujitsu.com>
+To: yocto-patches@lists.yoctoproject.org
+Cc: Wang Mingyu <wangmy@fujitsu.com>
+Subject: [yocto-patches] [meta-security] [PATCH] python3-fail2ban: drop unneeded S assignment
+Date: Fri,  4 Jul 2025 08:11:22 +0800
+Message-ID: <20250704001122.227-1-wangmy@fujitsu.com>
+X-Mailer: git-send-email 2.49.0.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250627-mesa-panthor-v3-0-798c24a9eef3@cherry.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 03 Jul 2025 19:34:08 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1748
+ <yocto-patches@lists.yoctoproject.org>; Fri, 04 Jul 2025 00:11:33 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1749
 
-On Fri 2025-06-27 @ 04:19:11 PM, Quentin Schulz wrote:
-> This removes now unneeded kmsro PACKAGECONFIG as mesa dropped it (as
-> well as OE-Core's recipe).
-> 
-> The Panfrost drivers currently do not compile anymore due to a missing
-> libclc PACKAGECONFIG dependency so this adds the libclc to the
-> Panfrost-supported SoCs.
-> 
-> This refactors a bit the bbappend to hopefully require a bit less
-> maintenance with newer SoCs with most assumed to be supported by
-> Panfrost mesa drivers.
-> 
-> This enables (untested) support for lima mesa driver on RK3066 and
-> RK3188.
-> 
-> Finally, this enables Panthor support for RK3588(S).
-> 
-> Panthor is the open-source implementation for the Arm GPU Valhall series
-> both in the Linux kernel and Mesa userspace. In the latter, the panfrost
-> "driver" is actually handling this version of the Arm GPU. One therefore
-> needs to enable panfrost in PACKAGECONFIG to be able to use this
-> open-source implementation.
-> 
-> The open-source implementation still requires a proprietary blob which
-> is running on the GPU: mali_csffw.bin. Note that the closed-source
-> implementation (libmali and vendor kernel drivers) also requires this
-> blob.
-> 
-> Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
-> ---
-> Changes in v3:
-> - added now-required libclc dependency for panfrost,
-> - added support for RK3066 and RK3188 (though untested)
-> - refactored bbappend to default to panfrost unless specified otherwise,
-> - Link to v2: https://lore.kernel.org/r/20250415-mesa-panthor-v2-0-a7850d0091fe@cherry.de
-> 
-> Changes in v2:
-> - rebased on top of master with mesa 25.0 update merged
-> - added patch 3 which removes kmsro from PACKAGECONFIG as it's now
->   unnecessary,
-> - Link to v1: https://lore.kernel.org/r/20240531-mesa-panthor-v1-0-8cfb4d17ad3a@cherry.de
-> 
-> ---
-> Quentin Schulz (6):
->       mesa: remove kmsro from PACKAGECONFIG
->       mesa: add libclc to PACKAGECONFIG for Panfrost-supported SoCs
->       mesa: enable lima for RK3066 boards
->       mesa: enable lima for RK3188 boards
->       mesa: rework bbappend to default to panfrost
->       mesa: add support for RK3588(S)
-> 
->  recipes-graphics/mesa/mesa.bbappend | 20 ++++++++++++++------
->  1 file changed, 14 insertions(+), 6 deletions(-)
-> ---
+From: Wang Mingyu <wangmy@fujitsu.com>
 
-For the series:
-Reviewed-by: Trevor Woerner <twoerner@gmail.com>
+Signed-off-by: Wang Mingyu <wangmy@fujitsu.com>
+---
+ .../recipes-security/fail2ban/python3-fail2ban_git.bb           | 2 --
+ 1 file changed, 2 deletions(-)
 
-Applied to meta-rockchip, master branch. Thanks!
+diff --git a/dynamic-layers/meta-python/recipes-security/fail2ban/python3-fail2ban_git.bb b/dynamic-layers/meta-python/recipes-security/fail2ban/python3-fail2ban_git.bb
+index 52d35f8..7312bf8 100644
+--- a/dynamic-layers/meta-python/recipes-security/fail2ban/python3-fail2ban_git.bb
++++ b/dynamic-layers/meta-python/recipes-security/fail2ban/python3-fail2ban_git.bb
+@@ -26,8 +26,6 @@ inherit systemd
+ 
+ SYSTEMD_SERVICE:${PN} = "fail2ban.service"
+ 
+-S = "${UNPACKDIR}/git"
+-
+ do_install:append () {
+     rm  -f ${D}/${bindir}/fail2ban-python
+     install -d ${D}/${sysconfdir}/fail2ban
+-- 
+2.43.0
+
 
