@@ -1,198 +1,200 @@
-Return-Path: <anibal@limonsoftware.com>
+Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE981C8303C
-	for <webhook@archiver.kernel.org>; Mon,  7 Jul 2025 14:44:00 +0000 (UTC)
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
- by mx.groups.io with SMTP id smtpd.web11.69.1751899434748132532
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22D8CC8303C
+	for <webhook@archiver.kernel.org>; Mon,  7 Jul 2025 18:41:04 +0000 (UTC)
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+ by mx.groups.io with SMTP id smtpd.web11.765.1751913659704650237
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 07 Jul 2025 07:43:54 -0700
+ Mon, 07 Jul 2025 11:40:59 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@limonsoftware-com.20230601.gappssmtp.com header.s=20230601 header.b=M1anz0PT;
- spf=pass (domain: limonsoftware.com, ip: 209.85.167.172, mailfrom: anibal@limonsoftware.com)
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-40a4bf1ebb7so1857397b6e.0
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 07 Jul 2025 07:43:54 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=qsmx6Tv2;
+ spf=pass (domain: konsulko.com, ip: 209.85.222.169, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7d5d1feca18so420799185a.2
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 07 Jul 2025 11:40:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=limonsoftware-com.20230601.gappssmtp.com; s=20230601; t=1751899434; x=1752504234; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=thy6inCuIk9Kk8QH1qvdvrIaetmEjBseKVo5sDDrPlo=;
-        b=M1anz0PTFbt/uk159CryiptfxD/xU20RSxspGmmb+fF0+XJcpHrPTd4gdAs47+uTF2
-         YWfguB/04N9xhltr7EDBLktO+m1bPEszVaIJwvyIK2AJoN+D46FEra8Fx055G6TXOsmO
-         VLyS6HTR25AqDSbiICqyJW8aHz6cFlyvQMDsmgvmmOrKHZ0sZNxZfHlJPaWh27CbwcjE
-         tLYqMUUt34h9pA3QhcK4dNF6XEwJst+5esL03d5fCvd2VgWnEohLkjPW4/III5vY+NIn
-         dDXfCgJJdbra0eJCBt5BTyVq4DO9PFA4HvxbNeb89bnFPF5Qeigf0m1FwtTCKcawZ2tu
-         w2DA==
+        d=konsulko.com; s=google; t=1751913658; x=1752518458; darn=lists.yoctoproject.org;
+        h=mime-version:references:message-id:in-reply-to:subject:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KGBi8P/L1xQ96LZEqJDZfEj5K3xQW2fUU8KKJYg/s7c=;
+        b=qsmx6Tv2OhxEVjRT20oBsLa9FIHPxxFibeBdLLc3E1sugHT1UgC79ob+8fMlE/ItvB
+         +dYYRD/Bpl8t3SmAPz6qpbEH2gavo/gV0HlSpUsKNw5cFVtb2uT45Fv28xkpjAYVTUNW
+         wMRExT9+ATO6T4DZvWKV83I96yiNLIrRPwlyU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751899434; x=1752504234;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=thy6inCuIk9Kk8QH1qvdvrIaetmEjBseKVo5sDDrPlo=;
-        b=FY/rDBTsj2cgrN9CkhkAwPmzNXArmGFNYqpVEEtloMRHBwUKnkGtBGtF9D31qfRfUY
-         fUyA9XVAsS3A4k9mg1YkyyL2zmZJnsbUkWKP0VDCSIhwSdrM/Gd9/UPG9JeiCfVjK/Jb
-         2MnvWmKo5vTxSV5p3fMZeekKpQTwQwkfPMAppIBVh1rlL5SzTr57X8zwV83lvLpvmGzY
-         b1xMgiIZw5mwYFGHwAvFCStZNSSPkdLhSAilddBUPHQkpPvC1N96mW4DHoQwOZbkzDYS
-         o2BnkC5Q1rCHbXRbK/JNP592sJyxRTdhVN+ANKyw85h8UyPpeP8D0/vURZZ8O4VAwCgC
-         C3Yw==
-X-Gm-Message-State: AOJu0YwBPqVNrcxz/Gns52GQfgtkNeN6FpWzLzv7Riq9vuXQh3u9lQHe
-	eHdlF9Qf1MPfQTtdt+CpHxCsvRJbCBzfZSNu8Y4UC08//9lxsqFEGlTnD6d2D3bq/rLL+GLM5OZ
-	04+zPDqa0oA==
-X-Gm-Gg: ASbGncueBBIfWeqxP6zVEtSjUpCWaCnvCwIX5aWXrN6W2UcWw6oeSBzzRBNECXxHdkI
-	LMHOa9FPWn/l7isRBeEIbwCJwEri39wmO5Cnr89vaF/dmSnyRfvV8u7LzGgfLQDIrLrDA+3RPCz
-	4N3mxX2Mk55rvjGb3wtsz1lcRLgVLEAWzW0/eegvhdAZE3WPNqxqrXIvx1XhmTZjwPJHoyTdlKH
-	GbloXzMgVhxsulF6GHH8rMcouavh7J7TXbNhxSdaZOmJCnKhCOgRilMweTv8PHCeL31yYmdzkvL
-	pbVS+/mYj+O087epb+Jr0LoKdsvbjMKNYYrrMnDQtP1H5c+kvCSALvPgDoTF1wibYoQ=
-X-Google-Smtp-Source: AGHT+IEOOFfjSPDhYDNGJHMt3f8WjucKhlnkFM2m4T0NeS8OtPoHafgIj/aEe6BWY4n0RFBx228GRQ==
-X-Received: by 2002:a05:6808:1250:b0:409:f8e:7297 with SMTP id 5614622812f47-40d071d3a11mr7799820b6e.0.1751899433710;
-        Mon, 07 Jul 2025 07:43:53 -0700 (PDT)
-Received: from ls.ts.net ([189.162.146.188])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-40d02adb990sm1325955b6e.38.2025.07.07.07.43.52
+        d=1e100.net; s=20230601; t=1751913658; x=1752518458;
+        h=mime-version:references:message-id:in-reply-to:subject:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KGBi8P/L1xQ96LZEqJDZfEj5K3xQW2fUU8KKJYg/s7c=;
+        b=c8HXIESjQroEefMIVWtBhupO7acb4V9o4xlyk7+jIn6dEvwODhS5HefOsv7zayCqfX
+         1XoH9WKtodXLl9fSaca6O+tVTD0SVDNXFQNOMJjJ3u0F/lZ/NZfaP96jDhA1sno8QzS2
+         73k+5cBFgxsnv5pj7SYpLQemyFhuoaQW3MydiVJEcWlVKF7gajuiJ1Esqv4hzSWB3aE9
+         2VSC8RUG05HMfz6+J/ZXFbEwZvJpWULcX5MqECUAgLiXYxUN5189cKlKqxzUgtF4i2zC
+         6O9r1udalWiuwDeScdY70X5uZIVzJAoNJoAFFH1ZeVdHBFAI47xW/LJAYMAY1/jZnWo7
+         7YVQ==
+X-Gm-Message-State: AOJu0YyqYN3t7ydnBijXBjlqUFWQsoUOFzzstRo6CLUwoOOt4hoxPN+q
+	4v/nirYmUAUJPY4U3wjYoumHmil3j31fhi56nacaDrcKH360Qsmqtaj4cuMAOzuEhpf/TFwQkJh
+	twQ0c
+X-Gm-Gg: ASbGnctno7SiGhQ/CBtu2HdcTSgahiJQbozkC6864K6LfvO7GHAeHw+zsIX4WpqbIXG
+	uJvku/mJyL6wIdixbErAgTPtpVOiheF+B9W04HIii+IlqZ1nmJoNQcgJx+sbkPTZVdJWKefvp9D
+	VUbRBkZe6OjTRrZZJXP8kIdN/L4zWn+79tHHZ3fs0H3wlEKqLTg0vmPc+rPeZoGLIiuDze4PUJ+
+	taB/JRnovakKFA4/xOn+xh+uE/+FcLrQYWYxyoPmyb72KiuWUoA0fj4PEpGUWKdgP8wyWmGbAAx
+	J3CLLddihz6RulYEeam8q3YPl6oicYduDUpdh5RV8uh0RA7MmKqnY0vDXMr+kyOiC8xMUvJ1pWV
+	N5zUDV/Ghv8Holx/hMLPe
+X-Google-Smtp-Source: AGHT+IEa0bBXsNlK+EVW8lkpvvz/Scvot9zJc2u5zFsyanq0+uNLxPniW6kZWOr+7Wty0acfIc/g8A==
+X-Received: by 2002:a05:620a:7085:b0:7d4:4b9b:3eed with SMTP id af79cd13be357-7d5df1130c8mr1931774285a.25.1751913658116;
+        Mon, 07 Jul 2025 11:40:58 -0700 (PDT)
+Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d5dbeaed91sm645041185a.100.2025.07.07.11.40.57
+        for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jul 2025 07:43:53 -0700 (PDT)
-From: Anibal Limon <anibal@limonsoftware.com>
+        Mon, 07 Jul 2025 11:40:57 -0700 (PDT)
+Date: Mon, 7 Jul 2025 14:40:56 -0400 (EDT)
+From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: erik.schumacher@iris-sensing.com,
-	yoann.congal@smile.fr,
-	joerg.sommer@navimatix.de,
-	nata.dobrick@gmail.com,
-	Anibal Limon <anibal@limonsoftware.com>
-Subject: [ptest-runner][PATCH] Makefile: Improvements on rules mainly check (unittest)
-Date: Mon,  7 Jul 2025 14:43:50 +0000
-Message-Id: <20250707144350.2013683-1-anibal@limonsoftware.com>
-X-Mailer: git-send-email 2.39.5
+Subject: Re: [yocto-patches] [meta-security][PATCH 00/12] Initial fixes for
+ master branch
+In-Reply-To: <184F1B9597C17008.7007@lists.yoctoproject.org>
+Message-ID: <093773af-5310-49f3-a535-f7515f1562a0@konsulko.com>
+References: <184F1B9597C17008.7007@lists.yoctoproject.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 07 Jul 2025 14:44:00 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1777
+ <yocto-patches@lists.yoctoproject.org>; Mon, 07 Jul 2025 18:41:04 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1778
 
-Commnly we built ptest-runner without unittest, so by default
-only build ptest-runner executable (all target).
-Move the -pthread flag into common CFLAGS upon.
+On Fri, 4 Jul 2025, Scott Murray via lists.yoctoproject.org wrote:
 
-Add pkg-config and check tests to let know the user this components
-are expected to be in the system when build and/or run tests using
-check.
+> Thank you for your patience, this patch series is a start on getting
+> master branch maintenance back in order, and allowing Marta and myself
+> to try getting through some resource estimating for the new CI setup.
+> The focus has been on patches that allow getting through clean builds
+> of the majority of the build tests in the CI pipeline, which I have done
+> manually for qemux86-64.  We will shake out any other issues as the CI
+> setup is tested (or reported via the list).
+>
+> Note that I did pick a few patches from the backlog on the mailing list,
+> but generally not things that were not build warning or failure fixes.
+> I did the S/UNPACKDIR changes myself, as I had started on them before
+> any of patches were posted to the list.  Additionally, there are 3
+> fixes for gcc 15 issues (the libhoth patches will be sent upstream
+> in the next day or two).
+>
+> I would ask that you give us a few days before sending (or resending)
+> patches with any expectation of immediate turnaround.  There is still
+> quite a bit of work to recreate a working CI setup, as well as ensuring
+> walnascar and scarthgap branches are in a testable state.  This series
+> has been pushed to master-next, and while I'm aware of the US long
+> weekend holiday, the goal is to merge these changes to master by Monday
+> afternoon at the latest, as I have some conference travel next week, and
+> we do need to unblock folks testing against master branch.
 
-Drop redundant tests rule and only keep check rule, if only wanna
-build the ptest-runner-test executable can be made explicitly.
+I have gone ahead and merged these changes into master branch, please
+let us know if you still have any parse/build issues.  As I mentioned
+above, I am travelling this week, so turnaround on patches sent to the
+list will be affected by that and our focus being on getting CI working.
 
-```
-devel@ls:~/ptest-runner2$ make ptest-runner-test
-devel@ls:~/ptest-runner2$ ./ptest-runner-test
-Usage: ./ptest-runner-test <-d directory>
+Thanks,
 
-```
+Scott
 
-The check rule stay the same when execute it it builts ptest-runner-test
-and execute unittests suite.
-
-```
-devel@ls:~/ptest-runner2$ make check
-PATH=".:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games" ptest-runner-test -d /workspace/ptest-runner2/tests/data
-Running suite(s): ptest_list
-100%: Checks: 9, Failures: 0, Errors: 0
-tests/ptest_list.c:47:P:Core:test_alloc_free:0: Passed
-tests/ptest_list.c:55:P:Core:test_add:0: Passed
-tests/ptest_list.c:66:P:Core:test_free_all:0: Passed
-tests/ptest_list.c:89:P:Core:test_length:0: Passed
-tests/ptest_list.c:110:P:Core:test_search:0: Passed
-tests/ptest_list.c:143:P:Core:test_remove:0: Passed
-tests/ptest_list.c:165:P:Core:test_remove_first:0: Passed
-tests/ptest_list.c:188:P:Core:test_remove_last:0: Passed
-tests/ptest_list.c:203:P:Core:test_remove_all:0: Passed
-Running suite(s): utils
-dmesg: read kernel buffer failed: Operation not permitted
-XML File './' could not be created. Is a directory.
-100%: Checks: 9, Failures: 0, Errors: 0
-tests/utils.c:88:P:Core:test_get_available_ptests:0: Passed
-tests/utils.c:134:P:Core:test_print_ptests:0: Passed
-tests/utils.c:161:P:Core:test_filter_ptests:0: Passed
-tests/utils.c:193:P:Core:test_run_ptests:0: Passed
-tests/utils.c:224:P:Core:test_run_timeout_duration_ptest:0: Passed
-tests/utils.c:254:P:Core:test_run_signal_ptest:0: Passed
-tests/utils.c:284:P:Core:test_run_fail_ptest:0: Passed
-tests/utils.c:328:P:Core:test_xml_pass:0: Passed
-tests/utils.c:338:P:Core:test_xml_fail:0: Passed
-```
-
-Signed-off-by: Anibal Limon <anibal@limonsoftware.com>
----
- Makefile | 43 +++++++++++++++++++++++++++----------------
- 1 file changed, 27 insertions(+), 16 deletions(-)
-
-diff --git a/Makefile b/Makefile
-index 662ced7..7ad4161 100644
---- a/Makefile
-+++ b/Makefile
-@@ -17,35 +17,46 @@ endif
- ifeq ($(MEMCHECK), 1)
- CFLAGS+= -DMEMCHECK
- endif
-+CFLAGS+= -pthread
- LDFLAGS=
- 
- BASE_SOURCES=utils.c ptest_list.c
--SOURCES=main.c $(BASE_SOURCES)
-+BASE_OBJECTS=$(BASE_SOURCES:.c=.o)
-+SOURCES=main.c
- OBJECTS=$(SOURCES:.c=.o)
- EXECUTABLE=ptest-runner
- 
--TEST_SOURCES=tests/main.c tests/ptest_list.c tests/utils.c $(BASE_SOURCES)
-+PKGCONFIG_BIN:=pkg-config
-+CHECK_LIB:=check
-+TEST_SOURCES=tests/main.c tests/ptest_list.c tests/utils.c
- TEST_OBJECTS=$(TEST_SOURCES:.c=.o)
- TEST_EXECUTABLE=ptest-runner-test
--TEST_CFLAGS=$(shell pkg-config --cflags check)
--TEST_LDFLAGS=$(shell pkg-config --libs check)
-+TEST_CFLAGS=$(shell $(PKGCONFIG_BIN) --cflags $(CHECK_LIB) 2>/dev/null)
-+TEST_LDFLAGS=$(shell $(PKGCONFIG_BIN) --libs $(CHECK_LIB) 2>/dev/null)
- 
- TEST_DATA=$(shell echo `pwd`/tests/data)
- 
--all: $(SOURCES) $(EXECUTABLE)
--
--$(EXECUTABLE): $(OBJECTS)
--	$(CC) $(LDFLAGS) $(OBJECTS) -pthread -lutil -o $@
--
--tests: $(TEST_SOURCES) $(TEST_EXECUTABLE)
--
--$(TEST_EXECUTABLE): $(TEST_OBJECTS)
--	$(CC) $(LDFLAGS) $(TEST_OBJECTS) -o $@ $(TEST_CFLAGS) $(TEST_LDFLAGS)
-+all: $(EXECUTABLE)
- 
- check: $(TEST_EXECUTABLE)
--	PATH=.:$(PATH) ./$(TEST_EXECUTABLE) -d $(TEST_DATA)
-+	PATH=".:$(PATH)" $(TEST_EXECUTABLE) -d $(TEST_DATA)
- 
- clean:
--	rm -rf $(EXECUTABLE) $(OBJECTS) $(TEST_EXECUTABLE) $(TEST_OBJECTS)
-+	rm -rf $(BASE_OBJECTS) $(EXECUTABLE) $(OBJECTS) $(TEST_EXECUTABLE) $(TEST_OBJECTS)
-+
-+$(EXECUTABLE): $(BASE_OBJECTS) $(OBJECTS)
-+	$(CC) $(LDFLAGS) $^ -o $@
-+
-+$(TEST_EXECUTABLE): $(BASE_OBJECTS) $(TEST_OBJECTS)
-+ifeq ($(shell command -v $(PKGCONFIG_BIN)),)
-+	$(error Please install `$(PKGCONFIG_BIN)`, use to get compilation flags.)
-+endif
-+ifeq ($(TEST_LDFLAGS),)
-+	$(error Please install `$(CHECK_LIB)`, can't get LDFLAGS via pkg-config.)
-+endif
-+ifeq ($(TEST_CFLAGS),)
-+	$(error Please install `$(CHECK_LIB)`, can't get CFLAGS via pkg-config.)
-+endif
-+	$(CC) $(TEST_CFLAGS) $^ -o $@ $(LDFLAGS) $(TEST_LDFLAGS)
- 
--.PHONY: clean tests
-+.PHONY: all check clean
--- 
-2.39.5
-
+> Changes:
+>
+> Anton Antonov (1):
+>   parsec-service: update PACKAGECONFIG options as lists of cargo build
+>     features
+>
+> Clayton Casciato (1):
+>   smack: Use new CVE_STATUS variable
+>
+> J. S. (1):
+>   Fix warning : lack of whitespace around assignment
+>
+> Marta Rybczynska (4):
+>   scap-security-guide: fix fetch
+>   chkrootkit: use Debian mirror
+>   CI: update build for new CI
+>   .gitlab-ci.yml: add logging of jobs to files
+>
+> Scott Murray (5):
+>   layer.conf: Update to whinlatter (5.3) release
+>   Adapt to S/UNPACKDIR changes
+>   sshguard: Update to 2.5.1
+>   libhoth: update to latest
+>   chkrootkit: fix building with gcc 15
+>
+>  .gitlab-ci.yml                                |  45 +++---
+>  conf/layer.conf                               |   2 +-
+>  .../checksecurity/checksecurity_2.0.16.bb     |   5 +-
+>  .../bastille/bastille_3.2.1.bb                |   2 +-
+>  .../recipes-security/nikto/nikto_2.1.6.bb     |   2 +-
+>  .../python/python3-json2html_1.3.0.bb         |   2 +-
+>  .../python/python3-xmldiff_2.7.0.bb           |   2 +-
+>  .../fail2ban/python3-fail2ban_git.bb          |   2 -
+>  meta-hardening/conf/layer.conf                |   2 +-
+>  meta-integrity/conf/layer.conf                |   2 +-
+>  meta-parsec/README.md                         |   4 +-
+>  meta-parsec/conf/layer.conf                   |   2 +-
+>  .../parsec-service/parsec-service_1.4.1.bb    |  15 +-
+>  meta-tpm/conf/layer.conf                      |   2 +-
+>  meta-tpm/recipes-tpm/libtpm/libtpms_0.10.0.bb |   1 -
+>  meta-tpm/recipes-tpm/swtpm/swtpm_0.10.0.bb    |   2 -
+>  .../0001-Fix-building-with-gcc-15.patch       | 151 ++++++++++++++++++
+>  ...02-Fix-building-without-dbus-backend.patch |  36 +++++
+>  meta-tpm/recipes-tpm1/hoth/libhoth_git.bb     |  13 +-
+>  .../openssl-tpm-engine_0.5.0.bb               |   2 -
+>  .../recipes-tpm1/pcr-extend/pcr-extend_git.bb |   2 -
+>  .../tpm-quote-tools/tpm-quote-tools_1.0.4.bb  |   1 -
+>  .../tpm-tools/tpm-tools_1.3.9.2.bb            |   2 -
+>  .../recipes-tpm1/trousers/trousers_git.bb     |   2 -
+>  .../ibmswtpm2/ibmswtpm2_183-2024-03-27.bb     |   2 +-
+>  .../ibmtpm2tss/ibmtpm2tss_2.2.0.bb            |   2 -
+>  .../tpm2-tcti-uefi/tpm2-tcti-uefi_0.9.9.bb    |   2 -
+>  .../recipes-tpm2/tpm2-totp/tpm2-totp_0.3.0.bb |   2 -
+>  recipes-compliance/openscap/openscap_1.4.1.bb |   2 -
+>  .../scap-security-guide_0.1.76.bb             |   9 +-
+>  recipes-ids/aide/aide_0.18.8.bb               |   2 +-
+>  recipes-ids/crowdsec/crowdsec_1.1.1.bb        |   2 -
+>  recipes-ids/ossec/ossec-hids_3.7.0.bb         |   5 +-
+>  recipes-ids/suricata/libhtp_0.5.50.bb         |   4 -
+>  recipes-ids/tripwire/tripwire_2.4.3.7.bb      |   4 +-
+>  recipes-kernel/lkrg/lkrg-module_0.9.7.bb      |   4 +-
+>  recipes-mac/AppArmor/apparmor_4.0.3.bb        |   1 -
+>  recipes-mac/ccs-tools/ccs-tools_1.8.9.bb      |   4 +-
+>  recipes-mac/smack/mmap-smack-test_1.0.bb      |   3 +-
+>  recipes-mac/smack/smack-test_1.0.bb           |   3 +-
+>  recipes-mac/smack/smack_1.3.1.bb              |  10 +-
+>  recipes-mac/smack/tcp-smack-test_1.0.bb       |   3 +-
+>  recipes-mac/smack/udp-smack-test_1.0.bb       |   3 +-
+>  recipes-perl/perl/libwhisker2-perl_2.5.bb     |   2 +-
+>  recipes-scanners/checksec/checksec_2.6.0.bb   |   4 +-
+>  recipes-scanners/clamav/clamav_0.104.4.bb     |   1 -
+>  recipes-scanners/rootkits/chkrootkit_0.58b.bb |   7 +-
+>  .../files/0001-Fix-building-with-gcc-15.patch |  39 +++++
+>  recipes-security/Firejail/firejail_0.9.72.bb  |   2 -
+>  recipes-security/chipsec/chipsec_1.9.1.bb     |   2 -
+>  .../cryptmount/cryptmount_6.2.0.bb            |   2 +-
+>  recipes-security/fscrypt/fscrypt_1.1.0.bb     |   2 -
+>  .../fscryptctl/fscryptctl_1.1.0.bb            |   2 -
+>  recipes-security/glome/glome_git.bb           |   1 -
+>  .../google-authenticator-libpam_1.09.bb       |   2 -
+>  recipes-security/isic/isic_0.07.bb            |   2 +-
+>  recipes-security/krill/krill_0.12.3.bb        |   1 -
+>  recipes-security/libest/libest_3.2.0.bb       |   2 -
+>  recipes-security/libgssglue/libgssglue_0.9.bb |   2 -
+>  recipes-security/libmspack/libmspack_1.11.bb  |   2 +-
+>  recipes-security/ncrack/ncrack_0.7.bb         |   2 -
+>  .../redhat-security/redhat-security_1.0.bb    |   3 +-
+>  recipes-security/sshguard/sshguard_2.4.3.bb   |  11 --
+>  recipes-security/sshguard/sshguard_2.5.1.bb   |  11 ++
+>  64 files changed, 319 insertions(+), 151 deletions(-)
+>  create mode 100644 meta-tpm/recipes-tpm1/hoth/libhoth/0001-Fix-building-with-gcc-15.patch
+>  create mode 100644 meta-tpm/recipes-tpm1/hoth/libhoth/0002-Fix-building-without-dbus-backend.patch
+>  create mode 100644 recipes-scanners/rootkits/files/0001-Fix-building-with-gcc-15.patch
+>  delete mode 100644 recipes-security/sshguard/sshguard_2.4.3.bb
+>  create mode 100644 recipes-security/sshguard/sshguard_2.5.1.bb
+>
+>
 
