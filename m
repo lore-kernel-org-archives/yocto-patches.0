@@ -2,40 +2,40 @@ Return-Path: <mathieu.dubois-briand@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34BB3C83F09
-	for <webhook@archiver.kernel.org>; Tue,  8 Jul 2025 13:47:54 +0000 (UTC)
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
- by mx.groups.io with SMTP id smtpd.web11.19411.1751982470361240127
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EA18C83F09
+	for <webhook@archiver.kernel.org>; Tue,  8 Jul 2025 13:49:44 +0000 (UTC)
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+ by mx.groups.io with SMTP id smtpd.web10.19287.1751982582202560562
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 08 Jul 2025 06:47:50 -0700
+ Tue, 08 Jul 2025 06:49:42 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=gm1 header.b=GaiEfmwr;
- spf=pass (domain: bootlin.com, ip: 217.70.183.199, mailfrom: mathieu.dubois-briand@bootlin.com)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 4E863442CD;
-	Tue,  8 Jul 2025 13:47:48 +0000 (UTC)
+ dkim=pass header.i=@bootlin.com header.s=gm1 header.b=PVVBNd0s;
+ spf=pass (domain: bootlin.com, ip: 217.70.183.195, mailfrom: mathieu.dubois-briand@bootlin.com)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 33503204CA;
+	Tue,  8 Jul 2025 13:49:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1751982468;
+	t=1751982580;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=SDbmNj3gdUSDnGBQX0gEH07ttULeApk0ug5YkJGCH5g=;
-	b=GaiEfmwrUBcau7FFFEMjSQiNcvH2zQFJr8NjSWyOYQy/vaG51ZGzIzfrXcesqjFKP9wrHY
-	QEtqSl+bJ+frMRTf2j75cnkaYLfMPZcSqheAMoreOXGL6K6uFARo4gvLuqUgsmAVQ8OLtS
-	cnb61ItvZhVRaF92rtBxsF5BHmsjSOo+6O7GeLh3Vw5SovQafjHpiAteJbPn91CwKA1wXK
-	roDtpgfVYml3H79TjC/iN4/DCtlvXxPaPadzzILUxNjEfqaZY03Sh199PZIkJrdx+h4B1F
-	cKqUoejOMsa4edjen/xIwY01BQgU6FZMue4y2oXA7RaLbZl//FeDJ4O6mkFokg==
+	bh=skCEf64d5/W1beiaFdDKT2aY4nYhsXsa2ysjQibRtKg=;
+	b=PVVBNd0savnmoC7mGranTVrYNN1/cDotYOsinI09diNnuGB69gl9ByzYu7s7ixZX8/WNNI
+	y1tpL/Qsf1/yD2JPuZdDvCHi9F54qeMaiGEJcYXGo5K14sD1S0th4JFk0B3u0b1tcG1cTX
+	fbhMEzHeT0B+CS99j4L4JoTUhvq/8WLYBaY7m3ZienqTU+6/4lx3Rq9iLPeSTkkd6oaaUY
+	2VJZnbZ9FpsGpczUjLDjr9UFuGDMWAUnOsszgdcsdnxBwPDMLbeUhxHcr3iuZWGk+4xp/p
+	Xyiop/K1atRLUE8A8YYKtbD8W7I4StHhN29+PssFDBfxpgwwMkoO4I2//bOrcA==
 From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 To: yocto-patches@lists.yoctoproject.org,
 	Antonin Godard <antonin.godard@bootlin.com>
 Cc: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [swat-tools][PATCH] Add a parent build column and filter
-Date: Tue,  8 Jul 2025 15:47:19 +0200
-Message-Id: <175198237191.1273441.14070662695899215838.b4-ty@bootlin.com>
+Subject: Re: [swat-tools][PATCH] review: add a confirmation menu before exiting
+Date: Tue,  8 Jul 2025 15:49:26 +0200
+Message-Id: <175198254533.1273990.964284045024083848.b4-ty@bootlin.com>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250620-parent-build-filter-v1-1-4ddd7b3207c8@bootlin.com>
-References: <20250620-parent-build-filter-v1-1-4ddd7b3207c8@bootlin.com>
+In-Reply-To: <20250620-confirmation-menu-v1-1-dec1ab0b9626@bootlin.com>
+References: <20250620-confirmation-menu-v1-1-dec1ab0b9626@bootlin.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -47,25 +47,21 @@ X-GND-Sasl: mathieu.dubois-briand@bootlin.com
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 08 Jul 2025 13:47:54 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1786
+ <yocto-patches@lists.yoctoproject.org>; Tue, 08 Jul 2025 13:49:44 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1787
 
 
-On Fri, 20 Jun 2025 11:08:15 +0200, Antonin Godard wrote:
-> To be able to filter failures by parent build number, e.g. filter all
-> failures for a-full build number xyz, add a --parent-build-filter (-p)
-> option to swattool. The option can be passed multiple times and can be a
-> regular expression.
+On Fri, 20 Jun 2025 08:52:48 +0200, Antonin Godard wrote:
+> Add a confirmation menu before exiting swatool. This way you can go back
+> to the main menu quickly by spamming "q", without fearing to exit
+> swattool entirely and having to relaunch it.
 > 
-> It is also displayed by default in show-pending-failures, after the
-> column "Build" as "Parent".
 > 
-> [...]
 
 Applied, thanks!
 
-[1/1] Add a parent build column and filter
-      (no commit info)
+[1/1] review: add a confirmation menu before exiting
+      commit: 1bcc6bfbcfca01ee91eb72eb113293ccdd089459
 
 Best regards,
 -- 
