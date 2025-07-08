@@ -1,168 +1,192 @@
-Return-Path: <martin.jansa@gmail.com>
+Return-Path: <rybczynska@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70CEEC71130
-	for <webhook@archiver.kernel.org>; Tue,  8 Jul 2025 07:24:52 +0000 (UTC)
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
- by mx.groups.io with SMTP id smtpd.web10.13204.1751959481841214298
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DF71C83F0F
+	for <webhook@archiver.kernel.org>; Tue,  8 Jul 2025 11:26:13 +0000 (UTC)
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+ by mx.groups.io with SMTP id smtpd.web11.16149.1751973966909333757
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 08 Jul 2025 00:24:42 -0700
+ Tue, 08 Jul 2025 04:26:06 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=OtYd72JD;
- spf=pass (domain: gmail.com, ip: 209.85.128.53, mailfrom: martin.jansa@gmail.com)
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-451d54214adso28050255e9.3
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 08 Jul 2025 00:24:41 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=UbPRHB+b;
+ spf=pass (domain: gmail.com, ip: 209.85.216.44, mailfrom: rybczynska@gmail.com)
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-313910f392dso3400181a91.2
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 08 Jul 2025 04:26:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751959480; x=1752564280; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AYD0CvGp3drIedA5ONueaZanua/CcgtcsqLMzU696x0=;
-        b=OtYd72JDUOwuMwF72iAJ8LfMKI4WhdaWZaS3/M8EW6LSZf/xc9d5dpfi/+dxlfbNKh
-         AsY42WO1VU92Ymjk4elzrAA+zINXmwWrU1dGMKoNU+e7q95d+Nui3LG98/3itoJLZ02Z
-         B1g9c6LakcL693uCUoIR3UvjCVvrxJrVvwO2F2dTegtS2V1xYXwXRcICCHr25/r++dwW
-         6w8oUQNn5YFO2OuHLsW+RFuQeD0Lk9XEOAVbEVzal5DGWf6aNfddvQ0QECaHs2y+MTdU
-         3qGovY/tqjSugdcMIQlqbpe2aeAJ4+qlt4USX2CFRk1ra9JpJb938gNwRKRf6z/bafYI
-         jKgw==
+        d=gmail.com; s=20230601; t=1751973966; x=1752578766; darn=lists.yoctoproject.org;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=W2I8QYI4srheO1eK0/k5XQQyGj1/Gr6GU0euwD7gLfQ=;
+        b=UbPRHB+b+swHkdQIzng/O5cw1TsjNmR+CjamWkIV4rzYrh+pv/heawBsKFdSTOmRAx
+         2PgwiyvovbA7GMvNByqDFVPSC3NcbwuPXLvMZknukUx4ASS1xKE3bvf0HG/WKdg27CeN
+         kqlIaAqkGT+wLOPG7dztNWt2bYnc8Fsbfb2bdqwwfUzzutE5/Rdo9SrlEOhdj2sLGahv
+         xpF4V/7dltYDOz1VUoMik4OLY+Bwej0XeaAzViKm94kAFiLyvh4VEKYg0PLVu61FYGxK
+         XdjrjuOpYRJ1uTuHmk0ve6rCv6P9hiXZWFFTNgVK8KN3IiU9Qo1B5Gjj4MIegAOvfM1y
+         tLiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751959480; x=1752564280;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AYD0CvGp3drIedA5ONueaZanua/CcgtcsqLMzU696x0=;
-        b=lTuQBmWEcl5a4iADvU/e6MkdwJCLUJJee8dWMu4dqv1Kt531IZryRyIxBFcbccEbt1
-         hAjF3LOx5p463LA8wQzbRIdonyjvyEu1fvAXjRen+227yfk49ktaexiAjmXd1Syb0NyJ
-         CpWubJS/4Xvil6tlMN6gQxe5pLAVwHjKKpwxJq3AFXsjHF4Fo6P1SQ2dmCUtu8Q0uDMF
-         yqQq1JNZYimxFu0BMCoRSQhOBjtsyYrTvNatzeO8Q6nSGwOALboLJoE709BQdgy8RGIu
-         8oXQO6HYkME4Ebc6xZJM85x2b/zxKxQU2nBpRAKewYp3Sbw/F/iJUCvWpSHtwJAGoB4T
-         pK7Q==
-X-Gm-Message-State: AOJu0YxoT38K1un4xuIny0NKaU4+ReU9swnQKodi6Y+wm6Fg31iguwAd
-	XElJ6o/g/vO3xcOi/RpHa5PCvD7JJjjFsbjdJE4geutKb0gpZW4lhZvzf76x6A==
-X-Gm-Gg: ASbGncvuiNSIcTa0Hn9n1fCAykPZKxW+TwonRZI8XRAMseRCbVXuthxDHI4KNE+ESm9
-	eenA79QLb7rV3F+YLdy067xgdY8oYZQ57Q0QKqN5RK8p4pU/1OwIkV/7O3NhdWyqgCyzx5VrwYp
-	cXjXxnoQY0jUC92Vr+R9qbateeUtb4Yejo3qa/av/mDHAsWspFlpyubWrD7O7r08bHnkHH6jxP0
-	EyWAp8GsMqXe2hDNhvdVu0Bsw8LqBFS7ZhIZ5Wpn3+WnCkbwuPmIOQ+vEGU10Cu9yMlgmzyH5pG
-	T1CvITOBxLZtIaw8FDUOPHnThhl2d8Eby8YH/cO+lfSa5YPjb2jp5k5zdlewNugI
-X-Google-Smtp-Source: AGHT+IFqaGX+9+iVpv12e7HM89DWc+juHHRG9M9hCsY0tHV7AOQC2f6PkGM64Y+6Z9GRYjcqweOV5g==
-X-Received: by 2002:a05:600c:1c89:b0:43d:94:2d1e with SMTP id 5b1f17b1804b1-454cd4bb500mr17149785e9.13.1751959480036;
-        Tue, 08 Jul 2025 00:24:40 -0700 (PDT)
-Received: from localhost ([109.238.218.228])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-454cd4938d9sm13149045e9.23.2025.07.08.00.24.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jul 2025 00:24:39 -0700 (PDT)
-From: martin.jansa@gmail.com
-To: yocto-patches@lists.yoctoproject.org
-Cc: Martin Jansa <martin2.jansa@lgepartner.com>
-Subject: [meta-tensorflow][PATCH 1/3] recipes: adapt to UNPACKDIR changes
-Date: Tue,  8 Jul 2025 09:24:34 +0200
-Message-ID: <20250708072436.24522-1-martin.jansa@gmail.com>
-X-Mailer: git-send-email 2.50.0
+        d=1e100.net; s=20230601; t=1751973966; x=1752578766;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=W2I8QYI4srheO1eK0/k5XQQyGj1/Gr6GU0euwD7gLfQ=;
+        b=BzMcD38pYB8HmVG0eFX06MtDhU9pCwqqkhM3iCCVyxPpdJXtsBw0zuPAMuY7BgDphh
+         O2AACvpN8dmAInUEx+ep8RTQsQukoV+zY7FNUstJFFTcYaKPH7GWmDdfxaFL2n/pnbbQ
+         wWowxTsEJVpLtupnvXmniBCCZvd7/2yBaRBlHJ84/MZ7O96X/zIm2eipg21VDRp8DbZ6
+         qSXF8IFbTwKN3khtrtqBt3fsfwoLuqzG1Gf5X4MxE/+0BHzOp3o66TGzfJVgKFBSyBeG
+         lovdNpRw2DvWMKzBiZqx51i3W0FTXF4pRIOaaI1yeKXm+HqQLUckzZpJwdHmUifEu0J0
+         8dvA==
+X-Gm-Message-State: AOJu0YyBYPxAZKn00ne7U9koFO4EBEuz3j69TFtxjzJCstRZi43AexGQ
+	IGmAdwhxglrcYkq5jH8Zl9RKMVz6Zs9Vm25TFt4FDO5m6qm2MYMM0o6FemphGUC96yFd6bV4h9b
+	XKzwhEzeFAqtTXbG0VszBKn22afSTmFjWCw==
+X-Gm-Gg: ASbGncuiFCsLvjXPSk1sIKPTG/zH3g+ZX6UdRsfwv/nWhqlLc/FZ8c9785jjR3myeSK
+	cgpgw12+M2/+rzciqh3xr+5E2y6fBMn8GKWDiAc1q6wSrU2kxgK4L+TtyFURiwgRlcNl01ml8GW
+	LolgXsW6/wr077JXuMrIeRT5LeJ/s2XsL4AwdVJE/S0zg=
+X-Google-Smtp-Source: AGHT+IHg5+CMIj5S/ZuMvI74UONuM8xF34hTrjSZk4IDblXdn+pmDeeAkwOAw7pAWN7nVh0eYSTJraPxe+oQQXEC3bM=
+X-Received: by 2002:a17:90b:2e4e:b0:312:f0d0:bb0 with SMTP id
+ 98e67ed59e1d1-31aadd28eadmr29067975a91.12.1751973965771; Tue, 08 Jul 2025
+ 04:26:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <184F1B9597C17008.7007@lists.yoctoproject.org> <093773af-5310-49f3-a535-f7515f1562a0@konsulko.com>
+In-Reply-To: <093773af-5310-49f3-a535-f7515f1562a0@konsulko.com>
+From: Marta Rybczynska <rybczynska@gmail.com>
+Date: Tue, 8 Jul 2025 13:25:54 +0200
+X-Gm-Features: Ac12FXzoksc0m5UiB93ffWvw2oMrgSWpUhzqkf4raJJAbcPJmuJRnZpD0bAZh8c
+Message-ID: <CAApg2=S78+EH5COOEmTqOnGwxN9V7UyW9Rkyzj3nfCJpMd=RvA@mail.gmail.com>
+Subject: Re: [yocto-patches] [meta-security][PATCH 00/12] Initial fixes for
+ master branch
+To: yocto-patches@lists.yoctoproject.org
+Content-Type: multipart/alternative; boundary="000000000000e2b72f06396939ce"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 08 Jul 2025 07:24:52 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1781
+ <yocto-patches@lists.yoctoproject.org>; Tue, 08 Jul 2025 11:26:13 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1784
 
-From: Martin Jansa <martin2.jansa@lgepartner.com>
+--000000000000e2b72f06396939ce
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Please see
-https://git.yoctoproject.org/poky/commit/?id=4dd321f8b83afecd962393101b2a6861275b5265
-for what changes are needed, and sed commands that can be used to make them en masse.
+On Mon, Jul 7, 2025 at 8:41=E2=80=AFPM Scott Murray via lists.yoctoproject.=
+org
+<scott.murray=3Dkonsulko.com@lists.yoctoproject.org> wrote:
 
-Based on migration guide from:
-https://lists.yoctoproject.org/g/docs/message/7195
+> On Fri, 4 Jul 2025, Scott Murray via lists.yoctoproject.org wrote:
+>
+> > Thank you for your patience, this patch series is a start on getting
+> > master branch maintenance back in order, and allowing Marta and myself
+> > to try getting through some resource estimating for the new CI setup.
+> > The focus has been on patches that allow getting through clean builds
+> > of the majority of the build tests in the CI pipeline, which I have don=
+e
+> > manually for qemux86-64.  We will shake out any other issues as the CI
+> > setup is tested (or reported via the list).
+> >
+> > Note that I did pick a few patches from the backlog on the mailing list=
+,
+> > but generally not things that were not build warning or failure fixes.
+> > I did the S/UNPACKDIR changes myself, as I had started on them before
+> > any of patches were posted to the list.  Additionally, there are 3
+> > fixes for gcc 15 issues (the libhoth patches will be sent upstream
+> > in the next day or two).
+> >
+> > I would ask that you give us a few days before sending (or resending)
+> > patches with any expectation of immediate turnaround.  There is still
+> > quite a bit of work to recreate a working CI setup, as well as ensuring
+> > walnascar and scarthgap branches are in a testable state.  This series
+> > has been pushed to master-next, and while I'm aware of the US long
+> > weekend holiday, the goal is to merge these changes to master by Monday
+> > afternoon at the latest, as I have some conference travel next week, an=
+d
+> > we do need to unblock folks testing against master branch.
+>
+> I have gone ahead and merged these changes into master branch, please
+> let us know if you still have any parse/build issues.  As I mentioned
+> above, I am travelling this week, so turnaround on patches sent to the
+> list will be affected by that and our focus being on getting CI working.
+>
+>
+Hello Scott,
+Thanks for that. For information (for others, mostly), there are still
+issues in
+CI after those changes. We're on that (host contamination reported in QA).
 
-with added .bbappend as we have couple S assignments in .bbappends as well
+As Scott says, until we have CI up and running again, the patch flow might
+be slow to happen.
 
-sed -i "/^S = \"\${WORKDIR}\/git\"/d" `find . -name \*.bb -o -name \*.inc -o -name \*.bbclass -o -name \*.bbappend` &&
-sed -i "s/^S = \"\${WORKDIR}\//S = \"\${UNPACKDIR}\//g" `find . -name \*.bb -o -name \*.inc -o -name \*.bbclass -o -name \*.bbappend` &&
-sed -i -z -E 's/([ \t\f\v\r]*\n){3,}/\n\n/g' `find . -name \*.bb -o -name \*.inc -o -name \*.bbappend`
+Thanks to all who have shown support and/or sent patches to help!
 
-Signed-off-by: Martin Jansa <martin2.jansa@lgepartner.com>
----
- recipes-devtools/openjdk/openjdk-11-native_11.0.15.bb       | 2 +-
- recipes-devtools/python/python3-mldtypes_0.5.1.bb           | 2 +-
- recipes-devtools/python/python3-opt-einsum_3.3.0.bb         | 2 +-
- recipes-framework/tensorflow/keras_2.19.0.bb                | 1 -
- recipes-framework/tensorflow/tensorflow-estimator_2.15.0.bb | 1 -
- recipes-framework/tensorflow/tensorflow.inc                 | 2 --
- 6 files changed, 3 insertions(+), 7 deletions(-)
+Kind regards,
+Marta
 
-diff --git a/recipes-devtools/openjdk/openjdk-11-native_11.0.15.bb b/recipes-devtools/openjdk/openjdk-11-native_11.0.15.bb
-index e982af6..cec79b2 100644
---- a/recipes-devtools/openjdk/openjdk-11-native_11.0.15.bb
-+++ b/recipes-devtools/openjdk/openjdk-11-native_11.0.15.bb
-@@ -9,7 +9,7 @@ SRC_URI = " \
-     https://github.com/ojdkbuild/contrib_jdk11u-ci/releases/download/jdk-11.0.15%2B10/jdk-11.0.15-ojdkbuild-linux-x64.zip \
- "
- 
--S = "${WORKDIR}/jdk-11.0.15-ojdkbuild-linux-x64"
-+S = "${UNPACKDIR}/jdk-11.0.15-ojdkbuild-linux-x64"
- 
- do_patch[noexec] = "1"
- do_configure[noexec] = "1"
-diff --git a/recipes-devtools/python/python3-mldtypes_0.5.1.bb b/recipes-devtools/python/python3-mldtypes_0.5.1.bb
-index 1755226..b3f8b98 100644
---- a/recipes-devtools/python/python3-mldtypes_0.5.1.bb
-+++ b/recipes-devtools/python/python3-mldtypes_0.5.1.bb
-@@ -11,7 +11,7 @@ inherit pypi python_setuptools_build_meta
- SRCNAME ?= "ml_dtypes"
- PYPI_SRC_URI = "https://files.pythonhosted.org/packages/32/49/6e67c334872d2c114df3020e579f3718c333198f8312290e09ec0216703a/${SRCNAME}-${PV}.tar.gz"
- SRC_URI += "file://0001-fix-setuptools-missing.patch"
--S = "${WORKDIR}/${SRCNAME}-${PV}"
-+S = "${UNPACKDIR}/${SRCNAME}-${PV}"
- 
- DEPENDS = " \
-     python3-pybind11-native \
-diff --git a/recipes-devtools/python/python3-opt-einsum_3.3.0.bb b/recipes-devtools/python/python3-opt-einsum_3.3.0.bb
-index ce9d220..4aecbba 100644
---- a/recipes-devtools/python/python3-opt-einsum_3.3.0.bb
-+++ b/recipes-devtools/python/python3-opt-einsum_3.3.0.bb
-@@ -14,6 +14,6 @@ PYPI_SRC_URI = "https://files.pythonhosted.org/packages/source/o/${PYPI_PACKAGE}
- SRC_URI += " \
-     file://0001-Use-ConfigParser-instead-of-SafeConfigParser.patch \
- "
--S = "${WORKDIR}/${SRCNAME}-${PV}"
-+S = "${UNPACKDIR}/${SRCNAME}-${PV}"
- 
- BBCLASSEXTEND = "native"
-diff --git a/recipes-framework/tensorflow/keras_2.19.0.bb b/recipes-framework/tensorflow/keras_2.19.0.bb
-index 3030f04..f6bcb03 100644
---- a/recipes-framework/tensorflow/keras_2.19.0.bb
-+++ b/recipes-framework/tensorflow/keras_2.19.0.bb
-@@ -9,7 +9,6 @@ SRC_URI = "git://github.com/keras-team/tf-keras.git;branch=r2.19;protocol=https
-           "
- 
- SRCREV = "a697e6a2238224a89e5cf53fb86fd4808b1b9133"
--S = "${WORKDIR}/git"
- 
- inherit python3native bazel
- 
-diff --git a/recipes-framework/tensorflow/tensorflow-estimator_2.15.0.bb b/recipes-framework/tensorflow/tensorflow-estimator_2.15.0.bb
-index 012ecc8..e9aee35 100644
---- a/recipes-framework/tensorflow/tensorflow-estimator_2.15.0.bb
-+++ b/recipes-framework/tensorflow/tensorflow-estimator_2.15.0.bb
-@@ -7,7 +7,6 @@ SRC_URI = "git://github.com/tensorflow/estimator.git;branch=r2.15;protocol=https
-            file://0001-customize-for-yocto.patch \
-           "
- SRCREV = "b5f91f8e4113396f0a5f090d6a52d676271caf48"
--S = "${WORKDIR}/git"
- 
- inherit python3native bazel
- 
-diff --git a/recipes-framework/tensorflow/tensorflow.inc b/recipes-framework/tensorflow/tensorflow.inc
-index be1ed11..8287032 100644
---- a/recipes-framework/tensorflow/tensorflow.inc
-+++ b/recipes-framework/tensorflow/tensorflow.inc
-@@ -27,8 +27,6 @@ SRC_URI = "git://github.com/tensorflow/tensorflow.git;branch=r2.19;protocol=http
-     file://0001-do-not-patch-.so-files-for-linux.patch \
- "
- 
--S = "${WORKDIR}/git"
--
- DEPENDS += " \
-     python3 \
-     python3-requests-native \
+--000000000000e2b72f06396939ce
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
+mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Mon, Jul 7, =
+2025 at 8:41=E2=80=AFPM Scott Murray via <a href=3D"http://lists.yoctoproje=
+ct.org">lists.yoctoproject.org</a> &lt;scott.murray=3D<a href=3D"mailto:kon=
+sulko.com@lists.yoctoproject.org">konsulko.com@lists.yoctoproject.org</a>&g=
+t; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0p=
+x 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">On Fri=
+, 4 Jul 2025, Scott Murray via <a href=3D"http://lists.yoctoproject.org" re=
+l=3D"noreferrer" target=3D"_blank">lists.yoctoproject.org</a> wrote:<br>
+<br>
+&gt; Thank you for your patience, this patch series is a start on getting<b=
+r>
+&gt; master branch maintenance back in order, and allowing Marta and myself=
+<br>
+&gt; to try getting through some resource estimating for the new CI setup.<=
+br>
+&gt; The focus has been on patches that allow getting through clean builds<=
+br>
+&gt; of the majority of the build tests in the CI pipeline, which I have do=
+ne<br>
+&gt; manually for qemux86-64.=C2=A0 We will shake out any other issues as t=
+he CI<br>
+&gt; setup is tested (or reported via the list).<br>
+&gt;<br>
+&gt; Note that I did pick a few patches from the backlog on the mailing lis=
+t,<br>
+&gt; but generally not things that were not build warning or failure fixes.=
+<br>
+&gt; I did the S/UNPACKDIR changes myself, as I had started on them before<=
+br>
+&gt; any of patches were posted to the list.=C2=A0 Additionally, there are =
+3<br>
+&gt; fixes for gcc 15 issues (the libhoth patches will be sent upstream<br>
+&gt; in the next day or two).<br>
+&gt;<br>
+&gt; I would ask that you give us a few days before sending (or resending)<=
+br>
+&gt; patches with any expectation of immediate turnaround.=C2=A0 There is s=
+till<br>
+&gt; quite a bit of work to recreate a working CI setup, as well as ensurin=
+g<br>
+&gt; walnascar and scarthgap branches are in a testable state.=C2=A0 This s=
+eries<br>
+&gt; has been pushed to master-next, and while I&#39;m aware of the US long=
+<br>
+&gt; weekend holiday, the goal is to merge these changes to master by Monda=
+y<br>
+&gt; afternoon at the latest, as I have some conference travel next week, a=
+nd<br>
+&gt; we do need to unblock folks testing against master branch.<br>
+<br>
+I have gone ahead and merged these changes into master branch, please<br>
+let us know if you still have any parse/build issues.=C2=A0 As I mentioned<=
+br>
+above, I am travelling this week, so turnaround on patches sent to the<br>
+list will be affected by that and our focus being on getting CI working.<br=
+>
+<br></blockquote><div><br></div><div>Hello Scott,</div><div>Thanks for that=
+. For information (for others, mostly), there are still issues in</div><div=
+>CI after those changes. We&#39;re on that (host contamination reported in =
+QA).</div><div><br></div><div>As Scott says, until we have CI up and runnin=
+g again, the patch flow might</div><div>be slow to happen.</div><div><br></=
+div><div>Thanks to all who have shown support and/or sent patches to help!<=
+/div><div><br></div><div>Kind regards,</div><div>Marta <br></div></div></di=
+v>
+
+--000000000000e2b72f06396939ce--
 
