@@ -1,103 +1,122 @@
-Return-Path: <mhalstead@linuxfoundation.org>
+Return-Path: <richard.purdie@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77138C83F1B
-	for <webhook@archiver.kernel.org>; Wed, 16 Jul 2025 18:45:28 +0000 (UTC)
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
- by mx.groups.io with SMTP id smtpd.web11.30246.1752691520851900803
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6F45C83F22
+	for <webhook@archiver.kernel.org>; Wed, 16 Jul 2025 19:43:38 +0000 (UTC)
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+ by mx.groups.io with SMTP id smtpd.web10.31741.1752695009920704826
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 16 Jul 2025 11:45:20 -0700
+ Wed, 16 Jul 2025 12:43:30 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=HEUAbxoA;
- spf=pass (domain: linuxfoundation.org, ip: 209.85.215.170, mailfrom: mhalstead@linuxfoundation.org)
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b390d09e957so122403a12.1
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 16 Jul 2025 11:45:20 -0700 (PDT)
+ dkim=pass header.i=@linuxfoundation.org header.s=google header.b=Ud2vr1rv;
+ spf=pass (domain: linuxfoundation.org, ip: 209.85.221.43, mailfrom: richard.purdie@linuxfoundation.org)
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a531fcaa05so86556f8f.3
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 16 Jul 2025 12:43:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1752691519; x=1753296319; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5Ro6nBxNvqyPgV4ceKQQCUA5/t/l2baqIynddfsE9yg=;
-        b=HEUAbxoAlIHNp9K785NDDYsXFwpU7SBMnfsfvZ5RCbOxxNSG+qotUIg4p0GeSZMcfy
-         fPDgW5hxm6CQahV1FGwgOjIVEgCc2B4qMCt50/yN1vqSkVvXEMYIKKzPP+u76bJ2EU9S
-         LdTbkVAu7gpjBUSyHGjP3Gy/kPF9wKjE7176I=
+        d=linuxfoundation.org; s=google; t=1752695007; x=1753299807; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LVgOlpUuhNa/yqNQ6s+iXBOSc3LPlcCg6l+UoipEmXM=;
+        b=Ud2vr1rv9RiI/3+shz93uZ6lZrsxrgfrP9pREEKnn1MeOR4AXwRLhqT/kxE2tRUAx/
+         vb3JtCsYa/OCsU1fW4zll9zGoTjepvJCI+DcOGjlo0prDptn00ECViDNaPXmZMzo4Ep+
+         Uxkpw55awJSKuYP9niYe+oicZ5QGESX2n4QaA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752691519; x=1753296319;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5Ro6nBxNvqyPgV4ceKQQCUA5/t/l2baqIynddfsE9yg=;
-        b=GVLK6XvtX7O2sgfaXVSRw6P2gn4xF5n5VieoF4H3pznK/Sq9Nl48TiUpn4rmFdp8ke
-         HtF80s35vipEWZsYCem76OWKNXOE1aQe3GBrcZd7QmWrc3jGI9FcI7JJAsQPNe4G9VII
-         se/+d7zdVslbGXrNcrOkFO1vjTuGX7QTG4QH3zYo5i+NNbobyou0ri71EYpz6Aui0qx3
-         dal/CFUoKhTkw5aVWJnHdhhnBXcVkDz5ttAMbmg8ZfrADKhM2VIl9ZCdfneYI1ykRw0X
-         VyglnigqnOtaabeaj3qtUkxehvPFUmZ4WdtAXa8uCQTgQu2sWD4rLZ7aclrK9ap9dLvJ
-         VplQ==
-X-Gm-Message-State: AOJu0YwiybhaM6AJzdFS1Ri7J5R6cwfHvuI+N2wJpSou05vCAa4rnf8S
-	rmYNu7xf7XOGqLO78kwWQUUS0dbm306v4yzyC81KNSvF11LpoTwy58C3ffydajxgrjGhvC09waD
-	oSDKx
-X-Gm-Gg: ASbGncsb2jAv7n5ybFON3SiFM7+UXl07gRQqCuByz6tbxKyMqxUgT68vXsHtmANHgL7
-	DaFOwzM7YkUgzbBm9o53OxlBpOMPd+6jLkTdL9/UauFOrqVraKyL+82eqWTTuUkEA3rSVBH/oKu
-	dNXE/GOI0Zep7hIOfKbpAypBF21WMFSf982dBafyXPNcKEPBNU12fcKPVpxk+sd7ueZZ8Oi2fz7
-	6vSC/L4JBftGG6SgJZMHHU7ZdLQN6Aghbz/56EwQIrMEEMVmVHuHGxl+BLFQeXVkGSt60hpIH2r
-	oS9xAs+jIA006GP18znTbJwgPu7hdFFjLuE592honGhBh5tj5HhNq7CDd1Dsz57qzrvIPlo0KNK
-	Si8WGKKMZjWAOTPrd6OjXNOwNxuuWan8=
-X-Google-Smtp-Source: AGHT+IH1WhV31O03k1MoVsxVvU3y1l3XVh3cTkfcwdDNcrqjVi2lyTLjTlxKrEQPmmNF4/tnomXPrg==
-X-Received: by 2002:a17:90b:2b4c:b0:311:eb85:96ea with SMTP id 98e67ed59e1d1-31c9f3c5719mr5315419a91.9.1752691518971;
-        Wed, 16 Jul 2025 11:45:18 -0700 (PDT)
-Received: from yoctolap.taild15c8.ts.net ([2001:470:b:487::627])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31caf825ee4sm7152a91.41.2025.07.16.11.45.17
+        d=1e100.net; s=20230601; t=1752695007; x=1753299807;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LVgOlpUuhNa/yqNQ6s+iXBOSc3LPlcCg6l+UoipEmXM=;
+        b=XOAGu+i77Y1MeApwLUxqzodKR5xoxeQAmfKt0QVf4vFfpnj5LQ72tD0reZFljbAzzn
+         WsoePcuopZ6lnTM/hGL+uUzaRVGLyEKonwR5bN6Mo6u4OAMsPp5Im04sZXCfNDdEH8c1
+         slnTxrjz1zt09Mc5GAnnkI1nvIZEp5wK9SvTX91L4Fw6DWA5hm/5oonhvTTlPRCm3XL+
+         b4r2XJYNZwk+9n7RNhrDLTvGP7Mpjp0B/QD/R6O7wMiOZpkQNAr3lx6dEqUWFfqWhnMK
+         5D792DQ7y6BYaiH/F7kCH1NYjf3g09ZpKIQq00PwWXKEwt1XX7QYQVUvIyRc5+0ly7GV
+         8MPw==
+X-Gm-Message-State: AOJu0Yyid7QM8qYD56NRHIhNfZpz1Gay+9VcB3cQ8c8uIl7H5sxbxeke
+	UYjHpZLbff20BiUHxrwmgQUX0u/PbEqXRhkd6q1v+7wgl3njx0cOxt1k7C2Ij+Qoz7zgDRf77/n
+	rt9Um
+X-Gm-Gg: ASbGncsZJnQ3nSwv+7qDAb/0Z9lDPHQv9Q3g/GTtdn2o9z1kNZXjU7zY+gD3Eg5coO0
+	Kf6q9DByIE//b+RwaKjUOUPd5b6oF9A2haYCHxgkq37tLVCKIuM/YtEwa7CLr6sM63gtRlD97pu
+	ze0ghNQZ57+ft49sfSPs4+BXIAGtzkDPabwqrQmLK7WX8nrNibnef8/mSHKM16HG48gq5qJ2wjT
+	8AnDZm/IAYfSEYM3QU/SkHVtTfgDhBCKabEA1q04eVbiGh7CG50dKn1QiU29DxeDpaeSZOm320m
+	QJHSzpuSEj5FeajfcpMAHeOp/+1dfm6HxBYKOLsR0mqyZjftEBDWAaXsq8cjs0CCalS6yuRzpmd
+	fZcalTmAKw/LZDVtEgky++ONlEzHzb+LBMgxE2foD+eGn6tugfwQ=
+X-Google-Smtp-Source: AGHT+IE50Z7hagFEozTKT3Nwhfs5s7qbdAUASUa0nPCNv5LmWNQqCXJoU542bHbxKHooA27P4TDGiQ==
+X-Received: by 2002:a05:6000:4406:b0:3a5:3b93:be4b with SMTP id ffacd0b85a97d-3b60e4d4d6dmr2497374f8f.25.1752695007076;
+        Wed, 16 Jul 2025 12:43:27 -0700 (PDT)
+Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:22ad:92e1:8848:8bb0])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e57200csm30371895e9.0.2025.07.16.12.43.26
+        for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 11:45:18 -0700 (PDT)
-From: Michael Halstead <mhalstead@linuxfoundation.org>
+        Wed, 16 Jul 2025 12:43:26 -0700 (PDT)
+From: Richard Purdie <richard.purdie@linuxfoundation.org>
 To: yocto-patches@lists.yoctoproject.org
-Cc: richard.purdie@linuxfoundation.org,
-	Michael Halstead <mhalstead@linuxfoundation.org>
-Subject: [yocto-autobuilder2] schedulers: remove obsolete ourTriggerable class
-Date: Wed, 16 Jul 2025 11:45:03 -0700
-Message-ID: <20250716184503.187037-1-mhalstead@linuxfoundation.org>
-X-Mailer: git-send-email 2.50.1
+Subject: [yocto-autobuilder-helper] [PATCH] config.json: Remove meta-clang testing
+Date: Wed, 16 Jul 2025 20:43:25 +0100
+Message-ID: <20250716194325.115819-1-richard.purdie@linuxfoundation.org>
+X-Mailer: git-send-email 2.48.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 16 Jul 2025 18:45:28 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1805
+ <yocto-patches@lists.yoctoproject.org>; Wed, 16 Jul 2025 19:43:38 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1806
 
-https://github.com/buildbot/buildbot/commit/c8393c1b0df442d7603fb2212c11a50d163bfdc5
-eliminates the need for ourTriggerable reconfigure safe class.
+The key pieces moved into core so this no longer makes sense.
 
-Signed-off-by: Michael Halstead <mhalstead@linuxfoundation.org>
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
 ---
- schedulers.py | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+ config.json | 24 +-----------------------
+ 1 file changed, 1 insertion(+), 23 deletions(-)
 
-diff --git a/schedulers.py b/schedulers.py
-index 11e42a5..309cb19 100644
---- a/schedulers.py
-+++ b/schedulers.py
-@@ -457,17 +457,11 @@ def builderNamesFromConfigFull(props):
- 
-     return builders
- 
--# Upstream Triggerable class will rasise NotImplementedError() which will mean triggers abort upon reconfig
--# Hack to intercept and ignore this, we'd rather they just survive in our case.
--class ourTriggerable(sched.Triggerable):
--    def reconfigService(self, name=None, *args, **kwargs):
--        return
--
- # nightly builder triggers various other builders
--wait_quick = ourTriggerable(name="wait-quick",
-+wait_quick = sched.Triggerable(name="wait-quick",
-                          builderNames=builderNamesFromConfigQuick)
- schedulers.append(wait_quick)
--wait_full = ourTriggerable(name="wait-full",
-+wait_full = sched.Triggerable(name="wait-full",
-                          builderNames=builderNamesFromConfigFull)
- schedulers.append(wait_full)
- 
--- 
-2.50.1
-
+diff --git a/config.json b/config.json
+index f62d294..4d27e29 100644
+--- a/config.json
++++ b/config.json
+@@ -682,24 +682,6 @@
+                 "BBTARGETS": "aws-iot-device-sdk-cpp-v2"
+             }
+         },
+-        "meta-clang" : {
+-            "NEEDREPOS" : ["poky", "meta-clang"],
+-            "extravars" : [
+-                "TOOLCHAIN = 'clang'"
+-            ],
+-            "step1": {
+-                "shortname": "Build for qemux86-64",
+-                "MACHINE": "qemux86-64",
+-                "BBTARGETS": "core-image-sato-sdk",
+-                "SANITYTARGETS" : "core-image-sato-sdk:do_testimage"
+-            },
+-            "step2": {
+-                "shortname": "Build for qemuarm64",
+-                "MACHINE": "qemuarm64",
+-                "BBTARGETS": "core-image-sato-sdk",
+-                "SANITYTARGETS" : "core-image-sato-sdk:do_testimage"
+-            }
+-        },
+        "bringup" : {
+             "SSTATEDIR" : ["SSTATE_DIR ?= '${HELPERBUILDDIR}/sstate'"],
+             "TEMPLATE" : "bringup"
+@@ -1219,7 +1201,7 @@
+             }
+         },
+         "check-layer-nightly" : {
+-            "NEEDREPOS" : ["poky", "meta-agl", "meta-arm", "meta-aws", "meta-intel", "meta-ti", "meta-openembedded", "meta-virtualization", "meta-clang", "meta-exein", "meta-qcom"],
++            "NEEDREPOS" : ["poky", "meta-agl", "meta-arm", "meta-aws", "meta-intel", "meta-ti", "meta-openembedded", "meta-virtualization", "meta-exein", "meta-qcom"],
+             "step1" : {
+                 "shortname" : "Test meta-agl YP Compatibility",
+                 "EXTRACMDS" : ["yocto-check-layer-wrapper ../meta-agl/meta-agl-core ../meta-agl/meta-netboot --dependency ../meta-openembedded/meta-oe ../meta-openembedded/meta-networking ../meta-openembedded/meta-python --no-auto-dependency"]
+@@ -1249,10 +1231,6 @@
+                 "shortname" : "Test meta-virtualization YP Compatibility",
+                 "EXTRACMDS" : ["yocto-check-layer-wrapper ../meta-virtualization --dependency ../meta-openembedded/meta-oe ../meta-openembedded/meta-networking ../meta-openembedded/meta-python ../meta-openembedded/meta-filesystems --no-auto-dependency"]
+             },
+-            "step8" : {
+-                "shortname" : "Test meta-clang YP Compatibility",
+-                "EXTRACMDS" : ["yocto-check-layer-wrapper ../meta-clang --no-auto-dependency"]
+-            },
+             "step9" : {
+                 "shortname" : "Test meta-exein YP Compatibility",
+                 "extravars" : [
 
