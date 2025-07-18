@@ -1,269 +1,139 @@
-Return-Path: <scott.murray@konsulko.com>
+Return-Path: <peter.marko@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C6ADC83F17
-	for <webhook@archiver.kernel.org>; Fri, 18 Jul 2025 14:11:23 +0000 (UTC)
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
- by mx.groups.io with SMTP id smtpd.web11.22067.1752847873682369345
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E8CDC83F1A
+	for <webhook@archiver.kernel.org>; Fri, 18 Jul 2025 16:29:34 +0000 (UTC)
+Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
+ by mx.groups.io with SMTP id smtpd.web11.2926.1752856165671832895
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 18 Jul 2025 07:11:13 -0700
+ Fri, 18 Jul 2025 09:29:27 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=AH7pJlHI;
- spf=pass (domain: konsulko.com, ip: 209.85.222.174, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7e32c95775aso206337185a.3
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 18 Jul 2025 07:11:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1752847872; x=1753452672; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JyfwPjr4aiDBcR7zyq8OiX3qeV3uJUV0T463+JFxXtk=;
-        b=AH7pJlHIsG9KvUoO4YJBBBqokriDKigYVi7XOXcWRELmTCh+1YadLI4220U/tS+WQn
-         SPnMjUxlc4um0T67P5u7LZGfczwQ7S6WEqC0aMekRfAlwZnGNbkEqQ3rOz9UJlCDaKXA
-         yA6c8m9i5HSK8TTo0cxKaBhWgUBHGEPmtMWz8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752847872; x=1753452672;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JyfwPjr4aiDBcR7zyq8OiX3qeV3uJUV0T463+JFxXtk=;
-        b=iJTawrNYB2+uFnaUjTjgaWKjGKr3MKr6kS1VQojaVeyVeFxCjlXoJcNapehGxVszBa
-         xbMpyZN5O5Rx02vyLxJQQvNPydbUFZz2MLUdUxLYdDATK9Ztwzc2zXGjl6FtkOqalHxs
-         DCdlGPml6HIUS3bh9awb42c5RgB4Tv3jXNzwyWwFw7rrPZdP3ZM4cma1UaoZn9uH5OMj
-         g1xwviDnOxKwSfoMADkIuefluDsd2Q4uWWuQu+H87NzFr8RVVLQseU0RXloGTc0LN2TZ
-         2iwQp/m0eiSNHTU8LXc1FbCTUgFlSJSvsiWN74UlJGhms9Ign6WNUTksB1OIT2EvVb7v
-         4hmg==
-X-Gm-Message-State: AOJu0YxJb8Bowy0nKCh+g7XZPLsFXEJXaZds5Apv5wnF/NiK38IEZ3kO
-	j+Ade4JKGjC/tuHTEX6O957n0DzIuDLIu77Ddk+vN90MgGQ/DnSrMnE0EIZgHn6AZUkA8POCUXC
-	FMgIt
-X-Gm-Gg: ASbGncuxw82hF6epWTjiO+VOilVFdhIzr8/sJ68APchv9jr6239fxyS/onhjnsu62jj
-	UsiuZQZElT7Iq4cLFuYpHIKxvSZQ+EUdIyjdTJpL2ClX0+H6ELBdu3JHifSTiWYQy6NgIUlQh5a
-	AXW5Yg8+ae5KyrXPoQetkexC0O+wyZwAuCJ4JYeTQfMnymeJyQctlJevNCBZyXWKbI0+1r2QuWJ
-	ggjdLc2WVYAkHi7BVg+bJy7frqSOrr79W/+dZ4V2T6+juLNuIiAjltMyDfsk327hmUzv1ncrx8a
-	kyUaO6WYAhP2WZ0r8pQvZnq3o8pBlES91WuFvHsnqB7zmjQyCUQ2OMhjXDGAL2VcFqWIASCTkbj
-	hankihb42APfKd+Bx8FjWYYQlnB7o1cvi3VSv2aQ+l7tvE9EdYdSZtxnJvQuG0+bmFS6JySCgHw
-	==
-X-Google-Smtp-Source: AGHT+IF3LI6wrq4yAK5ghkAVgOGhpO0HSQsfrNcDIJ2hXYcbfVwGxPF9YEfGHsmv5cyOq77pEAgMNg==
-X-Received: by 2002:a05:620a:7109:b0:7e3:4b99:9e7e with SMTP id af79cd13be357-7e34b99a4ebmr1249544285a.25.1752847872290;
-        Fri, 18 Jul 2025 07:11:12 -0700 (PDT)
-Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e356a0732dsm92368785a.0.2025.07.18.07.11.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jul 2025 07:11:12 -0700 (PDT)
-From: Scott Murray <scott.murray@konsulko.com>
+ dkim=pass header.i=peter.marko@siemens.com header.s=fm1 header.b=FcILFyw5;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.226, mailfrom: fm-256628-20250718162921ed52da7239e7867082-6wf4oi@rts-flowmailer.siemens.com)
+Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 20250718162921ed52da7239e7867082
+        for <yocto-patches@lists.yoctoproject.org>;
+        Fri, 18 Jul 2025 18:29:22 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=peter.marko@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=ex6U2YpsKSiCWYVv7oH7LPVbJPq7wwNR61SqU+qSgrc=;
+ b=FcILFyw5EgVO5qvbWaz97HnibC+S1OW98M9zj4oFQvHKqIMzHICKvrGrfzCre852QrJUkO
+ upenvKRUZaO/xetihVUjbk9VN+VR8cdZ3VxZbjkCKMr2BV8iUkxSJETm09JRmR2WBF2EMrGt
+ PTu8SJZRTWbbDWTbVUdExh4T/gb7Pze33FOH8obbYQP5lvCXxGgrgMlwiEx+5Qt4k8pLr83V
+ pJnBzlfYNk8MXsq9zyrJYUk2UqV3Ek0ZV1u+mg3vEuRlSXYwWFTcCYv6Cyk3iyqiTFnJUmfJ
+ rb8u2npYlwpEm5STC4zrC032dAQG94bKdBz4tMsR4v3lIpcbYYjKmHEw==;
+From: Peter Marko <peter.marko@siemens.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: marta.rybczynska@ygreky.com
-Subject: [meta-security][PATCH 4/4] samhain: Adapt test output to Automake format for ptest compatibility
-Date: Fri, 18 Jul 2025 10:10:59 -0400
-Message-ID: <06bd60600e8db1b843cf5cc0f074a11eac7e9a80.1752846514.git.scott.murray@konsulko.com>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <cover.1752846514.git.scott.murray@konsulko.com>
-References: <cover.1752846514.git.scott.murray@konsulko.com>
+Cc: jose.quaresma@foundries.io,
+	Peter Marko <peter.marko@siemens.com>
+Subject: [meta-lts-mixins][kirkstone/go][PATCH] go: upgrade 1.24.4 -> 1.24.5
+Date: Fri, 18 Jul 2025 18:28:35 +0200
+Message-Id: <20250718162835.8822-1-peter.marko@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-256628:519-21489:flowmailer
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 18 Jul 2025 14:11:23 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1815
+ <yocto-patches@lists.yoctoproject.org>; Fri, 18 Jul 2025 16:29:34 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1816
 
-From: Haixiao Yan <haixiao.yan.cn@windriver.com>
+From: Peter Marko <peter.marko@siemens.com>
 
-Convert CuTest output to follow Automake-compatible format
-(PASS:/FAIL:) so that ptest-runner can correctly parse and
-report test results.
+Upgrade to latest 1.24.x release [1]:
 
-root@qemux86-64:~# ptest-runner samhain-standalone -t 3600
-START: ptest-runner
-2025-07-06T09:38
-BEGIN: /usr/lib64/samhain-standalone/ptest
-PASS: Test_quote_string_ok
-PASS: Test_unquote_string_ok
-PASS: Test_csv_escape_ok
-PASS: Test_tiger
-PASS: Test_tiger_file
-PASS: Test_tiger_file_with_length
-PASS: Test_sh_tools_safe_name_01
-PASS: Test_sh_tools_safe_name_02
-PASS: Test_sh_tools_safe_name_03
-PASS: Test_sh_tools_safe_name_04
-PASS: Test_sh_tools_safe_name_05
-PASS: Test_sh_tools_safe_name_06
-PASS: Test_sh_tools_safe_name_07
-PASS: Test_is_numeric_01
-PASS: Test_dnmalloc
-PASS: Test_sh_unix_lookup_page
-PASS: Test_sl_strlcpy
-PASS: Test_sl_strlcat
-PASS: Test_sh_util_acl_compact
-PASS: Test_sh_util_strdup_ok
-PASS: Test_sh_util_strconcat_ok
-PASS: Test_sh_util_base64_enc_ok
-PASS: Test_sh_util_dirname_ok
-PASS: Test_sh_util_basename_ok
-PASS: Test_sh_util_utf8_ok
-PASS: Test_sh_util_obscure_ok
-PASS: Test_sl_stale
-PASS: Test_sl_snprintf
-PASS: Test_sl_ts_strncmp
-PASS: Test_sl_strcasecmp
-PASS: Test_zAVLTree
-PASS: Test_sha256
-PASS: Test_entropy
-PASS: Test_fifo
-PASS: Test_file_lists
-PASS: Test_file_dequote
-PASS: Test_uuid
-PASS: Test_ignore_ok
-PASS: Test_inotify
-PASS: Test_ipvx
-PASS: Test_login
-PASS: Test_login
-PASS: Test_portcheck_lists
-PASS: Test_processcheck_watchlist_ok
-PASS: Test_processcheck_listhandle_ok
-PASS: Test_restrict
-PASS: Test_cmdlist
-PASS: Test_srp
-PASS: Test_string
+$ git --no-pager log --oneline go1.24.4..go1.24.5
+9d828e80fa (tag: go1.24.5) [release-branch.go1.24] go1.24.5
+825eeee3f7 [release-branch.go1.24] cmd/go: disable support for multiple vcs in one module
+dbf30d88f3 [release-branch.go1.24] cmd/link: permit a larger size BSS reference to a smaller DATA symbol
+6b51660c8c [release-branch.go1.24] runtime: set mspan limit field early and eagerly
+cc604130c8 [release-branch.go1.24] runtime: prevent mutual deadlock between GC stopTheWorld and suspendG
+21b488bb60 [release-branch.go1.24] runtime: handle system goroutines later in goroutine profiling
+e038690847 [release-branch.go1.24] cmd/go/internal/fips140: ignore GOEXPERIMENT on error
+1575127ef8 [release-branch.go1.24] runtime: add missing unlock in sysReserveAlignedSbrk
+7d08a16fba [release-branch.go1.24] cmd/compile/internal/ssa: fix PPC64 merging of (AND (S[RL]Dconst ...)
+5f2cbe1f64 [release-branch.go1.24] cmd/compile: do nil check before calling duff functions, on arm64 and amd64
 
-DURATION: 0
-END: /usr/lib64/samhain-standalone/ptest
-2025-07-06T09:38
-STOP: ptest-runner
-TOTAL: 1 FAIL: 0
-root@qemux86-64:~#
+Fixes CVE-2025-4674 [2].
 
-Signed-off-by: Haixiao Yan <haixiao.yan.cn@windriver.com>
-Signed-off-by: Scott Murray <scott.murray@konsulko.com>
+[1] https://github.com/golang/go/compare/go1.24.4...go1.24.5
+[2] https://groups.google.com/g/golang-announce/c/gTNJnDXmn34
+
+(From OE-Core rev: a3cc5038ea10a4857627e6f4de25bdc43023a349)
+
+Signed-off-by: Peter Marko <peter.marko@siemens.com>
+Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
 ---
- ...t-output-to-match-Automake-standards.patch | 102 ++++++++++++++++++
- recipes-ids/samhain/samhain.inc               |   1 +
- 2 files changed, 103 insertions(+)
- create mode 100644 recipes-ids/samhain/files/0001-Format-test-output-to-match-Automake-standards.patch
+ recipes-devtools/go/{go-1.24.4.inc => go-1.24.5.inc}        | 2 +-
+ ...o-binary-native_1.24.4.bb => go-binary-native_1.24.5.bb} | 6 +++---
+ ...cross-canadian_1.24.4.bb => go-cross-canadian_1.24.5.bb} | 0
+ .../go/{go-cross_1.24.4.bb => go-cross_1.24.5.bb}           | 0
+ .../go/{go-crosssdk_1.24.4.bb => go-crosssdk_1.24.5.bb}     | 0
+ .../go/{go-runtime_1.24.4.bb => go-runtime_1.24.5.bb}       | 0
+ recipes-devtools/go/{go_1.24.4.bb => go_1.24.5.bb}          | 0
+ 7 files changed, 4 insertions(+), 4 deletions(-)
+ rename recipes-devtools/go/{go-1.24.4.inc => go-1.24.5.inc} (91%)
+ rename recipes-devtools/go/{go-binary-native_1.24.4.bb => go-binary-native_1.24.5.bb} (79%)
+ rename recipes-devtools/go/{go-cross-canadian_1.24.4.bb => go-cross-canadian_1.24.5.bb} (100%)
+ rename recipes-devtools/go/{go-cross_1.24.4.bb => go-cross_1.24.5.bb} (100%)
+ rename recipes-devtools/go/{go-crosssdk_1.24.4.bb => go-crosssdk_1.24.5.bb} (100%)
+ rename recipes-devtools/go/{go-runtime_1.24.4.bb => go-runtime_1.24.5.bb} (100%)
+ rename recipes-devtools/go/{go_1.24.4.bb => go_1.24.5.bb} (100%)
 
-diff --git a/recipes-ids/samhain/files/0001-Format-test-output-to-match-Automake-standards.patch b/recipes-ids/samhain/files/0001-Format-test-output-to-match-Automake-standards.patch
-new file mode 100644
-index 0000000..eccd242
---- /dev/null
-+++ b/recipes-ids/samhain/files/0001-Format-test-output-to-match-Automake-standards.patch
-@@ -0,0 +1,102 @@
-+From 065813e5ec274942c4e8803d813ae863fb17313f Mon Sep 17 00:00:00 2001
-+From: Haixiao Yan <haixiao.yan.cn@windriver.com>
-+Date: Sun, 6 Jul 2025 14:34:08 +0800
-+Subject: [PATCH] Format test output to match Automake standards
-+
-+Upstream-Status: Pending
-+
-+Signed-off-by: Haixiao Yan <haixiao.yan.cn@windriver.com>
-+---
-+ src/CuTest.c      | 63 +++++++++++++++--------------------------------
-+ src/make-tests.sh |  1 -
-+ 2 files changed, 20 insertions(+), 44 deletions(-)
-+
-+diff --git a/src/CuTest.c b/src/CuTest.c
-+index c1884daedbd8..44007fdb97ff 100644
-+--- a/src/CuTest.c
-++++ b/src/CuTest.c
-+@@ -302,49 +302,26 @@ void CuSuiteRun(CuSuite* testSuite)
-+ 	}
-+ }
-+ 
-+-void CuSuiteSummary(CuSuite* testSuite, CuString* summary)
-+-{
-+-	int i;
-+-	for (i = 0 ; i < testSuite->count ; ++i)
-+-	{
-+-		CuTest* testCase = testSuite->list[i];
-+-		CuStringAppend(summary, testCase->failed ? "F" : ".");
-+-	}
-+-	CuStringAppend(summary, "\n\n");
-+-}
-+-
-+ void CuSuiteDetails(CuSuite* testSuite, CuString* details)
-+ {
-+-	int i;
-+-	int failCount = 0;
-+-
-+-	if (testSuite->failCount == 0)
-+-	{
-+-		int passCount = testSuite->count - testSuite->failCount;
-+-		const char* testWord = passCount == 1 ? "test" : "tests";
-+-		CuStringAppendFormat(details, "OK (%d %s)\n", passCount, testWord);
-+-	}
-+-	else
-+-	{
-+-		if (testSuite->failCount == 1)
-+-			CuStringAppend(details, "There was 1 failure:\n");
-+-		else
-+-			CuStringAppendFormat(details, "There were %d failures:\n", testSuite->failCount);
-+-
-+-		for (i = 0 ; i < testSuite->count ; ++i)
-+-		{
-+-			CuTest* testCase = testSuite->list[i];
-+-			if (testCase->failed)
-+-			{
-+-				failCount++;
-+-				CuStringAppendFormat(details, "%d) %s: %s\n",
-+-					failCount, testCase->name, testCase->message);
-+-			}
-+-		}
-+-		CuStringAppend(details, "\n!!!FAILURES!!!\n");
-+-
-+-		CuStringAppendFormat(details, "Runs: %d ",   testSuite->count);
-+-		CuStringAppendFormat(details, "Passes: %d ", testSuite->count - testSuite->failCount);
-+-		CuStringAppendFormat(details, "Fails: %d\n",  testSuite->failCount);
-+-	}
-++    int i;
-++
-++    for (i = 0; i < testSuite->count; ++i)
-++    {
-++        CuTest* testCase = testSuite->list[i];
-++        if (testCase->failed)
-++        {
-++            CuStringAppendFormat(details, "FAIL: %s\n", testCase->name);
-++        }
-++        else
-++        {
-++            CuStringAppendFormat(details, "PASS: %s\n", testCase->name);
-++        }
-++    }
-++
-++    CuStringAppend(details, "\n");
-++    CuStringAppendFormat(details, "# TOTAL: %d\n", testSuite->count);
-++    CuStringAppendFormat(details, "# PASS:  %d\n", testSuite->count - testSuite->failCount);
-++    CuStringAppendFormat(details, "# FAIL:  %d\n", testSuite->failCount);
-+ }
-++
-+diff --git a/src/make-tests.sh b/src/make-tests.sh
-+index b6cf814e7030..01399ca75775 100755
-+--- a/src/make-tests.sh
-++++ b/src/make-tests.sh
-+@@ -45,7 +45,6 @@ cat $FILES | grep '^void Test' |
-+ echo \
-+ '
-+     CuSuiteRun(suite);
-+-    CuSuiteSummary(suite, output);
-+     CuSuiteDetails(suite, output);
-+     if (suite->failCount > 0)
-+       fprintf(stderr, "%s%c", output->buffer, 0x0A);
-+-- 
-+2.34.1
-+
-diff --git a/recipes-ids/samhain/samhain.inc b/recipes-ids/samhain/samhain.inc
-index 6b8d30e..fc4e423 100644
---- a/recipes-ids/samhain/samhain.inc
-+++ b/recipes-ids/samhain/samhain.inc
-@@ -19,6 +19,7 @@ SRC_URI = "https://la-samhna.de/archive/samhain_signed-${PV}.tar.gz \
-            file://0008-Add-LDFLAGS-variable-for-compiling-samhain_setpwd.patch \
-            file://0009-fix-build-with-new-version-attr.patch \
-            file://0010-Fix-initializer-element-is-not-constant.patch \
-+           file://0001-Format-test-output-to-match-Automake-standards.patch \
-            "
+diff --git a/recipes-devtools/go/go-1.24.4.inc b/recipes-devtools/go/go-1.24.5.inc
+similarity index 91%
+rename from recipes-devtools/go/go-1.24.4.inc
+rename to recipes-devtools/go/go-1.24.5.inc
+index eff3f2f..fae0d3f 100644
+--- a/recipes-devtools/go/go-1.24.4.inc
++++ b/recipes-devtools/go/go-1.24.5.inc
+@@ -17,4 +17,4 @@ SRC_URI += "\
+     file://0010-cmd-go-clear-GOROOT-for-func-ldShared-when-trimpath-.patch \
+     file://6d265b008e3d106b2706645e5a88cd8e2fb98953.patch \
+ "
+-SRC_URI[main.sha256sum] = "5a86a83a31f9fa81490b8c5420ac384fd3d95a3e71fba665c7b3f95d1dfef2b4"
++SRC_URI[main.sha256sum] = "74fdb09f2352e2b25b7943e56836c9b47363d28dec1c8b56c4a9570f30b8f59f"
+diff --git a/recipes-devtools/go/go-binary-native_1.24.4.bb b/recipes-devtools/go/go-binary-native_1.24.5.bb
+similarity index 79%
+rename from recipes-devtools/go/go-binary-native_1.24.4.bb
+rename to recipes-devtools/go/go-binary-native_1.24.5.bb
+index d1f8fc6..5002686 100644
+--- a/recipes-devtools/go/go-binary-native_1.24.4.bb
++++ b/recipes-devtools/go/go-binary-native_1.24.5.bb
+@@ -9,9 +9,9 @@ PROVIDES = "go-native"
  
- SRC_URI[sha256sum] = "0b5d3534fd60ecf45dfd79bd415e81f7a56eba7f1755771735e204f334033578"
--- 
-2.50.0
-
+ # Checksums available at https://go.dev/dl/
+ SRC_URI = "https://dl.google.com/go/go${PV}.${BUILD_GOOS}-${BUILD_GOARCH}.tar.gz;name=go_${BUILD_GOTUPLE}"
+-SRC_URI[go_linux_amd64.sha256sum] = "77e5da33bb72aeaef1ba4418b6fe511bc4d041873cbf82e5aa6318740df98717"
+-SRC_URI[go_linux_arm64.sha256sum] = "d5501ee5aca0f258d5fe9bfaed401958445014495dc115f202d43d5210b45241"
+-SRC_URI[go_linux_ppc64le.sha256sum] = "9ca4afef813a2578c23843b640ae0290aa54b2e3c950a6cc4c99e16a57dec2ec"
++SRC_URI[go_linux_amd64.sha256sum] = "10ad9e86233e74c0f6590fe5426895de6bf388964210eac34a6d83f38918ecdc"
++SRC_URI[go_linux_arm64.sha256sum] = "0df02e6aeb3d3c06c95ff201d575907c736d6c62cfa4b6934c11203f1d600ffa"
++SRC_URI[go_linux_ppc64le.sha256sum] = "00bdfb16d1094e78473b681d2d09d42c19c886d4dfed743853769f1665c7a552"
+ 
+ UPSTREAM_CHECK_URI = "https://golang.org/dl/"
+ UPSTREAM_CHECK_REGEX = "go(?P<pver>\d+(\.\d+)+)\.linux"
+diff --git a/recipes-devtools/go/go-cross-canadian_1.24.4.bb b/recipes-devtools/go/go-cross-canadian_1.24.5.bb
+similarity index 100%
+rename from recipes-devtools/go/go-cross-canadian_1.24.4.bb
+rename to recipes-devtools/go/go-cross-canadian_1.24.5.bb
+diff --git a/recipes-devtools/go/go-cross_1.24.4.bb b/recipes-devtools/go/go-cross_1.24.5.bb
+similarity index 100%
+rename from recipes-devtools/go/go-cross_1.24.4.bb
+rename to recipes-devtools/go/go-cross_1.24.5.bb
+diff --git a/recipes-devtools/go/go-crosssdk_1.24.4.bb b/recipes-devtools/go/go-crosssdk_1.24.5.bb
+similarity index 100%
+rename from recipes-devtools/go/go-crosssdk_1.24.4.bb
+rename to recipes-devtools/go/go-crosssdk_1.24.5.bb
+diff --git a/recipes-devtools/go/go-runtime_1.24.4.bb b/recipes-devtools/go/go-runtime_1.24.5.bb
+similarity index 100%
+rename from recipes-devtools/go/go-runtime_1.24.4.bb
+rename to recipes-devtools/go/go-runtime_1.24.5.bb
+diff --git a/recipes-devtools/go/go_1.24.4.bb b/recipes-devtools/go/go_1.24.5.bb
+similarity index 100%
+rename from recipes-devtools/go/go_1.24.4.bb
+rename to recipes-devtools/go/go_1.24.5.bb
 
