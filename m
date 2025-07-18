@@ -2,106 +2,97 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EAAEC83F34
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F7F5C83F3B
 	for <webhook@archiver.kernel.org>; Fri, 18 Jul 2025 14:11:13 +0000 (UTC)
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
- by mx.groups.io with SMTP id smtpd.web10.21828.1752847870529508892
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+ by mx.groups.io with SMTP id smtpd.web10.21830.1752847873031736043
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 18 Jul 2025 07:11:10 -0700
+ Fri, 18 Jul 2025 07:11:13 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=jxhagKPb;
- spf=pass (domain: konsulko.com, ip: 209.85.222.170, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7e2e3108841so245263585a.3
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 18 Jul 2025 07:11:10 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=Z73jBILJ;
+ spf=pass (domain: konsulko.com, ip: 209.85.222.182, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7e182e4171bso222365385a.3
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 18 Jul 2025 07:11:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1752847869; x=1753452669; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+7VoWzdTp9VrL7Ydej6wEYGRNuwYviJ/yG/8O5sZ5Jg=;
-        b=jxhagKPbaQLG8sDgLvh0ngJkh/T4zVmQ6VbVfpGQ2KbqvffG4uLvLPFxtm06lBJv97
-         ZWxs8wQezzljg03N1ODNLYi9KpaiO2rw++nE4SgEPOn3AEDllt16IjppVYII3Q4btS2M
-         Rwr/e2GmhwQ/hXyjd+pVKelXmtCDZuTjcCBAw=
+        d=konsulko.com; s=google; t=1752847872; x=1753452672; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B9M93dSYHu2d3PKS69ZDBnikVN6EHt2Yubky/6THd+Q=;
+        b=Z73jBILJbnywYqXP0d8mUIwRL6mSh36pXl1Llw6O2NyM121Gt/DkY0OILDXvL+7Gky
+         bNUZTVEqrW/3vrQrlCeLzUGyeCwuGuzp/6djb7j9v4IXu5rRsh1ai3NK0yb1TtaealfJ
+         Ju0TB41OJVHFs+fODi9Bws7ARPYmuhZx/hCPw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752847869; x=1753452669;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+7VoWzdTp9VrL7Ydej6wEYGRNuwYviJ/yG/8O5sZ5Jg=;
-        b=lbpfvnY6IoiRvndvILh4thKKWPN/f53R8mgHXJcBVpPkbGeEZPc0aE2kXnFy8GbwDi
-         vJGMYB77Ew3Wc9BPJmELlM9/P+AzUuVh8HAdxauMN24SNNdmsfybBZh/xTPvMBtie/Qp
-         /EKlXTtqqzyqpUTZYds7LEbfq3U7cBcJVa+1yHVntZieXGqUaoSs1vBSUAJXwVveRyWf
-         cWQiGJHTAZHWi4WLnUTfXllk+SmKfrAaZOIMy9PaOWfTaxrDLA4XW7YsJ3q1FDtYGJXV
-         J6rz2AO7tkMaYT213IaC4K36h6KcyrNGR65gla0zjKKNlBDDITv8x5SxwqZ2+Il1Gqr4
-         95mg==
-X-Gm-Message-State: AOJu0YyXvl7+/aZn97fzwQnZHT/dX05oTTqOKGNUtQ+rN/9fQ3de8alI
-	Lxjb273iEBEa6WN6JIIP2USOQdU3lZWQUnX64GH7lt7Ef+bEtU8/knbf19uvGv2fnDxwNItmAG+
-	fOsxQ
-X-Gm-Gg: ASbGncukiH2zCICioZhckYloBWSOB+Pxi5NBoEA2gPq0PEtMctTvX/scifpEGtZvLGD
-	oOOdcACEPRXLiOL14B6LLldCumdypK2/ATHrIqyGkBNOKw7p+r9ND9bsZBPospKPEFsbT5YqZqz
-	ZzSAZUQzQmmTH5KTQkcpOTRzTKSj1N33JgYEIeBWkyeeey13aHNnllmullOj4STyaQywJyHRbr1
-	eyfB4s9lDJZSo/6/R0Tt04RbMkXR6O2nq80PYhi7uvIFyqZZ94xSTelbJuTiNvfgZecZdLd0OOo
-	+jxEgTN1ju191xKP0LGK9b+ec+Run6EvGZQL1m399VB+xOEaaRD4+zsI1fjUMAQnm60AczUdiFl
-	GqF6W1Fdj/3SaM4YOeDEvCYQY6sHPNPdsj1HjGo5BH2LGunro4w2K/4q5YBmdsDgew2MVLyCEJP
-	YqQ6Am4XDJ
-X-Google-Smtp-Source: AGHT+IGjA23tvAZuH5Fq8qbpwfwhvPLpYMFxBPb4vtFLrVRQns+WibQzgzmRq3jADWMlr7NuQ4L20A==
-X-Received: by 2002:a05:620a:4043:b0:7d4:65ea:763e with SMTP id af79cd13be357-7e34362c57amr1351352385a.50.1752847869221;
-        Fri, 18 Jul 2025 07:11:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752847872; x=1753452672;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B9M93dSYHu2d3PKS69ZDBnikVN6EHt2Yubky/6THd+Q=;
+        b=OSIUUhh2KYsX19RWAti8E3OEOdOTTHB+YLGmi6Jk0BOFzmztd+bvAhIalL1MWARlqe
+         w/nuY3gZmTZQxo2qaIpCI/xCfF/beFI1U+WWqIC3SkrMeFol2dADjE7aT8Xel/2g9l5K
+         EM1KrqyuMC2pBYHiV8rnjP3EwNSMVM66Ksaj1mdJi6fM5i5Zg1WiF5dTK1TX3Zspem5M
+         hwiRftw5AeCXcwmwEhbKGhSkzaN1aVEmnjgtg6n4r4LwFb7FiLAhmU53IixJINa7dk2o
+         phHhsWXkxm2FQlc1fYCVCltA4P34AxOIIzkD8ST3OHnqd+obmnMy54ncyeqhDjsS6a/s
+         WeWw==
+X-Gm-Message-State: AOJu0YyU2+LvaZXawmow7JLwFNqyHzbjtiQ6M2AINZW4j9C2uInVi2bB
+	e9fLIQy+zBP+FHmxDDsIr6eJkc9iGjex6USMCjBtA4ucsI17kzSKNqOQOENLHBX+0xIwbvM70Cv
+	AsYYv
+X-Gm-Gg: ASbGncuOvzx4Jf6iYZfzJrL9IWfF1tYaXjYyTwyk9LBnqjE+X2jyx1SKIZj7YEyIGsp
+	88YZAwIOdBqJl4aNDRBRBjX4JDUy5ACuECPY0LVXBNnqU3FQhvgiVff/laqZ4opLu+OHrfyuhEN
+	jXmEz8KQsQkGjq4Gv//it2LQcHYMSnJHpkAxqtHA/6tFR3qs5KxOh5qkRx9EBF/4uz5aR1b3tfT
+	svqYgrBpDXQUEsHCDJ8FaOOq32K1PjjmUdopQtpJUVzLPAgFsms7xo7o5olH2RXDFU/QtZKwFwA
+	VpxOX53XVgPYaPfIl0N6UfcwpZ86bEsw6xJjzgyC7NsEU88UMewYAhtmQCoB6gDrr3h9nYG+JQo
+	XoFlIYEHRTbQcpHYjSdwk1VbBYO7kv4jckykywYr9EplPYXJPearBNxQubeqNzYif7izI3wMSOA
+	==
+X-Google-Smtp-Source: AGHT+IGXV/3iEWAGaxGdVO1jR7VEX1y6ZbErXG76YW+AYtYwf1z0XEwX3ObhzMxwxfOMEf3jU4z/ag==
+X-Received: by 2002:a05:6214:5681:b0:704:949e:9514 with SMTP id 6a1803df08f44-704f6a907d8mr184183566d6.19.1752847871637;
+        Fri, 18 Jul 2025 07:11:11 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e356a0732dsm92368785a.0.2025.07.18.07.11.08
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e356a0732dsm92368785a.0.2025.07.18.07.11.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jul 2025 07:11:08 -0700 (PDT)
+        Fri, 18 Jul 2025 07:11:11 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: marta.rybczynska@ygreky.com
-Subject: [meta-security][PATCH 0/4] master-next updates
-Date: Fri, 18 Jul 2025 10:10:55 -0400
-Message-ID: <cover.1752846514.git.scott.murray@konsulko.com>
+Subject: [meta-security][PATCH 3/4] suricata: fix "interface" arg in systemd service
+Date: Fri, 18 Jul 2025 10:10:58 -0400
+Message-ID: <ca34a66f82caa95b6469f2dee5be6c26bbe2cecc.1752846514.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.50.0
+In-Reply-To: <cover.1752846514.git.scott.murray@konsulko.com>
+References: <cover.1752846514.git.scott.murray@konsulko.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Fri, 18 Jul 2025 14:11:13 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1811
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1814
 
-Roll up the submissions since the first batch of whinlatter fixes,
-plus an upgrade of scap-security-guide to get it building again
-after the CMake 4.0 upgrade in oe-core.
+From: Clayton Casciato <majortomtosourcecontrol@gmail.com>
 
-A note about the ptest removal for scap-security-guide; while
-having comprehensive ptests is desirable, from the commit history
-it is clear that there was no interest in banging these ones into
-a working state in the last couple of years.  As well, ptests are
-not enabled in most of the current CI build configurations, and it
-seems clear that the build time hit would be massive in this case
-if they were.  If someone motivated to try to investigate resolving
-these issues appears, this decision can be revisited.
+Fix service startup
 
-Changes:
+https://docs.suricata.io/en/suricata-7.0.0/command-line-options.html#cmdoption-i
 
-Clayton Casciato (1):
-  suricata: fix "interface" arg in systemd service
+Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
+Signed-off-by: Scott Murray <scott.murray@konsulko.com>
+---
+ recipes-ids/suricata/files/suricata.service | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Haixiao Yan (1):
-  samhain: Adapt test output to Automake format for ptest compatibility
-
-Scott Murray (1):
-  scap-security-guide: upgrade 0.1.76 -> 0.1.77
-
-Yi Zhao (1):
-  scap-security-guide: disable ptest
-
- .../scap-security-guide/files/run-ptest       |   7 --
- ....1.76.bb => scap-security-guide_0.1.77.bb} |  54 +---------
- ...t-output-to-match-Automake-standards.patch | 102 ++++++++++++++++++
- recipes-ids/samhain/samhain.inc               |   1 +
- recipes-ids/suricata/files/suricata.service   |   2 +-
- 5 files changed, 106 insertions(+), 60 deletions(-)
- delete mode 100644 recipes-compliance/scap-security-guide/files/run-ptest
- rename recipes-compliance/scap-security-guide/{scap-security-guide_0.1.76.bb => scap-security-guide_0.1.77.bb} (50%)
- create mode 100644 recipes-ids/samhain/files/0001-Format-test-output-to-match-Automake-standards.patch
-
+diff --git a/recipes-ids/suricata/files/suricata.service b/recipes-ids/suricata/files/suricata.service
+index a99a76e..bd7010d 100644
+--- a/recipes-ids/suricata/files/suricata.service
++++ b/recipes-ids/suricata/files/suricata.service
+@@ -9,7 +9,7 @@ Documentation=https://redmine.openinfosecfoundation.org/projects/suricata/wiki
+ Type=simple
+ CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_RAW
+ RestrictAddressFamilies=
+-ExecStart=/usr/bin/suricata -c /etc/suricata/suricata.yaml eth0
++ExecStart=/usr/bin/suricata -c /etc/suricata/suricata.yaml -i eth0
+ ExecReload=/bin/kill -HUP $MAINPID
+ PrivateTmp=yes
+ ProtectHome=yes
 -- 
 2.50.0
 
