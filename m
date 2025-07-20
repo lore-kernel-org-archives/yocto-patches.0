@@ -1,139 +1,124 @@
-Return-Path: <peter.marko@siemens.com>
+Return-Path: <rybczynska@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E8CDC83F1A
-	for <webhook@archiver.kernel.org>; Fri, 18 Jul 2025 16:29:34 +0000 (UTC)
-Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
- by mx.groups.io with SMTP id smtpd.web11.2926.1752856165671832895
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E66E0C83F22
+	for <webhook@archiver.kernel.org>; Sun, 20 Jul 2025 18:26:26 +0000 (UTC)
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+ by mx.groups.io with SMTP id smtpd.web11.23123.1753035979013282064
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 18 Jul 2025 09:29:27 -0700
+ Sun, 20 Jul 2025 11:26:19 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=peter.marko@siemens.com header.s=fm1 header.b=FcILFyw5;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.226, mailfrom: fm-256628-20250718162921ed52da7239e7867082-6wf4oi@rts-flowmailer.siemens.com)
-Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 20250718162921ed52da7239e7867082
-        for <yocto-patches@lists.yoctoproject.org>;
-        Fri, 18 Jul 2025 18:29:22 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=peter.marko@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=ex6U2YpsKSiCWYVv7oH7LPVbJPq7wwNR61SqU+qSgrc=;
- b=FcILFyw5EgVO5qvbWaz97HnibC+S1OW98M9zj4oFQvHKqIMzHICKvrGrfzCre852QrJUkO
- upenvKRUZaO/xetihVUjbk9VN+VR8cdZ3VxZbjkCKMr2BV8iUkxSJETm09JRmR2WBF2EMrGt
- PTu8SJZRTWbbDWTbVUdExh4T/gb7Pze33FOH8obbYQP5lvCXxGgrgMlwiEx+5Qt4k8pLr83V
- pJnBzlfYNk8MXsq9zyrJYUk2UqV3Ek0ZV1u+mg3vEuRlSXYwWFTcCYv6Cyk3iyqiTFnJUmfJ
- rb8u2npYlwpEm5STC4zrC032dAQG94bKdBz4tMsR4v3lIpcbYYjKmHEw==;
-From: Peter Marko <peter.marko@siemens.com>
-To: yocto-patches@lists.yoctoproject.org
-Cc: jose.quaresma@foundries.io,
-	Peter Marko <peter.marko@siemens.com>
-Subject: [meta-lts-mixins][kirkstone/go][PATCH] go: upgrade 1.24.4 -> 1.24.5
-Date: Fri, 18 Jul 2025 18:28:35 +0200
-Message-Id: <20250718162835.8822-1-peter.marko@siemens.com>
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=EojPm2O8;
+ spf=pass (domain: gmail.com, ip: 209.85.216.52, mailfrom: rybczynska@gmail.com)
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-313f68bc519so2291970a91.0
+        for <yocto-patches@lists.yoctoproject.org>; Sun, 20 Jul 2025 11:26:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753035978; x=1753640778; darn=lists.yoctoproject.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=dTlwXpG0OjcTrGKPTP9sqr/eRoHcIaUrKIC3y7Li1Q8=;
+        b=EojPm2O8/P7yY/w+LYdiCfY2v1f++6c2j9opE6ug6flHqJRGFziRpRZlm9CZ6zyOKE
+         4bbemDaqEoVFkcIe1bl3HEBCqPe4Un6QrxxFUZik/hZTaKsotLEkk0DXRuwwuGJicOv3
+         vQQ5EKCsnFKP7jP1f10uDCGXVQET7XG69Y/Egedu+2Opg7ZTdsvbtTm8TE3G+mvfl8Ue
+         0ZG0lrUnWrGnx+flGOqvQVeWtCsyacJBsj+Xt3kxWHf0MOQd1NWbWPYuMrAwP4zZguPD
+         77IM29TC3GNk6fdFT+xtao+s0R7tIknHcBuIf87huoRuww6sPRQWvq4MeCYb7aqMcR2w
+         YBUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753035978; x=1753640778;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dTlwXpG0OjcTrGKPTP9sqr/eRoHcIaUrKIC3y7Li1Q8=;
+        b=wf1OwTa+UIghnhWEkBdQ4XbA7dUkUNU8WT/9xnvUpjxDgU7ppFezIEYeOmR23Qo1M9
+         iEsX0BlZ0SEy1X+CbT6t1ruDxdt+9elXGC3ww/0vySCkoKxY7Ig70GLQkVBqHGCt81WS
+         LbqSingpRUxtuldH6LKRIwV25X6f5LHwHGMDuO6QVuUNs1wiMcd9r3dhGEWm8awQ/exO
+         JyZ6UhiC68GSF9yATUihC86i3UGVbyA6lecGCrE7x5VaYs7ZHGyFy/cmxnN4z9zHxyrr
+         qdAe65OpJJVbfa0Q/0ZZj5oMsmctz0ovm1Ydy+u+RGszcN0vhwpKvJr9Py3TPSbinDTW
+         4oWw==
+X-Gm-Message-State: AOJu0Yy0egJyPAGNUq/7hDAxJpcNtogubi6ztQpTkBeNk4tQqFlC8o5k
+	PQspKUFid49Cysq6t7WeiWMCdmgXN/EAZcdAEAFZb7Fg3412c82yFXtqgEkcwU3QAz77MoBvtv2
+	G2BBkvI++FIzNRbDwUtX/Y6gpDhRONm8M5A==
+X-Gm-Gg: ASbGnctuDesWbS10vSp6gdqmqO8PSgcC0DsPJPiZHsO492DG6YgLjibRuZ11bYwgH35
+	FQUkpfi+D0dgNcXGv+CFvsEUemdu7vmmq/VQP98o1yGJei2lZ7+Qh8MKSfhFPXsEoXpgqgPXqAp
+	SGS59AJs+E/4FhNM+cjcEfWNx6EbPw/9MrDzXjLitAvmrVqGh/Dt7f6wRAZMwe6WzH0aBc5NDj9
+	Oz+Yw9G
+X-Google-Smtp-Source: AGHT+IF1Zv4eUN/LHDGJIY1UG/0mVfdS23eTI+QTrqJEH37KI2Wp5OfPLmmfAsgzl8ioXJMO32x3hEyAaJ3nnOcjCGs=
+X-Received: by 2002:a17:90b:4c52:b0:311:ffe8:20e9 with SMTP id
+ 98e67ed59e1d1-31c9f4a6b75mr29233733a91.17.1753035977885; Sun, 20 Jul 2025
+ 11:26:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-256628:519-21489:flowmailer
+References: <cover.1752846514.git.scott.murray@konsulko.com>
+In-Reply-To: <cover.1752846514.git.scott.murray@konsulko.com>
+From: Marta Rybczynska <rybczynska@gmail.com>
+Date: Sun, 20 Jul 2025 20:26:06 +0200
+X-Gm-Features: Ac12FXzSCPX2ev2-0BsUnLZVAac1INl6fEF2tT5m48M7vIsZwFOOzptFqSu6-Ss
+Message-ID: <CAApg2=Rs6QLgeErvpfFaAOP6ghbx+tBch7jFBBweZoNJ+M=24g@mail.gmail.com>
+Subject: Re: [yocto-patches] [meta-security][PATCH 0/4] master-next updates
+To: yocto-patches@lists.yoctoproject.org
+Cc: marta.rybczynska@ygreky.com
+Content-Type: multipart/alternative; boundary="000000000000bd8c29063a607ed1"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 18 Jul 2025 16:29:34 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1816
+ <yocto-patches@lists.yoctoproject.org>; Sun, 20 Jul 2025 18:26:26 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1817
 
-From: Peter Marko <peter.marko@siemens.com>
+--000000000000bd8c29063a607ed1
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Upgrade to latest 1.24.x release [1]:
+On Fri, Jul 18, 2025 at 4:11=E2=80=AFPM Scott Murray via lists.yoctoproject=
+.org
+<scott.murray=3Dkonsulko.com@lists.yoctoproject.org> wrote:
 
-$ git --no-pager log --oneline go1.24.4..go1.24.5
-9d828e80fa (tag: go1.24.5) [release-branch.go1.24] go1.24.5
-825eeee3f7 [release-branch.go1.24] cmd/go: disable support for multiple vcs in one module
-dbf30d88f3 [release-branch.go1.24] cmd/link: permit a larger size BSS reference to a smaller DATA symbol
-6b51660c8c [release-branch.go1.24] runtime: set mspan limit field early and eagerly
-cc604130c8 [release-branch.go1.24] runtime: prevent mutual deadlock between GC stopTheWorld and suspendG
-21b488bb60 [release-branch.go1.24] runtime: handle system goroutines later in goroutine profiling
-e038690847 [release-branch.go1.24] cmd/go/internal/fips140: ignore GOEXPERIMENT on error
-1575127ef8 [release-branch.go1.24] runtime: add missing unlock in sysReserveAlignedSbrk
-7d08a16fba [release-branch.go1.24] cmd/compile/internal/ssa: fix PPC64 merging of (AND (S[RL]Dconst ...)
-5f2cbe1f64 [release-branch.go1.24] cmd/compile: do nil check before calling duff functions, on arm64 and amd64
+> Roll up the submissions since the first batch of whinlatter fixes,
+> plus an upgrade of scap-security-guide to get it building again
+> after the CMake 4.0 upgrade in oe-core.
+>
+> A note about the ptest removal for scap-security-guide; while
+> having comprehensive ptests is desirable, from the commit history
+> it is clear that there was no interest in banging these ones into
+> a working state in the last couple of years.  As well, ptests are
+> not enabled in most of the current CI build configurations, and it
+> seems clear that the build time hit would be massive in this case
+> if they were.  If someone motivated to try to investigate resolving
+> these issues appears, this decision can be revisited.
+>
+>
+Fine for me. This commit leads to a better situation in the CI, OK to merge=
+.
 
-Fixes CVE-2025-4674 [2].
+Kind regards,
+Marta
 
-[1] https://github.com/golang/go/compare/go1.24.4...go1.24.5
-[2] https://groups.google.com/g/golang-announce/c/gTNJnDXmn34
+--000000000000bd8c29063a607ed1
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-(From OE-Core rev: a3cc5038ea10a4857627e6f4de25bdc43023a349)
+<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
+mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Fri, Jul 18,=
+ 2025 at 4:11=E2=80=AFPM Scott Murray via <a href=3D"http://lists.yoctoproj=
+ect.org">lists.yoctoproject.org</a> &lt;scott.murray=3D<a href=3D"mailto:ko=
+nsulko.com@lists.yoctoproject.org">konsulko.com@lists.yoctoproject.org</a>&=
+gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0=
+px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">Roll =
+up the submissions since the first batch of whinlatter fixes,<br>
+plus an upgrade of scap-security-guide to get it building again<br>
+after the CMake 4.0 upgrade in oe-core.<br>
+<br>
+A note about the ptest removal for scap-security-guide; while<br>
+having comprehensive ptests is desirable, from the commit history<br>
+it is clear that there was no interest in banging these ones into<br>
+a working state in the last couple of years.=C2=A0 As well, ptests are<br>
+not enabled in most of the current CI build configurations, and it<br>
+seems clear that the build time hit would be massive in this case<br>
+if they were.=C2=A0 If someone motivated to try to investigate resolving<br=
+>
+these issues appears, this decision can be revisited.<br>
+<br></blockquote><div><br></div><div>Fine for me. This commit leads to a be=
+tter situation in the CI, OK to merge.</div><div><br></div><div>Kind regard=
+s,</div><div>Marta <br></div></div></div>
 
-Signed-off-by: Peter Marko <peter.marko@siemens.com>
-Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
----
- recipes-devtools/go/{go-1.24.4.inc => go-1.24.5.inc}        | 2 +-
- ...o-binary-native_1.24.4.bb => go-binary-native_1.24.5.bb} | 6 +++---
- ...cross-canadian_1.24.4.bb => go-cross-canadian_1.24.5.bb} | 0
- .../go/{go-cross_1.24.4.bb => go-cross_1.24.5.bb}           | 0
- .../go/{go-crosssdk_1.24.4.bb => go-crosssdk_1.24.5.bb}     | 0
- .../go/{go-runtime_1.24.4.bb => go-runtime_1.24.5.bb}       | 0
- recipes-devtools/go/{go_1.24.4.bb => go_1.24.5.bb}          | 0
- 7 files changed, 4 insertions(+), 4 deletions(-)
- rename recipes-devtools/go/{go-1.24.4.inc => go-1.24.5.inc} (91%)
- rename recipes-devtools/go/{go-binary-native_1.24.4.bb => go-binary-native_1.24.5.bb} (79%)
- rename recipes-devtools/go/{go-cross-canadian_1.24.4.bb => go-cross-canadian_1.24.5.bb} (100%)
- rename recipes-devtools/go/{go-cross_1.24.4.bb => go-cross_1.24.5.bb} (100%)
- rename recipes-devtools/go/{go-crosssdk_1.24.4.bb => go-crosssdk_1.24.5.bb} (100%)
- rename recipes-devtools/go/{go-runtime_1.24.4.bb => go-runtime_1.24.5.bb} (100%)
- rename recipes-devtools/go/{go_1.24.4.bb => go_1.24.5.bb} (100%)
-
-diff --git a/recipes-devtools/go/go-1.24.4.inc b/recipes-devtools/go/go-1.24.5.inc
-similarity index 91%
-rename from recipes-devtools/go/go-1.24.4.inc
-rename to recipes-devtools/go/go-1.24.5.inc
-index eff3f2f..fae0d3f 100644
---- a/recipes-devtools/go/go-1.24.4.inc
-+++ b/recipes-devtools/go/go-1.24.5.inc
-@@ -17,4 +17,4 @@ SRC_URI += "\
-     file://0010-cmd-go-clear-GOROOT-for-func-ldShared-when-trimpath-.patch \
-     file://6d265b008e3d106b2706645e5a88cd8e2fb98953.patch \
- "
--SRC_URI[main.sha256sum] = "5a86a83a31f9fa81490b8c5420ac384fd3d95a3e71fba665c7b3f95d1dfef2b4"
-+SRC_URI[main.sha256sum] = "74fdb09f2352e2b25b7943e56836c9b47363d28dec1c8b56c4a9570f30b8f59f"
-diff --git a/recipes-devtools/go/go-binary-native_1.24.4.bb b/recipes-devtools/go/go-binary-native_1.24.5.bb
-similarity index 79%
-rename from recipes-devtools/go/go-binary-native_1.24.4.bb
-rename to recipes-devtools/go/go-binary-native_1.24.5.bb
-index d1f8fc6..5002686 100644
---- a/recipes-devtools/go/go-binary-native_1.24.4.bb
-+++ b/recipes-devtools/go/go-binary-native_1.24.5.bb
-@@ -9,9 +9,9 @@ PROVIDES = "go-native"
- 
- # Checksums available at https://go.dev/dl/
- SRC_URI = "https://dl.google.com/go/go${PV}.${BUILD_GOOS}-${BUILD_GOARCH}.tar.gz;name=go_${BUILD_GOTUPLE}"
--SRC_URI[go_linux_amd64.sha256sum] = "77e5da33bb72aeaef1ba4418b6fe511bc4d041873cbf82e5aa6318740df98717"
--SRC_URI[go_linux_arm64.sha256sum] = "d5501ee5aca0f258d5fe9bfaed401958445014495dc115f202d43d5210b45241"
--SRC_URI[go_linux_ppc64le.sha256sum] = "9ca4afef813a2578c23843b640ae0290aa54b2e3c950a6cc4c99e16a57dec2ec"
-+SRC_URI[go_linux_amd64.sha256sum] = "10ad9e86233e74c0f6590fe5426895de6bf388964210eac34a6d83f38918ecdc"
-+SRC_URI[go_linux_arm64.sha256sum] = "0df02e6aeb3d3c06c95ff201d575907c736d6c62cfa4b6934c11203f1d600ffa"
-+SRC_URI[go_linux_ppc64le.sha256sum] = "00bdfb16d1094e78473b681d2d09d42c19c886d4dfed743853769f1665c7a552"
- 
- UPSTREAM_CHECK_URI = "https://golang.org/dl/"
- UPSTREAM_CHECK_REGEX = "go(?P<pver>\d+(\.\d+)+)\.linux"
-diff --git a/recipes-devtools/go/go-cross-canadian_1.24.4.bb b/recipes-devtools/go/go-cross-canadian_1.24.5.bb
-similarity index 100%
-rename from recipes-devtools/go/go-cross-canadian_1.24.4.bb
-rename to recipes-devtools/go/go-cross-canadian_1.24.5.bb
-diff --git a/recipes-devtools/go/go-cross_1.24.4.bb b/recipes-devtools/go/go-cross_1.24.5.bb
-similarity index 100%
-rename from recipes-devtools/go/go-cross_1.24.4.bb
-rename to recipes-devtools/go/go-cross_1.24.5.bb
-diff --git a/recipes-devtools/go/go-crosssdk_1.24.4.bb b/recipes-devtools/go/go-crosssdk_1.24.5.bb
-similarity index 100%
-rename from recipes-devtools/go/go-crosssdk_1.24.4.bb
-rename to recipes-devtools/go/go-crosssdk_1.24.5.bb
-diff --git a/recipes-devtools/go/go-runtime_1.24.4.bb b/recipes-devtools/go/go-runtime_1.24.5.bb
-similarity index 100%
-rename from recipes-devtools/go/go-runtime_1.24.4.bb
-rename to recipes-devtools/go/go-runtime_1.24.5.bb
-diff --git a/recipes-devtools/go/go_1.24.4.bb b/recipes-devtools/go/go_1.24.5.bb
-similarity index 100%
-rename from recipes-devtools/go/go_1.24.4.bb
-rename to recipes-devtools/go/go_1.24.5.bb
+--000000000000bd8c29063a607ed1--
 
