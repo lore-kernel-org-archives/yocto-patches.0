@@ -1,101 +1,77 @@
-Return-Path: <scott.murray@konsulko.com>
+Return-Path: <ariel.dalessandro@collabora.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD963C83F1A
-	for <webhook@archiver.kernel.org>; Mon, 21 Jul 2025 17:10:34 +0000 (UTC)
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
- by mx.groups.io with SMTP id smtpd.web10.46785.1753117831399587704
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23BC9C83F1A
+	for <webhook@archiver.kernel.org>; Mon, 21 Jul 2025 18:18:35 +0000 (UTC)
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+ by mx.groups.io with SMTP id smtpd.web10.48584.1753121910091934310
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 21 Jul 2025 10:10:31 -0700
+ Mon, 21 Jul 2025 11:18:30 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=rY+TW7ik;
- spf=pass (domain: konsulko.com, ip: 209.85.222.176, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7d5d1feca18so441405085a.2
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 21 Jul 2025 10:10:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1753117830; x=1753722630; darn=lists.yoctoproject.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zp8o1NEPEmE5n1PBrEpf3Zg3uvdfirNWI0xLnr+ilE4=;
-        b=rY+TW7ik7/axK69nf0F9v+VB5AKP2whn/W0OAtrPEG0AulpZE5Y2A0cGAkwZQNAcbz
-         LpINWN2RfCYpNHumzdvFK2eqaniXklDrki/frp1DvSs2fBc1BMpNLw0dd8fw4oBJZIFW
-         73x75gv6YDfhFVBgRfNESw8eF0DOSOg/Ynbwo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753117830; x=1753722630;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zp8o1NEPEmE5n1PBrEpf3Zg3uvdfirNWI0xLnr+ilE4=;
-        b=xMSxy1G+944hyDySE+Rhq4cz7p7gCYVJ8RHUpg6bpoKOGVQhjA9CRZ+qCJCCqfD0Tc
-         yZ99r/cZzf/uoELCXRSsiNcxx9AQGJzBFceZAs1Meov9f21fYyA/jPN696SyjtOjQI/N
-         Rv2NcOAmcaHHrA6jidE5UsA9QyaLoLFrnVAEPJR2cKALijPBExKYmW392nfA1ft/iMTu
-         ZN4Hb1MTH4XLs8/bO0PjPogMBxO79BmL8udbFJKUp7VrlpgSGtOpHpf45h43AAyNqZpI
-         rQrjDhC8fEIk551VIRG7iEQX1bXBMEO1NNyOYwOjVrkrJPkdpQxjMmhbVexPze+f/Qjl
-         DjUQ==
-X-Gm-Message-State: AOJu0Yyz1JzXU5W8IQSCe4B5mJAXdoTjyRww37zHxFWEEv/1qD0hihY4
-	omFaGnY9WGzfjRbMQW8XptHrqCt0bRDTjq2zAdeHxl+aQ6764DE+dEdab0zDyRzKLKBcGTT9tzi
-	i085a
-X-Gm-Gg: ASbGnctkP7wNxfENW5khQx6jsqNGkTpyIkhLJ/BVZnGxBbA7JdX+6p16Px85ovb70BI
-	Nd4m993Il3J8kdEVj++E45e5ORdomUZCFl0WRWkVMnqDagpbaqdO3PTA7RBvElNtWnVdEtlEsr7
-	+b9baxAkK7skprbjyKNotUShcMT3lucN2T5OLM8wBlvt/gHqW4a3eHMqky5sajS1h7pcCMeiSkV
-	kxTVwkyn/xyQXHNtoNeW4VazF4JyzAGOOmsh10LObJMv4E0EHnAyYH0deEIL2xFjrA5zAkTBvx/
-	q2eH4UHbzBZqMBvTFodfZX+0Y9N8dsCrJSPypaI43u6oMIV2cDhfMTet+/Vjwy+w7uukCDz4L9N
-	d9wkqv1hrcvJv1MlFuTifbhVUQ14At80QUWUXOBpf71SeH5n18KZPK9DS
-X-Google-Smtp-Source: AGHT+IHrET9uf6MD06YmIuQE871fls3ORsuHiVYEo3FI70V765CB8T6lSLm9feVQrnuVkat2hYbiKw==
-X-Received: by 2002:a05:620a:4623:b0:7e3:2c25:9b72 with SMTP id af79cd13be357-7e34356d5f9mr2990301385a.24.1753117830083;
-        Mon, 21 Jul 2025 10:10:30 -0700 (PDT)
-Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e356b46b84sm428802085a.38.2025.07.21.10.10.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 10:10:29 -0700 (PDT)
-Date: Mon, 21 Jul 2025 13:10:21 -0400 (EDT)
-From: Scott Murray <scott.murray@konsulko.com>
-To: yocto-patches@lists.yoctoproject.org
-cc: marta.rybczynska@ygreky.com, rybczynska@gmail.com
-Subject: Re: [yocto-patches] [meta-security][PATCH 0/4] master-next updates
-In-Reply-To: <CAApg2=Rs6QLgeErvpfFaAOP6ghbx+tBch7jFBBweZoNJ+M=24g@mail.gmail.com>
-Message-ID: <aea68d87-0550-eda6-5f30-787ce856261f@konsulko.com>
-References: <cover.1752846514.git.scott.murray@konsulko.com> <CAApg2=Rs6QLgeErvpfFaAOP6ghbx+tBch7jFBBweZoNJ+M=24g@mail.gmail.com>
+ dkim=fail reason="dkim: signature did not verify: crypto/rsa: verification error" header.i=ariel.dalessandro@collabora.com header.s=zohomail header.b=b9TQ+gwC;
+ spf=pass (domain: collabora.com, ip: 136.143.188.112, mailfrom: ariel.dalessandro@collabora.com)
+ARC-Seal: i=1; a=rsa-sha256; t=1753121907; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=YWLzH6pkZs6o/zYU39ZwKz1m/rSxYLoxW8LWxuMm2Y33kcgAqxitmT4mr/Weqd6F8G2n2Ne78KKghIn4ONcWvB+OSOcKfcfo3hHkNz7VG3twpRS0eu2/g2d54HcezpRnxFWNd1bMv/GOUgGZdplSMUFhTnldGUEx11eHjXetyUU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753121907; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=/kFqBZdEBQTqt9ukKZkpYCm5vs0MSKorNbhnWo2Lk/0=; 
+	b=VjyCC1dACt9Cd0vc7ZgvSnQqFuRcPOJ4MighTvZEJt+alLqayGp54mko0fKiVuMnZB7um2UyMVSxI9q+Mz0ZhQgq13tJTLbbZlgYAfllPwelPP5/SJta6QuOVg2tDNFMlLImXzfl75pIR3Wfu4TcjoKPJ8affeoDSDhzUpqpA4Y=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=ariel.dalessandro@collabora.com;
+	dmarc=pass header.from=<ariel.dalessandro@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753121907;
+	s=zohomail; d=collabora.com; i=ariel.dalessandro@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:To:To:Cc:Cc:From:From:Subject:Subject:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=/kFqBZdEBQTqt9ukKZkpYCm5vs0MSKorNbhnWo2Lk/0=;
+	b=b9TQ+gwCET8yIVNob3RvmAkjm3t5ggqsXCHnnUak1H77HVN6LzSgM8AW6bwe06Ts
+	Ur/Pf84xVNlr0QbwwjLlWzc6bJUyk5wWmiD5LssLJUqY6gGI03VrZd2YZKqId/hYov/
+	1j5QkH1oEEzUUIzOmdZum9ICWPbuCPDiA5L6Uq0g=
+Received: by mx.zohomail.com with SMTPS id 1753121903854607.9292222810839;
+	Mon, 21 Jul 2025 11:18:23 -0700 (PDT)
+Message-ID: <052a381f-fd83-46c7-ae3d-d3bcb2ed8fac@collabora.com>
+Date: Mon, 21 Jul 2025 15:18:20 -0300
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="-1463811583-1155365993-1753117829=:19539"
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: yocto-patches@lists.yoctoproject.org
+Cc: scott.murray@konsulko.com, raj.khem@gmail.com
+From: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+Subject: [meta-lts-mixins][scarthgap/nodejs] Create new branch
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 21 Jul 2025 17:10:34 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1819
+ <yocto-patches@lists.yoctoproject.org>; Mon, 21 Jul 2025 18:18:35 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1820
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hi,
 
----1463811583-1155365993-1753117829=:19539
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Currently working on a chromium `136.0.7103.113` update [0] in 
+scarthgap, which depends on a major nodejs update to version `v22.11.0`.
 
-On Sun, 20 Jul 2025, Marta Rybczynska via lists.yoctoproject.org wrote:
+This is request to create a new branch in `meta-lts-mixins` [1] for this 
+purpose. The new branch should be called `scarthgap/nodejs` pulling from 
+the following repository branch:
 
-> On Fri, Jul 18, 2025 at 4:11 PM Scott Murray via lists.yoctoproject.org
-> <scott.murray=konsulko.com@lists.yoctoproject.org> wrote:
->
-> > Roll up the submissions since the first batch of whinlatter fixes,
-> > plus an upgrade of scap-security-guide to get it building again
-> > after the CMake 4.0 upgrade in oe-core.
-> >
-> > A note about the ptest removal for scap-security-guide; while
-> > having comprehensive ptests is desirable, from the commit history
-> > it is clear that there was no interest in banging these ones into
-> > a working state in the last couple of years.  As well, ptests are
-> > not enabled in most of the current CI build configurations, and it
-> > seems clear that the build time hit would be massive in this case
-> > if they were.  If someone motivated to try to investigate resolving
-> > these issues appears, this decision can be revisited.
->
-> Fine for me. This commit leads to a better situation in the CI, OK to merge.
+https://github.com/adalessandro/meta-lts-mixins/tree/scarthgap/nodejs
 
-I have gone ahead and merged the series to master.
+[0] https://github.com/OSSystems/meta-browser/issues/901
+[1] https://git.yoctoproject.org/meta-lts-mixins
 
-Thanks,
+Regards,
+Ariel
 
-Scott
+-- 
+Ariel D'Alessandro
+Software Engineer
 
----1463811583-1155365993-1753117829=:19539--
+Collabora Ltd.
+Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK 
+Registered in England & Wales, no. 5513718
+
 
