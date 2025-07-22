@@ -1,77 +1,97 @@
-Return-Path: <ariel.dalessandro@collabora.com>
+Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23BC9C83F1A
-	for <webhook@archiver.kernel.org>; Mon, 21 Jul 2025 18:18:35 +0000 (UTC)
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
- by mx.groups.io with SMTP id smtpd.web10.48584.1753121910091934310
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD4C8C83F1A
+	for <webhook@archiver.kernel.org>; Tue, 22 Jul 2025 13:58:43 +0000 (UTC)
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+ by mx.groups.io with SMTP id smtpd.web11.13452.1753192714965814790
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 21 Jul 2025 11:18:30 -0700
+ Tue, 22 Jul 2025 06:58:35 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: signature did not verify: crypto/rsa: verification error" header.i=ariel.dalessandro@collabora.com header.s=zohomail header.b=b9TQ+gwC;
- spf=pass (domain: collabora.com, ip: 136.143.188.112, mailfrom: ariel.dalessandro@collabora.com)
-ARC-Seal: i=1; a=rsa-sha256; t=1753121907; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=YWLzH6pkZs6o/zYU39ZwKz1m/rSxYLoxW8LWxuMm2Y33kcgAqxitmT4mr/Weqd6F8G2n2Ne78KKghIn4ONcWvB+OSOcKfcfo3hHkNz7VG3twpRS0eu2/g2d54HcezpRnxFWNd1bMv/GOUgGZdplSMUFhTnldGUEx11eHjXetyUU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753121907; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=/kFqBZdEBQTqt9ukKZkpYCm5vs0MSKorNbhnWo2Lk/0=; 
-	b=VjyCC1dACt9Cd0vc7ZgvSnQqFuRcPOJ4MighTvZEJt+alLqayGp54mko0fKiVuMnZB7um2UyMVSxI9q+Mz0ZhQgq13tJTLbbZlgYAfllPwelPP5/SJta6QuOVg2tDNFMlLImXzfl75pIR3Wfu4TcjoKPJ8affeoDSDhzUpqpA4Y=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=ariel.dalessandro@collabora.com;
-	dmarc=pass header.from=<ariel.dalessandro@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753121907;
-	s=zohomail; d=collabora.com; i=ariel.dalessandro@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:To:To:Cc:Cc:From:From:Subject:Subject:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=/kFqBZdEBQTqt9ukKZkpYCm5vs0MSKorNbhnWo2Lk/0=;
-	b=b9TQ+gwCET8yIVNob3RvmAkjm3t5ggqsXCHnnUak1H77HVN6LzSgM8AW6bwe06Ts
-	Ur/Pf84xVNlr0QbwwjLlWzc6bJUyk5wWmiD5LssLJUqY6gGI03VrZd2YZKqId/hYov/
-	1j5QkH1oEEzUUIzOmdZum9ICWPbuCPDiA5L6Uq0g=
-Received: by mx.zohomail.com with SMTPS id 1753121903854607.9292222810839;
-	Mon, 21 Jul 2025 11:18:23 -0700 (PDT)
-Message-ID: <052a381f-fd83-46c7-ae3d-d3bcb2ed8fac@collabora.com>
-Date: Mon, 21 Jul 2025 15:18:20 -0300
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=Eb8Fz1zQ;
+ spf=pass (domain: gmail.com, ip: 209.85.219.41, mailfrom: twoerner@gmail.com)
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-700fee04941so53028586d6.1
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 22 Jul 2025 06:58:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753192713; x=1753797513; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EQgylOPDnt0PuRuuPhLMFtBnKrdfu2WRSJEOPcvc92E=;
+        b=Eb8Fz1zQjtGTRzKyfjzGsC1Pm/Ba5WhN5PSXaA9GPuEarZ8krQFhv4lM63RBHlJQD7
+         aJAFZxiplU0X2llAjL1yYltefKe3k8GFHNgry/QhZV6CVbR/JELln/nxF3S8zGlMfFo+
+         q0Q1/Lk9P5hAvez2v73KdzUbzuYU4m0G+5yqanZlVV2eARHReLa12ofmqe4S1WDxsgZp
+         /V4yz89RrK5UBkoCRe5ozRCkY/BdZ0LtYTMkNO0SJt4h3WWUoRdHVqOSYnTHhnT+bunc
+         ZALVbxvXUC1OAGdudHcd8FbCIot/nKcwfrufP1FWKaG2CwApI3vmPOVktj6AdnINiwSI
+         vkvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753192713; x=1753797513;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EQgylOPDnt0PuRuuPhLMFtBnKrdfu2WRSJEOPcvc92E=;
+        b=HZWURS+E/5Qcir1TOAsuI0Bn+M4ElJAttBhYDzB8AVVwg74S9J7Xar6P5aKhndSsY+
+         aZ0XGPaxCL+8qhnVt0sRInVJ3+r2mAkNSwWBP8zdi6WjpWRZAWphEdkTnPEiIc71HUOj
+         YeOsjIFPqVDNrL4aUXwORA74tLINeogxrLeSyrvxyYnLiCUE1T2hEIWhIb4hifadq+mJ
+         jrzqvy5g+5Zb8DPbqTIZwCsSFStFnXVeipAwiRxpGW/F4IwRUU5sPtA+79HiUoAQDOdV
+         FaCnc232YqqtVnjY1I6D36VVbdYrtje70xKcOSSBIRkrnr9cAn8+eWbgWu+CTBygYtAB
+         kMZg==
+X-Gm-Message-State: AOJu0Yzecm+MptdpzwiMfxazAjDvQiHvj0JkyLqdkonwYRFVQ9HT15T2
+	ddYA5eZJ+sr1/i9C8oTEcwHSH5bJuLoLdDuuCTsOa/gGeYsGPz2w0vN4ZZrR6Q==
+X-Gm-Gg: ASbGncvijCEJB43yhEy/Tv2JIMj7LXWDy/Nnt7r12JCUAGmluHNGphWg/FJnobcbqY7
+	EaDzE0vxMZWcb5GQT1woeshVFvp3MDHI71XksqmCD8MWtmJFKB9hfDVQAppusxBzn204w2IYoN1
+	29/bOjQShzOg+1cSQ9ck6COP9vpwdQtP0fY1YpXORinTd/l3BVzM0CVHyVn8ig96Y0q6jOVpCEz
+	++vLI326YTJMLgkFecQk9kT66ApQIrvAs99jivIPwpeXbSjTmFCuoCrDoOzX8AvFn9L6lpX0m9d
+	NtywcaqbcdkG8llDMNMRDCZ/v9J8zXOewGcEJSPgc4hxgqGX/r8brNbhW4pah3mUnHsV2xP/AG+
+	7rrEoMbZAHnD+AXSMwJzrYfw76ae54kpyeHLVZh+maEdj6l9FLDXiMR+wYf6ECrs1wQ==
+X-Google-Smtp-Source: AGHT+IG7pwD/x880jCpqnC88/hj5Kc00zprO1lekDVmHdmzJVFnDOC6XK0CtTwhzezhblM7UqGjfpg==
+X-Received: by 2002:a05:6214:5c44:b0:704:7dbd:d991 with SMTP id 6a1803df08f44-705073a31b4mr346580336d6.31.1753192713197;
+        Tue, 22 Jul 2025 06:58:33 -0700 (PDT)
+Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7051ba92059sm51956586d6.83.2025.07.22.06.58.31
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Jul 2025 06:58:31 -0700 (PDT)
+From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: scott.murray@konsulko.com, raj.khem@gmail.com
-From: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-Subject: [meta-lts-mixins][scarthgap/nodejs] Create new branch
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Subject: [meta-rockchip][PATCH] systemd: repart requires fdisk explicitly
+Date: Tue, 22 Jul 2025 09:58:29 -0400
+Message-ID: <20250722135829.25568-1-twoerner@gmail.com>
+X-Mailer: git-send-email 2.44.0.501.g19981daefd7c
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 21 Jul 2025 18:18:35 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1820
+ <yocto-patches@lists.yoctoproject.org>; Tue, 22 Jul 2025 13:58:43 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1821
 
-Hi,
+According to [1], upstream meson's default configuration policy defaulted
+to "auto", meaning that it would search as far and wide as it could
+to find things like libraries and header files when deciding which
+options to enable during configuration. Apparently that is no longer the
+case, therefore new PACKAGECONFIG options have been added to systemd to
+explicitly ask for some features.
 
-Currently working on a chromium `136.0.7103.113` update [0] in 
-scarthgap, which depends on a major nodejs update to version `v22.11.0`.
+systemd's repart mechanism needs fdisk, which was probably being found and
+used implicitly before, but now needs to be enabled explicitly.
 
-This is request to create a new branch in `meta-lts-mixins` [1] for this 
-purpose. The new branch should be called `scarthgap/nodejs` pulling from 
-the following repository branch:
+[1] oe-core: 4ec67113e1e7 ("systemd: add libblkid and libfdisk PACKAGECONFIG options")
 
-https://github.com/adalessandro/meta-lts-mixins/tree/scarthgap/nodejs
+Signed-off-by: Trevor Woerner <twoerner@gmail.com>
+---
+ .../rk-rauc-demo/recipes-core/systemd/systemd_%.bbappend        | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[0] https://github.com/OSSystems/meta-browser/issues/901
-[1] https://git.yoctoproject.org/meta-lts-mixins
-
-Regards,
-Ariel
-
+diff --git a/dynamic-layers/rk-rauc-demo/recipes-core/systemd/systemd_%.bbappend b/dynamic-layers/rk-rauc-demo/recipes-core/systemd/systemd_%.bbappend
+index cf6c188277db..ee4134d2e64d 100644
+--- a/dynamic-layers/rk-rauc-demo/recipes-core/systemd/systemd_%.bbappend
++++ b/dynamic-layers/rk-rauc-demo/recipes-core/systemd/systemd_%.bbappend
+@@ -1,3 +1,3 @@
+ inherit rk-rauc-demo-features-check
+ 
+-PACKAGECONFIG:append:rk-rauc-demo = " repart openssl"
++PACKAGECONFIG:append:rk-rauc-demo = " repart openssl fdisk"
 -- 
-Ariel D'Alessandro
-Software Engineer
-
-Collabora Ltd.
-Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK 
-Registered in England & Wales, no. 5513718
+2.44.0.501.g19981daefd7c
 
 
