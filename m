@@ -2,61 +2,61 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CBF3C83F1A
-	for <webhook@archiver.kernel.org>; Wed, 23 Jul 2025 19:05:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A4C5C87FC5
+	for <webhook@archiver.kernel.org>; Wed, 23 Jul 2025 19:05:59 +0000 (UTC)
 Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
- by mx.groups.io with SMTP id smtpd.web11.23581.1753297546355408521
+ by mx.groups.io with SMTP id smtpd.web10.23089.1753297550091699524
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 23 Jul 2025 12:05:46 -0700
+ Wed, 23 Jul 2025 12:05:50 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=ZywCpZY8;
+ dkim=pass header.i=@konsulko.com header.s=google header.b=llTcxDoA;
  spf=pass (domain: konsulko.com, ip: 209.85.222.173, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7e1f3b95449so135167785a.1
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 23 Jul 2025 12:05:46 -0700 (PDT)
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7e32c95775aso29843585a.3
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 23 Jul 2025 12:05:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1753297545; x=1753902345; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1753297549; x=1753902349; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rLHrUC3z2KRgPfH+uF85QKIdODDZHdp/CHUENIZ0N88=;
-        b=ZywCpZY8Bcxv62+6IjJ7Vf1X4DNEGAvWnMe3bk7Pny0fJBN/3ljvvnHVSeovy2WyAI
-         ua36epcmRMm+X5RTsZpGyu/mNwPN+aVq9IA6yK7/luos5CXai56687e186MLAlKZEZdx
-         jubyQfMdxHClh77ZDBBiqXpuVCKGbRugfvaF4=
+        bh=dUnqpfFGrSBaqnzc88XIMmiNDF+IN4xW2ZozYk7IYTA=;
+        b=llTcxDoAT6xVSIuBJepuKyWrMpBVuMV34aeJ5sFIoq85cIUPEcULYAvbObuM+1ZGAE
+         /tY4aAqf4rDzHlYfUNoRKylp+qVq8PUSOiPbqc7GBiJfpG+9Dp4NPqRU+aqfUWsb63H/
+         6Iu9A98ZQIUkKRa2ONjUMTWcSBaKna+JO6BkA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753297545; x=1753902345;
+        d=1e100.net; s=20230601; t=1753297549; x=1753902349;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rLHrUC3z2KRgPfH+uF85QKIdODDZHdp/CHUENIZ0N88=;
-        b=IAK4MMBzuaPEPYEKS/aqcpoml1E6wHLFgRhIKKbV5rjxZ09XqESVlYQ5/dHVnmx7uS
-         y/nbTO/S3DszZV+AimwznXnMTcSWLzhILkOqaLVi/JqKEb3LXlQMYjocJZXPcm3dtnvs
-         V565Tn7x0bi1gHgcM/gEZ+wAXBAvyzSKoiaPonTjcZ2gqTCrIicyqxGYUQm59oeqbBIh
-         Dr9nsPxTksLMV0jQr8iD8wuldJH4GyHPQ34gWUEL69U+45uLXXl7lXSqLGvQ7fgZ7NZv
-         XU/y+FHhFcJA8SNJQemg7xVvGFL5ow4XNW4kMeMNv1PrJj9HfzSqCBnp3EnYSRYDYvlF
-         k1NA==
-X-Gm-Message-State: AOJu0YwGZWa00bpVzs6sLo1TG7RK3VEd/hgWHkUUmlpxZHLPGEdptYaB
-	PN5dKqCGqNZef7DKbqpxgKtAiPYZVmlPn0JBIMDo/qatMlciOA872Ix5MQo4iG1rT+xrTyn/TAr
-	pCf4G
-X-Gm-Gg: ASbGnctBaI4uA38mcI6RNAER65HyZMlXSF1pMFW8Zk6LqwWIpR+5TlP25iQBoiOEopk
-	bj2VZ1fUQhHAadVo73B62PD6aF+vtnKohmPB6rt7qbAbXmCpq/f0d9Sdt535ELu2Aqmqw5bjc5v
-	gFPYGsi9k7H9qBrCfefwvOQWH/tI0a9SJWx0jMNN6KsvzLKyaK0TJGsnEd/CLkLBz5iqMuj6+PV
-	wd5kraXaqTEwuRemTPuY8DL06sKljnV3HEqQ1MJ3MEjApQ8Rb6dZEihDcbL+wtv1Z/g7F7qY40t
-	sOP2lNMsYtq3vLRXNuGZi0sBNyCARDFZJWP2m/Mq0peDktHNkUwoZm+unvWIrr4rrDhlxkW22u4
-	csDXDwfyvA+TjGDkr4ibNEoqHc19xBUfjkBWR9vZWUv46v6Ln9+VtWAdwi/SzgDs7uSHcgDANcg
-	==
-X-Google-Smtp-Source: AGHT+IGEPkUgCE3MkgkHc7/G5cq+nWOY3fdmDFN+Umitb6m/D8Ft2A5s4WInS6wpDQDJJG+zfA/6HQ==
-X-Received: by 2002:a05:620a:438b:b0:7e0:e2d7:e03 with SMTP id af79cd13be357-7e62a8af300mr504297885a.7.1753297545111;
-        Wed, 23 Jul 2025 12:05:45 -0700 (PDT)
+        bh=dUnqpfFGrSBaqnzc88XIMmiNDF+IN4xW2ZozYk7IYTA=;
+        b=sS/ElLH512iGFGFbLSvxYQizX1uVM4OZgllnTWwS7HwY1oYuRudAGLujh6oTp53FAu
+         7+plebOo09KFpoNROJ69o865ul1a1N3+nLqYSZIqLztHPQxjYQMiAN94K1RUDETcmp8d
+         eAxu+C40WFB78F13rLgsnaLigl+6ha4NtHp9IPDgKlaWJ0f/1LVEyvrF1+TWknqEeRjR
+         m71Ik5h5pTY7rpwpSDbY13ZUNnREFgKc6FCX8LtJHvYzvygj3+gLjLLRMh789g3cv2ZX
+         vOzK+IjRq+fmNgdbZTwBzDxEsCBnq+RIglOuXAX8z6WU2ayoUnu4jDmSredUo5Zq85p1
+         afvg==
+X-Gm-Message-State: AOJu0YymmIYzGrrfvEnhYomn/wfldM2k8FLPPGxFlH5IW752zsOOw9gw
+	ArPesqQMaLkwJT388N1h5muAJKPVixLDH34V0wvgxVR5MssfRHJy4idEoh30+bJQQTdv+pvh7nb
+	xVfNX
+X-Gm-Gg: ASbGncsI/9gzFQhHAjPlyQG5t39douvF+RJqC0F8+h19ht9E3YZEZfciduZhUl53YIQ
+	1WffCIqTFWEs1WTSypnD3ifqxFmoWbaRHR5tp+HWbpHxTKQN+WRdf2b2G1qaxMnLv6msZwgxds/
+	25vmqEc+FxxQInkHheoif6xGWQzBL3K/pEhPIimNBE7lYoa/2C0YIcVBpbg8YxF29GLMEf/W1jv
+	2yUWMiVR/QlS3AmEezXn8x8FNLZsE/497+KYLWw9yPimCrjAIijTgf6qyKkMv73V0R+qWtJ8Sv7
+	f7YZiPiq8t42oz44NPsS5dC84b4PzS3KtN7inzES6mJR5/mozIbMPoBirF/0u5vb1nxgY0wQUX4
+	IXE7yky2Vl5jtsEg5bqx1L5K9Y9zM0Zu7GQtZp6GMgFyFPQHvqMoafUqj+4QTR2dWbMLJd09umt
+	GoB46xjCJ7
+X-Google-Smtp-Source: AGHT+IE7PE3MCho9sUyxvE/yd93PpbH+exWaW1E2OUkqEPGYitwbRAfDc3QTWdhiGvYKD30SIPx4jA==
+X-Received: by 2002:a05:620a:5787:b0:7e3:412f:1500 with SMTP id af79cd13be357-7e62a191109mr470150785a.44.1753297548868;
+        Wed, 23 Jul 2025 12:05:48 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e356c75cf5sm703576085a.84.2025.07.23.12.05.44
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e356c75cf5sm703576085a.84.2025.07.23.12.05.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 12:05:44 -0700 (PDT)
+        Wed, 23 Jul 2025 12:05:48 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: soumya.sambu@windriver.com
-Subject: [meta-lts-mixins][kirkstone/rust][PATCH 01/13] ptest-cargo: fix tests output format for testimage
-Date: Wed, 23 Jul 2025 15:05:20 -0400
-Message-ID: <efd603776a911911f8ee3c82beceba1741365feb.1753296167.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][kirkstone/rust][PATCH 03/13] oeqa/selftest/rust: Add exclusion to fix riscv64 builds
+Date: Wed, 23 Jul 2025 15:05:22 -0400
+Message-ID: <526a893a1cef959a688c2a3171ba94f0523a0153.1753296167.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.50.0
 In-Reply-To: <cover.1753296167.git.scott.murray@konsulko.com>
 References: <cover.1753296167.git.scott.murray@konsulko.com>
@@ -65,63 +65,33 @@ Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 23 Jul 2025 19:05:49 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1842
+ <yocto-patches@lists.yoctoproject.org>; Wed, 23 Jul 2025 19:05:59 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1844
 
-From: Ines KCHELFI <ines.kchelfi@smile.fr>
+From: Richard Purdie <richard.purdie@linuxfoundation.org>
 
-In testimage, the ptest-runner output parser expects test results to follow
-a specific format,with lines beginning with PASS:, FAIL:, or SKIP:. ptest-cargo,
-currently, does not emit any of those lines and the parser treats the test
-section as having no results, causing a test failure with :
+There was one failure occurring in rust testing for qemuriscv64. Exclude
+that test so we can enable in automated testing.
 
-AssertionError:
-ptests which had no test results:
-['<package>']
-
-This patch ensures that the recipes using ptest-cargo class explicitly emits
-PASS: or FAIL: lines, making the results compatible with the test parser and
-preventing test failures.
-
-Signed-off-by: Ines KCHELFI <ines.kchelfi@smile.fr>
-Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(adapted from oe-core commit 6a9356346f13556a06d4a99bd7924992c7e29d66)
+(adapted from oe-core commit a7f6ea5b20aa91e4a1b00dbea7a6447effb9220d)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- classes/ptest-cargo.bbclass | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ lib/oeqa/selftest/cases/rust_mixin.py | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/classes/ptest-cargo.bbclass b/classes/ptest-cargo.bbclass
-index 7b18d43..ece25ff 100644
---- a/classes/ptest-cargo.bbclass
-+++ b/classes/ptest-cargo.bbclass
-@@ -77,6 +77,7 @@ python do_compile_ptest_cargo() {
- 
- python do_install_ptest_cargo() {
-     import shutil
-+    import textwrap
- 
-     dest_dir = d.getVar("D")
-     pn = d.getVar("PN")
-@@ -107,7 +108,16 @@ python do_install_ptest_cargo() {
-             f.write(f"\necho \"\"\n")
-             f.write(f"echo \"## starting to run rust tests ##\"\n")               
-         for test_path in test_paths:
--            f.write(f"if ! {test_path} {rust_test_args}; then rc=1; fi\n")
-+            script = textwrap.dedent(f"""\
-+                if ! {test_path} {rust_test_args}
-+                then
-+                    rc=1
-+                    echo "FAIL: {test_path}"
-+                else
-+                    echo "PASS: {test_path}"
-+                fi
-+            """)
-+            f.write(script)
-         
-         f.write("exit $rc\n")
- 
+diff --git a/lib/oeqa/selftest/cases/rust_mixin.py b/lib/oeqa/selftest/cases/rust_mixin.py
+index 1098e90..806ddf6 100644
+--- a/lib/oeqa/selftest/cases/rust_mixin.py
++++ b/lib/oeqa/selftest/cases/rust_mixin.py
+@@ -86,6 +86,7 @@ class RustSelfTestSystemEmulated(OESelftestTestCase, OEPTestResultTestCase):
+                             'tests/ui/abi/stack-probes-lto.rs',
+                             'tests/ui/abi/stack-probes.rs',
+                             'tests/ui/codegen/mismatched-data-layouts.rs',
++                            'tests/codegen/rust-abi-arch-specific-adjustment.rs',
+                             'tests/ui/debuginfo/debuginfo-emit-llvm-ir-and-split-debuginfo.rs',
+                             'tests/ui/feature-gates/version_check.rs',
+                             'tests/ui-fulldeps/',
 -- 
 2.50.0
 
