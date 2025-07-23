@@ -2,61 +2,61 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2B00C87FCD
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9410C87FD1
 	for <webhook@archiver.kernel.org>; Wed, 23 Jul 2025 18:40:48 +0000 (UTC)
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
- by mx.groups.io with SMTP id smtpd.web11.23030.1753296043868982666
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+ by mx.groups.io with SMTP id smtpd.web11.23031.1753296045081747228
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 23 Jul 2025 11:40:44 -0700
+ Wed, 23 Jul 2025 11:40:45 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=uKmXESj+;
- spf=pass (domain: konsulko.com, ip: 209.85.160.170, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4ab82eb33f9so3418001cf.3
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 23 Jul 2025 11:40:43 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=cWQfTltl;
+ spf=pass (domain: konsulko.com, ip: 209.85.222.176, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7e62a1cbf81so29384485a.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 23 Jul 2025 11:40:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1753296043; x=1753900843; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1753296044; x=1753900844; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=fNqxo28ILZ92eV6buGbDsyl3YtCsfnHxvrLra7lJNks=;
-        b=uKmXESj+FdCoj+18AeVZDtmzW6ouyUAb7F7UvPXjvFOWyIVVQ9bTfydDPjWWSZ+7Ih
-         XvC74nI9TKbElpksLZh+4Jv1cs5QOEGGOjBrQjSol1VbdIi07WoMVi484BG0IBDnyjNV
-         lJkFSZMiaHwwT4LmTxMoUZ8zyezFk8Ea3W/J8=
+        bh=64lIn+jZ72KD2neSCH9xKuvMCFNg06Y6GVYKpgvvpcA=;
+        b=cWQfTltlvjLCEzyHB13Xlclyv4CALihEACRdfPJ7V5o8AgxHveCyeyJj/q9PAXOIdw
+         NiujfK6CO81Z6Dhsrd0YdY0P9vRfbc9EUJgrsert7oHpwlBdKXVaTopL1K8vIcSPyt96
+         YwnZZNBxcECzXbUz6NBr1CvSDYvtsFTyIff9c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753296043; x=1753900843;
+        d=1e100.net; s=20230601; t=1753296044; x=1753900844;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fNqxo28ILZ92eV6buGbDsyl3YtCsfnHxvrLra7lJNks=;
-        b=wC8zslVKQBDk6v4YUxjMFozq4XtRIEqsfYjch5yR1IGejS9ll38ViAjyEPPS91eJhz
-         nmN01uwDh24UTiFDmUpLVQYlFbxdbSq8fQtnopzJr9oqkynUTYsWA8L2XM3Ds/nHi8ya
-         seiC74+IpxfyYimPO7J9AHZZM+V9+PHSed2Husd9K+8HsLi5290YgvVNmcqregRIJ+wt
-         mzh6Ulgl+uDctEV9FGCbdTQut1Q4tUGMI9eFTClMl0nIl4C5XjLCJ92rlceiM7KDxYMn
-         NzQWn3rBSYuTLpTUwFn9AcXMbwPor9W6gOxysQnwuwOwVZ6LXK5WqFt7dRPbQouJeLGu
-         BvFg==
-X-Gm-Message-State: AOJu0YygDB9W4HvPnkWjLGDsdOkhuPz37YxOMw3wgh7ERdKjZNEkYyp7
-	T2YADzy8URtR7J212YIBN2Cs3FqgDN7LHqAvBy6dtJDjcgUUpb4v5AfzzBaZYVrWqk9WbNcPRpF
-	sWspJ
-X-Gm-Gg: ASbGncsufPEFOWuyjEKeG0YowJTJtxgikG3Oz6AKnlrEGSnjIBTo4DeJ7axzHSEOADg
-	Ox7sb8aNhkg6boy4LdZr2wPMTFptnSwXzVIQBHqlTKrRJjny8q4doEJ3COe54C4B26gYXoOyJa0
-	oRhdVT8hpoaKUuHipOAn4ygm7oAV7gjChFpr3QH+Quuv8OJCS9X1dDshD4bbigNGVOwz3juQsP4
-	qmvyUxVBSOb6Zw4A8CaNWh8NM7CKuakDQxGwTG8ukK/uGJA6mmmeRH3YWa3xR8pPsLKk/EveoU1
-	hHuYIXG2IpkGIdDzpWH+eQohFUvdhp2Rm4hEd/gEa+0kN7dojpgxGAnl8ac5NrCeAJAGBcy48OM
-	Gjp8HXR9mQydbDyFVTvPvupYCJSbdcnRS1H+3WQH3Tpjcz66MzUpveVkqAnXG+pJ8SSIcyUX8qg
+        bh=64lIn+jZ72KD2neSCH9xKuvMCFNg06Y6GVYKpgvvpcA=;
+        b=sw4YM+lXsNn0dvqOPlA4QGbujaIJ4iMmxALddI8jYlun0utGzaC6PhTEf1rX5cgRrX
+         uhXkjDK7sEMeXHLuFB2AFkI8WEOuwnprM0DkEQ0DuNnVBqV9wkNVH0O5dtteFROknClW
+         080p5PtXxGvDo6MoUPgnIT4oLnm2WBYRe4DFJoQleHDG5urW+1iGf+m8dd6dhkOaQETJ
+         p9rC3VIp/Um6jJ8OgdUoiKwSmIpVQJnJ0XMQygrrKUISCbUHytI+OgHFj/uKegn7AwSh
+         0nG9gQ7NnU7QU8FONS726OBJomUs3ST+5MSATQVTlyqFG82JEEwiJUJVZFgv5R1JHTn/
+         B2Uw==
+X-Gm-Message-State: AOJu0YxZTI0X+mrRIoKfSmsZV6nd4D1+d2UaXmE4UDO3Csd3KHFTki+j
+	flPWOiOJ2XdOfXaAwbC78sGZzZdMimLEuGZ3Ypm2RgoAaveZSdVE0QWpiS2iZXXqYuBH9WXIK+d
+	DUXMV
+X-Gm-Gg: ASbGnctlY4qhV0pB0xS50phanl6ajtvN5NMAna1MZUylrWj92SfjDbNfm8Db0gb0NYz
+	nJxneqJg8wtwWKDRkIAU6SHiDMbuBkY85Kz4uVQpA838O/nRK+hOB6reWKaA3vZyIG9R40ejEVU
+	fdcaDKlav3jQ3PhHu5BV4IPCOBPmfMdwnEbRi7zt2EiO0iwZSwugVK0tOqsL2maKCpulNh+HxE7
+	awM4Jmhl6bNLxjop47K8SxMi+o+JykYkWDX+/8Eb84l2G+LbEuz+3a9l+pYgafmKrQjVUC26VMg
+	OeaPYrqXXLz1pbD5uIa3/+WSLshoQuV2NlzKpkj/9pp4IfBzWuTfIDmAza2txZQNqfPvw6wsO2v
+	f8B3YpUKQOuvyqwtS+dc6nwkdtewO1WCpBdamt7AGYE+P6ZG+ZTDzRallQpmCkFKAQ6xNrZ+5Pw
 	==
-X-Google-Smtp-Source: AGHT+IFmO1NRUqf8nyhslXZid8N2wTeEaps9PwaosYUdpu7XoL/qMGKd2m1RHTy1/DRtaXMmFfkoxQ==
-X-Received: by 2002:a05:6214:29cb:b0:704:9a37:7e07 with SMTP id 6a1803df08f44-7070067ee0amr60065296d6.36.1753296042285;
-        Wed, 23 Jul 2025 11:40:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFj7WAAZxBydqH1klYHoYNL9df3BVa6tl4MFUWuvZmT44QSW4cig/+/TJh7agJFzV9sh76c8Q==
+X-Received: by 2002:a05:620a:1792:b0:7e3:4416:1032 with SMTP id af79cd13be357-7e62a19b95dmr447221785a.59.1753296043928;
+        Wed, 23 Jul 2025 11:40:43 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e356c77a1bsm697255985a.85.2025.07.23.11.40.41
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e356c77a1bsm697255985a.85.2025.07.23.11.40.43
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 11:40:41 -0700 (PDT)
+        Wed, 23 Jul 2025 11:40:43 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][scarthgap/rust][PATCH 10/13] rust: Drop obsolete rust-lld and extended tools dependencies
-Date: Wed, 23 Jul 2025 14:40:10 -0400
-Message-ID: <8538a40240e45bb3e4f05856d03c7976d45fa86e.1753295655.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][scarthgap/rust][PATCH 12/13] rust: override DEBUG_PREFIX_MAP
+Date: Wed, 23 Jul 2025 14:40:12 -0400
+Message-ID: <76a5ebf4e642726a63c5e9d23938850ab1f53123.1753295655.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.50.0
 In-Reply-To: <cover.1753295655.git.scott.murray@konsulko.com>
 References: <cover.1753295655.git.scott.murray@konsulko.com>
@@ -66,71 +66,36 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Wed, 23 Jul 2025 18:40:48 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1836
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1839
 
-From: Yash Shinde <Yash.Shinde@windriver.com>
+Add a rust bbappend to override the DEBUG_PREFIX_MAP scarthgap
+default of "-fcanon-prefix-map" as it seems to now cause issues
+with rust-llvm as of Rust 1.87.  master branch did not see this
+as the default value changed to be clang compatible before the
+upgrade to Rust 1.86.
 
-Some dependencies introduced during the v1.86 upgrade
-were needed only for rust-lld and certain LLVM extended tools,
-not for the Rust compiler itself.
-
-Since rust-lld and the extended tools are now disabled, these
-dependencies have become obsolete. Additionally, related tasks
-such as packaging zsh files and removing cargo binaries are no longer relevant.
-They can be re-enabled later if needed.
-
-Signed-off-by: Yash Shinde <Yash.Shinde@windriver.com>
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(adapted from oe-core commit 42141da566c9512b338900967e7e81e9e8b49150)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- recipes-devtools/rust/rust_1.86.0.bb | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ recipes-devtools/rust/rust_%.bbappend | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+ create mode 100644 recipes-devtools/rust/rust_%.bbappend
 
-diff --git a/recipes-devtools/rust/rust_1.86.0.bb b/recipes-devtools/rust/rust_1.86.0.bb
-index 6f6d7e5..8cfc2bd 100644
---- a/recipes-devtools/rust/rust_1.86.0.bb
-+++ b/recipes-devtools/rust/rust_1.86.0.bb
-@@ -7,13 +7,13 @@ LIC_FILES_CHKSUM = "file://COPYRIGHT;md5=11a3899825f4376896e438c8c753f8dc"
- inherit rust
- inherit cargo_common
- 
--DEPENDS += "rust-llvm pkgconfig-native openssl ninja-native"
-+DEPENDS += "rust-llvm"
- # native rust uses cargo/rustc from binary snapshots to bootstrap
- # but everything else should use our native builds
- DEPENDS:append:class-target = " cargo-native rust-native"
- DEPENDS:append:class-nativesdk = " cargo-native rust-native"
- 
--RDEPENDS:${PN}:append:class-target = " gcc g++ binutils bash"
-+RDEPENDS:${PN}:append:class-target = " gcc g++ binutils"
- 
- # Otherwise we'll depend on what we provide
- INHIBIT_DEFAULT_RUST_DEPS:class-native = "1"
-@@ -237,11 +237,10 @@ do_test_compile () {
- 
- ALLOW_EMPTY:${PN} = "1"
- 
--PACKAGES =+ "${PN}-rustdoc ${PN}-tools-clippy ${PN}-tools-rustfmt ${PN}-zsh-completion"
-+PACKAGES =+ "${PN}-rustdoc ${PN}-tools-clippy ${PN}-tools-rustfmt"
- FILES:${PN}-rustdoc = "${bindir}/rustdoc"
- FILES:${PN}-tools-clippy = "${bindir}/cargo-clippy ${bindir}/clippy-driver"
- FILES:${PN}-tools-rustfmt = "${bindir}/rustfmt"
--FILES:${PN}-zsh-completion = "${datadir}/zsh"
- 
- RDEPENDS:${PN}-rustdoc = "${PN}"
- RDEPENDS:${PN}-tools-clippy = "${PN}"
-@@ -258,10 +257,6 @@ rust_do_install() {
-     rust_runx install
- }
- 
--rust_do_install:append:class-native () {
--    rm -f ${D}${bindir}/cargo
--}
--
- rust_do_install:class-nativesdk() {
-     export PSEUDO_UNLOAD=1
-     rust_runx install
+diff --git a/recipes-devtools/rust/rust_%.bbappend b/recipes-devtools/rust/rust_%.bbappend
+new file mode 100644
+index 0000000..47d18f6
+--- /dev/null
++++ b/recipes-devtools/rust/rust_%.bbappend
+@@ -0,0 +1,10 @@
++# Override scarthgap default of "-fcanon-prefix-map" as it seems to
++# now cause issues with rust-llvm as of Rust 1.87.  master branch
++# did not see this as the default value changed to the below before
++# the upgrade to Rust 1.86.
++DEBUG_PREFIX_MAP = "\
++ -ffile-prefix-map=${S}=${TARGET_DBGSRC_DIR} \
++ -ffile-prefix-map=${B}=${TARGET_DBGSRC_DIR} \
++ -ffile-prefix-map=${STAGING_DIR_HOST}= \
++ -ffile-prefix-map=${STAGING_DIR_NATIVE}= \
++"
 -- 
 2.50.0
 
