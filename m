@@ -2,61 +2,61 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 959F8C83F17
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93601C83F1A
 	for <webhook@archiver.kernel.org>; Wed, 23 Jul 2025 18:40:38 +0000 (UTC)
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
- by mx.groups.io with SMTP id smtpd.web10.22556.1753296037809759375
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+ by mx.groups.io with SMTP id smtpd.web10.22551.1753296034351814689
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 23 Jul 2025 11:40:37 -0700
+ Wed, 23 Jul 2025 11:40:34 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=UVCccB84;
- spf=pass (domain: konsulko.com, ip: 209.85.222.179, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7e050bd078cso20894485a.3
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 23 Jul 2025 11:40:37 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=tDiBg7Qe;
+ spf=pass (domain: konsulko.com, ip: 209.85.222.169, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7e169ac6009so27390485a.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 23 Jul 2025 11:40:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1753296037; x=1753900837; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1753296033; x=1753900833; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=b5FCzfo20k9vwR4BRIgNILtghJf2+lKEtKiWlGJxzmc=;
-        b=UVCccB84xCnJSNTvmQdmlE6R1R+K9qpkPo9FzQWOIV3v6DZ5ytmkfFKN8QUPQjImfh
-         pOB12bAmc+7YAxIBPUBR9n5Zjjav+LwE55YPmKpDsRIs71fmXDbgCQyTe+kuNiyhtzFb
-         iNbMP+CNh2Sf4D3dyj7ARLcywP1IMGXhjacao=
+        bh=xrFeu9DJ8c68IkqrqaBc7AUZLjSTLwy4NnjgOhTFvEQ=;
+        b=tDiBg7QeDaEC20PrJEGaUYMasWMalWdtg7OtLkW69WhkMqLYOaSgbrXNpMLyE4SVNN
+         JjMTQlp8J4zeXw0+TDc+7PICbNg8k3zcb3XO0PIPMX/Q9FtKgDoqY9F8+EW5uvjswgb2
+         xngIJ9cQU5fWWfmQlQtHeP9WDnUsCa0aB7G6U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753296037; x=1753900837;
+        d=1e100.net; s=20230601; t=1753296033; x=1753900833;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=b5FCzfo20k9vwR4BRIgNILtghJf2+lKEtKiWlGJxzmc=;
-        b=BGUTuoo+okJoMzJbXmFvDLPO3yDjhsqvXdAGMwE+dXQEpB3KXjZscM5U6+A1k1VtdK
-         rLDO3IhOKY/+HdAGSZlNG/2IHss7G5tOySz4iCTfrHGAmgQI0mnxuJ9rDrXlwFxpYX8L
-         rG8LAIIfLlzxGf0hqIZe2Jtvou+70HgKJ9NS1gsh/L7EWG+5w+SS3qzSE2cZwrkObTSV
-         5FxAh3oDwzkjLrEj6GhJSnfNtT5TzEv6vwxmtMjRpy4vVsijcti3DHuvPpYHMdEkJAIS
-         CrYSSldokgUbPeRd0GxOHM07EZHdbvapgK4J7pqYqmRK4gdvEu2tVuGR9SFJc3UHrMIe
-         RpNQ==
-X-Gm-Message-State: AOJu0YyWJZ0qoqYonTfdDP0hnr5CtboK0h27wM8mi4B8esuG+GxhRsl5
-	4b1BQu+6r9Vq9vWr3VRhMOurtFjQyufF+NtvVHfl8e2VbDBnxeO0ieGZjTGL9gFTIMvpZAengV5
-	D7I61
-X-Gm-Gg: ASbGncv3gmrg6YKltrsnEAnjhP3Q5jio1wSmbj747wC4vVfshAP+g4UIBu+oEDQgp3G
-	1G/wj7BPYNztY2yCak3CqL3xzd6oqiQihhf1WL3ENQJqfGMT798G72k4wlkuQ/r16irRfBuDJpE
-	U62LiM83mHBzPw2/fjUQ4VZZ91F8L7bWRytoR4H8K4ldiDa9fCwRmdxXsjD8W5XTB7MNN8+uc6q
-	1yNywqGE6/vjsRqagQpr7bl/r529Djs2CQsVNaneH42aEjCZHlPCZs9KTjXgYBTdOIyD2oRLMxC
-	pwNsh7qPUO5ogpiFFy4yP6gw6GmpAK3HvdfYs5Lfoa7xrL/4HwpN7NLoNznPvLnxfVaUGJvUS6K
-	GPhPWQsw4i0ZQAgXZgqMd4x5Wm5C2jjEyRtU4m6h6xhNP4ckLyrYjKXU/sY0mW3sVlYnkyjMQi9
-	QWfGn8KTQT
-X-Google-Smtp-Source: AGHT+IHHBVSYQmh9xoZWj3Rwfw+fx+9JdI/US26Xczpigq4QBN6cCjTl8gRpKL5QR0SRkH+aovMVWg==
-X-Received: by 2002:a05:620a:935b:b0:7df:dea8:6384 with SMTP id af79cd13be357-7e62a1bc975mr404390885a.47.1753296036610;
-        Wed, 23 Jul 2025 11:40:36 -0700 (PDT)
+        bh=xrFeu9DJ8c68IkqrqaBc7AUZLjSTLwy4NnjgOhTFvEQ=;
+        b=pesax4FPCOiPv8zn70hfjXvm9dXrvGD2s0DzAFuakIFicVAxEw+p375pb8en6wp4Ib
+         ap/OAmB6KdFmZWJtOFFdrFNUo0FcnixQcPfcIEiRSdi8QwsvROd8/ElLG0hrikQ3pkju
+         Uxeb6qupteAVEDTPiJ7m+WqcXwEO93aDMeXEmhBgX3oxCo+IKJ+kZZMnP1azLJgTm4tV
+         Vk2E3ObQy8UE3bapPeQcTb91XxkLtxO8EGc8uvp3uXTPVU+k9xn1mhITZbRa1g2MstyI
+         jlQnVLYukjSITRHUMxitWlmi2GAYMGq4Rn9wuuJS+MZc0pav05h/G3iXC7L+gA6x0beq
+         OpTg==
+X-Gm-Message-State: AOJu0YzyITC6zp16Te4Arj6HahYw+vLAIPQ3QSIWZ1NGYYHdqPYdW4Ho
+	aGqWY0L2jGijLuFlwjRHDJOeOiOhxIMAb35xdCmN9Fk+Y4obDIHAtmImD1iCj4KprK+60iICDJK
+	Cqbg5
+X-Gm-Gg: ASbGncu63rff9LsuaVDwPwKCdxH12D5ltSLOKPAOjFamcaBuYnmEkYmMFHWcxghPEfm
+	Tg6D9j127IDymeT78uxv1oFWy1Ztuz/DGSJmqJQpqeEi06pQaA//5tC46BxBL1sAPDRD5il6aS0
+	n2ArMxEpVqI46ROFf53x6NfmQ+Djt5JstbkHcYeHGM1nd1fC0+tmJJS40Wx7+jPLrbR9Vupyigp
+	fyrA1bjkS2v8wFAM8HoOBrdEZcY+flnqdISIzDaP/uidGtzyhU2mzZmdJCgFEl+l+lDa19bbozv
+	u5+/K+15TDnzNXxwi82B20DOFoLC6Url2c620kleYdX/EWt5j1wFO3XNDYo+exJuTO0JHo/HJUp
+	dr1GFvb83eM0oJYU27rxIm4di731y2CiEFiUET/Ik6JKNvlvlNO6hbdsD90XR9I0dOYQ1gCDKAw
+	==
+X-Google-Smtp-Source: AGHT+IHXNgmNTLg5qTerfxsZWA0IkZpl7ARWnxL4CnhK8EItL5ymEbVq1qANK8OocBvn+MWBA9/2Kg==
+X-Received: by 2002:a05:620a:1aa9:b0:7e3:3ec0:395b with SMTP id af79cd13be357-7e62a0b6d82mr392944285a.8.1753296032836;
+        Wed, 23 Jul 2025 11:40:32 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e356c77a1bsm697255985a.85.2025.07.23.11.40.36
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e356c77a1bsm697255985a.85.2025.07.23.11.40.32
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 11:40:36 -0700 (PDT)
+        Wed, 23 Jul 2025 11:40:32 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][scarthgap/rust][PATCH 06/13] rust: consolidate rust-llvm dependencies
-Date: Wed, 23 Jul 2025 14:40:06 -0400
-Message-ID: <5d81ab70d9cfd78654cfb1b6bb9dcdfb0235d852.1753295655.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][scarthgap/rust][PATCH 01/13] ptest-cargo: fix tests output format for testimage
+Date: Wed, 23 Jul 2025 14:40:01 -0400
+Message-ID: <9a916901a49feca16528ee191fc9ea2ba1ecfc4c.1753295655.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.50.0
 In-Reply-To: <cover.1753295655.git.scott.murray@konsulko.com>
 References: <cover.1753295655.git.scott.murray@konsulko.com>
@@ -66,45 +66,62 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Wed, 23 Jul 2025 18:40:38 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1833
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1828
 
-From: Ross Burton <ross.burton@arm.com>
+From: Ines KCHELFI <ines.kchelfi@smile.fr>
 
-There's no need to have multiple overrides for this, as BBCLASSEXTEND
-will automatically map the dependencies as needed.
+In testimage, the ptest-runner output parser expects test results to follow
+a specific format,with lines beginning with PASS:, FAIL:, or SKIP:. ptest-cargo,
+currently, does not emit any of those lines and the parser treats the test
+section as having no results, causing a test failure with :
 
-Signed-off-by: Ross Burton <ross.burton@arm.com>
+AssertionError:
+ptests which had no test results:
+['<package>']
+
+This patch ensures that the recipes using ptest-cargo class explicitly emits
+PASS: or FAIL: lines, making the results compatible with the test parser and
+preventing test failures.
+
+Signed-off-by: Ines KCHELFI <ines.kchelfi@smile.fr>
 Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(adapted from oe-core commit ffa699332551fbbb95a0e388385667dc2706da6a)
+(adapted from oe-core commit 6a9356346f13556a06d4a99bd7924992c7e29d66)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- recipes-devtools/rust/rust_1.85.1.bb | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ classes-recipe/ptest-cargo.bbclass | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/recipes-devtools/rust/rust_1.85.1.bb b/recipes-devtools/rust/rust_1.85.1.bb
-index 90c6d5f..085fd3f 100644
---- a/recipes-devtools/rust/rust_1.85.1.bb
-+++ b/recipes-devtools/rust/rust_1.85.1.bb
-@@ -7,17 +7,12 @@ LIC_FILES_CHKSUM = "file://COPYRIGHT;md5=9c0fae516fe8aaea2fb601db4800daf7"
- inherit rust
- inherit cargo_common
+diff --git a/classes-recipe/ptest-cargo.bbclass b/classes-recipe/ptest-cargo.bbclass
+index 7b18d43..ece25ff 100644
+--- a/classes-recipe/ptest-cargo.bbclass
++++ b/classes-recipe/ptest-cargo.bbclass
+@@ -77,6 +77,7 @@ python do_compile_ptest_cargo() {
  
--DEPENDS += "file-native"
--DEPENDS:append:class-native = " rust-llvm-native"
--DEPENDS:append:class-nativesdk = " nativesdk-rust-llvm"
--
-+DEPENDS += "file-native rust-llvm"
- # native rust uses cargo/rustc from binary snapshots to bootstrap
- # but everything else should use our native builds
- DEPENDS:append:class-target = " cargo-native rust-native"
- DEPENDS:append:class-nativesdk = " cargo-native rust-native"
+ python do_install_ptest_cargo() {
+     import shutil
++    import textwrap
  
--DEPENDS += "rust-llvm (=${PV})"
--
- RDEPENDS:${PN}:append:class-target = " gcc g++ binutils"
+     dest_dir = d.getVar("D")
+     pn = d.getVar("PN")
+@@ -107,7 +108,16 @@ python do_install_ptest_cargo() {
+             f.write(f"\necho \"\"\n")
+             f.write(f"echo \"## starting to run rust tests ##\"\n")               
+         for test_path in test_paths:
+-            f.write(f"if ! {test_path} {rust_test_args}; then rc=1; fi\n")
++            script = textwrap.dedent(f"""\
++                if ! {test_path} {rust_test_args}
++                then
++                    rc=1
++                    echo "FAIL: {test_path}"
++                else
++                    echo "PASS: {test_path}"
++                fi
++            """)
++            f.write(script)
+         
+         f.write("exit $rc\n")
  
- # Otherwise we'll depend on what we provide
 -- 
 2.50.0
 
