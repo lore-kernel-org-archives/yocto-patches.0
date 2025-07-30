@@ -1,476 +1,289 @@
-Return-Path: <quaresma.jose@gmail.com>
+Return-Path: <levi.shafter@elder-tomes.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 456BFC87FCB
-	for <webhook@archiver.kernel.org>; Wed, 30 Jul 2025 15:49:32 +0000 (UTC)
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
- by mx.groups.io with SMTP id smtpd.web10.38879.1753890562678934592
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 500C9C83F26
+	for <webhook@archiver.kernel.org>; Wed, 30 Jul 2025 20:43:54 +0000 (UTC)
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+ by mx.groups.io with SMTP id smtpd.web11.46049.1753908225712111559
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 30 Jul 2025 08:49:22 -0700
+ Wed, 30 Jul 2025 13:43:45 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=fADsZ9hI;
- spf=pass (domain: gmail.com, ip: 209.85.222.46, mailfrom: quaresma.jose@gmail.com)
-Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-87f04817bf6so870241.0
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 30 Jul 2025 08:49:22 -0700 (PDT)
+ dkim=pass header.i=@elder-tomes-com.20230601.gappssmtp.com header.s=20230601 header.b=gmVukIwE;
+ spf=pass (domain: elder-tomes.com, ip: 209.85.166.174, mailfrom: levi.shafter@elder-tomes.com)
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3e3d31a9ac7so986845ab.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 30 Jul 2025 13:43:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753890561; x=1754495361; darn=lists.yoctoproject.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ydxlW4qYrC9zXVe7+w8/oZAXTKSJz0ZDdLVZ1zn0M50=;
-        b=fADsZ9hI8Do3gFHhQbiO0W9a61p/jOfvuIz5RGTy8HFIgmNmLY1LsLUSZ8PLsWVdTQ
-         yxbPLx6+u0esNlli8vxMPcDtV8HGrLlKUHG0HlQP+p4tUUNgWYUov6pahWmQ+SguR6hi
-         MRvkI3Oin1AZUA05ddLoiWdL9BTr+MCEnj7kzne7nBmxKChA6Ws6UlH8C1jtVfMjij8J
-         CWgfiuGBgXBQ3MP/r12ilZur4YG1i4S4SM3FoluPv2FlXEDaP6knhHifzhxTaK4q8JRF
-         PWPrsoCTN7eiHREXqkEkmA+KXtR15JkDZRhRRj5jG5bDoIY5hX8bbse57zMFj4HfQS5N
-         3SiQ==
+        d=elder-tomes-com.20230601.gappssmtp.com; s=20230601; t=1753908224; x=1754513024; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ciHJY6xuLXWAmavwLxdroR4PE67hvLXjhY6fsoEhk08=;
+        b=gmVukIwENUuLioGkM9KS5F7VBIE9T0ZgNppHxQ3sO9rKF2vc6gqHUw60VSRYQ9ZzEF
+         nR1VgDL3qIII65DcR9eBLGlsx/Nl3NSSh8I03Whk5T36T022wXLkjnCchgF8NenVNqoE
+         tsaoaVWoJYZcYsIGNtg+fibKdSKQD7yqZOn/pVEon56yO2wBb9tiwYvw8UlQc2NhYqFo
+         feokyG66wx9sZ0HZJA7gzrX9QYZdH5/S9JZnbl8Cmpjg07hUCfh6VpUGQBHwC7Np8xLo
+         NX3OLuAmH39hruz0XpB0Jrcscfetkk3GWVU2l4TqrlHKpDFGeRi2x2KtFyvosGFp+RBD
+         YrAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753890561; x=1754495361;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ydxlW4qYrC9zXVe7+w8/oZAXTKSJz0ZDdLVZ1zn0M50=;
-        b=ty9GWYDIAxqdbztYU2EbLJbuOCv11PhaCIKxHfXx6//eGd+ezrnF7hztN5IQS8+x2l
-         tBis1ZoS0Y/ouC7cQkv14lsIvfKfkGq7n38EmI67njG9ihEJ3SL5vAQ810w4uWSbvtpx
-         8YuiTHaXVI+txU4FPfkypPuhhmMjlKuN9CLFe0oXBdHn4IxVwx5/wwWe/rqerdACrszI
-         46CreWh/PgeI0p2v9KoSo0IATGLHHEV0emv89CMx1ayIHnJAG7YMMI5iaeaL2nFtFXhn
-         b+5dfFuSa8mF7/Z3geFsS9hTP5njaR12YBuVWzhSanqkeNtXKtGOEVa8HmLiUtVBlPIq
-         Y1jA==
-X-Gm-Message-State: AOJu0Yyt2u30IkWQhD88gbgotZ51tPqnAsseuSL1OyfKpAKgVQ276lLU
-	/b53LPhbP1NNtCv/H2Hy0YUc/FmrXyuHxExZNCNy+wagPTSsVlHCEXJz8X3E9KcvAPvfKAlS3t9
-	QZ3mxbNgm7mLOHcCSabpbePOworz5K8N5rGp0
-X-Gm-Gg: ASbGncs/wKJ8s0VLSW9Y3OCYypAGp7o7zpfydBHdHK6dRkEyMeTkx2VsO9WqEix8mHS
-	usm5HRPCgpESToEPzCdjZkCss/xTtTrYFOrllVrzKHijkaRXYnT2xN6RYEpgLx4tw+7tH4naXj3
-	Js3feVe7GzR1Q4bH/AgTnUFy0vwQK00uF7JWS3M2pyKrNXwlh7Pi6ZwfphwpCClEoubJ40J7Qu6
-	hQ/E+Xp
-X-Google-Smtp-Source: AGHT+IGfRNREJQsOyHGQnzxIh0iAI6zt/k/IjGaxyDU936+X0Bg/9CfeEW7ypiObQop1sRI46ZCsHMrhAK2Eh5o9On8=
-X-Received: by 2002:a05:6102:6106:20b0:4fb:f15c:2e39 with SMTP id
- ada2fe7eead31-4fbf15c4105mr1069342137.24.1753890561083; Wed, 30 Jul 2025
- 08:49:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753908224; x=1754513024;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ciHJY6xuLXWAmavwLxdroR4PE67hvLXjhY6fsoEhk08=;
+        b=K7Q4HcsHlDEqfnTN0ixCbF4DCXqzOGbaaaf49TH0MVpyhcQS5M9r0LGmo2xNnMuhYK
+         yVyEsnoJnCin5is81rdoSu+s6KpmywHWxBXtvc4AHctHViA1N2nYNXx3lrYSMNWE9n8p
+         NabK9zrTTYLsp078wr42dCPrD+hJjdV5uUYM3XyQLYL889dsNIg+DODc255bw3T8lRr1
+         tLZeuTaUmf4m9pLMl13Frk+Ux5fTdR4v5fG5DO1MLt0OqhsTVrE6TxY6Yk7/aOzU1Rl6
+         UERPBmGTFzqFRhbTkY2XH2mO146esIWu9Af9JJsAhtd3+4XSlN0EurMAeX2wRvSasWmv
+         rNog==
+X-Gm-Message-State: AOJu0YzTKf/XLWBrGG1b18DSGFo9QQSA75deb6UvFIJ0MxHODeHPDPm+
+	IWlqQlrxjD0f8v1p/POd553qX0LxZOqME4yj92mRayUJWWW0keleOoNdo8FNU+fEBt+rXpzXfPx
+	Y+Sgx6Yk=
+X-Gm-Gg: ASbGncu71NiZq+N28KClThDlg9BJb88EXSiLu994cq8MpstQka5TsuauB4F8eSg1Xw1
+	GMddbFLFThkD9lfDqo3Ev38rupIYuDWHoJaKG5veFRSgIhr5zlEeCLJ7513jwbTOf32jyaJorWr
+	dTMvbqxzCzcpgz/tcjA6sumortzl+vauT54kwJ/CIlJSC6qCGpqe/5xaD6em9tYUoRrdeRf6Htt
+	Dk69+RBwrdrgZVu2IyVQyX7TYelu+JoeWQ5K3pA6RUA0NUFRta8KhCma9jdyvDPvW7RSZljvsRE
+	PmC9NRHvoxTeDOQBwqJgELrNVDyXBZcycbtueT1QbppRXgtl4BoZOra1SCm8M69QBt6uCEHok8y
+	nEYETEbKd9QbH20atGi3lnlSIe4QrrgCs08QwOPpeIguYGzxYKf7j+6942A6vzwAXQaz339Q=
+X-Google-Smtp-Source: AGHT+IF6jnCUXSKE9wAzbWgfm2AZSsZf/Mc53hwGmm9IUk+B2e5AJ7ldy4hAfpFsi8Tio3vm+eRS4g==
+X-Received: by 2002:a05:6e02:156c:b0:3e3:f7f8:fbc9 with SMTP id e9e14a558f8ab-3e3f7f8fc5emr72657595ab.12.1753908224234;
+        Wed, 30 Jul 2025 13:43:44 -0700 (PDT)
+Received: from [192.168.1.8] (c-75-70-150-54.hsd1.co.comcast.net. [75.70.150.54])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e402aca49fsm594345ab.36.2025.07.30.13.43.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Jul 2025 13:43:43 -0700 (PDT)
+Message-ID: <bb24ee8c-b074-4b54-be64-2d1a09e5359f@elder-tomes.com>
+Date: Wed, 30 Jul 2025 14:43:43 -0600
 MIME-Version: 1.0
-References: <20250718162835.8822-1-peter.marko@siemens.com>
-In-Reply-To: <20250718162835.8822-1-peter.marko@siemens.com>
-From: Jose Quaresma <quaresma.jose@gmail.com>
-Date: Wed, 30 Jul 2025 16:49:10 +0100
-X-Gm-Features: Ac12FXwH5kgbaanRTgIFYPhRW31ZuJtOixEN8KEf9sFSIVOoC3UeE_CFDtycVRw
-Message-ID: <CANPvuRkhVY+-HghpenT_KfEtYddfBW0yuh=-2xcyDDjnMDmD8A@mail.gmail.com>
-Subject: Re: [yocto-patches] [meta-lts-mixins][kirkstone/go][PATCH] go:
- upgrade 1.24.4 -> 1.24.5
-To: yocto-patches@lists.yoctoproject.org
-Cc: jose.quaresma@foundries.io, Peter Marko <peter.marko@siemens.com>
-Content-Type: multipart/alternative; boundary="000000000000de5005063b277725"
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: yocto-patches@lists.yoctoproject.org, yi.zhao@windriver.com,
+ joe.macdonald@siemens.com
+From: Levi Shafter <levi.shafter@elder-tomes.com>
+Subject: [meta-selinux][PATCH] openssh: use config snippet instead of file
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 30 Jul 2025 15:49:32 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1877
+ <yocto-patches@lists.yoctoproject.org>; Wed, 30 Jul 2025 20:43:54 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1878
 
---000000000000de5005063b277725
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Config snippets should be used over file overrides since targeted
+changes may be required in multiple recipes.
 
-Hi Peter,
+Since the oe-core sshd_config file now includes
+/etc/ssh/sshd_config.d/*.conf, the meta-selinux configuration snippet
+does not require the following:
 
-Applied! Sorry for the delay but I was away for a while.
+* ChallengeResponseAutnetication: Replaced by
+  KbdInteractiveAuthentication and set to "no" by default
 
-Jose
+* Override default of no subsystems: This is already present
 
-Peter Marko via lists.yoctoproject.org <peter.marko=3D
-siemens.com@lists.yoctoproject.org> escreveu (sexta, 18/07/2025 =C3=A0(s) 1=
-7:29):
+* Compression, ClientAliveInterval, and ClientAliveCountMax: No changes
+  required due to identical requirements of meta-selinux
 
-> From: Peter Marko <peter.marko@siemens.com>
->
-> Upgrade to latest 1.24.x release [1]:
->
-> $ git --no-pager log --oneline go1.24.4..go1.24.5
-> 9d828e80fa (tag: go1.24.5) [release-branch.go1.24] go1.24.5
-> 825eeee3f7 [release-branch.go1.24] cmd/go: disable support for multiple
-> vcs in one module
-> dbf30d88f3 [release-branch.go1.24] cmd/link: permit a larger size BSS
-> reference to a smaller DATA symbol
-> 6b51660c8c [release-branch.go1.24] runtime: set mspan limit field early
-> and eagerly
-> cc604130c8 [release-branch.go1.24] runtime: prevent mutual deadlock
-> between GC stopTheWorld and suspendG
-> 21b488bb60 [release-branch.go1.24] runtime: handle system goroutines late=
-r
-> in goroutine profiling
-> e038690847 [release-branch.go1.24] cmd/go/internal/fips140: ignore
-> GOEXPERIMENT on error
-> 1575127ef8 [release-branch.go1.24] runtime: add missing unlock in
-> sysReserveAlignedSbrk
-> 7d08a16fba [release-branch.go1.24] cmd/compile/internal/ssa: fix PPC64
-> merging of (AND (S[RL]Dconst ...)
-> 5f2cbe1f64 [release-branch.go1.24] cmd/compile: do nil check before
-> calling duff functions, on arm64 and amd64
->
-> Fixes CVE-2025-4674 [2].
->
-> [1] https://github.com/golang/go/compare/go1.24.4...go1.24.5
-> [2] https://groups.google.com/g/golang-announce/c/gTNJnDXmn34
->
-> (From OE-Core rev: a3cc5038ea10a4857627e6f4de25bdc43023a349)
->
-> Signed-off-by: Peter Marko <peter.marko@siemens.com>
-> Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-> Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-> ---
->  recipes-devtools/go/{go-1.24.4.inc =3D> go-1.24.5.inc}        | 2 +-
->  ...o-binary-native_1.24.4.bb =3D> go-binary-native_1.24.5.bb} | 6 +++---
->  ...cross-canadian_1.24.4.bb =3D> go-cross-canadian_1.24.5.bb} | 0
->  .../go/{go-cross_1.24.4.bb =3D> go-cross_1.24.5.bb}           | 0
->  .../go/{go-crosssdk_1.24.4.bb =3D> go-crosssdk_1.24.5.bb}     | 0
->  .../go/{go-runtime_1.24.4.bb =3D> go-runtime_1.24.5.bb}       | 0
->  recipes-devtools/go/{go_1.24.4.bb =3D> go_1.24.5.bb}          | 0
->  7 files changed, 4 insertions(+), 4 deletions(-)
->  rename recipes-devtools/go/{go-1.24.4.inc =3D> go-1.24.5.inc} (91%)
->  rename recipes-devtools/go/{go-binary-native_1.24.4.bb =3D>
-> go-binary-native_1.24.5.bb} (79%)
->  rename recipes-devtools/go/{go-cross-canadian_1.24.4.bb =3D>
-> go-cross-canadian_1.24.5.bb} (100%)
->  rename recipes-devtools/go/{go-cross_1.24.4.bb =3D> go-cross_1.24.5.bb}
-> (100%)
->  rename recipes-devtools/go/{go-crosssdk_1.24.4.bb =3D>
-> go-crosssdk_1.24.5.bb} (100%)
->  rename recipes-devtools/go/{go-runtime_1.24.4.bb =3D> go-runtime_1.24.5.=
-bb}
-> (100%)
->  rename recipes-devtools/go/{go_1.24.4.bb =3D> go_1.24.5.bb} (100%)
->
-> diff --git a/recipes-devtools/go/go-1.24.4.inc
-> b/recipes-devtools/go/go-1.24.5.inc
-> similarity index 91%
-> rename from recipes-devtools/go/go-1.24.4.inc
-> rename to recipes-devtools/go/go-1.24.5.inc
-> index eff3f2f..fae0d3f 100644
-> --- a/recipes-devtools/go/go-1.24.4.inc
-> +++ b/recipes-devtools/go/go-1.24.5.inc
-> @@ -17,4 +17,4 @@ SRC_URI +=3D "\
->
->  file://0010-cmd-go-clear-GOROOT-for-func-ldShared-when-trimpath-.patch \
->      file://6d265b008e3d106b2706645e5a88cd8e2fb98953.patch \
->  "
-> -SRC_URI[main.sha256sum] =3D
-> "5a86a83a31f9fa81490b8c5420ac384fd3d95a3e71fba665c7b3f95d1dfef2b4"
-> +SRC_URI[main.sha256sum] =3D
-> "74fdb09f2352e2b25b7943e56836c9b47363d28dec1c8b56c4a9570f30b8f59f"
-> diff --git a/recipes-devtools/go/go-binary-native_1.24.4.bb
-> b/recipes-devtools/go/go-binary-native_1.24.5.bb
-> similarity index 79%
-> rename from recipes-devtools/go/go-binary-native_1.24.4.bb
-> rename to recipes-devtools/go/go-binary-native_1.24.5.bb
-> index d1f8fc6..5002686 100644
-> --- a/recipes-devtools/go/go-binary-native_1.24.4.bb
-> +++ b/recipes-devtools/go/go-binary-native_1.24.5.bb
-> @@ -9,9 +9,9 @@ PROVIDES =3D "go-native"
->
->  # Checksums available at https://go.dev/dl/
->  SRC_URI =3D "
-> https://dl.google.com/go/go${PV}.${BUILD_GOOS}-${BUILD_GOARCH}.tar.gz;nam=
-e=3Dgo_${BUILD_GOTUPLE}
-> "
-> -SRC_URI[go_linux_amd64.sha256sum] =3D
-> "77e5da33bb72aeaef1ba4418b6fe511bc4d041873cbf82e5aa6318740df98717"
-> -SRC_URI[go_linux_arm64.sha256sum] =3D
-> "d5501ee5aca0f258d5fe9bfaed401958445014495dc115f202d43d5210b45241"
-> -SRC_URI[go_linux_ppc64le.sha256sum] =3D
-> "9ca4afef813a2578c23843b640ae0290aa54b2e3c950a6cc4c99e16a57dec2ec"
-> +SRC_URI[go_linux_amd64.sha256sum] =3D
-> "10ad9e86233e74c0f6590fe5426895de6bf388964210eac34a6d83f38918ecdc"
-> +SRC_URI[go_linux_arm64.sha256sum] =3D
-> "0df02e6aeb3d3c06c95ff201d575907c736d6c62cfa4b6934c11203f1d600ffa"
-> +SRC_URI[go_linux_ppc64le.sha256sum] =3D
-> "00bdfb16d1094e78473b681d2d09d42c19c886d4dfed743853769f1665c7a552"
->
->  UPSTREAM_CHECK_URI =3D "https://golang.org/dl/"
->  UPSTREAM_CHECK_REGEX =3D "go(?P<pver>\d+(\.\d+)+)\.linux"
-> diff --git a/recipes-devtools/go/go-cross-canadian_1.24.4.bb
-> b/recipes-devtools/go/go-cross-canadian_1.24.5.bb
-> similarity index 100%
-> rename from recipes-devtools/go/go-cross-canadian_1.24.4.bb
-> rename to recipes-devtools/go/go-cross-canadian_1.24.5.bb
-> diff --git a/recipes-devtools/go/go-cross_1.24.4.bb b/recipes-devtools/go=
-/
-> go-cross_1.24.5.bb
-> similarity index 100%
-> rename from recipes-devtools/go/go-cross_1.24.4.bb
-> rename to recipes-devtools/go/go-cross_1.24.5.bb
-> diff --git a/recipes-devtools/go/go-crosssdk_1.24.4.bb
-> b/recipes-devtools/go/go-crosssdk_1.24.5.bb
-> similarity index 100%
-> rename from recipes-devtools/go/go-crosssdk_1.24.4.bb
-> rename to recipes-devtools/go/go-crosssdk_1.24.5.bb
-> diff --git a/recipes-devtools/go/go-runtime_1.24.4.bb
-> b/recipes-devtools/go/go-runtime_1.24.5.bb
-> similarity index 100%
-> rename from recipes-devtools/go/go-runtime_1.24.4.bb
-> rename to recipes-devtools/go/go-runtime_1.24.5.bb
-> diff --git a/recipes-devtools/go/go_1.24.4.bb b/recipes-devtools/go/
-> go_1.24.5.bb
-> similarity index 100%
-> rename from recipes-devtools/go/go_1.24.4.bb
-> rename to recipes-devtools/go/go_1.24.5.bb
->
->
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-> Links: You receive all messages sent to this group.
-> View/Reply Online (#1816):
-> https://lists.yoctoproject.org/g/yocto-patches/message/1816
-> Mute This Topic: https://lists.yoctoproject.org/mt/114223918/5052612
-> Group Owner: yocto-patches+owner@lists.yoctoproject.org
-> Unsubscribe:
-> https://lists.yoctoproject.org/g/yocto-patches/leave/13170708/5052612/150=
-4338242/xyzzy
-> [quaresma.jose@gmail.com]
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
->
->
->
+Testing process:
 
---=20
-Best regards,
+* Pulled modified meta-selinux layer into Poky and included openssh
 
-Jos=C3=A9 Quaresma
+* Built core-image-sato and ran via qemu
 
---000000000000de5005063b277725
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+* Verified /etc/ssh was as expected with an ssh_config.d directory with
+  the new selinux config snippet inside
 
-<div dir=3D"ltr"><div>Hi Peter,</div><div><br></div>Applied! Sorry for the =
-delay but I was away for a while.<div><div><br></div>Jose</div><br><div cla=
-ss=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr" class=3D"gmail_at=
-tr">Peter Marko via <a href=3D"http://lists.yoctoproject.org">lists.yoctopr=
-oject.org</a> &lt;peter.marko=3D<a href=3D"mailto:siemens.com@lists.yoctopr=
-oject.org">siemens.com@lists.yoctoproject.org</a>&gt; escreveu (sexta, 18/0=
-7/2025 =C3=A0(s) 17:29):<br></div><blockquote class=3D"gmail_quote" style=
-=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding=
--left:1ex">From: Peter Marko &lt;<a href=3D"mailto:peter.marko@siemens.com"=
- target=3D"_blank">peter.marko@siemens.com</a>&gt;<br>
-<br>
-Upgrade to latest 1.24.x release [1]:<br>
-<br>
-$ git --no-pager log --oneline go1.24.4..go1.24.5<br>
-9d828e80fa (tag: go1.24.5) [release-branch.go1.24] go1.24.5<br>
-825eeee3f7 [release-branch.go1.24] cmd/go: disable support for multiple vcs=
- in one module<br>
-dbf30d88f3 [release-branch.go1.24] cmd/link: permit a larger size BSS refer=
-ence to a smaller DATA symbol<br>
-6b51660c8c [release-branch.go1.24] runtime: set mspan limit field early and=
- eagerly<br>
-cc604130c8 [release-branch.go1.24] runtime: prevent mutual deadlock between=
- GC stopTheWorld and suspendG<br>
-21b488bb60 [release-branch.go1.24] runtime: handle system goroutines later =
-in goroutine profiling<br>
-e038690847 [release-branch.go1.24] cmd/go/internal/fips140: ignore GOEXPERI=
-MENT on error<br>
-1575127ef8 [release-branch.go1.24] runtime: add missing unlock in sysReserv=
-eAlignedSbrk<br>
-7d08a16fba [release-branch.go1.24] cmd/compile/internal/ssa: fix PPC64 merg=
-ing of (AND (S[RL]Dconst ...)<br>
-5f2cbe1f64 [release-branch.go1.24] cmd/compile: do nil check before calling=
- duff functions, on arm64 and amd64<br>
-<br>
-Fixes CVE-2025-4674 [2].<br>
-<br>
-[1] <a href=3D"https://github.com/golang/go/compare/go1.24.4...go1.24.5" re=
-l=3D"noreferrer" target=3D"_blank">https://github.com/golang/go/compare/go1=
-.24.4...go1.24.5</a><br>
-[2] <a href=3D"https://groups.google.com/g/golang-announce/c/gTNJnDXmn34" r=
-el=3D"noreferrer" target=3D"_blank">https://groups.google.com/g/golang-anno=
-unce/c/gTNJnDXmn34</a><br>
-<br>
-(From OE-Core rev: a3cc5038ea10a4857627e6f4de25bdc43023a349)<br>
-<br>
-Signed-off-by: Peter Marko &lt;<a href=3D"mailto:peter.marko@siemens.com" t=
-arget=3D"_blank">peter.marko@siemens.com</a>&gt;<br>
-Signed-off-by: Mathieu Dubois-Briand &lt;<a href=3D"mailto:mathieu.dubois-b=
-riand@bootlin.com" target=3D"_blank">mathieu.dubois-briand@bootlin.com</a>&=
-gt;<br>
-Signed-off-by: Richard Purdie &lt;<a href=3D"mailto:richard.purdie@linuxfou=
-ndation.org" target=3D"_blank">richard.purdie@linuxfoundation.org</a>&gt;<b=
-r>
----<br>
-=C2=A0recipes-devtools/go/{go-1.24.4.inc =3D&gt; go-1.24.5.inc}=C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 | 2 +-<br>
-=C2=A0...<a href=3D"http://o-binary-native_1.24.4.bb" rel=3D"noreferrer" ta=
-rget=3D"_blank">o-binary-native_1.24.4.bb</a> =3D&gt; <a href=3D"http://go-=
-binary-native_1.24.5.bb" rel=3D"noreferrer" target=3D"_blank">go-binary-nat=
-ive_1.24.5.bb</a>} | 6 +++---<br>
-=C2=A0...<a href=3D"http://cross-canadian_1.24.4.bb" rel=3D"noreferrer" tar=
-get=3D"_blank">cross-canadian_1.24.4.bb</a> =3D&gt; <a href=3D"http://go-cr=
-oss-canadian_1.24.5.bb" rel=3D"noreferrer" target=3D"_blank">go-cross-canad=
-ian_1.24.5.bb</a>} | 0<br>
-=C2=A0.../go/{<a href=3D"http://go-cross_1.24.4.bb" rel=3D"noreferrer" targ=
-et=3D"_blank">go-cross_1.24.4.bb</a> =3D&gt; <a href=3D"http://go-cross_1.2=
-4.5.bb" rel=3D"noreferrer" target=3D"_blank">go-cross_1.24.5.bb</a>}=C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0| 0<br>
-=C2=A0.../go/{<a href=3D"http://go-crosssdk_1.24.4.bb" rel=3D"noreferrer" t=
-arget=3D"_blank">go-crosssdk_1.24.4.bb</a> =3D&gt; <a href=3D"http://go-cro=
-sssdk_1.24.5.bb" rel=3D"noreferrer" target=3D"_blank">go-crosssdk_1.24.5.bb=
-</a>}=C2=A0 =C2=A0 =C2=A0| 0<br>
-=C2=A0.../go/{<a href=3D"http://go-runtime_1.24.4.bb" rel=3D"noreferrer" ta=
-rget=3D"_blank">go-runtime_1.24.4.bb</a> =3D&gt; <a href=3D"http://go-runti=
-me_1.24.5.bb" rel=3D"noreferrer" target=3D"_blank">go-runtime_1.24.5.bb</a>=
-}=C2=A0 =C2=A0 =C2=A0 =C2=A0| 0<br>
-=C2=A0recipes-devtools/go/{<a href=3D"http://go_1.24.4.bb" rel=3D"noreferre=
-r" target=3D"_blank">go_1.24.4.bb</a> =3D&gt; <a href=3D"http://go_1.24.5.b=
-b" rel=3D"noreferrer" target=3D"_blank">go_1.24.5.bb</a>}=C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 | 0<br>
-=C2=A07 files changed, 4 insertions(+), 4 deletions(-)<br>
-=C2=A0rename recipes-devtools/go/{go-1.24.4.inc =3D&gt; go-1.24.5.inc} (91%=
-)<br>
-=C2=A0rename recipes-devtools/go/{<a href=3D"http://go-binary-native_1.24.4=
-.bb" rel=3D"noreferrer" target=3D"_blank">go-binary-native_1.24.4.bb</a> =
-=3D&gt; <a href=3D"http://go-binary-native_1.24.5.bb" rel=3D"noreferrer" ta=
-rget=3D"_blank">go-binary-native_1.24.5.bb</a>} (79%)<br>
-=C2=A0rename recipes-devtools/go/{<a href=3D"http://go-cross-canadian_1.24.=
-4.bb" rel=3D"noreferrer" target=3D"_blank">go-cross-canadian_1.24.4.bb</a> =
-=3D&gt; <a href=3D"http://go-cross-canadian_1.24.5.bb" rel=3D"noreferrer" t=
-arget=3D"_blank">go-cross-canadian_1.24.5.bb</a>} (100%)<br>
-=C2=A0rename recipes-devtools/go/{<a href=3D"http://go-cross_1.24.4.bb" rel=
-=3D"noreferrer" target=3D"_blank">go-cross_1.24.4.bb</a> =3D&gt; <a href=3D=
-"http://go-cross_1.24.5.bb" rel=3D"noreferrer" target=3D"_blank">go-cross_1=
-.24.5.bb</a>} (100%)<br>
-=C2=A0rename recipes-devtools/go/{<a href=3D"http://go-crosssdk_1.24.4.bb" =
-rel=3D"noreferrer" target=3D"_blank">go-crosssdk_1.24.4.bb</a> =3D&gt; <a h=
-ref=3D"http://go-crosssdk_1.24.5.bb" rel=3D"noreferrer" target=3D"_blank">g=
-o-crosssdk_1.24.5.bb</a>} (100%)<br>
-=C2=A0rename recipes-devtools/go/{<a href=3D"http://go-runtime_1.24.4.bb" r=
-el=3D"noreferrer" target=3D"_blank">go-runtime_1.24.4.bb</a> =3D&gt; <a hre=
-f=3D"http://go-runtime_1.24.5.bb" rel=3D"noreferrer" target=3D"_blank">go-r=
-untime_1.24.5.bb</a>} (100%)<br>
-=C2=A0rename recipes-devtools/go/{<a href=3D"http://go_1.24.4.bb" rel=3D"no=
-referrer" target=3D"_blank">go_1.24.4.bb</a> =3D&gt; <a href=3D"http://go_1=
-.24.5.bb" rel=3D"noreferrer" target=3D"_blank">go_1.24.5.bb</a>} (100%)<br>
-<br>
-diff --git a/recipes-devtools/go/go-1.24.4.inc b/recipes-devtools/go/go-1.2=
-4.5.inc<br>
-similarity index 91%<br>
-rename from recipes-devtools/go/go-1.24.4.inc<br>
-rename to recipes-devtools/go/go-1.24.5.inc<br>
-index eff3f2f..fae0d3f 100644<br>
---- a/recipes-devtools/go/go-1.24.4.inc<br>
-+++ b/recipes-devtools/go/go-1.24.5.inc<br>
-@@ -17,4 +17,4 @@ SRC_URI +=3D &quot;\<br>
-=C2=A0 =C2=A0 =C2=A0file://0010-cmd-go-clear-GOROOT-for-func-ldShared-when-=
-trimpath-.patch \<br>
-=C2=A0 =C2=A0 =C2=A0file://6d265b008e3d106b2706645e5a88cd8e2fb98953.patch \=
-<br>
-=C2=A0&quot;<br>
--SRC_URI[main.sha256sum] =3D &quot;5a86a83a31f9fa81490b8c5420ac384fd3d95a3e=
-71fba665c7b3f95d1dfef2b4&quot;<br>
-+SRC_URI[main.sha256sum] =3D &quot;74fdb09f2352e2b25b7943e56836c9b47363d28d=
-ec1c8b56c4a9570f30b8f59f&quot;<br>
-diff --git a/recipes-devtools/go/<a href=3D"http://go-binary-native_1.24.4.=
-bb" rel=3D"noreferrer" target=3D"_blank">go-binary-native_1.24.4.bb</a> b/r=
-ecipes-devtools/go/<a href=3D"http://go-binary-native_1.24.5.bb" rel=3D"nor=
-eferrer" target=3D"_blank">go-binary-native_1.24.5.bb</a><br>
-similarity index 79%<br>
-rename from recipes-devtools/go/<a href=3D"http://go-binary-native_1.24.4.b=
-b" rel=3D"noreferrer" target=3D"_blank">go-binary-native_1.24.4.bb</a><br>
-rename to recipes-devtools/go/<a href=3D"http://go-binary-native_1.24.5.bb"=
- rel=3D"noreferrer" target=3D"_blank">go-binary-native_1.24.5.bb</a><br>
-index d1f8fc6..5002686 100644<br>
---- a/recipes-devtools/go/<a href=3D"http://go-binary-native_1.24.4.bb" rel=
-=3D"noreferrer" target=3D"_blank">go-binary-native_1.24.4.bb</a><br>
-+++ b/recipes-devtools/go/<a href=3D"http://go-binary-native_1.24.5.bb" rel=
-=3D"noreferrer" target=3D"_blank">go-binary-native_1.24.5.bb</a><br>
-@@ -9,9 +9,9 @@ PROVIDES =3D &quot;go-native&quot;<br>
-<br>
-=C2=A0# Checksums available at <a href=3D"https://go.dev/dl/" rel=3D"norefe=
-rrer" target=3D"_blank">https://go.dev/dl/</a><br>
-=C2=A0SRC_URI =3D &quot;<a href=3D"https://dl.google.com/go/go$%7BPV%7D.$%7=
-BBUILD_GOOS%7D-$%7BBUILD_GOARCH%7D.tar.gz;name=3Dgo_$%7BBUILD_GOTUPLE%7D" r=
-el=3D"noreferrer" target=3D"_blank">https://dl.google.com/go/go${PV}.${BUIL=
-D_GOOS}-${BUILD_GOARCH}.tar.gz;name=3Dgo_${BUILD_GOTUPLE}</a>&quot;<br>
--SRC_URI[go_linux_amd64.sha256sum] =3D &quot;77e5da33bb72aeaef1ba4418b6fe51=
-1bc4d041873cbf82e5aa6318740df98717&quot;<br>
--SRC_URI[go_linux_arm64.sha256sum] =3D &quot;d5501ee5aca0f258d5fe9bfaed4019=
-58445014495dc115f202d43d5210b45241&quot;<br>
--SRC_URI[go_linux_ppc64le.sha256sum] =3D &quot;9ca4afef813a2578c23843b640ae=
-0290aa54b2e3c950a6cc4c99e16a57dec2ec&quot;<br>
-+SRC_URI[go_linux_amd64.sha256sum] =3D &quot;10ad9e86233e74c0f6590fe5426895=
-de6bf388964210eac34a6d83f38918ecdc&quot;<br>
-+SRC_URI[go_linux_arm64.sha256sum] =3D &quot;0df02e6aeb3d3c06c95ff201d57590=
-7c736d6c62cfa4b6934c11203f1d600ffa&quot;<br>
-+SRC_URI[go_linux_ppc64le.sha256sum] =3D &quot;00bdfb16d1094e78473b681d2d09=
-d42c19c886d4dfed743853769f1665c7a552&quot;<br>
-<br>
-=C2=A0UPSTREAM_CHECK_URI =3D &quot;<a href=3D"https://golang.org/dl/" rel=
-=3D"noreferrer" target=3D"_blank">https://golang.org/dl/</a>&quot;<br>
-=C2=A0UPSTREAM_CHECK_REGEX =3D &quot;go(?P&lt;pver&gt;\d+(\.\d+)+)\.linux&q=
-uot;<br>
-diff --git a/recipes-devtools/go/<a href=3D"http://go-cross-canadian_1.24.4=
-.bb" rel=3D"noreferrer" target=3D"_blank">go-cross-canadian_1.24.4.bb</a> b=
-/recipes-devtools/go/<a href=3D"http://go-cross-canadian_1.24.5.bb" rel=3D"=
-noreferrer" target=3D"_blank">go-cross-canadian_1.24.5.bb</a><br>
-similarity index 100%<br>
-rename from recipes-devtools/go/<a href=3D"http://go-cross-canadian_1.24.4.=
-bb" rel=3D"noreferrer" target=3D"_blank">go-cross-canadian_1.24.4.bb</a><br=
->
-rename to recipes-devtools/go/<a href=3D"http://go-cross-canadian_1.24.5.bb=
-" rel=3D"noreferrer" target=3D"_blank">go-cross-canadian_1.24.5.bb</a><br>
-diff --git a/recipes-devtools/go/<a href=3D"http://go-cross_1.24.4.bb" rel=
-=3D"noreferrer" target=3D"_blank">go-cross_1.24.4.bb</a> b/recipes-devtools=
-/go/<a href=3D"http://go-cross_1.24.5.bb" rel=3D"noreferrer" target=3D"_bla=
-nk">go-cross_1.24.5.bb</a><br>
-similarity index 100%<br>
-rename from recipes-devtools/go/<a href=3D"http://go-cross_1.24.4.bb" rel=
-=3D"noreferrer" target=3D"_blank">go-cross_1.24.4.bb</a><br>
-rename to recipes-devtools/go/<a href=3D"http://go-cross_1.24.5.bb" rel=3D"=
-noreferrer" target=3D"_blank">go-cross_1.24.5.bb</a><br>
-diff --git a/recipes-devtools/go/<a href=3D"http://go-crosssdk_1.24.4.bb" r=
-el=3D"noreferrer" target=3D"_blank">go-crosssdk_1.24.4.bb</a> b/recipes-dev=
-tools/go/<a href=3D"http://go-crosssdk_1.24.5.bb" rel=3D"noreferrer" target=
-=3D"_blank">go-crosssdk_1.24.5.bb</a><br>
-similarity index 100%<br>
-rename from recipes-devtools/go/<a href=3D"http://go-crosssdk_1.24.4.bb" re=
-l=3D"noreferrer" target=3D"_blank">go-crosssdk_1.24.4.bb</a><br>
-rename to recipes-devtools/go/<a href=3D"http://go-crosssdk_1.24.5.bb" rel=
-=3D"noreferrer" target=3D"_blank">go-crosssdk_1.24.5.bb</a><br>
-diff --git a/recipes-devtools/go/<a href=3D"http://go-runtime_1.24.4.bb" re=
-l=3D"noreferrer" target=3D"_blank">go-runtime_1.24.4.bb</a> b/recipes-devto=
-ols/go/<a href=3D"http://go-runtime_1.24.5.bb" rel=3D"noreferrer" target=3D=
-"_blank">go-runtime_1.24.5.bb</a><br>
-similarity index 100%<br>
-rename from recipes-devtools/go/<a href=3D"http://go-runtime_1.24.4.bb" rel=
-=3D"noreferrer" target=3D"_blank">go-runtime_1.24.4.bb</a><br>
-rename to recipes-devtools/go/<a href=3D"http://go-runtime_1.24.5.bb" rel=
-=3D"noreferrer" target=3D"_blank">go-runtime_1.24.5.bb</a><br>
-diff --git a/recipes-devtools/go/<a href=3D"http://go_1.24.4.bb" rel=3D"nor=
-eferrer" target=3D"_blank">go_1.24.4.bb</a> b/recipes-devtools/go/<a href=
-=3D"http://go_1.24.5.bb" rel=3D"noreferrer" target=3D"_blank">go_1.24.5.bb<=
-/a><br>
-similarity index 100%<br>
-rename from recipes-devtools/go/<a href=3D"http://go_1.24.4.bb" rel=3D"nore=
-ferrer" target=3D"_blank">go_1.24.4.bb</a><br>
-rename to recipes-devtools/go/<a href=3D"http://go_1.24.5.bb" rel=3D"norefe=
-rrer" target=3D"_blank">go_1.24.5.bb</a><br>
-<br>
-<br>
--=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-<br>
-Links: You receive all messages sent to this group.<br>
-View/Reply Online (#1816): <a href=3D"https://lists.yoctoproject.org/g/yoct=
-o-patches/message/1816" rel=3D"noreferrer" target=3D"_blank">https://lists.=
-yoctoproject.org/g/yocto-patches/message/1816</a><br>
-Mute This Topic: <a href=3D"https://lists.yoctoproject.org/mt/114223918/505=
-2612" rel=3D"noreferrer" target=3D"_blank">https://lists.yoctoproject.org/m=
-t/114223918/5052612</a><br>
-Group Owner: <a href=3D"mailto:yocto-patches%2Bowner@lists.yoctoproject.org=
-" target=3D"_blank">yocto-patches+owner@lists.yoctoproject.org</a><br>
-Unsubscribe: <a href=3D"https://lists.yoctoproject.org/g/yocto-patches/leav=
-e/13170708/5052612/1504338242/xyzzy" rel=3D"noreferrer" target=3D"_blank">h=
-ttps://lists.yoctoproject.org/g/yocto-patches/leave/13170708/5052612/150433=
-8242/xyzzy</a> [<a href=3D"mailto:quaresma.jose@gmail.com" target=3D"_blank=
-">quaresma.jose@gmail.com</a>]<br>
--=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-<br>
-<br>
-<br>
-</blockquote></div><div><br clear=3D"all"></div><div><br></div><span class=
-=3D"gmail_signature_prefix">-- </span><br><div dir=3D"ltr" class=3D"gmail_s=
-ignature"><div dir=3D"ltr">Best regards,<div><br>Jos=C3=A9 Quaresma</div></=
-div></div></div>
+* Verified system was including selinux config modification by running
+  sshd -T
 
---000000000000de5005063b277725--
+Suggested-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
+Signed-off-by: Levi Shafter <lshafter@21sw.us>
+---
+Sponsor: 21SoftWare LLC
+
+v2: Install config snippet to sshd_config.d
+v1: https://lists.yoctoproject.org/g/yocto-patches/message/1818
+
+ .../openssh/files/sshd_config                 | 118 ------------------
+ .../files/sshd_config.d/50-selinux.conf       |  15 +++
+ .../openssh/openssh_selinux.inc               |  12 ++
+ 3 files changed, 27 insertions(+), 118 deletions(-)
+ delete mode 100644 recipes-connectivity/openssh/files/sshd_config
+ create mode 100644
+recipes-connectivity/openssh/files/sshd_config.d/50-selinux.conf
+
+diff --git a/recipes-connectivity/openssh/files/sshd_config
+b/recipes-connectivity/openssh/files/sshd_config
+deleted file mode 100644
+index 1c33ad0..0000000
+--- a/recipes-connectivity/openssh/files/sshd_config
++++ /dev/null
+@@ -1,118 +0,0 @@
+-#	$OpenBSD: sshd_config,v 1.102 2018/02/16 02:32:40 djm Exp $
+-
+-# This is the sshd server system-wide configuration file.  See
+-# sshd_config(5) for more information.
+-
+-# This sshd was compiled with PATH=/usr/bin:/bin:/usr/sbin:/sbin
+-
+-# The strategy used for options in the default sshd_config shipped with
+-# OpenSSH is to specify options with their default value where
+-# possible, but leave them commented.  Uncommented options override the
+-# default value.
+-
+-#Port 22
+-#AddressFamily any
+-#ListenAddress 0.0.0.0
+-#ListenAddress ::
+-
+-#HostKey /etc/ssh/ssh_host_rsa_key
+-#HostKey /etc/ssh/ssh_host_ecdsa_key
+-#HostKey /etc/ssh/ssh_host_ed25519_key
+-
+-# Ciphers and keying
+-#RekeyLimit default none
+-
+-# Logging
+-#SyslogFacility AUTH
+-#LogLevel INFO
+-
+-# Authentication:
+-
+-#LoginGraceTime 2m
+-#PermitRootLogin prohibit-password
+-#StrictModes yes
+-#MaxAuthTries 6
+-#MaxSessions 10
+-
+-#PubkeyAuthentication yes
+-
+-# The default is to check both .ssh/authorized_keys and
+.ssh/authorized_keys2
+-# but this is overridden so installations will only check
+.ssh/authorized_keys
+-#AuthorizedKeysFile	.ssh/authorized_keys
+-
+-#AuthorizedPrincipalsFile none
+-
+-#AuthorizedKeysCommand none
+-#AuthorizedKeysCommandUser nobody
+-
+-# For this to work you will also need host keys in /etc/ssh/ssh_known_hosts
+-#HostbasedAuthentication no
+-# Change to yes if you don't trust ~/.ssh/known_hosts for
+-# HostbasedAuthentication
+-#IgnoreUserKnownHosts no
+-# Don't read the user's ~/.rhosts and ~/.shosts files
+-#IgnoreRhosts yes
+-
+-# To disable tunneled clear text passwords, change to no here!
+-#PasswordAuthentication yes
+-#PermitEmptyPasswords no
+-
+-# Change to yes to enable challenge-response passwords (beware issues with
+-# some PAM modules and threads)
+-ChallengeResponseAuthentication no
+-
+-# Kerberos options
+-#KerberosAuthentication no
+-#KerberosOrLocalPasswd yes
+-#KerberosTicketCleanup yes
+-#KerberosGetAFSToken no
+-
+-# GSSAPI options
+-#GSSAPIAuthentication no
+-#GSSAPICleanupCredentials yes
+-
+-# Set this to 'yes' to enable PAM authentication, account processing,
+-# and session processing. If this is enabled, PAM authentication will
+-# be allowed through the ChallengeResponseAuthentication and
+-# PasswordAuthentication.  Depending on your PAM configuration,
+-# PAM authentication via ChallengeResponseAuthentication may bypass
+-# the setting of "PermitRootLogin without-password".
+-# If you just want the PAM account and session checks to run without
+-# PAM authentication, then enable this but set PasswordAuthentication
+-# and ChallengeResponseAuthentication to 'no'.
+-UsePAM yes
+-
+-#AllowAgentForwarding yes
+-#AllowTcpForwarding yes
+-#GatewayPorts no
+-#X11Forwarding no
+-#X11DisplayOffset 10
+-#X11UseLocalhost yes
+-#PermitTTY yes
+-#PrintMotd yes
+-#PrintLastLog yes
+-#TCPKeepAlive yes
+-#UseLogin no
+-#PermitUserEnvironment no
+-Compression no
+-ClientAliveInterval 15
+-ClientAliveCountMax 4
+-#UseDNS no
+-#PidFile /var/run/sshd.pid
+-#MaxStartups 10:30:100
+-#PermitTunnel no
+-#ChrootDirectory none
+-#VersionAddendum none
+-
+-# no default banner path
+-#Banner none
+-
+-# override default of no subsystems
+-Subsystem	sftp	/usr/libexec/sftp-server
+-
+-# Example of overriding settings on a per-user basis
+-#Match User anoncvs
+-#	X11Forwarding no
+-#	AllowTcpForwarding no
+-#	PermitTTY no
+-#	ForceCommand cvs server
+diff --git
+a/recipes-connectivity/openssh/files/sshd_config.d/50-selinux.conf
+b/recipes-connectivity/openssh/files/sshd_config.d/50-selinux.conf
+new file mode 100644
+index 0000000..775a24d
+--- /dev/null
++++ b/recipes-connectivity/openssh/files/sshd_config.d/50-selinux.conf
+@@ -0,0 +1,15 @@
++# 50-selinux.conf
++#
++# SELinux-specific SSHD configuration overrides
++# Managed by the meta-selinux layer in OpenEmbedded
++
++# Set this to 'yes' to enable PAM authentication, account processing,
++# and session processing. If this is enabled, PAM authentication will
++# be allowed through the ChallengeResponseAuthentication and
++# PasswordAuthentication.  Depending on your PAM configuration,
++# PAM authentication via ChallengeResponseAuthentication may bypass
++# the setting of "PermitRootLogin without-password".
++# If you just want the PAM account and session checks to run without
++# PAM authentication, then enable this but set PasswordAuthentication
++# and ChallengeResponseAuthentication to 'no'.
++UsePAM yes
+diff --git a/recipes-connectivity/openssh/openssh_selinux.inc
+b/recipes-connectivity/openssh/openssh_selinux.inc
+index 07c25c5..259753d 100644
+--- a/recipes-connectivity/openssh/openssh_selinux.inc
++++ b/recipes-connectivity/openssh/openssh_selinux.inc
+@@ -2,5 +2,17 @@ inherit enable-selinux enable-audit
+
+ FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
+
++SRC_URI += " \
++    file://50-selinux.conf \
++"
++
++do_install:append() {
++    install -d ${D}${sysconfdir}/ssh/sshd_config.d
++    install -m 0644 ${WORKDIR}/sources-unpack/50-selinux.conf \
++        ${D}${sysconfdir}/ssh/sshd_config.d/
++}
++
++FILES:${PN} += "${sysconfdir}/ssh/sshd_config.d/50-selinux.conf"
++
+ PACKAGECONFIG[selinux] = "--with-selinux,--without-selinux,libselinux"
+ PACKAGECONFIG[audit] = "--with-audit=linux,--without-audit,audit"
 
