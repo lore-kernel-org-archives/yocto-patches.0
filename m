@@ -1,150 +1,404 @@
-Return-Path: <scott.murray@konsulko.com>
+Return-Path: <yi.zhao@eng.windriver.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 001E9C87FCB
-	for <webhook@archiver.kernel.org>; Sun,  3 Aug 2025 17:24:48 +0000 (UTC)
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
- by mx.groups.io with SMTP id smtpd.web11.304.1754241888492468457
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D78B1C87FCF
+	for <webhook@archiver.kernel.org>; Mon,  4 Aug 2025 12:11:24 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+ by mx.groups.io with SMTP id smtpd.web11.16277.1754309477632341547
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 03 Aug 2025 10:24:48 -0700
+ Mon, 04 Aug 2025 05:11:17 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=rV8SGAm4;
- spf=pass (domain: konsulko.com, ip: 209.85.222.174, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7e7f9bba93fso62011985a.3
-        for <yocto-patches@lists.yoctoproject.org>; Sun, 03 Aug 2025 10:24:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1754241887; x=1754846687; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=C73ZcU6rm2HXXkel/94q4F8X+dx0oCtlO3ClhnnWFRc=;
-        b=rV8SGAm4XkL2jfasf+ErTb7gdLajOW/EriW/sfhXe7ZjVpS1KFsYFNkUQ45IIlwRJY
-         12ZliUwGZasFXxQ9bGWdsK7gI6Ri84CD3VgSjJPe9IWbl3osOCb/TnugSc8632mavCVY
-         6Ya3rVHrnMZZsnElheOvB5RXoX38OLL3MMeFM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754241887; x=1754846687;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=C73ZcU6rm2HXXkel/94q4F8X+dx0oCtlO3ClhnnWFRc=;
-        b=pMX+xO/pQ14GiXVEx7HuXOFLke0REH9XhASrymp83VKGktGKKe1X4rMf5AVypEQj8/
-         La6BnqrcfYmyuoquo8dkXTgoAZ3+M/vxBofKAkTBnju5eNwPjVh15rg1/kTq9nxcnnik
-         0lkzYlCjMSUpQTnG8RleofzsOyK3cy30/PZJDc6XPMJNxplTz2YbllHFfHdgHYO+8eZg
-         EH3oc8RY2Bwk51wb2Ac9plWOqpji0X+rBZA53CRxXEylq7ilqzllGgIp1vVsU8joU3Kn
-         2T9ZqvK1nMwXygUUB45zSezTlOE6KdOjTESraR5x8D+zaZPmdbBhnjIQ3zNkAie8r0+T
-         hr8g==
-X-Gm-Message-State: AOJu0YwLfRS9hYcJy3i7xQO9aBA5uIrxuwx/frbtYcb4i3xDmMhux5k7
-	2HyvHZRli6Got2P5z5FSvgD5/HkWeAGeZeCgRon+qFFNAIxX34RtjKAazJ1Tl5fgFg8yjDLPduw
-	Nq2ta
-X-Gm-Gg: ASbGncsZwjS4MztfgRVYeCRmBQKAB639T7V6NBlnO8W5Z/wdtaRxhALFZNKbxHuY75s
-	crJNmioJ2uN2GmfV3pNn1WuPVqslmZs2nAScnWJZJoSwJl4T5ROnxWAfIcDbtcfh/Ixe5nScgah
-	5rB/n2lSNxKtnzz3rMO0rGUHGzF3ke/Ar1VEFJPtsjmB7emNvAebEEMlkmTLa9+RyCAuzgP10Jo
-	1ZtFaE22Uk1rThMPDT3FUtZSXj1PGglIK0koAjFlTXbydxEi7z6qwZoz3SeAl2uVnWAd+atvh1h
-	IF/H8pcQEj6MwjKRew6brzkiX1o3ixtRfgCTf0zLETtftSr1sylsvgPQ+lcPwq6IiwuvfxhlgHi
-	aDJJth5nKm3lXX2WQ9cE+vB5Ez0SEGrW9RsO60I4Iwl1uptvUKeak1UVOqiVeikDTECpM0cSDMw
-	==
-X-Google-Smtp-Source: AGHT+IH0ivb9wLdS3M/oBPlO3muPsSra6fzAckXJCCQEGKJ3aV42Yq5Pc2pnM/SYAQrQoGkf6toZzg==
-X-Received: by 2002:ae9:e50c:0:b0:7e3:2c8e:a22d with SMTP id af79cd13be357-7e69627b09fmr922504685a.13.1754241887220;
-        Sun, 03 Aug 2025 10:24:47 -0700 (PDT)
-Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e67f7064b0sm454847785a.54.2025.08.03.10.24.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Aug 2025 10:24:46 -0700 (PDT)
-From: Scott Murray <scott.murray@konsulko.com>
-To: yocto-patches@lists.yoctoproject.org
-Cc: twoerner@gmail.com
-Subject: [meta-rockchip][PATCH] nanopc-t6: add
-Date: Sun,  3 Aug 2025 13:24:32 -0400
-Message-ID: <20250803172432.1341178-1-scott.murray@konsulko.com>
-X-Mailer: git-send-email 2.50.1
+ dkim=none (message not signed); spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.178.238, mailfrom: prvs=0311382005=yi.zhao@windriver.com)
+Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.8/8.18.1.8) with ESMTP id 5746GYbD1704364;
+	Mon, 4 Aug 2025 12:11:15 GMT
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10on2079.outbound.protection.outlook.com [40.107.92.79])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4899n61hea-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Mon, 04 Aug 2025 12:11:14 +0000 (GMT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vbmPEXWQAA+1AcysdTv+/Hvt1NCbZLS75LFfoF27S6g3jeLbqGUtbtUW1xb45pQswdpdJ4kb2ZkbeuaaiGzUqmXjOzWUbyA+lwWI7LFx40Cx8Kfhy0brfR/MRQo830K7jjaKAKIzOn0tCM33qA6KuOALtDKNyGcukGbNJZmBzR1dZaGmYr2MEutbakAm1ifn1qvi33R3X/Mb16xaYpt/cTTdmx9Ljc8Qh2UA2Hb1nndqN4IseBOWL7MHsmywBSwWELQYDUrghD7hWWzUhPqiMLnPPNqE79UXHs07dOcyiFVPqMO2kxGdAygs5MI+5KAIAsVJbNBrGSV6hu5tmK11oQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=laFTZQeTyTcHwXeMFkuTL1PlkPnQSyXfvUg3UhqMGhg=;
+ b=EIHCJFah3XmXwmgRoNLiCUsNSTGH+QTuy6bopw9FYJMtCfX/6s43/5i8K5Yt2S63mZPj7SluBGCqW+7ugQpovQAEHXzAsEAxjmz7ybah6R0b1JREeUMVtQ61PqIij580H61r7dxjzvJyxPePY8LiLj5R1ptLzKUNBze+SQnGgpYrPONGUiAYtv7uzWnDrbhb9vY5PCeqfu44jbh7CxRkF5gBP0NBHC+ElqNpdOryJp3VZQUsc73oKlDjtDd+/q6mXN6U6U0AmNjcSB756TgqD/J+ifORGlLQG2EMjc5PizvW898EjcbJTizizBC7Jpkrd2VL/jceIBAd9kel8tPobA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=windriver.com; dmarc=pass action=none
+ header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
+Received: from DS0PR11MB6399.namprd11.prod.outlook.com (2603:10b6:8:c8::5) by
+ LV3PR11MB8741.namprd11.prod.outlook.com (2603:10b6:408:21d::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Mon, 4 Aug
+ 2025 12:11:10 +0000
+Received: from DS0PR11MB6399.namprd11.prod.outlook.com
+ ([fe80::2b44:787c:e7ee:bfad]) by DS0PR11MB6399.namprd11.prod.outlook.com
+ ([fe80::2b44:787c:e7ee:bfad%3]) with mapi id 15.20.8989.018; Mon, 4 Aug 2025
+ 12:11:10 +0000
+Message-ID: <8fd3e86e-b9cb-41c7-9811-2536ceed3c10@windriver.com>
+Date: Mon, 4 Aug 2025 20:11:04 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [meta-selinux][PATCH] openssh: use config snippet instead of file
+To: Levi Shafter <levi.shafter@elder-tomes.com>,
+        yocto-patches@lists.yoctoproject.org, joe.macdonald@siemens.com
+References: <bb24ee8c-b074-4b54-be64-2d1a09e5359f@elder-tomes.com>
+Content-Language: en-US
+From: Yi Zhao <yi.zhao@windriver.com>
+In-Reply-To: <bb24ee8c-b074-4b54-be64-2d1a09e5359f@elder-tomes.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: TYCP286CA0235.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:3c7::13) To DS0PR11MB6399.namprd11.prod.outlook.com
+ (2603:10b6:8:c8::5)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB6399:EE_|LV3PR11MB8741:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4963515f-b8fd-4280-c0da-08ddd34fffb7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info: 
+	=?utf-8?B?VU1FaXFvWmNCRk52Uk5SS1A4bnl6UUtZRExaKzdnVURYMWY5TnlvUnB4aUJT?=
+ =?utf-8?B?UlpsVEIzVE5pK3ZUUjBnZTEzdkZGZmFhelJXU2pRbEd6ckZUdFVIMFJUSXps?=
+ =?utf-8?B?N29pN0EwMHFzcHFZTWV0Q3pQVDRQRlJraG95OGxzdUNUSVJsL2w3M2NoNzV5?=
+ =?utf-8?B?dGRQNGEwcGhIdkdhRWxSUVRSR3l4dk80ZUR2Y1BOTEt4M0taZFBES3ZFbitC?=
+ =?utf-8?B?NnBKcjdMUEJkUk9UUHdWNzZZcXlBODRxeWRwSU8zUXorMUFKcGQ1bWhrK0xS?=
+ =?utf-8?B?cXNXd1RZM2g1NUFHT3JMZzcrMXgzVSszRlVKVEZrQ0pHU0krNlZmdUlBZHJH?=
+ =?utf-8?B?ZXhMTm1BQzJ4bkpjcDBnYklzWm95NDNodDJlQlBhTDBrd1FFRVRvSjNsUys3?=
+ =?utf-8?B?OUE0RXdwWEtkSXl0Mmw3ckFYR2ViQU8wbktiTzRBRUcyL1dOVmZYQnRvVEY4?=
+ =?utf-8?B?b0s4T2hWcElMQlRuMlh6OHIwVWw1ZDJjb3RSTUhGTnA2VXVOV21zVzJwTXVK?=
+ =?utf-8?B?aUFPWWtXaWY2TjF4ZXhUYUpGUHRITFU1enBkVjNrZUZGVXJBL1ZETFZOTjFV?=
+ =?utf-8?B?U1JURHM0TUE1OWt4bmxWS3lRYzhrcXUvMW1XRGZyUExMSFhEUm1EUnk0YTBw?=
+ =?utf-8?B?bDUwZDZWRmpsOStqeDU1Vncyb081S3g4YkVhcC9uQmhOUFliZVVDQjFwc2or?=
+ =?utf-8?B?eHFIVXR4L2RzekxWejJReW05QXVOMGpxcHF4S0ltbFMwU0V1b00wenpNYUZr?=
+ =?utf-8?B?bE1GaE4wSytKWGQxR2RMREpWeXNRemVyZDhndER6UFlrcUxXUFpWb0NIZnBp?=
+ =?utf-8?B?SFZsQnNxSldQRVdKUG5XUFJ0UWIyQmJlemtXUmhjMTk3b2NSdERPM2xmYkJD?=
+ =?utf-8?B?d0VKbWJNODA2N0Y3QkhkbDZ3M1Y2VWlpNmtIMFBtNVVqS3hvSHJubzh6eUhH?=
+ =?utf-8?B?bVd0cy9oYUNGU3FUc2MxemdqMUEvYlJmemU5cEtLbWRDdmRObmwzU1FnNFVj?=
+ =?utf-8?B?S2JUNkw0WTlXY3dEMk1FR25GbHJNWFJ5cjQ4eG8yTTk2N0hMSzdXaW01Z3o4?=
+ =?utf-8?B?TEptV3R1OWZIZkVZM0RkcWRXbXFFcXA5UjN0OVE2QXY2ZEhISGRkclVDZGRG?=
+ =?utf-8?B?TEVvOGdKK3hQL1dmUlVVQVM4YnFqS2hWQ3k5S3FiVENYYUFoUzdwS3NEVXVL?=
+ =?utf-8?B?QXhCY2hYUVJzSnVnWFFaanBBMzRmbDAvelgyaGhoa1VtMjd3R1d5NWd6NERl?=
+ =?utf-8?B?eTk0V2FpNFRMQ3poeHh5NGxPTHdhWStvVm1ha3gxSzBlZGhUZ3pYOUdKNStr?=
+ =?utf-8?B?Z28zQmhONkJrSjBCeXgzZDdqWkJZY3JqVXRMZjFlcVFBY25ac2hpNVlvTTFI?=
+ =?utf-8?B?QjNOTm1JbllaZFlpWmRTNWo3NUhjdGhFVkdtNmY3NUx0aUhjL1hYeEFRay9M?=
+ =?utf-8?B?cGp2UitacjNmV3paeUVybGtGV0I0UkJPSFlkelpXTUNRS3ZQaFBiRlhjWnBz?=
+ =?utf-8?B?NjEvUUVncS9OWFdiVjNPNzFLUWdJQWRQUEovNU15WUdMWE15dnQzbTl3Qk1s?=
+ =?utf-8?B?SDhRN041YjI4WkF5UUk0RWxpS1U1UFMxQ0s5OFRRbFdneHRSOXFjOUNrVFBp?=
+ =?utf-8?B?RXJlSFJiZUQ5a2loN0V6UWRuMVE0YkFCWWlSLy9HSmVOKzFJZTc5TWJMZnJJ?=
+ =?utf-8?B?VTdXYnN0alZ6WXUyc0o0dnN3R0FSUStVUVU4dEZJTmpxMnFzWTV0MG5lSU9l?=
+ =?utf-8?B?UzgxSHZrelNTUHJ4anptalcrbVdBM2NTVjVmSEdJdmQwMEpYNWNzcEwxOVg3?=
+ =?utf-8?Q?cK+UKCukdAk0IuMW2yxuHvgqIs0B10tYET2jM=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB6399.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?dFE1QmhMcllYazA1a1o0dEp0SGpYcGpmOFFEdGcyblVtYkJGdlhWaituSEdW?=
+ =?utf-8?B?cGFRY2pvNnkyOTRZNjl0eG5sZXRzdW4yUGlHcVdPSWZEM3o5bTNrOTNrS3pO?=
+ =?utf-8?B?cThqV0NhYjEyUHYra1RhYitCMDlka3h5NTRRUGJzM0ZES1BxQ2VoblVsSGkw?=
+ =?utf-8?B?b1NkZzlpWXV5VDE4OWxzVFpsZXIxVUphZTROeDd5cjEyWk05Tnl4LzRqRWNE?=
+ =?utf-8?B?ZGxnS0hDNzZ6Mlh6aFU2azFrellaTkx0a3htbkdGZWNXU3piam1kem9nMG1S?=
+ =?utf-8?B?a3R0MFRtMUFiUGhzTmdGcDZncVRoOWpjMzZKWFhOMmJVSGQ5M2h6cDIxZzYy?=
+ =?utf-8?B?NVFqSzN1cFR4ZzRtSE1tZGNzejBqRndsdHFrNG00dUU3S3dBME1VcU9LZUNZ?=
+ =?utf-8?B?ZzBYSUZ1Z1lhMU50VFNwUWJuRFZKbnloSnpnWk9GUkVjb2htL0JRUzByalVL?=
+ =?utf-8?B?ZnUwSkZtM2FLL2xKY3Y5M0VHSVNkUFk0c0NCdGpFWkl1OU5mbDh4ak92cnRp?=
+ =?utf-8?B?czFQOVplNWV6eWdVeFU1SkE3d0N3LzY4WWdseFR2SGd6LzVMMFpSTng2SC9j?=
+ =?utf-8?B?Qk45NXZtc2Q1UlFNSmQzZlh4WVFTUi9pdFlyVkpVM1VDR2FpSXcvL2FRM05E?=
+ =?utf-8?B?ZEsvVzdIRjZRVnUyd1MvMTQ3RFBsZnUvdEZUT3hiZ1ZkdThCU09Jc1krUFpO?=
+ =?utf-8?B?Zm5EYVhMenJsVTJOSHhhaUswZk9EQ1FWMEw3UUo1SER1U3VWdUFQRG9ZblJh?=
+ =?utf-8?B?Uyt1VXUwWlpSYjludVpYMkt4YzVtQm83SnJxaFdRbHhSZ3hVbkkyR09NTS9F?=
+ =?utf-8?B?d2xTcTBwLzV5YzVrUmNVeU1YaVUxM0o5OVovMWlQeXl4UUUva052dG9PTGtq?=
+ =?utf-8?B?cVR5WmhXWU5SeXpFWUNQN25KT2szNUNVemFubEdRc3ZVSzIvZlo0K3pQNVVZ?=
+ =?utf-8?B?WTREMFlUWms0dnN1Zm85cEdMZnBIUlRyanNqTms1b1IvNGc4dkpyODVLaGNh?=
+ =?utf-8?B?VThHY3ZQWklTWTg3K3Fhek9QdGVjTVZIQnNVRElPbG9FVUo1ZkpKcGxvczUx?=
+ =?utf-8?B?TGR6dGdGcWJaTEs1SVlFUjQ2aFJYWm93RVkyMlhuYVk4Y205dkJTd1EzTmZV?=
+ =?utf-8?B?L3hFQ2pUTS9yc2JlbVBIaHZtR2cxSlc3ZFN1cXRCM21xRk80Vk5JUDdVWTdR?=
+ =?utf-8?B?N3FFVTRWSVc2ODl1SmJxaTBCYXNZV0diSUEybER5K0l3c0V3RUVzZ29hZHli?=
+ =?utf-8?B?UE83MnVUYXdrK3Q5N2cwMWJqWTRWTnQ5dThUbE9UT05jSkVna3hTQ2VZWk1F?=
+ =?utf-8?B?WDluT0dBMFkrYkhveDI3OTJLWXFKVFdSSGYyVmI3RWxjRDdLMzF5UGJSZDAx?=
+ =?utf-8?B?NFd5ZllnWE4ybUM0Y2xodTR4RGJnSnkwZnlVTzNKSlZPeWZsbjcyTDVYcWVQ?=
+ =?utf-8?B?QW83b2Y3dkgwNmhicE9UNjVnVno2dVplOG84b3RnYU81UjFDRUI0dEVUdFV1?=
+ =?utf-8?B?NVE4QmVGaEI3MFQrb0xoRzNQVERsaDZ1STJndHYrci91QjhYcDJYMEdDUWxF?=
+ =?utf-8?B?dUNsUUM1OHMrb2NBRzlqZFZHT1cyYk5OcytkRzVDbjR3d3VzVWFjOEhaeFVj?=
+ =?utf-8?B?MXM0OVBKNXNmZU1MeVNyaHh5MHl3aFlmQWszclg1MmZFcnB6ZWx6VWNCUlpp?=
+ =?utf-8?B?N2lVeGI1alQyNnN6RTI2U0c5ait0OWNkT2hyWDMxejBDcjlzVnpFTWpEZ2U5?=
+ =?utf-8?B?akhvN1E1c0ZVWDlCdjh0eTcwdE96eE95bnlMa0VMdi9RN1RCUzBvZ0VKd2Vl?=
+ =?utf-8?B?L1czRzhBZDNJZDB5eHh2aEFtMUFhZGZONjU3S0F5VHNRaUpUT3lqcFljLzls?=
+ =?utf-8?B?dTJaRDNLWlgrRzA3MnhzNklhazN4MEZXUzZIUzFUSzFpcmZ5Yzl1QkZTVm04?=
+ =?utf-8?B?dHhha29uZzZkVGUrZ0xCRFZvWVFXUVVWSkR0UkMrN1pIVFhWYXB0UXJJYWQ2?=
+ =?utf-8?B?WlRxTUx2RFhsY1NlaEc1NWEzcGdhQVJidkxlRlpyVStPYnhLVE9TNXlCMVNh?=
+ =?utf-8?B?U1ZGVGhIc05OSjdNTjFWWnVCN2RmQVk3UDY0bUMxLzFrSHlqTVBJbW5NUUZa?=
+ =?utf-8?Q?XDdOD4PephRWcIA3ADHsgsX+/?=
+X-OriginatorOrg: windriver.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4963515f-b8fd-4280-c0da-08ddd34fffb7
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB6399.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Aug 2025 12:11:10.5685
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: O7Es40h7kEHh/rAfqEDgVvQ+yLueLOw70fx4CDuXhU7LNILHizDPmSagWzV8BXY7KcrzpdUCKXz6e5UMJAY0gw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR11MB8741
+X-Authority-Analysis: v=2.4 cv=EP0G00ZC c=1 sm=1 tr=0 ts=6890a363 cx=c_pps
+ a=GSyeEiZtCXJC2m8NNe+Eew==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
+ a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=iGHA9ds3AAAA:8
+ a=pGLkceISAAAA:8 a=Q90LdCruLpZQ6fdvymkA:9 a=QEXdDO2ut3YA:10
+ a=nM-MV4yxpKKO9kiQg6Ot:22
+X-Proofpoint-ORIG-GUID: IahoiQtlNr2OWQ_XNYKk0XsBPUOZEWZK
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA0MDA2NiBTYWx0ZWRfXwcMk+WsJPlDk
+ ib8Vth9glcUadoc7ZjA5V+UaH2kob/Z1enIXfI9lz6cZ4N7irmwJNhfdG/u/7aRKauujEn1PelW
+ bgW8Lm5h5/hbKWSs3WrNstrD4DR7Tj2Tub3Yl1iAAW4u82sBqhbJJat9nwAHiqibt1yYuAuz91m
+ 9sUfGNPHlqr073PBV/f+etX7V7uB/BuhpdfmfXb1I/bRpekNfeoxfkxWSF6u7ARO2QhD6QrlEvE
+ 9eljgfEvOX3nHkxYobVeXKpLfwy8GCwY+ST6FKeVTT3zKMP5qE/MyNER4svsQk6bRANRoVDitWe
+ KVh9+Sh9jHCSJn3Zw2mh1y11PeP2nSrZr4dYq3rXwhQkOnXuEKLVrci1y1xdd9C5WehJTEbgSFB
+ HdjJJWR8
+X-Proofpoint-GUID: IahoiQtlNr2OWQ_XNYKk0XsBPUOZEWZK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-04_05,2025-08-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 bulkscore=0 phishscore=0 priorityscore=1501 suspectscore=0
+ clxscore=1011 spamscore=0 malwarescore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2507210000 definitions=main-2508020017
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sun, 03 Aug 2025 17:24:48 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1882
+ <yocto-patches@lists.yoctoproject.org>; Mon, 04 Aug 2025 12:11:24 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1883
 
-The FriendlyElec NanoPC-T6 is a one-for-all high performance open
-source platform for edge computing, designed and developed by the
-FriendlyElec team.
 
-Website:
-    https://www.friendlyelec.com/index.php?route=product/product&path=69&product_id=292
+On 7/31/25 04:43, Levi Shafter wrote:
+> Config snippets should be used over file overrides since targeted
+> changes may be required in multiple recipes.
+>
+> Since the oe-core sshd_config file now includes
+> /etc/ssh/sshd_config.d/*.conf, the meta-selinux configuration snippet
+> does not require the following:
+>
+> * ChallengeResponseAutnetication: Replaced by
+>    KbdInteractiveAuthentication and set to "no" by default
+>
+> * Override default of no subsystems: This is already present
+>
+> * Compression, ClientAliveInterval, and ClientAliveCountMax: No changes
+>    required due to identical requirements of meta-selinux
+>
+> Testing process:
+>
+> * Pulled modified meta-selinux layer into Poky and included openssh
+>
+> * Built core-image-sato and ran via qemu
+>
+> * Verified /etc/ssh was as expected with an ssh_config.d directory with
+>    the new selinux config snippet inside
+>
+> * Verified system was including selinux config modification by running
+>    sshd -T
+>
+> Suggested-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
+> Signed-off-by: Levi Shafter <lshafter@21sw.us>
+> ---
+> Sponsor: 21SoftWare LLC
+>
+> v2: Install config snippet to sshd_config.d
+> v1: https://lists.yoctoproject.org/g/yocto-patches/message/1818
+>
+>   .../openssh/files/sshd_config                 | 118 ------------------
+>   .../files/sshd_config.d/50-selinux.conf       |  15 +++
+>   .../openssh/openssh_selinux.inc               |  12 ++
+>   3 files changed, 27 insertions(+), 118 deletions(-)
+>   delete mode 100644 recipes-connectivity/openssh/files/sshd_config
+>   create mode 100644
+> recipes-connectivity/openssh/files/sshd_config.d/50-selinux.conf
+>
+> diff --git a/recipes-connectivity/openssh/files/sshd_config
+> b/recipes-connectivity/openssh/files/sshd_config
+> deleted file mode 100644
+> index 1c33ad0..0000000
+> --- a/recipes-connectivity/openssh/files/sshd_config
+> +++ /dev/null
+> @@ -1,118 +0,0 @@
+> -#	$OpenBSD: sshd_config,v 1.102 2018/02/16 02:32:40 djm Exp $
+> -
+> -# This is the sshd server system-wide configuration file.  See
+> -# sshd_config(5) for more information.
+> -
+> -# This sshd was compiled with PATH=/usr/bin:/bin:/usr/sbin:/sbin
+> -
+> -# The strategy used for options in the default sshd_config shipped with
+> -# OpenSSH is to specify options with their default value where
+> -# possible, but leave them commented.  Uncommented options override the
+> -# default value.
+> -
+> -#Port 22
+> -#AddressFamily any
+> -#ListenAddress 0.0.0.0
+> -#ListenAddress ::
+> -
+> -#HostKey /etc/ssh/ssh_host_rsa_key
+> -#HostKey /etc/ssh/ssh_host_ecdsa_key
+> -#HostKey /etc/ssh/ssh_host_ed25519_key
+> -
+> -# Ciphers and keying
+> -#RekeyLimit default none
+> -
+> -# Logging
+> -#SyslogFacility AUTH
+> -#LogLevel INFO
+> -
+> -# Authentication:
+> -
+> -#LoginGraceTime 2m
+> -#PermitRootLogin prohibit-password
+> -#StrictModes yes
+> -#MaxAuthTries 6
+> -#MaxSessions 10
+> -
+> -#PubkeyAuthentication yes
+> -
+> -# The default is to check both .ssh/authorized_keys and
+> .ssh/authorized_keys2
+> -# but this is overridden so installations will only check
+> .ssh/authorized_keys
+> -#AuthorizedKeysFile	.ssh/authorized_keys
+> -
+> -#AuthorizedPrincipalsFile none
+> -
+> -#AuthorizedKeysCommand none
+> -#AuthorizedKeysCommandUser nobody
+> -
+> -# For this to work you will also need host keys in /etc/ssh/ssh_known_hosts
+> -#HostbasedAuthentication no
+> -# Change to yes if you don't trust ~/.ssh/known_hosts for
+> -# HostbasedAuthentication
+> -#IgnoreUserKnownHosts no
+> -# Don't read the user's ~/.rhosts and ~/.shosts files
+> -#IgnoreRhosts yes
+> -
+> -# To disable tunneled clear text passwords, change to no here!
+> -#PasswordAuthentication yes
+> -#PermitEmptyPasswords no
+> -
+> -# Change to yes to enable challenge-response passwords (beware issues with
+> -# some PAM modules and threads)
+> -ChallengeResponseAuthentication no
+> -
+> -# Kerberos options
+> -#KerberosAuthentication no
+> -#KerberosOrLocalPasswd yes
+> -#KerberosTicketCleanup yes
+> -#KerberosGetAFSToken no
+> -
+> -# GSSAPI options
+> -#GSSAPIAuthentication no
+> -#GSSAPICleanupCredentials yes
+> -
+> -# Set this to 'yes' to enable PAM authentication, account processing,
+> -# and session processing. If this is enabled, PAM authentication will
+> -# be allowed through the ChallengeResponseAuthentication and
+> -# PasswordAuthentication.  Depending on your PAM configuration,
+> -# PAM authentication via ChallengeResponseAuthentication may bypass
+> -# the setting of "PermitRootLogin without-password".
+> -# If you just want the PAM account and session checks to run without
+> -# PAM authentication, then enable this but set PasswordAuthentication
+> -# and ChallengeResponseAuthentication to 'no'.
+> -UsePAM yes
+> -
+> -#AllowAgentForwarding yes
+> -#AllowTcpForwarding yes
+> -#GatewayPorts no
+> -#X11Forwarding no
+> -#X11DisplayOffset 10
+> -#X11UseLocalhost yes
+> -#PermitTTY yes
+> -#PrintMotd yes
+> -#PrintLastLog yes
+> -#TCPKeepAlive yes
+> -#UseLogin no
+> -#PermitUserEnvironment no
+> -Compression no
+> -ClientAliveInterval 15
+> -ClientAliveCountMax 4
+> -#UseDNS no
+> -#PidFile /var/run/sshd.pid
+> -#MaxStartups 10:30:100
+> -#PermitTunnel no
+> -#ChrootDirectory none
+> -#VersionAddendum none
+> -
+> -# no default banner path
+> -#Banner none
+> -
+> -# override default of no subsystems
+> -Subsystem	sftp	/usr/libexec/sftp-server
+> -
+> -# Example of overriding settings on a per-user basis
+> -#Match User anoncvs
+> -#	X11Forwarding no
+> -#	AllowTcpForwarding no
+> -#	PermitTTY no
+> -#	ForceCommand cvs server
+> diff --git
+> a/recipes-connectivity/openssh/files/sshd_config.d/50-selinux.conf
+> b/recipes-connectivity/openssh/files/sshd_config.d/50-selinux.conf
+> new file mode 100644
+> index 0000000..775a24d
+> --- /dev/null
+> +++ b/recipes-connectivity/openssh/files/sshd_config.d/50-selinux.conf
 
-Wiki:
-    https://wiki.friendlyelec.com/wiki/index.php/NanoPC-T6
+There's no need to create a sshd_config.d subdirectory. Simply place 
+50-selinux.conf in the files directory.
 
-Specs:
-- Rockchip RK3588 (4x ARM Cortex-A76 + 4x Cortex-A55)
-- ARM Mali-G610 MP4 (OpenGLES 1.1, 2.0, and 3.2, OpenCL up to 2.2 and Vulkan 1.2)
-- 4GB/8GB/16GB LPDDR4X
-- µSD
-- 32GB/64GB/256GB eMMC
-- 32MB SPI NOR Flash
-- 2x PCIe 2.5G Ethernet
-- 1x USB 3.0 Type A, 1x USB Type C
-- 2x USB 2.0 Type A (LTS model)
-- 1x HDMI (4Kp60) in
-- 2x HDMI (HDMI2.1, HDMI2.0, and HDMI1.4, 1x 8Kp60, 1x 4Kp60) out
-- 2x 4-lane MIPI-CSI
-- 2x 4-lane MIPI-DSI
-- 1x M.2 M-Key connector with PCIe 3.0 x4
-- 1x M.2 E-key connector with PCIe 2.1 x1 and USB2.0 Host
-- 1x Mini PCIe for 3G/4G module (non-LTS model)
-- 40-pin 2.54mm header (up to 2x SPIs, 6x UARTs, 1x I2Cs, 8x PWMs, 2x I2Ss, 28x GPIO)
-- 110 x 80 mm
+> @@ -0,0 +1,15 @@
+> +# 50-selinux.conf
+> +#
+> +# SELinux-specific SSHD configuration overrides
+> +# Managed by the meta-selinux layer in OpenEmbedded
+> +
+> +# Set this to 'yes' to enable PAM authentication, account processing,
+> +# and session processing. If this is enabled, PAM authentication will
+> +# be allowed through the ChallengeResponseAuthentication and
+> +# PasswordAuthentication.  Depending on your PAM configuration,
+> +# PAM authentication via ChallengeResponseAuthentication may bypass
+> +# the setting of "PermitRootLogin without-password".
+> +# If you just want the PAM account and session checks to run without
+> +# PAM authentication, then enable this but set PasswordAuthentication
+> +# and ChallengeResponseAuthentication to 'no'.
+> +UsePAM yes
+> diff --git a/recipes-connectivity/openssh/openssh_selinux.inc
+> b/recipes-connectivity/openssh/openssh_selinux.inc
+> index 07c25c5..259753d 100644
+> --- a/recipes-connectivity/openssh/openssh_selinux.inc
+> +++ b/recipes-connectivity/openssh/openssh_selinux.inc
+> @@ -2,5 +2,17 @@ inherit enable-selinux enable-audit
+>
+>   FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
+>
+> +SRC_URI += " \
+> +    file://50-selinux.conf \
+> +"
+> +
+> +do_install:append() {
+> +    install -d ${D}${sysconfdir}/ssh/sshd_config.d
+> +    install -m 0644 ${WORKDIR}/sources-unpack/50-selinux.conf \
+Use ${UNPACKDIR} instead of ${WORKDIR}/sources-unpack.
 
-Upstream kernel support for the T6 has matured enough to be usable, so
-add a machine configuration to allow people to migrate off of the older
-bits in the Rockchip BSP layer.  Note that there are two variants of
-the board, original and a newer "LTS" version that drops the MiniPCIe
-slot for a modem for two extra USB 2.0 ports and adds a USB-C connector
-for the debug UART.  Devicetrees for both are shipped.
+> +        ${D}${sysconfdir}/ssh/sshd_config.d/
+> +}
+> +
+> +FILES:${PN} += "${sysconfdir}/ssh/sshd_config.d/50-selinux.conf"
 
-Signed-off-by: Scott Murray <scott.murray@konsulko.com>
----
- conf/machine/nanopc-t6.conf                   | 15 +++++++++++++++
- recipes-kernel/linux/linux-yocto-dev.bbappend |  2 ++
- 2 files changed, 17 insertions(+)
- create mode 100644 conf/machine/nanopc-t6.conf
+This file should be packaged into ${PN}-sshd instead of ${PN}.
 
-diff --git a/conf/machine/nanopc-t6.conf b/conf/machine/nanopc-t6.conf
-new file mode 100644
-index 0000000..5ed413d
---- /dev/null
-+++ b/conf/machine/nanopc-t6.conf
-@@ -0,0 +1,15 @@
-+#@TYPE: Machine
-+#@NAME: NanoPC-T6
-+#@DESCRIPTION: NanoPC-T6 from FriendlyElec
-+#https://www.friendlyelec.com/index.php?route=product/product&path=69&product_id=292
-+
-+require conf/machine/include/rk3588.inc
-+
-+PREFERRED_PROVIDER_virtual/kernel = "linux-yocto-dev"
-+KERNEL_DEVICETREE = " \
-+    rockchip/rk3588-nanopc-t6.dtb \
-+    rockchip/rk3588-nanopc-t6-lts.dtb \
-+"
-+MACHINE_EXTRA_RRECOMMENDS += "kernel-modules"
-+
-+UBOOT_MACHINE = "nanopc-t6-rk3588_defconfig"
-diff --git a/recipes-kernel/linux/linux-yocto-dev.bbappend b/recipes-kernel/linux/linux-yocto-dev.bbappend
-index f738d13..f49768b 100644
---- a/recipes-kernel/linux/linux-yocto-dev.bbappend
-+++ b/recipes-kernel/linux/linux-yocto-dev.bbappend
-@@ -2,6 +2,8 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
- 
- COMPATIBLE_MACHINE:orangepi-5-plus = "orangepi-5-plus"
- COMPATIBLE_MACHINE:radxa-zero-3 = "radxa-zero-3"
-+COMPATIBLE_MACHINE:nanopc-t6 = "nanopc-t6"
- 
- SRC_URI:append:orangepi-5-plus = " file://rockchip-kmeta;type=kmeta;name=rockchip-kmeta;destsuffix=rockchip-kmeta"
- SRC_URI:append:radxa-zero-3 = " file://rockchip-kmeta;type=kmeta;name=rockchip-kmeta;destsuffix=rockchip-kmeta"
-+SRC_URI:append:nanopc-t6 = " file://rockchip-kmeta;type=kmeta;name=rockchip-kmeta;destsuffix=rockchip-kmeta"
--- 
-2.50.1
 
+//Yi
+
+> +
+>   PACKAGECONFIG[selinux] = "--with-selinux,--without-selinux,libselinux"
+>   PACKAGECONFIG[audit] = "--with-audit=linux,--without-audit,audit"
 
