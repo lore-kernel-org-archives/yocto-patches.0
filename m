@@ -1,197 +1,124 @@
-Return-Path: <antonin.godard@bootlin.com>
+Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE454C87FD1
-	for <webhook@archiver.kernel.org>; Tue,  5 Aug 2025 16:08:15 +0000 (UTC)
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
- by mx.groups.io with SMTP id smtpd.web11.3300.1754410094185694750
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1E54C87FD1
+	for <webhook@archiver.kernel.org>; Tue,  5 Aug 2025 21:46:57 +0000 (UTC)
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+ by mx.groups.io with SMTP id smtpd.web10.11064.1754430413239625420
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 05 Aug 2025 09:08:14 -0700
+ Tue, 05 Aug 2025 14:46:53 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=gm1 header.b=eRBVFmwn;
- spf=pass (domain: bootlin.com, ip: 217.70.183.195, mailfrom: antonin.godard@bootlin.com)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 3245F1F68F;
-	Tue,  5 Aug 2025 16:08:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1754410092;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=oB0lzUlHEWD/jWu5ZQnM+C02eewWWkhtVhES22MWW1E=;
-	b=eRBVFmwnBhEX5PP/7ncFJ9kY595/b5x/IjDe2HIaLmm5jz5IpKGuSJ9dToegb98I9TWxAs
-	1Krzw4OiYVlxzkQZlhYJbXa7iy5Sa07zkw0Rb+LgkvJfNWl+XISQXOJWJpvfSU+L2LBGxT
-	MRgARiAgb+eA6n/R+WJHXAx0OVrDiunGiJ6KECpqsEyQRsFh7GK7U1lr1Brkj1qWD/reRb
-	4aK3irhWhoATYarIIn6Lu7EiRywiO+IAMjciXpW5zxJuxfZoZE/p1m3fuRIPO/rJtvvCrX
-	Qw5C8e4qKH2Nvi/leTq6pOmxsRJWvuktJXZ7a8Zy+IULmfryblVxViijCsc29Q==
-From: Antonin Godard <antonin.godard@bootlin.com>
-Date: Tue, 05 Aug 2025 18:08:03 +0200
-Subject: [yocto-autobuilder-helper][PATCH] scripts/yocto-supported-distros:
- check worker status on AB API
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=BQNhTTwq;
+ spf=pass (domain: gmail.com, ip: 209.85.166.181, mailfrom: twoerner@gmail.com)
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3e3f01612daso22402235ab.2
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 05 Aug 2025 14:46:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754430412; x=1755035212; darn=lists.yoctoproject.org;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=edsFrGXMOOyY+CSw8CQyK24dOeJABxQf+eex3dQTZnY=;
+        b=BQNhTTwqeRsAPfuw1yy+y8SKdeScXkj3DWEmLYL9vjxxN/i+naVEpfpDcOKpfqxjps
+         m6lTIjfC0Fnshmvubp+1+FDP2FQ+flt2xhKI+acMAe2mLLp0VPHqv0BGnLtUkvCKJnlN
+         YlQ60oEJbTjf0q1Xusi7nMgg8f0HRwxzbrTg3pAWq1DZ2vfNpI7hGZw0yzJqsrRnW+EU
+         YnvxC+JgsxYV93v1XJywZ8HCvh/SYpNnu1a93LQBNG57i+tna4zxPP4A3qhn0JTt/xew
+         SADsS5qNMwjo6LVfs4RvuT8QPTY2KNWwwR47BdFEKvSqYs4T7qKDWwsmtV3k6/+ixl4g
+         +kYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754430412; x=1755035212;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=edsFrGXMOOyY+CSw8CQyK24dOeJABxQf+eex3dQTZnY=;
+        b=gFZaXwdJ9lp3l2V6U1rS6nW9+Dz0XDMexb3nNpaG5Tpngqtoa6vEjPSvuUE5912oiM
+         JuAlWNEZLq6t1Gza6Xa5EpF0toNSfYoSKmfxNFLuleDgU0/26nseOOpQwazrjNTgJO4k
+         g+A0ZswIWH+z8bb7XKYO5+NtECQFQvSF4gcb+ZQqUp2uwDaxoOsjCarG+cD8UgHjsIP/
+         gLZQSVuEaccFP57qL25T4DNl8NwvK/FRLY8EORWQ8m11mG+wzeCIzGmSux3PctzRElA9
+         XJDZydEG4aVQJkPx/n4DUpo0v10GrTKFVwteI8B0fFv8FJ0CIURsQ0Njgn3EXP7Z8DvW
+         7Flw==
+X-Gm-Message-State: AOJu0YwPKuRabPxGRXFVw67zgpdc86KIX3FtJ0XIrsfNvgsF/7h+mfmO
+	7cKzaktUc7UNlWf3qSq5zEyLUG3jR9P5PboMGrLWt4NyCCjIOBc/MwtC4GAmog==
+X-Gm-Gg: ASbGnctrPApvFxsttNgI9HEZlAxBcndGfj/HfH4K7cboyfIx1XyUDqErJJGKVO0+X8K
+	IftT4TgEvlV5UqErilZYzTCY4dvY2EoRtJUVdNqa5feIWjnf1tIQ52Z/V1WZ5gMcefyXrpVdQTZ
+	XnMAxUOpuapmC8DkFSOqCI6TX1FIlms74m5NBnGm407Nz4vM6tnFIzDt2MM3FMjP/bJgyEE5Odj
+	GgaDWYHcgWrq3U2GqFUNKU3k2pFIfAq+qlgjoVWnz53t8QUc79utT26ECWWNup1zNuNQV71/g0H
+	i0cQKkCtZMkUUmQwQ9udD9oGsZioNcRxdIF7fS1YOGghmP4TunOhjuSGFo9/T5XXEuvKyJ5KQE4
+	WX4f3Xx/+iOdtTRGWIHEaUEO3PtHc+ICxRBID8HaZ8muHEP7iPldjziQhRaZY
+X-Google-Smtp-Source: AGHT+IFFasFXXwQVZAn4XRVrCiR9AI2DB15WlniDhi/3SB4/8QDdAYZQiTBbyjarOCtMMSzA0OXElg==
+X-Received: by 2002:a05:6e02:2486:b0:3e2:9aea:8049 with SMTP id e9e14a558f8ab-3e51b8fe031mr3657335ab.13.1754430412253;
+        Tue, 05 Aug 2025 14:46:52 -0700 (PDT)
+Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e4029d41a6sm54105765ab.24.2025.08.05.14.46.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Aug 2025 14:46:51 -0700 (PDT)
+Date: Tue, 5 Aug 2025 17:46:48 -0400
+From: Trevor Woerner <twoerner@gmail.com>
+To: Scott Murray <scott.murray@konsulko.com>
+Cc: yocto-patches@lists.yoctoproject.org
+Subject: Re: [meta-rockchip][PATCH] nanopc-t6: add
+Message-ID: <20250805214648.GA37396@localhost>
+References: <20250803172432.1341178-1-scott.murray@konsulko.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250805-check-worker-statuses-v1-1-103948a7ccc5@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAGIskmgC/yXMQQ7CIBBA0as0s5aEklTRqzRdwDAVbFMaBqqm6
- d1FXb7F/zswpUAMt2aHRFvgEJeK9tQAerPcSQRXDUqqTmrZCfSEk3jGNFESnE0uTCzsudWo5EW
- PVwe1XRON4fX79sPfXOyDMH9n/TtijsKUHG0Js6snT/NKaYDj+AD3m1/4kwAAAA==
-X-Change-ID: 20250805-check-worker-statuses-b618c2078f9d
-To: yocto-patches@lists.yoctoproject.org
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Antonin Godard <antonin.godard@bootlin.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4406;
- i=antonin.godard@bootlin.com; h=from:subject:message-id;
- bh=Jyc2GroHKZJzVVG4up23c8787kDtIYdgAFb/ElBfNbs=;
- b=owEBbQKS/ZANAwAKAdGAQUApo6g2AcsmYgBokixrwTmlNS8ZN6R1SIdMTy1y8sAypwrfqq96n
- rVmHK78P2iJAjMEAAEKAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCaJIsawAKCRDRgEFAKaOo
- NtKeD/9vGK+fIBlbmfc3rkU9Ix9vtFS1ha0SoxBJR37ovUvexN/3mqZHSsjkeWpwwnBgHDm7+NJ
- ffMpNB+yxU7h6lbqIRCKSS6JqBzmC23Rk7EAtb40BvC3vT1md6qaODWLbBkGujjXaIkruPjO3ge
- cfYpvAwHcP6j3KY11gFHTYEEQJ956i5YXgfC/PsIhXh41hzw619hox4L2XHAy3ALGCtaMekYfA4
- 4ERUphbJCROsWIh5jWIdgH33sWScRhVbae++uRTWQeexwYgJZ7wvT7GDgA/n34ExAKkiGYReyG+
- DS/Bd39cYxXy3EM+3jz9s0tnsVVd6oakwIu/Cc46qrsfYev8e7Kq4zbkY4UJvdLPd2KY0sO5Ed7
- +O+uUb7LaE1eSpMMhF3LN7skP9I1jYN7fmho2o3PWric0BkYbihfdk/L/VcFCEArFRgXzQR/Ybn
- M6+nhZlj6XG0kec/2v1sTyatIS0ybBQyEEkP5HKNC7AApJCufbbbpFW20d4cZTB5uNBsaH1b5aP
- xg8vScmBGE7XujKDqjp5A+51D7fIy2SCaLml0A0uSB2O+lU8H7oVWrc7IVSqe17kurUYKJZgcUQ
- CXg1ppd8WmaDh6dW01j4XQeImNSCK3GEPSXsoQpG4Wc70wJhamTl8rUk8iPPQ/FGaPVlLJ/YhKq
- nNBz88TaR0kCO5A==
-X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
- fpr=8648725188DD401BB9A0D3FFD180414029A3A836
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduudehieduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkvfevofesthejredtredtjeenucfhrhhomheptehnthhonhhinhcuifhouggrrhguuceorghnthhonhhinhdrghhouggrrhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegkedvleekueeuudfgleevheeggeeggfetgeehtdejtefhteetvdelffeftddvleenucffohhmrghinhephihotghtohhprhhojhgvtghtrdhorhhgpdgtohhnfhhighdrphihnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemfegtkedumegvsggrjeemudgskegsmegrhegtleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemfegtkedumegvsggrjeemudgskegsmegrhegtledphhgvlhhopegluddvjedrtddruddrudgnpdhmrghilhhfrhhomheprghnthhonhhinhdrghhouggrrhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeefpdhrtghpthhtoheprghnthhonhhinhdrghhouggrrhgusegsohhothhlihhnrdgtohhmpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhot
- hhlihhnrdgtohhmpdhrtghpthhtohephihotghtohdqphgrthgthhgvsheslhhishhtshdrhihotghtohhprhhojhgvtghtrdhorhhg
-X-GND-Sasl: antonin.godard@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250803172432.1341178-1-scott.murray@konsulko.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 05 Aug 2025 16:08:15 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1886
+ <yocto-patches@lists.yoctoproject.org>; Tue, 05 Aug 2025 21:46:57 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1887
 
-Add a --check-worker-statuses flag to also check the workers statuses on
-the Autobuilder, and filter out any worker that is currently
-disconnected.
+On Sun 2025-08-03 @ 01:24:32 PM, Scott Murray wrote:
+> The FriendlyElec NanoPC-T6 is a one-for-all high performance open
+> source platform for edge computing, designed and developed by the
+> FriendlyElec team.
+> 
+> Website:
+>     https://www.friendlyelec.com/index.php?route=product/product&path=69&product_id=292
+> 
+> Wiki:
+>     https://wiki.friendlyelec.com/wiki/index.php/NanoPC-T6
+> 
+> Specs:
+> - Rockchip RK3588 (4x ARM Cortex-A76 + 4x Cortex-A55)
+> - ARM Mali-G610 MP4 (OpenGLES 1.1, 2.0, and 3.2, OpenCL up to 2.2 and Vulkan 1.2)
+> - 4GB/8GB/16GB LPDDR4X
+> - µSD
+> - 32GB/64GB/256GB eMMC
+> - 32MB SPI NOR Flash
+> - 2x PCIe 2.5G Ethernet
+> - 1x USB 3.0 Type A, 1x USB Type C
+> - 2x USB 2.0 Type A (LTS model)
+> - 1x HDMI (4Kp60) in
+> - 2x HDMI (HDMI2.1, HDMI2.0, and HDMI1.4, 1x 8Kp60, 1x 4Kp60) out
+> - 2x 4-lane MIPI-CSI
+> - 2x 4-lane MIPI-DSI
+> - 1x M.2 M-Key connector with PCIe 3.0 x4
+> - 1x M.2 E-key connector with PCIe 2.1 x1 and USB2.0 Host
+> - 1x Mini PCIe for 3G/4G module (non-LTS model)
+> - 40-pin 2.54mm header (up to 2x SPIs, 6x UARTs, 1x I2Cs, 8x PWMs, 2x I2Ss, 28x GPIO)
+> - 110 x 80 mm
+> 
+> Upstream kernel support for the T6 has matured enough to be usable, so
+> add a machine configuration to allow people to migrate off of the older
+> bits in the Rockchip BSP layer.  Note that there are two variants of
+> the board, original and a newer "LTS" version that drops the MiniPCIe
+> slot for a modem for two extra USB 2.0 ports and adds a USB-C connector
+> for the debug UART.  Devicetrees for both are shipped.
+> 
+> Signed-off-by: Scott Murray <scott.murray@konsulko.com>
+> ---
+>  conf/machine/nanopc-t6.conf                   | 15 +++++++++++++++
+>  recipes-kernel/linux/linux-yocto-dev.bbappend |  2 ++
+>  2 files changed, 17 insertions(+)
+>  create mode 100644 conf/machine/nanopc-t6.conf
 
-This should help maintaining the config.py file in the Autobuilder. This
-is relevant for the master branch here as we do not need to maintain
-poky.conf as strictly on stable branches.
+Added to meta-rockchip, master branch
+(with the addition of an entry in the README)
 
-This should warn the following on master, at the time of writing:
-
-  WARNING: Missing on the autobuilder but listed in poky.conf: ubuntu-20.04
-
-Meaning ubuntu-20.04 should be removed from poky.conf on meta-poky's
-master.
-
-Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
----
- config.json                     |  2 +-
- scripts/yocto-supported-distros | 44 +++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 45 insertions(+), 1 deletion(-)
-
-diff --git a/config.json b/config.json
-index 171e885..16ff72f 100644
---- a/config.json
-+++ b/config.json
-@@ -470,7 +470,7 @@
-             "step2" : {
-                 "removevars" : ["SANITY_TESTED_DISTROS"],
-                 "shortname" : "Compare AB workers and SANITY_TESTED_DISTROS",
--                "EXTRACMDS" : ["${SCRIPTSDIR}/yocto-supported-distros --config-from-web --release-from-env --compare"]
-+                "EXTRACMDS" : ["${SCRIPTSDIR}/yocto-supported-distros --config-from-web --release-from-env --compare --check-worker-statuses"]
-             }
-         },
-         "trigger-build-posttrigger" : {
-diff --git a/scripts/yocto-supported-distros b/scripts/yocto-supported-distros
-index 172a186..3664cf3 100755
---- a/scripts/yocto-supported-distros
-+++ b/scripts/yocto-supported-distros
-@@ -39,6 +39,7 @@
- # from a custom branch.
- 
- import argparse
-+import json
- import os
- import re
- import urllib.request
-@@ -52,6 +53,7 @@ from urllib.error import HTTPError
- 
- 
- CONFIG_REMOTE_URL = "https://git.yoctoproject.org/yocto-autobuilder2/plain/config.py"
-+AUTOBUILDER_WORKERS_ENDPOINT = "https://autobuilder.yoctoproject.org/valkyrie/api/v2/workers"
- 
- 
- def parse_arguments() -> argparse.Namespace:
-@@ -80,6 +82,11 @@ def parse_arguments() -> argparse.Namespace:
-                         action="store_true",
-                         help="Get config.py from yoctoproject's git web interface")
- 
-+    parser.add_argument("--check-worker-statuses",
-+                        action="store_true",
-+                        default=False,
-+                        help="Also check the worker statuses using the Autobuilder API")
-+
-     return parser.parse_args()
- 
- 
-@@ -242,6 +249,40 @@ def _compare(ab_workers: set, poky_workers: set, stable_release: bool):
-     return ok
- 
- 
-+def _filter_workers(possible_workers: Dict) -> Dict:
-+    """
-+    From the current dictionary of workers, remove the workers that are inactive
-+    (disconnected) by checking the Autobuilder REST API.
-+    """
-+
-+    _possible_workers = {}
-+    workers_ab = None
-+
-+    try:
-+        with urllib.request.urlopen(AUTOBUILDER_WORKERS_ENDPOINT) as r:
-+            workers_ab = json.load(r).get("workers")
-+    except (HTTPError, AttributeError) as e:
-+        print(f"WARNING: Error when trying to fetch the worker statuses from {AUTOBUILDER_WORKERS_ENDPOINT}:")
-+        print(e)
-+        print("Safely exiting...")
-+        exit(0)
-+
-+    if not workers_ab:
-+        return possible_workers
-+
-+    def is_connected(worker):
-+        for w_info in workers_ab:
-+            if w_info.get("name") == worker and w_info.get("connected_to"):
-+                return True
-+
-+        return False
-+
-+    for release in possible_workers:
-+        _possible_workers[release] = [w for w in possible_workers[release] if is_connected(w)]
-+
-+    return _possible_workers
-+
-+
- def main():
- 
-     args = parse_arguments()
-@@ -305,6 +346,9 @@ def main():
-             {release: _possible_workers(config.workers_prev_releases[release],
-                                         config.all_workers)})
- 
-+    if args.check_worker_statuses:
-+        possible_workers = _filter_workers(possible_workers)
-+
-     if args.compare:
-         assert len(releases) == 1, "Only one release should be passed for this mode"
-         release = releases[0]
-
----
-base-commit: baa4a9a06acf544e91f4816fd0cca484a6f7dab7
-change-id: 20250805-check-worker-statuses-b618c2078f9d
-
-Best regards,
---  
-Antonin Godard <antonin.godard@bootlin.com>
-
+Thanks!
 
