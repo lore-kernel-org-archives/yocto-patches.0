@@ -2,113 +2,94 @@ Return-Path: <antonin.godard@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B458C87FD3
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B496CA0EC1
 	for <webhook@archiver.kernel.org>; Wed,  6 Aug 2025 15:44:33 +0000 (UTC)
 Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
- by mx.groups.io with SMTP id smtpd.web10.28546.1754495066289047114
+ by mx.groups.io with SMTP id smtpd.web10.28545.1754495066279750866
  for <yocto-patches@lists.yoctoproject.org>;
  Wed, 06 Aug 2025 08:44:26 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=gm1 header.b=J1b5yJpQ;
+ dkim=pass header.i=@bootlin.com header.s=gm1 header.b=lfe0/4tN;
  spf=pass (domain: bootlin.com, ip: 217.70.183.197, mailfrom: antonin.godard@bootlin.com)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id AB95B44303;
-	Wed,  6 Aug 2025 15:44:23 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 6F43E44339;
+	Wed,  6 Aug 2025 15:44:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
 	t=1754495064;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=PXjR5f74PqcNybIfNhgCMec0kZ5bCPRYQaRRBQxfBPw=;
-	b=J1b5yJpQ9OVc/StjIdjNy9lHOYytuRAA01A9d30OUCTieLmPJKi1VhMbPRMTrmasm98RPe
-	TsTY+BK+AOa8tOfefU6s1TEP9M/IovJeiBiJIUo9McLSYT0zY+b2rBcYplghLlKargPUWz
-	p0wzLACFxEXnt13HLlWRnxUjohafrgCo+TxqRoTRFIdNY4vReRaHDFLkK4crSGqpiF6xwH
-	GMfVlRrjpgTQs3u5mzYbp+/zDiYPjtSFMNyEE+Of+oezHnPrCqVSP3tchs/ORKjusNbzBd
-	dMG0+Pf7tSGFEuY7WOLzZZYUBdNti0Fhuu5YHA/Vncget5E+E9qtT5ekfjMGTg==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Pbn6VKCuGWXsUX7XeqSwSLmrNp6jMsXbTUC9eiwjJyE=;
+	b=lfe0/4tNftTyETuBoKiKR1nIKg0nBKbzDMLGjeilQIRwHi4sQfw4h2SdABN9dZB3MSYoO5
+	+wTH1XofRC8UaORZr+4i0CUikhcxcnbCj465DQ5XSE+UotayZ38T1ScSVXQ7acz+YW/xQX
+	sj9gZ7sxIWu/TQQD1F0YOgNwe3l840LJTKI6/xPaOQK/rABbWAxZa85+4YKDmLd0E14hCo
+	VhX6hcNgdZqFGJSEiurDWXYeq9J3bgqBe+eL8yJlEy/Yj1FbaYMkQ6bpNWCJT9Q2SELziQ
+	MASALaRP4iuob9g9LhSjGv3K00kKDOg28BbYmdwu4wOJQBopHqvSRGGY33X9+Q==
 From: Antonin Godard <antonin.godard@bootlin.com>
-Subject: [yocto-autobuilder-helper][PATCH v2 0/7]
- scripts/yocto-supported-distros improvements
-Date: Wed, 06 Aug 2025 17:43:30 +0200
-Message-Id: <20250806-check-worker-statuses-v2-0-59dd990d22e7@bootlin.com>
+Date: Wed, 06 Aug 2025 17:43:32 +0200
+Subject: [yocto-autobuilder-helper][PATCH v2 2/7] config.json:
+ yocto-supported-distros: use --check-worker-statuses
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIACJ4k2gC/4WOQQ6CMBBFr2K6tqagSHHlPQgLOgxSQYZ0CkoId
- 7fgAcxfvcV//y+C0VlkcTsswuFk2VIfID4eBDRl/0Bpq8AiVnGitEokNAitfJNr0Un2pR8ZWZp
- rpCFWqa6zSoTu4LC2n92bFz/m0TwR/CbLZwJPshw9mdF2VTA12A3oiq3bWPbk5v3SFG2Gf+tTJ
- EPUObvoMgWA5G6IfGf7E9BLFOu6fgEa3iMc6AAAAA==
-X-Change-ID: 20250805-check-worker-statuses-b618c2078f9d
+Message-Id: <20250806-check-worker-statuses-v2-2-59dd990d22e7@bootlin.com>
+References: <20250806-check-worker-statuses-v2-0-59dd990d22e7@bootlin.com>
+In-Reply-To: <20250806-check-worker-statuses-v2-0-59dd990d22e7@bootlin.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
  Antonin Godard <antonin.godard@bootlin.com>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1726;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=866;
  i=antonin.godard@bootlin.com; h=from:subject:message-id;
- bh=j2GNeh/5JwixIthu3+NCAmG5xHXtUQI93bjCdXu4+s8=;
- b=owEBbQKS/ZANAwAKAdGAQUApo6g2AcsmYgBok3hWk9ZsqAIosncCKq7K6SRAfHUYxFN8RacdC
- Ek7KCabF8+JAjMEAAEKAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCaJN4VgAKCRDRgEFAKaOo
- NrRsD/46r1owzxMF6QdzyvVH9w8g3h+RNyMEVQXkkiOfDXHlqA67lsks9JgP6r6LGcgGVNuGMwL
- vj5BxzSJXOui5ZHJagDm52/Ah+VsxLP4khKH4rVoGvPW3I73mZnAXCJMVmkaAXGBU9FomjCc++y
- evt0kF893eEhsAvHm9wahJG0B6As/0+uPnSXp/QkY3KpZWYNqWJ/J5n6wXWB420Ik9l8ftt1TUp
- mODVpmTbPlCXZgsAxoWaz1LTgZS+7X73WgRQjZqR3YG745q3F1v31w8EsSGM/IuHLoZu/YXX7ps
- g5opfutU1o3qP5jGEhBopmJB4mpbO6NBp8ADtDR7w2nNL4C/F4p2h2v+Qop6qOLjvNMKxgjUxgs
- H82M2gXL/ccxWNSzZDjsRZyHs/idavx32wpHEOpLUXUEnjukz4kcdUdpH6sQYhZDx5eQdYOpdGK
- JL1Dm3i7aT62EDzl17mDbcSxBIoWcgtMA6d33RXBnyZjUzjYIGXzfn35u5uL9IdZDWZF5r5nQuF
- 7tSYMFckC1i7xET5EsoPwln9gn9Qk2gqT2DPMlZBWzhbyy4da2dazrbdpXt8TY4aNf46C7pgc6x
- bMwP9X2j+1UO2KcIwSnnLq0uZ77dFC/qZJsqVur9kYJRVdWpB22y1P3fC8UtRqic/sM2o5nk9uM
- //9ydfCnvbUwB9A==
+ bh=ffxx7FO1xCikDkuFSJ8Zy8mpXveI5ojIMmTLK6EGl3U=;
+ b=owEBbQKS/ZANAwAKAdGAQUApo6g2AcsmYgBok3hW2ClfObrZS4s6p2ufzg4TOca5hcjqR9MUS
+ gVbMrsC7KqJAjMEAAEKAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCaJN4VgAKCRDRgEFAKaOo
+ NpAzD/99iqBlJMbrwz8CEA3tHA1RRkIvww1K7wpGyQUixoyRse0dNEdqwsDMEpmvTy6uzZf0aWV
+ G/B9o2MIolgINcZAh2WkfVi+KhKjny7u0Ryf5mE+B29yPmqsu7pWrdCloLIUtA4CvyGCuwknUOz
+ /T/wtbjupgXTIvCdGYz/0T7FXsrMNYEgRMqpdybbfGH1gMs9LCvVTEv4dJUnMDj1vJn7SRGd4wQ
+ ON/UOCC/mski90vCjtUkMUBgwUplv+iP7sQBEzxmGL4i3PIy57umjvp/caWhEfd45vz+jH/Zg8e
+ p/nTtl4GyUaOICKfQOfv0rZayoG3xkqWYibxCX4zvzr76bemnHdgeiysLrtmY6Txpyu3ktwZKEy
+ MABEm5/FDrFDzOFmlrKWavaUoOWV6MppNan95Asz/Q/Z/gDDmbf+xIZbzjK8m0h3lX5SMbGG8A0
+ wdWyrrnm+8LHYP+P0+dc2a5fkvtIZ+kj0eXOxIZuZyY7cfdv57FsmfpJZfByeyVNa2IwxPdFXsQ
+ 8MkfvZBKd5xearg+9U/Iu/KQWeQ+I9I5qfjzcy7B0nGLBHUk+cq8OnWf94+pEl9rEfd65wohbhb
+ byLH4wa+5946UhVwd4QnwTJSStUbtzTx7GRutdZ03/vUlHe+eWfyRx+Om+m6teefoJCAkLEMduZ
+ DQ+WEQsqtKHZlqg==
 X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
  fpr=8648725188DD401BB9A0D3FFD180414029A3A836
 X-GND-State: clean
 X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduudekgeegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhufffkfggtgfgvfevofesthejredtredtjeenucfhrhhomheptehnthhonhhinhcuifhouggrrhguuceorghnthhonhhinhdrghhouggrrhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpedtudeuhfelveehueevudefgedvtdfffeevleefuedtjeeuteelgeelvefftdejteenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemfegtkedumegvsggrjeemudgskegsmegrhegtleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemfegtkedumegvsggrjeemudgskegsmegrhegtledphhgvlhhopegluddvjedrtddruddrudgnpdhmrghilhhfrhhomheprghnthhonhhinhdrghhouggrrhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeefpdhrtghpthhtoheprghnthhonhhinhdrghhouggrrhgusegsohhothhlihhnrdgtohhmpdhrtghpthhtohephihotghtohdqphgrthgthhgvsheslhhishhtshdrhihotghtohhprhhojhgvtghtrdhorhhgp
- dhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhm
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduudekgeegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomheptehnthhonhhinhcuifhouggrrhguuceorghnthhonhhinhdrghhouggrrhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeehieeguefhfeegheffgfeuieetheeileefheejkeetgfekueehueeluddvlefghfenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeeftgekudemvggsrgejmedusgeksgemrgehtgelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeeftgekudemvggsrgejmedusgeksgemrgehtgelpdhhvghloheplgduvdejrddtrddurddungdpmhgrihhlfhhrohhmpegrnhhtohhnihhnrdhgohgurghrugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepfedprhgtphhtthhopegrnhhtohhnihhnrdhgohgurghrugessghoohhtlhhinhdrtghomhdprhgtphhtthhopeihohgtthhoqdhprghttghhvghssehlihhsthhsrdihohgtthhophhrohhjvggtthdrohhrghdprhgtphhtthhopehthhhomhgrshdrphgvt
+ hgriiiiohhnihessghoohhtlhhinhdrtghomh
 X-GND-Sasl: antonin.godard@bootlin.com
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Wed, 06 Aug 2025 15:44:33 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1893
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1892
 
-Several improvement to this script including:
-
-- Checking the workers statuses from the Autobuilder API, to check if
-  workers are disconnected.
-- Some refactoring and simplifications (non-breaking).
-- Option to print previously supported distros (--old-distros).
-- Option to just print distros listed in SANITY_TESTED_DISTROS
-  (--poky-distros).
-- Options to modify the output format (lsb_release string or docs bullet
-  list).
-
-This will make my life much easier maintaining the supported distros
-section in the docs. In the long run, this could be called when building
-the docs to automatically generate the list.
+Use the new --check-worker-statuses option. This only makes sense for
+master.
 
 Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
 ---
-Changes in v2:
-- Add patches 2 to 7.
-- Link to v1: https://lore.kernel.org/r/20250805-check-worker-statuses-v1-1-103948a7ccc5@bootlin.com
+ config.json | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
----
-Antonin Godard (7):
-      scripts/yocto-supported-distros: check worker status on AB API
-      config.json: yocto-supported-distros: use --check-worker-statuses
-      scripts/yocto-supported-distros: configure mutually exclusive argparse groups
-      scripts/yocto-supported-distros: pass one release only
-      scripts/yocto-supported-distros: add option to print old distros
-      scripts/yocto-supported-distros: add --output-format option
-      scripts/yocto-supported-distros: add --poky-distros option
+diff --git a/config.json b/config.json
+index 171e885..16ff72f 100644
+--- a/config.json
++++ b/config.json
+@@ -470,7 +470,7 @@
+             "step2" : {
+                 "removevars" : ["SANITY_TESTED_DISTROS"],
+                 "shortname" : "Compare AB workers and SANITY_TESTED_DISTROS",
+-                "EXTRACMDS" : ["${SCRIPTSDIR}/yocto-supported-distros --config-from-web --release-from-env --compare"]
++                "EXTRACMDS" : ["${SCRIPTSDIR}/yocto-supported-distros --config-from-web --release-from-env --compare --check-worker-statuses"]
+             }
+         },
+         "trigger-build-posttrigger" : {
 
- config.json                     |   2 +-
- scripts/yocto-supported-distros | 308 ++++++++++++++++++++++++++++------------
- 2 files changed, 216 insertions(+), 94 deletions(-)
----
-base-commit: baa4a9a06acf544e91f4816fd0cca484a6f7dab7
-change-id: 20250805-check-worker-statuses-b618c2078f9d
-
-Best regards,
---  
-Antonin Godard <antonin.godard@bootlin.com>
+-- 
+2.50.1
 
 
