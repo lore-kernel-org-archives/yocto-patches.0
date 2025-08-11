@@ -2,40 +2,40 @@ Return-Path: <sandeep.gundlupet-raju@amd.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28E32C87FDB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D9F5C88CB9
 	for <webhook@archiver.kernel.org>; Mon, 11 Aug 2025 15:00:07 +0000 (UTC)
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (NAM02-BN1-obe.outbound.protection.outlook.com [40.107.212.68])
- by mx.groups.io with SMTP id smtpd.web10.50431.1754924397505236149
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (NAM12-BN8-obe.outbound.protection.outlook.com [40.107.237.83])
+ by mx.groups.io with SMTP id smtpd.web10.50432.1754924398205155934
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 11 Aug 2025 07:59:57 -0700
+ Mon, 11 Aug 2025 08:00:01 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@amd.com header.s=selector1 header.b=WcxUIPSI;
- spf=permerror, err=parse error for token &{10 18 %{i}._ip.%{h}._ehlo.%{d}._spf.vali.email}: invalid domain name (domain: amd.com, ip: 40.107.212.68, mailfrom: sandeep.gundlupet-raju@amd.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@amd.com header.s=selector1 header.b=nJwsQhLR;
+ spf=permerror, err=parse error for token &{10 18 %{i}._ip.%{h}._ehlo.%{d}._spf.vali.email}: invalid domain name (domain: amd.com, ip: 40.107.237.83, mailfrom: sandeep.gundlupet-raju@amd.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bj4JPuZGqzwmO3341AhlI97wtnvjJl/pMJQI0akh57+irLvgXnpKkRMr/laJWqQOUhRqv8NPU6s5ySQYjC48sn7f6u6rJy9DpFibeEnxztwpZPMQFnIaz37GawuJnlmpTSvV1a99A3L+yiHuxwxBlpqWnwUO15BybTM8Yf48/RqduFpkbgTuEiVk8k+XFSDZU8XhA/jRCIoZULXjimtAFJQRhn3kmDOITnd0FA7oo0RTjOyCShFJp8cvXzJB80xN1ZlAbZ7JwMR9I/DMVdgRKD2r1dtSJDadvBNwqIv554eTzFJuFRgv2d+bAKs5Qr1Ubrqv29/t5eCuli4E5nnkHQ==
+ b=iD8i9e6mBwjW6oirOXLKzjBn+cCW43Y8J54wStiulW03amjd8hQz3KvTCp+PH8fn7PCtrWMjF/BQ+rJqny79L2y+Ps10iC3R3/Gl8SF986ECaGl0/RUJEAAzeX4/wQHuHtBNIs4QCQzIS605/t/weQ3pv668FMLxoLi30dwBwcsEgGFkqFcOt+lkmcr8Y4Y9OUQ0e0llDPiaAU+Nv3iD+t9ErFmBwGFAVrbkaJq8wcw2WOTf7U/0nX0HVdob5O02YGdmuzL6pE3xxBg8afWO4NzzFeuNdSjeMoBjQxJLBzHWm0ITXeMd4dNPxZskAZ8Fu0qBd4v80vJZcN71cjKJ7Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YR9pj7cigNr/qZGbPUp7Bzn1aD6Dmt5eJwLwILqqrzk=;
- b=YD99oDCD40hOzbWWoJf/u4uta7UeJ0UAr/S3kQHht+ddOt80CdlI4fqdKbVSH1CFuZ+RGrzjc/L183su9YT+Qf4Jia5ty+Rd4FQP3F35ZHXZ2u40YZE47xmXCEmxwMoajUd+NFdG7VR5qYTO40h3npvChS/pO8ggNyNtymqk4raU6Ic15hjmKJtHvKyGzaIM7+jQt1He6Dsz51cIDUY0ExYdAE64MYeFea+tFHpSYsaU8w3cKYSfYp86uBXfvd3TPIberMpfb+U3x7zimmIvcGIpH4uV81CFNKiMYYcR2ZfCQEvYkd2KQP5fA0B6ZvW2apfhoomcCeAu4sSEuGuZBg==
+ bh=iSrrUwwZtPcjARKqu9O7gN5MoPF5xw6FJeRM92CQQFc=;
+ b=Byhqd3cl2n/KJjJTvObpJxTN6VcOat3XhZL7pymF4L3OLhCS2ojaRPuipAM4iGRQDxSNWziMZNChFf8+rcasXybb7TPWlIjCoKOztL4K1JtRDdRjjmtT1sx4xdlAlO400hXH8Is3E7i5++xiTEhfR1rbfnXaQU3+drxhqb7Ey81OTVJb2jfG4DN5Bynz1sja24Y1bX5AhaVQLMuBmWAiJKBHXYgYEC6BwTJUzkweqoWBY0er+MGudZBC8xij/+Sl2SwCbQCrQGCSxDo+REF4iDHludmObQusGqHOWvvxpsUyQTam3EwiPRTt5Ba0I9oHx8jMo8xYCjhpqw4iQraq0A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=lists.yoctoproject.org
  smtp.mailfrom=amd.com; dmarc=pass (p=quarantine sp=quarantine pct=100)
  action=none header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YR9pj7cigNr/qZGbPUp7Bzn1aD6Dmt5eJwLwILqqrzk=;
- b=WcxUIPSI0CYWA7THI9CzBRzhE/TWcwJLvBxAKaF0xCqZPyHVU0Qkp4JpJAcbnprx3QbWKtPva4dn6Dh1MsKLFQyVu8ix6wgPLye7aPeC96TvtDo2TR6eSQF8F1zdgZQO4tgamkxJyT6eqwTV4k01Zym0QXMPfP+s1uNL4ly2QI0=
-Received: from BL1PR13CA0269.namprd13.prod.outlook.com (2603:10b6:208:2ba::34)
- by CH2PR12MB4215.namprd12.prod.outlook.com (2603:10b6:610:ab::24) with
+ bh=iSrrUwwZtPcjARKqu9O7gN5MoPF5xw6FJeRM92CQQFc=;
+ b=nJwsQhLRz5fkEcj7XF0REFpzq9khwHDJS8sMA1faLI89DmHUZAfqMwfww8CDtaVJDavln5yHLru+TfE0/0BEUS0K5QJ8iQadbvji4OUoDmOTHkVRwxWofHepb5WSy2BzeLxvg0a1OvtrEoNecydP/mGUTnjPj4ZCj9cAHn5tXbE=
+Received: from BL1PR13CA0250.namprd13.prod.outlook.com (2603:10b6:208:2ba::15)
+ by SJ5PPF183341E5B.namprd12.prod.outlook.com (2603:10b6:a0f:fc02::98c) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.14; Mon, 11 Aug
- 2025 14:59:53 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.26; Mon, 11 Aug
+ 2025 14:59:52 +0000
 Received: from MN1PEPF0000ECD6.namprd02.prod.outlook.com
- (2603:10b6:208:2ba:cafe::10) by BL1PR13CA0269.outlook.office365.com
- (2603:10b6:208:2ba::34) with Microsoft SMTP Server (version=TLS1_3,
+ (2603:10b6:208:2ba:cafe::7c) by BL1PR13CA0250.outlook.office365.com
+ (2603:10b6:208:2ba::15) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.13 via Frontend Transport; Mon,
- 11 Aug 2025 14:59:53 +0000
+ 11 Aug 2025 14:59:51 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -45,111 +45,115 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
  MN1PEPF0000ECD6.mail.protection.outlook.com (10.167.242.135) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9031.11 via Frontend Transport; Mon, 11 Aug 2025 14:59:53 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
+ 15.20.9031.11 via Frontend Transport; Mon, 11 Aug 2025 14:59:51 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 11 Aug
- 2025 09:59:51 -0500
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 11 Aug
- 2025 09:59:50 -0500
+ 2025 09:59:48 -0500
 Received: from xcosswyocto01.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Mon, 11 Aug 2025 09:59:50 -0500
+ Transport; Mon, 11 Aug 2025 09:59:48 -0500
 From: Sandeep Gundlupet Raju <sandeep.gundlupet-raju@amd.com>
 To: <yocto-patches@lists.yoctoproject.org>, <chee.yang.lee@intel.com>
-Subject: [meta-zephyr][scarthgap][PATCH v3 13/13] zephyr-kernel-common: Add Board extension support
-Date: Mon, 11 Aug 2025 08:59:41 -0600
-Message-ID: <20250811145941.2553838-14-sandeep.gundlupet-raju@amd.com>
+Subject: [meta-zephyr][scarthgap][PATCH v3 6/13] classes: Move classes to match bbclass scope functionality
+Date: Mon, 11 Aug 2025 08:59:34 -0600
+Message-ID: <20250811145941.2553838-7-sandeep.gundlupet-raju@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250811145941.2553838-1-sandeep.gundlupet-raju@amd.com>
 References: <20250811145941.2553838-1-sandeep.gundlupet-raju@amd.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
+Received-SPF: None (SATLEXMB04.amd.com: sandeep.gundlupet-raju@amd.com does
+ not designate permitted sender hosts)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN1PEPF0000ECD6:EE_|CH2PR12MB4215:EE_
-X-MS-Office365-Filtering-Correlation-Id: afe77edb-7ddd-45e7-e769-08ddd8e7ba4e
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000ECD6:EE_|SJ5PPF183341E5B:EE_
+X-MS-Office365-Filtering-Correlation-Id: 622ff85e-dfa9-4d69-a5e2-08ddd8e7b986
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|36860700013|376014|1800799024|82310400026;
+	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?2LlyRWz4mmyTiRvb8Q20s4IRcdgN1CAzWcl1aOyzZjWhfEqWTMkGj1JlWFCb?=
- =?us-ascii?Q?ITBocMsARHxb7aKnzICPyEme9rAGE+vFTgavDKfuBOkqX3wfgUoyHhMSbkvK?=
- =?us-ascii?Q?wXJylxpc8eNxIP8OsbHOIGNXsDaVNh6xSfnN28onN0kxv0HqRE2ADXzWjc9Y?=
- =?us-ascii?Q?jaFU4yCOTuATR0+lqTDJRGaBjiB3YZ7/SoHIniATdy7tI69Rx1EKKA4AKqZj?=
- =?us-ascii?Q?815LWNQqodozwnwU9ONxfZvVakazhOq729AccKNjBspwj8sxE3dXVDIx+M3l?=
- =?us-ascii?Q?RxMkdQYTJTAiJztQljuJq1kssN4t6SotU2bFUJiul21tL+xxwIVRBk6cEKbW?=
- =?us-ascii?Q?Tj/wK6KRsVVZUzpslv0jf/BgvOBacECUihixFqe0qVcxvjf5EkozPPYG0fzO?=
- =?us-ascii?Q?1gVIMIvfENXPaVCB5UA0u7z/byK5pLB7Wdc981vIkEtGPwGIhOwpCVXychLB?=
- =?us-ascii?Q?vcF/JNFSG4TWL13NnLkOzM3irRwtWP9G84NEnHrnfUJIIUwYr9De8U+E4EV9?=
- =?us-ascii?Q?9C9oK7RQ1arWsA0mQzlYvHhqXqjgbVPHj7gFFy35etIzHW5tB2ncnqa3OHvr?=
- =?us-ascii?Q?KdzaGBRlzxcroEMDdlEs7Qe2oKm04izorRNHjyzAwBgZ06kjHA8PL7f27lMc?=
- =?us-ascii?Q?gYGxA9GBSrq1sLgoCP0XS9ri9VBWnw62KzfCah/oNFsJIelhhZxb6ajpuqWx?=
- =?us-ascii?Q?1VQ5ASgVBBRrHeCvczSvRCrIUF1z1wrJMg6XIi9yNAF+wLgDreKJw3KUM2Az?=
- =?us-ascii?Q?2QpTAFFyd6hholgPwkNgWi5oJSmYFing4SXgBk19YZ5SWadiM3B8647nkojm?=
- =?us-ascii?Q?tkwFv1+D04wbcBFyiago2T9NWeri48af11SKhXgmxsl1Y12smqnf6AkXvYw+?=
- =?us-ascii?Q?CJP5OSGWgfhu+r1el4zcMOY/qNXf1glzgqGZn9/mvkVslJx73/5/CPX3JJA2?=
- =?us-ascii?Q?aG/YfLdcGm/1HIGauPckgSfx9UfwWxZsbV2KfWd0+rwJNjFqEG3ZX+ZONu2Y?=
- =?us-ascii?Q?WuyM5rEiqOZpr4EwTi29N4aos1XxircTcNNqqnejnn+NcTcDrExK4CTNDl/U?=
- =?us-ascii?Q?AdR4Sj5PWSwH5OqBxpnsczXW/q0pmxyJKKAoReu56gbQQw6qX37gnLlQOZ2I?=
- =?us-ascii?Q?Iz4W0o0SywPxTUVdjJKyqjR+UYcfF6hPxQbotFlq2Hwwfvls0GhGfqnnCW2w?=
- =?us-ascii?Q?A1UkVejImnIkE7p+yYhqwfSHTUsvceEycgqAqRN1HKDjbs+ajW28uG8f+CpV?=
- =?us-ascii?Q?XdJ8oCjhxIg7ZblnrWpJukmT/dMx1DGu/WmEx8HLo46veArfIxsvofmhbFPf?=
- =?us-ascii?Q?zrfDyThIVLMGA32t+ugB2sqq2H3AYjkk8LNrIeYVdETQyKHPoM9tBCbOuLPJ?=
- =?us-ascii?Q?wNebWMneExl6jrc4oFy9qPD3i/6dbPKumbWmp2MrkQT79s82NPmkUt4AokaJ?=
- =?us-ascii?Q?Z7DkGPG7hwSyMPziz1ZSW5MU3niwL0ZC/hNnn3LY7MvOaC4qbkJDnIC76l5o?=
- =?us-ascii?Q?nJ7oZ1OlWYfGaAyKJiV2h3HU+yznHEMS66XT?=
+	=?us-ascii?Q?vZn+9AyLaMGzFNmqsMcji4h1MFjg69XMGmD8B5E/ASfq/DKO5gKk0qGB0gUz?=
+ =?us-ascii?Q?HRbukMA25Ozd9jpCyE7sSfKAmN63BzyXuMfR5MxE4qCD+XBJgoK3Ly1M+jDm?=
+ =?us-ascii?Q?PW006d5QXN/2MHqW+hNjrHTHnzlrXyWW4nXwGQl9dWNNl6qO5lZhKr6DYqdB?=
+ =?us-ascii?Q?8047KSeh0caHLY4SuPWMkgpzUtmQ8MmsfvV2aTokNJUhxALit+3JowpN3gnY?=
+ =?us-ascii?Q?zVHtgI1BGMHX5lk46KW53Ugp56jDdh6wgJgx17ZEK4s35PhZN9NAeVOtJHz0?=
+ =?us-ascii?Q?SZmjmX/Tu87LbXAYAzCgGrZKwvX7V2o8PtYv5DJ6iSyi1n1B/CEW8lXvsivG?=
+ =?us-ascii?Q?QFTQd7/9gd201JaJTohKpdZn5xz/kLmUHG/7xereGhx6U3sp1jTRH+zJSmmL?=
+ =?us-ascii?Q?NwB88I2tjVRESgkzpQy/qX9ppZamZH+51aXuzdrDnQbli93pVTcmpCZEjngn?=
+ =?us-ascii?Q?D4xRABpKCfJeApbY15fKLyI7oNbDGvuDycRbv+gaLJ4Rt3Z/EJIXgWMxzYKJ?=
+ =?us-ascii?Q?pWJfQ2wGY6BSIlz+uAPtp4NHG7vVfJ66AGRHaZyChx1z1K0MZ4+0prk5bZjZ?=
+ =?us-ascii?Q?W3MbZ6Q3x4SceQ6pyZ1yT5B4eB5IuuF2+NAkLE2BILKEBIkkHI7+5NtAxf4Y?=
+ =?us-ascii?Q?rFEa1CD0RGHjRNk6SI+PiTM7oqJBrbqWsR41A1ZPA0p8zvDP57FiUuRwEggL?=
+ =?us-ascii?Q?CKykfnnmUKn+ZMU52FwIqYCGPOt8TZGlhQK7tow6lMElimKro73udpCTs9qv?=
+ =?us-ascii?Q?yQy3YsZVm+bULHNl3oH7pUIWW997oMiK4iKgwUkrA15LZwxP6mFDCWG8s7UL?=
+ =?us-ascii?Q?yiLZ/5wIk82fjX+CHQbIvTaS3QRjZRRVoT9pjcbIh5OflQ/EsxXbYzbDSrxL?=
+ =?us-ascii?Q?8nmzbe4v2QJA8KeNfWkNMJkBAO5B7nEVfgkB8m69V28k+vVBWJ4Vk4i63DNK?=
+ =?us-ascii?Q?3NOyybUJiDp9coW0vlhvezLRc0ovFbUEUg+bHX/JpyQYiJvjG4DYyjc5iUKp?=
+ =?us-ascii?Q?9RPbjhpiHsB8jk1uI0kdDLwolp5ltnsc9aKpeWcf/aXmQdeLnKcORNGuJC+r?=
+ =?us-ascii?Q?L8mqg7VXwhs7M/41IKOWaOKEYofSyjr9amMKK/J0WZxxIg3TyY3t/fqW5IRS?=
+ =?us-ascii?Q?EpKgSN4fjVHFLmSShpkQReqalc1c9yT2uHRUeysk6drXjxcUYAc3/72Nd8ET?=
+ =?us-ascii?Q?6EF3u6IqIzrCvi1oL0ChqrYQsbYbW03pi+cwGXKNVA5r/XF93e0iDQ0KI5G9?=
+ =?us-ascii?Q?qdbTrfvo++jLFa2dSBCu3G5iPBma5kxMQWNHSy3MBAez7yeYSfzY10E+aBGA?=
+ =?us-ascii?Q?Wl4nlFr/rde05dnb8SjZEqCGNqn1iae5+YnreJsGwWD59OtcuaG518949Seg?=
+ =?us-ascii?Q?wHwGpeCYyFRK3XwM5Kh0YbBMI4O6YGxtfZft9QttMpYp2uAtPaKlTyHT1KwD?=
+ =?us-ascii?Q?/QqkxP6+i79UuJH9lIKH0lV4Uz1RX/XVCzrPOIQY/4Fj6kfa9rOk3p7KGsJJ?=
+ =?us-ascii?Q?I4hI1RDwUA8mDlo7j8Y9LHeHfTpmRXpPvYrv?=
 X-Forefront-Antispam-Report: 
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2025 14:59:53.0811
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2025 14:59:51.7686
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: afe77edb-7ddd-45e7-e769-08ddd8e7ba4e
+X-MS-Exchange-CrossTenant-Network-Message-Id: 622ff85e-dfa9-4d69-a5e2-08ddd8e7b986
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource: 
 	MN1PEPF0000ECD6.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4215
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPF183341E5B
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Mon, 11 Aug 2025 15:00:07 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1941
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1942
 
-Add board extension support variables where user can specify the
-BOARD_ROOT variable for out-of-tree custom boards.
+Move classes to classes-recipe as appropriate to match bbclass
+scope functionality.
+
+zephyr.bbclass, zephyr-qemuboot.bbclass, zephyrtest.bbclass are
+inherited by recipes hence move to classes-recipe.
 
 Signed-off-by: Sandeep Gundlupet Raju <sandeep.gundlupet-raju@amd.com>
 ---
- .../recipes-kernel/zephyr-kernel/zephyr-kernel-common.inc    | 5 +++++
- 1 file changed, 5 insertions(+)
+ .../{classes =3D> classes-recipe}/zephyr-qemuboot.bbclass           | 0
+ meta-zephyr-core/{classes =3D> classes-recipe}/zephyr.bbclass       | 0
+ meta-zephyr-core/{classes =3D> classes-recipe}/zephyrtest.bbclass   | 0
+ 3 files changed, 0 insertions(+), 0 deletions(-)
+ rename meta-zephyr-core/{classes =3D> classes-recipe}/zephyr-qemuboot.bbcl=
+ass (100%)
+ rename meta-zephyr-core/{classes =3D> classes-recipe}/zephyr.bbclass (100%=
+)
+ rename meta-zephyr-core/{classes =3D> classes-recipe}/zephyrtest.bbclass (=
+100%)
 
-diff --git a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-kernel-co=
-mmon.inc b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-kernel-comm=
-on.inc
-index 5191b9a..579fd6c 100644
---- a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-kernel-common.in=
-c
-+++ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-kernel-common.in=
-c
-@@ -18,6 +18,11 @@ EXTRA_OECMAKE =3D "\
-     -DZEPHYR_BASE=3D${ZEPHYR_BASE} \
-     -DBOARD=3D${BOARD} \
-     -DARCH=3D${ARCH} \
-+    -DBOARD_DIR=3D${BOARD_DIR} \
-+    -DARCH_DIR=3D${ARCH_DIR} \
-+    -DBOARD_ROOT=3D${BOARD_ROOT} \
-+    -DBOARD_EXTENSION_DIRS=3D${BOARD_EXTENSION_DIRS} \
-+    -DSOC_ROOT=3D${SOC_ROOT} \
-     -DZEPHYR_TOOLCHAIN_VARIANT=3D${ZEPHYR_TOOLCHAIN_VARIANT} \
-     -DZEPHYR_MODULES=3D${ZEPHYR_MODULES} \
-     "
+diff --git a/meta-zephyr-core/classes/zephyr-qemuboot.bbclass b/meta-zephyr=
+-core/classes-recipe/zephyr-qemuboot.bbclass
+similarity index 100%
+rename from meta-zephyr-core/classes/zephyr-qemuboot.bbclass
+rename to meta-zephyr-core/classes-recipe/zephyr-qemuboot.bbclass
+diff --git a/meta-zephyr-core/classes/zephyr.bbclass b/meta-zephyr-core/cla=
+sses-recipe/zephyr.bbclass
+similarity index 100%
+rename from meta-zephyr-core/classes/zephyr.bbclass
+rename to meta-zephyr-core/classes-recipe/zephyr.bbclass
+diff --git a/meta-zephyr-core/classes/zephyrtest.bbclass b/meta-zephyr-core=
+/classes-recipe/zephyrtest.bbclass
+similarity index 100%
+rename from meta-zephyr-core/classes/zephyrtest.bbclass
+rename to meta-zephyr-core/classes-recipe/zephyrtest.bbclass
 --=20
 2.34.1
 
