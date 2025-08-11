@@ -1,218 +1,177 @@
-Return-Path: <quentin.schulz@cherry.de>
+Return-Path: <sandeep.gundlupet-raju@amd.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D7D1C87FDB
-	for <webhook@archiver.kernel.org>; Mon, 11 Aug 2025 12:44:06 +0000 (UTC)
-Received: from AM0PR83CU005.outbound.protection.outlook.com (AM0PR83CU005.outbound.protection.outlook.com [52.101.69.38])
- by mx.groups.io with SMTP id smtpd.web10.47184.1754916245588051242
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 041B3C88CB9
+	for <webhook@archiver.kernel.org>; Mon, 11 Aug 2025 14:59:57 +0000 (UTC)
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (NAM11-CO1-obe.outbound.protection.outlook.com [40.107.220.73])
+ by mx.groups.io with SMTP id smtpd.web11.49944.1754924390842086166
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 11 Aug 2025 05:44:05 -0700
+ Mon, 11 Aug 2025 07:59:50 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@cherry.de header.s=selector1 header.b=KL5G3HhF;
- spf=pass (domain: cherry.de, ip: 52.101.69.38, mailfrom: quentin.schulz@cherry.de)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@amd.com header.s=selector1 header.b=gmAXQYXX;
+ spf=permerror, err=parse error for token &{10 18 %{i}._ip.%{h}._ehlo.%{d}._spf.vali.email}: invalid domain name (domain: amd.com, ip: 40.107.220.73, mailfrom: sandeep.gundlupet-raju@amd.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Wq2SjQUQ++6Jq8J15V4K4jO2ifew4AqpoeLwS+30KwDtaiFeuosL6abFYqmeFQKopNumcdkmTaixF5Wop4R5z93lNdoCBiUWSBEAl1pUh1Pe7qjvLSFJXCDvlTcKWcwbaVLFTIDS0YIVBF3YcNky599YSlA58Ln03I4wIxfrDxlxAVD3Q5y6CfwxMdjkX4yKiwO/UBP59sLJiGTTYJF4L4a1VSJILM2/PsXBjRAEFFhV0XjxyNx8hZG8FbFrsjOgWNz4tiXuWhwqeTjAXaMJAVYw/psWl8S/CBibK2+Q2Qd2CUH6v+QvMnB0QQipJ2D7Mr7O/4JsRSYBj7gsrWSarg==
+ b=pecGLBqj65W/GFapzSewWXapuiZHB0kEgHapP9cIy9mEjXbVWk7wg/eNEnRkb3on6Hp6Ur3IrEfPL8KeGfEydfHl8QK3bm13533zie7sABbn1Z41u6nGvGTXVMsEOoKmJrCgYinTKrECZFlQyH0NYJwwtTw4kMPYlH72qvmU/h6QrLXQHyTpPGlv5HCyq4NWCy1CTnNC3E+lM2CDUb3tDc3B2OpU296qcZ3Omfv6NlLcNgH+tGdo4zFjH10tockPzeytZ8urOYVf3fX+h6C54ihwkXg10IEn+8pdW9XWbX8bZtv+MI0bN/52F1/ve2f+J3AJEipXeFyTX2Iv+5c6Sw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kja5kx6LBIu170Sl5f085fQCHbmzDGC+IQIo0V4gHvo=;
- b=ajUeNdick/RmyF2DsB2U3ecDuy7P1dmFn3Jh9izZZ9ATnzYR4vZfvVYW3Q+raT+BhbGwexaaaeFXmZKDPm2LSqBEHPIfakEd+AwHpTjSlEHMgKeskU/hfVBX/VfnuMgoss4jtvo6JW1lQ3gKyhY0y7PXcOE+eyvRQH/6uW+4L73oxwkRDgD4snbOU/oBK+Gsrn8Qhd4kt1yiPHRtmv0it2e+FUYbuR/Oftx/w4ahy8JYysHgnI9ek9oSySahi5FbgOS2RYoCb9OjeBPhsI6rJ5SVz9DrcKZ1Y233GfZrPb7GCJsYd+vA+TfgERVeoeNEi9xu9tKttF9bYN/nI9YNGg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
+ bh=Oaw6CdFD5cVJRWO5o57yStVa5vvl2soKkyXSLYpSZD0=;
+ b=DTFpB5XcQa/BXu9tjPS2QmpY1LjKkNVSlIIeO4Tx/uUL4agVZ0m2na7Y4VqqPIGGtQF+lmpsTWA9lo3d7YIfPsGzNtU5BLrrgWZEUzkppykB12wzrcK7lZrHjlZL65hdCZjvOTmZZfdltlWsxi7r4XrwV/PKMgxeHRNfuHZAUydgDEjRjl3Gdcg0iRVjSyvC47S8P9pFAkDN8idiBkUbwHLGcJruDh0oPiwqDK65US0EpXGGPFJX7j/Yb1BfLgBjZjglz4REHJu6Fqahu3HBzcQ7UFikC2b9NXWoICqRFbFePqXIuabjJL1kt31dXtw7ouoNwFfqbdrSwnM9Csc7mw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=lists.yoctoproject.org
+ smtp.mailfrom=amd.com; dmarc=pass (p=quarantine sp=quarantine pct=100)
+ action=none header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kja5kx6LBIu170Sl5f085fQCHbmzDGC+IQIo0V4gHvo=;
- b=KL5G3HhFhGGTyvfz8rHDwsoTNuj17cKLRbM/+yND91cMrxSJh5NJQI+ejHuPvbNGA9MCKfs/FGMt0HoQct6bycb9+SLEq2lXbIy2cUauiSkvePBnIaN3RE/mwXqFZRu7BSeLBhlvBciCj/6966apCuBu9D8/0N3QpvFONCzi2jA=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com (2603:10a6:20b:42c::20)
- by PR3PR04MB7467.eurprd04.prod.outlook.com (2603:10a6:102:80::20) with
+ bh=Oaw6CdFD5cVJRWO5o57yStVa5vvl2soKkyXSLYpSZD0=;
+ b=gmAXQYXXuRh1diAVCklISpSA2JEnOMRNU32d4jeOFY0f2jDdwjd9BCoCw+0kn90FRVXWxFCkc6Ultt+owHJG2ZAl88HO5nkcJgGEhbJx82FhRDm93c6EDKwoP4wd/8H9i0O4DFas0VeYdQieIRMwxknzyCKuck/5K2f8KXrAhlk=
+Received: from BLAPR05CA0018.namprd05.prod.outlook.com (2603:10b6:208:36e::13)
+ by DS7PR12MB6006.namprd12.prod.outlook.com (2603:10b6:8:7d::19) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.18; Mon, 11 Aug
- 2025 12:44:02 +0000
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::5ee:7297:93b4:a8d1]) by AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::5ee:7297:93b4:a8d1%4]) with mapi id 15.20.9031.011; Mon, 11 Aug 2025
- 12:44:02 +0000
-Message-ID: <c506e59f-b72a-43d5-a435-9fa79193fbfc@cherry.de>
-Date: Mon, 11 Aug 2025 14:44:00 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [meta-rockchip][PATCH] nanopc-t6: add
-To: yocto-patches@lists.yoctoproject.org
-CC: twoerner@gmail.com
-References: <20250803172432.1341178-1-scott.murray@konsulko.com>
-Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <20250803172432.1341178-1-scott.murray@konsulko.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: FR3P281CA0185.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a4::18) To AS8PR04MB8897.eurprd04.prod.outlook.com
- (2603:10a6:20b:42c::20)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.21; Mon, 11 Aug
+ 2025 14:59:48 +0000
+Received: from MN1PEPF0000ECD7.namprd02.prod.outlook.com
+ (2603:10b6:208:36e:cafe::40) by BLAPR05CA0018.outlook.office365.com
+ (2603:10b6:208:36e::13) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.13 via Frontend Transport; Mon,
+ 11 Aug 2025 14:59:48 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ MN1PEPF0000ECD7.mail.protection.outlook.com (10.167.242.136) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9031.11 via Frontend Transport; Mon, 11 Aug 2025 14:59:48 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 11 Aug
+ 2025 09:59:47 -0500
+Received: from xcosswyocto01.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Mon, 11 Aug 2025 09:59:46 -0500
+From: Sandeep Gundlupet Raju <sandeep.gundlupet-raju@amd.com>
+To: <yocto-patches@lists.yoctoproject.org>, <chee.yang.lee@intel.com>
+Subject: [meta-zephyr][scarthgap][PATCH v3 2/13] zephyr-sdk: Add new inc file and update to 0.16.9 version
+Date: Mon, 11 Aug 2025 08:59:30 -0600
+Message-ID: <20250811145941.2553838-3-sandeep.gundlupet-raju@amd.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250811145941.2553838-1-sandeep.gundlupet-raju@amd.com>
+References: <20250811145941.2553838-1-sandeep.gundlupet-raju@amd.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB04.amd.com: sandeep.gundlupet-raju@amd.com does
+ not designate permitted sender hosts)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|PR3PR04MB7467:EE_
-X-MS-Office365-Filtering-Correlation-Id: abe886d3-6b64-4356-1c17-08ddd8d4bfd3
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000ECD7:EE_|DS7PR12MB6006:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4691ba05-dc7b-42a0-ecfe-08ddd8e7b74c
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|366016|376014|10070799003|1800799024|13003099007;
+	BCL:0;ARA:13230040|82310400026|1800799024|376014|36860700013;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?Do+q60hVwTCkZV73jPlbgF7uzyIpoFxSOhi/1cIt2eNqDSBsBTjDm+gHrp19?=
- =?us-ascii?Q?7VTNp7Ta28jUuuYDwiN4U/5HaWvQ2+id1+2FwYMcqkydb7oUrvYIQV0jh8f/?=
- =?us-ascii?Q?k1hlBq8OYhuhUS2HEMegnMcd7u3yl5iGk1YvCbuPoQGgGjiAe9cBzfj2C+VC?=
- =?us-ascii?Q?F9tv+0sMeGnGckjFxzuNEwfQrCxtCkedDAWvRUxluJHvass4mXeD+xixgl94?=
- =?us-ascii?Q?jx2DEs1wl22c+IY/r1xZY17h0JfXbxVzdeI89+vL3fxPFRKeGmzR2gaYcJiD?=
- =?us-ascii?Q?STXu0Y6a7QvTxbpnQ6rfcQG8RpxC++8tKKdh1qxlTjuMTlGlDmj9c5JT7/QJ?=
- =?us-ascii?Q?MfGChs3njNVTm6W3aT3LOrUFohpdAOicEmu13fXYAb630ORWtgxkk5EQauRd?=
- =?us-ascii?Q?oi4i1jOnftvlLKIbqL/rnUr5Ql6fQfM3BLOvuXUuHjj6ymN5697t/MYTiMmZ?=
- =?us-ascii?Q?660H+j6fb0YrLRtIeyKIG7AK8LeCCEDHkaPUzrkvANd/NgNSiJY3LLx7M7Dw?=
- =?us-ascii?Q?3mII54M2Y+5IBAZSqkdDK20bzueLkwuD0OWKyceh7yX3KP7IBPNQQI4loxL0?=
- =?us-ascii?Q?x5KdBKKuvCT8cE5S6lWn8bOmC2ohiCgBw+JSaUqsE0wj6Yl+57znHpFS3rX7?=
- =?us-ascii?Q?yyx8q8Sjdb/ERxjxN0EDZK+E9Vo9VO4M0ft7LdBLx6l1c4XAzt/tKhJn+Vt9?=
- =?us-ascii?Q?Jz9uDgFYr5DsCLT6xdb+jRQu7ldjmj6h9IMf2np7V1xoU/eV24iBqaHb/sRz?=
- =?us-ascii?Q?lY7Vh78zGbJCoPlica6LlpAdmRkj4Jb1mxwfZpwMywJtw0/EGsCfCkeNp4kG?=
- =?us-ascii?Q?/1F0bx8Zew1FEI8aWbw3D8y4zI+MbmVxjAo4WbsXrMFKGIfslwA+oQW55z/E?=
- =?us-ascii?Q?WK+SdCq3+Y76wEi5GADYnmMX1Yxm8dA2QeZ4GyZ06jRl3X9fBz2LGcXRskRg?=
- =?us-ascii?Q?2r6oGhLtSWGiAeNkZaEl1RClotQaUPsNDDEvxVWKyuxf+bfgyMOsVuO7Kz/x?=
- =?us-ascii?Q?2OfqrmCnC7cVWsRRtAnvQI6OY7ZVfiqibLtOEx7YnpMHDviyqj+3WJTNKxW6?=
- =?us-ascii?Q?eKb07kdKHTTcOR5Cv5oGPOfB+6LOuurKG2SN0wx+8XVAcKPufPFVF+o7cLQm?=
- =?us-ascii?Q?3by3bK1TbHq0esBojsWsWUSFRyASP7RzdbfC1DTa5DyjKvb90wAn9Ov7ieO0?=
- =?us-ascii?Q?dHRP8V8OD16Evf3u34VGeLYLt6enVissYomjnnkVSlBG0vxemdVRobZFkhEY?=
- =?us-ascii?Q?NHo7Y4YJQyoNsbicS48h6W9P3rSL8semEGJcJLMbfoaWcxczQfChg7CjJqxM?=
- =?us-ascii?Q?WnOuooVkNRSzqAi4Zz65EV+I3PGgc2BKThhaCCYyhCG+Pd4iiRdIcf2i2LYm?=
- =?us-ascii?Q?wi2eFd0=3D?=
+	=?us-ascii?Q?0tygdldOoQ5xXNe900JZB2T7reepN235uu2hShd6yu0DCrSqf4aNe384qAZ7?=
+ =?us-ascii?Q?LbXvSHdOR1U2j9pJ4qZCAZYq5XOPSf6KeoCAFfNKrjuA9nB+3eqVMWrRxXkR?=
+ =?us-ascii?Q?NS9TVe+boVROwTq2sXovgo6KSLqr4Loj1OEH/B07x2wPU/6yS+9GJb8gbpzw?=
+ =?us-ascii?Q?MTCHL6x4iR0bhS1ttsoO0ywvTXxca/dJATx2KbUQnhG75TwBHUpjBAGul/nS?=
+ =?us-ascii?Q?C3lLeydwWDKMJQjKXKdqWTv6JCnq97UHTKvUCndpejqrvcsn2FYjAOtktMcA?=
+ =?us-ascii?Q?iXacQDWEGHmmOdcgPJno55wFqXV3RRHklj9GCivnxOoQvQXnpaIVm3eQbASU?=
+ =?us-ascii?Q?35e8nFXfvOCDcF5QxHtqliCWk4SU5gZdkoslApBGwNTTub5Z5i2xxEtI0A8d?=
+ =?us-ascii?Q?y9jyrNwg1DCVIYQS4xqIW2DM0chocHjgsmwOy5FEcz4Rj3I+++rEBFMA5OVi?=
+ =?us-ascii?Q?y6sCI4KioqqB35Sf4yXXa/nazWn8IAC+vC1XXfell16fQndT8Hby7bluj1ZD?=
+ =?us-ascii?Q?9PFTdLIyQYvw8jbiBkBiZMwmVS0i0BB9Xih5qeSqbu+7T1x56nK+OvXIOhjg?=
+ =?us-ascii?Q?m07h3djZUTZSoKmBScTDP7U+x222Y4vxB9hmZqG+AtKSSHV2rOuq46Yb5I8K?=
+ =?us-ascii?Q?D/I1wBQHUgY9beShhiWOrGWCb795al5Rju/RvM7fQ4Dklddq7zWZogOu4cGC?=
+ =?us-ascii?Q?/yKj/4Yl6kGVFtsEwEcReVqbrOSD81tnfNXRGljuhQ0+cUszV31kBOGJ6xki?=
+ =?us-ascii?Q?cvNxuBoa/nW0Mog+EeKGtNzvuV3j82ikzf9po91fULUUSELlclcMCwoxcaH6?=
+ =?us-ascii?Q?tmBd4dUWctUKe4pjagu+lBKlp5ogVxk6aGFdRe1rhgFwoeqohcUYuxx3XiV5?=
+ =?us-ascii?Q?tgpogBHyGlwKZPTZvLDvuoavI9g7n5pTwgJCbfbLMYZly0rH3PEf8tKLK44x?=
+ =?us-ascii?Q?xLFEsv86bahZGjPN/PGlIlpdwG2lITo68SWbyNRAqxmSDcMTtsWVB+TtVe4R?=
+ =?us-ascii?Q?wn6paqH/TEXwe4hMNthuMRdt/opVzMoxxuiPIAFw4LC7w9xEJFZjxlChusXY?=
+ =?us-ascii?Q?Rmy0xK2Cw+q+iEeNgD/wA1Gajj8uw5pg/TR/CI3S/UVM2QO14E5kd6JuiRCC?=
+ =?us-ascii?Q?TADFG2U3NKmeX0dZBpu1XW4CC3OdP6DhX7Hdh55tsjgrWe7vuZGHFhoKe6R5?=
+ =?us-ascii?Q?lkx5MlzM4MIrG/e4mqBnlSmk9F8UVaCdnRzKjew8CNJZ5wCKdxJ+WWzbFC39?=
+ =?us-ascii?Q?Uc5BGxwmZ6UZiVT2AMyWf+rxzh/6ZCc1USEIVVKO2KQeN4Vi8sUFX30NebZB?=
+ =?us-ascii?Q?Kpyfu/KgGi74UWHAnuLkzbr2FYht1IQ3NX4qy8eL8/qurEaneEsnvsbRf2Ja?=
+ =?us-ascii?Q?eNB5AFsPc5p/wlq34KvFuGTl0SfQC8lB0sFer3qQIelGRtyzXsQYcUzLbohd?=
+ =?us-ascii?Q?bgeyLIVrDJIc2SKO4t+zldL3FO/07yvaqQ3tKnLk/rnwkgzitDY3FZEsKu1P?=
+ =?us-ascii?Q?/Gw3Hqt/w13z1B1VdK5YFrKId6USSuqEEOVU?=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(10070799003)(1800799024)(13003099007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?72sf74Mian8ipDP6qMVUGCWyw3fVOOmLwNU4I0FL9fHKTtupbQADqRRTgRSi?=
- =?us-ascii?Q?zxh3DXDC9WBo/8tCk4xzSwugKItxFaq5LCBy/Ywiz76XT3BPd4dJ5usMO1VD?=
- =?us-ascii?Q?kK41obQ0qdGxtzhXnrXiZD36sxI0DtAamrDjJoxCd6KIioFC6i8CfiV878nx?=
- =?us-ascii?Q?3az2lJQvzrLzyxCCnmXF/xiMw4bHTDgiOVkBFVH/uru5Fz6LzZSk7sg8HMBX?=
- =?us-ascii?Q?l/HR7qcNxfKYUU+//vTzwy4DTR/76ucDcrmJoCD2gctlFnhF4Clr1yu7sUvC?=
- =?us-ascii?Q?xWC5Bdnp+ioj2VM3KNe2Wj+nk2lk9TBqNPr3BkaYy+n56fJ5NoK57NhlBC4U?=
- =?us-ascii?Q?jQdWRdjK/rx0v9kLzsSLhgJgFvlo4Jp3QxgFnOnlofQyu7xswSVRFBqm1VTA?=
- =?us-ascii?Q?CPykgdsmEbkevd3G+Xksq5gTFJruyyoV4YcXK5KOVTLnWwhXsj8JsAB4tcK6?=
- =?us-ascii?Q?O2CFFo7i0cslTUiqurdsxCk8+3uC4Fq34wE1QFu/l8LvLwh0HjD8Dc7Ykf03?=
- =?us-ascii?Q?e1EFCTvxwAFyA/kvHZmAMuyff/H+kkQN5q2NAC+IKnKApw1BClkoSFiyaCeI?=
- =?us-ascii?Q?UCu9l4y7neLUVChvCnaozxbh48MOWVrdOdz3u7MT+qUaBSInG81SItB5VLAn?=
- =?us-ascii?Q?NMIC+sa0S2a6MhbUlPdcyccOlfIIvTZy5RiujePU01S5ufVQdLxIEG//OkCl?=
- =?us-ascii?Q?UEe7QpM3FDMIPVBT2HlP5EyNxJ8wJKBk4LkE7Isi0Xq5LlsanvNjeOyfjroF?=
- =?us-ascii?Q?YIFjXtDXoDM0dNg+Z+B1bLI4s92+B55at7jmoUhlo6vftGcioZSvdNVkCyCS?=
- =?us-ascii?Q?DfWbP8h3L+KXXdWYBGWyf6ZQpgQOSGvL8QFyeVKS4EYopOXuIlH2tuqu74nO?=
- =?us-ascii?Q?PtQRAO7w2PqDQ/KyGV9Q3x+HkYIr7P2cVbKsF+KVD1TK1IlgbrR9rHBdtWyV?=
- =?us-ascii?Q?/8otR18WjJ71t2uLrtEgqf+VvZPN8r1aPiUU5JQAQyOnFM6gFxlYvhY0pqK9?=
- =?us-ascii?Q?IIeczfQ18dliAwTPGVdfsUsF1vspQNoqcpNg/kT7qD3Mqw8HEJyfJrPuExub?=
- =?us-ascii?Q?C4U18VPWIKwyqparAcMp2LL33YBzDjKazrMgm9ZeZnrmGUI/F5PpJr12GJx1?=
- =?us-ascii?Q?hxDcD2TDVqO7Z9hU9FbCl0ih7VUvoy7fMQmgc7ef4lomPEBgXUwiZMv3aW7V?=
- =?us-ascii?Q?8oXlqrZ/vt34q4UPauYQSH1mbc7IwrHLuSiC4OlVA2PgDWL5rkDaPZobVSvZ?=
- =?us-ascii?Q?ibfdRiuLTOkUU5PYKiYCBDU4M3V6j8QLHKjSZpRVmmpHblnTmA3l10YLxWhT?=
- =?us-ascii?Q?vRVP2KKarzBYIIkHzz+/W/p/wSrDy+dLP3dGyUIA6PckvzrKdx2I5p6jmBfM?=
- =?us-ascii?Q?gRKr5P2jlC22/n6lTKoC3lXBQEIyIUy07AgiVsuRw2yCWYXQRxUAQRJlbFeB?=
- =?us-ascii?Q?wu3wpICWZW93TZKicN/IsFcKhvp4TjHHta9W6Qo80YudBdbHyo1cAm3+Buj+?=
- =?us-ascii?Q?+ZeeHkdtCSt+MTvQqQVYyn0Szt3x5mjAnxCVvsSiuBAv5pC22X4cb6GIxjV/?=
- =?us-ascii?Q?8ttAXqSk1gf31T/iKnemLVjm/yOI67cJ43p9+4wLxTc5gyTwz0j8u5krjWya?=
- =?us-ascii?Q?PBWERoM53V7f6yqHmXQ45+yk0jaPlpJsJ/7swB0WRv0Qyl1unvhGysUAiweL?=
- =?us-ascii?Q?IhVTDA=3D=3D?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: abe886d3-6b64-4356-1c17-08ddd8d4bfd3
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8897.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2025 12:44:02.1869
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2025 14:59:48.0356
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hOdZPQQEr1AIvPjf6Ggvz+u5P5ScEAzNM2WvNYi42Z+Blq8TPN4cQTWgLz6ItVzjutu0nn4FmwPhlk73i0HVmBpnjWeFJ8ieGD3A85+HzGs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7467
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4691ba05-dc7b-42a0-ecfe-08ddd8e7b74c
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource: 
+	MN1PEPF0000ECD7.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6006
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 11 Aug 2025 12:44:06 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1928
+ <yocto-patches@lists.yoctoproject.org>; Mon, 11 Aug 2025 14:59:57 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1930
 
-Hi Scott,
+Add zephyr-sdk.inc file and move all the common sdk implementation
+zephyr-sdk.inc file to support multiple version of sdk.
 
-On 8/3/25 7:24 PM, Scott Murray via lists.yoctoproject.org wrote:
-> The FriendlyElec NanoPC-T6 is a one-for-all high performance open
-> source platform for edge computing, designed and developed by the
-> FriendlyElec team.
->=20
-> Website:
->      https://www.friendlyelec.com/index.php?route=3Dproduct/product&path=
-=3D69&product_id=3D292
->=20
-> Wiki:
->      https://wiki.friendlyelec.com/wiki/index.php/NanoPC-T6
->=20
-> Specs:
-> - Rockchip RK3588 (4x ARM Cortex-A76 + 4x Cortex-A55)
-> - ARM Mali-G610 MP4 (OpenGLES 1.1, 2.0, and 3.2, OpenCL up to 2.2 and Vul=
-kan 1.2)
-> - 4GB/8GB/16GB LPDDR4X
-> - =C2=B5SD
-> - 32GB/64GB/256GB eMMC
-> - 32MB SPI NOR Flash
-> - 2x PCIe 2.5G Ethernet
-> - 1x USB 3.0 Type A, 1x USB Type C
-> - 2x USB 2.0 Type A (LTS model)
-> - 1x HDMI (4Kp60) in
-> - 2x HDMI (HDMI2.1, HDMI2.0, and HDMI1.4, 1x 8Kp60, 1x 4Kp60) out
-> - 2x 4-lane MIPI-CSI
-> - 2x 4-lane MIPI-DSI
-> - 1x M.2 M-Key connector with PCIe 3.0 x4
-> - 1x M.2 E-key connector with PCIe 2.1 x1 and USB2.0 Host
-> - 1x Mini PCIe for 3G/4G module (non-LTS model)
-> - 40-pin 2.54mm header (up to 2x SPIs, 6x UARTs, 1x I2Cs, 8x PWMs, 2x I2S=
-s, 28x GPIO)
-> - 110 x 80 mm
->=20
-> Upstream kernel support for the T6 has matured enough to be usable, so
-> add a machine configuration to allow people to migrate off of the older
-> bits in the Rockchip BSP layer.  Note that there are two variants of
-> the board, original and a newer "LTS" version that drops the MiniPCIe
-> slot for a modem for two extra USB 2.0 ports and adds a USB-C connector
-> for the debug UART.  Devicetrees for both are shipped.
->=20
-> Signed-off-by: Scott Murray <scott.murray@konsulko.com>
-> ---
->   conf/machine/nanopc-t6.conf                   | 15 +++++++++++++++
->   recipes-kernel/linux/linux-yocto-dev.bbappend |  2 ++
->   2 files changed, 17 insertions(+)
->   create mode 100644 conf/machine/nanopc-t6.conf
->=20
-> diff --git a/conf/machine/nanopc-t6.conf b/conf/machine/nanopc-t6.conf
-> new file mode 100644
-> index 0000000..5ed413d
-> --- /dev/null
-> +++ b/conf/machine/nanopc-t6.conf
-> @@ -0,0 +1,15 @@
-> +#@TYPE: Machine
-> +#@NAME: NanoPC-T6
-> +#@DESCRIPTION: NanoPC-T6 from FriendlyElec
-> +#https://www.friendlyelec.com/index.php?route=3Dproduct/product&path=3D6=
-9&product_id=3D292
-> +
-> +require conf/machine/include/rk3588.inc
-> +
-> +PREFERRED_PROVIDER_virtual/kernel =3D "linux-yocto-dev"
+Also update sdk to 0.16.9 version.
 
-Why do we need linux-yocto-dev here instead of linux-yocto?
+Signed-off-by: Sandeep Gundlupet Raju <sandeep.gundlupet-raju@amd.com>
+---
+ .../zephyr-sdk/{zephyr-sdk_0.16.5-1.bb =3D> zephyr-sdk.inc}     | 3 ---
+ .../recipes-devtools/zephyr-sdk/zephyr-sdk_0.16.9.bb          | 4 ++++
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+ rename meta-zephyr-core/recipes-devtools/zephyr-sdk/{zephyr-sdk_0.16.5-1.b=
+b =3D> zephyr-sdk.inc} (83%)
+ create mode 100644 meta-zephyr-core/recipes-devtools/zephyr-sdk/zephyr-sdk=
+_0.16.9.bb
 
-Initial support was added in 6.6 and linux-yocto in master is currently=20
-at 6.12.
+diff --git a/meta-zephyr-core/recipes-devtools/zephyr-sdk/zephyr-sdk_0.16.5=
+-1.bb b/meta-zephyr-core/recipes-devtools/zephyr-sdk/zephyr-sdk.inc
+similarity index 83%
+rename from meta-zephyr-core/recipes-devtools/zephyr-sdk/zephyr-sdk_0.16.5-=
+1.bb
+rename to meta-zephyr-core/recipes-devtools/zephyr-sdk/zephyr-sdk.inc
+index 0b608bc..ee2e63b 100644
+--- a/meta-zephyr-core/recipes-devtools/zephyr-sdk/zephyr-sdk_0.16.5-1.bb
++++ b/meta-zephyr-core/recipes-devtools/zephyr-sdk/zephyr-sdk.inc
+@@ -14,9 +14,6 @@ SDK_ARCHIVE =3D "zephyr-sdk-${PV}_linux-${BUILD_ARCH}.tar=
+.xz"
+ SDK_NAME =3D "${BUILD_ARCH}"
+ SRC_URI =3D "https://github.com/zephyrproject-rtos/sdk-ng/releases/downloa=
+d/v${PV}/${SDK_ARCHIVE};subdir=3D${S};name=3D${SDK_NAME}"
+=20
+-SRC_URI[x86_64.sha256sum] =3D "01f942146d2fc6d6afd5afe6f4b5c315525d2c937c7=
+e613d3312b0992b33bc68"
+-SRC_URI[aarch64.sha256sum] =3D "1749b6891a6a6e70b013d8b31ff067c5a94891f651=
+985a6da9a20367b2deb6c7"
+-
+ do_configure[noexec] =3D "1"
+ do_compile[noexec] =3D "1"
+=20
+diff --git a/meta-zephyr-core/recipes-devtools/zephyr-sdk/zephyr-sdk_0.16.9=
+.bb b/meta-zephyr-core/recipes-devtools/zephyr-sdk/zephyr-sdk_0.16.9.bb
+new file mode 100644
+index 0000000..ba20341
+--- /dev/null
++++ b/meta-zephyr-core/recipes-devtools/zephyr-sdk/zephyr-sdk_0.16.9.bb
+@@ -0,0 +1,4 @@
++require zephyr-sdk.inc
++
++SRC_URI[x86_64.sha256sum] =3D "9b4b96f8df594801a84fce1aa112a84cdfcd430efc2=
+a74229907b6421fb859a8"
++SRC_URI[aarch64.sha256sum] =3D "a8c1731ad602553304e539a7ade9cdb34caabc1850=
+d581585cbba0372a7493b2"
+--=20
+2.34.1
 
-Differences between 6.12 and 6.16 (linux-yocto-dev) is HDMI output and=20
-USB support, so i guess that's the reason? It would be nice to add a=20
-comment in code or commit log (too late now that it's merged) to explain=20
-why we're targeting a "development" version of the kernel recipe instead=20
-of the expected one so we know when to "revert" it back to using=20
-linux-yocto in the future?
-
-Cheers,
-Quentin
 
