@@ -2,66 +2,65 @@ Return-Path: <sandeep.gundlupet-raju@amd.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D667BCA0EC4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC6C4CA0ED3
 	for <webhook@archiver.kernel.org>; Mon, 11 Aug 2025 19:47:08 +0000 (UTC)
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (NAM10-DM6-obe.outbound.protection.outlook.com [40.107.93.50])
- by mx.groups.io with SMTP id smtpd.web10.57326.1754941622420801643
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (NAM11-BN8-obe.outbound.protection.outlook.com [40.107.236.76])
+ by mx.groups.io with SMTP id smtpd.web10.57321.1754941619178281784
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 11 Aug 2025 12:47:02 -0700
+ Mon, 11 Aug 2025 12:46:59 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@amd.com header.s=selector1 header.b=fkz+LeZX;
- spf=permerror, err=parse error for token &{10 18 %{i}._ip.%{h}._ehlo.%{d}._spf.vali.email}: invalid domain name (domain: amd.com, ip: 40.107.93.50, mailfrom: sandeep.gundlupet-raju@amd.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@amd.com header.s=selector1 header.b=aFK5xtiM;
+ spf=permerror, err=parse error for token &{10 18 %{i}._ip.%{h}._ehlo.%{d}._spf.vali.email}: invalid domain name (domain: amd.com, ip: 40.107.236.76, mailfrom: sandeep.gundlupet-raju@amd.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=am2nXDsIU/+HC/SknPbM9fqKAMwQ4N9e5PDfgM+Tyi1R0/fWUpeXe14Izftmshq8akSMQR7gLzXgOI+KxvpvH4tDayvOqUewc0a3yL1MAwJXY+wF8LGP7CcsmuPW2oZ6u6BkzG5PKm08FPsRjaV/sgY0tZUcVd6cwx/b32DqwKs5njP494FdUyeBISJ59eGHCX55cPDPmfM0KeIw/6PUBBvr5eL7V5IztA1dK+K7VV/2zSHR2DiVhSTqAI2GPPjJpNhfKWeiGnMJSftjnmoenZj6KTHX43En2jrNoNZ+oF5SOGaE42iQZcnVJpm5a9afcA0M1KK/mJctzGMSa41j7A==
+ b=VGqPDDlkcwkg7oJjGIK4kKYQwactFkvhlFkY3KoNZvKbgK6ZhiMk95/jdrznvof3/9OZ7Bw8rU+tv9ZpURVMjujcq/uyvgkwksgyV66NAMxyLnJyR7sk6wUDtopK3bqOg3Us/PZ51BrwObAHTer8V9yRmI6gD5CFc6JHqcjH9fF6RQfd3PehS/P0AYXcn6o079b6SnzfvUjcAoRc89GdBO8+zceAROGZ9VWL8UMc/+xgaSij0LW5RzMk25l1XT/+t17NOdODj3iWakOqPfAPjticQV0nTThgsxNbdBajf1BhPAb/zKYQbFkEKXS3G9EDecKJOAH/Jy1q4mxzwj18qw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=10E1QjRBllYheXG0z3khl52zhcmByD/4qTcS21Vm1gg=;
- b=vBJgsBCkf+71QIYCzCNConezjrTQZMAfVkiMqM4vnDzqtJzKRaPyV2lAEk9wuKDLv88Md/Dh9ZUxnbImJLSd95M7nJRQKO8HyuyU/mtgCANsEuzv6AoNYFH3Fml+n1NVhqRKMJIstBu20wevjWEYk5WtYkK+gH7rDV//9qyTnkl7/GfzeChKtLYGYjs7y9ICj4FNJIC3KMPNEJu9PUAU6e32iAzkbsTiNDybX2v4mj+pvA22H1WGf6aEBS7hvbD3tPwaPHAVT3QFCimO9/lF2g9nK9utYWZSePkO7T8+ZM6/kKi7IkB1QVwZYO1LIeSHSPq5bGtCBlqSSb+zMdun8g==
+ bh=ttZPjY2QYdbxen/nKIcWWy1DZ4lTaVhCg02ikXd6z8s=;
+ b=MR6L+/0U9jo8vZG1g1lvkFmqFOwsx1jrxfBiyGViu1WTl3gnzZnxnz3TU76hBrj98eqry8CT6QCFOoeinf/Dn6KUwzDDCsqbYaJP3mLWvhW0xeA+2jbQinaV1mnYfxffRS7iWpqJk0LOQ8THBJsh8/QCYf+2FPWy0DeoxFgZqJmPgOvp9V8/nXYu2iOYaTJMDoYd/QHNvSu2xAkaAAbbY1XG1abOJ4beVYHFzvFr7jbDcbUINscLRQUq2s3wWmMZp6OSs0xIZLPbAA6P+dnhneoN9DL5+5Na2D1M1ZUYq1hsENA1eZO/6AnrzKSSpF1QdqHNcM9qKp8kPBTx00y5Ng==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=lists.yoctoproject.org
  smtp.mailfrom=amd.com; dmarc=pass (p=quarantine sp=quarantine pct=100)
  action=none header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=10E1QjRBllYheXG0z3khl52zhcmByD/4qTcS21Vm1gg=;
- b=fkz+LeZX/JR8ihtGBYte398Nb0k165Lrgp/tX5A2YB67dfNP5+QpLdG64FVfPqtzUVohU3OdNz9fZJC1xTQIbKVFeikK+SkdC3eIIthrsr2PjDDnub2Hrz3uy8YP7LXWohtcwcdYncpvfLJgKQb55KvMgGOdVaHhDuUcpFBhhGw=
-Received: from CH2PR17CA0025.namprd17.prod.outlook.com (2603:10b6:610:53::35)
- by PH7PR12MB6540.namprd12.prod.outlook.com (2603:10b6:510:213::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.21; Mon, 11 Aug
- 2025 19:46:55 +0000
-Received: from CH2PEPF00000144.namprd02.prod.outlook.com
- (2603:10b6:610:53:cafe::48) by CH2PR17CA0025.outlook.office365.com
- (2603:10b6:610:53::35) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9009.22 via Frontend Transport; Mon,
- 11 Aug 2025 19:46:55 +0000
+ bh=ttZPjY2QYdbxen/nKIcWWy1DZ4lTaVhCg02ikXd6z8s=;
+ b=aFK5xtiMoplJ9E6Ky/C/nnngMDBWX9rzIl5cy1C+K6nhyrXgNmM4Z0kMsIF7DGsGb3ukMSiuFRCogmKw1NTinisrR+zMV3l7Fqb8nqBWFo4fXNEzifTfupWWrgKOdfT8zvVE9ADOoucxZ44eLIxjjjfptTe2ZRvcH9yzEPbt4dA=
+Received: from BY3PR05CA0015.namprd05.prod.outlook.com (2603:10b6:a03:254::20)
+ by DS7PR12MB6336.namprd12.prod.outlook.com (2603:10b6:8:93::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9009.21; Mon, 11 Aug 2025 19:46:55 +0000
+Received: from CO1PEPF000066ED.namprd05.prod.outlook.com
+ (2603:10b6:a03:254:cafe::1f) by BY3PR05CA0015.outlook.office365.com
+ (2603:10b6:a03:254::20) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.13 via Frontend Transport; Mon,
+ 11 Aug 2025 19:46:54 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
 Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- CH2PEPF00000144.mail.protection.outlook.com (10.167.244.101) with Microsoft
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CO1PEPF000066ED.mail.protection.outlook.com (10.167.249.10) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9031.11 via Frontend Transport; Mon, 11 Aug 2025 19:46:55 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.9031.11 via Frontend Transport; Mon, 11 Aug 2025 19:46:54 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 11 Aug
  2025 14:46:51 -0500
 Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
  (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 11 Aug
- 2025 14:46:50 -0500
+ 2025 14:46:51 -0500
 Received: from xcosswyocto01.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Mon, 11 Aug 2025 14:46:50 -0500
+ Transport; Mon, 11 Aug 2025 14:46:51 -0500
 From: Sandeep Gundlupet Raju <sandeep.gundlupet-raju@amd.com>
 To: <yocto-patches@lists.yoctoproject.org>, <chee.yang.lee@intel.com>
-Subject: [meta-zephyr][scarthgap][PATCH v4 11/13] classes-recipe: Convert zephyr-sample inc file to bbclass
-Date: Mon, 11 Aug 2025 13:46:44 -0600
-Message-ID: <20250811194646.3408854-12-sandeep.gundlupet-raju@amd.com>
+Subject: [meta-zephyr][scarthgap][PATCH v4 12/13] zephyr-kernel: Add rpmsg multi services recipe
+Date: Mon, 11 Aug 2025 13:46:45 -0600
+Message-ID: <20250811194646.3408854-13-sandeep.gundlupet-raju@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250811194646.3408854-1-sandeep.gundlupet-raju@amd.com>
 References: <20250811194646.3408854-1-sandeep.gundlupet-raju@amd.com>
@@ -72,352 +71,104 @@ Received-SPF: None (SATLEXMB05.amd.com: sandeep.gundlupet-raju@amd.com does
  not designate permitted sender hosts)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF00000144:EE_|PH7PR12MB6540:EE_
-X-MS-Office365-Filtering-Correlation-Id: 195b16f1-43a9-4c4c-8f19-08ddd90fd395
+X-MS-TrafficTypeDiagnostic: CO1PEPF000066ED:EE_|DS7PR12MB6336:EE_
+X-MS-Office365-Filtering-Correlation-Id: 16e96faf-5c9f-443d-0885-08ddd90fd31e
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?OI1fHaKdHF5mIdimXpo2cve9UW6/dWvc4XzICurDnZLSEaJFPrdnTgoZc2wk?=
- =?us-ascii?Q?/G7JjTLWDA19swxr2mMnZi6M0VUxHXeX67kBxpXspd+N8VfRxv6gqHBkziU/?=
- =?us-ascii?Q?BQfhBsPeyKBq0+Z2fhAz0tQZ9EgyCs1aKz49+WplaDB+6fK2Ld/0fWzOuv91?=
- =?us-ascii?Q?OlUnZxV9ZAQApTSwfM+8x/fb3EKPe44/HlDcVBmlVlceSa9zi+mpKvWZOt9U?=
- =?us-ascii?Q?voPfddPijYNdLBmqcUQ5jp22hBGKIKwhjj/iZkNd0HLO2VQkxiq3VuGoXvmK?=
- =?us-ascii?Q?YYd8ajZXooJdMTCYK+YHdxhxHxUzTK/BbuECP/YCnjKOizWT9lbi9uAVZQ/V?=
- =?us-ascii?Q?mGQip4JRvxZJJKUzWlcT4kQiaaL6uT1t0RWAspPz5OpJ9g2io0KPaOwPeW5q?=
- =?us-ascii?Q?vlGyjFKidYJJtQ/br0RhmVSojV7TQ7vAQDyQgZJWlr3N/KPuUF4a49N7K1Sq?=
- =?us-ascii?Q?4ZO2IYJ6zhlUNzwBIlUCx8cWbWkMZPhDSetj4GWt/Enx/wGbY/G14guIa2Ym?=
- =?us-ascii?Q?YXgnrinxf33GOUC/BKuY4cU3LKgZW/4DgY1e5teZM9HzZatHNuOAxNQPYhu2?=
- =?us-ascii?Q?3gPgtneIIrwzmV6BKC0zFVyIndb4puAM8hrfg2BgzcNPHetMhdQn+RsDLuMe?=
- =?us-ascii?Q?D4HD48gjkyUAk8XC3ffaLNRx2O3+6pd+rwDBOJQL2Gczz0isBmMcxQGOxCil?=
- =?us-ascii?Q?SsCitodBAHr85OiVd40FralaTbvZNGB0qoN4dB/7JduX8Ip5sUGZ2yWMqdTN?=
- =?us-ascii?Q?w2p6dST0VH2SJi/Ok+x1adC68hf5ymCnlRw4vrpNjuAAakTgGNR5jN7qbFJm?=
- =?us-ascii?Q?H7DyDaTt2cQofB4Dfx7Wf7LzYNyYGKfiakS4o9UWTCIc5GoBq0YZdoYPBlfx?=
- =?us-ascii?Q?ZFLk0FG4Qu+W64X4Kildk9eV8AepQg9X7uCbINauJSbKDM6Z9lmVC+esDamu?=
- =?us-ascii?Q?KnTTxVFSzUyTi1yVW09fcDeJ+sMpp2GPeklzPpGjojUgF3iu41mMO3OMgXEG?=
- =?us-ascii?Q?JzugY+bUYwwH38pDxISAnMAwzKm/5R1yOSaDdrDcbrjdd3leXrwG8UGraWK2?=
- =?us-ascii?Q?Odxmro2edGdPqVk8h0dc1Gc8T1zQ0isYiY/NzR2BkUc6tZ6BATLIAwBp0Seg?=
- =?us-ascii?Q?TPdYHT+a8t9SS8oRPw8QGaHSkhypZ1Bie/hx62BSLKh3sKTvxNPTM5fPZ473?=
- =?us-ascii?Q?cwTYF/quyc/q6popc8kA6oRM2/53XPF64uvIwW6HBtbJcep1FuGVrrrFYYo5?=
- =?us-ascii?Q?G0LJyEJP7GYbrzvTYkC6bvNlhuKYWNFl9MYNDpAJvvhgyMeapVFjC7qclLSS?=
- =?us-ascii?Q?YkUkzhqZhL/RO+Yw5VchHnGZsQc1XVglEcjaPp7K1xy+V3dLQO0h6O5KPVfB?=
- =?us-ascii?Q?54R+tBZfdczS+5cR2/wASiQ5gl+a+XEZpCkmRGJLpa8r9ZhPvTpzFuRAG0Ou?=
- =?us-ascii?Q?zQ3eixJwWUqnJ1nYf4la7D1fGiJdq3QIHXPOfMxs/UW597Y+rvdk2jT4VG0I?=
- =?us-ascii?Q?N4IOFOI6yy8pJ0FPhPLLulvk9EbGw6YFA8l4?=
+	=?us-ascii?Q?WngAtP7OLJl+20eH5haPHb/0Kws0YyycNOPKKvIm0P0OqzTTbbTGlrB4JuNd?=
+ =?us-ascii?Q?xF/Rlu39t1P/wH77cVUVMOyGwOfOfOSXFWmEv5ggbpjpUi4UvP+aHtLu3R0Q?=
+ =?us-ascii?Q?wflXz/KNgiOpZS1eW/DshW1KPVXTcdeTpdpTa40TT+Od6nHw99JXXgX7ax9W?=
+ =?us-ascii?Q?eYXij2gZf0uEJo33re5/xquC/j/WmysQaT9cLjmTTa3iF0PqmF0a8bvWcAFj?=
+ =?us-ascii?Q?aifSu/dN2MBBFLntT+fwEscje7KGSK5NvnUxmoJj5Q6MpKqY1AEQyEXMYBNK?=
+ =?us-ascii?Q?+1BVIR3YSUxjlEdaZ/l508R0tOhwAJgqSpyU1lnhP3zxSjR63ifkERirIUgn?=
+ =?us-ascii?Q?aLH723BbIBcFxI9Qz3tA8HhpjCdal40nC3BrZuk//5I10OW4Jbxhr5x0ICrP?=
+ =?us-ascii?Q?sDn/VWR6Zh83C+pbxMlvmsDaJWI096PA6aj9e6SUPSu0TjqCbMxSXpn9H87O?=
+ =?us-ascii?Q?ODUmuTrgOvF/7NyNJEnvlY+kuN2f/V3KQ7IeQVmnZWhosvtTyk4QOQ3AC6Tz?=
+ =?us-ascii?Q?bfkY2Hi9ti6f7TVm5nZfiYvh66okHLxuzsRqHDdrqeBSbTauPApRJ74bRV1R?=
+ =?us-ascii?Q?9U1cIFAhwTvkuiPco8XYKBThQshKqEglrm90MaeTMRjqt/QlgZFk2GbEl7nl?=
+ =?us-ascii?Q?XQB0cs6Ea6BYTD+77EGmqqbapkeb6TTlxTR2NtvYxf8wlPMB+frtbb1swQ+K?=
+ =?us-ascii?Q?xBl7RcRSgv10CA/d8/cugA8oqdI8YH97JN7GXW7D/cLNONLa45xlZAtc5XIp?=
+ =?us-ascii?Q?RUxhN94BlZPDIV8kONebfTr2xjAKHdhePKN5lFXnghhgBUVFIUMZfobkN+Cp?=
+ =?us-ascii?Q?PbygTk8lasLylfW8BccvboPovyXhTXZtThP/bnYOQttoF6kuGgLQam9D++MP?=
+ =?us-ascii?Q?IeOlR7BzVkqNP7hCjPtlPWTnrfFEQ4td5H22h54Wz4e4JIrurjBKgnAzKJCW?=
+ =?us-ascii?Q?X0GklbqG4wCBfFNgkzP+75QCfv+YBhQXbrVRAhMoFtn9xm6I40A+gHTnce5q?=
+ =?us-ascii?Q?MCPnB9C99XVyJUPglWQwT6kbJ155mkQMW5KrKk2l9Tf514c64oyUxOYUtNsD?=
+ =?us-ascii?Q?N40LEFcrtI9PKMyA/HV+5PweV2ZidJguejUSrUa37t9wvnxUugCclqg9gOs8?=
+ =?us-ascii?Q?ckzG9NmfUgkJfYtsfuPAe9M1EuzxEn7fGK4MnLsg8FPlxYHbBsrrFHHv7Vl8?=
+ =?us-ascii?Q?ff1cS/XsOBcVTv+bD8QspuiZkB0ZRIL04ZlgzeNO/hwlZbVuJZCf/YB/2036?=
+ =?us-ascii?Q?sLUh0ebCGqaCD93M/8yVa/08Ym9Vo+KEDukNwFbZE/RoBM9Rd/lhUIqAYWTx?=
+ =?us-ascii?Q?eg57w/O4Gi03aWptFJ6lzelDK/H1W1+wYQHOEdJPqKWrtCdhPELPg9uozBU0?=
+ =?us-ascii?Q?L2ClNpTlTH+OpuVlF38DnOsukZMTYxUiAkdbnO8l6oxBuxFa9rEgEOLWTCEo?=
+ =?us-ascii?Q?niwXkg5JX/EObseBriCZ7J1g/SsuiXLwccBGLnVFtNMIby343vLNZZNNWOSu?=
+ =?us-ascii?Q?M2w0CtPnnMWbNDyV9dUO0V05QVlAHyMYHy1Q?=
 X-Forefront-Antispam-Report: 
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2025 19:46:55.3470
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2025 19:46:54.4825
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 195b16f1-43a9-4c4c-8f19-08ddd90fd395
+X-MS-Exchange-CrossTenant-Network-Message-Id: 16e96faf-5c9f-443d-0885-08ddd90fd31e
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource: 
-	CH2PEPF00000144.namprd02.prod.outlook.com
+	CO1PEPF000066ED.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6540
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6336
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Mon, 11 Aug 2025 19:47:08 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1956
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1954
 
-Convert recipes-kernel/zephyr-kernel/zephyr-sample.inc file to
-classes-recipe/zephyr-sample.bbclass. Using this bbclass user can
-inherit this bbclass from any layer to build custom or out-of-tree
-zephyr applications.
-
-Also update the recipes to inherit zephyr-sample bbclass.
+Add zephyr-openamp-rpmsg-mulit-services recipe to build out of tree
+openamp-system-reference example applications.
 
 Signed-off-by: Sandeep Gundlupet Raju <sandeep.gundlupet-raju@amd.com>
 ---
- .../recipes-meta/meta/generate-zephyr-machines.bb      |  4 ++--
- meta-zephyr-core/classes-recipe/zephyr-sample.bbclass  | 10 ++++++++++
- .../recipes-kernel/zephyr-kernel/zephyr-blinky.bb      |  2 +-
- .../recipes-kernel/zephyr-kernel/zephyr-coap-client.bb |  2 +-
- .../recipes-kernel/zephyr-kernel/zephyr-coap-server.bb |  2 +-
- .../recipes-kernel/zephyr-kernel/zephyr-echo-client.bb |  2 +-
- .../recipes-kernel/zephyr-kernel/zephyr-hci-uart.bb    |  2 +-
- .../recipes-kernel/zephyr-kernel/zephyr-helloworld.bb  |  2 +-
- .../recipes-kernel/zephyr-kernel/zephyr-http-client.bb |  2 +-
- .../recipes-kernel/zephyr-kernel/zephyr-lvgl.bb        |  2 +-
- .../zephyr-kernel/zephyr-mqtt-publisher.bb             |  2 +-
- .../zephyr-kernel/zephyr-openamp-rsc-table.bb          |  2 +-
- .../zephyr-kernel/zephyr-openthread-echo-client.bb     |  2 +-
- .../zephyr-kernel/zephyr-openthread-rcp.bb             |  2 +-
- .../zephyr-kernel/zephyr-peripheral-esp.bb             |  2 +-
- .../zephyr-kernel/zephyr-peripheral-hr.bb              |  2 +-
- .../zephyr-kernel/zephyr-philosophers.bb               |  2 +-
- .../recipes-kernel/zephyr-kernel/zephyr-sample.inc     |  1 -
- .../zephyr-kernel/zephyr-synchronization.bb            |  2 +-
- .../zephyr-kernel/zephyr-websocket-client.bb           |  2 +-
- 20 files changed, 29 insertions(+), 20 deletions(-)
- create mode 100644 meta-zephyr-core/classes-recipe/zephyr-sample.bbclass
- delete mode 100644 meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-sa=
-mple.inc
+ .../zephyr-openamp-rpmsg-multi-srv.bb         | 23 +++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+ create mode 100644 meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-op=
+enamp-rpmsg-multi-srv.bb
 
-diff --git a/meta-zephyr-bsp/recipes-meta/meta/generate-zephyr-machines.bb =
-b/meta-zephyr-bsp/recipes-meta/meta/generate-zephyr-machines.bb
-index 30d362c..a52ffba 100644
---- a/meta-zephyr-bsp/recipes-meta/meta/generate-zephyr-machines.bb
-+++ b/meta-zephyr-bsp/recipes-meta/meta/generate-zephyr-machines.bb
-@@ -2,11 +2,11 @@
- # SPDX-License-Identifier: Apache-2.0
- FILESEXTRAPATHS:prepend :=3D "${THISDIR}/files:"
-=20
--ZEPHYR_INHERIT_CLASSES +=3D "zephyr cmake"
-+ZEPHYR_INHERIT_CLASSES +=3D "zephyr cmake zephyr-sample"
-=20
- inherit ${ZEPHYR_INHERIT_CLASSES}
-=20
--require recipes-kernel/zephyr-kernel/zephyr-sample.inc
-+#require recipes-kernel/zephyr-kernel/zephyr-sample.inc
-=20
- SRC_URI:append =3D " file://0001-zephyr-Export-an-OpenEmbedded-machine-con=
-fig.patch"
-=20
-diff --git a/meta-zephyr-core/classes-recipe/zephyr-sample.bbclass b/meta-z=
-ephyr-core/classes-recipe/zephyr-sample.bbclass
-new file mode 100644
-index 0000000..b2a71db
---- /dev/null
-+++ b/meta-zephyr-core/classes-recipe/zephyr-sample.bbclass
-@@ -0,0 +1,10 @@
-+#
-+# Copyright (C) 2025, Advanced Micro Devices, Inc. All rights reserved.
-+#
-+# SPDX-License-Identifier: MIT
-+#
-+# This bbclass is inherity by all the zephyr-kernel/zephyr-<apps>.bb recip=
-es
-+# to build zephyr applications. User can also inherit this bbclass from an=
-y
-+# layer for custom or out-of-tree zephyr applications.
-+
-+require recipes-kernel/zephyr-kernel/zephyr-image.inc
-diff --git a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-blinky.bb=
- b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-blinky.bb
-index c2a1e55..78a6e83 100644
---- a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-blinky.bb
-+++ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-blinky.bb
-@@ -1,3 +1,3 @@
--include zephyr-sample.inc
-+inherit zephyr-sample
-=20
- ZEPHYR_SRC_DIR =3D "${ZEPHYR_BASE}/samples/basic/blinky"
-diff --git a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-coap-clie=
-nt.bb b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-coap-client.bb
-index 7796f6b..aa020e9 100644
---- a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-coap-client.bb
-+++ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-coap-client.bb
-@@ -1,3 +1,3 @@
--include zephyr-sample.inc
-+inherit zephyr-sample
-=20
- ZEPHYR_SRC_DIR =3D "${ZEPHYR_BASE}/samples/net/sockets/coap_client"
-diff --git a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-coap-serv=
-er.bb b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-coap-server.bb
-index 5e345d4..b43143a 100644
---- a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-coap-server.bb
-+++ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-coap-server.bb
-@@ -1,3 +1,3 @@
--include zephyr-sample.inc
-+inherit zephyr-sample
-=20
- ZEPHYR_SRC_DIR =3D "${ZEPHYR_BASE}/samples/net/sockets/coap_server"
-diff --git a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-echo-clie=
-nt.bb b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-echo-client.bb
-index 73187cf..4705724 100644
---- a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-echo-client.bb
-+++ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-echo-client.bb
-@@ -1,3 +1,3 @@
--include zephyr-sample.inc
-+inherit zephyr-sample
-=20
- ZEPHYR_SRC_DIR =3D "${ZEPHYR_BASE}/samples/net/sockets/echo_client"
-diff --git a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-hci-uart.=
-bb b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-hci-uart.bb
-index ebc6dc3..f95f544 100644
---- a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-hci-uart.bb
-+++ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-hci-uart.bb
-@@ -1,4 +1,4 @@
--include zephyr-sample.inc
-+inherit zephyr-sample
-=20
- ZEPHYR_SRC_DIR =3D "${ZEPHYR_BASE}/samples/bluetooth/hci_uart"
-=20
-diff --git a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-helloworl=
-d.bb b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-helloworld.bb
-index 68b42aa..637287b 100644
---- a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-helloworld.bb
-+++ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-helloworld.bb
-@@ -2,6 +2,6 @@ SUMMARY =3D "Hello World Zephyr Sample"
- DESCRIPTION =3D "A simple Zephyr application that prints 'Hello World' on =
-the \
- console"
-=20
--include zephyr-sample.inc
-+inherit zephyr-sample
-=20
- ZEPHYR_SRC_DIR =3D "${ZEPHYR_BASE}/samples/hello_world"
-diff --git a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-http-clie=
-nt.bb b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-http-client.bb
-index 8bff2be..a4bf7f2 100644
---- a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-http-client.bb
-+++ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-http-client.bb
-@@ -1,4 +1,4 @@
--include zephyr-sample.inc
-+inherit zephyr-sample
-=20
- ZEPHYR_SRC_DIR =3D "${ZEPHYR_BASE}/samples/net/sockets/http_client"
-=20
-diff --git a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-lvgl.bb b=
-/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-lvgl.bb
-index a635da2..3878937 100644
---- a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-lvgl.bb
-+++ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-lvgl.bb
-@@ -1,4 +1,4 @@
--include zephyr-sample.inc
-+inherit zephyr-sample
-=20
- ZEPHYR_SRC_DIR =3D "${ZEPHYR_BASE}/samples/subsys/display/lvgl"
-=20
-diff --git a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-mqtt-publ=
-isher.bb b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-mqtt-publis=
-her.bb
-index f314841..fae7eb4 100644
---- a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-mqtt-publisher.b=
-b
-+++ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-mqtt-publisher.b=
-b
-@@ -1,3 +1,3 @@
--include zephyr-sample.inc
-+inherit zephyr-sample
-=20
- ZEPHYR_SRC_DIR =3D "${ZEPHYR_BASE}/samples/net/mqtt_publisher"
 diff --git a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-openamp-r=
-sc-table.bb b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-openamp-=
-rsc-table.bb
-index 5e51c23..2932b53 100644
---- a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-openamp-rsc-tabl=
-e.bb
-+++ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-openamp-rsc-tabl=
-e.bb
-@@ -1,4 +1,4 @@
--include zephyr-sample.inc
+pmsg-multi-srv.bb b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-op=
+enamp-rpmsg-multi-srv.bb
+new file mode 100644
+index 0000000..51152e5
+--- /dev/null
++++ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-openamp-rpmsg-mu=
+lti-srv.bb
+@@ -0,0 +1,23 @@
++SUMMARY =3D "Open AMP rpmsg mulit services"
++DESCRIPTION =3D "Open AMP rpmsg mulit services"
++
 +inherit zephyr-sample
-=20
-=20
- ZEPHYR_MAKE_OUTPUT =3D "zephyr_openamp_rsc_table.elf"
-diff --git a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-openthrea=
-d-echo-client.bb b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-ope=
-nthread-echo-client.bb
-index e2b3efd..0408d92 100644
---- a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-openthread-echo-=
-client.bb
-+++ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-openthread-echo-=
-client.bb
-@@ -1,4 +1,4 @@
--include zephyr-sample.inc
-+inherit zephyr-sample
-=20
- ZEPHYR_SRC_DIR =3D "${ZEPHYR_BASE}/samples/net/sockets/echo_client"
-=20
-diff --git a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-openthrea=
-d-rcp.bb b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-openthread-=
-rcp.bb
-index d745e85..e1f1646 100644
---- a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-openthread-rcp.b=
-b
-+++ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-openthread-rcp.b=
-b
-@@ -1,4 +1,4 @@
--include zephyr-sample.inc
-+inherit zephyr-sample
-=20
- ZEPHYR_SRC_DIR =3D "${ZEPHYR_BASE}/samples/net/openthread/coprocessor"
-=20
-diff --git a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-periphera=
-l-esp.bb b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-peripheral-=
-esp.bb
-index 0aac7f6..61829bb 100644
---- a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-peripheral-esp.b=
-b
-+++ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-peripheral-esp.b=
-b
-@@ -1,3 +1,3 @@
--include zephyr-sample.inc
-+inherit zephyr-sample
-=20
- ZEPHYR_SRC_DIR =3D "${ZEPHYR_BASE}/samples/bluetooth/peripheral_esp"
-diff --git a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-periphera=
-l-hr.bb b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-peripheral-h=
-r.bb
-index 80e3505..2c0fcb9 100644
---- a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-peripheral-hr.bb
-+++ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-peripheral-hr.bb
-@@ -1,3 +1,3 @@
--include zephyr-sample.inc
-+inherit zephyr-sample
-=20
- ZEPHYR_SRC_DIR =3D "${ZEPHYR_BASE}/samples/bluetooth/peripheral_hr"
-diff --git a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-philosoph=
-ers.bb b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-philosophers.=
-bb
-index 2b4fca3..931541e 100644
---- a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-philosophers.bb
-+++ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-philosophers.bb
-@@ -3,6 +3,6 @@ DESCRIPTION =3D "A simple Zephyr application that demonstra=
-tes basic sanity of \
- the kernel. It demonstrates that kernel scheduling, communication and timi=
-ng \
- operate correctly by printing a greeting to the console from two threads."
-=20
--include zephyr-sample.inc
-+inherit zephyr-sample
-=20
- ZEPHYR_SRC_DIR =3D "${ZEPHYR_BASE}/samples/philosophers"
-diff --git a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-sample.in=
-c b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-sample.inc
-deleted file mode 100644
-index 5f6dea9..0000000
---- a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-sample.inc
-+++ /dev/null
-@@ -1 +0,0 @@
--require zephyr-image.inc
-diff --git a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-synchroni=
-zation.bb b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-synchroniz=
-ation.bb
-index a55736b..217ab7d 100644
---- a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-synchronization.=
-bb
-+++ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-synchronization.=
-bb
-@@ -3,6 +3,6 @@ DESCRIPTION =3D "A simple Zephyr application that demonstra=
-tes basic sanity of \
- the kernel. It demonstrates that kernel scheduling, communication and timi=
-ng \
- operate correctly by printing a greeting to the console from two threads."
-=20
--include zephyr-sample.inc
-+inherit zephyr-sample
-=20
- ZEPHYR_SRC_DIR =3D "${ZEPHYR_BASE}/samples/synchronization"
-diff --git a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-websocket=
--client.bb b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-websocket=
--client.bb
-index b92e986..b646b6d 100644
---- a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-websocket-client=
-.bb
-+++ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-websocket-client=
-.bb
-@@ -1,3 +1,3 @@
--include zephyr-sample.inc
-+inherit zephyr-sample
-=20
- ZEPHYR_SRC_DIR =3D "${ZEPHYR_BASE}/samples/net/sockets/websocket_client"
++
++SRC_URI_ZEPHYR_OPEN_AMP_SYS_REF ?=3D "git:///github.com/OpenAMP/openamp-sy=
+stem-reference;protocol=3Dhttps"
++
++BRANCH ?=3D "v2024.05"
++BRANCHARG =3D "${@['nobranch=3D1', 'branch=3D${BRANCH}'][d.getVar('BRANCH'=
+, True) !=3D '']}"
++
++SRC_URI:append =3D " \
++    ${SRC_URI_ZEPHYR_OPEN_AMP_SYS_REF};name=3Dopen-amp-sys-ref;${BRANCHARG=
+};destsuffix=3Dgit/open-amp-sys-ref \
++    "
++
++SRCREV_open-amp-sys-ref =3D "d78315763fbacba8a74552d0ad570bd01c42ccf9"
++
++ZEPHYR_SRC_DIR =3D "${ZEPHYR_BASE}/../open-amp-sys-ref/examples/zephyr/rpm=
+sg_multi_services"
++
++ZEPHYR_MAKE_OUTPUT =3D "rpmsg_multi_services.elf"
++
++EXTRA_OECMAKE +=3D " \
++    -DCONF_FILE=3D"prj.conf" \
++    "
 --=20
 2.34.1
 
