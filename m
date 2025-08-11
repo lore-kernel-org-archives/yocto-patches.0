@@ -2,40 +2,40 @@ Return-Path: <sandeep.gundlupet-raju@amd.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13F2ECA0EC1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 032EFC87FD2
 	for <webhook@archiver.kernel.org>; Mon, 11 Aug 2025 14:59:57 +0000 (UTC)
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (NAM11-DM6-obe.outbound.protection.outlook.com [40.107.223.73])
- by mx.groups.io with SMTP id smtpd.web11.49949.1754924396374199097
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (NAM04-DM6-obe.outbound.protection.outlook.com [40.107.102.69])
+ by mx.groups.io with SMTP id smtpd.web11.49942.1754924389935962046
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 11 Aug 2025 07:59:56 -0700
+ Mon, 11 Aug 2025 07:59:50 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@amd.com header.s=selector1 header.b=zr7z8JP+;
- spf=permerror, err=parse error for token &{10 18 %{i}._ip.%{h}._ehlo.%{d}._spf.vali.email}: invalid domain name (domain: amd.com, ip: 40.107.223.73, mailfrom: sandeep.gundlupet-raju@amd.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@amd.com header.s=selector1 header.b=G8JIATsv;
+ spf=permerror, err=parse error for token &{10 18 %{i}._ip.%{h}._ehlo.%{d}._spf.vali.email}: invalid domain name (domain: amd.com, ip: 40.107.102.69, mailfrom: sandeep.gundlupet-raju@amd.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OBwNzR2FPqmKAA3Jnb9Met3fvWrADE617GB6Jc+EeAgkMzIzu4VPmkH+97cz/Wo7qgfL0bub0+D28AE6e0p0obQEoMfpPRKyhy5ec9atTbHyArHf/u8tK/i1gRe9mNTuT5pNrAhhp6QQr0A0vfZuG1Nihsyg3lgiQR/sjZtxBQrizr3WZMUTCgmT08lSGcZCSZBkvEykB7PjNwjNoMztCMflJX4zgUdVJFekadHRhCPv6Xwt6NCTwb3K4cuqLHqnIe4J1y7swRoHYJNdJSEAlL4uZIqPXyM3u6f+G8Bpdp58/1KAOq90xJcZOSV8xLgbJ2Ex5+iggtv8aDqIfZCVIQ==
+ b=IXv0FqyhNX8TfqtLYqnw3+IUjsIKtLK9vPLUxGqL/lNyouAnaFEkKuezc7wXvlbnO6QbP+ol8sSqGkcfQNS7kS+Rsz0cSMrkbPSf+1WIQ7JjbsRbCwBIXmtnaLbT9o9PNtIvZqDiJoA3rvjAMcCK3Dg7U2NH9gkPLs+FPNg/QYvfRzCAU0sZ4XrSkyJuuvy3vzFAtMEFCiGYii2A9YVNjOhv4JFydCl3KtsXY/utU7omJXCK6/LqIG4KBbexUr5yhGdSw+kdhlkEvFz96CXTMT0TNGIgYGi0G+jDbTOV8jlAUjwNBIYDzoPE2bZPVUSjWdfysDIMzNz6keAKxSRF4Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=libHPKrEdGkJD/iLYxKCQC1M2iEgtoZDf4BbATkOwjo=;
- b=wYPvii1ei60ZrPBMH1YfokQgD3EEz/enAMorqn3gxevM8LS7ACGmLr7jqjZMgZBgPfqjaB6RedAvBwYjTaGpVyeaDIOf1UyTDUs7vcWJGY1ZpzU89/Pz4RsOFox5vSLflnuTwRzffMNpjVxHekO0wtQCk8YMkibTXcYQXSfgp+VubKjghmrnZ3CxSYrVFrCDG4fmfOVZJqLGiqUN/Ds+4im3FY4wY/b6jokH7NfS2YIWosldLcvrvEJG4hkI0rBx/xEOgGsk+NLkN3b/3U82Xz6SBWBDJSGX9j7LXpAgANb/u2shNPjBG1pBZL4bFTxZ7gK+o7I6mlieCoFlOajqKA==
+ bh=lCJRxRRj9LPhEtniwOncZ/BlcT/pBhuu4y4kkbtB6l0=;
+ b=bpZzMMWt+P2vqJHl+Gth4AXNg73ZysK59xuVfiHRH1/7+2ixYCwJCESuyv84hx5h0jP5hWhbPR5/T5LgrQPgLwml6X0pan1LH1+bkWtScRLA3Z5uSf5zLhvYfVi3UjrQu9dFZpraYlbojQr28bIGeaSQDL5rd8q2iFgGInEWg8K+mULrbxGPw8OpUXT4+eVa2FWcR6/LXmt0Cu2sN3ok8AI25udsZ0dH+voTza1+2jJ/MCo4ORHR2+14vHp4b/es1A4tiRhSeLiOM1epbz124rllrU/Hg+K3aGd0LNR748rZp+5MAv36climTxAp0FmAfNzLslVYLTA7ljvhQ95nNg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=lists.yoctoproject.org
  smtp.mailfrom=amd.com; dmarc=pass (p=quarantine sp=quarantine pct=100)
  action=none header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=libHPKrEdGkJD/iLYxKCQC1M2iEgtoZDf4BbATkOwjo=;
- b=zr7z8JP+KDkiAddiSKXeKWkgNMsdZSa1dqyPT9mvaHLGxdQb4z0uftAVXGBQaIpwnoNO4QKgeSQY26K3EJCM0tYHUkcX0a1PsINi90yLTHnbxZ4FSYPzU3XKG8h/p7ZlZGjRn1JjogEHM3bkWXVjJfWUrsJ396AE0xrmYyBZVac=
-Received: from BL1PR13CA0266.namprd13.prod.outlook.com (2603:10b6:208:2ba::31)
- by SA1PR12MB7125.namprd12.prod.outlook.com (2603:10b6:806:29f::14) with
+ bh=lCJRxRRj9LPhEtniwOncZ/BlcT/pBhuu4y4kkbtB6l0=;
+ b=G8JIATsvemjOotBJHs4RA8NDGtorqGIPGSajLLCgrauXsMVlvbXd1Po3hbrobbb9uvG7iqvjiXajoL51BD2F//fvzSclpWlxRwQx5N5PHlRqT6p970MvhWzQRakcK5IOApdrCvsaUeQE6ptSigigwujlhi882P0MnluD0Hon8UE=
+Received: from BLAPR05CA0008.namprd05.prod.outlook.com (2603:10b6:208:36e::11)
+ by DS0PR12MB8456.namprd12.prod.outlook.com (2603:10b6:8:161::8) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.21; Mon, 11 Aug
- 2025 14:59:51 +0000
-Received: from MN1PEPF0000ECD6.namprd02.prod.outlook.com
- (2603:10b6:208:2ba:cafe::69) by BL1PR13CA0266.outlook.office365.com
- (2603:10b6:208:2ba::31) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.12 via Frontend Transport; Mon,
- 11 Aug 2025 14:59:51 +0000
+ 2025 14:59:47 +0000
+Received: from MN1PEPF0000ECD7.namprd02.prod.outlook.com
+ (2603:10b6:208:36e:cafe::66) by BLAPR05CA0008.outlook.office365.com
+ (2603:10b6:208:36e::11) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.13 via Frontend Transport; Mon,
+ 11 Aug 2025 14:59:47 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -43,21 +43,21 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
- MN1PEPF0000ECD6.mail.protection.outlook.com (10.167.242.135) with Microsoft
+ MN1PEPF0000ECD7.mail.protection.outlook.com (10.167.242.136) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9031.11 via Frontend Transport; Mon, 11 Aug 2025 14:59:51 +0000
+ 15.20.9031.11 via Frontend Transport; Mon, 11 Aug 2025 14:59:47 +0000
 Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 11 Aug
- 2025 09:59:48 -0500
+ 2025 09:59:46 -0500
 Received: from xcosswyocto01.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Mon, 11 Aug 2025 09:59:47 -0500
+ Transport; Mon, 11 Aug 2025 09:59:46 -0500
 From: Sandeep Gundlupet Raju <sandeep.gundlupet-raju@amd.com>
 To: <yocto-patches@lists.yoctoproject.org>, <chee.yang.lee@intel.com>
-Subject: [meta-zephyr][scarthgap][PATCH v3 5/13] zephyr-image: Add image artifacts to output files
-Date: Mon, 11 Aug 2025 08:59:33 -0600
-Message-ID: <20250811145941.2553838-6-sandeep.gundlupet-raju@amd.com>
+Subject: [meta-zephyr][scarthgap][PATCH v3 1/13] qemu-cortex-a9: Fix runqemu errors
+Date: Mon, 11 Aug 2025 08:59:29 -0600
+Message-ID: <20250811145941.2553838-2-sandeep.gundlupet-raju@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250811145941.2553838-1-sandeep.gundlupet-raju@amd.com>
 References: <20250811145941.2553838-1-sandeep.gundlupet-raju@amd.com>
@@ -68,141 +68,82 @@ Received-SPF: None (SATLEXMB04.amd.com: sandeep.gundlupet-raju@amd.com does
  not designate permitted sender hosts)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN1PEPF0000ECD6:EE_|SA1PR12MB7125:EE_
-X-MS-Office365-Filtering-Correlation-Id: 605d3292-377b-4308-1b1f-08ddd8e7b92c
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000ECD7:EE_|DS0PR12MB8456:EE_
+X-MS-Office365-Filtering-Correlation-Id: a6e8326f-b27d-4d9a-683c-08ddd8e7b704
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|376014|82310400026|36860700013|1800799024;
+	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?eRypSWL4ia1cNFtZAhyfPZhvuVJSFKRJoEqMr31XfRnh9s3dMYC1egTRCDtc?=
- =?us-ascii?Q?2TopYnlDCac6Xat0e430INxJlAfNEXZWY0mAccjtUZ09DQ7Xk574bCDkZafU?=
- =?us-ascii?Q?OJl2w2l8QXwtt5RyR2rVLJuwnvaA+XkN/IJKBC6KuP+Z1uZO1Yc1n+EduBsW?=
- =?us-ascii?Q?sQR/tmX9RTmuxvAwxc3ylm7TuGWn/WQaZOq0/4ilZ1yd9XL7knU+ATAXFUMx?=
- =?us-ascii?Q?vmsqkS7YFPetCscybXu5Z0Tciur9bzGVzu9JdEgWquJGShTlS4dq4Ra+PS5j?=
- =?us-ascii?Q?egp/v45fY3CrnKlvIH53KidnSG10WXyHIvNBxbDl4Ti4qW2waFvxZSkShEHI?=
- =?us-ascii?Q?IUXK2DD2jrnMlhJELnp8fhl5N85n/bzQBuEO7jP+YhsbpIb+M+suqXCV8MFf?=
- =?us-ascii?Q?52QXq5rchXiCFrlqNDekfuwdWJUySzXTP0hiY9OPfKP6rcLbk33V5F5FzAEJ?=
- =?us-ascii?Q?mOMxHpjxJcS9RDucLBl9nFsiVYyjF9Lxb25bgKbZO2agPQqsnZLXvnNW8jMu?=
- =?us-ascii?Q?KpimqolheNc0NxKugnc3mCWSNY+E3gqEuMMkjW6BVp3NbGeFVlPUd/choZKx?=
- =?us-ascii?Q?zMgvhUtBrtf8iglMNgBUbYWOts7q9awiuxX/1rafKQx2uR0VyuetuITc7Gkq?=
- =?us-ascii?Q?NFOHxGpR3kSpNpU6d4btIzFLpPybdUH5EHjYVcX+EEUp51UflMd+Opkar695?=
- =?us-ascii?Q?wv4fA+8kJN314w5DV11tY8q5YLyDwLOsEhjkVUqNhxhdOZXHNCRnQq5f3ePe?=
- =?us-ascii?Q?0AjysyReqIHx5+39QbzamOH8ngq07CTkOBSlmlYpwbQnDXHfwiuVCz2ftCBJ?=
- =?us-ascii?Q?hLYtytqwuvPzZH5HPoxPljn3HuoXtvUyLWazQRaG3LCJ12vHpPtjG1wLDFKD?=
- =?us-ascii?Q?y3fIhAERdeiMQaqCaTU9DpaBwp0bpzSPF6HIMs39ktZEO+MlJL0bHaKjBnok?=
- =?us-ascii?Q?91WUe9RQ1lal5QTNg89XLQMqCFZxF+XVgRDl8n4BAP7BRCesv+/6UFDu/1ZH?=
- =?us-ascii?Q?FoMmkeDvxKDKL7l3d3Y2gEAhPgVp7JU0eiYUvEVIes0g8Vtj+SwXXz2iMZXR?=
- =?us-ascii?Q?qVhV0jA6Ja7bFAmcOyKs7KTBZXa6o0EzpDmXhxBgu9gPbj88eDayTnbmWAKW?=
- =?us-ascii?Q?elePIsc3oX6DuLbSRxzPnDsefRyCJHDVl/9W3TwNOdk9AfcLy85XbvDu+U58?=
- =?us-ascii?Q?42Yc1Are6HBz6UNyFMW/jv/W5vDTtMG17+tVwEcDo286tWHiDQ/Pokyg2lvO?=
- =?us-ascii?Q?aWKRnpIAhQjZ0MUckNycLG1Zov6hWvvscgV5xp53gTiEUuceOzNEEmcUbeSO?=
- =?us-ascii?Q?hhVoaNVSfDW1KR9V+n/bXmK/JX/PjlfJ8HNnfiDfpWHKzgRSNrtpfo1YPbT8?=
- =?us-ascii?Q?XuD9ManHVxbE3E4YBbL8OLMqMo+ExcwXyKzH84Kfo2eHFwVebsuLiFlawt/E?=
- =?us-ascii?Q?UgKY6tcJurzWxJ5LiJRWSfbAKOn9qoz0nN5AZDexqEIWmC2ApjwBY7+fC72l?=
- =?us-ascii?Q?NcYCyTZLQAX7FIp+BvMtBRDWQTw6AcvKoeDk?=
+	=?us-ascii?Q?LSRyyK1C3su/+tbJfLMXALEyIEUI04yESMGZzhaiMGSLMQRajsB0EDRWt6A2?=
+ =?us-ascii?Q?9mf3pIZ+lOj+OlBVxRuD7oOtNBgCBr3UgzBufyp/7wPUSfLG7P8+qw9fqEUE?=
+ =?us-ascii?Q?cNIJHKldJSnUcyGWU5UAW6HQrHYm/zCKv4RjNVmSFGtZjHafuloC1qZd2wSd?=
+ =?us-ascii?Q?eJssYS9Y9BZHGYgAcLR5ylG1zh2yMAsA3fcpo1XhH2d/c3EpQmwmZVL/bQNp?=
+ =?us-ascii?Q?CWgUuQAl1VnxPuWjw3WzbkDR66zQG+qfDFDGSO8eFI3dqh5yoyhsv59XxldG?=
+ =?us-ascii?Q?q4RfdXmfH9StTO4+dqdk+H9VJitTLq3khsuFRrF1vuHZyG2Sw7o9PKYjhz62?=
+ =?us-ascii?Q?/DJdW8yFa9ASoRPk2VTmTr1qvl1WA0y5UGz6H4BFmGZhOSVJikr/IJ+2hwL2?=
+ =?us-ascii?Q?de8/M+sJKiN4qLiMUovMyQPYeoBPQtF8mgdMgVMlk4x5RsvIgZW1WER8z9Xh?=
+ =?us-ascii?Q?I1KotifxFPaEznDKn9GERP/Nx6EdBx00SbyrviVuaxHXeAh6MwlASOoJepiI?=
+ =?us-ascii?Q?RJ1SG9c35UaTJGVl1RS9zuTYrDPewSK+02dQNayCdqW6K+B33vNOP6K6e0Nl?=
+ =?us-ascii?Q?+I5r+oUSm99T0eAXPFN/OGPbOA+HAUetupoQQu3Iy8NMTDWa80DVMgzpsd8t?=
+ =?us-ascii?Q?6E+WRuxlpmIrQ3TKP1Oq7qojD3b1ZmI+/W+V5go2YeUwaXSSFQ5ycAOLSf90?=
+ =?us-ascii?Q?gWQjmYtk4P+QzyM+QuoS7Hr+4FBQo531jvtQfrTz7DBXX0Ug8D+un1DT9iyW?=
+ =?us-ascii?Q?EGSnkKOpmZ6cuNoidLwQRrExBBd97X5NyxJkYS4rvqu2KpNqsp5zu0vDaUNI?=
+ =?us-ascii?Q?PcOiWi3DOl4FrS0nfIvY2de5UjG3oPoh+QknGevXkAGlopsSfFcjdQlzY5/K?=
+ =?us-ascii?Q?3WjRK73amd0bVVzxA5CZAA9+BfCOufQparWc5OmBiLfMkoWaYJtf6esw5vXk?=
+ =?us-ascii?Q?lvoMF69WoweUdzIQwrUV4HSE4v6JhSvylIc3FX3chVC7vZHIJ3zf5vgdq51E?=
+ =?us-ascii?Q?hVaAymqNsr0bg2iXdXSPLeDB0jlNu3gXrvyEU/25cEklJEubpfrLIerQh2K9?=
+ =?us-ascii?Q?g9GuABKmzd9UEtrWQ8JKoHeYqjdI9JM0Wq9BOdqDcIRvFgbtzCfcxnoVec0o?=
+ =?us-ascii?Q?83oGgl7M4fdtju7b9unXW3wJMK2yNUMCT1u/rBo/cZKxp/uOULbYp21GilQb?=
+ =?us-ascii?Q?GpfU2sbJnOFKLNOci5DsWr8v5kb3P0rnUllt1CNPIRLgjPjU2jJZwU9qz4Vj?=
+ =?us-ascii?Q?211SwwMQUNGjOZluIBXlLAVrUc7cqdctsWwWm3TtXoNzc+qHZJfUpjVadJfK?=
+ =?us-ascii?Q?xLxjDuVT2yLTQMKGQ032uFx9GHb8DXwIz5ODEdogspvIR19wf5p3mJRD4wN/?=
+ =?us-ascii?Q?/EJRMVFWSstu4QFDgcX67Mlf8NC8a57QpGtLJtag/ypEtSqpINvkV5XW9uAS?=
+ =?us-ascii?Q?5mzL40dzglwJ8J01aWbjRpvJpJx+TSlo6ckbmdB1c46+agpm8cHJ8GhvXQXt?=
+ =?us-ascii?Q?8QK3Erpxe7WmgS/h0dS/5IK1Nfyo9jg+1/Cw?=
 X-Forefront-Antispam-Report: 
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2025 14:59:51.1751
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2025 14:59:47.5599
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 605d3292-377b-4308-1b1f-08ddd8e7b92c
+X-MS-Exchange-CrossTenant-Network-Message-Id: a6e8326f-b27d-4d9a-683c-08ddd8e7b704
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource: 
-	MN1PEPF0000ECD6.namprd02.prod.outlook.com
+	MN1PEPF0000ECD7.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7125
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8456
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Mon, 11 Aug 2025 14:59:57 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1938
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1929
 
-Inherit image-artifact-names bbclass in zephyr-image.inc and add
-image artifacts to output generated files.
+Fix below runqemu errors for qemu-cortex-a9 machine.
 
-Before:
-zephyr-helloworld.elf
-
-After:
-zephyr-helloworld-{MACHINE}-{DATETIME}.elf
+runqemu - ERROR - Failed to run qemu: qemu-system-arm: -device virtio-rng-p=
+ci,rng=3Drng0: No 'PCI' bus found for device 'virtio-rng-pci'
 
 Signed-off-by: Sandeep Gundlupet Raju <sandeep.gundlupet-raju@amd.com>
 ---
- .../zephyr-kernel/zephyr-image.inc            | 28 +++++++++++++++----
- 1 file changed, 23 insertions(+), 5 deletions(-)
+ meta-zephyr-bsp/conf/machine/qemu-cortex-a9.conf | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-image.inc=
- b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-image.inc
-index d6ee21f..93d36b1 100644
---- a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-image.inc
-+++ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-image.inc
-@@ -1,29 +1,47 @@
- require zephyr-kernel-src.inc
- require zephyr-kernel-common.inc
--inherit deploy
-+inherit deploy image-artifact-names
+diff --git a/meta-zephyr-bsp/conf/machine/qemu-cortex-a9.conf b/meta-zephyr=
+-bsp/conf/machine/qemu-cortex-a9.conf
+index 9dfee42..e1b026f 100644
+--- a/meta-zephyr-bsp/conf/machine/qemu-cortex-a9.conf
++++ b/meta-zephyr-bsp/conf/machine/qemu-cortex-a9.conf
+@@ -14,6 +14,7 @@ QB_MACHINE =3D "-machine xilinx-zynq-a9"
+ QB_CPU =3D "-cpu cortex-a9"
+ QB_GRAPHICS =3D "-nographic -vga none"
+ QB_OPT_APPEND =3D "-icount shift=3D3,align=3Doff,sleep=3Doff -rtc clock=3D=
+vm"
++QB_RNG =3D ""
 =20
- OECMAKE_SOURCEPATH =3D "${ZEPHYR_SRC_DIR}"
-=20
-+ZEPHYR_IMAGE_LINK_NAME ?=3D "${PN}-${MACHINE}"
-+ZEPHYR_IMAGE_BASE_NAME ?=3D "${PN}-${MACHINE}${IMAGE_VERSION_SUFFIX}"
-+
- do_install() {
-     install -d ${D}/firmware
-=20
--    install -D ${B}/zephyr/${ZEPHYR_MAKE_OUTPUT} ${D}/firmware/${PN}.elf
-+    install -D ${B}/zephyr/${ZEPHYR_MAKE_OUTPUT} ${D}/firmware/${ZEPHYR_IM=
-AGE_BASE_NAME}.elf
-=20
-     if [ -f ${B}/zephyr/${ZEPHYR_MAKE_BIN_OUTPUT} ]
-     then
--      install -D ${B}/zephyr/${ZEPHYR_MAKE_BIN_OUTPUT} ${D}/firmware/${PN}=
-.bin
-+      install -D ${B}/zephyr/${ZEPHYR_MAKE_BIN_OUTPUT} ${D}/firmware/${ZEP=
-HYR_IMAGE_BASE_NAME}.bin
-     fi
-=20
-     if [ -f ${B}/zephyr/${ZEPHYR_MAKE_EFI_OUTPUT} ]
-     then
--      install -D ${B}/zephyr/${ZEPHYR_MAKE_EFI_OUTPUT} ${D}/firmware/${PN}=
-.efi
-+      install -D ${B}/zephyr/${ZEPHYR_MAKE_EFI_OUTPUT} ${D}/firmware/${ZEP=
-HYR_IMAGE_BASE_NAME}.efi
-     fi
- }
-+
- FILES:${PN} =3D "/firmware"
- INSANE_SKIP +=3D "ldflags buildpaths"
- SYSROOT_DIRS +=3D "/firmware"
-=20
- do_deploy() {
--    cp ${D}/firmware/${PN}.* ${DEPLOYDIR}/
-+    cp ${B}/zephyr/${ZEPHYR_MAKE_OUTPUT} ${DEPLOYDIR}/${ZEPHYR_IMAGE_BASE_=
-NAME}.elf
-+    ln -sf ${ZEPHYR_IMAGE_BASE_NAME}.elf ${DEPLOYDIR}/${ZEPHYR_IMAGE_LINK_=
-NAME}.elf
-+
-+    if [ -f ${B}/zephyr/${ZEPHYR_MAKE_BIN_OUTPUT} ]
-+    then
-+       cp ${B}/zephyr/${ZEPHYR_MAKE_BIN_OUTPUT} ${DEPLOYDIR}/${ZEPHYR_IMAG=
-E_BASE_NAME}.bin
-+       ln -sf ${ZEPHYR_IMAGE_BASE_NAME}.bin ${DEPLOYDIR}/${ZEPHYR_IMAGE_LI=
-NK_NAME}.bin
-+    fi
-+
-+    if [ -f ${B}/zephyr/${ZEPHYR_MAKE_EFI_OUTPUT} ]
-+    then
-+       cp ${B}/zephyr/${ZEPHYR_MAKE_EFI_OUTPUT} ${DEPLOYDIR}/${ZEPHYR_IMAG=
-E_BASE_NAME}.efi
-+       ln -sf ${ZEPHYR_IMAGE_BASE_NAME}.efi ${DEPLOYDIR}/${ZEPHYR_IMAGE_LI=
-NK_NAME}.efi
-+    fi
-+
- }
- addtask deploy after do_install
+ # Zephyr RTOS settings
+ ZEPHYR_INHERIT_CLASSES +=3D "zephyr-qemuboot"
 --=20
 2.34.1
 
