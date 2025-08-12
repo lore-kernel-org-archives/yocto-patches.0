@@ -2,101 +2,121 @@ Return-Path: <skandigraun@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6C82CA0EC4
-	for <webhook@archiver.kernel.org>; Tue, 12 Aug 2025 08:41:52 +0000 (UTC)
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
- by mx.groups.io with SMTP id smtpd.web10.69852.1754988108363518259
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCE7DCA0EC4
+	for <webhook@archiver.kernel.org>; Tue, 12 Aug 2025 08:43:42 +0000 (UTC)
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+ by mx.groups.io with SMTP id smtpd.web11.69302.1754988219231768112
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 12 Aug 2025 01:41:48 -0700
+ Tue, 12 Aug 2025 01:43:39 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=kGumcXVQ;
- spf=pass (domain: gmail.com, ip: 209.85.208.46, mailfrom: skandigraun@gmail.com)
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-61568fbed16so8146370a12.3
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 12 Aug 2025 01:41:48 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=F/7RUnuO;
+ spf=pass (domain: gmail.com, ip: 209.85.208.48, mailfrom: skandigraun@gmail.com)
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-615756b1e99so7128859a12.0
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 12 Aug 2025 01:43:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754988107; x=1755592907; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1754988217; x=1755593017; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=yWpChZe1eIrO+TfxU82gtor0OqlO3oOzNrUT+GDqEp4=;
-        b=kGumcXVQ3sPmDcysrD9AQy4Eyg7TakjFjiS4GGySNPTc9T68qezosRSi2j+UIlannO
-         +1E/3qLBrSrGrv/Mze6eA4kwOm5xWstlYXtR+Vviy12x/97jr0T0Orp1Fwtilidic1Pd
-         KEmoicyZYzoReTU0MQFH/uWam2y2Ra9KLVpfAZowRdZN1/ZtKZvdSttNn+I39Cxy6Uq5
-         /dFnjuPPOelIamXgQfS8HTVW/T+p+pAkb+MIxknFrEvK+8JZ30qUXHHqW4X0tL6dcbT+
-         YROvQXJDfTbf1M3kFVt4v0FlZLKvHhQN1jKjxvfEcwHYYTUj5kPjCNDwKnoL8t37+Pt8
-         7Z4w==
+        bh=/vW7KMUpv0iZk2kA9A0bgUDzi+DAKYwk4CAqgwvvhA8=;
+        b=F/7RUnuOu6/LMKu6fpxRc1OeOqLZnfu9lUIkBZIVjJzIYrYucjj5lApYyxIoGbqVf6
+         wzhzv/LViWs5ZKkp/qNkF7TNXNz7h8/WIJdntuNp1t8oe/rB5qr4/2RZ9o0pnJh9KafG
+         83KKv4LTc3V8Dy5arJe4nThb3KIOA266SUrTVV1P5LEV5BlbkVdq42t50+r4L4wKvi7L
+         PC94JjkfCsyGY0oNF3q8OItu6/2VmSbeIdJB+o67+yae6k07e5Qn7r+R9Mix7NEp0YC9
+         Adeoz5TZ+iCAc0Ri44OXToVBEKhsAj7dYGy19q9tWqW6Ni6feod47yhTkvTuTUSPaFPQ
+         wkbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754988107; x=1755592907;
+        d=1e100.net; s=20230601; t=1754988218; x=1755593018;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yWpChZe1eIrO+TfxU82gtor0OqlO3oOzNrUT+GDqEp4=;
-        b=iudtcOalEyKbjydl33u8/nfjeB6/CTCb6lhFDhn4S5zDnvItLf4gDu38LK0lrHEOtA
-         omduAymvZ5MxRZl+MixeHj+W2yqXZAzMTTqTKB09/nm1yuCdRvpXd0pSJY7X9pu3T8W0
-         N4Dm96bdZv/UWRGdFpDHywAxGzJXjWtR2FnYgkbN15o605dEHq8JY/lzZURL98ydv6zu
-         a1w/fQ5cElKFyDMKwi45NmH5EdN+UV0pHmfVc6fgqn1Dr8o30X7QOtVMWK20nmAoRZ/g
-         W2mzYfWgHjjy1ZulH+ztL+8ICJjVEgVYxzIdgZlQ5jujji/e/mQn/j1Km8FvKhL6zSPW
-         ld9g==
-X-Gm-Message-State: AOJu0YxgtCFnoOiX5TErV/ZFFwZrzAcndhh9cLTjx0uVoa9hEYeW3rgj
-	chh4S2ssJkYOB5TW13BO5oe2hnvQWUPV6lzPsD2sumUYHprlzFpZMsrRWjhy4Nww
-X-Gm-Gg: ASbGncsQkTS+KwalV2/sVkN29M1Iw/1OapcbYnmw0UcUEXDPrzz3K2QLyT3+W/vhLLT
-	sFSNrmDYx8hidN0e1u1NvUP1x3LiSzfQhXaemym+hai7qoGObpOWjSHWLaWjt3xLWpxXSCrUctQ
-	m/tps9kQngR0DOxak2562mmxHnPeAY8YKkD734abxZoQdsCvHzN8CQetSwCkFjXYSCR45hnLRm4
-	96aGA9IAxbzI1zKBqmRq11aBpnDhkyf350vaOpxj7sZ9REI3rmSkdJ3mdpXhcE/sIvLsREtyQ9q
-	LjdRhJiNDqnXGteqGlVqix0kEPeqsyU8e8CXsQs7ww8N35mbTrHirggvf5r1O5M4MRUgTCMl89p
-	qs4m+sFKZE+Z3jLpy7UDm/vs9OTrJQA==
-X-Google-Smtp-Source: AGHT+IFTrTYHpy0GU6bbB269zJvGXY6Gs3QN4w9/WrM9xy5xv0mTSEPCO3u42dqBnmXZB2ZR+Do55A==
-X-Received: by 2002:a05:6402:51d2:b0:615:a60a:38a7 with SMTP id 4fb4d7f45d1cf-617e2b705bfmr14252962a12.7.1754988106482;
-        Tue, 12 Aug 2025 01:41:46 -0700 (PDT)
+        bh=/vW7KMUpv0iZk2kA9A0bgUDzi+DAKYwk4CAqgwvvhA8=;
+        b=VNZGMMHyk6RUi8j4yaVfVH5AxIWVZes9yVD0gq4t67P3oVZXRVTd0dt744/PhESb6w
+         TcdSAOsPdHckwX8XZUGtWO61zePuUnEIJpUOCfCSXhtMyrpZslKc2RHOsnPc09Z/E+DP
+         kAJtRBey/mru8NltvuY74jnTV+STKMMV+KxJZU4bR0n7kJled2goXLrn8AbTxmaxI2MQ
+         vAnBoGlUP81itv2Dt/fYsF0j51UOGuzugkprFBhYrIrSQh3i3yBFhwH3tMnNpkNGRtHT
+         BTAGTlAImxE0BtLDtPJsUCKixre3tWuUoZpdQ5aYz96GAaJ8L9Nf4XR3lHnPY/OUAKb6
+         1uIA==
+X-Gm-Message-State: AOJu0YxokmGfRv1b9jFscrOUtpvQ7jDj2WnO13wie6/dpqzO89Cz3GiX
+	FXh+Qj31BggM88oAfRVKBMqZfOBksihKp8Nt0fSySisbSDK29CcWZbEkjf1dHVZQ
+X-Gm-Gg: ASbGncvl+4jOpqMiZAc7u68Zp0wDkzzeT1mxC+t8twlZJQqROZuMGtvqMBDy3+azZ9Y
+	MOa553Asq/R403YnAocFNpFmSWl3ZNBd8teTY3iQOZI1XDy6A756okGy3vmA2+C1gdW9rnbMSZr
+	pecx8+UAFCSVe6TwFx49wLjv26Mre6fpH8A48OqCK0u6B65nHpd31eO5EYyxv6PpNnFKBQYQ59w
+	WIC63+PAakL4fkez5XeZc3h9phRYwee2DjiBGrJWiHMA/Y2PaS+xjfvNIAx8jZB+TwkQPtkq46S
+	MIphanYcxlNXyOZRBRAkMRdjvKbkBq/8YPPkBP8zZzH0wKgaGtLn8BDvbRF5GW/KabezRzFRwVL
+	M8MvTXXEos7iudIOy5NcLILJyFOKjDeQVWoCHuBlI
+X-Google-Smtp-Source: AGHT+IETvhwz5toDzAfOENeblrbVKH4lkZpvcgsLcKgWrYMbJAsjvnmt/TmYkU1TbSLpYiQNcrvfjA==
+X-Received: by 2002:a05:6402:5211:b0:617:b82d:a083 with SMTP id 4fb4d7f45d1cf-617e2e55e52mr13401726a12.17.1754988217501;
+        Tue, 12 Aug 2025 01:43:37 -0700 (PDT)
 Received: from [192.168.1.106] ([51.154.145.205])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-618461ab3dcsm1809550a12.56.2025.08.12.01.41.45
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8ffbde5sm19628853a12.54.2025.08.12.01.43.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Aug 2025 01:41:45 -0700 (PDT)
-Message-ID: <e66f8715-91fa-4968-ba95-3c4cff296835@gmail.com>
-Date: Tue, 12 Aug 2025 10:41:45 +0200
+        Tue, 12 Aug 2025 01:43:37 -0700 (PDT)
+Message-ID: <9f78b4c5-9a45-4161-890c-a37e5ace6f95@gmail.com>
+Date: Tue, 12 Aug 2025 10:43:36 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [meta-zephyr][scarthgap][PATCH v4 4/13] layer:
- Set PREFERRED_VERSION for kernel and sdk
+Subject: Re: [yocto-patches] [meta-zephyr][scarthgap][PATCH v4 12/13]
+ zephyr-kernel: Add rpmsg multi services recipe
 To: yocto-patches@lists.yoctoproject.org, chee.yang.lee@intel.com,
  sandeep.gundlupet-raju@amd.com
 References: <20250811194646.3408854-1-sandeep.gundlupet-raju@amd.com>
- <20250811194646.3408854-5-sandeep.gundlupet-raju@amd.com>
+ <20250811194646.3408854-13-sandeep.gundlupet-raju@amd.com>
 Content-Language: en-US
 From: Gyorgy Sarvari <skandigraun@gmail.com>
-In-Reply-To: <20250811194646.3408854-5-sandeep.gundlupet-raju@amd.com>
+In-Reply-To: <20250811194646.3408854-13-sandeep.gundlupet-raju@amd.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 12 Aug 2025 08:41:52 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1957
-
-I think this patch could be merged with 3/13,
-otherwise PREFERRED_VERSION_zephyr-kernel wouldn't be defined between
-these revisions, and bisecting could susprise people.
-
+ <yocto-patches@lists.yoctoproject.org>; Tue, 12 Aug 2025 08:43:42 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1958
 
 On 8/11/25 21:46, Sandeep Gundlupet Raju via lists.yoctoproject.org wrote:
-> Set default stable PREFERRED_VERSION for kernel and sdk.
+> Add zephyr-openamp-rpmsg-mulit-services recipe to build out of tree
+> openamp-system-reference example applications.
 >
 > Signed-off-by: Sandeep Gundlupet Raju <sandeep.gundlupet-raju@amd.com>
 > ---
->  meta-zephyr-core/conf/layer.conf | 4 ++++
->  1 file changed, 4 insertions(+)
+>  .../zephyr-openamp-rpmsg-multi-srv.bb         | 23 +++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+>  create mode 100644 meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-openamp-rpmsg-multi-srv.bb
 >
-> diff --git a/meta-zephyr-core/conf/layer.conf b/meta-zephyr-core/conf/layer.conf
-> index e1bb263..e355b3f 100644
-> --- a/meta-zephyr-core/conf/layer.conf
-> +++ b/meta-zephyr-core/conf/layer.conf
-> @@ -20,3 +20,7 @@ LAYERSERIES_COMPAT_zephyrcore = "kirkstone scarthgap"
->  PYTHON3_NATIVE_SITEPACKAGES_DIR = "${libdir_native}/${PYTHON3_DIR}/site-packages"
->  
->  addpylib ${LAYERDIR}/lib oeqa
+> diff --git a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-openamp-rpmsg-multi-srv.bb b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-openamp-rpmsg-multi-srv.bb
+> new file mode 100644
+> index 0000000..51152e5
+> --- /dev/null
+> +++ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-openamp-rpmsg-multi-srv.bb
+> @@ -0,0 +1,23 @@
+> +SUMMARY = "Open AMP rpmsg mulit services"
+> +DESCRIPTION = "Open AMP rpmsg mulit services"
+
+Typo in summary and description: mulit vs multi
+
 > +
-> +# Default to a stable version
-> +PREFERRED_VERSION_zephyr-kernel ??= "3.6.0"
-> +PREFERRED_VERSION_zephyr-sdk ??= "0.16.9"
+> +inherit zephyr-sample
+> +
+> +SRC_URI_ZEPHYR_OPEN_AMP_SYS_REF ?= "git:///github.com/OpenAMP/openamp-system-reference;protocol=https"
+
+Typo in src_uri: there is an extra slash after the "git://" protocol.
+
+> +
+> +BRANCH ?= "v2024.05"
+> +BRANCHARG = "${@['nobranch=1', 'branch=${BRANCH}'][d.getVar('BRANCH', True) != '']}"
+> +
+> +SRC_URI:append = " \
+> +    ${SRC_URI_ZEPHYR_OPEN_AMP_SYS_REF};name=open-amp-sys-ref;${BRANCHARG};destsuffix=git/open-amp-sys-ref \
+> +    "
+> +
+> +SRCREV_open-amp-sys-ref = "d78315763fbacba8a74552d0ad570bd01c42ccf9"
+> +
+> +ZEPHYR_SRC_DIR = "${ZEPHYR_BASE}/../open-amp-sys-ref/examples/zephyr/rpmsg_multi_services"
+> +
+> +ZEPHYR_MAKE_OUTPUT = "rpmsg_multi_services.elf"
+> +
+> +EXTRA_OECMAKE += " \
+> +    -DCONF_FILE="prj.conf" \
+> +    "
 
 
