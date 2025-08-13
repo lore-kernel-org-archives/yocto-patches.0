@@ -1,70 +1,89 @@
-Return-Path: <dixitparmar19@gmail.com>
+Return-Path: <chee.yang.lee@intel.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C70EACA0EC4
-	for <webhook@archiver.kernel.org>; Wed, 13 Aug 2025 03:32:38 +0000 (UTC)
-Subject: Re: [PATCH v5] [matchbox-panel-2] panel: added sysfs support
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F12CCCA0EC4
+	for <webhook@archiver.kernel.org>; Wed, 13 Aug 2025 07:29:29 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+ by mx.groups.io with SMTP id smtpd.web10.95573.1755070161382304099
+ for <yocto-patches@lists.yoctoproject.org>;
+ Wed, 13 Aug 2025 00:29:21 -0700
+Authentication-Results: mx.groups.io;
+ dkim=pass header.i=@intel.com header.s=Intel header.b=mOx/Hh1R;
+ spf=pass (domain: intel.com, ip: 192.198.163.9, mailfrom: chee.yang.lee@intel.com)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755070161; x=1786606161;
+  h=from:to:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=3Vn0lhYPkpwJZ0f2cnjMQjbFKfAaOiMeQSgUa9bXNrA=;
+  b=mOx/Hh1Rq0m7npi/6DeUb5IxFhE/oPyY0e5kAOEb1iiCHdUlSyA8wRw3
+   DZLCS+5d6CBsyS8o1klIkWINFRW35XNjy73qXFXh+yHH4acOMzua50tGI
+   Pk5/13BNzgfz9F05Z4OasSMZBTaaDhaLdszuHXqvaN6Gngmy2Rh1M07sR
+   752SYZg2exoG1af3xiCN2fA+3TSPCVCfLjJ3+XcU+C69G1wK+HAXM+7pu
+   gbp+5pL1jsQWWsAlKgywRzVh/dXEypsq/K9VAT018kjFSvcfEb38ABSEq
+   axD1WwHA0VzTE3WkI+Cl7OEh7QSrlk7yNdMwYFuR/kX310TKtV+mk8ooo
+   Q==;
+X-CSE-ConnectionGUID: WaBVhLFbQ3adfQ75MVEWaA==
+X-CSE-MsgGUID: BlDcSmwOSw+gIHSEsmdHzg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="68058294"
+X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
+   d="scan'208";a="68058294"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 00:29:21 -0700
+X-CSE-ConnectionGUID: Id5IgHhOTVCgvAA808VlHA==
+X-CSE-MsgGUID: X1JmIN+qRymJ+rZzUUt+6g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
+   d="scan'208";a="166672699"
+Received: from andromeda02.png.intel.com (HELO andromeda02..) ([10.107.232.49])
+  by orviesa008.jf.intel.com with ESMTP; 13 Aug 2025 00:29:20 -0700
+From: chee.yang.lee@intel.com
 To: yocto-patches@lists.yoctoproject.org
-From: "Dixit Parmar" <dixitparmar19@gmail.com>
-X-Originating-Location: Pune, Maharashtra, IN (223.233.84.16)
-X-Originating-Platform: Linux Chrome 129
-User-Agent: GROUPS.IO Web Poster
+Subject: [meta-zephyr][PATCH 1/2] layer.conf: Update to whinlatter release series
+Date: Wed, 13 Aug 2025 14:39:03 +0800
+Message-Id: <20250813063904.3141303-1-chee.yang.lee@intel.com>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
-Date: Tue, 12 Aug 2025 20:32:28 -0700
-References: <83bc1d22-e6e3-41d7-b380-5d9387c9959e@gmail.com>
-In-Reply-To: <83bc1d22-e6e3-41d7-b380-5d9387c9959e@gmail.com>
-Message-ID: <23953.1755055948946532766@lists.yoctoproject.org>
-Content-Type: multipart/alternative; boundary="qrIhFIbzTGibnUjsIC9c"
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 13 Aug 2025 03:32:38 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1978
+ <yocto-patches@lists.yoctoproject.org>; Wed, 13 Aug 2025 07:29:29 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/1979
 
---qrIhFIbzTGibnUjsIC9c
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+From: Lee Chee Yang <chee.yang.lee@intel.com>
 
-On Mon, Aug 11, 2025 at 02:16 PM, Gyorgy Sarvari wrote:
+Signed-off-by: Lee Chee Yang <chee.yang.lee@intel.com>
+---
+ meta-zephyr-bsp/conf/layer.conf  | 2 +-
+ meta-zephyr-core/conf/layer.conf | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
->=20
-> One more note, I'm sorry sorry for forgetting this from the previous mail=
-.
->=20
->=20
-> On 7/16/25 05:17, Dixit Parmar via lists.yoctoproject.org wrote:
->=20
->> +
->> +static gboolean read_val_from_file(const gchar *dev, const gchar *f,
->> gint64 *val)
->> +{
->> + gboolean ret =3D TRUE;
->> + gchar *endptr;
->> +
->=20
-> The endptr variable is not used at all, I think it can be removed.
-> According to the docs g_ascii_strtoll accepts NULL also instead of a
-> pointer as the second argument.
+diff --git a/meta-zephyr-bsp/conf/layer.conf b/meta-zephyr-bsp/conf/layer.conf
+index 60a0a80..52d9938 100644
+--- a/meta-zephyr-bsp/conf/layer.conf
++++ b/meta-zephyr-bsp/conf/layer.conf
+@@ -15,4 +15,4 @@ LAYERVERSION_zephyrbsp = "1"
+ 
+ LAYERDEPENDS_zephyrbsp = "zephyrcore core meta-python"
+ 
+-LAYERSERIES_COMPAT_zephyrbsp = "scarthgap styhead walnascar"
++LAYERSERIES_COMPAT_zephyrbsp = "scarthgap whinlatter"
+diff --git a/meta-zephyr-core/conf/layer.conf b/meta-zephyr-core/conf/layer.conf
+index 3482c6f..11a5bbd 100644
+--- a/meta-zephyr-core/conf/layer.conf
++++ b/meta-zephyr-core/conf/layer.conf
+@@ -15,7 +15,7 @@ LAYERVERSION_zephyrcore = "1"
+ 
+ LAYERDEPENDS_zephyrcore = "core meta-python"
+ 
+-LAYERSERIES_COMPAT_zephyrcore = "scarthgap styhead walnascar"
++LAYERSERIES_COMPAT_zephyrcore = "scarthgap whinlatter"
+ 
+ PYTHON3_NATIVE_SITEPACKAGES_DIR = "${libdir_native}/${PYTHON3_DIR}/site-packages"
+ 
+-- 
+2.37.3
 
-Noted.
-
---qrIhFIbzTGibnUjsIC9c
-Content-Type: text/html; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div>On Mon, Aug 11, 2025 at 02:16 PM, Gyorgy Sarvari wrote:</div>
-<div>
-<blockquote>One more note, I'm sorry sorry for forgetting this from the pre=
-vious mail.<br /><br />On 7/16/25 05:17, Dixit Parmar via lists.yoctoprojec=
-t.org wrote:<br />
-<blockquote>+<br />+static gboolean read_val_from_file(const gchar *dev, co=
-nst gchar *f, gint64 *val)<br />+{<br />+ gboolean ret =3D TRUE;<br />+ gch=
-ar *endptr;<br />+</blockquote>
-The endptr variable is not used at all, I think it can be removed.<br />Acc=
-ording to the docs g_ascii_strtoll accepts NULL also instead of a<br />poin=
-ter as the second argument.</blockquote>
-Noted.</div>
-
---qrIhFIbzTGibnUjsIC9c--
 
