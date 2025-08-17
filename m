@@ -2,61 +2,61 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AC0BCA0EE9
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ABC9CA0EE4
 	for <webhook@archiver.kernel.org>; Sun, 17 Aug 2025 21:08:23 +0000 (UTC)
 Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
- by mx.groups.io with SMTP id smtpd.web10.61168.1755464897787711952
+ by mx.groups.io with SMTP id smtpd.web10.61164.1755464893486311054
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 17 Aug 2025 14:08:17 -0700
+ Sun, 17 Aug 2025 14:08:13 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=bIvjZn+p;
+ dkim=pass header.i=@konsulko.com header.s=google header.b=MCHGd+Vu;
  spf=pass (domain: konsulko.com, ip: 209.85.160.171, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4b134f1c451so9075821cf.1
-        for <yocto-patches@lists.yoctoproject.org>; Sun, 17 Aug 2025 14:08:17 -0700 (PDT)
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4b274838c01so3171051cf.1
+        for <yocto-patches@lists.yoctoproject.org>; Sun, 17 Aug 2025 14:08:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1755464897; x=1756069697; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1755464892; x=1756069692; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qfnthYqZEY2DIETGId2O4rHHoXv7nshbPXG1qEXTrd4=;
-        b=bIvjZn+pP5oS1gx4l3vdZuH1eNR4EL7aMYpnfeoKduwvlUC58MzfC0k3wd5p60NY0s
-         TDFqbmj2WFxpUSQv3nmpQ13PXDbiNk/TeiP3sw/Yw/jPC23Gne9AJwbZVJsacvcw3U+7
-         EwyvEb+PezEUS7xKwwV8GqMSvSuTdVt4SdFDE=
+        bh=8cPi+rkuz8le7fGml2RDXF5Cq+8XRqt5TWuZwmKOl4k=;
+        b=MCHGd+VukrDRvDufhXQLGNRDnHVJ4B9iTSYVbHJC7dLJdaiwil+UwATgQPKvHz7T55
+         qlL64AysNUjm2hDNK7r6H7R/yFcsTP9WjRxHHU/NffKVhwPDBt8oN6+u2io08BDyOifC
+         qsZ/bKDap2ckP35leHpb9VQ4lIXW5eB4FRHCU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755464897; x=1756069697;
+        d=1e100.net; s=20230601; t=1755464892; x=1756069692;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qfnthYqZEY2DIETGId2O4rHHoXv7nshbPXG1qEXTrd4=;
-        b=wI21uc7/kNezcSOk8tflRcFX6VLbVWCq9UrWjrLStwL5G3MnsF8YQ1CwHBs1QX29sL
-         vLCGI7yQK75kKvqAE19e5CljX59Zzx/xghWo2nDTp8LHDXJsObuWXZTkLuWhOqfnW8+6
-         rM2z86hGPb4EVnPY6i0Dc2fey3pb4a2DPCRgfJj5FDzDrYWtxTkDQv1zS1yatN377OIw
-         5eHXmfKJIHH0YrGxYf5mocrHTkc3c6vrSVc0bqHPPKql130fmy6CKm5cVKTJxftnz28m
-         D7C1VmWjDoJaKxr+a7IptT1VIulV/Mpmm3eZnqXYhi67U2KGgS8JLf4bARdl13GxKgAR
-         sF6Q==
-X-Gm-Message-State: AOJu0Yw7glKxqqYIUnSACWgmdxWpE7tq9uROc/TIAU5dI4UeMH9CnPBx
-	l6MTSygpkkS2Qx/hTqeDxhTDhCuT7W4EAUQHy8PSlmFj6RTLhVbiH7TOQh15xX7tOYJJyqAlbZx
-	PGwGj
-X-Gm-Gg: ASbGncvtrI9UxuZQRLjAM6EIOIH7L013vrV2XLcXXFOjJ77qscSl0Hmz/0wcq5c9vj1
-	NEt+LBWy787WeJNlHB8sOGKkGPx/pTJ6zDx7xBQAJSDEwhiyF5kZECrKn3ZNH8ZMlOffpN6+AGJ
-	GXgC+Q3g3IiAGPFKZBymJsCxe0DFLVJcpn7arguJ+6Yj65kiXqmry7QAgaVERSNAztzmWQ0fS4c
-	QPmqTRyNCcl11iUBa65iMBkgYmPe310FmQ4lEjJSQ7Q+UDEnm89rUqRyyBLBFkLeRBgUGxKK6xL
-	4uRpN36M4htxAZyPcFHI4aJ0VXmGYLN+yOdMem/APhQ/Mj8rtWImM68bst1x0O7HwNkVBq5L6GO
-	lNsEtOmzLNc3OSVMlkmO68CJ8bEmIx5ispXrlzkQuYWO5ya/HjmNKhWhywq0OUhe6WW8MTvRshw
+        bh=8cPi+rkuz8le7fGml2RDXF5Cq+8XRqt5TWuZwmKOl4k=;
+        b=jY9gFGMXoE6kGztFwi5EMQvFRZoe0EkCafpVaD1s8eZpbyrX1UglfgvTobTfcLw/Gz
+         ADIOzFKUdxjW2YjpT41BIqXBUlAcVSgRUI52ZLRwVjRSwx+JxlinqtpC6tVD7D3K4XKg
+         o6GTPwo9ezrvW1IbzxWW1pJtB19QX08Mv4FUtsndYc0ZUfaRhZA1xgl5pzJT/c4aG5j6
+         LDP7mz+qpcuLL9nSEHAhT526f1eeP1E7qiCHhFubw6Q4FBtmySFBnxglA3yktDhx/GnO
+         H0t9Mt6X4EShVW0RsrDogHCIVsglLcyLdH/pbq2wBtKT1oryAKflbJh3zU6btZw1pSbh
+         3uTg==
+X-Gm-Message-State: AOJu0Yzp1StwLq+jlhy+a90TnK5FNOerezbKplqUR+NBS0qQIRRdhU7J
+	QQFRnLVMBzenkHes2klqrZWQnczr0MWWJaqPxg7JviqUBX1jSFUB7ZSJPYA0iML6LeGZmlBz6Qt
+	2qeY1
+X-Gm-Gg: ASbGncv/vGJUAsTocrCSywJludKuLmRezjhALVkSCbj6AXg7T76YKtDfnURxOtJ5TYh
+	ucEwFk4Ipu1qpEzfKEi0iKmixGoKpgdeYZ5mEu4WvpphU8LXzWK05sOI3wjktV9vjnKFQuiS9zJ
+	iPhQRFRhYXBA6XETZr/uM+bAoIpwSqEFpxXi+geUR37O4VYEILevj7q/0nnEu557OkQLnvkS5D1
+	xjH9InQG+0mIuKPub2c1yYa9dgIlu6usYHfDBbvN2Z0h6u5SnDB/OCfRN5LQ85KzxZ1GNNdC4Jf
+	Tw0NKDIp2JEG2X+prM8JZBdTO426E7GNs9lEo4rOzI138rbmS4jYQZM0ioRuccmQNcl0wVr+7gR
+	ktdfDtWpgRBjxi15J42eTdkOkTVRQr/ET54X62EXMz/Ee2PoCsMISffh9eBnYiDnU20dPZ8G6bw
 	==
-X-Google-Smtp-Source: AGHT+IG3uRid+nlptQ+CtHDSNe2nS2wWZ/H3WgMr+LHTGxf2mLTMyL8oi2cJe1X9KHIE/b6QPydqgA==
-X-Received: by 2002:ac8:59d6:0:b0:4b0:61aa:e38a with SMTP id d75a77b69052e-4b12a5cc8cbmr91781681cf.12.1755464896641;
-        Sun, 17 Aug 2025 14:08:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEeMMEbqzGRIXxh5n4zNYJIhGC4LYMBH67+pCcHX+ejt3JzExuOhruiPpduTascWofn/LJZsA==
+X-Received: by 2002:ac8:5851:0:b0:4b1:103b:bb70 with SMTP id d75a77b69052e-4b11e32dabbmr125171251cf.62.1755464892303;
+        Sun, 17 Aug 2025 14:08:12 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b11dddb0f4sm42215661cf.38.2025.08.17.14.08.15
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b11dddb0f4sm42215661cf.38.2025.08.17.14.08.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Aug 2025 14:08:16 -0700 (PDT)
+        Sun, 17 Aug 2025 14:08:11 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: marta.rybczynska@ygreky.com
-Subject: [meta-security][walnascar][PATCH 7/7] scap-security-guide: upgrade 0.1.76 -> 0.1.77
-Date: Sun, 17 Aug 2025 17:07:59 -0400
-Message-ID: <1f7eeb8e84811fa79b98f236ade42dc52d44cfc6.1755464538.git.scott.murray@konsulko.com>
+Subject: [meta-security][walnascar][PATCH 2/7] CI: update build for new CI
+Date: Sun, 17 Aug 2025 17:07:54 -0400
+Message-ID: <f61a11f9d8b621cff81837400095a16653096151.1755464538.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <cover.1755464538.git.scott.murray@konsulko.com>
 References: <cover.1755464538.git.scott.murray@konsulko.com>
@@ -66,36 +66,41 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Sun, 17 Aug 2025 21:08:23 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2030
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2025
 
-Update to latest version to pick up fixes required for building with
-CMake 4.0.
+From: Marta Rybczynska <marta.rybczynska@ygreky.com>
 
-ChangeLog:
-https://github.com/ComplianceAsCode/content/releases/tag/v0.1.77
+Update for Ubuntu 24.04 runners:
+- use venv for installing kas
+- add missing directories
 
+Assume that python3 and pip are installed.
+
+Signed-off-by: Marta Rybczynska <marta.rybczynska@ygreky.com>
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- ...p-security-guide_0.1.76.bb => scap-security-guide_0.1.77.bb} | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
- rename recipes-compliance/scap-security-guide/{scap-security-guide_0.1.76.bb => scap-security-guide_0.1.77.bb} (98%)
+ .gitlab-ci.yml | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/recipes-compliance/scap-security-guide/scap-security-guide_0.1.76.bb b/recipes-compliance/scap-security-guide/scap-security-guide_0.1.77.bb
-similarity index 98%
-rename from recipes-compliance/scap-security-guide/scap-security-guide_0.1.76.bb
-rename to recipes-compliance/scap-security-guide/scap-security-guide_0.1.77.bb
-index 8615f97..4da6c66 100644
---- a/recipes-compliance/scap-security-guide/scap-security-guide_0.1.76.bb
-+++ b/recipes-compliance/scap-security-guide/scap-security-guide_0.1.77.bb
-@@ -6,7 +6,7 @@ HOME_URL = "https://www.open-scap.org/security-policies/scap-security-guide/"
- LIC_FILES_CHKSUM = "file://LICENSE;md5=9bfa86579213cb4c6adaffface6b2820"
- LICENSE = "BSD-3-Clause"
+diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+index 46ab4a9..32ce2b9 100644
+--- a/.gitlab-ci.yml
++++ b/.gitlab-ci.yml
+@@ -1,10 +1,12 @@
+ .before-my-script: &before-my-script
+     - echo "$ERR_REPORT_USERNAME" > ~/.oe-send-error
+     - echo "$ERR_REPORT_EMAIL" >> ~/.oe-send-error
++    - echo "$CI_PROJECT_DIR" >> ~/.ci_project_dir
+     - export PATH=~/.local/bin:$PATH
+-    - wget https://bootstrap.pypa.io/get-pip.py
+-    - python3 get-pip.py
++    - python3 -m venv ~/kas_env/
++    - source ~/kas_env/bin/activate
+     - python3 -m pip install kas
++    - mkdir -p $CI_PROJECT_DIR/build/tmp/log/error-report/
  
--SRCREV = "616d4363527acb61c6494a97f3ceb47ec90f65fd"
-+SRCREV = "c1e1ba121d32b3c319b0e25ee2993b62386e5857"
- SRC_URI = "git://github.com/ComplianceAsCode/content.git;nobranch=1;protocol=https \
-            file://run_eval.sh \
-            file://run-ptest \
+ .after-my-script: &after-my-script
+     - cd $CI_PROJECT_DIR/poky
 -- 
 2.39.5
 
