@@ -1,125 +1,105 @@
-Return-Path: <martin.jansa@gmail.com>
+Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C88CCA0EE4
-	for <webhook@archiver.kernel.org>; Sun, 17 Aug 2025 20:46:53 +0000 (UTC)
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
- by mx.groups.io with SMTP id smtpd.web11.60518.1755463608932920568
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2742FCA0EE9
+	for <webhook@archiver.kernel.org>; Sun, 17 Aug 2025 21:08:13 +0000 (UTC)
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+ by mx.groups.io with SMTP id smtpd.web11.60905.1755464892716864202
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 17 Aug 2025 13:46:49 -0700
+ Sun, 17 Aug 2025 14:08:12 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=CsDxbvJq;
- spf=pass (domain: gmail.com, ip: 209.85.128.43, mailfrom: martin.jansa@gmail.com)
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45a286135c8so4494775e9.0
-        for <yocto-patches@lists.yoctoproject.org>; Sun, 17 Aug 2025 13:46:48 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=YToWacrf;
+ spf=pass (domain: konsulko.com, ip: 209.85.160.177, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4b109914034so40514211cf.0
+        for <yocto-patches@lists.yoctoproject.org>; Sun, 17 Aug 2025 14:08:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755463607; x=1756068407; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lt+zsCYGE7mg8ELWGAYwd3LGN5iACfaIBtwRO8ldAzw=;
-        b=CsDxbvJqw3uCago/9dACzO7ZAsm9eQ1QMUJHQrC69JVegY5paXAoLKqDaXH1cRw3Gr
-         pBeYDLK8/FPz6bZVBnVaQoWS35jv6TRcdK+GCcZFN6lYUxqGbgPlrVVeunohYJKeN/TG
-         +8/nhm9S6Ah2fRkG8iVS+4vGQVFfBx5Ms6vzUzqbtJGNdTWHWStAYku/7mdRzM5Jk7IV
-         +hG+55QqrfajRjvn/TArDChmPG0FBany6OEKiWIZDGTwxGsqHX0BcwjUSs9Svem/n0r4
-         JclV+e6Cj8XGmXu2ifDy0RpdUpeCEJC4fGdfDRR3Stj8s92qUYmTXHrSAqNVZyvSqNwY
-         6oDw==
+        d=konsulko.com; s=google; t=1755464891; x=1756069691; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f6NpVdoYjv6ztK8NR1SpYLt4KiubyrP0KqcKi+6afuc=;
+        b=YToWacrfLsjuw1NYwEXjXv3zcU+5S4oFGPQcb5qEAk9xVkR9vIiMJay1TfUZpvet3K
+         /lRolfeY3l2j70w5vKcIqXu2jG8B3iEw1FZQKrLI1ZzXj8HwjjE+S/zEX16KzHJJiiFK
+         nmxjii0L/kYlc+WR/9sMWdAjFwfOZR6Qsa8pw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755463607; x=1756068407;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lt+zsCYGE7mg8ELWGAYwd3LGN5iACfaIBtwRO8ldAzw=;
-        b=S7baSnRTV4t0Cl+oQkcPxVSZUdX66bUAN2OBJGTiFgRkluM8ZkC+3sqvfZJ3FPDi9B
-         uyXkvU804nMXutQRbqB9sJVbHNrlkQ1Pmgh2cGgj+DMjwUQ0Oj0U9QRer4gi0CRLYsc2
-         mcomM+FeHLff7dnPi2HEiXkSl71U5bScd9Dn4Ls7carxMqixS9koLQKdUaimYjmGAKAR
-         i3WDenO1UFn5WRH5wly3Dy2+i2GZ14XFa5RJlxmUW0yQq4kF3PxUZCA2yngbe+gj8VLJ
-         VBfn+n8an1JX1wpfREVFv77zAh2xZN/Rlai3srozou5FPOT6ePzTJ5V0l0yxZ57OYEuO
-         5S0w==
-X-Gm-Message-State: AOJu0YzQCLkJ5petF+Sr7YZ6IWVqVvlaVTww/489gU9BK/bTCr7kDIhU
-	Q2IucVtguuIafingkct45hHhEj53uX5YaKobsoS9fnVbXZMP+p+gDW9ytDQ78w==
-X-Gm-Gg: ASbGncuc1s5sSKrva46PHTrLWN9Ex1xC1bnLZ+SYGMjMvk0ereSvazzx4tNgc0YMZIQ
-	MrFCq5r+XEFt3AA2Q34xW3snYba0UWw9ugc02yhyIe80jtXFmQbp/B3+DuxBEk403TJWr9fux7f
-	YeUDIve1OkeLa2BpZ8GhKY2rVioIgV7c0Xcw47ZRdnKe5QJJlxG37VMd/0c8glaoeJIWJcrfGW+
-	ywo0mOnBgraQQ/pWoCTHZsZOVlhcdcKa741XiWSCkWLZ2k53EUllJFYozy8gQQ6/RUulenIJkeJ
-	r1FgKOvl5bX55U0VXqUcO2Ft4CPCb89YUFAPwYNzHQnuF7TTurbHBUf+W6bQtAau4+01n2Ys6tB
-	TWUt9peNQo8fkiOeg+kdjNXrIxA==
-X-Google-Smtp-Source: AGHT+IEBLGei7NYz+7fdx5UuFra6EmQ7/HSyBW8wEBrMiCV1MImloHiZZFfDnFtpqkbCL78adrQtGw==
-X-Received: by 2002:a05:6000:25c5:b0:3b9:148b:e6d with SMTP id ffacd0b85a97d-3ba50913636mr12018522f8f.20.1755463606940;
-        Sun, 17 Aug 2025 13:46:46 -0700 (PDT)
-Received: from localhost ([109.238.218.228])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3bb64c30c45sm10476183f8f.16.2025.08.17.13.46.46
+        d=1e100.net; s=20230601; t=1755464891; x=1756069691;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=f6NpVdoYjv6ztK8NR1SpYLt4KiubyrP0KqcKi+6afuc=;
+        b=R5Y5mIIebF/vbwxOFyeRcLK1SM32dR+QhWN81CIwJy6KN+Gm+BQu4t4x7N2Bh6Tj7y
+         PhoRLJw733DaBm9D8B5+dcQy40T+fibm8Ol30zTXZ2D9MJQqDxT5edPHWeWfg0j3OtKR
+         mnoyta6wwNNUUEy6swmSFq6exB1uuanuvBp5MKShLxlEuxvSZE5t2mAESwvDADdhBwMe
+         lp0dKNxeaYalgemv4paXrFfg1FGTUmyrzQ/WcPxGGYoMva+sxByOH2GeUjNmn/Sxo0Bc
+         bVfv3M4XI+l8fSVBXob+QtEXblFG6Unl7cujU2wpF8nBtlUQdJ7S4MdB1DVE9q65WPhs
+         vePA==
+X-Gm-Message-State: AOJu0Yy7XHJsVe2c+o7l71ABOSKQ3gB2S6EVdqQtYz6tUk586uuR1dj6
+	DTXrOpaxxLi+2wYY5kIzfrE8sOj9dTE5OldbrCEcjlzwCOMSnda8Dk+LgemwQyLVQL8sP3JaA1Q
+	Spi1p
+X-Gm-Gg: ASbGnctZMnHLdYbDU7n0Ct6NcdW5JHGA2OuHymEjU4ft+z3V13QvJgiFIkUgaXBXC6H
+	yBTlSaAhXqndMg407BB6T7AHT6fTooFBSgesa8nAtvRloUCziFlFLoDiDfSjSvfq2AfuZMW0B6S
+	XgdsJLTNkjr8LnnM3Zqg2fL/7nMrCGq+A13UguBHOkA8rsK1wyf7edQfn4VYaa+2+72u/liXVYk
+	pFjNaNE0F1hWA+b/0y7acaDt6zfuIZDBjUFKO5zvlMie0f/BeTLlLvVvzkrG1XtLeXZNdOQao6k
+	EXwbFuAKOfq0phZet+Mx+VagaBZqCJ+AiHVOCwlUDx93IgiL01Wyw4++n4QllwUXXAxsWTrGJef
+	mXwWkybPUodeqnH9EWw1ZHkI5MJV4lGkRgRkWleiSqd2HNHD1Jd4CNOI334PVh6mfcwzi9IREag
+	==
+X-Google-Smtp-Source: AGHT+IHkNcTXITXlfo7CpdSbcjRc8F2Z9P1i78pyXijd4qKosB5tPAXQCDHhsGqxiBLpuznolxpK2Q==
+X-Received: by 2002:ac8:5f8b:0:b0:4b0:7ae5:c3a4 with SMTP id d75a77b69052e-4b129dd720amr100443401cf.40.1755464891509;
+        Sun, 17 Aug 2025 14:08:11 -0700 (PDT)
+Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b11dddb0f4sm42215661cf.38.2025.08.17.14.08.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Aug 2025 13:46:46 -0700 (PDT)
-From: martin.jansa@gmail.com
+        Sun, 17 Aug 2025 14:08:11 -0700 (PDT)
+From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: hongxu.jia@windriver.com,
-	Martin Jansa <martin.jansa@gmail.com>
-Subject: [meta-tensorflow][scarthgap][PATCHv2] bazel-native: fix build with gcc-15
-Date: Sun, 17 Aug 2025 22:46:44 +0200
-Message-ID: <20250817204644.3817415-1-martin.jansa@gmail.com>
+Cc: marta.rybczynska@ygreky.com
+Subject: [meta-security][walnascar][PATCH 1/7] scap-security-guide: fix fetch
+Date: Sun, 17 Aug 2025 17:07:53 -0400
+Message-ID: <4df29593668e123146749a450e85fe4ef137071e.1755464538.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.50.1
+In-Reply-To: <cover.1755464538.git.scott.murray@konsulko.com>
+References: <cover.1755464538.git.scott.murray@konsulko.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sun, 17 Aug 2025 20:46:53 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2022
+ <yocto-patches@lists.yoctoproject.org>; Sun, 17 Aug 2025 21:08:13 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2024
 
-From: Martin Jansa <martin.jansa@gmail.com>
+From: Marta Rybczynska <marta.rybczynska@ygreky.com>
 
-Signed-off-by: Martin Jansa <martin.jansa@gmail.com>
+The project does not use release branches; their release model currently
+rebases the stable branch each release and relies on the release tags to
+keep the commits referenced.  Until their release model changes, just
+use the release commit with nobranch.
+
+See upstream issue [1] for details.
+
+[1] https://github.com/ComplianceAsCode/content/issues/13543
+
+Signed-off-by: Marta Rybczynska <marta.rybczynska@ygreky.com>
+[tweaked commit message]
+Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- recipes-devtools/bazel/bazel-native_6.0.0.bb  |  1 +
- .../bazel/files/include_stdint.patch          | 28 +++++++++++++++++++
- 2 files changed, 29 insertions(+)
- create mode 100644 recipes-devtools/bazel/files/include_stdint.patch
+ .../scap-security-guide/scap-security-guide_0.1.76.bb           | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/recipes-devtools/bazel/bazel-native_6.0.0.bb b/recipes-devtools/bazel/bazel-native_6.0.0.bb
-index 29abd0e..04ca4cc 100644
---- a/recipes-devtools/bazel/bazel-native_6.0.0.bb
-+++ b/recipes-devtools/bazel/bazel-native_6.0.0.bb
-@@ -12,6 +12,7 @@ SRC_URI = "https://github.com/bazelbuild/bazel/releases/download/${PV}/bazel-${P
-            file://0001-cutsomize-native-toolchains-for-Yocto.patch \
-            file://0001-fix-compile-failure-on-gcc-13.patch \
-            file://1f2b3ed4ac717b814d02a0d125f160ddabe78003.patch \
-+           file://include_stdint.patch \
- "
+diff --git a/recipes-compliance/scap-security-guide/scap-security-guide_0.1.76.bb b/recipes-compliance/scap-security-guide/scap-security-guide_0.1.76.bb
+index 73bd576..8615f97 100644
+--- a/recipes-compliance/scap-security-guide/scap-security-guide_0.1.76.bb
++++ b/recipes-compliance/scap-security-guide/scap-security-guide_0.1.76.bb
+@@ -7,7 +7,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=9bfa86579213cb4c6adaffface6b2820"
+ LICENSE = "BSD-3-Clause"
  
- inherit python3native
-diff --git a/recipes-devtools/bazel/files/include_stdint.patch b/recipes-devtools/bazel/files/include_stdint.patch
-new file mode 100644
-index 0000000..35c57c2
---- /dev/null
-+++ b/recipes-devtools/bazel/files/include_stdint.patch
-@@ -0,0 +1,28 @@
-+https://github.com/lihaohong6/COPR/blob/bf48c5450a909cf8358e3cbd81cdde26df426e12/bazel7/include_stdint.patch
-+
-+Upstream-Status: Submitted [https://github.com/bazelbuild/bazel/issues/25514]
-+
-+diff --git a/src/main/cpp/archive_utils.h b/src/main/cpp/archive_utils.h
-+index 18856ab..5298a36 100644
-+--- a/src/main/cpp/archive_utils.h
-++++ b/src/main/cpp/archive_utils.h
-+@@ -15,6 +15,7 @@
-+ #ifndef BAZEL_SRC_MAIN_CPP_ARCHIVE_UTILS_H_
-+ #define BAZEL_SRC_MAIN_CPP_ARCHIVE_UTILS_H_
-+
-++#include <cstdint>
-+ #include <string>
-+ #include <vector>
-+
-+diff --git a/src/main/cpp/util/logging.h b/src/main/cpp/util/logging.h
-+index b2cd459..7bf5a00 100644
-+--- a/src/main/cpp/util/logging.h
-++++ b/src/main/cpp/util/logging.h
-+@@ -14,6 +14,7 @@
-+ #ifndef BAZEL_SRC_MAIN_CPP_LOGGING_H_
-+ #define BAZEL_SRC_MAIN_CPP_LOGGING_H_
-+
-++#include <cstdint>
-+ #include <memory>
-+ #include <sstream>
-+ #include <string>
+ SRCREV = "616d4363527acb61c6494a97f3ceb47ec90f65fd"
+-SRC_URI = "git://github.com/ComplianceAsCode/content.git;branch=stable;protocol=https \
++SRC_URI = "git://github.com/ComplianceAsCode/content.git;nobranch=1;protocol=https \
+            file://run_eval.sh \
+            file://run-ptest \
+            "
+-- 
+2.39.5
+
 
