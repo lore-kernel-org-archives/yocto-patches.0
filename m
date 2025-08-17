@@ -1,303 +1,269 @@
-Return-Path: <sandeep.gundlupet-raju@amd.com>
+Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32112CA0EE4
-	for <webhook@archiver.kernel.org>; Sat, 16 Aug 2025 02:32:30 +0000 (UTC)
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (NAM04-MW2-obe.outbound.protection.outlook.com [40.107.101.81])
- by mx.groups.io with SMTP id smtpd.web11.27159.1755311544927793849
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2554CA0EE4
+	for <webhook@archiver.kernel.org>; Sun, 17 Aug 2025 17:29:51 +0000 (UTC)
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+ by mx.groups.io with SMTP id smtpd.web11.56799.1755451790722722753
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 15 Aug 2025 19:32:25 -0700
+ Sun, 17 Aug 2025 10:29:50 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@amd.com header.s=selector1 header.b=i2QMh88t;
- spf=permerror, err=parse error for token &{10 18 %{i}._ip.%{h}._ehlo.%{d}._spf.vali.email}: invalid domain name (domain: amd.com, ip: 40.107.101.81, mailfrom: sandeep.gundlupet-raju@amd.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CxipSVJRqa3c4QJlA0Le63w/hDaGoQX3O3MqRQAiDx50NIp6VWJjstV8k5lGjXdQJWWqIrzhYNbOst/gstkLD1TP7rcPzYWGnK1bJooWY1ZX9W8VxNCUtQyZQTekvzmjidD+FyUlcfPoze4fzuea4qh+hgLZOsjueN5nPR6Kftq0KhIUTS7QEtBRkJ3/XT7N+fF1FbkhYmbWalKfIjvayh562J4uyhm7ezWHKd8ys60peOSze8gsspoDzG/v+NWP1L0mpBaYrTaih02LvEjTmOk7EsFMF4TDtpXjYn1xwrCSlmJM/xNTyarp+Kf6OH2jarsXiHG1EH91Xw6Ix9nKjg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hScM9QMJPXJk93+wVchTbSKijw0981cU7zlhCSBIXC8=;
- b=iveVFZvjeghBhoakaJBGcpntIEWoON44minTuDZqFyWyhvp/wFuK3vhkYNCBlDuTVhWhvmDY7rRX+I6Q+1BcKvpaQviemw/3K1jtWOoT1UtUOTw0yET/kfu0hXER8wiax5IjMEpSFZpNJ+mtnCWCEKBaWqJFXx44bmoytz0AKOuJN14zDD7VW1koucTwjAsmoxcj/BXcUkOa6PTWdH8WFSYN9bMy3dtbBvkJ1vKIqS0vS07NDGIbSPvrUlr2Cgl5ZdrONJwWvWxOAF6pMosHcE6IQljKBd5DxvmQK2A4p/OWDQK4OCNESVQgDdm8ZiEMspj646H2WpKD2nHXBlrCyg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hScM9QMJPXJk93+wVchTbSKijw0981cU7zlhCSBIXC8=;
- b=i2QMh88thgdsAXpHRINp/v5o7aiTmMoGJj2IfuLxzd5vr2mGLdDFQQGnDLmTmIz/ApvVNfFLgce/bt/Qxpuqg66a8DNkB1Z0U0fkR1TGSBad/g+BV3orfcqhJxnljhYZ3WLNdVlU7BGYuP1b3a3goSIZ7gDUsHiAVsqaYwjFRFo=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from SN7PR12MB8770.namprd12.prod.outlook.com (2603:10b6:806:34b::21)
- by DS4PR12MB9634.namprd12.prod.outlook.com (2603:10b6:8:280::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.15; Sat, 16 Aug
- 2025 02:32:22 +0000
-Received: from SN7PR12MB8770.namprd12.prod.outlook.com
- ([fe80::52a8:e59e:e6dd:daa7]) by SN7PR12MB8770.namprd12.prod.outlook.com
- ([fe80::52a8:e59e:e6dd:daa7%6]) with mapi id 15.20.9031.014; Sat, 16 Aug 2025
- 02:32:22 +0000
-Message-ID: <2fe12dc4-be39-4ade-816d-fed337a65fcd@amd.com>
-Date: Fri, 15 Aug 2025 20:32:20 -0600
-User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [meta-zephyr][scarthgap][PATCH v5 4/12]
- zephyr-image: Add image artifacts to output files
-To: yocto-patches@lists.yoctoproject.org,
- Lee Chee Yang <chee.yang.lee@intel.com>
-References: <20250812174147.130972-1-sandeep.gundlupet-raju@amd.com>
- <20250812174147.130972-5-sandeep.gundlupet-raju@amd.com>
- <BL4PR11MB8797DFA56346369056287E86B92AA@BL4PR11MB8797.namprd11.prod.outlook.com>
- <SN7PR12MB8770AEA28E0566FB714AE8CDDA35A@SN7PR12MB8770.namprd12.prod.outlook.com>
-Content-Language: en-US
-From: "Gundlupet Raju, Sandeep" <sandeep.gundlupet-raju@amd.com>
-In-Reply-To: <SN7PR12MB8770AEA28E0566FB714AE8CDDA35A@SN7PR12MB8770.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BYAPR01CA0026.prod.exchangelabs.com (2603:10b6:a02:80::39)
- To SN7PR12MB8770.namprd12.prod.outlook.com (2603:10b6:806:34b::21)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=s6wpg35d;
+ spf=pass (domain: konsulko.com, ip: 209.85.160.174, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4b10957f506so45509681cf.0
+        for <yocto-patches@lists.yoctoproject.org>; Sun, 17 Aug 2025 10:29:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=konsulko.com; s=google; t=1755451789; x=1756056589; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=k5iH/0KqM2LQj39RjAEoZNHzyn508YxSjlFDlyG4Le8=;
+        b=s6wpg35droFgEvC5HoXOFykV04x8NVYaj27BNtZLpSStmfh+LU9M/gj9+A8WQY5JOW
+         j4gibIj5JHWPmjPrJiZgjZ6ZKgofA1JLlccNqgsgUS4q6nnlBFY8cMYsOw82FJpGmssK
+         1voXa52pMRxAfMRk7z5Jg8nQ7yq3r5oDqWYaw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755451789; x=1756056589;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=k5iH/0KqM2LQj39RjAEoZNHzyn508YxSjlFDlyG4Le8=;
+        b=ZIu6l+1FstR+ff6TU78roH7XZ5dAAlHP6pj3wGH9ub2qvH21KgZvuGO2XlSCNb+Xjz
+         X4tCH8bpdwuY9vMucBTajATMNnllyZvVftdDpSVgA+GeEtjU6lZRh2OtmlwtQykky8s6
+         yfVvt1duWvfiiK4Hkq9AJcT07xcgmi7FyLQ1h47dahfvb4XsInzxoTV6LhmXRmy6z3zc
+         4KdpeJzZc7nHc2iWX/+I0Q3Qgv1IB5SBUbFlRwFVnTk3Q2iAJPs22Nqnr/8336wFZYGa
+         UCHSIhxSpo+r9CIoDFFA7867AAiiXuixVdlQ43xmBU0dr9a/LzqsbO4WC9geizW5UdCR
+         oRjg==
+X-Gm-Message-State: AOJu0YzZmPnT6CGRcQ9KI0gY09C0Q0H/RO3lLTkksJB5LzbeohV5tX2D
+	GE68NKSIHZAf7iRBA0lkdESEeOpbzy7JDCF6kukOAilUgrkUcvn4tOmQXu7V5R4PmPm4+tfeCBL
+	pZx3n
+X-Gm-Gg: ASbGncvA5elUtTKWG/sVPccfyq9mtuC7gsekU4ukXBQfAkq99sIE91XJ3vdOP6FP8R2
+	4OSSPKOwp9ciAnHPdQLSI293BZEXlCbcjt5q3aDDtx4ziSEUKycT14k7nlD3SkGwivd+3EyI4Bm
+	EamUjY5w/09fgbIh8KmVXacPhrqSGchIoJ2hGFlvsqyd9wFtFmKgYqwqoNNLs6qWZklA2xXgTW3
+	xR8elxnfRqGKysPMlqnhPNSHRBuQp2YWBnSYhoeDKjEQyXzHGgka5aOF66NQoJVCrkvWbcDO0US
+	rYjJIrtN1DXGnZwFqPOiIVlScnij3KJxLFxrfEFUofJbGHawxxsuaWvU/Htre41T6ojIHRuyxkI
+	X8Ze6emv45aVWYN3iq0z7qfTGLAMr/zSjKK4+Qixi8pY11Ed2pwuUJywF92KwTBp3KG/fj3s6kw
+	==
+X-Google-Smtp-Source: AGHT+IEJwOxtdPk47fwsVhabXdgRsvj6rzEOORbBDiuDqGTEDzjEPvSfcXtIwgstPdKU8lZRsPp5vA==
+X-Received: by 2002:ac8:5fc4:0:b0:4a7:7c8e:1d5 with SMTP id d75a77b69052e-4b11d2dc588mr119004831cf.17.1755451789362;
+        Sun, 17 Aug 2025 10:29:49 -0700 (PDT)
+Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b11dc18a0esm39626271cf.9.2025.08.17.10.29.48
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Aug 2025 10:29:48 -0700 (PDT)
+From: Scott Murray <scott.murray@konsulko.com>
+To: yocto-patches@lists.yoctoproject.org
+Subject: [meta-lts-mixins][kirkstone/rust][PATCH 5/7] cargo-c: Update patches to latest versions
+Date: Sun, 17 Aug 2025 13:29:29 -0400
+Message-ID: <55c27644f5e0d09bb9329a24e7cd946ff6a4b01a.1755451486.git.scott.murray@konsulko.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <cover.1755451486.git.scott.murray@konsulko.com>
+References: <cover.1755451486.git.scott.murray@konsulko.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8770:EE_|DS4PR12MB9634:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5865dd49-6cf5-4432-acb9-08dddc6d210c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|4022899009|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?VFhJeks2OXRzTnFIaXZ3ZnJYcVRUeldqUGtoVG9QamQ2K2JEWmZ0alo5MVc1?=
- =?utf-8?B?Ti80WHU4WXlxMTJrZFl3Tm1QL2ZYKzMwSHE2N0pURitKeHptcGxSQWdNdnMz?=
- =?utf-8?B?bDBOQzdyejFLNHNDK2QvSjVWengrNlFTaFJzNk5ldWZFVUpNRWUvbXpkc2l6?=
- =?utf-8?B?OUljV3AvSTdXYStZakNPNkRvUDNwT2JsTkdLTGNOZlJvcElZdVo2SFVZbUtP?=
- =?utf-8?B?WEt0L0lPcE56ZTlvd0xseGswUGdQQk9LejdsMSs1TkFrbENvMUV1dFhPRDdY?=
- =?utf-8?B?NGNRMldGNUF1WmdZUzJ0L3FpWkVGR2NYS2FMK2NYZk5PUlVXVkt4OEphTDhP?=
- =?utf-8?B?anExUXVaUk5mN3E0dlkyV1UxNTI5cERrSEdCbHhXL2J3ZHdETGVWelE0NTBj?=
- =?utf-8?B?K2crZS9yWURjUCtrYUhwUjBLcEh0M0RkZnJnQStlODhDZ2ZaeWFzcUg4OGxk?=
- =?utf-8?B?VmdZTEh1bDI1WWZQcTVLQUVsU3BpNThDZ1BsaHlTWDI1N292SitHY3NtWVcv?=
- =?utf-8?B?SEVhMWR2RWR5dXNMbTQ4UjhiRDdob0JNQm9Cam5NbXNadFJzTUZHb2pyaVFm?=
- =?utf-8?B?Tzk4Uk5Ody92RzM2VEU4cVVwWWlValQ5OUZNUk55SUVzc3NVWFErUlBRU2xo?=
- =?utf-8?B?WTNpWkQ5QXNHMStuQVZaWXlwNm9SZ3ltTGRReE40d3JDalFpa1d5ZjNVNkZY?=
- =?utf-8?B?MzlzWmR0UWNsWVh1WHdKT3RZL1MwNlhrdzlGdUNvU25RWWJldU1NU2R0bm83?=
- =?utf-8?B?N0I5MDJFdjNRTWdZc0ZENmpOa08yM0NmWTd3SEQvakhIL2VkdGhTb0lUM1V0?=
- =?utf-8?B?dDJSNXR5YTVrbE9TNVc5WURCNVRiUC9xelROenNmZ0VoZ0dhWXQ3RndTOUpy?=
- =?utf-8?B?ME9TeXpGOHVoZTJWSzZLekRtb1BIaU1Vb1V0RE5UL0YveklLYVM0NlZMRWtU?=
- =?utf-8?B?OEpJajc2WXVmcHcza3cvck85V0NWM1ZFUHVhMlRyaUhBZis1TDdINm5MQlBy?=
- =?utf-8?B?NVIzY1NxM3VsTlluVDNzS0VEd1pnZS9oQ0tIdEVkRitDdWsrTGcwd1gxeWpo?=
- =?utf-8?B?dkVOZFd0M2oyK0IrZEN1STlCSkJwWTExRXhhbnpvU2VKREU1MXNsVklSNU1M?=
- =?utf-8?B?UHJnSVNaRTRkUlRKMkNGUmVHVU4zYjgwQVErYnlXMmlrU3lGc0R4eTZOUE5W?=
- =?utf-8?B?dDYvNHl2NjBtWGhHQUtZaVZtSDd5dElaOUkrRkc3VFdQVmpLek9zU0dSMUpO?=
- =?utf-8?B?TGlLNjlndEEvZFJ4QVFWaXpZeXpLWk5Wa3I3cUhoQ1FGZzdmOFdmbC9Qalg0?=
- =?utf-8?B?Rzl0Zi82dU5iMmZ4S0duQmZCbXVFVlYxZWRNYnpaM0lmSHp0c1hoOXRqMHdW?=
- =?utf-8?B?aTE1dExMOXVzSTc3NjNiYnNRRklBbUxsaEVVVVVnQm1iYU0xVU5MQ21ueXdu?=
- =?utf-8?B?SU5RK2tEVk1pMzlzbllXYnROdVpyRzVDUk11eFVxREJScXU0dXlDRHhnTTBk?=
- =?utf-8?B?WmxvQ2J2MzV2b290VUx3RkZLM25IeFplYk5zWWQ3YytZMHhKZVVLVEpzZ1Iy?=
- =?utf-8?B?RGhkek13OHlPR3FoWFhEdU91Sk1ZOVpOWC8rSEdEL2ZlQXhWSW41SzBPQTRa?=
- =?utf-8?B?VEVuQkJ1V0sxc3VGM2tnTk1YK2xUMUY3YjduOUNBSzNsbytCUVJmcEhSVkJG?=
- =?utf-8?B?UUFuOWFvRVZwaTdqaDd2UmNYb0pEQTM1b2phdllRb1VVcGhsbkErVEk4c0t1?=
- =?utf-8?B?V2d0S3ozNnMwaXRSOGRhTmNMMEl3Wm5Fa202a1ZNVmNZeG1WOFFZMmx4SkNk?=
- =?utf-8?Q?k9+ojqhVAPI7e/NCO+itKGGWesSDA5+VKIfdU=3D?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8770.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(4022899009)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?NXozVmVrM1FJMTdyUkprTjd0WFFBUU5MWmx0NW00TGc5YUFhdnBNSXY5U1NP?=
- =?utf-8?B?SElDRGFPeTZ3bmRiZ3RwbndabzA0am5zNDNoYXgxR2FEVFhOZm5USFlJdTJZ?=
- =?utf-8?B?dGdsd1lxVTdINzZacm9hdDZGN1FWalBBbFlJYkFlYzdkb3NlWGQ2Ym1ueEtF?=
- =?utf-8?B?U3RCYnBFd01EM3dJckZVTWVwenFza3Z2bHh3RFJXL21JUGZWcit3aXVYNnhr?=
- =?utf-8?B?elNBa1FBL1MvYlo5VEtEUXVhRVM4ekU1TndkZVBQZEw3M0QxRHp5MlZNaEhN?=
- =?utf-8?B?MTRwMVNtdm9hbFBpeWJUaHJBR1RWSWdncEk1VEc1YXFrQ0prNlRkYmFyWVNK?=
- =?utf-8?B?NUtWOElHK2hoczVCeTAzOSs5akkwcFA2bk1ua3l6Uk9YUnRGMTdDRWo4NVlY?=
- =?utf-8?B?bUdMQmdUYkJETmtWdS81bWFtd3NZMWM3bFVUSzIwcHdsb05ZZ01MVkJTT2Zy?=
- =?utf-8?B?eTVHWjUrTzA5R0JZSjZUYmh3YUxiYnUrTGYxcHFuL1JXOHRQZ1p4UXZ4VVRZ?=
- =?utf-8?B?MG5xZ042bFpXdzRyZ3dzSjU3eHh6YWsxNXUwcXl3Zkd5eklxV3hucklSRHEy?=
- =?utf-8?B?NGJhZ0dTeDZOYTA5eGpLcHVWUVozR2VXbnhkUTV2T0ExSGF2Q0RoWHhxZ3FU?=
- =?utf-8?B?Q05vNEJ4VDIrbjFlOFdSQTYwT0xIZkVUTnlNK25WTjQvTXFqeGlGNmRuZndq?=
- =?utf-8?B?NUxGNlRqOWk0TnkydkdHR1Z0ZHNkNC9aMFl2bDJUK0ZOT2VIelhuWmkrT05B?=
- =?utf-8?B?NHdLMUtWc3EzR3ozMlFicjNDR1Uwa2hFVFFZdU1UUUxhWXk4aFNjc3JUVjNN?=
- =?utf-8?B?ZnZrUHRqd29HQ3V4NktzRWFJL0RnRDRNWkgwRFNjYnZJUUNBbEU2ZTVmSGYy?=
- =?utf-8?B?VjNTNElaOEE4UktqL1BPdTV5VjhZMU5hQ2sxZlB0OWx1R3krVFg5SjFJU2VW?=
- =?utf-8?B?NEgzVlNKUUNkVzM5T3l6TkkzNi9xOHJvOVNRRUNtdU5XOHRzTGVzYkR3RGRB?=
- =?utf-8?B?QU4xa3NqVkMrYXB6Q3MzVEJEOUtaREVVbmovdW5OeHJvQmo1cmxLY2F0SURW?=
- =?utf-8?B?THBMK1l1R1RFcEtsSGI4YTA4NVB1ZjNTQ2hEcGJzenRrQVhXMmU1Q2o3MDRm?=
- =?utf-8?B?OCtQcFRqQTZjWDBWb2JRNWN3SWxzV3o0NDByMDM2bGVHQkhHMVJsZnRXdFdi?=
- =?utf-8?B?aVI0ZHBuUy81MmxwRU1aM0w1NVMvd3NKbmFqR2N6V2tHSXVvR3p0VS9HcEJN?=
- =?utf-8?B?T1l3dHU5ayt4SVNCeVFsRUFPSjZ2SzU5YnE5YitJallGR0RaY0pPUFF5bkNz?=
- =?utf-8?B?aWxjWjVLSE5CSllLMk5BVlJEWEdRYUs2RGhnWForcGxiRzc3MHI2Z2ZZOCtO?=
- =?utf-8?B?bGRTWGgrNDEvSDQvZlUrRGtHeWM5SjJ2V2VDc2crcWlYakpsLzVZYTNRbW8w?=
- =?utf-8?B?ejl4UWxyVWZTREQ5OVNTVEJJYmlKMmR1OTI0MUxENUl6T0YyM0sxMnhyZW9R?=
- =?utf-8?B?WFNnMlJRYXF2YUtaRWpUWkVkdWZlM3ZNWWo2bTQ1aWljTWNUalowWmJrOGRI?=
- =?utf-8?B?RHFpT0NualZrSHM5TUVVZi9kVkFpRGtldTh6bGZXZzBxaWpFUUlNWnFTTm5t?=
- =?utf-8?B?TGVwNXBPYUtnNkRHK0M1UnhxQmR4Wmk1cDJqL2RXYVlFMURKQ2JTSVhoMzJE?=
- =?utf-8?B?elJucE1EWjN3azVPUHp2cS9kYkVPb01WSlhtUHdvbU9temtQUUNJejAxdUcr?=
- =?utf-8?B?aG1iaStTeGMrR1drRkZKam1sZmlqcDRzejhqM29meTc4cXVSTStVSGNIbmx2?=
- =?utf-8?B?Y1dVUDRvQndMMFBocUVoc2JJRUZmSUk4UUsvWUl3bU96RWZWM0duK2xFOFNR?=
- =?utf-8?B?OE5weVh5dk1KZzd1SEdLdXc5cWY3b2o0b2w0cUVHWGRydVFBMk44UlNDNXEr?=
- =?utf-8?B?RkhVR21xeURGT1R0VWNYbXlpbkZiTGVOYnB0RXpLZ0JNUmE3KzdhU2N6d1Jm?=
- =?utf-8?B?eTgzSUFmcUJUN05jMDRLSTMyVGhxSG1lc1dNTGkvTjYwYnU0MTM3bXRDRWtl?=
- =?utf-8?B?TVc4QnNCbjhNSWhZdzdJUExweGtSYTdkMnRmQWh0MVVwU3JSQnNuSjFmeW1y?=
- =?utf-8?Q?a9u+0XBnIDGW8fhjqlcUC3CzR?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5865dd49-6cf5-4432-acb9-08dddc6d210c
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8770.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2025 02:32:22.2145
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jW2di8+87uqdNdQIPMONAQSXxCrm+LxA7ynZa8Evp3hpVaLq+gm+/ubeAE+kywWlsZU7kn3+ue/8x3GQHGoiRQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PR12MB9634
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sat, 16 Aug 2025 02:32:30 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2003
+ <yocto-patches@lists.yoctoproject.org>; Sun, 17 Aug 2025 17:29:51 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2009
 
+From: Khem Raj <raj.khem@gmail.com>
 
-On 8/13/2025 7:02 PM, Sandeep Gundlupet Raju via lists.yoctoproject.org 
-wrote:
-> [AMD Official Use Only - AMD Internal Distribution Only]
->
-> Thanks,
-> Sandeep
->> -----Original Message-----
->> From: yocto-patches@lists.yoctoproject.org <yocto-
->> patches@lists.yoctoproject.org> On Behalf Of Lee Chee Yang via
->> lists.yoctoproject.org
->> Sent: Tuesday, August 12, 2025 9:13 PM
->> To: yocto-patches@lists.yoctoproject.org
->> Subject: Re: [yocto-patches] [meta-zephyr][scarthgap][PATCH v5 4/12] zephyr-
->> image: Add image artifacts to output files
->>
->>
->>
->>> -----Original Message-----
->>> From: yocto-patches@lists.yoctoproject.org <yocto-
->>> patches@lists.yoctoproject.org> On Behalf Of Sandeep Gundlupet Raju
->>> via lists.yoctoproject.org
->>> Sent: Wednesday, 13 August, 2025 1:42 AM
->>> To: yocto-patches@lists.yoctoproject.org; Lee, Chee Yang
->>> <chee.yang.lee@intel.com>
->>> Subject: [yocto-patches] [meta-zephyr][scarthgap][PATCH v5 4/12]
->>> zephyr-
->>> image: Add image artifacts to output files
->>>
->>> Inherit image-artifact-names bbclass in zephyr-image.inc and add image
->>> artifacts to output generated files.
->>>
->>> Before:
->>> zephyr-helloworld.elf
->>>
->>> After:
->>> zephyr-helloworld-{MACHINE}-{DATETIME}.elf
->>>
->>> Signed-off-by: Sandeep Gundlupet Raju <sandeep.gundlupet-
->> raju@amd.com>
->>> ---
->>>   .../zephyr-kernel/zephyr-image.inc            | 28 +++++++++++++++----
->>>   1 file changed, 23 insertions(+), 5 deletions(-)
->>>
->>> diff --git
->>> a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-image.inc
->>> b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-image.inc
->>> index d6ee21f..93d36b1 100644
->>> --- a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-image.inc
->>> +++ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-image.inc
->>> @@ -1,29 +1,47 @@
->>>   require zephyr-kernel-src.inc
->>>   require zephyr-kernel-common.inc
->>> -inherit deploy
->>> +inherit deploy image-artifact-names
->>>
->>>   OECMAKE_SOURCEPATH = "${ZEPHYR_SRC_DIR}"
->>>
->>> +ZEPHYR_IMAGE_LINK_NAME ?= "${PN}-${MACHINE}"
->>> +ZEPHYR_IMAGE_BASE_NAME ?= "${PN}-
->>> ${MACHINE}${IMAGE_VERSION_SUFFIX}"
->>> +
->>>   do_install() {
->>>       install -d ${D}/firmware
->>>
->>> -    install -D ${B}/zephyr/${ZEPHYR_MAKE_OUTPUT}
->> ${D}/firmware/${PN}.elf
->>
->> Since this is for stable branch, I think we should keep the elf/bin/efi file with
->> old naming. We can deploy both ${PN}.elf and
->> ${ZEPHYR_IMAGE_BASE_NAME}.elf,  ${PN}.elf can be copy of/soft link to
->> latest  ${ZEPHYR_IMAGE_BASE_NAME}.elf, same for .bin and .efi.
->>
-> [Sandeep] : Agreed this is for stable branch but to me this seems to be a bug. Deploying ${PN}.elf is not a YP best practice. What do you think?
-[Sandeep]: Chee Yang, ping on above question.
->>
->>
->>
->>> +    install -D ${B}/zephyr/${ZEPHYR_MAKE_OUTPUT}
->>> + ${D}/firmware/${ZEPHYR_IMAGE_BASE_NAME}.elf
->>>
->>>       if [ -f ${B}/zephyr/${ZEPHYR_MAKE_BIN_OUTPUT} ]
->>>       then
->>> -      install -D ${B}/zephyr/${ZEPHYR_MAKE_BIN_OUTPUT}
->>> ${D}/firmware/${PN}.bin
->>> +      install -D ${B}/zephyr/${ZEPHYR_MAKE_BIN_OUTPUT}
->>> + ${D}/firmware/${ZEPHYR_IMAGE_BASE_NAME}.bin
->>>       fi
->>>
->>>       if [ -f ${B}/zephyr/${ZEPHYR_MAKE_EFI_OUTPUT} ]
->>>       then
->>> -      install -D ${B}/zephyr/${ZEPHYR_MAKE_EFI_OUTPUT}
->>> ${D}/firmware/${PN}.efi
->>> +      install -D ${B}/zephyr/${ZEPHYR_MAKE_EFI_OUTPUT}
->>> + ${D}/firmware/${ZEPHYR_IMAGE_BASE_NAME}.efi
->>>       fi
->>>   }
->>> +
->>>   FILES:${PN} = "/firmware"
->>>   INSANE_SKIP += "ldflags buildpaths"
->>>   SYSROOT_DIRS += "/firmware"
->>>
->>>   do_deploy() {
->>> -    cp ${D}/firmware/${PN}.* ${DEPLOYDIR}/
->>> +    cp ${B}/zephyr/${ZEPHYR_MAKE_OUTPUT}
->>> ${DEPLOYDIR}/${ZEPHYR_IMAGE_BASE_NAME}.elf
->>> +    ln -sf ${ZEPHYR_IMAGE_BASE_NAME}.elf
->>> + ${DEPLOYDIR}/${ZEPHYR_IMAGE_LINK_NAME}.elf
->>> +
->>> +    if [ -f ${B}/zephyr/${ZEPHYR_MAKE_BIN_OUTPUT} ]
->>> +    then
->>> +       cp ${B}/zephyr/${ZEPHYR_MAKE_BIN_OUTPUT}
->>> ${DEPLOYDIR}/${ZEPHYR_IMAGE_BASE_NAME}.bin
->>> +       ln -sf ${ZEPHYR_IMAGE_BASE_NAME}.bin
->>> ${DEPLOYDIR}/${ZEPHYR_IMAGE_LINK_NAME}.bin
->>> +    fi
->>> +
->>> +    if [ -f ${B}/zephyr/${ZEPHYR_MAKE_EFI_OUTPUT} ]
->>> +    then
->>> +       cp ${B}/zephyr/${ZEPHYR_MAKE_EFI_OUTPUT}
->>> ${DEPLOYDIR}/${ZEPHYR_IMAGE_BASE_NAME}.efi
->>> +       ln -sf ${ZEPHYR_IMAGE_BASE_NAME}.efi
->>> ${DEPLOYDIR}/${ZEPHYR_IMAGE_LINK_NAME}.efi
->>> +    fi
->>> +
->>>   }
->>>   addtask deploy after do_install
->>> --
->>> 2.34.1
->>>
->>>
->>>
->>>
->>>
->>
->>
->>
->>
->
->
-> -=-=-=-=-=-=-=-=-=-=-=-
-> Links: You receive all messages sent to this group.
-> View/Reply Online (#1986): https://lists.yoctoproject.org/g/yocto-patches/message/1986
-> Mute This Topic: https://lists.yoctoproject.org/mt/114670142/8188369
-> Group Owner: yocto-patches+owner@lists.yoctoproject.org
-> Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/14211927/8188369/518048116/xyzzy [santraju@amd.com]
-> -=-=-=-=-=-=-=-=-=-=-=-
->
->
+getrandom patch is accepted upstream with minor changes
+parking_lot patch has addressed upstream feedback
+
+Signed-off-by: Khem Raj <raj.khem@gmail.com>
+Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+(adapted from oe-core commit 9f0f41d8e3fe00df37d926d99fb490614b51dde7)
+Signed-off-by: Scott Murray <scott.murray@konsulko.com>
+---
+ ...Use-libc-SYS_futex_time64-on-riscv32.patch | 69 +++++++------------
+ ...Use-libc-SYS_futex_time64-on-riscv32.patch | 65 +++++++----------
+ 2 files changed, 51 insertions(+), 83 deletions(-)
+
+diff --git a/recipes-devtools/rust/cargo-c/0001-getrandom-Use-libc-SYS_futex_time64-on-riscv32.patch b/recipes-devtools/rust/cargo-c/0001-getrandom-Use-libc-SYS_futex_time64-on-riscv32.patch
+index dc7130f..638832c 100644
+--- a/recipes-devtools/rust/cargo-c/0001-getrandom-Use-libc-SYS_futex_time64-on-riscv32.patch
++++ b/recipes-devtools/rust/cargo-c/0001-getrandom-Use-libc-SYS_futex_time64-on-riscv32.patch
+@@ -1,53 +1,36 @@
+ From 71c356a07fbbf1530cfc87960e975f93bc9007e8 Mon Sep 17 00:00:00 2001
+ From: Khem Raj <raj.khem@gmail.com>
+ Date: Tue, 22 Jul 2025 09:46:03 -0700
+-Subject: [PATCH] Use libc::SYS_futex_time64 on riscv32
++Subject: [PATCH] Use getrandom syscall on riscv32/riscv64 linux
+ 
+-On RISC-V 32-bit (riscv32), the SYS_futex system call is
+-often handled indirectly due to the use of a 64-bit time_t
+-type. Specifically, while SYS_futex is not directly defined,
+-a related syscall like SYS_futex_time64 can be used,
++Minimum kernel needed on RISCV is fairly new (4.15+) so we are sure
++to have getrandom syscall, on glibc there is mimimal ABI kernel to denote
++it but musl does not have any other way to indicate it, so add it
++as a condition here to choose getrandom backend for rv32/rv64 on linux
++when using musl.
+ 
+-Upstream-Status: Submitted [https://github.com/rust-random/getrandom/pull/698]
++Upstream-Status: Backport [https://github.com/rust-random/getrandom/pull/699]
+ Signed-off-by: Khem Raj <raj.khem@gmail.com>
+ ---
+  src/backends/use_file.rs | 17 +++++++++++++++++
+  1 file changed, 17 insertions(+)
+ 
+-diff --git a/src/backends/use_file.rs b/src/backends/use_file.rs
+-index 7b48d43..baa0c66 100644
+---- a/src/backends/use_file.rs
+-+++ b/src/backends/use_file.rs
+-@@ -158,7 +158,18 @@ mod sync {
+-     pub(super) fn wait() {
+-         let op = libc::FUTEX_WAIT | libc::FUTEX_PRIVATE_FLAG;
+-         let timeout_ptr = core::ptr::null::<libc::timespec>();
+-+        #[cfg(not(target_arch = "riscv32"))]
+-         let ret = unsafe { libc::syscall(libc::SYS_futex, &FD, op, FD_ONGOING_INIT, timeout_ptr) };
+-+        #[cfg(target_arch = "riscv32")]
+-+        let ret = unsafe {
+-+            libc::syscall(
+-+                libc::SYS_futex_time64,
+-+                &FD,
+-+                op,
+-+                FD_ONGOING_INIT,
+-+                timeout_ptr,
+-+            )
+-+        };
+-         // FUTEX_WAIT should return either 0 or EAGAIN error
+-         debug_assert!({
+-             match ret {
+-@@ -172,7 +183,13 @@ mod sync {
+-     /// Wake up all threads which wait for value of atomic `FD` to change.
+-     pub(super) fn wake() {
+-         let op = libc::FUTEX_WAKE | libc::FUTEX_PRIVATE_FLAG;
+-+
+-+        #[cfg(not(target_arch = "riscv32"))]
+-         let ret = unsafe { libc::syscall(libc::SYS_futex, &FD, op, libc::INT_MAX) };
+-+
+-+        #[cfg(target_arch = "riscv32")]
+-+        let ret = unsafe { libc::syscall(libc::SYS_futex_time64, &FD, op, libc::INT_MAX) };
+-+
+-         debug_assert!(ret >= 0);
+-     }
+- 
++--- a/src/backends.rs
+++++ b/src/backends.rs
++@@ -93,7 +93,15 @@ cfg_if! {
++                 // Minimum supported Linux kernel version for MUSL targets
++                 // is not specified explicitly (as of Rust 1.77) and they
++                 // are used in practice to target pre-3.17 kernels.
++-                target_env = "musl",
+++                all(
+++                    target_env = "musl",
+++                    not(
+++                        any(
+++                            target_arch = "riscv64",
+++                            target_arch = "riscv32",
+++                        ),
+++                    ),
+++                ),
++             ),
++         )
++     ))] {
+diff --git a/recipes-devtools/rust/cargo-c/0001-parking-lot-Use-libc-SYS_futex_time64-on-riscv32.patch b/recipes-devtools/rust/cargo-c/0001-parking-lot-Use-libc-SYS_futex_time64-on-riscv32.patch
+index 37f21af..9e84ca3 100644
+--- a/recipes-devtools/rust/cargo-c/0001-parking-lot-Use-libc-SYS_futex_time64-on-riscv32.patch
++++ b/recipes-devtools/rust/cargo-c/0001-parking-lot-Use-libc-SYS_futex_time64-on-riscv32.patch
+@@ -1,66 +1,51 @@
+-From 78d4c37e9c5b60ea2368627c2fc297dfc46bec2a Mon Sep 17 00:00:00 2001
++From 7ebddca7070742bbb9cce471a93d699ad70ee371 Mon Sep 17 00:00:00 2001
+ From: Khem Raj <raj.khem@gmail.com>
+ Date: Tue, 22 Jul 2025 10:15:06 -0700
+-Subject: [PATCH] Use libc::SYS_futex_time64 on riscv32
++Subject: [PATCH] Use libc::SYS_futex_time64 on riscv32/musl
+ 
+ On RISC-V 32-bit (riscv32), the SYS_futex system call is
+ often handled indirectly due to the use of a 64-bit time_t
+ type. Specifically, while SYS_futex is not directly defined,
+-a related syscall like SYS_futex_time64 can be used,
++a related syscall like SYS_futex_time64 can be used on target
++e.g. riscv32
+ 
+ Upstream-Status: Submitted [https://github.com/Amanieu/parking_lot/pull/485]
+ Signed-off-by: Khem Raj <raj.khem@gmail.com>
+ ---
+- src/thread_parker/linux.rs | 19 +++++++++++++++++++
+- 1 file changed, 19 insertions(+)
++ src/thread_parker/linux.rs | 13 +++++++++++--
++ 1 file changed, 11 insertions(+), 2 deletions(-)
+ 
+ diff --git a/src/thread_parker/linux.rs b/src/thread_parker/linux.rs
+-index 92601f6..3695624 100644
++index 92601f6..0952db4 100644
+ --- a/src/thread_parker/linux.rs
+ +++ b/src/thread_parker/linux.rs
+-@@ -108,6 +108,7 @@ impl ThreadParker {
++@@ -108,9 +108,13 @@ impl ThreadParker {
+              .as_ref()
+              .map(|ts_ref| ts_ref as *const _)
+              .unwrap_or(ptr::null());
+-+        #[cfg(not(target_arch = "riscv32"))]
+++        #[cfg(not(all(target_arch = "riscv32", target_env = "musl")))]
+++        let futex_num = libc::SYS_futex;
+++        #[cfg(all(target_arch = "riscv32", target_env = "musl",))]
+++        let futex_num = libc::SYS_futex_time64;
+          let r = unsafe {
+              libc::syscall(
+-                 libc::SYS_futex,
+-@@ -117,6 +118,16 @@ impl ThreadParker {
+-                 ts_ptr,
+-             )
+-         };
+-+        #[cfg(target_arch = "riscv32")]
+-+        let r = unsafe {
+-+            libc::syscall(
+-+                libc::SYS_futex_time64,
+-+                &self.futex,
+-+                libc::FUTEX_WAIT | libc::FUTEX_PRIVATE_FLAG,
+-+                1,
+-+                ts_ptr,
+-+            )
+-+        };
+-         debug_assert!(r == 0 || r == -1);
+-         if r == -1 {
+-             debug_assert!(
+-@@ -137,12 +148,20 @@ impl super::UnparkHandleT for UnparkHandle {
++-                libc::SYS_futex,
+++                futex_num,
++                 &self.futex,
++                 libc::FUTEX_WAIT | libc::FUTEX_PRIVATE_FLAG,
++                 1,
++@@ -137,8 +141,13 @@ impl super::UnparkHandleT for UnparkHandle {
+      unsafe fn unpark(self) {
+          // The thread data may have been freed at this point, but it doesn't
+          // matter since the syscall will just return EFAULT in that case.
+-+        #[cfg(not(target_arch = "riscv32"))]
+++        #[cfg(not(all(target_arch = "riscv32", target_env = "musl",)))]
+++        let futex_num = libc::SYS_futex;
+++        #[cfg(all(target_arch = "riscv32", target_env = "musl",))]
+++        let futex_num = libc::SYS_futex_time64;
+++
+          let r = libc::syscall(
+-             libc::SYS_futex,
++-            libc::SYS_futex,
+++            futex_num,
+              self.futex,
+              libc::FUTEX_WAKE | libc::FUTEX_PRIVATE_FLAG,
+              1,
+-         );
+-+        #[cfg(target_arch = "riscv32")]
+-+        let r = libc::syscall(
+-+            libc::SYS_futex_time64,
+-+            self.futex,
+-+            libc::FUTEX_WAKE | libc::FUTEX_PRIVATE_FLAG,
+-+            1,
+-+        );
+-         debug_assert!(r == 0 || r == 1 || r == -1);
+-         if r == -1 {
+-             debug_assert_eq!(errno(), libc::EFAULT);
+-- 
+2.50.1
+
 
