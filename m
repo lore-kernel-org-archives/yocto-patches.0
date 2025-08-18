@@ -2,66 +2,66 @@ Return-Path: <sandeep.gundlupet-raju@amd.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C85CECA0EE4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5B4FCA0ED1
 	for <webhook@archiver.kernel.org>; Mon, 18 Aug 2025 22:03:22 +0000 (UTC)
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (NAM12-MW2-obe.outbound.protection.outlook.com [40.107.244.45])
- by mx.groups.io with SMTP id smtpd.web10.2789.1755554593508877785
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (NAM10-MW2-obe.outbound.protection.outlook.com [40.107.94.68])
+ by mx.groups.io with SMTP id smtpd.web11.2753.1755554592508744699
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 18 Aug 2025 15:03:13 -0700
+ Mon, 18 Aug 2025 15:03:12 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@amd.com header.s=selector1 header.b=Q2Di8UCV;
- spf=permerror, err=parse error for token &{10 18 %{i}._ip.%{h}._ehlo.%{d}._spf.vali.email}: invalid domain name (domain: amd.com, ip: 40.107.244.45, mailfrom: sandeep.gundlupet-raju@amd.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@amd.com header.s=selector1 header.b=TQhxrPHH;
+ spf=permerror, err=parse error for token &{10 18 %{i}._ip.%{h}._ehlo.%{d}._spf.vali.email}: invalid domain name (domain: amd.com, ip: 40.107.94.68, mailfrom: sandeep.gundlupet-raju@amd.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=clPK46tRVjieadL8Vv9jUZfpEu529/2jFxj6Hd8MmIJU8G24DXizjIpnNGpX4getDbynbnv24veogRizSG7/S60g9A+c26Zbe6Af5byzVP1VghgzFYj6iHIZdIOsPWHvxXzXkjHIl5cn4VhTNSmLevj5ccpRpc6Gll1KN/W6w8PYUqwju55ky37yxr5B5gSHXOKmq+9tgmXnksIugswIXC+Aiwb1OLxXJcz3na55k7CMKqL3VLBdFH5tDU6vFirH6YszPyiWAr02N+xNVMatZU7//204boF+CkxJb35dtPQIPPmLUN2oVkFtfUddXKGJxdyBYuCyUFrAwivUz2hzVw==
+ b=HiAopGgBo0LSRCUqbVTpw10g2qvomBzsAPrwk99c1pPerjrqdew5ch8QB+34sFcekXEoTH0zdCrnpoSKP4DWKLIWazOvhFiNezpb994FJskdO8WTCGUrcYJwCW0n7cw8xvxuTWbAg/CwaUUH4J+vf7UczgrZoF0CDhHmKifEZ71vXBr4l0P+fp84k7CsqMEMeq53JcW+0Yb2VrvkrVYV4mPY+0iI1nyHoO9uCGQ7eEHpiIsph8xC9XVXEh27p0oR9a61DrbLUV+dGj50abaXuIAaEnu74AUEsqFSgCxGSRsrWgQU7zScoapYpJfyr3/ViJn0ck3tuFB/gMTDm9P3HA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ISs6cuvTFdN7VCuELhR8XI1pTHN8m0TeLRCYXAYPsKk=;
- b=EmT3eEFcKvyYLfx5PIS+LJ9sGVRRdXhmRWapDxMuGe0S/1B3DUqbD2TzR+Da+AQIVmrd4WsSOwqZ5emcLHQBV1dwiS9vQa2m8nePSIXhdmVG6bF1x95h9jXPGKlomYDYyAftbLIO1WfrcRwe8rlsCZP4OtLNisZeJIashWDUeEYR5wabzW9/hEIu8cHYiswCA1Q0AbYZHENashG7J/+5ndgzOhY2J6FwMgQpnNM27lwWPBBVnZfo5AogGdCsO6iPudjt/fSiSRAsc9CNHq0lTTlzwFjOZC4ws/VC4BagzAEynrF2/Tj5103J0u/NPlhrr8wuISHe2zbaRv4RDMfw3A==
+ bh=K0v1+7PrV5cYc4kqLLRPw9UGIAYS6zsfBaOL0CoePJg=;
+ b=oTtb4ZqhL/rQDR+slDGXi1wuA/CNVo1qRCDT9I0cAWxb9jrCio6Wc7SEbT/B4lxIOsFT355Bxs8qMIJLoTI0/xMityfYfgHwSa2tTYehnE06b0OUq3C5ucZWklt7ARDTcQDrSBznVGZsLm4H+KdSHEah2JufTHsliJCVm4JUrCh3UJxvl6CJopLtCHEDqe/bkjU/IJQwZTOLoTzRRuTBBLXCrWwQQfmFZioepKlWJcQc/Ut2WqEOncOd7EAhK6yTnqdXdI/OxXO9Cx/q01Xv1nyT8wVD4ui7mqNf90nNQC4HIyrG744WwhwZXdkeYx+dtgi0A4eo/Yy3PI25ppgPag==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=lists.yoctoproject.org
  smtp.mailfrom=amd.com; dmarc=pass (p=quarantine sp=quarantine pct=100)
  action=none header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ISs6cuvTFdN7VCuELhR8XI1pTHN8m0TeLRCYXAYPsKk=;
- b=Q2Di8UCVVU9krIBrS/xxTBt3IbDOaPwdVYdrQVKyf9hlO+Z5C9d9gs/tzcHQVw66+hUvc7n4ge9kwBJFQSgg1ge51xwzR1B2vdkr3F2QzvIoOIGx+yDJkGExwimKHhbQGwR1DeoL2XvyLrz/8z3RExYFIlS+8ctBmPDQu+6wYTI=
-Received: from SJ0PR03CA0202.namprd03.prod.outlook.com (2603:10b6:a03:2ef::27)
- by DS7PR12MB9549.namprd12.prod.outlook.com (2603:10b6:8:24e::7) with
+ bh=K0v1+7PrV5cYc4kqLLRPw9UGIAYS6zsfBaOL0CoePJg=;
+ b=TQhxrPHHK2Opu1dRuW3hx4jmDTi9biIHDt29//KJofUAw9MKIlYbTabkko+eNBkPoJmQJ49OgpZVK0Yo7w7yZ13YG8q6p/I49cmFcuOGxdF4v8ZjYQB33nFCklIeHQyqa41G1bEMBJHPcvorcn5rUUFqGAP0w1NSqIXix3juWhc=
+Received: from BL1PR13CA0356.namprd13.prod.outlook.com (2603:10b6:208:2c6::31)
+ by MN6PR12MB8492.namprd12.prod.outlook.com (2603:10b6:208:472::22) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Mon, 18 Aug
- 2025 22:03:07 +0000
-Received: from CO1PEPF000044FD.namprd21.prod.outlook.com
- (2603:10b6:a03:2ef:cafe::4c) by SJ0PR03CA0202.outlook.office365.com
- (2603:10b6:a03:2ef::27) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.20 via Frontend Transport; Mon,
- 18 Aug 2025 22:03:07 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.18; Mon, 18 Aug
+ 2025 22:03:09 +0000
+Received: from BN2PEPF00004FBA.namprd04.prod.outlook.com
+ (2603:10b6:208:2c6:cafe::61) by BL1PR13CA0356.outlook.office365.com
+ (2603:10b6:208:2c6::31) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.12 via Frontend Transport; Mon,
+ 18 Aug 2025 22:03:09 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
 Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- CO1PEPF000044FD.mail.protection.outlook.com (10.167.241.203) with Microsoft
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN2PEPF00004FBA.mail.protection.outlook.com (10.167.243.180) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9073.0 via Frontend Transport; Mon, 18 Aug 2025 22:03:07 +0000
-Received: from satlexmb07.amd.com (10.181.42.216) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.9052.8 via Frontend Transport; Mon, 18 Aug 2025 22:03:09 +0000
+Received: from Satlexmb09.amd.com (10.181.42.218) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 18 Aug
- 2025 17:03:06 -0500
-Received: from SATLEXMB04.amd.com (10.181.40.145) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ 2025 17:03:08 -0500
+Received: from SATLEXMB04.amd.com (10.181.40.145) by satlexmb09.amd.com
+ (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1748.10; Mon, 18 Aug
- 2025 15:03:06 -0700
+ 2025 15:03:07 -0700
 Received: from xcosswyocto01.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Mon, 18 Aug 2025 17:03:06 -0500
+ Transport; Mon, 18 Aug 2025 17:03:07 -0500
 From: Sandeep Gundlupet Raju <sandeep.gundlupet-raju@amd.com>
 To: <yocto-patches@lists.yoctoproject.org>, <chee.yang.lee@intel.com>
-Subject: [meta-zephyr][scarthgap][PATCH v6 7/11] meta-zephyr: Update README files
-Date: Mon, 18 Aug 2025 16:03:00 -0600
-Message-ID: <20250818220304.2300436-8-sandeep.gundlupet-raju@amd.com>
+Subject: [meta-zephyr][scarthgap][PATCH v6 10/11] zephyr-kernel: Add rpmsg multi services recipe
+Date: Mon, 18 Aug 2025 16:03:03 -0600
+Message-ID: <20250818220304.2300436-11-sandeep.gundlupet-raju@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250818220304.2300436-1-sandeep.gundlupet-raju@amd.com>
 References: <20250818220304.2300436-1-sandeep.gundlupet-raju@amd.com>
@@ -70,417 +70,104 @@ Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000044FD:EE_|DS7PR12MB9549:EE_
-X-MS-Office365-Filtering-Correlation-Id: 011515a7-0de3-4a97-cd06-08dddea3035f
+X-MS-TrafficTypeDiagnostic: BN2PEPF00004FBA:EE_|MN6PR12MB8492:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8a63e8c2-8137-436f-8600-08dddea304a6
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014|13003099007;
+	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?OLSBQ/fWyG13Ldph4MuAIOuYzN7+8Bitxbt4AbUzx/uvv9XepAbRYXvhA923?=
- =?us-ascii?Q?L8OuzbnALR9TKLVRrgweDemjqwwpK6AeKYhasPWWMtMKhOJyWqSYAEOlvXwU?=
- =?us-ascii?Q?adJ7kOGEXijbWSzc/EyrT3LONyGp5ZAakaEro3oi3w8Q3ecIJpwDTNhiORI0?=
- =?us-ascii?Q?b6r3KkZr/l9rASS8ihmbbQpLNxOFgIbQuvZvEsAJhfLQ356OrrZOs+TFdgDL?=
- =?us-ascii?Q?SHb8NvcRX9Wi5sCWzuxuDOsYGsyLSHKjRa8eiAb6JNC8a/U7+xCWm9oi8rNN?=
- =?us-ascii?Q?GVhyz5P6L66Ks6sXOEm3BrWS8BqgrzhkC4WFI1PHpfOwWwSwFmx6TPMiXUw7?=
- =?us-ascii?Q?3FYI93vRK8pxJVwIurLH34/J3s/3ljmIigAZybgz6PXq+HctzIcwvKtjlSDX?=
- =?us-ascii?Q?JK2LMrs5JIlMV58lRpE2FWKD8toSRGnKpgH0AGwRqkUhPFZCaAkKz/RKnXox?=
- =?us-ascii?Q?s5Iy1yp9HrKHUKBCAqFI5D47JA1cdbsrAj5TksqhUWtjF1fFhXeuqN2ofMeP?=
- =?us-ascii?Q?0Ubaxt01a9S/lb+eY+7HFMcQilSb/OBPjiH03saPLqKsSTt5CkpakU/l4jp+?=
- =?us-ascii?Q?OmSo8nx4FNXBQ/DRSZjsB6GOiXy3Bh0mxgYn1qjW8xrZStar0hDzdU0oadNq?=
- =?us-ascii?Q?4zYXwYlyI1c+qu/pizF1BBEmqzhWwru2wIS7zylYVnmAR2hegy2uGHL7QGTl?=
- =?us-ascii?Q?SGiwsewC/b1iJzr5lQZnKFkAghapy2nBPsRzAtoyJHq5n5wHK3b68sryYU9j?=
- =?us-ascii?Q?9nf0F2vyniV72eyb47va7DlHmE4CFPA9B7XPGM0AuFgyU1ujX6AwdO3JUVw0?=
- =?us-ascii?Q?tfSI3z+Vet1Bp5XLus/E7J6pgs57omvsu0r5kXwfhF6F5vrtkQjZgBUM6Bb7?=
- =?us-ascii?Q?RxwU3uP7mLX/MtMGex9MSnRsJfluDxkv3bNwxpdiAOm6z+0oeXvMorGlsNFR?=
- =?us-ascii?Q?6hHsTbp6yJ39SmDvZEN1QiRpGp2I6VE+Fq2LGjLNLbzyjlG43lX+ja4ab/WV?=
- =?us-ascii?Q?GLez05o5YsIrop8zyBgkYKPwgTNmmRLi08XlFwmgLkvrRBibfmxA/T0d3m2m?=
- =?us-ascii?Q?2kpuuKmCe9f7QyOG2ieuDoRD3lUikGHs2FhZyQPXHEN82DqE0ytbWHIbViNo?=
- =?us-ascii?Q?KZJ9bQjyayUxbrHkOGcls/ZhnzW/2GIyn5RxWqT/tmNDTNl9G8Zo5bXL1sg7?=
- =?us-ascii?Q?cPwfPUDXaH9qWUytbhDqpeBAfEfOIBUf0NACiWezD4CdZ0c9BeBh7iB67B0q?=
- =?us-ascii?Q?0L3/399vP2zDtUHVPcjkCIiVCDbK7vc7/x5PgZrasf/35kkvY0/GA10gWYgS?=
- =?us-ascii?Q?mZaLF8auWG32aQEa2I61rwsD2Xoxm6Gsr67lWuNu7AeRJnHjFU9seOTer5MG?=
- =?us-ascii?Q?0X4KPjWNLZi/WDbaBpNoNWP2/CdJO+Eqdvwd3mf8SxQDrh3DU1OrJJEOLVrJ?=
- =?us-ascii?Q?zIbjqd6ATX4pq6g4GOoAxDJxDZX/zq15RgLsoQEmnV3Nni5vuKQbGsBBaAzd?=
- =?us-ascii?Q?d2FvCG3EDzRbb1s=3D?=
+	=?us-ascii?Q?9ZiybvZ5K1iorL+rWnq+7m9oobG/Omc7D7zvF/ICMLyVcgIM/XrEnCzw2tuR?=
+ =?us-ascii?Q?EQxlg9px55oJ92oVNneeM8TpXxvx6S8E2xizpHaGE6uqn8KtNcuQn2wc9czh?=
+ =?us-ascii?Q?OQBT7MQNOqGDJhFsTQxGH/2QpfSEU75AdYc0truluIFU9Rxh354Q26e/80xX?=
+ =?us-ascii?Q?SadTl+kfPyLgd2i2rCnRRiRthYnhpcNP6BdAXgHwYYakubqSCLN/QVFQ85zW?=
+ =?us-ascii?Q?5ksYnP7tx81ut8M2BSUEdRwb9wQF72o+oWBL/44E7ArhEb/SeEV44rrDP+cX?=
+ =?us-ascii?Q?elWvWlHE4dCGdfwbv4RKIl/H/thIqlmdggcVXTrl+1AoLfZNkVREKAQilWjC?=
+ =?us-ascii?Q?stpBlUpJSTGA11IiIRtrmOO6Svd1CY8F3kw3c8nhesJudsHDoVhNseCHvapV?=
+ =?us-ascii?Q?1SDj/XfcGh3zRIMkMOpJJ4gEAdLCaxwJEXlHtjKFER3ZBsEfZ9eXmtqqjTnO?=
+ =?us-ascii?Q?/zt/6ce50AxNpTDydpkc6TrkM9kr5jEbSmKinx7wrBwzsLKi/4HHDDtD+wl2?=
+ =?us-ascii?Q?Qq4vas7ggx1SsQu3NqbSn2IbLDjqwMsU9MkSiYdxSxI6FnrYAWNi31TDOqY2?=
+ =?us-ascii?Q?ekxk+lDReXnOVP350WJk+CCVBNwxiKz/ilJRth8KGxeeIIkjACIyu5lcFT+C?=
+ =?us-ascii?Q?tYESvLmEsYJ/2R6w42oV2YRCnQwHjz5vSkhmrtJiXMk0c+njueRIWj1RXfuC?=
+ =?us-ascii?Q?T1rBbEqdvueoTCeXeghYCBLLwFZwyyMOqlCEds7mvvhYfsaWbuUntGFNzVc5?=
+ =?us-ascii?Q?KGnrks+r0WWiOJqe2r/LEH4uWTf/MdkbsMHEmHimlkvwPtjJRTDkdE5utXw9?=
+ =?us-ascii?Q?ZSqvAnuPCQ2/Yji03cPqaHFKBxsUHHptIJ4oZnlGxN/S9tydNfvfj9iggM+v?=
+ =?us-ascii?Q?uwLcGvrmaSveQ7Q8pYiy40wZf0VDXP25xMsHcmttQfjdx3O/4tOz7nZR1t5b?=
+ =?us-ascii?Q?D+ugZD5TTT6sk0AE4nFHr/cUIaGAVrjxM/6TBUZZZhcHgrZ2lHpCfYHaFQQL?=
+ =?us-ascii?Q?oB9WbJIw2+mpWe0GTrBa+Ys/azHyuEz+vOAO0tr3dR5rgZM+AEQwQ8G3J75Q?=
+ =?us-ascii?Q?su0EISEHMedMmzmhvr1dUmHe2gj1dCJ18utZYpZDbgBjImOsmVQqXSKdb2hd?=
+ =?us-ascii?Q?rXdTaZIxc437wvrOCCKkC5DaWG25Wj7MLysy+U2DMTXIvTdKT4jAikuttGeL?=
+ =?us-ascii?Q?yl5UsouiLSLuIO6d6llNtjwJS7+BSlTKmC73z1BMW2y8u3+Gagu3ERVrsdC+?=
+ =?us-ascii?Q?TOdQ/p8Sll5ggCk2yyvHqpGCB/j9DH2t9R7DCVP9OaEeKcScyDOmHqzn/3Ov?=
+ =?us-ascii?Q?8ZhPZ6vfZjK6gVNYILa+w50eminLwrjzmoxOd38vLmiUHerHq3gzShcQOyeS?=
+ =?us-ascii?Q?fY9gSNbiS51Xmr+uXR/ukvpF+16NqCHiyE6sXNAIc5qKhTD3tX4MwV8mmRld?=
+ =?us-ascii?Q?p6hotgnDRgrrHT1BduS7ckbUsxax9zHEUYmeLMDou3G8PMHollVw0GQHYp60?=
+ =?us-ascii?Q?OX8GUNzAgKh42yz2dHw2k6MyBYnG/rB7eBdG?=
 X-Forefront-Antispam-Report: 
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014)(13003099007);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2025 22:03:07.2780
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2025 22:03:09.5111
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 011515a7-0de3-4a97-cd06-08dddea3035f
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8a63e8c2-8137-436f-8600-08dddea304a6
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource: 
-	CO1PEPF000044FD.namprd21.prod.outlook.com
+	BN2PEPF00004FBA.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB9549
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR12MB8492
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Mon, 18 Aug 2025 22:03:22 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2049
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2047
 
-Update README files with following.
-
- - Build instructions
- - Maintainers lists and patch submission
+Add zephyr-openamp-rpmsg-mulit-services recipe to build out of tree
+openamp-system-reference example applications.
 
 Signed-off-by: Sandeep Gundlupet Raju <sandeep.gundlupet-raju@amd.com>
 ---
- README.txt =3D> README.md     | 163 ++++++++++++++++++++++++------------
- meta-zephyr-bsp/README.md   |   5 ++
- meta-zephyr-bsp/README.txt  |   1 -
- meta-zephyr-core/README.md  |   6 ++
- meta-zephyr-core/README.txt |   1 -
- 5 files changed, 120 insertions(+), 56 deletions(-)
- rename README.txt =3D> README.md (60%)
- create mode 100644 meta-zephyr-bsp/README.md
- delete mode 100644 meta-zephyr-bsp/README.txt
- create mode 100644 meta-zephyr-core/README.md
- delete mode 100644 meta-zephyr-core/README.txt
+ .../zephyr-openamp-rpmsg-multi-srv.bb         | 23 +++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+ create mode 100644 meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-op=
+enamp-rpmsg-multi-srv.bb
 
-diff --git a/README.txt b/README.md
-similarity index 60%
-rename from README.txt
-rename to README.md
-index d3694a6..16951b0 100644
---- a/README.txt
-+++ b/README.md
-@@ -1,71 +1,101 @@
--Building Zephyr Images via bitbake recipes
--=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-+# meta-zephyr
-=20
--More detailed and up-to-date information can be found here:
--
--https://wiki.yoctoproject.org/wiki/TipsAndTricks/BuildingZephyrImages
-+This layer enables building Zephyr using Yocto Project.
-=20
--Prerequisites:
--=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-+## Dependencies
-=20
- This layer depends on:
--    Yocto distro (master)
--        git://git.yoctoproject.org/poky
--    Python layer (meta-openembedded/meta-python)
--        git://git.openembedded.org/meta-openembedded
-=20
--Add "meta-openembedded/meta-oe" to BBLAYERS
--Add "meta-openembedded/meta-python" to BBLAYERS
--Add "meta-zephyr-core" and "meta-zephyr-bsp" to BBLAYERS
-+	URI: https://git.yoctoproject.org/poky
-+	layers: meta, meta-poky
-+	branch: scarthgap
-+
-+	URI: https://git.openembedded.org/meta-openembedded
-+	layers: meta-oe, meta-python
-+	branch: scarthgap
-+
-+## Building Zephyr Images via bitbake recipes
-+
-+More detailed and up-to-date information can be found here:
-+
-+https://wiki.yoctoproject.org/wiki/TipsAndTricks/BuildingZephyrImages
-=20
--Building and Running Zephyr Samples
--=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-+> **Pre-requisites:**
-+1. Refer [Yocto Project Quick Build]( https://docs.yoctoproject.org/dev/si=
-ngleindex.html#yocto-project-quick-build) documentation.
-+
-+2. Clone and add following layers to BBLAYERS
-+    * meta-openembedded/meta-oe
-+    * meta-openembedded/meta-python
-+    * meta-zephyr-core
-+    * meta-zephyr-bsp
-+```
-+    $ mkdir sources
-+    $ git clone -b <release-branch> https://git.yoctoproject.org/poky
-+    $ git clone -b <branch-name> https://git.openembedded.org/meta-openemb=
-edded
-+    $ git clone -b <branch-name> https://git.yoctoproject.org/meta-zephyr
-+    $ source poky/oe-init-build-env
-+    $ bitbake-layers add-layer ../meta-openembedded/meta-oe
-+    $ bitbake-layers add-layer ../meta-openembedded/meta-python
-+    $ bitbake-layers add-layer ../meta-zephyr/meta-zephyr-core
-+    $ bitbake-layers add-layer ../meta-zephyr/meta-zephyr-bsp
-+```
-+
-+### Building and Running Zephyr Samples
-=20
- You can build Zephyr samples. There are several sample recipes.
-=20
- To use the Yocto toolchain, modify local conf by adding:
-+```
-     DISTRO=3D"zephyr"
-+```
-=20
- To use the Zephyr pre-built toolchain, modify local conf by adding:
-+```
-     ZEPHYR_TOOLCHAIN_VARIANT =3D "zephyr"
-+```
-=20
- For example, to build the Zephyr "philosophers" sample:
--   =20
-+```
-     $ MACHINE=3Dqemu-x86 bitbake zephyr-philosophers
--   =20
--You can then run the created "philosophers" image in qemu:
-+```
-=20
-+You can then run the created "philosophers" image in qemu:
-+```
-     $ runqemu qemu-x86
--   =20
--The same sample, for ARM image:
-+```
-=20
-+The same sample, for ARM image:
-+```
-     $ MACHINE=3Dqemu-cortex-m3 bitbake zephyr-philosophers
-     $ runqemu qemu-cortex-m3
--   =20
--The same sample, for Nios2 image:
-+```
-=20
-+The same sample, for Nios2 image:
-+```
-     $ MACHINE=3Dqemu-nios2 bitbake zephyr-philosophers
-     $ runqemu qemu-nios2
-+```
-=20
--Flashing
--=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D
-+### Flashing
-=20
- You can flash Zephyr samples to boards. Currently, the following MACHINEs
- are supported:
-  * DFU:
--  - arduino-101-sss
--  - arduino-101
--  - arduino-101-ble
-+   * arduino-101-sss
-+   * arduino-101
-+   * arduino-101-ble
-  * pyocd:
--  - 96b-nitrogen
-+   * 96b-nitrogen
-=20
- To flash the example you built with command e.g.
--
-+```
-     $ MACHINE=3D96b-nitrogen bitbake zephyr-philosophers
-+```
-=20
- call similar command with explicit flash_usb command:
--
-+```
-     $ MACHINE=3D96b-nitrogen bitbake zephyr-philosophers -c flash_usb
-+```
-=20
- dfu-util and/or pyocd need to be installed in your system. If you observe
- permission errors or the flashing process seem to hang, follow those instr=
-uctions:
-@@ -77,28 +107,31 @@ of IDs. Once that is set, the tool will only try to pr=
-ogram these IDs. You can
- query for the IDs by running `pyocd list` on your host while having the pr=
-obes
- attached. Besides setting this variable through the build's configuration =
-or
- metadata, you can also inject its value from command line with something l=
-ike:
--
-+```
-     $ PYOCD_FLASH_IDS=3D'<ID1> <ID2> <ID3>' BB_ENV_EXTRAWHITE=3D"$BB_ENV_E=
-XTRAWHITE PYOCD_FLASH_IDS" bitbake <TARGET> -c flash_usb
-+```
-+
-+## Building and Running Zephyr Tests
-=20
--Building and Running Zephyr Tests
--=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D
- Presently only toolchains for ARM, x86, IAMCU and Nios2 are supported.
- (For ARM we use CortexM3 toolchain)
-=20
- To run Zephyr Test using Yocto Image Tests, ensure following in local.conf=
-:
--
-+```
-     INHERIT +=3D "testimage"
-+```
-=20
- You can build and test an individual existing Zephyr test.
- This is done by appending the actual test name to the "zephyr-kernel-test"=
-,
- for example:
--
-+```
-     $ MACHINE=3Dqemu-x86 bitbake zephyr-kernel-test-sleep
-     $ MACHINE=3Dqemu-x86 bitbake zephyr-kernel-test-sleep -c testimage
-+```
-=20
- You can also build and run all Zephyr existing tests (as listed in the fil=
-e
- zephyr-kernel-test.inc). For example:
--
-+```
-     $ MACHINE=3Dqemu-x86 bitbake zephyr-kernel-test-all
-     $ MACHINE=3Dqemu-x86 bitbake zephyr-kernel-test-all -c testimage
- or=20
-@@ -107,16 +140,17 @@ or
- or=20
-     $ MACHINE=3Dqemu-nios2 bitbake zephyr-kernel-test-all
-     $ MACHINE=3Dqemu-nios2 bitbake zephyr-kernel-test-all -c testimage
--       =20
-+```
-+
-+## Generating OE Machines based on Zephyr board definitions
-=20
--Generating OE Machines based on Zephyr board definitions
--=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D
- We currently have a recipe called generate-zephry-machines which will go t=
-hrough
- and attempt to create an OE machine conf file for every board in Zephyr.
-=20
- This is run via:
--
-+```
- MACHINE=3Dqemu-x86 bitbake generate-zephyr-machines
-+```
-=20
- The output is then put in the normal deploy dir. This recipe is really onl=
-y
- useful for maintainers. There is currently no way to use the Zephyr board=
-=20
-@@ -125,14 +159,15 @@ you will need to run the above, copy the conf files f=
-rom the deploy dir to the
- machine conf directory and then run your build. This shouldn't need to hap=
-pen=20
- often.
-=20
--Generating new Zephyr recipe versions
--=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-+## Generating new Zephyr recipe versions
-+
- The script meta-zephyr-core/scripts/generate-version.py is used to generat=
-e
- Yocto configuration for a Zephyr version from the West configuration in th=
-e
- Zephyr repository. It requires the west and jinja2 Python packages to be
- installed on the host. Run it as follows:
--
-+```
-     $ ./meta-zephyr-core/scripts/generate-version.py x.x.x
-+```
-=20
- where x.x.x is the Zephyr version.
-=20
-@@ -140,17 +175,37 @@ The patch files added to SRC_URI in the generated fil=
-e should be validated and
- modified if required.
-=20
- The new version should be committed and submitted to the mailing list as
--described in "Contributing".
-+described in "Maintainers, Mailing list, Patches".
-+
-+## Maintainers, Mailing list, Patches
-+
-+Please send any patches for this layer to the yocto-patches mailinglists
-+with ['meta-zephyr'] in the subject:
-+
-+	yocto-patches@lists.yoctoproject.org
-+
-+When sending patches, please make sure the email subject line includes
-+`[meta-amd-edf][<BRANCH_NAME>][PATCH]` and cc'ing the maintainers.
-+
-+For more details follow the Yocto Project community patch submission guide=
-lines,
-+as described in:
-+
-+https://docs.yoctoproject.org/dev/contributor-guide/submit-changes.html#
-+
-+`git send-email --to yocto-patches@lists.yoctoproject.org *.patch`
-+
-+> **Note:** When creating patches, please use below format. To follow best=
- practice,
-+> if you have more than one patch use `--cover-letter` option while genera=
-ting the
-+> patches. Edit the 0000-cover-letter.patch and change the title and top o=
-f the
-+> body as appropriate.
-=20
--Contributing
--=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-+**Syntax:**
-+`git format-patch -s --subject-prefix=3D"meta-zephyr][<BRANCH_NAME>][PATCH=
-" -1`
-=20
--Patches for meta-zephyr should be sent to the yocto-patches@lists.yoctopro=
-ject.org
--mailing list.  See https://lists.yoctoproject.org/g/yocto-patches for subs=
-cription
--details and the list archive.  Please add [meta-zephyr] to the subject so
--the patches are identifable.
-+**Example:**
-+`git format-patch -s --subject-prefix=3D"meta-zephyr][scarthgap][PATCH" -1=
-`
-=20
--Git can be configured to send mails appropriately when using git send-emai=
-l:
-+**Maintainers:**
-=20
--$ git config --local sendemail.to yocto-patches@lists.yoctoproject.org
--$ git config --local format.subjectPrefix meta-zephyr][PATCH
-+    Lee Chee Yang <chee.yang.lee@intel.com>
-+	Sandeep Gundlupet Raju <sandeep.gundlupet-raju@amd.com>
-diff --git a/meta-zephyr-bsp/README.md b/meta-zephyr-bsp/README.md
+diff --git a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-openamp-r=
+pmsg-multi-srv.bb b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-op=
+enamp-rpmsg-multi-srv.bb
 new file mode 100644
-index 0000000..e159015
+index 0000000..222ed2b
 --- /dev/null
-+++ b/meta-zephyr-bsp/README.md
-@@ -0,0 +1,5 @@
-+# meta-zephyr-bsp
++++ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-openamp-rpmsg-mu=
+lti-srv.bb
+@@ -0,0 +1,23 @@
++SUMMARY =3D "Open AMP rpmsg multi services"
++DESCRIPTION =3D "Open AMP rpmsg multi services"
 +
-+This layer contains machine files for building Zephyr applications.
++inherit zephyr-sample
 +
-+For more details see [Building Instructions](../README.md)
-diff --git a/meta-zephyr-bsp/README.txt b/meta-zephyr-bsp/README.txt
-deleted file mode 100644
-index 2644ed0..0000000
---- a/meta-zephyr-bsp/README.txt
-+++ /dev/null
-@@ -1 +0,0 @@
--See ../README.txt
-diff --git a/meta-zephyr-core/README.md b/meta-zephyr-core/README.md
-new file mode 100644
-index 0000000..18db977
---- /dev/null
-+++ b/meta-zephyr-core/README.md
-@@ -0,0 +1,6 @@
-+# meta-zephyr-core
++SRC_URI_ZEPHYR_OPEN_AMP_SYS_REF ?=3D "git://github.com/OpenAMP/openamp-sys=
+tem-reference;protocol=3Dhttps"
 +
-+This layer enables Zephyr build metadata such as zephyr scripts, kernel in=
-clude
-+files, zephyr applications recipes and bitbake class to support qemu boot.
++BRANCH ?=3D "v2024.05"
++BRANCHARG =3D "${@['nobranch=3D1', 'branch=3D${BRANCH}'][d.getVar('BRANCH'=
+, True) !=3D '']}"
 +
-+For more details see [Building Instructions](../README.md)
-diff --git a/meta-zephyr-core/README.txt b/meta-zephyr-core/README.txt
-deleted file mode 100644
-index 2644ed0..0000000
---- a/meta-zephyr-core/README.txt
-+++ /dev/null
-@@ -1 +0,0 @@
--See ../README.txt
++SRC_URI:append =3D " \
++    ${SRC_URI_ZEPHYR_OPEN_AMP_SYS_REF};name=3Dopen-amp-sys-ref;${BRANCHARG=
+};destsuffix=3Dgit/open-amp-sys-ref \
++    "
++
++SRCREV_open-amp-sys-ref =3D "d78315763fbacba8a74552d0ad570bd01c42ccf9"
++
++ZEPHYR_SRC_DIR =3D "${ZEPHYR_BASE}/../open-amp-sys-ref/examples/zephyr/rpm=
+sg_multi_services"
++
++ZEPHYR_MAKE_OUTPUT =3D "rpmsg_multi_services.elf"
++
++EXTRA_OECMAKE +=3D " \
++    -DCONF_FILE=3D"prj.conf" \
++    "
 --=20
 2.34.1
 
