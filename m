@@ -2,40 +2,40 @@ Return-Path: <sandeep.gundlupet-raju@amd.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDAF5CA0EF4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE02CCA0EF6
 	for <webhook@archiver.kernel.org>; Mon, 18 Aug 2025 22:03:12 +0000 (UTC)
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (NAM10-BN7-obe.outbound.protection.outlook.com [40.107.92.89])
- by mx.groups.io with SMTP id smtpd.web10.2784.1755554590492194979
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (NAM12-DM6-obe.outbound.protection.outlook.com [40.107.243.64])
+ by mx.groups.io with SMTP id smtpd.web10.2783.1755554590081028165
  for <yocto-patches@lists.yoctoproject.org>;
  Mon, 18 Aug 2025 15:03:10 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@amd.com header.s=selector1 header.b=nlPQhULl;
- spf=permerror, err=parse error for token &{10 18 %{i}._ip.%{h}._ehlo.%{d}._spf.vali.email}: invalid domain name (domain: amd.com, ip: 40.107.92.89, mailfrom: sandeep.gundlupet-raju@amd.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@amd.com header.s=selector1 header.b=sRy/0TVZ;
+ spf=permerror, err=parse error for token &{10 18 %{i}._ip.%{h}._ehlo.%{d}._spf.vali.email}: invalid domain name (domain: amd.com, ip: 40.107.243.64, mailfrom: sandeep.gundlupet-raju@amd.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XJQNS6dtrguGFe7FoQY6g225rfB2+sLVkxVFf+jOQ5vo9XD9iY9S1+wxGwvTf/4mFI1nGvTbHksZSYQ5TDq1/CXxzwHbkdm+d0P4fctC/OJIeUU2vTnVKLahdwAcqcn3rBN0wRMxBGhOYM8KPg6FqFjqXBA0FrkeiYnvm0Jl0It87JcUEbqeRgn+NMFpTInrrXMtkoZDYnDFLaPO5HiDUpEszWqrNC2uiZpH3xmyc5MNaak/gsiK2dV/mwQvbUmsdsFvKIO0PEPR8W77U3L43+TS9WjhJ9f2r5D4FAn8tQIjnIntWXtmzaczoBVI5x7G+B+xnRcm0giy/F4zmdpgqw==
+ b=KIxD2WoE0vLXQQl555k+1Z14V9V8TM0r+Yuczz3LAQzS8kg+TgHetLHWmOdEtHiVT1dzbqJquZMmkoE8j8+wydsRZ/tEATHUKhdM55WQLG/NNMs3rgm9LA7f95fVOcXxPE36iZpGKnZRMwy+ZxYRbO8LI+XHk+oMoedozlpNssjra0NH8Cu9WW/DW66DXWvHjx+OxEfg8qkE/9N+GV6r3R3RpVvh+9RR4lYL00aCDi3t1T95bqETBW6bvptoYstbvHNnKnN9ckEXZIJISkh7XWPqHkM8MD9tjRuooh6mhoi6hl1dvhOGU8Hi9h9FK2gXrAbKZQnObvrovcK3j6LehQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cBjCUjK6nZT5h/0AN9PNqd4oGkWuobN6m5FuQcEh9MM=;
- b=ab7jmNsJ8XAeqniHvR3Zi3SZ0HAEmk2wSmp7SbFbygJtTLLEjd/c6Y03ANu/ncNd9ms9J5zgo9Wz9CmSzeRfdBZN8HUFatdc7kyE9VyepG1ztJBveIJXWLTFK1H6YIdzTPliAZXkLjYlPIvIFvAUzwLx79x2pn//vt4Wp1vn52HGo5VXkl5MCvOMPtJPlTalN50crQJB7ryy+8/t3wwZBXwibf0vEhbvIIs8dkFQ/2077T6pf16gmId41Exd2e0Mw+312GxFHLAR4kvehwY8iJEwfI3BQP0AFpGEnLOTms6XBpGObySMNUpYrKNkj+wWBLnXCN7dXFxrMPp/4M13qg==
+ bh=e9EPR4cTNA2vXb5f4YKQWncFzS9fxcYLpMy8LDB7Otw=;
+ b=CI0CXbZdQ+ubt80xEzY43y6no/AuIyYWH/Jqsw1u+xxcANyVUDQtS8kETnpsPnIwdj0jUOMGcCTfQwcMmXPuMnsY7wgfBE0Lw6ZGe14maULm++DEq5dgKOYl1TIzvC37mKZekwSJL3DvnPGskhYpsyoBtuLTPMNnXyOSYmuxnATPeRK4BMzoNcKmGLmEWrjHBg3Qlcb68xcTTcgJLd/A7GAm/8Hrfj9jnTtLQCmJ9HPgd2VNqMIZSrx77jvaMon4hTmYWLmZKng3Rot1zTYIgSgmlJsAPxbkoMP0pRE5BULLbHq7s5gs675u73GJ4dulqBsp6EV+IeTARHS/5qKUmw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=lists.yoctoproject.org
  smtp.mailfrom=amd.com; dmarc=pass (p=quarantine sp=quarantine pct=100)
  action=none header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cBjCUjK6nZT5h/0AN9PNqd4oGkWuobN6m5FuQcEh9MM=;
- b=nlPQhULlmYZX2uhmC1u5IsjS9uC5y15BtoYy/HAWWw4EKlmwOaQYItpfYQPbTgSZun1DzhLOPDEAprEp8+zu8XUFT85ko3Kw8vAiwxJwE/3uGoyrb96WVpdwjAMee0FSKAwiFXOS5hO03sNqCERzEIO4Xy5Xnmhmj/pg9yXGZfk=
-Received: from SJ0PR03CA0194.namprd03.prod.outlook.com (2603:10b6:a03:2ef::19)
- by SJ5PPFD525C5379.namprd12.prod.outlook.com (2603:10b6:a0f:fc02::9a3) with
+ bh=e9EPR4cTNA2vXb5f4YKQWncFzS9fxcYLpMy8LDB7Otw=;
+ b=sRy/0TVZTw4WAvy9QOWdiS97pQSMMgTPT/cn/haxwORDbArNtlK7tRifx/xfSBL3meP2OqSZSOEz1TlAYaxFNIF7QssTIL34AECjW3R9OUdVfavn3oX9WOaOHS7uebRT7rLxt98ADpC5AvAtEAJAZ5bgxt4/OFlXWO4MC0JqI1o=
+Received: from BYAPR02CA0055.namprd02.prod.outlook.com (2603:10b6:a03:54::32)
+ by PH7PR12MB5853.namprd12.prod.outlook.com (2603:10b6:510:1d4::15) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.13; Mon, 18 Aug
- 2025 22:03:06 +0000
-Received: from CO1PEPF000044FD.namprd21.prod.outlook.com
- (2603:10b6:a03:2ef:cafe::cd) by SJ0PR03CA0194.outlook.office365.com
- (2603:10b6:a03:2ef::19) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Mon, 18 Aug
+ 2025 22:03:05 +0000
+Received: from CO1PEPF000044FC.namprd21.prod.outlook.com
+ (2603:10b6:a03:54:cafe::6c) by BYAPR02CA0055.outlook.office365.com
+ (2603:10b6:a03:54::32) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.20 via Frontend Transport; Mon,
- 18 Aug 2025 22:03:06 +0000
+ 18 Aug 2025 22:03:05 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -43,126 +43,234 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
 Received: from SATLEXMB03.amd.com (165.204.84.17) by
- CO1PEPF000044FD.mail.protection.outlook.com (10.167.241.203) with Microsoft
+ CO1PEPF000044FC.mail.protection.outlook.com (10.167.241.202) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9073.0 via Frontend Transport; Mon, 18 Aug 2025 22:03:06 +0000
-Received: from satlexmb10.amd.com (10.181.42.219) by SATLEXMB03.amd.com
+ 15.20.9073.0 via Frontend Transport; Mon, 18 Aug 2025 22:03:04 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB03.amd.com
  (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 18 Aug
- 2025 17:03:06 -0500
-Received: from SATLEXMB04.amd.com (10.181.40.145) by satlexmb10.amd.com
- (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1748.10; Mon, 18 Aug
- 2025 15:03:06 -0700
+ 2025 17:03:04 -0500
 Received: from xcosswyocto01.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Mon, 18 Aug 2025 17:03:05 -0500
+ Transport; Mon, 18 Aug 2025 17:03:04 -0500
 From: Sandeep Gundlupet Raju <sandeep.gundlupet-raju@amd.com>
 To: <yocto-patches@lists.yoctoproject.org>, <chee.yang.lee@intel.com>
-Subject: [meta-zephyr][scarthgap][PATCH v6 5/11] zephyr-qemuboot: Use image artifact file in qemuimage
-Date: Mon, 18 Aug 2025 16:02:58 -0600
-Message-ID: <20250818220304.2300436-6-sandeep.gundlupet-raju@amd.com>
+Subject: [scarthgap][PATCH v6 0/11] Update for scarthgap release
+Date: Mon, 18 Aug 2025 16:02:53 -0600
+Message-ID: <20250818220304.2300436-1-sandeep.gundlupet-raju@amd.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250818220304.2300436-1-sandeep.gundlupet-raju@amd.com>
-References: <20250818220304.2300436-1-sandeep.gundlupet-raju@amd.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
+Received-SPF: None (SATLEXMB03.amd.com: sandeep.gundlupet-raju@amd.com does
+ not designate permitted sender hosts)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000044FD:EE_|SJ5PPFD525C5379:EE_
-X-MS-Office365-Filtering-Correlation-Id: 75c7f267-93a3-4a90-a607-08dddea302f3
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044FC:EE_|PH7PR12MB5853:EE_
+X-MS-Office365-Filtering-Correlation-Id: e416ea13-1515-4471-6ceb-08dddea301da
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|376014|1800799024|82310400026|36860700013;
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?WcwowXxgKbOk7HkeWQjgrtNUGOCUBj/WLljT9YRF98nQzCbMUMPqfBjzyuNi?=
- =?us-ascii?Q?pgoi1YK/YxE7gYCm6EIb2odyYiJeDKubRKxualAL1P3kihG8YXRiSwBDrdrY?=
- =?us-ascii?Q?Pg3U+N4WcWGgg1FLNbDe11xUsOInnVo9QozlOjGppp0ju70I4krXGSHFNGh9?=
- =?us-ascii?Q?NL3FUhiMJbpXkHc7qv8PNg0yLSiCwP9bsQVMv6P5OvRdbhWn89DjjFtiO+51?=
- =?us-ascii?Q?lSk4/T+gaOH63uHD9NRwYBtCKJ5bSLelDrDXbHchRsCw7P1QhWavPr5s8ONk?=
- =?us-ascii?Q?wAtpyak911OSCV5wGy+kDaY0II5wkJMN2egEwL+gdmCnhh0vYN3rCLL2IxBB?=
- =?us-ascii?Q?ZxeK1hWVl+VjgYVeGE8X/6YfQdkq82yu4qd1qWBmkUvxhmoQplRfgUXHW4kq?=
- =?us-ascii?Q?n1BpWbtxqmN2rjMN1DaC2VzVY0ymC6ga4oqxwU9/sGWh7sFPZVtCW6yD5/9G?=
- =?us-ascii?Q?dd6pT+o7LC74s0MmVIizLjwhsmEwHvCWmYbYAOJiIM4VzZS0JePCZbqnN8ar?=
- =?us-ascii?Q?nOGReRglx6UcEb98tnuU88uAhFDeKqc2eVWqthRVgGaoO69YCygSc/1MnbUJ?=
- =?us-ascii?Q?4WcEUHk/52aQ2/YR6iXegbH5CX2zGRLVW1jwx8eiCL1S1aOa2bHlintg0kNf?=
- =?us-ascii?Q?D/3vbYremdynKluqbsNiW/B+MBdeXWfjC8QnIkPMIQvqLWN9oAvItlOteCaR?=
- =?us-ascii?Q?SdSaqCBnuQ+8G9bqTzQUXVAfjfQZXOHtfKOrhGjn//RZpnaHpGpBA5k2Uy+T?=
- =?us-ascii?Q?7Nt+l5VkcTDXmVLalvpSbvt1aKkfyv1ce0k3mwWiO3FQAYASH2q2hjBM7xWQ?=
- =?us-ascii?Q?tu7tDkvT2aJxfM7EADQB/jfmeAL4MwzNJP22AtCmp2e6sWV6OoboHWo51qZT?=
- =?us-ascii?Q?AKal1FrTNAs3u0F0VRPwIHqYGk+Gn6RhsSOZSH4IGCjUb8EbwhP8m2LJTir1?=
- =?us-ascii?Q?E8dEApWW0U2+W6A54f/nZq6rTXuvEbXLtE1uJYw8ZIzExdI9XqLOUnvBZn2g?=
- =?us-ascii?Q?kwuTiuPvL9Cm2rAIq3Y+x/z9HO+Q+rRD9t1Z3Us4RFT7oEhi6ImkMPDe9s1L?=
- =?us-ascii?Q?P95GQoBwlVRbfq2nThP7Hg0JL76VgNhWGj2b2bqjqz04HL+hqQLAGoLo3JgP?=
- =?us-ascii?Q?dwHgWZz6TLQJiTkJh0tiaaBrF16YW1QOgnemKA/me12WKtG6Gb6gY4+oqbi3?=
- =?us-ascii?Q?HsUy3WRygJkfraqJaJm7Ft/tk72pcrGMjFzLely1Y3GGyuj+D8N4khKF6SfN?=
- =?us-ascii?Q?ZQ9sLKdDPC2xDL/WIPHJcyPU3agOc06QdxpgEkb7FsvYQAG/mQK0NP0g0k8q?=
- =?us-ascii?Q?qKZcYgeNDft4gq1a+Mu7S2BwcV/9ZQgO5Mh4ByxkYX4r9NXV9o6XSkenZ6se?=
- =?us-ascii?Q?Md4ctNg/sJpkvBpWfF/GBJ1pUUjLzvEovyyF+FMY8pybkqd6/H6jI8JHDpih?=
- =?us-ascii?Q?Y0gTfSY1FLIkifPBDbCz4W0AfADpS0EPOhSyRwI9gyk+2fgISYc4W6eV8xWw?=
- =?us-ascii?Q?OsqLkEx0Pp3jnLferWkRHNrl5WdSVNzY0ITJ?=
+	=?us-ascii?Q?+enOdPVss5J9i2CuASQi6HgbHXvxO9DJljvL0v0WnNOQehquPMi3pcBL74li?=
+ =?us-ascii?Q?ycpJ5AOyb9heB8TE5KoMksGKWAwUciWh4ZOepI85/L6mDV6pttvWeZiehaYU?=
+ =?us-ascii?Q?60L8w0pCJ7GztYreT55DGEWEusRiPOIi9APK71AUDmA+3a0iRqgE39sJlW/b?=
+ =?us-ascii?Q?xb8YsCepFi7npW1wbG52q30P/xkq3cCJT7/UOd6/QSEK+IOWTiFGC8b3YorE?=
+ =?us-ascii?Q?haGvcDfEg8JQgTUYWhvSX2aKVeMcTfh/T+uJrAJEEV/T/j4IHRWmwntQ8hrL?=
+ =?us-ascii?Q?vpdXqkS5w2AcUSs3Nc9iYwb1UljJjdvqCPWKP8Rt6g1xShtCKbvQwj7Rxau4?=
+ =?us-ascii?Q?lLspDcTrBJK1h/Ffm6xS6NY0ZEco1oAuVIbNyoE4/76nPFnvJxcXQx8W5c2a?=
+ =?us-ascii?Q?dJCVPr20DtvqD+7TDk8UebgNAC+nOAZw8CBeXMibg/iDXDuctW6HZg/E6NXY?=
+ =?us-ascii?Q?K5xfwplYoOLJnfDOnOFTsAzweDoFr5nem1F9D6gyA+yJpp4rguqNDVubW7QL?=
+ =?us-ascii?Q?so5Pl19aJ2qmnSyYpW99crYJHx75fufwVtk8zMg5pQdOH4vr4OMPwLaMegts?=
+ =?us-ascii?Q?h2kvEZFBkZCuHt4gu5/QLe3ffjoVpF27lmtcRIPS09KVrLGfo1eLIdV2nPnu?=
+ =?us-ascii?Q?I4I5Dl0k2vnFii6hAjAMjyF/jYSi/myWa9ghyPvb2bN8+HSduEpEzMiwpGAs?=
+ =?us-ascii?Q?Tv18LKpiQkqmBxNkHCh1KyVDLOqFbcWfn4uzYKFN0jVPK29W5IPvM4Wy/3Qh?=
+ =?us-ascii?Q?ejQDZWIVZJ9u1r+KHTDaxA3t5jKy/ICBBb22FyaZtxY0/bN7MRs9MgGAqOjm?=
+ =?us-ascii?Q?4qdDgecG/p3qd7UASjwgC5VPKu7BDOnieXrNqdwrsZVaf2BS7Q6DujKAUsu1?=
+ =?us-ascii?Q?9Oqy3R353DZEmVqY/Jq8g4hihwyujlNRgMPRlQkJ3DkhasebV6nDOjMDXKCx?=
+ =?us-ascii?Q?6xiz+ye13707a/OUzz17EuoKkTHQjgrsXCnp6OmDlhNHfzC8Ch6oK4Gka+hp?=
+ =?us-ascii?Q?H195BLt8HYjPrd7ZAfc2v8Hsd++/1kqBBPzeVjrWVJgtJALZVrwIAFHr9Ejf?=
+ =?us-ascii?Q?nrtTIAbnySYl67pF4uOCzlsXM6cGH7Di4gvogIEgno1aGaUVa7leMKH/Pgvk?=
+ =?us-ascii?Q?WQgJKoQoERbEtsqFa3hDu3ilTPfuqEPhXCfx0lPI1fl9wSzXoBKk8NBaNOuh?=
+ =?us-ascii?Q?ZnSMUsCWtirIr0j2q9V3D8wrZA1ifMaeVcmk9wWFVYJRDdqJBFGVe1G2shoT?=
+ =?us-ascii?Q?89XWfZ9r5i7vpS+1XhkhAX7roFsqxq6Ha0ZcEk2BUdvcmeiUhtwi801cedq7?=
+ =?us-ascii?Q?yfxDdZ/+N+xrnEuswSXu3wwTN3x7gRCIQI9aoXUlN01YlFrEhEGQWd3N6c7S?=
+ =?us-ascii?Q?ckcT0pYIhqf9TnGpDffh0ORtn0C8408YdCx5AtmoYfhmYJolOPzuxD4KCjk4?=
+ =?us-ascii?Q?GEId0GZ5+e/XNf1hn+2c8FPKml8clhOukbfZqAnhMehDQECcVgiZZD63JdHT?=
+ =?us-ascii?Q?N9GQkFCDx/VWXe5+k+r2vJzev/VqC1cSSKC9?=
 X-Forefront-Antispam-Report: 
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2025 22:03:06.5691
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2025 22:03:04.7268
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 75c7f267-93a3-4a90-a607-08dddea302f3
+X-MS-Exchange-CrossTenant-Network-Message-Id: e416ea13-1515-4471-6ceb-08dddea301da
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource: 
-	CO1PEPF000044FD.namprd21.prod.outlook.com
+	CO1PEPF000044FC.namprd21.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPFD525C5379
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5853
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Mon, 18 Aug 2025 22:03:12 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2041
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2040
 
-Use image artifacts output file in qemuimage link.
+Changes in v6:
+   - Deploy ${PN}.elf/bin/efi for backward compatibility.
 
-Before:
-zephyr-helloworld-image-{MACHINE}.elf -> zephyr-helloworld.elf
+Changes in v5:
+   - Fix typo in zephyr-openamp-rpmsg-multi-srv recipe.
+   - Merge below commits into single commit.
+     [meta-zephyr][scarthgap][PATCH v4 3/13] zephyr-kernel-src: Remove PREF=
+ERRED_VERSION_zephyr-kernel
+     [meta-zephyr][scarthgap][PATCH v4 4/13] layer: Set PREFERRED_VERSION f=
+or kernel and sdk
 
-After:
-zephyr-helloworld-image-{MACHINE}.elf -> zephyr-helloworld-{MACHINE}-{DATET=
-IME}.elf
+Changes in v4:
+   -  Fix below patch commit message typo.
+      zephyr-kernel-src: Remove PREFERRED_VERSION_zephyr-kernel
 
-Signed-off-by: Sandeep Gundlupet Raju <sandeep.gundlupet-raju@amd.com>
+Changes in v3:
+   - Add Board extension support variables.
+
+Changes in v2:
+   - Move classes to match bbclass scope functionality.
+   - Use relative path to follow best practice.
+   - Convert zephyr-sample inc file to bbclass so that it can
+     be inherited from custom layers to support out-of-tree
+     zephyr applications.
+
+Description of change:
+1. Add new inc file and update to 0.16.9 version for scathgap
+2. Remove PREFERRED_VERSION_zephyr-kernel from zephyr-kernel-src and
+   move to layer.conf
+3. Add image artifacts to output files and use these files for qemuimage.
+4. Add Zephyr LTS3.7.0 support for scarthgap release.
+5. Update README files.
+6. Move classes to match bbclass scope functionality.
+7. Use relative path to follow best practice.
+8. Convert zephyr-sample inc file to bbclass so that it can
+   be inherited from custom layers to support out-of-tree
+   zephyr applications.
+9. Add rpmsg multi services recipe for openamp.
+10. Add Board extension support.
+
+Testing:
+Run the following commands.
+
+$ MACHINE=3D<machine-name> bitbake zephyr-helloworld
+$ MACHINE=3D<machine-name> runqemu nographic
+
+
+Summary of changes:
+
+meta-zephyr (scarthgap):
+Sandeep Gundlupet Raju
+    zephyr-kernel-common: Add Board extension support
+Sandeep Gundlupet Raju
+    zephyr-kernel: Add rpmsg multi services recipe
+Sandeep Gundlupet Raju
+    classes-recipe: Convert zephyr-sample inc file to bbclass
+Sandeep Gundlupet Raju
+    zephyr-kernel: Use relative path
+Sandeep Gundlupet Raju
+    meta-zephyr: Update README files
+Sandeep Gundlupet Raju
+    zephyr-kernel: Add Zephyr LTS3.7.0 support
+Sandeep Gundlupet Raju
+    zephyr-qemuboot: Use image artifact file in qemuimage
+Sandeep Gundlupet Raju
+    classes: Move classes to match bbclass scope functionality
+Sandeep Gundlupet Raju
+    zephyr-image: Add image artifacts to output files
+Sandeep Gundlupet Raju
+    zephyr-kernel-src: Remove PREFERRED_VERSION_zephyr-kernel
+Sandeep Gundlupet Raju
+    zephyr-sdk: Add new inc file and update to 0.16.9 version
+
+ b/README.md                                                               =
+                                                |  163 +++--
+ b/meta-zephyr-bsp/README.md                                               =
+                                                |    5=20
+ b/meta-zephyr-bsp/recipes-meta/meta/generate-zephyr-machines.bb           =
+                                                |    4=20
+ b/meta-zephyr-core/README.md                                              =
+                                                |    6=20
+ b/meta-zephyr-core/classes-recipe/zephyr-qemuboot.bbclass                 =
+                                                |    6=20
+ b/meta-zephyr-core/classes-recipe/zephyr-sample.bbclass                   =
+                                                |   10=20
+ b/meta-zephyr-core/classes-recipe/zephyrtest.bbclass                      =
+                                                |    1=20
+ b/meta-zephyr-core/conf/layer.conf                                        =
+                                                |    4=20
+ b/meta-zephyr-core/recipes-devtools/zephyr-sdk/zephyr-sdk.inc             =
+                                                |    3=20
+ b/meta-zephyr-core/recipes-devtools/zephyr-sdk/zephyr-sdk_0.16.9.bb       =
+                                                |    4=20
+ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/files/0001-3.7-x86-fix-efi=
+-binary-generation-issue-in-cross-compila.patch |  106 +++
+ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-blinky.bb          =
+                                                |    2=20
+ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-coap-client.bb     =
+                                                |    2=20
+ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-coap-server.bb     =
+                                                |    2=20
+ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-echo-client.bb     =
+                                                |    2=20
+ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-hci-uart.bb        =
+                                                |    2=20
+ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-helloworld.bb      =
+                                                |    2=20
+ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-http-client.bb     =
+                                                |    2=20
+ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-image.inc          =
+                                                |   37 +
+ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-kernel-common.inc  =
+                                                |    2=20
+ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-kernel-src-3.7.0.in=
+c                                               |  274 ++++++++++
+ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-kernel-src.inc     =
+                                                |    2=20
+ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-kernel-test-all.bb =
+                                                |    2=20
+ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-kernel-test.bb     =
+                                                |    4=20
+ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-lvgl.bb            =
+                                                |    2=20
+ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-mqtt-publisher.bb  =
+                                                |    2=20
+ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-openamp-rpmsg-multi=
+-srv.bb                                         |   23=20
+ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-openamp-rsc-table.b=
+b                                               |    2=20
+ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-openthread-echo-cli=
+ent.bb                                          |    2=20
+ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-openthread-rcp.bb  =
+                                                |    2=20
+ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-peripheral-esp.bb  =
+                                                |    2=20
+ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-peripheral-hr.bb   =
+                                                |    2=20
+ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-philosophers.bb    =
+                                                |    2=20
+ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-synchronization.bb =
+                                                |    2=20
+ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-websocket-client.bb=
+                                                |    2=20
+ meta-zephyr-bsp/README.txt                                                =
+                                                |    1=20
+ meta-zephyr-core/README.txt                                               =
+                                                |    1=20
+ meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-image.inc            =
+                                                |    4=20
+ meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-kernel-common.inc    =
+                                                |    5=20
+ meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-sample.inc           =
+                                                |    1=20
+ 40 files changed, 607 insertions(+), 95 deletions(-)
 ---
- meta-zephyr-core/classes-recipe/zephyr-qemuboot.bbclass | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/meta-zephyr-core/classes-recipe/zephyr-qemuboot.bbclass b/meta=
--zephyr-core/classes-recipe/zephyr-qemuboot.bbclass
-index b45e6f6..ab0a281 100644
---- a/meta-zephyr-core/classes-recipe/zephyr-qemuboot.bbclass
-+++ b/meta-zephyr-core/classes-recipe/zephyr-qemuboot.bbclass
-@@ -1,6 +1,8 @@
- inherit qemuboot
-=20
--KERNEL_IMAGETYPE =3D "${PN}.elf"
-+ZEPHYR_IMAGE_BASE_NAME ?=3D "${PN}-${MACHINE}${IMAGE_VERSION_SUFFIX}"
-+
-+KERNEL_IMAGETYPE =3D "${ZEPHYR_IMAGE_BASE_NAME}.elf"
- QB_DEFAULT_FSTYPE =3D "elf"
- QB_NETWORK_DEVICE =3D "none"
- QB_NET =3D "none"
-@@ -27,7 +29,7 @@ python bootconf_clean() {
- python do_bootconf_write() {
-     bb.build.exec_func("do_write_qemuboot_conf", d)
-=20
--    qemuimage =3D "%s/%s.elf" % (d.getVar('DEPLOY_DIR_IMAGE', True), d.get=
-Var('PN', True))
-+    qemuimage =3D "%s/%s.elf" % (d.getVar('DEPLOY_DIR_IMAGE', True), d.get=
-Var('ZEPHYR_IMAGE_BASE_NAME', True))
-     qemuimage_link =3D d.getVar('QEMU_IMAGE_LINK', True)
-     if os.path.lexists(qemuimage_link):
-         os.remove(qemuimage_link)
---=20
-2.34.1
-
 
