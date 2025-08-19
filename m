@@ -2,143 +2,115 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E3BACA0EEB
-	for <webhook@archiver.kernel.org>; Tue, 19 Aug 2025 14:31:54 +0000 (UTC)
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
- by mx.groups.io with SMTP id smtpd.web11.16258.1755613907580895570
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36CECCA0EE6
+	for <webhook@archiver.kernel.org>; Tue, 19 Aug 2025 14:37:54 +0000 (UTC)
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+ by mx.groups.io with SMTP id smtpd.web10.16029.1755614268442173164
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 19 Aug 2025 07:31:47 -0700
+ Tue, 19 Aug 2025 07:37:48 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=gX65zHIJ;
- spf=pass (domain: konsulko.com, ip: 209.85.160.173, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4b109c5ac7bso55049581cf.3
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 19 Aug 2025 07:31:47 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=c8OjLlnL;
+ spf=pass (domain: konsulko.com, ip: 209.85.222.176, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7e87068760bso634827385a.3
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 19 Aug 2025 07:37:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1755613906; x=1756218706; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1755614267; x=1756219067; darn=lists.yoctoproject.org;
         h=mime-version:references:message-id:in-reply-to:subject:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=cgLrtjOHqPtxjz0oGu4n9tqUES7ajwJuBgMWDEQv95E=;
-        b=gX65zHIJlNReUQFPOmfmF8XrYwJyubPPt/KKDVhtcGOCSUqQRUqJCvcH1AAwNwEpd9
-         08xcfsQ4iFJSB0b7NboLFcsHBSOa5kJVHo9m4xvzcoeXSHvuTQiMgFmqC4bh8BzxW3He
-         Ym+2oPJg/UR/LJP8cejF0HUHoSJfzs0NfuB68=
+        bh=er3fGDkr6r9xNhhS/WFdlBCcmEwK9O6++zZMZ3qRZ0I=;
+        b=c8OjLlnLk32sJ+v/PtlFj/BIj6UNNjj1n9N2Tfh4x69YIJY53gClYgTiRSFzadz+0X
+         PpNtp46ksVNLjudoZmOWfpIkCHs7OzvxIeR8iptHiPVyS5wpBxcPdf4MTr9XUAO4qeQG
+         e6GQO3gK35gBBBOE4CBBa4zjJw5DTkQ+WnOSI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755613906; x=1756218706;
+        d=1e100.net; s=20230601; t=1755614267; x=1756219067;
         h=mime-version:references:message-id:in-reply-to:subject:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cgLrtjOHqPtxjz0oGu4n9tqUES7ajwJuBgMWDEQv95E=;
-        b=ejJOxmeNp7wdr4xc+qk8sqoeVZ2ua881BS9qxU+azj+1VfOOfUOvZqrZBkqRKS2i1T
-         Pm/WEqcko/e6QCRMLNCsicN2rb0E8VE2pJNDdopYai0496mXdjb8Swn1eC/wwstqpJiv
-         Tjg3c2dBPZhKakc2MGjueH5O4RehUVclIMxrDR1erDkIFTP1G6rHFn+qnKP3aplibedt
-         DgS1krOdDdGKZhgSCa+FpMbGbD5dG/DnuwEwlEhvGiF4LInlfVylrSub8omRvNfVUqpJ
-         UvQXM4tMoXrLd3YKgF+HGfI+iWMbvzo4OJOYa6yipgv4F3BMmyf3MqMAV4BXs1ikt4bg
-         VX/A==
-X-Gm-Message-State: AOJu0YyDr9BlO64cysA3hSiyjO+wJkQ/obABQpACCwBPy5oMkIy2aHcR
-	OAt1xANp8dyd0Ah54pUO3EestQodasZOO8xdRlua2dHrS3p5Bt8HVoBi4IY0HxOc8EfO+97/qwc
-	U2Lo/
-X-Gm-Gg: ASbGncuQv7a6B1TWZWpqzun0qxAGhh5Xe8mztxlfjL1LPqkgNxw/R5W7KfuMX8Rr5RD
-	SNVVHT3AAj5IVdOh2sxUmSUAmZCTNiwPbwE8mZ1hYJcmaP3SsUnMkWFYU2jvAHG/LDf47O/+CH9
-	ASmkc/6GHWU/+3ly/5a0jByrXpr4TEdJsSaTampDXQoKsczGZzusPmHw0SP43chVKgChmPXkHaP
-	1JBS8QHMfqkqH9TnEYYGAsI5RHoNzSi40N79bJ65ifYpxdErPqKrr8srEADc10H+XY78NuFDfai
-	t6YcrpUhthtJt8WmoBXXcbKRekFYGXBS+h1M5W1lXpBrAYQ6HCT78MRWPjZiS9mHjzXuZMMYkFW
-	kw199ZRexqE4/urUiwp40/NrAU7YUD3ND7fDLUHzzG16oZgWJT9cwxQLN
-X-Google-Smtp-Source: AGHT+IFapDSDCQ45EF1tL7rMS8lrokZOyWlNLMBf85p75uEWZjyT0+qQ3EfNr0PTtEUmWpm/r8rqCw==
-X-Received: by 2002:a05:622a:59c4:b0:4b0:638f:79ef with SMTP id d75a77b69052e-4b286e216b0mr26921101cf.35.1755613906271;
-        Tue, 19 Aug 2025 07:31:46 -0700 (PDT)
+        bh=er3fGDkr6r9xNhhS/WFdlBCcmEwK9O6++zZMZ3qRZ0I=;
+        b=vh6jG1Lm0oRLSa6fMp1/5radE7NbE2mUXs087YMmKHrBjzXGwq1xTmA3BOBpvDqRxo
+         ROSZrC4tAIt3PYW7i69fOKJMuLPQnw7xyelPcVeyAMKIR4QVKjsQQuN2JZUUHNU/E4G3
+         1n7CRTlbd2uHq2ijvcoGB4h8dt2ngoV/6liZfd/INrFW7pqWcN2q903JNOTmF+X4Hwy/
+         Fh3Z5C/tHuxMVkWIlVWcMfJYYk9/4sVSXfFrksdOCxf2ZUf5/MLeM6qUBNgJd0dwCAHT
+         sAzvHPMgyyqBBBH7orMCd3PJ7GcRgKH6U+Q3VXhv6iIAF9mIoxceMVgDJhlDr2fKBJfI
+         RTcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUkZ8BGLZ3XKKqGKfMiy+dHbP16/hQABET3DG1X4gH6KYfx6puSaG6+zzIL8mazqSKC03CsERXnugI+56BL@lists.yoctoproject.org
+X-Gm-Message-State: AOJu0YzlQGxy6d1bYxU6nLcgXrlOOKrR6a9LzHCbme1g1X/7quvrSVKK
+	bpV0TRzFPiUmo9OssukugjNwF5tCx62KWIG7anildyNrjDudfp0oVpvmAh7bU/pzRCk50kpNmYZ
+	Lu24O
+X-Gm-Gg: ASbGncv8eLztBtZTy7Nl8WxX9vVRB0CVzWsW1OAWU7KgxRkfLTeVkf0EN22HaCty7UD
+	lmxRvxqlC1K62z7flxqJAqMwdLxqeYNbbwGX3pnR3DAue8bdExlfCfvJL5j2BVbmT6ZB7O7z9SC
+	mD+OpwEQ/wOQqGeRpp1zUs6ShW3VYwLHTeqPfM+nRff40zG4e4Ncyw3+9b1LszWk4naaRtLBG8a
+	BbwypFJWku+j3dMrI5W2ihk2OFN5Htw8WIopjwUXGqIXF3Ouj0QKS7iJmbWyKScKakVMRydIwG8
+	ywrmXmaIL95RXFF979YqCo97AWfYGVbmFDcIPLZP0FgmUlKpVxWuaByn10VLhIGun3ZyEYWMYfY
+	0ErDtlRLtRazvDxUVibBItaejpQoN6TnwYKsEG3JHmIBihxzJeJ1K0gVz
+X-Google-Smtp-Source: AGHT+IFQSnlDA/LZjwrIFyGuftZMpPUGu37GoLbNjEHV9TeGLOluXJt29HibX0ULCSg3ZcGtlCNH/A==
+X-Received: by 2002:a05:620a:198d:b0:7e9:f820:2b3c with SMTP id af79cd13be357-7e9f820600fmr153585885a.72.1755614267268;
+        Tue, 19 Aug 2025 07:37:47 -0700 (PDT)
 Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b11dc851d9sm68677311cf.24.2025.08.19.07.31.45
-        for <yocto-patches@lists.yoctoproject.org>
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b11fbd3879sm67936901cf.35.2025.08.19.07.37.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 07:31:45 -0700 (PDT)
-Date: Tue, 19 Aug 2025 10:31:45 -0400 (EDT)
+        Tue, 19 Aug 2025 07:37:46 -0700 (PDT)
+Date: Tue, 19 Aug 2025 10:37:46 -0400 (EDT)
 From: Scott Murray <scott.murray@konsulko.com>
-To: yocto-patches@lists.yoctoproject.org
-Subject: Re: [yocto-patches] [meta-lts-mixins][scarthgap/rust][PATCH 0/8]
- Update to Rust 1.88.0
-In-Reply-To: <185C9E399CF5B378.30607@lists.yoctoproject.org>
-Message-ID: <233f26f0-0172-6ebc-a27f-4ea5a98596fa@konsulko.com>
-References: <185C9E399CF5B378.30607@lists.yoctoproject.org>
+To: "Marta Rybczynska (Ygreky)" <marta.rybczynska@ygreky.com>, 
+    yocto-patches@lists.yoctoproject.org
+Subject: Re: [meta-security][walnascar][PATCH 0/7] Assorted fixes
+In-Reply-To: <15651dbf-91f0-47e7-8898-2331f21dde30@ygreky.com>
+Message-ID: <20a64593-1502-3594-50db-3dd5713757d0@konsulko.com>
+References: <cover.1755464538.git.scott.murray@konsulko.com> <15651dbf-91f0-47e7-8898-2331f21dde30@ygreky.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 19 Aug 2025 14:31:54 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2057
+ <yocto-patches@lists.yoctoproject.org>; Tue, 19 Aug 2025 14:37:54 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2058
 
-On Sun, 17 Aug 2025, Scott Murray via lists.yoctoproject.org wrote:
+On Mon, 18 Aug 2025, Marta Rybczynska (Ygreky) wrote:
 
-> This patch series for the scarthgap/rust mixin layer backports the
-> recent Rust toolchain changes in oe-core master branch to pull in
-> the 1.87.0 -> 1.88.0 updates and other fixes.
 >
-> I intend to push this series to scarthgap/rust within 24 hours
-> unless a serious showstopper is pointed out.
+> On 17/08/2025 11:07 PM, Scott Murray wrote:
+> > A variety of fixes for enabling CI against the walnascar branch and fixing
+> > outstanding build issues, plus a bump of scap-security-guide to its latest
+> > version to match master brnach since the changes are minimal.
+> >
+> > I intent to merge these to walnascar branch in the next day or so if there
+> > are no objections.
+> >
+> > Changes:
+> >
+> > Anton Antonov (1):
+> >    parsec-service: update PACKAGECONFIG options as lists of cargo build
+> >      features
+> >
+> > Marta Rybczynska (5):
+> >    scap-security-guide: fix fetch
+> >    CI: update build for new CI
+> >    .gitlab-ci.yml: add logging of jobs to files
+> >    gitlab-ci.yml: fix file redirection for qemux86 build logs
+> >    checksecurity: update the debian package
+> >
+> > Scott Murray (1):
+> >    scap-security-guide: upgrade 0.1.76 -> 0.1.77
+> >
+> >   .gitlab-ci.yml                                | 45 +++++++++++--------
+> >   .../checksecurity/checksecurity_2.0.16.bb     |  7 ++-
+> >   meta-parsec/README.md                         |  4 +-
+> >   .../parsec-service/parsec-service_1.4.1.bb    | 15 +++----
+> >   ....1.76.bb => scap-security-guide_0.1.77.bb} |  4 +-
+> >   5 files changed, 39 insertions(+), 36 deletions(-)
+> >   rename
+> >   recipes-compliance/scap-security-guide/{scap-security-guide_0.1.76.bb =>
+> >   scap-security-guide_0.1.77.bb} (95%)
+> >
+>
+> Good idea to backport those. I'll run a walnascar branch CI to make sure, but
+> I expect no surprises.
 
-I have gone ahead and merged these changes to scarthgap/rust.
+I've gone ahead and merged these to the walnascar branch to unblock
+anyone needing checksecurity or scap-security-guide.  There's still a
+branch-specific patch to the CI configuration outstanding to make running
+it against walnascar straightforward, but I have smoke tested most of
+the build configurations locally with gitlab-ci-local.
 
 Scott
-
-> Changes:
->
-> Gyorgy Sarvari (1):
->   librsvg: upgrade 2.59.2 -> 2.60.0
->
-> Jayasurya Maganuru (1):
->   rust: Upgrade 1.87.0 -> 1.88.0
->
-> Khem Raj (4):
->   rust: Update riscv32 patch with the backport
->   cargo-c: Upgrade to 0.10.14+cargo-0.89.0
->   libstd-rs: Fix build regression on rv32
->   cargo-c: Update patches to latest versions
->
-> Peter Tatrai (2):
->   rust: disable executable-no-mangle-strip test on PowerPC due to linker
->     issue
->   rust: backport cstring-merging test fix for PowerPC targets
->
->  conf/layer.conf                               |   2 +-
->  lib/oeqa/selftest/cases/rust_mixin.py         |   2 +
->  recipes-devtools/rust/cargo-c-crates.inc      | 498 +++++++++---------
->  ...Use-libc-SYS_futex_time64-on-riscv32.patch |  36 ++
->  ...Use-libc-SYS_futex_time64-on-riscv32.patch |  51 ++
->  ...8.0.bb => cargo-c_0.10.14+cargo-0.89.0.bb} |   7 +-
->  .../rust/{cargo_1.87.0.bb => cargo_1.88.0.bb} |   0
->  ...l-codes-on-riscv32gc-unknown-linux-g.patch | 375 ++++++++++---
->  ...lain-syscalls-as-their-time64-varian.patch |  49 ++
->  ...teps-tool.rs-switch-off-lto-for-rust.patch |  18 +-
->  .../backport-fix-test-string-merging.patch    |  27 +
->  ...epro-issue-fix-with-cc-crate-hashmap.patch | 102 ----
->  ...d-statically-in-rustc_driver-feature.patch |   6 +-
->  .../rust/files/rust-oe-selftest.patch         |  63 ++-
->  ...ibstd-rs_1.87.0.bb => libstd-rs_1.88.0.bb} |   0
->  ....87.0.bb => rust-cross-canadian_1.88.0.bb} |   0
->  ...ust-llvm_1.87.0.bb => rust-llvm_1.88.0.bb} |   2 +-
->  recipes-devtools/rust/rust-snapshot.inc       |  78 +--
->  recipes-devtools/rust/rust-source.inc         |   4 +-
->  .../rust/{rust_1.87.0.bb => rust_1.88.0.bb}   |   0
->  recipes-gnome/librsvg/librsvg-crates.inc      | 472 +++++++++--------
->  ...ld-do-not-force-disable-gdk-pixbuf-l.patch |  49 ++
->  ...r-meson.build-do-not-look-for-gdk-pi.patch |  28 -
->  ...ot-force-disable-introspection-and-v.patch |  34 --
->  ...append-RUSTFLAGS-to-rustc-executable.patch |  37 ++
->  .../{librsvg_2.59.2.bb => librsvg_2.60.0.bb}  |  11 +-
->  26 files changed, 1196 insertions(+), 755 deletions(-)
->  create mode 100644 recipes-devtools/rust/cargo-c/0001-getrandom-Use-libc-SYS_futex_time64-on-riscv32.patch
->  create mode 100644 recipes-devtools/rust/cargo-c/0001-parking-lot-Use-libc-SYS_futex_time64-on-riscv32.patch
->  rename recipes-devtools/rust/{cargo-c_0.10.13+cargo-0.88.0.bb => cargo-c_0.10.14+cargo-0.89.0.bb} (52%)
->  rename recipes-devtools/rust/{cargo_1.87.0.bb => cargo_1.88.0.bb} (100%)
->  create mode 100644 recipes-devtools/rust/files/0001-riscv32-Define-plain-syscalls-as-their-time64-varian.patch
->  create mode 100644 recipes-devtools/rust/files/backport-fix-test-string-merging.patch
->  rename recipes-devtools/rust/{libstd-rs_1.87.0.bb => libstd-rs_1.88.0.bb} (100%)
->  rename recipes-devtools/rust/{rust-cross-canadian_1.87.0.bb => rust-cross-canadian_1.88.0.bb} (100%)
->  rename recipes-devtools/rust/{rust-llvm_1.87.0.bb => rust-llvm_1.88.0.bb} (99%)
->  rename recipes-devtools/rust/{rust_1.87.0.bb => rust_1.88.0.bb} (100%)
->  create mode 100644 recipes-gnome/librsvg/librsvg/0001-Revert-meson.build-do-not-force-disable-gdk-pixbuf-l.patch
->  delete mode 100644 recipes-gnome/librsvg/librsvg/0001-gdk-pixbuf-loader-meson.build-do-not-look-for-gdk-pi.patch
->  delete mode 100644 recipes-gnome/librsvg/librsvg/0001-meson.build-do-not-force-disable-introspection-and-v.patch
->  create mode 100644 recipes-gnome/librsvg/librsvg/0001-query-rustc-append-RUSTFLAGS-to-rustc-executable.patch
->  rename recipes-gnome/librsvg/{librsvg_2.59.2.bb => librsvg_2.60.0.bb} (90%)
->
->
 
