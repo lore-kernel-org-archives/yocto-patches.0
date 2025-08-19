@@ -2,83 +2,86 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26BCCCA0EEB
-	for <webhook@archiver.kernel.org>; Tue, 19 Aug 2025 14:31:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E3BACA0EEB
+	for <webhook@archiver.kernel.org>; Tue, 19 Aug 2025 14:31:54 +0000 (UTC)
 Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
- by mx.groups.io with SMTP id smtpd.web11.16249.1755613869021290539
+ by mx.groups.io with SMTP id smtpd.web11.16258.1755613907580895570
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 19 Aug 2025 07:31:09 -0700
+ Tue, 19 Aug 2025 07:31:47 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=X8QqOyuh;
+ dkim=pass header.i=@konsulko.com header.s=google header.b=gX65zHIJ;
  spf=pass (domain: konsulko.com, ip: 209.85.160.173, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4b1098f9e9eso75646681cf.0
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 19 Aug 2025 07:31:08 -0700 (PDT)
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4b109c5ac7bso55049581cf.3
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 19 Aug 2025 07:31:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1755613868; x=1756218668; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1755613906; x=1756218706; darn=lists.yoctoproject.org;
         h=mime-version:references:message-id:in-reply-to:subject:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=n7Pjz/qShN/5/ZUCoesP1VSFquhQTw64aXNTz+gsBvQ=;
-        b=X8QqOyuhvmncXb2ZXq/hkEF9HFpsusM4dKArY82bDWET5cMBKuxG3roO2lhAip24tF
-         sbraG5gqr4JBWQmBAG2mxTE7ceN5ETFhYA+c95U7rBlytSOOTQuWlw54tbybLwoa0MSL
-         AOWQAwPSwZb9cj0VGc6ytivEOzNX+zcx15FPU=
+        bh=cgLrtjOHqPtxjz0oGu4n9tqUES7ajwJuBgMWDEQv95E=;
+        b=gX65zHIJlNReUQFPOmfmF8XrYwJyubPPt/KKDVhtcGOCSUqQRUqJCvcH1AAwNwEpd9
+         08xcfsQ4iFJSB0b7NboLFcsHBSOa5kJVHo9m4xvzcoeXSHvuTQiMgFmqC4bh8BzxW3He
+         Ym+2oPJg/UR/LJP8cejF0HUHoSJfzs0NfuB68=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755613868; x=1756218668;
+        d=1e100.net; s=20230601; t=1755613906; x=1756218706;
         h=mime-version:references:message-id:in-reply-to:subject:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=n7Pjz/qShN/5/ZUCoesP1VSFquhQTw64aXNTz+gsBvQ=;
-        b=HY7aC33jXBR4huZXD84s2ZbNCKI7cB8ZUW8wVvJRdJPrwP4WRve2liYWKBPdlKtw3a
-         sjCDFnarJuYoRRXF/YH26pB3rXSqChLuCnO0cqTwCoFnPNgNZYgcVUHQp39RcdCwoku5
-         bGcKT2VD1A+v5160Uo8p718vMFAnkrbmsFvoW2pCsGfQ8GN/gmFIhS4pSViQZeg80pDy
-         bRWIpfxqO5Jdoc0U/F7sRzLEiaorJ73dFaUJoEqColABLuSqSy/U6eEjup6g03nmOoG0
-         /LsAsvJXEuV5XHZbbui7HqYfseW/LBdywyeqRWE1BNJDo3BJ2qgdBGdY7nBNlxdZlEE4
-         F5JQ==
-X-Gm-Message-State: AOJu0YxBKDtcFVDBrm1QSCSy7RRiqhLtqr/8+L2YpbjUUkWteRgON4Ll
-	M16gTT3p6qoziEKQw/rWJYeXogE3EbdPiyUP3iLx5nuJy+0vCTsiQv4NJZemVTC9Z8mX7sHP9Od
-	jr3sA
-X-Gm-Gg: ASbGncthZhDo0QKYU4JyZo+j/P6Uly4lw2cHB5kO0FquY0xgQGVUhkdxj5WmXUkqpG9
-	ujiBW2377BGV4oh6vLI5rsK9S73npNYw/WuqC0+Mu7XZ2vtg9V2mydoQPA4TkBW6t1qhmWF00ON
-	wM0HbCTiNZjYpR8XP38WqKEOwIGKUxH3L+OFvOi15kyGI1aTyAREnjvziwGhCUr5ubFUfq1NnEM
-	URu8MZ3Bj4OKWYEJhg8hkX1K9zBvYTNTHFhA38i2hGcamIXQpTBrHsZwMBKXpEJ48cWlJdWnb7/
-	pPDFCXLdrNMBA22TsSJbTxhEgdGPht06OLIIoMnuvygBuHekYn6r7e03HYybkVkFCwfJsv/5avX
-	C9NlVj3NmjhHcO6CWmqd/62F6zP4hTfW/c3GbKDuzdpyf2QLGF5Ms+f5EbkY1Qap2X5s=
-X-Google-Smtp-Source: AGHT+IGjVaxjPpAOVJK/KRgdgLKRmtUMJZwXm0gIQboyjpkvLD8hILE8sKYOF73r0q6ldHmLBCB3uA==
-X-Received: by 2002:a05:622a:1e91:b0:4b0:6825:30ce with SMTP id d75a77b69052e-4b286e0031bmr32145861cf.54.1755613867538;
-        Tue, 19 Aug 2025 07:31:07 -0700 (PDT)
+        bh=cgLrtjOHqPtxjz0oGu4n9tqUES7ajwJuBgMWDEQv95E=;
+        b=ejJOxmeNp7wdr4xc+qk8sqoeVZ2ua881BS9qxU+azj+1VfOOfUOvZqrZBkqRKS2i1T
+         Pm/WEqcko/e6QCRMLNCsicN2rb0E8VE2pJNDdopYai0496mXdjb8Swn1eC/wwstqpJiv
+         Tjg3c2dBPZhKakc2MGjueH5O4RehUVclIMxrDR1erDkIFTP1G6rHFn+qnKP3aplibedt
+         DgS1krOdDdGKZhgSCa+FpMbGbD5dG/DnuwEwlEhvGiF4LInlfVylrSub8omRvNfVUqpJ
+         UvQXM4tMoXrLd3YKgF+HGfI+iWMbvzo4OJOYa6yipgv4F3BMmyf3MqMAV4BXs1ikt4bg
+         VX/A==
+X-Gm-Message-State: AOJu0YyDr9BlO64cysA3hSiyjO+wJkQ/obABQpACCwBPy5oMkIy2aHcR
+	OAt1xANp8dyd0Ah54pUO3EestQodasZOO8xdRlua2dHrS3p5Bt8HVoBi4IY0HxOc8EfO+97/qwc
+	U2Lo/
+X-Gm-Gg: ASbGncuQv7a6B1TWZWpqzun0qxAGhh5Xe8mztxlfjL1LPqkgNxw/R5W7KfuMX8Rr5RD
+	SNVVHT3AAj5IVdOh2sxUmSUAmZCTNiwPbwE8mZ1hYJcmaP3SsUnMkWFYU2jvAHG/LDf47O/+CH9
+	ASmkc/6GHWU/+3ly/5a0jByrXpr4TEdJsSaTampDXQoKsczGZzusPmHw0SP43chVKgChmPXkHaP
+	1JBS8QHMfqkqH9TnEYYGAsI5RHoNzSi40N79bJ65ifYpxdErPqKrr8srEADc10H+XY78NuFDfai
+	t6YcrpUhthtJt8WmoBXXcbKRekFYGXBS+h1M5W1lXpBrAYQ6HCT78MRWPjZiS9mHjzXuZMMYkFW
+	kw199ZRexqE4/urUiwp40/NrAU7YUD3ND7fDLUHzzG16oZgWJT9cwxQLN
+X-Google-Smtp-Source: AGHT+IFapDSDCQ45EF1tL7rMS8lrokZOyWlNLMBf85p75uEWZjyT0+qQ3EfNr0PTtEUmWpm/r8rqCw==
+X-Received: by 2002:a05:622a:59c4:b0:4b0:638f:79ef with SMTP id d75a77b69052e-4b286e216b0mr26921101cf.35.1755613906271;
+        Tue, 19 Aug 2025 07:31:46 -0700 (PDT)
 Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b155b5baf4sm41871581cf.0.2025.08.19.07.31.06
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b11dc851d9sm68677311cf.24.2025.08.19.07.31.45
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 07:31:07 -0700 (PDT)
-Date: Tue, 19 Aug 2025 10:30:58 -0400 (EDT)
+        Tue, 19 Aug 2025 07:31:45 -0700 (PDT)
+Date: Tue, 19 Aug 2025 10:31:45 -0400 (EDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: Re: [yocto-patches] [meta-lts-mixins][kirkstone/rust][PATCH 0/7]
+Subject: Re: [yocto-patches] [meta-lts-mixins][scarthgap/rust][PATCH 0/8]
  Update to Rust 1.88.0
-In-Reply-To: <185C9E195CBCEAC5.8958@lists.yoctoproject.org>
-Message-ID: <1e475415-bfcd-c24c-7ebb-301091032a37@konsulko.com>
-References: <185C9E195CBCEAC5.8958@lists.yoctoproject.org>
+In-Reply-To: <185C9E399CF5B378.30607@lists.yoctoproject.org>
+Message-ID: <233f26f0-0172-6ebc-a27f-4ea5a98596fa@konsulko.com>
+References: <185C9E399CF5B378.30607@lists.yoctoproject.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 19 Aug 2025 14:31:14 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2056
+ <yocto-patches@lists.yoctoproject.org>; Tue, 19 Aug 2025 14:31:54 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2057
 
 On Sun, 17 Aug 2025, Scott Murray via lists.yoctoproject.org wrote:
 
-> This patch series for the kirkstone/rust mixin layer backports the
+> This patch series for the scarthgap/rust mixin layer backports the
 > recent Rust toolchain changes in oe-core master branch to pull in
 > the 1.87.0 -> 1.88.0 updates and other fixes.
 >
-> I intend to push this series to kirkstone/rust within 24 hours
+> I intend to push this series to scarthgap/rust within 24 hours
 > unless a serious showstopper is pointed out.
 
-I have gone ahead and merged these changes to kirkstone/rust.
+I have gone ahead and merged these changes to scarthgap/rust.
 
 Scott
 
 > Changes:
+>
+> Gyorgy Sarvari (1):
+>   librsvg: upgrade 2.59.2 -> 2.60.0
 >
 > Jayasurya Maganuru (1):
 >   rust: Upgrade 1.87.0 -> 1.88.0
@@ -114,10 +117,16 @@ Scott
 >  recipes-devtools/rust/rust-snapshot.inc       |  78 +--
 >  recipes-devtools/rust/rust-source.inc         |   4 +-
 >  .../rust/{rust_1.87.0.bb => rust_1.88.0.bb}   |   0
->  20 files changed, 848 insertions(+), 472 deletions(-)
+>  recipes-gnome/librsvg/librsvg-crates.inc      | 472 +++++++++--------
+>  ...ld-do-not-force-disable-gdk-pixbuf-l.patch |  49 ++
+>  ...r-meson.build-do-not-look-for-gdk-pi.patch |  28 -
+>  ...ot-force-disable-introspection-and-v.patch |  34 --
+>  ...append-RUSTFLAGS-to-rustc-executable.patch |  37 ++
+>  .../{librsvg_2.59.2.bb => librsvg_2.60.0.bb}  |  11 +-
+>  26 files changed, 1196 insertions(+), 755 deletions(-)
 >  create mode 100644 recipes-devtools/rust/cargo-c/0001-getrandom-Use-libc-SYS_futex_time64-on-riscv32.patch
 >  create mode 100644 recipes-devtools/rust/cargo-c/0001-parking-lot-Use-libc-SYS_futex_time64-on-riscv32.patch
->  rename recipes-devtools/rust/{cargo-c_0.10.13+cargo-0.88.0.bb => cargo-c_0.10.14+cargo-0.89.0.bb} (50%)
+>  rename recipes-devtools/rust/{cargo-c_0.10.13+cargo-0.88.0.bb => cargo-c_0.10.14+cargo-0.89.0.bb} (52%)
 >  rename recipes-devtools/rust/{cargo_1.87.0.bb => cargo_1.88.0.bb} (100%)
 >  create mode 100644 recipes-devtools/rust/files/0001-riscv32-Define-plain-syscalls-as-their-time64-varian.patch
 >  create mode 100644 recipes-devtools/rust/files/backport-fix-test-string-merging.patch
@@ -125,6 +134,11 @@ Scott
 >  rename recipes-devtools/rust/{rust-cross-canadian_1.87.0.bb => rust-cross-canadian_1.88.0.bb} (100%)
 >  rename recipes-devtools/rust/{rust-llvm_1.87.0.bb => rust-llvm_1.88.0.bb} (99%)
 >  rename recipes-devtools/rust/{rust_1.87.0.bb => rust_1.88.0.bb} (100%)
+>  create mode 100644 recipes-gnome/librsvg/librsvg/0001-Revert-meson.build-do-not-force-disable-gdk-pixbuf-l.patch
+>  delete mode 100644 recipes-gnome/librsvg/librsvg/0001-gdk-pixbuf-loader-meson.build-do-not-look-for-gdk-pi.patch
+>  delete mode 100644 recipes-gnome/librsvg/librsvg/0001-meson.build-do-not-force-disable-introspection-and-v.patch
+>  create mode 100644 recipes-gnome/librsvg/librsvg/0001-query-rustc-append-RUSTFLAGS-to-rustc-executable.patch
+>  rename recipes-gnome/librsvg/{librsvg_2.59.2.bb => librsvg_2.60.0.bb} (90%)
 >
 >
 
