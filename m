@@ -2,61 +2,61 @@ Return-Path: <chee.yang.lee@intel.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 374A4CA0EED
-	for <webhook@archiver.kernel.org>; Wed, 20 Aug 2025 08:02:59 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
- by mx.groups.io with SMTP id smtpd.web10.14765.1755676974748967031
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C80DCA0EED
+	for <webhook@archiver.kernel.org>; Wed, 20 Aug 2025 08:04:09 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+ by mx.groups.io with SMTP id smtpd.web11.14906.1755677038974685708
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 20 Aug 2025 01:02:55 -0700
+ Wed, 20 Aug 2025 01:03:59 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@intel.com header.s=Intel header.b=jHBGL/Bg;
- spf=pass (domain: intel.com, ip: 198.175.65.19, mailfrom: chee.yang.lee@intel.com)
+ dkim=pass header.i=@intel.com header.s=Intel header.b=S3k9BH2w;
+ spf=pass (domain: intel.com, ip: 198.175.65.15, mailfrom: chee.yang.lee@intel.com)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755676974; x=1787212974;
+  t=1755677039; x=1787213039;
   h=from:to:subject:date:message-id:references:in-reply-to:
    content-transfer-encoding:mime-version;
-  bh=T/ZQGLRlARDzQbknd8eGLU8ULRI28sFlIGTnnHq25qY=;
-  b=jHBGL/Bgdrb2efMptA2R292Yf20vm+gI4IOU3uLDjvgh0eufd6a3sZW3
-   ISZVRfrE8aMo3vxOZzAeO9j1PezfY+X/OC1cQ5b8yMycmMXGrkVu3cMVx
-   VwPHOstOt6PhTYo8ErCS9CPFnIeEbzFGlRlUKazzLbmOAzRm+/WWtCdiO
-   LJpal8TIJfvZaErmFdyYt6ZOj3tVrj5Xa9bX9XOvFxZN59Pba/7vwtC2q
-   1L8tY/MMxfbzztyPgb/ej4iC3KI7uq46dgoK/4+g4BlAAI8FUbNhpcKfQ
-   4JsqJ4pVLaxYUcfSKWhAwLWHyK2lxhd9sIkhv/1h1lEXowFbNn8MtSAoA
-   w==;
-X-CSE-ConnectionGUID: rql+OeK/TWm2Oi5kg+J4sg==
-X-CSE-MsgGUID: GCXHgS7eR4yLHNWJDgaDWA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="57796809"
+  bh=9NMxZR1MVIbsbaw08ct8NdvKJlCJakTcR+GoIk/dCf8=;
+  b=S3k9BH2w9U5788WjohLdacruxgFRUIhf3Ytp0NdXTpMA7baMQhdJjASt
+   GB8JKYLgDqymNM5XVYxvv86HBtGk4MbUE1peVMZMgRIQAeonm1FPpbpwt
+   Fn7sNOY9o+CHcLUQ5xthGR9Puq5sO0Tr1u07cubxAjhw+w6z93VXXmr2Y
+   EERbPB163y7H9fVTCbKIyuL7SSXZukPx2BvOsRuFH2YtSXYzoEhuZnbvh
+   3lgukcR9VqaZsb93ouE0Yz1PDWiL1IfeYCltBi4k8SDGO71ZRedYkikCZ
+   xjXLm+8NyU/B/IGeU3uJWDZIpjZB1rf4M3hDsH69Pq4F22HV2n4qJRGYh
+   Q==;
+X-CSE-ConnectionGUID: jRYZrnINQDO/wVtAbmAtTQ==
+X-CSE-MsgGUID: 1V4ShPLnQhq4Lnt2yGhleg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="61573034"
 X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="57796809"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 01:02:50 -0700
-X-CSE-ConnectionGUID: NopLADHITAWqVMUm70YP8w==
-X-CSE-MsgGUID: 1QiOev5FTKSgchTDKADndQ==
+   d="scan'208";a="61573034"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 01:03:59 -0700
+X-CSE-ConnectionGUID: Ehe+05FgQqm0uCjDO71gCw==
+X-CSE-MsgGUID: dmPgIFLWQK6pel4v9TAY3w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="205222313"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 01:02:50 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+   d="scan'208";a="167251039"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 01:03:58 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Wed, 20 Aug 2025 01:02:49 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ 15.2.2562.17; Wed, 20 Aug 2025 01:03:57 -0700
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Wed, 20 Aug 2025 01:02:49 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (40.107.243.65)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ 15.2.2562.17 via Frontend Transport; Wed, 20 Aug 2025 01:03:57 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (40.107.244.56)
+ by edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Wed, 20 Aug 2025 01:02:49 -0700
+ 15.2.2562.17; Wed, 20 Aug 2025 01:03:57 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=c97cJCZJvYFHDfKHbYJ1IgWp4E49k8CDO4KAVkujKVDM9jVItTm6beKTZtOC37YmPzQCNkcGIJq5wU6TZzArKdICKbu689cSNIhRxZaCEaRmBzSB9AUTLLaRzEi0V+DeyeOeNYl8fppw/szv5jAcsUiCWxQ4jZb+CFFWtU+aiQ4FFxQlYGWOhHM1JImjIKpduVVeowsUlPbrYz/ENPAssID35Xa6Ia4kyEdENLoCyAaXigf6L/5p+vA37/DJbCV9ZRVUihvJKH3qc0j6VimoVXrJREcD/B8RqEpt3Cs3RGj69rTTHyRAvKPVScoboUCF4zO7Rl7TojWwV9ff0S6PWg==
+ b=TIy4f54H6+YPaGQy5cCvSPK3WPkaTJEZvsx7zJOkCqRYa2YJZS4Y7j3ePekUW44+b4+BUYO42oax13D6uEHcP5ksbxF8UPjsR4TXofodTfU0XsoPz6CxXZcfQzsDM3hKKuM6XO/hqTIjgWIMCkF6eF7Qv02IUrsxe/sVssZ3wf1cWZCmPfSOF/1sS6b5DQmQI5kFIKXF7cdWlD8LsUr0qCjnD66gPj1zyg5mqPzRJe0Pt4W7vzqu9O09WwXSE1Q2GPC8riv6MVIa8KVWLu4+hsJwfpzHxsJCIJeROm6Lgiw30PbahqdMAlA9ZOO+COVu14epdKBWLGw6IpROGfGBSQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=L+JbhTscltMUbikM65f3jD9sS98mBxnR+oXxFETdcFo=;
- b=UeZ0RmY29/fPuPRIGAwgUO4LmhREpKVhF00xvlPiOFwuhftf0Sb6uP3XJesV6I+XRoUU1JK0VWspEWvwcT+gZls0AWwJYDfId0NqmxHKfchLoYauK0nKpWr0m7QuJTZlhTEMv7D8EpLP5VbLQRw8K8+4vNPw0IZYjKYez77ge387fLZoluQ2hw6dUJhIEAmt3sxseu7e2b9mb5I6Yr4s3CjkogoHIo6oasQQsibwGgYpwhbDWfJgyxCATIix6evVNeEP23Q7beecbUqf+sYNA94Do9JbW2jHFqtVbhzL84tadaIMwm7TWWicmkal+PbZvtcS3WiNLWlng4byyfnChw==
+ bh=CJ18J4+RKQGIGpV0g2KEUCdAIXQg8owCvt19CjlQhVw=;
+ b=j0c7+FuZQgmE3Fq5MM2p2bYBv6SPipXzKIu8rt5+KkNG3Dr01ebkJEGgkNxC1MgGWCuBmVeiUbdawgqB55QORSb0HjsK9ZCKn0fhBXLWVg2PtTv8OgT/VmgjReHtIgCbkQSUgTNFJu4jQ+auMyKQmsNVO1dV+AomeKTnRYc3usbWuG7LiulmRrdFkE7gbaCKhHr5ImwDRMnJKX6zLUQr/ofKe8BicdXDAZ0AB11zdgCdAm8XnHx4yP5u2CY4HfxZh07xox3xfw7HSgRUUgoK4P6T8Oop/BM8ZKRijGDBNCvyck/sNRSxUgUimm9UkmXSN75amenF9juVJwEhZx288w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
@@ -64,24 +64,24 @@ Received: from BL4PR11MB8797.namprd11.prod.outlook.com (2603:10b6:208:5a7::8)
  by IA1PR11MB9471.namprd11.prod.outlook.com (2603:10b6:208:5b3::9) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.13; Wed, 20 Aug
- 2025 08:02:48 +0000
+ 2025 08:03:56 +0000
 Received: from BL4PR11MB8797.namprd11.prod.outlook.com
  ([fe80::311e:565b:ccfd:f4c8]) by BL4PR11MB8797.namprd11.prod.outlook.com
  ([fe80::311e:565b:ccfd:f4c8%5]) with mapi id 15.20.9031.024; Wed, 20 Aug 2025
- 08:02:47 +0000
+ 08:03:56 +0000
 From: "Lee, Chee Yang" <chee.yang.lee@intel.com>
 To: Sandeep Gundlupet Raju <sandeep.gundlupet-raju@amd.com>,
 	"yocto-patches@lists.yoctoproject.org" <yocto-patches@lists.yoctoproject.org>
-Subject: RE: [meta-zephyr][scarthgap][PATCH v6 10/11] zephyr-kernel: Add rpmsg
- multi services recipe
-Thread-Topic: [meta-zephyr][scarthgap][PATCH v6 10/11] zephyr-kernel: Add
- rpmsg multi services recipe
-Thread-Index: AQHcEIv79J3EEd9jMUaEHyFwmaj6P7Rq0SGw
-Date: Wed, 20 Aug 2025 08:02:47 +0000
-Message-ID: <BL4PR11MB879791DA10D548D88531B23DB933A@BL4PR11MB8797.namprd11.prod.outlook.com>
+Subject: RE: [meta-zephyr][scarthgap][PATCH v6 11/11] zephyr-kernel-common:
+ Add Board extension support
+Thread-Topic: [meta-zephyr][scarthgap][PATCH v6 11/11] zephyr-kernel-common:
+ Add Board extension support
+Thread-Index: AQHcEIv/6qu7xAni5k6rNyXwHgUb/7Rqx6gg
+Date: Wed, 20 Aug 2025 08:03:56 +0000
+Message-ID: <BL4PR11MB87974D9CAC1FEACE72D6788BB933A@BL4PR11MB8797.namprd11.prod.outlook.com>
 References: <20250818220304.2300436-1-sandeep.gundlupet-raju@amd.com>
- <20250818220304.2300436-11-sandeep.gundlupet-raju@amd.com>
-In-Reply-To: <20250818220304.2300436-11-sandeep.gundlupet-raju@amd.com>
+ <20250818220304.2300436-12-sandeep.gundlupet-raju@amd.com>
+In-Reply-To: <20250818220304.2300436-12-sandeep.gundlupet-raju@amd.com>
 Accept-Language: en-SG, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -90,117 +90,93 @@ authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 x-ms-publictraffictype: Email
 x-ms-traffictypediagnostic: BL4PR11MB8797:EE_|IA1PR11MB9471:EE_
-x-ms-office365-filtering-correlation-id: 78a5e681-f7c4-4617-1dbc-08dddfbff3d2
+x-ms-office365-filtering-correlation-id: ede766f7-9c15-4583-70e1-08dddfc01c8e
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?e/0861nU75LeZtR3OUCi66f+L2EXcSDwpmaRdRR1VxEDFzd8OlGRvotCa3b9?=
- =?us-ascii?Q?CBnR2npf3wjMiJN5BVPqZwEmSzChvQmYbMzAcVWaPsRGdAqVpntQiTfQLSiA?=
- =?us-ascii?Q?o/fVcw+vKsTiz5OMA5/NrJrwk58UysAnTbbzqMB8hXs/IDQOsc4/J9J47G4Q?=
- =?us-ascii?Q?w5aL6CdrbaJ05IZRDZ/8jxfFTxCJ5meGgR8divCXKia2MZyyCpXKlZ0byw0y?=
- =?us-ascii?Q?VzxNvnop8M/DVUn9DXPOvRfhFG4KUv2qknC718pvXFbbwrl6u0wcAug2groI?=
- =?us-ascii?Q?Ih5fNoE0v6+cjZQDAwVtvkM1kHvzEn3po2TM/YKma3+qK318LN8NgUH/IJ8e?=
- =?us-ascii?Q?m/EBOiJ8YUEGx1FFMKcpkEPCblzs3gRlpiZYWfK5qVWPwCSekGPt+SY1kAGt?=
- =?us-ascii?Q?6KjRmZzUNKCnE86ichw2YY8iFw3XgQ6v10suszI4cposAv6w1hG4v21gfSkp?=
- =?us-ascii?Q?79mTfqpGi4AaAmvWe8vBVmcmDq8Un60wSRBoVkPnndTc57GHQ7j4slGSCk0h?=
- =?us-ascii?Q?VRPjgDYC+lvJGx4JhLYbFHJYA605n3eKf0JvFz0MdSyHw7WnDu0AxPKD1ELe?=
- =?us-ascii?Q?ntYiEe3MiS1/uUo7jP/YW06BQxkuEJcm02Oj1kSztB3Zl/UfiWmtW/KaZkK+?=
- =?us-ascii?Q?/tlarURD98q4tnONXtxWDFGJoZsIAJdT49mYGpM5UomPrJobyWVeNWIdqCNc?=
- =?us-ascii?Q?eHXay7f7wsSMPGUKA9dwk8peuty/I7kDAPYAcBDsdAiQvDL1hMZfwwOQ8iXK?=
- =?us-ascii?Q?Z3FpwnlFtmI7+8J98zR/i9vHwo7IMKcCtfMmdDLdcZ4lytpLYZVR8YhANz/u?=
- =?us-ascii?Q?Frr2MBnClhhI5TKt2mG2+2pdb1me/vHUnU8FA+RTx0snCh5GWsW4dQf/+iEo?=
- =?us-ascii?Q?iuhIKvBBjJZ8dbjZJJ8cBNHT+6nYghxVvMcq92ZnGh8GKOnugT+V1DO8nZ00?=
- =?us-ascii?Q?5tpLkRToW6EcB/OQqIbzroDTC6dMx6sO3Uiz87IG4thxPn9/RHCZbBgElzVW?=
- =?us-ascii?Q?emHfeNVkKq1Gt4KwrF7uOcJsQfmzKawXknffLzDJ+xDxxJLrg7twnUapck96?=
- =?us-ascii?Q?pd74cNokMYRuJF/llTwu1I3Xb1wlNeQzgOfwozq1nFpNZAbOFMeVUTOzuK8K?=
- =?us-ascii?Q?/gbtPSzNr/QEavkIwroTs27cfJx5/qvLcOvqPFg4Vyf/ydVdmk5iFebMpNIB?=
- =?us-ascii?Q?y75jBi3ByfTeWrUsED82LLjUdqSCq4amsV/Tmo2bMRTyE2pG09g8nHhcqI27?=
- =?us-ascii?Q?MiNIxJPEJTEHUaROScs4Bh/MqkZrc70mxsSfXYQ/AKWI0X8Rrstse8W3y4Ym?=
- =?us-ascii?Q?/EKXrR6BVaKmWUjgZcWC2S8yEJkM6OgKY4WLOmG6OT1gdnifC6YHb3B6cDoH?=
- =?us-ascii?Q?H4Wu0fZowT0KEASDFpIEIDOX0G4e3jS/Ju/qTOKt9f9H9EBEkrZGVL+cdrs3?=
- =?us-ascii?Q?M2XNnfvMQwyYeikxUYFf7HRYj2HhkZUEQdgvtXve5qXEnayIP3GQPw=3D=3D?=
+x-microsoft-antispam-message-info: =?us-ascii?Q?mgT0dDa2h9P4Q6SQ9n6C7Yeoeb+naRPXkn9fr3hDmjg8obAuDe+j4qWPQxGy?=
+ =?us-ascii?Q?SjcpSEsWixD615OxW+XjMPoCW+cOUx0U3EnocoC8s1Z2uZMTIiFOwfafhMJH?=
+ =?us-ascii?Q?7ox69PAa0Su5OI/xGe57I2NVHzj0KVy42mwXPJ2zBSn6s8plYUdPgf8eQ9KW?=
+ =?us-ascii?Q?rx7FU5MJbBiUG1ncTTclaVV0hPOk38QxfEF0BmNtesUcV5jNwXwjPQHzjKxs?=
+ =?us-ascii?Q?gXMM63jRFbV2/OX62dyHreEWRAO8RVnvzhQeDvi79Qn7rjt94ASEFY734PoA?=
+ =?us-ascii?Q?B5XTahjskH+jF+C15vpDTuGqVwAuBO9F9bYyoNaEGKJj3Tly5ralzxkNW/NM?=
+ =?us-ascii?Q?YddIczn0dfQuF7CgPSIwg+aXrRu3sXUoODQFZ1a2yyw7z/uEC5M5xt0UHDcn?=
+ =?us-ascii?Q?AqpZ9N6Rh2Wuy3wRhnwH3X6/qa0uWXTnIPp9559QpI6cqbT10uJAG2Ib6ED0?=
+ =?us-ascii?Q?ynV1G2a6gjr6p18d41UVl/EUN5GMAyZ7tLVnbI46deLBmfCQjBFJHePh0f2W?=
+ =?us-ascii?Q?QjcR5cMHrXIWfSL0wZdt9IvUTW3L1d6zrLZVlLVJR7cSGgkx/iGqKct77CVk?=
+ =?us-ascii?Q?+celv/hQC4q5QSNmXGy6Eoo88Cxgi4mvcmFkhHtUtCJsJn9GPPTE+JgW6H7X?=
+ =?us-ascii?Q?zF+sZDHOTI23Mrmc1bUyO9dRNUJB89kGyc0whKsDbTdMEeK1ahOi7TyPObjB?=
+ =?us-ascii?Q?3FqVADxOMv5/RYK3N050k9gsXwLXoPL458INiDvd52bGun+YGBeucTt6uiIa?=
+ =?us-ascii?Q?1m8lmUpsDS/Z1z857qr11IhUOtcrkb8c1T/tlzbvyTB7lS3u4mt1Ub2Tm5Uf?=
+ =?us-ascii?Q?D2pMxsHTtAghEWwtKAPa01kmjX+xB53xELf3lkvevpuakEOTWCWHbS7w+dLb?=
+ =?us-ascii?Q?Jx+yaq0eNz0TznBhPBkSDYP5nr6Ekba0eSJZR37gdym+/q7JInA99HhTQXe1?=
+ =?us-ascii?Q?2JBCPWrTVCGtgH+PzqLmCJ3jY734yk+uIRk3XzEoZabfYAHKI6uhTfR/zzyU?=
+ =?us-ascii?Q?F8veqOOM5lPxa4/mj6WbW6AS8GXUQbPmEE4EoR6L7f85Le0lmsW0ynQ7xiHp?=
+ =?us-ascii?Q?1LE9xm/Xc2iEH27UZxewt5rWzkOcKjwoiKWvBtAH0VpiCnWh97lZlJ7eLJUf?=
+ =?us-ascii?Q?TWxEQ3SJQ1+ch4K8hZ++Nxnjv2204pmRmq3WOQmwvXB8iuV1nUTFRGvyiYSu?=
+ =?us-ascii?Q?G7T1YW4o1MveLRtO3b/xo0SYJ54QNrr/kSDQwypCea69QmSLlDvadwHjiQI6?=
+ =?us-ascii?Q?+FtP8vI+KQfNgeEZ4AZjU4FYeSZhjVBIQJXSPJKA8VTpnypkuWXtNefounwG?=
+ =?us-ascii?Q?Q0Op1JHu5P4VBdt6s9lqR4C3UrZd1xVv/bYeJlsDhYY6RVn7Y6S1OA8j8X44?=
+ =?us-ascii?Q?cJWK8Jmrpq0bCx5x4T/BbU8+G96VU5U6Op7L5dhWQcZ+PMlHMirlz4FI/u+X?=
+ =?us-ascii?Q?9NAaWKhjGjF0LaChEh5fbOtnDtw2OOqX9wuyyKNOZi9pbFVdrYPvfg=3D=3D?=
 x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL4PR11MB8797.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?QQOj2vBbShPX/D6oKM0tyzBOabf8aEhzl0RUJo8muJiIexK8H10m12vU3dVY?=
- =?us-ascii?Q?+OD38DLzOS5z4E/FTni0m9VEgoRSC65b2C1GwKZlNgfOpjXrV2DJ7cd3m22J?=
- =?us-ascii?Q?vFZIujgf35ybm3k1o1o5oCVZkE5p2frYDyptB1YKBl7yiiFpxv27WgwrRA+w?=
- =?us-ascii?Q?zn+woB1PE70vYy6kSjZxCR1OAcNixFhuoUa+QEIFoYJY3ENmaXgWeeSnTcos?=
- =?us-ascii?Q?4a/2vxHY/vtZ6SaS8KhYYBtkp+HILXxgxoJt6GZWsF1nGOOc67qwlIKoDd66?=
- =?us-ascii?Q?jm6+6ldf8/Hd0B/pS2vT8nTJYfCxpqWiirsfdQB4L5e+UaoasmP4CowU68pb?=
- =?us-ascii?Q?Du2xvwvWA6TRcnBWoJascImgIT5+WpJZ3ISukE41AwbLbHxI0Sw7Zm8hzltx?=
- =?us-ascii?Q?nAzMCkAfznyG3w9B8+Ik7zE46RJ0XpfjfoBJ4M0NzSmqPn9cDfedONSHKh49?=
- =?us-ascii?Q?D17rhl6Z0Tax6Yf5TLa5LmhMbrELw5dhM9xhHK1iqKqY2czb3Es9jAT4EeZs?=
- =?us-ascii?Q?iAFV38dvf27KrgtzYBzrPkcVLi4InlHO85ouGnCR5PCoy2QHsxh7XIyjUw6a?=
- =?us-ascii?Q?GeU8165koS51FCa9mpBFYoCi6466NXKTsHGrLdpjSFJnqqtvYzIZIrjGFG6w?=
- =?us-ascii?Q?d+TuHOHEa0/qVfFUuSSxDGpjnKOBEa5osIunWHWtZ/c2bTfglGPT2ip52n2a?=
- =?us-ascii?Q?gNXr5TJqHWJkijV84ftqt1H03Zj6vqK7bgEmwIBrp+7E+hAuGnm0j0CVdnWP?=
- =?us-ascii?Q?dmfTsFasCKMS7/LYBvkhQgT20DPFWZWrGZDNVlukop8au1sBVSeZoS9dUTK0?=
- =?us-ascii?Q?hZr4dSVRecYU5Cm1tdA3Ta1L7YGyEOX6vrmX6ouhMmNhq/zO/ymsDMu6IqK2?=
- =?us-ascii?Q?Hl9A/vd6PIyQfrpl/x4QdpwQqEAq9HqzVVrzVxg2EYg0mxN3zDk6CGotXYPM?=
- =?us-ascii?Q?oXfR3F7TYiE1ItKnIxCRm4aCqkXrvV6YVw2BFW+KZI9XmmjcnoO3wbLFI386?=
- =?us-ascii?Q?i5GlODRbOTHgVbIbKfmVaNc6dlfIO0S3T2+8syU0v5yEnxsk/myVXNu4Hh97?=
- =?us-ascii?Q?u2FJuBHlhJubyedZ4cYbePPIT7adGrgmczEW7ZtgqG2X14PiUpFoa3ph+nRO?=
- =?us-ascii?Q?trqqgkKouHQomNH+QJvsWO75CiZ2WMUlKhfCzuk+uK4VZI71WJFov2s3rGXI?=
- =?us-ascii?Q?x+STbYxECAkeeYzM3UZnoPJKbKfAgMjTiJUR2gB3NhoxaIOc6QtsxdFi6ish?=
- =?us-ascii?Q?uB0rgYXPjRJAUWnkIAYuesopzgIPQEbPvpkoaGeLzEhO69qaQ5X7ejZ+9C6p?=
- =?us-ascii?Q?CsLyxUkTDoSMCkd4cfsZHfhj1PXtBP/CtZb0LyuoxjfttNN7XAuhOCKTcXAq?=
- =?us-ascii?Q?nlmC4715XtQtKZSMaAyFA8THUH7zUrCRUwkh7xig4JfLR54wIbsJKCRE0o8m?=
- =?us-ascii?Q?uVFHg02YB1rEmse9+TmFSfRofO1ygLG7kq/7fNHOXuRdoUTJY8tHgkY6RxNG?=
- =?us-ascii?Q?v1PYHTxplOofHpkEZkH8kcV1GaLm0obS82p25BJe5jms2Yp8jGYWnin5jC2s?=
- =?us-ascii?Q?bi92ngsc62o76eKTu72j193NUeqWj1NW66V7ZroX?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?maIJYEcH7WFYM29sFfDlb+PsueiC1oPnBLSk+5nieasoN2/FKfRz8+vJoRz2?=
+ =?us-ascii?Q?g8snI5+3RhePYGvoEmUVExiXBkxtMLfe9FQo8LGh4hsjR/jrEmVO8mpLyqq+?=
+ =?us-ascii?Q?qYecEa65syBZlps2WnD/mFLQkiV7IXcK15Df/rsjRpSUaQqsUBByjGRO2D80?=
+ =?us-ascii?Q?e0E+yJ/G8jv2Dw/62YPpbYgPk+fG7c05pN1Atzzm/W/GDnEqUmQvw6eiOagx?=
+ =?us-ascii?Q?SgycdiSvmArkloRJsqjZeDF2HnXc4guDrfboajo//ZmwB7wxc5mcuVzr28Hx?=
+ =?us-ascii?Q?InwK1hbWFEhuqTw3ZtxBwCoQES5bGmRCQTk8RJlqiU3dClNfoxVX4QX+HoWO?=
+ =?us-ascii?Q?pDGWjUVDj1/fAem5t3SAKiS8tw8Vt6Ha8VqTE4cgOK3mdRL/jE3xQxy+foRl?=
+ =?us-ascii?Q?ZawmW+iTrR++FRxBezOKNucxXbdBS1Tz9vHANjyDW03/Wl9EP3H84YSLcDqj?=
+ =?us-ascii?Q?SLcPz5IkXUXaE9i6ocxVYoGqbv/i7ChZub5QUsAYXYTdGseLW8MvDSbdSxEM?=
+ =?us-ascii?Q?93xdOtSRQ9MAGovFV+8dCUB40Py6yWkrMY77qwWLIkcSTZa+Rea8Ci+oXaWh?=
+ =?us-ascii?Q?2tbWtxYMhjQidj8C69ic64CQBnsX8PXJMGFAZ9Y36DaXWAn5M10v3bvrLRt+?=
+ =?us-ascii?Q?RNPNKomQYjrMP93Rs0LAgw53q2oWEOUCcV1tRAPAOs2CtD+QHD0k9blwvJTe?=
+ =?us-ascii?Q?XhQaj7RmD9rEVl0tDvja7h2suonlJXLeBu/kF3fIWAQLXWzbJmkxnPD7d2yY?=
+ =?us-ascii?Q?x8mn8eyEQa3fsbLUdRM5Wud92H+6D9n5E4uwXbGqaDBEQA1PTh/IgI+9xZJs?=
+ =?us-ascii?Q?Glfdfnj5JDerc58m37GDKc8PFZ20IY4QzDjqX2FDFZq/nZonBkpt8wYdue6K?=
+ =?us-ascii?Q?LwFkwW9NPXRUBfuIE3rBXxSDEUVXNzOCvh1Ct5SwP8iu8MDl2ClN2DBp2kD8?=
+ =?us-ascii?Q?LEJtWCr9Jfe2T95BUpKDeSh/Xgh4eScv7dpCAZOu0gOFPFvF1HBsQA0rBV4p?=
+ =?us-ascii?Q?6QU2XwU4aW4kwVzDJQt1zttz3YXisxaM6vrsRIcBZNw3V+PP9LVzskaYZyQa?=
+ =?us-ascii?Q?nZWg8Gh1gaPlIKuYFbAeEYDwkBqLks7LHJDIfXHMIR20qJZUjo6Ax6jl74xi?=
+ =?us-ascii?Q?D64gcXFXZsqnrNOwo0H7GHZxOGO0TV2UN+vWS+dCekzge4t4OpVY96W+kTrB?=
+ =?us-ascii?Q?B21lBqa5WKyxHK5+fFem3Qo4W3DXZdQqST889nD+B8hpneQE1zoPE8jLn4y+?=
+ =?us-ascii?Q?opdG12hxqyCt3xpS1XqAUTkqaN3YCYEG1RF49jzZ0z3y3f094z7t62fP34MK?=
+ =?us-ascii?Q?G1fDTsC/EsJJl81vTKbaVrs2C03eXCKSURK8ahBAzOrsnpJPUrcgDtPdl1h+?=
+ =?us-ascii?Q?Cid8f1UlY8iLzNtvaLIydF0OnbhuugCkHdvlCnCASQx6HAvtgfAdDFn+aVkj?=
+ =?us-ascii?Q?6rerFv937EVjA9OdPBWnZsONa5pdVHY++0njf6z4UIEqWYd0caLLehoQfObV?=
+ =?us-ascii?Q?YrED+zXRUFCiqR9RVtBJBbm9kFs8d3Dd1/PkQ+D7vT8W4AtbGVvoyFZ+a2Xw?=
+ =?us-ascii?Q?I42FXbfHsgAAYXXDQ19aHaTIl+f5YkOkTWrTY9zB?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: BL4PR11MB8797.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 78a5e681-f7c4-4617-1dbc-08dddfbff3d2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Aug 2025 08:02:47.8601
+X-MS-Exchange-CrossTenant-Network-Message-Id: ede766f7-9c15-4583-70e1-08dddfc01c8e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Aug 2025 08:03:56.1786
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: M8FOTilBeT46FvA8WNzbI9u4K6er1ri1mR6p5oGSTjQBVVRrRZqlOTbD4zXheCelGGGnyIeVjOaVQ6yuTGlBxw==
+X-MS-Exchange-CrossTenant-userprincipalname: ChPDaFUFHyDLcYE1J8om8MWQ2BMJteMqU4p90FCGFoXwltNos87vrpsH62bNHIELUZqTLH7GyJK+JpIHrisoIQ==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB9471
 X-OriginatorOrg: intel.com
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 20 Aug 2025 08:02:59 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2063
+ <yocto-patches@lists.yoctoproject.org>; Wed, 20 Aug 2025 08:04:09 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2064
 
 
-I got this error while building the recipe
+I think this cause build error with zephyr kernel 3.6.0. This works with ze=
+phyr kernel 3.7.0
 
-| /data/scarthgap/poky/build-zephyr/tmp-newlib/work/cortexa9-vfp-yocto-eabi=
-/zephyr-openamp-rpmsg-multi-srv/3.7.0+git/git/open-amp-sys-ref/examples/zep=
-hyr/rpmsg_multi_services/src/main_remote.c:26:2: error: #error "Sample requ=
-ires definition of shared memory for rpmsg"
-|    26 | #error "Sample requires definition of shared memory for rpmsg"
-|       |  ^~~~~
-| In file included from /data/scarthgap/poky/build-zephyr/tmp-newlib/work/c=
-ortexa9-vfp-yocto-eabi/zephyr-openamp-rpmsg-multi-srv/3.7.0+git/git/zephyr/=
-include/zephyr/toolchain/gcc.h:98,
-|                  from /data/scarthgap/poky/build-zephyr/tmp-newlib/work/c=
-ortexa9-vfp-yocto-eabi/zephyr-openamp-rpmsg-multi-srv/3.7.0+git/git/zephyr/=
-include/zephyr/toolchain.h:50,
-|                  from /data/scarthgap/poky/build-zephyr/tmp-newlib/work/c=
-ortexa9-vfp-yocto-eabi/zephyr-openamp-rpmsg-multi-srv/3.7.0+git/git/zephyr/=
-include/zephyr/kernel_includes.h:23,
-|                  from /data/scarthgap/poky/build-zephyr/tmp-newlib/work/c=
-ortexa9-vfp-yocto-eabi/zephyr-openamp-rpmsg-multi-srv/3.7.0+git/git/zephyr/=
-include/zephyr/kernel.h:17,
-|                  from /data/scarthgap/poky/build-zephyr/tmp-newlib/work/c=
-ortexa9-vfp-yocto-eabi/zephyr-openamp-rpmsg-multi-srv/3.7.0+git/git/open-am=
-p-sys-ref/examples/zephyr/rpmsg_multi_services/src/main_remote.c:7:
+| CMake Error at /data/scarthgap/poky/build-zephyr/tmp-newlib/work/cortexa9=
+-vfp-yocto-eabi/zephyr-philosophers/3.6.0+git/git/zephyr/cmake/modules/boar=
+ds.cmake:167 (message):
+|   Invalid BOARD; see above.
 
-
-Build With=20
-
-meta                 =3D "scarthgap:6f7e929ea6ea557f107c8ccffea69a7d7343959=
-1"
-meta-oe
-meta-python          =3D "scarthgap:c29a18fa39ede952f3f6108ec007c1906e2d9a0=
-d"
 
 
 > -----Original Message-----
@@ -208,60 +184,39 @@ d"
 > Sent: Tuesday, 19 August, 2025 6:03 AM
 > To: yocto-patches@lists.yoctoproject.org; Lee, Chee Yang
 > <chee.yang.lee@intel.com>
-> Subject: [meta-zephyr][scarthgap][PATCH v6 10/11] zephyr-kernel: Add
-> rpmsg multi services recipe
+> Subject: [meta-zephyr][scarthgap][PATCH v6 11/11] zephyr-kernel-common:
+> Add Board extension support
 >=20
-> Add zephyr-openamp-rpmsg-mulit-services recipe to build out of tree
-> openamp-system-reference example applications.
+> Add board extension support variables where user can specify the
+> BOARD_ROOT variable for out-of-tree custom boards.
 >=20
 > Signed-off-by: Sandeep Gundlupet Raju <sandeep.gundlupet-
 > raju@amd.com>
 > ---
->  .../zephyr-openamp-rpmsg-multi-srv.bb         | 23 +++++++++++++++++++
->  1 file changed, 23 insertions(+)
->  create mode 100644 meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-
-> openamp-rpmsg-multi-srv.bb
+>  .../recipes-kernel/zephyr-kernel/zephyr-kernel-common.inc    | 5 +++++
+>  1 file changed, 5 insertions(+)
 >=20
-> diff --git a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-openamp=
--
-> rpmsg-multi-srv.bb b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr=
--
-> openamp-rpmsg-multi-srv.bb
-> new file mode 100644
-> index 0000000..222ed2b
-> --- /dev/null
-> +++ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-openamp-
-> rpmsg
-> +++ -multi-srv.bb
-> @@ -0,0 +1,23 @@
-> +SUMMARY =3D "Open AMP rpmsg multi services"
-> +DESCRIPTION =3D "Open AMP rpmsg multi services"
-> +
-> +inherit zephyr-sample
-> +
-> +SRC_URI_ZEPHYR_OPEN_AMP_SYS_REF ?=3D
-> "git://github.com/OpenAMP/openamp-system-reference;protocol=3Dhttps"
-> +
-> +BRANCH ?=3D "v2024.05"
-> +BRANCHARG =3D "${@['nobranch=3D1',
-> 'branch=3D${BRANCH}'][d.getVar('BRANCH', True) !=3D '']}"
-> +
-> +SRC_URI:append =3D " \
-> +    ${SRC_URI_ZEPHYR_OPEN_AMP_SYS_REF};name=3Dopen-amp-sys-
-> ref;${BRANCHARG};destsuffix=3Dgit/open-amp-sys-ref \
-> +    "
-> +
-> +SRCREV_open-amp-sys-ref =3D
-> "d78315763fbacba8a74552d0ad570bd01c42ccf9"
-> +
-> +ZEPHYR_SRC_DIR =3D "${ZEPHYR_BASE}/../open-amp-sys-
-> ref/examples/zephyr/rpmsg_multi_services"
-> +
-> +ZEPHYR_MAKE_OUTPUT =3D "rpmsg_multi_services.elf"
-> +
-> +EXTRA_OECMAKE +=3D " \
-> +    -DCONF_FILE=3D"prj.conf" \
-> +    "
+> diff --git a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-kernel-
+> common.inc b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-kernel-
+> common.inc
+> index 5191b9a..579fd6c 100644
+> --- a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-kernel-
+> common.inc
+> +++ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-kernel-
+> common
+> +++ .inc
+> @@ -18,6 +18,11 @@ EXTRA_OECMAKE =3D "\
+>      -DZEPHYR_BASE=3D${ZEPHYR_BASE} \
+>      -DBOARD=3D${BOARD} \
+>      -DARCH=3D${ARCH} \
+> +    -DBOARD_DIR=3D${BOARD_DIR} \
+> +    -DARCH_DIR=3D${ARCH_DIR} \
+> +    -DBOARD_ROOT=3D${BOARD_ROOT} \
+> +    -DBOARD_EXTENSION_DIRS=3D${BOARD_EXTENSION_DIRS} \
+> +    -DSOC_ROOT=3D${SOC_ROOT} \
+>      -DZEPHYR_TOOLCHAIN_VARIANT=3D${ZEPHYR_TOOLCHAIN_VARIANT} \
+>      -DZEPHYR_MODULES=3D${ZEPHYR_MODULES} \
+>      "
 > --
 > 2.34.1
 
