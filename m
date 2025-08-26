@@ -1,116 +1,77 @@
-Return-Path: <vince@underview.tech>
+Return-Path: <peter.marko@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE876CA0EE4
-	for <webhook@archiver.kernel.org>; Sat, 23 Aug 2025 19:19:15 +0000 (UTC)
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
- by mx.groups.io with SMTP id smtpd.web11.3364.1755976745853452356
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78CBDCA0FE7
+	for <webhook@archiver.kernel.org>; Tue, 26 Aug 2025 19:06:58 +0000 (UTC)
+Received: from mta-64-228.siemens.flowmailer.net (mta-64-228.siemens.flowmailer.net [185.136.64.228])
+ by mx.groups.io with SMTP id smtpd.web11.74149.1756235213359181001
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 23 Aug 2025 12:19:06 -0700
+ Tue, 26 Aug 2025 12:06:54 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@underview.tech header.s=google header.b=Gxu5OqrB;
- spf=pass (domain: underview.tech, ip: 209.85.219.49, mailfrom: vince@underview.tech)
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-70d903d0d59so11945206d6.0
-        for <yocto-patches@lists.yoctoproject.org>; Sat, 23 Aug 2025 12:19:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=underview.tech; s=google; t=1755976744; x=1756581544; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oNcIK5qUZ7p60Btr2yclWntZ+/2R6GMNHThw4jXm8yk=;
-        b=Gxu5OqrBevCYZ0GgyW2oIps/Agh754CrRzZWS0Txp1LW9qOMTfU6luL+OWRl3K/sVi
-         Em/5GJYxDOT5N87FmWnzCjtN00gDYHFis3x+5wQRAcf5/17SvzGGiirTMmP7HvZI0gGC
-         hRfhizn7rBHUbi8bJ6X4xSFSBA6eiYYCIfUrR7ykKBzVmlLmfwEu8JLdQbQuBLeyjBIi
-         doLhXilrM26rcILLWAf/COtPCQIxh4VPJeuGijoeqrUbVzhubzvHDGpHObBofdfG5GZy
-         7DCNyQgJ2EIb73x3+YGKdByfIPwbIlitL3I2LGczL1YPUgxEhY4iASRvJkVN0TnJx7jv
-         HrZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755976744; x=1756581544;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oNcIK5qUZ7p60Btr2yclWntZ+/2R6GMNHThw4jXm8yk=;
-        b=lN2PQ2m686BBtIqoaJ0GUX97vrNWaV+mK3pQUoKm2g51TzUmUVrHIzuXwDZ3/13f5y
-         5gBI/OxKxGQfZ7iUhksmCYfnMKafMMerY1qYuAZjLywogOWRNAMWfDVCmtEYzByeOWP2
-         VcvgZXPjHNJ7QsyWZ29r2mDK891O8y5eidt2dArMPIf2DRfe5cqgij5mDUhWTCX4X3Qq
-         raHJXDrMOsG8ZdjEmpMCUxvuA6zLAnApzXM/wm1xZO/rCDn6cLbzSpzQKPnw7QX++ske
-         8h7xuiLYBFoi5j/CqOchdLOhzOKtitmzdFGEkELJHxTh/PAUBl2NG1YYES++ZEqU0zYL
-         rOXA==
-X-Gm-Message-State: AOJu0YxUnrmwItv/QcdcDu9rxKXrgd3dUmr0q3ze3cOxlHchTfLFKNOw
-	NZPRrt9ghGn2vFg6P5ToFogPBp43aGoUl/MV0Gdn1z4LwFAF6B5xNhVgI1GhzTqDXqhQ9v7YxPZ
-	X+63N
-X-Gm-Gg: ASbGncvYiHrKq+mtDIYjXSgXVrGFTskdAYaw8lGg4kdWH0vMtk+u0VZiHEObg/BpJfx
-	IU2ToPgOQ91NJsBYZf6Ssj2LSGeBJY0TofJd4xjYAbtwYhu7tDsPrSSYwkEInd8YHaRe+qa43tt
-	F06vY5RGGGKVH+k1KvaV4/pFqe9mJRReilX3BRBPlrm+vglk1vjyaGhC9a8Ux3Q/kStsgGs5UTp
-	f8KoGryB4plnALWfurhN+1+O23CzbHfzHTE9QBGsZzERqrc6nhdgs01a0a5r0tZ5+x3S8M27C2S
-	BB/e6vd8zzn7PUa4iGYoxZknWX+M0ezNvciqh1AaU1RAKkG6J/FSI/UE6A4Aa17bD3Q/8ZZWVl0
-	qwbWBEnVuHg9YnHVeDskD7g==
-X-Google-Smtp-Source: AGHT+IGlwc1/zZtjBmxpI+5aArgaoYPNz8CkfF5b64Iku8fndh0ef2I6rk3bzzjFncfnCDDC74Ys0A==
-X-Received: by 2002:a05:6214:5191:b0:70b:ca6d:24fc with SMTP id 6a1803df08f44-70d972c5165mr78383466d6.24.1755976744527;
-        Sat, 23 Aug 2025 12:19:04 -0700 (PDT)
-Received: from vince-server.. ([2601:406:4d01:1820::6d26])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70da714727csm17583436d6.13.2025.08.23.12.19.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Aug 2025 12:19:04 -0700 (PDT)
-From: Vincent Davis Jr <vince@underview.tech>
+ dkim=pass header.i=peter.marko@siemens.com header.s=fm2 header.b=Di3L9hmZ;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.228, mailfrom: fm-256628-2025082619064800e7ff905900020722-6tl6am@rts-flowmailer.siemens.com)
+Received: by mta-64-228.siemens.flowmailer.net with ESMTPSA id 2025082619064800e7ff905900020722
+        for <yocto-patches@lists.yoctoproject.org>;
+        Tue, 26 Aug 2025 21:06:49 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
+ d=siemens.com; i=peter.marko@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=uP1IHmkSQ16nkSiMh7JCs5U2QzjXJ00rlWKk0OwBbZk=;
+ b=Di3L9hmZOYBokNlwcvQIqXC+O+dJEtDl5p4xYgafGuOJ66NQ92KSvm6g3VDYkeS+LGtpr0
+ 5PZAcJ3LidCAvxdcD16prsh/+LtKb+WQengOdHeORO6gsM+eRxJ/BTxCqeIbtyh/U7Wml4Kl
+ VCWU/wxB7XF5lIxkAigV9P/AMt7YrJcVt3I9e7YKmh8USWNwM2dU2c1CWjeTMmSzI5gca3D7
+ //0HaUOTsSyo/Z1WecafGi/HIw34yW1OUGR9daURprpBs2p++Gi9Xsm0O+ixSu7dsURA0TwC
+ Vyo29zcmwIqk4K1bhQYpmG8ZC3BZ4OVNQmgs50MRnkg0sYUb/c83iBBA==;
+From: Peter Marko <peter.marko@siemens.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Vincent Davis Jr <vince@underview.tech>
-Subject: [meta-selinux][PATCH v2 2/2] selinux-python: fix No module named pip
-Date: Sat, 23 Aug 2025 15:18:57 -0400
-Message-ID: <20250823191857.602063-2-vince@underview.tech>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250823191857.602063-1-vince@underview.tech>
-References: <20250823191857.602063-1-vince@underview.tech>
+Cc: Peter Marko <peter.marko@siemens.com>
+Subject: [yocto-autobuilder-helper][PATCH] scripts/collect-results: add cve-update logs for metrics
+Date: Tue, 26 Aug 2025 21:06:00 +0200
+Message-Id: <20250826190600.20606-1-peter.marko@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-256628:519-21489:flowmailer
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sat, 23 Aug 2025 19:19:15 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2082
+ <yocto-patches@lists.yoctoproject.org>; Tue, 26 Aug 2025 19:06:58 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2083
 
-When running the do install task run
-into No modules named pip.
+From: Peter Marko <peter.marko@siemens.com>
 
-Add python3-pip-native to DEPENDS
-so that pip it available.
+CVE update is currently not working properly on autobuilder.
+Add db update logs to build results for problem analysis.
 
-PREFIX variable not being set also
-appears to effect whether pip is
-found or not. No reason was found
-as to why that is.
+The globs are necessary as:
+* there can be different host archs
+* there are different db sources (nvd/fkie and nvd2)
+* db update version is irrelevant and glob is future proof
+* ther are multiple bitbake runs (metrics for core and oe)
 
-Signed-off-by: Vincent Davis Jr <vince@underview.tech>
+Signed-off-by: Peter Marko <peter.marko@siemens.com>
 ---
- recipes-security/selinux/selinux-python_3.9.bb | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ scripts/collect-results | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/recipes-security/selinux/selinux-python_3.9.bb b/recipes-security/selinux/selinux-python_3.9.bb
-index b452887..88850ad 100644
---- a/recipes-security/selinux/selinux-python_3.9.bb
-+++ b/recipes-security/selinux/selinux-python_3.9.bb
-@@ -16,7 +16,7 @@ SRC_URI += "file://0001-sepolicy-fix-install-path-for-new-pymodule-sepolicy.patc
+diff --git a/scripts/collect-results b/scripts/collect-results
+index d29916b..b6cfe87 100755
+--- a/scripts/collect-results
++++ b/scripts/collect-results
+@@ -28,6 +28,14 @@ if [ -e $WORKDIR/buildhistory ]; then
+     fi
+ fi
  
- S = "${UNPACKDIR}/${BP}/python"
++case "$target" in
++    "metrics")
++        mkdir -p $DEST/$target/db-update
++        # there are multiple logs (for core and oe bitbake runs)
++        cp -f $WORKDIR/tmp/work/*/cve-update-*-native/*/temp/log.do_fetch.* $DEST/$target/db-update/ || true
++        ;;
++esac
++
+ HSFILE=$WORKDIR/tmp/buildstats/*/host_stats*
+ d="intermittent_failure_host_data"
  
--DEPENDS = "libsepol libselinux gettext-native python3-setuptools-scm-native"
-+DEPENDS = "libsepol libselinux gettext-native python3-setuptools-scm-native python3-pip-native"
- 
- RDEPENDS:${PN} = "\
-         python3-core \
-@@ -111,7 +111,9 @@ FILES:${PN} += "\
- "
- 
- do_install() {
--    oe_runmake DESTDIR="${D}" \
-+    oe_runmake \
-+        DESTDIR="${D}" \
-+        PREFIX=${prefix} \
-         PYLIBVER='python${PYTHON_BASEVERSION}' \
-         PYTHONLIBDIR='${PYTHON_SITEPACKAGES_DIR}' \
-         install
--- 
-2.43.0
-
 
