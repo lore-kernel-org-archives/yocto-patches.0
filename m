@@ -1,158 +1,91 @@
-Return-Path: <martin.jansa@gmail.com>
+Return-Path: <vanusuri@mvista.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C76DCA0EFF
-	for <webhook@archiver.kernel.org>; Wed, 27 Aug 2025 10:05:01 +0000 (UTC)
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
- by mx.groups.io with SMTP id smtpd.web11.11179.1756289095972465217
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 493BBCA0FF2
+	for <webhook@archiver.kernel.org>; Thu, 28 Aug 2025 05:20:42 +0000 (UTC)
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+ by mx.groups.io with SMTP id smtpd.web10.13852.1756358436459149587
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 27 Aug 2025 03:04:56 -0700
+ Wed, 27 Aug 2025 22:20:36 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=V58teA7c;
- spf=pass (domain: gmail.com, ip: 209.85.208.173, mailfrom: martin.jansa@gmail.com)
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-333f92d60ddso49646891fa.3
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 27 Aug 2025 03:04:55 -0700 (PDT)
+ dkim=pass header.i=@mvista.com header.s=google header.b=JiOjdMf7;
+ spf=pass (domain: mvista.com, ip: 209.85.210.181, mailfrom: vanusuri@mvista.com)
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7720c7cc05fso436771b3a.3
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 27 Aug 2025 22:20:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756289094; x=1756893894; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/+v0Ycu+Atxm0OPJygb/WW63CZwIks39DZ4ldlLbIo0=;
-        b=V58teA7cXs+x3yXABMTwfebDgCUabid4FsE3Sz10Uh5zUN8OkLsR2IL9d5x1HLH3lQ
-         liU+RUK3hfdFCCg4aObRvNzpCtIXY2M6SFOenlQr13X/lqE9fCYMDTYANFkhqp3EkrpD
-         lES5JrIF12yNYVwABI82aDXuqz50L/fzDiCpzq3ekvokRAh6kd/cCaBPyDRKxK7vFeQt
-         JEiBqcqNJDGp+Jpd7ymAtJindmWJ9G4ulK8YXhLSCqwMXVk0qf+qPPp0HHTa2sPHS6Nu
-         6yboQ9sbaol/ui3XvIufCq3flRsiMIW+VJZm00H7+x0PCbt8wKbxZmBr7CASII+pvno7
-         cqUw==
+        d=mvista.com; s=google; t=1756358435; x=1756963235; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lRCReKWdVXkuqCa82gyMt02E6hgxRuzjBQVSuhlnuTk=;
+        b=JiOjdMf7E0IQZP6+WoNnbFbnoQD46yYI8Xef+wCVZdBefPOAZIvgKrCvpr2QJtiDlE
+         UJmA2jXftKk+eEuY8fv8k/mgXeFueLpMIJdnTuufrin704hakH1UgD1038EnoEQ6MLwM
+         1zjJuBoruwyYbsa97iYDyC7doWHBBGVjzxins=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756289094; x=1756893894;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/+v0Ycu+Atxm0OPJygb/WW63CZwIks39DZ4ldlLbIo0=;
-        b=quEd8dUiymV1yXNYx5Y8utRwIeD8WrdXAduDLtAJxAx2p3jPkC57OxsbnzZMDMs5nx
-         tXzTPT1sXsar17+AvzfG8/kqSVzAsLIJbpTlApJpzmP7YUQ79iKQNrNjDDE3lU2CzBYf
-         NjRdP1JR3dgspfTxjvNztma+9kTT7rNF9yAKw6Ci4tvs6trUh7JjQn6a72sZnsbT6Lia
-         ulhO2PBd3bjeq/wRzDQLktG6yzBFJ9Y0suV6kXbdkBc9CMpVX4SYRzLEMXPpd/Q5kMfW
-         22AkGaD0CUSjwrS2uc5Pg7zT3z4FVFVxCoAHYyygEDIynzz66auyK+YXR5qsS+TrfDlE
-         Jaiw==
-X-Gm-Message-State: AOJu0YwCEJjjeMHGM7jZ/B8KKY0IisU3EVn4P3eN4XN10Qu50OrUFX4+
-	jMuuLN7qiKpUE4mop6zWGZqciiqwc7hyi1Oxcwu1yQVXCmuPJ6Y/8qAjf9F1lxMGJ0wUfQdKoi/
-	HbQyE40CpPbcd4cIFI21hSaxZ6bdV60jnFA==
-X-Gm-Gg: ASbGncuWI8fSiXA2F0Ny90pxWQnt3m9aLhiSt/Jn3tuBcMZkwHnLIImgYU78hm2BVA7
-	zCnMhk2fmOCJVj+qvTK4/wA8laH/DCf3ANwXXt0TolWbihaUXhBDh+Uhr8IpgCCLn2k6ZpVB7Q2
-	4NNQgytxhyZZ496ziWlYovx7j+cIPwuKwjcUyxrb7w0DvRt6Cc/mq6m1twcBxbkakIwvd0d8CPf
-	UqFhEKB9VzCXZwqWxcN
-X-Google-Smtp-Source: AGHT+IF2YX3eW3x9sf96SlXVYtajemQD3AQp7q1VID7Grl4307dZIilYyxmVfJmtJV3Dfsndk2F4b2uGon+Q/FfdKHY=
-X-Received: by 2002:a05:651c:1a0c:b0:336:6b37:c8f4 with SMTP id
- 38308e7fff4ca-3366b37cf0bmr36279731fa.35.1756289093435; Wed, 27 Aug 2025
- 03:04:53 -0700 (PDT)
-MIME-Version: 1.0
-References: <185D236360593879.4571@lists.yoctoproject.org>
-In-Reply-To: <185D236360593879.4571@lists.yoctoproject.org>
-From: Martin Jansa <martin.jansa@gmail.com>
-Date: Wed, 27 Aug 2025 12:04:40 +0200
-X-Gm-Features: Ac12FXzJQbb3lxCt3CWxIPIxJdzMYMRdmwVIdJvO1h83Mn14sFBTXROOBkC8Pe8
-Message-ID: <CA+chaQcBn_=Sz-8nPaC7RNGtR4FLhc6X7DaqMGhCopVq7HWxpQ@mail.gmail.com>
-Subject: Re: [yocto-patches] [meta-tensorflow][master][PATCH] bazel-native:
- fix build with gcc-15
+        d=1e100.net; s=20230601; t=1756358435; x=1756963235;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lRCReKWdVXkuqCa82gyMt02E6hgxRuzjBQVSuhlnuTk=;
+        b=Jb7myB8j/8nCcOcDSWLE1uS2rFNqjh2ngBfWS6PnTTUnqEjquVqLhpME8KpHaQ6f03
+         brI7+txffXFl0Czlwn6y2n0NxRMX5UTLePMuyreIyjpYeXOisLKBhxh48uyMIAzBPAFB
+         E6Mfm6abiYfFGjFPQl2ueZaECgZEUXxltyANMIiYCfF6yx07Boau+KLTwHb4f4afEBl4
+         +JW/SGNUJCVP55fpAzh+y2qukip+w/8Wkl0rv3GtlZyyXH9QHbknTfeSUxZBWDpJpCWy
+         y3IhYkRozzehz2DiomXEASmVCZOeRblrKue1WEJ6cUNR3DYgwABv6/IwgJsXb9e0B27S
+         O4FQ==
+X-Gm-Message-State: AOJu0Yxjw+XLs49OBdr5s8LUfL35PBcbzbYhiSpnXfzhKZ97DH/cVSj7
+	eWp/hpwDncTF+YjatU8i3vSFCl+V5WJY8zlVrI02EvveUGkZq3dH3pORR1iSB2OHum3a5JHy34C
+	9y7NhMsI=
+X-Gm-Gg: ASbGncv4wOl++KMi51PzDXe/EHIPyLUwhG6rb0x+ckqSLY4piCBwX0KoJ5XSsP8ThFZ
+	1Z6w4VcIH40x9QCfNerPOnehfmK0SDJ9sGYxzWbXMvzB+ND4Y1CJtqHEiDhYRXZl6KqYzGcNJQT
+	ImPiXLuWrLI8GVq13Tyru+iFO91JmQnEFybpF7fqkRq9PQyPXe5XXp2b2i6tuaz436IfbXu8UhX
+	tIJlXM7LkuIgLIG2bOuAMDmywMmUduamNrHJH71SNUiWagWAJmWIAzjw1J1tkbXbQqu/8QejfO2
+	Z9aOxUQFc9hfJBBgjL3KDMCA7lUlTf3ApzxtJcT2HxoGdw5/azICSvlq44lKeC6dqrVuOtZqMhb
+	O494X9AiGYpYEU6C7Wx1qzkOrspDS1fMM4fJTFem9kLfq
+X-Google-Smtp-Source: AGHT+IGmOdHDEKoWhWLP2KumresBW/KCvzBq7gaImcMj1563gRkMxWW+PDtgsnVZ3FlHgDYcyH7BAw==
+X-Received: by 2002:a05:6a00:2e21:b0:771:e8fd:a817 with SMTP id d2e1a72fcca58-771e8fdabcamr17136073b3a.14.1756358435136;
+        Wed, 27 Aug 2025 22:20:35 -0700 (PDT)
+Received: from MVIN00020.mvista.com ([49.207.215.240])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-771e9fc74d6sm9226827b3a.77.2025.08.27.22.20.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 22:20:34 -0700 (PDT)
+From: vanusuri@mvista.com
 To: yocto-patches@lists.yoctoproject.org
-Cc: hongxu.jia@windriver.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Cc: Vijay Anusuri <vanusuri@mvista.com>
+Subject: [yocto-patches][meta-cgl][PATCH] layer.conf: Add whinlatter
+Date: Thu, 28 Aug 2025 10:50:27 +0530
+Message-Id: <20250828052027.16787-1-vanusuri@mvista.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 27 Aug 2025 10:05:01 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2084
+ <yocto-patches@lists.yoctoproject.org>; Thu, 28 Aug 2025 05:20:42 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2085
 
-Hi,
+From: Vijay Anusuri <vanusuri@mvista.com>
 
-this time you didn't forget the "From:" in the body, but the Author is
-still mangled.
+LAYERSERIES_COMPAT: add whinlatter
 
-Are you applying the patches manually instead of "git am"?
+Signed-off-by: Vijay Anusuri <vanusuri@mvista.com>
+---
+ meta-cgl-common/conf/layer.conf | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Also ping for the same change for walnascar.
+diff --git a/meta-cgl-common/conf/layer.conf b/meta-cgl-common/conf/layer.conf
+index 2912dd9..c240d04 100644
+--- a/meta-cgl-common/conf/layer.conf
++++ b/meta-cgl-common/conf/layer.conf
+@@ -11,6 +11,6 @@ BBFILE_PRIORITY_cgl-common = "7"
+ 
+ LAYERDEPENDS_cgl-common = "core openembedded-layer networking-layer perl-layer filesystems-layer security selinux yocto"
+ 
+-LAYERSERIES_COMPAT_cgl-common = "honister kirkstone langdale mickledore nanbield scarthgap styhead"
++LAYERSERIES_COMPAT_cgl-common = "honister kirkstone langdale mickledore nanbield scarthgap styhead whinlatter"
+ 
+ require conf/distro/include/cgl_common_security_flags.inc
+-- 
+2.25.1
 
-Cheers,
-
-On Tue, Aug 19, 2025 at 12:12=E2=80=AFPM Martin Jansa via
-lists.yoctoproject.org <martin.jansa=3Dgmail.com@lists.yoctoproject.org>
-wrote:
->
-> From: Martin Jansa <martin.jansa@gmail.com>
->
-> Signed-off-by: Martin Jansa <martin.jansa@gmail.com>
-> ---
->  recipes-devtools/bazel/bazel-native_6.0.0.bb  |  1 +
->  .../bazel/files/include_stdint.patch          | 28 +++++++++++++++++++
->  2 files changed, 29 insertions(+)
->  create mode 100644 recipes-devtools/bazel/files/include_stdint.patch
->
-> diff --git a/recipes-devtools/bazel/bazel-native_6.0.0.bb b/recipes-devto=
-ols/bazel/bazel-native_6.0.0.bb
-> index bc63430..4960358 100644
-> --- a/recipes-devtools/bazel/bazel-native_6.0.0.bb
-> +++ b/recipes-devtools/bazel/bazel-native_6.0.0.bb
-> @@ -12,6 +12,7 @@ SRC_URI =3D "https://github.com/bazelbuild/bazel/releas=
-es/download/${PV}/bazel-${P
->             file://0001-cutsomize-native-toolchains-for-Yocto.patch \
->             file://0001-fix-compile-failure-on-gcc-13.patch \
->             file://1f2b3ed4ac717b814d02a0d125f160ddabe78003.patch \
-> +           file://include_stdint.patch \
->  "
->
->  inherit python3native
-> diff --git a/recipes-devtools/bazel/files/include_stdint.patch b/recipes-=
-devtools/bazel/files/include_stdint.patch
-> new file mode 100644
-> index 0000000..35c57c2
-> --- /dev/null
-> +++ b/recipes-devtools/bazel/files/include_stdint.patch
-> @@ -0,0 +1,28 @@
-> +https://github.com/lihaohong6/COPR/blob/bf48c5450a909cf8358e3cbd81cdde26=
-df426e12/bazel7/include_stdint.patch
-> +
-> +Upstream-Status: Submitted [https://github.com/bazelbuild/bazel/issues/2=
-5514]
-> +
-> +diff --git a/src/main/cpp/archive_utils.h b/src/main/cpp/archive_utils.h
-> +index 18856ab..5298a36 100644
-> +--- a/src/main/cpp/archive_utils.h
-> ++++ b/src/main/cpp/archive_utils.h
-> +@@ -15,6 +15,7 @@
-> + #ifndef BAZEL_SRC_MAIN_CPP_ARCHIVE_UTILS_H_
-> + #define BAZEL_SRC_MAIN_CPP_ARCHIVE_UTILS_H_
-> +
-> ++#include <cstdint>
-> + #include <string>
-> + #include <vector>
-> +
-> +diff --git a/src/main/cpp/util/logging.h b/src/main/cpp/util/logging.h
-> +index b2cd459..7bf5a00 100644
-> +--- a/src/main/cpp/util/logging.h
-> ++++ b/src/main/cpp/util/logging.h
-> +@@ -14,6 +14,7 @@
-> + #ifndef BAZEL_SRC_MAIN_CPP_LOGGING_H_
-> + #define BAZEL_SRC_MAIN_CPP_LOGGING_H_
-> +
-> ++#include <cstdint>
-> + #include <memory>
-> + #include <sstream>
-> + #include <string>
->
->
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-> Links: You receive all messages sent to this group.
-> View/Reply Online (#2054): https://lists.yoctoproject.org/g/yocto-patches=
-/message/2054
-> Mute This Topic: https://lists.yoctoproject.org/mt/114778714/3617156
-> Group Owner: yocto-patches+owner@lists.yoctoproject.org
-> Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/1338883=
-6/3617156/66960823/xyzzy [martin.jansa@gmail.com]
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
->
->
 
