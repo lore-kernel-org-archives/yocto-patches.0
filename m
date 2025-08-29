@@ -1,429 +1,351 @@
-Return-Path: <sandeep.gundlupet-raju@amd.com>
+Return-Path: <chee.yang.lee@intel.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37DB5CA0EED
-	for <webhook@archiver.kernel.org>; Thu, 28 Aug 2025 18:18:51 +0000 (UTC)
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (NAM12-DM6-obe.outbound.protection.outlook.com [40.107.243.52])
- by mx.groups.io with SMTP id smtpd.web11.4539.1756405124991419582
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF2ECA0FF6
+	for <webhook@archiver.kernel.org>; Fri, 29 Aug 2025 01:34:57 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+ by mx.groups.io with SMTP id smtpd.web10.3655.1756431277380415443
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 28 Aug 2025 11:18:45 -0700
+ Thu, 28 Aug 2025 18:34:37 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@amd.com header.s=selector1 header.b=xfCWYvM1;
- spf=permerror, err=parse error for token &{10 18 %{i}._ip.%{h}._ehlo.%{d}._spf.vali.email}: invalid domain name (domain: amd.com, ip: 40.107.243.52, mailfrom: sandeep.gundlupet-raju@amd.com)
+ dkim=pass header.i=@intel.com header.s=Intel header.b=POP6ohKA;
+ spf=pass (domain: intel.com, ip: 192.198.163.13, mailfrom: chee.yang.lee@intel.com)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756431277; x=1787967277;
+  h=from:to:subject:date:message-id:references:in-reply-to:
+   mime-version;
+  bh=YrBuETqiygUipC2WhatKOdXOk4GJmCfxh4kkR90KpOs=;
+  b=POP6ohKAhwrwO2X9SLVEBWW0UnWaIi2dUoWQ6UiQIVhS5yrrwVBQ3jdo
+   TxHIdtYZJwRK6KnfCAZ8uV74k1WU0Myb6gLSgac9p9ytKWDo2TaOMzR/f
+   tdtRGMlMHF1upHOTdOS3gAAtnPg8G0yNhSVB1z2g81/WCkojWe7gGr9ub
+   FgqyrgZCvBQ5TIIjUlU//d/VZOf0bw2x3V/ML8HN03vxMGVR0hvOSgazf
+   lTXDc6/1QC2oexiEyERcCFwFIeUC6v7D7KyyKL8fnpU8bU5jkcgAw2twi
+   IVmEDGw/1bk3GL7tATcOYRJKj1C0QrDsOQIiLoA1/wk7mOl06WRimupRP
+   g==;
+X-CSE-ConnectionGUID: hdD9LSk4QuqywLx7zCzOTQ==
+X-CSE-MsgGUID: Yuu7w3gkR7O479qg9CHWCw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11536"; a="61349423"
+X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
+   d="scan'208,217";a="61349423"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 18:34:36 -0700
+X-CSE-ConnectionGUID: Wxfo2EgAQ8u6EMuUPQxn8g==
+X-CSE-MsgGUID: 5cfHn+qQTkm/QoVRD0UgLQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
+   d="scan'208,217";a="174633093"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 18:34:37 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Thu, 28 Aug 2025 18:34:36 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Thu, 28 Aug 2025 18:34:36 -0700
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (40.107.96.63) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Thu, 28 Aug 2025 18:34:35 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hODQLaK7Xyra2DPasfVSmjowok/J4XngnnhAIWWjOupWvPuug8rYAmrIJ/VGhe50p9BYiE8IPJMg11bRY8wBxNmJO8gMie3T19mIbA4AtC3c4Qyi1xFwzkL0q6k6Lj+4PMtHFBp2C7iOscmxzAUvhDSr2t6KwqquVnYZtmHk1svalEomkmZFHdmvowF594gv7F1HfQDkqoY3HOP3hBTGLNMk3/YDIZOWGMKxyjN90rpM27a1frSelW3Wca+/SMV8vgPcR+LIAF9+9KGh07oK/5gODxpUhk4bPpRQzWIIruw+8xlYs5b74OHoegVsmqsOJPsno/9PY3ZjDaksH0grVw==
+ b=MREmM4OhIacC9X9ZddC8ni+oP5YwS0vU5giuWWq+TCGIPku/9+CZvxhlZoMt5lm0gum+5Gj4ztmxs801q7WB6DoJ2j43b1URGCYGGiJEeFiKM4hMdG9RyyuSClNIl8A1RaMCgntS4xGtir2GExG0AXMoEKddGdBmIjKCmrolAeeTttqyqxgAKXitg3U/1DDKr87v0nJy1BEdJfTzYm19+xoXcKYUM7cpdGmzX6ZFUXLU3/V+2KPSAMmqomKpy1n4WCJgwpNAi/31RLEA8mttEntiBtKlUWk/HHWeeIGOr/NLcjQfmaMM+DS6/exIwxVvX3RyoKZXSoecaCJ/xLeAuQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3SJl7vK/O/v93av/qrfZ7f0P+c+6OH+mVOzaL6c01w4=;
- b=mM4FraUfA9bCcS5hckjmq7fovjFfa3N2VBlenVYtt/bTDRuaqoaUQ+r9TbNItzjOJmuxkrgF4GDB9VZpA+KyRlbZ3RdzKHI7HfOXShL+/gledm1fSClsqgm1FMsBqzB/Ul3W3uLafQNGDGXfBPVZPdEi2/ZH9AjcKNlFQ5l9A5Lvs49YzojtCdyrq8FU8xkkCY0myY2CPG56vtqTv73G/r+GX+X0YIEgszWfAhTtW8doUraYsx/3BoWoIpV/LRuPfl3yJU04VSGSVpvrV0pvr/amg229g98OAnC2LowxnQQ5Gfyiu/NNW6JrAg4AcL7nPtaCj19HUJAOd9dtPe729g==
+ bh=YrBuETqiygUipC2WhatKOdXOk4GJmCfxh4kkR90KpOs=;
+ b=oIZIb8YKH5m34caVq8EkO4OjcjjCfwWAw1aodQ8j+MukPMGGCpBhYz9uRJxmfy+17D+T+d18FuNe5EqrwGl5gChwnXqRZeGTt3cnVLCEM/wA3faGOW10qtE12kBVMJkuiPQtdGqmaWu5TAeUK1R1zNwCO8J3ONRZGjLAaLrnK1xM4G0HkGhMoT8TQF8TTnRwXuZj2L0eVJLowS/8E2JkiTRpnSMwDnG+rjBrYMTAaZFiSeepIRaRrDkqG7Ajp2EZyiseW/hfWnZvJA7EkQ5g1Pd+Yn9It6GKK5s0t0ZtgrQsKEgIDJ+Se7PjZXZBYiXmA+y9jNM/qtPoh1lzwHT9sA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3SJl7vK/O/v93av/qrfZ7f0P+c+6OH+mVOzaL6c01w4=;
- b=xfCWYvM1sEN+rvngYsTBtRk8fMOieeszeftKchwogMiYk3MrIEh9t6qGLjRGUoNoHiQ16CFIWC+wet4V+/OqEdafWvPAORJa1taiKyA6aCiIG/hz5/Dop5PdFrgGQfL7ks/JCX0vcqI2rjSR9aITintd1ji1RG+wsr7/K1NYvh4=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from SN7PR12MB8770.namprd12.prod.outlook.com (2603:10b6:806:34b::21)
- by SJ0PR12MB5664.namprd12.prod.outlook.com (2603:10b6:a03:42b::18) with
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BL4PR11MB8797.namprd11.prod.outlook.com (2603:10b6:208:5a7::8)
+ by SN7PR11MB7667.namprd11.prod.outlook.com (2603:10b6:806:32a::10) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Thu, 28 Aug
- 2025 18:18:33 +0000
-Received: from SN7PR12MB8770.namprd12.prod.outlook.com
- ([fe80::52a8:e59e:e6dd:daa7]) by SN7PR12MB8770.namprd12.prod.outlook.com
- ([fe80::52a8:e59e:e6dd:daa7%6]) with mapi id 15.20.9052.019; Thu, 28 Aug 2025
- 18:18:33 +0000
-Content-Type: multipart/alternative;
- boundary="------------e6xQJ0bmfCXmB0d8L2SAC9GL"
-Message-ID: <61e57828-9a49-4d5d-b622-ef063cf444d7@amd.com>
-Date: Thu, 28 Aug 2025 12:18:27 -0600
-User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [meta-zephyr][master][PATCH v3 1/1]
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.15; Fri, 29 Aug
+ 2025 01:34:31 +0000
+Received: from BL4PR11MB8797.namprd11.prod.outlook.com
+ ([fe80::311e:565b:ccfd:f4c8]) by BL4PR11MB8797.namprd11.prod.outlook.com
+ ([fe80::311e:565b:ccfd:f4c8%5]) with mapi id 15.20.9052.019; Fri, 29 Aug 2025
+ 01:34:31 +0000
+From: "Lee, Chee Yang" <chee.yang.lee@intel.com>
+To: "Gundlupet Raju, Sandeep" <sandeep.gundlupet-raju@amd.com>,
+	"yocto-patches@lists.yoctoproject.org" <yocto-patches@lists.yoctoproject.org>
+Subject: RE: [yocto-patches] [meta-zephyr][master][PATCH v3 1/1]
  zephyr-kernel: Add rpmsg multi services recipe
-To: "Lee, Chee Yang" <chee.yang.lee@intel.com>,
- "yocto-patches@lists.yoctoproject.org" <yocto-patches@lists.yoctoproject.org>
+Thread-Topic: [yocto-patches] [meta-zephyr][master][PATCH v3 1/1]
+ zephyr-kernel: Add rpmsg multi services recipe
+Thread-Index: AQHcEeBXNDrevSHTmEKHz3JnwWyJw7R1CMEQgANjyoCAAGw7IA==
+Date: Fri, 29 Aug 2025 01:34:31 +0000
+Message-ID: <BL4PR11MB87973A5091395D9BBC292047B93AA@BL4PR11MB8797.namprd11.prod.outlook.com>
 References: <20250820143951.4033778-1-sandeep.gundlupet-raju@amd.com>
  <BL4PR11MB8797F6E908FBFEF26CBDF6FDB93BA@BL4PR11MB8797.namprd11.prod.outlook.com>
+ <61e57828-9a49-4d5d-b622-ef063cf444d7@amd.com>
+In-Reply-To: <61e57828-9a49-4d5d-b622-ef063cf444d7@amd.com>
+Accept-Language: en-SG, en-US
 Content-Language: en-US
-From: "Gundlupet Raju, Sandeep" <sandeep.gundlupet-raju@amd.com>
-In-Reply-To: <BL4PR11MB8797F6E908FBFEF26CBDF6FDB93BA@BL4PR11MB8797.namprd11.prod.outlook.com>
-X-ClientProxiedBy: CH0PR03CA0359.namprd03.prod.outlook.com
- (2603:10b6:610:11a::19) To SN7PR12MB8770.namprd12.prod.outlook.com
- (2603:10b6:806:34b::21)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BL4PR11MB8797:EE_|SN7PR11MB7667:EE_
+x-ms-office365-filtering-correlation-id: 73f0f0b5-9d80-4560-7b76-08dde69c33d7
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|10070799003|1800799024|376014|38070700018|8096899003|7053199007;
+x-microsoft-antispam-message-info: =?utf-8?B?WURieUdreDltcFArQVhUcXhWUzMwMWx1R083YlBlbTVrd3JOendDRlVRRTBy?=
+ =?utf-8?B?RkpFUUtGVUduK0FFdDZSZmlNR3JyaU9Rc3pwSHVXMEtLR2R4K0hpV3JRaU1B?=
+ =?utf-8?B?cjhlTVpCK0o5dWhpazFrdWNYRzMvRC83M24zVTBmbGFBNUU2NVRIZVhYblph?=
+ =?utf-8?B?d1BZQXRRayt1Sm4xcS9qU3QzR205dkNSVzJleVJwZUJUZkxWandscncyTHo0?=
+ =?utf-8?B?dlE0MjRJb3dENXp6VUhoVzU0a1k0Ukw3OEtjS2hoWnFrL2dueHVBT1VFTEoy?=
+ =?utf-8?B?OW9MQXp5L0FBanZCMXJ5Qk50R21pYmppeVRiWkN1UFFjWERKWjV1SmhJaXN0?=
+ =?utf-8?B?b1prWURDdjVoZmF6cXRxM0g5SUo4ZFlVTFpDYnR0QkY4N0lTN0JreVdmaW8y?=
+ =?utf-8?B?ZjFON01YRzJ1NHFvUitucUczazNTVTJHU2RqTU0zWWZRK29EbG54STNQcng1?=
+ =?utf-8?B?MnRBTmlqbUI0YUJFVU5PYkppdllEOW1hYlhOUG1oK0JVY1JzOTBuWDZXckxk?=
+ =?utf-8?B?eEE1VExuWVJkNCtBSExYN2VsSjZnVWZwOENVQWF0S0JreVJ6cnNzZHhWZjEr?=
+ =?utf-8?B?SXQ2N1orWVRpQ3JSNEFvQmEyR0Q3RkR2ckl6amNoQ0FHSjA0ZGp3WEZ0WnBC?=
+ =?utf-8?B?b3dCM3d3N1NTam9zZTVRNGF5cnVhMmVQcFRFNkdKZlh0MXBkbEZpUjQyQ1Jm?=
+ =?utf-8?B?V0pVcVorYWg1Rm9ZUlVXVVhaSi85czlpMGZwMGFsbTRadnh0WVZGWWExZmZ4?=
+ =?utf-8?B?cEV3VkUwUVZqRnlOcTlpL2tpaytaMHdTZ1g0RlRua0h3a1lVVWswL1FnQnFw?=
+ =?utf-8?B?a3dJWk5rQTN4UENuS1hzMDBDTm1zdjZ2QWovWnM5T1JzQ1hhRzVJMTNwRWVC?=
+ =?utf-8?B?Ylh5T3dUS1YyaURyL2tpZ3d4REVsN3pBWHZFUmY2UlFsUW55SURNY1pOZ0Z2?=
+ =?utf-8?B?UFBEcUFhWDg1eWR0SEZLTnVYdmJoRmZKenh5NDV0Qmw2VEJjVW9kRmY3dEJC?=
+ =?utf-8?B?WGNlQ1FDVllabVRMTmRGcWM5WDFua0ZORE9uZ3RrYjlYV3NQV1AzTEpWaEJL?=
+ =?utf-8?B?MnBDTERVYkQreDcwNlFlYktURTBWekFkNm5FdlY5VFB6b3FHNi8vNlkyNWtz?=
+ =?utf-8?B?aHBCZXdybnlCVlovNEJ1L25DWkNzdEJDWWtHRjRRa1U4b3orRUNpbmdNQk9x?=
+ =?utf-8?B?RW16WGg4cERrdWFrbmFYVzFpQ0ZTY1V3dkdkUjdnRkZ0ejdOTDFxV1Y4YmN4?=
+ =?utf-8?B?aUx1QzNycjdRTjBJVzc4TzdVaW9BWm9TQ0hLc2Z1MCs3bUZWRlpZOWNYUU11?=
+ =?utf-8?B?ZTlsOUhNZENrLy8wNHBVc3Jodk9pVzNteWk0cHhzS2RnejQwLzBPQjJ6OHdo?=
+ =?utf-8?B?WnBUU0xWY0RKcHdUMWE3SnJkaUpkbkx6QW9pNjI4RUpCR0VMQ0JFUGRmMFVS?=
+ =?utf-8?B?MXFabHk0bFR6K1BYb2dCZzVzeThBcGRIeS9VZHk0YnM5ckRqbGgyTWN3QUpn?=
+ =?utf-8?B?dWVDTTdqS0xZTnBFbDBnWmhZeU5UZmVCWUFiTFlUd3EvSVg5R3ROMXp2MWJz?=
+ =?utf-8?B?MTBrZEZFbXVWemQvdFY4clJiMHhHSnY4S1hhQXorck5KNzdjM1dCQW5vMTJU?=
+ =?utf-8?B?K1pXMmYwSjFIMThWK2lCWHFFS0EyUjBVMzV4TDJ6SE9NTHQ1cWJGTDE2WDBn?=
+ =?utf-8?B?QmxNejlYSkR0bjBoWm00WWVVQjdwaUw2MXo2V1YrVFNqWmU4SmpQRXpMcmVM?=
+ =?utf-8?B?YThjV3BrdlN4bW8yTCtvWGNpMGRDR1RUOEdwK0VSSkxuWXduQUVnRWlDYzJM?=
+ =?utf-8?B?MUJVQmVkYkROVjNJM3FBSmlzNzNzd0FnaWZNaTlLWmo1eUhNdjV4NG0zTE4z?=
+ =?utf-8?B?YnNhTUI1bFdFemU5VEk1ekIvbmNNR3FKeGFBR1dZRzNzdkJPT0FrR0JCWDky?=
+ =?utf-8?B?UEY1bVlNMjE5enVhSEpPNGFRbm5XdHJuRkIrRE05Wlh3OU92djFtNHV3NHdv?=
+ =?utf-8?B?WTV1SmhhSXNRPT0=?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL4PR11MB8797.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(10070799003)(1800799024)(376014)(38070700018)(8096899003)(7053199007);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?QnZlbFAzMDVONU5RNDJEeXh0a3RNdVlLdXIyNnEwVnU2R2JwS3V2QjFJS3I5?=
+ =?utf-8?B?eTBLcmJ5TUJBMERodnFUYUxVczNwby9JajY2Q0taYWsvOTk4Z0dLVHBRUXM2?=
+ =?utf-8?B?dnNqdHZyWGNLc0tHbFJsamM2aDJnRUNxL3VUZWxxMTlyU0JvRExJajVQVXlY?=
+ =?utf-8?B?SjBFRFdhZC9JV2NVQTVqS2o0SklQMUtTUHFaM1JHL0NhdXFESkp2dXBQNzBm?=
+ =?utf-8?B?YTYraHRDQXN6b1puNUVNMitnTktVMVpqRHZTd05kL2ppRHduRi9OYlBhZXZN?=
+ =?utf-8?B?SFRJUGhQRitoNmJEWWdiODJDaHRZMlNmYjE1ZU1kQ1d1Vms4c3FxMHQwOTht?=
+ =?utf-8?B?cWxqWit4VlFjSEcyM1pqZDhiR1Z1SnN1YXMzNlg4TnZ6OUNXZjkvSzE4WjAv?=
+ =?utf-8?B?eWxZeTRobnFxS2NvMHBkY08ra0liOXEzcXNMWUIrNlZJdEZHYW5XcEdUdlJM?=
+ =?utf-8?B?bUdaNlVBZ01DV0V3azlmWmtCczNGaTlzZE9tYmI5Q3pFM1dseTZSWERyK0JK?=
+ =?utf-8?B?YXA2dEh3VFF4ZGxQbXdzaHlUYllsbjV3aXVZSlU1NE5RU1djTmhhSXY2cjFF?=
+ =?utf-8?B?Q1lpWXBDUlg1eVlHZmNxa1JPV1d3bllwcjZYMXRhYVozcE9NWi9vVlFpaWFT?=
+ =?utf-8?B?OEJ6S3FCVk0yNUc1TmRBYWw3cnVtdnBxV3VwNFA2UWd6RDlTaERjWncxSGFP?=
+ =?utf-8?B?L2dRT2FZelRaanl5dkxwSzZzWVFFelhTdjBWQ1Fud0pWaHpJRDNWOWdNM0JN?=
+ =?utf-8?B?VG5yMXFxa3l1OGZIb0hKdjFNQUtWNWc0eUtRbFNJS1ZRQlIzWm1zSEhveDNQ?=
+ =?utf-8?B?WTk1cXN2UGJOODhlVDRZdzA4ZVF1eFFPL2xjQ0xRQmZRcE5EUVlTQUV4VzY4?=
+ =?utf-8?B?bGI3V1FEVEs1bjNmY3pZNkFvam83bXlSK0s4RG5RaHlTdGdDVXh5ckJCQjU5?=
+ =?utf-8?B?Z2hXSk4yRnZZZWpNWm5CNmxvS2sva045VUZGTjdWZC9SV2ljNW0vM0F5NlNE?=
+ =?utf-8?B?TVlUamM4a2g3OHhGMzBFMSs2L2pVZXB6aW0wcGo3cmdLTzVLQW9LaWowNHRM?=
+ =?utf-8?B?VDg1MCs0TFdLUEJyQ0dyS2QwN2hJcmREQ1hISzZ1V2VlczJsR3N3UENiMGVn?=
+ =?utf-8?B?U3JiRllWZXhLVWV0MFJxVmtrYUNMUXE3QmNPc2QxendrNU50WWJvM3FiaDZt?=
+ =?utf-8?B?YW11OHg5OHBRSGE3WlBFY0hiRHA1Rmc0UWNBWHNBWHJscmxxNDdnUGlyZmJq?=
+ =?utf-8?B?bTlUWjRIV1czYWlrMVFCeDJ4OUFxNTNRVDkzWWtweVovRjh0TDBld1NpdEJr?=
+ =?utf-8?B?MEhKeXIySjJtTUptYStnRnYzNHFBMGVwYm1ENW1sV0ptYzd2VVRmK3B6SWs1?=
+ =?utf-8?B?VVNEemRHMWp0Y1QxVTBlc2RZVmdIdUI5ZXQ2YUFNYmhZMXl4TWNnWFhaUXBG?=
+ =?utf-8?B?ak1RNFExaXB0WEE3TnF3VzVCMnJOTllDV2d6eCtpWnZCb1dTQk16UkpjaVl4?=
+ =?utf-8?B?VTNuYm5pWlNFN1VjakdYVHkrZ0w5V281YUNlZ2pHUXdDbzRsUVAwOXdoU3lV?=
+ =?utf-8?B?Z3hiNXduUmxodVFIcjEreDd0eTZvL29wN2FucFkrK3NBbnhGcVdHRnU0K3pK?=
+ =?utf-8?B?aTV2NXF6eGg0RTFqVFpsVTM0UkNBbTU4QUpBRk1IcmV5azhHY0MzMnd0RklN?=
+ =?utf-8?B?ZjZLa01QdWt3ZWR6M1ZNNno5T04rNHJIOEVVNmRlTlV3bHR5T21lUU44cjFt?=
+ =?utf-8?B?d0U5YTBNR3BFYURFQlozSGFKZm4ra3RaeExhZWtpNEgrbnRHcXRFNVJ1Qll3?=
+ =?utf-8?B?RGhFV2pJZG9aL05FZ0poWW1acS92d2pmU2x5azNSUXhIUWxuQXhGOTdDUXJ5?=
+ =?utf-8?B?aFhnQ2ludzhxN3g2aDlidVAxQlR3LzZoV3VGWkJJUUFWVVAwQW5jdlFVZ0sx?=
+ =?utf-8?B?MEFjdXRhQXBHeEd2a1NFbTcwVEtJWFhKdE42elB0YVpCMUNrQTE4WS9CU2pB?=
+ =?utf-8?B?QWUzVXNlc0gvNlBsNGVRWXIyZ0dFZG9LWGNDanQrNFdpNnF4RFp2QVZuZUpu?=
+ =?utf-8?B?Z01kSWpYczN4My9nVSt5N3NYTzJCQXluQVRCa0tVQXhuT2MzTTZTVUVIa2Jj?=
+ =?utf-8?B?enpPSmUvZXRNVXNSR2JzZjRlUlRlVkQ5M1J0d3RxU2kvTWd2d2lwTjBITllj?=
+ =?utf-8?Q?qmQ02PMDKtbSaiHmiVuIb2MOX3ol/BFg0TCgkkMhSoXE?=
+Content-Type: multipart/alternative;
+	boundary="_000_BL4PR11MB87973A5091395D9BBC292047B93AABL4PR11MB8797namp_"
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8770:EE_|SJ0PR12MB5664:EE_
-X-MS-Office365-Filtering-Correlation-Id: e9a7c92f-0866-45e7-d6f6-08dde65f4c87
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|1800799024|4022899009|366016|376014|7053199007|8096899003|13003099007;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?QlNzRjFPWmh2Z1VUMWNBYjhydHhVcks4RWdqQkdYNElMYzRDSG40Ky9UMGJY?=
- =?utf-8?B?YUV5UnU4bW93T0FSY0VTUXJjVXNhVWdyckc3WUFwQ2RWZmtqdDQwcEtXU2VI?=
- =?utf-8?B?cnpPT09vMCtqQXUyNjBzYW8rNjZ1a2ttaGQ3ZlFzR00yR3VhYnByaVRPRmZx?=
- =?utf-8?B?TmVDeGZxZEJmVmdSSEllcysybzc4cjE2Y3YvTjU4czF2bllsTmVVUEgrY0FK?=
- =?utf-8?B?OXYrT1Z0eTJVTjVZd2s5azRIWjNJR0N0dXhZS0RSR3QzZDBjTkJaK3ZmdFpW?=
- =?utf-8?B?WmZYaVZrTTRkV1RYY2ladlU0RXQzQzVhbnM2Q3dYVG15TlZlYzBPdWNSNEM3?=
- =?utf-8?B?Ynp2RUNuTlpuQkVvZnkvZThGbW50Qm1DZWt3b0RzeU44VDU5V2V6bVo0L25w?=
- =?utf-8?B?SzViYmliazVEU1RaQ2NFOW1BdGw5cWtQTnVYdGFNWDNlUU8xWnZoMlZvQk42?=
- =?utf-8?B?ZTR5UzhYRG95RFpqdWhoOSttY2xiZC9RenJVdWs4SEUrVEFTbTdvZTZ4UWtH?=
- =?utf-8?B?enpPcWlzUFNKYjZSUTRGaGZIQ1FtSkdCR0I1UHFvYzJKSTFiM2xWQ0pNbWM1?=
- =?utf-8?B?RHNJSzVBMHVUZE14MFpjUTAreitqRmQ0M3hGc2RKMjZKZmdVRjBwc29WNVhE?=
- =?utf-8?B?eDNUTWNocW1SWTQ3cXRJZlRRVnlxZ1FwRmVOUm9meFlyeGJhL3BCVXY4dmE4?=
- =?utf-8?B?OW90QVZFcFlXOU0zQmtENE84cW8zbERndUcyaWI4aDdrQTJmSC9zUGF2TTZD?=
- =?utf-8?B?diswdCtNRi9HTlFTcEk3YnlZNndXQUp1THVYTjJicXFrOGppeFp2WjY2Vytl?=
- =?utf-8?B?SDdTTEhhL1QxcHY0RjgvdjcveWJDTFlYbVRIUXdNOFdPdFdIQTExbzU2UlhW?=
- =?utf-8?B?MmpiM0crMVhsOFhocTlWWHNPS2RtUjdnVSt0dFFDOXptTEppUERBRHNra2oy?=
- =?utf-8?B?TmdoMDB4cFlTU01oMjVSSWRJOVZsOUVDNFVuZnR6RjIxeDRZY3RQNG5PVmpa?=
- =?utf-8?B?dVdBL1ZDSFlEckhoK0Q4K1pFVEExdURycHlWWW1DTDdWY1FVS0x5ZTcyUCt6?=
- =?utf-8?B?dld3QmhZVnhTeVMwb0YxTEgvZHN3QnZ4aUdsN2NVOWNMaE1hcjl6OFBOOEhR?=
- =?utf-8?B?dUUyMmlxTUxNMmF4SXRjZytqSUhJcEVITDNaQXZQeUxoY3FVVHVFSjJDS3c1?=
- =?utf-8?B?RHIyMWtNdkhwZjFSSFJNSjdNWXMxUGczSWpQYXZaSUpwL1FaM3hKU2RaNjlT?=
- =?utf-8?B?WXdWMlFrU1dicUdqbGw5c1RNN0wyQURpaW9CaVBuVTRnMDBwaEdyVEhoZlRT?=
- =?utf-8?B?NkVWZDVCVVV1ME10c0NjZUpVdHJrYTNXb1I5WHZpUU5PTWJnOExoV1B6NTJp?=
- =?utf-8?B?dzZvR0dGZEF2UGZlL0RCVW5NemsvenA4MkNOSWV0VXZEQVQvcVRSVVFPQi9n?=
- =?utf-8?B?a29DTnRRbm0vTmtpZmZvN0VNZThjRktvMk5ickppVTFtZGlJQUkxRDBmU3JY?=
- =?utf-8?B?ZGQrY1l4UjdyWlV1VndEYmpSTDdHdW9POEtNNER4RUpFSUNzTVd3L2JHSFZ6?=
- =?utf-8?B?eWlROVNNdDdtOU9YNjMzdW5SQ1daNVJsTlQvNmdDVkt1T3VUMjFhdjFZSUdP?=
- =?utf-8?B?UGhWZVdDZmUxK3Byb1BNeFplVVYrcVQ2dGhjbGU1R0pSUzFHTWhxL2UveTBn?=
- =?utf-8?B?dWtkcW05TEcyLzJJOFIzaW44YkdNMlg3ak1aWDBsVnROR1BQRkpWcVBDNkhr?=
- =?utf-8?B?Vjk3c1gvRFFOc2lPeVVqK2pHbDRXVFczbDdMNWh3QjY4Q0dGb0Q1VHo5Yi9R?=
- =?utf-8?Q?AdRbcoHoAizGz3DdrfXDVWTsmRWoAkC3rjMrY=3D?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8770.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(4022899009)(366016)(376014)(7053199007)(8096899003)(13003099007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?UmlDUWVUdXNmaUllS1F2US9ud0hxZ1o0U0ZKTzQ4WU51ZVZQU0pndk1KMDVC?=
- =?utf-8?B?aDUvOVdUU0xBdXJqZDJMaUhKMEd6M3dBWDhtRnNEY3ZVKyttcG5TYjlPdFRE?=
- =?utf-8?B?U280bmFXckdzSW8yL09MV0QyT2RRdS8rb05vZlFOcVYxdU1RV0VpNTFKczFk?=
- =?utf-8?B?R3c5WDF4RWJjaU16WGVGWU9EMzdDekRoYW9DOWtHeDhJSE80Mk5Ndi9nWHZ1?=
- =?utf-8?B?WW1VTXVJRHAyUHpvTXg3RUlhSHpGbXc5bjJyYVBpWEFhSlpDcVp6a1hFZlhI?=
- =?utf-8?B?YVZqR1hwaHB2aGhwTW5UL2hna0NTSjdRT3V3Sys5L0thaGN5WkZrMFlIdm1E?=
- =?utf-8?B?OTR0cjlaTk1ya21JVzhJRXVmckNQN3FocnFFTm51NkJzQ2dNRE8rSGJTVzZN?=
- =?utf-8?B?K0ZST2FXMy9jbUtiL0tzWTBRbG1jd1Z0aHVsWGd5akRRZjNSdEV2eXFXOEM3?=
- =?utf-8?B?dUlrb2pBWC8zZFEwR2tqS2pTU21Remlmc1BiNWdveFNldXlOMkxubCtVUGZM?=
- =?utf-8?B?KzhuRnVyUG8xems3YWRhRk5jZXBGNVFDNG11eFFTaXgxaEExQTBmMkc0K2Qz?=
- =?utf-8?B?WVV6OXU1RVd1NFNwRFBXM3h2MExEM21WaEhvQ1AzWUZDQ1Y5ZVdqdytUdzdK?=
- =?utf-8?B?UCs5MEVncVdXMXFkR2g1MG1qdHZJclJCNDVqSGVJb3pJdkhpRlNCM01TRVNi?=
- =?utf-8?B?eHJIQVhLZXllZGtaQ1RvSDdhZ1ZZVHg2RHArTUVCZitnQTllMVlhL2ZuRXRa?=
- =?utf-8?B?WXpQNjFSdmlWNXo2WHN3cjdoTzhJdUJiOURJQ2pUeTBLcW5nZWJWSDA1UzRL?=
- =?utf-8?B?eCt1czFCempTWldiWTkyMFNzM0VPMTd2WVlEdHUxbXFoUFArOWVqWEpKMTRh?=
- =?utf-8?B?RWdiaWc0QW5XN0h0MFdDbGxHeGpMbXpCcllabWJCeWI1V01tK2ltRVlNUThn?=
- =?utf-8?B?OEtpcUxSODBibGVmRUxPa3Z4ckhxeHlvdExqQ29Od011Y0M3am8vQWhMTkdP?=
- =?utf-8?B?TisvbERTOGFoQWV6VkZMSmtxZDNNSFpZUVprN3FZMXVaQ2VYalFXcEpCeGJ1?=
- =?utf-8?B?enRzMTRGejhWZ3B1V3JxKzZVR2JYMENyRzYzcVRnZlkzc0d0Nk9uZVJkcXZj?=
- =?utf-8?B?Q1U1VVRUMDJ2M0ZlY0xMeWYrcjBZdlg3NTJ1RUF0V3A1TlVGSzNWNFc2bUdS?=
- =?utf-8?B?eUd2SVNGV1BWRzVoOHVVNGxGMWtuVnhOT2lTSFdwZEc0VUtLK0orVHNlQ3VL?=
- =?utf-8?B?aGNmRVpnZlFYZGpSc1cvbWRvWHlXdGhQM0NGVlg1eFZ1aklXRTNGcHVhUkIv?=
- =?utf-8?B?NzhSQlBMN3U4YUoxTHQwNW9JYUF5dHFhZDFaeDdrcmlxZVFEWEd2VE9ETzJI?=
- =?utf-8?B?M0d4Qko1MTQ1VjJxNDN6cG9nZG5KYmVzNDZKWDJuYkphMVd0QlRJTFhJV1h5?=
- =?utf-8?B?Zmd1MEQwL2xVV2taa2sxWWI0OXZLdVk1d3lCVHRUUTQ0QkpPdHRFOGk4WVYv?=
- =?utf-8?B?UDRoMFBxemtpU0tjUldVdFN6czYrTjdaY0x4ZmVjZ054R3hzVXlSZjJlRTZC?=
- =?utf-8?B?SE4wVEh6dnhTMW5VdlU3QWlKU0kza3czaWkrejNWR01CQXcrWlZBYkE2SUdV?=
- =?utf-8?B?dTBOTnJNK2ErNjdoY1pRZVNyNUNzMlpKenFzbFQ1YWVjWHFFYmNlNG80NEYw?=
- =?utf-8?B?bllmY0JaMDhJMDhZc1d4Q2h0eDhISzBFbnE3dFgyazFkeS8rWS9QaW1WeEZI?=
- =?utf-8?B?Y0pHMGVTdHZnbFZDR2FSYzJoejY2MTY3clpLNVk5YmVoTU44dVNubHhQUHAv?=
- =?utf-8?B?Sit6SncxSWJxUXNEZmhHeDJpbVo4WGFVMVhzSUJuQ0Qwc0VlZVN6L2wvOHor?=
- =?utf-8?B?bXhBQ0l2YU9ZWTg4bGhYQWNyd09pcHhIclFSNUZFZjZwUnFmTDZjQlZDUEhW?=
- =?utf-8?B?akVFUkxUdm9aUzhybnE5ZVkzQTZSazh5YXQ4OUpoQWNremkzRFZ4aFk5a204?=
- =?utf-8?B?MDRFeE5GOFNiaWYvVjRvaEJBV1QzV09qeGtvMjJqaTQ5NnpySXhiVlVvbHNv?=
- =?utf-8?B?U1RNUGJ5RjZWVjkxL1J3UEIrVXZqL1RXd3IvUzEySzhGYSsybjhQUnJzMXNp?=
- =?utf-8?Q?3z1mnQ1h82NyIAn5hQFvwQhlE?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e9a7c92f-0866-45e7-d6f6-08dde65f4c87
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8770.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 18:18:33.7765
+X-MS-Exchange-CrossTenant-AuthSource: BL4PR11MB8797.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 73f0f0b5-9d80-4560-7b76-08dde69c33d7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Aug 2025 01:34:31.5190
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OfqpZSmTmXs8eSDf6vvwbHcqktQ2PAMPTBElCT1aM2d1r8Yq6a9DZM/aJ38/ZGoslEYeu9AjoQT6QNdHCE7LFA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB5664
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: CS8QdvFqpIDCDLfdr/+V//hqFbasSWL52zwHMccM+WhGWof4/6vWcCa+ZUV84SFsNmYKln1yXVn01BLyqZrjxw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB7667
+X-OriginatorOrg: intel.com
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 28 Aug 2025 18:18:51 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2089
+ <yocto-patches@lists.yoctoproject.org>; Fri, 29 Aug 2025 01:34:57 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2090
 
---------------e6xQJ0bmfCXmB0d8L2SAC9GL
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+--_000_BL4PR11MB87973A5091395D9BBC292047B93AABL4PR11MB8797namp_
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 
-Hi Chee Yang,
+SSBidWlsZCB3aXRoIGRlZmF1bHQgbG9jYWwuY29uZiBmcm9tIHBva3kgd2l0aA0KRElTVFJPID0g
+InplcGh5ciINClpFUEhZUl9UT09MQ0hBSU5fVkFSSUFOVCA9ICJ6ZXBoeXIiDQoNCkl0IHdvcmtz
+IG9ubHkgd2hlbiBJIHNldA0KRVhUUkFfT0VDTUFLRTphcHBlbmQ6cG4temVwaHlyLW9wZW5hbXAt
+cnBtc2ctbXVsdGktc3J2ID0gIiAtRENNQUtFX1BPTElDWV9WRVJTSU9OX01JTklNVU09My41ICIN
+Cg0KDQpGcm9tOiBHdW5kbHVwZXQgUmFqdSwgU2FuZGVlcCA8c2FuZGVlcC5ndW5kbHVwZXQtcmFq
+dUBhbWQuY29tPg0KU2VudDogRnJpZGF5LCAyOSBBdWd1c3QsIDIwMjUgMjoxOCBBTQ0KVG86IExl
+ZSwgQ2hlZSBZYW5nIDxjaGVlLnlhbmcubGVlQGludGVsLmNvbT47IHlvY3RvLXBhdGNoZXNAbGlz
+dHMueW9jdG9wcm9qZWN0Lm9yZw0KU3ViamVjdDogUmU6IFt5b2N0by1wYXRjaGVzXSBbbWV0YS16
+ZXBoeXJdW21hc3Rlcl1bUEFUQ0ggdjMgMS8xXSB6ZXBoeXIta2VybmVsOiBBZGQgcnBtc2cgbXVs
+dGkgc2VydmljZXMgcmVjaXBlDQoNCg0KSGkgQ2hlZSBZYW5nLA0KT24gOC8yOC8yMDI1IDI6MTYg
+QU0sIExlZSwgQ2hlZSBZYW5nIHdyb3RlOg0KDQpIaSBTYW5kZWVwDQoNClVuZm9ydHVuYXRlbHks
+IHdpdGggdGhlc2UgSSBzdGlsbCBjYW4ndCBidWlsZCB0aGUgcmVjaXBlLiBMb29rcyBsaWtlIHdl
+IG5lZWQgdG8gcGF0Y2ggQ01ha2VMaXN0cy50eHQNCg0KW1NhbmRlZXBdOiBOb3QganVzdCB6ZXBo
+eXItb3BlbmFtcC1ycG1zZy1tdWx0aS1zcnYgYXBwIGFueSBvZiB0aGUgemVwaHlyIGFwcChNQUNI
+SU5FPXFlbXUtY29ydGV4LXI1IGJpdGJha2UgemVwaHlyLWhlbGxvd29ybGQpICBpcyBub3Qgd29y
+a2luZyBmb3IgcjUgbWFjaGluZXMgdW5sZXNzIHlvdSBzZXQgdGhlIFpFUEhZUl9UT09MQ0hBSU5f
+VkFSSUFOVCA9ICJ6ZXBoeXIiIGluIGxvY2FsLmNvbmYNCg0KV2UgbmVlZCB0byB0YWtlIGEgbG9v
+ayBvbiB0aGlzIGlzc3VlLiBJIHNlZSB0aGlzIGlzc3VlIGluIGJvdGggbWFzdGVyIGFuZCBzY2Fy
+dGhnYXAgYXMgd2VsbC4NCg0KU29tZSBtYWNoaW5lcyBkb2Vzbid0IGJ1aWxkIGlmIHlvdSBkb24n
+dCBzZXQgWkVQSFlSX1RPT0xDSEFJTl9WQVJJQU5UID0gInplcGh5ciIuIENhbiB5b3UgdHJ5IGFk
+ZGluZyB0aGlzIHRvIHlvdXIgbG9jYWwuY29uZiBhbmQgc2VlIGlmIHlvdSBjYW4gYnVpbGQgaXQ/
+DQoNClRoYW5rcywNClNhbmRlZXANCg0KDQoNCg0KDQoNCg0KbWV0YSAgICAgICAgICAgICAgICAg
+PSAibWFzdGVyOmZiNGViZDYwNTM2YWY4NjcyZjk1MDM3NjEwNmUwYjA1MDBkNzAwN2MiDQoNCm1l
+dGEtb2UNCg0KbWV0YS1weXRob24gICAgICAgICAgPSAibWFzdGVyOjcxNGIzYWRjM2E5MmQ0MjM3
+MGEwZWE1N2E5NzQ0YWQyZDAzMWRiN2YiDQoNCm1ldGEtemVwaHlyLWNvcmUNCg0KbWV0YS16ZXBo
+eXItYnNwICAgICAgPSAibWFzdGVyOjUyNjBhZWE3ZWYxMzVkM2IyM2Y0OWM4ZDdiZjZjNmY3OGJk
+YzJmNTAiDQoNCg0KDQoNCg0KY29tbWFuZCA6DQoNCk1BQ0hJTkU9cWVtdS1jb3J0ZXgtcjUgYml0
+YmFrZSB6ZXBoeXItb3BlbmFtcC1ycG1zZy1tdWx0aS1zcnYNCg0KDQoNCg0KDQp8IENNYWtlIEVy
+cm9yIGF0IC9kYXRhL21hc3Rlci9wb2t5L2J1aWxkLXplcGh5ci90bXAvd29yay9xZW11X2NvcnRl
+eF9yNS16ZXBoeXIvemVwaHlyLW9wZW5hbXAtcnBtc2ctbXVsdGktc3J2LzQuMS4wK2dpdC9zb3Vy
+Y2VzL3plcGh5ci1vcGVuYW1wLXJwbXNnLW11bHRpLXNydi00LjEuMCtnaXQvbW9kdWxlcy9oYWwv
+bGlibWV0YWwvbGlibWUNCg0KdGFsL0NNYWtlTGlzdHMudHh0OjEgKGNtYWtlX21pbmltdW1fcmVx
+dWlyZWQpOg0KDQp8ICAgQ29tcGF0aWJpbGl0eSB3aXRoIENNYWtlIDwgMy41IGhhcyBiZWVuIHJl
+bW92ZWQgZnJvbSBDTWFrZS4NCg0KfA0KDQp8ICAgVXBkYXRlIHRoZSBWRVJTSU9OIGFyZ3VtZW50
+IDxtaW4+IHZhbHVlLiAgT3IsIHVzZSB0aGUgPG1pbj4uLi48bWF4PiBzeW50YXgNCg0KfCAgIHRv
+IHRlbGwgQ01ha2UgdGhhdCB0aGUgcHJvamVjdCByZXF1aXJlcyBhdCBsZWFzdCA8bWluPiBidXQg
+aGFzIGJlZW4gdXBkYXRlZA0KDQp8ICAgdG8gd29yayB3aXRoIHBvbGljaWVzIGludHJvZHVjZWQg
+YnkgPG1heD4gb3IgZWFybGllci4NCg0KfA0KDQp8ICAgT3IsIGFkZCAtRENNQUtFX1BPTElDWV9W
+RVJTSU9OX01JTklNVU09My41IHRvIHRyeSBjb25maWd1cmluZyBhbnl3YXkuDQoNCg0KDQoNCg==
 
-On 8/28/2025 2:16 AM, Lee, Chee Yang wrote:
-> Hi Sandeep
-> Unfortunately, with these I still can't build the recipe. Looks like we need to patch CMakeLists.txt
+--_000_BL4PR11MB87973A5091395D9BBC292047B93AABL4PR11MB8797namp_
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: base64
 
-[Sandeep]: Not just zephyr-openamp-rpmsg-multi-srv app any of the zephyr 
-app(MACHINE=qemu-cortex-r5 bitbake zephyr-helloworld)  is not working 
-for r5 machines unless you set the ZEPHYR_TOOLCHAIN_VARIANT = "zephyr" 
-in local.conf
+PGh0bWwgeG1sbnM6dj0idXJuOnNjaGVtYXMtbWljcm9zb2Z0LWNvbTp2bWwiIHhtbG5zOm89InVy
+bjpzY2hlbWFzLW1pY3Jvc29mdC1jb206b2ZmaWNlOm9mZmljZSIgeG1sbnM6dz0idXJuOnNjaGVt
+YXMtbWljcm9zb2Z0LWNvbTpvZmZpY2U6d29yZCIgeG1sbnM6bT0iaHR0cDovL3NjaGVtYXMubWlj
+cm9zb2Z0LmNvbS9vZmZpY2UvMjAwNC8xMi9vbW1sIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv
+VFIvUkVDLWh0bWw0MCI+DQo8aGVhZD4NCjxtZXRhIGh0dHAtZXF1aXY9IkNvbnRlbnQtVHlwZSIg
+Y29udGVudD0idGV4dC9odG1sOyBjaGFyc2V0PXV0Zi04Ij4NCjxtZXRhIG5hbWU9IkdlbmVyYXRv
+ciIgY29udGVudD0iTWljcm9zb2Z0IFdvcmQgMTUgKGZpbHRlcmVkIG1lZGl1bSkiPg0KPHN0eWxl
+PjwhLS0NCi8qIEZvbnQgRGVmaW5pdGlvbnMgKi8NCkBmb250LWZhY2UNCgl7Zm9udC1mYW1pbHk6
+IkNhbWJyaWEgTWF0aCI7DQoJcGFub3NlLTE6MiA0IDUgMyA1IDQgNiAzIDIgNDt9DQpAZm9udC1m
+YWNlDQoJe2ZvbnQtZmFtaWx5OkRlbmdYaWFuOw0KCXBhbm9zZS0xOjIgMSA2IDAgMyAxIDEgMSAx
+IDE7fQ0KQGZvbnQtZmFjZQ0KCXtmb250LWZhbWlseTpDYWxpYnJpOw0KCXBhbm9zZS0xOjIgMTUg
+NSAyIDIgMiA0IDMgMiA0O30NCkBmb250LWZhY2UNCgl7Zm9udC1mYW1pbHk6QXB0b3M7fQ0KQGZv
+bnQtZmFjZQ0KCXtmb250LWZhbWlseTpDb25zb2xhczsNCglwYW5vc2UtMToyIDExIDYgOSAyIDIg
+NCAzIDIgNDt9DQpAZm9udC1mYWNlDQoJe2ZvbnQtZmFtaWx5OiJcQERlbmdYaWFuIjsNCglwYW5v
+c2UtMToyIDEgNiAwIDMgMSAxIDEgMSAxO30NCi8qIFN0eWxlIERlZmluaXRpb25zICovDQpwLk1z
+b05vcm1hbCwgbGkuTXNvTm9ybWFsLCBkaXYuTXNvTm9ybWFsDQoJe21hcmdpbjowY207DQoJZm9u
+dC1zaXplOjEyLjBwdDsNCglmb250LWZhbWlseToiQXB0b3MiLHNhbnMtc2VyaWY7fQ0KcHJlDQoJ
+e21zby1zdHlsZS1wcmlvcml0eTo5OTsNCgltc28tc3R5bGUtbGluazoiSFRNTCBQcmVmb3JtYXR0
+ZWQgQ2hhciI7DQoJbWFyZ2luOjBjbTsNCglmb250LXNpemU6MTAuMHB0Ow0KCWZvbnQtZmFtaWx5
+OiJDb3VyaWVyIE5ldyI7fQ0Kc3Bhbi5IVE1MUHJlZm9ybWF0dGVkQ2hhcg0KCXttc28tc3R5bGUt
+bmFtZToiSFRNTCBQcmVmb3JtYXR0ZWQgQ2hhciI7DQoJbXNvLXN0eWxlLXByaW9yaXR5Ojk5Ow0K
+CW1zby1zdHlsZS1saW5rOiJIVE1MIFByZWZvcm1hdHRlZCI7DQoJZm9udC1mYW1pbHk6Q29uc29s
+YXM7fQ0Kc3Bhbi5FbWFpbFN0eWxlMjENCgl7bXNvLXN0eWxlLXR5cGU6cGVyc29uYWwtcmVwbHk7
+DQoJZm9udC1mYW1pbHk6IkFwdG9zIixzYW5zLXNlcmlmOw0KCWNvbG9yOndpbmRvd3RleHQ7fQ0K
+Lk1zb0NocERlZmF1bHQNCgl7bXNvLXN0eWxlLXR5cGU6ZXhwb3J0LW9ubHk7DQoJZm9udC1zaXpl
+OjEwLjBwdDsNCgltc28tbGlnYXR1cmVzOm5vbmU7fQ0KQHBhZ2UgV29yZFNlY3Rpb24xDQoJe3Np
+emU6NjEyLjBwdCA3OTIuMHB0Ow0KCW1hcmdpbjo3Mi4wcHQgNzIuMHB0IDcyLjBwdCA3Mi4wcHQ7
+fQ0KZGl2LldvcmRTZWN0aW9uMQ0KCXtwYWdlOldvcmRTZWN0aW9uMTt9DQotLT48L3N0eWxlPjwh
+LS1baWYgZ3RlIG1zbyA5XT48eG1sPg0KPG86c2hhcGVkZWZhdWx0cyB2OmV4dD0iZWRpdCIgc3Bp
+ZG1heD0iMTAyNiIgLz4NCjwveG1sPjwhW2VuZGlmXS0tPjwhLS1baWYgZ3RlIG1zbyA5XT48eG1s
+Pg0KPG86c2hhcGVsYXlvdXQgdjpleHQ9ImVkaXQiPg0KPG86aWRtYXAgdjpleHQ9ImVkaXQiIGRh
+dGE9IjEiIC8+DQo8L286c2hhcGVsYXlvdXQ+PC94bWw+PCFbZW5kaWZdLS0+DQo8L2hlYWQ+DQo8
+Ym9keSBsYW5nPSJFTi1NWSIgbGluaz0iYmx1ZSIgdmxpbms9InB1cnBsZSIgc3R5bGU9IndvcmQt
+d3JhcDpicmVhay13b3JkIj4NCjxkaXYgY2xhc3M9IldvcmRTZWN0aW9uMSI+DQo8cCBjbGFzcz0i
+TXNvTm9ybWFsIj48c3BhbiBzdHlsZT0iZm9udC1zaXplOjExLjBwdCI+SSBidWlsZCB3aXRoIGRl
+ZmF1bHQgbG9jYWwuY29uZiBmcm9tIHBva3kgd2l0aA0KPGJyPg0KRElTVFJPID0gJnF1b3Q7emVw
+aHlyJnF1b3Q7PG86cD48L286cD48L3NwYW4+PC9wPg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PHNw
+YW4gc3R5bGU9ImZvbnQtc2l6ZToxMS4wcHQiPlpFUEhZUl9UT09MQ0hBSU5fVkFSSUFOVCA9ICZx
+dW90O3plcGh5ciZxdW90Ozxicj4NCjxicj4NCkl0IHdvcmtzIG9ubHkgd2hlbiBJIHNldCA8bzpw
+PjwvbzpwPjwvc3Bhbj48L3A+DQo8cCBjbGFzcz0iTXNvTm9ybWFsIj48c3BhbiBzdHlsZT0iZm9u
+dC1zaXplOjExLjBwdCI+RVhUUkFfT0VDTUFLRTphcHBlbmQ6cG4temVwaHlyLW9wZW5hbXAtcnBt
+c2ctbXVsdGktc3J2ID0gJnF1b3Q7IC1EQ01BS0VfUE9MSUNZX1ZFUlNJT05fTUlOSU1VTT0zLjUg
+JnF1b3Q7PG86cD48L286cD48L3NwYW4+PC9wPg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PHNwYW4g
+c3R5bGU9ImZvbnQtc2l6ZToxMS4wcHQiPjxicj4NCjxicj4NCjxvOnA+PC9vOnA+PC9zcGFuPjwv
+cD4NCjxkaXYgc3R5bGU9ImJvcmRlcjpub25lO2JvcmRlci1sZWZ0OnNvbGlkIGJsdWUgMS41cHQ7
+cGFkZGluZzowY20gMGNtIDBjbSA0LjBwdCI+DQo8ZGl2Pg0KPGRpdiBzdHlsZT0iYm9yZGVyOm5v
+bmU7Ym9yZGVyLXRvcDpzb2xpZCAjRTFFMUUxIDEuMHB0O3BhZGRpbmc6My4wcHQgMGNtIDBjbSAw
+Y20iPg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PGI+PHNwYW4gbGFuZz0iRU4tVVMiIHN0eWxlPSJm
+b250LXNpemU6MTEuMHB0O2ZvbnQtZmFtaWx5OiZxdW90O0NhbGlicmkmcXVvdDssc2Fucy1zZXJp
+ZiI+RnJvbTo8L3NwYW4+PC9iPjxzcGFuIGxhbmc9IkVOLVVTIiBzdHlsZT0iZm9udC1zaXplOjEx
+LjBwdDtmb250LWZhbWlseTomcXVvdDtDYWxpYnJpJnF1b3Q7LHNhbnMtc2VyaWYiPiBHdW5kbHVw
+ZXQgUmFqdSwgU2FuZGVlcCAmbHQ7c2FuZGVlcC5ndW5kbHVwZXQtcmFqdUBhbWQuY29tJmd0Ow0K
+PGJyPg0KPGI+U2VudDo8L2I+IEZyaWRheSwgMjkgQXVndXN0LCAyMDI1IDI6MTggQU08YnI+DQo8
+Yj5Ubzo8L2I+IExlZSwgQ2hlZSBZYW5nICZsdDtjaGVlLnlhbmcubGVlQGludGVsLmNvbSZndDs7
+IHlvY3RvLXBhdGNoZXNAbGlzdHMueW9jdG9wcm9qZWN0Lm9yZzxicj4NCjxiPlN1YmplY3Q6PC9i
+PiBSZTogW3lvY3RvLXBhdGNoZXNdIFttZXRhLXplcGh5cl1bbWFzdGVyXVtQQVRDSCB2MyAxLzFd
+IHplcGh5ci1rZXJuZWw6IEFkZCBycG1zZyBtdWx0aSBzZXJ2aWNlcyByZWNpcGU8bzpwPjwvbzpw
+Pjwvc3Bhbj48L3A+DQo8L2Rpdj4NCjwvZGl2Pg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PG86cD4m
+bmJzcDs8L286cD48L3A+DQo8cD5IaSBDaGVlIFlhbmcsPG86cD48L286cD48L3A+DQo8ZGl2Pg0K
+PHAgY2xhc3M9Ik1zb05vcm1hbCI+T24gOC8yOC8yMDI1IDI6MTYgQU0sIExlZSwgQ2hlZSBZYW5n
+IHdyb3RlOjxvOnA+PC9vOnA+PC9wPg0KPC9kaXY+DQo8YmxvY2txdW90ZSBzdHlsZT0ibWFyZ2lu
+LXRvcDo1LjBwdDttYXJnaW4tYm90dG9tOjUuMHB0Ij4NCjxwcmU+SGkgU2FuZGVlcDxvOnA+PC9v
+OnA+PC9wcmU+DQo8cHJlPlVuZm9ydHVuYXRlbHksIHdpdGggdGhlc2UgSSBzdGlsbCBjYW4ndCBi
+dWlsZCB0aGUgcmVjaXBlLiBMb29rcyBsaWtlIHdlIG5lZWQgdG8gcGF0Y2ggQ01ha2VMaXN0cy50
+eHQ8bzpwPjwvbzpwPjwvcHJlPg0KPC9ibG9ja3F1b3RlPg0KPHA+W1NhbmRlZXBdOiBOb3QganVz
+dCZuYnNwO3plcGh5ci1vcGVuYW1wLXJwbXNnLW11bHRpLXNydiBhcHAgYW55IG9mIHRoZSB6ZXBo
+eXIgYXBwKE1BQ0hJTkU9cWVtdS1jb3J0ZXgtcjUgYml0YmFrZSB6ZXBoeXItaGVsbG93b3JsZCkm
+bmJzcDsgaXMgbm90IHdvcmtpbmcgZm9yIHI1IG1hY2hpbmVzIHVubGVzcyB5b3Ugc2V0IHRoZSBa
+RVBIWVJfVE9PTENIQUlOX1ZBUklBTlQgPSAmcXVvdDt6ZXBoeXImcXVvdDsgaW4gbG9jYWwuY29u
+ZjxvOnA+PC9vOnA+PC9wPg0KPHA+V2UgbmVlZCB0byB0YWtlIGEgbG9vayBvbiB0aGlzIGlzc3Vl
+LiBJIHNlZSB0aGlzIGlzc3VlIGluIGJvdGggbWFzdGVyIGFuZCBzY2FydGhnYXAgYXMgd2VsbC48
+bzpwPjwvbzpwPjwvcD4NCjxwPlNvbWUgbWFjaGluZXMgZG9lc24ndCBidWlsZCBpZiB5b3UgZG9u
+J3Qgc2V0IFpFUEhZUl9UT09MQ0hBSU5fVkFSSUFOVCA9ICZxdW90O3plcGh5ciZxdW90Oy4gQ2Fu
+IHlvdSB0cnkgYWRkaW5nIHRoaXMgdG8geW91ciBsb2NhbC5jb25mIGFuZCBzZWUgaWYgeW91IGNh
+biBidWlsZCBpdD88bzpwPjwvbzpwPjwvcD4NCjxwPlRoYW5rcyw8YnI+DQpTYW5kZWVwPG86cD48
+L286cD48L3A+DQo8YmxvY2txdW90ZSBzdHlsZT0ibWFyZ2luLXRvcDo1LjBwdDttYXJnaW4tYm90
+dG9tOjUuMHB0Ij4NCjxwcmU+PG86cD4mbmJzcDs8L286cD48L3ByZT4NCjxwcmU+PG86cD4mbmJz
+cDs8L286cD48L3ByZT4NCjxwcmU+PG86cD4mbmJzcDs8L286cD48L3ByZT4NCjxwcmU+bWV0YSZu
+YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyA9ICZxdW90O21hc3RlcjpmYjRl
+YmQ2MDUzNmFmODY3MmY5NTAzNzYxMDZlMGIwNTAwZDcwMDdjJnF1b3Q7PG86cD48L286cD48L3By
+ZT4NCjxwcmU+bWV0YS1vZTxvOnA+PC9vOnA+PC9wcmU+DQo8cHJlPm1ldGEtcHl0aG9uJm5ic3A7
+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7ID0gJnF1b3Q7
+bWFzdGVyOjcxNGIzYWRjM2E5MmQ0MjM3MGEwZWE1N2E5NzQ0YWQyZDAzMWRiN2YmcXVvdDs8bzpw
+PjwvbzpwPjwvcHJlPg0KPHByZT5tZXRhLXplcGh5ci1jb3JlPG86cD48L286cD48L3ByZT4NCjxw
+cmU+bWV0YS16ZXBoeXItYnNwJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7ID0gJnF1b3Q7
+bWFzdGVyOjUyNjBhZWE3ZWYxMzVkM2IyM2Y0OWM4ZDdiZjZjNmY3OGJkYzJmNTAmcXVvdDs8bzpw
+PjwvbzpwPjwvcHJlPg0KPHByZT48bzpwPiZuYnNwOzwvbzpwPjwvcHJlPg0KPHByZT48bzpwPiZu
+YnNwOzwvbzpwPjwvcHJlPg0KPHByZT5jb21tYW5kIDo8bzpwPjwvbzpwPjwvcHJlPg0KPHByZT5N
+QUNISU5FPXFlbXUtY29ydGV4LXI1IGJpdGJha2UgemVwaHlyLW9wZW5hbXAtcnBtc2ctbXVsdGkt
+c3J2PG86cD48L286cD48L3ByZT4NCjxwcmU+PG86cD4mbmJzcDs8L286cD48L3ByZT4NCjxwcmU+
+PG86cD4mbmJzcDs8L286cD48L3ByZT4NCjxwcmU+fCBDTWFrZSBFcnJvciBhdCAvZGF0YS9tYXN0
+ZXIvcG9reS9idWlsZC16ZXBoeXIvdG1wL3dvcmsvcWVtdV9jb3J0ZXhfcjUtemVwaHlyL3plcGh5
+ci1vcGVuYW1wLXJwbXNnLW11bHRpLXNydi80LjEuMCtnaXQvc291cmNlcy96ZXBoeXItb3BlbmFt
+cC1ycG1zZy1tdWx0aS1zcnYtNC4xLjArZ2l0L21vZHVsZXMvaGFsL2xpYm1ldGFsL2xpYm1lPG86
+cD48L286cD48L3ByZT4NCjxwcmU+dGFsL0NNYWtlTGlzdHMudHh0OjEgKGNtYWtlX21pbmltdW1f
+cmVxdWlyZWQpOjxvOnA+PC9vOnA+PC9wcmU+DQo8cHJlPnwmbmJzcDsmbmJzcDsgQ29tcGF0aWJp
+bGl0eSB3aXRoIENNYWtlICZsdDsgMy41IGhhcyBiZWVuIHJlbW92ZWQgZnJvbSBDTWFrZS48bzpw
+PjwvbzpwPjwvcHJlPg0KPHByZT58PG86cD48L286cD48L3ByZT4NCjxwcmU+fCZuYnNwOyZuYnNw
+OyBVcGRhdGUgdGhlIFZFUlNJT04gYXJndW1lbnQgJmx0O21pbiZndDsgdmFsdWUuJm5ic3A7IE9y
+LCB1c2UgdGhlICZsdDttaW4mZ3Q7Li4uJmx0O21heCZndDsgc3ludGF4PG86cD48L286cD48L3By
+ZT4NCjxwcmU+fCZuYnNwOyZuYnNwOyB0byB0ZWxsIENNYWtlIHRoYXQgdGhlIHByb2plY3QgcmVx
+dWlyZXMgYXQgbGVhc3QgJmx0O21pbiZndDsgYnV0IGhhcyBiZWVuIHVwZGF0ZWQ8bzpwPjwvbzpw
+PjwvcHJlPg0KPHByZT58Jm5ic3A7Jm5ic3A7IHRvIHdvcmsgd2l0aCBwb2xpY2llcyBpbnRyb2R1
+Y2VkIGJ5ICZsdDttYXgmZ3Q7IG9yIGVhcmxpZXIuPG86cD48L286cD48L3ByZT4NCjxwcmU+fDxv
+OnA+PC9vOnA+PC9wcmU+DQo8cHJlPnwmbmJzcDsmbmJzcDsgT3IsIGFkZCAtRENNQUtFX1BPTElD
+WV9WRVJTSU9OX01JTklNVU09My41IHRvIHRyeSBjb25maWd1cmluZyBhbnl3YXkuPG86cD48L286
+cD48L3ByZT4NCjxwcmU+PG86cD4mbmJzcDs8L286cD48L3ByZT4NCjxwcmU+PG86cD4mbmJzcDs8
+L286cD48L3ByZT4NCjwvYmxvY2txdW90ZT4NCjwvZGl2Pg0KPC9kaXY+DQo8L2JvZHk+DQo8L2h0
+bWw+DQo=
 
-We need to take a look on this issue. I see this issue in both master 
-and scarthgap as well.
-
-Some machines doesn't build if you don't set ZEPHYR_TOOLCHAIN_VARIANT = 
-"zephyr". Can you try adding this to your local.conf and see if you can 
-build it?
-
-Thanks,
-Sandeep
-
->
->
-> meta                 = "master:fb4ebd60536af8672f950376106e0b0500d7007c"
-> meta-oe
-> meta-python          = "master:714b3adc3a92d42370a0ea57a9744ad2d031db7f"
-> meta-zephyr-core
-> meta-zephyr-bsp      = "master:5260aea7ef135d3b23f49c8d7bf6c6f78bdc2f50"
->
->
-> command :
-> MACHINE=qemu-cortex-r5 bitbake zephyr-openamp-rpmsg-multi-srv
->
->
-> | CMake Error at /data/master/poky/build-zephyr/tmp/work/qemu_cortex_r5-zephyr/zephyr-openamp-rpmsg-multi-srv/4.1.0+git/sources/zephyr-openamp-rpmsg-multi-srv-4.1.0+git/modules/hal/libmetal/libme
-> tal/CMakeLists.txt:1 (cmake_minimum_required):
-> |   Compatibility with CMake < 3.5 has been removed from CMake.
-> |
-> |   Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
-> |   to tell CMake that the project requires at least <min> but has been updated
-> |   to work with policies introduced by <max> or earlier.
-> |
-> |   Or, add -DCMAKE_POLICY_VERSION_MINIMUM=3.5 to try configuring anyway.
->
->
->> -----Original Message-----
->> From:yocto-patches@lists.yoctoproject.org <yocto-
->> patches@lists.yoctoproject.org> On Behalf Of Sandeep Gundlupet Raju via
->> lists.yoctoproject.org
->> Sent: Wednesday, 20 August, 2025 10:40 PM
->> To:yocto-patches@lists.yoctoproject.org; Lee, Chee Yang
->> <chee.yang.lee@intel.com>
->> Subject: [yocto-patches] [meta-zephyr][master][PATCH v3 1/1] zephyr-kernel:
->> Add rpmsg multi services recipe
->>
->> Add zephyr-openamp-rpmsg-mulit-services recipe to build out of tree openamp-
->> system-reference example applications.
->>
->> Signed-off-by: Sandeep Gundlupet Raju<sandeep.gundlupet-raju@amd.com>
->> ---
->> Changes in v3:
->>     - Add machine compatible for qemu-cortex-r5 and stm32mp157c-dk2
->>       machines only.
->>
->> Testing:
->>
->> $ MACHINE=qemu-cortex-r5 bitbake zephyr-openamp-rpmsg-multi-srv
->> $ MACHINE=stm32mp157c-dk2 bitbake zephyr-openamp-rpmsg-multi-srv
->> ---
->>   .../zephyr-openamp-rpmsg-multi-srv.bb         | 25 +++++++++++++++++++
->>   1 file changed, 25 insertions(+)
->>   create mode 100644 meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-
->> openamp-rpmsg-multi-srv.bb
->>
->> diff --git a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-openamp-
->> rpmsg-multi-srv.bb b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-
->> openamp-rpmsg-multi-srv.bb
->> new file mode 100644
->> index 0000000..dca3b9b
->> --- /dev/null
->> +++ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-openamp-rpmsg
->> +++ -multi-srv.bb
->> @@ -0,0 +1,25 @@
->> +SUMMARY = "Open AMP rpmsg multi services"
->> +DESCRIPTION = "Open AMP rpmsg multi services"
->> +
->> +inherit zephyr-sample
->> +
->> +SRC_URI_ZEPHYR_OPEN_AMP_SYS_REF ?=
->> "git://github.com/OpenAMP/openamp-system-reference;protocol=https"
->> +
->> +BRANCH ?= "v2024.05"
->> +BRANCHARG ="${@['nobranch=1', 'branch=${BRANCH}'][d.getVar('BRANCH', True) != '']}"
->> +
->> +SRC_URI:append = " \
->> +    ${SRC_URI_ZEPHYR_OPEN_AMP_SYS_REF};name=open-amp-sys-
->> ref;${BRANCHARG};destsuffix=${P}/open-amp-sys-ref \
->> +    "
->> +
->> +SRCREV_open-amp-sys-ref = "d78315763fbacba8a74552d0ad570bd01c42ccf9"
->> +
->> +COMPATIBLE_MACHINE = "(qemu-cortex-r5|stm32mp157c-dk2)"
->> +
->> +ZEPHYR_SRC_DIR = "${ZEPHYR_BASE}/../open-amp-sys-
->> ref/examples/zephyr/rpmsg_multi_services"
->> +
->> +ZEPHYR_MAKE_OUTPUT = "rpmsg_multi_services.elf"
->> +
->> +EXTRA_OECMAKE += " \
->> +    -DCONF_FILE="prj.conf" \
->> +    "
->> --
->> 2.34.1
->>
->>
->>
->> -=-=-=-=-=-=-=-=-=-=-=-
->> Links: You receive all messages sent to this group.
->> View/Reply Online (#2073):https://lists.yoctoproject.org/g/yocto-
->> patches/message/2073
->> Mute This Topic:https://lists.yoctoproject.org/mt/114800427/1648606
->> Group Owner:yocto-patches+owner@lists.yoctoproject.org
->> Unsubscribe:https://lists.yoctoproject.org/g/yocto-
->> patches/leave/13233161/1648606/629479993/xyzzy [chee.yang.lee@intel.com]
->> -=-=-=-=-=-=-=-=-=-=-=-
->>
---------------e6xQJ0bmfCXmB0d8L2SAC9GL
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-<!DOCTYPE html><html><head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  </head>
-  <body>
-    <p>Hi Chee Yang,</p>
-    <div class="moz-cite-prefix">On 8/28/2025 2:16 AM, Lee, Chee Yang
-      wrote:<br>
-    </div>
-    <blockquote type="cite" cite="mid:BL4PR11MB8797F6E908FBFEF26CBDF6FDB93BA@BL4PR11MB8797.namprd11.prod.outlook.com">
-      <pre wrap="" class="moz-quote-pre">Hi Sandeep
-Unfortunately, with these I still can't build the recipe. Looks like we need to patch CMakeLists.txt</pre>
-    </blockquote>
-    <p>[Sandeep]: Not just&nbsp;<span style="white-space: pre-wrap">zephyr-openamp-rpmsg-multi-srv </span>app
-      any of the zephyr app(MACHINE=qemu-cortex-r5 bitbake
-      zephyr-helloworld)&nbsp; is not working for r5 machines unless you set
-      the ZEPHYR_TOOLCHAIN_VARIANT = &quot;zephyr&quot; in local.conf</p>
-    <p>We need to take a look on this issue. I see this issue in both
-      master and scarthgap as well.</p>
-    <p>Some machines doesn't build if you don't set
-      ZEPHYR_TOOLCHAIN_VARIANT = &quot;zephyr&quot;. Can you try adding this to
-      your local.conf and see if you can build it?</p>
-    <p>Thanks,<br>
-      Sandeep</p>
-    <blockquote type="cite" cite="mid:BL4PR11MB8797F6E908FBFEF26CBDF6FDB93BA@BL4PR11MB8797.namprd11.prod.outlook.com">
-      <pre wrap="" class="moz-quote-pre">
-
-
-meta                 = &quot;master:fb4ebd60536af8672f950376106e0b0500d7007c&quot;
-meta-oe
-meta-python          = &quot;master:714b3adc3a92d42370a0ea57a9744ad2d031db7f&quot;
-meta-zephyr-core
-meta-zephyr-bsp      = &quot;master:5260aea7ef135d3b23f49c8d7bf6c6f78bdc2f50&quot;
-
-
-command :
-MACHINE=qemu-cortex-r5 bitbake zephyr-openamp-rpmsg-multi-srv
-
-
-| CMake Error at /data/master/poky/build-zephyr/tmp/work/qemu_cortex_r5-zephyr/zephyr-openamp-rpmsg-multi-srv/4.1.0+git/sources/zephyr-openamp-rpmsg-multi-srv-4.1.0+git/modules/hal/libmetal/libme
-tal/CMakeLists.txt:1 (cmake_minimum_required):
-|   Compatibility with CMake &lt; 3.5 has been removed from CMake.
-|
-|   Update the VERSION argument &lt;min&gt; value.  Or, use the &lt;min&gt;...&lt;max&gt; syntax
-|   to tell CMake that the project requires at least &lt;min&gt; but has been updated
-|   to work with policies introduced by &lt;max&gt; or earlier.
-|
-|   Or, add -DCMAKE_POLICY_VERSION_MINIMUM=3.5 to try configuring anyway.
-
-
-</pre>
-      <blockquote type="cite">
-        <pre wrap="" class="moz-quote-pre">-----Original Message-----
-From: <a class="moz-txt-link-abbreviated" href="mailto:yocto-patches@lists.yoctoproject.org">yocto-patches@lists.yoctoproject.org</a> &lt;yocto-
-<a class="moz-txt-link-abbreviated" href="mailto:patches@lists.yoctoproject.org">patches@lists.yoctoproject.org</a>&gt; On Behalf Of Sandeep Gundlupet Raju via
-lists.yoctoproject.org
-Sent: Wednesday, 20 August, 2025 10:40 PM
-To: <a class="moz-txt-link-abbreviated" href="mailto:yocto-patches@lists.yoctoproject.org">yocto-patches@lists.yoctoproject.org</a>; Lee, Chee Yang
-<a class="moz-txt-link-rfc2396E" href="mailto:chee.yang.lee@intel.com">&lt;chee.yang.lee@intel.com&gt;</a>
-Subject: [yocto-patches] [meta-zephyr][master][PATCH v3 1/1] zephyr-kernel:
-Add rpmsg multi services recipe
-
-Add zephyr-openamp-rpmsg-mulit-services recipe to build out of tree openamp-
-system-reference example applications.
-
-Signed-off-by: Sandeep Gundlupet Raju <a class="moz-txt-link-rfc2396E" href="mailto:sandeep.gundlupet-raju@amd.com">&lt;sandeep.gundlupet-raju@amd.com&gt;</a>
----
-Changes in v3:
-   - Add machine compatible for qemu-cortex-r5 and stm32mp157c-dk2
-     machines only.
-
-Testing:
-
-$ MACHINE=qemu-cortex-r5 bitbake zephyr-openamp-rpmsg-multi-srv
-$ MACHINE=stm32mp157c-dk2 bitbake zephyr-openamp-rpmsg-multi-srv
----
- .../zephyr-openamp-rpmsg-multi-srv.bb         | 25 +++++++++++++++++++
- 1 file changed, 25 insertions(+)
- create mode 100644 meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-
-openamp-rpmsg-multi-srv.bb
-
-diff --git a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-openamp-
-rpmsg-multi-srv.bb b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-
-openamp-rpmsg-multi-srv.bb
-new file mode 100644
-index 0000000..dca3b9b
---- /dev/null
-+++ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-openamp-rpmsg
-+++ -multi-srv.bb
-@@ -0,0 +1,25 @@
-+SUMMARY = &quot;Open AMP rpmsg multi services&quot;
-+DESCRIPTION = &quot;Open AMP rpmsg multi services&quot;
-+
-+inherit zephyr-sample
-+
-+SRC_URI_ZEPHYR_OPEN_AMP_SYS_REF ?=
-&quot;git://github.com/OpenAMP/openamp-system-reference;protocol=https&quot;
-+
-+BRANCH ?= &quot;v2024.05&quot;
-+BRANCHARG = <a class="moz-txt-link-rfc2396E" href="mailto:${@['nobranch=1','branch=${BRANCH}'][d.getVar('BRANCH',True)!='']}">&quot;${@['nobranch=1', 'branch=${BRANCH}'][d.getVar('BRANCH',
-True) != '']}&quot;</a>
-+
-+SRC_URI:append = &quot; \
-+    ${SRC_URI_ZEPHYR_OPEN_AMP_SYS_REF};name=open-amp-sys-
-ref;${BRANCHARG};destsuffix=${P}/open-amp-sys-ref \
-+    &quot;
-+
-+SRCREV_open-amp-sys-ref = &quot;d78315763fbacba8a74552d0ad570bd01c42ccf9&quot;
-+
-+COMPATIBLE_MACHINE = &quot;(qemu-cortex-r5|stm32mp157c-dk2)&quot;
-+
-+ZEPHYR_SRC_DIR = &quot;${ZEPHYR_BASE}/../open-amp-sys-
-ref/examples/zephyr/rpmsg_multi_services&quot;
-+
-+ZEPHYR_MAKE_OUTPUT = &quot;rpmsg_multi_services.elf&quot;
-+
-+EXTRA_OECMAKE += &quot; \
-+    -DCONF_FILE=&quot;prj.conf&quot; \
-+    &quot;
---
-2.34.1
-
-
-
--=-=-=-=-=-=-=-=-=-=-=-
-Links: You receive all messages sent to this group.
-View/Reply Online (#2073): <a class="moz-txt-link-freetext" href="https://lists.yoctoproject.org/g/yocto">https://lists.yoctoproject.org/g/yocto</a>-
-patches/message/2073
-Mute This Topic: <a class="moz-txt-link-freetext" href="https://lists.yoctoproject.org/mt/114800427/1648606">https://lists.yoctoproject.org/mt/114800427/1648606</a>
-Group Owner: <a class="moz-txt-link-abbreviated" href="mailto:yocto-patches+owner@lists.yoctoproject.org">yocto-patches+owner@lists.yoctoproject.org</a>
-Unsubscribe: <a class="moz-txt-link-freetext" href="https://lists.yoctoproject.org/g/yocto">https://lists.yoctoproject.org/g/yocto</a>-
-patches/leave/13233161/1648606/629479993/xyzzy [<a class="moz-txt-link-abbreviated" href="mailto:chee.yang.lee@intel.com">chee.yang.lee@intel.com</a>]
--=-=-=-=-=-=-=-=-=-=-=-
-
-</pre>
-      </blockquote>
-      <pre wrap="" class="moz-quote-pre">
-</pre>
-    </blockquote>
-  </body>
-</html>
-
---------------e6xQJ0bmfCXmB0d8L2SAC9GL--
+--_000_BL4PR11MB87973A5091395D9BBC292047B93AABL4PR11MB8797namp_--
 
