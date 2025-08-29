@@ -1,351 +1,358 @@
-Return-Path: <chee.yang.lee@intel.com>
+Return-Path: <ticotimo@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF2ECA0FF6
-	for <webhook@archiver.kernel.org>; Fri, 29 Aug 2025 01:34:57 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
- by mx.groups.io with SMTP id smtpd.web10.3655.1756431277380415443
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A32ADCA0FF9
+	for <webhook@archiver.kernel.org>; Fri, 29 Aug 2025 09:55:20 +0000 (UTC)
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+ by mx.groups.io with SMTP id smtpd.web10.9872.1756461308531272921
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 28 Aug 2025 18:34:37 -0700
+ Fri, 29 Aug 2025 02:55:08 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@intel.com header.s=Intel header.b=POP6ohKA;
- spf=pass (domain: intel.com, ip: 192.198.163.13, mailfrom: chee.yang.lee@intel.com)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756431277; x=1787967277;
-  h=from:to:subject:date:message-id:references:in-reply-to:
-   mime-version;
-  bh=YrBuETqiygUipC2WhatKOdXOk4GJmCfxh4kkR90KpOs=;
-  b=POP6ohKAhwrwO2X9SLVEBWW0UnWaIi2dUoWQ6UiQIVhS5yrrwVBQ3jdo
-   TxHIdtYZJwRK6KnfCAZ8uV74k1WU0Myb6gLSgac9p9ytKWDo2TaOMzR/f
-   tdtRGMlMHF1upHOTdOS3gAAtnPg8G0yNhSVB1z2g81/WCkojWe7gGr9ub
-   FgqyrgZCvBQ5TIIjUlU//d/VZOf0bw2x3V/ML8HN03vxMGVR0hvOSgazf
-   lTXDc6/1QC2oexiEyERcCFwFIeUC6v7D7KyyKL8fnpU8bU5jkcgAw2twi
-   IVmEDGw/1bk3GL7tATcOYRJKj1C0QrDsOQIiLoA1/wk7mOl06WRimupRP
-   g==;
-X-CSE-ConnectionGUID: hdD9LSk4QuqywLx7zCzOTQ==
-X-CSE-MsgGUID: Yuu7w3gkR7O479qg9CHWCw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11536"; a="61349423"
-X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
-   d="scan'208,217";a="61349423"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 18:34:36 -0700
-X-CSE-ConnectionGUID: Wxfo2EgAQ8u6EMuUPQxn8g==
-X-CSE-MsgGUID: 5cfHn+qQTkm/QoVRD0UgLQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
-   d="scan'208,217";a="174633093"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 18:34:37 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Thu, 28 Aug 2025 18:34:36 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Thu, 28 Aug 2025 18:34:36 -0700
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (40.107.96.63) by
- edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Thu, 28 Aug 2025 18:34:35 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MREmM4OhIacC9X9ZddC8ni+oP5YwS0vU5giuWWq+TCGIPku/9+CZvxhlZoMt5lm0gum+5Gj4ztmxs801q7WB6DoJ2j43b1URGCYGGiJEeFiKM4hMdG9RyyuSClNIl8A1RaMCgntS4xGtir2GExG0AXMoEKddGdBmIjKCmrolAeeTttqyqxgAKXitg3U/1DDKr87v0nJy1BEdJfTzYm19+xoXcKYUM7cpdGmzX6ZFUXLU3/V+2KPSAMmqomKpy1n4WCJgwpNAi/31RLEA8mttEntiBtKlUWk/HHWeeIGOr/NLcjQfmaMM+DS6/exIwxVvX3RyoKZXSoecaCJ/xLeAuQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YrBuETqiygUipC2WhatKOdXOk4GJmCfxh4kkR90KpOs=;
- b=oIZIb8YKH5m34caVq8EkO4OjcjjCfwWAw1aodQ8j+MukPMGGCpBhYz9uRJxmfy+17D+T+d18FuNe5EqrwGl5gChwnXqRZeGTt3cnVLCEM/wA3faGOW10qtE12kBVMJkuiPQtdGqmaWu5TAeUK1R1zNwCO8J3ONRZGjLAaLrnK1xM4G0HkGhMoT8TQF8TTnRwXuZj2L0eVJLowS/8E2JkiTRpnSMwDnG+rjBrYMTAaZFiSeepIRaRrDkqG7Ajp2EZyiseW/hfWnZvJA7EkQ5g1Pd+Yn9It6GKK5s0t0ZtgrQsKEgIDJ+Se7PjZXZBYiXmA+y9jNM/qtPoh1lzwHT9sA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BL4PR11MB8797.namprd11.prod.outlook.com (2603:10b6:208:5a7::8)
- by SN7PR11MB7667.namprd11.prod.outlook.com (2603:10b6:806:32a::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.15; Fri, 29 Aug
- 2025 01:34:31 +0000
-Received: from BL4PR11MB8797.namprd11.prod.outlook.com
- ([fe80::311e:565b:ccfd:f4c8]) by BL4PR11MB8797.namprd11.prod.outlook.com
- ([fe80::311e:565b:ccfd:f4c8%5]) with mapi id 15.20.9052.019; Fri, 29 Aug 2025
- 01:34:31 +0000
-From: "Lee, Chee Yang" <chee.yang.lee@intel.com>
-To: "Gundlupet Raju, Sandeep" <sandeep.gundlupet-raju@amd.com>,
-	"yocto-patches@lists.yoctoproject.org" <yocto-patches@lists.yoctoproject.org>
-Subject: RE: [yocto-patches] [meta-zephyr][master][PATCH v3 1/1]
- zephyr-kernel: Add rpmsg multi services recipe
-Thread-Topic: [yocto-patches] [meta-zephyr][master][PATCH v3 1/1]
- zephyr-kernel: Add rpmsg multi services recipe
-Thread-Index: AQHcEeBXNDrevSHTmEKHz3JnwWyJw7R1CMEQgANjyoCAAGw7IA==
-Date: Fri, 29 Aug 2025 01:34:31 +0000
-Message-ID: <BL4PR11MB87973A5091395D9BBC292047B93AA@BL4PR11MB8797.namprd11.prod.outlook.com>
-References: <20250820143951.4033778-1-sandeep.gundlupet-raju@amd.com>
- <BL4PR11MB8797F6E908FBFEF26CBDF6FDB93BA@BL4PR11MB8797.namprd11.prod.outlook.com>
- <61e57828-9a49-4d5d-b622-ef063cf444d7@amd.com>
-In-Reply-To: <61e57828-9a49-4d5d-b622-ef063cf444d7@amd.com>
-Accept-Language: en-SG, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BL4PR11MB8797:EE_|SN7PR11MB7667:EE_
-x-ms-office365-filtering-correlation-id: 73f0f0b5-9d80-4560-7b76-08dde69c33d7
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|10070799003|1800799024|376014|38070700018|8096899003|7053199007;
-x-microsoft-antispam-message-info: =?utf-8?B?WURieUdreDltcFArQVhUcXhWUzMwMWx1R083YlBlbTVrd3JOendDRlVRRTBy?=
- =?utf-8?B?RkpFUUtGVUduK0FFdDZSZmlNR3JyaU9Rc3pwSHVXMEtLR2R4K0hpV3JRaU1B?=
- =?utf-8?B?cjhlTVpCK0o5dWhpazFrdWNYRzMvRC83M24zVTBmbGFBNUU2NVRIZVhYblph?=
- =?utf-8?B?d1BZQXRRayt1Sm4xcS9qU3QzR205dkNSVzJleVJwZUJUZkxWandscncyTHo0?=
- =?utf-8?B?dlE0MjRJb3dENXp6VUhoVzU0a1k0Ukw3OEtjS2hoWnFrL2dueHVBT1VFTEoy?=
- =?utf-8?B?OW9MQXp5L0FBanZCMXJ5Qk50R21pYmppeVRiWkN1UFFjWERKWjV1SmhJaXN0?=
- =?utf-8?B?b1prWURDdjVoZmF6cXRxM0g5SUo4ZFlVTFpDYnR0QkY4N0lTN0JreVdmaW8y?=
- =?utf-8?B?ZjFON01YRzJ1NHFvUitucUczazNTVTJHU2RqTU0zWWZRK29EbG54STNQcng1?=
- =?utf-8?B?MnRBTmlqbUI0YUJFVU5PYkppdllEOW1hYlhOUG1oK0JVY1JzOTBuWDZXckxk?=
- =?utf-8?B?eEE1VExuWVJkNCtBSExYN2VsSjZnVWZwOENVQWF0S0JreVJ6cnNzZHhWZjEr?=
- =?utf-8?B?SXQ2N1orWVRpQ3JSNEFvQmEyR0Q3RkR2ckl6amNoQ0FHSjA0ZGp3WEZ0WnBC?=
- =?utf-8?B?b3dCM3d3N1NTam9zZTVRNGF5cnVhMmVQcFRFNkdKZlh0MXBkbEZpUjQyQ1Jm?=
- =?utf-8?B?V0pVcVorYWg1Rm9ZUlVXVVhaSi85czlpMGZwMGFsbTRadnh0WVZGWWExZmZ4?=
- =?utf-8?B?cEV3VkUwUVZqRnlOcTlpL2tpaytaMHdTZ1g0RlRua0h3a1lVVWswL1FnQnFw?=
- =?utf-8?B?a3dJWk5rQTN4UENuS1hzMDBDTm1zdjZ2QWovWnM5T1JzQ1hhRzVJMTNwRWVC?=
- =?utf-8?B?Ylh5T3dUS1YyaURyL2tpZ3d4REVsN3pBWHZFUmY2UlFsUW55SURNY1pOZ0Z2?=
- =?utf-8?B?UFBEcUFhWDg1eWR0SEZLTnVYdmJoRmZKenh5NDV0Qmw2VEJjVW9kRmY3dEJC?=
- =?utf-8?B?WGNlQ1FDVllabVRMTmRGcWM5WDFua0ZORE9uZ3RrYjlYV3NQV1AzTEpWaEJL?=
- =?utf-8?B?MnBDTERVYkQreDcwNlFlYktURTBWekFkNm5FdlY5VFB6b3FHNi8vNlkyNWtz?=
- =?utf-8?B?aHBCZXdybnlCVlovNEJ1L25DWkNzdEJDWWtHRjRRa1U4b3orRUNpbmdNQk9x?=
- =?utf-8?B?RW16WGg4cERrdWFrbmFYVzFpQ0ZTY1V3dkdkUjdnRkZ0ejdOTDFxV1Y4YmN4?=
- =?utf-8?B?aUx1QzNycjdRTjBJVzc4TzdVaW9BWm9TQ0hLc2Z1MCs3bUZWRlpZOWNYUU11?=
- =?utf-8?B?ZTlsOUhNZENrLy8wNHBVc3Jodk9pVzNteWk0cHhzS2RnejQwLzBPQjJ6OHdo?=
- =?utf-8?B?WnBUU0xWY0RKcHdUMWE3SnJkaUpkbkx6QW9pNjI4RUpCR0VMQ0JFUGRmMFVS?=
- =?utf-8?B?MXFabHk0bFR6K1BYb2dCZzVzeThBcGRIeS9VZHk0YnM5ckRqbGgyTWN3QUpn?=
- =?utf-8?B?dWVDTTdqS0xZTnBFbDBnWmhZeU5UZmVCWUFiTFlUd3EvSVg5R3ROMXp2MWJz?=
- =?utf-8?B?MTBrZEZFbXVWemQvdFY4clJiMHhHSnY4S1hhQXorck5KNzdjM1dCQW5vMTJU?=
- =?utf-8?B?K1pXMmYwSjFIMThWK2lCWHFFS0EyUjBVMzV4TDJ6SE9NTHQ1cWJGTDE2WDBn?=
- =?utf-8?B?QmxNejlYSkR0bjBoWm00WWVVQjdwaUw2MXo2V1YrVFNqWmU4SmpQRXpMcmVM?=
- =?utf-8?B?YThjV3BrdlN4bW8yTCtvWGNpMGRDR1RUOEdwK0VSSkxuWXduQUVnRWlDYzJM?=
- =?utf-8?B?MUJVQmVkYkROVjNJM3FBSmlzNzNzd0FnaWZNaTlLWmo1eUhNdjV4NG0zTE4z?=
- =?utf-8?B?YnNhTUI1bFdFemU5VEk1ekIvbmNNR3FKeGFBR1dZRzNzdkJPT0FrR0JCWDky?=
- =?utf-8?B?UEY1bVlNMjE5enVhSEpPNGFRbm5XdHJuRkIrRE05Wlh3OU92djFtNHV3NHdv?=
- =?utf-8?B?WTV1SmhhSXNRPT0=?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL4PR11MB8797.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(10070799003)(1800799024)(376014)(38070700018)(8096899003)(7053199007);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?QnZlbFAzMDVONU5RNDJEeXh0a3RNdVlLdXIyNnEwVnU2R2JwS3V2QjFJS3I5?=
- =?utf-8?B?eTBLcmJ5TUJBMERodnFUYUxVczNwby9JajY2Q0taYWsvOTk4Z0dLVHBRUXM2?=
- =?utf-8?B?dnNqdHZyWGNLc0tHbFJsamM2aDJnRUNxL3VUZWxxMTlyU0JvRExJajVQVXlY?=
- =?utf-8?B?SjBFRFdhZC9JV2NVQTVqS2o0SklQMUtTUHFaM1JHL0NhdXFESkp2dXBQNzBm?=
- =?utf-8?B?YTYraHRDQXN6b1puNUVNMitnTktVMVpqRHZTd05kL2ppRHduRi9OYlBhZXZN?=
- =?utf-8?B?SFRJUGhQRitoNmJEWWdiODJDaHRZMlNmYjE1ZU1kQ1d1Vms4c3FxMHQwOTht?=
- =?utf-8?B?cWxqWit4VlFjSEcyM1pqZDhiR1Z1SnN1YXMzNlg4TnZ6OUNXZjkvSzE4WjAv?=
- =?utf-8?B?eWxZeTRobnFxS2NvMHBkY08ra0liOXEzcXNMWUIrNlZJdEZHYW5XcEdUdlJM?=
- =?utf-8?B?bUdaNlVBZ01DV0V3azlmWmtCczNGaTlzZE9tYmI5Q3pFM1dseTZSWERyK0JK?=
- =?utf-8?B?YXA2dEh3VFF4ZGxQbXdzaHlUYllsbjV3aXVZSlU1NE5RU1djTmhhSXY2cjFF?=
- =?utf-8?B?Q1lpWXBDUlg1eVlHZmNxa1JPV1d3bllwcjZYMXRhYVozcE9NWi9vVlFpaWFT?=
- =?utf-8?B?OEJ6S3FCVk0yNUc1TmRBYWw3cnVtdnBxV3VwNFA2UWd6RDlTaERjWncxSGFP?=
- =?utf-8?B?L2dRT2FZelRaanl5dkxwSzZzWVFFelhTdjBWQ1Fud0pWaHpJRDNWOWdNM0JN?=
- =?utf-8?B?VG5yMXFxa3l1OGZIb0hKdjFNQUtWNWc0eUtRbFNJS1ZRQlIzWm1zSEhveDNQ?=
- =?utf-8?B?WTk1cXN2UGJOODhlVDRZdzA4ZVF1eFFPL2xjQ0xRQmZRcE5EUVlTQUV4VzY4?=
- =?utf-8?B?bGI3V1FEVEs1bjNmY3pZNkFvam83bXlSK0s4RG5RaHlTdGdDVXh5ckJCQjU5?=
- =?utf-8?B?Z2hXSk4yRnZZZWpNWm5CNmxvS2sva045VUZGTjdWZC9SV2ljNW0vM0F5NlNE?=
- =?utf-8?B?TVlUamM4a2g3OHhGMzBFMSs2L2pVZXB6aW0wcGo3cmdLTzVLQW9LaWowNHRM?=
- =?utf-8?B?VDg1MCs0TFdLUEJyQ0dyS2QwN2hJcmREQ1hISzZ1V2VlczJsR3N3UENiMGVn?=
- =?utf-8?B?U3JiRllWZXhLVWV0MFJxVmtrYUNMUXE3QmNPc2QxendrNU50WWJvM3FiaDZt?=
- =?utf-8?B?YW11OHg5OHBRSGE3WlBFY0hiRHA1Rmc0UWNBWHNBWHJscmxxNDdnUGlyZmJq?=
- =?utf-8?B?bTlUWjRIV1czYWlrMVFCeDJ4OUFxNTNRVDkzWWtweVovRjh0TDBld1NpdEJr?=
- =?utf-8?B?MEhKeXIySjJtTUptYStnRnYzNHFBMGVwYm1ENW1sV0ptYzd2VVRmK3B6SWs1?=
- =?utf-8?B?VVNEemRHMWp0Y1QxVTBlc2RZVmdIdUI5ZXQ2YUFNYmhZMXl4TWNnWFhaUXBG?=
- =?utf-8?B?ak1RNFExaXB0WEE3TnF3VzVCMnJOTllDV2d6eCtpWnZCb1dTQk16UkpjaVl4?=
- =?utf-8?B?VTNuYm5pWlNFN1VjakdYVHkrZ0w5V281YUNlZ2pHUXdDbzRsUVAwOXdoU3lV?=
- =?utf-8?B?Z3hiNXduUmxodVFIcjEreDd0eTZvL29wN2FucFkrK3NBbnhGcVdHRnU0K3pK?=
- =?utf-8?B?aTV2NXF6eGg0RTFqVFpsVTM0UkNBbTU4QUpBRk1IcmV5azhHY0MzMnd0RklN?=
- =?utf-8?B?ZjZLa01QdWt3ZWR6M1ZNNno5T04rNHJIOEVVNmRlTlV3bHR5T21lUU44cjFt?=
- =?utf-8?B?d0U5YTBNR3BFYURFQlozSGFKZm4ra3RaeExhZWtpNEgrbnRHcXRFNVJ1Qll3?=
- =?utf-8?B?RGhFV2pJZG9aL05FZ0poWW1acS92d2pmU2x5azNSUXhIUWxuQXhGOTdDUXJ5?=
- =?utf-8?B?aFhnQ2ludzhxN3g2aDlidVAxQlR3LzZoV3VGWkJJUUFWVVAwQW5jdlFVZ0sx?=
- =?utf-8?B?MEFjdXRhQXBHeEd2a1NFbTcwVEtJWFhKdE42elB0YVpCMUNrQTE4WS9CU2pB?=
- =?utf-8?B?QWUzVXNlc0gvNlBsNGVRWXIyZ0dFZG9LWGNDanQrNFdpNnF4RFp2QVZuZUpu?=
- =?utf-8?B?Z01kSWpYczN4My9nVSt5N3NYTzJCQXluQVRCa0tVQXhuT2MzTTZTVUVIa2Jj?=
- =?utf-8?B?enpPSmUvZXRNVXNSR2JzZjRlUlRlVkQ5M1J0d3RxU2kvTWd2d2lwTjBITllj?=
- =?utf-8?Q?qmQ02PMDKtbSaiHmiVuIb2MOX3ol/BFg0TCgkkMhSoXE?=
-Content-Type: multipart/alternative;
-	boundary="_000_BL4PR11MB87973A5091395D9BBC292047B93AABL4PR11MB8797namp_"
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=MPVlHONb;
+ spf=pass (domain: gmail.com, ip: 209.85.167.42, mailfrom: ticotimo@gmail.com)
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-55f6ad5146eso155666e87.0
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 29 Aug 2025 02:55:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756461306; x=1757066106; darn=lists.yoctoproject.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=rAhBEWE2fOqDgQt666ZljrGGqRmH+3wmv/+HKd3xOYk=;
+        b=MPVlHONbACX2s2xqQeUBhI1GMIjykQLFODT6uRR4Re8IaoNjh830ovOYFpcc0h3CU2
+         bZE2J/5qLqWJzhe/fnC7YXq+3sHwmj0i6rf15TzI070nSjpgPAfztvwYU7nJR+XuDiaP
+         FlIE/6fCHbso7XAOh1O7UX8qlf4fbOUq06L+FKicF+H3r8k9LNUPVrq/GS/jXZFT5RXA
+         VDWypjYCYVWNm3OgE8FTZHExWPzglYHrh9pBw6Mj8EK7q7CGk2u9941QZMGkOVz0JtGa
+         nuKe6R4et/z93Sy/93M4NNgRRO5sJdFwNF0qchWbepzhf51lb4SHzfRJtdM927SGAsMT
+         rMrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756461306; x=1757066106;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rAhBEWE2fOqDgQt666ZljrGGqRmH+3wmv/+HKd3xOYk=;
+        b=w8g+tWBoON87Jy0BHgURmsLztN8exGkaf9hBebvT4d6SqXQhtBknaKJfaXV6a3+4PS
+         wwASDG0jRGOhLBD/EtlFNIMrCArHVN8xDSz2OJL4We4gF8Uub7cZiHYpIYk0MBXKN0IB
+         IaKjXO/HYsbbuFr0vVRfUhE9dFsQk6FNoa5G92VH/GRr97qHNgH54Klijx2HHplFfsu2
+         abiCIFzsupO+VJ8sCxcA0B5GBpiiAA76pOb26oshf2aCkdBI8D30rMIylm78b75ddnbP
+         ot6Q2ocj1VDPzq/LID5p7wzglg+oKdUr5S1CeZccytZoihDs0zGYZtrbVZiIV+0IzI8C
+         3jUQ==
+X-Gm-Message-State: AOJu0YyKuReJ/efy2w1STrBmh1yYVEE1+P/EfFV6O07kREgKkzWgHah4
+	l3gvypSVaazhT6JSCoJuJilPTjmkDe6ITXnmioQGlN6u+9WD4nRlEbyGI5XrbLQSrNzDuOVuzAk
+	Zuia/ZS+r6Ei9bR1tu+v5xOtBLTeK6aqN3GBNdUs=
+X-Gm-Gg: ASbGncvW+WLMNab6U1SwY7vNOgIyu1c+ugqENo0UXdGcasZx4Wc3Vg3CEbQy9pmkN48
+	h1PjpGutYY0a/F3jaHu8rwULkhzqyWNdZO+cL7EdNOUb05uDOUBI2ujdnyTEzSJ2QcH6QLoIrG4
+	Ytmeg8m2mQ20oEeLUpw4CpTzvNtx6Q5CJvbcpaXsDV4mSaWF+uDB//6uzB1zrOWc8kaPAnjCxAV
+	9zNjpTQ
+X-Google-Smtp-Source: AGHT+IGraBRrHmC+w8e/52Dt705kRrZjWnCPWO2/4ihImdISj/SdwR3EyBbeXWS7MzHF6O6Gtt30Ou7OiFTeQeK2VtU=
+X-Received: by 2002:a05:6512:1090:b0:55f:4714:efe with SMTP id
+ 2adb3069b0e04-55f47141690mr5660633e87.23.1756461305335; Fri, 29 Aug 2025
+ 02:55:05 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BL4PR11MB8797.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 73f0f0b5-9d80-4560-7b76-08dde69c33d7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Aug 2025 01:34:31.5190
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: CS8QdvFqpIDCDLfdr/+V//hqFbasSWL52zwHMccM+WhGWof4/6vWcCa+ZUV84SFsNmYKln1yXVn01BLyqZrjxw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB7667
-X-OriginatorOrg: intel.com
+References: <CY8PR11MB7921AAF6CFDC45DD76C7B40B813BA@CY8PR11MB7921.namprd11.prod.outlook.com>
+In-Reply-To: <CY8PR11MB7921AAF6CFDC45DD76C7B40B813BA@CY8PR11MB7921.namprd11.prod.outlook.com>
+From: Tim Orling <ticotimo@gmail.com>
+Date: Fri, 29 Aug 2025 11:54:52 +0200
+X-Gm-Features: Ac12FXwq36p5pECZ90yol52iO8s1ZdSI8v9S-InhG9Xj4RBms19Mf7gGdFdW0zo
+Message-ID: <CANx9H-Dy+hRXngzUdRew-v4xR8dsg-4_r=j=aJZrtKXwe2yPSQ@mail.gmail.com>
+Subject: Re: [yocto-patches] Insights from Integrating mixins rust into kirkstone-based
+To: yocto-patches@lists.yoctoproject.org
+Cc: Scott Murray <scott.murray@konsulko.com>, 
+	"MacLeod, Randy" <Randy.MacLeod@windriver.com>
+Content-Type: multipart/alternative; boundary="0000000000002a9612063d7e04e7"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 29 Aug 2025 01:34:57 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2090
+ <yocto-patches@lists.yoctoproject.org>; Fri, 29 Aug 2025 09:55:20 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2091
 
---_000_BL4PR11MB87973A5091395D9BBC292047B93AABL4PR11MB8797namp_
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+--0000000000002a9612063d7e04e7
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SSBidWlsZCB3aXRoIGRlZmF1bHQgbG9jYWwuY29uZiBmcm9tIHBva3kgd2l0aA0KRElTVFJPID0g
-InplcGh5ciINClpFUEhZUl9UT09MQ0hBSU5fVkFSSUFOVCA9ICJ6ZXBoeXIiDQoNCkl0IHdvcmtz
-IG9ubHkgd2hlbiBJIHNldA0KRVhUUkFfT0VDTUFLRTphcHBlbmQ6cG4temVwaHlyLW9wZW5hbXAt
-cnBtc2ctbXVsdGktc3J2ID0gIiAtRENNQUtFX1BPTElDWV9WRVJTSU9OX01JTklNVU09My41ICIN
-Cg0KDQpGcm9tOiBHdW5kbHVwZXQgUmFqdSwgU2FuZGVlcCA8c2FuZGVlcC5ndW5kbHVwZXQtcmFq
-dUBhbWQuY29tPg0KU2VudDogRnJpZGF5LCAyOSBBdWd1c3QsIDIwMjUgMjoxOCBBTQ0KVG86IExl
-ZSwgQ2hlZSBZYW5nIDxjaGVlLnlhbmcubGVlQGludGVsLmNvbT47IHlvY3RvLXBhdGNoZXNAbGlz
-dHMueW9jdG9wcm9qZWN0Lm9yZw0KU3ViamVjdDogUmU6IFt5b2N0by1wYXRjaGVzXSBbbWV0YS16
-ZXBoeXJdW21hc3Rlcl1bUEFUQ0ggdjMgMS8xXSB6ZXBoeXIta2VybmVsOiBBZGQgcnBtc2cgbXVs
-dGkgc2VydmljZXMgcmVjaXBlDQoNCg0KSGkgQ2hlZSBZYW5nLA0KT24gOC8yOC8yMDI1IDI6MTYg
-QU0sIExlZSwgQ2hlZSBZYW5nIHdyb3RlOg0KDQpIaSBTYW5kZWVwDQoNClVuZm9ydHVuYXRlbHks
-IHdpdGggdGhlc2UgSSBzdGlsbCBjYW4ndCBidWlsZCB0aGUgcmVjaXBlLiBMb29rcyBsaWtlIHdl
-IG5lZWQgdG8gcGF0Y2ggQ01ha2VMaXN0cy50eHQNCg0KW1NhbmRlZXBdOiBOb3QganVzdCB6ZXBo
-eXItb3BlbmFtcC1ycG1zZy1tdWx0aS1zcnYgYXBwIGFueSBvZiB0aGUgemVwaHlyIGFwcChNQUNI
-SU5FPXFlbXUtY29ydGV4LXI1IGJpdGJha2UgemVwaHlyLWhlbGxvd29ybGQpICBpcyBub3Qgd29y
-a2luZyBmb3IgcjUgbWFjaGluZXMgdW5sZXNzIHlvdSBzZXQgdGhlIFpFUEhZUl9UT09MQ0hBSU5f
-VkFSSUFOVCA9ICJ6ZXBoeXIiIGluIGxvY2FsLmNvbmYNCg0KV2UgbmVlZCB0byB0YWtlIGEgbG9v
-ayBvbiB0aGlzIGlzc3VlLiBJIHNlZSB0aGlzIGlzc3VlIGluIGJvdGggbWFzdGVyIGFuZCBzY2Fy
-dGhnYXAgYXMgd2VsbC4NCg0KU29tZSBtYWNoaW5lcyBkb2Vzbid0IGJ1aWxkIGlmIHlvdSBkb24n
-dCBzZXQgWkVQSFlSX1RPT0xDSEFJTl9WQVJJQU5UID0gInplcGh5ciIuIENhbiB5b3UgdHJ5IGFk
-ZGluZyB0aGlzIHRvIHlvdXIgbG9jYWwuY29uZiBhbmQgc2VlIGlmIHlvdSBjYW4gYnVpbGQgaXQ/
-DQoNClRoYW5rcywNClNhbmRlZXANCg0KDQoNCg0KDQoNCg0KbWV0YSAgICAgICAgICAgICAgICAg
-PSAibWFzdGVyOmZiNGViZDYwNTM2YWY4NjcyZjk1MDM3NjEwNmUwYjA1MDBkNzAwN2MiDQoNCm1l
-dGEtb2UNCg0KbWV0YS1weXRob24gICAgICAgICAgPSAibWFzdGVyOjcxNGIzYWRjM2E5MmQ0MjM3
-MGEwZWE1N2E5NzQ0YWQyZDAzMWRiN2YiDQoNCm1ldGEtemVwaHlyLWNvcmUNCg0KbWV0YS16ZXBo
-eXItYnNwICAgICAgPSAibWFzdGVyOjUyNjBhZWE3ZWYxMzVkM2IyM2Y0OWM4ZDdiZjZjNmY3OGJk
-YzJmNTAiDQoNCg0KDQoNCg0KY29tbWFuZCA6DQoNCk1BQ0hJTkU9cWVtdS1jb3J0ZXgtcjUgYml0
-YmFrZSB6ZXBoeXItb3BlbmFtcC1ycG1zZy1tdWx0aS1zcnYNCg0KDQoNCg0KDQp8IENNYWtlIEVy
-cm9yIGF0IC9kYXRhL21hc3Rlci9wb2t5L2J1aWxkLXplcGh5ci90bXAvd29yay9xZW11X2NvcnRl
-eF9yNS16ZXBoeXIvemVwaHlyLW9wZW5hbXAtcnBtc2ctbXVsdGktc3J2LzQuMS4wK2dpdC9zb3Vy
-Y2VzL3plcGh5ci1vcGVuYW1wLXJwbXNnLW11bHRpLXNydi00LjEuMCtnaXQvbW9kdWxlcy9oYWwv
-bGlibWV0YWwvbGlibWUNCg0KdGFsL0NNYWtlTGlzdHMudHh0OjEgKGNtYWtlX21pbmltdW1fcmVx
-dWlyZWQpOg0KDQp8ICAgQ29tcGF0aWJpbGl0eSB3aXRoIENNYWtlIDwgMy41IGhhcyBiZWVuIHJl
-bW92ZWQgZnJvbSBDTWFrZS4NCg0KfA0KDQp8ICAgVXBkYXRlIHRoZSBWRVJTSU9OIGFyZ3VtZW50
-IDxtaW4+IHZhbHVlLiAgT3IsIHVzZSB0aGUgPG1pbj4uLi48bWF4PiBzeW50YXgNCg0KfCAgIHRv
-IHRlbGwgQ01ha2UgdGhhdCB0aGUgcHJvamVjdCByZXF1aXJlcyBhdCBsZWFzdCA8bWluPiBidXQg
-aGFzIGJlZW4gdXBkYXRlZA0KDQp8ICAgdG8gd29yayB3aXRoIHBvbGljaWVzIGludHJvZHVjZWQg
-YnkgPG1heD4gb3IgZWFybGllci4NCg0KfA0KDQp8ICAgT3IsIGFkZCAtRENNQUtFX1BPTElDWV9W
-RVJTSU9OX01JTklNVU09My41IHRvIHRyeSBjb25maWd1cmluZyBhbnl3YXkuDQoNCg0KDQoNCg==
+On Thu, Aug 28, 2025 at 4:29=E2=80=AFPM Soumya via lists.yoctoproject.org
+<soumya.sambu=3Dwindriver.com@lists.yoctoproject.org> wrote:
 
---_000_BL4PR11MB87973A5091395D9BBC292047B93AABL4PR11MB8797namp_
-Content-Type: text/html; charset="utf-8"
-Content-Transfer-Encoding: base64
+> Hi Scott and meta-lts-mixins/kirkstone/rust folks,
+>
+> We (Randy and I and others at Wind River) wanted to share our experience
+> with integrating 'meta-lts-mixins/kirkstone/rust' into our kirkstone-base=
+d
+> setup to enable support for the latest Chromium version.
+>
+> While the initial integration showed promise, we encountered several buil=
+d
+> issues that led us to reconsider. Most of the challenges stemmed from the
+> major upgrade of python3-setuptools and the Rust toolchain, which
+> introduced incompatibilities with several packages in our environment.
+>
+> Here=E2=80=99s a summary of the key issues we faced:
+>
+> *Setuptools-related failures:*
+> - python3-strict-rfc3339 0.7-r0 =E2=80=93 do_compile failure: ERROR: pyth=
+on3
+> setup.py bdist_wheel' execution failed
+> - systemtap =E2=80=93 do_configure failure due to autoconf-related QA err=
+ors
+> - python3-grpcio =E2=80=93 do_compile failure: distutils.errors.CompileEr=
+ror
+> - python3-awscrt =E2=80=93 do_compile failure: unsafe include path
+> /usr/include/python3.10 for cross-compilation
+> - python3-azure-iot-device =E2=80=93 do_compile failure: invalid specifie=
+r '!=3D3.3*'
+>
 
-PGh0bWwgeG1sbnM6dj0idXJuOnNjaGVtYXMtbWljcm9zb2Z0LWNvbTp2bWwiIHhtbG5zOm89InVy
-bjpzY2hlbWFzLW1pY3Jvc29mdC1jb206b2ZmaWNlOm9mZmljZSIgeG1sbnM6dz0idXJuOnNjaGVt
-YXMtbWljcm9zb2Z0LWNvbTpvZmZpY2U6d29yZCIgeG1sbnM6bT0iaHR0cDovL3NjaGVtYXMubWlj
-cm9zb2Z0LmNvbS9vZmZpY2UvMjAwNC8xMi9vbW1sIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv
-VFIvUkVDLWh0bWw0MCI+DQo8aGVhZD4NCjxtZXRhIGh0dHAtZXF1aXY9IkNvbnRlbnQtVHlwZSIg
-Y29udGVudD0idGV4dC9odG1sOyBjaGFyc2V0PXV0Zi04Ij4NCjxtZXRhIG5hbWU9IkdlbmVyYXRv
-ciIgY29udGVudD0iTWljcm9zb2Z0IFdvcmQgMTUgKGZpbHRlcmVkIG1lZGl1bSkiPg0KPHN0eWxl
-PjwhLS0NCi8qIEZvbnQgRGVmaW5pdGlvbnMgKi8NCkBmb250LWZhY2UNCgl7Zm9udC1mYW1pbHk6
-IkNhbWJyaWEgTWF0aCI7DQoJcGFub3NlLTE6MiA0IDUgMyA1IDQgNiAzIDIgNDt9DQpAZm9udC1m
-YWNlDQoJe2ZvbnQtZmFtaWx5OkRlbmdYaWFuOw0KCXBhbm9zZS0xOjIgMSA2IDAgMyAxIDEgMSAx
-IDE7fQ0KQGZvbnQtZmFjZQ0KCXtmb250LWZhbWlseTpDYWxpYnJpOw0KCXBhbm9zZS0xOjIgMTUg
-NSAyIDIgMiA0IDMgMiA0O30NCkBmb250LWZhY2UNCgl7Zm9udC1mYW1pbHk6QXB0b3M7fQ0KQGZv
-bnQtZmFjZQ0KCXtmb250LWZhbWlseTpDb25zb2xhczsNCglwYW5vc2UtMToyIDExIDYgOSAyIDIg
-NCAzIDIgNDt9DQpAZm9udC1mYWNlDQoJe2ZvbnQtZmFtaWx5OiJcQERlbmdYaWFuIjsNCglwYW5v
-c2UtMToyIDEgNiAwIDMgMSAxIDEgMSAxO30NCi8qIFN0eWxlIERlZmluaXRpb25zICovDQpwLk1z
-b05vcm1hbCwgbGkuTXNvTm9ybWFsLCBkaXYuTXNvTm9ybWFsDQoJe21hcmdpbjowY207DQoJZm9u
-dC1zaXplOjEyLjBwdDsNCglmb250LWZhbWlseToiQXB0b3MiLHNhbnMtc2VyaWY7fQ0KcHJlDQoJ
-e21zby1zdHlsZS1wcmlvcml0eTo5OTsNCgltc28tc3R5bGUtbGluazoiSFRNTCBQcmVmb3JtYXR0
-ZWQgQ2hhciI7DQoJbWFyZ2luOjBjbTsNCglmb250LXNpemU6MTAuMHB0Ow0KCWZvbnQtZmFtaWx5
-OiJDb3VyaWVyIE5ldyI7fQ0Kc3Bhbi5IVE1MUHJlZm9ybWF0dGVkQ2hhcg0KCXttc28tc3R5bGUt
-bmFtZToiSFRNTCBQcmVmb3JtYXR0ZWQgQ2hhciI7DQoJbXNvLXN0eWxlLXByaW9yaXR5Ojk5Ow0K
-CW1zby1zdHlsZS1saW5rOiJIVE1MIFByZWZvcm1hdHRlZCI7DQoJZm9udC1mYW1pbHk6Q29uc29s
-YXM7fQ0Kc3Bhbi5FbWFpbFN0eWxlMjENCgl7bXNvLXN0eWxlLXR5cGU6cGVyc29uYWwtcmVwbHk7
-DQoJZm9udC1mYW1pbHk6IkFwdG9zIixzYW5zLXNlcmlmOw0KCWNvbG9yOndpbmRvd3RleHQ7fQ0K
-Lk1zb0NocERlZmF1bHQNCgl7bXNvLXN0eWxlLXR5cGU6ZXhwb3J0LW9ubHk7DQoJZm9udC1zaXpl
-OjEwLjBwdDsNCgltc28tbGlnYXR1cmVzOm5vbmU7fQ0KQHBhZ2UgV29yZFNlY3Rpb24xDQoJe3Np
-emU6NjEyLjBwdCA3OTIuMHB0Ow0KCW1hcmdpbjo3Mi4wcHQgNzIuMHB0IDcyLjBwdCA3Mi4wcHQ7
-fQ0KZGl2LldvcmRTZWN0aW9uMQ0KCXtwYWdlOldvcmRTZWN0aW9uMTt9DQotLT48L3N0eWxlPjwh
-LS1baWYgZ3RlIG1zbyA5XT48eG1sPg0KPG86c2hhcGVkZWZhdWx0cyB2OmV4dD0iZWRpdCIgc3Bp
-ZG1heD0iMTAyNiIgLz4NCjwveG1sPjwhW2VuZGlmXS0tPjwhLS1baWYgZ3RlIG1zbyA5XT48eG1s
-Pg0KPG86c2hhcGVsYXlvdXQgdjpleHQ9ImVkaXQiPg0KPG86aWRtYXAgdjpleHQ9ImVkaXQiIGRh
-dGE9IjEiIC8+DQo8L286c2hhcGVsYXlvdXQ+PC94bWw+PCFbZW5kaWZdLS0+DQo8L2hlYWQ+DQo8
-Ym9keSBsYW5nPSJFTi1NWSIgbGluaz0iYmx1ZSIgdmxpbms9InB1cnBsZSIgc3R5bGU9IndvcmQt
-d3JhcDpicmVhay13b3JkIj4NCjxkaXYgY2xhc3M9IldvcmRTZWN0aW9uMSI+DQo8cCBjbGFzcz0i
-TXNvTm9ybWFsIj48c3BhbiBzdHlsZT0iZm9udC1zaXplOjExLjBwdCI+SSBidWlsZCB3aXRoIGRl
-ZmF1bHQgbG9jYWwuY29uZiBmcm9tIHBva3kgd2l0aA0KPGJyPg0KRElTVFJPID0gJnF1b3Q7emVw
-aHlyJnF1b3Q7PG86cD48L286cD48L3NwYW4+PC9wPg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PHNw
-YW4gc3R5bGU9ImZvbnQtc2l6ZToxMS4wcHQiPlpFUEhZUl9UT09MQ0hBSU5fVkFSSUFOVCA9ICZx
-dW90O3plcGh5ciZxdW90Ozxicj4NCjxicj4NCkl0IHdvcmtzIG9ubHkgd2hlbiBJIHNldCA8bzpw
-PjwvbzpwPjwvc3Bhbj48L3A+DQo8cCBjbGFzcz0iTXNvTm9ybWFsIj48c3BhbiBzdHlsZT0iZm9u
-dC1zaXplOjExLjBwdCI+RVhUUkFfT0VDTUFLRTphcHBlbmQ6cG4temVwaHlyLW9wZW5hbXAtcnBt
-c2ctbXVsdGktc3J2ID0gJnF1b3Q7IC1EQ01BS0VfUE9MSUNZX1ZFUlNJT05fTUlOSU1VTT0zLjUg
-JnF1b3Q7PG86cD48L286cD48L3NwYW4+PC9wPg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PHNwYW4g
-c3R5bGU9ImZvbnQtc2l6ZToxMS4wcHQiPjxicj4NCjxicj4NCjxvOnA+PC9vOnA+PC9zcGFuPjwv
-cD4NCjxkaXYgc3R5bGU9ImJvcmRlcjpub25lO2JvcmRlci1sZWZ0OnNvbGlkIGJsdWUgMS41cHQ7
-cGFkZGluZzowY20gMGNtIDBjbSA0LjBwdCI+DQo8ZGl2Pg0KPGRpdiBzdHlsZT0iYm9yZGVyOm5v
-bmU7Ym9yZGVyLXRvcDpzb2xpZCAjRTFFMUUxIDEuMHB0O3BhZGRpbmc6My4wcHQgMGNtIDBjbSAw
-Y20iPg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PGI+PHNwYW4gbGFuZz0iRU4tVVMiIHN0eWxlPSJm
-b250LXNpemU6MTEuMHB0O2ZvbnQtZmFtaWx5OiZxdW90O0NhbGlicmkmcXVvdDssc2Fucy1zZXJp
-ZiI+RnJvbTo8L3NwYW4+PC9iPjxzcGFuIGxhbmc9IkVOLVVTIiBzdHlsZT0iZm9udC1zaXplOjEx
-LjBwdDtmb250LWZhbWlseTomcXVvdDtDYWxpYnJpJnF1b3Q7LHNhbnMtc2VyaWYiPiBHdW5kbHVw
-ZXQgUmFqdSwgU2FuZGVlcCAmbHQ7c2FuZGVlcC5ndW5kbHVwZXQtcmFqdUBhbWQuY29tJmd0Ow0K
-PGJyPg0KPGI+U2VudDo8L2I+IEZyaWRheSwgMjkgQXVndXN0LCAyMDI1IDI6MTggQU08YnI+DQo8
-Yj5Ubzo8L2I+IExlZSwgQ2hlZSBZYW5nICZsdDtjaGVlLnlhbmcubGVlQGludGVsLmNvbSZndDs7
-IHlvY3RvLXBhdGNoZXNAbGlzdHMueW9jdG9wcm9qZWN0Lm9yZzxicj4NCjxiPlN1YmplY3Q6PC9i
-PiBSZTogW3lvY3RvLXBhdGNoZXNdIFttZXRhLXplcGh5cl1bbWFzdGVyXVtQQVRDSCB2MyAxLzFd
-IHplcGh5ci1rZXJuZWw6IEFkZCBycG1zZyBtdWx0aSBzZXJ2aWNlcyByZWNpcGU8bzpwPjwvbzpw
-Pjwvc3Bhbj48L3A+DQo8L2Rpdj4NCjwvZGl2Pg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PG86cD4m
-bmJzcDs8L286cD48L3A+DQo8cD5IaSBDaGVlIFlhbmcsPG86cD48L286cD48L3A+DQo8ZGl2Pg0K
-PHAgY2xhc3M9Ik1zb05vcm1hbCI+T24gOC8yOC8yMDI1IDI6MTYgQU0sIExlZSwgQ2hlZSBZYW5n
-IHdyb3RlOjxvOnA+PC9vOnA+PC9wPg0KPC9kaXY+DQo8YmxvY2txdW90ZSBzdHlsZT0ibWFyZ2lu
-LXRvcDo1LjBwdDttYXJnaW4tYm90dG9tOjUuMHB0Ij4NCjxwcmU+SGkgU2FuZGVlcDxvOnA+PC9v
-OnA+PC9wcmU+DQo8cHJlPlVuZm9ydHVuYXRlbHksIHdpdGggdGhlc2UgSSBzdGlsbCBjYW4ndCBi
-dWlsZCB0aGUgcmVjaXBlLiBMb29rcyBsaWtlIHdlIG5lZWQgdG8gcGF0Y2ggQ01ha2VMaXN0cy50
-eHQ8bzpwPjwvbzpwPjwvcHJlPg0KPC9ibG9ja3F1b3RlPg0KPHA+W1NhbmRlZXBdOiBOb3QganVz
-dCZuYnNwO3plcGh5ci1vcGVuYW1wLXJwbXNnLW11bHRpLXNydiBhcHAgYW55IG9mIHRoZSB6ZXBo
-eXIgYXBwKE1BQ0hJTkU9cWVtdS1jb3J0ZXgtcjUgYml0YmFrZSB6ZXBoeXItaGVsbG93b3JsZCkm
-bmJzcDsgaXMgbm90IHdvcmtpbmcgZm9yIHI1IG1hY2hpbmVzIHVubGVzcyB5b3Ugc2V0IHRoZSBa
-RVBIWVJfVE9PTENIQUlOX1ZBUklBTlQgPSAmcXVvdDt6ZXBoeXImcXVvdDsgaW4gbG9jYWwuY29u
-ZjxvOnA+PC9vOnA+PC9wPg0KPHA+V2UgbmVlZCB0byB0YWtlIGEgbG9vayBvbiB0aGlzIGlzc3Vl
-LiBJIHNlZSB0aGlzIGlzc3VlIGluIGJvdGggbWFzdGVyIGFuZCBzY2FydGhnYXAgYXMgd2VsbC48
-bzpwPjwvbzpwPjwvcD4NCjxwPlNvbWUgbWFjaGluZXMgZG9lc24ndCBidWlsZCBpZiB5b3UgZG9u
-J3Qgc2V0IFpFUEhZUl9UT09MQ0hBSU5fVkFSSUFOVCA9ICZxdW90O3plcGh5ciZxdW90Oy4gQ2Fu
-IHlvdSB0cnkgYWRkaW5nIHRoaXMgdG8geW91ciBsb2NhbC5jb25mIGFuZCBzZWUgaWYgeW91IGNh
-biBidWlsZCBpdD88bzpwPjwvbzpwPjwvcD4NCjxwPlRoYW5rcyw8YnI+DQpTYW5kZWVwPG86cD48
-L286cD48L3A+DQo8YmxvY2txdW90ZSBzdHlsZT0ibWFyZ2luLXRvcDo1LjBwdDttYXJnaW4tYm90
-dG9tOjUuMHB0Ij4NCjxwcmU+PG86cD4mbmJzcDs8L286cD48L3ByZT4NCjxwcmU+PG86cD4mbmJz
-cDs8L286cD48L3ByZT4NCjxwcmU+PG86cD4mbmJzcDs8L286cD48L3ByZT4NCjxwcmU+bWV0YSZu
-YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
-OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyA9ICZxdW90O21hc3RlcjpmYjRl
-YmQ2MDUzNmFmODY3MmY5NTAzNzYxMDZlMGIwNTAwZDcwMDdjJnF1b3Q7PG86cD48L286cD48L3By
-ZT4NCjxwcmU+bWV0YS1vZTxvOnA+PC9vOnA+PC9wcmU+DQo8cHJlPm1ldGEtcHl0aG9uJm5ic3A7
-Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7ID0gJnF1b3Q7
-bWFzdGVyOjcxNGIzYWRjM2E5MmQ0MjM3MGEwZWE1N2E5NzQ0YWQyZDAzMWRiN2YmcXVvdDs8bzpw
-PjwvbzpwPjwvcHJlPg0KPHByZT5tZXRhLXplcGh5ci1jb3JlPG86cD48L286cD48L3ByZT4NCjxw
-cmU+bWV0YS16ZXBoeXItYnNwJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7ID0gJnF1b3Q7
-bWFzdGVyOjUyNjBhZWE3ZWYxMzVkM2IyM2Y0OWM4ZDdiZjZjNmY3OGJkYzJmNTAmcXVvdDs8bzpw
-PjwvbzpwPjwvcHJlPg0KPHByZT48bzpwPiZuYnNwOzwvbzpwPjwvcHJlPg0KPHByZT48bzpwPiZu
-YnNwOzwvbzpwPjwvcHJlPg0KPHByZT5jb21tYW5kIDo8bzpwPjwvbzpwPjwvcHJlPg0KPHByZT5N
-QUNISU5FPXFlbXUtY29ydGV4LXI1IGJpdGJha2UgemVwaHlyLW9wZW5hbXAtcnBtc2ctbXVsdGkt
-c3J2PG86cD48L286cD48L3ByZT4NCjxwcmU+PG86cD4mbmJzcDs8L286cD48L3ByZT4NCjxwcmU+
-PG86cD4mbmJzcDs8L286cD48L3ByZT4NCjxwcmU+fCBDTWFrZSBFcnJvciBhdCAvZGF0YS9tYXN0
-ZXIvcG9reS9idWlsZC16ZXBoeXIvdG1wL3dvcmsvcWVtdV9jb3J0ZXhfcjUtemVwaHlyL3plcGh5
-ci1vcGVuYW1wLXJwbXNnLW11bHRpLXNydi80LjEuMCtnaXQvc291cmNlcy96ZXBoeXItb3BlbmFt
-cC1ycG1zZy1tdWx0aS1zcnYtNC4xLjArZ2l0L21vZHVsZXMvaGFsL2xpYm1ldGFsL2xpYm1lPG86
-cD48L286cD48L3ByZT4NCjxwcmU+dGFsL0NNYWtlTGlzdHMudHh0OjEgKGNtYWtlX21pbmltdW1f
-cmVxdWlyZWQpOjxvOnA+PC9vOnA+PC9wcmU+DQo8cHJlPnwmbmJzcDsmbmJzcDsgQ29tcGF0aWJp
-bGl0eSB3aXRoIENNYWtlICZsdDsgMy41IGhhcyBiZWVuIHJlbW92ZWQgZnJvbSBDTWFrZS48bzpw
-PjwvbzpwPjwvcHJlPg0KPHByZT58PG86cD48L286cD48L3ByZT4NCjxwcmU+fCZuYnNwOyZuYnNw
-OyBVcGRhdGUgdGhlIFZFUlNJT04gYXJndW1lbnQgJmx0O21pbiZndDsgdmFsdWUuJm5ic3A7IE9y
-LCB1c2UgdGhlICZsdDttaW4mZ3Q7Li4uJmx0O21heCZndDsgc3ludGF4PG86cD48L286cD48L3By
-ZT4NCjxwcmU+fCZuYnNwOyZuYnNwOyB0byB0ZWxsIENNYWtlIHRoYXQgdGhlIHByb2plY3QgcmVx
-dWlyZXMgYXQgbGVhc3QgJmx0O21pbiZndDsgYnV0IGhhcyBiZWVuIHVwZGF0ZWQ8bzpwPjwvbzpw
-PjwvcHJlPg0KPHByZT58Jm5ic3A7Jm5ic3A7IHRvIHdvcmsgd2l0aCBwb2xpY2llcyBpbnRyb2R1
-Y2VkIGJ5ICZsdDttYXgmZ3Q7IG9yIGVhcmxpZXIuPG86cD48L286cD48L3ByZT4NCjxwcmU+fDxv
-OnA+PC9vOnA+PC9wcmU+DQo8cHJlPnwmbmJzcDsmbmJzcDsgT3IsIGFkZCAtRENNQUtFX1BPTElD
-WV9WRVJTSU9OX01JTklNVU09My41IHRvIHRyeSBjb25maWd1cmluZyBhbnl3YXkuPG86cD48L286
-cD48L3ByZT4NCjxwcmU+PG86cD4mbmJzcDs8L286cD48L3ByZT4NCjxwcmU+PG86cD4mbmJzcDs8
-L286cD48L3ByZT4NCjwvYmxvY2txdW90ZT4NCjwvZGl2Pg0KPC9kaXY+DQo8L2JvZHk+DQo8L2h0
-bWw+DQo=
+You would likely also need a meta-lts-mixins layer for python. No one ever
+stepped up to do this, but you can see an implementation at
+https://github.com/warthog9/meta-mixin-python
 
---_000_BL4PR11MB87973A5091395D9BBC292047B93AABL4PR11MB8797namp_--
+
+> *Rust-related failures:*
+> - Internal BSP: libstd-rs do_compile failure =E2=80=93 Error loading targ=
+et
+> specification: 'softfp' is not a valid value for llvm-floatabi
+> - mozjs78 and mozjs-91 =E2=80=93 do_compile failures
+>
+> Thanks to a variety of commits and your work, these issues were resolved.
+> However, we remain concerned about potential customer regressions from
+> introducing higher version packages into our kirkstone-based setup. So,
+> we=E2=80=99ve decided to hold off on using 'meta-lts-mixins/kirkstone/rus=
+t' for now
+> to avoid impacting our customers.
+>
+> We appreciate the effort that=E2=80=99s gone into maintaining the mixins =
+and hope
+> this feedback helps others in the community. We=E2=80=99ll continue to mo=
+nitor
+> developments and may make use of this work in customer-specific projects.
+>
+> Thanks again for your work and support.
+>
+> Regards,
+> Soumya
+> _._,_._,_
+> ------------------------------
+> Links:
+>
+> You receive all messages sent to this group.
+>
+> View/Reply Online (#2088)
+> <https://lists.yoctoproject.org/g/yocto-patches/message/2088> | Reply to
+> Group
+> <yocto-patches@lists.yoctoproject.org?subject=3DRe:%20%5Byocto-patches%5D=
+%20Insights%20from%20Integrating%20mixins%20rust%20into%20kirkstone-based>
+> | Reply to Sender
+> <soumya.sambu@windriver.com?subject=3DPrivate:%20Re:%20%5Byocto-patches%5=
+D%20Insights%20from%20Integrating%20mixins%20rust%20into%20kirkstone-based>
+> | Mute This Topic <https://lists.yoctoproject.org/mt/114935651/924729> | =
+New
+> Topic <https://lists.yoctoproject.org/g/yocto-patches/post>
+> Your Subscription
+> <https://lists.yoctoproject.org/g/yocto-patches/editsub/924729> | Contact
+> Group Owner <yocto-patches+owner@lists.yoctoproject.org> | Unsubscribe
+> <https://lists.yoctoproject.org/g/yocto-patches/leave/13169857/924729/102=
+3951714/xyzzy>
+> [ticotimo@gmail.com]
+> _._,_._,_
+>
+>
+
+--0000000000002a9612063d7e04e7
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div><br></div><div><br><div class=3D"gmail_quote gmail_quote_container"><d=
+iv dir=3D"ltr" class=3D"gmail_attr">On Thu, Aug 28, 2025 at 4:29=E2=80=AFPM=
+ Soumya via <a href=3D"http://lists.yoctoproject.org">lists.yoctoproject.or=
+g</a> &lt;soumya.sambu=3D<a href=3D"mailto:windriver.com@lists.yoctoproject=
+.org">windriver.com@lists.yoctoproject.org</a>&gt; wrote:<br></div><blockqu=
+ote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left-wid=
+th:1px;border-left-style:solid;padding-left:1ex;border-left-color:rgb(204,2=
+04,204)">
+
+
+
+
+<div dir=3D"ltr">
+<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
+bri,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)">
+Hi Scott and meta-lts-mixins/kirkstone/rust folks,</div>
+<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
+bri,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)">
+<br>
+</div>
+<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
+bri,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)">
+We (Randy and I and others at Wind River) wanted to share our experience wi=
+th integrating &#39;meta-lts-mixins/kirkstone/rust&#39; into our kirkstone-=
+based setup to enable support for the latest Chromium version.</div>
+<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
+bri,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)">
+<br>
+</div>
+<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
+bri,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)">
+While the initial integration showed promise, we encountered several build =
+issues that led us to reconsider. Most of the challenges stemmed from the m=
+ajor upgrade of python3-setuptools and the Rust toolchain, which introduced=
+ incompatibilities with several
+ packages in our environment.</div>
+<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
+bri,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)">
+<br>
+</div>
+<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
+bri,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)">
+Here=E2=80=99s a summary of the key issues we faced:</div>
+<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
+bri,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)">
+<br>
+</div>
+<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
+bri,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)">
+<b style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Calibr=
+i,Helvetica,sans-serif">Setuptools-related failures:</b></div>
+<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
+bri,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)">
+- python3-strict-rfc3339 0.7-r0 =E2=80=93 do_compile failure: ERROR: python=
+3 setup.py bdist_wheel&#39; execution failed</div>
+<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
+bri,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)">
+- systemtap =E2=80=93 do_configure failure due to autoconf-related QA error=
+s</div>
+<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
+bri,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)">
+- python3-grpcio =E2=80=93 do_compile failure: distutils.errors.CompileErro=
+r</div>
+<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
+bri,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)">
+- python3-awscrt =E2=80=93 do_compile failure: unsafe include path /usr/inc=
+lude/python3.10 for cross-compilation</div>
+<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
+bri,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)">
+- python3-azure-iot-device =E2=80=93 do_compile failure: invalid specifier =
+&#39;!=3D3.3*&#39;</div>
+<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
+bri,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)">
+</div></div></blockquote><div dir=3D"auto"><br></div><div dir=3D"auto">You =
+would likely also need a meta-lts-mixins layer for python. No one ever step=
+ped up to do this, but you can see an implementation at=C2=A0<div><a href=
+=3D"https://github.com/warthog9/meta-mixin-python">https://github.com/warth=
+og9/meta-mixin-python</a></div><div dir=3D"auto"><br></div></div><blockquot=
+e class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left-width=
+:1px;border-left-style:solid;padding-left:1ex;border-left-color:rgb(204,204=
+,204)"><div dir=3D"ltr"><div style=3D"font-family:Aptos,Aptos_EmbeddedFont,=
+Aptos_MSFontService,Calibri,Helvetica,sans-serif;font-size:12pt;color:rgb(0=
+,0,0)"><br>
+</div>
+<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
+bri,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)">
+<b style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Calibr=
+i,Helvetica,sans-serif">Rust-related failures:</b></div>
+<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
+bri,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)">
+- Internal BSP: libstd-rs do_compile failure =E2=80=93 Error loading target=
+ specification: &#39;softfp&#39; is not a valid value for llvm-floatabi</di=
+v>
+<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
+bri,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)">
+- mozjs78 and mozjs-91 =E2=80=93 do_compile failures</div>
+<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
+bri,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)">
+<br>
+</div>
+<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
+bri,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)">
+Thanks to a variety of commits and your work, these issues were resolved. H=
+owever, we remain concerned about potential customer regressions from intro=
+ducing higher version packages into our kirkstone-based setup. So, we=E2=80=
+=99ve decided to hold off on using &#39;meta-lts-mixins/kirkstone/rust&#39;
+ for now to avoid impacting our customers.</div>
+<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
+bri,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)">
+<br>
+</div>
+<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
+bri,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)">
+We appreciate the effort that=E2=80=99s gone into maintaining the mixins an=
+d hope this feedback helps others in the community. We=E2=80=99ll continue =
+to monitor developments and may make use of this work in customer-specific =
+projects.</div>
+<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
+bri,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)">
+<br>
+</div>
+<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
+bri,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)">
+Thanks again for your work and support.</div>
+<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
+bri,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)">
+<br>
+</div>
+<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
+bri,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)">
+Regards, =C2=A0</div>
+<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
+bri,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)">
+Soumya</div>
+</div>
+
+
+
+<div width=3D"1" style=3D"clear:both;color:white">_._,_._,_</div>
+
+<hr>
+
+
+Links:<p>
+
+
+ =20
+    You receive all messages sent to this group.
+ =20
+ =20
+
+
+</p><p>
+<a href=3D"https://lists.yoctoproject.org/g/yocto-patches/message/2088" tar=
+get=3D"_blank">View/Reply Online (#2088)</a> |
+
+
+  <a href=3D"mailto:yocto-patches@lists.yoctoproject.org?subject=3DRe:%20%5=
+Byocto-patches%5D%20Insights%20from%20Integrating%20mixins%20rust%20into%20=
+kirkstone-based" target=3D"_blank">Reply to Group</a>
+ =20
+    | <a href=3D"mailto:soumya.sambu@windriver.com?subject=3DPrivate:%20Re:=
+%20%5Byocto-patches%5D%20Insights%20from%20Integrating%20mixins%20rust%20in=
+to%20kirkstone-based" target=3D"_blank">Reply to Sender</a>
+ =20
+
+|
+
+  <a href=3D"https://lists.yoctoproject.org/mt/114935651/924729" target=3D"=
+_blank">Mute This Topic</a>
+
+
+| <a href=3D"https://lists.yoctoproject.org/g/yocto-patches/post" target=3D=
+"_blank">New Topic</a>
+
+<br>
+
+
+
+
+<a href=3D"https://lists.yoctoproject.org/g/yocto-patches/editsub/924729" t=
+arget=3D"_blank">Your Subscription</a> |
+<a href=3D"mailto:yocto-patches+owner@lists.yoctoproject.org" target=3D"_bl=
+ank">Contact Group Owner</a> |
+
+<a href=3D"https://lists.yoctoproject.org/g/yocto-patches/leave/13169857/92=
+4729/1023951714/xyzzy" target=3D"_blank">Unsubscribe</a>
+
+ [<a href=3D"mailto:ticotimo@gmail.com" target=3D"_blank">ticotimo@gmail.co=
+m</a>]<br>
+</p><div width=3D"1" style=3D"clear:both;color:white">_._,_._,_</div>
+
+<p></p><p></p></blockquote></div></div>
+
+--0000000000002a9612063d7e04e7--
 
