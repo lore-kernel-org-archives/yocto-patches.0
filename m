@@ -1,87 +1,122 @@
-Return-Path: <alex.kanavin@gmail.com>
+Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3B98CA0FF9
-	for <webhook@archiver.kernel.org>; Fri, 29 Aug 2025 10:06:10 +0000 (UTC)
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
- by mx.groups.io with SMTP id smtpd.web11.9911.1756461967995394706
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2309CA0FF2
+	for <webhook@archiver.kernel.org>; Sun, 31 Aug 2025 11:41:12 +0000 (UTC)
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+ by mx.groups.io with SMTP id smtpd.web10.27756.1756640472312283953
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 29 Aug 2025 03:06:08 -0700
+ Sun, 31 Aug 2025 04:41:12 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=aGqJpxKH;
- spf=pass (domain: gmail.com, ip: 209.85.219.180, mailfrom: alex.kanavin@gmail.com)
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e970f3c06b5so927070276.1
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 29 Aug 2025 03:06:07 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=c3QTzh5s;
+ spf=pass (domain: gmail.com, ip: 209.85.222.182, mailfrom: twoerner@gmail.com)
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7f889d176c2so454163185a.1
+        for <yocto-patches@lists.yoctoproject.org>; Sun, 31 Aug 2025 04:41:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756461967; x=1757066767; darn=lists.yoctoproject.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Uauk688WoDbjC3UDyCSE5G1cNTWeFnzPqpTeam6WCi4=;
-        b=aGqJpxKHi6sSeggpMEsA65YMhgBaUIfSmKAHVk/yYbXDdR16aUdI6CTXFxCCjHs3Fy
-         Ef7MTBJlXcz3YE2iz+5Mx+ZFO4TC+BkiA7f4S+8UHxHUnD+RcroiotSbOwb31KGuEDHR
-         PzwLEvUfo0YPCfK4Ys+kBpGSXF3FO0jQJ4dwq1xthifb/b/WzzCeBGt7GRbRkrlGv84R
-         ZaDhtCZKxWnTEQA4pSDLZvxqLEoTvJZHK+/CYiK6lN2K5XrClvgWtk/qnIXNk6lDYVCU
-         GsqfF6ny3Vxxys1djkx3YiCSN6rn7ZNxzsZd5YG66UQD9nlsLj4SSvHKmku4rN1xSauT
-         ScCw==
+        d=gmail.com; s=20230601; t=1756640470; x=1757245270; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5kvNE9RpUAQOoToYwyjOylZDrJyQfy0+dmLFlMJw448=;
+        b=c3QTzh5sNS7GAz1VTPAb9Kz0N0ekvZqniQRdjVhcRBzLZ10p/ZL563RmeBAFvI8xxz
+         d93q6qhUJKGJkyMBfHDgZywX5J/cghZBWsaGB31MngFtZwVR18wFWJFinluOzdb6fGT+
+         nO0fnv0q6hCZZVIvzrlvFJXEcIiJGRH4wL5XJSjpbtJGRxXkSJg5xGWgvsEXwJYFAOEX
+         pRZH40YDfI0qf1j4x37ML6Vum48FLHCCDKpas+Evy6K2eySlpIUhprMa+D6UjeNAnGZA
+         FDQKT5ShRYFZwMiQurdY9etD70moEmWZtwRiQhEzDUs3LWIpEhUJTajTMh54XosiVp3P
+         G8kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756461967; x=1757066767;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Uauk688WoDbjC3UDyCSE5G1cNTWeFnzPqpTeam6WCi4=;
-        b=tm1EgbcksFiizyHjQgbtd8R1q5tCu0c2dw33BiauyB40GJr8qE/Xy1OFD+3AOKjah0
-         toOkIWEWlJZn1pr4Y8ffmkF2WKoELw7T8shHaac8ib9W/6IKjMBeJujHE2xPJbIXNH18
-         OJcJ7ky8POw/c8+b2ra0hkogbrBoSyMXsAmKWPz3K+whsU+pjgdnTztx+mG1m+L0Dgeo
-         dfmvNbDEKPhre2epadCY8QPo+vtsE6X7OYBqPHtI+4CoQXhPlU7WlJ42K1FHLWWkUu6o
-         2pRlBkTSe2FKTkvCfnwcB09f7TxnypeCYbCyrPHZDRa7xfwddhu8iQHqSOHd/H+/Wn+w
-         YxAA==
-X-Gm-Message-State: AOJu0YzFlM4JCdmwQtQ/7SVy2UaOwsretFtNtp7W3Xp9deCYzJEC/9ae
-	rs0gX65EYbe3YUVaNMgz9fAk9xD9S/RkYRIWtqiNoDsJvtOBaxT8ChfqDDOos+F2AOKTW3Xo25H
-	YESjTwds1ahQwGKwxw4jiOD1kxrimV7XR3g2a
-X-Gm-Gg: ASbGncuGd90D1pLGkHb9UnRBLiSL7tZ/gyGz07ldeAMqLnXV3pdDA+syKo9PzGswDdW
-	2JWdffFvJ+5Gx4sx3l5AVLzLc8YXgXWhogSTwHnzGsTdueEOUX3KHxjYKOckEqlvzDiGmpcjjbY
-	i+m7Zhi+5yXmbrIEqOJMyd9mUtR3zYKvaF7jDANHriTpq2i6Cw9DhpZSPIEaXiLG6AZQc4h2Nvs
-	b1wDH3f5DaKbU9GBN2Th9KnU3xSznj1wDgETSBd1yJSS/Mia5Y1
-X-Google-Smtp-Source: AGHT+IH9Y5bcvJ1cpo5aJKfqHqwQWNUfNkp5f3S/GDuLHRQXFlIQwgbW6++g72f2PPVknwnbnM0kjf4FTpT2PPxGTlA=
-X-Received: by 2002:a05:690c:f04:b0:71e:7803:cbd1 with SMTP id
- 00721157ae682-71fdc2ec379mr286582857b3.15.1756461966832; Fri, 29 Aug 2025
- 03:06:06 -0700 (PDT)
-MIME-Version: 1.0
-References: <CY8PR11MB7921AAF6CFDC45DD76C7B40B813BA@CY8PR11MB7921.namprd11.prod.outlook.com>
- <CANx9H-Dy+hRXngzUdRew-v4xR8dsg-4_r=j=aJZrtKXwe2yPSQ@mail.gmail.com>
-In-Reply-To: <CANx9H-Dy+hRXngzUdRew-v4xR8dsg-4_r=j=aJZrtKXwe2yPSQ@mail.gmail.com>
-From: Alexander Kanavin <alex.kanavin@gmail.com>
-Date: Fri, 29 Aug 2025 12:05:55 +0200
-X-Gm-Features: Ac12FXwlUL4EiqJ9S1tDIOtqHZXL4J9EzxP7tX3FyWoAR_WpsaG8xaGwZYz4SaM
-Message-ID: <CANNYZj9i7Yh5ZbifZsd_=uTkDk5_C50fbWyM=7BJrEgF+vLL0w@mail.gmail.com>
-Subject: Re: [yocto-patches] Insights from Integrating mixins rust into kirkstone-based
+        d=1e100.net; s=20230601; t=1756640470; x=1757245270;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5kvNE9RpUAQOoToYwyjOylZDrJyQfy0+dmLFlMJw448=;
+        b=agJgWfW8atFMohgk0tHr+hxUFVMQjyIIa8jvePdm749uD19REvGShxVQNAeNjF0Gv1
+         3UROWczWmIBH0szMUUbvOzK+yFE8tbEMmSYqLMieK6DtmlIkG9G+2JaT+KJMfAGFBoPn
+         tAzMjAy03HD8Mkdsx+KOpgZIFcSTRfcExxT1c3iTjVFeQQiFqTmgYZ9QOqgq/QkDmaSx
+         GjEN3Ux68ADhbxWGd7Kyjm81SmXnHOipPz4yv8qoEs8oj5I87Nn6CiLaEFpsq8FUtr+r
+         piogzHsM3OIjmxEZgHkY7kQERooS6UvnglLVV5K2EUywZDFqbPGKYC45jJbsbAOE/cz1
+         EWQw==
+X-Gm-Message-State: AOJu0YyUUCesakFxOBM7edFrJ/ncNWY81bQCZrvMgQX4RxUEWfLafzpG
+	eveUmJqpp8xt+HT6jPi1VVDut/PgCWxtkW+WAiIcdibxtttYG6kt1oJFLhSqPw==
+X-Gm-Gg: ASbGncvTqMDHDvfTbi7jvy31pDMAUg/arLImC5EhFOWFL8xMuIx4022KqBR+/Vsqhqe
+	grf7dT460uwPNIMue+tUGpFOE+tzBbecG1SA/RYzesEueh5WS6nO3VMnd2vXnYFq919GVJDv8Rm
+	45C+hYAUx4sD/9UsHxYwWLzKICCUuieOYERaTK+hw0SjA2N+Iu2vzsYz3hnI/yhQLWiLAfTzbnj
+	KaoColM5KHjmokXG5gBYWDA2Vw7IIZeS48/1vNbkhWQETTx7L4XFr4ynsccQLKlODi5OKZPLfwR
+	pa4QOhNi0M07bQ/jEY64GiS1iXiOkscDhaMN+jGvqQx+pk36ChO5e7TpxpGGiTvLs0BlQ07YW4I
+	ALFKnW2gyQg/IeXrcvauAyMy9Q3gZXA+BqWFzWZn3897bVZGInC0SDclTpZgluq4HTQ==
+X-Google-Smtp-Source: AGHT+IHnfBEcVsTeSeuyj+MHCsFEikS7xzDtLEVgoFhmaFoMUm0rkcnQ47niQWGdnHJl2NkRPuzHug==
+X-Received: by 2002:a05:620a:2556:b0:7e6:31f3:eabc with SMTP id af79cd13be357-7ff26f9fb97mr406885285a.5.1756640469887;
+        Sun, 31 Aug 2025 04:41:09 -0700 (PDT)
+Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b30b6fd490sm45174911cf.53.2025.08.31.04.41.08
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 31 Aug 2025 04:41:08 -0700 (PDT)
+From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Scott Murray <scott.murray@konsulko.com>, 
-	"MacLeod, Randy" <Randy.MacLeod@windriver.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: [meta-rockchip][PATCH 1/4] linux-yocto bbappend: sort
+Date: Sun, 31 Aug 2025 07:41:02 -0400
+Message-ID: <20250831114105.27494-1-twoerner@gmail.com>
+X-Mailer: git-send-email 2.44.0.501.g19981daefd7c
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 29 Aug 2025 10:06:10 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2092
+ <yocto-patches@lists.yoctoproject.org>; Sun, 31 Aug 2025 11:41:12 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2093
 
-On Fri, 29 Aug 2025 at 11:55, Tim Orling via lists.yoctoproject.org
-<ticotimo=gmail.com@lists.yoctoproject.org> wrote:
-> You would likely also need a meta-lts-mixins layer for python. No one ever stepped up to do this, but you can see an implementation at
-> https://github.com/warthog9/meta-mixin-python
+Separate the entires into lists of 32 vs 64 bit machines, then sort each
+list.
 
-And then it just ends up being more difficult than going ahead and
-migrating to scarthgap (or better yet, master) where all these
-problems have been already solved by others.
+Signed-off-by: Trevor Woerner <twoerner@gmail.com>
+---
+ recipes-kernel/linux/linux-yocto_%.bbappend | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
-While I appreciate the work going into lts mixins, I still have mixed
-feelings about them. We should keep pushing people away from this
-'stay with a yocto release for as long as possible' mentality. It
-makes it difficult for them to contribute to yocto upstream for one
-thing, because the gap to their daily work is so huge. LTS is hugely
-successful and useful, and some want to have it for even longer amount
-of years, but it isn't helping in getting people to use master.
+diff --git a/recipes-kernel/linux/linux-yocto_%.bbappend b/recipes-kernel/linux/linux-yocto_%.bbappend
+index 56ec9d7ea81b..cd5efcf9d25c 100644
+--- a/recipes-kernel/linux/linux-yocto_%.bbappend
++++ b/recipes-kernel/linux/linux-yocto_%.bbappend
+@@ -1,27 +1,28 @@
+ FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
+ 
++COMPATIBLE_MACHINE:firefly-rk3288 = "firefly-rk3288"
+ COMPATIBLE_MACHINE:marsboard-rk3066 = "marsboard-rk3066"
+-COMPATIBLE_MACHINE:rock2-square = "rock2-square"
+ COMPATIBLE_MACHINE:radxarock = "radxarock"
+-COMPATIBLE_MACHINE:firefly-rk3288 = "firefly-rk3288"
+-COMPATIBLE_MACHINE:vyasa-rk3288 = "vyasa-rk3288"
++COMPATIBLE_MACHINE:rock2-square = "rock2-square"
+ COMPATIBLE_MACHINE:tinker-board = "tinker-board"
+ COMPATIBLE_MACHINE:tinker-board-s = "tinker-board-s"
+-COMPATIBLE_MACHINE:rock-pi-4 = "rock-pi-4"
++COMPATIBLE_MACHINE:vyasa-rk3288 = "vyasa-rk3288"
++
+ COMPATIBLE_MACHINE:nanopi-m4 = "nanopi-m4"
+ COMPATIBLE_MACHINE:nanopi-m4-2gb = "nanopi-m4-2gb"
+-COMPATIBLE_MACHINE:rock64 = "rock64"
+-COMPATIBLE_MACHINE:rock-pi-e = "rock-pi-e"
+-COMPATIBLE_MACHINE:nanopi-r4s = "nanopi-r4s"
+-COMPATIBLE_MACHINE:nanopi-r2s = "nanopi-r2s"
+ COMPATIBLE_MACHINE:nanopi-m4b = "nanopi-m4b"
+-COMPATIBLE_MACHINE:rock-pi-s = "rock-pi-s"
+-COMPATIBLE_MACHINE:roc-rk3328-cc = "roc-rk3328-cc"
++COMPATIBLE_MACHINE:nanopi-r2s = "nanopi-r2s"
++COMPATIBLE_MACHINE:nanopi-r4s = "nanopi-r4s"
+ COMPATIBLE_MACHINE:roc-rk3308-cc = "roc-rk3308-cc"
++COMPATIBLE_MACHINE:roc-rk3328-cc = "roc-rk3328-cc"
+ COMPATIBLE_MACHINE:rock-3a = "rock-3a"
+ COMPATIBLE_MACHINE:rock-4c-plus = "rock-4c-plus"
+ COMPATIBLE_MACHINE:rock-5a = "rock-5a"
+ COMPATIBLE_MACHINE:rock-5b = "rock-5b"
++COMPATIBLE_MACHINE:rock-pi-4 = "rock-pi-4"
++COMPATIBLE_MACHINE:rock-pi-e = "rock-pi-e"
++COMPATIBLE_MACHINE:rock-pi-s = "rock-pi-s"
++COMPATIBLE_MACHINE:rock64 = "rock64"
+ COMPATIBLE_MACHINE:soquartz = "soquartz"
+ 
+ SRC_URI:append = " file://rockchip-kmeta;type=kmeta;name=rockchip-kmeta;destsuffix=rockchip-kmeta"
+-- 
+2.44.0.501.g19981daefd7c
 
-Alex
 
