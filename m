@@ -1,109 +1,140 @@
-Return-Path: <samuli.piippo@gmail.com>
+Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92F30CA0FFE
-	for <webhook@archiver.kernel.org>; Tue,  2 Sep 2025 09:54:07 +0000 (UTC)
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
- by mx.groups.io with SMTP id smtpd.web10.73322.1756806846139496407
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A057CA0FFE
+	for <webhook@archiver.kernel.org>; Tue,  2 Sep 2025 12:20:58 +0000 (UTC)
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+ by mx.groups.io with SMTP id smtpd.web11.75936.1756815651221876269
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 02 Sep 2025 02:54:06 -0700
+ Tue, 02 Sep 2025 05:20:51 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=bAvx6mni;
- spf=pass (domain: gmail.com, ip: 209.85.167.47, mailfrom: samuli.piippo@gmail.com)
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55f646b1db8so4868573e87.0
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 02 Sep 2025 02:54:05 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=b6AJ43Cv;
+ spf=pass (domain: gmail.com, ip: 209.85.160.182, mailfrom: twoerner@gmail.com)
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4b326b6c189so30295961cf.2
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 02 Sep 2025 05:20:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756806844; x=1757411644; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hwYyCqIVck1DjzqxHtECjm8JozvkpAfVpMXHVuRyAmI=;
-        b=bAvx6mnivIh8+F3hD/cvtHVL2uuFeKG0PMgOyioQyMoaffFu7BLgDVXiMXIRNKv9Fb
-         Gdar2fvh9E1xgjHrPmOt6jtrHGAH3homFfj0iffpLCP2c/4hl/8vnnB8oz1DU7M4DtRf
-         0AdArwi9sLakxtal9gaeGDcwlQnGhCHhZBDJ2WqVOG6pSmEEJqh2aCJoGNGiOUG7DizO
-         CJdxZuJN5eG1GIP/72WCXFQ8A/bpy+z9UjvNoB2oYHmf7puLoSFQpWNqFj6q0ntApPiO
-         EH3Xv8xeON+rXhfkM62tfEuWNUQKPBHWlm6kXKkGu+vgWDnZ1KINjihJ6nXDpuA+XzaY
-         0fLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756806844; x=1757411644;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1756815649; x=1757420449; darn=lists.yoctoproject.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=hwYyCqIVck1DjzqxHtECjm8JozvkpAfVpMXHVuRyAmI=;
-        b=XvDEJhpdYe7KSr56FWu1/5+03XXFMiTKCF5Dr5QKfG0VT5nYX430q+TLUYJ1i2YRZN
-         k0REAByGv2Qifm+4kVPSlLVNAYrCaU7HYjVT8Zpyveo633l7vc7uo+R3ccNJYmMRFqXl
-         HIo/uRUYdwDEfBgeUR2rqN6SYU/S3aR/dLex4rbDpghV9uNwYD3iFns0tfuD6xEVvXzC
-         LXwptbvOLOVRMt+FWA4sye5DGVPGP3o62b2X856AaqdfjCb1WGVaBSrqN8QTqEr/o/8J
-         jPTO/l4b3TPqhzMbQaUOjiXHu058uWPhwkccKDBU0f3nOa0sSLvEfNl17/v9oZ6luDUA
-         Q1aQ==
-X-Gm-Message-State: AOJu0Yy8zHGfsklknsmpWXi1L9U2vcotfG9YLa28T0GYdbOjL+uNPhDl
-	LMcDyEd+km7MBRgtbvVM4FEjcoEiE9z6gS/bT1PVU7cK6kD0QfmM+5hcWVztgw==
-X-Gm-Gg: ASbGnct3P4AKYbejM/+lobBM01GYwqxr6sScIGs71u6wm8rgvLE1eK+M7w3e/Omm8ex
-	XiJrCckIiuBtFHCIwh70lLf1Wss1nETUoS5Z4xvFYpx+XKXoXVGjbcgAakzadVw4F2WHS7jzve+
-	B5NSlztMNd5ELD7KWglwFKWoRZUWZO7CGmECEFV7+NpoNfEfTEHTQrXH1gjd02FdBxhurvzNGuV
-	gnLvK6/x7V/Cc7oMJq95/m85r8FhKDVEN78bI43s8ZUmCx8INPJWBRGWyTJ8HXTeTmI/htsmZbH
-	TcOH3OQzHVuJgkoTSwIaYV28MPyZCU/Fr4ci8voSroX4uHm9QBhgqrY3H40a6LEUyV4X+TOGR0Y
-	BeyoI+8NyonHCKipwhSYuBazKK+VfBYZush4hDNEaKw==
-X-Google-Smtp-Source: AGHT+IGfj8jq88nYRE9wgq3SAlrYZQI9l280GzIFzU/veUeJLABzr+QwR91E+yaaR+9cmz5c6f6sTA==
-X-Received: by 2002:a05:6512:2522:b0:55f:6cd0:296b with SMTP id 2adb3069b0e04-55f70983a12mr3612052e87.49.1756806843406;
-        Tue, 02 Sep 2025 02:54:03 -0700 (PDT)
-Received: from dcbuildsrv.ci.qt.io ([192.89.120.62])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-560826d1092sm583680e87.7.2025.09.02.02.54.02
+        bh=qI3VjqWWrE7bsp95Jn54tkHTdUtbGExPqX4AVe/doW4=;
+        b=b6AJ43CvqXK3Yytpcko0hhaWAliSWLFjLvYZsEJHIet8YD6P6pC0cvtG5FkKXR9Yox
+         PeS4TiAhrv2NFc32UvL7LhDXzfeqjHlMIJj7rTOkAE405rorsBch7gwa74lCHKZuhLSo
+         W9Ob+Ema7He/3tw13GcoCJD62rYgCZ5moVkN6uUwgts6WXsuHeMppXUGKPaLfRtovBe9
+         qgOUXnBbmtBMYrAJK6D70otoCz9gI6c9gI7/0s5gWk0yplEgmbiKqN3EYs2JIO3KRrpZ
+         69CjFDA0ZCT+EoPWGPXZ2g25gKWy2tReXMDETWn7RUD/iOawHDYaIOoW3iyw455cy96q
+         02ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756815649; x=1757420449;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qI3VjqWWrE7bsp95Jn54tkHTdUtbGExPqX4AVe/doW4=;
+        b=PlCBXRklOfazSBwnBy4jae/lTYXLLk9HPXphoNCS0IoTgstClYZmmGD9UIBmProZ9Q
+         BvME+831Bj3So12J6xpVEGL5bdab2t5YoxQwZ6q89opcEMD9hEDMjQ7FHQ3Dr3S+xASm
+         Qt/+zl4wD7KBx/4IexJUAPOaQt6n0mJt5uUULnuHKEGObJezvpq5dyy3DOE+u4H89YjA
+         TGFwKUc3N4KTMRhvJhUvYjw6H5J6LlLRLorGa7Pyha8PAJqItsNThl91oPKiomY/k7Zc
+         Hty0AInPKxFcHq5nNRvrnCYt6/n10kfRIXehxee0dp8MdQ1oVpszS4n2o6M2BQR6bZCA
+         yLFQ==
+X-Gm-Message-State: AOJu0Yw/WRVftshzJCZFtv8ayY3AUSTe6O50kWUVmrLIEYw0EshZDky9
+	yYJ9rla/LkbB28hPBPoJeoai4zRm6hC5dTK26Hg09SlERF9nP+NEp64YiTWRwg==
+X-Gm-Gg: ASbGncuUHfekKbagtdK6sBLzJxfxzfnyDVWJuAPpzB22cmn8YCTeCE5GdzUQqmYUDtq
+	iM//NvTHbns1xq9cx09rLX9k4MMeG/tsfmWuLL+Od96lDR617xhMoIvnM42UIodvVF0PNPyd9VK
+	5eJ1E2wdwww58JbT1zR40xDcGsLU0//3x+Tlvg/Ncc5D3SSrSwEDt/Ub66CMXqxVpIu6QQzK6a2
+	gSm9/1t92dttmKCJBSPtP6o0gkXV8Imc1VR+o+KO+nnJnQdmCb7em0IutxhHF4lsnqXR07/UNTJ
+	UX7QXhKrF+E3DhVtY9hrhDFZf+Lb5crWjWCyYFyLxOMSekGhQU0Y7IgB5Dr7L6fuWovTN57rE+l
+	0SKAjdmShmPBe7qH3Oq/6TnrJ01CQiT1qKLIFDF37WJVPDGuq4QTWCdY/E+735maK4V9jNf8=
+X-Google-Smtp-Source: AGHT+IEsy0d0+Yt8dXwOK2CgvKhw0iDbh5qxdB4Jqm6d9+mslpr6KobSgPcPtSNpL65i28VkuaEwQQ==
+X-Received: by 2002:a05:622a:1353:b0:4a9:c8e3:a38 with SMTP id d75a77b69052e-4b31da0222emr110158981cf.30.1756815649083;
+        Tue, 02 Sep 2025 05:20:49 -0700 (PDT)
+Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b346323447sm10879711cf.47.2025.09.02.05.20.47
+        for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 02:54:02 -0700 (PDT)
-From: Samuli Piippo <samuli.piippo@gmail.com>
-X-Google-Original-From: Samuli Piippo <samuli.piippo@qt.io>
+        Tue, 02 Sep 2025 05:20:48 -0700 (PDT)
+Date: Tue, 2 Sep 2025 08:20:46 -0400
+From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: jpewhacker@gmail.com
-Subject: [meta-mingw] [PATCH] mingw-w64: Upgrade to 13.0.0 release
-Date: Tue,  2 Sep 2025 09:53:24 +0000
-Message-ID: <20250902095324.4049720-1-samuli.piippo@qt.io>
-X-Mailer: git-send-email 2.43.0
+Subject: Re: [yocto-patches] [meta-rockchip][PATCH 4/4] nanopc-t6: use non
+ -dev kernel
+Message-ID: <20250902122046.GA35430@localhost>
+References: <20250831114105.27494-1-twoerner@gmail.com>
+ <20250831114105.27494-4-twoerner@gmail.com>
+ <46735879-98bb-482c-b3d4-7e1532cfa271@cherry.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <46735879-98bb-482c-b3d4-7e1532cfa271@cherry.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 02 Sep 2025 09:54:07 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2106
+ <yocto-patches@lists.yoctoproject.org>; Tue, 02 Sep 2025 12:20:58 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2107
 
-Signed-off-by: Samuli Piippo <samuli.piippo@qt.io>
----
- recipes-devtools/mingw-w64/mingw-w64.inc                        | 2 +-
- ...-headers_12.0.0.bb => nativesdk-mingw-w64-headers_13.0.0.bb} | 0
- ...-runtime_12.0.0.bb => nativesdk-mingw-w64-runtime_13.0.0.bb} | 0
- ...eads_12.0.0.bb => nativesdk-mingw-w64-winpthreads_13.0.0.bb} | 0
- 4 files changed, 1 insertion(+), 1 deletion(-)
- rename recipes-devtools/mingw-w64/{nativesdk-mingw-w64-headers_12.0.0.bb => nativesdk-mingw-w64-headers_13.0.0.bb} (100%)
- rename recipes-devtools/mingw-w64/{nativesdk-mingw-w64-runtime_12.0.0.bb => nativesdk-mingw-w64-runtime_13.0.0.bb} (100%)
- rename recipes-devtools/mingw-w64/{nativesdk-mingw-w64-winpthreads_12.0.0.bb => nativesdk-mingw-w64-winpthreads_13.0.0.bb} (100%)
+On Mon 2025-09-01 @ 01:49:24 PM, Quentin Schulz via lists.yoctoproject.org wrote:
+> Hi Trevor,
+> 
+> On 8/31/25 1:41 PM, Trevor Woerner via lists.yoctoproject.org wrote:
+> > Now that 6.16.y is the preferred version of the linux-yocto kernel, the
+> > nanopc-t6 machine that had been using the linux-yocto-dev kernel can be
+> > switched to using the linux-yocto kernel instead.
+> > 
+> > NOTE: keep the various pieces of linux-yocto-dev infrastructure in place
+> >        so it can be used more easily again should it be needed
+> > 
+> > Signed-off-by: Trevor Woerner <twoerner@gmail.com>
+> > ---
+> >   conf/machine/nanopc-t6.conf                   | 1 -
+> >   recipes-kernel/linux/linux-yocto-dev.bbappend | 4 +---
+> >   recipes-kernel/linux/linux-yocto_%.bbappend   | 1 +
+> >   3 files changed, 2 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/conf/machine/nanopc-t6.conf b/conf/machine/nanopc-t6.conf
+> > index 5ed413d1c0e5..8d524bd764f6 100644
+> > --- a/conf/machine/nanopc-t6.conf
+> > +++ b/conf/machine/nanopc-t6.conf
+> > @@ -5,7 +5,6 @@
+> >   require conf/machine/include/rk3588.inc
+> > -PREFERRED_PROVIDER_virtual/kernel = "linux-yocto-dev"
+> >   KERNEL_DEVICETREE = " \
+> >       rockchip/rk3588-nanopc-t6.dtb \
+> >       rockchip/rk3588-nanopc-t6-lts.dtb \
+> > diff --git a/recipes-kernel/linux/linux-yocto-dev.bbappend b/recipes-kernel/linux/linux-yocto-dev.bbappend
+> > index 6f4981fe29e6..e06c8a4f717d 100644
+> > --- a/recipes-kernel/linux/linux-yocto-dev.bbappend
+> > +++ b/recipes-kernel/linux/linux-yocto-dev.bbappend
+> > @@ -1,5 +1,3 @@
+> >   FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
+> > -COMPATIBLE_MACHINE:nanopc-t6 = "nanopc-t6"
+> > -
+> > -SRC_URI:append:nanopc-t6 = " file://rockchip-kmeta;type=kmeta;name=rockchip-kmeta;destsuffix=rockchip-kmeta"
+> > +SRC_URI:append = " file://rockchip-kmeta;type=kmeta;name=rockchip-kmeta;destsuffix=rockchip-kmeta"
+> 
+> Shouldn't we have SRC_URI:append:rockchip here instead to avoid adding it
+> when building non-Rockchip boards while having meta-rockchip layer included
+> in bblayers.conf?
+> 
+> Same remark for the existing SRC_URI:append in linux-yocto_%.bbappend.
 
-diff --git a/recipes-devtools/mingw-w64/mingw-w64.inc b/recipes-devtools/mingw-w64/mingw-w64.inc
-index 97315f4..1162966 100644
---- a/recipes-devtools/mingw-w64/mingw-w64.inc
-+++ b/recipes-devtools/mingw-w64/mingw-w64.inc
-@@ -4,7 +4,7 @@ LIC_FILES_CHKSUM = "file://${WORKDIR}/mingw-w64-v${PV}/COPYING;md5=bb936f0e04d8f
- COMPATIBLE_HOST = ".*-mingw.*"
- 
- SRC_URI = "${SOURCEFORGE_MIRROR}/project/mingw-w64/mingw-w64/mingw-w64-release/mingw-w64-v${PV}.tar.bz2"
--SRC_URI[sha256sum] = "cc41898aac4b6e8dd5cffd7331b9d9515b912df4420a3a612b5ea2955bbeed2f"
-+SRC_URI[sha256sum] = "5afe822af5c4edbf67daaf45eec61d538f49eef6b19524de64897c6b95828caf"
- 
- UPSTREAM_CHECK_URI = "http://sourceforge.net/projects/mingw-w64/files/mingw-w64/mingw-w64-release/"
- UPSTREAM_CHECK_REGEX = "mingw-w64-v(?P<pver>(\d+[\.\-_]*)+)\.tar"
-diff --git a/recipes-devtools/mingw-w64/nativesdk-mingw-w64-headers_12.0.0.bb b/recipes-devtools/mingw-w64/nativesdk-mingw-w64-headers_13.0.0.bb
-similarity index 100%
-rename from recipes-devtools/mingw-w64/nativesdk-mingw-w64-headers_12.0.0.bb
-rename to recipes-devtools/mingw-w64/nativesdk-mingw-w64-headers_13.0.0.bb
-diff --git a/recipes-devtools/mingw-w64/nativesdk-mingw-w64-runtime_12.0.0.bb b/recipes-devtools/mingw-w64/nativesdk-mingw-w64-runtime_13.0.0.bb
-similarity index 100%
-rename from recipes-devtools/mingw-w64/nativesdk-mingw-w64-runtime_12.0.0.bb
-rename to recipes-devtools/mingw-w64/nativesdk-mingw-w64-runtime_13.0.0.bb
-diff --git a/recipes-devtools/mingw-w64/nativesdk-mingw-w64-winpthreads_12.0.0.bb b/recipes-devtools/mingw-w64/nativesdk-mingw-w64-winpthreads_13.0.0.bb
-similarity index 100%
-rename from recipes-devtools/mingw-w64/nativesdk-mingw-w64-winpthreads_12.0.0.bb
-rename to recipes-devtools/mingw-w64/nativesdk-mingw-w64-winpthreads_13.0.0.bb
--- 
-2.43.0
+Okay, I'll send a new series for this shortly.
 
+> Otherwise looks ok to me!
+
+Hmm... you have not provided any sign-off tag. Did you want to?
+
+> Cheers,
+> Quentin
+> 
+> 
+> -=-=-=-=-=-=-=-=-=-=-=-
+> Links: You receive all messages sent to this group.
+> View/Reply Online (#2101): https://lists.yoctoproject.org/g/yocto-patches/message/2101
+> Mute This Topic: https://lists.yoctoproject.org/mt/114989087/900817
+> Group Owner: yocto-patches+owner@lists.yoctoproject.org
+> Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/13168745/900817/63955952/xyzzy [twoerner@gmail.com]
+> -=-=-=-=-=-=-=-=-=-=-=-
+> 
+> 
 
