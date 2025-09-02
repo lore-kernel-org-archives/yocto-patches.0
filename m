@@ -1,167 +1,217 @@
-Return-Path: <quentin.schulz@cherry.de>
+Return-Path: <hprajapati@mvista.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD63CCA0FFD
-	for <webhook@archiver.kernel.org>; Mon,  1 Sep 2025 11:57:09 +0000 (UTC)
-Received: from OSPPR02CU001.outbound.protection.outlook.com (OSPPR02CU001.outbound.protection.outlook.com [40.107.159.61])
- by mx.groups.io with SMTP id smtpd.web11.49226.1756727827403702164
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A33AACA1007
+	for <webhook@archiver.kernel.org>; Tue,  2 Sep 2025 05:59:05 +0000 (UTC)
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+ by mx.groups.io with SMTP id smtpd.web10.70753.1756792737007822721
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 01 Sep 2025 04:57:07 -0700
+ Mon, 01 Sep 2025 22:58:57 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@cherry.de header.s=selector1 header.b=af5nqnqL;
- spf=pass (domain: cherry.de, ip: 40.107.159.61, mailfrom: quentin.schulz@cherry.de)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ma2xdnCg6FwJzkzXv5ZVL6Lfyf5W/ffTI74Uld58YCH/WBmkEY3/Oag7S9nH2RjrG8qIQmNwj7WRxoDonEFD9YT74UF2hUkqe9vIa7m43hmqcbbYXVGRkwl3KztVZET1TktNKQu+nGd2UiUx3GguRltjMXX+TakgKk8/vfU8aHB6+/+2qIo5xt9P7gg3YA61jbe7oVVbBshc7XEdNWAI2qcH3Ky5QXjnYdUcMMbVwsm/cVZz6wvQSobDa85C0IlBl47pfTgFKpMW6DAZFQLW/DC6foFfqtHRoHQDzDcd1+S9XR4PQCjy2BTTvXCADgD08IQwGQrNQz+bUZ2TgCfmZw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8vcRTQ4HpRMagv1CGW3nCB+cCr31q5sbRa5bVJp31Kc=;
- b=iiJVvS7SmZ/aI6/SNLw0rVXlbK7BJboF76WicA9dMUpi2JokPUmaD7/JpC+2e9iT/CJVxnBke5d9uFsH8e1SCuP6j/juijR7NYIdZk5/OvkEokV+W7wTNCRM4YT+aCG+9C7nXFelBCpPnDJgqq3neTGePnertPrTR369wydtUUyh7pimWe4uxjbS7TgCqzcgQDaREcqs7HNNZizv96FtvPVf73OczIQ0f7P8M622HKC16g4B1Zl4h6TuuIKbEHFkVdbG8i/2UPGgFiaIz0eP9kWb2ocdj8lOYHAjv1VCZAdkYPOOQsNAxPcxN9nxMZauYg/ApPSHCVWmKGvMAD+6lQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8vcRTQ4HpRMagv1CGW3nCB+cCr31q5sbRa5bVJp31Kc=;
- b=af5nqnqLlgd7YBAD3xyfaWmyfdin5TAd/CvZeT2NZcXDmGzHBLVe/UCp7jdSMI/nhWErA1poARCb/wD2UczQcAPU18wjFrU2cwg1lZe9oxs5OFP33f4DNRbC4bPoCMLRrl2pEZ/F9CKeA97f9uu9836ZqT4KxRA3xEJeL/hvlFo=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com (2603:10a6:20b:42c::20)
- by VI1PR04MB7085.eurprd04.prod.outlook.com (2603:10a6:800:122::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.16; Mon, 1 Sep
- 2025 11:57:03 +0000
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::5ee:7297:93b4:a8d1]) by AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::5ee:7297:93b4:a8d1%5]) with mapi id 15.20.9094.015; Mon, 1 Sep 2025
- 11:57:02 +0000
-Message-ID: <d014198f-ea2a-4e43-a773-3f84be365c0f@cherry.de>
-Date: Mon, 1 Sep 2025 13:57:01 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [meta-rockchip][PATCH 3/4] orangepi-5-plus: use
- non -dev kernel
+ dkim=pass header.i=@mvista.com header.s=google header.b=apOZdZah;
+ spf=pass (domain: mvista.com, ip: 209.85.216.47, mailfrom: hprajapati@mvista.com)
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-3298961169bso1750921a91.2
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 01 Sep 2025 22:58:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mvista.com; s=google; t=1756792736; x=1757397536; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hqbCzKenzG0Qx+PlTBWOvNN7jzso+L/qk6lwssXiBQo=;
+        b=apOZdZahMxExKwhXKGQBNruRSVqcAgThBZ/kgguUoeF0PbDkJKzqgdGvxdTGQBSzyR
+         JJBzuYL72SAB7B4mfiDHTieEseXvBUyA9oRSxMeu+D6f150BpRy9t6cTus2y02N4zrhM
+         kEaCST/DcjJgVDyJ79B+EvEuQpRaTl95+kwGs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756792736; x=1757397536;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hqbCzKenzG0Qx+PlTBWOvNN7jzso+L/qk6lwssXiBQo=;
+        b=gFgi7+MZgEJoTlPzqcgVwKuZaLW0rkUvxeYyEDr1mxGYuab8eDPyPpvY9A7pg2iBZm
+         MoTv25pDu/Wtrb+yVhBwJ8OHp6UboAZGz229CPHSrbIwPxxSH3ig+Q29z6YfymyIgGzv
+         e450He3r89cMCkdQuooUzHxe62ySvwfknAH60ZQsWYPIvI2MJENwy1NJ00IgwXG0qIuC
+         KbCxBDK1K7cEftgEXlGf5HCPb785B/Zaok6JumNHLWM3uCbVMvKQPAfo5jBeuctwZenh
+         iQxHbdMaG+eETJPRNJ81C9Z5ggqU88LHvMB94UZECupevR+9dPZ5vWamOOAZcVw9+f8F
+         nonw==
+X-Gm-Message-State: AOJu0YwsrTpwaKwvB+p1pCzDHbpa0WCWoCDxKQjqCp8JWqf6wxJcZI/5
+	ylNoDxenfgG+a1sDqYNLmKblxoJzR/fJ0nK9PIf47cgZWRZd1Lm3Ga9LYy60wNC/TE1GqGbig68
+	KxDZR
+X-Gm-Gg: ASbGncv+NHEB9snQv1q1WKuxADgsPa9jEnnXImKjQe4075wkeBNiCN4bPIkwONwIaqf
+	9x3NnA9Q/hE3hnAKm00hwT7ogTFC0J395Mi8T3/KMJ7KBxPwVCKKp1qhRYx80YHjqJMMGaCytGH
+	eQnY8sqVpO8r7IQyt8EiapzdUqyLh7Kf1jxebAoLR8rRaaKMl+XT/IVoStPqJhnUSsyx9iG91J6
+	dxowB88/HHrrEsFoXEoJR5Yw1l1d6tyVV5jTK1JMkm/oCDNy2RNMkvTon7rvoH5IlaOqakJFl+s
+	nZGuUGbV1sv/8oCWUKvr0e2t9Z/J4oc31DbWAsJPiGFUwHn6oH/S1HmY/WJCbKERKHBv3jP0rzE
+	PbbwYc+CJjEaeqbYkhKzq5oMiibWYj8UUELPHLbJH+RJHy4M=
+X-Google-Smtp-Source: AGHT+IF/HVZXeiJigFL8JjxRQkpsguQOrw189xKGKrA1XgZ01++c/wOKIACjCtvbS/xQmEg7BDqyiw==
+X-Received: by 2002:a17:90b:2692:b0:327:96dd:6299 with SMTP id 98e67ed59e1d1-328156e57a6mr14115697a91.33.1756792736150;
+        Mon, 01 Sep 2025 22:58:56 -0700 (PDT)
+Received: from MVIN00016.mvista.com ([150.129.170.183])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7725d5b90fasm4306176b3a.100.2025.09.01.22.58.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 22:58:55 -0700 (PDT)
+From: Hitendra Prajapati <hprajapati@mvista.com>
 To: yocto-patches@lists.yoctoproject.org
-References: <20250831114105.27494-1-twoerner@gmail.com>
- <20250831114105.27494-3-twoerner@gmail.com>
-Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <20250831114105.27494-3-twoerner@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0140.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:b8::8) To AS8PR04MB8897.eurprd04.prod.outlook.com
- (2603:10a6:20b:42c::20)
+Cc: Hitendra Prajapati <hprajapati@mvista.com>
+Subject: [meta-security][scarthgap][PATCH] libhtp: fix CVE-2025-53537
+Date: Tue,  2 Sep 2025 11:28:38 +0530
+Message-ID: <20250902055838.29035-1-hprajapati@mvista.com>
+X-Mailer: git-send-email 2.50.1
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|VI1PR04MB7085:EE_
-X-MS-Office365-Filtering-Correlation-Id: b7a38c8c-2876-4a94-d5d2-08dde94ea9ee
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?eGlTRHVISm4rQ3IyNkNEUlhUMkExVGpjaVByYWhmQi90RUlQaUJJY1dUa3p1?=
- =?utf-8?B?cjgrQjFhTzE2a2lGSFBxMkdRUGVtQjZ0V3piRmY0MWJzWWlKalBQaldmbzFO?=
- =?utf-8?B?Rk9EcU9SNW5vVExpa1BscERwR0ZVQm44YjNvQ1ZwblU3Z3orWmxLalZYcmVa?=
- =?utf-8?B?YjNBK0liU2ttTVdFVG4wVWx0dW9CVWlvZjNtMDM1eWE1c0p3NGd2TUxxMXdB?=
- =?utf-8?B?blFRZ3RLUDZVdUhvMytFZGhhWmhlRmVmcU1qZSs1OXhCb05GMHBuOG9zYjFx?=
- =?utf-8?B?TnJaY1ZWdzhRSXVIS3plYkt0aTg5blo5RVlGNW1DbjgrZXBBK29yakRaL2Rk?=
- =?utf-8?B?aEEwWTlibWx6QWRNZk11VWRaRWRUOGo3VHh6bE9jbFQxQWszQ2Y1NWRoN2hw?=
- =?utf-8?B?NFhFSTZ5WGtiTFQ5aWpYVEJvTkNtYmErdEhYTWdrZUZBU3Bybmdwc294TDg2?=
- =?utf-8?B?UUdHTWd2bGpDd20yTUpHZ0hMMGFTb1IvTEJVQk9ibU8xWEwzQUR3R1ZCb1N1?=
- =?utf-8?B?TmxFeXA4cHVzSmFnWGx4RDVDNnZlRE9lMTFOU0NtTlJRY3hhSGl6K3ZXYnJn?=
- =?utf-8?B?TlAza2o2ZXF4cmF1ZHlvSzRycGRXTnFpZWRKdUJBWHUzcTE4SzkwNzZSWjYy?=
- =?utf-8?B?MFFsSVRKSUhaUzdndkZFbUJYd3Y5d2pXckR4aDdqT2VnL1Vmc283OUNvbm9T?=
- =?utf-8?B?RTZmUzhlU0U4dTFHS3hJenJiMkRXVFA5Qy9tK21sTnZhWkxUbFZZSFZWbU12?=
- =?utf-8?B?V2IzK2xxYllhc3doVDdlMk10ZTZFYXJ1aUU2VnZDU2JyVWZNZkN1SDZWQS93?=
- =?utf-8?B?djQ4anVONlRNOGRHTXJaajdGa2ZheG8rN0lGOTlsZE04VVFqMkwvbVZPNjZn?=
- =?utf-8?B?R3pqYUdmMGRaUkNDaWs1TFFZT0VuU0xSZS93enhYTElFWW9qalpYYlV4aDRC?=
- =?utf-8?B?ZHFpNmJJRUp2LzVFZ202UkpPdjZHc3oyK0lFMzhobWc2R00wN1BsaGdhWnJD?=
- =?utf-8?B?bjMvbUhRTXNoK01BUFBOcWVqZzVRNmU5OFA3Ynk2M2RNT3pLZUNaU3A4Y2FM?=
- =?utf-8?B?cU5XTG8rdnNScHNvMlBlV1hrZytLNFhFbkFxM0t2eUlUaWt5V21NTW1NV1d5?=
- =?utf-8?B?QUVaQ2x6SmNhc3pjZG5VSlg5U0NSMkMvOWxqL2t1d1hsUkN4d1h6V0ZNSGEw?=
- =?utf-8?B?a2lXQjJvSUpsaE1kQW1vWkh2Ulg4K0ROUXFXdGQzZGdWUkh5bzU5T1hNT2lm?=
- =?utf-8?B?ZUlrZnFSRHhvcHd2MmYrRTRnaUdNdnQ3bnVhSldLSExaU3BnWW0yRHh0UGFW?=
- =?utf-8?B?bmhLeWdreWQydStIbFBKSExCT2pBWW5jRG1RazFIR2lYbUJnaFNUcG1OSHVI?=
- =?utf-8?B?cHVacXFsckJSMGhPblRXZzA1aTNzUEFjRnF2S3NNTUhNeC9OV2VHMjE1RzZs?=
- =?utf-8?B?ZnRjTlBIMHpGYW13bU0rVjREM0hteGhDNmMwdU5jMFpFbjltVWVUR0VXeGo3?=
- =?utf-8?B?UVNIUU9YeUZzaTBWWml6REI0NmFYNHBmSjdkRklnYzJYclk5UjZCekYxTkcz?=
- =?utf-8?B?ZmRselo5RU45bXQ2TGZPaVBCZ1FVOUlVeXRYOGQxaXVUblRYOC9GN2ZlY1VL?=
- =?utf-8?B?WkM0bDN1OWk2M2ZsQlVaYVhVQzZhWUJHSXJtUGUrei85eWhtS3I2QzhaWDBy?=
- =?utf-8?B?OEVGQmRna3FPbFc1MWVKeFdCeEdBS2cycDRpUDFpNnB4RG40UC9ENlVhb3pG?=
- =?utf-8?B?RlpHYjloT2R5NUxmRUpkcHJCWGptREpCSW5hWFZjUUFzeUZITTduVWVPV3kw?=
- =?utf-8?B?UWRjb2VvdHRON21nTzZGMWxGdy9QaGhWWmpVNlBiSElEVU5CTExobHA5dEU5?=
- =?utf-8?B?VHR1enB1WXMvSWEzWDBncVlXWHprVW5pSzFYQmFjT09WdkhyekQ3N1VrZDJV?=
- =?utf-8?Q?uTBGJR3BpI0=3D?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?eWEvWWI4QXQwRjBzUk5JV3lsdnA1azhYR3YzYjc1SUdNY1phTHNGWVhpV0Q4?=
- =?utf-8?B?b0tEdDhxcGx2eGdOVklvcm1uWEo1cUxPcHd4TmIxVWtpMGtHK0dWS3ZMczRX?=
- =?utf-8?B?YVl0YnI1SjJYS3NKTzdxc0RKRXZzdU1Na0hUUTNHM3ArME50QWVqc3hsTlZR?=
- =?utf-8?B?aHRTcU1OenIweWtzTXpHV1N6UzNaRmhZSFJBZzBkNHA0bEw1aVZOQVJSTE5o?=
- =?utf-8?B?OTJObG5qMHBLNHBaMElxR0lXNjJpUzBwNm1qTjRrMjdWQm5id0N4VFNEcFZl?=
- =?utf-8?B?YVp4bW13YVFaVHZwem80V3NqNHpkSk5ENlJJdUNwQnMyM1JMSis0bnpQMkpW?=
- =?utf-8?B?UEd2eXY2dHBmR0hRWGZvTFN1VVhrQUc1RlM3QndJblh4RURsUWI5U1d5K3Bv?=
- =?utf-8?B?K1d5a2JNeG5JL0lNOEhjekZvbmczTU5BaVRZeUp1eTVmL3U3UUNLOUtPSVpp?=
- =?utf-8?B?M0Q1QmhtS1MwV0swY21GUDNDclhGYTUzcGhVMUtvTHhMclIyUGJaWDJuUlJi?=
- =?utf-8?B?TE9MSkFIT3hHb2ppVU9HOUVBVkM5S1g4THpnckVHZXg3eUtiRmZUSm0rWEcy?=
- =?utf-8?B?ZEdRMzIxNHlWSkRGdnJFb200VktoU2RPVWl0cU9nSHN2TW1velk2QXVDUDBU?=
- =?utf-8?B?cU9HSW02TFlDemRwT3RyUGZhUXk5VjY5SWpmTWl2a0Vwb1ZKNHZBUnBKb2ZV?=
- =?utf-8?B?UzdwMlUvaUxUa2laSjJOUHozRWJMamtHVE9HdWZnTFB4ZHF0aitsVEErU1FY?=
- =?utf-8?B?b1pCcmVqMmF4RFJGUHBOMEhOUzZId1lCQnBkTEp5UnFvNDlya0MwZzYycWI5?=
- =?utf-8?B?NEczd05NOXliSFVOU3E5ZFJncDNOUzZXY2lHMC9VZHZXSFlGbFFnemFnUkR5?=
- =?utf-8?B?YXdERWZBTWx2QU5lTis4VVp1ZHlUbmFxTzFObWhtalFrTG1vL3lVTnNSZ0x1?=
- =?utf-8?B?RVFGTkhvS2hqVjdPSEZiYmttOHM5SU5MVEMzdzhhMmFYN2JxODBiL29NMDlk?=
- =?utf-8?B?eXdlbVhMOEZJMCt1RXZyaEhLdVk1WThTVGtBZmEvTTM0WTAxT2MvY1lHWC9H?=
- =?utf-8?B?ajBSRDVSWTJPT2FNd2lHSmxMOSswN2lFZUg5MzZFZ3ZveUdnTDM2elMzZkkx?=
- =?utf-8?B?dDRQeHM1QVZ5Q3dYc05iUXZRWnJKbGluTUE4YWxWRU5Eb3JJQjNockI5Zi9v?=
- =?utf-8?B?RnNpeWJJSm5Nb0VIUlpyNWtTZWoyQVNHekF0dmxwT3NrMUw2dENLbmREdnNJ?=
- =?utf-8?B?bXI4R1RNMU9nanpMNFZyLzkwMFI4THpZVUNiT3NkL3VCbEpIbWlSeXMzQkds?=
- =?utf-8?B?ZzI2U3lpdHBGK0F6YWxIQmFhd2xQbzRiMnBqaURIWjZOcVZNYnh4N3ZIcElp?=
- =?utf-8?B?VXlUR3c5UFVKK2Q4b0N4UFc5Sm43K3hPdTJueEpnbmZ1UStTMzBRK3pXY3Yx?=
- =?utf-8?B?YTBzT2dGVFphQyt2UlVpYkFNK3BLZkw2UldpWEx4bHVMRzFlcG40ak5STkds?=
- =?utf-8?B?alY5VEhmNk9SdFJieC9SMU5GRjliU01iWlY3VXNuaFZHaGpWQ1pCaU9VUjFX?=
- =?utf-8?B?VXhSc1gvQWs4VEFDazdEZ2RvTlUyQ1NpZnA0SnpJMUl5c0R0SU1MYjBjS1Ry?=
- =?utf-8?B?dlRkeXRyblJkS1pEZVk0OGFrNUNkdXpTVDJzS1ZhMjVEd2pjQUdoVzk4QXd1?=
- =?utf-8?B?aGJWV1Z1YkJ1c2tINDhRUjVvVGhWRDVNQ294dXo3QnlJbEc3RUg1YTlKTEFC?=
- =?utf-8?B?dUw2RW92S283RC8wTms0alFYYUNtbnVwTW93alZFUUFFckF3cnBqU20wY2pL?=
- =?utf-8?B?NHFIY0RUR1IwMlJpTGc2MjdIRUxWS2l0Q3hhK096VEdyTzRCcmVZS0xwZGV0?=
- =?utf-8?B?am1JZHZkYU9GZHNFdnpmQ0xhOW40dDl4Y2RkVFVISlJmb1VjT1pHc3EvYkkz?=
- =?utf-8?B?bkZKYW1EVDNkVkYvSTZCZTVUVEc5S0RFNXdYZk4vTkpnWFBCRmpMSnpVWlNt?=
- =?utf-8?B?U0EyOUdLUUllZ0k1ck8rb0VnOExzYmhMMEowQ21GY21lZkZkL3k5U1FqRDMr?=
- =?utf-8?B?YmY4dWZsdlBONDVXU09LZkpCVUZ6Rnh5cDNoUE5XNnlJU1dIWUtlbXU1UVcr?=
- =?utf-8?B?NmxtWEg1dEg0SVFKOWhDVmdEVEhjNEFaMk1LUlRGZlZISnZmbWZJYXNnZWNL?=
- =?utf-8?B?OVE9PQ==?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: b7a38c8c-2876-4a94-d5d2-08dde94ea9ee
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8897.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Sep 2025 11:57:02.6385
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BJCB8TuyuUWOx5AeaBq+p86Huz/LQInYZeeNz764o/ExeH8xc4Uua5jF7IqgTXds3SLrD4GNgH5kyo0C21+WRrkkAmraY5pNLim6tF+3Rjw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB7085
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 01 Sep 2025 11:57:09 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2104
+ <yocto-patches@lists.yoctoproject.org>; Tue, 02 Sep 2025 05:59:05 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2105
 
-Hi Trevor,
+Upstream-Status: Backport from
+https://github.com/OISF/libhtp/commit/226580d502ae98c148aaecc4846f78694b5e253c && https://github.com/OISF/libhtp/commit/9037ea35110a0d97be5cedf8d31fb4cd9a38c7a7
 
-On 8/31/25 1:41 PM, Trevor Woerner via lists.yoctoproject.org wrote:
-> Now that 6.16.y is the preferred version of the linux-yocto kernel, the
-> orangepi-5-plus machine that had been using the linux-yocto-dev kernel can
-> be switched to using the linux-yocto kernel instead.
-> 
+Signed-off-by: Hitendra Prajapati <hprajapati@mvista.com>
+---
+ .../suricata/files/CVE-2025-53537-001.patch   | 79 +++++++++++++++++++
+ .../suricata/files/CVE-2025-53537-002.patch   | 31 ++++++++
+ recipes-ids/suricata/libhtp_0.5.45.bb         |  2 +
+ 3 files changed, 112 insertions(+)
+ create mode 100644 recipes-ids/suricata/files/CVE-2025-53537-001.patch
+ create mode 100644 recipes-ids/suricata/files/CVE-2025-53537-002.patch
 
-Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
+diff --git a/recipes-ids/suricata/files/CVE-2025-53537-001.patch b/recipes-ids/suricata/files/CVE-2025-53537-001.patch
+new file mode 100644
+index 0000000..e16a59a
+--- /dev/null
++++ b/recipes-ids/suricata/files/CVE-2025-53537-001.patch
+@@ -0,0 +1,79 @@
++From 226580d502ae98c148aaecc4846f78694b5e253c Mon Sep 17 00:00:00 2001
++From: Philippe Antoine <contact@catenacyber.fr>
++Date: Tue, 11 Mar 2025 16:45:35 +0100
++Subject: [PATCH] decompressors: do not take data after end
++
++
++CVE: CVE-2025-53537
++Upstream-Status: Backport [https://github.com/OISF/libhtp/commit/226580d502ae98c148aaecc4846f78694b5e253c]
++Signed-off-by: Hitendra Prajapati <hprajapati@mvista.com>
++---
++ htp/htp_core.h          |  5 ++++-
++ htp/htp_decompressors.c | 21 ++++++++++++---------
++ 2 files changed, 16 insertions(+), 10 deletions(-)
++
++diff --git a/htp/htp_core.h b/htp/htp_core.h
++index 7c23212..fb142c9 100644
++--- a/htp/htp_core.h
+++++ b/htp/htp_core.h
++@@ -161,7 +161,10 @@ enum htp_content_encoding_t {
++     HTP_COMPRESSION_DEFLATE = 3,
++ 
++     /** LZMA compression. */
++-    HTP_COMPRESSION_LZMA = 4
+++    HTP_COMPRESSION_LZMA = 4,
+++
+++    /** No more data. */
+++    HTP_COMPRESSION_OVER = 5
++ };
++ 
++ /**
++diff --git a/htp/htp_decompressors.c b/htp/htp_decompressors.c
++index 19950df..0d94c30 100644
++--- a/htp/htp_decompressors.c
+++++ b/htp/htp_decompressors.c
++@@ -203,6 +203,8 @@ htp_status_t htp_gzip_decompressor_decompress(htp_decompressor_t *drec1, htp_tx_
++         }
++ 
++         return HTP_OK;
+++    } else if (drec->zlib_initialized == HTP_COMPRESSION_OVER) {
+++        return HTP_ERROR;
++     }
++ 
++     if (d->data == NULL) {
++@@ -316,15 +318,9 @@ restart:
++             // no initialization means previous error on stream
++             return HTP_ERROR;
++         }
++-        if (GZIP_BUF_SIZE > drec->stream.avail_out) {
++-            if (rc == Z_DATA_ERROR) {
++-                // There is data even if there is an error
++-                // So use this data and log a warning
++-                htp_log(d->tx->connp, HTP_LOG_MARK, HTP_LOG_WARNING, 0, "GZip decompressor: inflate failed with %d", rc);
++-                rc = Z_STREAM_END;
++-            }
++-        }
++-        if (rc == Z_STREAM_END) {
+++
+++	int error_after_data = (rc == Z_DATA_ERROR && drec->restart == 0 && GZIP_BUF_SIZE > drec->stream.avail_out);
+++        if (rc == Z_STREAM_END || error_after_data) {
++             // How many bytes do we have?
++             size_t len = GZIP_BUF_SIZE - drec->stream.avail_out;
++ 
++@@ -351,6 +347,13 @@ restart:
++             drec->stream.next_out = drec->buffer;
++             // TODO Handle trailer.
++ 
+++            if (error_after_data) {
+++                // There is data even if there is an error
+++                // So use this data and log a warning
+++                htp_log(d->tx->connp, HTP_LOG_MARK, HTP_LOG_WARNING, 0, "GZip decompressor: inflate failed with %d", rc);
+++                drec->zlib_initialized = HTP_COMPRESSION_OVER;
+++                return HTP_ERROR;
+++            }
++             return HTP_OK;
++         }
++         else if (rc != Z_OK) {
++-- 
++2.50.1
++
+diff --git a/recipes-ids/suricata/files/CVE-2025-53537-002.patch b/recipes-ids/suricata/files/CVE-2025-53537-002.patch
+new file mode 100644
+index 0000000..ff4f1a0
+--- /dev/null
++++ b/recipes-ids/suricata/files/CVE-2025-53537-002.patch
+@@ -0,0 +1,31 @@
++From 9037ea35110a0d97be5cedf8d31fb4cd9a38c7a7 Mon Sep 17 00:00:00 2001
++From: Philippe Antoine <contact@catenacyber.fr>
++Date: Tue, 17 Jun 2025 10:12:47 +0200
++Subject: [PATCH] decompressors: fix leak in lzma error case
++
++Ticket: 7766
++
++CVE: CVE-2025-53537
++Upstream-Status: Backport [https://github.com/OISF/libhtp/commit/9037ea35110a0d97be5cedf8d31fb4cd9a38c7a7]
++Signed-off-by: Hitendra Prajapati <hprajapati@mvista.com>
++---
++ htp/htp_decompressors.c | 3 +++
++ 1 file changed, 3 insertions(+)
++
++diff --git a/htp/htp_decompressors.c b/htp/htp_decompressors.c
++index 0d94c30..ce6cfe1 100644
++--- a/htp/htp_decompressors.c
+++++ b/htp/htp_decompressors.c
++@@ -351,6 +351,9 @@ restart:
++                 // There is data even if there is an error
++                 // So use this data and log a warning
++                 htp_log(d->tx->connp, HTP_LOG_MARK, HTP_LOG_WARNING, 0, "GZip decompressor: inflate failed with %d", rc);
+++                if (drec->zlib_initialized == HTP_COMPRESSION_LZMA) {
+++                    LzmaDec_Free(&drec->state, &lzma_Alloc);
+++                }
++                 drec->zlib_initialized = HTP_COMPRESSION_OVER;
++                 return HTP_ERROR;
++             }
++-- 
++2.50.1
++
+diff --git a/recipes-ids/suricata/libhtp_0.5.45.bb b/recipes-ids/suricata/libhtp_0.5.45.bb
+index 604a0ca..b87db35 100644
+--- a/recipes-ids/suricata/libhtp_0.5.45.bb
++++ b/recipes-ids/suricata/libhtp_0.5.45.bb
+@@ -6,6 +6,8 @@ LIC_FILES_CHKSUM = "file://LICENSE;beginline=1;endline=2;md5=596ab7963a1a0e5198e
+ 
+ SRC_URI = "git://github.com/OISF/libhtp.git;protocol=https;branch=0.5.x \
+            file://CVE-2024-45797.patch \
++           file://CVE-2025-53537-001.patch \
++           file://CVE-2025-53537-002.patch \
+           "
+ SRCREV = "8bdfe7b9d04e5e948c8fbaa7472e14d884cc00af"
+ 
+-- 
+2.50.1
 
-Thanks!
-Quentin
 
