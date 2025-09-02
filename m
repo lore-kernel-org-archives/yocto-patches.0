@@ -1,217 +1,109 @@
-Return-Path: <hprajapati@mvista.com>
+Return-Path: <samuli.piippo@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A33AACA1007
-	for <webhook@archiver.kernel.org>; Tue,  2 Sep 2025 05:59:05 +0000 (UTC)
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
- by mx.groups.io with SMTP id smtpd.web10.70753.1756792737007822721
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92F30CA0FFE
+	for <webhook@archiver.kernel.org>; Tue,  2 Sep 2025 09:54:07 +0000 (UTC)
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+ by mx.groups.io with SMTP id smtpd.web10.73322.1756806846139496407
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 01 Sep 2025 22:58:57 -0700
+ Tue, 02 Sep 2025 02:54:06 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@mvista.com header.s=google header.b=apOZdZah;
- spf=pass (domain: mvista.com, ip: 209.85.216.47, mailfrom: hprajapati@mvista.com)
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-3298961169bso1750921a91.2
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 01 Sep 2025 22:58:56 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=bAvx6mni;
+ spf=pass (domain: gmail.com, ip: 209.85.167.47, mailfrom: samuli.piippo@gmail.com)
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55f646b1db8so4868573e87.0
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 02 Sep 2025 02:54:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mvista.com; s=google; t=1756792736; x=1757397536; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1756806844; x=1757411644; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hqbCzKenzG0Qx+PlTBWOvNN7jzso+L/qk6lwssXiBQo=;
-        b=apOZdZahMxExKwhXKGQBNruRSVqcAgThBZ/kgguUoeF0PbDkJKzqgdGvxdTGQBSzyR
-         JJBzuYL72SAB7B4mfiDHTieEseXvBUyA9oRSxMeu+D6f150BpRy9t6cTus2y02N4zrhM
-         kEaCST/DcjJgVDyJ79B+EvEuQpRaTl95+kwGs=
+        bh=hwYyCqIVck1DjzqxHtECjm8JozvkpAfVpMXHVuRyAmI=;
+        b=bAvx6mnivIh8+F3hD/cvtHVL2uuFeKG0PMgOyioQyMoaffFu7BLgDVXiMXIRNKv9Fb
+         Gdar2fvh9E1xgjHrPmOt6jtrHGAH3homFfj0iffpLCP2c/4hl/8vnnB8oz1DU7M4DtRf
+         0AdArwi9sLakxtal9gaeGDcwlQnGhCHhZBDJ2WqVOG6pSmEEJqh2aCJoGNGiOUG7DizO
+         CJdxZuJN5eG1GIP/72WCXFQ8A/bpy+z9UjvNoB2oYHmf7puLoSFQpWNqFj6q0ntApPiO
+         EH3Xv8xeON+rXhfkM62tfEuWNUQKPBHWlm6kXKkGu+vgWDnZ1KINjihJ6nXDpuA+XzaY
+         0fLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756792736; x=1757397536;
+        d=1e100.net; s=20230601; t=1756806844; x=1757411644;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=hqbCzKenzG0Qx+PlTBWOvNN7jzso+L/qk6lwssXiBQo=;
-        b=gFgi7+MZgEJoTlPzqcgVwKuZaLW0rkUvxeYyEDr1mxGYuab8eDPyPpvY9A7pg2iBZm
-         MoTv25pDu/Wtrb+yVhBwJ8OHp6UboAZGz229CPHSrbIwPxxSH3ig+Q29z6YfymyIgGzv
-         e450He3r89cMCkdQuooUzHxe62ySvwfknAH60ZQsWYPIvI2MJENwy1NJ00IgwXG0qIuC
-         KbCxBDK1K7cEftgEXlGf5HCPb785B/Zaok6JumNHLWM3uCbVMvKQPAfo5jBeuctwZenh
-         iQxHbdMaG+eETJPRNJ81C9Z5ggqU88LHvMB94UZECupevR+9dPZ5vWamOOAZcVw9+f8F
-         nonw==
-X-Gm-Message-State: AOJu0YwsrTpwaKwvB+p1pCzDHbpa0WCWoCDxKQjqCp8JWqf6wxJcZI/5
-	ylNoDxenfgG+a1sDqYNLmKblxoJzR/fJ0nK9PIf47cgZWRZd1Lm3Ga9LYy60wNC/TE1GqGbig68
-	KxDZR
-X-Gm-Gg: ASbGncv+NHEB9snQv1q1WKuxADgsPa9jEnnXImKjQe4075wkeBNiCN4bPIkwONwIaqf
-	9x3NnA9Q/hE3hnAKm00hwT7ogTFC0J395Mi8T3/KMJ7KBxPwVCKKp1qhRYx80YHjqJMMGaCytGH
-	eQnY8sqVpO8r7IQyt8EiapzdUqyLh7Kf1jxebAoLR8rRaaKMl+XT/IVoStPqJhnUSsyx9iG91J6
-	dxowB88/HHrrEsFoXEoJR5Yw1l1d6tyVV5jTK1JMkm/oCDNy2RNMkvTon7rvoH5IlaOqakJFl+s
-	nZGuUGbV1sv/8oCWUKvr0e2t9Z/J4oc31DbWAsJPiGFUwHn6oH/S1HmY/WJCbKERKHBv3jP0rzE
-	PbbwYc+CJjEaeqbYkhKzq5oMiibWYj8UUELPHLbJH+RJHy4M=
-X-Google-Smtp-Source: AGHT+IF/HVZXeiJigFL8JjxRQkpsguQOrw189xKGKrA1XgZ01++c/wOKIACjCtvbS/xQmEg7BDqyiw==
-X-Received: by 2002:a17:90b:2692:b0:327:96dd:6299 with SMTP id 98e67ed59e1d1-328156e57a6mr14115697a91.33.1756792736150;
-        Mon, 01 Sep 2025 22:58:56 -0700 (PDT)
-Received: from MVIN00016.mvista.com ([150.129.170.183])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7725d5b90fasm4306176b3a.100.2025.09.01.22.58.54
+        bh=hwYyCqIVck1DjzqxHtECjm8JozvkpAfVpMXHVuRyAmI=;
+        b=XvDEJhpdYe7KSr56FWu1/5+03XXFMiTKCF5Dr5QKfG0VT5nYX430q+TLUYJ1i2YRZN
+         k0REAByGv2Qifm+4kVPSlLVNAYrCaU7HYjVT8Zpyveo633l7vc7uo+R3ccNJYmMRFqXl
+         HIo/uRUYdwDEfBgeUR2rqN6SYU/S3aR/dLex4rbDpghV9uNwYD3iFns0tfuD6xEVvXzC
+         LXwptbvOLOVRMt+FWA4sye5DGVPGP3o62b2X856AaqdfjCb1WGVaBSrqN8QTqEr/o/8J
+         jPTO/l4b3TPqhzMbQaUOjiXHu058uWPhwkccKDBU0f3nOa0sSLvEfNl17/v9oZ6luDUA
+         Q1aQ==
+X-Gm-Message-State: AOJu0Yy8zHGfsklknsmpWXi1L9U2vcotfG9YLa28T0GYdbOjL+uNPhDl
+	LMcDyEd+km7MBRgtbvVM4FEjcoEiE9z6gS/bT1PVU7cK6kD0QfmM+5hcWVztgw==
+X-Gm-Gg: ASbGnct3P4AKYbejM/+lobBM01GYwqxr6sScIGs71u6wm8rgvLE1eK+M7w3e/Omm8ex
+	XiJrCckIiuBtFHCIwh70lLf1Wss1nETUoS5Z4xvFYpx+XKXoXVGjbcgAakzadVw4F2WHS7jzve+
+	B5NSlztMNd5ELD7KWglwFKWoRZUWZO7CGmECEFV7+NpoNfEfTEHTQrXH1gjd02FdBxhurvzNGuV
+	gnLvK6/x7V/Cc7oMJq95/m85r8FhKDVEN78bI43s8ZUmCx8INPJWBRGWyTJ8HXTeTmI/htsmZbH
+	TcOH3OQzHVuJgkoTSwIaYV28MPyZCU/Fr4ci8voSroX4uHm9QBhgqrY3H40a6LEUyV4X+TOGR0Y
+	BeyoI+8NyonHCKipwhSYuBazKK+VfBYZush4hDNEaKw==
+X-Google-Smtp-Source: AGHT+IGfj8jq88nYRE9wgq3SAlrYZQI9l280GzIFzU/veUeJLABzr+QwR91E+yaaR+9cmz5c6f6sTA==
+X-Received: by 2002:a05:6512:2522:b0:55f:6cd0:296b with SMTP id 2adb3069b0e04-55f70983a12mr3612052e87.49.1756806843406;
+        Tue, 02 Sep 2025 02:54:03 -0700 (PDT)
+Received: from dcbuildsrv.ci.qt.io ([192.89.120.62])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-560826d1092sm583680e87.7.2025.09.02.02.54.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 22:58:55 -0700 (PDT)
-From: Hitendra Prajapati <hprajapati@mvista.com>
+        Tue, 02 Sep 2025 02:54:02 -0700 (PDT)
+From: Samuli Piippo <samuli.piippo@gmail.com>
+X-Google-Original-From: Samuli Piippo <samuli.piippo@qt.io>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Hitendra Prajapati <hprajapati@mvista.com>
-Subject: [meta-security][scarthgap][PATCH] libhtp: fix CVE-2025-53537
-Date: Tue,  2 Sep 2025 11:28:38 +0530
-Message-ID: <20250902055838.29035-1-hprajapati@mvista.com>
-X-Mailer: git-send-email 2.50.1
+Cc: jpewhacker@gmail.com
+Subject: [meta-mingw] [PATCH] mingw-w64: Upgrade to 13.0.0 release
+Date: Tue,  2 Sep 2025 09:53:24 +0000
+Message-ID: <20250902095324.4049720-1-samuli.piippo@qt.io>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 02 Sep 2025 05:59:05 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2105
+ <yocto-patches@lists.yoctoproject.org>; Tue, 02 Sep 2025 09:54:07 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2106
 
-Upstream-Status: Backport from
-https://github.com/OISF/libhtp/commit/226580d502ae98c148aaecc4846f78694b5e253c && https://github.com/OISF/libhtp/commit/9037ea35110a0d97be5cedf8d31fb4cd9a38c7a7
-
-Signed-off-by: Hitendra Prajapati <hprajapati@mvista.com>
+Signed-off-by: Samuli Piippo <samuli.piippo@qt.io>
 ---
- .../suricata/files/CVE-2025-53537-001.patch   | 79 +++++++++++++++++++
- .../suricata/files/CVE-2025-53537-002.patch   | 31 ++++++++
- recipes-ids/suricata/libhtp_0.5.45.bb         |  2 +
- 3 files changed, 112 insertions(+)
- create mode 100644 recipes-ids/suricata/files/CVE-2025-53537-001.patch
- create mode 100644 recipes-ids/suricata/files/CVE-2025-53537-002.patch
+ recipes-devtools/mingw-w64/mingw-w64.inc                        | 2 +-
+ ...-headers_12.0.0.bb => nativesdk-mingw-w64-headers_13.0.0.bb} | 0
+ ...-runtime_12.0.0.bb => nativesdk-mingw-w64-runtime_13.0.0.bb} | 0
+ ...eads_12.0.0.bb => nativesdk-mingw-w64-winpthreads_13.0.0.bb} | 0
+ 4 files changed, 1 insertion(+), 1 deletion(-)
+ rename recipes-devtools/mingw-w64/{nativesdk-mingw-w64-headers_12.0.0.bb => nativesdk-mingw-w64-headers_13.0.0.bb} (100%)
+ rename recipes-devtools/mingw-w64/{nativesdk-mingw-w64-runtime_12.0.0.bb => nativesdk-mingw-w64-runtime_13.0.0.bb} (100%)
+ rename recipes-devtools/mingw-w64/{nativesdk-mingw-w64-winpthreads_12.0.0.bb => nativesdk-mingw-w64-winpthreads_13.0.0.bb} (100%)
 
-diff --git a/recipes-ids/suricata/files/CVE-2025-53537-001.patch b/recipes-ids/suricata/files/CVE-2025-53537-001.patch
-new file mode 100644
-index 0000000..e16a59a
---- /dev/null
-+++ b/recipes-ids/suricata/files/CVE-2025-53537-001.patch
-@@ -0,0 +1,79 @@
-+From 226580d502ae98c148aaecc4846f78694b5e253c Mon Sep 17 00:00:00 2001
-+From: Philippe Antoine <contact@catenacyber.fr>
-+Date: Tue, 11 Mar 2025 16:45:35 +0100
-+Subject: [PATCH] decompressors: do not take data after end
-+
-+
-+CVE: CVE-2025-53537
-+Upstream-Status: Backport [https://github.com/OISF/libhtp/commit/226580d502ae98c148aaecc4846f78694b5e253c]
-+Signed-off-by: Hitendra Prajapati <hprajapati@mvista.com>
-+---
-+ htp/htp_core.h          |  5 ++++-
-+ htp/htp_decompressors.c | 21 ++++++++++++---------
-+ 2 files changed, 16 insertions(+), 10 deletions(-)
-+
-+diff --git a/htp/htp_core.h b/htp/htp_core.h
-+index 7c23212..fb142c9 100644
-+--- a/htp/htp_core.h
-++++ b/htp/htp_core.h
-+@@ -161,7 +161,10 @@ enum htp_content_encoding_t {
-+     HTP_COMPRESSION_DEFLATE = 3,
-+ 
-+     /** LZMA compression. */
-+-    HTP_COMPRESSION_LZMA = 4
-++    HTP_COMPRESSION_LZMA = 4,
-++
-++    /** No more data. */
-++    HTP_COMPRESSION_OVER = 5
-+ };
-+ 
-+ /**
-+diff --git a/htp/htp_decompressors.c b/htp/htp_decompressors.c
-+index 19950df..0d94c30 100644
-+--- a/htp/htp_decompressors.c
-++++ b/htp/htp_decompressors.c
-+@@ -203,6 +203,8 @@ htp_status_t htp_gzip_decompressor_decompress(htp_decompressor_t *drec1, htp_tx_
-+         }
-+ 
-+         return HTP_OK;
-++    } else if (drec->zlib_initialized == HTP_COMPRESSION_OVER) {
-++        return HTP_ERROR;
-+     }
-+ 
-+     if (d->data == NULL) {
-+@@ -316,15 +318,9 @@ restart:
-+             // no initialization means previous error on stream
-+             return HTP_ERROR;
-+         }
-+-        if (GZIP_BUF_SIZE > drec->stream.avail_out) {
-+-            if (rc == Z_DATA_ERROR) {
-+-                // There is data even if there is an error
-+-                // So use this data and log a warning
-+-                htp_log(d->tx->connp, HTP_LOG_MARK, HTP_LOG_WARNING, 0, "GZip decompressor: inflate failed with %d", rc);
-+-                rc = Z_STREAM_END;
-+-            }
-+-        }
-+-        if (rc == Z_STREAM_END) {
-++
-++	int error_after_data = (rc == Z_DATA_ERROR && drec->restart == 0 && GZIP_BUF_SIZE > drec->stream.avail_out);
-++        if (rc == Z_STREAM_END || error_after_data) {
-+             // How many bytes do we have?
-+             size_t len = GZIP_BUF_SIZE - drec->stream.avail_out;
-+ 
-+@@ -351,6 +347,13 @@ restart:
-+             drec->stream.next_out = drec->buffer;
-+             // TODO Handle trailer.
-+ 
-++            if (error_after_data) {
-++                // There is data even if there is an error
-++                // So use this data and log a warning
-++                htp_log(d->tx->connp, HTP_LOG_MARK, HTP_LOG_WARNING, 0, "GZip decompressor: inflate failed with %d", rc);
-++                drec->zlib_initialized = HTP_COMPRESSION_OVER;
-++                return HTP_ERROR;
-++            }
-+             return HTP_OK;
-+         }
-+         else if (rc != Z_OK) {
-+-- 
-+2.50.1
-+
-diff --git a/recipes-ids/suricata/files/CVE-2025-53537-002.patch b/recipes-ids/suricata/files/CVE-2025-53537-002.patch
-new file mode 100644
-index 0000000..ff4f1a0
---- /dev/null
-+++ b/recipes-ids/suricata/files/CVE-2025-53537-002.patch
-@@ -0,0 +1,31 @@
-+From 9037ea35110a0d97be5cedf8d31fb4cd9a38c7a7 Mon Sep 17 00:00:00 2001
-+From: Philippe Antoine <contact@catenacyber.fr>
-+Date: Tue, 17 Jun 2025 10:12:47 +0200
-+Subject: [PATCH] decompressors: fix leak in lzma error case
-+
-+Ticket: 7766
-+
-+CVE: CVE-2025-53537
-+Upstream-Status: Backport [https://github.com/OISF/libhtp/commit/9037ea35110a0d97be5cedf8d31fb4cd9a38c7a7]
-+Signed-off-by: Hitendra Prajapati <hprajapati@mvista.com>
-+---
-+ htp/htp_decompressors.c | 3 +++
-+ 1 file changed, 3 insertions(+)
-+
-+diff --git a/htp/htp_decompressors.c b/htp/htp_decompressors.c
-+index 0d94c30..ce6cfe1 100644
-+--- a/htp/htp_decompressors.c
-++++ b/htp/htp_decompressors.c
-+@@ -351,6 +351,9 @@ restart:
-+                 // There is data even if there is an error
-+                 // So use this data and log a warning
-+                 htp_log(d->tx->connp, HTP_LOG_MARK, HTP_LOG_WARNING, 0, "GZip decompressor: inflate failed with %d", rc);
-++                if (drec->zlib_initialized == HTP_COMPRESSION_LZMA) {
-++                    LzmaDec_Free(&drec->state, &lzma_Alloc);
-++                }
-+                 drec->zlib_initialized = HTP_COMPRESSION_OVER;
-+                 return HTP_ERROR;
-+             }
-+-- 
-+2.50.1
-+
-diff --git a/recipes-ids/suricata/libhtp_0.5.45.bb b/recipes-ids/suricata/libhtp_0.5.45.bb
-index 604a0ca..b87db35 100644
---- a/recipes-ids/suricata/libhtp_0.5.45.bb
-+++ b/recipes-ids/suricata/libhtp_0.5.45.bb
-@@ -6,6 +6,8 @@ LIC_FILES_CHKSUM = "file://LICENSE;beginline=1;endline=2;md5=596ab7963a1a0e5198e
+diff --git a/recipes-devtools/mingw-w64/mingw-w64.inc b/recipes-devtools/mingw-w64/mingw-w64.inc
+index 97315f4..1162966 100644
+--- a/recipes-devtools/mingw-w64/mingw-w64.inc
++++ b/recipes-devtools/mingw-w64/mingw-w64.inc
+@@ -4,7 +4,7 @@ LIC_FILES_CHKSUM = "file://${WORKDIR}/mingw-w64-v${PV}/COPYING;md5=bb936f0e04d8f
+ COMPATIBLE_HOST = ".*-mingw.*"
  
- SRC_URI = "git://github.com/OISF/libhtp.git;protocol=https;branch=0.5.x \
-            file://CVE-2024-45797.patch \
-+           file://CVE-2025-53537-001.patch \
-+           file://CVE-2025-53537-002.patch \
-           "
- SRCREV = "8bdfe7b9d04e5e948c8fbaa7472e14d884cc00af"
+ SRC_URI = "${SOURCEFORGE_MIRROR}/project/mingw-w64/mingw-w64/mingw-w64-release/mingw-w64-v${PV}.tar.bz2"
+-SRC_URI[sha256sum] = "cc41898aac4b6e8dd5cffd7331b9d9515b912df4420a3a612b5ea2955bbeed2f"
++SRC_URI[sha256sum] = "5afe822af5c4edbf67daaf45eec61d538f49eef6b19524de64897c6b95828caf"
  
+ UPSTREAM_CHECK_URI = "http://sourceforge.net/projects/mingw-w64/files/mingw-w64/mingw-w64-release/"
+ UPSTREAM_CHECK_REGEX = "mingw-w64-v(?P<pver>(\d+[\.\-_]*)+)\.tar"
+diff --git a/recipes-devtools/mingw-w64/nativesdk-mingw-w64-headers_12.0.0.bb b/recipes-devtools/mingw-w64/nativesdk-mingw-w64-headers_13.0.0.bb
+similarity index 100%
+rename from recipes-devtools/mingw-w64/nativesdk-mingw-w64-headers_12.0.0.bb
+rename to recipes-devtools/mingw-w64/nativesdk-mingw-w64-headers_13.0.0.bb
+diff --git a/recipes-devtools/mingw-w64/nativesdk-mingw-w64-runtime_12.0.0.bb b/recipes-devtools/mingw-w64/nativesdk-mingw-w64-runtime_13.0.0.bb
+similarity index 100%
+rename from recipes-devtools/mingw-w64/nativesdk-mingw-w64-runtime_12.0.0.bb
+rename to recipes-devtools/mingw-w64/nativesdk-mingw-w64-runtime_13.0.0.bb
+diff --git a/recipes-devtools/mingw-w64/nativesdk-mingw-w64-winpthreads_12.0.0.bb b/recipes-devtools/mingw-w64/nativesdk-mingw-w64-winpthreads_13.0.0.bb
+similarity index 100%
+rename from recipes-devtools/mingw-w64/nativesdk-mingw-w64-winpthreads_12.0.0.bb
+rename to recipes-devtools/mingw-w64/nativesdk-mingw-w64-winpthreads_13.0.0.bb
 -- 
-2.50.1
+2.43.0
 
 
