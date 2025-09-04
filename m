@@ -1,119 +1,137 @@
-Return-Path: <mathieu.dubois-briand@bootlin.com>
+Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41A6DCA1002
-	for <webhook@archiver.kernel.org>; Thu,  4 Sep 2025 15:49:30 +0000 (UTC)
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
- by mx.groups.io with SMTP id smtpd.web11.138.1757000959968737111
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABE18CA1013
+	for <webhook@archiver.kernel.org>; Thu,  4 Sep 2025 16:58:50 +0000 (UTC)
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+ by mx.groups.io with SMTP id smtpd.web10.1981.1757005125954101741
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 04 Sep 2025 08:49:20 -0700
+ Thu, 04 Sep 2025 09:58:46 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=dkim header.b=t82NfOlk;
- spf=pass (domain: bootlin.com, ip: 185.171.202.116, mailfrom: mathieu.dubois-briand@bootlin.com)
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id B0FD6C8F1EB;
-	Thu,  4 Sep 2025 15:49:02 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id E2BD2606C4;
-	Thu,  4 Sep 2025 15:49:17 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 91D001C22DE12;
-	Thu,  4 Sep 2025 17:49:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757000957; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=lefWDd7rkhMh21c35F+T3O0+deiFSbDQeSwcbOVdFNU=;
-	b=t82NfOlkgCtT2uwhVRuypnugrwMz5u0bxwK+XKyHnvlP68endGQvx/0+HVdzXROEtlvV/H
-	tUwPIQzzPoaBxoOP9CA40VA5qZ0yqAu6lAUv8djhCNRCZ9gOCDAM67XCjjHP4p6twDH7w+
-	1KvpTdm0PMX+BhSUrTqF1QAgk5kvx2nNKWhbfcxoCiq/7B5OWurxQg3XQ0+BTN87HPed36
-	QZAX1q7KkwR1cgXmd+M967qg2iks/sF2920v38tUJet96b/0WKPIocra99v0pR7hdR1Md2
-	YyXyKG74+x0M54M+xb8RiUvBHVx2Gw03Q7rgaeTm2bBkH2fQXM50QFxLTs2F6Q==
-From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Date: Thu, 04 Sep 2025 17:48:49 +0200
-Subject: [PATCH yocto-autobuilder2 1/3] runconfig: Add build configuration
- as properties
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250904-contrib-mathieu-build_props-v1-1-0ffaafcd01cb@bootlin.com>
-References: <20250904-contrib-mathieu-build_props-v1-0-0ffaafcd01cb@bootlin.com>
-In-Reply-To: <20250904-contrib-mathieu-build_props-v1-0-0ffaafcd01cb@bootlin.com>
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=fZnp82g8;
+ spf=pass (domain: gmail.com, ip: 209.85.160.172, mailfrom: twoerner@gmail.com)
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4b326b6c189so15301461cf.2
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 04 Sep 2025 09:58:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757005124; x=1757609924; darn=lists.yoctoproject.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KvODj+DIfQGq/55g1h1fb8plJ1N+0R2xHUVkvSgDC3I=;
+        b=fZnp82g8U0fSEHRaPmNMwo3nPlvYIs89mzoRuqxZS5g6dbJzxMxT38qLluAW0EnSBI
+         F12Qe65paZH3v8DMBBi+dq6kWpF7Gi3/ZgKPvACgYaZwPnP63DpcohF7w2tDIMGNfA+2
+         rNKDT04I22ku8Et3ud0wnalX/s5ZNOXPrMYXn4olXCE04SGU3cqeMUtPeG3PA2UgeI+h
+         8Ey+gglFGPuxw/OIJaHW9lLBrSd/dru+nNfSi1leH0v8wEWX4MJLHf+8u4dZwwyYXknx
+         Y4UyCjqnei6oMpAyCR3y4xby6Q0/5RBqDwdu+SbSzU1Yuwoh6tfDVIsT1WgnI0/3Sunq
+         QN/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757005124; x=1757609924;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KvODj+DIfQGq/55g1h1fb8plJ1N+0R2xHUVkvSgDC3I=;
+        b=Fy+nAl9TSpA+VTEOWX6ciJjGpoJCUfFVlto9QRT5HQKi4O/zvHWCIolhruGHLUbK3F
+         DHfdAU1V6UXgul0bHPnEiiJ2uycZKm37yNJLyE0DFWWrHjeG6YyuuD6lbkDYqFCxn/Bb
+         /ct3LXFs/ze8WbA+2ZFb1uhGs37bld6obCmLNLtj/hpBn5hzMSBbVX/F3pb0+K/PUav+
+         lFooV2wNlkLCMMt6tqNNZJ9kjfhIUFPS8YpdNBPgVoJqKl7ZY5BJFCHF492X4bXUfEOw
+         nmyV2BWXc/A9zGXBdYZO/C9ies44dDITXaaQsVc5EhKUGbWae1INd2Ri057U8t6aPxW9
+         E5Dg==
+X-Gm-Message-State: AOJu0YzQyPS9/rcpX0rkeiT9qmD2S2daYBQppEmm4FskBqLcUt5nCe2g
+	CRsKkfcCZP5srPo47nz0VLl5t9c9EAUs0dfHHBziDFXEcsKxRc0Dp6w2CkNHTQ==
+X-Gm-Gg: ASbGnctVMhClDfaZhY8E2Bj8Ze8TzYNVWIGFdUdxeUUR5gx61jm9INSDKes9+bXBG+W
+	oyEZUmvyPQfE0gHKb2Qmq9Jo0U0Yesu5H9YW6rfLD4nFrYCrkhT58eC8heinmjLqRvtNPOTTebP
+	jN26ZgoG/u1JQIlpNqTs4gX6uGSZJq7xCKwFAKiGNDpeogKnCaFfP0HBcs4gGe6MXmCfhpkxKoJ
+	BWrOShGkEmeTG8CxbWrZ8/6gHZ4oF0sgtf7mGKHYl7oNhFwVmZzb7jWeNL4AeiXndwuexToBCtn
+	y37i+3CTO1cTmaowpr2CAGi5xwUbUGDjvA9yoB00ePJZxk6xhQhFU3ihSaMgJW19x/vWm8dkqST
+	RrvbYje4u+p96E+wdzSlhHBXQltt3hWPkh6MTYqGfL8AmfMUuxcf4hQefvwpx
+X-Google-Smtp-Source: AGHT+IGA4pIhMnz0Rgp/8TgJcyBVlFzGW1Q19hA4wM5zaxquQs0z2kMmbxwwOlms5znuPZFOanhEgA==
+X-Received: by 2002:a05:622a:3d1:b0:4b3:b4e:1c9a with SMTP id d75a77b69052e-4b31d89da12mr255406081cf.7.1757005124171;
+        Thu, 04 Sep 2025 09:58:44 -0700 (PDT)
+Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b5d57c6e0asm17523451cf.51.2025.09.04.09.58.42
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 09:58:43 -0700 (PDT)
+Date: Thu, 4 Sep 2025 12:58:41 -0400
+From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Bruce Ashfield <bruce.ashfield@gmail.com>, 
- Peter Kjellerstedt <peter.kjellerstedt@axis.com>, 
- Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757000954; l=2421;
- i=mathieu.dubois-briand@bootlin.com; s=20241219; h=from:subject:message-id;
- bh=VkLZoQ9mj/l4YsR16lNXsfL62uT8FN5kRtTvaWfpo3M=;
- b=suOeSmws0gIqUh8wp6lWmcPFWZIrRwTXw50Nr9np8bawbGVkt/ikoAac0BpNWSLh4pNVMOdLL
- I7NYR+1vapvCcfgqlvD2bUw4HovlUiJi2E1fHD4XO+nWwBvq228CSyN
-X-Developer-Key: i=mathieu.dubois-briand@bootlin.com; a=ed25519;
- pk=1PVTmzPXfKvDwcPUzG0aqdGoKZJA3b9s+3DqRlm0Lww=
-X-Last-TLS-Session-Version: TLSv1.3
+Subject: Re: [yocto-patches] [meta-rockchip][PATCH] nanopi-r4s: refresh
+ device-tree patch for linux-6.16.y
+Message-ID: <20250904165841.GA26854@localhost>
+References: <20250904132717.8973-1-twoerner@gmail.com>
+ <f968f8e3-b138-48c6-9fff-43276c5ab03d@cherry.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <f968f8e3-b138-48c6-9fff-43276c5ab03d@cherry.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 04 Sep 2025 15:49:30 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2132
+ <yocto-patches@lists.yoctoproject.org>; Thu, 04 Sep 2025 16:58:50 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2135
 
-Add some important build configuration such as MACHINE or DISTRO to
-buildbot build properties.
+On Thu 2025-09-04 @ 03:43:45 PM, Quentin Schulz via lists.yoctoproject.org wrote:
+> Hi Trevor,
+> 
+> On 9/4/25 3:27 PM, Trevor Woerner via lists.yoctoproject.org wrote:
+> > The device-tree organization of the nanopi-r4s device changed slightly in
+> > the linux-6.16.y release, therefore refresh the nanopi-r4s device-tree
+> > patch to match.
+> > 
+> > Signed-off-by: Trevor Woerner <twoerner@gmail.com>
+> > ---
+> >   .../linux/linux-yocto/nanopi-r4s.scc          |  2 +-
+> >   ...opi-r4s.dtsi-enable-second-ethernet.patch} | 21 +++++++++----------
+> >   2 files changed, 11 insertions(+), 12 deletions(-)
+> >   rename recipes-kernel/linux/linux-yocto/rockchip-kmeta/bsp/rockchip/{0001-rk3399-nanopi-r4s.dts-enable-second-ethernet.patch => 0001-rk3399-nanopi-r4s.dtsi-enable-second-ethernet.patch} (56%)
+> > 
+> > diff --git a/recipes-kernel/linux/linux-yocto/nanopi-r4s.scc b/recipes-kernel/linux/linux-yocto/nanopi-r4s.scc
+> > index 266b77c63fe5..3d1601e28d13 100644
+> > --- a/recipes-kernel/linux/linux-yocto/nanopi-r4s.scc
+> > +++ b/recipes-kernel/linux/linux-yocto/nanopi-r4s.scc
+> > @@ -3,4 +3,4 @@ define KMACHINE nanopi-r4s
+> >   define KTYPE standard
+> >   define KARCH arm64
+> > -include bsp/rockchip/0001-rk3399-nanopi-r4s.dts-enable-second-ethernet.patch
+> > +include bsp/rockchip/0001-rk3399-nanopi-r4s.dtsi-enable-second-ethernet.patch
+> > diff --git a/recipes-kernel/linux/linux-yocto/rockchip-kmeta/bsp/rockchip/0001-rk3399-nanopi-r4s.dts-enable-second-ethernet.patch b/recipes-kernel/linux/linux-yocto/rockchip-kmeta/bsp/rockchip/0001-rk3399-nanopi-r4s.dtsi-enable-second-ethernet.patch
+> > similarity index 56%
+> > rename from recipes-kernel/linux/linux-yocto/rockchip-kmeta/bsp/rockchip/0001-rk3399-nanopi-r4s.dts-enable-second-ethernet.patch
+> > rename to recipes-kernel/linux/linux-yocto/rockchip-kmeta/bsp/rockchip/0001-rk3399-nanopi-r4s.dtsi-enable-second-ethernet.patch
+> > index e1f2b92665dd..a3dc23afae7e 100644
+> > --- a/recipes-kernel/linux/linux-yocto/rockchip-kmeta/bsp/rockchip/0001-rk3399-nanopi-r4s.dts-enable-second-ethernet.patch
+> > +++ b/recipes-kernel/linux/linux-yocto/rockchip-kmeta/bsp/rockchip/0001-rk3399-nanopi-r4s.dtsi-enable-second-ethernet.patch
+> > @@ -1,9 +1,8 @@
+> > -From 4c867907b68b417da0711cabdde30a969e368596 Mon Sep 17 00:00:00 2001
+> > +From de2c28076a50e94659ea9693f9d0a307ef475132 Mon Sep 17 00:00:00 2001
+> >   From: Trevor Woerner <twoerner@gmail.com>
+> > -Date: Sun, 17 Sep 2023 17:30:43 -0400
+> > -Subject: [PATCH] rk3399-nanopi-r4s.dts: enable second ethernet
+> > +Date: Thu, 4 Sep 2025 09:11:33 -0400
+> > +Subject: [PATCH] rk3399-nanopi-r4s.dtsi: enable second ethernet
+> > -# lspci
+> 
+> I think this isn't supposed to have disappeared from the commit log.
+> 
+> >   00:00.0 PCI bridge: Rockchip Electronics Co., Ltd RK3399 PCI Express Root Port
+> >   01:00.0 Ethernet controller: Realtek Semiconductor Co., Ltd. RTL8111/8168/8411 PCI Express Gigabit Ether)
+> > @@ -11,14 +10,14 @@ Link: https://github.com/armbian/build/pull/2415
+> >   Upstream-Status: Submitted [by someone else]
+> 
+> Where was it submitted? I cannot see it on linux-rockchip mailing list
+> archive the little I searched for it?
+> 
+> It'd be nice to have this upstreamed so you don't have to carry it around?
+> 
+> It does seem odd that every address and range is 0 though...
 
-Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
----
- steps/runconfig.py | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+Yea, it's a kludge of some sort.
 
-diff --git a/steps/runconfig.py b/steps/runconfig.py
-index a6d0dbd42efe..4e1e704f9de8 100644
---- a/steps/runconfig.py
-+++ b/steps/runconfig.py
-@@ -160,17 +160,22 @@ class RunConfigCheckSteps(shell.ShellCommand):
-     haltOnFailure = False
-     flunkOnFailure = True
-     jsonFileName = util.Interpolate("%(prop:builddir)s/runconfig.json")
--    logfiles = {'json': jsonFileName}
-+    propertiesFileName = util.Interpolate("%(prop:builddir)s/runconfig-properties.json")
-+    logfiles = {'json': jsonFileName, 'properties': propertiesFileName}
- 
-     def __init__(self, *args, **kwargs):
-         self.posttrigger = kwargs.pop("posttrigger")
-         self.command = get_runconfig_command(self.posttrigger)
-         self.command.append("--json-outputfile")
-         self.command.append(self.jsonFileName)
-+        self.command.append("--properties-outputfile")
-+        self.command.append(self.propertiesFileName)
-         super().__init__(*args, **kwargs)
- 
-         self.log_observer_json = logobserver.BufferLogObserver()
-         self.addLogObserver('json', self.log_observer_json)
-+        self.log_observer_properties = logobserver.BufferLogObserver()
-+        self.addLogObserver('properties', self.log_observer_properties)
- 
-     @defer.inlineCallbacks
-     def run(self):
-@@ -188,12 +193,17 @@ class RunConfigCheckSteps(shell.ShellCommand):
-         # If the command fails, fall back to old style run-config execution
-         rc = cmd.results()
-         logLines = self.log_observer_json.getStdout()
-+        propertiesLines = self.log_observer_properties.getStdout()
-         jsonconfig = None
-         try:
-             jsonconfig = json.loads(logLines)
-+            properties = json.loads(propertiesLines)
-         except Exception as ex:
-             self._addToLog('stderr', 'ERROR: unable to parse data, exception {}: {}'.format(ex.__class__, ex))
- 
-+        for k, v in properties.items():
-+            self.setProperty(k, v, "run-config output")
-+
-         if rc == FAILURE or not jsonconfig:
-             steps = [get_runconfig_legacy_step(self.posttrigger)]
-         else:
+> The change does look reasonable though :)
 
--- 
-2.39.5
-
+I just tried this "trick" on real hardware using the latest 6.16.2 linux-yocto
+kernel and it does not seem to work anymore. That's unfortunate. So I'll send
+a new patch to remove this kludge for now.
 
