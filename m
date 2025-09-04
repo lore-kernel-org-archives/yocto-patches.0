@@ -2,136 +2,100 @@ Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABE18CA1013
-	for <webhook@archiver.kernel.org>; Thu,  4 Sep 2025 16:58:50 +0000 (UTC)
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
- by mx.groups.io with SMTP id smtpd.web10.1981.1757005125954101741
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08CAFCA1015
+	for <webhook@archiver.kernel.org>; Thu,  4 Sep 2025 19:45:41 +0000 (UTC)
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+ by mx.groups.io with SMTP id smtpd.web10.3931.1757015135704832957
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 04 Sep 2025 09:58:46 -0700
+ Thu, 04 Sep 2025 12:45:35 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=fZnp82g8;
- spf=pass (domain: gmail.com, ip: 209.85.160.172, mailfrom: twoerner@gmail.com)
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4b326b6c189so15301461cf.2
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 04 Sep 2025 09:58:45 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=VeqKsvwm;
+ spf=pass (domain: gmail.com, ip: 209.85.160.173, mailfrom: twoerner@gmail.com)
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4b338d7a540so18927581cf.1
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 04 Sep 2025 12:45:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757005124; x=1757609924; darn=lists.yoctoproject.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1757015134; x=1757619934; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=KvODj+DIfQGq/55g1h1fb8plJ1N+0R2xHUVkvSgDC3I=;
-        b=fZnp82g8U0fSEHRaPmNMwo3nPlvYIs89mzoRuqxZS5g6dbJzxMxT38qLluAW0EnSBI
-         F12Qe65paZH3v8DMBBi+dq6kWpF7Gi3/ZgKPvACgYaZwPnP63DpcohF7w2tDIMGNfA+2
-         rNKDT04I22ku8Et3ud0wnalX/s5ZNOXPrMYXn4olXCE04SGU3cqeMUtPeG3PA2UgeI+h
-         8Ey+gglFGPuxw/OIJaHW9lLBrSd/dru+nNfSi1leH0v8wEWX4MJLHf+8u4dZwwyYXknx
-         Y4UyCjqnei6oMpAyCR3y4xby6Q0/5RBqDwdu+SbSzU1Yuwoh6tfDVIsT1WgnI0/3Sunq
-         QN/A==
+        bh=a3KTYP0mbwT3up3IN6pbf9NKd/KHuqlx26iT8Gme9fY=;
+        b=VeqKsvwm/F67FMPZ3a84Uq2A5PyKjVjVDR9aE1zur+qBx4NiRB/o9C9P+8X15za/+t
+         X8iF8E2xgz7QE8HfIt+3TfhHcXwPza5ombKJ5D80oH/GDDe2ESyKzjQMn6exLvwkuTp8
+         tyX+IewAUa5XnCePKhDIjBPXrixObvh11hLXX87S8cmmddtmDiie397pmDFLwzduRJ/D
+         lJK0MZeKDk6AQcFMOZxPKiPnnIIOWh5W0mp3C03Gxrhde0ZguB3PtSW1G0e26jBQqtf9
+         x8T2VGXZ8LvLQJOiA80MGoAzx2jN7ngz13Srh22oo3H/NwgZzsdwFDcm4AgVxyOGKk9q
+         yHkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757005124; x=1757609924;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1757015134; x=1757619934;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=KvODj+DIfQGq/55g1h1fb8plJ1N+0R2xHUVkvSgDC3I=;
-        b=Fy+nAl9TSpA+VTEOWX6ciJjGpoJCUfFVlto9QRT5HQKi4O/zvHWCIolhruGHLUbK3F
-         DHfdAU1V6UXgul0bHPnEiiJ2uycZKm37yNJLyE0DFWWrHjeG6YyuuD6lbkDYqFCxn/Bb
-         /ct3LXFs/ze8WbA+2ZFb1uhGs37bld6obCmLNLtj/hpBn5hzMSBbVX/F3pb0+K/PUav+
-         lFooV2wNlkLCMMt6tqNNZJ9kjfhIUFPS8YpdNBPgVoJqKl7ZY5BJFCHF492X4bXUfEOw
-         nmyV2BWXc/A9zGXBdYZO/C9ies44dDITXaaQsVc5EhKUGbWae1INd2Ri057U8t6aPxW9
-         E5Dg==
-X-Gm-Message-State: AOJu0YzQyPS9/rcpX0rkeiT9qmD2S2daYBQppEmm4FskBqLcUt5nCe2g
-	CRsKkfcCZP5srPo47nz0VLl5t9c9EAUs0dfHHBziDFXEcsKxRc0Dp6w2CkNHTQ==
-X-Gm-Gg: ASbGnctVMhClDfaZhY8E2Bj8Ze8TzYNVWIGFdUdxeUUR5gx61jm9INSDKes9+bXBG+W
-	oyEZUmvyPQfE0gHKb2Qmq9Jo0U0Yesu5H9YW6rfLD4nFrYCrkhT58eC8heinmjLqRvtNPOTTebP
-	jN26ZgoG/u1JQIlpNqTs4gX6uGSZJq7xCKwFAKiGNDpeogKnCaFfP0HBcs4gGe6MXmCfhpkxKoJ
-	BWrOShGkEmeTG8CxbWrZ8/6gHZ4oF0sgtf7mGKHYl7oNhFwVmZzb7jWeNL4AeiXndwuexToBCtn
-	y37i+3CTO1cTmaowpr2CAGi5xwUbUGDjvA9yoB00ePJZxk6xhQhFU3ihSaMgJW19x/vWm8dkqST
-	RrvbYje4u+p96E+wdzSlhHBXQltt3hWPkh6MTYqGfL8AmfMUuxcf4hQefvwpx
-X-Google-Smtp-Source: AGHT+IGA4pIhMnz0Rgp/8TgJcyBVlFzGW1Q19hA4wM5zaxquQs0z2kMmbxwwOlms5znuPZFOanhEgA==
-X-Received: by 2002:a05:622a:3d1:b0:4b3:b4e:1c9a with SMTP id d75a77b69052e-4b31d89da12mr255406081cf.7.1757005124171;
-        Thu, 04 Sep 2025 09:58:44 -0700 (PDT)
-Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b5d57c6e0asm17523451cf.51.2025.09.04.09.58.42
+        bh=a3KTYP0mbwT3up3IN6pbf9NKd/KHuqlx26iT8Gme9fY=;
+        b=QRAL48RdR8ionN5H3e4ubVTLOydlZBi2opxLiB9/MgMJQ0iIVJMmAq/bvZ9WO3GyHw
+         sgQPclSU3xUbeQEeAg6R2oSmtzDh3IvXD6uE6PcC7vFB9Lw6/F3mEzMzc8ouE/AOhjHT
+         wXgVve0/kFVXedxOcYmIP1mTeXFKOrctKJ++wyR86xGYJ0hvzh0NtQ3lxfuaYvrphcKV
+         uQ0cRYluc9+lvrdaXbZGkh9yJf7LjlfBL58wYeF/0qZRZaBy/Q2uJ2LpVcZXN1j/VrnG
+         FIK2Zsrg7qNKerMlNlCqN2BiImjAaPFHy78aJ7CYEx3XJiGoCt4QJmLjkPD6S+KcECLm
+         sfJw==
+X-Gm-Message-State: AOJu0YxHJ6CzQtqQsWS52CPDtqkuFCh8LkAv5rOx0G5vJQnP80FNM3Qp
+	SoQ4ng5T4e1mZOoRnXeEh4p5FUEMOleQ8Y2cAbBDlYYqgnKQNdWkNqu4w/6Gzw==
+X-Gm-Gg: ASbGncvAocS/iPimoJqRQ05lCiaCAB+8XHCqbEiuOBg754TPpge04vbGt6nrv+EfM9a
+	JboV+f0fE5m78Xs+4f9v+hXBTZ9fhne0APDHsmp87qokNKlRQgCc+6X9SZGoGEsbuA6Peo5Z4SE
+	8T7vg83LeFAzpq5lrA3beIKOKz2WrRNluqz0PfJsBE4xsHSRjaq1URhYWBelTs9eUIgWu0zm6kO
+	tfGXuCoy2CpwUt5NG5U8/8bF0o6dsnUEjuBsUrWR0DPKQkUFlclJeNLkgZtt+z+9CSxW9z3AB9W
+	zsjsFpgYDy0vriacwcYWInlO+6nOf9HxXhwsCk97yFD4bjJSI//QCVO2y4HlbLAl1GuzvIUSp7+
+	jraD9mUUHcECUWMEfwIvTurHJfLKw2KTapvXTpUF/y807qFYGHJUQvBGjGCVBDVJmeg==
+X-Google-Smtp-Source: AGHT+IGuh2lfBcBnAVnE5koPxV8OdoxgAvBJicfwhwjUqpkflcfBlJ/BEzR9T2f7oCmTYeeg5qPm7g==
+X-Received: by 2002:ac8:5786:0:b0:4b4:56b2:5c79 with SMTP id d75a77b69052e-4b456b25f12mr99989621cf.55.1757015133940;
+        Thu, 04 Sep 2025 12:45:33 -0700 (PDT)
+Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b48f760fa9sm33525141cf.26.2025.09.04.12.45.32
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 09:58:43 -0700 (PDT)
-Date: Thu, 4 Sep 2025 12:58:41 -0400
+        Thu, 04 Sep 2025 12:45:33 -0700 (PDT)
 From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: Re: [yocto-patches] [meta-rockchip][PATCH] nanopi-r4s: refresh
- device-tree patch for linux-6.16.y
-Message-ID: <20250904165841.GA26854@localhost>
-References: <20250904132717.8973-1-twoerner@gmail.com>
- <f968f8e3-b138-48c6-9fff-43276c5ab03d@cherry.de>
+Subject: [meta-rockchip][PATCH 2/2] nanopi-r4s: enable r8169 built-in
+Date: Thu,  4 Sep 2025 15:45:29 -0400
+Message-ID: <20250904194529.22656-2-twoerner@gmail.com>
+X-Mailer: git-send-email 2.44.0.501.g19981daefd7c
+In-Reply-To: <20250904194529.22656-1-twoerner@gmail.com>
+References: <20250904194529.22656-1-twoerner@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <f968f8e3-b138-48c6-9fff-43276c5ab03d@cherry.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 04 Sep 2025 16:58:50 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2135
+ <yocto-patches@lists.yoctoproject.org>; Thu, 04 Sep 2025 19:45:41 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2137
 
-On Thu 2025-09-04 @ 03:43:45 PM, Quentin Schulz via lists.yoctoproject.org wrote:
-> Hi Trevor,
-> 
-> On 9/4/25 3:27 PM, Trevor Woerner via lists.yoctoproject.org wrote:
-> > The device-tree organization of the nanopi-r4s device changed slightly in
-> > the linux-6.16.y release, therefore refresh the nanopi-r4s device-tree
-> > patch to match.
-> > 
-> > Signed-off-by: Trevor Woerner <twoerner@gmail.com>
-> > ---
-> >   .../linux/linux-yocto/nanopi-r4s.scc          |  2 +-
-> >   ...opi-r4s.dtsi-enable-second-ethernet.patch} | 21 +++++++++----------
-> >   2 files changed, 11 insertions(+), 12 deletions(-)
-> >   rename recipes-kernel/linux/linux-yocto/rockchip-kmeta/bsp/rockchip/{0001-rk3399-nanopi-r4s.dts-enable-second-ethernet.patch => 0001-rk3399-nanopi-r4s.dtsi-enable-second-ethernet.patch} (56%)
-> > 
-> > diff --git a/recipes-kernel/linux/linux-yocto/nanopi-r4s.scc b/recipes-kernel/linux/linux-yocto/nanopi-r4s.scc
-> > index 266b77c63fe5..3d1601e28d13 100644
-> > --- a/recipes-kernel/linux/linux-yocto/nanopi-r4s.scc
-> > +++ b/recipes-kernel/linux/linux-yocto/nanopi-r4s.scc
-> > @@ -3,4 +3,4 @@ define KMACHINE nanopi-r4s
-> >   define KTYPE standard
-> >   define KARCH arm64
-> > -include bsp/rockchip/0001-rk3399-nanopi-r4s.dts-enable-second-ethernet.patch
-> > +include bsp/rockchip/0001-rk3399-nanopi-r4s.dtsi-enable-second-ethernet.patch
-> > diff --git a/recipes-kernel/linux/linux-yocto/rockchip-kmeta/bsp/rockchip/0001-rk3399-nanopi-r4s.dts-enable-second-ethernet.patch b/recipes-kernel/linux/linux-yocto/rockchip-kmeta/bsp/rockchip/0001-rk3399-nanopi-r4s.dtsi-enable-second-ethernet.patch
-> > similarity index 56%
-> > rename from recipes-kernel/linux/linux-yocto/rockchip-kmeta/bsp/rockchip/0001-rk3399-nanopi-r4s.dts-enable-second-ethernet.patch
-> > rename to recipes-kernel/linux/linux-yocto/rockchip-kmeta/bsp/rockchip/0001-rk3399-nanopi-r4s.dtsi-enable-second-ethernet.patch
-> > index e1f2b92665dd..a3dc23afae7e 100644
-> > --- a/recipes-kernel/linux/linux-yocto/rockchip-kmeta/bsp/rockchip/0001-rk3399-nanopi-r4s.dts-enable-second-ethernet.patch
-> > +++ b/recipes-kernel/linux/linux-yocto/rockchip-kmeta/bsp/rockchip/0001-rk3399-nanopi-r4s.dtsi-enable-second-ethernet.patch
-> > @@ -1,9 +1,8 @@
-> > -From 4c867907b68b417da0711cabdde30a969e368596 Mon Sep 17 00:00:00 2001
-> > +From de2c28076a50e94659ea9693f9d0a307ef475132 Mon Sep 17 00:00:00 2001
-> >   From: Trevor Woerner <twoerner@gmail.com>
-> > -Date: Sun, 17 Sep 2023 17:30:43 -0400
-> > -Subject: [PATCH] rk3399-nanopi-r4s.dts: enable second ethernet
-> > +Date: Thu, 4 Sep 2025 09:11:33 -0400
-> > +Subject: [PATCH] rk3399-nanopi-r4s.dtsi: enable second ethernet
-> > -# lspci
-> 
-> I think this isn't supposed to have disappeared from the commit log.
-> 
-> >   00:00.0 PCI bridge: Rockchip Electronics Co., Ltd RK3399 PCI Express Root Port
-> >   01:00.0 Ethernet controller: Realtek Semiconductor Co., Ltd. RTL8111/8168/8411 PCI Express Gigabit Ether)
-> > @@ -11,14 +10,14 @@ Link: https://github.com/armbian/build/pull/2415
-> >   Upstream-Status: Submitted [by someone else]
-> 
-> Where was it submitted? I cannot see it on linux-rockchip mailing list
-> archive the little I searched for it?
-> 
-> It'd be nice to have this upstreamed so you don't have to carry it around?
-> 
-> It does seem odd that every address and range is 0 though...
+Since the Realtek RTL8169 is part of this board, enable it unconditionally in
+the kernel.
 
-Yea, it's a kludge of some sort.
+Signed-off-by: Trevor Woerner <twoerner@gmail.com>
+---
+ recipes-kernel/linux/linux-yocto/realtek-r8169.cfg | 1 +
+ recipes-kernel/linux/linux-yocto_%.bbappend        | 1 +
+ 2 files changed, 2 insertions(+)
+ create mode 100644 recipes-kernel/linux/linux-yocto/realtek-r8169.cfg
 
-> The change does look reasonable though :)
+diff --git a/recipes-kernel/linux/linux-yocto/realtek-r8169.cfg b/recipes-kernel/linux/linux-yocto/realtek-r8169.cfg
+new file mode 100644
+index 000000000000..811d42a79bf3
+--- /dev/null
++++ b/recipes-kernel/linux/linux-yocto/realtek-r8169.cfg
+@@ -0,0 +1 @@
++CONFIG_R8169=y
+diff --git a/recipes-kernel/linux/linux-yocto_%.bbappend b/recipes-kernel/linux/linux-yocto_%.bbappend
+index 5d68c7d56e2b..da1b172294e7 100644
+--- a/recipes-kernel/linux/linux-yocto_%.bbappend
++++ b/recipes-kernel/linux/linux-yocto_%.bbappend
+@@ -31,3 +31,4 @@ COMPATIBLE_MACHINE:rock64 = "rock64"
+ COMPATIBLE_MACHINE:soquartz = "soquartz"
+ 
+ SRC_URI:append:rockchip = " file://rockchip-kmeta;type=kmeta;name=rockchip-kmeta;destsuffix=rockchip-kmeta"
++SRC_URI:append:nanopi-r4s = " file://realtek-r8169.cfg"
+-- 
+2.44.0.501.g19981daefd7c
 
-I just tried this "trick" on real hardware using the latest 6.16.2 linux-yocto
-kernel and it does not seem to work anymore. That's unfortunate. So I'll send
-a new patch to remove this kludge for now.
 
