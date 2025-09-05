@@ -2,93 +2,120 @@ Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1EE1CA1013
-	for <webhook@archiver.kernel.org>; Fri,  5 Sep 2025 12:36:36 +0000 (UTC)
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
- by mx.groups.io with SMTP id smtpd.web10.20657.1757075787366714741
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0549ACA0FED
+	for <webhook@archiver.kernel.org>; Fri,  5 Sep 2025 12:52:17 +0000 (UTC)
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+ by mx.groups.io with SMTP id smtpd.web11.21169.1757076732459704647
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 05 Sep 2025 05:36:27 -0700
+ Fri, 05 Sep 2025 05:52:12 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=e7ZnrDJM;
- spf=pass (domain: gmail.com, ip: 209.85.160.176, mailfrom: twoerner@gmail.com)
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4b33945989bso37668121cf.2
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 05 Sep 2025 05:36:27 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=V0M8ZRD/;
+ spf=pass (domain: gmail.com, ip: 209.85.160.181, mailfrom: twoerner@gmail.com)
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4b340966720so14270831cf.2
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 05 Sep 2025 05:52:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757075785; x=1757680585; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1757076731; x=1757681531; darn=lists.yoctoproject.org;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=+JHWhY8jACIEr+GjwbNPs7XiYHBN867vkcyNvvsceas=;
-        b=e7ZnrDJM/el2yksWOGlv24eAo9MTVxg5Sz76eX6Z6lQmPfefWuxXExJK27WaqZDn3W
-         KVVBQpIAJSw8qwsIwCDwFT8mAKD2N9sihyrFzQPirTaFy+NrPCg8Zb3X4m7wvTLyqMUb
-         OaTMYKpPLEDyyc2cLuZ4ecN9LwxF5+El/L+3YFLVzUZ2gSByNsIT1Qv8EKhR2Lc6Pphd
-         Lv3md5g9wfvFOKj0KUG4Lpk3dHbEaSG/GCuwS/GZ2visMvc6A5/pHU3MUmaV93eNrVgX
-         Om9C+t/E90DjT7+x0PKPApoP7bPdKuSSnfAWTfKuBcoU119vwIKqwrHs+TB1/WVHsYT6
-         JRZA==
+        bh=6vxY7ag2dw8na1G0gXSV1yti4Wnj0eraNkqiVNIWsEI=;
+        b=V0M8ZRD/0scPzmknLF1dbI/9piSNkJw1uuZXswt3Q1m0D7G99pQErKevTAg9o7XkDF
+         uz2dz4S9o6PI7WGmSK3fcinCtbdLTM3WPU/j/+940qRJYud/ThnARb9JteamiIsSuwfp
+         3Biu+M/+tRqcb/cLuwBJLjfditlG96WijVfATyonTt0Mdz1LQUhpA7GG8WYTfwB/2UuT
+         +o+SN6SXfBq7F4E1yIaTqQzoeVG+WHNt0XGoq1pkmyQEpBhRkvgLwzYep3Dgy8ZS7Hav
+         D6joTZfVWbgoMf0aGzl4UZUhWIlzB6RudHmKIW/gGzFEfNW226pPzAEzk+qfuwns1UiV
+         frqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757075785; x=1757680585;
+        d=1e100.net; s=20230601; t=1757076731; x=1757681531;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+JHWhY8jACIEr+GjwbNPs7XiYHBN867vkcyNvvsceas=;
-        b=Vm2gYC9yN6h80yK2X+llG7/ygTeWWZ27JNqMNw599SJcx7x9poWmlz9b2IBb1dc9c7
-         iqTg4sfpn3af4SVjPx0gOdNuV7ziMu/vAk9nd+cojj5huGY3kF27Qercz/5nH3LAM+dE
-         DzI9FEgKscVj3oqzPXh1ZPwCXZtZNE3eKowvOXmzgO72CFuLoUP36qTadpDokYkjxC58
-         0/CJ6c299DFpX7gF9WdCjUq2Wz4WJLPfooAellNy8hmxrpusOmNBd9VjTc/HDujzJJAI
-         tD9DO4gyrtzFl9tCSbHMIAGZrmmMTB+n1nacE+cHXrXelcFWPprrQqa3wU1qoQed8PTl
-         v9wQ==
-X-Gm-Message-State: AOJu0YyWL+KNq4OOVmDp017Byycy3H1M6TLp8IKQJ/aCQjAzQXTM3AIr
-	HZWYyA2BZ3exLwfGf/MOepyPhmqm2cUTmdNRzYbxDD+gdr1MOLhUKo2Q0BsNAQ==
-X-Gm-Gg: ASbGnctl6c1tLOla9qJqo/ZVAcbb8790yrqrFQ0zt8n/uKNKfb6FJ1Eb9qv5uSKBzmD
-	+BoxN+V54T7c81udm3zcWHvrcwJZODmQAsUpnhK7IKSHka14cbdA7xXUu7VnLeWltZOXm3m1x7B
-	ult8WP4Klr+QExU6uewkX4y0GpKc27xJ/HgeX49MDTvHV8d3QGA2dIuQgRjmHA5RqBDJM8UN0bh
-	n+oKIIMZ9OTPMKuTZ6ML1qQrsOHFHU7KLTJq18s6M6zCgXvYSs4zGHJIy3CbGgvaqyq40HTqpA2
-	WBet/Lwrxvzq1oYkha/kOYRCsZFH/hi/wiDWGijIyq6zZr2mH6EIZSsJ3sJkLlJSHaUJRhh0tsK
-	8tR2ugFhbBEj7n8CHZ0/qe7R2+hYx4rSW8qof2djXII2+AEPckA==
-X-Google-Smtp-Source: AGHT+IH3cad1f1RSsh8cEw0pEzPZuwLazmarWzj7ScQ7qjm3OslabVUshMJ595BIaxwPQN8JlsGYYw==
-X-Received: by 2002:ac8:578d:0:b0:4b3:cbc:18c3 with SMTP id d75a77b69052e-4b31d844826mr255345021cf.29.1757075785209;
-        Fri, 05 Sep 2025 05:36:25 -0700 (PDT)
+        bh=6vxY7ag2dw8na1G0gXSV1yti4Wnj0eraNkqiVNIWsEI=;
+        b=enu70KRmEPIVLvz8IfS9LnuYh06icqJXlzGkfy0/GdfwdQiNUrZYqd60ANrxAg9AU8
+         CrP5URZiP099gdkz2VXZs93RZHOL8uotk7DFiKxTJhqZVEBCr1aG4nNq7VONHvSvL59D
+         ll4yp2Zsoo7tBbSyaVWxtx2FuHh49spAx3xb8pMwpi0Exbg7WCvYUIp8pB3ZTMhiftpU
+         lyNsuS44XfnG7rxoZTgGwiOKDAnlwo31v185x5lYUwWMioiwbPHqskLXZvGYSQK0Nr8b
+         6vIBWHBhyrRbeMjxdjws/YR2UXeCxBETmczMexyxiNy3JFk4fPHyIwV+qkDGfzLS6oUi
+         Odrw==
+X-Gm-Message-State: AOJu0YxnQAVPmkdew16RFAbabpXwEtsuqR8guVQiSWL2wLTBe0AWJUFP
+	vMmBpoyKIdXaRN9M8jmJN3wBAWWKM/g9tHJJ1i8eH7Of5V9k0wOWhHw0ywC0SQ==
+X-Gm-Gg: ASbGncuzvjQKYVu9MMwHWrKoQ5tsO8bpqpMymXooEE1LflrcVfkxn2yly0NZE5rFu3O
+	nlb/LkpOKEzdepJE2ADDU6dzBbsJbCPWQDZ+XF6lkcflsN7cqkaIoTCJX4AvD8wGaIQiutfYVjd
+	QGveaSmNWxwRuw+B+wE7IcRE2bKUnKoAZar2YPFtpwlUh5ju86jRZiVT7EHYvh9YhcKxgAo9wxG
+	L30V5E7HBamIe1uNPAW2C/bfwJa7z7jDqHEqP45+sA+/SePmH6r9veEluwHABJt4wPRRHHJymBV
+	sU8c/+PPXltHlayT1xMa7omR4ibpKrXlP16ScD3yottZmxJWiUxf0H0JxCpjMiQtMliEduA47iY
+	AoNqmoz3OUyIDKm3uK1fzz1BFDHILClnbFuGItYO06Ihqh9bqf6W+PLmp1q6j
+X-Google-Smtp-Source: AGHT+IE9pO+z0EPpKlq8ANjCggLfZf+KnPMPdhjDSHZdupLpXHuobgKip0soSnIKBBjXrb3NpRHGSw==
+X-Received: by 2002:a05:6214:20c5:b0:720:4a66:d3e8 with SMTP id 6a1803df08f44-7204a66e0e2mr198390126d6.19.1757076730413;
+        Fri, 05 Sep 2025 05:52:10 -0700 (PDT)
 Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b48f785d71sm46058231cf.44.2025.09.05.05.36.24
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-720acdff3acsm65177726d6.17.2025.09.05.05.52.09
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 05:36:24 -0700 (PDT)
-Date: Fri, 5 Sep 2025 08:36:22 -0400
+        Fri, 05 Sep 2025 05:52:09 -0700 (PDT)
+Date: Fri, 5 Sep 2025 08:52:07 -0400
 From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: Re: [meta-rockchip][PATCH 1/2] nanopi-r4s: remove 2nd eth work-around
-Message-ID: <20250905123622.GA36766@localhost>
+Subject: Re: [yocto-patches] [meta-rockchip][PATCH 2/2] nanopi-r4s: enable
+ r8169 built-in
+Message-ID: <20250905125207.GB36766@localhost>
 References: <20250904194529.22656-1-twoerner@gmail.com>
+ <20250904194529.22656-2-twoerner@gmail.com>
+ <edc0bc23-fc67-4f2f-a59f-b98e48128942@cherry.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250904194529.22656-1-twoerner@gmail.com>
+In-Reply-To: <edc0bc23-fc67-4f2f-a59f-b98e48128942@cherry.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 05 Sep 2025 12:36:36 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2141
+ <yocto-patches@lists.yoctoproject.org>; Fri, 05 Sep 2025 12:52:17 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2142
 
-On Thu 2025-09-04 @ 03:45:28 PM, Trevor Woerner wrote:
-> Pre-6.16.y linux kernels needed a kludge in order for the second ethernet the
-> work out of the box. With the update to the 6.16.y kernel the kludge no longer
-> applies. Fixing up the kludge so that it does apply does not seem to bring up
-> the second interface. However with the kludge removed altogether, the second
-> interface comes up without issue.
+On Fri 2025-09-05 @ 11:10:45 AM, Quentin Schulz via lists.yoctoproject.org wrote:
+> Hi Trevor,
 > 
->     # lspci
->     00:00.0 PCI bridge: Rockchip Electronics Co., Ltd RK3399 PCI Express Root Port
->     01:00.0 Ethernet controller: Realtek Semiconductor Co., Ltd. RTL8111/8168/8211/8411 PCI Express Gigabit Ethernet Controller (rev 15)
+> On 9/4/25 9:45 PM, Trevor Woerner via lists.yoctoproject.org wrote:
+> > Since the Realtek RTL8169 is part of this board, enable it unconditionally in
 > 
-> Signed-off-by: Trevor Woerner <twoerner@gmail.com>
-> ---
->  .../linux/linux-yocto/nanopi-r4s.scc          |  6 ---
->  ...anopi-r4s.dts-enable-second-ethernet.patch | 41 -------------------
->  recipes-kernel/linux/linux-yocto_%.bbappend   |  1 -
->  3 files changed, 48 deletions(-)
->  delete mode 100644 recipes-kernel/linux/linux-yocto/nanopi-r4s.scc
->  delete mode 100644 recipes-kernel/linux/linux-yocto/rockchip-kmeta/bsp/rockchip/0001-rk3399-nanopi-r4s.dts-enable-second-ethernet.patch
+> The FriendlyElec wiki and product page doesn't mention this part number,
+> weird (but armbian and openwrt forums do).
 
-Applied to meta-rockchip, master branch.
+...and so does the output of lspci.
+
+> FYI, it seems the default value when using "defconfig" defconfig from
+> upstream is R8169 driver built as a module, so you could simply install the
+> kernel module instead of marking it as Y. (But then you hit some corner
+> cases when you want to use NFS for rootfs for example).
+
+Exactly. If it is a device that is built into the board, I think it should be
+built into the kernel rather than a module.
+
+I didn't provide this in the commit message, but while testing with it enabled
+as a module, it is the driver that is installed automatically by the system,
+that's how/why I chose this driver to convert to =y.
+
+> While many devices supported by this driver seem to require (?) a firmware,
+> the R8169 seemingly doesn't seem to require one, so I guess this is fine :)
+> 
+> > the kernel.
+> > 
+> > Signed-off-by: Trevor Woerner <twoerner@gmail.com>
+> 
+> Acked-by: Quentin Schulz <quentin.schulz@cherry.de>
+> 
+> Thanks!
+> Quentin
+> 
+> 
+> -=-=-=-=-=-=-=-=-=-=-=-
+> Links: You receive all messages sent to this group.
+> View/Reply Online (#2138): https://lists.yoctoproject.org/g/yocto-patches/message/2138
+> Mute This Topic: https://lists.yoctoproject.org/mt/115070708/900817
+> Group Owner: yocto-patches+owner@lists.yoctoproject.org
+> Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/13168745/900817/63955952/xyzzy [twoerner@gmail.com]
+> -=-=-=-=-=-=-=-=-=-=-=-
+> 
+> 
 
