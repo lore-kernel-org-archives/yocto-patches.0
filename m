@@ -2,61 +2,61 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50494CAC58E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FBBDCAC58C
 	for <webhook@archiver.kernel.org>; Tue,  9 Sep 2025 18:50:30 +0000 (UTC)
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
- by mx.groups.io with SMTP id smtpd.web10.3376.1757443825269187111
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+ by mx.groups.io with SMTP id smtpd.web10.3381.1757443827267286990
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 09 Sep 2025 11:50:25 -0700
+ Tue, 09 Sep 2025 11:50:27 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=EpJlwXh4;
- spf=pass (domain: konsulko.com, ip: 209.85.222.169, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-80b7a6b2b47so567827685a.0
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 09 Sep 2025 11:50:25 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=l+QB5TFn;
+ spf=pass (domain: konsulko.com, ip: 209.85.160.182, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4b5ed9d7e96so42222821cf.0
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 09 Sep 2025 11:50:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1757443824; x=1758048624; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1757443826; x=1758048626; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=2plOedVRbIl/GoQJL6SSMvJ5vt804tWRcgiHevfYSm0=;
-        b=EpJlwXh4X6evB/izI2m/QH7Gj5fn12K9F0nLgsQAxRVxTkGK00GnUygJKxrYlGXEQk
-         cxuRTsTrv8rJ/WbiHc9m5SX99S4/eHT3U8+T2s8RUODtnklp43ctdj+0JPr2uAPXtW8x
-         Dyf1f/R1KJXl53stu7t/R4vLkJ30vxOj9WdBg=
+        bh=1A6ut0VPBnubGlj24KHLyVFjfdg/icQs+OS42PS10UU=;
+        b=l+QB5TFnJRfgLxO/BukS+pLO9/uZL22BnNOHh2CfAhBWcHY9tMlXQNBk1poNX/jK87
+         afoBSis0eJzocAejXVp7BYTrbRJjSz3GJlLrYOaVwbvuFoiFpVTyYQ0mc/CSTG5qKKKW
+         n1sIQE13rDF3XiQj1BmeDgBS9ZqcD68wbHAoI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757443824; x=1758048624;
+        d=1e100.net; s=20230601; t=1757443826; x=1758048626;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2plOedVRbIl/GoQJL6SSMvJ5vt804tWRcgiHevfYSm0=;
-        b=j5f6oFqaREQMxk9FRZbhsFDYAQoA+y2aMoNVv6v4ZJBdNk3oX70B4xIvlGI6aCTk58
-         Yv/78W/LiKtXvw7fY4a49lgmnIRWSV8WAh3be5N53L2hfnEdm6ClfSvvVZwEWB8/pwaP
-         TZqKAownIMmKPnYmLVmBV7S9ABbKA1GZ7KzvrhbA/A5PrzYyhAJnnRFV+BisToNKQHza
-         eQMOt/UB9vIBdcmOKVDR1kjZPTjyB6Pz/pqaP+7O5FaPOu3FBgBPyE6jdvDWxon2MDO9
-         NIZU5T9D6iqTzGb04GZC5jDwyVtFM9fniUQt1zbNabZdnlNghbLaQc62pGtRjbA6wbX0
-         kI7g==
-X-Gm-Message-State: AOJu0YwsotliYjShASTXOTme3iFSrcquR7wM2/ZaDRQqjxODGTOCL7sU
-	82Rji2OvUuqdNMIZCoiX6+av+sJsc4JVNHIXac9J+vTHBegVm7jCnuKWBww6f44Ryzox/euCJZ/
-	+fvj0
-X-Gm-Gg: ASbGnctzO8FjErOEFtA4IpmOOmgS34y2RO74bQL8h8CKqG642deGiCAryMQhx0cXFx/
-	JvVa/ycVe1VKYplaQqeIksH9vp6RGrMz8k1cq1cizYyq1+wax+WQhthQQTcjPrpR8qrxsNblFOa
-	AyrjoQr99hzkdDFTuRXAmt9zTD9IT26G8TRRmP7/I51F5OsQ5avZn4pVo/x5MynCCa0xCFWDwZ7
-	ry38wp4EppiC1BGbTp4hnmeTYIGPw0IibqSIbCkY3BBVt6hdAcwvrGYVZSiNrg7lbq0lEUJoKPi
-	vuLwxUYTdjj58ZhkA04PXAuEpVjofaX+dMXOoL6AOzErYdt4QiBbC0Ye/NZmq4tpHIHggbPizfP
-	Mn4s9xnb8IwakWPmTQYtASaj51ry5hG227BdhQqCeV1k3TCBLHerNeH1J3dJiPiCFpvUD6kRviw
-	==
-X-Google-Smtp-Source: AGHT+IFFUCyi78qvBoG6ivjW5O1B8gpTCacbr3w2uS9jJWH6wHMK7FWZbFqhvLzva+8rY4+sOMTAJQ==
-X-Received: by 2002:a05:620a:394f:b0:813:64ce:dd1e with SMTP id af79cd13be357-813c10f21edmr1433258085a.35.1757443824050;
-        Tue, 09 Sep 2025 11:50:24 -0700 (PDT)
+        bh=1A6ut0VPBnubGlj24KHLyVFjfdg/icQs+OS42PS10UU=;
+        b=C3CKCoZJvUw3tghoi0gv8r6ucu/Y8Yjy0KalBywLe4YKMoSzpPJ+phn1N1gv6XFeJL
+         aDVFbBkx2jRl/LeoOSFwP/j5SkfCyZG8KoDIQ6kCkUQHXY56u/rM2fn9TzZ9wDo+BIXM
+         H9MYmmqxodgVPDDXZbcNtTL8XVvOK5GXCx5AInywpKbHMNWSyS2DN+yDzfWfQjrQYpmJ
+         SRmuA1hwItluUhCNIvEx8VNwfLp7nNYKMWhVbem3Lmr24n+CI66TtxpiKAXVHUGXB6C6
+         nc3CADTNy0Zs8IrhXjqa3Z07ILlM1rm/nh8ANRgmbLDNSu/wUuSi4x8bLx5DceU+OMcl
+         L1Fg==
+X-Gm-Message-State: AOJu0YzJSuxrE+OBPPEiGLSLjb9U/9FDz01pe+ikXnCJMui2UxWYag+v
+	mWWrcqP+8dbsOY3pZaJ36SvdQyzQdXEdl/zSlHAV/dS4a60wTjwhwmrW7a2FE+dAcXPmcZOUpn3
+	m9BDk
+X-Gm-Gg: ASbGncuqrwl+xQMcXt/QJ8pObb/3rgdcbygxnJO3o1iz/yLTNoWSjYAXExq3XxiUUen
+	jChgcu8GtJNZEFDOMjgf8Uak0oyghNpS5k8GL6lzVEhIlGckOlmw8ljKKVzp/qxn9bpACv4szyC
+	sU6vLn5ZdS9shp60hU+qPgMPCq39iEpIwkZ3It5ihQZven6FDajYL9lF6numC8Bo1APHuuNhtzm
+	swtBGbK5lur6AXv2iwlSW2rmIf8sYOJko2h6q2qOX732CUIN+DaZjtgTULN+xzlJuwqRzrrsi16
+	Ln0kw0j4cxxJD9Xn1G1q/Z+GVmywiZQklTNuRuoO6mBl3KXqugCQTp3OnCpHLc0HHkXc7EAjHR/
+	eSRsFObZwdtevh/PxAMrmU8E4lKWrpXVGpc2Dk8lp//P3KRXvJCFT+vPeQ9zHZ+sko5/5mPZYop
+	y7bOwGND6pj4KY+6nmuFI=
+X-Google-Smtp-Source: AGHT+IGJR74/3s0xtNFUGHt3KJ2Pz/to6GGnTMlMuAG547gPlWTKBMgYWL4oHA4ZlDUhceH75NMzFQ==
+X-Received: by 2002:a05:622a:154:b0:4b5:d78b:fa24 with SMTP id d75a77b69052e-4b5e7e06a17mr204987911cf.28.1757443825766;
+        Tue, 09 Sep 2025 11:50:25 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-81b5ec7d3c8sm161168685a.46.2025.09.09.11.50.23
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-81b5ec7d3c8sm161168685a.46.2025.09.09.11.50.24
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 11:50:23 -0700 (PDT)
+        Tue, 09 Sep 2025 11:50:25 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][scarthgap/rust][PATCH 5/9] rust: handle softfp fpu
-Date: Tue,  9 Sep 2025 14:49:53 -0400
-Message-ID: <cad4a815845168721eafcb648f85f71050c6d70f.1757443674.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][scarthgap/rust][PATCH 7/9] rust-target-config: fix nativesdk-libstd-rs build with baremetal
+Date: Tue,  9 Sep 2025 14:49:55 -0400
+Message-ID: <d26ac3a6100821c859839a864217f058e1687c3b.1757443674.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <cover.1757443674.git.scott.murray@konsulko.com>
 References: <cover.1757443674.git.scott.murray@konsulko.com>
@@ -66,41 +66,59 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Tue, 09 Sep 2025 18:50:30 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2171
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2174
 
-From: Peter Marko <peter.marko@siemens.com>
+From: Ovidiu Panait <ovidiu.panait@windriver.com>
 
-With TARGET_FPU set to "softfp" stdlib-rs fails with:
-error: Error loading target specification: ARM targets must specify their float ABI. Run `rustc --print target-list` for a list of built-in targets
+If TCLIBC='baremetal' is set in local.conf, nativesdk-libstd-rs build fails
+with:
 
-This fpu type is set for example for arm in file
-meta/conf/machine/include/arm/feature-arm-vfp.inc
-when TUNE_FEATURES do not contain "callconvention-hard",
-e.g. when using tune
-DEFAULTTUNE = "cortexa8"
+| error[E0412]: cannot find type `c_char` in the crate root
+|   --> /usr/src/debug/libstd-rs/1.75.0/rustc-1.75.0-src/vendor/libc/src/unix/mod.rs:56:29
+|    |
+| 6  | pub type c_schar = i8;
+|    | ---------------------- similarly named type alias `c_schar` defined here
+| ...
+| 56 |         pub gr_name: *mut ::c_char,
+|    |                             ^^^^^^
 
-Signed-off-by: Peter Marko <peter.marko@siemens.com>
+This happens because rust_gen_target() sets os="none" when TCLIBC is
+'baremetal' - even for nativesdk targets. However, nativesdk packages are
+built against glibc, so the correct 'os' value should be "linux".
+
+Fix this by setting the os field based on {TARGET,HOST,BUILD}_OS variables,
+as it is already done in rust_base_triple(), instead of relying on TCLIBC.
+
+Signed-off-by: Ovidiu Panait <ovidiu.panait@windriver.com>
 Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(adapted from oe-core commit 4d50135cb902037380915966ecc97399d32e9f74)
+(adapted from oe-core commit 3eaf2cd5647585a1e6df03fc20e2753da27bb692)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- classes-recipe/rust-target-config.bbclass | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ classes-recipe/rust-target-config.bbclass | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/classes-recipe/rust-target-config.bbclass b/classes-recipe/rust-target-config.bbclass
-index 9677fbf..76dbf47 100644
+index 76dbf47..bbadd6c 100644
 --- a/classes-recipe/rust-target-config.bbclass
 +++ b/classes-recipe/rust-target-config.bbclass
-@@ -392,7 +392,7 @@ def rust_gen_target(d, thing, wd, arch):
-     if features != "":
-         tspec['features'] = features
-     fpu = d.getVar('TARGET_FPU')
--    if fpu == "soft":
-+    if fpu in ["soft", "softfp"]:
-         tspec['llvm-floatabi'] = "soft"
-     elif fpu == "hard":
-         tspec['llvm-floatabi'] = "hard"
+@@ -332,6 +332,7 @@ def rust_gen_target(d, thing, wd, arch):
+     sys = d.getVar('{}_SYS'.format(thing))
+     prefix = d.getVar('{}_PREFIX'.format(thing))
+     rustsys = d.getVar('RUST_{}_SYS'.format(thing))
++    os = d.getVar('{}_OS'.format(thing))
+ 
+     abi = None
+     cpu = "generic"
+@@ -371,7 +372,7 @@ def rust_gen_target(d, thing, wd, arch):
+     tspec['target-c-int-width'] = d.getVarFlag('TARGET_C_INT_WIDTH', arch_abi)
+     tspec['target-endian'] = d.getVarFlag('TARGET_ENDIAN', arch_abi)
+     tspec['arch'] = arch_to_rust_target_arch(rust_arch)
+-    if "baremetal" in d.getVar('TCLIBC'):
++    if "elf" in os:
+         tspec['os'] = "none"
+     else:
+         tspec['os'] = "linux"
 -- 
 2.50.1
 
