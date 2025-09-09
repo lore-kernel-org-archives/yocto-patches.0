@@ -2,61 +2,61 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B3CCCAC58F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DF18CAC593
 	for <webhook@archiver.kernel.org>; Tue,  9 Sep 2025 18:50:30 +0000 (UTC)
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
- by mx.groups.io with SMTP id smtpd.web10.3372.1757443821547204753
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+ by mx.groups.io with SMTP id smtpd.web10.3379.1757443826057637140
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 09 Sep 2025 11:50:21 -0700
+ Tue, 09 Sep 2025 11:50:26 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=oF6lygY9;
- spf=pass (domain: konsulko.com, ip: 209.85.222.169, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-80e33b9e2d3so552074085a.2
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 09 Sep 2025 11:50:21 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=TtbYG+mX;
+ spf=pass (domain: konsulko.com, ip: 209.85.160.172, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4b5fbd77f40so47849831cf.2
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 09 Sep 2025 11:50:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1757443820; x=1758048620; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1757443825; x=1758048625; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=fxdiAllBwmvJZ4Y+obHurUEDr5hVQYXmofjuNYjcRAo=;
-        b=oF6lygY9uSICBBIz97E8mH8m6cY5YDKNX8lYe330MmcRUNFTHaeL0cN6+/jL3abt+e
-         pbM5uCYzLfVkg8RziCXvliLzMYkoIsrD0V3JQT/BmeEW8A8FSsSwmhSzSEy2c/zEMEpJ
-         RdyAqQB30DQK2DWfz1rP9aaYQrcD+rqFO/OhM=
+        bh=E7/9wZzKSzVEonR8G4NBjMHmSf/+DBQPS7FiltwueDA=;
+        b=TtbYG+mXRBXSpD1/jgs0hT+VB2hc9WdqhiBL+sIzAMKnv9BII6Q3dwV1zd6FHZMdMr
+         AyUmP/SnkBne38KpNonuL3dnYysHasdXEdX/PzCxv6QqDq8jB36G1hxrvbvAB8bet7ji
+         o00wIBPXmvkS+V5cR1VEKfKM17mPHYn8R0CJY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757443820; x=1758048620;
+        d=1e100.net; s=20230601; t=1757443825; x=1758048625;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fxdiAllBwmvJZ4Y+obHurUEDr5hVQYXmofjuNYjcRAo=;
-        b=MwXJfUSZ2Pz1rK9yRBB8zJtBaf0+jpq8CPp+cSdPW8litSn6TSuEMefaevHxZy6L9f
-         z5TiuiYZKk+I4cgu7w2SFnEy1tU+j3UpLBlRR5wLGqpiesWPVQ6vJUhMwEJvLNPxHfjk
-         Qq8R5+u+1wO+oKPzWyqIpY0WFd9MCarbfi8fm3UzQVFfs3e2KfeZgu5YK0uGbLDiADqY
-         nk1zrnkQPaHCWvzW1FWY3XV7rPANCEfM9CkzV4Z6U0z1cPRUyXE4C8huMIFJNHGCInrv
-         TUsH3PaMx/TdUn0ZInkyaG03e0e3Qjp04rYmdEw1Ms9FjgQJS7iloRxHfnFF5xlQ62g1
-         WG3w==
-X-Gm-Message-State: AOJu0YzWbtfxJqBGS7VEM64N74ziBL89HVn6Zw2oE2+dAfo35rZTFBU+
-	ZHAuypZ9AzI3/u2sIQN87IN6+U9S8lLHhv+VsqmwNod2BFKFoWVKYyDIwZ3uRuUrENNpzUza0xy
-	H+uyf
-X-Gm-Gg: ASbGncsjBCam3OS5KvtG2K0UnN3NVzKO5GQZDVKYeZp9mx+kEwrlaQFZwRAbW2wLyB1
-	mIMuPuqDVasOc4nbljXNkbTocHkG8TlQANwy9qo0t54/bqCrYJqPnzGYrV/2V3RuPG+DCgUkaIH
-	1iVXz29vHGlek7zC7XUb+h5R9PSJbbYJv2BLamI1mVgfgueVSHiAuadn7UVIG4OfdDQPNEww2/v
-	I1iT7fdvvA1M+zRElZFpa1XiqlNuL6BGOjuv6RMnd1ozOh9N9dQWq1KAb8qUskZbELnKMMYD8KI
-	MY1lTzah/djovt5qHAwWssUytYjyb3Z2SJdR+h8TIemA3EIyagtvkMC2pbSWRh3S6nqlVBMgJYs
-	7dVu7APZF+O2MzG+b1laftRPBDfV/CdmxWbIyyVJhf5kJ/svJzremfJ3snHRr6bCzGvi7exfvKQ
+        bh=E7/9wZzKSzVEonR8G4NBjMHmSf/+DBQPS7FiltwueDA=;
+        b=ikmo9RgkUpQDXKiitJOMpeeazWZU0ngiZMCs+VlhVjoOF7r+TyphAkADHeN469TsNA
+         eQqPG33jd6O58aIbmlwoCa+yHlpr1mAq3jWtuXILdt8i006nfQQlfNcAGtlWY7mb2IFJ
+         pF6U1PUXmwk6sThOaGBajDzve/fIMjqj+NmLyK+vozkCIIJdKuqu9JF6V4x5Di7SrO/z
+         wWnheD8k8KzNzeP4WqJr67mvNs6/AJb6bBNW+3pkDm4hnoLxiQxwrT8FHmstb7cNO6vT
+         ze3pQjNbFrAKDPiHtkhWK2kDziY41byyW62Tsjiy3mGtUSeoeLcAtVPh+2D5xwxRFtRo
+         J9ow==
+X-Gm-Message-State: AOJu0YxFCDX+30D96F5UCOX/f314J4ayPcduF+g6W42mUgVpjIQ+2IGL
+	4xO47yCmNorqfeQ4UFnUOqrB8Yw0+LNqbTOBEQ/21Jam2KKhM4vZ/LdbtmCXANa7fd0tLUmbWt5
+	dyrmW
+X-Gm-Gg: ASbGnculQZUCmtU+p1me8PuaarUWIvQQhLIfS81qggKru00njHpB5n2hYyOecbHSZyp
+	hWXLXs8EVj8l2kdMmqMffHteZettLDl4Iy9fjEmxV5PCMgj1AixPYm3yMq50rplIj/RNmlabzje
+	W4Qo+WcV6G9QFAlNUF+ZgjNNnmiIrEjk2LM0gwzE1f3CzZUAjgGmcG1zoLYSIr0jsPeC7EVaidf
+	Nt0FysljusJzo7xhCb8aJZwOq+O6ru2LdG0ovCiy936gF8dXfFPyVkcGp6LaYteajTEgtPkhha/
+	hso+oIJJkDmWNkP+VrMJCLSjkfFCD79KSLW2B9ZGUGqFDcQHEWhkvHEnVGdDZf69+OuOVsiY1dT
+	3TyW+q+BfZoFBqhRW8KZar8E9TKSR8xmKjuFU7aZ5lpD4byCIW5/jECkDWYyScjfyWqnPQ6gy7g
 	==
-X-Google-Smtp-Source: AGHT+IF4i6szIcTD6cIFy5RMKR2iGYeClWAxa1lus6yVd1XZYdZIHgnmV2md9dbcJi88+yPzKPCcdw==
-X-Received: by 2002:a05:620a:290a:b0:80e:1081:90e3 with SMTP id af79cd13be357-813bdf67d02mr1145577385a.11.1757443820256;
-        Tue, 09 Sep 2025 11:50:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEmZ34xwEcxYRD9DfLnTVor6oHjiVAfi8ihw8ACz+v28cHiqoudkbRKdqSVLVlNsj04Mvzq2A==
+X-Received: by 2002:ac8:594a:0:b0:4ab:7f61:4339 with SMTP id d75a77b69052e-4b5f83b411bmr141452711cf.31.1757443824814;
+        Tue, 09 Sep 2025 11:50:24 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-81b5ec7d3c8sm161168685a.46.2025.09.09.11.50.19
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-81b5ec7d3c8sm161168685a.46.2025.09.09.11.50.24
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 11:50:19 -0700 (PDT)
+        Tue, 09 Sep 2025 11:50:24 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][scarthgap/rust][PATCH 1/9] rust-target-config: Add has-thread-local option
-Date: Tue,  9 Sep 2025 14:49:49 -0400
-Message-ID: <a6ec757fc98f9b8a29b55d7321e4a184ef091e50.1757443674.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][scarthgap/rust][PATCH 6/9] ptest-cargo: move run-ptest rc variable initialisation
+Date: Tue,  9 Sep 2025 14:49:54 -0400
+Message-ID: <1e842b980ba71ff3f767211c35113184acc66b85.1757443674.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <cover.1757443674.git.scott.murray@konsulko.com>
 References: <cover.1757443674.git.scott.murray@konsulko.com>
@@ -66,37 +66,47 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Tue, 09 Sep 2025 18:50:30 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2168
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2172
 
-From: Per x Johansson <perxjoh@axis.com>
+From: Yoann Congal <yoann.congal@smile.fr>
 
-The "has-elf-tls" option was removed by the commit
-8e1614a906086fb46c5dd7b7f2dffab91194165c. However is should have been
-renamed to "has-thread-local", since it was renamed and not removed in
-rust by this commit.
-https://github.com/rust-lang/rust/commit/391332c5d9d5a5e97a0d36e011a87ad43045cfd3
+ptest-cargo run-ptest can be generated in two fashions: generated from
+scratch or appended to an exiting run-ptest file. The rc variable used
+to track tests failure was only initialized in "generated from scratch"
+case. Which lead to errors in the "appended" case.
 
-Change-Id: Ia1fdf7698ebeef62a88052713645d5b499164353
-Signed-off-by: Per x Johansson <perxjoh@axis.com>
+Move the rc variable initialisation to the common code of both case to
+fix this problem.
+
+Only initialize rc if it was not already affected in the recipe provided
+run-ptest.
+
+Signed-off-by: Yoann Congal <yoann.congal@smile.fr>
+Cc: Gyorgy Sarvari <skandigraun@gmail.com>
 Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-(adapted from oe-core commit 18a87dd1724e0934a669aefae36d20374c06c493)
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+(adapted from oe-core commit 177c47b7decd8e2d1e24738d10b0f7db2777a772)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- classes-recipe/rust-target-config.bbclass | 1 +
- 1 file changed, 1 insertion(+)
+ classes-recipe/ptest-cargo.bbclass | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/classes-recipe/rust-target-config.bbclass b/classes-recipe/rust-target-config.bbclass
-index d4149b3..9677fbf 100644
---- a/classes-recipe/rust-target-config.bbclass
-+++ b/classes-recipe/rust-target-config.bbclass
-@@ -401,6 +401,7 @@ def rust_gen_target(d, thing, wd, arch):
-     tspec['linker-is-gnu'] = True
-     tspec['linker-flavor'] = "gcc"
-     tspec['has-rpath'] = True
-+    tspec['has-thread-local'] = True
-     tspec['position-independent-executables'] = True
-     tspec['panic-strategy'] = d.getVar("RUST_PANIC_STRATEGY")
- 
+diff --git a/classes-recipe/ptest-cargo.bbclass b/classes-recipe/ptest-cargo.bbclass
+index ece25ff..8351644 100644
+--- a/classes-recipe/ptest-cargo.bbclass
++++ b/classes-recipe/ptest-cargo.bbclass
+@@ -103,10 +103,10 @@ python do_install_ptest_cargo() {
+     with open(ptest_script, "a") as f:
+         if not script_exists:
+             f.write("#!/bin/sh\n")
+-            f.write("rc=0\n")                
+         else:
+             f.write(f"\necho \"\"\n")
+             f.write(f"echo \"## starting to run rust tests ##\"\n")               
++        f.write("if [ -z \"$rc\" ]; then rc=0; fi\n")
+         for test_path in test_paths:
+             script = textwrap.dedent(f"""\
+                 if ! {test_path} {rust_test_args}
 -- 
 2.50.1
 
