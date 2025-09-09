@@ -2,61 +2,61 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F292ACAC583
-	for <webhook@archiver.kernel.org>; Tue,  9 Sep 2025 18:44:29 +0000 (UTC)
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
- by mx.groups.io with SMTP id smtpd.web11.2992.1757443464972055238
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DAF3CAC58E
+	for <webhook@archiver.kernel.org>; Tue,  9 Sep 2025 18:44:30 +0000 (UTC)
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+ by mx.groups.io with SMTP id smtpd.web11.2985.1757443459855763465
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 09 Sep 2025 11:44:25 -0700
+ Tue, 09 Sep 2025 11:44:20 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=gd8iC2mg;
- spf=pass (domain: konsulko.com, ip: 209.85.222.173, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-80c45a0b023so566532985a.0
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 09 Sep 2025 11:44:24 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=RMLhWZTz;
+ spf=pass (domain: konsulko.com, ip: 209.85.222.180, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-817f23fea68so131907185a.3
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 09 Sep 2025 11:44:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1757443464; x=1758048264; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1757443459; x=1758048259; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hkW6Ub/+E2ocEDYma8s5N5zcHCCbs/+7PyKwaj1QMNk=;
-        b=gd8iC2mgrGPIH8BuXrkSKnWWHM8GBgm8PPNH5W0YcZmarMT+UZFwH2Dp2Y+m0aOIYE
-         dTe6TSub3GFoR1nVMnj22VQMH6shk3oDrpWfARpd5z9fniTeC3LDSfYB0tiBa2UO6L9F
-         Cv90coD1sW8YoIaNUJhNPsQVJYUaXRd62iLHI=
+        bh=FXGbuU64QRJ9sA5HUFf69APWYtdZMI+qQWwR0ZPk/CE=;
+        b=RMLhWZTzcsjeyuV5+aSiCvR8PaDuHdHS6e4GkZpG8TyYqKYuYVGqPScQEv/C+uUk4s
+         lkM6PMZpGnIoR+MZPbDrpcCup9bZZM9uW1tI41imzSg03SvM9S1tsSfM+7NHAxqP/Yos
+         //Dj4oujXI6na4kSF+aGgBqltfg/bVZaCXSGE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757443464; x=1758048264;
+        d=1e100.net; s=20230601; t=1757443459; x=1758048259;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hkW6Ub/+E2ocEDYma8s5N5zcHCCbs/+7PyKwaj1QMNk=;
-        b=jq1s394q6b1xDI1lRUGank2LXpV0s21adH++idpvogHp/y+SDqHB0CpzbSam1o/css
-         buM1XNVsKNU2+9VFWxXG2cUvfTc23pwcuQKsm4Cv2zru67s5x+vM5y2HEf8OIwWbA+YL
-         cf/V5if86TuBnUy0j2xZDCYiyQSFMXo6n3lDhgLd/wykkwQyK0iufqF7q7yntyo5XmaI
-         nOTSwVbMjhDTvc5Xw3Y4ZHrTvCNCyp/gyyapeEFPiItvFPS3DrMqAGbG3RzmyoqkhAoF
-         56QiuHft5sY+Ds+lWf4Ox0QDQZAncW1oR7xCnDEO3v62XinTQr6KCC0yCtmYAMDKr0Iv
-         JMzw==
-X-Gm-Message-State: AOJu0YyTXgMC0rHaoPtuYJ7Yn2xiKwC3OcQlSLdC6XCk0b/TeixiLN3n
-	3wfJagSmEs9uJyTebzr+kWzi3UtQENXo8tdGhr3NeY8t8h+HmYPzLdmcQJvJFWPxlTZCFH3E4Iv
-	UMXJQ
-X-Gm-Gg: ASbGncu1Yzs5i/QOIS0aDNbdMyn+DN73p2EWhzb6/x2T1Lxo/0+mZ1yAFbyyD8eaSEi
-	GdHNoBSFFmANrinfcV8dX2Fzrsk8iA/sE6gQTyT3sM5Fet9sXSTN5qgWXmsM9R4CzMQNgyRIB1x
-	lRMt/CmcHmQUiX4fl9s0RrwpOLYKqEhM8mFkNFkyunX1hMQaiyCbPOhqnBtjhRlkvA/MWnxoTdP
-	U6RVUY4oHFwulO+rk+ccfgCeamjITdnoFLtjDibs62fz10w8FLBBoBq9cUd9OQbdym+qXWLyIH7
-	/8ibYqtjaIYRuteq7kQtAQ6n/+nQufDcAhlya2hdjHn9nxUoL/oukLIlatKzMsu1nIvk3ev+6SV
-	MB1aCb6+x0AzfQCauYD/03heRt/ccCEYYnzUQHmfZV/fQb3vOXr1N6D2rO9MzpKeazbTXgO+eAg
-	==
-X-Google-Smtp-Source: AGHT+IG5CC1AZ9veFttG0pSvKIEL3X9k9qYp8f6ng0y+2KTVOE0NN8e8QdoJIPQ8+meVWo+GdZ/9lQ==
-X-Received: by 2002:a05:620a:1aaa:b0:7e6:9c12:f0ce with SMTP id af79cd13be357-813c283b455mr1146490785a.66.1757443461818;
-        Tue, 09 Sep 2025 11:44:21 -0700 (PDT)
+        bh=FXGbuU64QRJ9sA5HUFf69APWYtdZMI+qQWwR0ZPk/CE=;
+        b=Zqof39Zz0bEzr+LdbaV3V4tRnxgB9v1J4PC37ie3Tl8gaU746rTLcXsYS2C7uarTco
+         ArtarSSKvY+onLSmSsIQ2HuPDTOM4d+CrhsJUF4VnJytWj1v933xxD0lVO7myP2Q60uL
+         FegrwfQyiSCGxehbMdVYAHDIS+GOUNuPHK3zutFcBV7B5mt3hWbqXpltlB8EsUJneUfu
+         1+UTAHBw5iQrkp4TqzWFzALOOfM2GNidJ8ZUQEgP/rQAUNN+tXFFm3xu8ONTLJuIy0/f
+         hxblgyCkLki0WG7rtT0vl6G6butMK/YH7I6Yo8qHsl9AYd9++KkwGJS9tLifZr5c6u7Y
+         whdw==
+X-Gm-Message-State: AOJu0YxuHMYaczemhRzLHVQsf5mc++mRM7qIutQ2c/M5V9rier4EyUr9
+	SExzJ87iEG+qEfnWaREJj8DXl40caWJs6+gRleAeaiE8MMu2Os8y2K4hgYNzJseoXK5nt2a8+ho
+	3yADQ
+X-Gm-Gg: ASbGncuNWGpt/6d3qrdulxVZcQqtWr/LMWpJCA85t97jxaYAfv25yWwULS7HjulR0dq
+	JIdJYLggQ1IRktYzaaG2VprqNm/LVxj3KoUWJKNTSOvey1O9je2UWfk9aSOxsJy8gzStr7XEdmi
+	1jHkPR+3bl/DC9YL+9hBfYl+ki8fu/kUdMBPcGmZPrD/HwdmcaN1hwfqjUjCCZAKJpEX09cihY6
+	ACPPo/UUD/GLk3pbWcIhvzFS+zyWvDgj+BGsE2vNWW0JOG3KcKz0Q8qSIZ45IwK4V0/zRn9LzFe
+	T5qPpYbKZ05va/jWvGuDfU95Rl2e66RMujxOQmZOUXlrJnhHpC+rflVUX2VmGOPCzypGHLeAJ3k
+	Jhv0db8wOXj1HYOAH7G3RUvA0cK4QwJFqKpif8ZX5J0XPc5SqdCq4rw7AugIp0ONK/zNajNVs1M
+	6wc3aT7DOTRVdYtHhIPD0=
+X-Google-Smtp-Source: AGHT+IGw72SZNTM03isS+2yf8iCeIj+yCRL4IXe5RVPLVWkAokWz2pqju7omDatdP3g4SBf8n6LOiA==
+X-Received: by 2002:a05:620a:17a3:b0:7e8:e77:5f9d with SMTP id af79cd13be357-813c2b23d08mr1262768985a.48.1757443458598;
+        Tue, 09 Sep 2025 11:44:18 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-81b5f715c0bsm160164985a.61.2025.09.09.11.44.21
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-81b5f715c0bsm160164985a.61.2025.09.09.11.44.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 11:44:21 -0700 (PDT)
+        Tue, 09 Sep 2025 11:44:18 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Soumya Sambu <Soumya.Sambu@windriver.com>
-Subject: [meta-lts-mixins][kirkstone/rust][PATCH 8/9]  rust-target-config.bbclass: move target generation before do_configure
-Date: Tue,  9 Sep 2025 14:44:01 -0400
-Message-ID: <cf323970775e2bb5f1ebcafab3915b810b6956a7.1757441699.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][kirkstone/rust][PATCH 5/9] ptest-cargo: move run-ptest rc variable initialisation
+Date: Tue,  9 Sep 2025 14:43:58 -0400
+Message-ID: <48ee231cf1e7659212dc21b4980320a7b6241471.1757441699.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <cover.1757441699.git.scott.murray@konsulko.com>
 References: <cover.1757441699.git.scott.murray@konsulko.com>
@@ -65,52 +65,48 @@ Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 09 Sep 2025 18:44:29 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2166
+ <yocto-patches@lists.yoctoproject.org>; Tue, 09 Sep 2025 18:44:30 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2162
 
-From: Gyorgy Sarvari <skandigraun@gmail.com>
+From: Yoann Congal <yoann.congal@smile.fr>
 
-The rust_get_targets task from the rust-target-config class generates some
-Rust compiler configurations for different the target and host machine, which
-is used by Rust during compiling a recipe. These configurations supposed to
-be available by the time the Rust compiler is used for the first time.
+ptest-cargo run-ptest can be generated in two fashions: generated from
+scratch or appended to an exiting run-ptest file. The rc variable used
+to track tests failure was only initialized in "generated from scratch"
+case. Which lead to errors in the "appended" case.
 
-By default, this task is executed "before do_compile" - it assumes that
-this is the first task that would use this configuration.
+Move the rc variable initialisation to the common code of both case to
+fix this problem.
 
-However this is not always the case, especially with projects which are not
-pure Cargo projects, rather Cargo/Rust is called by a different build system.
-As an example librsvg uses meson, and during the do_configure step Meson probes
-the Rust compiler, trying to gather some library info from Rust. In case the
-rust_gen_targets task was executed before the do_configure task, then
-everything works. However this is not always the case - sometimes the job is
-executed between the configure and compile steps, in which case the configuration
-fails.
+Only initialize rc if it was not already affected in the recipe provided
+run-ptest.
 
-To avoid such problems, generate these targets before the do_configure step.
-
-Signed-off-by: Gyorgy Sarvari <skandigraun@gmail.com>
+Signed-off-by: Yoann Congal <yoann.congal@smile.fr>
+Cc: Gyorgy Sarvari <skandigraun@gmail.com>
 Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(adapted from oe-core commit 1d3c02553122982daedfe32c6ce09fac9e091952)
+(adapted from oe-core commit 177c47b7decd8e2d1e24738d10b0f7db2777a772)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- classes/rust-target-config.bbclass | 2 +-
+ classes/ptest-cargo.bbclass | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/classes/rust-target-config.bbclass b/classes/rust-target-config.bbclass
-index b027dd5..d45a932 100644
---- a/classes/rust-target-config.bbclass
-+++ b/classes/rust-target-config.bbclass
-@@ -426,7 +426,7 @@ python do_rust_gen_targets () {
-     rust_gen_target(d, 'TARGET', wd, d.getVar('TARGET_ARCH'))
- }
- 
--addtask rust_gen_targets after do_patch before do_compile
-+addtask rust_gen_targets after do_patch before do_configure
- do_rust_gen_targets[dirs] += "${RUST_TARGETS_DIR}"
- 
- # For building target C dependecies use only compiler parameters defined in OE
+diff --git a/classes/ptest-cargo.bbclass b/classes/ptest-cargo.bbclass
+index ece25ff..8351644 100644
+--- a/classes/ptest-cargo.bbclass
++++ b/classes/ptest-cargo.bbclass
+@@ -103,10 +103,10 @@ python do_install_ptest_cargo() {
+     with open(ptest_script, "a") as f:
+         if not script_exists:
+             f.write("#!/bin/sh\n")
+-            f.write("rc=0\n")                
+         else:
+             f.write(f"\necho \"\"\n")
+             f.write(f"echo \"## starting to run rust tests ##\"\n")               
++        f.write("if [ -z \"$rc\" ]; then rc=0; fi\n")
+         for test_path in test_paths:
+             script = textwrap.dedent(f"""\
+                 if ! {test_path} {rust_test_args}
 -- 
 2.50.1
 
