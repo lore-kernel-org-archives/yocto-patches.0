@@ -2,52 +2,52 @@ Return-Path: <antonin.godard@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30DD0CAC597
-	for <webhook@archiver.kernel.org>; Mon, 15 Sep 2025 13:51:52 +0000 (UTC)
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
- by mx.groups.io with SMTP id smtpd.web10.33987.1757944309667872090
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16E4DCAC59C
+	for <webhook@archiver.kernel.org>; Mon, 15 Sep 2025 13:53:02 +0000 (UTC)
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+ by mx.groups.io with SMTP id smtpd.web11.34259.1757944377472151591
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 15 Sep 2025 06:51:50 -0700
+ Mon, 15 Sep 2025 06:52:57 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=dkim header.b=f110EDXh;
- spf=pass (domain: bootlin.com, ip: 185.171.202.116, mailfrom: antonin.godard@bootlin.com)
+ dkim=pass header.i=@bootlin.com header.s=dkim header.b=H5Pffm5S;
+ spf=pass (domain: bootlin.com, ip: 185.246.84.56, mailfrom: antonin.godard@bootlin.com)
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 02533C8F1FA
-	for <yocto-patches@lists.yoctoproject.org>; Mon, 15 Sep 2025 13:51:31 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id CD9561A0DC1
+	for <yocto-patches@lists.yoctoproject.org>; Mon, 15 Sep 2025 13:52:55 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 4DABE6063F
-	for <yocto-patches@lists.yoctoproject.org>; Mon, 15 Sep 2025 13:51:47 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A7FD4102F2AC6;
-	Mon, 15 Sep 2025 15:51:45 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id A447D6063F
+	for <yocto-patches@lists.yoctoproject.org>; Mon, 15 Sep 2025 13:52:55 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 18CF9102F2AC8;
+	Mon, 15 Sep 2025 15:52:54 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757944307; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1757944375; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=tgSbBmYjbJGv6IN59KjdaDwlaGTSWhdpw+HrV4bToTg=;
-	b=f110EDXheyAr9hWfojFpM7RdHWDwjEaarGTKmW5vot2RnRFBKDGHziJVXGk8DXfIGcolIX
-	5udlYmVmzMRes5S0GNQUiotHhJew0fOqJBjD70HqYuVkcpXyLJFT02dpvqjl1OIEwVohDx
-	qKKCv2nS+nMOBPi8fgaiP6ebrba7mno3MyNNAmeVuAdA2vzp5DCAuRrazp4mqsEIV6mlUQ
-	CL0NlmpKDztSa5PGZ9UzBrLtQ7nkHrpHrm4lqeesx+DWzt4F8Yh7F7Bg42JM6y0mnzzwt+
-	Q48kVxROVWf1zebn659PmnwlAcMbkXaYqJdnAZaLPaClumVdImUOI5+Gqeb5KQ==
+	bh=Zm9bMpnS/k5cI2I6ab20Gjh+ugGK7SQkt0NbXjvdwmU=;
+	b=H5Pffm5SGqjq7elm+fCTJZC+xmabWiwXODIvPf8aArlmXt5UoPPr0MYdaWoBZUDYp8gJrb
+	XxCF75oO640jd+EiOxlFYp4as5tqwZqsSBdRwA8qBzlTFdr0ZLwJtN++xYaiJk9C/o4ml2
+	WXfGOUKiesKPDVe7I253wCdnqWo1OCJV9OcXntEOdrw6wqiFqTJeIoXZqC6XykeqsO8eMw
+	PYbQ1eMcYK3hnFL1rhVARmB5A2+THz9xmYFPYE2DFHO7YA3ojeTB0ImwQ2yLmA72VRoi9N
+	a74zTfJI52Zj2xZuXGzzV+iY2FfWjQh0Z42ULw4tJoU9GjhZ8LAq9pygiaWh2A==
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Mon, 15 Sep 2025 15:51:44 +0200
-Message-Id: <DCTF8WTBNZ6G.19EHR49OA99TA@bootlin.com>
+Date: Mon, 15 Sep 2025 15:52:54 +0200
+Message-Id: <DCTF9SSNYURU.37CQ1DVIGX6K7@bootlin.com>
 Subject: Re: [yocto-patches] [yocto-autobuilder-helper][PATCH 2/3]
  scripts/run-docs-build: pass active releases to bitbake
 Cc: "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>
 From: "Antonin Godard" <antonin.godard@bootlin.com>
 To: <yocto-patches@lists.yoctoproject.org>
-References: <20250915-pass-bitbake-active-releases-v1-0-a5530a97b9ef@bootlin.com> <20250915-pass-bitbake-active-releases-v1-2-a5530a97b9ef@bootlin.com> <8a7ec4a7-95cc-4d43-be75-9f88c9ead7e8@cherry.de>
-In-Reply-To: <8a7ec4a7-95cc-4d43-be75-9f88c9ead7e8@cherry.de>
+References: <20250915-pass-bitbake-active-releases-v1-0-a5530a97b9ef@bootlin.com> <20250915-pass-bitbake-active-releases-v1-2-a5530a97b9ef@bootlin.com> <4d2ad38d-230c-4719-b517-db79bdc6725d@cherry.de>
+In-Reply-To: <4d2ad38d-230c-4719-b517-db79bdc6725d@cherry.de>
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 15 Sep 2025 13:51:52 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2196
+ <yocto-patches@lists.yoctoproject.org>; Mon, 15 Sep 2025 13:53:02 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2197
 
-On Mon Sep 15, 2025 at 3:21 PM CEST, Quentin Schulz via lists.yoctoproject.=
+On Mon Sep 15, 2025 at 3:31 PM CEST, Quentin Schulz via lists.yoctoproject.=
 org wrote:
 > Hi Antonin,
 >
@@ -96,30 +96,30 @@ count=3D1 "[0-9]*\.[0-9]*")
 ASES
 >> +latest_branch=3D"$(echo "$BITBAKE_ACTIVE_RELEASES" | cut -d',' -f1 | so=
 rt -V | tail -n 1)"
+>>  =20
+>>   for branch in 1.46 $(git branch --remote --contains "$first_sphinx_com=
+mit" --format '%(refname:lstrip=3D3)'); do
+>>       if [ "$branch" =3D "HEAD" ]; then
+>> @@ -132,7 +138,7 @@ for branch in 1.46 $(git branch --remote --contains =
+"$first_sphinx_commit" --for
+>>       git checkout $branch
+>>       git reset --hard
+>>       git clean -ffdx
+>> -    git checkout origin/master releases.rst
+>> +    git checkout origin/master releases.rst set_versions.py sphinx-stat=
+ic/switchers.js.in Makefile
 >
-> I see... Bitbake development differs from YP's. BitBake already has a=20
-> branch named after the next release, while YP only branches off soon=20
-> before merging?
-
-Yes exactly. With the current form, we'd get 2.14 as the default landing pa=
-ge.
-
-> Another option could be to simply list the tags, and the take the=20
-> numerically highest one and extract the first two numbers.
->
-> git tag --contains "$first_sphinx_commit" --sort=3D'-version:refname'=20
-> '[0-9]*.[0-9]*' | grep --max-count=3D1 -o "^[0-9]\+\.[0-9]\+"
->
-> will return the branch, provided it's also one number dot one number for=
+> I don't think we should be checking out Makefile from master, we would=20
+> have to keep in mind that the Makefile needs to be backwards compatible=
 =20
-> the branch from which we have a tag named one number dot one number dot=
-=20
-> one number (which may be 0).
+> forever. This is a big burden to carry IMO.
 >
-> This avoids to rely on a script from outside of the bitbake repo or an=20
-> environment variable.
+> If we really need something from the current Makefile, we can always=20
+> patch the bitbake docs the same way we patch the yocto-docs on the fly.
 
-Good idea, I'll see how that works out.
+Indeed, I don't think the Makefile was necessary to backport anyway, I'll r=
+emove
+it.
 
 Thanks,
 Antonin
