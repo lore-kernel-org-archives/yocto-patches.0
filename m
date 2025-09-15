@@ -2,90 +2,128 @@ Return-Path: <antonin.godard@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36222CAC597
-	for <webhook@archiver.kernel.org>; Mon, 15 Sep 2025 14:02:12 +0000 (UTC)
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
- by mx.groups.io with SMTP id smtpd.web10.34305.1757944930548002260
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37E66CAC592
+	for <webhook@archiver.kernel.org>; Mon, 15 Sep 2025 14:05:12 +0000 (UTC)
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+ by mx.groups.io with SMTP id smtpd.web10.34374.1757945108126127527
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 15 Sep 2025 07:02:10 -0700
+ Mon, 15 Sep 2025 07:05:09 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=dkim header.b=07ItHkzF;
- spf=pass (domain: bootlin.com, ip: 185.246.85.4, mailfrom: antonin.godard@bootlin.com)
+ dkim=pass header.i=@bootlin.com header.s=dkim header.b=PQUHEhMZ;
+ spf=pass (domain: bootlin.com, ip: 185.171.202.116, mailfrom: antonin.godard@bootlin.com)
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 0DA1B4E40BFD
-	for <yocto-patches@lists.yoctoproject.org>; Mon, 15 Sep 2025 14:02:09 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id DEE44C8F1F9
+	for <yocto-patches@lists.yoctoproject.org>; Mon, 15 Sep 2025 14:04:49 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id C88F66063F
-	for <yocto-patches@lists.yoctoproject.org>; Mon, 15 Sep 2025 14:02:08 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5C9E5102F2AC6;
-	Mon, 15 Sep 2025 16:02:07 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 365E16063F
+	for <yocto-patches@lists.yoctoproject.org>; Mon, 15 Sep 2025 14:05:06 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9466B102F2AC6;
+	Mon, 15 Sep 2025 16:05:05 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757944928; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1757945105; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=uZ3qNJyFXWjEOhWsmbrAPe63Y7Zr842pyveiKYIWGVY=;
-	b=07ItHkzFDJxF8hYQ+CVG39VE48rak/o1yQlIRjbBdm0R+91cSf3o5YaAYd76H9qlCLQ2Ee
-	LzHmIvmLC4obRAjrepQ88UTTAGAcX2nJZgBSc9JBdD6g3Se0Iv48RcucXGMM2UchxK4vP2
-	ox1oK56S89WgcF70IZHX6tI4csasciEd5WRzDzEOM/wGq/AJnNJv9Y2uKQOYCWJbX/OAr8
-	Xhm/bUjpqPPB4Js7IPAj/C3vgOJNAMe0tt7QQp4m/Giqx1rd9b0kJohYdNZocyiK+r5bxS
-	5zbQD5/YJboZujqaDSS3UqBKZf+xTnkZWJzL0RtL6bsIgT31KSbxVNlA7bzgQw==
+	bh=7rRD0XLoWFtvrni0IqwbPwNzMJgJ/Bb12/3Jn1UZ4Z0=;
+	b=PQUHEhMZu8XSOyXcwDwAtVnQeBb4au5fF08CsDXjDL5KNr2lB/JdcJrm4g2JxRniBQy10l
+	RUT7kOMPK3vrQeVVcCdir8T3VFnZOi1RfLEPNFE58TtczFx2S2uSwpo/eVsN0BNLnYlt+4
+	U3RhTMVsGUAtFcR+ZHcDeu780P8F/8oP3VyzLt0bg4KEVi/HYppWCZ26tBaMtPaE3PyKDA
+	HLbmo6+k26Zdx061HfAnI1lGF89faEKBGqyVqXgy5UwsJcpPifmPeHuJOt/DJWURGLNIeS
+	umnaRgFR2QWCNF4fJJW9gfoAbdMYcgH68rjWe5hpeK0wvqYSdRwUVLJMVbEFig==
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Mon, 15 Sep 2025 16:02:07 +0200
-Message-Id: <DCTFGUT538S2.WRWNTIUMFVAH@bootlin.com>
-Subject: Re: [yocto-patches] [yocto-autobuilder-helper][PATCH 1/3]
- scripts/run-docs-build: cleanups and improvements
+Date: Mon, 15 Sep 2025 16:05:04 +0200
+Message-Id: <DCTFJ4BFB3AB.O63TQ09DHXVW@bootlin.com>
+Subject: Re: [yocto-patches] [yocto-autobuilder-helper][PATCH 3/3]
+ scripts/run-docs-build: pass version to bitbake docs build
 Cc: "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>
 From: "Antonin Godard" <antonin.godard@bootlin.com>
 To: <yocto-patches@lists.yoctoproject.org>
-References: <20250915-pass-bitbake-active-releases-v1-0-a5530a97b9ef@bootlin.com> <20250915-pass-bitbake-active-releases-v1-1-a5530a97b9ef@bootlin.com> <4519bb54-eb26-44eb-a743-eed5b46e2bc9@cherry.de>
-In-Reply-To: <4519bb54-eb26-44eb-a743-eed5b46e2bc9@cherry.de>
+References: <20250915-pass-bitbake-active-releases-v1-0-a5530a97b9ef@bootlin.com> <20250915-pass-bitbake-active-releases-v1-3-a5530a97b9ef@bootlin.com> <880f00bc-7c10-4721-9091-22d9f046d304@cherry.de>
+In-Reply-To: <880f00bc-7c10-4721-9091-22d9f046d304@cherry.de>
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 15 Sep 2025 14:02:12 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2198
+ <yocto-patches@lists.yoctoproject.org>; Mon, 15 Sep 2025 14:05:12 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2199
 
-On Mon Sep 15, 2025 at 2:53 PM CEST, Quentin Schulz via lists.yoctoproject.=
+On Mon Sep 15, 2025 at 3:30 PM CEST, Quentin Schulz via lists.yoctoproject.=
 org wrote:
 > Hi Antonin,
 >
 > On 9/15/25 2:19 PM, Antonin Godard via lists.yoctoproject.org wrote:
->> - Make it possible to override the shared directory to a local directory
->>    from environment
->> - Make variables that can be overridden from environment variables
->>    uppercase, for clarity
->
-> If you want to keep exisiting users of this script working, you can keep=
-=20
-> reading the lowercase variant and assign it to the uppercase variant as=
-=20
-> default if it isn't already set for example.
->
-> buildtools_url=3D${buildtools_url:-https://downloads.yoctoproject.org/rel=
-eases/yocto/yocto-4.1.2/buildtools/x86_64-buildtools-docs-nativesdk-standal=
-one-5.1-modified.sh}
-> BUILDTOOLS_URL=3D${BUILDTOOLS_URL:-$buildtools_url}
-
-I didn't have this in mind, I can surely do that.
-
->> - Convert mkdir to mkdir -p when creating output directories
->
-> Why? mkdir -p silences some errors. I assume we want to make sure the=20
-> directory doesn't exist already so we don't reuse some stale data.
-
-IIRC, I had issues building locally without this. I'll try again without th=
-is flag.
-
->> - Minor indent fixes and overall cleanups
+>> Bitbake's conf does is not aware of the current version it is building.
+>> Pass the information, which is read from bitbake/doc/conf.py. We have to
+>> checkout conf.py from master in additions to this, so this change
+>> applied on all branches.
 >>=20
+>> Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
+>> ---
+>>   scripts/run-docs-build | 8 ++++++--
+>>   1 file changed, 6 insertions(+), 2 deletions(-)
+>>=20
+>> diff --git a/scripts/run-docs-build b/scripts/run-docs-build
+>> index 549032f..654b401 100755
+>> --- a/scripts/run-docs-build
+>> +++ b/scripts/run-docs-build
+>> @@ -138,7 +138,11 @@ for branch in 1.46 $(git branch --remote --contains=
+ "$first_sphinx_commit" --for
+>>       git checkout $branch
+>>       git reset --hard
+>>       git clean -ffdx
+>> -    git checkout origin/master releases.rst set_versions.py sphinx-stat=
+ic/switchers.js.in Makefile
+>> +    git checkout origin/master releases.rst set_versions.py sphinx-stat=
+ic/switchers.js.in Makefile conf.py
 >
-> One commit per item in this list please, so it's easier to review :)
+> I don't think that's a good idea.
+>
+> This forces us to never update any plugin conf.py uses otherwise we may=
+=20
+> not be able to build earlier versions of the docs.
+>
+> I would suggest to follow what we've done for yocto-docs which is to=20
+> have conf.py read an autogenerated poky.yaml (we can call it=20
+> bitbake.yaml if we want) which sets the version of the docs to build.
 
-I'll try splitting it up.
+I don't really understand the advantage of having a yaml file for reading a
+version value, instead of reading it from the environment. I asked the ques=
+tion
+in another thread though so you answer here or in the other thread, up to y=
+ou :)
 
-Thanks,
+> How about current releases which are forced to "dev"? We patch them the=
+=20
+> same way we did for the yocto-docs, see patches in=20
+> scripts/docs-build-patches.
+
+I see. I will adapt the former releases with a patch to use the current ver=
+sion
+information.
+
+>> +
+>> +    # Pass this information to Bitbake so the docs gets built on the pr=
+oper
+>> +    # version. See bitbake/doc/conf.py.
+>> +    export BITBAKE_CURRENT_VERSION=3D"$branch"
+>>  =20
+>>       (
+>>           . $builddir/buildtools/environment-setup*
+>> @@ -213,7 +217,7 @@ for branch in "$ypdocsbranch" dunfell $(git branch -=
+-remote --contains "$first_s
+>>           git am "${scriptdir}/docs-build-patches/${branch}/"000*
+>>       fi
+>>  =20
+>> -    git checkout origin/master sphinx-static/switchers.js.in set_versio=
+ns.py
+>> +    git checkout tmp sphinx-static/switchers.js.in set_versions.py Make=
+file
+>
+> tmp?
+
+This slipped in from testing! Sorry.
+
+Thanks!
 Antonin
 
 --=20
