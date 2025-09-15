@@ -2,209 +2,214 @@ Return-Path: <quentin.schulz@cherry.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9252CAC592
-	for <webhook@archiver.kernel.org>; Mon, 15 Sep 2025 13:30:21 +0000 (UTC)
-Received: from OSPPR02CU001.outbound.protection.outlook.com (OSPPR02CU001.outbound.protection.outlook.com [40.107.159.69])
- by mx.groups.io with SMTP id smtpd.web11.33577.1757943012284551391
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CD2DCAC597
+	for <webhook@archiver.kernel.org>; Mon, 15 Sep 2025 13:32:02 +0000 (UTC)
+Received: from AS8PR04CU009.outbound.protection.outlook.com (AS8PR04CU009.outbound.protection.outlook.com [52.101.70.61])
+ by mx.groups.io with SMTP id smtpd.web10.33464.1757943115866307050
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 15 Sep 2025 06:30:12 -0700
+ Mon, 15 Sep 2025 06:31:56 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@cherry.de header.s=selector1 header.b=M73/mqJH;
- spf=pass (domain: cherry.de, ip: 40.107.159.69, mailfrom: quentin.schulz@cherry.de)
+ dkim=pass header.i=@cherry.de header.s=selector1 header.b=e/snemdA;
+ spf=pass (domain: cherry.de, ip: 52.101.70.61, mailfrom: quentin.schulz@cherry.de)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OmXZ5vxgIbhNZlx24qv9sFr+gwd2EokJLoctbn4/sdgsIDOwOYo/7SNUKJ5XteQ9eCNVuOVaiAXyUze22wPM2q8gQ5wtpm9n3uBcjPcVv78DYuebhif73k79JIr7K4zlpflAmoqopAGBmh7sWQzm7hzbLS16TAWztMkzWfxSA70m/IhIb0NYLVT9pJXE3wIV0IDxYu+WvycgOU5PFIBIPKK1fZ8VW7Mc6aewJ+f7qoKD4iWqGzV1+v6fSs9IVX4J3CK6ZYZplIf6YYTQq27d635ffyHdpKgpI+cjokorRF3Gm5GVkg0Nc01JTw/gp5E6L7X4hLLdtJkPQpcMO2fYrw==
+ b=EHPEDz8HNL97TA5j11/0L5G6vBlNwNY6PhxZVup3gAwrCIoEHWEhWKwndRI59dDvnhf+A10j0eyBDnC33ZrsWSQyOtn+iVPlFtr+lnGrzfJyhhFvbasstyd8Ru4V3VMRnNN4sttD5OhMwqY/JLhbAfj7KFYApij/0iBHevvJ54274AYvmkkrMP68He+Z39bmcJEDT7DWBH7r2SNiprBp1Nnu3PAYSYD/Vbk6vOmWvWDdTbWvsb9orZUybuJ8aM2fPKEd32eZ0RikKi07UuEHZ9mLFfFmt+7Ia7PxjNGTaMOyMy0YMkTmmBp60tUoXBtzkJg5dFE8aJgAccwHmxYGZA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EdG3MYHYGKgUuX5TFRJ/F48GSMjJoUpspylPI7eG5oA=;
- b=ol75yA1+Vk4WHCVaZ7YitwxUFr3cFdkVWqOY9D5rEqePz1Pn7LnBYSHKYaeVYH5SHRWBGAk3b+Ni6Ni+isUh2LCICOJ/w/Rz3HQ2jbltHPNt/ObUPljip4gc3EeqoV+sP1Fe0M2DFxeeIjgz4G2WeqqSZCBHoNcOy+53yZ5T4tJVQFu38wDa1HBeOGZc4JvwFD5kPhjvosP+sYMRfzIf0FSBGFjB4nBZ7tzqwftMmNwgncYAdwr3GDUGE9k7J/Qdsm9gEvnnVPpww5LXpbKF1HET7tjl36WsBSndIf3ZNLt4jFpzOTq7LmN3s0AR8j2BQaW4tZ4q/Xc3ny+ifVK7Rg==
+ bh=x0ADE/ULVYGGM6T/RekgRPP9C5PArjZq3v2iXc62pFg=;
+ b=Cdw1+IYYvy0pdoqVhJTuU7lzLoj6x7Rc6dGluhiFdzXXIMvdyibPJ8uAhzB2N4HULXTzM3VfybVwgg7RhqDxK8AwHTBrp0YhMQq0N9nw3A8dTHxGoWXXvC017qZWGJYSdIODIFZpC0+0yUOVwdiZsvnisnmCV2k+lQkUG6NHAleupNr7krXL8rZQLMFcJupfDmJIEfS2UkYHMgMry1i2q5EJrvTxeofZ86ujuFAfhekn3CBDEGTa6dz4G9JjJEduib/D6uvsQUCK53s0ekKk6AqfraWM3Fw5i5krirahmCVA27qmc8UKjs0eUkWIaZswSySqgHy+tvVjOJSkS3hzXg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
  dkim=pass header.d=cherry.de; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EdG3MYHYGKgUuX5TFRJ/F48GSMjJoUpspylPI7eG5oA=;
- b=M73/mqJHkFMSECzZDD75I0YQHmEVJ67I6WxIsJl8ewW8N2rBB3WGB6QtFzi9Jyllkj2PBd1Hp55s9Wie1vcdgNLg6w1F7ub0f5hAdheKntDTEZmxQZYM2/VcqcZmTbXyxmbbPrwM/BKiRxdPXuuMUQFCaTlmWPs0q/fguAfT4mE=
+ bh=x0ADE/ULVYGGM6T/RekgRPP9C5PArjZq3v2iXc62pFg=;
+ b=e/snemdAKoU9WkT2+a+EJOrea7d51vAhZeQKPtKptmIu4SifVABuxAUB8SyQ/0L5zmyfwNlP2Xp0Dt47IIfY08s/rd4HFq/zoccv3BsbYhPM5r988BJBZcasDQgx2k/VAFHJJmjTNJQhZTCvhJjp6L08iIWsNA9kpHBl50tIHDg=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=cherry.de;
 Received: from AS8PR04MB8897.eurprd04.prod.outlook.com (2603:10a6:20b:42c::20)
- by AS8PR04MB7974.eurprd04.prod.outlook.com (2603:10a6:20b:2a1::22) with
+ by PAXPR04MB9230.eurprd04.prod.outlook.com (2603:10a6:102:2bc::15) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.21; Mon, 15 Sep
- 2025 13:30:05 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.11; Mon, 15 Sep
+ 2025 13:31:52 +0000
 Received: from AS8PR04MB8897.eurprd04.prod.outlook.com
  ([fe80::5ee:7297:93b4:a8d1]) by AS8PR04MB8897.eurprd04.prod.outlook.com
  ([fe80::5ee:7297:93b4:a8d1%6]) with mapi id 15.20.9115.020; Mon, 15 Sep 2025
- 13:30:05 +0000
-Message-ID: <880f00bc-7c10-4721-9091-22d9f046d304@cherry.de>
-Date: Mon, 15 Sep 2025 15:30:04 +0200
+ 13:31:51 +0000
+Message-ID: <4d2ad38d-230c-4719-b517-db79bdc6725d@cherry.de>
+Date: Mon, 15 Sep 2025 15:31:51 +0200
 User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [yocto-autobuilder-helper][PATCH 3/3]
- scripts/run-docs-build: pass version to bitbake docs build
+Subject: Re: [yocto-patches] [yocto-autobuilder-helper][PATCH 2/3]
+ scripts/run-docs-build: pass active releases to bitbake
 To: yocto-patches@lists.yoctoproject.org
 Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
  Antonin Godard <antonin.godard@bootlin.com>
 References: <20250915-pass-bitbake-active-releases-v1-0-a5530a97b9ef@bootlin.com>
- <20250915-pass-bitbake-active-releases-v1-3-a5530a97b9ef@bootlin.com>
+ <20250915-pass-bitbake-active-releases-v1-2-a5530a97b9ef@bootlin.com>
 Content-Language: en-US
 From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <20250915-pass-bitbake-active-releases-v1-3-a5530a97b9ef@bootlin.com>
+In-Reply-To: <20250915-pass-bitbake-active-releases-v1-2-a5530a97b9ef@bootlin.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0393.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:cf::18) To AS8PR04MB8897.eurprd04.prod.outlook.com
+X-ClientProxiedBy: FR4P281CA0402.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:cf::14) To AS8PR04MB8897.eurprd04.prod.outlook.com
  (2603:10a6:20b:42c::20)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|AS8PR04MB7974:EE_
-X-MS-Office365-Filtering-Correlation-Id: 27927484-d45f-4524-6c68-08ddf45bfb26
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|PAXPR04MB9230:EE_
+X-MS-Office365-Filtering-Correlation-Id: f738b96a-b771-41d9-fba7-08ddf45c3adb
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
 X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?TC9GdWpZZlFuR3JiTnBTbjlLTlpSMko3elpHV1N5T0ZrNk9ycFpydE1jL1Zr?=
- =?utf-8?B?U1VENnE4UWpTUWJielZqTnJYQjRheHorb3BjUGs4cElEZjV5Rk5BYndxb3Iy?=
- =?utf-8?B?Z290RkNNRHdyeXNrcWhUUFJWRHc0ZTgyaUYxRjZVWXF1cGxMVjBFMThOUTh2?=
- =?utf-8?B?Rk9lZTlLaVA0R3RoanRrcEpsQkxBWjVzVzRwQ3RRVjA3WUgyc2pEU21NM0tw?=
- =?utf-8?B?L0t5a2szRU1vbDJPekpBWEZGQmtnQ2VVM0pMM1RwN0lrdGJyLzJnZmFHYnZV?=
- =?utf-8?B?TGFmOXlnRDBVUUxUYWtOWnNUcUkrRU5jQjFjTGM1c3RFanhwZE5wUi9uOTZG?=
- =?utf-8?B?YXdaUEVZS1MxczZMMG9TeHN2L1M5YUFNcjBTa3lwR25XLzh5WGZFVzlLcjBp?=
- =?utf-8?B?bUZEYXBDT2RNbFVtejU4bjdBU01zazN5SE5TRWNiREtjeG1BbWlqMEM3Sm5p?=
- =?utf-8?B?Wlk3QTRMRWFZcm95bUtCZXh2ZG96eCtjQ0lIeE5DK2RKT0k5Q0VIY0Q5VFdN?=
- =?utf-8?B?NU5JbDdBNER3cWNkM1oxdDZxTXFEbk1PRHFBUGs2NS96eitGWmRVay9NTU9Q?=
- =?utf-8?B?dFNkd3p3N01rSnpWTnI2eEZCL240SEdjSzdPSEJwR3VCcjZiVlFmNlRCSDhR?=
- =?utf-8?B?cFordFlsZjdzRG13VDY1N0hhR1oyUnMzTU9Rblh0VEk2aXBKczFKMUpaN0gx?=
- =?utf-8?B?dFBUZ0VLbEhEOCs4QTMrSmdQQW1lZ0tiblN4dFdTY29kbk1TUFArUmhSUlBK?=
- =?utf-8?B?YkorbkhKa0lIV2Rab2ZMNG90Zjk2UTFSeTc5bG9ua2ZudVhtS0VVMVI5MEZw?=
- =?utf-8?B?V3VZYUI0bERtVFRndW1jb0Yrby9ZVTE2RjUwSmNNcS9HS3RHQ2xSWHV3VmxI?=
- =?utf-8?B?NWM3c1Faa2JYaGE0ejUxYWY4ZzFoWU5KbGlKdHdKTlhCTG1xamNHRE5uaGxk?=
- =?utf-8?B?ZHdneXVrbktOZmFjU1VvOW1vbzUrQ2tYTmdQNFRxaFdCNFQ3NG13ajV6bUxt?=
- =?utf-8?B?MDc5ZXVxSlVkQ2pXanB6N2t1YmlPbjViNmJDeHNIcU53UTk5Mm9NcExZYU9M?=
- =?utf-8?B?OXZYZVBkcVBtMzFHUUcyVmxHaG5yNFFJOGlIbXVjbkUzaWVnQmJyZ2szMWZk?=
- =?utf-8?B?TFpLRWp3QlN5elBvOThXQklnMGxWRnQyZEVsVzFtcFRrWHRvYkd0RU1vdTVr?=
- =?utf-8?B?NkYwYjF1d0ovU0xlbE1keEl0OUhEL2p3RzVUdktqR0pndm05RGJaa2p5M2Jj?=
- =?utf-8?B?S1BZT3JYZVBLUTBDekw2VWliSmtaWFIxK0s4RTdMMVVsck5VL3o1bm1vd3JZ?=
- =?utf-8?B?eHAvR0tnUjNZQTNycWlOay90U25Pd09ZVW8zcXhydEdISmhnVEx2NnpRaWVp?=
- =?utf-8?B?dlAzRkVYV3NBV250cU1iLytjVjlwNVNNSkc4bWN1bzBvK3B4UHZVenpFRDZz?=
- =?utf-8?B?UDY2bHJRMG9IcjRmclo2bmFVbWg4OXdpTnhtWmlIOFljb0w4eFdJN2pwSmRX?=
- =?utf-8?B?N0hxK1Y1Ty9ZY29xOUpITzV4a2pXeGU1b2xIY0dITmk0c0JIL0QwOUttS0E3?=
- =?utf-8?B?U2VCSXBQQ1ZxbFRsbE13cFhoa1V3eHJGZXhLYmE2SXBIdTJGSmR4Z01HdWlX?=
- =?utf-8?B?dUo2Ym1vQ2Znc01rYnFhOHpSSzd0c0JmZUJCbEZuWWVhOW5pSm5yZnBmNDdj?=
- =?utf-8?B?QTJCWWJBd0tTWUxoRExCU3NycWNEaXd6Q2llUy9OYk5rWDFjRkhPZXU4NkJr?=
- =?utf-8?B?UkVtZFNnNGFrSEFuUEgwTE9aS1dXeUl3eGV1R0lKSmhVa2tvUlZ6THhFUVpa?=
- =?utf-8?B?RUw1QnNTZTFyZGlWMnJYc0Y4STJqVXkxVXZqa1RIOFhHY0k4cklmQi9BV0NN?=
- =?utf-8?B?R2l3L1dPVmFEUGJCUzlISVN3RXlPQmg5VUNOTFF3eTJxVDRmak5oMDR3U2Uw?=
- =?utf-8?Q?lI2IiA6h+xg=3D?=
+	=?utf-8?B?L09VMUtvZW02SlBiVThQWTdpaFp3NlpzeHNyMGNqQmJINERaOFRJZlkra0Q4?=
+ =?utf-8?B?QlF0dVZBVm5FRU5hR0ROZU5pVEtMVnV6WFBRaUVUOTc3Q3dxelpaemw4dU0z?=
+ =?utf-8?B?MTdaN2dpU0VET3BZajFHM2ZzMmphODlOQmkzVisrYTI3eWhVM3N4R2l0NGtH?=
+ =?utf-8?B?R0RhSkF4d25oWmUvbkVySFFYRm1kT1l6SDArTEJaL2hqa0RPNjhvaTJmQ0Uz?=
+ =?utf-8?B?dVIya242L2VhbmQvamVBMFROemhEOThSdUFSemJxd3hJalBGNUJiQ1JCSUVM?=
+ =?utf-8?B?aUlzM1ZqZWdVckdhb3NjN1RBOG1GNDE5bmhubjhaMzZQNVlCMFBQZ29lMEE3?=
+ =?utf-8?B?bm9pMmU4cGJEOVlFVFBFKzBHb2xGZkU1aHljVGNQeVk3MDJuS2VBaXdSdDBi?=
+ =?utf-8?B?OEFGanA5alhQMDEwVkdhQjh3ZzNRNDlFOWhmM3pNOGg1VlE3bUcySXJJWHpo?=
+ =?utf-8?B?YnF3MlE2UktGT25sY1NWZXJCTnBKZlRic1JDbFMwdW9GNTRQbWRHbHhDcUdG?=
+ =?utf-8?B?cExtV0J1R3ZrU1VHTXdQUnhCMzB2VHFmbTdFU2pUUVR3ZERrRHhMRDkreldH?=
+ =?utf-8?B?YU5ET0ZwRGVIRFc3T3M3RXFEUytJbWJXQU9HWGhjazU3TWpxZURhOHhmQ2lU?=
+ =?utf-8?B?RnBQZ0EveHh3NXRUYUd6UW5mc3JWSERabHN6aEFDOEg0aHhIaHRKNmdSaDZQ?=
+ =?utf-8?B?UFBmZkhJSEF2UVJOWE9TRmJzU2RDajg5Tmx6U2VOdGtMa01kYTA0akxzeE9O?=
+ =?utf-8?B?Y1RVVExCZ2U1cXJDeFVkTW00TjNpVzFoR0ZuVWJyWkU4aE55WnZXNVl4Q2tG?=
+ =?utf-8?B?ckd3UzRLZWx4My9FbUpmUC9WUldBUkJSMGRsaTBLMXAzRUdaNnprckE5M3Rx?=
+ =?utf-8?B?dW9yaVBndmo4Qk1vc1Z5SjFPZmJ6TUpCeEJyZ2JzckQ5ZEdmWlNGS001L2dt?=
+ =?utf-8?B?VytYaVI0R1lmMmZZWSt2OEIvWGhlV0tLZk16S3E1eHZzbGNmd3dJanVwMnpp?=
+ =?utf-8?B?ejBTYzhFd3YvZFF0UDRjbzk4SEJlbXM5aVlMd1RBRVBFUXhKbXJBTEMxRlAv?=
+ =?utf-8?B?L3gzMWdzZzZTaWRZYzBGczl0T2JNVjBPc08zcENTeVNzd3cwOXNhOXZtSkJJ?=
+ =?utf-8?B?eUZwZjYxY2tpUFhaTTlTRWd5NzVkUG1RbWJoMGZjeVdncVRpSnd5T3hIZ1Ar?=
+ =?utf-8?B?cG9KaGtWbmg5RlVpVU5rZXJ2RVoxNlhKUE9SUW85WXVKd3hZTWE0dVNzaEVv?=
+ =?utf-8?B?OEFYU0YyV3ZvdFdyclZPY3c4eGsxK0o4aUdRQXcrL0NOSEpMUExhTDk0WnB5?=
+ =?utf-8?B?MllMRG1EeXZkKzdPY0NiSjdJQnJLbG5TWVRUQkFyTlZVdDV1SXlIakYrczVQ?=
+ =?utf-8?B?ZC9FUE9TUjRkTFRMbGp6OTh2empmbFVJcmtscllveno3a25JYm9JUFhLZFEx?=
+ =?utf-8?B?NUVRMmNEM2g2aVdWUXF5K2pTbU9FYm1pVzZvL2N2dzgwTi9xZTZic3NNM3hI?=
+ =?utf-8?B?RXNsWkl2bDZMc1d5djQyejVUTGhneWJSUVRxaFhOdERNTGpYSmhyMysycjRV?=
+ =?utf-8?B?ck5yRy95RHhDSXlZUS9pUVJES3VDT0J3UVc4QXVNMm5GMSs3N3VLdC9Fcmlt?=
+ =?utf-8?B?SWkwY0dqNkJJd1RWc0VUeXhXK2JKV0xXOWp4V3lKdUJZeXpKMkhHMlFiQlZM?=
+ =?utf-8?B?WVR6Q0EzUlNJY2gxcnY3UXRub0ZXTE8xUUpobHNWaWZ1QmgxdWIyV21adWRV?=
+ =?utf-8?B?ckdqUXhlbTgxRDZzbGRlODErYTBPUDY1S1VGRzc0SGRiTSs2Y2ZDNEtLN2Nl?=
+ =?utf-8?B?ZjNVenNmT3FIeEhYNVY0ZFJFR29NN01ZdXBybXEzeFI0encxZmg0UThCZTFK?=
+ =?utf-8?B?ZzQ1c21vTloyN25tZ0Fad1hiMUZIZ0VQQTV4N20rQzk4Znk2b0IzYnJQTjVW?=
+ =?utf-8?Q?M+39XOpybWE=3D?=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?Y01YOHNhWWZ6bVJEVXRjMy8rcWF6YmVWUU5wZFNkbE1CcWJISzA0am9jRFRB?=
- =?utf-8?B?TUN0QW1sOG5GbGt1dXRRWDR4cldSL2owM3dqNm9SbTYwZlpVazlENlhPUzBl?=
- =?utf-8?B?NEdUbUhybUtVdjQ5bkdQc0R1OTlXYjZlUUw4TXJjMmsxOE05eGFFVnJwcTZD?=
- =?utf-8?B?NDhwR1Q2clZyMEpOMExabHVDK2FFZ2plREtpb1NDV3pqcUI3dTFPY3dHU2VT?=
- =?utf-8?B?Q0N6UnFwdWVRTlRDazIwbVFUanM4NG9rblhFOEhWZkoyb0pXU1dpZTVNZ1l4?=
- =?utf-8?B?b3FUT1FEOHlxVWN6ZURrQjdCWkJjSng0Mm8xRFRFTVNBcHFhMkRWSWpUZThm?=
- =?utf-8?B?Vkh6Y1d0TGVVVHc5WThMTi91OWtUSnhscHhaQ3pENFA5aVYwT1JmSW11WVly?=
- =?utf-8?B?SWhReEU4NW5zazFOc2kyNkdtaHMxMDNFMTdtbDlDMkFUelZHSHlpb3hHMjE3?=
- =?utf-8?B?NlRXM0JYNkN5NU1DQWhOV21EVU1xOWY5bkhLWlZyekRJOHlLdWZKazF6U0wr?=
- =?utf-8?B?NkdCbFE1U3cwblZDNy8yVW5CWDlNVU44OGl1aHpGa0JJbTRMU3ZqOERnakdx?=
- =?utf-8?B?dEFIb2poWDlSc1RaaklKWFIvR2YwbERNaVl6ZHFhZ3NOWktlSmVvMkFaaTE1?=
- =?utf-8?B?U0szcUQ4V1JFcWl1YTFFNWJYdm9KNUdocUt0Q3A1d1dhTW0rUGZlTnhmMVVp?=
- =?utf-8?B?WnZYL011MVRYOUoyOC8vV2VKcDk2ck8vRFdKNmJEV3JKYUNPMDczWnhUMHo0?=
- =?utf-8?B?WEEya25yVlRKTkwzTkRvK1BnQ1dzdjV1WExHeTFzVUV5TmcwMmxYVzQ3YkNH?=
- =?utf-8?B?T0RLaEdqV0NDZ3B1TDViTkxEemhVcjZMakxCMzlnZ2lpRDk0SVNpWGdVcHVV?=
- =?utf-8?B?SGlRRTk5Tnh2ZG5XYm4zUWdMRXc3YWI0c0ZlbUZmQWtGWlhFOHYwbUx3dVZv?=
- =?utf-8?B?YzFrVVhDcDdDcmFaRGZJVytSbmhaY2pjbXhPYWJnekJWekF2SDRnVmtRaVVI?=
- =?utf-8?B?cDRuMXowc25pd1kvUnFMV1IvOFdZZEdhNzFIN2c2KzBBQ1lmeDZhUjJMWGoz?=
- =?utf-8?B?RG1nTGxtcnlFamd3OXl0eFFnckhoUnJHS2Y4WlE5R3VqeHFwL0xJK0w3ejdH?=
- =?utf-8?B?TUVJT1Izak1qaG1PNVZ5VCtkNTl5VG8ydm0rSENLdUszU2YyQlg1N0pIT0ly?=
- =?utf-8?B?cTl4T0wxNVVPa2p0dGZ6RmIyR3pEdkVKdlVOdTBIcHVnRWpNZ3BDQzRjM2R1?=
- =?utf-8?B?Yy91UFNTbkRvWmREUlZXZGZYTGtaT1I2VWxlRm8zaUFEVURYVEk3RFVOVXVw?=
- =?utf-8?B?ZkxyOFNkaVJqNmtXUnVqb3FNM3J2T3MxWE0vK0dWZm1vOVNLNEJpaDhWOVNN?=
- =?utf-8?B?TkNRZWFnN3U1NnI2TlN0YjlYMXVqM2l4Q3NxTEdkWG1lS2JDcGp6QXY2ZVpM?=
- =?utf-8?B?TkExR3dLNWNweVA1S21RL1pPZmdHYmNmNFN6aGU4aE1BNWNpeFlOTmF4eW9Y?=
- =?utf-8?B?VzVNTVVsYmZDSEZRd2xmdUVRRGdVaVpZenR6TlJtMW9GNDBwc2puOU9sK2ZE?=
- =?utf-8?B?b1crZEVnTHRrOVhyOW9HcGFuS0UvdklhekJaVHV5L3hnREREVzlkK3VSZHVE?=
- =?utf-8?B?b3JONktJMTV1czFuc0JlTWVuNDJTNytMZkFnOHZ1WitRcThUbkJvMzVZdW02?=
- =?utf-8?B?czVVdStpN2RDVHRkQ0E0RHd1WmFBbEV1Mm9qVUtROGRXUTBSbjdodlUzS0JW?=
- =?utf-8?B?YjVjMGxaM1grb09UQUY0UHhlMDV1c3F1RkNqSHRYYUJWYzNTenJIUGpXSHRC?=
- =?utf-8?B?SGZKdEhhOC9wakxPNElrRlpXZzkxVXBpSXFKQ1dlbzlBanlFU0xDS3pTTDFy?=
- =?utf-8?B?M2lyWVBSYk5YZ3oxbld6cDVheDdPQ0c5cnRDZUpoelJrWDRHUmtXcElrNUpV?=
- =?utf-8?B?dVRXZGU5dGNvejV5YzhMVk1IeUk2V1FaTGQ5MEEwcENTT0dXSHFFSDFUTVlk?=
- =?utf-8?B?eUlOR0Rkdm1DMlMyOXdYc0JtZkd1blNUY1NSNDcyRCtOT0J5ZE9vMDdadUNm?=
- =?utf-8?B?ZmpBNU9PaGxMeDk4Z2FVZDRXcm45R2pmVGJNdUlHWVVoQnZRdENwZkxQZTVs?=
- =?utf-8?B?UkdtQlZieVFJL2l5Zks2WThqbU5VTUFWbng2MEg0bnRNNW1FS2pZakxqdmhX?=
- =?utf-8?B?bGc9PQ==?=
+	=?utf-8?B?ZWZYNmN2M1lKZk1uM3lKR3lHOXJUUmpMTlB1VGNmeWtsbU0xaWFTUTJUUStn?=
+ =?utf-8?B?THlrSDFVTFg1eG1YSXZzdEYxbGtyMUg4V00rVVJqY1lqQkFldnNwQ3FYUXcw?=
+ =?utf-8?B?VGNtZXo0RGZPZndHL0kzRlpyOHNUdjNJcmtSdVFZTE5PUll6S2N0a2NmbkJ3?=
+ =?utf-8?B?NjB2WUQzZTYrNnovSHMyWUNFRWEvMnFXL3A4bnlid2lSbUhjVEhKZUxhUlUv?=
+ =?utf-8?B?L3VsaGYySmMrUTduMjZVWXg5V3dXV0F5VHVaZVBTaFYzRVVabm5TSitaTnlN?=
+ =?utf-8?B?VFZINkl2SGxIL0xBUU51dlowMVNqQ3IrbHlWbU5IU0NROHFWZFVFOEsvOS9a?=
+ =?utf-8?B?NThLWlNWcmErTTF3bU5SejBkanNldFhvSVNwVW5TMjBiYlBibmp6OG1FbkFo?=
+ =?utf-8?B?THhSeXdKdmE1cGpPelZReEVPUnkzRTkxSTNBQVV6ZS90NkJaYmhSOWxKcC94?=
+ =?utf-8?B?c202WWhIcVJudnFjQWI3N01qOENXczV1ajFNL2pWOW51ZjRZTkhaS0lpRzhp?=
+ =?utf-8?B?QzdGUTd6cE80L25qVi9ZbVZubE9jUDU1OGZ5S2tyMTRHRDFNNmRmR1A3VFJK?=
+ =?utf-8?B?bjhBdXUvTHA2U0hBTXl0YVJ1bXppcjBpT29pUm9rMTh1c004c0VJZmlWNWRQ?=
+ =?utf-8?B?cUppU2xqSWxYUHpvT2YxajJ6UFBXdFFzdjRydUxFOXFObkVjd080bVdYbU8v?=
+ =?utf-8?B?bFRVa05wRW84K3duMU1peGNWZjNlSUZNYm5BZTdjdzJoRVpjRVBVL2poL3FY?=
+ =?utf-8?B?UmRnb3FvNE9obmpueElXcEx0YjZQWGc3Ulc0eXRTYWk2V0ljWXdlM1pMZ2FV?=
+ =?utf-8?B?YmxxaFhwR2NLWEMrRmZ3TnBsVWdmeVZwNzlVYm1vYVowZFN2NDZUVjdTbmJR?=
+ =?utf-8?B?ak40ZzRsckJKcW1keGRSZ3JOVXJHdTBjNUtYZFRrOUh3czNFcXFod3orSE96?=
+ =?utf-8?B?cVV1Ky94L3VGREU1SGVqUjJQb1YvZGV2bW92UGNWaUdnMHhURmlVZTNZbzVD?=
+ =?utf-8?B?ZFo3UENNYXZMbmJIWVE4bVpHUHBYYlUvTk1IWGVGRnk0UVFUZ0FiMFlKKzBU?=
+ =?utf-8?B?U2kyQ0ZaZSs3QkVwUnBNU0FZMEdBOVJoNWVsK2ZKdExSa1loWVJKY2FYdEk4?=
+ =?utf-8?B?UHdDWmN0STVNemRIMHdRYmU1eFpka05EeDFmV3BGMVpQSWw5UEg0NXdzcEkv?=
+ =?utf-8?B?WmlXMEdNVmt5eTNGYmI3Rm5vTld1UTZZekYrQjNCS2JVY2k4ck1sd3pld3Iz?=
+ =?utf-8?B?Wk9QcFBBc1p0QXFERUlSRi95a1FiK3pBT2VOZmg1TjdUWW1mTk1VMGwzRGM0?=
+ =?utf-8?B?aVFhbXFMTGJvZW45VG1mWGpJT0dWNi9HV25BZWZJMWMrUyswUGovVHhlSFRn?=
+ =?utf-8?B?bktvL2thZDJqMFlYRXFkZkN1aVp4K2VMRXhPeHVoZnYvbnRSV21oUGtIK3NZ?=
+ =?utf-8?B?T3V1S2w1dTlRVEx1azM1YTNPdjZQNTl1VUpXM3l4V1BVNDh2Sy9ZOWYzd2gx?=
+ =?utf-8?B?SzZVcGp4bVZzSFozRlFod3ZXaFR4NE1IUmNmNFVnLzJYYkVpNHcrM3FJMGJ2?=
+ =?utf-8?B?aEVxeUxIbHRqQm5kczJ0c3VRL0F0aHNTcWsrQ3l3RGpUQ2NlT3dlUHV5MFNK?=
+ =?utf-8?B?OHVoZWtWdW1kdFAwQnhPMm5Kd2xndWExOHhCOHNDQUNUcUVUU1JiU0R2QlFX?=
+ =?utf-8?B?cWxqTjRsenFTRSsvSXBDWUpVSWJhODM4TCtJTGFMV0R2em0vOTRYRmFPV0s2?=
+ =?utf-8?B?VzcxSGNKcjBvZU9scmtOYXEzSHB2SmZzZGVTdWtpMGtTR0ROTG1CRzlOZ1Bk?=
+ =?utf-8?B?VUM1akhURHgyMWdXMXlQc1VBUUtnQURjdlJSeStDSThXb2xMb3p2R1BsdkQr?=
+ =?utf-8?B?NjZOQzQwRG1ibmFPekRIOUU0QVBwQXF1a3lna2w3cG8vQlZwdDBRU01WdTNM?=
+ =?utf-8?B?S2x1SlB4SnVaZStoRUErYWpLWkQ1MGhSOFBBZ3h0Y2o2a2FJUks3czZQb291?=
+ =?utf-8?B?eTFiM2Y3T2NEWDlzeW1wYVBlRk01SEhJMWxrS2ZoNHhnZVNBL1duci9tV3F4?=
+ =?utf-8?B?NDh2b3BqZXI1R2pLYnZFNmgxbndPWm90TDEwN21nOHlhdjZMdTNtdUpCczl1?=
+ =?utf-8?B?VVZKZXB0UEIxVEY4T2VLNmRBVFN1S1M1bkk1UndmUHR4QmhPKzBzc0NyTytI?=
+ =?utf-8?B?Q2c9PQ==?=
 X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: 27927484-d45f-4524-6c68-08ddf45bfb26
+X-MS-Exchange-CrossTenant-Network-Message-Id: f738b96a-b771-41d9-fba7-08ddf45c3adb
 X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8897.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 13:30:05.1352
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 13:31:51.9062
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: b9v3eYEc7ZtTTdKAaoqzffp0ViuTfftpfug6wTUo73/7kqrBUwVqtixenKSt5XgDvF2uw7iYyyriIv9sZnvc1P8+IZBnKdFHL3thGDi5oM8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7974
+X-MS-Exchange-CrossTenant-UserPrincipalName: /2SUIUgmDcnjrTWWOhOfxgeboSYHgb287dkB503wan+DJyDB+WA+KexR0EQZLP3YZAi8pHO9QNGCz9d7eJSvF2DrZRPyJ0i+Sl4sYLNy6k4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9230
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 15 Sep 2025 13:30:21 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2194
+ <yocto-patches@lists.yoctoproject.org>; Mon, 15 Sep 2025 13:32:02 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2195
 
 Hi Antonin,
 
 On 9/15/25 2:19 PM, Antonin Godard via lists.yoctoproject.org wrote:
-> Bitbake's conf does is not aware of the current version it is building.
-> Pass the information, which is read from bitbake/doc/conf.py. We have to
-> checkout conf.py from master in additions to this, so this change
-> applied on all branches.
+> BitBake's doc now supports setting the active releases in the switchers
+> menu from an environment variable. Pass the active releases from the
+> list in yocto-docs/documentation/set_versions.py. This way we only have
+> to maintain active releases from the yocto-docs location.
+> 
+> The latest_branch information is retrieved from it, otherwise we land on
+> the in-development branch (2.14) instead of the latest stable one
+> (2.12) - at the time of writing this commit message.
 > 
 > Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
 > ---
->   scripts/run-docs-build | 8 ++++++--
->   1 file changed, 6 insertions(+), 2 deletions(-)
+>   scripts/run-docs-build | 10 ++++++++--
+>   1 file changed, 8 insertions(+), 2 deletions(-)
 > 
 > diff --git a/scripts/run-docs-build b/scripts/run-docs-build
-> index 549032f..654b401 100755
+> index aa1847d..549032f 100755
 > --- a/scripts/run-docs-build
 > +++ b/scripts/run-docs-build
-> @@ -138,7 +138,11 @@ for branch in 1.46 $(git branch --remote --contains "$first_sphinx_commit" --for
+> @@ -111,6 +111,11 @@ tar --exclude=eclipse -xJf ${docbookarchive_localpath}
+>   
+>   $scriptdir/docs_add_banner.py
+>   
+> +# Retrieve the active bitbake releases from the yocto active releases, by using
+> +# set_versions.py from yocto-docs
+> +BITBAKE_ACTIVE_RELEASES=$("$ypdocs"/set_versions.py bitbake-active-releases)
+> +export BITBAKE_ACTIVE_RELEASES
+> +
+>   cd $bbdocs
+>   mkdir -p $outputdir/bitbake
+>   
+> @@ -121,7 +126,8 @@ mkdir -p $outputdir/bitbake
+>   # see the latest releases.
+>   first_sphinx_commit=84ccba0f4aff91528f764523fe1205a354c889ed
+>   
+> -latest_branch=$(git branch --remote --contains "$first_sphinx_commit" --format '%(refname:lstrip=3)' --sort='-version:refname' | grep --max-count=1 "[0-9]*\.[0-9]*")
+> +# Get the latest branch from the active releases in BITBAKE_ACTIVE_RELEASES
+> +latest_branch="$(echo "$BITBAKE_ACTIVE_RELEASES" | cut -d',' -f1 | sort -V | tail -n 1)"
+>   
+>   for branch in 1.46 $(git branch --remote --contains "$first_sphinx_commit" --format '%(refname:lstrip=3)'); do
+>       if [ "$branch" = "HEAD" ]; then
+> @@ -132,7 +138,7 @@ for branch in 1.46 $(git branch --remote --contains "$first_sphinx_commit" --for
 >       git checkout $branch
 >       git reset --hard
 >       git clean -ffdx
-> -    git checkout origin/master releases.rst set_versions.py sphinx-static/switchers.js.in Makefile
-> +    git checkout origin/master releases.rst set_versions.py sphinx-static/switchers.js.in Makefile conf.py
+> -    git checkout origin/master releases.rst
+> +    git checkout origin/master releases.rst set_versions.py sphinx-static/switchers.js.in Makefile
 
-I don't think that's a good idea.
+I don't think we should be checking out Makefile from master, we would 
+have to keep in mind that the Makefile needs to be backwards compatible 
+forever. This is a big burden to carry IMO.
 
-This forces us to never update any plugin conf.py uses otherwise we may 
-not be able to build earlier versions of the docs.
-
-I would suggest to follow what we've done for yocto-docs which is to 
-have conf.py read an autogenerated poky.yaml (we can call it 
-bitbake.yaml if we want) which sets the version of the docs to build.
-How about current releases which are forced to "dev"? We patch them the 
-same way we did for the yocto-docs, see patches in 
-scripts/docs-build-patches.
-
-> +
-> +    # Pass this information to Bitbake so the docs gets built on the proper
-> +    # version. See bitbake/doc/conf.py.
-> +    export BITBAKE_CURRENT_VERSION="$branch"
->   
->       (
->           . $builddir/buildtools/environment-setup*
-> @@ -213,7 +217,7 @@ for branch in "$ypdocsbranch" dunfell $(git branch --remote --contains "$first_s
->           git am "${scriptdir}/docs-build-patches/${branch}/"000*
->       fi
->   
-> -    git checkout origin/master sphinx-static/switchers.js.in set_versions.py
-> +    git checkout tmp sphinx-static/switchers.js.in set_versions.py Makefile
-
-tmp?
+If we really need something from the current Makefile, we can always 
+patch the bitbake docs the same way we patch the yocto-docs on the fly.
 
 Cheers,
 Quentin
