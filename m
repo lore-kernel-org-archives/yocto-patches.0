@@ -1,226 +1,150 @@
-Return-Path: <rybczynska@gmail.com>
+Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72D7FCAC59A
-	for <webhook@archiver.kernel.org>; Thu, 18 Sep 2025 05:28:49 +0000 (UTC)
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
- by mx.groups.io with SMTP id smtpd.web11.6940.1758173326352021288
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 828A0CAC59A
+	for <webhook@archiver.kernel.org>; Thu, 18 Sep 2025 12:43:03 +0000 (UTC)
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+ by mx.groups.io with SMTP id smtpd.web11.13286.1758199373208185084
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 17 Sep 2025 22:28:46 -0700
+ Thu, 18 Sep 2025 05:42:53 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=LwAyWOx8;
- spf=pass (domain: gmail.com, ip: 209.85.214.176, mailfrom: rybczynska@gmail.com)
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-267f0fe72a1so3440645ad.2
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 17 Sep 2025 22:28:46 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=fPROuJTv;
+ spf=pass (domain: konsulko.com, ip: 209.85.160.180, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4b794e9a850so7752431cf.2
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 18 Sep 2025 05:42:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758173325; x=1758778125; darn=lists.yoctoproject.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=iyQ1g4DTzGGeK8ragipI6QsJ8TjGc3DyEeDe6FvFgXY=;
-        b=LwAyWOx8z0YPlHArojOf2RxDSFi8RFmRZu9yPwsJs5ekmfE/DzIwyTRVQSBbdzfwfU
-         59uqEvaFnVFlanvwv+Xumiwe5Fh1eUX53FZbt18vCIK56z0OnoV3VJ0ZXqFk2F5lNGts
-         BsaAMJ2Wed6SM4ygEIrgFQmMzM5/8vd1eZHVkuKqHhKzuPu1ifoaWZnhwbDmkpeJEcvL
-         0fTjTXcMIAm7zAr3T3YHpKbeMxqDsH4fDD+qkXIONtloPP+hyVjo8QbmPP6H+1pbwR1M
-         g6+oX5ctt3xoMfafTdMevfG2TEdCpsDjbor1TCYSh5EXSxvcYFpsXcjiCnPOdCV+1wuU
-         aZTw==
+        d=konsulko.com; s=google; t=1758199371; x=1758804171; darn=lists.yoctoproject.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lPkeCS1u988IJSfr2weiQgK/UiQPTDyiwbmOaQ2DuUw=;
+        b=fPROuJTv+8WMp+m0RyPZ1K/xx5F2w2MnztmJ2E1BOL9bVWW/VGR2w/tX8Ds8qEw2sI
+         825mCHt2IpE2J/mLkhsvjzTystfCmCe+kQt6yBUtR1dvz79lYJ1vNhb1YwzvBKIggWqX
+         CJNsKtC8GzvxmfwF9ocKoZv9kSq07w5ygP0rg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758173325; x=1758778125;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iyQ1g4DTzGGeK8ragipI6QsJ8TjGc3DyEeDe6FvFgXY=;
-        b=B8/aJtYz+KrwNuRbk/XcIH7BJG0XxlVIZTZsRG1E2+tl73LfGP44t6NmKS/ySRcTpO
-         1uqvNd+wwTp1Psf8d9aTuC2LpptoOIf43IZZQsGV+cwGF3qNwgYrUaOk8eVXqv8zfkv2
-         1kAFjbzxw5dBpPkTZXrvhPt/r0P18eMfOduEEASl4YKrHprYor1U+xEhWnU+hf9gdQXJ
-         fTqorIUn8yiWhO+vY/rx2mADAFAddlrFjyrgQ+WpntgG8DbMTxuCCcv6YkVYzsfd8y22
-         W6CjnUqbgjCSq142cVLLbRNraOWhUoWBuTtyzIrGHW/rsVUQjkO7RsWGUiXBk2dPgtED
-         jB+A==
-X-Gm-Message-State: AOJu0YwwH4J+CLyHTtsAYwYpDpaBNgNoVsdkgO8QCLBQxLVMNxaRxL8l
-	3IdxalralAmADq+gPqgu3jaJmhqdhyqt5i4a2yeg+MIGJJVDKge5QMse+PmDU+dd+xqD+rC8w/K
-	sUmAbgcVKP5r3B4LhcsS7pgFsZruGfyTS51XtUhw=
-X-Gm-Gg: ASbGnctn1pHNlvzd8/I+fPApg1VYNsxn/fa+kfgrNgrTQ2zy1tvV06yVA6zhP+tZ/YH
-	AFniRsmkD6A+YvkEOH6xw1M23E/wuO80i7PBM2Umyn2l/As9ZSG+GHkwQA7zqjV4/kyp03yfrmJ
-	okXlnSZQgPluhkZOOibYRoDq7FXKicokUvODWlVwbjKxtYRXMTo6Ts2yChFOrF11BpELpioVNQQ
-	Xv858qRFzY9M7FPMyqlkUItGBhtSrVY/IjSH7x3bSFDweMsExrDoG6exQQ=
-X-Google-Smtp-Source: AGHT+IGf7e6FAMBYD0xjoBFGwY7J+nXHrIbj18TP5VRmLNGwt2oAg/ZWgSYT/k8Kkz9eO9L93qdxVwsQeRZWEp+8y0c=
-X-Received: by 2002:a17:903:11cc:b0:262:661d:eb1d with SMTP id
- d9443c01a7336-268118b9516mr62731335ad.1.1758173325178; Wed, 17 Sep 2025
- 22:28:45 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1758138771.git.scott.murray@konsulko.com> <730ebbddc121016151a72d3e0bce61351a0ad365.1758138771.git.scott.murray@konsulko.com>
-In-Reply-To: <730ebbddc121016151a72d3e0bce61351a0ad365.1758138771.git.scott.murray@konsulko.com>
-From: Marta Rybczynska <rybczynska@gmail.com>
-Date: Thu, 18 Sep 2025 07:28:33 +0200
-X-Gm-Features: AS18NWAl7Be3-cA7VeyZicYnrCAY8gaDecc865iP7BVfdIHmalv2sRi33QpzdxI
-Message-ID: <CAApg2=TMGYOJN0=u5-YSSaEnZC3UDjnXf_deEpWSB9pAjFJyXA@mail.gmail.com>
-Subject: Re: [yocto-patches] [meta-security][PATCH 5/5] lynis: update to 3.1.5
+        d=1e100.net; s=20230601; t=1758199371; x=1758804171;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lPkeCS1u988IJSfr2weiQgK/UiQPTDyiwbmOaQ2DuUw=;
+        b=dIScV5OwV/vhVuOQl+wnGWpcmtwFW2IrE9PAoJJRvNH7Hr8mfAY2EKCWjqyevCSsjA
+         fqPxQ1lQwLQaR7YYyeG0B956k2z8iaVmVad8l2Dj4NIGuRBl1byvtM4ePblEQvK3oVw1
+         sNRIYdO7yxmhoirJ3S9ffUzAUlJhfs2UBYBhANVUwEHOySxG2W7UoOHNSTkorq8ABuBz
+         Vq3KPb38+iU0jHTy19xZ8QqnUe8nRSYy/anLqS+4CDLarabJYFQoV9a8tQ/Wipo/V0D/
+         Lk5iyQMNB3XHtkNbnQHJaH4Ewfu/5X7yQkK5lVo6W8IGbOBhI5c5BEqr4Le+Dd6dUj3m
+         yKTA==
+X-Gm-Message-State: AOJu0Yx/KBb/JzhkzQOoJ/S4L15fVgLwG+9hPloMdJuvflbTFn4YjIyR
+	CA8lnSpLcYQ59xQIYx/A1+uRaFNVvDgvBXt1iD1V+WVeMGEtY+nRPL8BS+AbdyTd3r6k7o0XydE
+	FUOQm
+X-Gm-Gg: ASbGnctR+Pd+1c0QNz6gDaLYxc80dVxoKbP28BcyMsvgbCTjt+9dMqIJvHoZ/pHPS9P
+	3f1xM65ZQYqenuvFFsKKMeGQraKVd0qSpxGNawsQrTnPSHujlHvDP3+pYsEVMgEyTB+hgASQCau
+	xyd6KYT7B16Qz/5iLEm0x6+qDyNwMbtjJwkFx3zi0uxYKUL5ElItrFc8WMFJW5an1bF5neYeHuG
+	0WqT2+n5YtnEZLYEO0uqZxe0td5/iPhsD4fvpFAEOcaetLJuuGVskhs4PRCRfoER3zWpIBPuGSu
+	LlxCA53TAuqzl98AWym45DOX2LYwKswz0ox9gRbgkpkzWHAIIUNLHSWFZYOWeeFwMdEUU4ZvcoL
+	+/shwCXCiUGe7c3dhPOmpg3cdUP0+wZ4hLMclZV0sya2pKtHsD27Ouhp8EaLLKCpoCOcbbmrBy9
+	kT
+X-Google-Smtp-Source: AGHT+IFN1/nV0BkrEmUrrxx/P5Odo0prEbXVS+QQRHsQ01YCslE0hO/xFe8/jQ8D8BtzhecozxoMFw==
+X-Received: by 2002:a05:622a:1488:b0:4b6:23d0:c89a with SMTP id d75a77b69052e-4ba676bb299mr62328751cf.37.1758199371463;
+        Thu, 18 Sep 2025 05:42:51 -0700 (PDT)
+Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-836260ccd2dsm156056885a.13.2025.09.18.05.42.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Sep 2025 05:42:51 -0700 (PDT)
+Date: Thu, 18 Sep 2025 08:42:50 -0400 (EDT)
+From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Marta Rybczynska <marta.rybczynska@ygreky.com>
-Content-Type: multipart/alternative; boundary="000000000000803e36063f0ca080"
+cc: Marta Rybczynska <marta.rybczynska@ygreky.com>, rybczynska@gmail.com
+Subject: Re: [yocto-patches] [meta-security][PATCH 5/5] lynis: update to
+ 3.1.5
+In-Reply-To: <CAApg2=TMGYOJN0=u5-YSSaEnZC3UDjnXf_deEpWSB9pAjFJyXA@mail.gmail.com>
+Message-ID: <bc3df76c-5037-46f4-ca68-b8e0fd281585@konsulko.com>
+References: <cover.1758138771.git.scott.murray@konsulko.com> <730ebbddc121016151a72d3e0bce61351a0ad365.1758138771.git.scott.murray@konsulko.com> <CAApg2=TMGYOJN0=u5-YSSaEnZC3UDjnXf_deEpWSB9pAjFJyXA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="-1463811583-2133505461-1758199371=:17462"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 18 Sep 2025 05:28:49 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2215
+ <yocto-patches@lists.yoctoproject.org>; Thu, 18 Sep 2025 12:43:03 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2216
 
---000000000000803e36063f0ca080
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-On Wed, Sep 17, 2025 at 10:43=E2=80=AFPM Scott Murray via lists.yoctoprojec=
-t.org
-<scott.murray=3Dkonsulko.com@lists.yoctoproject.org> wrote:
+---1463811583-2133505461-1758199371=:17462
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-> From: Michael Opdenacker <michael.opdenacker@rootcommit.com>
->
-> Tested on master (whinlatter) with beaglebone-yocto
->
-> New in version 3.1.5 (2025-07-29):
-> https://cisofy.com/changelog/lynis/#315
->
-> Added:
-> - Support for OpenWrt
-> - Bitdefender detection on Linux
-> - Detection of openSUSE Tumbleweed-Slowroll
->
-> Changed:
-> - Corrected detection of service manager SMF
-> - Extended GetHostID function to allow HostID and HostID2 creation on
-> OpenWrt
-> - Check modules also under /usr/lib/modules.d
->
-> Signed-off-by: Michael Opdenacker <michael.opdenacker@rootcommit.com>
-> ---
->  recipes-compliance/lynis/{lynis_3.1.4.bb =3D> lynis_3.1.5.bb} | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->  rename recipes-compliance/lynis/{lynis_3.1.4.bb =3D> lynis_3.1.5.bb} (93=
-%)
->
-> diff --git a/recipes-compliance/lynis/lynis_3.1.4.bb
-> b/recipes-compliance/lynis/lynis_3.1.5.bb
-> similarity index 93%
-> rename from recipes-compliance/lynis/lynis_3.1.4.bb
-> rename to recipes-compliance/lynis/lynis_3.1.5.bb
-> index 3546a9e..3d1e8b7 100644
-> --- a/recipes-compliance/lynis/lynis_3.1.4.bb
-> +++ b/recipes-compliance/lynis/lynis_3.1.5.bb
-> @@ -8,7 +8,7 @@ LIC_FILES_CHKSUM =3D
-> "file://LICENSE;md5=3D3edd6782854304fd11da4975ab9799c1"
->
->  SRC_URI =3D "https://downloads.cisofy.com/lynis/${BPN}-${PV}.tar.gz"
->
-> -SRC_URI[sha256sum] =3D
-> "c4dbcddd429624d5b2319cd3b19728e18a7885b70b8eb0a9fdd3ca5f0ae28eb6"
-> +SRC_URI[sha256sum] =3D
-> "8d2c6652ba60116a82514522b666ca77293f4bfc69f1e581028769f7ebb52ba4"
->
->  #UPSTREAM_CHECK =3D "https://downloads.cisofy.com/lynis"
->
->
-Hello,
-I was thinking about this one, as lynis is causing issues for each new
-version. The last version is indeed  ${BPN}-${PV}.tar.gz
-<https://downloads.cisofy.com/lynis/$%7BBPN%7D-$%7BPV%7D.tar.gz>, but when
-they release, they move the previous one. Existing recipes do not work
-anymore.
+On Thu, 18 Sep 2025, Marta Rybczynska via lists.yoctoproject.org wrote:
 
-I think the solution would be to use their GitHub releases like
-https://github.com/CISOfy/lynis/archive/refs/tags/3.1.5.tar.gz
+> On Wed, Sep 17, 2025 at 10:43 PM Scott Murray via lists.yoctoproject.org
+> <scott.murray=konsulko.com@lists.yoctoproject.org> wrote:
+>
+> > From: Michael Opdenacker <michael.opdenacker@rootcommit.com>
+> >
+> > Tested on master (whinlatter) with beaglebone-yocto
+> >
+> > New in version 3.1.5 (2025-07-29):
+> > https://cisofy.com/changelog/lynis/#315
+> >
+> > Added:
+> > - Support for OpenWrt
+> > - Bitdefender detection on Linux
+> > - Detection of openSUSE Tumbleweed-Slowroll
+> >
+> > Changed:
+> > - Corrected detection of service manager SMF
+> > - Extended GetHostID function to allow HostID and HostID2 creation on
+> > OpenWrt
+> > - Check modules also under /usr/lib/modules.d
+> >
+> > Signed-off-by: Michael Opdenacker <michael.opdenacker@rootcommit.com>
+> > ---
+> >  recipes-compliance/lynis/{lynis_3.1.4.bb => lynis_3.1.5.bb} | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >  rename recipes-compliance/lynis/{lynis_3.1.4.bb => lynis_3.1.5.bb} (93%)
+> >
+> > diff --git a/recipes-compliance/lynis/lynis_3.1.4.bb
+> > b/recipes-compliance/lynis/lynis_3.1.5.bb
+> > similarity index 93%
+> > rename from recipes-compliance/lynis/lynis_3.1.4.bb
+> > rename to recipes-compliance/lynis/lynis_3.1.5.bb
+> > index 3546a9e..3d1e8b7 100644
+> > --- a/recipes-compliance/lynis/lynis_3.1.4.bb
+> > +++ b/recipes-compliance/lynis/lynis_3.1.5.bb
+> > @@ -8,7 +8,7 @@ LIC_FILES_CHKSUM =
+> > "file://LICENSE;md5=3edd6782854304fd11da4975ab9799c1"
+> >
+> >  SRC_URI = "https://downloads.cisofy.com/lynis/${BPN}-${PV}.tar.gz"
+> >
+> > -SRC_URI[sha256sum] =
+> > "c4dbcddd429624d5b2319cd3b19728e18a7885b70b8eb0a9fdd3ca5f0ae28eb6"
+> > +SRC_URI[sha256sum] =
+> > "8d2c6652ba60116a82514522b666ca77293f4bfc69f1e581028769f7ebb52ba4"
+> >
+> >  #UPSTREAM_CHECK = "https://downloads.cisofy.com/lynis"
+> >
+>
+> Hello,
+> I was thinking about this one, as lynis is causing issues for each new
+> version. The last version is indeed  ${BPN}-${PV}.tar.gz
+> <https://downloads.cisofy.com/lynis/$%7BBPN%7D-$%7BPV%7D.tar.gz>, but when
+> they release, they move the previous one. Existing recipes do not work
+> anymore.
+>
+> I think the solution would be to use their GitHub releases like
+> https://github.com/CISOfy/lynis/archive/refs/tags/3.1.5.tar.gz
+>
+> That would avoid the need to update the link every time they release.
+>
+> What do you think?
 
-That would avoid the need to update the link every time they release.
+Those are not reliable, as Github may regenerate them randomly.  There's
+actually a QA check in oe-core (src-uri-bad) that explicitly flags such
+URIs.  It may be worth asking upstream to always also put the new
+releases into their archive directory on downloads.cisofy.com right away
+so that the URI can stay stable.  I can imagine them not going for that,
+though, based on the recommendation to always use the latest version on
+their download site.
 
-What do you think?
-
-Kind regards,
-Marta
-
---000000000000803e36063f0ca080
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
-mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Wed, Sep 17,=
- 2025 at 10:43=E2=80=AFPM Scott Murray via <a href=3D"http://lists.yoctopro=
-ject.org">lists.yoctoproject.org</a> &lt;scott.murray=3D<a href=3D"mailto:k=
-onsulko.com@lists.yoctoproject.org">konsulko.com@lists.yoctoproject.org</a>=
-&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px =
-0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">From=
-: Michael Opdenacker &lt;<a href=3D"mailto:michael.opdenacker@rootcommit.co=
-m" target=3D"_blank">michael.opdenacker@rootcommit.com</a>&gt;<br>
-<br>
-Tested on master (whinlatter) with beaglebone-yocto<br>
-<br>
-New in version 3.1.5 (2025-07-29):<br>
-<a href=3D"https://cisofy.com/changelog/lynis/#315" rel=3D"noreferrer" targ=
-et=3D"_blank">https://cisofy.com/changelog/lynis/#315</a><br>
-<br>
-Added:<br>
-- Support for OpenWrt<br>
-- Bitdefender detection on Linux<br>
-- Detection of openSUSE Tumbleweed-Slowroll<br>
-<br>
-Changed:<br>
-- Corrected detection of service manager SMF<br>
-- Extended GetHostID function to allow HostID and HostID2 creation on OpenW=
-rt<br>
-- Check modules also under /usr/lib/modules.d<br>
-<br>
-Signed-off-by: Michael Opdenacker &lt;<a href=3D"mailto:michael.opdenacker@=
-rootcommit.com" target=3D"_blank">michael.opdenacker@rootcommit.com</a>&gt;=
-<br>
----<br>
-=C2=A0recipes-compliance/lynis/{<a href=3D"http://lynis_3.1.4.bb" rel=3D"no=
-referrer" target=3D"_blank">lynis_3.1.4.bb</a> =3D&gt; <a href=3D"http://ly=
-nis_3.1.5.bb" rel=3D"noreferrer" target=3D"_blank">lynis_3.1.5.bb</a>} | 2 =
-+-<br>
-=C2=A01 file changed, 1 insertion(+), 1 deletion(-)<br>
-=C2=A0rename recipes-compliance/lynis/{<a href=3D"http://lynis_3.1.4.bb" re=
-l=3D"noreferrer" target=3D"_blank">lynis_3.1.4.bb</a> =3D&gt; <a href=3D"ht=
-tp://lynis_3.1.5.bb" rel=3D"noreferrer" target=3D"_blank">lynis_3.1.5.bb</a=
->} (93%)<br>
-<br>
-diff --git a/recipes-compliance/lynis/<a href=3D"http://lynis_3.1.4.bb" rel=
-=3D"noreferrer" target=3D"_blank">lynis_3.1.4.bb</a> b/recipes-compliance/l=
-ynis/<a href=3D"http://lynis_3.1.5.bb" rel=3D"noreferrer" target=3D"_blank"=
->lynis_3.1.5.bb</a><br>
-similarity index 93%<br>
-rename from recipes-compliance/lynis/<a href=3D"http://lynis_3.1.4.bb" rel=
-=3D"noreferrer" target=3D"_blank">lynis_3.1.4.bb</a><br>
-rename to recipes-compliance/lynis/<a href=3D"http://lynis_3.1.5.bb" rel=3D=
-"noreferrer" target=3D"_blank">lynis_3.1.5.bb</a><br>
-index 3546a9e..3d1e8b7 100644<br>
---- a/recipes-compliance/lynis/<a href=3D"http://lynis_3.1.4.bb" rel=3D"nor=
-eferrer" target=3D"_blank">lynis_3.1.4.bb</a><br>
-+++ b/recipes-compliance/lynis/<a href=3D"http://lynis_3.1.5.bb" rel=3D"nor=
-eferrer" target=3D"_blank">lynis_3.1.5.bb</a><br>
-@@ -8,7 +8,7 @@ LIC_FILES_CHKSUM =3D &quot;file://LICENSE;md5=3D3edd6782854=
-304fd11da4975ab9799c1&quot;<br>
-<br>
-=C2=A0SRC_URI =3D &quot;<a href=3D"https://downloads.cisofy.com/lynis/$%7BB=
-PN%7D-$%7BPV%7D.tar.gz" rel=3D"noreferrer" target=3D"_blank">https://downlo=
-ads.cisofy.com/lynis/${BPN}-${PV}.tar.gz</a>&quot;<br>
-<br>
--SRC_URI[sha256sum] =3D &quot;c4dbcddd429624d5b2319cd3b19728e18a7885b70b8eb=
-0a9fdd3ca5f0ae28eb6&quot;<br>
-+SRC_URI[sha256sum] =3D &quot;8d2c6652ba60116a82514522b666ca77293f4bfc69f1e=
-581028769f7ebb52ba4&quot;<br>
-<br>
-=C2=A0#UPSTREAM_CHECK =3D &quot;<a href=3D"https://downloads.cisofy.com/lyn=
-is" rel=3D"noreferrer" target=3D"_blank">https://downloads.cisofy.com/lynis=
-</a>&quot;<br>
-<br></blockquote><div><br></div><div>Hello,</div><div>I was thinking about =
-this one, as lynis is causing issues for each new version. The last version=
- is indeed=C2=A0 <a href=3D"https://downloads.cisofy.com/lynis/$%7BBPN%7D-$=
-%7BPV%7D.tar.gz" rel=3D"noreferrer" target=3D"_blank">${BPN}-${PV}.tar.gz</=
-a>, but when they release, they move the previous one. Existing recipes do =
-not work anymore.</div><div><br></div><div>I think the solution would be to=
- use their GitHub releases like <a href=3D"https://github.com/CISOfy/lynis/=
-archive/refs/tags/3.1.5.tar.gz">https://github.com/CISOfy/lynis/archive/ref=
-s/tags/3.1.5.tar.gz</a></div><div><br></div><div>That would avoid the need =
-to update the link every time they release.<br></div><div><br></div><div>Wh=
-at do you think?</div><div><br></div><div>Kind regards,</div><div>Marta<br>=
-</div></div></div>
-
---000000000000803e36063f0ca080--
+Scott
+---1463811583-2133505461-1758199371=:17462--
 
