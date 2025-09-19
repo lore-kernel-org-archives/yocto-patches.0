@@ -2,62 +2,61 @@ Return-Path: <antonin.godard@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 223C2CAC5A5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 214C0CAC59A
 	for <webhook@archiver.kernel.org>; Fri, 19 Sep 2025 09:23:36 +0000 (UTC)
 Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
- by mx.groups.io with SMTP id smtpd.web10.12341.1758273811551516060
+ by mx.groups.io with SMTP id smtpd.web10.12340.1758273807298191850
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 19 Sep 2025 02:23:31 -0700
+ Fri, 19 Sep 2025 02:23:28 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=dkim header.b=yOhaXpXq;
+ dkim=pass header.i=@bootlin.com header.s=dkim header.b=0WVQc3k0;
  spf=pass (domain: bootlin.com, ip: 185.246.84.56, mailfrom: antonin.godard@bootlin.com)
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 4B2521A0F14
-	for <yocto-patches@lists.yoctoproject.org>; Fri, 19 Sep 2025 09:23:30 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 79B1E1A0F11
+	for <yocto-patches@lists.yoctoproject.org>; Fri, 19 Sep 2025 09:23:25 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 235EE606A8
-	for <yocto-patches@lists.yoctoproject.org>; Fri, 19 Sep 2025 09:23:30 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 788D6102F1C3C;
-	Fri, 19 Sep 2025 11:23:29 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 4E9C8606A8
+	for <yocto-patches@lists.yoctoproject.org>; Fri, 19 Sep 2025 09:23:25 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 70AEA102F1C3C;
+	Fri, 19 Sep 2025 11:23:19 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758273809; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=uaPnsimfNpVoa9hRuAESXHebyZKgLWlOdRWIqwSjuTk=;
-	b=yOhaXpXqGSyCeM476LX6Wud9xJQMmhR24xqlbHezoIscoCVQnd16f8DUsVYPSbLvj/3h8r
-	DZ4ldO1b7oI/qbD990GzWpS+IGaW1Dh+t3u02x6s2hRUhzir7t7vyjalNFstZsngCbgIi5
-	1OWar4iMJV0AqwFdiup1rWp8hG6dlpIU7l6ink+Ys0PrgW3FomC3pKUn2uriNi1pT2Qi31
-	PrMCsnBYB5rDh6PY7/h9txLEfOy4h0XUX8Fewz6Kh04nikcTkO0tBTrD6gbYDK16jiQEUC
-	4weR/FQQ3x5Cqxk3UdKtu1a7Ks5toJtmC1gf+NLgoH3GE7ILRqY1AWZh0q71yg==
+	t=1758273804; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=Cl89KxgYeM9uWPZzpdUU2REG65oRWEjumrqGCWzNE1M=;
+	b=0WVQc3k0R4vQ3Le9X26kQKdTbMhiHIvCGwyeyQRTcjiDrzeLqwm+wQmdbCP1BolJKwGuPv
+	KaMlrq58z00EyOckygr9cuLsjkh4yKhJ0RzF04r8GTHkqKyFUZGsomYl7SDuFrB34cc3DK
+	kt33WMg1zlFzMruRSZjniJF/oZArxeSVtx1pAZFHQl9WH6VUGmWSVKgBqNbzeVicAA6Ur9
+	cbm8uyZZOyg4wgC0hSPAqQN2PSQOknCOkgXrvtAM4uE8CesadRuDZBqfaromzrb1dyDehU
+	mvW1N9+HCsFXApGdMMKbWeHq8lUNS012qu+oFm6CemJdY21PP6fs4btEobsH5w==
 From: Antonin Godard <antonin.godard@bootlin.com>
-Date: Fri, 19 Sep 2025 11:23:05 +0200
-Subject: [yocto-autobuilder-helper][PATCH] scripts/yocto-supported-distros:
- update after changes in config.py
+Date: Fri, 19 Sep 2025 11:22:48 +0200
+Subject: [yocto-autobuilder2][PATCH] config.py: remove debian11 for master
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250919-udpate-ysd-script-v1-1-e5d4eacda316@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAPggzWgC/yXMQQ6CMBBA0auQWTsJJUGtVyEsSmeUMYQ2ndZIC
- He36vIt/t9BOQkr3JodEr9EJawV5tSAn936YBSqhq7t+tYai4Wiy4ybEqpPEjNejes9GUuX/gy
- 1i4nv8v49h/FvLdOTff6Ohi34HNCVHKYiC3HCmZfIaYTj+ADXdiRnjwAAAA==
-X-Change-ID: 20250919-udpate-ysd-script-81a5cd19d756
+Message-Id: <20250919-master-exclude-debian11-v1-1-bc0e7c7998ea@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAOcgzWgC/yXMywrCMBBA0V8ps3YgUxUaf6V0kceoIzWRPEql9
+ N+NujyLezfInIQzXLoNEi+SJYYGOnTg7ibcGMU3Q6/6s9Kk8Wly4YS8url6Rs9WTCBCIjXQ4JU
+ +niy0+pX4KuvvPE5/52of7Mp3N76jKxFNLdFWmT2nfoJ9/wAKMGUFjwAAAA==
+X-Change-ID: 20250919-master-exclude-debian11-110818d0934b
 To: yocto-patches@lists.yoctoproject.org
 Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
  Antonin Godard <antonin.godard@bootlin.com>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2750;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4376;
  i=antonin.godard@bootlin.com; h=from:subject:message-id;
- bh=pj9Yndd79tgSnKktxjupG9QaFHMPTfTHvsqf3gOnKcg=;
- b=owEBbQKS/ZANAwAKAdGAQUApo6g2AcsmYgBozSERzcINaZyM0YIFAL/m1z5PgcvQngONrIG0g
- uxMp42sxJ+JAjMEAAEKAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCaM0hEQAKCRDRgEFAKaOo
- Ng8qEACZv8nhLVcFLm6fYvuT0/8MgfFl9tatZ3Jt3LNyd483ncyTV2WpXfVr6DiFDqidAQHno3z
- 8tzoqO3QkIace6wOs8QGZGNF3DToudIVjxyIKrTTMlCBYYXPPJHFaE/VweCMkvCr+JPyOkTs58g
- ALzyPjhiBYE0K21ma1cACwRN2HJ9I221wK1eZpcBBv6v5Y5QRKFQoGWnR7Z0hVqzbPAfxO9kgao
- UdIBbrdDmk1SCmWqWkMcbmNvp7trqqHmm5ybYtqixXuBsS8wfKi37hk7sQAffZXVF0Ak7cIcax3
- 0q3jeq5xCh1DipDdTrhXbkAJIkhH8K2tVAgX09qFgq3eo7W7S8AXdtn3l4ZOTfvBEnPdAHL7XcY
- BORHoQGID0/n73EkEf4mTKE56QXrsLg/vJFsyqYFp7djbIi7jiLYQKxTBklyaKh2XbNCDyKN41p
- z4Ay0j5yoo3NmUM8eZw9/wCR4iWgz2Aqq1gDeLp5kBRqrTBBA+md9WTzUrgBkdlmdaVMbjIK125
- Te4HoSAWQTH7FH4y0SU8IljzYjor+YLCAAbYhY+FF6mWQOi9g8cz1KrKFs5wuItQV7ZVTKeXmcI
- 4C5iLCoAVGZD0BnODuPOX0v0ov35Yqky3cXAcGoWeck4g2l8B8iNSJFlOxS92kAOzXWYLR6EX8Q
- 1LI7eQCTC2YIH0A==
+ bh=v7HNU5R5b1xiW9SN7Ls0VhI+7m9BEnpMM7cBOOSyqY8=;
+ b=owEBbQKS/ZANAwAKAdGAQUApo6g2AcsmYgBozSEHmjK5W2f/h3LUkmuZwMX2rF3Bq+7xrsCEo
+ J7DLM0W1uGJAjMEAAEKAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCaM0hBwAKCRDRgEFAKaOo
+ NsmjD/95Go0Y+rMCIS/lBoVTiZ43XnEEZP15yvKzKg6gY5IXXjdd/W6QNe2zpPc6x1r96HLB8Uj
+ dAFRKVdIyDFkNrDJB/TRfNpiwF/2XD4srKcB8mlat4LXq9SGYEizz2MEup+4FUmKHRSjRMoC/HA
+ Zab9HoawmF/jNj/x+rON+VRzKE/1YWEfMjEKdCbTef/AaCuMrUX5hpjhzj99dYyaMjLzZNMoOUL
+ tx4uCt3K+pGn8DQVd+L2CVPEp8coe9kShbaboFqekA7oMWnhUHrm9wesQPFwDNm7jMf1uHQzC/7
+ 9LM1fpwnXgmMej9vNALhxsW7k/14f4iCtMgk7P61aXy4tTtWmyRVIv+RIvjlurRMoxrJDyH5SgV
+ duJ47tgKoYQ7KpxMeIdfFwFbDAndIdTeU7+reizZHtT8eb8YjEHBkkkbs3gPULsv50zJTlcUE4m
+ fPkghwg0bwa8oWcPo3rxF/2MgXYZyxvYhZ9/PjD/ioFO0WREZ9KjoXxQx+TDYPPs20ZU2bFVyTT
+ cw2Zv6zUV304h9hNNQRcLq+xo7O8A7jj61JVkkOOQmFwnYlrNJlT6wwEKJatEDH3whJ9EZ9gHi/
+ zF9mVt1c2PQGlDr5y3ILkj729K3cLZAaGaHc/q+V/d/Gi5QQAJmbCjOkA+dGEKMfx/mAWiATrQP
+ gvX/QaE3k+KUfnQ==
 X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
  fpr=8648725188DD401BB9A0D3FFD180414029A3A836
 X-Last-TLS-Session-Version: TLSv1.3
@@ -65,78 +64,103 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Fri, 19 Sep 2025 09:23:36 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2220
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2219
 
-The config.py configuration file of yocto-autobuilder2 changed, and now
-"master" is listed in a worker_filters variable (same as before but
-includes master).
+We want to keep the debian11 worker, but we want it only for the stable
+releases. The current code in config.py does not allow master to run on
+its own filtered list of workers, it just takes all workers in
+all_workers.
 
-Adapt the script to always read from that filtered list.
+Rename workers_prev_releases to worker_filters, and include master in
+the list. By default, the list of workers for master is the same as
+all_workers, but we remove the workers listed in master_exclude_list.
+
+We have to do some mangling to remove the -vk. If something wrong
+happens an exception is raised.
 
 Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
 ---
 For context see:
 https://lore.kernel.org/r/DCW1DRNGJELA.1WL7VLD0XA7T2@bootlin.com
-
-Should be merged along with "config.py: remove debian11 for master" on
-yocto-autobuilder2.
 ---
- scripts/yocto-supported-distros | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+ builders.py       |  4 ++--
+ config.py         | 20 ++++++++++++++++++--
+ docker/Dockerfile |  2 +-
+ 3 files changed, 21 insertions(+), 5 deletions(-)
 
-diff --git a/scripts/yocto-supported-distros b/scripts/yocto-supported-distros
-index e70943d..d833327 100755
---- a/scripts/yocto-supported-distros
-+++ b/scripts/yocto-supported-distros
-@@ -185,7 +185,7 @@ def _possible_workers(all_workers: List[str],
-     Return workers in match_workers that match the workers in all_workers.
-     A match is a worker in all_workers that starts with a worker in
-     match_workers.
--    This is because workers_prev_releases is defined like so in config.py.
-+    This is because worker_filters is defined like so in config.py.
-     """
+diff --git a/builders.py b/builders.py
+index d26b7e9..03af055 100644
+--- a/builders.py
++++ b/builders.py
+@@ -163,11 +163,11 @@ def nextWorker(bldr, workers, buildrequest):
+         # Has to be a better way to do this
+         branch = buildrequest.sources[''].branch
+     if branch and "bringup" not in bldr.name:
+-        for branchname in config.workers_prev_releases:
++        for branchname in config.worker_filters:
+             if branchname in branch:
+                 possible_workers = []
+                 for w in workers:
+-                    if w.worker.workername.startswith(config.workers_prev_releases[branchname]):
++                    if w.worker.workername.startswith(config.worker_filters[branchname]):
+                         possible_workers.append(w)
+                 log.msg("nextWorker: Limiting %s to workers %s for %s" % (str(bldr), str(possible_workers), branchname))
+                 break
+diff --git a/config.py b/config.py
+index 559ca99..ae8e4af 100644
+--- a/config.py
++++ b/config.py
+@@ -2,6 +2,8 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ #
  
-     possible_workers = []
-@@ -382,9 +382,9 @@ def main():
++import re
++
+ # ## Build configuration, tied to config.json in yocto-autobuilder-helpers
+ # Repositories used by each builder
+ buildertorepos = {
+@@ -197,8 +199,22 @@ workers_toaster = ["ubuntu2204-vk-1", "ubuntu2204-vk-2", "ubuntu2204-vk-3", "ubu
  
-     possible_workers = []
+ all_workers = workers + workers_bringup + workers_buildperf + workers_arm
  
--    stable_release = True
-+    stable_release = release != "master"
- 
--    if release != "master" and release not in config.workers_prev_releases:
-+    if release not in config.worker_filters:
-         print(f"Release {release} does not exist")
-         if args.release_from_env:
-             # Might be a custom branch or something else... safely exiting
-@@ -392,12 +392,8 @@ def main():
-         else:
-             exit(1)
- 
--    if release == "master":
--        stable_release = False
--        possible_workers = config.all_workers
--    else:
--        possible_workers = _possible_workers(config.workers_prev_releases[release],
--                                             config.all_workers)
-+    possible_workers = _possible_workers(config.worker_filters[release],
-+                                         config.all_workers)
- 
-     if args.check_worker_statuses:
-         possible_workers = _filter_inactive_workers(possible_workers)
-@@ -433,7 +429,7 @@ def main():
- 
-         old_distros = []
- 
--        for distro in config.workers_prev_releases[release]:
-+        for distro in config.worker_filters[release]:
-             if not any(distro in w for w in config.all_workers):
-                 old_distros.append(_mangle_worker(distro, "ab", args.output_format))
- 
+-# Worker filtering for older releases
+-workers_prev_releases = {
++_remove_vk_re = re.compile(r"^(.+)-vk(-.+)?$")
++def mangle_worker(w: str):
++    m = re.match(_remove_vk_re, w)
++    if m:
++        return m.group(1)
++
++    raise Exception(f"Not able to mangle the following worker: {w}")
++
++# Workers we want to exclude for testing on master* branches
++master_exclude_list = ("debian11",)
++
++master_workers = list({mangle_worker(w) for w in all_workers if mangle_worker(w) not in master_exclude_list})
++
++# Worker filtering for branches
++worker_filters = {
++    "master" : master_workers,
+     "walnascar" : ("alma8", "alma9", "debian11", "debian12", "fedora39", "fedora40", "fedora41", "opensuse155", "opensuse156", "rocky8", "rocky9", "stream9", "ubuntu2004","ubuntu2204", "ubuntu2304", "ubuntu2404", "ubuntu2410", "perf-"),
+     "styhead" : ("alma8", "alma9", "debian11", "debian12", "fedora38", "fedora39", "fedora40", "opensuse154", "opensuse155", "opensuse156", "rocky8", "rocky9", "stream8", "ubuntu1804", "ubuntu2004","ubuntu2204", "ubuntu2304", "ubuntu2404", "perf-"),
+     "scarthgap" : ("alma8", "alma9", "debian11", "debian12", "fedora38", "fedora39", "fedora40", "opensuse154", "rocky9", "stream8", "ubuntu1804", "ubuntu2004","ubuntu2204", "ubuntu2304", "ubuntu2404", "perf-"),
+diff --git a/docker/Dockerfile b/docker/Dockerfile
+index 6948a11..5d8997f 100644
+--- a/docker/Dockerfile
++++ b/docker/Dockerfile
+@@ -110,7 +110,7 @@ RUN sed -i \
+         -e "s@^\(sharedrepodir *= *\).*@\1\"/sharedrepo\"@" \
+         -e "s@^\(publish_dest *= *\).*@\1\"/publish\"@" \
+         # Use any worker for any release \
+-        -e '$ a workers_prev_releases = {}' \
++        -e '$ a worker_filters = {}' \
+         /home/pokybuild/yocto-controller/yoctoabb/config.py && \
+     sed -i \
+         # Change location of sharedrepodir and publish_dest directories \
 
 ---
-base-commit: fa3e15fba7fa96da520343c2ad312cefa6fc9c87
-change-id: 20250919-udpate-ysd-script-81a5cd19d756
+base-commit: 5dab41d319bc8a5fece467485d11fbf05cee5688
+change-id: 20250919-master-exclude-debian11-110818d0934b
 
 Best regards,
 --  
