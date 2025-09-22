@@ -1,171 +1,157 @@
-Return-Path: <majortomtosourcecontrol@gmail.com>
+Return-Path: <martin.jansa@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAFCECA100F
-	for <webhook@archiver.kernel.org>; Mon, 22 Sep 2025 15:04:30 +0000 (UTC)
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
- by mx.groups.io with SMTP id smtpd.web10.54386.1758553466131226576
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87215CAC592
+	for <webhook@archiver.kernel.org>; Mon, 22 Sep 2025 17:26:51 +0000 (UTC)
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+ by mx.groups.io with SMTP id smtpd.web11.58584.1758562005482953532
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 22 Sep 2025 08:04:26 -0700
+ Mon, 22 Sep 2025 10:26:45 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=Ns6BmEWQ;
- spf=pass (domain: gmail.com, ip: 209.85.166.44, mailfrom: majortomtosourcecontrol@gmail.com)
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-88432e1af6dso357099739f.2
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 22 Sep 2025 08:04:26 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=UPCtccS0;
+ spf=pass (domain: gmail.com, ip: 209.85.167.52, mailfrom: martin.jansa@gmail.com)
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-579e9fd5474so4012595e87.0
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 22 Sep 2025 10:26:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758553465; x=1759158265; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1758562004; x=1759166804; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nzgD0KbqO1vdxYRJ5rqXZhMeeUHQX8TUa6OVz/Ru9Rg=;
-        b=Ns6BmEWQHi7DRX4B+hU0/L3hW4ZBxwWFjR47LfsTWlm0mtdwSrt3JuTdvIC0GWTVJr
-         nvB6sB4mPyzjc1+f9VG5I9V0FdJ8wcjFqk5OcqsK8cF8Du0W+YAWKVMZMTiiUaCd+Mn0
-         F2fGuO+mQPUeMtcv1r3QhBV2Lop36/qolXcisiwJ/D9d9TpUL8kToVA8+wEACghcIgbq
-         U46b1rgcM9vzINcv263oTHmVeXKO1a2y+e2QUvtvagU4YNgXDVnKQ+7rSfyukBBc8Lkh
-         6VqOpNzrFjOlL/lOzeoGR/FYuP8Ki+ge8H3mXzP3S9J9ij1y0M807Ep66Dmf8Dnncwm1
-         D41A==
+        bh=C0SxwUCy1Rpj87HBQmss/QzHIVdhanWasVqcWdTheFg=;
+        b=UPCtccS0YD2XzshXKLLCRx3bQOo0xkDkEzs5lI7wxGiiPs/XA5Qsflj8iWnI67vdYg
+         SBGH8LZbUTRZEqgROZgxiSVfskrSQqDgya4h9PaBAIdC2diIypZVMW4dvlKViwMA4HPz
+         VL7I+eFn73fdd7FzkELmgW5xG1ryDuOVlL9QDvHnoou0RKC89r0dUsiMp5w0rRT+2aei
+         VqMVr+MRizK8X6Z2Ee3Zso5s35cRqgQglgsewlQRNwO28SgH3Oia8EjU9iPpdjr7T26j
+         c2pqeTruq7IfcK5/C9i9xm8O4xk0TndDoMI4nFCTcRTo3XisneICNuYeud69+mrGjDMs
+         KJhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758553465; x=1759158265;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=nzgD0KbqO1vdxYRJ5rqXZhMeeUHQX8TUa6OVz/Ru9Rg=;
-        b=o5Tho3amFiWhK1ol6Wx1v3M+BBVoMJkp81zxHwtQpt2Gbl6SKCnrTCcCTVySsNS183
-         CHIfIAxbTWCn0v81FYrmQSIyOTW1BrEvVpDL+T0F+FruhnO6jBBWDt2o90jrJCIKCPj5
-         hemM6i48Yi3JEz3KRkb0XTeWdpaNpLw3YrkyQUBvuZRhXiZyh36muvue1PffhrGuRnUJ
-         1dPVy/NJxjcNoheT5MoBFV/2hHkMUPT67pTzkIvdnOHRgWlKHHC0IwZ2qoaJTO/wcJKS
-         y+B/1e3F7V1drZUVjQUipwMFtcI5ffByFUAf5C/d8pgnUiRbntvu5HNPq0uFmb+eefU2
-         AoJg==
-X-Gm-Message-State: AOJu0YwJ1V7UH9dFvenv713sO/kU5oVjIZuYubIsKqbkNmXEdjWMozWS
-	cfp3AFjtLUgVxHskoldmb3TdhK9mpzntqIvs9pxajvwlFGuGxyT+KgrHnmgCWg==
-X-Gm-Gg: ASbGncskRTMFbIpZ+Pd2D1DcjrG7oYXqtn0vCyWEKOhz5czrNbCkqMrpJpxjhHQESfp
-	9FGqGMOlco8l8D3BsBkzEtt4jUfD2Bj/PS3vp0X3d92Y74jaiRWHEBFSvra9FTgfUl6TJYf8Qxh
-	CPtATCfHL9Zlz3/GajIViZC6BS3DHNGwIqau/ur3+gMcV0Arx0zsqk+MmtdAm62NzKkeCFEBeiv
-	j1hLBq9YhYDtZW5y/JnvPCX1J1RF+vjzvU04nU+dM1U2CzLRDLAjZIUIpAVG0LYFgHaXBYTWuvx
-	ufxnv2Q3QAbqkTCX3JW6Ppw5pLrFjgkwuUWVcq4/I/FTrocjZ1uq/eOuei/8s1kJ9/dnMzhKOUI
-	CiCyRAkUkJfrVkwkvTYMchTnZQYQyOXLJS6B8+4N+VnlP334APdN1NO8MooCJomraUFIH4Ztacq
-	O5AzjMnreD
-X-Google-Smtp-Source: AGHT+IEBKcJ0mdrRSvhO6V/fTYy+n7E1IlNj1vhWUD8Zo1MJcJUAlP4OlYqv0Fle3FPauBdryN7GJw==
-X-Received: by 2002:a05:6e02:12c2:b0:424:708:77af with SMTP id e9e14a558f8ab-424819709b3mr189427375ab.20.1758553464063;
-        Mon, 22 Sep 2025 08:04:24 -0700 (PDT)
-Received: from [172.26.252.3] (174-16-207-42.hlrn.qwest.net. [174.16.207.42])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-424593dfb5bsm58692475ab.9.2025.09.22.08.04.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Sep 2025 08:04:23 -0700 (PDT)
-Message-ID: <fc0c6979-568e-47a1-9906-f93e58312147@gmail.com>
-Date: Mon, 22 Sep 2025 09:04:22 -0600
+        d=1e100.net; s=20230601; t=1758562004; x=1759166804;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=C0SxwUCy1Rpj87HBQmss/QzHIVdhanWasVqcWdTheFg=;
+        b=JcbrRsqKXbGrRQxvwCgRtYtEnK5GzJCB2EzbJ8BhS2W0GgRDtSHXWsJhEpLZHU7ycs
+         k8R4uzBzH8gLAzZebBsbZka+mQy9UKwtPDWsPaj7zj3XsLZ6IlvQhTVttwcOCNSPrz09
+         8Db3c3FWsyz/BSzo9tMUT6MIK7aH1vI8k+FX7MJe+a0W2B5gvtiFxgOWnOLZUOaziCjb
+         Obmft/6eDHrlAU+//wdL2oyXLgPYND69OEjg30fEfM+Jna6kYM69AunC2CtWRttWi8vR
+         XdpH34AFru72BFgd5QyEomEJUAH3SJAkF9CqQKpx4RYVP/wg/dI4+Oamp/X9lEyu0uTd
+         WiLQ==
+X-Gm-Message-State: AOJu0YwPI5pcXFprt4QdlXGK9HEzifFjcpEysxXasPwK2nspum7XWASd
+	pyQuYw54s9rahu7wlYskVExfu3cOPEHPSXOjJ+2E9ZPMKAKYIk9TrFGphj8jxu+l1HQbPwRt30R
+	0afaZgoiLFdFVYCFGU2/noBGNgK9Skrqb7g==
+X-Gm-Gg: ASbGncsmlTclG4Ev9lTPZKvWyv76EsB0D6smI/xx0kbSUSVzMct7gH8ad/+FYQgui07
+	WOtyZ/FqUte5PStf0PM/UOqipg1OVFBjClnxC8d+9TUzAAh5WZpnjGGRNb+o21oWvSnzPEGg5Lb
+	H1ef3Zju3xBUxUC+sscsTyrwTJtO16ZkHk+aN8fC9fZLZ4uVVWlPa0qrZvDlMsdVQN/EE1mu9gm
+	T0WhJCeWQ==
+X-Google-Smtp-Source: AGHT+IF2silCQb2nL+PTNgsFR4QN/+DB02istcZvNt3WNkeE+Jm9/wRh2Ty5zMGegdAiJfSNnLhZjkwK4y3x1/AEWSE=
+X-Received: by 2002:a05:6512:3483:b0:57a:3020:202 with SMTP id
+ 2adb3069b0e04-57a3020060fmr3197508e87.16.1758562003197; Mon, 22 Sep 2025
+ 10:26:43 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: yocto-patches@lists.yoctoproject.org, scott.murray@konsulko.com,
- rybczynska@gmail.com
-From: Clayton Casciato <majortomtosourcecontrol@gmail.com>
-Subject: [meta-security][PATCH v2] suricata-update: add package to pull files
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <185CE350789F6CFE.8958@lists.yoctoproject.org> <CA+chaQdqb7f+oo44idJwqdOd7PR4PK3Q2r4iD4mQf9F5YZzAQQ@mail.gmail.com>
+In-Reply-To: <CA+chaQdqb7f+oo44idJwqdOd7PR4PK3Q2r4iD4mQf9F5YZzAQQ@mail.gmail.com>
+From: Martin Jansa <martin.jansa@gmail.com>
+Date: Mon, 22 Sep 2025 19:26:28 +0200
+X-Gm-Features: AS18NWCftY2q7kE0t_yM3NYhXm6iQ4L0FFyUv5w2-YdVDJEfzYr8ZspfuBTtGoI
+Message-ID: <CA+chaQcD=7jfKxKZxf+3ME9wgrXkN1PeEo7Mf9j-5Dvr-bkF0g@mail.gmail.com>
+Subject: Re: [yocto-patches] [meta-tensorflow][walnascar][PATCH] bazel-native:
+ fix build with gcc-15
+To: yocto-patches@lists.yoctoproject.org
+Cc: hongxu.jia@windriver.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 22 Sep 2025 15:04:30 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2228
+ <yocto-patches@lists.yoctoproject.org>; Mon, 22 Sep 2025 17:26:51 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2229
 
-suricata has "--disable-suricata-update"
+ping3 for this patch in walnascar (it was already applied in scarthgap
+and master/whinlatter branches over a month ago, but still missing in
+walnascar).
 
-Original add: caaeb67863a6 ("suricata-update: add package to pull rules")
-Suricata dropped: 7a1691c03726 ("suricata: Drop 4.1.x its EOL")
-Not readded: 818a8646a689 ("suricata: rust is in core")
-
-*Changes*
-1.2.1 -> 1.3.6
-Drop period and trailing space in SUMMARY value
-Drop now-redundant "S"
-Use HTTPS protocol for SRC_URI
-LICENSE "GPLv2" -> "GPL-2.0-only"
-Add "python3-shell" RDEPENDS to resolve:
-  ModuleNotFoundError: No module named 'shlex'
-
-Basic target testing:
-root@beaglebone-yocto:~# suricata-update
-22/9/2025 -- 04:06:23 - <Info> -- Using data-directory /var/lib/suricata.
-22/9/2025 -- 04:06:23 - <Info> -- Using Suricata configuration /etc/suricata/suricata.yaml
-22/9/2025 -- 04:06:23 - <Info> -- Using /usr/share/suricata/rules for Suricata provided rules.
-22/9/2025 -- 04:06:23 - <Info> -- Found Suricata version 7.0.0 at /bin/suricata.
-22/9/2025 -- 04:06:23 - <Info> -- Loading /etc/suricata/suricata.yaml
-22/9/2025 -- 04:06:23 - <Info> -- Disabling rules for protocol pgsql
-22/9/2025 -- 04:06:23 - <Info> -- Disabling rules for protocol modbus
-22/9/2025 -- 04:06:23 - <Info> -- Disabling rules for protocol dnp3
-22/9/2025 -- 04:06:23 - <Info> -- Disabling rules for protocol enip
-22/9/2025 -- 04:06:23 - <Info> -- No sources configured, will use Emerging Threats Open
-22/9/2025 -- 04:06:23 - <Info> -- Fetching https://rules.emergingthreats.net/open/suricata-7.0.0/emerging.rules.tar.gz.
- 100% - 5102134/5102134
-22/9/2025 -- 04:06:24 - <Info> -- Done.
-22/9/2025 -- 04:06:25 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/app-layer-events.rules
-22/9/2025 -- 04:06:25 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/decoder-events.rules
-22/9/2025 -- 04:06:25 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/dhcp-events.rules
-22/9/2025 -- 04:06:25 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/dnp3-events.rules
-22/9/2025 -- 04:06:25 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/dns-events.rules
-22/9/2025 -- 04:06:25 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/files.rules
-22/9/2025 -- 04:06:25 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/http2-events.rules
-22/9/2025 -- 04:06:25 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/http-events.rules
-22/9/2025 -- 04:06:25 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/ipsec-events.rules
-22/9/2025 -- 04:06:25 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/kerberos-events.rules
-22/9/2025 -- 04:06:25 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/modbus-events.rules
-22/9/2025 -- 04:06:25 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/mqtt-events.rules
-22/9/2025 -- 04:06:25 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/nfs-events.rules
-22/9/2025 -- 04:06:25 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/ntp-events.rules
-22/9/2025 -- 04:06:25 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/quic-events.rules
-22/9/2025 -- 04:06:25 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/rfb-events.rules
-22/9/2025 -- 04:06:25 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/smb-events.rules
-22/9/2025 -- 04:06:25 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/smtp-events.rules
-22/9/2025 -- 04:06:25 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/ssh-events.rules
-22/9/2025 -- 04:06:25 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/stream-events.rules
-22/9/2025 -- 04:06:25 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/tls-events.rules
-22/9/2025 -- 04:06:27 - <Info> -- Ignoring file ba1345f233851ca2df4d905ea4b386d2/rules/emerging-deleted.rules
-22/9/2025 -- 04:06:57 - <Info> -- Loaded 61205 rules.
-22/9/2025 -- 04:07:02 - <Info> -- Disabled 14 rules.
-22/9/2025 -- 04:07:02 - <Info> -- Enabled 0 rules.
-22/9/2025 -- 04:07:02 - <Info> -- Modified 0 rules.
-22/9/2025 -- 04:07:02 - <Info> -- Dropped 0 rules.
-22/9/2025 -- 04:07:03 - <Info> -- Enabled 136 rules for flowbit dependencies.
-22/9/2025 -- 04:07:03 - <Info> -- Creating directory /var/lib/suricata/rules.
-22/9/2025 -- 04:07:03 - <Info> -- Backing up current rules.
-22/9/2025 -- 04:07:03 - <Info> -- Writing rules to /var/lib/suricata/rules/suricata.rules: total: 61205; enabled: 45406; added: 61205; removed 0; modified: 0
-22/9/2025 -- 04:07:06 - <Info> -- Writing /var/lib/suricata/rules/classification.config
-22/9/2025 -- 04:07:07 - <Info> -- Testing with suricata -T.
-22/9/2025 -- 04:07:57 - <Info> -- Done.
-
-Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
----
-
-Sponsor: 21SoftWare LLC
-
-v2: 1.3.4 -> 1.3.6, drop "S", document target test results
-v1: https://lists.yoctoproject.org/g/yocto-patches/message/1569
-
- .../suricata/python3-suricata-update_1.3.6.bb     | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
- create mode 100644 recipes-ids/suricata/python3-suricata-update_1.3.6.bb
-
-diff --git a/recipes-ids/suricata/python3-suricata-update_1.3.6.bb b/recipes-ids/suricata/python3-suricata-update_1.3.6.bb
-new file mode 100644
-index 0000000..cdf2faa
---- /dev/null
-+++ b/recipes-ids/suricata/python3-suricata-update_1.3.6.bb
-@@ -0,0 +1,15 @@
-+SUMMARY = "The tool for updating your Suricata rules"
-+HOMEPAGE = "http://suricata-ids.org/"
-+SECTION = "security Monitor/Admin"
-+LICENSE = "GPL-2.0-only"
-+
-+LIC_FILES_CHKSUM = "file://LICENSE;beginline=1;endline=2;md5=c70d8d3310941dcdfcd1e02800a1f548"
-+
-+SRCREV = "f76a61bdee69961537585a1036c4294da28495a5"
-+SRC_URI = "git://github.com/OISF/suricata-update;protocol=https;branch=master"
-+
-+inherit python3native python3targetconfig setuptools3
-+
-+RDEPENDS:${PN} = "python3-pyyaml python3-logging python3-compression python3-shell"
-+
-+BBCLASSEXTEND = "native nativesdk"
+On Mon, Sep 15, 2025 at 3:01=E2=80=AFPM Martin Jansa <martin.jansa@gmail.co=
+m> wrote:
+>
+> ping2
+>
+> On Mon, Aug 18, 2025 at 4:38=E2=80=AFPM Martin Jansa via
+> lists.yoctoproject.org <martin.jansa=3Dgmail.com@lists.yoctoproject.org>
+> wrote:
+> >
+> > From: Martin Jansa <martin.jansa@gmail.com>
+> >
+> > Signed-off-by: Martin Jansa <martin.jansa@gmail.com>
+> > ---
+> >  recipes-devtools/bazel/bazel-native_6.0.0.bb  |  1 +
+> >  .../bazel/files/include_stdint.patch          | 28 +++++++++++++++++++
+> >  2 files changed, 29 insertions(+)
+> >  create mode 100644 recipes-devtools/bazel/files/include_stdint.patch
+> >
+> > diff --git a/recipes-devtools/bazel/bazel-native_6.0.0.bb b/recipes-dev=
+tools/bazel/bazel-native_6.0.0.bb
+> > index 19b411b..a0daa3b 100644
+> > --- a/recipes-devtools/bazel/bazel-native_6.0.0.bb
+> > +++ b/recipes-devtools/bazel/bazel-native_6.0.0.bb
+> > @@ -12,6 +12,7 @@ SRC_URI =3D "https://github.com/bazelbuild/bazel/rele=
+ases/download/${PV}/bazel-${P
+> >             file://0001-cutsomize-native-toolchains-for-Yocto.patch \
+> >             file://0001-fix-compile-failure-on-gcc-13.patch \
+> >             file://1f2b3ed4ac717b814d02a0d125f160ddabe78003.patch \
+> > +           file://include_stdint.patch \
+> >  "
+> >
+> >  inherit python3native
+> > diff --git a/recipes-devtools/bazel/files/include_stdint.patch b/recipe=
+s-devtools/bazel/files/include_stdint.patch
+> > new file mode 100644
+> > index 0000000..35c57c2
+> > --- /dev/null
+> > +++ b/recipes-devtools/bazel/files/include_stdint.patch
+> > @@ -0,0 +1,28 @@
+> > +https://github.com/lihaohong6/COPR/blob/bf48c5450a909cf8358e3cbd81cdde=
+26df426e12/bazel7/include_stdint.patch
+> > +
+> > +Upstream-Status: Submitted [https://github.com/bazelbuild/bazel/issues=
+/25514]
+> > +
+> > +diff --git a/src/main/cpp/archive_utils.h b/src/main/cpp/archive_utils=
+.h
+> > +index 18856ab..5298a36 100644
+> > +--- a/src/main/cpp/archive_utils.h
+> > ++++ b/src/main/cpp/archive_utils.h
+> > +@@ -15,6 +15,7 @@
+> > + #ifndef BAZEL_SRC_MAIN_CPP_ARCHIVE_UTILS_H_
+> > + #define BAZEL_SRC_MAIN_CPP_ARCHIVE_UTILS_H_
+> > +
+> > ++#include <cstdint>
+> > + #include <string>
+> > + #include <vector>
+> > +
+> > +diff --git a/src/main/cpp/util/logging.h b/src/main/cpp/util/logging.h
+> > +index b2cd459..7bf5a00 100644
+> > +--- a/src/main/cpp/util/logging.h
+> > ++++ b/src/main/cpp/util/logging.h
+> > +@@ -14,6 +14,7 @@
+> > + #ifndef BAZEL_SRC_MAIN_CPP_LOGGING_H_
+> > + #define BAZEL_SRC_MAIN_CPP_LOGGING_H_
+> > +
+> > ++#include <cstdint>
+> > + #include <memory>
+> > + #include <sstream>
+> > + #include <string>
+> >
+> >
+> > -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+> > Links: You receive all messages sent to this group.
+> > View/Reply Online (#2035): https://lists.yoctoproject.org/g/yocto-patch=
+es/message/2035
+> > Mute This Topic: https://lists.yoctoproject.org/mt/114764168/3617156
+> > Group Owner: yocto-patches+owner@lists.yoctoproject.org
+> > Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/13388=
+836/3617156/66960823/xyzzy [martin.jansa@gmail.com]
+> > -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+> >
+> >
 
