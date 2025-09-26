@@ -1,185 +1,103 @@
-Return-Path: <richard.purdie@linuxfoundation.org>
+Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24708CAC5B8
-	for <webhook@archiver.kernel.org>; Fri, 26 Sep 2025 16:57:56 +0000 (UTC)
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
- by mx.groups.io with SMTP id smtpd.web10.359.1758905872804667273
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28A71CAC5AE
+	for <webhook@archiver.kernel.org>; Fri, 26 Sep 2025 17:19:56 +0000 (UTC)
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+ by mx.groups.io with SMTP id smtpd.web10.862.1758907195169530872
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 26 Sep 2025 09:57:53 -0700
+ Fri, 26 Sep 2025 10:19:55 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=GVRCY0Iq;
- spf=pass (domain: linuxfoundation.org, ip: 209.85.128.43, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-46e29d65728so16372415e9.3
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 26 Sep 2025 09:57:52 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=g4fzM+o6;
+ spf=pass (domain: konsulko.com, ip: 209.85.160.178, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4d7b4b3c06dso12277301cf.1
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 26 Sep 2025 10:19:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1758905871; x=1759510671; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5+eMjNMtTf8xEXS5v1FDozpg6eV9ny1KqGRMiU3Ob50=;
-        b=GVRCY0Iq3nA8xAyBfZSmD2PgzN8mgM5xLRVnnDJLUb0ceBQYop3yOcZZZgLbnEMOEh
-         XqH0GS98mlCfbPKYYPPfs1qae2JkcmOTCT3J1PpOqrihu4t3IZfDSq0+v3qltfXVc/iR
-         cHo+GujKdNcSl1yHc1ihqHPxcMq+CPM0duKE8=
+        d=konsulko.com; s=google; t=1758907194; x=1759511994; darn=lists.yoctoproject.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wsYry57B+raJwas7KCyYxBD1Tmr0m5wDqXCKC3GUbTM=;
+        b=g4fzM+o6mHiu17PGQcfcuIAJaQ4I3NGL3mK7y1mur+Y2Fovpdfoc6aVO5BcSMRx8W9
+         qogkigopD4yAMKoHlxAKID3Ds+PhYYgde7yc8UmM//5d2YAltxJr5qKykFyZDcxuYpH8
+         72fv7mr7a+RO782AfugxMIJLXcCDxueb4QDUM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758905871; x=1759510671;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5+eMjNMtTf8xEXS5v1FDozpg6eV9ny1KqGRMiU3Ob50=;
-        b=kb5wh1wb7nIcp+Cc0/wBWKC4DmiBgqB8/3fdCBmqRIHz17REKY/wi0mT04U99BlbI3
-         K0+pgWemGLSkszeU+vVHDgmhe3oyQz9+OfGZ4gZxsiwsuqPzYIyp+qSUsFCYP45gBmF6
-         XUwPrB9meY4UeIugM5yuVHvT4C7PbcLCunXeC3t2hOiJQTtREjwZ2XIdM0clNBTT4ygP
-         vW5yhI1ISH4CaUsgexou41rvM+KDBrsXwj72em8MjWXXVZ6xnGCwrZYtgdzKUABEKD6n
-         1cTmSYeGULXiklQruC5ujWzjVx1fWNUnSIq6L+um8b9urDSbXa374HyZTAaHVcTZcwtK
-         Zjrg==
-X-Gm-Message-State: AOJu0Yxiqc0oim1h4wEMB/yY0XI3ANrfJIGCVtqcriCqpf9Jsa1zW/zl
-	iVTAHEQS/tBisalgvJV7yVomToNUBjFvm2MANfa/oZnQeA6Y4M06HpzT9nsyv/Kz6akosK2j82H
-	mkQZf
-X-Gm-Gg: ASbGncuv4zodhQlllLj9CQ0KLwuyqUSaXtJ/+8DrAgcJ/6YpHrLs9XgWFuUJK+XQiQe
-	tCnPvP4ueMM4+LZvyc+AvPXhlqQn3TfWd5Iu9cbd7e54tN3RdUuHkJxqnNbE5rLOgkwMr3J6viN
-	iOzvbPSXJOXcp3gzHLCGpJSTrrtNT8huq5wt07IrSWakpeilAEcCMYWC3LENUSIm2FcTdgcwupg
-	5hi/hkntu8g57BMs2noFLdtdFUJT2hBNHhqak0SugYqDpRfYVg6yywxAUlrWtrT1Lu2LFTA9h4B
-	1+sz+bJAvrgD/Qp1U5wBOL3G3BKfarLa89EDT+r6i17dZu9E2g7XtQg0UmVGUTIzPUE1EloThGY
-	qnOPjrye+SuB0XLRfevKNvqI5Lnot5twxX/aXduYr9DvNssCpUTo=
-X-Google-Smtp-Source: AGHT+IFTHdsvz2YN6QeglPiaJS3tf8onlf9LCiG3txoeXI8PaomRO5DDrEUBGZuL/JNSWdQDmmLo1A==
-X-Received: by 2002:a05:600c:698c:b0:46e:1abc:1839 with SMTP id 5b1f17b1804b1-46e329ba122mr79881215e9.15.1758905870550;
-        Fri, 26 Sep 2025 09:57:50 -0700 (PDT)
-Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:8a7a:1fb6:e6df:2fa7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fc5603365sm8040330f8f.37.2025.09.26.09.57.49
-        for <yocto-patches@lists.yoctoproject.org>
+        d=1e100.net; s=20230601; t=1758907194; x=1759511994;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wsYry57B+raJwas7KCyYxBD1Tmr0m5wDqXCKC3GUbTM=;
+        b=V7mDb5zdDFgjJ+NC/QPsVET1GaTmty3I8U+8BhK9a672zeyj7G24Mf6ccA6TXZ5Kv1
+         xFyEPbLWyWUEnyeWuHmzTIhEQTp3vQLPrQlnJDdMPEddNFSuWDQU0hGcEBllCt7nIA+w
+         A0YAesel1+dYa7vLJt8tNV2u0YMMj89erFMYM0h5KKmKvaCBq/jy57DAuxXzLqfJdz+E
+         rf6YTmbwLVrdhRaxC/cI7UZNoMiwsrhJsEquZvagGrsssqcMbZgudRfxcX6W3N86FmOe
+         XdlM8kTc/MLfaPTMO+agAesTJdF3fnujYk1KmJPi5xtM4RKwbqK3mMRF74R8dasjhTs1
+         m1zA==
+X-Gm-Message-State: AOJu0Yx0d3HlnMGCEq96j9xwbZcbog1aysETfZ8bNwlr+8e/Qrle8sgQ
+	c1YKwiai8t0nw1wAiLYs/ku3j7ErCskKTvnClV5Nn7AO+IiqWoeqg6BUeZ7i2BRPcx8=
+X-Gm-Gg: ASbGncvAfA4GvuewdNca9SAJYFWgYDfEz/h/ntV2P2xGM8Tn/QjkRq7HhgvfXmBp0cU
+	cCy7CbbJCCDlR4wYuLtExdG7ajj/JLehqMILlQh9VVu8331Gh21UW7VKMkZiTXgYQwK+HZKjyrt
+	nWXIjPDk4MpDEWO+/AEv44ceoU4ViT7Jv4bsHlg/3y+3HA5lCtHcgmiYlkv29fqTQ5LBENJcJ5I
+	iJNvQ93UUnM/2PWw4baY0J/+pBjmhmrhGSncYpjZ282i1U6LGjB6koQteCedECD6pxDXMKECKCy
+	pc3O9X9RLMvZ6OlxaNtl/RoxxCP9qwxIuZysWl0yectltMLjSrBAfC7WhN+9USfFMcsmhcrU/vK
+	kUMsdrxS6eUjyM1uCF/i5UbScnMAYGl2Irj8mOfWJOtSg4rtkFhljgOBiBBC6ZtsfcZjo
+X-Google-Smtp-Source: AGHT+IEMCpRuH5Wv4VPqpXGbUfOw25KD53q3FE4wxA+WYIxuh1Z4Y0xAstI2jcJOSvLzFbI9DgWg5w==
+X-Received: by 2002:a05:622a:480b:b0:4b7:aff5:e8c2 with SMTP id d75a77b69052e-4da4bbe4440mr99089721cf.58.1758907193889;
+        Fri, 26 Sep 2025 10:19:53 -0700 (PDT)
+Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8016701923csm29349106d6.36.2025.09.26.10.19.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Sep 2025 09:57:49 -0700 (PDT)
-From: Richard Purdie <richard.purdie@linuxfoundation.org>
-To: yocto-patches@lists.yoctoproject.org
-Subject: [yocto-autobuilder2] [PATCH] builders: Write out an overrides file for bitbake-setup
-Date: Fri, 26 Sep 2025 17:57:49 +0100
-Message-ID: <20250926165749.31002-1-richard.purdie@linuxfoundation.org>
-X-Mailer: git-send-email 2.48.1
+        Fri, 26 Sep 2025 10:19:53 -0700 (PDT)
+Date: Fri, 26 Sep 2025 13:19:40 -0400 (EDT)
+From: Scott Murray <scott.murray@konsulko.com>
+To: Yi Zhao <yi.zhao@windriver.com>
+cc: yocto-patches@lists.yoctoproject.org, rybczynska@gmail.com
+Subject: Re: [meta-security][PATCH] libmhash: fix build with gcc 15
+In-Reply-To: <20250926061054.1868481-1-yi.zhao@windriver.com>
+Message-ID: <2ebef80a-a8eb-323b-cc9e-9a214380079c@konsulko.com>
+References: <20250926061054.1868481-1-yi.zhao@windriver.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 26 Sep 2025 16:57:56 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2241
+ <yocto-patches@lists.yoctoproject.org>; Fri, 26 Sep 2025 17:19:56 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2242
 
-bitbake-setup can take an overrides file for repository information. Write
-this out into all builds.
+On Fri, 26 Sep 2025, Yi Zhao wrote:
 
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
----
- builders.py               |  2 +
- steps/writebbsetupjson.py | 83 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 85 insertions(+)
- create mode 100644 steps/writebbsetupjson.py
+> GCC 15 switched to C23 by default, which libmhash does not yet support.
+> So keep using C17.
 
-diff --git a/builders.py b/builders.py
-index bf36c755..e519562e 100644
---- a/builders.py
-+++ b/builders.py
-@@ -121,6 +121,7 @@ def create_builder_factory():
-     f.addStep(TargetPresent())
-     f.addStep(steps.SetProperties(properties=ensure_props_set))
-     f.addStep(WriteLayerInfo(name='Write main layerinfo.json', haltOnFailure=True))
-+    f.addStep(WriteBBSetupJson(name='Write bbsetup-overrides.json', haltOnFailure=True))
-     f.addStep(steps.ShellCommand(
-         command=[util.Interpolate("%(prop:builddir)s/yocto-autobuilder-helper/scripts/shared-repo-unpack"),
-                  util.Interpolate("%(prop:builddir)s/layerinfo.json"),
-@@ -298,6 +299,7 @@ def create_parent_builder_factory(buildername, waitname):
-         haltOnFailure=True,
-         name='Fetch yocto-autobuilder-helper'))
-     factory.addStep(WriteLayerInfo(name='Write main layerinfo.json', haltOnFailure=True))
-+    factory.addStep(WriteBBSetupJson(name='Write bbsetup-overrides.json', haltOnFailure=True))
-     factory.addStep(steps.ShellCommand(
-         command=[
-             util.Interpolate("%(prop:builddir)s/yocto-autobuilder-helper/scripts/prepare-shared-repos"),
-diff --git a/steps/writebbsetupjson.py b/steps/writebbsetupjson.py
-new file mode 100644
-index 00000000..ae55d01a
---- /dev/null
-+++ b/steps/writebbsetupjson.py
-@@ -0,0 +1,83 @@
-+#
-+# SPDX-License-Identifier: GPL-2.0-only
-+#
-+# Author: Richard Purdie <richard.purdie@linuxfoundation.org>
-+#
-+
-+from twisted.internet import defer
-+from buildbot.process import buildstep
-+import json
-+import os
-+
-+import config
-+
-+mappings = {
-+    "oecore" : "openembedded-core",
-+}
-+
-+class WriteBBSetupJson(buildstep.ShellMixin, buildstep.BuildStep):
-+    name = "WriteBBSetupJson"
-+
-+    def __init__(self, **kwargs):
-+        buildstep.BuildStep.__init__(self, **kwargs)
-+
-+    def generateSetupJson(self):
-+        setupdata = {}
-+        setupdata["description"] = "Autobuilder generated bitbake setup json config"
-+        setupdata["version"] = "1.0"
-+        setupdata["sources"] = {}
-+
-+        writerepos = config.buildertorepos.get(self.getProperty("buildername"))
-+        if not writerepos:
-+            writerepos = config.buildertorepos["default"]
-+
-+        for repo in writerepos:
-+            # poky is only used for older releases which don't use bitbake-setup
-+            if repo == "poky":
-+                continue
-+
-+            url = self.getProperty("repo_{}".format(repo))
-+            branch = self.getProperty("branch_{}".format(repo))
-+            revision = self.getProperty("commit_{}".format(repo))
-+
-+            if revision and revision != "HEAD":
-+                rev = revision
-+            else:
-+                rev = branch
-+
-+            reponame = repo
-+            if repo in mappings:
-+                reponame = mappings[repo]
-+            repodict = {
-+                "git-remote": {
-+                    "remotes" : {
-+                        "origin": {
-+                            "uri" : url
-+                        }
-+                    },
-+                   "rev" : rev
-+                }
-+            }
-+            setupdata["sources"] = {reponame : repodict}
-+
-+        return json.dumps(setupdata, sort_keys=True, indent=4,
-+                          separators=(',', ': '))
-+
-+    @defer.inlineCallbacks
-+    def run(self):
-+        repojson = self.generateSetupJson()
-+        layerinfo = os.path.join(self.getProperty("builddir"),
-+                                 "bbsetup-overrides.json")
-+        writerepos = "printf '%s' > %s" % (repojson, layerinfo)
-+        cmd = yield self.makeRemoteShellCommand(
-+            command=writerepos)
-+        yield self.runCommand(cmd)
-+        return cmd.results()
-+
-+
-+@defer.inlineCallbacks
-+def run(self):
-+    cmd = RemoteCommand(args)
-+    log = yield self.addLog('output')
-+    cmd.useLog(log, closeWhenFinished=True)
-+    yield self.runCommand(cmd)
+Nothing in meta-security actually uses libmhash at the moment, so I'm
+curious if you have a usecase for using it standalone?  It used to be
+pulled in by the aide recipe via PACKAGECONFIG, but Armin disabled that
+last year with a note that newer releases will drop using it.  So my plan
+is to take this patch, but unless you can confirm you need the libmhash
+recipe for   something, we will drop it when aide is updated, which I
+intend to do soon.
+
+Thanks,
+
+Scott
+
+
+> Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
+> ---
+>  recipes-security/libmhash/libmhash_0.9.9.9.bb | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/recipes-security/libmhash/libmhash_0.9.9.9.bb b/recipes-security/libmhash/libmhash_0.9.9.9.bb
+> index f5518d2..805cf05 100644
+> --- a/recipes-security/libmhash/libmhash_0.9.9.9.bb
+> +++ b/recipes-security/libmhash/libmhash_0.9.9.9.bb
+> @@ -25,6 +25,8 @@ SRC_URI[sha256sum] = "56521c52a9033779154432d0ae47ad7198914785265e1f570cee21ab24
+>
+>  inherit autotools-brokensep ptest multilib_header
+>
+> +CFLAGS += "-std=gnu17"
+> +
+>  do_install:append() {
+>      oe_multilib_header mutils/mhash_config.h
+>  }
+>
 
