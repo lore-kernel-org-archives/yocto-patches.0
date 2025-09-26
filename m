@@ -1,103 +1,91 @@
-Return-Path: <scott.murray@konsulko.com>
+Return-Path: <yoann.congal@smile.fr>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28A71CAC5AE
-	for <webhook@archiver.kernel.org>; Fri, 26 Sep 2025 17:19:56 +0000 (UTC)
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
- by mx.groups.io with SMTP id smtpd.web10.862.1758907195169530872
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83BE5CAC5B8
+	for <webhook@archiver.kernel.org>; Fri, 26 Sep 2025 21:10:50 +0000 (UTC)
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+ by mx.groups.io with SMTP id smtpd.web10.2045.1758921045892562518
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 26 Sep 2025 10:19:55 -0700
+ Fri, 26 Sep 2025 14:10:46 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=g4fzM+o6;
- spf=pass (domain: konsulko.com, ip: 209.85.160.178, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4d7b4b3c06dso12277301cf.1
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 26 Sep 2025 10:19:55 -0700 (PDT)
+ dkim=pass header.i=@smile.fr header.s=google header.b=eu7J5ILL;
+ spf=pass (domain: smile.fr, ip: 209.85.128.42, mailfrom: yoann.congal@smile.fr)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-46b7bf21fceso19766965e9.3
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 26 Sep 2025 14:10:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1758907194; x=1759511994; darn=lists.yoctoproject.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wsYry57B+raJwas7KCyYxBD1Tmr0m5wDqXCKC3GUbTM=;
-        b=g4fzM+o6mHiu17PGQcfcuIAJaQ4I3NGL3mK7y1mur+Y2Fovpdfoc6aVO5BcSMRx8W9
-         qogkigopD4yAMKoHlxAKID3Ds+PhYYgde7yc8UmM//5d2YAltxJr5qKykFyZDcxuYpH8
-         72fv7mr7a+RO782AfugxMIJLXcCDxueb4QDUM=
+        d=smile.fr; s=google; t=1758921044; x=1759525844; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=P2ysXVmCnlU3zXENeEjiVsB43arFxgfc4BRqrxGaXIw=;
+        b=eu7J5ILLETLgG3mIibiDCNon3FPqesxT4fiIAWCXMV60EboP7NKJpFVBcrq+DXsOm0
+         plcqB2GM3jxk5HVNRdgTu1k7rHIuE2jdAblrDRNF/YRawbHmbAR67CKDXJUUnHjbJBZQ
+         hSwmp7nXGDdJfefVcGFJ2Ns3Q5LsgzLObd200=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758907194; x=1759511994;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wsYry57B+raJwas7KCyYxBD1Tmr0m5wDqXCKC3GUbTM=;
-        b=V7mDb5zdDFgjJ+NC/QPsVET1GaTmty3I8U+8BhK9a672zeyj7G24Mf6ccA6TXZ5Kv1
-         xFyEPbLWyWUEnyeWuHmzTIhEQTp3vQLPrQlnJDdMPEddNFSuWDQU0hGcEBllCt7nIA+w
-         A0YAesel1+dYa7vLJt8tNV2u0YMMj89erFMYM0h5KKmKvaCBq/jy57DAuxXzLqfJdz+E
-         rf6YTmbwLVrdhRaxC/cI7UZNoMiwsrhJsEquZvagGrsssqcMbZgudRfxcX6W3N86FmOe
-         XdlM8kTc/MLfaPTMO+agAesTJdF3fnujYk1KmJPi5xtM4RKwbqK3mMRF74R8dasjhTs1
-         m1zA==
-X-Gm-Message-State: AOJu0Yx0d3HlnMGCEq96j9xwbZcbog1aysETfZ8bNwlr+8e/Qrle8sgQ
-	c1YKwiai8t0nw1wAiLYs/ku3j7ErCskKTvnClV5Nn7AO+IiqWoeqg6BUeZ7i2BRPcx8=
-X-Gm-Gg: ASbGncvAfA4GvuewdNca9SAJYFWgYDfEz/h/ntV2P2xGM8Tn/QjkRq7HhgvfXmBp0cU
-	cCy7CbbJCCDlR4wYuLtExdG7ajj/JLehqMILlQh9VVu8331Gh21UW7VKMkZiTXgYQwK+HZKjyrt
-	nWXIjPDk4MpDEWO+/AEv44ceoU4ViT7Jv4bsHlg/3y+3HA5lCtHcgmiYlkv29fqTQ5LBENJcJ5I
-	iJNvQ93UUnM/2PWw4baY0J/+pBjmhmrhGSncYpjZ282i1U6LGjB6koQteCedECD6pxDXMKECKCy
-	pc3O9X9RLMvZ6OlxaNtl/RoxxCP9qwxIuZysWl0yectltMLjSrBAfC7WhN+9USfFMcsmhcrU/vK
-	kUMsdrxS6eUjyM1uCF/i5UbScnMAYGl2Irj8mOfWJOtSg4rtkFhljgOBiBBC6ZtsfcZjo
-X-Google-Smtp-Source: AGHT+IEMCpRuH5Wv4VPqpXGbUfOw25KD53q3FE4wxA+WYIxuh1Z4Y0xAstI2jcJOSvLzFbI9DgWg5w==
-X-Received: by 2002:a05:622a:480b:b0:4b7:aff5:e8c2 with SMTP id d75a77b69052e-4da4bbe4440mr99089721cf.58.1758907193889;
-        Fri, 26 Sep 2025 10:19:53 -0700 (PDT)
-Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8016701923csm29349106d6.36.2025.09.26.10.19.53
+        d=1e100.net; s=20230601; t=1758921044; x=1759525844;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=P2ysXVmCnlU3zXENeEjiVsB43arFxgfc4BRqrxGaXIw=;
+        b=nVsdSsu3/FmYh3bprR/nCaJu80yy1hj+N6wc4Qz4SV2Hw9si2VI7bJsPSOxp6o+f3T
+         08bOHe1lbIn245BITJXn+Zs4aKNAzgLxfjehrr/sQebvi9thWmijVANm/W2nZoOeqzz4
+         rNTf6TOJCXBJIlXmho5a06WpkAijUMcbPiUz4Hb/A+wr8XbVfE2+DmVPw4HhuS0QY/Bg
+         bhg+v6PQmYaO1NWk9mf4plojZuns1lhaUNBYifq/q/74TdTCtjeOVeLdOsLKIiI9ZuKQ
+         XNmnPaULjG4SDzwHl/tPJ77fqH7t/wr5BcZxpGwVCT4hdgRmM6xLoPAo8hdD9jNauz/S
+         b8tQ==
+X-Gm-Message-State: AOJu0YwsU4MBE/z8Nr3U6KXqe+CAkH64I0uiDx02pgv117Lom+SPfwhV
+	S9liNPFnOIqZguh5rjaQzIAR26nUbeW1ZaSZwz4FeDalw1TVyJGsvu662q7a10BKO06G4BpREqI
+	/ukw7pzg=
+X-Gm-Gg: ASbGnct4sNthRidCWGStR4fBguKF6TeS9Foc6T9vjsqyj76wtg6PBjdqilLLG3sy5cA
+	18imN6IKRzCD1jVMLE1TwxDcIFcF9H93BAxwbdkL/Zdf+qiedL7feiVXeJ/C844Kcb/wjk+5IAT
+	cB+wOlSX4QibarbRePeRdNkceq5nVE0G84qx3nIxfxwj3YWgKpYZnb3lsEyTFdXk2pHp0Mc6ZFT
+	V6bT+Flh+6aAt1E3ZtS/mLpPtR7/QmgnjngYDEiT+ewReJLHhU3+4kalGNmua+QBKiZlzEBiFhF
+	qFvluh98ea/pXzk5vpZOnUpZAU4QNB4agnbdEJHw1a2SZdP3FLD+gnY08fLzhi55mWW+/CLwK++
+	lfcBMSDiXYrQOcIgEyYzX/IAh8mo5fbCUbEH9Im1xK/0en+e4REx/F0/4zLk3glfvyz7Jizj6Os
+	KyC41XL6f89m7GnJwkMq4on4pduQy5Hw==
+X-Google-Smtp-Source: AGHT+IG8qUveEdKt+4sedZVExabY4B+jktin7TBXG69gp63/LMr0L8LEfnISV2e9ua0PZn5DeDpQOw==
+X-Received: by 2002:a05:6000:1866:b0:3ee:13ba:e13b with SMTP id ffacd0b85a97d-40e4ba3a8dcmr7979841f8f.33.1758921043793;
+        Fri, 26 Sep 2025 14:10:43 -0700 (PDT)
+Received: from P-ASN-ECS-830T8C3.home (2a01cb001331aa0017b58d8bf04048c3.ipv6.abo.wanadoo.fr. [2a01:cb00:1331:aa00:17b5:8d8b:f040:48c3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e33be3268sm87163925e9.11.2025.09.26.14.10.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Sep 2025 10:19:53 -0700 (PDT)
-Date: Fri, 26 Sep 2025 13:19:40 -0400 (EDT)
-From: Scott Murray <scott.murray@konsulko.com>
-To: Yi Zhao <yi.zhao@windriver.com>
-cc: yocto-patches@lists.yoctoproject.org, rybczynska@gmail.com
-Subject: Re: [meta-security][PATCH] libmhash: fix build with gcc 15
-In-Reply-To: <20250926061054.1868481-1-yi.zhao@windriver.com>
-Message-ID: <2ebef80a-a8eb-323b-cc9e-9a214380079c@konsulko.com>
-References: <20250926061054.1868481-1-yi.zhao@windriver.com>
+        Fri, 26 Sep 2025 14:10:43 -0700 (PDT)
+From: Yoann Congal <yoann.congal@smile.fr>
+To: yocto-patches@lists.yoctoproject.org
+Cc: Yoann Congal <yoann.congal@smile.fr>
+Subject: [yocto-autobuilder-helper][PATCH] config.json: meta-oe-mirror: add "opencl" to DISTRO_FEATURES
+Date: Fri, 26 Sep 2025 23:10:30 +0200
+Message-Id: <20250926211029.637232-1-yoann.congal@smile.fr>
+X-Mailer: git-send-email 2.39.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 26 Sep 2025 17:19:56 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2242
+ <yocto-patches@lists.yoctoproject.org>; Fri, 26 Sep 2025 21:10:50 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2243
 
-On Fri, 26 Sep 2025, Yi Zhao wrote:
+From: Yoann Congal <yoann.congal@smile.fr>
 
-> GCC 15 switched to C23 by default, which libmhash does not yet support.
-> So keep using C17.
+Some meta-oe recipe are behind an "opencl" feature_check. Activate it
+for the test to cover these recipes.
 
-Nothing in meta-security actually uses libmhash at the moment, so I'm
-curious if you have a usecase for using it standalone?  It used to be
-pulled in by the aide recipe via PACKAGECONFIG, but Armin disabled that
-last year with a note that newer releases will drop using it.  So my plan
-is to take this patch, but unless you can confirm you need the libmhash
-recipe for   something, we will drop it when aide is updated, which I
-intend to do soon.
+Signed-off-by: Yoann Congal <yoann.congal@smile.fr>
+---
+ config.json | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-
-Scott
-
-
-> Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
-> ---
->  recipes-security/libmhash/libmhash_0.9.9.9.bb | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/recipes-security/libmhash/libmhash_0.9.9.9.bb b/recipes-security/libmhash/libmhash_0.9.9.9.bb
-> index f5518d2..805cf05 100644
-> --- a/recipes-security/libmhash/libmhash_0.9.9.9.bb
-> +++ b/recipes-security/libmhash/libmhash_0.9.9.9.bb
-> @@ -25,6 +25,8 @@ SRC_URI[sha256sum] = "56521c52a9033779154432d0ae47ad7198914785265e1f570cee21ab24
->
->  inherit autotools-brokensep ptest multilib_header
->
-> +CFLAGS += "-std=gnu17"
-> +
->  do_install:append() {
->      oe_multilib_header mutils/mhash_config.h
->  }
->
+diff --git a/config.json b/config.json
+index 90cb791..588a2f6 100644
+--- a/config.json
++++ b/config.json
+@@ -1696,7 +1696,7 @@
+             ],
+             "extravars" : [
+                 "LICENSE_FLAGS_ACCEPTED = 'commercial'",
+-                "DISTRO_FEATURES:append = ' pam systemd usrmerge'",
++                "DISTRO_FEATURES:append = ' pam systemd usrmerge opencl'",
+                 "FORTRAN:forcevariable = ',fortran'",
+                 "RUNTIMETARGET:append:pn-gcc-runtime = ' libquadmath'"
+             ],
 
