@@ -2,296 +2,143 @@ Return-Path: <vanusuri@mvista.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19C94CAC5B0
-	for <webhook@archiver.kernel.org>; Tue, 30 Sep 2025 03:37:17 +0000 (UTC)
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
- by mx.groups.io with SMTP id smtpd.web10.17008.1759203427181286989
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30E90CAC5B8
+	for <webhook@archiver.kernel.org>; Tue, 30 Sep 2025 03:49:47 +0000 (UTC)
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+ by mx.groups.io with SMTP id smtpd.web10.17188.1759204186447645113
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 29 Sep 2025 20:37:07 -0700
+ Mon, 29 Sep 2025 20:49:46 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@mvista.com header.s=google header.b=MC+FOhjo;
- spf=pass (domain: mvista.com, ip: 209.85.208.49, mailfrom: vanusuri@mvista.com)
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-62105d21297so10781592a12.0
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 29 Sep 2025 20:37:06 -0700 (PDT)
+ dkim=pass header.i=@mvista.com header.s=google header.b=Fo/n8un8;
+ spf=pass (domain: mvista.com, ip: 209.85.214.171, mailfrom: vanusuri@mvista.com)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-27d69771e3eso45270075ad.3
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 29 Sep 2025 20:49:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mvista.com; s=google; t=1759203425; x=1759808225; darn=lists.yoctoproject.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=EUW9j9LYcNOoNtGxiHagPtTW9Kh0DHCUfkofTE+eyzw=;
-        b=MC+FOhjoPTp1LnqpRrzvjwxRW2kUVVjKhc0H0fTljkDXwKmXOijhj3+jM06uuEhLFE
-         MObRSSPOr9FdTyVgs8JGLdLws67lbNC1imzPNjSEiuRcimrSS308iF8ZMMgNxRUmw6eb
-         PSkEkOsIEz5riGvmWqIqYNKSSvR5e3dQZXbz0=
+        d=mvista.com; s=google; t=1759204185; x=1759808985; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rt09C+88Tt18JP+XBL/MAgzvrwL6r15iZhAfDZ33tGs=;
+        b=Fo/n8un81lr/9JhltSuXojHmlz1Bazsoa5AND0MlUROhlrzyV4Rc7p+45FIIbH1afy
+         j8vZ/GqUZHZlU1r6AfPLzFAqTylI7kGHkqpJzX0LA+kRLkcDpNJeO312qJAgFhcd7ibX
+         hy3iFl8T/E+6CenOVOYJXef9m3M/DBTFhKPMM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759203425; x=1759808225;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1759204185; x=1759808985;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=EUW9j9LYcNOoNtGxiHagPtTW9Kh0DHCUfkofTE+eyzw=;
-        b=dT/tDLx4rnhdOMY1jia3zRXjx9LJU5ErXBvbofFAAdf+drYuM9sLDiLV3Jjp4YaalZ
-         C95qpbA0PmHYzVYf1zBJeREdsTy/reeAWmxVckfLqt8ZJDq9u4kPr5knDUlT/a9bDCLY
-         gvJ+NEe9mgntIij4qd5eK0OewxN9goBzoDtKsS63WgTgd0dsoiArg90ZD2k/5EIXoKR7
-         b+D7+q47SXoNGmzY5qxwkrhatACHYzlRqvFwoYNkuSPCW3GockcjRE5M7phUsDjftyf3
-         2iok0Oja4AJRmx29+VHvnxV3Ai0U+It9X0VV0yP3UdrG8fecZiWTZn63aJR8GHRILDS2
-         LqxQ==
-X-Gm-Message-State: AOJu0Yzqm2m4OaBUlIhi9482tn2lxnvY1F+uATaSlB680cu7MPl9r/l/
-	T/3280pLGhTcXaHLKh5wG14x0/wXzylSqNSg03mhP4eq3Lf64oA6ifmfsDAZWkwFIirUzADVZNA
-	oxWO/sZWSfyfvQppegAnHUtNEPCNgNaziGsx5qlwM4Q==
-X-Gm-Gg: ASbGncvLMc1R6+KzEWpcDq1arW846EDoWON2xk9m4lLi6swj0vSfiiPl8PxyqY6XDc8
-	B6wkN4+z1l5ArLkwi+4P4tfiWxElzoTA5kSl4P1qopoM/ZGiFhL7GsS3tH5A1N9RZN+AiHgM/jj
-	Qw703zzb7pVv4AC00VuGVQrXvn7qprJ9RChQrHH0pK8fnT6/mQL342v123SdY8ZIecx23SZKZ7i
-	4c00a7Vx/txuWUNG0xLFsZsx1/8dw1nEVg1WqokFUp+wrwrEKlpe3nLIYa88sQLgaMSsbDSn6vl
-X-Google-Smtp-Source: AGHT+IFoa4nuX7FZnX4gZ6VeOGRJZLLUSgeAAh5rVXkVcY6u94KU4/yLIhSFqbZsZXPsWyCkmcLZjK9Opgt3NtehFvM=
-X-Received: by 2002:a17:907:7fa5:b0:b40:a71b:152e with SMTP id
- a640c23a62f3a-b40a71b1703mr393518466b.40.1759203425371; Mon, 29 Sep 2025
- 20:37:05 -0700 (PDT)
+        bh=rt09C+88Tt18JP+XBL/MAgzvrwL6r15iZhAfDZ33tGs=;
+        b=gmPy2eZG8wj6NSswoEPazKy22Xpk//Xd9Hab0p0IUSEneimtx9p7JPiIyaoGL5VY/9
+         PuZiLTAS+4eaSmlOeMBLDAmVy6acagsNIZsGYW39K04to2ITcjNPYx/FvZcMCTgwJBZI
+         uJ0vjz/0Sk+RMkD5ibyrV5E0RJgUKZcRjke4DXGKAts9Vuw4lzwUqaDBU7hcAjrNiNOA
+         LFex2JLlrHCT18Pg+O4ZwOz2QH3BKx3++of2rqWyfKys7q7qbEk1fwORuMffaRPaths+
+         SKAeV66A2J/FhSL4/a9K/ybHwfqYIaumyTOYMDieofZ+UklCaGps/RGZvtKDXVxo55L8
+         Aidw==
+X-Gm-Message-State: AOJu0YxKHKt8jb3Jc6wFw6JQTqZV2tKJEzHtzrCh1m74/ED0+/WzxRgE
+	CRn3i7w4T2nW8GN01cz68A69Z/wOMOC6EVc2lIIOl4XvsPdhVBBtV0LdaHbh8iAdugPJYgidlBR
+	Q7Zpdh2o=
+X-Gm-Gg: ASbGncsarmMgsSlPrlW/IPKwf/6tFYkYUyanRgr/4eSLFtBwhLhiqc7PtVvET8o/ZnR
+	vofe7AZLZgSPnH07xYjUwJ0KzKiCrhkEsflnTDZgYyDI5FO/zmJNVTf417wGGSJskjJfgWWek23
+	iIGPRIqgJaUOvDtg2XEQtng8SlapWRsbthfQYN1mslJd+94Xb/KcqGUgofVOnYQEsneJ2+qe8Um
+	WmXYAF9SSUaQIvs5smbU35spcE3vD1cFKIT13DONzWqRorRA+FYGZLzGPkGI3Xolh9BqSoy4P/D
+	dKH4ZMXf09dRJh8DRzMk6C+A6ASQIAY6N1qb3gWlgxvKxCNs9x2ZSN+0YG0sPIy1rshsaUztXQl
+	9HEb3sse8WaHFEbYwhFtWKHTGjPsIxN7j6fSkrFNBF00QPY+2D7SfpyUVnlwaJQZGr9aIt9OlUg
+	==
+X-Google-Smtp-Source: AGHT+IHHOab9SHmTyFfNYLObixVRKuaVYQO2aoT9HByaf3glZBsd1a4cse1pS732bCrmr2JvYJ7T0A==
+X-Received: by 2002:a17:903:1a0d:b0:27e:d7a4:cd32 with SMTP id d9443c01a7336-27ed7a4cda3mr199039215ad.57.1759204185339;
+        Mon, 29 Sep 2025 20:49:45 -0700 (PDT)
+Received: from localhost.localdomain ([2401:4900:62d2:5a18:f11e:c6a0:64bc:a06c])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b59671ce93fsm7176996a12.3.2025.09.29.20.49.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Sep 2025 20:49:44 -0700 (PDT)
+From: vanusuri@mvista.com
+To: yocto-patches@lists.yoctoproject.org
+Cc: Vijay Anusuri <vanusuri@mvista.com>
+Subject: [yocto-patches][meta-cgl][PATCH v2 1/3] recipes: Fix whitespace warnings
+Date: Tue, 30 Sep 2025 09:19:33 +0530
+Message-Id: <20250930034935.89622-1-vanusuri@mvista.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20250929045007.12623-1-vanusuri@mvista.com> <20250929045007.12623-3-vanusuri@mvista.com>
- <CAMKF1spJZ6Y1XxG-86ROPPwbGp2gzyb0xX6R1H0hG0y0DRq4tg@mail.gmail.com>
- <CANQUz1_H7qfd10auFPr4dBXvyCdGtsn9dgM+0fsWav3n=8VTeA@mail.gmail.com> <CAMKF1srK7AZFg36EJ8W8Ti-VcxznC3f_p4RzBHxLq0Z9uEtT-w@mail.gmail.com>
-In-Reply-To: <CAMKF1srK7AZFg36EJ8W8Ti-VcxznC3f_p4RzBHxLq0Z9uEtT-w@mail.gmail.com>
-From: Vijay Anusuri <vanusuri@mvista.com>
-Date: Tue, 30 Sep 2025 09:06:53 +0530
-X-Gm-Features: AS18NWDhJ8TbyX3tXLHwop0d2-SrzCvN9t2B4yaNB6M1sKj2sdLxyqW0xrD9H9A
-Message-ID: <CANQUz1_16qWLDrqBrrSCa=LHwUVHaHRQs+SAySHumbj+hoSqQg@mail.gmail.com>
-Subject: Re: [yocto-patches][meta-cgl][PATCH 3/3] ucarp: Fix the permissions
-To: Khem Raj <raj.khem@gmail.com>
-Cc: yocto-patches@lists.yoctoproject.org
-Content-Type: multipart/alternative; boundary="00000000000041db03063ffc77b7"
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 30 Sep 2025 03:37:17 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2256
+ <yocto-patches@lists.yoctoproject.org>; Tue, 30 Sep 2025 03:49:47 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2257
 
---00000000000041db03063ffc77b7
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: Vijay Anusuri <vanusuri@mvista.com>
 
-Sure. I will update the commit message and send out a v2 patch.
+Signed-off-by: Vijay Anusuri <vanusuri@mvista.com>
+---
+ .../recipes-cgl/cluster-glue/cluster-glue_1.0.12.bb           | 4 ++--
+ meta-cgl-common/recipes-cgl/pacemaker/pacemaker_2.0.5.bb      | 2 +-
+ meta-cgl-common/recipes-cgl/racoon2/racoon2_202003018.bb      | 4 ++--
+ meta-cgl-common/recipes-perl/perl/libtest-pod-perl_1.52.bb    | 2 +-
+ 4 files changed, 6 insertions(+), 6 deletions(-)
 
-On Tue, Sep 30, 2025 at 8:29=E2=80=AFAM Khem Raj <raj.khem@gmail.com> wrote=
-:
+diff --git a/meta-cgl-common/recipes-cgl/cluster-glue/cluster-glue_1.0.12.bb b/meta-cgl-common/recipes-cgl/cluster-glue/cluster-glue_1.0.12.bb
+index 0184e7d..6ca7556 100644
+--- a/meta-cgl-common/recipes-cgl/cluster-glue/cluster-glue_1.0.12.bb
++++ b/meta-cgl-common/recipes-cgl/cluster-glue/cluster-glue_1.0.12.bb
+@@ -43,8 +43,8 @@ EXTRA_OECONF = "--with-daemon-user=${HA_USER} \
+                 --with-ocf-root=${libdir}/ocf \
+                "
+ 
+-CACHED_CONFIGUREVARS="ac_cv_path_XML2CONFIG=0 \
+-                      ac_cv_path_SSH=ssh \
++CACHED_CONFIGUREVARS = "ac_cv_path_XML2CONFIG=0 \
++                        ac_cv_path_SSH=ssh \
+ "
+ 
+ USERADD_PACKAGES = "${PN}"
+diff --git a/meta-cgl-common/recipes-cgl/pacemaker/pacemaker_2.0.5.bb b/meta-cgl-common/recipes-cgl/pacemaker/pacemaker_2.0.5.bb
+index 04bb62f..ff90030 100644
+--- a/meta-cgl-common/recipes-cgl/pacemaker/pacemaker_2.0.5.bb
++++ b/meta-cgl-common/recipes-cgl/pacemaker/pacemaker_2.0.5.bb
+@@ -21,7 +21,7 @@ SRC_URI = "git://github.com/ClusterLabs/${BPN}.git;branch=main;protocol=https \
+           "
+ 
+ CFLAGS += "-I${STAGING_INCDIR}/heartbeat"
+-CPPFLAGS +="-I${STAGING_INCDIR}/heartbeat"
++CPPFLAGS += "-I${STAGING_INCDIR}/heartbeat"
+ SRC_URI:append:libc-musl = "file://0001-pacemaker-fix-compile-error-of-musl-libc.patch"
+ 
+ SRCREV = "ba59be71228fed04f78ab374dfac748d314d0e89"
+diff --git a/meta-cgl-common/recipes-cgl/racoon2/racoon2_202003018.bb b/meta-cgl-common/recipes-cgl/racoon2/racoon2_202003018.bb
+index 0a04bf5..211b911 100644
+--- a/meta-cgl-common/recipes-cgl/racoon2/racoon2_202003018.bb
++++ b/meta-cgl-common/recipes-cgl/racoon2/racoon2_202003018.bb
+@@ -32,7 +32,7 @@ SRC_URI = "git://github.com/zoulasc/racoon2;branch=master;protocol=https \
+            file://spmd.service \
+           "
+ 
+-SRCREV="7b68950328454b0e91ba24698c10c4a790705cc1"
++SRCREV = "7b68950328454b0e91ba24698c10c4a790705cc1"
+ SRC_URI[md5sum] = "2fa33abff1ccd6fc22876a23db77aaa8"
+ SRC_URI[sha256sum] = "f23773e4d97cec823ec634085b5e60a7884a13467ff1bffc17daac14d02f9caa"
+ 
+@@ -84,7 +84,7 @@ INITSCRIPT_PARAMS:${PN} = "remove"
+ INITSCRIPT_NAME:${PN}-iked = "iked"
+ INITSCRIPT_PARAMS:${PN}-iked = "remove"
+ INITSCRIPT_NAME:${PN}-kinkd = "kinkd"
+-INITSCRIPT_PARAMS:${PN}-kinkd= "remove"
++INITSCRIPT_PARAMS:${PN}-kinkd = "remove"
+ 
+ SYSTEMD_PACKAGES = "${PN}"
+ SYSTEMD_SERVICE:${PN} = "spmd.service iked.service"
+diff --git a/meta-cgl-common/recipes-perl/perl/libtest-pod-perl_1.52.bb b/meta-cgl-common/recipes-perl/perl/libtest-pod-perl_1.52.bb
+index f72dbd3..04bd8b9 100644
+--- a/meta-cgl-common/recipes-perl/perl/libtest-pod-perl_1.52.bb
++++ b/meta-cgl-common/recipes-perl/perl/libtest-pod-perl_1.52.bb
+@@ -11,7 +11,7 @@ RDEPENDS:${PN} += " perl-module-test-more \
+                     "
+ PR = "r2"
+ 
+-SRC_URI ="http://search.cpan.org/CPAN/authors/id/E/ET/ETHER/Test-Pod-${PV}.tar.gz;name=test-pod-perl-${PV}"
++SRC_URI = "http://search.cpan.org/CPAN/authors/id/E/ET/ETHER/Test-Pod-${PV}.tar.gz;name=test-pod-perl-${PV}"
+ SRC_URI[test-pod-perl-1.52.md5sum] = "472dda77746d48e6465bf62e47aeca81"
+ SRC_URI[test-pod-perl-1.52.sha256sum] = "60a8dbcc60168bf1daa5cc2350236df9343e9878f4ab9830970a5dde6fe8e5fc"
+ S = "${UNPACKDIR}/Test-Pod-${PV}"
+-- 
+2.25.1
 
-> On Mon, Sep 29, 2025 at 6:16=E2=80=AFPM Vijay Anusuri <vanusuri@mvista.co=
-m> wrote:
-> >
-> > Hi Khem,
-> >
-> > The Makefile.in.in file inside the po/ directory had read-only
-> permissions (0444), even for the file owner. During the build, the proces=
-s
-> attempted to copy and overwrite this file but failed due to lack of write
-> permissions.
-> >
-> > I updated the permissions to grant write access so that the build
-> process could proceed successfully.
-> >
-> > Below is the error snippet
-> >
-> >
-> > | NOTE: List of Makefile.in.ins to update:
-> /home/xxx/project/yocto_master/poky/build/tmp/work/x86-64-v3-poky-linux/u=
-carp/1.5.2/sources/ucarp-1.5.2/po/
-> Makefile.in.in
-> > | NOTE: Executing: cp
-> /home/xxx/project/yocto_master/poky/build/tmp/work/x86-64-v3-poky-linux/u=
-carp/1.5.2/recipe-sysroot-native/usr/share/gettext/po/
-> Makefile.in.in
-> /home/xxx/project/yocto_master/poky/build/tmp/work/x86-64-v3-poky-linux/u=
-carp/1.5.2/sources/ucarp-1.5.2/po/
-> > | cp: cannot create regular file
-> '/home/xxx/project/yocto_master/poky/build/tmp/work/x86-64-v3-poky-linux/=
-ucarp/1.5.2/sources/ucarp-1.5.2/po/
-> Makefile.in.in': Permission denied
-> >
->
-> Good. It will be nice to add this context in the commit message.
->
-> >
-> > Thanks & Regards,
-> > Vijay
-> >
-> > On Tue, Sep 30, 2025 at 12:26=E2=80=AFAM Khem Raj <raj.khem@gmail.com> =
-wrote:
-> >>
-> >> On Sun, Sep 28, 2025 at 9:50=E2=80=AFPM Vijay Anusuri via
-> >> lists.yoctoproject.org <vanusuri=3Dmvista.com@lists.yoctoproject.org>
-> >> wrote:
-> >> >
-> >> > From: Vijay Anusuri <vanusuri@mvista.com>
-> >> >
-> >> > Gave write permission to po
-> >> > List of Makefile.in.ins to update po/Makefile.in.in
-> >> >
-> >> > Signed-off-by: Vijay Anusuri <vanusuri@mvista.com>
-> >> > ---
-> >> >  meta-cgl-common/recipes-cgl/ucarp/ucarp_1.5.2.bb | 4 ++++
-> >> >  1 file changed, 4 insertions(+)
-> >> >
-> >> > diff --git a/meta-cgl-common/recipes-cgl/ucarp/ucarp_1.5.2.bb
-> b/meta-cgl-common/recipes-cgl/ucarp/ucarp_1.5.2.bb
-> >> > index d221814..8a2737b 100644
-> >> > --- a/meta-cgl-common/recipes-cgl/ucarp/ucarp_1.5.2.bb
-> >> > +++ b/meta-cgl-common/recipes-cgl/ucarp/ucarp_1.5.2.bb
-> >> > @@ -42,6 +42,10 @@ EXTRA_OECONF +=3D "--sysconfdir=3D${sysconfdir}/$=
-{BPN}"
-> >> >  # fix the perms for config.rpath
-> >> >  do_configure:prepend() {
-> >> >      chmod 755 ${S}/config.rpath
-> >> > +    # Make sure po directory is writable by current user
-> >>
-> >> Why should it be writable ?
-> >>
-> >> > +    if [ -d "${S}/po" ]; then
-> >> > +        chmod -R u+rw ${S}/po
-> >> > +    fi
-> >> >  }
-> >> >
-> >> >  do_install:append() {
-> >> > --
-> >> > 2.25.1
-> >> >
-> >> >
-> >> >
-> >> > -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-> >> > Links: You receive all messages sent to this group.
-> >> > View/Reply Online (#2248):
-> https://lists.yoctoproject.org/g/yocto-patches/message/2248
-> >> > Mute This Topic: https://lists.yoctoproject.org/mt/115490482/1997914
-> >> > Group Owner: yocto-patches+owner@lists.yoctoproject.org
-> >> > Unsubscribe:
-> https://lists.yoctoproject.org/g/yocto-patches/leave/13340786/1997914/645=
-821814/xyzzy
-> [raj.khem@gmail.com]
-> >> > -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-> >> >
-> >> >
->
-
---00000000000041db03063ffc77b7
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div>Sure. I will update the commit message and send out a=
- v2 patch.</div></div><br><div class=3D"gmail_quote gmail_quote_container">=
-<div dir=3D"ltr" class=3D"gmail_attr">On Tue, Sep 30, 2025 at 8:29=E2=80=AF=
-AM Khem Raj &lt;<a href=3D"mailto:raj.khem@gmail.com">raj.khem@gmail.com</a=
->&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px=
- 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">On =
-Mon, Sep 29, 2025 at 6:16=E2=80=AFPM Vijay Anusuri &lt;<a href=3D"mailto:va=
-nusuri@mvista.com" target=3D"_blank">vanusuri@mvista.com</a>&gt; wrote:<br>
-&gt;<br>
-&gt; Hi Khem,<br>
-&gt;<br>
-&gt; The <a href=3D"http://Makefile.in.in" rel=3D"noreferrer" target=3D"_bl=
-ank">Makefile.in.in</a> file inside the po/ directory had read-only permiss=
-ions (0444), even for the file owner. During the build, the process attempt=
-ed to copy and overwrite this file but failed due to lack of write permissi=
-ons.<br>
-&gt;<br>
-&gt; I updated the permissions to grant write access so that the build proc=
-ess could proceed successfully.<br>
-&gt;<br>
-&gt; Below is the error snippet<br>
-&gt;<br>
-&gt;<br>
-&gt; | NOTE: List of Makefile.in.ins to update: /home/xxx/project/yocto_mas=
-ter/poky/build/tmp/work/x86-64-v3-poky-linux/ucarp/1.5.2/sources/ucarp-1.5.=
-2/po/<a href=3D"http://Makefile.in.in" rel=3D"noreferrer" target=3D"_blank"=
->Makefile.in.in</a><br>
-&gt; | NOTE: Executing: cp /home/xxx/project/yocto_master/poky/build/tmp/wo=
-rk/x86-64-v3-poky-linux/ucarp/1.5.2/recipe-sysroot-native/usr/share/gettext=
-/po/<a href=3D"http://Makefile.in.in" rel=3D"noreferrer" target=3D"_blank">=
-Makefile.in.in</a> /home/xxx/project/yocto_master/poky/build/tmp/work/x86-6=
-4-v3-poky-linux/ucarp/1.5.2/sources/ucarp-1.5.2/po/<br>
-&gt; | cp: cannot create regular file &#39;/home/xxx/project/yocto_master/p=
-oky/build/tmp/work/x86-64-v3-poky-linux/ucarp/1.5.2/sources/ucarp-1.5.2/po/=
-<a href=3D"http://Makefile.in.in" rel=3D"noreferrer" target=3D"_blank">Make=
-file.in.in</a>&#39;: Permission denied<br>
-&gt;<br>
-<br>
-Good. It will be nice to add this context in the commit message.<br>
-<br>
-&gt;<br>
-&gt; Thanks &amp; Regards,<br>
-&gt; Vijay<br>
-&gt;<br>
-&gt; On Tue, Sep 30, 2025 at 12:26=E2=80=AFAM Khem Raj &lt;<a href=3D"mailt=
-o:raj.khem@gmail.com" target=3D"_blank">raj.khem@gmail.com</a>&gt; wrote:<b=
-r>
-&gt;&gt;<br>
-&gt;&gt; On Sun, Sep 28, 2025 at 9:50=E2=80=AFPM Vijay Anusuri via<br>
-&gt;&gt; <a href=3D"http://lists.yoctoproject.org" rel=3D"noreferrer" targe=
-t=3D"_blank">lists.yoctoproject.org</a> &lt;vanusuri=3D<a href=3D"mailto:mv=
-ista.com@lists.yoctoproject.org" target=3D"_blank">mvista.com@lists.yoctopr=
-oject.org</a>&gt;<br>
-&gt;&gt; wrote:<br>
-&gt;&gt; &gt;<br>
-&gt;&gt; &gt; From: Vijay Anusuri &lt;<a href=3D"mailto:vanusuri@mvista.com=
-" target=3D"_blank">vanusuri@mvista.com</a>&gt;<br>
-&gt;&gt; &gt;<br>
-&gt;&gt; &gt; Gave write permission to po<br>
-&gt;&gt; &gt; List of Makefile.in.ins to update po/<a href=3D"http://Makefi=
-le.in.in" rel=3D"noreferrer" target=3D"_blank">Makefile.in.in</a><br>
-&gt;&gt; &gt;<br>
-&gt;&gt; &gt; Signed-off-by: Vijay Anusuri &lt;<a href=3D"mailto:vanusuri@m=
-vista.com" target=3D"_blank">vanusuri@mvista.com</a>&gt;<br>
-&gt;&gt; &gt; ---<br>
-&gt;&gt; &gt;=C2=A0 meta-cgl-common/recipes-cgl/ucarp/<a href=3D"http://uca=
-rp_1.5.2.bb" rel=3D"noreferrer" target=3D"_blank">ucarp_1.5.2.bb</a> | 4 ++=
-++<br>
-&gt;&gt; &gt;=C2=A0 1 file changed, 4 insertions(+)<br>
-&gt;&gt; &gt;<br>
-&gt;&gt; &gt; diff --git a/meta-cgl-common/recipes-cgl/ucarp/<a href=3D"htt=
-p://ucarp_1.5.2.bb" rel=3D"noreferrer" target=3D"_blank">ucarp_1.5.2.bb</a>=
- b/meta-cgl-common/recipes-cgl/ucarp/<a href=3D"http://ucarp_1.5.2.bb" rel=
-=3D"noreferrer" target=3D"_blank">ucarp_1.5.2.bb</a><br>
-&gt;&gt; &gt; index d221814..8a2737b 100644<br>
-&gt;&gt; &gt; --- a/meta-cgl-common/recipes-cgl/ucarp/<a href=3D"http://uca=
-rp_1.5.2.bb" rel=3D"noreferrer" target=3D"_blank">ucarp_1.5.2.bb</a><br>
-&gt;&gt; &gt; +++ b/meta-cgl-common/recipes-cgl/ucarp/<a href=3D"http://uca=
-rp_1.5.2.bb" rel=3D"noreferrer" target=3D"_blank">ucarp_1.5.2.bb</a><br>
-&gt;&gt; &gt; @@ -42,6 +42,10 @@ EXTRA_OECONF +=3D &quot;--sysconfdir=3D${s=
-ysconfdir}/${BPN}&quot;<br>
-&gt;&gt; &gt;=C2=A0 # fix the perms for config.rpath<br>
-&gt;&gt; &gt;=C2=A0 do_configure:prepend() {<br>
-&gt;&gt; &gt;=C2=A0 =C2=A0 =C2=A0 chmod 755 ${S}/config.rpath<br>
-&gt;&gt; &gt; +=C2=A0 =C2=A0 # Make sure po directory is writable by curren=
-t user<br>
-&gt;&gt;<br>
-&gt;&gt; Why should it be writable ?<br>
-&gt;&gt;<br>
-&gt;&gt; &gt; +=C2=A0 =C2=A0 if [ -d &quot;${S}/po&quot; ]; then<br>
-&gt;&gt; &gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 chmod -R u+rw ${S}/po<br>
-&gt;&gt; &gt; +=C2=A0 =C2=A0 fi<br>
-&gt;&gt; &gt;=C2=A0 }<br>
-&gt;&gt; &gt;<br>
-&gt;&gt; &gt;=C2=A0 do_install:append() {<br>
-&gt;&gt; &gt; --<br>
-&gt;&gt; &gt; 2.25.1<br>
-&gt;&gt; &gt;<br>
-&gt;&gt; &gt;<br>
-&gt;&gt; &gt;<br>
-&gt;&gt; &gt; -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-<br>
-&gt;&gt; &gt; Links: You receive all messages sent to this group.<br>
-&gt;&gt; &gt; View/Reply Online (#2248): <a href=3D"https://lists.yoctoproj=
-ect.org/g/yocto-patches/message/2248" rel=3D"noreferrer" target=3D"_blank">=
-https://lists.yoctoproject.org/g/yocto-patches/message/2248</a><br>
-&gt;&gt; &gt; Mute This Topic: <a href=3D"https://lists.yoctoproject.org/mt=
-/115490482/1997914" rel=3D"noreferrer" target=3D"_blank">https://lists.yoct=
-oproject.org/mt/115490482/1997914</a><br>
-&gt;&gt; &gt; Group Owner: <a href=3D"mailto:yocto-patches%2Bowner@lists.yo=
-ctoproject.org" target=3D"_blank">yocto-patches+owner@lists.yoctoproject.or=
-g</a><br>
-&gt;&gt; &gt; Unsubscribe: <a href=3D"https://lists.yoctoproject.org/g/yoct=
-o-patches/leave/13340786/1997914/645821814/xyzzy" rel=3D"noreferrer" target=
-=3D"_blank">https://lists.yoctoproject.org/g/yocto-patches/leave/13340786/1=
-997914/645821814/xyzzy</a> [<a href=3D"mailto:raj.khem@gmail.com" target=3D=
-"_blank">raj.khem@gmail.com</a>]<br>
-&gt;&gt; &gt; -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-<br>
-&gt;&gt; &gt;<br>
-&gt;&gt; &gt;<br>
-</blockquote></div>
-
---00000000000041db03063ffc77b7--
 
