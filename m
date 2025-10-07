@@ -1,87 +1,111 @@
-Return-Path: <joaomarcos.costa@bootlin.com>
+Return-Path: <mathieu.dubois-briand@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82A72CAC5B8
-	for <webhook@archiver.kernel.org>; Mon,  6 Oct 2025 09:18:07 +0000 (UTC)
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
- by mx.groups.io with SMTP id smtpd.web11.30063.1759742278874506340
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6649FCCD186
+	for <webhook@archiver.kernel.org>; Tue,  7 Oct 2025 14:37:24 +0000 (UTC)
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+ by mx.groups.io with SMTP id smtpd.web10.20395.1759847834267853939
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 06 Oct 2025 02:18:00 -0700
+ Tue, 07 Oct 2025 07:37:14 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@bootlin.com header.s=dkim header.b=Je4IZDbQ;
- spf=pass (domain: bootlin.com, ip: 185.246.85.4, mailfrom: joaomarcos.costa@bootlin.com)
+ dkim=pass header.i=@bootlin.com header.s=dkim header.b=yX1TO8d2;
+ spf=pass (domain: bootlin.com, ip: 185.246.84.56, mailfrom: mathieu.dubois-briand@bootlin.com)
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 205F74E40F22
-	for <yocto-patches@lists.yoctoproject.org>; Mon,  6 Oct 2025 09:17:57 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id EBF731A11CB
+	for <yocto-patches@lists.yoctoproject.org>; Tue,  7 Oct 2025 14:37:12 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id D4983606B7;
-	Mon,  6 Oct 2025 09:17:56 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 415F8102F1C35;
-	Mon,  6 Oct 2025 11:17:45 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id C56DE606C8
+	for <yocto-patches@lists.yoctoproject.org>; Tue,  7 Oct 2025 14:37:12 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2659D102F2165;
+	Tue,  7 Oct 2025 16:37:12 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1759742276; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=Y6Pe8oZ9IG1DYxK5WvghhO4miEyO6YQqiM7l4y9BrRI=;
-	b=Je4IZDbQkTiG16TvQy9oubrYcgivqDEugQyXZa1wfadk4gRnWmDkgDTS4hOY2JQVoE/9Bi
-	lziZ6dQKwXbBZcMavbY2h1X6YVaZuLouauewso3A0sQFNMnRHaAdqJEjdiQP2dYtUhhZ1W
-	4rVXulkIQHaeVcgQw6AOOvI6CiC8x+AuqiHWaaQ/1e0XZZGNNpZ8yfXRhR8zsTVYgMnOIq
-	UfAQXTtMBsycSOa/l9RY7iOd1kaqswARWZwGW1IqnHuefAkSqRe0iw2P4GMLZCNyxZWota
-	jGTAqYw48tUuLvI5onvqvO+0CQMWytwyghELyTToiOE4ig7WWxXj09dTJ8cpBw==
-Message-ID: <b80fe998-eb2d-46e0-bf8f-1299967cc27f@bootlin.com>
-Date: Mon, 6 Oct 2025 11:17:45 +0200
+	t=1759847832; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=jH9Jy4h/VQfhIuba+8lObu47LbGw9piU0B3s7ze6bX8=;
+	b=yX1TO8d2mGtGuMa58h6laU7ttyMR3qXgZgrZHJ+gP+yYep4Iiar3ps4rsinHQ5uX0UKWX1
+	LGwzLvthgqx4xYdVfOoNC3GD7WNSY7UzgKWgny0Myma8xV2C++Wjc+6P2din1vlq8GT+qT
+	j/4+ouzBE2ZBlWdEjM7uQhwO8kW5jAbH9s5WSGwsNJlnSpNhSIVuKdIt7MV+BiHdTy5BR1
+	UQIleADPgGtX4bhs9r+OTHQ8mWXCdfMi2VubnjgJmwGu43sQ5dRId2UceDIDjqHUgwieVw
+	XMAmrRdBxLUcjZv/F4RHmXu0zggddjPmR743smXwk7BHLp7CdRf3N0GdhKrk8g==
+From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Date: Tue, 07 Oct 2025 16:37:03 +0200
+Subject: [PATCH yocto-autobuilder-helper master-next v3 2/3] getproperties:
+ Also extract build properties
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [meta-selinux][PATCH v2 0/1] initscripts: fix incompatibility
- with read-only-rootfs
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251007-contrib-mathieu-build_props-v3-2-0263f52bd682@bootlin.com>
+References: <20251007-contrib-mathieu-build_props-v3-0-0263f52bd682@bootlin.com>
+In-Reply-To: <20251007-contrib-mathieu-build_props-v3-0-0263f52bd682@bootlin.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: thomas.petazzoni@bootlin.com, peter.kjellerstedt@axis.com,
- joe.macdonald@siemens.com, yi.zhao@windriver.com
-References: <20250929162057.48553-1-joaomarcos.costa@bootlin.com>
-Content-Language: en-US, fr
-From: Joao Marcos Costa <joaomarcos.costa@bootlin.com>
-Organization: Bootlin
-In-Reply-To: <20250929162057.48553-1-joaomarcos.costa@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1759847830; l=1931;
+ i=mathieu.dubois-briand@bootlin.com; s=20241219; h=from:subject:message-id;
+ bh=uwDSSKXMvizcr8QvtvgxaWKOnTcpu394t8+57wu0cIY=;
+ b=1qEdQLGbbJl/IyMCLC1TfHTUmP8SMcPhAr/3wteRrYrSzGHTTRNieqr/e7qJwHOGGqFmo4HpD
+ EaS14rahGExBb1xMSndP7aEUxWaisiCJy4lTx8KTmVQKPmCrhUU0Si/
+X-Developer-Key: i=mathieu.dubois-briand@bootlin.com; a=ed25519;
+ pk=1PVTmzPXfKvDwcPUzG0aqdGoKZJA3b9s+3DqRlm0Lww=
 X-Last-TLS-Session-Version: TLSv1.3
-Content-Transfer-Encoding: quoted-printable
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 06 Oct 2025 09:18:07 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2271
+ <yocto-patches@lists.yoctoproject.org>; Tue, 07 Oct 2025 14:37:24 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2273
 
-Hello,
+Extract some important build configuration values, allowing to add them
+to buildbot properties. This includes MACHINE, DISTRO, SDKMACHINE and
+PACKAGE_CLASSES.
 
-On 9/29/25 18:20, Jo=C3=A3o Marcos Costa wrote:
-> Hello,
->=20
-> This patch presents a possible fix for a build-time issue whenever the
-> 'read-only-rootfs' IMAGE_FEATURE is used. I decided to keep the details=
- on the
-> commit message itself, and to add this cover letter mostly for keeping =
-a
-> changelog.
->=20
-> Best regards,
-> ---
->=20
-> Changes in v2:
-> - removed the do_ prefix in do_restore_context as it is used mostly for=
- tasks
-> - replaced the python anonymous function by 'postfuncs' variable flag
->=20
-> Jo=C3=A3o Marcos Costa (1):
->    initscripts: fix incompatibility with read-only-rootfs
->=20
->   recipes-core/initscripts/initscripts-1.0_selinux.inc | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
->=20
+Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+---
+ scripts/getproperties.py | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
 
-I'm realizing now that I didn't add the maintainers to CC in my previous=20
-mail, sorry about that.
+diff --git a/scripts/getproperties.py b/scripts/getproperties.py
+index 0d8eab22efbdba65d1ca497a6a28c361c42d5a83..ce1bc2fb45a8fce463fd2e19249833075b9d975b 100755
+--- a/scripts/getproperties.py
++++ b/scripts/getproperties.py
+@@ -8,8 +8,9 @@ import sys
+ 
+ import utils
+ 
++# Usage: scripts/getproperties.py <builddir> [builder_name]
+ builddir = sys.argv[1]
+-
++targetname = sys.argv[2] if len(sys.argv) > 2 else None
+ 
+ with open(builddir + "/../layerinfo.json") as f:
+     repos = json.load(f)
+@@ -71,5 +72,22 @@ buildid = hashlib.sha1(buildid.encode("utf-8")).hexdigest()
+ 
+ jsonprops['yp_build_revision'] = buildid
+ 
+-print(json.dumps(jsonprops, indent=4, sort_keys=True))
++ourconfig = utils.loadconfig()
++exported_properties = ['DISTRO', 'MACHINE', 'SDKMACHINE', 'PACKAGE_CLASSES']
++if targetname in ourconfig['overrides']:
++    target_props = {}
++    target = ourconfig['overrides'][targetname]
++    maxsteps = 1
++    for v in target:
++        if v.startswith("step"):
++            # Get properties values for this build step, falling back to
++            # defaults if they are not set.
++            for prop in exported_properties:
++                for propdict in (target[v], target, ourconfig['defaults']):
++                    if prop in propdict:
++                        target_props.setdefault(prop, set()).add(propdict[prop])
++                        break
++    for k, v in target_props.items():
++        jsonprops[k] = list(v)[0] if len(v) == 1 else list(v)
+ 
++print(json.dumps(jsonprops, indent=4, sort_keys=True))
 
---=20
-Best regards,
-Jo=C3=A3o Marcos Costa
+-- 
+2.47.3
+
 
