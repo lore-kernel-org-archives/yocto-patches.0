@@ -2,50 +2,51 @@ Return-Path: <mathieu.dubois-briand@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80EEBCCD188
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C7F6CCD187
 	for <webhook@archiver.kernel.org>; Tue,  7 Oct 2025 14:37:34 +0000 (UTC)
 Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
- by mx.groups.io with SMTP id smtpd.web11.20534.1759847847111038424
+ by mx.groups.io with SMTP id smtpd.web10.20403.1759847848118835825
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 07 Oct 2025 07:37:27 -0700
+ Tue, 07 Oct 2025 07:37:28 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=dkim header.b=ovKkcIVe;
+ dkim=pass header.i=@bootlin.com header.s=dkim header.b=HrHuJ4jx;
  spf=pass (domain: bootlin.com, ip: 185.246.84.56, mailfrom: mathieu.dubois-briand@bootlin.com)
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id D03921A116B
-	for <yocto-patches@lists.yoctoproject.org>; Tue,  7 Oct 2025 14:37:25 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id CB4801A1167
+	for <yocto-patches@lists.yoctoproject.org>; Tue,  7 Oct 2025 14:37:26 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id A90E9606C8
-	for <yocto-patches@lists.yoctoproject.org>; Tue,  7 Oct 2025 14:37:25 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EE41E102F2168;
-	Tue,  7 Oct 2025 16:37:24 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id A4434606C8
+	for <yocto-patches@lists.yoctoproject.org>; Tue,  7 Oct 2025 14:37:26 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 78F1B102F2167;
+	Tue,  7 Oct 2025 16:37:25 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
 	t=1759847845; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=1n/PfEIy8T/ke7sR7sW2U4r8XL5aCCtkmL7lG7LXAfk=;
-	b=ovKkcIVeLbFzD0y7Z4O32Sv+bpkLd1OzMSgVToLLZCkQFCiVXf3lpSQ6l9Kg1hksS5jEz2
-	CB2KnCO0UpSi0TRuIwVduSNxi16tsNgrvrdYYq0V8GQj1l3IrMDtYHWwdasu+3wI3zKvHU
-	uC0qYdc0aMQSWnaoMSLr+PvGdkC70VYMioBRon9q5Bh7b9KA5ZlROgRMulVp6Ny5Y79iDU
-	Vi3fUeqdGRdx4fP50/+IsgUwkeoOmYcGXyoGHJOgoHE0Omx2ng77exk1MgmBh6VQCPtIIb
-	NPCLK3+02mbMwgMElc12MYY89sDXDufQMfyOZ+8g0gEus3RAG9EF75UYMnBOgQ==
+	bh=yB+ANRchbSeFwISRo31WdrNP+sShEiEaGE0sLCEor04=;
+	b=HrHuJ4jxd4OLkNvmoyMD96Ji71fJQb1EHBrjDBAf9uv0mWLZCHbkDAF8yDQogW9Ojhc8ol
+	ViBBOTCgcUZlYhZXopClx9dPxfPyyjsStshB11EEelXApgUQ88N2Sh6WPvky9Le+XxGGlH
+	qIKqXsLnwRXK29fEuFXP/IGxczusZrIP0iwU8ZfuLkRTA/cqnNT/GH5QU1HSOifjrXfPQy
+	IE+rCx9Dv4O7Q4yhORLNEAzcVDwPNKUPTo0RT9pvg1mhx1bmButpQPWxHpRsm85LvyCJyT
+	lNa67h+w/XGAANv5Vpj8Wh308UQh/jR9wnNJsrNetND7C9XWOX0/TznpgEZHuw==
 From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Date: Tue, 07 Oct 2025 16:37:21 +0200
-Subject: [PATCH yocto-autobuilder2 05/10] docker: refresh patches
+Date: Tue, 07 Oct 2025 16:37:22 +0200
+Subject: [PATCH yocto-autobuilder2 06/10] yocto_console_view: fix commit
+ links
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251007-contrib-mathieu-bb-setup-links-v1-5-bb1d79289c3f@bootlin.com>
+Message-Id: <20251007-contrib-mathieu-bb-setup-links-v1-6-bb1d79289c3f@bootlin.com>
 References: <20251007-contrib-mathieu-bb-setup-links-v1-0-bb1d79289c3f@bootlin.com>
 In-Reply-To: <20251007-contrib-mathieu-bb-setup-links-v1-0-bb1d79289c3f@bootlin.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
  Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1759847841; l=4396;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1759847841; l=6753;
  i=mathieu.dubois-briand@bootlin.com; s=20241219; h=from:subject:message-id;
- bh=eoj1cUw/NZtNe7Wmk/bbz6xAp4hPhnH4NK7Lf394HSY=;
- b=8ZUd9gC6pnzlJK8jXyZN+E/aowQ6ULnr2fKlfSYMTD4Jo6VpGVKZ72fCLOpubYrCSX2fYzyRp
- nEgeuFsi8WFD1dWGTVEveMP0eYX4XMQIaugAhnHh/iCeNCDFUUbbtyH
+ bh=eecZ2wnAAo4+keyYCyd4x561tHopeQnxPBwj4EEBKOc=;
+ b=2Os+UDbQ8duoAlcCnvMWtu6/O0X1mke/JTzJRovb/ipkqjA/XZ20uD/HZip0t0dTc5WGKkDrC
+ vIue/l7ATGyD6nU9appVp/cABIoReo6Y8+fn89fa7qwurEgUSMZv88x
 X-Developer-Key: i=mathieu.dubois-briand@bootlin.com; a=ed25519;
  pk=1PVTmzPXfKvDwcPUzG0aqdGoKZJA3b9s+3DqRlm0Lww=
 X-Last-TLS-Session-Version: TLSv1.3
@@ -53,89 +54,157 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Tue, 07 Oct 2025 14:37:34 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2281
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2282
 
 Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 ---
- ...001-builders-Do-not-create-tags-during-builds.patch |  8 ++++----
- ...ers-Modify-free-space-check-to-work-in-docker.patch | 18 +++++++++---------
- 2 files changed, 13 insertions(+), 13 deletions(-)
+ .../src/views/ConsoleView/ConsoleView.tsx          | 37 +++++++++++++++---
+ .../src/views/ConsoleView/YoctoChangeDetails.tsx   | 44 +++++++++++++++++-----
+ 2 files changed, 66 insertions(+), 15 deletions(-)
 
-diff --git a/docker/yocto-autobuilder2_patches/0001-builders-Do-not-create-tags-during-builds.patch b/docker/yocto-autobuilder2_patches/0001-builders-Do-not-create-tags-during-builds.patch
-index 65b428caa1fc086a88f6b1326de25d2b00843582..8e772c8fa7b1b2cdd59af58f5f87b1332d5fb602 100644
---- a/docker/yocto-autobuilder2_patches/0001-builders-Do-not-create-tags-during-builds.patch
-+++ b/docker/yocto-autobuilder2_patches/0001-builders-Do-not-create-tags-during-builds.patch
-@@ -1,4 +1,4 @@
--From 12db34cf42ca695bd34594853013e54464a809f5 Mon Sep 17 00:00:00 2001
-+From baef5f6c4c2cf973385392d1e163f8bec2f6cca2 Mon Sep 17 00:00:00 2001
- From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
- Date: Fri, 3 Jan 2025 09:39:06 +0100
- Subject: [PATCH 1/2] builders: Do not create tags during builds
-@@ -9,10 +9,10 @@ Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-  1 file changed, 1 deletion(-)
+diff --git a/yocto_console_view/src/views/ConsoleView/ConsoleView.tsx b/yocto_console_view/src/views/ConsoleView/ConsoleView.tsx
+index 826ba2aec8bdc775e7365c987284a82628c0db1a..dd84c7913cdab3ae3e4537e4b00d0fb077be4b71 100644
+--- a/yocto_console_view/src/views/ConsoleView/ConsoleView.tsx
++++ b/yocto_console_view/src/views/ConsoleView/ConsoleView.tsx
+@@ -125,7 +125,7 @@ function resolveFakeChange(revision: string, whenTimestamp: number, comment: str
+   }
  
- diff --git a/builders.py b/builders.py
--index b4c08fa1f29c..4e10bdceedb2 100644
-+index 15985f258bb9..a16a857d9211 100644
- --- a/builders.py
- +++ b/builders.py
--@@ -284,7 +284,6 @@ def create_parent_builder_factory(buildername, waitname):
-+@@ -307,7 +307,6 @@ def create_parent_builder_factory(buildername, waitname):
-              util.Interpolate("%(prop:builddir)s/layerinfo.json"),
-              util.Interpolate("{}/%(prop:buildername)s-%(prop:buildnumber)s".format(config.sharedrepodir)),
-              "-p", get_publish_dest,
-@@ -21,5 +21,5 @@ index b4c08fa1f29c..4e10bdceedb2 100644
-          haltOnFailure=True,
-          name="Prepare shared repositories"))
- -- 
--2.39.5
-+2.47.3
+   const newChange = {
+-    change: new Change(undefined as unknown as IDataAccessor, "a/1", {
++    change: new Change(undefined as unknown as IDataAccessor, {
+       changeid: revision,
+       author: "",
+       branch: "",
+@@ -135,8 +135,12 @@ function resolveFakeChange(revision: string, whenTimestamp: number, comment: str
+       project: "",
+       properties: {},
+       repository: "",
+-      revision: revision,
+-      revlink: null,
++      poky_revision: revision,
++      oecore_revision: null,
++      bitbake_revision: null,
++      poky_revlink: null,
++      oecore_revlink: null,
++      bitbake_revlink: null,
+       when_timestamp: whenTimestamp,
+     }),
+     buildsByBuilderId: new Map<number, Build[]>
+@@ -156,8 +160,19 @@ function selectChangeForBuild(build: Build, buildset: Buildset,
+   if ((build.properties !== null && ('yp_build_revision' in build.properties))  || (build.buildid in revMapping)) {
+     let revision;
+     let change = undefined;
++    let oecore_revision = undefined, bitbake_revision = undefined;
++    let use_bitbake_setup = false;
+     if (build.properties !== null && ('yp_build_revision' in build.properties)) {
+       revision = build.properties['yp_build_revision'][0];
++      if ('commit_oecore' in build.properties) {
++        oecore_revision = build.properties['commit_oecore'][0];
++      }
++      if ('commit_oecore' in build.properties) {
++        bitbake_revision = build.properties['commit_bitbake'][0];
++      }
++      if ('use_bitbake_setup' in build.properties) {
++        use_bitbake_setup = build.properties['use_bitbake_setup'][0];
++      }
+     } else {
+       revision = revMapping[build.buildid];
+     }
+@@ -178,7 +193,19 @@ function selectChangeForBuild(build: Build, buildset: Buildset,
+       if (build.buildid in branchMapping) {
+         change.change.caption = branchMapping[build.buildid];
+       }
+-      change.change.revlink = "http://git.yoctoproject.org/cgit.cgi/poky/commit/?id=" + revision;
++
++      if (!use_bitbake_setup) {
++        change.change.poky_revlink = "http://git.yoctoproject.org/cgit.cgi/poky/commit/?id=" + revision;
++        change.change.poky_revision = revision;
++      } else {
++        // We might retrieve the "use_bitbake_setup" after the first execution, so wrong poky data might have been added: remove them.
++        change.change.poky_revlink = change.change.poky_revision = undefined;
++
++        change.change.oecore_revlink = "https://git.openembedded.org/openembedded-core/commit/?id=" + oecore_revision;
++        change.change.bitbake_revlink = "https://git.openembedded.org/bitbake/commit/?id=" + bitbake_revision;
++        change.change.oecore_revision = oecore_revision;
++        change.change.bitbake_revision = bitbake_revision;
++      }
+       change.change.errorlink = "http://errors.yoctoproject.org/Errors/Latest/?filter=" + revision + "&type=commit&limit=150";
  
-diff --git a/docker/yocto-autobuilder2_patches/0002-builders-Modify-free-space-check-to-work-in-docker.patch b/docker/yocto-autobuilder2_patches/0002-builders-Modify-free-space-check-to-work-in-docker.patch
-index 6d3ec5539b97c0c45b18f73cf7d1fcf93fa39f32..8c0ad1c93cbefe0887c6618a67761c582ce0b99d 100644
---- a/docker/yocto-autobuilder2_patches/0002-builders-Modify-free-space-check-to-work-in-docker.patch
-+++ b/docker/yocto-autobuilder2_patches/0002-builders-Modify-free-space-check-to-work-in-docker.patch
-@@ -1,4 +1,4 @@
--From 9bf9680ab9125138d926c22ca434ad86053bb5c4 Mon Sep 17 00:00:00 2001
-+From c6032ab33d39981eb9dede27d0bbd073a8d58389 Mon Sep 17 00:00:00 2001
- From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
- Date: Wed, 20 Nov 2024 14:53:34 +0100
- Subject: [PATCH 2/2] builders: Modify free space check to work in docker
-@@ -9,10 +9,10 @@ Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-  1 file changed, 2 insertions(+), 3 deletions(-)
+       let bid = build.buildid;
+@@ -239,7 +266,7 @@ export const ConsoleView = observer(() => {
+   const buildsQuery = useDataApiQuery(() => Build.getAll(accessor, {query: {
+       limit: buildFetchLimit,
+       order: '-started_at',
+-      property: ["yp_build_revision", "yp_build_branch", "reason", "publish_destination"],
++      property: ["yp_build_revision", "yp_build_branch", "commit_oecore", "commit_bitbake", "reason", "publish_destination", "use_bitbake_setup"],
+     }}));
  
- diff --git a/builders.py b/builders.py
--index ba47241de2cc..02f6c10c6add 100644
-+index a16a857d9211..d5389283e605 100644
- --- a/builders.py
- +++ b/builders.py
--@@ -67,8 +67,7 @@ def canStartBuild(builder, wfb, request):
-+@@ -70,8 +70,7 @@ def canStartBuild(builder, wfb, request):
-  
-      # threshold is GB of space
-      checks = {
-@@ -22,15 +22,15 @@ index ba47241de2cc..02f6c10c6add 100644
-      }
-  
-      for mountpoint in checks:
--@@ -76,7 +75,7 @@ def canStartBuild(builder, wfb, request):
-+@@ -79,7 +78,7 @@ def canStartBuild(builder, wfb, request):
-  
--         threshold = threshold * 1024 *1024 * 1024
-+         bytes_in_gb = 1024 * 1024 * 1024
-  
- -        cmd = yield shell("findmnt -T %s --df -n --bytes | awk '{print $5}'" % mountpoint, wfb.worker, builder)
- +        cmd = yield shell("findmnt --all -T %s --df -n --bytes | awk '{print $5}'" % mountpoint, wfb.worker, builder)
--         if int(cmd.stdout) < threshold:
--             log.msg("Detected {0} GB of space available on {1}, less than threshold of {2} GB. Can't start build".format(cmd.stdout, name, threshold))
--             wfb.worker.quarantine_timeout = 10 * 60
-+         space = int(cmd.stdout.strip())
-+         if space < threshold * bytes_in_gb:
-+             log.msg("Detected {0} GB of space available on {1}, less than threshold of {2} GB. Can't start build".format(space / bytes_in_gb, name, threshold))
- -- 
--2.39.5
-+2.47.3
- 
+   const windowSize = useWindowSize()
+diff --git a/yocto_console_view/src/views/ConsoleView/YoctoChangeDetails.tsx b/yocto_console_view/src/views/ConsoleView/YoctoChangeDetails.tsx
+index 37670de255c96efb7135c9eb2ef8f4847a627222..18a74cf170034b4eda6a30b0bd3f484fa686e7a9 100644
+--- a/yocto_console_view/src/views/ConsoleView/YoctoChangeDetails.tsx
++++ b/yocto_console_view/src/views/ConsoleView/YoctoChangeDetails.tsx
+@@ -70,16 +70,33 @@ export const YoctoChangeDetails = observer(({change, compact, showDetails, setSh
+             </tr>
+             : <></>
+           }
+-          <tr>
+-            <td>Revision</td>
++          { change.poky_revlink
++          ? <tr>
++            <td>poky revision</td>
+             <td>
+-            {
+-              change.revlink
+-              ? <a href={change.revlink}>{change.revision}</a>
+-              : <></>
+-            }
++              <a href={change.poky_revlink}>{change.poky_revision}</a>
++            </td>
++          </tr>
++          : <></>
++          }
++          { change.oecore_revlink
++          ? <tr>
++            <td>openembedded-core revision</td>
++            <td>
++              <a href={change.oecore_revlink}>{change.oecore_revision}</a>
+             </td>
+           </tr>
++          : <></>
++          }
++          { change.bitbake_revlink
++          ? <tr>
++            <td>bitbake revision</td>
++            <td>
++              <a href={change.bitbake_revlink}>{change.bitbake_revision}</a>
++            </td>
++          </tr>
++          : <></>
++          }
+         </tbody>
+       </Table>
+       <h5>Comment</h5>
+@@ -117,9 +134,16 @@ export const YoctoChangeDetails = observer(({change, compact, showDetails, setSh
+                         overlay={popoverWithText("comments-" + change.id, change.caption)}>
+           <React.Fragment>
+             {
+-              change.revlink
+-              ? <a href={change.revlink}>{change.caption}</a>
+-              : <span>{change.caption}</span>
++              change.poky_revlink
++              ? <a href={change.poky_revlink}>{change.caption} (poky)</a>
++              : change.oecore_revlink
++                ? <a href={change.oecore_revlink}>{change.caption} (oe-core)</a>
++               : <span>{change.caption}</span>
++            }
++            {
++              change.bitbake_revlink
++              ? <a href={change.bitbake_revlink}>{change.caption} (bitbake)</a>
++              : <></>
+             }
+             {
+               change.errorlink
 
 -- 
 2.47.3
