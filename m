@@ -2,51 +2,51 @@ Return-Path: <mathieu.dubois-briand@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAB33CCD18D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CC68CCD18B
 	for <webhook@archiver.kernel.org>; Tue,  7 Oct 2025 14:37:34 +0000 (UTC)
 Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
- by mx.groups.io with SMTP id smtpd.web10.20398.1759847845173485306
+ by mx.groups.io with SMTP id smtpd.web11.20535.1759847848675975747
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 07 Oct 2025 07:37:25 -0700
+ Tue, 07 Oct 2025 07:37:28 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=dkim header.b=HomEsVvt;
+ dkim=pass header.i=@bootlin.com header.s=dkim header.b=Qer7vVhb;
  spf=pass (domain: bootlin.com, ip: 185.246.84.56, mailfrom: mathieu.dubois-briand@bootlin.com)
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id DED371A116B
-	for <yocto-patches@lists.yoctoproject.org>; Tue,  7 Oct 2025 14:37:23 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 657751A1169
+	for <yocto-patches@lists.yoctoproject.org>; Tue,  7 Oct 2025 14:37:27 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id B7C39606C8
-	for <yocto-patches@lists.yoctoproject.org>; Tue,  7 Oct 2025 14:37:23 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1BAF2102F2165;
-	Tue,  7 Oct 2025 16:37:23 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 3D969606C8
+	for <yocto-patches@lists.yoctoproject.org>; Tue,  7 Oct 2025 14:37:27 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 83820102F216B;
+	Tue,  7 Oct 2025 16:37:26 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1759847843; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1759847846; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=Z3bfdtzEXLmxLUDHuDAVyxJh3MBQFTDRqZQNpaXLI40=;
-	b=HomEsVvtXseKJTKySFTTVQhVJmxxMrPA2h57rQjpcX1MCagh7Gb1p6tFVEkWp2sRGWMgRK
-	gySCqKXfc7s5gUWPwVLVEToL2Sla+hQljthuiljw0oD8KlZB8TVQZPca5Bq4/V0SW2N26M
-	jFApzODMFYakrcPtjSIqE4s8iTHXaNHw3z+UyGTI+XTJ2T/10TRhDg2ACl5Cd1sutSk65H
-	NPfUeODSxVNu2iv3tGeyLlxAFdCBO/Ozz2OTdYq1EgD0qpB4KRIEDfBUCnNhj92Y6GtrXN
-	O82Lvslg+RwSee8tsQkZmQtpT2/6wIkqNufdebayMRXwXbb93c0vt3Z+IQSylQ==
+	bh=ngzc4cRpkiV9RSNmy5vim5w5ZrsMe5hgHqnfNFqwf7I=;
+	b=Qer7vVhb/hrqDvNeW0V/t1aRjz7gQJlBhP7WyQ6nawFbTNUlcb+XLLdm3ahs1N/yd+6ZlB
+	LjGNisvVJebj/3Qw/xvZ+D/dXMsZpxNJmeRAZrYcO95XU4hKMPVAouS6RlOlgkYwWW38u5
+	AzIoCrbEiTx6wU7oeSu9ZRNE50smKGG9Cd0ZntlpAv1zVIVmZs250qWGazRso40VfFLhHI
+	nt44Dh43kNk3414gBZzKxRIxJnotd9mdKYwHbvIgXwX3+gItNCAH9lT+hXtV1ZjjU87DZ1
+	tED6SonGiRFNqISpnPqUIAP/i97KWT0OF0yQl0auEI7V3dNeuxMy5cnpyfIVhw==
 From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Date: Tue, 07 Oct 2025 16:37:18 +0200
-Subject: [PATCH yocto-autobuilder2 02/10] docker: compose: Fix docker role
- detection
+Date: Tue, 07 Oct 2025 16:37:23 +0200
+Subject: [PATCH yocto-autobuilder2 07/10] yocto_console_view: fix error
+ link
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251007-contrib-mathieu-bb-setup-links-v1-2-bb1d79289c3f@bootlin.com>
+Message-Id: <20251007-contrib-mathieu-bb-setup-links-v1-7-bb1d79289c3f@bootlin.com>
 References: <20251007-contrib-mathieu-bb-setup-links-v1-0-bb1d79289c3f@bootlin.com>
 In-Reply-To: <20251007-contrib-mathieu-bb-setup-links-v1-0-bb1d79289c3f@bootlin.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
  Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1759847841; l=1941;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1759847841; l=2021;
  i=mathieu.dubois-briand@bootlin.com; s=20241219; h=from:subject:message-id;
- bh=Pnzr8L0tp10zJ9Fd2Wlw8qsVJi8t6vgA5Vyhbaq6G1g=;
- b=752ND0admrkg4U0JTm+6FB5qcC0ky8A33OJUS5+8tdYjr20DYrQ2KCjPBKzxJ+t9ZEtJe1Hgs
- 3who+vhAlqhADPFwQcwgDXhEk8S5z6j23S0n2QQ6YXa/2jDZnby+0bn
+ bh=OOUSMFHiGOKuzdmHtqWnA6Me8OfsI9afGGkh8+HZaNs=;
+ b=YIrSWdImXXODBg76Qn1JV5TTXWKswLH1Cc3QKRcDd48Khe6AIk2gMZQtbZGsbo7OU5g/yBc4E
+ 42pCLgVPvkUBFwC6WUItFQ9CwAFU3qC6KdWfcvyioL0Q2bOPlo4dwXl
 X-Developer-Key: i=mathieu.dubois-briand@bootlin.com; a=ed25519;
  pk=1PVTmzPXfKvDwcPUzG0aqdGoKZJA3b9s+3DqRlm0Lww=
 X-Last-TLS-Session-Version: TLSv1.3
@@ -54,66 +54,38 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Tue, 07 Oct 2025 14:37:34 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2278
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2283
 
-It looks like the name of docker containers created with docker-compose
-is not always the same: is is generated from various values, sometimes
-separated by underscores, sometimes by dashes, breaking role detection.
-Try to use another method that should be a bit more reliable.
+This might need to be updated once https://errors.yoctoproject.org is
+fixed for the bitbake-setup switch.
 
 Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 ---
- docker/compose.yaml | 4 ++++
- docker/entry.sh     | 4 ++--
- 2 files changed, 6 insertions(+), 2 deletions(-)
+ yocto_console_view/src/views/ConsoleView/ConsoleView.tsx | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/docker/compose.yaml b/docker/compose.yaml
-index 50034d90d52b34f5d09c01a48b8f3e256fe8339a..334e13720b3b4b89128300fa623628d7ea219b5f 100644
---- a/docker/compose.yaml
-+++ b/docker/compose.yaml
-@@ -2,6 +2,7 @@
+diff --git a/yocto_console_view/src/views/ConsoleView/ConsoleView.tsx b/yocto_console_view/src/views/ConsoleView/ConsoleView.tsx
+index dd84c7913cdab3ae3e4537e4b00d0fb077be4b71..19b24d1a04270f71bda9ea8b55b62196be79f7b7 100644
+--- a/yocto_console_view/src/views/ConsoleView/ConsoleView.tsx
++++ b/yocto_console_view/src/views/ConsoleView/ConsoleView.tsx
+@@ -197,6 +197,7 @@ function selectChangeForBuild(build: Build, buildset: Buildset,
+       if (!use_bitbake_setup) {
+         change.change.poky_revlink = "http://git.yoctoproject.org/cgit.cgi/poky/commit/?id=" + revision;
+         change.change.poky_revision = revision;
++        change.change.errorlink = "http://errors.yoctoproject.org/Errors/Latest/?filter=" + revision + "&type=commit&limit=150";
+       } else {
+         // We might retrieve the "use_bitbake_setup" after the first execution, so wrong poky data might have been added: remove them.
+         change.change.poky_revlink = change.change.poky_revision = undefined;
+@@ -205,8 +206,8 @@ function selectChangeForBuild(build: Build, buildset: Buildset,
+         change.change.bitbake_revlink = "https://git.openembedded.org/bitbake/commit/?id=" + bitbake_revision;
+         change.change.oecore_revision = oecore_revision;
+         change.change.bitbake_revision = bitbake_revision;
++        change.change.errorlink = "http://errors.yoctoproject.org/Errors/Latest/?filter=" + oecore_revision + "&type=commit&limit=150";
+       }
+-      change.change.errorlink = "http://errors.yoctoproject.org/Errors/Latest/?filter=" + revision + "&type=commit&limit=150";
  
- ---
- 
-+name: ab2
- x-base-service: &base-service
-   build:
-     context: ..
-@@ -17,15 +18,18 @@ x-base-service: &base-service
- services:
-   controller:
-     <<: *base-service
-+    command: controller
-     ports:
-       - 8010:8010
-     cpus: 4
-   worker: &base-worker
-     <<: *base-service
-+    command: worker
-     cpus: 8
-     mem_limit: 16gb
-   extraworker:
-     <<: *base-worker
-+    command: extraworker
-     cpus: 1
-     mem_limit: 2gb
-     deploy:
-diff --git a/docker/entry.sh b/docker/entry.sh
-index 1aef2ba4025f9871e84189283fd791fab109862d..900e4b9b229ffab31fcd345b8eaec57bd2fef90a 100644
---- a/docker/entry.sh
-+++ b/docker/entry.sh
-@@ -6,9 +6,9 @@ chown pokybuild:nogroup /home/pokybuild/git/mirror
- chown pokybuild:nogroup /srv/autobuilder
- cd /home/pokybuild/ || exit 1
- 
-+role=${1}
- docker_name=$(host "$(host "$(hostname)" | awk '{print $NF}')" | awk '{print $NF}' | awk -F . '{print $1}')
--role=$(echo "${docker_name}" | cut -d_ -f 2)
--instance=$(echo "${docker_name}" | cut -d_ -f 3)
-+instance=$(echo "${docker_name}" | sed -e 's/.*[^0-9]\([0-9]*\)$/\1/')
- 
- if [ "${role}" = "controller" ]; then
-   su pokybuild -c "yocto-autobuilder-helper/janitor/ab-janitor" &
+       let bid = build.buildid;
+       if ((buildset !== null) && (buildset.parent_buildid != null)) {
 
 -- 
 2.47.3
