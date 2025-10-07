@@ -2,51 +2,51 @@ Return-Path: <mathieu.dubois-briand@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CC68CCD18B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5F9CCCD189
 	for <webhook@archiver.kernel.org>; Tue,  7 Oct 2025 14:37:34 +0000 (UTC)
 Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
- by mx.groups.io with SMTP id smtpd.web11.20535.1759847848675975747
+ by mx.groups.io with SMTP id smtpd.web10.20406.1759847849545423740
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 07 Oct 2025 07:37:28 -0700
+ Tue, 07 Oct 2025 07:37:30 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=dkim header.b=Qer7vVhb;
+ dkim=pass header.i=@bootlin.com header.s=dkim header.b=1C398tw/;
  spf=pass (domain: bootlin.com, ip: 185.246.84.56, mailfrom: mathieu.dubois-briand@bootlin.com)
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 657751A1169
-	for <yocto-patches@lists.yoctoproject.org>; Tue,  7 Oct 2025 14:37:27 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 42C061A116B
+	for <yocto-patches@lists.yoctoproject.org>; Tue,  7 Oct 2025 14:37:28 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 3D969606C8
-	for <yocto-patches@lists.yoctoproject.org>; Tue,  7 Oct 2025 14:37:27 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 83820102F216B;
-	Tue,  7 Oct 2025 16:37:26 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 1A82F606C8
+	for <yocto-patches@lists.yoctoproject.org>; Tue,  7 Oct 2025 14:37:28 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1C023102F216A;
+	Tue,  7 Oct 2025 16:37:27 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1759847846; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1759847847; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=ngzc4cRpkiV9RSNmy5vim5w5ZrsMe5hgHqnfNFqwf7I=;
-	b=Qer7vVhb/hrqDvNeW0V/t1aRjz7gQJlBhP7WyQ6nawFbTNUlcb+XLLdm3ahs1N/yd+6ZlB
-	LjGNisvVJebj/3Qw/xvZ+D/dXMsZpxNJmeRAZrYcO95XU4hKMPVAouS6RlOlgkYwWW38u5
-	AzIoCrbEiTx6wU7oeSu9ZRNE50smKGG9Cd0ZntlpAv1zVIVmZs250qWGazRso40VfFLhHI
-	nt44Dh43kNk3414gBZzKxRIxJnotd9mdKYwHbvIgXwX3+gItNCAH9lT+hXtV1ZjjU87DZ1
-	tED6SonGiRFNqISpnPqUIAP/i97KWT0OF0yQl0auEI7V3dNeuxMy5cnpyfIVhw==
+	bh=0jWrnr0KOK0VFgVvCdN2dwOhZTgtdgSJIMmfy9aSRUY=;
+	b=1C398tw/J2VCDXodH7Txw0KAd16YSVk/pEjBab3qaKzB9Y6I3qvMqvHmPBpprRQjsOtyyk
+	Js+XbnYg/yB4OikufPvTNyuZUcbnCQvQ3G96e9FTiiYGdTUlxRU2nUiJRM7FySZNNRL6xG
+	/2iJ6V7B0C6IvM0Bpzruz0jhQI0JB9CLKQBlaQs/SufsDNfM5CDWeCQYKwK1HiWzyVTBwL
+	KX5cMMrH0M1tyo8nvx3M7LTolCbNxfzZSkZcvGjUyr5Y3VGnh5yDTJFShP8jt/tPnLuEgb
+	zRxdxlo6PcYOf3kuztQaGBPCDvcluA9a4OF7glxtEiQu7PNOz+2JknScNGoXFQ==
 From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Date: Tue, 07 Oct 2025 16:37:23 +0200
-Subject: [PATCH yocto-autobuilder2 07/10] yocto_console_view: fix error
- link
+Date: Tue, 07 Oct 2025 16:37:24 +0200
+Subject: [PATCH yocto-autobuilder2 08/10] builders: Add poky-ci-archive tag
+ in build properties
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251007-contrib-mathieu-bb-setup-links-v1-7-bb1d79289c3f@bootlin.com>
+Message-Id: <20251007-contrib-mathieu-bb-setup-links-v1-8-bb1d79289c3f@bootlin.com>
 References: <20251007-contrib-mathieu-bb-setup-links-v1-0-bb1d79289c3f@bootlin.com>
 In-Reply-To: <20251007-contrib-mathieu-bb-setup-links-v1-0-bb1d79289c3f@bootlin.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
  Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1759847841; l=2021;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1759847841; l=4604;
  i=mathieu.dubois-briand@bootlin.com; s=20241219; h=from:subject:message-id;
- bh=OOUSMFHiGOKuzdmHtqWnA6Me8OfsI9afGGkh8+HZaNs=;
- b=YIrSWdImXXODBg76Qn1JV5TTXWKswLH1Cc3QKRcDd48Khe6AIk2gMZQtbZGsbo7OU5g/yBc4E
- 42pCLgVPvkUBFwC6WUItFQ9CwAFU3qC6KdWfcvyioL0Q2bOPlo4dwXl
+ bh=3J9Uaocr2o+e/7ipiXsMFhBoMD7u3mlc16k8N6BYgFI=;
+ b=UZzJZKtlhTLdol9YcvMSsS2/Vo7OuCECmoUJzM2I90530Fe8rpoer0wEsvxnUaz6Z4uX8aqit
+ ngdYCE6UaHZAxH53+vKSLEKXRa/PB2t3gGRFdu7M0aAkkZkt24arTZd
 X-Developer-Key: i=mathieu.dubois-briand@bootlin.com; a=ed25519;
  pk=1PVTmzPXfKvDwcPUzG0aqdGoKZJA3b9s+3DqRlm0Lww=
 X-Last-TLS-Session-Version: TLSv1.3
@@ -54,38 +54,95 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Tue, 07 Oct 2025 14:37:34 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2283
-
-This might need to be updated once https://errors.yoctoproject.org is
-fixed for the bitbake-setup switch.
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2284
 
 Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 ---
- yocto_console_view/src/views/ConsoleView/ConsoleView.tsx | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ builders.py                                        | 10 +++++++-
+ ...builders-Do-not-create-tags-during-builds.patch | 28 ++++++++++++++++++----
+ 2 files changed, 32 insertions(+), 6 deletions(-)
 
-diff --git a/yocto_console_view/src/views/ConsoleView/ConsoleView.tsx b/yocto_console_view/src/views/ConsoleView/ConsoleView.tsx
-index dd84c7913cdab3ae3e4537e4b00d0fb077be4b71..19b24d1a04270f71bda9ea8b55b62196be79f7b7 100644
---- a/yocto_console_view/src/views/ConsoleView/ConsoleView.tsx
-+++ b/yocto_console_view/src/views/ConsoleView/ConsoleView.tsx
-@@ -197,6 +197,7 @@ function selectChangeForBuild(build: Build, buildset: Buildset,
-       if (!use_bitbake_setup) {
-         change.change.poky_revlink = "http://git.yoctoproject.org/cgit.cgi/poky/commit/?id=" + revision;
-         change.change.poky_revision = revision;
-+        change.change.errorlink = "http://errors.yoctoproject.org/Errors/Latest/?filter=" + revision + "&type=commit&limit=150";
-       } else {
-         // We might retrieve the "use_bitbake_setup" after the first execution, so wrong poky data might have been added: remove them.
-         change.change.poky_revlink = change.change.poky_revision = undefined;
-@@ -205,8 +206,8 @@ function selectChangeForBuild(build: Build, buildset: Buildset,
-         change.change.bitbake_revlink = "https://git.openembedded.org/bitbake/commit/?id=" + bitbake_revision;
-         change.change.oecore_revision = oecore_revision;
-         change.change.bitbake_revision = bitbake_revision;
-+        change.change.errorlink = "http://errors.yoctoproject.org/Errors/Latest/?filter=" + oecore_revision + "&type=commit&limit=150";
-       }
--      change.change.errorlink = "http://errors.yoctoproject.org/Errors/Latest/?filter=" + revision + "&type=commit&limit=150";
+diff --git a/builders.py b/builders.py
+index 15985f258bb9fa7d38e70f4ca35f87ede4c24a23..2fb0bf827b0f08fb822320ad9fc858592e606cc7 100644
+--- a/builders.py
++++ b/builders.py
+@@ -311,6 +311,12 @@ def create_parent_builder_factory(buildername, waitname):
+         ],
+         haltOnFailure=True,
+         name="Prepare shared repositories"))
++    factory.addStep(steps.SetProperty(
++        property="poky-ci-archive_tag", value=createBuildTag))
++    tagurl = util.Interpolate('https://git.yoctoproject.org/poky-ci-archive/log/?h=%(kw:tag)s',
++                              tag=createBuildTag)
++    factory.addStep(steps.SetProperty(
++        property="poky-ci-archive_url", value=tagurl))
+     factory.addStep(steps.SetProperty(
+         property="sharedrepolocation",
+         value=util.Interpolate("{}/%(prop:buildername)s-%(prop:buildnumber)s".format(config.sharedrepodir))
+@@ -358,7 +364,9 @@ def create_parent_builder_factory(buildername, waitname):
+             "milestone_number": util.Property("milestone_number"),
+             "rc_number": util.Property("rc_number"),
+             "yp_build_revision": util.Property("yp_build_revision"),
+-            "yp_build_branch": util.Property("yp_build_branch")
++            "yp_build_branch": util.Property("yp_build_branch"),
++            "poky-ci-archive_tag": util.Property("poky-ci-archive_tag"),
++            "poky-ci-archive_url": util.Property("poky-ci-archive_url")
+         }
  
-       let bid = build.buildid;
-       if ((buildset !== null) && (buildset.parent_buildid != null)) {
+         for repo in config.buildertorepos[buildername]:
+diff --git a/docker/yocto-autobuilder2_patches/0001-builders-Do-not-create-tags-during-builds.patch b/docker/yocto-autobuilder2_patches/0001-builders-Do-not-create-tags-during-builds.patch
+index 8e772c8fa7b1b2cdd59af58f5f87b1332d5fb602..b36f2ea7e83edcd70ecbab6ecd13f2bb986e2dc6 100644
+--- a/docker/yocto-autobuilder2_patches/0001-builders-Do-not-create-tags-during-builds.patch
++++ b/docker/yocto-autobuilder2_patches/0001-builders-Do-not-create-tags-during-builds.patch
+@@ -1,18 +1,18 @@
+-From baef5f6c4c2cf973385392d1e163f8bec2f6cca2 Mon Sep 17 00:00:00 2001
++From b6a31b0c63a7529961ea02c53f43b9edb110f4de Mon Sep 17 00:00:00 2001
+ From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+ Date: Fri, 3 Jan 2025 09:39:06 +0100
+ Subject: [PATCH 1/2] builders: Do not create tags during builds
+ 
+ Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+ ---
+- builders.py | 1 -
+- 1 file changed, 1 deletion(-)
++ builders.py | 9 ---------
++ 1 file changed, 9 deletions(-)
+ 
+ diff --git a/builders.py b/builders.py
+-index 15985f258bb9..a16a857d9211 100644
++index 2fb0bf827b0f..af1cc263fd2e 100644
+ --- a/builders.py
+ +++ b/builders.py
+-@@ -307,7 +307,6 @@ def create_parent_builder_factory(buildername, waitname):
++@@ -307,16 +307,9 @@ def create_parent_builder_factory(buildername, waitname):
+              util.Interpolate("%(prop:builddir)s/layerinfo.json"),
+              util.Interpolate("{}/%(prop:buildername)s-%(prop:buildnumber)s".format(config.sharedrepodir)),
+              "-p", get_publish_dest,
+@@ -20,6 +20,24 @@ index 15985f258bb9..a16a857d9211 100644
+          ],
+          haltOnFailure=True,
+          name="Prepare shared repositories"))
++-    factory.addStep(steps.SetProperty(
++-        property="poky-ci-archive_tag", value=createBuildTag))
++-    tagurl = util.Interpolate('https://git.yoctoproject.org/poky-ci-archive/log/?h=%(kw:tag)s',
++-                              tag=createBuildTag)
++-    factory.addStep(steps.SetProperty(
++-        property="poky-ci-archive_url", value=tagurl))
++     factory.addStep(steps.SetProperty(
++         property="sharedrepolocation",
++         value=util.Interpolate("{}/%(prop:buildername)s-%(prop:buildnumber)s".format(config.sharedrepodir))
++@@ -365,8 +358,6 @@ def create_parent_builder_factory(buildername, waitname):
++             "rc_number": util.Property("rc_number"),
++             "yp_build_revision": util.Property("yp_build_revision"),
++             "yp_build_branch": util.Property("yp_build_branch"),
++-            "poky-ci-archive_tag": util.Property("poky-ci-archive_tag"),
++-            "poky-ci-archive_url": util.Property("poky-ci-archive_url")
++         }
++ 
++         for repo in config.buildertorepos[buildername]:
+ -- 
+ 2.47.3
+ 
 
 -- 
 2.47.3
