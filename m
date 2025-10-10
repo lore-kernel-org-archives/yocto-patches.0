@@ -1,150 +1,120 @@
-Return-Path: <mathieu.dubois-briand@bootlin.com>
+Return-Path: <piotr@qbee.io>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5F9CCCD189
-	for <webhook@archiver.kernel.org>; Tue,  7 Oct 2025 14:37:34 +0000 (UTC)
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
- by mx.groups.io with SMTP id smtpd.web10.20406.1759847849545423740
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7FD5CCA476
+	for <webhook@archiver.kernel.org>; Fri, 10 Oct 2025 18:44:42 +0000 (UTC)
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+ by mx.groups.io with SMTP id smtpd.web11.1415.1760121881041920506
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 07 Oct 2025 07:37:30 -0700
+ Fri, 10 Oct 2025 11:44:41 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=dkim header.b=1C398tw/;
- spf=pass (domain: bootlin.com, ip: 185.246.84.56, mailfrom: mathieu.dubois-briand@bootlin.com)
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 42C061A116B
-	for <yocto-patches@lists.yoctoproject.org>; Tue,  7 Oct 2025 14:37:28 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 1A82F606C8
-	for <yocto-patches@lists.yoctoproject.org>; Tue,  7 Oct 2025 14:37:28 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1C023102F216A;
-	Tue,  7 Oct 2025 16:37:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1759847847; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=0jWrnr0KOK0VFgVvCdN2dwOhZTgtdgSJIMmfy9aSRUY=;
-	b=1C398tw/J2VCDXodH7Txw0KAd16YSVk/pEjBab3qaKzB9Y6I3qvMqvHmPBpprRQjsOtyyk
-	Js+XbnYg/yB4OikufPvTNyuZUcbnCQvQ3G96e9FTiiYGdTUlxRU2nUiJRM7FySZNNRL6xG
-	/2iJ6V7B0C6IvM0Bpzruz0jhQI0JB9CLKQBlaQs/SufsDNfM5CDWeCQYKwK1HiWzyVTBwL
-	KX5cMMrH0M1tyo8nvx3M7LTolCbNxfzZSkZcvGjUyr5Y3VGnh5yDTJFShP8jt/tPnLuEgb
-	zRxdxlo6PcYOf3kuztQaGBPCDvcluA9a4OF7glxtEiQu7PNOz+2JknScNGoXFQ==
-From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Date: Tue, 07 Oct 2025 16:37:24 +0200
-Subject: [PATCH yocto-autobuilder2 08/10] builders: Add poky-ci-archive tag
- in build properties
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251007-contrib-mathieu-bb-setup-links-v1-8-bb1d79289c3f@bootlin.com>
-References: <20251007-contrib-mathieu-bb-setup-links-v1-0-bb1d79289c3f@bootlin.com>
-In-Reply-To: <20251007-contrib-mathieu-bb-setup-links-v1-0-bb1d79289c3f@bootlin.com>
+ dkim=pass header.i=@qbee.io header.s=google header.b=R5UEDK6s;
+ spf=pass (domain: qbee.io, ip: 209.85.167.50, mailfrom: piotr@qbee.io)
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-586883eb9fbso3210696e87.1
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 10 Oct 2025 11:44:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=qbee.io; s=google; t=1760121879; x=1760726679; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EMD9glwYNsJekLbCr05I5OXa5hoVzjBSzab4TnJk8J4=;
+        b=R5UEDK6syhynnECYe/OXoLGJx6xswWI89w1980/y8WydiO6pLyuymundM3L3bM+2hV
+         CnNJm2b2YJWbPYdgOw8WwzpRMrv37On+LBZO8OHTaVwgF2/HxgfPwU7az+HgDVXING9D
+         QbZd0PKSRBck/5B8VRhjPWMX2C78Rq2sRJBw0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760121879; x=1760726679;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EMD9glwYNsJekLbCr05I5OXa5hoVzjBSzab4TnJk8J4=;
+        b=QdBvKyegQfYfkDB+oOUtcDMHImm3fOqXRLDtontVNcbdWm+YOfAV+EproJqMUQPa1o
+         HIWXfJAe1wZ3ZbyZsVdMKqhXynMy9P/o6sVchDbBy3KEFm06lFH37qTKmd89lkCekwu3
+         WvPzxjt6Fjk3kEzHCMWfaRLUWGmhZSwp8WcSCqxwWuW7EyByDH184VhZ7zFECxuy9myW
+         OcjQ4Am9dHE3j6l6mKbc1fHWI++1m7jRUBqyKa8j8ha19wT+KO+ATBsLIL7HdX0o1GRM
+         9MIkLfCIn4rAnB1bLlEHAOLeCR7hN6qMyeNwAV11m7CRQ63jrBe0PE8VmLSuSqL37UoF
+         cmbA==
+X-Gm-Message-State: AOJu0YwZOArfvtQoQxFm0Fh0hh067QVwVD6D1p7fMqE3WujpFd1G96+H
+	jjegs0onZkFOmgEOYdhfHv04/i7/TgHWZZQbWwdyGCzA3S2Oe5SkUeZPclOdd/Md3q3y3uZNrOb
+	fUy2cq9k=
+X-Gm-Gg: ASbGncvlWUHDvTY9YSyzGixbbhjn9YWp0VFu+gRAri63DMueOTZ1vLz9fq0Cuyqi5np
+	RYiz63SfvIuYMkMargfy2UsoUHOfJjWEC6Qvx1S6UNs5rFgPDLt15br190SK7mY+v4UNjbya0EE
+	1nI8Uwdf7dNOVSa22Ls/F072Qsx/Bqfi1yn0yPD8bxY9O7BpwDvTIJ0SkcVicUUna+jkynF9tWm
+	p/fwVtpZXwqJy+Nj6dYJg4ShPSv5n38kVMBURPBDd4uDtVWDZ6OsQSIcN60Bd2jeE4ORhSZZ4+h
+	MKOxQbPes3O8uiM1SpTK7lRsQepaZ7s6OtakQBHJgCwaiBbu3O2cNgKZ+mCpfb5Fp/LwT0YPQsU
+	8Q81oorDDsa29zPXWtG1GDQsw12uXRU6PVZ+70zXlAApf7nLZx+aojdrKO2Ca22aqYIU/OXo=
+X-Google-Smtp-Source: AGHT+IFU+9J40+DPlpR3Q6G0gn4xwp1jDwJ6r6ZLcwqGw15EKY/JTJ4ClPWg6T5VKMEeHI1oo4UOQw==
+X-Received: by 2002:a05:6512:398c:b0:57e:4998:95ce with SMTP id 2adb3069b0e04-5906d8ed6famr3150661e87.35.1760121878419;
+        Fri, 10 Oct 2025 11:44:38 -0700 (PDT)
+Received: from localhost (80.89-10-247.nextgentel.com. [89.10.247.80])
+        by smtp.gmail.com with UTF8SMTPSA id 2adb3069b0e04-59088579de8sm1105114e87.115.2025.10.10.11.44.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Oct 2025 11:44:38 -0700 (PDT)
+From: =?UTF-8?q?Piotr=20Buli=C5=84ski?= <piotr@qbee.io>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1759847841; l=4604;
- i=mathieu.dubois-briand@bootlin.com; s=20241219; h=from:subject:message-id;
- bh=3J9Uaocr2o+e/7ipiXsMFhBoMD7u3mlc16k8N6BYgFI=;
- b=UZzJZKtlhTLdol9YcvMSsS2/Vo7OuCECmoUJzM2I90530Fe8rpoer0wEsvxnUaz6Z4uX8aqit
- ngdYCE6UaHZAxH53+vKSLEKXRa/PB2t3gGRFdu7M0aAkkZkt24arTZd
-X-Developer-Key: i=mathieu.dubois-briand@bootlin.com; a=ed25519;
- pk=1PVTmzPXfKvDwcPUzG0aqdGoKZJA3b9s+3DqRlm0Lww=
-X-Last-TLS-Session-Version: TLSv1.3
+Cc: =?UTF-8?q?Piotr=20Buli=C5=84ski?= <piotr@qbee.io>
+Subject: [layerindex-web][PATCH] Set default settings module and import from django.conf
+Date: Fri, 10 Oct 2025 20:44:35 +0200
+Message-ID: <20251010184435.68264-1-piotr@qbee.io>
+X-Mailer: git-send-email 2.50.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 07 Oct 2025 14:37:34 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2284
+ <yocto-patches@lists.yoctoproject.org>; Fri, 10 Oct 2025 18:44:42 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2287
 
-Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+- Replace `os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'` with
+  `os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")`
+  to avoid overwriting an existing settings module if already defined.
+- Change `import settings` to `from django.conf import settings`
+  for proper use of Django’s settings registry
+
+Signed-off-by: Piotr Buliński <piotr@qbee.io>
 ---
- builders.py                                        | 10 +++++++-
- ...builders-Do-not-create-tags-during-builds.patch | 28 ++++++++++++++++++----
- 2 files changed, 32 insertions(+), 6 deletions(-)
+ layerindex/recipedesc.py          | 2 +-
+ layerindex/tools/import_layers.py | 2 +-
+ layerindex/utils.py               | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/builders.py b/builders.py
-index 15985f258bb9fa7d38e70f4ca35f87ede4c24a23..2fb0bf827b0f08fb822320ad9fc858592e606cc7 100644
---- a/builders.py
-+++ b/builders.py
-@@ -311,6 +311,12 @@ def create_parent_builder_factory(buildername, waitname):
-         ],
-         haltOnFailure=True,
-         name="Prepare shared repositories"))
-+    factory.addStep(steps.SetProperty(
-+        property="poky-ci-archive_tag", value=createBuildTag))
-+    tagurl = util.Interpolate('https://git.yoctoproject.org/poky-ci-archive/log/?h=%(kw:tag)s',
-+                              tag=createBuildTag)
-+    factory.addStep(steps.SetProperty(
-+        property="poky-ci-archive_url", value=tagurl))
-     factory.addStep(steps.SetProperty(
-         property="sharedrepolocation",
-         value=util.Interpolate("{}/%(prop:buildername)s-%(prop:buildnumber)s".format(config.sharedrepodir))
-@@ -358,7 +364,9 @@ def create_parent_builder_factory(buildername, waitname):
-             "milestone_number": util.Property("milestone_number"),
-             "rc_number": util.Property("rc_number"),
-             "yp_build_revision": util.Property("yp_build_revision"),
--            "yp_build_branch": util.Property("yp_build_branch")
-+            "yp_build_branch": util.Property("yp_build_branch"),
-+            "poky-ci-archive_tag": util.Property("poky-ci-archive_tag"),
-+            "poky-ci-archive_url": util.Property("poky-ci-archive_url")
-         }
+diff --git a/layerindex/recipedesc.py b/layerindex/recipedesc.py
+index 33aef31..8cbdcf0 100644
+--- a/layerindex/recipedesc.py
++++ b/layerindex/recipedesc.py
+@@ -31,7 +31,7 @@ def main():
+     # Get access to our Django model
+     newpath = os.path.abspath(os.path.dirname(os.path.abspath(sys.argv[0])) + '/..')
+     sys.path.append(newpath)
+-    os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
++    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
  
-         for repo in config.buildertorepos[buildername]:
-diff --git a/docker/yocto-autobuilder2_patches/0001-builders-Do-not-create-tags-during-builds.patch b/docker/yocto-autobuilder2_patches/0001-builders-Do-not-create-tags-during-builds.patch
-index 8e772c8fa7b1b2cdd59af58f5f87b1332d5fb602..b36f2ea7e83edcd70ecbab6ecd13f2bb986e2dc6 100644
---- a/docker/yocto-autobuilder2_patches/0001-builders-Do-not-create-tags-during-builds.patch
-+++ b/docker/yocto-autobuilder2_patches/0001-builders-Do-not-create-tags-during-builds.patch
-@@ -1,18 +1,18 @@
--From baef5f6c4c2cf973385392d1e163f8bec2f6cca2 Mon Sep 17 00:00:00 2001
-+From b6a31b0c63a7529961ea02c53f43b9edb110f4de Mon Sep 17 00:00:00 2001
- From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
- Date: Fri, 3 Jan 2025 09:39:06 +0100
- Subject: [PATCH 1/2] builders: Do not create tags during builds
+     from django.core.management import setup_environ
+     from django.conf import settings
+diff --git a/layerindex/tools/import_layers.py b/layerindex/tools/import_layers.py
+index 57b0f86..9696362 100755
+--- a/layerindex/tools/import_layers.py
++++ b/layerindex/tools/import_layers.py
+@@ -61,7 +61,7 @@ def main():
+         loglevel = logging.INFO
  
- Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
- ---
-- builders.py | 1 -
-- 1 file changed, 1 deletion(-)
-+ builders.py | 9 ---------
-+ 1 file changed, 9 deletions(-)
+     utils.setup_django()
+-    import settings
++    from django.conf import settings
+     from layerindex.models import Branch, LayerItem, LayerBranch, LayerDependency, LayerMaintainer, LayerNote, Recipe, Source, Patch, PackageConfig, StaticBuildDep, DynamicBuildDep, RecipeFileDependency, Machine, Distro, BBClass, BBAppend, IncFile
+     from django.db import transaction
  
- diff --git a/builders.py b/builders.py
--index 15985f258bb9..a16a857d9211 100644
-+index 2fb0bf827b0f..af1cc263fd2e 100644
- --- a/builders.py
- +++ b/builders.py
--@@ -307,7 +307,6 @@ def create_parent_builder_factory(buildername, waitname):
-+@@ -307,16 +307,9 @@ def create_parent_builder_factory(buildername, waitname):
-              util.Interpolate("%(prop:builddir)s/layerinfo.json"),
-              util.Interpolate("{}/%(prop:buildername)s-%(prop:buildnumber)s".format(config.sharedrepodir)),
-              "-p", get_publish_dest,
-@@ -20,6 +20,24 @@ index 15985f258bb9..a16a857d9211 100644
-          ],
-          haltOnFailure=True,
-          name="Prepare shared repositories"))
-+-    factory.addStep(steps.SetProperty(
-+-        property="poky-ci-archive_tag", value=createBuildTag))
-+-    tagurl = util.Interpolate('https://git.yoctoproject.org/poky-ci-archive/log/?h=%(kw:tag)s',
-+-                              tag=createBuildTag)
-+-    factory.addStep(steps.SetProperty(
-+-        property="poky-ci-archive_url", value=tagurl))
-+     factory.addStep(steps.SetProperty(
-+         property="sharedrepolocation",
-+         value=util.Interpolate("{}/%(prop:buildername)s-%(prop:buildnumber)s".format(config.sharedrepodir))
-+@@ -365,8 +358,6 @@ def create_parent_builder_factory(buildername, waitname):
-+             "rc_number": util.Property("rc_number"),
-+             "yp_build_revision": util.Property("yp_build_revision"),
-+             "yp_build_branch": util.Property("yp_build_branch"),
-+-            "poky-ci-archive_tag": util.Property("poky-ci-archive_tag"),
-+-            "poky-ci-archive_url": util.Property("poky-ci-archive_url")
-+         }
-+ 
-+         for repo in config.buildertorepos[buildername]:
- -- 
- 2.47.3
+diff --git a/layerindex/utils.py b/layerindex/utils.py
+index 8bbd621..66e4994 100644
+--- a/layerindex/utils.py
++++ b/layerindex/utils.py
+@@ -400,7 +400,7 @@ def setup_django():
+     # Get access to our Django model
+     newpath = os.path.abspath(os.path.dirname(__file__) + '/..')
+     sys.path.append(newpath)
+-    os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
++    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
+     django.setup()
  
-
--- 
-2.47.3
-
+ def logger_create(name):
 
