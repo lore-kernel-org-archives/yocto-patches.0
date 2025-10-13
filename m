@@ -2,152 +2,175 @@ Return-Path: <majortomtosourcecontrol@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BF47CCD18D
-	for <webhook@archiver.kernel.org>; Mon, 13 Oct 2025 15:28:10 +0000 (UTC)
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
- by mx.groups.io with SMTP id smtpd.web11.46863.1760369280193663570
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71032CCD183
+	for <webhook@archiver.kernel.org>; Mon, 13 Oct 2025 15:52:10 +0000 (UTC)
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+ by mx.groups.io with SMTP id smtpd.web11.47538.1760370720990432784
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 13 Oct 2025 08:28:00 -0700
+ Mon, 13 Oct 2025 08:52:01 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=Hsejw3SD;
- spf=pass (domain: gmail.com, ip: 209.85.166.42, mailfrom: majortomtosourcecontrol@gmail.com)
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-93bd394fab0so106916139f.0
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 13 Oct 2025 08:28:00 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=VMt1l64A;
+ spf=pass (domain: gmail.com, ip: 209.85.166.177, mailfrom: majortomtosourcecontrol@gmail.com)
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-42f3acb1744so19741265ab.0
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 13 Oct 2025 08:52:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760369279; x=1760974079; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1760370720; x=1760975520; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:subject:from:to:content-language
          :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YNnrZB1sf+BPeerrQDONaaFOuX1wVBsoZwladMp3aDE=;
-        b=Hsejw3SDGYVyFH2Wn4xqjxsbYHUHr6Y6Y1lhNxqm4jV6uaGYg9JKHRliK4qJ3mkcVR
-         ivasUYAZAxTw/kfmnX2BmJRmHyEJKMV9tq/3RkJwTbmuH5fe/ElehRHC3OdNhkuAeoRN
-         gljxAEIQ4+03w0w4NIuO0ndp3zlh8iPGcVkXRdCNBhbdCnfa5COfeVNiYwm3Js2cWEDi
-         a0djA/i+Kb+2zh9KQnzzLDXyTuj6DpSCb37SRtEj/QCxnhYK3nbTaRvtcjo1q4cAq47g
-         E/rs5XpzYUzgvX34mJfPj39ZNpicLW/FeR/zJ5yMISZsG6WlNZJo/OrBFwVf9mKVKR5h
-         igjg==
+        bh=fc0XsfQJfC6pIWWyctD4hWgYiG81y+Ljd4QDkviNewA=;
+        b=VMt1l64A1S1+OXYvc0aOOA7HB4qSHLXpT+l3ecvdBIVjkRbU9Jf/4KDk6iwyigmI1w
+         WnaM8v/XDQzck1F4a8AghsqpuU42bYjGIvKz5XQORuNekvEH/EaPnjxNK2eJQll+phG6
+         j5jv67066j7wcFYvNiwEz4ydjD860tkrMgC37RVflUtyxpVmLqIWrNVjeITcrXgEuM65
+         EN87+QrLA6VwwQ1nt8yI/f/ZED0bBIen9IBmwKuo44DD7OmyEyefV0NV8k9KlghVGxDH
+         2LFmn9o0Lw1yEX52AQKRqn5hXZcDRnUt3fFaf9Z3Q8UyTXEzZAHPI3P7CQ6qnXW0rnmm
+         TQoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760369279; x=1760974079;
+        d=1e100.net; s=20230601; t=1760370720; x=1760975520;
         h=content-transfer-encoding:subject:from:to:content-language
          :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=YNnrZB1sf+BPeerrQDONaaFOuX1wVBsoZwladMp3aDE=;
-        b=MXuoXaxLl965TSXpxI9CDXk7n6bwgu6eoJ3Drdxk9MUZ47WtYKx4SEhgNtyuidGB3u
-         n+juy30p/vGacevuf6oeOgdWK/TNeZWX90XbCyD35+vuf8H5D2O+O91++YmkkpOkcC+X
-         qOTUMvpSkcJwWYIgTMUhvIYqAfNZpL571fbS9ABdQmmFJ4FWNnwggCd/aSPnUmE/CMIe
-         yyYFf2HLWX7P+2gozIy8paPVV+xQs/0yq7jAF6JHgL1ildfONZCheNuWDYOD/lCoS6MX
-         tFEVmMwgZ0qRAAAcoTpbX9Ri7zTDk8yE5shK1Sst150oH6T8rIYRnV2t8nzTJf7fQov1
-         +7vw==
-X-Forwarded-Encrypted: i=1; AJvYcCUfVG9GD2CfnA+DvFhRmN1XNsovDodTcTg9WLWrOvHKh/CxsO8+aNoUochv3O5WZP99KONDcqhaoSxfshgx@lists.yoctoproject.org
-X-Gm-Message-State: AOJu0Yy3LG1WzKYN7rQlPoT6pYuply215dkUKCvCN1UprJzEoqrsc5sz
-	kMvrwGaU+nglr1YULm5j+eNzktAn6ikqAGdIacuARQsIpxW11mGsRp9h
-X-Gm-Gg: ASbGncsC9gubv+mypHeyIta9hwA9MSnyTHfpNnZmrNyXJNAi2D5LVQ823eqtpZgU1zJ
-	Yfb94/4fYGPtpQqdaZrwGqRMRTnUF1jCqkNXOXxxRx1HoXNHT8ZSuz6OpnjhxUNDbaHzmgsqbxL
-	N9AhcD+jJZ6Cs/hDP23+bizrLQgAheldDyAQRLWhQkQWaV/L/ek2weq30ziwyc0QUSY0a4HvyAY
-	HWOmpzHw7FajMphl0rOo9LDCCKH1tWllKnf8iv5JD6v/LpmApJKJU0S2zQ+PbbJmEAbKO/IOy2r
-	dp8BRymgojU5HtapzxjJkTt/7Sa0QBDXMVR3/f9+BqVRUno7Jhc7SzKEl1lE2HnlpgUxczV3hru
-	Kssfl7aupqiEcNO6tNFgWDmGU1dnvs2dxx3wd/WBnTsHYG+hjmImePuwKhP1b/v0buT9QssI+l3
-	IzWR7qkbgWpWNiNpRe+wY=
-X-Google-Smtp-Source: AGHT+IEP0SJhr+ZYE4LITvP5+hWAacsqtqy+/w3c1m66kuZ3RL83cU/TQ9OIXpOWoum7+5uutp4AEA==
-X-Received: by 2002:a05:6602:29d4:b0:93b:a3c3:1b09 with SMTP id ca18e2360f4ac-93bd17928e4mr2769771439f.6.1760369279251;
-        Mon, 13 Oct 2025 08:27:59 -0700 (PDT)
+        bh=fc0XsfQJfC6pIWWyctD4hWgYiG81y+Ljd4QDkviNewA=;
+        b=R3a6E53/Ekf373odqXyOQW2GhJrhAu1/+WCnvqBUE2RnbGkMCpFhrg/4yP6bqNmUhc
+         xsxEZa3dt6bkOqWCqcggYgsHoUKuW2MIr8OoojB9EjHn1CFZHMnES4Qsk0BR/ibcd1ZH
+         W4KGKVQuDUo8K2pi3b5W/KzjR5hlZX18JFh6wBgHBVc1zq0MlpuRuogdjV6CappuiTPV
+         bFAbFohha8plttzlJPi0nOfUOgcX7nPhwntkqa9/D1f8h7MulKY8VzNo/F03pWPkFGTt
+         CytqgouUtSbudAtM7xOAthzKa4+XEVxrZTF13d6NGpm2WM9QJUTf0Aqiiq/ICTDcZt9B
+         /c/w==
+X-Forwarded-Encrypted: i=1; AJvYcCU8ksOLiM6zKKvDdnQrVjUrJQNZWesIGDfuJ4hioeosZAztBeMbJvf56N3ay+Jfl6EPh317IUdyn79Z2KWO@lists.yoctoproject.org
+X-Gm-Message-State: AOJu0Yx3jrdDslXBjUsOMa9qSk4ZvLbjbwWNTux9dMhf8mtswEsTW3Lk
+	EdQsxFDnkY+mbat3jx5ZLcsC0ZBahb/5PsOBfYlcnv8vJXHwn3gnYKfO
+X-Gm-Gg: ASbGncsNhO5qfnjlwbur3OCF7zz/9n9NkEnCFfz0KtOsARFHKPMvnVqNdhYhWPa2lEm
+	GflyVMe4Ui7dlRf2vin+P7ZRlX8g0LqDj2KGk4rpK309gPDydBf5WbaTm9Awdt6T7LhT1XzDXwo
+	zaknsRNzSM6vQkWyljv4SDuHRM0G6kLAoVq0KLZsqq7tNwpQTFynU+bj236nnbocr62YiuQTcxY
+	b0Qr8z5EQfSphaEBF+qUWVX05JM5EAPFEj8JMbnKJeypcLJFLaI4faVcgxZhdG6RpGmgHpG5WO+
+	OfABbPb9gs4+V26jRQjQvjfVhKuJ8bJSNSEu6K9Pncydh8nMfwCdnKM79R+d9DdBOIq7MxYKZgX
+	0dHW7OXh3ISLFaxOsOBmz+7HrFCt1QxDsFHvmRtVCK/V/IWk6CwXAkUdh0URbbUmDQ64r62uZga
+	nDxPEf9xwUU2wTsXprlPi+2+cx5rxyQw==
+X-Google-Smtp-Source: AGHT+IEDOppVA/eEvnihL3CSEoc3yOF2Ab6qqzZJJxFRuCoxXIk0DWSMYIV20Of2rbMIA3DAZd7qpw==
+X-Received: by 2002:a05:6e02:1a68:b0:42e:6e3a:3075 with SMTP id e9e14a558f8ab-42f873df5a5mr180235385ab.21.1760370720053;
+        Mon, 13 Oct 2025 08:52:00 -0700 (PDT)
 Received: from [172.26.252.3] (174-29-210-254.hlrn.qwest.net. [174.29.210.254])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-93e2594a907sm377954939f.8.2025.10.13.08.27.58
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-58f7200b261sm3735833173.34.2025.10.13.08.51.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Oct 2025 08:27:58 -0700 (PDT)
-Message-ID: <89c5902b-7202-4081-98a9-8f2a56b8bcc1@gmail.com>
-Date: Mon, 13 Oct 2025 09:27:57 -0600
+        Mon, 13 Oct 2025 08:51:59 -0700 (PDT)
+Message-ID: <60dd3c10-61ea-43e5-9140-bd58fa6bd1e5@gmail.com>
+Date: Mon, 13 Oct 2025 09:51:59 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Content-Language: en-US
 To: Yi Zhao <yi.zhao@windriver.com>, joe.macdonald@siemens.com,
  yocto-patches@lists.yoctoproject.org
 From: Clayton Casciato <majortomtosourcecontrol@gmail.com>
-Subject: [meta-selinux][scarthgap][PATCH] refpolicy: oddjob - allow
- oddjob_mkhomedir_t user_terminals
+Subject: [meta-selinux][walnascar][PATCH] refpolicy: systemd - allow
+ systemd_generator_t use user ttys
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 13 Oct 2025 15:28:10 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2296
+ <yocto-patches@lists.yoctoproject.org>; Mon, 13 Oct 2025 15:52:10 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2297
 
 Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
 ---
- ...ervices-oddjob-allow-oddjob_mkhomedi.patch | 54 +++++++++++++++++++
+ ...ystem-systemd-allow-systemd_generato.patch | 77 +++++++++++++++++++
  .../refpolicy/refpolicy_common.inc            |  1 +
- 2 files changed, 55 insertions(+)
- create mode 100644 recipes-security/refpolicy/refpolicy/0069-policy-modules-services-oddjob-allow-oddjob_mkhomedi.patch
+ 2 files changed, 78 insertions(+)
+ create mode 100644 recipes-security/refpolicy/refpolicy/0059-policy-modules-system-systemd-allow-systemd_generato.patch
 
-diff --git a/recipes-security/refpolicy/refpolicy/0069-policy-modules-services-oddjob-allow-oddjob_mkhomedi.patch b/recipes-security/refpolicy/refpolicy/0069-policy-modules-services-oddjob-allow-oddjob_mkhomedi.patch
+diff --git a/recipes-security/refpolicy/refpolicy/0059-policy-modules-system-systemd-allow-systemd_generato.patch b/recipes-security/refpolicy/refpolicy/0059-policy-modules-system-systemd-allow-systemd_generato.patch
 new file mode 100644
-index 0000000..4f74ea8
+index 0000000..f64c115
 --- /dev/null
-+++ b/recipes-security/refpolicy/refpolicy/0069-policy-modules-services-oddjob-allow-oddjob_mkhomedi.patch
-@@ -0,0 +1,54 @@
-+From d382b824f4976935ccd81ef68d547cb30289a068 Mon Sep 17 00:00:00 2001
++++ b/recipes-security/refpolicy/refpolicy/0059-policy-modules-system-systemd-allow-systemd_generato.patch
+@@ -0,0 +1,77 @@
++From 00907f0de29c87ca007bbb5889ff02b66cdfe700 Mon Sep 17 00:00:00 2001
 +From: Clayton Casciato <ccasciato@21sw.us>
-+Date: Wed, 16 Apr 2025 16:45:56 -0600
-+Subject: [PATCH] oddjob: allow oddjob_mkhomedir_t user_terminals
++Date: Mon, 5 May 2025 11:15:14 -0600
++Subject: [PATCH] systemd: allow systemd_generator_t use user ttys
 +
-+type=EXECVE argc=3 a0=mkhomedir_helper a1=user123 a2=0077
++type=PROCTITLE
++proctitle=/usr/lib/systemd/system-generators/systemd-getty-generator
++/run/systemd/generator /run/systemd/generator.early /run/systemd/gene
 +
-+type=SYSCALL arch=armeb syscall=execve per=PER_LINUX success=yes exit=0
-+a0=0x5685f8 a1=0x577518 a2=0x572f10 a3=0x0 items=0 ppid=427 pid=1367
++type=SYSCALL arch=armeb syscall=openat per=PER_LINUX success=yes exit=4
++a0=AT_FDCWD a1=0xbea41b28
++a2=O_RDWR|O_NOCTTY|O_NONBLOCK|O_NOFOLLOW|O_CLOEXEC a3=0x0 items=0
++ppid=1106 pid=1109 auid=unset uid=root gid=root euid=root suid=root
++fsuid=root egid=root sgid=root fsgid=root tty=(none) ses=unset
++comm=systemd-getty-g
++exe=/usr/lib/systemd/system-generators/systemd-getty-generator
++subj=system_u:system_r:systemd_generator_t:s0 key=(null)
++
++type=AVC avc:  denied  { open } for  pid=1109 comm=systemd-getty-g
++path=/dev/ttyAMA0 dev="devtmpfs" ino=2
++scontext=system_u:system_r:systemd_generator_t:s0
++tcontext=unconfined_u:object_r:user_tty_device_t:s0 tclass=chr_file
++
++type=AVC avc:  denied  { read write } for  pid=1109 comm=systemd-getty-g
++name=ttyAMA0 dev="devtmpfs" ino=2
++scontext=system_u:system_r:systemd_generator_t:s0
++tcontext=unconfined_u:object_r:user_tty_device_t:s0 tclass=chr_file
++----
++type=PROCTITLE
++proctitle=/usr/lib/systemd/system-generators/systemd-getty-generator
++/run/systemd/generator /run/systemd/generator.early /run/systemd/gene
++
++type=SYSCALL arch=armeb syscall=ioctl per=PER_LINUX success=yes exit=0
++a0=0x4 a1=TCGETS a2=0xbea41ab0 a3=0xbea41ae4 items=0 ppid=1106 pid=1109
 +auid=unset uid=root gid=root euid=root suid=root fsuid=root egid=root
-+sgid=root fsgid=root tty=ttyAMA0 ses=unset comm=mkhomedir_helpe
-+exe=/usr/sbin/mkhomedir_helper
-+subj=unconfined_u:unconfined_r:oddjob_mkhomedir_t:s0-s0:c0.c1023
-+key=(null)
++sgid=root fsgid=root tty=(none) ses=unset comm=systemd-getty-g
++exe=/usr/lib/systemd/system-generators/systemd-getty-generator
++subj=system_u:system_r:systemd_generator_t:s0 key=(null)
 +
-+type=AVC avc:  denied  { append } for  pid=1367 comm=mkhomedir_helpe
-+path=/dev/ttyAMA0 dev="devtmpfs" ino=2
-+scontext=unconfined_u:unconfined_r:oddjob_mkhomedir_t:s0-s0:c0.c1023
++type=AVC avc:  denied  { ioctl } for  pid=1109 comm=systemd-getty-g
++path=/dev/ttyAMA0 dev="devtmpfs" ino=2 ioctlcmd=TCGETS
++scontext=system_u:system_r:systemd_generator_t:s0
 +tcontext=unconfined_u:object_r:user_tty_device_t:s0 tclass=chr_file
-+
-+type=AVC avc:  denied  { read write } for  pid=1367 comm=mkhomedir_helpe
-+path=/dev/ttyAMA0 dev="devtmpfs" ino=2
-+scontext=unconfined_u:unconfined_r:oddjob_mkhomedir_t:s0-s0:c0.c1023
-+tcontext=unconfined_u:object_r:user_tty_device_t:s0 tclass=chr_file
-+
-+--
-+
-+https://github.com/SELinuxProject/refpolicy/blob/RELEASE_2_20250213/policy/modules/system/userdomain.if#L4340
-+https://github.com/SELinuxProject/refpolicy/blob/RELEASE_2_20250213/policy/support/obj_perm_sets.spt#L272
 +
 +--
 +
 +Fedora:
-+https://github.com/fedora-selinux/selinux-policy/commit/c03dfdc29340d93008b9ff2edc6d6b55b1f2d2a0
++
++matchpathcon /usr/lib/systemd/system-generators/systemd-getty-generator
++
++system_u:object_r:systemd_getty_generator_exec_t:s0
++
++https://github.com/fedora-selinux/selinux-policy/commit/6adfc23f83c3b9078c0245c66095eb78f411bedd#diff-20413b38529167819e3ef86a39929b3638ea684202dc692282e633cd05065969R1322
 +
 +Signed-off-by: Clayton Casciato <ccasciato@21sw.us>
 +
-+Upstream-Status: Backport [https://github.com/SELinuxProject/refpolicy/commit/e9a7c96ba0bca21d455bcc80cbe96caaebf32a33]
++Upstream-Status: Backport [https://github.com/SELinuxProject/refpolicy/commit/930e04f861ab3e753ca831b0c3a1fe51f4b423f9]
 +
 +Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
 +---
-+ policy/modules/services/oddjob.te | 1 +
-+ 1 file changed, 1 insertion(+)
++ policy/modules/system/systemd.te | 3 +++
++ 1 file changed, 3 insertions(+)
 +
-+diff --git a/policy/modules/services/oddjob.te b/policy/modules/services/oddjob.te
-+index 299077739..814d48460 100644
-+--- a/policy/modules/services/oddjob.te
-++++ b/policy/modules/services/oddjob.te
-+@@ -100,4 +100,5 @@ userdom_home_filetrans_user_home_dir(oddjob_mkhomedir_t)
-+ userdom_manage_user_home_content_dirs(oddjob_mkhomedir_t)
-+ userdom_manage_user_home_content_files(oddjob_mkhomedir_t)
-+ userdom_manage_user_home_dirs(oddjob_mkhomedir_t)
-++userdom_use_inherited_user_terminals(oddjob_mkhomedir_t)
-+ userdom_user_home_dir_filetrans_user_home_content(oddjob_mkhomedir_t, notdevfile_class_set)
++diff --git a/policy/modules/system/systemd.te b/policy/modules/system/systemd.te
++index 3e612d0b5..514ead9a8 100644
++--- a/policy/modules/system/systemd.te
+++++ b/policy/modules/system/systemd.te
++@@ -622,6 +622,9 @@ udev_read_runtime_files(systemd_generator_t)
++ mls_file_read_to_clearance(systemd_generator_t)
++ mls_file_write_to_clearance(systemd_generator_t)
++ 
+++# for systemd-getty-generator
+++userdom_use_user_ttys(systemd_generator_t)
+++
++ ifdef(`distro_gentoo',`
++ 	corecmd_shell_entry_type(systemd_generator_t)
++ ')
 diff --git a/recipes-security/refpolicy/refpolicy_common.inc b/recipes-security/refpolicy/refpolicy_common.inc
-index d1a6214..e768e22 100644
+index d29d50c..32234b0 100644
 --- a/recipes-security/refpolicy/refpolicy_common.inc
 +++ b/recipes-security/refpolicy/refpolicy_common.inc
-@@ -84,6 +84,7 @@ SRC_URI += " \
-         file://0066-policy-modules-services-oddjob-allow-oddjob_mkhomedi.patch \
-         file://0067-fixdep-dbus.patch \
-         file://0068-fix-building-when-dbus-module-is-not-enabled.patch \
-+        file://0069-policy-modules-services-oddjob-allow-oddjob_mkhomedi.patch \
+@@ -74,6 +74,7 @@ SRC_URI += " \
+         file://0056-policy-modules-system-systemd-make-_systemd_t-MLS-tr.patch \
+         file://0057-policy-modules-system-logging-make-syslogd_runtime_t.patch \
+         file://0058-policy-modules-services-oddjob-allow-oddjob_mkhomedi.patch \
++        file://0059-policy-modules-system-systemd-allow-systemd_generato.patch \
          "
  
  S = "${WORKDIR}/refpolicy"
