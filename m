@@ -1,539 +1,737 @@
-Return-Path: <quic_sasikuma@quicinc.com>
+Return-Path: <richard.purdie@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27697CCD187
-	for <webhook@archiver.kernel.org>; Tue, 14 Oct 2025 08:52:28 +0000 (UTC)
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
- by mx.groups.io with SMTP id smtpd.web10.10480.1760431938746868676
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5739BCCD187
+	for <webhook@archiver.kernel.org>; Tue, 14 Oct 2025 10:23:49 +0000 (UTC)
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+ by mx.groups.io with SMTP id smtpd.web11.12007.1760437428578579149
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 14 Oct 2025 01:52:18 -0700
+ Tue, 14 Oct 2025 03:23:49 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@quicinc.com header.s=qcppdkim1 header.b=KyL89Wo9;
- spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: quicinc.com, ip: 205.220.168.131, mailfrom: quic_sasikuma@quicinc.com)
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59E87IEV017790;
-	Tue, 14 Oct 2025 08:52:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=PS8LCuOUxPoPK9t4dNFGXkKM
-	1UHDdOQEa3t47VIoyWM=; b=KyL89Wo9d4YwVVJW0+aq368zxeLhQvUHsFEsMkxi
-	Mj5yjGSULZDyik+QIDOD1JPdhwvtV1Tj/xHAZej6pNXuq0tXxN8qREZofYQOe22X
-	PNW+872YpwHGx7gcgdVg5ScCYIrRrstxGEYuM25iis/3QL6NEs0qk7z8qAuivJEh
-	q8ttDyo0ji90BsytUGSmb8mzMMcW69SdiCebPh7sQvClDJ4OHreL7OQGuBke0WDf
-	xbDU1b5BVVz5O6QAnaQpNt9rEztjAAkuKatvCzNT0Z3MBWYLimcci+mLHS22Wnmg
-	hLKqdUGWMhocQwG22rwdoUI21cfSyDPqXpvhdgETopF24Q==
-Received: from dm2pr04cu003.outbound.protection.outlook.com (mail-dm2pr04cu00300.outbound.protection.outlook.com [40.93.13.56])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49rw1ac4s4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 14 Oct 2025 08:52:17 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=weRnf+K81XClPqXtAO3gbNkuiuKXUl2eyxdRfd1YgOFkgpMmYiRAacB1CNTmZYma+bvhlC6ykiJEUjbhBKOoKcEKrCCqChKqJXB7NdptWEigOCCPydzYT+ju9aDASAWi7J6v9XCq5ZJAjPP0B5uB7JhAtUz3GV6Pz0O6SASKc2EJ1QFhRraPwXSKoRg3EpgZMJhOKNNOTu+S2ZlRkjHFTY+75Qy3PxmQqNxAtBGKSiN3VTF9GQlvejjHc29PZbuw8D3/hMV7G/xkJPYoXt/nzCLS8daSAjvHBLibmVjwYF7RnOB/Ye1Cqzc/d/eBlHg8zPxPxLUTYzcnAmcfVciNYA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PS8LCuOUxPoPK9t4dNFGXkKM1UHDdOQEa3t47VIoyWM=;
- b=NarVciEyKQuYIrGKey7NB9T0RXtcvda99EJ/U4wZy8PDZJRd4dhGNiPum8+udqcdiFXgPtejJ9PCgyXnBD0HBWCZHonbvjXq/uiAHKqs4AABEpFFD6DUjzYoNoYe2BR+O9WCSn4MNCbzmY7nNdQCqzUBa2da5ql/sXMEl8+PZEbr00WFHlksFYrUEeOftDWlEULW5JrsvivrpvlbQjPIFEGT7s2P8GWJx/UpABi+V4xIHr3Bmi9iSuAfnL6He6qljV8jSZDQdtrTpRruptp/CYLq/4T6ZHx2JHHpq2ia7vkLvM9aaQKQzeoE6eOPUL3szceLNcNEGV/RUgXzg8QkzQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=quicinc.com; dmarc=pass action=none header.from=quicinc.com;
- dkim=pass header.d=quicinc.com; arc=none
-Received: from BL3PR02MB8986.namprd02.prod.outlook.com (2603:10b6:208:3b6::10)
- by SJ0PR02MB7134.namprd02.prod.outlook.com (2603:10b6:a03:2a3::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.12; Tue, 14 Oct
- 2025 08:52:13 +0000
-Received: from BL3PR02MB8986.namprd02.prod.outlook.com
- ([fe80::55fd:41af:45b2:fb35]) by BL3PR02MB8986.namprd02.prod.outlook.com
- ([fe80::55fd:41af:45b2:fb35%7]) with mapi id 15.20.9203.009; Tue, 14 Oct 2025
- 08:52:13 +0000
-From: "Sasi Kumar Maddineni (QUIC)" <quic_sasikuma@quicinc.com>
-To: Yi Zhao <yi.zhao@windriver.com>,
-        "Sasi Kumar Maddineni (QUIC)"
-	<quic_sasikuma@quicinc.com>,
-        "yocto-patches@lists.yoctoproject.org"
-	<yocto-patches@lists.yoctoproject.org>
-Subject: RE: meta-selinux][PATCH - Do not look HLL files when
- POLICY_MONOLITHIC=y is configured
-Thread-Topic: meta-selinux][PATCH - Do not look HLL files when
- POLICY_MONOLITHIC=y is configured
-Thread-Index: Adw8L9X3DxEoxiLUTsiBneUmKF6KlQAtOdMAAAAIIRAAAGfAsA==
-Date: Tue, 14 Oct 2025 08:52:13 +0000
-Message-ID: 
- <BL3PR02MB898682DC436D91B19BA8D1D7E8EBA@BL3PR02MB8986.namprd02.prod.outlook.com>
-References: 
- <BL3PR02MB89865DB6BD360CBD532D749AE8EAA@BL3PR02MB8986.namprd02.prod.outlook.com>
- <a5ad7b6e-3a31-4fa5-83f8-918744c6c32e@windriver.com>
- <BL3PR02MB89860445FD4D9D47B7135FB6E8EBA@BL3PR02MB8986.namprd02.prod.outlook.com>
-In-Reply-To: 
- <BL3PR02MB89860445FD4D9D47B7135FB6E8EBA@BL3PR02MB8986.namprd02.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-Mentions: yi.zhao@windriver.com
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BL3PR02MB8986:EE_|SJ0PR02MB7134:EE_
-x-ms-office365-filtering-correlation-id: 70784ee8-18bf-4dd1-8c70-08de0afef849
-x-ld-processed: 98e9ba89-e1a1-4e38-9007-8bdabc25de1d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230040|1800799024|366016|376014|38070700021|7053199007|8096899003|4053099003|4013099003;
-x-microsoft-antispam-message-info: 
- =?us-ascii?Q?WdS+ocLL8QO815k1E3IyF9Z0rgM+NiRMJD2bhyhlrIGuvEvou3H3FcXgDkk4?=
- =?us-ascii?Q?1XsvOwVV32MOf6kVdy26c8fUw6YOMOl9OGuLl4GHYufWDpoA3rmza9H1AXoW?=
- =?us-ascii?Q?KlGn1TRXyuR2qoTrFyax58EpnXDeLty9EkGPpmyJWZPCPjSZxbMtPT72JEOz?=
- =?us-ascii?Q?wKdV64uHEwQYUQ0/C5Pil/e933NsC94ZPzEg0lG1Vm9RoOxDKPrpVecd83W9?=
- =?us-ascii?Q?1n5JL7cHK3eLU2GoenF8M/mjRCWnHY+BCxHlXwbAvUe6R3Yq4WpzwEB8D/+d?=
- =?us-ascii?Q?5DRVH/6gc8bwc/6qE8iYkL6WUSXosaUhMyARn2GY8otlBDJgKbw8v33Z7AYz?=
- =?us-ascii?Q?qKhRUEtUgAklahWUGeuy9a5ljYYDcJcV6PNKO/Pv5s4mjPlp84iRdWtQdqny?=
- =?us-ascii?Q?YGEcWKG7D/oRCpmo8WkWFvEkK5AYJBg3T+wDJdi/FcQGdE25gm/GHznkR8A7?=
- =?us-ascii?Q?/GMqhPqUGBHTtdoLN7Ug0qQc6pgpktWiUrKMrxzvLTgBigp8BJ/GuT6LWVD1?=
- =?us-ascii?Q?aEkaQDYn5b1ljgW6ewPjoCz2FE6NtqHD+lJqdximri7Qdquu0sT28RYGgRsO?=
- =?us-ascii?Q?dEFlyKOEk6iHt98YsJHxxmJtkY0seBUKz0JBSnXpVU7v7vbIbXYYi0ZKK8kP?=
- =?us-ascii?Q?+hXhkvcilZ2Gy6V9TN0A9YOOmVaUFLTwkZgyOgQkKTLsuO+EXv/lVSNzb5mw?=
- =?us-ascii?Q?MA1KHeutV5KgNmBpoinlomgRrlUe1lo2481MTMz7WP1WJuXwWJbfAYyE5xhX?=
- =?us-ascii?Q?C587jPrrIzD65jcC3FyeCOzUn7zxO6uxWAwbAPL5WS1exlRdQkBWAgRUVGy0?=
- =?us-ascii?Q?Z1aePoxIOY3uX226xakoQ9xuCPxywHxmyf6R/ttng7aoj0Onb/IMX3Og8+h4?=
- =?us-ascii?Q?tGWCx8TbdInnLa9Au0NzKqkWqYtnqpHjpLZiit0yddKJ+T/Ritobh7EHT14w?=
- =?us-ascii?Q?BqvrrwygOnxpn0qDMMVra/oqgUvyc9P0XYRFxSWy9HOGaqKp9HU/W8bsiwAz?=
- =?us-ascii?Q?4ReW5tLCk3HwH7nJX08CqGHerhKtG1Pm1aG7yWd2L18Cm0KVNVhhkZy0Qpch?=
- =?us-ascii?Q?y5dGPuzhM0HmgOl/oXexsTqI7jGLxWTuM6KhceYJYtSEFkhv/gh9JO2ZkL6y?=
- =?us-ascii?Q?1+yOLu2LE30LvEQLoK1v+/6r9Y1btxm7M/smJv85eewZhfQ7FatJFGzhH0gq?=
- =?us-ascii?Q?GJ/8gStaHF//jO01eJe5hNWodzVLMr22Q5SdOHbsWPIJg/0u1D3GhGHZO7KY?=
- =?us-ascii?Q?wSCerBrsgRxiJBkz1GaZZVm+RPBrLkfkciYxT9Pp/S960gx9SzPNQ1Bq1OqQ?=
- =?us-ascii?Q?ZKYnezAWEBW/QuUJ1TuD0SxP4+Wj29v+qfQ8uKLg2MlmUL2LD+FqhXmT5Dta?=
- =?us-ascii?Q?WtFhmGR9mrqKMf1kBWfdj/JuIb0q+a4m/aDQawLsWWi80jBWzjC5yUxKCE16?=
- =?us-ascii?Q?cAeCR3a4cmGGaepqSGaerwgVLAmdtBqzIIlFV3VHs0qg0ds4jZJbgi4//ERB?=
- =?us-ascii?Q?7Y4RCkVuJpSaly20f8zEYDg1cHE4nYDk5ALe?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR02MB8986.namprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700021)(7053199007)(8096899003)(4053099003)(4013099003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?us-ascii?Q?Spld6MS8W7leZfEHh5onMbt30FRivPgPJN3Mf60aMRGWLKx4278j+lSsEy3B?=
- =?us-ascii?Q?qrvE6DCdaoT4bjcGubJZlSE0+3xHHGQfa0CLZNWJy5m+E5n0DJy6hO4bsAqo?=
- =?us-ascii?Q?t48AONB242Cw8UFGVK/H/LxZl6LRGIN3fdQnIq/d3sF+vC9oXl0im6Iw8I+d?=
- =?us-ascii?Q?o///NHqJywYvRJwBqDuhLpt8kuPF4CFGKNvoqh80tda7qshDIwfrjoB/Y7/J?=
- =?us-ascii?Q?N2jfwtpRU3aZ6u1V9ad1DZFo5G/AAd9Fz1y6iepyF1FXWBjgJqSG2gAg8TZ/?=
- =?us-ascii?Q?MNjYQ5Hkji3SamTbxEcy5HKYSBrCvfEEtlNeZ0+Ziryjy5U7XLNbCILooAEk?=
- =?us-ascii?Q?l7KngG4LqeG+1Vl4S5z54P6BppJ+WC5KuWbdhDSXk1pQTWzePrwNVoOxFCFE?=
- =?us-ascii?Q?GpXqV0Lzgm8Df3RF0MCUC9q+hMFDZlZV55hKA+b/xqm79CccHLLFyXj6g5FS?=
- =?us-ascii?Q?78gsz8Mxvn8QPV/bTI4liipZASsDNk3gVKbr6Iya2gs0xYTmNKDeaL7oOvF/?=
- =?us-ascii?Q?0xiBm5wqzxxaUZCFTVFW6uLYklD7ZNPJLhXyLIVfIEDqN/rrJClk+3O5Aevn?=
- =?us-ascii?Q?Hi5XF5HqU3LhG3XEgY8Kk62Wo8tP3BtTUUtFb10W0uAHrmqEnD5D+LGd1nIv?=
- =?us-ascii?Q?M0I4CmXr/PJ57H+Zqjh6OWpHHSwNC9pbuf02GZs4Zxcs489y/3Hadmq5SOto?=
- =?us-ascii?Q?l+lR8S2r79+McqyoHHRWqAAf7a/9e/P1Gj4m7HbpI/F6LYeBKXDi+Q5FynXB?=
- =?us-ascii?Q?RAbPO8yxjNNazRh0WhIt6NZRndZo+6cxfcL4wC4BU3DeYM/ZU7KtyTJjEIIq?=
- =?us-ascii?Q?vKeuwhrFGTRlFjCilPj0HISusZvv40B6XTOL1skN/K17r1TuVucyGX/TJZJy?=
- =?us-ascii?Q?cBVcUccTDop7TidwiKnAACU3tk4kU+tKYQiVpxt7Kz0nH9fSXlBmWDr7HRB9?=
- =?us-ascii?Q?CdHAIM4OIY954F3bUDMpC+/Qb0eIAEgac9vlMOIEmX8qnOv2l5r+eiosK28Z?=
- =?us-ascii?Q?31PK/577x5yEpX6/aCs8/YmF6vbKL3vL5NnVuOezFk9QUKk1ldZV6wiBGVX1?=
- =?us-ascii?Q?XVm4uC+hYSUpPp9D00cJ/1QtmpfdoN55TAmCsoMw54ypnymdQ12x9NEenkqe?=
- =?us-ascii?Q?SxTaw+Jt9eWhiKvbAHvanXNVjAQBmxWjSZgXObRncWC9wvokCQpxImyKD12V?=
- =?us-ascii?Q?pFjhh9qf1LTg+SbfYgB0uW8YVWsJ9CyVy7Q3JGEgoK3UuI4kddS+OtGobdYM?=
- =?us-ascii?Q?2BSXPx04FR5/mNzZr+rhlTe3iAr91K6bwc65ehdrT+w/Mp5cLAoPsiaXafAY?=
- =?us-ascii?Q?7YBZcUlB2IKTknPj9Xtp2w0DF9LVh+8YU9Btoh67tLrfwt8fB/veoc1NUnWI?=
- =?us-ascii?Q?7NqC6g1HS5TY4rImZ3R0dkKztIzOoIHepuMQ1Kv6mE6k/6LX+eTz2cSTvNlX?=
- =?us-ascii?Q?1gcqZr/5ZcGoAV99KcTRe3Bi5ZubIouAqyztx7LWyhAs+dtE2ZhLVk1Z2pcE?=
- =?us-ascii?Q?tie6q9HjFSdkkaiXM1Cs9QI6EazWkp2js4kxEczKPnH6n3n34S5ohhJM/Ze9?=
- =?us-ascii?Q?wl1WCMz+/rm61/Ouu1pu6LVldrsClVhni4dj944D?=
-Content-Type: multipart/mixed;
-	boundary="_005_BL3PR02MB898682DC436D91B19BA8D1D7E8EBABL3PR02MB8986namp_"
+ dkim=pass header.i=@linuxfoundation.org header.s=google header.b=RxCWjvmC;
+ spf=pass (domain: linuxfoundation.org, ip: 209.85.128.49, mailfrom: richard.purdie@linuxfoundation.org)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-46e33b260b9so41618225e9.2
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 14 Oct 2025 03:23:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1760437426; x=1761042226; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=F81u3W31k5T1so65ZgY5cSVYE+VMri0yxAteiCvvBdI=;
+        b=RxCWjvmCKMkXc7jkTt6pp3tMfeCnG2HaDflB9Kit6KiahoVT5Jt7cGl0flJi3N/KaD
+         xaSssrPOVWwubvzRVEw0kCuDSuk/OXp30Dl8eEkGyKm8ZqTfVMolfXBUGID2Xg6qUy52
+         y0mqWgHHp7EKXwVx/08pUfzHCBRF/rqBg69pM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760437426; x=1761042226;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=F81u3W31k5T1so65ZgY5cSVYE+VMri0yxAteiCvvBdI=;
+        b=DVLSoPaeUFSIhWzxIVnf35vD8xJBoyjlqdJGyML1LQAVFUUCBH6g3Uj4RIqL2xxl48
+         m0N4aGtxE3FOZESSYIX5jwPqqJSpR4iQeENQ0DZqac3GdoA2lpwgv0Gy7QgjNgwTgzBM
+         Zt0rlxkR1p68eqgXyEWECUg14uFoavPudnHsdfTNFa9Pg0If/dtF5is8zY2GQxyx33FI
+         MI8MkKnD27uM/jpllGKtqKNwVJwUHUwpT8kBuP9zmG9OwhwLbF1j9JwnZRe5a40K2AWc
+         jTS+ihQVBWzahkWPx22/DuXChdyVC3ITJaeMrUSVy6Ijd1hSkOQ81QQfMu6FV7KDfNVh
+         snlQ==
+X-Gm-Message-State: AOJu0YxNvF+Y37Rho0ig/etadfTHcHSfV2VXpCqOxUBZCxN7bPFrwfWx
+	eGyGWfLIv0MrSpNDsY3nrOmiBBwrwLIw5Jowv8qSbkt3rf4YWgPKZyOIdT34+8PwFj66a1jL70r
+	kWIqz
+X-Gm-Gg: ASbGncsgYiStNn02LYDW8Yi5pGgL9k243N9TpoajKqNbZLZ2Vv/cO1ZHou/StVkhllW
+	1oPFsz5i3ZPb7ghWljl92CxXtIn4hRubFwTpHX1gcjVZY6MBiCphKLsSRrXVviO+Cl7VKH5SJ7+
+	2aLGTAOW36UA2zWC16b/oS5+46thX3ShYpCGaHMeOpAxenUxikAS+yvv9z1ouCHsYL1HYkb/nhH
+	y8YBUCc8P2py4qcIzKqcFsgcq5UDyW3JSyrEKlBI6cFerVIsgfunHHWoWch17qvlDyt4Q2tIJev
+	HxkKjJvHGxNqwV9u8bIBQFG9yUynS4ToyUMgjJrbFsHDUrhYXPWW8UdH27X71cbawpUvjUaeHpd
+	66TseIR7CcAR3curfLoWcdJiAEtXB+GfQjw8sHFwFjmeSY2z/foLAgFSQRbV+2cNqWAhfu2MXqy
+	/rO2wIo5sNLPgjfQ==
+X-Google-Smtp-Source: AGHT+IEtvlqEZUncTn4He15wGNAGYcUPmyilQRAnJNWfVu7wxb30pEIS1ZH3eyU6n7la2rXkdYhLPQ==
+X-Received: by 2002:a05:600c:198f:b0:46e:3b1a:20d7 with SMTP id 5b1f17b1804b1-46fa9af8595mr197055635e9.19.1760437425939;
+        Tue, 14 Oct 2025 03:23:45 -0700 (PDT)
+Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:2ac0:755:9ed5:f113])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb49bdfd0sm233715225e9.10.2025.10.14.03.23.44
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 03:23:44 -0700 (PDT)
+From: Richard Purdie <richard.purdie@linuxfoundation.org>
+To: yocto-patches@lists.yoctoproject.org
+Subject: [yocto-autobuilder-helper] [PATCH 1/2] config.json/scripts: Switch to use bitbake-setup
+Date: Tue, 14 Oct 2025 11:23:43 +0100
+Message-ID: <20251014102344.645363-1-richard.purdie@linuxfoundation.org>
+X-Mailer: git-send-email 2.48.1
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	9MsFyWuzFqEAiuf7H6w2KNkKQwcqiKxIOjXKP1hA7opF5lgKcNamdzoeg7y0qEZ6D5zzkLW2tWnnIwmc4tZrj33Zc0YwPSvmlc9TaOwL1CBrjg8uk0fZMeD88wbKg3QuCZ/Mc/+stlsoyt9inzn57ubgFij/gSZ1zb29d6y1VXiBABnsEfDSEwsxaW9w/ZJhmFm/r1UCkQY1bvkGP5ZzxWP5OdLEw81DEjOTNOkrAI/MVUJ8wpqya5813VR/IkPnSDt6K2OZCXz7q7okqUrQLHF5vaZV7Odd6IIDMAZdI60NWGaSdhiU2j4YHi6t3VJL9BXjZYN5/dZuSbBSO6FBlB+AOTyVIZm8BygREu3zwhgCF/Z+zG9zwFw9SMd1UStGYBde2n4A/iqInhIZtrw3yupoHKF9EDl2T2E1BnYBHTJq771fIoHdDkHUvMamjXXQmeOIpuCh1VoLZLtYTr40Ztd/xtCK4EWMJmMYCuUXYB4qDmA9LdbbElZA9L1b8Wig1smvaIlP4eE+R0c430CzTRuken3XeqMAeh/jB7fDJ6K5dt022J9eKrvQpQKdAPZ8QNNRFAhCttF22hOLmhPwVmisgJCpDnCw2AAaECz7n674woVtZ9sNReAou80dW25s
-X-OriginatorOrg: quicinc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BL3PR02MB8986.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 70784ee8-18bf-4dd1-8c70-08de0afef849
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Oct 2025 08:52:13.6256
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 98e9ba89-e1a1-4e38-9007-8bdabc25de1d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: IeHnQCTm5GGd9RTfIxYVpm3HwXKRhszi0bs9fKkly/tREcqe2911AJrrUMMzexDoelRvXfn6GyVGfWe+esK44/zT4BF0bFi+HOcc5twTC68=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR02MB7134
-X-Authority-Analysis: v=2.4 cv=K88v3iWI c=1 sm=1 tr=0 ts=68ee0f42 cx=c_pps
- a=wTW14iHPWsjxmVSX4jmdzg==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=x6icFKpwvdMA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=t7CeM3EgAAAA:8 a=COk6AnOGAAAA:8 a=iGHA9ds3AAAA:8
- a=JZAv2bsQOfyt6W66-AAA:9 a=lqcHg5cX4UMA:10 a=CjuIK1q_8ugA:10 a=yMhMjlubAAAA:8
- a=SSmOFEACAAAA:8 a=qODO415F75pXo8RfmBAA:9 a=iqxcGQUJe6CFmoLh:21
- a=gKO2Hq4RSVkA:10 a=UiCQ7L4-1S4A:10 a=hTZeC7Yk6K0A:10 a=frz4AuCg-hUA:10
- a=hnIUdSgYGJrKyR2U0r8A:9 a=B2y7HmGcmWMA:10 a=BswEn3vCGKkgpsjylGoA:9
- a=FdTzh2GWekK77mhwV6Dw:22 a=TjNXssC_j7lpFel5tvFf:22 a=nM-MV4yxpKKO9kiQg6Ot:22
-X-Proofpoint-GUID: YpUp112ZmqOx12i_kFm04qORuKzHNtT8
-X-Proofpoint-ORIG-GUID: YpUp112ZmqOx12i_kFm04qORuKzHNtT8
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEzMDAzNSBTYWx0ZWRfXxIwshZZdBoWW
- 4vH6JxoPnrq5TwzO4habolyQms9icJGP6CAer7mptpZSBcIKu2dK3xOzqvet485bLSdlvCbnZQ/
- WYWlA+/psCjT3N1LmfhG8Sj8Rs4Tc9lEaedJV56pTKw9/GbNMrvRXB6mBqWg4zNdExcx5iHld5G
- tt37GyFSlG1gW0ab1rNko/p8UOAyq9P/DU3XeBUploXJlQtdrjZ0+e27HEP55dC7lOWmHgey4ns
- RoiozeTNyv/54m4xytIz+ye77QjivRF51EaR75o961HMn+3zBAV/QeDfKQefhzFa3IcEcIe3acs
- xMR0N4rRBLww5FZzhPnSYAj+e+jHTc7Mra8TMSmjAznuDw1E9d8RClV+TKsYR8Mp1nPNtzrYQtr
- wZbJtCHCXjvqh7yKF/0F3EC3xk8Ryw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-14_02,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 spamscore=0 impostorscore=0 priorityscore=1501 phishscore=0
- adultscore=0 clxscore=1015 bulkscore=0 suspectscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510130035
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 14 Oct 2025 08:52:28 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2299
+ <yocto-patches@lists.yoctoproject.org>; Tue, 14 Oct 2025 10:23:49 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2300
 
---_005_BL3PR02MB898682DC436D91B19BA8D1D7E8EBABL3PR02MB8986namp_
-Content-Type: multipart/alternative;
-	boundary="_000_BL3PR02MB898682DC436D91B19BA8D1D7E8EBABL3PR02MB8986namp_"
+With the addition of bitbake-setup to the master branch, we can switch from using the
+combo-layer built poky repository to using bitbake-setup instead.
 
---_000_BL3PR02MB898682DC436D91B19BA8D1D7E8EBABL3PR02MB8986namp_
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+This patch set changes the setup to use bitbake/oecore/meta-yocto/yocto-docs instead
+of poky. Most of the changes are due to the new layer layout, or using bitbake-setuip
+instead of scripts in helper. The existing scripts are still run for now to handle layers
+not in the core configuration json.
 
-Hi @'Yi Zhao'<mailto:yi.zhao@windriver.com>,
+We continue to write extra settings to auto.conf.
 
+This switches the code to use the distro/machine selection from fragments.
 
-Attached additional patches required for compilation of refpolicy in MONOLI=
-TIHIC design and also corrected policy version in semanage.conf as per chec=
-kpolicy.
+We need to use init-build-env instead of oe-init-build-env in most cases.
 
-Apply patches in indexed order.
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+---
+ config.json                     | 79 ++++++++++++++++++---------------
+ scripts/bitbake-extra-tests     |  2 +-
+ scripts/build-perf-test-wrapper |  8 ++--
+ scripts/getproperties.py        |  2 +
+ scripts/layer-config            | 22 +++------
+ scripts/run-config              | 15 ++++---
+ scripts/run-cvecheck            |  2 +-
+ scripts/run-patchtest-selftest  |  6 +--
+ scripts/setup-config            | 17 ++++++-
+ scripts/shared-repo-unpack      | 43 +++++++++++++++---
+ scripts/upload-error-reports    |  2 +-
+ scripts/utils.py                | 12 +++--
+ 12 files changed, 128 insertions(+), 82 deletions(-)
 
-Also, why we don't we configure POLICY_MONOLITHIC to 'y', if our focus is c=
-onsumer embedded devices instead of server distributions?
-
-
-Regards,
-Sasi.
-
-From: Sasi Kumar Maddineni
-Sent: Tuesday, October 14, 2025 2:04 PM
-To: 'Yi Zhao' <yi.zhao@windriver.com>; Sasi Kumar Maddineni (QUIC) <quic_sa=
-sikuma@quicinc.com>; yocto-patches@lists.yoctoproject.org
-Subject: RE: meta-selinux][PATCH - Do not look HLL files when POLICY_MONOLI=
-THIC=3Dy is configured
-
-Hi @Yi Zhao<mailto:yi.zhao@windriver.com>,
-
-I have few more patches to send. I will share by EOD.
-
-1. One issue is the build system is picking the host libsepol instead of re=
-cipe-sysroot.
-2. Another issue is in rebuild_policy, we need to change policy version to =
-35, since policy version depends on checkpolicy version.
-
-I will share patches in a while today.
-
-Regards,
-Sasi Kumar Maddineni,
-Qualcomm Innovation Center.
-
-From: Yi Zhao <yi.zhao@windriver.com<mailto:yi.zhao@windriver.com>>
-Sent: Tuesday, October 14, 2025 2:00 PM
-To: Sasi Kumar Maddineni (QUIC) <quic_sasikuma@quicinc.com<mailto:quic_sasi=
-kuma@quicinc.com>>; yocto-patches@lists.yoctoproject.org<mailto:yocto-patch=
-es@lists.yoctoproject.org>
-Subject: Re: meta-selinux][PATCH - Do not look HLL files when POLICY_MONOLI=
-THIC=3Dy is configured
-
-
-WARNING: This email originated from outside of Qualcomm. Please be wary of =
-any links or attachments, and do not enable macros.
-
-Hi Sasi,
-On 10/13/25 18:59, Sasi Kumar Maddineni (QUIC) wrote:
-Hi @Yi Zhao<mailto:yi.zhao@windriver.com>,
-
-
-I tried configuring POLICY_MONOLITHIC=3Dy for our consumer embedded devices=
- platform.
-The recipe is looking HLL(.pp) files in case of MONOLITHIC as well and buil=
-d is failing, which it should not be doing.
-
-So, I raised a patch with the fix and shared the attachment.
-
-Please review provide your valuable comments.
-
-
-
-Thank you for your patch. I found that even with this patch applied, buildi=
-ng refpolicy still failed when POLICY_MONOLITHIC=3Dy. So it looks like more=
- changes are needed.
-
-
-
-//Yi
-
-
-
-
-Regards,
-Sasi Kumar Maddineni,
-Qualcomm Innovation Center.
-
---_000_BL3PR02MB898682DC436D91B19BA8D1D7E8EBABL3PR02MB8986namp_
-Content-Type: text/html; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-
-<html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
-osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
-xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
-//www.w3.org/TR/REC-html40">
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii"=
->
-<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
-<style><!--
-/* Font Definitions */
-@font-face
-	{font-family:"Cambria Math";
-	panose-1:2 4 5 3 5 4 6 3 2 4;}
-@font-face
-	{font-family:Calibri;
-	panose-1:2 15 5 2 2 2 4 3 2 4;}
-@font-face
-	{font-family:Aptos;}
-/* Style Definitions */
-p.MsoNormal, li.MsoNormal, div.MsoNormal
-	{margin:0in;
-	font-size:12.0pt;
-	font-family:"Aptos",sans-serif;
-	mso-ligatures:standardcontextual;}
-a:link, span.MsoHyperlink
-	{mso-style-priority:99;
-	color:blue;
-	text-decoration:underline;}
-span.EmailStyle19
-	{mso-style-type:personal-reply;
-	font-family:"Aptos",sans-serif;
-	color:windowtext;}
-.MsoChpDefault
-	{mso-style-type:export-only;
-	font-size:10.0pt;
-	mso-ligatures:none;}
-@page WordSection1
-	{size:8.5in 11.0in;
-	margin:1.0in 1.0in 1.0in 1.0in;}
-div.WordSection1
-	{page:WordSection1;}
---></style><!--[if gte mso 9]><xml>
-<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
-</xml><![endif]--><!--[if gte mso 9]><xml>
-<o:shapelayout v:ext=3D"edit">
-<o:idmap v:ext=3D"edit" data=3D"1" />
-</o:shapelayout></xml><![endif]-->
-</head>
-<body lang=3D"EN-US" link=3D"blue" vlink=3D"purple" style=3D"word-wrap:brea=
-k-word">
-<div class=3D"WordSection1">
-<p class=3D"MsoNormal">Hi <a id=3D"OWAAMBBCC4A59E57B4FDB8A73BA0861EF52CB" h=
-ref=3D"mailto:yi.zhao@windriver.com">
-<span style=3D"font-family:&quot;Aptos&quot;,sans-serif;text-decoration:non=
-e">@'Yi Zhao'</span></a>,<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Attached additional patches required for compilation=
- of refpolicy in MONOLITIHIC design and also corrected policy version in se=
-manage.conf as per checkpolicy.<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Apply patches in indexed order.<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Also, why we don&#8217;t we configure POLICY_MONOLIT=
-HIC to &#8216;y&#8217;, if our focus is consumer embedded devices instead o=
-f server distributions?<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Regards,<o:p></o:p></p>
-<p class=3D"MsoNormal">Sasi.<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
-0in 0in">
-<p class=3D"MsoNormal"><b><span style=3D"font-size:11.0pt;font-family:&quot=
-;Calibri&quot;,sans-serif;mso-ligatures:none">From:</span></b><span style=
-=3D"font-size:11.0pt;font-family:&quot;Calibri&quot;,sans-serif;mso-ligatur=
-es:none"> Sasi Kumar Maddineni
-<br>
-<b>Sent:</b> Tuesday, October 14, 2025 2:04 PM<br>
-<b>To:</b> 'Yi Zhao' &lt;yi.zhao@windriver.com&gt;; Sasi Kumar Maddineni (Q=
-UIC) &lt;quic_sasikuma@quicinc.com&gt;; yocto-patches@lists.yoctoproject.or=
-g<br>
-<b>Subject:</b> RE: meta-selinux][PATCH - Do not look HLL files when POLICY=
-_MONOLITHIC=3Dy is configured<o:p></o:p></span></p>
-</div>
-</div>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Hi <a id=3D"OWAAM76F26AF067584A9B8776F54127DF480F" h=
-ref=3D"mailto:yi.zhao@windriver.com">
-<span style=3D"font-family:&quot;Aptos&quot;,sans-serif;text-decoration:non=
-e">@Yi Zhao</span></a>,<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">I have few more patches to send. I will share by EOD=
-.<br>
-<br>
-1. One issue is the build system is picking the host libsepol instead of re=
-cipe-sysroot.<br>
-2. Another issue is in rebuild_policy, we need to change policy version to =
-35, since policy version depends on checkpolicy version.<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">I will share patches in a while today.<o:p></o:p></p=
->
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Regards,<o:p></o:p></p>
-<p class=3D"MsoNormal">Sasi Kumar Maddineni,<o:p></o:p></p>
-<p class=3D"MsoNormal">Qualcomm Innovation Center.<o:p></o:p></p>
-<p class=3D"MsoNormal"><b><o:p>&nbsp;</o:p></b></p>
-<div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
-0in 0in">
-<p class=3D"MsoNormal"><b><span style=3D"font-size:11.0pt;font-family:&quot=
-;Calibri&quot;,sans-serif;mso-ligatures:none">From:</span></b><span style=
-=3D"font-size:11.0pt;font-family:&quot;Calibri&quot;,sans-serif;mso-ligatur=
-es:none"> Yi Zhao &lt;</span><a href=3D"mailto:yi.zhao@windriver.com"><span=
- style=3D"font-size:11.0pt;font-family:&quot;Calibri&quot;,sans-serif;mso-l=
-igatures:none">yi.zhao@windriver.com</span></a><span style=3D"font-size:11.=
-0pt;font-family:&quot;Calibri&quot;,sans-serif;mso-ligatures:none">&gt;
-<br>
-<b>Sent:</b> Tuesday, October 14, 2025 2:00 PM<br>
-<b>To:</b> Sasi Kumar Maddineni (QUIC) &lt;</span><a href=3D"mailto:quic_sa=
-sikuma@quicinc.com"><span style=3D"font-size:11.0pt;font-family:&quot;Calib=
-ri&quot;,sans-serif;mso-ligatures:none">quic_sasikuma@quicinc.com</span></a=
-><span style=3D"font-size:11.0pt;font-family:&quot;Calibri&quot;,sans-serif=
-;mso-ligatures:none">&gt;;
-</span><a href=3D"mailto:yocto-patches@lists.yoctoproject.org"><span style=
-=3D"font-size:11.0pt;font-family:&quot;Calibri&quot;,sans-serif;mso-ligatur=
-es:none">yocto-patches@lists.yoctoproject.org</span></a><span style=3D"font=
--size:11.0pt;font-family:&quot;Calibri&quot;,sans-serif;mso-ligatures:none"=
-><br>
-<b>Subject:</b> Re: meta-selinux][PATCH - Do not look HLL files when POLICY=
-_MONOLITHIC=3Dy is configured<o:p></o:p></span></p>
-</div>
-</div>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p align=3D"center" style=3D"text-align:center"><strong><span style=3D"font=
--size:10.5pt;font-family:&quot;Arial&quot;,sans-serif;color:black;backgroun=
-d:yellow">WARNING:</span></strong><span style=3D"font-size:10.5pt;font-fami=
-ly:&quot;Arial&quot;,sans-serif;color:black;background:yellow">
- This email originated from outside of Qualcomm. Please be wary of any link=
-s or attachments, and do not enable macros.</span><o:p></o:p></p>
-<div>
-<p>Hi Sasi,<o:p></o:p></p>
-<div>
-<p class=3D"MsoNormal">On 10/13/25 18:59, Sasi Kumar Maddineni (QUIC) wrote=
-:<o:p></o:p></p>
-</div>
-<blockquote style=3D"margin-top:5.0pt;margin-bottom:5.0pt">
-<p class=3D"MsoNormal">Hi <a id=3D"OWAAMD1F1AEE518A641D18477FC9978CA9D0C" h=
-ref=3D"mailto:yi.zhao@windriver.com">
-<span style=3D"font-family:&quot;Aptos&quot;,sans-serif;text-decoration:non=
-e">@Yi Zhao</span></a>,<o:p></o:p></p>
-<p class=3D"MsoNormal">&nbsp;<o:p></o:p></p>
-<p class=3D"MsoNormal">&nbsp;<o:p></o:p></p>
-<p class=3D"MsoNormal">I tried configuring POLICY_MONOLITHIC=3Dy for our co=
-nsumer embedded devices platform.
-<o:p></o:p></p>
-<p class=3D"MsoNormal">The recipe is looking HLL(.pp) files in case of MONO=
-LITHIC as well and build is failing, which it should not be doing.<o:p></o:=
-p></p>
-<p class=3D"MsoNormal">&nbsp;<o:p></o:p></p>
-<p class=3D"MsoNormal">So, I raised a patch with the fix and shared the att=
-achment.<o:p></o:p></p>
-<p class=3D"MsoNormal">&nbsp;<o:p></o:p></p>
-<p class=3D"MsoNormal">Please review provide your valuable comments.<o:p></=
-o:p></p>
-</blockquote>
-<p><o:p>&nbsp;</o:p></p>
-<p style=3D"margin-bottom:12.0pt">Thank you for your patch. I found that ev=
-en with this patch applied, building refpolicy still failed when POLICY_MON=
-OLITHIC=3Dy. So it looks like more changes are needed.<o:p></o:p></p>
-<p><o:p>&nbsp;</o:p></p>
-<p>//Yi<o:p></o:p></p>
-<blockquote style=3D"margin-top:5.0pt;margin-bottom:5.0pt">
-<p class=3D"MsoNormal">&nbsp;<o:p></o:p></p>
-<p class=3D"MsoNormal">&nbsp;<o:p></o:p></p>
-<p class=3D"MsoNormal">&nbsp;<o:p></o:p></p>
-<p class=3D"MsoNormal">&nbsp;<o:p></o:p></p>
-<p class=3D"MsoNormal">Regards,<o:p></o:p></p>
-<p class=3D"MsoNormal">Sasi Kumar Maddineni,<o:p></o:p></p>
-<p class=3D"MsoNormal">Qualcomm Innovation Center.<o:p></o:p></p>
-</blockquote>
-</div>
-</div>
-</body>
-</html>
-
---_000_BL3PR02MB898682DC436D91B19BA8D1D7E8EBABL3PR02MB8986namp_--
-
---_005_BL3PR02MB898682DC436D91B19BA8D1D7E8EBABL3PR02MB8986namp_
-Content-Type: application/octet-stream;
-	name="0002-libsepol-add-change-to-pick-libsepol-from-recipe-sys.patch"
-Content-Description: 
- 0002-libsepol-add-change-to-pick-libsepol-from-recipe-sys.patch
-Content-Disposition: attachment;
-	filename="0002-libsepol-add-change-to-pick-libsepol-from-recipe-sys.patch";
-	size=1245; creation-date="Tue, 14 Oct 2025 08:51:36 GMT";
-	modification-date="Tue, 14 Oct 2025 08:52:11 GMT"
-Content-Transfer-Encoding: base64
-
-RnJvbSA1Y2IwNWM3YzBkYmM3MjlhMTQwNWI5YzM4ZGZhNTZkN2MxYWMzMTdkIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBTYXNpIEt1bWFyIE1hZGRpbmVuaSA8cXVpY19zYXNpa3VtYUBx
-dWljaW5jLmNvbT4KRGF0ZTogVHVlLCAxNCBPY3QgMjAyNSAxNDowOTo0MSArMDUzMApTdWJqZWN0
-OiBbbWV0YS1zZWxpbnV4XVtQQVRDSF0gbGlic2Vwb2w6IGFkZCBjaGFuZ2UgdG8gcGljayBsaWJz
-ZXBvbCBmcm9tCiByZWNpcGUtc3lzcm9vdCBzYmluLgoKd2hpbGUgYnVpbGRpbmcgaG9zdCBtYWNo
-aW5lJ3MgbGlic2Vwb2wgbGliIGlzIGdldHRpbmcgcGlja2VkLAppbnN0ZWFkIG9mIHBpY2tpbmcg
-cmVjaXBlLXN5c3Jvb3Qgc2JpbiBkaXJlY3RvcnkuCgppbml0aWFsaXplICd0Y19zYmluZGlyJyB3
-aXRoIHJlY2lwZS1zeXNyb290IHNiaW4gcGF0aC4KClNpZ25lZC1vZmYtYnk6IFNhc2kgS3VtYXIg
-TWFkZGluZW5pIDxxdWljX3Nhc2lrdW1hQHF1aWNpbmMuY29tPgotLS0KIHJlY2lwZXMtc2VjdXJp
-dHkvcmVmcG9saWN5L3JlZnBvbGljeV9jb21tb24uaW5jIHwgMSArCiAxIGZpbGUgY2hhbmdlZCwg
-MSBpbnNlcnRpb24oKykKCmRpZmYgLS1naXQgYS9yZWNpcGVzLXNlY3VyaXR5L3JlZnBvbGljeS9y
-ZWZwb2xpY3lfY29tbW9uLmluYyBiL3JlY2lwZXMtc2VjdXJpdHkvcmVmcG9saWN5L3JlZnBvbGlj
-eV9jb21tb24uaW5jCmluZGV4IDI3YWFjNDQuLjhiYTRkMjggMTAwNjQ0Ci0tLSBhL3JlY2lwZXMt
-c2VjdXJpdHkvcmVmcG9saWN5L3JlZnBvbGljeV9jb21tb24uaW5jCisrKyBiL3JlY2lwZXMtc2Vj
-dXJpdHkvcmVmcG9saWN5L3JlZnBvbGljeV9jb21tb24uaW5jCkBAIC0xMzEsNiArMTMxLDcgQEAg
-RVhUUkFfT0VNQUtFID0gIk5BTUU9JHtQT0xJQ1lfTkFNRX0gXAogICAgIE1DU19DQVRTPSR7UE9M
-SUNZX01DU19DQVRTfSIKIAogRVhUUkFfT0VNQUtFICs9ICJ0Y191c3JiaW5kaXI9JHtTVEFHSU5H
-X0JJTkRJUl9OQVRJVkV9IgorRVhUUkFfT0VNQUtFICs9ICJ0Y19zYmluZGlyPSR7U1RBR0lOR19E
-SVJfTkFUSVZFfSR7YmFzZV9zYmluZGlyX25hdGl2ZX0iCiBFWFRSQV9PRU1BS0UgKz0gIk9VVFBV
-VF9QT0xJQ1k9YCR7U1RBR0lOR19CSU5ESVJfTkFUSVZFfS9jaGVja3BvbGljeSAtViB8IGN1dCAt
-ZCcgJyAtZjFgIgogRVhUUkFfT0VNQUtFICs9ICJDQz0nJHtCVUlMRF9DQ30nIENGTEFHUz0nJHtC
-VUlMRF9DRkxBR1N9JyBQWVRIT049JyR7UFlUSE9OfSciCiAKLS0gCjIuMzQuMQoK
-
---_005_BL3PR02MB898682DC436D91B19BA8D1D7E8EBABL3PR02MB8986namp_
-Content-Type: application/octet-stream;
-	name="0003-Correct-policy-version-semanage.conf-as-per-checkpol.patch"
-Content-Description: 
- 0003-Correct-policy-version-semanage.conf-as-per-checkpol.patch
-Content-Disposition: attachment;
-	filename="0003-Correct-policy-version-semanage.conf-as-per-checkpol.patch";
-	size=1102; creation-date="Tue, 14 Oct 2025 08:51:36 GMT";
-	modification-date="Tue, 14 Oct 2025 08:52:12 GMT"
-Content-Transfer-Encoding: base64
-
-RnJvbSA0M2JlNzY2NzU1N2I0NDllOWE0YWZjMDQ2NTU4MWIzZGZmZDUyNDczIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBTYXNpIEt1bWFyIE1hZGRpbmVuaSA8cXVpY19zYXNpa3VtYUBx
-dWljaW5jLmNvbT4KRGF0ZTogVHVlLCAxNCBPY3QgMjAyNSAxNDoxNTozMyArMDUzMApTdWJqZWN0
-OiBbbWV0YS1zZWxpbnV4XVtQQVRDSF0gQ29ycmVjdCBwb2xpY3kgdmVyc2lvbiBzZW1hbmFnZS5j
-b25mIGFzIHBlcgogY2hlY2twb2xpY3kKClRoZSBjb2RlICJPVVRQVVRfUE9MSUNZPWAke1NUQUdJ
-TkdfQklORElSX05BVElWRX0vY2hlY2twb2xpY3kgLVYgfCBjdXQgLWQnICcgLWYxYCIKYXNzaWdu
-cyBPVVRQVVRfUE9MSUNZIHdpdGggMzUgYW5kIHBvbGljeS4zNSBpcyBnZXR0dGluZyBnZW5lcmF0
-ZWQuCgpTbywgY29ycmVjdGluZyB0aGUgcG9saWN5IHZlcnNpb24gaW4gc2VtYW5hZ2UuY29uZiBm
-aWxlIHRvby4KClNpZ25lZC1vZmYtYnk6IFNhc2kgS3VtYXIgTWFkZGluZW5pIDxxdWljX3Nhc2lr
-dW1hQHF1aWNpbmMuY29tPgotLS0KIHJlY2lwZXMtc2VjdXJpdHkvcmVmcG9saWN5L3JlZnBvbGlj
-eV9jb21tb24uaW5jIHwgMiArLQogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRl
-bGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEvcmVjaXBlcy1zZWN1cml0eS9yZWZwb2xpY3kvcmVmcG9s
-aWN5X2NvbW1vbi5pbmMgYi9yZWNpcGVzLXNlY3VyaXR5L3JlZnBvbGljeS9yZWZwb2xpY3lfY29t
-bW9uLmluYwppbmRleCA4YmE0ZDI4Li45ZjdjODYzIDEwMDY0NAotLS0gYS9yZWNpcGVzLXNlY3Vy
-aXR5L3JlZnBvbGljeS9yZWZwb2xpY3lfY29tbW9uLmluYworKysgYi9yZWNpcGVzLXNlY3VyaXR5
-L3JlZnBvbGljeS9yZWZwb2xpY3lfY29tbW9uLmluYwpAQCAtMjA1LDcgKzIwNSw3IEBAIHBhdGgg
-PSAke1NUQUdJTkdfRElSX05BVElWRX0ke3NiaW5kaXJfbmF0aXZlfS9zZWZjb250ZXh0X2NvbXBp
-bGUKIGFyZ3MgPSBcJEAKIFtlbmRdCiAKLXBvbGljeS12ZXJzaW9uID0gMzMKK3BvbGljeS12ZXJz
-aW9uID0gMzUKIEVPRgogCiAgICAgIyBDcmVhdGUgcG9saWN5IHN0b3JlIGFuZCBidWlsZCB0aGUg
-cG9saWN5Ci0tIAoyLjM0LjEKCg==
-
---_005_BL3PR02MB898682DC436D91B19BA8D1D7E8EBABL3PR02MB8986namp_--
+diff --git a/config.json b/config.json
+index 588a2f6..04358a9 100644
+--- a/config.json
++++ b/config.json
+@@ -26,7 +26,10 @@
+     "AUTOBUILDER_HASHSERV" : "wss://hashserv.yoctoproject.org/ws",
+ 
+     "defaults" : {
+-        "NEEDREPOS" : ["poky"],
++        "NEEDREPOS" : ["bitbake"],
++        "BBSETUP_DLDIR" : "${BASE_SHAREDDIR}/current_sources",
++        "BBSETUP_CONFIG" : ["poky-master", "poky"],
++        "BBSETUP_FRAGMENTS" : [],
+         "DISTRO" : "poky",
+         "MACHINE" : "qemux86-64",
+         "SDKMACHINE" : "x86_64",
+@@ -43,7 +46,8 @@
+         "extravars" : [
+             "SANITY_TESTED_DISTROS = ''",
+             "BB_HASHSERVE = '${AUTOBUILDER_HASHSERV}'",
+-            "OE_FRAGMENTS += 'core/yocto-autobuilder/autobuilder core/yocto-autobuilder/autobuilder-resource-constraints'"
++            "OE_FRAGMENTS += 'core/yocto-autobuilder/autobuilder core/yocto-autobuilder/autobuilder-resource-constraints'",
++            "EXTRA_IMAGE_FEATURES ?= 'allow-empty-password empty-root-password allow-root-login'"
+         ]
+     },
+     "templates" : {
+@@ -85,7 +89,7 @@
+             "step1" : {
+                 "shortname" : "Machine oe-selftest",
+                 "EXTRACMDS" : ["${SCRIPTSDIR}/checkvnc; DISPLAY=:1 oe-selftest ${HELPERSTMACHTARGS} -j 15"],
+-                "ADDLAYER" : ["${BUILDDIR}/../meta-selftest"]
++                "ADDLAYER" : ["${BUILDDIR}/../layers/openembedded-core/meta-selftest"]
+             }
+         },
+         "altcfg-qemu" : {
+@@ -221,7 +225,7 @@
+                     "RPM_GPG_SIGN_CHUNK = '1'"
+                 ],
+                 "EXTRACMDS" : ["${SCRIPTSDIR}/checkvnc; DISPLAY=:1 oe-selftest -a --skip-tests distrodata.Distrodata.test_checkpkg -T yocto-mirrors -T machine -T toolchain-user -T toolchain-system -j 15"],
+-                "ADDLAYER" : ["${BUILDDIR}/../meta-selftest"]
++                "ADDLAYER" : ["${BUILDDIR}/../layers/openembedded-core/meta-selftest"]
+             }
+         },
+         "buildperf" : {
+@@ -257,7 +261,7 @@
+             "step2" : {
+                 "shortname" : "OE Selftest",
+                 "EXTRACMDS" : ["${SCRIPTSDIR}/checkvnc; OEQA_DEBUGGING_SAVED_OUTPUT=${BASE_SHAREDDIR}/pub/repro-fail/ DISPLAY=:1 oe-selftest -a --skip-tests distrodata.Distrodata.test_checkpkg reproducible -T yocto-mirrors -T machine -T toolchain-user -T toolchain-system -j 15"],
+-                "ADDLAYER" : ["${BUILDDIR}/../meta-selftest"]
++                "ADDLAYER" : ["${BUILDDIR}/../layers/openembedded-core/meta-selftest"]
+             },
+             "step3" : {
+                 "shortname" : "Python Linter Report",
+@@ -277,16 +281,16 @@
+             "step1" : {
+                 "shortname" : "Reproducible Selftest",
+                 "EXTRACMDS" : ["${SCRIPTSDIR}/checkvnc; OEQA_DEBUGGING_SAVED_OUTPUT=${BASE_SHAREDDIR}/pub/repro-fail/ DISPLAY=:1 oe-selftest -r reproducible"],
+-                "ADDLAYER" : ["${BUILDDIR}/../meta-selftest"]
++                "ADDLAYER" : ["${BUILDDIR}/../layers/openembedded-core/meta-selftest"]
+ 
+             }
+         },
+         "reproducible-meta-oe" : {
+             "MACHINE" : "qemux86-64",
+             "SDKMACHINE" : "x86_64",
+-            "NEEDREPOS" : ["poky", "meta-openembedded"],
++            "NEEDREPOS" : ["bitbake", "meta-openembedded"],
+             "ADDLAYER" : [
+-                "${BUILDDIR}/../meta-selftest"
++                "${BUILDDIR}/../layers/openembedded-core/meta-selftest"
+             ],
+             "extravars" : [
+                 "EXCLUDE_FROM_WORLD:layer-core = '1'",
+@@ -462,7 +466,7 @@
+             "step1" : {
+                 "shortname" : "Sources pre-fetching",
+                 "BBTARGETS" : "universe -c fetch -k",
+-                "ADDLAYER" : ["${BUILDDIR}/../meta-selftest"],
++                "ADDLAYER" : ["${BUILDDIR}/../layers/openembedded-core/meta-selftest"],
+                 "extravars" : [
+                     "SOURCE_MIRROR_FETCH = '1'"
+                 ]
+@@ -478,16 +482,17 @@
+             "step1" : {
+                 "shortname" : "Source Mirror Selftest",
+                 "EXTRACMDS" : ["${SCRIPTSDIR}/checkvnc; DISPLAY=:1 oe-selftest -a -t yocto-mirrors -j 15"],
+-                "ADDLAYER" : ["${BUILDDIR}/../meta-selftest"]
++                "ADDLAYER" : ["${BUILDDIR}/../layers/openembedded-core/meta-selftest"]
+             }
+         }
+ 
+     },
+     "overrides" : {
+         "qemuarm-oecore" : {
+-            "NEEDREPOS" : ["oecore", "bitbake"],
++            "NEEDREPOS" : ["bitbake"],
+             "MACHINE" : "qemuarm",
+-            "DISTRO" : "None",
++            "DISTRO" : "",
++            "BBSETUP_CONFIG" : ["oe-nodistro", "nodistro"],
+             "extravars" : [
+                 "INHERIT += 'uninative'",
+                 "require conf/distro/include/yocto-uninative.inc",
+@@ -557,7 +562,7 @@
+             "step1" : {
+                 "shortname" : "Sources pre-fetching (arm specific)",
+                 "BBTARGETS" : "universe -c fetch -k",
+-                "ADDLAYER" : ["${BUILDDIR}/../meta-selftest"],
++                "ADDLAYER" : ["${BUILDDIR}/../layers/openembedded-core/meta-selftest"],
+                 "extravars" : [
+                     "SOURCE_MIRROR_FETCH = '1'"
+                 ]
+@@ -614,7 +619,7 @@
+         },
+ 
+         "meta-arm" : {
+-            "NEEDREPOS" : ["poky", "meta-arm"],
++            "NEEDREPOS" : ["bitbake", "meta-arm"],
+             "ADDLAYER" : [
+                 "${BUILDDIR}/../meta-arm/meta-arm-toolchain",
+                 "${BUILDDIR}/../meta-arm/meta-arm",
+@@ -648,7 +653,7 @@
+             }
+         },
+         "meta-agl-core" : {
+-            "NEEDREPOS" : ["poky", "meta-agl"],
++            "NEEDREPOS" : ["bitbake", "meta-agl"],
+             "ADDLAYER" : [
+                 "${BUILDDIR}/../meta-agl/meta-agl-core"
+             ],
+@@ -665,7 +670,7 @@
+             }
+         },
+         "meta-aws" : {
+-            "NEEDREPOS" : ["poky", "meta-openembedded", "meta-aws"],
++            "NEEDREPOS" : ["bitbake", "meta-openembedded", "meta-aws"],
+             "ADDLAYER" : [
+                 "${BUILDDIR}/../meta-openembedded/meta-oe",
+                 "${BUILDDIR}/../meta-openembedded/meta-python",
+@@ -799,7 +804,7 @@
+             }
+         },
+         "meta-intel" : {
+-            "NEEDREPOS" : ["poky", "meta-intel"],
++            "NEEDREPOS" : ["bitbake", "meta-intel"],
+             "ADDLAYER" : ["${BUILDDIR}/../meta-intel"],
+             "MACHINE" : "intel-corei7-64",
+             "TEMPLATE" : "arch-hw"
+@@ -1050,7 +1055,7 @@
+         },
+         "buildtools-docs" : {
+             "MACHINE" : "qemux86-64",
+-            "NEEDREPOS" : ["poky", "meta-openembedded"],
++            "NEEDREPOS" : ["bitbake", "meta-openembedded"],
+             "ADDLAYER" : [
+                     "${BUILDDIR}/../meta-openembedded/meta-oe",
+                     "${BUILDDIR}/../meta-openembedded/meta-python",
+@@ -1188,20 +1193,20 @@
+             "TEMPLATE" : "reproducible"
+         },
+         "check-layer" : {
+-            "NEEDREPOS" : ["poky", "meta-mingw"],
++            "NEEDREPOS" : ["bitbake", "meta-mingw"],
+             "DISTRO" : "nodistro",
+             "step1" : {
+-                "EXTRACMDS" : ["bitbake-layers remove-layer ../meta-poky; yocto-check-layer ../meta-poky"]
++                "EXTRACMDS" : ["yocto-check-layer ../layers/meta-yocto/meta-poky"]
+             },
+             "step2" : {
+-                "EXTRACMDS" : ["bitbake-layers remove-layer ../meta-yocto-bsp; yocto-check-layer ../meta-yocto-bsp"]
++                "EXTRACMDS" : ["yocto-check-layer ../layers/meta-yocto/meta-yocto-bsp"]
+             },
+             "step3" : {
+                 "EXTRACMDS" : ["yocto-check-layer-wrapper ../meta-mingw"]
+             }
+         },
+         "check-layer-nightly" : {
+-            "NEEDREPOS" : ["poky", "meta-agl", "meta-arm", "meta-aws", "meta-intel", "meta-ti", "meta-openembedded", "meta-virtualization", "meta-clang", "meta-exein", "meta-qcom"],
++            "NEEDREPOS" : ["bitbake", "meta-agl", "meta-arm", "meta-aws", "meta-intel", "meta-ti", "meta-openembedded", "meta-virtualization", "meta-clang", "meta-exein", "meta-qcom"],
+             "step1" : {
+                 "shortname" : "Test meta-agl YP Compatibility",
+                 "EXTRACMDS" : ["yocto-check-layer-wrapper ../meta-agl/meta-agl-core ../meta-agl/meta-netboot --dependency ../meta-openembedded/meta-oe ../meta-openembedded/meta-networking ../meta-openembedded/meta-python --no-auto-dependency"]
+@@ -1248,7 +1253,7 @@
+             }
+         },
+         "metrics" : {
+-            "NEEDREPOS" : ["poky", "meta-openembedded"],
++            "NEEDREPOS" : ["bitbake", "meta-openembedded"],
+             "extravars" : [
+                 "INHERIT += 'cve-check'",
+                 "BB_DISKMON_DIRS = ''",
+@@ -1299,7 +1304,7 @@
+             }
+         },
+         "metrics-gitstats" : {
+-            "NEEDEDREPOS" : [],
++            "NEEDREPOS" : [],
+             "step1" : {
+                 "shortname" : "Generate gitstats",
+                 "EXTRACMDS" : ["${SCRIPTSDIR}/run-gitstats ${BUILDDIR}/../"]
+@@ -1321,7 +1326,7 @@
+             }
+         },
+         "meta-mingw" : {
+-            "NEEDREPOS" : ["poky", "meta-mingw"],
++            "NEEDREPOS" : ["bitbake", "meta-mingw"],
+             "MACHINE" : "qemux86-64",
+             "BBTARGETS" : "core-image-mingw-sdktest:do_populate_sdk",
+             "ADDLAYER" : ["${BUILDDIR}/../meta-mingw"],
+@@ -1334,7 +1339,7 @@
+             }
+         },
+         "meta-oe" : {
+-            "NEEDREPOS" : ["poky", "meta-openembedded"],
++            "NEEDREPOS" : ["bitbake", "meta-openembedded"],
+             "MACHINE" : "qemux86-64",
+             "extravars" : [
+                 "INHERIT += 'rm_work'"
+@@ -1354,7 +1359,7 @@
+             }
+         },
+         "meta-virt" : {
+-            "NEEDREPOS" : ["poky", "meta-openembedded", "meta-virtualization"],
++            "NEEDREPOS" : ["bitbake", "meta-openembedded", "meta-virtualization"],
+             "ADDLAYER" : [
+                 "${BUILDDIR}/../meta-openembedded/meta-oe",
+                 "${BUILDDIR}/../meta-openembedded/meta-python",
+@@ -1459,7 +1464,7 @@
+                     "IMAGE_INSTALL:append = ' service hello-mod'",
+                     "TEST_SUITES:append = ' skeletoninit'"
+                 ],
+-                "ADDLAYER" : ["${BUILDDIR}/../meta-skeleton"]
++                "ADDLAYER" : ["${BUILDDIR}/../layers/openembedded-core/meta-skeleton"]
+             },
+             "step4" : {
+                 "shortname" : "Systemd with sysvinit compat",
+@@ -1515,7 +1520,7 @@
+             "TEMPLATE" : "buildperf"
+         },
+         "auh" : {
+-            "NEEDREPOS" : ["poky", "auto-upgrade-helper"],
++            "NEEDREPOS" : ["bitbake", "auto-upgrade-helper"],
+             "extravars" :[
+                 "DL_DIR = '${TOPDIR}/downloads'",
+                 "INHERIT += 'buildhistory'",
+@@ -1542,7 +1547,7 @@
+             }
+         },
+         "auh-meta-oe": {
+-            "NEEDREPOS": ["poky", "auto-upgrade-helper", "meta-openembedded"],
++            "NEEDREPOS": ["bitbake", "auto-upgrade-helper", "meta-openembedded"],
+             "extravars": [
+                 "DL_DIR = '${TOPDIR}/downloads'",
+                 "INHERIT += 'buildhistory'",
+@@ -1673,15 +1678,15 @@
+             "step1" : {
+                 "shortname" : "Yocto Mirror Selftest",
+                 "EXTRACMDS" : ["${SCRIPTSDIR}/checkvnc; DISPLAY=:1 oe-selftest -r buildoptions.SourceMirroring.test_yocto_source_mirror"],
+-                "ADDLAYER" : ["${BUILDDIR}/../meta-selftest"]
++                "ADDLAYER" : ["${BUILDDIR}/../layers/openembedded-core/meta-selftest"]
+             }
+         },
+         "meta-oe-mirror" : {
+             "SDKMACHINE" : "x86_64",
+             "MACHINE" : "qemux86-64",
+-            "NEEDREPOS" : ["poky", "meta-openembedded"],
++            "NEEDREPOS" : ["bitbake", "meta-openembedded"],
+             "ADDLAYER" : [
+-                "${BUILDDIR}/../meta-selftest",
++                "${BUILDDIR}/../layers/openembedded-core/meta-selftest",
+ 
+                 "${BUILDDIR}/../meta-openembedded/meta-oe",
+                 "${BUILDDIR}/../meta-openembedded/meta-python",
+@@ -1713,7 +1718,7 @@
+             }
+         },
+         "meta-webosose" : {
+-            "NEEDREPOS" : ["poky", "meta-webosose", "meta-security", "meta-clang", "meta-openembedded", "meta-qt6"],
++            "NEEDREPOS" : ["bitbake", "meta-webosose", "meta-security", "meta-clang", "meta-openembedded", "meta-qt6"],
+             "DISTRO": "webos",
+             "MACHINE": "qemux86-64",
+             "NOLAYERADD": ["meta-security", "meta-clang", "meta-qt6", "meta-webosose", "meta-openembedded"],
+@@ -1751,7 +1756,7 @@
+             "TEMPLATE" : "trigger-build-posttrigger"
+         },
+         "patchtest" : {
+-            "NEEDREPOS" : ["poky", "meta-patchtest", "meta-openembedded"],
++            "NEEDREPOS" : ["bitbake", "meta-patchtest", "meta-openembedded"],
+             "MACHINE" : "qemux86-64",
+             "ADDLAYER" : [
+                 "${BUILDDIR}/../meta-openembedded/meta-oe",
+@@ -1763,10 +1768,10 @@
+             }
+         },
+ 	"patchtest-selftest" : {
+-	    "NEEDREPOS" : ["poky"],
++	    "NEEDREPOS" : ["bitbake"],
+ 	    "EXTRACMDS" : ["${SCRIPTSDIR}/run-patchtest-selftest ${HELPERBUILDDIR}/.."],
+ 	    "ADDLAYER" : [
+-	        "${BUILDDIR}/../meta-selftest"
++	        "${BUILDDIR}/../layers/openembedded-core/meta-selftest"
+ 	    ]
+ 	},
+         "toaster" : {
+diff --git a/scripts/bitbake-extra-tests b/scripts/bitbake-extra-tests
+index c8d6d83..1bc06fb 100755
+--- a/scripts/bitbake-extra-tests
++++ b/scripts/bitbake-extra-tests
+@@ -1,5 +1,5 @@
+ #!/bin/bash
+-. ./oe-init-build-env
++source ./build/init-build-env
+ TERM=xterm-256color
+ TASK_EXP_UNIT_TEST=1 bitbake -g -u taskexp_ncurses zlib acl
+ if [ $? -ne 0 ]; then
+diff --git a/scripts/build-perf-test-wrapper b/scripts/build-perf-test-wrapper
+index c236c60..9028463 100755
+--- a/scripts/build-perf-test-wrapper
++++ b/scripts/build-perf-test-wrapper
+@@ -128,7 +128,7 @@ os.makedirs(build_dir + "/conf", exist_ok=True)
+ subprocess.check_call("cp -r %s/build/conf/auto.conf %s/conf" % (gitdir, build_dir), shell=True)
+ 
+ # Run actual test script
+-ret = subprocess.call("BDIR=%s . ./oe-init-build-env >/dev/null; oe-build-perf-test --out-dir %s --globalres-file %s --lock-file %s/oe-build-perf.lock"
++ret = subprocess.call("BDIR=%s source ./build/init-build-env >/dev/null; oe-build-perf-test --out-dir %s --globalres-file %s --lock-file %s/oe-build-perf.lock"
+  % (build_dir, results_tmpdir, globalres_log, args.work_dir), shell=True)
+ 
+ if ret == 1:
+@@ -147,7 +147,7 @@ if git_repo:
+     print("\nArchiving results in " + git_repo)
+ 
+     os.makedirs(git_repo, exist_ok=True)
+-    subprocess.check_call("BDIR=%s . ./oe-init-build-env >/dev/null; oe-git-archive " % build_dir + \
++    subprocess.check_call("BDIR=%s source ./build/init-build-env >/dev/null; oe-git-archive " % build_dir + \
+         "--git-dir " + git_repo + " " \
+         "--branch-name '{hostname}/{branch}/{machine}' " \
+         "--tag-name '{hostname}/{branch}/{machine}/{commit_count}-g{commit}/{tag_number}' " \
+@@ -182,8 +182,8 @@ if git_repo:
+         with open(report_txt, "w") as f:
+             f.write("HTML Report/Graphs are available at:\n    %s\n\n" % url)
+ 
+-    subprocess.check_call("BDIR=%s . ./oe-init-build-env >/dev/null; oe-build-perf-report -r %s %s >> %s" % (build_dir, git_repo, extraopts, report_txt), shell=True)
+-    subprocess.check_call("BDIR=%s . ./oe-init-build-env >/dev/null; oe-build-perf-report -r %s %s --html > %s " % (build_dir, git_repo, extraopts, report_html), shell=True)
++    subprocess.check_call("BDIR=%s source ./build/init-build-env >/dev/null; oe-build-perf-report -r %s %s >> %s" % (build_dir, git_repo, extraopts, report_txt), shell=True)
++    subprocess.check_call("BDIR=%s source ./build/init-build-env >/dev/null; oe-build-perf-report -r %s %s --html > %s " % (build_dir, git_repo, extraopts, report_html), shell=True)
+ 
+     subprocess.check_call("cp %s %s/%s.txt" % (report_txt, global_results, filename), shell=True)
+     subprocess.check_call("cp %s %s/%s.html" % (report_html, global_results, filename), shell=True)
+diff --git a/scripts/getproperties.py b/scripts/getproperties.py
+index 5f396a9..5ce6204 100755
+--- a/scripts/getproperties.py
++++ b/scripts/getproperties.py
+@@ -6,6 +6,8 @@ import sys
+ 
+ builddir = sys.argv[1]
+ 
++builddir = builddir + "/layers/openembedded-core/"
++
+ jsonprops = {}
+ jsonprops['yp_build_revision'] =  subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=builddir).decode('utf-8').strip()
+ jsonprops['yp_build_branch'] = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=builddir).decode('utf-8').strip()
+diff --git a/scripts/layer-config b/scripts/layer-config
+index 93dc7e3..348f9df 100755
+--- a/scripts/layer-config
++++ b/scripts/layer-config
+@@ -26,33 +26,23 @@ args = parser.parse_args()
+ ourconfig = utils.loadconfig()
+ 
+ def bitbakecmd(targetdir, cmd):
+-    subprocess.check_call(". ./oe-init-build-env; %s" % cmd, shell=True, cwd=targetdir)
++    subprocess.check_call(". ./init-build-env; %s" % cmd, shell=True, cwd=targetdir)
+ 
+ needrepos = utils.getconfigvar("NEEDREPOS", ourconfig, args.target, None)
+ 
+-callinit = False
+-
+ repos = utils.getconfig("repo-defaults", ourconfig)
+ 
+ for repo in needrepos:
+     repo_basename = repo.split('/')[0]
+-    checkdir = repo_basename
+-    if repo_basename in repos:
+-        if "call-init" in repos[repo_basename] and repos[repo_basename]["call-init"]:
+-            callinit = True
+-        if "checkout-dirname" in repos[repo_basename]:
+-            checkdir = repos[repo_basename]["checkout-dirname"]
+-
++    if repo_basename in ['bitbake', 'oecore']:
++        continue
+     source = args.abworkdir + "/repos/" + repo_basename
+-    destination = args.abworkdir + "/" + checkdir
+-    if not os.path.isdir(destination) or callinit:
++    destination = args.abworkdir + "/" + repo_basename
++    if not os.path.isdir(destination):
+         utils.mkdir(destination)
+         for f in os.listdir(source):
+             subprocess.check_call(['mv', source + "/" + f, destination + "/"])
+ 
+-if callinit:
+-    subprocess.check_call(". ./oe-init-build-env", shell=True, cwd=args.abworkdir)
+-
+ for repo in needrepos:
+     repo_basename = repo.split('/')[0]
+     if repo_basename in repos and "no-layer-add" in repos[repo_basename] and repos[repo_basename]["no-layer-add"]:
+@@ -61,7 +51,7 @@ for repo in needrepos:
+     if repo_basename in nolayeradd:
+         continue
+     try:
+-        bitbakecmd(args.abworkdir, "bitbake-layers add-layer %s" % (args.abworkdir + "/" + repo))
++        bitbakecmd(args.abworkdir + "/build", "bitbake-layers add-layer %s" % (args.abworkdir + "/" + repo))
+     except subprocess.CalledProcessError as e:
+         utils.printheader("ERROR: Command %s failed with exit code %d, see errors above." % (e.cmd, e.returncode))
+         sys.exit(e.returncode)
+diff --git a/scripts/run-config b/scripts/run-config
+index 98b48e5..17610ea 100755
+--- a/scripts/run-config
++++ b/scripts/run-config
+@@ -157,7 +157,7 @@ elif extratools:
+     if args.phase == "init" and args.stepname == "extratools":
+         sys.exit(0)
+ 
+-logconfig = args.builddir + "/../bitbake/contrib/autobuilderlog.json"
++logconfig = args.builddir + "/../layers/bitbake/contrib/autobuilderlog.json"
+ print("Using BB_LOGCONFIG=%s" % logconfig)
+ os.environ["BB_LOGCONFIG"] = logconfig
+ 
+@@ -202,21 +202,23 @@ def bitbakecmd(builddir, cmd, report, stepnum, stepname, oeenv=True):
+     except FileNotFoundError:
+         numreports = 0
+ 
++    cmdpath = builddir
++
+     def writelog(msg, a, b):
+         a.write(msg)
+         b.write(msg)
+ 
+     if oeenv:
+-        cmd = ". ./oe-init-build-env; %s" % cmd
++        cmd = ". ./init-build-env; %s" % cmd
+ 
+     if testmode:
+         print("Would run '%s'" % cmd)
+         return
+ 
+     with open(log, "a") as outf:
+-        writelog("Running '%s' with output to %s\n" % (cmd, log), outf, sys.stdout)
++        writelog("Running '%s' with output to %s in %s\n" % (cmd, log, cmdpath), outf, sys.stdout)
+ 
+-    with subprocess.Popen(cmd, shell=True, cwd=builddir + "/..", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=0) as p, open(log, 'ab') as f:
++    with subprocess.Popen(["/bin/bash", "-c", cmd], cwd=cmdpath, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=0) as p, open(log, 'ab') as f:
+         for line in p.stdout:
+             writelog(line, f, sys.stdout.buffer)
+             sys.stdout.flush()
+@@ -370,9 +372,10 @@ elif args.phase == "finish" and args.stepname == "send-errors":
+ 
+ if jcfg:
+     addentry("builddir-cleanup", "Cleaning up build directory", "finish")
+-elif args.phase == "finish" and args.stepname == "builddir-cleanup":
++# full/quick have a second phase in post-trigger
++elif args.phase == "finish" and args.stepname == "builddir-cleanup" and args.target not in ["a-full", "a-quick"]:
+     if args.builddir and os.path.exists(args.builddir):
+-        if os.path.exists("oe-init-build-env"):
++        if os.path.exists(args.builddir + "/build/init-build-env"):
+             bitbakecmd(args.builddir, "bitbake -m", report, 99, args.stepname)
+         runcmd(["mv", args.builddir, args.builddir + "-renamed"])
+ 
+diff --git a/scripts/run-cvecheck b/scripts/run-cvecheck
+index c6b0066..39ee5ba 100755
+--- a/scripts/run-cvecheck
++++ b/scripts/run-cvecheck
+@@ -73,7 +73,7 @@ fi
+ 
+ cd ..
+ set +u
+-. oe-init-build-env build
++source build/init-build-env build
+ set -u
+ bitbake world --runall cve_check -R conf/distro/include/cve-extra-exclusions.inc
+ 
+diff --git a/scripts/run-patchtest-selftest b/scripts/run-patchtest-selftest
+index 58edb0e..197edf7 100755
+--- a/scripts/run-patchtest-selftest
++++ b/scripts/run-patchtest-selftest
+@@ -9,10 +9,10 @@ set -u
+ set -o pipefail
+ set -x
+ 
+-pokydir=$(realpath "$1")
++oecoredir=$(realpath "$1")/layers/openembedded-core/
+ 
+ python3 -m venv venv --without-pip --system-site-packages
+ source venv/bin/activate
+-python3 -m pip install -r $pokydir/meta/lib/patchtest/requirements.txt
++python3 -m pip install -r $oecoredir/meta/lib/patchtest/requirements.txt
+ 
+-$pokydir/meta/lib/patchtest/selftest/selftest
++$oecoredir/meta/lib/patchtest/selftest/selftest
+diff --git a/scripts/setup-config b/scripts/setup-config
+index 594ff5e..c311d95 100755
+--- a/scripts/setup-config
++++ b/scripts/setup-config
+@@ -56,13 +56,23 @@ sdkextraconf = os.path.join(args.builddir, "conf", "sdk-extra.conf")
+ if os.path.exists(sdkextraconf):
+     os.remove(sdkextraconf)
+ 
+-for v in ["MACHINE", "DISTRO", "SDKMACHINE", "PACKAGE_CLASSES"]:
++for v in ["SDKMACHINE", "PACKAGE_CLASSES"]:
+     value = utils.getconfigvar(v, ourconfig, args.target, stepnum)
+     if value and value != "None":
+         variables.append(v + ' = "%s"' % value)
+ 
++machine = utils.getconfigvar("MACHINE", ourconfig, args.target, stepnum) 
+ distro = utils.getconfigvar("DISTRO", ourconfig, args.target, stepnum)
+ 
++def enable_fragment(fragment):
++    cmd = ". ./init-build-env; bitbake-config-build enable-fragment %s" % fragment
++    cmdpath = args.builddir
++
++    print("Running '%s' in %s\n" % (cmd, cmdpath))
++    utils.flush()
++    subprocess.check_call(["/bin/bash", "-c", cmd], cwd=cmdpath)
++
++
+ for v in ["DLDIR", "PRSERV"]:
+     value = utils.getconfigvar(v, ourconfig, args.target, stepnum)
+     if value:
+@@ -130,3 +140,8 @@ with open(sdkextraconf, "w") as f:
+         print("  " + v)
+         f.write(v + "\n")
+ 
++if machine:
++    enable_fragment("machine/" + machine)
++if distro:
++    enable_fragment("distro/" + distro)
++
+diff --git a/scripts/shared-repo-unpack b/scripts/shared-repo-unpack
+index 5269e0e..5c30baa 100755
+--- a/scripts/shared-repo-unpack
++++ b/scripts/shared-repo-unpack
+@@ -46,17 +46,19 @@ stashdir = utils.getconfig("REPO_STASH_DIR", ourconfig)
+ 
+ needrepos = utils.getconfigvar("NEEDREPOS", ourconfig, args.target, None)
+ 
+-with open(args.repojson) as f:
++layerjson = args.repojson
++bbsetup_json = args.repojson.replace("layerinfo.json", "bbsetup-overrides.json")
++
++with open(layerjson) as f:
+     repos = json.load(f)
+ 
+ utils.filterrepojson(repos, args.target)
+ 
++bitbake_setup = False
++
+ targetsubdir = args.abworkdir + "/repos"
+ needrepos_baseddirs = [r.split('/')[0] for r in needrepos]
+ for repo in sorted(repos.keys()):
+-    # gplv2 is no longer built/tested in master
+-    if repo == "meta-gplv2":
+-        continue
+     if repo not in needrepos_baseddirs:
+         continue
+     if args.cache_dir:
+@@ -76,7 +78,38 @@ for repo in sorted(repos.keys()):
+ 
+ utils.setup_buildtools_tarball(ourconfig, args.workername, args.abworkdir + "/buildtools")
+ 
++if "bitbake" not in repos:
++    sys.exit(0)
++
+ try:
+-    subprocess.check_call([scriptsdir + "/layer-config", args.abworkdir, args.target])
++    bbs_dldir = utils.getconfigvar("BBSETUP_DLDIR", ourconfig, args.target, None)
++    bbs_config = utils.getconfiglist("BBSETUP_CONFIG", ourconfig, args.target, None)
++    bbs_fragments = utils.getconfiglist("BBSETUP_FRAGMENTS", ourconfig, args.target, None)
++    machine = utils.getconfigvar("MACHINE", ourconfig, args.target, None)
++    if machine:
++        bbs_fragments.append("machine/" + machine)
++    distro = utils.getconfigvar("DISTRO", ourconfig, args.target, None)
++    if distro:
++        bbs_fragments.append("distro/" + distro)
++
++    cmd = [targetsubdir + "/bitbake/bin/bitbake-setup",
++           "--setting", "default", "top-dir-prefix",  os.path.dirname(os.path.dirname(args.abworkdir)),
++           "--setting", "default", "top-dir-name", os.path.basename(os.path.dirname(args.abworkdir)),
++           "--setting", "default", "dl-dir", bbs_dldir,
++           "--global-settings", args.abworkdir + "/settings.conf",
++           "init",
++           "--skip-selection", "machine",
++           "--skip-selection", "distro",
++           "--source-overrides", bbsetup_json,
++           "--build-dir-name", "build",
++           "--non-interactive",
++           ] + bbs_config + bbs_fragments
++    print("Running command %s" % " ".join(cmd))
++    utils.flush()
++    subprocess.check_call(cmd)
++    layercmd = [scriptsdir + "/layer-config", args.abworkdir, args.target]
++    print("Running command %s" % " ".join(layercmd))
++    utils.flush()
++    subprocess.check_call(layercmd)
+ except subprocess.CalledProcessError as e:
+     sys.exit(e.returncode)
+diff --git a/scripts/upload-error-reports b/scripts/upload-error-reports
+index 36d7820..74a0ac9 100755
+--- a/scripts/upload-error-reports
++++ b/scripts/upload-error-reports
+@@ -22,7 +22,7 @@ if [ -d $BUILDDIR/tmp/log/error-report/ ]; then
+     host=`hostname`
+     echo "yp-ab-$host" > ~/.oe-send-error
+ 
+-    . ./oe-init-build-env
++    source ./build/init-build-env
+     for x in `ls $BUILDDIR/tmp/log/error-report/ | grep error_report_`; do
+         send-error-report -y  -l $ERRORLINK tmp/log/error-report/$x
+     done
+diff --git a/scripts/utils.py b/scripts/utils.py
+index ea92e0d..efc7c99 100644
+--- a/scripts/utils.py
++++ b/scripts/utils.py
+@@ -297,14 +297,12 @@ def publishrepo(clonedir, repo, publishdir):
+     mkdir(publishdir)
+     subprocess.check_call("rsync -av " + archive_name + "* " + publishdir, shell=True, cwd=sharedrepo)
+ 
+-# The repo json needs to be filtered to allow builds with and without bitbake-setup
++# The repo json needs to be filtered for builds with bitbake-setup
+ def filterrepojson(data, target=None):
+-    # For a-full or a-quick, we want all repos. Otherwise we should use poky and ignore bitbake and friends
+-    if target and target != "a-full" and target != "a-quick" and "poky" in data:
+-        data.pop("bitbake", None)
+-        data.pop("meta-yocto", None)
+-        data.pop("yocto-docs", None)
+-        data.pop("oecore", None)
++    if "poky" in data:
++        del data["poky"]
++    if "meta-gplv2" in data:
++        del data["meta-gplv2"]
+     return
+ 
+ def mkdir(path):
 
