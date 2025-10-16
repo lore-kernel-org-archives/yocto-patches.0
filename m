@@ -2,54 +2,51 @@ Return-Path: <mathieu.dubois-briand@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B998CCD19A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76D54CCD1A1
 	for <webhook@archiver.kernel.org>; Thu, 16 Oct 2025 13:21:03 +0000 (UTC)
 Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
- by mx.groups.io with SMTP id smtpd.web10.8278.1760620855616422796
+ by mx.groups.io with SMTP id smtpd.web10.8279.1760620856193405294
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 16 Oct 2025 06:20:55 -0700
+ Thu, 16 Oct 2025 06:20:56 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=dkim header.b=s1Y0ocg2;
+ dkim=pass header.i=@bootlin.com header.s=dkim header.b=WKUoWHer;
  spf=pass (domain: bootlin.com, ip: 185.246.85.4, mailfrom: mathieu.dubois-briand@bootlin.com)
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 47AF94E41102
+	by smtpout-03.galae.net (Postfix) with ESMTPS id CADAA4E41103
 	for <yocto-patches@lists.yoctoproject.org>; Thu, 16 Oct 2025 13:20:54 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 1D7836062C
+	by smtpout-01.galae.net (Postfix) with ESMTPS id A07EE6062C
 	for <yocto-patches@lists.yoctoproject.org>; Thu, 16 Oct 2025 13:20:54 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 49458102F22FC;
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 08641102F2304;
 	Thu, 16 Oct 2025 15:20:53 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1760620853; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=AuDdX05DgznQMmtjOKfX1jINMMU8hok66fCQgcdQIh4=;
-	b=s1Y0ocg2xgdwGPbMYvOLpv7VRsGZT8akzY6l0W8STxpn/EtBgI8ZZ1QshmhJ73yeZ6W0zH
-	qbizcKdey5vH0svcoZZE1dQc1yprjDu95Zxaw3gwGEHhetEh4nOMuWiOMFQhk/UfMiV3tL
-	QBoRN5tAGYQcdQmhthd0oA0omULbAkftTmPAzhwaCUgx09gr3heoZ9Fj+t0dcCS/0OBQeN
-	OhVRrGVkXP8fSmsj5o/sPzfgf9kw6T+KL8QsqP5D0Ie6iqV9vnMJCkDsCTTJF7gkCgrVgM
-	Jjp1S1E4XPDg5jXAgBVPICU9E43dYmVCh09begdyTxN/3bL3iekxFb8mK0uOaw==
+	t=1760620854; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=Kaseh5pwfz391x0GvjN9VZEiyFHMAwZlZXMnWcVVMZw=;
+	b=WKUoWHerWzKoWK1hSjRl/9y4I5xSNKAAHCyvoB+or4eA8Km18BGx58QWwVhvQZmU4NxtR0
+	6/19PaZhNcLKDyt6qTRjB1IbSfKtsxZ2K2DftaXXabDjlDBp85BshSizH4u/MvpimU4f9E
+	1sLrcC3wyjGjwrlCnaehOCB3C9QHYRwY+5XQ++qqNhmCcoXiTNIBEwVXUXr8L7wzq/H1NC
+	/q/LY20IgwK8Bf3kA1kJ/AR434x1mf1ZZrw4ihlrnnNFQCeRWRIdA9flGU1gU78dPCLCZm
+	9BCGNfomgzrUYEvIn7bmAY2ZajpFRBoTR/ott7oT95GalEsiMAL1H8/tqVVbJQ==
 From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Subject: [PATCH yocto-autobuilder-helper master-next v4 0/2] run-config:
- Export some build properties
-Date: Thu, 16 Oct 2025 15:20:49 +0200
-Message-Id: <20251016-contrib-mathieu-build_props-v4-0-1f2f6700e06b@bootlin.com>
+Date: Thu, 16 Oct 2025 15:20:50 +0200
+Subject: [PATCH yocto-autobuilder-helper master-next v4 1/2] getproperties:
+ Also extract build properties
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIADHx8GgC/43OwWrEIBDG8VcJnmtRY0zSU9+jlKJmthlInKAm7
- LLk3SseSkth6fE7/H8zd5YgIiT20txZhAMTUihDPzXMzzZ8AsepbKaE6sQoNPcUckTHV5tnhJ2
- 7HZfpY4u0Jd5pL7z3oxmMZEXYIlzwWvU3diOfids9U00g8hmWDWKz2pTLCnDN7L1UM6ZM8VZfO
- mRt/3X9kFxwNUygpbK+1eOrI8oLhmdPa5UP9VMbH2uqaM6I3jndOxDDX6391qQQ/WOtLZpQpr1
- 0yk1mUL+18zy/AM8auNSKAQAA
-X-Change-ID: 20250904-contrib-mathieu-build_props-54c0ccc96861
+Message-Id: <20251016-contrib-mathieu-build_props-v4-1-1f2f6700e06b@bootlin.com>
+References: <20251016-contrib-mathieu-build_props-v4-0-1f2f6700e06b@bootlin.com>
+In-Reply-To: <20251016-contrib-mathieu-build_props-v4-0-1f2f6700e06b@bootlin.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
  Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760620853; l=1672;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760620853; l=2336;
  i=mathieu.dubois-briand@bootlin.com; s=20241219; h=from:subject:message-id;
- bh=c9YVrofuHObmtAcbX6L36orEvOASayj7iQ1mYljPYXc=;
- b=oQSFP7g3ZRLBuF4RcVJFaqjUN0TxLHCSNJ3y0E5yW9TM7aOr/EXNmG+cmb+ai4TB1iAWkK3uY
- lI0p0W0dMfjD5FtJbN/rsXeN3BYTdloVI0drLmzkVyswKfbdbZTUJ14
+ bh=UO7h1dh7tAm8um/+r6J2WwafvLsq5Q7yrr8YR62Oeps=;
+ b=8h7S8gQxGv19K0ARcl6g5/MSrURcqGsbj4AfP85AwCptr2InVl0I13G7v23IHjJApfFLvT7wL
+ e2n7l5hc6zCBB4FQqw+fG79FdTjaGkuFYCs3X8vXz02qsiRId2LzxlM
 X-Developer-Key: i=mathieu.dubois-briand@bootlin.com; a=ed25519;
  pk=1PVTmzPXfKvDwcPUzG0aqdGoKZJA3b9s+3DqRlm0Lww=
 X-Last-TLS-Session-Version: TLSv1.3
@@ -57,48 +54,68 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Thu, 16 Oct 2025 13:21:03 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2320
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2321
 
-Allows to extract some build data from the config.json, such as MACHINE
-or DISTRO. This will be used by the build configuration step in
-yocto-autobuilder2.
+Extract some important build configuration values, allowing to add them
+to buildbot properties. This includes MACHINE, DISTRO, SDKMACHINE and
+PACKAGE_CLASSES.
 
-Additionally, add a property explicitly saying this build use
-bitake-setup. This is used to either show poky or bitbake/oe-core
-revisions on the console view.
-
-Also add b4 configuration file, to ease a bit the patch submission process.
+Properties will be assign either a single string value or a list of
+strings, when different values are used across different steps.
 
 Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 ---
-Changes in v4:
-- Improve comments in scripts/getproperties.py changes.
-- Link to v3: https://lore.kernel.org/r/20251007-contrib-mathieu-build_props-v3-0-0263f52bd682@bootlin.com
+ scripts/getproperties.py | 29 +++++++++++++++++++++++++++--
+ 1 file changed, 27 insertions(+), 2 deletions(-)
 
-Changes in v3:
-- Use scripts/getproperties.py instead of scripts/run-config, easing the
-  integration on the autobuilder.
-- Add a build property to show we use bibake-setup.
-- Link to v2: https://lore.kernel.org/r/20250909-contrib-mathieu-build_props-v2-0-b607bb47be08@bootlin.com
+diff --git a/scripts/getproperties.py b/scripts/getproperties.py
+index 1148d52be5aa..2119424b2dd4 100755
+--- a/scripts/getproperties.py
++++ b/scripts/getproperties.py
+@@ -8,8 +8,9 @@ import sys
+ 
+ import utils
+ 
++# Usage: scripts/getproperties.py <builddir> [builder_name]
+ builddir = sys.argv[1]
+-
++targetname = sys.argv[2] if len(sys.argv) > 2 else None
+ 
+ with open(builddir + "/../layerinfo.json") as f:
+     repos = json.load(f)
+@@ -71,5 +72,29 @@ buildid = hashlib.sha1(buildid.encode("utf-8")).hexdigest()
+ 
+ jsonprops['yp_build_revision'] = buildid
+ 
+-print(json.dumps(jsonprops, indent=4, sort_keys=True))
++ourconfig = utils.loadconfig()
++exported_properties = ['DISTRO', 'MACHINE', 'SDKMACHINE', 'PACKAGE_CLASSES']
++if targetname in ourconfig['overrides']:
++    target_props = {}
++    target = ourconfig['overrides'][targetname]
++    maxsteps = 1
++    # For each properties, construct of set of all values this property is
++    # assigned with.
++    # We iterate each steps, and get corresponding values from:
++    # - The step itself.
++    # - If no value was found, the build target template.
++    # - If still not value is found, the defaults value.
++    for v in target:
++        if v.startswith("step"):
++            for prop in exported_properties:
++                for propdict in (target[v], target, ourconfig['defaults']):
++                    if prop in propdict:
++                        target_props.setdefault(prop, set()).add(propdict[prop])
++                        break
++
++    # Transform property sets: as single value if the set only contains one
++    # value, as a list of values otherwise.
++    for k, v in target_props.items():
++        jsonprops[k] = list(v)[0] if len(v) == 1 else list(v)
+ 
++print(json.dumps(jsonprops, indent=4, sort_keys=True))
 
-Changes in v2:
-- Do not modify the list of arguments expected by run-config, allowing
-  to merge this commit only on some branches.
-- Link to v1: https://lore.kernel.org/r/20250904-contrib-mathieu-build_props-v1-0-28de412ac349@bootlin.com
-
----
-Mathieu Dubois-Briand (2):
-      getproperties: Also extract build properties
-      getproperties: Add property to indicate we use bitbake-setup
-
- scripts/getproperties.py | 31 +++++++++++++++++++++++++++++--
- 1 file changed, 29 insertions(+), 2 deletions(-)
----
-base-commit: 1a41841cf310adb608e88763f0ebb308c8cd897b
-change-id: 20250904-contrib-mathieu-build_props-54c0ccc96861
-
-Best regards,
 -- 
-Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+2.47.3
 
 
