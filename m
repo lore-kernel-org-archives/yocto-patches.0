@@ -2,61 +2,61 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04802CCD1A4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E812CCD1AD
 	for <webhook@archiver.kernel.org>; Thu, 16 Oct 2025 21:22:45 +0000 (UTC)
 Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
- by mx.groups.io with SMTP id smtpd.web11.1671.1760649756731635805
+ by mx.groups.io with SMTP id smtpd.web10.1663.1760649761108633729
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 16 Oct 2025 14:22:36 -0700
+ Thu, 16 Oct 2025 14:22:41 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=ahHfnDkV;
+ dkim=pass header.i=@konsulko.com header.s=google header.b=IpAanJrY;
  spf=pass (domain: konsulko.com, ip: 209.85.219.42, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-79599d65f75so15836386d6.2
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 16 Oct 2025 14:22:36 -0700 (PDT)
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-87c1f61ba98so10227776d6.0
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 16 Oct 2025 14:22:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1760649755; x=1761254555; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1760649760; x=1761254560; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IhNNaoYV8MwPr/5+HXNLB/pTl5tHhfVNHE/XSMYdB0Q=;
-        b=ahHfnDkVx0mA8gp0+j/wzTroYNlAezwCdZV53VbIPXWYP+HxWI4KcK4zXPNIZg+hQE
-         nuejUT2pJXqD24sjiz2ntFY61HE2dcPcoirSHi+Zhza8e7yYHftuR8KtvM9TNxd4RiQk
-         lq7UvHfMPuZcWy6y4qChE+u5SUHCpoTq3N/M4=
+        bh=EALPpaQVsvx1uMGkDTAH3ni+1zWtqTZtDnD0uPqXfQA=;
+        b=IpAanJrY2jeIlK+LT06n8R7pg0/tRo16VWMQnniWWMrX9nBIKLKgbiEXSawlDhsWpr
+         oKR8D6GdVPVROirOEBzRfBxH+RTjk8IeK8jBVVhueLvJNlp2Kps4Q0SXIXFg5+j6599f
+         87VbQFszCWmp+sE5f4x+A7OgSje2ZesYnSljs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760649755; x=1761254555;
+        d=1e100.net; s=20230601; t=1760649760; x=1761254560;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IhNNaoYV8MwPr/5+HXNLB/pTl5tHhfVNHE/XSMYdB0Q=;
-        b=h120g2r9uKHUNLDvjrnpsh+jspNpV4GRtsSA4RJaTJ1ovuqyv4lD5InagKShBXAEFI
-         0tbuD2BLrJghEweFPsABa8ua/sCcgcKaiPAV3ktYSGtI5LQgFMxGjVyQNcfLt1DdaTsn
-         XAAA2g3vT1W38Wf158QorwmgEM0PxD6pvKqL23SQhNgJV+QIOM/JXSyLBsrOojWkpg+h
-         NGKkBYZEUWGKPD48niMF76O/LP5YZd4AaJt/BbL2vfOOhhgkYvX+aPP4pKHzZf8+ObNe
-         rLZthHCzesjnH0fn3eea50haXbqRTCiOm6iWPOhdMxdJf5tDl2PMmRNyR4j8iZit/ZZR
-         uf9A==
-X-Gm-Message-State: AOJu0Yx1+jHki/JdkYlvPs0VvxKt3S6p//gJLzW+ZCVPkMvMwJTVi39O
-	UqewfExvx7jnQVbML/kfsFRfwXJv6YFP4SzVZcpsLtHtGMMfeS/UBCi29q2PQpLyGzKlx3ZC+EL
-	ciFsw
-X-Gm-Gg: ASbGncsPDx58MNjQbHFSTWPB55mTqjtvihVRJOE6MF2DvKK+/7E++Mg07xMrAmr4ZuA
-	tnrXdRikAXVhzB4ICWzkJKHyNGrkmgggvkZqvKZMIyNbyAs2wohsbEE/CjkHvXPYO2VEvyxHanf
-	eeAEAwRvYsOqGtnPPLRuD6YKU7DF8pnIDRZ1VWdasAy011DFCIH65tzHInm08vn2n2o49dH3Ip1
-	1d8ai0T74DN1Ww/Cd7amhOs5f6pDJbc3QOor55/gtvF1RWbebckZoHvZ1kwp0jwoHTMmAKoykBW
-	OcaJVmAAUfsXmYYTrIJAyvxCCGQdHrJaKZezbOoO3+egPHZqkIQP+obA9HswNBtyM66p5KWMRRe
-	FpluWXgZDjPWVVp59OE4oLMODCXj/8nQbasDUOaRWYAelP/w4xTe3CH644DoFXXPLmYVumvvNdj
-	fQteAfU6FBiyTwRS4YxwkI818wcIqWlPEmlpvGbrnvY0HuzyVPddHtx3GE+p6h914=
-X-Google-Smtp-Source: AGHT+IGEj0lI0b4GyUUyBkQwxis8HlYqNyH2/dbHmgWoBDSXTvU5QF10FlH7uokVnZvxWl5qnX4pRg==
-X-Received: by 2002:a05:6214:124f:b0:804:9cab:926d with SMTP id 6a1803df08f44-87c206339b3mr20849736d6.37.1760649755298;
-        Thu, 16 Oct 2025 14:22:35 -0700 (PDT)
+        bh=EALPpaQVsvx1uMGkDTAH3ni+1zWtqTZtDnD0uPqXfQA=;
+        b=Alkn9UT4bB+qPFhM5us5fapPEelaZfeTI3OWNPhec0wpCQlmy0wm5645eA99fiD7Qs
+         jUCWBzc8lylwpEf5AkLHO0tXw5885/KwpICzVqJFi0oS8WSus/Jrx2Qf5fu/iF1bXIqS
+         YrB3i7H0zzvOJTnDvItMCGkfOlmNY4TuizxWoaob95Q/15Wcby0BA6OBdyrQ4fQjMLrR
+         cQcaFbpf5aPlhcCtV073GAlYZfeIBXXfZlBD0oPpCO9gJDGo3oSRFJTrZm/0mnilyMJD
+         o0YwwwWrKjY1C3Kb7BjBt97jaS3aoCtYvqO1AfV17B/ULfNt5WpbDtPmxpUuIerKUFqg
+         45WA==
+X-Gm-Message-State: AOJu0YzhIzbHkKw2K3vKVrgyTIK/KGfiiY43U2/b8vnnouwku2UjLJAb
+	8ouRf58+OzUYnQFxyqKlIhshiKvwUhkn5t/mmDNWxRt2PMTZ5uluyso/wXk1B/WcDY4TafAJzvx
+	TymI2
+X-Gm-Gg: ASbGncvbQeGXZZDnwEnI+6ahD78sr8zDTkHeyDz2kTdHcl8DYmabWUdhjkg7pEEhIIn
+	vhfqIVbHTOtFu9ZCoqQtKVnPxgYc+wXzsCJ2QqWNp+CWLSPhJUPnFtxtOgDvoO83o2PKlc1EBew
+	toGyJ7Y/dmOs2y1nizHp3Uj/ECW5C/JlbUP0dtTFokdSMLt41IgvCzt2M4dn+lGUjhyElJyrsfe
+	tI7aoZxgchMxm1UzkINZRgizsEZZ+mtBoPIxMYw16TjrDppFztSfcMMDo2v/At3+KPJbqyrUEqu
+	pG0O+9NbtHjrzHOgwj8z9MgFxEUCNP+lMqGp54EtT0LyJZdhuWyGJF5QpNnIUXfD2DgRkJfQzxl
+	6K8Xyz6beSxNBtbRlPOc0J1PbFNu2rd49RF4GCnEKB1tC+3MwJX13HvJETH+SuomQkHo+rW7OFR
+	q9QZbgSUjx1YHpvWAKIdvGu1YfTUKCJzrFHJr8zr7S1FF3cTMR2Mlbk8KwJvx5HhM=
+X-Google-Smtp-Source: AGHT+IElNGOt8I2kUdV+C57snsoAfaUnKQ+d6ElZvcl6GkaEvu4OSCyMU/RQkY87jheovaoaKtOh0w==
+X-Received: by 2002:a05:6214:da5:b0:87c:1d24:7b7f with SMTP id 6a1803df08f44-87c2068520amr24083716d6.23.1760649759520;
+        Thu, 16 Oct 2025 14:22:39 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87c1c2fd4f4sm14647466d6.7.2025.10.16.14.22.34
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87c1c2fd4f4sm14647466d6.7.2025.10.16.14.22.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 14:22:34 -0700 (PDT)
+        Thu, 16 Oct 2025 14:22:38 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Marta Rybczynska <marta.rybczynska@ygreky.com>
-Subject: [meta-security][PATCH 04/15] chipsec: disable until 6.16 support is fixed
-Date: Thu, 16 Oct 2025 17:22:03 -0400
-Message-ID: <d183c4cc6483a56f622a7d1ae7b61bf299dac255.1760648348.git.scott.murray@konsulko.com>
+Subject: [meta-security][PATCH 08/15] suricata: populate SYSTEMD_SERVICE for service autostart
+Date: Thu, 16 Oct 2025 17:22:07 -0400
+Message-ID: <b571d65f6b5549b2eebf45dacdcbcec73ab1eb8e.1760648348.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <cover.1760648348.git.scott.murray@konsulko.com>
 References: <cover.1760648348.git.scott.murray@konsulko.com>
@@ -66,47 +66,60 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Thu, 16 Oct 2025 21:22:45 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2329
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2333
 
-From: Marta Rybczynska <marta.rybczynska@ygreky.com>
+From: Clayton Casciato <majortomtosourcecontrol@gmail.com>
 
-The 1.13.16 version does not work on the kernel 6.16 for now [1].
+https://docs.yoctoproject.org/dev/ref-manual/variables.html#term-SYSTEMD_SERVICE
 
-Disable when waiting for the fix.
+Before:
+root@beaglebone-yocto:~# systemctl status suricata
+* suricata.service - Suricata IDS/IDP daemon
+     Loaded: loaded (/usr/lib/systemd/system/suricata.service; disabled; preset: disabled)
+     Active: inactive (dead)
+       Docs: man:suricata(8)
+             man:suricatasc(8)
+             https://redmine.openinfosecfoundation.org/projects/suricata/wiki
 
-[1] https://github.com/chipsec/chipsec/issues/2563
+After:
+root@beaglebone-yocto:~# systemctl status suricata
+* suricata.service - Suricata IDS/IDP daemon
+     Loaded: loaded (/usr/lib/systemd/system/suricata.service; enabled; preset: enabled)
+     Active: active (running) since Mon 2025-09-22 04:05:08 UTC; 20s ago
+ Invocation: 8cfeb29631f443f0830bffeb00975931
+       Docs: man:suricata(8)
+             man:suricatasc(8)
+             https://redmine.openinfosecfoundation.org/projects/suricata/wiki
+   Main PID: 268 (Suricata-Main)
+      Tasks: 7 (limit: 4915)
+     Memory: 36.8M (peak: 37M)
+        CPU: 2.222s
+     CGroup: /system.slice/suricata.service
+             `-268 /usr/bin/suricata -c /etc/suricata/suricata.yaml -i eth0
 
-Signed-off-by: Marta Rybczynska <marta.rybczynska@ygreky.com>
+Sep 22 04:05:08 beaglebone-yocto systemd[1]: Started Suricata IDS/IDP daemon.
+Sep 22 04:05:09 beaglebone-yocto suricata[268]: i: suricata: This is Suricata version 7.0.0 RELEASE running in SYSTEM mode
+Sep 22 04:05:10 beaglebone-yocto suricata[268]: W: detect: No rule files match the pattern /var/lib/suricata/rules/suricata.rules
+Sep 22 04:05:10 beaglebone-yocto suricata[268]: W: detect: 1 rule files specified, but no rules were loaded!
+Sep 22 04:05:10 beaglebone-yocto suricata[268]: i: threads: Threads created -> W: 1 FM: 1 FR: 1   Engine started.
+
+Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
 ---
- recipes-core/packagegroup/packagegroup-core-security.bb | 4 ++--
- recipes-security/chipsec/chipsec_1.13.16.bb             | 2 ++
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ recipes-ids/suricata/suricata_7.0.0.bb | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/recipes-core/packagegroup/packagegroup-core-security.bb b/recipes-core/packagegroup/packagegroup-core-security.bb
-index bda78ce..3f5b0a5 100644
---- a/recipes-core/packagegroup/packagegroup-core-security.bb
-+++ b/recipes-core/packagegroup/packagegroup-core-security.bb
-@@ -46,8 +46,8 @@ RDEPENDS:packagegroup-security-utils = "\
-     "
+diff --git a/recipes-ids/suricata/suricata_7.0.0.bb b/recipes-ids/suricata/suricata_7.0.0.bb
+index f02d343..c36fbf1 100644
+--- a/recipes-ids/suricata/suricata_7.0.0.bb
++++ b/recipes-ids/suricata/suricata_7.0.0.bb
+@@ -139,6 +139,7 @@ fi
+ }
  
- have_krill =  "${@bb.utils.contains("DISTRO_FEATURES", "pam", "krill", "",d)}"
--RDEPENDS:packagegroup-security-utils:append:x86 = " chipsec ${have_krill}"
--RDEPENDS:packagegroup-security-utils:append:x86-64 = " firejail chipsec ${have_krill}"
-+RDEPENDS:packagegroup-security-utils:append:x86 = " ${have_krill}"
-+RDEPENDS:packagegroup-security-utils:append:x86-64 = " firejail ${have_krill}"
- RDEPENDS:packagegroup-security-utils:append:aarch64 = " firejail ${have_krill}"
- RDEPENDS:packagegroup-security-utils:remove:libc-musl = "krill firejail"
+ SYSTEMD_PACKAGES = "${PN}"
++SYSTEMD_SERVICE:${PN} = "${BPN}.service"
  
-diff --git a/recipes-security/chipsec/chipsec_1.13.16.bb b/recipes-security/chipsec/chipsec_1.13.16.bb
-index 5d65e89..9698d8f 100644
---- a/recipes-security/chipsec/chipsec_1.13.16.bb
-+++ b/recipes-security/chipsec/chipsec_1.13.16.bb
-@@ -34,3 +34,5 @@ FILES:${PN} += "${exec_prefix}"
- 
- RDEPENDS:${PN} = "python3 python3-modules"
- INSANE_SKIP:${PN} = "already-stripped"
-+
-+SKIP_RECIPE[chipsec] ?= "Waiting for upstream support of the kernel 6.16"
+ PACKAGES =+ "${PN}-python"
+ FILES:${PN} += "${systemd_unitdir} ${sysconfdir}/tmpfiles.d"
 -- 
 2.51.0
 
