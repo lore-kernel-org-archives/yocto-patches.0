@@ -1,126 +1,88 @@
-Return-Path: <richard.purdie@linuxfoundation.org>
+Return-Path: <mathieu.dubois-briand@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5C1CCCD194
-	for <webhook@archiver.kernel.org>; Thu, 16 Oct 2025 12:13:52 +0000 (UTC)
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
- by mx.groups.io with SMTP id smtpd.web10.6542.1760616827809927731
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE14CCD19A
+	for <webhook@archiver.kernel.org>; Thu, 16 Oct 2025 13:20:23 +0000 (UTC)
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+ by mx.groups.io with SMTP id smtpd.web11.8311.1760620820446718488
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 16 Oct 2025 05:13:48 -0700
+ Thu, 16 Oct 2025 06:20:21 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=VfKX36Uo;
- spf=pass (domain: linuxfoundation.org, ip: 209.85.128.46, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-47112edf9f7so3495055e9.0
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 16 Oct 2025 05:13:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1760616826; x=1761221626; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0PQCb5lbUC0eG1M5176tvM1M/UOHIJQwEfKGUYTroxI=;
-        b=VfKX36UoXuTQRUP7hUgJum4K52bCFs5sHwL8phC2WzfPE67sB6uutlpVUtNo2naD05
-         +CHsqPTUO+tRjZm9aq4NO6FFGnY4KF6vZ4GmwGIIjCVrkGjtApogmLqd+HX3mTLFSFE2
-         cDP9e/JHO8t9Kq51ehjNJspAHbM1AfS06d1IE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760616826; x=1761221626;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0PQCb5lbUC0eG1M5176tvM1M/UOHIJQwEfKGUYTroxI=;
-        b=SqKSKf9PqhfhUfmTQuKDIX6wj324eSnfmBy9DChvlSrt8rTwe6fPsQBKyfZrFeTM8C
-         1JwTplmbiEIClxSML2icoSdsd9pzcaosNKZn9bDYZthdNV/jvnqTXvnu1FplQjufDej5
-         77K5Mk2Kc0cko206WkRXPc9P7lHkBGHW5QxZhuPBESu6OJN4UArXOgQuKeIVatLQTgLe
-         31YA4IIZOTWCuN0e9Hd6JR/rqMI/bDKonDDUeX2p/BpWwOwQClP/4/FEmrXafr0ytY6C
-         m1DaeylWcvJiTYvYfLZAgUG9zXDc4POrOV0uav1DuwtpUYIFXb18GB1xh0I6HIJRRv5Q
-         HEmA==
-X-Gm-Message-State: AOJu0Yw92d5irSfBUJfAdc+n3K+wtQ7lKE/aPCDkJhWpQwVnqJQBLYkF
-	C7509UKmuqvo1rc+HMuHq/n0ZfhibMDZKLkMOXR+7GnWAfVAdz9tBIy+emu66N5hN+8ZuwEQUXe
-	VHJGS
-X-Gm-Gg: ASbGncs8beqHPJSWFVAe2z8nMMVpLtMeNPQuK4MW091ZinXNqZf32xc9FOOPumtKucJ
-	Vp/O9+ixpHpZL8r24josxiFwt8swvsoeJKkUTdIeiw+oqxB+jwvqEAUdRd3nhaiNTawPtnB7sHL
-	guF8YlHMclogAbe6OQBP8GgtAX04pQaUDZ6EEgdDDJ+MzzLuJXsJ9+IFvTyK1wa9a2iQzewGufj
-	MDTvAQLiPDdgIwYGQGjwFlqCiGnoJBgsE4qr87oCHOS8S8P3uBzL/ADh5BVPqHg7qsqyCilDzBm
-	JQVv5lR3soasHRxivShsQJCrzHLF1nS3m6p9OKmCmjeFHQWnsQhPkJO+qKFQMyGzcfzps8uN8pS
-	AxkNXVRFbWx/l1aj7fF81vaclIVomNLqjzVRVQPWjSIMRE7ZV9so6KLngxYA3PXbCDKi2uBTqTB
-	ap1r1SnGckMl7Lp6u622uZwtZ3zmS8Qp+/I5Oz7to=
-X-Google-Smtp-Source: AGHT+IEggTUMO+uTeLsqw1h8t8AApIFH4+4WG016N17dJ5vn9HwE/kEF+7drWeDTacyx2m4oGFyV/Q==
-X-Received: by 2002:a05:600c:37c9:b0:46e:477a:f3dd with SMTP id 5b1f17b1804b1-46fa9b1b18emr234913285e9.36.1760616825596;
-        Thu, 16 Oct 2025 05:13:45 -0700 (PDT)
-Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:5c57:ae18:7f42:815d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5e0a03sm34767266f8f.37.2025.10.16.05.13.44
-        for <yocto-patches@lists.yoctoproject.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 05:13:44 -0700 (PDT)
-From: Richard Purdie <richard.purdie@linuxfoundation.org>
-To: yocto-patches@lists.yoctoproject.org
-Subject: [yocto-autobuilder-helper] [PATCH] config.json/scripts: Fix toaster execution with bitbake-setup
-Date: Thu, 16 Oct 2025 13:13:43 +0100
-Message-ID: <20251016121343.959160-1-richard.purdie@linuxfoundation.org>
-X-Mailer: git-send-email 2.48.1
+ dkim=pass header.i=@bootlin.com header.s=dkim header.b=n3LvAsAL;
+ spf=pass (domain: bootlin.com, ip: 185.246.84.56, mailfrom: mathieu.dubois-briand@bootlin.com)
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 260601A134B
+	for <yocto-patches@lists.yoctoproject.org>; Thu, 16 Oct 2025 13:20:19 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id F15466062C
+	for <yocto-patches@lists.yoctoproject.org>; Thu, 16 Oct 2025 13:20:18 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6255C102F22FC;
+	Thu, 16 Oct 2025 15:20:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1760620818; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=I9VMf5shjJ8HX6f7CQ+UBwKRe95Ki9ZZxhYG57HdXC0=;
+	b=n3LvAsALMPCkwmpfQgwTlQ8BW6QVqJFstITNbqVsdJDKJDi/ej/Z24tl2aTRV900Biat0g
+	2NSfMPKs7UZcfwGpzmuL4yf1ISa6+AdCGNcwZzJZUvajaXGNYwodivy3EzBMgEfflcmBCc
+	yAP/EgCJtWYCQI8tIMVhIFJfvvQdBAHhE/HY2nccsQy29qnxL2zfitPqR6xR8MfnbKD043
+	AkYxFZV0VrOLDVqmgq5FOmhtD10rQwExcI3nNEvnudjO61c6NlGs8IgM8LV1daSdO5K2/L
+	ZD+L3wxXjIH7onDQP8IrqNVZ4I/4s1R3q50KvLxJZ/im0cdThS16FwShO7TpMw==
+From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Date: Thu, 16 Oct 2025 15:20:12 +0200
+Subject: [PATCH yocto-autobuilder2 v2 1/6] builders: Fix disk space error
+ message
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251016-contrib-mathieu-bb-setup-links-v2-1-095908455e0b@bootlin.com>
+References: <20251016-contrib-mathieu-bb-setup-links-v2-0-095908455e0b@bootlin.com>
+In-Reply-To: <20251016-contrib-mathieu-bb-setup-links-v2-0-095908455e0b@bootlin.com>
+To: yocto-patches@lists.yoctoproject.org
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760620815; l=1201;
+ i=mathieu.dubois-briand@bootlin.com; s=20241219; h=from:subject:message-id;
+ bh=EvqKVYn0FMi0Ktotld9fjDR2yNQPcE8mkXDk5mRV0Bo=;
+ b=DxTuUZYNNm0BujAcO86QRaiZQzE9tWzbMMTSh/VoE2MQ76AfrZEjkDZ10C0jD1rU1pEw4petv
+ rac2QjgL7DyDYLTcRZSsAyPgW4EwhMkwM0S4Jr7DZrmPngx4XhVhwC/
+X-Developer-Key: i=mathieu.dubois-briand@bootlin.com; a=ed25519;
+ pk=1PVTmzPXfKvDwcPUzG0aqdGoKZJA3b9s+3DqRlm0Lww=
+X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 16 Oct 2025 12:13:52 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2312
+ <yocto-patches@lists.yoctoproject.org>; Thu, 16 Oct 2025 13:20:23 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2314
 
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 ---
- config.json               |  2 +-
- scripts/run-toaster-tests | 14 +++++++-------
- 2 files changed, 8 insertions(+), 8 deletions(-)
+ builders.py | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/config.json b/config.json
-index 00da369..ce019ae 100644
---- a/config.json
-+++ b/config.json
-@@ -1776,7 +1776,7 @@
- 	    ]
- 	},
-         "toaster" : {
--            "EXTRACMDS" : ["${SCRIPTSDIR}/run-toaster-tests ${HELPERBUILDDIR} ${HELPERBUILDDIR}/.."]
-+            "EXTRACMDS" : ["${SCRIPTSDIR}/run-toaster-tests ${HELPERBUILDDIR} ${HELPERBUILDDIR}/../layers/bitbake"]
-         }
-     },
-     "repo-defaults" : {
-diff --git a/scripts/run-toaster-tests b/scripts/run-toaster-tests
-index 014c714..de056d0 100755
---- a/scripts/run-toaster-tests
-+++ b/scripts/run-toaster-tests
-@@ -3,7 +3,7 @@
- # SPDX-License-Identifier: GPL-2.0-only
- #
- # Called with $1 as the build directory
--#             $2 as the path to poky
-+#             $2 as the path to bitbake
+diff --git a/builders.py b/builders.py
+index 0000122af015..15985f258bb9 100644
+--- a/builders.py
++++ b/builders.py
+@@ -77,12 +77,12 @@ def canStartBuild(builder, wfb, request):
+     for mountpoint in checks:
+         threshold, name = checks[mountpoint]
  
- set -e
- set -u
-@@ -11,7 +11,7 @@ set -o pipefail
- set -x
+-        threshold = threshold * 1024 *1024 * 1024
++        bytes_in_gb = 1024 * 1024 * 1024
  
- builddir=$(realpath "$1")
--pokydir=$(realpath "$2")
-+bitbakedir=$(realpath "$2")
- 
- cd $builddir
- 
-@@ -28,12 +28,12 @@ mkdir -p toaster_logs
- 
- python3 -m venv venv --without-pip --system-site-packages
- source venv/bin/activate
--python3 -m pip install -r $pokydir/bitbake/toaster-requirements.txt -r $pokydir/bitbake/lib/toaster/tests/toaster-tests-requirements.txt
-+python3 -m pip install -r $bitbakedir/toaster-requirements.txt -r $bitbakedir/lib/toaster/tests/toaster-tests-requirements.txt
- 
--python3 -m pytest -c $pokydir/bitbake/lib/toaster/pytest.ini $pokydir/bitbake/lib/toaster/tests/
-+python3 -m pytest -c $bitbakedir/lib/toaster/pytest.ini $bitbakedir/lib/toaster/tests/
- 
--if [ -e $pokydir/bitbake/lib/toaster/orm/fixtures/check_fixtures.py ]; then
-+if [ -e $bitbakedir/lib/toaster/orm/fixtures/check_fixtures.py ]; then
-     echo "Checking toaster fixtures"
--    cd $pokydir/bitbake/lib/toaster/orm/fixtures/
--    $pokydir/bitbake/lib/toaster/orm/fixtures/check_fixtures.py
-+    cd $bitbakedir/lib/toaster/orm/fixtures/
-+    $bitbakedir/lib/toaster/orm/fixtures/check_fixtures.py
- fi
+         cmd = yield shell("findmnt -T %s --df -n --bytes | awk '{print $5}'" % mountpoint, wfb.worker, builder)
+         space = int(cmd.stdout.strip())
+-        if space < threshold:
+-            log.msg("Detected {0} GB of space available on {1}, less than threshold of {2} GB. Can't start build".format(space, name, threshold))
++        if space < threshold * bytes_in_gb:
++            log.msg("Detected {0} GB of space available on {1}, less than threshold of {2} GB. Can't start build".format(space / bytes_in_gb, name, threshold))
+             wfb.worker.quarantine_timeout = 10 * 60
+             wfb.worker.putInQuarantine()
+             return False
+
+-- 
+2.47.3
+
 
