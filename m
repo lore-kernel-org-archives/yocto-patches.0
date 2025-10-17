@@ -1,193 +1,145 @@
-Return-Path: <rybczynska@gmail.com>
+Return-Path: <quic_sasikuma@quicinc.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69D2DCCD199
-	for <webhook@archiver.kernel.org>; Fri, 17 Oct 2025 04:14:37 +0000 (UTC)
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
- by mx.groups.io with SMTP id smtpd.web11.8272.1760674473780491953
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7997ACCD184
+	for <webhook@archiver.kernel.org>; Fri, 17 Oct 2025 04:24:47 +0000 (UTC)
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+ by mx.groups.io with SMTP id smtpd.web11.8381.1760675081077899830
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 16 Oct 2025 21:14:33 -0700
+ Thu, 16 Oct 2025 21:24:41 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=KBfZKtDU;
- spf=pass (domain: gmail.com, ip: 209.85.214.182, mailfrom: rybczynska@gmail.com)
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2907948c1d2so15961095ad.3
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 16 Oct 2025 21:14:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760674473; x=1761279273; darn=lists.yoctoproject.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=xGRfo1kPNPlAMFLL1DnLXtKOtsAyXjP313Ql5Vejaiw=;
-        b=KBfZKtDUtV1jSAYK7ICEBQOGhLyrCFfYNgYo64ZHVirT7vfn02y6DUcPSHCAH5E4j/
-         EekSek7BHJo0SWc+wVRGZ4yVp06FrhtE70LjuBLTiV3z59PLQAhFweyQgI+XX+S9lt1/
-         ZqdsKAn7pcXEsBT7pjh4Jb+Fcibu2BXnt2ffJZUVK1VBXLlqBXedRkS9uG6O6ktSbgL1
-         IUUOGQPWpe7JtP60KAl5Ez9p7q3Vh2R4W6EfoIphqt7p4aKUxfd/8AZUFn1jY3P7J2w2
-         NK0yJEulBM9msXZaC1lieeQF2NpAwSR4MmGUGrJY2AzXRusBQk6VB8szePEwoL+8V3Kr
-         +pig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760674473; x=1761279273;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xGRfo1kPNPlAMFLL1DnLXtKOtsAyXjP313Ql5Vejaiw=;
-        b=ZBf5CFxvOX1ZpfvqffiKKeqJLwsVEyd7U2/q6r1xKnDpC7qSK0/qqoind+uAJ97tur
-         rAThC1dUywfgC83KP45Fnu4f354k2VmE5CbiSsfidqyVgv5inYRHNU1UnKg0opQnlnts
-         4Jvz/shlvkxPC9I6lMUEGEfi3HVQQWcUdVs5MMdqKXxwTsqIYCxFxFZR3x76dNZtWw11
-         lRZSRLYHEzJA9A2Caw92AoKd/DLdjRbClg+szgAQ0snMwWQnD3ozt4p3XGhI4lT4c/te
-         3WljMWBPT7ZJDm+v7xRGm7eK4bP/Hr+xmpIn3h24/v//pI+VZLb3b6xVhc2g2l7c9+71
-         rZPQ==
-X-Gm-Message-State: AOJu0Yzy4k92VDzRmYs9Cg7/200wD0Cfbywb2BUm5O95HH/Zn1rzIKxN
-	RBvwTQOPU1Z+6vcJMeUZ+ZqqcS34mpUSjdwMk/52kZgAshDsqZCg8nrRH4jtpzn1nWMLVe/w4rt
-	l1qVScl6KPULRrGC/PtXdJT03bOE7e10SuY1M
-X-Gm-Gg: ASbGncsBrJ5UBCNe5EzX4xzGfNH1rFFrE37fGT/WwQ53LGiPu6yspEU6qx1TxiCf+OR
-	JYGj9DRKrMfuFk7xcpJKypkQ+jo31pvsbsTFmviCOo9aMhk5B4rvxuQc+ZGLCcO82f5PoGKayjv
-	sjXS5JCtdt82tBna7+UrstZs9pRhm2TyrOWYdJLVhYscNY97aqV6CMmGqyoRIbAayAs/7rjKWAK
-	wlKEScqnDx2tWog8UNWCez7QfZEtoMOxjCUgDd4099B9bWY63dwx+OyY6ILj0nZVoyN0Q3vjjpk
-	gFz1JvvnFQkTa+gK5F5t5hOzbucf
-X-Google-Smtp-Source: AGHT+IEdi/C8ek9EBLySmN9DvyFXjUAP6kdL8DezWiuISxw0IGp8IQKBexdqSk9FilhzQOysIXJcycUvcT1vbWe/VMk=
-X-Received: by 2002:a17:903:8c6:b0:290:d0fb:55ab with SMTP id
- d9443c01a7336-290d0fb57e8mr22479855ad.50.1760674472450; Thu, 16 Oct 2025
- 21:14:32 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1760648348.git.scott.murray@konsulko.com> <6cbe841e8b09ac4804e8c87e23f81d68f97c17f4.1760648348.git.scott.murray@konsulko.com>
-In-Reply-To: <6cbe841e8b09ac4804e8c87e23f81d68f97c17f4.1760648348.git.scott.murray@konsulko.com>
-From: Marta Rybczynska <rybczynska@gmail.com>
-Date: Fri, 17 Oct 2025 06:14:19 +0200
-X-Gm-Features: AS18NWAgOr9ykaXkCOlnFy8vzS6NJSL_mYyz-bWrCGJ736IBxW1DzpxobdcZmvM
-Message-ID: <CAApg2=Qyi6MuRVhwux=1y6TfGgu+6Xs6Hc3rXod7tBaU0vZApA@mail.gmail.com>
-Subject: Re: [yocto-patches] [meta-security][PATCH 01/15] kas: use repo name
+ dkim=pass header.i=@quicinc.com header.s=qcppdkim1 header.b=F8RlNlMm;
+ spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: qualcomm.com, ip: 205.220.168.131, mailfrom: sasikuma@qualcomm.com)
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59GKLMel006161
+	for <yocto-patches@lists.yoctoproject.org>; Fri, 17 Oct 2025 04:24:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=R71ltd4Kz7VJHZ7qflP8NHhpYjhzTAMef9l
+	xlhAd0wk=; b=F8RlNlMm+yeehgjTox11KFmKxvILs4QDx9V/zdJRDviG3bfADXm
+	8obCVsA2GZG11a+vyvQJ0WiGgA+irfUeerQBQTIER4wSzc5ikl0qddbCw1QTgn/t
+	MeXKTiJCw8hKnwPfZkLRUq2TG5ljzmOQggcmQzPreKPDgzZUYQEyvp1oOqY13IJn
+	xLBrM2rV+VkayEDyFxFTNZmWgWrTJk5PMemNCMCLr9clHlCurS17VdaH86qDApOA
+	mjzNjsbiHvSgoBUMQieeww5d8abOJ4VO7YBba9rvCUHFFDbCumLbXyvi/IlIhoNl
+	CjvmZ/Nx3ONDVmpCDdkUrCjhRramF1YTnkw==
+Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49s6mww4p2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+	for <yocto-patches@lists.yoctoproject.org>; Fri, 17 Oct 2025 04:24:40 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 59H4OboV005967
+	for <yocto-patches@lists.yoctoproject.org>; Fri, 17 Oct 2025 04:24:37 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 49qgammfvg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+	for <yocto-patches@lists.yoctoproject.org>; Fri, 17 Oct 2025 04:24:37 +0000
+Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 59H4OaQr005962
+	for <yocto-patches@lists.yoctoproject.org>; Fri, 17 Oct 2025 04:24:36 GMT
+Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-sasikuma-hyd.qualcomm.com [10.147.243.253])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 59H4Oana005960
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 17 Oct 2025 04:24:36 +0000
+Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 4060212)
+	id A72235C4; Fri, 17 Oct 2025 09:54:35 +0530 (+0530)
+From: Sasi Kumar Maddineni <quic_sasikuma@quicinc.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Marta Rybczynska <marta.rybczynska@ygreky.com>
-Content-Type: multipart/alternative; boundary="0000000000007edd32064152f86b"
+Cc: Sasi Kumar Maddineni <quic_sasikuma@quicinc.com>
+Subject: [meta-selinux][PATCH] refpolicy_common: Skip HLL module processing for monolithic policy builds
+Date: Fri, 17 Oct 2025 09:54:19 +0530
+Message-Id: <20251017042419.3307354-1-quic_sasikuma@quicinc.com>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEzMDA4MyBTYWx0ZWRfXysOdTBIW8clO
+ cIX0+Fnm+fWXWpkq5ntQR1LqCq1gkj5syvZvU9/muoyruQmzhbNBGnR0y1HAEMlO+z8ShuVzdyV
+ MtC10gV+UtOJCUepJYg4mY+e6jXNBvaXO5D4ED5UV8z75KEL1G/huAS7aBZptBNq0ioz5FtyqUP
+ 98sCg98KQ1sDJU3d6mDd1FLBX/k1pcFnidfZPkKqCWbEc2EJp2Dh0ZgdibXPemX8yKcIU+cfiCc
+ mOWoU90W/30yF2Ng9ZmXZUghbEU47dw+4MTgK7ZzX6ypBUvreNomtzjxezGyNMkHBNM+4uiVG5i
+ dYj/TmZu8Ks50InzHvSPYGPFZYXQ79Q6NBgW65uy74jQ45Dj2pI3Ts1jwWygxCDmOZdQpXfw9dl
+ HNwQwm2ocnAVebtYxWKJnCvx/328JA==
+X-Authority-Analysis: v=2.4 cv=Fr4IPmrq c=1 sm=1 tr=0 ts=68f1c508 cx=c_pps
+ a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=COk6AnOGAAAA:8
+ a=N_kUeKDYNsvIcx_cwUsA:9 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: M6XcvX7R0i8morFjZNMpTUqxeU8e5vYz
+X-Proofpoint-ORIG-GUID: M6XcvX7R0i8morFjZNMpTUqxeU8e5vYz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-17_02,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 impostorscore=0 spamscore=0 phishscore=0 malwarescore=0
+ adultscore=0 lowpriorityscore=0 bulkscore=0 suspectscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510130083
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 17 Oct 2025 04:14:37 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2341
+ <yocto-patches@lists.yoctoproject.org>; Fri, 17 Oct 2025 04:24:47 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2342
 
---0000000000007edd32064152f86b
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Avoid processing and copying high-level language (.pp) modules during do_install
+when MONOLITHIC=y is set. This prevents build failures due to missing files in
+/usr/share/selinux/targeted, which are not generated in monolithic mode.
 
-Hello Scott,
-We do not need this one, it will actually break the build for
-meta-security, I have removed it already earlier this week from
-https://git.yoctoproject.org/meta-security/log/?h=3Dmaster-next
+Fixes error:
+  cp: cannot stat '/usr/share/selinux/targeted/*.*': No such file or directory
 
-Kind regards,
-Marta
+Signed-off-by: Sasi Kumar Maddineni <quic_sasikuma@quicinc.com>
+---
+ .../refpolicy/refpolicy_common.inc            | 33 ++++++++++---------
+ 1 file changed, 17 insertions(+), 16 deletions(-)
 
-On Thu, Oct 16, 2025 at 11:22=E2=80=AFPM Scott Murray via lists.yoctoprojec=
-t.org
-<scott.murray=3Dkonsulko.com@lists.yoctoproject.org> wrote:
+diff --git a/recipes-security/refpolicy/refpolicy_common.inc b/recipes-security/refpolicy/refpolicy_common.inc
+index fd41f8a..27aac44 100644
+--- a/recipes-security/refpolicy/refpolicy_common.inc
++++ b/recipes-security/refpolicy/refpolicy_common.inc
+@@ -173,22 +173,23 @@ prepare_policy_store() {
+     # Get hll type from suffix on base policy module
+     HLL_TYPE=$(echo ${POL_SRC}/base.* | awk -F . '{if (NF>1) {print $NF}}')
+     HLL_BIN=${STAGING_DIR_NATIVE}${prefix}/libexec/selinux/hll/${HLL_TYPE}
+-
+-    for i in ${POL_SRC}/*.${HLL_TYPE}; do
+-        MOD_NAME=$(basename $i | sed "s/\.${HLL_TYPE}$//")
+-        MOD_DIR=${POL_ACTIVE_MODS}/${MOD_NAME}
+-        mkdir -p ${MOD_DIR}
+-        echo -n "${HLL_TYPE}" > ${MOD_DIR}/lang_ext
+-        if ! bzip2 -t $i >/dev/null 2>&1; then
+-            ${HLL_BIN} $i | bzip2 --stdout > ${MOD_DIR}/cil
+-            bzip2 -f $i && mv -f $i.bz2 $i
+-        else
+-            bunzip2 --stdout $i | \
+-                ${HLL_BIN} | \
+-                bzip2 --stdout > ${MOD_DIR}/cil
+-        fi
+-        cp $i ${MOD_DIR}/hll
+-    done
++    if [ "${POLICY_MONOLITHIC}" != "y" ]; then
++        for i in ${POL_SRC}/*.${HLL_TYPE}; do
++            MOD_NAME=$(basename $i | sed "s/\.${HLL_TYPE}$//")
++            MOD_DIR=${POL_ACTIVE_MODS}/${MOD_NAME}
++            mkdir -p ${MOD_DIR}
++            echo -n "${HLL_TYPE}" > ${MOD_DIR}/lang_ext
++            if ! bzip2 -t $i >/dev/null 2>&1; then
++                ${HLL_BIN} $i | bzip2 --stdout > ${MOD_DIR}/cil
++                bzip2 -f $i && mv -f $i.bz2 $i
++            else
++                bunzip2 --stdout $i | \
++                    ${HLL_BIN} | \
++                    bzip2 --stdout > ${MOD_DIR}/cil
++            fi
++            cp $i ${MOD_DIR}/hll
++        done
++    fi
+ }
+ 
+ rebuild_policy() {
+-- 
+2.34.1
 
-> From: Marta Rybczynska <marta.rybczynska@ygreky.com>
->
-> Use the repo name directly, otherwise the build can get the wrong clone.
->
-> Signed-off-by: Marta Rybczynska <marta.rybczynska@ygreky.com>
-> ---
->  kas/kas-security-base.yml | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/kas/kas-security-base.yml b/kas/kas-security-base.yml
-> index 17f4bb3..e5af7bc 100644
-> --- a/kas/kas-security-base.yml
-> +++ b/kas/kas-security-base.yml
-> @@ -6,7 +6,7 @@ distro: poky
->  repos:
->    meta-security:
->      layers:
-> -      ../meta-security:
-> +      ../meta-security-staging:
->        meta-tpm:
->        meta-integrity:
->        meta-hardening:
-> --
-> 2.51.0
->
->
->
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-> Links: You receive all messages sent to this group.
-> View/Reply Online (#2326):
-> https://lists.yoctoproject.org/g/yocto-patches/message/2326
-> Mute This Topic: https://lists.yoctoproject.org/mt/115797538/5827677
-> Group Owner: yocto-patches+owner@lists.yoctoproject.org
-> Unsubscribe:
-> https://lists.yoctoproject.org/g/yocto-patches/leave/13234581/5827677/971=
-106717/xyzzy
-> [rybczynska@gmail.com]
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
->
->
->
-
---0000000000007edd32064152f86b
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div>Hello Scott,</div><div>We do not need this one, it wi=
-ll actually break the build for meta-security, I have removed it already ea=
-rlier this week from <a href=3D"https://git.yoctoproject.org/meta-security/=
-log/?h=3Dmaster-next">https://git.yoctoproject.org/meta-security/log/?h=3Dm=
-aster-next</a></div><div><br></div><div>Kind regards,</div><div>Marta<br></=
-div></div><br><div class=3D"gmail_quote gmail_quote_container"><div dir=3D"=
-ltr" class=3D"gmail_attr">On Thu, Oct 16, 2025 at 11:22=E2=80=AFPM Scott Mu=
-rray via <a href=3D"http://lists.yoctoproject.org">lists.yoctoproject.org</=
-a> &lt;scott.murray=3D<a href=3D"mailto:konsulko.com@lists.yoctoproject.org=
-">konsulko.com@lists.yoctoproject.org</a>&gt; wrote:<br></div><blockquote c=
-lass=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px soli=
-d rgb(204,204,204);padding-left:1ex">From: Marta Rybczynska &lt;<a href=3D"=
-mailto:marta.rybczynska@ygreky.com" target=3D"_blank">marta.rybczynska@ygre=
-ky.com</a>&gt;<br>
-<br>
-Use the repo name directly, otherwise the build can get the wrong clone.<br=
->
-<br>
-Signed-off-by: Marta Rybczynska &lt;<a href=3D"mailto:marta.rybczynska@ygre=
-ky.com" target=3D"_blank">marta.rybczynska@ygreky.com</a>&gt;<br>
----<br>
-=C2=A0kas/kas-security-base.yml | 2 +-<br>
-=C2=A01 file changed, 1 insertion(+), 1 deletion(-)<br>
-<br>
-diff --git a/kas/kas-security-base.yml b/kas/kas-security-base.yml<br>
-index 17f4bb3..e5af7bc 100644<br>
---- a/kas/kas-security-base.yml<br>
-+++ b/kas/kas-security-base.yml<br>
-@@ -6,7 +6,7 @@ distro: poky<br>
-=C2=A0repos:<br>
-=C2=A0 =C2=A0meta-security:<br>
-=C2=A0 =C2=A0 =C2=A0layers:<br>
--=C2=A0 =C2=A0 =C2=A0 ../meta-security:<br>
-+=C2=A0 =C2=A0 =C2=A0 ../meta-security-staging:<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0meta-tpm:<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0meta-integrity:<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0meta-hardening:<br>
--- <br>
-2.51.0<br>
-<br>
-<br>
-<br>
--=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-<br>
-Links: You receive all messages sent to this group.<br>
-View/Reply Online (#2326): <a href=3D"https://lists.yoctoproject.org/g/yoct=
-o-patches/message/2326" rel=3D"noreferrer" target=3D"_blank">https://lists.=
-yoctoproject.org/g/yocto-patches/message/2326</a><br>
-Mute This Topic: <a href=3D"https://lists.yoctoproject.org/mt/115797538/582=
-7677" rel=3D"noreferrer" target=3D"_blank">https://lists.yoctoproject.org/m=
-t/115797538/5827677</a><br>
-Group Owner: <a href=3D"mailto:yocto-patches%2Bowner@lists.yoctoproject.org=
-" target=3D"_blank">yocto-patches+owner@lists.yoctoproject.org</a><br>
-Unsubscribe: <a href=3D"https://lists.yoctoproject.org/g/yocto-patches/leav=
-e/13234581/5827677/971106717/xyzzy" rel=3D"noreferrer" target=3D"_blank">ht=
-tps://lists.yoctoproject.org/g/yocto-patches/leave/13234581/5827677/9711067=
-17/xyzzy</a> [<a href=3D"mailto:rybczynska@gmail.com" target=3D"_blank">ryb=
-czynska@gmail.com</a>]<br>
--=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-<br>
-<br>
-<br>
-</blockquote></div>
-
---0000000000007edd32064152f86b--
 
