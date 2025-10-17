@@ -1,166 +1,122 @@
-Return-Path: <quic_sasikuma@quicinc.com>
+Return-Path: <mathieu.dubois-briand@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6814BCCD195
-	for <webhook@archiver.kernel.org>; Fri, 17 Oct 2025 06:43:28 +0000 (UTC)
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
- by mx.groups.io with SMTP id smtpd.web10.9769.1760683406194971198
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7EE4CCD195
+	for <webhook@archiver.kernel.org>; Fri, 17 Oct 2025 08:20:48 +0000 (UTC)
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+ by mx.groups.io with SMTP id smtpd.web11.10781.1760689239922737928
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 16 Oct 2025 23:43:26 -0700
+ Fri, 17 Oct 2025 01:20:40 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@quicinc.com header.s=qcppdkim1 header.b=N8z/HEfI;
- spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: qualcomm.com, ip: 205.220.180.131, mailfrom: sasikuma@qualcomm.com)
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59GKLbOa020486
-	for <yocto-patches@lists.yoctoproject.org>; Fri, 17 Oct 2025 06:43:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=HbWb2OBHL/PLFwA7o0Z+dP2Vmghv/mZq+mZ
-	W0Z0+YP8=; b=N8z/HEfIiHG9QBT7WX17KVCNYPBVdheGrG8SKaSF2q7XUyFew3/
-	KIRn2xb7nH5/cxdHx0JME0ImHgkonBsQHMdZR+3wWOUQ5oqHDbT4WD1//ZB6XbPE
-	jOfaVPReE9baYXCS85iSDDhI5qqEkP44LOjNKZgXK6I8B9j601PdK80d6CE0vnnA
-	g6FYgj6RPncxv9KdeSd1e+Z6tUJaZ/eemi7UnmlzXo0AF5lMxzFrnxF5GFAqoIHC
-	l6GuFb/DY2WBQzvepOTA2jBoDNLB3Hi/2LqqZthp7YkG489DUm5QOxS38LRmbaiy
-	UQ1ruTeaJjWFGui6wqFnIPNjfnIYbnyGNiA==
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49sua8suud-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <yocto-patches@lists.yoctoproject.org>; Fri, 17 Oct 2025 06:43:24 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 59H6hLtF029789
-	for <yocto-patches@lists.yoctoproject.org>; Fri, 17 Oct 2025 06:43:21 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 49qgan1kut-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <yocto-patches@lists.yoctoproject.org>; Fri, 17 Oct 2025 06:43:21 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 59H6hLn8029779
-	for <yocto-patches@lists.yoctoproject.org>; Fri, 17 Oct 2025 06:43:21 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-sasikuma-hyd.qualcomm.com [10.147.243.253])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 59H6hKnc029760
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 17 Oct 2025 06:43:21 +0000
-Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 4060212)
-	id 0C1515C7; Fri, 17 Oct 2025 12:13:20 +0530 (+0530)
-From: Sasi Kumar Maddineni <quic_sasikuma@quicinc.com>
-To: yocto-patches@lists.yoctoproject.org
-Cc: Sasi Kumar Maddineni <quic_sasikuma@quicinc.com>
-Subject: [meta-selinux][PATCH] genhomedircon: remove build path reference from generated file_context.homedirs header
-Date: Fri, 17 Oct 2025 12:13:18 +0530
-Message-Id: <20251017064318.3442718-1-quic_sasikuma@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+ dkim=pass header.i=@bootlin.com header.s=dkim header.b=qoPJSjxx;
+ spf=pass (domain: bootlin.com, ip: 185.246.85.4, mailfrom: mathieu.dubois-briand@bootlin.com)
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id F19DD4E4111B
+	for <yocto-patches@lists.yoctoproject.org>; Fri, 17 Oct 2025 08:20:37 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id C4DF7606DB
+	for <yocto-patches@lists.yoctoproject.org>; Fri, 17 Oct 2025 08:20:37 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EEEBE102F2330;
+	Fri, 17 Oct 2025 10:20:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1760689237; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=kZj2/GVgsuiz4jaqBfXR0Dp+Cj5UWAOr4TX15SleA/Y=;
+	b=qoPJSjxx5ijci8JtXHM3vCWpju+kIvh8Q1NDqqoLHwEFqsWdo/UlUvueZdiNGzrU6lhNKX
+	XXs6UIP3qICpZ5Isdr/tdlbkndrKXFUprgp5Fz4vRm9xgpM0L0dQTXQoiZe17XL7km+jps
+	m2bPCRc9SI0bIiHcI2qRZcZue3BN13NJHpmkbBzin2K7pVmqAG+rPnQfHVzLdZ8n4O0oWN
+	gTIX76FswUQkybT8ilscZ6r39sVfAsifopzL7d+MRWDZ+HTed62GSNp8XXHAJN8AmAJl5M
+	2nvbFJ1/1Lx4IFK0h8b++q+d+O2By+mjWGzUt4hW50R5OD27vAZBa8WhhdDoWg==
+From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Date: Fri, 17 Oct 2025 10:20:29 +0200
+Subject: [PATCH yocto-autobuilder-helper] prepare-shared-repos: Add tag for
+ separate gits
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: TbAyDc4SNWI5sN4V_7fF4EhZZgnEsXPT
-X-Authority-Analysis: v=2.4 cv=e5MLiKp/ c=1 sm=1 tr=0 ts=68f1e58d cx=c_pps
- a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=COk6AnOGAAAA:8
- a=-Axzdxy3En8sPjE_xngA:9 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE0MDEzNCBTYWx0ZWRfX3YXuG5jqcj5+
- cvcZJH72cGXigBOFk5WHUAnqo8Y6aN2ilztH15vOX5+Uf7lKTciTrrKUl7cqlfiWLB4P+WAtV/R
- lNibbiltLhMQkITGV18S73WbDtV7Z6DOLCfBkuSEmPqFRHztbJumbj+BhwyOLZ4BZTwZOYRtJyZ
- 4if+o4zElXMnKwOPiELLFVMgzmz0Tvp60vqktx0XgQ+fe9X0vsO3mU6pc+Ri0Y5eIPJ19wlhN0J
- dp1A+ARwNlsbhe8zycgZvsNj6332oq04h51LWYjJrDLODTg3see8nKnsg+wpOp6LduF2FkNIy1d
- QomESlTFl/FFOqv/nlM6Td1bdaSur3hGxiKBAxQ4pN60xUPnc+LWf7M4JFzpocORHMyI5oZUgFf
- ZBzRZBKzUGgZjNusnTXatkkmEGzr1w==
-X-Proofpoint-ORIG-GUID: TbAyDc4SNWI5sN4V_7fF4EhZZgnEsXPT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-17_03,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 suspectscore=0 spamscore=0 adultscore=0 clxscore=1015
- priorityscore=1501 impostorscore=0 malwarescore=0 bulkscore=0
- lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
- definitions=main-2510140134
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251017-contrib-mathieu-oe-core-tag-v1-1-9ed5059cde28@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAE388WgC/x3MQQrDIBBA0auEWXcgWkugVyldGJ3EgdQJo5aWk
+ LtXunx/8Q8opEwF7sMBSm8uLLnDXAYIyeeVkGM32NHezGgmDJKr8owvXxNTQ6GelLD6FV2wzi3
+ emSleoR92pYU///sDvhKqoG9V5sZbJMVE204Kz/P8AZNUTy+HAAAA
+X-Change-ID: 20251017-contrib-mathieu-oe-core-tag-4c244fa417d3
+To: yocto-patches@lists.yoctoproject.org
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760689236; l=2609;
+ i=mathieu.dubois-briand@bootlin.com; s=20241219; h=from:subject:message-id;
+ bh=shSDt55Um/Y7jWtH09oAPCdkynx+sy2mp9GivlCR0Ls=;
+ b=whZ78ccDHpNeoaA38xbyH2UZ8xEVzAshc6gK4wXG0FzPMV+kgkGdugNtODoeKH7UhzyIUcirD
+ 7VG/aJqmrEKCd8GtebV40qmQDg2VcxizwrWf89KjwJjIPtv4ZsdQhWb
+X-Developer-Key: i=mathieu.dubois-briand@bootlin.com; a=ed25519;
+ pk=1PVTmzPXfKvDwcPUzG0aqdGoKZJA3b9s+3DqRlm0Lww=
+X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 17 Oct 2025 06:43:28 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2345
+ <yocto-patches@lists.yoctoproject.org>; Fri, 17 Oct 2025 08:20:48 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2346
 
-The heading() function in genhomedircon.py included a comment referencing the
-absolute path to the local.users file, which resides under TMPDIR during Yocto
-builds. This caused the package QA check 'buildpaths' to fail due to the presence
-of build-time paths in the final packaged output.
+As poky is no longer used, add tags for openembedded-core, bitbake and
+meta-yocto. We continue to use the same poky-ci-archive repo.
 
-Reference:
-The below commented lines are in filecontexts.homedirs file as a header,
-which contains TMPDIR path. So, do_package_qa is flagging this issue in
-case of MONOLITHIC design.
-
-To resolve this, the line generating the comment with the full path was removed,
-preventing unnecessary QA errors and ensuring cleaner policy files.
-
-Signed-off-by: Sasi Kumar Maddineni <quic_sasikuma@quicinc.com>
+Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 ---
- ...move-build-path-reference-from-gener.patch | 36 +++++++++++++++++++
- .../refpolicy/refpolicy_common.inc            |  3 +-
- 2 files changed, 38 insertions(+), 1 deletion(-)
- create mode 100644 recipes-security/refpolicy/refpolicy/0057-genhomedircon-remove-build-path-reference-from-gener.patch
+PLEASE DO NOT MERGE!
 
-diff --git a/recipes-security/refpolicy/refpolicy/0057-genhomedircon-remove-build-path-reference-from-gener.patch b/recipes-security/refpolicy/refpolicy/0057-genhomedircon-remove-build-path-reference-from-gener.patch
-new file mode 100644
-index 0000000..af9bba3
---- /dev/null
-+++ b/recipes-security/refpolicy/refpolicy/0057-genhomedircon-remove-build-path-reference-from-gener.patch
-@@ -0,0 +1,36 @@
-+From f584d80dc13f63119af53618350fd8262f17fe63 Mon Sep 17 00:00:00 2001
-+From: Sasi Kumar Maddineni <quic_sasikuma@quicinc.com>
-+Date: Fri, 17 Oct 2025 11:51:15 +0530
-+Subject: [PATCH] genhomedircon: remove build path reference from generated
-+ file_context.homedirs header
-+
-+The heading() function in genhomedircon.py included a comment referencing the
-+absolute path to the local.users file, which resides under TMPDIR during Yocto
-+builds. This caused the package QA check 'buildpaths' to fail due to the presence
-+of build-time paths in the final packaged output.
-+
-+To resolve this, the line generating the comment with the full path was removed,
-+preventing unnecessary QA errors and ensuring cleaner policy files.
-+
-+Upstream-Status: Pending
-+
-+Signed-off-by: Sasi Kumar Maddineni <quic_sasikuma@quicinc.com>
-+---
-+ support/genhomedircon.py | 1 -
-+ 1 file changed, 1 deletion(-)
-+
-+diff --git a/support/genhomedircon.py b/support/genhomedircon.py
-+index b865a07c8..e7685545f 100644
-+--- a/support/genhomedircon.py
-++++ b/support/genhomedircon.py
-+@@ -157,7 +157,6 @@ class selinuxConfig:
-+ 
-+ 	def heading(self):
-+ 		ret = "\n#\n#\n# User-specific file contexts, generated via %s\n" % sys.argv[0]
-+-		ret += "# edit %s to change file_context\n#\n#\n" % self.getUsersFile()
-+ 		return ret
-+ 
-+ 	def getUsers(self):
-+-- 
-+2.34.1
-+
-diff --git a/recipes-security/refpolicy/refpolicy_common.inc b/recipes-security/refpolicy/refpolicy_common.inc
-index cf32723..aa782ca 100644
---- a/recipes-security/refpolicy/refpolicy_common.inc
-+++ b/recipes-security/refpolicy/refpolicy_common.inc
-@@ -72,7 +72,8 @@ SRC_URI += " \
-         file://0054-policy-modules-system-setrans-allow-setrans_t-use-fd.patch \
-         file://0055-policy-modules-system-systemd-make-_systemd_t-MLS-tr.patch \
-         file://0056-policy-modules-system-logging-make-syslogd_runtime_t.patch \
--        "
-+        file://0057-genhomedircon-remove-build-path-reference-from-gener.patch \
-+	"
+Only merge this once oe-core and bitbake master branches have been
+pushed on poky-ci-archive, as we need to bypass push checks to do that.
+---
+ scripts/prepare-shared-repos | 3 ++-
+ scripts/utils.py             | 5 +++--
+ 2 files changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/scripts/prepare-shared-repos b/scripts/prepare-shared-repos
+index a510a4fd0cf4..8ffc2c501571 100755
+--- a/scripts/prepare-shared-repos
++++ b/scripts/prepare-shared-repos
+@@ -17,6 +17,7 @@ import tempfile
+ import utils
  
- S = "${UNPACKDIR}/refpolicy"
+ poky_tag_remote = "git@push.yoctoproject.org:poky-ci-archive"
++tagged_repos = {"bitbake", "oecore", "meta-yocto"}
  
+ parser = utils.ArgParser(description='Iterates over a set of repositories in a json file and sets up a shared directory containing them.')
+ 
+@@ -55,7 +56,7 @@ with tempfile.TemporaryDirectory(prefix="shared-repo-temp-", dir="/home/pokybuil
+             utils.fetchgitrepo(tempdir, repo, repos[repo], stashdir, depth=1)
+         if args.publish_dir:
+             utils.publishrepo(tempdir, repo, args.publish_dir)
+-        if repo == "poky" and args.tag:
++        if repo in tagged_repos and args.tag:
+             utils.taggitrepo(tempdir, repo, repos[repo], poky_tag_remote, args.tag)
+ 
+     utils.printheader("Creating shared src tarball")
+diff --git a/scripts/utils.py b/scripts/utils.py
+index efc7c991181e..a4de27e71722 100644
+--- a/scripts/utils.py
++++ b/scripts/utils.py
+@@ -283,10 +283,11 @@ def fetchgitrepo(clonedir, repo, params, stashdir, depth=None):
+ def taggitrepo(clonedir, repo, params, tagremote, tagname):
+     sharedrepo = "%s/%s" % (clonedir, repo)
+     revision = params["revision"]
++    tag = f"{repo}/{tagname}"
+     print("Creating tag...")
+-    subprocess.check_call(["git", "tag", tagname, revision], cwd=sharedrepo)
++    subprocess.check_call(["git", "tag", tag, revision], cwd=sharedrepo)
+     print("Pushing tag...")
+-    subprocess.check_call(["git", "push", tagremote, tagname], cwd=sharedrepo)
++    subprocess.check_call(["git", "push", tagremote, tag], cwd=sharedrepo)
+ 
+ def publishrepo(clonedir, repo, publishdir):
+     sharedrepo = "%s/%s" % (clonedir, repo)
+
+---
+base-commit: 63f4e3954ff26cfd753c3c21f094b751978dda3e
+change-id: 20251017-contrib-mathieu-oe-core-tag-4c244fa417d3
+
+Best regards,
 -- 
-2.34.1
+Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 
 
