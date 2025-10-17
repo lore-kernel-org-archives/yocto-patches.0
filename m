@@ -2,39 +2,39 @@ Return-Path: <yi.zhao@eng.windriver.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B786FCCD195
-	for <webhook@archiver.kernel.org>; Fri, 17 Oct 2025 15:54:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB174CCD195
+	for <webhook@archiver.kernel.org>; Fri, 17 Oct 2025 15:56:01 +0000 (UTC)
 Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
- by mx.groups.io with SMTP id smtpd.web10.19720.1760716444195934185
+ by mx.groups.io with SMTP id smtpd.web11.19702.1760716554397493891
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 17 Oct 2025 08:54:04 -0700
+ Fri, 17 Oct 2025 08:55:54 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@windriver.com header.s=PPS06212021 header.b=pCqDFJ+G;
+ dkim=pass header.i=@windriver.com header.s=PPS06212021 header.b=GkOgIrkt;
  spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.178.238, mailfrom: prvs=238560992c=yi.zhao@windriver.com)
 Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59HF1cFO3619656;
-	Fri, 17 Oct 2025 15:54:03 GMT
+	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59HF1qrp3619957;
+	Fri, 17 Oct 2025 15:55:53 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
 	 h=cc:content-transfer-encoding:content-type:date:from
 	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	PPS06212021; bh=RlZth65CyJH2XmDKvMToBmfowcUW8YHopDizd8g+yE8=; b=
-	pCqDFJ+GKio0WlmLnY0bx3NBvEU5PDzFDPTMkr/vVK9+FgmELRwZzAmGi2FhPiSK
-	+g1Wci3C6uCc2HOxUcwWm8VfDTXqpStIw4vjKGoGqadQ0PQ07dZx6gAF2SIVZj/T
-	q9iJOaOserH5U/y2ga+uv3EkAxykoASXp2PSd45tj+HxwHvE5L4wuVnHGj9ZpoLO
-	UDi2ryfNrGLppnVp93beEXV+b76b+Htwt5l4qLV0fElyxxeR5qg1TxhzFCUuZk5G
-	hJoYGuxAVzHY4BwfuNEaMKmxPQjveWMImv3oeaH3WGg5bnNA2ksXqm5ZIcuMcR7C
-	fzMpIErpzz1LYEY3cWZAkQ==
-Received: from cy7pr03cu001.outbound.protection.outlook.com (mail-westcentralusazon11010042.outbound.protection.outlook.com [40.93.198.42])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 49sthhcand-1
+	PPS06212021; bh=wRE1qk4xSVXl78REzxBbir9hQi1aPtebTv0v6IuDcE4=; b=
+	GkOgIrktxpys7N3AnyYTHvYmlE5THR2pK8a8XJf1r2VQByQ7cxAmNGxwP2xMqE8a
+	Pb5Uxjz3zAfZ2hiHChhRqOcMMFBBa+JHff2y01Et5+CG+FERE9HKDsD1kJHYX8bn
+	9CbJt42uXfpUaTAFRqbuv4G2eCnYd4NjFSHEzQkhOyZWEjIcsL1+FXKREr/5es60
+	7EkhdDjhga7EchUIwk9YZUHYF70uZWNJnzS/jKtqWzSZh+eRKpv0NaKcJPzoByD9
+	YZLfrEhqwNPwk++IAwgF+xLkEAerFu/KOTqgt3t7w6TkpA8CHtWph/GRcIQW6swz
+	MECUaklcKJiIZJUe5bEw0A==
+Received: from bl0pr03cu003.outbound.protection.outlook.com (mail-eastusazon11012013.outbound.protection.outlook.com [52.101.53.13])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 49sthhcarp-1
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Fri, 17 Oct 2025 15:54:02 +0000 (GMT)
+	Fri, 17 Oct 2025 15:55:53 +0000 (GMT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nhreL3lwSBTA/Hi3StFhaypmvGDBNyBMXIq3eT6zsu8ZG+geMbBwygjwRib6IXLQgEmcN56W5lCmJjGRN9lKunNZfDUoPuY1Lre1uxBrRlGJW8m4Fieh8j2gMbS3FOxTfsPSEgX9/cQnCwLgHH6Bqsq0bWwFlkJMQENFMVCcQCLWSWZv8vPBfsJnLPG+Bp0KtCxhdbOU29B9UdcUyWrSFkufb3wNEfxrkYgAYyGpBOcbZDq7YIAsFFghgqk+roDVWTIon7U0HIfLnTQglinBD7VEO1sgBxyIK0qGSrjo+Jy8dIEFqKHY4FrjF2jbhUYDXIqsfRhT++wTv08dQ6zEbw==
+ b=RU1GWvIXLqyYIvbUpoucmlGRXGgC7OVDRfaFu2wpudoxbMZNtoo3XkcvyNkS/BXrau90Oj1R/IkvTfUGzfpoCBrpgJ9U9tOjwMdYKwVAu+TgBT/zbDevusytBhjbr2a3WTjjOPm14ihgYn+xY/ZO22aDTVIu1iMENwuhAjxrUSC+uWLBJ99NL1uvVmpoKzloDiuDRVgakFDYcG8nsh6563YcOF7y4eF5wzk4923bV8KXe4toIXB+vxGofbUtJeeswi++hUh7XTvFSWydRkmqZ9IFt5RnuDRhVc090fYhrSmCj6JggnMGnbNrNcVecXipZt6UurNUX1JTx8G475r8Tg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RlZth65CyJH2XmDKvMToBmfowcUW8YHopDizd8g+yE8=;
- b=EHr7ilYe56RebMf9fVuDn1hcXu/AeXmg+T0EovFgw976PoCZJuS3VroJs/twkb9Cl/jQ5aeoB8BgKFSjhQJRdoEjGwAfwyctcmUOBhPZUTxPCFae1JnR3HgktHtc5x7Id7QzdsDlW5o7JCgAi7272YOOQBVYYaOjPVRdnfhmn34JIqAD32GH+p+r/jpwbLXLS0T5vgYqEf3faslhXnyQSuPuqzzYfmSr9ahXpFYcAEoteksi0I5f9QifTDgtxbSDBbEmJRl4LRaeyPPdPcz1MYSXQsmHZzKKlmf2YTC2GpnBJACJjxE1hAL3Tf5dClm/nZ/6tSg+3xgOY9yR2Gt3aw==
+ bh=wRE1qk4xSVXl78REzxBbir9hQi1aPtebTv0v6IuDcE4=;
+ b=SHpdj1uQKebJzZQDbarHI875Njp38odbB1z1GbOFUHrrAggK2qajpdetdPnRBk7wfRbhd+INQ1/tpgZkj7sZv4vnjVDTXQ2b7doCzcCMbn63CucnJvYm0uR2DueXLqKC0jRhISgaJxSp5CLLoGrMex13CiFhgBMEh8k022DxSzAjmJOaS9tUOyYiJjZR9rRDGghoAkq3r0HLPagURpTQ8/HY80DqNQjJPM6air2LgAgynKdpnQMiiJT5jqZCTmS2bX2WKguDMoKzm3SmXzfSW0+97nW4bhhIFHUqT6hRVcl5zcKxmujtCD1aAYpsbXyLFszHvXpwMn7XdwaWSlBj2Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=windriver.com; dmarc=pass action=none
  header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
@@ -42,135 +42,135 @@ Received: from DS0PR11MB6399.namprd11.prod.outlook.com (2603:10b6:8:c8::5) by
  MW4PR11MB8266.namprd11.prod.outlook.com (2603:10b6:303:1e3::17) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.13; Fri, 17 Oct
- 2025 15:54:00 +0000
+ 2025 15:55:50 +0000
 Received: from DS0PR11MB6399.namprd11.prod.outlook.com
  ([fe80::2b44:787c:e7ee:bfad]) by DS0PR11MB6399.namprd11.prod.outlook.com
  ([fe80::2b44:787c:e7ee:bfad%3]) with mapi id 15.20.9228.011; Fri, 17 Oct 2025
- 15:53:59 +0000
-Message-ID: <22cca177-dc7c-46a5-afa0-327ab71310da@windriver.com>
-Date: Fri, 17 Oct 2025 23:53:55 +0800
+ 15:55:50 +0000
+Message-ID: <63498285-1222-4dd9-b9ae-d706046d065c@windriver.com>
+Date: Fri, 17 Oct 2025 23:55:45 +0800
 User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [meta-selinux][PATCH] genhomedircon: remove build
- path reference from generated file_context.homedirs header
+Subject: Re: [yocto-patches] [meta-selinux][PATCH] refpolicy_common: Skip HLL
+ module processing for monolithic policy builds
 To: yocto-patches@lists.yoctoproject.org
 Cc: Sasi Kumar Maddineni <quic_sasikuma@quicinc.com>
-References: <20251017064318.3442718-1-quic_sasikuma@quicinc.com>
+References: <20251017042419.3307354-1-quic_sasikuma@quicinc.com>
 Content-Language: en-US
 From: Yi Zhao <yi.zhao@windriver.com>
-In-Reply-To: <20251017064318.3442718-1-quic_sasikuma@quicinc.com>
+In-Reply-To: <20251017042419.3307354-1-quic_sasikuma@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: TYCP286CA0357.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:405:7c::15) To DS0PR11MB6399.namprd11.prod.outlook.com
+X-ClientProxiedBy: TYCP286CA0353.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:405:7c::10) To DS0PR11MB6399.namprd11.prod.outlook.com
  (2603:10b6:8:c8::5)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DS0PR11MB6399:EE_|MW4PR11MB8266:EE_
-X-MS-Office365-Filtering-Correlation-Id: 086f52c6-41c7-4f87-9054-08de0d956302
+X-MS-Office365-Filtering-Correlation-Id: 26a4cddc-cbbc-478c-84d9-08de0d95a4fe
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
 X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?YlY1SVRmMWhVeG1YMzR0VFk3aE5MUG9ha1R2clhETzFtejc3Wkh1UGo3YVQy?=
- =?utf-8?B?NG9NdFh5emZLb3psT0t2QnRGUTZsbWhFNmJpV3QzQ1kyKzR4Y0xLTW5tTW5C?=
- =?utf-8?B?SEd5aVptQWdkZXFSSjVTSE5OcG1WTiszQk9DL0tPZVRwa0ZrWndRYmlQYkJ0?=
- =?utf-8?B?OTNJY0xyckFVWWNmMHJZRGhoZW41RHREUUFFeHRQUEVCZmlocGdNMjFGaTBB?=
- =?utf-8?B?dmhWK1F6dE5mZkpKS2dUWURCMkJNL3BkSk15ZnJRWmlCOVFYTkE5eWprK0t0?=
- =?utf-8?B?Q2hsd28yZ3pFZ2YzQVhoUDhPMnBqVE5ibS8xbGU0eFgzbkhyTVN6K0FPQ2RR?=
- =?utf-8?B?ZVZJQkpSNC9qMk5NYXZCczZkOVRLMTBQRWpFZStNUXNtWlQyR2tabUlhR1Ru?=
- =?utf-8?B?Tjd6SFJvME9iTEtDTVNkanFTNGlUWFBEOE5Da1FaWUxhcENMRHRYdFFyRndk?=
- =?utf-8?B?WWU0M21OMW5sK2xJeHFVTUVGeWZleit1QzJadWs0RTZFYkRObldRUEcyY2pQ?=
- =?utf-8?B?S3duWXM1aGFjOXNORVRFYWpnZUhjaEMvMW9yVlBzTTZXOXk0MmFYUW12M3px?=
- =?utf-8?B?dHREcFp6ZnZVSTlkd0lWbE5aVFVaSlpaNVk1aW9TRlhjcE9VNGZiMU9DSVNF?=
- =?utf-8?B?b3hLT3Z1QitKQXpPeFZ0YkQvQXFuVDIyc0ZYbG1ISUhjTVdMNjFCZ1RYa3Fy?=
- =?utf-8?B?K0w2Y0NpeUtnbWp6bXlLdC8zWDc1ekdUS2QzZTFkUmZKODVWYnJGamhXeThV?=
- =?utf-8?B?cS9rK2J0S1lKYytCcHZKRUdtVGlyVmdkajdJVzNMdnFNR0MvVWxsUFZXWi91?=
- =?utf-8?B?eDRKNTdOeFlMa01nMlJOZ29RV0k5ZGNnQklJQkQyYnVpYjRNaFdFQUVXNm9x?=
- =?utf-8?B?TkZnQ1IySkN2eWFBZ3lFQWFCUXVONmFDNTA5QURlUGFvTmVYaHNHVFUwSUVn?=
- =?utf-8?B?L2xROWVmSjQ5ZjF3dm93NEVzb25qeDlZNnhFWnh4WWh3b01ER2ZuZitpanBR?=
- =?utf-8?B?N0p5UG0zZEdGQWFmSXk0bVdlekhrS1llOGEzakRCV1hzRnBZZXVQamp4aDVK?=
- =?utf-8?B?bUpNWkkzZ2lPcVhTRWdkL0JJV3djaW8xbDAxd2FPTGFiVlIyMmNoYWVhQ2x4?=
- =?utf-8?B?bFJxSkxobUdlZ1Buald0NWVSM2VNWHJza01sUTlqOG93TERjRHIxMkNGZ2U5?=
- =?utf-8?B?MHVmY2E1aEFYMFRiV2VKY20rcDE5dithc3NqanY2RWlLSWdRT3FWTXdETXA1?=
- =?utf-8?B?NDZVeHUrZmxWYUI3Z2hXN0hBakpUVTlZakJHNFZlRW5jMnpQbURteHhjUVhh?=
- =?utf-8?B?TGR4ZHJNYkt5QW9vK09EQ2Nib09GSlpncG1ReDBzemFsbzFFSnhXRnJleEJK?=
- =?utf-8?B?akZLSkxGQVdYQ0Y4ZnhjRFJ1K1VNMlRlYWdHejBkN3A0Q3g1MmJTMlU3L0dG?=
- =?utf-8?B?ZVpkTHlPV0tISXp5eGd6R1ZYdkY1SXZYVTFkbTZTUXpHRXdCSDQ4S0IrVjVZ?=
- =?utf-8?B?RFZZTE9TemNCQnhBaHFJU21TeXpDNW9ma3VUYUxPREdtYlppM0lqN3FqQW1v?=
- =?utf-8?B?TjVhSVYzejVXMTZRcmtmMFNGRThxNDVqRk5TQWhsMzRITmx3cVNkTHRVN2ds?=
- =?utf-8?B?MHVmVGNIbnBoZGFzWHFtbVNBa2R1eEc2RzkyY05sL1NNbUY1NnFoL1VBRDlS?=
- =?utf-8?B?T1pYZ1dENUhvL25JUVBQOS9oay8rU0pqYzVFWklqcW93a014ODIzWU5YT0p1?=
- =?utf-8?B?bVNTTFZPb3hpSkFvdVgyYm9DaXdOUGszYWI4MmYzZmI2b0o5R0g5cit0WExI?=
- =?utf-8?B?MHBtTTNJR3VoT29JYVNnTHBLQnhWbEFBVUJOVUFyZDZnTUNHaWxrUndYaUZk?=
- =?utf-8?B?amVKc1E4Mm5QSEEycGkrVUxrWWpMS2JMM0hvVnZVREttRXdESTh2TEVSeHYz?=
- =?utf-8?Q?CMV8FztsxShCrvPejYYUfB1bSevogyMj?=
+	=?utf-8?B?Q2xFWGZMeXpYbVZ6WDhoYjRFUE5nbTREZWxGd3J3TVNyaVBsRjZxV3RYcXE0?=
+ =?utf-8?B?V3FCNTF1a2xyc2tTOWF3NmgzRndQTElKak1IQVNRd0Q0OGsyT3ZpMXFweWRr?=
+ =?utf-8?B?M2hLSlh5QVhYVElWckxXNllLTVZIdnI5c0gvY3kxb1JJZSt1Q1pLZHFMTU52?=
+ =?utf-8?B?c0xYSVphUUxQZXFzRlMrcXJ0WDBsMjJKaUlFZ0IrRFRqVGhQRXNnSmhJK2kr?=
+ =?utf-8?B?cVloQ3ZtamE4dEhoM3Vvak1wb2ZnZVNCWk84Z1RqTjM1NXVRMzREdVdnWEFH?=
+ =?utf-8?B?aXFDdTcxVzVld0hocDZpUUxEZXFPaHZnVHZTbFN3UWNiZURDRm82aFA1SHpS?=
+ =?utf-8?B?K3Jvd2hicjlXV3R6ZzQ0NXNZUkNpdE11bGlpMTdPRWgwYmptd1Ftc253bzF5?=
+ =?utf-8?B?YlR0RkpNMHNJNm1nQWJ0aHhVdjByWXlKVFVuaWs4UDh6K3YxVUZtSEpLZS8v?=
+ =?utf-8?B?cFYzajIwQ29mckZiMTVDeHFpdndnNUpKUHhoUVBCY1BVSms0TjVkZkVPdFI5?=
+ =?utf-8?B?OWtsWFB0NlNUbjVYSlJvd2gySzc3Y1pRVGE1OXpCRFQ4WWgySFdwQ2VOTGN4?=
+ =?utf-8?B?a2FUanJTT0VERjFsRFVlTjVWL3p1ZHN5QWw3cGxiWmtNa0Y0ODBQR21qb2p3?=
+ =?utf-8?B?cER6elNWeFNGdXpyTjJYUHlacEFqNXJqV1dva0FlazlUYXVCMzN3c3lSbWJy?=
+ =?utf-8?B?SmVjR09ZL0M5SVpoa3N1N0UxTUFuUURzRis1Y1N1Ymp6L0RqNXVWTUxnVlNZ?=
+ =?utf-8?B?bUpscElub0pSZCs0Q0g1SFBqZVZKNWQyVU1nQ3RYZEpVU3RJL1lIb0tBb0dH?=
+ =?utf-8?B?RGlMcFhWNEN5RXZkeERmRW4zV1E5blpRU296bmtjbGY0UWVCdjFSNGdPZHU2?=
+ =?utf-8?B?NVdVREZrZThJVzZqY0FEUXZ1NFBSS0IyNVhLc1FmQWRiV2xwMG9tNE0vSDdP?=
+ =?utf-8?B?MmZYNDlJWDhEY25YZWVkeGlnWDE0VXNMNWpPVStOZXEzL052N29OaUJyemVM?=
+ =?utf-8?B?Z1ZiSzBCb2Z6MXE0UUdoTTdoUkFpeXB2WVNzd0FSRHZNUXpwWUZub1BEMVAw?=
+ =?utf-8?B?TldTSVo1U2VzM0dnUlUrd1VOV1VGd3JlY0VoczJqV2JJMzdxT1V5Mm9ydWpC?=
+ =?utf-8?B?VVhoTWZpRVFFc0hmbWpHQ3g1TWozSUlSb0FhRU96bDMyVzUzZ0s5aHNLTTVz?=
+ =?utf-8?B?QUZ0VElmNHZWQmpmNnZST3ZEREg0b3czSkpRNkp1TFNZbkFjbjc5ZzM4QlR1?=
+ =?utf-8?B?WW0zUFVvZ0N2d3k0bDY4UTVYZ1VyQ0ZYc1VxUlRiSjhxQlA1Y1BXWG4ybVhL?=
+ =?utf-8?B?K1B1aHcrOGtDaVVJV1plNzVER082bllnTmZQemNGVlZPZXpoeHdGa05kZy9X?=
+ =?utf-8?B?OTIxQ2F2VnduSHVQajJWdzAzWjFSaUt4Q0x4SkVpUm5FWm5jZzBWc1VzVGpN?=
+ =?utf-8?B?dHk0WEk1UkxSemgvakhtZVpOb1FNUkJyM3hBRmdQaVI1SENaY3J0VVN2OVRV?=
+ =?utf-8?B?dG04dGlPSkFWNWcwcXRDM1o5ZDlwa0dEQlZoSHY4Mlk3dVF1cy92c1dUNnhL?=
+ =?utf-8?B?T1ZCSGlHNlJncGllL3k2dTZVbVQxL1NxV25OelVhYjFCWmR1QUUwbEh4U3o0?=
+ =?utf-8?B?NjBHbSsyTVNyT2Q4RDNtcE1MekJYWi9LK3Fab1hVNWcvNFAvNXI1c1VoWHFR?=
+ =?utf-8?B?NHIzR3M2ZGZIbVVMMmx1a3EyYjgyUUc4b05qVjdVMDM3MWVoZlNFZlVJQlAx?=
+ =?utf-8?B?eEJBTTFISTZSRHpzaXRGdFZ1eFJwVTFTdlZlOTI1bkpjVEloWjJ4SWt4QTFY?=
+ =?utf-8?B?M0N4Y3ZiczErMmtqSEVYUXh6c0dUaWk4Nmp4TkFFOFloeHY5VDlRdE1vOFR6?=
+ =?utf-8?B?dzJlQk1CK1gvUjJBdEhuZFBtYjBGaVVXbnFXbUpaUFFoeUt6OW1EQnRtVzlN?=
+ =?utf-8?Q?SjqpiCII7wxZktJUN2JNAg2ZSwLojqEJ?=
 X-Forefront-Antispam-Report: 
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB6399.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?SjA4ZXMweG9MN3ZPV1hUM2M1Vm1LelNNRk9rNGFXVWl1NnlNZFAzUWo0bmNw?=
- =?utf-8?B?cmxqV2VMUVhJTVdNcm1qbkxwcmVQWGdEUWxlS0pPTUxGWGJyQ3FsWXlGZzV3?=
- =?utf-8?B?dWFZSVF4REdIdjFXTnBlRGx2MjdxUTZ3cDA3Z2xEOVYxWjVRZ203ZXh1R0t3?=
- =?utf-8?B?SWRsSVlUR0c1MFdjYTVpRVRCSmRHbStHTG04L1lDU2dRUHNpM2xEenVvNUJo?=
- =?utf-8?B?UXJVMi90SWRYbWgrb2p3VFlINVhMWU5hSUtBV2Z4QkNQeTZ5V3lqVFh2MkVt?=
- =?utf-8?B?S2huenRPUGY2MUo4TFdlTVQ2a1B1L2FLM1pQQmx6Wmh5SlFIc1ViU0dSd1JU?=
- =?utf-8?B?ejdBNWhnVGgyMjZMUU9ITkFHSmRnSGpydmxCanRJcVR4VGdhVFVPdEtTSmdq?=
- =?utf-8?B?bFJocVdzS1pLbDR1S002cklRNjlQcmM1SmRNUEROUVVuRlVtQTRLeU0xc3hC?=
- =?utf-8?B?RWd6bVhFekRzTDFkR3N0aWFMd0JYeitxM1hBcElpdkdCemh0bW9jM3JldDh1?=
- =?utf-8?B?dzM2VURLM2dmbm1rZXg5RktxK2N2LzNkeHdSY0tZVCtXbTdCMjBjamVpbytX?=
- =?utf-8?B?MlEzOGtlL0VmeFFnYzlYeXZKWTVwSkVIT3ZpSFdjV1U5cHlDNXhEVnVMM2R6?=
- =?utf-8?B?VkRiaEQ3ckVvOHNmQkxJZkNrZ1FYaUE5OFk4UWxLZHlKeHRRRnptOUFDcFYv?=
- =?utf-8?B?cVBTVDU3ZUplbkovOFc0elMyaWdweHpQV1EvYUFTeWtKME43UGIzQm5PZDhJ?=
- =?utf-8?B?bWNjTzVMdXlhUFM3emFqdUxiMWhnUlBxWkZTUUhWUXg0Y0M0SlpGVDFCeUpq?=
- =?utf-8?B?aTViakZjSGltQ2JrYW4wUVdtOXFZYlNmbTZ6VCtIVVBjRk5zVm1qaUR0Z0lN?=
- =?utf-8?B?V1VNNXFsWjB1b0tOTk1DWnJhNjhOb0ZnajdlVitnMHdKQ0k0KzZRWlJFL08r?=
- =?utf-8?B?K0NRUDJKelBTYXVPZnU4OURCMlUwL2lDSkwzM3IzSysyK3ZnTE1Eam5wT0t1?=
- =?utf-8?B?K3hnVEhPZXV6ZDZaeVdoa2IraGpkQTZpdzNNN0Jma0tTNDBaTWQ4VHRQOG1J?=
- =?utf-8?B?UEJvczlwSTI3UUdZSURKeUxVRlFmRXBTZkhod2xJaEkyTC9HTThranVPNk9K?=
- =?utf-8?B?TGtoaFlDNjVTMnI2UnBFcXJoaFdGSThKTHpJMDB0YXR3WW9JeCtBYWs1dzJx?=
- =?utf-8?B?aVhsanRYSmVOdUNKTGRoaDVVQ25KcDYweVR3L2YwR0RxRm9Sb1lOOGlNT0Z6?=
- =?utf-8?B?ZGxwSTI0Mm94bm1WSkxLR1VBaWRnZTJrVEtIM08zamFTb1krbjJ5eEoySVJC?=
- =?utf-8?B?Y3B2bitPTnNndUg2anEwNUFVTFpwYVlHWEtGZS85bk03ajdleVhBMDVkVFdY?=
- =?utf-8?B?alBnMlJkUWNNVlcxb1VXdCtPZ2NzK0g0a3MyeHdVSDZPakM3YmREWWlGaGg0?=
- =?utf-8?B?Zk9xUEZOWXFiS2F5UHhxcEsxQmNrT3YySzZMbm9qckU0RzJabG9rN0tRK0lx?=
- =?utf-8?B?dGlpUnBsRzRwemVhK0ZqMER6VXNzNnlDSmUxWmsvTENIb094QmdaK2VYVHRm?=
- =?utf-8?B?Z2FoQ1FHajQvbkNIYm5ZTGVwZWV3elZXT25PTUQ4MkNqbTBkTW51OFdtOFkx?=
- =?utf-8?B?OVNZNlJ3cVRKcVdDWHoxREF3eE53WTNzN0R2d0EyV1JMT2xNN0NHM1IwdzRO?=
- =?utf-8?B?OGNUQVdaZ2pqVjRCbVl5VTVlUk80NmJTU3k1ejkzL3RsbXRFaG5MakVUTHB4?=
- =?utf-8?B?c01YeEF4LzR5T08yNUhLKzQ3cE9GOTR2SC9Kc0lpVDJ5Z1hUeFh4bzkzeURM?=
- =?utf-8?B?aU9lZ0lLODNGNTlUUXZwRW5vNm1tbER0V2JhYmZlMW9XQjJ2OCswSExyUzll?=
- =?utf-8?B?N2JPbGxrZGtZckpWRHJjQXFSSUlzbGVZc1ZhUTMxV1NzYmZGVmtRU2NOdWFj?=
- =?utf-8?B?UWJ5V1lBU1FYcFhGbWgzVjQ2WjdZZmVVT2k3cGFXTWhpekhRWXZTWlQ1M1N4?=
- =?utf-8?B?YnJUTFQzUEdmZEthb1NHS25BSEVmcm9QYlRIa1MyQitoV2NFMXJucXB6MWl1?=
- =?utf-8?B?TXJ6TnBYcGhvRSsrTDlSMXVibGwzK0UweXl6UWZwRURlZ1VaWk9nRUhpc0ha?=
- =?utf-8?Q?Xqt+ZHD3SPZqwoA1V6+SFWlMr?=
+	=?utf-8?B?LzRvV3ZhczZIT0hGeUVTQ1ZiNTBFR3NYWlNNUm9yeTk0cEFBcmxrc21oT0pV?=
+ =?utf-8?B?V3pJLzVlbmV0eTZ6dzFUeEZJaTNPN2pOOVBKa0tSZzkyYlA4Z0pCQkI3ZURH?=
+ =?utf-8?B?ZUVUcUdOeHJ2eUdHbFB6aEoxSjU1Um5wQ25KOVlFbk02bWVGODdoTDdBOVlo?=
+ =?utf-8?B?NnExNUFKS0RPTWFUQlZEVEZmZnBXZGp0WDJvU3d1MEc0dm0yNzdWNGZMRHhF?=
+ =?utf-8?B?TFdHOXNIek1pWXlJbUs3a2o1M1dBRGRyNUc2ZkZJM080d0tHNFk5WjlhbTU4?=
+ =?utf-8?B?U2hpREJvT21qU3ZBNSs3bnVUbTBoSFhEajZQVnphVkJCaDhrOTUydWhxL2xn?=
+ =?utf-8?B?K2Rxa2FQWjFzcTFzbkEwTXNKSDJJT29jYTMrMGt5UU1LTDVpRzlwcFdFRjNG?=
+ =?utf-8?B?V1FkM0M3Ylk1VGFjeXVnWThnRG0xcjAxbm1tWUdWMWg5Tjh4UW1EZ3hUdGU0?=
+ =?utf-8?B?QjU5blFSM0YvQnNjZGVwTGFzR2JLbUtma3lPYkJYUW9SUzZhTHZ3YU1pSVZX?=
+ =?utf-8?B?TlNZQW00WEVhakZpTnM4dnRFd1FtVzZUeDU2TFowTlk3TUlwNk1ZdXBGeVFN?=
+ =?utf-8?B?SS9WL1pPY3dlTGhCdWlSMUxId292enBkS1prbWJodHhFeU1mWmYrUk9YdFZQ?=
+ =?utf-8?B?bitRRzYyZm5mY1hWMmhDSkt5WURpMEk1dGV3bGh5ZjN3Y0FCa3U0T3ZUSnhB?=
+ =?utf-8?B?amFEUlZyT2x2bmdXblp3M2E0NVVhdGpLdldGSXpPOXF2czgvTTEycnA4MkZm?=
+ =?utf-8?B?Q0xBVEVWUlpOQ3pWL25sUFh1OHRUejcyNnZTbFpRSHZMV3BxZmVIMGYwUnJ4?=
+ =?utf-8?B?eGgrdEhvZysxNG0xTjNGM21CY0ZhZmxXbEtIeVhObEtkQ0t0RmJoeEJTbCta?=
+ =?utf-8?B?d1BtRjhseUhLbk1QcElxUng4WWRGbzBNQ1I1U3hyOXhsdGdGajFtK1J2aVZt?=
+ =?utf-8?B?Vms1cjBKaTVoSlR5MjQyREV6L0pqZUxjdVNSU3oxNXBtM1UrdzZSN1o1V3RV?=
+ =?utf-8?B?TFlmTEp2SmszNzRPeXpmWWhIRGlCMG5YRERRUUVnc0pnV2sxUitBaitsT1Mx?=
+ =?utf-8?B?eHB5bnNvQVQybXZZS1RRL3JEM1dPTGxJMU1qdG55dS9adEQrcUxLU2FYMW0z?=
+ =?utf-8?B?ZjgvVG4rdnl2a0w2QUhWWVZjQWl6Q3pKd3B3RVg0RWZLcVVUYmFLWjVCSldK?=
+ =?utf-8?B?dTFoMnVnRFZjOXZyQzNyQm9mYzhDVEppNkpMZFhHUXhQWVNIZVdoWVpyTTBu?=
+ =?utf-8?B?blh5ZGxMdGdBbFlMM2tNY1BaZ01VOHZQdHdwYWlKa00xM2FxSTdoeDRZekpv?=
+ =?utf-8?B?TmNwY3I1ZE5OWHl1TlpOL2crdU1wa204ZVdYM2IrMzNvNWZDWHIya1N5T3Yw?=
+ =?utf-8?B?THRFbXdWYkxhcTVsNDRxNVFkNkdZemxIZkRoV1ByZEJFQTkzV3M1Y28rOXFz?=
+ =?utf-8?B?UWhKR1BXdDZGOUVtR29ma3ZHc3NOVTlpZlVOby9oSjRhN0ZiWlNudEozUjZM?=
+ =?utf-8?B?MHpkZjI1dGN4K2Nod2cwekE1LzIrWEdJRGJyM2MzRTRid0haK1VJbGpVaUYr?=
+ =?utf-8?B?TU5tWnFIbGlwVFlHZW9tdUFEeHlrTURoYjdjeUhYQnlKeGFBem5RTi9ja1la?=
+ =?utf-8?B?TlhLRFRtNUkzUjJ2SmQ2bUNkWGxCc2x3TFJmOU9xRDJZOWJoOHNWR2FxWStK?=
+ =?utf-8?B?SWpEMlprTjNqSmxWcVVDQXV1d1hWdWQwS2czUGZCK2xSUU9nbDJyWnVEbzZS?=
+ =?utf-8?B?L2QyZVFlNWt2ZytqVEwyZmFxRGwralZ6MkJqTVRVamNJbHQrTXJtc2ZnaVZI?=
+ =?utf-8?B?bHVweDJJYVN1YUFzODIxV0g0N3QyVHVSd0xvSVpuTUFkYndPeFlHeUZoUkM0?=
+ =?utf-8?B?VHMzNTc5L3dqc1pUMzk3cmY0R3A4c0JrTTJaaEQ5WUNxSUV5cjJtaTg0a1Ev?=
+ =?utf-8?B?UVVLK2JrTmFlWSt2b0krTUdqNzNCT1ZVQTR3KzFVTWNmT2FBcUFvOEtzOVpC?=
+ =?utf-8?B?blliWE9QUlUrZUJ0aE9uOTQySVBKdVQ3UzhBWFdkS2t4emdlQ2FNU0hvajlp?=
+ =?utf-8?B?VnprTThkZW85b2dXZVVaa1M4ZC9mNWYzMkNscC9Bd2szUXFKUDNTTGZJZHZV?=
+ =?utf-8?Q?U0hDwx2/SZ8xl4jj/18owFCR8?=
 X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 086f52c6-41c7-4f87-9054-08de0d956302
+X-MS-Exchange-CrossTenant-Network-Message-Id: 26a4cddc-cbbc-478c-84d9-08de0d95a4fe
 X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB6399.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 15:53:59.8404
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 15:55:50.5887
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: exl6e3354MqAIIVNlnrKkxjaNbr8uHTjPFM3slXACr/bWztmIdffK3PiObT23mOxdnNLQ0aEOExslJog8+pfGw==
+X-MS-Exchange-CrossTenant-UserPrincipalName: lph36EMIst0mwaAFEPsCMPhqmZti6vdohezJVJU5JQ6FI5tTCzGFLSwu5nzpvyCNKarZC1IV8DEjk6ihh2damg==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB8266
-X-Proofpoint-GUID: lqz8iLIdo4f1hnwMImlgwjrLYIqZOGot
-X-Proofpoint-ORIG-GUID: lqz8iLIdo4f1hnwMImlgwjrLYIqZOGot
-X-Authority-Analysis: v=2.4 cv=QLBlhwLL c=1 sm=1 tr=0 ts=68f2669b cx=c_pps
- a=EKn0uP0Y4sICCJyfUD6Zbg==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
+X-Proofpoint-GUID: DWYCxkNqIqlrReqehM_3om3sPbBg9DAg
+X-Proofpoint-ORIG-GUID: DWYCxkNqIqlrReqehM_3om3sPbBg9DAg
+X-Authority-Analysis: v=2.4 cv=QLBlhwLL c=1 sm=1 tr=0 ts=68f26709 cx=c_pps
+ a=UidE1AiM3qFEYM2TBOftzg==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
  a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
  a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10
  a=VkNPw1HP01LnGYTKEx00:22 a=iGHA9ds3AAAA:8 a=COk6AnOGAAAA:8
- a=560_TMv1KZjy7Psni4MA:9 a=QEXdDO2ut3YA:10 a=nM-MV4yxpKKO9kiQg6Ot:22
+ a=k3OF_JfcUK2G-7nlJu0A:9 a=QEXdDO2ut3YA:10 a=nM-MV4yxpKKO9kiQg6Ot:22
  a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE3MDExOCBTYWx0ZWRfX6YntnAaJzmuu
- WBn88UHqtIdd3dun5Dz1cYzX/H/PxaZPgCOlEBQP9ure1/H5m4EPRBLa2Ojh3beQQ02jh7AbbBk
- b/WAWG5JAYXnSBuUNuW/3CDJ3rRdAzNBU1BtL2TjZGxWEa8dEOUw8wWp/Ta0xLpREuzWA3d6UFM
- VG1oBOAU54u3jfwM52BxGGm7CKGfIEMSQCUKKBLURBts4ubFTinOScTTB+3ddw/5I+O5lyA1DlC
- ySlEeanUMzcGSSVgLek2B6uSkfRUnT286qBr6A8QSReT04hazkqGk+HmFaRZ6y/jFMECTBfXKjY
- dJ3TwgHJ6LP4o2iHW4f5gd6z2qEuhX2EK3i+VGzvGkZxhbNPa+OX63adB6VCbBOlDb7DoYBv8kf
- yn9CnfAt8zV0EQ7iLWiG/+kjlyI48w==
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE3MDExOCBTYWx0ZWRfX8R3oKU1BeH3/
+ NueT1IcFuGudzza5t/TEVCSYROYUT7z8myEHjK08vpuMWX3gXX8KXea9ZSEyfwACg7q+/uW1eyO
+ J0MJlm/IyEvTpb8rHqKxYxeCmt4mAtNj8xL+FZ/KhaU2sp4inS2cRVTocnyp6aRj13AXpCs66o1
+ 8aTMi2lWVAkd/Z4lN625Bvs8VO3bVNoQ4dtZoxnaflGkdccTf9O2pY9l0xgBFvff7cjZ5gkIk29
+ yC4bHJUf0PBSQKqBZ19X0zz2qqPo3rpuXgeIoY9z2cN0X3S2bgIe0VJUpFeo07u9hB2wc11h7b7
+ LoHigFkczvS/SJ3GOZQ7qANa228dHX51echYcZCeLV8JKxF1fhQBwkfJOafb5bsfE0mo4OGZjnW
+ 6PjPRd7fO4Nm/ttNCbmHTemfUSJZhw==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-17_05,2025-10-13_01,2025-03-28_01
@@ -182,98 +182,75 @@ X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 17 Oct 2025 15:54:11 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2350
+ <yocto-patches@lists.yoctoproject.org>; Fri, 17 Oct 2025 15:56:01 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2351
 
 
-On 10/17/25 14:43, Sasi Kumar Maddineni (QUIC) via 
+On 10/17/25 12:24, Sasi Kumar Maddineni (QUIC) via 
 lists.yoctoproject.org wrote:
-> The heading() function in genhomedircon.py included a comment referencing the
-> absolute path to the local.users file, which resides under TMPDIR during Yocto
-> builds. This caused the package QA check 'buildpaths' to fail due to the presence
-> of build-time paths in the final packaged output.
+> Avoid processing and copying high-level language (.pp) modules during do_install
+> when MONOLITHIC=y is set. This prevents build failures due to missing files in
+> /usr/share/selinux/targeted, which are not generated in monolithic mode.
 >
-> Reference:
-> The below commented lines are in filecontexts.homedirs file as a header,
-> which contains TMPDIR path. So, do_package_qa is flagging this issue in
-> case of MONOLITHIC design.
+> Fixes error:
+>    cp: cannot stat '/usr/share/selinux/targeted/*.*': No such file or directory
 >
-> To resolve this, the line generating the comment with the full path was removed,
-> preventing unnecessary QA errors and ensuring cleaner policy files.
+> Signed-off-by: Sasi Kumar Maddineni <quic_sasikuma@quicinc.com>
+> ---
+>   .../refpolicy/refpolicy_common.inc            | 33 ++++++++++---------
+>   1 file changed, 17 insertions(+), 16 deletions(-)
+>
+> diff --git a/recipes-security/refpolicy/refpolicy_common.inc b/recipes-security/refpolicy/refpolicy_common.inc
+> index fd41f8a..27aac44 100644
+> --- a/recipes-security/refpolicy/refpolicy_common.inc
+> +++ b/recipes-security/refpolicy/refpolicy_common.inc
+> @@ -173,22 +173,23 @@ prepare_policy_store() {
+>       # Get hll type from suffix on base policy module
+>       HLL_TYPE=$(echo ${POL_SRC}/base.* | awk -F . '{if (NF>1) {print $NF}}')
+>       HLL_BIN=${STAGING_DIR_NATIVE}${prefix}/libexec/selinux/hll/${HLL_TYPE}
+> -
+> -    for i in ${POL_SRC}/*.${HLL_TYPE}; do
+> -        MOD_NAME=$(basename $i | sed "s/\.${HLL_TYPE}$//")
+> -        MOD_DIR=${POL_ACTIVE_MODS}/${MOD_NAME}
+> -        mkdir -p ${MOD_DIR}
+> -        echo -n "${HLL_TYPE}" > ${MOD_DIR}/lang_ext
+> -        if ! bzip2 -t $i >/dev/null 2>&1; then
+> -            ${HLL_BIN} $i | bzip2 --stdout > ${MOD_DIR}/cil
+> -            bzip2 -f $i && mv -f $i.bz2 $i
+> -        else
+> -            bunzip2 --stdout $i | \
+> -                ${HLL_BIN} | \
+> -                bzip2 --stdout > ${MOD_DIR}/cil
+> -        fi
+> -        cp $i ${MOD_DIR}/hll
+> -    done
+> +    if [ "${POLICY_MONOLITHIC}" != "y" ]; then
 
 
-We can simply use 'sed' to filter TMPDIR. For example, add the following 
-line in do_install:append():
-
-sed -i -e 's|${D}||' 
-${D}${sysconfdir}/selinux/${POLICY_NAME}/contexts/files/file_contexts.homedirs
+Please add this change to refpolicy-minimum_git.bb as well, since the 
+prepare_policy_store() function in that recipe is overwritten.
 
 
 //Yi
 
 
->
-> Signed-off-by: Sasi Kumar Maddineni <quic_sasikuma@quicinc.com>
-> ---
->   ...move-build-path-reference-from-gener.patch | 36 +++++++++++++++++++
->   .../refpolicy/refpolicy_common.inc            |  3 +-
->   2 files changed, 38 insertions(+), 1 deletion(-)
->   create mode 100644 recipes-security/refpolicy/refpolicy/0057-genhomedircon-remove-build-path-reference-from-gener.patch
->
-> diff --git a/recipes-security/refpolicy/refpolicy/0057-genhomedircon-remove-build-path-reference-from-gener.patch b/recipes-security/refpolicy/refpolicy/0057-genhomedircon-remove-build-path-reference-from-gener.patch
-> new file mode 100644
-> index 0000000..af9bba3
-> --- /dev/null
-> +++ b/recipes-security/refpolicy/refpolicy/0057-genhomedircon-remove-build-path-reference-from-gener.patch
-> @@ -0,0 +1,36 @@
-> +From f584d80dc13f63119af53618350fd8262f17fe63 Mon Sep 17 00:00:00 2001
-> +From: Sasi Kumar Maddineni <quic_sasikuma@quicinc.com>
-> +Date: Fri, 17 Oct 2025 11:51:15 +0530
-> +Subject: [PATCH] genhomedircon: remove build path reference from generated
-> + file_context.homedirs header
-> +
-> +The heading() function in genhomedircon.py included a comment referencing the
-> +absolute path to the local.users file, which resides under TMPDIR during Yocto
-> +builds. This caused the package QA check 'buildpaths' to fail due to the presence
-> +of build-time paths in the final packaged output.
-> +
-> +To resolve this, the line generating the comment with the full path was removed,
-> +preventing unnecessary QA errors and ensuring cleaner policy files.
-> +
-> +Upstream-Status: Pending
-> +
-> +Signed-off-by: Sasi Kumar Maddineni <quic_sasikuma@quicinc.com>
-> +---
-> + support/genhomedircon.py | 1 -
-> + 1 file changed, 1 deletion(-)
-> +
-> +diff --git a/support/genhomedircon.py b/support/genhomedircon.py
-> +index b865a07c8..e7685545f 100644
-> +--- a/support/genhomedircon.py
-> ++++ b/support/genhomedircon.py
-> +@@ -157,7 +157,6 @@ class selinuxConfig:
-> +
-> + 	def heading(self):
-> + 		ret = "\n#\n#\n# User-specific file contexts, generated via %s\n" % sys.argv[0]
-> +-		ret += "# edit %s to change file_context\n#\n#\n" % self.getUsersFile()
-> + 		return ret
-> +
-> + 	def getUsers(self):
-> +--
-> +2.34.1
-> +
-> diff --git a/recipes-security/refpolicy/refpolicy_common.inc b/recipes-security/refpolicy/refpolicy_common.inc
-> index cf32723..aa782ca 100644
-> --- a/recipes-security/refpolicy/refpolicy_common.inc
-> +++ b/recipes-security/refpolicy/refpolicy_common.inc
-> @@ -72,7 +72,8 @@ SRC_URI += " \
->           file://0054-policy-modules-system-setrans-allow-setrans_t-use-fd.patch \
->           file://0055-policy-modules-system-systemd-make-_systemd_t-MLS-tr.patch \
->           file://0056-policy-modules-system-logging-make-syslogd_runtime_t.patch \
-> -        "
-> +        file://0057-genhomedircon-remove-build-path-reference-from-gener.patch \
-> +	"
+> +        for i in ${POL_SRC}/*.${HLL_TYPE}; do
+> +            MOD_NAME=$(basename $i | sed "s/\.${HLL_TYPE}$//")
+> +            MOD_DIR=${POL_ACTIVE_MODS}/${MOD_NAME}
+> +            mkdir -p ${MOD_DIR}
+> +            echo -n "${HLL_TYPE}" > ${MOD_DIR}/lang_ext
+> +            if ! bzip2 -t $i >/dev/null 2>&1; then
+> +                ${HLL_BIN} $i | bzip2 --stdout > ${MOD_DIR}/cil
+> +                bzip2 -f $i && mv -f $i.bz2 $i
+> +            else
+> +                bunzip2 --stdout $i | \
+> +                    ${HLL_BIN} | \
+> +                    bzip2 --stdout > ${MOD_DIR}/cil
+> +            fi
+> +            cp $i ${MOD_DIR}/hll
+> +        done
+> +    fi
+>   }
 >   
->   S = "${UNPACKDIR}/refpolicy"
->   
+>   rebuild_policy() {
 
