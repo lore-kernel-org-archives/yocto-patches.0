@@ -1,190 +1,109 @@
-Return-Path: <mathieu.dubois-briand@bootlin.com>
+Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C115BCCD195
-	for <webhook@archiver.kernel.org>; Fri, 17 Oct 2025 08:21:18 +0000 (UTC)
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
- by mx.groups.io with SMTP id smtpd.web10.10824.1760689269707845747
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52E9BCCD195
+	for <webhook@archiver.kernel.org>; Fri, 17 Oct 2025 14:29:21 +0000 (UTC)
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+ by mx.groups.io with SMTP id smtpd.web10.16829.1760711359845393795
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 17 Oct 2025 01:21:10 -0700
+ Fri, 17 Oct 2025 07:29:20 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=dkim header.b=kftqOzki;
- spf=pass (domain: bootlin.com, ip: 185.246.85.4, mailfrom: mathieu.dubois-briand@bootlin.com)
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 6155D4E4111B
-	for <yocto-patches@lists.yoctoproject.org>; Fri, 17 Oct 2025 08:21:08 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 37FE4606DB
-	for <yocto-patches@lists.yoctoproject.org>; Fri, 17 Oct 2025 08:21:08 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8EFC0102F2335;
-	Fri, 17 Oct 2025 10:21:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1760689267; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=4S+WV6pWFkquzaXivoJ9e4vJHQFc4uBTg58XLkAFfF0=;
-	b=kftqOzkimhEg3+etQzLlNEASDYFK9sjwI70hI0VWtAAsK4Tcze9vbho1CtICf8km7nztwz
-	cjB2CtMva7cumtnTb/A1VUaHI3QH8jj0gJCjGXm9/uJTQoDlnn+6ax74cseHEaqBaFQ6n4
-	WPWMNiLkV521WFGDd+X+OeEEZitWtsA6ef0xY9FVhy8Mx/84OAos0NKFeZbdfP63LNz2/R
-	jObYGnES0maXcXVvitmLTfmu3GNHss/RUvGc0btNXQFUZ2qNNy1Fcm9AgPo6wrGD6AZSPk
-	8tnMfKJYBICzq6gOnRHuy7BXUfnbQylzs3wP2+I2lDVrrZ5ySTqMAqpvT2Lbbg==
-From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Date: Fri, 17 Oct 2025 10:21:05 +0200
-Subject: [PATCH yocto-autobuilder2] builders: Show tags on separate gits
+ dkim=pass header.i=@konsulko.com header.s=google header.b=o6yXxosp;
+ spf=pass (domain: konsulko.com, ip: 209.85.219.49, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-7960d69f14bso17113746d6.2
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 17 Oct 2025 07:29:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=konsulko.com; s=google; t=1760711359; x=1761316159; darn=lists.yoctoproject.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=o4Mia+xTTO7YsYj7/axkmx0NIvSeymx8y+KqLzOeDd8=;
+        b=o6yXxospqpOoEPaRn8+vrsV1d6pjCfuzy+Ry9w/w3pG2wDv3+7Oym8yQ0lHeY5LnOp
+         iaxugv++8iRRk4CC74psuRLOIXLrwBqT7ezl04Dc+XisMJVJ3+aWt7wYx6oC3NtePwRd
+         6q4xsTZHoAjxdswdUVSBoHKvS/zgzfA0hmtX0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760711359; x=1761316159;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=o4Mia+xTTO7YsYj7/axkmx0NIvSeymx8y+KqLzOeDd8=;
+        b=vX8r1GrEfXgGNOUIVIwV/5ZN0iT4qGWjqIbOpsM+5jteOVKw2UmZokSe+XSF0/ZUww
+         iYltpJ0XKju7vInPf8PxPQN+bicrn6WjDTxqsk1KkfygzyYBKbvRisYQ9nknFnnJ0kzi
+         OfqtqeKIll1SgpxTKvAycQFokNjcsZqVi8WOskRowD3RHsqxmqxngFCAmTLKjOiF3ney
+         uWw3hMX/KxqOaXgQQjEnrhCwAaOwyEEG7R+VP292T53k4KqFPN01svRejkoEzCD8GZkb
+         V1NW7TaXiIgoS9tYt0kTW8y3f7r/V9X6CVxD4P0zg5GUXgu+s+xKd8SRzGPsBIEX+1tp
+         0d7w==
+X-Gm-Message-State: AOJu0YyhldxNUEASXzkjy4RO+eVBlt43cSfHCDGc1l7/W6xxZOATFMAt
+	CzvOnXEME+9edLuXvcn9C8TjUIW2CC3/PhbQCHuN5cRL31o/6FBu7NNSWpE+gr9jCR4=
+X-Gm-Gg: ASbGncv1s+zjiMfcm3aKlk9Zhs03VyopXu9lSfeLq1UAZuWQ9Z/iQnWz4S0WP4Z6mE1
+	G6wJ9dDBz7qwoSRMfhm2DjbKC8/X3Lwvx/rq1YqVcbPras2lcjevpbILJcfdqmamfVtP4JCCXK4
+	OMVqfcKfT1tU2xq2GZIpxenUFkDUNZplhQBlW2R8+hthNs6IYqoDwnXu/BsuBARsRznCeo0b5Xk
+	IMVoLOiEWz9tlnBAjKk9dHbWMAsYZGmDMhCWqNdTjMR/zbuOIOryyx2alH24mkQguGPU+nMzyZk
+	DJTKMhNhjMMeVOfFSpn2SbAQIhCfjuWFrM33bFMjdk2EXkeC8UgSJ2UD1kb2XIyKPXHqPLKBMA4
+	EHwF+HBpx1HVRV1mfEcZf4fXrc9oeqnAyqfM3vM3hSaAJdeYHZu89AV7zOL++00/x4dsbIxeYzD
+	PSFHy57/c3kPtleAnBSz5x/F/xCQGMgu+2vF0=
+X-Google-Smtp-Source: AGHT+IFHYG6AaD/SB9+6KtaLw28HerpHNojmPsVwm+xe+bwG9AsfyLt8s13lNjJDDUYCktlVOXfC+Q==
+X-Received: by 2002:ac8:7d49:0:b0:4b0:8e2e:fd9b with SMTP id d75a77b69052e-4e89d28f497mr46786001cf.28.1760711358325;
+        Fri, 17 Oct 2025 07:29:18 -0700 (PDT)
+Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87c16fe1e25sm34315606d6.1.2025.10.17.07.29.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Oct 2025 07:29:16 -0700 (PDT)
+Date: Fri, 17 Oct 2025 10:29:04 -0400 (EDT)
+From: Scott Murray <scott.murray@konsulko.com>
+To: "Marta Rybczynska (Ygreky)" <marta.rybczynska@ygreky.com>
+cc: yocto-patches@lists.yoctoproject.org
+Subject: Re: [meta-security][PATCH 01/15] kas: use repo name
+In-Reply-To: <e1d64ff2-80b7-4a99-8329-0d227199032f@ygreky.com>
+Message-ID: <af60652b-486c-0aa0-9733-2f4af98c8829@konsulko.com>
+References: <cover.1760648348.git.scott.murray@konsulko.com> <6cbe841e8b09ac4804e8c87e23f81d68f97c17f4.1760648348.git.scott.murray@konsulko.com> <e1d64ff2-80b7-4a99-8329-0d227199032f@ygreky.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251017-contrib-mathieu-oe-core-tag-v1-1-a9c204c3750e@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAHD88WgC/x2M0QrCMAwAf2Xk2UDbIYK/Ij60XdwC2kiaDmXs3
- 1f2eMdxG1RSpgr3YQOllStL6eAvA+QllpmQp84QXLh652+YpZhywk+0hamhUFdKaHHGMQXnfB5
- 9L6Efvkov/p33B/wlm2BsJqnxeyIN8Nz3A4FDmcqBAAAA
-X-Change-ID: 20251017-contrib-mathieu-oe-core-tag-3b2001c31101
-To: yocto-patches@lists.yoctoproject.org
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760689267; l=6358;
- i=mathieu.dubois-briand@bootlin.com; s=20241219; h=from:subject:message-id;
- bh=hcRKp6wP/w3nQE/EVcFEQ5RAXn3RS2lAwLjvnH4T848=;
- b=ox53YyVQPC3v2eAspQCQJDzoBnuCapL4wnQAv7h9t2dFLYCnda7ITo3lluKksltxp/ej9s1fo
- ySDvY5ZveiFBvmahO1BI+q2cWHLEa4bXsKM0cTcJ/kZk9THhauYMTQE
-X-Developer-Key: i=mathieu.dubois-briand@bootlin.com; a=ed25519;
- pk=1PVTmzPXfKvDwcPUzG0aqdGoKZJA3b9s+3DqRlm0Lww=
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=US-ASCII
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 17 Oct 2025 08:21:18 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2348
+ <yocto-patches@lists.yoctoproject.org>; Fri, 17 Oct 2025 14:29:21 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2349
 
-Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
----
- builders.py                                        | 21 +++++++++++----
- ...builders-Do-not-create-tags-during-builds.patch | 31 +++++++++++++++-------
- 2 files changed, 37 insertions(+), 15 deletions(-)
+On Fri, 17 Oct 2025, Marta Rybczynska (Ygreky) wrote:
 
-diff --git a/builders.py b/builders.py
-index 18c119aa7617..b7379ece71f2 100644
---- a/builders.py
-+++ b/builders.py
-@@ -272,6 +272,13 @@ def prioritizeBuilders(master, builders):
-     #log.msg("Using %s" % str(rv))
-     return rv
- 
-+# Tags in poky-ci-archive are prefixed with the name of the repo, except for
-+# poky itself.
-+tag_prefixes = {"poky": "",
-+                "bitbake": "bitbake/",
-+                "oecore": "oecore/",
-+                "meta-yocto": "meta-yocto/"}
-+
- @util.renderer
- def createBuildTag(props):
-     buildername = props.getProperty('buildername')
-@@ -313,10 +320,12 @@ def create_parent_builder_factory(buildername, waitname):
-         name="Prepare shared repositories"))
-     factory.addStep(steps.SetProperty(
-         property="poky-ci-archive_tag", value=createBuildTag))
--    tagurl = util.Interpolate('https://git.yoctoproject.org/poky-ci-archive/log/?h=%(kw:tag)s',
--                              tag=createBuildTag)
--    factory.addStep(steps.SetProperty(
--        property="poky-ci-archive_url", value=tagurl))
-+
-+    for repo, prefix in tag_prefixes.items():
-+        tagurl = util.Interpolate('https://git.yoctoproject.org/poky-ci-archive/log/?h=%(kw:prefix)s%(kw:tag)s',
-+                                  prefix=prefix, tag=createBuildTag)
-+        factory.addStep(steps.SetProperty(
-+            property=f"poky-ci-archive_url_{repo}", value=tagurl))
-     factory.addStep(steps.SetProperty(
-         property="sharedrepolocation",
-         value=util.Interpolate("{}/%(prop:buildername)s-%(prop:buildnumber)s".format(config.sharedrepodir))
-@@ -366,7 +375,6 @@ def create_parent_builder_factory(buildername, waitname):
-             "yp_build_revision": util.Property("yp_build_revision"),
-             "yp_build_branch": util.Property("yp_build_branch"),
-             "poky-ci-archive_tag": util.Property("poky-ci-archive_tag"),
--            "poky-ci-archive_url": util.Property("poky-ci-archive_url")
-         }
- 
-         for repo in config.buildertorepos[buildername]:
-@@ -377,6 +385,9 @@ def create_parent_builder_factory(buildername, waitname):
-         set_props["milestone_number"] = util.Property("milestone_number")
-         set_props["rc_number"] = util.Property("rc_number")
- 
-+        for repo in tag_prefixes:
-+            set_props[f"poky-ci-archive_url_{repo}"] = util.Property(f"poky-ci-archive_url_{repo}")
-+
-         return set_props
- 
-     factory.addStep(steps.Trigger(schedulerNames=[waitname],
-diff --git a/docker/yocto-autobuilder2_patches/0001-builders-Do-not-create-tags-during-builds.patch b/docker/yocto-autobuilder2_patches/0001-builders-Do-not-create-tags-during-builds.patch
-index b36f2ea7e83e..c1482f72c8e4 100644
---- a/docker/yocto-autobuilder2_patches/0001-builders-Do-not-create-tags-during-builds.patch
-+++ b/docker/yocto-autobuilder2_patches/0001-builders-Do-not-create-tags-during-builds.patch
-@@ -5,14 +5,14 @@ Subject: [PATCH 1/2] builders: Do not create tags during builds
- 
- Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
- ---
-- builders.py | 9 ---------
-- 1 file changed, 9 deletions(-)
-+ builders.py | 13 -------------
-+ 1 file changed, 13 deletions(-)
- 
- diff --git a/builders.py b/builders.py
--index 2fb0bf827b0f..af1cc263fd2e 100644
-+index b7379ece71f2..d87e41c9233e 100644
- --- a/builders.py
- +++ b/builders.py
--@@ -307,16 +307,9 @@ def create_parent_builder_factory(buildername, waitname):
-+@@ -314,18 +314,9 @@ def create_parent_builder_factory(buildername, waitname):
-              util.Interpolate("%(prop:builddir)s/layerinfo.json"),
-              util.Interpolate("{}/%(prop:buildername)s-%(prop:buildnumber)s".format(config.sharedrepodir)),
-              "-p", get_publish_dest,
-@@ -22,22 +22,33 @@ index 2fb0bf827b0f..af1cc263fd2e 100644
-          name="Prepare shared repositories"))
- -    factory.addStep(steps.SetProperty(
- -        property="poky-ci-archive_tag", value=createBuildTag))
---    tagurl = util.Interpolate('https://git.yoctoproject.org/poky-ci-archive/log/?h=%(kw:tag)s',
---                              tag=createBuildTag)
---    factory.addStep(steps.SetProperty(
---        property="poky-ci-archive_url", value=tagurl))
-+-
-+-    for repo, prefix in tag_prefixes.items():
-+-        tagurl = util.Interpolate('https://git.yoctoproject.org/poky-ci-archive/log/?h=%(kw:prefix)s%(kw:tag)s',
-+-                                  prefix=prefix, tag=createBuildTag)
-+-        factory.addStep(steps.SetProperty(
-+-            property=f"poky-ci-archive_url_{repo}", value=tagurl))
-      factory.addStep(steps.SetProperty(
-          property="sharedrepolocation",
-          value=util.Interpolate("{}/%(prop:buildername)s-%(prop:buildnumber)s".format(config.sharedrepodir))
--@@ -365,8 +358,6 @@ def create_parent_builder_factory(buildername, waitname):
-+@@ -374,7 +365,6 @@ def create_parent_builder_factory(buildername, waitname):
-              "rc_number": util.Property("rc_number"),
-              "yp_build_revision": util.Property("yp_build_revision"),
-              "yp_build_branch": util.Property("yp_build_branch"),
- -            "poky-ci-archive_tag": util.Property("poky-ci-archive_tag"),
---            "poky-ci-archive_url": util.Property("poky-ci-archive_url")
-          }
-  
-          for repo in config.buildertorepos[buildername]:
-+@@ -385,9 +375,6 @@ def create_parent_builder_factory(buildername, waitname):
-+         set_props["milestone_number"] = util.Property("milestone_number")
-+         set_props["rc_number"] = util.Property("rc_number")
-+ 
-+-        for repo in tag_prefixes:
-+-            set_props[f"poky-ci-archive_url_{repo}"] = util.Property(f"poky-ci-archive_url_{repo}")
-+-
-+         return set_props
-+ 
-+     factory.addStep(steps.Trigger(schedulerNames=[waitname],
- -- 
- 2.47.3
- 
+> Hello Scott,
+>
+> we do not need this one (removed from
+> https://git.yoctoproject.org/meta-security/log/?h=master-next)
+>
+> and it would actually break the build for meta-security
 
----
-base-commit: 37a0183944496fb30ed73e4d2fd3acdb532a7d06
-change-id: 20251017-contrib-mathieu-oe-core-tag-3b2001c31101
+Oops, I wasn't paying attention, thought I'd filtered that one out
+previously.  We definitely don't want this one on master.
 
-Best regards,
--- 
-Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Thanks,
 
+Scott
+
+
+> On 16.10.2025 23:22, Scott Murray wrote:
+> > From: Marta Rybczynska <marta.rybczynska@ygreky.com>
+> >
+> > Use the repo name directly, otherwise the build can get the wrong clone.
+> >
+> > Signed-off-by: Marta Rybczynska <marta.rybczynska@ygreky.com>
+> > ---
+> >   kas/kas-security-base.yml | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/kas/kas-security-base.yml b/kas/kas-security-base.yml
+> > index 17f4bb3..e5af7bc 100644
+> > --- a/kas/kas-security-base.yml
+> > +++ b/kas/kas-security-base.yml
+> > @@ -6,7 +6,7 @@ distro: poky
+> >   repos:
+> >     meta-security:
+> >       layers:
+> > -      ../meta-security:
+> > +      ../meta-security-staging:
+> >         meta-tpm:
+> >         meta-integrity:
+> >         meta-hardening:
+>
+>
 
