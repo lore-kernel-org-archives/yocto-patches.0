@@ -2,118 +2,88 @@ Return-Path: <mathieu.dubois-briand@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7EE4CCD195
-	for <webhook@archiver.kernel.org>; Fri, 17 Oct 2025 08:20:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBCB9CCD184
+	for <webhook@archiver.kernel.org>; Fri, 17 Oct 2025 08:20:58 +0000 (UTC)
 Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
- by mx.groups.io with SMTP id smtpd.web11.10781.1760689239922737928
+ by mx.groups.io with SMTP id smtpd.web11.10783.1760689248749159816
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 17 Oct 2025 01:20:40 -0700
+ Fri, 17 Oct 2025 01:20:49 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=dkim header.b=qoPJSjxx;
+ dkim=pass header.i=@bootlin.com header.s=dkim header.b=fRmTD9XO;
  spf=pass (domain: bootlin.com, ip: 185.246.85.4, mailfrom: mathieu.dubois-briand@bootlin.com)
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id F19DD4E4111B
-	for <yocto-patches@lists.yoctoproject.org>; Fri, 17 Oct 2025 08:20:37 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 66EE54E4111B
+	for <yocto-patches@lists.yoctoproject.org>; Fri, 17 Oct 2025 08:20:47 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id C4DF7606DB
-	for <yocto-patches@lists.yoctoproject.org>; Fri, 17 Oct 2025 08:20:37 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EEEBE102F2330;
-	Fri, 17 Oct 2025 10:20:36 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 3E908606DB
+	for <yocto-patches@lists.yoctoproject.org>; Fri, 17 Oct 2025 08:20:47 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9843B102F2335;
+	Fri, 17 Oct 2025 10:20:46 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1760689237; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=kZj2/GVgsuiz4jaqBfXR0Dp+Cj5UWAOr4TX15SleA/Y=;
-	b=qoPJSjxx5ijci8JtXHM3vCWpju+kIvh8Q1NDqqoLHwEFqsWdo/UlUvueZdiNGzrU6lhNKX
-	XXs6UIP3qICpZ5Isdr/tdlbkndrKXFUprgp5Fz4vRm9xgpM0L0dQTXQoiZe17XL7km+jps
-	m2bPCRc9SI0bIiHcI2qRZcZue3BN13NJHpmkbBzin2K7pVmqAG+rPnQfHVzLdZ8n4O0oWN
-	gTIX76FswUQkybT8ilscZ6r39sVfAsifopzL7d+MRWDZ+HTed62GSNp8XXHAJN8AmAJl5M
-	2nvbFJ1/1Lx4IFK0h8b++q+d+O2By+mjWGzUt4hW50R5OD27vAZBa8WhhdDoWg==
+	t=1760689246; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=NkWNEiSNXJcKTFOtL2XwJpcmtDZ+N8tu+2vvn23HeaI=;
+	b=fRmTD9XOUQhbJYqzqaC/JE9kCz7RWNVB+coxYPXRZhDQlOE86qVRxBcpK1/+VzfD0Oakid
+	sBlu2w/gJjidBtuF5KZBGtcWrY0l/cUDTh69x03QFeuJiimt4FTDcfhAyEdCbaFqV0eXx9
+	3XnRyqvgp7eT1OB5ALbdTel/Wyxi3j5/MMopjBeEtZd7d1wcFErh0Odn7TIfNP3X7ys9cc
+	z6uu5PTzazg/bqkPwtXnncQ4iAz7yFmKwDXv1WS+uII5Me24A7yp3VnmeX4IBacYpktyUT
+	Ytdz7erkr08EcjcHFcE7vY4QjBOe5qB1uzggCmSnheAZu8EosTBTt+ne/pZbtg==
 From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Date: Fri, 17 Oct 2025 10:20:29 +0200
-Subject: [PATCH yocto-autobuilder-helper] prepare-shared-repos: Add tag for
- separate gits
+Date: Fri, 17 Oct 2025 10:20:43 +0200
+Subject: [PATCH yocto-autobuilder2] schedulers: Update my release selector
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251017-contrib-mathieu-oe-core-tag-v1-1-9ed5059cde28@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAE388WgC/x3MQQrDIBBA0auEWXcgWkugVyldGJ3EgdQJo5aWk
- LtXunx/8Q8opEwF7sMBSm8uLLnDXAYIyeeVkGM32NHezGgmDJKr8owvXxNTQ6GelLD6FV2wzi3
- emSleoR92pYU///sDvhKqoG9V5sZbJMVE204Kz/P8AZNUTy+HAAAA
-X-Change-ID: 20251017-contrib-mathieu-oe-core-tag-4c244fa417d3
+Message-Id: <20251017-mathieu-update-release-selector-v1-1-9e7d18416924@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAFr88WgC/x2N0QrCMBAEf6XcswdJUAv+ivhwbVZ7UJtySYpS+
+ u8Gn4aBYXenDFNkunU7GTbNmpYm/tTROMnyAmtsTsGFi3e+57eUSVG5rlEK2DBDMjg3jiUZu8G
+ dwxVR+hCorayGp37+D3f6ptaw1JKGqnOEBXocxw9BYm/JhQAAAA==
+X-Change-ID: 20251017-mathieu-update-release-selector-0b0426eda722
 To: yocto-patches@lists.yoctoproject.org
 Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
  Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760689236; l=2609;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760689246; l=1136;
  i=mathieu.dubois-briand@bootlin.com; s=20241219; h=from:subject:message-id;
- bh=shSDt55Um/Y7jWtH09oAPCdkynx+sy2mp9GivlCR0Ls=;
- b=whZ78ccDHpNeoaA38xbyH2UZ8xEVzAshc6gK4wXG0FzPMV+kgkGdugNtODoeKH7UhzyIUcirD
- 7VG/aJqmrEKCd8GtebV40qmQDg2VcxizwrWf89KjwJjIPtv4ZsdQhWb
+ bh=bFt/tbFGA0NjGKozzus5NPYFVR6DX/MtgZ8TIIdkV10=;
+ b=IcWUhRXxaFeX0momKUReOELYmCECfW5GPNTs3mtf5xaw7sE+3ZuJnuaSjPeVPdUJakG7YqjGS
+ dN7JL51HSHFDIiAWL9Qj0c7SCU+LBGOPGxvkDcD0BZDpLjQwMBJZME6
 X-Developer-Key: i=mathieu.dubois-briand@bootlin.com; a=ed25519;
  pk=1PVTmzPXfKvDwcPUzG0aqdGoKZJA3b9s+3DqRlm0Lww=
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 17 Oct 2025 08:20:48 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2346
-
-As poky is no longer used, add tags for openembedded-core, bitbake and
-meta-yocto. We continue to use the same poky-ci-archive repo.
+ <yocto-patches@lists.yoctoproject.org>; Fri, 17 Oct 2025 08:20:58 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2347
 
 Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 ---
-PLEASE DO NOT MERGE!
+ schedulers.py | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Only merge this once oe-core and bitbake master branches have been
-pushed on poky-ci-archive, as we need to bypass push checks to do that.
----
- scripts/prepare-shared-repos | 3 ++-
- scripts/utils.py             | 5 +++--
- 2 files changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/scripts/prepare-shared-repos b/scripts/prepare-shared-repos
-index a510a4fd0cf4..8ffc2c501571 100755
---- a/scripts/prepare-shared-repos
-+++ b/scripts/prepare-shared-repos
-@@ -17,6 +17,7 @@ import tempfile
- import utils
- 
- poky_tag_remote = "git@push.yoctoproject.org:poky-ci-archive"
-+tagged_repos = {"bitbake", "oecore", "meta-yocto"}
- 
- parser = utils.ArgParser(description='Iterates over a set of repositories in a json file and sets up a shared directory containing them.')
- 
-@@ -55,7 +56,7 @@ with tempfile.TemporaryDirectory(prefix="shared-repo-temp-", dir="/home/pokybuil
-             utils.fetchgitrepo(tempdir, repo, repos[repo], stashdir, depth=1)
-         if args.publish_dir:
-             utils.publishrepo(tempdir, repo, args.publish_dir)
--        if repo == "poky" and args.tag:
-+        if repo in tagged_repos and args.tag:
-             utils.taggitrepo(tempdir, repo, repos[repo], poky_tag_remote, args.tag)
- 
-     utils.printheader("Creating shared src tarball")
-diff --git a/scripts/utils.py b/scripts/utils.py
-index efc7c991181e..a4de27e71722 100644
---- a/scripts/utils.py
-+++ b/scripts/utils.py
-@@ -283,10 +283,11 @@ def fetchgitrepo(clonedir, repo, params, stashdir, depth=None):
- def taggitrepo(clonedir, repo, params, tagremote, tagname):
-     sharedrepo = "%s/%s" % (clonedir, repo)
-     revision = params["revision"]
-+    tag = f"{repo}/{tagname}"
-     print("Creating tag...")
--    subprocess.check_call(["git", "tag", tagname, revision], cwd=sharedrepo)
-+    subprocess.check_call(["git", "tag", tag, revision], cwd=sharedrepo)
-     print("Pushing tag...")
--    subprocess.check_call(["git", "push", tagremote, tagname], cwd=sharedrepo)
-+    subprocess.check_call(["git", "push", tagremote, tag], cwd=sharedrepo)
- 
- def publishrepo(clonedir, repo, publishdir):
-     sharedrepo = "%s/%s" % (clonedir, repo)
+diff --git a/schedulers.py b/schedulers.py
+index 40a7facd5424..8ab9dee54f33 100644
+--- a/schedulers.py
++++ b/schedulers.py
+@@ -45,12 +45,14 @@ branchdefaults = {
+         'branch_oecore': 'master-next',
+     },
+     'mathieu-next': {
++        'reason': 'test mathieu/master-next',
+         'repo_poky': 'ssh://git@push.yoctoproject.org/poky-contrib',
+         'branch_poky': 'mathieu/master-next',
+         'repo_oecore': 'ssh://git@push.openembedded.org/openembedded-core-contrib',
+         'branch_oecore': 'mathieu/master-next',
+         'repo_bitbake': 'ssh://git@push.openembedded.org/bitbake-contrib',
+         'branch_bitbake': 'mathieu/master-next',
++        'branch_meta-yocto': 'contrib/mathieu/master-next',
+     },
+     'mut': {
+         'branch': 'master',
 
 ---
-base-commit: 63f4e3954ff26cfd753c3c21f094b751978dda3e
-change-id: 20251017-contrib-mathieu-oe-core-tag-4c244fa417d3
+base-commit: 37a0183944496fb30ed73e4d2fd3acdb532a7d06
+change-id: 20251017-mathieu-update-release-selector-0b0426eda722
 
 Best regards,
 -- 
