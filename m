@@ -1,85 +1,154 @@
-Return-Path: <alex.kanavin@gmail.com>
+Return-Path: <majortomtosourcecontrol@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5527CCD193
-	for <webhook@archiver.kernel.org>; Mon, 20 Oct 2025 11:50:16 +0000 (UTC)
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
- by mx.groups.io with SMTP id smtpd.web10.15989.1760961015355324880
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4F7BCCD193
+	for <webhook@archiver.kernel.org>; Mon, 20 Oct 2025 16:36:04 +0000 (UTC)
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+ by mx.groups.io with SMTP id smtpd.web10.1825.1760978161846646292
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 20 Oct 2025 04:50:15 -0700
+ Mon, 20 Oct 2025 09:36:01 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=jUGqAh1G;
- spf=pass (domain: gmail.com, ip: 209.85.219.50, mailfrom: alex.kanavin@gmail.com)
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-87c103928ffso64961466d6.1
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 20 Oct 2025 04:50:15 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=RnRGgTDh;
+ spf=pass (domain: gmail.com, ip: 209.85.166.51, mailfrom: majortomtosourcecontrol@gmail.com)
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-92790f12293so226253339f.2
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 20 Oct 2025 09:36:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760961014; x=1761565814; darn=lists.yoctoproject.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=OyPaDEA3ruykRJ3B1YKUT8u/5NZdaCbfQp4S0COi8AE=;
-        b=jUGqAh1GBETnFdrfGTOzvhNk9bTy1kzfzafLCjVdz60eRSLpmC6Stot1QSqvWZtijz
-         VYfK/xruN/wHhO+ib5ThChEI4JDc3bGyF0jCitZ9DuztJK+FNmm/fSPRVYRD48XgekSy
-         Wlx963037nrbCRItanUwDUpo+1oYV8Qv0L6XEpORKphjQVrvKaP+/ZO8gdODJekX51DW
-         jOnEY80K8tkQicA7h75lavJVn96pBaYK/Oy8w345YhnKRvL/6GP1bqm6Tfvyyip3yeWY
-         zWzeFcMci+u35iR5YqI8RASOUPOmdYOf4s222awMOrwEoN7MxRc1mn7XE76rCk1/SJeN
-         00NA==
+        d=gmail.com; s=20230601; t=1760978161; x=1761582961; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IS1Pf/McLgQKiG+N7aL4ggkLy+BBzyf/iqHhiuh48W0=;
+        b=RnRGgTDhjeZBLntWy/y2ToQP8aKDRXkhmTwGPKDLG3+FZBHo0ysyspqbEqF2zr0UpK
+         z+ojKfwCcS37Blc6tBpnPHCiigsmTN85oPAc7Hn+B69R5ZVISVE29A35ieKZUKKLSb3v
+         w73/Po3tsh8hFbhJcZ9BmJtJjQnwse2ENCPjkNM+P3uu8jK+F3wPPo1K3MsHO9DcDrQH
+         nLPRA0xHCzSnEYyVcnxWQr+qWLaFrVJSLrOXvHzfsbLg/twKztWgDiWOwzqB1MCvJMZg
+         Jbk+npLIXBB7r2Wo53FDIIloBdz9KLUUYRYappGy1tnCXuLXC2GbCTGD695IXx4nREo0
+         6dZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760961014; x=1761565814;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OyPaDEA3ruykRJ3B1YKUT8u/5NZdaCbfQp4S0COi8AE=;
-        b=IocHqHVClvqr0s0IYebNAzk6W9L74fKXcQM+9p80kndzKN475i6qgdkXdtRVFyQNHS
-         RgPx/WahYfSXd9SQdeikPbUOMeWbTheikdjN/ZCXCulFSgUnSb9P6G+1bV3ndInN6XrX
-         /OPzGKJnb+m9mvux8XVeK0a0fVIyjlxZPkTbRQGDvn7rNGd6e9QT8eftUhXH79NTzg2x
-         pPRuYxSUmKZAKWdF1ut66h3EC1Cm18y2QtfX/hOTt6MGC3D1t9Uoui+AurtU94Nt0rzm
-         3TkNHR5roHK+njdodgm1vZUNUQ3f0z5UWFEifBAJWMbTYxH5AxBxszwiy0bc1fLvdPYD
-         tuqg==
-X-Gm-Message-State: AOJu0YypkiZ9bqtqHdp9esjFP5Qjh6KYtJpXRTUnRD/v81W81CFTF7AA
-	8jdK9HKbelg9TnF/BKUEl/E0iqiT3U/Hpk5rSKCPMqerfOy0tm6Q1Lbt5jT/L/yOP2ZD/RzXwFW
-	/ynviASkVsOyvQ2JTGiDSeZ1ZHVQWDQ5fLg==
-X-Gm-Gg: ASbGncudPCax3ujkl/3iUl+GCS3wbS2Y4PmmhlIKuNyBxy/1gKEtkmUIwHJz9XyLzEJ
-	SULu/yy4KCDJmBNVclZlLUYaqH2elyB2z8qcL+sWwAJI+xxIsuOD7dCNTykg/WF1Y1v+k/qCaGV
-	lm7FCsAMTHhOuySG9YJFtaO2ZcPkDnrI1NuD2KgDsunpdgmuQySzgrzoFiGqy9lsG2ZkWajXLen
-	37YWAdFX18TrwtsQW1WETZTLtLXRR7Uwnoupi4t7HwE9Iqitq6x4TqM9Ma0sP626DYpzPP4pnrw
-	En6Adm10HpT6Pr1G8llFzsVvI304sngHnv9umnELShai2Yjq6fyDqEeSvQM0+gY1F0SQJjdo0fq
-	RBg4qnJ1B+67Kt2+2XQ==
-X-Google-Smtp-Source: AGHT+IHXBfuAaVA4b+oOrr17/LHCJuDKZ+0SjH0CIG952OH+v5hxAeX/D/aBn0Qsojcykm+6liR2rMgMXttKmAlernU=
-X-Received: by 2002:ad4:5c61:0:b0:816:10d4:e50e with SMTP id
- 6a1803df08f44-87c2057f9a9mr164214696d6.23.1760961014269; Mon, 20 Oct 2025
- 04:50:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760978161; x=1761582961;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=IS1Pf/McLgQKiG+N7aL4ggkLy+BBzyf/iqHhiuh48W0=;
+        b=KDXCDoQtfO8wojQ+2zgnwPsrBwuHrm097TYqixpWvpyEN3VBiIAKmPhw2M5mt/I8DS
+         Pwt7yYjw5S+RkuXH1hvvEN40bMXNHQA/BeKLz53/lNvZXuBAwAOChQiWvywYh/549T2Y
+         mLI/RQdFxHHjg5lKoFtWvpS/FGSlOidGwO3r8hVyeAIKGGsNwbih+tAZWKlDHHXX2Kn5
+         aiJPadeAtEEzpaL+VCLdfpBH4guFvZzfCdCQiWXBNPvIBSqmGfQlMsr3nOnp2QaPTaT2
+         A3w0xuBAJPkEvlcX4IdHy30I6T1tHSGNS9C4DwI+OjMLyd6ULzNb1zTVdGzolK4gOaK6
+         Tl0A==
+X-Forwarded-Encrypted: i=1; AJvYcCXI+fgzKrZ3XosO/lVOQkDgS4olXa21+Go5XVWAiRaGgnGgNdedWU+A28muTEJSWuGl6u/ddgnqmS4Mu3f2@lists.yoctoproject.org
+X-Gm-Message-State: AOJu0YxcMFqDudbt4CUNGNO+LRnbOnmoHocpKXIux2BikwZjNbU/Qd/F
+	vlNk7GT2r1spHD4tUZnTvDV0D2ih0DJ3M6wRRpKb9tByMLfIJHPeuusS
+X-Gm-Gg: ASbGncvftpRRXlAl3kF9axxqLglj8XS7L0kZ79mtbFzy74pw1Pu2WFdknEmX6jtSrjk
+	xyWKzWpj+jOIaQU824ttk8toEFejZMTyCc1Liw0Fw6ortgt/YgW7ZL9OG++96KslsKIaG5Mltkw
+	xjTCFQ6VduCuM1bF4mljZVin7RJz72XJrmIqLkBOImAbmVFhm3wOz2WbuHNUElXymw8B7sCV0pW
+	X21YgFha+DkiY7zZHN0Xuuefcgz+3e190VlnlrK4tLi8jowNEOJ0ehAKNBoSCcnM+y/O/bJO6xs
+	BgNBxd3i2mhvfBq7BAFL37YF5TO1a5Y8JAoKNGOeNX63jheIdSPL7noSHiqQfSLv9yLIL6BsfxB
+	2pK99c2rEsSH+UgoZzlJH5Xc2zfI9hoaq7i4+lggxFIP29jR6LcXyTJ8G7yFVPYcZvrfCPpdm11
+	Q3RfkuwJLfl1DHZTSRFuSfET9fpQxxHUkQwo5xY4bHWJLrN7JaijInO0kf+rg2mccB6PSDKz25g
+	5s=
+X-Google-Smtp-Source: AGHT+IEyBDBAIzo4bEkbqgRjiDq9pjhxpCZrJoaQ+PkTEqx/bK8Mxs2EWUuMuktB7dl29Bezvq+zQQ==
+X-Received: by 2002:a05:6e02:1686:b0:430:b616:485e with SMTP id e9e14a558f8ab-430c514b670mr212209835ab.0.1760978160895;
+        Mon, 20 Oct 2025 09:36:00 -0700 (PDT)
+Received: from [172.26.252.3] (174-29-210-254.hlrn.qwest.net. [174.29.210.254])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5a8a9797c36sm2983444173.56.2025.10.20.09.36.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 09:36:00 -0700 (PDT)
+Message-ID: <46292791-91d0-4eb7-a616-e2ef7fab8b4c@gmail.com>
+Date: Mon, 20 Oct 2025 10:36:00 -0600
 MIME-Version: 1.0
-References: <20251014102344.645363-1-richard.purdie@linuxfoundation.org>
-In-Reply-To: <20251014102344.645363-1-richard.purdie@linuxfoundation.org>
-From: Alexander Kanavin <alex.kanavin@gmail.com>
-Date: Mon, 20 Oct 2025 13:50:03 +0200
-X-Gm-Features: AS18NWCGRuA_CFK6AuwtS2LfjIOI6w5vwj8TdPdRPRotFV4eckgy6INFGdVut24
-Message-ID: <CANNYZj-KXPZ0dOLoHTuVmnZoXtKy0eJ0Rgk8qmm5_FFWfFVcCA@mail.gmail.com>
-Subject: Re: [yocto-patches] [yocto-autobuilder-helper] [PATCH 1/2]
- config.json/scripts: Switch to use bitbake-setup
-To: yocto-patches@lists.yoctoproject.org
-Cc: Richard Purdie <richard.purdie@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Yi Zhao <yi.zhao@windriver.com>, joe.macdonald@siemens.com,
+ yocto-patches@lists.yoctoproject.org
+From: Clayton Casciato <majortomtosourcecontrol@gmail.com>
+Subject: [meta-selinux][scarthgap][PATCH] refpolicy: chronyd - allow chronyd_t
+ kernel_t:system module_request
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 20 Oct 2025 11:50:16 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2366
+ <yocto-patches@lists.yoctoproject.org>; Mon, 20 Oct 2025 16:36:04 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2367
 
-On Tue, 14 Oct 2025 at 12:23, Richard Purdie via
-lists.yoctoproject.org
-<richard.purdie=linuxfoundation.org@lists.yoctoproject.org> wrote:
-> +            "EXTRA_IMAGE_FEATURES ?= 'allow-empty-password empty-root-password allow-root-login'"
+Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
+---
+ ...ervices-chronyd-allow-chronyd_t-kern.patch | 53 +++++++++++++++++++
+ .../refpolicy/refpolicy_common.inc            |  1 +
+ 2 files changed, 54 insertions(+)
+ create mode 100644 recipes-security/refpolicy/refpolicy/0072-policy-modules-services-chronyd-allow-chronyd_t-kern.patch
 
-This should be in its own fragment, and testimage class should check
-that the features are in place, and print something helpful when
-they're not. Probably the poky login banner should mention the
-fragment too, so that people aren't baffled when they expect behavior
-from the old poky default template, and typing root without password
-isn't working.
-
-I'll come up with a patchset. :)
-
-Alex
+diff --git a/recipes-security/refpolicy/refpolicy/0072-policy-modules-services-chronyd-allow-chronyd_t-kern.patch b/recipes-security/refpolicy/refpolicy/0072-policy-modules-services-chronyd-allow-chronyd_t-kern.patch
+new file mode 100644
+index 0000000..bbc4b10
+--- /dev/null
++++ b/recipes-security/refpolicy/refpolicy/0072-policy-modules-services-chronyd-allow-chronyd_t-kern.patch
+@@ -0,0 +1,53 @@
++From 0586fd29500c3d9d2b37dd0a1498f19184676610 Mon Sep 17 00:00:00 2001
++From: Clayton Casciato <ccasciato@21sw.us>
++Date: Tue, 10 Jun 2025 21:30:13 -0600
++Subject: [PATCH] chronyd: allow chronyd_t kernel_t:system module_request
++
++type=PROCTITLE proctitle=/usr/sbin/chronyd
++
++type=SYSCALL arch=armeb syscall=socket per=PER_LINUX success=no
++exit=EAFNOSUPPORT(Address family not supported by protocol) a0=inet6
++a1=SOCK_DGRAM a2=ip a3=0x80800 items=0 ppid=1 pid=1308 auid=unset
++uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root
++fsgid=root tty=(none) ses=unset comm=chronyd exe=/usr/sbin/chronyd
++subj=system_u:system_r:chronyd_t:s0 key=(null)
++
++type=AVC avc:  denied  { module_request } for  pid=1308 comm=chronyd
++kmod="net-pf-10" scontext=system_u:system_r:chronyd_t:s0
++tcontext=system_u:system_r:kernel_t:s0 tclass=system
++
++--
++
++Issue background: https://access.redhat.com/solutions/6768131
++
++--
++
++Fedora:
++
++https://github.com/fedora-selinux/selinux-policy/commit/d5acb7734d02012c54bee0064155c477b96f0bdd
++
++$ sesearch -A --source chronyd_t --target kernel_t --class system --perm module_request
++allow chronyd_t kernel_t:system module_request;
++allow domain kernel_t:system module_request; [ domain_kernel_load_modules ]:True
++
++Signed-off-by: Clayton Casciato <ccasciato@21sw.us>
++
++Upstream-Status: Backport [https://github.com/SELinuxProject/refpolicy/commit/2836207462b68c54cf21ad21f7f6befffbb1aef0]
++
++Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
++---
++ policy/modules/services/chronyd.te | 1 +
++ 1 file changed, 1 insertion(+)
++
++diff --git a/policy/modules/services/chronyd.te b/policy/modules/services/chronyd.te
++index 3d4007a57..0cac72e13 100644
++--- a/policy/modules/services/chronyd.te
+++++ b/policy/modules/services/chronyd.te
++@@ -83,6 +83,7 @@ files_runtime_filetrans(chronyd_t, chronyd_runtime_t, { dir file sock_file })
++ 
++ kernel_read_system_state(chronyd_t)
++ kernel_read_network_state(chronyd_t)
+++kernel_request_load_module(chronyd_t)
++ 
++ corenet_all_recvfrom_netlabel(chronyd_t)
++ corenet_udp_sendrecv_generic_if(chronyd_t)
+diff --git a/recipes-security/refpolicy/refpolicy_common.inc b/recipes-security/refpolicy/refpolicy_common.inc
+index fd3073c..3e19f89 100644
+--- a/recipes-security/refpolicy/refpolicy_common.inc
++++ b/recipes-security/refpolicy/refpolicy_common.inc
+@@ -87,6 +87,7 @@ SRC_URI += " \
+         file://0069-policy-modules-services-oddjob-allow-oddjob_mkhomedi.patch \
+         file://0070-policy-modules-system-systemd-allow-systemd_generato.patch \
+         file://0071-policy-modules-system-unconfined-allow-firewalld_t-u.patch \
++        file://0072-policy-modules-services-chronyd-allow-chronyd_t-kern.patch \
+         "
+ 
+ S = "${WORKDIR}/refpolicy"
 
