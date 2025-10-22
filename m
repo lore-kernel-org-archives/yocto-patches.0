@@ -2,178 +2,157 @@ Return-Path: <majortomtosourcecontrol@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FE15CCD1AB
-	for <webhook@archiver.kernel.org>; Wed, 22 Oct 2025 14:31:56 +0000 (UTC)
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
- by mx.groups.io with SMTP id smtpd.web11.11056.1761143510355910383
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5898ACCD1BB
+	for <webhook@archiver.kernel.org>; Wed, 22 Oct 2025 15:26:26 +0000 (UTC)
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+ by mx.groups.io with SMTP id smtpd.web10.12452.1761146780559568567
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 22 Oct 2025 07:31:50 -0700
+ Wed, 22 Oct 2025 08:26:20 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=Vk4jR479;
- spf=pass (domain: gmail.com, ip: 209.85.166.178, mailfrom: majortomtosourcecontrol@gmail.com)
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-430e182727dso13039305ab.1
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 22 Oct 2025 07:31:50 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=L9/4HwPY;
+ spf=pass (domain: gmail.com, ip: 209.85.166.179, mailfrom: majortomtosourcecontrol@gmail.com)
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-430ca464785so50891635ab.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 22 Oct 2025 08:26:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761143509; x=1761748309; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1761146780; x=1761751580; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:subject:from:to:content-language
          :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7gUEmRsWiHmaNr5a4QTBTIxXT2+vhhGUETdCiKlp8+8=;
-        b=Vk4jR479TrNCUfl/3/zOt5Orb/4yzn2S+UJDxlboZPBq7PHXu+FYFWfiQHnunFIMBz
-         V5uIutxYuKtcu5sxSz73DI89GWPbEOv8tParUtz8EGzIeHVPmNg5k1bPE2Nr5o+W3CC1
-         BUVb+JJcJWaJWpX+x/DkP1D4wQ8zGaTvlKycDyudhy1zK9UJlYdfzs4JT7easriuiK+a
-         M2DgORtj3Gd4LWp1yToOr8lhCxt/YbL/e5TJISQxpIy04wZnYHKLavef/78PSvuQdi/8
-         9XuGEDW0YtwWk5hJhiRC/7RIHJ4qhbiwM48bmh94psQYkKWKtT5erGQAyU/FHiPLwoZY
-         2qZg==
+        bh=Qtv7p6GnNIxrcDBjHAIm02aRnf/KS3PQlQZ1BU0a1lQ=;
+        b=L9/4HwPYg1Tnz7CeiFvavQ69Smt3FABGQj8hnldvaOqftHtTMTVQE2Jvu1FWUMWW/n
+         I8t9s08Ra0VDO0I4e9HLAQjJH9iMSvmaTgRSqhHZOumaK1xj4gQ5J3o6E8NVXJs2eP04
+         1BivddsKylpSEjANzfLmnHAfowO0GOBVkX3COiycezovlUQyqITer94s3eUDehY1KUkP
+         Vr4UPETCYl74C+WpvE6vNtYzZPS0QZoXC005g6qwlhZxNSFEer3YYhif4Oc5tC/cN1Ks
+         BGpx7SgBJjQhwH6VHkguHziBIY7HYEyO51s48aiBF8FBMexSeipuwF7z0xqUpteDvnaF
+         3GPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761143509; x=1761748309;
+        d=1e100.net; s=20230601; t=1761146780; x=1761751580;
         h=content-transfer-encoding:subject:from:to:content-language
          :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=7gUEmRsWiHmaNr5a4QTBTIxXT2+vhhGUETdCiKlp8+8=;
-        b=pDttK4q1qyUxckTpEtKnTZk+/IDxsHHuqijw2JEiPkzPdp/SjJ6H1iso61TdKTOFBR
-         mTV2hFf3eRfY7dYjYOsK6MrhXK/G8vY4OP/37qFMxJsXqiT3RAXisekjQ+jOQJL9w0dQ
-         TSHapH+Y+ei+Ydm59gLivShYZezf7nGtkSpRCUdWCyhSej571IDlt6L+42hr9a0YZ8pq
-         wosreZGtYvhbGOHMZhkSdkZxAZQUncwVstEXjK8pmWND4rWSZ1S5ZnXVGHAbG1lJ5VWz
-         qJSBdf3nFsf616h6+xInBUcdPa4IgOuSok813YXd1IGZ3ACttH8c2XdM0NBYXZSIj3Ro
-         OEoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVXeC3Ofk45bBC8iF+u0GifLGhcUk97eKxF90jN+lQKw6Ekz7JTU5tC4MfTu4GhbhjpAz1nyqN6d4JADmR1@lists.yoctoproject.org
-X-Gm-Message-State: AOJu0YwPzdSCxUu1ZuI0KzsscwGdU+AztWOye1uxcVf8PKyrs86qwXkI
-	XjFtEL7LltUDbOGwnY9AR6vey4NxltxUpPyNc5sMgX2fpPuCPQZOiSbN
-X-Gm-Gg: ASbGncuqSi4b3S1DhlJnG/neozWrkTn1smVh65RBQpS/4q8hASuBC4HZn2DA6FZJuvq
-	I4JWUKGDUp+gFz2eztib0BykB0y6QfLYbeHOtHkBXMN1Y8GpxtcCop/Zf3zix1mLHFHqfRUfEvT
-	RGuX+3c8yk5SP/UmezZJPxjBI3qWz8h9Nu01nxIur0XsQd/Ja0u2R8TkT8HsCThmdCxKJzVhg49
-	nuf2f9x5AekzAbL9qmKYhHNgGuVw6hD0LCvUXkZhngLOGWQq5zSNYhg0llS4Hyh4OrtAMC4g0k6
-	U4zoeHMZThtjFAhWSywjoyeWKOxONiZeWmdnLmMyBOeETL9M2DKslTFdSCKr+yUZ/wTT4VaiYtI
-	8ofKura3G7W+C7+DZDhUfxHG3zuNn07enlkLqL+fO4+cx3eguWziZ2sdyhgjC0oaJEKbMQJJNGP
-	/ytPqeo6cMrSZgQnqnqt5mtJcxXo9Ph4ndzl3sZa9tozOUvrFB5upzGQ==
-X-Google-Smtp-Source: AGHT+IGgfvPZaEuDtPDOHivNZdNcT0mF2k/wqSkMthR1tV/50qng5S6XUD26Ug/NDeYzYrQvsXkmrg==
-X-Received: by 2002:a05:6e02:440a:20b0:430:c534:e189 with SMTP id e9e14a558f8ab-430c534e1c6mr252423905ab.28.1761143509230;
-        Wed, 22 Oct 2025 07:31:49 -0700 (PDT)
+        bh=Qtv7p6GnNIxrcDBjHAIm02aRnf/KS3PQlQZ1BU0a1lQ=;
+        b=OfeArQezgryCt3ZCI0xMXfiCTx9pxfxMjFi1pTaKF4E9uvEM1lO0gd841UjbOgywLy
+         igACuLPk2vs2BFPvYaSX1w0dvuNp6F3Qml71BztYAARauyoZ2/ZNxYt1yoxqhfrlTfZE
+         koMRv2pHKjcS0U/07NAQCPnrXefzCRu1HuIXVDG2G30/loqwtmQ5KYGnynEU61mGI9za
+         AUCGMoCjf/Qb/KlPWK2GKzWOc5as3F5pofYZo8+kgNYWavjrFEWJs/zlWFCRfqyVmfr+
+         B/9ITBs9P1WiYvlwMymEBtQ4qFEGozMVRfMiblvrbCgYuL69q6n1RmzLkQQnMEAZcDAQ
+         8Rtw==
+X-Forwarded-Encrypted: i=1; AJvYcCUw9cFYz6o9eTQuJuGyZsTGT2S7xiFTpp/PmM2/Uvy+9tSpqj3Ke309LrTEdlE7YxfjlQGTEvT+8l6cb26M@lists.yoctoproject.org
+X-Gm-Message-State: AOJu0YxO7a3XM1QBr2LqDqHtbbEAboorkdy0nSUXD75Gu60QxaX9/gQO
+	flarEOKDe0uYRKZYNl6tnX17mUaPDeKQKMzK1vzvI+b2D04WuNRD6JlS
+X-Gm-Gg: ASbGnctCl7cGOxYjKpc2sLBxQoETOeuGiFGCDF1K97C4Fysf0OPEgem+aJfQTvKO/2A
+	Ipx6X7vp53G+t178bded+NKv87WxyYCarejaxP6jcSpsFTi9KLqSJcrVgPx7roApdlHZsq2Mh58
+	Y+rwp0yjSmSWnGnYjqNTHYS7QAfSKEKDs+e06O5uJgZ9ijY+wPvwtATSp9JXo1hWy/nxU+lobE9
+	QLuaDeiT0LlS8V9rt2PzuOQIp25zcpfRJOwI5RviyI5aVwV6Lr2r2FmjxlAQjl0Gd8Y9Sk7xW4b
+	kFNitofw/sgWot3EdwQSDt4LbXKz2tCnqtuUJBSzr4tnHmqc+N+wXl6g6i+te7QyZr+V2H6ychh
+	kiFFmhxjomKfqE28e2c+Ultr/TrIhoTodWBWY9buwLwyuZi3jz2pzdi23n/iXMGYhsKRci5VCvG
+	ietNdOWtCdqhvoM5n35cZRAz/mXJ5G13sR9wxJHLd8XiJjY/5+UM0SFCcGWZzYGaX7
+X-Google-Smtp-Source: AGHT+IFCf+297LP/ERvNmoOZyKOugztoC6suRUqDit1xookMha37NLYlsamP9txnJQS7MhOzmNLbYA==
+X-Received: by 2002:a05:6e02:23c5:b0:431:d763:193a with SMTP id e9e14a558f8ab-431d7631991mr20252555ab.21.1761146779648;
+        Wed, 22 Oct 2025 08:26:19 -0700 (PDT)
 Received: from [172.26.252.3] (174-29-210-254.hlrn.qwest.net. [174.29.210.254])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5a8a9797c36sm4970304173.56.2025.10.22.07.31.48
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5a8a9630a45sm5257745173.20.2025.10.22.08.26.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Oct 2025 07:31:48 -0700 (PDT)
-Message-ID: <5f688205-ae84-4a9d-87ec-291846f2c032@gmail.com>
-Date: Wed, 22 Oct 2025 08:31:48 -0600
+        Wed, 22 Oct 2025 08:26:19 -0700 (PDT)
+Message-ID: <699748f2-1d3b-42be-9c42-9bb8039f3534@gmail.com>
+Date: Wed, 22 Oct 2025 09:26:18 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Content-Language: en-US
 To: Yi Zhao <yi.zhao@windriver.com>, joe.macdonald@siemens.com,
  yocto-patches@lists.yoctoproject.org
 From: Clayton Casciato <majortomtosourcecontrol@gmail.com>
-Subject: [meta-selinux][scarthgap][PATCH] refpolicy: ssh - allow sshd_t
- userdomain:key search
+Subject: [meta-selinux][walnascar][PATCH] refpolicy: dbus - allow
+ system_dbusd_t unconfined_t:fd use
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 22 Oct 2025 14:31:56 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2382
+ <yocto-patches@lists.yoctoproject.org>; Wed, 22 Oct 2025 15:26:26 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2383
 
 Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
 ---
- ...ervices-ssh-allow-sshd_t-userdomain-.patch | 80 +++++++++++++++++++
+ ...ervices-dbus-allow-system_dbusd_t-un.patch | 59 +++++++++++++++++++
  .../refpolicy/refpolicy_common.inc            |  1 +
- 2 files changed, 81 insertions(+)
- create mode 100644 recipes-security/refpolicy/refpolicy/0074-policy-modules-services-ssh-allow-sshd_t-userdomain-.patch
+ 2 files changed, 60 insertions(+)
+ create mode 100644 recipes-security/refpolicy/refpolicy/0064-policy-modules-services-dbus-allow-system_dbusd_t-un.patch
 
-diff --git a/recipes-security/refpolicy/refpolicy/0074-policy-modules-services-ssh-allow-sshd_t-userdomain-.patch b/recipes-security/refpolicy/refpolicy/0074-policy-modules-services-ssh-allow-sshd_t-userdomain-.patch
+diff --git a/recipes-security/refpolicy/refpolicy/0064-policy-modules-services-dbus-allow-system_dbusd_t-un.patch b/recipes-security/refpolicy/refpolicy/0064-policy-modules-services-dbus-allow-system_dbusd_t-un.patch
 new file mode 100644
-index 0000000..43434c4
+index 0000000..6279c0c
 --- /dev/null
-+++ b/recipes-security/refpolicy/refpolicy/0074-policy-modules-services-ssh-allow-sshd_t-userdomain-.patch
-@@ -0,0 +1,80 @@
-+From 965e1c66c8c3bd5087a5f8d276a57974d0378855 Mon Sep 17 00:00:00 2001
++++ b/recipes-security/refpolicy/refpolicy/0064-policy-modules-services-dbus-allow-system_dbusd_t-un.patch
+@@ -0,0 +1,59 @@
++From bd85d4340b7af107749d65f673df781978214c3a Mon Sep 17 00:00:00 2001
 +From: Clayton Casciato <ccasciato@21sw.us>
-+Date: Mon, 7 Jul 2025 16:38:49 -0600
-+Subject: [PATCH] ssh: allow sshd_t userdomain:key search
++Date: Tue, 8 Jul 2025 16:58:05 -0600
++Subject: [PATCH] dbus: allow system_dbusd_t unconfined_t:fd use
 +
-+~# grep key /etc/pam.d/sshd
-+session    optional     pam_keyinit.so force revoke
++"sudo su -"
 +
 +--
 +
-+type=PROCTITLE proctitle=sshd: user123 [priv]
++type=PROCTITLE proctitle=/usr/bin/dbus-daemon --system
++--address=systemd: --nofork --nopidfile --systemd-activation
++--syslog-only
 +
-+type=SYSCALL arch=armeb syscall=keyctl per=PER_LINUX success=no
-+exit=ENOKEY(Required key not available) a0=0x8 a1=0xfffffffc
-+a2=0xfffffffd a3=0x3e8 items=0 ppid=1 pid=557 auid=unset uid=user123
-+gid=user123 euid=root suid=root fsuid=root egid=root sgid=root fsgid=root
-+tty=(none) ses=unset comm=sshd exe=/usr/sbin/sshd
-+subj=system_u:system_r:sshd_t:s0 key=(null)
++type=SYSCALL arch=armeb syscall=recvmsg per=PER_LINUX success=yes
++exit=312 a0=0x12 a1=0xbef207c8 a2=MSG_CMSG_CLOEXEC a3=0x1 items=0
++ppid=1 pid=184 auid=unset uid=messagebus gid=messagebus euid=messagebus
++suid=messagebus fsuid=messagebus egid=messagebus sgid=messagebus
++fsgid=messagebus tty=(none) ses=unset comm=dbus-daemon
++exe=/usr/bin/dbus-daemon subj=system_u:system_r:system_dbusd_t:s0
++key=(null)
 +
-+type=AVC avc:  denied  { search } for  pid=557 comm=sshd
-+scontext=system_u:system_r:sshd_t:s0
-+tcontext=unconfined_u:unconfined_r:unconfined_t:s0 tclass=key
++type=AVC avc:  denied  { use } for  pid=184 comm=dbus-daemon
++path=anon_inode:[pidfd] dev="pidfs" ino=303
++scontext=system_u:system_r:system_dbusd_t:s0
++tcontext=unconfined_u:unconfined_r:unconfined_t:s0 tclass=fd
 +
 +--
 +
 +Fedora:
-+$ sesearch -A --source sshd_t --target unconfined_t --class key --perm search
-+allow domain domain:key { link search };
++
++$ sesearch -A --source system_dbusd_t --target unconfined_t --class fd --perm use
++allow domain domain:fd use; [ domain_fd_use ]:True
++allow domain unconfined_t:fd use;
++allow systemprocess initrc_transition_domain:fd use;
++
++$ getsebool domain_fd_use
++domain_fd_use --> on
 +
 +Signed-off-by: Clayton Casciato <ccasciato@21sw.us>
 +
-+Upstream-Status: Backport [https://github.com/SELinuxProject/refpolicy/commit/c4a2989845ef3fedc4036041ed1fa61c28594842]
++Upstream-Status: Backport [https://github.com/SELinuxProject/refpolicy/commit/c0848ca7b7469436ae1ec3190c808ea5a92e6bc6]
 +
 +Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
 +---
-+ policy/modules/services/ssh.if      |  1 +
-+ policy/modules/system/userdomain.if | 18 ++++++++++++++++++
-+ 2 files changed, 19 insertions(+)
++ policy/modules/services/dbus.te | 1 +
++ 1 file changed, 1 insertion(+)
 +
-+diff --git a/policy/modules/services/ssh.if b/policy/modules/services/ssh.if
-+index b3394bd92..4935d2e9d 100644
-+--- a/policy/modules/services/ssh.if
-++++ b/policy/modules/services/ssh.if
-+@@ -254,6 +254,7 @@ template(`ssh_server_template', `
++diff --git a/policy/modules/services/dbus.te b/policy/modules/services/dbus.te
++index 4e2e32ec0..1420ede29 100644
++--- a/policy/modules/services/dbus.te
+++++ b/policy/modules/services/dbus.te
++@@ -285,6 +285,7 @@ optional_policy(`
 + 
-+ 	miscfiles_read_localization($1_t)
-+ 
-++	userdom_search_all_users_keys($1_t)
-+ 	userdom_create_all_users_keys($1_t)
-+ 	userdom_dontaudit_relabelfrom_user_ptys($1_t)
-+ 	userdom_search_user_home_dirs($1_t)
-+diff --git a/policy/modules/system/userdomain.if b/policy/modules/system/userdomain.if
-+index ea7a90a5d..3775ee8b5 100644
-+--- a/policy/modules/system/userdomain.if
-++++ b/policy/modules/system/userdomain.if
-+@@ -4915,6 +4915,24 @@ interface(`userdom_sigchld_all_users',`
-+ 	allow $1 userdomain:process sigchld;
++ optional_policy(`
++ 	unconfined_dbus_send(system_dbusd_t)
+++	unconfined_use_fds(system_dbusd_t)
 + ')
 + 
-++########################################
-++## <summary>
-++##	Search keys for all user domains.
-++## </summary>
-++## <param name="domain">
-++##	<summary>
-++##	Domain allowed access.
-++##	</summary>
-++## </param>
-++#
-++interface(`userdom_search_all_users_keys',`
-++	gen_require(`
-++		attribute userdomain;
-++	')
-++
-++	allow $1 userdomain:key search;
-++')
-++
-+ ########################################
-+ ## <summary>
-+ ##	Read keys for all user domains.
++ optional_policy(`
 diff --git a/recipes-security/refpolicy/refpolicy_common.inc b/recipes-security/refpolicy/refpolicy_common.inc
-index e730cb3..1478721 100644
+index 8782dbe..9d729df 100644
 --- a/recipes-security/refpolicy/refpolicy_common.inc
 +++ b/recipes-security/refpolicy/refpolicy_common.inc
-@@ -89,6 +89,7 @@ SRC_URI += " \
-         file://0071-policy-modules-system-unconfined-allow-firewalld_t-u.patch \
-         file://0072-policy-modules-services-chronyd-allow-chronyd_t-kern.patch \
-         file://0073-policy-modules-services-ssh-allow-sshd_t-kernel_t-sy.patch \
-+        file://0074-policy-modules-services-ssh-allow-sshd_t-userdomain-.patch \
+@@ -79,6 +79,7 @@ SRC_URI += " \
+         file://0061-policy-modules-services-chronyd-allow-chronyd_t-kern.patch \
+         file://0062-policy-modules-services-ssh-allow-sshd_t-kernel_t-sy.patch \
+         file://0063-policy-modules-services-ssh-allow-sshd_t-userdomain-.patch \
++        file://0064-policy-modules-services-dbus-allow-system_dbusd_t-un.patch \
          "
  
  S = "${WORKDIR}/refpolicy"
