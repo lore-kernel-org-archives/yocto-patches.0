@@ -1,144 +1,97 @@
-Return-Path: <majortomtosourcecontrol@gmail.com>
+Return-Path: <hongxu.jia@eng.windriver.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DF5FCCD1BC
-	for <webhook@archiver.kernel.org>; Thu, 23 Oct 2025 17:26:00 +0000 (UTC)
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
- by mx.groups.io with SMTP id smtpd.web11.776.1761240351879819275
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF52ACCD1BF
+	for <webhook@archiver.kernel.org>; Fri, 24 Oct 2025 02:56:26 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+ by mx.groups.io with SMTP id smtpd.web10.1100.1761274577114165071
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 23 Oct 2025 10:25:51 -0700
+ Thu, 23 Oct 2025 19:56:17 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=HjufSzT2;
- spf=pass (domain: gmail.com, ip: 209.85.166.179, mailfrom: majortomtosourcecontrol@gmail.com)
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-430a5fe0c5cso9130565ab.0
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 23 Oct 2025 10:25:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761240351; x=1761845151; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Juh7xiGBG6AVEZEzN/sKTm2cHJV2JGcj+T2JCm7bmAk=;
-        b=HjufSzT29JeGdUXFW8t12OBoKL8QF11lATMC3c3uzBSsz374sompa5BVViVz/yKhC5
-         sySoH5gB8rSi6pa/QsFhCXQa+QTwwIBk9PHHZ/TYQJtM9u/vdEZzqrmx82J/ClA0Y+38
-         wMJzqfX9o7GNKz7K2mHcRaXgEuw11wGsHE3IyoxyYtc6bhEgn7HblRaL84FvyMnVjviX
-         6LTo/PRI+7PC7YaAvG7dX/eV5XW0jaLCBEwm3ljEmZXHHd63bZCA3ZBsN7Ge6/I1aTAV
-         NJHMTUjU/QHlbTibLhUOPVq/GWODWbtDmuDsF3cHMvPK9yKM0gUG//fQUCPerYBaiHbx
-         ulIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761240351; x=1761845151;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Juh7xiGBG6AVEZEzN/sKTm2cHJV2JGcj+T2JCm7bmAk=;
-        b=MvnZALPbugGZTza3h40yi7RiWonLHSym5fQVJ/c8u8Mm8YTOB+G+3qHHKTML3Ep20g
-         w2IEAA6p1ufIZRqx8J2Tvwj2PHdGDZqT65hDCXPnRZkz7I3C4csnevbRb1j6G0d0ms4L
-         tvMYQ4ORZJTAYjUZ8pTYFP3LxF/ry0wEOjUqzFmwAiT7cMMBJVGilrdxpyvTMzhRC/qo
-         gzC12DVO9Y1IwFxEm0BtjKUwmtakshIDIYPpB0x1wJmxL/0kqHhgc8upEl/BjRRd4U9G
-         a6fQDJ2vZoY8wpMX+dTDQRRVD5mCZVKg94vWf8dfB2qtj5QOPG88yQHZRDo8dx0Z1frP
-         e5/w==
-X-Forwarded-Encrypted: i=1; AJvYcCWozhlPZNcWqyejGx5gi4FY7I7q4kuyLMH4Mvps/zh4eG6XZuRfD2Zsg3mSFrOI9sMl2zw6jirlI8K+ol4h@lists.yoctoproject.org
-X-Gm-Message-State: AOJu0YwVtpFkWcToDk4cTicL7zyB097cNVAXr73IHDtleVaEHj8l+uKG
-	qZ/xPohoZUoCdtem0Cb+4ESzcjyfA2JpjpJs5E3pF8sy4e+KbavPzTCY
-X-Gm-Gg: ASbGncuqDiz4MaSOphfqcOuxvatKjOZFiGqwyV31Modka3/Ra0dzDGo+eiq2s6C9bv3
-	kESla5y++08ocJqpqH/e8GwQ3rdutD0Q0AxnF6Uzs5SiZGQn4cXvMLd+LCWpy3XJsVG+C10yEWz
-	CX0Q8DFTFFKJI1ppMfgEdCFZHQJeEK+OCfWzwMSyH9M84Khq41iqDEy/oCLdWdd43E6MnNAerWj
-	sD4breqFxuIbbbAivdMmqwKwteM0Pqe3FP7icbTpgGfWeb2G+JBPM5zIuWvDl+ZAwdHDIhYoxrY
-	aBBmvtPycMXXcZJI61X1dgN6ZxyHV/MRQ4MpEmfFxaxrUySPZDVMVX7oTYS4fwMMvsczY8wUY/I
-	vUgOqZyXcVzm+ernOkxzYHwaLOgVaEZyWaLBoW4aO/3FLk4WIAxgTDCFM6pLCO6PjH87wgjt/dw
-	wlN4mnGMjlia4gpJI7IZ/OIDgZEfv28g/TnqX8paa0ccmrl3MCAIA/3XJCjkH/ZnmN
-X-Google-Smtp-Source: AGHT+IFt0xe94jwi1NhyNE0dTc1M/M7uNVhdBbLAkNnlcoapXHoBbMBj960L6XHGdie1br63j4qbRw==
-X-Received: by 2002:a05:6e02:160e:b0:42f:8d40:6c4b with SMTP id e9e14a558f8ab-430c5246f89mr389266595ab.11.1761240350972;
-        Thu, 23 Oct 2025 10:25:50 -0700 (PDT)
-Received: from [172.26.252.3] (174-29-210-254.hlrn.qwest.net. [174.29.210.254])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5abb7fdb0fesm1112509173.34.2025.10.23.10.25.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Oct 2025 10:25:50 -0700 (PDT)
-Message-ID: <6a0ec0dd-a107-4499-af2d-219910649f7e@gmail.com>
-Date: Thu, 23 Oct 2025 11:25:49 -0600
+ dkim=pass header.i=@windriver.com header.s=PPS06212021 header.b=R1c/glEv;
+ spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.178.238, mailfrom: prvs=23920ed3f1=hongxu.jia@windriver.com)
+Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59O0aENo2366956
+	for <yocto-patches@lists.yoctoproject.org>; Fri, 24 Oct 2025 02:56:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
+	 h=content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PPS06212021; bh=wR9GGDYuh0qWsyykSx33
+	vzHfDwo46bKeN9LaDe43cWk=; b=R1c/glEvSM8u22qH6Xsxy9GRGbgiPbyfh2kO
+	JD5P8RU0Gr1LjnQe6+UVqWQHYHvkE5HCrM/9jPd9kNE30PeKuS3dZkQEsrhxRzwU
+	4jJYDwBfZxZrbqzMdOy6G9MgG9BniX1TiKTRlBY3gJZmfbMDujNfwJr8xIc4jNh1
+	0hVMxAGFNyPEfeetYgYOHGMostQNfATr79Iz4nVvOXblgZ4uDbjHzJ4bJusaZWZd
+	1BCG5Qp5nJcSh0M6luSKCsG1xE2eF4jddr5+5by4cocZAlBmcRsp1YZh+qMfXmBD
+	4cnFANRXp2mw77ge1uQdmafAPAjn5dsnHgDiiXmE4yZxDkUptg==
+Received: from ala-exchng01.corp.ad.wrs.com ([128.224.246.36])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 49y8atheua-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <yocto-patches@lists.yoctoproject.org>; Fri, 24 Oct 2025 02:56:16 +0000 (GMT)
+Received: from ala-exchng01.corp.ad.wrs.com (10.11.224.121) by
+ ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.59; Thu, 23 Oct 2025 19:56:14 -0700
+Received: from pek-lpg-core5.wrs.com (10.11.232.110) by
+ ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server id
+ 15.1.2507.59 via Frontend Transport; Thu, 23 Oct 2025 19:56:14 -0700
+From: Hongxu Jia <hongxu.jia@windriver.com>
+To: <yocto-patches@lists.yoctoproject.org>
+Subject: [meta-security][PATCH] ecryptfs-utils: Add CVE tag for ecryptfs-utils-CVE-2016-6224.patch
+Date: Fri, 24 Oct 2025 10:56:13 +0800
+Message-ID: <20251024025613.941520-1-hongxu.jia@windriver.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Yi Zhao <yi.zhao@windriver.com>, joe.macdonald@siemens.com,
- yocto-patches@lists.yoctoproject.org
-From: Clayton Casciato <majortomtosourcecontrol@gmail.com>
-Subject: [meta-selinux][scarthgap][PATCH] refpolicy: files - add
- files_delete_var_chr_files interface
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=N9ck1m9B c=1 sm=1 tr=0 ts=68faead0 cx=c_pps
+ a=AbJuCvi4Y3V6hpbCNWx0WA==:117 a=AbJuCvi4Y3V6hpbCNWx0WA==:17
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=PYnjg3YJAAAA:8 a=danhDmx_AAAA:8
+ a=t7CeM3EgAAAA:8 a=NELBC_J_JFTSqUUxlFgA:9 a=ZXulRonScM0A:10
+ a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI0MDAyNSBTYWx0ZWRfX/xk2m89IbQes
+ MCykwnbJbt3FIw0Rt+fBzFZZNzcuG1remyjIamDWg0P6WbZlli9W3w7aL/S646VVH70dzWj/QZF
+ RM1Y4tlrKnRYgFYxgVefmuEdA9yXt0dGr1GAFU7zeD9ArEAy0mE7oWAql5PBn7SqS1qupJxj3w/
+ VslGkPUrCW9yLzUr99JUdlg3XooTy3GPTcu0OgCeK5+TqYGJvXBZ209AOTLr8auuwv59uLakldT
+ pLq9D1i8Y+leV9H9ypAQ09mjbilEnwQ3mcod6gj2xnIE6XHcxDZQQLBHc3xcyMxPROcpKbXJDmh
+ cSNiknxyPQVj0FpCSNJ3zUhjrty+uXy89TQhRrX6CaT2viY4eXl1uwNFx1XDWIouLY6W93Jo/Dr
+ oI8EK0J3g+o5345u38P31OsgPIk2wQ==
+X-Proofpoint-ORIG-GUID: -K9lkUMacVjYKQBOnQFK3I6YqPuGZbS9
+X-Proofpoint-GUID: -K9lkUMacVjYKQBOnQFK3I6YqPuGZbS9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-23_03,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 bulkscore=0 spamscore=0 impostorscore=0 adultscore=0
+ phishscore=0 suspectscore=0 clxscore=1015 lowpriorityscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510240025
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 23 Oct 2025 17:26:00 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2388
+ <yocto-patches@lists.yoctoproject.org>; Fri, 24 Oct 2025 02:56:26 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2389
 
-Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
+Follow Yocto policy to add CVE tag to CVE patch
+
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+Signed-off-by: Robert Yang <liezhi.yang@windriver.com>
 ---
- ...ernel-files-add-files_delete_var_chr.patch | 44 +++++++++++++++++++
- .../refpolicy/refpolicy_common.inc            |  1 +
- 2 files changed, 45 insertions(+)
- create mode 100644 recipes-security/refpolicy/refpolicy/0077-policy-modules-kernel-files-add-files_delete_var_chr.patch
+ .../ecryptfs-utils/files/ecryptfs-utils-CVE-2016-6224.patch      | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/recipes-security/refpolicy/refpolicy/0077-policy-modules-kernel-files-add-files_delete_var_chr.patch b/recipes-security/refpolicy/refpolicy/0077-policy-modules-kernel-files-add-files_delete_var_chr.patch
-new file mode 100644
-index 0000000..ed3ca61
---- /dev/null
-+++ b/recipes-security/refpolicy/refpolicy/0077-policy-modules-kernel-files-add-files_delete_var_chr.patch
-@@ -0,0 +1,44 @@
-+From a8379a82beb37fbe36775575b8d43d1281342bba Mon Sep 17 00:00:00 2001
-+From: Clayton Casciato <ccasciato@21sw.us>
-+Date: Mon, 12 May 2025 12:39:10 -0600
-+Subject: [PATCH] files: add files_delete_var_chr_files interface
-+
-+Signed-off-by: Clayton Casciato <ccasciato@21sw.us>
-+
-+Upstream-Status: Backport [https://github.com/SELinuxProject/refpolicy/commit/605ee571a04d7db29f61dc086ad4675793d94864]
-+
-+Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
-+---
-+ policy/modules/kernel/files.if | 19 +++++++++++++++++++
-+ 1 file changed, 19 insertions(+)
-+
-+diff --git a/policy/modules/kernel/files.if b/policy/modules/kernel/files.if
-+index 9ade962a9..7223210f4 100644
-+--- a/policy/modules/kernel/files.if
-++++ b/policy/modules/kernel/files.if
-+@@ -6127,6 +6127,25 @@ interface(`files_manage_var_symlinks',`
-+ 	manage_lnk_files_pattern($1, var_t, var_t)
-+ ')
-+ 
-++########################################
-++## <summary>
-++##	Delete character device nodes in
-++##	the var directory.
-++## </summary>
-++## <param name="domain">
-++##	<summary>
-++##	Domain allowed access.
-++##	</summary>
-++## </param>
-++#
-++interface(`files_delete_var_chr_files',`
-++	gen_require(`
-++		type var_t;
-++	')
-++
-++	delete_chr_files_pattern($1, var_t, var_t)
-++')
-++
-+ ########################################
-+ ## <summary>
-+ ##	Create objects in the /var directory
-diff --git a/recipes-security/refpolicy/refpolicy_common.inc b/recipes-security/refpolicy/refpolicy_common.inc
-index 5554ef9..9d4f68a 100644
---- a/recipes-security/refpolicy/refpolicy_common.inc
-+++ b/recipes-security/refpolicy/refpolicy_common.inc
-@@ -92,6 +92,7 @@ SRC_URI += " \
-         file://0074-policy-modules-services-ssh-allow-sshd_t-userdomain-.patch \
-         file://0075-policy-modules-services-dbus-allow-system_dbusd_t-un.patch \
-         file://0076-policy-modules-system-systemd-allow-systemd_logind_t.patch \
-+        file://0077-policy-modules-kernel-files-add-files_delete_var_chr.patch \
-         "
+diff --git a/recipes-security/ecryptfs-utils/files/ecryptfs-utils-CVE-2016-6224.patch b/recipes-security/ecryptfs-utils/files/ecryptfs-utils-CVE-2016-6224.patch
+index a457d79..c0a86e9 100644
+--- a/recipes-security/ecryptfs-utils/files/ecryptfs-utils-CVE-2016-6224.patch
++++ b/recipes-security/ecryptfs-utils/files/ecryptfs-utils-CVE-2016-6224.patch
+@@ -14,6 +14,7 @@ the patch comes from:
+ https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2016-6224
+ https://bazaar.launchpad.net/~ecryptfs/ecryptfs/trunk/revision/882
  
- S = "${WORKDIR}/refpolicy"
++CVE: CVE-2016-6224
+ Upstream-Status: Backport
+ 
+ Signed-off-by: Li Zhou <li.zhou@windriver.com>
+-- 
+2.34.1
+
 
