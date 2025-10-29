@@ -1,112 +1,92 @@
-Return-Path: <ross.burton@arm.com>
+Return-Path: <mathieu.dubois-briand@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D0FDCCF9EE
-	for <webhook@archiver.kernel.org>; Wed, 29 Oct 2025 14:21:08 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mx.groups.io with SMTP id smtpd.web10.7027.1761747661238048615
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BE9ACCF9E9
+	for <webhook@archiver.kernel.org>; Wed, 29 Oct 2025 14:25:38 +0000 (UTC)
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+ by mx.groups.io with SMTP id smtpd.web10.7106.1761747935804668396
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 29 Oct 2025 07:21:01 -0700
+ Wed, 29 Oct 2025 07:25:36 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: arm.com, ip: 217.140.110.172, mailfrom: ross.burton@arm.com)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 13CEF1C2B
-	for <yocto-patches@lists.yoctoproject.org>; Wed, 29 Oct 2025 07:20:53 -0700 (PDT)
-Received: from cesw-amp-gbt-1s-m12830-04.lab.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 823773F66E
-	for <yocto-patches@lists.yoctoproject.org>; Wed, 29 Oct 2025 07:21:00 -0700 (PDT)
-From: Ross Burton <ross.burton@arm.com>
-To: yocto-patches@lists.yoctoproject.org
-Subject: [PATCH][yocto-autobuilder-helper 2/3] dashboard/bugtriage: improve active milestone logic
-Date: Wed, 29 Oct 2025 14:20:57 +0000
-Message-ID: <20251029142058.3066156-2-ross.burton@arm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251029142058.3066156-1-ross.burton@arm.com>
-References: <20251029142058.3066156-1-ross.burton@arm.com>
+ dkim=pass header.i=@bootlin.com header.s=dkim header.b=FarwCN1J;
+ spf=pass (domain: bootlin.com, ip: 185.246.85.4, mailfrom: mathieu.dubois-briand@bootlin.com)
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 27FF14E413CD
+	for <yocto-patches@lists.yoctoproject.org>; Wed, 29 Oct 2025 14:25:34 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id F3BD8606E8
+	for <yocto-patches@lists.yoctoproject.org>; Wed, 29 Oct 2025 14:25:33 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1F7C6102F250A;
+	Wed, 29 Oct 2025 15:25:32 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761747933; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=iZQgObXDTNw59TwDvE8xUDWrt8gT76wNSKqiop0RpVc=;
+	b=FarwCN1JyUpr+TWK0ZGajvJP9WRzFRYpP74Lf4nXSf5Eeg9XFKvoRlDQpYgqNBHdzglIwp
+	sB0nXykzoDSHZTax20cxaeLi3fiP4+f+5lh9JL3AS7PG38quAIwUn9PVocNZtmNgsusWlc
+	4JNiSwxXDxj+OES5LxirvUjgtCaPzq5k3HuSH3sDkf7YD/m2EJwhbVvOOJCR1PLDg9OzB1
+	rQvEHQtnizbqMtzaYAwLibBODbmntbjUnGI7U+FmhRBEqyTY4CLmae3AhgpTxebU+ShBBn
+	TmjHso3mqEJvw8d6BQIUXI/DNIHk993+EDubtiEyvEwhco9EIGxWQiTz4fFjdw==
+From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Date: Wed, 29 Oct 2025 15:25:03 +0100
+Subject: [PATCH yocto-autobuilder-helper] config: update metrics-gitstats
+ needed repos
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251029-contrib-mathieu-metrics-gitstats-bbsetup-v1-1-db66b2ad6c2f@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAL4jAmkC/x3NQQqDMBBA0avIrDsQtbbYq5QukjgxA2okMykt4
+ t0bunyb/w8QykwCj+aATG8WTltFe2nAR7vNhDxVQ2e6oTXdiD5tmtnhajUyFVyp0gvOrKJWBZ0
+ T0rLjjcx4vYehD66HmtszBf78V0/4Jq8JbdHkCi8TZYy07JThdZ4/NiudwZQAAAA=
+X-Change-ID: 20251029-contrib-mathieu-metrics-gitstats-bbsetup-6e0947f53fb3
+To: yocto-patches@lists.yoctoproject.org
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761747932; l=1082;
+ i=mathieu.dubois-briand@bootlin.com; s=20241219; h=from:subject:message-id;
+ bh=41Cj1aHncnP0FA8YI8Tj6WCUMQmqarC0eMpTXXkxjUY=;
+ b=j8Qs1+GQ1qOnvgMWlbX5eBnODWuqg1Lex/HZ8lNJBmrvY2pK1DRe8spSFoIChaMr/KXh9EvA5
+ ScNEObsHIfzBHcd7LMBZD1E0gSIVY6OsdwfjkM4hYFv2qdi7BKAX9J4
+X-Developer-Key: i=mathieu.dubois-briand@bootlin.com; a=ed25519;
+ pk=1PVTmzPXfKvDwcPUzG0aqdGoKZJA3b9s+3DqRlm0Lww=
+X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 29 Oct 2025 14:21:08 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2402
+ <yocto-patches@lists.yoctoproject.org>; Wed, 29 Oct 2025 14:25:38 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2404
 
-The next major release is now 6.0, so we should create milestone releases
-for that release and consider them active.  Do a little refactoring to
-reduce duplication of the milestone creation.
+Bitbake repository has to be added, in order to have bitbake-setup.
+Meta-openembedded repository also has to to be checked-out, as it is
+referenced in buildertorepos in yocto-autobuilder2: getproperties.py
+will fail if both lists are not inconsistent.
 
-Also I expect we'll be creating a 6.99 target shortly, so consider that
-active too.
-
-Signed-off-by: Ross Burton <ross.burton@arm.com>
+Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 ---
- scripts/dashboard/bugtriage/index.html | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+ config.json | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/scripts/dashboard/bugtriage/index.html b/scripts/dashboard/b=
-ugtriage/index.html
-index a51279ab..891510f0 100644
---- a/scripts/dashboard/bugtriage/index.html
-+++ b/scripts/dashboard/bugtriage/index.html
-@@ -291,6 +291,7 @@
-         "---",
-         "0.0.0",
-         "5.99",
-+        "6.99",
-         "Q1",
-         "Q2",
-         "Q3",
-@@ -327,21 +328,24 @@
-         } else {
-           // If there's not a latest_tag set then this is the current de=
-velopment cycle.
-=20
-+          function createMilestones(version) {
-+            // Create all milestones for a specific version
-+            return new Set([1, 2, 3, 4].map((m) =3D> `${version} M${m}`)=
-);
-+          }
-+
-           // The current release is active (e.g. 5.3)
-           active.push(release.series_version);
-=20
-           // And so is the next minor release (eg 5.4)
-           let parts =3D release.series_version.split(".");
-           parts[parts.length - 1]++;
--          const next =3D parts.join(".");
-+          let next =3D parts.join(".");
-           active.push(next);
--
-           // And all of the next releases milestones
--          let milestones =3D new Set([1, 2, 3, 4].map((m) =3D> `${next} =
-M${m}`));
--          active.push(...milestones);
-+          active.push(...createMilestones(next));
-=20
-           // All remaining milestones in this release
--          milestones =3D new Set([1, 2, 3, 4].map((m) =3D> `${release.se=
-ries_version} M${m}`));
-+          let milestones =3D createMilestones(release.series_version);
-           // Remove the milestones that have been releases. Map the tag =
-names to milestone names here.
-           const seenMilestones =3D new Set(release.releases.map((s) =3D>=
- s.replace("_", " ")));
-           milestones =3D milestones.difference(seenMilestones);
-@@ -349,7 +353,11 @@
-=20
-           // The next major release (eg 6.0) is active
-           parts =3D release.series_version.split(".");
--          active.push(`${parseInt(parts[0])+1}.0`);
-+          next =3D `${parseInt(parts[0])+1}.0`
-+          active.push(next);
-+          // And all of the next releases milestones
-+          active.push(...createMilestones(next));
-+
-           console.log(active);
-         }
-       }
---=20
-2.43.0
+diff --git a/config.json b/config.json
+index c4d29aebc9cc..61c751a00634 100644
+--- a/config.json
++++ b/config.json
+@@ -1305,7 +1305,7 @@
+             }
+         },
+         "metrics-gitstats" : {
+-            "NEEDREPOS" : [],
++            "NEEDREPOS" : ["bitbake", "meta-openembedded"],
+             "step1" : {
+                 "shortname" : "Generate gitstats",
+                 "EXTRACMDS" : ["${SCRIPTSDIR}/run-gitstats ${BUILDDIR}/../"]
+
+---
+base-commit: 63f4e3954ff26cfd753c3c21f094b751978dda3e
+change-id: 20251029-contrib-mathieu-metrics-gitstats-bbsetup-6e0947f53fb3
+
+Best regards,
+-- 
+Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 
 
