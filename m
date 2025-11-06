@@ -1,86 +1,99 @@
-Return-Path: <twoerner@gmail.com>
+Return-Path: <alex.kanavin@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F1D7CCFA0D
-	for <webhook@archiver.kernel.org>; Wed,  5 Nov 2025 14:31:27 +0000 (UTC)
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.10810.1762353083751417300
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A817BCCFA03
+	for <webhook@archiver.kernel.org>; Thu,  6 Nov 2025 09:49:06 +0000 (UTC)
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.11082.1762422540967040258
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 05 Nov 2025 06:31:23 -0800
+ Thu, 06 Nov 2025 01:49:01 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=SUoVrgM/;
- spf=pass (domain: gmail.com, ip: 209.85.219.49, mailfrom: twoerner@gmail.com)
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-880570bdef8so34933696d6.3
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 05 Nov 2025 06:31:23 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=XPF0Yu31;
+ spf=pass (domain: gmail.com, ip: 209.85.218.44, mailfrom: alex.kanavin@gmail.com)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b3e7cc84b82so145942066b.0
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 06 Nov 2025 01:49:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762353082; x=1762957882; darn=lists.yoctoproject.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=htKijLDtOOMFEiGQasQl5e3e4wxi3quoZHZDN/UbLYk=;
-        b=SUoVrgM/wY9uu2G/GIudOwhdqCoMKgGLiCfhNjiOkep5xRBt3Vxo0or+vbHMfkgtDR
-         bzahzgXbnKgDCFSLJedV8cYu4qeRuTbUdhkTecMdnIuouttU8430shhHvdrxdLfxQIh/
-         6gHmqSh9s9XDfq2qSgLVCsPCS/DzMYBuO26UdGpYJtjGyS+OBXOaSfMiBTioD5Pn9REd
-         EhdonuGlsQwBbDRcv/yCCzHTxl9QLc3AEIi4avQYQDen+NwU6fezVyF9PGy+q7Vk1pJb
-         ilrwsZs7Bap4YMmKA7Dm34cVMYq+0zsZ/u4QtMJyIE2rx+GlbaVYrHZ37J2tI2Nyd9Z/
-         nqOQ==
+        d=gmail.com; s=20230601; t=1762422539; x=1763027339; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q68OBHXATXs6JYULyeAqBggXMk1qQlyiw391ZYsUC7o=;
+        b=XPF0Yu31yK2INDxlppbJwOWtYVJHB3WhelKnhKkGWA0cBafmFVX77efU0VGXo2j9/s
+         WAIbAIambTjGGT3l8EaQybALqTkEzLgUY+xL3OjpSu6rKGPEQF3rmBY5BlU7TbpzBPeC
+         ch8GYW0NyNXULFNFKcJzwo65hwK/bTa1VbbTJ3kFvHWhyn4sErwnfjkbWU+5uaBpPZlH
+         qHpOBqoEvJqnj3OrDSVYIeFr05w9wYTOtZb36eOTiepl0CLiaJClIh1Qmdq4TlXbM7cK
+         GCMGTZBkEi98hnyurmkDjUu4gcthM/sIAUBctgn5SNYLdLytMtL+qAkHRxO7TH1Rcivt
+         nrmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762353082; x=1762957882;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=htKijLDtOOMFEiGQasQl5e3e4wxi3quoZHZDN/UbLYk=;
-        b=FdwXT6++AKPOuH9Hh0HLH1XKZMoUciq4iC/iA4XJQnQHEtfNSVb8X43ByfBKj18BAt
-         NE44FImcEJTfu8I7NgW2GVKoBo4Hx6bUjUrhLxKn5lfviJ03GK8YOoesZWma98BvwluS
-         vJt/b0lU/i35fwXLgo6dhEpQvI5UrH52kYGrM+LyWHuvOla3u32WQy2ef5mijrwZA1NQ
-         hMkCewZ/85f//ucVIWCHRxkBPQ+uqNX8w09huvdhO5DdjscvvX1VqxjD4cCxbbCiuiVt
-         1sXZD8oRbV7lMqhrWn7OG7Q729sOGch96qdxojBJr3PjHvIKD4zXYk0narRufrizlPdx
-         Ba1g==
-X-Gm-Message-State: AOJu0YwTx/iCXbks/chHHCvXlAkmrTak3LYE6x1lfmw3IKSfAdb5ivT1
-	WtsIKJcti9hvKdymGwFvcHAzRUbmnZjVhr5koB3Bn6CTuQOr5KSZSNm+4Mxhcg==
-X-Gm-Gg: ASbGncssyPlmrx1wHarZYTcQ/I2HMEJR98rIbQVxGk9MN1LdKGbolLZgoHah2IPA7sp
-	A1oAsa3fQtH+TbAJD1Bj1tUto1GFSQy2EfYA3J7BE4ZFdx8Ue70CV0CjplbbjPJAeaG9MDjgaVP
-	RuKdtXsvao3A/zjb9RpC8h6nGMc5evfDnuTcDqvtxL7R0169Gx4YRBR37pgjkzMxCsezpPD6erg
-	ivCxHfH4YhhRbLMELb2zcM8nMCQQwLohyEzM7VZrPKBjY78J4eW1QmgW8ZFliZ0Q4yTYo+HdohP
-	hxZyrdwVjxoSXiASb8XUoAC5DwYaGS1ETON8zcJYeKmo97keK2HIZVaNcPq4EAzP6vyIhtfzXYb
-	rhna0adVmah0keL9jCT+ltxryIRAJqXFSUNMjsk6JbofuSNuZmdhZ6GnNQkpJH/bijqlqW6Tb20
-	Mu45XonaQN0HDHqawTpUoJa3obxNc=
-X-Google-Smtp-Source: AGHT+IGVB115ws+SECyiGuZRCFcoYVtJfCNzLS3bJCQyLDwe7mONoEq8HNHwfFwDFXH5R6MrfsE4+A==
-X-Received: by 2002:a05:6214:d0e:b0:880:57b3:cd1b with SMTP id 6a1803df08f44-880710be04emr45441346d6.18.1762353081952;
-        Wed, 05 Nov 2025 06:31:21 -0800 (PST)
-Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-88060e94455sm41599186d6.49.2025.11.05.06.31.20
-        for <yocto-patches@lists.yoctoproject.org>
+        d=1e100.net; s=20230601; t=1762422539; x=1763027339;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Q68OBHXATXs6JYULyeAqBggXMk1qQlyiw391ZYsUC7o=;
+        b=iASH53995SjFLr/l3BHHrGjWkQqKM1FyKwscV1BnJ9PQ5np7Vxsi5BhJbtZujQtht3
+         X+lQQL6O4QcI01HGG24v1Xed25Fk6fkMhyN38hwx4Uts7o1v0TPnmogcaN58+iYPkeGM
+         Q1RLLQXLG9M59n5e4rpVmu+RaS7hvB9E4EMtXQ2NfRg424soVBPVWuyBidABwprrzBl8
+         OS6AtsAujVpbqCJqmY5y8IOF+bwO5sIHQBtwALx0X31/AzHJIeFr5CeO1JsufvTfTJA5
+         y00e45yC0y2+jC2KSyJuBI9hjmGGlsJZZVelevXHT13Z4LX5RggRcZsHk6veQR+QkkwP
+         4e6g==
+X-Gm-Message-State: AOJu0YyhQ+shC1Z0pU7sP4EUOARdbSt3sYpKNFz4MpfAwSmmX2PiLrUK
+	e+s3R38LRVpNYwo96+h3z7RzcW7ngBIj7n9ND2j34Tk051dy9qVUnycLf5lxKA==
+X-Gm-Gg: ASbGncuAzAI83PGx2FLdLT3qJC4m0GjSGJTHArXOMuRd0asNoHA5xA4i/vrHnJ+w/nJ
+	X1Y22I/If56k/BXklZd/nR8y28iY1F8ZDCX4rj7SYbeXUgsua2Nduc6JfyBjITHUkIsSNacEUUR
+	RhQ99BDuVIL3oe/a480tvxqk5r0z9AkH5CgpmS2K2fLUm2BxeuGMOCXQysFDO13S3zTziCqsqoZ
+	C2/KRDZtERlwdTzqh7czRsrVSND0cgnRbNuniimG0DZQHwHs+WV+AVw/PnAiMk1aLoN57y6aPmx
+	P9GDwCCaoASREJ3ono/ZjtZd6HrNuCN8qFuEkVQ6tSnVZ3npdcyQzX2HONEsgNvsF0KdHcNS4F9
+	ulKXbuf+qRpobVMnREI0qTYgmG8kbEiHuDAo1dkvnZbX8X6fIiFO/sDkdaAevVE1WAaUfrl4rei
+	hvCtbq3MxsTh8BFTRbs4u4Jg5zA2zzkd0wCMiuAAZu7hXs/KIP
+X-Google-Smtp-Source: AGHT+IFyM6hMkscjNBPd4LSMpW7Th3JticZQvtLGlH/tIIo6BO1XFu3FOs7IEK2Klm5kNExw+ZeogA==
+X-Received: by 2002:a17:907:7e92:b0:b04:6546:345a with SMTP id a640c23a62f3a-b72655cdfa1mr640359066b.52.1762422539095;
+        Thu, 06 Nov 2025 01:48:59 -0800 (PST)
+Received: from alex-lx-laptop.lab.linutronix.de (vpn23a.hotsplots.net. [176.74.57.162])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7289334288sm175757466b.15.2025.11.06.01.48.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 06:31:21 -0800 (PST)
-Date: Wed, 5 Nov 2025 08:53:37 -0500
-From: Trevor Woerner <twoerner@gmail.com>
+        Thu, 06 Nov 2025 01:48:58 -0800 (PST)
+From: Alexander Kanavin <alex.kanavin@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: Re: [meta-rockchip][PATCH] fix sed invocation
-Message-ID: <20251105135337.GA3094@localhost>
-References: <20251104174516.31259-1-twoerner@gmail.com>
+Cc: Alexander Kanavin <alex@linutronix.de>
+Subject: [yocto-autobuilder-helper][PATCH] config.json: correct AUH job to match the new bitbake-setup based layer layout
+Date: Thu,  6 Nov 2025 10:48:54 +0100
+Message-ID: <20251106094854.259875-1-alex.kanavin@gmail.com>
+X-Mailer: git-send-email 2.47.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251104174516.31259-1-twoerner@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 05 Nov 2025 14:31:27 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2423
+ <yocto-patches@lists.yoctoproject.org>; Thu, 06 Nov 2025 09:49:06 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2424
 
-On Tue 2025-11-04 @ 12:45:16 PM, Trevor Woerner wrote:
-> "sed -ie" is different than "sed -i -e". Although both run the script on
-> the intended file in-place, the first one creates a backup. These two
-> were accidentally merged into one option which can sometimes work, but
-> not in this case.
-> 
-> Signed-off-by: Trevor Woerner <twoerner@gmail.com>
-> ---
->  .../rk-rauc-demo/recipes-core/rauc/rauc-conf.bbappend           | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+From: Alexander Kanavin <alex@linutronix.de>
 
-Applied to meta-rockchip, master branch.
+Signed-off-by: Alexander Kanavin <alex@linutronix.de>
+---
+ config.json | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/config.json b/config.json
+index 100de3a..f65563b 100644
+--- a/config.json
++++ b/config.json
+@@ -1532,10 +1532,10 @@
+             "step1" : {
+                 "shortname" : "setup AUH",
+                 "EXTRAPLAINCMDS" : [
+-                    "git config user.email auh@yoctoproject.org",
+-                    "git config user.name 'Auto Upgrade Helper'",
+-                    "git switch -C tmp-auh-upgrades HEAD",
+-                    "install -D ${SCRIPTSDIR}/auh-config/upgrade-helper.conf ./build/upgrade-helper/upgrade-helper.conf"
++                    "git -C ../layers/openembedded-core config user.email auh@yoctoproject.org",
++                    "git -C ../layers/openembedded-core config user.name 'Auto Upgrade Helper'",
++                    "git -C ../layers/openembedded-core switch -C tmp-auh-upgrades HEAD",
++                    "install -D ${SCRIPTSDIR}/auh-config/upgrade-helper.conf ./upgrade-helper/upgrade-helper.conf"
+                 ]
+             },
+             "step2" : {
+-- 
+2.47.2
+
 
