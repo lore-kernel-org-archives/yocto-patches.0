@@ -1,93 +1,104 @@
-Return-Path: <osama.abdelkader@gmail.com>
+Return-Path: <majortomtosourcecontrol@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B44DFCCFA18
-	for <webhook@archiver.kernel.org>; Sat,  8 Nov 2025 20:21:50 +0000 (UTC)
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.13201.1762633310123842619
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B35B5CCFA13
+	for <webhook@archiver.kernel.org>; Sat,  8 Nov 2025 20:22:50 +0000 (UTC)
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.13208.1762633367215784149
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 08 Nov 2025 12:21:50 -0800
+ Sat, 08 Nov 2025 12:22:47 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=mAIa9mTX;
- spf=pass (domain: gmail.com, ip: 209.85.128.43, mailfrom: osama.abdelkader@gmail.com)
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-47728f914a4so10755275e9.1
-        for <yocto-patches@lists.yoctoproject.org>; Sat, 08 Nov 2025 12:21:49 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=VbCgOcsS;
+ spf=pass (domain: gmail.com, ip: 209.85.166.50, mailfrom: majortomtosourcecontrol@gmail.com)
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-948614ceac0so121185739f.0
+        for <yocto-patches@lists.yoctoproject.org>; Sat, 08 Nov 2025 12:22:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762633308; x=1763238108; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VyEXchpZcXqjMLpzovmozQetXAo4os/uZXiinxHc6y0=;
-        b=mAIa9mTXr5XEUoVIOjhaf9+a+ES0/Fe1nvP5VRcfcEi85SRx7xgs3C6ezm40IVj4T1
-         z6oj0RYiWu5IsTRrkrGVqXC/JXsEGblzCglWPmXB/TbfSniarIucSO+DDhOHtdQkN6Ls
-         F4TNUfUIwdLUlNd3iTYyydxmPFGdNQyvmTPbLYK0eF8tvuNOQ9FzKcjEdFvIOMY+iZm1
-         mWCmAOMLKAR8h4cSy/2cj/hQTb11Z5Ms9vgYwQRRNQnwpr64R5nOxY6BolgA/laEWHpa
-         rwU7GOxxbIcunVDeHArLmmgsbdnY1IUkmHZv58Wel/uUscuGkOeSPf6IFsz4UovaMT/E
-         rywg==
+        d=gmail.com; s=20230601; t=1762633366; x=1763238166; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2YAr1dDBuoRzH8y/SN2dVyhqakzisNbgNG3/uf8/x00=;
+        b=VbCgOcsScjCsvhU2mog3JabK0g8VguNceQv1J99/iYcMES7uiHvRd83MHGl5257jEo
+         1N5bMBO3cOkQB8vbDaOL2GsNSUq0rf+qpuvQpigIuK7otyO7yVjJ1uJuz40bdXaCAlJM
+         kr4uw2MDujKqf1jvEFOStI0TlaYnI2dyQV5T4DcS7VNspWVKUsQE+PbElgLtugANS1I8
+         JFjT9u9evslVfM8mWPPg3eedxfk3XokaK0InZtngN5SVsNltFMVRf1bhEb0azGZobNr8
+         HtovYHYwXd5tsKAZQfvV2pM3klbuYszkuKZI244so/Wk4fdWrjueLfZG9SLDvYpY/Lxm
+         ZuTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762633308; x=1763238108;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VyEXchpZcXqjMLpzovmozQetXAo4os/uZXiinxHc6y0=;
-        b=DJvf0O9oKhKJfvRGdoyadijC8nHyEMbJTjfdN3sbEmtx/N7ENO8abHDUoKtvGbhayT
-         L/oBVSz9zJ4yLaGP+q1b7T2hLZQ6tzy5nLJoj2dnvRmqBSenamFlPgP8XfcmxAw1EJvo
-         GBZYiviirenLxm0Dsgia3O3TC+PX9CRmVTL3JbP3tQmWSXz68sK6C12WQV4cUsYASTC7
-         mDh1dmEMc9MXEME+LE/bsin1cBkvo3i+k5ghxy4YlHAkq2siLLo5UafkaSe9Du02GA2v
-         tJedqiK1kBd7OoWSPMBNZnLk70iPwVcgVTat2s9rXxp4DNJaPQMavlPsfN/Di5eNY3Td
-         qa6w==
-X-Gm-Message-State: AOJu0Yz4GzAp9IhPqOYOhcpIbtA62qGLwkFxsPSg46MxbvF2xa8jZS0L
-	f1m7GNzwmQfdOO3ycpmXhvLi+dpWgK6H8VhnweNqNrNINh/knSs45bWLUeTWQGNF
-X-Gm-Gg: ASbGnctsVJTYiebRIdyFlN1X0GTWV91cOlcSe8J766L9+9g994LXj82RDyu5q0ucRRf
-	neSJcnS6+gx3C1Lc+du8PkEMF8Nxl6mvMlI+0Dga3kGJQvlBxkYV3p124tFPKx5D9TPqONhli0X
-	hYGL0XLRsD8Zp8VGL5zrJqClODqKsClRTvdrVq4bv4UdVD0TLAIJLuj+TxUezqU9fH2i6l2Di97
-	qjBKeB6v9dDol3vd6L9NP0wvcgdiVTYdB+a9kWxOBNNMwizah7l2J6ul5IFkRB5EZya/qYazBlo
-	pRmAHZGE4bNrbIg25SXMxNLPElofaNu4D9IMBaqtupKEYDT3Yf50vGT8tCh3frrh4ZY+LBbky4c
-	iv2OVtZUF4p3rX7gJLS2EMk2kaE5N0LJpXhFv3D9mAD7gCrcQHwHnrC1Nn3C9EEo2maq9yxwIio
-	aNKYAC
-X-Google-Smtp-Source: AGHT+IGC+M0M6c2Q4o7kR1PAYbm0NtMjNad/y0ZzVLtMpQmVF4b4p0sqEXv9RJ0bzq5XR6XNDJZzSQ==
-X-Received: by 2002:a05:600c:6055:b0:477:6d96:b3c8 with SMTP id 5b1f17b1804b1-4777327b50bmr24334365e9.23.1762633308157;
-        Sat, 08 Nov 2025 12:21:48 -0800 (PST)
-Received: from osama.. ([156.223.140.230])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4777838199bsm16467595e9.9.2025.11.08.12.21.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Nov 2025 12:21:47 -0800 (PST)
-From: Osama Abdelkader <osama.abdelkader@gmail.com>
-To: yocto-patches@lists.yoctoproject.org
-Cc: Osama Abdelkader <osama.abdelkader@gmail.com>
-Subject: [PATCH] poky: fix typo in README
-Date: Sat,  8 Nov 2025 22:21:43 +0200
-Message-ID: <20251108202143.13272-1-osama.abdelkader@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1762633366; x=1763238166;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2YAr1dDBuoRzH8y/SN2dVyhqakzisNbgNG3/uf8/x00=;
+        b=r8LYr3VqelKXlRVjRQPDWl8+DokZopp7tfjnsPQYQS339lbEzI5wJcDKqyexzoH80g
+         jet3+y0cdl8ZZczIf2fb9y4W0KK6iow1tRxLIvqC4EM0RlJPPX/qPDqvIcSUy7tpOb/V
+         L7uNxFEkjN6yOfaDGiDmpfDqbFSdPt1ZGg9MkF4klS+GQrWoTDVNV4Q6R3amL2EuCH50
+         Tz/3MqryNq8e/SjyQWM8IPYcUmn4neHDfG3rZVO9uaYWye0MfiQs0vglhIFmXjga9nwg
+         MvE6s8PUbqYOdHuXcAlBUoLG43JAAoLqPD0nRGJt++HVToIkKZN1TRyByCA7HX9daAPd
+         TN3Q==
+X-Gm-Message-State: AOJu0Yx+wVT2ZFCxaH2NDluMEtN+1zFXV+8OlYuzk2gw7SfBPJVZdsZb
+	iEKEh4Uqyd7e9DmJ7oVsaOyhNAQP9eqRa3qwnMg90UGRCQcR6VDQWE+N
+X-Gm-Gg: ASbGncvFAe5QcArLIxVs66cOK7uJTCqpznLRhUG9sUt+YZCmSyTsHTPtyjKEoQLFWei
+	BOf2AVb89jjzaTF1slv421lGIkUfc++Jt1KZlEJpJ5iBWzYsi0rv9YdUU+CeZrU3bl8lQK+6/3R
+	uF05mjGrerrHgzvGTrYh7qmR3S6ZU8JQqBUVBo1EyxfQGmBY63sNNLun4BKtAaj71v7gHf98yW6
+	TRZ6BjEOFEr07jM+ZYMy6T1tbipXc2r1727imqWI8TXi+FpH3SrFG6S+we52y1OFnG1bmZvc3bj
+	iLQfvR3y8MF2XcMvF/BvfiIHYyX0o4zLyPlEIiFaNPp9R4Ui8NGUSt2OK3svd/Rva43Q8EZnHpO
+	FrWaJabYQe6wHw5ZhfkOaS1dtq+L13n5ZIb3VyCTt9usT1th1qLLuP1euDzcmnilJrAqBFLXp35
+	OTwm9IRFPmbz/XM4PhR05JmTagmytCCuc4bEKTnXagFi51kzVxAEkY5w==
+X-Google-Smtp-Source: AGHT+IEgshgHiKvImR7ReznxfJrLzTpcG8e1eXeQA3H3XLGVT/5WENHDWBfYMFU5tHZVigks3erwbA==
+X-Received: by 2002:a05:6602:6d03:b0:945:ccad:90b1 with SMTP id ca18e2360f4ac-94895fd1ad5mr518102639f.7.1762633366395;
+        Sat, 08 Nov 2025 12:22:46 -0800 (PST)
+Received: from [172.26.252.3] (174-29-210-254.hlrn.qwest.net. [174.29.210.254])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5b7468374adsm3217817173.28.2025.11.08.12.22.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 08 Nov 2025 12:22:45 -0800 (PST)
+Message-ID: <b8cdcf84-5fb5-4c1e-b24e-ce784b3e98ca@gmail.com>
+Date: Sat, 8 Nov 2025 13:22:45 -0700
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [meta-security][PATCH] suricata: update to 7.0.12
+To: Scott Murray <scott.murray@konsulko.com>
+Cc: yocto-patches@lists.yoctoproject.org, rybczynska@gmail.com,
+ sdoshi@mvista.com
+References: <10994238-57a3-4100-ae0e-85ce34e93f25@gmail.com>
+ <5ab11d33-891e-e56a-2572-445f68e79fa2@konsulko.com>
+Content-Language: en-US
+From: Clayton Casciato <majortomtosourcecontrol@gmail.com>
+In-Reply-To: <5ab11d33-891e-e56a-2572-445f68e79fa2@konsulko.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sat, 08 Nov 2025 20:21:50 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2459
+ <yocto-patches@lists.yoctoproject.org>; Sat, 08 Nov 2025 20:22:50 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2460
 
-ut meant -> it meant
+>> Update libhtp to required version 0.5.52
+>>
+>> https://suricata.io/2024/02/08/suricata-7-0-3-and-6-0-16-released/
+>> CVE-2024-23835
+>> CVE-2024-23836
+>> CVE-2024-24568
+> 
+> How attached are you to listing all the CVEs in the commit message?
+> I'm definitely going to prune the test information (perhaps put that
+> in a cover letter next time), but I'm tempted to omit the CVEs as
+> well to shorten the commit message, since they are listed in the
+> release note links.
+> 
+> Thanks,
+> 
+> Scott
+Hi, Scott
 
-Signed-off-by: Osama Abdelkader <osama.abdelkader@gmail.com>
----
- README | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Please modify the CVEs and test information as appropriate.
 
-diff --git a/README b/README
-index 84f3937d1f..7cf111ed14 100644
---- a/README
-+++ b/README
-@@ -50,7 +50,7 @@ developing layers, we made the artificial "poky" repository construct
- as a way to let people easily and quickly get started with the project.
- without cloning and managing multiple repositories. Layers were a new
- idea with lots of rough edges. kas didn't exist, I think repo was only
--just created and it was a different world. For us, ut meant hacking up
-+just created and it was a different world. For us, it meant hacking up
- a quick tool, "combo-layer" and it was really a temporary solution to
- fill a gap and it was at least as functional as repo of the era. It was
- assumed we'd work it out properly in the future.
--- 
-2.43.0
+I will keep this in mind for the future.
 
+Thank you!
+
+--
+Clayton Casciato
 
