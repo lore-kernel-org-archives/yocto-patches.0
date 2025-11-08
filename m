@@ -1,152 +1,93 @@
-Return-Path: <rybczynska@gmail.com>
+Return-Path: <mathieu.dubois-briand@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4729CCFA18
-	for <webhook@archiver.kernel.org>; Sat,  8 Nov 2025 07:17:45 +0000 (UTC)
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.1362.1762586256720442103
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15A5BCCFA18
+	for <webhook@archiver.kernel.org>; Sat,  8 Nov 2025 14:31:38 +0000 (UTC)
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.6607.1762612294837792502
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 07 Nov 2025 23:17:36 -0800
+ Sat, 08 Nov 2025 06:31:35 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=TTe2ph63;
- spf=pass (domain: gmail.com, ip: 209.85.215.182, mailfrom: rybczynska@gmail.com)
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b67684e2904so923203a12.2
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 07 Nov 2025 23:17:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762586255; x=1763191055; darn=lists.yoctoproject.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=pFDiT95myCe8+G5RjIaR21MDQ5PgkFnn6WsYOVBBhnQ=;
-        b=TTe2ph63ZUZWVdcTRnQZ/CERkJ5juaVwOm1CdXUN/Im0vYIhdLe3/An9PetcNvWdt1
-         pKrloD5kRk0FF9c0ndllpKHdbLDD+UFrNUv8BevIkpq2b8iJhxvKkzUPpw8O40GAJ7cC
-         Z/ADYlOe5hy2lzJJU3kbBp01drv4BoEXcLMhwp/crOUBLlU/hx1MA0lH99wEMQVTcSm9
-         IYgJaqhKVolDoU1uT3u2iZSSkKU8pEj/e48qFm/fb+xWxdtYgh5/VcLxWXhwCO/51snG
-         LPlCRosJcEa8mmnW8qYXc++dmSajfYQcNGy8bDWr2GHLws6wcV5OrTgt1rsJLzrpGxqF
-         x62A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762586255; x=1763191055;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pFDiT95myCe8+G5RjIaR21MDQ5PgkFnn6WsYOVBBhnQ=;
-        b=DYAEsiKqK8RA40WgzLTyLiM6OZs66SHpdEJ9PU6b+fD9pqic1VLpTxMYbhktUzw1Qn
-         V6ROOlAdMnZwCMPpgNPfyJx3uGtmX56C/qp8A2VsyeYW/6cJaiPu90r1I4l4l/G518oF
-         Xnn5j+PqGGx4Wm/kHsFXFRBbyfv4nnFZx78labVUjDFQ94aBomm3YflCSQ6g6c+dFfaC
-         v77W+zd4DmQLNDwEf5SY/Y7+o//E6S5bnoqUZTUtEBrOkb/gBAtP/GGcDgCVnkGvl6Yi
-         zWj5INwjIuB97oNBi7TRrt61H0CqgYmH3+wQhGJVeu9w6XP5r0hecxFDDdysSoqIj3Bx
-         A71Q==
-X-Gm-Message-State: AOJu0YyKQIMLmOm98mGGmyCk3yCUkdkFnMjNnTVIiY48XZzzEnL2qw/i
-	cpMfiFKPS9gDv2hzZws9uMERohbPiF4ctyOvWA6aVU+/CTOzuGbl5vLlw77myoABACXDxMSrkuQ
-	pl6WYWRjshBhQswVKn5o2Ztpdt+DPpaaTzw==
-X-Gm-Gg: ASbGncsqzo+YW6hejD2w/uNSNL3hbYbdNMMZDqM4cuNeDPc+jjheRIBuzssNP5+eU/I
-	Iaky/j+pR6KhSHVolbqIoZsbZn8QxiuWGwKUHVnyf8m4ypht0DH4CQSt7wn/APO+G4OXgO4fBky
-	7Mh1SV+SmfJTGJ20a/xSB1JDDDgIUnaFNbZ9LaLnbaIIzeVCSFoMp7pRLx/dXb8C/PAtlXcWKcT
-	iIgbmWfzWVWlCilmAUHQSUojcI/QXVh/9V0E/m1lrLZcmuAWmklw+PkcViLkPDBgxbT8rGe7IPf
-	jS4MTAtlLLeGnXXTnMdNAhhOaQ==
-X-Google-Smtp-Source: AGHT+IGK4Z4Kv2FqkizLHigzRnceBO7U3En3YHtYtCmhE7XDaEXb6vBHEzGU7LHIfrhBlm9LfbjccASttSsc+pc3Zdk=
-X-Received: by 2002:a17:902:f601:b0:274:5030:2906 with SMTP id
- d9443c01a7336-297e56d0d6dmr25052125ad.46.1762586255117; Fri, 07 Nov 2025
- 23:17:35 -0800 (PST)
+ dkim=pass header.i=@bootlin.com header.s=dkim header.b=wgrvx88V;
+ spf=pass (domain: bootlin.com, ip: 185.171.202.116, mailfrom: mathieu.dubois-briand@bootlin.com)
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 6B650C0E63E
+	for <yocto-patches@lists.yoctoproject.org>; Sat,  8 Nov 2025 14:31:11 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id AA91960710
+	for <yocto-patches@lists.yoctoproject.org>; Sat,  8 Nov 2025 14:31:32 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 36DB311850330;
+	Sat,  8 Nov 2025 15:31:31 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1762612292; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=GppHZe7aH6OCi+ycfODyxdNsUhtp7XkrNVRw/RpVoi8=;
+	b=wgrvx88VSN2IT+3r8rEP4l8ZIG4XnMmWvam1VwFXQlklnqWHSfUS4id5HACdCUt7zcCpGU
+	kq97FFRR7PChSr81JMBXsb9O51SFlRQ4uj5T9hO1+SwZC7zx6XRW0WUXj/IK+r0jfVnTbA
+	c0y6hLAIEea7cxU4EPPvfEsmvf1FB644FUxyn2y79faYsDhMtzrT991UPXNxiSfiM8LjOf
+	H7SaXtase/NcvGZlFb1gozUsmtdFYDOMyMc9dOcvZ7AyQVrBYr7FMmROWoM4NMuSud19Py
+	GESLS0hRYTEPeEEMJm9LHtmrSgaljZ2WYl6olOlBJpKhgrIM+HXqZjTvQU3T+w==
+From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Date: Sat, 08 Nov 2025 15:31:09 +0100
+Subject: [PATCH yocto-autobuilder2] consoleview: fix handling of undefined
+ URL strings
 MIME-Version: 1.0
-References: <cover.1751647559.git.scott.murray@konsulko.com> <ce65d0a7-4873-434d-98eb-dd5bf922b565@gmail.com>
-In-Reply-To: <ce65d0a7-4873-434d-98eb-dd5bf922b565@gmail.com>
-From: Marta Rybczynska <rybczynska@gmail.com>
-Date: Sat, 8 Nov 2025 08:17:21 +0100
-X-Gm-Features: AWmQ_bkksAMOwhlkCw96yUSWuS1ymMIV-a0kGwPeA51TPxo1RAryNV91GTjQICA
-Message-ID: <CAApg2=RARDxjHn5XmD_uWfY=Y-2zhyS+GuMLqh_mRDQTCsj3jg@mail.gmail.com>
-Subject: Re: [yocto-patches] [meta-security][PATCH 00/12] Initial fixes for
- master branch
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251108-mathieu-fix-url-replace-v1-1-ce0c804c3d1e@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIACxUD2kC/x2MQQqDMBAAvyJ77kISqi39SulhjZu6kBrZJKVF/
+ LvB48DMbJBZhTM8ug2Uv5IlLQ3spQM/0/JmlKkxOON6a80dP1Rm4YpBflg1ovIayTPewuDoGqg
+ fRgOtXpWbcp6f8E++JKRa0lglTqwOXvt+AFy/9Hd9AAAA
+X-Change-ID: 20251108-mathieu-fix-url-replace-7f62a4fa56b0
 To: yocto-patches@lists.yoctoproject.org
-Cc: Scott Murray <scott.murray@konsulko.com>, marta.rybczynska@ygreky.com
-Content-Type: multipart/alternative; boundary="0000000000009f504206431017e9"
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762612291; l=1186;
+ i=mathieu.dubois-briand@bootlin.com; s=20241219; h=from:subject:message-id;
+ bh=Wjy1IYs5yHW4dT2xsSj5CrO34kLG/JXCGQewcOx1dVY=;
+ b=o2hhSFqt1JxzW8bg4ceMWVDDP1TkQNeL/RgK3oz5zAaYYhWqkLzGZsd1f/1+JLKH12t6vkt2z
+ wV9FNdC3b2GCGSEkYe1kesrVLSCriq/to+r+GNogy8YX9VVWTYEs7XK
+X-Developer-Key: i=mathieu.dubois-briand@bootlin.com; a=ed25519;
+ pk=1PVTmzPXfKvDwcPUzG0aqdGoKZJA3b9s+3DqRlm0Lww=
+X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sat, 08 Nov 2025 07:17:45 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2431
+ <yocto-patches@lists.yoctoproject.org>; Sat, 08 Nov 2025 14:31:38 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2432
 
---0000000000009f504206431017e9
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Some errors were observed on the console view when the URL string is
+undefined. Reason for undefined URLs is unexplained so far, but we
+should at least try to not generate any JS exception.
 
-Hello Gyorgy,
-Positively yes, it is on my list just after the poky split. On the news
-side, we have the CI working now.
+Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+---
+ yocto_console_view/src/views/ConsoleView/ConsoleView.tsx | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Kind regards,
-Marta
+diff --git a/yocto_console_view/src/views/ConsoleView/ConsoleView.tsx b/yocto_console_view/src/views/ConsoleView/ConsoleView.tsx
+index 16569ea9eac8..a30402a9a335 100644
+--- a/yocto_console_view/src/views/ConsoleView/ConsoleView.tsx
++++ b/yocto_console_view/src/views/ConsoleView/ConsoleView.tsx
+@@ -156,6 +156,10 @@ const gitHostAliases = new Map([
+ 
+ function getHttpURL(url)
+ {
++       if (url === undefined) {
++               return url;
++       }
++
+        let u = new URL(url.replace(RegExp("^[a-z]*://"), "https://"));
+        u.username = "";
+        if (gitHostAliases.has(u.host)) {
 
-On Fri, Nov 7, 2025 at 5:35=E2=80=AFPM Gyorgy Sarvari via lists.yoctoprojec=
-t.org
-<skandigraun=3Dgmail.com@lists.yoctoproject.org> wrote:
+---
+base-commit: fdc34623463b1c708220021649ba4b8b53db3dbf
+change-id: 20251108-mathieu-fix-url-replace-7f62a4fa56b0
 
-> On 7/4/25 19:11, Scott Murray via lists.yoctoproject.org wrote:
-> > There is still
-> > quite a bit of work to recreate a working CI setup, as well as ensuring
-> > walnascar and scarthgap branches are in a testable state.
->
-> Is the Scarthgap branch still planned to be resurrected?
->
->
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-> Links: You receive all messages sent to this group.
-> View/Reply Online (#2430):
-> https://lists.yoctoproject.org/g/yocto-patches/message/2430
-> Mute This Topic: https://lists.yoctoproject.org/mt/113986841/5827677
-> Group Owner: yocto-patches+owner@lists.yoctoproject.org
-> Unsubscribe:
-> https://lists.yoctoproject.org/g/yocto-patches/leave/13234581/5827677/971=
-106717/xyzzy
-> [rybczynska@gmail.com]
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
->
->
->
+Best regards,
+-- 
+Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 
---0000000000009f504206431017e9
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div>Hello Gyorgy,</div><div>Positively yes, it is on my l=
-ist just after the poky split. On the news side, we have the CI working now=
-.</div><div><br></div><div>Kind regards,</div><div>Marta<br></div></div><br=
-><div class=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr" class=3D=
-"gmail_attr">On Fri, Nov 7, 2025 at 5:35=E2=80=AFPM Gyorgy Sarvari via <a h=
-ref=3D"http://lists.yoctoproject.org">lists.yoctoproject.org</a> &lt;skandi=
-graun=3D<a href=3D"mailto:gmail.com@lists.yoctoproject.org">gmail.com@lists=
-.yoctoproject.org</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote"=
- style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);p=
-adding-left:1ex">On 7/4/25 19:11, Scott Murray via <a href=3D"http://lists.=
-yoctoproject.org" rel=3D"noreferrer" target=3D"_blank">lists.yoctoproject.o=
-rg</a> wrote:<br>
-&gt; There is still<br>
-&gt; quite a bit of work to recreate a working CI setup, as well as ensurin=
-g<br>
-&gt; walnascar and scarthgap branches are in a testable state.=C2=A0 <br>
-<br>
-Is the Scarthgap branch still planned to be resurrected?<br>
-<br>
-<br>
--=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-<br>
-Links: You receive all messages sent to this group.<br>
-View/Reply Online (#2430): <a href=3D"https://lists.yoctoproject.org/g/yoct=
-o-patches/message/2430" rel=3D"noreferrer" target=3D"_blank">https://lists.=
-yoctoproject.org/g/yocto-patches/message/2430</a><br>
-Mute This Topic: <a href=3D"https://lists.yoctoproject.org/mt/113986841/582=
-7677" rel=3D"noreferrer" target=3D"_blank">https://lists.yoctoproject.org/m=
-t/113986841/5827677</a><br>
-Group Owner: <a href=3D"mailto:yocto-patches%2Bowner@lists.yoctoproject.org=
-" target=3D"_blank">yocto-patches+owner@lists.yoctoproject.org</a><br>
-Unsubscribe: <a href=3D"https://lists.yoctoproject.org/g/yocto-patches/leav=
-e/13234581/5827677/971106717/xyzzy" rel=3D"noreferrer" target=3D"_blank">ht=
-tps://lists.yoctoproject.org/g/yocto-patches/leave/13234581/5827677/9711067=
-17/xyzzy</a> [<a href=3D"mailto:rybczynska@gmail.com" target=3D"_blank">ryb=
-czynska@gmail.com</a>]<br>
--=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-<br>
-<br>
-<br>
-</blockquote></div>
-
---0000000000009f504206431017e9--
 
