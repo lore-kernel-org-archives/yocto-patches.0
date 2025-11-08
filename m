@@ -2,61 +2,61 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8978CD13CF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A619DCD1292
 	for <webhook@archiver.kernel.org>; Sat,  8 Nov 2025 20:20:10 +0000 (UTC)
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.13175.1762633201226239372
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.13177.1762633203370871917
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 08 Nov 2025 12:20:01 -0800
+ Sat, 08 Nov 2025 12:20:03 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=ioqYtBAm;
- spf=pass (domain: konsulko.com, ip: 209.85.219.49, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-88246401c9eso1687796d6.1
-        for <yocto-patches@lists.yoctoproject.org>; Sat, 08 Nov 2025 12:20:01 -0800 (PST)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=mROtLbXU;
+ spf=pass (domain: konsulko.com, ip: 209.85.222.170, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-8b26b12be9eso12141185a.1
+        for <yocto-patches@lists.yoctoproject.org>; Sat, 08 Nov 2025 12:20:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1762633200; x=1763238000; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1762633202; x=1763238002; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=RceM25XY8NP0JuNbgLAa1X9q7VJa/F5jwg7OOjN3OKc=;
-        b=ioqYtBAm7RU8kSekuLpvqdsob8g0U+dwbM63hs7H4sU8AgnbIu6ReUfzkKRYQuEa3e
-         K2inh46fCSX0nuz0P6LEmP3X8cjEA6eOiQkITN3dYWY67xsHNuxrbNUtejePwzOQy3FX
-         MY4Wx4HoclypZiksm39t7CASePsmwEYr57SaA=
+        bh=NinUJMA1QVpPNFNDyekNItgGbT3/YI6z6kNNsE7794Q=;
+        b=mROtLbXUfRKySpMV5IUFm9bq8KW+F+lBFN7zzSqUxm9fIcMN2uKup/sTP1qvk8wKBy
+         xOP17OsZntu60/OUfHOvEXW7VjGezYdj0GTiDQ2JxXiQ1FwtjhJBeW/eh15XBMS8zsP+
+         QHH5hxM8kIwIGGOR9WTkIjpUDrJ8fn8we15Z4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762633200; x=1763238000;
+        d=1e100.net; s=20230601; t=1762633202; x=1763238002;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=RceM25XY8NP0JuNbgLAa1X9q7VJa/F5jwg7OOjN3OKc=;
-        b=kufQWK9rDlj9it5PuEelSyrQm2c2xJLddh5wsqO0JbKR9EmnmEFfyqVF+JGOuGIzuY
-         7uQ2o22mYKZhsRrPvr8Enqv6w8dPFhyuBbj68XrVgWcq5RX1w+6+YVlRY+CY1cpJctnQ
-         7KK9vki97E+zKazU/17o/Sb/qf4nHIJS8a1OAfNPF/fFe6JepnP22zMWzY751EW+faCB
-         /WwOZUDItpS8YqhCPkNSbFYcHCVBk9eYnB+QCc3DPcDnKKNaDiW+LsFsUvwYuWwqTQ4G
-         fZbF8MoBkNpMOGwjhzjgn9DXyvwvrEyR1TmWy1FBiXcZBFp/PV9dbTv1DXhMHCevrYJu
-         dc7w==
-X-Gm-Message-State: AOJu0YzaXQv/nWbCdz/WFz5Fx0LEr31EJAAzwj824gOUN2eJ3o+U00jC
-	EgOReNC5WcTvkKWUZ5BTPGVZqg5jL/FYyKNJHX2B2iOnacCyB34K6PFNJN3vjWNtsImcJ7CducB
-	wW6xG
-X-Gm-Gg: ASbGncuYSrtPlFS7/E4N8y747/WuX3/0H6KqlCR4+JrltkILS7viIUrIajjOabA/wDP
-	T5aJxYqiMtLyoNPCSaQxx5WayqLqqn4ORaZaJe2ylrCZ5PAnsmlS/NzcqgQN4ln4R82XPRiNNno
-	SYCkcKRL82XzcVJ7/QIWWxwRNPalFhJYepkVddrf+euqSmgn9WRnWR7LbL+iZQazK2MBqgiT63Y
-	LSq0J+gXGGoXXTe3qKny3BDZDE02Kg0ZVKAMeL5rJrlTkk2Py2zMwN8y/udOQSFfT1j9eqUDF5j
-	GjAQfF1YASiXf8MoFxEvDwsSwJ9b1rSE9X5IHc1wNXTQ/G4R+sFgjVdswtMgy9ANb6SCSDQAExV
-	Pv9Wqx3u4wSjZ7sJsu4StbqdT3s54oSuUrBz7xyro/63BRCVMKm7UchO2hJp61U3V0Q1zI0ALLG
-	/5Nb63bMoPpKgH+6gbsA0nat59rP2KuDtd63RDcgjVT54JySRKvj7obrIr79Xvos4=
-X-Google-Smtp-Source: AGHT+IGk6CX/9RxCWi9lc5S4XzUjZV9AHpDQy2tIgzJcXUHGa3L47VUrYMufExgzohtof/x50y5YXA==
-X-Received: by 2002:a05:6214:29cf:b0:878:ee25:427d with SMTP id 6a1803df08f44-882387136cdmr51658646d6.59.1762633199875;
-        Sat, 08 Nov 2025 12:19:59 -0800 (PST)
+        bh=NinUJMA1QVpPNFNDyekNItgGbT3/YI6z6kNNsE7794Q=;
+        b=gyWLojq+FnO6stp6lW1GN+e7RhoWDMyAxd3qgbeUEwCfY1mWDDYYDUU9KC3QcJ2x/H
+         KjaGAc2jV/71ovDsCMaO0rCQSumEifpwrQtu8d/Y6GjG3yNa+i58lwb9nmCZ/FqNVtLO
+         gaWa5dNWm4bIjOmIEcCiN3J/HIV/xrSpL9PyXQEAGfdZx/X4VWyldPKfKlfVHpzNWqnP
+         1Zx7lbd3KyLiJwnMg9vC4ldMQqwL2NqLYp2+TU0+s+VLioL05IcBiG9mDCI+wo5v7TM2
+         2OWY1mlP2MIhuZo1oab6EA5eAHR2HXpyriGb8p0f17KBSi1BvUed7ZqRvKAkQABe8MVz
+         Feaw==
+X-Gm-Message-State: AOJu0YxGpuw8sAXZeeXw8L0rKYVNj10E+kZDL21XMlOPvKHmbi5udACh
+	lUjAmuXMBMtxdf3+Rpmf/qeAVpop8RXt6VS2lkOPNA/jZCepoWZyIiebl0mWYZUumA9sLMo2d4k
+	ErKNk
+X-Gm-Gg: ASbGncv5MXzCfSSBLhi+b8Om67owEsUn/+FcxzmD4/67nVsAdZSZyzXnwhgBPcEL99J
+	glD2KhcVpSQvjKhIo10saR9GffSSr3/zqGFgxh/H7zAlPE4VwHU0SBXMvFwU93aieqmoTnaWCZe
+	dlpuG4zGLkPSoipp5+k9QkJSoMXZiSeoM6mOEeFESfYPv24/vjpfJcGnuhsBuhtSOHBQuAR+FDI
+	mWpbdyREwq+9RZERshyBiHv8b3KM/tT2Nk6P9J2XC+bWedDkLRgzJDQQLfiUquYeEGvsgagGC/T
+	FwI6oNo/KIB97yQ7dUVKktmKr56cFvz8T13Ir6uCvWJN67mwBDWtavMzTp3VhrIrCnJcoVUeKx0
+	rrY+BYMZFZgcFlPW90fquCgto60o9cSneHM2feUSRp1cxHRCZm7S9v+Q3GDCifzKhbtEe4s51Ay
+	fDteCXzUBMAx/k5GwYBuOXr9m3gAXtnCu51uB1ytVbHkMFMM57Gy5K
+X-Google-Smtp-Source: AGHT+IHo3ekrSbMc8st6KJu4rOoudn8QzlkmkJgsyrmaNQkGtRlxUpSTA2L/Q4o6ldq3+hELURYGBQ==
+X-Received: by 2002:a05:6214:628:b0:880:5193:10fb with SMTP id 6a1803df08f44-882386eba88mr41767206d6.54.1762633202013;
+        Sat, 08 Nov 2025 12:20:02 -0800 (PST)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-88238ba36d4sm19786856d6.58.2025.11.08.12.19.59
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-88238ba36d4sm19786856d6.58.2025.11.08.12.20.01
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Nov 2025 12:19:59 -0800 (PST)
+        Sat, 08 Nov 2025 12:20:01 -0800 (PST)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][scarthgap/rust][PATCH 07/11] rust-target-config: PPC64 targets require explicit ABI selection to avoid build failures with rustc.
-Date: Sat,  8 Nov 2025 15:19:42 -0500
-Message-ID: <77052fec220c0cc0ad4e40abbf62bccd8573a1f2.1762633051.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][scarthgap/rust][PATCH 10/11] oeqa/selftest/rust: strip debug symbols from test binaries
+Date: Sat,  8 Nov 2025 15:19:45 -0500
+Message-ID: <363761fad5ceac7fad12c05451a32b9db942fd36.1762633051.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <cover.1762633051.git.scott.murray@konsulko.com>
 References: <cover.1762633051.git.scott.murray@konsulko.com>
@@ -66,57 +66,43 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Sat, 08 Nov 2025 20:20:10 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2454
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2457
 
-From: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
+From: Peter Tatrai <peter.tatrai.ext@siemens.com>
 
-Without a specified ABI, rustc panics with the following error:
-|   thread 'rustc' panicked at compiler/rustc_codegen_ssa/src/back/metadata.rs:394:21:
-|   No ABI specified for this PPC64 ELF target.
+Strip debug symbols from test binaries using RUSTFLAGS='-C strip=debuginfo'
+to reduce binary sizes from 300+ MB to ~140 MB.
 
-This issue was occuring because of the following Rust commit:
-https://github.com/rust-lang/rust/commit/9c1180b6238d163fc384d60d85647385d9210343
+This is especially critical for PowerPC mac99 which has a hardcoded 768MB
+RAM limit in QEMU. Without stripping, test binaries uploaded to /tmp (tmpfs)
+cause 'No space left on device' errors during test execution.
 
-As noted in the upstream changes:
-If the flags do not correctly indicate the ABI,
-linkers such as ld.lld assume that the ppc64 object files are always ELFv2,
-which leads to broken binaries if ELFv1 is used for the object files.
+The size reduction also benefits all other architectures by reducing
+memory pressure and upload times during testing.
 
-Because of this, it is now required to explicitly specify the ABI for PPC64 targets
-using one of the following:
-"elfv1" => EF_PPC64_ABI_ELF_V1,
-"elfv2" => EF_PPC64_ABI_ELF_V2,
-
-If no ABI is specified, the Rust compiler will panic with the error:
-No ABI specified for this PPC64 ELF target
-
-To address this:
-- Set 'elfv2' for powerpc64le (little-endian), which mandates ELFv2 ABI.
-- Set 'elfv1' for powerpc64 (big-endian), which defaults to ELFv1 ABI.
-
-Signed-off-by: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
+Signed-off-by: Peter Tatrai <peter.tatrai.ext@siemens.com>
+Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(adapted from oe-core commit 6cee30b7941c22eef52011b6bac0d3c0d7944abe)
+(adapted from oe-core commit ede3ac6f587507f98ffbe9a8b07e21e57c27c986)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- classes-recipe/rust-target-config.bbclass | 4 ++++
- 1 file changed, 4 insertions(+)
+ lib/oeqa/selftest/cases/rust_mixin.py | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/classes-recipe/rust-target-config.bbclass b/classes-recipe/rust-target-config.bbclass
-index 0377fcd..b9198c7 100644
---- a/classes-recipe/rust-target-config.bbclass
-+++ b/classes-recipe/rust-target-config.bbclass
-@@ -386,6 +386,10 @@ def rust_gen_target(d, thing, wd, arch):
-         tspec['llvm-abiname'] = "ilp32d"
-     if "loongarch64" in tspec['llvm-target']:
-         tspec['llvm-abiname'] = "lp64d"
-+    if "powerpc64le" in tspec['llvm-target']:
-+        tspec['llvm-abiname'] = "elfv2"
-+    if "powerpc64" in tspec['llvm-target']:
-+        tspec['llvm-abiname'] = "elfv1"
-     tspec['vendor'] = "unknown"
-     tspec['target-family'] = "unix"
-     tspec['linker'] = "{}{}gcc".format(d.getVar('CCACHE'), prefix)
+diff --git a/lib/oeqa/selftest/cases/rust_mixin.py b/lib/oeqa/selftest/cases/rust_mixin.py
+index 95859a9..b7213f9 100644
+--- a/lib/oeqa/selftest/cases/rust_mixin.py
++++ b/lib/oeqa/selftest/cases/rust_mixin.py
+@@ -121,6 +121,9 @@ class RustSelfTestSystemEmulated(OESelftestTestCase, OEPTestResultTestCase):
+             cmd = "export TARGET_VENDOR=\"-poky\";"
+             cmd = cmd + " export PATH=%s/recipe-sysroot-native/usr/bin/python3-native:%s/recipe-sysroot-native/usr/bin:%s/recipe-sysroot-native/usr/bin/%s:%s/hosttools:$PATH;" % (rustlibpath, rustlibpath, rustlibpath, tcpath, tmpdir)
+             cmd = cmd + " export RUST_TARGET_PATH=%s/rust-targets;" % rustlibpath
++            # Strip debug symbols from test binaries to reduce size (300+ MB -> ~140 MB)
++            # PowerPC mac99 QEMU has 768MB RAM limit, so we need to minimize test binary sizes
++            cmd = cmd + " export RUSTFLAGS='-C strip=debuginfo';"
+             # Trigger testing.
+             cmd = cmd + " export TEST_DEVICE_ADDR=\"%s:12345\";" % qemu.ip
+             cmd = cmd + " cd %s; python3 src/bootstrap/bootstrap.py test %s --target %s" % (builddir, testargs, targetsys)
 -- 
 2.51.0
 
