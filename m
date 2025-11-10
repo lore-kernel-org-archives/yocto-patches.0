@@ -1,196 +1,123 @@
-Return-Path: <quaresma.jose@gmail.com>
+Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB2F6CCF9E3
-	for <webhook@archiver.kernel.org>; Mon, 10 Nov 2025 11:59:13 +0000 (UTC)
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.46458.1762775950110623735
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B37FCCFA13
+	for <webhook@archiver.kernel.org>; Mon, 10 Nov 2025 21:09:43 +0000 (UTC)
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.1881.1762808973669716070
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 10 Nov 2025 03:59:10 -0800
+ Mon, 10 Nov 2025 13:09:33 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=fW/NSfp1;
- spf=pass (domain: gmail.com, ip: 209.85.208.49, mailfrom: quaresma.jose@gmail.com)
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-64088c6b309so4625935a12.0
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 10 Nov 2025 03:59:09 -0800 (PST)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=c6MV73iO;
+ spf=pass (domain: konsulko.com, ip: 209.85.160.173, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4ed82ee9e57so49905721cf.0
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 10 Nov 2025 13:09:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762775948; x=1763380748; darn=lists.yoctoproject.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=yMyqtEUMuRZvxt33ZVv//BeKHh1yZmHQmuw0YQrwvGQ=;
-        b=fW/NSfp1YCIMeYkgrdQ+CL1WiFjl0Thzh8l59sw8AEJQTzrnScX6zWPOuTI3mLsBvY
-         P1icGA3V2fvoO9cehk9vheWXzorRZkc0QQnV4gz6qO6ZsV0E/iXjFZrPLa/w69fvtint
-         WE8Lc68ZLn3toyRWQmVtHK+b+k4bOHue6VB7u5f2u+06vQmfwpT7E+pGhwY1dURDiOlK
-         F4NujRIXjE2Co4Hwlh9Hb45fq1XEbCeqE4bofEbGd/WMn900PMq4CCHQhyEAbkBHExT/
-         NY+3n9Pxus0DBheCQZFOseMRml1ZPK09eUsIs4njC/uDTPmawNXJzj62WcVASkWiNPl1
-         A/rw==
+        d=konsulko.com; s=google; t=1762808972; x=1763413772; darn=lists.yoctoproject.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rfroi657PzaG6hCVGW7jvIAPbkVFozCU0V9ZM5+eoVQ=;
+        b=c6MV73iOyLTImrDebQSLspu3FxMyR7/37JmR+CX6trIDmo1XWYI88PSvKfzgUDaTAF
+         BJC0YrDpwusJLSBHmw7zaiuwy3Vh/Ef8qKL06s3YsWw26jdbYiZcU49guikCMVCsAe2E
+         YHhizGDpvHsONjASBISt3SoErkyhE91O6c+xc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762775948; x=1763380748;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yMyqtEUMuRZvxt33ZVv//BeKHh1yZmHQmuw0YQrwvGQ=;
-        b=fqoAdhBM/woqdgnGKszkFULNAxZAKqflTtJK5Bo0ueNX03aRvAxtbq0JIsULIUhmoN
-         FBjOHCuCsPBlrED0uOcshCASAPKucyI+HXeY7koa9rglWneuzJscGlExcH0a+bxufLBg
-         fHYMEnTFQq9hODD1fPFdDxOD2LsSrg4UqczroPGFsU6mnXIxnzuDN5FUXuLcj9SshVJ7
-         EsnXNqwBZaUHFvcAbVpe+bjrscrVsMsJfK0Ygj8j4eGmHbpea3/NpT27pFOHKzeJigC7
-         JSr4W9FCsyb6IhKqJpkxLzZJxuD1WwZ66p6W2up5Z8rpMm0ksy71aFvCeC1kX0sLcGGK
-         INOg==
-X-Gm-Message-State: AOJu0YyaG6iv5MDP0MemDfe00CSsYUUBzRboaOPXRFxQOREIArtwJYRq
-	3pB9DzbynBWFzLhj6/BNt2YhIeM6i7nLVDqNCfYHJ4d8+UYIiBkeiZXFLkimlslWZRdxTedqOYl
-	T3VGLDx12QaYcD/nYvXuVozinE7+dpIno4l4x0to=
-X-Gm-Gg: ASbGnctczOK5upo3b3wH/0T3iq52N9NOvw4Xdsx6Auj0tOkCB93PXNfP7yHD+0K4X93
-	PAmtozoU9P9FgnXqYNZdeUAqrkflA7/QmY93lEqErW81i+sfvp5vyP2zcfNevnjywzD1TWvzc5a
-	2Ndwv9UQcDEO7dKWsptsGaXCUwx7ftY9qsSFa2ui0kjWpqRz03txDQJ+DoG7wbxJPpFbniVesRP
-	PBnhd7BptzPWJ3k3W5hIuw2BIloztgYftawYE7fQUqG7bPKA19TEEvYxLuiDnZphzxIWb0p
-X-Google-Smtp-Source: AGHT+IHNNlcSSkLbskH+O2RDvagxM94hdeCn5e+tIq3r3StYOVSfZF+H2aw1rKs21J3etVyDFCYNit2uBlOacBsuZls=
-X-Received: by 2002:a17:907:7f2a:b0:b6d:801a:648 with SMTP id
- a640c23a62f3a-b72e055df35mr724592166b.48.1762775947771; Mon, 10 Nov 2025
- 03:59:07 -0800 (PST)
-MIME-Version: 1.0
-References: <20251110085356.11336-1-peter.marko@siemens.com>
-In-Reply-To: <20251110085356.11336-1-peter.marko@siemens.com>
-From: Jose Quaresma <quaresma.jose@gmail.com>
-Date: Mon, 10 Nov 2025 11:58:56 +0000
-X-Gm-Features: AWmQ_bkMrULXoh-zG_UXHTArGzK_IfrtAMOegF8WqJvGdSUKDX2yJmmlbIWgHjk
-Message-ID: <CANPvuR=SZ58xNsdw91C7XjnOQU6Jn5PcAz0v75vygUTCLAqQPw@mail.gmail.com>
-Subject: Re: [yocto-patches] [meta-lts-mixins][kirkstone/go][PATCH] README:
- add myself as maintainer
+        d=1e100.net; s=20230601; t=1762808972; x=1763413772;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Rfroi657PzaG6hCVGW7jvIAPbkVFozCU0V9ZM5+eoVQ=;
+        b=OKkSzrleCHDcDYiqq57UbxIhpos7nbGIcWadgqI3dPWRiAUL8KJwBA2K9XgAJW1OdE
+         C/+YNYPrbDYKENNSNha2liS09iUEWDCVxUrah1rXdP28Iiw/I3f9/yMLSQ0He5G7+K24
+         dY+j5Vg6IJWKM6LApJvi7IraowMtQUJnLoeju+NTP28VAoLq+sIwQwjKr2f7eHxr7MkX
+         TRXKWYSeU36pIJdI+cwHfAI7I0x9KTg1aHOzw43dnHAQU15rqSdhBJ+NWY0uubYGoulU
+         GDlbwpxQPAQ1uObjjLvnUEVrzjw/N5KIyoG5lUxPPsoppHn5NnN5jW3hvB1uzHcPUwAW
+         t2Xw==
+X-Gm-Message-State: AOJu0YxU0s9+jLdb+aHh6g4PsLgMfh5QmL3A2uMg+d3tBat9a1li97C/
+	IftQqBCCXg4BPMYKVZfY8gUb1DB7LagAz+w0yjGa2pnIKSCskHLeyBKY2uFFgWgK+TT5inYxWs3
+	rtvsF
+X-Gm-Gg: ASbGnctBjrmRoRGKq2fuWSMj4DcblQ1KNQD/4QE7nuahBnOe86vQRDddGKJbXDgVJqC
+	+lP6O9YZqIPo0pd0xc2+G03ahsDyQQ1bMdcw/ZtBccULijYZcio1PwaOb25vCAHm3B4NYcV+lXO
+	RpezQPRJb6jEM/I0Z+FcdfLW/F3Wa53ISrLeFKfQK0VaNP+1f0VTUX2ZKBGZC3KLJYT40qOA7BV
+	AtMI5XZ6kAdWaXPm4BH5Ko10cFcbXoXmEiHZH4wti3dmGFM9hcZcmjnbcauOlgVFazUflXhWI6Y
+	Eb3RKvTMow0g52BRJjb9wKzyAL5v8hs5BAuMUaAhOFpWQc86SRhZGI51GW/iGOkR8/QA9QAPZMx
+	2BeXI3PbcarmTrfALODexxuw/uyksemOh1ynFlcQlAJFyOzaIs4rNxqjYOdu+ITN46luyP/PxFD
+	lUaFzm09ZLNdjo7eOhXGMiq9XCbimO5OPLsToHey/wxvHykw==
+X-Google-Smtp-Source: AGHT+IGpRvl6NfSz/2M+/n4HC4WoEajPDiKupff69BJf5Kv/mOThEG4MFmrBzY8jv5fZEL1DlCupcQ==
+X-Received: by 2002:ac8:7d95:0:b0:4ed:6574:3a90 with SMTP id d75a77b69052e-4eda4f11931mr119009981cf.35.1762808972377;
+        Mon, 10 Nov 2025 13:09:32 -0800 (PST)
+Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b2355e776esm1063246485a.21.2025.11.10.13.09.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Nov 2025 13:09:31 -0800 (PST)
+Date: Mon, 10 Nov 2025 16:09:31 -0500 (EST)
+From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Peter Marko <peter.marko@siemens.com>, Jose Quaresma <jose.quaresma@foundries.io>
-Content-Type: multipart/alternative; boundary="0000000000002f871206433c42b4"
+cc: Johannes Aalto <aalto.johannes@gmail.com>
+Subject: Re: [yocto-patches] [meta-lts-mixins][scarthgap/rust][PATCH] Update
+ README.md with SDK configuration instructions
+In-Reply-To: <20251109175336.257896-1-aalto.johannes@gmail.com>
+Message-ID: <ee2c9c46-ad4a-fd96-df53-2154f2966521@konsulko.com>
+References: <20251109175336.257896-1-aalto.johannes@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 10 Nov 2025 11:59:13 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2474
+ <yocto-patches@lists.yoctoproject.org>; Mon, 10 Nov 2025 21:09:43 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2475
 
---0000000000002f871206433c42b4
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Sun, 9 Nov 2025, Johannes Aalto via lists.yoctoproject.org wrote:
 
-Hi Peter,
-
-Applied along with the other pending patches you sent.
-
-Thank you for all your help.
-
-Jose
-
-Peter Marko via lists.yoctoproject.org <peter.marko=3D
-siemens.com@lists.yoctoproject.org> escreveu (segunda, 10/11/2025 =C3=A0(s)
-08:54):
-
-> From: Peter Marko <peter.marko@siemens.com>
+> Add the required configuration for creating the SDK.
+> Motivation for the change is that the steps seem to be slightly different
+> than the config for plain poky version of rust (and I guesskirkstone/rust
+> branch too).
 >
-> I'm already very active contributor backporting all go recipe updates
-> and it makes sense to have at least two maintainers to be able to handle
-> contributions in timely manner.
+> Especially, line like:
+>  SDK_TOOLCHAIN_LANGS += 'rust'
+> and/or
+>  TOOLCHAIN_TARGET_TASK:append = " libstd-rs"
 >
-> Signed-off-by: Peter Marko <peter.marko@siemens.com>
-> Cc: Jose Quaresma <jose.quaresma@foundries.io>
+> seems to create a broken set of libraries due to having duplicate libraries causing build
+> errors like:
+>  error[E0464]: multiple candidates for `rlib` dependency `std` found
+>    |
+>    = note: candidate #1: /opt/poky/5.0.10/sysroots/cortexa72-poky-linux/usr/lib/rustlib/aarch64-poky-linux-gnu/lib/libstd-370fbb2cfd29928b.rlib
+>    = note: candidate #2: /opt/poky/5.0.10/sysroots/cortexa72-poky-linux/usr/lib/rustlib/aarch64-poky-linux-gnu/lib/libstd.so
+>
+> (although, I'm not quite sure if this difference in config is intended behavior)
+
+I hit the duplicate libraries issue myself last week, and at the moment I
+don't believe it's unique to using the scarthgap/rust mixin layer,
+oe-core master branch likely has the same problem when using non-trivial
+images.  I am going to try to pin down a simple reproducer in the next
+couple of days to foster discussion about whether something should be
+done in oe-core to avoid the issue.  So, for now I'm going to hold off on
+taking this, once the situation is clearer I will reassess.
+
+Scott
+
+
+> Signed-off-by: Johannes Aalto <aalto.johannes@gmail.com>
 > ---
->  README | 1 +
->  1 file changed, 1 insertion(+)
+>  README.md | 4 ++++
+>  1 file changed, 4 insertions(+)
 >
-> diff --git a/README b/README
-> index d0b6bc4..6752254 100644
-> --- a/README
-> +++ b/README
-> @@ -12,3 +12,4 @@ The patches can be backport from openembedded-core with=
-:
+> diff --git a/README.md b/README.md
+> index a00a00e..0f5c30d 100644
+> --- a/README.md
+> +++ b/README.md
+> @@ -29,6 +29,10 @@ Notes
+>    support are included, and the backported Rust test is included as the
+>    "rust_mixin", it is not guaranteed that it will always be in a passing
+>    state.
+> +- To include Rust support in a SDK, do the following in e.g. local.conf:
+> +  ```
+> +  TOOLCHAIN_HOST_TASK:append = " packagegroup-rust-cross-canadian-${MACHINE}"
+> +  ```
+>  - The intent is to track any further upgrades that occur in the master
+>    branch of oe-core, with an expected end of support in April 2028, the
+>    same as Yocto Project's planned EOL for Scarthgap (per
 >
->  Maintainers:
->  Jose Quaresma <jose.quaresma@foundries.io>
-> +Peter Marko <peter.marko@siemens.com>
->
->
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-> Links: You receive all messages sent to this group.
-> View/Reply Online (#2469):
-> https://lists.yoctoproject.org/g/yocto-patches/message/2469
-> Mute This Topic: https://lists.yoctoproject.org/mt/116216252/5052612
-> Group Owner: yocto-patches+owner@lists.yoctoproject.org
-> Unsubscribe:
-> https://lists.yoctoproject.org/g/yocto-patches/leave/13170708/5052612/150=
-4338242/xyzzy
-> [quaresma.jose@gmail.com]
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
->
->
->
-
---=20
-Best regards,
-
-Jos=C3=A9 Quaresma
-
---0000000000002f871206433c42b4
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div>Hi Peter,<br><br></div><div>Applied along with the ot=
-her pending patches you sent.<br><br></div>Thank you for all your help.<fon=
-t color=3D"#888888"><br><br>Jose</font></div><br><div class=3D"gmail_quote =
-gmail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">Peter Marko vi=
-a <a href=3D"http://lists.yoctoproject.org">lists.yoctoproject.org</a> &lt;=
-peter.marko=3D<a href=3D"mailto:siemens.com@lists.yoctoproject.org">siemens=
-.com@lists.yoctoproject.org</a>&gt; escreveu (segunda, 10/11/2025 =C3=A0(s)=
- 08:54):<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px=
- 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">From: P=
-eter Marko &lt;<a href=3D"mailto:peter.marko@siemens.com" target=3D"_blank"=
->peter.marko@siemens.com</a>&gt;<br>
-<br>
-I&#39;m already very active contributor backporting all go recipe updates<b=
-r>
-and it makes sense to have at least two maintainers to be able to handle<br=
->
-contributions in timely manner.<br>
-<br>
-Signed-off-by: Peter Marko &lt;<a href=3D"mailto:peter.marko@siemens.com" t=
-arget=3D"_blank">peter.marko@siemens.com</a>&gt;<br>
-Cc: Jose Quaresma &lt;<a href=3D"mailto:jose.quaresma@foundries.io" target=
-=3D"_blank">jose.quaresma@foundries.io</a>&gt;<br>
----<br>
-=C2=A0README | 1 +<br>
-=C2=A01 file changed, 1 insertion(+)<br>
-<br>
-diff --git a/README b/README<br>
-index d0b6bc4..6752254 100644<br>
---- a/README<br>
-+++ b/README<br>
-@@ -12,3 +12,4 @@ The patches can be backport from openembedded-core with:<=
-br>
-<br>
-=C2=A0Maintainers:<br>
-=C2=A0Jose Quaresma &lt;<a href=3D"mailto:jose.quaresma@foundries.io" targe=
-t=3D"_blank">jose.quaresma@foundries.io</a>&gt;<br>
-+Peter Marko &lt;<a href=3D"mailto:peter.marko@siemens.com" target=3D"_blan=
-k">peter.marko@siemens.com</a>&gt;<br>
-<br>
-<br>
--=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-<br>
-Links: You receive all messages sent to this group.<br>
-View/Reply Online (#2469): <a href=3D"https://lists.yoctoproject.org/g/yoct=
-o-patches/message/2469" rel=3D"noreferrer" target=3D"_blank">https://lists.=
-yoctoproject.org/g/yocto-patches/message/2469</a><br>
-Mute This Topic: <a href=3D"https://lists.yoctoproject.org/mt/116216252/505=
-2612" rel=3D"noreferrer" target=3D"_blank">https://lists.yoctoproject.org/m=
-t/116216252/5052612</a><br>
-Group Owner: <a href=3D"mailto:yocto-patches%2Bowner@lists.yoctoproject.org=
-" target=3D"_blank">yocto-patches+owner@lists.yoctoproject.org</a><br>
-Unsubscribe: <a href=3D"https://lists.yoctoproject.org/g/yocto-patches/leav=
-e/13170708/5052612/1504338242/xyzzy" rel=3D"noreferrer" target=3D"_blank">h=
-ttps://lists.yoctoproject.org/g/yocto-patches/leave/13170708/5052612/150433=
-8242/xyzzy</a> [<a href=3D"mailto:quaresma.jose@gmail.com" target=3D"_blank=
-">quaresma.jose@gmail.com</a>]<br>
--=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-<br>
-<br>
-<br>
-</blockquote></div><div><br clear=3D"all"></div><div><br></div><span class=
-=3D"gmail_signature_prefix">-- </span><br><div dir=3D"ltr" class=3D"gmail_s=
-ignature"><div dir=3D"ltr">Best regards,<div><br>Jos=C3=A9 Quaresma</div></=
-div></div>
-
---0000000000002f871206433c42b4--
 
