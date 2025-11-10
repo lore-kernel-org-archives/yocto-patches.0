@@ -1,370 +1,353 @@
-Return-Path: <hemant.jadhav@emerson.com>
+Return-Path: <skandigraun@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DDB8CD13CF
-	for <webhook@archiver.kernel.org>; Mon, 10 Nov 2025 04:06:41 +0000 (UTC)
-Received: from mx0b-00300601.pphosted.com (mx0b-00300601.pphosted.com [148.163.142.35])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.40272.1762747593608638490
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66B44CCF9E3
+	for <webhook@archiver.kernel.org>; Mon, 10 Nov 2025 08:12:42 +0000 (UTC)
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.43742.1762762353394421513
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 09 Nov 2025 20:06:33 -0800
+ Mon, 10 Nov 2025 00:12:33 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@emerson.com header.s=email header.b=VDK9+nk9;
- spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: emerson.com, ip: 148.163.142.35, mailfrom: prvs=04098c52d2=hemant.jadhav@emerson.com)
-Received: from pps.filterd (m0484883.ppops.net [127.0.0.1])
-	by mx0b-00300601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A9NsGxa032258
-	for <yocto-patches@lists.yoctoproject.org>; Mon, 10 Nov 2025 04:06:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=emerson.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=email; bh=eN/D
-	RpVriLEtlCD0yQYIwtEe4iGc2dSw43jI+UKRPw0=; b=VDK9+nk9bKFbTia5h3Wo
-	YbBeRnLOPxeBSVe9NxXq5AKjG+umkckvKInx322H1EiZUs7plnhhxuSCyVJffp7s
-	cMAH3n8xNNJ7IVfALgJUjPGuqsGqdtBTJ5cuw8576olxc/Uz26f9gjrdGH5z0BzQ
-	RMj/U1L13o9quZGyjA/Ky82R2pp/F9P14bMDHdP/xOnW6O8gVq2uPxAqagGD9BuY
-	k5oOmOuDmFqac0uRok+TdxoPDVn234En8hz4muKboY4ktdx2/ceKBJR2C4JLknop
-	6yJD93QVtHKVS0+ljsog4TBAnNjBaXq8Q6avdEfRO2qfb6ELNEya+yHQoRM0tgWp
-	Fg==
-Received: from us-aus-excas-p1.ni.corp.natinst.com ([130.164.94.73])
-	by mx0b-00300601.pphosted.com (PPS) with ESMTPS id 4aajmukvtf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <yocto-patches@lists.yoctoproject.org>; Mon, 10 Nov 2025 04:06:32 +0000 (GMT)
-Received: from us-aus-excas-p1.ni.corp.natinst.com (130.164.68.17) by
- us-aus-excas-p1.ni.corp.natinst.com (130.164.68.17) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Sun, 9 Nov 2025 22:06:31 -0600
-Received: from hjadhav-Virtual-Machine.mshome.net (172.18.68.32) by
- us-aus-excas-p1.ni.corp.natinst.com (130.164.68.17) with Microsoft SMTP
- Server id 15.2.1258.28 via Frontend Transport; Sun, 9 Nov 2025 22:06:31 -0600
-From: Hemant Jadhav <hemant.jadhav@emerson.com>
-To: <yocto-patches@lists.yoctoproject.org>
-Subject: [meta-security][PATCH 2/2] clamav: Remove obsolete 0.104.4 recipe and patches
-Date: Sun, 9 Nov 2025 22:06:31 -0600
-Message-ID: <20251110040631.34843-2-hemant.jadhav@emerson.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251110040631.34843-1-hemant.jadhav@emerson.com>
-References: <20251110040631.34843-1-hemant.jadhav@emerson.com>
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=Sr5FpXiL;
+ spf=pass (domain: gmail.com, ip: 209.85.128.49, mailfrom: skandigraun@gmail.com)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4775ae77516so32178925e9.1
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 10 Nov 2025 00:12:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762762351; x=1763367151; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:in-reply-to:cc:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=p3q6WstlIQQpJG1b7Y+5g2esyBv9DLS2s/+aZw6bHtE=;
+        b=Sr5FpXiL1Me2zxYqqTLdrwtzkpjbmGLh/2gG5HDyZJvI4gTli/8N7Om0N3yoBP1OtC
+         mjDvlAel2QiTGp2jlfLvIaWnSt7xAvXHmFqmkT6HB8kWVdqiaMj5EJ9mlTXqvAtOi9c9
+         O95L4VKo/YPwvlWtJFx3e3kfHtp/Qo0zZoxQuUewxTJJC5FIY4nAYIkEirMXkHkZdKek
+         j9HO+D32DTjtPi4wspg+xesINQjfrPBpxBMkvG+NFvg2sUuK48Bn7sNTJJYVK43xqEZh
+         Y+FrvjqdX8zJ6WYZrR3lOw+t9vChZkryrl121rm2kCdfxt8P+0KLMXigHJ6eIkyT9oqv
+         wj2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762762351; x=1763367151;
+        h=content-transfer-encoding:in-reply-to:cc:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=p3q6WstlIQQpJG1b7Y+5g2esyBv9DLS2s/+aZw6bHtE=;
+        b=FqVf4CgtBO6TPDyvwHDBqfZSXQvW+rQnAaJ8W/kh76LrnVjI7MB0VIiWjv/b0PQHc/
+         MJsbeAQzWvRctoubye78p88gM6TKEuAt2fzn3svMHI3pgGtu7irnhJlCDB3APGHJB443
+         3mEl/8rTiGJELUcbUF/RXGQqXIhprep8agFM1ObeJRAVGfs6E6AZKV/eX6ESsUEXdYVp
+         OJAUZPPa8KCOwT3mEsja6PFA+CLgAX5JL1mAOvzeOdxgrZQa81NCu1oWlHD5ZPoG9Xbw
+         7PD8/4ipo/xSLcfY1k8JgqCEcOymfZo+T2PZefTpOQYzVkdBjR9UE02riEg1Q2N8vtkQ
+         13wg==
+X-Gm-Message-State: AOJu0YyHkhJoGhKo9+PkoI8cBK6eAULC4NAk/mVtdxiL0UhKZ9XIJYBV
+	Wj04RHb471zIufKldUP+xVMwrcg67VTpPvYjkDJi6uSAXp3YKqFJY3f1JZtjpDrx
+X-Gm-Gg: ASbGnctwTq0j9XsJRbgo6etaK8e8ZSNbk5vShkpgsXn/Wx/uMBsEMzD7Mj/BPMRJ0pO
+	J/4Nl1ZgaO045WZjTQy/8yKrm6wrIUtEpdD6Z6xbYaMrv2H+mtqX8jEZKNPrxeGPxMoWRUYEbYU
+	uJTh4IXp17b52fL0A8wE+Tp7uzVU1c+uTREG4yc3pbE73C+7cII0wQibhelpggUwlTodfNOC3KZ
+	kac3CMhopEROeeLJm0NhkDX/rXCBxlERcv7aW7gN/PTC3FyRRqqqKtbs9WKABACF2fb+de7/YX+
+	DwoeQo3zguLsNZaqUSoZ4qkg7Tl4OheNVlVytK4Et4y2voFABwBw7NTc/YIpSob6/M3NGm6vzdm
+	izZwarWQ+nfAwUJ88cziZdZY/F7xSRP2X/E9atcx9j/9ttKALeM03IgSwNvyM+XOrsXkWzVw7kV
+	97grSuLjUcV7zYEiFo64w=
+X-Google-Smtp-Source: AGHT+IGijTNXm4LkE8vEovmMCOH54VlnKSy80FaobHV8wCn4Fk+VjZg6dozwNMjI2jUn44fR54XPMQ==
+X-Received: by 2002:a05:600c:4453:b0:45d:5c71:769a with SMTP id 5b1f17b1804b1-4777327cb45mr47101895e9.26.1762762351403;
+        Mon, 10 Nov 2025 00:12:31 -0800 (PST)
+Received: from [192.168.1.106] ([51.154.145.205])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4777d9447eesm28348525e9.16.2025.11.10.00.12.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Nov 2025 00:12:30 -0800 (PST)
+Message-ID: <b5a1a707-0e05-468d-8915-e8ae9b9c9fb8@gmail.com>
+Date: Mon, 10 Nov 2025 09:12:30 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=XP09iAhE c=1 sm=1 tr=0 ts=691164c8 cx=c_pps a=cVKeW2pxJVqlUTLH3Z+MUA==:117 a=cVKeW2pxJVqlUTLH3Z+MUA==:17 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=tPundid6AAAA:8 a=geDs06hvAAAA:8 a=NEAV23lmAAAA:8 a=pGLkceISAAAA:8
- a=2UrD4va2YF_85ptEFQwA:9 a=aPicV9olnlo_TREvANR5:22 a=7yvi0DHx91fDKfvzWsLo:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA5MDAyMyBTYWx0ZWRfX6pSQ7l0kPfBc v6uiKfu9OIFZocdExVrBvfuMYIUCDdQFz3SEGehI4o4zv8yzy2vi8/EOaCnLO6pgx4P3+L1Lo2W nXyq3+EJW72hZaEhoTxFTuKKw9LJRXl64BoXLDCPSKPNCXpmwW4wQng394wDcqiZLmGeOhbHqps
- BaDiV7gpwoO4SirCD+2wKXYeutiZTuK3GUSMEQEOWpnEuAvtsH5xdqrwqCv+W5+GVQ2wWrFtecR rRfzY/P8hAN/5JF5fAEb+oi2PjWYjdtVhZ6tqeWAOQMxEQ7cJkO+KPbDT6C285TVn3Cw8MA4UjD WuzVCBynSf4ElK6qB2OSi/KSeyVg3AT0vp4h7f/Exbw/HKugQy+4YQjp2wiGYR3oPxlXzMJw8ap
- jbNYdclEtplnT2708w+U3ncWE/GubA==
-X-Proofpoint-GUID: XsOFYOaQpCz_I4Y5ksMxIR-rSKHiJbfo
-X-Proofpoint-ORIG-GUID: XsOFYOaQpCz_I4Y5ksMxIR-rSKHiJbfo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-10_01,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
- impostorscore=0 priorityscore=1501 lowpriorityscore=0 clxscore=1011
- malwarescore=0 adultscore=0 phishscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000
- definitions=main-2511090023
+User-Agent: Mozilla Thunderbird
+Subject: Re: [yocto-patches] [meta-security][PATCH 1/2] clamav: Add ClamAV
+ 1.4.3 recipe with enhanced security and Rust support
+To: yocto-patches@lists.yoctoproject.org
+References: <20251110040631.34843-1-hemant.jadhav@emerson.com>
+Content-Language: en-US
+From: Gyorgy Sarvari <skandigraun@gmail.com>
+Cc: hemant.jadhav@emerson.com
+In-Reply-To: <20251110040631.34843-1-hemant.jadhav@emerson.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 10 Nov 2025 04:06:41 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2467
+ <yocto-patches@lists.yoctoproject.org>; Mon, 10 Nov 2025 08:12:42 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2468
 
-Remove the legacy ClamAV 0.104.4 recipe and its associated patches
-as it has been replaced by the modern 1.4.3 version.
+On 11/10/25 05:06, Hemant Jadhav via lists.yoctoproject.org wrote:
+> Add modern ClamAV 1.4.3 recipe with comprehensive improvements over
+> the legacy 0.104.4 version.
+>
+> Major changes in 1.4.3:
+> - Upgraded core engine with improved threat detection capabilities
+> - Added Rust components requiring cross-compilation support
+> - Updated CMake build system replacing legacy autotools
+> - Modernized library dependencies (LLVM, JSON-C, PCre2)
+> - Added comprehensive license compliance for multi-component package
+> - Enhanced cross-compilation support for all target architectures
+>
+> The recipe includes dynamic Cargo configuration using Yocto variables
+>     to support cross-compilation to any target architecture supported by
+>     the build system, replacing hardcoded architecture assumptions.
+>
+> - Implemented CMake cache variables for cross-compilation
+> - Updated all license checksums for compliance
+> - Added Rust toolchain integration with proper environment setup
+>
+> Security rationale:
+> - ClamAV 0.104.4 reached end-of-life and is no longer maintained
+> - Upstream strongly recommends migration to 1.4.x for security updates
+>
+> Signed-off-by: Hemant Jadhav <hemant.jadhav@emerson.com>
+> ---
+>  recipes-scanners/clamav/clamav_1.4.3.bb       | 203 ++++++++++++++++++
+>  recipes-scanners/clamav/files/tmpfiles.clamav |   1 +
+>  .../clamav/files/volatiles.03_clamav          |   1 +
+>  3 files changed, 205 insertions(+)
+>  create mode 100644 recipes-scanners/clamav/clamav_1.4.3.bb
+>
+> diff --git a/recipes-scanners/clamav/clamav_1.4.3.bb b/recipes-scanners/clamav/clamav_1.4.3.bb
+> new file mode 100644
+> index 0000000..a19eb41
+> --- /dev/null
+> +++ b/recipes-scanners/clamav/clamav_1.4.3.bb
+> @@ -0,0 +1,203 @@
+> +SUMMARY = "ClamAV anti-virus utilities and scanner tools"
+> +DESCRIPTION = "ClamAV is an open source antivirus engine for detecting trojans, viruses, malware & other malicious threats."
+> +HOMEPAGE = "http://www.clamav.net/index.html"
+> +SECTION = "security"
+> +LICENSE = "GPL-2.0-only & LGPL-2.1-only & BSD-2-Clause & Zlib & Apache-2.0-with-LLVM-exception"
+> +LIC_FILES_CHKSUM = "file://COPYING.txt;md5=2c0b5770a62017a3121c69bb9f680b0c \
+> +                    file://COPYING/COPYING.LGPL;md5=2d5025d4aa3495befef8f17206a5b0a1 \
+> +                    file://COPYING/COPYING.bzip2;md5=ae8d555c34b656ff864ea9437a10d3a0 \
+> +                    file://COPYING/COPYING.zlib;md5=3648a0b9713ab246e11536055165a41a \
+> +                    file://COPYING/COPYING.llvm;md5=c82fc668ef1809acdd0684811df93bfc \
+> +                    file://COPYING/COPYING.unrar;md5=6a741ba21afc8b71aeaee3b5f86a8111 \
+> +                    file://COPYING/COPYING.file;md5=e63a61022c36cff2fdfbf02dd51674bd \
+> +                    file://COPYING/COPYING.curl;md5=be5d9e1419c4363f4b32037a2d3b7ffa \
+> +                    "
+> +
+> +DEPENDS = "glibc llvm libtool db openssl zlib curl libxml2 bison pcre2 json-c libcheck rust-native cargo-native libmspack"
+> +
+> +SRC_URI = "git://github.com/Cisco-Talos/clamav;branch=rel/1.4;protocol=https \
+> +           file://clamd.conf \
+> +           file://freshclam.conf \
+> +           file://volatiles.03_clamav \
+> +           file://tmpfiles.clamav \
+> +           "
+> +
+> +# ClamAV version 1.4.3
+> +SRCREV = "d8b053865fd5995f7af98bfbcd98c9a5644bfe2b"
+> +S = "${WORKDIR}/git"
 
-Removed files:
-- clamav_0.104.4.bb - Obsolete recipe
-- CVE-2024-20505.patch - Security patch (fixed in 1.4.3)
-- CVE-2024-20506.patch - Security patch (fixed in 1.4.3)
-- headers_fixup.patch - Build fix (not needed in 1.4.3)
-- oe_cmake_fixup.patch - Build fix (not needed in 1.4.3)
+Setting S like this is not needed in the master branch anymore, it is
+set automatically. (Using ${WORKDIR} here causes also a fatal error)
 
-Rationale:
-- ClamAV 0.104.4 reached end-of-life and is no longer maintained
-- Security vulnerabilities are addressed in 1.4.3
-- Patches are obsolete with the new CMake-based build system
+> +
+> +COMPATIBLE_HOST:libc-musl:class-target = "null"
+> +
+> +LEAD_SONAME = "libclamav.so"
+> +SO_VER = "12.0.0"
+> +BINCONFIG = "${bindir}/clamav-config"
+> +
+> +inherit cmake chrpath pkgconfig useradd systemd multilib_header multilib_script rust-common
+> +
+> +
+> +UPSTREAM_CHECK_COMMITS = "1"
+> +
+> +CLAMAV_USER ?= "clamav"
+> +CLAMAV_GROUP ?= "clamav"
+> +
+> +PACKAGECONFIG ?= "clamonacc \
+> +                  ${@bb.utils.contains("DISTRO_FEATURES", "systemd", "systemd", "", d)}"
+> +PACKAGECONFIG[milter] = "-DENABLE_MILTER=ON ,-DENABLE_MILTER=OFF, curl, curl"
+> +PACKAGECONFIG[clamonacc] = "-DENABLE_CLAMONACC=ON ,-DENABLE_CLAMONACC=OFF,"
+> +PACKAGECONFIG[unrar] = "-DENABLE_UNRAR=ON ,-DENABLE_UNRAR=OFF,"
+> +PACKAGECONFIG[freshclamdnsfix] = "-DENABLE_FRESHCLAM_DNS_FIX=ON ,-DENABLE_FRESHCLAM_DNS_FIX=OFF,"
+> +PACKAGECONFIG[systemd] = "-DENABLE_SYSTEMD=ON -DSYSTEMD_UNIT_DIR=${systemd_system_unitdir}, -DENABLE_SYSTEMD=OFF, systemd"
+> +
+> +EXTRA_OECMAKE = "-DCMAKE_BUILD_TYPE=Release -DOPTIMIZE=ON -DENABLE_JSON_SHARED=OFF \
+> +                 -DCLAMAV_GROUP=${CLAMAV_GROUP} -DCLAMAV_USER=${CLAMAV_USER} \
+> +                 -DENABLE_TESTS=OFF -DBUILD_SHARED_LIBS=ON \
+> +                 -DDO_NOT_SET_RPATH=ON \
+> +                 -DCMAKE_INSTALL_PREFIX=${prefix} \
+> +                 -DCMAKE_INSTALL_SYSCONFDIR=${sysconfdir} \
+> +                 -DCMAKE_INSTALL_FULL_SYSCONFDIR=${sysconfdir} \
+> +                 -DSYSCONFDIR=${sysconfdir} \
+> +                 -DHAVE_SIGNED_RIGHT_SHIFT=1 \
+> +                 -DHAVE_UNAME_SYSCALL=1 \
+> +                 -DHAVE_FD_PASSING=1 \
+> +                 -Dtest_run_result=0 \
+> +                 -Dtest_run_result__TRYRUN_OUTPUT='' \
+> +                 -DCMAKE_C_FLAGS='${CFLAGS} -Wno-error=format-truncation -Wno-error=unused-function' \
+> +                 "
+> +
+> +# Rust Cross-Compilation Configuration for Yocto
+> +export CARGO_TARGET_DIR = "${WORKDIR}/cargo_target"
+> +
+> +MULTILIB_SCRIPTS = "${PN}-dev:${bindir}/clamav-config"
+> +
+> +# Create Cargo configuration for cross-compilation
+> +do_configure:prepend() {
+> +    mkdir -p ${WORKDIR}/.cargo
+> +    
+> +    cat > ${WORKDIR}/.cargo/config.toml << EOF
+> +[build]
+> +target = "${RUST_TARGET_SYS}"
+> +
+> +[target.${RUST_TARGET_SYS}]
+> +linker = "${RUST_TARGET_CC}"
+> +
+> +[target.${RUST_BUILD_SYS}]
+> +linker = "${RUST_BUILD_CC}"
+> +EOF
+> +    
 
-Signed-off-by: Hemant Jadhav <hemant.jadhav@emerson.com>
----
- recipes-scanners/clamav/clamav_0.104.4.bb     | 156 ------------------
- .../clamav/files/headers_fixup.patch          |  58 -------
- .../clamav/files/oe_cmake_fixup.patch         |  39 -----
- 3 files changed, 253 deletions(-)
- delete mode 100644 recipes-scanners/clamav/clamav_0.104.4.bb
- delete mode 100644 recipes-scanners/clamav/files/headers_fixup.patch
- delete mode 100644 recipes-scanners/clamav/files/oe_cmake_fixup.patch
+Is this config.toml required here? Wouldn't it work if cargo_common
+class would be inherited instead of rust-common, and let it create
+config.toml?
 
-diff --git a/recipes-scanners/clamav/clamav_0.104.4.bb b/recipes-scanners/clamav/clamav_0.104.4.bb
-deleted file mode 100644
-index 7b81fd0..0000000
---- a/recipes-scanners/clamav/clamav_0.104.4.bb
-+++ /dev/null
-@@ -1,156 +0,0 @@
--SUMMARY = "ClamAV anti-virus utility for Unix - command-line interface"
--DESCRIPTION = "ClamAV is an open source antivirus engine for detecting trojans, viruses, malware & other malicious threats."
--HOMEPAGE = "http://www.clamav.net/index.html"
--SECTION = "security"
--LICENSE = "LGPL-2.1-only"
--
--DEPENDS = "glibc llvm libtool db openssl zlib curl libxml2 bison pcre2 json-c libcheck"
-- 
--COMPATIBLE_HOST:libc-musl:class-target = "null"
--
--LIC_FILES_CHKSUM = "file://COPYING.txt;beginline=2;endline=3;md5=f7029fbbc5898b273d5902896f7bbe17"
--
--# July 30th, 2022
--SRCREV = "563ba93052f3b7b46fb8725a65ee6299a9c332cf"
--
--SRC_URI = "git://github.com/Cisco-Talos/clamav;branch=rel/0.104;protocol=https \
--    file://clamd.conf \
--    file://freshclam.conf \
--    file://volatiles.03_clamav \
--    file://tmpfiles.clamav \
--    file://headers_fixup.patch \
--    file://oe_cmake_fixup.patch \
--"
--
--LEAD_SONAME = "libclamav.so"
--SO_VER = "9.6.0"
--
--BINCONFIG = "${bindir}/clamav-config"
--
--inherit cmake chrpath pkgconfig useradd systemd multilib_header multilib_script
--
--UPSTREAM_CHECK_COMMITS = "1"
--
--CLAMAV_UID ?= "clamav"
--CLAMAV_GID ?= "clamav"
--
--MULTILIB_SCRIPTS = "${PN}-dev:${bindir}/clamav-config"
--
--EXTRA_OECMAKE = " -DCMAKE_BUILD_TYPE=Release -DOPTIMIZE=ON -DENABLE_JSON_SHARED=OFF \
--                  -DCLAMAV_GROUP=${CLAMAV_GID} -DCLAMAV_USER=${CLAMAV_UID} \ 
--                  -DENABLE_TESTS=OFF -DBUILD_SHARED_LIBS=ON \
--                  -DDISABLE_MPOOL=ON -DENABLE_FRESHCLAM_DNS_FIX=ON \
--                   "
--
--PACKAGECONFIG ?= "  clamonacc \
--                 ${@bb.utils.contains("DISTRO_FEATURES", "systemd", "systemd", "", d)}"
--
--PACKAGECONFIG[milter] = "-DENABLE_MILTER=ON ,-DENABLE_MILTER=OFF, curl, curl"
--PACKAGECONFIG[clamonacc] = "-DENABLE_CLAMONACC=ON ,-DENABLE_CLAMONACC=OFF,"
--PACKAGECONFIG[unrar] = "-DENABLE_UNRAR=ON ,-DENABLE_UNRAR=OFF,"
--PACKAGECONFIG[systemd] = "-DENABLE_SYSTEMD=ON -DSYSTEMD_UNIT_DIR=${systemd_system_unitdir}, -DENABLE_SYSTEMD=OFF, systemd"
--
--export OECMAKE_C_FLAGS += " -I${STAGING_INCDIR} -L ${RECIPE_SYSROOT}${nonarch_libdir} -L${STAGING_LIBDIR} -lpthread" 
--
--do_install:append () {
--    install -d ${D}/${sysconfdir}
--    install -d -o ${PN} -g ${CLAMAV_GID} ${D}/${localstatedir}/lib/clamav
--    install -d ${D}${sysconfdir}/clamav ${D}${sysconfdir}/default/volatiles
--
--    install -m 644 ${UNPACKDIR}/clamd.conf ${D}/${prefix}/${sysconfdir}
--    install -m 644 ${UNPACKDIR}/freshclam.conf ${D}/${prefix}/${sysconfdir}
--    install -m 0644 ${UNPACKDIR}/volatiles.03_clamav  ${D}${sysconfdir}/default/volatiles/03_clamav
--    sed -i -e 's#${STAGING_DIR_HOST}##g' ${D}${libdir}/pkgconfig/libclamav.pc
--    rm ${D}/${libdir}/libclamav.so
--    if [ "${INSTALL_CLAMAV_CVD}" = "1" ]; then
--        install -m 666 ${S}/clamav_db/* ${D}/${localstatedir}/lib/clamav/.
--    fi
--
--    rm ${D}/${libdir}/libfreshclam.so
--
--    if ${@bb.utils.contains('DISTRO_FEATURES','systemd','true','false',d)};then
--        install -d ${D}${sysconfdir}/tmpfiles.d
--        install -m 0644 ${UNPACKDIR}/tmpfiles.clamav ${D}${sysconfdir}/tmpfiles.d/clamav.conf
--    fi
--    oe_multilib_header clamav-types.h
--}
--
--pkg_postinst:${PN} () {
--    if [ -z "$D" ]; then
--        if command -v systemd-tmpfiles >/dev/null; then
--            systemd-tmpfiles --create ${sysconfdir}/tmpfiles.d/clamav.conf
--        elif [ -e ${sysconfdir}/init.d/populate-volatile.sh ]; then
--            ${sysconfdir}/init.d/populate-volatile.sh update
--        fi
--    fi
--}
--
--PACKAGES += "${PN}-daemon ${PN}-clamdscan ${PN}-freshclam ${PN}-libclamav"
--
--FILES:${PN} = "${bindir}/clambc ${bindir}/clamscan ${bindir}/clamsubmit ${sbindir}/clamonacc \
--                ${bindir}/*sigtool ${mandir}/man1/clambc* ${mandir}/man1/clamscan* \
--                ${mandir}/man1/sigtool* ${mandir}/man1/clambsubmit*  \
--                ${docdir}/clamav/*"
--
--FILES:${PN}-clamdscan = " ${bindir}/clamdscan \
--                        ${docdir}/clamdscan/* \
--                        ${mandir}/man1/clamdscan* \
--                        "
--
--FILES:${PN}-daemon = "${bindir}/clamconf ${bindir}/clamdtop ${sbindir}/clamd \
--                        ${mandir}/man1/clamconf* ${mandir}/man1/clamdtop* \
--                        ${mandir}/man5/clamd*  ${mandir}/man8/clamd* \
--                        ${sysconfdir}/clamd.conf* \
--                        /usr/etc/clamd.conf* \
--                        ${systemd_system_unitdir}/clamav-daemon/* \
--                        ${docdir}/clamav-daemon/*  ${sysconfdir}/clamav-daemon \
--                        ${sysconfdir}/logcheck/ignore.d.server/clamav-daemon \
--                        ${systemd_system_unitdir}/clamav-daemon.service \
--                        ${systemd_system_unitdir}/clamav-clamonacc.service \
--                        "
--
--FILES:${PN}-freshclam = "${bindir}/freshclam \
--                        ${sysconfdir}/freshclam.conf*  \
--                        /usr/etc/freshclam.conf*  \
--                        ${sysconfdir}/clamav ${sysconfdir}/default/volatiles \
--                        ${sysconfdir}/tmpfiles.d/*.conf \
--                        ${localstatedir}/lib/clamav \
--                        ${docdir}/${PN}-freshclam ${mandir}/man1/freshclam.* \
--                        ${mandir}/man5/freshclam.conf.* \
--                        ${systemd_system_unitdir}/clamav-freshclam.service"
--
--FILES:${PN}-dev = " ${bindir}/clamav-config ${libdir}/*.la \
--                    ${libdir}/pkgconfig/*.pc \
--                    ${mandir}/man1/clamav-config.* \
--                    ${includedir}/*.h ${docdir}/libclamav* \
--                    ${libdir}/libmspack.so"
--
--FILES:${PN}-staticdev = "${libdir}/*.a"
--
--FILES:${PN}-libclamav = "${libdir}/libclamav.so* ${libdir}/libclammspack.so* \
--                         ${libdir}/libfreshclam.so* ${docdir}/libclamav/* \
--                         ${libdir}/libmspack* "
--
--FILES:${PN}-doc = "${mandir}/man/* \
--                   ${datadir}/man/* \
--                   ${docdir}/* "
--
--USERADD_PACKAGES = "${PN}-freshclam "
--GROUPADD_PARAM:${PN}-freshclam = "--system ${CLAMAV_UID}"
--USERADD_PARAM:${PN}-freshclam = "--system -g ${CLAMAV_GID} --home-dir  \
--    ${localstatedir}/lib/${BPN} \
--    --no-create-home  --shell /sbin/nologin ${PN}"
--
--RPROVIDES:${PN} += "${PN}-systemd"
--RREPLACES:${PN} += "${PN}-systemd"
--RCONFLICTS:${PN} += "${PN}-systemd"
--SYSTEMD_PACKAGES  = "${PN}-daemon ${PN}-freshclam"
--SYSTEMD_SERVICE:${PN}-daemon = "clamav-daemon.service"
--SYSTEMD_SERVICE:${PN}-freshclam = "clamav-freshclam.service"
--
--INSANE_SKIP:${PN}-libclamav  += "dev-so"
--
--RDEPENDS:${PN} = "openssl ncurses-libncurses libxml2 libbz2 ncurses-libtinfo curl libpcre2 clamav-libclamav"
--RRECOMMENDS:${PN} = "clamav-freshclam"
--RDEPENDS:${PN}-freshclam = "clamav"
--RDEPENDS:${PN}-daemon = "clamav clamav-freshclam"
-diff --git a/recipes-scanners/clamav/files/headers_fixup.patch b/recipes-scanners/clamav/files/headers_fixup.patch
-deleted file mode 100644
-index 369aa58..0000000
---- a/recipes-scanners/clamav/files/headers_fixup.patch
-+++ /dev/null
-@@ -1,58 +0,0 @@
--Fixes checks not needed do to glibc 2.33
--
--Upstream-Status: Pending
--Signed-off-by: Armin Kuster <akuster808@gmail.com>
--
--Index: git/CMakeLists.txt
--===================================================================
----- git.orig/CMakeLists.txt
--+++ git/CMakeLists.txt
--@@ -443,8 +443,6 @@ check_include_file("stdlib.h"
-- check_include_file("string.h"           HAVE_STRING_H)
-- check_include_file("strings.h"          HAVE_STRINGS_H)
-- check_include_file("sys/cdefs.h"        HAVE_SYS_CDEFS_H)
---check_include_file("sys/dl.h"           HAVE_SYS_DL_H)
---check_include_file("sys/fileio.h"       HAVE_SYS_FILIO_H)
-- check_include_file("sys/mman.h"         HAVE_SYS_MMAN_H)
-- check_include_file("sys/param.h"        HAVE_SYS_PARAM_H)
-- check_include_file("sys/queue.h"        HAVE_SYS_QUEUE_H)
--@@ -479,8 +477,6 @@ endif()
-- 
-- # int-types variants
-- check_include_file("inttypes.h"         HAVE_INTTYPES_H)
---check_include_file("sys/inttypes.h"     HAVE_SYS_INTTYPES_H)
---check_include_file("sys/int_types.h"    HAVE_SYS_INT_TYPES_H)
-- check_include_file("stdint.h"           HAVE_STDINT_H)
-- 
-- # this hack required to silence warnings on systems with inttypes.h
--@@ -608,17 +604,11 @@ check_type_size("time_t"  SIZEOF_TIME_T)
-- # Checks for library functions.
-- include(CheckSymbolExists)
-- check_symbol_exists(_Exit           "stdlib.h"      HAVE__EXIT)
---check_symbol_exists(accept4         "sys/types.h"   HAVE_ACCEPT4)
-- check_symbol_exists(snprintf        "stdio.h"       HAVE_SNPRINTF)
---check_symbol_exists(stat64          "sys/stat.h"    HAVE_STAT64)
---check_symbol_exists(strcasestr      "string.h"      HAVE_STRCASESTR)
-- check_symbol_exists(strerror_r      "string.h"      HAVE_STRERROR_R)
---check_symbol_exists(strlcat         "string.h"      HAVE_STRLCAT)
---check_symbol_exists(strlcpy         "string.h"      HAVE_STRLCPY)
-- check_symbol_exists(strndup         "string.h"      HAVE_STRNDUP)
-- check_symbol_exists(strnlen         "string.h"      HAVE_STRNLEN)
---check_symbol_exists(strnstr         "string.h"      HAVE_STRNSTR)
---check_symbol_exists(sysctlbyname    "sysctl.h"      HAVE_SYSCTLBYNAME)
--+check_symbol_exists(strcasecmp      "string.h"      HAVE_STRNCMP)
-- check_symbol_exists(timegm          "time.h"        HAVE_TIMEGM)
-- check_symbol_exists(vsnprintf       "stdio.h"       HAVE_VSNPRINTF)
-- 
--@@ -632,10 +622,9 @@ else()
--     check_symbol_exists(fseeko          "stdio.h"       HAVE_FSEEKO)
--     check_symbol_exists(getaddrinfo     "netdb.h"       HAVE_GETADDRINFO)
--     check_symbol_exists(getpagesize     "unistd.h"      HAVE_GETPAGESIZE)
---    check_symbol_exists(mkstemp         "unistd.h"      HAVE_MKSTEMP)
--     check_symbol_exists(poll            "poll.h"        HAVE_POLL)
---    check_symbol_exists(setgroups       "unistd.h"      HAVE_SETGROUPS)
--     check_symbol_exists(setsid          "unistd.h"      HAVE_SETSID)
--+    set(HAVE_SYSCONF_SC_PAGESIZE 1)
-- endif()
-- 
-- include(CheckSymbolExists)
-diff --git a/recipes-scanners/clamav/files/oe_cmake_fixup.patch b/recipes-scanners/clamav/files/oe_cmake_fixup.patch
-deleted file mode 100644
-index c9c88b9..0000000
---- a/recipes-scanners/clamav/files/oe_cmake_fixup.patch
-+++ /dev/null
-@@ -1,39 +0,0 @@
--Issue with rpath including /usr/lib and crosscompile checkes causing oe configure to fail
--
--Use oe's cmake rpath framework and exclude some of the cmake checks that fail in our env
--
--Upstream-Status: Inappropriate [configuration]
--Singed-off-by: Armin Kuster <akuster808@gmail.com>
--
--Index: git/CMakeLists.txt
--===================================================================
----- git.orig/CMakeLists.txt
--+++ git/CMakeLists.txt
--@@ -162,12 +162,6 @@ endif()
-- 
-- include(GNUInstallDirs)
-- 
---if(CMAKE_INSTALL_FULL_LIBDIR)
---    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR}")
---else()
---    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
---endif()
---
-- if(C_LINUX)
--     if(CMAKE_COMPILER_IS_GNUCXX)
--         # Set _GNU_SOURCE for O_LARGEFILE, O_CLOEXEC, O_DIRECTORY, O_NOFOLLOW, etc flags on older systems
--@@ -581,14 +575,8 @@ include(TestInline)
-- include(CheckFileOffsetBits)
-- # Determine how to pack structs on this platform.
-- include(CheckStructPacking)
---# Check for signed right shift implementation.
---include(CheckSignedRightShift)
-- # Check if systtem fts implementation available
-- include(CheckFTS)
---# Check if uname(2) follows POSIX standard.
---include(CheckUnamePosix)
---# Check support for file descriptor passing
---include(CheckFDPassing)
-- 
-- # Check if big-endian
-- include(TestBigEndian)
--- 
-2.43.0
+> +    export CARGO_TARGET_DIR="${WORKDIR}/cargo_target"
+
+This export is set a few lines above already outside of the task (which
+makes it being available for all tasks).
+
+> +}
+> +
+> +do_install:append() {
+> +    install -d ${D}/${sysconfdir}
+> +    install -d ${D}/${localstatedir}/lib/clamav
+> +    install -d ${D}${sysconfdir}/clamav ${D}${sysconfdir}/default/volatiles
+> +
+> +    install -m 644 ${WORKDIR}/clamd.conf ${D}${sysconfdir}
+> +    install -m 644 ${WORKDIR}/freshclam.conf ${D}${sysconfdir}
+> +    install -m 0644 ${WORKDIR}/volatiles.03_clamav  ${D}${sysconfdir}/default/volatiles/03_clamav
+
+I think these are in UNPACKDIR now, not in WORKDIR.
+
+> +    
+> +    if [ -d ${D}${prefix}/etc ]; then
+> +        cp -r ${D}${prefix}/etc/* ${D}${sysconfdir}/ 2>/dev/null || true
+> +        rm -rf ${D}${prefix}/etc
+> +    fi
+> +    
+> +    sed -i -e 's#${STAGING_DIR_HOST}##g' ${D}${libdir}/pkgconfig/libclamav.pc
+> +    rm ${D}/${libdir}/libclamav.so
+> +    if [ "${INSTALL_CLAMAV_CVD}" = "1" ]; then
+> +        install -m 666 ${S}/clamav_db/* ${D}/${localstatedir}/lib/clamav/.
+> +    fi
+> +
+> +    rm ${D}/${libdir}/libfreshclam.so
+> +
+> +    if ${@bb.utils.contains('DISTRO_FEATURES','systemd','true','false',d)};then
+> +        install -d ${D}${sysconfdir}/tmpfiles.d
+> +        install -m 0644 ${WORKDIR}/tmpfiles.clamav ${D}${sysconfdir}/tmpfiles.d/clamav.conf
+> +    fi
+> +    oe_multilib_header clamav-types.h
+> +}
+> +
+> +pkg_postinst:${PN} () {
+> +    if [ -z "$D" ]; then
+> +        if command -v systemd-tmpfiles >/dev/null; then
+> +            systemd-tmpfiles --create ${sysconfdir}/tmpfiles.d/clamav.conf
+> +        elif [ -e ${sysconfdir}/init.d/populate-volatile.sh ]; then
+> +            ${sysconfdir}/init.d/populate-volatile.sh update
+> +        fi
+> +    fi
+> +}
+> +
+> +PACKAGES += "${PN}-daemon ${PN}-clamdscan ${PN}-freshclam ${PN}-libclamav ${PN}-libclammspack"
+> +
+> +FILES:${PN} = "${bindir}/clambc ${bindir}/clamscan ${bindir}/clamsubmit ${sbindir}/clamonacc \
+> +               ${bindir}/*sigtool ${mandir}/man1/clambc* ${mandir}/man1/clamscan* \
+> +               ${mandir}/man1/sigtool* ${mandir}/man1/clambsubmit* \
+> +               ${docdir}/clamav/*"
+> +
+> +FILES:${PN}-clamdscan = "${bindir}/clamdscan \
+> +                         ${docdir}/clamdscan/* \
+> +                         ${mandir}/man1/clamdscan* \
+> +                         "
+> +
+> +FILES:${PN}-daemon = "${bindir}/clamconf ${bindir}/clamdtop ${sbindir}/clamd \
+> +                      ${mandir}/man1/clamconf* ${mandir}/man1/clamdtop* \
+> +                      ${mandir}/man5/clamd* ${mandir}/man8/clamd* \
+> +                      ${sysconfdir}/clamd.conf* \
+> +                      ${systemd_system_unitdir}/clamav-daemon/* \
+> +                      ${docdir}/clamav-daemon/* ${sysconfdir}/clamav-daemon \
+> +                      ${sysconfdir}/logcheck/ignore.d.server/clamav-daemon \
+> +                      ${systemd_system_unitdir}/clamav-daemon.service \
+> +                      ${systemd_system_unitdir}/clamav-clamonacc.service \
+> +                      "
+> +
+> +FILES:${PN}-freshclam = "${bindir}/freshclam \
+> +                         ${sysconfdir}/freshclam.conf* \
+> +                         ${sysconfdir}/clamav ${sysconfdir}/default/volatiles \
+> +                         ${sysconfdir}/tmpfiles.d/*.conf \
+> +                         ${localstatedir}/lib/clamav \
+> +                         ${docdir}/${PN}-freshclam ${mandir}/man1/freshclam.* \
+> +                         ${mandir}/man5/freshclam.conf.* \
+> +                         ${systemd_system_unitdir}/clamav-freshclam.service"
+> +
+> +FILES:${PN}-libclamav = "${libdir}/libclamav.so* \
+> +                         ${libdir}/libfreshclam.so* ${docdir}/libclamav/* \
+> +                         "
+> +
+> +FILES:${PN}-libclammspack = "${libdir}/libclammspack.so* \
+> +                             ${libdir}/libmspack.so* \
+> +                             "
+> +
+> +FILES:${PN}-dev = "${bindir}/clamav-config ${libdir}/*.la \
+> +                   ${libdir}/pkgconfig/*.pc \
+> +                   ${mandir}/man1/clamav-config.* \
+> +                   ${includedir}/*.h ${docdir}/libclamav*"
+> +
+> +FILES:${PN}-staticdev = "${libdir}/*.a"
+> +
+> +FILES:${PN}-doc = "${mandir}/man/* \
+> +                   ${datadir}/man/* \
+> +                   ${docdir}/* \
+> +                   "
+> +
+> +RDEPENDS:${PN} = "openssl ncurses-libncurses libxml2 libbz2 ncurses-libtinfo curl libpcre2 clamav-libclamav"
+> +RDEPENDS:${PN}-daemon = "clamav clamav-freshclam"
+> +RDEPENDS:${PN}-freshclam = "clamav"
+> +RDEPENDS:${PN}-libclamav = "clamav-libclammspack"
+> +
+> +RRECOMMENDS:${PN} = "clamav-freshclam"
+> +
+> +RPROVIDES:${PN} += "${PN}-systemd"
+> +RREPLACES:${PN} += "${PN}-systemd"  
+> +RCONFLICTS:${PN} += "${PN}-systemd"
+> +
+> +SYSTEMD_PACKAGES = "${PN}-daemon ${PN}-freshclam"
+> +SYSTEMD_SERVICE:${PN}-daemon = "clamav-daemon.service"
+> +SYSTEMD_SERVICE:${PN}-freshclam = "clamav-freshclam.service"
+> +
+> +USERADD_PACKAGES = "${PN}-freshclam"
+> +GROUPADD_PARAM:${PN}-freshclam = "--system ${CLAMAV_GROUP}"
+> +USERADD_PARAM:${PN}-freshclam = "--system -g ${CLAMAV_GROUP} --home-dir \
+> +                                 ${localstatedir}/lib/${BPN} \
+> +                                 --no-create-home --shell /sbin/nologin ${CLAMAV_USER}"
+> +
+> +INSANE_SKIP:${PN}-libclamav += "dev-so"
+> +INSANE_SKIP:${PN}-libclammspack += "dev-so"
+> diff --git a/recipes-scanners/clamav/files/tmpfiles.clamav b/recipes-scanners/clamav/files/tmpfiles.clamav
+> index fd5adfe..8e0849e 100644
+> --- a/recipes-scanners/clamav/files/tmpfiles.clamav
+> +++ b/recipes-scanners/clamav/files/tmpfiles.clamav
+> @@ -1,3 +1,4 @@
+>  #Type Path        Mode UID  GID  Age Argument
+> +d /var/lib/clamav 0755 clamav clamav -
+>  d /var/log/clamav 0755 clamav clamav -
+>  f /var/log/clamav/freshclam.log 0644 clamav clamav -
+> diff --git a/recipes-scanners/clamav/files/volatiles.03_clamav b/recipes-scanners/clamav/files/volatiles.03_clamav
+> index ee2153c..0561c4d 100644
+> --- a/recipes-scanners/clamav/files/volatiles.03_clamav
+> +++ b/recipes-scanners/clamav/files/volatiles.03_clamav
+> @@ -1,3 +1,4 @@
+>  # <type> <owner> <group> <mode> <path> <linksource>
+> +d clamav clamav 0755 /var/lib/clamav none
+>  d clamav clamav 0755 /var/log/clamav none
+>  f clamav clamav 0655 /var/log/clamav/freshclam.log none
 
 
