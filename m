@@ -2,137 +2,126 @@ Return-Path: <mathieu.dubois-briand@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2ECACCFA13
-	for <webhook@archiver.kernel.org>; Mon, 10 Nov 2025 09:56:12 +0000 (UTC)
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.44902.1762768568156477352
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DBB5CCFA13
+	for <webhook@archiver.kernel.org>; Mon, 10 Nov 2025 10:13:03 +0000 (UTC)
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.45072.1762769577863526530
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 10 Nov 2025 01:56:08 -0800
+ Mon, 10 Nov 2025 02:12:58 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=dkim header.b=qiqxAi0v;
- spf=pass (domain: bootlin.com, ip: 185.246.85.4, mailfrom: mathieu.dubois-briand@bootlin.com)
+ dkim=pass header.i=@bootlin.com header.s=dkim header.b=V02O2RTk;
+ spf=pass (domain: bootlin.com, ip: 185.171.202.116, mailfrom: mathieu.dubois-briand@bootlin.com)
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 58C194E41606
-	for <yocto-patches@lists.yoctoproject.org>; Mon, 10 Nov 2025 09:56:06 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 06B1CC108EA
+	for <yocto-patches@lists.yoctoproject.org>; Mon, 10 Nov 2025 10:12:34 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 2B571606F5
-	for <yocto-patches@lists.yoctoproject.org>; Mon, 10 Nov 2025 09:56:06 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E3685103716F0;
-	Mon, 10 Nov 2025 10:56:04 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 503D0606F5
+	for <yocto-patches@lists.yoctoproject.org>; Mon, 10 Nov 2025 10:12:55 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 72305103718CC;
+	Mon, 10 Nov 2025 11:12:53 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1762768565; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=jbFrU7QctMZvAgx4FoajeNkwiB3/0Pn9ITUTG056//M=;
-	b=qiqxAi0vdlKF2eD0rgoS2P0RlF1XB+N5/wSBQdnlUQp0TWTHY1tMUNfo1u8YON+PWrRaPG
-	S4RrjguuhPury7uzZGUpr6g2YmU6W/kDqQwPbXj2qWBRRCs9IbMEL8uzVoSyY7sx6IGmoU
-	ENffoYN6iA3cAtVbDGgVPNNgpfvX+ja3R1chWLTZAqwiIIIPJ/htMFZ18OE0VGMNZTQICe
-	nrsCBljEvqtWCnLj47rVlazCbNRMNrYuIpsRa+G4POMHVs7Pb+4fIl6FqJ5gBDRmxQ91La
-	XXC+mabXeN/YOTEjVcf6ywelaP50V7t1roslzOl64vfVhyDvmasON2mt2K3VGg==
-From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Date: Mon, 10 Nov 2025 10:55:51 +0100
-Subject: [PATCH yocto-autobuilder2 v2] consoleview: fix handling of
- undefined URL strings
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251110-mathieu-fix-url-replace-v2-1-ee360c02a1ea@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAKa2EWkC/4WNTQqDMBBGr1Jm3SlJqla66j2KixjHOqCO5Ecq4
- t0bvECXD973vR0CeaYAz8sOnlYOLHMGc72AG+z8IeQuMxhlSq1VjZONA1PCnr+Y/IieltE6wkd
- fGVv0tqxaBXm9eMrK+fyGTVwUtClKm3jsyBtosjNwiOK3M77q0/zbWTVqdKRcrQp37zS9WpE48
- nxzMkFzHMcPw3U6BtQAAAA=
-X-Change-ID: 20251108-mathieu-fix-url-replace-7f62a4fa56b0
-To: yocto-patches@lists.yoctoproject.org
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762768564; l=3769;
- i=mathieu.dubois-briand@bootlin.com; s=20241219; h=from:subject:message-id;
- bh=GFVhxBMOTR/ZXxweJT44AAc0IhZXXMCNRwEg1GgCxJk=;
- b=IXdgUjqpQ9vhzqI0X9s39cJKLwfEfpSyvCSNgHPQyid5yUpIG5BWA2Lc0+ddBeRhySqhXj3C0
- ip/aUVZs0NHBZBT8wFb5ZY9tAmNYDjQ/kEdviRK1s9D5BRo+ChzMAi3
-X-Developer-Key: i=mathieu.dubois-briand@bootlin.com; a=ed25519;
- pk=1PVTmzPXfKvDwcPUzG0aqdGoKZJA3b9s+3DqRlm0Lww=
+	t=1762769574; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=Xovv+NEUpK/uloQeh3PMDwAI+K5o/uYColt2FtRV5hI=;
+	b=V02O2RTkdjBtHdH3CifsA0tx9xa3jYeu11B9/jcHgV0UckNn3a2LzGcD/wkN2f5/sCUpqw
+	A7aBwIwUhiR0Cx8shJ6x4vTIbnTuX13ij4Xg4P/BCZ26WvkTZij+ecQL1qs6DCHVgZK+wp
+	7KX7hBVwRQ7sEltLPCEUD+R8ijTYamvsfXsTCeBMRWBcicgBR82/3GqZvoTTY4STPAISwC
+	tnwOeVe9O8LqIJiU41S6/afTtp8iSAATXjktASjdQmz3LIYsm03YfF2FhJIzRzE9DhFMxE
+	sztlzQYTeKiow5+292xX8boDWBSXICjow0k7EEYGcJd6pvufSFK6NL0o09fovA==
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 10 Nov 2025 11:12:53 +0100
+Message-Id: <DE4XNUKMV1P0.2W00O0VLX0KVJ@bootlin.com>
+Subject: Re: [yocto-patches] [PATCH yocto-autobuilder2] reporters: swatbot:
+ Fix branch name retrieval
+Cc: "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>
+From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
+To: <yocto-patches@lists.yoctoproject.org>
+X-Mailer: aerc 0.19.0-0-gadd9e15e475d
+References: <1863DFD4C9467C5A.10180@lists.yoctoproject.org>
+In-Reply-To: <1863DFD4C9467C5A.10180@lists.yoctoproject.org>
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 10 Nov 2025 09:56:12 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2471
+ <yocto-patches@lists.yoctoproject.org>; Mon, 10 Nov 2025 10:13:03 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2472
 
-Some errors were observed on the console view when the URL string is
-undefined. Just mask URLs in such case, as it would otherwise lead to a
-JS exception.
+On Wed Sep 10, 2025 at 10:52 AM CEST, Mathieu Dubois-Briand via lists.yocto=
+project.org wrote:
+> The swatbot reporter tries to get the name of the built branch, using
+> the "branch_poky" property of the build. Some builders, such as "docs",
+> do not use the poky git, so this property is missing. Currently, this
+> result in a non-fatal error on the buildbot controller, but the build
+> entry is not added to swatbot.
+>
+> Import code from swattool, falling back to oecore or yocto-docs branch
+> name.
+>
+> Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+> ---
+>  reporters/swatbot.py | 20 +++++++++++++++++++-
+>  1 file changed, 19 insertions(+), 1 deletion(-)
+>
+> diff --git a/reporters/swatbot.py b/reporters/swatbot.py
+> index 5e434d5d04a4..6e3827329033 100644
+> --- a/reporters/swatbot.py
+> +++ b/reporters/swatbot.py
+> @@ -49,6 +49,24 @@ class SwatBotURI(object):
+>              return self.client.get(query, timeout=3Dself.TIMEOUT, header=
+s=3Dself.headers, allow_redirects=3DFalse)
+>          return req
+> =20
+> +    def get_build_branch(self, build):
+> +        """Extract branch name from build properties.
+> +
+> +        Args:
+> +            build: Build dictionary containing properties
+> +
+> +        Returns:
+> +            Branch name if found, None otherwise
+> +        """
+> +        repos =3D ['poky', 'oecore', 'yocto-docs']
+> +        for repo in repos:
+> +            branch =3D build['properties'].get(f'branch_{repo}')
+> +            if branch:
+> +                return branch[0]
+> +        branches =3D [p for p in build['properties'] if p.startswith('br=
+anch')]
+> +        log.err("Failed to get corresponding branch, possible values: %s=
+", branches)
+> +        return None
+> +
+>      def find_build_collection(self, build):
+>          dbid =3D None
+> =20
+> @@ -77,7 +95,7 @@ class SwatBotURI(object):
+>                      'attributes': {
+>                          "buildid": collection_build_id,
+>                          "targetname": build['builder']['name'],
+> -                        "branch": build['properties']['branch_poky'][0],
+> +                        "branch": self.get_build_branch(build)
+>                      }
+>                  }
+>              }
+>
+> ---
+> base-commit: 247aaef0910826113ccfc892f42f9012a45034f7
+> change-id: 20250910-contrib-mathieu-swatbot_branches_fix-7fbe5402eed6
+>
+> Best regards,
 
-Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
----
-Changes in v2:
-- Trying to fix the whole logic instead of just skipping undefined
-  values.
-- Link to v1: https://lore.kernel.org/r/20251108-mathieu-fix-url-replace-v1-1-ce0c804c3d1e@bootlin.com
----
- .../src/views/ConsoleView/ConsoleView.tsx          | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+Hi Richard,
 
-diff --git a/yocto_console_view/src/views/ConsoleView/ConsoleView.tsx b/yocto_console_view/src/views/ConsoleView/ConsoleView.tsx
-index 16569ea9eac8..14276ce92da9 100644
---- a/yocto_console_view/src/views/ConsoleView/ConsoleView.tsx
-+++ b/yocto_console_view/src/views/ConsoleView/ConsoleView.tsx
-@@ -185,16 +185,16 @@ function selectChangeForBuild(build: Build, buildset: Buildset,
-         oecore_revision = build.properties['commit_oecore'][0];
-       }
-       if ('repo_oecore' in build.properties) {
--        oecore_repo = build.properties['repo_oecore'][0];
-+        oecore_repo = getHttpURL(build.properties['repo_oecore'][0]);
-       }
-       if ('commit_oecore' in build.properties) {
-         bitbake_revision = build.properties['commit_bitbake'][0];
-       }
-       if ('repo_bitbake' in build.properties) {
--        bitbake_repo = build.properties['repo_bitbake'][0];
-+        bitbake_repo = getHttpURL(build.properties['repo_bitbake'][0]);
-       }
-       if ('repo_poky' in build.properties) {
--        poky_repo = build.properties['repo_poky'][0];
-+        poky_repo = getHttpURL(build.properties['repo_poky'][0]);
-       }
-       if ('use_bitbake_setup' in build.properties) {
-         use_bitbake_setup = build.properties['use_bitbake_setup'][0];
-@@ -220,20 +220,22 @@ function selectChangeForBuild(build: Build, buildset: Buildset,
-         change.change.caption = branchMapping[build.buildid];
-       }
- 
--      oecore_repo = getHttpURL(oecore_repo);
--      bitbake_repo = getHttpURL(bitbake_repo);
--      poky_repo = getHttpURL(poky_repo);
--
-       if (!use_bitbake_setup) {
--        change.change.poky_revlink = poky_repo + "/commit/?id=" + revision;
-+        if (poky_repo !== undefined) {
-+          change.change.poky_revlink = poky_repo + "/commit/?id=" + revision;
-+        }
-         change.change.poky_revision = revision;
-         change.change.errorlink = "http://errors.yoctoproject.org/Errors/Latest/?filter=" + revision + "&type=commit&limit=150";
-       } else {
-         // We might retrieve the "use_bitbake_setup" after the first execution, so wrong poky data might have been added: remove them.
-         change.change.poky_revlink = change.change.poky_revision = undefined;
- 
--        change.change.oecore_revlink = oecore_repo + "/commit/?id=" + oecore_revision;
--        change.change.bitbake_revlink = bitbake_repo + "/commit/?id=" + bitbake_revision;
-+        if (oecore_repo !== undefined) {
-+          change.change.oecore_revlink = oecore_repo + "/commit/?id=" + oecore_revision;
-+        }
-+        if (bitbake_repo !== undefined) {
-+          change.change.bitbake_revlink = bitbake_repo + "/commit/?id=" + bitbake_revision;
-+        }
-         change.change.oecore_revision = oecore_revision;
-         change.change.bitbake_revision = bitbake_revision;
-         change.change.errorlink = "http://errors.yoctoproject.org/Errors/Latest/?filter=" + oecore_revision + "&type=commit&limit=150";
+I believe this patch was never merged, any opinion on these changes?
 
----
-base-commit: fdc34623463b1c708220021649ba4b8b53db3dbf
-change-id: 20251108-mathieu-fix-url-replace-7f62a4fa56b0
+Thanks,
+Mathieu
 
-Best regards,
--- 
-Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+--=20
+Mathieu Dubois-Briand, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
