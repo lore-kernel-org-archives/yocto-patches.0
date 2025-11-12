@@ -1,245 +1,328 @@
-Return-Path: <ross.burton@arm.com>
+Return-Path: <skandigraun@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6D40CD342F
-	for <webhook@archiver.kernel.org>; Wed, 12 Nov 2025 18:05:19 +0000 (UTC)
-Received: from DM1PR04CU001.outbound.protection.outlook.com (DM1PR04CU001.outbound.protection.outlook.com [52.101.61.45])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.3909.1762970328256474716
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE56CCD3442
+	for <webhook@archiver.kernel.org>; Wed, 12 Nov 2025 19:05:11 +0000 (UTC)
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.5571.1762974303205616225
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 12 Nov 2025 09:58:48 -0800
+ Wed, 12 Nov 2025 11:05:03 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@amd.com header.s=selector1 header.b=QsqHUHd9;
- spf=permerror, err=parse error for token &{10 18 %{i}._ip.%{h}._ehlo.%{d}._spf.vali.email}: invalid domain name (domain: amd.com, ip: 52.101.61.45, mailfrom: mark.hatle@amd.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oK57Q1bjFRJntVJM6eYLmJsk3Hc2NrfFme6vJHmf/xIXlsWe7jE9RKNlB1nayBxvQLi155t7yIFjfwxJwaIOqMly90LmwaUnTdanI+2l23OPxTiJD+6G70wnbF693KfvGntpjglIDcYz0Rv+L6HnJjjPLRH9s7YsG6AWAM0HJgyVEZDoEw9k7Oqh6DO8KHutlnR3+734N2MYkZHvlAaxqQS5Vcd6SAHmPDnIc5n6lvw7dUSrqIGpiyKQgKsQA3MmRZ+I8/mzOdZWGRLTzuRJfYyvAtURhka2mmcXKTbYlMS1gbtMVSapNkulTd4h6htTmO5IaZy+3B5+VWVg6FUBjQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ILtJcBNRkA0dsHenI8/Hicd7re8iYkXJZvOBXA0hZ5M=;
- b=tFEC6ii1bJ/5zXISN4wqR/Y7J2XfNMeiPB4jaKyHHWgaa7v623qTlOp2O467/gQ4qu/ZxBZhYUjJlZu0Hzhp62m9GV9/eWhn8SlzgOdU1GBEjIHp5tH4u9tgqJLhsjMaDtOYv8TYkbcs/SejCH6JiBWfxXzSrrxPXrEdw+gjBXiPnXnV7fRgTsVuUWdh2U4UQX3Ibmg/Ybcgi7/ewurrCWVJEiJFeaElbr6pYp0a9JyUx+ynDKoyXMbW4/POPGpQA8BFQ0OAMk2qTQshBnYLIjV5qunwqxBvqwqMu0/JV2gJ2SlYa+tVHuPU2J3M/l8nMippu2iiiYv7VMqGVS69BQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ILtJcBNRkA0dsHenI8/Hicd7re8iYkXJZvOBXA0hZ5M=;
- b=QsqHUHd94yyLCpWhJXhX8lo4R0MITqlSe7lWvTD/muMXr+MQkjQrGWCPb+WC4Ssvy2h/wg6nEA9/Z33VaOevlwXSF/7rF25TPQtYg4pfKob0UnpchKNeGxf/o6JAzilqMipOGtlVi84aJpFn6vgVZlEpERPmskqpveqgu/H7LD0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB7018.namprd12.prod.outlook.com (2603:10b6:510:1b8::14)
- by DM4PR12MB7694.namprd12.prod.outlook.com (2603:10b6:8:102::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Wed, 12 Nov
- 2025 17:58:45 +0000
-Received: from PH7PR12MB7018.namprd12.prod.outlook.com
- ([fe80::e2bd:c56f:ea1d:9a11]) by PH7PR12MB7018.namprd12.prod.outlook.com
- ([fe80::e2bd:c56f:ea1d:9a11%6]) with mapi id 15.20.9320.013; Wed, 12 Nov 2025
- 17:58:45 +0000
-Message-ID: <711e5b61-ac32-40fd-b014-1cbdba45dc98@amd.com>
-Date: Wed, 12 Nov 2025 11:58:42 -0600
-User-Agent: Mozilla Thunderbird
-Subject: Re: [pseudo][PATCH 2/2] pseudo_db: fix duplicated xattr in rename
-To: Hongxu Jia <hongxu.jia@windriver.com>,
- yocto-patches@lists.yoctoproject.org, richard.purdie@linuxfoundation.org
-References: <20251111135951.2121065-1-hongxu.jia@windriver.com>
- <20251111135951.2121065-2-hongxu.jia@windriver.com>
-From: "Mark Hatle" <mark.hatle@amd.com>
-In-Reply-To: <20251111135951.2121065-2-hongxu.jia@windriver.com>
-X-ClientProxiedBy: YQBPR0101CA0114.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c01:5::17) To PH7PR12MB7018.namprd12.prod.outlook.com
- (2603:10b6:510:1b8::14)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=JSVhOSYi;
+ spf=pass (domain: gmail.com, ip: 209.85.128.43, mailfrom: skandigraun@gmail.com)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-47777000dadso297205e9.1
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 12 Nov 2025 11:05:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762974301; x=1763579101; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BJXnSgNvqddM15S+29euzp4INwVdGkjGx5RDIXpOygo=;
+        b=JSVhOSYihRiY0LG1thA3SrU3Tltrx8Paj5Bk8tjTRaTHkhC0lbd9H5kd54ZinqWjAM
+         wQBLUdzp3XBUCzGC1JM4KigfE16Nnjanl9/VPoDZ0xDgCQzE1op5F5nfJEouWNwE7mPw
+         Zkz3LvYXpFK9i1vMUrLtpcqEsruzugHOPEyceZKTou9nP3QO88g/YKsyCpyWGPd05+6g
+         k77nRuyAazfEPncew7RPjcO2py/g/G80u/6aQv11H7lL2i7/EIZVC/N+yFvcuzGEUu8t
+         XYeOnTFapLUIDXgvfJn5+eeoa16je30/lh/bxddmZ/Z9pMXKek5XpPMktXkXvhv7xrO4
+         vS4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762974301; x=1763579101;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BJXnSgNvqddM15S+29euzp4INwVdGkjGx5RDIXpOygo=;
+        b=q16gA8j3dYqMp17nIt+Ltzx1P9U194PMBT7hyPVqJwECoCFBdTK4qR5jjHhIOeNmgf
+         30CcbCCtqpxf3v/xS8ksqnEe+DlPUXtD+ZrpCHrnXslyxvcVKrca1Q1gQcH9PzHInrgZ
+         AEf70mKAIfQ1lUpvWBLFYJM5vW5WO17TNoluSXiF1CfyHDZEW2qGXpFY85J8FPdyhsXP
+         sEVL6wI/kzpOryz4iwS8kDG132Qc4TtuEHDle3oAnXOeT+jJ08svC6iKPXgB5OWpeCIM
+         kVoN90o3lDxNJV4YfNhfM7KIvCcRuXo8cXE8qsfQTIbEo4j/9R8CVvROBELEqP32rhiL
+         1Sdg==
+X-Gm-Message-State: AOJu0YzamMmvG+tiE5dSQRVJPUh1mG/+nc1qaz7xDkSu+jHGlCOerMfy
+	ylsV1yAlSsmhAwsUUinJ+lRQGvHkfbsfp4k0h+G2T8gUBjj2GrxnGBYEOlSrktn5
+X-Gm-Gg: ASbGncsv4BEmoQt6zWh9gZUEpgptFsxTrH8Jr+kRtjOWNUOO0E9uBLVAKCN9nPteKSL
+	HqfDeSwW7iJ5A8Q/7S2+nak0k4KQ8jQhH3r0GT0Jg6fIWjSG/9RdDb0to9F8gmMBkVoYlt6XyBS
+	bU2QReG3hwD9LwdocLsA2wnwudGxV/9GwREr783+MAwjZO9Zg5AxAYk/0Yo6QkpBdyNnneimNbG
+	aqwzDjRzGsu5R4b89Ni5w+dAeHIvUpu7FdqXB5QWgEstIBaL1/RjSfSKsZ8P6iLcH55z9QKajA3
+	7y/b16Lzwpql+dFB2W83lmiAAh8Pv+WWdhu2Lgch9kdTa6apubOCORHZRA1zPpnk0etdiQQx3V1
+	QV9phVBdLPEK0Aq4TiUf4XHsL/T9sz2pSJbGjhj96FWSMU6eYgYFWM1dNqmHbCzcWky45Kwsn8O
+	+zv606rnJ5yiMddKKqNY8=
+X-Google-Smtp-Source: AGHT+IHDuZhL31TDd1Hr60BXpjWnlGzvFr02PEx55KLD+bQoZegSwTUTkzLviKOaDZCcTL3b2fLsbw==
+X-Received: by 2002:a05:600c:a012:b0:46e:206a:78cc with SMTP id 5b1f17b1804b1-4778b9ceb3dmr7867415e9.28.1762974301391;
+        Wed, 12 Nov 2025 11:05:01 -0800 (PST)
+Received: from [192.168.1.106] ([51.154.145.205])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47789ffea1esm27710915e9.13.2025.11.12.11.05.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Nov 2025 11:05:00 -0800 (PST)
+Message-ID: <d4baf3a5-44fe-48d8-80c6-3d17cddac79d@gmail.com>
+Date: Wed, 12 Nov 2025 20:05:00 +0100
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB7018:EE_|DM4PR12MB7694:EE_
-X-MS-Office365-Filtering-Correlation-Id: 32f51adf-e35c-4a58-24c7-08de22151fa5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?V1FHNlhoTS9iOW5nb2hYdlBvc1RQcDZyQVdjcWN3MVBZL3E2eEdsdEgzcWlk?=
- =?utf-8?B?bC91aGsyRDFTRENncndkRWlRdmRIRitjNE5TeitWUzF1VHFnOEN2bVpWNE8x?=
- =?utf-8?B?V3V4ZkpHcitLcm80NXcxVkt6bHZMWHIwR3JCMXBzMEVNd1h4cmRKQ2pjVTJa?=
- =?utf-8?B?OHpJZXo2YUt0cnJ6TG1uajQxd0ZYTk1wRzE0aTd0V0VuMGxUMXcvWU9PNVN3?=
- =?utf-8?B?MjZONEplL0dTTXVNaWVzaDZQZVpPRHNYL1gybWE4QUlHUTh3OXJwNTNzQjRp?=
- =?utf-8?B?UWkrQVhFZkg1S3pWUlJ3Q2NVVll4LzY4QjhQQmhXZEZydXN0WEQ0d3duNEM4?=
- =?utf-8?B?ZVRxU1g3MXd2bG8zRHk5anVHODQvQ1g3cGcwd0VrNG1GZllRR1I5SGVheFkw?=
- =?utf-8?B?WmJiai9QZSsxbHA1S2RjdEdnNU9PcnIzTjc4OUtMRk9IaTVjakNySUgxY1Ra?=
- =?utf-8?B?T3ZmZkl0MEJsNHRaTENDbjhXYVJZUDBsZ2dKbmM0RFRHMW9WTVdDbjFESkVF?=
- =?utf-8?B?T2hlTzdCaG5TSHNRZ3JjUFZQRnJOVEhuUlVLRkdTODdSME84NzRUY0tEVWgr?=
- =?utf-8?B?MFZoNm9xN3diRElNVkMxV2FxRzJhQjZLSXM0OVA4cnp1NXpQVHRYNWVndGFH?=
- =?utf-8?B?WnhjTkNDQm5xdW9VMXQ1SE5ocWNHV1ZQWnkrZnRqTUU4UWtPVXMyWUJ0MW9J?=
- =?utf-8?B?ZHROdlZGNWRJbHNNNTVtalpxWlUxTmhzdG1FSW9TV0VBU1E2eW1ZME92NjQ4?=
- =?utf-8?B?b2VPNm82bHl0b2wzc0dMRk90Vk9kbGplUmlXWnVzMU42SFdDdUMxa1lDcWFH?=
- =?utf-8?B?NTZXcTc1TDd3Z3FGV1RweEdLWThZdUNPdmdkRy9XQW55L1lXM1hqTkV4Kzgx?=
- =?utf-8?B?c2VHSXVvS2s5QTgzUHE2aWErUEV3dlBtaSsvbXJGbkRVbXlIYmZWSmNyZ3Zr?=
- =?utf-8?B?RythdndBVkZ5TEpPNjdpQkxpTXp0NzRlREdtcnluMVRJUGhmT2pKdkFoZE1k?=
- =?utf-8?B?MTgwUlBkdUZiQ1o1OFRVd0tTekVBbmQ4blg4MmNlVUZFOU5GbEpSOUlSMGk4?=
- =?utf-8?B?R2VxSWY1Uy9IUkEvaWt6Ri9ZRjN3c29obXNVN25rR3MrNTYwR2N1WFp6aElr?=
- =?utf-8?B?TFFURGFOZk1CWUhLVXpQUW9SLy9oSTlDNjlSL3Bld0YyT2czQitxK3U3dHcw?=
- =?utf-8?B?bExwN0JKc2RvaFFpQVJSYUZJbzNTZE5qajVhbDh1V1BYTzFRenBnTWprUy9o?=
- =?utf-8?B?dHVHdnBsS0Urd3hkMis0cE1FOWlybnkyTTRKS3J0QW41cWFFMkVMeVVmM2E4?=
- =?utf-8?B?cmFqeXZhQ2wvTjFzR1FSajQvK2lkVzhTSGhEYjA1d3RMV3NkSUhzelkrQWNH?=
- =?utf-8?B?Rk1EZktpQWoxbklueXZ0SURwRTR4bTREdklGaURSV25Pb2tLMHg5ajJoSlhM?=
- =?utf-8?B?aE5wNjZGT3ZKZmtKa3ZEYmZsRlZSSlkxN1VrWUM0UFdic1VTNHY3cWFSYVdZ?=
- =?utf-8?B?WHJ4WWl6aU11WVBVQXJMdklYM01UUGdxTFliNUlUZ2NRenJzZmxQWW44Y2JD?=
- =?utf-8?B?WnpEbUpUd2hLeDBOV0xCSW90WHdNR0Q2a29YSnFMcDJqL0FIU25XSDZZV3J2?=
- =?utf-8?B?QzR2b0tLZzlSRUlCK3Znb21hdXc0NWxTMDJ6dlFidThJRTZDZTR3K0RWMFp5?=
- =?utf-8?B?L1B6a3hLbUlVcTBZdEFKNDY4SWZPZFExNEtSbVB3cUdHZjVWMmdNUitYUndS?=
- =?utf-8?B?UVhNclpXN3lUQVl1VlJuRjlPRzBUdG5YQjAvMXF2Z2paMzhmbWpjSkpqUlJM?=
- =?utf-8?B?NkVHdk15TUh0SVZjcTZQak5XRlI2TUx5SmFlRUpkbHkwWDJCdW0rcDhiNW1S?=
- =?utf-8?B?OTNDVFpMaTIwVHJKYmg5aklPTlBXWTIvUzQ2dUVQYStrQnBkSGxGa0RyMzhs?=
- =?utf-8?Q?bUHwbFj1ReKoNsPPKlSQWsIgYeYqNpKL?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB7018.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?dFpWQzE1bm80cldLQThyOGdUSFByaFFOdm9GR0pvaEg0N29sWmI0b0I4eWhj?=
- =?utf-8?B?eDcxUDE0dW9ZSUF0dytId3I4MTVEZEVxRnAwNXN6SFNzdzNyOHp4VmxSajJ3?=
- =?utf-8?B?KzVmODRPZG8wOUtBOWhKd09hMENEZzhHNElKVzZtSkVjYnU0SGppZE9GRmVr?=
- =?utf-8?B?YkdnSzRBVFdkWERKR2RxUE0yZWlMZjRWcnk4QVlaUm9Pd29KYmFiaXUwKzlI?=
- =?utf-8?B?TGkyM1ZOQzRjaUlobVZSZjE2ZkREdnM3Ukt0ME9rZ1J1TXl6VDR5NitSM1k2?=
- =?utf-8?B?bzJMemVxRnFEOTZjd0hmeWV3eTYrbHhnUEdwRjFhbU5YVXl0TEhVTjJaaU1w?=
- =?utf-8?B?a3ZsZWV2aGJLbElNU0J0eWNBVDV0d0xRVWgvUWVkZk93MEI0NXd3Rmg0cGk5?=
- =?utf-8?B?NjNDd1k5TDFkQUtmU1NtM3g2dUpXKzVQK2o5cHJkbXJzOG9jMTAzK1hFb2Ny?=
- =?utf-8?B?V3VlQmJTcmREeDNFQjhXcUw1djdEZmhFZzJpZzVILzlEd0V6RlhUbE0ybTNu?=
- =?utf-8?B?aWZPTEd4akhZcDAyc2o4R1VldzR5N3lVc20vNVNZbHRRR2IwZ2ZwdjE3OFo0?=
- =?utf-8?B?aWdMdlo3bUVvcGphYTVOZzIrRlJNcSs2S0tpdEovMU5UMktPTGZhQkZlenRD?=
- =?utf-8?B?cjJGUFY4STF4VDdBTlRkQm54YStzQ2JnektkczZsV3Z1bEkzeEw4czFrTjlw?=
- =?utf-8?B?YVZINFhUNmFGUnB1SlZzbmZSNndhUmdXTUR1TTJXZS9CcHNUSnlVcSt5MlFu?=
- =?utf-8?B?WFJUNm1LOVJPL0VwV1MwbStNYWx1OW1oNUszaGlKMlZudkZYanN2cFVKS3Va?=
- =?utf-8?B?eWIwY1RQeUpsRnBFdklBa1ZIa0xtU3I0cGxaR0l0TkRlamQwZ3c4dDdwSFQ2?=
- =?utf-8?B?aWRpSHdxbzVJSWxJRUdwT1FYcCttZ3FRSWUwWmo0NWQ5bDlIb2x5Y2R6WTlM?=
- =?utf-8?B?LzRPcHR1NTc3RXYxb2ZSbFJ0UVJ2QW1xSGd0dE5xZVlXZmFxK0o5NEgwaEtP?=
- =?utf-8?B?SXBHeGVHdk1qOXl3amx1TmtNUTlmVjkxdHNFWjdiTUZxNHdLV1IxQkJIci9r?=
- =?utf-8?B?aEhMaFdTWlZqUEpKaUF4U0R0eEF2Yy9ZbWo1eUd0eVVYUXRpRzc4dDFqZ2dY?=
- =?utf-8?B?bGxPckVBTExkY0poZmlubHphWUxmNjhtU3QzVWM5Rm9uNkdFUk00RjNabnNj?=
- =?utf-8?B?R0lVb0JKRXA2MkdSZ0FTZTRERVR3UEluUEhGU3hxZEpGUFFQUXg1dnowZmxj?=
- =?utf-8?B?Y2daWmprU3NHLzlIbTFiOC83WW8zWU1aV0hORUhRVnNYVnF3M0FpV0l1SjhF?=
- =?utf-8?B?NWRXTzlUUXVXZEF0Z0pLYWxSM2JpWTNzNkVLWHcvWFd0Vm1tZG4wUXBzaGdI?=
- =?utf-8?B?UURoc2tPdXVPSjVPY2c3Ullka2RkWjI4Tlk5K0pPYnkvTG1teFlaTE9xVlds?=
- =?utf-8?B?djJRN3FCVVI2cno1N2VsM0pWUWxMM2w1eGYyOEczVkhNcDNla2VqL05QdGh3?=
- =?utf-8?B?KzRRT2FUQk9QUG5NczZzd0dkU00zcXRxMW8xeDA5NDBvWXQ1UGFjcGM2eGw4?=
- =?utf-8?B?N2hucEZHcXczV3lPSGR1KysvNlpYOVVPcDhlZEJRUXYrWEVjdkI2amlqTXZ0?=
- =?utf-8?B?Z0xUV3NNcW42Z1hGeTB0WkduWitzTDZFbHlQOFdMS3dnUnRaZndtbEF3MXAz?=
- =?utf-8?B?RDhZQU1WcnRsUjAxbTd4OU92RzhzdjdySjFzeUtIRGYyOVRWc1JuSXJIblpl?=
- =?utf-8?B?c0xkaHF6b3kwSDNuN21WNEcwT0NPV1pOWlR6Y2lPcmRuajlCek90YWtXMGJF?=
- =?utf-8?B?dzNUd2EwUFQzbUlNVEJJWmdSRW1rcHRXVlhDYmtvZUVveUQ3L1RrTEhFRjRY?=
- =?utf-8?B?TFZ5OXk5anB2YWMvQ3FHV0RWK1UzNHFWeWdCd09LWGJ0QWVubE9LVCt0N053?=
- =?utf-8?B?YTlTRWpJbXRGMXEyTEtCMHhDaHhNMUlsd2htU09MZlBqRjVzbEhiaU85a3Bp?=
- =?utf-8?B?ZVEwS2k1VXhYYjhXTEpGdVNZcTUwYy9DWEZoMlBQSFFZbVdEWlJRdkNpMFox?=
- =?utf-8?B?NXNWLzJ1UHpjTzYranNER2tlV2RKa3ExYmVIUTRsRTFrTVFZaXFlMUxyVnN3?=
- =?utf-8?Q?W4fDLklp5Khl5Tqvs6mcwInfj?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 32f51adf-e35c-4a58-24c7-08de22151fa5
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB7018.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 17:58:45.5823
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tA48IMNxccspodi556HmWQ1k7NROeg4YvGz+FtkHa29l4vlnZdSNNnQBAhm5k2WL
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7694
+User-Agent: Mozilla Thunderbird
+Subject: Re: [yocto-patches] [meta-security][PATCH v3 1/2] clamav: Add ClamAV
+ 1.4.3 recipe with enhanced security and Rust support
+To: yocto-patches@lists.yoctoproject.org
+Cc: Hemant Jadhav <hemant.jadhav@emerson.com>
+References: <20251111144857.80186-1-hemant.jadhav@emerson.com>
 Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Gyorgy Sarvari <skandigraun@gmail.com>
+In-Reply-To: <20251111144857.80186-1-hemant.jadhav@emerson.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 12 Nov 2025 18:05:19 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2497
+ <yocto-patches@lists.yoctoproject.org>; Wed, 12 Nov 2025 19:05:11 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2498
 
-I don't completely understand what is going wrong here.  Some comments below to the patch that might help me understand it.
+Thanks for the new version
 
-On 11/11/25 7:59 AM, Hongxu Jia wrote:
-> In commit [fbaffe9 Handle rename(3) across devices.], it defines function
-> pdb_update_inode to change dev/inode for a given path -- used only by
-> RENAME for now.
-> 
-> In commit [58e4171 xattr work: handle deletes and renames], in function
-> pdb_update_inode, it defines oldmsg to test the existence of msg->path.
-> If yes, copy xattrs from oldmsg to msg. If both of oldmsg and msg have
-> the same dev/inode, it caused duplicated xattrs in the given path.
-> Here are the reproducible steps:
-> 
-> 1) Create a file in rootfs
-> mkdir -p rootfs; touch rootfs/file
-> 
-> 2) Use IMA/EVM signing utility to set xattr
-> evmctl ima_sign --hashalgo sha256 --key path-to/ima_keys/x509_ima.key --pass=xxx ./rootfs/file
-> 
-> 3) List xattr, get security.ima
-> $ getfattr -d -m ^ -R -- rootfs/
-> - rootfs/
-> |# file: rootfs//file
-> security.ima=0sAwIEOI1nBgEASdQgr4UDRTIYmF7q5SHFsyt3J/TO0Pwwz/hDiV3m4kjWALSKGC0Ea7wel6cZ1CcA/hQQ6gW5e86kswTCFexmM6qdE1MVG1IrP1L9YZcpJ3Ghh5bJS8S7Kb/J2FCaaPW9skGn8vG339CRHUuNz2z6uy6pryjLAVoAyl0jdqDlUTmhzfd7Bq6i1HLGSyBxm9nPwFDe4E5ubpwJlrN11YHUJSWVoAmpMfPLgu2bDalAz/I6tTMFdrEoR7SH0F9LuwKGnq4CAzrpsts/8/islsKWWPmmalv635EGG/k7g7zY0D/cHjc3YyaMYtvd43OWbTu+2j6w8IywmaZXN/YZg4AMgw==
-> 
-> 4) Rename
-> $ mv rootfs/file rootfs/rename_file
-> 
-> 5) List xattr, found duplicated security.ima
-> $ getfattr -d -m ^ -R -- rootfs/
-> - rootfs/
-> |# file: rootfs//rename_file
-> security.ima=0sAwIEOI1nBgEASdQgr4UDRTIYmF7q5SHFsyt3J/TO0Pwwz/hDiV3m4kjWALSKGC0Ea7wel6cZ1CcA/hQQ6gW5e86kswTCFexmM6qdE1MVG1IrP1L9YZcpJ3Ghh5bJS8S7Kb/J2FCaaPW9skGn8vG339CRHUuNz2z6uy6pryjLAVoAyl0jdqDlUTmhzfd7Bq6i1HLGSyBxm9nPwFDe4E5ubpwJlrN11YHUJSWVoAmpMfPLgu2bDalAz/I6tTMFdrEoR7SH0F9LuwKGnq4CAzrpsts/8/islsKWWPmmalv635EGG/k7g7zY0D/cHjc3YyaMYtvd43OWbTu+2j6w8IywmaZXN/YZg4AMgw==
-> security.ima=0sAwIEOI1nBgEASdQgr4UDRTIYmF7q5SHFsyt3J/TO0Pwwz/hDiV3m4kjWALSKGC0Ea7wel6cZ1CcA/hQQ6gW5e86kswTCFexmM6qdE1MVG1IrP1L9YZcpJ3Ghh5bJS8S7Kb/J2FCaaPW9skGn8vG339CRHUuNz2z6uy6pryjLAVoAyl0jdqDlUTmhzfd7Bq6i1HLGSyBxm9nPwFDe4E5ubpwJlrN11YHUJSWVoAmpMfPLgu2bDalAz/I6tTMFdrEoR7SH0F9LuwKGnq4CAzrpsts/8/islsKWWPmmalv635EGG/k7g7zY0D/cHjc3YyaMYtvd43OWbTu+2j6w8IywmaZXN/YZg4AMgw==
-> 
-> This commit:
-> 
-> - Due to oldmsg is static variable, clean up the memory of oldmsg
->    to avoid dirty data from last call.
+fwiw:
+Reviewed-by: Gyorgy Sarvari <skandigraun@gmail.com>
 
-See below, but the memcpy of the new msg should both setup the oldmsg and clear any old data.  It was expected that subsequent calls would clear any specific data we didn't want preserved (for whatever reason) -- See below.
-
-> - Other than copy the whole msg to oldmsg, only copy path and
->    pathlen from msg to oldmsg, use function pdb_find_file_path
->    to fill oldmsg->dev and oldmsg->ino if it existed
-> 
-> - Copy xattr only if the existed oldmsg have different dev/inode
->    with msg to avoid duplicated xattr for the same dev/indoe
-> 
-> Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+On 11/11/25 15:48, Hemant Jadhav via lists.yoctoproject.org wrote:
+> Add modern ClamAV 1.4.3 recipe with comprehensive improvements over
+> the legacy 0.104.4 version.
+>
+> Major changes in 1.4.3:
+> - Upgraded core engine with improved threat detection capabilities
+> - Added Rust components requiring cross-compilation support
+> - Updated CMake build system replacing legacy autotools
+> - Modernized library dependencies (LLVM, JSON-C, PCre2)
+> - Added comprehensive license compliance for multi-component package
+> - Enhanced cross-compilation support for all target architectures
+>
+> The recipe leverages cargo_common class for automatic Rust toolchain
+> configuration, eliminating manual Cargo setup. File paths use UNPACKDIR
+> for compatibility with master branch.
+>
+> - Implemented CMake cache variables for cross-compilation
+> - Updated all license checksums for compliance
+> - Added Rust toolchain integration with automatic environment setup
+>
+> Security rationale:
+> - ClamAV 0.104.4 reached end-of-life and is no longer maintained
+> - Upstream strongly recommends migration to 1.4.x for security updates
+>
+> Signed-off-by: Hemant Jadhav <hemant.jadhav@emerson.com>
 > ---
->   pseudo_db.c | 9 ++++++---
->   1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/pseudo_db.c b/pseudo_db.c
-> index 8b23938..d6ae1d3 100644
-> --- a/pseudo_db.c
-> +++ b/pseudo_db.c
-> @@ -2188,10 +2188,13 @@ pdb_update_inode(pseudo_msg_t *msg) {
->   		pseudo_diag("Can't update the inode of a file without its path.\n");
->   		return 1;
->   	}
-> -	memcpy(oldmsg, msg, sizeof(*msg) + msg->pathlen);
-> +	memset(oldmsg, 0, sizeof(*msg) + pseudo_path_max());
-
-Originally we did NOT memset this, as we expected the memcpy to overwrite any existing memory.  This is why the memcpy was the entire old msg to the new msg entry.
-
-> +	/* Copy path and pathlen from msg to oldmsg */
-> +	memcpy(oldmsg->path, msg->path, msg->pathlen);
-> +	oldmsg->pathlen = msg->pathlen;
->   	found_existing = !pdb_find_file_path(oldmsg);
-
-The function above (pdb_find_file_path) was supposed to clear items from oldmsg (as necessary), basically resetting the dev/ino and any other stuff that this function cares about.  (That may no longer be true, I'm really not sure!)
-
-I'm not against memset and then partial copy, but do we need any of the other fields?  This is the part I'm really unclear about.  (Especially uid/gid/mode and op.)
-
-> -	if (found_existing) {
-> -		/* we have an existing file entry */
-> +	if (found_existing && (msg->dev!=oldmsg->dev || msg->ino!=oldmsg->ino)) {
-> +		/* we have an existing file entry with different dev/inode */
-
-The above change looks correct to me.  I'm not sure why this wasn't done original, maybe an oversight.
-
->   		pdb_copy_xattrs(oldmsg, msg);
->   	}
-
-if you don't do the xattr copy then is the issue that we have 'junk' in the 'oldmsg' that needs to be cleared?  Or are there other fields in oldmsg that are the concern?
-
-Unless there is a specific reason, I would rather copy of the msg -> oldmsg and then clear just the items we do not want.  This should clear old data and give us a known starting point for the "new" oldmsg.  We can then sanitize/memset/clear whatever fields we don't care about.
-
->   	sqlite3_bind_int(update, 1, msg->dev);
+> v2: Address review comments:
+> - Remove S variable (auto-detected in master branch)
+> - Use cargo_common instead of rust-common (handles config.toml automatically)
+> - Remove manual Cargo configuration in do_configure:prepend()
+> - Change ${WORKDIR} to ${UNPACKDIR} for file path references
+>
+> v3: Remove S variable that was mistakenly left in v2
+> ---
+>  recipes-scanners/clamav/clamav_1.4.3.bb       | 181 ++++++++++++++++++
+>  recipes-scanners/clamav/files/tmpfiles.clamav |   1 +
+>  .../clamav/files/volatiles.03_clamav          |   1 +
+>  3 files changed, 183 insertions(+)
+>  create mode 100644 recipes-scanners/clamav/clamav_1.4.3.bb
+>
+> diff --git a/recipes-scanners/clamav/clamav_1.4.3.bb b/recipes-scanners/clamav/clamav_1.4.3.bb
+> new file mode 100644
+> index 0000000..f6b97d3
+> --- /dev/null
+> +++ b/recipes-scanners/clamav/clamav_1.4.3.bb
+> @@ -0,0 +1,181 @@
+> +SUMMARY = "ClamAV anti-virus utilities and scanner tools"
+> +DESCRIPTION = "ClamAV is an open source antivirus engine for detecting trojans, viruses, malware & other malicious threats."
+> +HOMEPAGE = "http://www.clamav.net/index.html"
+> +SECTION = "security"
+> +LICENSE = "GPL-2.0-only & LGPL-2.1-only & BSD-2-Clause & Zlib & Apache-2.0-with-LLVM-exception"
+> +LIC_FILES_CHKSUM = "file://COPYING.txt;md5=2c0b5770a62017a3121c69bb9f680b0c \
+> +                    file://COPYING/COPYING.LGPL;md5=2d5025d4aa3495befef8f17206a5b0a1 \
+> +                    file://COPYING/COPYING.bzip2;md5=ae8d555c34b656ff864ea9437a10d3a0 \
+> +                    file://COPYING/COPYING.zlib;md5=3648a0b9713ab246e11536055165a41a \
+> +                    file://COPYING/COPYING.llvm;md5=c82fc668ef1809acdd0684811df93bfc \
+> +                    file://COPYING/COPYING.unrar;md5=6a741ba21afc8b71aeaee3b5f86a8111 \
+> +                    file://COPYING/COPYING.file;md5=e63a61022c36cff2fdfbf02dd51674bd \
+> +                    file://COPYING/COPYING.curl;md5=be5d9e1419c4363f4b32037a2d3b7ffa \
+> +                    "
+> +
+> +DEPENDS = "glibc llvm libtool db openssl zlib curl libxml2 bison pcre2 json-c libcheck rust-native cargo-native libmspack"
+> +
+> +SRC_URI = "git://github.com/Cisco-Talos/clamav;branch=rel/1.4;protocol=https \
+> +           file://clamd.conf \
+> +           file://freshclam.conf \
+> +           file://volatiles.03_clamav \
+> +           file://tmpfiles.clamav \
+> +           "
+> +
+> +# ClamAV version 1.4.3
+> +SRCREV = "d8b053865fd5995f7af98bfbcd98c9a5644bfe2b"
+> +
+> +COMPATIBLE_HOST:libc-musl:class-target = "null"
+> +
+> +LEAD_SONAME = "libclamav.so"
+> +SO_VER = "12.0.0"
+> +BINCONFIG = "${bindir}/clamav-config"
+> +
+> +inherit cmake chrpath pkgconfig useradd systemd multilib_header multilib_script cargo_common
+> +
+> +
+> +UPSTREAM_CHECK_COMMITS = "1"
+> +
+> +CLAMAV_USER ?= "clamav"
+> +CLAMAV_GROUP ?= "clamav"
+> +
+> +PACKAGECONFIG ?= "clamonacc \
+> +                  ${@bb.utils.contains("DISTRO_FEATURES", "systemd", "systemd", "", d)}"
+> +PACKAGECONFIG[milter] = "-DENABLE_MILTER=ON ,-DENABLE_MILTER=OFF, curl, curl"
+> +PACKAGECONFIG[clamonacc] = "-DENABLE_CLAMONACC=ON ,-DENABLE_CLAMONACC=OFF,"
+> +PACKAGECONFIG[unrar] = "-DENABLE_UNRAR=ON ,-DENABLE_UNRAR=OFF,"
+> +PACKAGECONFIG[freshclamdnsfix] = "-DENABLE_FRESHCLAM_DNS_FIX=ON ,-DENABLE_FRESHCLAM_DNS_FIX=OFF,"
+> +PACKAGECONFIG[systemd] = "-DENABLE_SYSTEMD=ON -DSYSTEMD_UNIT_DIR=${systemd_system_unitdir}, -DENABLE_SYSTEMD=OFF, systemd"
+> +
+> +EXTRA_OECMAKE = "-DCMAKE_BUILD_TYPE=Release -DOPTIMIZE=ON -DENABLE_JSON_SHARED=OFF \
+> +                 -DCLAMAV_GROUP=${CLAMAV_GROUP} -DCLAMAV_USER=${CLAMAV_USER} \
+> +                 -DENABLE_TESTS=OFF -DBUILD_SHARED_LIBS=ON \
+> +                 -DDO_NOT_SET_RPATH=ON \
+> +                 -DCMAKE_INSTALL_PREFIX=${prefix} \
+> +                 -DCMAKE_INSTALL_SYSCONFDIR=${sysconfdir} \
+> +                 -DCMAKE_INSTALL_FULL_SYSCONFDIR=${sysconfdir} \
+> +                 -DSYSCONFDIR=${sysconfdir} \
+> +                 -DHAVE_SIGNED_RIGHT_SHIFT=1 \
+> +                 -DHAVE_UNAME_SYSCALL=1 \
+> +                 -DHAVE_FD_PASSING=1 \
+> +                 -Dtest_run_result=0 \
+> +                 -Dtest_run_result__TRYRUN_OUTPUT='' \
+> +                 -DCMAKE_C_FLAGS='${CFLAGS} -Wno-error=format-truncation -Wno-error=unused-function' \
+> +                 "
+> +
+> +MULTILIB_SCRIPTS = "${PN}-dev:${bindir}/clamav-config"
+> +
+> +do_install:append() {
+> +    install -d ${D}/${sysconfdir}
+> +    install -d ${D}/${localstatedir}/lib/clamav
+> +    install -d ${D}${sysconfdir}/clamav ${D}${sysconfdir}/default/volatiles
+> +
+> +    install -m 644 ${UNPACKDIR}/clamd.conf ${D}${sysconfdir}
+> +    install -m 644 ${UNPACKDIR}/freshclam.conf ${D}${sysconfdir}
+> +    install -m 0644 ${UNPACKDIR}/volatiles.03_clamav  ${D}${sysconfdir}/default/volatiles/03_clamav
+> +    
+> +    if [ -d ${D}${prefix}/etc ]; then
+> +        cp -r ${D}${prefix}/etc/* ${D}${sysconfdir}/ 2>/dev/null || true
+> +        rm -rf ${D}${prefix}/etc
+> +    fi
+> +    
+> +    sed -i -e 's#${STAGING_DIR_HOST}##g' ${D}${libdir}/pkgconfig/libclamav.pc
+> +    rm ${D}/${libdir}/libclamav.so
+> +    if [ "${INSTALL_CLAMAV_CVD}" = "1" ]; then
+> +        install -m 666 ${S}/clamav_db/* ${D}/${localstatedir}/lib/clamav/.
+> +    fi
+> +
+> +    rm ${D}/${libdir}/libfreshclam.so
+> +
+> +    if ${@bb.utils.contains('DISTRO_FEATURES','systemd','true','false',d)};then
+> +        install -d ${D}${sysconfdir}/tmpfiles.d
+> +        install -m 0644 ${UNPACKDIR}/tmpfiles.clamav ${D}${sysconfdir}/tmpfiles.d/clamav.conf
+> +    fi
+> +    oe_multilib_header clamav-types.h
+> +}
+> +
+> +pkg_postinst:${PN} () {
+> +    if [ -z "$D" ]; then
+> +        if command -v systemd-tmpfiles >/dev/null; then
+> +            systemd-tmpfiles --create ${sysconfdir}/tmpfiles.d/clamav.conf
+> +        elif [ -e ${sysconfdir}/init.d/populate-volatile.sh ]; then
+> +            ${sysconfdir}/init.d/populate-volatile.sh update
+> +        fi
+> +    fi
+> +}
+> +
+> +PACKAGES += "${PN}-daemon ${PN}-clamdscan ${PN}-freshclam ${PN}-libclamav ${PN}-libclammspack"
+> +
+> +FILES:${PN} = "${bindir}/clambc ${bindir}/clamscan ${bindir}/clamsubmit ${sbindir}/clamonacc \
+> +               ${bindir}/*sigtool ${mandir}/man1/clambc* ${mandir}/man1/clamscan* \
+> +               ${mandir}/man1/sigtool* ${mandir}/man1/clambsubmit* \
+> +               ${docdir}/clamav/*"
+> +
+> +FILES:${PN}-clamdscan = "${bindir}/clamdscan \
+> +                         ${docdir}/clamdscan/* \
+> +                         ${mandir}/man1/clamdscan* \
+> +                         "
+> +
+> +FILES:${PN}-daemon = "${bindir}/clamconf ${bindir}/clamdtop ${sbindir}/clamd \
+> +                      ${mandir}/man1/clamconf* ${mandir}/man1/clamdtop* \
+> +                      ${mandir}/man5/clamd* ${mandir}/man8/clamd* \
+> +                      ${sysconfdir}/clamd.conf* \
+> +                      ${systemd_system_unitdir}/clamav-daemon/* \
+> +                      ${docdir}/clamav-daemon/* ${sysconfdir}/clamav-daemon \
+> +                      ${sysconfdir}/logcheck/ignore.d.server/clamav-daemon \
+> +                      ${systemd_system_unitdir}/clamav-daemon.service \
+> +                      ${systemd_system_unitdir}/clamav-clamonacc.service \
+> +                      "
+> +
+> +FILES:${PN}-freshclam = "${bindir}/freshclam \
+> +                         ${sysconfdir}/freshclam.conf* \
+> +                         ${sysconfdir}/clamav ${sysconfdir}/default/volatiles \
+> +                         ${sysconfdir}/tmpfiles.d/*.conf \
+> +                         ${localstatedir}/lib/clamav \
+> +                         ${docdir}/${PN}-freshclam ${mandir}/man1/freshclam.* \
+> +                         ${mandir}/man5/freshclam.conf.* \
+> +                         ${systemd_system_unitdir}/clamav-freshclam.service"
+> +
+> +FILES:${PN}-libclamav = "${libdir}/libclamav.so* \
+> +                         ${libdir}/libfreshclam.so* ${docdir}/libclamav/* \
+> +                         "
+> +
+> +FILES:${PN}-libclammspack = "${libdir}/libclammspack.so* \
+> +                             ${libdir}/libmspack.so* \
+> +                             "
+> +
+> +FILES:${PN}-dev = "${bindir}/clamav-config ${libdir}/*.la \
+> +                   ${libdir}/pkgconfig/*.pc \
+> +                   ${mandir}/man1/clamav-config.* \
+> +                   ${includedir}/*.h ${docdir}/libclamav*"
+> +
+> +FILES:${PN}-staticdev = "${libdir}/*.a"
+> +
+> +FILES:${PN}-doc = "${mandir}/man/* \
+> +                   ${datadir}/man/* \
+> +                   ${docdir}/* \
+> +                   "
+> +
+> +RDEPENDS:${PN} = "openssl ncurses-libncurses libxml2 libbz2 ncurses-libtinfo curl libpcre2 clamav-libclamav"
+> +RDEPENDS:${PN}-daemon = "clamav clamav-freshclam"
+> +RDEPENDS:${PN}-freshclam = "clamav"
+> +RDEPENDS:${PN}-libclamav = "clamav-libclammspack"
+> +
+> +RRECOMMENDS:${PN} = "clamav-freshclam"
+> +
+> +RPROVIDES:${PN} += "${PN}-systemd"
+> +RREPLACES:${PN} += "${PN}-systemd"  
+> +RCONFLICTS:${PN} += "${PN}-systemd"
+> +
+> +SYSTEMD_PACKAGES = "${PN}-daemon ${PN}-freshclam"
+> +SYSTEMD_SERVICE:${PN}-daemon = "clamav-daemon.service"
+> +SYSTEMD_SERVICE:${PN}-freshclam = "clamav-freshclam.service"
+> +
+> +USERADD_PACKAGES = "${PN}-freshclam"
+> +GROUPADD_PARAM:${PN}-freshclam = "--system ${CLAMAV_GROUP}"
+> +USERADD_PARAM:${PN}-freshclam = "--system -g ${CLAMAV_GROUP} --home-dir \
+> +                                 ${localstatedir}/lib/${BPN} \
+> +                                 --no-create-home --shell /sbin/nologin ${CLAMAV_USER}"
+> +
+> +INSANE_SKIP:${PN}-libclamav += "dev-so"
+> +INSANE_SKIP:${PN}-libclammspack += "dev-so"
+> diff --git a/recipes-scanners/clamav/files/tmpfiles.clamav b/recipes-scanners/clamav/files/tmpfiles.clamav
+> index fd5adfe..8e0849e 100644
+> --- a/recipes-scanners/clamav/files/tmpfiles.clamav
+> +++ b/recipes-scanners/clamav/files/tmpfiles.clamav
+> @@ -1,3 +1,4 @@
+>  #Type Path        Mode UID  GID  Age Argument
+> +d /var/lib/clamav 0755 clamav clamav -
+>  d /var/log/clamav 0755 clamav clamav -
+>  f /var/log/clamav/freshclam.log 0644 clamav clamav -
+> diff --git a/recipes-scanners/clamav/files/volatiles.03_clamav b/recipes-scanners/clamav/files/volatiles.03_clamav
+> index ee2153c..0561c4d 100644
+> --- a/recipes-scanners/clamav/files/volatiles.03_clamav
+> +++ b/recipes-scanners/clamav/files/volatiles.03_clamav
+> @@ -1,3 +1,4 @@
+>  # <type> <owner> <group> <mode> <path> <linksource>
+> +d clamav clamav 0755 /var/lib/clamav none
+>  d clamav clamav 0755 /var/log/clamav none
+>  f clamav clamav 0655 /var/log/clamav/freshclam.log none
 
 
