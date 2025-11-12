@@ -1,88 +1,94 @@
-Return-Path: <skandigraun@gmail.com>
+Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE56CCD3442
-	for <webhook@archiver.kernel.org>; Wed, 12 Nov 2025 19:05:11 +0000 (UTC)
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.5571.1762974303205616225
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D104ECD3440
+	for <webhook@archiver.kernel.org>; Wed, 12 Nov 2025 19:07:21 +0000 (UTC)
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.5625.1762974431790756445
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 12 Nov 2025 11:05:03 -0800
+ Wed, 12 Nov 2025 11:07:12 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=JSVhOSYi;
- spf=pass (domain: gmail.com, ip: 209.85.128.43, mailfrom: skandigraun@gmail.com)
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-47777000dadso297205e9.1
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 12 Nov 2025 11:05:02 -0800 (PST)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=diQkT5JR;
+ spf=pass (domain: konsulko.com, ip: 209.85.222.169, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-8b25ed53fcbso3975285a.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 12 Nov 2025 11:07:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762974301; x=1763579101; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BJXnSgNvqddM15S+29euzp4INwVdGkjGx5RDIXpOygo=;
-        b=JSVhOSYihRiY0LG1thA3SrU3Tltrx8Paj5Bk8tjTRaTHkhC0lbd9H5kd54ZinqWjAM
-         wQBLUdzp3XBUCzGC1JM4KigfE16Nnjanl9/VPoDZ0xDgCQzE1op5F5nfJEouWNwE7mPw
-         Zkz3LvYXpFK9i1vMUrLtpcqEsruzugHOPEyceZKTou9nP3QO88g/YKsyCpyWGPd05+6g
-         k77nRuyAazfEPncew7RPjcO2py/g/G80u/6aQv11H7lL2i7/EIZVC/N+yFvcuzGEUu8t
-         XYeOnTFapLUIDXgvfJn5+eeoa16je30/lh/bxddmZ/Z9pMXKek5XpPMktXkXvhv7xrO4
-         vS4A==
+        d=konsulko.com; s=google; t=1762974431; x=1763579231; darn=lists.yoctoproject.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aBbmsLDcnkyk2rki+hej6KKChtDzhPd1/JQI60uDWgo=;
+        b=diQkT5JRejPuTUQXp5teMGqcnAmx1PYEFB+Zz1XlaLvWC5JbBACZGXqQoZrXMkn2Yq
+         4kVQCgDsINlOzm/UefqjYotYkVgaF2FWIpjVCSQ0WsNZRLQLRSUZ0T6h9Dvhql0LoHFm
+         bPRQsr1peLgGm74HiLnDYt91EqEyI8GNt0YYo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762974301; x=1763579101;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1762974431; x=1763579231;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=BJXnSgNvqddM15S+29euzp4INwVdGkjGx5RDIXpOygo=;
-        b=q16gA8j3dYqMp17nIt+Ltzx1P9U194PMBT7hyPVqJwECoCFBdTK4qR5jjHhIOeNmgf
-         30CcbCCtqpxf3v/xS8ksqnEe+DlPUXtD+ZrpCHrnXslyxvcVKrca1Q1gQcH9PzHInrgZ
-         AEf70mKAIfQ1lUpvWBLFYJM5vW5WO17TNoluSXiF1CfyHDZEW2qGXpFY85J8FPdyhsXP
-         sEVL6wI/kzpOryz4iwS8kDG132Qc4TtuEHDle3oAnXOeT+jJ08svC6iKPXgB5OWpeCIM
-         kVoN90o3lDxNJV4YfNhfM7KIvCcRuXo8cXE8qsfQTIbEo4j/9R8CVvROBELEqP32rhiL
-         1Sdg==
-X-Gm-Message-State: AOJu0YzamMmvG+tiE5dSQRVJPUh1mG/+nc1qaz7xDkSu+jHGlCOerMfy
-	ylsV1yAlSsmhAwsUUinJ+lRQGvHkfbsfp4k0h+G2T8gUBjj2GrxnGBYEOlSrktn5
-X-Gm-Gg: ASbGncsv4BEmoQt6zWh9gZUEpgptFsxTrH8Jr+kRtjOWNUOO0E9uBLVAKCN9nPteKSL
-	HqfDeSwW7iJ5A8Q/7S2+nak0k4KQ8jQhH3r0GT0Jg6fIWjSG/9RdDb0to9F8gmMBkVoYlt6XyBS
-	bU2QReG3hwD9LwdocLsA2wnwudGxV/9GwREr783+MAwjZO9Zg5AxAYk/0Yo6QkpBdyNnneimNbG
-	aqwzDjRzGsu5R4b89Ni5w+dAeHIvUpu7FdqXB5QWgEstIBaL1/RjSfSKsZ8P6iLcH55z9QKajA3
-	7y/b16Lzwpql+dFB2W83lmiAAh8Pv+WWdhu2Lgch9kdTa6apubOCORHZRA1zPpnk0etdiQQx3V1
-	QV9phVBdLPEK0Aq4TiUf4XHsL/T9sz2pSJbGjhj96FWSMU6eYgYFWM1dNqmHbCzcWky45Kwsn8O
-	+zv606rnJ5yiMddKKqNY8=
-X-Google-Smtp-Source: AGHT+IHDuZhL31TDd1Hr60BXpjWnlGzvFr02PEx55KLD+bQoZegSwTUTkzLviKOaDZCcTL3b2fLsbw==
-X-Received: by 2002:a05:600c:a012:b0:46e:206a:78cc with SMTP id 5b1f17b1804b1-4778b9ceb3dmr7867415e9.28.1762974301391;
-        Wed, 12 Nov 2025 11:05:01 -0800 (PST)
-Received: from [192.168.1.106] ([51.154.145.205])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47789ffea1esm27710915e9.13.2025.11.12.11.05.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Nov 2025 11:05:00 -0800 (PST)
-Message-ID: <d4baf3a5-44fe-48d8-80c6-3d17cddac79d@gmail.com>
-Date: Wed, 12 Nov 2025 20:05:00 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+        bh=aBbmsLDcnkyk2rki+hej6KKChtDzhPd1/JQI60uDWgo=;
+        b=DKCVRgu7OJ996jm2obagLWclOOslPyLqrVg3Y608TGvl/MNWEAcTiIPcK0muBGm4Zw
+         dNO+DP85Oi5XfdFuXEaIQ5KdeqsGcquA0yXGW8/M88jfhBWntvpaRgRfb3WkeSCOWqR6
+         yO/YrSnZLJ3mnHpqGlc3ZkgskR36dx1a4GJWDzLcoi7JefOVOPzufRrnNSU2vKIEp+Mh
+         f40l+kMlhxZshOf/JhwRzbwmtpQkCq2liVNBSCKhFPcKqAfHdXJ4y8k6GtRL0cRKGJ7A
+         YYbLs8zjt55bEk9N7NeE8hEiZa/ctB5pWYJ7nokh3R8G89T5sDJMcaJUmZMNRHl9g88s
+         kSMg==
+X-Gm-Message-State: AOJu0Yw7o+gEZNJaaLNK+YV0RmzSbHunrWE04ff3Z4yPUdyfUNgpGu+s
+	X75sXgrmRc7P/BxVXzxZh1RC3q3BuTGsl+2M+iP0f3bcPcjG1b9OXdzYKkccDkvoJiY=
+X-Gm-Gg: ASbGncvwjLq5XIrm52FohngxCasU5UxGSEM9Lfvqln8dAkMFR9WcWt/26vhxEWHcCLE
+	+opQcWo/O4kDzOygx1XwwRbbuBbE87RCoy0CLZJSSzBlVkXMRTW6tWXa++I142O4Ybo7nrc+3gK
+	mMCOb647YQ7SGRp/cSNtVqQtID2mqxDthuPnaH3kw5DwcnP5ZHGI1q9UrjmiczrSeqEtjy01HS6
+	whvEIby6jCl1q+HPqhTDsJtl2gp4AVItAnlyDuO8ai+h6FRclB9KvFZ+DcmEwUt12OIiqghQkJw
+	IXj4G5vnn9Xd0B8Vq4r2TB/6DYb/OJAfCOVndRraqxWBakzTmy24zggGIc68TP0B8wMXws/ZWbU
+	K0BYEloEqnESS3CLEhDfkYTD7QhruEDAPUqMLt4++tx767cc7GGbZMdC015wIR4jut0/GN19sAh
+	MGrNdxp81Ks8NADrNN4idWZI+IqP/gbfmDdiA=
+X-Google-Smtp-Source: AGHT+IGueuNcho5dc0sCe2gQnGLdSd4HBZKlCtnj/w17u9QdKoZd7Ozm/h5NnpNMvSyrihDq54Yafg==
+X-Received: by 2002:a05:620a:17a3:b0:8b2:34b8:16e9 with SMTP id af79cd13be357-8b29b7c74f3mr499085785a.48.1762974430355;
+        Wed, 12 Nov 2025 11:07:10 -0800 (PST)
+Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b29aa27893sm241113085a.56.2025.11.12.11.07.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 11:07:10 -0800 (PST)
+Date: Wed, 12 Nov 2025 14:07:09 -0500 (EST)
+From: Scott Murray <scott.murray@konsulko.com>
+To: Hemant Jadhav <hemant.jadhav@emerson.com>
+cc: yocto-patches@lists.yoctoproject.org
 Subject: Re: [yocto-patches] [meta-security][PATCH v3 1/2] clamav: Add ClamAV
  1.4.3 recipe with enhanced security and Rust support
-To: yocto-patches@lists.yoctoproject.org
-Cc: Hemant Jadhav <hemant.jadhav@emerson.com>
-References: <20251111144857.80186-1-hemant.jadhav@emerson.com>
-Content-Language: en-US
-From: Gyorgy Sarvari <skandigraun@gmail.com>
 In-Reply-To: <20251111144857.80186-1-hemant.jadhav@emerson.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Message-ID: <76cdfeb3-b214-a87a-f6bf-3df119784887@konsulko.com>
+References: <20251111144857.80186-1-hemant.jadhav@emerson.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 12 Nov 2025 19:05:11 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2498
+ <yocto-patches@lists.yoctoproject.org>; Wed, 12 Nov 2025 19:07:21 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2499
 
-Thanks for the new version
+On Tue, 11 Nov 2025, Hemant Jadhav via lists.yoctoproject.org wrote:
 
-fwiw:
-Reviewed-by: Gyorgy Sarvari <skandigraun@gmail.com>
-
-On 11/11/25 15:48, Hemant Jadhav via lists.yoctoproject.org wrote:
 > Add modern ClamAV 1.4.3 recipe with comprehensive improvements over
 > the legacy 0.104.4 version.
->
+
+How are you testing this?  ATM it fails to build since only cargo_common's
+do_configure is getting run, leaving CMake unconfigured:
+
+$ less temp/log.do_compile
+DEBUG: Executing shell function do_compile
+NOTE: VERBOSE=1 cmake --build
+/ws2/scottm/dev/oe/test.meta-security/build/tmp/work/x86-64-v3-oe-linux/clamav/1.4.3/build
+--target all --
+Error: not a CMake build directory (missing CMakeCache.txt)
+WARNING: exit code 1 from a shell command.
+
+At the very minimum you'll need a custom do_configure that calls both
+cmake_do_configure and cargo_common_do_configure.  Please do not send a
+v4 until you have a build reproducibly working from a clean build tree
+(i.e. either from scratch or at least with tmp removed).
+
+Scott
+
 > Major changes in 1.4.3:
 > - Upgraded core engine with improved threat detection capabilities
 > - Added Rust components requiring cross-compilation support
@@ -200,12 +206,12 @@ On 11/11/25 15:48, Hemant Jadhav via lists.yoctoproject.org wrote:
 > +    install -m 644 ${UNPACKDIR}/clamd.conf ${D}${sysconfdir}
 > +    install -m 644 ${UNPACKDIR}/freshclam.conf ${D}${sysconfdir}
 > +    install -m 0644 ${UNPACKDIR}/volatiles.03_clamav  ${D}${sysconfdir}/default/volatiles/03_clamav
-> +    
+> +
 > +    if [ -d ${D}${prefix}/etc ]; then
 > +        cp -r ${D}${prefix}/etc/* ${D}${sysconfdir}/ 2>/dev/null || true
 > +        rm -rf ${D}${prefix}/etc
 > +    fi
-> +    
+> +
 > +    sed -i -e 's#${STAGING_DIR_HOST}##g' ${D}${libdir}/pkgconfig/libclamav.pc
 > +    rm ${D}/${libdir}/libclamav.so
 > +    if [ "${INSTALL_CLAMAV_CVD}" = "1" ]; then
@@ -291,7 +297,7 @@ On 11/11/25 15:48, Hemant Jadhav via lists.yoctoproject.org wrote:
 > +RRECOMMENDS:${PN} = "clamav-freshclam"
 > +
 > +RPROVIDES:${PN} += "${PN}-systemd"
-> +RREPLACES:${PN} += "${PN}-systemd"  
+> +RREPLACES:${PN} += "${PN}-systemd"
 > +RCONFLICTS:${PN} += "${PN}-systemd"
 > +
 > +SYSTEMD_PACKAGES = "${PN}-daemon ${PN}-freshclam"
@@ -324,5 +330,5 @@ On 11/11/25 15:48, Hemant Jadhav via lists.yoctoproject.org wrote:
 > +d clamav clamav 0755 /var/lib/clamav none
 >  d clamav clamav 0755 /var/log/clamav none
 >  f clamav clamav 0655 /var/log/clamav/freshclam.log none
-
+>
 
