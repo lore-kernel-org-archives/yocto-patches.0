@@ -2,145 +2,145 @@ Return-Path: <ross.burton@arm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4811CD343B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6D40CD342F
 	for <webhook@archiver.kernel.org>; Wed, 12 Nov 2025 18:05:19 +0000 (UTC)
-Received: from PH0PR06CU001.outbound.protection.outlook.com (PH0PR06CU001.outbound.protection.outlook.com [40.107.208.3])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.3572.1762969600110178940
+Received: from DM1PR04CU001.outbound.protection.outlook.com (DM1PR04CU001.outbound.protection.outlook.com [52.101.61.45])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.3909.1762970328256474716
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 12 Nov 2025 09:46:40 -0800
+ Wed, 12 Nov 2025 09:58:48 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@amd.com header.s=selector1 header.b=oo7UzZZO;
- spf=permerror, err=parse error for token &{10 18 %{i}._ip.%{h}._ehlo.%{d}._spf.vali.email}: invalid domain name (domain: amd.com, ip: 40.107.208.3, mailfrom: mark.hatle@amd.com)
+ dkim=pass header.i=@amd.com header.s=selector1 header.b=QsqHUHd9;
+ spf=permerror, err=parse error for token &{10 18 %{i}._ip.%{h}._ehlo.%{d}._spf.vali.email}: invalid domain name (domain: amd.com, ip: 52.101.61.45, mailfrom: mark.hatle@amd.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=E+pAPImx/ClgbrMwFn4zLWlHjbgztWlEi2rsOhLLWcw6bKIY9iaGwUGc6Rke2rtyHYbbFgSn5oOUjd/bqcqeGWgW+JwumdTZdmigRLIGGeF4Ow86Dw1iHipZZWay9d3JRMn4diLz0AWqaV1jmh1rUr4wJpfBA5rhgCy4KxF+ho+hm4MScT0bURq2UGAx1oWLFHqa98R6YZH/wsUAxHxStn5CQLlE+g9Ac0KsREVmv/pe1o0mR+BGuc9YBK1zx2tMSBEMumFVZInNVJSW5y9FeQ/g//hDWAqS8tfXzx4tQGawu94ak288YEYdX84fRL6gRBZ963l8gTQ6jCv+yZHZ5A==
+ b=oK57Q1bjFRJntVJM6eYLmJsk3Hc2NrfFme6vJHmf/xIXlsWe7jE9RKNlB1nayBxvQLi155t7yIFjfwxJwaIOqMly90LmwaUnTdanI+2l23OPxTiJD+6G70wnbF693KfvGntpjglIDcYz0Rv+L6HnJjjPLRH9s7YsG6AWAM0HJgyVEZDoEw9k7Oqh6DO8KHutlnR3+734N2MYkZHvlAaxqQS5Vcd6SAHmPDnIc5n6lvw7dUSrqIGpiyKQgKsQA3MmRZ+I8/mzOdZWGRLTzuRJfYyvAtURhka2mmcXKTbYlMS1gbtMVSapNkulTd4h6htTmO5IaZy+3B5+VWVg6FUBjQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MKk272RN1eTZLO1GRnV+adoqsK1N2bzoUByZexXBSzE=;
- b=AMU1H17FhQG3yoB2AKtUt0JLLtfqu+v3wmKZfayGazox+IZ/9wPOg4nbxwX8lquMVgrTjulWgrXCVDzlclBqiXl11iwwb2+/svisulw5i0zI5I0xOO4D6KKo1OP8uMMz/MT/ab4W6udPA/9U8GJJGqapnqKH4ptVGrgs7NEUzulOUgaMgFITPIscSX2Kzv1/e6mRWCwGePVKrAKfifsg/UvgLWP/TYyaEraqdV7qSc//OGzbur6wXI6kjDI1qV/V14AJstff52TP4nCbwtuGHfzR6ZvsZ9S3Cbd7RfNB3gJ73PMCr0MSP47WxrzFv9t9JTL73R2ORCqBY8Cu7//hEQ==
+ bh=ILtJcBNRkA0dsHenI8/Hicd7re8iYkXJZvOBXA0hZ5M=;
+ b=tFEC6ii1bJ/5zXISN4wqR/Y7J2XfNMeiPB4jaKyHHWgaa7v623qTlOp2O467/gQ4qu/ZxBZhYUjJlZu0Hzhp62m9GV9/eWhn8SlzgOdU1GBEjIHp5tH4u9tgqJLhsjMaDtOYv8TYkbcs/SejCH6JiBWfxXzSrrxPXrEdw+gjBXiPnXnV7fRgTsVuUWdh2U4UQX3Ibmg/Ybcgi7/ewurrCWVJEiJFeaElbr6pYp0a9JyUx+ynDKoyXMbW4/POPGpQA8BFQ0OAMk2qTQshBnYLIjV5qunwqxBvqwqMu0/JV2gJ2SlYa+tVHuPU2J3M/l8nMippu2iiiYv7VMqGVS69BQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
  header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MKk272RN1eTZLO1GRnV+adoqsK1N2bzoUByZexXBSzE=;
- b=oo7UzZZOG4IKnjT+fkVjnpf7uCanjWxglwtwgELz0bJcCI2h/tCXtHyPmOdb+z7gWjrERbD/CR10TegSyeUjvktfazeZkXbwJjZ18xMeCH7xGoiwAMsZxLmbGZ+FD1nTpK0smT70ONPvK/03fQesRV8jf29sO9nzps4WhZ5oQkU=
+ bh=ILtJcBNRkA0dsHenI8/Hicd7re8iYkXJZvOBXA0hZ5M=;
+ b=QsqHUHd94yyLCpWhJXhX8lo4R0MITqlSe7lWvTD/muMXr+MQkjQrGWCPb+WC4Ssvy2h/wg6nEA9/Z33VaOevlwXSF/7rF25TPQtYg4pfKob0UnpchKNeGxf/o6JAzilqMipOGtlVi84aJpFn6vgVZlEpERPmskqpveqgu/H7LD0=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=amd.com;
 Received: from PH7PR12MB7018.namprd12.prod.outlook.com (2603:10b6:510:1b8::14)
- by SN7PR12MB7935.namprd12.prod.outlook.com (2603:10b6:806:349::11) with
+ by DM4PR12MB7694.namprd12.prod.outlook.com (2603:10b6:8:102::6) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.16; Wed, 12 Nov
- 2025 17:46:38 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Wed, 12 Nov
+ 2025 17:58:45 +0000
 Received: from PH7PR12MB7018.namprd12.prod.outlook.com
  ([fe80::e2bd:c56f:ea1d:9a11]) by PH7PR12MB7018.namprd12.prod.outlook.com
  ([fe80::e2bd:c56f:ea1d:9a11%6]) with mapi id 15.20.9320.013; Wed, 12 Nov 2025
- 17:46:37 +0000
-Message-ID: <ff0a842e-cc9e-443f-8f8c-c7206a719dd1@amd.com>
-Date: Wed, 12 Nov 2025 11:46:35 -0600
+ 17:58:45 +0000
+Message-ID: <711e5b61-ac32-40fd-b014-1cbdba45dc98@amd.com>
+Date: Wed, 12 Nov 2025 11:58:42 -0600
 User-Agent: Mozilla Thunderbird
-Subject: Re: [pseudo][PATCH 1/2] pseudo_ipc.h: make 8 byte alignment for structure pseudo_msg_t
+Subject: Re: [pseudo][PATCH 2/2] pseudo_db: fix duplicated xattr in rename
 To: Hongxu Jia <hongxu.jia@windriver.com>,
  yocto-patches@lists.yoctoproject.org, richard.purdie@linuxfoundation.org
 References: <20251111135951.2121065-1-hongxu.jia@windriver.com>
+ <20251111135951.2121065-2-hongxu.jia@windriver.com>
 From: "Mark Hatle" <mark.hatle@amd.com>
-In-Reply-To: <20251111135951.2121065-1-hongxu.jia@windriver.com>
-X-ClientProxiedBy: YT4PR01CA0286.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:109::6) To PH7PR12MB7018.namprd12.prod.outlook.com
+In-Reply-To: <20251111135951.2121065-2-hongxu.jia@windriver.com>
+X-ClientProxiedBy: YQBPR0101CA0114.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:5::17) To PH7PR12MB7018.namprd12.prod.outlook.com
  (2603:10b6:510:1b8::14)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB7018:EE_|SN7PR12MB7935:EE_
-X-MS-Office365-Filtering-Correlation-Id: 92f4f445-338a-4962-4e9c-08de22136dd2
+X-MS-TrafficTypeDiagnostic: PH7PR12MB7018:EE_|DM4PR12MB7694:EE_
+X-MS-Office365-Filtering-Correlation-Id: 32f51adf-e35c-4a58-24c7-08de22151fa5
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
 X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?T0JmSmd2bjhWR1RnQTVVZDY3a1BDL014MXdWYVlSM2U5MElUZmNDSk90UjBt?=
- =?utf-8?B?TFFvNDZmU0pNdnFPNk1nK2lqK3J1R0JxQmZUTk1EK3pYeHJDLzhCQkdWVU5o?=
- =?utf-8?B?QVMxNVN4QTZPbUFZVXoyVEJFaEtWbUI3ODJQbVNYMUh2eXRsS3Myb1ZZQk9o?=
- =?utf-8?B?ZUZpMmh0N3ByS2FxWDhqY3Q0em51RERmRk8rSmwwR3B1YzRrU2d6clA3L2dy?=
- =?utf-8?B?UmJ3VUhKd0Evajc0VEFwbzlPaFFXZ2tjb1ROanJsY3c3YU96ZjVJRTFRYnJJ?=
- =?utf-8?B?NHJqUGwvaVNIYW0xZm5KaDd1UThnS0tjM2Z4dU5rT0hiTmp5bVRPODFPaDB4?=
- =?utf-8?B?UnZjRTBQWDEwR25sU2hkTXAzQVFPTk5hYWFBOHFBYzNoUHNMZE9hZEsvZ0FY?=
- =?utf-8?B?Q0tieGRReUVlTG9IWkJaWitMVDF2bzljRWNBSnpIN0oyVjNodmtNNTVUT0VQ?=
- =?utf-8?B?VjRmTmFkVTNJLzdlZEx2dGx6b1kxNXExaThYbGpTd2xUSUluM1ZrTmVvYW9s?=
- =?utf-8?B?M0VCQjExanVuK1lHemhoUjFzNWpnRWJZc3JPMjNrL2REK1pwcis1T28zVVBh?=
- =?utf-8?B?eHg5aVRFemFUbm9EZ3U1YVloVDJoUFd6MVlyWHVsek5zUzV5QWVSRlQxUjA2?=
- =?utf-8?B?Ri8vRnVuT3VrVjNGYmE0dTNDQ2tIbHU5ZU9pSi9tWVBTbE1NdFNOdUIycTlz?=
- =?utf-8?B?clZ6R0tsN3FxcXpvb1dOcXlxZGhVSk5KWFQ4T1V4MStsQTZTeHREVmJqdlRx?=
- =?utf-8?B?K3lFeTNpUm5wTWlyNjhVV2x2dEJzaXBJV1AxZ3RlTS9wR2syaXhCd2g1eG5x?=
- =?utf-8?B?aTgzQ2lSemlKb2NJc3FRZjhJM045bktqWGdlUm1iYkE5c0Q0YnZSSW9YaG0r?=
- =?utf-8?B?d2FOR3BJRzhMZzJmMFF5NEFsUy9tRWR4SW9Tc1VCRFdIU1FYbHdLUSsvVllN?=
- =?utf-8?B?a0kybmhnUVFwQmUyY05ab1J2S3ErSTI0dHVlV25ZeXNVc3gzVTVtZkNaaWNy?=
- =?utf-8?B?dEkrZ0NUejhvMWgzWFdhWUtZS3BmRHIwSm4zci9XNWc3ZVlSM2VWbERQRWJO?=
- =?utf-8?B?aG5Ec0NFa2xsb3g0NkNnbzRqN0NPUlFCTmFHbEpZY2QxVXd6TW5lVUh5N3RS?=
- =?utf-8?B?V0Y2WmgvYUtNK250OFBzVzVVTVhqeHl2Q0NKekRSWWJsRWd0VTF4L1pmeStj?=
- =?utf-8?B?dXo1UnREMjZuM05IQzVQU3kwdG1ZZ1craXdZSmFLaDZyYW1tM0Voa3FJZ1Ew?=
- =?utf-8?B?eS9HQ2FtUHFIUnB2NFQ5MFBRTGZWd1pEcHdxK1R1N2xjMERXY1hIRzZtOWl6?=
- =?utf-8?B?TmVqaDh5YWMvNTNsREpuTGwveXJ6MG9WOWVsaURtczFQQkYwZXI2YVNPT1BJ?=
- =?utf-8?B?azRHRXErenFsUDJUeDlUOXlYTUVsNWkxa2JnSExMcXQxVmdoKzVQejdKem5T?=
- =?utf-8?B?YnVOdDJZU2VSK3RoVVVRU254RzRYaDQ1b1FxaURFRExmc1dwckpPckdoNGd5?=
- =?utf-8?B?OHpKQTFHUHV3TUp3cEpVdnZzODljZ1lYOUFwMXJibERQZi9aM0pjeWsyVm5Q?=
- =?utf-8?B?bXlZZlphdnMrU25SZXUrSmVQbjdRNU0xZUNXdHhtVW90TmlWT1VmUzNtbnNU?=
- =?utf-8?B?WUVVWnlWN0dYNHdXZlErRWFrUndocWRnWFVhakdteDlnd3dHNFJJSi9CVUU4?=
- =?utf-8?B?bTc5dVVwT0dscEJpckNweG9pOVMwYTM1RFl1dWNVdTVsc1cyaThkUE5SV2pD?=
- =?utf-8?B?bEtGWHJOLzcxTkJKbncrUm1xMmRvdENSVFY5Q1lMdUMvTzMzWGErNkVobldy?=
- =?utf-8?B?QXFkN1A5Q1dEZlZxUVVKNUNlRG9LVWlxT2tqOUhPZkdUS0wyaFJqWjVBVmpr?=
- =?utf-8?B?eEFBbk5hdHBsaG10ckhvMXh2YmNySG5SS2IwRWkyMmZnazJTMk1sbWVaWlZM?=
- =?utf-8?B?cnl5dG84ZE1HOHd6NTYwTncvdkpXdjhJOEc3MUkxU2FSNkREWlAzMy82Q3lJ?=
- =?utf-8?B?TUt4WG5lWGx3PT0=?=
+	=?utf-8?B?V1FHNlhoTS9iOW5nb2hYdlBvc1RQcDZyQVdjcWN3MVBZL3E2eEdsdEgzcWlk?=
+ =?utf-8?B?bC91aGsyRDFTRENncndkRWlRdmRIRitjNE5TeitWUzF1VHFnOEN2bVpWNE8x?=
+ =?utf-8?B?V3V4ZkpHcitLcm80NXcxVkt6bHZMWHIwR3JCMXBzMEVNd1h4cmRKQ2pjVTJa?=
+ =?utf-8?B?OHpJZXo2YUt0cnJ6TG1uajQxd0ZYTk1wRzE0aTd0V0VuMGxUMXcvWU9PNVN3?=
+ =?utf-8?B?MjZONEplL0dTTXVNaWVzaDZQZVpPRHNYL1gybWE4QUlHUTh3OXJwNTNzQjRp?=
+ =?utf-8?B?UWkrQVhFZkg1S3pWUlJ3Q2NVVll4LzY4QjhQQmhXZEZydXN0WEQ0d3duNEM4?=
+ =?utf-8?B?ZVRxU1g3MXd2bG8zRHk5anVHODQvQ1g3cGcwd0VrNG1GZllRR1I5SGVheFkw?=
+ =?utf-8?B?WmJiai9QZSsxbHA1S2RjdEdnNU9PcnIzTjc4OUtMRk9IaTVjakNySUgxY1Ra?=
+ =?utf-8?B?T3ZmZkl0MEJsNHRaTENDbjhXYVJZUDBsZ2dKbmM0RFRHMW9WTVdDbjFESkVF?=
+ =?utf-8?B?T2hlTzdCaG5TSHNRZ3JjUFZQRnJOVEhuUlVLRkdTODdSME84NzRUY0tEVWgr?=
+ =?utf-8?B?MFZoNm9xN3diRElNVkMxV2FxRzJhQjZLSXM0OVA4cnp1NXpQVHRYNWVndGFH?=
+ =?utf-8?B?WnhjTkNDQm5xdW9VMXQ1SE5ocWNHV1ZQWnkrZnRqTUU4UWtPVXMyWUJ0MW9J?=
+ =?utf-8?B?ZHROdlZGNWRJbHNNNTVtalpxWlUxTmhzdG1FSW9TV0VBU1E2eW1ZME92NjQ4?=
+ =?utf-8?B?b2VPNm82bHl0b2wzc0dMRk90Vk9kbGplUmlXWnVzMU42SFdDdUMxa1lDcWFH?=
+ =?utf-8?B?NTZXcTc1TDd3Z3FGV1RweEdLWThZdUNPdmdkRy9XQW55L1lXM1hqTkV4Kzgx?=
+ =?utf-8?B?c2VHSXVvS2s5QTgzUHE2aWErUEV3dlBtaSsvbXJGbkRVbXlIYmZWSmNyZ3Zr?=
+ =?utf-8?B?RythdndBVkZ5TEpPNjdpQkxpTXp0NzRlREdtcnluMVRJUGhmT2pKdkFoZE1k?=
+ =?utf-8?B?MTgwUlBkdUZiQ1o1OFRVd0tTekVBbmQ4blg4MmNlVUZFOU5GbEpSOUlSMGk4?=
+ =?utf-8?B?R2VxSWY1Uy9IUkEvaWt6Ri9ZRjN3c29obXNVN25rR3MrNTYwR2N1WFp6aElr?=
+ =?utf-8?B?TFFURGFOZk1CWUhLVXpQUW9SLy9oSTlDNjlSL3Bld0YyT2czQitxK3U3dHcw?=
+ =?utf-8?B?bExwN0JKc2RvaFFpQVJSYUZJbzNTZE5qajVhbDh1V1BYTzFRenBnTWprUy9o?=
+ =?utf-8?B?dHVHdnBsS0Urd3hkMis0cE1FOWlybnkyTTRKS3J0QW41cWFFMkVMeVVmM2E4?=
+ =?utf-8?B?cmFqeXZhQ2wvTjFzR1FSajQvK2lkVzhTSGhEYjA1d3RMV3NkSUhzelkrQWNH?=
+ =?utf-8?B?Rk1EZktpQWoxbklueXZ0SURwRTR4bTREdklGaURSV25Pb2tLMHg5ajJoSlhM?=
+ =?utf-8?B?aE5wNjZGT3ZKZmtKa3ZEYmZsRlZSSlkxN1VrWUM0UFdic1VTNHY3cWFSYVdZ?=
+ =?utf-8?B?WHJ4WWl6aU11WVBVQXJMdklYM01UUGdxTFliNUlUZ2NRenJzZmxQWW44Y2JD?=
+ =?utf-8?B?WnpEbUpUd2hLeDBOV0xCSW90WHdNR0Q2a29YSnFMcDJqL0FIU25XSDZZV3J2?=
+ =?utf-8?B?QzR2b0tLZzlSRUlCK3Znb21hdXc0NWxTMDJ6dlFidThJRTZDZTR3K0RWMFp5?=
+ =?utf-8?B?L1B6a3hLbUlVcTBZdEFKNDY4SWZPZFExNEtSbVB3cUdHZjVWMmdNUitYUndS?=
+ =?utf-8?B?UVhNclpXN3lUQVl1VlJuRjlPRzBUdG5YQjAvMXF2Z2paMzhmbWpjSkpqUlJM?=
+ =?utf-8?B?NkVHdk15TUh0SVZjcTZQak5XRlI2TUx5SmFlRUpkbHkwWDJCdW0rcDhiNW1S?=
+ =?utf-8?B?OTNDVFpMaTIwVHJKYmg5aklPTlBXWTIvUzQ2dUVQYStrQnBkSGxGa0RyMzhs?=
+ =?utf-8?Q?bUHwbFj1ReKoNsPPKlSQWsIgYeYqNpKL?=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB7018.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB7018.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?VVZWWWZRMlRNandaN0tRRU80TldTYjVRa25kVnZVQ3VLRTFGNFR0Rm9kSXl3?=
- =?utf-8?B?R3gvaE5JZEhjNkxkZklyRW01OWJxRHlKaERheWsyS3lHVU5DRGlWQUNZUlFa?=
- =?utf-8?B?RU5QcjQ4Szc4Qjd2K3FXWVBEa1JSZVNzZVFXblgvNGtHRCtXTnVRRnZzR1VM?=
- =?utf-8?B?V0dkZ21mSHh4a0IvR1dLNWxDbVNIMGtlZHY3QWV0QTNIcnMrWC9uQWVQakFV?=
- =?utf-8?B?eHVHRmtaOE9Ja2xBTllPQWxvZmVndCtoYnlVNThPdmh1cFIwWXJScnJGdnlP?=
- =?utf-8?B?SUV3SlhYejVxKzE1RDdlWjBzZmV1WXBFQm9lWG5iQUU0NlBVUzJ3NTdNV1dy?=
- =?utf-8?B?R0lhVThVWitVUmtVL0FXdk5oQmlWUE9qSWtiMWdBMHdmTEtQY0JvV1dmU291?=
- =?utf-8?B?Y0hMWlFmalJIUmRhYk90VGNiSDdpZE1SSnVDTktNNVFWc3E5MElmK3NnOFg2?=
- =?utf-8?B?Y3piQlUvc3JUYmMwTXBiU1NWM1ppNlFjNjFQYlVqQkFubzNxdUtrSzAvczBt?=
- =?utf-8?B?Q2o1eUoxZmJBMWpWQktITlVTNWFEb2hsaEl5emRPcFQyWmxOZXZLSVA2b3M4?=
- =?utf-8?B?ZWl6NUJONDc3cnlrOHJEdU1HRzd1K0d3RE5xOXh1aDdjVjR4S1AzVlVYYjFC?=
- =?utf-8?B?VEQyaDBIcGNNMmV2WlJFVndtR2ZNaXBSUGdBakx6cjN2QWlaaW53ZFZ6SHVp?=
- =?utf-8?B?QUNjZ1k0VmsxTEtJQXB5dHRpcURCa0NSdkhZREtVSnlFUmlxYnBPMWVtQkZK?=
- =?utf-8?B?N2UvR3krbkd6M2NPL21wMEcxN0lzVW83U1BOLzI0OWNOc01GbmRCNVVwNlI4?=
- =?utf-8?B?OWVhZnd4aVYvekJCU3YrUE1BTDN1Z21jdk5ZWXM1K1JVdlcyV011am1FVzNU?=
- =?utf-8?B?Y3JWV05mRElUL3o5OEZKK3Z0b2t2cHlTaCs1UyswV0RrOGZMcFdjMXAwUEpN?=
- =?utf-8?B?ZmVzNHdsTUNtcWFNWUdFNk9TK091djQraXR2bTc2SGVHazBMWm9Idk0reWI5?=
- =?utf-8?B?OGx1NEtFcEozQWs1Vnl0L0Q2K3dEUXRhalJFRjhEZXJUVXJVcUtOV3lZVmFt?=
- =?utf-8?B?WjdXcU9hV2I0Smh2b3g5ekpLNFFRczJ2QTJCMFlmZnhSelcydlZLZnFDYjJC?=
- =?utf-8?B?VnpzQ3hoOWsxQTFHS3hpSzJ5c25LL2QvRTdFMGtuakphOHRjMGZvUzM5Nmk4?=
- =?utf-8?B?S3R2enlvVURvWDN6ZkhRd0grWW5nUTFhbmhVZWpvbS9QRVZ3OTFSTGNGNEgx?=
- =?utf-8?B?WWFxVzZHRGllU3hJdG9qMy92ZkdCckJ4QVgwaEI0Lyt5YktjTjlPb1cwN3U3?=
- =?utf-8?B?b3JkRnFxTUNhdTFyVVQ2cUxnT2dXdlJ3MmVYSDNSaDRDWWl6cVFFdlQvVkQx?=
- =?utf-8?B?U3Y1YUpNL216SGxXZVF5SFFqTC9pbjZ2YThUR29xN3haa1loR21zbnozeHNm?=
- =?utf-8?B?TlpMaXBiZmNUT0xaanZvOElVZzhTc1hScW5MUkdCUzBIOVRsZmpmLyszMnJR?=
- =?utf-8?B?QzEzMGExWld0QXFiNFhCUmxOT2RVeWVjNlppcXNwOTcyWTZ5c0d4NUMxa3Jz?=
- =?utf-8?B?YVprdjZadGNqV1YyODlkTzJJRjBiU211QkU4YTRCU0NkdnQwQ081VkROWXV6?=
- =?utf-8?B?VkllWCtZRnZvSStzT09xWHhqMCtZNDNpZ1BmeDdzY1dlM1Z1WFBGOVpYcHVU?=
- =?utf-8?B?VUZPb1F2VjNabEtjNlVWaEhVSmhVU0R5N0VDZGN4NklYM2JmSjdnOU43V2Er?=
- =?utf-8?B?YVZIY1VLVU9kYlZabUVQNEN6MURuWHE4bFpTdnpqczgyVE9xeG1vejAzRWVi?=
- =?utf-8?B?aTVPbkVpVG9OYnowZExkMTJINUgwWDBMU2ZsdzRnYkphVkx6My9CV3d2eVBE?=
- =?utf-8?B?aFd3NlpkeDdRSjRrK0JKUFE1ejEya2pKY2xDajVML0pXbDVVbHpsNFVnMGF4?=
- =?utf-8?B?bm4xVnJ3S0FqSjNXdzVzOEU4VndMT2F0L3FFM2ZtLzEydUJERjJrUHZ2MG96?=
- =?utf-8?B?OUw3VmhnTzN6aENyNlVTeUNRVTRXbHQ4dEwxZzhDc25tY3h6VTU0K2NtL25j?=
- =?utf-8?B?YmVDY1pjRUE4d0dCMk0wS1ZKMzdONTA1MDZ2ZDRLREx3T0lqSERpalFjUGFQ?=
- =?utf-8?Q?KSByANBzGnzMP+6lDyXjQKV5y?=
+	=?utf-8?B?dFpWQzE1bm80cldLQThyOGdUSFByaFFOdm9GR0pvaEg0N29sWmI0b0I4eWhj?=
+ =?utf-8?B?eDcxUDE0dW9ZSUF0dytId3I4MTVEZEVxRnAwNXN6SFNzdzNyOHp4VmxSajJ3?=
+ =?utf-8?B?KzVmODRPZG8wOUtBOWhKd09hMENEZzhHNElKVzZtSkVjYnU0SGppZE9GRmVr?=
+ =?utf-8?B?YkdnSzRBVFdkWERKR2RxUE0yZWlMZjRWcnk4QVlaUm9Pd29KYmFiaXUwKzlI?=
+ =?utf-8?B?TGkyM1ZOQzRjaUlobVZSZjE2ZkREdnM3Ukt0ME9rZ1J1TXl6VDR5NitSM1k2?=
+ =?utf-8?B?bzJMemVxRnFEOTZjd0hmeWV3eTYrbHhnUEdwRjFhbU5YVXl0TEhVTjJaaU1w?=
+ =?utf-8?B?a3ZsZWV2aGJLbElNU0J0eWNBVDV0d0xRVWgvUWVkZk93MEI0NXd3Rmg0cGk5?=
+ =?utf-8?B?NjNDd1k5TDFkQUtmU1NtM3g2dUpXKzVQK2o5cHJkbXJzOG9jMTAzK1hFb2Ny?=
+ =?utf-8?B?V3VlQmJTcmREeDNFQjhXcUw1djdEZmhFZzJpZzVILzlEd0V6RlhUbE0ybTNu?=
+ =?utf-8?B?aWZPTEd4akhZcDAyc2o4R1VldzR5N3lVc20vNVNZbHRRR2IwZ2ZwdjE3OFo0?=
+ =?utf-8?B?aWdMdlo3bUVvcGphYTVOZzIrRlJNcSs2S0tpdEovMU5UMktPTGZhQkZlenRD?=
+ =?utf-8?B?cjJGUFY4STF4VDdBTlRkQm54YStzQ2JnektkczZsV3Z1bEkzeEw4czFrTjlw?=
+ =?utf-8?B?YVZINFhUNmFGUnB1SlZzbmZSNndhUmdXTUR1TTJXZS9CcHNUSnlVcSt5MlFu?=
+ =?utf-8?B?WFJUNm1LOVJPL0VwV1MwbStNYWx1OW1oNUszaGlKMlZudkZYanN2cFVKS3Va?=
+ =?utf-8?B?eWIwY1RQeUpsRnBFdklBa1ZIa0xtU3I0cGxaR0l0TkRlamQwZ3c4dDdwSFQ2?=
+ =?utf-8?B?aWRpSHdxbzVJSWxJRUdwT1FYcCttZ3FRSWUwWmo0NWQ5bDlIb2x5Y2R6WTlM?=
+ =?utf-8?B?LzRPcHR1NTc3RXYxb2ZSbFJ0UVJ2QW1xSGd0dE5xZVlXZmFxK0o5NEgwaEtP?=
+ =?utf-8?B?SXBHeGVHdk1qOXl3amx1TmtNUTlmVjkxdHNFWjdiTUZxNHdLV1IxQkJIci9r?=
+ =?utf-8?B?aEhMaFdTWlZqUEpKaUF4U0R0eEF2Yy9ZbWo1eUd0eVVYUXRpRzc4dDFqZ2dY?=
+ =?utf-8?B?bGxPckVBTExkY0poZmlubHphWUxmNjhtU3QzVWM5Rm9uNkdFUk00RjNabnNj?=
+ =?utf-8?B?R0lVb0JKRXA2MkdSZ0FTZTRERVR3UEluUEhGU3hxZEpGUFFQUXg1dnowZmxj?=
+ =?utf-8?B?Y2daWmprU3NHLzlIbTFiOC83WW8zWU1aV0hORUhRVnNYVnF3M0FpV0l1SjhF?=
+ =?utf-8?B?NWRXTzlUUXVXZEF0Z0pLYWxSM2JpWTNzNkVLWHcvWFd0Vm1tZG4wUXBzaGdI?=
+ =?utf-8?B?UURoc2tPdXVPSjVPY2c3Ullka2RkWjI4Tlk5K0pPYnkvTG1teFlaTE9xVlds?=
+ =?utf-8?B?djJRN3FCVVI2cno1N2VsM0pWUWxMM2w1eGYyOEczVkhNcDNla2VqL05QdGh3?=
+ =?utf-8?B?KzRRT2FUQk9QUG5NczZzd0dkU00zcXRxMW8xeDA5NDBvWXQ1UGFjcGM2eGw4?=
+ =?utf-8?B?N2hucEZHcXczV3lPSGR1KysvNlpYOVVPcDhlZEJRUXYrWEVjdkI2amlqTXZ0?=
+ =?utf-8?B?Z0xUV3NNcW42Z1hGeTB0WkduWitzTDZFbHlQOFdMS3dnUnRaZndtbEF3MXAz?=
+ =?utf-8?B?RDhZQU1WcnRsUjAxbTd4OU92RzhzdjdySjFzeUtIRGYyOVRWc1JuSXJIblpl?=
+ =?utf-8?B?c0xkaHF6b3kwSDNuN21WNEcwT0NPV1pOWlR6Y2lPcmRuajlCek90YWtXMGJF?=
+ =?utf-8?B?dzNUd2EwUFQzbUlNVEJJWmdSRW1rcHRXVlhDYmtvZUVveUQ3L1RrTEhFRjRY?=
+ =?utf-8?B?TFZ5OXk5anB2YWMvQ3FHV0RWK1UzNHFWeWdCd09LWGJ0QWVubE9LVCt0N053?=
+ =?utf-8?B?YTlTRWpJbXRGMXEyTEtCMHhDaHhNMUlsd2htU09MZlBqRjVzbEhiaU85a3Bp?=
+ =?utf-8?B?ZVEwS2k1VXhYYjhXTEpGdVNZcTUwYy9DWEZoMlBQSFFZbVdEWlJRdkNpMFox?=
+ =?utf-8?B?NXNWLzJ1UHpjTzYranNER2tlV2RKa3ExYmVIUTRsRTFrTVFZaXFlMUxyVnN3?=
+ =?utf-8?Q?W4fDLklp5Khl5Tqvs6mcwInfj?=
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 92f4f445-338a-4962-4e9c-08de22136dd2
+X-MS-Exchange-CrossTenant-Network-Message-Id: 32f51adf-e35c-4a58-24c7-08de22151fa5
 X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB7018.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 17:46:37.7951
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 17:58:45.5823
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: f1sTT9/SKP5zpfXl4YTl6Rfi9epoEFYZU8tGBvZEjWHRAu4zinWlWHXwE00VQJrM
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7935
+X-MS-Exchange-CrossTenant-UserPrincipalName: tA48IMNxccspodi556HmWQ1k7NROeg4YvGz+FtkHa29l4vlnZdSNNnQBAhm5k2WL
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7694
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
@@ -148,107 +148,98 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Wed, 12 Nov 2025 18:05:19 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2496
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2497
 
-
+I don't completely understand what is going wrong here.  Some comments below to the patch that might help me understand it.
 
 On 11/11/25 7:59 AM, Hongxu Jia wrote:
-> typedef struct {
->      pseudo_msg_type_t type;
->      ...
->      char path[];
-> } pseudo_msg_t;
+> In commit [fbaffe9 Handle rename(3) across devices.], it defines function
+> pdb_update_inode to change dev/inode for a given path -- used only by
+> RENAME for now.
 > 
-> The [] item at the end of the struct is a C99 feature:
-> Flexible Array Members in a structure in C [1]. The size
-> of path in structure should be 0.
+> In commit [58e4171 xattr work: handle deletes and renames], in function
+> pdb_update_inode, it defines oldmsg to test the existence of msg->path.
+> If yes, copy xattrs from oldmsg to msg. If both of oldmsg and msg have
+> the same dev/inode, it caused duplicated xattrs in the given path.
+> Here are the reproducible steps:
 > 
-> On 64-bit arch, sizeof(pseudo_msg_t) = 80, but PSEUDO_HEADER_SIZE =
-> offsetof(pseudo_msg_t, path) = 76, the reason is 8 byte alignment
-> in 64-bit arch.
+> 1) Create a file in rootfs
+> mkdir -p rootfs; touch rootfs/file
 > 
-> The differ between sizeof(pseudo_msg_t) and PSEUDO_HEADER_SIZE
-> made memory overlab in memcpy, such as
+> 2) Use IMA/EVM signing utility to set xattr
+> evmctl ima_sign --hashalgo sha256 --key path-to/ima_keys/x509_ima.key --pass=xxx ./rootfs/file
 > 
->    memcpy(oldmsg, msg, PSEUDO_HEADER_SIZE);
->    memcpy(newmsg, old, sizeof(pseudo_msg_t) + old->pathlen);
+> 3) List xattr, get security.ima
+> $ getfattr -d -m ^ -R -- rootfs/
+> - rootfs/
+> |# file: rootfs//file
+> security.ima=0sAwIEOI1nBgEASdQgr4UDRTIYmF7q5SHFsyt3J/TO0Pwwz/hDiV3m4kjWALSKGC0Ea7wel6cZ1CcA/hQQ6gW5e86kswTCFexmM6qdE1MVG1IrP1L9YZcpJ3Ghh5bJS8S7Kb/J2FCaaPW9skGn8vG339CRHUuNz2z6uy6pryjLAVoAyl0jdqDlUTmhzfd7Bq6i1HLGSyBxm9nPwFDe4E5ubpwJlrN11YHUJSWVoAmpMfPLgu2bDalAz/I6tTMFdrEoR7SH0F9LuwKGnq4CAzrpsts/8/islsKWWPmmalv635EGG/k7g7zY0D/cHjc3YyaMYtvd43OWbTu+2j6w8IywmaZXN/YZg4AMgw==
 > 
-> Add 4 chars to structure as reserved for 8 byte alignment, then
-> PSEUDO_HEADER_SIZE = sizeof(pseudo_msg_t) = 80.
+> 4) Rename
+> $ mv rootfs/file rootfs/rename_file
 > 
-> [1] https://www.geeksforgeeks.org/c/flexible-array-members-structure-c/
+> 5) List xattr, found duplicated security.ima
+> $ getfattr -d -m ^ -R -- rootfs/
+> - rootfs/
+> |# file: rootfs//rename_file
+> security.ima=0sAwIEOI1nBgEASdQgr4UDRTIYmF7q5SHFsyt3J/TO0Pwwz/hDiV3m4kjWALSKGC0Ea7wel6cZ1CcA/hQQ6gW5e86kswTCFexmM6qdE1MVG1IrP1L9YZcpJ3Ghh5bJS8S7Kb/J2FCaaPW9skGn8vG339CRHUuNz2z6uy6pryjLAVoAyl0jdqDlUTmhzfd7Bq6i1HLGSyBxm9nPwFDe4E5ubpwJlrN11YHUJSWVoAmpMfPLgu2bDalAz/I6tTMFdrEoR7SH0F9LuwKGnq4CAzrpsts/8/islsKWWPmmalv635EGG/k7g7zY0D/cHjc3YyaMYtvd43OWbTu+2j6w8IywmaZXN/YZg4AMgw==
+> security.ima=0sAwIEOI1nBgEASdQgr4UDRTIYmF7q5SHFsyt3J/TO0Pwwz/hDiV3m4kjWALSKGC0Ea7wel6cZ1CcA/hQQ6gW5e86kswTCFexmM6qdE1MVG1IrP1L9YZcpJ3Ghh5bJS8S7Kb/J2FCaaPW9skGn8vG339CRHUuNz2z6uy6pryjLAVoAyl0jdqDlUTmhzfd7Bq6i1HLGSyBxm9nPwFDe4E5ubpwJlrN11YHUJSWVoAmpMfPLgu2bDalAz/I6tTMFdrEoR7SH0F9LuwKGnq4CAzrpsts/8/islsKWWPmmalv635EGG/k7g7zY0D/cHjc3YyaMYtvd43OWbTu+2j6w8IywmaZXN/YZg4AMgw==
+> 
+> This commit:
+> 
+> - Due to oldmsg is static variable, clean up the memory of oldmsg
+>    to avoid dirty data from last call.
+
+See below, but the memcpy of the new msg should both setup the oldmsg and clear any old data.  It was expected that subsequent calls would clear any specific data we didn't want preserved (for whatever reason) -- See below.
+
+> - Other than copy the whole msg to oldmsg, only copy path and
+>    pathlen from msg to oldmsg, use function pdb_find_file_path
+>    to fill oldmsg->dev and oldmsg->ino if it existed
+> 
+> - Copy xattr only if the existed oldmsg have different dev/inode
+>    with msg to avoid duplicated xattr for the same dev/indoe
 > 
 > Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
 > ---
->   pseudo_ipc.h | 1 +
->   1 file changed, 1 insertion(+)
+>   pseudo_db.c | 9 ++++++---
+>   1 file changed, 6 insertions(+), 3 deletions(-)
 > 
-> diff --git a/pseudo_ipc.h b/pseudo_ipc.h
-> index d945257..2836cc4 100644
-> --- a/pseudo_ipc.h
-> +++ b/pseudo_ipc.h
-> @@ -26,6 +26,7 @@ typedef struct {
->   	unsigned int pathlen;
->   	int nlink;
->   	int deleting;
-> +	char reserved[4];
->   	char path[];
->   } pseudo_msg_t;
->   
+> diff --git a/pseudo_db.c b/pseudo_db.c
+> index 8b23938..d6ae1d3 100644
+> --- a/pseudo_db.c
+> +++ b/pseudo_db.c
+> @@ -2188,10 +2188,13 @@ pdb_update_inode(pseudo_msg_t *msg) {
+>   		pseudo_diag("Can't update the inode of a file without its path.\n");
+>   		return 1;
+>   	}
+> -	memcpy(oldmsg, msg, sizeof(*msg) + msg->pathlen);
+> +	memset(oldmsg, 0, sizeof(*msg) + pseudo_path_max());
 
-I think it would be better to use the alignment operator instead, specifically:
+Originally we did NOT memset this, as we expected the memcpy to overwrite any existing memory.  This is why the memcpy was the entire old msg to the new msg entry.
 
-         unsigned int pathlen;
-         int nlink;
-         int deleting;
-         char path[];
-   } __attribute__((aligned(8))) pseudo_msg_t;
+> +	/* Copy path and pathlen from msg to oldmsg */
+> +	memcpy(oldmsg->path, msg->path, msg->pathlen);
+> +	oldmsg->pathlen = msg->pathlen;
+>   	found_existing = !pdb_find_file_path(oldmsg);
 
-In my testing this results in the same 80 byte length for both 64-bit and 32-bit systems.
+The function above (pdb_find_file_path) was supposed to clear items from oldmsg (as necessary), basically resetting the dev/ino and any other stuff that this function cares about.  (That may no longer be true, I'm really not sure!)
 
-I wrote a quick test program for the addressing:
+I'm not against memset and then partial copy, but do we need any of the other fields?  This is the part I'm really unclear about.  (Especially uid/gid/mode and op.)
 
-64-bit:
-Address: 0x4379d100
-       type: 0x0
-         op: 0x4
-     result: 0x8
-     access: 0xc
-     client: 0x10
-         fd: 0x14
-        dev: 0x18
-        ino: 0x20
-        uid: 0x28
-        gid: 0x2c
-       mode: 0x30
-       rdev: 0x38
-    pathlen: 0x40
-      nlink: 0x44
-   deleting: 0x48
-       path: 0x4c
-Length: 80
+> -	if (found_existing) {
+> -		/* we have an existing file entry */
+> +	if (found_existing && (msg->dev!=oldmsg->dev || msg->ino!=oldmsg->ino)) {
+> +		/* we have an existing file entry with different dev/inode */
 
-32-bit:
-Address: 0xffc2a828
-       type: 0x0
-         op: 0x4
-     result: 0x8
-     access: 0xc
-     client: 0x10
-         fd: 0x14
-        dev: 0x18
-        ino: 0x20
-        uid: 0x28
-        gid: 0x2c
-       mode: 0x30
-       rdev: 0x38
-    pathlen: 0x40
-      nlink: 0x44
-   deleting: 0x48
-       path: 0x4c
-Length: 80
+The above change looks correct to me.  I'm not sure why this wasn't done original, maybe an oversight.
 
-This seems to address the issue and the offsets within the structure are maintained as expected.
+>   		pdb_copy_xattrs(oldmsg, msg);
+>   	}
 
---Mark
+if you don't do the xattr copy then is the issue that we have 'junk' in the 'oldmsg' that needs to be cleared?  Or are there other fields in oldmsg that are the concern?
+
+Unless there is a specific reason, I would rather copy of the msg -> oldmsg and then clear just the items we do not want.  This should clear old data and give us a known starting point for the "new" oldmsg.  We can then sanitize/memset/clear whatever fields we don't care about.
+
+>   	sqlite3_bind_int(update, 1, msg->dev);
+
 
