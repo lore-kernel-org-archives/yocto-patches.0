@@ -1,229 +1,358 @@
-Return-Path: <Qi.Chen@windriver.com>
+Return-Path: <samuli.piippo@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89EACCCFA1A
-	for <webhook@archiver.kernel.org>; Wed, 12 Nov 2025 05:36:53 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.6718.1762925813251985794
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 515E5CCF9F8
+	for <webhook@archiver.kernel.org>; Wed, 12 Nov 2025 07:39:24 +0000 (UTC)
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.7974.1762933158863965703
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 11 Nov 2025 21:36:53 -0800
+ Tue, 11 Nov 2025 23:39:19 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@windriver.com header.s=PPS06212021 header.b=Om+8ikIy;
- spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.166.238, mailfrom: prvs=3411dc7477=qi.chen@windriver.com)
-Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AC50Htb1674042;
-	Tue, 11 Nov 2025 21:36:51 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
-	 h=cc:content-transfer-encoding:content-type:date:from
-	:message-id:mime-version:subject:to; s=PPS06212021; bh=ErUm3vZJu
-	rnFY74U4Zc+Lpza3KE+tiDWpAIjP/UHu/U=; b=Om+8ikIyAwQr/1COaK9Norl1C
-	1hXmq33VgAjIzAHPgKD5r4mzbecUfWb/QIEhhxz+EAvbaF3XDSJH6SVGzmxdItTu
-	r5/AWegLYhh0iRoG3VlyrbHPvbAdsPRL7X/9d0QS53BIAeKLdrXOAbGQxd770hpy
-	WGAs1RATu93FE/vf41I9xI40srGAKBvQuC52cxyshvuCDpjuqt/+55eo7DoAka5j
-	zDeV8JcytTrim4xOp1U5ssG+fxmBEw8u7cu8VAGUv9G+EjKUjgXXopkDJ38fJBsd
-	Cj2WG48Q7aBsDXT5dYPtDtg3iVaXeblf+nS9lGr0fh5Tejb3FIPvGY3u7P2qw==
-Received: from ch1pr05cu001.outbound.protection.outlook.com (mail-northcentralusazon11010051.outbound.protection.outlook.com [52.101.193.51])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4aa2134dwr-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Tue, 11 Nov 2025 21:36:51 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UnGwaktsb0Z10evEy4AXvdHSjoWeRQnt1HxHH6hIpY1GFeNriVUHyhuiFb/ZpxsPl+JlVqjuMGsi7yrp02Tv1/HI7Gd2WYBEQDd+dYASE5K+WeAVfJIjemrsO11ItFgZATVvjuC/tDFjJjTTjGNVEiszigFdHe7T7DAb54LlQwOYX1hviXrUa21NoCYa3U1So1Ie0aSyerQd0cv1KPpqRK5zjBzBwW5o0QJvyONh50YLrHKuw5glZnVDKAaQETS/856I4oXsptJO5zgCHs26b8pIw9hx05E3Wm/VXc38kX9eaV1RQz3bSqk4A4GzrEgA0r2VmojUI4iIjHHKe5ZeYA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ErUm3vZJurnFY74U4Zc+Lpza3KE+tiDWpAIjP/UHu/U=;
- b=TXy9+LLfB3kUCUVBNUqhJe0DTC3IvyhY/4vsdtENbAkhnp5Xm4Gyvik/PxdML/MHBkyL1wGdcPkXUDSiNMb0BSuxz6ierDICjijIB6iVLa3WB8jdUKyvn8vsFHpiwREiE5LZRQE4up48yfX7QgShYtD7oXUe1+NdDRK/2jQrQzZQcvxZbkH8lvgo3taMoY0F5KZgfPRf99XsQ3gY/cFsZXOCJ1YJk6KzywwOIDMQdJ9pNlCGQ3mpB2Ff4faZG9ONPu4JECCAqDa8dI4fDFuf3fp1/9VO0jU8CgQVeZwuaiRLJqxB4Xpjm292+H5B5C6EOiaWp/PqJxRQlHmJMgDfiA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=windriver.com; dmarc=pass action=none
- header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
-Received: from CO6PR11MB5602.namprd11.prod.outlook.com (2603:10b6:303:13a::5)
- by CH3PR11MB8701.namprd11.prod.outlook.com (2603:10b6:610:1c8::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Wed, 12 Nov
- 2025 05:36:49 +0000
-Received: from CO6PR11MB5602.namprd11.prod.outlook.com
- ([fe80::5ad6:8f90:b01d:2c62]) by CO6PR11MB5602.namprd11.prod.outlook.com
- ([fe80::5ad6:8f90:b01d:2c62%4]) with mapi id 15.20.9320.013; Wed, 12 Nov 2025
- 05:36:49 +0000
-From: Qi.Chen@windriver.com
-To: yocto-patches@lists.yoctoproject.org
-Cc: jpewhacker@gmail.com, qi.chen@windriver.com, paul@pbarker.dev
-Subject: [meta-mingw][PATCH V3] meta-mingw: support generating Windows SDK with no symlink
-Date: Wed, 12 Nov 2025 13:36:31 +0800
-Message-Id: <20251112053631.3078261-1-Qi.Chen@windriver.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: KU0P306CA0012.MYSP306.PROD.OUTLOOK.COM
- (2603:1096:d10:17::10) To CO6PR11MB5602.namprd11.prod.outlook.com
- (2603:10b6:303:13a::5)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=eicZbJaL;
+ spf=pass (domain: gmail.com, ip: 209.85.218.42, mailfrom: samuli.piippo@gmail.com)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b72bf7e703fso95425866b.2
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 11 Nov 2025 23:39:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762933157; x=1763537957; darn=lists.yoctoproject.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=1YG717u90cuyWrgEuqLzmz3djaGjLsbX7A9Z5s+mHl4=;
+        b=eicZbJaLYgGy4XV+WTcS5mRjNRVnQ8JWW+GRXelf5EgrojL24fduh8x3L5gtRzaONP
+         1UoFRa8q7IDi6uZtWppEU2YZyCW8lyUnCYk1+OGIJoQP9jCivzXipPOAJZXMoFoMMA8d
+         hRovD3DdMnNUr30Brfhu0v7ohkDdfQTSSbNSwb8x44j3fA9Sr3IgdTYxFB+ws/+B5rwk
+         n+t5teiZNHQrBEjOeXA6X8unhGIpKDV9FneJeKcKFSPHwg01B0tCk0u2U51bQt8lLN3+
+         8HPBzCbRFm4YamSu+ultHK5yLTDvzYdNVL27mg4b+QW7CgR53lFMD9W3+emhxvny+lEP
+         v/CQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762933157; x=1763537957;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1YG717u90cuyWrgEuqLzmz3djaGjLsbX7A9Z5s+mHl4=;
+        b=NFHt97I4zm9YcSNXIIn4dcRn/eEzw4HHBuRfRnQN10A7vxiDTMZLhggVozBFtsahXH
+         Ss28SNCKs92IhER4OTW6fYharFQMWwc1EhhPOxwY/fbNk/tE/cAbA3aoGRCapMFe8sNM
+         3xxpuK9yqtCuWGj8w04rTlnPKsqBcbQ7O4wwl5nGOQhlFgf1c+3Y/LLNmQWz+rEJupJZ
+         oYZAQ8aZ1ocTavG0061MbZwc2oMKmNtpcF0ifKQr2KGhGXN7swh1zGp6t1j1RtAanv+2
+         iPxwSVUqUnNDy1FeX9B6NG1oXYF45Ac3r7p/yyE/lt/cXw33VtrY/AhsqDGfZ3ZfUaV6
+         m+qQ==
+X-Gm-Message-State: AOJu0YypxuQvnZc1vHwSqR47OpJeixb2pAAMOquVr7D4DJ8hIbkh6fzY
+	NqqDxX0p9GJRXaW5vTxWlf3d3zvTNc8xzSCb13Oe1XPoYFfRW+PfuhGyRqxU0k/EstZZbVqobws
+	h0NlR8HX1ifvrE/T0ZDAJ7YEN/bzkDVVJij1t
+X-Gm-Gg: ASbGnctpJK9E4jbOwY3/Pju4bjDr5Ig2A7uvoma1xWTbzUOwBq9zWJ9pwJW6s8OFdJp
+	JlJVxQk7P6JldQfROJxo091SBY2Peyg4zNaXC0ZYeJioZbhWhyOZUj13MuP0Q0HsnUzYFpKPd/o
+	TLyRu0KfXbDQyWisg6Oxo1JfRwNDpr8XJdBo0XqjEZALfIqoxXOrIss06gIlF2fmxUXqPOuoDw7
+	vM4AmrCjRM5J5Ur3g97LKtoNIq1iEJMp+PE4Vr1YjFxN837bzFm62L5Clw=
+X-Google-Smtp-Source: AGHT+IHHNh7sZwRHMn5RFj80mF/KbeJqC9OEYW0LAZJclEl4YPiHh+mpfoJd0Yl25eA30e3ykI2GNLk4+OMF5rqzXTM=
+X-Received: by 2002:a17:907:7285:b0:b72:dce0:d8e7 with SMTP id
+ a640c23a62f3a-b7331973fc7mr186369166b.23.1762933156684; Tue, 11 Nov 2025
+ 23:39:16 -0800 (PST)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO6PR11MB5602:EE_|CH3PR11MB8701:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6848695b-921a-4ed3-b5b2-08de21ad79ff
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|366016|52116014|1800799024|376014|38350700014;
-X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?gYHegkNbFl7ECh28OwqSORnIEJGSe8DUejW/UNXRvrHmHEXVeJA/yscUknVI?=
- =?us-ascii?Q?bP7z1tkSlSchBqT9srf7Ftc8WRqcoQjw8xS/wduKWdwPwFTp2NxW57FuNas3?=
- =?us-ascii?Q?qOx2tRlVCqClNzEdj91PSrGAsyfUo4OUglsL0q0QunZnE1vNPQEI4GG7EQ+m?=
- =?us-ascii?Q?qJYbPis9b9gTHGSJb69tuc4ZM+l+8cgVPwRiobrjgIIDdb0Eqj10UREXU5YP?=
- =?us-ascii?Q?xSDNISc3mkw7T7xgk6A0sAPLt74Pxf/3Xj/VoiH6lPhhx3uFYiDc05VcrPz5?=
- =?us-ascii?Q?6piS0NVkAsM3xtQhSBI343PzVAgJ7QDUq416+xT8EovECjjLQnzt6BiyZyez?=
- =?us-ascii?Q?81AHqjPQ2cAzT3+GuE2OMJIZEv70bPlLzkEw2M4QiOFL6bYcyrnyoYzXEtmI?=
- =?us-ascii?Q?gzmWLfLl/ObnlMKLiEk6NGKIG63c4JTyGqmFnYMziAwS1MKjZJgUsTPNiPZ5?=
- =?us-ascii?Q?St2eKFNWQzf2eYaF4x6LSgyxEkeAtFdfBzvegMTY1wtw0hFHSYGPPnEM0UOz?=
- =?us-ascii?Q?tEVbQJnA6nJ6IBW9IaPtW5koCXmqnRfsrvWHqdAgdHWIVkBJlcnl8odhV/Fw?=
- =?us-ascii?Q?1VDzTYi35CGYUiYejEfGA//DRss7wDSIi+I96GF6bnYsDgTeerZlusa7LsAQ?=
- =?us-ascii?Q?xvARV00feCvg0dz/JxoiRu8dfkZGSfXefgdYauje2HwSLMCRy9u/nfJHwHe8?=
- =?us-ascii?Q?0WkHW35QZgxK/hrk/uyavTTTVhDL6EF0tPHipqKz8evuEo03Uy5CZJ27g+LJ?=
- =?us-ascii?Q?lOz/1aYuhbHC7/eSTk/eXr+4ONdGWKS3XaBd1rWPsYSqxoqCmPmO7Bb4yhty?=
- =?us-ascii?Q?jsHp2UMK5qOCyV2WOPCPU71GEndeRZ2Zh41NyR+SrHXaI3S24IXeyJGdISCn?=
- =?us-ascii?Q?vuLmYCfoNYFoIvqVYKaPlSEX0+q+5g827C1UoYiSKlLBPNysf/rxSSNN0lyY?=
- =?us-ascii?Q?resgoM85T2/LIFwxvON49AHfOYDIv5iWpdkmC8mQsJiEBzK+3699/N6+Mssw?=
- =?us-ascii?Q?Vo6ZKyNPjw0+nqgU5QkSXxLwroM15ctKLRIb2wttHL5SQrViUCWvOxAwU5/l?=
- =?us-ascii?Q?uSvBA8nu6rTlhPCDWpkaQp3SYtwTrU50htfSWhXCqdguM6dH6Q0kEt0YlXJp?=
- =?us-ascii?Q?oKM13aqAYjz+qhzG69wxEwiwyVt9CVK7MnFuMnShIof26aegCFga0GQI35gl?=
- =?us-ascii?Q?oQMyoyYmOW08ImTo7uk/Hhn0zhZ4bNvAMGd4n+Kcpc6LqPOCeoJybweHiden?=
- =?us-ascii?Q?yUksYRch72nkjIgUx//bVrBJcdASVBT07UId/b3OcR8qSarozOshdkT9n0sC?=
- =?us-ascii?Q?HlO9k0o4l0Phb0F/+x4Xxv9I+/6JQI42iT83++y1x5qVWS7TuoIbDWs6bGiE?=
- =?us-ascii?Q?/ZO3NcVVtVylp8bUtOjFhjZ5ht2lnYOTihRxv56XFkzF9XiDR1G9tzQgaeYr?=
- =?us-ascii?Q?LdE+cLkY1lcXSWqpU1m0PaTf4nfAdk6EAKDSGZWVeoQS7SCAFQvKrq4ET79L?=
- =?us-ascii?Q?hhV0KMWZ19wzNpKF1EHO0uTXkzwwDkDq1tNA?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR11MB5602.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(1800799024)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?QKkEjqCqjNr+DWsoGJdM73mLkVzCRJNXDD84UFdGMI6g6S/o+qioae1dKK7e?=
- =?us-ascii?Q?GEjOjq7sDsorxZeFTVukKdNF6oO3q7El4DarzBG13IAqNPJx0xewav8Twbiq?=
- =?us-ascii?Q?T0wjWxNcUyUcJOcsgFNCXS9CuVohiWbFbkphUFBgt9BR4hrd3up3aP76ZU/q?=
- =?us-ascii?Q?AaEoCoKqMp6tZOYfyuHhOByLRxMxiTpvvkQvNqcI+uAG72HyOSbB+vFOlW9q?=
- =?us-ascii?Q?BecPD7gIkmyvWQDIUQnhmxp+26sIQD98cs71jtit1zRq4vC83+24Si6Qtap3?=
- =?us-ascii?Q?ry67qy44y3ZuumVerenKNRJ0EKMV6bDwIhQ053HoNkcKnpe6z5AWi3qsklvT?=
- =?us-ascii?Q?WXD01mBaQHO53/ls8NvTb+7aSGxxaJ9h7VtrVqLlMNDfc7zM54Mb+S3fCJm6?=
- =?us-ascii?Q?l1XT7z4aviUYt5kGnSK02LAGlM/ozvmDKYNAmS4f8B3kZqWvDhc3YHysyPIN?=
- =?us-ascii?Q?EYnTsECvrEzH5KIVLBVR2Ra2aekeoj0zvBhTEppu4N6Naq96ks9wsoeoi7By?=
- =?us-ascii?Q?GdawvRKDzeZs9oQV0vYA+CaMhx3pjN8OEnNzvn+V87OPGLPJzGXaUmF802Ki?=
- =?us-ascii?Q?wa/ilx4UwcC4PusjQVBSJ1s2tQF/UEiBG+kQPNzpZNfmwldQMqZH7ur+PMdf?=
- =?us-ascii?Q?8BMZKUeSAe2HS9WXcb96JeDvpRId3UQ6X2q92MKS/jnbOoYILsXyvRrW4oor?=
- =?us-ascii?Q?inBkexXYwOjvfxlLlgEavKwnylYIVr1ixoqXPk8aJOTgpoDd+qKDw76LjY9C?=
- =?us-ascii?Q?tXP65Ub1FI9sKsuCAqcowPpfeAEIonxRMKv0b6I1ZmZRSVuqpqE07uc0V55g?=
- =?us-ascii?Q?gFWXmiWJfsSD0mhtyNt1GTJPQJ+vtXiEwZXMKVE3/3yRmHjEhWD5SYvYV5FB?=
- =?us-ascii?Q?gxfhmSQeL/bic0EKpj6F8CBfh/KwIfU8oXidDMN2q/GXd9r/TPTvcoMSQVNZ?=
- =?us-ascii?Q?LBzSdUzJ64XBdk34mUE2pUysHob0o2Ttvafl6SXMeAcv5nm0DNV9zkexqpup?=
- =?us-ascii?Q?9KSa20Po3WbZrT41RU2ayNLvRl1/QJwpsLgObw43GbTJsDtxlqFk/Bf/D8aL?=
- =?us-ascii?Q?aNrpQWtQJZhAUGx7SG+jSFajjx30nGywAldII76QxGFaEe41ZO2j9HxX0lsr?=
- =?us-ascii?Q?SBP/haElZ7ZsI5R0Kse+FFQfdZHR3KMHwf8gzU/W97iwrFcEcp+lQFSP8jGq?=
- =?us-ascii?Q?nCDRkpEHgndy5eSasaVHvkTlv7MFViLd/8sIUxf6U0YeHppALXMIoGeD1mvj?=
- =?us-ascii?Q?Lc7yBVt+GJgVnGGcC0eIniORNe+x/IlXvYHRYUe4kGX5k+U8N3EfU4AG46mn?=
- =?us-ascii?Q?JRHxjAFPR38kCmA8WUvlPEfdM7g/5d9JnxqvNSM7W+fsYG9s8wDSZm2YkcV3?=
- =?us-ascii?Q?mpdn0EFIZOakzHEvEKAUTgWR+3/I79Ch8W6WBLe8wGlBhgqRaFtj2ehpL8sj?=
- =?us-ascii?Q?s7KL92t6SVYorV+/q9dmF63RnU+UyaAcpLkUj1XcSqXIjCBajGrqOQjwSKXM?=
- =?us-ascii?Q?N+zE8rtvV6VfPTdsZghbdK4YLDcDXt0INxP72+dgGVmEFSOQR7J3Aszjznez?=
- =?us-ascii?Q?ezLX6wq/XDDDhkxihOwFz7spfLiomU35+cd5AJyI?=
-X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6848695b-921a-4ed3-b5b2-08de21ad79ff
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR11MB5602.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 05:36:49.4542
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pZK3w8pY6CE6kEIoFsaXkVqP7eII/Zb8619ZrQuL9GFtGPf1AJoEjBNjAY+yHp5dAef/L4x6cLXFJqu27VHMvw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB8701
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDA0MiBTYWx0ZWRfX3r97Yz14Yuk8
- gDEC8X3s4JV0/09hikGEZZPKCxcfq4lOnoaskfB70snQzkyrsFOGzyOit4xdAF8zLYvZAqgIbTG
- cUKWafjYMA7ap1mi8PG0QqyOOCQg6VCfLtfoHSoT6b+miHLep40/n6kdMrR/J5FzgnK5FyIIi4d
- qnnPCvxyatzH1JSfgM99NpFS+/nESkW+P1NK0xedS7gLwxC1hlkESVmx1Uw/zo/kB6eSxJhEgIA
- +bD9bUr8m1chsJZQ+A/OTgz40EC3NokSN1Japw6tFiAS/63Zg+RIlJpsFxlLWOk1LQRszfMfjlE
- hRY62ewm/FHqk45pqn0edvX5ooe926By/O9dhWLX5k9DB6yZjNEf/TgWrkElqGLGqt33pHXWp7u
- tW+A6CkYCaO/sskK0c7Pf+jo9fvmCg==
-X-Proofpoint-ORIG-GUID: YHPqE1CI7lHTWzBPNCq95Qgcaq3KvON5
-X-Authority-Analysis: v=2.4 cv=XPA9iAhE c=1 sm=1 tr=0 ts=69141cf3 cx=c_pps
- a=kgXPJ/cF3Xw5T7/w5pCavQ==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
- a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
- a=xqWC_Br6kY4A:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=t7CeM3EgAAAA:8 a=LtwcJJPwdmsIudEpcK8A:9 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-GUID: YHPqE1CI7lHTWzBPNCq95Qgcaq3KvON5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-12_01,2025-11-11_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 clxscore=1015 malwarescore=0 adultscore=0 bulkscore=0
- phishscore=0 spamscore=0 lowpriorityscore=0 priorityscore=1501 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511120042
+References: <20251103021848.3068540-1-Qi.Chen@windriver.com>
+ <CAJdd5GYib3yt92tuSDcr0UQqcDL251EFXpvNuNGHrmrujnpDDg@mail.gmail.com> <87e0a761-ad36-44aa-b262-464aaeb97471@windriver.com>
+In-Reply-To: <87e0a761-ad36-44aa-b262-464aaeb97471@windriver.com>
+From: Samuli Piippo <samuli.piippo@gmail.com>
+Date: Wed, 12 Nov 2025 09:39:05 +0200
+X-Gm-Features: AWmQ_blaUi3nwSXtCtBALXhTsafs7gTm0IYDV0ZLSLbb4s9k_yQCzP3hokPWf7M
+Message-ID: <CABXoSoW68LaasoHdKFcRV_XHBbixCakN+qq=O1hx7dFTf-pFdw@mail.gmail.com>
+Subject: Re: [yocto-patches] [meta-mingw][PATCH V2] meta-mingw: support
+ generating Windows SDK with no symlink
+To: yocto-patches@lists.yoctoproject.org
+Cc: Joshua Watt <jpewhacker@gmail.com>, paul@pbarker.dev
+Content-Type: multipart/alternative; boundary="000000000000912862064360dc2c"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 12 Nov 2025 05:36:53 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2489
+ <yocto-patches@lists.yoctoproject.org>; Wed, 12 Nov 2025 07:39:24 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2490
 
-From: Chen Qi <Qi.Chen@windriver.com>
+--000000000000912862064360dc2c
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On some Windows systems, symlinks are not allowed due to IT policy.
-We need to be able to generate Windows SDK without symlinks.
+Would it make more sense to leave out the INHERIT and WINSDK_NO_SYMLINK.
+Instead, if you need this, you can inherit the class in your recipe or
+local.conf
 
-To do this, a new variable, WINSDK_NO_SYMLINK, and a new bbclass,
-mingw_sdk_handle_symlink.bbclass, are introduced to achieve this.
+-samuli
 
-By default, things work as before; when setting WINSDK_NO_SYMLINK
-to "1", SDK will replace all symlinks with the actual contents.
+On Wed, 12 Nov 2025 at 07:35, Chen Qi via lists.yoctoproject.org <Qi.Chen=
+=3D
+windriver.com@lists.yoctoproject.org> wrote:
 
-Signed-off-by: Chen Qi <Qi.Chen@windriver.com>
----
- classes/mingw_sdk_handle_symlink.bbclass    | 25 +++++++++++++++++++++
- conf/machine-sdk/include/mingw32-common.inc |  3 +++
- 2 files changed, 28 insertions(+)
- create mode 100644 classes/mingw_sdk_handle_symlink.bbclass
+> On 11/11/25 23:25, Joshua Watt wrote:
+> > On Sun, Nov 2, 2025 at 7:19=E2=80=AFPM <Qi.Chen@windriver.com> wrote:
+> >> From: Chen Qi <Qi.Chen@windriver.com>
+> >>
+> >> On some Windows systems, symlinks are not allowed due to IT policy.
+> >> We need to be able to generate Windows SDK without symlinks.
+> >>
+> >> To do this, a new variable, WINSDK_NO_SYMLINK, and a new bbclass,
+> >> mingw_sdk_handle_symlink.bbclass, are introduced to achieve this.
+> >>
+> >> By default, things work as before; when setting WINSDK_NO_SYMLINK
+> >> to "1", SDK will replace all symlinks with the actual contents.
+> >>
+> >> Signed-off-by: Chen Qi <Qi.Chen@windriver.com>
+> >> ---
+> >>   classes/mingw_sdk_handle_symlink.bbclass    | 25 +++++++++++++++++++=
+++
+> >>   conf/machine-sdk/include/mingw32-common.inc |  3 +++
+> >>   2 files changed, 28 insertions(+)
+> >>   create mode 100644 classes/mingw_sdk_handle_symlink.bbclass
+> >>
+> >> diff --git a/classes/mingw_sdk_handle_symlink.bbclass
+> b/classes/mingw_sdk_handle_symlink.bbclass
+> >> new file mode 100644
+> >> index 0000000..2f6dbe6
+> >> --- /dev/null
+> >> +++ b/classes/mingw_sdk_handle_symlink.bbclass
+> >> @@ -0,0 +1,25 @@
+> >> +WINSDK_NO_SYMLINK ?=3D "0"
+> >> +
+> >> +archive_sdk:prepend:sdkmingw32 () {
+> >> +       if [ "${WINSDK_NO_SYMLINK}" =3D "1" ]; then
+> >> +               for parse_type in "file" "directory"; do
+> >> +                       find "${SDK_OUTPUT}/${SDKPATH}" -type l -print=
+0
+> | while IFS=3D read -r -d '' symlink; do
+> >> +                               target=3D$(readlink -f "$symlink" || e=
+cho
+> "NOTVALID")
+> >> +                               if [ "$target" =3D "NOTVALID" ]; then
+> >> +                                       continue
+> >> +                               fi
+> >> +                               if [ ! -e "$target" ]; then
+> >> +                                       continue
+> >> +                               elif [ -d "$target" ]; then
+> >> +                                       if [ "$parse_type" =3D
+> "directory" ]; then
+> >> +                                               rm "$symlink" && cp -r
+> "$target" "$symlink"
+> >> +                                       fi
+> >> +                               else
+> >> +                                       if [ "$parse_type" =3D "file" =
+];
+> then
+> >> +                                               rm "$symlink" && cp
+> "$target" "$symlink"
+> >> +                                       fi
+> >> +                               fi
+> >> +                       done
+> >> +               done
+> >> +       fi
+> >> +}
+> >> diff --git a/conf/machine-sdk/include/mingw32-common.inc
+> b/conf/machine-sdk/include/mingw32-common.inc
+> >> index 56b8052..bf3f14e 100644
+> >> --- a/conf/machine-sdk/include/mingw32-common.inc
+> >> +++ b/conf/machine-sdk/include/mingw32-common.inc
+> >> @@ -59,3 +59,6 @@ GCCPIE:mingw32 =3D ""
+> >>
+> >>   # wine and wineserver are required to test MinGW SDKs
+> >>   HOSTTOOLS_NONFATAL +=3D "wine wineserver"
+> >> +
+> >> +# handle symlinks
+> >> +INHERIT +=3D "mingw_sdk_handle_symlink"
+> > Does this need to be unconditional? I'd prefer something like
+> > INHERIT:mingw32 instead if that works
+>
+> Hi Joshua,
+>
+> I just tried it out. Using INHERIT:append:sdkmingw32 works.
+> We have to use :append instead of "+=3D" to avoid overriding settings.
+>
+> I'll send out V3.
+>
+> Regards,
+> Qi
+>
+> >
+> >> --
+> >> 2.34.1
+> >>
+>
+>
+>
+> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+> Links: You receive all messages sent to this group.
+> View/Reply Online (#2488):
+> https://lists.yoctoproject.org/g/yocto-patches/message/2488
+> Mute This Topic: https://lists.yoctoproject.org/mt/116091557/3617605
+> Group Owner: yocto-patches+owner@lists.yoctoproject.org
+> Unsubscribe:
+> https://lists.yoctoproject.org/g/yocto-patches/leave/14256716/3617605/551=
+361261/xyzzy
+> [samuli.piippo@gmail.com]
+> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+>
+>
+>
 
-diff --git a/classes/mingw_sdk_handle_symlink.bbclass b/classes/mingw_sdk_handle_symlink.bbclass
-new file mode 100644
-index 0000000..2f6dbe6
---- /dev/null
-+++ b/classes/mingw_sdk_handle_symlink.bbclass
-@@ -0,0 +1,25 @@
-+WINSDK_NO_SYMLINK ?= "0"
-+
-+archive_sdk:prepend:sdkmingw32 () {
-+	if [ "${WINSDK_NO_SYMLINK}" = "1" ]; then
-+		for parse_type in "file" "directory"; do
-+			find "${SDK_OUTPUT}/${SDKPATH}" -type l -print0 | while IFS= read -r -d '' symlink; do
-+				target=$(readlink -f "$symlink" || echo "NOTVALID")
-+				if [ "$target" = "NOTVALID" ]; then
-+					continue
-+				fi
-+				if [ ! -e "$target" ]; then
-+					continue
-+				elif [ -d "$target" ]; then
-+					if [ "$parse_type" = "directory" ]; then
-+						rm "$symlink" && cp -r "$target" "$symlink"
-+					fi
-+				else
-+					if [ "$parse_type" = "file" ]; then
-+						rm "$symlink" && cp "$target" "$symlink"
-+					fi
-+				fi
-+			done
-+		done
-+	fi
-+}
-diff --git a/conf/machine-sdk/include/mingw32-common.inc b/conf/machine-sdk/include/mingw32-common.inc
-index 56b8052..7cb1f9b 100644
---- a/conf/machine-sdk/include/mingw32-common.inc
-+++ b/conf/machine-sdk/include/mingw32-common.inc
-@@ -59,3 +59,6 @@ GCCPIE:mingw32 = ""
- 
- # wine and wineserver are required to test MinGW SDKs
- HOSTTOOLS_NONFATAL += "wine wineserver"
-+
-+# handle symlinks
-+INHERIT:append:sdkmingw32 = " mingw_sdk_handle_symlink"
--- 
-2.34.1
+--000000000000912862064360dc2c
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+<div dir=3D"ltr"><div>Would it make more sense to leave out the INHERIT and=
+=C2=A0WINSDK_NO_SYMLINK.</div><div>Instead, if you need this, you can inher=
+it the class in your recipe or local.conf</div><div><br></div><div>-samuli<=
+/div></div><br><div class=3D"gmail_quote gmail_quote_container"><div dir=3D=
+"ltr" class=3D"gmail_attr">On Wed, 12 Nov 2025 at 07:35, Chen Qi via <a hre=
+f=3D"http://lists.yoctoproject.org">lists.yoctoproject.org</a> &lt;Qi.Chen=
+=3D<a href=3D"mailto:windriver.com@lists.yoctoproject.org">windriver.com@li=
+sts.yoctoproject.org</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quo=
+te" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204=
+);padding-left:1ex">On 11/11/25 23:25, Joshua Watt wrote:<br>
+&gt; On Sun, Nov 2, 2025 at 7:19=E2=80=AFPM &lt;<a href=3D"mailto:Qi.Chen@w=
+indriver.com" target=3D"_blank">Qi.Chen@windriver.com</a>&gt; wrote:<br>
+&gt;&gt; From: Chen Qi &lt;<a href=3D"mailto:Qi.Chen@windriver.com" target=
+=3D"_blank">Qi.Chen@windriver.com</a>&gt;<br>
+&gt;&gt;<br>
+&gt;&gt; On some Windows systems, symlinks are not allowed due to IT policy=
+.<br>
+&gt;&gt; We need to be able to generate Windows SDK without symlinks.<br>
+&gt;&gt;<br>
+&gt;&gt; To do this, a new variable, WINSDK_NO_SYMLINK, and a new bbclass,<=
+br>
+&gt;&gt; mingw_sdk_handle_symlink.bbclass, are introduced to achieve this.<=
+br>
+&gt;&gt;<br>
+&gt;&gt; By default, things work as before; when setting WINSDK_NO_SYMLINK<=
+br>
+&gt;&gt; to &quot;1&quot;, SDK will replace all symlinks with the actual co=
+ntents.<br>
+&gt;&gt;<br>
+&gt;&gt; Signed-off-by: Chen Qi &lt;<a href=3D"mailto:Qi.Chen@windriver.com=
+" target=3D"_blank">Qi.Chen@windriver.com</a>&gt;<br>
+&gt;&gt; ---<br>
+&gt;&gt;=C2=A0 =C2=A0classes/mingw_sdk_handle_symlink.bbclass=C2=A0 =C2=A0 =
+| 25 +++++++++++++++++++++<br>
+&gt;&gt;=C2=A0 =C2=A0conf/machine-sdk/include/mingw32-common.inc |=C2=A0 3 =
++++<br>
+&gt;&gt;=C2=A0 =C2=A02 files changed, 28 insertions(+)<br>
+&gt;&gt;=C2=A0 =C2=A0create mode 100644 classes/mingw_sdk_handle_symlink.bb=
+class<br>
+&gt;&gt;<br>
+&gt;&gt; diff --git a/classes/mingw_sdk_handle_symlink.bbclass b/classes/mi=
+ngw_sdk_handle_symlink.bbclass<br>
+&gt;&gt; new file mode 100644<br>
+&gt;&gt; index 0000000..2f6dbe6<br>
+&gt;&gt; --- /dev/null<br>
+&gt;&gt; +++ b/classes/mingw_sdk_handle_symlink.bbclass<br>
+&gt;&gt; @@ -0,0 +1,25 @@<br>
+&gt;&gt; +WINSDK_NO_SYMLINK ?=3D &quot;0&quot;<br>
+&gt;&gt; +<br>
+&gt;&gt; +archive_sdk:prepend:sdkmingw32 () {<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0if [ &quot;${WINSDK_NO_SYMLINK}&quot; =
+=3D &quot;1&quot; ]; then<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0for parse_=
+type in &quot;file&quot; &quot;directory&quot;; do<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0find &quot;${SDK_OUTPUT}/${SDKPATH}&quot; -type l -prin=
+t0 | while IFS=3D read -r -d &#39;&#39; symlink; do<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0target=3D$(readlink -f &quo=
+t;$symlink&quot; || echo &quot;NOTVALID&quot;)<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if [ &quot;$target&quot; =
+=3D &quot;NOTVALID&quot; ]; then<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0continue<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0fi<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if [ ! -e &quot;$target&quo=
+t; ]; then<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0continue<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0elif [ -d &quot;$target&quo=
+t; ]; then<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0if [ &quot;$parse_type&quot; =3D &quot;directory&quot; ]; then<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0rm &quot;$symlink&quot; &amp;&amp; cp -r &qu=
+ot;$target&quot; &quot;$symlink&quot;<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0fi<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0else<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0if [ &quot;$parse_type&quot; =3D &quot;file&quot; ]; then<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0rm &quot;$symlink&quot; &amp;&amp; cp &quot;=
+$target&quot; &quot;$symlink&quot;<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0fi<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0fi<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0done<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0done<br>
+&gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0fi<br>
+&gt;&gt; +}<br>
+&gt;&gt; diff --git a/conf/machine-sdk/include/mingw32-common.inc b/conf/ma=
+chine-sdk/include/mingw32-common.inc<br>
+&gt;&gt; index 56b8052..bf3f14e 100644<br>
+&gt;&gt; --- a/conf/machine-sdk/include/mingw32-common.inc<br>
+&gt;&gt; +++ b/conf/machine-sdk/include/mingw32-common.inc<br>
+&gt;&gt; @@ -59,3 +59,6 @@ GCCPIE:mingw32 =3D &quot;&quot;<br>
+&gt;&gt;<br>
+&gt;&gt;=C2=A0 =C2=A0# wine and wineserver are required to test MinGW SDKs<=
+br>
+&gt;&gt;=C2=A0 =C2=A0HOSTTOOLS_NONFATAL +=3D &quot;wine wineserver&quot;<br=
+>
+&gt;&gt; +<br>
+&gt;&gt; +# handle symlinks<br>
+&gt;&gt; +INHERIT +=3D &quot;mingw_sdk_handle_symlink&quot;<br>
+&gt; Does this need to be unconditional? I&#39;d prefer something like<br>
+&gt; INHERIT:mingw32 instead if that works<br>
+<br>
+Hi Joshua,<br>
+<br>
+I just tried it out. Using INHERIT:append:sdkmingw32 works.<br>
+We have to use :append instead of &quot;+=3D&quot; to avoid overriding sett=
+ings.<br>
+<br>
+I&#39;ll send out V3.<br>
+<br>
+Regards,<br>
+Qi<br>
+<br>
+&gt;<br>
+&gt;&gt; --<br>
+&gt;&gt; 2.34.1<br>
+&gt;&gt;<br>
+<br>
+<br>
+<br>
+-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-<br>
+Links: You receive all messages sent to this group.<br>
+View/Reply Online (#2488): <a href=3D"https://lists.yoctoproject.org/g/yoct=
+o-patches/message/2488" rel=3D"noreferrer" target=3D"_blank">https://lists.=
+yoctoproject.org/g/yocto-patches/message/2488</a><br>
+Mute This Topic: <a href=3D"https://lists.yoctoproject.org/mt/116091557/361=
+7605" rel=3D"noreferrer" target=3D"_blank">https://lists.yoctoproject.org/m=
+t/116091557/3617605</a><br>
+Group Owner: <a href=3D"mailto:yocto-patches%2Bowner@lists.yoctoproject.org=
+" target=3D"_blank">yocto-patches+owner@lists.yoctoproject.org</a><br>
+Unsubscribe: <a href=3D"https://lists.yoctoproject.org/g/yocto-patches/leav=
+e/14256716/3617605/551361261/xyzzy" rel=3D"noreferrer" target=3D"_blank">ht=
+tps://lists.yoctoproject.org/g/yocto-patches/leave/14256716/3617605/5513612=
+61/xyzzy</a> [<a href=3D"mailto:samuli.piippo@gmail.com" target=3D"_blank">=
+samuli.piippo@gmail.com</a>]<br>
+-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-<br>
+<br>
+<br>
+</blockquote></div>
+
+--000000000000912862064360dc2c--
 
