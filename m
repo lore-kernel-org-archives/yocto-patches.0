@@ -1,166 +1,96 @@
-Return-Path: <skandigraun@gmail.com>
+Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE819CD98C8
-	for <webhook@archiver.kernel.org>; Thu, 13 Nov 2025 18:40:22 +0000 (UTC)
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.56.1763059216979032979
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A17BCD98D6
+	for <webhook@archiver.kernel.org>; Thu, 13 Nov 2025 20:14:13 +0000 (UTC)
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.2214.1763064852645185146
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 13 Nov 2025 10:40:17 -0800
+ Thu, 13 Nov 2025 12:14:12 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=PNo0dYSp;
- spf=pass (domain: gmail.com, ip: 209.85.221.54, mailfrom: skandigraun@gmail.com)
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-42b2a0c18caso650238f8f.1
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 13 Nov 2025 10:40:16 -0800 (PST)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=oC0f7ZN6;
+ spf=pass (domain: konsulko.com, ip: 209.85.160.176, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4e88cacc5d9so10160211cf.0
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 13 Nov 2025 12:14:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763059215; x=1763664015; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=ND5Fs+qG+loc7vb10nbYeLr1W8XSjasxyUOho6StlZQ=;
-        b=PNo0dYSpkN4cJi626mhdnNqvrm+HRWPFU47qPVmK9pJblPoWCADW9nWtGLA/2C1Rcr
-         RGAN0BnT9f0Msm7kaV9avY5FkUOxo4A6bwt0XX6DbSCvnE1EIpdDEnfnHj0o7cVAtGAx
-         saZ21uQuuR4TMGBKwdBJ2WbsNMkdOendBzze9X/lp1CqpvSDRoZEA3K/7vqTh7GS9pf+
-         F2pgo0a9mkSOGDBqP4JhzX2EU4uqxLZuWcWHxms1qFPoYnBTx+D+uWKFDbO8dsHaWPaO
-         7s0TUgBoKZIyGAk7c8qJ3LIHy4hNBw5upiUQOtNtKQ0xCmF+0xisTje/tJy1/DaS1FRU
-         Tmsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763059215; x=1763664015;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=konsulko.com; s=google; t=1763064851; x=1763669651; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ND5Fs+qG+loc7vb10nbYeLr1W8XSjasxyUOho6StlZQ=;
-        b=ax05N6+CikTT0nejr029jzRRpioT77TvfFXP1RN2oTISqIfkQng2jbFHnx97JbP4Lp
-         unZUp4TbM3VFoV+/VTROZKpBSSBRgXBJctRgrZHnl3R3qYxjj1OidgGCZEtg99BjbL1h
-         /ThNmoey904DZg5m/b4RSdYe4mThqB0c93egmto63T1v8zfEWKsenkrNifrp308jqVNS
-         xBcRhAz6uMIixly9r4bQfxWVA7rISRG/yLd3IMVVcPygSwVdpg2dLRm1G2lZ/T31lif6
-         Vse9xubRVKbH2ywAyXiC1ZiAWUZ5yInmM3QDBA/jJkzwOBg3DWQeoCzLu9L3Zw/6wGKA
-         L2Vw==
-X-Gm-Message-State: AOJu0Yzg/9eNRwPSIREeZ+pVUfr9ppwAbopp2SR14vhTzBYon044Ztjp
-	RM8P63pQlkBvOfcIPuPCV5Dt9usWqi4HjREkAomqpTWGnUaKdK/itOJC5mmvJNg0
-X-Gm-Gg: ASbGncuT8d9C76rTz7mpjDlLd9URk2aBqIfgy88wQI5DfJeoSZSxVa9+9A1a7jN3zea
-	OSSPuLlJCZhjmMd+HT0TX9pBXDTORcY1NILXIS1vrMN4AkRHSTecl+TgglAut2RVmTaQMI9Mnms
-	C3OJKdS1Rr89A94AiMx0sF9h83d9sKNh/HT7jbv7Xb/M/IymljBXTJ3GFmFW4sFUouQvfRums9/
-	tflU2fVCBINdTX50sef9DtGgiGTJzo0xe1R5BOMu5PCQbyNFtgjc8CPy5dvlf1XT6MSkuHP4xNF
-	4Gi1f41gusNmepQ+D125Eup9wkAxaRR9z619eFqd9ixeboV2VUTKZsYKub3qrynqfLps4PHB2pT
-	sXljRmZK1e92gJnB33rY6+069RpkZ/OtLxBbNIgFsI8JjnyIbozkLc0a4FPUp2WGRRJJ3SNBvmF
-	2HkO6omaO/
-X-Google-Smtp-Source: AGHT+IFb+xvAA0jg1cgn7BZkK6IE0lZdni3ea5hM6vbJd2tAROYTFKvzcx5zBBR8VnU8Wjn7/AQE8A==
-X-Received: by 2002:a05:6000:2087:b0:42b:549a:1a91 with SMTP id ffacd0b85a97d-42b595bc410mr349679f8f.61.1763059215073;
-        Thu, 13 Nov 2025 10:40:15 -0800 (PST)
-Received: from [192.168.1.106] ([51.154.145.205])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53e7ae2dsm5420799f8f.5.2025.11.13.10.40.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Nov 2025 10:40:14 -0800 (PST)
-Message-ID: <ddda5d51-5a61-4566-866f-58b9e232e26d@gmail.com>
-Date: Thu, 13 Nov 2025 19:40:14 +0100
+        bh=3bbVwDQN/WJST5RUGTwe4qfZIfRW5ugnPD0kCm9iyko=;
+        b=oC0f7ZN6gbo17ymRr4Q5h8DyHy3gPtOKfwsu1ARx3VBIYUdS5ucJu7M4Hu3FBLG7mR
+         SKyNZqeH0YOAgghiZT1bYodCmlmbcYTlLyyzoZQIHN5IxNj/w8orYmTyYV8fNuKDr8yz
+         FU3tKNa+oyV33ab5iF3V7jd7cWqC+U/MiQKU0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763064851; x=1763669651;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3bbVwDQN/WJST5RUGTwe4qfZIfRW5ugnPD0kCm9iyko=;
+        b=u/tekuIdxO6t/WnuRVhghCj1rv4TOjJNve4DhYFRlG6UkAFzzKeXsbYTDRtK2WT0Sz
+         fINz+ax5qobxIkrZvY+Iw8X58EIH+qPKh4Wqez2LvB/bMx+GnWpELUeQHB7l+juicWNJ
+         sbIRFmoeezaCUfrUlxzGpn+uPqMXtVixDs4WrkIsaJuevacvlAuROIxmkUQHaZhDCP5i
+         ff3a4BcdqSfSpXMp5X8ElGOP7aIre9EgVwFB6UTeV8mGm+oszHlE9HpX91/lRozg29fs
+         ppEwK4gWu2HDtMnZHU3JU5cRnw74qmV3bRjwAMz5StTDWVPfuZLepd6+4FgF6WI4G1EA
+         9FPA==
+X-Gm-Message-State: AOJu0YzYEDjqPP97Sn/4SA9YRraNKg9Ek2GF5b/IS/6MDttjeIldPt3e
+	fLjghuzqU0MtRoDtcaU7SbaBYAgu4Fhq2tR+zEnM4vDOg2Gnt2oPsIEGia5zArNozyqVp7Qpu+I
+	0+VOC
+X-Gm-Gg: ASbGncuHygvgVfbHDllghZeopsuaQQh1V/p4rOKVWoQbmZDv6dBrqmUdJkiUdSj6QIk
+	AP8rFPUOAFK+iW7s/x8/UvPsMVXxeDhzhEBrAfsroImCZmCy8WrAyIlzR4LXLBFzHQIE6TuXC4d
+	V8f70Z0PLxD7UE6aWqXQfFFpP278sAb9ogsh6qqYrrm4FV7/6+l4P88gORb+HpVPkjlEo81Qz2h
+	QmnnU5+Gij5rg4RUqB+vHeaTHJvyiFlOpXVy3HxYSeUJfcdOJK9knJR3ak+upY4JAtY1Mn9TkGz
+	DLloPmhRX4kjaYL0Vyz0IgnW8gHomUXOt2blQabPiqje+5V9CabhhLGFWu7nJYnaNYu5dG+aWfU
+	JJYDgnohMVwBY5npMry/lR1oz4XVFQFYGzZ8WlWfQ82eY0tD9Q3hjUdfBhpjIQtOEWH7cRpZ2Rk
+	qZRjH3cDNT6+EnEAWshAeg5TJ+BJ7aR+pp6WdmabosaOVKkchWx0+Y
+X-Google-Smtp-Source: AGHT+IHO2dS5hvTajK1dXp/OglffcwMfwnqRUQo4Z+m0IIXbxO6MwKge4EbPHYd8d920oTdW7wX+EQ==
+X-Received: by 2002:ac8:5844:0:b0:4b5:ea1f:77ec with SMTP id d75a77b69052e-4edf1f4b087mr14003171cf.0.1763064851417;
+        Thu, 13 Nov 2025 12:14:11 -0800 (PST)
+Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ede881acc7sm17636211cf.28.2025.11.13.12.14.09
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Nov 2025 12:14:09 -0800 (PST)
+From: Scott Murray <scott.murray@konsulko.com>
+To: yocto-patches@lists.yoctoproject.org
+Subject: [meta-security][PATCH 3/6] ecryptfs-utils: Add CVE tag for ecryptfs-utils-CVE-2016-6224.patch
+Date: Thu, 13 Nov 2025 15:13:39 -0500
+Message-ID: <b639be32ad038d49091ddc1ae1aaf3e2c7e5bbc5.1763064477.git.scott.murray@konsulko.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <cover.1763064477.git.scott.murray@konsulko.com>
+References: <cover.1763064477.git.scott.murray@konsulko.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [meta-tensorflow][PATCH] tensorflow-lite: package
- headers
-To: yocto-patches@lists.yoctoproject.org,
- Martin Jansa <martin.jansa@gmail.com>
-References: <20250913173840.3216545-1-skandigraun@gmail.com>
- <CA+chaQeaQqkjO1v+qoo308ZqH17Fk9VLiahPC3dBj_TknckhZQ@mail.gmail.com>
-Content-Language: en-US
-From: Gyorgy Sarvari <skandigraun@gmail.com>
-In-Reply-To: <CA+chaQeaQqkjO1v+qoo308ZqH17Fk9VLiahPC3dBj_TknckhZQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 13 Nov 2025 18:40:22 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2543
+ <yocto-patches@lists.yoctoproject.org>; Thu, 13 Nov 2025 20:14:13 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2547
 
-On 11/13/25 18:18, Martin Jansa via lists.yoctoproject.org wrote:
-> Why should tensorflow-lite provide header files from flatbuffers,
-> cannot it use system headers from flatbuffers recipe? This breaks a
-> build for recipes which depend on both tensorflow-lite and flatbuffers
-> because of conflicts in RSS as in:
-> ERROR: foo-1.0-r0 do_prepare_recipe_sysroot: The file
-> /usr/include/flatbuffers/array.h is installed by both tensorflow-lite
-> and flatbuffers, aborting
->
-> I can send a patch to remove them (I have it locally).
+From: hongxu <hongxu.jia@eng.windriver.com>
 
-Hmmmm... that was a very long time ago, hard to remember the details... 
+Follow Yocto policy to add CVE tag to CVE patch
 
-If there is a flatbuffers recipe, I guess it would be usable, and most
-likely you are right, it would be more appropriate instead of this.
-I remember I added this for libamera-apps in meta-rpi - I can test it
-tomorrow and ping back, if that would be okay for you.
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+Signed-off-by: Robert Yang <liezhi.yang@windriver.com>
+---
+ .../ecryptfs-utils/files/ecryptfs-utils-CVE-2016-6224.patch      | 1 +
+ 1 file changed, 1 insertion(+)
 
-> On Sat, Sep 13, 2025 at 7:38 PM Gyorgy Sarvari via
-> lists.yoctoproject.org <skandigraun=gmail.com@lists.yoctoproject.org>
-> wrote:
->> The headers are not packages with tensorflow-lite, making it not easy to
->> compile any applications using them.
->>
->> This patch copies the headers from the source and output folder to
->> the includedir.
->>
->> The patch was derived from the content of a pre-compiled tflite package[1],
->> and from compilation error messages that were returned by rpicam-apps
->> recipe (which uses this recipe as an optional dependency)
->>
->> [1]: https://github.com/prepkg/tensorflow-lite-raspberrypi/releases/tag/2.20.0
->>
->> Signed-off-by: Gyorgy Sarvari <skandigraun@gmail.com>
->> ---
->>  .../tensorflow/tensorflow-lite_2.19.0.bb      | 23 +++++++++++++++++++
->>  1 file changed, 23 insertions(+)
->>
->> diff --git a/recipes-framework/tensorflow/tensorflow-lite_2.19.0.bb b/recipes-framework/tensorflow/tensorflow-lite_2.19.0.bb
->> index 14a538a..786507e 100644
->> --- a/recipes-framework/tensorflow/tensorflow-lite_2.19.0.bb
->> +++ b/recipes-framework/tensorflow/tensorflow-lite_2.19.0.bb
->> @@ -114,6 +114,29 @@ do_install() {
->>          ${D}${datadir}/label_image
->>
->>
->> +    # install the headers also
->> +    cd ${S}
->> +    for header in `find ./tensorflow/lite -type f -name *.h`; do
->> +        install -D -m 0644 $header ${D}${includedir}/$header
->> +    done
->> +
->> +    for header in `find ./tensorflow/compiler/mlir -type f -name *.h`; do
->> +        install -D -m 0644 $header ${D}${includedir}/$header
->> +    done
->> +
->> +    for header in `find ./tensorflow/core/public -type f -name *.h`; do
->> +        install -D -m 0644 $header ${D}${includedir}/$header
->> +    done
->> +    cd -
->> +
->> +    cd ${WORKDIR}/bazel/output_base/external/flatbuffers/include
->> +    for header in `find ./flatbuffers -type f`; do
->> +        install -D -m 0644 $header ${D}${includedir}/$header
->> +    done
->> +    cd -
->> +
->> +    # header installation done
->> +
->>      #echo "Installing pip package"
->>      install -d ${D}/${PYTHON_SITEPACKAGES_DIR}
->>      ${STAGING_BINDIR_NATIVE}/pip3 install --disable-pip-version-check -v \
->>
->>
->>
->>
->>
->
-> -=-=-=-=-=-=-=-=-=-=-=-
-> Links: You receive all messages sent to this group.
-> View/Reply Online (#2542): https://lists.yoctoproject.org/g/yocto-patches/message/2542
-> Mute This Topic: https://lists.yoctoproject.org/mt/115226423/6084445
-> Group Owner: yocto-patches+owner@lists.yoctoproject.org
-> Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/14038302/6084445/1344600526/xyzzy [skandigraun@gmail.com]
-> -=-=-=-=-=-=-=-=-=-=-=-
->
->
+diff --git a/recipes-security/ecryptfs-utils/files/ecryptfs-utils-CVE-2016-6224.patch b/recipes-security/ecryptfs-utils/files/ecryptfs-utils-CVE-2016-6224.patch
+index a457d79..c0a86e9 100644
+--- a/recipes-security/ecryptfs-utils/files/ecryptfs-utils-CVE-2016-6224.patch
++++ b/recipes-security/ecryptfs-utils/files/ecryptfs-utils-CVE-2016-6224.patch
+@@ -14,6 +14,7 @@ the patch comes from:
+ https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2016-6224
+ https://bazaar.launchpad.net/~ecryptfs/ecryptfs/trunk/revision/882
+ 
++CVE: CVE-2016-6224
+ Upstream-Status: Backport
+ 
+ Signed-off-by: Li Zhou <li.zhou@windriver.com>
+-- 
+2.51.0
 
 
