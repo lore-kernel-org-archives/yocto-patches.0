@@ -1,177 +1,85 @@
-Return-Path: <skandigraun@gmail.com>
+Return-Path: <louis.rannou@semalibre.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5578BCDE014
-	for <webhook@archiver.kernel.org>; Fri, 14 Nov 2025 06:49:17 +0000 (UTC)
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.12444.1763102948141422399
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13165CDE03E
+	for <webhook@archiver.kernel.org>; Fri, 14 Nov 2025 08:30:08 +0000 (UTC)
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.13398.1763109004418537129
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 13 Nov 2025 22:49:08 -0800
+ Fri, 14 Nov 2025 00:30:04 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=XT9hlbcY;
- spf=pass (domain: gmail.com, ip: 209.85.128.41, mailfrom: skandigraun@gmail.com)
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-477619f8ae5so11908795e9.3
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 13 Nov 2025 22:49:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763102946; x=1763707746; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=DrYk5GgcZ7n84/GVgA7IlX7XjegmQbaV+gq+lhG6fzE=;
-        b=XT9hlbcYt15M2Oxo4TDrUeH9WohG0lDtojczoC+3OAprp3OkKS5007cKP/dV7hXFNW
-         Po8GIjn0COF/TdtqMjVUJ7Pm5v83Y2W9t9tyAxEOKKPuAbjbu1DTpCBvXuZZxTUaoU2n
-         JpaykXU+hLY8x+/WS3yYMD3CORInjrka9Ey+UQmh2vBzqdlItl3gizYVFfSkUUmi0wCa
-         b2t3UDhgM57nt/4GLzu+5r46e8g4RYedQt+WfuEadLa/FuKAyKnENwuJqggMnthvkFNq
-         MKg5aXFxbEUtnwcqg/OPzZEnegHGtKQQq2W8dYIfwZeWxfY/Qd6FX6D3OcfSvWxhDO3k
-         Zq0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763102946; x=1763707746;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DrYk5GgcZ7n84/GVgA7IlX7XjegmQbaV+gq+lhG6fzE=;
-        b=wE7sUYPcxk+AXFQ9Q/507cRr9LqvVXJvkpf/Q0PZYf7vTrI2q7RoDnrj5GiTQ8kAte
-         N51Dz+Sy8Yz52Aeh5U7Cvlp7KUjHi3JR9Vs/yU+uCaYMfZ2IGEg1cAmUo3MbNDDIAwxh
-         rdbILS7DZzyckibpvXpLokaixEZ0lFItZqJXDI3bF8+iwm6reKFwdHBtojLYvOic5osM
-         u5vKWFyn/ycRwPgOBd8/qGALXJJBZE5o/PaKtgRmIA7g4NpHxPN9v5dKWtWoMhkYgNS6
-         VdSXpovmmX9JhDRQVMyz81eVdTjiiu4W21P58WJ3flC8EZz8LZ2rLspY7pjAjdMlis93
-         Tedg==
-X-Gm-Message-State: AOJu0YzyFKHb6re+ilD7nJJMRTDsdI+Djsd22yHszQobdMW1hfA163y6
-	QcF4jk+nmsgBW4YpesCTbihAJkcYrgVJdpIg1sDDSIy9kdwYNgAQ+XP6sKhOWhuA
-X-Gm-Gg: ASbGnct96+ciUXd8IdkToyQrktcCIbFJvuyPGi7LRHrhIDMF6lW/oomMOeIEWMyeec0
-	wpfqv70oN3AK4nhoUNz/Nv3jQNBTPXvvi7U0L2PykxDkD38TxbRNK2iKpSKgIizEXJUu5RsXujP
-	LdKqDgEtHk3UN1wE/enV8hH0WakfJoHPZ+zOALlrSINrV7iUPXg09QCSNJE58pIy/ck9OcpYM06
-	xEn6LyCnlZkqgIIxeC5ZjZRgLTfHYejyPiHyHibfXnDgTofiBrYIsGIyRWf2XVnXYdovOLSb74x
-	urpJ6flBmmgfyVV5Hr/rAQHVNCsXEV7C9y8U0BN/4ujdbOYlmq2QSnXWG4boEKN6MSi3HU2pvZI
-	oA3Eer+uenXDgJl8OtW6rgGTL6VE77LsexUXeyRMbMbeT7hA70m5OCoILDaLHTY6+4jKUKDmVHd
-	s46qFjgrTK/su2zQPdpns=
-X-Google-Smtp-Source: AGHT+IFs7Ihjf02TU3f0jH4TYyp5ghO2YIIYS9qO/GD96BzzihEpKgVSdBIcuBn9OMoTFnGB0vRbfA==
-X-Received: by 2002:a05:6000:2dc8:b0:42b:3cd2:e9bc with SMTP id ffacd0b85a97d-42b5936c65bmr1720936f8f.39.1763102946222;
-        Thu, 13 Nov 2025 22:49:06 -0800 (PST)
-Received: from [192.168.1.106] ([51.154.145.205])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53f29c5fsm8030794f8f.46.2025.11.13.22.49.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Nov 2025 22:49:05 -0800 (PST)
-Message-ID: <68b196e3-0657-420b-a493-800e548080fe@gmail.com>
-Date: Fri, 14 Nov 2025 07:49:05 +0100
+ dkim=fail reason="dkim: no key for signature: lookup dkim._domainkey.semalibre.com on 100.100.100.100:53: no such host" header.i=@semalibre.com header.s=dkim header.b=S82Ad2+/;
+ spf=pass (domain: semalibre.com, ip: 185.171.202.116, mailfrom: louis.rannou@semalibre.com)
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id D5D30C10F60;
+	Fri, 14 Nov 2025 08:29:40 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id A06306060E;
+	Fri, 14 Nov 2025 08:30:02 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 85952102F2A6F;
+	Fri, 14 Nov 2025 09:29:59 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=semalibre.com;
+	s=dkim; t=1763109001;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=0JKGj/Qje8B2mVlfGrv3Ren1Gb/UdAdDq/mf3y3goAw=;
+	b=S82Ad2+/NbrIqNCpDHGlGEjsJtXYtA/EtGmuDqzgEajChgIumHIGok5wrelsxKKtbcPQc6
+	gFTwI4WVckkHpxo6fzW5J5xjlwybwo58n5rTiZ7my6dtA1yPUjaFLh74KmypwI+7PNnrw3
+	v2z8N+EN7BF+8/8miRRWQRMTiKpKQYYicZcsTCdioqMjjboFQPiTmkINLZlr5RC/yk0a01
+	F1k34eQdkHl+3AOrAj+pVT5BJ29oVP1s3gbfjBL9O4IfKNZkUTsgEmw9pct3FvgXToG4kL
+	fvFXRFXG3OjBlSeB3T/vJfUkKF5mcx+f4//G5y7/O4/AE5bHOWpJe0iWR9k6yQ==
+From: Louis Rannou <louis.rannou@semalibre.com>
+To: yocto-patches@lists.yoctoproject.org
+Cc: scott.murray@konsulko.com,
+	rybczynska@gmail.com,
+	pascal.eberhard@non.se.com,
+	yi.zhao@windriver.com,
+	Louis Rannou <louis.rannou@non.se.com>
+Subject: [meta-security][PATCH 0/4] openscap: upgrade 1.4.1 to 1.4.2 with fixes
+Date: Fri, 14 Nov 2025 09:29:46 +0100
+Message-ID: <20251114-openscap_bump-v1-0-1c8169b8e332@non.se.com>
+X-Mailer: git-send-email 2.51.2
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [meta-tensorflow][PATCH] tensorflow-lite: package
- headers
-To: yocto-patches@lists.yoctoproject.org,
- Martin Jansa <martin.jansa@gmail.com>
-References: <20250913173840.3216545-1-skandigraun@gmail.com>
- <CA+chaQeaQqkjO1v+qoo308ZqH17Fk9VLiahPC3dBj_TknckhZQ@mail.gmail.com>
- <1877A5045FAF8D77.1051542@lists.yoctoproject.org>
-Content-Language: en-US
-From: Gyorgy Sarvari <skandigraun@gmail.com>
-In-Reply-To: <1877A5045FAF8D77.1051542@lists.yoctoproject.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+X-Change-ID: 20251113-openscap_bump-5c33d1ab2ceb
+X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: quoted-printable
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 14 Nov 2025 06:49:17 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2552
+ <yocto-patches@lists.yoctoproject.org>; Fri, 14 Nov 2025 08:30:08 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2553
 
-Apparently the latest version of libcamera for rpi (or at least its
-dependency, libpisp) doesn't compile anymore with the master branch...
-from my end please feel free to modify tf-lite as you wish. 
+From: Louis Rannou <louis.rannou@non.se.com>
 
-Thanks for noticing the issue.
+This series of patches makes an upgrade of openscap and scap-security wit=
+h a repends fix
+and other minor corrections.
 
-On 11/13/25 19:40, Gyorgy Sarvari via lists.yoctoproject.org wrote:
-> On 11/13/25 18:18, Martin Jansa via lists.yoctoproject.org wrote:
->> Why should tensorflow-lite provide header files from flatbuffers,
->> cannot it use system headers from flatbuffers recipe? This breaks a
->> build for recipes which depend on both tensorflow-lite and flatbuffers
->> because of conflicts in RSS as in:
->> ERROR: foo-1.0-r0 do_prepare_recipe_sysroot: The file
->> /usr/include/flatbuffers/array.h is installed by both tensorflow-lite
->> and flatbuffers, aborting
->>
->> I can send a patch to remove them (I have it locally).
-> Hmmmm... that was a very long time ago, hard to remember the details... 
->
-> If there is a flatbuffers recipe, I guess it would be usable, and most
-> likely you are right, it would be more appropriate instead of this.
-> I remember I added this for libamera-apps in meta-rpi - I can test it
-> tomorrow and ping back, if that would be okay for you.
->
->> On Sat, Sep 13, 2025 at 7:38 PM Gyorgy Sarvari via
->> lists.yoctoproject.org <skandigraun=gmail.com@lists.yoctoproject.org>
->> wrote:
->>> The headers are not packages with tensorflow-lite, making it not easy to
->>> compile any applications using them.
->>>
->>> This patch copies the headers from the source and output folder to
->>> the includedir.
->>>
->>> The patch was derived from the content of a pre-compiled tflite package[1],
->>> and from compilation error messages that were returned by rpicam-apps
->>> recipe (which uses this recipe as an optional dependency)
->>>
->>> [1]: https://github.com/prepkg/tensorflow-lite-raspberrypi/releases/tag/2.20.0
->>>
->>> Signed-off-by: Gyorgy Sarvari <skandigraun@gmail.com>
->>> ---
->>>  .../tensorflow/tensorflow-lite_2.19.0.bb      | 23 +++++++++++++++++++
->>>  1 file changed, 23 insertions(+)
->>>
->>> diff --git a/recipes-framework/tensorflow/tensorflow-lite_2.19.0.bb b/recipes-framework/tensorflow/tensorflow-lite_2.19.0.bb
->>> index 14a538a..786507e 100644
->>> --- a/recipes-framework/tensorflow/tensorflow-lite_2.19.0.bb
->>> +++ b/recipes-framework/tensorflow/tensorflow-lite_2.19.0.bb
->>> @@ -114,6 +114,29 @@ do_install() {
->>>          ${D}${datadir}/label_image
->>>
->>>
->>> +    # install the headers also
->>> +    cd ${S}
->>> +    for header in `find ./tensorflow/lite -type f -name *.h`; do
->>> +        install -D -m 0644 $header ${D}${includedir}/$header
->>> +    done
->>> +
->>> +    for header in `find ./tensorflow/compiler/mlir -type f -name *.h`; do
->>> +        install -D -m 0644 $header ${D}${includedir}/$header
->>> +    done
->>> +
->>> +    for header in `find ./tensorflow/core/public -type f -name *.h`; do
->>> +        install -D -m 0644 $header ${D}${includedir}/$header
->>> +    done
->>> +    cd -
->>> +
->>> +    cd ${WORKDIR}/bazel/output_base/external/flatbuffers/include
->>> +    for header in `find ./flatbuffers -type f`; do
->>> +        install -D -m 0644 $header ${D}${includedir}/$header
->>> +    done
->>> +    cd -
->>> +
->>> +    # header installation done
->>> +
->>>      #echo "Installing pip package"
->>>      install -d ${D}/${PYTHON_SITEPACKAGES_DIR}
->>>      ${STAGING_BINDIR_NATIVE}/pip3 install --disable-pip-version-check -v \
->>>
->>>
->>>
->>>
->>>
->>
->>
->>
->
->
-> -=-=-=-=-=-=-=-=-=-=-=-
-> Links: You receive all messages sent to this group.
-> View/Reply Online (#2543): https://lists.yoctoproject.org/g/yocto-patches/message/2543
-> Mute This Topic: https://lists.yoctoproject.org/mt/115226423/6084445
-> Group Owner: yocto-patches+owner@lists.yoctoproject.org
-> Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/14038302/6084445/1344600526/xyzzy [skandigraun@gmail.com]
-> -=-=-=-=-=-=-=-=-=-=-=-
->
->
+I have based the source on the well formatted github release instead of t=
+he commit
+sha. So let me know if that's incorrect.
 
+It also includes a runtime test and musl fix.
+
+Signed-off-by: Louis Rannou <louis.rannou@non.se.com>
+---
+Louis Rannou (4):
+      openscap: update to 1.4.2
+      scap-security-guide: update to 0.1.78
+      oeqa: openscap test
+      openscap: fix musl compatibility
+
+ lib/oeqa/runtime/cases/openscap.py                 | 48 ++++++++++++++++=
+++++++
+ .../{openscap_1.4.1.bb =3D> openscap_1.4.2.bb}       | 16 +++++---
+ ...ide_0.1.77.bb =3D> scap-security-guide_0.1.78.bb} |  4 +-
+ 3 files changed, 59 insertions(+), 9 deletions(-)
+---
+base-commit: 9f1d763bb17bf105cc313a95eb3b07496b34bacc
+change-id: 20251113-openscap_bump-5c33d1ab2ceb
+
+Best regards,
+-- =20
+Louis Rannou <louis.rannou@non.se.com>
 
