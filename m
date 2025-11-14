@@ -2,182 +2,212 @@ Return-Path: <quaresma.jose@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7DB8CE7AEF
-	for <webhook@archiver.kernel.org>; Fri, 14 Nov 2025 11:37:29 +0000 (UTC)
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.15880.1763120239399407716
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B587CCE7AF3
+	for <webhook@archiver.kernel.org>; Fri, 14 Nov 2025 11:46:39 +0000 (UTC)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.16024.1763120793734492514
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 14 Nov 2025 03:37:19 -0800
+ Fri, 14 Nov 2025 03:46:34 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=AaAVDRbO;
- spf=pass (domain: gmail.com, ip: 209.85.218.47, mailfrom: quaresma.jose@gmail.com)
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b735b7326e5so220325966b.0
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 14 Nov 2025 03:37:19 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=MBkvcUNJ;
+ spf=pass (domain: gmail.com, ip: 209.85.218.50, mailfrom: quaresma.jose@gmail.com)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b714b1290aeso281992266b.2
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 14 Nov 2025 03:46:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763120237; x=1763725037; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1763120792; x=1763725592; darn=lists.yoctoproject.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=etB8mnhgV+lliF+Fs94R5ezuHnMpzpvDxysg77Aw7pg=;
-        b=AaAVDRbOUZnoboUyq6WZ4ItCq/uHrv1ZewWBTZUUeHZQ16mlUdbIh6BOyJsVSzLIHX
-         bWHScsf9bVB6lEK+Y/vino0kXc1pZWYpFJbAq4pvEloH1DreQzb13z4jzoL9ok9j/Vtv
-         EchEWKKRGPfT8JUu54aDhjNEJ1cVr6bZ19K+B0ELKm2i9zvwfuzzSfxpBnv0ntx46D12
-         fsufa1xMB8PLmUp9Fa8pFCxkO1dQ7/rW9+zdzQQO83CyBNN0NM2cGIwBqn+9vVUX0pRC
-         ItEZEoisTnDz3SLtqKO44UsunGmO1iCKbX5DDr5clutd1wQr13YuU8s14CI728Uatu+a
-         BG0g==
+        bh=STKG5Q4QEWtvRwhcXrYtU6t9Vi4N9yvmsBHZKTZRAkw=;
+        b=MBkvcUNJz2XiCK1VYX9DVf8DgqmI4aa8kLugVlzVMpafRO3hf07zqA+95A9QDFAY3E
+         ADfOZwQQ4dPE33FqZEHwLF6IO5FSoOWJua3J+YdV9VcnIWWrCK/HFRTHjDg6dCWcDWnT
+         EABEoSAa1rrOJ3T+OXFEsS1NcmnV0qFzwBSToBcjdObK0ybr9Q6eRXB5Gen+13TWQGhw
+         NcA6ksms5bVgHGxSEXUA7n9zuydkb6IudkdzjQ1PTmAjtqE+bto90zzhAaJRkbbWL0Sh
+         +wrN+Vke4HxCtIAIPv55/uFHLJpw8fWwI59SS27lURu+IOJOVa/bgYkKHG52h9xWROnV
+         vAXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763120237; x=1763725037;
+        d=1e100.net; s=20230601; t=1763120792; x=1763725592;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=etB8mnhgV+lliF+Fs94R5ezuHnMpzpvDxysg77Aw7pg=;
-        b=EPOF/Woo5YlIlgtY9G/ueD2akWCQexwi53dBhvyPA2m4OzS13mPxwtGppWx/T7hv8k
-         tJWJkb7OuIe4mEEOZd9ciP+5P5Lq0ygsW0I8dIFfqy3lZS44nVXloV/nn7hnxq8CzbI4
-         yz07NdMxsH/HJO5SFP8AgpaKvo0Lhs1T+/QXzLcznzxMfKLdtIRrIeEYY8gNOafVO5xn
-         piSpRloBBkcYykV8UQSJq3nKMy2UggVQEAMAnu/WNpWR+Xho5mgNPKPKqfe2hNTM4GKy
-         hrpsmcir6nV2mqEJO4Z6M35OgOfvpyYAAzbPtT6SIEIXFBQ+StV1od6KFuSuXxLU15qi
-         ENhA==
-X-Gm-Message-State: AOJu0YzGSvl4gqVemXtw5lzl7A5u93iJKtG6YdNpocMXB/GuuI3mQ/fq
-	6ZGj0dWSEf4bkqEZKEGlO/jfZj7Ue/9Dug7+yrKusXK+8a8RMmmMM6/XPgANjX5MCMMdF4D6l7x
-	oPehzIEp3Q594h9GV7u+XhpqTlr92mp0HfErhfhA=
-X-Gm-Gg: ASbGnctWfM1tb+TFGfmOFfi7vU1hLBeFa4DydRJgQI8wQWCtxlcNBjd/x0pyQdJiu3Q
-	hAT6h9RsYjzxskEkPaRSDDL1bzmxVTtTVNH+HUmCKhG7b3db6MFfMUADNkQg1KyRoXokRiTaEGA
-	noau5D76LbQV/J9wBAX8gystQYLlDODU9j8Hk7OT5u2Q4eRBodZgpI3oSrSDXgzpkGL752Hdw8H
-	R5yw7qfGaUglx9tk5XkDHO6m6KMGV7C9hiUk8u/M6WWFzucNlDy5e7TB9omuIHCrCXVbw1Z/Uyx
-	q3Y8qXE=
-X-Google-Smtp-Source: AGHT+IGrAknq9PtOmVY+bP/FQJJ0keGT1xzhNze18YTlM6awfsAw+oyf0qiIZ6O/1iM74NY/OsLNdWG5TBfXMWZtRoM=
-X-Received: by 2002:a17:907:eccc:b0:b73:2e54:a002 with SMTP id
- a640c23a62f3a-b73485707c9mr666233366b.15.1763120236713; Fri, 14 Nov 2025
- 03:37:16 -0800 (PST)
+        bh=STKG5Q4QEWtvRwhcXrYtU6t9Vi4N9yvmsBHZKTZRAkw=;
+        b=ONx2sq7Wb4jtBjLV38Kt9nUXaZQFLBC3NEN0chpyUMOZ53rRaGM3ZxRrXYAfoCCYle
+         EEDX3QOxjmC8eG/yWv0cjsctsbfl3Ran3FFy2eVGB7Oh1hsKeJ+oO3uvP3coJtaglqPZ
+         17GzfAtY2M3Zo0T8FJEVVJIFtjdoeZ3obBEN8xEJ47yFJcTrm40Ee/7vCNLoPztOVJKH
+         Eb8b3bZhAuH8VY0453r6qgL3C1nAwKKsZtU71VsXr54qh0eM79MB0bA13eoW6yeKks7z
+         3LYSOsyf7b3CzL+eLIuMWZDtyUDUOzS111g09BNXTJcBxR4e2CNwxpqlqtWnJOB7buhJ
+         rkyA==
+X-Gm-Message-State: AOJu0Yyb5qUYOXRkkWa1DqZwrPiNBZtpy+oLJgf9MM0/6og4LmpI0ZSO
+	jMIPiUZhk5rr33gFWSkf5qf1w22F1NZsJo1Wbv5Ert0YppAxMftPDRL8dW18NK16m5elyUYtgpy
+	52iRRJDa7WT0OQIYRJdq0qdv6v4E/NnLfoQqeZpU=
+X-Gm-Gg: ASbGncvtyAlsr5sSjN/F6+hUmeT3SIs4rEHh2hV0Rjha99X6yHUgjNZISx8LJEoi/3r
+	S8q/1Sa/QFpGp8oTC6ku7TOqFa15TrKmWRlOwl79nuLXsbikFC1vD9jwObXJCAYk9kz1Gg/kkyT
+	iNCib5/DeScziPGvzdkHsk46PCnsOrzD8y8jgiHhufxRJlq0376sfoZnfpC5Ph9qR+Inv9c1SLi
+	MovASerfxvA018anXWB8UKhoO99dRw3a5ewG+aF0d0Ndc5mXTcdQ5oEyJYw41UeICaobUxW
+X-Google-Smtp-Source: AGHT+IHIz4zThpKNS/qNXlFkl4S+LMbikbQ0pkLbsKFLYQYou748RGKve7Y+8+875fKE0oWqtXGHt3vZklOjs3zWmJg=
+X-Received: by 2002:a17:907:7246:b0:b73:301c:b158 with SMTP id
+ a640c23a62f3a-b73677ed40bmr271863366b.6.1763120791157; Fri, 14 Nov 2025
+ 03:46:31 -0800 (PST)
 MIME-Version: 1.0
-References: <20251113125712.18914-1-peter.marko@siemens.com> <20251113125712.18914-35-peter.marko@siemens.com>
-In-Reply-To: <20251113125712.18914-35-peter.marko@siemens.com>
+References: <20251113125712.18914-1-peter.marko@siemens.com>
+In-Reply-To: <20251113125712.18914-1-peter.marko@siemens.com>
 From: Jose Quaresma <quaresma.jose@gmail.com>
-Date: Fri, 14 Nov 2025 11:37:05 +0000
-X-Gm-Features: AWmQ_bl35SoyS6OJxXswAb7K8lt8OfU0kyjfLwF-VdBNiMuEqDGgHuES6oWG3-M
-Message-ID: <CANPvuR=GwC6m1XXTMnLPu4j_ysZu2sdkWGEoeic5vHKaGUoDUQ@mail.gmail.com>
-Subject: Re: [yocto-patches] [meta-lts-mixins][scarthgap/go][RFC PATCH 34/34]
- readme: add QA chapter
+Date: Fri, 14 Nov 2025 11:46:19 +0000
+X-Gm-Features: AWmQ_bnYD_tWO4QBAAyq0MaP00wo8naWaYbAQFQK51ALZD5Jo18y932mUYxB-EE
+Message-ID: <CANPvuR=zdbNg=PJh+D32C=g6euOPCnOC73uVm2hH564O0MB+Rg@mail.gmail.com>
+Subject: Re: [yocto-patches] [meta-lts-mixins][scarthgap/go][RFC PATCH 00/34]
+ initial scarthgap/go version
 To: yocto-patches@lists.yoctoproject.org
 Cc: peter.marko@siemens.com, jose.quaresma@foundries.io
-Content-Type: multipart/alternative; boundary="00000000000067db7a06438c6bb6"
+Content-Type: multipart/alternative; boundary="00000000000074017806438c8c70"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 14 Nov 2025 11:37:29 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2561
+ <yocto-patches@lists.yoctoproject.org>; Fri, 14 Nov 2025 11:46:39 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2562
 
---00000000000067db7a06438c6bb6
+--00000000000074017806438c8c70
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+
+Hi Peter,
+
+Very nice work putting all of that in place and much better than the
+kirkstone/go.
+I will try to help in any way I can with the maintenance of the layer.
+
+Thank you very much for the hard work.
+
+Jose
 
 Peter Marko via lists.yoctoproject.org <peter.marko=3D
 siemens.com@lists.yoctoproject.org> escreveu (quinta, 13/11/2025 =C3=A0(s)
 12:57):
 
-> Describe QA done when accepting patches.
+> Hello everyone,
 >
-> Note that oe-selftest fail when additional parameters (like -j) is not
-> present. When that is fixed, we can simplify the oe-selftest QA example.
+> here is initial draft of meta-lts-mixins scarthgap/go branch.
+> Compared to kirkstone/go this now also contains proper testing.
+> Functionality is I think equivalent to current kirsktone/go branch.
 >
-> Expected results:
-> * runtime
-> RESULTS - go.GoCompileTest.test_go_compile: PASSED (67.87s)
-> RESULTS - go.GoCompileTest.test_go_module: PASSED (6.17s)
-> RESULTS - go.GoHelloworldTest.test_gohelloworld: PASSED (1.24s)
-> RESULTS - ping.PingTest.test_ping: PASSED (0.02s)
-> RESULTS - ssh.SSHTest.test_ssh: PASSED (0.67s)
-> * sdk
-> RESULTS - go.GoCompileTest.test_go_build: PASSED (0.35s)
-> RESULTS - go.GoCompileTest.test_go_module: PASSED (0.33s)
-> RESULTS - go.GoHostCompileTest.test_go_cross_compile: PASSED (0.22s)
-> RESULTS - go.GoHostCompileTest.test_go_module_cross_compile: PASSED (0.37=
-s)
-> * oe-selftest
-> 2025-11-13 11:55:23,485 - oe-selftest - INFO -
-> gotoolchain.oeGoToolchainSelfTest.test_go_dep_build
-> (subunit.RemotedTestCase)
-> 2025-11-13 11:55:23,485 - oe-selftest - INFO -  ... ok
-> 2025-11-13 11:55:23,485 - oe-selftest - INFO - 0: 1/1 1/1 (3.17s) (0
-> failed) (gotoolchain.oeGoToolchainSelfTest.test_go_dep_build)
+> Note that the testing depends on not-yet-merged series
+>   https://lists.openembedded.org/g/openembedded-core/message/226238
 >
-> Signed-off-by: Peter Marko <peter.marko@siemens.com>
-> ---
->  README.md | 44 ++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 44 insertions(+)
->
-> diff --git a/README.md b/README.md
-> index e316fc6..06a948d 100644
-> --- a/README.md
-> +++ b/README.md
-> @@ -41,3 +41,47 @@ Maintenance
->  Layer maintainers:
->  * Jose Quaresma <jose.quaresma@foundries.io>
->  * Peter Marko <peter.marko@siemens.com>
-> +
-> +Quality Assurance
-> +-----------------
-> +
-> +QA tests are using original openembedded-core testsuites.
-> +Current plan is to backport QA test changes to openembedded-core
-> scarthgap branch.
-> +When that is no longer possible, changes will picked here.
-> +
-> +Automated tests to verify go toolchain functionality are being executed
-> with following configurations and commands:
-> +
-> +* OEQA runtime
-> +
-> +    ```
-> +    IMAGE_INSTALL:append =3D " packagegroup-core-ssh-dropbear go-hellowo=
-rld
-> packagegroup-go-sdk-target"
->
-
-Is the go-helloworld running automatically or does it need to be launched
-manually?
-
-Jose
-
-
-> +    IMAGE_CLASSES +=3D "testimage"
-> +    TEST_SUITES =3D "ping ssh go"
-> +    QB_MEM =3D "-m 2048"
-> +    ```
-> +
-> +    ```
-> +    bitbake core-image-minimal && bitbake core-image-minimal:do_testimag=
+> Creation notes:
+> * base commit copied from kirkstone/go branch
+>   * adapted release name and removed obsolete lines from layer.conf
+> * all recipe changes from master were picked into this series except thos=
 e
-> +    ```
-> +
-> +* OEQA SDK
-> +
-> +    ```
-> +    IMAGE_CLASSES +=3D "testimage"
-> +    SDK_TOOLCHAIN_LANGS =3D "go"
-> +    TESTSDK_SUITES =3D "go"
-> +    ```
-> +
-> +    ```
-> +    bitbake core-image-minimal:do_populate_sdk && bitbake
-> core-image-minimal:do_testsdk
-> +    ```
-> +
-> +* OEQA selftest
-> +
-> +    ```
-> +    SANITY_TESTED_DISTROS =3D ""
-> +    ```
-> +
-> +    ```
-> +    oe-selftest -r gotoolchain -j $(grep -c ^processor /proc/cpuinfo)
-> +    ```
+> not suitable for scarthgap
+>   * 7321cc17ae5483f17fe9cdffea7b62acd9d9c3a2 meta: set S to be in
+> UNPACKDIR in recipes that explicitly set
+>   * 4ccc3bc8266c327bcc18c9a3faf7536210dfb9f0 classes/recipes: Switch
+> virtual/XXX-gcc to virtual/cross-cc (and c++/binutils)
+> * all test changes from master were submitted as backports to
+> openembedded-core (link above)
+> * 3 patches were sent to openembedded master branch upstream based on
+> testing and file comparison
+>   * https://lists.openembedded.org/g/openembedded-core/message/226226
+> oeqa: fix package detection in go sdk tests
+>   * https://lists.openembedded.org/g/openembedded-core/message/226231
+> go-helloworld: fix license
+>   * https://lists.openembedded.org/g/openembedded-core/message/226237
+> oeqa: drop unnecessary dependency from go runtime tests
+> * class/lib changes between scarthgap and master are following:
+>   * $ git log --oneline
+> 8f46f60a703defc3e74adad382320c129cef0b06..origin/master -- \
+>         meta/classes/go-vendor.bbclass meta/classes-recipe/go.bbclass \
+>         meta/classes-recipe/goarch.bbclass
+> meta/classes-recipe/go-mod.bbclass \
+>         meta/classes-recipe/go-ptest.bbclass
+> meta/classes-recipe/go-mod-update-modules.bbclass
+>     26368cfb91 go-mod-update-modules.bbclass: Update license finding
+>     cfff8e9682 goarch.bbclass: do not leak TUNE_FEATURES into crosssdk
+> task signatures
+>     0aa406d058 recipetool/create_go: proxy module fetching to
+> go-mod-update-modules
+>     34bb889ffa classes/go-mod-update-modules: add class to generate modul=
+e
+> list
+>     5f8218c626 go-mod.bbclass: Calculate GO_MOD_CACHE_DIR relative to
+> ${UNPACKDIR}
+>     374a91204b go: Check if GO_IMPORT is set in recipe and error if not
+>     791ab77ac0 go: remove support for GOROOT_FINAL
+>     30ea609d33 meta/meta-selftest: Fix variable assignment whitespace
+>     6c4e3206b6 classes: go-vendor: Change symlink creation.
+>     fc4f589cc7 go-vendor: Fix absolute paths issue
+>     114fe16f96 classes/go-vendor: Use UNPACKDIR instead of WORKDIR
+>     35496654db go-mod.bbclass: Unpack module dependency license files
+>     287daff0bb go-mod.bbclass: Set GO_MOD_CACHE_DIR
+>     cc4ec43a2b go: Drop fork of unpack code, mandate GO_SRCURI_DESTSUFFIX
+>   * there are mostly changes to directory layout, fetching and style or
+> new go-mod-update-modules class
+>   * GOROOT_FINAL can be kept as unused variable like in scarthgap
+>   * TUNE_FEATURES fix is being backported to scarthgap and kirkstone
+> opembedded-core
+>
+> Peter
+>
+> ---
+>
+> Alexander Kanavin (4):
+>   go-helloworld: update to latest revision
+>   go-helloworld: update to latest revision
+>   go-helloworld: update to latest revision
+>   meta: remove consecutive blank lines
+>
+> Gyorgy Sarvari (1):
+>   go-helloworld: update to latest revision
+>
+> Hongxu Jia (4):
+>   go: upgrade 1.22.12 -> 1.24.0
+>   go: fix buildpath issue for go-runtime
+>   go: remove support for GOROOT_FINAL
+>   tcmode-default: bump GOVERSION to 1.24.0
+>
+> Jose Quaresma (1):
+>   Revert "go: Drop fork of unpack code, mandate GO_SRCURI_DESTSUFFIX"
+>
+> Khem Raj (1):
+>   go-cross: Disable build with ccache
+>
+> Osama Abdelkader (1):
+>   go-cross-canadian: fix binaries install and GOARCH
+>
+> Peter Marko (18):
+>   Initial commit: add license, readme and layer config
+>   go-helloworld: add from openembedded-core scarthgap
+>   go: add from openembedded-core scarthgap
+>   go-helloworld: fix license
+>   go: upgrade 1.24.0 -> 1.24.1
+>   go: upgrade 1.24.1 -> 1.24.2
+>   go: upgrade 1.24.2 -> 1.24.3
+>   go: upgrade 1.24.3 -> 1.24.4
+>   go: set status of CVE-2024-3566
+>   go: upgrade 1.24.4 -> 1.24.5
+>   go: upgrade 1.24.5 -> 1.24.6
+>   go: upgrade 1.24.6 -> 1.25.0
+>   conf/layer: switch to golang 1.25
+>   go: upgrade 1.25.0 -> 1.25.1
+>   go: upgrade 1.25.1 -> 1.25.2
+>   go: upgrade 1.25.2 -> 1.25.3
+>   readme: update to markdown format
+>   readme: add QA chapter
+>
+> Randolph Sapp (1):
+>   go: fix sigaction usage on i386 platforms
+>
+> Richard Purdie (3):
+>   go: Drop fork of unpack code, mandate GO_SRCURI_DESTSUFFIX
+>   meta/meta-selftest: Fix variable assignment whitespace
+>   go: Fix to work without gold on aarch64
+>
 >
 >
 > -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 > Links: You receive all messages sent to this group.
-> View/Reply Online (#2533):
-> https://lists.yoctoproject.org/g/yocto-patches/message/2533
-> Mute This Topic: https://lists.yoctoproject.org/mt/116273420/5052612
+> View/Reply Online (#2515):
+> https://lists.yoctoproject.org/g/yocto-patches/message/2515
+> Mute This Topic: https://lists.yoctoproject.org/mt/116273402/5052612
 > Group Owner: yocto-patches+owner@lists.yoctoproject.org
 > Unsubscribe:
 > https://lists.yoctoproject.org/g/yocto-patches/leave/13170708/5052612/150=
@@ -193,123 +223,162 @@ Best regards,
 
 Jos=C3=A9 Quaresma
 
---00000000000067db7a06438c6bb6
+--00000000000074017806438c8c70
 Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
-mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">Peter Marko via=
- <a href=3D"http://lists.yoctoproject.org">lists.yoctoproject.org</a> &lt;p=
-eter.marko=3D<a href=3D"mailto:siemens.com@lists.yoctoproject.org">siemens.=
-com@lists.yoctoproject.org</a>&gt; escreveu (quinta, 13/11/2025 =C3=A0(s) 1=
-2:57):<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0=
-px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">Describe =
-QA done when accepting patches.<br>
+<div dir=3D"ltr">Hi Peter,<br><br>Very nice work putting all of that in pla=
+ce and much better=C2=A0than the kirkstone/go.<div>I will try to help in an=
+y way I can with the maintenance of the layer.<br><br>Thank you very much f=
+or the hard work.<br><br>Jose</div></div><br><div class=3D"gmail_quote gmai=
+l_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">Peter Marko via <a=
+ href=3D"http://lists.yoctoproject.org">lists.yoctoproject.org</a> &lt;pete=
+r.marko=3D<a href=3D"mailto:siemens.com@lists.yoctoproject.org">siemens.com=
+@lists.yoctoproject.org</a>&gt; escreveu (quinta, 13/11/2025 =C3=A0(s) 12:5=
+7):<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px =
+0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">Hello everyo=
+ne,<br>
 <br>
-Note that oe-selftest fail when additional parameters (like -j) is not<br>
-present. When that is fixed, we can simplify the oe-selftest QA example.<br=
+here is initial draft of meta-lts-mixins scarthgap/go branch.<br>
+Compared to kirkstone/go this now also contains proper testing.<br>
+Functionality is I think equivalent to current kirsktone/go branch.<br>
+<br>
+Note that the testing depends on not-yet-merged series<br>
+=C2=A0 <a href=3D"https://lists.openembedded.org/g/openembedded-core/messag=
+e/226238" rel=3D"noreferrer" target=3D"_blank">https://lists.openembedded.o=
+rg/g/openembedded-core/message/226238</a><br>
+<br>
+Creation notes:<br>
+* base commit copied from kirkstone/go branch<br>
+=C2=A0 * adapted release name and removed obsolete lines from layer.conf<br=
 >
+* all recipe changes from master were picked into this series except those =
+not suitable for scarthgap<br>
+=C2=A0 * 7321cc17ae5483f17fe9cdffea7b62acd9d9c3a2 meta: set S to be in UNPA=
+CKDIR in recipes that explicitly set<br>
+=C2=A0 * 4ccc3bc8266c327bcc18c9a3faf7536210dfb9f0 classes/recipes: Switch v=
+irtual/XXX-gcc to virtual/cross-cc (and c++/binutils)<br>
+* all test changes from master were submitted as backports to openembedded-=
+core (link above)<br>
+* 3 patches were sent to openembedded master branch upstream based on testi=
+ng and file comparison<br>
+=C2=A0 * <a href=3D"https://lists.openembedded.org/g/openembedded-core/mess=
+age/226226" rel=3D"noreferrer" target=3D"_blank">https://lists.openembedded=
+.org/g/openembedded-core/message/226226</a> oeqa: fix package detection in =
+go sdk tests<br>
+=C2=A0 * <a href=3D"https://lists.openembedded.org/g/openembedded-core/mess=
+age/226231" rel=3D"noreferrer" target=3D"_blank">https://lists.openembedded=
+.org/g/openembedded-core/message/226231</a> go-helloworld: fix license<br>
+=C2=A0 * <a href=3D"https://lists.openembedded.org/g/openembedded-core/mess=
+age/226237" rel=3D"noreferrer" target=3D"_blank">https://lists.openembedded=
+.org/g/openembedded-core/message/226237</a> oeqa: drop unnecessary dependen=
+cy from go runtime tests<br>
+* class/lib changes between scarthgap and master are following:<br>
+=C2=A0 * $ git log --oneline 8f46f60a703defc3e74adad382320c129cef0b06..orig=
+in/master -- \<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 meta/classes/go-vendor.bbclass meta/classes-rec=
+ipe/go.bbclass \<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 meta/classes-recipe/goarch.bbclass meta/classes=
+-recipe/go-mod.bbclass \<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 meta/classes-recipe/go-ptest.bbclass meta/class=
+es-recipe/go-mod-update-modules.bbclass<br>
+=C2=A0 =C2=A0 26368cfb91 go-mod-update-modules.bbclass: Update license find=
+ing<br>
+=C2=A0 =C2=A0 cfff8e9682 goarch.bbclass: do not leak TUNE_FEATURES into cro=
+sssdk task signatures<br>
+=C2=A0 =C2=A0 0aa406d058 recipetool/create_go: proxy module fetching to go-=
+mod-update-modules<br>
+=C2=A0 =C2=A0 34bb889ffa classes/go-mod-update-modules: add class to genera=
+te module list<br>
+=C2=A0 =C2=A0 5f8218c626 go-mod.bbclass: Calculate GO_MOD_CACHE_DIR relativ=
+e to ${UNPACKDIR}<br>
+=C2=A0 =C2=A0 374a91204b go: Check if GO_IMPORT is set in recipe and error =
+if not<br>
+=C2=A0 =C2=A0 791ab77ac0 go: remove support for GOROOT_FINAL<br>
+=C2=A0 =C2=A0 30ea609d33 meta/meta-selftest: Fix variable assignment whites=
+pace<br>
+=C2=A0 =C2=A0 6c4e3206b6 classes: go-vendor: Change symlink creation.<br>
+=C2=A0 =C2=A0 fc4f589cc7 go-vendor: Fix absolute paths issue<br>
+=C2=A0 =C2=A0 114fe16f96 classes/go-vendor: Use UNPACKDIR instead of WORKDI=
+R<br>
+=C2=A0 =C2=A0 35496654db go-mod.bbclass: Unpack module dependency license f=
+iles<br>
+=C2=A0 =C2=A0 287daff0bb go-mod.bbclass: Set GO_MOD_CACHE_DIR<br>
+=C2=A0 =C2=A0 cc4ec43a2b go: Drop fork of unpack code, mandate GO_SRCURI_DE=
+STSUFFIX<br>
+=C2=A0 * there are mostly changes to directory layout, fetching and style o=
+r new go-mod-update-modules class<br>
+=C2=A0 * GOROOT_FINAL can be kept as unused variable like in scarthgap<br>
+=C2=A0 * TUNE_FEATURES fix is being backported to scarthgap and kirkstone o=
+pembedded-core<br>
 <br>
-Expected results:<br>
-* runtime<br>
-RESULTS - go.GoCompileTest.test_go_compile: PASSED (67.87s)<br>
-RESULTS - go.GoCompileTest.test_go_module: PASSED (6.17s)<br>
-RESULTS - go.GoHelloworldTest.test_gohelloworld: PASSED (1.24s)<br>
-RESULTS - ping.PingTest.test_ping: PASSED (0.02s)<br>
-RESULTS - ssh.SSHTest.test_ssh: PASSED (0.67s)<br>
-* sdk<br>
-RESULTS - go.GoCompileTest.test_go_build: PASSED (0.35s)<br>
-RESULTS - go.GoCompileTest.test_go_module: PASSED (0.33s)<br>
-RESULTS - go.GoHostCompileTest.test_go_cross_compile: PASSED (0.22s)<br>
-RESULTS - go.GoHostCompileTest.test_go_module_cross_compile: PASSED (0.37s)=
+Peter<br>
 <br>
-* oe-selftest<br>
-2025-11-13 11:55:23,485 - oe-selftest - INFO - gotoolchain.oeGoToolchainSel=
-fTest.test_go_dep_build (subunit.RemotedTestCase)<br>
-2025-11-13 11:55:23,485 - oe-selftest - INFO -=C2=A0 ... ok<br>
-2025-11-13 11:55:23,485 - oe-selftest - INFO - 0: 1/1 1/1 (3.17s) (0 failed=
-) (gotoolchain.oeGoToolchainSelfTest.test_go_dep_build)<br>
-<br>
-Signed-off-by: Peter Marko &lt;<a href=3D"mailto:peter.marko@siemens.com" t=
-arget=3D"_blank">peter.marko@siemens.com</a>&gt;<br>
 ---<br>
-=C2=A0README.md | 44 ++++++++++++++++++++++++++++++++++++++++++++<br>
-=C2=A01 file changed, 44 insertions(+)<br>
 <br>
-diff --git a/README.md b/README.md<br>
-index e316fc6..06a948d 100644<br>
---- a/README.md<br>
-+++ b/README.md<br>
-@@ -41,3 +41,47 @@ Maintenance<br>
-=C2=A0Layer maintainers:<br>
-=C2=A0* Jose Quaresma &lt;<a href=3D"mailto:jose.quaresma@foundries.io" tar=
-get=3D"_blank">jose.quaresma@foundries.io</a>&gt;<br>
-=C2=A0* Peter Marko &lt;<a href=3D"mailto:peter.marko@siemens.com" target=
-=3D"_blank">peter.marko@siemens.com</a>&gt;<br>
-+<br>
-+Quality Assurance<br>
-+-----------------<br>
-+<br>
-+QA tests are using original openembedded-core testsuites.<br>
-+Current plan is to backport QA test changes to openembedded-core scarthgap=
- branch.<br>
-+When that is no longer possible, changes will picked here.<br>
-+<br>
-+Automated tests to verify go toolchain functionality are being executed wi=
-th following configurations and commands:<br>
-+<br>
-+* OEQA runtime<br>
-+<br>
-+=C2=A0 =C2=A0 ```<br>
-+=C2=A0 =C2=A0 IMAGE_INSTALL:append =3D &quot; packagegroup-core-ssh-dropbe=
-ar go-helloworld packagegroup-go-sdk-target&quot;<br></blockquote><div><br>=
-</div><div>Is the go-helloworld running=C2=A0automatically or does it need =
-to be launched manually?<br><br>Jose</div><div>=C2=A0</div><blockquote clas=
-s=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid r=
-gb(204,204,204);padding-left:1ex">
-+=C2=A0 =C2=A0 IMAGE_CLASSES +=3D &quot;testimage&quot;<br>
-+=C2=A0 =C2=A0 TEST_SUITES =3D &quot;ping ssh go&quot;<br>
-+=C2=A0 =C2=A0 QB_MEM =3D &quot;-m 2048&quot;<br>
-+=C2=A0 =C2=A0 ```<br>
-+<br>
-+=C2=A0 =C2=A0 ```<br>
-+=C2=A0 =C2=A0 bitbake core-image-minimal &amp;&amp; bitbake core-image-min=
-imal:do_testimage<br>
-+=C2=A0 =C2=A0 ```<br>
-+<br>
-+* OEQA SDK<br>
-+<br>
-+=C2=A0 =C2=A0 ```<br>
-+=C2=A0 =C2=A0 IMAGE_CLASSES +=3D &quot;testimage&quot;<br>
-+=C2=A0 =C2=A0 SDK_TOOLCHAIN_LANGS =3D &quot;go&quot;<br>
-+=C2=A0 =C2=A0 TESTSDK_SUITES =3D &quot;go&quot;<br>
-+=C2=A0 =C2=A0 ```<br>
-+<br>
-+=C2=A0 =C2=A0 ```<br>
-+=C2=A0 =C2=A0 bitbake core-image-minimal:do_populate_sdk &amp;&amp; bitbak=
-e core-image-minimal:do_testsdk<br>
-+=C2=A0 =C2=A0 ```<br>
-+<br>
-+* OEQA selftest<br>
-+<br>
-+=C2=A0 =C2=A0 ```<br>
-+=C2=A0 =C2=A0 SANITY_TESTED_DISTROS =3D &quot;&quot;<br>
-+=C2=A0 =C2=A0 ```<br>
-+<br>
-+=C2=A0 =C2=A0 ```<br>
-+=C2=A0 =C2=A0 oe-selftest -r gotoolchain -j $(grep -c ^processor /proc/cpu=
-info)<br>
-+=C2=A0 =C2=A0 ```<br>
+Alexander Kanavin (4):<br>
+=C2=A0 go-helloworld: update to latest revision<br>
+=C2=A0 go-helloworld: update to latest revision<br>
+=C2=A0 go-helloworld: update to latest revision<br>
+=C2=A0 meta: remove consecutive blank lines<br>
+<br>
+Gyorgy Sarvari (1):<br>
+=C2=A0 go-helloworld: update to latest revision<br>
+<br>
+Hongxu Jia (4):<br>
+=C2=A0 go: upgrade 1.22.12 -&gt; 1.24.0<br>
+=C2=A0 go: fix buildpath issue for go-runtime<br>
+=C2=A0 go: remove support for GOROOT_FINAL<br>
+=C2=A0 tcmode-default: bump GOVERSION to 1.24.0<br>
+<br>
+Jose Quaresma (1):<br>
+=C2=A0 Revert &quot;go: Drop fork of unpack code, mandate GO_SRCURI_DESTSUF=
+FIX&quot;<br>
+<br>
+Khem Raj (1):<br>
+=C2=A0 go-cross: Disable build with ccache<br>
+<br>
+Osama Abdelkader (1):<br>
+=C2=A0 go-cross-canadian: fix binaries install and GOARCH<br>
+<br>
+Peter Marko (18):<br>
+=C2=A0 Initial commit: add license, readme and layer config<br>
+=C2=A0 go-helloworld: add from openembedded-core scarthgap<br>
+=C2=A0 go: add from openembedded-core scarthgap<br>
+=C2=A0 go-helloworld: fix license<br>
+=C2=A0 go: upgrade 1.24.0 -&gt; 1.24.1<br>
+=C2=A0 go: upgrade 1.24.1 -&gt; 1.24.2<br>
+=C2=A0 go: upgrade 1.24.2 -&gt; 1.24.3<br>
+=C2=A0 go: upgrade 1.24.3 -&gt; 1.24.4<br>
+=C2=A0 go: set status of CVE-2024-3566<br>
+=C2=A0 go: upgrade 1.24.4 -&gt; 1.24.5<br>
+=C2=A0 go: upgrade 1.24.5 -&gt; 1.24.6<br>
+=C2=A0 go: upgrade 1.24.6 -&gt; 1.25.0<br>
+=C2=A0 conf/layer: switch to golang 1.25<br>
+=C2=A0 go: upgrade 1.25.0 -&gt; 1.25.1<br>
+=C2=A0 go: upgrade 1.25.1 -&gt; 1.25.2<br>
+=C2=A0 go: upgrade 1.25.2 -&gt; 1.25.3<br>
+=C2=A0 readme: update to markdown format<br>
+=C2=A0 readme: add QA chapter<br>
+<br>
+Randolph Sapp (1):<br>
+=C2=A0 go: fix sigaction usage on i386 platforms<br>
+<br>
+Richard Purdie (3):<br>
+=C2=A0 go: Drop fork of unpack code, mandate GO_SRCURI_DESTSUFFIX<br>
+=C2=A0 meta/meta-selftest: Fix variable assignment whitespace<br>
+=C2=A0 go: Fix to work without gold on aarch64<br>
+<br>
 <br>
 <br>
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-<br>
 Links: You receive all messages sent to this group.<br>
-View/Reply Online (#2533): <a href=3D"https://lists.yoctoproject.org/g/yoct=
-o-patches/message/2533" rel=3D"noreferrer" target=3D"_blank">https://lists.=
-yoctoproject.org/g/yocto-patches/message/2533</a><br>
-Mute This Topic: <a href=3D"https://lists.yoctoproject.org/mt/116273420/505=
+View/Reply Online (#2515): <a href=3D"https://lists.yoctoproject.org/g/yoct=
+o-patches/message/2515" rel=3D"noreferrer" target=3D"_blank">https://lists.=
+yoctoproject.org/g/yocto-patches/message/2515</a><br>
+Mute This Topic: <a href=3D"https://lists.yoctoproject.org/mt/116273402/505=
 2612" rel=3D"noreferrer" target=3D"_blank">https://lists.yoctoproject.org/m=
-t/116273420/5052612</a><br>
+t/116273402/5052612</a><br>
 Group Owner: <a href=3D"mailto:yocto-patches%2Bowner@lists.yoctoproject.org=
 " target=3D"_blank">yocto-patches+owner@lists.yoctoproject.org</a><br>
 Unsubscribe: <a href=3D"https://lists.yoctoproject.org/g/yocto-patches/leav=
@@ -323,7 +392,7 @@ ttps://lists.yoctoproject.org/g/yocto-patches/leave/13170708/5052612/150433=
 </blockquote></div><div><br clear=3D"all"></div><div><br></div><span class=
 =3D"gmail_signature_prefix">-- </span><br><div dir=3D"ltr" class=3D"gmail_s=
 ignature"><div dir=3D"ltr">Best regards,<div><br>Jos=C3=A9 Quaresma</div></=
-div></div></div>
+div></div>
 
---00000000000067db7a06438c6bb6--
+--00000000000074017806438c8c70--
 
