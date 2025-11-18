@@ -2,144 +2,147 @@ Return-Path: <anuj.mittal@oss.qualcomm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3D09CEDD81
-	for <webhook@archiver.kernel.org>; Tue, 18 Nov 2025 13:09:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF6F0CEDD86
+	for <webhook@archiver.kernel.org>; Tue, 18 Nov 2025 13:09:20 +0000 (UTC)
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.12094.1763471349659146008
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.12082.1763471351022578966
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 18 Nov 2025 05:09:09 -0800
+ Tue, 18 Nov 2025 05:09:11 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@qualcomm.com header.s=qcppdkim1 header.b=f7XRlGxg;
- dkim=pass header.i=@oss.qualcomm.com header.s=google header.b=gRNCaL9h;
+ dkim=pass header.i=@qualcomm.com header.s=qcppdkim1 header.b=ljPDz3oo;
+ dkim=pass header.i=@oss.qualcomm.com header.s=google header.b=Jcjou8ZM;
  spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: oss.qualcomm.com, ip: 205.220.168.131, mailfrom: anuj.mittal@oss.qualcomm.com)
 Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AI8VgpJ2250590
-	for <yocto-patches@lists.yoctoproject.org>; Tue, 18 Nov 2025 13:09:09 GMT
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AI8VT5g2250184
+	for <yocto-patches@lists.yoctoproject.org>; Tue, 18 Nov 2025 13:09:10 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=k30sP3pIxzoCoMj5KtTT6pJbQt+FPzmYFVD
-	ofdmAw4Y=; b=f7XRlGxgCQWJcQffLEZr/gG4Q6xKPHhSH+u8z94I5Ix6X3nTb5g
-	Q/yHL02jPRKDsm+Mt4sWDtwwuTnPl0f+bw2h7bqHm96VCqbtj9+201Qr4zjuwOKf
-	6LM+cUM2WHpMuZLzwYvBMbxxPtQxvbUGI4KW0ZJGzJuT5FgprXl1I0PX2DRgsygk
-	/DgcmGGaVR5t7pnF6VIyZgexcl+js0ZhAYPY7T6SvSpLnft1MuDfAwGYq+HSwlkh
-	OZfJuP0grEnyher6d67GBWP+1DmGqGUZP6BqYO0cZIyoCbvCHyoHKdUOdLpSWvku
-	gw1hyHM0klFsDW24NRfomzzyYXVmvhgXv9w==
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4agnc5gs7p-1
+	content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=qcppdkim1; bh=jq+BZzINcdT
+	wBNg/3NCqSwA9yK1a7EywscWcJBX06DA=; b=ljPDz3oogH+6NGDIU5oRV/AhUOr
+	MOD/mw2htcqlVQRmcp3qAFc/lv7mCNpuEDLV1xTnWRsDTiRosZqiIMjsGHU1/39/
+	ZJHKxFyMnABMs6WyXXr6lR1EPF4ptpoV5uCSgXkBRqXKonYHgmYDSR5w1PEDgFso
+	NVPMxnf8xoxGfxzNyz9GrpqU45THiGGcySoYN996AxspwieqbAcC2jJvSzE2YJqo
+	Sxb9WQYHJgTtI14BD62aT94SdOJNKW9sd5Wvk2xjH6lWmC95A/e2D3jRt2RGqB2k
+	om5ohWislKMs47he77WNG4L6FpzMbAhQZEY29qnYJ17FJSsx6FdGyczQ0OA==
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4agnc5gs7r-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <yocto-patches@lists.yoctoproject.org>; Tue, 18 Nov 2025 13:09:09 +0000 (GMT)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-340ad9349b3so13932004a91.1
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 18 Nov 2025 05:09:09 -0800 (PST)
+	for <yocto-patches@lists.yoctoproject.org>; Tue, 18 Nov 2025 13:09:10 +0000 (GMT)
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-7b96038aa68so5971568b3a.0
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 18 Nov 2025 05:09:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1763471348; x=1764076148; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=k30sP3pIxzoCoMj5KtTT6pJbQt+FPzmYFVDofdmAw4Y=;
-        b=gRNCaL9hGFBimobUugPBkN9wivPF7hzgI53RTK2LJLDBWus6K4YkyrISsfYubJuFu3
-         gss+ovU2HVIHB+DaZYhqo6aaqSor6bE2rmuLKkAuTYkq/3Yia37pnBpYr/4uaLlT9Jjn
-         aZrtumH3Vs1EULOf75di385iK19bC89w0PnenyWTuVbzWJBk8QQD5QfEQLRw/IUnS6Yr
-         BhOBuIK+87dhzckmU9KE918k9d0NwJzQ0CJ99xeVK/Uf1pKjgNEr/l+Tf+zXUWH6PT3a
-         6Y2q67pQuL+uHL7CxwTB9pfWZgC8FQ0r2+xCaXltT5zyECAM5Ch884tvIDM8phNsQswB
-         l5CQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763471348; x=1764076148;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=oss.qualcomm.com; s=google; t=1763471350; x=1764076150; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=k30sP3pIxzoCoMj5KtTT6pJbQt+FPzmYFVDofdmAw4Y=;
-        b=PeZ8P805Ty0zWSGA7qCooQh8slvfam+voIFVdoyyc2Xp3KwkuoCYmYmodzkroyapBO
-         qcMpWIqAaKuexaH8Yjl4aHi+n+hjr/0fLe52Ya9OczrbEusAY1vdDzqKrM38vIAjc44G
-         HYfE6VA+jXBjcdUy1P/DCWaI/GFrzN2WBS/1lS1KSJGavlxp1mV2hP/VSgOiQU9oXsmQ
-         uMLhCS3NNj7EHCUkaOn6d3ocd8dHqwO3Q2v5W/xz1LPkVTsoZhiwmhCL0jRoTQWW83Yd
-         WMuC5Mf7QvDSiy1N4/k6rQsKVOec336/9UPHnlol7ufWpNG9BWmx6rJfVqM8yF3McVfx
-         xiHg==
-X-Gm-Message-State: AOJu0YyBpLgvjTymqSgFhFif4TJXfPdlA2WqP4/ORcroATtPzhJR6dpd
-	pwcwnQv9SED2EsXjA5fqEKRNBaa1x9q1AHM6VWw17TUV5X5Tgteuwmns5/8z5iOmqmGmVi+1S+6
-	1lOQX8R76nwaZRuEM1iMqwVJKQZniUGNhikmWrAwKl9S7mwUBEkHSBbxKWK0h6gCmEh5CVfFAJu
-	DY+1o7ZE3Xs3g3
-X-Gm-Gg: ASbGncs7W2gFFHyZCXA7vwdh/49+ZkK6ckcM+e5/GZn78dCuUJlEDmZh23ElZV3oxB6
-	iULQZkWq+sDk8xLLuFApkR8is/MAePzHncSx2bj4o5+0JeaNHjDZlIemW9AuA7X5b+gyA6kr803
-	lS9RJ1VEkTj4P2V0Il58j6gqOgHdbnE8PMFoCpzW+0Mwy0VK3NehSpk8TgFfXOx8YbrTJUtsey+
-	L9i/C1xL+qUQbXq0XqfWsrX+58OR7Xpf0hJZfx7UAA/PM7kw3OCzZwPVmEJewI+ht8IqOMWmi2O
-	s0IKgZmaEJbi3OMcQrU5i6iV2TICglwbfJDhw936xpzfhXXtjiQVi6KjOSdOhdQINZEM63wE7h/
-	RG8fZPQ3irFE3y7bGKQhA0JFfFxwoveLCHM/9r7Zu
-X-Received: by 2002:a17:90b:3fc8:b0:340:b1b1:3d28 with SMTP id 98e67ed59e1d1-343fa75a9cdmr17912305a91.25.1763471348484;
-        Tue, 18 Nov 2025 05:09:08 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEUpHEQIZA2B2JH6WidZVHUzH5UAOrdozWqLgQFbbVXjZWQVIV4Wde5Nl6PJhKzih+8yJXEmQ==
-X-Received: by 2002:a17:90b:3fc8:b0:340:b1b1:3d28 with SMTP id 98e67ed59e1d1-343fa75a9cdmr17912248a91.25.1763471347821;
-        Tue, 18 Nov 2025 05:09:07 -0800 (PST)
+        bh=jq+BZzINcdTwBNg/3NCqSwA9yK1a7EywscWcJBX06DA=;
+        b=Jcjou8ZMcbQ0FOxI39uJ5JcC1B5lK2YCt+YqnaRo7LtsUW7bSP0BWMrbVXOIiKSnHj
+         Fbz26iimDYPlPCwGnufPJ4PsC1bjiW5uMf+NvAtIfVhiX9ENOsOsYo8Ty5uCP00pjdRC
+         IFX+LSgwRT0Vvtn+aAPmpSffdUzBLBRvCCKZZinLUgrPhdfiVBqCC3M+hKKRp92QWA0Z
+         mEMez3DuEIe1xfCafHNSqKH1U7+OmNJVLc+CarMCvnGT385Z5jM1QSqTqFQ5s03cs60c
+         bx6T1n/KC7+cQ1Z2/pxqb5NukmnDGPtAa07dzqWec+R5fLodYJZ71ZUlMiV6HJVBH09p
+         ZIsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763471350; x=1764076150;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=jq+BZzINcdTwBNg/3NCqSwA9yK1a7EywscWcJBX06DA=;
+        b=hbOx+kU6LGaHlffYSYAuLyFqtHUNW8Yzjljwrh8sO9KhtNi98YFtbrT/p9SMMLSwY0
+         fr5tLXSi7by6LvSUwEwADKPd0aT67hhqqP/h1bKb+F5Oe/KVmnvL6jqfcIQZa7GXnEKe
+         AQBVfPd2I+e2AI3+By9n/0rdVdVCU/jiHGNT7Sahxp5/bFEmue1I4kd+6iKswX1zaQXI
+         Yz3f/twwiNrwgbbjJFnSaojINQ1Uge6gpSUYiI+63iHQcI1MJ6uuq20wN9UUrofo/xkN
+         kCa7aMxJzp8exP3q1jpRq+tB7y1O6Q4rzjHfvIWWQ2OSZbEs5snaJCXaIukolR5kfOoi
+         Z4jw==
+X-Gm-Message-State: AOJu0Yz/cN9En2YW7OnKk/Gt1mM+Ikhc8e0CMkj885OvapmtXn7uzwsB
+	kJ+PVIpGB0gUkKJj5UC+BZrvSpQLwKkb1WpoRvj/K5y9GT3z5rsFxSdZ5KP/HmOyjtviB98eJ+a
+	Ca0vrU3RTfwUJXK5eti2EyjbBrbnDPTLXaaVD2JIXggYcwAwyVZIN9ggAUqDBZ3O/F/PYEXkVal
+	1K7flYa9hZ+UXy
+X-Gm-Gg: ASbGnctBUPdxSTxJ1Tc73aYhuOPwQG3sOxj8Pcn3J7nRIkaefYY5r+HY2zr7wMP7XZA
+	iopQR17AeHZL0ffJYbpd8FeVcpXDzGlb3ALO8dfU+70ikmyum+6uGgkPlyCaZKMjKHURyXseWwN
+	xu+EiVWg44JlI5O/4RE0SrOSQADHuUs67ECpLeycdvmzcEBWV2Pzt5zD+QvDpgt+d61Zv+MTdIN
+	M2+wywfLYV9hDvRW4riUXT10WCd7VnFq60Ja5phApOY+fTLIUu95YdB7CYSUIuy5Y9LoLSXq0WV
+	8gQgZAglcRcTxmtizezHwBovuqupsDK8S4oRxrZuftpTmdc/nknuFfV9CrGaoZTq5XouZvMUv6/
+	99D4fdlGmLTiTmopBfzN3w+w59GXERnJPvf/Qddgy
+X-Received: by 2002:aa7:938d:0:b0:7a1:6124:c470 with SMTP id d2e1a72fcca58-7c12f64f901mr2594595b3a.8.1763471349948;
+        Tue, 18 Nov 2025 05:09:09 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEkaDKxk7EoC/JsL5dn04x6C0CCKIMlXx6Duxz3AeNpSeIXTKAD12ilgjVUu6sp9pDNcyJpOw==
+X-Received: by 2002:aa7:938d:0:b0:7a1:6124:c470 with SMTP id d2e1a72fcca58-7c12f64f901mr2594565b3a.8.1763471349243;
+        Tue, 18 Nov 2025 05:09:09 -0800 (PST)
 Received: from hu-anujmitt-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b9250d24b9sm16516514b3a.17.2025.11.18.05.09.06
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b9250d24b9sm16516514b3a.17.2025.11.18.05.09.08
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Nov 2025 05:09:07 -0800 (PST)
+        Tue, 18 Nov 2025 05:09:08 -0800 (PST)
 From: Anuj Mittal <anuj.mittal@oss.qualcomm.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-selinux][PATCH 1/2] selinux-python: make semanage RDEPENDS on sepolgen
-Date: Tue, 18 Nov 2025 18:38:58 +0530
-Message-ID: <20251118130859.946532-1-anuj.mittal@oss.qualcomm.com>
+Subject: [meta-selinux][PATCH 2/2] policycoreutils: remove reference to obsolete code
+Date: Tue, 18 Nov 2025 18:38:59 +0530
+Message-ID: <20251118130859.946532-2-anuj.mittal@oss.qualcomm.com>
 X-Mailer: git-send-email 2.51.2
+In-Reply-To: <20251118130859.946532-1-anuj.mittal@oss.qualcomm.com>
+References: <20251118130859.946532-1-anuj.mittal@oss.qualcomm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: F246i-dgOfZFBe6WPb1asuHHSKutaLxY
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTE4MDEwNSBTYWx0ZWRfXzPPv2xgZLXnP
- mNIngN/jnBhlpZquzfZ6zhfzqAvItYlRenCvMYotetvcBRxcNy9k5GnhG7QT6XX7Lfrv8O6/6BR
- p9RQVUSREsXKMmlTv3Wx9tbBfrES+LJATFBwtH/m7n79z+9V3IwU9LBJxe3iMcCa5VqEID/s7fg
- okhhAKBUPG/aTgzZW5g19SKMGcQtb0KJWV+FczaWr898AenB8JhD00h2IdXQk96JjV8Uo3dLyi+
- 7eRkZO/Nu5zcU2Jn4m6BTiMP61Owg+CFx54vqUoUJTpeBmW19XOk5kcCEoLzOERHBvIj3v0yONY
- oemv/kq5sXrcXY+QR2h6WEyCAIugsuk7iO3+95EyyX3nGenuD3ZWQKG21ZkliQLOUp2vwUUUQQh
- G/VullRrbo8uGNXGt7v/hJckgj0NLg==
-X-Authority-Analysis: v=2.4 cv=BYTVE7t2 c=1 sm=1 tr=0 ts=691c6ff5 cx=c_pps
- a=RP+M6JBNLl+fLTcSJhASfg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+X-Proofpoint-GUID: ubeH9ch3gIEIPVWrzhICeTxXteVNyIyh
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTE4MDEwNSBTYWx0ZWRfXz/RzxdyGu8qm
+ N4/Qz24Oy5c90QKZXWbVNeaNU/R9+c3IQpiGrGVCohFRkyJhdBvKqK3uDMj7gr8QNVY9908m6rf
+ ToVA4zxAuFLKj5G4KNPIAJoihH/3lhVei/o7k0HNIH1U3bO4FNmz8duECJVzUV02anfJe9XuMSM
+ 7fkWlnJc/1DjN/1sq8h9IplKyqkbdk+ue5sqshy3UaRVjFcFppSZcWx2hEgL/ehV6UXiGo/OMMT
+ 83AJAfmd+s4OSDhBbVeQ6LXdnTJmEFPkpGJ43MlLQWWOm1W9DhURX7PJx8/76pc7z4zg9Erigvy
+ /N1oLkaPtxjCDv86t39c9xnZ/3nDAgvWYA0L9z2wAJiKCxsbS48Nry1jObg6jTwQLe1RE4VjIfS
+ AByEgiDh/IzstYNzajCGFeR9VMaZhw==
+X-Authority-Analysis: v=2.4 cv=BYTVE7t2 c=1 sm=1 tr=0 ts=691c6ff6 cx=c_pps
+ a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
  a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=B4qtFHoHhPDmKG_lr2MA:9 a=iS9zxrgQBfv6-_F4QbHw:22
-X-Proofpoint-ORIG-GUID: F246i-dgOfZFBe6WPb1asuHHSKutaLxY
+ a=NEAV23lmAAAA:8 a=EUspDBNiAAAA:8 a=6YGyEImX2DtimxmLrGkA:9
+ a=IoOABgeZipijB_acs4fv:22
+X-Proofpoint-ORIG-GUID: ubeH9ch3gIEIPVWrzhICeTxXteVNyIyh
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
  definitions=2025-11-17_04,2025-11-18_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 spamscore=0 bulkscore=0 clxscore=1011 priorityscore=1501
+ malwarescore=0 spamscore=0 bulkscore=0 clxscore=1015 priorityscore=1501
  lowpriorityscore=0 suspectscore=0 phishscore=0 impostorscore=0 adultscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511180105
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 18 Nov 2025 13:09:10 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2580
+ <yocto-patches@lists.yoctoproject.org>; Tue, 18 Nov 2025 13:09:20 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2581
 
 From: Anuj Mittal <anuj.mittal@oss.qualcomm.com>
 
-Make the dependency explicit, otherwise when it leads to errors when it
-is not included.
+The code referenced no longer exists [1]. It was refactored later to
+change the way modules are loaded [2].
 
-| ~ # semanage permissive
-| Traceback (most recent call last):
-|   File "/sbin/semanage", line 29, in <module>
-|     import seobject
-|   File "/usr/lib/python3.13/site-packages/seobject.py", line 33, in <module>
-|     import sepolicy
-|   File "/usr/lib/python3.13/site-packages/sepolicy/__init__.py", line 8, in <module>
-|     import sepolgen.defaults as defaults
-| ModuleNotFoundError: No module named 'sepolgen'
+Remove reference to the code, comment and creation of directory as it
+can be set to something else as well.
+
+[1] https://github.com/SELinuxProject/selinux/commit/565ea9832e841075e362db4d188cc7ebb0d4c35e
+[2] https://github.com/SELinuxProject/selinux/commit/2ff279e21e4715ac49e094b5fae8bc8e84b9e417
 
 Signed-off-by: Anuj Mittal <anuj.mittal@oss.qualcomm.com>
 ---
- recipes-security/selinux/selinux-python_3.9.bb | 1 +
- 1 file changed, 1 insertion(+)
+ recipes-security/selinux/policycoreutils_3.9.bb | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/recipes-security/selinux/selinux-python_3.9.bb b/recipes-security/selinux/selinux-python_3.9.bb
-index 88850ad..62226cf 100644
---- a/recipes-security/selinux/selinux-python_3.9.bb
-+++ b/recipes-security/selinux/selinux-python_3.9.bb
-@@ -53,6 +53,7 @@ RDEPENDS:${PN}-semanage = "\
-         libselinux-python \
-         audit-python \
-         ${PN} \
-+        ${PN}-sepolgen \
- "
- PACKAGECONFIG ??= "sepolicy-generate"
- PACKAGECONFIG[sepolicy-generate] = ",,,"
+diff --git a/recipes-security/selinux/policycoreutils_3.9.bb b/recipes-security/selinux/policycoreutils_3.9.bb
+index 443e18b..c2a3871 100644
+--- a/recipes-security/selinux/policycoreutils_3.9.bb
++++ b/recipes-security/selinux/policycoreutils_3.9.bb
+@@ -171,10 +171,4 @@ do_install:append:class-target() {
+         install -d ${D}${sysconfdir}/pam.d/
+         install -m 0644 ${UNPACKDIR}/pam.d/* ${D}${sysconfdir}/pam.d/
+     fi
+-
+-    # /var/lib/selinux is involved by seobject.py:
+-    #   + dirname = "/var/lib/selinux"
+-    # and it's required for running command:
+-    #   $ semanage permissive [OPTS]
+-    install -d ${D}${localstatedir}/lib/selinux
+ }
 -- 
 2.51.2
 
