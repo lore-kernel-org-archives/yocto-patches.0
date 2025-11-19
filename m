@@ -2,34 +2,34 @@ Return-Path: <peter.marko@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8667CF34D9
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECE00CF34DA
 	for <webhook@archiver.kernel.org>; Wed, 19 Nov 2025 15:05:57 +0000 (UTC)
-Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.9150.1763564756770038152
+Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.9153.1763564756992869693
  for <yocto-patches@lists.yoctoproject.org>;
  Wed, 19 Nov 2025 07:05:57 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=peter.marko@siemens.com header.s=fm1 header.b=EzPoXHgb;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.226, mailfrom: fm-256628-2025111915055470fda668170002078f-iwcwe6@rts-flowmailer.siemens.com)
-Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 2025111915055470fda668170002078f
+ dkim=pass header.i=peter.marko@siemens.com header.s=fm1 header.b=cEnTVFao;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.225, mailfrom: fm-256628-20251119150554cdcb567b490002073b-l1kqga@rts-flowmailer.siemens.com)
+Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 20251119150554cdcb567b490002073b
         for <yocto-patches@lists.yoctoproject.org>;
-        Wed, 19 Nov 2025 16:05:55 +0100
+        Wed, 19 Nov 2025 16:05:54 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=peter.marko@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=0afVVTJc6rvr21It2wITI/i3Zftusw25WTxBZDrTHKM=;
- b=EzPoXHgbKGBLB6NUoqW1gjkF5iIswCRpCG0UzNJJ9U7kd2Mtzu8RYfR2NQ/bLNIMKGy8jA
- pFOfjikEBOAOFOdugNsCkSzEHk62kNYemobHsMbkrmcDheadtHvUw6fVp/GOOF2ESkgg3qUF
- wgm2xZr/ZzNEc6zyC60L2WB80wqiPiLIW06xBIeJpOiTs0Q6LGZrXZP7lZ8hjCszlD9vAwhj
- ZCFnnH5cxOnAF9Tob+bsp6EjzSidWBK6P339qe6CfTDvumZHjjayo4Kp0Sgv38lEmH6Bx6Oo
- rQKVDaCbHCKnKEDWe7ozITFwvLeuIwHlo3TFitsoJypv4fWwM8FcPdlA==;
+ bh=EYr7hb5CTWgqyzs48T0RYe8TaKXwzTwMdNLxOU0evKE=;
+ b=cEnTVFao/gpfqYFw0Pf9UR7z90xG+dqv0LzqMihZflS9Q+WRteqJ0Er/KN6fql73o4xiAx
+ NFLakFauBQx+XetcupA2yTdnJG09F1buqNko4mkuUtPAQ6SCFSZted2k7thjsc3sKZPauDIC
+ YoAOLKuodZtkOpFg+FoMi21zQWIB+g4rPJ+56HAQZ0C3sXOviQ9dI71qkA0rOpFs5v5kEXOu
+ 8MeJAsRT5Oh19d6UOKZaeplB83fNgn/vyvQKfr5Ns7dYwxSt6m3hDi9VsOMRBKxhTyxN8N1m
+ QSKdQkSrH9d//fMeC8A6bY253uhogdOGF7KVAlXM6vhRLXTo0xbem3tQ==;
 From: Peter Marko <peter.marko@siemens.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: peter.marko@siemens.com,
 	jose.quaresma@foundries.io
-Subject: [meta-lts-mixins][scarthgap/go][PATCH v2 11/35] go-helloworld: fix license
-Date: Wed, 19 Nov 2025 16:04:58 +0100
-Message-Id: <20251119150522.15477-12-peter.marko@siemens.com>
+Subject: [meta-lts-mixins][scarthgap/go][PATCH v2 09/35] meta/meta-selftest: Fix variable assignment whitespace
+Date: Wed, 19 Nov 2025 16:04:56 +0100
+Message-Id: <20251119150522.15477-10-peter.marko@siemens.com>
 In-Reply-To: <20251119150522.15477-1-peter.marko@siemens.com>
 References: <20251119150522.15477-1-peter.marko@siemens.com>
 MIME-Version: 1.0
@@ -40,44 +40,33 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Wed, 19 Nov 2025 15:05:57 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2596
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2595
 
-From: Peter Marko <peter.marko@siemens.com>
+From: Richard Purdie <richard.purdie@linuxfoundation.org>
 
-The example repo doesn't seem to have ever been under MIT.
-It started with Apache-2.0, later changed to standard go license BSD-3.
+Recipes are much more readable with whitespace around the assignment operators.
+Fix various assignments in OE-Core to show this is definitely the preferred
+formatting.
 
-The license file exists in the sources, so use that one instead of
-taking it from the OE-Core license directory.
+(From OE-Core rev: 30ea609d3357fb3de911f2f6a5e6856c151b976a)
 
-Note that this was already fixed in scarthgap and kirkstone, but it was
-not submitted to master. Also the old releases still had Apache, so this
-patch is different now with new versioni of thie component.
-
-License-Update: Fix license declaration.
-
-(From OE-Core rev: a192ce88b8b374fb50210e0c06d5801fe83d6d9e)
-
-Signed-off-by: Peter Marko <peter.marko@siemens.com>
-Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+Signed-off-by: Peter Marko <peter.marko@siemens.com>
 ---
- recipes-extended/go-examples/go-helloworld_0.1.bb | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ recipes-extended/go-examples/go-helloworld_0.1.bb | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/recipes-extended/go-examples/go-helloworld_0.1.bb b/recipes-extended/go-examples/go-helloworld_0.1.bb
-index 586f45b..3ffe64b 100644
+index 65a79ab..cafcb2c 100644
 --- a/recipes-extended/go-examples/go-helloworld_0.1.bb
 +++ b/recipes-extended/go-examples/go-helloworld_0.1.bb
-@@ -2,8 +2,8 @@ SUMMARY = "This is a simple example recipe that cross-compiles a Go program."
- SECTION = "examples"
- HOMEPAGE = "https://golang.org/"
+@@ -15,7 +15,7 @@ SRC_URI = "git://go.googlesource.com/example;branch=master;protocol=https"
+ GO_IMPORT = "golang.org/x/example"
+ GO_INSTALL = "${GO_IMPORT}/hello"
  
--LICENSE = "MIT"
--LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
-+LICENSE = "BSD-3-Clause"
-+LIC_FILES_CHKSUM = "file://src/${GO_IMPORT}/LICENSE;md5=7998cb338f82d15c0eff93b7004d272a"
+-export GO111MODULE="off"
++export GO111MODULE = "off"
  
- SRC_URI = "git://go.googlesource.com/example;branch=master;protocol=https;destsuffix=${GO_SRCURI_DESTSUFFIX}"
- SRCREV = "8b405629c4a5215871be932097e099c05ec5cb2e"
+ inherit go
+ 
 
