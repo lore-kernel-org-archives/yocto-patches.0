@@ -2,34 +2,34 @@ Return-Path: <peter.marko@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 496BCCF3951
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 615E2CF3955
 	for <webhook@archiver.kernel.org>; Wed, 19 Nov 2025 15:05:58 +0000 (UTC)
-Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.9148.1763564757192064944
+Received: from mta-64-228.siemens.flowmailer.net (mta-64-228.siemens.flowmailer.net [185.136.64.228])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.9145.1763564756691608539
  for <yocto-patches@lists.yoctoproject.org>;
  Wed, 19 Nov 2025 07:05:57 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=peter.marko@siemens.com header.s=fm1 header.b=S73+afJa;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.225, mailfrom: fm-256628-20251119150555f47a2e2fcc00020797-apyuzh@rts-flowmailer.siemens.com)
-Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 20251119150555f47a2e2fcc00020797
+ dkim=pass header.i=peter.marko@siemens.com header.s=fm1 header.b=NlRhpI8D;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.228, mailfrom: fm-256628-20251119150555aa6156dd6500020747-a_f_bb@rts-flowmailer.siemens.com)
+Received: by mta-64-228.siemens.flowmailer.net with ESMTPSA id 20251119150555aa6156dd6500020747
         for <yocto-patches@lists.yoctoproject.org>;
         Wed, 19 Nov 2025 16:05:55 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=peter.marko@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=2/qIuCbkRN7YIghOb4XIkLTKLcupCpIG2YZCkqmy6ho=;
- b=S73+afJa0c7c0C1509zdfF4HzCmQpNTqrYeAvcUfQfuQy7HfKbwiGi/0javXjK0VcCwguQ
- tXN6VsQuYtgTyZ3RYl/yD3I4x57bFgubBW/l3XTi250p/tVg1vVzCsumUiIeRopNi7EGBWEJ
- Oh5NZ9UMMjEmTBZOuE2RSFK3ZSZ1w24alFpU08NObgfsym/lemIkAxROD75a+ZsV+YvdKo62
- v1ZBHpzPLJg8TTsncZ3rYRnToib0Xq5jX6omr5CMiIx1LtHTEGGdV7IDjrTratCn+v05eefC
- jyeP177SzXzcsi+AbovFowO4LiImgNUsnXl2XWfPS0czacxYnPt0cHSQ==;
+ bh=ig3Oa3dluqNTGgD231y33yMI3NO4Ykq4rfnSXCr+878=;
+ b=NlRhpI8Di599Qug2V6ReqNP2lzWupmhHLORWdTYJ6RsCE3pSYQXQRFeXlPFsWVK1Lt1slo
+ mJT/xXRF73shelpqwYd8ZHw03D402+93r/ODhwtwCTbGepDCu96Fiil9p4b18MbruJ5xnOMP
+ 5VMY6VY5igtHmyI7dzh8lUmYPS8TEdrd/CQrIsAbbhJcPSX8DbnP8GpWfuPi5+uYy+gOxCTW
+ laY3wwGyntEAiWCZ6qqEhknWAo1vqO6aNcs/GW65aHKkEKuPDVVbxGTg4F0J9uioW3RvdTfU
+ uL46ZmMTgMjgMw4z3e1N/O8g6PC/vjVzg2TMTw8UhOVR2u11H6VAwaig==;
 From: Peter Marko <peter.marko@siemens.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: peter.marko@siemens.com,
 	jose.quaresma@foundries.io
-Subject: [meta-lts-mixins][scarthgap/go][PATCH v2 20/35] go: upgrade 1.24.3 -> 1.24.4
-Date: Wed, 19 Nov 2025 16:05:07 +0100
-Message-Id: <20251119150522.15477-21-peter.marko@siemens.com>
+Subject: [meta-lts-mixins][scarthgap/go][PATCH v2 32/35] go: upgrade 1.25.2 -> 1.25.3
+Date: Wed, 19 Nov 2025 16:05:19 +0100
+Message-Id: <20251119150522.15477-33-peter.marko@siemens.com>
 In-Reply-To: <20251119150522.15477-1-peter.marko@siemens.com>
 References: <20251119150522.15477-1-peter.marko@siemens.com>
 MIME-Version: 1.0
@@ -40,101 +40,99 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Wed, 19 Nov 2025 15:05:58 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2605
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2607
 
 From: Peter Marko <peter.marko@siemens.com>
 
-Upgrade to latest 1.24.x release [1]:
+Upgrade to latest 1.25.x release [1]:
 
-$ git --no-pager log --oneline go1.24.3..go1.24.4
-6796ebb2cb [release-branch.go1.24] go1.24.4
-85897ca220 [release-branch.go1.24] net/http: strip sensitive proxy headers from redirect requests
-9f9cf28f8f [release-branch.go1.24] os: don't follow symlinks on Windows when O_CREATE|O_EXCL
-a31c931adf [release-branch.go1.24] cmd/link: allow linkname reference to a TEXT symbol regardless of size
-03811ab1b3 [release-branch.go1.24] crypto/x509: decouple key usage and policy validation
-04a9473847 [release-branch.go1.24] lib/fips140: set inprocess.txt to v1.0.0
-db8f1dc948 [release-branch.go1.24] hash/maphash: hash channels in purego version of maphash.Comparable
-664cf832ec [release-branch.go1.24] runtime/debug: document DefaultGODEBUG as a BuildSetting
-431f75a0b9 [release-branch.go1.24] os: fix Root.Mkdir permission bits on OpenBSD
+$ git --no-pager log --oneline go1.25.2..go1.25.3
+28622c1959 (tag: go1.25.3) [release-branch.go1.25] go1.25.3
+e05b2c92d9 [release-branch.go1.25] crypto/x509: rework fix for CVE-2025-58187
+79ec0c94f3 [release-branch.go1.25] spec: update spec date to match release date
 
-Fixes CVE-2025-4673, CVE-2025-0913 and CVE-2025-22874 [2].
+This release addresses breakage caused by a security patch included in Go 1.25.2
+and 1.24.8, which enforced overly restrictive validation on the parsing of X.509
+certificates. We've removed those restrictions while maintaining the security
+fix that the initial release addressed [2].
 
-[1] https://github.com/golang/go/compare/go1.24.3...go1.24.4
-[2] https://groups.google.com/g/golang-announce/c/ufZ8WpEsA3A
+[1] https://github.com/golang/go/compare/go1.25.2...go1.25.3
+[2] https://groups.google.com/g/golang-announce/c/YEyj6FUNbik
 
-(From OE-Core rev: 25aed3ec02c22857380957783e2926bf3368398c)
+(From OE-Core rev: d5f281bf13995117d98af809a2caea91e241713e)
 
 Signed-off-by: Peter Marko <peter.marko@siemens.com>
 Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Signed-off-by: Ross Burton <ross.burton@arm.com>
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
 ---
- recipes-devtools/go/{go-1.24.3.inc => go-1.24.4.inc}        | 2 +-
- ...o-binary-native_1.24.3.bb => go-binary-native_1.24.4.bb} | 6 +++---
- ...cross-canadian_1.24.3.bb => go-cross-canadian_1.24.4.bb} | 0
- .../go/{go-cross_1.24.3.bb => go-cross_1.24.4.bb}           | 0
- .../go/{go-crosssdk_1.24.3.bb => go-crosssdk_1.24.4.bb}     | 0
- .../go/{go-runtime_1.24.3.bb => go-runtime_1.24.4.bb}       | 0
- recipes-devtools/go/{go_1.24.3.bb => go_1.24.4.bb}          | 0
+ recipes-devtools/go/{go-1.25.2.inc => go-1.25.3.inc}        | 2 +-
+ ...o-binary-native_1.25.2.bb => go-binary-native_1.25.3.bb} | 6 +++---
+ ...cross-canadian_1.25.2.bb => go-cross-canadian_1.25.3.bb} | 0
+ .../go/{go-cross_1.25.2.bb => go-cross_1.25.3.bb}           | 0
+ .../go/{go-crosssdk_1.25.2.bb => go-crosssdk_1.25.3.bb}     | 0
+ .../go/{go-runtime_1.25.2.bb => go-runtime_1.25.3.bb}       | 0
+ recipes-devtools/go/{go_1.25.2.bb => go_1.25.3.bb}          | 0
  7 files changed, 4 insertions(+), 4 deletions(-)
- rename recipes-devtools/go/{go-1.24.3.inc => go-1.24.4.inc} (91%)
- rename recipes-devtools/go/{go-binary-native_1.24.3.bb => go-binary-native_1.24.4.bb} (78%)
- rename recipes-devtools/go/{go-cross-canadian_1.24.3.bb => go-cross-canadian_1.24.4.bb} (100%)
- rename recipes-devtools/go/{go-cross_1.24.3.bb => go-cross_1.24.4.bb} (100%)
- rename recipes-devtools/go/{go-crosssdk_1.24.3.bb => go-crosssdk_1.24.4.bb} (100%)
- rename recipes-devtools/go/{go-runtime_1.24.3.bb => go-runtime_1.24.4.bb} (100%)
- rename recipes-devtools/go/{go_1.24.3.bb => go_1.24.4.bb} (100%)
+ rename recipes-devtools/go/{go-1.25.2.inc => go-1.25.3.inc} (91%)
+ rename recipes-devtools/go/{go-binary-native_1.25.2.bb => go-binary-native_1.25.3.bb} (79%)
+ rename recipes-devtools/go/{go-cross-canadian_1.25.2.bb => go-cross-canadian_1.25.3.bb} (100%)
+ rename recipes-devtools/go/{go-cross_1.25.2.bb => go-cross_1.25.3.bb} (100%)
+ rename recipes-devtools/go/{go-crosssdk_1.25.2.bb => go-crosssdk_1.25.3.bb} (100%)
+ rename recipes-devtools/go/{go-runtime_1.25.2.bb => go-runtime_1.25.3.bb} (100%)
+ rename recipes-devtools/go/{go_1.25.2.bb => go_1.25.3.bb} (100%)
 
-diff --git a/recipes-devtools/go/go-1.24.3.inc b/recipes-devtools/go/go-1.24.4.inc
+diff --git a/recipes-devtools/go/go-1.25.2.inc b/recipes-devtools/go/go-1.25.3.inc
 similarity index 91%
-rename from recipes-devtools/go/go-1.24.3.inc
-rename to recipes-devtools/go/go-1.24.4.inc
-index 78e2614..eff3f2f 100644
---- a/recipes-devtools/go/go-1.24.3.inc
-+++ b/recipes-devtools/go/go-1.24.4.inc
-@@ -17,4 +17,4 @@ SRC_URI += "\
-     file://0010-cmd-go-clear-GOROOT-for-func-ldShared-when-trimpath-.patch \
-     file://6d265b008e3d106b2706645e5a88cd8e2fb98953.patch \
+rename from recipes-devtools/go/go-1.25.2.inc
+rename to recipes-devtools/go/go-1.25.3.inc
+index 9d1cf69..c29f4d6 100644
+--- a/recipes-devtools/go/go-1.25.2.inc
++++ b/recipes-devtools/go/go-1.25.3.inc
+@@ -18,4 +18,4 @@ SRC_URI += "\
+     file://0011-cmd-link-stop-forcing-binutils-gold-dependency-on-aa.patch \
+     file://0001-runtime-when-using-cgo-on-386-call-C-sigaction-funct.patch \
  "
--SRC_URI[main.sha256sum] = "229c08b600b1446798109fae1f569228102c8473caba8104b6418cb5bc032878"
-+SRC_URI[main.sha256sum] = "5a86a83a31f9fa81490b8c5420ac384fd3d95a3e71fba665c7b3f95d1dfef2b4"
-diff --git a/recipes-devtools/go/go-binary-native_1.24.3.bb b/recipes-devtools/go/go-binary-native_1.24.4.bb
-similarity index 78%
-rename from recipes-devtools/go/go-binary-native_1.24.3.bb
-rename to recipes-devtools/go/go-binary-native_1.24.4.bb
-index af56dc9..9f78853 100644
---- a/recipes-devtools/go/go-binary-native_1.24.3.bb
-+++ b/recipes-devtools/go/go-binary-native_1.24.4.bb
+-SRC_URI[main.sha256sum] = "3711140cfb87fce8f7a13f7cd860df041e6c12f7610f40cac6ec6fa2b65e96e4"
++SRC_URI[main.sha256sum] = "a81a4ba593d0015e10c51e267de3ff07c7ac914dfca037d9517d029517097795"
+diff --git a/recipes-devtools/go/go-binary-native_1.25.2.bb b/recipes-devtools/go/go-binary-native_1.25.3.bb
+similarity index 79%
+rename from recipes-devtools/go/go-binary-native_1.25.2.bb
+rename to recipes-devtools/go/go-binary-native_1.25.3.bb
+index 2e5abbe..3f939ca 100644
+--- a/recipes-devtools/go/go-binary-native_1.25.2.bb
++++ b/recipes-devtools/go/go-binary-native_1.25.3.bb
 @@ -9,9 +9,9 @@ PROVIDES = "go-native"
  
  # Checksums available at https://go.dev/dl/
  SRC_URI = "https://dl.google.com/go/go${PV}.${BUILD_GOOS}-${BUILD_GOARCH}.tar.gz;name=go_${BUILD_GOTUPLE}"
--SRC_URI[go_linux_amd64.sha256sum] = "3333f6ea53afa971e9078895eaa4ac7204a8c6b5c68c10e6bc9a33e8e391bdd8"
--SRC_URI[go_linux_arm64.sha256sum] = "a463cb59382bd7ae7d8f4c68846e73c4d589f223c589ac76871b66811ded7836"
--SRC_URI[go_linux_ppc64le.sha256sum] = "341a749d168f47b1d4dad25e32cae70849b7ceed7c290823b853c9e6b0df0856"
-+SRC_URI[go_linux_amd64.sha256sum] = "77e5da33bb72aeaef1ba4418b6fe511bc4d041873cbf82e5aa6318740df98717"
-+SRC_URI[go_linux_arm64.sha256sum] = "d5501ee5aca0f258d5fe9bfaed401958445014495dc115f202d43d5210b45241"
-+SRC_URI[go_linux_ppc64le.sha256sum] = "9ca4afef813a2578c23843b640ae0290aa54b2e3c950a6cc4c99e16a57dec2ec"
+-SRC_URI[go_linux_amd64.sha256sum] = "d7fa7f8fbd16263aa2501d681b11f972a5fd8e811f7b10cb9b26d031a3d7454b"
+-SRC_URI[go_linux_arm64.sha256sum] = "9aaeb044bf8dbf50ca2fbf0edc5ebc98b90d5bda8c6b2911526df76f61232919"
+-SRC_URI[go_linux_ppc64le.sha256sum] = "91dd35ac3f33baa642d9bac22b626bdb5ee0372cf80e7d782994337f81f34417"
++SRC_URI[go_linux_amd64.sha256sum] = "0335f314b6e7bfe08c3d0cfaa7c19db961b7b99fb20be62b0a826c992ad14e0f"
++SRC_URI[go_linux_arm64.sha256sum] = "1d42ebc84999b5e2069f5e31b67d6fc5d67308adad3e178d5a2ee2c9ff2001f5"
++SRC_URI[go_linux_ppc64le.sha256sum] = "68d1a08bf3567f330717d821b266a0be1c5080bd05dc238b5a43a24ca0c47d7c"
  
  UPSTREAM_CHECK_URI = "https://golang.org/dl/"
  UPSTREAM_CHECK_REGEX = "go(?P<pver>\d+(\.\d+)+)\.linux"
-diff --git a/recipes-devtools/go/go-cross-canadian_1.24.3.bb b/recipes-devtools/go/go-cross-canadian_1.24.4.bb
+diff --git a/recipes-devtools/go/go-cross-canadian_1.25.2.bb b/recipes-devtools/go/go-cross-canadian_1.25.3.bb
 similarity index 100%
-rename from recipes-devtools/go/go-cross-canadian_1.24.3.bb
-rename to recipes-devtools/go/go-cross-canadian_1.24.4.bb
-diff --git a/recipes-devtools/go/go-cross_1.24.3.bb b/recipes-devtools/go/go-cross_1.24.4.bb
+rename from recipes-devtools/go/go-cross-canadian_1.25.2.bb
+rename to recipes-devtools/go/go-cross-canadian_1.25.3.bb
+diff --git a/recipes-devtools/go/go-cross_1.25.2.bb b/recipes-devtools/go/go-cross_1.25.3.bb
 similarity index 100%
-rename from recipes-devtools/go/go-cross_1.24.3.bb
-rename to recipes-devtools/go/go-cross_1.24.4.bb
-diff --git a/recipes-devtools/go/go-crosssdk_1.24.3.bb b/recipes-devtools/go/go-crosssdk_1.24.4.bb
+rename from recipes-devtools/go/go-cross_1.25.2.bb
+rename to recipes-devtools/go/go-cross_1.25.3.bb
+diff --git a/recipes-devtools/go/go-crosssdk_1.25.2.bb b/recipes-devtools/go/go-crosssdk_1.25.3.bb
 similarity index 100%
-rename from recipes-devtools/go/go-crosssdk_1.24.3.bb
-rename to recipes-devtools/go/go-crosssdk_1.24.4.bb
-diff --git a/recipes-devtools/go/go-runtime_1.24.3.bb b/recipes-devtools/go/go-runtime_1.24.4.bb
+rename from recipes-devtools/go/go-crosssdk_1.25.2.bb
+rename to recipes-devtools/go/go-crosssdk_1.25.3.bb
+diff --git a/recipes-devtools/go/go-runtime_1.25.2.bb b/recipes-devtools/go/go-runtime_1.25.3.bb
 similarity index 100%
-rename from recipes-devtools/go/go-runtime_1.24.3.bb
-rename to recipes-devtools/go/go-runtime_1.24.4.bb
-diff --git a/recipes-devtools/go/go_1.24.3.bb b/recipes-devtools/go/go_1.24.4.bb
+rename from recipes-devtools/go/go-runtime_1.25.2.bb
+rename to recipes-devtools/go/go-runtime_1.25.3.bb
+diff --git a/recipes-devtools/go/go_1.25.2.bb b/recipes-devtools/go/go_1.25.3.bb
 similarity index 100%
-rename from recipes-devtools/go/go_1.24.3.bb
-rename to recipes-devtools/go/go_1.24.4.bb
+rename from recipes-devtools/go/go_1.25.2.bb
+rename to recipes-devtools/go/go_1.25.3.bb
 
