@@ -2,34 +2,34 @@ Return-Path: <peter.marko@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9316FCF34CB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94D08CF34CC
 	for <webhook@archiver.kernel.org>; Wed, 19 Nov 2025 15:05:57 +0000 (UTC)
-Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.9143.1763564756309508392
+Received: from mta-65-228.siemens.flowmailer.net (mta-65-228.siemens.flowmailer.net [185.136.65.228])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.9147.1763564756931793593
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 19 Nov 2025 07:05:56 -0800
+ Wed, 19 Nov 2025 07:05:57 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=peter.marko@siemens.com header.s=fm1 header.b=RHsfCPYc;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227, mailfrom: fm-256628-20251119150554365b864cc800020755-aluvvy@rts-flowmailer.siemens.com)
-Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 20251119150554365b864cc800020755
+ dkim=pass header.i=peter.marko@siemens.com header.s=fm1 header.b=bn4fiO3r;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.228, mailfrom: fm-256628-20251119150554e9738ee06f000207c6-gbvrss@rts-flowmailer.siemens.com)
+Received: by mta-65-228.siemens.flowmailer.net with ESMTPSA id 20251119150554e9738ee06f000207c6
         for <yocto-patches@lists.yoctoproject.org>;
         Wed, 19 Nov 2025 16:05:54 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=peter.marko@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=l2qPCTVRhRC1fnU9fhK0WrtlzzojVcjIkGsszTuFlvI=;
- b=RHsfCPYc+SRRkCrAPbRCpr86c5NN0kxWotzGIzX8iae3IdlFeAsL5dZPNZzgBlfdIil1Mm
- V2qWKNhSLeruI0luX7hzp1BDr5Ayw0fFowDhcjbixH/3/lKW/6WMUR5Tobw899QHfVJ6+3cO
- bI8QrDMzG1yvS79SeIx9SwR3NPYG0r/U6p7orOBlseDjzX3f9wzfY78iSCeCHqgEVoBmufgE
- 5zlHWJaibSjJ9jPWGlgNon0NzdW+GwhrCPXAP0ckrZUsl26jSg1n/3fe6nUGkXov7Km3NLzf
- jAwkw6/imzU1SRJcUs3xd2BRyHhU0K/JgKP8ymQn95Z40Dcxb7fu9Ayg==;
+ bh=flA3TcLbTclnmqPEWSKySCdAM4txjh6XLwOYV4OYJn0=;
+ b=bn4fiO3rv2QFBnaG8rcJzqJZC+kBtV4goBuCdhrdXJwgaWonPdv5Gv3WNOSiwvLabcW2KB
+ msi2v9BA962bh5Hp0nOGF0T/9h5VU4arHgfzXiklC9V47clg5Qj0125Pah71dMRV8E971hlN
+ LQv9sa5WlbJiuwhS6B/5akyTbRRhLtApL4HTzVS4WIXFGktzY4yIKRy8HTd0XnjWqN7PpEMu
+ jsCnY5XOu5mcXLLrfa3PX4oxKDxjAFmMr1iriliIESxflRmVmwa1lCEH+Rcb0DD0F5xfSBqL
+ so04K2kO3voDJW7jSljjtoBANZLIxIICEvz5wOscL5GKpNMQWYtyls4A==;
 From: Peter Marko <peter.marko@siemens.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: peter.marko@siemens.com,
 	jose.quaresma@foundries.io
-Subject: [meta-lts-mixins][scarthgap/go][PATCH v2 04/35] go-helloworld: update to latest revision
-Date: Wed, 19 Nov 2025 16:04:51 +0100
-Message-Id: <20251119150522.15477-5-peter.marko@siemens.com>
+Subject: [meta-lts-mixins][scarthgap/go][PATCH v2 14/35] go: fix buildpath issue for go-runtime
+Date: Wed, 19 Nov 2025 16:05:01 +0100
+Message-Id: <20251119150522.15477-15-peter.marko@siemens.com>
 In-Reply-To: <20251119150522.15477-1-peter.marko@siemens.com>
 References: <20251119150522.15477-1-peter.marko@siemens.com>
 MIME-Version: 1.0
@@ -40,30 +40,118 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Wed, 19 Nov 2025 15:05:57 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2585
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2589
 
-From: Alexander Kanavin <alex.kanavin@gmail.com>
+From: Hongxu Jia <hongxu.jia@windriver.com>
 
-(From OE-Core rev: ed7d5a9e0ea2c970b3c101876dc3e3b8b5ae2ade)
+In upstream commit [cmd: remove support for GOROOT_FINAL][1], it clear
+GOROOT for func ld when -trimpath is used
 
-Signed-off-by: Alexander Kanavin <alex@linutronix.de>
+But it missed to do the same thing for share libarary linking which caused
+building go-runtime failed with buildpath issue
+
+|ERROR: go-runtime-1.23.4-r0 do_package_qa: QA Issue: File /usr/lib/go/pkg/
+linux_amd64_dynlink/libstd.so in package go-runtime contains reference to
+TMPDIR [buildpaths]
+
+This commit applied a patch to clear GOROOT for func ldShared when
+-trimpath is used and add option -trimpath to go-runtime build
+
+[1] https://github.com/golang/go/commit/507d1b22f4b58ac68841582d0c2c0ab6b20e5a98
+[2] https://github.com/golang/go/commit/507d1b22f4b58ac68841582d0c2c0ab6b20e5a98#diff-cab5921f94f2667bb0bc1b935d2d46b4c03541b4351b33438ab7290b94dea212R669
+
+(From OE-Core rev: f7b05ebfdc6504a8360741f273163ef7fbb11b10)
+
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
 Signed-off-by: Peter Marko <peter.marko@siemens.com>
 ---
- recipes-extended/go-examples/go-helloworld_0.1.bb | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ recipes-devtools/go/go-1.24.0.inc             |  1 +
+ recipes-devtools/go/go-runtime.inc            |  2 +-
+ ...OOT-for-func-ldShared-when-trimpath-.patch | 51 +++++++++++++++++++
+ 3 files changed, 53 insertions(+), 1 deletion(-)
+ create mode 100644 recipes-devtools/go/go/0010-cmd-go-clear-GOROOT-for-func-ldShared-when-trimpath-.patch
 
-diff --git a/recipes-extended/go-examples/go-helloworld_0.1.bb b/recipes-extended/go-examples/go-helloworld_0.1.bb
-index 98cd4d8..74f3520 100644
---- a/recipes-extended/go-examples/go-helloworld_0.1.bb
-+++ b/recipes-extended/go-examples/go-helloworld_0.1.bb
-@@ -6,7 +6,7 @@ LICENSE = "MIT"
- LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
- 
- SRC_URI = "git://go.googlesource.com/example;branch=master;protocol=https"
--SRCREV = "d9923f6970e9ba7e0d23aa9448ead71ea57235ae"
-+SRCREV = "32022caedd6a177a7717aa8680cbe179e1045935"
- UPSTREAM_CHECK_COMMITS = "1"
- 
- GO_IMPORT = "golang.org/x/example"
+diff --git a/recipes-devtools/go/go-1.24.0.inc b/recipes-devtools/go/go-1.24.0.inc
+index 26a4947..a52dd19 100644
+--- a/recipes-devtools/go/go-1.24.0.inc
++++ b/recipes-devtools/go/go-1.24.0.inc
+@@ -14,6 +14,7 @@ SRC_URI += "\
+     file://0007-exec.go-filter-out-build-specific-paths-from-linker-.patch \
+     file://0008-src-cmd-dist-buildgo.go-do-not-hardcode-host-compile.patch \
+     file://0009-go-Filter-build-paths-on-staticly-linked-arches.patch \
++    file://0010-cmd-go-clear-GOROOT-for-func-ldShared-when-trimpath-.patch \
+     file://6d265b008e3d106b2706645e5a88cd8e2fb98953.patch \
+ "
+ SRC_URI[main.sha256sum] = "d14120614acb29d12bcab72bd689f257eb4be9e0b6f88a8fb7e41ac65f8556e5"
+diff --git a/recipes-devtools/go/go-runtime.inc b/recipes-devtools/go/go-runtime.inc
+index 413cf6d..e5f1733 100644
+--- a/recipes-devtools/go/go-runtime.inc
++++ b/recipes-devtools/go/go-runtime.inc
+@@ -34,7 +34,7 @@ do_compile() {
+ 	if [ -n "${GO_DYNLINK}" ]; then
+ 		export GOTOOLDIR="${B}/pkg/tool/native_native"
+ 		CC="$CC_FOR_${TARGET_GOTUPLE}" GOARCH="${TARGET_GOARCH}" GOOS="${TARGET_GOOS}" GOROOT=${B} \
+-			$GOTOOLDIR/go_bootstrap install -linkshared -buildmode=shared ${GO_SHLIB_LDFLAGS} std
++			$GOTOOLDIR/go_bootstrap install -linkshared -trimpath -buildmode=shared ${GO_SHLIB_LDFLAGS} std
+ 	fi
+ 	cd ${B}
+ }
+diff --git a/recipes-devtools/go/go/0010-cmd-go-clear-GOROOT-for-func-ldShared-when-trimpath-.patch b/recipes-devtools/go/go/0010-cmd-go-clear-GOROOT-for-func-ldShared-when-trimpath-.patch
+new file mode 100644
+index 0000000..2c2f0cb
+--- /dev/null
++++ b/recipes-devtools/go/go/0010-cmd-go-clear-GOROOT-for-func-ldShared-when-trimpath-.patch
+@@ -0,0 +1,51 @@
++From c4215b5ca69a7626d97cf9b7ebc460c2b5b9148b Mon Sep 17 00:00:00 2001
++From: Hongxu Jia <hongxu.jia@windriver.com>
++Date: Fri, 28 Feb 2025 19:13:18 -0800
++Subject: [PATCH 10/11] cmd/go: clear GOROOT for func ldShared when -trimpath
++ is used
++
++In commit [cmd: remove support for GOROOT_FINAL][1], it clear GOROOT
++for func ld when -trimpath is used. [2]
++
++This commit do the same thing for func ldShared, otherwise run go_bootstrap
++with -trimpath does not remove build path directory from the generated share
++libarary
++
++  $ ./make.bash --target-only --no-banner std
++  $ go_bootstrap install -linkshared -buildmode=shared -trimpath std
++  $ grep "$(pwd)" ./pkg/linux_amd64_dynlink/libstd.so
++  Binary file ./pkg/linux_amd64_dynlink/libstd.so matches
++
++[1] https://github.com/golang/go/commit/507d1b22f4b58ac68841582d0c2c0ab6b20e5a98
++[2] https://github.com/golang/go/commit/507d1b22f4b58ac68841582d0c2c0ab6b20e5a98#diff-cab5921f94f2667bb0bc1b935d2d46b4c03541b4351b33438ab7290b94dea212R669
++
++Upstream-Status: Submitted [https://go-review.googlesource.com/c/go/+/653895]
++
++Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
++---
++ src/cmd/go/internal/work/gc.go | 9 ++++++++-
++ 1 file changed, 8 insertions(+), 1 deletion(-)
++
++diff --git a/src/cmd/go/internal/work/gc.go b/src/cmd/go/internal/work/gc.go
++index 3a173efee8..8b7a44e031 100644
++--- a/src/cmd/go/internal/work/gc.go
+++++ b/src/cmd/go/internal/work/gc.go
++@@ -728,7 +728,14 @@ func (gcToolchain) ldShared(b *Builder, root *Action, toplevelactions []*Action,
++ 	// the output file path is recorded in the .gnu.version_d section.
++ 	dir, targetPath := filepath.Split(targetPath)
++ 
++-	return b.Shell(root).run(dir, targetPath, nil, cfg.BuildToolexec, base.Tool("link"), "-o", targetPath, "-importcfg", importcfg, ldflags)
+++	env := []string{}
+++	// When -trimpath is used, GOROOT is cleared
+++	if cfg.BuildTrimpath {
+++		env = append(env, "GOROOT=")
+++	} else {
+++		env = append(env, "GOROOT="+cfg.GOROOT)
+++	}
+++	return b.Shell(root).run(dir, targetPath, env, cfg.BuildToolexec, base.Tool("link"), "-o", targetPath, "-importcfg", importcfg, ldflags)
++ }
++ 
++ func (gcToolchain) cc(b *Builder, a *Action, ofile, cfile string) error {
++-- 
++2.25.1
++
 
