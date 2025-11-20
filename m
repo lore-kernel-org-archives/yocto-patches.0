@@ -1,168 +1,125 @@
-Return-Path: <quentin.schulz@cherry.de>
+Return-Path: <michael.opdenacker@rootcommit.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A90ECF8841
-	for <webhook@archiver.kernel.org>; Thu, 20 Nov 2025 10:40:15 +0000 (UTC)
-Received: from OSPPR02CU001.outbound.protection.outlook.com (OSPPR02CU001.outbound.protection.outlook.com [40.107.159.70])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.31317.1763635209355256149
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 648DECF8842
+	for <webhook@archiver.kernel.org>; Thu, 20 Nov 2025 11:03:35 +0000 (UTC)
+Received: from panther.cherry.relay.mailchannels.net (panther.cherry.relay.mailchannels.net [23.83.223.141])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.31593.1763636606655955469
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 20 Nov 2025 02:40:10 -0800
+ Thu, 20 Nov 2025 03:03:26 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@cherry.de header.s=selector1 header.b=YBF105mX;
- spf=pass (domain: cherry.de, ip: 40.107.159.70, mailfrom: quentin.schulz@cherry.de)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GC2jnTCEO1qaR5KmXp3aoaPwPE4TQMQypm8qIEqZ8eSG7WnOTNC4h50wt7S9HOtCxYFVyKJrXQ9pYu0u+vpzefFK5xVYm/a9LUbxkZzIFvdcTBc4FRYWCrN0REeCMyf13MPBhfImrEu6s9cfpnoEVTqqCO2BmOCrIszbPUZK0ZFpEvNUUXHigBmryeOMwtY2SwRT0smSXLiNZHQdKqi8F65lqisij/puGzN3QWp1SSPQqWmdNs7YPIuFV3Bq9HxVY7t9NMjDTOX0w0Lhhu+LHniR9j0l35VC3oAGy8ds9o1+J/36A7lDQtFHeWq6LE+TlOOyQ6dFHj4/MGvMZNQQxw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ThuZiMGRYsIwxiM0xX3AmmQNd11MobcrsLDcyDdRGxw=;
- b=LoYupyCuFuKj8B9q/w3I9bJtFCMGzV/RGWjRecHHlf3nugWiPs7razoYjh1SmFZIYtJWhPK67GwRDiDH6jxNQyp2Vl4+wdsU9J5whDDlgPryYLTAYW2bdV88KrJpOzSNm3x/6FR1Zkaz718DMD0IlrJOH1GQDAaxmm/J7D8TSW5VNED8+UmYL7cxhS9tKpGNXcZILtEB+ORvs4vEnbG0UfOQ6wsVQt4aGIRdujrAK+cp0lnDmMSSjG41rlEd+ZC5Wa7E/oHOtWjeq39TPJGBcV383F9rC7ByElJZt5JQuUtgXwWqQTNaRfpqGhZv/x5Y/p7dTC1VO4ncLF7g6JOdxg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ThuZiMGRYsIwxiM0xX3AmmQNd11MobcrsLDcyDdRGxw=;
- b=YBF105mX3/nN8B3RqUu5WO2oaIXD2ZN4UIQ0ms7kLXeMP7QGBmb9ajSniRaKtioL9K7HerF7FK90TuZ6WkuSedJXKaBltM1VJ/qnYda5NkQ6P+xY9EI8LU5nFC7SWeZRwaYzFhGXvKH+aO6Zx5PcUhKTbITbzdksXoDbrB4CIO4=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com (2603:10a6:20b:42c::20)
- by AS8PR04MB7990.eurprd04.prod.outlook.com (2603:10a6:20b:2a5::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9343.10; Thu, 20 Nov
- 2025 10:40:06 +0000
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::5ee:7297:93b4:a8d1]) by AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::5ee:7297:93b4:a8d1%6]) with mapi id 15.20.9343.009; Thu, 20 Nov 2025
- 10:40:06 +0000
-Message-ID: <58102c94-8c32-450a-bccf-1edd16bbad3f@cherry.de>
-Date: Thu, 20 Nov 2025 11:40:05 +0100
+ dkim=pass header.i=@rootcommit.com header.s=hostingermail-a header.b=XmuyFvH5;
+ spf=pass (domain: rootcommit.com, ip: 23.83.223.141, mailfrom: michael.opdenacker@rootcommit.com)
+X-Sender-Id: hostingeremail|x-authuser|michael.opdenacker@rootcommit.com
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id 0553F1210EA
+	for <yocto-patches@lists.yoctoproject.org>; Thu, 20 Nov 2025 11:03:26 +0000 (UTC)
+Received: from de-fra-smtpout3.hostinger.io (trex-green-9.trex.outbound.svc.cluster.local [100.127.179.109])
+	(Authenticated sender: hostingeremail)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 0C36512188A
+	for <yocto-patches@lists.yoctoproject.org>; Thu, 20 Nov 2025 11:03:23 +0000 (UTC)
+ARC-Seal: i=1; a=rsa-sha256; d=mailchannels.net; s=arc-2022; cv=none;
+	t=1763636604;
+	b=uOZHIinfdvb40V6xLCNSmu696qxG/dXecstZ0rma+I+oze5HJXSsFw4L1sohr69S/uRM6d
+	eW4Ws2AAJ/JsGvcvi946ZBRw8tDyrknyug+x3La1uTqLs3vK1nxWQeQOkmKZ4lKy2goQzV
+	OtE7e4Qq8WN23oZYOHJQWhO3MgYdU7j2xviwz+XdpX7XGbVSPuWnPhQ/KeWw8eYVg4scxj
+	0/kcr+DAK5tStXyrYv/immjOQr3G7lTStnoEj6QyCU88pI0eW+7FhM6wrVH6Ua1YvteMUV
+	5FfJdDOyj+scRA4c6IjpZ3jPHj7FlcxZh5SEq1CweE9240y22B19KrBV9KBGFQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1763636604;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=egXNovtmuqry9aj1DyhtpP3q2tQSfI2+ePYLPtaOB9E=;
+	b=Ripgg0VPF054lpZov9pFWeS3gwEBIPl02MZD0Gk1ssCS4xHlsQJsxwBJNdUh4GFMXclxTD
+	SmtJk1T/k6PcJOqP3s/sfPjF3jrlCt8u8DFi+byZrybGg/L86InVIG4pui60zTN1Wt9ipK
+	Dyhtr0q09HqwRN6wKcs1iUeqEJsFOX4hhnEAl8zHDTGOcF1OTro3BQLmnLGAqhvqU53plS
+	3g6d0nAhck7J2CYVTesv0Yjbu1g0RovehKLRwBb7+fxzfRSAXhp4LpOhLuqYSsux200rWU
+	5Qf/QTByD6W4z+zoR9Ch56Vgttyo6ZgHZ1mRJ4kMWKQQ0QC1tVx4E97oFDPt/Q==
+ARC-Authentication-Results: i=1;
+	rspamd-55b59744f-9n86x;
+	auth=pass smtp.auth=hostingeremail
+ smtp.mailfrom=michael.opdenacker@rootcommit.com
+X-Sender-Id: hostingeremail|x-authuser|michael.opdenacker@rootcommit.com
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: 
+ hostingeremail|x-authuser|michael.opdenacker@rootcommit.com
+X-MailChannels-Auth-Id: hostingeremail
+X-Lyrical-Power: 359e165c2e775c01_1763636604570_1466888559
+X-MC-Loop-Signature: 1763636604570:1914773761
+X-MC-Ingress-Time: 1763636604570
+Received: from de-fra-smtpout3.hostinger.io (de-fra-smtpout3.hostinger.io
+ [148.222.55.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.127.179.109 (trex/7.1.3);
+	Thu, 20 Nov 2025 11:03:24 +0000
+Received: from [IPV6:2001:861:4450:d360:a066:6d43:e556:60e2] (unknown [IPv6:2001:861:4450:d360:a066:6d43:e556:60e2])
+	(Authenticated sender: michael.opdenacker@rootcommit.com)
+	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4dBwSV1FWDz3x6f;
+	Thu, 20 Nov 2025 11:03:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rootcommit.com;
+	s=hostingermail-a; t=1763636602;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=egXNovtmuqry9aj1DyhtpP3q2tQSfI2+ePYLPtaOB9E=;
+	b=XmuyFvH5U9U9GYrjG0wltkXIS5OmpsestF0iHnu3nKGV27xmrgzoGJNn6YnbUKs0obBCgV
+	Ng87W8G1/mibROvFyKMfWJtzozGOrnaj20kt4FtQDdSe4wy/QendCmVz76TVSi5WmTh4Rt
+	ANuXMru59HFXR5SvABxVhfLKe7xhUn+fi3CqTAvSvHlpt58NQk2D8JbiqYtqUYImO58h3m
+	7OvwEST1fTSZVcbnwjHEhsTHkiDmoHVv5bP6cppak3qf8n1PLPXsQ0Ks/atzsbeGVLz0HG
+	7XzjvkR8/w/zmuun61acovIFyYnPFkt+Jv32kh6gQeYFGxvlUyoUqk7JO+NVKQ==
+Message-ID: <048c6ea4-e7cc-4650-8f0f-b85ef961914f@rootcommit.com>
+MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+Cc: michael.opdenacker@rootcommit.com
 Subject: Re: [yocto-patches] [PATCH meta-rockchip] orangepi-3b: add
 To: yocto-patches@lists.yoctoproject.org
-Cc: michael.opdenacker@rootcommit.com
 References: <1879B0158049C4B6.1423420@lists.yoctoproject.org>
  <f176e971-d19f-47a1-a591-d2a501d16079@rootcommit.com>
-Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <f176e971-d19f-47a1-a591-d2a501d16079@rootcommit.com>
+ <58102c94-8c32-450a-bccf-1edd16bbad3f@cherry.de>
+Content-Language: en-US, fr
+From: Michael Opdenacker <michael.opdenacker@rootcommit.com>
+Organization: Root Commit
+In-Reply-To: <58102c94-8c32-450a-bccf-1edd16bbad3f@cherry.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BE1P281CA0079.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:b10:78::18) To AS8PR04MB8897.eurprd04.prod.outlook.com
- (2603:10a6:20b:42c::20)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|AS8PR04MB7990:EE_
-X-MS-Office365-Filtering-Correlation-Id: b21dee83-7ad9-439f-7a41-08de28212b68
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?bEZSUGVscXBOMWJDWmErdWoyZnd6Vm5nUnJHWDM5T2lNOEppQ2NOenpETGpw?=
- =?utf-8?B?dGtYZFNXaW9XUitlL3hhVVB2ZnZ2NjVjT0xmejB0Y29JcTgvN2RpZUlIRDRm?=
- =?utf-8?B?YmV1dzNNaVVBdzhWT3BEdm5jRDdwQit4S0VDN29XSVdOVk5RQklPbWNIOTY4?=
- =?utf-8?B?VEJCeDlFOVNIL1JzdSsyN0g3NHc1bTc3SW5iRGZJSHZkdHM4YnlabXlucW96?=
- =?utf-8?B?ajNZNlZoT2E1clZtdHByREkvTDRPS0Z4NE9DTG9VdjhWL2RHMlZZbkRmUzlt?=
- =?utf-8?B?WU1EUHF2TTJmUlpPT1NZem1KTDhId0RUOVplUzZ6a1FiOUFEVlpMOWJzeUZh?=
- =?utf-8?B?T3haVm5NNjA4dDE1dTRUWk0vVVh6NnFoODg1S1JPNFF6MDgvMERsRStzajA5?=
- =?utf-8?B?ZnlKZXVqY0ttei9XcWQ0L1hQSkUxRE1kZmpmVlRxWUF3dDM0amE4d3F4MDBI?=
- =?utf-8?B?ekRJcndiM2R4QUhMNkhzZitCUEU1SlpaLzArbUpXbXFwUFhyMlI1N3pKSjlK?=
- =?utf-8?B?ZlZHcHhMMHZ5bE1hM29lWVJnR01uR2VwajNnNTJwTXhhNHYxWnFXdlF5bUQz?=
- =?utf-8?B?VWtWUVVVaVpqUUZFOU1OYk5ZSVBqdzV3SkFtOU5oRTUrRHdCY2gxeXlyTUxn?=
- =?utf-8?B?cEMrNFVtZUdvZ01ISWJLaUovQzRFanU3dHNnZTMrWkJNTzRvc1pGYjVUajl5?=
- =?utf-8?B?WmxxZVpiZXJoWXFDR2I4Y2tNR3h0TXowKzkrTGw5QUIzdjdwNGZZdE11ZW1m?=
- =?utf-8?B?RC9HeFVEYlpIekxLN2JuVzNGY0YxaEcwcXlFZ2VoUUFkdCtqd2JTWlZwKzJI?=
- =?utf-8?B?eVNqc1YxUDlJcmdLV2pOWnE5OGVNMUhUb0dKODVLTE5NVXVxR2hBc1E0Nk00?=
- =?utf-8?B?NGlMYmtxZzA2YVArWTNTaUFIbEowb01HN1lIWDh1OFJaTG5qbEptWFlHZCt5?=
- =?utf-8?B?SUY1UWIvRmhFcStyMWQxVExDSVRDTVgrai9Kd0k4MjZWUllLYTR0RXZMczlP?=
- =?utf-8?B?T2E0eGtzVDMrYU0xM09VbkQ3alN2NGorVEpMNU14VXRST1VnNEJlbU5uN1d1?=
- =?utf-8?B?QWx0YWx4WUZ6S294WEJ3b2ZSRFI2WTdsVmxISXFFcGtDT0cwYXhXYzdlekE5?=
- =?utf-8?B?Wmg2MmhCclRqSnUyVmtHZ1pRQk53Ynd1RVhZV2JtWWxta2pLWk9wS1UvVHo3?=
- =?utf-8?B?eXdPM0FibnUrVE54ZDNzR2xRNmFJY2tuMktyLzMxRUNEcFBVSmgvb1llRkdu?=
- =?utf-8?B?K1BHYUhJTkFvMEVBRHdWNFNoQkZtN3ZKcEZDc1ZjS05OSEplUHZRMmNpREVu?=
- =?utf-8?B?VjVqbXB5STZKSWJGbTBUQnpJeW1rWjZ1YXB5d3VHVmVNelFrS1UrTHRQencz?=
- =?utf-8?B?R0I5WGg5NkZSM0VXaUlvTERrWjdmWmRuNEhpMk9TVmFlc21SY0t4YVdwajVn?=
- =?utf-8?B?SDJ5MVYzTmpKY0E2a2Q3bzdPdFJpbjgrOUkzaml0RVQwVGhLZ1ZOcEV0Mm9G?=
- =?utf-8?B?UUp1V1NyeldaN3hKK0ZxdThpWmhoaFFVWkNHVFlqdy9ySURCbzJFRjd2NVRR?=
- =?utf-8?B?cXRUNm9id1BSVWdpYnFiNGprRk4wOFhRSkRSTnBWY0JkOVFPMEtha3c0V1Ju?=
- =?utf-8?B?cTVpL1BkSWJxOG9OamZMNytwSjFzdGtBam1EYnpGN2g4enJ2WUx2NmZFYlpJ?=
- =?utf-8?B?UW9XbWJWUC9hTFhzaU1xYi9MaHRVdE9oa25rTDR2OHhjSzJQRm1MNHNqRGgx?=
- =?utf-8?B?dGdXU0hGRkVkRGNTcitSWGVSMk1hR21ETUFzMVpPQWJROXhTakVoajZwU2l3?=
- =?utf-8?B?QUIvNHBjMWNac1Y2N2k4R25reW1CNWNWUVNFbkt5Y29yM2tWaWx2ZG1PMlRj?=
- =?utf-8?B?TXo4UWY4KzcyOWl2RDVuWWhwaTFDbUpJTHpyWHo1UTlIU1BrTG9yTzU4SW5D?=
- =?utf-8?Q?Yx4iYEkrxYCOyau0pObuMoHJD7jAiplK?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?cjFSVWk3SkZlUkNtaFltUENkZ3NBWVZsTVhhSkk2RnZoZXdIZFNNV2svU1B6?=
- =?utf-8?B?MklCNHlOaUsyTmtrc0VzV2VUc3RiV25aR0V6VjdxL3NRdmJMTXQ1MksvTm1B?=
- =?utf-8?B?Q0hNT3lkTGRVVkUzN3k3U2NlUnN3UERuMnB4Tm85aElHditEMytzYnAvekFM?=
- =?utf-8?B?R1NKRlpyY0FRbkwxZ0t1cU5xNHRtQUFFclhaTEVMMUV1Z3c5VGYyMy9aZ2dX?=
- =?utf-8?B?UU9tclpsVG55bUF5N1lJR2J1WVVLNzN1V1RZbWt2WUNzL3JxZHJTMFFsZExO?=
- =?utf-8?B?bmJWZEp5NEdaeU5ETVJzQ1BPdWdiY3NVamhzbGJsbVNDSitjNkQ0SDlPZ0tr?=
- =?utf-8?B?bjR6ZG5qLzdjdTVGbFhDbGM1YnpRaWVvRlNRNFpQUWRIWXVIR3pFcmVGYTd5?=
- =?utf-8?B?S21TYTE4c2FMd0xZQjBHWlhmVVYrS0ZodzFhUGhNSzRzWDBpSWcweXQwMU1N?=
- =?utf-8?B?R0tNcnQ0RXlHdDFGV0NmM2VlZ1dtS0t6YWoveDluZEZnOFF1OGZ0enhOS3Vv?=
- =?utf-8?B?Y1laUkFmUWt5blRIWTJ3dXpkeUswTDlBQzI1S0ZadkRvNWNwNHR1TVNwOWF0?=
- =?utf-8?B?VkV0d2ZqZUtpRU5aZXJaNnpGL1ZyZmZmNWpuVFc3dytYMXRWMHAwY0NiamE0?=
- =?utf-8?B?NzBaMXlra2IzdzQ3cGJob1dybGdzaFJYdTBGRjBIUUxNeGZVK0N3Zmk2WEpC?=
- =?utf-8?B?ZVU2QWdOb0dxZGtWMUMwV0dlQ0RKeklSbFFkLzZwSXZ5azBVb0o2bjd1MDZp?=
- =?utf-8?B?UUlPY0hVUzhrMW0yOTlqQmY2SXE2U1ZZVTVqV0ZYbTlibDk3RVNadlBzNXVv?=
- =?utf-8?B?bE04dTRqbEtCdWtvbDk5U1B3clBNM3VmTCtKSnVlRU0vSS9Bd1BJak5HbUll?=
- =?utf-8?B?U3N1b29BSUsvMnJSUHBQUGxhcTFWdUNENU5HemovMU4wb1pTN1Z2bHFRWVpM?=
- =?utf-8?B?eDg2STNvRVplMmJwUDhScGtEMldzUWdBdnlFTDZaWVNJbm5zSk0vR1VPdStU?=
- =?utf-8?B?RlZmOWVPc1JubVpEdVg5TE5SQ1RCb3ZpVFFWSUcyK1d2VjY1blJGdlFoc1Fh?=
- =?utf-8?B?U3VBMHJPa1VXYVFUbTJTSVNmOHZzRyt3bS93cTdoaFFzdnN0RzhacmhKV1NE?=
- =?utf-8?B?Zk90b3ZRWlpiVXJWN1IvUlFWcTZpMHhQVjZCRnJXdHhtTFVNcjFNbHZSQytZ?=
- =?utf-8?B?dXlIa2kwMVRKaW00N21CUWdtaWVackFnN1ZKbUNTdEI2VUZ2RWNIclo4RjRy?=
- =?utf-8?B?NWR5dGRMNUZMN21mbE0yZVhVcGlHOTBpWmFobGF2N1dISFJBTWIyR2Jlamp6?=
- =?utf-8?B?d0psL3cwTTdEMXYvWlBwOUdzMkRjSkJWSHVxNURRcFhhKzY3b1VkUU9tM1ZC?=
- =?utf-8?B?QUdNSVNpWUwwcHVhT2dOcW1LYVZzRVVnLzRiUFJ6QUVCYVV6QVpOUFd5cHdL?=
- =?utf-8?B?TEkzR0huOVhkdk9ERGxsMVhCM0tnbkFJOERvY1hleU1NVFU0VlVZUVo4bzY5?=
- =?utf-8?B?d0hSbnZYSEVQRzdnMWoyVVFQcjNYcUhWSHp3bGVoZCtudHV6T0wrdUljNE94?=
- =?utf-8?B?WHE0N05lZkpIV3JlM3A4VmIxVzJ4emJxYmlXMEloZkxGaWJld2lPZHBFMHJS?=
- =?utf-8?B?aFlFQ21ISW9ldDRMVy91MUp0Q05sSkQvNWZpeU5nR1gyUkFGTExmaGdNWmMv?=
- =?utf-8?B?Y3IxRGw0S2FYTWt4WngwNXUydE41bHRpMForTklWY244OXZaYjd1Y2d5clJ2?=
- =?utf-8?B?RWVBUHMyM2d3Q01zaXNqbWJsVmhoQlY0bStYLzNNY1lsY2ZFbCs1Wi9QSlp3?=
- =?utf-8?B?NUdBbHg3WHE2RnRnekJhdlJqazQxWmFpYUdiWWZJR1RsT1ZmRnM0VzNxQ1o0?=
- =?utf-8?B?cUpMajFNV3oyVFlDVy9TZjZleXFacktRY0pUV2VuRloza0JTYytUREhiY1Ns?=
- =?utf-8?B?UTBaaW1BQk81azJYOUFWZ2h3azdEUEFveW9EcGtnWC9PakxsejU3ekF2U3U2?=
- =?utf-8?B?d3R2Vzg3RVVMS1EzUGpMK1JNekxOcXRQdmNlWms4ZlFuRllpQ05nUXN3NDZG?=
- =?utf-8?B?YTBjQUpjeUFSTWY1V3JIYWRhd25kZFRoNE1KMHJNQ2VGUFVwYWJqYkxOVjhC?=
- =?utf-8?B?ZnVCNlNEUk9ibWJVUVlReU9ZSmVJR01tU0tzSFZsL2o5WXdZT0QvbFJlRkJa?=
- =?utf-8?B?WUE9PQ==?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: b21dee83-7ad9-439f-7a41-08de28212b68
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8897.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Nov 2025 10:40:06.2203
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jABCA/X92aZuTfvYYIIhhXXm7Kr6NLU40Shp3ZPCFFEma71l7gg3fjmvjKS1jnaRTCkunnokjtw9MmPMPFzil3GfsXxo6uGAEhZXzaPwFrk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7990
+Date: Thu, 20 Nov 2025 11:03:21 +0000 (UTC)
+X-CM-Analysis: v=2.4 cv=ALriHGRn c=1 sm=1 tr=0 ts=691ef57a a=l2urqJcD81kOlpy6CkxEZg==:617 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=d70CFdQeAAAA:8 a=iGHA9ds3AAAA:8 a=FnV5fwCJXuL6rIWBNa4A:9 a=QEXdDO2ut3YA:10 a=NcxpMcIZDGm-g932nG_k:22 a=nM-MV4yxpKKO9kiQg6Ot:22
+X-CM-Envelope: MS4xfNpMs+YzSf5GvZM+VGElm9unvCmRtPnBB0m3UtV/CNO4fiNzQyZR9YfyAEIgknhnV3bZRMT8v1XKI4tQqkrNRjw2hWL0IXDLNwH1MplBBpS/lUWnA9rO nMbm+qQyOiIM8Wcxtk//9j11OHx1og9H0LmxTFopsusrHuo3gQIk0YoanCE2/hzWEDxOREv5YhDYMQweFlxajromMvLMGviMpUXJJEUf65QeEcHZmxVh9V5k gVlmzFUxgsVGRhs1TNS6A1JF9ial6FQwtcU3xR0xQWGcphZWCFo8BzXQQ6ikHmbkh55gbt48IgjtsafobojiFoDM5ev2Zz6Ey8HLO8EjyWoeFXozZydDJvcY gx2o/L6SF/8VxE9dJFIqIx+0bd1cjX2I6QlmHx9asxszGZX8r0o=
+X-AuthUser: michael.opdenacker@rootcommit.com
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 20 Nov 2025 10:40:15 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2624
+ <yocto-patches@lists.yoctoproject.org>; Thu, 20 Nov 2025 11:03:35 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2625
 
-Hi Michael,
+Hi Quentin,
 
-On 11/20/25 11:34 AM, Michael Opdenacker via lists.yoctoproject.org wrote:
-> Oops, it seems b4 messed up the subject line.
-> It should contain "[meta-rockchip][PATCH]"
-> 
+On 11/20/25 11:40, Quentin Schulz via lists.yoctoproject.org wrote:
+> Hi Michael,
+>
+> On 11/20/25 11:34 AM, Michael Opdenacker via lists.yoctoproject.org 
+> wrote:
+>> Oops, it seems b4 messed up the subject line.
+>> It should contain "[meta-rockchip][PATCH]"
+>>
+>
+> All my patches sent by b4 have the same pattern as yours. Glancing at 
+> b4's code, I believe this is how it's intended to work, c.f. 
+> get_rebuilt_subject() in src/b4/__init__.py
+Good to know. So, it's not too bad.
+Thanks for your reply!
+Cheers
+Michael.
 
-All my patches sent by b4 have the same pattern as yours. Glancing at 
-b4's code, I believe this is how it's intended to work, c.f. 
-get_rebuilt_subject() in src/b4/__init__.py
+-- 
+Michael Opdenacker
+Root Commit
+Yocto Project and OpenEmbedded Training course - Learn by doing:
+https://rootcommit.com/training/yocto/
 
-Cheers,
-Quentin
 
