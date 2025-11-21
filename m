@@ -1,203 +1,139 @@
-Return-Path: <yi.zhao@eng.windriver.com>
+Return-Path: <peter.marko@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FC01CFA46E
-	for <webhook@archiver.kernel.org>; Fri, 21 Nov 2025 03:36:53 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.3556.1763696205351802518
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAB36CFA74E
+	for <webhook@archiver.kernel.org>; Fri, 21 Nov 2025 08:35:44 +0000 (UTC)
+Received: from mta-65-228.siemens.flowmailer.net (mta-65-228.siemens.flowmailer.net [185.136.65.228])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.7564.1763714139422675369
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 20 Nov 2025 19:36:45 -0800
+ Fri, 21 Nov 2025 00:35:40 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@windriver.com header.s=PPS06212021 header.b=EnHNrBhW;
- spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.166.238, mailfrom: prvs=342016e232=yi.zhao@windriver.com)
-Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AL1f9gM1433358
-	for <yocto-patches@lists.yoctoproject.org>; Thu, 20 Nov 2025 19:36:44 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
-	 h=content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=PPS06212021; bh=cv68+rI5vasevZFj3N2/
-	51WDuHpp9YJiopZYEZwqEAc=; b=EnHNrBhWbRfqCgxe0tRShVksKT9XBB/s4Yr8
-	eZW9MtATZi7qUeo9uNvW+mR/HXH43VL7j+DP6gHkUe4OAW2nIh+gXp59t56zOer+
-	59b3vKq/V8PJbCNWVnHqnreTTdPKTmhMdmexWFIKxccDFXCBzvEjLaa2uv6/BrFG
-	RLI6o6W/ylLGiVOKLl0S1DrQ6BmIZE5S7Tq0627KYKeLepw05ZW+CxFdP/haUzkX
-	fGnGz4bYy9AwODgMI+Smxhf2qqT7AAb9y9wqbIla6zvZICkT0tWb3vV+GU7i6MEw
-	uvFN5fUIryNYM0aaFPZVEh/vQC0XlUQJdAT1XRXZdMtlO9loYQ==
-Received: from ch4pr04cu002.outbound.protection.outlook.com (mail-northcentralusazon11013047.outbound.protection.outlook.com [40.107.201.47])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4ajemug2pm-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT)
-	for <yocto-patches@lists.yoctoproject.org>; Thu, 20 Nov 2025 19:36:44 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YHVfnHV6/flOw+uJ+VNUpV/Drawo3PApHBKLsjbayAnYdj7H9tVVmaiH0ra8o7GbCCvm2H1yZd0OWyicM1TGDSNX5Kj0XA2u+l/L5jpxVwWdR4GEiJvawvsdNI+9X26n/6wDw5tOsL1fQkUqOfKc2Om4Klo7hWsY9AoDietMTQXQ6VvfNbr6NSI8QZyow2dy8C/DRLMdjuAgkGlrjZos49qZI8sEJBOVEOxVGY6XY61EYP3IxahpeAOLmGFZIvpSQlXwQY3rNKLdMr7UEv9JNa4tUQ8Glge2ntSwnyYEY8B/12FRkYGM2fpfbsG9C7CVdJhnEZmkltadXHm0Tp5V5w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cv68+rI5vasevZFj3N2/51WDuHpp9YJiopZYEZwqEAc=;
- b=aXmQ6onsGVLoDblsRYwi/l/E5OMIvl4AGY8ZXBOOSpNh5GGuYAloU2mQL20y2ep0rEoN4C9HYJCZEh5V17/y9DhT2U3ujftehjk+Ddxx3A15Tm98YvedNyjHqOjlxMSWqURjVR7MBeoKQRSqJxanujMjhUYJNLoQtpfSLMbqv0FDEV1wh0NLlETAC57je3RMT0HE9z4nBtjzGYMuE5ASTCloh9j9FJ7DcdoEgkEryLYHSPFIoFgblfsypg7xKKu56QkZx/yzm6uMmzJHmonLNDeRjrqPO3mqa7Hkf6gbVyOfq9BjjWIkMXVoRnoclqXlteVLjRU/T9qEjAAUJ1JTVw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=windriver.com; dmarc=pass action=none
- header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
-Received: from DS0PR11MB6399.namprd11.prod.outlook.com (2603:10b6:8:c8::5) by
- SN7PR11MB7666.namprd11.prod.outlook.com (2603:10b6:806:34b::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9343.11; Fri, 21 Nov
- 2025 03:36:41 +0000
-Received: from DS0PR11MB6399.namprd11.prod.outlook.com
- ([fe80::2b44:787c:e7ee:bfad]) by DS0PR11MB6399.namprd11.prod.outlook.com
- ([fe80::2b44:787c:e7ee:bfad%3]) with mapi id 15.20.9343.011; Fri, 21 Nov 2025
- 03:36:41 +0000
-From: Yi Zhao <yi.zhao@windriver.com>
+ dkim=pass header.i=peter.marko@siemens.com header.s=fm1 header.b=DbbFS7//;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.228, mailfrom: fm-256628-20251121083535ba196a3017000207c6-ccczxn@rts-flowmailer.siemens.com)
+Received: by mta-65-228.siemens.flowmailer.net with ESMTPSA id 20251121083535ba196a3017000207c6
+        for <yocto-patches@lists.yoctoproject.org>;
+        Fri, 21 Nov 2025 09:35:36 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=peter.marko@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=xV3IVoZXQAtXyV4JsV3cUdhLRK8DsV8NSC9JsAK5lww=;
+ b=DbbFS7//ewA14t3SqK1ZLH3wTkrFTttXzH8ihOETdTBeCSOwEID+p5PA+aPAcrN+lcgy8T
+ dYlu9PgXYJhcnGY85IXlH87PPceIRbOWO77KXtdIO8tYk4qym9btHCaqwimMtAGsTMhMxWCK
+ WUGGDcrWWWWDC5XmJDzJpmm+5Io/KEon4OjtSxmfCCxU00QsSCXhRj9HvkOrXZIOQhr4XOHL
+ Usng116DTK3ot07Bq2pV3xkg3BZTtqM84oD52Nps4sCMPX0Lkyyi4WSzRaz+k09avBE21Im5
+ Wts0KtmsW9aX1wbI00041wxODF3ydP6n+Xzk7knfuwsSUT7c93QQK3ew==;
+From: Peter Marko <peter.marko@siemens.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-security][PATCH] libgssglue: add UPSTREAM_CHECK_GITTAGREGEX
-Date: Fri, 21 Nov 2025 11:36:26 +0800
-Message-Id: <20251121033626.3847896-1-yi.zhao@windriver.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR02CA0090.apcprd02.prod.outlook.com
- (2603:1096:4:90::30) To DS0PR11MB6399.namprd11.prod.outlook.com
- (2603:10b6:8:c8::5)
+Cc: jose.quaresma@foundries.io,
+	Peter Marko <peter.marko@siemens.com>
+Subject: [meta-lts-mixins][kirkstone/go][PATCH] go: upgrade 1.25.3 -> 1.25.4
+Date: Fri, 21 Nov 2025 09:35:31 +0100
+Message-Id: <20251121083531.864699-1-peter.marko@siemens.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB6399:EE_|SN7PR11MB7666:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0b5b5a81-e4d2-46a7-b270-08de28af2f6c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|366016|376014|52116014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?PqrlsTxqdUmc+CSq7bISKAcG4ZerllZql8C3lzXCHCd90vwL/kL74a9lqeEA?=
- =?us-ascii?Q?rNcGT8d/A/3FTxZbBul9RDlGwqxPN/KgqEwPx5RWnIG5Jm9otVX9mrVdLOHZ?=
- =?us-ascii?Q?Tp24WudAR8KjZ2ImJtbqO40xaGfwFzyNTEFhLumRA98cY5Cayo42bIAMgdOz?=
- =?us-ascii?Q?bJo1xy+J9fgd6RS2I2UUePbqVQ2dTX+icsTugBlm16Zt1KKG0+1t04CX1c5M?=
- =?us-ascii?Q?bDWWcBHeIecekl/f9c8ZflAGJNlW9sdF/4udbdNBjXc6JSODRU4sfvj9naPy?=
- =?us-ascii?Q?vWMmN3lm4wImq21s0+4cpjY+GW7xwFUnM9XCPdFTFpwRU4bHDWcZTK2kzIjd?=
- =?us-ascii?Q?FD68yhsl6TvbJM0EJukR/vesH08QtZgdLTidar7wT0bfk7OeIAQDB7153WOz?=
- =?us-ascii?Q?CfzAkpIa2Vf/fwspGUcNs3NET+O/GoRw2NBD0fzivrnHV+1tS5UQ9xWN7uJa?=
- =?us-ascii?Q?WflR3T5p3L47Yegf+cBp5LTUrW0tyP3z+wBEBbWSA95JNxKD4Baqztrkntyx?=
- =?us-ascii?Q?YuW5q8ZHtjgRAWPk2aTiZG+roSr2Rvkeq24x5HLpBYNQl9hbOvSA+u5bHYBK?=
- =?us-ascii?Q?zRNWS8zfDWjV1F8dLkrUh7+CWx/GWESwSJRwFttXMM+CkiRYzcnCpqkob2Ex?=
- =?us-ascii?Q?9yHF7xNeoNuid3SJnWmtbIeQtjoQl1gceY0LzzExXKWHRmxWRmIr5DQ52Dk/?=
- =?us-ascii?Q?IYes5IesvBNe14cfF72+fHhAzvlvfbyFTMuqRjPuCddjyqcqyuA8bZBkDwF6?=
- =?us-ascii?Q?BsBLf2Qy/RUUjPPFhzw18DV9OduodWwlRhs9B0NJuCL8rlE4OIe85B/qHRoQ?=
- =?us-ascii?Q?Y6HyXD/04mhQZbFZjiM9GEzMG9Tj2z7o+qow2FwJfHC2aijJXbgxGwKqIyvj?=
- =?us-ascii?Q?Vx6JH0O4FlyZpVmiBMzcB8kicFsrFg+ygpyHDXd4TmSWsFYHaKW6NGFh81Mu?=
- =?us-ascii?Q?ZBONOcQvhQPPrvYruLG6WO02WTx4+I0AOWeADMpq2pcecgyHuqevY0CLUedZ?=
- =?us-ascii?Q?rPpFnO/nZwm24eMiJ/9hsgtuFg4RCD3cJ/md6vU3fPS2vToTmzx02RVcRMAN?=
- =?us-ascii?Q?VINiSJb51OQfC0f/XeqXVqHSIG5mXPb+UKocxH5BBlzlqq9cg/0qx4H8GBOU?=
- =?us-ascii?Q?vHI68v7Q85q6svWiv5Lrw/oWAzUgMuit116ox+xtWHYf4lFBJt7I4qJ60BX2?=
- =?us-ascii?Q?zwYVlf3SeM2IxydaXh4Q9dy/B7MHcAzC31PpmDBm9emL3qeyzzkDxJFlq2z0?=
- =?us-ascii?Q?0jbyjT1PCZ3+btl7eqW+TkmERB3KwqNrAYF/JNq+KvNMMPpRtvyRzGtYQi4n?=
- =?us-ascii?Q?IsbCwKI1gu82w1MBOTbN730n4KWX+hOiRFTvSLz7frBdKCXpnJK6XCTnJN4r?=
- =?us-ascii?Q?CXTNJgTxbYWqMYzePynqseEjWwNcaRByOG5O9fL4+80WupRUK8gMk8hmMcKz?=
- =?us-ascii?Q?WDrTjrkKYKy9z7gLVhIvOFy8tzhhiS0XLt1rSauqDTi+MsgJD+5HKFef+NI3?=
- =?us-ascii?Q?BuUJ8k1z2WgWrU4CfpHifDQQKzeRylmkhpw7?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB6399.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?JMmTTEOmcAmHobg6Kp3T+M50s37QgRgRiitL+HMYNjOrwnKU1kvf1A1T1Jg5?=
- =?us-ascii?Q?v3GC8+pSdxUa+nloUL5SuRMixYcfRiiFiws2X+4madVdrDoCsAJhXowKN+G6?=
- =?us-ascii?Q?uHQSAVTQHaCiKwJx9c1fHePMb1P6kpW1XhOoSrpAXxRHAIRqsyTMp8bXM2sm?=
- =?us-ascii?Q?dIppMftH8r0y6jYc7hUjRqNbRo24QP7BTA75dILaqcx2lc6XWeGeV3BlPWhS?=
- =?us-ascii?Q?W8BUzL9wXdcqm8RJeMYBqgsD/KjU8jd8QXIoGnxzgmHliOcqyn6Eh6NQUdnl?=
- =?us-ascii?Q?IjePVF033pOwE8ekeeYRDFLwQTfdJZOCGT3uGgy25YtqjALvc5jG64t1Lzrp?=
- =?us-ascii?Q?3rY7d2fxJbRTiYQueqQjZZDGthTOGvfJbml61guzlr01BEB19RnB2djCcao4?=
- =?us-ascii?Q?p3gBwoZHK4eLp2S+8u7UUljU2Ifl6Ks18eeb/LpmE74EDdINiNPMR35F1LYa?=
- =?us-ascii?Q?qFiuCw+uDXhWXmIva90bagvsGf+Ml+FCV6G5j/YMryca9XLXj2WquUxzjhQj?=
- =?us-ascii?Q?lSJkKIWjS5ovUvn8rHSE6rgWmbKy28aWikWaF/Zd4GGgotrs1aib8NWr+xmD?=
- =?us-ascii?Q?AaFczkLz/LNMgRYpqPOvS5QZTUOgq5kZljPffd8JSGnriFJVBDYVnTabzsnl?=
- =?us-ascii?Q?P/FrjsdUx/JBLFtibBGOP1p0tFC/TP2pzpFQiv2lL9qNpsxrldEcMcbhq0Ey?=
- =?us-ascii?Q?SFPMjqpDZs40zSHEc3pmaT3/0tuFOHlfIm0RUfMYOlkqOzBTV45n0Jse8hRg?=
- =?us-ascii?Q?iZqlpD/hfwAinwnl8uDx1WB4kXwWA8ywWXUyRu/IV0sRUeLyHu4TweGmWLWP?=
- =?us-ascii?Q?M4MW5tAc3SzwcK1004qw+v9yxE+nAb38e/WrUfrg/1pVxjqroilk5TJl1oeR?=
- =?us-ascii?Q?uZIpEo+yO0nfHv47in2oxNc63jOYn+bmhNmhCPWeggHyy2q30O+Hru/BOf0r?=
- =?us-ascii?Q?sw5511xMbGGiCcJgRZ3CNjFV/RnYYTH5ivGtGSkjIfAhprOzyghLSfVcQNpu?=
- =?us-ascii?Q?5wUnI95ltcMJWo1y5OJ0OyMUd9PLYYoP1AdNQ2XEqi2IWFJDuDZI+3sDdYjU?=
- =?us-ascii?Q?vHItlTZHLEsdZegm7yEx2kZAeanLs0dvQKGhhqht3yL4d4Ptn5p65fBuL7RY?=
- =?us-ascii?Q?e93w2+PWRhyb1dRW1F0jqMVoAAG3XcaxUTTz9SY2BOsnnUJPsICghqKACSk6?=
- =?us-ascii?Q?NQQUKNeuLAkQFCIpVuyanB/fDWGpXTUnMdzD/tLqZeTwg0i5NQMCZ1/Sj3lk?=
- =?us-ascii?Q?6c5uGwp91OaaCm0SPiKOAtW6phqWFo8nRJ2RE6IAkPxmu2l0/XBsy9pzXNZC?=
- =?us-ascii?Q?sk6iZNCxA/N1+VLCT82yTBjXJaNYFjCTArNv8QsFBhBkZrVowwXz6q8Bp+aj?=
- =?us-ascii?Q?GQexMAg0wyUaebg/aLbFVQb4FC1ZMtLuJmADl1gVaiBSEiU1VgncVAzxPpvT?=
- =?us-ascii?Q?mPSimb0y1657zutmkkoTu1miPdauMdf/L0h+hfsdGPoF0o4PS5pKFcI+SN6V?=
- =?us-ascii?Q?N4G/yviW3U9ODcFuibd2iEQEwDO+XfB1DWiB0tqoMYk6vjxiZw0DvYcLaOUd?=
- =?us-ascii?Q?02/y5WlGr+opi1N4xx4TyBAmNLc9tBqDrKDwXZ9N?=
-X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0b5b5a81-e4d2-46a7-b270-08de28af2f6c
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB6399.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Nov 2025 03:36:41.7519
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZwL9aNdTDZQaBBqyrK8OLReb/WtV7CWM0w2zqFC0GYhnaHwKlv2E4FR5XxTQK+FUiGyM3dm0iGwnRcAxjHC5AQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB7666
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTIxMDAyNiBTYWx0ZWRfX3hiy6m+bn+x9
- dlOkEZHQcYPvqj9lR65jp+EqR0wC1/hz4jzciCJXpQ/mmEVaHqKJlAU8TWvvZCpiJj2zfXlHnuZ
- vy4SgJs+W+mOD8esbXBFmCVnJcYgrvF73qOsqMEuXAtIiT++gtTrwG2MpBzPtS8eHB2GB0I6Tik
- OyUClMNEYo1AmG6WU2CQyxJzkZ6isAHJm2HJ4yrFnjpTSq6YRdYGZjKVw08h6u5uWoylNrUd1qi
- uQDueXwwc6SNHSljac3T1IxfC3FLvXSvvRf9gI9l57+m+4cKGOSTiKHf3edwg60baRhPD4wCE2+
- Z72338NCri3cwaVJLej8AFlEjHtRDMu7i7IsiEJmCdPkN4UGo45x5C6sINjpq4OJGQ7y9jS26/R
- F4vIFAeKqnPLIgArI8tcGcptoOwFEw==
-X-Proofpoint-ORIG-GUID: zRRKZ-dJyCTKVZx19Uj5Pcj-X23YCTyX
-X-Proofpoint-GUID: zRRKZ-dJyCTKVZx19Uj5Pcj-X23YCTyX
-X-Authority-Analysis: v=2.4 cv=fKo0HJae c=1 sm=1 tr=0 ts=691fde4c cx=c_pps
- a=2P5E0MqkZ2zb1j7CzKDU6Q==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
- a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
- a=xqWC_Br6kY4A:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=t7CeM3EgAAAA:8 a=p0WdMEafAAAA:8 a=uTDV0Q3B7Burbv6hrfcA:9
- a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-21_01,2025-11-20_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 clxscore=1015 phishscore=0 bulkscore=0 malwarescore=0
- suspectscore=0 lowpriorityscore=0 priorityscore=1501 impostorscore=0
- spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511210026
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-256628:519-21489:flowmailer
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 21 Nov 2025 03:36:53 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2641
+ <yocto-patches@lists.yoctoproject.org>; Fri, 21 Nov 2025 08:35:44 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2642
 
-Add UPSTREAM_CHECK_GITTAGREGEX to check the correct latest stable
-verison.
+From: Peter Marko <peter.marko@siemens.com>
 
-Before the patch:
-$ devtool latest-version libgssglue
-INFO: Current version: 0.9
-INFO: Latest version: 011
-INFO: Latest version's commit: af30789052a8cc5f86b5b0c8fd4758c7ba1505ff
+Upgrade to latest 1.25.x release [1]:
 
-After the patch:
-$ devtool latest-version libgssglue
-INFO: Current version: 0.9
-INFO: Latest version: 0.9
-INFO: Latest version's commit: ada76bdaec665f70505f0b3aefe871b873e7c4b6
+$ git --no-pager log --oneline go1.25.3..go1.25.4
+f2cd93aa05 (tag: go1.25.4) [release-branch.go1.25] go1.25.4
+83885f3c22 [release-branch.go1.25] encoding/pem: properly calculate end indexes
+5ba37a3677 [release-branch.go1.25] cmd/compile: don't optimize away a panicing interface comparison
+8097b1915f [release-branch.go1.25] os: support deleting read-only files in RemoveAll on older Windows versions
+4942c74d04 [release-branch.go1.25] Revert "crypto/internal/fips140/subtle: add assembly implementation of xorBytes for mips64x"
+cd21a7b31b [release-branch.go1.25] Revert "crypto/internal/fips140/subtle: add assembly implementation of xorBytes for mipsx"
+bf95b76739 [release-branch.go1.25] runtime: use one more address bit for tagged pointers
+bbb7627123 [release-branch.go1.25] cmd/compile: prevent shapifying of pointer shape type
+7e049e5c31 [release-branch.go1.25] encoding/pem: properly decode strange PEM data
+f6db7350e1 [release-branch.go1.25] net/url: allow IP-literals with IPv4-mapped IPv6 addresses
 
-Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
+Release information: [2]
+
+[1] https://github.com/golang/go/compare/go1.25.3...go1.25.4
+[2] https://groups.google.com/g/golang-announce/c/tVVHm9gnwl8
+
+(From OE-Core rev: 116d7fc8dd940c781d5ee0801d3ddfb79a82d357)
+
+Signed-off-by: Peter Marko <peter.marko@siemens.com>
+Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
 ---
- recipes-security/libgssglue/libgssglue_0.9.bb | 2 ++
- 1 file changed, 2 insertions(+)
+ recipes-devtools/go/{go-1.25.3.inc => go-1.25.4.inc}        | 2 +-
+ ...o-binary-native_1.25.3.bb => go-binary-native_1.25.4.bb} | 6 +++---
+ ...cross-canadian_1.25.3.bb => go-cross-canadian_1.25.4.bb} | 0
+ .../go/{go-cross_1.25.3.bb => go-cross_1.25.4.bb}           | 0
+ .../go/{go-crosssdk_1.25.3.bb => go-crosssdk_1.25.4.bb}     | 0
+ .../go/{go-runtime_1.25.3.bb => go-runtime_1.25.4.bb}       | 0
+ recipes-devtools/go/{go_1.25.3.bb => go_1.25.4.bb}          | 0
+ 7 files changed, 4 insertions(+), 4 deletions(-)
+ rename recipes-devtools/go/{go-1.25.3.inc => go-1.25.4.inc} (91%)
+ rename recipes-devtools/go/{go-binary-native_1.25.3.bb => go-binary-native_1.25.4.bb} (79%)
+ rename recipes-devtools/go/{go-cross-canadian_1.25.3.bb => go-cross-canadian_1.25.4.bb} (100%)
+ rename recipes-devtools/go/{go-cross_1.25.3.bb => go-cross_1.25.4.bb} (100%)
+ rename recipes-devtools/go/{go-crosssdk_1.25.3.bb => go-crosssdk_1.25.4.bb} (100%)
+ rename recipes-devtools/go/{go-runtime_1.25.3.bb => go-runtime_1.25.4.bb} (100%)
+ rename recipes-devtools/go/{go_1.25.3.bb => go_1.25.4.bb} (100%)
 
-diff --git a/recipes-security/libgssglue/libgssglue_0.9.bb b/recipes-security/libgssglue/libgssglue_0.9.bb
-index 532227a..a00fae6 100644
---- a/recipes-security/libgssglue/libgssglue_0.9.bb
-+++ b/recipes-security/libgssglue/libgssglue_0.9.bb
-@@ -26,6 +26,8 @@ SRC_URI = "git://gitlab.com/gsasl/libgssglue.git;protocol=https;branch=master \
-           "
- SRCREV = "ada76bdaec665f70505f0b3aefe871b873e7c4b6"
+diff --git a/recipes-devtools/go/go-1.25.3.inc b/recipes-devtools/go/go-1.25.4.inc
+similarity index 91%
+rename from recipes-devtools/go/go-1.25.3.inc
+rename to recipes-devtools/go/go-1.25.4.inc
+index c29f4d6..f88d7fe 100644
+--- a/recipes-devtools/go/go-1.25.3.inc
++++ b/recipes-devtools/go/go-1.25.4.inc
+@@ -18,4 +18,4 @@ SRC_URI += "\
+     file://0011-cmd-link-stop-forcing-binutils-gold-dependency-on-aa.patch \
+     file://0001-runtime-when-using-cgo-on-386-call-C-sigaction-funct.patch \
+ "
+-SRC_URI[main.sha256sum] = "a81a4ba593d0015e10c51e267de3ff07c7ac914dfca037d9517d029517097795"
++SRC_URI[main.sha256sum] = "160043b7f17b6d60b50369436917fda8d5034640ba39ae2431c6b95a889cc98c"
+diff --git a/recipes-devtools/go/go-binary-native_1.25.3.bb b/recipes-devtools/go/go-binary-native_1.25.4.bb
+similarity index 79%
+rename from recipes-devtools/go/go-binary-native_1.25.3.bb
+rename to recipes-devtools/go/go-binary-native_1.25.4.bb
+index 79a0f5c..997c4bd 100644
+--- a/recipes-devtools/go/go-binary-native_1.25.3.bb
++++ b/recipes-devtools/go/go-binary-native_1.25.4.bb
+@@ -9,9 +9,9 @@ PROVIDES = "go-native"
  
-+UPSTREAM_CHECK_GITTAGREGEX = "libgssglue-(?P<pver>\d+(\.\d+)+)"
-+
- inherit autotools-brokensep ptest
+ # Checksums available at https://go.dev/dl/
+ SRC_URI = "https://dl.google.com/go/go${PV}.${BUILD_GOOS}-${BUILD_GOARCH}.tar.gz;name=go_${BUILD_GOTUPLE}"
+-SRC_URI[go_linux_amd64.sha256sum] = "0335f314b6e7bfe08c3d0cfaa7c19db961b7b99fb20be62b0a826c992ad14e0f"
+-SRC_URI[go_linux_arm64.sha256sum] = "1d42ebc84999b5e2069f5e31b67d6fc5d67308adad3e178d5a2ee2c9ff2001f5"
+-SRC_URI[go_linux_ppc64le.sha256sum] = "68d1a08bf3567f330717d821b266a0be1c5080bd05dc238b5a43a24ca0c47d7c"
++SRC_URI[go_linux_amd64.sha256sum] = "9fa5ffeda4170de60f67f3aa0f824e426421ba724c21e133c1e35d6159ca1bec"
++SRC_URI[go_linux_arm64.sha256sum] = "a68e86d4b72c2c2fecf7dfed667680b6c2a071221bbdb6913cf83ce3f80d9ff0"
++SRC_URI[go_linux_ppc64le.sha256sum] = "38c8ac8463537c99fbc1ef368f243b626144446c09db71b1d20634a4237c966d"
  
- do_configure:prepend() {
--- 
-2.34.1
-
+ UPSTREAM_CHECK_URI = "https://golang.org/dl/"
+ UPSTREAM_CHECK_REGEX = "go(?P<pver>\d+(\.\d+)+)\.linux"
+diff --git a/recipes-devtools/go/go-cross-canadian_1.25.3.bb b/recipes-devtools/go/go-cross-canadian_1.25.4.bb
+similarity index 100%
+rename from recipes-devtools/go/go-cross-canadian_1.25.3.bb
+rename to recipes-devtools/go/go-cross-canadian_1.25.4.bb
+diff --git a/recipes-devtools/go/go-cross_1.25.3.bb b/recipes-devtools/go/go-cross_1.25.4.bb
+similarity index 100%
+rename from recipes-devtools/go/go-cross_1.25.3.bb
+rename to recipes-devtools/go/go-cross_1.25.4.bb
+diff --git a/recipes-devtools/go/go-crosssdk_1.25.3.bb b/recipes-devtools/go/go-crosssdk_1.25.4.bb
+similarity index 100%
+rename from recipes-devtools/go/go-crosssdk_1.25.3.bb
+rename to recipes-devtools/go/go-crosssdk_1.25.4.bb
+diff --git a/recipes-devtools/go/go-runtime_1.25.3.bb b/recipes-devtools/go/go-runtime_1.25.4.bb
+similarity index 100%
+rename from recipes-devtools/go/go-runtime_1.25.3.bb
+rename to recipes-devtools/go/go-runtime_1.25.4.bb
+diff --git a/recipes-devtools/go/go_1.25.3.bb b/recipes-devtools/go/go_1.25.4.bb
+similarity index 100%
+rename from recipes-devtools/go/go_1.25.3.bb
+rename to recipes-devtools/go/go_1.25.4.bb
 
