@@ -2,61 +2,61 @@ Return-Path: <piotr@qbee.io>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F753CFC506
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6FA8CFC29F
 	for <webhook@archiver.kernel.org>; Fri, 21 Nov 2025 20:34:38 +0000 (UTC)
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.20917.1763757269485185384
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.20933.1763757275676479674
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 21 Nov 2025 12:34:29 -0800
+ Fri, 21 Nov 2025 12:34:36 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@qbee.io header.s=google header.b=VQbP42+H;
- spf=pass (domain: qbee.io, ip: 209.85.208.176, mailfrom: piotr@qbee.io)
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-37a33b06028so23008711fa.2
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 21 Nov 2025 12:34:29 -0800 (PST)
+ dkim=pass header.i=@qbee.io header.s=google header.b=NwMUWjQD;
+ spf=pass (domain: qbee.io, ip: 209.85.208.169, mailfrom: piotr@qbee.io)
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-37a34702a20so21278841fa.3
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 21 Nov 2025 12:34:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=qbee.io; s=google; t=1763757267; x=1764362067; darn=lists.yoctoproject.org;
+        d=qbee.io; s=google; t=1763757273; x=1764362073; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JHCb99yc8xsVtaE7ueh4PmfEo3Jg8lD0bk5QN7CHIRU=;
-        b=VQbP42+HrAVQYvdxR8tRXrHZ30G2T/7KTBW/w5j958df2A2kDkcsglA+iwNqYiQkhA
-         uOAjWzFGvfRQ39y3xsQzZ3NFK3Lb7tNmdwhuEqVx6jEOZnxkk6cBHVnP/aEBud6jPD31
-         dN6i5xB2kdQClr0qBPlFuYyi2g/v/FHfEFVt8=
+        bh=dpZnHLmmPVNXeCnc2sUqPRKbLrXH65rG77XaoVgU17U=;
+        b=NwMUWjQD/m4rrEKLH/yFAJg2IKF0KxP8m2s3hdNtG9X7TBwC13AjH3WD518EwfWxqO
+         NpXeGUXB+sTakoEUeSMZiW6+iMzwsHm7BEhcDSo3JOkHq5uWYsW/bVxCZZ1ATfxW22Pz
+         Di7nE1ieOtUQXcarSy2m07UBgaGT2nVyru4uM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763757267; x=1764362067;
+        d=1e100.net; s=20230601; t=1763757273; x=1764362073;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=JHCb99yc8xsVtaE7ueh4PmfEo3Jg8lD0bk5QN7CHIRU=;
-        b=G1H8T83zAblu6jJPJAHPWwuVZ0uR9ijEuHawU+nORJtTU+wpVWDYk2D3JKXoteiXyK
-         Rpi6oUdlTOy9xtOc/AItMwgCPpEA7KRTXtLropfAVhfxjiBgGHz8vKPBqt3m41kW6PvJ
-         v53agF0DK2+yoCJRIAS3qVfSlh7MK33F3skmludgz7HTToq9v9lCHmUd3tNrtMzO/LRZ
-         vznWzFa4GRxq0Y+DjR0MexEZIFCcWW99Al37QsvdF2RSUjuatjj+usNdqtOT+SckQ6+r
-         LTZATu/VWiqIfqHRX36/tHJfvbao/yD2QQ3l84B4HFgfZLEYXVo+tYLn5KN/Z02l7Ces
-         M2qA==
-X-Gm-Message-State: AOJu0YwMw9WO7hiQechnhq3tT2LM6TtinWiYx7pGpbCVdRy7y7j2YeCL
-	aOwFdU7wYlDgHGd44bvcSOSjrxUgWJGU1BFBBDEZusZdVsMCkARJYo+DzHt/z97fKkn/hxwN/2i
-	LzAy4yOo=
-X-Gm-Gg: ASbGncuErFsYM4pFEXwucqE4/dSn6I8IiUCY5c2cgU/ApI5UR4IbAE5XLjMu0f5bxdB
-	r+I8+zvwuzqQ84g4EMCfGB5svhWQwYZSPR3rn9quPgb9qFIT2rk/AOejY+xGmxkFMK6FyRpPO2N
-	GQDp2YIQoecF53Ae7razsXbQ/AmCnU3PfyQeWcPDpWq2GtQgs3a5kNGhrh3NiYu6F91mUmWY2aA
-	YIDJrABX78wbXzPcBEgpBe/VmEThVKGUDYRm4SQbZhUG913iOqw0Sg562f2fnY0dO4JN7exsMbA
-	FXWAsU/ev2s4efDiV0IrHnX6OBNXLMSNe+Zewe073fa8kJqRV06Ygq6aieTmTYaBJk5jRdbbq/h
-	DsyOYeA4H/H9C3/8AHhIiT98eCc6PlIKsnza9vFeRWNMsY6+uNfOa/GoXlflQHJM5G2N732cTCg
-	AENreOqV0jlutQYxEhfi5Kgo0mr8IIcB8hqBkc3pM0
-X-Google-Smtp-Source: AGHT+IFbFYwumuntbM0eAYNH4Q5R6Zy7pBwo8wpi7lm1VeaN1APZo7uFQHXiHS3g/+zoMWhjZgPNVw==
-X-Received: by 2002:a2e:9087:0:b0:37b:af78:5901 with SMTP id 38308e7fff4ca-37cd9194d39mr7669621fa.6.1763757267365;
-        Fri, 21 Nov 2025 12:34:27 -0800 (PST)
+        bh=dpZnHLmmPVNXeCnc2sUqPRKbLrXH65rG77XaoVgU17U=;
+        b=uA24tYyqx8b6Rx6OJPZ0PDQaUAtecZoYdv+vT1stlGMepApOwYIkPTQNpa/LtW6NHc
+         NaOGwraP2hVDeX9vzt6YfdbADhLfS4dKY5nloCA+2BDQXrt2q3cOMDLnSqBr3TTT03Oi
+         xarQNy2KQAb8KNVG4d9bMs9QgjMWHqq/X6Iw+rIKPRqZVmApf4XlOYxbpHBZlhkaxv8D
+         dBtNgkhekzoPiVqctOt1pBFy9gK2QhREuH+gApvMp2m6DdhKImK7UF0itkgZKmlU+Ivf
+         qM+j0yjkhNrF+eCxPbc+CehYaJ/Y2Gz10FO6tXxLUzj5ZJEwUOHUSC5uNW7GYM7Uw9b8
+         zPOw==
+X-Gm-Message-State: AOJu0YxWAM1Zcl7aPHLzdBUz0za4YjrTbwe/dYLtqR5sEX730TCrS+St
+	Z5lAihWrzEpTpdWGEdV8ih+Q2F5ZYDZD0hfoYaS3Bu7J5q7sEzHNjKOYliJOaO8IoQFFperKwuY
+	mN+XIumo=
+X-Gm-Gg: ASbGncuQWEutzqHAplymGkbXQW55EjIkre566Fd7+zOZgpRdhNpxAjjIl2cHwAU0J40
+	OPKSJ0Xsbu5MgDxE34iFrfXOm/eod5bVB+Z83JSV4PvgbWgDx9l3q4QiYpUvGMxTrKmgLLoiSjU
+	LpOyKDGq34FPJAsRnwLJPhsE6bKX0Gpu0b38A1x4r5/1IyJl8AMs4srmo0QVcjpjOZgVp3IAH3l
+	jkH+/igutIyLj8D+9coeeNeVWhHqzCQUirynRr677pmq5j4dNv+B9AuwJEwKII/iyPlQitRHZYK
+	/kBDd8GZZRGzTET4uarAfF2XCfuuLNF43X5ISw5FrJsQfzQ/6Kzi9fn3aWaUy2LeC+1KK5gi9jD
+	P9plRqadBGvBwtZqfeapbDOeYky5G4m2u6mZSWqNo2rl7QQj5D3SsN22OA8XwASIWXFYi24rxDG
+	2pPrtUGLSZl9SGIKHU9BK4vlZ6lH0tS6sPFd65UFDI
+X-Google-Smtp-Source: AGHT+IG0nrQtj+8TOycZ6jcDHqxjSGfGrYGSj4OI9WkUjeP5sWaZniKkekTbkgj7pyzhMwA6RrvWWA==
+X-Received: by 2002:a2e:97cf:0:b0:37b:9dd9:d203 with SMTP id 38308e7fff4ca-37cd9197979mr8627061fa.11.1763757272981;
+        Fri, 21 Nov 2025 12:34:32 -0800 (PST)
 Received: from localhost (80.89-10-247.nextgentel.com. [89.10.247.80])
-        by smtp.gmail.com with UTF8SMTPSA id 38308e7fff4ca-37cc6bbf1dbsm12940231fa.40.2025.11.21.12.34.26
+        by smtp.gmail.com with UTF8SMTPSA id 38308e7fff4ca-37cc6b59d3esm12980751fa.14.2025.11.21.12.34.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Nov 2025 12:34:27 -0800 (PST)
+        Fri, 21 Nov 2025 12:34:32 -0800 (PST)
 From: =?UTF-8?q?Piotr=20Buli=C5=84ski?= <piotr@qbee.io>
 To: yocto-patches@lists.yoctoproject.org
 Cc: =?UTF-8?q?Piotr=20Buli=C5=84ski?= <piotr@qbee.io>
-Subject: [layerindex-web][PATCH 2/3] Configure ruff code formater to preserve quote style
-Date: Fri, 21 Nov 2025 21:33:49 +0100
-Message-ID: <20251121203350.55855-2-piotr@qbee.io>
+Subject: [layerindex-web][PATCH 3/3] Extend support for environmental variables in docker/settings.py
+Date: Fri, 21 Nov 2025 21:33:50 +0100
+Message-ID: <20251121203350.55855-3-piotr@qbee.io>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20251121203350.55855-1-piotr@qbee.io>
 References: <20251121203350.55855-1-piotr@qbee.io>
@@ -67,27 +67,38 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Fri, 21 Nov 2025 20:34:38 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2653
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2654
 
-Current code uses a mix of single and double quotes, and that causes a
-lot of code changes every time a file is formatted with ruff. This ruff
-configuration gets us all the benfits of automated code formating
-withough the downside of having to unify the whole code base in terms of
-quote styling.
+This change will allow devcontainer (or any other way of deploying the
+system) to provide values for BASE_DIR and EMAIL_BACKEND through
+environmental varialbles.
 
 Signed-off-by: Piotr Buliński <piotr@qbee.io>
 ---
- ruff.toml | 2 ++
- 1 file changed, 2 insertions(+)
- create mode 100644 ruff.toml
+ docker/settings.py | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/ruff.toml b/ruff.toml
-new file mode 100644
-index 0000000..cfce94a
---- /dev/null
-+++ b/ruff.toml
-@@ -0,0 +1,2 @@
-+[format]
-+quote-style = "preserve"
-\ No newline at end of file
+diff --git a/docker/settings.py b/docker/settings.py
+index c202585..9a96e83 100644
+--- a/docker/settings.py
++++ b/docker/settings.py
+@@ -50,7 +50,7 @@ USE_I18N = True
+ USE_L10N = True
+ 
+ # Avoid specific paths
+-BASE_DIR = os.path.dirname(__file__)
++BASE_DIR = os.getenv('BASE_DIR', os.path.dirname(__file__))
+ 
+ # Absolute filesystem path to the directory that will hold user-uploaded files.
+ # Example: "/home/media/media.lawrence.com/media/"
+@@ -231,6 +231,9 @@ MESSAGE_TAGS = {
+ 
+ # Registration settings
+ ACCOUNT_ACTIVATION_DAYS = 2
++EMAIL_BACKEND = os.getenv(
++    "EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend"
++)
+ EMAIL_HOST = os.getenv('EMAIL_HOST', 'layers.test')
+ EMAIL_PORT = os.getenv('EMAIL_PORT', '25')
+ EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', False)
 
