@@ -2,287 +2,92 @@ Return-Path: <piotr@qbee.io>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFBBACFC503
-	for <webhook@archiver.kernel.org>; Fri, 21 Nov 2025 20:34:28 +0000 (UTC)
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.20914.1763757260456963300
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F753CFC506
+	for <webhook@archiver.kernel.org>; Fri, 21 Nov 2025 20:34:38 +0000 (UTC)
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.20917.1763757269485185384
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 21 Nov 2025 12:34:20 -0800
+ Fri, 21 Nov 2025 12:34:29 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@qbee.io header.s=google header.b=VqAeqU7G;
- spf=pass (domain: qbee.io, ip: 209.85.167.53, mailfrom: piotr@qbee.io)
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5959da48139so2476711e87.1
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 21 Nov 2025 12:34:20 -0800 (PST)
+ dkim=pass header.i=@qbee.io header.s=google header.b=VQbP42+H;
+ spf=pass (domain: qbee.io, ip: 209.85.208.176, mailfrom: piotr@qbee.io)
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-37a33b06028so23008711fa.2
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 21 Nov 2025 12:34:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=qbee.io; s=google; t=1763757258; x=1764362058; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=l2ZX/qcMR2qr4NIvxJvli2CibOiTpTjMjdImG2uwpkM=;
-        b=VqAeqU7G+3adp6vvwI8MYQuUpqmjCI/85VD0YBkBw8IcfWsxkhXcbg2LHuDH/+Jaa4
-         jpywGdAj/Oey8NdgT6YPgpZRzJ+2mte16U3GlR//o0S5RsEXuCL3vfnCpAVln8l9mKdl
-         9/YTYljagRpMHdUjorFP4D2NHCgxxjErElCF8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763757258; x=1764362058;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=qbee.io; s=google; t=1763757267; x=1764362067; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=l2ZX/qcMR2qr4NIvxJvli2CibOiTpTjMjdImG2uwpkM=;
-        b=dJmvDSHdchXApWQfrPjGHmDmEku9sRRcAmBgdnG7zywV8ZJbZ4D9wP3hp1pxewqugu
-         ODykkXYsoJ56/lWaiUnnWtuPSLauH0okVuWemJ0dNqBYBFB34GkD2yLVq4aHBXuRz+PM
-         2eTwOIQ9rbIeGx9Bm5x7H+A3fZuXzSmlqFJLa2SUCJRBd2Tgqh6enHaNsvaaPRkacHG7
-         vHXcUZWhRMSfpObC7Tq+JcsAjc9A3a83f7EwV9Iulv21Hn/jGsiiMCpxIu3waOfxqlj8
-         VEA9j08N/bUJ6OItXMuZuYy6YPjNUSipxGF9gVRn/M5nv7o57FMA4BX5SlRpm6yj5X/1
-         zMyA==
-X-Gm-Message-State: AOJu0Yz7WVxdruB1dfEor5G9QrIv93vWFHmZyLO3diGVi0XMLn5aFf4C
-	asmM/HfsOxwy1nGHRDewGiRY3ZCNJVssysApvTgppqAC5IZicViJJ0seyUiFYcR6+k+95bBZnEM
-	AmyCgKBk=
-X-Gm-Gg: ASbGncs/lqvCVEJmHesLu6IaSklLFD7PDLEL4QfBKNhLTT2IiRbeFJtOLj7lAPjyJa/
-	x+aKdaSKQjSryFmsQW5JyfYaCgarjhtXO3AdOIXOh8reRxaWGntsH0RGLL/5R4BOLa4jP5mVdXv
-	63+evkr7hvCBm0W4gV2rMMpCoTpKDqrK1gVxs6sASU91FalvHp2qdKdjlOwnCLR/JYObc2YhrrZ
-	FE0atrr0/gA+6AYqlQDSg2OQVxF/MJz99UWg0SQpv1Li6H773VkpsX2LW1ttfDwtNe2NRSgvhQ5
-	UVaVNlHYs08uK+92QwPTuqElExUBl56YXcoRTHxB3MwHlsxRC5Nr1mMuiv2ob+vTYEgHYqrVpld
-	KHchg8Duv1zIxc/Ublp+LhomnX4eC/yLAnpKZoLwuVnAGVoH1hKRPe2xZQMpEFlu3N5gKtBty/O
-	GselkJePOv6Me7uWuIJ0bF1PlmfH3DJPI2NDkZZhEo
-X-Google-Smtp-Source: AGHT+IFHgynqfwuZeeDvMdpFOqWqz56Tubo+DB+qscj9GRHj/KJjWMa8pri2TPd7JV2iB76P9IHMWg==
-X-Received: by 2002:a05:6512:3e0a:b0:57d:6fca:f208 with SMTP id 2adb3069b0e04-596a3eefe83mr1300777e87.45.1763757257406;
-        Fri, 21 Nov 2025 12:34:17 -0800 (PST)
+        bh=JHCb99yc8xsVtaE7ueh4PmfEo3Jg8lD0bk5QN7CHIRU=;
+        b=VQbP42+HrAVQYvdxR8tRXrHZ30G2T/7KTBW/w5j958df2A2kDkcsglA+iwNqYiQkhA
+         uOAjWzFGvfRQ39y3xsQzZ3NFK3Lb7tNmdwhuEqVx6jEOZnxkk6cBHVnP/aEBud6jPD31
+         dN6i5xB2kdQClr0qBPlFuYyi2g/v/FHfEFVt8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763757267; x=1764362067;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=JHCb99yc8xsVtaE7ueh4PmfEo3Jg8lD0bk5QN7CHIRU=;
+        b=G1H8T83zAblu6jJPJAHPWwuVZ0uR9ijEuHawU+nORJtTU+wpVWDYk2D3JKXoteiXyK
+         Rpi6oUdlTOy9xtOc/AItMwgCPpEA7KRTXtLropfAVhfxjiBgGHz8vKPBqt3m41kW6PvJ
+         v53agF0DK2+yoCJRIAS3qVfSlh7MK33F3skmludgz7HTToq9v9lCHmUd3tNrtMzO/LRZ
+         vznWzFa4GRxq0Y+DjR0MexEZIFCcWW99Al37QsvdF2RSUjuatjj+usNdqtOT+SckQ6+r
+         LTZATu/VWiqIfqHRX36/tHJfvbao/yD2QQ3l84B4HFgfZLEYXVo+tYLn5KN/Z02l7Ces
+         M2qA==
+X-Gm-Message-State: AOJu0YwMw9WO7hiQechnhq3tT2LM6TtinWiYx7pGpbCVdRy7y7j2YeCL
+	aOwFdU7wYlDgHGd44bvcSOSjrxUgWJGU1BFBBDEZusZdVsMCkARJYo+DzHt/z97fKkn/hxwN/2i
+	LzAy4yOo=
+X-Gm-Gg: ASbGncuErFsYM4pFEXwucqE4/dSn6I8IiUCY5c2cgU/ApI5UR4IbAE5XLjMu0f5bxdB
+	r+I8+zvwuzqQ84g4EMCfGB5svhWQwYZSPR3rn9quPgb9qFIT2rk/AOejY+xGmxkFMK6FyRpPO2N
+	GQDp2YIQoecF53Ae7razsXbQ/AmCnU3PfyQeWcPDpWq2GtQgs3a5kNGhrh3NiYu6F91mUmWY2aA
+	YIDJrABX78wbXzPcBEgpBe/VmEThVKGUDYRm4SQbZhUG913iOqw0Sg562f2fnY0dO4JN7exsMbA
+	FXWAsU/ev2s4efDiV0IrHnX6OBNXLMSNe+Zewe073fa8kJqRV06Ygq6aieTmTYaBJk5jRdbbq/h
+	DsyOYeA4H/H9C3/8AHhIiT98eCc6PlIKsnza9vFeRWNMsY6+uNfOa/GoXlflQHJM5G2N732cTCg
+	AENreOqV0jlutQYxEhfi5Kgo0mr8IIcB8hqBkc3pM0
+X-Google-Smtp-Source: AGHT+IFbFYwumuntbM0eAYNH4Q5R6Zy7pBwo8wpi7lm1VeaN1APZo7uFQHXiHS3g/+zoMWhjZgPNVw==
+X-Received: by 2002:a2e:9087:0:b0:37b:af78:5901 with SMTP id 38308e7fff4ca-37cd9194d39mr7669621fa.6.1763757267365;
+        Fri, 21 Nov 2025 12:34:27 -0800 (PST)
 Received: from localhost (80.89-10-247.nextgentel.com. [89.10.247.80])
-        by smtp.gmail.com with UTF8SMTPSA id 2adb3069b0e04-5969db75627sm1857476e87.5.2025.11.21.12.34.16
+        by smtp.gmail.com with UTF8SMTPSA id 38308e7fff4ca-37cc6bbf1dbsm12940231fa.40.2025.11.21.12.34.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Nov 2025 12:34:17 -0800 (PST)
+        Fri, 21 Nov 2025 12:34:27 -0800 (PST)
 From: =?UTF-8?q?Piotr=20Buli=C5=84ski?= <piotr@qbee.io>
 To: yocto-patches@lists.yoctoproject.org
 Cc: =?UTF-8?q?Piotr=20Buli=C5=84ski?= <piotr@qbee.io>
-Subject: [layerindex-web][PATCH 1/3] Add support for Development Containers
-Date: Fri, 21 Nov 2025 21:33:48 +0100
-Message-ID: <20251121203350.55855-1-piotr@qbee.io>
+Subject: [layerindex-web][PATCH 2/3] Configure ruff code formater to preserve quote style
+Date: Fri, 21 Nov 2025 21:33:49 +0100
+Message-ID: <20251121203350.55855-2-piotr@qbee.io>
 X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20251121203350.55855-1-piotr@qbee.io>
+References: <20251121203350.55855-1-piotr@qbee.io>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 21 Nov 2025 20:34:28 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2652
+ <yocto-patches@lists.yoctoproject.org>; Fri, 21 Nov 2025 20:34:38 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2653
 
-This lowers the barrier of entry for new contributors by setting up a
-completely functional layerindex system from a clean repository.
-
-More on dev containers: https://containers.dev
+Current code uses a mix of single and double quotes, and that causes a
+lot of code changes every time a file is formatted with ruff. This ruff
+configuration gets us all the benfits of automated code formating
+withough the downside of having to unify the whole code base in terms of
+quote styling.
 
 Signed-off-by: Piotr Buliński <piotr@qbee.io>
 ---
- .devcontainer/.env               |  6 +++
- .devcontainer/devcontainer.json  | 63 ++++++++++++++++++++++++++++++++
- .devcontainer/docker-compose.yml | 56 ++++++++++++++++++++++++++++
- README.vscode                    | 50 +++++++++++++++++++++++++
- 4 files changed, 175 insertions(+)
- create mode 100644 .devcontainer/.env
- create mode 100644 .devcontainer/devcontainer.json
- create mode 100644 .devcontainer/docker-compose.yml
- create mode 100644 README.vscode
+ ruff.toml | 2 ++
+ 1 file changed, 2 insertions(+)
+ create mode 100644 ruff.toml
 
-diff --git a/.devcontainer/.env b/.devcontainer/.env
+diff --git a/ruff.toml b/ruff.toml
 new file mode 100644
-index 0000000..230c010
+index 0000000..cfce94a
 --- /dev/null
-+++ b/.devcontainer/.env
-@@ -0,0 +1,6 @@
-+DJANGO_SETTINGS_MODULE = 'docker.settings'
-+DEBUG = 1
-+SECRET_KEY = 'replace-me'
-+HOSTNAME = 'localhost'
-+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-+BASE_DIR = '/opt/layerindex'
-\ No newline at end of file
-diff --git a/.devcontainer/devcontainer.json b/.devcontainer/devcontainer.json
-new file mode 100644
-index 0000000..4eb5b22
---- /dev/null
-+++ b/.devcontainer/devcontainer.json
-@@ -0,0 +1,63 @@
-+{
-+  "name": "Layerindex Web Development Container",
-+  "dockerComposeFile": "docker-compose.yml",
-+  "service": "app",
-+  "workspaceFolder": "/opt/layerindex",
-+  "postCreateCommand": "pip install ruff pytest && python3 manage.py migrate",
-+  "remoteUser": "layers",
-+  "forwardPorts": [
-+    8000
-+  ],
-+  "customizations": {
-+    "vscode": {
-+      "extensions": [
-+        // Python extensions, since this is a Python/Django project
-+        "ms-python.python",
-+        // Include Pylance for type checking
-+        "ms-python.vscode-pylance",
-+        // Debugging support
-+        "ms-python.debugpy",
-+        // Ruff linter
-+        "charliermarsh.ruff",
-+        // Beautiful syntax and scoped snippets for Django
-+        "batisteo.vscode-django",
-+        // SQL tools allowing to connect to the database
-+        "mtxr.sqltools-driver-mysql"
-+      ],
-+      "settings": {
-+        "terminal.integrated.defaultProfile.linux": "bash",
-+        "python.defaultInterpreterPath": "/usr/bin/python3",
-+        "remote.autoForwardPorts": false,
-+        "sqltools.connections": [
-+          {
-+            "mysqlOptions": {
-+              "authProtocol": "default",
-+              "enableSsl": "Disabled"
-+            },
-+            "ssh": "Disabled",
-+            "previewLimit": 50,
-+            "server": "layersdb",
-+            "port": 3306,
-+            "driver": "MariaDB",
-+            "name": "layersdb",
-+            "database": "layersdb",
-+            "username": "root",
-+            "password": "testingpw"
-+          }
-+        ],
-+        "editor.formatOnSaveMode": "modifications",
-+        "[jsonc]": {
-+          "editor.defaultFormatter": "vscode.json-language-features"
-+        },
-+        "[python]": {
-+          "editor.defaultFormatter": "charliermarsh.ruff"
-+        },
-+        "python.testing.unittestEnabled": false,
-+        "python.testing.pytestEnabled": true,
-+        "editor.rulers": [
-+          80
-+        ]
-+      }
-+    }
-+  }
-+}
-\ No newline at end of file
-diff --git a/.devcontainer/docker-compose.yml b/.devcontainer/docker-compose.yml
-new file mode 100644
-index 0000000..83fc864
---- /dev/null
-+++ b/.devcontainer/docker-compose.yml
-@@ -0,0 +1,56 @@
-+services:
-+  layersdb:
-+    image: mariadb:lts
-+    environment:
-+      MARIADB_DATABASE: layersdb
-+      MARIADB_ROOT_PASSWORD: testingpw
-+    healthcheck:
-+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
-+      start_period: 10s
-+      interval: 5s
-+      timeout: 5s
-+      retries: 5
-+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --wait_timeout=28800 --max_allowed_packet=128M
-+
-+  layersrabbit:
-+    image: rabbitmq:alpine
-+    healthcheck:
-+      test: rabbitmq-diagnostics -q ping
-+      start_period: 10s
-+      interval: 5s
-+      timeout: 5s
-+      retries: 5
-+
-+  app:
-+    depends_on:
-+      layersdb:
-+        condition: service_healthy
-+      layersrabbit:
-+        condition: service_healthy
-+    build: ..
-+    image: yoctoproject/layerindex-web
-+    working_dir: /opt/layerindex
-+    volumes:
-+      - ..:/opt/layerindex
-+      - workdir:/opt/workdir
-+    env_file:
-+      - .env
-+    command: ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
-+
-+  celery:
-+    depends_on:
-+      layersdb:
-+        condition: service_healthy
-+      layersrabbit:
-+        condition: service_healthy
-+    image: yoctoproject/layerindex-web
-+    working_dir: /opt/layerindex
-+    volumes:
-+      - ..:/opt/layerindex:ro
-+      - workdir:/opt/workdir
-+    env_file:
-+      - .env
-+    command: /usr/local/bin/celery --workdir=/opt/layerindex --app layerindex.tasks worker --loglevel=INFO
-+
-+volumes:
-+  workdir:
-diff --git a/README.vscode b/README.vscode
-new file mode 100644
-index 0000000..db72329
---- /dev/null
-+++ b/README.vscode
-@@ -0,0 +1,50 @@
-+VSCode + DevContainers Setup
-+----------------------------
-+
-+If you already use VSCode and Docker, you can setup the local development
-+environment using preconfigured DevContainers extension.
-+
-+Getting Started
-+---------------
-+
-+1. Install Dev Containers extension (ms-vscode-remote.remote-containers)
-+2. Open local clone of this repository in VSCode
-+3. Click on "Reopen in Container" when prompted by VSCode
-+4. Wait 1-2 minutes for VSCode to setup your DevContainer
-+
-+Once the DevContainer setup process is completed, you'll have access to:
-+
-+* Django development server running at http://localhost:8000
-+* All Django database migrations applied
-+* PyTest autodiscovery and debugger configured
-+* Database client extension configured with the local server
-+* Code linting and formatting with ruff
-+* Command line git support with your SSH keys mounted in the container
-+
-+FAQ
-+---
-+
-+1.  How do I import master branch from the public instance?
-+
-+    Run the following command in the VSCode Terminal:
-+
-+    $ layerindex/tools/import_layers.py https://layers.openembedded.org
-+
-+
-+2.  How do I see emails sent by the development system?
-+
-+    Emails are logged to the standard output of the layerindex-web container.
-+
-+    To see the logs:
-+
-+    1. Open the Command Palette: Ctrl+Shift+P / Cmd+Shift+P
-+    2. Type: "Remote Explorer: Focus on Dev Containers View"
-+    3. Right-click on the layerindex-web container
-+    4. Select "Show Container Log"
-+
-+
-+3.  How do I interact with Django's manage.py script?
-+
-+    Open a new terminal window in VSCode and type:
-+
-+    $ ./manage.py ...
++++ b/ruff.toml
+@@ -0,0 +1,2 @@
++[format]
++quote-style = "preserve"
 \ No newline at end of file
 
