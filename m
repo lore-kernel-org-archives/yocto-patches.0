@@ -2,157 +2,127 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB022CFC28D
-	for <webhook@archiver.kernel.org>; Fri, 21 Nov 2025 14:21:46 +0000 (UTC)
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.12417.1763734901848096696
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32A87CFC28B
+	for <webhook@archiver.kernel.org>; Fri, 21 Nov 2025 14:52:07 +0000 (UTC)
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.13075.1763736718839454885
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 21 Nov 2025 06:21:42 -0800
+ Fri, 21 Nov 2025 06:51:59 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=QR5iHAqw;
- spf=pass (domain: konsulko.com, ip: 209.85.222.181, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-8b28f983333so200567885a.3
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 21 Nov 2025 06:21:41 -0800 (PST)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=QU91pI+w;
+ spf=pass (domain: konsulko.com, ip: 209.85.219.51, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-880576ebe38so23484866d6.2
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 21 Nov 2025 06:51:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1763734900; x=1764339700; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DzfI47SUGQHv3ZpELw+NUMMpo9Vc/aWTPLyEO3xbYZk=;
-        b=QR5iHAqwzogholgmkXwp/v4d9Za5wexlieAaMJaqcLrmF37/lblzmmBw4oRDt22pjB
-         ZG0FLw3jnKTyPMQ+80Vl2syH6lvxTU7WNU/Q5NRrTnjmCtm/Yz3mYKASIVUIfFccrCf+
-         EqL3ipAhwyhCQSCJYT1VhxGeiWNEVjIO2gpoc=
+        d=konsulko.com; s=google; t=1763736718; x=1764341518; darn=lists.yoctoproject.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=j77+BsImSV8g/HsWSiaWcdVCK5a2AHFFGicS6qNPgIM=;
+        b=QU91pI+wyZgEv+D6KD775bHg+EV7uqtjMtdKqRFpND93pBG73Gx9q/G0LsXSdGdWxK
+         6oy+uM4t0eE0y7T1K7dV1RCkj0TmwBu21luMS5ft31ZxcAQZE+RPyLUC04tJdKUgsaLy
+         csPWTtZhA22/JoQnpfHkRHANv4qdNsuHQSyx4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763734900; x=1764339700;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=DzfI47SUGQHv3ZpELw+NUMMpo9Vc/aWTPLyEO3xbYZk=;
-        b=A9LDOC3l//b+p6uU0r0bTZ7bipjzX4TJidUgU59Yoxk5BUK5Utrho0tMM1lhS4TlwA
-         iC7mHBoKa7xWqmEfBjAdLvRPsao4SUHwz36XXLZYhD/JO5nKbbSfOAA1J0nsGcCgJbcK
-         qCW8+AuRDY8JZxbUkA27ccMlFTbNV5a+eeXu2pDku1pmeWDW+wVZa7T43u87xgyXAFCL
-         NreYa5oSEWUR64c4Q3G1dAXmghzHf3WS90U9uzQs9NrlGvOKMMix8CdZx6LTfrP1Oy5f
-         yAA/eimOAD3OjtzYPVPaGwJM8V9jmAY66DlIPLkc2IfBQBGIbhsoce6MKafTDIgRq0dw
-         Ujyg==
-X-Gm-Message-State: AOJu0Yy/+J7SiC1Sgv6BnGCmnlKGTKJmDJ63Pip6HHdfpbWAn301gPtW
-	nvNjHB8CyUxmTjmWqDt8+GBx9hPFpU61CgI0arZJfgYCbcLlwXJ+tfGLimmN5906AI6WQMmybig
-	2Bjjs
-X-Gm-Gg: ASbGncu3TXZRIi/a1HvomtADXlgz8vBWpol1fQJd9+PavS5KTpmtGq/URWRYQudf3ff
-	xBxMtabGnejrMIZvUZyln/GsjeemdriO/69jzL/FRBP6FrUHhl+f57fm4/SIir1255UcyJeaAvu
-	VmVH2Z58h+obP8cxHn6M0X4Q3hRlUAQKprurDOxO9LGZDTsgK6d4Q+3Vwiy7qGqtC6nuJda4knz
-	KnLxOUm6/k97+Vlh5vDhdfBpCnV8uDEbVnZHHaiVHL5LJpL4T9GeHT4cAcMV0W5EDYJebf7B1IC
-	BPPisO6AXO7bPJ48EXjtzxSoHtLlmqDf2ZumHmugjpfwJuQlJ8ScsUWorDmmTU7E24FxG2dCe94
-	8JVuag+FNZJ4irfrTuNxpTYc8kEC48pjnhff9L4AYdTuKkWoluWBOVOTWZxGkluPi2LA2ltB9BU
-	F4L3AORnU+1S6XsvXKPLbVep/P1v/fgNQ/Sy0nblobGnHxeQ+fhDKFZSMsWhNrW/8=
-X-Google-Smtp-Source: AGHT+IGdLELo45lAMw9ZlY5DLMQBSlL5jQaBbCyUKnVoWfk+KuxBZ3ECdu7+HRBKKfWqwDWc0bs5tA==
-X-Received: by 2002:a05:620a:2a10:b0:80e:3af7:7a0c with SMTP id af79cd13be357-8b33d274bf9mr234685285a.43.1763734900202;
-        Fri, 21 Nov 2025 06:21:40 -0800 (PST)
-Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b3295db58fsm374815785a.37.2025.11.21.06.21.39
-        for <yocto-patches@lists.yoctoproject.org>
+        d=1e100.net; s=20230601; t=1763736718; x=1764341518;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j77+BsImSV8g/HsWSiaWcdVCK5a2AHFFGicS6qNPgIM=;
+        b=bGM1FPswOS9bT9yE9UqL5bNQXtwLwS9jJqQHHTx1DRRrnkDDy9vsRy0gIZTOawdlea
+         WBP1kOED7lQyhd/Wi8AoLb2TqcMX7U5yLNxMI/PAEXK0AK3bOm9iDbzjoaZYXUcVMM+b
+         w/R/UeWLiwoyupk2u9WVoBAquLMtsZPAJxXEXiOnMWQ6cbHjK3hdjQ35lodhpKFlp4aw
+         MzzE/T3c2cvgvfMlf8rNM1t7LPvFoiHpISoLBb5E/GMToEiifW+AIvXqm+xqodDd5/Zx
+         6aCidQejQ7SFsNOxYkIBeqew/kW3yUPVUPPPXfJB9PMh1feLpQAMQGlAzcrDBDO9HXPd
+         h8Yw==
+X-Gm-Message-State: AOJu0YwIuOOqIxxeCmJUp9YZYsa2zM2yr0ijy5tM9862qz7y2NcKb5CW
+	+AQV5WTW901hvuco32mZ9Hq/W6T/mUBvPmsFFmYDzWwg3BhvZ1/kZliMbeRfcs7hQ38=
+X-Gm-Gg: ASbGncv6BjqfeTRIeFi2cmLri7uxsqXsP1DYJmp1UUsMv1GSNI0B3ZeFYczMHRPqfKn
+	C9DKa3me2ZMtGqrq5E53NyfRaIPElfb7j1QL/i+91HGhXkb/mrvOB06TtyrO26pvNjEDeaQPMUu
+	7OgOvKivSwqXzC6SmKaZ3NrVBbOtHp9iiEG+7Cv3ZaWJ1vGT5mYBgPHrh4y0WXVCOmXr/9To4eg
+	aA8DWZ/3KB1o5XNS/AoXfWqeV0fqwgevmRhIwFaDXfWcAz4bMne7tKDmzMFuEukE1paiaxj/Oj0
+	GXbXABKnR/I7Cin2ADOjHHx5L9llSZAKWLwLswIaOlqQ2FbezEIM4+3iKVCV0pr0ixeJsVtPiDa
+	yuE/UZ7Wz4EzvxhokAT8msHx33uElGKpiCBuXEFYZ8TwstXZOqx9DB7+AnZC1QBJy/f/qzTTNGM
+	tsncjzCPPxfiNp43J71GFNhXvTt26fNoz8/vuzF8CDfee7cA==
+X-Google-Smtp-Source: AGHT+IEs/pj7M/7NgOdq1QBVzJGNFIHZAtWA0hB0XILe8wOH5g9zxI0ZnB3FYL8x2kr/BvwyY7VHOg==
+X-Received: by 2002:a05:6214:e4b:b0:87c:226f:f5c7 with SMTP id 6a1803df08f44-8847c548462mr37962856d6.38.1763736717528;
+        Fri, 21 Nov 2025 06:51:57 -0800 (PST)
+Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8846e46a4b2sm40111016d6.19.2025.11.21.06.51.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Nov 2025 06:21:39 -0800 (PST)
+        Fri, 21 Nov 2025 06:51:56 -0800 (PST)
+Date: Fri, 21 Nov 2025 09:51:55 -0500 (EST)
 From: Scott Murray <scott.murray@konsulko.com>
-To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-security][PATCH 5/6] oeqa: openscap test
-Date: Fri, 21 Nov 2025 09:21:19 -0500
-Message-ID: <a043f0b8eded3444d6ac520a5fab02b191d43cf0.1763734538.git.scott.murray@konsulko.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <cover.1763734538.git.scott.murray@konsulko.com>
-References: <cover.1763734538.git.scott.murray@konsulko.com>
+To: Louis Rannou <louis.rannou@semalibre.com>
+cc: yocto-patches@lists.yoctoproject.org, rybczynska@gmail.com, 
+    pascal.eberhard@non.se.com, yi.zhao@windriver.com, 
+    Louis Rannou <louis.rannou@non.se.com>
+Subject: Re: [meta-security][PATCH 0/4] openscap: upgrade 1.4.1 to 1.4.2 with
+ fixes
+In-Reply-To: <20251114-openscap_bump-v1-0-1c8169b8e332@non.se.com>
+Message-ID: <7f3fa589-dabf-388f-6430-38065904b683@konsulko.com>
+References: <20251114-openscap_bump-v1-0-1c8169b8e332@non.se.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 21 Nov 2025 14:21:46 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2649
+ <yocto-patches@lists.yoctoproject.org>; Fri, 21 Nov 2025 14:52:07 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2651
 
-From: Louis Rannou <louis.rannou@non.se.com>
+On Fri, 14 Nov 2025, Louis Rannou wrote:
 
-Add basic openscap test. This looks for an existing profile and run a basic scan.
+> From: Louis Rannou <louis.rannou@non.se.com>
+>
+> This series of patches makes an upgrade of openscap and scap-security with a repends fix
+> and other minor corrections.
+>
+> I have based the source on the well formatted github release instead of the commit
+> sha. So let me know if that's incorrect.
+>
+> It also includes a runtime test and musl fix.
 
-Openscap scans return 1 in case of failure, 0 in case of success and 2 when a
-vulnerability has been found. As this does not aim to check openscap reports, 2 is
-considered as a successful test.
+Just a heads up on these, I took Yi's prior upgrade patches since they
+didn't change SRC_URI for openscap, and then applied your other recipe
+fixes on top as a separate change, please take a look to see if I've
+missed something.  I dropped the musl enabling changes, as both openscap
+and scap-security-guide were still failing to build with musl for me
+with a couple of different errors:
 
-Signed-off-by: Louis Rannou <louis.rannou@non.se.com>
-(added to test image)
-Signed-off-by: Scott Murray <scott.murray@konsulko.com>
----
- lib/oeqa/runtime/cases/openscap.py         | 48 ++++++++++++++++++++++
- recipes-core/images/security-test-image.bb |  2 +-
- 2 files changed, 49 insertions(+), 1 deletion(-)
- create mode 100644 lib/oeqa/runtime/cases/openscap.py
+.../openscap-1.4.2/src/OVAL/probes/unix/process58_probe.c:161:18:
+error: 'PATH_MAX' undeclared (first use in this function)
 
-diff --git a/lib/oeqa/runtime/cases/openscap.py b/lib/oeqa/runtime/cases/openscap.py
-new file mode 100644
-index 0000000..7012b6b
---- /dev/null
-+++ b/lib/oeqa/runtime/cases/openscap.py
-@@ -0,0 +1,48 @@
-+# SPDX-License-Identifier: MIT
-+#
-+
-+from oeqa.runtime.case import OERuntimeTestCase
-+from oeqa.core.decorator.depends import OETestDepends
-+from oeqa.runtime.decorator.package import OEHasPackage
-+
-+
-+class OpenscapTest(OERuntimeTestCase):
-+
-+    @OEHasPackage(["openscap"])
-+    @OETestDepends(["ssh.SSHTest.test_ssh"])
-+    def test_openscap_basic(self):
-+        status, output = self.target.run("oscap -V")
-+        msg = (
-+            "`oscap -V` command does not work as expected. "
-+            "Status and output:%s and %s" % (status, output)
-+        )
-+        self.assertEqual(status, 0, msg=msg)
-+
-+    @OEHasPackage(["openscap"])
-+    @OEHasPackage(["scap-security-guide"])
-+    @OETestDepends(["ssh.SSHTest.test_ssh"])
-+    def test_openscap_scan(self):
-+        SCAP_SOURCE = "/usr/share/xml/scap/ssg/content/ssg-openembedded-xccdf.xml"
-+        CPE_DICT = "/usr/share/xml/scap/ssg/content/ssg-openembedded-cpe-dictionary.xml"
-+
-+        cmd = "oscap info --profiles %s" % SCAP_SOURCE
-+        status, output = self.target.run(cmd)
-+        msg = (
-+            "oscap info` command does not work as expected.\n"
-+            "Command: %s\n" % cmd + "Status and output:%s and %s" % (status, output)
-+        )
-+        self.assertEqual(status, 0, msg=msg)
-+
-+        for p in output.split("\n"):
-+            profile = p.split(":")[0]
-+            cmd = "oscap xccdf eval --cpe %s --profile %s %s" % (
-+                CPE_DICT,
-+                profile,
-+                SCAP_SOURCE,
-+            )
-+            status, output = self.target.run(cmd)
-+            msg = (
-+                "`oscap xccdf eval` does not work as expected.\n"
-+                "Command: %s\n" % cmd + "Status and output:%s and %s" % (status, output)
-+            )
-+            self.assertNotEqual(status, 1, msg=msg)
-diff --git a/recipes-core/images/security-test-image.bb b/recipes-core/images/security-test-image.bb
-index 81f69dd..e7e354e 100644
---- a/recipes-core/images/security-test-image.bb
-+++ b/recipes-core/images/security-test-image.bb
-@@ -12,7 +12,7 @@ IMAGE_INSTALL:append = "\
-     ${@bb.utils.contains("BBFILE_COLLECTIONS", "integrity", "packagegroup-ima-evm-utils","", d)} \
- "
- 
--TEST_SUITES = "ssh ping apparmor clamav samhain sssd checksec smack suricata aide firejail"
-+TEST_SUITES = "ssh ping apparmor clamav openscap samhain sssd checksec smack suricata aide firejail"
- TEST_SUITES:append = " parsec tpm2 swtpm ima"
- 
- INSTALL_CLAMAV_CVD = "1"
--- 
-2.51.0
+and:
 
+.../openscap-1.4.2/src/OVAL/probes/unix/linux/systemdshared.h:188:50:
+error: implicit declaration of function 'basename'; did you mean 'rename'?
+
+(I saw this one in scap-security-guide as well).  Please test locally
+with latest oe-core master to see if you can reproduce.  If you cannot,
+we'll have to compare notes further, though my test build setup is pretty
+plain.
+
+Thanks,
+
+Scott
+
+
+> Signed-off-by: Louis Rannou <louis.rannou@non.se.com>
+> ---
+> Louis Rannou (4):
+>       openscap: update to 1.4.2
+>       scap-security-guide: update to 0.1.78
+>       oeqa: openscap test
+>       openscap: fix musl compatibility
+>
+>  lib/oeqa/runtime/cases/openscap.py                 | 48 ++++++++++++++++++++++
+>  .../{openscap_1.4.1.bb => openscap_1.4.2.bb}       | 16 +++++---
+>  ...ide_0.1.77.bb => scap-security-guide_0.1.78.bb} |  4 +-
+>  3 files changed, 59 insertions(+), 9 deletions(-)
+> ---
+> base-commit: 9f1d763bb17bf105cc313a95eb3b07496b34bacc
+> change-id: 20251113-openscap_bump-5c33d1ab2ceb
+>
+> Best regards,
+> --
+> Louis Rannou <louis.rannou@non.se.com>
+>
 
