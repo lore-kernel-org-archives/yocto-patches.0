@@ -2,61 +2,61 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3CB5CFD31E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C76BCFD313
 	for <webhook@archiver.kernel.org>; Sun, 23 Nov 2025 23:45:53 +0000 (UTC)
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.4871.1763941548264716718
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.5056.1763941551934573412
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 23 Nov 2025 15:45:48 -0800
+ Sun, 23 Nov 2025 15:45:52 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=OrzHewmq;
- spf=pass (domain: konsulko.com, ip: 209.85.222.175, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-8b29ff9d18cso370993785a.3
-        for <yocto-patches@lists.yoctoproject.org>; Sun, 23 Nov 2025 15:45:48 -0800 (PST)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=oypBKe5B;
+ spf=pass (domain: konsulko.com, ip: 209.85.222.180, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-8b2e530a748so355902985a.0
+        for <yocto-patches@lists.yoctoproject.org>; Sun, 23 Nov 2025 15:45:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1763941547; x=1764546347; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1763941551; x=1764546351; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=zBC/XrRDvE0M8TreB4urm2ooDaHGxqvxsCfku8Sqw5M=;
-        b=OrzHewmq0GYLimhDtlFk/e/LpoV5BQcBd7iyTVg7LM1k5b75s8xR/Xa6DDx0G1/0rZ
-         xAZUPv7iLJlvJ+eEqQ9zb0ssjSQK5KKWMzFqSkjcIIEO5ebwBxO0W8id7chD+iH3kfAq
-         O3/xMvNWNLZMR+Z0kJzSv223CHu0vtx8Swyyw=
+        bh=aGci2DTrEBfigQCc2w19pIJ5C2moEwL/Q5U/OTUMvbk=;
+        b=oypBKe5Baw77joxp2DiIK9MdO/hJJ7zorx5J4CkzAciOoX8iSKrgl195v53UeD07wp
+         rQuMwuXMe5PXDImMBEuu+STBrTcu8E+vrRUAOdD3mt698lvJZqAsxm5Bzq44RRYwYgtO
+         HFHqGmi+JfrZXXsX9fZTZb25jh1JFxp4QoM+k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763941547; x=1764546347;
+        d=1e100.net; s=20230601; t=1763941551; x=1764546351;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=zBC/XrRDvE0M8TreB4urm2ooDaHGxqvxsCfku8Sqw5M=;
-        b=h4f9fV3PUqT2INO58+WmMVCDnfHbL2E3u+bkI/p2GfEH71Zrnq6B3jpx8uWpZvv4KS
-         VVr7jBraF6zhLzFU9ZJzZe+Q2S9zfKASwm0D4y1H5eTGLDTRj0oymb7f89Qu5OvrJMmI
-         o6x9s96FyLJX/zIN4NV/KY8mWhahllP1+sCL/rFMejzDPIavUNPHp+MT4SYJjm5Y+g4a
-         jsloSrlQRIWMutfMB9C2Bca/wqz7rIbthgWSwcrOCFWTSbcMyJDk9/16EXleWnC6Tp2m
-         ULH+D+c6ynF5nbpgxxWDCTN/Pb3TAKz3sKVowA1LpHyysQVjIjnMurjw15sl6OR/0Nfc
-         04kg==
-X-Gm-Message-State: AOJu0YxJvFpce22foSncX2kYZOGAx3OeU9nbBuodrswzZRtJjAdeIGXV
-	H01y7aNHU3EgtAnV3nwaJlE6YWZZcP24K8vAIn68zBsisSq78x6l+mhvN9hGhKSJa2MiVvpCYGZ
-	I9m8q
-X-Gm-Gg: ASbGncuUmZ86zoW0y1wSXIKBs7VlQax5L3ExAoQPy5sWBeup9R5VqxYdvfIDFXklu+X
-	hl6eeGOYR+vN5FFIPOQZ79VoBi5C+l0Bv4Xzh5DhtbPW+1nCSV4o7MSHDWBHrP4nZv01g0QQliP
-	fqG3oINVfi310ygya/Z2L2FGc3kGRRF1FiI1y51VWWh/P7PcJJsgjjuOljzeHAmPR4ROlGVVD1l
-	FWVSdO1Ez4ea100p8kcPIr1EszqKN4gHvRp0bJ4nZMAEo5nAUb3ImpmF3GzkXc/fDtsdrfY7VXT
-	jZU2MlVRejFUQSt4X0N3ZEYxjT7gR/ios33n/93GOzmvhZlDSf3+58MqIQkQEWHXZ6zyx0U7sO5
-	z2PmV+YrWt4nHK7OfeUFozcalU4n8iBnoGBZdUZeEAhTLbIjq3+8eCRSUo1AAe6QdL36TjjaV0s
-	pWM+6dZm6FY5ooa23lv8SnPf/DZEp+nEFCKAvYdJybJN7MLEGvjPUU6L2bDMGriSE=
-X-Google-Smtp-Source: AGHT+IFKw4+g9ZjcATBPAHav+goc6NmC43j5XnqB8YebbftVwiVmC6OPnoCXHRTuN4zNn25Bw3+XtQ==
-X-Received: by 2002:a05:620a:172b:b0:88f:4264:ea78 with SMTP id af79cd13be357-8b33d1b2482mr1300752285a.15.1763941546687;
-        Sun, 23 Nov 2025 15:45:46 -0800 (PST)
+        bh=aGci2DTrEBfigQCc2w19pIJ5C2moEwL/Q5U/OTUMvbk=;
+        b=QT7i5ARr7dbcb1WQ6f87TAG+OIZGgtahlXVITwrhKN4DVr0IQo7jDlbedr9G1NHGaC
+         fbW8EJ8jMyVs+YFuZGfoyCcj86U4yHDJLS36WYQKRSbj4w7JqqaB42x95+J/zhDIB2wz
+         67UykFC5UJ/xzSQ4DMjxqKcAFtXY8VstKN4Zk/hww5BUJpbcckbtLSM4G2PWvOSZepHI
+         sh7tRxW0T8a4LHazy378G0kACeHG1Wf1ZT6KDg8mNmimnj0poNLxAOrmK41PZht1MtbW
+         K6J4VXDHa7AULgDEM44lXXOwlNpRMqZN10ENzTb2+QV3/VpMaRkjIeRdSzm+GYfvQfHZ
+         WU9g==
+X-Gm-Message-State: AOJu0YyC1XpwXXcNvBEjVGZftHCaTIs2tt4UwC90yi9sTqnsqMs8bbVL
+	5n1pKoBivPLj9fQnZHlI4SW7Tnak7JZw7/MZ2TFSlDkdsl1ULhXq00u2kNzdc7ow0d1PNQ5y5rn
+	iV6Zj
+X-Gm-Gg: ASbGncv8QefJD/qhef+OzLANnnE1QvhbX644aD5ipREdc5uMImaLoOStMaGf9Rt6I8B
+	0W/km67xge9HgAEIe8kbeZlP8da6Gl5KKO2FaInd4itAglQ2WtF4JQubOcnyRSjlbzJ96HhQBXg
+	CM57XFrJOgoBHjJshB0cjk1wWf1509SgTBIxs40uSBBPlZdVBomk4jqiQNzFtQ4WLwjgcpNWUYk
+	mNMHkj2tAhiMr364f9leMcAN2yxBvRmOxLGpP0lFPlzIh+8DK2++7faNxqDAtzXqXDN+z5pckqt
+	kn5Fxi7nCMz2/FTUeoLtsl9/u6dm1TlDqXSIKf1tuGqamoOtwzI18tsLLi1D3ZRIdOgDT8L3ud/
+	gOV66Is3kgrB5ee2FlUvHi8gRpgdgWAHqGVf2o5WGOnERRQP9/rNFSTwlyP4XhWLxB9c2XN2ot0
+	T6eGdUWcm+94+x4qT0YTu+7bRzq1w6UmZaT4TIIVOgY3BMJppZZy55QzzUvX/UORM=
+X-Google-Smtp-Source: AGHT+IExNGNtJOMM2csfey4EnBpp1+rARryfNtd6ddaT17eEUIaMu5Oh30KOK9/KejJSDl8wxlSUew==
+X-Received: by 2002:a05:620a:2910:b0:8a2:45ba:1b5e with SMTP id af79cd13be357-8b33d1f01a9mr1284318185a.28.1763941550478;
+        Sun, 23 Nov 2025 15:45:50 -0800 (PST)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b32932db59sm843706585a.1.2025.11.23.15.45.45
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b32932db59sm843706585a.1.2025.11.23.15.45.49
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Nov 2025 15:45:46 -0800 (PST)
+        Sun, 23 Nov 2025 15:45:49 -0800 (PST)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-security][scarthgap][PATCH 28/32] suricata: drop pkg_postinst_ontarget systemd init
-Date: Sun, 23 Nov 2025 18:45:08 -0500
-Message-ID: <ea3ab291df9f2c045c8796fc02b97b09cb020cba.1763938436.git.scott.murray@konsulko.com>
+Subject: [meta-security][scarthgap][PATCH 31/32] suricata: populate SYSTEMD_SERVICE for service autostart
+Date: Sun, 23 Nov 2025 18:45:11 -0500
+Message-ID: <282d281042995e7927812031298ca17f8a0445cd.1763938436.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <cover.1763938436.git.scott.murray@konsulko.com>
 References: <cover.1763938436.git.scott.murray@konsulko.com>
@@ -66,65 +66,62 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Sun, 23 Nov 2025 23:45:53 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2686
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2689
 
 From: Clayton Casciato <majortomtosourcecontrol@gmail.com>
 
-/var/log/suricata initialization is handled by
-systemd-tmpfiles-setup.service, which occurs before services like
-suricata
+https://docs.yoctoproject.org/dev/ref-manual/variables.html#term-SYSTEMD_SERVICE
 
-Work towards resolving:
-ERROR: [...] do_rootfs: The following packages could not be configured
-offline and rootfs is read-only: ['100-suricata']
+Before:
+root@beaglebone-yocto:~# systemctl status suricata
+* suricata.service - Suricata IDS/IDP daemon
+     Loaded: loaded (/usr/lib/systemd/system/suricata.service; disabled; preset: disabled)
+     Active: inactive (dead)
+       Docs: man:suricata(8)
+             man:suricatasc(8)
+             https://redmine.openinfosecfoundation.org/projects/suricata/wiki
 
-Added in commit 36d656fe7244 ("suricata: add tmpfiles.d config")
+After:
+root@beaglebone-yocto:~# systemctl status suricata
+* suricata.service - Suricata IDS/IDP daemon
+     Loaded: loaded (/usr/lib/systemd/system/suricata.service; enabled; preset: enabled)
+     Active: active (running) since Mon 2025-09-22 04:05:08 UTC; 20s ago
+ Invocation: 8cfeb29631f443f0830bffeb00975931
+       Docs: man:suricata(8)
+             man:suricatasc(8)
+             https://redmine.openinfosecfoundation.org/projects/suricata/wiki
+   Main PID: 268 (Suricata-Main)
+      Tasks: 7 (limit: 4915)
+     Memory: 36.8M (peak: 37M)
+        CPU: 2.222s
+     CGroup: /system.slice/suricata.service
+             `-268 /usr/bin/suricata -c /etc/suricata/suricata.yaml -i eth0
 
-systemd testing:
-
-root@beaglebone-yocto:~# ls -d /var/log/suricata
-/var/log/suricata
-
-root@beaglebone-yocto:~# systemctl enable suricata
-Created symlink '/etc/systemd/system/multi-user.target.wants/suricata.service' -> '/usr/lib/systemd/system/suricata.service'.
-
-root@beaglebone-yocto:~# rmdir /var/log/suricata
-
-root@beaglebone-yocto:~# reboot now
-
-root@beaglebone-yocto:~# ls -d /var/log/suricata
-/var/log/suricata
-
-root@beaglebone-yocto:~# journalctl -o short-iso-precise -u systemd-tmpfiles-setup -u suricata
-2025-05-20T00:45:46.450027+00:00 beaglebone-yocto systemd[1]: Starting Create System Files and Directories...
-[...]
-2025-05-20T00:45:47.041049+00:00 beaglebone-yocto systemd[1]: Finished Create System Files and Directories.
-2025-05-20T00:45:47.542976+00:00 beaglebone-yocto systemd[1]: Started Suricata IDS/IDP daemon.
-[...]
+Sep 22 04:05:08 beaglebone-yocto systemd[1]: Started Suricata IDS/IDP daemon.
+Sep 22 04:05:09 beaglebone-yocto suricata[268]: i: suricata: This is Suricata version 7.0.0 RELEASE running in SYSTEM mode
+Sep 22 04:05:10 beaglebone-yocto suricata[268]: W: detect: No rule files match the pattern /var/lib/suricata/rules/suricata.rules
+Sep 22 04:05:10 beaglebone-yocto suricata[268]: W: detect: 1 rule files specified, but no rules were loaded!
+Sep 22 04:05:10 beaglebone-yocto suricata[268]: i: threads: Threads created -> W: 1 FM: 1 FR: 1   Engine started.
 
 Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
-Signed-off-by: Armin Kuster <akuster808@gmail.com>
-(cherry picked from commit 9109f7258dc60c88985869ceff5ca3523cd01400)
+(cherry picked from commit 0b7b0629bebe98237ce3060ebe132db05cdcc3b7)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- recipes-ids/suricata/suricata_7.0.0.bb | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ recipes-ids/suricata/suricata_7.0.0.bb | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/recipes-ids/suricata/suricata_7.0.0.bb b/recipes-ids/suricata/suricata_7.0.0.bb
-index e2e94e2..7a6b930 100644
+index 021575f..62baa35 100644
 --- a/recipes-ids/suricata/suricata_7.0.0.bb
 +++ b/recipes-ids/suricata/suricata_7.0.0.bb
-@@ -148,9 +148,7 @@ do_install () {
+@@ -156,6 +156,7 @@ fi
  }
  
- pkg_postinst_ontarget:${PN} () {
--if command -v systemd-tmpfiles >/dev/null; then
--    systemd-tmpfiles --create ${sysconfdir}/tmpfiles.d/suricata.conf
--elif [ -e ${sysconfdir}/init.d/populate-volatile.sh ]; then
-+if [ -e ${sysconfdir}/init.d/populate-volatile.sh ]; then
-     ${sysconfdir}/init.d/populate-volatile.sh update
- fi
- }
+ SYSTEMD_PACKAGES = "${PN}"
++SYSTEMD_SERVICE:${PN} = "${BPN}.service"
+ 
+ PACKAGES =+ "${PN}-python"
+ FILES:${PN} += "${systemd_unitdir} ${sysconfdir}/tmpfiles.d"
 -- 
 2.47.3
 
