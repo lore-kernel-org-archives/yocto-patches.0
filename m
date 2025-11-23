@@ -2,61 +2,61 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E71BCFD31E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F4BFCFD2F6
 	for <webhook@archiver.kernel.org>; Sun, 23 Nov 2025 23:45:43 +0000 (UTC)
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.5047.1763941538786677810
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.5043.1763941534115887875
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 23 Nov 2025 15:45:38 -0800
+ Sun, 23 Nov 2025 15:45:34 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=SjfhTfI8;
- spf=pass (domain: konsulko.com, ip: 209.85.222.170, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-8b2da83f721so421196985a.1
-        for <yocto-patches@lists.yoctoproject.org>; Sun, 23 Nov 2025 15:45:38 -0800 (PST)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=h3SE9K2K;
+ spf=pass (domain: konsulko.com, ip: 209.85.222.169, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-8b2dec4d115so378818785a.0
+        for <yocto-patches@lists.yoctoproject.org>; Sun, 23 Nov 2025 15:45:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1763941538; x=1764546338; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1763941533; x=1764546333; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=eypY4NuEDKS3LzRUmDzTHvNBKZaSx9hdUYfcT0BqKCA=;
-        b=SjfhTfI8yLqahF8fzvgkpiEYhXk49MyjT0y0f2hSktYixUpHT4VoGzhxrLAwz0E1ug
-         tztfkgIwzNVCaWjGae5qv5ay9xZnX4IB7dS7ZjlyejmWYRJvv4d3mQQ6CJTQO0LoS6J8
-         +qFyiNlEJMeIsNZjD4AbQjeRt3AuHTiThNXTk=
+        bh=eEBT2Q1pXVhJBASg4K4wMWq31Pgk/8wzBRCs1mP/xEY=;
+        b=h3SE9K2KoA6AY7K25CFMiq/gv2WoLzoX5bbrFhjL/vWVk4BYSRWevoteHIY1NNO96u
+         YiQ18u13rTWMaVIFZDeM6OU/+A9CP+38IWpc//GFrJw30yDpR6bW/6euMukhA9kzuwlO
+         eO0QFoXjScCihwl59So3A/NdiEwd8KRUEcB68=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763941538; x=1764546338;
+        d=1e100.net; s=20230601; t=1763941533; x=1764546333;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=eypY4NuEDKS3LzRUmDzTHvNBKZaSx9hdUYfcT0BqKCA=;
-        b=lLYwf+/vNddcGVhVSop+SdDO6ttaoNcvlL9ry6IncIBZTVP4QNzLuYmHIofSd4kMf+
-         SRfq1QwtpGhhnIR72sbHaNxS9BIQtPAEIHvk9Cq+UZWUlVQEsdOo5zFbugIoOD49fwpp
-         7yksoGeX+o73hvrk7c1pvmY3R9C7p/XrIkADHewqP9U1zd6GDhDCsDpv2WPD3sMJa85n
-         C1+55uMMQhMCawZTYcLZFwPh3oJz+DnlD3pFv72SoBJddF6RhINTRj7VIXn7ekReCN6K
-         JqVu/6z7yBIoMraRxpgxu7oawlw7RnyjdIfsw+Cxof+nlHyTqbfEMI/spinAU5arJhl4
-         dyLQ==
-X-Gm-Message-State: AOJu0YzGrXlpV4ie0eoEAqTlXcZkRCaIAikO1B9W409BaLeBPczwSAjz
-	AIBcIMsOlembtYsbriePymDVCxkKz4xGNDH8eOgpGbYHF9Nu465lJchvllvS/j6zpAIpb7a/TgG
-	qmxUV
-X-Gm-Gg: ASbGncs3bCViYELkEAi0SpyEuJnqkNte0aJZgeEVPkwbqQLJfnhmFY0Pgw+4fQe5a5M
-	EPS6c+ju7aSFlae7CiKGUf3TL/tKCRXa5XVOA4pIcngHm3ORXnmreZtMGn7SDbJhxqXjqeelgVg
-	ygSf0oRzxMGoM0BwRYEl44TgCQMURCBybTZbFFqRXTC139y5XEUGMPN3laOiaT3nHQo21NNHZ2a
-	LyyfShnBw/47Ii6sdjGtebS83TKb73a37vdDNo0g8qpG98nbM34lbjTWdhcAAi/Du5L9q3w4bnK
-	xRYa/9Sz0MQHg1EoyNojFiRmoDTdHfa9zKbg62rXKKjdQ5WINJjmzKSrQlP0O56Mb3lzUO9CcFo
-	yHbH68RgMhZU/nCKuPsWODzAvA/40F+fvJY94Qf7mB8iNyRINYF0yRya2CJTi7T3y6ze0EA+NP+
-	Ru6yiMJSkcD5T0/MYBrKwGzocxo69V4kfB9Ai7sdethXdz/ZskHMaZgGqoml1/5hk=
-X-Google-Smtp-Source: AGHT+IGI6o8JRL+MufuxxHPCtdRWyM9VNTe8ggW1v40n/pDPaV+l7aVCyCZZwnpxH8OGC34dDXT7sw==
-X-Received: by 2002:a05:620a:448b:b0:8a6:1a5d:7ae8 with SMTP id af79cd13be357-8b33bde9a79mr1488557885a.28.1763941537492;
-        Sun, 23 Nov 2025 15:45:37 -0800 (PST)
+        bh=eEBT2Q1pXVhJBASg4K4wMWq31Pgk/8wzBRCs1mP/xEY=;
+        b=TCW9QkloMtdFv7QbNCMhP24KQ/s2dhMaipkzauT5AeNv0HsuyT8vX2xUxyIhg/FHlX
+         RfaBk1gq0F0a3rSUeMRpSF9zEefx1dHPefXFWtn2VTUNYv3ghky49ff859voNgSVlzzI
+         spd6pSBCoa3gO+uM2FhbWH/iCsWUg4FENk/h5IjaItC3/pHjwflW2yv+PmLtCeCtQrJG
+         sn4Ky3mlwnKoAGW4RakeDihHEpWBevFRpOa5EOytq+pFkHwilBxvvyY6Du+AP2ORURQ7
+         G7I3AFzxkTZNAUZ1L5xt7dSestcBozF7fXMHksWPSJBFB1wDsqjkD2s+B6QkprZK//b8
+         5Wkg==
+X-Gm-Message-State: AOJu0YwAPb34oVaLiwMaNp0g5+7/st9jN7mWsb2RH7QaT0N5tRSsi3Lk
+	bFnwbSliix4itUA7Ey9wcECDt08nbp2HwwykoeZX92WTRucTw6iysBD8/RHAVwhRnlT1MqDsZ82
+	Jz3Ni
+X-Gm-Gg: ASbGncvIeHgMH3TJPozJgs8TvSk6bIYA+WkiapTQHYbMZGm82NcuOSXT+4rQO2WHLI8
+	oP9t0gIer2PcX/BGi4lyVKzHDbBRZpue9/Wc5C4m4tl/KlPtpgkwbzFUkpbJKgv3JCYpZOlSURw
+	PUIMeaABXWlpGhz3xW7+3ymT1pzpk1+Ckdu2IW0UduekvMGaoFQaevEnnwUTt/fmpM8NljqptE0
+	ICHkNnK+4FecfvUJcRQvGwMH2zdrzp0leSrVDb+KRvsHcIo9rEY2EsNuf9PpkNKGCiIkjXs+d5Z
+	6YdRT+ojqTx/m/UfJk/yH3JwDUm1wdKiR4k+mg9Kuxp5c7OiMU22uXi5H2co06ZZT8plqsZCaXa
+	NKbUTtvlL+zSzljHdtpQN2HFs3O6rhaRiqloC+P29W4XUq8zgTIJET2Dtb8xiOEENzVpmZGPUJ0
+	9snNuZktUSiNz2NhBAE3z5ijSfx+t7gntX7LYRxC3T90G1icGAKLsRfskWqqVDyWY=
+X-Google-Smtp-Source: AGHT+IFB+W9wDn7hi0EuvafAh6OpsHFfUZ1XGFKS2qpMOOs1bFJqgeuK48GrdGn9DNyL7GzHzK10uQ==
+X-Received: by 2002:a05:620a:1a25:b0:8b1:f2cd:76ad with SMTP id af79cd13be357-8b33d5ffadamr1370962385a.89.1763941532720;
+        Sun, 23 Nov 2025 15:45:32 -0800 (PST)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b32932db59sm843706585a.1.2025.11.23.15.45.36
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b32932db59sm843706585a.1.2025.11.23.15.45.31
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Nov 2025 15:45:36 -0800 (PST)
+        Sun, 23 Nov 2025 15:45:32 -0800 (PST)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-security][scarthgap][PATCH 20/32] libhtp: fix CVE-2025-53537
-Date: Sun, 23 Nov 2025 18:45:00 -0500
-Message-ID: <94f04a4dc279e7f2d5a8dcad2e64a7b3b6aa9d60.1763938436.git.scott.murray@konsulko.com>
+Subject: [meta-security][scarthgap][PATCH 16/32] suricata: Fix CVE-2024-55605
+Date: Sun, 23 Nov 2025 18:44:56 -0500
+Message-ID: <8477af51d60170ce783cc6db3c0040c29468e65f.1763938436.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <cover.1763938436.git.scott.murray@konsulko.com>
 References: <cover.1763938436.git.scott.murray@konsulko.com>
@@ -66,158 +66,243 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Sun, 23 Nov 2025 23:45:43 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2678
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2674
 
 From: Hitendra Prajapati <hprajapati@mvista.com>
 
-Upstream-Status: Backport from
-https://github.com/OISF/libhtp/commit/226580d502ae98c148aaecc4846f78694b5e253c && https://github.com/OISF/libhtp/commit/9037ea35110a0d97be5cedf8d31fb4cd9a38c7a7
+Upstream-Status: Backport from https://github.com/OISF/suricata/commit/f80ebd5a30b02db5915f749f0c067c7adefbbe76 && https://github.com/OISF/suricata/commit/c3a6abf60134c2993ee3802ee52206e9fdbf55ba
 
 Signed-off-by: Hitendra Prajapati <hprajapati@mvista.com>
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- .../suricata/files/CVE-2025-53537-001.patch   | 79 +++++++++++++++++++
- .../suricata/files/CVE-2025-53537-002.patch   | 31 ++++++++
- recipes-ids/suricata/libhtp_0.5.45.bb         |  2 +
- 3 files changed, 112 insertions(+)
- create mode 100644 recipes-ids/suricata/files/CVE-2025-53537-001.patch
- create mode 100644 recipes-ids/suricata/files/CVE-2025-53537-002.patch
+ .../suricata/files/CVE-2024-55605.patch       | 205 ++++++++++++++++++
+ recipes-ids/suricata/suricata_7.0.0.bb        |   1 +
+ 2 files changed, 206 insertions(+)
+ create mode 100644 recipes-ids/suricata/files/CVE-2024-55605.patch
 
-diff --git a/recipes-ids/suricata/files/CVE-2025-53537-001.patch b/recipes-ids/suricata/files/CVE-2025-53537-001.patch
+diff --git a/recipes-ids/suricata/files/CVE-2024-55605.patch b/recipes-ids/suricata/files/CVE-2024-55605.patch
 new file mode 100644
-index 0000000..e16a59a
+index 0000000..c8bfead
 --- /dev/null
-+++ b/recipes-ids/suricata/files/CVE-2025-53537-001.patch
-@@ -0,0 +1,79 @@
-+From 226580d502ae98c148aaecc4846f78694b5e253c Mon Sep 17 00:00:00 2001
-+From: Philippe Antoine <contact@catenacyber.fr>
-+Date: Tue, 11 Mar 2025 16:45:35 +0100
-+Subject: [PATCH] decompressors: do not take data after end
++++ b/recipes-ids/suricata/files/CVE-2024-55605.patch
+@@ -0,0 +1,205 @@
++From f80ebd5a30b02db5915f749f0c067c7adefbbe76 Mon Sep 17 00:00:00 2001
++From: Philippe Antoine <pantoine@oisf.net>
++Date: Thu, 7 Nov 2024 17:49:45 +0100
++Subject: [PATCH] detect/transforms: write directly in inspect buffer
 +
++instead of writing to a temporary buffer and then copying,
++to save the cost of copying.
 +
-+CVE: CVE-2025-53537
-+Upstream-Status: Backport [https://github.com/OISF/libhtp/commit/226580d502ae98c148aaecc4846f78694b5e253c]
++Ticket: 7229
++
++Upstream-Status: Backport [https://github.com/OISF/suricata/commit/f80ebd5a30b02db5915f749f0c067c7adefbbe76 && https://github.com/OISF/suricata/commit/c3a6abf60134c2993ee3802ee52206e9fdbf55ba]
++CVE: CVE-2024-55605
 +Signed-off-by: Hitendra Prajapati <hprajapati@mvista.com>
 +---
-+ htp/htp_core.h          |  5 ++++-
-+ htp/htp_decompressors.c | 21 ++++++++++++---------
-+ 2 files changed, 16 insertions(+), 10 deletions(-)
++ src/detect-engine.c                        | 23 ++++++++++++++++++++--
++ src/detect-engine.h                        |  3 ++-
++ src/detect-transform-compress-whitespace.c |  8 ++++++--
++ src/detect-transform-dotprefix.c           | 10 +++++++---
++ src/detect-transform-strip-whitespace.c    |  8 ++++++--
++ src/detect-transform-urldecode.c           |  8 ++++++--
++ src/detect-transform-xor.c                 |  7 +++++--
++ 7 files changed, 53 insertions(+), 14 deletions(-)
 +
-+diff --git a/htp/htp_core.h b/htp/htp_core.h
-+index 7c23212..fb142c9 100644
-+--- a/htp/htp_core.h
-++++ b/htp/htp_core.h
-+@@ -161,7 +161,10 @@ enum htp_content_encoding_t {
-+     HTP_COMPRESSION_DEFLATE = 3,
-+ 
-+     /** LZMA compression. */
-+-    HTP_COMPRESSION_LZMA = 4
-++    HTP_COMPRESSION_LZMA = 4,
-++
-++    /** No more data. */
-++    HTP_COMPRESSION_OVER = 5
-+ };
-+ 
++diff --git a/src/detect-engine.c b/src/detect-engine.c
++index 141b48a..cdb24d8 100644
++--- a/src/detect-engine.c
+++++ b/src/detect-engine.c
++@@ -1647,11 +1647,13 @@ void InspectionBufferFree(InspectionBuffer *buffer)
 + /**
-+diff --git a/htp/htp_decompressors.c b/htp/htp_decompressors.c
-+index 19950df..0d94c30 100644
-+--- a/htp/htp_decompressors.c
-++++ b/htp/htp_decompressors.c
-+@@ -203,6 +203,8 @@ htp_status_t htp_gzip_decompressor_decompress(htp_decompressor_t *drec1, htp_tx_
-+         }
++  * \brief make sure that the buffer has at least 'min_size' bytes
++  * Expand the buffer if necessary
+++ *
+++ * \retval pointer to inner buffer to use, or NULL if realloc failed
++  */
++-void InspectionBufferCheckAndExpand(InspectionBuffer *buffer, uint32_t min_size)
+++uint8_t *InspectionBufferCheckAndExpand(InspectionBuffer *buffer, uint32_t min_size)
++ {
++     if (likely(buffer->size >= min_size))
++-        return;
+++        return buffer->buf;
 + 
-+         return HTP_OK;
-++    } else if (drec->zlib_initialized == HTP_COMPRESSION_OVER) {
-++        return HTP_ERROR;
++     uint32_t new_size = (buffer->size == 0) ? 4096 : buffer->size;
++     while (new_size < min_size) {
++@@ -1662,7 +1664,24 @@ void InspectionBufferCheckAndExpand(InspectionBuffer *buffer, uint32_t min_size)
++     if (ptr != NULL) {
++         buffer->buf = ptr;
++         buffer->size = new_size;
+++    } else {
+++        return NULL;
++     }
+++    return buffer->buf;
+++}
+++
+++/**
+++ * \brief set inspect length of inspect buffer
+++ * The inspect buffer may have been overallocated (by strip_whitespace for example)
+++ * so, this sets the final length
+++ */
+++void InspectionBufferTruncate(InspectionBuffer *buffer, uint32_t buf_len)
+++{
+++    DEBUG_VALIDATE_BUG_ON(buffer->buf == NULL);
+++    DEBUG_VALIDATE_BUG_ON(buf_len > buffer->size);
+++    buffer->inspect = buffer->buf;
+++    buffer->inspect_len = buf_len;
+++    buffer->initialized = true;
++ }
++ 
++ void InspectionBufferCopy(InspectionBuffer *buffer, uint8_t *buf, uint32_t buf_len)
++diff --git a/src/detect-engine.h b/src/detect-engine.h
++index 7617e66..04713a7 100644
++--- a/src/detect-engine.h
+++++ b/src/detect-engine.h
++@@ -31,7 +31,8 @@ void InspectionBufferInit(InspectionBuffer *buffer, uint32_t initial_size);
++ void InspectionBufferSetup(DetectEngineThreadCtx *det_ctx, const int list_id,
++         InspectionBuffer *buffer, const uint8_t *data, const uint32_t data_len);
++ void InspectionBufferFree(InspectionBuffer *buffer);
++-void InspectionBufferCheckAndExpand(InspectionBuffer *buffer, uint32_t min_size);
+++uint8_t *InspectionBufferCheckAndExpand(InspectionBuffer *buffer, uint32_t min_size);
+++void InspectionBufferTruncate(InspectionBuffer *buffer, uint32_t buf_len);
++ void InspectionBufferCopy(InspectionBuffer *buffer, uint8_t *buf, uint32_t buf_len);
++ void InspectionBufferApplyTransforms(InspectionBuffer *buffer,
++         const DetectEngineTransforms *transforms);
++diff --git a/src/detect-transform-compress-whitespace.c b/src/detect-transform-compress-whitespace.c
++index 5cbf0fd..cc78c7e 100644
++--- a/src/detect-transform-compress-whitespace.c
+++++ b/src/detect-transform-compress-whitespace.c
++@@ -111,7 +111,11 @@ static void TransformCompressWhitespace(InspectionBuffer *buffer, void *options)
++         return;
 +     }
 + 
-+     if (d->data == NULL) {
-+@@ -316,15 +318,9 @@ restart:
-+             // no initialization means previous error on stream
-+             return HTP_ERROR;
-+         }
-+-        if (GZIP_BUF_SIZE > drec->stream.avail_out) {
-+-            if (rc == Z_DATA_ERROR) {
-+-                // There is data even if there is an error
-+-                // So use this data and log a warning
-+-                htp_log(d->tx->connp, HTP_LOG_MARK, HTP_LOG_WARNING, 0, "GZip decompressor: inflate failed with %d", rc);
-+-                rc = Z_STREAM_END;
-+-            }
-+-        }
-+-        if (rc == Z_STREAM_END) {
-++
-++	int error_after_data = (rc == Z_DATA_ERROR && drec->restart == 0 && GZIP_BUF_SIZE > drec->stream.avail_out);
-++        if (rc == Z_STREAM_END || error_after_data) {
-+             // How many bytes do we have?
-+             size_t len = GZIP_BUF_SIZE - drec->stream.avail_out;
++-    uint8_t output[input_len]; // we can only shrink
+++    // we can only shrink
+++    uint8_t *output = InspectionBufferCheckAndExpand(buffer, input_len);
+++    if (output == NULL) {
+++        return;
+++    }
++     uint8_t *oi = output, *os = output;
 + 
-+@@ -351,6 +347,13 @@ restart:
-+             drec->stream.next_out = drec->buffer;
-+             // TODO Handle trailer.
++     //PrintRawDataFp(stdout, input, input_len);
++@@ -132,7 +136,7 @@ static void TransformCompressWhitespace(InspectionBuffer *buffer, void *options)
++     uint32_t output_size = oi - os;
++     //PrintRawDataFp(stdout, output, output_size);
 + 
-++            if (error_after_data) {
-++                // There is data even if there is an error
-++                // So use this data and log a warning
-++                htp_log(d->tx->connp, HTP_LOG_MARK, HTP_LOG_WARNING, 0, "GZip decompressor: inflate failed with %d", rc);
-++                drec->zlib_initialized = HTP_COMPRESSION_OVER;
-++                return HTP_ERROR;
-++            }
-+             return HTP_OK;
-+         }
-+         else if (rc != Z_OK) {
++-    InspectionBufferCopy(buffer, os, output_size);
+++    InspectionBufferTruncate(buffer, output_size);
++ }
++ 
++ #ifdef UNITTESTS
++diff --git a/src/detect-transform-dotprefix.c b/src/detect-transform-dotprefix.c
++index 52a2633..d58e1d4 100644
++--- a/src/detect-transform-dotprefix.c
+++++ b/src/detect-transform-dotprefix.c
++@@ -110,11 +110,15 @@ static void TransformDotPrefix(InspectionBuffer *buffer, void *options)
++     const size_t input_len = buffer->inspect_len;
++ 
++     if (input_len) {
++-        uint8_t output[input_len + 1]; // For the leading '.'
+++        // For the leading '.'
+++        uint8_t *output = InspectionBufferCheckAndExpand(buffer, input_len + 1);
+++        if (output == NULL) {
+++            return;
+++        }
++ 
+++        memmove(&output[1], buffer->inspect, input_len);
++         output[0] = '.';
++-        memcpy(&output[1], buffer->inspect, input_len);
++-        InspectionBufferCopy(buffer, output, input_len + 1);
+++        InspectionBufferTruncate(buffer, input_len + 1);
++     }
++ }
++ 
++diff --git a/src/detect-transform-strip-whitespace.c b/src/detect-transform-strip-whitespace.c
++index 32fb96f..6040592 100644
++--- a/src/detect-transform-strip-whitespace.c
+++++ b/src/detect-transform-strip-whitespace.c
++@@ -106,7 +106,11 @@ static void TransformStripWhitespace(InspectionBuffer *buffer, void *options)
++     if (input_len == 0) {
++         return;
++     }
++-    uint8_t output[input_len]; // we can only shrink
+++    // we can only shrink
+++    uint8_t *output = InspectionBufferCheckAndExpand(buffer, input_len);
+++    if (output == NULL) {
+++        return;
+++    }
++     uint8_t *oi = output, *os = output;
++ 
++     //PrintRawDataFp(stdout, input, input_len);
++@@ -119,7 +123,7 @@ static void TransformStripWhitespace(InspectionBuffer *buffer, void *options)
++     uint32_t output_size = oi - os;
++     //PrintRawDataFp(stdout, output, output_size);
++ 
++-    InspectionBufferCopy(buffer, os, output_size);
+++    InspectionBufferTruncate(buffer, output_size);
++ }
++ 
++ #ifdef UNITTESTS
++diff --git a/src/detect-transform-urldecode.c b/src/detect-transform-urldecode.c
++index 13ef033..a4e9655 100644
++--- a/src/detect-transform-urldecode.c
+++++ b/src/detect-transform-urldecode.c
++@@ -125,12 +125,16 @@ static void TransformUrlDecode(InspectionBuffer *buffer, void *options)
++     if (input_len == 0) {
++         return;
++     }
++-    uint8_t output[input_len]; // we can only shrink
+++    // we can only shrink
+++    uint8_t *output = InspectionBufferCheckAndExpand(buffer, input_len);
+++    if (output == NULL) {
+++        return;
+++    }
++ 
++     changed = BufferUrlDecode(input, input_len, output, &output_size);
++ 
++     if (changed) {
++-        InspectionBufferCopy(buffer, output, output_size);
+++        InspectionBufferTruncate(buffer, output_size);
++     }
++ }
++ 
++diff --git a/src/detect-transform-xor.c b/src/detect-transform-xor.c
++index e42700f..18f96df 100644
++--- a/src/detect-transform-xor.c
+++++ b/src/detect-transform-xor.c
++@@ -133,12 +133,15 @@ static void DetectTransformXor(InspectionBuffer *buffer, void *options)
++     if (input_len == 0) {
++         return;
++     }
++-    uint8_t output[input_len];
+++    uint8_t *output = InspectionBufferCheckAndExpand(buffer, input_len);
+++    if (output == NULL) {
+++        return;
+++    }
++ 
++     for (uint32_t i = 0; i < input_len; i++) {
++         output[i] = input[i] ^ pxd->key[i % pxd->length];
++     }
++-    InspectionBufferCopy(buffer, output, input_len);
+++    InspectionBufferTruncate(buffer, input_len);
++ }
++ 
++ #ifdef UNITTESTS
 +-- 
-+2.50.1
++2.25.1
 +
-diff --git a/recipes-ids/suricata/files/CVE-2025-53537-002.patch b/recipes-ids/suricata/files/CVE-2025-53537-002.patch
-new file mode 100644
-index 0000000..ff4f1a0
---- /dev/null
-+++ b/recipes-ids/suricata/files/CVE-2025-53537-002.patch
-@@ -0,0 +1,31 @@
-+From 9037ea35110a0d97be5cedf8d31fb4cd9a38c7a7 Mon Sep 17 00:00:00 2001
-+From: Philippe Antoine <contact@catenacyber.fr>
-+Date: Tue, 17 Jun 2025 10:12:47 +0200
-+Subject: [PATCH] decompressors: fix leak in lzma error case
-+
-+Ticket: 7766
-+
-+CVE: CVE-2025-53537
-+Upstream-Status: Backport [https://github.com/OISF/libhtp/commit/9037ea35110a0d97be5cedf8d31fb4cd9a38c7a7]
-+Signed-off-by: Hitendra Prajapati <hprajapati@mvista.com>
-+---
-+ htp/htp_decompressors.c | 3 +++
-+ 1 file changed, 3 insertions(+)
-+
-+diff --git a/htp/htp_decompressors.c b/htp/htp_decompressors.c
-+index 0d94c30..ce6cfe1 100644
-+--- a/htp/htp_decompressors.c
-++++ b/htp/htp_decompressors.c
-+@@ -351,6 +351,9 @@ restart:
-+                 // There is data even if there is an error
-+                 // So use this data and log a warning
-+                 htp_log(d->tx->connp, HTP_LOG_MARK, HTP_LOG_WARNING, 0, "GZip decompressor: inflate failed with %d", rc);
-++                if (drec->zlib_initialized == HTP_COMPRESSION_LZMA) {
-++                    LzmaDec_Free(&drec->state, &lzma_Alloc);
-++                }
-+                 drec->zlib_initialized = HTP_COMPRESSION_OVER;
-+                 return HTP_ERROR;
-+             }
-+-- 
-+2.50.1
-+
-diff --git a/recipes-ids/suricata/libhtp_0.5.45.bb b/recipes-ids/suricata/libhtp_0.5.45.bb
-index 604a0ca..b87db35 100644
---- a/recipes-ids/suricata/libhtp_0.5.45.bb
-+++ b/recipes-ids/suricata/libhtp_0.5.45.bb
-@@ -6,6 +6,8 @@ LIC_FILES_CHKSUM = "file://LICENSE;beginline=1;endline=2;md5=596ab7963a1a0e5198e
+diff --git a/recipes-ids/suricata/suricata_7.0.0.bb b/recipes-ids/suricata/suricata_7.0.0.bb
+index e5d6ed1..1cb02f4 100644
+--- a/recipes-ids/suricata/suricata_7.0.0.bb
++++ b/recipes-ids/suricata/suricata_7.0.0.bb
+@@ -18,6 +18,7 @@ SRC_URI += " \
+     file://fixup.patch \
+     file://CVE-2024-45795.patch \
+     file://CVE-2024-45796.patch \
++    file://CVE-2024-55605.patch \
+     "
  
- SRC_URI = "git://github.com/OISF/libhtp.git;protocol=https;branch=0.5.x \
-            file://CVE-2024-45797.patch \
-+           file://CVE-2025-53537-001.patch \
-+           file://CVE-2025-53537-002.patch \
-           "
- SRCREV = "8bdfe7b9d04e5e948c8fbaa7472e14d884cc00af"
- 
+ inherit autotools pkgconfig python3native systemd ptest cargo cargo-update-recipe-crates
 -- 
 2.47.3
 
