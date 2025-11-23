@@ -2,61 +2,61 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22537CFD340
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2242BCFD31D
 	for <webhook@archiver.kernel.org>; Sun, 23 Nov 2025 23:45:23 +0000 (UTC)
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.5032.1763941519401719942
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.4855.1763941518758196806
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 23 Nov 2025 15:45:19 -0800
+ Sun, 23 Nov 2025 15:45:18 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=T8yPjKm/;
- spf=pass (domain: konsulko.com, ip: 209.85.222.180, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-8b22624bcdaso481155485a.3
-        for <yocto-patches@lists.yoctoproject.org>; Sun, 23 Nov 2025 15:45:19 -0800 (PST)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=S02BF/zG;
+ spf=pass (domain: konsulko.com, ip: 209.85.222.178, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-8b2d32b9777so508967085a.2
+        for <yocto-patches@lists.yoctoproject.org>; Sun, 23 Nov 2025 15:45:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1763941518; x=1764546318; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1763941517; x=1764546317; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=mNWp6XnQrusZG6GVydXZa3cq7t5bu2DMPu61VXEm+eA=;
-        b=T8yPjKm/r4bjiniw+zj/x33xXfWYvqzplQaoTFS5nF4uYNhiBvPvipPIZ143XElD5s
-         22+8RtDkIDP1kIm5xMJyEKcNj2DUJiZWgv860k0KhK72+u1H+co/+iZAmU3h8wz44TSo
-         ngkqNBUxIVlCemkiXqxJlntoHmc8P4XPy1Cc8=
+        bh=bBPQlmkBpXKTXHb5vXmxwi4XpQdZ1MmJ0RQhTipRiI4=;
+        b=S02BF/zGhRNctiwLukB5Vgg14qj/bUtqXVaZeU4WOQFoJTnRmEzy/bK5bxYf3sAIkL
+         A9tw4Qaw6F5nFT/M04/+Nn9kwR9MJcUrKzrdSrk/Z28s/L+KKqxH2NiLuR0NZwJdXNVR
+         ryMVN9VqHXn/N1fCtTE6IokdnfHzG9qsX3rCU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763941518; x=1764546318;
+        d=1e100.net; s=20230601; t=1763941517; x=1764546317;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=mNWp6XnQrusZG6GVydXZa3cq7t5bu2DMPu61VXEm+eA=;
-        b=JxT0XLCdFZ3NCoBk9IfNX+jVW4kUTcER1iV03wkgse8iO1Ir3oyOLcZXE+487fMYj5
-         DtiNkyH5b+4Ru83dWEWpVbl9wK7+GBzAhJYdw4PipJdsIOwKQTfbBicFbsDNCy3SZZqu
-         vNEKXbRm/LzZxE6W9+RPysRlBG+jTGTT5e3IInKByCIQ1oLNUciiaa+uVCqhECdUjCnj
-         xcSsaKrB9O74p28nXOUEbQd5Iwxv1LHfJX+0+7ovl9BiMRU9Giab90SEV9qNq4hVtt47
-         o6U7mVYOotCVtrRPlxn37MTNG4dv7hS2NQKcJQnjLL83VTbEtJiVJi6Qmbh5/xiZa1Br
-         gwWg==
-X-Gm-Message-State: AOJu0YyEMOChj+i2+qvbgkBKydmu64HWRWnqQyRemuME/ax1CutHkq12
-	tCN0jozoVYpE8+acKvwg6nOUKajeLYrjPCa2bsA4wVle2uS4DO1RR/+ohF4Q9Bf1QimUAPd7dud
-	dnowo
-X-Gm-Gg: ASbGncvaurBN1+CN/BxbRLf4KuLqiSs/wO1Y50OV1NHP4nh3pRyA+w2uirqAcQqHO5h
-	l59VGF/MoISuHxXKn3x3dedse5Sz3PumL2FfxEY5h4Tg96rdc+45d3OweXHUOSObsQyoXS8X0YT
-	/IP5xO2ZB1bhA+bglYZwYUS9x/k5CIbHkwKz0cf8x0XcsnE3IV7u6A8kEwDEUfG6EJAP+YRwi4k
-	oEF3Uyc9+dP7bFp0Z6l0IZPbo2bHKSC8FSnuyXmghr8tXwu3JNK8sxPeqHh8YVqcpQkfmfUDfyE
-	m7x9/UJRajQ/s4zOpTfXk2ZHHhKhrnHRe/4ZqYz6ONLsp2a6xRPyJbxPvYFOhcMBaodRJekTrRa
-	hGI7CknxblnvXOnDUEW5QVT1IfjoMv5xQsBD2i6QCSG+cRqTmAX+A0lL7aP3ByT07Jj7FhUFwT7
-	+9KWG5nQ3NzvjPYfsIo7e/aLewaqqfvJfCWl1yw8zqX1R6JF97/Rf9+1wyciqHx/M=
-X-Google-Smtp-Source: AGHT+IEj2ZBBG9sgoR6Dfxevruy14EWAgArE1mLaWMXjVhe9cDP72jb7IHuCmQfMNXnhBE04Z7t47Q==
-X-Received: by 2002:a05:620a:4623:b0:8b1:ed55:e4f0 with SMTP id af79cd13be357-8b33d22542cmr1371955285a.39.1763941518036;
-        Sun, 23 Nov 2025 15:45:18 -0800 (PST)
+        bh=bBPQlmkBpXKTXHb5vXmxwi4XpQdZ1MmJ0RQhTipRiI4=;
+        b=t1oJ9/LFBhxFLkjqFkIChC3sQeZ5dQBxM/pNFWeOFD70JRLDVfFkhnu4mH/fIihmN+
+         r+mYJxMjQQaydM97LYMRCnfpdP2AeKIea2FS2JMQH6FfaHjmS1JOiT82e7CtIZJgh9Zj
+         OF2I7xRak3KQsejKhlddFudC8NwtQMxc7Eid3SmFPAam11a5qbbQ3F0PFLmA9VYOs0oX
+         mWQN1x0xAcXMzkMZXmX+rc88glaR/7s09eoXXTUVEgN/T0gNxj55ySzSaBUl2WnlR4XE
+         YIMlTCjA/iriZpU1uzT9PbMwtUzf580RolvzC20vRnRmhN3k/1GQQSwWYuE70nqwOIaC
+         DQmw==
+X-Gm-Message-State: AOJu0Yz1h4S011ErGDXNHPnr+nm3B3gY+ypiJX/4JnBmAE/ViENp9Upq
+	sZ/S7syMeeCkM3oRiSZvNwi50VR9HSjD6h+lBUOU1kkz2QlC/qLdpyBdeopeLL/vU27K6/PfAmW
+	19z76
+X-Gm-Gg: ASbGncsxwoEjyOpuIALBEpeeCGCTH8OkZvebfYhPZFu3xDr/Fw+42wBNopimMo4+uW7
+	dQpnHi+Bu/+gbKHEb9BfdSsJv/qslHT6fdP6o//xt/6Bwzl6qMu+YAvAuD3ZASyzZCpaSwMFaxy
+	mDB0qcZAoEm3N63xq888VmHAh38jd1c5nHAJH4N1SgpoDA5UxpbIyBK+4xxhnXxzRRBoBBQez6c
+	hFM/+feU4733MetYYODCFZs1Vlt2hlfRdYmSxrzpkqQndsiMkFtqzT+cniu1cKPrUbKtw/Wd3/P
+	usUHX+Ujz7hJMWm6HczSr7jlKj9ZYNrQFDYOIIAw1JYVNJhtlim9XOZi8W4j7E2qnF/fBhBnbMW
+	3pd55/wKyZz/ntGW1SHzDCZGGXy9WqTZbuloKxcKaGJWGGnNguXQQ53wfWKz/d0KSfbE9Udc07w
+	ZKG8StHYxaXjq6VBw2czuL4deP+1AU2nmOuK6gSpHwBCLluekMQ13Npm9LORRhNtc=
+X-Google-Smtp-Source: AGHT+IGfgk3iALZ5hAiTC7wiS8yCkLsiSze41E4PE8bW+LhNN+JCmfDAJBTtKT5g9kWSsix1C/r/Ow==
+X-Received: by 2002:a05:620a:460d:b0:8b0:f8c4:a5fe with SMTP id af79cd13be357-8b33d5f2646mr1231197585a.89.1763941517272;
+        Sun, 23 Nov 2025 15:45:17 -0800 (PST)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b32932db59sm843706585a.1.2025.11.23.15.45.17
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b32932db59sm843706585a.1.2025.11.23.15.45.16
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Nov 2025 15:45:17 -0800 (PST)
+        Sun, 23 Nov 2025 15:45:16 -0800 (PST)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-security][scarthgap][PATCH 02/32] CI: update build for new CI
-Date: Sun, 23 Nov 2025 18:44:42 -0500
-Message-ID: <dbd0761fd6f1558fd434c9be223147cd3e71af56.1763938436.git.scott.murray@konsulko.com>
+Subject: [meta-security][scarthgap][PATCH 01/32] Update maintainers
+Date: Sun, 23 Nov 2025 18:44:41 -0500
+Message-ID: <c8400db9147934ed3c557b4ecd41d54f6e6c321a.1763938436.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <cover.1763938436.git.scott.murray@konsulko.com>
 References: <cover.1763938436.git.scott.murray@konsulko.com>
@@ -66,153 +66,219 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Sun, 23 Nov 2025 23:45:23 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2660
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2659
 
-From: Marta Rybczynska <marta.rybczynska@ygreky.com>
+Add Marta and myself as maintainers for meta-security and the other
+embedded layers that Armin had been maintaining.  To avoid Armin
+getting bugged about individual recipes, set the RECIPE_MAINTAINER
+variables to myself.
 
-Update for Ubuntu 24.04 runners:
-- use venv for installing kas
-- add missing directories
-- assume that python3 and pip are installed.
-
-Other changes:
-- add logging of jobs to files
-- build parsec images where appropriate
-
-Signed-off-by: Marta Rybczynska <marta.rybczynska@ygreky.com>
-(squashed and updated with missing master version changes)
+(backport from master)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
 ---
- .gitlab-ci.yml | 47 +++++++++++++++++++++++++++--------------------
- 1 file changed, 27 insertions(+), 20 deletions(-)
+ README.md                                     |  4 +-
+ .../include/maintainers-meta-security.inc     | 72 +++++++++----------
+ meta-hardening/README.md                      |  4 +-
+ meta-integrity/README.md                      |  4 +-
+ meta-parsec/README.md                         |  1 -
+ meta-tpm/README.md                            |  4 +-
+ .../distro/include/maintainers-meta-tpm.inc   | 33 +++++----
+ 7 files changed, 64 insertions(+), 58 deletions(-)
 
-diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
-index 1e82a87..5e15221 100644
---- a/.gitlab-ci.yml
-+++ b/.gitlab-ci.yml
-@@ -1,10 +1,13 @@
- .before-my-script: &before-my-script
-     - echo "$ERR_REPORT_USERNAME" > ~/.oe-send-error
-     - echo "$ERR_REPORT_EMAIL" >> ~/.oe-send-error
-+    - echo "$CI_PROJECT_DIR" >> ~/.ci_project_dir
-     - export PATH=~/.local/bin:$PATH
--    - wget https://bootstrap.pypa.io/get-pip.py
--    - python3 get-pip.py
-+    - python3 -m venv ~/kas_env/
-+    - source ~/kas_env/bin/activate
-     - python3 -m pip install kas
-+    - mkdir -p $CI_PROJECT_DIR/build/tmp/log/error-report/
-+    - mkdir -p $CI_PROJECT_DIR/log/
+diff --git a/README.md b/README.md
+index 3e092a9..c657d15 100644
+--- a/README.md
++++ b/README.md
+@@ -83,7 +83,9 @@ Now you can just do 'git send-email origin/master' to send all local patches.
  
- .after-my-script: &after-my-script
-     - cd $CI_PROJECT_DIR/poky
-@@ -26,6 +29,10 @@ stages:
-   stage: base 
-   after_script:
-     - *after-my-script
-+  artifacts:
-+    paths:
-+      - $CI_PROJECT_DIR/log/*
-+    when: always
+ For pull requests, please use create-pull-request and send-pull-request. 
  
- .parsec:
-   before_script:
-@@ -51,77 +58,77 @@ stages:
- qemux86:
-   extends: .base
-   script:
--  - kas shell kas/$CI_JOB_NAME.yml  -c "bitbake -k security-build-image integrity-image-minimal"
--  - kas build --target harden-image-minimal kas/$CI_JOB_NAME-harden.yml
-+  - kas shell kas/$CI_JOB_NAME.yml  -c "bitbake -k security-build-image integrity-image-minimal" 2>&1 | tee $CI_PROJECT_DIR/log/qemux86_security_image.txt
-+  - kas build --target harden-image-minimal kas/$CI_JOB_NAME-harden.yml 2>&1 | tee $CI_PROJECT_DIR/log/qemux86_harden_image.txt
+-Maintainers:    Armin Kuster <akuster808@gmail.com>
++Maintainers:
++Scott Murray <scott.murray@konsulko.com>
++Marta Rybczynska <rybczynska@gmail.com>
  
- qemux86-musl:
-   extends: .musl
-   needs: ['qemux86']
-   script:
--  - kas build --target security-build-image kas/$CI_JOB_NAME.yml
-+  - kas build --target security-build-image kas/$CI_JOB_NAME.yml 2>&1 | tee $CI_PROJECT_DIR/log/qemux86_musl_security_image.txt
  
- qemux86-parsec:
-   extends: .parsec
-   needs: ['qemux86']
-   script:
--  - kas build --target security-build-image kas/$CI_JOB_NAME.yml
-+  - kas build --target security-parsec-image kas/$CI_JOB_NAME.yml 2>&1 | tee $CI_PROJECT_DIR/log/qemux86_parsec_security_image.txt
+ License
+diff --git a/conf/distro/include/maintainers-meta-security.inc b/conf/distro/include/maintainers-meta-security.inc
+index f623d70..c052695 100644
+--- a/conf/distro/include/maintainers-meta-security.inc
++++ b/conf/distro/include/maintainers-meta-security.inc
+@@ -19,39 +19,39 @@
+ #	RECIPE_MAINTAINER:pn-<recipe name> = "Full Name <address@domain>"
+ #
+ # Please keep this list in alphabetical order.
+-RECIPE_MAINTAINER:pn-aircrack-ng = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-apparmor = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-bastille = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-buck-security = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-ccs-tools = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-checksec = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-checksecurity = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-clamav = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-ding-libs = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-ecryptfs-utils = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-fscryptctl = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-google-authenticator-libpam = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-hash-perl = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-isic = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-keyutils = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-libaes-siv = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-libgssglue = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-libhtp = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-libmhash = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-libmspack = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-lib-perl = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-libseccomp = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-libwhisker2-perl = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-ncrack = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-nikto = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-paxctl = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-python3-fail2ban = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-python3-scapy = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-python-fail2ban = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-python-scapy = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-redhat-security = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-samhain = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-smack = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-sssd = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-suricata = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-tripwire = "Armin Kuster <akuster808@gmail.com>"
++RECIPE_MAINTAINER:pn-aircrack-ng = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-apparmor = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-bastille = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-buck-security = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-ccs-tools = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-checksec = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-checksecurity = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-clamav = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-ding-libs = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-ecryptfs-utils = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-fscryptctl = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-google-authenticator-libpam = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-hash-perl = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-isic = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-keyutils = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-libaes-siv = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-libgssglue = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-libhtp = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-libmhash = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-libmspack = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-lib-perl = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-libseccomp = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-libwhisker2-perl = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-ncrack = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-nikto = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-paxctl = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-python3-fail2ban = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-python3-scapy = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-python-fail2ban = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-python-scapy = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-redhat-security = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-samhain = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-smack = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-sssd = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-suricata = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-tripwire = "Scott Murray <scott.murray@konsulko.com>"
+diff --git a/meta-hardening/README.md b/meta-hardening/README.md
+index cc39ca4..36f269a 100644
+--- a/meta-hardening/README.md
++++ b/meta-hardening/README.md
+@@ -76,7 +76,9 @@ $ git config format.subjectPrefix meta-hardening][PATCH
  
- qemux86-test:
-   extends: .test
-   needs: ['qemux86']
-   allow_failure: true
-   script:
--  - kas build --target security-test-image kas/$CI_JOB_NAME.yml
--  - kas build -c testimage --target security-test-image kas/$CI_JOB_NAME.yml
-+  - kas build --target security-test-image kas/$CI_JOB_NAME.yml 2>&1 | tee $CI_PROJECT_DIR/log/qemux86_test_security_image.txt
-+  - kas build -c testimage --target security-test-image kas/$CI_JOB_NAME.yml 2>&1 | tee $CI_PROJECT_DIR/log/qemux86_testimage_security_image.txt
+ Now you can just do 'git send-email origin/master' to send all local patches.
  
- qemux86-64:
-   extends: .base
-   script:
--  - kas shell kas/$CI_JOB_NAME.yml  -c "bitbake -k security-build-image security-tpm-image security-tpm2-image integrity-image-minimal"
--  - kas build --target dm-verity-image-initramfs kas/$CI_JOB_NAME-dm-verify.yml
--  - kas build --target security-build-image kas/$CI_JOB_NAME-alt.yml
-+  - kas shell kas/$CI_JOB_NAME.yml  -c "bitbake -k core-image-minimal security-build-image security-tpm-image security-tpm2-image integrity-image-minimal" 2>&1 | tee $CI_PROJECT_DIR/log/qemux86_64_security_image.txt
-+  - kas build --target dm-verity-image-initramfs kas/$CI_JOB_NAME-dm-verify.yml 2>&1 | tee $CI_PROJECT_DIR/log/qemux86_64_dm_verify.txt
-+  - kas build --target security-build-image kas/$CI_JOB_NAME-alt.yml 2>&1 | tee $CI_PROJECT_DIR/log/qemux86_64_security_build_image.txt
+-Maintainers:  Armin Kuster <akuster808@gmail.com>
++Maintainers:
++Scott Murray <scott.murray@konsulko.com>
++Marta Rybczynska <rybczynska@gmail.com>
  
- qemux86-64-parsec:
-   extends: .parsec
-   needs: ['qemux86-64']
-   script:
--  - kas build --target security-build-image kas/$CI_JOB_NAME.yml
-+  - kas build --target security-parsec-image kas/$CI_JOB_NAME.yml 2>&1 | tee $CI_PROJECT_DIR/log/qemux86_64_parsec_security_image.txt
+ License
+ =======
+diff --git a/meta-integrity/README.md b/meta-integrity/README.md
+index c333a9f..191b8e4 100644
+--- a/meta-integrity/README.md
++++ b/meta-integrity/README.md
+@@ -45,7 +45,9 @@ yocto-patches@yoctoproject.org mailing list. When submitting patches that way,
+ make sure to copy the maintainer and add a "[meta-integrity]"
+ prefix to the subject of the mails.
  
- qemuarm:
-   extends: .base
-   script:
--  - kas build --target security-build-image kas/$CI_JOB_NAME.yml
-+  - kas build --target security-build-image kas/$CI_JOB_NAME.yml 2>&1 | tee $CI_PROJECT_DIR/log/qemuarm_security_image.txt
+-Maintainer: Armin Kuster <akuster808@gmail.com>
++Maintainers:
++Scott Murray <scott.murray@konsulko.com>
++Marta Rybczynska <rybczynska@gmail.com>
  
- qemuarm-parsec:
-   extends: .parsec
-   needs: ['qemuarm']
-   script:
--  - kas build --target security-build-image kas/$CI_JOB_NAME.yml
-+  - kas build --target security-parsec-image kas/$CI_JOB_NAME.yml 2>&1 | tee $CI_PROJECT_DIR/log/qemuarm_parsec_security_image.txt
  
- qemuarm64:
-   extends: .base
-   script:
--  - kas shell kas/$CI_JOB_NAME.yml  -c "bitbake -k security-build-image security-tpm2-image integrity-image-minimal"
--  - kas build --target security-build-image kas/$CI_JOB_NAME-alt.yml
-+  - kas shell kas/$CI_JOB_NAME.yml  -c "bitbake -k security-build-image security-tpm2-image integrity-image-minimal" 2>&1 | tee $CI_PROJECT_DIR/log/qemuarm64_parsec_security_image.txt
-+  - kas build --target security-build-image kas/$CI_JOB_NAME-alt.yml 2>&1 | tee $CI_PROJECT_DIR/log/qemuarm64_build_security_image.txt
+ Table of Contents
+diff --git a/meta-parsec/README.md b/meta-parsec/README.md
+index 785c932..9dea718 100644
+--- a/meta-parsec/README.md
++++ b/meta-parsec/README.md
+@@ -257,7 +257,6 @@ $ git config format.subjectPrefix meta-parsec][PATCH
+ Now you can just do 'git send-email origin/master' to send all local patches.
  
- qemuarm64-musl:
-   extends: .musl
-   needs: ['qemuarm64']
-   script:
--  - kas build --target security-build-image kas/$CI_JOB_NAME.yml
-+  - kas build --target security-build-image kas/$CI_JOB_NAME.yml 2>&1 | tee $CI_PROJECT_DIR/log/qemuarm64_musl_security_image.txt
+ Maintainers:    Anton Antonov <Anton.Antonov@arm.com>
+-                Armin Kuster <akuster808@gmail.com>
  
- qemuarm64-parsec:
-   extends: .parsec
-   needs: ['qemuarm64']
-   script:
--  - kas build --target security-build-image kas/$CI_JOB_NAME.yml
-+  - kas build --target security-parsec-image kas/$CI_JOB_NAME.yml 2>&1 | tee $CI_PROJECT_DIR/log/qemuarm64_parsec_security_image.txt
  
- qemumips64:
-   extends: .base
-   script:
--  - kas build --target security-build-image kas/$CI_JOB_NAME.yml
-+  - kas build --target security-build-image kas/$CI_JOB_NAME.yml 2>&1 | tee $CI_PROJECT_DIR/log/qemumips64_security_image.txt
+ License
+diff --git a/meta-tpm/README.md b/meta-tpm/README.md
+index 983c753..523b284 100644
+--- a/meta-tpm/README.md
++++ b/meta-tpm/README.md
+@@ -69,7 +69,9 @@ $ git config format.subjectPrefix meta-security][PATCH
  
- qemuriscv64:
-   extends: .base
-   script:
--  - kas build --target security-build-image kas/$CI_JOB_NAME.yml
-+  - kas build --target security-build-image kas/$CI_JOB_NAME.yml 2>&1 | tee $CI_PROJECT_DIR/log/qemuriscv64_security_image.txt
+ Now you can just do 'git send-email origin/master' to send all local patches.
+ 
+-Maintainers:    Armin Kuster <akuster808@gmail.com>
++Maintainers:    
++Scott Murray <scott.murray@konsulko.com>
++Marta Rybczynska <rybczynska@gmail.com>
+ 
+ 
+ License
+diff --git a/meta-tpm/conf/distro/include/maintainers-meta-tpm.inc b/meta-tpm/conf/distro/include/maintainers-meta-tpm.inc
+index e7b216d..829f198 100644
+--- a/meta-tpm/conf/distro/include/maintainers-meta-tpm.inc
++++ b/meta-tpm/conf/distro/include/maintainers-meta-tpm.inc
+@@ -19,20 +19,19 @@
+ #	RECIPE_MAINTAINER:pn-<recipe name> = "Full Name <address@domain>"
+ #
+ # Please keep this list in alphabetical order.
+-RECIPE_MAINTAINER:pn-aircrack-ng = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-pcr-extend = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-tpm-quote-tools = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-libtpm = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-trousers = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-swtpm = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-openssl-tpm-engine = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-tpm-tools = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-tpm2-abrmd = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-tpm2-totp = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-tpm2-tcti-uefi = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-tpm2-tss-engine = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-tpm2-pkcs11 = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-tpm2-tss = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-tpm2-tools = "Armin Kuster <akuster808@gmail.com>"
+-RECIPE_MAINTAINER:pn-ibmswtpm2 = "Armin Kuster <akuster808@gmail.com>"
+-
++RECIPE_MAINTAINER:pn-aircrack-ng = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-pcr-extend = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-tpm-quote-tools = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-libtpms = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-trousers = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-swtpm = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-openssl-tpm-engine = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-tpm-tools = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-tpm2-abrmd = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-tpm2-totp = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-tpm2-tcti-uefi = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-tpm2-tss-engine = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-tpm2-pkcs11 = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-tpm2-tss = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-tpm2-tools = "Scott Murray <scott.murray@konsulko.com>"
++RECIPE_MAINTAINER:pn-ibmswtpm2 = "Scott Murray <scott.murray@konsulko.com>"
 -- 
 2.47.3
 
