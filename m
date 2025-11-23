@@ -2,224 +2,205 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04DAFCFD2F6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 128B2CFD313
 	for <webhook@archiver.kernel.org>; Sun, 23 Nov 2025 23:45:23 +0000 (UTC)
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.4854.1763941518051995033
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.4856.1763941520518892193
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 23 Nov 2025 15:45:18 -0800
+ Sun, 23 Nov 2025 15:45:20 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=rnmJTRbm;
- spf=pass (domain: konsulko.com, ip: 209.85.222.173, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-8b2da83f721so421181685a.1
-        for <yocto-patches@lists.yoctoproject.org>; Sun, 23 Nov 2025 15:45:17 -0800 (PST)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=e8yaIRPD;
+ spf=pass (domain: konsulko.com, ip: 209.85.222.171, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-8b220ddc189so448802485a.0
+        for <yocto-patches@lists.yoctoproject.org>; Sun, 23 Nov 2025 15:45:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1763941517; x=1764546317; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DLLltTlNYD/qaFQZrWaEhCOqo/SlpejFvc3qcoo/zXk=;
-        b=rnmJTRbmuO9wN1VUGNwkBWTxhup4eYwuXSDz+qicAogcsSAzkUU+k6kmfAloNiZgwt
-         yK3nWjmrPCgC6YROwN2bfawwocmoDtQ0quEH4m4pT09ANs2ZzC+JKu/e+6Eqb1YoG7js
-         kq4aa99o3KRKKETwjyltA+aD+QyfeI3uXttOo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763941517; x=1764546317;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=konsulko.com; s=google; t=1763941519; x=1764546319; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=DLLltTlNYD/qaFQZrWaEhCOqo/SlpejFvc3qcoo/zXk=;
-        b=w/VsGRe9BB9P1YSHrrYp6RokGVvDIOUIgyCtaq4KzP6yjYOu+XI5VJUlDRmzN8qtUm
-         8qu7mFTic661sSHRklWfVmpdy/YnVAxVWQT0Z/+wPW1YYsusNpNKAm80Yi2ctz4clpmQ
-         oBAWXlMecBpv/3CBV8mXB6VVqFf86uPLtb1ZxTtlSjQS/J7x84tWJrjllUL9oNrVNZC/
-         yxoZD1vvVtQb4JONkvHDJ5qcbDdwEGwczgMMkjfyZXLyBGKLLb/QFoaF2VfCH/F8hoKR
-         rMCA6fHH3Y6WsDRk6ZbPvFBX/ymqTSD5BdNUnSzYZP5ZXx4eYXGgw9x7p68rfZS54P9z
-         SSpg==
-X-Gm-Message-State: AOJu0YwUZ4J+iJe5FoiTg8mbByfVQojRvZTjB85mKT67gmZqw5rO4uJs
-	g1FgCUTBnJfagkxAA3WjSd5tAPI3tRHO6coQWFgox0eGq2p3kfmOr6oGHYJlpFNS3Asm4rzaKHP
-	x3xXa
-X-Gm-Gg: ASbGncsZk0eqO7NfFb1YeFBd/D7EHlg3GhsmcTS/nt3jRimYhlU48pIvMrpJJjddq1u
-	W+sClNyk6TJuLO/w5J/dpW9ogU1JEV8FZtCJxOOx6Q+Rt+Pk/RTcymNOjjJg7xNWxL+erg8g1hB
-	cx5sWDOkAowVk5t7GxvOF6PEX4zlr2BvSDpTFQvqd7llu7YytpLeyJZTwBBbvGXhGNy/qBKU/n6
-	eLluT55L/b7wBBY/PENcOkiG5DmB1h+dMD+46cSpzutz3ynNkTgbD+UItejwkkB71DNjm7ckhNJ
-	h2pDvC0RLJiRXwtqolpHGGcZPCkcth8mI7bl+xUUSGasTw0AAUbGzOoqTcTVEa1PJ3ThMeue5Rx
-	Bs0J2Gt5Q3sCMmjcIJJa1VB7J2yypbEubqL46aiq+L9XMYJmNauPo6volt8cVzL/3kd6NoL5Kfz
-	Ayz+XXVa6PWR9BSdPeANpsc6Ms8S2lPYYfOXt4q3ES6ABpAsyc1ozU/YQk3TjAd4/QQPODqfBqx
-	w==
-X-Google-Smtp-Source: AGHT+IHeFkhiCCpg8s1r6QAKqv2eAOpNMD1oIvWqMWqFEj96egBbGsSb+ZrVWC027IadMIQzPEYSTg==
-X-Received: by 2002:a05:620a:178c:b0:8b2:ea3f:2fa4 with SMTP id af79cd13be357-8b32ab88726mr1783087885a.6.1763941516460;
-        Sun, 23 Nov 2025 15:45:16 -0800 (PST)
+        bh=jng7qDD82KyMPs+W1S8oGQxE+ROJY7qz8hKhVkA1+FE=;
+        b=e8yaIRPDf1Yb6mLti/VnViuiLVN1q0Ibj+2sW6Mj3c/N3J8NbhMeMBPBTa9J8PSEhY
+         2MuXCBTxbdj6pm8PqkoJ1sqZ/2b39vepNAODs3sjHbSsrCW2KlSV7N5mEiYTT2/HJN6M
+         +zCmL8WSwd33M70WH+AFhhlGIsjtVigCnUy/A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763941519; x=1764546319;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=jng7qDD82KyMPs+W1S8oGQxE+ROJY7qz8hKhVkA1+FE=;
+        b=RcU8BKWqIVlYoA4+vdODh09v6aC/R26/ZdUy1lThUfhegz9l8OkqQkyaCOkcE7uO9u
+         tUQMd8+NF2Ui02VIFeg3XDfywh2X+5WqjHZfFpZIcPpE3JEvLGhiw8vVD55Opj0Tr8G6
+         jjYIGSUITJbTIRkjTzQyFcQQYcGpUOmodO2DUszMjlQqde/wF3e1o2xh8uf1R11KX3uh
+         ryKF0C6aOdt+94vaO+/LGsFaa5NypOMA+BefuxjTVYiqYGPTApBnzr9eIssN2zH9K6N5
+         isxf7Ob76wagC2rRX/w2LmDz5fhpaZ41hHD4JoeU3K/f80bpXEJ4ntbAD3XGumQ8jN2t
+         FeOA==
+X-Gm-Message-State: AOJu0Yw6FPDjj4eSDht4xhydnPjG5bZtYYZmuY1YVVGULMb1dHE5FZo6
+	FBZVzBZvUqtX4/kKFYZHDQmK6bsnTfg1p/POI0QqZ0JIHtZLvjfhX0EcG7syjMKwhPgHSpdevoW
+	mFEJv
+X-Gm-Gg: ASbGnctkDmD1hxqUcjZPdETzb/saSBfHzykzv7hSg0MFQTmTdXjqJ7Ix55GDaN/86r2
+	Vh1wvBBPBp2QKmpmHN9v1byIAzASmtvBeAybqzpIc/h7uzlidi8/dU1txS1q06xsUSJ1l/+BUNS
+	+1bBQ7FOG8+E36E4/tKP3HmAXgt0QL908xdH9muPa6clWj6VYmWydM4F34kcHKWlNz69DBP2mNi
+	XCU9nvuPkkMd6Vz1f6q3UrhRvDZ3Hf/LMdTEbR5/PIHUVE8rkJSwN5ni2QdCXe3YTcjC2/quJ9r
+	Pf6wSULELmS5w0pwzGnIbjgthx2xIJOxrxzqefouKzT4pgld66txUvS+unMfff3lhttJ0lzuTjj
+	CHx4UyGiX9P2rDWyVzsVEWzEv8lZhXhrLk/h7yqQgT2H5iRteackccxWo9yCfKKc3ErHbf8ZQOL
+	sUoIK0BVWJjbzjTGs/axyLrC2DQWCskE92JFedCzD7DgdxLE26anYyZJuuM/fpkwU=
+X-Google-Smtp-Source: AGHT+IFt8ldvUBPxAluGRQ5TL3MPf3ClTCRcXMZ9go9lfwmr/MVswyq0OrO2hF8CJ/TVdCoLNOxBtA==
+X-Received: by 2002:a05:620a:4404:b0:8b1:7194:b926 with SMTP id af79cd13be357-8b33d477402mr1185533285a.55.1763941519065;
+        Sun, 23 Nov 2025 15:45:19 -0800 (PST)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b32932db59sm843706585a.1.2025.11.23.15.45.15
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b32932db59sm843706585a.1.2025.11.23.15.45.18
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Nov 2025 15:45:16 -0800 (PST)
+        Sun, 23 Nov 2025 15:45:18 -0800 (PST)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-security][scarthgap][PATCH 00/32] Roll up outstanding fixes
-Date: Sun, 23 Nov 2025 18:44:40 -0500
-Message-ID: <cover.1763938436.git.scott.murray@konsulko.com>
+Subject: [meta-security][scarthgap][PATCH 03/32] kas: update configuration
+Date: Sun, 23 Nov 2025 18:44:43 -0500
+Message-ID: <da3b5d09cd542a84aff9838a4b33e4d8814226a8.1763938436.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <cover.1763938436.git.scott.murray@konsulko.com>
+References: <cover.1763938436.git.scott.murray@konsulko.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sun, 23 Nov 2025 23:45:22 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2658
+ <yocto-patches@lists.yoctoproject.org>; Sun, 23 Nov 2025 23:45:23 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2661
 
-This patch series attempts to get scarthgap branch back into a
-usable state.  These changes are on the scarthgap-next branch of
-meta-security, and my plan is to merge them to scarthgap branch at
-the end of day Tuesday (EST).
-
-It includes:
-- All the outstanding patches to the mailing list that I could find,
-  barring one duplicate python3-fail2ban update that did not apply
-  and had a newer alternative available.
-- Changes to get the gitlab CI test pipelines to the same state as
-  master (i.e. build tests all passing).
-- Selected backports of other changes from master that seemed
-  appropriate.
-
-Things to note:
-- I chose to keep all the suricata and libhtp CVE fixes history even
-  though I've backported 7.0.12 and 0.5.52 updates on top, since I
-  figure this approach makes it easier to check if a patch submission
-  was missed.  Plus, I'm lazy, and didn't feel like squashing all that
-  away after I was done testing.
-- Going forward, I would prefer suricata and libhtp upgrades over
-  accruing a large set of CVE patches until that stops being feasible
-  for the 7.0.x and 0.5.x versions, respectively.  Those should go
-  through master branch first until it has switched to newer major
-  versions (which will be soon for suricata).
-- I believe all the backported suricata systemd support changes are
-  effectively fixes, please let me know if I'm missing something and
-  they will break your usecase.
-- The packagegroup-core-security change of PACKAGE_ARCH to MACHINE_ARCH
-  is potentially a breaking change if you're using on target package
-  updates (e.g. with dnf or apt), and for some reason using that
-  packagegroup.  My guess is that no one uses that packagegroup since
-  it's effectively special purpose for the build test image, but please
-  let me know if this will break something for you.
-- There are still some other outstanding CVEs for firejail and clamav.
-  firejail is potentially upgradeable, but clamav is problematic since
-  I believe 0.104.x was already unsupported when scarthgap shipped.
-  If you care about clamav support for scarthgap, plus provide some
-  input on if an upgrade to one of the LTS branches (1.0 or 1.4) is
-  something you would like to see / would be able to help test.
-
-Thanks,
-
-Scott
-
+From: Marta Rybczynska <marta.rybczynska@ygreky.com>
 
 Changes:
+- switch to scarthgap
+- add required usrmerge feature to kas-security-alt configuration
+- add whitespaces around assignement
+- add common dldir/sstate
+- don't build apparmor in musl configus
+- only enable ptest for the test image
 
-Aidan Stewart (1):
-  smack: Switch to CVE_STATUS
+Signed-off-by: Marta Rybczynska <marta.rybczynska@ygreky.com>
+(squashed and recent master changes backported)
+Signed-off-by: Scott Murray <scott.murray@konsulko.com>
+---
+ kas/kas-security-alt.yml    |  2 +-
+ kas/kas-security-base.yml   | 13 +++++++++----
+ kas/kas-security-parsec.yml |  2 +-
+ kas/qemuarm64-musl.yml      |  1 +
+ kas/qemux86-musl.yml        |  1 +
+ kas/qemux86-test.yml        |  5 +++++
+ 6 files changed, 18 insertions(+), 6 deletions(-)
 
-Armin Kuster (1):
-  harden-image-minimal: Fix usermod
-
-Chen Qi (1):
-  libgssglue: switch to use git source
-
-Clayton Casciato (6):
-  suricata: resolve TMPDIR QA issues in do_configure
-  suricata: drop pkg_postinst_ontarget systemd init
-  suricata: fix "interface" arg in systemd service
-  suricata: install classification, reference configs
-  suricata: populate SYSTEMD_SERVICE for service autostart
-  suricata: update to 7.0.12
-
-Haixiao Yan (2):
-  fail2ban: Adapt test output to Automake format for ptest compatibility
-  fail2ban: replace fail2ban-python shebang with python3
-
-Hitendra Prajapati (7):
-  suricata: fix CVE-2024-45795 & CVE-2024-45796
-  suricata: Fix CVE-2024-55605
-  clamav: fix CVE-2025-20260
-  suricata: fix multiple CVEs
-  libhtp: fix CVE-2025-53537
-  suricata: Fix multiple CVEs
-  suricata: fix CVE-2024-55627 && CVE-2024-55628
-
-Marta Rybczynska (7):
-  CI: update build for new CI
-  kas: update configuration
-  scap-security-guide: fix fetch
-  lynis: update 3.1.1 -> 3.1.4
-  chkrootkit: use debian mirror
-  checksecurity: update the debian package
-  bastille: prevent host uids on files
-
-Rasmus Villemoes (1):
-  fail2ban: update to 1.1.0+
-
-Scott Murray (4):
-  Update maintainers
-  packagegroup-core-security: add missing packages
-  meta-tpm: Small maintainers fix
-  ima-evm-utils: remove unnecessary FILESEXTRAPATHS tweak
-
-Yi Zhao (1):
-  python3-fail2ban: fix ptest failures
-
-akash hadke (1):
-  meta-security: Remove True option to getVar calls
-
- .gitlab-ci.yml                                |   47 +-
- README.md                                     |    4 +-
- .../include/maintainers-meta-security.inc     |   72 +-
- .../checksecurity/checksecurity_2.0.16.bb     |    7 +-
- .../bastille/bastille_3.2.1.bb                |    2 +
- ...ges-the-IPs-again.-additionally-it-g.patch |  210 +++
- ...ao.unittest.TestRunner-for-ptest-out.patch |   43 +
- ...case.py-set-correct-config-dir-for-t.patch |   34 +
- ...l2ban_1.0.2.bb => python3-fail2ban_git.bb} |   40 +-
- kas/kas-security-alt.yml                      |    2 +-
- kas/kas-security-base.yml                     |   13 +-
- kas/kas-security-parsec.yml                   |    2 +-
- kas/qemuarm64-musl.yml                        |    1 +
- kas/qemux86-musl.yml                          |    1 +
- kas/qemux86-test.yml                          |    5 +
- meta-hardening/README.md                      |    4 +-
- .../images/harden-image-minimal.bb            |    4 +-
- meta-integrity/README.md                      |    4 +-
- meta-integrity/classes/ima-evm-rootfs.bbclass |    2 +-
- .../ima-evm-utils/ima-evm-utils_1.5.bb        |    2 -
- meta-parsec/README.md                         |    1 -
- .../parsec-service/parsec-service_1.3.0.bb    |    4 +-
- meta-tpm/README.md                            |    4 +-
- .../distro/include/maintainers-meta-tpm.inc   |   32 +-
- .../lynis/{lynis_3.1.1.bb => lynis_3.1.4.bb}  |    2 +-
- .../scap-security-guide_0.1.71.bb             |    2 +-
- .../packagegroup-core-security.bb             |    4 +
- ...kefile-from-using-its-own-rust-steps.patch |   40 +
- .../suricata/files/CVE-2024-45797.patch       |  148 --
- recipes-ids/suricata/files/fixup.patch        |   32 -
- recipes-ids/suricata/files/suricata.service   |    2 +-
- .../{libhtp_0.5.45.bb => libhtp_0.5.52.bb}    |    6 +-
- recipes-ids/suricata/suricata-crates.inc      | 1509 ++++++++---------
- .../{suricata_7.0.0.bb => suricata_7.0.12.bb} |   27 +-
- recipes-mac/smack/smack_1.3.1.bb              |    7 +-
- recipes-scanners/clamav/clamav_0.104.4.bb     |    1 +
- .../clamav/files/CVE-2025-20260.patch         |  366 ++++
- recipes-scanners/rootkits/chkrootkit_0.57.bb  |    2 +-
- recipes-security/libgssglue/libgssglue_0.8.bb |    5 +-
- 39 files changed, 1612 insertions(+), 1081 deletions(-)
- create mode 100644 dynamic-layers/meta-python/recipes-security/fail2ban/files/0001-example.com-changes-the-IPs-again.-additionally-it-g.patch
- create mode 100644 dynamic-layers/meta-python/recipes-security/fail2ban/files/0001-fail2ban-use-putao.unittest.TestRunner-for-ptest-out.patch
- create mode 100644 dynamic-layers/meta-python/recipes-security/fail2ban/files/0002-clientreadertestcase.py-set-correct-config-dir-for-t.patch
- rename dynamic-layers/meta-python/recipes-security/fail2ban/{python3-fail2ban_1.0.2.bb => python3-fail2ban_git.bb} (63%)
- rename recipes-compliance/lynis/{lynis_3.1.1.bb => lynis_3.1.4.bb} (93%)
- create mode 100644 recipes-ids/suricata/files/0001-Skip-pkg-Makefile-from-using-its-own-rust-steps.patch
- delete mode 100644 recipes-ids/suricata/files/CVE-2024-45797.patch
- delete mode 100644 recipes-ids/suricata/files/fixup.patch
- rename recipes-ids/suricata/{libhtp_0.5.45.bb => libhtp_0.5.52.bb} (82%)
- rename recipes-ids/suricata/{suricata_7.0.0.bb => suricata_7.0.12.bb} (82%)
- create mode 100644 recipes-scanners/clamav/files/CVE-2025-20260.patch
-
+diff --git a/kas/kas-security-alt.yml b/kas/kas-security-alt.yml
+index 3ee9808..8f754ac 100644
+--- a/kas/kas-security-alt.yml
++++ b/kas/kas-security-alt.yml
+@@ -5,4 +5,4 @@ header:
+ 
+ local_conf_header:
+   alt: |
+-      DISTRO_FEATURES:append = " systemd"
++      INIT_MANAGER = "systemd"
+diff --git a/kas/kas-security-base.yml b/kas/kas-security-base.yml
+index fa7915c..ff66889 100644
+--- a/kas/kas-security-base.yml
++++ b/kas/kas-security-base.yml
+@@ -13,7 +13,7 @@ repos:
+ 
+   poky:
+     url: https://git.yoctoproject.org/git/poky
+-    refspec: master
++    refspec: scarthgap
+     layers:
+       meta:
+       meta-poky:
+@@ -21,7 +21,7 @@ repos:
+ 
+   meta-openembedded:
+     url: http://git.openembedded.org/meta-openembedded
+-    refspec: master
++    refspec: scarthgap
+     layers:
+       meta-oe:
+       meta-perl:
+@@ -36,8 +36,8 @@ local_conf_header:
+     INHERIT += "buildstats buildstats-summary buildhistory"
+     INHERIT += "report-error"
+     IMAGE_CLASSES += "testimage"
+-    BB_NUMBER_THREADS="24"
+-    BB_NUMBER_PARSE_THREADS="12"
++    BB_NUMBER_THREADS = "24"
++    BB_NUMBER_PARSE_THREADS = "12"
+     BB_TASK_NICE_LEVEL = '5'
+     BB_TASK_NICE_LEVEL_task-testimage = '0'
+     BB_TASK_IONICE_LEVEL = '2.7'
+@@ -47,6 +47,7 @@ local_conf_header:
+     PACKAGE_CLASSES = "package_ipk"
+ 
+     DISTRO_FEATURES:append = " security pam apparmor smack ima tpm tpm2"
++    DISTRO_FEATURES:remove = "ptest"
+     MACHINE_FEATURES:append = " tpm tpm2"
+ 
+   diskmon: |
+@@ -60,6 +61,10 @@ local_conf_header:
+     HALT,${SSTATE_DIR},100M,1K \
+     HALT,/tmp,10M,1K"
+ 
++  dlsstate: |
++    DL_DIR = "/home/gitlab-runner/build/downloads"
++    SSTATE_DIR = "/home/gitlab-runner/build/sstate-cache"
++
+ bblayers_conf_header:
+   base: |
+     BBPATH = "${TOPDIR}"
+diff --git a/kas/kas-security-parsec.yml b/kas/kas-security-parsec.yml
+index 9a009be..cfaa660 100644
+--- a/kas/kas-security-parsec.yml
++++ b/kas/kas-security-parsec.yml
+@@ -10,7 +10,7 @@ repos:
+ 
+   meta-clang:
+     url: https://github.com/kraj/meta-clang.git
+-    refspec: master
++    refspec: scarthgap
+ 
+ local_conf_header:
+   meta-parsec: |
+diff --git a/kas/qemuarm64-musl.yml b/kas/qemuarm64-musl.yml
+index b353eb4..f01f759 100644
+--- a/kas/qemuarm64-musl.yml
++++ b/kas/qemuarm64-musl.yml
+@@ -6,5 +6,6 @@ header:
+ local_conf_header:
+     musl: |
+         TCLIBC = "musl"
++        DISTRO_FEATURES:remove = "apparmor"
+ 
+ machine: qemuarm64
+diff --git a/kas/qemux86-musl.yml b/kas/qemux86-musl.yml
+index 61d9572..aa6572c 100644
+--- a/kas/qemux86-musl.yml
++++ b/kas/qemux86-musl.yml
+@@ -6,5 +6,6 @@ header:
+ local_conf_header:
+     musl: |
+         TCLIBC = "musl"
++        DISTRO_FEATURES:remove = "apparmor"
+ 
+ machine: qemux86
+diff --git a/kas/qemux86-test.yml b/kas/qemux86-test.yml
+index 83a5353..c4609f9 100644
+--- a/kas/qemux86-test.yml
++++ b/kas/qemux86-test.yml
+@@ -3,4 +3,9 @@ header:
+   includes:
+     - kas-security-base.yml
+ 
++local_conf_header:
++  ptest: |
++      DISTRO_FEATURES:append = " ptest"
++      EXTRA_IMAGE_FEATURES:append = " allow-empty-password allow-root-login empty-root-password"
++
+ machine: qemux86
 -- 
 2.47.3
 
