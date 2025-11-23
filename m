@@ -2,61 +2,62 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4025CCFD31E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3392ECFD31D
 	for <webhook@archiver.kernel.org>; Sun, 23 Nov 2025 23:45:33 +0000 (UTC)
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.5037.1763941527430971423
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.5038.1763941529976839157
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 23 Nov 2025 15:45:27 -0800
+ Sun, 23 Nov 2025 15:45:30 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=idsg2rWb;
- spf=pass (domain: konsulko.com, ip: 209.85.222.175, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-8b22624bcdaso481162185a.3
-        for <yocto-patches@lists.yoctoproject.org>; Sun, 23 Nov 2025 15:45:27 -0800 (PST)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=VMbidtpD;
+ spf=pass (domain: konsulko.com, ip: 209.85.222.174, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-8b2dcdde65bso560151385a.0
+        for <yocto-patches@lists.yoctoproject.org>; Sun, 23 Nov 2025 15:45:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1763941526; x=1764546326; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1763941529; x=1764546329; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=TPEbQ4jv5f5OfzqavuzEikFXYwyBTK2BGinkDxw8d6A=;
-        b=idsg2rWbs3xTpEZeFoHWm4IiaG33T6C78mgJkCjvYHzQXYtrhSgoWwbgnEPpSIOQ6t
-         1SKbGwT2CfBsXiLS/lf+71vUNYCqmTUDdGTKJTbkRl8VR2m4QNNR6H7wZeXmceTPw4Pd
-         /17vf+Kx4RR4UC4D21V5mlkvhC8vVlfN51T28=
+        bh=KLxBfJueovbo3gTdK8FYBULNuYYFWxvoDIshRGYv65s=;
+        b=VMbidtpDdXnS24MhfemoYHTVr9VJQRLlAOyLtzB4PTjcb9H+M0q37wxMRZMfdSVDK+
+         Q+iKMF9B/kDlYHTstJztVJLqUvoGqEazRGOa7nY+lkBzsyPCEIHH2WC8h6cQkGomkAwJ
+         uqQIe8wU93iV9SnQXnOFsTBBZC1v4iABB2nY8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763941526; x=1764546326;
+        d=1e100.net; s=20230601; t=1763941529; x=1764546329;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=TPEbQ4jv5f5OfzqavuzEikFXYwyBTK2BGinkDxw8d6A=;
-        b=tdATjgEaqjSbbyXrBCci9zYZGfZBT+BpxQ0/Uyfmad5t3vVClrldKM9qrJoRduEwNo
-         ORpkKUPcGxYUp2ET4YnRBSWv0OoArfmcNKsBwnERdHBBSMNEemDhZPqLxYWFAVPqfoPf
-         M0GoqYIQQ1Wv0VLk6cZjozF3jAO7PFxFKbmzW3H8ThkY9a0eFjBEfgKGh+LSdsQcDLaU
-         Wr6HnU9WA5wSwzm8mJLsg8hM+O/XnRUCXQ/CX402x+c3rd5ub7aApZbKLVo2likE7EJg
-         k7d8eowRko01chM2eSQ/cn1Y5fU3mljTzl3xeJHQT5xhULXVZfN7Jujth7jUKS7gOIN3
-         IE6g==
-X-Gm-Message-State: AOJu0Yxz55cME6DOakdvUlF6neT781DoUYJOwsMgHAy8HM5xfEIWokHd
-	Sw+m81uWQuitVRnQaLirbXq0yLOR4/nw0zcyK0kMqatZnOhiAeO7sgG3cgnVKR4v7lUWydt4b3S
-	FpVwP
-X-Gm-Gg: ASbGnct+V/dXGdqkxzQgUSbLhCf67LMye8EpgLvWKu/m48iJdD6EzHpDATNsEry/7mf
-	gO7BT/CGc/pILUA/ild58FyJqv47fRKDUm4juV3b6K9u01jtXT3gFO/zOBfzLWGOdNJW80rnyEA
-	x5o/zfqG6aX34J9SsBJyEl0MTolkcgau4J5Wmi/5JB9qgdyZOd5aiuve7vuD2BsMzrOu7ChqNpt
-	o+ar28Y1h1qqE85jLaD37IVWKXWK6AZOZGhgy9Oh5fPRfRylGa4yjZi0n0jsa6b7p7Mld1OxDmy
-	GFJIv8IZWAwsRlpFxsfDBJGf0SNr/a3NrUq0zFs+Fa37ornJKIUbG4ImN/TV2srNvSr7D7CYT+y
-	p6aVxrAn0/i7qIzynDmq7g3U1iOab84EH98SxzfZcsNdH6I+oT1BUoIVr/shHY+e+lQ8VEVO4nQ
-	fzHinCtZLfvX3OKjUjUgjEHcSYIHl/dxhVtRHkVHgLwhg12V3SfuQN3ZP/R+iJmKg=
-X-Google-Smtp-Source: AGHT+IH//XkSnPe4Z+DqOD/JJ9wwibrY0t02Og5W7N2EiwgaYq1yudf3HAgYmJ6tcItKP1HdX3EPEQ==
-X-Received: by 2002:a05:620a:3910:b0:8b2:7726:c7bd with SMTP id af79cd13be357-8b33d498e31mr1264039185a.62.1763941526118;
-        Sun, 23 Nov 2025 15:45:26 -0800 (PST)
+        bh=KLxBfJueovbo3gTdK8FYBULNuYYFWxvoDIshRGYv65s=;
+        b=W2OZ/2yWV8xOXELkqUE79ZPEt3t9dDJbwDVtOJF1BhkOjrilDZ2LHHSTuPfq8oYibB
+         +SwLApzLLI1gv4QypZQoU+/BbnvtaD6ZGdhcKTRMML5l+kLs38ncjpE3BKRQEaJMGuSC
+         ZS7CPS/nzLoQu3u8F5XIRqwXgcr5VUalWT3TY9jY1vG/mMPSr+MLwi9RZlldHQIDLw3J
+         uUcl7VPaQ7h04liihwiPFA+jtCawRFqGxYRE9uXjVs6tyNXiZ1BJ4VcVq+54uQZzqUds
+         nMsbl/b78vvdvXxMdlHJW5kuMmGQnaQpr+9s22J6chpKbgO0gHXgCiLCluCF7LsZznnp
+         +xiQ==
+X-Gm-Message-State: AOJu0Yx0xJNgsJ8vADYTrP1m7LlaRt2NlpptjvER+FgH/6672Q+3ytTX
+	9cM8kBYMODCx07pr1scZr+GyYAAma7vw61pJ5eAGuy0cN6ANZKP6JYK69N8lis7mJGYtdNODBC9
+	HbtPE
+X-Gm-Gg: ASbGncukHYWIs+CcLtxhOq5u2r7Bk4pXFwomlBbMQQS4GheMdP4n+nxfX3ncSE2mA80
+	GQxn5v07ebSk9hrnsWTTE/8xvgcjWAAQiFUwcLEsEV2v4NEq1jNcKtYF9BqHKYMHaKwdOm1flUI
+	YUScfftEqySzZ2/bUvKdQ8IvNigaITJNLGv7Ohl1ozYg+KC3yJ+pvluMiBVEsgNT3cIABmk/SX6
+	3wx9cKSp7JKdlxHXJXwcJk8LYUNbFoh3b89C5A72Qh8QvLd1NxCIzQqShCUY1f9Hw9aCdDCXXvc
+	zOuH+yeXXxPVFsEvXDS9oSPbbvL/p5QDyhuU66UCT3NOBbPXbJ8j34kKcidzNcZw+RDUvRhpA3O
+	rjS3qdxlOk1HC6jfNsRnyaO5SjBcFXv5Vp/YCsS6JQLNxc0YUYoIIdY7mqJAzDypgotx4Vaygap
+	cmzoZ/8bBYxxBo7lPDqTAvFWGmd9K+rCH29HN+C/cWvnXSjDdvsdHR4vDbAY10ypHkQw7DWi68x
+	w==
+X-Google-Smtp-Source: AGHT+IHFP9GOuGe6EokZ8W0GnD0xDg0WQ3f0tpKMpOu7MhzubW/JIjf4ai8Fx6KyyztUxmD9AN41WQ==
+X-Received: by 2002:a05:620a:4712:b0:8b2:6bdf:3d15 with SMTP id af79cd13be357-8b33d21330bmr1300067485a.8.1763941528494;
+        Sun, 23 Nov 2025 15:45:28 -0800 (PST)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b32932db59sm843706585a.1.2025.11.23.15.45.25
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b32932db59sm843706585a.1.2025.11.23.15.45.27
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Nov 2025 15:45:25 -0800 (PST)
+        Sun, 23 Nov 2025 15:45:28 -0800 (PST)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-security][scarthgap][PATCH 10/32] packagegroup-core-security: add missing packages
-Date: Sun, 23 Nov 2025 18:44:50 -0500
-Message-ID: <e72b57ca2d9d096295dc7c6519bc4488d3cd2051.1763938436.git.scott.murray@konsulko.com>
+Subject: [meta-security][scarthgap][PATCH 12/32] ima-evm-utils: remove unnecessary FILESEXTRAPATHS tweak
+Date: Sun, 23 Nov 2025 18:44:52 -0500
+Message-ID: <6be5c4ef33389075dbaf87d207ddabd6aeb11531.1763938436.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <cover.1763938436.git.scott.murray@konsulko.com>
 References: <cover.1763938436.git.scott.murray@konsulko.com>
@@ -66,44 +67,32 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Sun, 23 Nov 2025 23:45:33 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2668
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2670
 
-Changes:
-- Add libmhash and libgssglue so they will get tested by CI.
-- Switch to MACHINE_ARCH to facilitate the above, but it makes sense
-  anyway due to all the machine overrides used in the packagegroup
-  definition.  Since this packagegroup is to facilitate testing and
-  unlikely to be used by downstreams, it is believed this will have
-  minimal impact.
+It was pointed out that the recipe was wrongly doing
+FILESEXTRAPATHS:append, but on inspection the recipe does
+not need it at all, so just remove.
 
-(adapted from 26e745243d6d28768ed4a237d9a48f68210c70a6)
+Reported-by: Robert P. J. Day <rpjday@crashcourse.ca>
+(cherry picked from commit 5770a76fc0d78a645ab254979986f572fd18b3ec)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- recipes-core/packagegroup/packagegroup-core-security.bb | 4 ++++
- 1 file changed, 4 insertions(+)
+ .../recipes-security/ima-evm-utils/ima-evm-utils_1.5.bb         | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/recipes-core/packagegroup/packagegroup-core-security.bb b/recipes-core/packagegroup/packagegroup-core-security.bb
-index 3ef77e5..10063c3 100644
---- a/recipes-core/packagegroup/packagegroup-core-security.bb
-+++ b/recipes-core/packagegroup/packagegroup-core-security.bb
-@@ -3,6 +3,8 @@ LICENSE = "MIT"
- LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302 \
-                     file://${COREBASE}/meta/COPYING.MIT;md5=3da9cfbcb788c80a0384361b4de20420"
+diff --git a/meta-integrity/recipes-security/ima-evm-utils/ima-evm-utils_1.5.bb b/meta-integrity/recipes-security/ima-evm-utils/ima-evm-utils_1.5.bb
+index 8ac080c..ac0a383 100644
+--- a/meta-integrity/recipes-security/ima-evm-utils/ima-evm-utils_1.5.bb
++++ b/meta-integrity/recipes-security/ima-evm-utils/ima-evm-utils_1.5.bb
+@@ -6,8 +6,6 @@ DEPENDS += "openssl attr keyutils"
  
-+PACKAGE_ARCH = "${MACHINE_ARCH}"
-+
- inherit packagegroup
+ DEPENDS:class-native += "openssl-native keyutils-native"
  
- PACKAGES = "\
-@@ -36,6 +38,8 @@ RDEPENDS:packagegroup-security-utils = "\
-     fscryptctl \
-     glome \
-     keyutils \
-+    libgssglue \
-+    libmhash \
-     nmap \
-     pinentry \
-     softhsm \
+-FILESEXTRAPATHS:append := "${THISDIR}/${PN}:"
+-
+ SRC_URI = " \
+     https://github.com/mimizohar/ima-evm-utils/releases/download/v${PV}/${BP}.tar.gz \
+     file://0001-Do-not-get-generation-using-ioctl-when-evm_portable-.patch \
 -- 
 2.47.3
 
