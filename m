@@ -1,177 +1,116 @@
-Return-Path: <quentin.schulz@cherry.de>
+Return-Path: <majortomtosourcecontrol@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39810CFA466
-	for <webhook@archiver.kernel.org>; Mon, 24 Nov 2025 13:19:18 +0000 (UTC)
-Received: from DU2PR03CU002.outbound.protection.outlook.com (DU2PR03CU002.outbound.protection.outlook.com [52.101.65.48])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.16510.1763990348963194367
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69FE3CFD313
+	for <webhook@archiver.kernel.org>; Mon, 24 Nov 2025 14:03:48 +0000 (UTC)
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.17410.1763993022751875862
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 24 Nov 2025 05:19:09 -0800
+ Mon, 24 Nov 2025 06:03:42 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@cherry.de header.s=selector1 header.b=fEgXCpgy;
- spf=pass (domain: cherry.de, ip: 52.101.65.48, mailfrom: quentin.schulz@cherry.de)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mkJg8bzzKbIv4uAp1dZSxw8hFVM3lzbkUp9foIutDaSBgnj7aKOPAFxkTwWN5YyKgEfJGzqvGGn0fuUlF5BIotvuH1ZU4Q9y4DDPTApKEDJaxuKriTnqaA/kd/v4HSedpsMRIoWs11spm2ilT4a2VXY0D8MyZYFY7aM3nQkwsXvDLSuk/wQewyy3nHOE6FDMOpjS3yMjIc4iYvA4QYyKsO/jF7KDfvyV9XTfg0ZoHsGspKJAjDgZQ01z6FWh45Umw6XtM5P0cAW9ey+wq0dP6BPmg28h0uFkC2vOmgncQJXLjgfeim3EMr29CuasZZAft2XTddS4bm3I1+e8966BQQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=K+1XkmjZVZVwCOe8qhAi965IwCMY2J+nt6EgavbHlO4=;
- b=dIzFXrOgciMpGTopkPO/+LwpgWFKpEZVB70ZOnD1iNZmgXrr9MlQZhXmSi7VRN03NNRhFQ4wwh3ABsygvNKZMQsJ/TrFW9wo5IPmrCPajA266o3rlF+FXIV06ruUibajM1tHBDzYy69GGdXqOSzb4Yn7Cug0zm7NnqGzGy6JmamqZ0+NOVUZU1i4xBE7vB/BVuGo3IfWIQZdZj6SUpNmTi7xZ02Znaf/0j7z6YzpPbIJ3TeVdNQa0oIfw6MtHqCdIwbJ8lBDbPHHJ0JGCQtBBjSMgFN1pyajGU2Z3NYwkCqqIBXkfZxc4KLP8YTo3U2UkdqAsuKCQbuLRCByfdA7UA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=K+1XkmjZVZVwCOe8qhAi965IwCMY2J+nt6EgavbHlO4=;
- b=fEgXCpgyN5JKBJhm/5NlWyKnXMhY3/JjtIQEi98BsUG3md8eCTUIqnFB2ivJF5a1CpCbuZdi9xRVx9h3RMk65E7L+Xh/ae3yMgCLeukyJPMB6v9HbVAkvbaIKKQqMvpwgov53lCzbWh5HBxCxLf02Haic70ryZnXKT/Kye+z2dY=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from GVXPR04MB12038.eurprd04.prod.outlook.com (2603:10a6:150:2be::5)
- by AM0PR04MB11880.eurprd04.prod.outlook.com (2603:10a6:20b:6fe::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9343.17; Mon, 24 Nov
- 2025 13:19:05 +0000
-Received: from GVXPR04MB12038.eurprd04.prod.outlook.com
- ([fe80::1033:5a9a:dc18:dad]) by GVXPR04MB12038.eurprd04.prod.outlook.com
- ([fe80::1033:5a9a:dc18:dad%4]) with mapi id 15.20.9343.016; Mon, 24 Nov 2025
- 13:19:05 +0000
-Message-ID: <925d8341-42b6-4fc9-98a1-23fe90b4b1d8@cherry.de>
-Date: Mon, 24 Nov 2025 14:19:03 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [meta-rockchip] [PATCH v3] rk3288: use u-boot.img
- as bootloader image
-To: yocto-patches@lists.yoctoproject.org,
- Peter Shkenev <mustela@erminea.space>
-References: <20251108225641.171832-1-mustela@erminea.space>
- <20251114145308.GA22027@localhost> <20251114150114.GA26364@localhost>
-Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <20251114150114.GA26364@localhost>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: WA1P291CA0020.POLP291.PROD.OUTLOOK.COM
- (2603:10a6:1d0:19::24) To GVXPR04MB12038.eurprd04.prod.outlook.com
- (2603:10a6:150:2be::5)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=OvR725Zm;
+ spf=pass (domain: gmail.com, ip: 209.85.166.180, mailfrom: majortomtosourcecontrol@gmail.com)
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-4331d3eea61so13654885ab.2
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 24 Nov 2025 06:03:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763993022; x=1764597822; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=1Nk+TN4adNd9DqBNitusIXV6/5hkbxcj1chYxZZWsSY=;
+        b=OvR725Zmd/3Irmr6pAAtmgy7WMYPr0cw2n39PCDjBwCso1in7r99Cm2kfkvR91ecfB
+         qYL+Jmk6fhpDssOigQhM+OzUudioJDT0iPg6HD0ku09IFMMAt+0/KLqvARikv0OHMhEK
+         l5sBeL32YMl/Ej11pOL3+ifOzgKzc1j4wE7tgGkI9AI+rjeQVMxWmfE/yw+CJ3vLU1Ul
+         KQEWLhg4czd6nd0ir8Ypnuqy6wfWcul7hOMBQxCVhEgw0DTLeXbtQNcmsN+b415U6Y/Z
+         g8obsOUYgNBnh5NrfiN2FKnqLvzB3kHYfcHFLHHuwM1YJRgwKRnhdjIuLOqRS2lyTHuc
+         zPIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763993022; x=1764597822;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1Nk+TN4adNd9DqBNitusIXV6/5hkbxcj1chYxZZWsSY=;
+        b=g5pWwt6VqsBmLBJXrgE14KotJ53TcXka4PnbhDDgU58x/7Ed0piepqnubLVh3foCTE
+         cgdlrivkNcNcB3rRzoxxXX5acX9RrvTEmOFARPSx5x+/AK4JBF9vQuZCXuSCTMTQYJg2
+         72lYB0GcTws0y3ZvmwjSpjRnEnfC+Xu1EYIumw4tNrJK+7g6XY4N58z39twR+HRaOecf
+         mjJeM0kF0H9esd6GVEVHinqSgAspsFpsSUTIqGJQj6NkpDp1JSYJPTilmwh3oJnsGVWP
+         u+U2x4GMWKU5Zyvtk9GhYAR1g+XP3sGKPjP/GilrkylXEpMuLLMvucAF3T1/4J31IyYR
+         cBPg==
+X-Forwarded-Encrypted: i=1; AJvYcCULMpmdOpVSoFfQOCsoC1ia7uP/qoYQhzULoikHPFdxUoDVurpu5S574eabFgcseUM3gZ4WzDxyh/Vi8Neu@lists.yoctoproject.org
+X-Gm-Message-State: AOJu0YzYubQvdB3RDRFO0ykoX8B6w0UIHAjC8Ou4Z7YRzHDSXExLBXKd
+	OPQq6uBNAtdZ2KQEW/FnQm3M3U8a1KrFV4TwNlGMvUS+VHcmnF189RO/
+X-Gm-Gg: ASbGncva8CmU+5sgdRWvWopqoO0XZqeErCQgqDsJotoqq0KKE8YTQ5pslmspZjyS6ld
+	mhgkSb9JzaE5ID/wNn8WQ/N6AYUasS78DHc7zqvu74WTMpLwiRMi7XZf0bCa884jx/ONp+iA8Pv
+	UAv+mTYK7dEVgdatcCQNtqbDWdyWijMVQOHL7H5Av1eX+iddhKPESlEpNhA48N2z8Xv1qU9U5PH
+	YuNwreE4udZIOSdpAqIlHXUhAj9t3uhysOfY6orve7Qz5P5qoWWYetUCXIEMmW0wtWnZMhY1b5q
+	wR91BONXXrkKPSxfrDCnGjXrov0VC4AO7oxjImhJJ4ujD5Y06Aj4l4BEgYalIt/F/7OrNz6IVMQ
+	SHnPEciFcP9jUAmnRMpg1ziiBQOWHyJsDHGxWAhUJeW837L4eUp8ylhHsQa0TgOLM4aAmXZ5Oao
+	YWuKj+MtFPGh161sJMHHIAw9ou45EokGjiPPcReXv/9GghssaP6ZIVIuFqMXYDaQ==
+X-Google-Smtp-Source: AGHT+IEuHMMBoD4ZXJmIBO3DojMeTGqJTneVqGe/HAPsohGpEDB/+h8LqZ8kOoBX4/04uz4YgVVBXQ==
+X-Received: by 2002:a92:cda9:0:b0:430:c90d:10ae with SMTP id e9e14a558f8ab-435b8e672f6mr122737905ab.32.1763993021659;
+        Mon, 24 Nov 2025 06:03:41 -0800 (PST)
+Received: from [172.26.252.3] (75-166-169-44.hlrn.qwest.net. [75.166.169.44])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-435a90e9b61sm59571005ab.34.2025.11.24.06.03.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Nov 2025 06:03:41 -0800 (PST)
+Message-ID: <8b9bc9e9-4b5d-46e8-9ef6-36158827ae14@gmail.com>
+Date: Mon, 24 Nov 2025 07:03:40 -0700
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GVXPR04MB12038:EE_|AM0PR04MB11880:EE_
-X-MS-Office365-Filtering-Correlation-Id: c6048584-d479-4d39-2c7e-08de2b5c0a9e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|10070799003|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?WCtZelk3SzJkVWFCazBCaUhibVRldEQ4NjhFcHcrWVlndU1HcjhYdGZaOEFS?=
- =?utf-8?B?RGptZFVQQ2tic3BrOE03N0JYSU9LWlhtajU3c2tXaWRFV2xYQ25ZZldmSWZ3?=
- =?utf-8?B?WHhTU2licVd6amxaWXJCK3BpbUJpUWxHdXgydWJ3UlR4c1BRLzkrbitzTVhL?=
- =?utf-8?B?bGtTMG52QXNXaGRYUkR1cmp1eFYyVkM0cG5CcXM0TmpheW1PUnZGaVlocml5?=
- =?utf-8?B?anJVZ0JtYVo4VWY3cHF5NTR6cWZlVG40QVJmQnhGYmNRZ3EwdVhwUGtpU1k5?=
- =?utf-8?B?NE1tR0FEOHNhTTBEc1ovTEMxckJWdjZGRUx3bVNtdHNzcjBRbW1MTUt4Ly9r?=
- =?utf-8?B?SjZ4MGF4NFVzdFp1WFFkeVhHcnJHdCtyMkJoZ1d2UTBFNm5FNWZWTE9reTdK?=
- =?utf-8?B?cHNiaE8vQ1lpMHVDZGJiSitlSzFCQmNESDhHeXdWZHRiRTNzVnhtYlFkZEps?=
- =?utf-8?B?VTRzYXUxZmMydWhCaEx6L0VCYVR3eHBMck1NOUVyeCs4MXd3Z2JDMjk0WG1N?=
- =?utf-8?B?aHRUUGI3eVNYWkd1QVpHajB4dG9HY3dDK2NISlZBRld6SU9PdHJFWWd5cDFE?=
- =?utf-8?B?OE1Ta3VYUVpOdE5sYzFWaFN5WmJ5UCtOd2syOS9PaUVCcmtRU2REbUxkejJG?=
- =?utf-8?B?WGZseHVCbzlRS0NXSkJWR0s0OXlISEZVeDJyaUxyQUErbjJMSko5NnpYaXFa?=
- =?utf-8?B?bmRPZUFaeU0yaDJmZjJieEplUGpLd0tTSVlTb0ptb29td29MSmlVSUJUY0VZ?=
- =?utf-8?B?S3hkcW1meWp0dzFUeDYxRzB3SWF4K1NRNWpNVUVtZjRJT2FiMW1QZmYrK2RP?=
- =?utf-8?B?NFVNbmZ1WWoxS0U1ZThRM1ZERGErVEo1elJucU01ODlRejVvVVdaTFZFOHlS?=
- =?utf-8?B?OTR6alR3STVWOVlsM3VTQXpPNzlWTmRBb2NJNVNhbjBxemFVVEpaOGdnMjdQ?=
- =?utf-8?B?ZWF3OTZyNTk3TDRmTFlhUXB3akdnZVlLTmx3TVVEeExTbTZycWVsR1FHcnkx?=
- =?utf-8?B?MzNRUzJPOEJzREdYellPS0VOT1Zqdm02MFNJWFhEZVdTUnUwSmUvMWRDbHdV?=
- =?utf-8?B?WTF0ZlNzbCswcGpPWHd0czlsVEV6T2I1emJXUHJqaEorb1RZbGExWUlUSmdj?=
- =?utf-8?B?dy9mbS8wRGRKeXcvaWFHTTcvZWdCRVFzTXQ2UEY1QmhXR2IwU3dOd0ZWQkdi?=
- =?utf-8?B?UVFNNzhjdzI4anBERFFRU29HYmc1bDgva3dlVndEYjYzRTU5dFB3Q1U1L2Nk?=
- =?utf-8?B?UFgvMWx4LzhFVVhqMWNmQ216a254UWlwdVdsMHJnajlYMlJjUUpaS0wvWi9w?=
- =?utf-8?B?SUZwa1VsUUtkMkFYWWhXRVlwbFJyaWRtMVpSWkJyTm1EU3NIL0owOE9wTUpa?=
- =?utf-8?B?QmpYcDFiZ1VKSFV6WFhZRGxIaExNRDduRHlQbFJzaEMyaWZmYjh4MklKUTAw?=
- =?utf-8?B?Y3FQOGM5SEl6K1VnaHBVVEFZVEdyeXBVejNBaXAyR0dQRDlSYXEwVjhBcm1D?=
- =?utf-8?B?em5UdWJldUp3dzljd1pYOEh4WmQ1cUtzRVdRblhmTWtMMkd5SnRHVFNFYnRK?=
- =?utf-8?B?RS9qelp1WUJUTFNyaHExNmpjdm1LOGhpZjFsSmdxQTB1aStPVHYxVVR5WERQ?=
- =?utf-8?B?TG12WHdCYTVZWmpOdDZOWjVXRXlzVnVoaDFGNm5RNDZuR3JVYTRVNE1TVlZa?=
- =?utf-8?B?RzI4TlZZcFplbGlNc0pRQmQwd2lUeHdOSkdBVWgyeDFaVnV0YktxMys0Qlky?=
- =?utf-8?B?Vm52UEpyMXlNVktKUDNJK3FHN2lwZHNvcWVGNGpqTTlhT0VPajJESXUreWFM?=
- =?utf-8?B?Q25ieEhyandZdlEzZkVRcWtWYkYrN0lneHZLcXBFM01JSkdIL1VReHIydzcy?=
- =?utf-8?B?d1NDb3JFcHJNcWVuVFRlYUN5M2FrWE1wZ1NaTkJPWGltNGovMkpaUndtOEk1?=
- =?utf-8?Q?EjCaOhz2Mkjp3xcLp2iAwSjoehFqERbT?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GVXPR04MB12038.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?WjF3aEs0L0ZTUndacXVialA0N0VnYlJwaTVLNEhnQUdrQmRPbmkyUmlKdU9r?=
- =?utf-8?B?QnhOUzc2YmV4RDlOV1puUHRhR0ZJK2Z3V0JiMWxYb290eUpPczFqMVprMURL?=
- =?utf-8?B?UHVTK3hxTTVxVWp1VEpnQ0NreFo3NUpjUVVGb29IcnVHcFpPYzZVeG5seFZy?=
- =?utf-8?B?MmVuSVBlUU1nMlNGejBpT0pBOVBCWEZiaWViV2dON3MwSFNCWERUcmNJak1m?=
- =?utf-8?B?c1VTeXlrZXlyenh2VlN5M2NIZkRnSnBsKzNwUExBZTNPYUh3dHU0NmxjbW1a?=
- =?utf-8?B?UGN3aHd2U0FQZnZKTnBGbk9BY2VTQ2wwcnlqOVRaQVRPR0g4aGxkTEtMaHRB?=
- =?utf-8?B?VFltdEVldlZSemUvdE1KaGt5cW55eXhDZ2NqOWl4SmJMWDEvS250M3dYeDJZ?=
- =?utf-8?B?c2RMektOREFLeVlqRDJkUXVGVXA4NDRkVHNoTzR1eTE4K2RUZ2tmTHRyc01K?=
- =?utf-8?B?eUlwTzlzcE5JcXBZaTYrVHh1RXVhd2dkUmxZeGdyT1hZalBKSUFLUG1WRU03?=
- =?utf-8?B?YVJIU0JyMklRK2hyTG8xM2pTNFFmMVhUZUxpWUF2TStPYkNsSGI0UEEvQUNE?=
- =?utf-8?B?TmdEbnI3K2xTUGF2M0V5cndvZTB0YW9KN1ArWWFsRG9rM3pJcGozUUp0VlFs?=
- =?utf-8?B?T1ltUElZdmxzSEh0OU9QMUpTbWVoa0tLU0dzaEh5VW9pajdjVm5TazU2cWtQ?=
- =?utf-8?B?RTNsdDZzUVQxMTBXRnVIS0xtdGdCVUpaNzNwRzRwWXpzVDljOG5FOGpGMEov?=
- =?utf-8?B?L0hXcGhzM21nbkh0VkxPb1AwaFNBTTZQQnBHV3IvdFo2L3VjT3pZRzBhU3d6?=
- =?utf-8?B?S0lKZ0dET0tiMldDUDJyVU0rdlhJc1RYdEdjdjN1Q1RpQzRqZy9SRTFkeVhL?=
- =?utf-8?B?aGNuZFVsRCtyeHMyLyt5ZWFPUlBKSnB5eFRHTkg5UmdxOE00WUZGZ0RQQnFD?=
- =?utf-8?B?aTVlYk44WnZhd21IMEIxWUdyclYzQzdaTDFxWC9Nalcwc0xud2lmZ3p6OE5X?=
- =?utf-8?B?VlI5cDJ0ekFXMDlkRlN4VW5PNlZieGNWdWVnNnJIU0tPVEpYSW1rTnRnSHNm?=
- =?utf-8?B?eExCcmsxWmxjNU1xbjRvNWh6ejloaVF4bGRHUkJndXJ0K3VIUDVZV0hxTlY0?=
- =?utf-8?B?SmcxdW5yQjVTQjVoTUVpcjdsY3ZUMFQ1QURhV0syK2V2ZVR2TUxqRHA4bzls?=
- =?utf-8?B?K1ZnUVJweXNSZlpUME5vaWVtb3IwZmErZ0M1cnRQQjVVSEYvQkdhcnFLbksv?=
- =?utf-8?B?cGVlVk1PS0l2UEp3U3BtNEkwZFZ5TytVMDJXcDRzTlJqclp2eXdsUk8ybWNp?=
- =?utf-8?B?bk5JMW5JTks4TVpZL2Z2ckF3Undtek1QbUlsMmdUdmRPOE9yZisyZEViUHZs?=
- =?utf-8?B?VGd5MWZ2QnBySGZMNXRRajlrdmowcUZld3dkeFl1L20rU29QM3c1MFBhMVBT?=
- =?utf-8?B?L2V4WDh5TGJEUGlSbWhaZW1JbkNyeXZTRTRMd3BVMjRiSjlmZFREZkVhQWdG?=
- =?utf-8?B?TnQ2dHFsdmxIa2p6SUNwUmNVMXdPRDg0UkRNbmNOV0t0cW5ZYUJ6cmM1bWpv?=
- =?utf-8?B?VW0xRlJFdHBVZis2SFVzQVRJYlpFaHN5K0tEMndOVVpOY1BISU5MUzcxVGxC?=
- =?utf-8?B?R1F4R1IxVEpHeFlveG5keDZCYW9RRWRTeDREUnZLUUl3U0pSZmtBZzlRRkF5?=
- =?utf-8?B?bGJaZTdKczFtNDlTYWpyV3dRVzlkNzdpK3V3SGkzZTM4b0YvVXNhTjJMbFNh?=
- =?utf-8?B?MTRmL2xoYWtpaWdCcHhPYlVLaWFVZGFpNnNYc1h4c0dPWSsyRFYrNGRUd2ll?=
- =?utf-8?B?VmVGTlBSTkZWa0ZqcFBhS1VMenNQL1NxRFZtbFVydjV6V3JQMC8rVCt6MStN?=
- =?utf-8?B?R0tFR05lWUR5OWRxb1RXN2VwL21KaDltSDJab3hGK1BWMGdiaG5hcDFsLzVD?=
- =?utf-8?B?TDdMcGdqSU5abmVzT3B3dmI0NHBVSE5YblYvditkNDhCbWVkcU4ya0sveGY0?=
- =?utf-8?B?N0srbGhRaTJZRm50UlFlMEc2S1NtM29WRHRKc1ltUVhSbEgxbW9xUHNjTnh5?=
- =?utf-8?B?OTJZYzYrNm52YTRVT2g5Y0JaK2F5d01iOUkxVGxlVVFGNXU2VWhSd2NEUEZl?=
- =?utf-8?B?VFVwVkg0YWFKZjZ0cmZxNE1Kd3N5QlB1VFdYbjdFeTZKL1FhVlFIUHlUV1l5?=
- =?utf-8?Q?lW5a4i8LNWQnAs42NWXg704=3D?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: c6048584-d479-4d39-2c7e-08de2b5c0a9e
-X-MS-Exchange-CrossTenant-AuthSource: GVXPR04MB12038.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Nov 2025 13:19:04.9628
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Wd7e9KtP+hc6eVQQeyt71vcsHXdfCVUfSHg1FYViAqdDT5XiW+9LUKbzRPfBAcrBw2y5y3gBH/FriuhF/wpGYX0tDwsjRqA2VvZJDlsWvBc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB11880
+User-Agent: Mozilla Thunderbird
+Subject: Re: [yocto-patches] [meta-security][scarthgap][PATCH 04/32]
+ scap-security-guide: fix fetch
+To: Scott Murray <scott.murray@konsulko.com>,
+ yocto-patches@lists.yoctoproject.org
+References: <cover.1763938436.git.scott.murray@konsulko.com>
+ <7425c3ca03c6dbb21ba02d7a97787709cb51f8ee.1763938436.git.scott.murray@konsulko.com>
+Content-Language: en-US
+Cc: marta.rybczynska@ygreky.com, skandigraun@gmail.com
+From: Clayton Casciato <majortomtosourcecontrol@gmail.com>
+In-Reply-To: <7425c3ca03c6dbb21ba02d7a97787709cb51f8ee.1763938436.git.scott.murray@konsulko.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 24 Nov 2025 13:19:18 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2692
+ <yocto-patches@lists.yoctoproject.org>; Mon, 24 Nov 2025 14:03:48 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2693
 
-Hi Trevor,
+> From: Marta Rybczynska <marta.rybczynska@ygreky.com>
+>@
+> The project does not keep releases in branches, instead they tag them. The stable branch
+> does not contain releases, so we use the revision only.
+>@
+> See upstream issue [1] for details.
+>@
+> [1] https://github.com/ComplianceAsCode/content/issues/13543
+>@
+> Signed-off-by: Marta Rybczynska <marta.rybczynska@ygreky.com>
+> --- 
+>  .../scap-security-guide/scap-security-guide_0.1.71.bb           | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>@
+> diff --git a/recipes-compliance/scap-security-guide/scap-security-guide_0.1.71.bb b/recipes-compliance/scap-security-guide/scap-security-guide_0.1.71.bb
+> index 5e45332..e277ccf 100644
+> --- a/recipes-compliance/scap-security-guide/scap-security-guide_0.1.71.bb
+> +++ b/recipes-compliance/scap-security-guide/scap-security-guide_0.1.71.bb
+> @@ -7,7 +7,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=9bfa86579213cb4c6adaffface6b2820"
+>  LICENSE = "BSD-3-Clause"
+>@@
+>  SRCREV = "459f0abf2ac08d36e5fc4a2619bc75cff7000da9"
+> -SRC_URI = "git://github.com/ComplianceAsCode/content.git;branch=stable;protocol=https \
+> +SRC_URI = "git://github.com/ComplianceAsCode/content.git;nobranch=1;protocol=https \
+>             file://run_eval.sh \
+>             file://run-ptest \
+>             "   
+Hi, Scott
 
-On 11/14/25 4:01 PM, Trevor Woerner via lists.yoctoproject.org wrote:
-> On Fri 2025-11-14 @ 09:53:08 AM, Trevor Woerner wrote:
->> My build testing shows that this patch fails for the rock2-square
->> MACHINE. Are others seeing this as well? In the v1 patch Quentin noticed
->> this and mentioned building for all rk3288 devices, was this tested?
-> 
-> Actually, never mind, the fix is so small and obvious, I'll just roll it
-> into the patch and commit it.
-> 
+I would suggest instead updating the SRCREV to
+879672a39577a8b8c9413641c9e6b8a0bd4f12bc.
 
-(Probably should have used ${UBOOT_SUFFIX} for the fixup :) )
+See https://lists.yoctoproject.org/g/yocto-patches/topic/116289037
 
-Do you have a Rock2 Square by any chance? I'm wondering if we cannot 
-migrate it to use wic instead of rockchip-gpt-img for generating the 
-final flashable image? But I don't own the board so it makes it a bit 
-hard to test patches.
-
-Cheers,
-Quentin
+--
+Clayton Casciato
 
