@@ -1,90 +1,106 @@
-Return-Path: <majortomtosourcecontrol@gmail.com>
+Return-Path: <hemant.jadhav@emerson.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 702B3CFA466
-	for <webhook@archiver.kernel.org>; Mon, 24 Nov 2025 14:10:38 +0000 (UTC)
-Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.17559.1763993430732655311
- for <yocto-patches@lists.yoctoproject.org>;
- Mon, 24 Nov 2025 06:10:30 -0800
-Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=CCw9wJEk;
- spf=pass (domain: gmail.com, ip: 209.85.166.47, mailfrom: majortomtosourcecontrol@gmail.com)
-Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-94861514a5cso166236039f.1
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 24 Nov 2025 06:10:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763993430; x=1764598230; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=yz3h800N9wQrNAAHQts559LQJAzOoPsJEIip6yhGlpU=;
-        b=CCw9wJEkK7z/DDxoI9t0FJ0FQWc/sMlU/XxSvA+1xDYu3AdqE/Ct0icyY1AtH++ZG7
-         1I/XPh3pWndYi1pqDwN/gh3rg9sw9vYlhNE7KactHLbK2Wy64IIhZYSGb6Z2khENAq7I
-         iSQbjlRQVcx4A8xF39xtJX0r5uqrpWoitrNYu1je9yGLNKbH28swDwzjxxcPdt7nR1jn
-         5tnb49Cg0NrXzKrXSBp73q7Duv02C7MYKOfAyxJxw71s6+Jc7fyH6dOH075+LIGYuBNc
-         GhsDC7eYukVfFf2EyHVAZ5rlhqxxhiYVRoorSQD2cLq1LM9WEzSr/pi0n6kAiGxDoLk1
-         2aGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763993430; x=1764598230;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yz3h800N9wQrNAAHQts559LQJAzOoPsJEIip6yhGlpU=;
-        b=qVBvUmNxUpi92IBeiIY+OLh2wRAPcg56nB9/sc1tsgvaVVEAM5dhJhPNeI2ynhbFYh
-         fRamdHcbk0E2RNNLht4G0mfW8ovZETw/UEeF5UQxHUu3CD6GaqKfDRh/guXPXnD3A0Fy
-         1X/u+ce0E15BhQyH0mMnV03WM7zQ6g8jqTh3TF1DsS7086TrL9uyWuzX5u1uh7C1I9Fh
-         kkRv2AEQ7i7Je8JQQNBgp7lAcIY4nfclysbus2HHgazKgbIM3p2w7AZkvrLp9h6/dmjR
-         eH9p7/KHl/a38cv4ufsy5FgxzkG+BqxU/0LzRm+KtXL3wsdzaN2rhsOTJWYB03Z/U8oZ
-         zLcg==
-X-Forwarded-Encrypted: i=1; AJvYcCWPkRxXBwc46IhyTrgaWoHblrpHCBl7TM4q0qoDjeAY10SzcUWYNIGXdLSxtRTJBfJ4FwKWqZEbqfJEpkfR@lists.yoctoproject.org
-X-Gm-Message-State: AOJu0YxLjgYm3ra2lM5XZnMIv8ThN+rqCKa3VQlzxDUgRcicnBA/RHbp
-	qtgJ4p0gsJ9vY2zNbEg6fuPRIIT5cVVYPCf33YyAq+y3rHcgTm9+VosP
-X-Gm-Gg: ASbGnctiTznWenIUzKsq/r0GOjl5BBqBlaIezJ6BkJdVv4PnhDBoakD0jvEtfomYfrI
-	alQsiRF/GN+yiac5jpW18+B+ZredyzbxzbJ72uklth3SrgaA7AN2S2hHRHtNOv5+LoCXYeDBfmX
-	q249kMTTTrbJeVSMLBwUbpAuuULIOYKYnLNGgk0mvYoKtk+E8tGGxHNm3Uaz+Gfy99OkZVbgsnk
-	lQuP9rz/ltbPwPdFKRl4D9YDSqrPnoZGwrcU3GbKVoMJ43xy0XTX/s2RDXe2yQgW+zd/RyfsB5J
-	C1nJDfSqCOXzaTAUlPcbxNayZ+xsYE0i5eD1/s43Ku4zRUdTq7zNUMYbYZtJqknvydkmZ5HALU4
-	xNSl6KXbcyAOics3iYvVJjMrQsldQMqhByURcrC2ggsAbJrBBXmdeleJJnATAZibaN+8WkBj6Tn
-	aqfS8WDylmGoMsIlGKx1PJRbYIPRWOtsj3S3ZNgXFuIiOoYlWXqSU4pJ3uREO5uy9QNPH6O9u8
-X-Google-Smtp-Source: AGHT+IHhOJTm6rk4BAEOIFa7Any6IEV1pwuJGEzQdOEag9TiUTQPkpYI962GyAqP0e0XFOv4RCWMrg==
-X-Received: by 2002:a05:6638:a209:b0:592:969b:a29f with SMTP id 8926c6da1cb9f-5b967acf28amr5826013173.18.1763993429858;
-        Mon, 24 Nov 2025 06:10:29 -0800 (PST)
-Received: from [172.26.252.3] (75-166-169-44.hlrn.qwest.net. [75.166.169.44])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5b954a7976bsm5646183173.26.2025.11.24.06.10.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Nov 2025 06:10:29 -0800 (PST)
-Message-ID: <1a0d3267-8887-48d1-b970-39f7de3b4268@gmail.com>
-Date: Mon, 24 Nov 2025 07:10:29 -0700
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C595CFD313
+	for <webhook@archiver.kernel.org>; Mon, 24 Nov 2025 14:55:58 +0000 (UTC)
+Subject: Re: [PATCH 1/2] clamav: Add recipe for version 1.4.3
+To: yocto-patches@lists.yoctoproject.org
+From: "Hemant Jadhav" <hemant.jadhav@emerson.com>
+X-Originating-Location: US (69.41.68.7)
+X-Originating-Platform: Windows Edge 142
+User-Agent: GROUPS.IO Web Poster
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [meta-security][scarthgap][PATCH 00/32] Roll up
- outstanding fixes
-To: Scott Murray <scott.murray@konsulko.com>,
- yocto-patches@lists.yoctoproject.org
-References: <cover.1763938436.git.scott.murray@konsulko.com>
-Content-Language: en-US
-From: Clayton Casciato <majortomtosourcecontrol@gmail.com>
-In-Reply-To: <cover.1763938436.git.scott.murray@konsulko.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Mon, 24 Nov 2025 06:55:52 -0800
+References: <20251120231345.1004458-1-hemant.jadhav@emerson.com> <5cf5a43b-152a-099b-1aaf-b5a5f7a9a129@konsulko.com> <672520.1763935693231696616@lists.yoctoproject.org> <2a78e262-0747-923f-4deb-43036e22711f@konsulko.com>
+In-Reply-To: <2a78e262-0747-923f-4deb-43036e22711f@konsulko.com>
+Message-ID: <686098.1763996152543724259@lists.yoctoproject.org>
+Content-Type: multipart/alternative; boundary="M379u4vPY55N2qmrcobH"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 24 Nov 2025 14:10:38 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2694
+ <yocto-patches@lists.yoctoproject.org>; Mon, 24 Nov 2025 14:55:58 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2695
 
-> - There are still some other outstanding CVEs for firejail and clamav.
->   firejail is potentially upgradeable, but clamav is problematic since
->   I believe 0.104.x was already unsupported when scarthgap shipped.
->   If you care about clamav support for scarthgap, plus provide some
->   input on if an upgrade to one of the LTS branches (1.0 or 1.4) is
->   something you would like to see / would be able to help test.
-Hi, Scott
+--M379u4vPY55N2qmrcobH
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-I would like to see clamav updated (1.4 preferred).
+On Sun, Nov 23, 2025 at 05:57 PM, Scott Murray wrote:
 
---
-Clayton Casciato
+>=20
+> Okay, thanks. I am surprised you have pkg_postinst calling
+> populate-volatiles/systemd-tmpfiles, AFAIK those are run by
+> default in early sysinit, and shouldn't need to be run
+> per-package. Did you test without the pkg_postinst to see if
+> that worked?
+
+Hi Scott,
+I actually added the pkg_postinst:${PN}() purposefully after testing it for=
+ uninstall-reinstall on running system scenario.
+Here's what I found:
+
+**For Fresh system boot**: volatiles/tmpfiles work perfectly and create the=
+ directories automatically during init.
+**For Runtime package installation** where I manually removed/uninstalled c=
+lamav and removed directories: the directories are NOT created until the ne=
+xt boot.
+
+Without the pkg_postinst:${PN}(), when installing the package on a running =
+system, freshclam fails immediately with:
+"ERROR: Failed to open log file /var/log/clamav/freshclam.log: No such file=
+ or directory"
+When I manually ran `/etc/init.d/populate-volatile.sh update`, the director=
+ies were created and everything worked correctly.
+
+So the pkg_postinst:${PN}() was added to take care of this scenario to inst=
+all or upgrade packages on running systems without rebooting.
+So that package is usable right away.
+
+I can remove the block of code, since for the fresh system this is not a pr=
+oblem and usually user will reboot after removing and package. Let me know =
+your thoughts.
+
+Hemant
+
+--M379u4vPY55N2qmrcobH
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div>On Sun, Nov 23, 2025 at 05:57 PM, Scott Murray wrote:</div>
+<div>
+<blockquote>Okay, thanks. I am surprised you have pkg_postinst calling<br /=
+>populate-volatiles/systemd-tmpfiles, AFAIK those are run by<br />default i=
+n early sysinit, and shouldn't need to be run<br />per-package. Did you tes=
+t without the pkg_postinst to see if<br />that worked?</blockquote>
+<br />
+<div><br />Hi Scott,</div>
+<div>I actually added the pkg_postinst:${PN}() purposefully after testing i=
+t for uninstall-reinstall on running system scenario.</div>
+<div>Here's what I found:</div>
+<div>&nbsp;</div>
+<div>**For Fresh system boot**: volatiles/tmpfiles work perfectly and creat=
+e the directories automatically during init.</div>
+<div>**For Runtime package installation** where I manually removed/uninstal=
+led clamav and removed directories: the directories are NOT created until t=
+he next boot.</div>
+<div>&nbsp;</div>
+<div>Without the pkg_postinst:${PN}(), when installing the package on a run=
+ning system, freshclam fails immediately with:<br />"ERROR: Failed to open =
+log file /var/log/clamav/freshclam.log: No such file or directory"<br />Whe=
+n I manually ran `/etc/init.d/populate-volatile.sh update`, the directories=
+ were created and everything worked correctly.</div>
+<div>&nbsp;</div>
+<div>So the pkg_postinst:${PN}() was added to take care of this scenario to=
+ install or upgrade packages on running systems without rebooting.&nbsp;<br=
+ />So that package is usable right away.</div>
+<div>&nbsp;</div>
+<div>I can remove the block of code, since for the fresh system this is not=
+ a problem and usually user will reboot after removing and package. Let me =
+know your thoughts.</div>
+<div>&nbsp;</div>
+<div>Hemant</div>
+</div>
+
+--M379u4vPY55N2qmrcobH--
 
