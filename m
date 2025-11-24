@@ -1,214 +1,109 @@
-Return-Path: <bruce.ashfield@gmail.com>
+Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A77ACCFD355
-	for <webhook@archiver.kernel.org>; Mon, 24 Nov 2025 19:36:53 +0000 (UTC)
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.53.1764013011322544133
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B7EECFD367
+	for <webhook@archiver.kernel.org>; Mon, 24 Nov 2025 22:54:54 +0000 (UTC)
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.4573.1764024893305458278
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 24 Nov 2025 11:36:51 -0800
+ Mon, 24 Nov 2025 14:54:53 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=coUIsUlk;
- spf=pass (domain: gmail.com, ip: 209.85.214.174, mailfrom: bruce.ashfield@gmail.com)
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-297e982506fso63809805ad.2
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 24 Nov 2025 11:36:51 -0800 (PST)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=AOVGPrcD;
+ spf=pass (domain: konsulko.com, ip: 209.85.219.45, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-88043139c35so48723956d6.0
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 24 Nov 2025 14:54:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764013011; x=1764617811; darn=lists.yoctoproject.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=jp4Fju8R/UgOw5+FtIchq818op5INq4OGH8nZzYCeT0=;
-        b=coUIsUlkgDvtMv/W0XNULy/VEqxLPWa+Ydcg6c8Gih4SSFvI0aVzGik/27R+qBOjD2
-         0d1Y0SDrtSZ9FCJEshe4+OYqyQEnYAlwbJgSicH23LbT3ylmpWAFMAPU7dMqRgVOAQ7A
-         m8jwr0p2QHprOYUxPEFnITY5DEqgt31S61nLOAUXuqYqGTQWwLpuuShMn+XGyDcwG9XB
-         TqLROEAsHIfCJdQi8nyeLhr+HQ2jl984C5Ejb6+4yry7o3A8C8TWLKg3UPAmI+1Y2CeQ
-         XpeGpIWToh681XpgfZlLNU3u2aD2eq2hXFsaIZhVsuWFQThWVdD97eQMXtaJReuh7LuR
-         OC+g==
+        d=konsulko.com; s=google; t=1764024892; x=1764629692; darn=lists.yoctoproject.org;
+        h=mime-version:references:message-id:in-reply-to:subject:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=j5fG80eLwa6fRcPb8DA9bf25i5fr4VJBW8xVu/QKUx0=;
+        b=AOVGPrcD12xdS0teUl9gtTpYJ/ZDuHl+89zfhW5pIRXbjEZrw+4uPYAFnz+a/BVIs9
+         PDXFu5tP4ztiNVHq5xVSr57byClrBjHwCstg6z1nPLjUJ0pF2uuvshQ7w6jG2JdrMowY
+         Phtnh6tkfQFeUAWFkUQuuKfy2kabjyWaKzSww=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764013011; x=1764617811;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jp4Fju8R/UgOw5+FtIchq818op5INq4OGH8nZzYCeT0=;
-        b=D7KfZeBnw+56vzteISg5RjOuuc3v9Eky83ShqdESn33mq83wvzGj7JyZuTMcYg5gNe
-         0GBO+p5FRjb1lNfS3yzF6M3/NG21g6Q7hHwQQ28TDP7cR4p1ICacop2qj6BaniMlXIH/
-         COo91xvPew6zfrG2J8KCjd6xIx8sNqpyL45jEzjZuvnXfW4ugQLq+luLhTrVt11+aFDu
-         KQqA2O9ZtOE9w70f2EzcAyZduirapW0jJdrqcZqVD+EtQHjY8whT2ykV0vHepGxOh9Q1
-         TnNh6C6YQnWphfCtriDgldZ7cId67uZwJcJyZmaneKmkK2fGKov8mcvS8fYkJutxcHJU
-         1Opg==
-X-Gm-Message-State: AOJu0YyEZXZ6imYMq10IbT7sWcsjMZkniFbXsIEon7G4MHmZ98bgibPz
-	X5viamgUenluuntALmc3+HrF8erGiTnGmMDBzklL/WQPF14pAM+uSxV+HqsgBwQjVt4gfBvodqV
-	ggpMBdk3HokIlZ28RUBMnTLtURAzPmXM=
-X-Gm-Gg: ASbGncsk7OLNm7WEEyNG4MEkEa7WQzAe/DMV6H/r/FQRtaOaxXbi0o/4GKo2k9tudCe
-	PDVqSblZtukxeIateN+E5EIGZX+bR1sZ9jLH9sf6wxxDtZ9nXgKUChe6VHUlkWnWx0ML6mkhQA+
-	LXIQdPzsonuK70EvHB1iO1wU+9RoTv8MAdImJQcy5D84OdchqiL/Oo6Toch7MlKpnOn8MjzpadC
-	T9vT1IElLMWOa5FGOG9PSwo/ymnv8cBnsneY4V9nsLpj2FbJyTFUNXKYYHviPfZWGyE4x89
-X-Google-Smtp-Source: AGHT+IFqgWfdEDZly5lXkzXqV6suEAlrnBsgagngttc1Rq22wYY3nyuDADN+fUTV+pNKaNV+xqBfb/kLMW+frY0SiXA=
-X-Received: by 2002:a17:90b:5143:b0:343:66e2:5f9b with SMTP id
- 98e67ed59e1d1-34733f15d4fmr13078023a91.24.1764013010738; Mon, 24 Nov 2025
- 11:36:50 -0800 (PST)
+        d=1e100.net; s=20230601; t=1764024892; x=1764629692;
+        h=mime-version:references:message-id:in-reply-to:subject:to:from:date
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j5fG80eLwa6fRcPb8DA9bf25i5fr4VJBW8xVu/QKUx0=;
+        b=N/q6HBnEQEumqjakWZSN8jCp67pOmV9zwFqYeiHOCLN6QSR5kVHkeCMJ5Wj1dt6sVH
+         i1tK8IV66BBKerc3pA5qQSwjf3b9gqCAcyYn/hpMRDURfBJ+pBKhHy+V6+b6vciUgBpx
+         oKIWFR3ofCyDovXASQahTaYa0Fi8X35/qPnMBD1NMu2ClltaSgHgnd/o0CAHQfQGIn8I
+         aXoZoOAzt2x7UXESteiTggk8a5+dr4a+E2OloT2xXbYvvowBtpOBT+0lngVhcJRU6S0Z
+         HVC2sWWObYubfnj89eK3L9vijs8ahFAv8KgFSt3W8wv+Bblq8FsghFx8Dd9TaoflPApP
+         jyyA==
+X-Gm-Message-State: AOJu0YwdQQEqhg1GCorfNGnkMbeoHGOMPxxQbNNh2Y0sD081xEBJ47os
+	2fNKo6kikXEwR8QHonsslZPqTtTG9PsIKDOAtzlyFuaZxrbBngwC5wOxICV33F4Ls8JU0gcvaSX
+	JaZfL
+X-Gm-Gg: ASbGncuzKYGbcifsch44H5el9Lv/t30W00Ckejmow41jzEkzmXS0mnx19b04eMAw4Q5
+	9UflzhvCYWVVoZhyJjI1hbX8jhAFkPtRACFjOC/bLT14iXo04oJCRReLZrx0zyOC+pKupGwPqV3
+	5BR6ujhrA5Qt6ZtxGfvd3M7mJPlHF9mcgudRSrUjUsxligwBmBYkFAw254FsmEzD76229P2Y4sN
+	Qgl3w8M84/4DVyo+tN12SjEnA6cOIofhXzn/i3Pa3c2YRv/YgU0j4m9fcchTze4T/hB2qCUMFGP
+	5S1TsKanog3QAxzcGfHHKCUNntxigGq7XgiWlfwvfkqsA6nR2088xhzAEE/MRo4WOPgUepzeGWh
+	syOfFvwLR7cbxaLBXxjCBezigiKejGZq0DieaFOibhUcbkq2TG1Ans6WFPGbmUnzFeYBny4A96Q
+	oshYw1/GiLb7QHKAnjo9nUNW7QIgLmvyEHTJMrpE9oZVJ2sQ==
+X-Google-Smtp-Source: AGHT+IHaUMsmMuFLsC83pxFm1B5K3FDcCsYElKxnAXnzvw1ZZOkadmsqtA/YGX4kEMvmlXzBNsrmew==
+X-Received: by 2002:a05:6214:5010:b0:879:b99b:9952 with SMTP id 6a1803df08f44-8863af15a96mr11012706d6.17.1764024891902;
+        Mon, 24 Nov 2025 14:54:51 -0800 (PST)
+Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8846e48f0d8sm110179286d6.25.2025.11.24.14.54.51
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Nov 2025 14:54:51 -0800 (PST)
+Date: Mon, 24 Nov 2025 17:54:50 -0500 (EST)
+From: Scott Murray <scott.murray@konsulko.com>
+To: yocto-patches@lists.yoctoproject.org
+Subject: Re: [yocto-patches] [meta-security][PATCH 0/6] Assorted updates
+In-Reply-To: <187A0B8B661E603D.1534078@lists.yoctoproject.org>
+Message-ID: <35e818dc-eabb-8dc5-40fa-2fc2ceda888e@konsulko.com>
+References: <187A0B8B661E603D.1534078@lists.yoctoproject.org>
 MIME-Version: 1.0
-References: <20251124183534.870124-1-ross.burton@arm.com>
-In-Reply-To: <20251124183534.870124-1-ross.burton@arm.com>
-From: Bruce Ashfield <bruce.ashfield@gmail.com>
-Date: Mon, 24 Nov 2025 14:36:39 -0500
-X-Gm-Features: AWmQ_blh1MoUd3hJdR3NM_sdedNldKDjNpxuOODQi6tV1ZdnmqBvFkVFccYRGPM
-Message-ID: <CADkTA4N00z1Eg1A7FrHT2rq1eJX042jwA2gFoAqf_+xuYZAcHA@mail.gmail.com>
-Subject: Re: [PATCH kernel-module-hello-world 1/2] hello-world: some cleanups
-To: Ross Burton <ross.burton@arm.com>
-Cc: yocto-patches@lists.yoctoproject.org
-Content-Type: multipart/alternative; boundary="000000000000e2604606445c48a8"
+Content-Type: text/plain; charset=US-ASCII
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 24 Nov 2025 19:36:53 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2705
+ <yocto-patches@lists.yoctoproject.org>; Mon, 24 Nov 2025 22:54:54 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2706
 
---000000000000e2604606445c48a8
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Fri, 21 Nov 2025, Scott Murray via lists.yoctoproject.org wrote:
 
-Acked-by: Bruce Ashfield <bruce.ashfield@gmail.com>
+> This patch series rolls up contributed patches from the past few weeks,
+> including a couple I missed with last week's push.  They are queued on
+> the master-next branch if you would like to check them out to test
+> yourself.  I intend to merge these to master branch at end of day Monday
+> unless there are objections.
 
-On Mon, Nov 24, 2025 at 1:35=E2=80=AFPM Ross Burton <ross.burton@arm.com> w=
-rote:
+These have now been merged to master.
 
-> No need to include linux/init.h as module.h does this.
->
-> Set the author to a real name for clarity.
->
-> Print the filename of the module to verify that path remapping is
-> working if specified.
->
-> Fix a typo in the comments.
->
-> Signed-off-by: Ross Burton <ross.burton@arm.com>
-> ---
->  hello-world.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
->
-> diff --git a/hello-world.c b/hello-world.c
-> index 8ca2dc6..9c22cde 100644
-> --- a/hello-world.c
-> +++ b/hello-world.c
-> @@ -7,27 +7,26 @@
->   *
->   *
->   */
-> -#include <linux/init.h>
->  #include <linux/module.h>
->
->
->  /* See module.h for additional #defines you may want to customize*/
->  MODULE_LICENSE("Dual MIT/GPL"); /* See module.h for acceptable options *=
-/
-> -MODULE_AUTHOR("Homer Simpson");
-> +MODULE_AUTHOR("Mark Asselstine");
->  MODULE_DESCRIPTION("A hello-world kernel module");
->  MODULE_VERSION("0.1");
->
->  /* Initialize the module, called when first loaded */
->  static int __init hello_world_init(void) {
->    /* print "Hello World" to the dmesg on module load */
-> -  printk(KERN_INFO "Hello World\n");
-> +  printk(KERN_INFO "Hello World from " __FILE__ "\n");
->
->    return 0;
->  }
->
->  /* Last call before module unload, complete any cleanup */
->  static void __exit hello_world_exit(void) {
-> -  /* print "Goodby World" to the dmesg on module unload */
-> +  /* print "Goodbye World" to the dmesg on module unload */
->    printk(KERN_INFO "Goodbye World\n");
->  }
->
-> --
-> 2.43.0
->
->
+Scott
 
---=20
-- Thou shalt not follow the NULL pointer, for chaos and madness await thee
-at its end
-- "Use the force Harry" - Gandalf, Star Trek II
 
---000000000000e2604606445c48a8
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div class=3D"gmail_default" style=3D"font-size:small">Ack=
-ed-by: Bruce Ashfield &lt;<a href=3D"mailto:bruce.ashfield@gmail.com">bruce=
-.ashfield@gmail.com</a>&gt;</div></div><br><div class=3D"gmail_quote gmail_=
-quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Mon, Nov 24, 2025=
- at 1:35=E2=80=AFPM Ross Burton &lt;<a href=3D"mailto:ross.burton@arm.com">=
-ross.burton@arm.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quot=
-e" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204)=
-;padding-left:1ex">No need to include linux/init.h as module.h does this.<b=
-r>
-<br>
-Set the author to a real name for clarity.<br>
-<br>
-Print the filename of the module to verify that path remapping is<br>
-working if specified.<br>
-<br>
-Fix a typo in the comments.<br>
-<br>
-Signed-off-by: Ross Burton &lt;<a href=3D"mailto:ross.burton@arm.com" targe=
-t=3D"_blank">ross.burton@arm.com</a>&gt;<br>
----<br>
-=C2=A0hello-world.c | 7 +++----<br>
-=C2=A01 file changed, 3 insertions(+), 4 deletions(-)<br>
-<br>
-diff --git a/hello-world.c b/hello-world.c<br>
-index 8ca2dc6..9c22cde 100644<br>
---- a/hello-world.c<br>
-+++ b/hello-world.c<br>
-@@ -7,27 +7,26 @@<br>
-=C2=A0 *<br>
-=C2=A0 *<br>
-=C2=A0 */<br>
--#include &lt;linux/init.h&gt;<br>
-=C2=A0#include &lt;linux/module.h&gt;<br>
-<br>
-<br>
-=C2=A0/* See module.h for additional #defines you may want to customize*/<b=
-r>
-=C2=A0MODULE_LICENSE(&quot;Dual MIT/GPL&quot;); /* See module.h for accepta=
-ble options */<br>
--MODULE_AUTHOR(&quot;Homer Simpson&quot;);<br>
-+MODULE_AUTHOR(&quot;Mark Asselstine&quot;);<br>
-=C2=A0MODULE_DESCRIPTION(&quot;A hello-world kernel module&quot;);<br>
-=C2=A0MODULE_VERSION(&quot;0.1&quot;);<br>
-<br>
-=C2=A0/* Initialize the module, called when first loaded */<br>
-=C2=A0static int __init hello_world_init(void) {<br>
-=C2=A0 =C2=A0/* print &quot;Hello World&quot; to the dmesg on module load *=
-/<br>
--=C2=A0 printk(KERN_INFO &quot;Hello World\n&quot;);<br>
-+=C2=A0 printk(KERN_INFO &quot;Hello World from &quot; __FILE__ &quot;\n&qu=
-ot;);<br>
-<br>
-=C2=A0 =C2=A0return 0;<br>
-=C2=A0}<br>
-<br>
-=C2=A0/* Last call before module unload, complete any cleanup */<br>
-=C2=A0static void __exit hello_world_exit(void) {<br>
--=C2=A0 /* print &quot;Goodby World&quot; to the dmesg on module unload */<=
-br>
-+=C2=A0 /* print &quot;Goodbye World&quot; to the dmesg on module unload */=
-<br>
-=C2=A0 =C2=A0printk(KERN_INFO &quot;Goodbye World\n&quot;);<br>
-=C2=A0}<br>
-<br>
--- <br>
-2.43.0<br>
-<br>
-</blockquote></div><div><br clear=3D"all"></div><div><br></div><span class=
-=3D"gmail_signature_prefix">-- </span><br><div dir=3D"ltr" class=3D"gmail_s=
-ignature">- Thou shalt not follow the NULL pointer, for chaos and madness a=
-wait thee at its end<br>- &quot;Use the force Harry&quot; - Gandalf, Star T=
-rek II<br><br></div>
-
---000000000000e2604606445c48a8--
+> For folks looking for scarthgap updates, I've been a bit delayed, but
+> am still working up a patch series, hopefully will have it out by Monday.
+>
+> Scott
+>
+>
+> Louis Rannou (2):
+>   openscap: fixes
+>   oeqa: openscap test
+>
+> Yi Zhao (4):
+>   openscap: upgrade 1.4.1 -> 1.4.2
+>   scap-security-guide: upgrade 0.1.77 -> 0.1.78
+>   libgssglue: update HOMEPAGE
+>   libgssglue: add UPSTREAM_CHECK_GITTAGREGEX
+>
+>  lib/oeqa/runtime/cases/openscap.py            | 48 +++++++++++++++++++
+>  .../{openscap_1.4.1.bb => openscap_1.4.2.bb}  |  8 ++--
+>  ....1.77.bb => scap-security-guide_0.1.78.bb} |  2 +-
+>  recipes-core/images/security-test-image.bb    |  2 +-
+>  recipes-security/libgssglue/libgssglue_0.9.bb |  4 +-
+>  5 files changed, 58 insertions(+), 6 deletions(-)
+>  create mode 100644 lib/oeqa/runtime/cases/openscap.py
+>  rename recipes-compliance/openscap/{openscap_1.4.1.bb => openscap_1.4.2.bb} (94%)
+>  rename recipes-compliance/scap-security-guide/{scap-security-guide_0.1.77.bb => scap-security-guide_0.1.78.bb} (96%)
+>
+>
 
