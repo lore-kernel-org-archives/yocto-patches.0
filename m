@@ -2,70 +2,70 @@ Return-Path: <alex.kanavin@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EEB2D10393
-	for <webhook@archiver.kernel.org>; Wed, 26 Nov 2025 08:38:44 +0000 (UTC)
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.9183.1764146318378000823
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4798FD10394
+	for <webhook@archiver.kernel.org>; Wed, 26 Nov 2025 08:40:14 +0000 (UTC)
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.9046.1764146405800117515
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 26 Nov 2025 00:38:38 -0800
+ Wed, 26 Nov 2025 00:40:06 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=g2JNvI3V;
- spf=pass (domain: gmail.com, ip: 209.85.208.49, mailfrom: alex.kanavin@gmail.com)
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6419b7b4b80so9009881a12.2
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 26 Nov 2025 00:38:38 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=ZQTt23eq;
+ spf=pass (domain: gmail.com, ip: 209.85.218.53, mailfrom: alex.kanavin@gmail.com)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b73a9592fb8so176522666b.1
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 26 Nov 2025 00:40:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764146317; x=1764751117; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1764146404; x=1764751204; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
         bh=5rhy6hWv5D0sDFebQ+Bi/pT4Eo2aAJ6M+vnccTl/nNY=;
-        b=g2JNvI3VgA9aYTuCJyV1stqy6GzGDyOXIhRnbZcqG7I2++sie+Ay17hUVeV2zQ7JOb
-         E3m7zUKEwrgM3CriwYAhMGv6T3W30tsrp86zrjWZbsTKtuhjn+IPAzOhST87cZSuU1Fi
-         0VlfZXOv0BMDGt5NQWkY59QlildoQl77y3wo1XdME0f3jKpARhwuV6tkRZupMMJC/cSF
-         VaHOZYZKZ32BRPEgY3mm96ACQMS6lsVTOCbWGKK6X8katVtyiGgdHsHJVVfafKCbPmd/
-         8StYrBUwDoRnueMqrwvnxSORXKJYB19ftAyTcLbd6RVs9wkg69HAzwUW/jmPUNfJIOfd
-         Xsdg==
+        b=ZQTt23eq/c5euMn2FqSbaUnHr7UKvrhjTncuHyCP0KbwSGUsjP8KWeysblb62V03CE
+         /oW0ZLsEQtrb+N22rXO71DR2rQDbEfOIcGndOFMKfTbLIF+9quc3EtHY+lZKVR3Y4PJu
+         gsGgXOOxw4BWbv7qT92c6woxUXdzol+FhWKF2Ih8MFXkE5+lpWfR9vL2dtOTfLE28lXz
+         9QE7wC2hHS6LoQn2IIIt5/e8reVB/46bx4nhyRlfD3L+IoY3MnAn8jVTJCJsdsVgnZfw
+         Dfyu/XcnW1YysULOCs7ShR1E9PFXEfiq5VD/eCIYEJo+KNW3vhCnRFPLKPqxTjbILNat
+         Roag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764146317; x=1764751117;
+        d=1e100.net; s=20230601; t=1764146404; x=1764751204;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
         bh=5rhy6hWv5D0sDFebQ+Bi/pT4Eo2aAJ6M+vnccTl/nNY=;
-        b=fu/tFWm+HOUCdQ0X7rPMDd9NaKFN/472tTgiyrVRrQjYUcqt8Q9nsCi5r3vTTlBAkH
-         QsY7+1R11d9ivmeFdPovclR0TuHenxXRnfAf9YofVSITzcRGdRhngbYZEPluU2zbf+Er
-         ng6CJaDtcrhziX6l29aPInkupBlZyEd7qnrHZGdDkScyiekkx5a1mLDpOeDeBgoA7IGX
-         YzdkJy471T6AbxPndXRcTcn6URwww/2EYNj+iLMk5YVc1hjqLVTxHZ4jtiyobMRkdw++
-         SYO9rkxLyL5+wVNWeO3O4tch5k3ZW2RBc/frKeU+rk7NKTM/Mp+YpF2wFXLFBC8kKq1o
-         rofA==
-X-Gm-Message-State: AOJu0YwAY65CPzdgyVWSl9n0oCBCZacbn+Tq6CrBG6NXwb8ZbuQGqFES
-	vWBdcMTzQM7euGcY9HvlXhvJecuUDdfeflbuJPbbpF4WAhGHNRBV6ZRlQlR81g==
-X-Gm-Gg: ASbGncsCABCmG/sW6L7frJ/WIEDJ3zEGhluZaPfvT44Wc9sDIS2leRnf2V5olhCQueZ
-	Hq47UpxHeAVEPTJoARh4+ThitlosG2oxO8HUt84YaM/M0+8PYdR78ucPdJPG8uyp2IrfzBcUTOX
-	W5s9M89QjumoWFDVDGeBheQqbuHPPfd3omarL5+dqIetftBVsqW0JLhZAkoxfkzTt3xLnGRYRF+
-	Abyb0/vcmC1WExHvTfXlEchCcgAdX/RjqOpDm4FzbbLs5Iyer/9c8Tpz/S0Ff7EzEfC2+AHxdGJ
-	klCqemNyTxYiP5ujvTUgjEFya+czRQ/67ZRzv6AtGJ2GJWq2arTGirRy1Dh166Sikv4Aw15OaJ8
-	F0+81wY0b7z1fJwAg8BVjdyoEpERzk8kuTv0F2ncNBcVLMo0brkpX0bbxaImlk190CYqiY0swoU
-	iIz01kffB8irk7MLhtmW/jrB4Zu/Eb6UxKyfgN5mnOaQ/i+y5oBMY=
-X-Google-Smtp-Source: AGHT+IE3fogzuKb6rIcV5qBQUXE7A1uuZPpqYs6EIsQarvabL+JRkBAW4Z7mSSd4CUTY3Q5y2uyyOw==
-X-Received: by 2002:a05:6402:2689:b0:640:95fc:2fcb with SMTP id 4fb4d7f45d1cf-64554459225mr18184286a12.12.1764146316511;
-        Wed, 26 Nov 2025 00:38:36 -0800 (PST)
+        b=MPvcZCxbULO9bYBDkvr0dVGOVokbZVd7D+58v1nfYDXzu/ny5t1cVC51Yw8OaRZhTp
+         1ja2tm9rw5eNGMzyhmUybKaeJraEUI27aC+WD4G8OqIepxejsEMV0gcJ7jjLiPC6DWgX
+         1xXjlCKRZCkQrHg6QGnjc/A1zMWghDu/+VPAHoTFTHmU4pBbyd9JlxKDqYLFbgxZaynV
+         Q/TNeMWg4svWkxJnSfcH4nb+sRfr195DeyBtM6sbP/+UcGuViIqBq9EdOK72Ehp/Q1Qe
+         CkDon1sG/IgBn/eQQy96hur0cKbuwakORf6T23uy8QkornibcDdb0HylHYpOWFKqFN+p
+         6TnQ==
+X-Gm-Message-State: AOJu0YyFkUBO6wqm91+o/NQGN/ESUOYeyEZyMLoFHTZKJ+bUpENLeaBA
+	sVlR5CqEgGgqXTgauVl7eFUM4sBPgyYIPVfpaGkvcwg014mWZDIzSqD5Ih8euw==
+X-Gm-Gg: ASbGncvjpYEqf7NdKqP9j0eOD4h76RESTtZn16+AewxW/lKOEW8iYyemE2ROJD1ajnJ
+	zkIrjVYLs3nvR9x4dpjgyarQlZBpvu4m2MFE3KX07tH5HW0yDCJtR+dNDJQ2pIk2fsBUvKgEU1k
+	3R4LHDRyqXzVuLb86h4WUWkPwm01R3LnZlEFAggjjMtydgLVMbslOsYxisVkpMr5O/sF5HI6PI6
+	QwIgemlm2tsoMkvLQTAAxfMZrt0NKppxlO42YieyKVDSRM0wwUgSJUKKiymZRqX1WPfKYSnw+kO
+	mYFXTrW1kzgxGcFDrF1d0A4RxRS7XHteNymRlmM0SC2iO0ykg8Io/opd/Brb6s20j2DvWfWtf/2
+	Z7ciKU6BHbLgiTaC1GDXvmgRb2qxBMHa/Pp7WOq4aYlDfgI9AdEdnOiXWHhaJJpU/QPtIZHaz5Y
+	i8MydrjUYkM/hDNO/Er5iGjQK6vOaJgAV1iqX0H/LCOqeVRYqd1Us=
+X-Google-Smtp-Source: AGHT+IGlkxRDqFzfQ6aw79Y07kk2cvVHdU2wqyr9oqxxMPvhOUYONf1RUZN9ZKBrmZKeIsGlfPNjuw==
+X-Received: by 2002:a17:907:2d29:b0:b07:e258:4629 with SMTP id a640c23a62f3a-b7657285447mr2718820166b.16.1764146403788;
+        Wed, 26 Nov 2025 00:40:03 -0800 (PST)
 Received: from alex-lx-laptop.lab.linutronix.de ([2a02:2455:86ac:8b00:8de8:97f1:4c58:d8a6])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-645364437b2sm16963842a12.25.2025.11.26.00.38.35
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b765c1379ddsm1726134666b.0.2025.11.26.00.40.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Nov 2025 00:38:36 -0800 (PST)
+        Wed, 26 Nov 2025 00:40:03 -0800 (PST)
 From: Alexander Kanavin <alex.kanavin@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Alexander Kanavin <alex@linutronix.de>
-Subject: [yocto-autobuilder-helper][PATCH] commit.json: account for oe-nodistro -> oe-nodistro-master rename
-Date: Wed, 26 Nov 2025 09:38:32 +0100
-Message-ID: <20251126083832.1828092-1-alex.kanavin@gmail.com>
+Subject: [yocto-autobuilder-helper][PATCH v2] config.json: account for oe-nodistro -> oe-nodistro-master rename
+Date: Wed, 26 Nov 2025 09:40:00 +0100
+Message-ID: <20251126084000.1828294-1-alex.kanavin@gmail.com>
 X-Mailer: git-send-email 2.47.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 26 Nov 2025 08:38:44 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2711
+ <yocto-patches@lists.yoctoproject.org>; Wed, 26 Nov 2025 08:40:14 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2712
 
 From: Alexander Kanavin <alex@linutronix.de>
 
