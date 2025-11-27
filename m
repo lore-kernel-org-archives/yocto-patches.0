@@ -1,156 +1,92 @@
-Return-Path: <antonin.godard@bootlin.com>
+Return-Path: <richard.purdie@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03681D111A8
-	for <webhook@archiver.kernel.org>; Thu, 27 Nov 2025 15:48:18 +0000 (UTC)
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.21520.1764258494741086296
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 631B3CFD2F6
+	for <webhook@archiver.kernel.org>; Thu, 27 Nov 2025 16:40:38 +0000 (UTC)
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.22651.1764261630588685851
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 27 Nov 2025 07:48:15 -0800
+ Thu, 27 Nov 2025 08:40:30 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=dkim header.b=TD6IjrSO;
- spf=pass (domain: bootlin.com, ip: 185.171.202.116, mailfrom: antonin.godard@bootlin.com)
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id A7F63C16A1C
-	for <yocto-patches@lists.yoctoproject.org>; Thu, 27 Nov 2025 15:47:49 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 821FD60722
-	for <yocto-patches@lists.yoctoproject.org>; Thu, 27 Nov 2025 15:48:12 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B2CBD102F294B;
-	Thu, 27 Nov 2025 16:48:11 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1764258491; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=hw/rl6q5LXmS4068G9BkFeKGo6T9D2Wu9xEU+kzZOrM=;
-	b=TD6IjrSOieSv1ziH2gClWVrNqJkOoJ1J4KlJAJqvEC/oEyIECY+oUNoO9St+olfTW5nU3a
-	6x8n45GRZ2fyP2RMyyFEgR8prAXXO2NfRrgcFg1sX3o4kCmRiorPu1t+VjV19/wCNMAuHF
-	jHgd+y0yvU+vEFtUyncKgeCxqgbvlLeY19qSgU5DwElO90n+RAfhnYc2Aus6Y9GwFaXlRP
-	HqB9UCTMuCcSAF0PZAdPO2b7xqIlzFzbEboS/tqhYbfLLIWkGJBkfsO9J9mzFbDkByL62X
-	QCoHIYWcB+e1QNG3vnhkW063HTJ1a2YMgn6As7D6CLIoniKPvrTUSBlr15cb1A==
-From: Antonin Godard <antonin.godard@bootlin.com>
-Date: Thu, 27 Nov 2025 16:48:04 +0100
-Subject: [layerindex-web][PATCH RESEND] layerindex: branchcompare: add rST
- format
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251127-branch-compare-rst-v1-1-4eaf3a66ea91@bootlin.com>
+ dkim=pass header.i=@linuxfoundation.org header.s=google header.b=GGK98PNa;
+ spf=pass (domain: linuxfoundation.org, ip: 209.85.128.47, mailfrom: richard.purdie@linuxfoundation.org)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-47796a837c7so6807645e9.0
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 27 Nov 2025 08:40:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1764261628; x=1764866428; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uK1kGhbC6dV6r/xiiKSL6gOcT10zQofpW1nLRNiYCmo=;
+        b=GGK98PNamgZn0a7Vh3nze0yETI90nTkk5R8KUtbOc75OKzge+lGURQmdbbz5d8pdrx
+         eIQmXRRCoYR8YpIqFtRg6xFV0aZ6k/tMAfqPnLM0W3uBn8hAy2GHkYMirpmIV7ZmCvt3
+         7ZeAjn7K3jurL3BVq1mt7PUBKT73f36vVmFGg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764261628; x=1764866428;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uK1kGhbC6dV6r/xiiKSL6gOcT10zQofpW1nLRNiYCmo=;
+        b=viAEjNgbGh6HgzihCOx5CmbQgR9QwTimKibLelPEUFMUQBreNv3y8GDPbwgSyeqeUN
+         C5VwiO+ezgr+Snq3imQJVDqCu6aOEmQ4HWYdPyDO5PdO+biMSSO+X/t0rfRhn0zp57i3
+         JMx1U61affqr3M+Yqr49rc62+uY6VTnolmgSjPfgvndQ6Plq1HEvN8unTls0ygYZHt+l
+         8kOXkjFySDJVRg0iWSrTFCizq51A1JI2LeEvclv/iF8SaUsORDG6mv64cDCv32LdnKZv
+         DLPu6eu7yLLmouoRVFB4QlneCQGzB7bz8CZiw9S5hkqGS24vhR3SNwdYKDUU9Y2gLfH4
+         9swg==
+X-Gm-Message-State: AOJu0Yw5h1JNCF0DDvTWsZABIBtBwUYUuPnx6b5uOo8swGAQsbvzOG+B
+	WyH6ePZRjqrRg06Jcz1EIGX71BBDIqQ4bD4F9PCaVE4Yx83J6eioGfPbRY+eoBJqRpDM/icy4RG
+	T5ICU
+X-Gm-Gg: ASbGncum425ISLnyFejfHH9ifB9N2h5mO9cLrqt5703+twR+0SCtXaNM5BoIu2a7Hu7
+	1DnmiEJbR+XZ1mEJZKdpDyJDT6Lptp0tpG3BRc1UrmNt7yD2Iy4cnWABaU010wIpkazCgCJBdAL
+	8f76+RsQ8q5nsStXmHgAoyr70j6+t/3PV8gDj/ecwPK5MznYzeV/p3OJzT5yz5vNj3c85X1uJsH
+	J/cpXSSNv+K66QIOfUoD3jMoOoi8iedUOWwAJcnjne4t4ovgmV8l67i72vaO3/lELhaY/IEuFNC
+	LYwGkL+VXCj6iebYm6LQf5fs4huYt2jIjt+MEBPkWH81h9/cmfzeDxxorVciXI4a9wpDHbY4zQY
+	LdZ2ZYo7eEEVQrli20ZZMU01seaPcDYppUFKrfa/2H6RZRh5OD/q5zT+l/SpVPV5DD/A6FdTqqh
+	4Yhz3Hd92dY0rvY9iBldSksiu7SaOHMkCCNv0N3O17dTc8AdrQOA==
+X-Google-Smtp-Source: AGHT+IGJXt/Eg3wP5HUGCMm0Ghp/Mt/Fj/7mJvj7H6ejFDYzOhQ88Nn+T7LOOq5aBu7mDGPpd5oBcA==
+X-Received: by 2002:a05:600c:3b09:b0:477:a3f9:fda5 with SMTP id 5b1f17b1804b1-477c016e425mr188804605e9.9.1764261628327;
+        Thu, 27 Nov 2025 08:40:28 -0800 (PST)
+Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:49e4:7f15:9d56:4465])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47911143a16sm39884605e9.1.2025.11.27.08.40.27
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Nov 2025 08:40:27 -0800 (PST)
+From: Richard Purdie <richard.purdie@linuxfoundation.org>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Antonin Godard <antonin.godard@bootlin.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3556;
- i=antonin.godard@bootlin.com; h=from:subject:message-id;
- bh=L+qyG8w8dZ/4dydiYdM7fXqBM3o9slyCwzgXlCwlHh4=;
- b=owEBbQKS/ZANAwAKAdGAQUApo6g2AcsmYgBpKHK7PN0htqtEnHZDt8zy1TOkN+dw38sJ968Lv
- xJOoB5nQ4SJAjMEAAEKAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCaShyuwAKCRDRgEFAKaOo
- NgUMD/4jVqAciRW0T1v9y/3lWjFM9qcuTAipAi846dfwH55L7PqdzTmC4NvqB3Xui1k0MFrlXF2
- K/lVMcwZMg+BSS0gy3/TMkt95QdsM+6PJ/TddokCExoTOPjShMHLmjFEEdIPhkjaYcOik3YxWQI
- zNF/qVAliuzDUhPPsvNvNofr35w8vdth5ve3SMCqd9avqP0nENagwNh6bCPsfbrqc0bQMjioGHF
- YWgKZ2SUDdRsCf7N4VXyGaemQM3Lfq/iGuK4QIuaCbkN3Ta6DJN8SrjmAlWMreUh8bqKwQmZrsm
- A04FyMf7DToSXCJa5m5ENJYKWKPeJZyww82hAWUdcJEyFFl0wyIq77Cc/ED2LZmugwinEgZnIzj
- hB1S2NJdqNaDQVnDcBSSAdKVHph9MO/MqwnUAqNRuEHCc13gu8ZXeDPGLxJyDigRtjBsgZzmDA1
- ES+mD39BS9dyRDffOMq45Izv1tagu8g5y6hHBP2v9dL06RaDmW9XSeBcGydTeRc8V3rLYT4wDL7
- JyU7zxlf0Zok5XCiB+n/pW1nG4K8dtMcTkRhvWkmyxOj5g3l6Z/vGacSCTWqIRNcKXQfuJwiedT
- pG1HffCcBxDRCJJllhkPM0t3m5VczOKY29ml3yWlLugpBq4S8BTmncZXTA16M/ecKk4ieIPWI29
- wRMIcFzIVZc5LuQ==
-X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
- fpr=8648725188DD401BB9A0D3FFD180414029A3A836
-X-Last-TLS-Session-Version: TLSv1.3
+Subject: [yocto-autobuilder-helper] [PATCH] scripts/getproperties: Fix to handled detached head states
+Date: Thu, 27 Nov 2025 16:40:26 +0000
+Message-ID: <20251127164026.853181-1-richard.purdie@linuxfoundation.org>
+X-Mailer: git-send-email 2.48.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 27 Nov 2025 15:48:18 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2720
+ <yocto-patches@lists.yoctoproject.org>; Thu, 27 Nov 2025 16:40:38 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2721
 
-Add a new rST output format for the branch comparison tool. This can be
-used to help write the Yocto Project release notes.
+Now that we have a whinlatter branch, we're seeing HEAD being reported instead
+of the real branch name. For some reason buildbot leaves the tree in a detached
+head state even though the revisions match and this doesn't work with rev-parse.
 
-Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
+Try using name-rev instead (thanks Mathieu for the pointer).
+
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
 ---
-An existing example (that I formatted manually at the time):
-https://git.yoctoproject.org/yocto-docs/tree/documentation/migration-guides/release-notes-5.2.rst?id=79cd33b06e87c04e4f873a5afd9d53714bc5047f#n876
+ scripts/getproperties.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-HTML output: https://docs.yoctoproject.org/5.2.4/migration-guides/release-notes-5.2.html#recipe-upgrades-in-yocto-ver
----
- layerindex/urls.py                         |  5 +++++
- templates/layerindex/branchcompare.html    |  1 +
- templates/layerindex/branchcompare_rst.txt | 35 ++++++++++++++++++++++++++++++
- 3 files changed, 41 insertions(+)
-
-diff --git a/layerindex/urls.py b/layerindex/urls.py
-index 80ceaa7..3b95a88 100644
---- a/layerindex/urls.py
-+++ b/layerindex/urls.py
-@@ -195,6 +195,11 @@ urlpatterns = [
-             content_type='text/plain; charset=utf-8',
-             template_name='layerindex/branchcompare_plain.txt'),
-         name='branch_comparison_plain'),
-+    re_path(r'^branch_comparison_rst/$',
-+        BranchCompareView.as_view(
-+            content_type='text/plain; charset=utf-8',
-+            template_name='layerindex/branchcompare_rst.txt'),
-+        name='branch_comparison_rst'),
-     re_path(r'^recipe_deps/$',
-         RecipeDependenciesView.as_view(
-             template_name='layerindex/recipedeps.html'),
-diff --git a/templates/layerindex/branchcompare.html b/templates/layerindex/branchcompare.html
-index 56b2310..93ac801 100644
---- a/templates/layerindex/branchcompare.html
-+++ b/templates/layerindex/branchcompare.html
-@@ -151,6 +151,7 @@
+diff --git a/scripts/getproperties.py b/scripts/getproperties.py
+index 5c342c7..a0175c2 100755
+--- a/scripts/getproperties.py
++++ b/scripts/getproperties.py
+@@ -21,7 +21,7 @@ def get_revision(repopath):
+     return subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=repopath).decode('utf-8').strip()
  
-     <span class="pull-right">
-     <a class="btn btn-default" href="{% url 'branch_comparison_plain' %}?{{ request.GET.urlencode }}"><i class="glyphicon glyphicon-file"></i> Plain text</a>
-+    <a class="btn btn-default" href="{% url 'branch_comparison_rst' %}?{{ request.GET.urlencode }}"><i class="glyphicon glyphicon-file"></i> rST</a>
-     </span>
+ def get_branch(repopath):
+-   return subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=repopath).decode('utf-8').strip()
++   return subprocess.check_output(["git", "name-rev", "--name-only", "HEAD"], cwd=repopath).decode('utf-8').strip()
  
- 
-diff --git a/templates/layerindex/branchcompare_rst.txt b/templates/layerindex/branchcompare_rst.txt
-new file mode 100644
-index 0000000..1e61848
---- /dev/null
-+++ b/templates/layerindex/branchcompare_rst.txt
-@@ -0,0 +1,35 @@
-+From {{ from_branch }} to {{ to_branch }} (layers: {{ showlayers_text }})
-+
-+Added
-+-----
-+
-+.. list-table::
-+   :widths: 30 70
-+   :header-rows: 1
-+
-+   * - Recipe
-+     - Version(s)
-+{% for recipe in added %}   * - ``{{ recipe.pn }}``
-+     - {% for rv in recipe.to_versions %}{{ rv.pv }}{% if not forloop.last %}, {% endif %}{% endfor %}
-+{% endfor %}
-+
-+Changed
-+-------
-+
-+.. list-table::
-+   :widths: 20 40 40
-+   :header-rows: 1
-+
-+   * - Recipe
-+     - Previous version(s)
-+     - New version(s)
-+{% for recipe in changed %}{% with pv_changed=recipe.pv_changed %}   * - ``{{ recipe.pn }}``
-+     - {% for rv in recipe.from_versions %}{{ rv.pv }}{% if rv.srcrev and not pv_changed %} ({{ rv.srcrev|truncatechars:13 }}){% endif %}{% if not forloop.last %}, {% endif %}{% endfor %}
-+     - {% for rv in recipe.to_versions %}{{ rv.pv }}{% if rv.srcrev and not pv_changed %} ({{ rv.srcrev|truncatechars:13 }}){% endif %}{% if not forloop.last %}, {% endif %}{% endfor %}
-+{% endwith %}{% endfor %}
-+
-+Removed
-+-------
-+
-+{% for recipe in removed %}-  ``{{ recipe.pn }}``
-+{% endfor %}
-
----
-base-commit: 459e8d6f1f18528a835513f12dffcc999c8f7fb5
-change-id: 20251127-branch-compare-rst-e26338eefd53
--- 
-
+ jsonprops = {}
+ jsonprops['commit_yocto-autobuilder-helper'] = get_revision(builddir + "/../yocto-autobuilder-helper/")
 
