@@ -1,204 +1,135 @@
-Return-Path: <twoerner@gmail.com>
+Return-Path: <mathieu.dubois-briand@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44647D2CE1B
-	for <webhook@archiver.kernel.org>; Fri,  5 Dec 2025 03:37:32 +0000 (UTC)
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.62474.1764905845409408746
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FEF7D2F7CC
+	for <webhook@archiver.kernel.org>; Fri,  5 Dec 2025 09:46:40 +0000 (UTC)
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.2104.1764927991054353274
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 04 Dec 2025 19:37:25 -0800
+ Fri, 05 Dec 2025 01:46:32 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=BWty8oQo;
- spf=pass (domain: gmail.com, ip: 209.85.219.51, mailfrom: twoerner@gmail.com)
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-88267973e5cso8922866d6.3
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 04 Dec 2025 19:37:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764905843; x=1765510643; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FbNLzV+hhxnLXYZ0hs6/4ZI1dtEZbrjzhUGeJKhsgRw=;
-        b=BWty8oQoN72Y6YixfBZeBQAgoC4S26Y3mJjOZwVM+3NQI4UYZpSw+nm0O+/9EkUQCm
-         imoD78sK73LoLjSm5JBfid7E9CRrmktnOMzoxvQ4UcexZls6chSqbWL/B5o8bmVs7sms
-         0TDK2mA/gk0JfvpTJOM/ZBOuJk72J74fufKfANwr6RnLN4b9HAwy04Btqi/YFQPU2BDN
-         Ssroq1QzZWCX5o6tqjjMaycfr0/85JT6YAbbh+xO1zPSJflXKQDrXsDV3oR2W15pTMLi
-         /rM5CFqZmrl99exRIztQRL/g47aHTM/HCXMnG0Rn3aeCCuLDGzLoAAMFgsXaeuEvnFZY
-         s8Qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764905843; x=1765510643;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FbNLzV+hhxnLXYZ0hs6/4ZI1dtEZbrjzhUGeJKhsgRw=;
-        b=to80w6wn8jV0MUONukWumKQSeod8qaWmb2Gfzg5sKkIoYry08sDeA3ZWI6uzb9wgXf
-         mOkPAvvj++6D/LtRSygrSDJ7BCRIz4VysMzhb/fr2EfmgmWeaMuILNJb66zAYjLsrM3H
-         ijmLD5Jbch5VW3IB54cn7BUOPhOCBiIw7T76izeHjhHtr8mWiviRimWMxcxkhsqGI7gI
-         3OCCCt8R6mUUJ0/a7ORB7M/5FFXkL3/oGQkDl6TsyfDEeX0RwHlIBbD+TCTtAjyNl5Tr
-         kV7XKVsE22bsJaGUPATF039cgBe1arvCGL3Y60qdBh/JUAgyA2hEw90+nbuRFiaJZHuw
-         vjBQ==
-X-Gm-Message-State: AOJu0YznEZ+fvE0E2glBqDh5W9n9rX98WgYDlw1wVD6+6ozIC86DOdCm
-	+1+DccoJzISGM++BKY/B0Ddnv3q45OjODIirls1nR/wgvKWcraZVbespf/sbXg==
-X-Gm-Gg: ASbGncsBnZp4lJlHc6brHK0VYVvCzSUu6I+cxS3w7fh1sGpQsG8F3yRs6whEY+lAuiz
-	XdSla5WzcnNbOJ8qrZhrt/ziN/cGyQeRwNw0T8BmdmLwMnZZyHGOZc5PDyDrOItAQ8xhKhcnbU1
-	7DRoPNTLoqD5e+tMkPi3dSpx0qjUvf5C6lJ6ZwmWfQj+ElZEtY3pYHRjmZd1gLdKt0QfjLGbgi3
-	Kw2pPzscpzmoM6p3ca2uAr6jIl2ZexkuNUnY5nLGTY+QUTJSYltcqtELFtyiWS5KDZ7NQ7MovKX
-	xq8MsxOhMeOcx0BxuvQwV+DCos9d+mjYa9GVSn8LwCMcPJfvYP7I2E14L2HbkpvuyzSqOwJo978
-	ieR33V2ToO/5/uoQtjFY1DP6VO1gwPUc4yGYdykpxi3UG52HTdjUf4rJ3dnwUXIT/45yFPyeENO
-	Orr2eXdrpcczfvsCO8mCSwqZXjTeRpF0AaMu8V1A==
-X-Google-Smtp-Source: AGHT+IGjCMfC9AUsulukVLHdRZXc4R/Nd7bFU0xm+W1I5j7A9V8Wt/7G+zdreMSwTB1xXWV1AmAnhg==
-X-Received: by 2002:ad4:5d41:0:b0:882:44cc:f58e with SMTP id 6a1803df08f44-8882481ddb8mr92395206d6.2.1764905843396;
-        Thu, 04 Dec 2025 19:37:23 -0800 (PST)
-Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-88827f335dbsm26050246d6.8.2025.12.04.19.37.22
-        for <yocto-patches@lists.yoctoproject.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Dec 2025 19:37:22 -0800 (PST)
-From: Trevor Woerner <twoerner@gmail.com>
-To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-rockchip][PATCH 1/2] make rockchip kernel tweaks easier to use
-Date: Thu,  4 Dec 2025 22:37:14 -0500
-Message-ID: <20251205033715.8852-1-twoerner@gmail.com>
-X-Mailer: git-send-email 2.51.0.193.g4975ec3473b4
+ dkim=pass header.i=@bootlin.com header.s=dkim header.b=Jd4iG30S;
+ spf=pass (domain: bootlin.com, ip: 185.171.202.116, mailfrom: mathieu.dubois-briand@bootlin.com)
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 32750C1964C
+	for <yocto-patches@lists.yoctoproject.org>; Fri,  5 Dec 2025 09:46:05 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id A1AE460731
+	for <yocto-patches@lists.yoctoproject.org>; Fri,  5 Dec 2025 09:46:28 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 50C3310B60661;
+	Fri,  5 Dec 2025 10:46:27 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1764927988; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=QpwoStgYoDGxHXIkGdOPIrIXkLfMMDHn1/TIEMKQN58=;
+	b=Jd4iG30SdoxL7PjQPGrgrF/CYbUkBA2yeBDxPLSuxhVjLrf4gSTWeNvZ2smp3Fxz1A3ynU
+	iMdPu3sSPesgshU/d0P1HZpTbG6cnae9S/NOYqYCIlkqaiNObXZyhzmmfWqLnsXYP3gWgf
+	+R7wVPosT7UkaxmMJAGvotE2bw7TG7k0FlRJDAKXDa57KrwUvl43Npb8mMyeps3LeQLgvj
+	L3WAWoxhuPiKqNTAkT9jpYbiupSu2EpBwey9LPz6TpugWatjBQTyz5x69VHLdFwo2KLGlZ
+	GT9DGKLS5KxZXd/zERxaAXM5geKEKbI7N/JBUCZA2GhknUFN1vdfUwSN9klVnw==
+From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Date: Fri, 05 Dec 2025 10:46:07 +0100
+Subject: [PATCH yocto-autobuilder2] yocto_console_view: Show branch names
+ instead of build caption
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251205-mathieu-console-link-names-v1-1-3827363bf8f5@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAN+pMmkC/x3MSwrCMBAA0KuUWTvQJgY/V5EuYjq1g+mM5CNK6
+ d0NLt/mbZApMWW4dhskenNmlYbh0EFYvDwIeWoG0xs3mN7h6svCVDGoZI2EkeWJ4lfKaMNsj/Z
+ CZ3ciaMEr0cyff36Dr4ai6GvRe+U4UTIw7vsPvLev0oAAAAA=
+X-Change-ID: 20251205-mathieu-console-link-names-3cf3439e857e
+To: yocto-patches@lists.yoctoproject.org
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1764927987; l=3963;
+ i=mathieu.dubois-briand@bootlin.com; s=20241219; h=from:subject:message-id;
+ bh=qHw5RvM6Zycf3s1NCRzLiPxIosCaNRtOFvuglgbdbEw=;
+ b=4DSlL/59QdgX/vh9hdbiMpFTKef69wnpLql/ZMvgEGeXs2m6WDUP7qhurl7qSjFH9QfuIsMYQ
+ e99SelrzbgUDA5xOeeFOISPeHq7dPwxzLbrwll5TBlQ2W9BxQLq0yKU
+X-Developer-Key: i=mathieu.dubois-briand@bootlin.com; a=ed25519;
+ pk=1PVTmzPXfKvDwcPUzG0aqdGoKZJA3b9s+3DqRlm0Lww=
+X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 05 Dec 2025 03:37:32 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2736
+ <yocto-patches@lists.yoctoproject.org>; Fri, 05 Dec 2025 09:46:40 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2738
 
-If linux-yocto is used with this layer, these rockchip tweaks are
-available automatically. However, if the user wishes to use their own
-linux kernel recipe, these rockchip tweaks are cumbersome since the
-MACHINE definition wants to include them. Reorganize how these tweaks
-are provided to make them easier to work with when using custom recipes.
+Build caption is set to oe-core build branch by yocto-autobuilder-helper
+scripts. Today we are using this caption to describe all branches on the
+console view, but some repos might use other branches.
 
-Nothing needs to be changed when using linux-yocto. Otherwise simply
-provide the following line (or something similar which has the same
-effect) in any custom linux kernel recipe:
+Explicitly use oe-core and bitbake branch names instead.
 
-	require recipes-kernel/linux/linux-rockchip.inc
-
-Signed-off-by: Trevor Woerner <twoerner@gmail.com>
+Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 ---
- recipes-kernel/linux/linux-rockchip.inc       | 35 ++++++++++++++++++
- .../realtek-r8169.cfg                         |  0
- .../rockchip/remove-non-rockchip-arch-arm.cfg |  0
- .../rockchip/remove-non-rockchip-arch-arm.scc |  0
- .../remove-non-rockchip-arch-arm64.cfg        |  0
- .../remove-non-rockchip-arch-arm64.scc        |  0
- recipes-kernel/linux/linux-yocto_%.bbappend   | 36 +------------------
- 7 files changed, 36 insertions(+), 35 deletions(-)
- create mode 100644 recipes-kernel/linux/linux-rockchip.inc
- rename recipes-kernel/linux/{linux-yocto => linux-rockchip}/realtek-r8169.cfg (100%)
- rename recipes-kernel/linux/{linux-yocto => linux-rockchip}/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm.cfg (100%)
- rename recipes-kernel/linux/{linux-yocto => linux-rockchip}/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm.scc (100%)
- rename recipes-kernel/linux/{linux-yocto => linux-rockchip}/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm64.cfg (100%)
- rename recipes-kernel/linux/{linux-yocto => linux-rockchip}/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm64.scc (100%)
+ yocto_console_view/src/views/ConsoleView/ConsoleView.tsx       | 10 +++++++++-
+ .../src/views/ConsoleView/YoctoChangeDetails.tsx               |  4 ++--
+ 2 files changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/recipes-kernel/linux/linux-rockchip.inc b/recipes-kernel/linux/linux-rockchip.inc
-new file mode 100644
-index 000000000000..a648ecb20679
---- /dev/null
-+++ b/recipes-kernel/linux/linux-rockchip.inc
-@@ -0,0 +1,35 @@
-+FILESEXTRAPATHS:prepend := "${THISDIR}/linux-rockchip:"
-+
-+# 32-bit devices
-+COMPATIBLE_MACHINE:firefly-rk3288 = "firefly-rk3288"
-+COMPATIBLE_MACHINE:marsboard-rk3066 = "marsboard-rk3066"
-+COMPATIBLE_MACHINE:radxarock = "radxarock"
-+COMPATIBLE_MACHINE:rock2-square = "rock2-square"
-+COMPATIBLE_MACHINE:tinker-board = "tinker-board"
-+COMPATIBLE_MACHINE:tinker-board-s = "tinker-board-s"
-+COMPATIBLE_MACHINE:vyasa-rk3288 = "vyasa-rk3288"
-+
-+# 64-bit devices
-+COMPATIBLE_MACHINE:nanopc-t6 = "nanopc-t6"
-+COMPATIBLE_MACHINE:nanopi-m4 = "nanopi-m4"
-+COMPATIBLE_MACHINE:nanopi-m4-2gb = "nanopi-m4-2gb"
-+COMPATIBLE_MACHINE:nanopi-m4b = "nanopi-m4b"
-+COMPATIBLE_MACHINE:nanopi-r2s = "nanopi-r2s"
-+COMPATIBLE_MACHINE:nanopi-r4s = "nanopi-r4s"
-+COMPATIBLE_MACHINE:orangepi-3b = "orangepi-3b"
-+COMPATIBLE_MACHINE:orangepi-5-plus = "orangepi-5-plus"
-+COMPATIBLE_MACHINE:radxa-zero-3 = "radxa-zero-3"
-+COMPATIBLE_MACHINE:roc-rk3308-cc = "roc-rk3308-cc"
-+COMPATIBLE_MACHINE:roc-rk3328-cc = "roc-rk3328-cc"
-+COMPATIBLE_MACHINE:rock-3a = "rock-3a"
-+COMPATIBLE_MACHINE:rock-4c-plus = "rock-4c-plus"
-+COMPATIBLE_MACHINE:rock-5a = "rock-5a"
-+COMPATIBLE_MACHINE:rock-5b = "rock-5b"
-+COMPATIBLE_MACHINE:rock-pi-4 = "rock-pi-4"
-+COMPATIBLE_MACHINE:rock-pi-e = "rock-pi-e"
-+COMPATIBLE_MACHINE:rock-pi-s = "rock-pi-s"
-+COMPATIBLE_MACHINE:rock64 = "rock64"
-+COMPATIBLE_MACHINE:soquartz = "soquartz"
-+
-+SRC_URI:append:rockchip = " file://rockchip-kmeta;type=kmeta;name=rockchip-kmeta;destsuffix=rockchip-kmeta"
-+SRC_URI:append:nanopi-r4s = " file://realtek-r8169.cfg"
-diff --git a/recipes-kernel/linux/linux-yocto/realtek-r8169.cfg b/recipes-kernel/linux/linux-rockchip/realtek-r8169.cfg
-similarity index 100%
-rename from recipes-kernel/linux/linux-yocto/realtek-r8169.cfg
-rename to recipes-kernel/linux/linux-rockchip/realtek-r8169.cfg
-diff --git a/recipes-kernel/linux/linux-yocto/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm.cfg b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm.cfg
-similarity index 100%
-rename from recipes-kernel/linux/linux-yocto/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm.cfg
-rename to recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm.cfg
-diff --git a/recipes-kernel/linux/linux-yocto/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm.scc b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm.scc
-similarity index 100%
-rename from recipes-kernel/linux/linux-yocto/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm.scc
-rename to recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm.scc
-diff --git a/recipes-kernel/linux/linux-yocto/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm64.cfg b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm64.cfg
-similarity index 100%
-rename from recipes-kernel/linux/linux-yocto/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm64.cfg
-rename to recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm64.cfg
-diff --git a/recipes-kernel/linux/linux-yocto/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm64.scc b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm64.scc
-similarity index 100%
-rename from recipes-kernel/linux/linux-yocto/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm64.scc
-rename to recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm64.scc
-diff --git a/recipes-kernel/linux/linux-yocto_%.bbappend b/recipes-kernel/linux/linux-yocto_%.bbappend
-index 2dba3d70a3ca..34bf335d0b10 100644
---- a/recipes-kernel/linux/linux-yocto_%.bbappend
-+++ b/recipes-kernel/linux/linux-yocto_%.bbappend
-@@ -1,35 +1 @@
--FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
--
--# 32-bit devices
--COMPATIBLE_MACHINE:firefly-rk3288 = "firefly-rk3288"
--COMPATIBLE_MACHINE:marsboard-rk3066 = "marsboard-rk3066"
--COMPATIBLE_MACHINE:radxarock = "radxarock"
--COMPATIBLE_MACHINE:rock2-square = "rock2-square"
--COMPATIBLE_MACHINE:tinker-board = "tinker-board"
--COMPATIBLE_MACHINE:tinker-board-s = "tinker-board-s"
--COMPATIBLE_MACHINE:vyasa-rk3288 = "vyasa-rk3288"
--
--# 64-bit devices
--COMPATIBLE_MACHINE:nanopc-t6 = "nanopc-t6"
--COMPATIBLE_MACHINE:nanopi-m4 = "nanopi-m4"
--COMPATIBLE_MACHINE:nanopi-m4-2gb = "nanopi-m4-2gb"
--COMPATIBLE_MACHINE:nanopi-m4b = "nanopi-m4b"
--COMPATIBLE_MACHINE:nanopi-r2s = "nanopi-r2s"
--COMPATIBLE_MACHINE:nanopi-r4s = "nanopi-r4s"
--COMPATIBLE_MACHINE:orangepi-3b = "orangepi-3b"
--COMPATIBLE_MACHINE:orangepi-5-plus = "orangepi-5-plus"
--COMPATIBLE_MACHINE:radxa-zero-3 = "radxa-zero-3"
--COMPATIBLE_MACHINE:roc-rk3308-cc = "roc-rk3308-cc"
--COMPATIBLE_MACHINE:roc-rk3328-cc = "roc-rk3328-cc"
--COMPATIBLE_MACHINE:rock-3a = "rock-3a"
--COMPATIBLE_MACHINE:rock-4c-plus = "rock-4c-plus"
--COMPATIBLE_MACHINE:rock-5a = "rock-5a"
--COMPATIBLE_MACHINE:rock-5b = "rock-5b"
--COMPATIBLE_MACHINE:rock-pi-4 = "rock-pi-4"
--COMPATIBLE_MACHINE:rock-pi-e = "rock-pi-e"
--COMPATIBLE_MACHINE:rock-pi-s = "rock-pi-s"
--COMPATIBLE_MACHINE:rock64 = "rock64"
--COMPATIBLE_MACHINE:soquartz = "soquartz"
--
--SRC_URI:append:rockchip = " file://rockchip-kmeta;type=kmeta;name=rockchip-kmeta;destsuffix=rockchip-kmeta"
--SRC_URI:append:nanopi-r4s = " file://realtek-r8169.cfg"
-+require linux-rockchip.inc
+diff --git a/yocto_console_view/src/views/ConsoleView/ConsoleView.tsx b/yocto_console_view/src/views/ConsoleView/ConsoleView.tsx
+index 14276ce92da9..28bfca376f54 100644
+--- a/yocto_console_view/src/views/ConsoleView/ConsoleView.tsx
++++ b/yocto_console_view/src/views/ConsoleView/ConsoleView.tsx
+@@ -138,6 +138,8 @@ function resolveFakeChange(revision: string, whenTimestamp: number, comment: str
+       poky_revision: revision,
+       oecore_revision: null,
+       bitbake_revision: null,
++      oecore_branch: null,
++      bitbake_branch: null,
+       poky_revlink: null,
+       oecore_revlink: null,
+       bitbake_revlink: null,
+@@ -253,6 +255,12 @@ function selectChangeForBuild(build: Build, buildset: Buildset,
+         change.change.publishurl = change.change.publishurl.replace("/srv/autobuilder/autobuilder.yocto.io/", "https://autobuilder.yocto.io/");
+         change.change.publishurl = change.change.publishurl.replace("/srv/autobuilder/valkyrie.yocto.io/", "https://valkyrie.yocto.io/");
+       }
++      if ('branch_oecore' in build.properties) {
++        change.change.oecore_branch = build.properties['branch_oecore'][0];
++      }
++      if ('branch_bitbake' in build.properties) {
++        change.change.bitbake_branch = build.properties['branch_bitbake'][0];
++      }
+     }
+ 
+     return change;
+@@ -299,7 +307,7 @@ export const ConsoleView = observer(() => {
+   const buildsQuery = useDataApiQuery(() => Build.getAll(accessor, {query: {
+       limit: buildFetchLimit,
+       order: '-started_at',
+-      property: ["yp_build_revision", "yp_build_branch", "repo_poky", "repo_oecore", "commit_oecore", "repo_bitbake", "commit_bitbake", "reason", "publish_destination", "use_bitbake_setup"],
++      property: ["yp_build_revision", "yp_build_branch", "repo_poky", "repo_oecore", "commit_oecore", "branch_oecore", "repo_bitbake", "commit_bitbake", "branch_bitbake", "reason", "publish_destination", "use_bitbake_setup"],
+     }}));
+ 
+   const windowSize = useWindowSize()
+diff --git a/yocto_console_view/src/views/ConsoleView/YoctoChangeDetails.tsx b/yocto_console_view/src/views/ConsoleView/YoctoChangeDetails.tsx
+index 18a74cf17003..f703b44a5530 100644
+--- a/yocto_console_view/src/views/ConsoleView/YoctoChangeDetails.tsx
++++ b/yocto_console_view/src/views/ConsoleView/YoctoChangeDetails.tsx
+@@ -137,12 +137,12 @@ export const YoctoChangeDetails = observer(({change, compact, showDetails, setSh
+               change.poky_revlink
+               ? <a href={change.poky_revlink}>{change.caption} (poky)</a>
+               : change.oecore_revlink
+-                ? <a href={change.oecore_revlink}>{change.caption} (oe-core)</a>
++                ? <a href={change.oecore_revlink}>{change.oecore_branch ? change.oecore_branch : change.caption} (oe-core)</a>
+                : <span>{change.caption}</span>
+             }
+             {
+               change.bitbake_revlink
+-              ? <a href={change.bitbake_revlink}>{change.caption} (bitbake)</a>
++              ? <a href={change.bitbake_revlink}>{change.bitbake_branch ? change.bitbake_branch : change.caption} (bitbake)</a>
+               : <></>
+             }
+             {
+
+---
+base-commit: e8c4db23afb334de278f3c5c7800c33fe32f7438
+change-id: 20251205-mathieu-console-link-names-3cf3439e857e
+
+Best regards,
 -- 
-2.51.0.193.g4975ec3473b4
+Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 
 
