@@ -2,130 +2,94 @@ Return-Path: <t.f.g.geelen@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB63FD3B7E2
-	for <webhook@archiver.kernel.org>; Mon,  8 Dec 2025 22:31:38 +0000 (UTC)
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.5889.1765233094409376320
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2D74D3B7EA
+	for <webhook@archiver.kernel.org>; Mon,  8 Dec 2025 22:36:48 +0000 (UTC)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.6049.1765233399578258163
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 08 Dec 2025 14:31:34 -0800
+ Mon, 08 Dec 2025 14:36:39 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=cSHvQYqA;
- spf=pass (domain: gmail.com, ip: 209.85.208.46, mailfrom: t.f.g.geelen@gmail.com)
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-640860f97b5so6493782a12.2
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 08 Dec 2025 14:31:34 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=VXJ9O3qg;
+ spf=pass (domain: gmail.com, ip: 209.85.218.51, mailfrom: t.f.g.geelen@gmail.com)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b735e278fa1so834980366b.0
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 08 Dec 2025 14:36:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765233092; x=1765837892; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1765233397; x=1765838197; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/mB824KNwjoxxdu686mT9/MHn9SfkojoD59o0J9TxcA=;
-        b=cSHvQYqAeIFrh4fYjSIqdDWSSMetN50d+TkZ3iRbPLVcH7YrScdQeXhpJXAVD3qXJa
-         Cu6GhZrSiolvOtxOzOluvbI+SpzTsukCcz0C5v3ruMqjHMAp9wfK/W1HuKv4BtHLZFrI
-         8Xz2k1LmmVLvBj5bdoQwTfnGDJ8/X9cLawQgicLwzxTUNEfJn1KOp4zq5t6vz7rshw29
-         8fjXjt1OsJLQWKHzq9310JqB4aMGJZTXvsPH7DdScZAJrsYbbIpdYeM8QW0oblJrt5ry
-         2IjJ1desQqiBocsf8BoTGwdyDyl7Ld0MQwe6n9bfuONtPzFiSKXYw3P0Kz2tSWQ1xqS7
-         OoXQ==
+        bh=eOYD1KGUvzVf4sQ9d9O72HwxKlHs3e8Jue4iX5uYAg4=;
+        b=VXJ9O3qgaCjUYr5PoaXrZ07VgsXP4f1B5YiUTcZqQcD7suySYWkI+F/e6y4bImhhzY
+         B0hoH3T896A8RUZYYCfLpUZwTdds35LVlFqnnrkmr4U/7mAATspw4SimuOq0nmlZISHT
+         zHD/ywhMQft2Q/WohwMSdLDrlldWyixMv68ojnj3BRV6B5GhEN91x/rTvKqKdUUepXWL
+         rRXHnjFfr4TCIqBxMK6UChsSH2Gue2n6rnbC9MnQzU3PA6oaQB3EFTjnUJtYI25eetGM
+         nxgsYTtlRIkMkLn7XNufwoARm3WMg8EIuw64bams4i/uy5EAfwFmAcK+JBC6BNKCwHAo
+         U51A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765233092; x=1765837892;
+        d=1e100.net; s=20230601; t=1765233397; x=1765838197;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/mB824KNwjoxxdu686mT9/MHn9SfkojoD59o0J9TxcA=;
-        b=CAvrifu7wrt7Iw98/lZr0aYBMDSiV4GkgqwrWMKVdpNapQu4VkwssKqJrQ/18xcWU5
-         SvWBMHQqwyUdd+1vh1IdPPWRGTUSEkeliC+f1IoiGbgTW9VtIS65GCdnpflAgmVY+5KL
-         oJVqnFdNMNfORB01R3SOJBkJm9xa83aUoMtENSLQQiv32gSuY/+PSqlAqSlxZNv6whPj
-         5kh3CbpiH7UFswwijJmIrwCpXLTAHbfz0wv3vPPBKJonj4mwBB+tkdM0DA9wN1oXG0Mh
-         +o0sNYrSZlgEa3C/bVmFKy55QInolHhUcoLuGPpkKpw+jx6HOP+1uaUrYiPzL/9m3LEm
-         FjRA==
-X-Gm-Message-State: AOJu0YwGeVp5/R9YpySWOHIFvWQfe72lXL103rTFbW1xQhAX/LidSeET
-	dCJhphpXsop2LUcWXrsuncw9I8iw7SMmK7NEDcrqhI0AXNneG2nV96WAlDg6RQ==
-X-Gm-Gg: ASbGncs3hWDPYpPZMFVARVmgSHhQdyRa2y5ONH+B+6ZWDFMXwTB+3e5Xz26zgM4EPpi
-	IcxyxSLHcQXeJ2FOzf0b4dkEmf29KA2eRJRvHE60OeQJUjhaSKxCuOrbRum8qmRtSFIdX31I4Zk
-	4+xOJPWeSrgUeWUe/zklszhgCar3PUIJz51+wmTCkTJRIh58MOkUB0pmEbea2i3vI3fCV2LPj94
-	aLp9fKUJodhXYQRdiGf/BgS9kSD5+q1lXY7EK2I9I+pw3/n5UrK5TcltYhLK2ug0uqCu86m8sI/
-	ZbXU+hjDx/8LLNO5q9XppmYPNAgyloff2ZKBaug/O2HcLBRtkF6A9V8baiAAKkjlvYOlESST2R9
-	z4cq1Q5b+1eXZhGnVnUAphCmh3jzJVJwRaViBAt0P6QGTUomgOi7hPff9NJAEhpLfDk+iESOG4H
-	FknRrvXU4YqfHLe27IFjnG+HLP8gGQ+vRIVeOhi9VznWbXLaXj1plTf+rKUF70Wow2
-X-Google-Smtp-Source: AGHT+IGEK2glSeCvMneLjnKrfXJIDgqJL0WNjQ8kEWoR8l0+2F2dmViCIgm0F/FMcZHAN5IXJpnFxQ==
-X-Received: by 2002:a05:6402:2347:b0:640:eb29:fc7e with SMTP id 4fb4d7f45d1cf-6491abf209fmr7737748a12.20.1765233092080;
-        Mon, 08 Dec 2025 14:31:32 -0800 (PST)
+        bh=eOYD1KGUvzVf4sQ9d9O72HwxKlHs3e8Jue4iX5uYAg4=;
+        b=lK9ZzSf+lPNIPZlM+HIfX4dHFonCJXnnb1Wuohj0lMEnQTobvdJPjq4u8LSQESPQg6
+         FzAbt/ABjjyvlL8uZ6xiZNI3gTeqIIXXtkm5W0YDnG0/TxHZpA5EaJt5TyQGziiCOIs3
+         9ITBWyuCg7OUas9uuh+SPylFHihSVb587anF5kYDGb4vmdzICjxUUPOTkc9N+1d4vr4A
+         Kw94gnyPzA60rP6+a+ypa1aLqiDe1YsM6EVIUaEwfLEwsSoWLt6LHgq2b4iD28EDSRr5
+         X8ljziuPfAQfSnlKfWwhsXjRMfsVMpdOjtEoIqU8Y3ym5W+3DGW/QsGczRX3OHWoP7BQ
+         ccbw==
+X-Gm-Message-State: AOJu0YwL/houRuSTm0+TcrEaJbANiptpvGiDAQpSB76u5qeWf/nhmET8
+	ht1q8nX6iaqFPJDPjg9gAl7lILBdt4idSdD7p38D8lea9zmCYrJrnhST7UNM3g==
+X-Gm-Gg: ASbGncuq6kL1dXCUBT739+Wsz7wNAu01vzSjjuL4Z5IjToDd1VPeUumdaoRX2NazaxC
+	oReIOWLstufiVOa0ZpyUDERtSB9vI6oHefwRlEs9FHxA1yOm1amL0WIOoT0uY6ZhMeHduZRM4Uu
+	W7Yx0rGdU6HpDopLwgEhzbkaz8a1m75lDdcTrmS0uDq/t9zcW1xClbD2x/KOaGMTKiQ9a/uDebO
+	KtMhyntENJrZ6DJ1dZVMFDQDcoU+rv4UwR5/V1o+4j7wQtHE1KxlhriuDfFoBHwzYPOMeT6aKM+
+	zGmSpjWdV1LNoPNZ3r8JiJI4l6uR8JKde+8GXU/rQNi5NZMfFuK5RvnBPm/KoegB5JnPvzYROCa
+	FQ7Z45+pQviEHeiWPcg7QTbOVk9UERlQesQMXMM5HBKrv56iKsvaLi7rzLeDmM0tqqOgrpyokqA
+	6fWS/p3+qsv631eeyHOFMWM8WbGMaYdvVWw8Yft75JKo59MbBARa3HeWXuIPSXjECz
+X-Google-Smtp-Source: AGHT+IGlSjViRbHJ4IA6/Q+X4W1wzKyaInzLRRhC4EcBN9z6omX5EV7WmQJMlGH7gNvgk+qrLP7RzA==
+X-Received: by 2002:a17:907:728e:b0:b73:9792:918b with SMTP id a640c23a62f3a-b7a24331131mr998351866b.27.1765233397097;
+        Mon, 08 Dec 2025 14:36:37 -0800 (PST)
 Received: from control-center.fritz.box (150-12-20-31.ftth.glasoperator.nl. [31.20.12.150])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-647b412e2d8sm12229930a12.34.2025.12.08.14.31.31
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-647b2edad10sm11897670a12.9.2025.12.08.14.36.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Dec 2025 14:31:31 -0800 (PST)
+        Mon, 08 Dec 2025 14:36:36 -0800 (PST)
 From: Tom Geelen <t.f.g.geelen@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Tom Geelen <t.f.g.geelen@gmail.com>
-Subject: [auh][PATCH 2/2] testimage: adjust qmp detection for testimage
-Date: Mon,  8 Dec 2025 23:31:18 +0100
-Message-ID: <20251208223118.374387-2-t.f.g.geelen@gmail.com>
+Cc: Alex Kanavin <alex.kanavin@gmail.com>,
+	Tom Geelen <t.f.g.geelen@gmail.com>
+Subject: [auh][PATCH 1/2] testimage: update package installation logic to use groups
+Date: Mon,  8 Dec 2025 23:36:08 +0100
+Message-ID: <20251208223609.378679-1-t.f.g.geelen@gmail.com>
 X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 08 Dec 2025 22:31:38 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2751
+ <yocto-patches@lists.yoctoproject.org>; Mon, 08 Dec 2025 22:36:48 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2752
 
-When defining a testimage it will try to run an image via Qemu and need qmp. QMP is assumed to be provided. However this throws an error. Use the RECIPE_SYSROOT_NATIVE of the testimage and set up the paths using this.
+Incorrect variable pkgs_ctx was passed to _get_pkgs_to_install. It’s undefined in testimage().
+_get_pkgs_to_install iterates groups of upgrade results and extracts PN and PTEST_ENABLED from per-recipe context via bitbake -e. Passing the wrong or undefined variable prevents building an image with the upgraded packages and their -ptest addons.
 
 Signed-off-by: Tom Geelen <t.f.g.geelen@gmail.com>
 ---
- modules/testimage.py | 38 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 37 insertions(+), 1 deletion(-)
+ modules/testimage.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/modules/testimage.py b/modules/testimage.py
-index 849a9f1..0a0f924 100644
+index 6377368..849a9f1 100644
 --- a/modules/testimage.py
 +++ b/modules/testimage.py
-@@ -73,10 +73,46 @@ class TestImage():
-         return ' '.join(pkgs_out)
+@@ -74,7 +74,7 @@ class TestImage():
  
      def testimage(self, groups, machine, image):
-+        # Minimal: derive native sysroot from the image's environment and expose it via PYTHONPATH.
-+        try:
-+            # Use the image-specific environment; this matches what succeeds outside AUH
-+            bb_env = self.bb.env(image)
-+            rsn = bb_env.get('RECIPE_SYSROOT_NATIVE')
-+            if rsn:
-+                I(f"AUH: RECIPE_SYSROOT_NATIVE (image)={rsn}")
-+                pythonpaths = []
-+                libdir = os.path.join(rsn, 'usr', 'lib')
-+                if os.path.isdir(libdir):
-+                    for entry in os.listdir(libdir):
-+                        if entry.startswith('python'):
-+                            sp = os.path.join(libdir, entry, 'site-packages')
-+                            if os.path.isdir(sp):
-+                                pythonpaths.append(sp)
-+                    qp = os.path.join(libdir, 'qemu-python')
-+                    if os.path.isdir(qp):
-+                        pythonpaths.append(qp)
-+
-+                if pythonpaths:
-+                    new_py = os.pathsep.join(pythonpaths)
-+                    os.environ['OEQA_PYTHONPATH_NATIVE'] = new_py
-+                    os.environ['PYTHONPATH'] = new_py + os.pathsep + os.environ.get('PYTHONPATH', '')
-+                    os.environ['BB_ENV_PASSTHROUGH_ADDITIONS'] = os.environ.get('BB_ENV_PASSTHROUGH_ADDITIONS', '') + ' OEQA_PYTHONPATH_NATIVE PYTHONPATH'
-+                    # Ensure oeqa picks up changes during task execution
-+                    os.environ['TESTIMAGE_UPDATE_VARS'] = (os.environ.get('TESTIMAGE_UPDATE_VARS', '') + ' OEQA_PYTHONPATH_NATIVE PYTHONPATH').strip()
-+                    I(f"AUH: OEQA_PYTHONPATH_NATIVE set to: {new_py}")
-+                else:
-+                    W('Native sysroot found but no python paths; qmp import may fail')
-+            else:
-+                W('RECIPE_SYSROOT_NATIVE not present; ensure qemu-native/qemu-system-native are available')
-+        except Exception as ex:
-+            W('Failed to configure PYTHONPATH for qmp: {}'.format(ex))
-+
          os.environ['CORE_IMAGE_EXTRA_INSTALL'] = \
-             self._get_pkgs_to_install(groups)
+-            self._get_pkgs_to_install(pkgs_ctx)
++            self._get_pkgs_to_install(groups)
          os.environ['TEST_LOG_DIR'] = self.logdir
--        os.environ['TESTIMAGE_UPDATE_VARS'] = 'TEST_LOG_DIR'
-+        # Keep TEST_LOG_DIR propagating alongside any previously set vars
-+        prev_update = os.environ.get('TESTIMAGE_UPDATE_VARS', '')
-+        os.environ['TESTIMAGE_UPDATE_VARS'] = (prev_update + ' TEST_LOG_DIR').strip()
+         os.environ['TESTIMAGE_UPDATE_VARS'] = 'TEST_LOG_DIR'
          I( " Installing additional packages to the image: {}".format(os.environ['CORE_IMAGE_EXTRA_INSTALL']))
- 
-         I( "   building %s for %s ..." % (image, machine))
 -- 
 2.43.0
 
