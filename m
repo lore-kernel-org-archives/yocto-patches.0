@@ -2,34 +2,34 @@ Return-Path: <peter.marko@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 293C0D3E77B
-	for <webhook@archiver.kernel.org>; Wed, 10 Dec 2025 20:41:25 +0000 (UTC)
-Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.6399.1765399277110845253
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 014C5D3E77B
+	for <webhook@archiver.kernel.org>; Wed, 10 Dec 2025 20:41:35 +0000 (UTC)
+Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.6402.1765399288477251970
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 10 Dec 2025 12:41:18 -0800
+ Wed, 10 Dec 2025 12:41:28 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=peter.marko@siemens.com header.s=fm2 header.b=NG57bSbt;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.226, mailfrom: fm-256628-20251210204113d6d65ee4a1000207ca-qzw5hp@rts-flowmailer.siemens.com)
-Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 20251210204113d6d65ee4a1000207ca
+ dkim=pass header.i=peter.marko@siemens.com header.s=fm2 header.b=j8B6jlKM;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.227, mailfrom: fm-256628-20251210204126ed793989260002073f-3_kn9w@rts-flowmailer.siemens.com)
+Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 20251210204126ed793989260002073f
         for <yocto-patches@lists.yoctoproject.org>;
-        Wed, 10 Dec 2025 21:41:14 +0100
+        Wed, 10 Dec 2025 21:41:26 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
  d=siemens.com; i=peter.marko@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=lJUr2WetA08+y0w58AMK/w9ZbUF/YuRtkMYgEH2M2SE=;
- b=NG57bSbteRGnXiRSfO6WwJ71IxNTLYjO3IREeWf7V25AjAmN35EGmApyN74VHPEPM3ti70
- yvRTyH3kIcJMhVR+s8WKeDDxMOm6R0Xznca09zf3fxYzMwAN4I7ISPkTH5uAhTYzHzknA7q4
- 2a5nNJqfb2vb+8hV0bR+8Q0cMCR/ZO/DAzOt94dPODqTMO1Kz3uIlL1OfyuvAUbyRWp3x/Mt
- qvEXdX5jOosG7im/DQg6HSnmwOg4UAZNLqi4ZFT6G9ejFOuFLbi2inTYBAJ2cnXdaZdAFtt+
- b+RUcTpcFV+W3ocI8zVeHaEuojOjE00jKzX3F9bgYODzTpTjMRCWbniQ==;
+ bh=cJeue7Zjn4lxtAMsNF1QcwGd5H/mjsw2mPul2wp4K2Y=;
+ b=j8B6jlKMYj4ioilMqyJ1McMAi97VruIX857CRQQTSh3dLsXGQyRoW99u8Bl43lsIH7IJZm
+ wdDPSLK9/i6p0x8Ao3j4EbHOu39P+oAQ6D4SxItUWnjlgiG6FvlTOfe9HSyQjuTtBNI5FzTe
+ nSPf6DS8//0fs1V6GsFyuvFxTWyppbjxIARqeQqbYkVV43fSxBADcttFGCYhvGXVdzW6zvcb
+ PRxE01odRWPjH0yMQxlNHURgCUbrgEZoGwNkkgVXIk8NBd0Y82+nFC2pBXBotXfTLOKwtyCl
+ psVRgITBZ7xORRUyRHGvb2ww92pjQGORqlG128J2cBe7guGypuZcK6uw==;
 From: Peter Marko <peter.marko@siemens.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: jose.quaresma@foundries.io,
 	Peter Marko <peter.marko@siemens.com>
-Subject: [meta-lts-mixins][scarthgap/go][PATCH] go: upgrade 1.25.4 -> 1.25.5
-Date: Wed, 10 Dec 2025 21:41:13 +0100
-Message-Id: <20251210204113.10115-1-peter.marko@siemens.com>
+Subject: [meta-lts-mixins][kirkstone/go][PATCH] go: upgrade 1.25.4 -> 1.25.5
+Date: Wed, 10 Dec 2025 21:41:25 +0100
+Message-Id: <20251210204125.10132-1-peter.marko@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Flowmailer-Platform: Siemens
@@ -37,8 +37,8 @@ Feedback-ID: 519:519-256628:519-21489:flowmailer
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 10 Dec 2025 20:41:25 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2763
+ <yocto-patches@lists.yoctoproject.org>; Wed, 10 Dec 2025 20:41:35 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2764
 
 From: Peter Marko <peter.marko@siemens.com>
 
@@ -97,7 +97,7 @@ diff --git a/recipes-devtools/go/go-binary-native_1.25.4.bb b/recipes-devtools/g
 similarity index 79%
 rename from recipes-devtools/go/go-binary-native_1.25.4.bb
 rename to recipes-devtools/go/go-binary-native_1.25.5.bb
-index cf94e8e..868cb20 100644
+index 997c4bd..94de9ce 100644
 --- a/recipes-devtools/go/go-binary-native_1.25.4.bb
 +++ b/recipes-devtools/go/go-binary-native_1.25.5.bb
 @@ -9,9 +9,9 @@ PROVIDES = "go-native"
