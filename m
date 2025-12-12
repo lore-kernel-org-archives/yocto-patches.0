@@ -1,260 +1,309 @@
-Return-Path: <paul@pbarker.dev>
+Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66E76D4417D
-	for <webhook@archiver.kernel.org>; Fri, 12 Dec 2025 11:00:24 +0000 (UTC)
-Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.10215.1765537218324609660
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A701D4922A
+	for <webhook@archiver.kernel.org>; Fri, 12 Dec 2025 13:49:25 +0000 (UTC)
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.13060.1765547364287636104
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 12 Dec 2025 03:00:18 -0800
+ Fri, 12 Dec 2025 05:49:24 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@pbarker.dev header.s=fm3 header.b=lyqxECYh;
- dkim=pass header.i=@messagingengine.com header.s=fm1 header.b=vme0I/gn;
- spf=pass (domain: pbarker.dev, ip: 103.168.172.154, mailfrom: paul@pbarker.dev)
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 7206514001E3;
-	Fri, 12 Dec 2025 06:00:17 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Fri, 12 Dec 2025 06:00:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pbarker.dev; h=
-	cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1765537217; x=1765623617; bh=ra3nWqppK0
-	MeJ17bXySgL5n/glQ3wNV49El7DiPvKIM=; b=lyqxECYhhMB2qgQuIJmEvD17Rx
-	DBIkNt1xSX4knKBr7CUUlp/KbdSm05b5mm5GTkc5Lk7nmRcXBusel37MpKZhzEtJ
-	QP6AOj50cwJpTXIkkaSk9bTxM29kJcDCTolkkKoHtmFDnxZpV7aBXnoiQhZd4oK7
-	H3xuLQ2pL8Opn7InyGkJRaP46Vve0Zhly4BSTs2XYQFDAMYHTG4sL27CIn6AB6WR
-	PbLO54DQm+qa/Eiiqf4vRawpTRS4Cjq2tKNKa4wYYcp3wY6g0i2UvIam70Zolp7T
-	Epoo7dZr8Lg5zmx99OAtCJ2DcDzojryfm48VvhC890fwRRH1kCgAFPHnhq3w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1765537217; x=1765623617; bh=ra3nWqppK0MeJ17bXySgL5n/glQ3wNV49El
-	7DiPvKIM=; b=vme0I/gnLXKjfemuwLFNcOBn9/d3ChabP9Pi/Rqhp2eGxp97WkM
-	rglQr8vZyHuhnlz0/05UnVidUf41rE1Jz0kz01vtGXTjvO+514+a0ISFuV3DVgmT
-	xQEhcBoKEN1UqhLbhhzjBoOek5DKKIbU4wi/Atv0WlCNImx4H3IgDYQqeSfehyZR
-	OeAJx2ILNlw6/3PEF9E0hmVUXIgHyPV3VLTkQI7vs/z0YTrr7Xw1z5QkNoMajHd/
-	PcFld+fRRNv9NG8eGMIjf7h5YiVYPBxeG9hu2TP8r8sPdixzMH3xutL8M5xHWsGn
-	FdVCr6qz5TRpwZZ8xs/oe3GEaVW1wQAHOjw==
-X-ME-Sender: <xms:wfU7aUreiTUhvevjFiLbEgLNcr9JAp4tZWanAzwows3P83cfXL-Gzw>
-    <xme:wfU7aQrBNZq45WxwY-NHuEWmnMBSEg87lr2cmrRtXDbVhlR69lG4V24R65ATMfXSM
-    ajsX5ja75dq3mwDJedMyORtQLp1sHKqlpm9iRUS94oj2P--q8xGJzs>
-X-ME-Received: <xmr:wfU7aW0j08nHk6SBDYmtEi4fjTVS8cmLY-uzA3NZwE981U3sIYL47Lm-pQqYnxH_EoJsybuKTmaObZRqNw06OLpNVVLTybVEPQZtFXU5Y1pT>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvkedttdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefkuffhvfffjghftggfggesghdtreertderjeenucfhrhhomheprfgruhhluceurghr
-    khgvrhcuoehprghulhesphgsrghrkhgvrhdruggvvheqnecuggftrfgrthhtvghrnhepke
-    egtdffkeeigeehueekgeeftdfgheefjeekjeffjefggfeitdelgfekkefggedvnecuffho
-    mhgrihhnpeihohgtthhophhrohhjvggtthdrohhrghenucevlhhushhtvghrufhiiigvpe
-    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehprghulhesphgsrghrkhgvrhdruggvvhdp
-    nhgspghrtghpthhtohepvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohephihotg
-    htohdqphgrthgthhgvsheslhhishhtshdrhihotghtohhprhhojhgvtghtrdhorhhgpdhr
-    tghpthhtohepmhhhrghlshhtvggrugeslhhinhhugihfohhunhgurghtihhonhdrohhrgh
-X-ME-Proxy: <xmx:wfU7aXBMEPf8ogoqn9YQQuo2NxDRYPxiFcyNuu5RAxBCOYexVIiN7g>
-    <xmx:wfU7aWepo1cStCx2PEDRyAmepwAs57L-5WD2jIjHdgfUAkMm8Vm-Cg>
-    <xmx:wfU7aUiWbXXCq6PYtoIcDczrO0tfFrXMrSWhb6hZfMYRwkoqbgnmIA>
-    <xmx:wfU7aWpfokp6yuGabKURZyzJvRTtyi_US_7Wek6hh5QMfJzlWkYhmw>
-    <xmx:wfU7aVFgw84xI2fw2AbSYQABP0ecK22UljYPdzfjhiZsUfHQCqMPWAye>
-Feedback-ID: i51494658:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 12 Dec 2025 06:00:16 -0500 (EST)
-Message-ID: <dfc12c5377a796cea8d376c031d3c60b843546e9.camel@pbarker.dev>
-Subject: Re: [yocto-patches] [yocto-autobuilder2] README-Guide: Add
- yocto_console_view build directions.
-From: Paul Barker <paul@pbarker.dev>
-To: yocto-patches@lists.yoctoproject.org, Michael Halstead
-	 <mhalstead@linuxfoundation.org>
-Date: Fri, 12 Dec 2025 11:00:14 +0000
-In-Reply-To: <CADfgfobJCbbvjGO69kHKWu0NJtHqY11Fzx_jarXVXbbR7ezcmw@mail.gmail.com>
-References: 
-	<CADfgfobJCbbvjGO69kHKWu0NJtHqY11Fzx_jarXVXbbR7ezcmw@mail.gmail.com>
-Autocrypt: addr=paul@pbarker.dev; prefer-encrypt=mutual;
- keydata=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
- ep0k17xg==
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-HPuQveBYlfj+HoSKJxsy"
-User-Agent: Evolution 3.52.3-0ubuntu1.1 
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=NFY2CCh5;
+ spf=pass (domain: gmail.com, ip: 209.85.219.54, mailfrom: twoerner@gmail.com)
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-8887f43b224so9372996d6.1
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 12 Dec 2025 05:49:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1765547363; x=1766152163; darn=lists.yoctoproject.org;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fWD/c0DPbCdfqw5fAdLldY1zelHuXQDE5bItZyj+kWI=;
+        b=NFY2CCh5cVLb+WXiY/P88SYiGdCbQKJfu/1UdIzTqvH703TSnhTWN3Tqww5j6SCVhM
+         XokwoWmOGnAd1+0xd5CiABi8TD4ovNt9lsJkW6dY7W3k9EYBf+GsQ6joJS5Ywx6DEtCc
+         cCXconc2H0KQFjgqFIC+p6D/x0GOsxaCPqNb2upGmCIa8n70gwZ9EeqXtkX8r+w5Wy/F
+         dIi7mfRMWcFumtIwN7BK6OUnZ2hDBhFL9L19oFqy9gYkcnok8CBIJFG4c/tuKeFoFsuK
+         D2uQS/6Jf9HEpgS+Ip5/UARR/3yVxRUPCWHSiQmO/pVtcQPk4lFHXhmZk/MHV24/WVIz
+         A+Qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765547363; x=1766152163;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:to
+         :from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fWD/c0DPbCdfqw5fAdLldY1zelHuXQDE5bItZyj+kWI=;
+        b=YBFMdhGv4TKaqupFNqjREVlVnPC1p+iwE2NIlRFEz3DCpnTpon3rJ3kPe270IQKtYb
+         1iELgXw0KFdhMXDQmsy5n1617TvVHmvspsbKnqRSBRzUSmtWY0eA8XTN65D8qk6WBcRg
+         wbluazkZrIusJ76a5C8A+FCBonL2XK3cXikFaF/yDNsQLRac7lsiUCzkdpNHbnTbDuIX
+         F8miT8wKc9yibXYzW5gzbPO53oasVkzJpg/38GOw2oGeaq8NRAGCepZCKsBNVMYy+dFN
+         dztUa6utoVetB2N86Y7aabippjTghTPhzynZLfRcywRrU89E3xkmm6e+QB0IAmzRXRZv
+         w9VA==
+X-Gm-Message-State: AOJu0YyKvkploJHHuZFAeU2+j5EWkEEOewP8egPX/FcjTvHK9o45mCma
+	O6jq9eXn4+v3C240zE3SMWDtvSjhybGQRCCbHWZP+LjQQhTFzrJHp9sb9iHQmA==
+X-Gm-Gg: AY/fxX6GbEQAtK0yFVgkv8KItCeGjhawbkp3QxSWPfOmKV0sc6nDO5oQcR1WZqX8F0K
+	IbCV5CrwrvwfvPzmukLm084MBAWufym7j/8ATTPaEcSddAcfb5As/9SrEpXj5sTE8hgkRH3N4TP
+	GY4Geo/05njKQbJ6j53wDtdMPyrsk9x1+WJEX1i9rPM4+aR/M65dtKJMvvPtDfERgXNJ5FyTZDF
+	T6JwcFEcFlSqM7AEgOxbm1k5KRHrwydHAuhykQrUYOTGt4z9EXGZcIUcJBOXn0aUHhHBzV7u7/2
+	HgHUzbXIHNpo6qEh4XlamwcKaDPBt3Ok7CX8AgC3T8Sq2xK4RcRGQT9fV+nRPcgLzvmRV3OiF7D
+	uuToi0zd1KaZ3kIuuwBxAyzsLXRkXDrUJsML8mpQ6iZOjtjor3ym9iSjy/mbN1LU8ZiwMnlcFXf
+	CiOKNk2Jk8PH45APDfgdA4rmCS3yQ4s+XwkMoIxex7f0euBtMc
+X-Google-Smtp-Source: AGHT+IH0v8hh47l2fUYqJMXmVkhmLkXKgIQ7s71IxolqdjM0QLF+nRCuxwqKA+FiGLehUl3LeywiIg==
+X-Received: by 2002:a05:6214:311e:b0:880:1be2:82d4 with SMTP id 6a1803df08f44-8887e1ab9e5mr30695236d6.26.1765547362502;
+        Fri, 12 Dec 2025 05:49:22 -0800 (PST)
+Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-888818ccf43sm12814736d6.32.2025.12.12.05.49.21
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Dec 2025 05:49:21 -0800 (PST)
+Date: Fri, 12 Dec 2025 08:49:20 -0500
+From: Trevor Woerner <twoerner@gmail.com>
+To: yocto-patches@lists.yoctoproject.org
+Subject: Re: [yocto-patches] [meta-rockchip][PATCH] provide a filesystem
+ overlay example
+Message-ID: <20251212134919.GA8875@localhost>
+References: <20251211210332.25509-1-twoerner@gmail.com>
+ <12e8c8b3-f1b4-4aaa-abac-9449f9daffd3@cherry.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <12e8c8b3-f1b4-4aaa-abac-9449f9daffd3@cherry.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 12 Dec 2025 11:00:24 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2772
+ <yocto-patches@lists.yoctoproject.org>; Fri, 12 Dec 2025 13:49:25 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2773
 
+On Fri 2025-12-12 @ 11:47:55 AM, Quentin Schulz via lists.yoctoproject.org wrote:
+> Hi Trevor,
+> 
+> On 12/11/25 10:03 PM, Trevor Woerner via lists.yoctoproject.org wrote:
+> > Most implementations that use an A/B, full-partition update mechanism
+> > (such as RAUC configured for this scenario) need some way of preserving
+> > system configurations in a location that survives updates. The RAUC demo
+> > provided in this layer is an example of a full-partition update,
+> > therefore provide an example of using a filesystem overlay to preserve
+> > system configurations. This example is gated by a configuration knob:
+> > 
+> > 	RK_OVERLAY_DEMO
+> > 
+> > Signed-off-by: Trevor Woerner <twoerner@gmail.com>
+> > ---
+> >   README                                        | 28 +++++++++++++++++++
+> >   conf/machine/include/rockchip-rauc.inc        |  1 +
+> >   .../systemd/data-partition-overlay_1.0.bb     | 22 +++++++++++++++
+> >   .../recipes-core/systemd/files/etc.mount      | 13 +++++++++
+> >   .../recipes-core/systemd/files/home.mount     | 13 +++++++++
+> >   5 files changed, 77 insertions(+)
+> >   create mode 100644 dynamic-layers/rk-rauc-demo/recipes-core/systemd/data-partition-overlay_1.0.bb
+> >   create mode 100644 dynamic-layers/rk-rauc-demo/recipes-core/systemd/files/etc.mount
+> >   create mode 100644 dynamic-layers/rk-rauc-demo/recipes-core/systemd/files/home.mount
+> > 
+> > diff --git a/README b/README
+> > index 6a13428d488d..92dc072a0833 100644
+> > --- a/README
+> > +++ b/README
+> > @@ -140,6 +140,34 @@ Notes:
+> >   	this layer, perform the same steps as above except for the step enabling
+> >   	RK_RAUC_DEMO.
+> > +  /data overlay with RAUC
+> > +	When using RAUC for whole-partition rootfs updates, you will need some
+> > +	way of preserving some pieces of data between updates; this is why the
+> > +	DEMO scheme provided in this layer also includes a /data partition.
+> > +	Now that you have a /data partition that is not updated, you need some
+> > +	way of storing your important data there and making it available,
+> > +	seamlessly, into your system regardless of which slot is running.
+> > +
+> > +	One way of accomplishing this is to move your important files into
+> > +	/data and providing symlinks back into each running bundle. But that
+> > +	requires you to know ahead of time which files will be touched... which
+> > +	quickly can become a game of whack-a-mole. A better alternative is to
+> > +	use a filesystem overlay. With a filesystem overlay, multiple paths are
+> > +	overlaid on top of each other behind the scenes so what you see is one
+> > +	directory containing the aggregation of all layers. Filesystem overlays
+> > +	have a concept of "bottom layers" and "upper layers", if you write a new
+> > +	file into an overlay, the file will be written into the uppermost
+> > +	layer, leaving the lower layers intact. If a file is modified, the
+> > +	modifications are stored in the upper layer, occluding the lower layer.
+> > +	Therefore, creating an overlay using locations in the /data partition
+> > +	as the uppermost layer allows changes to persist across RAUC updates.
+> > +
+> > +	This layer includes a simple overlay scheme to demonstrate one way of
+> > +	making use of this mechanism. To enable the demo included in this layer
+> > +	RAUC must be enabled, then also enable:
+> > +
+> > +		RK_OVERLAY_DEMO
+> > +
+> 
+> You're overlaying two directories, so please make this explicit in the
+> README. /etc and /home are overlaid. Now, is the root user's home directory
+> in /home/root or in /root? Because you may want to overlay that as well?
 
---=-HPuQveBYlfj+HoSKJxsy
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+It's in /root, good point! ...or I could put root's home directory under
+/home?
 
-On Thu, 2025-12-11 at 10:35 -0800, Michael Halstead via
-lists.yoctoproject.org wrote:
-> Adding directions we use to build for production.
->=20
-> Signed-off-by: Michael Halstead <mhalstead@linuxfoundation.org>
-> ---
->  README-Guide.md | 72 +++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 72 insertions(+)
->=20
-> diff --git a/README-Guide.md b/README-Guide.md
-> index 69368b9..bee5a1f 100644
-> --- a/README-Guide.md
-> +++ b/README-Guide.md
-> @@ -72,6 +72,78 @@ being triggered:
->  export LANG=3Den_US.UTF-8
->  ```
->=20
-> +### 1.2.1) Building and Deploying the Yocto Console View
-> +
-> +
-> +Build the Package on a Workstation
-> +
-> +These steps are performed on your local development machine.
-> +
-> +**Prerequisites:** You must have **Podman** installed.
-> +
-> +1.  Clone the `yocto-autobuilder2` repository and start a container,
-> mounting the repository into the `/build` directory.
-> +
-> +    ```bash
-> +    git clone https://git.yoctoproject.org/yocto-autobuilder2
-> +    cd yocto-autobuilder2/
-> +    podman run -ti --rm --volume .:/build:Z,U node:22 bash
-> +    ```
-> +
-> +2.  **Inside the container**, navigate to the package directory,
-> install the necessary build dependencies, and build the Python wheel
-> (`.whl`) file.
-> +
-> +    ```bash
-> +    # Run these commands inside the podman container
-> +    cd /build/yocto_console_view
-> +    apt update; apt install -y python3-dev python3-build
-> python3-setuptools python3-pip
-> +    python3 -m pip install --break-system-packages buildbot_pkg
-> +    python3 -m build --no-isolation
-> +    ```
-> +
-> +3.  A successful build will generate a wheel file in the `dist/`
-> directory. You can verify this by listing the contents of the `dist/`
-> directory.
-> +
-> +    ```bash
-> +    ls dist/
-> +    ```
-> +
-> +    You should see a file named like
-> `yocto_console_view-2025.3.12-py3-none-any.whl`.
-> +
-> +4.  Once the build is complete, exit the container.
-> +
-> +    ```bash
-> +    # Press Ctrl+D or type 'exit'
-> +    exit
-> +    ```
-> +
-> +-----
-> +
-> +Deploy the Package to the Controller
-> +
-> +These steps are performed on the Buildbot controller machine.
-> +
-> +1.  First, copy the newly created wheel file from your workstation to
-> the controller. The file will be located in the
-> `yocto-autobuilder2/yocto_console_view/dist/` directory on your
-> workstation.
-> +
-> +    *Example filename:* `yocto_console_view-2025.3.12-py3-none-any.whl`
-> +
-> +2.  On the **controller**, switch to the `pokybuild` user, activate
-> the buildbot virtual environment, install the new wheel, and restart
-> the controller.
-> +
-> +    ```bash
-> +    # Switch to the build user
-> +    su - pokybuild
-> +
-> +    # Activate the Python virtual environment, if not already active
-> +    . ~/buildbot-venv/bin/activate
-> +
-> +    # Install the package you copied over
-> +    pip install yocto_console_view-2025.3.12-py3-none-any.whl
-> +
-> +    # IMPORTANT: Check that the cluster is idle before restarting at
-> +    # Restart the controller instance
-> +    buildbot restart ~/yocto-controller
-> +    ```
-> +
-> +The new console view plugin is now deployed and active.
-> +
-> +
+In desktop Linux I guess it's common for /home to have lots of
+sub-directories, and be NFS-mounted, etc in which case having root's
+home handled separately is good, but there probably is no need for it
+here?
 
-Thanks for documenting this!
+> Additionally, CONFIG_OVERLAY_FS support likely needs to be enabled in the
+> kernel for this to work, so mentioning this would be nice? (though we also
+> didn't mention this for the VPU, so... :) ).
 
-The change looks good, but the patch has been re-wrapped when sending so
-it needed a few lines to be joined together to be able to apply it.
+It's funny I didn't mention this, considering the other email thread in
+progress ;-) The aarch64 defconfig includes:
 
-Reviewed-by: Paul Barker <paul@pbarker.dev>
+	CONFIG_OVERLAY_FS=m
 
---=20
-Paul Barker
+which is good enough to make this work. It also includes
 
+	CONFIG_OVERLAY_FS_REDIRECT_ALWAYS_FOLLOW=y
 
---=-HPuQveBYlfj+HoSKJxsy
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+which might be questionable. The in-kernel documentation says:
 
------BEGIN PGP SIGNATURE-----
+	OVERLAY_FS_REDIRECT_ALWAYS_FOLLOW:
 
-iIcEABYKAC8WIQSzjPXf5Y1BDWhU2iCrY1Tsnbr0bgUCaTv1vhEccGF1bEBwYmFy
-a2VyLmRldgAKCRCrY1Tsnbr0bgjNAP49sULNs0hwJa1FukFGHNPAR3p0e2/MKflW
-A8cMG4nhGgEA1NpoelbbIVsb4n/+evZcuCSqXwgeSSIP8gsINDSUDQ0=
-=v4Io
------END PGP SIGNATURE-----
+	    If this is enabled, then redirects are always followed by default.
+	    Enabling this results in a less secure configuration. Enable this
+	    option only when worried about backward compatibility with kernels
+	    that have the redirect_dir feature and follow redirects even if
+	    turned off.
 
---=-HPuQveBYlfj+HoSKJxsy--
+> >     HW video decoding with gstreamer
+> >   	Most Rockchip SoCs have some integrated VPU, either Hantro, RKVDEC or
+> > diff --git a/conf/machine/include/rockchip-rauc.inc b/conf/machine/include/rockchip-rauc.inc
+> > index a6f79503076b..3ea95298fed6 100644
+> > --- a/conf/machine/include/rockchip-rauc.inc
+> > +++ b/conf/machine/include/rockchip-rauc.inc
+> > @@ -2,3 +2,4 @@
+> >   # rauc demo configuration from this layer
+> >   OVERRIDES .= "${@ ':rk-rauc-demo' if bb.utils.to_boolean(d.getVar('RK_RAUC_DEMO'), False) else ''}"
+> >   IMAGE_INSTALL:append:rk-rauc-demo = " abd-partition"
+> > +IMAGE_INSTALL:append:rk-rauc-demo = " ${@ 'data-partition-overlay' if bb.utils.to_boolean(d.getVar('RK_OVERLAY_DEMO'), False) else ''}"
+> > diff --git a/dynamic-layers/rk-rauc-demo/recipes-core/systemd/data-partition-overlay_1.0.bb b/dynamic-layers/rk-rauc-demo/recipes-core/systemd/data-partition-overlay_1.0.bb
+> > new file mode 100644
+> > index 000000000000..7d9a9e6de82b
+> > --- /dev/null
+> > +++ b/dynamic-layers/rk-rauc-demo/recipes-core/systemd/data-partition-overlay_1.0.bb
+> > @@ -0,0 +1,22 @@
+> > +SUMMARY = "Overlay Logic onto the /data partition"
+> > +LICENSE = "OSL-3.0"
+> > +LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/OSL-3.0;md5=438ec6d864bbb958a49df939a56511cf"
+> > +
+> > +inherit rk-rauc-demo-features-check systemd
+> > +
+> > +SYSTEMD_SERVICE:${PN} = "etc.mount home.mount"
+> > +
+> > +S = "${UNPACKDIR}"
+> > +
+> > +SRC_URI = " \
+> > +        file://etc.mount \
+> > +        file://home.mount \
+> > +	"
+> > +
+> > +do_install() {
+> > +	install -d ${D}${sysconfdir}/systemd/system
+> > +	install -m 0644 ${UNPACKDIR}/etc.mount ${D}${sysconfdir}/systemd/system/
+> > +	install -m 0644 ${UNPACKDIR}/home.mount ${D}${sysconfdir}/systemd/system/
+> 
+> I see we have a couple of systemd_*unitdir variables in bitbake.conf, should
+> we use one of those instead?
+
+Good catch.
+
+> > +}
+> > +
+> > +RDEPENDS:${PN} += "abd-partition"
+> 
+> Maybe add a comment this is necessary because of the data.mount requirement?
+
+Sounds good, and yes.
+
+> > diff --git a/dynamic-layers/rk-rauc-demo/recipes-core/systemd/files/etc.mount b/dynamic-layers/rk-rauc-demo/recipes-core/systemd/files/etc.mount
+> > new file mode 100644
+> > index 000000000000..65b896563bef
+> > --- /dev/null
+> > +++ b/dynamic-layers/rk-rauc-demo/recipes-core/systemd/files/etc.mount
+> > @@ -0,0 +1,13 @@
+> > +[Unit]
+> > +Description=OverlayFS mount for /etc to /data/overlay/etc
+> > +Requires=data.mount
+> > +After=data.mount
+> > +
+> 
+> I'm wondering if this cannot be handled by
+> 
+> RequiresMountsFor=/data
+> 
+> c.f. https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html#RequiresMountsFor=
+
+Okay, I'll try that. systemd unit files are such a labyrinth. Some AI
+suggested the above ;-)
+
+> > +[Mount]
+> > +What=overlay
+> > +Where=/etc
+> > +Type=overlay
+> > +Options=lowerdir=/etc,upperdir=/data/overlay/etc,workdir=/data/overlay-workdir/etc
+> > +
+> > +[Install]
+> > +WantedBy=multi-user.target
+> > diff --git a/dynamic-layers/rk-rauc-demo/recipes-core/systemd/files/home.mount b/dynamic-layers/rk-rauc-demo/recipes-core/systemd/files/home.mount
+> > new file mode 100644
+> > index 000000000000..d6a384fa9c75
+> > --- /dev/null
+> > +++ b/dynamic-layers/rk-rauc-demo/recipes-core/systemd/files/home.mount
+> > @@ -0,0 +1,13 @@
+> > +[Unit]
+> > +Description=OverlayFS mount for /home to /data/overlay/home
+> > +Requires=etc.mount
+> > +After=etc.mount
+> > +
+> 
+> Why is this not data.mount too?
+
+I did this patch one piece at a time. It took me less than an hour from
+start of reading to getting /etc working. It then took me the rest of
+the day to get /home added as well. The problem was with
+ordering/dependencies.
+
+If I ordered both /home and /etc overlays after data.mount it would
+always fail; either one or both of the mounts would not appear in the
+`mount` output or (worse) the overlays would appear to be mounted (they
+would show up in the `mount` output) but one or both of the mounts would
+not work.
+
+The solution I found was to explicitly order them: data → etc → home. In
+practice it didn't matter whether home or etc came first, they just
+needed to be strongly ordered.
+
+While trying to get this right, sometimes systemd itself would throw a:
+
+	[ SKIP ] Ordering cycle found, skipping Ove…mount for /etc to /data/overlay/etc
+
+on boot (sometimes for etc, sometime for home) which at least warned me
+that something went wrong. Other times it didn't give the error, but
+failed anyway.
+
+tl;dr: it's a bit finicky ;-)
+
+> Otherwise looks ok to me.
+
+Thanks!
+
+> Cheers,
+> Quentin
+> 
+> 
+> -=-=-=-=-=-=-=-=-=-=-=-
+> Links: You receive all messages sent to this group.
+> View/Reply Online (#2771): https://lists.yoctoproject.org/g/yocto-patches/message/2771
+> Mute This Topic: https://lists.yoctoproject.org/mt/116736285/900817
+> Group Owner: yocto-patches+owner@lists.yoctoproject.org
+> Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/13168745/900817/63955952/xyzzy [twoerner@gmail.com]
+> -=-=-=-=-=-=-=-=-=-=-=-
+> 
+> 
 
