@@ -1,315 +1,260 @@
-Return-Path: <quentin.schulz@cherry.de>
+Return-Path: <paul@pbarker.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8410DD44176
-	for <webhook@archiver.kernel.org>; Fri, 12 Dec 2025 10:48:24 +0000 (UTC)
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (DB3PR0202CU003.outbound.protection.outlook.com [52.101.84.7])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.10077.1765536499469321512
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66E76D4417D
+	for <webhook@archiver.kernel.org>; Fri, 12 Dec 2025 11:00:24 +0000 (UTC)
+Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.10215.1765537218324609660
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 12 Dec 2025 02:48:19 -0800
+ Fri, 12 Dec 2025 03:00:18 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@cherry.de header.s=selector1 header.b=NZUBKDGj;
- spf=pass (domain: cherry.de, ip: 52.101.84.7, mailfrom: quentin.schulz@cherry.de)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pZBka0UgbzG0KgRGWNBzj6DQWZb11nxEuEWYwu2gRP9lPb0NwGoS0q/j+2qJERxL1w3CHeT/EMDbubwOfSqcUzk6Jdd6SSjcfKcSs76U11jEWzjbchymVNkT6DxcwKlUWbMLNEHuZGnTD+7ZHTlvwdN0RXeYL4TQw3VsLepXb7AsQ9v1TYu2V6pWrAQdJYskB0Lvenet/nsAIBd2boVpo6wk/j8kwzlEeqhjMPXwjVJi3WREoVEziauSC6yYim/6bDLAKqI6TTWxtggQ9UfZ5jaq2CEJnFm2NkZgUhPhTpKCF8LRAq62BCQ7npin5H2ykZH3vxlk93fQH+0VL4cyRw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fPpPzIHxtiXucqvXPlI8T4/lsg209CXq/db+PPd5iRs=;
- b=ZJ2u0YalcjKmuZbQoZwt+ZXQmGCXzV9tjsoPVH2nzvtQCnF8Q/UAVu+m0ptlW0Yu/yVzbsjPgaBDj/CO5fAI9Ac0fC/0rEc2aIBdJEpJsgkpmMxzj1YoyvDRm9iEhYDbenuLBG51kUNVkR58F9aIICGj1tN5xSyEalVuxsvaZHQKouQUHzQt1Sa+gdn1q5Ovlz/GbxGLkKZn63Gx/Ekz1F1/DKVIBEl4UPZr2Jw8mJ1zZFMrblZIv/REFrVh/T+3VMnguaHOiE9gjHFwzXO9GahagXOep6rAiurXriSdU0gxct/7riJX7X1zvyYZCCTYcqtqtDEZvFb5Q1VduLfJEQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fPpPzIHxtiXucqvXPlI8T4/lsg209CXq/db+PPd5iRs=;
- b=NZUBKDGjdzWVA7Jz+smfsi3GMM2e9QaLMduaHGzYR6f0vgSR7GhtIP4tRReij3gPtrpBLs7w/gV6jzJPBY+PYspcBCUPM8xgtnpLbJnhzpcvRT2kIIx/1fwJ+HHH7d8kLaLMpmi/dXQjIQoBvJFwT8WJC/4es8KTxaSXS6Rc+oQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from GVXPR04MB12038.eurprd04.prod.outlook.com (2603:10a6:150:2be::5)
- by DB9PR04MB8218.eurprd04.prod.outlook.com (2603:10a6:10:24a::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9412.9; Fri, 12 Dec
- 2025 10:48:15 +0000
-Received: from GVXPR04MB12038.eurprd04.prod.outlook.com
- ([fe80::1033:5a9a:dc18:dad]) by GVXPR04MB12038.eurprd04.prod.outlook.com
- ([fe80::1033:5a9a:dc18:dad%4]) with mapi id 15.20.9412.005; Fri, 12 Dec 2025
- 10:48:15 +0000
-Message-ID: <12e8c8b3-f1b4-4aaa-abac-9449f9daffd3@cherry.de>
-Date: Fri, 12 Dec 2025 11:47:55 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [meta-rockchip][PATCH] provide a filesystem
- overlay example
-To: yocto-patches@lists.yoctoproject.org
-References: <20251211210332.25509-1-twoerner@gmail.com>
-Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <20251211210332.25509-1-twoerner@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR0P281CA0206.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:ad::15) To GVXPR04MB12038.eurprd04.prod.outlook.com
- (2603:10a6:150:2be::5)
+ dkim=pass header.i=@pbarker.dev header.s=fm3 header.b=lyqxECYh;
+ dkim=pass header.i=@messagingengine.com header.s=fm1 header.b=vme0I/gn;
+ spf=pass (domain: pbarker.dev, ip: 103.168.172.154, mailfrom: paul@pbarker.dev)
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 7206514001E3;
+	Fri, 12 Dec 2025 06:00:17 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-10.internal (MEProxy); Fri, 12 Dec 2025 06:00:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pbarker.dev; h=
+	cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1765537217; x=1765623617; bh=ra3nWqppK0
+	MeJ17bXySgL5n/glQ3wNV49El7DiPvKIM=; b=lyqxECYhhMB2qgQuIJmEvD17Rx
+	DBIkNt1xSX4knKBr7CUUlp/KbdSm05b5mm5GTkc5Lk7nmRcXBusel37MpKZhzEtJ
+	QP6AOj50cwJpTXIkkaSk9bTxM29kJcDCTolkkKoHtmFDnxZpV7aBXnoiQhZd4oK7
+	H3xuLQ2pL8Opn7InyGkJRaP46Vve0Zhly4BSTs2XYQFDAMYHTG4sL27CIn6AB6WR
+	PbLO54DQm+qa/Eiiqf4vRawpTRS4Cjq2tKNKa4wYYcp3wY6g0i2UvIam70Zolp7T
+	Epoo7dZr8Lg5zmx99OAtCJ2DcDzojryfm48VvhC890fwRRH1kCgAFPHnhq3w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1765537217; x=1765623617; bh=ra3nWqppK0MeJ17bXySgL5n/glQ3wNV49El
+	7DiPvKIM=; b=vme0I/gnLXKjfemuwLFNcOBn9/d3ChabP9Pi/Rqhp2eGxp97WkM
+	rglQr8vZyHuhnlz0/05UnVidUf41rE1Jz0kz01vtGXTjvO+514+a0ISFuV3DVgmT
+	xQEhcBoKEN1UqhLbhhzjBoOek5DKKIbU4wi/Atv0WlCNImx4H3IgDYQqeSfehyZR
+	OeAJx2ILNlw6/3PEF9E0hmVUXIgHyPV3VLTkQI7vs/z0YTrr7Xw1z5QkNoMajHd/
+	PcFld+fRRNv9NG8eGMIjf7h5YiVYPBxeG9hu2TP8r8sPdixzMH3xutL8M5xHWsGn
+	FdVCr6qz5TRpwZZ8xs/oe3GEaVW1wQAHOjw==
+X-ME-Sender: <xms:wfU7aUreiTUhvevjFiLbEgLNcr9JAp4tZWanAzwows3P83cfXL-Gzw>
+    <xme:wfU7aQrBNZq45WxwY-NHuEWmnMBSEg87lr2cmrRtXDbVhlR69lG4V24R65ATMfXSM
+    ajsX5ja75dq3mwDJedMyORtQLp1sHKqlpm9iRUS94oj2P--q8xGJzs>
+X-ME-Received: <xmr:wfU7aW0j08nHk6SBDYmtEi4fjTVS8cmLY-uzA3NZwE981U3sIYL47Lm-pQqYnxH_EoJsybuKTmaObZRqNw06OLpNVVLTybVEPQZtFXU5Y1pT>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvkedttdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefkuffhvfffjghftggfggesghdtreertderjeenucfhrhhomheprfgruhhluceurghr
+    khgvrhcuoehprghulhesphgsrghrkhgvrhdruggvvheqnecuggftrfgrthhtvghrnhepke
+    egtdffkeeigeehueekgeeftdfgheefjeekjeffjefggfeitdelgfekkefggedvnecuffho
+    mhgrihhnpeihohgtthhophhrohhjvggtthdrohhrghenucevlhhushhtvghrufhiiigvpe
+    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehprghulhesphgsrghrkhgvrhdruggvvhdp
+    nhgspghrtghpthhtohepvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohephihotg
+    htohdqphgrthgthhgvsheslhhishhtshdrhihotghtohhprhhojhgvtghtrdhorhhgpdhr
+    tghpthhtohepmhhhrghlshhtvggrugeslhhinhhugihfohhunhgurghtihhonhdrohhrgh
+X-ME-Proxy: <xmx:wfU7aXBMEPf8ogoqn9YQQuo2NxDRYPxiFcyNuu5RAxBCOYexVIiN7g>
+    <xmx:wfU7aWepo1cStCx2PEDRyAmepwAs57L-5WD2jIjHdgfUAkMm8Vm-Cg>
+    <xmx:wfU7aUiWbXXCq6PYtoIcDczrO0tfFrXMrSWhb6hZfMYRwkoqbgnmIA>
+    <xmx:wfU7aWpfokp6yuGabKURZyzJvRTtyi_US_7Wek6hh5QMfJzlWkYhmw>
+    <xmx:wfU7aVFgw84xI2fw2AbSYQABP0ecK22UljYPdzfjhiZsUfHQCqMPWAye>
+Feedback-ID: i51494658:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 12 Dec 2025 06:00:16 -0500 (EST)
+Message-ID: <dfc12c5377a796cea8d376c031d3c60b843546e9.camel@pbarker.dev>
+Subject: Re: [yocto-patches] [yocto-autobuilder2] README-Guide: Add
+ yocto_console_view build directions.
+From: Paul Barker <paul@pbarker.dev>
+To: yocto-patches@lists.yoctoproject.org, Michael Halstead
+	 <mhalstead@linuxfoundation.org>
+Date: Fri, 12 Dec 2025 11:00:14 +0000
+In-Reply-To: <CADfgfobJCbbvjGO69kHKWu0NJtHqY11Fzx_jarXVXbbR7ezcmw@mail.gmail.com>
+References: 
+	<CADfgfobJCbbvjGO69kHKWu0NJtHqY11Fzx_jarXVXbbR7ezcmw@mail.gmail.com>
+Autocrypt: addr=paul@pbarker.dev; prefer-encrypt=mutual;
+ keydata=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
+ ep0k17xg==
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-HPuQveBYlfj+HoSKJxsy"
+User-Agent: Evolution 3.52.3-0ubuntu1.1 
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GVXPR04MB12038:EE_|DB9PR04MB8218:EE_
-X-MS-Office365-Filtering-Correlation-Id: 03e82518-4e9f-4216-c351-08de396bf468
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|10070799003;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?bVhFYitIaFJOcWp4MDU5WWE3V0JqSDJBTlRlQWpsRzBnNk1jaXRmajJHSWQ5?=
- =?utf-8?B?NGkvTEZpdTkwbE5VeloyNlppczJ6NkNEZ1pkdTNzMTFKMklhTEpPU05rWFNU?=
- =?utf-8?B?RWx5bVIxV0RySzBvRUVib0tLWENmRHA2VkdXWFk3Qkg0bWRRM3JGWGlXR3E5?=
- =?utf-8?B?OTFHZlFqS0FnTkdwdU41U2dydS82R283NFJnVXJGYWc4OTZxV3ovLzFOcUdx?=
- =?utf-8?B?YzN6MTlIcndFRnBiMmdpMXBBUXJXclV5aWFJZjEyWWRqME5udXNZNnBLRkZu?=
- =?utf-8?B?akJrL2ZKaHBGWHVFcWUyc1JETzcvNk8xOUJLQ3M3c2NBK0luT3F6UE56RU9k?=
- =?utf-8?B?UVN5UVB3anQzdmYvdXJJMjFrWGczVUd2Yndkby9KR0lmbldXSTVyNnpqOUJw?=
- =?utf-8?B?N2JjTHBhSjBlWmM5UGwwdThEWW5rRU1DN2RyTzEyQ2VnY3VRVG94c1JQVFlJ?=
- =?utf-8?B?RU9lQmc1VGQ0QnJuZDkyV1FNMnVJdGxFTTkzUDR0UUxIYjRqUzAxNHJmSFI3?=
- =?utf-8?B?c0xBMFRJZlV3N21uUGk1RmtXQTlJOFQzeitxdVNSRWEvZ2ZFZjZWZ1hEaFFB?=
- =?utf-8?B?OXN5b2M4MEhQQm1vK29KV0J3S2gxYUc1M0NJK1VSYjhnRmVLZ0QvMFRPVWRI?=
- =?utf-8?B?MjI4VlJjNkx3Ty84NDk4bGlCSUJ3Nm13ZUtmVk5SeDRCVmoyZmh1NHpJWmhk?=
- =?utf-8?B?eWVKeldxYU9HcEwzVmowWUd0Mi8xeFJLNDN6ekpFc2JVNE1LZENNZEpnT3No?=
- =?utf-8?B?ZGttdEx5QnNmd1ZmNi9nMEZLejN6d0RmSWUwdHRSQVQyaVZCb2NaKzd2eHlU?=
- =?utf-8?B?SG1oWTFxY2p2UjFzRzF2cHF3UU1lNlBNRnB4eVlWS1YzYVVUeS9NTGY3eEZO?=
- =?utf-8?B?L2FkcDB3Y21Vblp4eHdBRTdXdE5xZ0U4K2RSRjVYaFBxdkJ1K25QVVlsVnhs?=
- =?utf-8?B?cTBwUlRlUEFXdVl5enRxZzh3SlNta2dZbkduak5ZdVBSTFhKRmVSU3E1dU5p?=
- =?utf-8?B?cndzSGVsSm9ESTB5Qm1BQ3NZQmdVck9Vd2ZWb1VWWW90RXArSE85Z0pqYmQy?=
- =?utf-8?B?aWdTa2NxVUJiQVRGdHc2MHlwbFQwMk16cDRCMFp3NHZiZHlmZGI0bUFpTTd4?=
- =?utf-8?B?RnBwUVUvUXdpMmFUTVVtbHlEdkR3VWlPcm1ZcEFxeCtSMVBaakRGdC9XVCtB?=
- =?utf-8?B?eW01TGV1L0J1R1VIVTFIR20rYWlPL3dMV1k0L2JoQzE5eS9lZ2FyMVp5M3lN?=
- =?utf-8?B?OUFLbkJaUnNzSHRtQUxvUnVqUTFpRXEyeE9oWGZXckhzSjFwWE1LRTFTMUxu?=
- =?utf-8?B?YWd3YWpyMUs2V2JzdVI3K2VtWlI0UVJvblVrTnhLSGZhcTgybGI3Q2pORWdC?=
- =?utf-8?B?SllkYmRYWlNXV3I3ek10czh2MVI0OEx3TzluRGZjMUtpbFM1bC96Z2JiSU1l?=
- =?utf-8?B?M3M3enVBRzJzS0x6WW5QSUZIUG9ITHBieHJTb3ExMDY4ZitsbS9BQm1ibFZ5?=
- =?utf-8?B?b1FkRE9sTG5KZ2VvVi8zdHlMa29aV3N0SlM1OVRENit0SytBYTVXWndSbkpk?=
- =?utf-8?B?MlEvVE5rWU1Ub2o4eHZoY043Tjc4czhnSmtXT2s2amRjdmY3RXQxR2dYZEV5?=
- =?utf-8?B?V2F3bi9Ec1pDWFc1Q0JpWWNacTBNU2RtUjlqTStUSUUxcFl2Kzl5VHdPVCth?=
- =?utf-8?B?Z3A3WEh0MU5SVmVLdlRMMWdaVFBwTnpsditpZXRXMjluUVVKS3NzbGNIUkls?=
- =?utf-8?B?NmhYb1lwV0dSTFdXa2UrUmZ3aUsyOUcxd21oZThaSGRkRk9aQ3NRdmJ0MHg1?=
- =?utf-8?B?YS9CRnVlaVZFWW5zbm02eHRkZzhtSUV0N1NVRkwyOXV5SXJ3emtvNDcrVVA5?=
- =?utf-8?B?ZHVmalRHSzVJNGRic1BScGx0bU83RDdib0hrMVVuWVJnVUE9PQ==?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GVXPR04MB12038.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(10070799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?V2lSblVyVGpGdTNIOC8zS2lpdHA0VmQ3VXJoM3lKQ0o3My9Bb1AwTE9WRXpI?=
- =?utf-8?B?UEozajZtRW1DR1Y4QXFBMmorMjNZZktXQ05iRXRqcFU1dVVHVmgzV0k0bmtD?=
- =?utf-8?B?bnJ0R3h5b3JLYXhsMm8rVjR6RHoxeTN2bWhwSFI1ZndzR2RoR0hGeDZKR1pl?=
- =?utf-8?B?TmxLOVNFcWpFSlFrZmxlc3R0eDRlNjdLbUJBY2pQRHRtVDBuZGJCNEhubi9Z?=
- =?utf-8?B?c2xySlR3NGJYSVU3KzJCWUZObkFibVBhMzEzMGEydEhkNmE5dXZYd3IyRk5W?=
- =?utf-8?B?VUZpK1JHTHQzM3J4SXVadys4S0owTnZ1T2xoMXFWQmRRc3RiZC8zRjYzRTNM?=
- =?utf-8?B?dlBXMS9PZ3d0NnZEY2hSNXdCcnBISWptTktuSC8raG5JZXRRN1R6Y1RPWmxJ?=
- =?utf-8?B?MnM5c1NPMkVxcVpOd2g4azU5enJWM3E5dm1FWGJwY1pyS1RJcGlwYWljVllj?=
- =?utf-8?B?Zm5pOERQSnBaQkdocjgybXVZNzNMUE5CMmFQblNxUmdSZFRKUTlTMkNHM0lT?=
- =?utf-8?B?SFBseGVTbXhMMnlQNDFTRzhKRjRlcU16Q1pSaHVCR1crLzhrQ1psTCs4WlVp?=
- =?utf-8?B?VkZHRFNyeTRxUnVNTWdqSzI1UmdrUW5ac2tVOW5ibDR3WHR6MG1Xc2xIVFhn?=
- =?utf-8?B?VTlpU1E4a1lUWDhKbVU0WEs2Wm9GU1YrZm1CNGN2dzFZa3NoSXRYS3JodWc3?=
- =?utf-8?B?UXpBZTMrVllmeSthdWZaWFo5ZnBRellsdjdDcjZtUEw1SnQ3QlBxOEpZYXVl?=
- =?utf-8?B?bmpUcys2ZTVqYk5SMFFrbXZiN2pwWGpuOVk2ZW1wNk9nWkdhd0cwWWk2MUwz?=
- =?utf-8?B?TnBRY0lHck9JWnBkRTRFMTJQTE54d3NkdzhtcVBHVThXQ3FiQVRlajRhckdh?=
- =?utf-8?B?UFhUdXZoYllOR2hibHdDOTdrelVJenVrVEFTVmNSRHBxUXpvcloraGhqSE04?=
- =?utf-8?B?R3BWODR5cWdaYXd6ZEJISklNR1J4ZGUxNXdpa2NLQjg4Mm1ITmljWDFRUXZm?=
- =?utf-8?B?ekZnaFZtTGZndnVSMDVkaEluUnRnOGY5RnM3Wk5YWnRkM0h2aWl3QitVVnB4?=
- =?utf-8?B?Q2ZtTEhKTzFuUitPUGxhNnIwKzk0M1pCODdIQlFQRkpTMzNLRDd3Sjk0amhI?=
- =?utf-8?B?Qm44SkJhY2liUzNlbktiRXgwNDRGMldhVWpOVzlXVGJzeGs1bjRXb05CcHlv?=
- =?utf-8?B?MERpUk5KZWJ4U2c3SEp1ZS9GTDFpaVozbldRNzNGK2VCclVMdWtkd1MwNDhB?=
- =?utf-8?B?dFp2OFo0US9lbWNld3BlQlV0VlB6OVFXS2N4ZnNuOXp0bVdWL251RzNiM2E4?=
- =?utf-8?B?Vi8zdnVSU1p1WUNxRW1BQTBMdk9nTmo3NVpNdFZFNjBXUldWbXVvNXYzLzFH?=
- =?utf-8?B?bWVFbWh1QjJRVXhtRDhBei9tRnFCZ1d4UUVBRUJtT1B0bjZPTWh1K21iMGlK?=
- =?utf-8?B?Y3ZFL3hBdk1TRjVPWUZZUElUK2RMeGgrTmZjT3k1TW5WYWh5VmR6OThJa2Rq?=
- =?utf-8?B?MjdiaVJiUTFiem1sUUUvNFdPcmpBSE1wenhxU2RKK2xCUjlBVzlteG52ZUFL?=
- =?utf-8?B?NTdWVGxxWHVGTEZPMFJNektkK24xRmsvQjBjaW15VWxqQmYyZzMyQVRPckFD?=
- =?utf-8?B?dGRSNDFJYlFrUGVxNjU5SWRZamJqZC9zNlBwb0ZadnFKR2Nnd3JJR3M5SmRY?=
- =?utf-8?B?M0pOanM4RFYvUzRjLzBQOTZQb216RFhuS1FzWnRlcC9wbjk4T1hlYkUrSUMy?=
- =?utf-8?B?U09rWksvaG1OZFZiNnVrTEQySDdYaER4MnE2eHk5cFB3akZaVFhuWlo0cGdj?=
- =?utf-8?B?RlFRZWxWajlZOW9YcW1DQnZPT1ZycmhubVJOWmx4cDhPVTBwNCtsUTlBZ01x?=
- =?utf-8?B?eU1EWG5jS29ya3cwS01UOE93M1hBZ29PMmNIam9MNVA5aDJUWlZ2aVV6RStL?=
- =?utf-8?B?YWpDNE9wdHk0THluNGpPQnlYMWhsZnRwUFZONkRBZ3FXcjByOFdLTlIvVWNF?=
- =?utf-8?B?akNzbFJxRHMrVXdjN2dvcmJic0dkbmlrQW9LU09DbFNaMVd4Qld5TjcrYmt2?=
- =?utf-8?B?OGtyUWlsOFpaNStOYUtFZ3lXbXBxSExJeUNnaEVvOUJTd1ZsdlgxWFJhcThy?=
- =?utf-8?B?d3hsOHgwdFF4UWd0dE4rQ0tlRVFxZHprc2pmSkR4bWZHVmFFclNSOGtFODBi?=
- =?utf-8?Q?3wIbx85bEuLWohFPv/xI/Uk=3D?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: 03e82518-4e9f-4216-c351-08de396bf468
-X-MS-Exchange-CrossTenant-AuthSource: GVXPR04MB12038.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Dec 2025 10:48:15.8759
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JCaNlZID9eyxO7/NN4R3hCFq2gClc+eaCimVp/1JQAPjyXxOyRnRvgbEFnWMLaCYt5DPhT5tCG7sgSx0CXPDftTC1LOYo84Oq++nFevc4Qs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8218
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 12 Dec 2025 10:48:24 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2771
+ <yocto-patches@lists.yoctoproject.org>; Fri, 12 Dec 2025 11:00:24 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2772
 
-Hi Trevor,
 
-On 12/11/25 10:03 PM, Trevor Woerner via lists.yoctoproject.org wrote:
-> Most implementations that use an A/B, full-partition update mechanism
-> (such as RAUC configured for this scenario) need some way of preserving
-> system configurations in a location that survives updates. The RAUC demo
-> provided in this layer is an example of a full-partition update,
-> therefore provide an example of using a filesystem overlay to preserve
-> system configurations. This example is gated by a configuration knob:
-> 
-> 	RK_OVERLAY_DEMO
-> 
-> Signed-off-by: Trevor Woerner <twoerner@gmail.com>
+--=-HPuQveBYlfj+HoSKJxsy
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, 2025-12-11 at 10:35 -0800, Michael Halstead via
+lists.yoctoproject.org wrote:
+> Adding directions we use to build for production.
+>=20
+> Signed-off-by: Michael Halstead <mhalstead@linuxfoundation.org>
 > ---
->   README                                        | 28 +++++++++++++++++++
->   conf/machine/include/rockchip-rauc.inc        |  1 +
->   .../systemd/data-partition-overlay_1.0.bb     | 22 +++++++++++++++
->   .../recipes-core/systemd/files/etc.mount      | 13 +++++++++
->   .../recipes-core/systemd/files/home.mount     | 13 +++++++++
->   5 files changed, 77 insertions(+)
->   create mode 100644 dynamic-layers/rk-rauc-demo/recipes-core/systemd/data-partition-overlay_1.0.bb
->   create mode 100644 dynamic-layers/rk-rauc-demo/recipes-core/systemd/files/etc.mount
->   create mode 100644 dynamic-layers/rk-rauc-demo/recipes-core/systemd/files/home.mount
-> 
-> diff --git a/README b/README
-> index 6a13428d488d..92dc072a0833 100644
-> --- a/README
-> +++ b/README
-> @@ -140,6 +140,34 @@ Notes:
->   	this layer, perform the same steps as above except for the step enabling
->   	RK_RAUC_DEMO.
->   
-> +  /data overlay with RAUC
-> +	When using RAUC for whole-partition rootfs updates, you will need some
-> +	way of preserving some pieces of data between updates; this is why the
-> +	DEMO scheme provided in this layer also includes a /data partition.
-> +	Now that you have a /data partition that is not updated, you need some
-> +	way of storing your important data there and making it available,
-> +	seamlessly, into your system regardless of which slot is running.
+>  README-Guide.md | 72 +++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 72 insertions(+)
+>=20
+> diff --git a/README-Guide.md b/README-Guide.md
+> index 69368b9..bee5a1f 100644
+> --- a/README-Guide.md
+> +++ b/README-Guide.md
+> @@ -72,6 +72,78 @@ being triggered:
+>  export LANG=3Den_US.UTF-8
+>  ```
+>=20
+> +### 1.2.1) Building and Deploying the Yocto Console View
 > +
-> +	One way of accomplishing this is to move your important files into
-> +	/data and providing symlinks back into each running bundle. But that
-> +	requires you to know ahead of time which files will be touched... which
-> +	quickly can become a game of whack-a-mole. A better alternative is to
-> +	use a filesystem overlay. With a filesystem overlay, multiple paths are
-> +	overlaid on top of each other behind the scenes so what you see is one
-> +	directory containing the aggregation of all layers. Filesystem overlays
-> +	have a concept of "bottom layers" and "upper layers", if you write a new
-> +	file into an overlay, the file will be written into the uppermost
-> +	layer, leaving the lower layers intact. If a file is modified, the
-> +	modifications are stored in the upper layer, occluding the lower layer.
-> +	Therefore, creating an overlay using locations in the /data partition
-> +	as the uppermost layer allows changes to persist across RAUC updates.
 > +
-> +	This layer includes a simple overlay scheme to demonstrate one way of
-> +	making use of this mechanism. To enable the demo included in this layer
-> +	RAUC must be enabled, then also enable:
+> +Build the Package on a Workstation
 > +
-> +		RK_OVERLAY_DEMO
+> +These steps are performed on your local development machine.
 > +
-
-You're overlaying two directories, so please make this explicit in the 
-README. /etc and /home are overlaid. Now, is the root user's home 
-directory in /home/root or in /root? Because you may want to overlay 
-that as well?
-
-Additionally, CONFIG_OVERLAY_FS support likely needs to be enabled in 
-the kernel for this to work, so mentioning this would be nice? (though 
-we also didn't mention this for the VPU, so... :) ).
-
->     HW video decoding with gstreamer
->   
->   	Most Rockchip SoCs have some integrated VPU, either Hantro, RKVDEC or
-> diff --git a/conf/machine/include/rockchip-rauc.inc b/conf/machine/include/rockchip-rauc.inc
-> index a6f79503076b..3ea95298fed6 100644
-> --- a/conf/machine/include/rockchip-rauc.inc
-> +++ b/conf/machine/include/rockchip-rauc.inc
-> @@ -2,3 +2,4 @@
->   # rauc demo configuration from this layer
->   OVERRIDES .= "${@ ':rk-rauc-demo' if bb.utils.to_boolean(d.getVar('RK_RAUC_DEMO'), False) else ''}"
->   IMAGE_INSTALL:append:rk-rauc-demo = " abd-partition"
-> +IMAGE_INSTALL:append:rk-rauc-demo = " ${@ 'data-partition-overlay' if bb.utils.to_boolean(d.getVar('RK_OVERLAY_DEMO'), False) else ''}"
-> diff --git a/dynamic-layers/rk-rauc-demo/recipes-core/systemd/data-partition-overlay_1.0.bb b/dynamic-layers/rk-rauc-demo/recipes-core/systemd/data-partition-overlay_1.0.bb
-> new file mode 100644
-> index 000000000000..7d9a9e6de82b
-> --- /dev/null
-> +++ b/dynamic-layers/rk-rauc-demo/recipes-core/systemd/data-partition-overlay_1.0.bb
-> @@ -0,0 +1,22 @@
-> +SUMMARY = "Overlay Logic onto the /data partition"
-> +LICENSE = "OSL-3.0"
-> +LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/OSL-3.0;md5=438ec6d864bbb958a49df939a56511cf"
+> +**Prerequisites:** You must have **Podman** installed.
 > +
-> +inherit rk-rauc-demo-features-check systemd
+> +1.  Clone the `yocto-autobuilder2` repository and start a container,
+> mounting the repository into the `/build` directory.
 > +
-> +SYSTEMD_SERVICE:${PN} = "etc.mount home.mount"
+> +    ```bash
+> +    git clone https://git.yoctoproject.org/yocto-autobuilder2
+> +    cd yocto-autobuilder2/
+> +    podman run -ti --rm --volume .:/build:Z,U node:22 bash
+> +    ```
 > +
-> +S = "${UNPACKDIR}"
+> +2.  **Inside the container**, navigate to the package directory,
+> install the necessary build dependencies, and build the Python wheel
+> (`.whl`) file.
 > +
-> +SRC_URI = " \
-> +        file://etc.mount \
-> +        file://home.mount \
-> +	"
+> +    ```bash
+> +    # Run these commands inside the podman container
+> +    cd /build/yocto_console_view
+> +    apt update; apt install -y python3-dev python3-build
+> python3-setuptools python3-pip
+> +    python3 -m pip install --break-system-packages buildbot_pkg
+> +    python3 -m build --no-isolation
+> +    ```
 > +
-> +do_install() {
-> +	install -d ${D}${sysconfdir}/systemd/system
-> +	install -m 0644 ${UNPACKDIR}/etc.mount ${D}${sysconfdir}/systemd/system/
-> +	install -m 0644 ${UNPACKDIR}/home.mount ${D}${sysconfdir}/systemd/system/
-
-I see we have a couple of systemd_*unitdir variables in bitbake.conf, 
-should we use one of those instead?
-
-> +}
+> +3.  A successful build will generate a wheel file in the `dist/`
+> directory. You can verify this by listing the contents of the `dist/`
+> directory.
 > +
-> +RDEPENDS:${PN} += "abd-partition"
-
-Maybe add a comment this is necessary because of the data.mount requirement?
-
-> diff --git a/dynamic-layers/rk-rauc-demo/recipes-core/systemd/files/etc.mount b/dynamic-layers/rk-rauc-demo/recipes-core/systemd/files/etc.mount
-> new file mode 100644
-> index 000000000000..65b896563bef
-> --- /dev/null
-> +++ b/dynamic-layers/rk-rauc-demo/recipes-core/systemd/files/etc.mount
-> @@ -0,0 +1,13 @@
-> +[Unit]
-> +Description=OverlayFS mount for /etc to /data/overlay/etc
-> +Requires=data.mount
-> +After=data.mount
+> +    ```bash
+> +    ls dist/
+> +    ```
+> +
+> +    You should see a file named like
+> `yocto_console_view-2025.3.12-py3-none-any.whl`.
+> +
+> +4.  Once the build is complete, exit the container.
+> +
+> +    ```bash
+> +    # Press Ctrl+D or type 'exit'
+> +    exit
+> +    ```
+> +
+> +-----
+> +
+> +Deploy the Package to the Controller
+> +
+> +These steps are performed on the Buildbot controller machine.
+> +
+> +1.  First, copy the newly created wheel file from your workstation to
+> the controller. The file will be located in the
+> `yocto-autobuilder2/yocto_console_view/dist/` directory on your
+> workstation.
+> +
+> +    *Example filename:* `yocto_console_view-2025.3.12-py3-none-any.whl`
+> +
+> +2.  On the **controller**, switch to the `pokybuild` user, activate
+> the buildbot virtual environment, install the new wheel, and restart
+> the controller.
+> +
+> +    ```bash
+> +    # Switch to the build user
+> +    su - pokybuild
+> +
+> +    # Activate the Python virtual environment, if not already active
+> +    . ~/buildbot-venv/bin/activate
+> +
+> +    # Install the package you copied over
+> +    pip install yocto_console_view-2025.3.12-py3-none-any.whl
+> +
+> +    # IMPORTANT: Check that the cluster is idle before restarting at
+> +    # Restart the controller instance
+> +    buildbot restart ~/yocto-controller
+> +    ```
+> +
+> +The new console view plugin is now deployed and active.
+> +
 > +
 
-I'm wondering if this cannot be handled by
+Thanks for documenting this!
 
-RequiresMountsFor=/data
+The change looks good, but the patch has been re-wrapped when sending so
+it needed a few lines to be joined together to be able to apply it.
 
-c.f. 
-https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html#RequiresMountsFor=
+Reviewed-by: Paul Barker <paul@pbarker.dev>
 
-> +[Mount]
-> +What=overlay
-> +Where=/etc
-> +Type=overlay
-> +Options=lowerdir=/etc,upperdir=/data/overlay/etc,workdir=/data/overlay-workdir/etc
-> +
-> +[Install]
-> +WantedBy=multi-user.target
-> diff --git a/dynamic-layers/rk-rauc-demo/recipes-core/systemd/files/home.mount b/dynamic-layers/rk-rauc-demo/recipes-core/systemd/files/home.mount
-> new file mode 100644
-> index 000000000000..d6a384fa9c75
-> --- /dev/null
-> +++ b/dynamic-layers/rk-rauc-demo/recipes-core/systemd/files/home.mount
-> @@ -0,0 +1,13 @@
-> +[Unit]
-> +Description=OverlayFS mount for /home to /data/overlay/home
-> +Requires=etc.mount
-> +After=etc.mount
-> +
+--=20
+Paul Barker
 
-Why is this not data.mount too?
 
-Otherwise looks ok to me.
+--=-HPuQveBYlfj+HoSKJxsy
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 
-Cheers,
-Quentin
+-----BEGIN PGP SIGNATURE-----
+
+iIcEABYKAC8WIQSzjPXf5Y1BDWhU2iCrY1Tsnbr0bgUCaTv1vhEccGF1bEBwYmFy
+a2VyLmRldgAKCRCrY1Tsnbr0bgjNAP49sULNs0hwJa1FukFGHNPAR3p0e2/MKflW
+A8cMG4nhGgEA1NpoelbbIVsb4n/+evZcuCSqXwgeSSIP8gsINDSUDQ0=
+=v4Io
+-----END PGP SIGNATURE-----
+
+--=-HPuQveBYlfj+HoSKJxsy--
 
