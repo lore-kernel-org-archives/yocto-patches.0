@@ -2,111 +2,91 @@ Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A14DD59F75
-	for <webhook@archiver.kernel.org>; Sat, 13 Dec 2025 07:10:28 +0000 (UTC)
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.1432.1765609823099238118
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B428D59F77
+	for <webhook@archiver.kernel.org>; Sat, 13 Dec 2025 07:11:08 +0000 (UTC)
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.1441.1765609866951892978
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 12 Dec 2025 23:10:23 -0800
+ Fri, 12 Dec 2025 23:11:07 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=AQWNQXXJ;
- spf=pass (domain: gmail.com, ip: 209.85.160.169, mailfrom: twoerner@gmail.com)
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4ee1879e6d9so21341011cf.1
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 12 Dec 2025 23:10:22 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=QNAFadEO;
+ spf=pass (domain: gmail.com, ip: 209.85.160.174, mailfrom: twoerner@gmail.com)
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4edf1be4434so16706131cf.1
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 12 Dec 2025 23:11:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765609821; x=1766214621; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1765609865; x=1766214665; darn=lists.yoctoproject.org;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=waAqQZPSSINSGVOKwt7teD6yd7fInbv7AcfjKM6ItWc=;
-        b=AQWNQXXJcPs8DhRGSpkox7QTKQ/qds4tKMcjfmyagh6Es6kg5K3q1p01hxgpGxv5Um
-         0BGC2dYb/vPXLQUgCwJHx8HCaOYdKDFaOZIb4ZISLw8jaRUQRf+12WAox8DPyUzG7vc9
-         8WxNYvMEuk8HhjPIov8qqZU5ocT3NetvEC07A8WRfeGN9swNsvhSRoCBPlWwi04Lmgn1
-         uK1UGGomJuKux9sITfbCUGYtLl1u0qbnKuVDAdv7XX/CJIO2EwHfOG9llLGeqg3YhnoP
-         Fz7tSp83Qd5pX/B5pYJhhOA1iYZxNdRfXoV/FRJNxrizoR15xR7wIn9opT2398ESrTU/
-         yuIg==
+        bh=VQ/LJKVmRoNW7uSXmh5LcoDZmM3qWWTIECadoNjr2Gc=;
+        b=QNAFadEOVuJt47aHX1GICzumtYvSW8mhzsd3M3BowbQheOmzrgI0e5zcFVpXlOJxBX
+         fnZmdSxHkIb8RiIV/VZD0+vFWZPfF8SVTqG1DePc2SoXDwH2DxHuDqdO+6YUfV8l5p0r
+         QNv8l2CtETNPa/KwFX4Rmqiaq3pYYOPhHI4kEE96xJyrgqPckJ9rrXyWjmOjO9ztTnBa
+         WEfEH8qo/FVoHwna4xXqvixBiCUo/OpMmXaVmBeaikDdTPQBdn1t9hwVUK4XKRB7RUIY
+         Vy9lRRtcFRDR8fQFoBPSdlESW6DkTRDr9xoH6LPl3ziu8eiLXqYdMCbZ9bmFVhr2S3MM
+         xdmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765609821; x=1766214621;
+        d=1e100.net; s=20230601; t=1765609865; x=1766214665;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:to:from:date:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=waAqQZPSSINSGVOKwt7teD6yd7fInbv7AcfjKM6ItWc=;
-        b=w5U6tu2UU7tLo7TPoC+ifh7tGyeMAzFabgy3h0fX3wMLtJwPkKt7KcPMKnocnQukib
-         XUvISZKHZWf59Sv+b676uTtEKsYlg/RKNJlQ7syiGHMNOmRqyFtDK9eJE8Wc6fuQw2vr
-         pQksU/bTjKnF8kWm/cyfqab02TLJ3y9mTo+TeXfvBBm8w8laP/AuSenxCCOT9SxRUCg+
-         CF1RxtkbbHiERhaK+pYLxQd2Cmn0POWYLXizP5PTO6fKNgkr6E36ejq9k8s4nR2ZbtqL
-         d6LFi26efZVxUFRWcKYBM7krD4rBniO9rzoC17/TspP/kojw7Kw5+gWlAlTXLxDq438k
-         zMeg==
-X-Gm-Message-State: AOJu0Yz2fb/lpsugkHfliIdMmjrY8L13jpJckwH6GovgjFZvN2kx2xYP
-	AJTAY0N3zRIfbjQEtxrT8AJKQnpwkhosMmUvXPfGHQ94p7ewKQ11NwE/3cqnhw==
-X-Gm-Gg: AY/fxX5bZ9nfAJCiDQTmJCnkEeqiZZd2Q6nvEo21RknAjr0dh0sUWwmIromTE8Cgvci
-	uyPLYCSyicoXl7a6T0IN+mvYvg6IGeSR2Qemy6UtF0zf9ll1bFwI9ciuRmu2i9Of1qUm/CZWN7o
-	xf+5Ohfefr1f5EJetXncjvQoPYM8CExedqOIvRFK+mr6JNHzmInqfy9LDLB6a8ffO9PbygA1qlL
-	1wetkttwMOD+/rGpYFhcXmgxiGj8iU5hNo6HmyCFq+zFrlEQTy+JeqfHU22FVcFCdYNpo7TFuBj
-	WooW9zIAB1cB3llFfGpnPPEffbGo8XXKVOj5GMapttpvVuumiqj1pj0tlKqaJc/SaGHM03KKozd
-	7UHk/vXGzMQPtzYdbTmVIO/tS6osmYHYcMd95dSAYYYbYnT7zzSCz+oKliGhpn11nZBxuuev2F6
-	HIuXKF93IZWmZ3ZV88btrLhUlJrlQIs2ogUwDNHA==
-X-Google-Smtp-Source: AGHT+IF67pD31UUIR3JY4+WoCCGZH1AKE2cidIVZq1i48g9kyxZT4aJFmc3wBfhWycIwvByUNqjZkw==
-X-Received: by 2002:a05:622a:4244:b0:4ef:bed6:5345 with SMTP id d75a77b69052e-4f1d05ad4demr64613431cf.50.1765609821440;
-        Fri, 12 Dec 2025 23:10:21 -0800 (PST)
+        bh=VQ/LJKVmRoNW7uSXmh5LcoDZmM3qWWTIECadoNjr2Gc=;
+        b=FwObZYLhTHtXMzGjl8Qydb6xGdh0XzKpqw6mBP2TQT1SurhZrE5HmtfJ9pCsQoYNy0
+         6VCM5bkI+1xhh+aYY2bTWt89J0O+tNbZNywP2qE3ErNWaYW/dbWSqNW54ug72dzC6VOR
+         nS2QiDLJnDQBRHPCmk6JTtM5lutuATM/2SpL04NTJR6yVOG2HiuEGo3Vq2mFQIcId+Op
+         J4YBsZb7hXzjppiDZXuoAiXl/YuTLJJe5w490vNhmeZX6opH0hTpNM1E1yGIbWFnt7J+
+         W0lEIw8zrG3FsPs9dGTwJfLjumsdiBFY9Sk5ScvzwPc1ixgTiQA+YuEvpiyr+oV3/aK/
+         ROTg==
+X-Gm-Message-State: AOJu0YyghotZgj2uAGc3fg07fyRru2VqXXU3y32NQI7H5VSmcIHOn7/M
+	23uLKGDyYtDB80vXRtlMBlVpFfFhoVbKgAfozg0y/MyljxKjOnl7xANcILuf0w==
+X-Gm-Gg: AY/fxX4FhATzoCvwDvrz3KKyFrQZ+m4GHEGJuw7PJLjuEhePSTXDwOPcLwP7g2KeUir
+	n25coIjZB9kM1FdNA9G7oZfUh1NjXvBfWiWkZ09dkkLJmtcIb6bY1GdREDKYbfzPxTiBiXzTdXs
+	STpTr/lx3tlj/r4XDYrkufT0/GyJ8mJGTpBYlXGGeChbAtr6AOlyE9afyGPe2XJiTSYBslLCdGU
+	Q+6LANkiIRYdchbJ6TsqXXRTVnSxh12GnH11lFCwMyaM7xCWzcqxeKcMonXBPtE4F61cj3KQJad
+	/i9uiz02NUa2wU+bKmvj/roHW0ZYdGgAaVRX17sAs7foa3P2K5w1+SOi4Pi4kylqCzVbeG1ugBI
+	m6+AQHGyIIfXInuNIK6BkgAZRmv8OvmWSltM/Ov7YAMNVPm+WX1gsVYwYMM9D0b5hyIVN9p/upk
+	IIPBJX3yJD8fwGD1nA760jWWdrhUk9Cz1VQYDztg==
+X-Google-Smtp-Source: AGHT+IFSwH4zgmXEC1mmmKauJF65zGycqZOINw//SxUuXY8I+bC4+6F/GRB6/UESgYARlh7ZgrxMuw==
+X-Received: by 2002:a05:622a:4d99:b0:4ee:d6:7a51 with SMTP id d75a77b69052e-4f1d04670b7mr70199681cf.12.1765609865481;
+        Fri, 12 Dec 2025 23:11:05 -0800 (PST)
 Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4f1bd5c2e41sm56758601cf.13.2025.12.12.23.10.20
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8bab5665e02sm596486485a.19.2025.12.12.23.11.04
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Dec 2025 23:10:20 -0800 (PST)
-Date: Sat, 13 Dec 2025 02:10:18 -0500
+        Fri, 12 Dec 2025 23:11:04 -0800 (PST)
+Date: Sat, 13 Dec 2025 02:11:03 -0500
 From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: Re: [meta-rockchip][PATCH v2 1/2] provide a filesystem overlay
- example
-Message-ID: <20251213071018.GA29788@localhost>
+Subject: Re: [meta-rockchip][PATCH v2 2/2] abd-partition: place unit file in
+ system location
+Message-ID: <20251213071103.GB29788@localhost>
 References: <20251212182420.24920-1-twoerner@gmail.com>
+ <20251212182420.24920-2-twoerner@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251212182420.24920-1-twoerner@gmail.com>
+In-Reply-To: <20251212182420.24920-2-twoerner@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sat, 13 Dec 2025 07:10:28 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2780
+ <yocto-patches@lists.yoctoproject.org>; Sat, 13 Dec 2025 07:11:08 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2781
 
-On Fri 2025-12-12 @ 01:24:19 PM, Trevor Woerner wrote:
-> Most implementations that use an A/B, full-partition update mechanism
-> (such as RAUC configured for this scenario) need some way of preserving
-> system configurations in a location that survives updates. The RAUC demo
-> provided in this layer is an example of a full-partition update,
-> therefore provide an example of using a filesystem overlay to preserve
-> the /etc and /home locations.
-> 
-> This example is gated by a configuration knob:
-> 
-> 	RK_OVERLAY_DEMO
+On Fri 2025-12-12 @ 01:24:20 PM, Trevor Woerner wrote:
+> The system location for systemd unit files is in /usr/lib/systemd and
+> local or admin-created unit files, that are meant to take precedence
+> over the units in the system location, are to be placed in /etc/systemd.
+> Move these unit files to the system location instead of putting them in
+> the override location.
 > 
 > Signed-off-by: Trevor Woerner <twoerner@gmail.com>
 > ---
 > changes since v1:
-> - the commit message was updated to identify the locations that the demo
->   will overlay (/etc and /home)
-> - the README blurb was updated:
->   - to also indicate which locations will have an overlay in the demo
->   - to indicate the kernel config requirement
->   - to explain options on how to include the root's home directory in
->     the overlay
-> - use the standard bitbake variable to place the unit files in the
->   standard systemd system unit file location (/usr/lib/systemd)
-> - use RequiresMountsFor as the overlay mount unit's dependency mechanism
+> - added
 > ---
->  README                                        | 50 +++++++++++++++++++
->  conf/machine/include/rockchip-rauc.inc        |  1 +
->  .../systemd/data-partition-overlay_1.0.bb     | 22 ++++++++
->  .../recipes-core/systemd/files/etc.mount      | 12 +++++
->  .../recipes-core/systemd/files/home.mount     | 12 +++++
->  5 files changed, 97 insertions(+)
->  create mode 100644 dynamic-layers/rk-rauc-demo/recipes-core/systemd/data-partition-overlay_1.0.bb
->  create mode 100644 dynamic-layers/rk-rauc-demo/recipes-core/systemd/files/etc.mount
->  create mode 100644 dynamic-layers/rk-rauc-demo/recipes-core/systemd/files/home.mount
+>  .../rk-rauc-demo/recipes-core/systemd/abd-partition.bb        | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
 Pushed to meta-rockchip, master branch.
 
