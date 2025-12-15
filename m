@@ -1,92 +1,102 @@
-Return-Path: <ross.burton@arm.com>
+Return-Path: <hemant.jadhav@emerson.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F09BAD5B175
-	for <webhook@archiver.kernel.org>; Mon, 15 Dec 2025 14:35:45 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.50128.1765809339579910789
- for <yocto-patches@lists.yoctoproject.org>;
- Mon, 15 Dec 2025 06:35:39 -0800
-Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: arm.com, ip: 217.140.110.172, mailfrom: ross.burton@arm.com)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D6F6A497
-	for <yocto-patches@lists.yoctoproject.org>; Mon, 15 Dec 2025 06:35:31 -0800 (PST)
-Received: from cesw-amp-gbt-1s-m12830-04.lab.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A54BB3F694
-	for <yocto-patches@lists.yoctoproject.org>; Mon, 15 Dec 2025 06:35:38 -0800 (PST)
-From: Ross Burton <ross.burton@arm.com>
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F42DD5B870
+	for <webhook@archiver.kernel.org>; Mon, 15 Dec 2025 21:32:10 +0000 (UTC)
+Subject: Re: [meta-security][PATCH v8] clamav: Add recipe for version 1.4.3
 To: yocto-patches@lists.yoctoproject.org
-Subject: [PATCH][yocto-autobuilder-helper] dashboard/bugtriage: add retest section
-Date: Mon, 15 Dec 2025 14:35:32 +0000
-Message-ID: <20251215143532.981506-1-ross.burton@arm.com>
-X-Mailer: git-send-email 2.43.0
+From: "Hemant Jadhav" <hemant.jadhav@emerson.com>
+X-Originating-Location: US (69.41.68.5)
+X-Originating-Platform: Windows Edge 143
+User-Agent: GROUPS.IO Web Poster
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Date: Mon, 15 Dec 2025 13:32:07 -0800
+References: <20251124153927.463459-1-hemant.jadhav@emerson.com>
+In-Reply-To: <20251124153927.463459-1-hemant.jadhav@emerson.com>
+Message-ID: <223420.1765834327157471311@lists.yoctoproject.org>
+Content-Type: multipart/alternative; boundary="rnOU1JBUWgUo4KeD6nou"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 15 Dec 2025 14:35:45 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2789
+ <yocto-patches@lists.yoctoproject.org>; Mon, 15 Dec 2025 21:32:10 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2790
 
-Add a section for bugs with the "retest" whiteboard entry.
+--rnOU1JBUWgUo4KeD6nou
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Ross Burton <ross.burton@arm.com>
----
- scripts/dashboard/bugtriage/index.html | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+Hi
 
-diff --git a/scripts/dashboard/bugtriage/index.html b/scripts/dashboard/b=
-ugtriage/index.html
-index 45273ef8..10d998d2 100644
---- a/scripts/dashboard/bugtriage/index.html
-+++ b/scripts/dashboard/bugtriage/index.html
-@@ -152,6 +152,14 @@
-         </p>
-         <div id=3D"newcomer"></div>
-       </div>
-+
-+      <div class=3D"section scrollspy" id=3D"retest-container">
-+        <h4>Needs Testing <a class=3D"waves-effect btn-flat" onclick=3D"=
-reloadTable('#retest');"><i class=3D"material-icons">refresh</i></a></h4>
-+        <p>
-+          All open bugs which have been tagged as needing to be retested=
-.
-+        </p>
-+        <div id=3D"retest"></div>
-+      </div>
-     </div>
-=20
-     <div class=3D"col hide-on-small-only m3 l2">
-@@ -166,6 +174,7 @@
-         <li><a href=3D"#inactivefeatures-container">Old Features</a></li=
->
-         <li><a href=3D"#oldmilestone-container">Wrong Milestone</a></li>
-         <li><a href=3D"#newcomer-container">Newcomer</a></li>
-+        <li><a href=3D"#retest-container">Retest</a></li>
-       </ul>
-     </div>
-   </div>
-@@ -401,6 +410,9 @@
-         case "#newcomer":
-           bugsByWhiteboard(table, "NEWCOMER");
-           break;
-+        case "#retest":
-+          bugsByWhiteboard(table, "RETEST");
-+          break;
-         case "#reopened":
-           bugsByStatus(table, "REOPENED");
-           break;
-@@ -428,6 +440,7 @@
-     reloadTable("#inactivebugs");
-     reloadTable("#inactivefeatures");
-     reloadTable("#oldmilestone");
-+    reloadTable("#retest");
-=20
-     document.addEventListener('DOMContentLoaded', function () {
-       var elems =3D document.querySelectorAll('.scrollspy');
---=20
-2.43.0
+Any updates for this patch for clamAV?
 
+Thanks
+Hemant
+
+--rnOU1JBUWgUo4KeD6nou
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div><span style=3D"color: #242424; font-family: 'Segoe UI', 'Segoe UI Web =
+(West European)', -apple-system, BlinkMacSystemFont, Roboto, 'Helvetica Neu=
+e', sans-serif; font-size: 15px; font-style: normal; font-variant-ligatures=
+: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: norm=
+al; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; =
+widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: =
+normal; background-color: #ffffff; text-decoration-thickness: initial; text=
+-decoration-style: initial; text-decoration-color: initial; display: inline=
+ !important; float: none;">Hi&nbsp;</span><br style=3D"color: #242424; font=
+-family: 'Segoe UI', 'Segoe UI Web (West European)', -apple-system, BlinkMa=
+cSystemFont, Roboto, 'Helvetica Neue', sans-serif; font-size: 15px; font-st=
+yle: normal; font-variant-ligatures: normal; font-variant-caps: normal; fon=
+t-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-=
+indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-te=
+xt-stroke-width: 0px; white-space: normal; background-color: #ffffff; text-=
+decoration-thickness: initial; text-decoration-style: initial; text-decorat=
+ion-color: initial;" /><br style=3D"color: #242424; font-family: 'Segoe UI'=
+, 'Segoe UI Web (West European)', -apple-system, BlinkMacSystemFont, Roboto=
+, 'Helvetica Neue', sans-serif; font-size: 15px; font-style: normal; font-v=
+ariant-ligatures: normal; font-variant-caps: normal; font-weight: 400; lett=
+er-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-t=
+ransform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0p=
+x; white-space: normal; background-color: #ffffff; text-decoration-thicknes=
+s: initial; text-decoration-style: initial; text-decoration-color: initial;=
+" /><span style=3D"color: #242424; font-family: 'Segoe UI', 'Segoe UI Web (=
+West European)', -apple-system, BlinkMacSystemFont, Roboto, 'Helvetica Neue=
+', sans-serif; font-size: 15px; font-style: normal; font-variant-ligatures:=
+ normal; font-variant-caps: normal; font-weight: 400; letter-spacing: norma=
+l; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; w=
+idows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: n=
+ormal; background-color: #ffffff; text-decoration-thickness: initial; text-=
+decoration-style: initial; text-decoration-color: initial; display: inline =
+!important; float: none;">Any updates for this patch for clamAV?&nbsp;</spa=
+n></div>
+<div>&nbsp;</div>
+<div><span style=3D"color: #242424; font-family: 'Segoe UI', 'Segoe UI Web =
+(West European)', -apple-system, BlinkMacSystemFont, Roboto, 'Helvetica Neu=
+e', sans-serif; font-size: 15px; font-style: normal; font-variant-ligatures=
+: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: norm=
+al; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; =
+widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: =
+normal; background-color: #ffffff; text-decoration-thickness: initial; text=
+-decoration-style: initial; text-decoration-color: initial; display: inline=
+ !important; float: none;">Thanks&nbsp;</span><br style=3D"color: #242424; =
+font-family: 'Segoe UI', 'Segoe UI Web (West European)', -apple-system, Bli=
+nkMacSystemFont, Roboto, 'Helvetica Neue', sans-serif; font-size: 15px; fon=
+t-style: normal; font-variant-ligatures: normal; font-variant-caps: normal;=
+ font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; t=
+ext-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webki=
+t-text-stroke-width: 0px; white-space: normal; background-color: #ffffff; t=
+ext-decoration-thickness: initial; text-decoration-style: initial; text-dec=
+oration-color: initial;" /><span style=3D"color: #242424; font-family: 'Seg=
+oe UI', 'Segoe UI Web (West European)', -apple-system, BlinkMacSystemFont, =
+Roboto, 'Helvetica Neue', sans-serif; font-size: 15px; font-style: normal; =
+font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400=
+; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; =
+text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-wid=
+th: 0px; white-space: normal; background-color: #ffffff; text-decoration-th=
+ickness: initial; text-decoration-style: initial; text-decoration-color: in=
+itial; display: inline !important; float: none;">Hemant&nbsp;</span></div>
+
+--rnOU1JBUWgUo4KeD6nou--
 
