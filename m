@@ -1,174 +1,238 @@
-Return-Path: <quentin.schulz@cherry.de>
+Return-Path: <paul@pbarker.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66A7ED5CC97
-	for <webhook@archiver.kernel.org>; Tue, 16 Dec 2025 09:39:24 +0000 (UTC)
-Received: from GVXPR05CU001.outbound.protection.outlook.com (GVXPR05CU001.outbound.protection.outlook.com [52.101.83.52])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.18713.1765877954352220369
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CF63D5E120
+	for <webhook@archiver.kernel.org>; Tue, 16 Dec 2025 10:35:55 +0000 (UTC)
+Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.19288.1765881352665381557
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 16 Dec 2025 01:39:14 -0800
+ Tue, 16 Dec 2025 02:35:52 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@cherry.de header.s=selector1 header.b=DmUgqiYa;
- spf=pass (domain: cherry.de, ip: 52.101.83.52, mailfrom: quentin.schulz@cherry.de)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=a8iYjDyIBMjtfbrCIN9uycKLrIrO0bNEps5M2GUf6ZeeoWbdxUmYgiF7ac1mQaAfzecyGfwGG5NALIdyWfzP0hyAJ6y6BxKiSeblx3Wkrysbb1kBn4JPDm9SPx7xW9SS+7kT9uqhviMhVZkuvNNhUU3Xwl1Ib2EGTPfDi/fIf+SmTkAbasvNrS1S2/5MFYy9F8att54b/UHDh/QcN0Z3sDoxJYVyLudyuFczU/5FV/oMalO0MMI+CsZ+QBIvNQ/UTv4nvgA/pSXSh5Sv8SI03x0ng/JMFVfIDk4zorK8nVG7J3ZsPi43pm0dVuhiZkCS/xmYb8NeEtApqHXbQi45eg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+zc96/BNQ6DDTcfE7g5pYBpvSwlGCKuAsX61LthXDck=;
- b=lbxo4pKEJMuCMhgStBB9BaScbApJKThRWablOfRduE20sISEKMiKmeG5tatzMyZZCvd40yRcnMqDgv2WHjUoNS8OjZ2bnj+wLfjWyFndI1/QqVum37D/dSqGJzvBZVzNoU+g7TfmLUCzz1Ce1f+jLoJOJo1aBNswDOm2UOEwpPly6J8bO62pplSVI2kr+eBwl6Vob4R/jUayeKatWUujtbcFsA1E2iMz3o7lflUbJkNAmORncMCItFiSTknrfF3VABYuhX9Aj3dd15kHh4Gu06mDEV+Ig/UbidEpYEmBEMb7wjyUDY3zB+e3QdQhmxT+uE0lKYe2sl316yRJIPVUfw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+zc96/BNQ6DDTcfE7g5pYBpvSwlGCKuAsX61LthXDck=;
- b=DmUgqiYaDCTwIk3S8VGtmEI4jVxzF2GjTjcBURG2NeMt091H3xecOnMoUO03ZMO5cXn/YpT27CrufP4nCm7XNqxw9SJ9Ae6wNw5LaAae4HaFGqdnXXK7CN1a1YxM77ftgOZvlYFcS/ToWTYhRU0bEqjCfqGlX5OGWc1hPurFqTM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from GVXPR04MB12038.eurprd04.prod.outlook.com (2603:10a6:150:2be::5)
- by PAXPR04MB8319.eurprd04.prod.outlook.com (2603:10a6:102:1c3::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9434.6; Tue, 16 Dec
- 2025 09:39:09 +0000
-Received: from GVXPR04MB12038.eurprd04.prod.outlook.com
- ([fe80::1033:5a9a:dc18:dad]) by GVXPR04MB12038.eurprd04.prod.outlook.com
- ([fe80::1033:5a9a:dc18:dad%4]) with mapi id 15.20.9412.011; Tue, 16 Dec 2025
- 09:39:09 +0000
-Message-ID: <c9e558db-8aa1-4d0b-bba1-451d038edbf1@cherry.de>
-Date: Tue, 16 Dec 2025 10:38:41 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [meta-dpdk][PATCH] README: change mailing list
- for patch contribution
-To: yocto-patches@lists.yoctoproject.org, meta-intel@lists.yoctoproject.org
-References: <20251216021516.2600042-1-anuj.mittal@oss.qualcomm.com>
-Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <20251216021516.2600042-1-anuj.mittal@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0263.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:e8::10) To GVXPR04MB12038.eurprd04.prod.outlook.com
- (2603:10a6:150:2be::5)
+ dkim=pass header.i=@pbarker.dev header.s=fm3 header.b=Ad1++/rG;
+ dkim=pass header.i=@messagingengine.com header.s=fm1 header.b=dlCZ9+HN;
+ spf=pass (domain: pbarker.dev, ip: 103.168.172.156, mailfrom: paul@pbarker.dev)
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id C0FC9140024A;
+	Tue, 16 Dec 2025 05:35:51 -0500 (EST)
+Received: from phl-frontend-02 ([10.202.2.161])
+  by phl-compute-06.internal (MEProxy); Tue, 16 Dec 2025 05:35:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pbarker.dev; h=
+	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1765881351; x=1765967751; bh=cMdaxqC8B3
+	1023+756sBI4gqU1gAcMq7VyXsnMWQjek=; b=Ad1++/rGV1etHGfyBbd59LxNaT
+	KQoRoKAcs1GxEYrOpCUmjID4EIIlPyiI/l2w+PXGUzl/aJzaGtyYvu8OoIKVn1fR
+	2kwjEfz+FEYN85Kneddf4uloLzXvvz852OH8uyMtHp6Qp8mQl6zIGqL/rckrj55l
+	OnpBeyXkudOxbg2xhTfpfz9wBRiUy98okvRnXKoj6aU1Yo3LAdCAUirFLe5ZaQat
+	ze93HIstaUjxkBjg1MuhpbARn1CHsaq34wPsfdh/On673BkxPPIIGcVxusb5qo4D
+	wgx2ZfJA8v3tNofo02ZDOtOJuvcb5Zzf6/kbQFT5QfbZK2RIEIyPm2BrCOhA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1765881351; x=1765967751; bh=cMdaxqC8B31023+756sBI4gqU1gAcMq7VyX
+	snMWQjek=; b=dlCZ9+HN06dkznSRdgTCtXlCXjXE2If1w9y8i1yd91b+tPgAKI6
+	d6hLfc0+4M3Eh2lvoI10b45BuGRLPXTr7zad1/iyg2j7MNJWAYLvbAu1x3y3N+pJ
+	iUPpzc9FEUVxx1yeIEvQKRkSI+t9QynqpxLti9JStgiS26lSGYqL2ry6rml7OyHj
+	bGxrosSI1NkmMQz8Lr5ybjf0mxwBWSon8NjbLHVsaH6CrWsEg7sW5tQlTjO5qcMi
+	HGYjzGLU0UKF+yAtGA+GSJ99ri10xOpyzwqSTdPuhEx08g49OlUszexIoVJCju0V
+	L9rc3GwDiumwycF8QJBMUI9VwipIMG+N25A==
+X-ME-Sender: <xms:BzZBaY0YYsES75GUt7HhXQDgklUq3SwqWs9IRt12fGjyg0qkgJQasg>
+    <xme:BzZBaTOjYGvw2eo8O3dCQwxROLd1GN3b69NgSesXzhj6eQGt16QhlWkSbz-1ZKsdh
+    r8Ex93s3mHtoXSu6gJLXhvnLDmsN6wo5K52N_uDVlAxpmEW0kgjeQ>
+X-ME-Received: <xmr:BzZBaY1YnKW3FVndmvHWsKxlHyKFB_jp3ssrM50PtkdzP8o5uZFnEW1CsrdVHb91QQZZL5H4RWMqXqf4WuibNP9BUEG3lTLTNbPzDnEUubtb>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdefleeghecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefkuffhvfevffgjfhgtfgggsehgtderredtreejnecuhfhrohhmpefrrghulhcuuegr
+    rhhkvghruceophgruhhlsehpsggrrhhkvghrrdguvghvqeenucggtffrrghtthgvrhhnpe
+    ejudefvdfhheevtdduledvleejieehieevffelhefffedtgfduvdevjeekheffhfenucff
+    ohhmrghinhephihotghtohhprhhojhgvtghtrdhorhhgnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomhepphgruhhlsehpsggrrhhkvghrrdguvghv
+    pdhnsggprhgtphhtthhopeefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeihoh
+    gtthhoqdhprghttghhvghssehlihhsthhsrdihohgtthhophhrohhjvggtthdrohhrghdp
+    rhgtphhtthhopegrnhhujhdrmhhithhtrghlsehoshhsrdhquhgrlhgtohhmmhdrtghomh
+    dprhgtphhtthhopehnihgtohhlrghsrdguvggthhgvshhnvgesohhsshdrqhhurghltgho
+    mhhmrdgtohhm
+X-ME-Proxy: <xmx:BzZBaaEiS0bJ_qRH7tOlxvOu8Q78KxeWWbRZyjTKCUtTlTGTJ1SqMg>
+    <xmx:BzZBaV5ycGcxV5l2vGTxbnBHP9PWxdXkJ_3qZLtvSxz2r158I7y2ZQ>
+    <xmx:BzZBaQs0ad0vKDj5vJiY8N87afdyKsQWZkPcUy_53HJtVOANOhZ--A>
+    <xmx:BzZBaW5A8vt2TkT48cxmL9J4NDz9vCvHPsTXuUIQSuNsW2xDome2Mw>
+    <xmx:BzZBaZUfLwHSyxlqpYRnnNuh91HCe-R7JlTftl7sR1TOKHg4SGo_JItX>
+Feedback-ID: i51494658:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 16 Dec 2025 05:35:50 -0500 (EST)
+Message-ID: <a59d61cd0637cbc09b44cdaf2044b15ca550ad3d.camel@pbarker.dev>
+Subject: Re: [yocto-patches] [yocto-autobuilder2][PATCH] config.py: add
+ meta-qcom to layers to be built
+From: Paul Barker <paul@pbarker.dev>
+To: yocto-patches@lists.yoctoproject.org, Anuj Mittal
+	 <anuj.mittal@oss.qualcomm.com>
+Cc: nicolas.dechesne@oss.qualcomm.com
+Date: Tue, 16 Dec 2025 10:35:44 +0000
+In-Reply-To: <20251210024150.379272-1-anuj.mittal@oss.qualcomm.com>
+References: <20251210024150.379272-1-anuj.mittal@oss.qualcomm.com>
+Autocrypt: addr=paul@pbarker.dev; prefer-encrypt=mutual;
+ keydata=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
+ ep0k17xg==
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-ZgTKhhF4M+kUZ74n5dSM"
+User-Agent: Evolution 3.52.3-0ubuntu1.1 
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GVXPR04MB12038:EE_|PAXPR04MB8319:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4b66c00e-e5f5-4988-0ff5-08de3c86f6bc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|10070799003|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?Ym4yL2F2bDFXQ1hkODdhNFUxV002aWJQU1U0N2tMMHgwSWxUTUI0WG0vTlZu?=
- =?utf-8?B?bmRTWUF2c0NWeTA4dEhpWjU4U1dBc0ROazlveEQ3d1BBc3FEV0JsN0hWZ3VK?=
- =?utf-8?B?ZTBTVjJQQk5heG9pZ2pIbGNNWkM0VlNVQURZRm52ZzhHNTN5cWttaE1XVDNo?=
- =?utf-8?B?ZkZ2bXJXMStFUHZwRFJxUnhib0JsOVFHbkViUEpaYk8waWhFSWVKTi9CNzd5?=
- =?utf-8?B?dVBaQ2plQ2FqMnZ3TEFlL1B3U2dFRGxsVHB5cVZlejc0MzNJZ0NyODFhLzI0?=
- =?utf-8?B?U0lvK0FzOWFET01obGc4TnNObzZrUFJrOGhtVi9yR0RxVFRVckJTQmhvV2RR?=
- =?utf-8?B?b2hZK042SmkvZ1Y0QzIxYVVMWjJzT1BsRFZEdDdPSHM0N3JEd2FtWTVFSmhm?=
- =?utf-8?B?dExEVzRNUHYvcktjOGMybTJJQUxZQThnUC9aaDNPKzhVa2toakRnZFl4ZFRD?=
- =?utf-8?B?OTRtU1AyN1c1YUtyVUwzN054b3F5UkJNeEwzVWppUmJPbVU4ZHN3c2dyN2NH?=
- =?utf-8?B?dmZHaCtUVVhDTjIwTGp1RGZGWWhwNDRmbTdvZTRlNm85NDI5T2xLb2JuMDFk?=
- =?utf-8?B?QUNvYXBBT3Mwb0VuNHJIbmk5TWltUzRGempsM2xaUi9qcURTaG1sYnB2clRK?=
- =?utf-8?B?S2JZYjkvaG4xQmt0THpBM08rS0lMaGNaUkZkK0FWd3RGK28vUHVWOHRtZTdn?=
- =?utf-8?B?WlgwNHJFNFZaUlViR2x4eHhNRHg4S1ZGTTU3b1VnL0tDdHZyVENxSC9RZlV4?=
- =?utf-8?B?aDRQNmNMVlpFZEFnZVhTdUFxZHhIUy9LNU14SWJISEgxbXo4b1BLa2dzek95?=
- =?utf-8?B?Vkh1N2o1eG1PK0hIWmdHVHpIL3pJb0tSb2gvNkVQeTUxVGlMRlFVMDJXZGpy?=
- =?utf-8?B?aU5PZDlZRmIwaWJiTGJqSUgvQ01tTk5PVlBKcTA1eGttb3NjOFVOQXBCR2JP?=
- =?utf-8?B?NkkxRWtNRnlHaHVCazEvUTFZZ2tzZW0wM0YxN2VPNDlFdi85c29GNW9WMWhS?=
- =?utf-8?B?cHMzazBsL0xCSDVwVmF0Qk8vL3Jtb21xYm5TSVhqRXdlZ01wZnBYVDErc3pL?=
- =?utf-8?B?ckZzUncyU3JIdXByVnZIZXBpN2dQSkcwNTVlVmxxZEcvekRrWmpQYXEwQnpv?=
- =?utf-8?B?cEZPUkVyUmgzNTQvSFhpWnl2WENhZEliME1VNjhnVk1HUm9ZY1NXNTlNZGM4?=
- =?utf-8?B?bkJPTlp3UURQcmZVS3I2SmpvQzFGWHJueVBFMnFEL2VJQ21yVld0WFRGN3cz?=
- =?utf-8?B?S0FyRTlPTnppKzhjYUNaUVhjT2RDYmgyTld1blJ0RzB6cWxlZmF2V0gxSWpB?=
- =?utf-8?B?amd3b0NxeTNJcHZBQ1R4ZUxsYng1OUxxTE1MdGtseTRleW9jd1NGT2FjOGZO?=
- =?utf-8?B?bUthYWRHOEZWeDB5T1B5ak03WTBES3NvNGNub1lpckhLMkNDNTdVV1dZWnky?=
- =?utf-8?B?NERzYzViL0J0bVZ3eGVWOVgzZ2dpM3BZZERmY2F1Vjhwd1V2R2E1aXkybW1s?=
- =?utf-8?B?UFRSbm4ydE9KUGMvUnZSUXhRSERYM2NsUmUvSHRBajRyNHdMdTY4Y25mdUZJ?=
- =?utf-8?B?SVZpdEY1Q0dxY20xRWRpQ2NUZ05vQ2JlczlJKzFBd2hkVm5pTVd0b2JLZlp2?=
- =?utf-8?B?dDRFUURzUEh3M2JJQ05VWDhUcGpwTFdDN2xlbFFuZitISlFBTlFBTG5hYUtj?=
- =?utf-8?B?Z2NYWjB1MXdORTVHQmxxRVpRMDMwVm9lS1duQ214NEhpb09BSXgySC9UVGRB?=
- =?utf-8?B?WDh5N3BjTXl4VUtBOUZBdy9RWmhjdlZoTFlxaVBOZ2Rlcjl0Nk5oUTJTck1h?=
- =?utf-8?B?b2piaGdoYlhkd0lmSEQ3ejFGeDRLQUMwRTg1eFlYckZ5ZkZqdEkzeDU4S2RC?=
- =?utf-8?B?RnFDTjZsTHpCQ3lZUGhHYWltR1Iwc2d3R0JRMjNneEsyaWc9PQ==?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GVXPR04MB12038.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?V0h4d25NckY5SnF4VEVEMWEzaWNyd3F1MGpNdUYwaFpJdFFxK2lNcGtCWEdn?=
- =?utf-8?B?bjJwcVUxUjRuQ0tJbTYyUFhxOTByN0pHWG0vbUpSVndpYllrQzJPTW5kVTBI?=
- =?utf-8?B?YS9QdUtyLytXVTRtMkgzQTg1YXhOOXhBS1pSMFdjZmJXbjFQcG5BOTJDQUg0?=
- =?utf-8?B?WGpJSmhBUVZLUGtQVlV2bUxNMTBvWHBsVmFZMTZXSkhDckEzRDI0alBRdGRo?=
- =?utf-8?B?MExyR2sxZUsralYwTWdHalUrTkdReFU2WTlQQTFSank0dHYzZVl0RjdOV1Vz?=
- =?utf-8?B?RU4vUUE0ZnJVOFRVbzJ2WFNsWnZWSEJLKytCWXY1cGtRL2RSQzFBZG5NWDRO?=
- =?utf-8?B?a2NYa1ErZWZROENnMkR2U0dhbDR0akYza2hOeWtVTW1mbzZ5dkJjcGpqS3lI?=
- =?utf-8?B?aFFycEpydDlUQ0lheXhlY2RlVHc1QU9ZRmtEcmdDbnlRMC9ScnpHVzZLVU92?=
- =?utf-8?B?MGdYd0dUNWZwbmt0cDY5S3JKblJqUjhFaGpFQTEwZ0ZCcFJjcDdackdoVENz?=
- =?utf-8?B?cG1ZNmdtM0VBTC9aMS9YNDl6NGJwVFVrSG9IYXljZ3pwcHlhVnprMk5YNG90?=
- =?utf-8?B?bHIwdjhQOWhnM3F1ODBtTVY5NzNkR0h6V2JYa3VlbkgzUE5NNXJXV2I2UnRK?=
- =?utf-8?B?VUx6WGUrK0s0Q3UxQUYra3VZaEJ4bGdRYUdCS1BwQmQyUnJzbTBiN05XMm96?=
- =?utf-8?B?SzZXbTlhMWpJcW5wUU5POWQ2dklua3JLeU9icy9XdGFPMW4yYzZkQVFha2Zw?=
- =?utf-8?B?SjgrdFhSVnJud3Ezam14N3dObk5DZXN2RlpSb2R0WHdTWEtRRkhWdVlaZkhu?=
- =?utf-8?B?ZU5PTm5CM2tNUk1xcEorNVhUamlVUFBTUWxHNGl3TzZPdjNxd0NWNld1NUoz?=
- =?utf-8?B?aEpDYS9EY20xRkFYckhwaVhCcG9xWCs1S29mcDVJd24vc0E1WksrcFJFc2h4?=
- =?utf-8?B?cytzQ1cvMkNWRXJJbzUzN1h6RjJmZTNzSk5PcnBXR21xVkhPSmZBbVduK1N4?=
- =?utf-8?B?TTdCSzYvd3M1dWpzQ2dkZ2N5dXltK29KaGd4bndUYUw2VjVZZDBkVWNkN3h2?=
- =?utf-8?B?czhSVXZheFA1WkdGamFJbjk4UURQYlBMUWNMNXNZREJXY1FHNXAreVFtZEU0?=
- =?utf-8?B?aXJha1p6OTFHY1NFVXMvS1c3aWpoWWJvL3lNY0UwdDE2a2dueDRLNmVGWEJv?=
- =?utf-8?B?NzJFYUhSL3ZIQXNwNm1MU1JzRlMrdnp4ajIwbU5jWFdNL0k4OWF3UU1MWXdq?=
- =?utf-8?B?UW94U0hwMEpuN3l6TWJNamgyLzZKdm1MSjdXMWVqaTduS2g1MDkrUkJqREpv?=
- =?utf-8?B?dDhqeUFWUXZyNkE5dFlSa0lmQnQrREdRUnRySzdRbUwybGdiMzVUa2xraE9J?=
- =?utf-8?B?cVFRMkkwYUE1T1dHV2ZWZzBWdlJjM0JKZXY0N3pWT2M2UGxvaHhieE5wbWVR?=
- =?utf-8?B?VFpyTTh5eFZ1MXRUUHYrc0tGS0lLZm1nRXpwREJpUmpjTGxwYVdhbktpeStU?=
- =?utf-8?B?Nm82WWlMeHM5b0pHcStVZUdkdTJBVlg0UHFwOG1hUThnNUhtMGpXMzRaNG4v?=
- =?utf-8?B?eEg0UzFEa2YybXR3VGNaUkJ0dTc2enI3dHBJOGhNVVQxVTI2WndMM1Iwa21K?=
- =?utf-8?B?ZTc5TnZQcXd0UUNwVVpobGxFYjFsMWtHaTdVTDUvckUyQ1o0MGdjZzZBRG9D?=
- =?utf-8?B?L1F2ZmwwU1ozVlNIMC9WUE5zK1puaEF1Mm9LeURFVmRtRTRxLzdkMXVyaFVV?=
- =?utf-8?B?Ky9jQS9Ia3Jxa3RVOHRJWSt5VXppbEYya0VwMXNOdkZ2cnJYdlNoWDFaL3Fx?=
- =?utf-8?B?NkdObWtSSVhWUmhzTEdQOW9yOUoxRklLRTJnMm4yZUpUNk9VSmVYem5UUllQ?=
- =?utf-8?B?UWhoeGtHd1pCUGQ5SW5uR1BhN1lkRktTOTlhZ3JubFlYb0o2SDVsKzdaWDJS?=
- =?utf-8?B?OTJZakNpVWNuRmpDTE1qdVEydXZUa3RUVm03ZmVUY0taeVZGQXA2SC9GMy8y?=
- =?utf-8?B?SGVKNUpWRkI2Y2lTc2hSMnRaL3pUaWNoR2J3K0swOWhqQXVaeUNLRExibGNh?=
- =?utf-8?B?VEZTYmVEeFZ5UDM3Q0phU2djUGZ3VFppNE1zT09ua1duYlFQVkxqTlp4aU9Q?=
- =?utf-8?B?QUJmQzlyTFA1R3luRDBXczA0ZVVBVDRpSGREeWxvN25sa2lqa1RtRkxOZ2lX?=
- =?utf-8?Q?l2JVQvDZwje4uqDvzX7Vk6c=3D?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4b66c00e-e5f5-4988-0ff5-08de3c86f6bc
-X-MS-Exchange-CrossTenant-AuthSource: GVXPR04MB12038.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Dec 2025 09:39:09.6759
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zGs4EIvrjolGlbnSi/9sqEM7lkaVBTktEyaEo/qnMMGxoXlONdVHGunhpRLehBtXQDCY3vZ03MThfEPnERKXol9EMs6dmluivF3W32AREjs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8319
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 16 Dec 2025 09:39:24 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2798
+ <yocto-patches@lists.yoctoproject.org>; Tue, 16 Dec 2025 10:35:55 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2799
+
+
+--=-ZgTKhhF4M+kUZ74n5dSM
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, 2025-12-10 at 08:11 +0530, Anuj Mittal via
+lists.yoctoproject.org wrote:
+> From: Anuj Mittal <anuj.mittal@oss.qualcomm.com>
+>=20
+> Add builder for Qualcomm BSP layer meta-qcom and include it in a-full.
+>=20
+> Signed-off-by: Anuj Mittal <anuj.mittal@oss.qualcomm.com>
+> ---
+>  config.py | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/config.py b/config.py
+> index 2408602..07cf403 100644
+> --- a/config.py
+> +++ b/config.py
+> @@ -8,7 +8,7 @@ baserepos =3D ["bitbake", "oecore", "meta-yocto", "yocto-=
+docs", "poky"]
+>  # Repositories used by each builder
+>  buildertorepos =3D {
+>      "a-quick": baserepos + ["meta-intel", "meta-mingw", "meta-gplv2"],
+> -    "a-full": baserepos + ["meta-intel", "meta-mingw", "meta-gplv2", "me=
+ta-arm", "meta-aws", "meta-agl", "meta-openembedded", "meta-virtualization"=
+, "meta-clang"],
+> +    "a-full": baserepos + ["meta-intel", "meta-mingw", "meta-gplv2", "me=
+ta-arm", "meta-aws", "meta-agl", "meta-openembedded", "meta-virtualization"=
+, "meta-clang", "meta-qcom"],
+>      "non-gpl3": baserepos + ["meta-gplv2"],
+>      "meta-mingw": baserepos + ["meta-mingw"],
+>      "meta-oe": baserepos + ["meta-openembedded"],
+> @@ -18,6 +18,7 @@ buildertorepos =3D {
+>      "meta-arm": baserepos + ["meta-arm"],
+>      "meta-agl-core": baserepos + ["meta-agl"],
+>      "meta-aws": baserepos + ["meta-aws", "meta-openembedded"],
+> +    "meta-qcom": baserepos + ["meta-qcom"],
+>      "meta-clang": baserepos + ["meta-clang"],
+>      "buildtools-docs": baserepos + ["meta-openembedded"],
+>      "qemuarm-oecore": ["oecore", "bitbake"],
+> @@ -100,7 +101,7 @@ trigger_builders_wait_full =3D trigger_builders_wait_=
+shared + [
+>      "oe-selftest-debian", "oe-selftest-fedora",
+>      "qemux86-64-ptest", "qemux86-64-ltp", "qemuarm64-ptest", "qemuarm64-=
+ltp",
+>      "meta-intel", "meta-arm", "meta-aws", "meta-agl-core", "meta-virt", =
+"qemuarmv5",
+> -    "qemuarm-tc", "qemuarm64-tc", "qemux86-tc", "qemux86-64-tc"
+> +    "qemuarm-tc", "qemuarm64-tc", "qemux86-tc", "qemux86-64-tc", "meta-q=
+com"
+>  ]
+> =20
+>  trigger_builders_wait_quick_releases =3D {
+> @@ -147,7 +148,8 @@ builders_others =3D [
+>      "edgerouter", "edgerouter-alt",
+>      "oe-selftest-ubuntu", "oe-selftest-centos", "oe-selftest-opensuse",
+>      "non-gpl3",
+> -    "meta-webosose"
+> +    "meta-webosose",
+> +    "meta-qcom"
+>  ] + old_arch_full + riscv
+> =20
+>  subbuilders =3D list(set(trigger_builders_wait_quick + trigger_builders_=
+wait_full + trigger_builders_wait_perf + builders_others))
+> @@ -283,6 +285,7 @@ builder_tags =3D {
+>      "meta-aws": ["layers"],
+>      "meta-agl-core": ["layers"],
+>      "meta-virt": ["layers"],
+> +    "meta-qcom": ["layers"],
+> =20
+>      "musl-qemux86": ["musl"],
+>      "musl-qemux86-64": ["musl"],
 
 Hi Anuj,
 
-On 12/16/25 3:15 AM, Anuj Mittal via lists.yoctoproject.org wrote:
-> [You don't often get email from anuj.mittal=oss.qualcomm.com@lists.yoctoproject.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
-> 
-> From: Anuj Mittal <anuj.mittal@oss.qualcomm.com>
-> 
-> yocto-patches is a more appropriate list for meta-dpdk since this is not
-> Intel specific.
-> 
+This patch was discussed in the TSC call yesterday. We need to make this
+change in two stages:
 
-I don't see any mention of adding [meta-dpdk] subject (and how to do it) 
-so that a patch sent to the ML is known to be applied to that tree? See 
-https://git.yoctoproject.org/meta-rockchip/tree/README#n251 for an example.
+1) Add meta-qcom as an individually triggered build.
 
-You may want to add a .b4-config, see 
-https://git.yoctoproject.org/meta-rockchip/tree/.b4-config for an 
-example. See https://b4.docs.kernel.org/ for documentation on that tool :)
+2) Once this is confirmed working, add it to the a-full build set with a
+   follow up patch.
 
-Cheers,
-Quentin
+Could you re-send just the changes for (1)? So, no changes to
+buildertorepos["a-full"] or trigger_builders_wait_full yet.
+
+Best regards,
+
+--=20
+Paul Barker
+
+
+--=-ZgTKhhF4M+kUZ74n5dSM
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iIcEABYKAC8WIQSzjPXf5Y1BDWhU2iCrY1Tsnbr0bgUCaUE2ABEccGF1bEBwYmFy
+a2VyLmRldgAKCRCrY1Tsnbr0briDAQCmoMp7kxvIxdW9oJLtlEZRx4+BAruDfPbc
+Fadfg120QgD/Z2GgXYOMtBFvsrZuRJwNbGOdLZ9NV8SaB1dh5OTjUA4=
+=TY4+
+-----END PGP SIGNATURE-----
+
+--=-ZgTKhhF4M+kUZ74n5dSM--
 
