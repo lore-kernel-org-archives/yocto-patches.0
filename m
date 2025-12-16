@@ -1,130 +1,169 @@
-Return-Path: <anuj.mittal@oss.qualcomm.com>
+Return-Path: <paul@pbarker.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7BFDD5E14A
-	for <webhook@archiver.kernel.org>; Tue, 16 Dec 2025 12:50:55 +0000 (UTC)
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.21641.1765889450897064561
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D44BD5E39B
+	for <webhook@archiver.kernel.org>; Tue, 16 Dec 2025 14:50:36 +0000 (UTC)
+Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.24269.1765896634299335924
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 16 Dec 2025 04:50:50 -0800
+ Tue, 16 Dec 2025 06:50:34 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@qualcomm.com header.s=qcppdkim1 header.b=HGxLGB/r;
- dkim=pass header.i=@oss.qualcomm.com header.s=google header.b=Urzdb4hJ;
- spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: oss.qualcomm.com, ip: 205.220.168.131, mailfrom: anuj.mittal@oss.qualcomm.com)
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5BGBvDkF2810486
-	for <yocto-patches@lists.yoctoproject.org>; Tue, 16 Dec 2025 12:50:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+gfet/EqfiUfAJvEcNQCm6JwzOUSWNDej4fOIy38vgA=; b=HGxLGB/r1fMSxeTn
-	L4/k4BaIMUQW6klsovUybrTWfNt5fUzNll1jSD6ycqz1FurpETQMIbzkfX+Y2+VG
-	Zpw0zEjuvMv/ADatBZxaI5gcBuCQm+U/nd01TIriqc8DyxYT3QHUZDyUOOdzs/mV
-	cHNV6wngG3Nyt3yOiT+blF0XcHu1YMQrnv+zvBxMoDW5uIsNJHqdXSYGaHW6A2Q7
-	iSwKp68pmm5rvIrOoxQfphl8bysZS7x4+rCwbGEjkLPSa6zteg/z7+PoLl+X2qLC
-	BAZx3k+GPvByKH7MD9PGLL220qitKLZqIMgY7tdGTNZ7jciwgucUjhyOp8nSU8Yl
-	GE19yw==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4b32gasdce-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <yocto-patches@lists.yoctoproject.org>; Tue, 16 Dec 2025 12:50:50 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4ee0c1c57bcso167159061cf.2
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 16 Dec 2025 04:50:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1765889449; x=1766494249; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+gfet/EqfiUfAJvEcNQCm6JwzOUSWNDej4fOIy38vgA=;
-        b=Urzdb4hJUz8b8GFliSZ/Kuove0MvSJ2Er0jvLKjWEW1Cp39i5ZtCXKmp5ztUcRmDTP
-         jhqNYyGeAVqhydtCJutQOGhlUX5CsUqCqK3MumFJ8YrZL2KwbeOQMI0b9If08k9q1KNv
-         8p6BOPz2zHqQCq/k5ftMnJrMA1zxC8tmNlxFhZyEuiXfAU11F50IRgrOzhoyPIZfio7P
-         YVzi1RDJtoNXKD3HZ3aMayRhdzNu3XvTMdE9dAEmB9fYgFmSB0GO1zSCWXLhkwaHHoMp
-         IsaoZaYokYfpJeuPJ+PCQVSIEsuKThc2Ikgn63cAoOtMbwQEYqKELb5/ilG43gdgvlcw
-         Kx3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765889449; x=1766494249;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=+gfet/EqfiUfAJvEcNQCm6JwzOUSWNDej4fOIy38vgA=;
-        b=i0TjjQkpH7ZyRManoW9MaqxopKYzaonGR99bZet0Olb0jNaOqG/TJCpCKzXFKdKSNl
-         P55pHvHY+05T+POnS8kwSfRIxMqTkS7JCHSqt+T5zd79uRrTkT6UjlwnCifoT+cDH8iR
-         4Od7EFyovdIcy3xR2F0Iaqk60m/jVr8MI2Rsd/j7Q2pTsIhWGDVoPRvyXoNn6m7GkGRt
-         fnrU5f75E8uvOJvcUCL8bYJyggpC6twa/ZBc1pIqmo/8yRdhE2ckuE1QSPZi8Udhi9DP
-         GfBsXZ0fo7g9E3A9f1TpSr6OtFzkF3wN7E0NNIKXilHRa2pOfKeFOBjrXegafVornhH+
-         0ahg==
-X-Gm-Message-State: AOJu0Yy1ZKMJgX208ijOcJRXq7LHNON8RGB09Dk7IsXBPNZe6i6d+igc
-	/h9XoWbcqohP22k/mserb3WPBdwMlZgrHqwkOvb3P8AvGirO+dkP6eBX1UzxwpDvyOavIOtrfgH
-	SXNsai6bDKpp9merALbygnPUOXWfz+Pk3QDrih772r9KtVehYVHSOosy7xPJHpz+iqv1Lu0b4fg
-	31MPpAdXWB5ZVToUq6foQqeE5+DwhbsuXp/jaaJ3ggoFRCDq8HbKh7iOEslDCpl3I=
-X-Gm-Gg: AY/fxX5EagwbnVc6TBCa4h0dZcjMZnzmDpZaQKU3MfSL+sJqzDa4jE+CzSR46KqHjkP
-	NUaZ2jSL3fWxyTBRF8UU+AAUdz3zY84ChNJ20FK02MOJ2/xKm7bM9q1Bb7/1zXE+xK3rEnhu/YK
-	/O9UfOp3Q3A/JuRUbcbnncARhSbDqpRRxVvgs/dRygDQa1WK2z2S1ZJRAvxc6i58nV
-X-Received: by 2002:a05:622a:8c8:b0:4ee:19f2:9f1b with SMTP id d75a77b69052e-4f1d04fe751mr192867531cf.37.1765889449359;
-        Tue, 16 Dec 2025 04:50:49 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHD07XUkcTBJa0SsqynsfMDYnjRsTcfJTEBngC9Tu75iq/xfD7rQIsHu6M4ygZy7RFNjvfNpuG/G92szrZK0cQ=
-X-Received: by 2002:a05:6214:3f8d:b0:88a:4ab2:5f52 with SMTP id
- 6a1803df08f44-88a4ab26055mr15967256d6.51.1765889112147; Tue, 16 Dec 2025
- 04:45:12 -0800 (PST)
-MIME-Version: 1.0
-References: <20251210024150.379272-1-anuj.mittal@oss.qualcomm.com> <a59d61cd0637cbc09b44cdaf2044b15ca550ad3d.camel@pbarker.dev>
-In-Reply-To: <a59d61cd0637cbc09b44cdaf2044b15ca550ad3d.camel@pbarker.dev>
-From: Anuj Mittal <anuj.mittal@oss.qualcomm.com>
-Date: Tue, 16 Dec 2025 20:45:00 +0800
-X-Gm-Features: AQt7F2ovrav2Fnf4LNiMQsBR4DI5urBX7CEAZg0BOVEgxHVp37nYEkXZ4KQCSTE
-Message-ID: <CA+s=J=yfW49FP_M+98-D2f6RV7bEob-0ScqNXXr26ZgDiOOBnQ@mail.gmail.com>
-Subject: Re: [yocto-patches] [yocto-autobuilder2][PATCH] config.py: add
+ dkim=pass header.i=@pbarker.dev header.s=fm3 header.b=el5JOBfe;
+ dkim=pass header.i=@messagingengine.com header.s=fm1 header.b=R4DJHw9w;
+ spf=pass (domain: pbarker.dev, ip: 103.168.172.159, mailfrom: paul@pbarker.dev)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 6EE2F14001E1;
+	Tue, 16 Dec 2025 09:50:33 -0500 (EST)
+Received: from phl-frontend-01 ([10.202.2.160])
+  by phl-compute-03.internal (MEProxy); Tue, 16 Dec 2025 09:50:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pbarker.dev; h=
+	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1765896633; x=1765983033; bh=EY3w0UMn7G
+	1iB7S/FgQPfMvcSmt+WtZhCFOfDG7FESg=; b=el5JOBfed3+y4dmnj0haZ9c9sz
+	jtHuvtxSKdEpzTT3Zdeg5h+HEqYWtwkKNs9HP9gHwlGRq14NwD3OdYnL9PeZC9DY
+	L6DBSSvr8Ge8YVyGN9llBMmEW4Lte2/dFqvy0TAKHIC91l/NZH1qsEkkCe9Bc/8C
+	tLUSal5ej8ofx33jBX3DsSxOZHVQKp8ag0HqFTt8GR9t09RQDb5Lm1N26ERjeDiA
+	Bjxak7Hf0Qppz0gtALNzKk42/heO55pNCX/cwcmayn9IiqneVwGVJe10XqaPtBeO
+	XUBPXWEagNRHJ8NmmYswjbN73BJVKJpnycck/VvxYIEGBUCpuw9kvL+g6wiw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1765896633; x=1765983033; bh=EY3w0UMn7G1iB7S/FgQPfMvcSmt+WtZhCFO
+	fDG7FESg=; b=R4DJHw9wTKLZ0F4RA7I48rvElZ+hgIA+/jEBR+pnRnHjQ38TOK5
+	/nWMTBWRndn1QGGJbAM3oU5PFU1iONHaJW2KwJtVzEc5akczi/DYu/QKX8k4jWIX
+	sjD6ed4Ez/LHjtswlyw09UCTUW0415RF0hg1m5AOMKSLtGtG6D1Tk843OhLauA0W
+	ryBdyME/INfr+BWeWaMMASeJ5aM+AYBzvHIixGN9o6jFkBR+Qc58BAuxDZubUU9r
+	D0CBcT0UjbRRDCGSq62PZTuDXmIPSiJhKZhAUGF9T9NoR59z1aVWQvnLWsgPtrz5
+	chfnkBv1BcEutOkHsJoBt5Tj5ynOz62vLAA==
+X-ME-Sender: <xms:uXFBaVg5TczFiQKNBzV9hoCwKJmxmB8EqoQI6-a9QqbMWH5iyhGV-w>
+    <xme:uXFBaRz-UHRLmbSb8RqRGkt5G7opSyLEjp9nnUKNigwGXSHgg41lU0bt9lsqsaKGc
+    GxWncNFYTGUw6fg8sGaiiD-iOPxIX57rY185_Q-4V_v325nJex1cXE>
+X-ME-Received: <xmr:uXFBaYLV-j4Dnlru4TQr1JBh8gDquYfmTjULZk959AeQ1s1pye3NaZr8VBJXJ6W8U6YlY9FeDRPbamSaT3CK-frSfbETJtDJKHK-3-_JssZx>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdefleeljecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefkuffhvfevffgjfhgtfgggsehgtderredtreejnecuhfhrohhmpefrrghulhcuuegr
+    rhhkvghruceophgruhhlsehpsggrrhhkvghrrdguvghvqeenucggtffrrghtthgvrhhnpe
+    ejudefvdfhheevtdduledvleejieehieevffelhefffedtgfduvdevjeekheffhfenucff
+    ohhmrghinhephihotghtohhprhhojhgvtghtrdhorhhgnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomhepphgruhhlsehpsggrrhhkvghrrdguvghv
+    pdhnsggprhgtphhtthhopeefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeihoh
+    gtthhoqdhprghttghhvghssehlihhsthhsrdihohgtthhophhrohhjvggtthdrohhrghdp
+    rhgtphhtthhopegrnhhujhdrmhhithhtrghlsehoshhsrdhquhgrlhgtohhmmhdrtghomh
+    dprhgtphhtthhopehrihgthhgrrhgurdhpuhhrughivgeslhhinhhugihfohhunhgurght
+    ihhonhdrohhrgh
+X-ME-Proxy: <xmx:uXFBaYQ1CcdJNNW1ttC9ijMt7x9BKpu_B-slqlnoW4ejuJSoqzGd2Q>
+    <xmx:uXFBaQprg0B7c6GINq5Cu3u-iCRUR_vA1OsvT-Me6C9ecs9v0pidew>
+    <xmx:uXFBadpPhkbwH1kE3GguxFBEYfMleuGvNEj5nUZ4vUvjVMr-O-cD8g>
+    <xmx:uXFBaaPpz8msnChkYll8AV1h79ZXgdy11Jp4oG7wsME1bmDDraTRpw>
+    <xmx:uXFBaXH8qcvAiBgQOenZhQ7mKd0xhLxjUVoqP-mg124AO5WP6VCa7Mf8>
+Feedback-ID: i51494658:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 16 Dec 2025 09:50:32 -0500 (EST)
+Message-ID: <ae85a91f90b249465bb6169bf5d109ac32869873.camel@pbarker.dev>
+Subject: Re: [yocto-patches] [yocto-autobuilder2][PATCH v2] config.py: add
  meta-qcom to layers to be built
-To: Paul Barker <paul@pbarker.dev>
-Cc: yocto-patches@lists.yoctoproject.org, nicolas.dechesne@oss.qualcomm.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Authority-Analysis: v=2.4 cv=Vcb6/Vp9 c=1 sm=1 tr=0 ts=694155aa cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=IkcTkHD0fZMA:10 a=wP3pNCr1ah4A:10
- a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22 a=foCVyA4svL5jPZxvdroA:9
- a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22
-X-Proofpoint-GUID: 2ZGL0cJygvYdLROppAfWkaZQIukXEI5g
-X-Proofpoint-ORIG-GUID: 2ZGL0cJygvYdLROppAfWkaZQIukXEI5g
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjE2MDEwOSBTYWx0ZWRfX2TM8Gr4LeFGC
- iaOGuWgjd+5zsyyBOeiCKDTBnFAramDSvb/IsvIsleZmzIGXDqxPGtVCBYuNX2ePJvidQPXmJU4
- 5PNsebp1w1ijmZUAeZkCaC9NMIfBqfM4lPhECu/fqyvz/QVHAaytIZA7DCDvjJ01Q15wCuH3BDj
- fo20OoyhAQEM6PY6V0GIl8SN4IutJAhZwxzNrUyONYlcqfvmgFWM4dUCMorCVH5ILQtzGMVhNrR
- 1gmfa1g4YQhsC697hTNFj16dMpFgcGFMBu25qCCmnHYxDgWLeW2HuoNKWzNBlmjmyOGBGk01iUx
- /0k439Wt7GBZRHtUI6O8ydpwVuoFwm2rnuzQkBTdX42qA1+tvCnxptTWmB0XkoNku2v/RFKcV7W
- xBWtvv7by31eHP5WaitpwWUTeqVzsg==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-12-16_02,2025-12-16_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 priorityscore=1501 adultscore=0 lowpriorityscore=0 spamscore=0
- clxscore=1015 impostorscore=0 phishscore=0 malwarescore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2512160109
+From: Paul Barker <paul@pbarker.dev>
+To: yocto-patches@lists.yoctoproject.org, Anuj Mittal
+	 <anuj.mittal@oss.qualcomm.com>
+Cc: Richard Purdie <richard.purdie@linuxfoundation.org>
+Date: Tue, 16 Dec 2025 14:50:28 +0000
+In-Reply-To: <20251216124336.2902015-1-anuj.mittal@oss.qualcomm.com>
+References: <20251216124336.2902015-1-anuj.mittal@oss.qualcomm.com>
+Autocrypt: addr=paul@pbarker.dev; prefer-encrypt=mutual;
+ keydata=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
+ ep0k17xg==
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-jA81JxAbJ1SDSNW+0xMJ"
+User-Agent: Evolution 3.52.3-0ubuntu1.1 
+MIME-Version: 1.0
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 16 Dec 2025 12:50:55 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2802
+ <yocto-patches@lists.yoctoproject.org>; Tue, 16 Dec 2025 14:50:36 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2803
 
-On Tue, Dec 16, 2025 at 6:35=E2=80=AFPM Paul Barker <paul@pbarker.dev> wrot=
-e:
-> This patch was discussed in the TSC call yesterday. We need to make this
-> change in two stages:
->
-> 1) Add meta-qcom as an individually triggered build.
->
-> 2) Once this is confirmed working, add it to the a-full build set with a
->    follow up patch.
->
-> Could you re-send just the changes for (1)? So, no changes to
-> buildertorepos["a-full"] or trigger_builders_wait_full yet.
->
 
-Thank you, I've sent v2 with these changes.
+--=-jA81JxAbJ1SDSNW+0xMJ
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
+On Tue, 2025-12-16 at 18:13 +0530, Anuj Mittal via
+lists.yoctoproject.org wrote:
+> From: Anuj Mittal <anuj.mittal@oss.qualcomm.com>
+>=20
+> Add builder for Qualcomm BSP layer meta-qcom that can be individually
+> triggered.
+>=20
+> Signed-off-by: Anuj Mittal <anuj.mittal@oss.qualcomm.com>
 
-Anuj
+Richard merged this and I was able to run a successful build:
+  https://autobuilder.yoctoproject.org/valkyrie/#/builders/113/builds/1
+
+You can go ahead and send the a-full config change now.
+
+Best regards,
+
+--=20
+Paul Barker
+
+
+--=-jA81JxAbJ1SDSNW+0xMJ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iIcEABYKAC8WIQSzjPXf5Y1BDWhU2iCrY1Tsnbr0bgUCaUFxtBEccGF1bEBwYmFy
+a2VyLmRldgAKCRCrY1Tsnbr0bqjWAQC3xW/hZnN1vqg0d9ZxT10BihfYGvnh7UIm
+soYE4hECDQD/em2xF3iRrwVWwOS5c6m+6h9nKONkOSjMeDOYXPH/1g8=
+=2rVm
+-----END PGP SIGNATURE-----
+
+--=-jA81JxAbJ1SDSNW+0xMJ--
 
