@@ -2,517 +2,393 @@ Return-Path: <Ruiqiang.Hao@windriver.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48BA5D64079
-	for <webhook@archiver.kernel.org>; Wed, 17 Dec 2025 05:51:34 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.8040.1765950684018788163
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73A06D64079
+	for <webhook@archiver.kernel.org>; Wed, 17 Dec 2025 06:36:24 +0000 (UTC)
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.8455.1765953375610407139
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 16 Dec 2025 21:51:24 -0800
+ Tue, 16 Dec 2025 22:36:15 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@windriver.com header.s=PPS06212021 header.b=QGq/8P4X;
- spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.178.238, mailfrom: prvs=444693418e=ruiqiang.hao@windriver.com)
-Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5BH4AuNm2367653;
-	Wed, 17 Dec 2025 05:51:23 GMT
+ dkim=pass header.i=@windriver.com header.s=PPS06212021 header.b=foLo7Ckh;
+ spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.166.238, mailfrom: prvs=444693418e=ruiqiang.hao@windriver.com)
+Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5BH5RiQI1116634;
+	Tue, 16 Dec 2025 22:36:15 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
 	 h=content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=PPS06212021; bh=Na+RT6mgr9Mo/AapFz+1
-	btH0hd28FTCsY4jR+/UnBGw=; b=QGq/8P4XbVla8JI50RSAgFhuIZcwwm2E2iaX
-	6kNpsIA7y4BNGiNCcyGjMY3kj6b4otxlfDuZ//qIwJNYVEo9adayk6496OWEnfS3
-	uOD3Kk7zvl2weCi1fYtGoac7CN+FVmmphDTgRIsBWOPwySYYjN8T39qifkNzy5aF
-	eWnEECVB0eRtR2F/zvPx6wYeVyUI0dPkVhoHnlVtDmIhaHEUVOyp5+Aa2HVdNVkJ
-	BnB1gIe/7T2E4RgFgRTAtnRtsrZTe3pwsl+XTlILcvmtlwT+grYp5a7p/zySx0ar
-	xBM7bibxycKt6WetRtJfTaMsXhtrgiz2SqZnjkTNsPRQXxMQtg==
-Received: from ph7pr06cu001.outbound.protection.outlook.com (mail-westus3azon11010039.outbound.protection.outlook.com [52.101.201.39])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4b3k0br5s7-1
+	:mime-version:subject:to; s=PPS06212021; bh=J56XZ2zgCZG7ExpMiOD/
+	eTRO6i+2WKEwaARj/4ScwyA=; b=foLo7CkhcRNER54NjrkDq9606rAtYAa9pDDT
+	Wc5dDwNANluV1rzjLTYxuA5bm4HpXzq209ApVE02hXm3nBASjCcHbgM02X3Rm73i
+	cZtrdmonfe72elRmxVQUfzrRW3at6qW+i93M5D01zN7hL16BCeJozPLTPyDD9hmF
+	nuuJOe1FI/sAcJpQe1UtGPhBpkM06jUX0rPy5DRoji7fGrhDPJ0pMoQc8KbzrZxK
+	bGjdAZP+FLjjwBJgnxhw1Nd1v+5owHeLwlIgmcmg2HMK99B1shqCE2MnZ4QJ6FjD
+	l4FPG8vzSWtSrrXlHXa0uBpJMuH8J2xeo8Mh6M+WY33V03wKdQ==
+Received: from dm5pr21cu001.outbound.protection.outlook.com (mail-centralusazon11011051.outbound.protection.outlook.com [52.101.62.51])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4b3k6j06nn-1
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Wed, 17 Dec 2025 05:51:22 +0000 (GMT)
+	Tue, 16 Dec 2025 22:36:14 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tLpvV1MH9M101YLVJ86upO7UlsVw+S63uBbZWKikkX3evg1+Dm+d6XxaTRcnCyfnvRUXg1P0sTGVgKN+A8jUabR2lNm40D2eNDP0/ULfSUEuG9NFoSWM2Uq7ibIyOR0+B4K5O/Hd1JLKLFzRwwUxdLa3r/a51/845gRO5jTcCKZ3vU1Y1ZtYwueSWJKx618j8UUvl1yhQG8/TUEWAus9b0F/9CMHxf3f/7kJnIShF1lvnXj3cmWNoGpXSsxzeoSHE3i9vwzX33PZvo05sNQrk66RDnW02BzZBO8w40YC/rMttCOE9u5OLGNwDNuKe1IOei204hgdmvhlBrHG3oyLmA==
+ b=tBwKnGBfO+n0tsvIwDBwzLGmw4nBs7T9J3z3bWgORO3wW/ViEkdLGfaK7HX/ghVg6CU7sO4wK9rbO8AlexaZKwzYQuVTk/N4F3l0t5Uu9lUDCebm8mk8bMJBEWXnl7gbFgRoP6+O/ez9uadfe8bsOOUtuDCKMIZPCOewPiFZQJLKU3kW5Ii/Ko0YUH0KBjclLRBD1d8ToHdRXXl0g1liAGFlWQb9FcDSc33HONRgmpjXgRMo43ceCvJxhvDfSzyJnzo9wshHpKElzgfJOsY5Szaay/S7oHxqOIcDncaAPRvel20IyCzxFqDgu13/SBi/Tr+dFbqpRHKQknBxiatWzw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Na+RT6mgr9Mo/AapFz+1btH0hd28FTCsY4jR+/UnBGw=;
- b=G1YWnP14cX9wI4gy/drqFaV/hEXgH0ebi0kH0L5QZr7yofov6eghAMlVzOqJx9ih5g+t/CDikzrFp9RDvtr2U3Dkks3OCGK97Pgr1IrqSlbf3GVu83snz8KaPNB+rrr3MYC3joetbu3dyRz09Q4vvvRaQKAlAx888x04V24DP4HZgZeJ0zZ6SeKtIevXk3zN0mG/du6DMyqMBvafoMv0EsLcLTspX6alaQyQf/Ux9yCCZtmIbN9e4w83AbiicEOl6wbxBBUMRem5//nWk6DsPVEqTSoeFmA5gpV0tbWlW8WTGg90sjXqApnLHefPR6xc0iuvM5g3HM6IDsV1xz9G5g==
+ bh=J56XZ2zgCZG7ExpMiOD/eTRO6i+2WKEwaARj/4ScwyA=;
+ b=PnbvQs0s2WzSu2lRck5Ph8HE5o2tCdGZ9Fm8hQ8XDjzB88HMaff/FKHadiYbnPrtTRfDrsn/3R7SWElRxqLwsMawqbzi962CBiV+HuRves6mw40fJTnUox6gVt9B8OhFfcnmsgVfCMrvXB7E3Hd9GapUvnxdioiDqJmHEyLqkj8cOzeAEqmtdHbUAeJLGSkI7ysZ/2yuWuXdSPaUBFMtfCkECSVbcEt2HGT4LAX8V3vyvUByprX1qjKrdfHHosogH+PzNX9jkrvcKT0hY5tmNuRGGZYnVBWq9K1evyx3ui+9CYGO8YnWRVDzKmoOEKEJoZ2R46jcov2m6VF7IKCzuQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=windriver.com; dmarc=pass action=none
  header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
 Received: from SN7PR11MB8025.namprd11.prod.outlook.com (2603:10b6:806:2dc::19)
- by CH8PR11MB9458.namprd11.prod.outlook.com (2603:10b6:610:2bc::6) with
+ by LV8PR11MB8722.namprd11.prod.outlook.com (2603:10b6:408:207::12) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9434.6; Wed, 17 Dec
- 2025 05:51:18 +0000
+ 2025 06:36:10 +0000
 Received: from SN7PR11MB8025.namprd11.prod.outlook.com
  ([fe80::a5fe:8f1a:b4b:d00a]) by SN7PR11MB8025.namprd11.prod.outlook.com
  ([fe80::a5fe:8f1a:b4b:d00a%4]) with mapi id 15.20.9434.001; Wed, 17 Dec 2025
- 05:51:18 +0000
+ 06:36:09 +0000
 From: Ruiqiang Hao <ruiqiang.hao@windriver.com>
 To: anuj.mittal@oss.qualcomm.com, yocto-patches@lists.yoctoproject.org
-Subject: [meta-dpdk][PATCH v3] dpdk: upgrade 23.11.1 -> 25.11.0
-Date: Wed, 17 Dec 2025 13:51:03 +0800
-Message-ID: <20251217055103.3695009-1-ruiqiang.hao@windriver.com>
+Subject: [PATCH] dpdk: Remove 22.11 due to end-of-life
+Date: Wed, 17 Dec 2025 14:35:59 +0800
+Message-ID: <20251217063559.40717-1-ruiqiang.hao@windriver.com>
 X-Mailer: git-send-email 2.46.2
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: TY4PR01CA0111.jpnprd01.prod.outlook.com
- (2603:1096:405:378::12) To SN7PR11MB8025.namprd11.prod.outlook.com
+X-ClientProxiedBy: SI2PR01CA0010.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:191::12) To SN7PR11MB8025.namprd11.prod.outlook.com
  (2603:10b6:806:2dc::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR11MB8025:EE_|CH8PR11MB9458:EE_
-X-MS-Office365-Filtering-Correlation-Id: f0b1c913-3cc7-455c-795b-08de3d304c3f
+X-MS-TrafficTypeDiagnostic: SN7PR11MB8025:EE_|LV8PR11MB8722:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2f505be4-b847-4453-df18-08de3d36909a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|52116014|1800799024|376014|366016|38350700014;
+	BCL:0;ARA:13230040|52116014|376014|1800799024|366016|38350700014;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?cDY0FlHF14ETZeh6r1xSeehVyrN8qVDJyLAQffWHClM4sFocFMK6N1MaiDdR?=
- =?us-ascii?Q?e4NhcLFH+B1NO7am2hliW796mUClK4c24euE54vSCDxEuLqvT8U3wOQVlvA3?=
- =?us-ascii?Q?Faj9FBhksQwA27gRjcF7rgSFeliWQ8ptGnQAJKwYcFhe647wJaxbpnmSKjGl?=
- =?us-ascii?Q?GkDJmbEaenbStm+NRYZCmPi0cQlh3tjNTtSIHODw+JW2fjkvzDy3Q3ZcXuJU?=
- =?us-ascii?Q?AqkP4dy1kv5beqkIQGHqvf1zJ223AVQGnjpxL8LKj0nw7wl28YbxLWShcEWD?=
- =?us-ascii?Q?KS04Pz1w46h76Dz3DHBSw6ogmXUCmIg7HuY6z1idXEQspS995PXsscJ+zTPk?=
- =?us-ascii?Q?jjaCt0lud+1oOUPVnTP1g446gTuVI6788d1tqMYcTGHW7SpXTolvEzRcVdQp?=
- =?us-ascii?Q?vTNK7wYA7ezsC/mJaC++jnbh6oNJNy3obMIOdBYig0HBDeBQfuj4EURerYb6?=
- =?us-ascii?Q?HzIOEFeRLoLEu4FQxPCf5ad0LKF94UvDrHbySuvI0z2ynZRhNkwsFQqGzTjX?=
- =?us-ascii?Q?Y46GuUB0jFZ7PmmRM9nOswwZ6lhc/gzFE3KJiR3+8LsgfRICHnEHqDavmlr6?=
- =?us-ascii?Q?erHgvXdB2DxNHWN2rsoD5uRywDV9pRcqHoNVH9/1RBuoSPaD43HvrNe7b0z4?=
- =?us-ascii?Q?tn3SbA6fznk0l8ZWPf1rtX6ZIR5nj3k1jZ3uxVjctFZgstdsWcYlIr2YP7ta?=
- =?us-ascii?Q?qHKeJRO2sHVES1Qm465cw5n9UkqCws87BILcjbPDpIYF9xxuHyIeR/l7YI33?=
- =?us-ascii?Q?fYfKX9EhG+teeSMEva8rVYlHdH40IK1RHpFYip/acd2Mdf8jsISqT4YUcOP3?=
- =?us-ascii?Q?eZchnU/vHwmBOvt08mMVinB6Sc88AKrb2eNLGMRnIDHGz0zVXKiptHzIcjFS?=
- =?us-ascii?Q?x1atjXHaju4QkQX770m6DwswEmdYK8KytlExAuBGF8ZbzDETmtbMeqjv81VD?=
- =?us-ascii?Q?M+qV4cZNHQHs7uHa8T4Z0lVGw8blG6Nm1j2EIHbMNzeQiUKM1qeu0i+2YK63?=
- =?us-ascii?Q?fdCkN2PJy51HNgeezJAibC/hok2RpZNjQi5yKEp+e6NmSVIpDbR9OcyTOPJk?=
- =?us-ascii?Q?Vd9rL4bZBlSl6HpR9Tvx6GBSXwFFkv8ehHWCsLr4oDXkB9QgyE63ACVNuVBu?=
- =?us-ascii?Q?7myXv/FxAkv5NIsNhfsBTUrFd7oJ9yq6HxNXNEDXNKvy1Msn6RBhsmvxa2Bh?=
- =?us-ascii?Q?Cr07PWbuDpft9um5p0vfhXGcYWL3GoJPHnaebkR2O7UAnTIu8Kgc7DpclzRB?=
- =?us-ascii?Q?S5M7r0HMFhjEGBXSTb6BMWxg8sX0NjqoU3CtRKFk3aQEE0egof6gPCkt4hf5?=
- =?us-ascii?Q?mGWFOiZyU6FhS/dQVniLgQil+YKjo4Dlx7yFNhXuqOW6BRUrhjL/ONhTXhdw?=
- =?us-ascii?Q?Mnls2X2WSfhIf0tEEQ2zbNlfPTsVhUAEZZ1wURvSucg7CG2vIUEtdkHqv5Ps?=
- =?us-ascii?Q?YKN6ghfcmTzIvehayC4BsuVXEjvL3r+tLVmlwI1nCsPU6XiwiucdDw=3D=3D?=
+	=?us-ascii?Q?ZuRuIl8j0L65TeZNXEKv4pH+477uWVd5jQC7ztZCmkDJfGRFUhWRUEZMutxo?=
+ =?us-ascii?Q?VG4kdE9HK8mEWRmr+xTUXdtQtYcPd0YaQldQJmOyLJX7cNYpGwfiR8r7k7IH?=
+ =?us-ascii?Q?tCx88tsgRMzuJUuXUK0G4yO5+EhD1aHh3525Vqy4Paj0dl8O/nD2T9CEMHSG?=
+ =?us-ascii?Q?dyzAyCop5jNPwjn76MjUtPSWCwnRo5L6ZM+DrO1EvXrVCgS7nFJt3gm5S1vl?=
+ =?us-ascii?Q?7/RLquK1qn4fcJBT1DdAVejmSAucaYnBy8na1HMmQQRUy47Wo6NWYMNpYTSk?=
+ =?us-ascii?Q?EvUe8hKpp3Xo9aIj1bXWST9N++YRsLddN3a9Xu1qJ5xI72eennGOZjEmohk3?=
+ =?us-ascii?Q?YQzB3jPHbX7PPtYHugHOWNOKRY1WC19xqtFRwEbql3IaaRxK6X7Kxh4InH8R?=
+ =?us-ascii?Q?Jp72TUGmAetf21hmVs5il73DQrCGAG5N3f7frcMAccrhgTcRLlhJM331D59g?=
+ =?us-ascii?Q?Wr5mjjHGKFgT82IwggnNkzajtIS2NH/Qtio3M4x+g7RXmZ4GuHKA3G+FNN9c?=
+ =?us-ascii?Q?bwNYVOhdD5ee/SaZGeFnBRCuGqgm1a8a72WtzHbuunHEyFYBrOziAi86+cMA?=
+ =?us-ascii?Q?NfMeg9caxeogMrlQe0LaPOMMTUctx3DgNR3+cgbYgUC/+5uFZBsQZpxrC26m?=
+ =?us-ascii?Q?pJZoAlJpMPCx8Xmt3AuZ8TR7Y+RFf83lJLnOX8WHWjda2TkRiZMvNh6H4ptM?=
+ =?us-ascii?Q?lr8Sinffk+Ix7Beny2ipK05Js3AywuKkk7Oh0IPzTEXsLslQ7ffJCJm6lxOV?=
+ =?us-ascii?Q?LyzmTw4ndmSX4jfY2f5oHL5V9Vn/Dd0o1WNarNDuce5scmDxXrfWZgDDs5JJ?=
+ =?us-ascii?Q?Ejj4hB2JgaabODStbCfO1Oc+ZiFVyVDZcihuHZcKWV8DPYZMWxmjftg2j9N1?=
+ =?us-ascii?Q?r0+5tkUfL55ucmhxQt+C+CL0M+A4JutlB2nB7LYqiYwVnL/oIYql+mZMyZdE?=
+ =?us-ascii?Q?DiXnmspRiv5I5gsn1UWNYaGCQW4zfDx/ehgMw7f6zPzsb/7SSVw0MdL57BgY?=
+ =?us-ascii?Q?JDUlY3d34cqsJFFWXqO073aua5c1yb8GUhd4/oMth/uas/BHfxvpJnSQgn65?=
+ =?us-ascii?Q?is2+Di6TBd2TCdGWYsJoDfpdIIU1VeEM4r6bGk+gRLVVFMtwkOffQPLj8dB7?=
+ =?us-ascii?Q?yqqsBkA9QNklSKnGZZV+6+HvNG5VkAhtIVoWuaPWb0s/G8XwL35CFm3phSoE?=
+ =?us-ascii?Q?19s4dPyA8veRKHdRFCWxfi2FalMENZ7jV56dWuCOy8B46L+JaZwPLtqont/p?=
+ =?us-ascii?Q?JnYnuEnAkL5s9w7vmvTP2f7rdF29xj485Aahs/dHsEAzTHrc9Mx0OHjrqVmB?=
+ =?us-ascii?Q?E/P73/w6FeVIAufq5Ol2T5y4/yXfnoRCqVkAUkmXGvBBtBrE4w7cYJLyJ1/1?=
+ =?us-ascii?Q?IbxiQS+lm/UC9MTuDkWgSXsKQqrBdDBbfzHKUe4ga5RLfsdCFu0soUWyV/fD?=
+ =?us-ascii?Q?CRO7v87HSjYcJ1Y9fszKwvqM4/yygKYkm7nwOD82lVVzi4Pz/sy3fUkeUEwW?=
+ =?us-ascii?Q?0Y+PKN6FuqEBeXh7ldQgCPAxDmYa4lryv5aw?=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR11MB8025.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(1800799024)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR11MB8025.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?Z6kFTwGm34KEPBp/Ms7WAxdzJ4SfhzEAUwXB17jmfMgDrGJzZsVz/t7gaSdK?=
- =?us-ascii?Q?nD7c1hHY7vL1LhXeKWaLt7mLPIFS6OJPikWfd/3jDmJpcp6/LtjnMw007n2K?=
- =?us-ascii?Q?CQKDtqefwU2bqhQOtHRtH6MDGZi2QdS/s7XyKniPNDu3uonDSxxDMltZI98A?=
- =?us-ascii?Q?7Y0FkRgh4TgxkwUGN6LQoiVlVnRNKhAK31JYyFPLz0MJ69LAA41rxc1MaNNs?=
- =?us-ascii?Q?e6UNFZsTjjvkWVrscYs1LysZFcb7d+c/PNtBAT+ATjcMTg09+/ocWma41cs5?=
- =?us-ascii?Q?jcqT4qXUBeKJBqAmfVNuulyOvj2JJMDSq2ukNbSc67FqMflYv7RwJcJBg7rM?=
- =?us-ascii?Q?yITdzah5nbnr1tfEcatx45qFrNxOBFugFun7Dq5uixcElS8EAMNYIn/g4Wep?=
- =?us-ascii?Q?PHiwrB6TeKm2MZlbJ6M6gNh47jYhmL2bElpWqmDCx3XuhfTqBt9Q6yHJDx80?=
- =?us-ascii?Q?0odQHW15FXNAVhsH8Ryfg4Q9Be/n9m1cnM9aN6DjuCRyODZt6uiqZ12gb7M8?=
- =?us-ascii?Q?dHpcWNzHDiHRlKD6zQ/7Y9uh2YyrDMKKjLwj5ZHNQcncUMjJ+MkCG9bUOq3V?=
- =?us-ascii?Q?9S7SX4rm9fvBFl5dJKKB3JQiCkMe/Bnx2PUSeQPYGAfyoWPUIpLM1SgJkGBF?=
- =?us-ascii?Q?lnHCVmL5HOlBO8KFH88yNjeTAh24VczLt1loF2wNpG0pSzaF8nOCgDxKWRfB?=
- =?us-ascii?Q?uiQEJrqWTWSeZp4Gx6JcU7nHRPDPADle3y3Slj6kQAM89BBVlCV6k7KJTY3A?=
- =?us-ascii?Q?ZS71tXrMe46SXAOXuMSE529oQrXz3OIkDO8FXxuWFQMOG4Q2Mg6ZUJRN+C1l?=
- =?us-ascii?Q?vn4BTukLJhmQtEgRCKa5MArdd5SUfU4QzVE8AfSCVg7vmW+lTnq/ZCGlVHX9?=
- =?us-ascii?Q?vOPKaCWdNyh6Aj7/O0+aFKgvEBRDSga1oTdkuBGkqUONxWzSCJbZlzgXIshs?=
- =?us-ascii?Q?a3oQMdUuTV6OWz9dNr78hPIpXEj7mvtZE6XeDD4lEmbZkQhRrvpzFE2F+nMM?=
- =?us-ascii?Q?Jr9fpQGxBQhCbytGCI3dUJw3bOAV88HrCITJXkfHzdEqj28Rl/k4VJYROOVd?=
- =?us-ascii?Q?XQLYPMTo9IvDYB7JB0vi04utu2YNpGD1gU1THckYIfgA18wFr+72u2KGrEtl?=
- =?us-ascii?Q?2hGaYNZ68kVi8HbzMBIveHjnB86QJ+T2W285rl+QD+ixZSZB++2VufLzAtIK?=
- =?us-ascii?Q?HRKwO1fsGGFOVQ4/PjKa7Cz99xbZQF9w0nTn1iuaPMdDbjPu4JEymjEAV9Be?=
- =?us-ascii?Q?7t1v0NwTLzY1zXcRB7YisTymxjIBdf0ZwnsDVEVtui8tnuVxT/jMwsHQjqOt?=
- =?us-ascii?Q?Vi+bK4HYDAz9tWnTj6a1O/0Os1AcZX7qt5C6fGxf0JxaGGxkz0OBMsjrCZvY?=
- =?us-ascii?Q?MGIfOrXU+TzZ1mbleOgVrl77E89XIq16xoioCNehtpMA77insYGnHDFCCmsq?=
- =?us-ascii?Q?j+dzG80uq8Oj38UZD9VaTTg879jRWDW64+1gXlb3mgN6JoovmIiDdlgvKetX?=
- =?us-ascii?Q?gf1q6gw5DHitjBpE4OcN3qy3sOI6AQGpQ95p1uPAk3SdcNePjvJyxVSmigoX?=
- =?us-ascii?Q?lT/I00oMaxweIPv1ldus6hRJkzJptDkj3c6PEIMy0d9P+hNMsg6A9H2hjQEn?=
- =?us-ascii?Q?jw=3D=3D?=
+	=?us-ascii?Q?3S4L6EdjC+klyms1R3sAfX49f+tP5KNVFNr3dEGlKTmKpL+H0tUpvO6Pm6Ta?=
+ =?us-ascii?Q?WBE8v0+l3/WrGYqlebqo0sTr+li0oSxvHeqstsYEhbvxaKRlnzTNOcQeNz2M?=
+ =?us-ascii?Q?5FwnLnCBnspvnyepZzq/rIh1r8hzzvfqOzAFC5ijvReoD1VY3ZJ8KhCfH/jq?=
+ =?us-ascii?Q?ByqNLG6ZYn4/jk0UR0+5XlJXVhNfWQdly0QtGpnrS0yYXrpW5lbTgqWiezv2?=
+ =?us-ascii?Q?U5bhG/XuBnTMCwcvePXF/eP0Q7JkBARkDEcL5G8TotsExzrtxX7m4dTWRg8F?=
+ =?us-ascii?Q?MC/BYJvBsKdtfHYQokiCCI8/BS4G15hblcIj2F+/bmhiHWSLI4QZCdliu7po?=
+ =?us-ascii?Q?ArLBoGybVvnRTmJ3kFKyLz0KcFaOIf34Doqr1JMStEhP/UOkCSlVVYHqfw8L?=
+ =?us-ascii?Q?YO0wHmFmPLzf+X3vU4ZDPJl4xVcHAEBxEhmiPuDbIiHLQ25A9k4K5eD95+C0?=
+ =?us-ascii?Q?JRk8hNp1JCZU1A8DjLWnYqN9FpOi0onFE7CVWqFyFbNDUMfQ4WLtlZ0t0MC+?=
+ =?us-ascii?Q?V8NVXY/ZmP9mz9JGi8MUFosvZuxnrQ4ISBx2IgbuqZKcNmOPQZbznWA2hj08?=
+ =?us-ascii?Q?v5vF7fMu9D78DaQHj91W4R4ZncpRz0/ZkiR1I+lGWv9gzKHOm8+Ucy0GNMPI?=
+ =?us-ascii?Q?UZs6clV3ecOk2/eZbmYXpwZ9+7pvWdJrNwOAH2hrtU1WURzCFJMWMeVE5zMr?=
+ =?us-ascii?Q?Bu8R5RU+7Yz4+YJrVIS/s0W8bzFgwyXGIRGkd9quN5+y1vLIrmwB6itKFEGK?=
+ =?us-ascii?Q?Ra7HnY6TLq7JRnbb5YL6IEHf+UUeHzsUOVdrV05jzT+JqrCsPbFtgeibQwRO?=
+ =?us-ascii?Q?o6sr+PIkBr5ZT9jt07X0dECrmJsgZsL7wCZ8PQzulUHsUIasidcm3cr01lyg?=
+ =?us-ascii?Q?quFgURaLSq6p0MlZ0cggHPacmE6F3NHo/gqWJSl3PYf0oRWllkmfCFMBocfT?=
+ =?us-ascii?Q?e0949s1r7A+wZ7hwr7NkuMQ13lvnr4imuQDnIrcxKActc1BLeS4RCJfOKPo8?=
+ =?us-ascii?Q?fHGnN/VUgtgZ60+5zFnzlGinxhpzOSDPjiGWY8CFSRGvfFbva9f2125eOVJD?=
+ =?us-ascii?Q?rL2c0Vbv1wv+YINK6SjxTv9LACXA6Kr52l13yGfOB2jYHO/iJUVbtKbzKq1M?=
+ =?us-ascii?Q?gRFTlm7pLzapNF4llhqtHCnIP1UnYglMCyTQ0CxQL4zir56NUvwghjboc6Dg?=
+ =?us-ascii?Q?+oNFv7GLHLVive5A7SZjHo0JrN/itXHxtQIaT56pYArvNsSOEVpbkzX2WnQy?=
+ =?us-ascii?Q?4eFsyHp2L3f9hwGjBGU+r0Bw87P+5HE9nv+FwS3KVdlwCAl+zYjZzqL7E+Na?=
+ =?us-ascii?Q?B2pnY6CbupDl3HVmNoeA9SaTQcjp+n1cQjLsStiULOWchy+FZSuU9c8ZTPE/?=
+ =?us-ascii?Q?6jN0GPTbMqADXy4l0OPq4KCVIM78btgDf0/n/r1ztql2hbI2uiISe2+jVudb?=
+ =?us-ascii?Q?qyVewu9nBOBlb4wg8MdtPEHVeRQ+nQbCKFYxq7RLPSe1mRsj0nIIv/dr7INT?=
+ =?us-ascii?Q?IvVOEd8klS/6NJJ2eh4rDlTTHlJE3K1nUf1ZhWZaD7gkkNmaHLvrQ3JeWSzg?=
+ =?us-ascii?Q?wuK9O9KqbaJ4ylKipGqqK54+tAE7pdwKT5JUBTUmMMAeeJw3dIlEEB+hJp/3?=
+ =?us-ascii?Q?nQ=3D=3D?=
 X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f0b1c913-3cc7-455c-795b-08de3d304c3f
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2f505be4-b847-4453-df18-08de3d36909a
 X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB8025.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Dec 2025 05:51:18.3324
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Dec 2025 06:36:09.8597
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ieBPvwAvAKmMN+wRjxulG/4H6y/RLxCOg0rPH5POE74jKASgBqRw1fu1jqPrvsItcfDmR/EzXITJeWhLDbK4vJyX2hxMX2KAufzSS9P8/Pg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH8PR11MB9458
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjE3MDA0NCBTYWx0ZWRfX6nS8/syygiYD
- VMlm479sOSnxPgtWK8wCvy7lEbJRs6283bHubMowqLK4pc1yOP8y4LAd2kNaUFSpUum+i4zv1jJ
- 760rZaBrxr6j4uYAtvIs6L6FneNpKsbkPN2jBt8j372Aeb3rIXmBjxzUboQguY/G/ffprEQaMzX
- WmpYBiEw117hNBc+Z1c/sp/aYSt2CBqbUxXFVMs8QDtGJZYX4P9kQIpGIiK5aKaLnis9tqNUOHX
- VpP18E11eYiSHdtc56kgQ3NP7bc4P/zn5elexbsaFx2cQzkySEEjPKf63ULiUK84HfiD3ATuwpp
- /Wzg09s568XHZmCehY3VJpc/aZyLXFTB9rjB3wrZWNG8UjnAPzWE0fWPgzK4nS+IHbzqKhcBZy0
- W+vxOAget+C3LnnDjGMzZVhI0x+Spg==
-X-Proofpoint-ORIG-GUID: Qa_yf8F2Dcl-lw8l0LA0TJx5pIZ6wDFI
-X-Proofpoint-GUID: Qa_yf8F2Dcl-lw8l0LA0TJx5pIZ6wDFI
-X-Authority-Analysis: v=2.4 cv=C+HkCAP+ c=1 sm=1 tr=0 ts=694244da cx=c_pps
- a=air8cPz1/yJpzemNVwtxUg==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
+X-MS-Exchange-CrossTenant-UserPrincipalName: ojIBTVvbm9VegwFlvP3TZI/Mzp9kWxOfe11bjOyYWjQAhcqy5UKu+p6jt5zPLsQ4ZlUi4WP4xkRTNQg9eFId97GZtCFqA8NTg6GwN/EYiQE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR11MB8722
+X-Authority-Analysis: v=2.4 cv=ErvfbCcA c=1 sm=1 tr=0 ts=69424f5f cx=c_pps
+ a=qX5DP9EEIf1faxnBSU0rOg==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
  a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
  a=xqWC_Br6kY4A:10 a=wP3pNCr1ah4A:10 a=VkNPw1HP01LnGYTKEx00:22
- a=8rWy6zfcAAAA:8 a=t7CeM3EgAAAA:8 a=1XWaLZrsAAAA:8 a=20KFwNOVAAAA:8
- a=r2HGPOCozAU88W8aTVMA:9 a=YjdVzJdQTyZRADMV7wFX:22 a=FdTzh2GWekK77mhwV6Dw:22
+ a=t7CeM3EgAAAA:8 a=QyXUC8HyAAAA:8 a=xNf9USuDAAAA:8 a=nzjS3KwODS20eyGiZVoA:9
+ a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-GUID: M6yjo99VDjVXn30SNlaa5u4PGLhxQ5sA
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjE3MDA1MSBTYWx0ZWRfX2hXcbIC4ogtB
+ tkUZ0jbnve6/ZoH99Odpvj7AziVRzS2k2+04QH0eJJ/qokq1m8wrwm9sI1xCNGqvWt3vmJvXa58
+ 5mN1slnhniGnATcgagkOKISVo88qi9c1moEWEGPdAvXZr3439g097jKppgALUlT9bGMwFL4e8kq
+ IJwgO8oax39o79HBHhcsRT7UGcqW6pEt/imBCONGBzWKdME85By0Fw3T3p2EhPJUgFsTijOA7EU
+ 5peo4I9Jj0CS99qVTQsW5P4KrnG2f88MJnDia2UTqfOYYjOSN8B3lumPfn1ju1CXzXLosajqrii
+ Mf2YtuV4LnMpXzyLqUSmKwNkBIUYaE3wpBbznqYsdbY+T2ZYSLrcAOg4wg9/xEv8JWesM+W5ldh
+ kAG1nfCMZY5OqBMcdKWEF0910DUnEA==
+X-Proofpoint-ORIG-GUID: M6yjo99VDjVXn30SNlaa5u4PGLhxQ5sA
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-12-16_03,2025-12-16_05,2025-10-01_01
+ definitions=2025-12-17_01,2025-12-16_05,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 phishscore=0 impostorscore=0 priorityscore=1501
- malwarescore=0 clxscore=1015 suspectscore=0 spamscore=0 adultscore=0
- bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2512170044
+ spamscore=0 priorityscore=1501 clxscore=1015 bulkscore=0 lowpriorityscore=0
+ suspectscore=0 impostorscore=0 malwarescore=0 adultscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2512170051
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 17 Dec 2025 05:51:34 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2809
+ <yocto-patches@lists.yoctoproject.org>; Wed, 17 Dec 2025 06:36:24 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2810
 
 From: Ruiqiang Hao <Ruiqiang.Hao@windriver.com>
 
-Upgrade to DPDK 25.11 LTS release.
-
-- Remove patches that are no longer needed in 25.11.0:
-  * 0001-Add-new-tracepoint-function-for-type-time_t.patch
-  * 0001-net-gve-base-fix-build-with-Fedora.patch
-  * 0001-net-ionic-fix-build-with-Fedora.patch
-- Update library path from pmds-24.0 to pmds-26.0
-- Update SRCREV and branch references
+DPDK 22.11 is approaching end-of-life status. Remove the bb files
+and related patches to maintain only supported versions.
 
 Signed-off-by: Ruiqiang Hao <Ruiqiang.Hao@windriver.com>
 ---
- ...-tracepoint-function-for-type-time_t.patch | 114 ------------------
- ...1-net-gve-base-fix-build-with-Fedora.patch |  95 ---------------
- ...0001-net-ionic-fix-build-with-Fedora.patch |  65 ----------
- .../dpdk/{dpdk_23.11.1.bb => dpdk_25.11.0.bb} |  11 +-
- 4 files changed, 4 insertions(+), 281 deletions(-)
- delete mode 100644 recipes-extended/dpdk/dpdk/0001-Add-new-tracepoint-function-for-type-time_t.patch
- delete mode 100644 recipes-extended/dpdk/dpdk/0001-net-gve-base-fix-build-with-Fedora.patch
- delete mode 100644 recipes-extended/dpdk/dpdk/0001-net-ionic-fix-build-with-Fedora.patch
- rename recipes-extended/dpdk/{dpdk_23.11.1.bb => dpdk_25.11.0.bb} (82%)
+ recipes-extended/dpdk/dpdk-module_22.11.7.bb  | 49 ------------
+ .../dpdk/0001-Makefile-add-makefile.patch     | 75 -------------------
+ recipes-extended/dpdk/dpdk_22.11.7.bb         | 67 -----------------
+ 3 files changed, 191 deletions(-)
+ delete mode 100644 recipes-extended/dpdk/dpdk-module_22.11.7.bb
+ delete mode 100644 recipes-extended/dpdk/dpdk/0001-Makefile-add-makefile.patch
+ delete mode 100644 recipes-extended/dpdk/dpdk_22.11.7.bb
 
-diff --git a/recipes-extended/dpdk/dpdk/0001-Add-new-tracepoint-function-for-type-time_t.patch b/recipes-extended/dpdk/dpdk/0001-Add-new-tracepoint-function-for-type-time_t.patch
+diff --git a/recipes-extended/dpdk/dpdk-module_22.11.7.bb b/recipes-extended/dpdk/dpdk-module_22.11.7.bb
 deleted file mode 100644
-index 56b4b43..0000000
---- a/recipes-extended/dpdk/dpdk/0001-Add-new-tracepoint-function-for-type-time_t.patch
+index 1ce396c..0000000
+--- a/recipes-extended/dpdk/dpdk-module_22.11.7.bb
 +++ /dev/null
-@@ -1,114 +0,0 @@
--From a97f93abc34731b73689c0c78bd189a91625779f Mon Sep 17 00:00:00 2001
--From: Changqing Li <changqing.li@windriver.com>
--Date: Tue, 29 Apr 2025 10:14:13 +0800
--Subject: [PATCH] Add new tracepoint function for type time_t
+@@ -1,49 +0,0 @@
+-include dpdk.inc
 -
--To support Y2038 issue, for 32bit system, -D_TIME_BITS=64 is passed to
--gcc, struct timespec time->tv_sec is 64bit, but size_t is 32bits, so
--dpdk will compile failed with error:
--"../git/lib/ethdev/ethdev_trace.h: In function
--'rte_eth_trace_timesync_write_time':
--../git/lib/eal/include/rte_common.h:498:55: error: size of unnamed array
--is negative
--  498 | #define RTE_BUILD_BUG_ON(condition) ((void)sizeof(char[1 -
--      2*!!(condition)]))"
+-FILESEXTRAPATHS:prepend := "${THISDIR}/dpdk:"
 -
--Add a new tracepoint function for type time_t to fix this issue
+-SRC_URI += " \
+-            file://0001-Makefile-add-makefile.patch \
+-"
+-STABLE = "-stable"
+-BRANCH = "22.11"
+-SRCREV = "077a7044cc5b2533410f691c8db6fb4f6667b1ca"
 -
--Upstream-Status: Submitted [https://patchwork.dpdk.org/project/dpdk/patch/20250527120404.2027529-1-changqing.li@windriver.com/]
+-inherit module
 -
--Signed-off-by: Changqing Li <changqing.li@windriver.com>
-----
-- lib/eal/common/eal_common_trace_ctf.c | 5 +++++
-- lib/eal/include/rte_trace_point.h     | 4 ++++
-- lib/ethdev/ethdev_trace.h             | 8 ++++----
-- 3 files changed, 13 insertions(+), 4 deletions(-)
+-#kernel module needs 'rte_build_config.h', which is generated at buid time
+-DEPENDS += "dpdk"
 -
--diff --git a/lib/eal/common/eal_common_trace_ctf.c b/lib/eal/common/eal_common_trace_ctf.c
--index 04c4f71..055555e 100644
----- a/lib/eal/common/eal_common_trace_ctf.c
--+++ b/lib/eal/common/eal_common_trace_ctf.c
--@@ -88,6 +88,11 @@ meta_data_type_emit(char **meta, int *offset)
-- 		"typealias integer {size = 64; base = x;} := size_t;\n"
-- #else
-- 		"typealias integer {size = 32; base = x;} := size_t;\n"
--+#endif
--+#if defined(_TIME_BITS) && _TIME_BITS == 64
--+		"typealias integer {size = 64; base = x;} := time_t;\n"
--+#else
--+		"typealias integer {size = 32; base = x;} := time_t;\n"
-- #endif
-- 		"typealias floating_point {\n"
-- 		"    exp_dig = 8;\n"
--diff --git a/lib/eal/include/rte_trace_point.h b/lib/eal/include/rte_trace_point.h
--index 41e2a7f..d05422c 100644
----- a/lib/eal/include/rte_trace_point.h
--+++ b/lib/eal/include/rte_trace_point.h
--@@ -22,6 +22,7 @@ extern "C" {
-- 
-- #include <stdbool.h>
-- #include <stdio.h>
--+#include <time.h>
-- 
-- #include <rte_branch_prediction.h>
-- #include <rte_common.h>
--@@ -145,6 +146,8 @@ _tp _args \
-- #define rte_trace_point_emit_ptr(val)
-- /** Tracepoint function payload for string datatype */
-- #define rte_trace_point_emit_string(val)
--+/** Tracepoint function payload for time_t datatype */
--+#define rte_trace_point_emit_time_t(val)
-- /**
--  * Tracepoint function to capture a blob.
--  *
--@@ -429,6 +432,7 @@ do { \
-- #define rte_trace_point_emit_float(in) __rte_trace_point_emit(in, float)
-- #define rte_trace_point_emit_double(in) __rte_trace_point_emit(in, double)
-- #define rte_trace_point_emit_ptr(in) __rte_trace_point_emit(in, uintptr_t)
--+#define rte_trace_point_emit_time_t(in) __rte_trace_point_emit(in, time_t)
-- 
-- #endif /* __DOXYGEN__ */
-- 
--diff --git a/lib/ethdev/ethdev_trace.h b/lib/ethdev/ethdev_trace.h
--index 1b1ae0c..1d0dabb 100644
----- a/lib/ethdev/ethdev_trace.h
--+++ b/lib/ethdev/ethdev_trace.h
--@@ -1129,7 +1129,7 @@ RTE_TRACE_POINT(
-- 	RTE_TRACE_POINT_ARGS(uint16_t port_id, const struct timespec *time,
-- 		int ret),
-- 	rte_trace_point_emit_u16(port_id);
---	rte_trace_point_emit_size_t(time->tv_sec);
--+	rte_trace_point_emit_time_t(time->tv_sec);
-- 	rte_trace_point_emit_long(time->tv_nsec);
-- 	rte_trace_point_emit_int(ret);
-- )
--@@ -2146,7 +2146,7 @@ RTE_TRACE_POINT_FP(
-- 	RTE_TRACE_POINT_ARGS(uint16_t port_id, const struct timespec *timestamp,
-- 		uint32_t flags, int ret),
-- 	rte_trace_point_emit_u16(port_id);
---	rte_trace_point_emit_size_t(timestamp->tv_sec);
--+	rte_trace_point_emit_time_t(timestamp->tv_sec);
-- 	rte_trace_point_emit_long(timestamp->tv_nsec);
-- 	rte_trace_point_emit_u32(flags);
-- 	rte_trace_point_emit_int(ret);
--@@ -2158,7 +2158,7 @@ RTE_TRACE_POINT_FP(
-- 	RTE_TRACE_POINT_ARGS(uint16_t port_id, const struct timespec *timestamp,
-- 		int ret),
-- 	rte_trace_point_emit_u16(port_id);
---	rte_trace_point_emit_size_t(timestamp->tv_sec);
--+	rte_trace_point_emit_time_t(timestamp->tv_sec);
-- 	rte_trace_point_emit_long(timestamp->tv_nsec);
-- 	rte_trace_point_emit_int(ret);
-- )
--@@ -2169,7 +2169,7 @@ RTE_TRACE_POINT_FP(
-- 	RTE_TRACE_POINT_ARGS(uint16_t port_id, const struct timespec *time,
-- 		int ret),
-- 	rte_trace_point_emit_u16(port_id);
---	rte_trace_point_emit_size_t(time->tv_sec);
--+	rte_trace_point_emit_time_t(time->tv_sec);
-- 	rte_trace_point_emit_long(time->tv_nsec);
-- 	rte_trace_point_emit_int(ret);
-- )
---- 
--2.34.1
+-COMPATIBLE_MACHINE = "null"
+-COMPATIBLE_HOST:libc-musl:class-target = "null"
+-COMPATIBLE_HOST:linux-gnux32 = "null"
 -
-diff --git a/recipes-extended/dpdk/dpdk/0001-net-gve-base-fix-build-with-Fedora.patch b/recipes-extended/dpdk/dpdk/0001-net-gve-base-fix-build-with-Fedora.patch
+-export S
+-export STAGING_KERNEL_DIR
+-export STAGING_INCDIR
+-export INSTALL_MOD_DIR = "dpdk"
+-
+-do_configure[noexec] = "1"
+-
+-do_compile() {
+-    cd ${S}/kernel/linux/kni
+-    unset CFLAGS CPPFLAGS CXXFLAGS LDFLAGS
+-    oe_runmake KERNEL_PATH=${STAGING_KERNEL_DIR}   \
+-           KERNEL_VERSION=${KERNEL_VERSION}    \
+-           CC="${KERNEL_CC}" LD="${KERNEL_LD}" \
+-           AR="${KERNEL_AR}" \
+-               O=${STAGING_KERNEL_BUILDDIR} \
+-           KBUILD_EXTRA_SYMBOLS="${KBUILD_EXTRA_SYMBOLS}" \
+-           ${MAKE_TARGETS}
+-}
+-
+-do_install() {
+-    cd ${S}/kernel/linux/kni
+-    unset CFLAGS CPPFLAGS CXXFLAGS LDFLAGS
+-    oe_runmake DEPMOD=echo MODLIB="${D}${nonarch_base_libdir}/modules/${KERNEL_VERSION}" \
+-               INSTALL_FW_PATH="${D}${nonarch_base_libdir}/firmware" \
+-               CC="${KERNEL_CC}" LD="${KERNEL_LD}" \
+-               O=${STAGING_KERNEL_BUILDDIR} \
+-               ${MODULES_INSTALL_TARGET}
+-}
+-
+diff --git a/recipes-extended/dpdk/dpdk/0001-Makefile-add-makefile.patch b/recipes-extended/dpdk/dpdk/0001-Makefile-add-makefile.patch
 deleted file mode 100644
-index 05efc3f..0000000
---- a/recipes-extended/dpdk/dpdk/0001-net-gve-base-fix-build-with-Fedora.patch
+index 0fc849b..0000000
+--- a/recipes-extended/dpdk/dpdk/0001-Makefile-add-makefile.patch
 +++ /dev/null
-@@ -1,95 +0,0 @@
--From f0d9e787747dda0715654da9f0501f54fe105868 Mon Sep 17 00:00:00 2001
--From: Joshua Washington <joshwash@google.com>
--Date: Thu, 17 Oct 2024 16:42:33 -0700
--Subject: net/gve/base: fix build with Fedora Rawhide
+@@ -1,75 +0,0 @@
+-From 768cef60957d5e840071d1d6514d4add3f3c2904 Mon Sep 17 00:00:00 2001
+-From: Naveen Saini <naveen.kumar.saini@intel.com>
+-Date: Wed, 14 Apr 2021 17:25:53 +0800
+-Subject: [PATCH] Makefile: add makefile
 -
--Currently, a number of integer types are typedef'd to their corresponding
--userspace or RTE values. This can be problematic if these types are
--already defined somewhere else, as it would cause type collisions.
--This patch changes the typedefs to #define macros which are only defined
--if the types are not defined already.
+-Current meson build for kernel module build does not fit in Yocto.
+-So added Makefile to build rte_kni.ko
 -
--Note: this was reported by OBS CI on 2024/10/17, when compiling DPDK
--in Fedora Rawhide.
+-Upstream-Status: Inappropriate
 -
--Fixes: c9ba2caf6302 ("net/gve/base: add OS-specific implementation")
--Fixes: abf1242fbb84 ("net/gve: add struct members and typedefs for DQO")
--Cc: stable@dpdk.org
--
--Upstream-Status: Backport [https://git.dpdk.org/dpdk/commit/?id=f0d9e787747dda0715654da9f0501f54fe105868]
--
--Reported-by: David Marchand <david.marchand@redhat.com>
--Signed-off-by: Joshua Washington <joshwash@google.com>
--Signed-off-by: Xiangyu Chen <xiangyu.chen@windriver.com>
+-Signed-off-by: Naveen Saini <naveen.kumar.saini@intel.com>
 ----
-- drivers/net/gve/base/gve_osdep.h | 48 ++++++++++++++++++++++++++++++----------
-- 1 file changed, 36 insertions(+), 12 deletions(-)
+- kernel/linux/kni/Kbuild   |  6 ------
+- kernel/linux/kni/Makefile | 35 +++++++++++++++++++++++++++++++++++
+- 2 files changed, 35 insertions(+), 6 deletions(-)
+- delete mode 100644 kernel/linux/kni/Kbuild
+- create mode 100644 kernel/linux/kni/Makefile
 -
--(limited to 'drivers/net/gve/base/gve_osdep.h')
--
--diff --git a/drivers/net/gve/base/gve_osdep.h b/drivers/net/gve/base/gve_osdep.h
--index c0ee0d567c..64181cebd6 100644
----- a/drivers/net/gve/base/gve_osdep.h
--+++ b/drivers/net/gve/base/gve_osdep.h
--@@ -29,22 +29,46 @@
-- #include <sys/utsname.h>
-- #endif
-- 
---typedef uint8_t u8;
---typedef uint16_t u16;
---typedef uint32_t u32;
---typedef uint64_t u64;
--+#ifndef u8
--+#define u8 uint8_t
--+#endif
--+#ifndef u16
--+#define u16 uint16_t
--+#endif
--+#ifndef u32
--+#define u32 uint32_t
--+#endif
--+#ifndef u64
--+#define u64 uint64_t
--+#endif
-- 
---typedef rte_be16_t __sum16;
--+#ifndef __sum16
--+#define __sum16 rte_be16_t
--+#endif
-- 
---typedef rte_be16_t __be16;
---typedef rte_be32_t __be32;
---typedef rte_be64_t __be64;
--+#ifndef __be16
--+#define __be16 rte_be16_t
--+#endif
--+#ifndef __be32
--+#define __be32 rte_be32_t
--+#endif
--+#ifndef __be64
--+#define __be64 rte_be64_t
--+#endif
-- 
---typedef rte_le16_t __le16;
---typedef rte_le32_t __le32;
---typedef rte_le64_t __le64;
--+#ifndef __le16
--+#define __le16 rte_le16_t
--+#endif
--+#ifndef __le32
--+#define __le32 rte_le32_t
--+#endif
--+#ifndef __le64
--+#define __le64 rte_le64_t
--+#endif
-- 
---typedef rte_iova_t dma_addr_t;
--+#ifndef dma_addr_t
--+#define dma_addr_t rte_iova_t
--+#endif
-- 
-- #define ETH_MIN_MTU	RTE_ETHER_MIN_MTU
-- #define ETH_ALEN	RTE_ETHER_ADDR_LEN
---- 
--cgit v1.2.3
--
-diff --git a/recipes-extended/dpdk/dpdk/0001-net-ionic-fix-build-with-Fedora.patch b/recipes-extended/dpdk/dpdk/0001-net-ionic-fix-build-with-Fedora.patch
-deleted file mode 100644
-index ce9a762..0000000
---- a/recipes-extended/dpdk/dpdk/0001-net-ionic-fix-build-with-Fedora.patch
-+++ /dev/null
-@@ -1,65 +0,0 @@
--From 45d48356e552d661885e1c29613891c11cd8ff4a Mon Sep 17 00:00:00 2001
--From: Timothy Redaelli <tredaelli@redhat.com>
--Date: Thu, 24 Oct 2024 11:30:06 +0200
--Subject: net/ionic: fix build with Fedora Rawhide
--
--Currently, a number of integer types are typedef'd to their corresponding
--userspace or RTE values. This can be problematic if these types are
--already defined somewhere else, as it would cause type collisions.
--This patch changes the typedefs to #define macros which are only defined
--if the types are not defined already.
--
--Fixes: 5ef518098ec6 ("net/ionic: register and initialize adapter")
--
--Upstream-Status: Backport [https://git.dpdk.org/dpdk-stable/patch/?id=45d48356e552d661885e1c29613891c11cd8ff4a]
--
--Signed-off-by: Timothy Redaelli <tredaelli@redhat.com>
--Signed-off-by: Xiangyu Chen <xiangyu.chen@windriver.com>
-----
-- drivers/net/ionic/ionic_osdep.h | 30 ++++++++++++++++++++++--------
-- 1 file changed, 22 insertions(+), 8 deletions(-)
--
--diff --git a/drivers/net/ionic/ionic_osdep.h b/drivers/net/ionic/ionic_osdep.h
--index 68f767b920..97188dfd59 100644
----- a/drivers/net/ionic/ionic_osdep.h
--+++ b/drivers/net/ionic/ionic_osdep.h
--@@ -30,14 +30,28 @@
-- 
-- #define __iomem
-- 
---typedef uint8_t	 u8;
---typedef uint16_t u16;
---typedef uint32_t u32;
---typedef uint64_t u64;
+-diff --git a/kernel/linux/kni/Kbuild b/kernel/linux/kni/Kbuild
+-deleted file mode 100644
+-index e5452d6c00..0000000000
+---- a/kernel/linux/kni/Kbuild
+-+++ /dev/null
+-@@ -1,6 +0,0 @@
+--# SPDX-License-Identifier: BSD-3-Clause
+--# Copyright(c) 2018 Luca Boccassi <bluca@debian.org>
 --
---typedef uint16_t __le16;
---typedef uint32_t __le32;
---typedef uint64_t __le64;
--+#ifndef u8
--+#define u8 uint8_t
--+#endif
--+#ifndef u16
--+#define u16 uint16_t
--+#endif
--+#ifndef u32
--+#define u32 uint32_t
--+#endif
--+#ifndef u64
--+#define u64 uint64_t
--+#endif
+--ccflags-y := $(MODULE_CFLAGS)
+--obj-m := rte_kni.o
+--rte_kni-y := $(patsubst $(src)/%.c,%.o,$(wildcard $(src)/*.c))
+-diff --git a/kernel/linux/kni/Makefile b/kernel/linux/kni/Makefile
+-new file mode 100644
+-index 0000000000..19897ee06e
+---- /dev/null
+-+++ b/kernel/linux/kni/Makefile
+-@@ -0,0 +1,35 @@
+-+#
+-+# Makefile for building rte_kni.ko
+-+#
+-+MODULE_CFLAGS += -include $(S)/config/rte_config.h
+-+MODULE_CFLAGS += -I$(S)/lib/librte_eal/include
+-+MODULE_CFLAGS += -I$(S)/lib/librte_kni
+-+MODULE_CFLAGS += -I$(S)/kernel/linux/kni
+-+MODULE_CFLAGS += -I$(S)/lib/kni
+-+MODULE_CFLAGS += -I$(S)
+-+MODULE_CFLAGS += -I$(STAGING_INCDIR)
 -+
--+#ifndef __le16
--+#define __le16 rte_le16_t
--+#endif
--+#ifndef __le32
--+#define __le32 rte_le32_t
--+#endif
--+#ifndef __le64
--+#define __le64 rte_le64_t
--+#endif
-- 
-- #define ioread8(reg)		rte_read8(reg)
-- #define ioread32(reg)		rte_read32(rte_le_to_cpu_32(reg))
+-+rte_kni-objs = kni_misc.o kni_net.o
+-+
+-+ccflags-y := $(MODULE_CFLAGS)
+-+cflags-y := $(MODULE_CFLAGS)
+-+obj-m := rte_kni.o
+-+
+-+
+-+KERNEL_MAKE_OPTS := -C $(STAGING_KERNEL_DIR) M=$(CURDIR)
+-+ifneq ($(ARCH),)
+-+KERNEL_MAKE_OPTS += ARCH=$(ARCH)
+-+endif
+-+ifneq ($(CROSS_COMPILE),)
+-+KERNEL_MAKE_OPTS += CROSS_COMPILE=$(CROSS_COMPILE)
+-+endif
+-+
+-+build:
+-+	$(MAKE) $(KERNEL_MAKE_OPTS) modules
+-+
+-+install: modules_install
+-+
+-+modules_install:
+-+	$(MAKE) $(KERNEL_MAKE_OPTS) modules_install
+-+
+-+clean:
+-+	$(MAKE) $(KERNEL_MAKE_OPTS) clean
 --- 
--cgit v1.2.3
+-2.17.1
 -
-diff --git a/recipes-extended/dpdk/dpdk_23.11.1.bb b/recipes-extended/dpdk/dpdk_25.11.0.bb
-similarity index 82%
-rename from recipes-extended/dpdk/dpdk_23.11.1.bb
-rename to recipes-extended/dpdk/dpdk_25.11.0.bb
-index b5aab21..c409fa0 100644
---- a/recipes-extended/dpdk/dpdk_23.11.1.bb
-+++ b/recipes-extended/dpdk/dpdk_25.11.0.bb
-@@ -1,13 +1,10 @@
- include dpdk.inc
- 
--SRC_URI += " file://0001-config-meson-get-cpu_instruction_set-from-meson-opti.patch \
--             file://0001-net-ionic-fix-build-with-Fedora.patch \
--             file://0001-net-gve-base-fix-build-with-Fedora.patch \
--             file://0001-Add-new-tracepoint-function-for-type-time_t.patch"
-+SRC_URI += " file://0001-config-meson-get-cpu_instruction_set-from-meson-opti.patch"
- 
- STABLE = "-stable"
--BRANCH = "23.11"
--SRCREV = "a6ec5765cf83d3d58cbd6d4ed5b92b4a06f8a808"
-+BRANCH = "v25.11"
-+SRCREV = "ed957165eadbe60a47d5ec223578cdd1c13d0bd9"
- 
- def get_cpu_instruction_set(bb, d):
-     import re
-@@ -55,7 +52,7 @@ PACKAGES =+ "${PN}-examples ${PN}-tools"
- FILES:${PN} += " ${bindir}/dpdk-testpmd \
- 		 ${bindir}/dpdk-proc-info \
- 		 ${libdir}/*.so* \
--		 ${libdir}/dpdk/pmds-24.0/*.so* \
-+		 ${libdir}/dpdk/pmds-26.0/*.so* \
- 		 "
- FILES:${PN}-examples = " \
- 	${prefix}/share/dpdk/examples/* \
+diff --git a/recipes-extended/dpdk/dpdk_22.11.7.bb b/recipes-extended/dpdk/dpdk_22.11.7.bb
+deleted file mode 100644
+index e69a2df..0000000
+--- a/recipes-extended/dpdk/dpdk_22.11.7.bb
++++ /dev/null
+@@ -1,67 +0,0 @@
+-include dpdk.inc
+-
+-SRC_URI += " \
+-            file://0001-meson.build-march-and-mcpu-already-passed-by-Yocto-21.11.patch \
+-"
+-
+-STABLE = "-stable"
+-BRANCH = "22.11"
+-SRCREV = "077a7044cc5b2533410f691c8db6fb4f6667b1ca"
+-
+-# kernel module is provide by dpdk-module recipe, so disable here
+-EXTRA_OEMESON = " -Denable_kmods=false \
+-                -Dexamples=all \
+-"
+-
+-COMPATIBLE_MACHINE = "null"
+-COMPATIBLE_HOST:libc-musl:class-target = "null"
+-COMPATIBLE_HOST:linux-gnux32 = "null"
+-
+-PACKAGECONFIG ??= " "
+-PACKAGECONFIG[afxdp] = ",,libbpf xdp-tools"
+-PACKAGECONFIG[libvirt] = ",,libvirt"
+-
+-RDEPENDS:${PN} += "pciutils python3-core"
+-RDEPENDS:${PN}-examples += "bash"
+-DEPENDS = "numactl python3-pyelftools-native"
+-
+-inherit meson pkgconfig
+-
+-INSTALL_PATH = "${prefix}/share/dpdk"
+-
+-do_install:append(){
+-    # remove  source files
+-    rm -rf ${D}/${INSTALL_PATH}/examples/*
+-
+-    # Install examples
+-    install -m 0755 -d ${D}/${INSTALL_PATH}/examples/
+-    for dirname in ${B}/examples/dpdk-*
+-    do
+-        if [ ! -d ${dirname} ] && [ -x ${dirname} ]; then
+-            install -m 0755 ${dirname} ${D}/${INSTALL_PATH}/examples/
+-        fi
+-    done
+-
+-}
+-
+-PACKAGES =+ "${PN}-examples ${PN}-tools"
+-
+-FILES:${PN} += " ${bindir}/dpdk-testpmd \
+-		 ${bindir}/dpdk-proc-info \
+-		 ${libdir}/*.so* \
+-		 ${libdir}/dpdk/pmds-23.0/*.so* \
+-		 "
+-FILES:${PN}-examples = " \
+-	${prefix}/share/dpdk/examples/* \
+-	"
+-
+-FILES:${PN}-tools = " \
+-    ${bindir}/dpdk-pdump \
+-    ${bindir}/dpdk-test \
+-    ${bindir}/dpdk-test-* \
+-    ${bindir}/dpdk-*.py \
+-    "
+-
+-CVE_PRODUCT = "data_plane_development_kit"
+-
+-INSANE_SKIP:${PN} = "dev-so"
 -- 
-2.35.5
+2.46.2
 
 
