@@ -2,92 +2,94 @@ Return-Path: <antonin.godard@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10554D65543
-	for <webhook@archiver.kernel.org>; Wed, 17 Dec 2025 10:37:36 +0000 (UTC)
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.11840.1765967849433176730
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36C3FD65C78
+	for <webhook@archiver.kernel.org>; Wed, 17 Dec 2025 16:14:48 +0000 (UTC)
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.18336.1765988080112454719
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 17 Dec 2025 02:37:30 -0800
+ Wed, 17 Dec 2025 08:14:41 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=dkim header.b=s7irv5Rq;
- spf=pass (domain: bootlin.com, ip: 185.246.85.4, mailfrom: antonin.godard@bootlin.com)
+ dkim=pass header.i=@bootlin.com header.s=dkim header.b=1g4KBp28;
+ spf=pass (domain: bootlin.com, ip: 185.171.202.116, mailfrom: antonin.godard@bootlin.com)
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 787154E41C57
-	for <yocto-patches@lists.yoctoproject.org>; Wed, 17 Dec 2025 10:37:27 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 4CC66C1A59E
+	for <yocto-patches@lists.yoctoproject.org>; Wed, 17 Dec 2025 16:14:13 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 48F1A6072F
-	for <yocto-patches@lists.yoctoproject.org>; Wed, 17 Dec 2025 10:37:27 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A34EE119527C3;
-	Wed, 17 Dec 2025 11:37:25 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id D75856072F
+	for <yocto-patches@lists.yoctoproject.org>; Wed, 17 Dec 2025 16:14:37 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F29EB102F0ADF;
+	Wed, 17 Dec 2025 17:14:31 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1765967846; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=3hIAIDm8FGEAoNPi8CVcmLf88Vpl9AZrdlR7ac1skZY=;
-	b=s7irv5Rqsa1nYF8rQIqKROwPam5TFfE4+WoyQD4ez3QWet0mhjjVNMZ62muzWByHGMAT0l
-	aGIRmvj5BBLrMP7dD4mGijq8cH5tlBNmDuY6KKg2sgt46xMDTGB7DB/7X4c+dTh8XfiLe6
-	7UDdz7iXjVUXTBHMFuu2QQGAZv6rjq6qxjjM5SkfNLpicA9/BbYTIKDYOxJFhduUMP9jYj
-	/3ygM0FbpNKbympd/DVYYx+zchvSzEXm5Z40ZmnUMptJaCWZ3C/XJHx6uKTHUqm8L7Sakg
-	KLCFspJ/QRThvv6MJ9d1t/eungWvYlGWm20JexNFQMpm/kzjqYSmxIkkjQcAnQ==
+	t=1765988073; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=EmVPlFXEnOBiEGgSHEfJS1Cx+jFyBfF4jBhioolpVRk=;
+	b=1g4KBp28Skz07j9JxLpTwUJ0onO1oeABZRWXp+B1NVujrhxvW7aUzChWAFnInJbUQ1AQ5/
+	oH37N0PMEEVIVkp3icXv48613aqIja9lh1luDkpGG5HwYHqLuXocFNkrD45QKv+AJY+NPN
+	komyfvO2TkoRrYCqRgrfm4WgF3x1eZhKo3kxSTvjKFccWVe7rYxNIhaWSZ9A8vd8Qn2F5I
+	MEWxKdcV/DfX10YGhybXtcorSMozelOwIbnsp10sdoge8HZBU+xI1Uf6DjFFYpoPSMf09v
+	2oUGO6VvTzzNAtpnBz2ybeMNYk48U1CE5jRbSdRFg8Hh98NdmP2UpBp0imSvKQ==
 From: Antonin Godard <antonin.godard@bootlin.com>
-Date: Wed, 17 Dec 2025 11:37:13 +0100
-Subject: [yocto-autobuilder-helper][PATCH] scripts/run-docs-build: update
- buildtools docs tarball to 5.3
+Date: Wed, 17 Dec 2025 17:14:25 +0100
+Subject: [yocto-autobuilder2][PATCH] config.py: add whinlatter release to
+ workers_prev_releases
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251217-update-buildtools-tarball-v1-1-2e3e3db2a0a0@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIANmHQmkC/yXMTQ7CIBBA4as0s3YSwGCsV2m64Ge0GFLIAEbT9
- O5iXX6L9zYoxIEK3IYNmF6hhLR2yNMAbjHrgzD4blBCaSnOElv2phLaFqKvKcWC1bA1MeJVayW
- k8ZdRjdD7zHQP7+M9zX+XZp/k6m84fZKrCU2r6XgR40IxE8+w719dRQlClwAAAA==
-X-Change-ID: 20251031-update-buildtools-tarball-855201ad6929
+Message-Id: <20251217-add-whinlatter-to-config-v1-1-9aeb42d212bd@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAODWQmkC/yXMTQ6CMBBA4auQWTuJVInRqxAWZWYKY0hr+oMaw
+ t2tuvwW722QJKokuDUbRFk1afAV7aEBmq2fBJWrwRxN15r2gpYZn7P6xeYsEXNACt7phGSZ+Nr
+ R6ewc1PwRxenrt+6Hv1MZ70L5++vfgWprSw5j0YUlmgH2/QNsa/zNkAAAAA==
+X-Change-ID: 20251217-add-whinlatter-to-config-cadcd95c34ff
 To: yocto-patches@lists.yoctoproject.org
 Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
  Antonin Godard <antonin.godard@bootlin.com>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1359;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1677;
  i=antonin.godard@bootlin.com; h=from:subject:message-id;
- bh=pH1Gd3kt17/NnDTMEJrbbtX9wccM0MZIekVCjBwhhFI=;
- b=owEBbQKS/ZANAwAKAdGAQUApo6g2AcsmYgBpQoflOIUKSqhJDhApgOdQG3klrD4zIqbAB42JZ
- GLtimPG6lmJAjMEAAEKAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCaUKH5QAKCRDRgEFAKaOo
- Nh1pD/9AfTT3L+dyTXBCnvNdVdozNFLn0NyzDo7NiE1ZjpfJbJ/A6pUPfdmCe2ZVK1vJLtIgZzh
- JjlXWhuziizB67PcBamiYSFp+JAyku7GeoEwSnW5rqcW5hEN46Yuze8U6MdSEp2qVOi4ZPsqUH2
- mbFVcjqrsU3anjsvW1OwdcQqDpOEXnvkIwSlU2m+/HHRLgk992UUs2YukXasG/TRIekMTxS1E3U
- 17MDuQktBgTcGePlP53ShbsoKsV62+Vi9BuWfsHNoxCAncOHSwv0QTKdhlmuh0a8xGAKFIND07U
- Dj5YzkfPNYIS7vyAV1pMVZr1dJINnBpZMN2fej2KUSPBSseH1tnHoJA7zWjTv4EXeGz85J5j3Xq
- h9usY49Z/rnjKWNXHPtUDqWwjWjaxCGhD4NO2BiFwSTQAHyqFXiUYmGPg1bS6uTv91t1xwik6hZ
- yBzBBuyPgr4R32dGtbsZpRQBTmqREXcmJJ7ZpEVntbswtxGDkV+E5iOgWwWnP5zGHub3qcZM1Dz
- ZjHDLznIJ95Nyze3kvhtgMkr+4FU4vS4pWeOTcEbt+wAajWfDnJBXD2HvfwBoUHUZak6btYxQn8
- Zg1rCWrZRWnBDF+C8u0CiFhW1+63OPfNXqA3g39fnQbyKwyQxL8HUaZ2YRp6HZBBr23ZiLnEbqk
- MqjuaN/rVQBBTrA==
+ bh=esZCtgDIR/3bFsQ5rUWamOvoyuxvv4DWSo/je1tGcKQ=;
+ b=owEBbQKS/ZANAwAKAdGAQUApo6g2AcsmYgBpQtbne3HtLhBm9LhHYyO39XisBB9cf1SNMZPmy
+ b0mFD2d10SJAjMEAAEKAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCaULW5wAKCRDRgEFAKaOo
+ NlL7EACltsX0xX36k3pJufY6U1ADPz3vav5+In7McqFybtDrm+AOHL2IBGeu3HFeBDseC46f5sy
+ O3iQl83V2ilicN1g2wcpTmFdkOopS8za3GT6wCUi/JUSYHH83OtKIO+Mx98TW/IfjSx7XCJUYKM
+ dgPhK0lqkdjRyp2oSKqVaQn30fgbHtCfy0X5NFDWWUDdYoPLNq8tRNF/fz5x/1DR8lFn+iZ+y9m
+ 5qbBgH3AL3hENF2FQQBgsafjDCevu7msN9L4iN26w2Tu2t5wGcvRMfs6jAYuWQHFLDdIyaGa/lj
+ UsfPt4Pqm7gc/Ba9uvh85C3PXzsLEvKleujbQhCDS7i33NhH6wmoLhUT4PJy7dwDmcc0r6GzLze
+ agfEIXW5o6KBvlEC2HM+ejqhL4tokDNKhXf5WLE1lJAzB66xF+bh7qdrygN5OPAlOD6sDiv4W4K
+ es2tvQvm96rUkxfV985N3xd7b7tZQb9q0fO/aEiyPbiAxL1Xq8jFPqilu/9C+Pkd4XB5s3RC54z
+ xIjneAnK8Pqd5RQwK05/iOkbW69NUfDMgq010je4jDQb5bA7gvaepQ9+wGnyNHp15m5ukjGMcGP
+ dn+b5nNz+11vY2QGlGmpS4LEjYyKVXK+x+7Rc2uIRkLK6dECypFPEiDUwHqMCF5+t4yNUpx84ur
+ Yal7aV+koS4quSw==
 X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
  fpr=8648725188DD401BB9A0D3FFD180414029A3A836
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 17 Dec 2025 10:37:36 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2811
+ <yocto-patches@lists.yoctoproject.org>; Wed, 17 Dec 2025 16:14:48 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2812
+
+The list if based on what we list as supported in the documentation:
+https://git.yoctoproject.org/yocto-docs/tree/documentation/ref-manual/system-requirements.rst?id=e7b40b71dec8d4aee2e7b711e7c1083b2920f171#n55
 
 Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
 ---
- scripts/run-docs-build | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ config.py | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/scripts/run-docs-build b/scripts/run-docs-build
-index a001fb2..b83799a 100755
---- a/scripts/run-docs-build
-+++ b/scripts/run-docs-build
-@@ -26,7 +26,7 @@ scriptdir="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
- PUBLISH=${PUBLISH:-1}
- sharedir=`jq -r '.["BASE_SHAREDDIR"]' < $HOME/config-local.json`
- # Modified 5.1 tools image to include rsvg, switch to next released version
--buildtools_url=${buildtools_url:-https://downloads.yoctoproject.org/releases/yocto/yocto-4.1.2/buildtools/x86_64-buildtools-docs-nativesdk-standalone-5.1-modified.sh}
-+buildtools_url=${buildtools_url:-https://downloads.yoctoproject.org/releases/yocto/yocto-5.3/buildtools/x86_64-buildtools-docs-nativesdk-standalone-5.2.99%2Bsnapshot-8519978592483bb096ed5192fff7af6c887b799e.sh}
- buildtools_url_old=${buildtools_url_old:-https://downloads.yoctoproject.org/releases/yocto/yocto-4.1.2/buildtools/x86_64-buildtools-docs-nativesdk-standalone-4.1.2.sh}
- docbookarchive_url=${docbookarchive_url:-https://downloads.yoctoproject.org/mirror/docbook-mirror/docbook-archives-20201105.tar.xz}
+diff --git a/config.py b/config.py
+index 50710bc..ace6c59 100644
+--- a/config.py
++++ b/config.py
+@@ -187,6 +187,7 @@ all_workers = workers + workers_bringup + workers_buildperf + workers_arm
  
+ # Worker filtering for older releases
+ workers_prev_releases = {
++    "whinlatter" : ("alma8", "alma9", "debian11", "debian12", "debian13", "fedora39", "fedora40", "fedora41", "fedora42", "opensuse155", "opensuse156", "rocky8", "rocky9", "stream9", "ubuntu2204", "ubuntu2404", "ubuntu2504", "ubuntu2510", "perf-"),
+     "walnascar" : ("alma8", "alma9", "debian11", "debian12", "fedora39", "fedora40", "fedora41", "opensuse155", "opensuse156", "rocky8", "rocky9", "stream9", "ubuntu2004","ubuntu2204", "ubuntu2304", "ubuntu2404", "ubuntu2410", "perf-"),
+     "styhead" : ("alma8", "alma9", "debian11", "debian12", "fedora38", "fedora39", "fedora40", "opensuse154", "opensuse155", "opensuse156", "rocky8", "rocky9", "stream8", "ubuntu1804", "ubuntu2004","ubuntu2204", "ubuntu2304", "ubuntu2404", "perf-"),
+     "scarthgap" : ("alma8", "alma9", "debian11", "debian12", "fedora38", "fedora39", "fedora40", "opensuse154", "rocky9", "stream8", "ubuntu1804", "ubuntu2004","ubuntu2204", "ubuntu2304", "ubuntu2404", "perf-"),
 
 ---
-base-commit: bb28c344660afc88a7a4c1edf8847041728a6654
-change-id: 20251031-update-buildtools-tarball-855201ad6929
+base-commit: 044e5fe818870ec93baf278e9564db233eae5075
+change-id: 20251217-add-whinlatter-to-config-cadcd95c34ff
 
 
