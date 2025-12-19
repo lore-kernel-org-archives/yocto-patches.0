@@ -1,157 +1,111 @@
-Return-Path: <michael.opdenacker@rootcommit.com>
+Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ADC1D7495C
-	for <webhook@archiver.kernel.org>; Fri, 19 Dec 2025 06:34:27 +0000 (UTC)
-Received: from bumble.maple.relay.mailchannels.net (bumble.maple.relay.mailchannels.net [23.83.214.25])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.11785.1766126059736265318
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7948DD74960
+	for <webhook@archiver.kernel.org>; Fri, 19 Dec 2025 07:01:37 +0000 (UTC)
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.11971.1766127695753494392
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 18 Dec 2025 22:34:20 -0800
+ Thu, 18 Dec 2025 23:01:35 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@rootcommit.com header.s=hostingermail-a header.b=VdjE9vkC;
- spf=pass (domain: rootcommit.com, ip: 23.83.214.25, mailfrom: michael.opdenacker@rootcommit.com)
-X-Sender-Id: hostingeremail|x-authuser|michael.opdenacker@rootcommit.com
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id D0DDC720F81;
-	Fri, 19 Dec 2025 06:34:18 +0000 (UTC)
-Received: from fr-int-smtpout12.hostinger.io (trex-green-8.trex.outbound.svc.cluster.local [100.102.180.166])
-	(Authenticated sender: hostingeremail)
-	by relay.mailchannels.net (Postfix) with ESMTPA id ECFB1720BD7;
-	Fri, 19 Dec 2025 06:34:17 +0000 (UTC)
-ARC-Seal: i=1; a=rsa-sha256; d=mailchannels.net; s=arc-2022; cv=none;
-	t=1766126058;
-	b=dxkhzFzhEzXjhOouhsfAKho24ZYr6rscdjd49CVNs4P7uZ5EtzeJSc77cS4jCyYQtkRjr5
-	3aG/UtZhbPl2y7/3Mqx5Er5HyO4ROcRjyqLrqB6WjquPGqkIqtPzV/LbSRZ6YH6Wv0uelw
-	ssxt+MPFJLHYjRp8yhOx9VlHTAHHBsQeAPb4HsIlqoXQzCnEXNDA/FP5gR2BvwuH4Z2kO9
-	Vkk96/ux5bYhJzy5zPOPWNJQ3MVpTWplkyyV9IGQJYMp6gAP+YkADNhsvgRP03vAdAvSP3
-	3VkA4ZkhNVswtYUkFbrQWw5azm4X2zU/PPickTDBHUXjuVf6Udwf1vuf93j15Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1766126058;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=dFwPPXufBGX7VMYG7ThrohQrOca9GgDXS+G8XNueQEY=;
-	b=B99PutymaOZa9FjRr5/9taNkob27tx1L9cOXxSZYldJ90Ob5yulbby+kUwwjXw1AROFXF6
-	e1hh5GHLagvqbjbinA3ncfYUElrhR9MQNfESKi9XV00Ig6i7nPk85iW5cN+m2YZow0TQyL
-	Ny8IFEIQqlNSchzfIOZ6gMujX8V9n+Bwnb04eGA0J1ScjoYmN2tFHN3T1WJ3e0a4zJGPgM
-	+O7cPnrxDII55G85ExCqZBqinzLJf/rx3eBYFjKgye32fCZljJd/23H8/uaz+tz6LsLP26
-	QQdrcfLbhDJpQcI8gx2xAn3cA9xL7/jWBcYUrV4+11EZslFQqFzIayVXHOEyow==
-ARC-Authentication-Results: i=1;
-	rspamd-547f5d9dc7-lf8fq;
-	auth=pass smtp.auth=hostingeremail
- smtp.mailfrom=michael.opdenacker@rootcommit.com
-X-Sender-Id: hostingeremail|x-authuser|michael.opdenacker@rootcommit.com
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: 
- hostingeremail|x-authuser|michael.opdenacker@rootcommit.com
-X-MailChannels-Auth-Id: hostingeremail
-X-Rock-Battle: 5c0314fc3152ed7c_1766126058655_1747641395
-X-MC-Loop-Signature: 1766126058655:3885057504
-X-MC-Ingress-Time: 1766126058655
-Received: from fr-int-smtpout12.hostinger.io (fr-int-smtpout12.hostinger.io
- [148.222.54.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.102.180.166 (trex/7.1.3);
-	Fri, 19 Dec 2025 06:34:18 +0000
-Received: from [IPV6:2001:861:4450:d360:acbc:85c8:6fe1:767c] (unknown [IPv6:2001:861:4450:d360:acbc:85c8:6fe1:767c])
-	(Authenticated sender: michael.opdenacker@rootcommit.com)
-	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4dXd6b6Xh2z1xpD;
-	Fri, 19 Dec 2025 06:34:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rootcommit.com;
-	s=hostingermail-a; t=1766126056;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dFwPPXufBGX7VMYG7ThrohQrOca9GgDXS+G8XNueQEY=;
-	b=VdjE9vkCLm38CXF6jBNLo4oj3T5ajhHcDq84s4y9EzX74yhNg4PxY86xI/J85V/YOc6M3R
-	YFJkmV4m4k0944S82NDk5saXZO9VoAtoW9qeqaCW08mzK28g5prYmuZci/kpKRjEP8/v5w
-	Q3s918Lrtmr+pxTpw3H7kPqn6igW5Fasswok4dHHJgvCC2xpxkN6oDHHpEAZ7pFUdwFFdu
-	+F4mM6Q/brkCf5V+PoA9HbHG6+NSc+vPYOpTtIU3jY+Mt+9GLnMg9V47PMFoJeSbAwVa6t
-	kivUbi8eScxqh++shZ+qTaBp0CeId5WBEQhrmCTEIz+HSia9UV8oh//ISSxdwA==
-Message-ID: <2faed21a-9745-4f67-a2de-efe1f56c4141@rootcommit.com>
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=Za6ZP9j0;
+ spf=pass (domain: gmail.com, ip: 209.85.219.47, mailfrom: twoerner@gmail.com)
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-88a2fe9e200so11717086d6.0
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 18 Dec 2025 23:01:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1766127694; x=1766732494; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=S72SaqBHcGHVbB+5yjTnOH+8r3DyAblBcsi/HqOjlyI=;
+        b=Za6ZP9j0x5nrL0ODXoaT4xVvl0yUSYVIfDohtJYPJnuaz2i5SckpbRhJP2mL6CLNg2
+         UfQZjzC/RqoQkyvI2ioGsBxjhQnX2pxyhEGAFy4BtuOp+qWoK/JBxoiKquRQeUYOxU3M
+         F9dI1/ZpIlLsu+2Y5L+gb/1rSWn3uMJ9lRc9P95ceW+eVoI24jVmUqo2tBX4zrnWNRW0
+         w5IQfFBMT3aAY7o8V5HG2ZTGO/hAaRhSouFuHb2ma096OeBw8Tem1vFX42027AQITus5
+         CaDy35MWzDc/A/Jhvucdf7fByhE84LGH4AxU2/k7iK0CX7pn4M9FurgdOQhOFSolmU/Z
+         lLdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1766127694; x=1766732494;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=S72SaqBHcGHVbB+5yjTnOH+8r3DyAblBcsi/HqOjlyI=;
+        b=OrU4v5qM2ySFypNVTluj0jgmMjfDM+w0VLn1l93Xn2+A3cnEKE+d2cKF5N7uATw+Rn
+         3Rl+osSUdRgEUAovPSNWN3mZU538D0Yh297HjnsiG3cEWUDlgfxHyhw9kD98cxAa3fkm
+         73pbiQOA1t3OtdhFjH4hUJqhpmpA34bJo6W5V0LFc8QT5sywJQSGMSSBL6+Xhl4VnUGr
+         5E32Kap/m65CSQHHGwzku0wjSfpo17oFK7DffeAsVza/ozMIul9pjG3qP6TK3zF7dy/7
+         SVkiIA7ttd412BQ74nhJe9pmojjicPgtoH8b8HiBEP63qSCV3GFx/T4Dzjt+2v720/2Z
+         T2hw==
+X-Gm-Message-State: AOJu0YyQVb4Y7ubVMh54tMyaOju/FWCwvwFCKiURol8wGdT8sYHXhizN
+	xTzhGmCgVXexnWHApn0JbDVZZxZ305Psb7oClXbpf+lOTIkygOQV6A8LIJBpzg==
+X-Gm-Gg: AY/fxX6vxbXb+hDyWFQ7fIN/lwipycBL3mHmsaDLnv28aVngzTbVF/wcIHBJ6RgISEM
+	9zo6LHY4FBwIkcNqb5CNBrhaWohds8BIw9IhtNnEJRXxr5FAasCAz6JbedEtm8TLzjO/B+m9sBX
+	zRo0NN2diN37kn1w6QuhF8MqI+Gx9dRhlimj58Spg9fJnXL43RsJZ+HDUCbXo6Msr5JKwDTRLkC
+	IDVB+hVWogQqkqvGh+bEzstnZKGF+TFzIz6OBip5LrTUOKZunGn9FQcQBBxRiyAiznqkrSrgYUC
+	pZlMJwcgPnzbPgjdzfFyI87IEdkOOO7Ib8ZIupWDyDU9t95/IZqUyaC6Lm/lPTqGmookSrMImkY
+	fXF+dyIoqotgi0Nm5knVwa53rK4XKTyrMkwOXqwawLSsYUSxFKOR6tG2sn4SIBPPtsIGt1Ed3Jw
+	0Q/BFwyf1utVXK5W9mEMrVUGGEmdfOVj3sukDZlQ==
+X-Google-Smtp-Source: AGHT+IF0SBmUqly3jyB2GHIC4Hz2kyxzB5/UzkhHd2vxpFaVbDdOep1fdlDneprXCWvJ40JsnMcZeQ==
+X-Received: by 2002:ad4:4f0e:0:b0:882:489e:a79d with SMTP id 6a1803df08f44-88d81d44bc4mr24749676d6.22.1766127693916;
+        Thu, 18 Dec 2025 23:01:33 -0800 (PST)
+Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-88d99d7d5f4sm13570166d6.40.2025.12.18.23.01.33
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Dec 2025 23:01:33 -0800 (PST)
+From: Trevor Woerner <twoerner@gmail.com>
+To: yocto-patches@lists.yoctoproject.org
+Subject: [meta-rockchip][PATCH 2/5] provide kernel *.inc
+Date: Fri, 19 Dec 2025 02:00:11 -0500
+Message-ID: <20251219070014.39432-2-twoerner@gmail.com>
+X-Mailer: git-send-email 2.51.0.193.g4975ec3473b4
+In-Reply-To: <20251219070014.39432-1-twoerner@gmail.com>
+References: <20251219070014.39432-1-twoerner@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: michael.opdenacker@rootcommit.com, yocto-patches@lists.yoctoproject.org
-Subject: Re: [yocto-patches] [meta-rockchip] [PATCH] tinker-board-3: add
-To: Trevor Woerner <twoerner@gmail.com>
-References: <18823A0A6BE7E236.1506149@lists.yoctoproject.org>
- <38a42c2b-3025-4516-8aac-c9136ee6e55b@rootcommit.com>
- <20251219025010.GB5613@localhost>
-Content-Language: en-US, fr
-From: Michael Opdenacker <michael.opdenacker@rootcommit.com>
-Organization: Root Commit
-In-Reply-To: <20251219025010.GB5613@localhost>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Date: Fri, 19 Dec 2025 06:34:15 +0000 (UTC)
-X-CM-Analysis: v=2.4 cv=NuiDcNdJ c=1 sm=1 tr=0 ts=6944f1e8 a=3KgNOvecfSDjBda/iPf6Uw==:617 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=VwQbUJbxAAAA:8 a=NEAV23lmAAAA:8 a=d70CFdQeAAAA:8 a=iGHA9ds3AAAA:8 a=h008hTMyyYeqU19Cri4A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=NcxpMcIZDGm-g932nG_k:22 a=nM-MV4yxpKKO9kiQg6Ot:22
-X-CM-Envelope: MS4xfCt4X9Nr9VoL57ibf1SzpATDdQPTjj8ItGY66b2aq9SMfashWYlCbVW1s0ZbgaHbZFXNdQqVpAtXeMcN5EiJJpFD9+DTKExoC1EddWexMRy5dqKeYLeB 2jH+yhfEr2da60APhR8tdbBSan6fNruEmaPBIG7TWQv/j6XQ2zV1bOmwrS+Fl4XYaurpj+hPagKcjW4mSWjZ6i7WE4vuainnpuQwilCYb/GLPe2xqBzEb1jX 3AX8rUQ0Q0NEHlUCeFO63Jh2c2hVx24SRngBj+2VRL1BDQ5xMJjlCiTmfMqeeiIvRwxLX3fIkKwItn2UCaXNOBROxccVhagWgBaS757t/nQ3wwc1VEAyFHCD 5nS/q7s5ME/GkBcVkHOs7YtGT4BGnmbOg2pSZ9rLONnPzuGy08u1AlGvkG0RQwhN+s4e0c8Z
-X-AuthUser: michael.opdenacker@rootcommit.com
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 19 Dec 2025 06:34:27 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2822
+ <yocto-patches@lists.yoctoproject.org>; Fri, 19 Dec 2025 07:01:37 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2824
 
-Hi Trevor
+Consolidate the two bbappends for linux-yocto and linux-yocto-dev and
+provide the "guts" of the rockchip additions in an *inc file which could
+be used by other linux kernel recipes outside this layer when a rockchip
+machine is used.
 
-On 12/19/25 03:50, Trevor Woerner wrote:
-> On Thu 2025-12-18 @ 06:10:07 AM, Michael Opdenacker via lists.yoctoproj=
-ect.org wrote:
->> Greetings,
->>
->> On 12/18/25 07:03, Michael Opdenacker via lists.yoctoproject.org wrote=
-:
->>> From: Michael Opdenacker <michael.opdenacker@rootcommit.com>
->>>
->>> Add basic support for the Asus Tinker Board 3 [1] and 3S [2] SBCs,
->>> with the Rockchip rk3566 SoC.
->>>
->>> Support for such boards was introduced in the 6.19-rc1 version
->>> of the Linux kernel:
->>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/co=
-mmit/?id=3D9f80b3952318d7ef18573a5010f06118602f992e
->>>
->>> Therefore, the https://github.com/betafive/meta-linux-mainline/
->>> layer is currently a prerequisite to build images for such machines.
->> Is it fine to require an additional dependency to the "meta-linux-main=
-line"
->> layer here, as Linux 6.19-rc1 isn't supported by linux-yocto-dev?
->>
->> I could add a machine dependent string to LAYERDEPENDS_rockchip, but I=
- don't
->> want to pollute conf/layer.conf.
->>
->> And it seems BBFILES_DYNAMIC is for recipes only, not configuration fi=
-les.
->> Thanks in advance
->> Michael.
-> As much as I like Paul's meta-linux-mainline (and use it myself from
-> time to time) I would prefer of meta-rockchip didn't have a dependency
-> on it.
+Signed-off-by: Trevor Woerner <twoerner@gmail.com>
+---
+ recipes-kernel/linux/linux-%.bbappend                          | 1 +
+ .../linux/{linux-yocto_%.bbappend => linux-rockchip.inc}       | 0
+ recipes-kernel/linux/linux-yocto-dev.bbappend                  | 3 ---
+ 3 files changed, 1 insertion(+), 3 deletions(-)
+ create mode 100644 recipes-kernel/linux/linux-%.bbappend
+ rename recipes-kernel/linux/{linux-yocto_%.bbappend => linux-rockchip.inc} (100%)
+ delete mode 100644 recipes-kernel/linux/linux-yocto-dev.bbappend
 
-
-No problem at all. I fully understand you want to keep meta-rockchip=20
-clean, and it looks very clean compared to other layers).
-
-This being said, having a board in a community layer like ours is a way=20
-to share code and foster collaboration, all the more as OE/Yocto can=20
-help people focus on userspace aspects while keeping the early boot=20
-details transparent.=C2=A0 It's a bit frustrating to have to wait for 2 m=
-ore=20
-months, but its not blocking either.
-Thanks for your review!
-Cheers
-Michael.
-
---=20
-Michael Opdenacker
-Root Commit
-Yocto Project and OpenEmbedded Training course - Learn by doing:
-https://rootcommit.com/training/yocto/
+diff --git a/recipes-kernel/linux/linux-%.bbappend b/recipes-kernel/linux/linux-%.bbappend
+new file mode 100644
+index 000000000000..34bf335d0b10
+--- /dev/null
++++ b/recipes-kernel/linux/linux-%.bbappend
+@@ -0,0 +1 @@
++require linux-rockchip.inc
+diff --git a/recipes-kernel/linux/linux-yocto_%.bbappend b/recipes-kernel/linux/linux-rockchip.inc
+similarity index 100%
+rename from recipes-kernel/linux/linux-yocto_%.bbappend
+rename to recipes-kernel/linux/linux-rockchip.inc
+diff --git a/recipes-kernel/linux/linux-yocto-dev.bbappend b/recipes-kernel/linux/linux-yocto-dev.bbappend
+deleted file mode 100644
+index 81d2b6d693c4..000000000000
+--- a/recipes-kernel/linux/linux-yocto-dev.bbappend
++++ /dev/null
+@@ -1,3 +0,0 @@
+-FILESEXTRAPATHS:prepend := "${THISDIR}/linux-rockchip:"
+-
+-SRC_URI:append:rockchip = " file://rockchip-kmeta;type=kmeta;name=rockchip-kmeta;destsuffix=rockchip-kmeta"
+-- 
+2.50.0.173.g8b6f19ccfc3a
 
 
