@@ -2,62 +2,61 @@ Return-Path: <antonin.godard@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 910E5D767D1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FB21D767CB
 	for <webhook@archiver.kernel.org>; Fri, 19 Dec 2025 10:36:08 +0000 (UTC)
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.14171.1766140562621984301
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.14245.1766140566698784075
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 19 Dec 2025 02:36:03 -0800
+ Fri, 19 Dec 2025 02:36:07 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=dkim header.b=gvZHNC4g;
- spf=pass (domain: bootlin.com, ip: 185.246.84.56, mailfrom: antonin.godard@bootlin.com)
+ dkim=pass header.i=@bootlin.com header.s=dkim header.b=l5pHN/sn;
+ spf=pass (domain: bootlin.com, ip: 185.246.85.4, mailfrom: antonin.godard@bootlin.com)
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id AFD5F1A22DF
-	for <yocto-patches@lists.yoctoproject.org>; Fri, 19 Dec 2025 10:36:00 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 284D04E41CB5
+	for <yocto-patches@lists.yoctoproject.org>; Fri, 19 Dec 2025 10:36:05 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 7AABE6071D
-	for <yocto-patches@lists.yoctoproject.org>; Fri, 19 Dec 2025 10:36:00 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0C89F102F0CD2;
-	Fri, 19 Dec 2025 11:35:54 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id F35736071D
+	for <yocto-patches@lists.yoctoproject.org>; Fri, 19 Dec 2025 10:36:04 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6B513102F0CD5;
+	Fri, 19 Dec 2025 11:36:00 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1766140556; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=AowxS4YQJQNA5ENFifwfQ7S6yNENaV8OO3fw/U9QMfs=;
-	b=gvZHNC4gfvCDeJ2Kss7cxLb/C+ud6S7DdorS9nlc3vsPxbSQsl7Gi+ejJwITp737DoJYbD
-	7TnncGydrBLWxOlqV0ItYAKvMfPsByNF8sFRi5p6mEC1c9hetQHcWCrka7z99uXbI3pmg/
-	Cu9Nm4el48z2T5T3oNfz+ghla1lU2CuxsDCDW3nyL7ktcLHUMKhXW1FJE0rdUG03GNJN+6
-	TyWnzK2JO0GDxdzXLVqE5n//m6ceagA+ZEU2WT9YdfunC3qgVxfzDXonHWDBRJdwPkldu9
-	ergqnia3Lxvjsw03eEOepCgtvxYEJ1yS+0pLjAset6aDqgHUaM6CxIU+0cwmfw==
+	t=1766140560; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=COfeaHbyieXyTX9o2uA/Y1fkKA4rJXUoII2FwjDnwnc=;
+	b=l5pHN/snLRX2wxmC5zbyuIAzvUc7PUPI9oprlNv6Lo7HvqJ0Zdlc08YVObVcInOV1akEqY
+	raXkoGN6tksZWkwThLreYiaId0RHg/Z++dEbTPR1dan31BCwbBELSSY81aR3M92fIWaehd
+	Z3ZRLtFtMo5M2jmD7kRLZ8lj5TdHV++WxhHD0krSl2pRiaDslU6HmE6pSOY+t1806wYf3+
+	KkYTneN6k1gDapBUrozXPAjFRtLUhXeEyy/YvJxcCP0pc6X6ETFYPVe1Ycz1i0yBkmnNdR
+	OqXjMRIS3FrJvpEr5znzMsRkYEZ2DOfT+uIqU2bClhztYGNQlbGzD2wdi/d4Uw==
 From: Antonin Godard <antonin.godard@bootlin.com>
-Subject: [yocto-autobuilder-helper][PATCH 0/3] scripts/release-parser.py:
- update and move from poky
-Date: Fri, 19 Dec 2025 11:35:36 +0100
-Message-Id: <20251219-releases-parser-updates-v1-0-6830e6a67db0@bootlin.com>
+Date: Fri, 19 Dec 2025 11:35:37 +0100
+Subject: [yocto-autobuilder-helper][PATCH 1/3] scripts/release-parser.py:
+ use yocto-docs instead of poky
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAHgqRWkC/yXMTQ7CIBBA4as0s5ak9EeDV2m6oDDaMaQQBoym6
- d0ddfkt3tuBMRMyXJsdMj6JKW4CfWrArXa7oyIvhq7tRt1pozIGtIysks3Sqpq8LcKLa8dhQNO
- fTQ9Sp4w3ev3O0/w31+WBrnx30zu6EpWtJS6VgpfRiiFhnuE4Pob4oiaVAAAA
-X-Change-ID: 20251219-releases-parser-updates-7c0544e93693
+Message-Id: <20251219-releases-parser-updates-v1-1-6830e6a67db0@bootlin.com>
+References: <20251219-releases-parser-updates-v1-0-6830e6a67db0@bootlin.com>
+In-Reply-To: <20251219-releases-parser-updates-v1-0-6830e6a67db0@bootlin.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
  Antonin Godard <antonin.godard@bootlin.com>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=989;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1220;
  i=antonin.godard@bootlin.com; h=from:subject:message-id;
- bh=QMTA2lPZ8GIiZKRbstdkWO/aTC4IrSiM+jHh6W6SeDg=;
- b=owEBbQKS/ZANAwAKAdGAQUApo6g2AcsmYgBpRSqKKbZGR7CK+e/8yqN8Zq9bVgnbBzJD3HQyI
- NwIgIaZyGKJAjMEAAEKAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCaUUqigAKCRDRgEFAKaOo
- Nt4RD/9BQNtqt2EEEcwT/RuLFXVrb2BtBLl+k6DaQxUnKVkGu6MAD2p0tlLeqKe0EatJwwMX/9o
- nxfmQ5PDni10UZvUc1uoYnm4nJPC1adYkJzwaOHMYCMyasoIUbiI3mlXfdoaxYr8OPya1boGPm3
- iUadVucCsDumDVr3PVAiiABeL4GaLe/3h6azOviuYXGTbQJbvyHsrn54hnqtIE7sk66SB67cPrc
- IdjYyfju5lnLxcKZKwOIyySUns2ANTh5Aho6z7lV9Mm8Y6P+9U6nYjfJ9KLXiI2fnT17J3vS0QO
- hp92AWcR7PAp/93B5wzFI1mtv1elrP1k/0hx5ipXSATQK1xHwaoObfYjIW8I24X/UlAEHn8AWg9
- YYH5O31yzzffI37B1idZp/Hu+o2Zy0eeqsPNwJP307EQANdgMQ/yYX/zKzQn/Kc5B6XUWlQlIVK
- Cj2hslAvE9sg5khPUh1BN8coLUDZ2xaVAIa16TcK3vGgwb89C5odtgTGQ2Xvo7oaxVek0oi1r4t
- Do3BuTTrT2N+XZLSYQT5Oeiijiv+5N6uG4RNNM0Dv1OlV4ad0MMtTs2rS21S2Bn6OJFZ8BZzeJZ
- WyqMwEkW90gU55IbBxoW4qkOEthf+qJiNb87qi5HUBDbkIeseOBxaiKhz9DFstlV06EABm63ogc
- t6RAQcfYsQuHTaw==
+ bh=R0QY+okYnj9ZhTNAQQDTGOEnFu/JAkmpIccrWje4VOk=;
+ b=owEBbQKS/ZANAwAKAdGAQUApo6g2AcsmYgBpRSqKGll7jmoIf5+mXjbkFnMnIbVOj3yzWajkn
+ 8w8m4/lO3eJAjMEAAEKAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCaUUqigAKCRDRgEFAKaOo
+ NoaCD/4hhE7YfI5SD2oXl1gkxLcwoIHN+SdKbWQDODcuQFEoGHtOCslx7+DMRvdvR/2a+JrdYf8
+ 0JGTlOwBdbQb7+XVqsee1N0jj14pH+40o5qg70p4vqcvzyOyUr4rVzpmsc7EI+csbazozo4/4Ig
+ d+rRLMNr8mKSPmviYd8CuNyulbhlFNRYUwK02ZCb93QIozBYdDnircSukWR1wEal3Md/qolKadR
+ li5ocvVF653v20xbYr/MbaS4p/jBQt/RmcXWqYZjGY2dIvBseIu9WNTCJYGiVaRaZrifkGCnjz7
+ lnCGb3oUB0kfKF67R3sTxi9ZuZi+aSkhlYU8K9OjeNZVfkmeNLg2ITLaPmGMp+O+TUkx8JQwrEj
+ EkAMs6PBRjosKoWWpRXvvtATyXaaGNeLmBV0ocNNh7o5GIBlaWHQfrsyKteLtqXAH/mxGtn9Xfc
+ 582lKwouR9UDMhDjiHUy+9/QjLF9nPwPzmOj5KnFM4cw7NbKZI30sVbEIARrBmLw7TZdkaPCNpP
+ GxiTS8ANRRtFGo7PWwhxAw1hlFMZEu4Ccl8zOwUveP2lE+qPIusBAe/b8Upz1NGt4hFRy6zDgw1
+ 7buMqlbQ13uWzxg3EjgSHulJ8U7b4pXgy/17nUOydYbK+4R4LLFSAGmq83+1z835rgpxguMprz+
+ BRoJZ1pMiZnRgPg==
 X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
  fpr=8648725188DD401BB9A0D3FFD180414029A3A836
 X-Last-TLS-Session-Version: TLSv1.3
@@ -65,31 +64,46 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Fri, 19 Dec 2025 10:36:08 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2828
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2829
 
-Make the necessary changes to move away from poky and use yocto-docs to
-get the tag information we need. yocto-docs is currently one of the
-closest source of tags compared to poky.
-
-I don't have the autobuilder setup locally, so this is a best guess on
-my side to understand how to put the yocto-docs repository in
-~/git/mirror.
-
-The last patch is a simple refactoring to avoid mistakes when updating
-this release-parser.py file.
+For the release-parser.py to pick up new tags, we need to move away from
+the poky repository. Right now, one of source of tags closest to poky we
+have is yocto-docs. Add this repository as a dependency of the indexing
+job.
 
 Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
 ---
-Antonin Godard (3):
-      scripts/release-parser.py: use yocto-docs instead of poky
-      scripts/release-parser.py: update for Wrynose/Whinlatter
-      scripts/release-parser.py: define globals for stable/active versions
+ config.json               | 1 +
+ scripts/release-parser.py | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
- config.json               |  1 +
- scripts/release-parser.py | 15 +++++++++------
- 2 files changed, 10 insertions(+), 6 deletions(-)
----
-base-commit: b98e33ede486a09d37f89f7df934c7e7ad0a3e58
-change-id: 20251219-releases-parser-updates-7c0544e93693
+diff --git a/config.json b/config.json
+index 3229cde..be65d24 100644
+--- a/config.json
++++ b/config.json
+@@ -1402,6 +1402,7 @@
+             }
+         },
+         "indexing" : {
++            "NEEDREPOS": ["yocto-docs"],
+             "step1" : {
+                 "shortname" : "Generate non-release index",
+                 "EXTRACMDS" : ["${SCRIPTSDIR}/generate-testresult-index.py ${BASE_SHAREDDIR}/pub/non-release/"]
+diff --git a/scripts/release-parser.py b/scripts/release-parser.py
+index 21a6d57..ef25289 100755
+--- a/scripts/release-parser.py
++++ b/scripts/release-parser.py
+@@ -10,7 +10,7 @@ from collections import defaultdict
+ import datetime
+ import semver
+ 
+-GIT_REPO = "~/git/mirror/poky"
++GIT_REPO = "~/git/mirror/yocto-docs"
+ 
+ repo = Repo(GIT_REPO)
+ 
+
+-- 
+2.51.0
 
 
