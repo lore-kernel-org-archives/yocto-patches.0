@@ -2,80 +2,80 @@ Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C78B9D711D5
-	for <webhook@archiver.kernel.org>; Fri, 19 Dec 2025 02:47:45 +0000 (UTC)
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.8966.1766112458772332497
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C571ED711D7
+	for <webhook@archiver.kernel.org>; Fri, 19 Dec 2025 02:50:15 +0000 (UTC)
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.8835.1766112614714931650
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 18 Dec 2025 18:47:38 -0800
+ Thu, 18 Dec 2025 18:50:14 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=j/QDqiWK;
- spf=pass (domain: gmail.com, ip: 209.85.222.176, mailfrom: twoerner@gmail.com)
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-8b5ed9e7500so101002485a.0
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 18 Dec 2025 18:47:38 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=fSkUuC+v;
+ spf=pass (domain: gmail.com, ip: 209.85.160.174, mailfrom: twoerner@gmail.com)
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4ed75832448so17014681cf.2
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 18 Dec 2025 18:50:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766112457; x=1766717257; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1766112613; x=1766717413; darn=lists.yoctoproject.org;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QuFqCS/CCk0Yaosq9R445N5ZEnSHyaWMmyKkf/DZ99Y=;
-        b=j/QDqiWKyMeF3CUgvWQoxe14BHLWl9lUZdZBaMT0gDSCpHtxuoX1c//mYNnEai4WL4
-         o3ruFlyuoN0xZTtRqBQH2DNFKjojYbpb8R4UenlWueBGJavse+5/ALYqZnTEhoCMwNga
-         IXfaGuO8YhHFISTh/kv4481bBhT0Dw/a7pB+AfM/wlGIffVonXj4AFWt7ki9CSecIHsj
-         hzv6iNwWXsmcB5DuBGWzTbFfFkZMFotKxD17qtvrKk98X9VvK2TOWlpy5+PbtrGL2SaY
-         0ZozFEH0htkwIoB9bUhJj2gn0QGtGKq3motumsC5uquHr3oppxlYuOISC8U03U18/uCX
-         V4vg==
+        bh=eStNsC7gHMQL7aE+DrNMnrO4Otg2svhpAU2JqDduSxc=;
+        b=fSkUuC+vFcF49EnTLTgFpHLZzSANs0/kZ7ZL/8dd8n4U22nX4phGIoj7LSphVK6T31
+         M/RuDx47Pon5O0mKmYrrKoGo5jxqBizDwldako8IxChu4mEumZzPZgUceBvoZ9KylWBP
+         n3ZobiaOgiGRxMk90xtHzii+dgFb3bDKxIN4oU3qNVI4vu1aw5Pvpf2B4jl5ViaoyZ+e
+         7+7TSnyB3bujbdMteGIfAj5v1dshvVGwuFF/5Wnsf+k+Qf1nKkah26OwErz5hL/nVT4j
+         L9aftRHO9HyNjCktbFpgceii/d/VVMzoDuqPvW3WRGKW+HO3lD8v/lWMZCELcpX8UHrS
+         sddw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766112457; x=1766717257;
+        d=1e100.net; s=20230601; t=1766112613; x=1766717413;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=QuFqCS/CCk0Yaosq9R445N5ZEnSHyaWMmyKkf/DZ99Y=;
-        b=RVHQb//DUn9+WcyRmRRqwds95pV5en6VxibM05lIWpghw0ajZYF3zmB1Dk3w3vL1XU
-         VNF0UHjbVNbabgmLzHu/uXS049sOtc31YqFpJYOpcEEiG/WIPdwu740tJO7QRPm6adyD
-         I/z+MNUBS9BmS2fl7jbkjTUxJE26AqnvGgzvAO9RM/QPGJHFf0ZanKjKltddE+lzmcJt
-         EDyyZQxbUKVqZbOBQdYcaR33jxLVW0oIkY08+8pf+vXbgY6ljuCzZtRYR70YTykvAe2F
-         BlrecwYUVtzKsE25POcTwFGOtikwPcFjBOeb7W+F5py0qxDfrX1JBVQvljIg+aSKvabR
-         Pqkw==
-X-Gm-Message-State: AOJu0Yz/+zThyjKLEgn0srgRSWSA2fmBR9y7wSc/elO7AFQmunV9+Caz
-	hjB1mtvz3gOLMy1Ray5Yer81N51WtptOlVhwqzpnp9uzrQPCxCIl7YvSf6PhJw==
-X-Gm-Gg: AY/fxX7CdexZk+bbwRNfo9fZzXB5IcQEMvvnThd51gSQZaneocUsbjTlCOApArQ9aZG
-	WiSIBpjnUHLc9tWwXCiM90XLJwBfs4ylc69CI8nM6V+23vVcbHwG3kuAGyXN3clzMLPpzmPGD7i
-	BfMgx1s47jsgm7oXuT4kSH9wRYKgcgweGcowKYW0smNjE4h9JsyJW98C2UgLRwQLjiUo9mzFO44
-	W6Y3MqYZgOTCZ4Q+hf3LrP4tbSRdjnGNpYYwifJ/QnrLs/4sqQMGDMY/lsnSvrYHf01Q4R7cTes
-	LIQorXDeW+U52yUlupcZFyUJM4HqJ5DS0qmAtHf4HnrczyGq+bHzYec9VSSCgGK75fbjEdFIkga
-	zUBs00J97owWxeVujJ4HVTESWCtPhMVyAoPSNKdcSHvhJH2s5IgT5xJESn3N4F93rfcWW6BjmSi
-	nB9KfygxhJb3UsRgCJZWKOBPORkdY8zT+JvDDZ+Q==
-X-Google-Smtp-Source: AGHT+IFwagSXiWw9BmhlvlLchWwD4hPc+8IRrs6fafN0B1chjgPugUCBYHygLXSt4cm7Yj2D8XVTjw==
-X-Received: by 2002:a05:620a:4690:b0:8b2:e8b5:1e9a with SMTP id af79cd13be357-8c08fbdef1bmr297126685a.21.1766112457111;
-        Thu, 18 Dec 2025 18:47:37 -0800 (PST)
+        bh=eStNsC7gHMQL7aE+DrNMnrO4Otg2svhpAU2JqDduSxc=;
+        b=PAzmnBOFp9Sq+8me9ngGSRi4ZgqGfxiIt7bVzYWlwBSk5LXyCX8P7H7E+aHVPbBfcV
+         ShmnCx3zOabwvV4/q5k/uOUZxAfpMvTqHn9hCjU652kUXiVO7LOmZK1LK5HCrhblRpPx
+         TGXopm0y7hTNM4rlLjx9+JvW6UStNQdoKnadlbPOufSJEL/UxS+VaJfwQrLn460tYGrK
+         sRqcJlCwlCS8Lj67odyne2guahkD/Ema3eN1DeAjA/qsR43S0imNobDMOBWdpGuDdKo4
+         q+Hi4ZxSWhLOVDMBprJT4WahYYITSwZgFMotuitCHgDbusLny7Foe3Dh9dq00TFRz8n3
+         ieJQ==
+X-Gm-Message-State: AOJu0YySb2qxmimVfRSc2v3nTSF9N7KrZ76v/fftUmqIIt6oEj7E3mvL
+	LMTECABI9zvLqqftr7MDJG5ddMm9Fe0PqXD4AbesHgl4LXRP8YaggsTmfjV5yw==
+X-Gm-Gg: AY/fxX7lAhqd3djNLyA//OWuMvv0EiShCx9dyUrI4ZJuBRlPosLbi2hwyAa2SHNu8D7
+	R/gNJutsnYMLB/nVW71syX8P4kMvad+GNi4j41Tm4XG59a/atdR5Z33fuFXqVjlLhLDBJvPgdM8
+	Aq//pGPrf07/EtKRQFGe868NFV4bvjg45YJyIRqa0ROBG3vA/cgt2bgu4hqyxTfZZLQq4QpT1rK
+	63eSr2buhnzlYFiNJY5Om+YGdMSqhRFEoC/HypvqhMAY3SSwy4jE086mRke0XaP2TIvK+OXlduj
+	lmPNFziAtqEKCiAe/qvfjyLoT9B+dwJNQhqZchGDkK4EvRkeSjmhqhxBAYYKLopsDbjhz7wGAcu
+	tRgTM/B0l4ryMoLq5O6RBgor5+5aMq9mlh872D88pOjWhMukfLC+apAwb5zkCY7wykkJItchsx9
+	5DRf7G9l/GHA3FTycg+/aYma68wEGzgmxPfhOrQg==
+X-Google-Smtp-Source: AGHT+IEoH3cYhUeQD2G7Xsysc/TLhP1JPAmSAfzHIcIxzxTGecVznEkAap6P0C2YXnUCfQTliCYwQw==
+X-Received: by 2002:a05:622a:a0d:b0:4ee:ccd:7215 with SMTP id d75a77b69052e-4f4abbc303amr24342021cf.0.1766112613180;
+        Thu, 18 Dec 2025 18:50:13 -0800 (PST)
 Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8c0971ee182sm83769785a.33.2025.12.18.18.47.36
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4f4ac55fe70sm7494151cf.11.2025.12.18.18.50.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Dec 2025 18:47:36 -0800 (PST)
-Date: Thu, 18 Dec 2025 21:47:34 -0500
+        Thu, 18 Dec 2025 18:50:12 -0800 (PST)
+Date: Thu, 18 Dec 2025 21:50:10 -0500
 From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Michael Opdenacker <michael.opdenacker@rootcommit.com>
+Cc: michael.opdenacker@rootcommit.com
 Subject: Re: [yocto-patches] [meta-rockchip] [PATCH] tinker-board-3: add
-Message-ID: <20251219024734.GA5613@localhost>
-References: <20251218060321.2194839-1-michael.opdenacker@rootcommit.com>
- <026999a3-ef46-4590-99ab-bbd8fbb0affc@cherry.de>
+Message-ID: <20251219025010.GB5613@localhost>
+References: <18823A0A6BE7E236.1506149@lists.yoctoproject.org>
+ <38a42c2b-3025-4516-8aac-c9136ee6e55b@rootcommit.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <026999a3-ef46-4590-99ab-bbd8fbb0affc@cherry.de>
+In-Reply-To: <38a42c2b-3025-4516-8aac-c9136ee6e55b@rootcommit.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 19 Dec 2025 02:47:45 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2819
+ <yocto-patches@lists.yoctoproject.org>; Fri, 19 Dec 2025 02:50:15 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2820
 
-On Thu 2025-12-18 @ 11:46:10 AM, Quentin Schulz via lists.yoctoproject.org wrote:
-> Hi Michael,
+On Thu 2025-12-18 @ 06:10:07 AM, Michael Opdenacker via lists.yoctoproject.org wrote:
+> Greetings,
 > 
-> On 12/18/25 7:03 AM, Michael Opdenacker via lists.yoctoproject.org wrote:
+> On 12/18/25 07:03, Michael Opdenacker via lists.yoctoproject.org wrote:
 > > From: Michael Opdenacker <michael.opdenacker@rootcommit.com>
 > > 
 > > Add basic support for the Asus Tinker Board 3 [1] and 3S [2] SBCs,
@@ -87,49 +87,18 @@ On Thu 2025-12-18 @ 11:46:10 AM, Quentin Schulz via lists.yoctoproject.org wrote
 > > 
 > > Therefore, the https://github.com/betafive/meta-linux-mainline/
 > > layer is currently a prerequisite to build images for such machines.
-> > 
-> > Here are already supported features:
-> > - Debug UART (/dev/ttyS2)
-> > - SD card (/dev/mmcblk1)
-> > - eMMC (/dev/mmcblk0, only on Tinker Board 3S)
-> > - I2C:
-> >    - i2c0 (internal bus with a PMIC and regulators)
-> >    - i2c2 (internal bus with an at24 eeprom and an RTC device)
-> > - USB 2.0 ports
-> > - 2 GPIO LEDS
-> > 
-> > [1] https://tinker-board.asus.com/series/tinker-board-3.html
-> > [2] https://tinker-board.asus.com/series/tinker-board-3s.html
-> > 
-> > Signed-off-by: Michael Opdenacker <michael.opdenacker@rootcommit.com>
-> > ---
-> >   conf/machine/include/tinker-board-3.inc     | 11 +++++++++++
-> >   conf/machine/tinker-board-3.conf            | 10 ++++++++++
-> >   conf/machine/tinker-board-3s.conf           | 10 ++++++++++
-> >   recipes-kernel/linux/linux-yocto_%.bbappend |  2 ++
-> >   4 files changed, 33 insertions(+)
-> >   create mode 100644 conf/machine/include/tinker-board-3.inc
-> >   create mode 100644 conf/machine/tinker-board-3.conf
-> >   create mode 100644 conf/machine/tinker-board-3s.conf
-> > 
-> > diff --git a/conf/machine/include/tinker-board-3.inc b/conf/machine/include/tinker-board-3.inc
-> > new file mode 100644
-> > index 0000000..17d0ecc
-> > --- /dev/null
-> > +++ b/conf/machine/include/tinker-board-3.inc
-> > @@ -0,0 +1,11 @@
-> > +require conf/machine/include/rk3566.inc
-> > +
-> > +# Kernel provided by https://github.com/betafive/meta-linux-mainline/
-> > +PREFERRED_PROVIDER_virtual/kernel = "linux-mainline"
-> > +PREFERRED_VERSION_virtual/kernel = "6.19-rc1"
-> > +
 > 
-> Not sure we really want to do this. Maybe wait for linux-yocto-dev to hit
-> v6.19*? We used to do this for some Radxa board in the past I believe.
+> Is it fine to require an additional dependency to the "meta-linux-mainline"
+> layer here, as Linux 6.19-rc1 isn't supported by linux-yocto-dev?
+> 
+> I could add a machine dependent string to LAYERDEPENDS_rockchip, but I don't
+> want to pollute conf/layer.conf.
+> 
+> And it seems BBFILES_DYNAMIC is for recipes only, not configuration files.
+> Thanks in advance
+> Michael.
 
-I would prefer to add this board once support is available via any of
-the Yocto Project kernels. We've added boards to meta-rockchip many
-times in the past when support was available through linux-yocto-dev.
-Ideally upstream U-Boot would support it as well.
+As much as I like Paul's meta-linux-mainline (and use it myself from
+time to time) I would prefer of meta-rockchip didn't have a dependency
+on it.
 
