@@ -1,194 +1,99 @@
-Return-Path: <michael.opdenacker@rootcommit.com>
+Return-Path: <antonin.godard@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CDBBD7878A
-	for <webhook@archiver.kernel.org>; Fri, 19 Dec 2025 15:17:30 +0000 (UTC)
-Received: from goldenrod.apple.relay.mailchannels.net (goldenrod.apple.relay.mailchannels.net [23.83.208.74])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.18871.1766157443799494954
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3EA2D7879F
+	for <webhook@archiver.kernel.org>; Fri, 19 Dec 2025 16:13:30 +0000 (UTC)
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.20261.1766160809222487627
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 19 Dec 2025 07:17:24 -0800
+ Fri, 19 Dec 2025 08:13:30 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@rootcommit.com header.s=hostingermail-a header.b=D421HGpF;
- spf=pass (domain: rootcommit.com, ip: 23.83.208.74, mailfrom: michael.opdenacker@rootcommit.com)
-X-Sender-Id: hostingeremail|x-authuser|michael.opdenacker@rootcommit.com
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id D7763801624;
-	Fri, 19 Dec 2025 15:17:22 +0000 (UTC)
-Received: from fr-int-smtpout14.hostinger.io (100-109-2-65.trex-nlb.outbound.svc.cluster.local [100.109.2.65])
-	(Authenticated sender: hostingeremail)
-	by relay.mailchannels.net (Postfix) with ESMTPA id D90A8800C41;
-	Fri, 19 Dec 2025 15:17:20 +0000 (UTC)
-ARC-Seal: i=1; a=rsa-sha256; d=mailchannels.net; s=arc-2022; cv=none;
-	t=1766157441;
-	b=tX3X59LpjcrQ2JFaaTglBM3DcvkJhj8KniB6yG1NWtQbUwYL2TWkaQkMcKbBSN/L93LuJT
-	cEyxvpZRGL5Mt6VNuXV1IdhUyVPYOFot/l/LpTQblCDQSwDdVk22vJx+pvMPkhq/hOk9Is
-	7nNulPEdaUT2qaQmUIqeSaph0cVi92SGhHgPAMDszQBjFYQ4nSiOlRWqXoCvQ5O1WJT390
-	xCSsD07gkc2P0+snN2184GO3RsJ/7HtWRJ3g1hF+v2zISDK+ecTY76+6kV5vjXt3UaEgGp
-	XQPn+N6otG0+8MJhrkRF2ddQlIGr/SbZ2Ittb4ATp5zhdLgeX3KYmaoGt4p4vg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1766157441;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=bixQ/qGojkB8LVWtfHnwjECgCwY0zaqjiIwbjpXvRaA=;
-	b=oa5xYlfMmJhpQNgW5YV9HWGnZ6DyKB9s5irNYUs1KGMhtUsT/uiyz2YJ2M+a9by3IJeaCk
-	BtASvFbsGz4rTFfJrtbW7RKQPQxw8W4dA4XYjjpd+5t88TwpyxFWHZ7nz24vv0LTYVS8HZ
-	2592F7MVxW7hrpeJh3JGR5ZG9pEbFguXo7JHMG3KQiGfNypGZa683Jq5CYdSJETBen1Go/
-	z33eJ3QbjWaYn/nhFyT9DGg4DspBKGMXhBO66jdkyN2Q1QN/K1NDtXQjcJOaWmcBylJLtj
-	soUOxlxjiaCNXGUynE4UvvlQuRVgSukfu3AcvR8pxq/DiYBLkPk7S3qQrANr7w==
-ARC-Authentication-Results: i=1;
-	rspamd-78fcb7d87f-76lz2;
-	auth=pass smtp.auth=hostingeremail
- smtp.mailfrom=michael.opdenacker@rootcommit.com
-X-Sender-Id: hostingeremail|x-authuser|michael.opdenacker@rootcommit.com
-X-MC-Relay: Good
-X-MailChannels-SenderId: 
- hostingeremail|x-authuser|michael.opdenacker@rootcommit.com
-X-MailChannels-Auth-Id: hostingeremail
-X-Glossy-Harbor: 5b3f93e11d4c3490_1766157441564_4131693214
-X-MC-Loop-Signature: 1766157441564:2524922239
-X-MC-Ingress-Time: 1766157441564
-Received: from fr-int-smtpout14.hostinger.io (fr-int-smtpout14.hostinger.io
- [148.222.54.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.109.2.65 (trex/7.1.3);
-	Fri, 19 Dec 2025 15:17:21 +0000
-Received: from [IPV6:2001:861:4450:d360:b6c6:22ca:202c:384c] (unknown [IPv6:2001:861:4450:d360:b6c6:22ca:202c:384c])
-	(Authenticated sender: michael.opdenacker@rootcommit.com)
-	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4dXrk65dnSz1xyP;
-	Fri, 19 Dec 2025 15:17:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rootcommit.com;
-	s=hostingermail-a; t=1766157439;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bixQ/qGojkB8LVWtfHnwjECgCwY0zaqjiIwbjpXvRaA=;
-	b=D421HGpFQDqvPWHAGp+ZAQvnngjyhbMfrfK9Qp3yEVVjxtZa+rofvkdz75xJdlRYBPjVQN
-	emX5CJX8BWWlV/kY9yqM0rKcpzoSOlMR+Dg6qkmxU7RzptHMKJW0i5ruS8QLxbO9c21AB6
-	4nyyg/A+qLCG1eGcoLUQsUlkSlPFg/ogNLrVEoqzwJbjIiaPEDOr+znhlbUNtWMdzKu7MU
-	vrk7zs9wjEEwQTbHZqPEMrW510pRq1afK1A8Kgsva/xjSvlVJp9u6lUs+bo+yuBT07lRt9
-	2xK+5upBo3Sx1OIU5qIM9AMqd2Tf/QjDP2LNtOYejqmdiu4x4nP1xlp219L75g==
-Message-ID: <add50e10-f93c-4124-a9b1-caaedf60dda7@rootcommit.com>
+ dkim=pass header.i=@bootlin.com header.s=dkim header.b=M9Dvy7GO;
+ spf=pass (domain: bootlin.com, ip: 185.246.84.56, mailfrom: antonin.godard@bootlin.com)
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 1041C1A22EF
+	for <yocto-patches@lists.yoctoproject.org>; Fri, 19 Dec 2025 16:13:27 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id D4C3E6071D
+	for <yocto-patches@lists.yoctoproject.org>; Fri, 19 Dec 2025 16:13:26 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 70D7110AA9535;
+	Fri, 19 Dec 2025 17:13:25 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1766160806; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=dO4gN13EqYlx/GjXvqgDzw0189X2n/NtWc420+u3U0E=;
+	b=M9Dvy7GONb1JSP4jEivVHsF7U3zP1tWZLe4NLm1S87L4+d1l8AWZw//Arkfh1xP0uJF1kD
+	09Ye7LHmox9cgukjoQb77DbL5Xgr6oAMhK59v7f3G9ZkE+xsHPHgiRzkJYAS5XshcVEyVG
+	hm2gFFH9DpsN7hP2qA5fJBYHINE8VSTKlnhfVXBGcXWuLBHr+sC/92AnADRfRWhOhjIqTB
+	1FHqrBO61bd1HC1BgYAuHnDaBeIe4fVqDLShNNH7QbPErUCR3HG/NPSU/+WtH/wb4WlguA
+	GV/355Sw6y/9XezM9+R9C88MgMLq48j8ZDhinLVKT6wP2qqpHt9KG66Y1KxBow==
+From: Antonin Godard <antonin.godard@bootlin.com>
+Date: Fri, 19 Dec 2025 17:13:21 +0100
+Subject: [yocto-autobuilder-helper][PATCH] config.json: indexing: add
+ bitbake repository back
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: michael.opdenacker@rootcommit.com, yocto-patches@lists.yoctoproject.org
-Subject: Re: [yocto-patches] [meta-rockchip] [PATCH] tinker-board-3: add
-To: Quentin Schulz <quentin.schulz@cherry.de>
-References: <20251218060321.2194839-1-michael.opdenacker@rootcommit.com>
- <026999a3-ef46-4590-99ab-bbd8fbb0affc@cherry.de>
-Content-Language: en-US, fr
-From: Michael Opdenacker <michael.opdenacker@rootcommit.com>
-Organization: Root Commit
-In-Reply-To: <026999a3-ef46-4590-99ab-bbd8fbb0affc@cherry.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Date: Fri, 19 Dec 2025 15:17:18 +0000 (UTC)
-X-CM-Envelope: MS4xfAsk9yh1+yY92EW27R6/autZEY6xdj/4mXr4Cwwmmw3ko26h43GT4uFi4Dj9tZ+mICRRD+NRmWhyLvIUZimCtGuCscTCiIUqAb39Vv93iza0lMdYemDp FJ/aCgylwN9tGnesR4BVPXT6SzJvIGmJuLsSybMjhy2EFsR8F+6LVGdQpu0lHGLULq2ONU56PJjPduXPccy4VcTl/WDjfdOpVYnCf+InQt9f74li5NubP9tp nT0PDDTYnNWH4Z6TqqODY4E0x8jsDs5n6rQXIJ41+cVJQZ2vwfHpFBFWQ/BDFW9AYhCTvaq1SirF3QSUrqYEMYLjZM9GcIGR2J/GOa1+tiL/HYQbSS0p6d1T IYYs+U5w39/PtCiUjw50E6LkmalSWApODNutqNN02OBT/q9Dk+H3k9CsVa1oU4Ur3sWi+Uy8
-X-CM-Analysis: v=2.4 cv=GbNFnhXL c=1 sm=1 tr=0 ts=69456c7f a=dqk5TzrUznxRrYcIKFAfaQ==:617 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=NEAV23lmAAAA:8 a=d70CFdQeAAAA:8 a=_oUSXZN_6neA2UNA2EQA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=NcxpMcIZDGm-g932nG_k:22
-X-AuthUser: michael.opdenacker@rootcommit.com
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251219-fix-indexing-job-v1-1-78c3c87201c4@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAKF5RWkC/yXMywqDMBSE4VeRs+6BJCDUvoq4MHGqRySRXIpFf
+ Pem7fKDmf+khChI9GhOinhJkuAr9K0ht4x+BstUTUaZVhvd8VMOFj/hED/zGiyjdVYp3OE6S/W
+ 2R9TNL9kPf6diV7j87fTv4HLgseRgi2wTIi/YdsSBrusDHAUpJo4AAAA=
+X-Change-ID: 20251219-fix-indexing-job-e5cb00e8ec9b
+To: yocto-patches@lists.yoctoproject.org
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>, 
+ Antonin Godard <antonin.godard@bootlin.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=963;
+ i=antonin.godard@bootlin.com; h=from:subject:message-id;
+ bh=EL5kVsux8pJWfgu9ctFO/ErAGEpVPtuIVvSDh4LYrA4=;
+ b=owEBbQKS/ZANAwAKAdGAQUApo6g2AcsmYgBpRXmkcvxUjChKgpk1FiMYXALu5ITJrEcDcwid5
+ PmHvZr7PwaJAjMEAAEKAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCaUV5pAAKCRDRgEFAKaOo
+ NqfmD/4upQZmacDQWr3fbvlyRadBtXXemL56ue4/PEfLx79JGKBpApVSyeEp/AF2bQYL09E4dvP
+ gM2/CycBZ4yGz1Ta2i9PBixSAHTgVTw8qY8XZcrOc5ZEqfhGzUxZ3JSG5OVv6CvAoJIuBtoBq/p
+ lMSs0iV39bTVmgXXnRCoUQyc2nvV6w9CAt8iRRoHouemCaeK8Aj285K0VcbLo/vygFf0KKN/yMB
+ AJAW1EKHDVSOSte9LQjFlhtYu45dhdTuA9qw8QJy52caujwpI3wtCnxrBGGgRK2ehmXjulB9hKO
+ tFMXDRntHYPhHo9wxa4oDDgzhCrOVlQJxycTXuvZXu4KU2OryJA+yDJeICiCICkdIqm0LuJPInx
+ y+P5XbxdikipzkNmbhW1oqf7pOfGgVkO+TWW2Q2oy38moisy0PcZJtwzoe2qWKGygFyN44cdvv9
+ CmR7FKxg7QJTd40ZASZM555bTJdaxvLN+dowxYnu8WioA6Qd+Xk0k1hHtOyYGF1aOnSkyxthF8V
+ K+5mZfIAIy6V8aubRUhEv5AuWc0nmp1/AGWx8V/8pUygHl7HExRLRfGEqRfZ7wYGN4OMwDSNDGM
+ T3otm3xMN3lUZYHq8VZzFv7Yy5Img0nmZTGQdDhvDB2bvDaAbL1WG1Fh8LPZ6fYestDheAxNsby
+ eHRf54//4rsKdXg==
+X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
+ fpr=8648725188DD401BB9A0D3FFD180414029A3A836
+X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 19 Dec 2025 15:17:30 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2835
+ <yocto-patches@lists.yoctoproject.org>; Fri, 19 Dec 2025 16:13:30 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2836
 
-Hi Quentin
+The change in 2395b8974745 ("scripts/release-parser.py: use yocto-docs
+instead of poky") replaces the previous definition of NEEDREPOS, and
+does not append. Add bitbake back to the repositories to fix the
+indexing builder.
 
-Thanks a lot for the review, much appreciated!
-You're my top (and favorite) reviewer :)
+Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
+---
+ config.json | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 12/18/25 11:46, Quentin Schulz wrote:
->> +# Kernel provided by https://github.com/betafive/meta-linux-mainline/
->> +PREFERRED_PROVIDER_virtual/kernel =3D "linux-mainline"
->> +PREFERRED_VERSION_virtual/kernel =3D "6.19-rc1"
->> +
->
-> Not sure we really want to do this. Maybe wait for linux-yocto-dev to=20
-> hit v6.19*? We used to do this for some Radxa board in the past I=20
-> believe.
+diff --git a/config.json b/config.json
+index be65d24..3415b1a 100644
+--- a/config.json
++++ b/config.json
+@@ -1402,7 +1402,7 @@
+             }
+         },
+         "indexing" : {
+-            "NEEDREPOS": ["yocto-docs"],
++            "NEEDREPOS": ["bitbake", "yocto-docs"],
+             "step1" : {
+                 "shortname" : "Generate non-release index",
+                 "EXTRACMDS" : ["${SCRIPTSDIR}/generate-testresult-index.py ${BASE_SHAREDDIR}/pub/non-release/"]
 
-Understood, let's wait for 2 more months then ;-)
-
->
->> +MACHINE_EXTRA_RRECOMMENDS +=3D "kernel-modules"
->> +
->> +# U-Boot doesn't support Tinker Board 3 so far
->> +# but boots fine when configured for a similar SBC
->> +UBOOT_MACHINE =3D "soquartz-model-a-rk3566_defconfig"
->
-> Can you maybe try generic-rk3568_defconfig instead?
-
-Excellent, it works!
-And instead of displaying a wrong board name at boot time, we have=20
-something correct in U-Boot's output:
-
-Model: Generic RK3566/RK3568
-SoC:=C2=A0 =C2=A0RK3566
-
->> +++ b/conf/machine/tinker-board-3s.conf
->> @@ -0,0 +1,10 @@
->> +# Copyright (C) 2025 Michael Opdenacker=20
->> <michael.opdenacker@rootcommit.com>
->> +# Released under the MIT license (see COPYING.MIT for the terms)
->> +
->> +#@TYPE: Machine
->> +#@NAME: Tinker Board 3S RK3566
->> +#@DESCRIPTION: ASUS Tinker Board 3 is a Raspberry Pi like SBC based=20
->> on Rockchip RK3566 Processor.
->
-> s/Tinker Board 3/Tinker Board 3S.
-Fixed, thanks!
->
->> +
->> +require conf/machine/include/tinker-board-3.inc
->> +
->> +KERNEL_DEVICETREE =3D "rockchip/rk3566-tinker-board-3s.dtb"
->
-> Do you know if Asus has provided a way to know at runtime which of the=20
-> Tinker 3/3S is currently running the software? E.g. via a GPIO or an=20
-> ADC channel with different voltage values?
->
-> This would help us only have one machine for supporting both. In=20
-> U-Boot, you'd do the auto-detection and load the appropriate device=20
-> tree based on that.
-
-
-I don't know, but I can investigate. That would be useful indeed.
-
->
-> We also need an entry in the README for this newly supported board.
-
-
-Correct, fixed.
-
->
->> diff --git a/recipes-kernel/linux/linux-yocto_%.bbappend=20
->> b/recipes-kernel/linux/linux-yocto_%.bbappend
->> index 2dba3d7..684d33a 100644
->> --- a/recipes-kernel/linux/linux-yocto_%.bbappend
->> +++ b/recipes-kernel/linux/linux-yocto_%.bbappend
->> @@ -30,6 +30,8 @@ COMPATIBLE_MACHINE:rock-pi-e =3D "rock-pi-e"
->> =C2=A0 COMPATIBLE_MACHINE:rock-pi-s =3D "rock-pi-s"
->> =C2=A0 COMPATIBLE_MACHINE:rock64 =3D "rock64"
->> =C2=A0 COMPATIBLE_MACHINE:soquartz =3D "soquartz"
->> +COMPATIBLE_MACHINE:tinker-board-3 =3D "tinker-board-3"
->> +COMPATIBLE_MACHINE:tinker-board-3s =3D "tinker-board-3s"
->
-> NACK, it isn't supported, you said it yourself.
-
-Yep, see you in 2 months for a V2 ;-)
-
-Thanks again
-Michael.
-
---=20
-Michael Opdenacker
-Root Commit
-Yocto Project and OpenEmbedded Training course - Learn by doing:
-https://rootcommit.com/training/yocto/
+---
+base-commit: 4e37ec5c3097bc73a4b26c2a8f6002e1e923d3e6
+change-id: 20251219-fix-indexing-job-e5cb00e8ec9b
 
 
