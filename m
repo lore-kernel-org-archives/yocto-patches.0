@@ -2,63 +2,63 @@ Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FE4AE67494
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FE8CE67495
 	for <webhook@archiver.kernel.org>; Sun, 21 Dec 2025 00:49:00 +0000 (UTC)
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.51713.1766278131463356538
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.51312.1766278131002944800
  for <yocto-patches@lists.yoctoproject.org>;
  Sat, 20 Dec 2025 16:48:51 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=L9MzGV8t;
- spf=pass (domain: gmail.com, ip: 209.85.219.41, mailfrom: twoerner@gmail.com)
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-8885b3c06caso44992366d6.1
-        for <yocto-patches@lists.yoctoproject.org>; Sat, 20 Dec 2025 16:48:51 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=KTNI44NT;
+ spf=pass (domain: gmail.com, ip: 209.85.219.52, mailfrom: twoerner@gmail.com)
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-888310b91c5so34017746d6.1
+        for <yocto-patches@lists.yoctoproject.org>; Sat, 20 Dec 2025 16:48:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766278130; x=1766882930; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1766278129; x=1766882929; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=w6WpzvTnWyR+O4VaVLAqcQ4q+pM0ycwKuDP37Sw9o38=;
-        b=L9MzGV8t+1b6WWiWgVGu/SiPHhe2IKpQ4iqMwSL6BhxqbxTosLLfFA9r01B2IssWnX
-         rFv0PTQehNIVCGar4AKwyLB7Wm6sOkfN530+buMO0HeAWG6GRJtmsHLO1xhhtLaLEjoo
-         IWY9e3DpwhjL1ow8onOYiwheq0KAewYbHcnAjpr6ZaSUhip6wXoU9Hwe+G8ERiIAKL8+
-         kX3o8CKHj5Mpo8V92me7yLFnC0UcsKozeK7o5LDtuTpLUI5gCONiFOboy4H6CMXUow9D
-         Jj3jO30szONF16zxS93JGvY0TrryqIkJJ8JiSfOq+vjJTbsFddtAxGVzzRvWj1oZ0RD7
-         Q9qw==
+        bh=da+vCF+pqdBXBDQWII5F4MlcLfZ+w64zKK/Sjyx8cJo=;
+        b=KTNI44NT7IY485urxX7ENCV1cFq47nLMq8A4h6eEtWmz+TQZxLXOozcd7BtG1v+pn0
+         pXu0d/tkMOkrJqSCTnJIdEjYClOoFG8umxCVbkK24iTHX2JyVi1MyFrSpTeWWoMKqNkG
+         E0/GCZDrFXomhoqGAOzydJ53SvyHa0IiILJyN7mNljNMa6pa8sKwsFPKzo+VtpcXzaP2
+         HfihbtU1Rv53d/otlOMs3ePZW3ifRpn6ADvsPofP/MRonVjms2yi/u+J2Rjm9/LP7YTP
+         GFKVvinWUqcPuGLmyHcfIulw3SmM+xPt0u0cO3JiXo3QcPxnAOFw2B4RowyP8LGJybA4
+         xqaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766278130; x=1766882930;
+        d=1e100.net; s=20230601; t=1766278129; x=1766882929;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=w6WpzvTnWyR+O4VaVLAqcQ4q+pM0ycwKuDP37Sw9o38=;
-        b=JeZSL+GsB3V9VOeJ4NIKBCyZFQo3H6bgSshEutJTPUXqqNFJ8bB2bRkwHuiMUaBYCU
-         FIHNxH/MJ34JA5wC2lOOsWxVsJ5hJKCwhGQolCB0P+rL5J6tQ/LB/6VWBgdWV2/3Sil4
-         1MVJlJHr/JFPM5NFwWJOWO80Q+VpgGcGstwQFxEbbvVgT5CrDEUGMUVx0jTXm7qsMVmC
-         xDFh+afU7AwUpPEgTKzg87NnT5HlQRg5J0CZGQgRvNW9J4ewqc97ENGjSoiUQcxBPCyf
-         T9jtcAzUI230+Q+aaVmcNfV1rGqgs+7pTGytZZJ0KqkmjZ7PnbZjcaOFXxYhf60u/EEI
-         M7PA==
-X-Gm-Message-State: AOJu0YwZy848HSQ8FKjezvcCyIeTKXAKhiAJoMS8iaPJliTMmLqjZTQH
-	4oExDDu53LnbCV6zO8al1N24R1dgYOJuAn5LCSaSxILWHupfnrOlRrlQrqa4cw==
-X-Gm-Gg: AY/fxX6eklZwSoBzxq3ChKY5zDp1Nb4Hrhit052jNtU+0oHlJjsr6t8vVSpL8/p/q4U
-	/xuPoWFdi3bZPEVELOwy89MYfPd1WJdt73oIJ7EQEWRuMQS2Im1j2PIVKV81x6YHV6BXqvoS5ha
-	YSy7duqx0yXCB7M3Ls9nLdLsGn5pHKBK0Rx93lyHwsNWS7uaAN/AGTyPBrTAkDltGOfJo1OiSyW
-	pIIdpfOpZc2tB6spyG5BC8JJXKM5Ug/HX4X8Jg0VEB6F27tVAMKHBQ1bNJs/TfG6Jsd8ROz4oUK
-	Wc0IW1xL2ALerQ08eWnQXKOy1P/g2dNvZpL1OTIQdrAJRUzRa6A6+dOx598ujb43C8Bb9m38LLd
-	GiU0aSOmBEmgWp6zXP8srTlf2RQ5t6VlzkAhTKwzlHZxmlvWi7HymlFrcfbbGST6U1YE42WPx1s
-	4n8dawt7YRt2M3jz75D1B8cNKsi1j+EiTaTnWwByTUIBMMBhtz
-X-Google-Smtp-Source: AGHT+IFtLsaZ9Iok5gt+1yMucWhgnsN3ygz58/97GP6HKu21xEMrByPfAYaIC8IN9piNCBnybX22Kw==
-X-Received: by 2002:a05:620a:1904:b0:8ba:419f:c79e with SMTP id af79cd13be357-8c08fa9c407mr1091679485a.55.1766278129986;
+        bh=da+vCF+pqdBXBDQWII5F4MlcLfZ+w64zKK/Sjyx8cJo=;
+        b=IEpbX+ajg5saCxa4jeE8KKaLP4sguf34EKYbzeuV5y9JrWavrnGYGnK+hE935J0zAo
+         ohGBalb4e7ThNlSIrTQ3x8OGbScvidbMcav2Ilj7SbpUBBjmqn7oHkoHGZDzxEEejhLV
+         tyBKRb3K5dbwjI3nKZv4fF/xNIm4wib882/foI3rSr1kA1I8oy/nC3NA5zFtk9FNZ5JJ
+         yAz6jmuYRouiLLYbFWCaBmDeYxRXlHUAbLTQsXMd2mAf4S3JYVTmqeVFr+Fv5Uod8X7o
+         I5u8nKQrTEkmoOLKXXD5CWIYUlyjx7pCXp/9+N6FrBeVn/Ea+U2Jbg8OxdG6GYryagvM
+         /SZw==
+X-Gm-Message-State: AOJu0YwnEWuMXUsZDCil7doGE5ctO6FA+gYRNwnReg1HsM98xVM0LTMM
+	OZSnQiigdtPfP5T0188QxOin2kVWfz9sW3Z+BBn1NM6aSze/UoE6NbCM8yUWEg==
+X-Gm-Gg: AY/fxX7iir+8TmlqoNKNUoauTU4qrNW+cfTuQ/2n9/KOeLR+P7XqBA28HHkbW03pxb0
+	Ci8EdMy6+aPLV4I3mOW/qNeULzk1tdUOH6Go4d4s4BhQUJvNkgxvEpB1iCUFa67ewGf/QvVAEyW
+	zVQByxCgGhY43/CEFRGiHREIgU/Z2mQrryoRylIXTQotb8MeRXfDJeqL9q1vJ1irUwHaHu3zTqq
+	mKkvi4mbMWAt3e/NNNzbYCQhIQkbufmyMw/RFtKCVYap3t0394sh9r/9MaoTwAYTn/3tCMEJnbP
+	W7klel5ZsjuvZ27U3b3WGJtlYkCB3a+u1dT/GeeNoG2WW3cZhE23wjvv/wnpS8Xd6aoMtdFY3PM
+	lBn3JhWP3LhJSW0QE5fdGtw7JoKovoK2YZ0p4LRkfaqYSOhTV/ZcaMSOaZ8h2nrv5lB+rUS6+kb
+	tyFUnZ6uQHc5U9SWaLUii0M4N7UekmQa1Gzg2dtfkP5ANYyhRu
+X-Google-Smtp-Source: AGHT+IGpqNk6I+pE95b7jLPFoCy+/vkoGFPVfV2kiAZj4Hydnbli7KJ7gvUhTypv4SjCa67hSbfEww==
+X-Received: by 2002:a05:620a:4096:b0:8a2:d235:8136 with SMTP id af79cd13be357-8c090029d3emr1063253385a.25.1766278129015;
         Sat, 20 Dec 2025 16:48:49 -0800 (PST)
 Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8c0973f0807sm511867385a.41.2025.12.20.16.48.49
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8c0973f0807sm511867385a.41.2025.12.20.16.48.47
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 20 Dec 2025 16:48:49 -0800 (PST)
+        Sat, 20 Dec 2025 16:48:47 -0800 (PST)
 From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-rockchip][PATCH v2 4/5] kernel: clean up non-rockchip arch removal
-Date: Sat, 20 Dec 2025 19:48:42 -0500
-Message-ID: <20251221004843.31946-4-twoerner@gmail.com>
+Subject: [meta-rockchip][PATCH v2 3/5] move KERNEL_FEATURES
+Date: Sat, 20 Dec 2025 19:48:41 -0500
+Message-ID: <20251221004843.31946-3-twoerner@gmail.com>
 X-Mailer: git-send-email 2.51.0.193.g4975ec3473b4
 In-Reply-To: <20251221004843.31946-1-twoerner@gmail.com>
 References: <20251221004843.31946-1-twoerner@gmail.com>
@@ -68,84 +68,144 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Sun, 21 Dec 2025 00:49:00 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2840
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2839
 
-Over time more architectures are supported by the linux kernel (both
-32-bit and 64-bit), and others are dropped; architectures unrelated to
-rockchip. Clean up these non-rockchip architectures from the kernel
-config to help keep its size small.
+Move KERNEL_FEATURES from SoC configurations to linux kernel recipes.
 
 Signed-off-by: Trevor Woerner <twoerner@gmail.com>
 ---
 changes since v1:
 - none
 ---
- .../bsp/rockchip/remove-non-rockchip-arch-arm.cfg     | 11 +++++++----
- .../bsp/rockchip/remove-non-rockchip-arch-arm64.cfg   |  5 +++++
- 2 files changed, 12 insertions(+), 4 deletions(-)
+ conf/machine/include/rk3066.inc         | 1 -
+ conf/machine/include/rk3188.inc         | 1 -
+ conf/machine/include/rk3288.inc         | 1 -
+ conf/machine/include/rk3308.inc         | 1 -
+ conf/machine/include/rk3328.inc         | 1 -
+ conf/machine/include/rk3399.inc         | 1 -
+ conf/machine/include/rk3566.inc         | 1 -
+ conf/machine/include/rk3568.inc         | 1 -
+ conf/machine/include/rk3588s.inc        | 1 -
+ recipes-kernel/linux/linux-rockchip.inc | 3 +++
+ 10 files changed, 3 insertions(+), 9 deletions(-)
 
-diff --git a/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm.cfg b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm.cfg
-index e9443f17895c..fdd3e6964053 100644
---- a/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm.cfg
-+++ b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm.cfg
-@@ -38,14 +38,16 @@ CONFIG_ARCH_MESON=n
- CONFIG_ARCH_MILBEAUT=n
- CONFIG_ARCH_MILBEAUT_M10V=n
- CONFIG_ARCH_MMP=n
--CONFIG_ARCH_MSM8916=n
--CONFIG_ARCH_MSM8960=n
--CONFIG_ARCH_MSM8974=n
--CONFIG_ARCH_MSM8X60=n
- CONFIG_ARCH_MVEBU=n
- CONFIG_ARCH_MXC=n
-+CONFIG_ARCH_OMAP=n
-+CONFIG_ARCH_OMAP2PLUS=n
- CONFIG_ARCH_OMAP3=n
- CONFIG_ARCH_OMAP4=n
-+CONFIG_SOC_OMAP5=n
-+CONFIG_SOC_AM33XX=n
-+CONFIG_SOC_AM43XX=n
-+CONFIG_SOC_DRA7XX=n
- CONFIG_ARCH_QCOM=n
- CONFIG_ARCH_R7S72100=n
- CONFIG_ARCH_R7S9210=n
-@@ -66,6 +68,7 @@ CONFIG_ARCH_R8A7794=n
- CONFIG_ARCH_R9A06G032=n
- CONFIG_ARCH_RENESAS=n
- CONFIG_ARCH_SH73A0=n
-+CONFIG_PLAT_SPEAR=n
- CONFIG_ARCH_SPEAR13XX=n
- CONFIG_ARCH_STI=n
- CONFIG_ARCH_STM32=n
-diff --git a/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm64.cfg b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm64.cfg
-index 5b804a2ca26b..12fde404d64a 100644
---- a/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm64.cfg
-+++ b/recipes-kernel/linux/linux-rockchip/rockchip-kmeta/bsp/rockchip/remove-non-rockchip-arch-arm64.cfg
-@@ -1,12 +1,16 @@
- CONFIG_ARCH_ACTIONS=n
-+CONFIG_ARCH_AIROHA=n
- CONFIG_ARCH_ALPINE=n
- CONFIG_ARCH_APPLE=n
-+CONFIG_ARCH_AXIADO=n
- CONFIG_ARCH_BCM2835=n
- CONFIG_ARCH_BCM=n
- CONFIG_ARCH_BCMBCA=n
- CONFIG_ARCH_BCM_IPROC=n
- CONFIG_ARCH_BERLIN=n
-+CONFIG_ARCH_BLAIZE=n
- CONFIG_ARCH_BRCMSTB=n
-+CONFIG_ARCH_CIX=n
- CONFIG_ARCH_EXYNOS=n
- CONFIG_ARCH_SPARX5=n
- CONFIG_ARCH_HISI=n
-@@ -46,6 +50,7 @@ CONFIG_ARCH_R9A09G011=n
- CONFIG_ARCH_RENESAS=n
- CONFIG_ARCH_S32=n
- CONFIG_ARCH_SEATTLE=n
-+CONFIG_ARCH_SOPHGO=n
- CONFIG_ARCH_STM32=n
- CONFIG_ARCH_SPRD=n
- CONFIG_ARCH_SUNXI=n
+diff --git a/conf/machine/include/rk3066.inc b/conf/machine/include/rk3066.inc
+index 2829a68431a8..fdca5770cc60 100644
+--- a/conf/machine/include/rk3066.inc
++++ b/conf/machine/include/rk3066.inc
+@@ -11,6 +11,5 @@ require conf/machine/include/arm/armv7a/tune-cortexa9.inc
+ SERIAL_CONSOLES = "115200;ttyS2"
+ 
+ KBUILD_DEFCONFIG = "multi_v7_defconfig"
+-KERNEL_FEATURES:append:rk3066 = " bsp/rockchip/remove-non-rockchip-arch-arm.scc"
+ 
+ ENABLE_STATELESS_VPU_GST ?= "1"
+diff --git a/conf/machine/include/rk3188.inc b/conf/machine/include/rk3188.inc
+index 1af745524bfa..102726f59e28 100644
+--- a/conf/machine/include/rk3188.inc
++++ b/conf/machine/include/rk3188.inc
+@@ -11,6 +11,5 @@ require conf/machine/include/arm/armv7a/tune-cortexa9.inc
+ SERIAL_CONSOLES = "115200;ttyFIQ0"
+ 
+ KBUILD_DEFCONFIG = "multi_v7_defconfig"
+-KERNEL_FEATURES:append:rk3188 = " bsp/rockchip/remove-non-rockchip-arch-arm.scc"
+ 
+ ENABLE_STATELESS_VPU_GST ?= "1"
+diff --git a/conf/machine/include/rk3288.inc b/conf/machine/include/rk3288.inc
+index 00cc04bc6378..8886beafaa4b 100644
+--- a/conf/machine/include/rk3288.inc
++++ b/conf/machine/include/rk3288.inc
+@@ -11,7 +11,6 @@ require conf/machine/include/arm/armv7a/tune-cortexa17.inc
+ SERIAL_CONSOLES = "115200;ttyS2"
+ 
+ KBUILD_DEFCONFIG ?= "multi_v7_defconfig"
+-KERNEL_FEATURES:append:rk3288 = " bsp/rockchip/remove-non-rockchip-arch-arm.scc"
+ 
+ # Set UBOOT_SUFFIX to "itb" if you are going to use OP-TEE
+ UBOOT_SUFFIX ?= "img"
+diff --git a/conf/machine/include/rk3308.inc b/conf/machine/include/rk3308.inc
+index 6876564fbcb2..59007ceb0f8d 100644
+--- a/conf/machine/include/rk3308.inc
++++ b/conf/machine/include/rk3308.inc
+@@ -12,7 +12,6 @@ require conf/machine/include/rockchip-wic.inc
+ SERIAL_CONSOLES = "1500000;ttyS0"
+ 
+ KBUILD_DEFCONFIG ?= "defconfig"
+-KERNEL_FEATURES:append:rk3308 = " bsp/rockchip/remove-non-rockchip-arch-arm64.scc"
+ 
+ UBOOT_SUFFIX ?= "itb"
+ UBOOT_ENTRYPOINT ?= "0x06000000"
+diff --git a/conf/machine/include/rk3328.inc b/conf/machine/include/rk3328.inc
+index 2fe2710399b1..34a61096cb3c 100644
+--- a/conf/machine/include/rk3328.inc
++++ b/conf/machine/include/rk3328.inc
+@@ -11,7 +11,6 @@ require conf/machine/include/arm/armv8a/tune-cortexa53.inc
+ require conf/machine/include/rockchip-wic.inc
+ 
+ KBUILD_DEFCONFIG ?= "defconfig"
+-KERNEL_FEATURES:append:rk3328 = " bsp/rockchip/remove-non-rockchip-arch-arm64.scc"
+ 
+ TFA_PLATFORM = "rk3328"
+ TFA_BUILD_TARGET = "bl31"
+diff --git a/conf/machine/include/rk3399.inc b/conf/machine/include/rk3399.inc
+index 8d30cf7e460b..166db7b80059 100644
+--- a/conf/machine/include/rk3399.inc
++++ b/conf/machine/include/rk3399.inc
+@@ -11,7 +11,6 @@ require conf/machine/include/arm/armv8a/tune-cortexa72-cortexa53.inc
+ require conf/machine/include/rockchip-wic.inc
+ 
+ KBUILD_DEFCONFIG ?= "defconfig"
+-KERNEL_FEATURES:append:rk3399 = " bsp/rockchip/remove-non-rockchip-arch-arm64.scc"
+ 
+ TFA_PLATFORM = "rk3399"
+ TFA_BUILD_TARGET = "bl31"
+diff --git a/conf/machine/include/rk3566.inc b/conf/machine/include/rk3566.inc
+index 5b65ad7d4a47..f6bf5c37d60e 100644
+--- a/conf/machine/include/rk3566.inc
++++ b/conf/machine/include/rk3566.inc
+@@ -10,7 +10,6 @@ require conf/machine/include/arm/armv8-2a/tune-cortexa55.inc
+ require conf/machine/include/rockchip-wic.inc
+ 
+ KBUILD_DEFCONFIG ?= "defconfig"
+-KERNEL_FEATURES:append:rk3566 = " bsp/rockchip/remove-non-rockchip-arch-arm64.scc"
+ 
+ PREFERRED_PROVIDER_trusted-firmware-a = "rockchip-rkbin-tf-a"
+ PREFERRED_PROVIDER_optee-os = "rockchip-rkbin-optee-os"
+diff --git a/conf/machine/include/rk3568.inc b/conf/machine/include/rk3568.inc
+index ad3952de074c..050110892f46 100644
+--- a/conf/machine/include/rk3568.inc
++++ b/conf/machine/include/rk3568.inc
+@@ -10,7 +10,6 @@ require conf/machine/include/arm/armv8-2a/tune-cortexa55.inc
+ require conf/machine/include/rockchip-wic.inc
+ 
+ KBUILD_DEFCONFIG ?= "defconfig"
+-KERNEL_FEATURES:append:rk3568 = " bsp/rockchip/remove-non-rockchip-arch-arm64.scc"
+ 
+ PREFERRED_PROVIDER_trusted-firmware-a = "rockchip-rkbin-tf-a"
+ PREFERRED_PROVIDER_optee-os = "rockchip-rkbin-optee-os"
+diff --git a/conf/machine/include/rk3588s.inc b/conf/machine/include/rk3588s.inc
+index 203b97c6353c..18c2fb2ecef8 100644
+--- a/conf/machine/include/rk3588s.inc
++++ b/conf/machine/include/rk3588s.inc
+@@ -9,7 +9,6 @@ require conf/machine/include/arm/armv8-2a/tune-cortexa76-cortexa55.inc
+ require conf/machine/include/rockchip-wic.inc
+ 
+ KBUILD_DEFCONFIG ?= "defconfig"
+-KERNEL_FEATURES:append:rk3588s = " bsp/rockchip/remove-non-rockchip-arch-arm64.scc"
+ 
+ PREFERRED_PROVIDER_trusted-firmware-a = "rockchip-rkbin-tf-a"
+ PREFERRED_PROVIDER_optee-os = "rockchip-rkbin-optee-os"
+diff --git a/recipes-kernel/linux/linux-rockchip.inc b/recipes-kernel/linux/linux-rockchip.inc
+index a648ecb20679..6c62e849834c 100644
+--- a/recipes-kernel/linux/linux-rockchip.inc
++++ b/recipes-kernel/linux/linux-rockchip.inc
+@@ -33,3 +33,6 @@ COMPATIBLE_MACHINE:soquartz = "soquartz"
+ 
+ SRC_URI:append:rockchip = " file://rockchip-kmeta;type=kmeta;name=rockchip-kmeta;destsuffix=rockchip-kmeta"
+ SRC_URI:append:nanopi-r4s = " file://realtek-r8169.cfg"
++
++KERNEL_FEATURES:append:rockchip:arm = " bsp/rockchip/remove-non-rockchip-arch-arm.scc"
++KERNEL_FEATURES:append:rockchip:aarch64 = " bsp/rockchip/remove-non-rockchip-arch-arm64.scc"
 -- 
 2.50.0.173.g8b6f19ccfc3a
 
