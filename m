@@ -2,128 +2,133 @@ Return-Path: <mark.hatle@kernel.crashing.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB3ECE6780A
-	for <webhook@archiver.kernel.org>; Mon, 22 Dec 2025 17:28:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86B66E6B25D
+	for <webhook@archiver.kernel.org>; Mon, 22 Dec 2025 22:54:19 +0000 (UTC)
 Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.84768.1766424511101768800
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.90710.1766444056223182145
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 22 Dec 2025 09:28:31 -0800
+ Mon, 22 Dec 2025 14:54:16 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: kernel.crashing.org, ip: 63.228.1.57, mailfrom: mark.hatle@kernel.crashing.org)
-Received: from kernel.crashing.org (70-99-78-136.nuveramail.net [70.99.78.136] (may be forged))
-	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 5BMHSSnT677204;
-	Mon, 22 Dec 2025 11:28:29 -0600
-Received: from [192.168.2.103] ([192.168.2.103])
-	by kernel.crashing.org (8.14.7/8.14.7) with ESMTP id 5BMHSRIG022102;
-	Mon, 22 Dec 2025 11:28:27 -0600
-Message-ID: <857d2100-3ec9-4ea3-93d2-6bf3a1e21213@kernel.crashing.org>
-Date: Mon, 22 Dec 2025 11:28:27 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [pseudo] [PATCH] unix: realpath fails if the
- resolved path doesn't exist.
-Content-Language: en-US
+Received: from kernel.crashing.org.net (70-99-78-136.nuveramail.net [70.99.78.136] (may be forged))
+	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 5BMMsEAP687292;
+	Mon, 22 Dec 2025 16:54:14 -0600
 From: Mark Hatle <mark.hatle@kernel.crashing.org>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Gauthier HADERER <ghaderer@wyplay.com>
-Reply-To: yocto-patches@lists.yoctoproject.org
-References: <20251219140600.212527-1-ghaderer@wyplay.com>
- <188393A7B5B66276.1614991@lists.yoctoproject.org>
-In-Reply-To: <188393A7B5B66276.1614991@lists.yoctoproject.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Cc: ghaderer@wyplay.com
+Subject: [pseudo][PATCH] pseudo_util.c: Skip realpath like expansion for /proc
+Date: Mon, 22 Dec 2025 16:54:13 -0600
+Message-Id: <1766444053-25346-1-git-send-email-mark.hatle@kernel.crashing.org>
+X-Mailer: git-send-email 1.8.3.1
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 22 Dec 2025 17:28:33 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2859
+ <yocto-patches@lists.yoctoproject.org>; Mon, 22 Dec 2025 22:54:19 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2860
 
+From: Mark Hatle <mark.hatle@amd.com>
 
+See: Yocto Project bugzilla 16028
 
-On 12/22/25 9:37 AM, Mark Hatle wrote:
-> I'm going to investigate this a bit more, but I think generally speaking this
-> may be right.
-> 
-> Looking at the POSIX documentation for realpath, we need to set errno as well.
-> I've just got to figure out what the errno needs to be.  It looks like there are
-> two different errno settings, one is based on the dirname, the other the
-> basename.  But I need to figure out what real glibc does in this case so we can
-> mimic.
-> 
-> I plan to work on this today and provide more feedback as I get it.
-> 
-> --Mark
-> 
-> On 12/19/25 8:06 AM, Gauthier HADERER via lists.yoctoproject.org wrote:
->> The pseudo implementation of `realpath()' may return a path which doesn't
->> exist. This is not POSIX compliant and causes troubles with uutils (coreutils
->> in Rust).
->>
->> For example, the tail commands tries to determine the file path of its standard
->> input file descriptor by calling `realpath("/dev/fd/0")'. When the input is a
->> pipe, the GNU C library returns NULL but pseudo returns
->> `/proc/<pid>/fd/pipe:[xxxxxx]'. As it got a path, the tail command tries to
->> open it and fails.
+Gauthier HADERER (see comment 23) reported an issue where realpath like
+behavior of pseudo_fix_path function resulted in a failure of the rust
+based tail command.
 
-(without pseudo)
+It was determined that the behavior could be emulated by doing:
 
-echo | realpath /dev/fd/0
+echo "test" | tail /dev/fd/0
 
-results in
+(tail, cat or any other similar command would result in the same failure)
 
-/proc/1399637/fd/pipe:[1176962683]
+This results in:
+  /dev/fd/0 -> /proc/self/fd/0
+  /proc/self/fd/0 -> /proc/1475524/fd/0
+  /proc/1475524/fd/0 -> /proc/1475524/fd/pipe:[1177004485]
 
-So the result of the pipe isn't actually wrong according to what I'm seeing.
+with an eventual failure of unable to open /proc/1475524/fd/pipe:[1177004485]
 
-What I am finding is realpath needs to:
+This change resolves the issue by detecting the path has been resolved into
+the /proc filesystem and then forcing the system to stop resolving
+additional path elements.  This ensures that special /proc behavior can be
+maintained.
 
-Resolve <dirname>, if it doesn't exist it's NULL and an errno.
+It is still unclear to me why the original code path fails, but in proc
+there is clearly a symlink for the pipe, but the pipe itself is not present
+which is triggering the failure condition.  Accessing the pipe via
+/proc/self/fd/0 appears to work reliably and consistently while not
+introducing issues with the special path resolution required for chroot
+emulation.
 
-TRY to resolve the <basename>, if this doesn't exist, then we just return it as 
-it is, otherwise it's resolved (if a symlink converted to the target) otherwise 
-just returned 'as-is'.
+Reported-by: Gauthier HADERER <ghaderer@wyplay.com>
 
-So I think something else is causing an issue here.  The result from pseudo may 
-still be incorrect, but it's not as simple as just checking if the file exists 
-or not.  Not existing is allowed, as long as the <dirname> exists, if the file 
-is a symlink that the target of the symlink itself exists, otherwise it's 
-returned "as-is".
+Signed-off-by: Mark Hatle <mark.hatle@amd.com>
+Signed-off-by: Mark Hatle <mark.hatle@kernel.crashing.org>
+---
+ pseudo_util.c          | 15 +++++++++++++++
+ test/test-proc-pipe.sh | 27 +++++++++++++++++++++++++++
+ 2 files changed, 42 insertions(+)
+ create mode 100755 test/test-proc-pipe.sh
 
---Mark
+diff --git a/pseudo_util.c b/pseudo_util.c
+index a94a4da..5f4b356 100644
+--- a/pseudo_util.c
++++ b/pseudo_util.c
+@@ -620,6 +620,21 @@ pseudo_append_element(char *newpath, char *root, size_t allocated, char **pcurre
+ 		pseudo_diag("pseudo_append_element: invalid args.\n");
+ 		return -1;
+ 	}
++
++	/* If we end up resolving a path into /proc, it has special meaning.
++	 * For instance, /dev/fd/0 -> /proc/self/fd/0 ->
++	 *    /proc/1475524/fd/0 -> /proc/1475524/fd/pipe:[1177004485]
++	 * Trying to access the resolved name "pipe:[....]" may fail.
++	 * Instead, once we enter /proc, we stop expanding symlinks.
++	 *
++	 * This now results in /dev/fd/0 -> /proc/self/fd/0
++	 */
++	if (strncmp(newpath, "/proc", 5) == 0) {
++		pseudo_debug(PDBGF_PATH | PDBGF_VERBOSE, "paes: %s in /proc\n",
++			newpath ? newpath : "<nil>");
++                leave_this = 1;
++	}
++
+ 	current = *pcurrent;
+ 	pseudo_debug(PDBGF_PATH | PDBGF_VERBOSE, "pae: '%s', + '%.*s', is_dir %d\n",
+ 		newpath, (int) elen, element, is_dir);
+diff --git a/test/test-proc-pipe.sh b/test/test-proc-pipe.sh
+new file mode 100755
+index 0000000..30b6880
+--- /dev/null
++++ b/test/test-proc-pipe.sh
+@@ -0,0 +1,27 @@
++#!/bin/bash
++#
++# SPDX-License-Identifier: LGPL-2.1-only
++#
++# See Yocto Project bugzilla 16028
++#
++# It was determined that a utility that use /dev/fd may fail when run under
++# pseudo, while working properly outside.
++#
++# For example: echo "test" | cat /dev/fd/0
++
++# Tests
++result=$(echo "test" | cat 2>&1)
++rc=$?
++if [ $rc -ne 0 -o "$result" != "test" ]; then
++    echo Failed simple echo pipe test - $rc:
++    echo $result
++    exit 1
++fi
++
++result=$(echo "test" | cat /dev/fd/0 2>&1)
++rc=$?
++if [ $rc -ne 0 -o "$result" != "test" ]; then
++    echo Failed /dev/fd/0 echo pipe test - $rc:
++    echo $result
++    exit 1
++fi
+-- 
+1.8.3.1
 
->> Upstream-Status: Pending
->> ---
->>    ports/unix/guts/realpath.c | 8 ++++++++
->>    1 file changed, 8 insertions(+)
->>
->> diff --git a/ports/unix/guts/realpath.c b/ports/unix/guts/realpath.c
->> index 8d8118b..ee7d409 100644
->> --- a/ports/unix/guts/realpath.c
->> +++ b/ports/unix/guts/realpath.c
->> @@ -14,6 +14,14 @@
->>    		errno = ENAMETOOLONG;
->>    		return NULL;
->>    	}
->> +
->> +	/* We must fail if the target path doesn't exist. */
->> +	struct stat buf;
->> +
->> +	if (base_lstat(rname, &buf) == -1) {
->> +		return NULL;
->> +	}
->> +
->>    		len = strlen(rname);
->>    		char *ep = rname + len - 1;
->>    		while (ep > rname && *ep == '/') {
-> 
-> 
-> -=-=-=-=-=-=-=-=-=-=-=-
-> Links: You receive all messages sent to this group.
-> View/Reply Online (#2845): https://lists.yoctoproject.org/g/yocto-patches/message/2845
-> Mute This Topic: https://lists.yoctoproject.org/mt/116859482/3616948
-> Group Owner: yocto-patches+owner@lists.yoctoproject.org
-> Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/13201099/3616948/947757854/xyzzy [mark.hatle@kernel.crashing.org]
-> -=-=-=-=-=-=-=-=-=-=-=-
-> 
-> 
 
