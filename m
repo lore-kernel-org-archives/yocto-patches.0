@@ -1,89 +1,76 @@
-Return-Path: <alex.kanavin@gmail.com>
+Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF28CE6F086
-	for <webhook@archiver.kernel.org>; Tue, 23 Dec 2025 20:11:45 +0000 (UTC)
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.108086.1766520697642642533
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3446DE6FE31
+	for <webhook@archiver.kernel.org>; Tue, 23 Dec 2025 21:03:36 +0000 (UTC)
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.108663.1766523808618981745
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 23 Dec 2025 12:11:37 -0800
+ Tue, 23 Dec 2025 13:03:28 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=SbeslxQG;
- spf=pass (domain: gmail.com, ip: 209.85.219.52, mailfrom: alex.kanavin@gmail.com)
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-88a2d21427dso52979126d6.3
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 23 Dec 2025 12:11:37 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=mMBpQC2F;
+ spf=pass (domain: gmail.com, ip: 209.85.219.44, mailfrom: twoerner@gmail.com)
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-88fcc71dbf4so15279166d6.2
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 23 Dec 2025 13:03:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766520697; x=1767125497; darn=lists.yoctoproject.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=4ekRlS0TDnIi+iT3qFR9jxCyb9jpdj7owGtZmX0p6x4=;
-        b=SbeslxQGi6xYG/5QlYKYo1EjKTsj/44aNFeCxSQj0oVtASybBn3Z+lYil2Thccu4lF
-         YH6J+scvbOAfFiygOryIBkD4KIPPPcbSvRTM/aw5zAx71S7hTwIq6GZOPupBJnEC12fh
-         OyfZx5DAawWoE5p/yvhjYe1+aUe73U1zp6NnfOk6zfSkG6ejWxN9UVOLCEsncB8rbzh8
-         ROwzr5v4Lp9zHp61TO94c/qlSgSpJ/sYnHbBc7OU6MleezbF9qk2ZLuW/fzVpbrWt7vu
-         mIKsZgRP+mupgexlgJJmtTdz1EP0xe0vK8L0QW6upLS8YVHFP0aHprGT+3TacotQoTic
-         4Gcg==
+        d=gmail.com; s=20230601; t=1766523807; x=1767128607; darn=lists.yoctoproject.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=butJpHnqQ90SHoGGD42cin4PuKq/RXOJvTfZuOfcYHA=;
+        b=mMBpQC2F9c3HsljNeOwgEMGMTdU+lnuEYR0pSQarFVOUPRIbFxRtXRHSoeYtdGjyPZ
+         Ey6yPe7QPIdPLcGYCI0pLHp/JT5qsX1N21gOZ2jxi2dJoaKwAKVQ5cHfKUm6hspe4g+k
+         QjKj4KWDaMm0Stn/V2xr3KevwtAbPkGfUgbiSc90orJkpAw0is3Ywzn4ggh/wsnEsrl6
+         UwyGdnQxp3AHraibSXL8kmEnaokWx/BJ/B3j8CT5ClBMAmaCICZiOMYlW28UHr9eDQ3I
+         SC8/nINpjmRqGcWJtXGbdM5Vqmj6KTZsA39qYue+/pEimJtJwcxrkB4g87+d/BwMKmua
+         GgXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766520697; x=1767125497;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4ekRlS0TDnIi+iT3qFR9jxCyb9jpdj7owGtZmX0p6x4=;
-        b=YGRAwEHF6mSnaJWEeQdd29md+CEdUWjs6LuU9TwZ1r09qDlwkBLcqj/4wjlUwe8xMR
-         Y4XAfUKdwr1KldpKh7H7u5KT0mjIbLbI4czTp3TOdChUOB/c7BN7er4Nkk8dh1Rt7IOW
-         N57RtEKz83gogDoYG1dqfVrH6hYr24IlOkuu5EjwU30nn4wGO1OWI/NHpEtpAbbM4i7S
-         jDsdaxUGch4I7AZxvRoqqDdLcNy9sQ3SOHvSwHLK9LIOvbDlc3+2sSiB+rW/zg7woZ4j
-         ZXYCnKJBKalV9blVVbI8fdJ5Tu6NzPiMbtV41YZs9xIEwWkqdERGPDUtL++ANh3MaCRl
-         OSBA==
-X-Gm-Message-State: AOJu0Yxcl4Kwv3V7Y50WEFo51zhfPvG7wMRuL5KssSt0pbMfOBhKzXl9
-	pMKTR3cDo5TwYRQS3Kxtoya7NXF5UZ8ZEbEWyQPjpX1RwObc+qRhzkKv9rgLmE6u48cd1dEzxu6
-	0hoGrN93XrX1JyBt3aRyAPmrphTBzOmmA/jVw
-X-Gm-Gg: AY/fxX4OHNAjyX/P5BWbMRXWr8OlQHK7COltaC1EVBBzVjTBVOoFaLlWQ++fuvnpoJF
-	9FB26x2OSHqZJ2A4IU0aSBg/6u4ZpTKIHTjM2LYcTHbmvXTv7AdmIrmtHGd9AULIHQVW5tDPL1Y
-	RVrEh9ELBzaXwadEv0uErRH7K67HcynaagoYEJqjwh1k+sDR3ZUcc5i9gG9ZEP4JDOmiTGKDyqa
-	GtzHcNX0cd5KNBHXCbzN23MT8sez+bJ5grDiHbDMr3ad37eUj8yaDBc63x5OJBEBTxzMA==
-X-Google-Smtp-Source: AGHT+IFwJx/ad/JCnpRfCFaIbh+0rdTkZMJxL0wA2ui1JK4OMOitKxXXhLI9ohfak9v1rx5bd74VuBEQqT7Zx8D7L+8=
-X-Received: by 2002:ad4:5e88:0:b0:880:278d:d4aa with SMTP id
- 6a1803df08f44-88d844345ecmr267694536d6.7.1766520696566; Tue, 23 Dec 2025
- 12:11:36 -0800 (PST)
-MIME-Version: 1.0
-References: <20251206070923.2254134-1-chee.yang.lee@intel.com>
- <CANNYZj8i7_nR1x+eAt_zXmiYvTvRRNV96YjADJBE87ZDkNSkuw@mail.gmail.com> <a813fc85-9309-4c82-895b-5fb6f8eb8022@amd.com>
-In-Reply-To: <a813fc85-9309-4c82-895b-5fb6f8eb8022@amd.com>
-From: Alexander Kanavin <alex.kanavin@gmail.com>
-Date: Tue, 23 Dec 2025 21:11:25 +0100
-X-Gm-Features: AQt7F2oiFHw1Pn7YbrxrTpHZFbTeYFFWV1cgteZ0dEBPSgBxAMKi1DC0rCDdN0w
-Message-ID: <CANNYZj-v+8-k2n1o3at5vUUEf=4OHMZUtr9AYo2dU8OHqwrxig@mail.gmail.com>
-Subject: Re: [yocto-patches] [meta-zephyr][PATCH] README: drop reference to poky
+        d=1e100.net; s=20230601; t=1766523807; x=1767128607;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:to:from:date:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=butJpHnqQ90SHoGGD42cin4PuKq/RXOJvTfZuOfcYHA=;
+        b=ueN/3CspCrv5uhAU44KN1ljQpQJF4nORPpv3xtlnDi7CNQ5tmIQICCTBn8uK+3Hskw
+         LGByz+FSJJHsOW6em5O3d/HjDiIwNp0gPKC772npf3ftIiX6VK+0b62QhpL7U6AQbDoi
+         y5ckPbwrTlbQqBo6vr0EpcZIfQox3j4zyvuDoSps3+fceXynVdVRjm2vpALcy6SYt+WY
+         I759mCKjRx7boynBGORmw4Iz1fZI62UHXBUmXQoshYHabEtaiCgMPZ53nakhsOK3Tkd4
+         G18eh5SNZBUPdn5IyK1VhFk3J+yFD+XwY7+BLVN1gmMiP4k2l4DnQzlZfdxjnlrKYZuV
+         rRKg==
+X-Gm-Message-State: AOJu0YwT64WuPd8L92LXHq6MfRt11BXw1K63Il2RkIWefu6t5FYHpkvi
+	iaSnscvSW75NLM7gHt6Gra7wcsj8LSQNIYPgQotUmn7CIfhbT7hRyxcmVNeSeg==
+X-Gm-Gg: AY/fxX7Y181XwTtuq1K/SN8bzsC/T1PBeuNfOdrwC8Yf7A3XISKhy4h6/7NFFriAYNu
+	fiCyAqxL76lWSccxbU8wOU8s1KKt4X1TCYCGOuspJoI4CRMropVfKG3NerjHpsy+J5eRoxrtz/n
+	mFWVbWCOHjVHlI9nk02KfLdNz9SxG6S2rEPk/RWSFydW8Svuh6VJDCAc6zGyaCDc/9AxW47aSKe
+	q2JqUHl+Ze/HKEdl7A/8T+HzNKX6NRZWERiI84SdsN5dZPTdxW5Ns3x+BKtaoqH8wflSzvvmWLw
+	9hqQHf0aPgoVxFvIIWgyyW4ok6qdddvOe0HCQ93mhdLK9dPAw9waavDh+hBcwqzUY+4G/qhng1R
+	QRJkU9cE8cWVKP1VrEdxl+fQ7vwGFy6nWbRlDOtfRvcvGjDpH2fVD6KvrNmIDrkMBm5tyVJGUo8
+	NayG5WN4wE/G8maekCnFwIpM3DhqcpJsAIEmsH/A==
+X-Google-Smtp-Source: AGHT+IHb69XPld2UDlton51QdmHyU19tQ5x+Tzj7tUj5Ro45MZcbW6oCJb1zCophUEynndieSrEK3A==
+X-Received: by 2002:a0c:e84a:0:b0:88a:2b3c:463c with SMTP id 6a1803df08f44-88d837932femr208998206d6.37.1766523806987;
+        Tue, 23 Dec 2025 13:03:26 -0800 (PST)
+Received: from localhost (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-88d996b69c4sm113020586d6.36.2025.12.23.13.03.25
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Dec 2025 13:03:26 -0800 (PST)
+Date: Tue, 23 Dec 2025 16:03:24 -0500
+From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Lee Chee Yang <chee.yang.lee@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [yocto-patches] [meta-rockchip][PATCH v2 1/5] kmeta
+ reorganization
+Message-ID: <20251223210324.GA37673@localhost>
+References: <1883149997ED858B.1614991@lists.yoctoproject.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1883149997ED858B.1614991@lists.yoctoproject.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 23 Dec 2025 20:11:45 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2865
+ <yocto-patches@lists.yoctoproject.org>; Tue, 23 Dec 2025 21:03:36 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2866
 
-On Tue, 23 Dec 2025 at 20:12, Sandeep Gundlupet Raju via
-lists.yoctoproject.org
-<sandeep.gundlupet-raju=amd.com@lists.yoctoproject.org> wrote:
-> [Sandeep]: Alex, I'm having hard time to use bitbake-setup, does
-> bitbake-setup will clone and include dependency layers? For example
-> meta-zephyr-core depends on meta-python (depends)-> meta-oe. If so we
-> can simplify the instructions.
-
-Take a look at https://git.openembedded.org/bitbake/tree/default-registry/configurations/poky-master.conf.json
-
-You need to specify what repositories need to be cloned first, then,
-separately, what layers need to be enabled. For example, there's one
-entry for cloning meta-yocto, and then from that repository two layers
-are enabled in a build:
-
-            "bb-layers":
-["openembedded-core/meta","meta-yocto/meta-yocto-bsp","meta-yocto/meta-poky"],
-
-Something similar can be written for meta-zephyr dependencies.
-
-Alex
+Entire series applied to meta-rockchip, master branch.
 
