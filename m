@@ -1,117 +1,102 @@
-Return-Path: <majortomtosourcecontrol@gmail.com>
+Return-Path: <t.f.g.geelen@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B107EE499B
-	for <webhook@archiver.kernel.org>; Tue, 30 Dec 2025 19:41:05 +0000 (UTC)
-Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.71281.1767123659186860670
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7DB0C2A065
+	for <webhook@archiver.kernel.org>; Sun,  4 Jan 2026 00:47:59 +0000 (UTC)
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.35361.1767487673327006990
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 30 Dec 2025 11:40:59 -0800
+ Sat, 03 Jan 2026 16:47:53 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=In8juy0b;
- spf=pass (domain: gmail.com, ip: 209.85.161.47, mailfrom: majortomtosourcecontrol@gmail.com)
-Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-65cfddebfd0so6190539eaf.0
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 30 Dec 2025 11:40:59 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=fRto67KY;
+ spf=pass (domain: gmail.com, ip: 209.85.208.54, mailfrom: t.f.g.geelen@gmail.com)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-64baaa754c6so14585341a12.3
+        for <yocto-patches@lists.yoctoproject.org>; Sat, 03 Jan 2026 16:47:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767123658; x=1767728458; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V8O7N4HQ2VZCyJv9BrVoEj3xIs+6dRKY13rDC17Lod8=;
-        b=In8juy0bs0mn9qAvHwGZRa4eXDio56tEj8Eqyo+7BGypXO+A3I5RpdM5f9SJaJBp0W
-         8ig8CpnEJagL1RU6Debv5QUtEhfQQ24WX7XEFEJmeq39CiqI9qJvC1v3CSdxdb69ZDlG
-         VifabuDxvLPInNJWe2YBKyVCnWY6bYkJTicTPFecHdVrMgWQZR9ZWsVG0AClfFWEIFuQ
-         c5ncRMLI4cBrtlx6seigYb0pSFMuhfVDNI+3vCJZoKaLgRqg/rYy4ocRow2ZmTli3UvM
-         +z+6CPp6w751zTjYNM7ZFDIr3ieOhYz5dYjvLXZTIQPEBnHVynkuMY/yIec4qmy45aN5
-         uH/Q==
+        d=gmail.com; s=20230601; t=1767487671; x=1768092471; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UMwOOcTi1gj+bzu0d3zD/WLvzIgwm0QQ3WbkoDDZe6I=;
+        b=fRto67KY21fK8MOWOBAlurZEQ2qDRb86d4WSlJZwR+l42Z/MT7sC6GtFrLiMzuMJ/n
+         v9qircNNezfZq0NrG+z6fZEUmR81dtw0TGxPsSFhXLzoQINjO0hZg0a1PgEtGBsd1rBa
+         cCFCPUOZxEVl6QDn+x4VWvzfVQ0fBfjjOL40oFaiAtD/K0CDUmi5URIC7JI4bToX83yM
+         6mxRyiwkyLcIBfZXaSfCgFHSJBoqcC1M2Gljt/KBBjJkfwuhUtoLoQGu4K9fkBQLOBZS
+         pt7uq3hX5PBv/21EsgEOImJCItbdA5nChXPsB6X5lgKxVWJfPFRy0UbpEYnAFg5JMVMu
+         MWxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767123658; x=1767728458;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=V8O7N4HQ2VZCyJv9BrVoEj3xIs+6dRKY13rDC17Lod8=;
-        b=voeccrwmTXJiSQo9U4+t3/QKteBDLhP30ghMZ4y+DyE5ucLZxhpG8yyfsgM5T3Uc+3
-         dIiqCe7jpRovlqVgkSe2YLGiGkhANDaErn++kupbQo8apXK888DUM21GKOzrBM3EcT11
-         S6Byq7QyDuSvJ/Tb/i9iFMAqLsNcFYf3u9jej3JS3CQBrKVA1/aI1Ho6kT45rd00lufR
-         /GVwgL+KKJaA0k0Ped+B6pjP6kQlX7X8J7A/a+MO/4qXA4X5S1O3ZTVJ5ghLhgX4NGwy
-         6qauDXV3vr0tb2Foi+V6aAGryI+FA1LbTjOLvH+UQiJb6JMNCXecXtnuRBKjmVTbxW99
-         Dz1g==
-X-Gm-Message-State: AOJu0YxXEUEEIIlbwUI6q7eHVHCcf9hPXf9d5bTqZvwFkFQzqL5thMkQ
-	YcvhtIL711LMna4X4K0l36z/F8lrpR9GKKR83iwvqgDqC+83KM9hRAAvHWpP2A==
-X-Gm-Gg: AY/fxX7MmtdPGSd8LlWZDcf++qMgSmPSgS8aOkbRT2o2WN81GNPpcFxK8DpN5DqYAMv
-	8/1saELPj0NlXa82yyV+C2T4ymlUMNF6GIWH81fTTopl4x0zLpje3bRJN5di+cg1SXqR5tJJ/co
-	ViVx9HCDvEQNp3P/P11kjb+B1eGEvVlDJWMTRkH64Hiz0SERpI5O/LC0sCWbNDcFPUL4mRFjmwl
-	ekdVm5nvfiZ/4AexdFWbdg9Fasoo3/iMe5yNEGZHrDMtxHPOe5zn5PHMOzuxNR7lvRsi43UNlnA
-	jwprMDWpEGbMlwPcrX/sYUPOpUEHKx67cXVI9jbuKHNAl7GCDmRdS0nOxYdspry6KxsKFSEGKg6
-	yxfP2MQLY/I+P0oD5dyYukTUI1Q2khlNQVeVeVR++9F6lJoxTyAn45rMOLIZGKpx5cspNI9lrOG
-	JeCHRcoNyR7vf8cLz/n0HjrivjlxVEOXHKBXpW7aP8dH4hJ4qsqjTka7mASo9PbA==
-X-Google-Smtp-Source: AGHT+IGfCkm9cJNjxRsq1TgidkgqrAQS3QeEmzkgIKXwtnLzYsmgbMEK4h+OgdxHjW6zC79nGBWSbA==
-X-Received: by 2002:a05:6820:c309:b0:65d:2a0:4b57 with SMTP id 006d021491bc7-65d0e9e3c2emr9824541eaf.34.1767123658441;
-        Tue, 30 Dec 2025 11:40:58 -0800 (PST)
-Received: from [172.26.252.3] (75-166-169-44.hlrn.qwest.net. [75.166.169.44])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-65d0f3fb710sm20190214eaf.2.2025.12.30.11.40.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Dec 2025 11:40:58 -0800 (PST)
-Message-ID: <6e6bd482-bfeb-45f6-9da3-cd90652c4647@gmail.com>
-Date: Tue, 30 Dec 2025 12:40:57 -0700
+        d=1e100.net; s=20230601; t=1767487671; x=1768092471;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UMwOOcTi1gj+bzu0d3zD/WLvzIgwm0QQ3WbkoDDZe6I=;
+        b=Or6ZPJj+mDhYSiw9PiFEekMv+r5co3uq7c9YGMHDYL0ogcGvwObEKbwCtnk98aRK7U
+         JDzZW4G+aN7SDGOIQ1RJb7jucUlWum7zS+XHJzxow/kwI7qUGo7qHhhXZTKpGBPq4fHk
+         m0WnTA2eLKpGHXXxDnGIRYMx8LJVsV9VcQY170yX0JdCwdZLdV1ZdIHHayLxBX1ne/8S
+         BXc36A36g0XhNK9DahbZocVHKCDWe95ElPnjKzLnvllu6SYEd4UQBMR1Yod8HovE1U2H
+         E0WmLpbJDg1N2yd6xBtcidQGuNQmuw1DhgKn4MVeDuXlcRwHSZ/6pv3klDdoGpRz357a
+         65Vg==
+X-Gm-Message-State: AOJu0YwxnYXBq/2hjNqFVM3Ew7mnNFnv8G9IJqZDH7l2H476sJ0aOjV6
+	UeE7frSPLBJWfzfWbrn+R3lrhwcvfNhduWgu2HAcAMTZq/r2WFu76GeTKmzS7cQP
+X-Gm-Gg: AY/fxX5qJfuYkIwFyXOnpZcAPnhPjpAy28G1j9BMpAstYssDPXS1dATDKN1GEJVz9Gv
+	4DDkAe+hRyZTYReNgXepeoOpPSosjn8AGlRl9SmIZ6Lr9TifrYns+fEX6bD8rVcZNYlEn3V+KK9
+	xvxj4XkMbb4I5QJDxrde+PBrmWj/VOKbs5tzgl/ih+Xqg7p43dVOhOsI7LRuqvB6lBWIIEWHsgv
+	L7MpNuMbWC9FvD613BynKmzHRzV9xIwd5L2RGHa8JrP9Bj9aVgRop4AVmnWHHmA0jlzMIcFs+c+
+	E+a2bFNA2ym3eD5mNPXGCPXLkWHBp/LiGaNZFzQw1d49FflGsRTaquyWM45og5tE87BXgMVInhO
+	TtbeGWQTQC4JJuwMcC+yRrNuy1MnNPdCstohvpcPooD8BUigcLBRg/vAOUdBw5MnRVn4PRVJoYQ
+	Tdx43LICNREhNSmFFzzV6I2++2mZOaswf6jDIKoc/o5uHjyQu1cXANEnf2hvmzqYan
+X-Google-Smtp-Source: AGHT+IEGv2ObHzAv7xSv/d1ERGcoYnGt1iPR6pMdQfvwDXYvYj3oYotMb4FY9YDfKoCSl3ufVTXeuA==
+X-Received: by 2002:a17:906:9fd2:b0:b73:42df:27a with SMTP id a640c23a62f3a-b8036f2fa8fmr4264786366b.1.1767487670800;
+        Sat, 03 Jan 2026 16:47:50 -0800 (PST)
+Received: from control-center.fritz.box (150-12-20-31.ftth.glasoperator.nl. [31.20.12.150])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8037a5bdfesm5104839066b.10.2026.01.03.16.47.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 03 Jan 2026 16:47:50 -0800 (PST)
+From: Tom Geelen <t.f.g.geelen@gmail.com>
+To: yocto-patches@lists.yoctoproject.org
+Cc: Alex Kanavin <alex.kanavin@gmail.com>,
+	Tom Geelen <t.f.g.geelen@gmail.com>
+Subject: [auh][PATCH 1/5] README: fix version numbering.
+Date: Sun,  4 Jan 2026 01:46:57 +0100
+Message-ID: <20260104004708.2494403-2-t.f.g.geelen@gmail.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: yocto-patches@lists.yoctoproject.org,
- Scott Murray <scott.murray@konsulko.com>, rybczynska@gmail.com
-From: Clayton Casciato <majortomtosourcecontrol@gmail.com>
-Subject: [meta-security][PATCH] suricata: drop trailing whitespace
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 30 Dec 2025 19:41:05 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2888
+ <yocto-patches@lists.yoctoproject.org>; Sun, 04 Jan 2026 00:47:59 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2889
 
-Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
+The README had incorrect step numbering.
+
 ---
-Sponsor: 21SoftWare LLC
+ README | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- recipes-ids/suricata/suricata_7.0.13.bb | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+diff --git a/README b/README
+index 3d0c3fa..f94c733 100644
+--- a/README
++++ b/README
+@@ -38,7 +38,7 @@ WARNING: if you are using the default maintainers.inc file supplied
+          emails to the default maintainers. Please be careful not to
+          do this :)
+ 
+-4. If you want to enable buildhistory (optional) you need to enable it in
++3. If you want to enable buildhistory (optional) you need to enable it in
+ upgrade-helper.conf, and also add the following lines to your conf/local.conf
+ file:
+ 
+@@ -52,7 +52,7 @@ $BUILDDIR/upgrade-helper/work/recipe/buildhistory-diff.txt.
+ 
+ (Do not remove any other inherited class in the process).
+ 
+-5. If you want to enable testimage (optional) you need to enable in
++4. If you want to enable testimage (optional) you need to enable in
+ upgrade-helper.conf also add the following lines to your conf/local.conf
+ file:
+ 
+-- 
+2.43.0
 
-diff --git a/recipes-ids/suricata/suricata_7.0.13.bb b/recipes-ids/suricata/suricata_7.0.13.bb
-index 0635bf3..7298f1b 100644
---- a/recipes-ids/suricata/suricata_7.0.13.bb
-+++ b/recipes-ids/suricata/suricata_7.0.13.bb
-@@ -40,18 +40,18 @@ B = "${S}"
- PACKAGECONFIG ??= "jansson file pcre2 yaml python pcap cap-ng net"
- PACKAGECONFIG:append = " ${@bb.utils.contains('DISTRO_FEATURES', 'ptest', 'unittests', '', d)}"
- 
--PACKAGECONFIG[pcre2] = "--with-libpcre2-includes=${STAGING_INCDIR} --with-libpcre2-libraries=${STAGING_LIBDIR}, ,libpcre2 ," 
-+PACKAGECONFIG[pcre2] = "--with-libpcre2-includes=${STAGING_INCDIR} --with-libpcre2-libraries=${STAGING_LIBDIR}, ,libpcre2 ,"
- PACKAGECONFIG[yaml] = "--with-libyaml-includes=${STAGING_INCDIR} --with-libyaml-libraries=${STAGING_LIBDIR}, ,libyaml ,"
--PACKAGECONFIG[pcap] = "--with-libpcap-includes=${STAGING_INCDIR} --with-libpcap-libraries=${STAGING_LIBDIR}, ,libpcap" 
-+PACKAGECONFIG[pcap] = "--with-libpcap-includes=${STAGING_INCDIR} --with-libpcap-libraries=${STAGING_LIBDIR}, ,libpcap"
- PACKAGECONFIG[cap-ng] = "--with-libcap_ng-includes=${STAGING_INCDIR} --with-libcap_ng-libraries=${STAGING_LIBDIR}, ,libcap-ng , "
--PACKAGECONFIG[net] = "--with-libnet-includes=${STAGING_INCDIR} --with-libnet-libraries=${STAGING_LIBDIR}, , libnet," 
-+PACKAGECONFIG[net] = "--with-libnet-includes=${STAGING_INCDIR} --with-libnet-libraries=${STAGING_LIBDIR}, , libnet,"
- PACKAGECONFIG[nfnetlink] = "--with-libnfnetlink-includes=${STAGING_INCDIR} --with-libnfnetlink-libraries=${STAGING_LIBDIR}, ,libnfnetlink ,"
- PACKAGECONFIG[nfq] = "--enable-nfqueue, --disable-nfqueue,libnetfilter-queue,"
- 
- PACKAGECONFIG[jansson] = "--with-libjansson-includes=${STAGING_INCDIR} --with-libjansson-libraries=${STAGING_LIBDIR},,jansson, jansson"
- PACKAGECONFIG[file] = ",,file, file"
--PACKAGECONFIG[python] = "--enable-python, --disable-python, python3, python3-core" 
--PACKAGECONFIG[unittests] = "--enable-unittests, --disable-unittests," 
-+PACKAGECONFIG[python] = "--enable-python, --disable-python, python3, python3-core"
-+PACKAGECONFIG[unittests] = "--enable-unittests, --disable-unittests,"
- 
- export logdir = "${localstatedir}/log"
- 
-@@ -81,7 +81,7 @@ oe_cargo_build () {
- }
- 
- do_compile () {
--    # we do this to bypass the make provided by this pkg 
-+    # we do this to bypass the make provided by this pkg
-     # patches Makefile to skip the subdir
-     cargo_do_compile
- 
 
