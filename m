@@ -2,206 +2,96 @@ Return-Path: <t.f.g.geelen@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D54C4C2A067
-	for <webhook@archiver.kernel.org>; Sun,  4 Jan 2026 00:48:59 +0000 (UTC)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.35343.1767487732619081622
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7DF9C2A069
+	for <webhook@archiver.kernel.org>; Sun,  4 Jan 2026 00:49:59 +0000 (UTC)
+Received: from mail-ed1-f68.google.com (mail-ed1-f68.google.com [209.85.208.68])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.35356.1767487791233776260
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 03 Jan 2026 16:48:52 -0800
+ Sat, 03 Jan 2026 16:49:51 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=huKgpgiZ;
- spf=pass (domain: gmail.com, ip: 209.85.218.54, mailfrom: t.f.g.geelen@gmail.com)
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b7a02592efaso1953418766b.1
-        for <yocto-patches@lists.yoctoproject.org>; Sat, 03 Jan 2026 16:48:52 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=VR4flsrv;
+ spf=pass (domain: gmail.com, ip: 209.85.208.68, mailfrom: t.f.g.geelen@gmail.com)
+Received: by mail-ed1-f68.google.com with SMTP id 4fb4d7f45d1cf-64b8b5410a1so14938068a12.2
+        for <yocto-patches@lists.yoctoproject.org>; Sat, 03 Jan 2026 16:49:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767487731; x=1768092531; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1767487789; x=1768092589; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UIymGo77VyU0wrlUUtE/9RzfW+ZnKXDb2PwkR3ek+SA=;
-        b=huKgpgiZcj47p13BsnfzUAVKpJTovogc1yFCjR0vRm8Yx0H7i8KhTcLUU2vnC7dPhz
-         7n7KomFNe+vSAL84NAEJvuN72O81rq4SeSokZ/U7M6I0VsCFwT0LCdz00HUZEQWR3E1I
-         flqAMSbm1p6IbGwyFILlcvM84ZGYHrGzYU7nmHYf8hb6E+vTgzvmJN+rnXmyA+IymqTt
-         IupEOkHRE50JkpS2/enx33CCyExRp6/UZYWkJLf6ptRuBkUDrmhw6xmiYLN90cykkIGJ
-         0CFeCl2xfkYVfuXolZKkQb4bcwbHRurmpB5F4xNSpHImJAiBCCGxCOI1Yt8QHT3HYuUA
-         q/tw==
+        bh=6YT3KgcxVaF3S/TYKvh/FNOpxKwjgJCjCGsLD/CR9s0=;
+        b=VR4flsrv76SZESX0nAW2h/kiFZEuR1zl9NEIAJI/nzx5tNvTQLbeacXcidavGhc6dE
+         i9ENWgCx8ORtb/Pc0o4ge2m+tu6zqHUTCPkY/Yzgyhcbg33oJbmBk8WYmqvTPqkK5NS8
+         pfmnPgcmL4yq7m6ZDS8OjfO3LZ9Exbvz1wcGEXYt4P0UZzOBm3vztxLhBYRNdb5q+tkB
+         Ccm7//4DkvRDqNJzNwfYfoHd8AaECOI9od35wIGaa0iqrA1s72n7+HqGdxLUcU0eiTa1
+         b/5rzR0iw6LCWJqBaNjhOCybYYRmbSSuGfs/Kvh6dDLV6fp20SvoCDoBZGav23pP1ZF+
+         qrPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767487731; x=1768092531;
+        d=1e100.net; s=20230601; t=1767487789; x=1768092589;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=UIymGo77VyU0wrlUUtE/9RzfW+ZnKXDb2PwkR3ek+SA=;
-        b=QMfKnjZIUp6wWTMSqJ8+DohG6l84WXQr+T8ii8LaCboNikTLYNN1Aserx01pTKxyhr
-         RcxoQXdCNzmwTH81PFB6UMphYCA+dE/lBKrplWEPuKGxkJEdfNGPrG+cZqByE3QFu2Xx
-         t5txtmd8gJ7TKN3tHrfRH/AoiK5meC9VD72jfk/iT9SJ2jDz2+1eGBeMwflZG0gwhjYp
-         8dtVYw2v0ug4gbs9qVj+1Mw/u97Ey4W4NjebfYLDIw/S+c75cUWnYb1A1CLGQlebxj1E
-         Xk12aDkgJmaBjVv8NrSRfVnMhPJ9++pi4fA7xfoyUWR1v7emst5JESjCYE2Go5r73beg
-         r2+A==
-X-Gm-Message-State: AOJu0YzGAyK2wmOmBCClX20sYWCh5acnfK9dmYVTfk5BRRXtQFH8TQdO
-	aToNLQ3qaTYusjN1DU4706C//jTiOJS/GDCuQhOCC9KnuvVHWj9/r6ee/UfZ/DeC
-X-Gm-Gg: AY/fxX7YvlrwRg7rBAL2JTCv9IFkuH1FSOV+/COQxvebpCMFcV/U2E6o8fY4NaIQF+J
-	C9BnvVS0zfrK+ndvD7m1SxsR1YIo7pEyo5mmI27nVm4Fy8EpeNLYa/FmMggCUFW8Fb4BnJnD/KB
-	1dgDu/Dg8AYn5SHPmfJC6OsQ306EL/7koBzr2E8xpKKzY+PjDY5dnJavnUvaeN+hV47dedL6BSP
-	BOSilofKybh/kkCfp6X2MRA2PLVz2OZ/xOWdOLjF57+3Ym2zTdxL5cOM6gGUwa2fTzMyqe8mcnL
-	J9exrG8AhjoKlAgpVK6NGpQ/xN5vJ+vxb0RWTUSQovFfBI6yPtT0GH963tqUMbcwucTsaqKNTQS
-	sw/xRK9iy10LqoVnIKvjg51yeZ+nGHnytm9JrenVmkRBpxX2UfC24IatGaHVbGhcelQZSLwZdGv
-	HfY/KZmMWkzTHGAFINHbHysC4FLw4SxxKf4NjqUT/actGfbpnYXJ+GCS+As+88DU2m
-X-Google-Smtp-Source: AGHT+IGJMxbepz/DsIkJDRdSCt+wxNFX4J1yCrgWme6EL57yOSAcR9Uz4GAQA0kNYrpk79eoeobmKw==
-X-Received: by 2002:a17:907:c994:b0:b80:40d2:9652 with SMTP id a640c23a62f3a-b8040d296a2mr2795548566b.65.1767487730529;
-        Sat, 03 Jan 2026 16:48:50 -0800 (PST)
+        bh=6YT3KgcxVaF3S/TYKvh/FNOpxKwjgJCjCGsLD/CR9s0=;
+        b=pogmmthH/l1Mbo17AeadWsqp6Zp8KfulhWubXyq80yqDUsWChG3s/Sh6D/BQ0BlKcV
+         925IAWpfTjSndmoWMf4Xp5KAmdIypPibV7dkHzi9aL9Rp3z6eR298KiyfxBJlljxK/O9
+         JSp0cj+2ae8xKoEonzeGe3pL2OFVpF9lFYYlXuULZRX1oVrfUmq35pBZxAw/nygnksGa
+         U08W9F/Uicj+w8KXJmeHDbbQq+IpO8v5I2HK/dNZNr1kNDuB9a0Su/hXgHq+pZANca7j
+         4werTQ4puZMVq0TG/oTfaNWtAbxUm4GPHg7fd8fXiFBJmg+978p/gh6LWkTDTwUHJFfn
+         poyw==
+X-Gm-Message-State: AOJu0Yx/bcYcqHPdqdJImMI1+HkSnd3v4/bJ5dgX21KVzRnJR+NPbdx1
+	sJ3gbdzwcAC+GgOyP5N4gMasrXAD2lDXAPHYxztkpEDxcKHonU8iR3R7yj9MJoiicLw=
+X-Gm-Gg: AY/fxX5YRQJU3INJVJmtrGRWTnerzcQRjXuhE2nJ/E67nAudnQ7W3AHxeHmCKP6IBK/
+	hJYhO3UMYTd1egVb0/EwkEbVDEgXe8IJTJ20dddQCR6Fgk0klHnMEm4i2vxfgclixT3os1PCVGJ
+	AjQ4kvWVc+ldMj9MwdbCwsL4UT1VUDmel3x/C4IkP3i05eh9e52ifyBEn+OlUtZNfyoYRdGrpfy
+	/dpAlwZgUHOm4l5t4Gh8s7heLLITGJhyhVTiIaIpM1RBkfdkg++0ir948VBjYlrN5+a3gqdJznA
+	5a5iBjZM0/IKZTpNuHLpLdS6qLFmw373cw4whM6W0u8APBu/EwaDthVJV2Sqfys7yw9lFoxKYD0
+	0NYdVi71p3ApcT3PypNRp9CzaUzgQK+BahLKwAV6EjTRiShh7LS5t/bOewQL/BLoGkMzXdBpNdZ
+	qh5VHpOH/8ti/063w/HOobIk2+BAZF99XUZH6uZamWIBqYOw54q5ve5xJFjKLE/Bd9
+X-Google-Smtp-Source: AGHT+IEEGF6Z/xq9GA4nVxn9/SB68FlyLnKuuEKi8kTq1p4Y+273236STcxbKvHva0hFq8KdSNle2w==
+X-Received: by 2002:a17:907:2d0e:b0:b76:bcf5:a38a with SMTP id a640c23a62f3a-b8036a924ffmr5076794166b.0.1767487789175;
+        Sat, 03 Jan 2026 16:49:49 -0800 (PST)
 Received: from control-center.fritz.box (150-12-20-31.ftth.glasoperator.nl. [31.20.12.150])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8037a5bdfesm5104839066b.10.2026.01.03.16.48.50
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8037a5bdfesm5104839066b.10.2026.01.03.16.49.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 03 Jan 2026 16:48:50 -0800 (PST)
+        Sat, 03 Jan 2026 16:49:48 -0800 (PST)
 From: Tom Geelen <t.f.g.geelen@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Alex Kanavin <alex.kanavin@gmail.com>,
 	Tom Geelen <t.f.g.geelen@gmail.com>
-Subject: [auh][PATCH 3/5] Remove unused imports
-Date: Sun,  4 Jan 2026 01:47:01 +0100
-Message-ID: <20260104004708.2494403-6-t.f.g.geelen@gmail.com>
+Subject: [auh][PATCH 5/5] Record commit failures as group errors in Updater class so that commit errors are not treated as SUCCESS but as a FAILURE
+Date: Sun,  4 Jan 2026 01:47:04 +0100
+Message-ID: <20260104004708.2494403-9-t.f.g.geelen@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260104004708.2494403-2-t.f.g.geelen@gmail.com>
 References: <20260104004708.2494403-2-t.f.g.geelen@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sun, 04 Jan 2026 00:48:59 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2891
+ <yocto-patches@lists.yoctoproject.org>; Sun, 04 Jan 2026 00:49:59 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2893
 
-Every file in AUH contains imports that are not used. This patch
-removes those unused imports to clean up the code.
+What is happening before: commit_changes() throws, run() catches it and removes the group from succeeded_pkggroups_ctx, but it never sets g['error']. The Statistics.update() logic classifies groups purely by g['error'] is None → “Succeeded”. So you end up with “Succeeded: 1” even though commit failed.
 
+Signed-off-by: Tom Geelen <t.f.g.geelen@gmail.com>
 ---
- modules/buildhistory.py       | 6 ------
- modules/steps.py              | 4 ----
- modules/testimage.py          | 7 -------
- modules/utils/bitbake.py      | 4 ----
- modules/utils/devtool.py      | 2 --
- modules/utils/emailhandler.py | 2 --
- modules/utils/git.py          | 1 -
- 7 files changed, 26 deletions(-)
+ upgrade-helper.py | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/modules/buildhistory.py b/modules/buildhistory.py
-index 0c13cb4..407a1e5 100644
---- a/modules/buildhistory.py
-+++ b/modules/buildhistory.py
-@@ -20,13 +20,7 @@
- #
- 
- import os
--import logging as log
--from logging import debug as D
--from logging import info as I
- from logging import warning as W
--from logging import error as E
--from logging import critical as C
--import sys
- 
- from errors import *
- from utils.git import Git
-diff --git a/modules/steps.py b/modules/steps.py
-index 08f47fd..93cb3a6 100644
---- a/modules/steps.py
-+++ b/modules/steps.py
-@@ -20,16 +20,12 @@
- #
- 
- import os
--import sys
--import subprocess
- import shutil
- import re
- 
- from logging import debug as D
- from logging import info as I
- from logging import warning as W
--from logging import error as E
--from logging import critical as C
- 
- from errors import *
- from buildhistory import BuildHistory
-diff --git a/modules/testimage.py b/modules/testimage.py
-index 849a9f1..85ee4f3 100644
---- a/modules/testimage.py
-+++ b/modules/testimage.py
-@@ -22,15 +22,8 @@
- #
- 
- import os
--import sys
--import shutil
- 
--import logging as log
--from logging import debug as D
- from logging import info as I
--from logging import warning as W
--from logging import error as E
--from logging import critical as C
- 
- from errors import *
- from utils.bitbake import *
-diff --git a/modules/utils/bitbake.py b/modules/utils/bitbake.py
-index 32c234c..ad011db 100644
---- a/modules/utils/bitbake.py
-+++ b/modules/utils/bitbake.py
-@@ -24,11 +24,7 @@
- #
- 
- import os
--import logging as log
--from logging import info as I
- from logging import debug as D
--from logging import error as E
--from logging import critical as C
- import sys
- import re
- 
-diff --git a/modules/utils/devtool.py b/modules/utils/devtool.py
-index b3a9ce7..d4b7ba7 100644
---- a/modules/utils/devtool.py
-+++ b/modules/utils/devtool.py
-@@ -1,6 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0-or-later
--import os
--import logging as log
- from logging import debug as D
- 
- from utils.bitbake import *
-diff --git a/modules/utils/emailhandler.py b/modules/utils/emailhandler.py
-index 1ed4bfc..0629c8f 100644
---- a/modules/utils/emailhandler.py
-+++ b/modules/utils/emailhandler.py
-@@ -24,7 +24,6 @@
- #
- 
- import os
--import logging as log
- from logging import error as E
- from logging import info as I
- from smtplib import SMTP
-@@ -33,7 +32,6 @@ from email.mime.text import MIMEText
- from email.mime.application import MIMEApplication
- from email.mime.multipart import MIMEMultipart
- from email.generator import Generator
--import shutil
- from io import StringIO
- 
- class Email(object):
-diff --git a/modules/utils/git.py b/modules/utils/git.py
-index abdcc47..abc1acc 100644
---- a/modules/utils/git.py
-+++ b/modules/utils/git.py
-@@ -24,7 +24,6 @@
- #
- 
- import os
--import logging as log
- from logging import debug as D
- 
- from utils.bitbake import *
+diff --git a/upgrade-helper.py b/upgrade-helper.py
+index 165fd42..8457c7b 100755
+--- a/upgrade-helper.py
++++ b/upgrade-helper.py
+@@ -528,6 +528,8 @@ class Updater(object):
+             except Exception as e:
+                 import traceback
+                 E(" Couldn't commit changes to %s:\n%s" % (pkggroup_name, traceback.format_exc()))
++                # Ensure commit failures are recorded as group errors
++                g['error'] = e
+                 if g in succeeded_pkggroups_ctx:
+                     succeeded_pkggroups_ctx.remove(g)
+                     failed_pkggroups_ctx.append(g)
 -- 
 2.43.0
 
