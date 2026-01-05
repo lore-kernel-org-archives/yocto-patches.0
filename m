@@ -2,97 +2,154 @@ Return-Path: <t.f.g.geelen@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 405BBCD0423
-	for <webhook@archiver.kernel.org>; Mon,  5 Jan 2026 22:52:54 +0000 (UTC)
-Received: from mail-ej1-f65.google.com (mail-ej1-f65.google.com [209.85.218.65])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.77736.1767653565062860121
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42D34CD0423
+	for <webhook@archiver.kernel.org>; Mon,  5 Jan 2026 22:58:24 +0000 (UTC)
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.77859.1767653894613996991
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 05 Jan 2026 14:52:45 -0800
+ Mon, 05 Jan 2026 14:58:14 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=Iqs4EVrU;
- spf=pass (domain: gmail.com, ip: 209.85.218.65, mailfrom: t.f.g.geelen@gmail.com)
-Received: by mail-ej1-f65.google.com with SMTP id a640c23a62f3a-b7eff205947so63287566b.1
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 05 Jan 2026 14:52:44 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=btduoVCF;
+ spf=pass (domain: gmail.com, ip: 209.85.167.53, mailfrom: t.f.g.geelen@gmail.com)
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-59b30275e69so22052e87.1
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 05 Jan 2026 14:58:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767653563; x=1768258363; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iHiImJD8N2UvwzrgD0iQU7noL9zXKzvQqCdqH7l+cuo=;
-        b=Iqs4EVrU3treLfu4irA+0JFqjcAInAFVCr8QIzP1Be+WIXlSV2OjzBnxPKRdBibjwq
-         cfYWuHqTgDTKmWwXKbXZYGoHV7Lorx9wAj0wiaVKT2CKcDCOYlDkgHzLiz7yPCh/Fm4i
-         vv8oMWvYNi/aTsPa4WLp93XBBA7RTQd/uBr53f7et1sDQAiNRNFNxcWzYAbzDgtonNVy
-         ZRKW2AGitHshYqZ27+BMp25wh05xHEAct+1YceDJA5r/6DJDmEeS6OO+aREePhucuZ1I
-         UJUdPZq/37NQu9MPF3b9Ofya2rAvijZoWiv3wLN4Ud/59DaEo0381t1SHge7gogz8yAY
-         x5uA==
+        d=gmail.com; s=20230601; t=1767653892; x=1768258692; darn=lists.yoctoproject.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=cso1+frjkR0DxwIaMkBsUDV5qLMouuzWngIXpV1SI40=;
+        b=btduoVCF1wCzpHdm9vr3jYKbg+PIZpzsQJnjxQ+2oVjLwTVUQHCC2nKU36k73tZcrN
+         Jk/j648mTIExJXYvkExFjhWmrKot8FDg8MmIr9IOPISJVa6VsYbnsXKATqG6DMfcjmfJ
+         LGf1asCdV7KgpvAKx/afZoMlhGBMsYsKECivHEfHWOQZs+eyXcqCsgBOxm3Ag0FzbeKT
+         2i0ZzVYL32wJJotS8P4bHc3xV30inUGUidzUnxqgHD1AxyWlfMaJ2lUF68ubhHjqYPxD
+         r+cRy2/AXJDOKuqU40VeoO2rj6Uvev/G/EH/uzDPiex5bgnXeHex8TwnIm4/RE68MByZ
+         GDyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767653563; x=1768258363;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=iHiImJD8N2UvwzrgD0iQU7noL9zXKzvQqCdqH7l+cuo=;
-        b=NFxMgM2l2F8l/sXxnUnWm6K5A0Fctky3RLBuD+jwSKJaPf1D38PxqfIsQh5ucOvptr
-         uKVg4z+uFzEeqy/a76LLDyUEOiBljyMA9C9p4X9d/fisOeppXv5C58fWSf4IziVTdoOW
-         U2tNyNdydv77piuU8y8CSjaus8OQrr/i/xpKB72HZY1nYQrEJpeed/Btiwu6/oHDqiJ2
-         mF10vfVBRPfvk8fRg1T77RSnwuln+I9Owv5VOn5Tfd+T9tQXNugWl54jw244RUfoykJC
-         RIQ2/K6JEIJSXJMTmKJ9FoaTvG9GbaE+EsK5ECOqeZWV8vXqTF7wkfPBiJk0AdZ2mpI1
-         /dMw==
-X-Gm-Message-State: AOJu0YwobftyjGFo1K8IS83xN1przGUJ/MhAdR6G9zBvDaKL84orTpJ8
-	ItkkDNcfTI47UdK71SetrtObw6iwZsygXTsFlbs+1ltIP/tPLNnkKDYksWpz6hM0mlk=
-X-Gm-Gg: AY/fxX5Zk19FNmAf/xNsO21yswJZX62D4UPn21cU+T/JaX6HFfEaAmK6+7vJ8ZrF806
-	tZuWMB+ZbKWlMDSP/kI4G/6s5QsNV5BhOj2bYJVYtZ6qNfeY2HPsNh30yhGpmNN1gIcCafdScNi
-	hq2cm61cUr0wBhX6uJLWH85YZe0898yfcKAv+OvtLNcGbMSlC+EyLGnDKDO3PuJu2odIV9zrhA2
-	uuj82+ocpI5A9loGkd/nB6oUkDUR9U0tNWV6KRbonVPHMRbGRiTDHn7Hyh7eMGgqoNEuzyOvz+L
-	HVhulo5CH2wXrAwrZiemSqKJf37bZRYYorVOgJ6lqTFiZpWak3mtGIkCiEfuxsaAM6aUAUcDOh7
-	hW7uPBjW9Ihizclgw0RMUes67rzjFrIywrkwdQ5P2Za7P2YWfxTTvIl+rxEAGcJy4thwKnKasI+
-	T6ByzVstJjM0QJ+qZuRV0ssaohVSdIIyYSWDe5GglguDtnVNUiw/icCbAFhvQhaY5i
-X-Google-Smtp-Source: AGHT+IGkhtu4WirGIRcvxGJzynOmGDolnww0jswOOC+3ozxo4XBEyuPeVD82QCUQFxvQXi0eNBg9xg==
-X-Received: by 2002:a17:907:6095:b0:b73:99f7:8134 with SMTP id a640c23a62f3a-b8426dd7806mr110738966b.45.1767653562747;
-        Mon, 05 Jan 2026 14:52:42 -0800 (PST)
-Received: from control-center.fritz.box (150-12-20-31.ftth.glasoperator.nl. [31.20.12.150])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b842a233806sm48908866b.10.2026.01.05.14.52.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Jan 2026 14:52:42 -0800 (PST)
-From: Tom Geelen <t.f.g.geelen@gmail.com>
-To: yocto-patches@lists.yoctoproject.org
-Cc: Alex Kanavin <alex.kanavin@gmail.com>,
-	Tom Geelen <t.f.g.geelen@gmail.com>
-Subject: [auh][PATCH 2/2] Record commit failures as group errors in Updater class so that commit errors are not treated as SUCCESS but as a FAILURE
-Date: Mon,  5 Jan 2026 23:47:47 +0100
-Message-ID: <20260105224745.581549-4-t.f.g.geelen@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260105224745.581549-2-t.f.g.geelen@gmail.com>
-References: <20260105224745.581549-2-t.f.g.geelen@gmail.com>
+        d=1e100.net; s=20230601; t=1767653892; x=1768258692;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cso1+frjkR0DxwIaMkBsUDV5qLMouuzWngIXpV1SI40=;
+        b=Cv8Ba+ExS8uFEIFBJh3b+sFIRilVB2XiAu0zwaWjv1RSbITL7tv7Z27hFBTJxkCBOP
+         rzgYS4PaI+FHSpmWfnQEMibz3VzhdOpEaon4Sm+shllDwo4SsX4XZH3AzKhz5IJ8WGwY
+         zslJIsA8fJ/sMjxYTx9d6xfuFrWuwB/lDBXiEkxzUUA1KlNNedO+ngGPAtW0lzsClFUN
+         v6m1GJF0A4iZ06FNrjTiA7U16sosB9/2eIpVsFA/NDwI5Nczml5xBBwlPqkPJxDKRdX0
+         I5EbVQAfXmyYBqavwykEXeOze17EqNr55c7lbhQ2np8/Z7h+azagLq3eEge/vAPTxBIc
+         Rd6g==
+X-Gm-Message-State: AOJu0YzaiJCDH0RjYekI3r8h1X1wwfRYuLZo7M4PsZU0r1UIhWDq9YmN
+	TbVdG01wgkoQN3GM6dhQoeyfA9Gqbwsb/dgsT0jqIWQC1ZjN86APIYdm/hlCCiIJ6u9Ty+k8Zwe
+	2yTsdD4UofGZtRlrEl/CK1/2O2zdSp4YszOeb
+X-Gm-Gg: AY/fxX7EtbKUJ3bDiioU53mZ70huZJf2dOftqzVLo5Zo8fyhb2uZG0qq7ZN9E/XR0tp
+	rvu1dQymLQcR3Fb2SqRx3mHl/NKm7CQDwhJzNT99w+ApzDtb0jCH1GUwXNlofJqr3ZprQRzH6sn
+	bAkCk+dgAaqyz12k59cYnuxEYJLpvICokVLukmHTDB6RqTfQ7kGBy33DMJToDlYILwk75V4VzZ8
+	mKenoLcdQRY7uG+a4wquEN5+Kez3HDWVW8EbaO0vVJpUYvOXa5GLCE6UZ7qXPWNdmdwHA==
+X-Google-Smtp-Source: AGHT+IFBFF99tLJw/z/VoLUBVj9UHXfKvDaiOJc61BnHVb4jVfdXHXBcQtZqFPURHlvqr6GwdfSZEH6Tw3GGrx7xpBc=
+X-Received: by 2002:a05:6512:3c9c:b0:59a:107a:45a5 with SMTP id
+ 2adb3069b0e04-59b6522822emr359292e87.23.1767653891616; Mon, 05 Jan 2026
+ 14:58:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Tom Geelen <t.f.g.geelen@gmail.com>
+Date: Mon, 5 Jan 2026 23:58:01 +0100
+X-Gm-Features: AQt7F2q7HF4NjPUjzV9QQ3Qp35PHbhZVEbmEDZe6glSkFi-r8UhYFjvWappF250
+Message-ID: <CAJo0Az7nERXq4M8Lk+hwjqnBA8uUDXgy4EDGhOj3wYJ2=4y8Hw@mail.gmail.com>
+Subject: [auh] New Patches
+To: yocto-patches@lists.yoctoproject.org
+Cc: Alexander Kanavin <alex.kanavin@gmail.com>
+Content-Type: multipart/alternative; boundary="0000000000004bb15e0647abfe5b"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 05 Jan 2026 22:52:54 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2898
+ <yocto-patches@lists.yoctoproject.org>; Mon, 05 Jan 2026 22:58:24 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2899
 
-What is happening before: commit_changes() throws, run() catches it and removes the group from succeeded_pkggroups_ctx, but it never sets g['error']. The Statistics.update() logic classifies groups purely by g['error'] is None → “Succeeded”. So you end up with “Succeeded: 1” even though commit failed.
+--0000000000004bb15e0647abfe5b
+Content-Type: text/plain; charset="UTF-8"
 
-Signed-off-by: Tom Geelen <t.f.g.geelen@gmail.com>
----
- upgrade-helper.py | 2 ++
- 1 file changed, 2 insertions(+)
+Hi Alex,
 
-diff --git a/upgrade-helper.py b/upgrade-helper.py
-index 002c3dc..c1c26c0 100755
---- a/upgrade-helper.py
-+++ b/upgrade-helper.py
-@@ -526,6 +526,8 @@ class Updater(object):
-             except Exception as e:
-                 import traceback
-                 E(" Couldn't commit changes to %s:\n%s" % (pkggroup_name, traceback.format_exc()))
-+                # Ensure commit failures are recorded as group errors
-+                g['error'] = e
-                 if g in succeeded_pkggroups_ctx:
-                     succeeded_pkggroups_ctx.remove(g)
-                     failed_pkggroups_ctx.append(g)
--- 
-2.43.0
+*Nothing to commit problem*
+I have proposed a simple solution for the problem you mentioned. It still
+raises e normally in commit_changes except for the case when there is
+nothing to commit.
 
+I tested it with the recipes lua (which fails to compile) and perlcross
+(which has a full devtool failure) and now the results are what you would
+expect. (see below)
+
+INFO: ########### The list of recipes to be upgraded #############
+INFO: , perlcross, 1.6.2, 1.6.4, Unassigned <unassigned@yoctoproject.org>,
+N/A
+INFO: ############################################################
+INFO: Building gcc runtimes ...
+INFO:  building gcc runtime for qemux86-64
+INFO: ATTEMPT PACKAGE GROUP 1/1
+INFO: perlcross: Upgrading to 1.6.4
+INFO: perlcross: Loading environment ...
+INFO: perlcross: Running 'devtool upgrade' ...
+ERROR: perlcross: The following devtool command failed:  upgrade perlcross
+-V 1.6.4
+INFO: perlcross: Auto commit changes ...
+INFO: perlcross: nothing to commit
+INFO: Generating work tarball in
+/home/tom/projects/meta-sanctum/build-homeassistant/build/upgrade-helper/20260105215203.tar.gz
+...
+INFO: Recipe upgrade statistics:
+
+    * Failed (devtool error): 1
+        perlcross, 1.6.4, Unassigned <unassigned@yoctoproject.org>
+
+    TOTAL: attempted=1 succeeded=0(0.00%) failed=1(100.00%)
+
+*error reported as success*
+I have resubmitted this one, as even with the above fix that problem is
+still there as I believe they are also not related per se. This problem
+arises when one tries to call AUH on a recipe on a non-core repo and it
+will go through the AUH steps correctly but on committing it will fail as
+the git root is automatically set to the core layer, instead of using the
+layer the recipe is actually located. With this adjustment at least now
+there are no false positives generated anymore.
+
+I'm working on detection method for recipes so git is used in the correct
+repo.
+
+Regards,
+
+Tom
+
+--0000000000004bb15e0647abfe5b
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Hi Alex,<br><br><b>Nothing to commit problem</b><br>I have=
+ proposed a simple solution for the problem you mentioned. It still raises =
+e normally in commit_changes except for the case when there is nothing to c=
+ommit.<br><br>I tested it with the recipes lua (which fails to compile) and=
+ perlcross (which has a full devtool failure) and now the results are what =
+you would expect. (see below)<br><br>INFO: ########### The list of recipes =
+to be upgraded #############<br>INFO: , perlcross, 1.6.2, 1.6.4, Unassigned=
+ &lt;<a href=3D"mailto:unassigned@yoctoproject.org">unassigned@yoctoproject=
+.org</a>&gt;, N/A<br>INFO: ################################################=
+############<br>INFO: Building gcc runtimes ...<br>INFO: =C2=A0building gcc=
+ runtime for qemux86-64<br>INFO: ATTEMPT PACKAGE GROUP 1/1<br>INFO: perlcro=
+ss: Upgrading to 1.6.4<br>INFO: perlcross: Loading environment ...<br>INFO:=
+ perlcross: Running &#39;devtool upgrade&#39; ...<br>ERROR: perlcross: The =
+following devtool command failed: =C2=A0upgrade perlcross -V 1.6.4<br>INFO:=
+ perlcross: Auto commit changes ...<br>INFO: perlcross: nothing to commit<b=
+r>INFO: Generating work tarball in /home/tom/projects/meta-sanctum/build-ho=
+meassistant/build/upgrade-helper/20260105215203.tar.gz ...<br>INFO: Recipe =
+upgrade statistics:<br><br>=C2=A0 =C2=A0 * Failed (devtool error): 1<br>=C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 perlcross, 1.6.4, Unassigned &lt;<a href=3D"mailto=
+:unassigned@yoctoproject.org">unassigned@yoctoproject.org</a>&gt;<br><br>=
+=C2=A0 =C2=A0 TOTAL: attempted=3D1 succeeded=3D0(0.00%) failed=3D1(100.00%)=
+<div><br></div><div><b>error reported as success</b></div><div>I have resub=
+mitted this one, as even with the above fix that problem is still there as =
+I believe they are also not related per se. This problem arises when one tr=
+ies to call AUH on a recipe on a non-core repo and it will go through the A=
+UH steps correctly but on committing it will fail as the git root is automa=
+tically set to the core layer, instead of using the layer the recipe is act=
+ually located. With this adjustment at least now there are no false positiv=
+es generated anymore.</div><div><br></div><div>I&#39;m working on detection=
+ method for recipes so git is used in the correct repo.</div><div><br></div=
+><div>Regards,</div><div><br></div><div>Tom</div></div>
+
+--0000000000004bb15e0647abfe5b--
 
