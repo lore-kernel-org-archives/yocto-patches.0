@@ -1,155 +1,198 @@
-Return-Path: <t.f.g.geelen@gmail.com>
+Return-Path: <quic_sasikuma@quicinc.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42D34CD0423
-	for <webhook@archiver.kernel.org>; Mon,  5 Jan 2026 22:58:24 +0000 (UTC)
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.77859.1767653894613996991
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9549CD0435
+	for <webhook@archiver.kernel.org>; Tue,  6 Jan 2026 04:20:25 +0000 (UTC)
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.83476.1767673220849173539
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 05 Jan 2026 14:58:14 -0800
+ Mon, 05 Jan 2026 20:20:21 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=btduoVCF;
- spf=pass (domain: gmail.com, ip: 209.85.167.53, mailfrom: t.f.g.geelen@gmail.com)
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-59b30275e69so22052e87.1
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 05 Jan 2026 14:58:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767653892; x=1768258692; darn=lists.yoctoproject.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=cso1+frjkR0DxwIaMkBsUDV5qLMouuzWngIXpV1SI40=;
-        b=btduoVCF1wCzpHdm9vr3jYKbg+PIZpzsQJnjxQ+2oVjLwTVUQHCC2nKU36k73tZcrN
-         Jk/j648mTIExJXYvkExFjhWmrKot8FDg8MmIr9IOPISJVa6VsYbnsXKATqG6DMfcjmfJ
-         LGf1asCdV7KgpvAKx/afZoMlhGBMsYsKECivHEfHWOQZs+eyXcqCsgBOxm3Ag0FzbeKT
-         2i0ZzVYL32wJJotS8P4bHc3xV30inUGUidzUnxqgHD1AxyWlfMaJ2lUF68ubhHjqYPxD
-         r+cRy2/AXJDOKuqU40VeoO2rj6Uvev/G/EH/uzDPiex5bgnXeHex8TwnIm4/RE68MByZ
-         GDyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767653892; x=1768258692;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cso1+frjkR0DxwIaMkBsUDV5qLMouuzWngIXpV1SI40=;
-        b=Cv8Ba+ExS8uFEIFBJh3b+sFIRilVB2XiAu0zwaWjv1RSbITL7tv7Z27hFBTJxkCBOP
-         rzgYS4PaI+FHSpmWfnQEMibz3VzhdOpEaon4Sm+shllDwo4SsX4XZH3AzKhz5IJ8WGwY
-         zslJIsA8fJ/sMjxYTx9d6xfuFrWuwB/lDBXiEkxzUUA1KlNNedO+ngGPAtW0lzsClFUN
-         v6m1GJF0A4iZ06FNrjTiA7U16sosB9/2eIpVsFA/NDwI5Nczml5xBBwlPqkPJxDKRdX0
-         I5EbVQAfXmyYBqavwykEXeOze17EqNr55c7lbhQ2np8/Z7h+azagLq3eEge/vAPTxBIc
-         Rd6g==
-X-Gm-Message-State: AOJu0YzaiJCDH0RjYekI3r8h1X1wwfRYuLZo7M4PsZU0r1UIhWDq9YmN
-	TbVdG01wgkoQN3GM6dhQoeyfA9Gqbwsb/dgsT0jqIWQC1ZjN86APIYdm/hlCCiIJ6u9Ty+k8Zwe
-	2yTsdD4UofGZtRlrEl/CK1/2O2zdSp4YszOeb
-X-Gm-Gg: AY/fxX7EtbKUJ3bDiioU53mZ70huZJf2dOftqzVLo5Zo8fyhb2uZG0qq7ZN9E/XR0tp
-	rvu1dQymLQcR3Fb2SqRx3mHl/NKm7CQDwhJzNT99w+ApzDtb0jCH1GUwXNlofJqr3ZprQRzH6sn
-	bAkCk+dgAaqyz12k59cYnuxEYJLpvICokVLukmHTDB6RqTfQ7kGBy33DMJToDlYILwk75V4VzZ8
-	mKenoLcdQRY7uG+a4wquEN5+Kez3HDWVW8EbaO0vVJpUYvOXa5GLCE6UZ7qXPWNdmdwHA==
-X-Google-Smtp-Source: AGHT+IFBFF99tLJw/z/VoLUBVj9UHXfKvDaiOJc61BnHVb4jVfdXHXBcQtZqFPURHlvqr6GwdfSZEH6Tw3GGrx7xpBc=
-X-Received: by 2002:a05:6512:3c9c:b0:59a:107a:45a5 with SMTP id
- 2adb3069b0e04-59b6522822emr359292e87.23.1767653891616; Mon, 05 Jan 2026
- 14:58:11 -0800 (PST)
-MIME-Version: 1.0
-From: Tom Geelen <t.f.g.geelen@gmail.com>
-Date: Mon, 5 Jan 2026 23:58:01 +0100
-X-Gm-Features: AQt7F2q7HF4NjPUjzV9QQ3Qp35PHbhZVEbmEDZe6glSkFi-r8UhYFjvWappF250
-Message-ID: <CAJo0Az7nERXq4M8Lk+hwjqnBA8uUDXgy4EDGhOj3wYJ2=4y8Hw@mail.gmail.com>
-Subject: [auh] New Patches
+ dkim=pass header.i=@quicinc.com header.s=qcppdkim1 header.b=B7gpB3vu;
+ spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: qualcomm.com, ip: 205.220.180.131, mailfrom: sasikuma@qualcomm.com)
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6063Q0vY3213732
+	for <yocto-patches@lists.yoctoproject.org>; Tue, 6 Jan 2026 04:20:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=1VG8H9W6dCeTPVhJLtKZx0CM/+O/dbZngh4
+	qyVp6yRw=; b=B7gpB3vuj+vPiujwKyPs16hIBQeCAYU8m4CAUj2uSflj1jtfAB8
+	JgAxdQqOF85jwL7mixUtLkbZ84+TYW1A/3gASfjXjzpzeyHQGwcei82XROOn5KuC
+	iPrUVtgeigB9wbky10SP7P5rsFbxTbqPzTw/uMrhxg1rLNZWI5GIouSA/mll+9Ga
+	/rDQMDqDcL9eAgw+ivbYZYyBKBNmVuE/akYUMmGkA9H2Iz1sMPxA47JCMFmvDHv1
+	KNy0k6JImq+N4k/5FAF34Eq6OYaAXWx59UyTNoYnP2cq5OnA3MhCCUP0vrxz/I5f
+	nVphnG5EBqQLWsoKdDJwV5yjPYpgpNPFDfA==
+Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bgpnd8q4s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+	for <yocto-patches@lists.yoctoproject.org>; Tue, 06 Jan 2026 04:20:19 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 6064KFvs030587
+	for <yocto-patches@lists.yoctoproject.org>; Tue, 6 Jan 2026 04:20:15 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 4bev6m1nhh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+	for <yocto-patches@lists.yoctoproject.org>; Tue, 06 Jan 2026 04:20:15 +0000
+Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 6064KF6s030579
+	for <yocto-patches@lists.yoctoproject.org>; Tue, 6 Jan 2026 04:20:15 GMT
+Received: from hu-devc-hyd-u24-a.qualcomm.com ([10.213.102.143])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 6064KFDr030577
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 06 Jan 2026 04:20:15 +0000
+Received: by hu-devc-hyd-u24-a.qualcomm.com (Postfix, from userid 4060212)
+	id 60E5921CBF; Tue,  6 Jan 2026 09:50:14 +0530 (+0530)
+From: Sasi Kumar Maddineni <quic_sasikuma@quicinc.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Alexander Kanavin <alex.kanavin@gmail.com>
-Content-Type: multipart/alternative; boundary="0000000000004bb15e0647abfe5b"
+Cc: Sasi Kumar Maddineni <quic_sasikuma@quicinc.com>
+Subject: [meta-selinux][PATCH/V7] refpolicy: Add support to configure policy store root
+Date: Tue,  6 Jan 2026 09:50:12 +0530
+Message-ID: <20260106042012.1240290-1-quic_sasikuma@quicinc.com>
+X-Mailer: git-send-email 2.43.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: LQBIXlIyHC0qSh0_U1U9TrKADkRQks7C
+X-Proofpoint-GUID: LQBIXlIyHC0qSh0_U1U9TrKADkRQks7C
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTA2MDAzMyBTYWx0ZWRfXzpoUc6gHbkie
+ J/9AKXkwpAfaYMwXEWAGSg8tFgIKJOiADtAAYmSYFnGHA8/R+hcBGI28yT6nUMLoU9d+VnLurga
+ EyuDPftyzligHhdDlpRsgoUh8prYKp2SJqVsAheqYvRvIrMaPBjj2ij8vt6SIgWg1S4O5QtES+u
+ 2GFJLPaoFw7u+yzhc9gzP8BKcfYTtDOTAQ+vSC0bGxTRaGNXyJeKM62cr5T3w3o98/YSrg3UHpY
+ jLTFlL8tvuX3fVpoqls3MQau/yyDChFnnM7X3pNXGviC1niOrjEv9dwI1L2rP5iwmJmYnn2Rhxc
+ O3sbk5KqhHV7RZ/yPz9t4VLKZv6FZVGP5/ImE8rr0YUnJ710mkMenAHy3/I94pxTn8xjEwL0tL9
+ S3sjEC264Kq4jgeUVtp+NKRN0EFB3JmOciv4lhnbha++snjeaRDjQmtZj5PPquTn+fgVhu6cuIr
+ 0NdAwBcTz5I0PYtlxgg==
+X-Authority-Analysis: v=2.4 cv=Jpz8bc4C c=1 sm=1 tr=0 ts=695c8d83 cx=c_pps
+ a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=vUbySO9Y5rIA:10 a=VkNPw1HP01LnGYTKEx00:22 a=COk6AnOGAAAA:8
+ a=I8g-lVKgVl53kmlvlZgA:9 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2026-01-05_02,2026-01-05_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 malwarescore=0 bulkscore=0 clxscore=1015 adultscore=0
+ phishscore=0 suspectscore=0 impostorscore=0 spamscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2512120000 definitions=main-2601060033
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 05 Jan 2026 22:58:24 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2899
+ <yocto-patches@lists.yoctoproject.org>; Tue, 06 Jan 2026 04:20:25 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2900
 
---0000000000004bb15e0647abfe5b
-Content-Type: text/plain; charset="UTF-8"
+By default, policy modules(*.pp) are stored in /var directory.
+Features like: ostree remove files in folders like /var
+variable data directory while build time.
 
-Hi Alex,
+Added support for custom policy store. We can now configure
+path to custom policy store to variable `POLICY_STORE_ROOT`.
 
-*Nothing to commit problem*
-I have proposed a simple solution for the problem you mentioned. It still
-raises e normally in commit_changes except for the case when there is
-nothing to commit.
+Signed-off-by: Sasi Kumar Maddineni <quic_sasikuma@quicinc.com>
+---
+ .../refpolicy/refpolicy-minimum_git.bb        |  2 +-
+ .../refpolicy/refpolicy_common.inc            |  9 ++++++---
+ recipes-security/selinux/libsemanage_3.9.bb   | 20 ++++++++++++++++---
+ 3 files changed, 24 insertions(+), 7 deletions(-)
 
-I tested it with the recipes lua (which fails to compile) and perlcross
-(which has a full devtool failure) and now the results are what you would
-expect. (see below)
+diff --git a/recipes-security/refpolicy/refpolicy-minimum_git.bb b/recipes-security/refpolicy/refpolicy-minimum_git.bb
+index 5a0ed6f..011c153 100644
+--- a/recipes-security/refpolicy/refpolicy-minimum_git.bb
++++ b/recipes-security/refpolicy/refpolicy-minimum_git.bb
+@@ -67,7 +67,7 @@ prepare_policy_store() {
+     oe_runmake 'DESTDIR=${D}' 'prefix=${D}${prefix}' install
+     POL_PRIORITY=100
+     POL_SRC=${D}${datadir}/selinux/${POLICY_NAME}
+-    POL_STORE=${D}${localstatedir}/lib/selinux/${POLICY_NAME}
++    POL_STORE=${D}${POLICY_STORE_ROOT}/${POLICY_NAME}
+     POL_ACTIVE_MODS=${POL_STORE}/active/modules/${POL_PRIORITY}
+ 
+     # Prepare to create policy store
+diff --git a/recipes-security/refpolicy/refpolicy_common.inc b/recipes-security/refpolicy/refpolicy_common.inc
+index 964906b..59dfecd 100644
+--- a/recipes-security/refpolicy/refpolicy_common.inc
++++ b/recipes-security/refpolicy/refpolicy_common.inc
+@@ -77,10 +77,12 @@ SRC_URI += " \
+ S = "${UNPACKDIR}/refpolicy"
+ 
+ CONFFILES:${PN} = "${sysconfdir}/selinux/config"
++
++POLICY_STORE_ROOT ?= "${localstatedir}/lib/selinux"
+ FILES:${PN} += " \
+     ${sysconfdir}/selinux/${POLICY_NAME}/ \
+     ${datadir}/selinux/${POLICY_NAME}/*.pp \
+-    ${localstatedir}/lib/selinux/${POLICY_NAME}/ \
++    ${POLICY_STORE_ROOT}/${POLICY_NAME}/ \
+     "
+ FILES:${PN}-dev =+ " \
+     ${datadir}/selinux/${POLICY_NAME}/include/ \
+@@ -165,7 +167,7 @@ prepare_policy_store() {
+     oe_runmake 'DESTDIR=${D}' 'prefix=${D}${prefix}' install
+     POL_PRIORITY=100
+     POL_SRC=${D}${datadir}/selinux/${POLICY_NAME}
+-    POL_STORE=${D}${localstatedir}/lib/selinux/${POLICY_NAME}
++    POL_STORE=${D}${POLICY_STORE_ROOT}/${POLICY_NAME}
+     POL_ACTIVE_MODS=${POL_STORE}/active/modules/${POL_PRIORITY}
+ 
+     # Prepare to create policy store
+@@ -207,13 +209,14 @@ args = \$@
+ [end]
+ 
+ policy-version = 35
++store-root = "${POLICY_STORE_ROOT}"
+ EOF
+ 
+     # Create policy store and build the policy
+     semodule -p ${D} -s ${POLICY_NAME} -n -B
+     rm -f ${D}${sysconfdir}/selinux/semanage.conf
+     # No need to leave final dir created by semanage laying around
+-    rm -rf ${D}${localstatedir}/lib/selinux/final
++    rm -rf ${D}${POLICY_STORE_ROOT}/final
+ }
+ 
+ install_misc_files() {
+diff --git a/recipes-security/selinux/libsemanage_3.9.bb b/recipes-security/selinux/libsemanage_3.9.bb
+index 2425a2e..1279cce 100644
+--- a/recipes-security/selinux/libsemanage_3.9.bb
++++ b/recipes-security/selinux/libsemanage_3.9.bb
+@@ -32,6 +32,8 @@ FILES:${PN}-python = "${PYTHON_SITEPACKAGES_DIR}/* \
+ FILES:${PN}-dbg += "${PYTHON_SITEPACKAGES_DIR}/.debug/*"
+ FILES:${PN} += "${libexecdir}"
+ 
++POLICY_STORE_ROOT ?= "${localstatedir}/lib/selinux"
++
+ do_compile:append() {
+     oe_runmake pywrap \
+         PYLIBVER='python${PYTHON_BASEVERSION}' \
+@@ -46,9 +48,21 @@ do_install:append() {
+         PYLIBVER='python${PYTHON_BASEVERSION}' \
+         PYTHONLIBDIR='${PYTHON_SITEPACKAGES_DIR}'
+ 
+-    # Update "policy-version" for semanage.conf
+-    sed -i 's/^#\s*\(policy-version\s*=\).*$/\1 35/' \
+-        ${D}/etc/selinux/semanage.conf
++    conf_file="${D}/etc/selinux/semanage.conf"
++
++    if [ -f "${conf_file}" ]; then
++        # Update "policy-version" for semanage.conf
++        sed -i 's/^#\s*\(policy-version\s*=\).*$/\1 35/' \
++            ${D}/etc/selinux/semanage.conf
++
++        # Update "store-root" for semanage.conf
++        if grep -q '^store-root=' "${conf_file}"; then
++            sed -i "s|^store-root=.*$|store-root=${POLICY_STORE_ROOT}|" "${conf_file}"
++        else
++            printf 'store-root=%s\n' "${POLICY_STORE_ROOT}" >> "${conf_file}"
++        fi
++    fi
++
+ }
+ 
+ BBCLASSEXTEND = "native"
+-- 
+2.43.0
 
-INFO: ########### The list of recipes to be upgraded #############
-INFO: , perlcross, 1.6.2, 1.6.4, Unassigned <unassigned@yoctoproject.org>,
-N/A
-INFO: ############################################################
-INFO: Building gcc runtimes ...
-INFO:  building gcc runtime for qemux86-64
-INFO: ATTEMPT PACKAGE GROUP 1/1
-INFO: perlcross: Upgrading to 1.6.4
-INFO: perlcross: Loading environment ...
-INFO: perlcross: Running 'devtool upgrade' ...
-ERROR: perlcross: The following devtool command failed:  upgrade perlcross
--V 1.6.4
-INFO: perlcross: Auto commit changes ...
-INFO: perlcross: nothing to commit
-INFO: Generating work tarball in
-/home/tom/projects/meta-sanctum/build-homeassistant/build/upgrade-helper/20260105215203.tar.gz
-...
-INFO: Recipe upgrade statistics:
-
-    * Failed (devtool error): 1
-        perlcross, 1.6.4, Unassigned <unassigned@yoctoproject.org>
-
-    TOTAL: attempted=1 succeeded=0(0.00%) failed=1(100.00%)
-
-*error reported as success*
-I have resubmitted this one, as even with the above fix that problem is
-still there as I believe they are also not related per se. This problem
-arises when one tries to call AUH on a recipe on a non-core repo and it
-will go through the AUH steps correctly but on committing it will fail as
-the git root is automatically set to the core layer, instead of using the
-layer the recipe is actually located. With this adjustment at least now
-there are no false positives generated anymore.
-
-I'm working on detection method for recipes so git is used in the correct
-repo.
-
-Regards,
-
-Tom
-
---0000000000004bb15e0647abfe5b
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr">Hi Alex,<br><br><b>Nothing to commit problem</b><br>I have=
- proposed a simple solution for the problem you mentioned. It still raises =
-e normally in commit_changes except for the case when there is nothing to c=
-ommit.<br><br>I tested it with the recipes lua (which fails to compile) and=
- perlcross (which has a full devtool failure) and now the results are what =
-you would expect. (see below)<br><br>INFO: ########### The list of recipes =
-to be upgraded #############<br>INFO: , perlcross, 1.6.2, 1.6.4, Unassigned=
- &lt;<a href=3D"mailto:unassigned@yoctoproject.org">unassigned@yoctoproject=
-.org</a>&gt;, N/A<br>INFO: ################################################=
-############<br>INFO: Building gcc runtimes ...<br>INFO: =C2=A0building gcc=
- runtime for qemux86-64<br>INFO: ATTEMPT PACKAGE GROUP 1/1<br>INFO: perlcro=
-ss: Upgrading to 1.6.4<br>INFO: perlcross: Loading environment ...<br>INFO:=
- perlcross: Running &#39;devtool upgrade&#39; ...<br>ERROR: perlcross: The =
-following devtool command failed: =C2=A0upgrade perlcross -V 1.6.4<br>INFO:=
- perlcross: Auto commit changes ...<br>INFO: perlcross: nothing to commit<b=
-r>INFO: Generating work tarball in /home/tom/projects/meta-sanctum/build-ho=
-meassistant/build/upgrade-helper/20260105215203.tar.gz ...<br>INFO: Recipe =
-upgrade statistics:<br><br>=C2=A0 =C2=A0 * Failed (devtool error): 1<br>=C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 perlcross, 1.6.4, Unassigned &lt;<a href=3D"mailto=
-:unassigned@yoctoproject.org">unassigned@yoctoproject.org</a>&gt;<br><br>=
-=C2=A0 =C2=A0 TOTAL: attempted=3D1 succeeded=3D0(0.00%) failed=3D1(100.00%)=
-<div><br></div><div><b>error reported as success</b></div><div>I have resub=
-mitted this one, as even with the above fix that problem is still there as =
-I believe they are also not related per se. This problem arises when one tr=
-ies to call AUH on a recipe on a non-core repo and it will go through the A=
-UH steps correctly but on committing it will fail as the git root is automa=
-tically set to the core layer, instead of using the layer the recipe is act=
-ually located. With this adjustment at least now there are no false positiv=
-es generated anymore.</div><div><br></div><div>I&#39;m working on detection=
- method for recipes so git is used in the correct repo.</div><div><br></div=
-><div>Regards,</div><div><br></div><div>Tom</div></div>
-
---0000000000004bb15e0647abfe5b--
 
