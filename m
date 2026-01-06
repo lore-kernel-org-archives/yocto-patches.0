@@ -1,88 +1,130 @@
-Return-Path: <alex.kanavin@gmail.com>
+Return-Path: <paul@pbarker.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21F12C47BEA
-	for <webhook@archiver.kernel.org>; Tue,  6 Jan 2026 10:53:18 +0000 (UTC)
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.87468.1767696787669673542
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E676CDC19C
+	for <webhook@archiver.kernel.org>; Tue,  6 Jan 2026 13:15:40 +0000 (UTC)
+Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.89567.1767705332028359066
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 06 Jan 2026 02:53:07 -0800
+ Tue, 06 Jan 2026 05:15:32 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=h+mzrPyM;
- spf=pass (domain: gmail.com, ip: 209.85.219.50, mailfrom: alex.kanavin@gmail.com)
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-88fcc71dbf4so4784506d6.2
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 06 Jan 2026 02:53:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767696787; x=1768301587; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EMXsT8Txsp5E/N8SGzfCAwy4LUXQPxSEXGNV6Q8Cup4=;
-        b=h+mzrPyM4AYtbf982dqvdRFC61/JOYU6OYbExKBZs2SofcIu3HWYftxX9+2c7FVGzf
-         jMKRkDlEEZiSNO8jm21z2SgtRQ7xTBHxU8MNHyNGijZzT8weKo6He/gCLo/hmM5sfAyd
-         KzipRvfB9tRcWCw989CESqGFuDqWMhOFtFfjCIEnz7Ka27K0OhcWJoHFA+wRiRUyYTwk
-         RL4aRy49+RmDoUHcxVFcwoumc16zNO6Nu9zoxOmLHBnc8Crnk3V9TTZURUYrHLky/D78
-         9dSDDDE3hQxm8r0FRv5y2OgorrYMoW1xewTd3kymwqxqX7xKiLYGIyXTDBl3aYQ90XFK
-         n/Zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767696787; x=1768301587;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=EMXsT8Txsp5E/N8SGzfCAwy4LUXQPxSEXGNV6Q8Cup4=;
-        b=NU1HGu1+61rjsB05+CuE6XDWjASW4zhfEP3eFQgZoxiqSO8KDNeH+LByGjCMTS5DkP
-         tvxd01YP4AlVGOpE7ut4RKugsdvH5f0I+gX+hXmdBW8/cMWTcAGo3AXfu6IInilHyw3b
-         1hCwHYhv8SHidsy1NtTHJ7sTwSZxPqW9SaB24NEwdWsz/gJEEJXon1tM+tT/Im+1vEtY
-         U+Z895E9QaNbb13w4pB2G7q7Aus+FmBdJ+B6uRmg9s7gDXtf34J5A2FNI+exNGLjMRvZ
-         ftu+8KGYcGl2e44R2e11jdAhu3rDluv2XDFtWqnekdv1//xfDLzcpnT1V3TOy9iMfe/4
-         JrLw==
-X-Gm-Message-State: AOJu0YwtGvVPfGw0rfGk8gILeezkloR3XMX7KB/z0RiA2ziaWhVTpzUw
-	3L1lt6mU2NmnWb19A2ia971p9BAJRYdAj8UQjxB6HGDv7NYbikV4MM8ycnBRZ5JQa++qvQ9W+gh
-	7wRf1x4i0H4MHRZOVTL9AwnPpZPPazeg=
-X-Gm-Gg: AY/fxX6t0JO01X2gXGAKAmfLbNVheryLSfiaRJXWPoRWqyejgpwCFCOR5pKUlj978JP
-	rMzwO/lBEkB3KtfQIHtwcwDLrLrrRa5gjdGvg98ahaJMSrJUEtyabFkVmWMrhzvvR4Z04zYIO7Z
-	qBD7FVe3OqTD49vUaIbKYOB5Je3gAxhvVB8B7YmxxLgXJvIxiruwixVRP2oc8RVDVgrcVg/P7qF
-	dZKVQhJJ0vhtCKYUJWeC1gKPxCcwD8wJ75GCwWpGwh/58vru8ZVZe0NLrVfBV1/HhcAPLet6pr3
-	VIbacmk+ZMsditYcNyUHDTGUCMbS/w==
-X-Google-Smtp-Source: AGHT+IFmq9eT55gkUCnDAFraVh3o+M1bd5DSuStIe/tRQfZnIVvsbOczGTk9x1+eFD2r2PAp5FhU9cCit74T4n7YtNM=
-X-Received: by 2002:a05:6214:2682:b0:888:fc37:f9b7 with SMTP id
- 6a1803df08f44-89075e7d567mr33425866d6.25.1767696786616; Tue, 06 Jan 2026
- 02:53:06 -0800 (PST)
+ dkim=pass header.i=@pbarker.dev header.s=fm3 header.b=vWZ2kMm+;
+ dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=b0q/a0k8;
+ spf=pass (domain: pbarker.dev, ip: 202.12.124.146, mailfrom: paul@pbarker.dev)
+Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
+	by mailfout.stl.internal (Postfix) with ESMTP id 58AA61D000B7;
+	Tue,  6 Jan 2026 08:15:31 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-11.internal (MEProxy); Tue, 06 Jan 2026 08:15:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pbarker.dev; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm3; t=1767705331; x=1767791731; bh=aL
+	J+ukIhZLh3ffIidovHejAL0d/1/Zkx6fTyj2P1Fq0=; b=vWZ2kMm+XhSgXr9Qpz
+	MtJNUQAZIBMm8JvaXUFUKiWW4cvgkwXkkUxxulxKgqPMdQkiNRxHr1U5NO9XceEN
+	WfgLAltYum3l7AOBh0mteFoCP7PmoP8YWz+1p0/GlrEABSYzCFQMo6DWfCmvgfjo
+	yHih4+aeBsf95npqgZipazxIWlChVvQXJ8BY2dG0ysMFeGuuuKiod50oYBGClg1N
+	uHpRdnUb64v6SYyl1eIfdOrk4YoiBgdPcIdXTz7dnzJm9KNpsv+B3+x2v6Xu9/CO
+	MimNmKmspR/ioT6HK+d/r5D57EX2X7c0OraaDxNBT9yFiXJhktfbrtYOxgkC1DPb
+	Id1A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1767705331; x=1767791731; bh=aLJ+ukIhZLh3ffIidovHejAL0d/1
+	/Zkx6fTyj2P1Fq0=; b=b0q/a0k8jgPPYvGGpBabGzRX99bqsVQZOUeTQYab0+m2
+	Go9X1WE79IUOJm8lAfhZHwpm+sbKo0Jjo7D3iUTfB9NpN9MDgy6PhU/rlNb+e1IE
+	HKNLnB0e1pXjt98tV7h+3vUVYkxfQjCESz4UOqh6FnunPMINhyTAlVzB0ZdwItkL
+	tq9M/QpwVyCAnwHhr2z+FFzE2msvuLbVnJH1QY3hBUqHYIvsGpBPJtXasTwhJ1lb
+	wHIl7D4OIMujEfbeoe7lEAMR/sn8k3ghBhC6R1NFC8hQxls1prUjOUh3vjeiiLRx
+	DBphAMHXX8QtEfo+DunBGV+M3lDOqiUbgRSgS2Kvow==
+X-ME-Sender: <xms:8gpdabhD2-LP5GuHVc44XydVfKPB0j4W2W0je7WnVKTWT4DPyO5BNg>
+    <xme:8gpdaeDEZmxBxKtDD4V0Sp59YIAfXPUcJ9HM57N0eAMYSChBTr2n37DBIqdijVJR4
+    QnnzFQet9bdCFdbUDi09CFRlwfgnYy-sIVbIARzr_fTu8R9Ir7jWpM>
+X-ME-Received: <xmr:8gpdaYsJbG9BnR7m19ZQFUyoOZHUR11akKBbUoq13HB5tzaroSDVvtf7eQjF0g7geYlrieB7R-T62NhfDYzyPg3seCK__Eo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddutddtvdelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucenucfjughrpefhfffugggtgffkvfevofesthejredtre
+    dtjeenucfhrhhomheprfgruhhluceurghrkhgvrhcuoehprghulhesphgsrghrkhgvrhdr
+    uggvvheqnecuggftrfgrthhtvghrnhephfetuefgveevvedvveegfffgffethedvjeefle
+    fhlefhtddvjedvffegtdeludfhnecuffhomhgrihhnpeihohgtthhophhrohhjvggtthdr
+    ohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hprghulhesphgsrghrkhgvrhdruggvvhdpnhgspghrtghpthhtohepvddpmhhouggvpehs
+    mhhtphhouhhtpdhrtghpthhtohepphgruhhlsehpsggrrhhkvghrrdguvghvpdhrtghpth
+    htohephihotghtohdqphgrthgthhgvsheslhhishhtshdrhihotghtohhprhhojhgvtght
+    rdhorhhg
+X-ME-Proxy: <xmx:8gpdaTY7kf95hBocV5DO8dH5TtAMNi38WTHcr6oaQo5ubMqY6ibcFQ>
+    <xmx:8gpdabU3l584THQnXNUaX-HOsK1unTpfA905fI9o0SKvW_7TEkKkuA>
+    <xmx:8gpdaX5B470tPxh5n2oKmn7sblMcWwF2HhTE3gU8nLu2-lD8uicY0w>
+    <xmx:8gpdaWjJVoaKhSG-4Lpv5NW7SXYgePdkx9vSq5L5tGQL92QWe5ydag>
+    <xmx:8wpdaYF-NMFsMEhiXx-nnZVW_gurIkp5w8nZvEzhWITYN-GZvxmhXMA2>
+Feedback-ID: i51494658:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 6 Jan 2026 08:15:29 -0500 (EST)
+From: Paul Barker <paul@pbarker.dev>
+Date: Tue, 06 Jan 2026 13:15:14 +0000
+Subject: [PATCH yocto-autobuilder-helper whinlatter] getproperties: Ignore
+ meta-riscv for nightly-check-layer
 MIME-Version: 1.0
-References: <CAJo0Az7nERXq4M8Lk+hwjqnBA8uUDXgy4EDGhOj3wYJ2=4y8Hw@mail.gmail.com>
-In-Reply-To: <CAJo0Az7nERXq4M8Lk+hwjqnBA8uUDXgy4EDGhOj3wYJ2=4y8Hw@mail.gmail.com>
-From: Alexander Kanavin <alex.kanavin@gmail.com>
-Date: Tue, 6 Jan 2026 11:52:55 +0100
-X-Gm-Features: AQt7F2pnCiDMQ3sOLfBY_3nwfQX_ymglC4azKsoc6M4kjY5ssq-mFU79YeOHATc
-Message-ID: <CANNYZj-xYfMcqmVbUkz6OxKuyaMvXcMwQYH7cAsjwOONf63YRQ@mail.gmail.com>
-Subject: Re: [auh] New Patches
-To: Tom Geelen <t.f.g.geelen@gmail.com>
-Cc: yocto-patches@lists.yoctoproject.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260106-riscv-whinlatter-v1-1-cb4210f7b674@pbarker.dev>
+X-B4-Tracking: v=1; b=H4sIAOEKXWkC/0WMywqDMBAAfyXsuQtRqtj+Sukhj7VZCIlsom0R/
+ 93QS48DM7NDIWEqcFc7CG1cOKcG3UWBCya9CNk3hl73o+70iMLFbfgOnKKplQSn23SdNVnyg4W
+ WLUIzf37LB3yzqxnNWrNdOfqmB4oLifoP4HkcJ2m89T6HAAAA
+X-Change-ID: 20260106-riscv-whinlatter-8984f0ebed5b
+To: yocto-patches@lists.yoctoproject.org
+Cc: Paul Barker <paul@pbarker.dev>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1287; i=paul@pbarker.dev;
+ h=from:subject:message-id; bh=c9eR6sXMkqzyRHr+wzUpwD0YWrgjiIpSnuan7YW/iew=;
+ b=owGbwMvMwCW2OjnkzdxdX/IYT6slMWTGcn3MvXbVeHPTK/W30taNjw0jyyac937+r1OOJXjOy
+ +UpCdPDO0pZGMS4GGTFFFk293y9/7TXkTcj5JYCzBxWJpAhDFycAjCR5n2MDPMX6Hmq1x/NXm59
+ /vdJ2YnyVadtJBeW272fdS991nbWo/MZGb6uMNjbd8LFRsZtxZvYLerfrkrqCOj3KgWsKNwg+Xr
+ hAiYA
+X-Developer-Key: i=paul@pbarker.dev; a=openpgp;
+ fpr=98B2AAC100AC3F82BB5D546774975C81B7E66BAC
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 06 Jan 2026 10:53:18 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2904
+ <yocto-patches@lists.yoctoproject.org>; Tue, 06 Jan 2026 13:15:40 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2905
 
-On Mon, 5 Jan 2026 at 23:58, Tom Geelen <t.f.g.geelen@gmail.com> wrote:
+We only test meta-riscv on the master branch at the moment.
 
-> I have resubmitted this one, as even with the above fix that problem is s=
-till there as I believe they are also not related per se. This problem aris=
-es when one tries to call AUH on a recipe on a non-core repo and it will go=
- through the AUH steps correctly but on committing it will fail as the git =
-root is automatically set to the core layer, instead of using the layer the=
- recipe is actually located. With this adjustment at least now there are no=
- false positives generated anymore.
->
-> I'm working on detection method for recipes so git is used in the correct=
- repo.
+Signed-off-by: Paul Barker <paul@pbarker.dev>
+---
+Tested on autobuilder:
+  https://autobuilder.yoctoproject.org/valkyrie/#/builders/85/builds/901
 
-Thanks, I've applied and pushed these. I wonder how AUH ever worked
-with non-core layers as people did use it to run mass updates on
-meta-oe for instance.
+This build still failed due to issues in meta-intel, but it got past the
+"Load build revisions" step where it was previously failing.
+---
+ scripts/getproperties.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Alex
+diff --git a/scripts/getproperties.py b/scripts/getproperties.py
+index 39930c55d8ac..90ca1ef45d1d 100755
+--- a/scripts/getproperties.py
++++ b/scripts/getproperties.py
+@@ -56,7 +56,7 @@ for repo in sorted(repos.keys()):
+     if not os.path.exists(layerpath):
+         # layer may not be used by the build and hence not moved into final position
+         layerpath = builddir + '/repos/' + repo
+-    if not os.path.exists(layerpath) and repo in ['meta-security']:
++    if not os.path.exists(layerpath) and repo in ['meta-security', 'meta-riscv']:
+         # Repos is specified on the controller but not used in the helper config
+         continue
+     getrevs(jsonprops, layerpath, repo)
+
+---
+base-commit: 6f793956c9b43f7a74f5a22c86a93b744b21ada9
+change-id: 20260106-riscv-whinlatter-8984f0ebed5b
+
+Best regards,
+-- 
+Paul Barker
+
 
