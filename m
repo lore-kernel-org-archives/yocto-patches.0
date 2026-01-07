@@ -2,63 +2,63 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2330ECFD64C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F3D1CFD64E
 	for <webhook@archiver.kernel.org>; Wed,  7 Jan 2026 15:00:36 +0000 (UTC)
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.7743.1767798028464234186
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.7744.1767798028662475160
  for <yocto-patches@lists.yoctoproject.org>;
  Wed, 07 Jan 2026 07:00:28 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=hZmxNXPw;
- spf=pass (domain: konsulko.com, ip: 209.85.222.172, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-8b1e54aefc5so183273285a.1
+ dkim=pass header.i=@konsulko.com header.s=google header.b=AcL2TrDb;
+ spf=pass (domain: konsulko.com, ip: 209.85.160.176, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4eda6c385c0so15006931cf.3
         for <yocto-patches@lists.yoctoproject.org>; Wed, 07 Jan 2026 07:00:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=konsulko.com; s=google; t=1767798027; x=1768402827; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Vx7rsy22l8dLMMMSftoNDtb2O19BkozeoTD7M9PIltI=;
-        b=hZmxNXPwIwfSC7+0VzC/ZqD3ydNP6rsMT6bnt+qeiEK4LTmonGN3nGnqs2bdbvMBlu
-         1O3WldGaCop7n1uH+PS1q86QVFZHo40h2bSe5MfNlxMUUcjeUSRZEcT9X3GCpEsxpelZ
-         9ivZNpefrq9CxrUTyWYBmSVReJgv8k1LJ8bSA=
+        bh=x/clH+wkBn/fC4aeLEvr8i/eBJOfx0yZ5n7VJtVgrX4=;
+        b=AcL2TrDb/xu6DT+W2pkUxa2eQ7/dDNY0a93Knez7B4o7U/WU8W6CsHvMT2j0ScGaIa
+         3q/wEgK0NG/IrilR9CrXVVXjuCP6n5Ttr9lNTOdCW1VRynH9cQxz8JSwhhZE2LORXbh0
+         06QDKnzmebGD9JTGGqkitLNWsNRzsHliDeb1U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1767798027; x=1768402827;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=Vx7rsy22l8dLMMMSftoNDtb2O19BkozeoTD7M9PIltI=;
-        b=QNx13PAO5mIG80x1hqmAEc4IdE06cI75Zy/9LFZJLFPuApr81YJacdg+XxwbflXduT
-         J6SQxtGCV5J0nj2pSlAGEVUfEeL3xdxeXsNWY0vj8IN6E89OMZpsmyYF3YxCg22+XrOW
-         b9SKClIYRNKPcj+1NVa2U2P9LLyMfTQ256HDUjYJdyqZ8FtVKXkl03IJmXyqb1HxIazm
-         Ijv2MKIAEII7wUrBaNcm+hrHMk6Qf0wb6eQ724qJjf6kJjcRqU52eUWI/X+FXKLOWgTh
-         vZ2dXurPH53b6b7Up8b3IXnjE5W7eZH4TnjzJgQYfHg4aZ58mWWwGxB77NPcI9aGWHcc
-         V/jg==
-X-Gm-Message-State: AOJu0Yw8a0xHLyY14IFg2LPv0K/uT6s3qitV9OTr4MFSie3OWUmqTuwm
-	RJOTNQ+JAbDlxGHmBX6u6kP7zhQWbDrtveibdp/itMRMIm0czOZxDiXCqLEqh81FKQVghPb0t+H
-	3flHx
-X-Gm-Gg: AY/fxX6nszjNrtkjX6iAdquipQQRZjd+yuhls4l3y3wnHUcbHVsQ9hiAUzLxGgx8n8+
-	9N/Ofs8nNUHENe+EGvRB6PBH1bUefYRKS3JLCPa5Z88TutKWqn06MpoUIvdnRHdIjcJyoxPjgXY
-	8TWDwx9JKsyCOvjQ53uChD4a2hH52KLral8tyOEDsZx6QyxyjS8g3Hn9Qzi97vfuJhZE4JtSivX
-	+fnT3p5stUJB7wz1QEqZysGfFKoqSg+gmw5xwi/LeRtXunu2TOA89sDMxO967NLRSaH2kYc9CKp
-	Q/IQlSpMT5ZITXtFqF4SW5QS3BpUCPBCY0LxTk46D1C/VmsyGz6KbhVh7SoX/7N8/GrxBX+XpCV
-	tyPtumbyMm4K8V2M7OuGip5pZmzL3i6CfNQMsCaS+AhRiIVIyGQ0/FxJUbtvkc1XVsj/k5eGOpi
-	VJyZpoTWpVCmVaNdmMOnMVzef1ich/ZmundSMh2YoQuDasm0UeGyp5GxCGhscs62BGPi5AI1kX6
-	MK/ogxUWE6oTKKWHhkX0FEv+W2Z/3W7C4KBsiEcF3XDQ8jgasn6no/pcMje/uI=
-X-Google-Smtp-Source: AGHT+IHxuDKlDUmI9gkBEueh4EvpFboxTltoYpgVhnxozw3MrTbBGOOi/7b2eX7N3mHrIGps5UaInQ==
-X-Received: by 2002:a05:622a:1a86:b0:4e6:ebe3:9403 with SMTP id d75a77b69052e-4ffb4a6d332mr35231341cf.41.1767798026479;
-        Wed, 07 Jan 2026 07:00:26 -0800 (PST)
+        bh=x/clH+wkBn/fC4aeLEvr8i/eBJOfx0yZ5n7VJtVgrX4=;
+        b=Klr+7cuOwNbCinluldOqTRlrZFl4NE07fut8z+CNPgJhPpsib3RzMQaJwBoPdsfbM6
+         qWJ71/MuCjRucqWtl6tfkeCw+snqv0vO4pk1Ag3xdo4TtbNWlJFmNDEwjt1iZ25pz18R
+         0wG9653Xk+GuVVsGhYmb+5aXwtBt7GAKaQUFeTjdUQUlYUekeyuMlW6YO37mthDDXvsK
+         JkLbWaJ1aTLqMZjebwaMsaAoH3HSRsvzzI/vOnSELo9DZRydGoh8zzRnN+/lfYuZmvGj
+         s6w8DUEESpFA3PgygWdKX2VEI+uHyCtV77ZKrQmp0Aq5AGys69wI1FZEdtd6ewgJej/+
+         ee0A==
+X-Gm-Message-State: AOJu0YyxoEppLPqzZwGg7EPahTzUzL8fygk4B4rhU+u30W8FTCfTV3iP
+	WH3u+I13nDcxgJvurwbhK7rmH1guBYPtOCJp0pxl86t6sugo575rQykg6iv6Ok6O7QI3T6bNzwD
+	/ijgJ
+X-Gm-Gg: AY/fxX6yopnr8/QxQqMeopZEOPX9+KJxgEpOxdYQGpeTRjSGUi5oiLMLIwmmaDKtbLq
+	kICqRZbXwbPSycRuUjdCQJ2HRgLmKB15aIwgMx3RH3BpeKdzZP/wwLlM33k7o9c9yPjJl7wlIhZ
+	gv/oTAE/YBqMQFoIVv5JalPJxzVHC7/FUbq3XSjQiLfyWXT6c54nqJuJ28JXB4xJlToTkGq+Pu2
+	wHhfBmMWAwWe/0KcGm2DNGrHYQNawe5hVRFMscDydRHoYOaBmiGIHJBjaA68AHBIZuPoMnXHHzg
+	lGzA63+V8onSWsHFyNJdegoWXYD2/RYMdB/JJmQHSeMjBpVairDq0cLgdwwks+mVULiO8m6vw+2
+	Es3Hy2NPwZkPN8MnX6IFlDJenM2f6YCFBD/SvTCd4kmM+wH+o0REmRDFbfuI6jHI8TAJsVe/AYT
+	SYrOBGQZwp0Xpohjcp6fJbAsyfy8npxCn32rCaaVRHbktewdPz8qBte9NjKWyA6dqBGRrD7VTxM
+	n4pBoAicAUrqR2plAG2hSz4SqSwPt1wgIGlOLylDUwLBFCwSq21
+X-Google-Smtp-Source: AGHT+IEpRhXM3KiPPHmypSIWzOYSKsmpKGBpA6jtVFTVnnEzgKMLMjorvGb4a6n9nMgenemtj4l3Mg==
+X-Received: by 2002:a05:622a:88:b0:4ee:7ee:df70 with SMTP id d75a77b69052e-4ffb4a6069emr36978291cf.80.1767798025752;
+        Wed, 07 Jan 2026 07:00:25 -0800 (PST)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
         by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ffa8d568cbsm34113551cf.11.2026.01.07.07.00.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Jan 2026 07:00:26 -0800 (PST)
+        Wed, 07 Jan 2026 07:00:25 -0800 (PST)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org,
 	Marta Rybczynska <rybczynska@gmail.com>,
 	Anton Antonov <Anton.Antonov@arm.com>
-Subject: [meta-security][PATCH 3/4] meta-parsec: Remove meta-clang dependency
-Date: Wed,  7 Jan 2026 10:00:08 -0500
-Message-ID: <7d0ae0d688d34c1574530cb93c12323ac48f1bb3.1767797568.git.scott.murray@konsulko.com>
+Subject: [meta-security][PATCH 2/4] suricata: update PACKAGECONFIG[jansson] option to required
+Date: Wed,  7 Jan 2026 10:00:07 -0500
+Message-ID: <635238de190ed0281fbdecec6ed3a2a517f71bc6.1767797568.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <cover.1767797568.git.scott.murray@konsulko.com>
 References: <cover.1767797568.git.scott.murray@konsulko.com>
@@ -68,78 +68,87 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Wed, 07 Jan 2026 15:00:36 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2909
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2910
 
-Since clang is in openembedded-core now, meta-parsec no longer needs
-meta-clang.  Also updated maintainers in meta-parsec README.md since
-it had previously been missed.
+From: Clayton Casciato <majortomtosourcecontrol@gmail.com>
 
+jansson is required as of Suricata 5.0:
+https://github.com/OISF/suricata/commit/e49c40428e1b9f7e5dcdb5857c3978d5cb859fd9
+
+This is still required in the latest release:
+https://github.com/OISF/suricata/blob/suricata-8.0.2/configure.ac#L828
+
+On exclusion attempt:
+[...]
+| checking for jansson.h... no
+| checking for json_dump_callback in -ljansson... no
+|
+|     ERROR: Jansson is now required.
+|
+|     Go get it from your distribution or from:
+|       http://www.digip.org/jansson/
+|
+|     Ubuntu/Debian: apt install libjansson-dev
+|     CentOS: yum install jansson-devel
+|     Fedora: dnf install jansson-devel
+|
+| NOTE: The following config.log files may provide further information.
+| NOTE: [...]/poky-whinlatter/build/tmp/work/cortexa57-poky-linux/suricata/7.0.13/sources/suricata-7.0.13/config.log
+| ERROR: configure failed
+| WARNING: exit code 1 from a shell command.
+ERROR: Task ([...]/poky-whinlatter/layers/meta-security/recipes-ids/suricata/suricata_7.0.13.bb:do_configure) failed with exit code '1'
+
+Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- kas/kas-security-parsec.yml | 4 ----
- meta-parsec/README.md       | 6 ++----
- meta-parsec/conf/layer.conf | 2 +-
- 3 files changed, 3 insertions(+), 9 deletions(-)
+ recipes-ids/suricata/suricata_7.0.13.bb | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/kas/kas-security-parsec.yml b/kas/kas-security-parsec.yml
-index 9a009be..c44a280 100644
---- a/kas/kas-security-parsec.yml
-+++ b/kas/kas-security-parsec.yml
-@@ -8,10 +8,6 @@ repos:
-     layers:
-       meta-parsec:
+diff --git a/recipes-ids/suricata/suricata_7.0.13.bb b/recipes-ids/suricata/suricata_7.0.13.bb
+index 7298f1b..469e42d 100644
+--- a/recipes-ids/suricata/suricata_7.0.13.bb
++++ b/recipes-ids/suricata/suricata_7.0.13.bb
+@@ -7,7 +7,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;beginline=1;endline=2;md5=c70d8d3310941dcdfcd
+ SRC_URI = "http://www.openinfosecfoundation.org/download/suricata-${PV}.tar.gz"
+ SRC_URI[sha256sum] = "bbc94cf0a297f4560c64569ed72867c799287defdaf6e6572ce769f48dd2559b"
  
--  meta-clang:
--    url: https://github.com/kraj/meta-clang.git
--    refspec: master
--
- local_conf_header:
-   meta-parsec: |
-     IMAGE_INSTALL:append = " parsec-service parsec-tool"
-diff --git a/meta-parsec/README.md b/meta-parsec/README.md
-index a5472ae..913bba7 100644
---- a/meta-parsec/README.md
-+++ b/meta-parsec/README.md
-@@ -14,9 +14,6 @@ This layer depends on:
-     URI git://git.yoctoproject.org/meta-security
-     branch: master
+-DEPENDS = "lz4 libhtp"
++DEPENDS = "jansson lz4 libhtp"
  
--    URI https://github.com/kraj/meta-clang.git
--    branch: master
--
- Adding the meta-parsec layer to your build
- ==========================================
+ SRC_URI += " \
+     file://volatiles.03_suricata \
+@@ -27,6 +27,7 @@ EXTRA_OECONF += " --disable-debug \
+     --enable-non-bundled-htp \
+     --disable-suricata-update \
+     --with-libhtp-includes=${STAGING_INCDIR} --with-libhtp-libraries=${STAGING_LIBDIR} \
++    --with-libjansson-includes=${STAGING_INCDIR} --with-libjansson-libraries=${STAGING_LIBDIR} \
+     "
  
-@@ -32,7 +29,6 @@ other layers needed. e.g.:
-       /path/to/yocto/meta-yocto-bsp \
-       /path/to/meta-openembedded/meta-oe \
-       /path/to/meta-openembedded/meta-python \
--      /path/to/meta-clang \
-       /path/to/meta-security/meta-tpm \
-       /path/to/meta-security/meta-parsec \
-       "
-@@ -257,6 +253,8 @@ $ git config format.subjectPrefix meta-parsec][PATCH
- Now you can just do 'git send-email origin/master' to send all local patches.
+ CARGO_SRC_DIR = "rust"
+@@ -37,7 +38,7 @@ CARGO_BUILD_FLAGS:append = " --offline"
+ B = "${S}"
  
- Maintainers:    Anton Antonov <Anton.Antonov@arm.com>
-+                Scott Murray <scott.murray@konsulko.com>
-+                Marta Rybczynska <rybczynska@gmail.com>
+ # nfnetlink has a dependancy to meta-networking
+-PACKAGECONFIG ??= "jansson file pcre2 yaml python pcap cap-ng net"
++PACKAGECONFIG ??= "file pcre2 yaml python pcap cap-ng net"
+ PACKAGECONFIG:append = " ${@bb.utils.contains('DISTRO_FEATURES', 'ptest', 'unittests', '', d)}"
  
+ PACKAGECONFIG[pcre2] = "--with-libpcre2-includes=${STAGING_INCDIR} --with-libpcre2-libraries=${STAGING_LIBDIR}, ,libpcre2 ,"
+@@ -48,7 +49,6 @@ PACKAGECONFIG[net] = "--with-libnet-includes=${STAGING_INCDIR} --with-libnet-lib
+ PACKAGECONFIG[nfnetlink] = "--with-libnfnetlink-includes=${STAGING_INCDIR} --with-libnfnetlink-libraries=${STAGING_LIBDIR}, ,libnfnetlink ,"
+ PACKAGECONFIG[nfq] = "--enable-nfqueue, --disable-nfqueue,libnetfilter-queue,"
  
- License
-diff --git a/meta-parsec/conf/layer.conf b/meta-parsec/conf/layer.conf
-index 29a8f11..39d1265 100644
---- a/meta-parsec/conf/layer.conf
-+++ b/meta-parsec/conf/layer.conf
-@@ -10,7 +10,7 @@ BBFILE_PRIORITY_parsec-layer = "5"
+-PACKAGECONFIG[jansson] = "--with-libjansson-includes=${STAGING_INCDIR} --with-libjansson-libraries=${STAGING_LIBDIR},,jansson, jansson"
+ PACKAGECONFIG[file] = ",,file, file"
+ PACKAGECONFIG[python] = "--enable-python, --disable-python, python3, python3-core"
+ PACKAGECONFIG[unittests] = "--enable-unittests, --disable-unittests,"
+@@ -138,4 +138,6 @@ PACKAGES =+ "${PN}-python"
+ FILES:${PN} += "${systemd_unitdir} ${sysconfdir}/tmpfiles.d"
+ FILES:${PN}-python = "${bindir}/suricatasc ${PYTHON_SITEPACKAGES_DIR}"
  
- LAYERSERIES_COMPAT_parsec-layer = "whinlatter walnascar scarthgap"
- 
--LAYERDEPENDS_parsec-layer = "core clang-layer"
-+LAYERDEPENDS_parsec-layer = "core"
- BBLAYERS_LAYERINDEX_NAME_parsec-layer = "meta-parsec"
- 
- addpylib ${LAYERDIR}/lib oeqa
++RDEPENDS:${PN} += "jansson"
++
+ CONFFILES:${PN} = "${sysconfdir}/suricata/suricata.yaml"
 -- 
 2.51.0
 
