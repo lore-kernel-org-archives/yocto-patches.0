@@ -1,190 +1,119 @@
-Return-Path: <scott.murray@konsulko.com>
+Return-Path: <yoann.congal@smile.fr>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADD9BD26D91
-	for <webhook@archiver.kernel.org>; Fri,  9 Jan 2026 18:30:51 +0000 (UTC)
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.16895.1767983445023761144
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F554D26D9B
+	for <webhook@archiver.kernel.org>; Fri,  9 Jan 2026 21:49:52 +0000 (UTC)
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.21297.1767995382310590729
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 09 Jan 2026 10:30:45 -0800
+ Fri, 09 Jan 2026 13:49:42 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=K64DdaCP;
- spf=pass (domain: konsulko.com, ip: 209.85.160.182, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4ed7024c8c5so36708051cf.3
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 09 Jan 2026 10:30:44 -0800 (PST)
+ dkim=pass header.i=@smile.fr header.s=google header.b=Jn4WA8+t;
+ spf=pass (domain: smile.fr, ip: 209.85.128.46, mailfrom: yoann.congal@smile.fr)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-477619f8ae5so36067745e9.3
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 09 Jan 2026 13:49:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1767983444; x=1768588244; darn=lists.yoctoproject.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=i76PGegnPB8p26AOpkCq4UKes97jIocPIfjuF0w75qI=;
-        b=K64DdaCPVsyhPMaWINgukQUqHm8FplFdpO709UmsI+2X9QPpp4+qAw6TyCJlU9EIo6
-         klToIeBlbXaHSjgkwvppCakYunkY6dEyNyVVNs2JAUWz6yYJrIXQt0gB+nVUKHWCGfXK
-         nylEu9JQPCMieMetj49iAh4sbTDFJNdpHLe5M=
+        d=smile.fr; s=google; t=1767995380; x=1768600180; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ERR6NzNQS7Eg6p4aQUfL2EwKvldglJy3l0NyasSwJTc=;
+        b=Jn4WA8+tkam2I4IwW4s8linUtGQW+8JFal4bxmROaDU/Czp5bSfSB/dldIDN06WgtX
+         srjDSbh89VMypMdpAKdnX7+3YtqaNd7UbE0Yaek5ubSJ1QfnRVPajrXJ70Ip6KmMUNcQ
+         bW7iLNy6i1/M56+wFXUO/J7Et2RQizrCWMqrI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767983444; x=1768588244;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=i76PGegnPB8p26AOpkCq4UKes97jIocPIfjuF0w75qI=;
-        b=telo30KHdi20ZI60swA4RtGlqFvszadNbKeuOmXcm/AYfplcEWHoM97v43ym1AFs6o
-         udpm2npqinqbS3ryJ1I+Q9kVZaxsxxXGRjW0LV5V+G6MDUupFMRSvd4rFWihC5ASMMC2
-         FR2lK3WSE9BeH82RHFFm2oK8bJ3+JiZJNLt77WsOkCNlH+6+dhWrB6LC/yWKukv6hY0u
-         xcIiLIq2rVmBK8J0M/FzkPVO9Xk5qJdMRK0jyj2zfucnXH2B6S0LZqa597/Vm+iYB/v8
-         WrB1gGk+SLIlUpKsWGhJ1o0t5O3vw5yrb6q+AjMq5fvnPT3o1l8fcqGUtd5Len5ph0lK
-         a0Pw==
-X-Gm-Message-State: AOJu0YymJ3XC57oulSP30aoMQ9iIQ5MAHj5KAscETqHhkRhex6aUO58B
-	726zD0A39WwuxBA/VQkjXxSFxupBEP60Rw0DYc69J0JmMshqRnnXndrasmLUKOvVVmo=
-X-Gm-Gg: AY/fxX7Dq5f6z8++AhcqqYlRn6rr99+h/687p/S7mPc0zqNniTDq5hqw8kwMsRwolZa
-	gqpVA4c9IZQbB538eARX1JApLaKocwLfRrKTBszcKN1iPL5SqFWM5a6dFjDOdmJblZ/pNH+m0Bl
-	OtYMiYygRofApCp/GOiee0e2Yn3Thoj03Kqrm9R5S9T55cO28LQtL2vDKYZi/yPz0ew7DqtAQbk
-	JdYI1KhAgnoRBEEhXPFSeXqOen5EUY8yBfsBzZB1LSJbmXGlOK1ttgv7Gox841Z5ELwg7ixxKjk
-	tU9Yk8YL5IOTpSK/WO4gNMn9BC+c8IGRISWKVXsdaVclmKtebg7gyQtzLP2PIb31QMzX6O9ghlH
-	9WfnfjbuYZpT2Z7RH/cec/ce0b7f5lwAnYfEO84n5E8BPSOEi+YE1KUg5+z2ZqvSXg4xSgxI9f1
-	knP20kInhhhwd8q1B/9folPObenMnWameXndznx2GMKGG1l186alontlDRk3e29eeAN/QHfXOGL
-	wg1gDBLeqFcWQJMRqGg5e1N1pnWsiOZOEY=
-X-Google-Smtp-Source: AGHT+IEDx/RQAEkpF/2IqIZGjuzVdN2Xw/waD3H2sQK5x9urahO35oqS4WNgLOFj0SjDW6sQol0Z6w==
-X-Received: by 2002:ac8:5a47:0:b0:4ec:f84d:cb40 with SMTP id d75a77b69052e-4ffb4a3ec38mr135099531cf.44.1767983443552;
-        Fri, 09 Jan 2026 10:30:43 -0800 (PST)
-Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ffa8e4c810sm76250351cf.24.2026.01.09.10.30.42
+        d=1e100.net; s=20230601; t=1767995380; x=1768600180;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ERR6NzNQS7Eg6p4aQUfL2EwKvldglJy3l0NyasSwJTc=;
+        b=wC7mCq8r2CD6frrtTa9qdh8Bjufd6D7681TZtKD6+8/OCv5EC78u3xvHkGC0KtT7fJ
+         33C/p3/ay/FmyryQe8E2rnFUmR4uA+q94LaPVBezcegZp3gtGHCnUX8PByyYN90HjQd6
+         sl1DRqi2HpHQxqm6y0FX2O63gQBNYHC/ikVwqotTjSe3Z8rHKB7Mfk9L7hHQrFaU3BAn
+         XJ80Pcj+uLFVL3gkKL/LzpbXWN0bC/xN257Sa4ve3Ww4jfNfcYAQO8nzZ7PHm4w1EV6Q
+         g1Aq3b8Lff7b1u4Wlb3tcAw9v09+Y4bBh1RRJ4+pQ+cI838LFfJ4H6WsmJ4pkbFrpXmo
+         Jv2A==
+X-Gm-Message-State: AOJu0YycNqg2MRzVU+66VSuO+p+tBONEh4CKoeJob08ZqOHwW29qQ+s/
+	5Zu3g9i6mraNkDkj/bG8QmIeQnbEB2JzcDt2qfhvWip3TU5eZ/yqbXZnva1AVcXWC32pKxhnvoX
+	ATamO
+X-Gm-Gg: AY/fxX4qgCHYmKvzuDbZ98lRY/NetjWQte4dJ60tC8980DpaE25uHXucwcQL2i5WMDP
+	TdvmAVlghop/vDBF5z93PUonn/BwLhjvxjU+b0CibrWRcyfzhwd1EhJS4AqAXpGrljb/3dVVODc
+	7YSmFJAa0FEeHLrRHrkT+PDRZaY3K9HpMk9ZAsNXA4yQmyJvdeB0Ry9cCDTvHAy92dxaukGIwKo
+	h1Q+xly8OWVmCWvd5qJcCGSMKFvR1JCT/D8lzFF++LdENPIL01OC3PhrTn/gcWlbNzkbrXqM6bK
+	fQ6i9G3ptuaSBSFoj1IGekAn/eQLq8yj+tAzRrTwXaMnDXerFjLgQSj3f+tgdfDKVUGYAUJZ4Wc
+	9YFHgwZGqOtJ7tIpnkoaZZ4P2W4AEU5LNxKLo6wG0q+y1XBcsgWiZlsCUOh6dXp2kpcVKqBrr50
+	qZM5QWei/IZLcgv/aLfjbQNLyMyETD6RX9MBXXfbviLpXZ65Qgq/WUPa+zmHTCiF9D/j0SO6LXo
+	HHak5GxDU4hudBC
+X-Google-Smtp-Source: AGHT+IHB7si0bVmi6FmIqlDgk4oS/GXcRzlat1t6VO0n5+ESuGXj/dCVUYigU1YYM4Ee3kTCTqteSQ==
+X-Received: by 2002:a05:600c:5391:b0:479:3a89:121d with SMTP id 5b1f17b1804b1-47d84b614b8mr126084825e9.36.1767995380355;
+        Fri, 09 Jan 2026 13:49:40 -0800 (PST)
+Received: from FRSMI25-LASER.home (2a01cb001331aa00e75da6c4f7444a1e.ipv6.abo.wanadoo.fr. [2a01:cb00:1331:aa00:e75d:a6c4:f744:4a1e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47d8717d9e7sm69014735e9.8.2026.01.09.13.49.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Jan 2026 10:30:43 -0800 (PST)
-Date: Fri, 9 Jan 2026 13:30:42 -0500 (EST)
-From: Scott Murray <scott.murray@konsulko.com>
-To: Vijay Anusuri <vanusuri@mvista.com>
-cc: yocto-patches@lists.yoctoproject.org
-Subject: Re: [meta-security][kirkstone][PATCH] sssd: Fix for CVE-2025-11561
-In-Reply-To: <CANQUz19gBo=0VHCRMPYRqHLn8Cvw5V5u6F4SPcKFYMSJsxRoVA@mail.gmail.com>
-Message-ID: <b06f688f-4622-f42d-3b82-3549e8f14c50@konsulko.com>
-References: <20251205101051.171885-1-vanusuri@mvista.com> <CANQUz19gBo=0VHCRMPYRqHLn8Cvw5V5u6F4SPcKFYMSJsxRoVA@mail.gmail.com>
+        Fri, 09 Jan 2026 13:49:39 -0800 (PST)
+From: Yoann Congal <yoann.congal@smile.fr>
+To: yocto-patches@lists.yoctoproject.org
+Cc: Yoann Congal <yoann.congal@smile.fr>
+Subject: [yocto-autobuilder2][PATCH 1/2] schedulers: Add whinlatter-next/-nut builds to the branch selector
+Date: Fri,  9 Jan 2026 22:49:22 +0100
+Message-ID: <20260109214923.435527-1-yoann.congal@smile.fr>
+X-Mailer: git-send-email 2.47.3
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="-1463811583-888252922-1767983443=:3481"
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 09 Jan 2026 18:30:51 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2927
+ <yocto-patches@lists.yoctoproject.org>; Fri, 09 Jan 2026 21:49:52 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2928
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+From: Yoann Congal <yoann.congal@smile.fr>
 
----1463811583-888252922-1767983443=:3481
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Those two build setups will be frequently used for stable maintenance
+work. A shortcut is appreciated.
 
-On Fri, 9 Jan 2026, Vijay Anusuri wrote:
+Signed-off-by: Yoann Congal <yoann.congal@smile.fr>
+---
+ schedulers.py | 22 +++++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
 
-> Hi Team,
->
-> Any Update on this ?
->
-> Thanks & Regards,
-> Vijay
-
-My apologies, kirkstone and scarthgap branch updates have been delayed due
-to travel on my part in early December followed by the holidays.  I'm
-aiming to push out updates for them in the next few days.
-
-Scott
-
-
-> On Fri, Dec 5, 2025 at 3:41 PM <vanusuri@mvista.com> wrote:
->
-> > From: Vijay Anusuri <vanusuri@mvista.com>
-> >
-> > Upstream-Status: Backport [
-> > https://github.com/SSSD/sssd/commit/a0336f4cd69c25b3d501a3d361d3d286c00da4d2
-> > ]
-> >
-> > Signed-off-by: Vijay Anusuri <vanusuri@mvista.com>
-> > ---
-> >  .../sssd/files/CVE-2025-11561.patch           | 50 +++++++++++++++++++
-> >  recipes-security/sssd/sssd_2.5.2.bb           |  1 +
-> >  2 files changed, 51 insertions(+)
-> >  create mode 100644 recipes-security/sssd/files/CVE-2025-11561.patch
-> >
-> > diff --git a/recipes-security/sssd/files/CVE-2025-11561.patch
-> > b/recipes-security/sssd/files/CVE-2025-11561.patch
-> > new file mode 100644
-> > index 0000000..0bfed6d
-> > --- /dev/null
-> > +++ b/recipes-security/sssd/files/CVE-2025-11561.patch
-> > @@ -0,0 +1,50 @@
-> > +From a0336f4cd69c25b3d501a3d361d3d286c00da4d2 Mon Sep 17 00:00:00 2001
-> > +From: Sumit Bose <sbose@redhat.com>
-> > +Date: Fri, 10 Oct 2025 12:57:40 +0200
-> > +Subject: [PATCH] krb5: disable Kerberos localauth an2ln plugin for AD/IPA
-> > +MIME-Version: 1.0
-> > +Content-Type: text/plain; charset=UTF-8
-> > +Content-Transfer-Encoding: 8bit
-> > +
-> > +If a client is joined to AD or IPA SSSD's localauth plugin can handle
-> > +the mapping of Kerberos principals to local accounts. In case it cannot
-> > +map the Kerberos principals libkrb5 is currently configured to fall back
-> > +to the default localauth plugins 'default', 'rule', 'names',
-> > +'auth_to_local', 'k5login' and 'an2ln' (see man krb5.conf for details).
-> > +All plugins except 'an2ln' require some explicit configuration by either
-> > +the administrator or the local user. To avoid some unexpected mapping is
-> > +done by the 'an2ln' plugin this patch disables it in the configuration
-> > +snippets for SSSD's localauth plugin.
-> > +
-> > +Resolves: https://github.com/SSSD/sssd/issues/8021
-> > +
-> > +:relnote: After startup SSSD already creates a Kerberos configuration
-> > + snippet typically in /var/lib/sss/pubconf/krb5.include.d/localauth_plugin
-> > + if the AD or IPA providers are used. This enables SSSD's localauth
-> > plugin.
-> > + Starting with this release the an2ln plugin is disabled in the
-> > + configuration snippet as well. If this file or its content are included
-> > in
-> > + the Kerberos configuration it will fix CVE-2025-11561.
-> > +
-> > +Reviewed-by: Alexey Tikhonov <atikhono@redhat.com>
-> > +Reviewed-by: Pavel Březina <pbrezina@redhat.com>
-> > +(cherry picked from commit 9939c39d1949fad48af2f0b43c788bad0809e310)
-> > +
-> > +Upstream-Status: Backport [
-> > https://github.com/SSSD/sssd/commit/a0336f4cd69c25b3d501a3d361d3d286c00da4d2
-> > ]
-> > +CVE: CVE-2025-11561
-> > +Signed-off-by: Vijay Anusuri <vanusuri@mvista.com>
-> > +---
-> > + src/util/domain_info_utils.c | 1 +
-> > + 1 file changed, 1 insertion(+)
-> > +
-> > +diff --git a/src/util/domain_info_utils.c b/src/util/domain_info_utils.c
-> > +index e131a5d96af..160e1711bcd 100644
-> > +--- a/src/util/domain_info_utils.c
-> > ++++ b/src/util/domain_info_utils.c
-> > +@@ -751,6 +751,7 @@ static errno_t sss_write_krb5_snippet_common(const
-> > char *file_name,
-> > + #define LOCALAUTH_PLUGIN_CONFIG \
-> > + "[plugins]\n" \
-> > + " localauth = {\n" \
-> > ++"  disable = an2ln\n" \
-> > + "  module = sssd:"APP_MODULES_PATH"/sssd_krb5_localauth_plugin.so\n" \
-> > + " }\n"
-> > +
-> > diff --git a/recipes-security/sssd/sssd_2.5.2.bb b/recipes-security/sssd/
-> > sssd_2.5.2.bb
-> > index c07559c..43c31ee 100644
-> > --- a/recipes-security/sssd/sssd_2.5.2.bb
-> > +++ b/recipes-security/sssd/sssd_2.5.2.bb
-> > @@ -25,6 +25,7 @@ SRC_URI = "
-> > https://github.com/SSSD/sssd/releases/download/${PV}/sssd-${PV}.tar.g
-> >             file://musl_fixup.patch \
-> >             file://CVE-2021-3621.patch \
-> >             file://CVE-2023-3758.patch \
-> > +           file://CVE-2025-11561.patch \
-> >             "
-> >
-> >  SRC_URI[sha256sum] =
-> > "5e21b3c7b4a2f1063d0fbdd3216d29886b6eaba153b44fb5961698367f399a0f"
-> > --
-> > 2.25.1
-> >
-> >
->
----1463811583-888252922-1767983443=:3481--
+diff --git a/schedulers.py b/schedulers.py
+index f552467..85e0be4 100644
+--- a/schedulers.py
++++ b/schedulers.py
+@@ -82,6 +82,26 @@ branchdefaults = {
+         'branch_yocto-docs': 'whinlatter',
+         'branch_oecore': 'whinlatter',
+     },
++    'whinlatter-next': {
++        'reason': 'Stable maintenance - whinlatter-next',
++        'branch': 'whinlatter',
++        'swat_monitor': False,
++        'repo_bitbake': 'ssh://git@push.openembedded.org/bitbake-contrib',
++        'branch_bitbake': 'stable/2.16-next',
++        'repo_oecore': 'ssh://git@push.openembedded.org/openembedded-core-contrib',
++        'branch_oecore': 'stable/whinlatter-next',
++        'branch_meta-yocto': 'contrib/whinlatter-next',
++    },
++    'whinlatter-nut': {
++        'reason': 'Stable maintenance - whinlatter-nut',
++        'branch': 'whinlatter',
++        'swat_monitor': False,
++        'repo_bitbake': 'ssh://git@push.openembedded.org/bitbake-contrib',
++        'branch_bitbake': 'stable/2.16-nut',
++        'repo_oecore': 'ssh://git@push.openembedded.org/openembedded-core-contrib',
++        'branch_oecore': 'stable/whinlatter-nut',
++        'branch_meta-yocto': 'contrib/whinlatter-nut',
++    },
+     'walnascar': {
+         'branch': 'walnascar',
+         'branch_poky': 'walnascar',
+@@ -497,7 +517,7 @@ def parent_scheduler(target):
+             name="branchselector",
+             default="master",
+             label="Release Shortcut Selector",
+-            choices=["master", "master-next", "mathieu-next", "antonin-next", "mut", "whinlatter", "walnascar", "styhead", "scarthgap", "nanbield", "mickledore", "langdale", "kirkstone", "honister", "hardknott", "gatesgarth", "dunfell", "zeus", "warrior", "thud", "sumo", "rocko", "pyro", "morty"],
++            choices=["master", "master-next", "mathieu-next", "antonin-next", "mut", "whinlatter", "whinlatter-next", "whinlatter-nut", "walnascar", "styhead", "scarthgap", "nanbield", "mickledore", "langdale", "kirkstone", "honister", "hardknott", "gatesgarth", "dunfell", "zeus", "warrior", "thud", "sumo", "rocko", "pyro", "morty"],
+             selectors=branchdefaults),
+         util.BooleanParameter(
+             name="swat_monitor",
 
