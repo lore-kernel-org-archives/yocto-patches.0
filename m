@@ -1,183 +1,190 @@
-Return-Path: <quentin.schulz@cherry.de>
+Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B49BD1A632
-	for <webhook@archiver.kernel.org>; Fri,  9 Jan 2026 14:09:59 +0000 (UTC)
-Received: from OSPPR02CU001.outbound.protection.outlook.com (OSPPR02CU001.outbound.protection.outlook.com [40.107.159.13])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.10816.1767967795331538926
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADD9BD26D91
+	for <webhook@archiver.kernel.org>; Fri,  9 Jan 2026 18:30:51 +0000 (UTC)
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.16895.1767983445023761144
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 09 Jan 2026 06:09:56 -0800
+ Fri, 09 Jan 2026 10:30:45 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@cherry.de header.s=selector1 header.b=Oikh3WI2;
- spf=pass (domain: cherry.de, ip: 40.107.159.13, mailfrom: quentin.schulz@cherry.de)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pOog19cyvG87DxxXySptIl4Ag2/4cmwSfCvzTfPpXmfbErGhAomlgGgVjnyPEvj+hBiszkylqW32s0Ky2c/Qqe1Hpo16RX4jSfjtSYdOcQBfJogtMtDzMPQaZaLT5ZjBQeCedL3hDUxHB5biJO7I6jYO7CiCys4IIBmfOxMTySHwCNeWOWnp4AiNAUmu4y6FR4Hra9O04Mb+SQyIH8eDGdSJmLJR/jCFM67OBgQH4UXymfuhI7Ga1bntVKDFYsU9GMNog5O15cX4bDjBU2kklDiTermRAb2IaFmzWhmUzeKFBXgW9GvZ3qaYHZVLr3IN7118sIwFO0boPPAp/KGrsA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=74ccgPqsPszsEKWfeNYRVVyXuTPzNZLBzKhO3xyIoCQ=;
- b=mUIi/7NayC6FyRi6x/9bp7pmAoSr4LhL48SBs0spUWDYkWeEn/0smX44E5YgPyfzDZjPTb7dg/88gORibEFivI811u9LxoXJd2+EF2s3jKnybURy5Gx+YzL40xsKJUEU6/CZz5Cyn622lxJfkNSEluJJdYehm2ZzGnIqSnnN1moELI2xVLyg2Xfb4flxilQKOvNbhS9Ic4NnbZKncWEdrPvO5YP4THphPyusJd8+OWEo69ZLqb6FInPtt1Qz3TC4+g0NllI+jfF058N3ABpUkVEgSBGiWpQYRypwyUbbxJKATbZsqkH7joBLW/fSfA89b+59FA5sjJoRnt+FE1gZPw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=74ccgPqsPszsEKWfeNYRVVyXuTPzNZLBzKhO3xyIoCQ=;
- b=Oikh3WI2ySeWbtNBGnkp5g5MqwQqP6TjmFaUg8S1TUwSumb2kJBbzHpb0GyuZzm92oXmbJ4RTxhT9F/L7cmDUioth3QRXS19/QomkQbAhVYirAk3jPn5CHocaUZ0h4906nkneHgzSObtO0AzRVQFf6HiyhPe50V0EQN+MonhgEo=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from GVXPR04MB12038.eurprd04.prod.outlook.com (2603:10a6:150:2be::5)
- by AS8PR04MB7893.eurprd04.prod.outlook.com (2603:10a6:20b:2ab::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9478.4; Fri, 9 Jan
- 2026 14:09:50 +0000
-Received: from GVXPR04MB12038.eurprd04.prod.outlook.com
- ([fe80::1033:5a9a:dc18:dad]) by GVXPR04MB12038.eurprd04.prod.outlook.com
- ([fe80::1033:5a9a:dc18:dad%4]) with mapi id 15.20.9499.004; Fri, 9 Jan 2026
- 14:09:50 +0000
-Message-ID: <dd990ccd-a418-45bc-b708-d3b1fc763ea5@cherry.de>
-Date: Fri, 9 Jan 2026 15:09:46 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [meta-rockchip][PATCH v2 5/5] fix u-boot for tf-a
- firmware
-To: yocto-patches@lists.yoctoproject.org
-References: <20251221004843.31946-1-twoerner@gmail.com>
- <20251221004843.31946-5-twoerner@gmail.com>
-Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <20251221004843.31946-5-twoerner@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR0P281CA0119.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a8::17) To GVXPR04MB12038.eurprd04.prod.outlook.com
- (2603:10a6:150:2be::5)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=K64DdaCP;
+ spf=pass (domain: konsulko.com, ip: 209.85.160.182, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4ed7024c8c5so36708051cf.3
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 09 Jan 2026 10:30:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=konsulko.com; s=google; t=1767983444; x=1768588244; darn=lists.yoctoproject.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=i76PGegnPB8p26AOpkCq4UKes97jIocPIfjuF0w75qI=;
+        b=K64DdaCPVsyhPMaWINgukQUqHm8FplFdpO709UmsI+2X9QPpp4+qAw6TyCJlU9EIo6
+         klToIeBlbXaHSjgkwvppCakYunkY6dEyNyVVNs2JAUWz6yYJrIXQt0gB+nVUKHWCGfXK
+         nylEu9JQPCMieMetj49iAh4sbTDFJNdpHLe5M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767983444; x=1768588244;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=i76PGegnPB8p26AOpkCq4UKes97jIocPIfjuF0w75qI=;
+        b=telo30KHdi20ZI60swA4RtGlqFvszadNbKeuOmXcm/AYfplcEWHoM97v43ym1AFs6o
+         udpm2npqinqbS3ryJ1I+Q9kVZaxsxxXGRjW0LV5V+G6MDUupFMRSvd4rFWihC5ASMMC2
+         FR2lK3WSE9BeH82RHFFm2oK8bJ3+JiZJNLt77WsOkCNlH+6+dhWrB6LC/yWKukv6hY0u
+         xcIiLIq2rVmBK8J0M/FzkPVO9Xk5qJdMRK0jyj2zfucnXH2B6S0LZqa597/Vm+iYB/v8
+         WrB1gGk+SLIlUpKsWGhJ1o0t5O3vw5yrb6q+AjMq5fvnPT3o1l8fcqGUtd5Len5ph0lK
+         a0Pw==
+X-Gm-Message-State: AOJu0YymJ3XC57oulSP30aoMQ9iIQ5MAHj5KAscETqHhkRhex6aUO58B
+	726zD0A39WwuxBA/VQkjXxSFxupBEP60Rw0DYc69J0JmMshqRnnXndrasmLUKOvVVmo=
+X-Gm-Gg: AY/fxX7Dq5f6z8++AhcqqYlRn6rr99+h/687p/S7mPc0zqNniTDq5hqw8kwMsRwolZa
+	gqpVA4c9IZQbB538eARX1JApLaKocwLfRrKTBszcKN1iPL5SqFWM5a6dFjDOdmJblZ/pNH+m0Bl
+	OtYMiYygRofApCp/GOiee0e2Yn3Thoj03Kqrm9R5S9T55cO28LQtL2vDKYZi/yPz0ew7DqtAQbk
+	JdYI1KhAgnoRBEEhXPFSeXqOen5EUY8yBfsBzZB1LSJbmXGlOK1ttgv7Gox841Z5ELwg7ixxKjk
+	tU9Yk8YL5IOTpSK/WO4gNMn9BC+c8IGRISWKVXsdaVclmKtebg7gyQtzLP2PIb31QMzX6O9ghlH
+	9WfnfjbuYZpT2Z7RH/cec/ce0b7f5lwAnYfEO84n5E8BPSOEi+YE1KUg5+z2ZqvSXg4xSgxI9f1
+	knP20kInhhhwd8q1B/9folPObenMnWameXndznx2GMKGG1l186alontlDRk3e29eeAN/QHfXOGL
+	wg1gDBLeqFcWQJMRqGg5e1N1pnWsiOZOEY=
+X-Google-Smtp-Source: AGHT+IEDx/RQAEkpF/2IqIZGjuzVdN2Xw/waD3H2sQK5x9urahO35oqS4WNgLOFj0SjDW6sQol0Z6w==
+X-Received: by 2002:ac8:5a47:0:b0:4ec:f84d:cb40 with SMTP id d75a77b69052e-4ffb4a3ec38mr135099531cf.44.1767983443552;
+        Fri, 09 Jan 2026 10:30:43 -0800 (PST)
+Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ffa8e4c810sm76250351cf.24.2026.01.09.10.30.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Jan 2026 10:30:43 -0800 (PST)
+Date: Fri, 9 Jan 2026 13:30:42 -0500 (EST)
+From: Scott Murray <scott.murray@konsulko.com>
+To: Vijay Anusuri <vanusuri@mvista.com>
+cc: yocto-patches@lists.yoctoproject.org
+Subject: Re: [meta-security][kirkstone][PATCH] sssd: Fix for CVE-2025-11561
+In-Reply-To: <CANQUz19gBo=0VHCRMPYRqHLn8Cvw5V5u6F4SPcKFYMSJsxRoVA@mail.gmail.com>
+Message-ID: <b06f688f-4622-f42d-3b82-3549e8f14c50@konsulko.com>
+References: <20251205101051.171885-1-vanusuri@mvista.com> <CANQUz19gBo=0VHCRMPYRqHLn8Cvw5V5u6F4SPcKFYMSJsxRoVA@mail.gmail.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GVXPR04MB12038:EE_|AS8PR04MB7893:EE_
-X-MS-Office365-Filtering-Correlation-Id: edd1cb2c-fb98-4642-cd61-08de4f88c103
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?VDRtWjdGQTlEYXdOY0psYTVqQ2hCRnp1a2pNRjl4TzljVmNiMjlXNlA3VWpm?=
- =?utf-8?B?SE5XWFhiV3dHMHFLTmpvWnB3Z3hqc3h3RHJkMXQvQ2kvajFzUmVuQ1V5d0R4?=
- =?utf-8?B?VkJBakJOanBSb05qUVZsZWIzcGJhNDFKUitJRjM0WkZoaVVreVN0bEF6bUZw?=
- =?utf-8?B?R1kyMG9zUjR4aTdOTXFhL2ZPQkV4eFRzUmFQNnlWTG1SUnRGYWo0RXFyWC82?=
- =?utf-8?B?eTF2a1ZmMklscGdPVGFkRW40eG52L2JQKzVXTWw4VkVhdWZ5V1I5VHpocVVS?=
- =?utf-8?B?YlNIaXRKeUNRVGlLb3FGdEg4Qi9KdE53a3lPcXlQUlRrZnh5QUZTanJ5N3dz?=
- =?utf-8?B?eEQ2MjFJbXNBSytxYVNWaUVKRURyWnpsSFNtWEZtUFJrem9SU0Vrc091Rm43?=
- =?utf-8?B?SjBYSzRIVVZDWUxoOTVCZEpwMEJMaXh3VzF0T3NLUFI4NXVqN281ZzJRajM1?=
- =?utf-8?B?Nk9BNW1RWnpCUkxOVkt0c0xWWWR0TlZLM2tQT3lVYUxuWVJXazgvMTE4eFlJ?=
- =?utf-8?B?czlGdmprR0hVQ3JpRk4xSGJ6Rm0ydFMwU1BaUG45aFhSVXV6Q2JzZm81Y1NP?=
- =?utf-8?B?OTl3dTFwRlg4dUNFdWgrbWk3WFBlNndIOW0xNHBXY3FzUVY4WWk5S3VZazlu?=
- =?utf-8?B?UDlvczF3Nm5vL0VpSnBySFdUd2NJSDY3MnM5ejBsQ2RpZWxnTGtndVh2SUw4?=
- =?utf-8?B?bmIveUl2d201dmZTZjYxSFRiaTEzRkFzRExwNndhbm1yTTRQT0E1anJpTW9v?=
- =?utf-8?B?TzFBZThqUzZmNVJzdDBKZTlrWU9zeW5oNm1vTHQvb0N4T3Z0VTZmbkI5UVBP?=
- =?utf-8?B?Q1JYME81UE9ycjk0TlI5ZnJFeFFwYjVaYzlaTzBsVklzNnFEV1o3eWw3N1NO?=
- =?utf-8?B?TDhJL2ZXNlhsL1hUcjM3N1JqbmEwOW9HS1oyZnkzcjVRRGhvbHhTKzlBSVdC?=
- =?utf-8?B?ZTVGN0hzN1dDY1VESk90U3RzTTZjWUJvWTNNaU8zQWl2QjBvMVZHZWdFODk0?=
- =?utf-8?B?TVBlRjdKYmlFejc1cFhUNytzV3pIcno0Z2VqODFPSnRGczAzeEdMVnBybW5I?=
- =?utf-8?B?L3lnZU9BeEgzWndONTZCSHM3dk5GZ0FYYXVUMFIyTkwrODkxTzNIbFN5MHNn?=
- =?utf-8?B?ZlkxMlJGcmt0THNtNDhZUFJyMjNtVEh1UlpMOE9jNUtxWkZrL1d6OVphaG14?=
- =?utf-8?B?b2ZzVndzemlCTVlITUhoZ0dRTDZGdWFCNkFOaHIrbktnV1J1a25uSi9wUDYw?=
- =?utf-8?B?M2FEN05LSEJFZVl6eUdCZW9sZFVFYlhZQ3E5a3VPRndjeE9TTGx4ZHh0bXgr?=
- =?utf-8?B?bUpFeFZhaEFibEFlUGlmWDFVZCtDOGhjeFRtSEFFRG5YRmZYdko1d3NyRlY2?=
- =?utf-8?B?V3g1MldpSklWWFR4Q0FUZnQzd25zZEpwZnpEQWRpS0JYaWFvVEJscksyZE1D?=
- =?utf-8?B?akNhLzZUeVRwL3h5YlE5NlRROEJRcTRpTXJSdGx3T0hIdTFaNSt5N01rVC9P?=
- =?utf-8?B?ZXhOOEE4MHJlWU9WS0s3QmZCazErVnNLZVg1c0thQmlEdjFjaTBLN0tDV21T?=
- =?utf-8?B?elN3cldaNm1Za3pCek1aZ1YyMnMyNmdmUlIya2owZ2lmYTRhNWc4bHZzSVl5?=
- =?utf-8?B?cWEvZHEzS2RneUF2R0RyZU5BTUJBbGtPeXE5OWhFdnRkOHZNcHdUcVdBUWZV?=
- =?utf-8?B?NjIwQnJkNUlOYlNzN2d3K2Z1cUhzVXdBcEZzdDdSMkFoM2tsVmRNYS91ZE9V?=
- =?utf-8?B?ZDE5ZWEzcStVWjVkYzFPNTMvcytTN3NlUjVDQ1JyU3ZmUFBBeTdSNTBtRUox?=
- =?utf-8?B?VllJVkNOeENzTlZVWlNsTlMwUFFoSGt0RzdVc3c2bk9kbTQzT1FwNm82NVI2?=
- =?utf-8?B?a2JobzllTldUVDN6c2lnbEV6dnpRb0Q3UkloZlc1NXllakVkVXhmZ0E2WDR5?=
- =?utf-8?Q?r73JWfm2sJoDzK4JpncSoIOWQFyXZVht?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GVXPR04MB12038.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?d08rSWtGaXhPTWZaMkdDZVRDU3ZDQ2RhcEx6VWRPL2VQR0YxNW5ISHVqU3Ru?=
- =?utf-8?B?MlgrVXM1WGdxYmRkU0cvamR0V3ZZNzV0NEwxdVc1TVdrT2U5bTNDUExzZmV0?=
- =?utf-8?B?UnZVelJJTTJ3UHVYSXFZUklUSE41SHRsMCtJdm5pVm0ybkx1aWE5UGhiZXA3?=
- =?utf-8?B?SWVoTDIzcXRzNlJXNnJmdEFXSzE0S1N5czJZRHhDN01uWHBYVThpRVZYUVFD?=
- =?utf-8?B?WjI5S3NzSUh3Sm5ka0JvaDBHbnVUbzNtck04OE1adXlERHlHUFZ2OWZIVGhF?=
- =?utf-8?B?SE96bGZPa2JtM3YzUktRMFNBUnpncWUwRisrV09JVy9IOFh6L2VrTU5oTjF5?=
- =?utf-8?B?VGF4d3JXNnFRUmxxL3VsTm5wV2l2NzA4bVVMZ1RmYU1tMU5QS0xvZEYwUHRn?=
- =?utf-8?B?VHJYNFFqTUZ1c2piV0R2cHFjNUZvUFVrclVzSnBZdGpsdUNabEVOZ0N2eVpP?=
- =?utf-8?B?UkNNMkZWNGkzSFJybGo3MTBoQ1Nsa25CUllzQWtaeFlTOFpxOHRHV3lxU3NF?=
- =?utf-8?B?NFVZSlExQk1Pd0loaEpJaEtzMWhud29BUFJKYmRkS3NOZlBJMGRVcmwzR3NY?=
- =?utf-8?B?aUw4cjlsc0UxTmlEN0QrRXJwcHc1T215ckl5akRWQ3NNbUt2VDNNSVFLWHNk?=
- =?utf-8?B?KzlHbHo1bEtnQXkvQWhHMHdBVFR6WVFqRXplUy8xcDJkTzVSd2VkNEd2Skk1?=
- =?utf-8?B?dkhjUUxkbTdCTlh6Qm82WVVKTFN6Z3VmRUdHMXhDOGdVN0RPSVpaQXdPdDhp?=
- =?utf-8?B?OUtISDdRQXc2czhqMDdETk92dzJUazJDNWN4dkRuRFJxeFZFUW9aZW1qc1Az?=
- =?utf-8?B?cGtWaEo1dFYyNXpsNHp3SkdXZ3g3SFJoVk1wVS9vR2tSUTczeThoZGp6bEpi?=
- =?utf-8?B?TkcyMXQ2Q1VFaUgvb08xLzJEU1l4V09hakhINFkwdGt6MURVc2kwR0pJNHpE?=
- =?utf-8?B?VEVrbUJMNHQyV1d6T0hOcktlMXozSUhlZTJSTnZ4WWhnZUVTcTFUMUJ1cDlZ?=
- =?utf-8?B?ZjVGam0yZjdZZUZKR2E5SGNtSCtWdGg2RU9OU2JTb0V6ZXpVc25DQzdINHJm?=
- =?utf-8?B?ODdBZDVVZE1HalRwVHFmQXM0SGJveFRBNXpNU2MwaXF6eFRob3hpcGUvbW5y?=
- =?utf-8?B?RVFnUEpSaW5lL3VSV3BPcVBHZitRZmRyU1VlR3lLeHpXeWIzODhybGVQSUN2?=
- =?utf-8?B?WnhnRnlpZ0RkclJNQ3J4OS82OCtvdU02amxlQnBSUEtBeFhhempkNG9hVlpC?=
- =?utf-8?B?TWpYZUFxQjQvS1p3YmRoelphK0w4Mlo1SklEUndXSFo3UGJRQTVHV2dvKzVE?=
- =?utf-8?B?c0NOdUUra24xMDYzNUR4aVdRU3pGRE81K2FUTnZZUmUwK2srcnUya09XbERm?=
- =?utf-8?B?ZU5aSmtzZktRcmpHdTZQV1haZk5uRFRudFZsakx0K1cwd01xL2kyeVRXTk42?=
- =?utf-8?B?aGRSV1hxR25aZzU0aHZWQ2tkbXU1b0QwSGlXT0xsa0dZc1RVT1pHVDQxRHpX?=
- =?utf-8?B?dzhuWjlON08xeUt4RDBIOGEvQVpQb3RjZ211WStaY0sxN1JhMnB3NHp2aURE?=
- =?utf-8?B?WGNoZ2dDVHpZeUJmblpValVKVGtwMGtzQzE0eHRUM1BvdDdEbjdpdlo3cnFE?=
- =?utf-8?B?NDJINnMvWGZUTjNKWjZGUEd1YXhpRFJHbnA2ZENMRm50N1JKeHlYMXJVS0lS?=
- =?utf-8?B?VDBiWVhwcUJ1bXR0N1VDMXNDaHh0cnpjTjkzNE9GeGQzSjc4ZUNvRnpzaFlt?=
- =?utf-8?B?NkRlYm5EcHVsM1FYVGJ3UDY5Z0F6SEZxeDJIeXZKTjQxTFVqZEhLSDE2aDZI?=
- =?utf-8?B?U1NFUTgrVU5LbXVtUEY1ck5EVTRJZ29sOVFGa3dLMzErS2VlbUtQaEtGdDZZ?=
- =?utf-8?B?b3h1QnVmZGtvaVN2S2Y3YkdoeHF0dXdxMUNEUDR4bDVIR3Z4bUptTUtKNkVO?=
- =?utf-8?B?eEs0Vk94NjNSZkVNdndrOTNKV3MxeU9KWGllWGJmWDZWZWhOWmxLV1Z0L1Yz?=
- =?utf-8?B?MU1rcFpGNmVIVmNtdVZ4Y0FTbWN3c3lVQi9xTDFyNlBCbHFzNTgrL2tneXlx?=
- =?utf-8?B?WmkrcjNRVUQ3S3l4TlcxNjhmU3BBR0Q4WExqdlI3dnA4aEpNNUwvQjY0THQ5?=
- =?utf-8?B?VVVaT0lwdFZUbGtaem5INzNpV0xtV0ZyUlM2TkFLejdtb0pmM2RwWmFJSzBI?=
- =?utf-8?B?MUg5Q3dxNHBRamhSckhiVDJ3YUZmSldrMDEvcHZYMUtpUHNkSCtsc01LOHFV?=
- =?utf-8?B?UUJJOWpvRXRFenk4WURMWUczL0ZLNDRscUtNaS81cU4vWktiSlFRNzNpcS9s?=
- =?utf-8?B?OUtERFZIRUs0cHR3bkNNSVArcGlNa0d5TDJPM1hsZSsyditGM2hKU1NJL0I3?=
- =?utf-8?Q?nceRQSjND7KLrgz4=3D?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: edd1cb2c-fb98-4642-cd61-08de4f88c103
-X-MS-Exchange-CrossTenant-AuthSource: GVXPR04MB12038.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jan 2026 14:09:50.6417
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: d/4+YiAJj2qoavaJC3qXzYxPWbVJS6+gd7vuuemCH+v4VTvYtX4csYvq7uDdRKjwIiAyzaVk5bnrkhMtYAM+MroQKPLXUNQYXKclQFQYc6k=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7893
+Content-Type: multipart/mixed; boundary="-1463811583-888252922-1767983443=:3481"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 09 Jan 2026 14:09:59 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2926
+ <yocto-patches@lists.yoctoproject.org>; Fri, 09 Jan 2026 18:30:51 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2927
 
-Hi Trevor,
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-On 12/21/25 1:48 AM, Trevor Woerner via lists.yoctoproject.org wrote:
-> A change was made in the location and name of the bl31 artifact for
-> device firmware built with trusted-firmware-a. Update the build to match
-> so these devices continue to build successfully.
-> 
+---1463811583-888252922-1767983443=:3481
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-Thanks for pinging me in private on this. And thanks for the quick 
-band-aid patch to fix the build :)
+On Fri, 9 Jan 2026, Vijay Anusuri wrote:
 
-This patch is probably not enough. I believe all SoCs are impacted by 
-this issue.
+> Hi Team,
+>
+> Any Update on this ?
+>
+> Thanks & Regards,
+> Vijay
 
-I think this is due to 7bce36a2c64b ("arm/trusted-firmware-a: Use 
-firmware.bbclass") in meta-arm which now uses firmware.bbclass, which 
-deploys in a per-recipe directory in DEPLOY_IMAGE_DIR instead of dumping 
-stuff directly there.
+My apologies, kirkstone and scarthgap branch updates have been delayed due
+to travel on my part in early December followed by the holidays.  I'm
+aiming to push out updates for them in the next few days.
 
-Checking now... ping me next week if I haven't answered here or sent a 
-patch to fix it.
+Scott
 
-Cheers,
-Quentin
 
+> On Fri, Dec 5, 2025 at 3:41 PM <vanusuri@mvista.com> wrote:
+>
+> > From: Vijay Anusuri <vanusuri@mvista.com>
+> >
+> > Upstream-Status: Backport [
+> > https://github.com/SSSD/sssd/commit/a0336f4cd69c25b3d501a3d361d3d286c00da4d2
+> > ]
+> >
+> > Signed-off-by: Vijay Anusuri <vanusuri@mvista.com>
+> > ---
+> >  .../sssd/files/CVE-2025-11561.patch           | 50 +++++++++++++++++++
+> >  recipes-security/sssd/sssd_2.5.2.bb           |  1 +
+> >  2 files changed, 51 insertions(+)
+> >  create mode 100644 recipes-security/sssd/files/CVE-2025-11561.patch
+> >
+> > diff --git a/recipes-security/sssd/files/CVE-2025-11561.patch
+> > b/recipes-security/sssd/files/CVE-2025-11561.patch
+> > new file mode 100644
+> > index 0000000..0bfed6d
+> > --- /dev/null
+> > +++ b/recipes-security/sssd/files/CVE-2025-11561.patch
+> > @@ -0,0 +1,50 @@
+> > +From a0336f4cd69c25b3d501a3d361d3d286c00da4d2 Mon Sep 17 00:00:00 2001
+> > +From: Sumit Bose <sbose@redhat.com>
+> > +Date: Fri, 10 Oct 2025 12:57:40 +0200
+> > +Subject: [PATCH] krb5: disable Kerberos localauth an2ln plugin for AD/IPA
+> > +MIME-Version: 1.0
+> > +Content-Type: text/plain; charset=UTF-8
+> > +Content-Transfer-Encoding: 8bit
+> > +
+> > +If a client is joined to AD or IPA SSSD's localauth plugin can handle
+> > +the mapping of Kerberos principals to local accounts. In case it cannot
+> > +map the Kerberos principals libkrb5 is currently configured to fall back
+> > +to the default localauth plugins 'default', 'rule', 'names',
+> > +'auth_to_local', 'k5login' and 'an2ln' (see man krb5.conf for details).
+> > +All plugins except 'an2ln' require some explicit configuration by either
+> > +the administrator or the local user. To avoid some unexpected mapping is
+> > +done by the 'an2ln' plugin this patch disables it in the configuration
+> > +snippets for SSSD's localauth plugin.
+> > +
+> > +Resolves: https://github.com/SSSD/sssd/issues/8021
+> > +
+> > +:relnote: After startup SSSD already creates a Kerberos configuration
+> > + snippet typically in /var/lib/sss/pubconf/krb5.include.d/localauth_plugin
+> > + if the AD or IPA providers are used. This enables SSSD's localauth
+> > plugin.
+> > + Starting with this release the an2ln plugin is disabled in the
+> > + configuration snippet as well. If this file or its content are included
+> > in
+> > + the Kerberos configuration it will fix CVE-2025-11561.
+> > +
+> > +Reviewed-by: Alexey Tikhonov <atikhono@redhat.com>
+> > +Reviewed-by: Pavel Březina <pbrezina@redhat.com>
+> > +(cherry picked from commit 9939c39d1949fad48af2f0b43c788bad0809e310)
+> > +
+> > +Upstream-Status: Backport [
+> > https://github.com/SSSD/sssd/commit/a0336f4cd69c25b3d501a3d361d3d286c00da4d2
+> > ]
+> > +CVE: CVE-2025-11561
+> > +Signed-off-by: Vijay Anusuri <vanusuri@mvista.com>
+> > +---
+> > + src/util/domain_info_utils.c | 1 +
+> > + 1 file changed, 1 insertion(+)
+> > +
+> > +diff --git a/src/util/domain_info_utils.c b/src/util/domain_info_utils.c
+> > +index e131a5d96af..160e1711bcd 100644
+> > +--- a/src/util/domain_info_utils.c
+> > ++++ b/src/util/domain_info_utils.c
+> > +@@ -751,6 +751,7 @@ static errno_t sss_write_krb5_snippet_common(const
+> > char *file_name,
+> > + #define LOCALAUTH_PLUGIN_CONFIG \
+> > + "[plugins]\n" \
+> > + " localauth = {\n" \
+> > ++"  disable = an2ln\n" \
+> > + "  module = sssd:"APP_MODULES_PATH"/sssd_krb5_localauth_plugin.so\n" \
+> > + " }\n"
+> > +
+> > diff --git a/recipes-security/sssd/sssd_2.5.2.bb b/recipes-security/sssd/
+> > sssd_2.5.2.bb
+> > index c07559c..43c31ee 100644
+> > --- a/recipes-security/sssd/sssd_2.5.2.bb
+> > +++ b/recipes-security/sssd/sssd_2.5.2.bb
+> > @@ -25,6 +25,7 @@ SRC_URI = "
+> > https://github.com/SSSD/sssd/releases/download/${PV}/sssd-${PV}.tar.g
+> >             file://musl_fixup.patch \
+> >             file://CVE-2021-3621.patch \
+> >             file://CVE-2023-3758.patch \
+> > +           file://CVE-2025-11561.patch \
+> >             "
+> >
+> >  SRC_URI[sha256sum] =
+> > "5e21b3c7b4a2f1063d0fbdd3216d29886b6eaba153b44fb5961698367f399a0f"
+> > --
+> > 2.25.1
+> >
+> >
+>
+---1463811583-888252922-1767983443=:3481--
 
