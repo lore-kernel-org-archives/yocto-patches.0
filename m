@@ -2,35 +2,33 @@ Return-Path: <peter.marko@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF123D2502E
-	for <webhook@archiver.kernel.org>; Sun, 11 Jan 2026 19:05:37 +0000 (UTC)
-Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.16414.1768158326597390255
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D54F1D2502D
+	for <webhook@archiver.kernel.org>; Sun, 11 Jan 2026 19:06:57 +0000 (UTC)
+Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.16324.1768158410405422040
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 11 Jan 2026 11:05:28 -0800
+ Sun, 11 Jan 2026 11:06:50 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=peter.marko@siemens.com header.s=fm1 header.b=dxcS7TBS;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.226, mailfrom: fm-256628-202601111905277f2f74875800020700-qzo490@rts-flowmailer.siemens.com)
-Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 202601111905277f2f74875800020700
+ dkim=pass header.i=peter.marko@siemens.com header.s=fm1 header.b=Nr/diw3B;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.227, mailfrom: fm-256628-20260111190648fcf3e0a0f0000207e5-_0s0jy@rts-flowmailer.siemens.com)
+Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 20260111190648fcf3e0a0f0000207e5
         for <yocto-patches@lists.yoctoproject.org>;
-        Sun, 11 Jan 2026 20:05:27 +0100
+        Sun, 11 Jan 2026 20:06:48 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=peter.marko@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=NEE5rcnUTWfVFbn/yvf4fCBhpfiFOJQ/IM1CJkUjjlE=;
- b=dxcS7TBSzdZONe+eE7Rs+y2d2MftuKjNnLtY9Z/l3VLoNj9QKQqn9sa6Hth4hbNTN/5Pm7
- sAxoc8PlWdmOTys5W30OWj3dCOQTVSUi/2+ohrSMOUvh05x7/vY7dwYhne3axGABJ6gNtQdF
- uW48Qg82nO4euzGnzv7HXBnk5P6sV/3gZgsIpPmwnVdQi3SU08FEFXomh8mJ++UTRmLA40uQ
- fPFONNnv8iMNNohIwXtX9CRU153+QX5hI0F1RjgU9LOAQp0sbp4thJXm6s2Mq+9FSOmNsajD
- BypxrunZoJICUF0dc8za3r1CeVNgF+Th8HD/291FOkODxkl57iHxf3Og==;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=3wJguOzDcbe5836cuf1i9Wz6jvofIp2puQ99KJ4bQW4=;
+ b=Nr/diw3BKgMNlJ1TDmEaA6A5a+voG8csVESJTD7XUeqDHNC8BzrIqXvPAwJUNRYr5zVtXl
+ S8iYxFzghh2RaK3ig+HW8g0DawjW2lDyFIWgHcqDjF7g62NiujTSePb1E8BMr+WSuZyreghQ
+ 6qoe61A4v6VN73SDulVI93/rpBUcEzmv38EhYZGyg1tM7rVk8c5HNfpUQnhc5ZqVo6BOhnq5
+ 8WZJVGmJBLn8izFuc/O1QpobkOshWhlrwG8P+1VDClDXAtTGGrzXnHij8ISP1Eq4qOUw53BY
+ efOMmC/1GUf3uGnLSTxkaI9uzJmY4nztzZgoCuSeqM4I7/tIBBq/y8Vg==;
 From: Peter Marko <peter.marko@siemens.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Peter Marko <peter.marko@siemens.com>
-Subject: [yocto-metrics][PATCH 2/2] patch-status: add whinlatter
-Date: Sun, 11 Jan 2026 20:05:15 +0100
-Message-Id: <20260111190515.13188-2-peter.marko@siemens.com>
-In-Reply-To: <20260111190515.13188-1-peter.marko@siemens.com>
-References: <20260111190515.13188-1-peter.marko@siemens.com>
+Subject: [yocto-metrics][PATCH v2 1/2] patch-status: drop styhead
+Date: Sun, 11 Jan 2026 20:06:42 +0100
+Message-Id: <20260111190643.13404-1-peter.marko@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Flowmailer-Platform: Siemens
@@ -38,62 +36,47 @@ Feedback-ID: 519:519-256628:519-21489:flowmailer
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sun, 11 Jan 2026 19:05:37 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2934
+ <yocto-patches@lists.yoctoproject.org>; Sun, 11 Jan 2026 19:06:57 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2935
 
-See https://lists.yoctoproject.org/g/yocto-announce/message/366
+From: Peter Marko <peter.marko@siemens.com>
+
+Metrics are no longer updated for this styhead, so drop current list of
+its CVEs. Keep it in graphs as all other obsolete releases.
 
 Signed-off-by: Peter Marko <peter.marko@siemens.com>
 ---
- patch-status/index.html   | 12 +++++++++++-
- patch-status/releases.csv |  1 +
- 2 files changed, 12 insertions(+), 1 deletion(-)
+v2: correct sender
+ patch-status/index.html | 11 -----------
+ 1 file changed, 11 deletions(-)
 
 diff --git a/patch-status/index.html b/patch-status/index.html
-index 39c6f5a5..f0841c73 100644
+index 9bdcd478..39c6f5a5 100644
 --- a/patch-status/index.html
 +++ b/patch-status/index.html
-@@ -170,6 +170,10 @@ SPDX-License-Identifier: MIT
-           <summary>master</summary>
-           <div id="cve_status_master"></div>
-         </details>
-+        <details>
-+          <summary>whinlatter</summary>
-+          <div id="cve_status_whinlatter"></div>
-+        </details>
-         <details>
+@@ -174,10 +174,6 @@ SPDX-License-Identifier: MIT
            <summary>walnascar</summary>
            <div id="cve_status_walnascar"></div>
-@@ -365,6 +369,12 @@ SPDX-License-Identifier: MIT
-         createCVEList('cve_status_master', data);
+         </details>
+-        <details>
+-          <summary>styhead</summary>
+-          <div id="cve_status_styhead"></div>
+-        </details>
+         <details>
+           <summary>scarthgap</summary>
+           <div id="cve_status_scarthgap"></div>
+@@ -375,13 +371,6 @@ SPDX-License-Identifier: MIT
+         createCVEList('cve_status_walnascar', data);
        })
  
-+    fetch('cve-status-whinlatter.txt')
-+      .then(response => response.text())
-+      .then(data => {
-+        createCVEList('cve_status_whinlatter', data);
-+      })
-+
-     fetch('cve-status-walnascar.txt')
+-    fetch('cve-status-styhead.txt')
+-      .then(response => response.text())
+-      .then(data => {
+-        createCVEList('cve_status_styhead', data);
+-      })
+-
+-
+     fetch('cve-status-scarthgap.txt')
        .then(response => response.text())
        .then(data => {
-@@ -440,7 +450,7 @@ SPDX-License-Identifier: MIT
-       upstream_status: 'Malformed Upstream-Status',
-       inactive_upstream: 'Inactive-Upstream'
-     };
--    const branches = ['master', 'walnascar', 'styhead', 'scarthgap', 'nanbield', 'mickledore', 'langdale', 'kirkstone', 'honister', 'hardknott', 'gatesgarth', 'dunfell']
-+    const branches = ['master', 'whinlatter', 'walnascar', 'styhead', 'scarthgap', 'nanbield', 'mickledore', 'langdale', 'kirkstone', 'honister', 'hardknott', 'gatesgarth', 'dunfell']
- 
-     const general_options = {
-       tooltip: {
-diff --git a/patch-status/releases.csv b/patch-status/releases.csv
-index 91b94bd9..1e8d95f3 100644
---- a/patch-status/releases.csv
-+++ b/patch-status/releases.csv
-@@ -1,4 +1,5 @@
- Name,Date
-+5.3 (Whinlatter),2025-12-16
- 5.2 (Walnascar),2025-05-08
- 5.1 (Styhead),2024-10-17
- 5.0 (Scarthgap),2024-04-30
 
