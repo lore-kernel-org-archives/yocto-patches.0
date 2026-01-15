@@ -2,61 +2,61 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B12FFD4663D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4CC5D3CCB0
 	for <webhook@archiver.kernel.org>; Thu, 15 Jan 2026 22:46:58 +0000 (UTC)
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.688.1768517214106491196
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.690.1768517214824433613
  for <yocto-patches@lists.yoctoproject.org>;
  Thu, 15 Jan 2026 14:46:54 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=AXAPTppJ;
- spf=pass (domain: konsulko.com, ip: 209.85.219.42, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-88a3b9ddd40so8120066d6.1
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 15 Jan 2026 14:46:53 -0800 (PST)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=f378gLUJ;
+ spf=pass (domain: konsulko.com, ip: 209.85.222.180, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-8c5265d06c3so241969585a.1
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 15 Jan 2026 14:46:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1768517213; x=1769122013; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1768517214; x=1769122014; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tUUZzt6Y2g2VvCEas/5BVqY8LI+A1XW6Il+dWwSN6iw=;
-        b=AXAPTppJyIhrflISmEd5Kx0Tvbl4OKiLE42DwTjK9QWC9VhiPndvvv1f+wJ22qBiWc
-         pVunqQCXW+5DJABkapAFR3CiV0R6Ix5eOf8syR2qaQKhKX74y2ERSazs63utnHZZBehO
-         fYaAIWmB+bs32T0GehjQJyWMJrm0xvAUrymMk=
+        bh=HNcd9iwZoMzCWgHxeBAhfjAdyaFoSNZ7KeL31k5lk/k=;
+        b=f378gLUJ5bkV6F/SGnqMajXQJ/djr3+f8pJh+FOFsXrT5W+r6NAu93h7yXnkbKXgRZ
+         orK8bYKYGf1GCVgxzmb60ZPzE8INogbhWqc0bZ4bv7reh2t4BoWuuo//wl9aVnxaBTdO
+         7GR2a4/SSWOVvvlBac3uerENT+qJZ2WLcCTo0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768517213; x=1769122013;
+        d=1e100.net; s=20230601; t=1768517214; x=1769122014;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=tUUZzt6Y2g2VvCEas/5BVqY8LI+A1XW6Il+dWwSN6iw=;
-        b=puVALmhmGbNOGl3DYS/CdRPCbw5g3BQ9xFbKbvt+8vvu3lpAoT0BavY2wpDsAGSOyl
-         0wktRnqawbWlsQrwNxmox/DxrGKorZmQ78peTe5D5+W0pgyFDj/GtFZBd1FmZsvn28m9
-         skCmNJ/ETeTIGEEsikHDipJ+gRhXyA2vfm71/jO0FQn1LgjsS7gSUR+Mhg5bSm1DDR+T
-         QmxkglbzEQ6zIHGf458F6ZicwSRn026YdQ5NMX/5g+wDRy6kEPiXcAEWZGCQFZ6lqmsn
-         LriXd5BjunpkXAnFLl+ZYhomP7LG7BsJBDhMxLnYwj1wMcNnQnywLYhBmqgjCGP7wN8h
-         mesw==
-X-Gm-Message-State: AOJu0YwBFw42f38+/5pnaHDkhDOvtPgRe0H7DiRC9JtbOSnNtbLCMM4w
-	X4ObW45HlcbWHOm6u5YDlQXg31Ofdm2CBLl43prw+VMeleysI5C7pri0lfjyAvCyDTTtneX12AM
-	blo+M
-X-Gm-Gg: AY/fxX5Wf22r/Vo1cp4Ax0JHAkMDfyqCgWgbgOX6FNFCCIL82bZ9+EjhfAE4W4qk6DE
-	wuM+Cjm/gFkDIyArFSJxGIbOyhX2xEefcXfKTpbIl5EdRd57W/vVL9OB1GY+1hqEdfv95VpFeX9
-	m5AOnY9hFrGc2hHBFN6qEXucPwUNHXLVxYJV3vjEcD6OXajtjUeT1oTC0RtireJLhOe8E33myhj
-	2+bLi5qy9HzTHGCPMrSyrnvQT+/lO9RNt+zLfOmOreVpOXbfH47C8WlVokieO75JttO34Z/eQG3
-	u32ftuH46HKl6HivoueuQkSgDvyViT1IS24dvcOyfxH5ZWK6GrJqXbtrN80SzBnTVoZ5i8BJ07g
-	WmXvzPNSuIa6JsbRCr7xcguwPvrqD8j+s0ZydD7BIqQVwsEUCowNa1YuQGFMZddEDy5duMRbMFt
-	6fa79GpFEu+Hwez7gk4PVpArA4nc8Sp2qb60oELqaaM1FSW6GuItusHDbWZu9A5qsENEozsiYDL
-	cMjTTBess3yC8Gh2j2dYOAw87YwpdN8jd6s9gBeiuK1aq56/MjQ
-X-Received: by 2002:ad4:5cef:0:b0:890:e2d:a9d6 with SMTP id 6a1803df08f44-8942ddb3c6amr17442346d6.68.1768517212640;
-        Thu, 15 Jan 2026 14:46:52 -0800 (PST)
+        bh=HNcd9iwZoMzCWgHxeBAhfjAdyaFoSNZ7KeL31k5lk/k=;
+        b=NuG6DbF5Qrb/gldRCxnCJy5B7ZSZ2KuvPHNo+rR9umdyBATV47YHESrnQbRrTWODTD
+         Dh0RcaJwaOKG1qdYmbTkpVwiNJw4PL4cpkjRIiYfg1Bwn3VOBxKWWsliARoj2qI1e5Hz
+         JUREkXtpopYogNynbsGXRxVAc7tYIqxmFNM45WjzEztGWj/u6uBamsvbiUMhMahDjuxy
+         Nrrq4+N636VI+6KU7lUZ3oB0bpgb1dl/Jt/WXf1MJNE8k1fnCo8cV2BTI3L2gBo311DQ
+         /oS3uyM/ZEKVcJ82Xaj62dPzg6TLqtJZ5w4N1FAEMRoidfXTfS2Ce5NwM9RJdqxe2hhB
+         r61g==
+X-Gm-Message-State: AOJu0YwkezJiq/1odRxSHul3ZSCmW+NOyA3epplS9Wi2a42Zb7PknvNe
+	W6cV8L3OmFiktdju5T8W4/+lIE/eRdL98MHd9pSdcTJqRS1MgR/OGSk15Pt7skrLT/DqtTjxgJM
+	SpWVu
+X-Gm-Gg: AY/fxX6q2ZMHxxQ1SbersO9rp46KNQcvVoK9qLLlt7Zq7emV4UFtAgX9SCwzhn4d4QA
+	xtdM83nmd2cYhz+/R8XIH0H1LFG6NYmEi6/oiE6lzWNN7j2yGYD3L7f83rBa1BmYVjgdOGu1yM0
+	GEwzdB4s9H2lIg1uXh0pbDOTCtsa98xxb0mIvoe1wQ++mVQGH9BfDL/fXto8Z0JYRbtmvNHnjMm
+	mkB3g+2AeCx+/THoe81kxbocdSsqeEw8AdNpblIcB94u6vhZQSfOPVy2X3ZqqOIUTMRYQDAn7r6
+	xqbI9pFyN5I7aM4qwRQ3mrwg0LSt1cZrCPDFVS6zPKnyn1F/MgUQZez+ga6PqkJ+lntWKkTHiuq
+	lgZkVuhhF5QqmXnTxGJoxlDYUCSZCcufSVz800hcoYSECVaPzrZj+rAljuwzgf/uNJ4i6ni9M+a
+	E74foot6dlVzytHRx7QbwjU6PMs1uo7QkSTHGdq0wZoQ5JgMvlR63D3rO3kRs9vjXpF8KvN6esl
+	fM3VWx3DDGdYl2VxwRMH+lk/VlSgnJ68BI06MHPolYkBeYts3bZ
+X-Received: by 2002:a05:6214:401a:b0:890:7f85:81d1 with SMTP id 6a1803df08f44-89389fa20f5mr71472296d6.13.1768517213636;
+        Thu, 15 Jan 2026 14:46:53 -0800 (PST)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8942e6040casm7921436d6.21.2026.01.15.14.46.51
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8942e6040casm7921436d6.21.2026.01.15.14.46.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jan 2026 14:46:52 -0800 (PST)
+        Thu, 15 Jan 2026 14:46:53 -0800 (PST)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Marta Rybczynska <rybczynska@gmail.com>
-Subject: [meta-security][kirkstone][PATCH 2/9] CI: update build for new CI
-Date: Thu, 15 Jan 2026 17:46:23 -0500
-Message-ID: <cbbb804f5dd2fb26ec391255694e4e0ec32b3ed4.1768515491.git.scott.murray@konsulko.com>
+Subject: [meta-security][kirkstone][PATCH 3/9] kas: update configuration
+Date: Thu, 15 Jan 2026 17:46:24 -0500
+Message-ID: <85c681c0d4163dacdad219e1e17b995b33cbdd51.1768515491.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <cover.1768515491.git.scott.murray@konsulko.com>
 References: <cover.1768515491.git.scott.murray@konsulko.com>
@@ -66,154 +66,178 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Thu, 15 Jan 2026 22:46:58 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2967
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2968
 
 From: Marta Rybczynska <marta.rybczynska@ygreky.com>
 
-Update for Ubuntu 24.04 runners:
-- use venv for installing kas
-- add missing directories
-- assume that python3 and pip are installed.
+Update based on latest master configuration.
 
-Other changes:
-- add logging of jobs to files
+Changes:
+- switch to kirkstone
+- add required usrmerge feature to kas-security-alt configuration
+- add whitespaces around assignement
+- add common dldir/sstate
+- don't build apparmor in musl configs
+- only enable ptest for the test image
+- Update the kas configuration file versions to 19 to match kas 4.8.x.
+- Change refspec to branch to remove deprecation warnings.
+- Add quoting around URLs to match upstream examples.
 
-Signed-off-by: Marta Rybczynska <marta.rybczynska@ygreky.com>
-(reworked for kirkstone branch)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- .gitlab-ci.yml | 49 ++++++++++++++++++++++++++++---------------------
- 1 file changed, 28 insertions(+), 21 deletions(-)
+ kas/kas-security-alt.yml    |  4 ++--
+ kas/kas-security-base.yml   | 21 +++++++++++++--------
+ kas/kas-security-dm.yml     |  2 +-
+ kas/kas-security-parsec.yml |  4 ++--
+ kas/qemuarm64-musl.yml      |  1 +
+ kas/qemux86-musl.yml        |  1 +
+ kas/qemux86-test.yml        |  4 ++++
+ 7 files changed, 24 insertions(+), 13 deletions(-)
 
-diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
-index a4137cb..e37a161 100644
---- a/.gitlab-ci.yml
-+++ b/.gitlab-ci.yml
-@@ -1,10 +1,13 @@
- .before-my-script: &before-my-script
-     - echo "$ERR_REPORT_USERNAME" > ~/.oe-send-error
-     - echo "$ERR_REPORT_EMAIL" >> ~/.oe-send-error
-+    - echo "$CI_PROJECT_DIR" >> ~/.ci_project_dir
-     - export PATH=~/.local/bin:$PATH
--    - wget https://bootstrap.pypa.io/get-pip.py
--    - python3 get-pip.py
-+    - python3 -m venv ~/kas_env/
-+    - source ~/kas_env/bin/activate
-     - python3 -m pip install kas
-+    - mkdir -p $CI_PROJECT_DIR/build/tmp/log/error-report/
-+    - mkdir -p $CI_PROJECT_DIR/log/
+diff --git a/kas/kas-security-alt.yml b/kas/kas-security-alt.yml
+index 3ee9808..2a449c5 100644
+--- a/kas/kas-security-alt.yml
++++ b/kas/kas-security-alt.yml
+@@ -1,8 +1,8 @@
+ header:
+-    version: 9
++    version: 19
+     includes: 
+         - kas-security-base.yml
  
- .after-my-script: &after-my-script
-     - cd $CI_PROJECT_DIR/poky
-@@ -26,6 +29,10 @@ stages:
-   stage: base 
-   after_script:
-     - *after-my-script
-+  artifacts:
-+    paths:
-+      - $CI_PROJECT_DIR/log/*
-+    when: always
+ local_conf_header:
+   alt: |
+-      DISTRO_FEATURES:append = " systemd"
++      INIT_MANAGER = "systemd"
+diff --git a/kas/kas-security-base.yml b/kas/kas-security-base.yml
+index 3bf46db..78c0b04 100644
+--- a/kas/kas-security-base.yml
++++ b/kas/kas-security-base.yml
+@@ -1,5 +1,5 @@
+ header:
+-  version: 9
++  version: 19
  
- .parsec:
-   before_script:
-@@ -51,78 +58,78 @@ stages:
- qemux86:
-   extends: .base
-   script:
--  - kas shell kas/$CI_JOB_NAME.yml  -c "bitbake -k security-build-image integrity-image-minimal"
--  - kas build --target security-build-image kas/$CI_JOB_NAME-comp.yml
--  - kas build --target harden-image-minimal kas/$CI_JOB_NAME-harden.yml
-+  - kas shell kas/$CI_JOB_NAME.yml  -c "bitbake -k security-build-image integrity-image-minimal" 2>&1 | tee $CI_PROJECT_DIR/log/qemux86_security_image.txt
-+  - kas build --target security-build-image kas/$CI_JOB_NAME-comp.yml  2>&1 | tee $CI_PROJECT_DIR/log/qemux86_compliance_image.txt
-+  - kas build --target harden-image-minimal kas/$CI_JOB_NAME-harden.yml 2>&1 | tee $CI_PROJECT_DIR/log/qemux86_harden_image.txt
+ distro: poky
  
- qemux86-musl:
-   extends: .musl
-   needs: ['qemux86']
-   script:
--  - kas build --target security-build-image kas/$CI_JOB_NAME.yml
-+  - kas build --target security-build-image kas/$CI_JOB_NAME.yml 2>&1 | tee $CI_PROJECT_DIR/log/qemux86_musl_security_image.txt
+@@ -13,16 +13,16 @@ repos:
+       meta-hardening:
  
- qemux86-parsec:
-   extends: .parsec
-   needs: ['qemux86']
-   script:
--  - kas build --target security-build-image kas/$CI_JOB_NAME.yml
-+  - kas build --target security-build-image kas/$CI_JOB_NAME.yml 2>&1 | tee $CI_PROJECT_DIR/log/qemux86_parsec_security_image.txt
+   poky:
+-    url: https://git.yoctoproject.org/git/poky
+-    refspec: master
++    url: "https://git.yoctoproject.org/git/poky"
++    branch: kirkstone
+     layers:
+       meta:
+       meta-poky:
+       meta-yocto-bsp:
+-
++ 
+   meta-openembedded:
+-    url: http://git.openembedded.org/meta-openembedded
+-    refspec: master
++    url: "http://git.openembedded.org/meta-openembedded"
++    branch: kirkstone
+     layers:
+       meta-oe:
+       meta-perl:
+@@ -41,8 +41,8 @@ local_conf_header:
+     INHERIT += "report-error"
+     INHERIT += "testimage"
+     INHERIT += "rm_work"
+-    BB_NUMBER_THREADS="24"
+-    BB_NUMBER_PARSE_THREADS="12"
++    BB_NUMBER_THREADS = "24"
++    BB_NUMBER_PARSE_THREADS = "12"
+     BB_TASK_NICE_LEVEL = '5'
+     BB_TASK_NICE_LEVEL_task-testimage = '0'
+     BB_TASK_IONICE_LEVEL = '2.7'
+@@ -52,6 +52,7 @@ local_conf_header:
+     PACKAGE_CLASSES = "package_ipk"
  
- qemux86-test:
-   extends: .test
-   needs: ['qemux86']
-   allow_failure: true
-   script:
--  - kas build --target security-test-image kas/$CI_JOB_NAME.yml
--  - kas build -c testimage --target security-test-image kas/$CI_JOB_NAME.yml
-+  - kas build --target security-test-image kas/$CI_JOB_NAME.yml 2>&1 | tee $CI_PROJECT_DIR/log/qemux86_test_security_image.txt
-+  - kas build -c testimage --target security-test-image kas/$CI_JOB_NAME.yml 2>&1 | tee $CI_PROJECT_DIR/log/qemux86_testimage_security_image.txt
+     DISTRO_FEATURES:append = " security pam apparmor smack ima tpm tpm2"
++    DISTRO_FEATURES:remove = "ptest"
+     MACHINE_FEATURES:append = " tpm tpm2"
  
- qemux86-64:
-   extends: .base
-   script:
--  - kas shell kas/$CI_JOB_NAME.yml  -c "bitbake -k security-build-image security-tpm-image security-tpm2-image integrity-image-minimal"
--  - kas build --target dm-verity-image-initramfs kas/$CI_JOB_NAME-dm-verify.yml
--  - kas build --target security-build-image kas/$CI_JOB_NAME-alt.yml
-+  - kas shell kas/$CI_JOB_NAME.yml  -c "bitbake -k core-image-minimal security-build-image security-tpm-image security-tpm2-image integrity-image-minimal" 2>&1 | tee $CI_PROJECT_DIR/log/qemux86_64_security_image.txt
-+  - kas build --target dm-verity-image-initramfs kas/$CI_JOB_NAME-dm-verify.yml 2>&1 | tee $CI_PROJECT_DIR/log/qemux86_64_dm_verify.txt
-+  - kas build --target security-build-image kas/$CI_JOB_NAME-alt.yml 2>&1 | tee $CI_PROJECT_DIR/log/qemux86_64_security_build_image.txt
+   diskmon: |
+@@ -65,6 +66,10 @@ local_conf_header:
+     ABORT,${SSTATE_DIR},100M,1K \
+     ABORT,/tmp,10M,1K"
  
- qemux86-64-parsec:
-   extends: .parsec
-   needs: ['qemux86-64']
-   script:
--  - kas build --target security-build-image kas/$CI_JOB_NAME.yml
-+  - kas build --target security-build-image kas/$CI_JOB_NAME.yml 2>&1 | tee $CI_PROJECT_DIR/log/qemux86_64_parsec_security_image.txt
++  dlsstate: |
++    DL_DIR = "/home/gitlab-runner/build/downloads"
++    SSTATE_DIR = "/home/gitlab-runner/build/sstate-cache"
++
+ bblayers_conf_header:
+   base: |
+     BBPATH = "${TOPDIR}"
+diff --git a/kas/kas-security-dm.yml b/kas/kas-security-dm.yml
+index c03b336..fe74d25 100644
+--- a/kas/kas-security-dm.yml
++++ b/kas/kas-security-dm.yml
+@@ -1,5 +1,5 @@
+ header:
+-    version: 9
++    version: 19
+     includes: 
+         - kas-security-base.yml
  
- qemuarm:
-   extends: .base
-   script:
--  - kas build --target security-build-image kas/$CI_JOB_NAME.yml
-+  - kas build --target security-build-image kas/$CI_JOB_NAME.yml 2>&1 | tee $CI_PROJECT_DIR/log/qemuarm_security_image.txt
+diff --git a/kas/kas-security-parsec.yml b/kas/kas-security-parsec.yml
+index 9a009be..cb59fba 100644
+--- a/kas/kas-security-parsec.yml
++++ b/kas/kas-security-parsec.yml
+@@ -1,5 +1,5 @@
+ header:
+-    version: 9
++    version: 19
+     includes:
+         - kas-security-base.yml
  
- qemuarm-parsec:
-   extends: .parsec
-   needs: ['qemuarm']
-   script:
--  - kas build --target security-build-image kas/$CI_JOB_NAME.yml
-+  - kas build --target security-build-image kas/$CI_JOB_NAME.yml 2>&1 | tee $CI_PROJECT_DIR/log/qemuarm_parsec_security_image.txt
+@@ -10,7 +10,7 @@ repos:
  
- qemuarm64:
-   extends: .base
-   script:
--  - kas shell kas/$CI_JOB_NAME.yml  -c "bitbake -k security-build-image security-tpm2-image integrity-image-minimal"
--  - kas build --target security-build-image kas/$CI_JOB_NAME-alt.yml
-+  - kas shell kas/$CI_JOB_NAME.yml  -c "bitbake -k security-build-image security-tpm2-image integrity-image-minimal" 2>&1 | tee $CI_PROJECT_DIR/log/qemuarm64_security_image.txt
-+  - kas build --target security-build-image kas/$CI_JOB_NAME-alt.yml 2>&1 | tee $CI_PROJECT_DIR/log/qemuarm64_build_security_image.txt
+   meta-clang:
+     url: https://github.com/kraj/meta-clang.git
+-    refspec: master
++    branch: kirkstone
  
- qemuarm64-musl:
-   extends: .musl
-   needs: ['qemuarm64']
-   script:
--  - kas build --target security-build-image kas/$CI_JOB_NAME.yml
-+  - kas build --target security-build-image kas/$CI_JOB_NAME.yml 2>&1 | tee $CI_PROJECT_DIR/log/qemuarm64_musl_security_image.txt
+ local_conf_header:
+   meta-parsec: |
+diff --git a/kas/qemuarm64-musl.yml b/kas/qemuarm64-musl.yml
+index b353eb4..f01f759 100644
+--- a/kas/qemuarm64-musl.yml
++++ b/kas/qemuarm64-musl.yml
+@@ -6,5 +6,6 @@ header:
+ local_conf_header:
+     musl: |
+         TCLIBC = "musl"
++        DISTRO_FEATURES:remove = "apparmor"
  
- qemuarm64-parsec:
-   extends: .parsec
-   needs: ['qemuarm64']
-   script:
--  - kas build --target security-build-image kas/$CI_JOB_NAME.yml
-+  - kas build --target security-build-image kas/$CI_JOB_NAME.yml 2>&1 | tee $CI_PROJECT_DIR/log/qemuarm64_parsec_security_image.txt
+ machine: qemuarm64
+diff --git a/kas/qemux86-musl.yml b/kas/qemux86-musl.yml
+index 61d9572..aa6572c 100644
+--- a/kas/qemux86-musl.yml
++++ b/kas/qemux86-musl.yml
+@@ -6,5 +6,6 @@ header:
+ local_conf_header:
+     musl: |
+         TCLIBC = "musl"
++        DISTRO_FEATURES:remove = "apparmor"
  
- qemumips64:
-   extends: .base
-   script:
--  - kas build --target security-build-image kas/$CI_JOB_NAME.yml
-+  - kas build --target security-build-image kas/$CI_JOB_NAME.yml 2>&1 | tee $CI_PROJECT_DIR/log/qemumips64_security_image.txt
+ machine: qemux86
+diff --git a/kas/qemux86-test.yml b/kas/qemux86-test.yml
+index 83a5353..98f1e7f 100644
+--- a/kas/qemux86-test.yml
++++ b/kas/qemux86-test.yml
+@@ -3,4 +3,8 @@ header:
+   includes:
+     - kas-security-base.yml
  
- qemuriscv64:
-   extends: .base
-   script:
--  - kas build --target security-build-image kas/$CI_JOB_NAME.yml
-+  - kas build --target security-build-image kas/$CI_JOB_NAME.yml 2>&1 | tee $CI_PROJECT_DIR/log/qemuriscv64_security_image.txt
++local_conf_header:
++  ptest: |
++      DISTRO_FEATURES:append = " ptest"
++
+ machine: qemux86
 -- 
 2.51.0
 
