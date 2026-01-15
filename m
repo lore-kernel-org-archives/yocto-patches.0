@@ -2,190 +2,80 @@ Return-Path: <antonin.godard@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC7DED39010
-	for <webhook@archiver.kernel.org>; Thu, 15 Jan 2026 12:50:33 +0000 (UTC)
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.34919.1768481426224818005
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F282D44C53
+	for <webhook@archiver.kernel.org>; Thu, 15 Jan 2026 14:19:04 +0000 (UTC)
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.36644.1768486734931189069
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 15 Jan 2026 04:50:27 -0800
+ Thu, 15 Jan 2026 06:18:55 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=dkim header.b=zcsh6h5R;
- spf=pass (domain: bootlin.com, ip: 185.246.84.56, mailfrom: antonin.godard@bootlin.com)
+ dkim=pass header.i=@bootlin.com header.s=dkim header.b=dwD+J90O;
+ spf=pass (domain: bootlin.com, ip: 185.171.202.116, mailfrom: antonin.godard@bootlin.com)
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 3F1F31A287B
-	for <yocto-patches@lists.yoctoproject.org>; Thu, 15 Jan 2026 12:50:24 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 832EDC1F1EC
+	for <yocto-patches@lists.yoctoproject.org>; Thu, 15 Jan 2026 14:18:26 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 16130606B6
-	for <yocto-patches@lists.yoctoproject.org>; Thu, 15 Jan 2026 12:50:24 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BEB3810B68606;
-	Thu, 15 Jan 2026 13:50:22 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 40CC5606B6
+	for <yocto-patches@lists.yoctoproject.org>; Thu, 15 Jan 2026 14:18:53 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9B5AD10B685B3;
+	Thu, 15 Jan 2026 15:18:52 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1768481423; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=MiZyeCajRGOAAxQgue1i9kqdnLWsHil3d0JwGbmvGig=;
-	b=zcsh6h5Rz1mvFnsOgoT0MoIHHSc8TFwN5MwGhgJsI+rjCTKnrZpewi75Ekpi/ClSYrZieo
-	DHb/dDc1+B//ruTW90NYDuSL/yw5JUf089A7eGhkB37kMtA+BATSdLWmU6RbjsqUvYSC2D
-	L6UdFi5/Qr6mU6YcMEc+V3YXwKcZIh+B1OTAZmrCqKfxbNw7skX4qWNQtjp68E6WM8N6WU
-	P93V3jojqzHMJFd6JNjbawQGwiUerAjSnv4+3jgpd2T33qijaadT7M14qiXN7G5fmgyWpB
-	WoCPM0Ox4uVXaDQAqSLxao940KqTthXxQzNjgwDi3lDg7vukF7xFss0N3fkKBw==
+	t=1768486732; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=vX3+qnnRpaSKrvq7kmL6b4McBhNvOZXNPBgmJPRaX8Q=;
+	b=dwD+J90OZbaKRSOpfV13OmCU1YJ6GV7LIBBkf0U6Xjak0WCipw08qIPjL/zcAbaylrFeGf
+	266BbKBqIYekz0nku8sIclWsdVyNgznKB1DIJE+eA2lWWL/0gRWHSrjvVmqxzrVQPQyp5j
+	mp/VXe2xjTDUOfMoNewjIldx3n4WkUk8OFBTzHZluqMSE+zrMnxXugknwzCJdJO2A9tRPV
+	eB2vQAyF5QeIeOtOfMPQtLOEKimgw9VvgkJSpvjTzAF0IDDKo2dNCWXvsEbLbmvObPFFx8
+	a553JxnHQcjhSlJFJaP4QK6aoqRHKXa6yQf5pS0ikcdx0MWuqZxGvtaqsuJ0TA==
 From: Antonin Godard <antonin.godard@bootlin.com>
-Date: Thu, 15 Jan 2026 13:50:09 +0100
-Subject: [swat-tools][PATCH] Display the duration of builds
+Subject: [swat-tools][PATCH 0/2] Status bar improvements
+Date: Thu, 15 Jan 2026 15:18:46 +0100
+Message-Id: <20260115-status-bar-info-v1-0-1386e29bc87a@bootlin.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260115-build-duration-v1-1-4ae71508e060@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAIDiaGkC/yXMQQrCMBCF4auUWTvQJNWFVyldJJmpjpRGMkkVS
- u9u1OUH7/07KGdhhWu3Q+ZNVNLaYE4dxLtfb4xCzWB7e+mNcRiqLIRUsy9tiucQZzcMxlkiaKd
- n5lnev+A4/a01PDiWb2XUly9YUlp0guP4ALkBcn1+AAAA
-X-Change-ID: 20260113-build-duration-5bcf344132dd
+X-B4-Tracking: v=1; b=H4sIAEb3aGkC/yXMSw7CMAwA0atUXmOpCeUjrlJ1EacuGKEExS4gV
+ b17AyzfYmYB5SKscGkWKPwSlZwq3K6BeAvpyihjNfjWH1vnDqgWbFakUFDSlNGPRGdHYd+dItT
+ qWXiSz+/YD3/rTHeO9t30+g6GlvNDB1jXDWU4Dih/AAAA
+X-Change-ID: 20260115-status-bar-info-2dbb81ba347c
 To: yocto-patches@lists.yoctoproject.org
 Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>, 
  Antonin Godard <antonin.godard@bootlin.com>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4349;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=433;
  i=antonin.godard@bootlin.com; h=from:subject:message-id;
- bh=/RdwnRUrq6QYutoKSgM6O+egx0a4C4hPpddj+ivCS5Y=;
- b=owEBbQKS/ZANAwAKAdGAQUApo6g2AcsmYgBpaOKOPQXsPodNWRKxRAPPiwhibZ8eempc8hPZr
- DfTUvwQj/eJAjMEAAEKAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCaWjijgAKCRDRgEFAKaOo
- NiKgEACTauhnB4zh6DmmRzB5nZWl8Bk5r54qN05Hme9hKEKA2gz3X4V2K7oGFspXY7RXokNTBUC
- QZ75wdbGmT3Zmw55znZIHnjYqtHcZTlglKYCB+5z8QAI0IhybENc3lDO4PQBD/Uo7d3WWKbljl+
- T0OGF34h7AvvMD+eFGbbWNjA2E1Af3m4yxn62Cp7AZp5fGewUTpARdOcOcK8MTDDHC8YiZPDj31
- u2JmNdJHpQxfZpnmxLdB1eyhIsMyFicrLFBV4G77zJSmDPQfvy9CokqxVPdWXC0QMDsPaln1vBc
- dLdKH76Xe7n6XHrxBnyrFxU48Bey/eR7fvuV0tcQRpUSl2mA4LE2Ihd76H7et4DVjnUH+qBQnYd
- uZklqYvxkJ+l8o6IVGnFyI+cuLo7Z3R2Fm97rdald2LuqBXTf3cP5wyUHCp8Kf5eW3+YvfxMW6N
- wLwN92LWyyKwYpHZkzymBnLc5QNUJRreQRAAKOzMCWEpbjKx1SW0OXJV/B/NU6oQqwcC4+64EL2
- U27PgEFwo4IEjGsHyp0+qk2png3SyWOgLb61MfVPL2ir2gBtu66bEWHCNVPwOZmKZ35f13ffAZO
- pK6ODJbVL8Uf/wGPBWfoyrkhIatz8OCNjnQjRJzQITJVzqui03HhZYxJjFT5H+6QQpl8rXItFMu
- EP/YLxfx/cwzlzg==
+ bh=2uI3CICbyN4xglCji+ewaNIw2yhR3Qy2/ZmZJ1tTMSQ=;
+ b=owEBbQKS/ZANAwAKAdGAQUApo6g2AcsmYgBpaPdLB7s6UI6nV3ybPoeYvYuSo2Pkw18QPnjTy
+ w1kk7cTQW6JAjMEAAEKAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCaWj3SwAKCRDRgEFAKaOo
+ Nvq0D/44gYAttyKRDx2lWvelFcvC+0HG92SJ4OKiV0DVCk5BJ1LQ2ZtTnn2BX8+8tbYOksLzavZ
+ zBmF4iSeGLXojiHgxrNx/669FeY8KSWMZirwOioR4REzFJYk71y/EJ6zRV2BczkSSIFiVbuIMuE
+ 1bs5I1xrDTkBmTiZysSS++I0d6UUBNGijKJ3Rie0bfJpsZhvEb+NK4MAJ0Dgw2KG1JE/3QUq0Hh
+ nM5pSlLjymKOgRATxqEMyRXo8l/OudS2cwWkaS79rBqsovQIMArNEPsQuzlzWDUZJgNJLHExnnY
+ 6Mo8uVZlPTCNp7kPFo7VmFrXt9P8BtKogWWsqXlcln8ezis6T1PkUn0Da41IxWc4VirdObKtsQn
+ rD8hhWaJxyTU0GLoCHtzDpygCFpEvyqWB/7ru/7jMUe82bRzbR43JfIhfKsfjlLVeUhfLkyCByP
+ EFbK8b/WwRL+/Uum1Zdx4Hvgox2BAeud6RFn/usU1vDYYiwaL6uT7PC5uNCmNXAGNDtArTMFmqF
+ W0Z2SXoQGhxvT0hU7Vgu28DimtNtO9pg4nSrH/vh+RWZo5KOZOFHn2vKK0XB0z0QRF2hluc/dhP
+ QrJsQcv097QrDEjsCJBPVzX9UBs0ksrPF4T2IoeUkOi/dr5bJgPJ9kl6iypU4xE9iyjiWa6EBek
+ VuAU1ZNfZI/5h2Q==
 X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
  fpr=8648725188DD401BB9A0D3FFD180414029A3A836
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 15 Jan 2026 12:50:33 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2961
-
-It can sometimes be useful to know how long a build took, especially for
-hanging builds that were canceled after a while.
-
-Add the start timestamp as data stored in the database, and use it with
-completed to display the duration. The start timestamp is not displayed,
-only the duration.
+ <yocto-patches@lists.yoctoproject.org>; Thu, 15 Jan 2026 14:19:04 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2962
 
 Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
 ---
- README.md               |  1 +
- swattool/database.py    |  4 +++-
- swattool/initmanager.py |  1 +
- swattool/swatbuild.py   | 11 +++++++++++
- 4 files changed, 16 insertions(+), 1 deletion(-)
+Antonin Godard (2):
+      swattool/review.py: show owner repartition in status bar
+      swattool/review.py: status_bar: show number of triaged builds
 
-diff --git a/README.md b/README.md
-index 7f44a87..47359e9 100644
---- a/README.md
-+++ b/README.md
-@@ -237,6 +237,7 @@ Available field names for the `sort` configuration option:
- - `Test` - Test name
- - `Owner` - Assigned owner
- - `Worker` - Worker machine name
-+- `Started` - Start timestamp
- - `Completed` - Completion timestamp
- - `SWAT URL` - SWAT interface URL
- - `Autobuilder URL` - Autobuilder URL
-diff --git a/swattool/database.py b/swattool/database.py
-index 82108dd..d50fbc1 100644
---- a/swattool/database.py
-+++ b/swattool/database.py
-@@ -28,6 +28,7 @@ SCHEMA = {
-         "status",
-         "test",
-         "worker",
-+        "started",
-         "completed",
-         "collection_id",
-         "ab_url",
-@@ -280,7 +281,8 @@ class Database:
-             cur.execute(
-                 "INSERT INTO build VALUES(:build_id, "
-                 ":buildbot_build_id, :status, :test, :worker, "
--                ":completed, :collection_id, :ab_url, :parent_id);",
-+                ":started, :completed, :collection_id, "
-+                ":ab_url, :parent_id);",
-                 data,
-             )
- 
-diff --git a/swattool/initmanager.py b/swattool/initmanager.py
-index 74932db..526946c 100644
---- a/swattool/initmanager.py
-+++ b/swattool/initmanager.py
-@@ -326,6 +326,7 @@ class InitManager:
-         data["status"] = int(attributes["status"])
-         data["test"] = attributes["targetname"]
-         data["worker"] = attributes["workername"]
-+        data["started"] = attributes["started"]
-         data["completed"] = attributes["completed"]
-         data["collection_id"] = int(collectionid)
-         data["ab_url"] = attributes["url"]
-diff --git a/swattool/swatbuild.py b/swattool/swatbuild.py
-index edc1ea8..a53fbf5 100644
---- a/swattool/swatbuild.py
-+++ b/swattool/swatbuild.py
-@@ -102,7 +102,9 @@ class Field(enum.StrEnum):
-     TEST = "Test"
-     OWNER = "Owner"
-     WORKER = "Worker"
-+    STARTED = "Started"
-     COMPLETED = "Completed"
-+    DURATION = "Duration"
-     SWAT_URL = "SWAT URL"
-     AUTOBUILDER_URL = "Autobuilder URL"
-     FAILURES = "Failures"
-@@ -123,7 +125,9 @@ class Field(enum.StrEnum):
-             cls.TEST,
-             cls.OWNER,
-             cls.WORKER,
-+            cls.STARTED,
-             cls.COMPLETED,
-+            cls.DURATION,
-         ]
- 
- 
-@@ -267,7 +271,9 @@ class Build:
-         self.status = Status.from_int(sql_rows[0]["status"])
-         self.test = sql_rows[0]["test"]
-         self.worker = sql_rows[0]["worker"]
-+        self.started = datetime.fromisoformat(sql_rows[0]["started"])
-         self.completed = datetime.fromisoformat(sql_rows[0]["completed"])
-+        self.duration = self.completed - self.started
-         self.swat_url = swat_url
-         self.autobuilder_url = sql_rows[0]["ab_url"]
-         self.owner = sql_rows[0]["owner"]
-@@ -492,8 +498,12 @@ class Build:
-         """
-         if field == Field.BUILD:
-             return self.id
-+        if field == Field.STARTED:
-+            return self.completed.astimezone().isoformat(timespec="minutes")
-         if field == Field.COMPLETED:
-             return self.completed.astimezone().isoformat(timespec="minutes")
-+        if field == Field.DURATION:
-+            return self.duration
-         if field == Field.BRANCHES:
-             return "&".join(self._get_branches())
-         if field.name.lower() in self.__dict__:
-@@ -634,6 +644,7 @@ class Build:
-             Field.BRANCHES,
-             Field.WORKER,
-             Field.COMPLETED,
-+            Field.DURATION,
-             Field.SWAT_URL,
-             Field.AUTOBUILDER_URL,
-         ]
-
+ swattool/review.py | 25 ++++++++++++++++++++++++-
+ 1 file changed, 24 insertions(+), 1 deletion(-)
 ---
 base-commit: 8b38da2933736cbb589a9837e3f1940e925fb842
-change-id: 20260113-build-duration-5bcf344132dd
+change-id: 20260115-status-bar-info-2dbb81ba347c
 
 
