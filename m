@@ -1,102 +1,100 @@
-Return-Path: <Qi.Chen@windriver.com>
+Return-Path: <alex.kanavin@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A00A3D4A5FE
-	for <webhook@archiver.kernel.org>; Fri, 16 Jan 2026 05:05:23 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.169.1768539915029113934
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 237B9D4A607
+	for <webhook@archiver.kernel.org>; Fri, 16 Jan 2026 06:47:54 +0000 (UTC)
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.837.1768546072883613187
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 15 Jan 2026 21:05:15 -0800
+ Thu, 15 Jan 2026 22:47:53 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@windriver.com header.s=PPS06212021 header.b=RPGLIiag;
- spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.178.238, mailfrom: prvs=54767f529f=qi.chen@windriver.com)
-Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60G4BGvR3796726;
-	Fri, 16 Jan 2026 05:05:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
-	 h=cc:content-transfer-encoding:content-type:date:from
-	:message-id:mime-version:subject:to; s=PPS06212021; bh=tC1o3udf4
-	gGJBvj7neiVF2GnoO1hRdvrPsnnW7iJFG4=; b=RPGLIiagM2bg3EtU5UiLHcM3n
-	RPy3xtBkl1JekRcbzoY3GAXMAI7aOoytVg1wOc47SPInvLL7XcCyogyQStsF6yYp
-	hqhw47zACbV46sxRhjMDkWfLyKDBdbZQbgYUthbcO72Jhdi/OC2ol9dlLt/hP52V
-	ND0zDoBFlSMCkk5IU08QkDmu+2bKuW1YNRSGPGJSgEJf+v9dJMAZuyRpC0hpt/Bu
-	QXNgHkaOCX0wZ/rN8bnQgcPxZyUeV5d4S1d5theY+FZjSaqfcQD8zzgAOyCtVbe+
-	S98CQDIUn35SF/EJ7IetlFebVd9t+AlM2tOTnPg83OY2LzOG3dy5rv6v243lg==
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [128.224.246.37])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4bqd7y82bg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Fri, 16 Jan 2026 05:05:13 +0000 (GMT)
-Received: from ala-exchng01.corp.ad.wrs.com (10.11.224.121) by
- ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.61; Thu, 15 Jan 2026 21:05:12 -0800
-Received: from oak-lpgbuild14.wrs.com (10.11.232.110) by
- ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server id
- 15.1.2507.61 via Frontend Transport; Thu, 15 Jan 2026 21:05:12 -0800
-From: <Qi.Chen@windriver.com>
-To: <yocto-patches@lists.yoctoproject.org>
-CC: <jpewhacker@gmail.com>
-Subject: [meta-mingw][PATCH] mingw_sdk_handle_symlink.bbclass: avoid using non-posix -d option for read
-Date: Fri, 16 Jan 2026 05:05:12 +0000
-Message-ID: <20260116050512.3751871-1-Qi.Chen@windriver.com>
-X-Mailer: git-send-email 2.43.0
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=SIAdwnbg;
+ spf=pass (domain: gmail.com, ip: 209.85.221.44, mailfrom: alex.kanavin@gmail.com)
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-42fbc544b09so1163127f8f.1
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 15 Jan 2026 22:47:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1768546071; x=1769150871; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=73O40v+kq1Mf99Oi+ZiiqhXRZKkTMV9qCku+VLwad7A=;
+        b=SIAdwnbgvRPuDSpEHbrJlsRFe0RnuGTrII54KPd70CUVM7D+bvUmnIP5qdYFvxK1Of
+         qplJyOFpv2vl/m4CMT7Z1lobXwYlWgNa1HtIgALWnnhnIdwiDBI95Uayx+AHsEd0tIpm
+         Jf4uH6KpS0u6GaivVlZ7qMhmv3UOkZI2XFUZ4eGNQ8mZ1IDwtUO63lkT8uGY0+L7aZ19
+         vEJabAolj97/g+O6XNaTkjpcDs9T4r17lndlraQGHrrLem9sfrL28e4uOTuEr+nn/vIJ
+         pcz5o1/lbrOcCYa2rhiKOyqSUo8NxsCLWDBTLLfD0FzU68TydixFzjLBLMravXNIJAZn
+         JbLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768546071; x=1769150871;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=73O40v+kq1Mf99Oi+ZiiqhXRZKkTMV9qCku+VLwad7A=;
+        b=lqjmQYc+9on18dvoPpD0DcX1Zp59jHuy8KCYylBMInfnmRrjxBG+mZca2xokmaOnuW
+         mX6IiGSDaT6AgZ7dUOwyCUXkGuSVyD8N3WOIl0nrqxZ3ueeSYRrKJok8whTP6ofKXQpM
+         ckX0GigxUvBWSnG3QHxDaU0wepRv7nQaUMi1ucRILyab2LR67l3RwAvIBOU3ThkSNMmV
+         AfJcBa3xItkaxkYRFkV6oiFbuJ++cVVoslZ3QGsUObnVRWc7xjXtAd6oqwOM/yfrAGHl
+         yde6smPClIySQSXYn7lNbDmmDbbCxGIzZVvlMrrSBE/xJDRbJmTlJ0Q73h0fCfbbxVHl
+         qdmA==
+X-Gm-Message-State: AOJu0YyNpMdddQoq1HVw6oUFqdDfkAf56PuXJgOBslX+v/3NmrtWuDG7
+	gs48QMybboVpLLdH9/MYd2L9JpbMA7TAfm7BXXCDjyodwX4eqseX5Y2o6CcycDI8
+X-Gm-Gg: AY/fxX74G7R8rxM+ANqLpXMxOlzic8YC/gWttUG2vc1MlEep+eeKPQfSHK+ScEqmYqC
+	E3o5NFfnXg2DOeqOq/ibzwXxjpktXAPC/k+6XdrBWLHiQR13G2rRQCoeYUsyRfAVxosOpYTBO6M
+	gdIGqaTEcTZJE0BzPkHHO6T6HYAL3AmzFKauQgUWteMQLdmbexdgWn5p9Xyh1xPrm1n+aFQqvP8
+	IVViqu6+Fyy4Ab6Xhc+CgCNXXJyXiySUGxDZqYiPtaZE0s9nhgFUJ+nljrYyY1qAJFyoRSwCW13
+	3LAi1LOskuBIAjzxdJOO/w0y/cBTDlX3NUbgS3L+Y8BMBp7p3NyOzyiaaJY8DRL+ug4CEBD37Of
+	+T3DtjJ2uZK70K5QiA6MBnZWOPMqzgdTMYr+YvK/i7MidC9D/HZLkLnWLc9VpXeI4ExfhdAFoAm
+	JMcQQz5v4T6eNKMuKPeT6uN7bD5KtGzI2VxF5/e/1WqQpb9y8=
+X-Received: by 2002:a05:6000:144b:b0:431:344:5a2d with SMTP id ffacd0b85a97d-43569bbadf7mr2026304f8f.41.1768546070909;
+        Thu, 15 Jan 2026 22:47:50 -0800 (PST)
+Received: from Zen2.lab.linutronix.de. (drugstore.linutronix.de. [80.153.143.164])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4356996d02dsm3271413f8f.23.2026.01.15.22.47.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Jan 2026 22:47:50 -0800 (PST)
+From: Alexander Kanavin <alex.kanavin@gmail.com>
+X-Google-Original-From: Alexander Kanavin <alex@linutronix.de>
+To: yocto-patches@lists.yoctoproject.org
+Cc: Alexander Kanavin <alex@linutronix.de>
+Subject: [auh][PATCH 1/2] commit_changes: handle lack of recipe_dir gracefully
+Date: Fri, 16 Jan 2026 07:47:44 +0100
+Message-ID: <20260116064746.3584094-1-alex@linutronix.de>
+X-Mailer: git-send-email 2.47.3
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: V6GZFobGVLFow4qYi39zATsx-VLMXER3
-X-Authority-Analysis: v=2.4 cv=FPcWBuos c=1 sm=1 tr=0 ts=6969c709 cx=c_pps
- a=Lg6ja3A245NiLSnFpY5YKQ==:117 a=Lg6ja3A245NiLSnFpY5YKQ==:17
- a=vUbySO9Y5rIA:10 a=VkNPw1HP01LnGYTKEx00:22 a=t7CeM3EgAAAA:8
- a=ZAnmOsV7Th_jmlSXHOEA:9 a=zZCYzV9kfG8A:10 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-ORIG-GUID: V6GZFobGVLFow4qYi39zATsx-VLMXER3
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTE2MDAzOCBTYWx0ZWRfX8Xz7Np+c+OJ+
- iU3xAUP8I38b4oFgIkO60CDUZksNucrjCc351VF9kyK40YZgqj2GbwCYAnaEMETSKKntHwmSNVG
- ZkeUgdbfiZPCajg7FILsO+TfGG/rVpi44QLmg7RlzB2N2NFxZfqXf5h+Goe9AHwtxxI4xTkq22H
- FP6fV6tp1mB7k+obkA6XKUCek1oI51afIY22lBcQKdQ3BD1gohFwLXET8GlmhGQix6rikKuEtt4
- d3o+98t94xiCWXd3s7cvDC4c9fxQFZvwM6HBoTwS7mGRI21Vo7l8FgGOHJvj7LVUSgb9o7FqXUq
- OQHMhDvG5P82S4kNM2wb8JnTxPilPtcQVgFmwJ80cSNKSR5Ga01LsnrbHapD5RBzBaVyZlOi3yf
- q8xjqvfTf2KNgLNEwYBzxYH7uYhVgd50u7VMZz4aKyqky6DO+YXhVmCtWJDTK+enV47CoBB0mXp
- aNLnmk2LxqQMt38vGdA==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2026-01-16_01,2026-01-15_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 spamscore=0 lowpriorityscore=0 priorityscore=1501
- suspectscore=0 clxscore=1015 adultscore=0 bulkscore=0 phishscore=0
- malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2512120000
- definitions=main-2601160038
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 16 Jan 2026 05:05:23 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2996
+ <yocto-patches@lists.yoctoproject.org>; Fri, 16 Jan 2026 06:47:54 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/2997
 
-From: Chen Qi <Qi.Chen@windriver.com>
+Recent changes exposed this issue: if recipe_dir is not
+set, then the code should not try to access it, and instead
+simply skip the recipe, and handle it as a 'nothing to commit'
+situation.
 
-The '-d' option for read is bash specific extension. We need to
-avoid using it.
+recipe_dir may not be set when for some reason reading the
+recipe environment has failed.
 
-Signed-off-by: Chen Qi <Qi.Chen@windriver.com>
+Signed-off-by: Alexander Kanavin <alex@linutronix.de>
 ---
- classes/mingw_sdk_handle_symlink.bbclass | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ upgrade-helper.py | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/classes/mingw_sdk_handle_symlink.bbclass b/classes/mingw_sdk_handle_symlink.bbclass
-index 2f6dbe6..e158d14 100644
---- a/classes/mingw_sdk_handle_symlink.bbclass
-+++ b/classes/mingw_sdk_handle_symlink.bbclass
-@@ -3,7 +3,7 @@ WINSDK_NO_SYMLINK ?= "0"
- archive_sdk:prepend:sdkmingw32 () {
- 	if [ "${WINSDK_NO_SYMLINK}" = "1" ]; then
- 		for parse_type in "file" "directory"; do
--			find "${SDK_OUTPUT}/${SDKPATH}" -type l -print0 | while IFS= read -r -d '' symlink; do
-+			find "${SDK_OUTPUT}/${SDKPATH}" -type l -print | while read -r symlink; do
- 				target=$(readlink -f "$symlink" || echo "NOTVALID")
- 				if [ "$target" = "NOTVALID" ]; then
- 					continue
+diff --git a/upgrade-helper.py b/upgrade-helper.py
+index c1c26c0..2f38e0a 100755
+--- a/upgrade-helper.py
++++ b/upgrade-helper.py
+@@ -393,7 +393,8 @@ class Updater(object):
+ 
+             I(" %s: Auto commit changes ..." % pns)
+             for p in g['pkgs']:
+-                self.git.add(p['recipe_dir'])
++                if 'recipe_dir' in p:
++                    self.git.add(p['recipe_dir'])
+             self.git.commit(g['commit_msg'], self.opts['author'])
+ 
+             stdout = self.git.create_patch(g['workdir'])
 -- 
-2.43.0
+2.47.3
 
 
