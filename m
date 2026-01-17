@@ -2,125 +2,151 @@ Return-Path: <mark.hatle@kernel.crashing.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05CB5C9832E
-	for <webhook@archiver.kernel.org>; Sat, 17 Jan 2026 16:09:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 040C5C9832F
+	for <webhook@archiver.kernel.org>; Sat, 17 Jan 2026 16:11:01 +0000 (UTC)
 Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.11178.1768666132578942582
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.11238.1768666255215404811
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 17 Jan 2026 08:08:52 -0800
+ Sat, 17 Jan 2026 08:10:55 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: kernel.crashing.org, ip: 63.228.1.57, mailfrom: mark.hatle@kernel.crashing.org)
 Received: from kernel.crashing.org (70-99-78-136.nuveramail.net [70.99.78.136] (may be forged))
-	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 60HG8oae2511094;
-	Sat, 17 Jan 2026 10:08:50 -0600
+	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 60HGAphU2511309;
+	Sat, 17 Jan 2026 10:10:52 -0600
 Received: from [192.168.2.106] ([192.168.2.106])
-	by kernel.crashing.org (8.14.7/8.14.7) with ESMTP id 60HG8mMO002116;
-	Sat, 17 Jan 2026 10:08:49 -0600
-Message-ID: <b511b5ae-3401-4ca3-8d3a-83eaeed9b623@kernel.crashing.org>
-Date: Sat, 17 Jan 2026 10:08:48 -0600
+	by kernel.crashing.org (8.14.7/8.14.7) with ESMTP id 60HGAp7f002137;
+	Sat, 17 Jan 2026 10:10:51 -0600
+Message-ID: <c98c8fb9-2402-4d92-b37d-bcf6ed5e079e@kernel.crashing.org>
+Date: Sat, 17 Jan 2026 10:10:50 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [pseudo][PATCH 13/20]
- ports/linux/pseudo_wrappers.c: Reorder the syscall operations
+Subject: Re: [yocto-patches] [pseudo][PATCH 15/20] ports/linux: Add additional
+ EFAULTS for Linux functions
 Content-Language: en-US
 From: Mark Hatle <mark.hatle@kernel.crashing.org>
 To: yocto-patches@lists.yoctoproject.org
 Cc: seebs@seebs.net, richard.purdie@linuxfoundation.org
 Reply-To: yocto-patches@lists.yoctoproject.org
 References: <1768520616-7289-1-git-send-email-mark.hatle@kernel.crashing.org>
- <188B0C23901378A4.2703508@lists.yoctoproject.org>
-In-Reply-To: <188B0C23901378A4.2703508@lists.yoctoproject.org>
+ <188B0C2348C47D4E.2703508@lists.yoctoproject.org>
+In-Reply-To: <188B0C2348C47D4E.2703508@lists.yoctoproject.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sat, 17 Jan 2026 16:09:00 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3003
+ <yocto-patches@lists.yoctoproject.org>; Sat, 17 Jan 2026 16:11:00 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3004
 
+I'm dropping this patch.  Debian 11 glibc has set more functions as path 
+nonnull, so the compiler complains about the EFAULT check of path.
 
+The original issue is still resolved, but if this nonnull behavior continues at 
+some point it's going to show what rust is doing to check for xstat is indeed 
+sketchy.
+
+--Mark
 
 On 1/15/26 5:43 PM, Mark Hatle wrote:
-> The seccomp wrap always takes effect when pseudo is running, this will
-> prevent various behavior, even if pseudo is generally considered to be
-> disabled, but in memory.
-> 
-> The openat2 and renameat2 however should only run if pseudo is enabled.
+> Note, other functions claim to return EFAULT when the path element is NULL,
+> however glibc has these parameters tagged as non-null which optimizes out
+> any sort of NULL test by default.  Due to this only items that don't error
+> were included.
 > 
 > Signed-off-by: Mark Hatle <mark.hatle@kernel.crashing.org>
 > ---
->   ports/linux/pseudo_wrappers.c | 29 ++++++++++++++++-------------
->   1 file changed, 16 insertions(+), 13 deletions(-)
+>   ports/linux/openat2/wrapfuncs.in |  2 +-
+>   ports/linux/wrapfuncs.in         | 22 +++++++++++-----------
+>   ports/linux/xattr/wrapfuncs.in   | 16 ++++++++--------
+>   3 files changed, 20 insertions(+), 20 deletions(-)
 > 
-> diff --git a/ports/linux/pseudo_wrappers.c b/ports/linux/pseudo_wrappers.c
-> index 6b54083..b486c34 100644
-> --- a/ports/linux/pseudo_wrappers.c
-> +++ b/ports/linux/pseudo_wrappers.c
-> @@ -65,19 +65,6 @@ syscall(long number, ...) {
->   		return rc;
->   	}
->   
-> -#ifdef SYS_renameat2
-> -	/* concerns exist about trying to parse arguments because syscall(2)
-> -	 * specifies strange ABI behaviors. If we can get better clarity on
-> -	 * that, it could make sense to redirect to wrap_renameat2().
-> -	 */
-> -	if (number == SYS_renameat2) {
-> -		errno = ENOSYS;
-> -		return -1;
-> -	}
-> -#else
-> -	(void) number;
-> -#endif
-> -
->   #ifdef SYS_seccomp
->   	/* pseudo and seccomp are incompatible as pseudo uses different syscalls
->   	 * so pretend to enable seccomp but really do nothing */
-> @@ -92,6 +79,10 @@ syscall(long number, ...) {
->   	}
->   #endif
->   
-> +        if (pseudo_disabled) {
-> +                goto call_syscall;
-> +        }
-> +
->   #ifdef SYS_openat2
->   	/* concerns exist about trying to parse arguments because syscall(2)
->   	 * specifies strange ABI behaviors. If we can get better clarity on
-> @@ -105,6 +96,18 @@ syscall(long number, ...) {
->   	}
->   #endif
->   
-> +#ifdef SYS_renameat2
-> +	/* concerns exist about trying to parse arguments because syscall(2)
-> +	 * specifies strange ABI behaviors. If we can get better clarity on
-> +	 * that, it could make sense to redirect to wrap_renameat2().
-> +	 */
-> +	if (number == SYS_renameat2) {
-> +		errno = ENOSYS;
-> +		return -1;
-> +	}
-> +#endif
-> +
-> +call_syscall:
-
-On Debian 11 this fails to compile.  I had to add a patch to workaround what I 
-suspect is a compiler bug:
-
-  call_syscall:
-+       /* On Debian 11 - gcc (Debian 10.2.1-6) this results in:
-+        *   error: a label can only be part of a statement and a declaration
-+        *   is not a statement
-+        *
-+        * adding a ; here resolves this
-+        */
-+       ;
-+
-
-
-
-
->   	/* gcc magic to attempt to just pass these args to syscall. we have to
->   	 * guess about the number of args; the docs discuss calling conventions
->   	 * up to 7, so let's try that?
+> diff --git a/ports/linux/openat2/wrapfuncs.in b/ports/linux/openat2/wrapfuncs.in
+> index 96ae8a7..419813f 100644
+> --- a/ports/linux/openat2/wrapfuncs.in
+> +++ b/ports/linux/openat2/wrapfuncs.in
+> @@ -1 +1 @@
+> -int openat2(int dirfd, const char *path, struct open_how *how, size_t size);
+> +int openat2(int dirfd, const char *path, struct open_how *how, size_t size); /* efault=path */
+> diff --git a/ports/linux/wrapfuncs.in b/ports/linux/wrapfuncs.in
+> index 234a13c..7a2e9f0 100644
+> --- a/ports/linux/wrapfuncs.in
+> +++ b/ports/linux/wrapfuncs.in
+> @@ -1,17 +1,17 @@
+>   int open(const char *path, int flags, ...{mode_t mode}); /* flags=((flags&O_NOFOLLOW)||((flags&(O_CREAT|O_EXCL))==(O_CREAT|O_EXCL))), noignore_path=1 */
+>   char *get_current_dir_name(void);
+> -int __xstat(int ver, const char *path, struct stat *buf);
+> -int __lxstat(int ver, const char *path, struct stat *buf); /* flags=AT_SYMLINK_NOFOLLOW */
+> +int __xstat(int ver, const char *path, struct stat *buf); /* efault=path */
+> +int __lxstat(int ver, const char *path, struct stat *buf); /* flags=AT_SYMLINK_NOFOLLOW, efault=path */
+>   int __fxstat(int ver, int fd, struct stat *buf);
+>   int lchmod(const char *path, mode_t mode); /* flags=AT_SYMLINK_NOFOLLOW */
+>   int lchown(const char *path, uid_t owner, gid_t group); /* flags=AT_SYMLINK_NOFOLLOW */
+> -int __fxstatat(int ver, int dirfd, const char *path, struct stat *buf, int flags);
+> +int __fxstatat(int ver, int dirfd, const char *path, struct stat *buf, int flags); /* efault=path */
+>   int openat(int dirfd, const char *path, int flags, ...{mode_t mode}); /* flags=((flags&O_NOFOLLOW)||((flags&(O_CREAT|O_EXCL))==(O_CREAT|O_EXCL))), noignore_path=1 */
+>   int __openat_2(int dirfd, const char *path, int flags); /* flags=((flags&O_NOFOLLOW)||((flags&(O_CREAT|O_EXCL))==(O_CREAT|O_EXCL))), noignore_path=1 */
+>   int mknod(const char *path, mode_t mode, dev_t dev); /* real_func=pseudo_mknod */
+>   int mknodat(int dirfd, const char *path, mode_t mode, dev_t dev); /* real_func=pseudo_mknodat */
+> -int __xmknod(int ver, const char *path, mode_t mode, dev_t *dev); /* flags=AT_SYMLINK_NOFOLLOW */
+> -int __xmknodat(int ver, int dirfd, const char *path, mode_t mode, dev_t *dev); /* flags=AT_SYMLINK_NOFOLLOW */
+> +int __xmknod(int ver, const char *path, mode_t mode, dev_t *dev); /* flags=AT_SYMLINK_NOFOLLOW, efault=path */
+> +int __xmknodat(int ver, int dirfd, const char *path, mode_t mode, dev_t *dev); /* flags=AT_SYMLINK_NOFOLLOW, efault=path */
+>   int fcntl(int fd, int cmd, ...{struct flock *lock});  /* noignore_path=1 */
+>   int fcntl64(int fd, int cmd, ...{struct flock *lock});  /* noignore_path=1 */
+>   # just so we know the inums of symlinks
+> @@ -24,15 +24,15 @@ int creat64(const char *path, mode_t mode);
+>   int stat(const char *path, struct stat *buf); /* real_func=pseudo_stat */
+>   int lstat(const char *path, struct stat *buf); /* real_func=pseudo_lstat, flags=AT_SYMLINK_NOFOLLOW */
+>   int fstat(int fd, struct stat *buf); /* real_func=pseudo_fstat */
+> -int fstatat(int dirfd, const char *path, struct stat *buf, int flags);
+> +int fstatat(int dirfd, const char *path, struct stat *buf, int flags); /* efault=path */
+>   int stat64(const char *path, struct stat64 *buf); /* real_func=pseudo_stat64 */
+>   int lstat64(const char *path, struct stat64 *buf); /* real_func=pseudo_lstat64, flags=AT_SYMLINK_NOFOLLOW */
+>   int fstat64(int fd, struct stat64 *buf); /* real_func=pseudo_fstat64 */
+> -int fstatat64(int dirfd, const char *path, struct stat64 *buf, int flags);
+> -int __xstat64(int ver, const char *path, struct stat64 *buf);
+> -int __lxstat64(int ver, const char *path, struct stat64 *buf); /* flags=AT_SYMLINK_NOFOLLOW */
+> +int fstatat64(int dirfd, const char *path, struct stat64 *buf, int flags); /* efault=path */
+> +int __xstat64(int ver, const char *path, struct stat64 *buf); /* efault=path */
+> +int __lxstat64(int ver, const char *path, struct stat64 *buf); /* flags=AT_SYMLINK_NOFOLLOW, efault=path */
+>   int __fxstat64(int ver, int fd, struct stat64 *buf);
+> -int __fxstatat64(int ver, int dirfd, const char *path, struct stat64 *buf, int flags);
+> +int __fxstatat64(int ver, int dirfd, const char *path, struct stat64 *buf, int flags); /* efault=path */
+>   FILE *fopen64(const char *path, const char *mode); /* noignore_path=1 */
+>   int nftw64(const char *path, int (*fn)(const char *, const struct stat64 *, int, struct FTW *), int nopenfd, int flag); /* noignore_path=1 */
+>   FILE *freopen64(const char *path, const char *mode, FILE *stream);  /* noignore_path=1 */
+> @@ -61,7 +61,7 @@ int getpwent_r(struct passwd *pwbuf, char *buf, size_t buflen, struct passwd **p
+>   int getgrent_r(struct group *gbuf, char *buf, size_t buflen, struct group **gbufp);
+>   int capset(cap_user_header_t hdrp, const cap_user_data_t datap); /* real_func=pseudo_capset */
+>   long syscall(long nr, ...); /* hand_wrapped=1 */
+> -int renameat2(int olddirfd, const char *oldpath, int newdirfd, const char *newpath, unsigned int flags); /* flags=AT_SYMLINK_NOFOLLOW */
+> +int renameat2(int olddirfd, const char *oldpath, int newdirfd, const char *newpath, unsigned int flags); /* flags=AT_SYMLINK_NOFOLLOW, efault=oldpath|newpath */
+>   int prctl(int option, ...); /* hand_wrapped=1 */
+>   int close_range(unsigned int lowfd, unsigned int maxfd, int flags);
+>   void closefrom(int fd);
+> diff --git a/ports/linux/xattr/wrapfuncs.in b/ports/linux/xattr/wrapfuncs.in
+> index 09eba23..e8045b9 100644
+> --- a/ports/linux/xattr/wrapfuncs.in
+> +++ b/ports/linux/xattr/wrapfuncs.in
+> @@ -1,12 +1,12 @@
+> -ssize_t getxattr(const char *path, const char *name, void *value, size_t size); /* flags=0, version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
+> -ssize_t lgetxattr(const char *path, const char *name, void *value, size_t size); /* flags=AT_SYMLINK_NOFOLLOW, version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
+> +ssize_t getxattr(const char *path, const char *name, void *value, size_t size); /* flags=0, version="GLIBC_2.3", version-aarch64="GLIBC_2.17", efault=path */
+> +ssize_t lgetxattr(const char *path, const char *name, void *value, size_t size); /* flags=AT_SYMLINK_NOFOLLOW, version="GLIBC_2.3", version-aarch64="GLIBC_2.17", efault=path */
+>   ssize_t fgetxattr(int filedes, const char *name, void *value, size_t size); /* version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
+> -int setxattr(const char *path, const char *name, const void *value, size_t size, int xflags); /* flags=0, version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
+> -int lsetxattr(const char *path, const char *name, const void *value, size_t size, int xflags); /* flags=AT_SYMLINK_NOFOLLOW, version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
+> +int setxattr(const char *path, const char *name, const void *value, size_t size, int xflags); /* flags=0, version="GLIBC_2.3", version-aarch64="GLIBC_2.17", efault=path */
+> +int lsetxattr(const char *path, const char *name, const void *value, size_t size, int xflags); /* flags=AT_SYMLINK_NOFOLLOW, version="GLIBC_2.3", version-aarch64="GLIBC_2.17", efault=path */
+>   int fsetxattr(int filedes, const char *name, const void *value, size_t size, int xflags); /* version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
+> -ssize_t listxattr(const char *path, char *list, size_t size); /* flags=0, version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
+> -ssize_t llistxattr(const char *path, char *list, size_t size); /* flags=AT_SYMLINK_NOFOLLOW, version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
+> +ssize_t listxattr(const char *path, char *list, size_t size); /* flags=0, version="GLIBC_2.3", version-aarch64="GLIBC_2.17", efault=path */
+> +ssize_t llistxattr(const char *path, char *list, size_t size); /* flags=AT_SYMLINK_NOFOLLOW, version="GLIBC_2.3", version-aarch64="GLIBC_2.17", efault=path */
+>   ssize_t flistxattr(int filedes, char *list, size_t size); /* version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
+> -int removexattr(const char *path, const char *name); /* flags=0, version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
+> -int lremovexattr(const char *path, const char *name); /* flags=AT_SYMLINK_NOFOLLOW, version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
+> +int removexattr(const char *path, const char *name); /* flags=0, version="GLIBC_2.3", version-aarch64="GLIBC_2.17", efault=path */
+> +int lremovexattr(const char *path, const char *name); /* flags=AT_SYMLINK_NOFOLLOW, version="GLIBC_2.3", version-aarch64="GLIBC_2.17", efault=path */
+>   int fremovexattr(int filedes, const char *name); /* version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
 
