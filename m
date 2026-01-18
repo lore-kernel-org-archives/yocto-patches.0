@@ -1,152 +1,101 @@
-Return-Path: <mark.hatle@kernel.crashing.org>
+Return-Path: <yoann.congal@smile.fr>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 040C5C9832F
-	for <webhook@archiver.kernel.org>; Sat, 17 Jan 2026 16:11:01 +0000 (UTC)
-Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.11238.1768666255215404811
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E1D2C98315
+	for <webhook@archiver.kernel.org>; Sun, 18 Jan 2026 22:56:46 +0000 (UTC)
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.24569.1768777003432735074
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 17 Jan 2026 08:10:55 -0800
+ Sun, 18 Jan 2026 14:56:43 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: kernel.crashing.org, ip: 63.228.1.57, mailfrom: mark.hatle@kernel.crashing.org)
-Received: from kernel.crashing.org (70-99-78-136.nuveramail.net [70.99.78.136] (may be forged))
-	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 60HGAphU2511309;
-	Sat, 17 Jan 2026 10:10:52 -0600
-Received: from [192.168.2.106] ([192.168.2.106])
-	by kernel.crashing.org (8.14.7/8.14.7) with ESMTP id 60HGAp7f002137;
-	Sat, 17 Jan 2026 10:10:51 -0600
-Message-ID: <c98c8fb9-2402-4d92-b37d-bcf6ed5e079e@kernel.crashing.org>
-Date: Sat, 17 Jan 2026 10:10:50 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [pseudo][PATCH 15/20] ports/linux: Add additional
- EFAULTS for Linux functions
-Content-Language: en-US
-From: Mark Hatle <mark.hatle@kernel.crashing.org>
+ dkim=pass header.i=@smile.fr header.s=google header.b=BjV8X/ZS;
+ spf=pass (domain: smile.fr, ip: 209.85.128.51, mailfrom: yoann.congal@smile.fr)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-47f5c2283b6so23787095e9.1
+        for <yocto-patches@lists.yoctoproject.org>; Sun, 18 Jan 2026 14:56:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=smile.fr; s=google; t=1768777002; x=1769381802; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=su7bbLE76G42eQmFWgcK8Xlnw9rgMW7tDX3f3FXTrNs=;
+        b=BjV8X/ZSulER1V0SewuFXh+XHkb/JwqXVCAOFPjz4K1DUjZUfJUXwlqGkq292EaboT
+         41vVJnRRpUeLyF/4DWZfV8V9jYfBvin00hB70sPHXuDsCLLMR5MeGJSj9TdqV+xyY6m7
+         FTxMQS9pV2yaR5bREsva6Fdvq2mLt8kPX3EqE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768777002; x=1769381802;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=su7bbLE76G42eQmFWgcK8Xlnw9rgMW7tDX3f3FXTrNs=;
+        b=TFT+BUHbSejN1Q6V8Huw4oh8tQl1o/v/L9vtg4FLFaQfeQWFrBa8Cax5HRfUjsp2Ey
+         UuOuS7eZFtZku46s3upepU2oVRabczEByAzYGF0CEr3BGd8iyz/O0V8N6LyL2fVOchj9
+         Fb4zxPETPNthW5CRgvV7UAQ/KQnStcw5NlmNbdUoB1WUq0HdGUCKRjWx4QXNyTvoj5ju
+         WXrR2CQJkMsHxLcaoN01KwWFuPfIne9QS9BxjrdJttOOQoPTXjRbmOG1Y6KTcm0Du3WP
+         GVaU7rAIwhyB6IIWythzfI/HlGwu59u1KoVzeDJ4s7gHrUqG6JV7nhQuHZfqY/eDkwum
+         lOWg==
+X-Gm-Message-State: AOJu0YwYQ9sn/werqpRX0Zzd50/BZ6jYVQ0ttow3f+kF239g65eXEElu
+	RyC17dkWJRKvjxwiy7I0OTcQqwgaC9M5jUGUABoD2DKVULbuW/ld1joNnOi+movhXwxm0a5Xmey
+	sDqNxP0A=
+X-Gm-Gg: AY/fxX5z4OR8nvDE94pSHNCb/v6piw6WT5Ank79D6Zb0OcNl/6VSs/R+pujYTGb7rMW
+	wjXNc8PznMQXtMsAET5qhWPnQhH5e2tEPBwpD8iAYO2/OX92GQ8JO4JL9sh649TTjOxwmhDT9iE
+	BaMHN4Z/rHcOSuRdwI8yQWMc421EPfIxU46ICixve8p6UwtJ8jLAbkVEnv2e6nVtLx0s/hkKZB4
+	ntMVN+KWp+Ny8a+GesciSaH56VuxwSjeYOujACxm522Wa0pqupkxRio04qQdUb76nC9drYe7Czt
+	HO+xk91fhMLVKulfFyAfyrJvgVj7+ItTfHJ5oK3wI+9JwyVyMTz00y/AmyaqQbCbGHYbJTpRdUo
+	uAo9rxUQgze6tS6VgFFoibJ26/nsyx8mxXjb0lV8oh1U7TVVddKtOxczD0i8Vsyz/05j9k2UetQ
+	b+o5uot5Tl7+PyMLB2wpxErtHazWX1m6auumRw5zp/i1nTa6IzCVUJKKe5SLVKKMc04CN7SGQkP
+	ku6arXIJVWwqnOs
+X-Received: by 2002:a05:600c:548d:b0:477:9fcf:3fe3 with SMTP id 5b1f17b1804b1-4801e2a4c3bmr119989255e9.0.1768777001646;
+        Sun, 18 Jan 2026 14:56:41 -0800 (PST)
+Received: from FRSMI25-LASER.home (2a01cb001331aa00d7d0f271c59dc868.ipv6.abo.wanadoo.fr. [2a01:cb00:1331:aa00:d7d0:f271:c59d:c868])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4801e9fb193sm68142135e9.6.2026.01.18.14.56.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 18 Jan 2026 14:56:41 -0800 (PST)
+From: Yoann Congal <yoann.congal@smile.fr>
 To: yocto-patches@lists.yoctoproject.org
-Cc: seebs@seebs.net, richard.purdie@linuxfoundation.org
-Reply-To: yocto-patches@lists.yoctoproject.org
-References: <1768520616-7289-1-git-send-email-mark.hatle@kernel.crashing.org>
- <188B0C2348C47D4E.2703508@lists.yoctoproject.org>
-In-Reply-To: <188B0C2348C47D4E.2703508@lists.yoctoproject.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Cc: Yoann Congal <yoann.congal@smile.fr>
+Subject: [yocto-autobuilder2][PATCH] schedulers: add whinlatter branch default for meta-arm/meta-virtualization
+Date: Sun, 18 Jan 2026 23:56:20 +0100
+Message-ID: <20260118225619.1910046-2-yoann.congal@smile.fr>
+X-Mailer: git-send-email 2.47.3
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sat, 17 Jan 2026 16:11:00 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3004
+ <yocto-patches@lists.yoctoproject.org>; Sun, 18 Jan 2026 22:56:46 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3005
 
-I'm dropping this patch.  Debian 11 glibc has set more functions as path 
-nonnull, so the compiler complains about the EFAULT check of path.
+From: Yoann Congal <yoann.congal@smile.fr>
 
-The original issue is still resolved, but if this nonnull behavior continues at 
-some point it's going to show what rust is doing to check for xstat is indeed 
-sketchy.
+meta-arm's master does not build with whinlatter[0].
+meta-virtualization has not diff master/whinlatter now will at some
+point.
+Switch both to whinlatter by default in the branch selector.
 
---Mark
+[0]: https://autobuilder.yoctoproject.org/valkyrie/#/builders/29/builds/3080
 
-On 1/15/26 5:43 PM, Mark Hatle wrote:
-> Note, other functions claim to return EFAULT when the path element is NULL,
-> however glibc has these parameters tagged as non-null which optimizes out
-> any sort of NULL test by default.  Due to this only items that don't error
-> were included.
-> 
-> Signed-off-by: Mark Hatle <mark.hatle@kernel.crashing.org>
-> ---
->   ports/linux/openat2/wrapfuncs.in |  2 +-
->   ports/linux/wrapfuncs.in         | 22 +++++++++++-----------
->   ports/linux/xattr/wrapfuncs.in   | 16 ++++++++--------
->   3 files changed, 20 insertions(+), 20 deletions(-)
-> 
-> diff --git a/ports/linux/openat2/wrapfuncs.in b/ports/linux/openat2/wrapfuncs.in
-> index 96ae8a7..419813f 100644
-> --- a/ports/linux/openat2/wrapfuncs.in
-> +++ b/ports/linux/openat2/wrapfuncs.in
-> @@ -1 +1 @@
-> -int openat2(int dirfd, const char *path, struct open_how *how, size_t size);
-> +int openat2(int dirfd, const char *path, struct open_how *how, size_t size); /* efault=path */
-> diff --git a/ports/linux/wrapfuncs.in b/ports/linux/wrapfuncs.in
-> index 234a13c..7a2e9f0 100644
-> --- a/ports/linux/wrapfuncs.in
-> +++ b/ports/linux/wrapfuncs.in
-> @@ -1,17 +1,17 @@
->   int open(const char *path, int flags, ...{mode_t mode}); /* flags=((flags&O_NOFOLLOW)||((flags&(O_CREAT|O_EXCL))==(O_CREAT|O_EXCL))), noignore_path=1 */
->   char *get_current_dir_name(void);
-> -int __xstat(int ver, const char *path, struct stat *buf);
-> -int __lxstat(int ver, const char *path, struct stat *buf); /* flags=AT_SYMLINK_NOFOLLOW */
-> +int __xstat(int ver, const char *path, struct stat *buf); /* efault=path */
-> +int __lxstat(int ver, const char *path, struct stat *buf); /* flags=AT_SYMLINK_NOFOLLOW, efault=path */
->   int __fxstat(int ver, int fd, struct stat *buf);
->   int lchmod(const char *path, mode_t mode); /* flags=AT_SYMLINK_NOFOLLOW */
->   int lchown(const char *path, uid_t owner, gid_t group); /* flags=AT_SYMLINK_NOFOLLOW */
-> -int __fxstatat(int ver, int dirfd, const char *path, struct stat *buf, int flags);
-> +int __fxstatat(int ver, int dirfd, const char *path, struct stat *buf, int flags); /* efault=path */
->   int openat(int dirfd, const char *path, int flags, ...{mode_t mode}); /* flags=((flags&O_NOFOLLOW)||((flags&(O_CREAT|O_EXCL))==(O_CREAT|O_EXCL))), noignore_path=1 */
->   int __openat_2(int dirfd, const char *path, int flags); /* flags=((flags&O_NOFOLLOW)||((flags&(O_CREAT|O_EXCL))==(O_CREAT|O_EXCL))), noignore_path=1 */
->   int mknod(const char *path, mode_t mode, dev_t dev); /* real_func=pseudo_mknod */
->   int mknodat(int dirfd, const char *path, mode_t mode, dev_t dev); /* real_func=pseudo_mknodat */
-> -int __xmknod(int ver, const char *path, mode_t mode, dev_t *dev); /* flags=AT_SYMLINK_NOFOLLOW */
-> -int __xmknodat(int ver, int dirfd, const char *path, mode_t mode, dev_t *dev); /* flags=AT_SYMLINK_NOFOLLOW */
-> +int __xmknod(int ver, const char *path, mode_t mode, dev_t *dev); /* flags=AT_SYMLINK_NOFOLLOW, efault=path */
-> +int __xmknodat(int ver, int dirfd, const char *path, mode_t mode, dev_t *dev); /* flags=AT_SYMLINK_NOFOLLOW, efault=path */
->   int fcntl(int fd, int cmd, ...{struct flock *lock});  /* noignore_path=1 */
->   int fcntl64(int fd, int cmd, ...{struct flock *lock});  /* noignore_path=1 */
->   # just so we know the inums of symlinks
-> @@ -24,15 +24,15 @@ int creat64(const char *path, mode_t mode);
->   int stat(const char *path, struct stat *buf); /* real_func=pseudo_stat */
->   int lstat(const char *path, struct stat *buf); /* real_func=pseudo_lstat, flags=AT_SYMLINK_NOFOLLOW */
->   int fstat(int fd, struct stat *buf); /* real_func=pseudo_fstat */
-> -int fstatat(int dirfd, const char *path, struct stat *buf, int flags);
-> +int fstatat(int dirfd, const char *path, struct stat *buf, int flags); /* efault=path */
->   int stat64(const char *path, struct stat64 *buf); /* real_func=pseudo_stat64 */
->   int lstat64(const char *path, struct stat64 *buf); /* real_func=pseudo_lstat64, flags=AT_SYMLINK_NOFOLLOW */
->   int fstat64(int fd, struct stat64 *buf); /* real_func=pseudo_fstat64 */
-> -int fstatat64(int dirfd, const char *path, struct stat64 *buf, int flags);
-> -int __xstat64(int ver, const char *path, struct stat64 *buf);
-> -int __lxstat64(int ver, const char *path, struct stat64 *buf); /* flags=AT_SYMLINK_NOFOLLOW */
-> +int fstatat64(int dirfd, const char *path, struct stat64 *buf, int flags); /* efault=path */
-> +int __xstat64(int ver, const char *path, struct stat64 *buf); /* efault=path */
-> +int __lxstat64(int ver, const char *path, struct stat64 *buf); /* flags=AT_SYMLINK_NOFOLLOW, efault=path */
->   int __fxstat64(int ver, int fd, struct stat64 *buf);
-> -int __fxstatat64(int ver, int dirfd, const char *path, struct stat64 *buf, int flags);
-> +int __fxstatat64(int ver, int dirfd, const char *path, struct stat64 *buf, int flags); /* efault=path */
->   FILE *fopen64(const char *path, const char *mode); /* noignore_path=1 */
->   int nftw64(const char *path, int (*fn)(const char *, const struct stat64 *, int, struct FTW *), int nopenfd, int flag); /* noignore_path=1 */
->   FILE *freopen64(const char *path, const char *mode, FILE *stream);  /* noignore_path=1 */
-> @@ -61,7 +61,7 @@ int getpwent_r(struct passwd *pwbuf, char *buf, size_t buflen, struct passwd **p
->   int getgrent_r(struct group *gbuf, char *buf, size_t buflen, struct group **gbufp);
->   int capset(cap_user_header_t hdrp, const cap_user_data_t datap); /* real_func=pseudo_capset */
->   long syscall(long nr, ...); /* hand_wrapped=1 */
-> -int renameat2(int olddirfd, const char *oldpath, int newdirfd, const char *newpath, unsigned int flags); /* flags=AT_SYMLINK_NOFOLLOW */
-> +int renameat2(int olddirfd, const char *oldpath, int newdirfd, const char *newpath, unsigned int flags); /* flags=AT_SYMLINK_NOFOLLOW, efault=oldpath|newpath */
->   int prctl(int option, ...); /* hand_wrapped=1 */
->   int close_range(unsigned int lowfd, unsigned int maxfd, int flags);
->   void closefrom(int fd);
-> diff --git a/ports/linux/xattr/wrapfuncs.in b/ports/linux/xattr/wrapfuncs.in
-> index 09eba23..e8045b9 100644
-> --- a/ports/linux/xattr/wrapfuncs.in
-> +++ b/ports/linux/xattr/wrapfuncs.in
-> @@ -1,12 +1,12 @@
-> -ssize_t getxattr(const char *path, const char *name, void *value, size_t size); /* flags=0, version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
-> -ssize_t lgetxattr(const char *path, const char *name, void *value, size_t size); /* flags=AT_SYMLINK_NOFOLLOW, version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
-> +ssize_t getxattr(const char *path, const char *name, void *value, size_t size); /* flags=0, version="GLIBC_2.3", version-aarch64="GLIBC_2.17", efault=path */
-> +ssize_t lgetxattr(const char *path, const char *name, void *value, size_t size); /* flags=AT_SYMLINK_NOFOLLOW, version="GLIBC_2.3", version-aarch64="GLIBC_2.17", efault=path */
->   ssize_t fgetxattr(int filedes, const char *name, void *value, size_t size); /* version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
-> -int setxattr(const char *path, const char *name, const void *value, size_t size, int xflags); /* flags=0, version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
-> -int lsetxattr(const char *path, const char *name, const void *value, size_t size, int xflags); /* flags=AT_SYMLINK_NOFOLLOW, version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
-> +int setxattr(const char *path, const char *name, const void *value, size_t size, int xflags); /* flags=0, version="GLIBC_2.3", version-aarch64="GLIBC_2.17", efault=path */
-> +int lsetxattr(const char *path, const char *name, const void *value, size_t size, int xflags); /* flags=AT_SYMLINK_NOFOLLOW, version="GLIBC_2.3", version-aarch64="GLIBC_2.17", efault=path */
->   int fsetxattr(int filedes, const char *name, const void *value, size_t size, int xflags); /* version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
-> -ssize_t listxattr(const char *path, char *list, size_t size); /* flags=0, version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
-> -ssize_t llistxattr(const char *path, char *list, size_t size); /* flags=AT_SYMLINK_NOFOLLOW, version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
-> +ssize_t listxattr(const char *path, char *list, size_t size); /* flags=0, version="GLIBC_2.3", version-aarch64="GLIBC_2.17", efault=path */
-> +ssize_t llistxattr(const char *path, char *list, size_t size); /* flags=AT_SYMLINK_NOFOLLOW, version="GLIBC_2.3", version-aarch64="GLIBC_2.17", efault=path */
->   ssize_t flistxattr(int filedes, char *list, size_t size); /* version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
-> -int removexattr(const char *path, const char *name); /* flags=0, version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
-> -int lremovexattr(const char *path, const char *name); /* flags=AT_SYMLINK_NOFOLLOW, version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
-> +int removexattr(const char *path, const char *name); /* flags=0, version="GLIBC_2.3", version-aarch64="GLIBC_2.17", efault=path */
-> +int lremovexattr(const char *path, const char *name); /* flags=AT_SYMLINK_NOFOLLOW, version="GLIBC_2.3", version-aarch64="GLIBC_2.17", efault=path */
->   int fremovexattr(int filedes, const char *name); /* version="GLIBC_2.3", version-aarch64="GLIBC_2.17" */
+Signed-off-by: Yoann Congal <yoann.congal@smile.fr>
+---
+ schedulers.py | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/schedulers.py b/schedulers.py
+index 0fa6d2d..34dbfcc 100644
+--- a/schedulers.py
++++ b/schedulers.py
+@@ -75,12 +75,14 @@ branchdefaults = {
+         'branch': 'whinlatter',
+         'branch_poky': 'master',
+         'branch_bitbake': '2.16',
++        'branch_meta-arm': 'whinlatter',
+         'branch_meta-gplv2': 'master',
+         'branch_meta-mingw': 'whinlatter',
+         'branch_meta-openembedded': 'whinlatter',
+         'branch_meta-yocto': 'whinlatter',
+         'branch_yocto-docs': 'whinlatter',
+         'branch_oecore': 'whinlatter',
++        'branch_meta-virtualization': 'whinlatter',
+     },
+     'whinlatter-next': {
+         'reason': 'Stable maintenance - whinlatter-next',
 
