@@ -2,160 +2,102 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B186D2ECE0
-	for <webhook@archiver.kernel.org>; Mon, 19 Jan 2026 20:32:03 +0000 (UTC)
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.44164.1768854722002903918
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 886E9D2ECE5
+	for <webhook@archiver.kernel.org>; Mon, 19 Jan 2026 20:38:33 +0000 (UTC)
+Received: from mail-qk1-f193.google.com (mail-qk1-f193.google.com [209.85.222.193])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.44547.1768855104407591863
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 19 Jan 2026 12:32:02 -0800
+ Mon, 19 Jan 2026 12:38:24 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=czxee89h;
- spf=pass (domain: konsulko.com, ip: 209.85.222.180, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-8c52c67f64cso496809485a.0
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 19 Jan 2026 12:32:01 -0800 (PST)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=mvMpilpi;
+ spf=pass (domain: konsulko.com, ip: 209.85.222.193, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk1-f193.google.com with SMTP id af79cd13be357-8c52e25e644so434117485a.0
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 19 Jan 2026 12:38:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1768854721; x=1769459521; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sG9WQ72C7eXpo4d0eRDXDrqmNRigG8E1WcVwNewoU0E=;
-        b=czxee89hS93ikmqWyFv6CLz9FQ58U/+GMpq1WTjaGQX8IcnMovD6Rw4OOvWB4xKPdR
-         Ht4GKWsOoD603s51QjepXiTPaI7cCC/wY9TW5vwNNUo96CEQhW+1Hg5CYD2ysslV0IfD
-         40iuwkfC5aXDD3FINqzfivwnA84AVyNF/JQXs=
+        d=konsulko.com; s=google; t=1768855103; x=1769459903; darn=lists.yoctoproject.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zHPYx67T8h8dSjTK6UQc+lCtafYWkFjOhVxfGvt/qDs=;
+        b=mvMpilpiWgD/UZtj905RSSaPRG7c6u9bYpbux2D2hdnfX1SMeouvcMDjXd3e0y8KTY
+         fffIF6olXVqoMDAkr/V+z+Xn9QdCuA4GwGPxtRgdD17dH5jGSUbwml4NXc1Qcx2FpBgM
+         4p7v7PmMfkThCEtk+MLSv6cR3aafVbQzUCwGg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768854721; x=1769459521;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=sG9WQ72C7eXpo4d0eRDXDrqmNRigG8E1WcVwNewoU0E=;
-        b=SrK3V3pYNcvOw0VEHp1vN8OBDMIpFw8I9b5jYWJLtu1g7n45ZuypJkXurcUQmOL4YP
-         h8fsY/5jbRXml7U4PzTv6/A3QIgVqxYn5YbA04KoKi72qqW8RQj7RMu+51WjcZvYQv8u
-         MuaN+kZJwmBZHTTDevDufp8DnX+99V2fCMMU2H08l6o7MDFH8SUCa6YtKrhEpAdqYzwY
-         Wqoe8TArT5RWa6tLyo9tz0uZq/p8WLnDHeSyVQfOs993YxrrwS7pOjt0dJTl5KjoJiNN
-         GtOT31iqy0itOf0kNwMcv+g6PWO9mMeGtw0eL/WtnflRUxl23HhvF2ZptWtc0tJ/jzgU
-         hxlw==
-X-Gm-Message-State: AOJu0Yx1HljuRL5Dmo0fcIIUO6frbUK4/OVsDPJbFc06sKuVERZ77lXB
-	8QsESQ5USvFQ9pLICFxxVy8oZO27UeqOB5xIUb3HcNUYJn28CyfYnmuBWNamxeW5vYPOKDZ0l8T
-	WoczF
-X-Gm-Gg: AY/fxX4mOji+H8afeAADOAMSQv9eAQpIT/PnO7peTVMgM4gzA8x4N1vTRCn+swh2C8f
-	BJzln3/MeOkSKz3G48Ic7P6Bq7KesRcqeHaVA81HmQVPxxDUkjoFloDCbWDleKiYV8eA5tKlcXe
-	OPuemnQkoNW31ezI2MlZUKiCBDkfU8sCb26Jg47h/jfzuZ2ssJlud7qoMc5aiSLbF2VsZuwuDGJ
-	aViNCizsrLLji9DTUi4yuUC2/cmfrV/snA6Yzcbswgwtg4bWATAA0aOOpFFBfylxPd3gXMS0FyI
-	RP2ud9jjvfK9687vo1/rEGC8CKir5INbYh2eCmMFGO1/rrWur8Xpw9HCo9my98O9jJZsr70fOvF
-	GvT5H93yDss7LDVDKwTmZGl9RRFc+9mYtjpLExOx1lIPvLm439YfJs6HUtsYAPCRzpc4T58bxx7
-	seKBBJ4hvSip8iph2vpRIXoyfmBzYRa3UXFaYG00Do3La/xSmoN/6K2Cr/fwexaFF1tOLQajT7s
-	Q9tVc2T10cmtxlbGSFBx8GgPXHmqFSJ0zfdjqowGDc/g/+5kckc
-X-Received: by 2002:a05:620a:2947:b0:897:56e7:6aa3 with SMTP id af79cd13be357-8c6a676db0amr1705991885a.56.1768854720714;
-        Mon, 19 Jan 2026 12:32:00 -0800 (PST)
-Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8c6a7248dcfsm860337485a.25.2026.01.19.12.32.00
+        d=1e100.net; s=20230601; t=1768855103; x=1769459903;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zHPYx67T8h8dSjTK6UQc+lCtafYWkFjOhVxfGvt/qDs=;
+        b=mv6shw6XKmfeoHu61rVggBIRCxTD+vlkFYJZPqFuYYCmp3SNBKAcV622yQUvwMew65
+         TplZL+a7mY00TYL7hPOadOftsMfvGg3YYSQYvWXZtyKazMhYD7q1gUyfvwgN7n5hTm+D
+         Zadzcg0xdSqFE4HAa7/D6wfYVmcMwVjpLfqUVGdiqkPRi5aaK+k99RnRlh3pI+eEPL0V
+         10cOl1lmSPNEpz5xeb6BPs5afOHV7d4g0zBF+wj42FEVGK3TxpC06U2lms0jyHZewv1r
+         cxTkJL+LWZ5kFdx9wj0noHZac2wUVb/SAaBiOhUOc2MSVbfbWyb4u/rfvi6rwyHhTQH3
+         yXgQ==
+X-Gm-Message-State: AOJu0YwZDxGmHgfP76OaYjaSlZLgz3p6U0r7r7g5sXkcs8ajA46DvzMn
+	CdN5poR1wXeGrogbgKWKyGzgMhZIaYfbbedLfLuAXgLXW9G72YtTt73c/avXJ9HeWL6J+40ORme
+	hCcENyzE=
+X-Gm-Gg: AY/fxX5P5+LjH3vFX4fr9dd22rldOnW1T5xYSc/e6bbwIer7DH5f6xzWTco8if2C7Et
+	ux7TvOtR05lQ54kv6Gru4vLgBCcuizO1dvbymfIV8n7VSvXwDycaLymUM/nwhBAkKNh64rp1GHL
+	Bt00Gs0PExRcPFJb4IX4Gigm3okPzuOsIHPByQjt/CsiuIEy7eDR09ARjEVUb5hsdB2M51LczQH
+	ku4tCk5/LzdK3q0+P/0xmzkl44cMyCHXV0/HtdnNLc/NuN1qsYPJw1Lje2Da2UBCg7NyRkEmEEU
+	DaL8yEaeB3SYLgL80gc1pqGFAW/DyeruVawdJ8YWI2E65uw1zpShPqD3+Qx1JuCxaueK6sYrxq5
+	8tEAFVDST8w47SqmolskKfj6GUKC0cXrkc6BcvkckkVmVYG+TGHjeZxE6H6FegVECs8AKAsMNg/
+	zka/5CUviXjwYF1kkDrvYGPgPTbnvQTzhTVGMpOKe8iIQvueHKRdGDSliNjCqZOVJ5gR5wcJnYB
+	KNbZlPduMYLqLbkJcZaBByEDLKenNXtiEg=
+X-Received: by 2002:a05:620a:4150:b0:8c6:a539:55cd with SMTP id af79cd13be357-8c6a693b0e8mr1579674385a.41.1768855103099;
+        Mon, 19 Jan 2026 12:38:23 -0800 (PST)
+Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8c6a71ab288sm899165185a.6.2026.01.19.12.38.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Jan 2026 12:32:00 -0800 (PST)
+        Mon, 19 Jan 2026 12:38:22 -0800 (PST)
+Date: Mon, 19 Jan 2026 15:38:22 -0500 (EST)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Marta Rybczynska <rybczynska@gmail.com>
-Subject: [meta-lts-security][whinlatter][PATCH 2/3] suricata: add PACKAGECONFIG[seccomp] - MemoryDenyWriteExecute
-Date: Mon, 19 Jan 2026 15:31:52 -0500
-Message-ID: <252f97af420cd170c37f3c33c2c1e86afeaa25f5.1768854613.git.scott.murray@konsulko.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <cover.1768854613.git.scott.murray@konsulko.com>
-References: <cover.1768854613.git.scott.murray@konsulko.com>
+cc: Marta Rybczynska <rybczynska@gmail.com>
+Subject: Re: [yocto-patches] [meta-lts-security][PATCH 0/3] Assorted updates
+ 01/19
+In-Reply-To: <188C3BD0ABF104BC.2815209@lists.yoctoproject.org>
+Message-ID: <e8b6cd6c-63f8-20ba-4793-3e045f4b7617@konsulko.com>
+References: <188C3BD0ABF104BC.2815209@lists.yoctoproject.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 19 Jan 2026 20:32:03 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3020
+ <yocto-patches@lists.yoctoproject.org>; Mon, 19 Jan 2026 20:38:33 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3022
 
-From: Clayton Casciato <majortomtosourcecontrol@gmail.com>
+Oops, these are indeed for meta-security, the "lts-" in the subject
+was a cut and paste accident on my part.
 
-Add option to prevent memory mappings that are both writable and
-executable.
+On Mon, 19 Jan 2026, Scott Murray via lists.yoctoproject.org wrote:
 
-https://www.freedesktop.org/software/systemd/man/255/systemd.exec.html#MemoryDenyWriteExecute=
-
-Core Suricata developer:
-https://github.com/jasonish/suricata-rpms/blob/a606a810325dd0a4f3ee45b2756b96bda28e590b/7.0/suricata-4.1.1-service.patch#L23
-
-Fedora:
-https://src.fedoraproject.org/rpms/suricata/c/cfb3b996f54d28018cd01f9c6b9ecb77e59f344d
-
-Resolve SELinux AVC denial:
-type=PROCTITLE proctitle=/usr/bin/suricata
--c /etc/suricata/suricata.yaml -i eth0
-
-type=SYSCALL arch=aarch64 syscall=mprotect success=no
-exit=EACCES(Permission denied) a0=0x7fffa7d04000 a1=0x4000
-a2=PROT_READ|PROT_WRITE|PROT_EXEC a3=0x21 items=0 ppid=1 pid=283
-auid=unset uid=root gid=root euid=root suid=root fsuid=root egid=root
-sgid=root fsgid=root tty=(none) ses=unset comm=Suricata-Main
-exe=/usr/bin/suricata subj=system_u:system_r:initrc_t:s0 key=(null)
-
-type=AVC avc:  denied  { execmem } for  pid=283 comm=Suricata-Main
-scontext=system_u:system_r:initrc_t:s0
-tcontext=system_u:system_r:initrc_t:s0 tclass=process
-
-Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
-Signed-off-by: Scott Murray <scott.murray@konsulko.com>
----
- recipes-ids/suricata/files/suricata.service |  1 +
- recipes-ids/suricata/suricata_7.0.13.bb     | 15 ++++++++++++++-
- 2 files changed, 15 insertions(+), 1 deletion(-)
-
-diff --git a/recipes-ids/suricata/files/suricata.service b/recipes-ids/suricata/files/suricata.service
-index bd7010d..4b774f4 100644
---- a/recipes-ids/suricata/files/suricata.service
-+++ b/recipes-ids/suricata/files/suricata.service
-@@ -14,6 +14,7 @@ ExecReload=/bin/kill -HUP $MAINPID
- PrivateTmp=yes
- ProtectHome=yes
- ProtectSystem=yes
-+MemoryDenyWriteExecute=no
- 
- [Install]
- WantedBy=multi-user.target
-diff --git a/recipes-ids/suricata/suricata_7.0.13.bb b/recipes-ids/suricata/suricata_7.0.13.bb
-index 469e42d..b0d2c82 100644
---- a/recipes-ids/suricata/suricata_7.0.13.bb
-+++ b/recipes-ids/suricata/suricata_7.0.13.bb
-@@ -38,7 +38,15 @@ CARGO_BUILD_FLAGS:append = " --offline"
- B = "${S}"
- 
- # nfnetlink has a dependancy to meta-networking
--PACKAGECONFIG ??= "file pcre2 yaml python pcap cap-ng net"
-+PACKAGECONFIG ??= "file \
-+                   pcre2 \
-+                   yaml \
-+                   python \
-+                   pcap \
-+                   cap-ng \
-+                   net \
-+                   ${@bb.utils.filter('DISTRO_FEATURES', 'seccomp', d)} \
-+                   "
- PACKAGECONFIG:append = " ${@bb.utils.contains('DISTRO_FEATURES', 'ptest', 'unittests', '', d)}"
- 
- PACKAGECONFIG[pcre2] = "--with-libpcre2-includes=${STAGING_INCDIR} --with-libpcre2-libraries=${STAGING_LIBDIR}, ,libpcre2 ,"
-@@ -51,6 +59,7 @@ PACKAGECONFIG[nfq] = "--enable-nfqueue, --disable-nfqueue,libnetfilter-queue,"
- 
- PACKAGECONFIG[file] = ",,file, file"
- PACKAGECONFIG[python] = "--enable-python, --disable-python, python3, python3-core"
-+PACKAGECONFIG[seccomp] = ""
- PACKAGECONFIG[unittests] = "--enable-unittests, --disable-unittests,"
- 
- export logdir = "${localstatedir}/log"
-@@ -115,6 +124,10 @@ do_install () {
-              -e s:/bin/kill:${base_bindir}/kill:g \
-              -e s:/usr/lib:${libdir}:g \
-              ${UNPACKDIR}/suricata.service > ${D}${systemd_unitdir}/system/suricata.service
-+
-+        if ${@bb.utils.contains('PACKAGECONFIG', 'seccomp', 'true', 'false', d)}; then
-+            sed -i -e 's/^MemoryDenyWriteExecute=no$/MemoryDenyWriteExecute=yes/' ${D}${systemd_unitdir}/system/suricata.service
-+        fi
-     fi
- 
-     # Remove /var/run as it is created on startup
--- 
-2.51.0
-
+> This patch series rolls up the contributed patches from the past couple
+> weeks, plus a lynis update from myself.  These changes are queued on the
+> master-next branch if you would like to check them out to test yourself.
+> I intend to merge these to master branch at end of day tomorrow (Eastern
+> Time, Jan. 20) unless there are objections.
+>
+> Scott
+>
+>
+> Changes:
+>
+> Clayton Casciato (1):
+>   suricata: add PACKAGECONFIG[seccomp] - MemoryDenyWriteExecute
+>
+> Scott Murray (1):
+>   lynis: upgrade to 3.1.6
+>
+> Stephan Wurm (1):
+>   dm-verity-img.bbclass: filter units from value part
+>
+>  classes/dm-verity-img.bbclass                     |  4 ++--
+>  .../lynis/{lynis_3.1.5.bb => lynis_3.1.6.bb}      |  2 +-
+>  recipes-ids/suricata/files/suricata.service       |  1 +
+>  recipes-ids/suricata/suricata_7.0.13.bb           | 15 ++++++++++++++-
+>  4 files changed, 18 insertions(+), 4 deletions(-)
+>  rename recipes-compliance/lynis/{lynis_3.1.5.bb => lynis_3.1.6.bb} (96%)
+>
+>
 
