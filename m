@@ -1,105 +1,97 @@
-Return-Path: <antonin.godard@bootlin.com>
+Return-Path: <richard.purdie@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2642CCF2C6
-	for <webhook@archiver.kernel.org>; Mon, 19 Jan 2026 08:44:09 +0000 (UTC)
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.31718.1768812244750750544
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC099CCF2CA
+	for <webhook@archiver.kernel.org>; Mon, 19 Jan 2026 08:53:19 +0000 (UTC)
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.31808.1768812796807351826
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 19 Jan 2026 00:44:06 -0800
+ Mon, 19 Jan 2026 00:53:17 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=dkim header.b=iXUzww8u;
- spf=pass (domain: bootlin.com, ip: 185.246.84.56, mailfrom: antonin.godard@bootlin.com)
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 9C0811A294C
-	for <yocto-patches@lists.yoctoproject.org>; Mon, 19 Jan 2026 08:44:02 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 70E8260731
-	for <yocto-patches@lists.yoctoproject.org>; Mon, 19 Jan 2026 08:44:02 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2832E10B6978E;
-	Mon, 19 Jan 2026 09:44:01 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1768812242; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=hDmtkOl8m17bhaDESbjZr7cbg7eZi7ouyC5YM0nu6R0=;
-	b=iXUzww8u/qOQP4ZMwZhSX4LQy6rno0/6ZxpZlcU7oKRbbQ87mcvVZGMcrUTIAc6VQFGcgl
-	s1vRmajtw20eanGAyQwSqKuEbnqNiTsFPjZ1Q6e2R7SkkK7HDvIbZH+FAgMstSDK4pBOYZ
-	XRTp9ZwxDCgzw19Q3lgvBmop8Ps++xYox4lGmjyz5wcgOnIahsshDqm2XCT4fKI4wqezi3
-	bPcVQePyzIAWB9o0pB3IqZlJ7z+b0Xeug43/VkzmHAJa9iDD/4tSmZpcu4NAx9yjgBhA2L
-	1CjBRI6Ab6gxsCR2bay4Lyahul6lxSfIyby7qiE+LG/gSOfqpBp2A7t4Zk8iMA==
-From: Antonin Godard <antonin.godard@bootlin.com>
-Date: Mon, 19 Jan 2026 09:43:47 +0100
-Subject: [yocto-autobuilder-helper][PATCH] config.json: rename qemux86-64
- builders to contain "-64"
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260119-qemux86-64-builds-rename-v1-1-1509a9431c02@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAMLubWkC/yXMSw6CMBRG4a2QO/YmLZGHboUwKO2v1ACFPgyGs
- HcRh9/gnI0CvEWge7aRx9sG66YD8pKR7tX0BFtzmHKRl0LKGy8Y01qXXF65S3YwgT0mNYKFqYW
- poERVFHTks8fDrue6af8OqXtBx9+v+TgdHasU3bmB5x7DDN/Svn8Bf3QwCJYAAAA=
-X-Change-ID: 20260119-qemux86-64-builds-rename-0d80d7ea0755
+ dkim=pass header.i=@linuxfoundation.org header.s=google header.b=O9vNOcYC;
+ spf=pass (domain: linuxfoundation.org, ip: 209.85.128.42, mailfrom: richard.purdie@linuxfoundation.org)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-47ee3a63300so37472925e9.2
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 19 Jan 2026 00:53:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1768812795; x=1769417595; darn=lists.yoctoproject.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Q1dLMzov02/DKMKQX7lZ8ejUqwgzzeO3Fwzqke98n1E=;
+        b=O9vNOcYC1LFmfPeXoHbR9mkQ65Wd6T1dDQNWuGX0O1kjn+l+kRSlbx2kZbn2Hl+zyi
+         m/Mq+9x3O7IPj/HTkOGu1Dsw1MQQbcn94rKFAUyF/EV7OiH1nys1YIpMi+xojzX9kg3a
+         qwKrNjdCiv949CX/ptwMWSyBNWSMaju3KEDHo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768812795; x=1769417595;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q1dLMzov02/DKMKQX7lZ8ejUqwgzzeO3Fwzqke98n1E=;
+        b=LXZvBupo+aHcr80gCBZF3W3gHLPaap0Gi0zqfeCwPmLd0CswJjzaArDdpicbondgi2
+         rxURhhpT/V+osvAtbT+eeEg7AjY+a+ZYPa8dNMVfzf92PrTtzHv+YOQHXlyyFRem4Ow7
+         4ppNUA652/pR8GxYSA4+VTv0YMX/AWKrgdpVs2ViahEpBDWZc9XlviG8tXlVIK/HC7RM
+         a7IvOT+ASI2GSMkWaAoIiDa0rGliXAnaLmo7JimsxWvPwaTNuNqD7FEBpyWF/sb3+kmQ
+         rrdqamZnJpDwVchuHq2fjMg9fCI+Gskb8Zl+HzwfK0GsvQ4vWiJvqehnlPTlpZS3lNc/
+         uJ0Q==
+X-Gm-Message-State: AOJu0YymZF2FMO32xYBs+1tF/q9iU2TEYXY3sPdKMvAlwrr/VfQ9Ahg0
+	Q0E7SAqew7uxsJceHgJ0UTGLVW9N5zrWrXh//e9QOvPAHhgnU38x8AdZizjPQqsp381/wxz33Hx
+	UuValcqo=
+X-Gm-Gg: AY/fxX5FOR83kBMq2g49XWW9gH++LbM4Q5Ulle5sgDGQbRZ+qS32owYOSSIRuasEO83
+	BxdnLQ2b9qGEpRfZiM68BijMpZSKQ8lxwDLK2qILI+ynWzTrdcjOVrW3BFX5CHPg6jMSTfeUJZ4
+	S/PBUA/5etdUtfapwNai5+UIN9kTZrzXSixuMB+1i4bYKna8zI8gcvM38WpE+uFzS43dG7Eobd3
+	/pM8zYvpyuZEuMk4LiNSLF4VPlUeJbjO3TdnMKkeRbZf/P6altGy+JH5CjwZlNJ4U52WA20W2uz
+	QJ18pfpuim6tPDAqjRBHt8MOkuKkTu50QBqIQpv+Oy+AQ5uyLJKLhP/uYOCaiP2pR0cxac1qtrR
+	miI9S8QBA4pC9vJE3uXO4afyUUAPH5+3AAoUwOFzTsMK39bHT4OVCz0jpNsNxgZoJZ1mZYex66j
+	8LtW1Y5MPjRgPumgiun0wP1Zpa0Zr/MA7omEbjaDOKKCf2z6kgSpZGGk8+7kDcuPD9RbpUEQpGP
+	O0=
+X-Received: by 2002:a05:600c:8597:b0:477:b642:9dc1 with SMTP id 5b1f17b1804b1-48024c9525bmr78141515e9.20.1768812794666;
+        Mon, 19 Jan 2026 00:53:14 -0800 (PST)
+Received: from ?IPv6:2001:8b0:aba:5f3c:7cb0:ccc0:c4cf:d0a1? ([2001:8b0:aba:5f3c:7cb0:ccc0:c4cf:d0a1])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4356997eb2asm21938438f8f.37.2026.01.19.00.53.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Jan 2026 00:53:13 -0800 (PST)
+Message-ID: <c232e9f1078adaf155f7c0c7ad74a8665737df0e.camel@linuxfoundation.org>
+Subject: Re: [yocto-patches] [yocto-autobuilder-helper][PATCH] config.json:
+ rename qemux86-64 builders to contain "-64"
+From: Richard Purdie <richard.purdie@linuxfoundation.org>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Antonin Godard <antonin.godard@bootlin.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1114;
- i=antonin.godard@bootlin.com; h=from:subject:message-id;
- bh=kY7hm++MwrxtIRlQY/7ZIwMySsPxJ4oX/Ww8puoeA3g=;
- b=owEBbQKS/ZANAwAKAdGAQUApo6g2AcsmYgBpbe7QGzEpH9BruNadgJxxkw036/ws9sn22T1Vy
- TNAsXBq0wSJAjMEAAEKAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCaW3u0AAKCRDRgEFAKaOo
- NljnD/9CcYEZTbH197/5/23TamUazB0J78auNHl6IQcRhid/cY4sISaAX7Na3c+2FYJYLr+g286
- drs53ISiif5AH/lC1/5OYsoRtsK37+AGS5BNkk2AFxS58Cm+M/8ClPJ8fr/F7jotmk/+W3YgmEG
- gX8WHRVc+WehdffSG94tBDfDq2qMEtrhtgEGNH2z7SPYd7T71uxB3f7Oqm032B3anVjn22dLWbN
- wAFv+geDXIP9z/yq3FyYnDNeViUEYx4UhtpyMaLPyPDsrsCYZAf3S+R1/KgQI+AAdUFh91J9a5g
- b50g0g0a9qYYS5H+4yzbZFUNUKa+l53P1oUsFGFLx3XFwUnKjjn4EP6bSsLDltFXpgoJKuXnfuT
- cXrmyhKaVB5WoP5hVhw8iz5c1JW/xYO9Lz4S6meEmKojKaE/My/FdsEU4EwfdMsCrbQ1cQGqgtu
- ofqkrZfXdalld9sIMJjNDplFamdyk7J+TiEVZp6TuSuiYp3gjOPjdhTXu8Xnd/TH0NU2/m2H8dz
- HRECTzxUJzlJJvD/YVlDbAKo6RwGZo1/vfcFubIM9LlcwdYTuOpAGfr7yKpY2NbtIWvA4cIkC8d
- H1HUqCtjZVGsx14Dj9Ew5/tzx0ahDl9cCUB3MWQcpJCoSnU0WSpaLB1v7HPYlvopgbbSPK4FR30
- TRTFDyF0o6RxDgg==
-X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
- fpr=8648725188DD401BB9A0D3FFD180414029A3A836
-X-Last-TLS-Session-Version: TLSv1.3
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Antonin Godard
+	 <antonin.godard@bootlin.com>
+Date: Mon, 19 Jan 2026 08:53:13 +0000
+In-Reply-To: <20260119-qemux86-64-builds-rename-v1-1-1509a9431c02@bootlin.com>
+References: 
+	<20260119-qemux86-64-builds-rename-v1-1-1509a9431c02@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.0-1ubuntu0.1 
+MIME-Version: 1.0
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 19 Jan 2026 08:44:09 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3007
+ <yocto-patches@lists.yoctoproject.org>; Mon, 19 Jan 2026 08:53:19 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3008
 
-It can be confusing as some builds are also named qemux86-<something> for
-the "qemux86" machine. Rename these two qemux86-64 to begin with
-"qemux86-64-".
+On Mon, 2026-01-19 at 09:43 +0100, Antonin Godard via lists.yoctoproject.or=
+g wrote:
+> It can be confusing as some builds are also named qemux86-<something> for
+> the "qemux86" machine. Rename these two qemux86-64 to begin with
+> "qemux86-64-".
+>=20
+> Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
+> ---
+> =C2=A0config.json | 4 ++--
+> =C2=A01 file changed, 2 insertions(+), 2 deletions(-)
 
-Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
----
- config.json | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I do agree it is confusing but it isn't this simple, you need to rename
+in autobuilder2 and in every branch of autobuilder-helper. Things like
+the results output then change too :/
 
-diff --git a/config.json b/config.json
-index 3229cde..1a81133 100644
---- a/config.json
-+++ b/config.json
-@@ -831,14 +831,14 @@
-             "MACHINE" : "genericx86-64",
-             "TEMPLATE" : "altcfg-hw"
-         },
--        "qemux86-world" : {
-+        "qemux86-64-world" : {
-             "MACHINE" : "qemux86-64",
-             "BBTARGETS" : "world",
-             "extravars" : [
-                 "OE_FRAGMENTS += 'core/yocto-autobuilder/multilib-x86-lib32'"
-             ]
-         },
--        "qemux86-world-alt" : {
-+        "qemux86-64-world-alt" : {
-             "MACHINE" : "qemux86-64",
-             "DISTRO" : "poky-altcfg",
-             "BBTARGETS" : "world",
+It did used to actually build qemux86, we changed that as it didn't
+make sense but I worried about the renaming of the target on the
+autobuilder. I'm not sure whether that was in kirkstone or not.
 
----
-base-commit: 6f793956c9b43f7a74f5a22c86a93b744b21ada9
-change-id: 20260119-qemux86-64-builds-rename-0d80d7ea0755
+Cheers,
 
+Richard
 
