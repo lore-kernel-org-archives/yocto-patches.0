@@ -2,116 +2,96 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BE92FC619B
-	for <webhook@archiver.kernel.org>; Mon, 19 Jan 2026 20:28:53 +0000 (UTC)
-Received: from mail-qv1-f66.google.com (mail-qv1-f66.google.com [209.85.219.66])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.44330.1768854523314632464
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D5F1D2ECE1
+	for <webhook@archiver.kernel.org>; Mon, 19 Jan 2026 20:32:03 +0000 (UTC)
+Received: from mail-qk1-f196.google.com (mail-qk1-f196.google.com [209.85.222.196])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.44160.1768854720228595444
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 19 Jan 2026 12:28:43 -0800
+ Mon, 19 Jan 2026 12:32:00 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=E23KIm8s;
- spf=pass (domain: konsulko.com, ip: 209.85.219.66, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qv1-f66.google.com with SMTP id 6a1803df08f44-88888c41a13so64957046d6.3
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 19 Jan 2026 12:28:43 -0800 (PST)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=uU/lZ5p4;
+ spf=pass (domain: konsulko.com, ip: 209.85.222.196, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk1-f196.google.com with SMTP id af79cd13be357-8c5389c3d4cso523826185a.3
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 19 Jan 2026 12:32:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1768854522; x=1769459322; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KIp53e4wLwyAMivLd+6OyCTeURFJ7r5eBjzgCvqJMt8=;
-        b=E23KIm8s8xLGD4NkH0xk9ezvuJhfn5rOGkPve++l76FDvwTuWkqwWjs88LnWUhuJ5P
-         pCOz/m6y4dRKZ/kJ1ajCS0o+5HjKwtJZt+C53O3fWRPD04IzzgYIotmFCyd3T70arJkS
-         Nd2KSMCzUin+sOQieLmVdXdQwoxkv1WlwYNuE=
+        d=konsulko.com; s=google; t=1768854719; x=1769459519; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=j0A8VlpXu2EzmifXhJtSdNfS2jmfZIDeeKcTMm4YnUc=;
+        b=uU/lZ5p4aNUtAGtWltN/fnqs6YZyqawhUzK/Ah/LAvmrx9TWKvnBAO/mnDCdUIB9Ml
+         xpkQLf2WAouWhwPWCcCXLFXnuW6TBqpZTdie3WO//Vgc0q4yDHLlNPhryGWCU7EgqII5
+         Hx20EMWMgiqBzVICDy93wQgxq1oaEE6hKcuxo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768854522; x=1769459322;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=KIp53e4wLwyAMivLd+6OyCTeURFJ7r5eBjzgCvqJMt8=;
-        b=Fw3/IKQJ7O5BON0CIIruN9Dfeop5Bt2gzFFfe1Dqh9PQM1xRuY/KNyGLR6jbOkJorF
-         BZ9fBWOQ0xBjy2fkYFPulR8HHilGTqPFQ4cERVdEShWMb5w4GRi6HyWY/aJDopfCVHvA
-         O9GPtT6gXoEp6RBoT5Vpjo45fTGo0f+eZWXIDlEaCw0WbdAVwp7Q8A9SxunG5VX21GSv
-         AgDF3qJZpc63gzVLNs1nqPjMo5iQ0gYkr9JdmlvRqSWmfrUjbQT5XqYP4Xc2/RfWXxjF
-         D7R6Qvvwlm/xrOm+ByJlILz1Jv8+7XMERkpFwSXZMAnySfYD4ijtvFsfzugYkFLIvh64
-         5csA==
-X-Gm-Message-State: AOJu0Yxo/TvGEvXxcNQ1JsTYa4qcg2tar2vz0+TYF5UbAWxaSwJ4eOvw
-	T4hjxPOuhPoqJ/oAUjw5BmOnWV3pBUsS3lcpcKE0DmWobFBTJ+gaN3Ffg0gjayYDr3saWK6Qy/n
-	rrLesBnc=
-X-Gm-Gg: AY/fxX7dvIz5H61dF9xz5p0B7NRfpyBFf/9++ZjGDuFayT/+dKzdr6kGbc7bd+pAOoD
-	KqoyO/4HfktiUvGXDm1vNjtsOy9PqnFL5SBvqcF/rEVS5MkfTIFehvNdVSeGGaT7Vxz9UKFH6/2
-	QdycYWqvLpzVquYIGV6l1pmp9Re976wwF4DDNq1lbQHDzP4d9aIFcuRLx5QwZ0G3Jgb9D62aa4l
-	JiW9fbPu0jaEiuX9lJeqplqmJ7lgi7cjHXsmWF9SoMvlDqIziPYguHtIodsyN2BU6Tqma6xiGqZ
-	YF19Uq3KaSOqAe9Squ01U8YScH7cOIFosTCF0oJMCAICiJMkP5tiEbXppsr5ufF9UxgI/TV2dYb
-	u7acxhl533SQLyL4g3vAvy6LjE6GogOAcXRKOkF6KPFSQgslWVT9s1XPCsBUqfC34dcI2GiZ16L
-	cUv5aDsvMyC+Ckj0SYpYSgFW+vr+cUtJE+MNxu6mkS6V5KGZzKzP5rMf3EIaLeAUDelqhSiFLFj
-	ZMfArIzI3Q1GQtOZPHsyj9urj3ObVcDsCqpUw7z2po3nDyYTPhf
-X-Received: by 2002:ac8:5810:0:b0:501:463a:20a1 with SMTP id d75a77b69052e-502a17d3611mr163269381cf.81.1768854521996;
-        Mon, 19 Jan 2026 12:28:41 -0800 (PST)
+        d=1e100.net; s=20230601; t=1768854719; x=1769459519;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j0A8VlpXu2EzmifXhJtSdNfS2jmfZIDeeKcTMm4YnUc=;
+        b=wK/Qs8aN/T4+kPKIH9QWIQnHz7FhfnVgQE+WpAmFbor4Sekmbul5gRosZ9S4rgcw4D
+         v2iPfwTyP7oQOJCGOV6sBVOMPRUQkUDjRdfaK5CxFwVmP+lZ6qpcxE6RU6QZwfFtnC5H
+         MASF0uS/jJMe8NMswVAIcdS1AnzgOfcgjSNseAZNwRgbhW/HqlbaiqX04RYohahcsC4T
+         ZXCTz7m4V6/Gw6WZBxAbfSEwBghchGVK/hy/ABzu6OUigfSufZcFTDk/E9PMgqtqrjdu
+         Mlxnw8+Jgt+IJ2duXYP82KnVaERu2DCBId8Qe+U4ViQkJuy929kS55y8pCEJiagGsrsC
+         YNkw==
+X-Gm-Message-State: AOJu0YwqGJSD8MGpWyL8hWd2WC8g7sKnBv/cmlCRbbx9fnW4YvAsJMCF
+	qkIVOlX/gbRuskD6E0nvQFjdRS7uxqLgywFDkRrBvDF2Q/cn75I32SyMbH/7n/EiaGjRJIEECLl
+	aid7wK8s=
+X-Gm-Gg: AY/fxX7BYHu290ZX7K90Q5z3U/1ntuPtY0HSPoJ9Zg44OD8OZf/WCDKhgkVGH0t5B5x
+	D2xCBbW/ZPgdYnuCLvifLT/CdPclFMdVQsnViTuLyXxjrgc0yJ4wJmQUhwZPM/yWM9rBD2UFJ+t
+	TOmlJNjZfHLQ2/X0VbvUNPFbV15nVVOOd4SoYn3Y4nRBZ6KSTBDMawUFPzQsFa53khWjF4wTKkI
+	VFIWNNGASslQMUIerbMovKgzR2GL1H/swWyGGWhRsrIDj3MY/buZ6PSt7wJT1wBau/H9UOFnV9k
+	AWEPbqKMTa69MrCdK/PpHApDcR8l1M6fwBm+6FiYbGFD+u5M039Aq0VShpU4eJcJNvtqFvagmFJ
+	zv9pClDnvN3+lxQfehXGHp0dez5m/IEXC7FcBvitE4TaNrXN799CHajsR5P0IN0Kn2DOhCpr6BZ
+	mI1uI1QPR9x07FjZFmnJr4TkoSKVRbEHA1WPzSWLkDZ63P4l3tfhi0jC3+jGS/w1ONaloOQx7uX
+	NNCDXHSrcpefHp5ztltvbf81KwtHKjyx6NZrRefM2cDcmzhrkj6
+X-Received: by 2002:a05:620a:1a86:b0:8c6:a213:8fe0 with SMTP id af79cd13be357-8c6a66e449cmr1567130285a.23.1768854718835;
+        Mon, 19 Jan 2026 12:31:58 -0800 (PST)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-502a1f21c9asm82661411cf.34.2026.01.19.12.28.41
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8c6a7248dcfsm860337485a.25.2026.01.19.12.31.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Jan 2026 12:28:41 -0800 (PST)
+        Mon, 19 Jan 2026 12:31:58 -0800 (PST)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Marta Rybczynska <rybczynska@gmail.com>
-Subject: [meta-lts-security][PATCH 3/3] dm-verity-img.bbclass: filter units from value part
-Date: Mon, 19 Jan 2026 15:28:23 -0500
-Message-ID: <9e6d962250aab6e5319215f15b0201ef233c46cd.1768854292.git.scott.murray@konsulko.com>
+Subject: [meta-lts-security][whinlatter][PATCH 0/3] Assorted updates 01/19
+Date: Mon, 19 Jan 2026 15:31:50 -0500
+Message-ID: <cover.1768854613.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <cover.1768854292.git.scott.murray@konsulko.com>
-References: <cover.1768854292.git.scott.murray@konsulko.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 19 Jan 2026 20:28:53 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3017
+ <yocto-patches@lists.yoctoproject.org>; Mon, 19 Jan 2026 20:32:03 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3018
 
-From: Stephan Wurm <stephan.wurm@a-eberle.de>
+This patch series rolls up the contributed patches from the past couple
+weeks, plus a lynis update from myself.  These changes are queued on
+the whinlatter-next branch if you would like to check them out to test
+yourself.  I intend to merge these to master branch at end of day
+tomorrow (Eastern Time, Jan. 20) unless there are objections.
 
-This is necessary for cryptsetup starting from v2.8.0 which introduced
-"[units]" in its output breaking the parsing of veritysetup output.
+Scott
 
-VERITY header information for image-poky-20250701085433.squashfs-zst.verity.
-UUID:                   5dc16c55-79b8-4988-9d79-900f8e143f98
-Hash type:              1
-Data blocks:            40091
-Data block size:        4096 [bytes]
-Hash blocks:            318
-Hash block size:        4096 [bytes]
-Hash algorithm:         sha256
-Salt:                   f670bf67a32f4f5a22e052d7bf84830f8d35ea24e2d52f585f6275207899153b
-Root hash:              a7eab55b7933e347650671611e4b2a10571f2a28a1fb0fc8eae409f7a0d86693
 
-This extends the value filter to remove the "[units]" from the .env file,
-while retaining compatibility to older cryptsetup releases.
+Changes:
 
-Signed-off-by: Stephan Wurm <stephan.wurm@a-eberle.de>
-Signed-off-by: Scott Murray <scott.murray@konsulko.com>
----
- classes/dm-verity-img.bbclass | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Clayton Casciato (1):
+  suricata: add PACKAGECONFIG[seccomp] - MemoryDenyWriteExecute
 
-diff --git a/classes/dm-verity-img.bbclass b/classes/dm-verity-img.bbclass
-index 47f698c..48557e9 100644
---- a/classes/dm-verity-img.bbclass
-+++ b/classes/dm-verity-img.bbclass
-@@ -71,12 +71,12 @@ process_verity() {
-     # two parts into separate variables and process them separately. For the
-     # key part: convert the names to upper case and replace spaces with
-     # underscores to create correct shell variable names. For the value part:
--    # just trim all white-spaces.
-+    # just trim all white-spaces and remove units.
-     IFS=":"
-     while read KEY VAL; do
-         printf '%s=%s\n' \
-             "$(echo "$KEY" | tr '[:lower:]' '[:upper:]' | sed 's/ /_/g')" \
--            "$(echo "$VAL" | tr -d ' \t')" >> $ENV
-+            "$(echo "$VAL" | tr -d ' \t' | sed 's/\[.*\]//')" >> $ENV
-     done
- 
-     # Add partition size
+Scott Murray (1):
+  lynis: upgrade to 3.1.6
+
+Stephan Wurm (1):
+  dm-verity-img.bbclass: filter units from value part
+
+ classes/dm-verity-img.bbclass                     |  4 ++--
+ .../lynis/{lynis_3.1.5.bb => lynis_3.1.6.bb}      |  2 +-
+ recipes-ids/suricata/files/suricata.service       |  1 +
+ recipes-ids/suricata/suricata_7.0.13.bb           | 15 ++++++++++++++-
+ 4 files changed, 18 insertions(+), 4 deletions(-)
+ rename recipes-compliance/lynis/{lynis_3.1.5.bb => lynis_3.1.6.bb} (96%)
+
 -- 
 2.51.0
 
