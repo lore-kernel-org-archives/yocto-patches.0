@@ -2,102 +2,110 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61942D2ECE5
-	for <webhook@archiver.kernel.org>; Mon, 19 Jan 2026 20:38:53 +0000 (UTC)
-Received: from mail-qv1-f65.google.com (mail-qv1-f65.google.com [209.85.219.65])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.44554.1768855131403090951
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87540D2ECE9
+	for <webhook@archiver.kernel.org>; Mon, 19 Jan 2026 20:40:23 +0000 (UTC)
+Received: from mail-qk1-f194.google.com (mail-qk1-f194.google.com [209.85.222.194])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.44335.1768855217321221152
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 19 Jan 2026 12:38:51 -0800
+ Mon, 19 Jan 2026 12:40:17 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=HBNNVItk;
- spf=pass (domain: konsulko.com, ip: 209.85.219.65, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qv1-f65.google.com with SMTP id 6a1803df08f44-88a32bf0248so33710166d6.0
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 19 Jan 2026 12:38:51 -0800 (PST)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=Bjb+aF1e;
+ spf=pass (domain: konsulko.com, ip: 209.85.222.194, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk1-f194.google.com with SMTP id af79cd13be357-8c59bce68a1so297728385a.0
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 19 Jan 2026 12:40:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1768855130; x=1769459930; darn=lists.yoctoproject.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gxk0lC8W5cCPu5KFrLMRI6OviNBaG5WUqO/Y3kVEFfg=;
-        b=HBNNVItkttaw8czz91XilxFa1/KTlyA7erElHYuxGiVjwTfotHfWvkfv58c1VdjZtx
-         WzR8eQBKaRwZXmYkAg9ZvbjW78ZDnGWUdLEC3EM3qxoFwKE4XQgNn0vW6Aoz1YGhvOgV
-         9wQZ5Ij/tlnqkqdsu8QFHXPJpZXf2T9XAXdXA=
+        d=konsulko.com; s=google; t=1768855216; x=1769460016; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fd95pWZPcEEQP9/Z6cQNOI6JvwsFIKU/RqcnCvoKGIk=;
+        b=Bjb+aF1erIn5+CQfiSHry9DmV6NULdR8+30S+B6zjOdMpRy8OaOOrzpG75KCrKD4Ll
+         2QtNFFsn+pNYg4bdvaVmYarBgHw1lHx63TZasWD2ctrCJNYMpasxnHjflgprVUjPyQ4/
+         VaFGumFwpkzmuQU8cZ2knN++WgdCRWkSt/mnA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768855130; x=1769459930;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gxk0lC8W5cCPu5KFrLMRI6OviNBaG5WUqO/Y3kVEFfg=;
-        b=MLLBTm3SG5pN7JcPMwu5OyHmS0eySkYa7b35jYhb7vZS3UVAzxaKwPDQe+QhfesABi
-         8w8oUO5dYXxpapTfG1VgtvNJeTRNoBM3iCDIXRXiUMA+MEbWQ70rJ36p6eDh1K9MW75P
-         s+f7b0LTRUT5Rj8jO1gwgqbR1/lyE8blC4BVrrOZ45VCO1L2dJPGPcnjKqypYPAnk48m
-         Y3DRisVOS9l1A1a4xBwc5AX2Mz+/2O83Sz1BAUAoVR52PwCtVODnTQPKv4yct9OqI6Oq
-         xG8Tjd1AAq7ErYism4gYqPSZgjkrucDeK5jDRFAIniB7okOh5iSK2AhjJs4Eq7Kuq1CD
-         N2Sw==
-X-Gm-Message-State: AOJu0YxFT61tUx7qWTIlw+AOJnRWxXzBKQZbsiFrdVR3LXpBea3Im0AX
-	7QwGla+d31EqZY6FQ2OJNULqg/DQ407NrUX0lFN+EOBkzeXOxJ7hAXjw2+arnCvUX43+czPvO9P
-	zQiM6Hm0=
-X-Gm-Gg: AZuq6aJMF0jLVW7r4ayzgkQLvcpf/vchksk4pntI961UCCRX3MCKoGiCGSFlZOiCzwe
-	l0pRg5LG60slDeY/KCNIQava8vOlaYilfIJ2NBXy886KfxtIXeg/jkN7w5uMNhjtvIjg9Qq3uGW
-	7ogihfpMiI4OpZwumj45Pke5q+Hprn9j9wQBC1cTpjkb5u7x5xKHi+pfBMf4KEhd+i2lf7kShwX
-	6jFYz6YmNLhlJAvVkhUYjq6zvEgVhc6TAWHOJkZCNfwmBrZkynUqpevWF9Jnu/TTvbQ0f7CP0Il
-	er1fh/BIgiLOFXmawd97LHKdSPe440+2z98xWSzbFFe6HqqWtM0X7oCzj1f7TGtxq4mvS1Zywv5
-	0Otmu0Ci7TUmVjUdyyieRfBSiVGLkzCNTmhv6B9gpP59oPxw2IK+gbqYQQvJrzgxyfQ3e/t9sfl
-	bCrpjtwjJ74Tb0FwmFx9aFGSW+WdI8/U88HpeAuf/UtR3ikmT5x6f3p+9dFMRhr5kbFhtrasKBM
-	zbFtrvdHb7/oW0M569H91Qwo7e9k+zub7oebGK2C4JKYw==
-X-Received: by 2002:ad4:5c67:0:b0:880:461d:2e19 with SMTP id 6a1803df08f44-8942dd70189mr177230056d6.42.1768855130060;
-        Mon, 19 Jan 2026 12:38:50 -0800 (PST)
-Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8942e6cd63esm86499576d6.49.2026.01.19.12.38.49
+        d=1e100.net; s=20230601; t=1768855216; x=1769460016;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Fd95pWZPcEEQP9/Z6cQNOI6JvwsFIKU/RqcnCvoKGIk=;
+        b=Frijfo9kzw+NXNKNMRkqNB+z8XIFXlwjagMxxLaOuH6HECeUy6mspI+YDJOPHZ7SBr
+         eEv4YcMofWTkJDjZIeqZiARl0nUEXGysPMEhLcyCeLzqYUkybWfP8aQHkZn07x6oeNMn
+         Y9a8KIc7zD23nEeqBwdiYNo1uBfKw/ITZChAO8QBf549sEnsqiASR3VBme6ILHc10onN
+         6SXfl8m50t4vCmElzrRCHHYDXv/+ZGql4hgCp2Iccr65kXlbsQcYrKG5H6hiC01/0W+9
+         BwDEWlYihX2bFyVzgUzLMS7QnQ2hBIf2X4OZ62RdeWmDbC1psLbZCYpX6vCHeqThUaT3
+         9ppQ==
+X-Gm-Message-State: AOJu0YwLoQR7NOgFoLyExCbK+8XTUKGTMLTzwmqN5CXC2i8kjjAZEA7k
+	v6OdypGkdaoUkWrz7IXlcMkJ5M6gCGE329aPZ53aj8SMuuQZtD61Jai+o3D3bx34iULQO/bVCXU
+	3tw6aq8E=
+X-Gm-Gg: AY/fxX6ZasGXZVxyONkDjUSyElew4SNTQph3ZaW+5hIyWTVen743/kW4wqQrZWGVOV2
+	eNEZJtMO/jnRHfidHRwq9hRnflizGzfp2hnp6438ycuISXyi5rfC6uiBlOoh10oJD+hdMT+rXAU
+	d3nNskkB0q4tvDRM9Rxft0gyA97T7wmh/ul/+cIq9tZliGh7P5WFX9XI29tPgoaZ1maVfwmNR0u
+	J9s6ydFxj1EJB5PkbhN6Fd9/gX2cXZgV1wakRx+dFUtQBha3ym/IokbXjcB+S00T0+TbpxgKSpZ
+	4Ac5X7GukQeet/g11l/ztPypMlXBdGiXqe1rVqXhV4/iXR752iHgB6QtAs08u7PmRGc4g48R9nr
+	KCyfctTC3ks0RISmkGy9DVUoY6yNYfkM8sgH2FuwZFuYDjHixhGXIbrpEaoCLFLwSpeHFZnqsTg
+	biM8zQyvSscLAM3jos56CdK/MYI8kD8BvaTaAbof9KNPIicntTlX+UI6Ndbhb7k2dobfSWm0M/S
+	/oJjX/Vgbjr/Nk1pCNJUX+bEpaO6hrLrHWwzJOlgtNVI1iSzcJs
+X-Received: by 2002:a05:620a:1912:b0:811:f742:c752 with SMTP id af79cd13be357-8c6a6718331mr1863399985a.36.1768855215939;
+        Mon, 19 Jan 2026 12:40:15 -0800 (PST)
+Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8c6a70f1fe1sm851462085a.0.2026.01.19.12.40.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Jan 2026 12:38:49 -0800 (PST)
-Date: Mon, 19 Jan 2026 15:38:49 -0500 (EST)
+        Mon, 19 Jan 2026 12:40:15 -0800 (PST)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-cc: Marta Rybczynska <rybczynska@gmail.com>
-Subject: Re: [yocto-patches] [meta-lts-security][whinlatter][PATCH 0/3]
- Assorted updates 01/19
-In-Reply-To: <188C3BFF15A14E90.3354624@lists.yoctoproject.org>
-Message-ID: <6d9dd9d1-95f9-8bdd-8cc9-e1eb14570385@konsulko.com>
-References: <188C3BFF15A14E90.3354624@lists.yoctoproject.org>
+Cc: Marta Rybczynska <rybczynska@gmail.com>
+Subject: [meta-security][scarthgap][PATCH 0/6] Assorted updates 01/19
+Date: Mon, 19 Jan 2026 15:39:55 -0500
+Message-ID: <cover.1768854779.git.scott.murray@konsulko.com>
+X-Mailer: git-send-email 2.51.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 19 Jan 2026 20:38:53 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3023
+ <yocto-patches@lists.yoctoproject.org>; Mon, 19 Jan 2026 20:40:23 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3024
 
-Oops, these are indeed for meta-security, the "lts-" in the subject
-was a cut and paste accident on my part.
+This patch series rolls up the contributed patches from the past couple
+weeks, plus backported lynis updates and a sssd update from myself.
+These changes are queued on the scarthgap-next branch if you would like
+to check them out to test yourself.  I intend to merge these to scarthgap
+branch at end of day tomorrow (Eastern Time, Jan. 20) unless there are
+objections.
 
-On Mon, 19 Jan 2026, Scott Murray via lists.yoctoproject.org wrote:
+Scott
 
-> This patch series rolls up the contributed patches from the past couple
-> weeks, plus a lynis update from myself.  These changes are queued on
-> the whinlatter-next branch if you would like to check them out to test
-> yourself.  I intend to merge these to master branch at end of day
-> tomorrow (Eastern Time, Jan. 20) unless there are objections.
->
-> Scott
->
->
-> Changes:
->
-> Clayton Casciato (1):
->   suricata: add PACKAGECONFIG[seccomp] - MemoryDenyWriteExecute
->
-> Scott Murray (1):
->   lynis: upgrade to 3.1.6
->
-> Stephan Wurm (1):
->   dm-verity-img.bbclass: filter units from value part
->
->  classes/dm-verity-img.bbclass                     |  4 ++--
->  .../lynis/{lynis_3.1.5.bb => lynis_3.1.6.bb}      |  2 +-
->  recipes-ids/suricata/files/suricata.service       |  1 +
->  recipes-ids/suricata/suricata_7.0.13.bb           | 15 ++++++++++++++-
->  4 files changed, 18 insertions(+), 4 deletions(-)
->  rename recipes-compliance/lynis/{lynis_3.1.5.bb => lynis_3.1.6.bb} (96%)
->
->
+
+Changes:
+
+Marta Rybczynska (1):
+  lynis: move to GitHub fetching
+
+Michael Opdenacker (1):
+  lynis: update to 3.1.5
+
+Scott Murray (2):
+  sssd: Upgrade to 2.9.7
+  lynis: upgrade to 3.1.6
+
+Vijay Anusuri (2):
+  sssd: Upgrade 2.9.2 -> 2.9.5
+  sssd: Fix for CVE-2025-11561
+
+ .../0001-sssctl-add-error-analyzer.patch      | 42 +++++++++-------
+ .../sssd/files/CVE-2025-11561.patch           | 50 +++++++++++++++++++
+ .../sssd/files/drop_ntpdate_chk.patch         | 17 +++++--
+ .../sssd/files/fix-ldblibdir.patch            |  9 +++-
+ .../recipes-security/sssd/files/fix_gid.patch | 16 ++++--
+ .../sssd/files/musl_fixup.patch               | 34 +++++++------
+ .../recipes-security/sssd/files/no_gen.patch  | 18 ++++---
+ .../sssd/{sssd_2.9.2.bb => sssd_2.9.7.bb}     |  3 +-
+ .../lynis/{lynis_3.1.4.bb => lynis_3.1.6.bb}  |  6 +--
+ 9 files changed, 141 insertions(+), 54 deletions(-)
+ create mode 100644 dynamic-layers/networking-layer/recipes-security/sssd/files/CVE-2025-11561.patch
+ rename dynamic-layers/networking-layer/recipes-security/sssd/{sssd_2.9.2.bb => sssd_2.9.7.bb} (98%)
+ rename recipes-compliance/lynis/{lynis_3.1.4.bb => lynis_3.1.6.bb} (87%)
+
+-- 
+2.51.0
+
 
