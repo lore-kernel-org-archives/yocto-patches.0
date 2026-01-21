@@ -1,252 +1,623 @@
-Return-Path: <peter.kjellerstedt@axis.com>
+Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82669C44506
-	for <webhook@archiver.kernel.org>; Wed, 21 Jan 2026 17:52:53 +0000 (UTC)
-Received: from OSPPR02CU001.outbound.protection.outlook.com (OSPPR02CU001.outbound.protection.outlook.com [40.107.159.31])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.17986.1769017963786241929
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9935DC44506
+	for <webhook@archiver.kernel.org>; Wed, 21 Jan 2026 18:12:43 +0000 (UTC)
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.18280.1769019159971754619
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 21 Jan 2026 09:52:44 -0800
+ Wed, 21 Jan 2026 10:12:40 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@axis.com header.s=selector1 header.b=Y8VMgEaw;
- spf=pass (domain: axis.com, ip: 40.107.159.31, mailfrom: peter.kjellerstedt@axis.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Xv9Bi9YDWEWG8a3K0lg3W22bNz19yko8c6AWLY2D9C4+52eXEOzcuYDxDEJ0PdRFxkfb6JP9PZu+Z8/mhoUH9jEG5FfKZG+ckhVqNmHUxYgaQpLM0MXIO7Y57v5lQ3S78YSxF8Q93IYu4rSaYz90V57d1+/txsGbEz5x9IBKRCghvMB680gBdhssjV4i4mnsSHvPj1Ern/w4zIlNyEU28+NTt1qZi5zBD3o9qChEFpWyWTksphQHizbvziLMDzB80eWoDSCqfOYqGI8orqHBRpKiQBCEGgA1fczd91k9M09CQa9qWUGSqYWx8b9HDeW2duQgOhB1u4Z8aiqVIjUm7g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=C5fSSrmXdhzQzkUzYAu5bU2KafSzVsO46aZ0eBfzNaU=;
- b=nlcf5X35t9/ig4JKn4atkvzFGTv63wohNCG4jqZzyrM47BRSUK61a9Vfyu2vwPkB5CqugoXkgj3nni1VMnrxDntW5qzhsqVWt2U8UWohyHc2K7n5o4ciHMlpmOKXQ6pHYsx22Jm27dILKkPKCngrCwTITHxoFhC56pHbKKZY/29JvS8fiz8sXus+XKb9XfFY21e9knJLR9TTt9Ez3uTM5JGoXUJhV/ONBU3KSEq4UY8uso5C+mBq8aO8eyFZaRX0Qtg0wiXqjKoVVxhSYB0hYGdmm00Z7QScM8K+PdCwIwLUhkD8p6WslQQWJs7HymEaiUzISs4mVTZ4jdmFcN1SjQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=axis.com; dmarc=pass action=none header.from=axis.com;
- dkim=pass header.d=axis.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=C5fSSrmXdhzQzkUzYAu5bU2KafSzVsO46aZ0eBfzNaU=;
- b=Y8VMgEawxyc9SxJRm6mrKLZziRim6G4FulvgeIHRlBtWgZxThATTSk5eJ0AZU0qppvDujYg+qPs5SsIlKnO1bVjZyYnkqnN8OPJovfq5vysMZLpDIIwvtoGqObOrpY+B3rZe5WJtUOXg9LkH1JfbfF8Hdim0bIw6+S7wbKeOP4U=
-Received: from DB5PR02MB10213.eurprd02.prod.outlook.com (2603:10a6:10:4a8::17)
- by PA6PR02MB10709.eurprd02.prod.outlook.com (2603:10a6:102:3d4::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9520.12; Wed, 21 Jan
- 2026 17:52:38 +0000
-Received: from DB5PR02MB10213.eurprd02.prod.outlook.com
- ([fe80::1bee:3174:a078:5af9]) by DB5PR02MB10213.eurprd02.prod.outlook.com
- ([fe80::1bee:3174:a078:5af9%7]) with mapi id 15.20.9542.008; Wed, 21 Jan 2026
- 17:52:38 +0000
-From: Peter Kjellerstedt <peter.kjellerstedt@axis.com>
-To: "yocto-patches@lists.yoctoproject.org"
-	<yocto-patches@lists.yoctoproject.org>
-CC: Yoann Congal <yoann.congal@smile.fr>
-Subject: RE: [yocto-patches] [yocto-autobuilder2][PATCH v2 1/2] schedulers:
- sort repo branches in maintained stable branches
-Thread-Topic: [yocto-patches] [yocto-autobuilder2][PATCH v2 1/2] schedulers:
- sort repo branches in maintained stable branches
-Thread-Index: AQHciv362uq0WKBGdkGkiegOJk5/JbVc5mNw
-Date: Wed, 21 Jan 2026 17:52:38 +0000
-Message-ID: 
- <DB5PR02MB10213B6D7B2ED24E5B7C1BC72EF96A@DB5PR02MB10213.eurprd02.prod.outlook.com>
-References: <20260121174651.64212-1-yoann.congal@smile.fr>
-In-Reply-To: <20260121174651.64212-1-yoann.congal@smile.fr>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=axis.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DB5PR02MB10213:EE_|PA6PR02MB10709:EE_
-x-ms-office365-filtering-correlation-id: 791d928c-0618-4444-5d27-08de5915dde7
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230040|376014|366016|1800799024|38070700021|7053199007;
-x-microsoft-antispam-message-info: 
- =?us-ascii?Q?WtQbeQivCEnNcCazW+3Yo4nThKz+FYprqRYjlgngWqBcBamu7bmDH6OUapVQ?=
- =?us-ascii?Q?swZKGxLkSphg5V8IAbuIQmk1xm+sejBPACoSC70Omh4qbmlUMf643YmXE76t?=
- =?us-ascii?Q?mRzmzio3jUtkuQfLh689a5kw3N9mvIObylvhGpuR30BP4j5HAQAJEEliPwKh?=
- =?us-ascii?Q?DM0epu4RqP88EoAqdY4rRX7C+fZ6imozMg99s09A+kRpLBJTYp4Bx8ywUiCL?=
- =?us-ascii?Q?Tku5YMT/Bq6hROMYIYHjriswaT4/qB4bo5dRDnvDHDi8Gv18y+LQRChCwQTd?=
- =?us-ascii?Q?3FztU4Ox5mb36z+VCPAs3QzCpul4p5UNARow9/y1zO65xnnWivJhDe2CdS+g?=
- =?us-ascii?Q?Ovos4MfCiinVunYLGtDYJ0va1HZteSSgK/ZZ+DvjgpQti/5AXjAAGCy7mCBz?=
- =?us-ascii?Q?NLixacFbwghdRBQ9FHgAuxcUcWbWtnsSUs82eBMUJKsHEyDsMCj2GDC3bVuQ?=
- =?us-ascii?Q?htDwH4j8v/AosxURpVh/zQfP8XCO/+PKAcW7Ieh9WAGS4/I1net2t5CMNBx+?=
- =?us-ascii?Q?ntKhwkZzTYT/iLWdg1eTSlpW+ZMhm3bQgrjFpUJngkhOX7JEWqM6j8t1zn0w?=
- =?us-ascii?Q?xnOVQSiU+SpdaiqFreLQUtTrjhX5uiMWn10XvE/PFdBxTM4oEZXRp/aQtxlZ?=
- =?us-ascii?Q?ZSMKUAVN4TeOScpHufchP8qhRm5rIeG2/xGUvLdzYQ3Xna11DAwmsaipKcMi?=
- =?us-ascii?Q?5lreCpzKlGaW399d4olK2z23h6Tqx1jNRv+rEFVSHlUPwEaIosF+gJBa/wgb?=
- =?us-ascii?Q?UEGyBSDTa+/OSbiiq1VeP6NIU/8cgX63WtluUguB6Vl+UZw/nyNx5uoAQWvW?=
- =?us-ascii?Q?5ZwdmzH8HnPJNxeSBaGcVXR9EBxW/LJfzwkOpKyCJprHmDuXsO97On8pt9iZ?=
- =?us-ascii?Q?3ug7lPg6FDBv8nSgJTXMXjDuQM0LNFaF3Ftu1+gfCMlWizPCBrCjaK6BFWCN?=
- =?us-ascii?Q?POPpX1wle3/2YjcP/hHJYy9/9WsljSU4CN9HoOOdOaOiU1kVudFNnwzUS9eu?=
- =?us-ascii?Q?UHSRveDIXDqiigXC8AAGQSZNcyhaq2kbb0J5CbCaMGqcsoK0WzvtXvaLEdsT?=
- =?us-ascii?Q?ekI0b1lWb8fUhqhyRK+e799DLv2bj4Qnm6HaNo0jzBDsbX70KtsNRqbglWZD?=
- =?us-ascii?Q?bYdEGwSFPM69EDgl2gVnVkTItKKi8R5jvpVnRA3d/8wl7LpssktdcvJ6v5G3?=
- =?us-ascii?Q?hkMAB6/UeGE3y25cL6W8MLk0Ev+rRezNaJZd9PdEoc417co+F3aFRjsT2cbP?=
- =?us-ascii?Q?EiVnq1XZpGcsQwfc0r1BnLAO2vncvj2zCb2wqG6FBAbmkVVLjrhTWBRe2jVC?=
- =?us-ascii?Q?g2v0Yc6r0hZxlc4ACa7NgpSMx5+yD96fe7NezM4iS08Tg+oTcq4OJxcibfUm?=
- =?us-ascii?Q?rBtPube0D6pQ0k6BYspwvT/pCPhv5lPAGgZRL/51T5ztsSV6s7O97yDBDa1M?=
- =?us-ascii?Q?uOE6kSZV/XFaDg9R0DAn1Sd5CEGxYnZDt4z/waMwRa0cQ0UlilaFv3YfP0r4?=
- =?us-ascii?Q?TcatH8cz8ivIiXhw1a9dLAMs2M9+1BkqNK/PxUb9BYtXm+Pcx4DU0fRRPMTs?=
- =?us-ascii?Q?S7wWNVTJPl2XSE/hvjB9NPkWig3UaK0ffRSvPYNchk44EfY6dM7oSMPebPak?=
- =?us-ascii?Q?M7z1PkpykYUzuN8Cyqg54uQ=3D?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB5PR02MB10213.eurprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700021)(7053199007);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?us-ascii?Q?iEBM/xDw1zru9h8E2C/zDbTdl56CQuIazFhULZoMZFDRNXIr8ywlmd81pWZV?=
- =?us-ascii?Q?8QXO4njE6BUoi0G8FSryp6hXq8cNGoNIwmc8EB0NyA/RmiuWmuFzP+kyJzKy?=
- =?us-ascii?Q?dEvazXB26VqqtdBdEIZMAtgVyc2AkAyIM51X9uxj4eTL2zISX7emZQi7VAfC?=
- =?us-ascii?Q?j5wclHxgd+op9RlTSq4vRspKGqPJ4nIoD6BFETqL6B9PhVf9za5pj9ZveRXT?=
- =?us-ascii?Q?s7CA2YBMriM5OuHtu4IgI0JUlAQkadGk1/QJ3n51pVE8TCD730O0ONpHug4R?=
- =?us-ascii?Q?kBkc5w5ijQXXpYEoPXvC+aOP3fTVCSmtnLviz1hN7Xpd67m9DkA9lrf8iCCd?=
- =?us-ascii?Q?YdWN7STIi2XG8TvO4Ni19Slv3qcNfGsd3O3eAjP4TghryiAFwKeDy5YfkZlL?=
- =?us-ascii?Q?WbjZaAY3JhB8OE9gr6mrQJa+q8xLTt6YBH5/8GblxpFoJqHeOdntao3xJCvk?=
- =?us-ascii?Q?3TJi2001j1leOF8VQLUygdXHBsWwKLm/kzs2Nrt5MpUiD22RQpLs5z4isD6h?=
- =?us-ascii?Q?z81Vi3DC2PGAWJ4v6rSVShwYnB0k6PMvz5c9UkoZUmammgebbgT2+q2dke+v?=
- =?us-ascii?Q?l2NNy0MSuFajC6HzI0+ej0rYl5sJ3fWr9yP67vm6vteFKCYUrUnVzmn5SxmG?=
- =?us-ascii?Q?OVNmL4tbdL91C5MYuuXJSNCprdr3tlJ2FzP5irTvlNsfipsK3iNbVCVcGR8S?=
- =?us-ascii?Q?dvScUnWWvbZjJ7GNUoKGeBBboTgxXk9EXx7c1IhWZpTP3Flc42/o1EtEqRmr?=
- =?us-ascii?Q?eWPtFMYbrDoPq3Y1KmRuoI6GqHJbwcX/U4VdNE7iN9hUND3VnFRaQlafAfD5?=
- =?us-ascii?Q?Tft+TgKao0iDmplfAsBDQtVFuHAZbK/uQN6xn7XMn7Xg3GtEjskv91mdxf6q?=
- =?us-ascii?Q?bFkyTu3q7htLBxcCJYnAs7qdZlgOScRuQYimc1LWBlQGY43UD9iCT5oC6CDz?=
- =?us-ascii?Q?aK8PLO4F36OZZKPuViU8X2FyDt5sRZp0qGdaeuTi1gUQuKgXptaBetOIhLYC?=
- =?us-ascii?Q?40INzyIWTbCLp0ycV4i9R8adW0CTaHLtul0QHPCtmK0rpCk7br+2NVENtAuC?=
- =?us-ascii?Q?1CFZqg30DJJ0KRk+agvJ0asIgWI1Wa8IVv/bIFaIiXSmGwdwP/8iw9eeMqTR?=
- =?us-ascii?Q?J/p1Qv4kkuOIdzlUGXClx7snMe+S+ni9bBv5/ghpVjbH7qcEvCanf/ijKJ2n?=
- =?us-ascii?Q?k+kkQsSHRS51tI0v99OMbyvmkoQkqamvazLX5DOZc+SOobBJLXB3A41xadHA?=
- =?us-ascii?Q?UN7QQVddM8LBcT6YH5O+lM/1ysgrMN1CC3Yg1Zu/cceGQ6YP3dJ5OnW5pgTl?=
- =?us-ascii?Q?kzdLz2Ds3hF3EnEC1Ft1njp3peJwbis/cXXLYXnvRoWHPR1b0vvMGj5DQS/r?=
- =?us-ascii?Q?cWjLpcNh6rjCRnYy3xPtB3TeE92/zFdWErp11GwBrW2nv4lroFeI2QDySF6h?=
- =?us-ascii?Q?W0QbYeNxMM6t2qEz+mCklYYmSVi3vffdno5P6S5lDUHyyefko8JuW9Nui/gT?=
- =?us-ascii?Q?L47ZNrcfrP0TpOl3VUGqV0UkSBf2PJum1QgQ4nT86ppfshrFyk5WKQGs5h67?=
- =?us-ascii?Q?aD34MzxIR/HGYLo1Xy4k2hDfFiAYgx1db3ovj2mky7zTWXMxL0lQpmcrAiuz?=
- =?us-ascii?Q?o1SZ1vlEWMc7Pi1q4qyXbyue6g5o3hWRgEXeBbYGk4th1AMPZt6cTFVpqoEW?=
- =?us-ascii?Q?IF9GJCBD0yA5BZlg/e98+EJhCq8=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ dkim=pass header.i=@konsulko.com header.s=google header.b=Ih28yiBu;
+ spf=pass (domain: konsulko.com, ip: 209.85.219.42, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-8946e32e534so2027386d6.3
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 21 Jan 2026 10:12:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=konsulko.com; s=google; t=1769019159; x=1769623959; darn=lists.yoctoproject.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wfoP/jEUe0SkZ9NIr0XjXxj2wmUijVgfvrHiD/77ZAs=;
+        b=Ih28yiBu5PrW6xw4+2N2IfKT1qZ66z9cjrsHRN8xciUGwnzcFSDylnLa7quZlqi6Aw
+         ujrBt2B+2q36iWRk/lr0vUhkmeg9y6C2K7L4mdNux46w53hknFBbHD7q0pOWV8UIuOBg
+         0GaAh4v0VHWlGTmN3gAAs2EYLp31EenXpOPCQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769019159; x=1769623959;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wfoP/jEUe0SkZ9NIr0XjXxj2wmUijVgfvrHiD/77ZAs=;
+        b=Zg4Wa1g+defSpztUb0Mtks4ePwNE9fA9IvuI1SswZVTJpySax+5uvKWMMeMOO8Zz3R
+         0A0UPnd1KGehpxFiOa8YIAnk0lJFDV899UQ70C8a7VgaNdQbNgZMLCmgBa0lhV71kYU5
+         ovm6ZMWcYxYro0VY75XypGSplop0cjDFO7klt7AaMrooy1CVBRgHKbm4FrA/Jwga/+P+
+         AOYpB2cCSztzobrysniIFftwjj55L26k3rtmW8CxqzXRdrcYHqdFKXoUjKVSSuDjv5KH
+         wyU3kGs+omN+syN+uahxYbEmpQSs6DtE2o6rR8mC+JPaMBpb6NWngua9RcDLBXe/tAaA
+         cEaQ==
+X-Gm-Message-State: AOJu0Yz7cr8128eepYm3XKGcw8f8tK6TETa9/SLj+0XUhLuuXJfU9eTL
+	wb0x73J2xRI5gzGRvyznopMTew2B8Kg9Xh0k9Blgzj9JsJnvDFIWboHeiVZQiJVEDv5aPentdoW
+	M7gQb
+X-Gm-Gg: AZuq6aLcxpGWyXpockMXMNDH0NHmpLKPXC/q7OqY2ZoATQItXSKsxRVqzB5esCzU6bx
+	67Ovt7V8F+cei46ceiuVQFqsH1C/cEYLCbhbFgecMDXLkQBMKl/qjCyiQu1EO8VYFhq+ghQdwTr
+	J2+AMiZ5583WL7ris42SMkGDhF599tMVSwhF1Gr4AfMCWN3e4czhqLHGTVXnX7wBIgNYzD3a77W
+	Q3zWWTic/uaidRsVWsvaeVoJ4vPnDm92Oo73yBBMTayy/elYKKmrjEJr3VY/esgvrxfK0uuJfPy
+	WAw+Qr0OoJo9JtdHcrBC9HB/2j58pcca4AlUUymFVBLrwd7LXzIr0ld0RIUdp3q68CgBA01SgCX
+	XRMzjbyAhxKrKoXwN1L1iGHI+8CAB0rKyRWHwjn5T1ebT23RvbNTJjDVuu1q2IdK6OUC3WOkDVc
+	mDDGPr5DfGn5pNBNRcIMNCzcE9keZ1c8s7QdFgZFxgZ42P/7OBqDIh5jISRsXH39PVkAtnriVy/
+	Vct6alWz1S0OGsnrZ/DQ0zPNli9ZmQ5Lzg=
+X-Received: by 2002:a05:6214:5197:b0:890:f15:25d4 with SMTP id 6a1803df08f44-8942e506e64mr232466626d6.67.1769019158428;
+        Wed, 21 Jan 2026 10:12:38 -0800 (PST)
+Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8c6a71d8314sm1294159185a.24.2026.01.21.10.12.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Jan 2026 10:12:37 -0800 (PST)
+Date: Wed, 21 Jan 2026 13:12:37 -0500 (EST)
+From: Scott Murray <scott.murray@konsulko.com>
+To: Tobias Burghart <tobias.burghart@rohde-schwarz.com>
+cc: yocto-patches@lists.yoctoproject.org
+Subject: Re: [meta-lts-mixins][kirkstone/rust][PATCH] rust: Upgrade 1.90.0
+ -> 1.91.1
+In-Reply-To: <20260121105245.3978691-1-tobias.burghart.oss@rohde-schwarz.com>
+Message-ID: <7459d429-3e06-442a-f26a-8b4c30919a32@konsulko.com>
+References: <20260121105245.3978691-1-tobias.burghart.oss@rohde-schwarz.com>
 MIME-Version: 1.0
-X-OriginatorOrg: axis.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DB5PR02MB10213.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 791d928c-0618-4444-5d27-08de5915dde7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jan 2026 17:52:38.5191
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 78703d3c-b907-432f-b066-88f7af9ca3af
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: yjxcWdoaB3hc2H/BQTSyhr6MEZ7WAuuiYUUJvROe/UETwL81rbpo+bfBZGNBk5mT
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA6PR02MB10709
+Content-Type: text/plain; charset=US-ASCII
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 21 Jan 2026 17:52:53 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3050
+ <yocto-patches@lists.yoctoproject.org>; Wed, 21 Jan 2026 18:12:43 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3051
 
-> -----Original Message-----
-> From: yocto-patches@lists.yoctoproject.org <yocto-patches@lists.yoctoproj=
-ect.org> On Behalf Of Yoann Congal via lists.yoctoproject.org
-> Sent: den 21 januari 2026 18:47
-> To: yocto-patches@lists.yoctoproject.org
-> Cc: Yoann Congal <yoann.congal@smile.fr>
-> Subject: [yocto-patches] [yocto-autobuilder2][PATCH v2 1/2] schedulers: s=
-ort repo branches in maintained stable branches
->=20
-> From: Yoann Congal <yoann.congal@smile.fr>
->=20
-> This should help seeing if any branch is missing by comparing with the
-> "Build Properties" page of a build.
->=20
-> Signed-off-by: Yoann Congal <yoann.congal@smile.fr>
+On Wed, 21 Jan 2026, tobias.burghart.oss@rohde-schwarz.com wrote:
+
+> From: Tobias Burghart <tobias.burghart@rohde-schwarz.com>
+>
+> https://blog.rust-lang.org/2025/11/10/Rust-1.91.1/
+>
+> Test results summary:
+>
+>     rust v1.91.1
+>     +-----------+--------+---------+
+>     | Machine   | Passed | Ignored |
+>     +-----------+--------+---------+
+>     | arm-32    | 29,968 |  1,510  |
+>     | arm-64    | 30,071 |  1,447  |
+>     | x86-32    | 29,985 |  1,489  |
+>     | x86-64    | 30,229 |  1,247  |
+>     | riscv-64  | 30,045 |  1,472  |
+>     +-----------+--------+---------+
+>
+>     Test results difference (1.91.1 - 1.90):
+>     +-----------+--------+---------+
+>     | Machine   | Passed | Ignored |
+>     +-----------+--------+---------+
+>     | arm-32    |  +451  |   -19   |
+>     | arm-64    |  +463  |   -24   |
+>     | x86-32    |  +477  |   -18   |
+>     | x86-64    |  +326  |   -28   |
+>     | riscv-64  |  +461  |   -22   |
+>     +-----------+--------+---------+
+>
+> Signed-off-by: Tobias Burghart <tobias.burghart@rohde-schwarz.com>
+
+Thanks for these, but my plan is to catch up to master (1.92.0) with my
+backporting process in the next few days.  I had hoped to do it last
+week, but got delayed by some meta-security updating.
+
+Scott
+
 > ---
->  schedulers.py | 22 +++++++++++-----------
->  1 file changed, 11 insertions(+), 11 deletions(-)
->=20
-> diff --git a/schedulers.py b/schedulers.py
-> index 42983a8..0018fcb 100644
-> --- a/schedulers.py
-> +++ b/schedulers.py
-> @@ -73,16 +73,16 @@ branchdefaults =3D {
->      },
->      'whinlatter': {
->          'branch': 'whinlatter',
-> -        'branch_poky': 'master',
->          'branch_bitbake': '2.16',
->          'branch_meta-arm': 'whinlatter',
->          'branch_meta-gplv2': 'master',
->          'branch_meta-mingw': 'whinlatter',
->          'branch_meta-openembedded': 'whinlatter',
-> +        'branch_meta-virtualization': 'whinlatter',
->          'branch_meta-yocto': 'whinlatter',
-> -        'branch_yocto-docs': 'whinlatter',
->          'branch_oecore': 'whinlatter',
-> -        'branch_meta-virtualization': 'whinlatter',
-> +        'branch_poky': 'master',
-
-I don't know how these are actually used, but is a branch for poky=20
-really meaningful with Whinlatter? Though I notice that meta-gplv2=20
-is also mentioned above, and it has been dead and buried for years...
-
-> +        'branch_yocto-docs': 'whinlatter',
->      },
->      'walnascar': {
->          'branch': 'walnascar',
-> @@ -120,22 +120,22 @@ branchdefaults =3D {
->      },
->      'scarthgap': {
->          'branch': 'scarthgap',
-> -        'branch_poky': 'scarthgap',
->          'branch_bitbake': '2.8',
-> -        'branch_meta-arm': 'scarthgap',
->          'branch_meta-agl': 'master',
-> +        'branch_meta-arm': 'scarthgap',
->          'branch_meta-aws': 'scarthgap',
->          'branch_meta-clang': 'scarthgap',
->          'branch_meta-gplv2': 'master',
->          'branch_meta-intel': 'scarthgap',
->          'branch_meta-mingw': 'scarthgap',
->          'branch_meta-openembedded': 'scarthgap',
-> +        'branch_meta-qt6': '6.8.1',
->          'branch_meta-security': 'scarthgap',
->          'branch_meta-ti': 'scarthgap',
->          'branch_meta-virtualization': 'scarthgap',
-> -        'branch_oecore': 'scarthgap',
->          'branch_meta-webosose': 'scarthgap-webos',
-> -        'branch_meta-qt6': '6.8.1',
-> +        'branch_oecore': 'scarthgap',
-> +        'branch_poky': 'scarthgap',
->      },
->      'nanbield': {
->          'branch': 'nanbield',
-> @@ -185,22 +185,22 @@ branchdefaults =3D {
->      },
->      'kirkstone': {
->          'branch': 'kirkstone',
-> -        'branch_poky': 'kirkstone',
->          'branch_bitbake': '2.0',
-> -        'branch_meta-arm': 'kirkstone',
->          'branch_meta-agl': 'quillback',
-> +        'branch_meta-arm': 'kirkstone',
->          'branch_meta-aws': 'kirkstone',
->          'branch_meta-clang': 'kirkstone',
->          'branch_meta-gplv2': 'kirkstone',
->          'branch_meta-intel': 'kirkstone',
->          'branch_meta-mingw': 'kirkstone',
->          'branch_meta-openembedded': 'kirkstone',
-> +        'branch_meta-qt6': '6.8.1',
->          'branch_meta-security': 'kirkstone',
->          'branch_meta-ti': 'kirkstone',
->          'branch_meta-virtualization': 'kirkstone',
-> -        'branch_oecore': 'kirkstone',
->          'branch_meta-webosose': 'kirkstone-webos',
-> -        'branch_meta-qt6': '6.8.1',
-> +        'branch_oecore': 'kirkstone',
-> +        'branch_poky': 'kirkstone',
->      },
->      'honister': {
->          'branch': 'honister',
->=20
-
-//Peter
-
+>  classes/rust-target-config.bbclass            |  2 +-
+>  conf/layer.conf                               |  2 +-
+>  lib/oeqa/selftest/cases/rust_mixin.py         |  2 +-
+>  .../rust/{cargo_1.90.0.bb => cargo_1.91.1.bb} |  0
+>  ...-gcs-instead-of-gcs-target-attribute.patch | 66 ----------------
+>  ...teps-tool.rs-switch-off-lto-for-rust.patch | 20 ++---
+>  .../rust/files/rust-oe-selftest.patch         | 59 +++++---------
+>  ...ibstd-rs_1.90.0.bb => libstd-rs_1.91.1.bb} |  0
+>  ....90.0.bb => rust-cross-canadian_1.91.1.bb} |  0
+>  ...ust-llvm_1.90.0.bb => rust-llvm_1.91.1.bb} |  0
+>  recipes-devtools/rust/rust-snapshot.inc       | 78 +++++++++----------
+>  recipes-devtools/rust/rust-source.inc         |  3 +-
+>  .../rust/{rust_1.90.0.bb => rust_1.91.1.bb}   |  4 +-
+>  13 files changed, 74 insertions(+), 162 deletions(-)
+>  rename recipes-devtools/rust/{cargo_1.90.0.bb => cargo_1.91.1.bb} (100%)
+>  delete mode 100644 recipes-devtools/rust/files/0001-libunwind-Use-gcs-instead-of-gcs-target-attribute.patch
+>  rename recipes-devtools/rust/{libstd-rs_1.90.0.bb => libstd-rs_1.91.1.bb} (100%)
+>  rename recipes-devtools/rust/{rust-cross-canadian_1.90.0.bb => rust-cross-canadian_1.91.1.bb} (100%)
+>  rename recipes-devtools/rust/{rust-llvm_1.90.0.bb => rust-llvm_1.91.1.bb} (100%)
+>  rename recipes-devtools/rust/{rust_1.90.0.bb => rust_1.91.1.bb} (99%)
+>
+> diff --git a/classes/rust-target-config.bbclass b/classes/rust-target-config.bbclass
+> index b351638..0c6fc95 100644
+> --- a/classes/rust-target-config.bbclass
+> +++ b/classes/rust-target-config.bbclass
+> @@ -368,7 +368,7 @@ def rust_gen_target(d, thing, wd, arch):
+>      if tspec['data-layout'] is None:
+>          bb.fatal("No rust target defined for %s" % arch_abi)
+>      tspec['max-atomic-width'] = int(d.getVarFlag('MAX_ATOMIC_WIDTH', arch_abi))
+> -    tspec['target-pointer-width'] = d.getVarFlag('TARGET_POINTER_WIDTH', arch_abi)
+> +    tspec['target-pointer-width'] = int(d.getVarFlag('TARGET_POINTER_WIDTH', arch_abi))
+>      tspec['target-c-int-width'] = int(d.getVarFlag('TARGET_C_INT_WIDTH', arch_abi))
+>      tspec['target-endian'] = d.getVarFlag('TARGET_ENDIAN', arch_abi)
+>      tspec['arch'] = arch_to_rust_target_arch(rust_arch)
+> diff --git a/conf/layer.conf b/conf/layer.conf
+> index 287f795..489273f 100644
+> --- a/conf/layer.conf
+> +++ b/conf/layer.conf
+> @@ -15,7 +15,7 @@ LAYERDEPENDS_lts-rust-mixin = "core"
+>
+>  LICENSE_PATH += "${LAYERDIR}/files/common-licenses"
+>
+> -RUSTVERSION ?= "1.90.0%"
+> +RUSTVERSION ?= "1.91.1%"
+>
+>  # This is not ideal, but it seems better to mask out the older oe-core
+>  # recipes completely since they will not work with this layer on top,
+> diff --git a/lib/oeqa/selftest/cases/rust_mixin.py b/lib/oeqa/selftest/cases/rust_mixin.py
+> index b7213f9..f6ffcf4 100644
+> --- a/lib/oeqa/selftest/cases/rust_mixin.py
+> +++ b/lib/oeqa/selftest/cases/rust_mixin.py
+> @@ -107,7 +107,7 @@ class RustSelfTestSystemEmulated(OESelftestTestCase, OEPTestResultTestCase):
+>              # Copy remote-test-server to image through scp
+>              host_sys = get_bb_var("RUST_BUILD_SYS", "rust")
+>              ssh = SSHControl(ip=qemu.ip, logfile=qemu.sshlog, user="root")
+> -            ssh.copy_to(builddir + "/build/" + host_sys + "/stage1-tools-bin/remote-test-server","~/")
+> +            ssh.copy_to(builddir + "/build/" + host_sys + "/stage2-tools-bin/remote-test-server","~/")
+>              # Execute remote-test-server on image through background ssh
+>              command = '~/remote-test-server --bind 0.0.0.0:12345 -v'
+>              sshrun=subprocess.Popen(("ssh", '-o',  'UserKnownHostsFile=/dev/null', '-o',  'StrictHostKeyChecking=no', '-f', "root@%s" % qemu.ip, command), shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+> diff --git a/recipes-devtools/rust/cargo_1.90.0.bb b/recipes-devtools/rust/cargo_1.91.1.bb
+> similarity index 100%
+> rename from recipes-devtools/rust/cargo_1.90.0.bb
+> rename to recipes-devtools/rust/cargo_1.91.1.bb
+> diff --git a/recipes-devtools/rust/files/0001-libunwind-Use-gcs-instead-of-gcs-target-attribute.patch b/recipes-devtools/rust/files/0001-libunwind-Use-gcs-instead-of-gcs-target-attribute.patch
+> deleted file mode 100644
+> index a704671..0000000
+> --- a/recipes-devtools/rust/files/0001-libunwind-Use-gcs-instead-of-gcs-target-attribute.patch
+> +++ /dev/null
+> @@ -1,66 +0,0 @@
+> -From e4f4094de8ddcbe6d5ff1cdf782d2b89e0563903 Mon Sep 17 00:00:00 2001
+> -From: Khem Raj <raj.khem@gmail.com>
+> -Date: Wed, 30 Apr 2025 19:51:19 -0700
+> -Subject: [PATCH] libunwind: Use +gcs instead of gcs target attribute
+> -
+> -__attribute__((target("gcs"))) does not work with gcc
+> -
+> -GCC-15 has added gcs intrinsics [1] but the syntax for enabling it is
+> -slightly different. This syntax works with clang too.
+> -
+> -With gcc15 compiler libunwind's check for this macros is succeeding and it
+> -ends up enabling 'gcs' by using function attribute, this works with clang
+> -but not with gcc but '+gcs' works with both
+> -
+> -We can see this in rust compiler bootstrap for aarch64/musl when system
+> -uses gcc15, it ends up with these errors
+> -
+> -Building libunwind.a for aarch64-poky-linux-musl
+> -cargo:warning=/mnt/b/yoe/master/sources/poky/build/tmp/work/cortexa57-poky-linux-musl/rust/1.85.1/rustc-1.85.1-src/src/llvm-project/libunwind/src/UnwindLevel1.c:191:1: error: arch extension 'gcs' should be prefixed by '+'
+> -cargo:warning=  191 | unwind_phase2(unw_context_t *uc, unw_cursor_t *cursor, _Unwind_Exception *exception_object) {
+> -cargo:warning=      | ^~~~~~~~~~~~~
+> -cargo:warning=/mnt/b/yoe/master/sources/poky/build/tmp/work/cortexa57-poky-linux-musl/rust/1.85.1/rustc-1.85.1-src/src/llvm-project/libunwind/src/UnwindLevel1.c:337:22: error: arch extension 'gcs' should be prefixed by '+'
+> -cargo:warning=  337 |                      _Unwind_Stop_Fn stop, void *stop_parameter) {
+> -cargo:warning=      |                      ^~~~~~~~~~~~~~~
+> -
+> -[1] https://gcc.gnu.org/git/?p=gcc.git;a=commit;h=5a6af707f0af
+> -
+> -Upstream-Status: Submitted [https://github.com/llvm/llvm-project/pull/138077]
+> -
+> -Signed-off-by: Khem Raj <raj.khem@gmail.com>
+> ----
+> - src/llvm-project/libunwind/src/UnwindLevel1.c | 4 ++--
+> - 1 file changed, 2 insertions(+), 2 deletions(-)
+> -
+> ---- a/src/llvm-project/libunwind/src/UnwindLevel1.c
+> -+++ b/src/llvm-project/libunwind/src/UnwindLevel1.c
+> -@@ -185,7 +185,7 @@ extern int __unw_step_stage2(unw_cursor_
+> -
+> - #if defined(_LIBUNWIND_USE_GCS)
+> - // Enable the GCS target feature to permit gcspop instructions to be used.
+> --__attribute__((target("gcs")))
+> -+__attribute__((target("+gcs")))
+> - #endif
+> - static _Unwind_Reason_Code
+> - unwind_phase2(unw_context_t *uc, unw_cursor_t *cursor, _Unwind_Exception *exception_object) {
+> -@@ -329,7 +329,7 @@ unwind_phase2(unw_context_t *uc, unw_cur
+> -
+> - #if defined(_LIBUNWIND_USE_GCS)
+> - // Enable the GCS target feature to permit gcspop instructions to be used.
+> --__attribute__((target("gcs")))
+> -+__attribute__((target("+gcs")))
+> - #endif
+> - static _Unwind_Reason_Code
+> - unwind_phase2_forced(unw_context_t *uc, unw_cursor_t *cursor,
+> ---- a/src/llvm-project/libunwind/src/cet_unwind.h
+> -+++ b/src/llvm-project/libunwind/src/cet_unwind.h
+> -@@ -42,7 +42,8 @@
+> - #include <arm_acle.h>
+> -
+> - // We can only use GCS if arm_acle.h defines the GCS intrinsics.
+> --#ifdef _CHKFEAT_GCS
+> -+// Enable gcs with clang for now, gcc does not build unwindlevel1.c correctly
+> -+#if defined(_CHKFEAT_GCS) && defined(__clang__)
+> - #define _LIBUNWIND_USE_GCS 1
+> - #endif
+> -
+> diff --git a/recipes-devtools/rust/files/0001-src-core-build_steps-tool.rs-switch-off-lto-for-rust.patch b/recipes-devtools/rust/files/0001-src-core-build_steps-tool.rs-switch-off-lto-for-rust.patch
+> index 7f25ba9..a8232b9 100644
+> --- a/recipes-devtools/rust/files/0001-src-core-build_steps-tool.rs-switch-off-lto-for-rust.patch
+> +++ b/recipes-devtools/rust/files/0001-src-core-build_steps-tool.rs-switch-off-lto-for-rust.patch
+> @@ -24,9 +24,9 @@ diff --git a/src/bootstrap/src/core/build_steps/tool.rs b/src/bootstrap/src/core
+>  index 087df2f8a..00790affb 100644
+>  --- a/src/bootstrap/src/core/build_steps/tool.rs
+>  +++ b/src/bootstrap/src/core/build_steps/tool.rs
+> -@@ -16,14 +16,12 @@ use std::{env, fs};
+> - #[cfg(feature = "tracing")]
+> - use tracing::instrument;
+> +@@ -13,14 +13,12 @@ use std::ffi::OsStr;
+> + use std::path::PathBuf;
+> + use std::{env, fs};
+>
+>  -use crate::core::build_steps::compile::is_lto_stage;
+>   use crate::core::build_steps::toolstate::ToolState;
+> @@ -41,14 +41,16 @@ index 087df2f8a..00790affb 100644
+>  +use crate::core::config::{DebuginfoLevel, TargetSelection};
+>   use crate::utils::exec::{BootstrapCommand, command};
+>   use crate::utils::helpers::{add_dylib_path, exe, t};
+> - use crate::{Compiler, FileType, Kind, Mode, gha};
+> -@@ -160,20 +158,7 @@ impl Step for ToolBuild {
+> + use crate::{Compiler, FileType, Kind, Mode};
+> +@@ -121,22 +119,7 @@ impl Step for ToolBuild {
+>               cargo.env("RUSTC_WRAPPER", ccache);
+>           }
+>
+> --        // Rustc tools (miri, clippy, cargo, rustfmt, rust-analyzer)
+> +-        // RustcPrivate tools (miri, clippy, rustfmt, rust-analyzer) and cargo
+>  -        // could use the additional optimizations.
+> --        if self.mode == Mode::ToolRustc && is_lto_stage(&self.build_compiler) {
+> +-        if is_lto_stage(&self.build_compiler)
+> +-            && (self.mode == Mode::ToolRustcPrivate || self.path == "src/tools/cargo")
+> +-        {
+>  -            let lto = match builder.config.rust_lto {
+>  -                RustcLto::Off => Some("off"),
+>  -                RustcLto::Thin => Some("thin"),
+> @@ -67,7 +69,7 @@ index 087df2f8a..00790affb 100644
+>  diff --git a/src/bootstrap/src/core/builder/mod.rs b/src/bootstrap/src/core/builder/mod.rs
+>  --- a/src/bootstrap/src/core/builder/mod.rs
+>  +++ b/src/bootstrap/src/core/builder/mod.rs
+> -@@ -13,7 +13,7 @@
+> +@@ -13,7 +13,7 @@ use clap::ValueEnum;
+>   #[cfg(feature = "tracing")]
+>   use tracing::instrument;
+>
+> @@ -75,4 +77,4 @@ diff --git a/src/bootstrap/src/core/builder/mod.rs b/src/bootstrap/src/core/buil
+>  +pub use self::cargo::Cargo;
+>   pub use crate::Compiler;
+>   use crate::core::build_steps::compile::{Std, StdLink};
+> - use crate::core::build_steps::{
+> + use crate::core::build_steps::tool::RustcPrivateCompilers;
+> diff --git a/recipes-devtools/rust/files/rust-oe-selftest.patch b/recipes-devtools/rust/files/rust-oe-selftest.patch
+> index fe683e9..7d26d75 100644
+> --- a/recipes-devtools/rust/files/rust-oe-selftest.patch
+> +++ b/recipes-devtools/rust/files/rust-oe-selftest.patch
+> @@ -10,7 +10,7 @@ Signed-off-by: Peter Tatrai <Peter.Tatrai@siemens.com>
+>  diff --git a/compiler/rustc_errors/src/markdown/tests/term.rs b/compiler/rustc_errors/src/markdown/tests/term.rs
+>  --- a/compiler/rustc_errors/src/markdown/tests/term.rs
+>  +++ b/compiler/rustc_errors/src/markdown/tests/term.rs
+> -@@ -61,6 +61,7 @@ fn test_wrapping_write() {
+> +@@ -62,6 +62,7 @@ fn test_wrapping_write() {
+>   }
+>
+>   #[test]
+> @@ -21,7 +21,7 @@ diff --git a/compiler/rustc_errors/src/markdown/tests/term.rs b/compiler/rustc_e
+>  diff --git a/compiler/rustc_interface/src/tests.rs b/compiler/rustc_interface/src/tests.rs
+>  --- a/compiler/rustc_interface/src/tests.rs
+>  +++ b/compiler/rustc_interface/src/tests.rs
+> -@@ -137,6 +137,7 @@ fn assert_non_crate_hash_different(x: &Options, y: &Options) {
+> +@@ -147,6 +147,7 @@ fn assert_non_crate_hash_different(x: &Options, y: &Options) {
+>
+>   // When the user supplies --test we should implicitly supply --cfg test
+>   #[test]
+> @@ -29,7 +29,7 @@ diff --git a/compiler/rustc_interface/src/tests.rs b/compiler/rustc_interface/sr
+>   fn test_switch_implies_cfg_test() {
+>       sess_and_cfg(&["--test"], |_sess, cfg| {
+>           assert!(cfg.contains(&(sym::test, None)));
+> -@@ -145,6 +146,7 @@ fn test_switch_implies_cfg_test() {
+> +@@ -155,6 +156,7 @@ fn test_switch_implies_cfg_test() {
+>
+>   // When the user supplies --test and --cfg test, don't implicitly add another --cfg test
+>   #[test]
+> @@ -37,7 +37,7 @@ diff --git a/compiler/rustc_interface/src/tests.rs b/compiler/rustc_interface/sr
+>   fn test_switch_implies_cfg_test_unless_cfg_test() {
+>       sess_and_cfg(&["--test", "--cfg=test"], |_sess, cfg| {
+>           let mut test_items = cfg.iter().filter(|&&(name, _)| name == sym::test);
+> -@@ -154,6 +156,7 @@ fn test_switch_implies_cfg_test_unless_cfg_test() {
+> +@@ -164,6 +166,7 @@ fn test_switch_implies_cfg_test_unless_cfg_test() {
+>   }
+>
+>   #[test]
+> @@ -49,7 +49,7 @@ diff --git a/library/std/tests/sync/rwlock.rs b/library/std/tests/sync/rwlock.rs
+>  index 1a9d3d3f12f..0a9cfc48806 100644
+>  --- a/library/std/tests/sync/rwlock.rs
+>  +++ b/library/std/tests/sync/rwlock.rs
+> -@@ -74,6 +74,7 @@
+> +@@ -605,6 +605,7 @@
+>
+>   #[test]
+>   #[cfg_attr(not(panic = "unwind"), ignore = "test requires unwinding support")]
+> @@ -57,7 +57,7 @@ index 1a9d3d3f12f..0a9cfc48806 100644
+>   fn test_rw_arc_poison_wr() {
+>       let arc = Arc::new(RwLock::new(1));
+>       let arc2 = arc.clone();
+> -@@ -87,6 +88,7 @@
+> +@@ -618,6 +619,7 @@
+>
+>   #[test]
+>   #[cfg_attr(not(panic = "unwind"), ignore = "test requires unwinding support")]
+> @@ -65,7 +65,7 @@ index 1a9d3d3f12f..0a9cfc48806 100644
+>   fn test_rw_arc_poison_mapped_w_r() {
+>       let arc = Arc::new(RwLock::new(1));
+>       let arc2 = arc.clone();
+> -@@ -101,6 +103,7 @@
+> +@@ -632,6 +634,7 @@
+>
+>   #[test]
+>   #[cfg_attr(not(panic = "unwind"), ignore = "test requires unwinding support")]
+> @@ -73,7 +73,7 @@ index 1a9d3d3f12f..0a9cfc48806 100644
+>   fn test_rw_arc_poison_ww() {
+>       let arc = Arc::new(RwLock::new(1));
+>       assert!(!arc.is_poisoned());
+> -@@ -115,6 +118,7 @@
+> +@@ -646,6 +649,7 @@
+>   }
+>
+>   #[test]
+> @@ -81,7 +81,7 @@ index 1a9d3d3f12f..0a9cfc48806 100644
+>   #[cfg_attr(not(panic = "unwind"), ignore = "test requires unwinding support")]
+>   fn test_rw_arc_poison_mapped_w_w() {
+>       let arc = Arc::new(RwLock::new(1));
+> -@@ -131,6 +135,7 @@
+> +@@ -662,6 +666,7 @@
+>
+>   #[test]
+>   #[cfg_attr(not(panic = "unwind"), ignore = "test requires unwinding support")]
+> @@ -89,7 +89,7 @@ index 1a9d3d3f12f..0a9cfc48806 100644
+>   fn test_rw_arc_no_poison_rr() {
+>       let arc = Arc::new(RwLock::new(1));
+>       let arc2 = arc.clone();
+> -@@ -160,6 +165,7 @@
+> +@@ -691,6 +696,7 @@
+>
+>   #[test]
+>   #[cfg_attr(not(panic = "unwind"), ignore = "test requires unwinding support")]
+> @@ -97,38 +97,14 @@ index 1a9d3d3f12f..0a9cfc48806 100644
+>   fn test_rw_arc_no_poison_rw() {
+>       let arc = Arc::new(RwLock::new(1));
+>       let arc2 = arc.clone();
+> -@@ -227,6 +233,7 @@
+> -
+> - #[test]
+> - #[cfg_attr(not(panic = "unwind"), ignore = "test requires unwinding support")]
+> -+#[ignore]
+> - fn test_rw_arc_access_in_unwind() {
+> -     let arc = Arc::new(RwLock::new(1));
+> -     let arc2 = arc.clone();
+> -@@ -326,6 +333,7 @@
+> -
+> - #[test]
+> - #[cfg_attr(not(panic = "unwind"), ignore = "test requires unwinding support")]
+> -+#[ignore]
+> - fn test_into_inner_poison() {
+> -     let m = new_poisoned_rwlock(NonCopy(10));
+> -
+> -@@ -362,6 +370,7 @@
+> -
+> - #[test]
+> - #[cfg_attr(not(panic = "unwind"), ignore = "test requires unwinding support")]
+> -+#[ignore]
+> - fn test_get_mut_poison() {
+> -     let mut m = new_poisoned_rwlock(NonCopy(10));
+> -
+> -@@ -571,6 +571,7 @@
+> +@@ -794,6 +800,7 @@
+>
+>   #[test]
+>   #[cfg_attr(not(panic = "unwind"), ignore = "test requires unwinding support")]
+>  +#[ignore]
+>   fn panic_while_mapping_write_unlocked_poison() {
+>       let lock = RwLock::new(());
+> -
+> +
+>  diff --git a/library/test/src/tests.rs b/library/test/src/tests.rs
+>  --- a/library/test/src/tests.rs
+>  +++ b/library/test/src/tests.rs
+> @@ -143,7 +119,7 @@ diff --git a/library/test/src/tests.rs b/library/test/src/tests.rs
+>  diff --git a/library/std/tests/sync/mutex.rs b/library/std/tests/sync/mutex.rs
+>  --- a/library/std/tests/sync/mutex.rs
+>  +++ b/library/std/tests/sync/mutex.rs
+> -@@ -312,6 +312,7 @@
+> +@@ -472,6 +472,7 @@
+>
+>   #[test]
+>   #[cfg_attr(not(panic = "unwind"), ignore = "test requires unwinding support")]
+> @@ -151,7 +127,7 @@ diff --git a/library/std/tests/sync/mutex.rs b/library/std/tests/sync/mutex.rs
+>   fn test_mutex_arc_poison_mapped() {
+>       let arc = Arc::new(Mutex::new(1));
+>       assert!(!arc.is_poisoned());
+> -@@ -391,6 +392,7 @@
+> +@@ -388,6 +389,7 @@
+>
+>   #[test]
+>   #[cfg_attr(not(panic = "unwind"), ignore = "test requires unwinding support")]
+> @@ -308,13 +284,14 @@ diff --git a/tests/codegen-llvm/transmute-scalar.rs b/tests/codegen-llvm/transmu
+>  index ce1b0558b2e..e8fda2cd566 100644
+>  --- a/tests/codegen-llvm/transmute-scalar.rs
+>  +++ b/tests/codegen-llvm/transmute-scalar.rs
+> -@@ -1,5 +1,6 @@
+> +@@ -1,6 +1,7 @@
+>   //@ add-core-stubs
+> - //@ compile-flags: -C opt-level=0 -C no-prepopulate-passes
+> + //@ compile-flags: -C opt-level=0 -C no-prepopulate-passes --target=x86_64-unknown-linux-gnu
+> + //@ needs-llvm-components: x86
+>  +//@ ignore-riscv64
+>
+>   #![crate_type = "lib"]
+> - #![feature(no_core, repr_simd, arm_target_feature, mips_target_feature, s390x_target_feature)]
+> + #![feature(no_core, repr_simd)]
+>  diff --git a/tests/codegen-llvm/uninhabited-transparent-return-abi.rs b/tests/codegen-llvm/uninhabited-transparent-return-abi.rs
+>  index face1577c3f..09e0846bad0 100644
+>  --- a/tests/codegen-llvm/uninhabited-transparent-return-abi.rs
+> diff --git a/recipes-devtools/rust/libstd-rs_1.90.0.bb b/recipes-devtools/rust/libstd-rs_1.91.1.bb
+> similarity index 100%
+> rename from recipes-devtools/rust/libstd-rs_1.90.0.bb
+> rename to recipes-devtools/rust/libstd-rs_1.91.1.bb
+> diff --git a/recipes-devtools/rust/rust-cross-canadian_1.90.0.bb b/recipes-devtools/rust/rust-cross-canadian_1.91.1.bb
+> similarity index 100%
+> rename from recipes-devtools/rust/rust-cross-canadian_1.90.0.bb
+> rename to recipes-devtools/rust/rust-cross-canadian_1.91.1.bb
+> diff --git a/recipes-devtools/rust/rust-llvm_1.90.0.bb b/recipes-devtools/rust/rust-llvm_1.91.1.bb
+> similarity index 100%
+> rename from recipes-devtools/rust/rust-llvm_1.90.0.bb
+> rename to recipes-devtools/rust/rust-llvm_1.91.1.bb
+> diff --git a/recipes-devtools/rust/rust-snapshot.inc b/recipes-devtools/rust/rust-snapshot.inc
+> index 6a8802c..c6f9031 100644
+> --- a/recipes-devtools/rust/rust-snapshot.inc
+> +++ b/recipes-devtools/rust/rust-snapshot.inc
+> @@ -4,56 +4,56 @@
+>  ## The exact (previous) version that has been used is specified in the source tarball.
+>  ## The version is replicated here.
+>
+> -SNAPSHOT_VERSION = "1.89.0"
+> +SNAPSHOT_VERSION = "1.90.0"
+>
+> -SRC_URI[rustc-snapshot-aarch64.sha256sum] = "16ed8d8c7628a481c8501e7cd1022a123269b297bdedbb7f211f37a15e937e0e"
+> -SRC_URI[rust-std-snapshot-aarch64.sha256sum] = "abea0955dded88c68d731524ab9d29b162fae23bf5805b9f1dec063cba37c2aa"
+> -SRC_URI[cargo-snapshot-aarch64.sha256sum] = "f9df3ee6d55a2387459b843477743fa386c3c0f126bd0be01691ee49309681b8"
+> -SRC_URI[clippy-snapshot-aarch64.sha256sum] = "46512c61e217e613dc4d329fda8c6dde0d0ea94c4ae59c1ca2af9cf480458ff0"
+> +SRC_URI[rustc-snapshot-aarch64.sha256sum] = "4e1a9987a11d7d91f0d5afbf5333feb62f44172e4a31f33ce7246549003217f2"
+> +SRC_URI[rust-std-snapshot-aarch64.sha256sum] = "4952abb7d9d3ed7cea4f7ea44dcb23dc67631fae4ac44a5f059b90a4b5e9223f"
+> +SRC_URI[cargo-snapshot-aarch64.sha256sum] = "bd8d1da6fe88ea7e29338f24277c22156267447adbfc47d690467ad32d02c2a7"
+> +SRC_URI[clippy-snapshot-aarch64.sha256sum] = "1a7f969c5712c17d960d6fba8235b33f264a9484b369dc388766a540f1ba464f"
+>
+> -SRC_URI[rustc-snapshot-i686.sha256sum] = "a5ca58ab1b419ddbf5e4ea9b206a3d1feb0cfc4e0879a96c2c2f809ee9ca00b0"
+> -SRC_URI[rust-std-snapshot-i686.sha256sum] = "853605815e8267baf8fdc6e4594514d2e0afb46fb29f478ebec871a3424430f3"
+> -SRC_URI[cargo-snapshot-i686.sha256sum] = "1b3edcf590af9b9abdfa95f34b90a4258560627464a2a25d4e4503bb5834e291"
+> -SRC_URI[clippy-snapshot-i686.sha256sum] = "2c47960ee78d804ce679b06c9c759e777ac7f39cae48bd8ffaf7ff706f951520"
+> +SRC_URI[rustc-snapshot-i686.sha256sum] = "3b33cef77f9a57d592beb5117d933134bc76258006e6d4f9aed2969d20c75742"
+> +SRC_URI[rust-std-snapshot-i686.sha256sum] = "dc4bffa768326e0cc47d6b129bcb891af6e7b7bf09ec92bca45e49420b9837bd"
+> +SRC_URI[cargo-snapshot-i686.sha256sum] = "c1e9b24bbfa95550b5dba9de2045a4c906bea108625781758692b2a407428391"
+> +SRC_URI[clippy-snapshot-i686.sha256sum] = "3e902971ef6b44ccb804af73aba5dc8c6199ed09a76f178b0eed6f53f7f56eab"
+>
+> -SRC_URI[rustc-snapshot-loongarch64.sha256sum] = "c090c2ab6b54a8d84129de4ef53bd4df35358191092d3217bf6fa99c20c860c6"
+> -SRC_URI[rust-std-snapshot-loongarch64.sha256sum] = "2c5aa2cad944499c5b64947dcfeb12f3d5c91ced330a0982e000f22ec3dea27f"
+> -SRC_URI[cargo-snapshot-loongarch64.sha256sum] = "d22678ae984535464cd9aff3515e9ec5145ecb8db489ef4cce5c697e0538b500"
+> -SRC_URI[clippy-snapshot-loongarch64.sha256sum] = "0392c4fc97dc72b0d7d518129428c928b887e63b47f3d931fab7e54e2332ca9c"
+> +SRC_URI[rustc-snapshot-loongarch64.sha256sum] = "aca7ee7f0d98e34dafa367cef9c35626d37cf8334f356498aa2bda2fc02206b3"
+> +SRC_URI[rust-std-snapshot-loongarch64.sha256sum] = "cb779575cec151223c3c144bc9ca957530fa510e36b32bc9f35bbb1b7dde9e2f"
+> +SRC_URI[cargo-snapshot-loongarch64.sha256sum] = "6ae37dc8eb3ff4655053a39d5f973613a82a8a8e2fff42c423ca33d8cf19e6c1"
+> +SRC_URI[clippy-snapshot-loongarch64.sha256sum] = "847b3d4bd3d2be23bafbb90cd2ed5e1bf1aacb2e7152e7d2f99bee1078aa0eaa"
+>
+> -SRC_URI[rustc-snapshot-powerpc.sha256sum] = "08de18310e7750796261b45d5faccc31ff94ff64148bb5d9fa65e9727a432010"
+> -SRC_URI[rust-std-snapshot-powerpc.sha256sum] = "a03b3c3facf4701b6c7e8f379f2aac445a582227b881e3268dee3752a84a89eb"
+> -SRC_URI[cargo-snapshot-powerpc.sha256sum] = "ebdb0c8c9fad2d07dc702c9bfaee5dd140f6b0f9493bdd0c0d33f1449b7d97c2"
+> -SRC_URI[clippy-snapshot-powerpc.sha256sum] = "f93cb4327943f30b3da8e671eab6a78cdc3110c6612ad2a5eeaa9d8597fbd452"
+> +SRC_URI[rustc-snapshot-powerpc.sha256sum] = "c5d898ca92063d634011525557f2acabc65d4ea268022e7005f99b6ba917357b"
+> +SRC_URI[rust-std-snapshot-powerpc.sha256sum] = "756d1bbd66ebb0d4d575b650a8a94d52546f6892bd2f864410411f6027ed879f"
+> +SRC_URI[cargo-snapshot-powerpc.sha256sum] = "5b160a2bf0e6f470b83c5988db5b6f02b6d65d3d97a9b965acbfe940b4143b34"
+> +SRC_URI[clippy-snapshot-powerpc.sha256sum] = "42ac7480dcac12a843803f5ee398d2a42389359178774cab20c66eda4f6927a5"
+>
+> -SRC_URI[rustc-snapshot-powerpc64.sha256sum] = "6c66c8a3d698bb338d20453c88d768e87a5af8970af4f4082d18dec26c10da2c"
+> -SRC_URI[rust-std-snapshot-powerpc64.sha256sum] = "29338a9b067fe1adfd4d5ad681577c2333b3ca266a631822f23fad0984dcca39"
+> -SRC_URI[cargo-snapshot-powerpc64.sha256sum] = "f23184532c1e2eef6df49358fdfb867e99e84db7c814ce667744a36bc2fd8d37"
+> -SRC_URI[clippy-snapshot-powerpc64.sha256sum] = "695228193ff41ac32ec562140294d87b1988311dfe685acc72b725429e2651d9"
+> +SRC_URI[rustc-snapshot-powerpc64.sha256sum] = "7adbc3c317a73b7d504e171d65a2b0e93953e3e572dab99acabe91140101f81d"
+> +SRC_URI[rust-std-snapshot-powerpc64.sha256sum] = "16daac5dc6994c03ab3b8c4e6e5e52c41f5fc5846acea08f4fdf0759cc273aa2"
+> +SRC_URI[cargo-snapshot-powerpc64.sha256sum] = "fdf90d22476c88d5b9cf8a3ac0937d0b9c6b7dafbf6b3afde369c2f5b8faec88"
+> +SRC_URI[clippy-snapshot-powerpc64.sha256sum] = "071e06a50d5b2975905bb2d6211f2d2372ab0dbd50b7b0097168cb64e77a4bb0"
+>
+> -SRC_URI[rustc-snapshot-powerpc64le.sha256sum] = "14b7a8b7b3951a59a765804e1dd2ad454d3412000e7166ad8f2f621e29a88941"
+> -SRC_URI[rust-std-snapshot-powerpc64le.sha256sum] = "40123b87f0b909376d7f0bd291553b7e10aa637dd710f4bc698bcdcd0b08d21b"
+> -SRC_URI[cargo-snapshot-powerpc64le.sha256sum] = "764eb5f54c2b0779f9e84c6fb0763e45316d5a51fbd187b56f9f6d7a646272d4"
+> -SRC_URI[clippy-snapshot-powerpc64le.sha256sum] = "682d112649355a637a871347d41317e361eb555bbfd4a4e48b26b0978449184b"
+> +SRC_URI[rustc-snapshot-powerpc64le.sha256sum] = "e87b8eb926a65211a99f6712ff376c5950b4b11c67ed7f92019da27a34ae7085"
+> +SRC_URI[rust-std-snapshot-powerpc64le.sha256sum] = "eac29f92ccd335c51553c362c7a6d3de2eb7071b5ae3839470e351a6a3ebdb77"
+> +SRC_URI[cargo-snapshot-powerpc64le.sha256sum] = "f029151dfeed6570b8b347e04a5bb7dcb9c59d8e5454c535c05bb5069c216354"
+> +SRC_URI[clippy-snapshot-powerpc64le.sha256sum] = "12d19dbec34c5a35cd285fe74dcd0226563c0b25be5d041479744060e9374c98"
+>
+> -SRC_URI[rustc-snapshot-riscv64gc.sha256sum] = "2a2a00288faa8a55b16a3135c979bbd9c823f1e9ff376ea452ef0700ccc20d48"
+> -SRC_URI[rust-std-snapshot-riscv64gc.sha256sum] = "ee83276bb2d456116517638b8ff379c24ceffe1c0e381103739cb1db8e4c20da"
+> -SRC_URI[cargo-snapshot-riscv64gc.sha256sum] = "ec9a8f609f23b196d09e6537dbaec7c6fd947e3b8266406c6654b2c112530de2"
+> -SRC_URI[clippy-snapshot-riscv64gc.sha256sum] = "6bba0817c70b4dfae08238beb38003c623404d26b9ec00a297d08c9bf81c6d76"
+> +SRC_URI[rustc-snapshot-riscv64gc.sha256sum] = "11ae522969c6b18ad4b5a1ae229473de59406af7ab2e831acb43ee247a16b58d"
+> +SRC_URI[rust-std-snapshot-riscv64gc.sha256sum] = "675dc5556d9d879101d2401b693fcf79edac8f00a49249e2e0f19cecd172ce51"
+> +SRC_URI[cargo-snapshot-riscv64gc.sha256sum] = "8a09de014f7cec749b338c6636d190a1b73fd377bab6a223eb715d3c76c49e79"
+> +SRC_URI[clippy-snapshot-riscv64gc.sha256sum] = "02338e25b3d2b61d9dbee7bee4c9ed148f18e2d010c6297ffd36df98042f41a2"
+>
+> -SRC_URI[rustc-snapshot-s390x.sha256sum] = "b2b811644d26d10195be0272b81bd28ed55aa998300c52b0d3b74bb40c162c42"
+> -SRC_URI[rust-std-snapshot-s390x.sha256sum] = "2a7ed11535aac5b298a21799292ad8393b14a16acbac6358416406a0d2639746"
+> -SRC_URI[cargo-snapshot-s390x.sha256sum] = "92534c38ffe3a6b17964f37ca812c5d00f079011acb060ec036945d2f568a772"
+> -SRC_URI[clippy-snapshot-s390x.sha256sum] = "a4a050854353325c1710440a5f727e4280f1758fad5c0da6ba336ed57156fb48"
+> +SRC_URI[rustc-snapshot-s390x.sha256sum] = "274daef5a69c8812411248a4afea4f58a096c978dffba6b1198da8e3b5a02de7"
+> +SRC_URI[rust-std-snapshot-s390x.sha256sum] = "e3e7e3dbc65616eebc69e642d9042363ec38d7f50393ef816cc5238ec475f3f5"
+> +SRC_URI[cargo-snapshot-s390x.sha256sum] = "468ace270ee4edac0a10185ea876ea555e41bacc0137ff08985d2155fe8cc777"
+> +SRC_URI[clippy-snapshot-s390x.sha256sum] = "bb0a9483a36fdbdab08b433613b374c036779d247a8d508e31265193c3759a8d"
+>
+> -SRC_URI[rustc-snapshot-x86_64.sha256sum] = "b42c254e1349df86bd40bc28fdf386172a1a46f2eeabe3c7a08a75cf1fb60e27"
+> -SRC_URI[rust-std-snapshot-x86_64.sha256sum] = "2719470dcd78b3f97d78b978c8f85a1a58d84ff11b62558294621c01bca34d49"
+> -SRC_URI[cargo-snapshot-x86_64.sha256sum] = "99fc10be2aeedf2c23a484f217bfa76458494495a0eee33e280d3616bb08282d"
+> -SRC_URI[clippy-snapshot-x86_64.sha256sum] = "c6c362c6cd74567022e9ba0c16f6676f8c2b73d955adcf1f6f4c51cf15e57ce8"
+> +SRC_URI[rustc-snapshot-x86_64.sha256sum] = "48c2a42de9e92fcae8c24568f5fe40d5734696a6f80e83cc6d46eef1a78f13c9"
+> +SRC_URI[rust-std-snapshot-x86_64.sha256sum] = "663f4ab7945b392d5e5294dec1b050a66820a20e86f084ec37eeb0f2f7ff5569"
+> +SRC_URI[cargo-snapshot-x86_64.sha256sum] = "9853db03d68578a30972e2755c89c66aec035fec641cf8f3a7117c81eec2578d"
+> +SRC_URI[clippy-snapshot-x86_64.sha256sum] = "5b6466419693a05365827378145014a37ae74fb2948fab390d5210a524792ed8"
+>
+> -SRC_URI[rust-std-snapshot-i586.sha256sum] = "7909e4bff0a971286958f2a88c3bbf231d6ba4ac1add0b2aa3669adb9f869836"
+> +SRC_URI[rust-std-snapshot-i586.sha256sum] = "46eab5c41bf9160a31a53560ff5fc43308c0998cde952533e76fadef66799553"
+>
+> -SRC_URI[rust-std-snapshot-sparc64.sha256sum] = "a23126912b494dc2fcad495f78f920e43c2b1f06159e45477664aa37c03d80fa"
+> +SRC_URI[rust-std-snapshot-sparc64.sha256sum] = "c204ecb424090cc6c0100cef3013f8636d29f288db99c037578aee7d2672a711"
+>
+>  SRC_URI += " \
+>      ${RUST_DIST_SERVER}/dist/${RUST_STD_SNAPSHOT}.tar.xz;name=rust-std-snapshot-${RUST_BUILD_ARCH};subdir=rust-snapshot-components \
+> diff --git a/recipes-devtools/rust/rust-source.inc b/recipes-devtools/rust/rust-source.inc
+> index 895e9a8..14f74a9 100644
+> --- a/recipes-devtools/rust/rust-source.inc
+> +++ b/recipes-devtools/rust/rust-source.inc
+> @@ -7,10 +7,9 @@ SRC_URI += "https://static.rust-lang.org/dist/rustc-${RUST_VERSION}-src.tar.xz;n
+>              file://oeqa-selftest-Increase-timeout-in-process-sigpipe-ru.patch;patchdir=${RUSTSRC} \
+>              file://0001-src-core-build_steps-tool.rs-switch-off-lto-for-rust.patch;patchdir=${RUSTSRC} \
+>              file://revert-link-std-statically-in-rustc_driver-feature.patch;patchdir=${RUSTSRC} \
+> -            file://0001-libunwind-Use-gcs-instead-of-gcs-target-attribute.patch;patchdir=${RUSTSRC} \
+>              file://0001-riscv32-Define-plain-syscalls-as-their-time64-varian.patch;patchdir=${RUSTSRC} \
+>  "
+> -SRC_URI[rust.sha256sum] = "6bfeaddd90ffda2f063492b092bfed925c4b8c701579baf4b1316e021470daac"
+> +SRC_URI[rust.sha256sum] = "66401bb815e236cc6b2aacbbe23b61b286c1fe27a67902e7c0222cfe77b3dbab"
+>
+>  RUSTSRC = "${WORKDIR}/rustc-${RUST_VERSION}-src"
+>
+> diff --git a/recipes-devtools/rust/rust_1.90.0.bb b/recipes-devtools/rust/rust_1.91.1.bb
+> similarity index 99%
+> rename from recipes-devtools/rust/rust_1.90.0.bb
+> rename to recipes-devtools/rust/rust_1.91.1.bb
+> index c6ddaed..8cfc2bd 100644
+> --- a/recipes-devtools/rust/rust_1.90.0.bb
+> +++ b/recipes-devtools/rust/rust_1.91.1.bb
+> @@ -266,7 +266,7 @@ rust_do_install:class-nativesdk() {
+>
+>      install -d ${D}${bindir}
+>      for i in cargo-clippy clippy-driver rustfmt; do
+> -        cp build/${RUST_BUILD_SYS}/stage1-tools/${RUST_HOST_SYS}/release/$i ${D}${bindir}
+> +        cp build/${RUST_BUILD_SYS}/stage2-tools/${RUST_HOST_SYS}/release/$i ${D}${bindir}
+>          patchelf --set-rpath "\$ORIGIN/../lib" ${D}${bindir}/$i
+>      done
+>
+> @@ -301,7 +301,7 @@ rust_do_install:class-target() {
+>
+>      install -d ${D}${bindir}
+>      for i in ${EXTRA_TOOLS}; do
+> -        cp build/${RUST_BUILD_SYS}/stage1-tools/${RUST_HOST_SYS}/release/$i ${D}${bindir}
+> +        cp build/${RUST_BUILD_SYS}/stage2-tools/${RUST_HOST_SYS}/release/$i ${D}${bindir}
+>          patchelf --set-rpath "\$ORIGIN/../lib" ${D}${bindir}/$i
+>      done
+>
+>
 
