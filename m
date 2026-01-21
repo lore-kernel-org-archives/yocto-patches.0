@@ -2,59 +2,59 @@ Return-Path: <tobias.burghart@rohde-schwarz.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5B71C44501
-	for <webhook@archiver.kernel.org>; Wed, 21 Jan 2026 10:53:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9C6EC44501
+	for <webhook@archiver.kernel.org>; Wed, 21 Jan 2026 10:56:40 +0000 (UTC)
 Received: from mail02.rohde-schwarz.com (mail02.rohde-schwarz.com [80.246.32.97])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.9023.1768992811207224859
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.9054.1768992999563383279
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 21 Jan 2026 02:53:31 -0800
+ Wed, 21 Jan 2026 02:56:40 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@rohde-schwarz.com header.s=mail25 header.b=Dg5EOMBQ;
+ dkim=pass header.i=@rohde-schwarz.com header.s=mail25 header.b=gusT04mq;
  spf=pass (domain: rohde-schwarz.com, ip: 80.246.32.97, mailfrom: tobias.burghart.oss@rohde-schwarz.com)
 Received: from securemail-mu-h4.rohde-schwarz.com (10.0.19.146) by
  mail02.rohde-schwarz.com (172.21.64.152) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.39; Wed, 21 Jan 2026 11:53:28 +0100
+ 15.2.1748.39; Wed, 21 Jan 2026 11:56:37 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=rohde-schwarz.com; s=mail25;
-	t=1768992808; bh=JvsH5NXuNGhXb8DmoJtl46hZbK5MF8XWE2QmmEYv0tQ=;
+	t=1768992998; bh=sLpepis7kyAWP0ZJ/4bB0sGkW3ebJKmn2egz6g1gTew=;
 	h=From:Subject:Date:Message-ID:To;
-	b=Dg5EOMBQF7KyGvQcPXBSTCoofPMR+qu5K9e1lFYSU2e+NyRQ+hDBUaXOt3sExX0rE4F4WzKK
-	  E74VjY9MpUjc/N5z2YrYEKMdR8OBGBjsFVuoCDIrhxGZRHzE+6L4Rr/doTs54ipuAbutzGcd
-	  r4HkteRGp95eUTtVAqzWmvCGFH8QWuTWA2bzkccXVpRQ2Ty9xdJPLPmBxxxVbxwfWMgcbQ2c
-	  JD1Da22jq7gaRtIxj/RsShn/UWN+iHwKTD4PKzrhxjgYStCc36idAl+XgC+PyqKS8C5+hkkr
-	  ntnupHhxNFf3yXDtfkfXLwu/ZqaLKLwDEpHY8M0xriA8Z8m1+551pA==
+	b=gusT04mq7e7FCo6pVZ+Fcux/fjmSPK7Zb2JddyKRFbC2F4HSE2Irua0MiCbdf+iHBI9gz1hh
+	  oSt6P7jo5s26ms9zKsBy2HBWiXq/TkWhrt3bgyzT3g6MaVU1PD/R948myIGl5lb3AsDmJ2ru
+	  Mzbl5UvOZFLbzPsbhOuvCpsSkfQET13p3jehU45dfE6pu/xuHXqfbypkP+inuwpJL6jes4NT
+	  QokUluTBa/CmwI+s8+eLFokKpfPMzvkxwI0Stnw6HtFwYI4nEyyNgNI6vWoTbCyJy2LwpYON
+	  E/KsoSfGF9ygXPZgj2/mh1ubVprCncM700CwDFZ6SxjfExpT+6MeXg==
 Received: from GMU451.rsint.net ([10.0.225.106])
-          by gmu812.rsint.net (Totemo SMTP Server) with SMTP ID 56;
-          Wed, 21 Jan 2026 10:53:28 +0000 (GMT)
-Received: from GMU454.rsint.net (10.0.225.120) by GMU451.rsint.net
+          by gmu812.rsint.net (Totemo SMTP Server) with SMTP ID 336;
+          Wed, 21 Jan 2026 10:56:37 +0000 (GMT)
+Received: from GMU453.rsint.net (10.0.225.119) by GMU451.rsint.net
  (10.0.225.106) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.27; Wed, 21 Jan
- 2026 11:53:27 +0100
+ 2026 11:56:36 +0100
 Received: from lx002016.rsint.net (10.112.0.173) by SMTP-EMEA-AR.RSINT.NET
- (10.0.229.4) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.27; Wed, 21 Jan
- 2026 11:53:25 +0100
+ (10.0.229.1) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 21 Jan
+ 2026 11:56:34 +0100
 From: <tobias.burghart.oss@rohde-schwarz.com>
 To: <yocto-patches@lists.yoctoproject.org>
 CC: <scott.murray@konsulko.com>, Tobias Burghart
 	<tobias.burghart@rohde-schwarz.com>
-Subject: [meta-lts-mixins][kirkstone/rust][PATCH] rust: Upgrade 1.90.0 ->
+Subject: [meta-lts-mixins][scarthgap/rust][PATCH] rust: Upgrade 1.90.0 ->
  1.91.1
-Date: Wed, 21 Jan 2026 11:52:45 +0100
-Message-ID: <20260121105245.3978691-1-tobias.burghart.oss@rohde-schwarz.com>
+Date: Wed, 21 Jan 2026 11:56:24 +0100
+Message-ID: <20260121105624.3978843-1-tobias.burghart.oss@rohde-schwarz.com>
 Reply-To: <tobias.burghart@rohde-schwarz.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
 X-Originating-IP: [10.112.0.173]
 X-RUS_SENSITIVITY: 10
-X-GBS-PROCJOB: /iKL4WQjJHGnFlDccb0n+CChOTokyMRYra0vkYAERTTmlQOFXnUgGGWON0zySoHd
+X-GBS-PROCJOB: LhnCXq/8lZwbtx97pjf3RIOV0LkhwmR8S211V1JH+qPPspeTCESUMQYAVL9TEa/K
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 21 Jan 2026 10:53:40 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3037
+ <yocto-patches@lists.yoctoproject.org>; Wed, 21 Jan 2026 10:56:40 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3038
 
 From: Tobias Burghart <tobias.burghart@rohde-schwarz.com>
 
@@ -62,31 +62,31 @@ https://blog.rust-lang.org/2025/11/10/Rust-1.91.1/
 
 Test results summary:
 
-    rust v1.91.1
-    +-----------+--------+---------+
-    | Machine   | Passed | Ignored |
-    +-----------+--------+---------+
-    | arm-32    | 29,968 |  1,510  |
-    | arm-64    | 30,071 |  1,447  |
-    | x86-32    | 29,985 |  1,489  |
-    | x86-64    | 30,229 |  1,247  |
-    | riscv-64  | 30,045 |  1,472  |
-    +-----------+--------+---------+
+   rust v1.91.1
+   +-----------+--------+---------+
+   | Machine   | Passed | Ignored |
+   +-----------+--------+---------+
+   | arm-32    | 29,968 |  1,510  |
+   | arm-64    | 30,071 |  1,447  |
+   | x86-32    | 29,985 |  1,489  |
+   | x86-64    | 30,229 |  1,247  |
+   | riscv-64  | 30,045 |  1,472  |
+   +-----------+--------+---------+
 
-    Test results difference (1.91.1 - 1.90):
-    +-----------+--------+---------+
-    | Machine   | Passed | Ignored |
-    +-----------+--------+---------+
-    | arm-32    |  +451  |   -19   |
-    | arm-64    |  +463  |   -24   |
-    | x86-32    |  +477  |   -18   |
-    | x86-64    |  +326  |   -28   |
-    | riscv-64  |  +461  |   -22   |
-    +-----------+--------+---------+
+   Test results difference (1.91.1 - 1.90):
+   +-----------+--------+---------+
+   | Machine   | Passed | Ignored |
+   +-----------+--------+---------+
+   | arm-32    |  +451  |   -19   |
+   | arm-64    |  +463  |   -24   |
+   | x86-32    |  +477  |   -18   |
+   | x86-64    |  +326  |   -28   |
+   | riscv-64  |  +461  |   -22   |
+   +-----------+--------+---------+
 
 Signed-off-by: Tobias Burghart <tobias.burghart@rohde-schwarz.com>
 ---
- classes/rust-target-config.bbclass            |  2 +-
+ classes-recipe/rust-target-config.bbclass     |  2 +-
  conf/layer.conf                               |  2 +-
  lib/oeqa/selftest/cases/rust_mixin.py         |  2 +-
  .../rust/{cargo_1.90.0.bb =3D> cargo_1.91.1.bb} |  0
@@ -111,11 +111,11 @@ s-canadian_1.91.1.bb} (100%)
 } (100%)
  rename recipes-devtools/rust/{rust_1.90.0.bb =3D> rust_1.91.1.bb} (99%)
 
-diff --git a/classes/rust-target-config.bbclass b/classes/rust-target-confi=
-g.bbclass
-index b351638..0c6fc95 100644
---- a/classes/rust-target-config.bbclass
-+++ b/classes/rust-target-config.bbclass
+diff --git a/classes-recipe/rust-target-config.bbclass b/classes-recipe/rus=
+t-target-config.bbclass
+index b5d0d18..1f3b071 100644
+--- a/classes-recipe/rust-target-config.bbclass
++++ b/classes-recipe/rust-target-config.bbclass
 @@ -368,7 +368,7 @@ def rust_gen_target(d, thing, wd, arch):
      if tspec['data-layout'] is None:
          bb.fatal("No rust target defined for %s" % arch_abi)
@@ -130,18 +130,15 @@ TH', arch_abi))
      tspec['target-endian'] =3D d.getVarFlag('TARGET_ENDIAN', arch_abi)
      tspec['arch'] =3D arch_to_rust_target_arch(rust_arch)
 diff --git a/conf/layer.conf b/conf/layer.conf
-index 287f795..489273f 100644
+index 8c5dc72..e01a81a 100644
 --- a/conf/layer.conf
 +++ b/conf/layer.conf
-@@ -15,7 +15,7 @@ LAYERDEPENDS_lts-rust-mixin =3D "core"
+@@ -15,4 +15,4 @@ LAYERDEPENDS_scarthgap-rust-mixin =3D "core"
 =20
  LICENSE_PATH +=3D "${LAYERDIR}/files/common-licenses"
 =20
 -RUSTVERSION ?=3D "1.90.0%"
 +RUSTVERSION ?=3D "1.91.1%"
-=20
- # This is not ideal, but it seems better to mask out the older oe-core
- # recipes completely since they will not work with this layer on top,
 diff --git a/lib/oeqa/selftest/cases/rust_mixin.py b/lib/oeqa/selftest/case=
 s/rust_mixin.py
 index b7213f9..f6ffcf4 100644
@@ -768,5 +765,5 @@ i ${D}${bindir}
      done
 =20
 --=20
-2.34.1
+2.43.0
 
