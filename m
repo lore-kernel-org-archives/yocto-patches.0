@@ -2,108 +2,109 @@ Return-Path: <antonin.godard@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F18F1D72357
-	for <webhook@archiver.kernel.org>; Fri, 23 Jan 2026 09:00:16 +0000 (UTC)
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.63623.1769158811220571520
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BAABD7235A
+	for <webhook@archiver.kernel.org>; Fri, 23 Jan 2026 09:00:17 +0000 (UTC)
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.63628.1769158815061587584
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 23 Jan 2026 01:00:12 -0800
+ Fri, 23 Jan 2026 01:00:15 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=dkim header.b=LAVATbeJ;
- spf=pass (domain: bootlin.com, ip: 185.246.85.4, mailfrom: antonin.godard@bootlin.com)
+ dkim=pass header.i=@bootlin.com header.s=dkim header.b=xTGR6PqQ;
+ spf=pass (domain: bootlin.com, ip: 185.171.202.116, mailfrom: antonin.godard@bootlin.com)
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id DFD1D4E42214
-	for <yocto-patches@lists.yoctoproject.org>; Fri, 23 Jan 2026 09:00:08 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 8FDC5C21ABD
+	for <yocto-patches@lists.yoctoproject.org>; Fri, 23 Jan 2026 09:00:13 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id AE89B6070A;
-	Fri, 23 Jan 2026 09:00:08 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D290E119A8790;
-	Fri, 23 Jan 2026 10:00:06 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 66C416070A
+	for <yocto-patches@lists.yoctoproject.org>; Fri, 23 Jan 2026 09:00:13 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 63015119A879A;
+	Fri, 23 Jan 2026 10:00:12 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1769158808; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=K6DyoTsFhd1jkD5PHiulTDaxPHixSlDCjZNeooPpn0A=;
-	b=LAVATbeJFhGmmmm90/K6hzhobZvFRM9eHt9x38THdwd3JxyNQmlqz0xUlJcclnmqNAeyRf
-	4LkEQ0U/HzmWsyi2NSaXmudpLeFA45QlHNXtUwcztHVy1sMDv4pmzEg+H5C9FpTqBUfIY/
-	vzX1ArXa4iAEw6Yjr7X1qtSm0RYtTeSQw0zlOnawScytSpAYbZOAUnsIZLSgGM6T5zVzSp
-	Pvv0j8n/sO9zss2lQwhO28uHd0otB+aq8u/NHBrYKn7+0ewqdIJWrEYumNNGvRIIRZO3ap
-	/JSspV2h1kFXr0S33MXoImeftqiDoMPNRfaR9hkkl5l4cLzlXLQEoPHz9RYTEA==
+	t=1769158812; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=eHyOJZXTB2jRg0VlsJARbpaosvPTYgwdA+CXoTYJ91I=;
+	b=xTGR6PqQI+OCVHLoDA+PbLO16pzNrNfNuQMP+Tv8ipUCusGm9dkEqtlOLSRZRQGxcxirpB
+	846TFE5FnF+8lyN3XlhDbI7bhqxpEPiODqIqQtgyPDl1dIx/t40olIPEk1dHLEAqmLpxy/
+	JjqK6eHoFDzFjd4bplDQ5FyXGVWP5cJ6u0lQyi3KbBZTQwG4+LmDWSdcjOMnZGJPo58j6s
+	/l6fydUsvhni5F1BpgEt3c8cRhoMby3mDC56tPWzOyq6kVa7wizzCLYehfdazsIlyYkJEF
+	GXmfSV2PeuqnQ+FPtH93L+HXJ6uodD/VYkYU+ZGB6AGm9E17G5Oa3PfB/PokeQ==
 From: Antonin Godard <antonin.godard@bootlin.com>
-Subject: [yocto-autobuilder-helper][PATCH v2 0/9]
- scripts/release-parser.py: update and move from poky
-Date: Fri, 23 Jan 2026 09:59:43 +0100
-Message-Id: <20260123-releases-parser-updates-v2-0-c24c30da807b@bootlin.com>
+Date: Fri, 23 Jan 2026 09:59:49 +0100
+Subject: [yocto-autobuilder-helper][PATCH v2 6/9]
+ scripts/release-parser.py: use cloned yocto-docs from build directory
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAH84c2kC/4WOSw6CMBRFt2I6tqYtUMSR+yAM+nlKTaVNP0RC2
- LsFF+DwDM65d0URgoGIbqcVBZhNNG4qwM4npEYxPQEbXRgxwhrKaIcDWBARIvYiFBdnr0Uq2Cr
- S1DV0Fe8qVGwf4GE+R7kffhyzfIFKe65fnEoOi5yczMbqEhrBegjD7o4mJheW49RM98L//Zlig
- vm1IsAFb7Ukd+lcsma6KPdGw7ZtX/seXs3sAAAA
-X-Change-ID: 20251219-releases-parser-updates-7c0544e93693
+Message-Id: <20260123-releases-parser-updates-v2-6-c24c30da807b@bootlin.com>
+References: <20260123-releases-parser-updates-v2-0-c24c30da807b@bootlin.com>
+In-Reply-To: <20260123-releases-parser-updates-v2-0-c24c30da807b@bootlin.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Antonin Godard <antonin.godard@bootlin.com>, 
- Quentin Schulz <quentin.schulz@cherry.de>
+ Antonin Godard <antonin.godard@bootlin.com>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1638;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1376;
  i=antonin.godard@bootlin.com; h=from:subject:message-id;
- bh=+cmslbvjarc3E9P/O1rx83yNvleaxVozj5cN9FVQsjA=;
- b=owEBbQKS/ZANAwAKAdGAQUApo6g2AcsmYgBpcziU0oABBL1GqvaVyxuwheWFwKH9sk8t1r73i
- zuY0thhZZaJAjMEAAEKAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCaXM4lAAKCRDRgEFAKaOo
- NlIBD/9pSEY/hhvKV/JKMXKgALHtoUnv+bD69DIEkPYjyT9EFy6tdzm2PfaC7AEkmROLebpoIn6
- /sdrs0NeVpVzINmojbHgEOGu7/Ab0yXlLwi0g89tAs3l3InCT+aHd1bmfb+s6elQ5NDwptSHyVG
- 7B297vrfgw1uY1o3x1MbO1prNDqluF9MoyqcIZ9sjbCCJI5B4ZGkQhb2z+lecQUWgjFmdwbhqps
- VV0cCfYpc5vR+lydC9q5uyj/g4OelY5Z7/RQkV0rbiwDMnKBkrjmi8pRcKJ6aymK6Tf9RXEi0xM
- oBbp/SdMKA8yHcSaZU7KrcWotYgJFWKyKdRB4Wosc0N4A+rYfTXO1uUr561oSp6v64A1oeJomgp
- aOVNpC8eKdoRHVgMgAlBYuu2dvSlbphxhHW6VBxqiPr40f0idjIGnDcMPbIfnNFqpqu7aAibdec
- 0CT7S0pkCqT5PsS7q9xU2sLSTA0Ixhy4n+0F7iXHuP6IaLCu/Fkk/wnK3OIFnPdNFfuYRjRGLYM
- o8WxR+G/TTfGl2x/7uWHJnCQpZ6+shuDUxFuacq5bsmisuFfAAPsf0cHNSH7L69Y0VlMiZZAZor
- T1aquP2G7yjciF28f3Uy99R8cxeuT6AmbBuPoE2DOJ0b5UmRhz8DfxD7AYfcctdxfUlrc77de1X
- Fnnmzqo25TLbdQg==
+ bh=1ta+NaNaC4Ok1gphZ0R2yh4cjYzi9gJPZl9VrxquqvY=;
+ b=owEBbQKS/ZANAwAKAdGAQUApo6g2AcsmYgBpcziViYaEdpZDVuVKoxVwkjf3B+7sQTXs00bDJ
+ P/vyZ5lhrCJAjMEAAEKAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCaXM4lQAKCRDRgEFAKaOo
+ Np+eD/9ot2VDHH1T5/ZWWXo2P2Tx98zvAKImSd2NXhdURQYDrzbKtxvi+4V7zFv61in9t5W05cO
+ YJsEs6V/oWXrcaPyEDGI5mT5gDM5fAzuQkWcErRSQOXIMKNb6v/WTQVEieRpC6IAnOP1Idu2gey
+ M/h2uUDFl6MoCizfdgPGlx2OcUQtMY3EUXgbgTOgihHAnOsQkx6ZqDt4VhQWbdWmSE3907CvYoj
+ qhX6F1L4u6xIdpU7TDxnNwRwChi1e0m56qgFOO9dDNQwI/kPCIkeae3WW8FafFItMtanFAvvBbG
+ xZ4F6WOx0Cu0aR9x1YmUl+AJ04KjpjvnM280BcrCQONNoeiJzu/72CHs/0jAjAM3B8oXBjGMMN7
+ 6Le0mxE366z7V3SLrXTn11sdKK4sZI6ajkjTom+cgNlbgiwWaFdRydfIJsyvOJujAnylydJBB0+
+ IbWFy35mI7VGsQWra0Nl+dz/GJK5XC87IScH+O3b/T/+WS5sNTwRSGPsCljNhXId3IyveFq7nC6
+ 1h+rvOa0+99mFkJZVOCBQnUoEWs76Oey7fmRILDsdsmhmH1GJP9Da0sXNyAaFZR9L4O9pMG4YCQ
+ kGU4gFVqfWDzVP/VPcRzRlY6/1zfFBY7b+sslZPGqqcSwP8V1QGSkiNoOC+OGNReoTNqqggpgao
+ dHZQ+qrj5a4zeyw==
 X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
  fpr=8648725188DD401BB9A0D3FFD180414029A3A836
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 23 Jan 2026 09:00:16 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3056
+ <yocto-patches@lists.yoctoproject.org>; Fri, 23 Jan 2026 09:00:17 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3061
 
-Make the necessary changes to move away from poky and use yocto-docs to
-get the tag information we need. yocto-docs is currently one of the
-closest source of tags compared to poky.
-
-Also do some refactoring on release-parser.py to make it slightly easier
-to maintain (by only maintaining variables at the top of the file).
-
-This is what the output looks like if you want to verify:
-https://0x0.st/PPgi.json
+Add an argument to release-parser.py to pass the yocto-docs repository,
+and pass it from run-dashboard-index.
 
 Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
 ---
-Changes in v2:
-- Declare an array for supported releases as suggested by quentin.
-- Rebase on master.
-- Link to v1: https://patch.msgid.link/20251219-releases-parser-updates-v1-0-6830e6a67db0@bootlin.com
+ scripts/release-parser.py   | 4 +++-
+ scripts/run-dashboard-index | 2 +-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
----
-Antonin Godard (9):
-      scripts/release-parser.py: use yocto-docs instead of poky
-      scripts/release-parser.py: update for Wrynose/Whinlatter
-      scripts/release-parser.py: define globals for stable/active versions
-      config.json: indexing: add bitbake repository back
-      config.json: indexing: don't add yocto-docs as a layer
-      scripts/release-parser.py: use cloned yocto-docs from build directory
-      scripts/release-parser.py: don't remove non-existing branch
-      scripts/release-parser.py: update commit for yocto-docs
-      scripts/release-parser.py: use latest_tag to get branch name
+diff --git a/scripts/release-parser.py b/scripts/release-parser.py
+index 33c5fe7..cb56257 100755
+--- a/scripts/release-parser.py
++++ b/scripts/release-parser.py
+@@ -10,7 +10,9 @@ from collections import defaultdict
+ import datetime
+ import semver
+ 
+-GIT_REPO = "~/git/mirror/yocto-docs"
++GIT_REPO = sys.argv[1]
++
++print(f"Reading tag information in {GIT_REPO}")
+ 
+ SUPPORTED_RELEASES = {
+      "yocto-4.0": "LTS until Apr. 2026",
+diff --git a/scripts/run-dashboard-index b/scripts/run-dashboard-index
+index 8c5222e..c3fb8fa 100755
+--- a/scripts/run-dashboard-index
++++ b/scripts/run-dashboard-index
+@@ -16,7 +16,7 @@ scriptdir="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+ dest=${DEST:-docs@docs.yoctoproject.org:dashboard/}
+ 
+ cd $builddir
+-$scriptdir/release-parser.py 
++$scriptdir/release-parser.py $builddir/yocto-docs
+ $scriptdir/layer-parser.py
+ curl --silent --output $scriptdir/dashboard/testresults.json https://git.yoctoproject.org/yocto-testresults/plain/oeselftest/reproducible/qemux86-64/testresults.json
+ 
 
- config.json                 |  2 ++
- scripts/release-parser.py   | 34 +++++++++++++++++++---------------
- scripts/run-dashboard-index |  2 +-
- 3 files changed, 22 insertions(+), 16 deletions(-)
----
-base-commit: ec17abb0b2d759b800cefec4fcac61cee74dbefc
-change-id: 20251219-releases-parser-updates-7c0544e93693
+-- 
+2.52.0
 
 
