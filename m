@@ -1,413 +1,222 @@
-Return-Path: <yoann.congal@smile.fr>
+Return-Path: <peter.marko@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E83B0D715E9
-	for <webhook@archiver.kernel.org>; Sat, 24 Jan 2026 13:53:45 +0000 (UTC)
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.18777.1769262820484256282
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5422DD715EE
+	for <webhook@archiver.kernel.org>; Sat, 24 Jan 2026 14:53:26 +0000 (UTC)
+Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.19842.1769266405588055380
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 24 Jan 2026 05:53:40 -0800
+ Sat, 24 Jan 2026 06:53:25 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@smile.fr header.s=google header.b=uhQ2123/;
- spf=pass (domain: smile.fr, ip: 209.85.221.47, mailfrom: yoann.congal@smile.fr)
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-4327555464cso2066830f8f.1
-        for <yocto-patches@lists.yoctoproject.org>; Sat, 24 Jan 2026 05:53:40 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769262819; cv=none;
-        d=google.com; s=arc-20240605;
-        b=G8I7ot/Rm1zJOvKhFNd7KP4zEzyT1Bq+SgoTAvX0Iqhn6me5NUymurThYR12cC9eRc
-         VvOuBzL7tllrmBDTcojIQu6Yo3h2HpGU94H6NzRLPTYTzCIUB7zldvPs7ZSlRGIMOMFi
-         UMZoQTOQk3io/tQJJWp6ICnawWNTmiu2rhLWB+wOgdRjQ7yAY+1mSU5ag4JQHTqvpXg+
-         tAC+Zg34hHOFXVl/pBjAVbN0B8GgcRfP7jHxmS4LfHlCr+8nQnqr3JaDrcXknxfYJrO2
-         Cdb2/UtPtPNO/B7EaFIUv/a0oDUzbeovzmfJJwVWw4+NRSyxqGPdLxjj7nZizS5v5rh3
-         CMjA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=lnm1TNI/E60KGD0uuziOVEQVPn8mUhjhKBmEUTvZu9g=;
-        fh=VvQjf0NX9rkBq68zKFbgS/cQ/2U9OrQZ/WSGzGdcdjs=;
-        b=hjH9uskmyuvfBj7ZG3REMCn0loF7DSXE1rKenpxhnZL7zCuB5FMh7NQYGRR4tPxHDS
-         rbd+GfYxt6+RkNO8Ke3U/fr0oampIaFC/mlVa7JQzaQd6ce+4q++FKfkqLwdUJUM5jfX
-         y6W8asfrg3ORBCOfVttbm4DyGiJDcjyLWTKL4QMHjemS2TWk/aBhp06tPFVhyy2KOtZ/
-         tWth7QNNAWQLVr+LsZq2l/IkqnsiK6WrrnUh72hp4QkG14Os02pBCbaJ3ARJSSnsgbFn
-         Zig+/KhL49er6C6TDK1JmwCSkIMbNX8LP8zuWilBkj1gDlj1nHXrNACNy8tEJOFdHIpo
-         3Trg==;
-        darn=lists.yoctoproject.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=smile.fr; s=google; t=1769262819; x=1769867619; darn=lists.yoctoproject.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=lnm1TNI/E60KGD0uuziOVEQVPn8mUhjhKBmEUTvZu9g=;
-        b=uhQ2123/Q0/cP7BIPa2mPkaKN2YZbFwqVrplCW2eDW5EZffht1fFMAusbSmq0p4IOr
-         scPQIhfyOKvDzUb5W36e27i6y/57UCy7e46ovHWgWjGVXgkCmubz4+mYqsLKMmkRvXDi
-         A7s6gTw/Na4+Qj4lyhyLErPyN0S2Ec/8m64SQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769262819; x=1769867619;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lnm1TNI/E60KGD0uuziOVEQVPn8mUhjhKBmEUTvZu9g=;
-        b=VCtxm1+TOqDp1UNJozIEpj3rfxbxJF0WHes7yIx982LpD9538tkCFeHDE+EIExlAaC
-         QkFm75wLLHAwbRDiMD/h9Ckjtvg8ONAerjf3HKBSG3cjKh/Yfhnefuc9T6Zw7yzJUSkT
-         zlOOEeiiR666nvvYxqQ07GWZEazrEFZ5GS2OT5xWJ4UvWbFOLhqyf4Eki+tLoqS/j56S
-         F9zN/x0/s3RfCaE3qyT/mRwAXs356ldsAOr+9IiPHBEMERJr4ZzmY62FiDshC1LKR8Qa
-         N0ZG7eMdTcn81P2+Ug9OTzSp9bv7m9mOVQaV5PS8b7TtCKLiRe9b5D9MZ2zG4UYFXZlt
-         9zrw==
-X-Gm-Message-State: AOJu0YzmQqr265hO544NwgigwRBXEFrUaN6qSW/76VwhNZZj1jMI4+6K
-	zI9PtS5wECejahmZbjzHaPoWW33B2DDo5L/tInnQxmsvxoJ1j80qDGIwXSoqCukpbw4cXt45SJK
-	cBjviNAXVQe9c3DDnqW7ilY2SoCGUxtSIlOiDaSbLLA==
-X-Gm-Gg: AZuq6aLKE5+Sum3CqB5ieQ+AhxBCD2jYGht8LdeE4s7jpKCt/R3p3KxQ/hXAHOlJnzJ
-	mAMPLbg4BShaW7ICsuT4v6sU4rLSgwgeG8wKFE51Z6rTKG3+/ncUXNESRtotkO2vrYBc4dwIsfD
-	D6wADxJkJQnYu6fM74pvxDpCEOFL57yKnzUvBrnWQUbGwg/IsCGfCtrySN4s52I9P2E4WKa84PW
-	+QrMlWcRH2/dccvhFX5EmCgfZxb0/hDV+CmDPmwuzU+ZqcEUMRVvRRMBYTYywsTzJmMxVuLfGZL
-	jEucCIFsOA/+/MFzTHW0zOKbsAh/
-X-Received: by 2002:a05:6000:2c08:b0:435:9522:2bc9 with SMTP id
- ffacd0b85a97d-435b15bd97fmr12725334f8f.5.1769262818603; Sat, 24 Jan 2026
- 05:53:38 -0800 (PST)
+ dkim=pass header.i=peter.marko@siemens.com header.s=fm1 header.b=cjPAwnFk;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.225, mailfrom: fm-256628-202601241453239ca7a6a9d40002070a-8rnqlp@rts-flowmailer.siemens.com)
+Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 202601241453239ca7a6a9d40002070a
+        for <yocto-patches@lists.yoctoproject.org>;
+        Sat, 24 Jan 2026 15:53:23 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=peter.marko@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=0vCAl5JGbLIVxkwMz0kdWOBroJ/IThwoBa35VG2K4GQ=;
+ b=cjPAwnFkQ9aEdJQCe3hUKYnm5J7jXy9UE0tOVDHFxFiAkfuEbVQ7DvAwMWsO3Ql6S022CW
+ 2NFw9FbrMYYmQfeKYFd2XJrGRlV+qveBRplI7oGa2WK6Inylw3GaR/uYHgkTWeHtbIEasehQ
+ 2wAwezxdTLqT+eJM9Y7H02yrb+oN9bB+DXHka8FlXM3gBN+BB//GfxgAYvL+KDM5Wo+p3deL
+ LNb+ZN7dn65x7Dr5AKL7x9nw3fKqgQCx4b4/VZVXXR6JgVK/AaekHswscraER2X6ppLU4wet
+ ZZF0ZtlFm1wP4h8n96LKPcJerB2yyQqH78IlU/uu3UDLWJjD84EXYjMw==;
+From: Peter Marko <peter.marko@siemens.com>
+To: yocto-patches@lists.yoctoproject.org
+Cc: jose.quaresma@foundries.io,
+	Peter Marko <peter.marko@siemens.com>
+Subject: [meta-lts-mixins][kirkstone/go][PATCH] go: upgrade 1.25.5 -> 1.25.6
+Date: Sat, 24 Jan 2026 15:53:22 +0100
+Message-Id: <20260124145322.3192112-1-peter.marko@siemens.com>
 MIME-Version: 1.0
-References: <20260121174651.64212-1-yoann.congal@smile.fr> <DB5PR02MB10213B6D7B2ED24E5B7C1BC72EF96A@DB5PR02MB10213.eurprd02.prod.outlook.com>
-In-Reply-To: <DB5PR02MB10213B6D7B2ED24E5B7C1BC72EF96A@DB5PR02MB10213.eurprd02.prod.outlook.com>
-From: Yoann Congal <yoann.congal@smile.fr>
-Date: Sat, 24 Jan 2026 14:53:12 +0100
-X-Gm-Features: AZwV_Qju3xx6Cjv30eiy5_7aGxQRwLgVXQXJPCEyYkKqU7JhzqEqwTZclYsDV0g
-Message-ID: <CAMSfU+77g0L6iG6Y1pcxd3KmXOGSE9i13iP048X612BqNxVFYA@mail.gmail.com>
-Subject: Re: [yocto-patches] [yocto-autobuilder2][PATCH v2 1/2] schedulers:
- sort repo branches in maintained stable branches
-To: Peter Kjellerstedt <peter.kjellerstedt@axis.com>
-Cc: "yocto-patches@lists.yoctoproject.org" <yocto-patches@lists.yoctoproject.org>
-Content-Type: multipart/alternative; boundary="000000000000d14dad06492299c4"
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-256628:519-21489:flowmailer
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sat, 24 Jan 2026 13:53:45 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3067
+ <yocto-patches@lists.yoctoproject.org>; Sat, 24 Jan 2026 14:53:26 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3069
 
---000000000000d14dad06492299c4
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: Peter Marko <peter.marko@siemens.com>
 
-Le mer. 21 janv. 2026 =C3=A0 18:52, Peter Kjellerstedt <
-peter.kjellerstedt@axis.com> a =C3=A9crit :
+Upgrade to latest 1.25.x release [1]:
 
-> > -----Original Message-----
-> > From: yocto-patches@lists.yoctoproject.org <
-> yocto-patches@lists.yoctoproject.org> On Behalf Of Yoann Congal via
-> lists.yoctoproject.org
-> > Sent: den 21 januari 2026 18:47
-> > To: yocto-patches@lists.yoctoproject.org
-> > Cc: Yoann Congal <yoann.congal@smile.fr>
-> > Subject: [yocto-patches] [yocto-autobuilder2][PATCH v2 1/2] schedulers:
-> sort repo branches in maintained stable branches
-> >
-> > From: Yoann Congal <yoann.congal@smile.fr>
-> >
-> > This should help seeing if any branch is missing by comparing with the
-> > "Build Properties" page of a build.
-> >
-> > Signed-off-by: Yoann Congal <yoann.congal@smile.fr>
-> > ---
-> >  schedulers.py | 22 +++++++++++-----------
-> >  1 file changed, 11 insertions(+), 11 deletions(-)
-> >
-> > diff --git a/schedulers.py b/schedulers.py
-> > index 42983a8..0018fcb 100644
-> > --- a/schedulers.py
-> > +++ b/schedulers.py
-> > @@ -73,16 +73,16 @@ branchdefaults =3D {
-> >      },
-> >      'whinlatter': {
-> >          'branch': 'whinlatter',
-> > -        'branch_poky': 'master',
-> >          'branch_bitbake': '2.16',
-> >          'branch_meta-arm': 'whinlatter',
-> >          'branch_meta-gplv2': 'master',
-> >          'branch_meta-mingw': 'whinlatter',
-> >          'branch_meta-openembedded': 'whinlatter',
-> > +        'branch_meta-virtualization': 'whinlatter',
-> >          'branch_meta-yocto': 'whinlatter',
-> > -        'branch_yocto-docs': 'whinlatter',
-> >          'branch_oecore': 'whinlatter',
-> > -        'branch_meta-virtualization': 'whinlatter',
-> > +        'branch_poky': 'master',
->
-> I don't know how these are actually used, but is a branch for poky
-> really meaningful with Whinlatter? Though I notice that meta-gplv2
-> is also mentioned above, and it has been dead and buried for years...
->
+$ git --no-pager log --oneline go1.25.5..go1.25.6
+69801b25b9 (tag: go1.25.6) [release-branch.go1.25] go1.25.6
+9d497df196 [release-branch.go1.25] archive/zip: reduce CPU usage in index construction
+afa9b66ac0 [release-branch.go1.25] net/url: add urlmaxqueryparams GODEBUG to limit the number of query parameters
+2526187481 [release-branch.go1.25] cmd/go/internal/work: sanitize flags before invoking 'pkg-config'
+082365aa55 [release-branch.go1.25] cmd/go: update VCS commands to use safer flag/argument syntax
+4be38528a6 [release-branch.go1.25] crypto/tls: don't copy auto-rotated session ticket keys in Config.Clone
+525dd85363 [release-branch.go1.25] crypto/tls: reject trailing messages after client/server hello
+ddcf27fc8c [release-branch.go1.25] Revert "errors: optimize errors.Join for single unwrappable errors"
+14f50f6e3e [release-branch.go1.25] cmd/compile: handle propagating an out-of-range jump table index
+4e531b2f14 [release-branch.go1.25] runtime: mark getfp as nosplit
+6f07a57145 [release-branch.go1.25] runtime/race: set missing argument frame for ppc64x atomic And/Or wrappers
+ea603eea37 [release-branch.go1.25] os: allow direntries to have zero inodes on Linux
+93f5d1c27e [release-branch.go1.25] os,internal/poll: don't call IsNonblock for consoles and Stdin
+d5bfdcbc47 [release-branch.go1.25] crypto/tls: use inner hello for earlyData when using QUIC and ECH
 
-Those are used to pre-fill the "target branch" fields when starting a new
-build on the autobuilder.
-Poky and meta-gplv2 are not used in the build but since the field is
-present, I'd rather have it filled to a known value instead of inheriting
-the default value.
-I agree that some cleanup should be done to remove those unused repos from
-the UI but that is for another day.
+Fixes CVE-2025-61728, CVE-2025-61726, CVE-2025-68121, CVE-2025-61731,
+      CVE-2025-68119 and CVE-2025-61730.
 
-> +        'branch_yocto-docs': 'whinlatter',
-> >      },
-> >      'walnascar': {
-> >          'branch': 'walnascar',
-> > @@ -120,22 +120,22 @@ branchdefaults =3D {
-> >      },
-> >      'scarthgap': {
-> >          'branch': 'scarthgap',
-> > -        'branch_poky': 'scarthgap',
-> >          'branch_bitbake': '2.8',
-> > -        'branch_meta-arm': 'scarthgap',
-> >          'branch_meta-agl': 'master',
-> > +        'branch_meta-arm': 'scarthgap',
-> >          'branch_meta-aws': 'scarthgap',
-> >          'branch_meta-clang': 'scarthgap',
-> >          'branch_meta-gplv2': 'master',
-> >          'branch_meta-intel': 'scarthgap',
-> >          'branch_meta-mingw': 'scarthgap',
-> >          'branch_meta-openembedded': 'scarthgap',
-> > +        'branch_meta-qt6': '6.8.1',
-> >          'branch_meta-security': 'scarthgap',
-> >          'branch_meta-ti': 'scarthgap',
-> >          'branch_meta-virtualization': 'scarthgap',
-> > -        'branch_oecore': 'scarthgap',
-> >          'branch_meta-webosose': 'scarthgap-webos',
-> > -        'branch_meta-qt6': '6.8.1',
-> > +        'branch_oecore': 'scarthgap',
-> > +        'branch_poky': 'scarthgap',
-> >      },
-> >      'nanbield': {
-> >          'branch': 'nanbield',
-> > @@ -185,22 +185,22 @@ branchdefaults =3D {
-> >      },
-> >      'kirkstone': {
-> >          'branch': 'kirkstone',
-> > -        'branch_poky': 'kirkstone',
-> >          'branch_bitbake': '2.0',
-> > -        'branch_meta-arm': 'kirkstone',
-> >          'branch_meta-agl': 'quillback',
-> > +        'branch_meta-arm': 'kirkstone',
-> >          'branch_meta-aws': 'kirkstone',
-> >          'branch_meta-clang': 'kirkstone',
-> >          'branch_meta-gplv2': 'kirkstone',
-> >          'branch_meta-intel': 'kirkstone',
-> >          'branch_meta-mingw': 'kirkstone',
-> >          'branch_meta-openembedded': 'kirkstone',
-> > +        'branch_meta-qt6': '6.8.1',
-> >          'branch_meta-security': 'kirkstone',
-> >          'branch_meta-ti': 'kirkstone',
-> >          'branch_meta-virtualization': 'kirkstone',
-> > -        'branch_oecore': 'kirkstone',
-> >          'branch_meta-webosose': 'kirkstone-webos',
-> > -        'branch_meta-qt6': '6.8.1',
-> > +        'branch_oecore': 'kirkstone',
-> > +        'branch_poky': 'kirkstone',
-> >      },
-> >      'honister': {
-> >          'branch': 'honister',
-> >
->
-> //Peter
->
->
+Release information: [2]
 
---=20
-Yoann Congal
-Smile ECS
+[1] https://github.com/golang/go/compare/go1.25.5...go1.25.6
+[2] https://groups.google.com/g/golang-announce/c/Vd2tYVM8eUc
 
---000000000000d14dad06492299c4
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Peter Marko <peter.marko@siemens.com>
+Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+---
+ recipes-devtools/go/{go-1.25.5.inc => go-1.25.6.inc}      | 2 +-
+ ...binary-native_1.25.5.bb => go-binary-native_1.25.6.bb} | 6 +++---
+ ...oss-canadian_1.25.5.bb => go-cross-canadian_1.25.6.bb} | 0
+ .../go/{go-cross_1.25.5.bb => go-cross_1.25.6.bb}         | 0
+ .../go/{go-crosssdk_1.25.5.bb => go-crosssdk_1.25.6.bb}   | 0
+ .../go/{go-runtime_1.25.5.bb => go-runtime_1.25.6.bb}     | 0
+ ...go-make-content-based-hash-generation-less-pedan.patch | 8 ++++----
+ ...ime-when-using-cgo-on-386-call-C-sigaction-funct.patch | 4 ++--
+ .../go/0006-cmd-go-make-GOROOT-precious-by-default.patch  | 2 +-
+ recipes-devtools/go/{go_1.25.5.bb => go_1.25.6.bb}        | 0
+ 10 files changed, 11 insertions(+), 11 deletions(-)
+ rename recipes-devtools/go/{go-1.25.5.inc => go-1.25.6.inc} (91%)
+ rename recipes-devtools/go/{go-binary-native_1.25.5.bb => go-binary-native_1.25.6.bb} (79%)
+ rename recipes-devtools/go/{go-cross-canadian_1.25.5.bb => go-cross-canadian_1.25.6.bb} (100%)
+ rename recipes-devtools/go/{go-cross_1.25.5.bb => go-cross_1.25.6.bb} (100%)
+ rename recipes-devtools/go/{go-crosssdk_1.25.5.bb => go-crosssdk_1.25.6.bb} (100%)
+ rename recipes-devtools/go/{go-runtime_1.25.5.bb => go-runtime_1.25.6.bb} (100%)
+ rename recipes-devtools/go/{go_1.25.5.bb => go_1.25.6.bb} (100%)
 
-<div dir=3D"ltr"><div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=
-=3D"gmail_quote"><div dir=3D"ltr" class=3D"gmail_attr">Le=C2=A0mer. 21 janv=
-. 2026 =C3=A0=C2=A018:52, Peter Kjellerstedt &lt;<a href=3D"mailto:peter.kj=
-ellerstedt@axis.com" target=3D"_blank">peter.kjellerstedt@axis.com</a>&gt; =
-a =C3=A9crit=C2=A0:<br></div><blockquote class=3D"gmail_quote" style=3D"mar=
-gin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1=
-ex">&gt; -----Original Message-----<br>
-&gt; From: <a href=3D"mailto:yocto-patches@lists.yoctoproject.org" target=
-=3D"_blank">yocto-patches@lists.yoctoproject.org</a> &lt;<a href=3D"mailto:=
-yocto-patches@lists.yoctoproject.org" target=3D"_blank">yocto-patches@lists=
-.yoctoproject.org</a>&gt; On Behalf Of Yoann Congal via <a href=3D"http://l=
-ists.yoctoproject.org" rel=3D"noreferrer" target=3D"_blank">lists.yoctoproj=
-ect.org</a><br>
-&gt; Sent: den 21 januari 2026 18:47<br>
-&gt; To: <a href=3D"mailto:yocto-patches@lists.yoctoproject.org" target=3D"=
-_blank">yocto-patches@lists.yoctoproject.org</a><br>
-&gt; Cc: Yoann Congal &lt;<a href=3D"mailto:yoann.congal@smile.fr" target=
-=3D"_blank">yoann.congal@smile.fr</a>&gt;<br>
-&gt; Subject: [yocto-patches] [yocto-autobuilder2][PATCH v2 1/2] schedulers=
-: sort repo branches in maintained stable branches<br>
-&gt; <br>
-&gt; From: Yoann Congal &lt;<a href=3D"mailto:yoann.congal@smile.fr" target=
-=3D"_blank">yoann.congal@smile.fr</a>&gt;<br>
-&gt; <br>
-&gt; This should help seeing if any branch is missing by comparing with the=
-<br>
-&gt; &quot;Build Properties&quot; page of a build.<br>
-&gt; <br>
-&gt; Signed-off-by: Yoann Congal &lt;<a href=3D"mailto:yoann.congal@smile.f=
-r" target=3D"_blank">yoann.congal@smile.fr</a>&gt;<br>
-&gt; ---<br>
-&gt;=C2=A0 schedulers.py | 22 +++++++++++-----------<br>
-&gt;=C2=A0 1 file changed, 11 insertions(+), 11 deletions(-)<br>
-&gt; <br>
-&gt; diff --git a/schedulers.py b/schedulers.py<br>
-&gt; index 42983a8..0018fcb 100644<br>
-&gt; --- a/schedulers.py<br>
-&gt; +++ b/schedulers.py<br>
-&gt; @@ -73,16 +73,16 @@ branchdefaults =3D {<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 },<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &#39;whinlatter&#39;: {<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch&#39;: &#39;whinlatter&#3=
-9;,<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_poky&#39;: &#39;master&#39;,<=
-br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_bitbake&#39;: &#39;2.16&=
-#39;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-arm&#39;: &#39;whin=
-latter&#39;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-gplv2&#39;: &#39;ma=
-ster&#39;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-mingw&#39;: &#39;wh=
-inlatter&#39;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-openembedded&#39;: =
-&#39;whinlatter&#39;,<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-virtualization&#39;: &#3=
-9;whinlatter&#39;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-yocto&#39;: &#39;wh=
-inlatter&#39;,<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_yocto-docs&#39;: &#39;whinlat=
-ter&#39;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_oecore&#39;: &#39;whinla=
-tter&#39;,<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-virtualization&#39;: &#3=
-9;whinlatter&#39;,<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_poky&#39;: &#39;master&#39;,<=
-br>
-<br>
-I don&#39;t know how these are actually used, but is a branch for poky <br>
-really meaningful with Whinlatter? Though I notice that meta-gplv2 <br>
-is also mentioned above, and it has been dead and buried for years...<br></=
-blockquote><div><br></div><div>Those are used to pre-fill the &quot;target =
-branch&quot; fields when starting a new build on the autobuilder.</div><div=
->Poky and=C2=A0meta-gplv2 are not used in the build but since the field is =
-present, I&#39;d rather have it filled to a known value instead of inheriti=
-ng the default value.</div><div>I agree that some cleanup should be done to=
- remove those unused repos from the UI but that is for another day.</div><d=
-iv><br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px =
-0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_yocto-docs&#39;: &#39;whinlat=
-ter&#39;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 },<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &#39;walnascar&#39;: {<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch&#39;: &#39;walnascar&#39=
-;,<br>
-&gt; @@ -120,22 +120,22 @@ branchdefaults =3D {<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 },<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &#39;scarthgap&#39;: {<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch&#39;: &#39;scarthgap&#39=
-;,<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_poky&#39;: &#39;scarthgap&#39=
-;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_bitbake&#39;: &#39;2.8&#=
-39;,<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-arm&#39;: &#39;scarthgap=
-&#39;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-agl&#39;: &#39;mast=
-er&#39;,<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-arm&#39;: &#39;scarthgap=
-&#39;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-aws&#39;: &#39;scar=
-thgap&#39;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-clang&#39;: &#39;sc=
-arthgap&#39;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-gplv2&#39;: &#39;ma=
-ster&#39;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-intel&#39;: &#39;sc=
-arthgap&#39;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-mingw&#39;: &#39;sc=
-arthgap&#39;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-openembedded&#39;: =
-&#39;scarthgap&#39;,<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-qt6&#39;: &#39;6.8.1&#39=
-;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-security&#39;: &#39=
-;scarthgap&#39;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-ti&#39;: &#39;scart=
-hgap&#39;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-virtualization&#39;=
-: &#39;scarthgap&#39;,<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_oecore&#39;: &#39;scarthgap&#=
-39;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-webosose&#39;: &#39=
-;scarthgap-webos&#39;,<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-qt6&#39;: &#39;6.8.1&#39=
-;,<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_oecore&#39;: &#39;scarthgap&#=
-39;,<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_poky&#39;: &#39;scarthgap&#39=
-;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 },<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &#39;nanbield&#39;: {<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch&#39;: &#39;nanbield&#39;=
-,<br>
-&gt; @@ -185,22 +185,22 @@ branchdefaults =3D {<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 },<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &#39;kirkstone&#39;: {<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch&#39;: &#39;kirkstone&#39=
-;,<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_poky&#39;: &#39;kirkstone&#39=
-;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_bitbake&#39;: &#39;2.0&#=
-39;,<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-arm&#39;: &#39;kirkstone=
-&#39;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-agl&#39;: &#39;quil=
-lback&#39;,<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-arm&#39;: &#39;kirkstone=
-&#39;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-aws&#39;: &#39;kirk=
-stone&#39;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-clang&#39;: &#39;ki=
-rkstone&#39;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-gplv2&#39;: &#39;ki=
-rkstone&#39;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-intel&#39;: &#39;ki=
-rkstone&#39;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-mingw&#39;: &#39;ki=
-rkstone&#39;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-openembedded&#39;: =
-&#39;kirkstone&#39;,<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-qt6&#39;: &#39;6.8.1&#39=
-;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-security&#39;: &#39=
-;kirkstone&#39;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-ti&#39;: &#39;kirks=
-tone&#39;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-virtualization&#39;=
-: &#39;kirkstone&#39;,<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_oecore&#39;: &#39;kirkstone&#=
-39;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-webosose&#39;: &#39=
-;kirkstone-webos&#39;,<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_meta-qt6&#39;: &#39;6.8.1&#39=
-;,<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_oecore&#39;: &#39;kirkstone&#=
-39;,<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch_poky&#39;: &#39;kirkstone&#39=
-;,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 },<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &#39;honister&#39;: {<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;branch&#39;: &#39;honister&#39;=
-,<br>
-&gt; <br>
-<br>
-//Peter<br>
-<br>
-</blockquote></div><div><br clear=3D"all"></div><br><span class=3D"gmail_si=
-gnature_prefix">-- </span><br><div dir=3D"ltr" class=3D"gmail_signature"><d=
-iv dir=3D"ltr"><font face=3D"Raleway, regular">Yoann Congal</font><div><fon=
-t face=3D"Raleway, regular">Smile ECS</font></div></div></div></div>
-</div>
-
---000000000000d14dad06492299c4--
+diff --git a/recipes-devtools/go/go-1.25.5.inc b/recipes-devtools/go/go-1.25.6.inc
+similarity index 91%
+rename from recipes-devtools/go/go-1.25.5.inc
+rename to recipes-devtools/go/go-1.25.6.inc
+index 47d5c39..2c31c4a 100644
+--- a/recipes-devtools/go/go-1.25.5.inc
++++ b/recipes-devtools/go/go-1.25.6.inc
+@@ -18,4 +18,4 @@ SRC_URI += "\
+     file://0011-cmd-link-stop-forcing-binutils-gold-dependency-on-aa.patch \
+     file://0001-runtime-when-using-cgo-on-386-call-C-sigaction-funct.patch \
+ "
+-SRC_URI[main.sha256sum] = "22a5fd0a91efcd28a1b0537106b9959b2804b61f59c3758b51e8e5429c1a954f"
++SRC_URI[main.sha256sum] = "58cbf771e44d76de6f56d19e33b77d745a1e489340922875e46585b975c2b059"
+diff --git a/recipes-devtools/go/go-binary-native_1.25.5.bb b/recipes-devtools/go/go-binary-native_1.25.6.bb
+similarity index 79%
+rename from recipes-devtools/go/go-binary-native_1.25.5.bb
+rename to recipes-devtools/go/go-binary-native_1.25.6.bb
+index 94de9ce..261f7dc 100644
+--- a/recipes-devtools/go/go-binary-native_1.25.5.bb
++++ b/recipes-devtools/go/go-binary-native_1.25.6.bb
+@@ -9,9 +9,9 @@ PROVIDES = "go-native"
+ 
+ # Checksums available at https://go.dev/dl/
+ SRC_URI = "https://dl.google.com/go/go${PV}.${BUILD_GOOS}-${BUILD_GOARCH}.tar.gz;name=go_${BUILD_GOTUPLE}"
+-SRC_URI[go_linux_amd64.sha256sum] = "9e9b755d63b36acf30c12a9a3fc379243714c1c6d3dd72861da637f336ebb35b"
+-SRC_URI[go_linux_arm64.sha256sum] = "b00b694903d126c588c378e72d3545549935d3982635ba3f7a964c9fa23fe3b9"
+-SRC_URI[go_linux_ppc64le.sha256sum] = "f0904b647b5b8561efc5d48bb59a34f2b7996afab83ccd41c93b1aeb2c0067e4"
++SRC_URI[go_linux_amd64.sha256sum] = "f022b6aad78e362bcba9b0b94d09ad58c5a70c6ba3b7582905fababf5fe0181a"
++SRC_URI[go_linux_arm64.sha256sum] = "738ef87d79c34272424ccdf83302b7b0300b8b096ed443896089306117943dd5"
++SRC_URI[go_linux_ppc64le.sha256sum] = "bee02dbe034b12b839ae7807a85a61c13bee09ee38f2eeba2074bd26c0c0ab73"
+ 
+ UPSTREAM_CHECK_URI = "https://golang.org/dl/"
+ UPSTREAM_CHECK_REGEX = "go(?P<pver>\d+(\.\d+)+)\.linux"
+diff --git a/recipes-devtools/go/go-cross-canadian_1.25.5.bb b/recipes-devtools/go/go-cross-canadian_1.25.6.bb
+similarity index 100%
+rename from recipes-devtools/go/go-cross-canadian_1.25.5.bb
+rename to recipes-devtools/go/go-cross-canadian_1.25.6.bb
+diff --git a/recipes-devtools/go/go-cross_1.25.5.bb b/recipes-devtools/go/go-cross_1.25.6.bb
+similarity index 100%
+rename from recipes-devtools/go/go-cross_1.25.5.bb
+rename to recipes-devtools/go/go-cross_1.25.6.bb
+diff --git a/recipes-devtools/go/go-crosssdk_1.25.5.bb b/recipes-devtools/go/go-crosssdk_1.25.6.bb
+similarity index 100%
+rename from recipes-devtools/go/go-crosssdk_1.25.5.bb
+rename to recipes-devtools/go/go-crosssdk_1.25.6.bb
+diff --git a/recipes-devtools/go/go-runtime_1.25.5.bb b/recipes-devtools/go/go-runtime_1.25.6.bb
+similarity index 100%
+rename from recipes-devtools/go/go-runtime_1.25.5.bb
+rename to recipes-devtools/go/go-runtime_1.25.6.bb
+diff --git a/recipes-devtools/go/go/0001-cmd-go-make-content-based-hash-generation-less-pedan.patch b/recipes-devtools/go/go/0001-cmd-go-make-content-based-hash-generation-less-pedan.patch
+index b55ad1e..6d75266 100644
+--- a/recipes-devtools/go/go/0001-cmd-go-make-content-based-hash-generation-less-pedan.patch
++++ b/recipes-devtools/go/go/0001-cmd-go-make-content-based-hash-generation-less-pedan.patch
+@@ -109,7 +109,7 @@ index 7b073165d5..1f618be0bb 100644
+  	}
+  
+  	// Configuration specific to compiler toolchain.
+-@@ -2631,8 +2633,25 @@ func envList(key, def string) []string {
++@@ -2639,8 +2641,25 @@ func envList(key, def string) []string {
+  	return args
+  }
+  
+@@ -136,7 +136,7 @@ index 7b073165d5..1f618be0bb 100644
+  	if cppflags, err = buildFlags("CPPFLAGS", "", p.CgoCPPFLAGS, checkCompilerFlags); err != nil {
+  		return
+  	}
+-@@ -2648,6 +2667,13 @@ func (b *Builder) CFlags(p *load.Package) (cppflags, cflags, cxxflags, fflags, l
++@@ -2656,6 +2675,13 @@ func (b *Builder) CFlags(p *load.Package) (cppflags, cflags, cxxflags, fflags, l
+  	if ldflags, err = buildFlags("LDFLAGS", DefaultCFlags, p.CgoLDFLAGS, checkLinkerFlags); err != nil {
+  		return
+  	}
+@@ -150,7 +150,7 @@ index 7b073165d5..1f618be0bb 100644
+  
+  	return
+  }
+-@@ -2665,7 +2691,7 @@ func (b *Builder) cgo(a *Action, cgoExe, objdir string, pcCFLAGS, pcLDFLAGS, cgo
++@@ -2673,7 +2699,7 @@ func (b *Builder) cgo(a *Action, cgoExe, objdir string, pcCFLAGS, pcLDFLAGS, cgo
+  	p := a.Package
+  	sh := b.Shell(a)
+  
+@@ -159,7 +159,7 @@ index 7b073165d5..1f618be0bb 100644
+  	if err != nil {
+  		return nil, nil, err
+  	}
+-@@ -3229,7 +3255,7 @@ func (b *Builder) swigOne(a *Action, file, objdir string, pcCFLAGS []string, cxx
++@@ -3237,7 +3263,7 @@ func (b *Builder) swigOne(a *Action, file, objdir string, pcCFLAGS []string, cxx
+  	p := a.Package
+  	sh := b.Shell(a)
+  
+diff --git a/recipes-devtools/go/go/0001-runtime-when-using-cgo-on-386-call-C-sigaction-funct.patch b/recipes-devtools/go/go/0001-runtime-when-using-cgo-on-386-call-C-sigaction-funct.patch
+index 33e3b03..d27809a 100644
+--- a/recipes-devtools/go/go/0001-runtime-when-using-cgo-on-386-call-C-sigaction-funct.patch
++++ b/recipes-devtools/go/go/0001-runtime-when-using-cgo-on-386-call-C-sigaction-funct.patch
+@@ -168,7 +168,7 @@ diff --git a/src/runtime/os_linux.go b/src/runtime/os_linux.go
+ index c9d25a5be8..f9fe1b5f33 100644
+ --- a/src/runtime/os_linux.go
+ +++ b/src/runtime/os_linux.go
+-@@ -486,7 +486,8 @@ func setsig(i uint32, fn uintptr) {
++@@ -487,7 +487,8 @@ func setsig(i uint32, fn uintptr) {
+  	sigfillset(&sa.sa_mask)
+  	// Although Linux manpage says "sa_restorer element is obsolete and
+  	// should not be used". x86_64 kernel requires it. Only use it on
+@@ -178,7 +178,7 @@ index c9d25a5be8..f9fe1b5f33 100644
+  	if GOARCH == "386" || GOARCH == "amd64" {
+  		sa.sa_restorer = abi.FuncPCABI0(sigreturn__sigaction)
+  	}
+-@@ -562,6 +563,21 @@ func sysSigaction(sig uint32, new, old *sigactiont) {
++@@ -563,6 +564,21 @@ func sysSigaction(sig uint32, new, old *sigactiont) {
+  //go:noescape
+  func rt_sigaction(sig uintptr, new, old *sigactiont, size uintptr) int32
+  
+diff --git a/recipes-devtools/go/go/0006-cmd-go-make-GOROOT-precious-by-default.patch b/recipes-devtools/go/go/0006-cmd-go-make-GOROOT-precious-by-default.patch
+index 5117379..15ffdb3 100644
+--- a/recipes-devtools/go/go/0006-cmd-go-make-GOROOT-precious-by-default.patch
++++ b/recipes-devtools/go/go/0006-cmd-go-make-GOROOT-precious-by-default.patch
+@@ -94,7 +94,7 @@ index 1f618be0bb..651fa64582 100644
+  	if err := sh.Mkdir(a.Objdir); err != nil {
+  		return err
+  	}
+-@@ -1731,6 +1748,14 @@ func (b *Builder) linkShared(ctx context.Context, a *Action) (err error) {
++@@ -1739,6 +1756,14 @@ func (b *Builder) linkShared(ctx context.Context, a *Action) (err error) {
+  		return err
+  	}
+  
+diff --git a/recipes-devtools/go/go_1.25.5.bb b/recipes-devtools/go/go_1.25.6.bb
+similarity index 100%
+rename from recipes-devtools/go/go_1.25.5.bb
+rename to recipes-devtools/go/go_1.25.6.bb
 
