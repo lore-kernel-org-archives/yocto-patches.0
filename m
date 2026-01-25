@@ -2,128 +2,131 @@ Return-Path: <ecordonnier@snap.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA24BD72369
-	for <webhook@archiver.kernel.org>; Sat, 24 Jan 2026 23:52:28 +0000 (UTC)
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.30223.1769298741475767049
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEAC0D715F8
+	for <webhook@archiver.kernel.org>; Sun, 25 Jan 2026 00:04:08 +0000 (UTC)
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.30349.1769299439027556367
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 24 Jan 2026 15:52:21 -0800
+ Sat, 24 Jan 2026 16:03:59 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@snap.com header.s=google header.b=TvCc4xMJ;
- spf=pass (domain: snapchat.com, ip: 209.85.221.49, mailfrom: ecordonnier@snapchat.com)
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-42fb6ce71c7so3160886f8f.1
-        for <yocto-patches@lists.yoctoproject.org>; Sat, 24 Jan 2026 15:52:21 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769298739; cv=none;
+ dkim=pass header.i=@snap.com header.s=google header.b=GKSukzb7;
+ spf=pass (domain: snapchat.com, ip: 209.85.221.47, mailfrom: ecordonnier@snapchat.com)
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-4359249bbacso2843342f8f.0
+        for <yocto-patches@lists.yoctoproject.org>; Sat, 24 Jan 2026 16:03:58 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769299437; cv=none;
         d=google.com; s=arc-20240605;
-        b=NM77Iu5+WcqQPytq6fAP4PT3snnqvjfPJCy9aYEKdFh4zkzf6PCTTjE5EIyCBWIFlf
-         aoABEL0xA+ABe5iNqG+3vluHRkfE5lyRz+IJ+7kiMS/OXbvPoEX3DqlERQYfWZNsUtAC
-         cE9GcO1d+EeTz5OlJifhU+sUocl0go4fU9bqSkb+wZgu3yl0HNpI+gN2n4l66+C+ZuJa
-         4/XDzJh9QndgLDQzskzPi+7ogkkawCV151y5KiCm/nz5xrnwVoyK+tOq0+kutvxHWKlM
-         PX6OWi6/hulidwY42fol7GL5CAV13OWavmuqGWLZz53ua/87OFsInBL5lOzGten9k0FN
-         WKSg==
+        b=bA4EPhNecEaNo8H5rEnuOSqEi+LD2hYx1USyADqCSFCEcjg7/Q72IDMDeEOS3y2udR
+         sgMRFtlC/PlrHgA76h7M9LMnvHDozp/nodU3xzBeJBA6H8pzwGZLRcTVt/wGKzexyasr
+         od5iODG1jJXlQGArH8WC7wmMmOmz22D7UZggVKTeP30BYLXkbUXgkTt7u7tkZaBWxwWv
+         ajgy5ot4bKdWZey3wH2VZhlVVbskoxeE1sJ1u2IWZokel4DwIyJ86yfORAlzhQ3G8WvM
+         CiVPTJYNNJXA9lgT76IDNWewuuIr1iMeCSX/t6TX2DomrqEvf9m9I4XUVwX3nNf3M+g0
+         1Xgg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:dkim-signature;
-        bh=vGZacQOtDgFAG24oFwr9+s/ETi6ZchaL+FFtrh7l19g=;
+        bh=UP0VZDCIUdtlQZKIfNHkyDl1B1TVnW1/eZP5ZCpx/vo=;
         fh=WYPXitkITvu5Cy82D7TmXctEruuopl2Z5dY5LsP+Ht0=;
-        b=OiUkGhMmNeGWhlQu4PeCCDWYsXZ0xNunuH19wUSFJugaORaoJjtne2sb68L69ypTie
-         tmFWibrRHciePu/r2Zkq1Ha/KWxm+Djx49uwAuHscSbqDHs8WCbNT0VLCFsfPQtpbm9J
-         /qwt0iFuPVXf9wThZ5HuiJ//ogJ3f6vBk/tKTpB9XXUTk3FylI9SnOs4tt4a6g4jmOjd
-         m2ZONDwP+Uz/rLUWDKOJ/YSpQkzGFmbcUnRB+1jo6XsgftV2jnZyTNd6jyh6BbflMKiZ
-         xKx8J5+w9CyYp+f5iMZk7edU1wK/2VuwVP5LrVb4pEr/pH3O4hpNnGPDDZaVzMQy88eH
-         Enzw==;
+        b=i3spCtHJL30z9/nHSQrGrWrnTXrvj6CcjgG0rd5UA6v+hfDvVVlujdY00/EUOVng8X
+         3PE+Cm4mIxAy+yhGhg9EvGBtPSHSjY5abbGlYHpbktuX9PRUT00iqsGgGri9NjU3Sbq0
+         NEErp0KObIh1pYe86+1eVE4Rw9s40FOfFtomCMunjAv2mn6Ocv8HZ8S9r1GAOyFOR4rw
+         CkEPaClLlRjBduFuYUlXlMl7slLmWYuFXd8nNjPvlm8ypg73fgYgnyfBoTBZcKfroQBI
+         5WFgHn990PA78sLuoGPa1fMjQHwpzkR1zedIzaBQmf6idtlnzWmqVcOS4fTD0Yl4XDfs
+         bhFA==;
         darn=lists.yoctoproject.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=snap.com; s=google; t=1769298739; x=1769903539; darn=lists.yoctoproject.org;
+        d=snap.com; s=google; t=1769299437; x=1769904237; darn=lists.yoctoproject.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=vGZacQOtDgFAG24oFwr9+s/ETi6ZchaL+FFtrh7l19g=;
-        b=TvCc4xMJ7oQkBrQVW3w7HVAddhIIii8AXVMDN09RxuXrDcGKlss61h3NIvtRfFlFmS
-         JvNPNC5cgiclyCOq5dG/P5YizJXC3/rdkt0s4Z4/4sAxKN6IM9SGkgLhLOpEnw1GGO68
-         1smM6mCF2IvpHcqvXpHxKUe58137fHeOD+BJg=
+        bh=UP0VZDCIUdtlQZKIfNHkyDl1B1TVnW1/eZP5ZCpx/vo=;
+        b=GKSukzb7Qe3xrjbdn9kQE+4fNDmpmUYud9vi7mJrL32tFdfHKzYKgi2J41v+atM0d4
+         86Lu0+eqhdeTZuUOMh71bsjG2W9mRHvO/Q72dNwfSVIZGHRuod6yG4mSwvtYPdFfA8e/
+         VcOPa4ibHBxKhaaexheiP0MRDl5P2NBp39vSI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769298739; x=1769903539;
+        d=1e100.net; s=20230601; t=1769299437; x=1769904237;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vGZacQOtDgFAG24oFwr9+s/ETi6ZchaL+FFtrh7l19g=;
-        b=TQtteHNo+jZ10cq2CQ0J2mkI4cL78FqokoABBIDpSSjSMV2a/p5mRKl/b5eUBuScKS
-         Z2Na/YnyMo/bgc4OrFerfuO1jjCnBXbo5629EPvs6gHi6iSRX35KEjv8FL/tPXkWWTuU
-         qz3DSJmHBErHGyg9T+9CdSiXtgmAB0U0QGsM5OsHNt0AJGuxlLnU968BgoaSEcI3Bwaw
-         FdnMT0znuGgteE0fJRCvp1obCmSLORc8+5niuNRoCSW9ardu/ABl3OKm5f5ngepzRlFR
-         iyNGazyFV20b0lZdkHGjdds9Rg+EqdxKTcIqtiG2NLjH60e6QsKfQELA+aSP42s/Wu4+
-         h+/g==
-X-Gm-Message-State: AOJu0YyoXGnUxgwiZFVgcKWKgr+BNwEzv0+eORawI/N82FdJdFbXFXcX
-	AOVIjQ7TGmwhIhZptdeakZOOpCq6vdBFDD/88fz+yRsBqX4A97f1n9WPAhwWf96NOs2eAFxcIay
-	E6+9JgLs2+50mq84CjmGL9UPBkCSM93mUDYgwvr3YEU1Wq5Q41LD5LcoAyQ==
-X-Gm-Gg: AZuq6aLsgMBL+Z+pcxbD1BX14bugERaWbZvKCu3GJDK9l+M8dZtcVATYPC+K7Ba8k6f
-	yG1uUn0MBVZCS4y9EYuxx+jISjVaP+fFWpO+sJ1sjW+7VIrV1KJj4bws3M05nPFhh9nopbwjL1A
-	hc+vmnqpF3e1BthMnX2ve9huHhQFthRicfo7p8u5ADr1CcqLyMtKEHROHu5txt3+W+ajB7LJ6Et
-	0XvxtHm24H0SMIZSa4eFsCI4BPV/9u/OW3yTMJOYCtJbBVEPtW4IisUlsiRis5Mxk7uy6gh5PLJ
-	brKuwGqe1lyq70kI0XM+YgLByXin7vt3LzmVxA==
-X-Received: by 2002:a05:6000:2389:b0:430:f59d:4dfc with SMTP id
- ffacd0b85a97d-435ca0e2b4amr177072f8f.9.1769298738931; Sat, 24 Jan 2026
- 15:52:18 -0800 (PST)
+        bh=UP0VZDCIUdtlQZKIfNHkyDl1B1TVnW1/eZP5ZCpx/vo=;
+        b=U5PT/lr7annlnTQg4Am7u9KjyMfh966VSDs1a75oGdGqvYvbgl1hnfdj9xoesmetCu
+         pWdm5/6AahxbOvnk8A9RHsX0tX+MbMYIJPGW9NaDSb+3UcePYBkPXSUYr3qXHpYkfLvM
+         dyYHqaaLB6iyqVtyh+STo4aU8no1abmuELCkw2JKOkKyz3+8Mi7VzHwK4A9y0ONwJqK4
+         aB4ocbFRejlrWJSqDTFSf3ZnFH14wJ7TM9eCgrZ61YSOQxvMdKJA/Xa5P5CpokNqwtGB
+         TS16BVtCA3jNeDpYK0qZGLAaGdPs/QQOYZw8bTvJEZOHoX8mKNIFHmotV+f88Zq8bE8E
+         zXuQ==
+X-Gm-Message-State: AOJu0Yw7MuKmgjvz7Ki/MXSmNq9u5nLEqUpCCGC0v1h7IrTDvZ/3+3KC
+	1cqbi3Is9JvEqF8OP6gmuYldoEqDh61i8dG2l+s60K/VU5dtTSFD2sK8mtse4YRJwmw/uxuGupd
+	xyLf3V/lEQHW540+52zNKl5VhUF2yhPqgOEOgJz3WflwLkLYDWqB02rA=
+X-Gm-Gg: AZuq6aLaVA3i+qF3P+qHB2ZqPMgp0YyoHVSq5jBZusnzcVrqzEyu3yLNv7dQbrj5z7F
+	5npWgyU+miBMoFq1UUfYiYZlOuqincVufrpZ0l97auyOJ4qfL3lnDJ5t64kV8Asj2fDCM3ju8vx
+	EtD7fDzejzMVHl9dg4cjcTzotcPT4S+iChvudbZ5SsISgb2sS66BAtWNFkzn5eeM2HNJvvOfmsC
+	SeOcQmgpYbcuxTpMbCKq5iVkLTuToWA3DCJ7NY18ZhSoF3gtDnjkIrktWL5RBXxZ6eKoOAbl54e
+	O0Txw9GkbYDt9Y5R/YIA1k/nzBU=
+X-Received: by 2002:a05:6000:2389:b0:435:bcbd:cb29 with SMTP id
+ ffacd0b85a97d-435c9a8f9d6mr474370f8f.2.1769299436701; Sat, 24 Jan 2026
+ 16:03:56 -0800 (PST)
 MIME-Version: 1.0
-References: <20260120170459.95161-1-dev@qinc.tv>
-In-Reply-To: <20260120170459.95161-1-dev@qinc.tv>
+References: <20260120170246.94746-1-dev@qinc.tv>
+In-Reply-To: <20260120170246.94746-1-dev@qinc.tv>
 From: Etienne Cordonnier <ecordonnier@snap.com>
-Date: Sun, 25 Jan 2026 00:52:07 +0100
-X-Gm-Features: AZwV_QhvOslulnl7dX-1VjqC0WUAfsmMxO2_0KrlQFtTfq_ph-YSpla0a7rbZxY
-Message-ID: <CAHUKmYaGtmW80g5c+Rky4N5f854JnsoC+us83Ut=BZAYtKmPWw@mail.gmail.com>
-Subject: Re: [yocto-patches] [meta-darwin][PATCH] Add GDB and CLANG
- (conditionally) to the SDK builds
+Date: Sun, 25 Jan 2026 01:03:45 +0100
+X-Gm-Features: AZwV_Qh3CJI5foSy-XdtbBR6QSVLTBHb25TkfhvPrXIiTudmJBKu30uzJq4U8Gk
+Message-ID: <CAHUKmYaTWriiL3A1R4BgxCHU0tiyu+3Xyw_F-XeqTOW2DS+F8Q@mail.gmail.com>
+Subject: Re: [yocto-patches] [meta-darwin][PATCH] Patch GCC for aarch64 macOS
+ host build on aarch64 linux host
 To: yocto-patches@lists.yoctoproject.org
 Cc: "Eric L. Hernes" <eric@qinc.tv>
-Content-Type: multipart/alternative; boundary="000000000000d615c706492af604"
+Content-Type: multipart/alternative; boundary="0000000000006d2de406492b20a2"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sat, 24 Jan 2026 23:52:28 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3073
+ <yocto-patches@lists.yoctoproject.org>; Sun, 25 Jan 2026 00:04:08 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3074
 
---000000000000d615c706492af604
+--0000000000006d2de406492b20a2
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 Hi Eric,
 
-thanks for the patch!
-
-I've not tested the patch functionally yet. Just some minor comments at the
-moment:
-- the indentation at 7 spaces is non-standard and needs to be fixed
-- we can't hard-code target to arm as long as we've not dropped x86 support
-completely:
-instead of target=3Ddarwin64-arm64-cc, something like:
-
-target=3D"${@'darwin64-arm64-cc' if d.getVar('SDK_ARCH') =3D=3D 'aarch64' e=
-lse
-'darwin64-x86_64-cc'}"
-
-- there is a typo: with-mpft -> with-mpfr
+Thanks for the patch! Can you please add an upstream-status to the
+file 0102-aarch64-on-aarch64.patch (
+https://docs.yoctoproject.org/scarthgap/contributor-guide/recipe-style-guid=
+e.html
+ ). The QA_ERROR patch-status is enabled per default on recent yocto
+releases and we'll need it on all patches for updating meta-darwin to the
+next version.
 
 =C3=89tienne
 
-On Tue, Jan 20, 2026 at 6:05=E2=80=AFPM Eric L. Hernes via lists.yoctoproje=
+
+On Tue, Jan 20, 2026 at 6:03=E2=80=AFPM Eric L. Hernes via lists.yoctoproje=
 ct.org
 <dev=3Dqinc.tv@lists.yoctoproject.org> wrote:
 
 > From: "Eric L. Hernes" <eric@qinc.tv>
 >
-> GDB and CLANG are not included in the SDK builds on Darwin. This patch
-> adds them. GDB is added to the packagegroup files.  I had to disable
-> some of the advanced options for gdb to get a compile.
+> The configure script and aarch64.h get a bit confused when building
+> the darwin cross canadian.  `driver-aarch64.c` gets added which has
+> more build problems and isn't needed on the cross build.  The
+> `aarch64.h` file looks for `sysctl/..h` headers when targeting MACHO
+> binaries , which also do not exist on the linux build machine.
 >
-> CLANG is added conditionally from the `CLANGSDK=3D1` variable.  This
-> also was missing from the *packagegroup* files.
+> There should be a CPP macro for "linux_build_host" or
+> similar to use for the system dependent includes and config.  Since we
+> don't have this, we use (!defined(darwin_macosx_version_min)), which
+> seems to be "darwin builds only".  It's a bit of a hack, but should be
+> ok for this deep corner case.
 >
-> commit f68c74645010c413601ed4766f702c93e8b111f7
-> Author: Eric L. Hernes <ehernes@portrait.com>
-> Date:   Mon Jan 19 11:45:13 2026 -0600
+> Without this patch, cross builds targeting macOS/arm64 on a Linux
+> Intel machine work; but linux arm64 does not.  This is maybe a more
+> common situation. With Apple Intel machines out of production for 5+
+> years now, Docker on Apple Silicon should be much more common, and
+> getting more so.
 >
->     patches to enable CLANGSDK and gdb on darwinsdk builds
+> It is possible to configure an Intel Docker image on Apple Silicon
+> with Rosetta 2, but the builds with native arm64 are significantly
+> faster.
 >
 > commit da00745de4531722df9b955892c5835a7c26c03f
 > Author: Eric L. Hernes <ehernes@portrait.com>
@@ -132,116 +135,69 @@ ct.org
 >
 >     additional patch for gcc to build on arm64 build for arm64 host
 > ---
->  .../openssl/openssl_%.bbappend                | 25 +++++++++++++++++++
->  .../nativesdk-packagegroup-sdk-host.bbappend  |  3 +++
->  .../packagegroup-cross-canadian.bbappend      |  5 ++++
->  .../gdb/gdb-cross-canadian_%.bbappend         | 19 ++++++++++++++
->  4 files changed, 52 insertions(+)
->  create mode 100644 recipes-connectivity/openssl/openssl_%.bbappend
->  create mode 100644 recipes-devtools/gdb/gdb-cross-canadian_%.bbappend
+>  .../gcc/files/0102-aarch64-on-aarch64.patch   | 30 +++++++++++++++++++
+>  recipes-devtools/gcc/gcc-source_%.bbappend    |  4 +++
+>  2 files changed, 34 insertions(+)
+>  create mode 100644
+> recipes-devtools/gcc/files/0102-aarch64-on-aarch64.patch
 >
-> diff --git a/recipes-connectivity/openssl/openssl_%.bbappend
-> b/recipes-connectivity/openssl/openssl_%.bbappend
+> diff --git a/recipes-devtools/gcc/files/0102-aarch64-on-aarch64.patch
+> b/recipes-devtools/gcc/files/0102-aarch64-on-aarch64.patch
 > new file mode 100644
-> index 0000000..befbc64
+> index 0000000..fd7ef2c
 > --- /dev/null
-> +++ b/recipes-connectivity/openssl/openssl_%.bbappend
-> @@ -0,0 +1,25 @@
+> +++ b/recipes-devtools/gcc/files/0102-aarch64-on-aarch64.patch
+> @@ -0,0 +1,30 @@
+> +--- gcc-13.4.0/gcc/config.host~        2026-01-08 23:01:47.056268010 +00=
+00
+> ++++ gcc-13.4.0/gcc/config.host 2026-01-08 23:10:07.958588006 +0000
+> +@@ -102,6 +102,9 @@
+> +   aarch64*-*-freebsd* | aarch64*-*-linux* | aarch64*-*-fuchsia* |\
+> +   aarch64*-*-darwin*)
+> +     case ${target} in
+> ++      *-oesdk-*)
+> ++      # don't add driver-aarch64.o for oesdk cross builds
+> ++      ;;
+> +       aarch64*-*-*)
+> +       host_extra_gcc_objs=3D"driver-aarch64.o"
+> +       host_xmake_file=3D"${host_xmake_file} aarch64/x-aarch64"
+> +--- gcc-13.4.0/gcc/config/aarch64/aarch64.h~   2026-01-08
+> 23:01:46.859268010 +0000
+> ++++ gcc-13.4.0/gcc/config/aarch64/aarch64.h    2026-01-08
+> 23:08:14.417236009 +0000
+> +@@ -1223,7 +1223,14 @@
 > +
-> +do_configure:darwin21 () {
-> +       target=3Ddarwin64-arm64-cc
-> +
-> +       useprefix=3D${prefix}
-> +       if [ "x$useprefix" =3D "x" ]; then
-> +               useprefix=3D/
-> +       fi
-> +       # WARNING: do not set compiler/linker flags (-I/-D etc.) in
-> EXTRA_OECONF, as they will fully replace the
-> +       # environment variables set by bitbake. Adjust the environment
-> variables instead.
-> +       PERLEXTERNAL=3D"$(realpath ${S}/external/perl/Text-Template-*/lib=
-)"
-> +       test -d "$PERLEXTERNAL" || bberror "PERLEXTERNAL '$PERLEXTERNAL'
-> not found!"
-> +       HASHBANGPERL=3D"/usr/bin/env perl" PERL=3Dperl
-> PERL5LIB=3D"$PERLEXTERNAL" \
-> +       perl ${S}/Configure ${EXTRA_OECONF} ${PACKAGECONFIG_CONFARGS}
-> ${DEPRECATED_CRYPTO_FLAGS} --prefix=3D$useprefix --openssldir=3D${libdir}=
-/ssl-3
-> --libdir=3D${libdir} $target
-> +       perl ${B}/configdata.pm --dump
-> +}
-> +
-> +RDEPENDS:remove:${PN}-misc =3D "perl"
-> +RDEPENDS:remove:${PN}-ptest =3D "openssl-bin"
-> +RDEPENDS:remove:${PN}-ptest =3D "perl"
-> +RDEPENDS:remove:${PN}-ptest =3D "perl-modules"
-> +RDEPENDS:remove:${PN}-ptest =3D "bash"
-> +RDEPENDS:remove:${PN}-ptest =3D "sed"
-> +RDEPENDS:remove:${PN}-ptest =3D "openssl-engines"
-> +RDEPENDS:remove:${PN}-ptest =3D "openssl-ossl-module-legacy"
-> diff --git
-> a/recipes-core/packagegroups/nativesdk-packagegroup-sdk-host.bbappend
-> b/recipes-core/packagegroups/nativesdk-packagegroup-sdk-host.bbappend
-> index 170a8c1..d1191e7 100644
-> --- a/recipes-core/packagegroups/nativesdk-packagegroup-sdk-host.bbappend
-> +++ b/recipes-core/packagegroups/nativesdk-packagegroup-sdk-host.bbappend
-> @@ -4,3 +4,6 @@ RDEPENDS:${PN}:darwin21 =3D "\
->      nativesdk-bison \
->      nativesdk-sdk-provides-dummy \
->      "
-> +
-> +RDEPENDS:${PN}:darwin21 +=3D "${@bb.utils.contains('CLANGSDK', '1',
-> 'nativesdk-clang', '', d)}"
-> +
-> diff --git
-> a/recipes-core/packagegroups/packagegroup-cross-canadian.bbappend
-> b/recipes-core/packagegroups/packagegroup-cross-canadian.bbappend
-> index de29f47..4e46eae 100644
-> --- a/recipes-core/packagegroups/packagegroup-cross-canadian.bbappend
-> +++ b/recipes-core/packagegroups/packagegroup-cross-canadian.bbappend
-> @@ -1,9 +1,14 @@
->  # Use indirection to stop these being expanded prematurely
->  BINUTILS =3D "binutils-cross-canadian-${TRANSLATED_TARGET_ARCH}"
->  GCC =3D "gcc-cross-canadian-${TRANSLATED_TARGET_ARCH}"
-> +GDB =3D "gdb-cross-canadian-${TRANSLATED_TARGET_ARCH}"
-> +CLANG =3D "clang-cross-canadian-${TRANSLATED_TARGET_ARCH}"
->
->  RDEPENDS:${PN}:darwinsdk =3D "\
->      ${@all_multilib_tune_values(d, 'BINUTILS')} \
->      ${@all_multilib_tune_values(d, 'GCC')} \
-> +    ${GDB} \
->      meta-environment-${MACHINE} \
->      "
-> +
-> +RDEPENDS:${PN}:darwinsdk +=3D "${@bb.utils.contains('CLANGSDK', '1',
-> '${CLANGCROSSCANADIANDEPS}', '', d)}"
-> diff --git a/recipes-devtools/gdb/gdb-cross-canadian_%.bbappend
-> b/recipes-devtools/gdb/gdb-cross-canadian_%.bbappend
-> new file mode 100644
-> index 0000000..99dac80
-> --- /dev/null
-> +++ b/recipes-devtools/gdb/gdb-cross-canadian_%.bbappend
-> @@ -0,0 +1,19 @@
-> +PACKAGECONFIG:remove =3D "python"
-> +PACKAGECONFIG:remove =3D "debuginfod"
-> +
-> +EXTRA_OECONF:append:darwinsdk =3D " \
-> +    --with-gmp=3D${STAGING_EXECPREFIXDIR} \
-> +    --with-mpft=3D${STAGING_EXECPREFIXDIR} \
-> +    --with-mpc=3D${STAGING_EXECPREFIXDIR} \
+> + /* Extra specs when building a native AArch64-hosted compiler.
+> +    Option rewriting rules based on host system.  */
+> +-#if defined(__aarch64__)
+> ++
+> ++//
+> ++// XXX-ELH: we don't do this for crosssdk builds,
+> ++// so how do we know that? For now we just pick a symbol that is define=
+d
+> in the build
+> ++//
+> ++// g++ -fno-PIE -dM -E  .....  -MT gcc.o -MMD -MP -MF ./.deps/gcc.TPo
+> ../../../../../../../work-shared/gcc-13.4.0-r0/gcc-13.4.0/gcc/gcc.cc
+> ++//
+> ++#if defined(__aarch64__) && !defined(darwin_macosx_version_min)
+> + extern const char *host_detect_local_cpu (int argc, const char **argv);
+> + #define HAVE_LOCAL_CPU_DETECT
+> + # define EXTRA_SPEC_FUNCTIONS                                          =
+ \
+> diff --git a/recipes-devtools/gcc/gcc-source_%.bbappend
+> b/recipes-devtools/gcc/gcc-source_%.bbappend
+> index 73b4843..d1089e5 100644
+> --- a/recipes-devtools/gcc/gcc-source_%.bbappend
+> +++ b/recipes-devtools/gcc/gcc-source_%.bbappend
+> @@ -9,3 +9,7 @@ SRC_URI:append =3D " \
+>  SRC_URI:append =3D " \
+>      file://0101-aarch64-Darwin-support-gcc-13-darwin.patch \
+>  "
+> +# Patch to allow building aarch64 toolchain for mac on aarch64 linux
+> +SRC_URI:append =3D " \
+> +    file://0102-aarch64-on-aarch64.patch \
 > +"
-> +
-> +EXTRA_OECONF:remove:darwinsdk =3D "--disable-gas"
-> +EXTRA_OECONF:remove:darwinsdk =3D "--disable-binutils"
-> +EXTRA_OECONF:remove:darwinsdk =3D "--disable-ld"
-> +EXTRA_OECONF:remove:darwinsdk =3D "--disable-gold"
-> +EXTRA_OECONF:remove:darwinsdk =3D "--with-system-readline"
-> +
-> +# Remove -rpath-link and -rpath
-> +LDFLAGS:darwinsdk =3D "${BUILDSDK_LDFLAGS}"
-> +
-> +INSANE_SKIP:append:darwin21 =3D " buildpaths"
 > --
 > 2.50.1 (Apple Git-155)
 >
@@ -249,67 +205,78 @@ ct.org
 >
 > -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 > Links: You receive all messages sent to this group.
-> View/Reply Online (#3035):
+> View/Reply Online (#3034):
 > https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.yoctoproject=
-.org_g_yocto-2Dpatches_message_3035&d=3DDwIFAg&c=3DncDTmphkJTvjIDPh0hpF_4vC=
-HvabgGkICC2epckfdiw&r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&m=3D_pu=
-erYIDUBoaGuNtBlJG7tTaRD6u0CmRwlKdBXOgrQdKsYsyc7QvUgvq1B0KPzK2&s=3DWdCUPuQH4=
-_kgB_zPSlmoiDVolXxnGlpUrnZ4bgKGHpo&e=3D
+.org_g_yocto-2Dpatches_message_3034&d=3DDwIFAg&c=3DncDTmphkJTvjIDPh0hpF_4vC=
+HvabgGkICC2epckfdiw&r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&m=3Dv_c=
+XEb90NejE92y4oHgGGaxyjMe0vXc0NQVyod-CBBjQCoe7w_WAVPnpNOERnMcH&s=3DnvE2CScun=
+7jrUsSqv8R5GZrhQ85vrrkjT_Hx9pvZh9M&e=3D
 > Mute This Topic:
 > https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.yoctoproject=
-.org_mt_117366396_7048771&d=3DDwIFAg&c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC=
-2epckfdiw&r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&m=3D_puerYIDUBoaG=
-uNtBlJG7tTaRD6u0CmRwlKdBXOgrQdKsYsyc7QvUgvq1B0KPzK2&s=3DO62qmjJUsxyOm39Z8uQ=
-9q7zP0xxII0nRnkugFlqlffM&e=3D
+.org_mt_117366348_7048771&d=3DDwIFAg&c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC=
+2epckfdiw&r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&m=3Dv_cXEb90NejE9=
+2y4oHgGGaxyjMe0vXc0NQVyod-CBBjQCoe7w_WAVPnpNOERnMcH&s=3DtfNwfVQqI75MWPFBK9k=
+j_nq8wkP4FfSZWqKzzKG5ko4&e=3D
 > Group Owner: yocto-patches+owner@lists.yoctoproject.org
 > Unsubscribe:
 > https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.yoctoproject=
 .org_g_yocto-2Dpatches_leave_13184993_7048771_1814342232_xyzzy&d=3DDwIFAg&c=
 =3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&r=3DAhkbNonVuMIGRfPx_Qj9TsRi=
-h1DULJTKUkSGa66m67E&m=3D_puerYIDUBoaGuNtBlJG7tTaRD6u0CmRwlKdBXOgrQdKsYsyc7Q=
-vUgvq1B0KPzK2&s=3DQESP0Hyg0GP6AoZbq9EY5fTX390b8qALUz8LqGOdbOI&e=3D
+h1DULJTKUkSGa66m67E&m=3Dv_cXEb90NejE92y4oHgGGaxyjMe0vXc0NQVyod-CBBjQCoe7w_W=
+AVPnpNOERnMcH&s=3D2PQ6gTEChT_YXwK8n3kAvN8UEKKPgXf-WnlinWMlkUE&e=3D
 > [ecordonnier@snap.com]
 > -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 >
 >
 >
 
---000000000000d615c706492af604
+--0000000000006d2de406492b20a2
 Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-<div dir=3D"ltr">Hi Eric,<br><br>thanks for the patch!<br><br>I&#39;ve not =
-tested the patch functionally yet. Just some minor comments at the moment:<=
-br>- the indentation at 7 spaces is non-standard and needs to be fixed<br>-=
- we can&#39;t hard-code target to arm as long as we&#39;ve not dropped x86 =
-support completely:<br>instead of target=3Ddarwin64-arm64-cc, something lik=
-e:<br><br>target=3D&quot;${@&#39;darwin64-arm64-cc&#39; if d.getVar(&#39;SD=
-K_ARCH&#39;) =3D=3D &#39;aarch64&#39; else &#39;darwin64-x86_64-cc&#39;}&qu=
-ot;<br><br>- there is a typo: with-mpft -&gt; with-mpfr<br><br>=C3=89tienne=
-</div><br><div class=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr"=
- class=3D"gmail_attr">On Tue, Jan 20, 2026 at 6:05=E2=80=AFPM Eric L. Herne=
-s via <a href=3D"http://lists.yoctoproject.org">lists.yoctoproject.org</a> =
-&lt;dev=3D<a href=3D"mailto:qinc.tv@lists.yoctoproject.org">qinc.tv@lists.y=
-octoproject.org</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" s=
-tyle=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);pad=
-ding-left:1ex">From: &quot;Eric L. Hernes&quot; &lt;<a href=3D"mailto:eric@=
-qinc.tv" target=3D"_blank">eric@qinc.tv</a>&gt;<br>
+<div dir=3D"ltr">Hi Eric,<br><br>Thanks for the patch! Can you please add a=
+n upstream-status to the file=C2=A00102-aarch64-on-aarch64.patch (=C2=A0<a =
+href=3D"https://docs.yoctoproject.org/scarthgap/contributor-guide/recipe-st=
+yle-guide.html" target=3D"_blank">https://docs.yoctoproject.org/scarthgap/c=
+ontributor-guide/recipe-style-guide.html</a> =C2=A0). The QA_ERROR patch-st=
+atus is enabled per default on recent yocto releases and we&#39;ll need=C2=
+=A0it on all patches for updating meta-darwin to the next version.<br><br>=
+=C3=89tienne<br><br></div><br><div class=3D"gmail_quote"><div dir=3D"ltr" c=
+lass=3D"gmail_attr">On Tue, Jan 20, 2026 at 6:03=E2=80=AFPM Eric L. Hernes =
+via <a href=3D"http://lists.yoctoproject.org" target=3D"_blank">lists.yocto=
+project.org</a> &lt;dev=3D<a href=3D"mailto:qinc.tv@lists.yoctoproject.org"=
+ target=3D"_blank">qinc.tv@lists.yoctoproject.org</a>&gt; wrote:<br></div><=
+blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-l=
+eft:1px solid rgb(204,204,204);padding-left:1ex">From: &quot;Eric L. Hernes=
+&quot; &lt;<a href=3D"mailto:eric@qinc.tv" target=3D"_blank">eric@qinc.tv</=
+a>&gt;<br>
 <br>
-GDB and CLANG are not included in the SDK builds on Darwin. This patch<br>
-adds them. GDB is added to the packagegroup files.=C2=A0 I had to disable<b=
-r>
-some of the advanced options for gdb to get a compile.<br>
+The configure script and aarch64.h get a bit confused when building<br>
+the darwin cross canadian.=C2=A0 `driver-aarch64.c` gets added which has<br=
+>
+more build problems and isn&#39;t needed on the cross build.=C2=A0 The<br>
+`aarch64.h` file looks for `sysctl/..h` headers when targeting MACHO<br>
+binaries , which also do not exist on the linux build machine.<br>
 <br>
-CLANG is added conditionally from the `CLANGSDK=3D1` variable.=C2=A0 This<b=
-r>
-also was missing from the *packagegroup* files.<br>
+There should be a CPP macro for &quot;linux_build_host&quot; or<br>
+similar to use for the system dependent includes and config.=C2=A0 Since we=
 <br>
-commit f68c74645010c413601ed4766f702c93e8b111f7<br>
-Author: Eric L. Hernes &lt;<a href=3D"mailto:ehernes@portrait.com" target=
-=3D"_blank">ehernes@portrait.com</a>&gt;<br>
-Date:=C2=A0 =C2=A0Mon Jan 19 11:45:13 2026 -0600<br>
+don&#39;t have this, we use (!defined(darwin_macosx_version_min)), which<br=
+>
+seems to be &quot;darwin builds only&quot;.=C2=A0 It&#39;s a bit of a hack,=
+ but should be<br>
+ok for this deep corner case.<br>
 <br>
-=C2=A0 =C2=A0 patches to enable CLANGSDK and gdb on darwinsdk builds<br>
+Without this patch, cross builds targeting macOS/arm64 on a Linux<br>
+Intel machine work; but linux arm64 does not.=C2=A0 This is maybe a more<br=
+>
+common situation. With Apple Intel machines out of production for 5+<br>
+years now, Docker on Apple Silicon should be much more common, and<br>
+getting more so.<br>
+<br>
+It is possible to configure an Intel Docker image on Apple Silicon<br>
+with Rosetta 2, but the builds with native arm64 are significantly<br>
+faster.<br>
 <br>
 commit da00745de4531722df9b955892c5835a7c26c03f<br>
 Author: Eric L. Hernes &lt;<a href=3D"mailto:ehernes@portrait.com" target=
@@ -321,126 +288,79 @@ Date:=C2=A0 =C2=A0Mon Jan 19 09:54:57 2026 -0600<br>
 =C2=A0 =C2=A0 additional patch for gcc to build on arm64 build for arm64 ho=
 st<br>
 ---<br>
-=C2=A0.../openssl/openssl_%.bbappend=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 | 25 +++++++++++++++++++<br>
-=C2=A0.../nativesdk-packagegroup-sdk-host.bbappend=C2=A0 |=C2=A0 3 +++<br>
-=C2=A0.../packagegroup-cross-canadian.bbappend=C2=A0 =C2=A0 =C2=A0 |=C2=A0 =
-5 ++++<br>
-=C2=A0.../gdb/gdb-cross-canadian_%.bbappend=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0| 19 ++++++++++++++<br>
-=C2=A04 files changed, 52 insertions(+)<br>
-=C2=A0create mode 100644 recipes-connectivity/openssl/openssl_%.bbappend<br=
->
-=C2=A0create mode 100644 recipes-devtools/gdb/gdb-cross-canadian_%.bbappend=
+=C2=A0.../gcc/files/0102-aarch64-on-aarch64.patch=C2=A0 =C2=A0| 30 ++++++++=
++++++++++++<br>
+=C2=A0recipes-devtools/gcc/gcc-source_%.bbappend=C2=A0 =C2=A0 |=C2=A0 4 +++=
 <br>
+=C2=A02 files changed, 34 insertions(+)<br>
+=C2=A0create mode 100644 recipes-devtools/gcc/files/0102-aarch64-on-aarch64=
+.patch<br>
 <br>
-diff --git a/recipes-connectivity/openssl/openssl_%.bbappend b/recipes-conn=
-ectivity/openssl/openssl_%.bbappend<br>
+diff --git a/recipes-devtools/gcc/files/0102-aarch64-on-aarch64.patch b/rec=
+ipes-devtools/gcc/files/0102-aarch64-on-aarch64.patch<br>
 new file mode 100644<br>
-index 0000000..befbc64<br>
+index 0000000..fd7ef2c<br>
 --- /dev/null<br>
-+++ b/recipes-connectivity/openssl/openssl_%.bbappend<br>
-@@ -0,0 +1,25 @@<br>
-+<br>
-+do_configure:darwin21 () {<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0target=3Ddarwin64-arm64-cc<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0useprefix=3D${prefix}<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0if [ &quot;x$useprefix&quot; =3D &quot;x&quot; =
-]; then<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0useprefix=3D/<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0fi<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0# WARNING: do not set compiler/linker flags (-I=
-/-D etc.) in EXTRA_OECONF, as they will fully replace the<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0# environment variables set by bitbake. Adjust =
-the environment variables instead.<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0PERLEXTERNAL=3D&quot;$(realpath ${S}/external/p=
-erl/Text-Template-*/lib)&quot;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0test -d &quot;$PERLEXTERNAL&quot; || bberror &q=
-uot;PERLEXTERNAL &#39;$PERLEXTERNAL&#39; not found!&quot;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0HASHBANGPERL=3D&quot;/usr/bin/env perl&quot; PE=
-RL=3Dperl PERL5LIB=3D&quot;$PERLEXTERNAL&quot; \<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0perl ${S}/Configure ${EXTRA_OECONF} ${PACKAGECO=
-NFIG_CONFARGS} ${DEPRECATED_CRYPTO_FLAGS} --prefix=3D$useprefix --openssldi=
-r=3D${libdir}/ssl-3 --libdir=3D${libdir} $target<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0perl ${B}/<a href=3D"http://configdata.pm" rel=
-=3D"noreferrer" target=3D"_blank">configdata.pm</a> --dump<br>
-+}<br>
-+<br>
-+RDEPENDS:remove:${PN}-misc =3D &quot;perl&quot;<br>
-+RDEPENDS:remove:${PN}-ptest =3D &quot;openssl-bin&quot;<br>
-+RDEPENDS:remove:${PN}-ptest =3D &quot;perl&quot;<br>
-+RDEPENDS:remove:${PN}-ptest =3D &quot;perl-modules&quot;<br>
-+RDEPENDS:remove:${PN}-ptest =3D &quot;bash&quot;<br>
-+RDEPENDS:remove:${PN}-ptest =3D &quot;sed&quot;<br>
-+RDEPENDS:remove:${PN}-ptest =3D &quot;openssl-engines&quot;<br>
-+RDEPENDS:remove:${PN}-ptest =3D &quot;openssl-ossl-module-legacy&quot;<br>
-diff --git a/recipes-core/packagegroups/nativesdk-packagegroup-sdk-host.bba=
-ppend b/recipes-core/packagegroups/nativesdk-packagegroup-sdk-host.bbappend=
++++ b/recipes-devtools/gcc/files/0102-aarch64-on-aarch64.patch<br>
+@@ -0,0 +1,30 @@<br>
++--- gcc-13.4.0/gcc/config.host~=C2=A0 =C2=A0 =C2=A0 =C2=A0 2026-01-08 23:0=
+1:47.056268010 +0000<br>
+++++ gcc-13.4.0/gcc/config.host 2026-01-08 23:10:07.958588006 +0000<br>
++@@ -102,6 +102,9 @@<br>
++=C2=A0 =C2=A0aarch64*-*-freebsd* | aarch64*-*-linux* | aarch64*-*-fuchsia*=
+ |\<br>
++=C2=A0 =C2=A0aarch64*-*-darwin*)<br>
++=C2=A0 =C2=A0 =C2=A0case ${target} in<br>
+++=C2=A0 =C2=A0 =C2=A0 *-oesdk-*)<br>
+++=C2=A0 =C2=A0 =C2=A0 # don&#39;t add driver-aarch64.o for oesdk cross bui=
+lds<br>
+++=C2=A0 =C2=A0 =C2=A0 ;;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0aarch64*-*-*)<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0host_extra_gcc_objs=3D&quot;driver-aarch64.o&qu=
+ot;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0host_xmake_file=3D&quot;${host_xmake_file} aarc=
+h64/x-aarch64&quot;<br>
++--- gcc-13.4.0/gcc/config/aarch64/aarch64.h~=C2=A0 =C2=A02026-01-08 23:01:=
+46.859268010 +0000<br>
+++++ gcc-13.4.0/gcc/config/aarch64/aarch64.h=C2=A0 =C2=A0 2026-01-08 23:08:=
+14.417236009 +0000<br>
++@@ -1223,7 +1223,14 @@<br>
++ <br>
++ /* Extra specs when building a native AArch64-hosted compiler.<br>
++=C2=A0 =C2=A0 Option rewriting rules based on host system.=C2=A0 */<br>
++-#if defined(__aarch64__)<br>
+++<br>
+++//<br>
+++// XXX-ELH: we don&#39;t do this for crosssdk builds,<br>
+++// so how do we know that? For now we just pick a symbol that is defined =
+in the build<br>
+++//<br>
+++// g++ -fno-PIE -dM -E=C2=A0 .....=C2=A0 -MT gcc.o -MMD -MP -MF ./.deps/g=
+cc.TPo ../../../../../../../work-shared/gcc-13.4.0-r0/gcc-13.4.0/gcc/gcc.cc=
 <br>
-index 170a8c1..d1191e7 100644<br>
---- a/recipes-core/packagegroups/nativesdk-packagegroup-sdk-host.bbappend<b=
+++//<br>
+++#if defined(__aarch64__) &amp;&amp; !defined(darwin_macosx_version_min)<b=
 r>
-+++ b/recipes-core/packagegroups/nativesdk-packagegroup-sdk-host.bbappend<b=
++ extern const char *host_detect_local_cpu (int argc, const char **argv);<b=
 r>
-@@ -4,3 +4,6 @@ RDEPENDS:${PN}:darwin21 =3D &quot;\<br>
-=C2=A0 =C2=A0 =C2=A0nativesdk-bison \<br>
-=C2=A0 =C2=A0 =C2=A0nativesdk-sdk-provides-dummy \<br>
-=C2=A0 =C2=A0 =C2=A0&quot;<br>
-+<br>
-+RDEPENDS:${PN}:darwin21 +=3D &quot;${@bb.utils.contains(&#39;CLANGSDK&#39;=
-, &#39;1&#39;, &#39;nativesdk-clang&#39;, &#39;&#39;, d)}&quot;<br>
-+<br>
-diff --git a/recipes-core/packagegroups/packagegroup-cross-canadian.bbappen=
-d b/recipes-core/packagegroups/packagegroup-cross-canadian.bbappend<br>
-index de29f47..4e46eae 100644<br>
---- a/recipes-core/packagegroups/packagegroup-cross-canadian.bbappend<br>
-+++ b/recipes-core/packagegroups/packagegroup-cross-canadian.bbappend<br>
-@@ -1,9 +1,14 @@<br>
-=C2=A0# Use indirection to stop these being expanded prematurely<br>
-=C2=A0BINUTILS =3D &quot;binutils-cross-canadian-${TRANSLATED_TARGET_ARCH}&=
-quot;<br>
-=C2=A0GCC =3D &quot;gcc-cross-canadian-${TRANSLATED_TARGET_ARCH}&quot;<br>
-+GDB =3D &quot;gdb-cross-canadian-${TRANSLATED_TARGET_ARCH}&quot;<br>
-+CLANG =3D &quot;clang-cross-canadian-${TRANSLATED_TARGET_ARCH}&quot;<br>
-<br>
-=C2=A0RDEPENDS:${PN}:darwinsdk =3D &quot;\<br>
-=C2=A0 =C2=A0 =C2=A0${@all_multilib_tune_values(d, &#39;BINUTILS&#39;)} \<b=
-r>
-=C2=A0 =C2=A0 =C2=A0${@all_multilib_tune_values(d, &#39;GCC&#39;)} \<br>
-+=C2=A0 =C2=A0 ${GDB} \<br>
-=C2=A0 =C2=A0 =C2=A0meta-environment-${MACHINE} \<br>
-=C2=A0 =C2=A0 =C2=A0&quot;<br>
-+<br>
-+RDEPENDS:${PN}:darwinsdk +=3D &quot;${@bb.utils.contains(&#39;CLANGSDK&#39=
-;, &#39;1&#39;, &#39;${CLANGCROSSCANADIANDEPS}&#39;, &#39;&#39;, d)}&quot;<=
-br>
-diff --git a/recipes-devtools/gdb/gdb-cross-canadian_%.bbappend b/recipes-d=
-evtools/gdb/gdb-cross-canadian_%.bbappend<br>
-new file mode 100644<br>
-index 0000000..99dac80<br>
---- /dev/null<br>
-+++ b/recipes-devtools/gdb/gdb-cross-canadian_%.bbappend<br>
-@@ -0,0 +1,19 @@<br>
-+PACKAGECONFIG:remove =3D &quot;python&quot;<br>
-+PACKAGECONFIG:remove =3D &quot;debuginfod&quot;<br>
-+<br>
-+EXTRA_OECONF:append:darwinsdk =3D &quot; \<br>
-+=C2=A0 =C2=A0 --with-gmp=3D${STAGING_EXECPREFIXDIR} \<br>
-+=C2=A0 =C2=A0 --with-mpft=3D${STAGING_EXECPREFIXDIR} \<br>
-+=C2=A0 =C2=A0 --with-mpc=3D${STAGING_EXECPREFIXDIR} \<br>
++ #define HAVE_LOCAL_CPU_DETECT<br>
++ # define EXTRA_SPEC_FUNCTIONS=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0\<br>
+diff --git a/recipes-devtools/gcc/gcc-source_%.bbappend b/recipes-devtools/=
+gcc/gcc-source_%.bbappend<br>
+index 73b4843..d1089e5 100644<br>
+--- a/recipes-devtools/gcc/gcc-source_%.bbappend<br>
++++ b/recipes-devtools/gcc/gcc-source_%.bbappend<br>
+@@ -9,3 +9,7 @@ SRC_URI:append =3D &quot; \<br>
+=C2=A0SRC_URI:append =3D &quot; \<br>
+=C2=A0 =C2=A0 =C2=A0file://0101-aarch64-Darwin-support-gcc-13-darwin.patch =
+\<br>
+=C2=A0&quot;<br>
++# Patch to allow building aarch64 toolchain for mac on aarch64 linux<br>
++SRC_URI:append =3D &quot; \<br>
++=C2=A0 =C2=A0 file://0102-aarch64-on-aarch64.patch \<br>
 +&quot;<br>
-+<br>
-+EXTRA_OECONF:remove:darwinsdk =3D &quot;--disable-gas&quot;<br>
-+EXTRA_OECONF:remove:darwinsdk =3D &quot;--disable-binutils&quot;<br>
-+EXTRA_OECONF:remove:darwinsdk =3D &quot;--disable-ld&quot;<br>
-+EXTRA_OECONF:remove:darwinsdk =3D &quot;--disable-gold&quot;<br>
-+EXTRA_OECONF:remove:darwinsdk =3D &quot;--with-system-readline&quot;<br>
-+<br>
-+# Remove -rpath-link and -rpath<br>
-+LDFLAGS:darwinsdk =3D &quot;${BUILDSDK_LDFLAGS}&quot;<br>
-+<br>
-+INSANE_SKIP:append:darwin21 =3D &quot; buildpaths&quot;<br>
 -- <br>
 2.50.1 (Apple Git-155)<br>
 <br>
@@ -448,47 +368,47 @@ index 0000000..99dac80<br>
 <br>
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-<br>
 Links: You receive all messages sent to this group.<br>
-View/Reply Online (#3035): <a href=3D"https://urldefense.proofpoint.com/v2/=
-url?u=3Dhttps-3A__lists.yoctoproject.org_g_yocto-2Dpatches_message_3035&amp=
+View/Reply Online (#3034): <a href=3D"https://urldefense.proofpoint.com/v2/=
+url?u=3Dhttps-3A__lists.yoctoproject.org_g_yocto-2Dpatches_message_3034&amp=
 ;d=3DDwIFAg&amp;c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhk=
-bNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3D_puerYIDUBoaGuNtBlJG7tTaRD=
-6u0CmRwlKdBXOgrQdKsYsyc7QvUgvq1B0KPzK2&amp;s=3DWdCUPuQH4_kgB_zPSlmoiDVolXxn=
-GlpUrnZ4bgKGHpo&amp;e=3D" rel=3D"noreferrer" target=3D"_blank">https://urld=
+bNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3Dv_cXEb90NejE92y4oHgGGaxyjM=
+e0vXc0NQVyod-CBBjQCoe7w_WAVPnpNOERnMcH&amp;s=3DnvE2CScun7jrUsSqv8R5GZrhQ85v=
+rrkjT_Hx9pvZh9M&amp;e=3D" rel=3D"noreferrer" target=3D"_blank">https://urld=
 efense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.yoctoproject.org_g_yocto-2=
-Dpatches_message_3035&amp;d=3DDwIFAg&amp;c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgG=
-kICC2epckfdiw&amp;r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3D_=
-puerYIDUBoaGuNtBlJG7tTaRD6u0CmRwlKdBXOgrQdKsYsyc7QvUgvq1B0KPzK2&amp;s=3DWdC=
-UPuQH4_kgB_zPSlmoiDVolXxnGlpUrnZ4bgKGHpo&amp;e=3D</a> <br>
+Dpatches_message_3034&amp;d=3DDwIFAg&amp;c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgG=
+kICC2epckfdiw&amp;r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3Dv=
+_cXEb90NejE92y4oHgGGaxyjMe0vXc0NQVyod-CBBjQCoe7w_WAVPnpNOERnMcH&amp;s=3DnvE=
+2CScun7jrUsSqv8R5GZrhQ85vrrkjT_Hx9pvZh9M&amp;e=3D</a> <br>
 Mute This Topic: <a href=3D"https://urldefense.proofpoint.com/v2/url?u=3Dht=
-tps-3A__lists.yoctoproject.org_mt_117366396_7048771&amp;d=3DDwIFAg&amp;c=3D=
+tps-3A__lists.yoctoproject.org_mt_117366348_7048771&amp;d=3DDwIFAg&amp;c=3D=
 ncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhkbNonVuMIGRfPx_Qj9TsR=
-ih1DULJTKUkSGa66m67E&amp;m=3D_puerYIDUBoaGuNtBlJG7tTaRD6u0CmRwlKdBXOgrQdKsY=
-syc7QvUgvq1B0KPzK2&amp;s=3DO62qmjJUsxyOm39Z8uQ9q7zP0xxII0nRnkugFlqlffM&amp;=
+ih1DULJTKUkSGa66m67E&amp;m=3Dv_cXEb90NejE92y4oHgGGaxyjMe0vXc0NQVyod-CBBjQCo=
+e7w_WAVPnpNOERnMcH&amp;s=3DtfNwfVQqI75MWPFBK9kj_nq8wkP4FfSZWqKzzKG5ko4&amp;=
 e=3D" rel=3D"noreferrer" target=3D"_blank">https://urldefense.proofpoint.co=
-m/v2/url?u=3Dhttps-3A__lists.yoctoproject.org_mt_117366396_7048771&amp;d=3D=
+m/v2/url?u=3Dhttps-3A__lists.yoctoproject.org_mt_117366348_7048771&amp;d=3D=
 DwIFAg&amp;c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhkbNonV=
-uMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3D_puerYIDUBoaGuNtBlJG7tTaRD6u0Cm=
-RwlKdBXOgrQdKsYsyc7QvUgvq1B0KPzK2&amp;s=3DO62qmjJUsxyOm39Z8uQ9q7zP0xxII0nRn=
-kugFlqlffM&amp;e=3D</a> <br>
+uMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3Dv_cXEb90NejE92y4oHgGGaxyjMe0vXc=
+0NQVyod-CBBjQCoe7w_WAVPnpNOERnMcH&amp;s=3DtfNwfVQqI75MWPFBK9kj_nq8wkP4FfSZW=
+qKzzKG5ko4&amp;e=3D</a> <br>
 Group Owner: <a href=3D"mailto:yocto-patches%2Bowner@lists.yoctoproject.org=
 " target=3D"_blank">yocto-patches+owner@lists.yoctoproject.org</a><br>
 Unsubscribe: <a href=3D"https://urldefense.proofpoint.com/v2/url?u=3Dhttps-=
 3A__lists.yoctoproject.org_g_yocto-2Dpatches_leave_13184993_7048771_1814342=
 232_xyzzy&amp;d=3DDwIFAg&amp;c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdi=
-w&amp;r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3D_puerYIDUBoaG=
-uNtBlJG7tTaRD6u0CmRwlKdBXOgrQdKsYsyc7QvUgvq1B0KPzK2&amp;s=3DQESP0Hyg0GP6AoZ=
-bq9EY5fTX390b8qALUz8LqGOdbOI&amp;e=3D" rel=3D"noreferrer" target=3D"_blank"=
+w&amp;r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3Dv_cXEb90NejE9=
+2y4oHgGGaxyjMe0vXc0NQVyod-CBBjQCoe7w_WAVPnpNOERnMcH&amp;s=3D2PQ6gTEChT_YXwK=
+8n3kAvN8UEKKPgXf-WnlinWMlkUE&amp;e=3D" rel=3D"noreferrer" target=3D"_blank"=
 >https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.yoctoproject.=
 org_g_yocto-2Dpatches_leave_13184993_7048771_1814342232_xyzzy&amp;d=3DDwIFA=
 g&amp;c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhkbNonVuMIGR=
-fPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3D_puerYIDUBoaGuNtBlJG7tTaRD6u0CmRwlKd=
-BXOgrQdKsYsyc7QvUgvq1B0KPzK2&amp;s=3DQESP0Hyg0GP6AoZbq9EY5fTX390b8qALUz8LqG=
-OdbOI&amp;e=3D</a>=C2=A0 [<a href=3D"mailto:ecordonnier@snap.com" target=3D=
+fPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3Dv_cXEb90NejE92y4oHgGGaxyjMe0vXc0NQVy=
+od-CBBjQCoe7w_WAVPnpNOERnMcH&amp;s=3D2PQ6gTEChT_YXwK8n3kAvN8UEKKPgXf-WnlinW=
+MlkUE&amp;e=3D</a>=C2=A0 [<a href=3D"mailto:ecordonnier@snap.com" target=3D=
 "_blank">ecordonnier@snap.com</a>]<br>
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-<br>
 <br>
 <br>
 </blockquote></div>
 
---000000000000d615c706492af604--
+--0000000000006d2de406492b20a2--
 
