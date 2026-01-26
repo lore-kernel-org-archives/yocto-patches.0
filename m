@@ -2,61 +2,61 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51F6FD1953A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A618CF65E8
 	for <webhook@archiver.kernel.org>; Mon, 26 Jan 2026 23:55:11 +0000 (UTC)
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.35788.1769471706774149242
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.35785.1769471703009661890
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 26 Jan 2026 15:55:06 -0800
+ Mon, 26 Jan 2026 15:55:03 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=Qsfe5lVF;
- spf=pass (domain: konsulko.com, ip: 209.85.222.172, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-8c52c67f64cso508413785a.0
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 26 Jan 2026 15:55:06 -0800 (PST)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=kA8c38JY;
+ spf=pass (domain: konsulko.com, ip: 209.85.222.179, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-8c6a0702b86so508516585a.0
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 26 Jan 2026 15:55:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1769471706; x=1770076506; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1769471702; x=1770076502; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=IPHTDeXpYPEUovKay1N7FZMuM+zeyoM8WVoq2z1x86o=;
-        b=Qsfe5lVFif8ftY8vVCAxnfug3oorAy0oDzJCycQyneg+3QogXiw5WMuOeMJ2hoD654
-         rB7A/ZMmfV5EHwVZZLwqrm2KgQRqAN//tzXdhrsYEvXe48L0dmxRhWKuVASob99m2qNw
-         l5/YeKSt/GOXw2eR6vJbCfJ4sUkp75ccZOsCU=
+        bh=QmofS/kF1wA/X2YOsua2T/5dd4txnyqYvN3uwgVwjLg=;
+        b=kA8c38JYtIfl7dS2Z4NiRNx63y6y3eNXqZzCHCHrn4MT0ahjz2eaOGIIZNWZXUe46y
+         9NjB3/RcLVVztU5I4lnYSAIP3TO6oNEhgPPe5cc4r8BakLEGyOFGS2PNlkw9WJFYGxYw
+         tIvUbu6cO5U1D0Fq6Qm59aC0LVlteQ+pL+nns=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769471706; x=1770076506;
+        d=1e100.net; s=20230601; t=1769471702; x=1770076502;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=IPHTDeXpYPEUovKay1N7FZMuM+zeyoM8WVoq2z1x86o=;
-        b=P8NFNst7iyaBlf4+jgM6N2kW0/F/rsL5evKjlyhTXpglzLRltwipkUe9Gp5OfRWLzY
-         MGCyYvXGzOKgI2Pta1BluKc35880PFgI/d1KqPgqu3w7eTGqOQulMUDGmJ0uESs+hkFa
-         Vse0+uABTBw6XKWwLXhLPs1onEAXciTKW/ordcRG6/SFYy2q4ujKNj2VHP2YyA+QdM18
-         XhjaHRdRiS8STQi1huNX8yfgcKzRRXpwOw+g6miUNSpXe4WlYqrBw0c+tVcQv5mxJlwZ
-         KLolwBFrR2yKE7S6xga3caZosXzQK3zpmycTnHI/PLqcEt3fBeXaSPIauYn6UyPd/eKu
-         e7Dg==
-X-Gm-Message-State: AOJu0Yzt9M8uZteVshCADPue/bKNnQmnk0fPF4yX11FtaT+kq4alZDJE
-	C9CrUqVjNCFgppny8cd7N2e6lP4bffdnMG6Iu/v8k7iPqYeyFGevdQ34LCnQcpVN7iHN4tGNIy2
-	CzD0ecH4=
-X-Gm-Gg: AZuq6aKiwxhhRz4rH1+Iwc4iA+vSzla7FE/zzGALB8XXEQ3U5UCmpumH5w+psW/F33I
-	XsQ93jyXsySXPD6XI+rB7CThdB0EvT8JE/QeE9WBs6e/xC5L4yZ0S2NvSTHV8lZY12GQWy0aIJi
-	vcw76E5xz8jtLdUKIW6BEhXZkvhVJ4u2v3hw3OL+azFciRRmpm+aqqqmuDyULvtGn15yqxIMg00
-	21m4pLiYJZwmvDNjPWVsXYa0Fen2zS5uDcYwj/tRVP4hZVmVNvZ2tIotEgJtUHPbJLjrCXP10w5
-	LpjTMS330m4Z3Rn81P4to1ecMcgFPP1bBgfK3PLuF5r/nwEOzh6Lyhp65ChIEa4tZkrdap+KXVW
-	c98H056qYpg03Zb0OUJUAObsX7aVyRs6ci1VZGbBvEFRJ9ynprXTY1tGqh6GcO3haf78yS46RaW
-	An4iFL6Ldq5rcVKXLszoVDG4+F0No1urThv1ZX+5fGNQjFhRnj25p3vaw+2XhaQiyzI6xrfTMFp
-	bsEK1ArVubVks10E0STfroKUP1dy5wNzNHJiBQKHsAo9gCqOji5
-X-Received: by 2002:a05:620a:17aa:b0:8c6:b14e:6569 with SMTP id af79cd13be357-8c6f968f177mr782596585a.79.1769471705437;
-        Mon, 26 Jan 2026 15:55:05 -0800 (PST)
+        bh=QmofS/kF1wA/X2YOsua2T/5dd4txnyqYvN3uwgVwjLg=;
+        b=EDPmdd5/LRe/Q0MXR6iFkJNkyXjiCG2FTComFzm2flRGv+yhCoaX25h0Y2IyOs5jrB
+         1p3zIt7lsI0QKJjUS+3Tlv78ojVvEePNNjZqYVChF2PEC1MHOjGJqSVQePryVzBKu/Vg
+         Oa9lLLBsutS4VAXgd4gEmu/3+S0AvJkKEddwYNaJSmoM9Eo6LSK/ZpG8l2awforYG2m8
+         k+CuoiBDY82xqaaki1RhDCSnvpINpdh/UqKO1rEI+Hqc6r0G7tR0v3TEQDRxXexiHAMT
+         vESzef64iIXYTsvqf6PTmUbV+ZNKnbPpF4/Q6revdeE802ro/+vocl5RBWOOyE2SiCAB
+         0SzA==
+X-Gm-Message-State: AOJu0Yx/02s1BGz6+Eweqh4CMRpUI0hdhswJNePd+yZLMkN/rPdluQn1
+	rcCOKaRcfT1qs4DFVoDypYbSQV67bonKwq2RPqpaHTZWe9YI8XSv9z/iCoqdef399Gc8tfTh4Vi
+	+YX+ShzY=
+X-Gm-Gg: AZuq6aLZtkSxPzpDbZpvaskyGbM0ItDY4S0zcX69RiURhLt+t4HbE6YSqP6Jg+yXoDw
+	e3P8vup5+hZGwobazkOtP5HDESlekxS96MUlERkayXmMSTKd2ydFthU0YPqJA43hJUHVKuO0Vdu
+	ESwNhsVgIFNbmVxgOW/8RxHSdMWnKiSIlnr9vb5pzB6zi6XBB838ql/AjvgHYc4ywyvERsjcBp4
+	akR5Ykqz/N4JY+0au+/wprVlcK1B2eyxV/xEcrOCOEEvgWGWvObTQfsabO5/PkdgjRx3V2KSmYz
+	NHDkiHp8U9kV6rvPAuGXwh3r+V0ZVZ6/WFYv/Cnwnqf0pq949BZ785cijDFKbTdIsoHkUkrIvEm
+	jRyCGc9yA61FHO5XThYa95biKw8MyRq8cYqxNPz4wI0iGZQp9TsBwf5U6fag2G88MfnE6Qqpcrs
+	6XAGIQLfNa+qicT1cGUsGw4WTqMgZ+Lczmeo8PMzZdnytRYyrH1lGAHu2SI6SYOReFgvy3/aRxI
+	i47dtnwZ5xsimFdILAEEG9sOUNuJvODVyjpc3TcPJDpk6VkDzTd
+X-Received: by 2002:a05:620a:17a5:b0:8b2:f9ac:a88b with SMTP id af79cd13be357-8c6f95c6de3mr721038785a.21.1769471701688;
+        Mon, 26 Jan 2026 15:55:01 -0800 (PST)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8c6e37d1f14sm1061740885a.15.2026.01.26.15.55.04
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8c6e37d1f14sm1061740885a.15.2026.01.26.15.55.01
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Jan 2026 15:55:04 -0800 (PST)
+        Mon, 26 Jan 2026 15:55:01 -0800 (PST)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][kirkstone/rust][PATCH 05/10] rust: Upgrade 1.91.0 -> 1.91.1
-Date: Mon, 26 Jan 2026 18:54:51 -0500
-Message-ID: <75c503be95d147a846bf02461fd975e74c1abe6f.1769471543.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][kirkstone/rust][PATCH 02/10] oeqa/selftest/rust: Exclude tier-check and fix openssl-sys build error
+Date: Mon, 26 Jan 2026 18:54:48 -0500
+Message-ID: <a032ef9a71847a33e8e930c7df49794b09dd809f.1769471543.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <cover.1769471543.git.scott.murray@konsulko.com>
 References: <cover.1769471543.git.scott.murray@konsulko.com>
@@ -66,102 +66,76 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Mon, 26 Jan 2026 23:55:11 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3107
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3103
 
 From: Yash Shinde <Yash.Shinde@windriver.com>
 
-https://blog.rust-lang.org/2025/11/10/Rust-1.91.1/
+- Exclude tier-check which fails due to file not found error.
 
-Test results summary:
+Testing stage2 platform support check (x86_64-poky-linux-gnu)
+Compiling tier-check v0.1.0
+(/srv/pokybuild/yocto-worker/qemux86-64-tc/build/build-st-1400964/tmp/work/x86-64-v3-poky-linux/rust/1.91.1/sources/rustc-1.91.1-src/src/tools/tier-check)
+thread 'main' (163263) panicked at src/tools/tier-check/src/main.rs:16:10:
+rustc should run: Os { code: 2, kind: NotFound, message: "No such file or directory" }
 
-   rust v1.91.1
-   +-----------+--------+---------+
-   | Machine   | Passed | Ignored |
-   +-----------+--------+---------+
-   | arm-32    | 29,968 |  1,510  |
-   | arm-64    | 30,071 |  1,447  |
-   | x86-32    | 29,985 |  1,489  |
-   | x86-64    | 30,229 |  1,247  |
-   | riscv-64  | 30,045 |  1,472  |
-   +-----------+--------+---------+
+Reported: https://github.com/rust-lang/rust/issues/149171
 
-   Test results difference (1.91.1 - 1.90):
-   +-----------+--------+---------+
-   | Machine   | Passed | Ignored |
-   +-----------+--------+---------+
-   | arm-32    |  +451  |   -19   |
-   | arm-64    |  +463  |   -24   |
-   | x86-32    |  +477  |   -18   |
-   | x86-64    |  +326  |   -28   |
-   | riscv-64  |  +461  |   -22   |
-   +-----------+--------+---------+
+- Fix following error by providing openssl in the image:
+error: failed to run custom build command for `openssl-sys v0.9.109`
+
+Failed to find OpenSSL development headers.
+You can try fixing this setting the `OPENSSL_DIR` environment variable
+pointing to your OpenSSL installation or installing OpenSSL headers package
+specific to your distribution.
+
+- Exclude "tests/assembly-llvm/c-variadic-arm.rs" failing on arm32.
 
 Signed-off-by: Yash Shinde <Yash.Shinde@windriver.com>
 Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(adapted from oe-core commit f20987e79d50b3e94df3b763326af3a44e4ae3a8)
+(adapted from oe-core commit b71cb92f368a9bd958518f82646c6f31e5f96039)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- conf/layer.conf                                                 | 2 +-
- recipes-devtools/rust/{cargo_1.91.0.bb => cargo_1.91.1.bb}      | 0
- .../rust/{libstd-rs_1.91.0.bb => libstd-rs_1.91.1.bb}           | 0
- ...t-cross-canadian_1.91.0.bb => rust-cross-canadian_1.91.1.bb} | 0
- .../rust/{rust-llvm_1.91.0.bb => rust-llvm_1.91.1.bb}           | 0
- recipes-devtools/rust/rust-source.inc                           | 2 +-
- recipes-devtools/rust/{rust_1.91.0.bb => rust_1.91.1.bb}        | 0
- 7 files changed, 2 insertions(+), 2 deletions(-)
- rename recipes-devtools/rust/{cargo_1.91.0.bb => cargo_1.91.1.bb} (100%)
- rename recipes-devtools/rust/{libstd-rs_1.91.0.bb => libstd-rs_1.91.1.bb} (100%)
- rename recipes-devtools/rust/{rust-cross-canadian_1.91.0.bb => rust-cross-canadian_1.91.1.bb} (100%)
- rename recipes-devtools/rust/{rust-llvm_1.91.0.bb => rust-llvm_1.91.1.bb} (100%)
- rename recipes-devtools/rust/{rust_1.91.0.bb => rust_1.91.1.bb} (100%)
+ lib/oeqa/selftest/cases/rust_mixin.py | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/conf/layer.conf b/conf/layer.conf
-index d024b1b..489273f 100644
---- a/conf/layer.conf
-+++ b/conf/layer.conf
-@@ -15,7 +15,7 @@ LAYERDEPENDS_lts-rust-mixin = "core"
+diff --git a/lib/oeqa/selftest/cases/rust_mixin.py b/lib/oeqa/selftest/cases/rust_mixin.py
+index b7213f9..50684ca 100644
+--- a/lib/oeqa/selftest/cases/rust_mixin.py
++++ b/lib/oeqa/selftest/cases/rust_mixin.py
+@@ -47,7 +47,7 @@ class RustSelfTestSystemEmulated(OESelftestTestCase, OEPTestResultTestCase):
+         bitbake("{} -c test_compile".format(recipe))
+         builddir = get_bb_var("RUSTSRC", "rust")
+         # build core-image-minimal with required packages
+-        default_installed_packages = ["libgcc", "libstdc++", "libatomic", "libgomp"]
++        default_installed_packages = ["libgcc", "libstdc++", "libatomic", "libgomp", "openssl"]
+         features = []
+         features.append('IMAGE_FEATURES += "ssh-server-dropbear"')
+         features.append('CORE_IMAGE_EXTRA_INSTALL += "{0}"'.format(" ".join(default_installed_packages)))
+@@ -75,9 +75,11 @@ class RustSelfTestSystemEmulated(OESelftestTestCase, OEPTestResultTestCase):
+                             'src/tools/rustdoc-themes',
+                             'src/tools/rust-installer',
+                             'src/tools/test-float-parse',
++                            'src/tools/tier-check',
+                             'src/tools/suggest-tests',
+                             'src/tools/tidy',
+                             'tests/assembly-llvm/asm/aarch64-outline-atomics.rs',
++                            'tests/assembly-llvm/c-variadic-arm.rs',
+                             'tests/codegen-llvm/issues/issue-122805.rs',
+                             'tests/codegen-llvm/thread-local.rs',
+                             'tests/mir-opt/',
+@@ -116,9 +118,11 @@ class RustSelfTestSystemEmulated(OESelftestTestCase, OEPTestResultTestCase):
+             targetsys = get_bb_var("RUST_TARGET_SYS", "rust")
+             rustlibpath = get_bb_var("WORKDIR", "rust")
+             tmpdir = get_bb_var("TMPDIR", "rust")
++            staging_dir_native = get_bb_var("STAGING_DIR_NATIVE", "core-image-minimal")
  
- LICENSE_PATH += "${LAYERDIR}/files/common-licenses"
- 
--RUSTVERSION ?= "1.91.0%"
-+RUSTVERSION ?= "1.91.1%"
- 
- # This is not ideal, but it seems better to mask out the older oe-core
- # recipes completely since they will not work with this layer on top,
-diff --git a/recipes-devtools/rust/cargo_1.91.0.bb b/recipes-devtools/rust/cargo_1.91.1.bb
-similarity index 100%
-rename from recipes-devtools/rust/cargo_1.91.0.bb
-rename to recipes-devtools/rust/cargo_1.91.1.bb
-diff --git a/recipes-devtools/rust/libstd-rs_1.91.0.bb b/recipes-devtools/rust/libstd-rs_1.91.1.bb
-similarity index 100%
-rename from recipes-devtools/rust/libstd-rs_1.91.0.bb
-rename to recipes-devtools/rust/libstd-rs_1.91.1.bb
-diff --git a/recipes-devtools/rust/rust-cross-canadian_1.91.0.bb b/recipes-devtools/rust/rust-cross-canadian_1.91.1.bb
-similarity index 100%
-rename from recipes-devtools/rust/rust-cross-canadian_1.91.0.bb
-rename to recipes-devtools/rust/rust-cross-canadian_1.91.1.bb
-diff --git a/recipes-devtools/rust/rust-llvm_1.91.0.bb b/recipes-devtools/rust/rust-llvm_1.91.1.bb
-similarity index 100%
-rename from recipes-devtools/rust/rust-llvm_1.91.0.bb
-rename to recipes-devtools/rust/rust-llvm_1.91.1.bb
-diff --git a/recipes-devtools/rust/rust-source.inc b/recipes-devtools/rust/rust-source.inc
-index 0378f3c..14f74a9 100644
---- a/recipes-devtools/rust/rust-source.inc
-+++ b/recipes-devtools/rust/rust-source.inc
-@@ -9,7 +9,7 @@ SRC_URI += "https://static.rust-lang.org/dist/rustc-${RUST_VERSION}-src.tar.xz;n
-             file://revert-link-std-statically-in-rustc_driver-feature.patch;patchdir=${RUSTSRC} \
-             file://0001-riscv32-Define-plain-syscalls-as-their-time64-varian.patch;patchdir=${RUSTSRC} \
- "
--SRC_URI[rust.sha256sum] = "9b94161dba3aa32192e0e75f7891912d98095ffb86087b07a05af35a0265a938"
-+SRC_URI[rust.sha256sum] = "66401bb815e236cc6b2aacbbe23b61b286c1fe27a67902e7c0222cfe77b3dbab"
- 
- RUSTSRC = "${WORKDIR}/rustc-${RUST_VERSION}-src"
- 
-diff --git a/recipes-devtools/rust/rust_1.91.0.bb b/recipes-devtools/rust/rust_1.91.1.bb
-similarity index 100%
-rename from recipes-devtools/rust/rust_1.91.0.bb
-rename to recipes-devtools/rust/rust_1.91.1.bb
+             # Set path for target-poky-linux-gcc, RUST_TARGET_PATH and hosttools.
+             cmd = "export TARGET_VENDOR=\"-poky\";"
++            cmd = cmd + " export OPENSSL_DIR=%s/usr;" %(staging_dir_native)
+             cmd = cmd + " export PATH=%s/recipe-sysroot-native/usr/bin/python3-native:%s/recipe-sysroot-native/usr/bin:%s/recipe-sysroot-native/usr/bin/%s:%s/hosttools:$PATH;" % (rustlibpath, rustlibpath, rustlibpath, tcpath, tmpdir)
+             cmd = cmd + " export RUST_TARGET_PATH=%s/rust-targets;" % rustlibpath
+             # Strip debug symbols from test binaries to reduce size (300+ MB -> ~140 MB)
 -- 
 2.51.0
 
