@@ -1,138 +1,104 @@
-Return-Path: <richard.purdie@linuxfoundation.org>
+Return-Path: <yoann.congal@smile.fr>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D460D7237C
-	for <webhook@archiver.kernel.org>; Sun, 25 Jan 2026 21:52:51 +0000 (UTC)
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.6265.1769377967777133311
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA867C88E7B
+	for <webhook@archiver.kernel.org>; Mon, 26 Jan 2026 08:53:25 +0000 (UTC)
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.16113.1769417600435425481
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 25 Jan 2026 13:52:48 -0800
+ Mon, 26 Jan 2026 00:53:20 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=WD4GMxJN;
- spf=pass (domain: linuxfoundation.org, ip: 209.85.221.50, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-435903c4040so2363263f8f.3
-        for <yocto-patches@lists.yoctoproject.org>; Sun, 25 Jan 2026 13:52:47 -0800 (PST)
+ dkim=pass header.i=@smile.fr header.s=google header.b=y22Hf3mt;
+ spf=pass (domain: smile.fr, ip: 209.85.128.42, mailfrom: yoann.congal@smile.fr)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-47ff94b46afso35507045e9.1
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 26 Jan 2026 00:53:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1769377966; x=1769982766; darn=lists.yoctoproject.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=qr9FwO/az8f92oRiZsPXqbyuGUbO0u+YbxMtQ+ei//g=;
-        b=WD4GMxJNSEPlOPSKPi00g1OSqDJ7obz04Lgu770bz2p3qPaWn9pRV5JMXQmNLDcmwF
-         ouAMGpPAJMyYXDACy7rfcJcEbEWNGJ5W8WOfGGy0Nn1EjTWr76JUSCsZSB1KTB/EQJwn
-         E5ovM6KvqnfaMJtn4x1JPJIJ/n5YLREfQwleE=
+        d=smile.fr; s=google; t=1769417598; x=1770022398; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jcgwGy/DnIIQkLJf4MiCSQMaUDbZBGg2MgShgf6Mgew=;
+        b=y22Hf3mtUDIDslnBc/qtEWXB1fyK31LZIs63p2AWhc1hzKoZBCEbUqgs6lSck2P67Y
+         TMx596amMW1MBJne5SLRZ3s70z1tBItM5sw3pGeOHgHsoWenU9hyrKLOrSuViRuLNTFZ
+         fFfVqV3qiTgqLE9HTNvUNf82INf5cZmC28K7k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769377966; x=1769982766;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qr9FwO/az8f92oRiZsPXqbyuGUbO0u+YbxMtQ+ei//g=;
-        b=U6b0MnQojfL+M7/B+nV0pTX5o2oJoy+xqH4eXqJzSQ6pGTuCjjorul77cO9fO+1C0I
-         PTOFk2v0RgQcbUVVgnJ7JoQ0IkKsZvF5Ax8Yeq7m+Z0f8Z2nszz0NrUXyQlIBc44J186
-         g+iINJTHwM1A7Xz5oO2EXdsVIKQiwyLDQGeeaTXAp1k4UOdXF8bPHRo6u6z+25c36DNg
-         kmqnXr+Es6iRtmWJP8G6Kvs3FelAEreHw9x3KvgDhsJSUVz1o+LvhXS+EQKxu8cJAay0
-         eVumT8RwE/97VyUZJdifkk6z3Kn52SmTGcwHXW5oqwjcIWfaMr8JMbdFl+IR5HobvRL7
-         DF/g==
-X-Gm-Message-State: AOJu0YxyRKwHRlVLqlfOGaLHRa3w8RueGtpUz+qY11AACVaW0GP8siTC
-	HTFxoLsADL9ZFkDQur4HeIRldrB5C2wiN+GTV9cnTVR9wTSCmwAeNsm5B04ZujvP8/ekLifOD9c
-	GLrUEWR8=
-X-Gm-Gg: AZuq6aJkB+c8uknyqUfm5h1VSPbxaFcFefteNfwA3v3+PWv6qAjD4DgDm6H6RwRkb9P
-	YD61YI6btK2N+D147sDSp8i1+qmmVsxC5Srqqxv2QCuNJEpb4Z8HrtZ79eYBxSi1hE6MlEeyiMV
-	zN2v7jjKvgTEFJSVoXWxqxmPxeR5TxfrB1HRyNXIbmGwMdtkuPYZ0MJqiaTVjdsNpFvgyI0x7hB
-	sOs0A7B/rIIszogL/wHlIRfvobx1oEfcHu1bKjKVsN5XYLjISdysNB1x4DNozTFPsuNsij1r4Ed
-	M5fJDA502eECwcn2JpcSPpb3aFLjyiLya4V2HBehZTgbWRBXIDfE0fEEOj8xCv0R+nkGQIPM72h
-	wIo5a7TGp6EGOPn60ORNDjehahZ3/alaQLSBUfUEcCJtsxg5ZEmyZ5gSBAiaYz8nhDWKB7GI4Bo
-	kFtyndGGB5NOaAZhLOAUJF65CdAceQ22T9YHmn9OHYF8g6XDAbTDwjoVThohWcqMm8JTvbwnkwD
-	Pu+of4vpvA+Cw==
-X-Received: by 2002:a05:6000:1866:b0:435:ab90:6f34 with SMTP id ffacd0b85a97d-435ca124849mr3932147f8f.16.1769377965744;
-        Sun, 25 Jan 2026 13:52:45 -0800 (PST)
-Received: from ?IPv6:2001:8b0:aba:5f3c:2c23:1ef4:9a85:53f4? ([2001:8b0:aba:5f3c:2c23:1ef4:9a85:53f4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-435b1e7164dsm25234599f8f.23.2026.01.25.13.52.44
+        d=1e100.net; s=20230601; t=1769417598; x=1770022398;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jcgwGy/DnIIQkLJf4MiCSQMaUDbZBGg2MgShgf6Mgew=;
+        b=SY5u0+YVYn2TZRnXTjEzG0vXY2ndxmtjkQvnbBxLhmQMEqJCA0CXa0j+ONlEGMwYx2
+         Aae08sYugIpaAAdBcTtb9AZ9owVc9iT6NrMhabsE1lWg6c10tqbEbxespmRJsAyV9MgV
+         tgekBITCJsPO/39hdHi3xdl6d1BGxBQ+TTtBwKoX2e8iA0fn69UyBhoY+WmQkmPSKKeN
+         865rbfHroXXF32+S8SK8azRs9QwZmbFg31dpS5OF/m6SvyUAl6b264vGGn65Gjll0Okr
+         QNDc/pLP0GiAQzsD5CSEPo36H0Otb97V5XGvv1BxRfm82SjfVs1K+T4XTDJGI/cdvYR0
+         ALvA==
+X-Gm-Message-State: AOJu0YzwJGvHvwiyLWQVN1XHltCGOYAD1qfJyPDQ17qFct78hVttdCFx
+	RBkYow8ILIvGVO5GpHe/xc5zzcCJwosGkGszYPeYTvD3VaOFzFKWd9tcko+MM6662VqPEi6cFi6
+	c3YlJ
+X-Gm-Gg: AZuq6aK4FilhUlzAFaNlZV411NR85Tuupm7tqdE2f/d9JQGNFmFL60mHERVY8g5ONvJ
+	fOi5dHMLvKZxENUm0qNXk87pQN6JVSOQX0N/bSGNvFJ6UZzLtfoBFbreAWTmNfTjB4SONa1jclx
+	s4ZsvXbyC9aBRvNmm8i94O2+x2RAgy2MXfw1EwMU9G1fGywRXumyc1a5yVyeHUeGkJxTar/kw3H
+	fhfxhXFjW+xnr2i0gTN9QR2CQqDDPm0W0WDKfU1OKxuhMv8VTYntTZtEvNFRoZ2BloAml1qVKLg
+	Fe6KkDBnIVP+dF2zLNLgluCjxZiVme/qnAGiHwWliPDdUd0pGn6FxTY6zy7zYKV0UNXo1AniHDl
+	13ufbcdu5FxLq+8opYSZYc1WCxxddaTqJxqzkERONI1k+9e4WpS1pV76UIehf0fliCWwooqSy62
+	GhdaEiSTBsU9TqGgHwdGUTz90khh7RunZrN1LV9tkhjcRvfuGaIV1xafAZsHxmSsrBRexvP35V9
+	EjIi+2EGhAeoYQd5n52mg==
+X-Received: by 2002:a05:600c:4e50:b0:47e:e051:79ee with SMTP id 5b1f17b1804b1-4805cd08fb5mr65616355e9.3.1769417598509;
+        Mon, 26 Jan 2026 00:53:18 -0800 (PST)
+Received: from FRSMI25-LASER.idf.intranet (static-css-ccs-204145.business.bouyguestelecom.com. [176.157.204.145])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4804d84588fsm261871855e9.2.2026.01.26.00.53.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Jan 2026 13:52:45 -0800 (PST)
-Message-ID: <010e5f88c6444634471f8e166044c15f182fac46.camel@linuxfoundation.org>
-Subject: Re: [yocto-patches] [yocto-autobuilder2][PATCH v2 1/2] schedulers:
- sort repo branches in maintained stable branches
-From: Richard Purdie <richard.purdie@linuxfoundation.org>
+        Mon, 26 Jan 2026 00:53:18 -0800 (PST)
+From: Yoann Congal <yoann.congal@smile.fr>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Yoann Congal <yoann.congal@smile.fr>
-Date: Sun, 25 Jan 2026 21:52:44 +0000
-In-Reply-To: <DB5PR02MB10213B6D7B2ED24E5B7C1BC72EF96A@DB5PR02MB10213.eurprd02.prod.outlook.com>
-References: <20260121174651.64212-1-yoann.congal@smile.fr>
-	 <DB5PR02MB10213B6D7B2ED24E5B7C1BC72EF96A@DB5PR02MB10213.eurprd02.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.0-1ubuntu0.1 
+Subject: [yocto-autobuilder-helper][PATCH] send_qa_email: add git-describe output if possible
+Date: Mon, 26 Jan 2026 09:52:53 +0100
+Message-ID: <20260126085252.178615-2-yoann.congal@smile.fr>
+X-Mailer: git-send-email 2.47.3
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sun, 25 Jan 2026 21:52:51 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3076
+ <yocto-patches@lists.yoctoproject.org>; Mon, 26 Jan 2026 08:53:25 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3077
 
-On Wed, 2026-01-21 at 17:52 +0000, Peter Kjellerstedt via lists.yoctoprojec=
-t.org wrote:
-> > -----Original Message-----
-> > From: yocto-patches@lists.yoctoproject.org=C2=A0<yocto-patches@lists.yo=
-ctoproject.org> On Behalf Of Yoann Congal via lists.yoctoproject.org
-> > Sent: den 21 januari 2026 18:47
-> > To: yocto-patches@lists.yoctoproject.org
-> > Cc: Yoann Congal <yoann.congal@smile.fr>
-> > Subject: [yocto-patches] [yocto-autobuilder2][PATCH v2 1/2] schedulers:=
- sort repo branches in maintained stable branches
-> >=20
-> > From: Yoann Congal <yoann.congal@smile.fr>
-> >=20
-> > This should help seeing if any branch is missing by comparing with the
-> > "Build Properties" page of a build.
-> >=20
-> > Signed-off-by: Yoann Congal <yoann.congal@smile.fr>
-> > ---
-> > =C2=A0schedulers.py | 22 +++++++++++-----------
-> > =C2=A01 file changed, 11 insertions(+), 11 deletions(-)
-> >=20
-> > diff --git a/schedulers.py b/schedulers.py
-> > index 42983a8..0018fcb 100644
-> > --- a/schedulers.py
-> > +++ b/schedulers.py
-> > @@ -73,16 +73,16 @@ branchdefaults =3D {
-> > =C2=A0=C2=A0=C2=A0=C2=A0 },
-> > =C2=A0=C2=A0=C2=A0=C2=A0 'whinlatter': {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 'branch': 'whinlatter'=
-,
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 'branch_poky': 'master',
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 'branch_bitbake': '2.1=
-6',
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 'branch_meta-arm': 'wh=
-inlatter',
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 'branch_meta-gplv2': '=
-master',
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 'branch_meta-mingw': '=
-whinlatter',
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 'branch_meta-openembed=
-ded': 'whinlatter',
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 'branch_meta-virtualization=
-': 'whinlatter',
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 'branch_meta-yocto': '=
-whinlatter',
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 'branch_yocto-docs': 'whinl=
-atter',
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 'branch_oecore': 'whin=
-latter',
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 'branch_meta-virtualization=
-': 'whinlatter',
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 'branch_poky': 'master',
->=20
-> I don't know how these are actually used, but is a branch for poky=20
-> really meaningful with Whinlatter? Though I notice that meta-gplv2=20
-> is also mentioned above, and it has been dead and buried for years...
+From: Yoann Congal <yoann.congal@smile.fr>
 
-It is a limitation of the build infrastructure, it needs to be set to
-something resolvable. No, it isn't ideal, equally we've a lot of bigger
-problems. When we drop kirkstone, we can drop that too.
+This would allow to quickly identify commits that are not on the right
+branch.
 
-Cheers,
+Partial example of output on my whinlatter-nut branch:
+  bitbake: 74f8a927ca6a20342072e5579182aea917b6dc30 (yocto-5.3-3-g74f8a927c)
+  meta-yocto: 6973ca663aaa9c3ab517ee960ab7985a5bf54c07 (yocto-5.3-1-g6973ca6)
+  openembedded-core: b4e7819b99d9c1a8995eba87e6f466fd8c77e14a (yocto-5.3-73-gb4e7819b99)
+(It shows that every commits are correctly after yocto-5.3)
 
-Richard
+Signed-off-by: Yoann Congal <yoann.congal@smile.fr>
+---
+ scripts/send_qa_email.py | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/scripts/send_qa_email.py b/scripts/send_qa_email.py
+index e3de4b5..8d24af5 100755
+--- a/scripts/send_qa_email.py
++++ b/scripts/send_qa_email.py
+@@ -265,6 +265,15 @@ def send_qa_email():
+         # Need the finalised revisions (not 'HEAD')
+         targetrepodir = "%s/%s" % (repodir, repo)
+         revision = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=targetrepodir).decode('utf-8').strip()
++
++        # Add git describe output if possible
++        try:
++            description = subprocess.check_output(["git", "describe", "--match", "yocto-*", "HEAD"],
++                                                  cwd=targetrepodir, stderr=subprocess.DEVNULL).decode('utf-8').strip()
++            revision += " (%s)" % description
++        except subprocess.CalledProcessError:
++            pass # ignore any error
++
+         buildhashes += "%s: %s\n" % (repo, revision)
+ 
+     web_root = utils.getconfig('WEBPUBLISH_DIR', ourconfig)
 
