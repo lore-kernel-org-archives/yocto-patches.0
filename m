@@ -1,260 +1,99 @@
-Return-Path: <foss@0leil.net>
+Return-Path: <ross.burton@arm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE3E7D13C28
-	for <webhook@archiver.kernel.org>; Mon, 26 Jan 2026 14:48:57 +0000 (UTC)
-Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [84.16.66.172])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.21691.1769438927873779908
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45A06D13C3E
+	for <webhook@archiver.kernel.org>; Mon, 26 Jan 2026 15:43:58 +0000 (UTC)
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.22494.1769441870430651006
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 26 Jan 2026 06:48:48 -0800
+ Mon, 26 Jan 2026 07:37:51 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: 0leil.net, ip: 84.16.66.172, mailfrom: foss+yocto@0leil.net)
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4f0BHf1nMxzbgt;
-	Mon, 26 Jan 2026 15:48:46 +0100 (CET)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4f0BHd5kBMzrwR;
-	Mon, 26 Jan 2026 15:48:45 +0100 (CET)
-From: Quentin Schulz <foss+yocto@0leil.net>
-Date: Mon, 26 Jan 2026 15:48:30 +0100
-Subject: [PATCH meta-rockchip 2/2] add support for baking OP-TEE OS into
- U-Boot proper binary
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260126-optee-os-v1-2-874261a77dad@cherry.de>
-References: <20260126-optee-os-v1-0-874261a77dad@cherry.de>
-In-Reply-To: <20260126-optee-os-v1-0-874261a77dad@cherry.de>
+ dkim=pass header.i=@baylibre-com.20230601.gappssmtp.com header.s=20230601 header.b=UHgB9hjV;
+ spf=pass (domain: baylibre.com, ip: 209.85.128.45, mailfrom: ukleinek@baylibre.com)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-47eddddcdcfso26982515e9.1
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 26 Jan 2026 07:37:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1769441869; x=1770046669; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XmpozehDiu6EqJEJ/yPG0FJ/Cp2U+yJfGdO5K8sC9xE=;
+        b=UHgB9hjVzUNhv7Wo7LfpOlbeT7bZgFIxWXiTDUPpF7BMbnKQ1BpvBWUS8ovqEltWtw
+         PYumOGs8qjHItIqm1PXoPxwvMkg4Vn2xfhUcjUU/LN71bi38gpsDPqWbiUPfGh3+yS0+
+         VdQBql9o6b310LA9+MZgKXNRjJdTLSCjg3VulHd1BPpiAr7nWtByAYniJ5on6CB1cj/V
+         18RI1NnnClfOhZ1wfzqd4LlTWbxfCiRfjFDlyi223PkAN4Qkx2n0D1Epy5xiNx99jz04
+         QmHgWP6lJyqow/mp/zsFdsfbzKwSDCWpyFONc1lcCBIVEpk/5q8Q7Eq+xB8Ro+aya3zQ
+         XBFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769441869; x=1770046669;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XmpozehDiu6EqJEJ/yPG0FJ/Cp2U+yJfGdO5K8sC9xE=;
+        b=aqt+oL+C5dsyqg8VHxNk/Mudd0kHnwpqte2vq4z7/RxGsREPyc/dLuDdbikfFrkMOo
+         65aGdYgVdiBHpXZwM7hKVPW+jSwcKxb17pC43SqEIk6ykbDMyT8b6wuLZR+ePWUT/sw2
+         TT7ziWUuDtaWwrylLr7LuuilcaVfQ9EIDTQuPUqE724dcQhinE4kYxWSkhIERFzWabn7
+         ZcjRWvDe3enbl1vCMqFMYAaF9ibPEVWPLJrn1XFvyBRtCkr3nhkXmFRs4HGew4iUktOq
+         YTulRipDeO/XKKZXc/kL4o91glTtFJYNoMYavgHW/e7SMCBQwtmES4zlXgJEXuSBICik
+         2olw==
+X-Gm-Message-State: AOJu0YyNWqZ0eUD5LsbBYULjnh/hkXCvPiYL+4x8WW8sgD05eN0VZU9g
+	k6MK5fQNph6/UEpxduDwZZxCcJfGWyA1x8PnHUeyfAUL7c4GrThaij4L6cFGH50xMNvom+3oUnd
+	qb17W
+X-Gm-Gg: AZuq6aJv0jyLrcuK/N4akhOUT2FS0tO+27muFxJkESNvnu+wnK81ipELgISVbnlisKo
+	QdjMBaJklM0CFKqlwKvnJUxMsSTxfVqG8dEuRnt/Pp4jfPHRGi34wSZ9wa4/mpPYeO4c+pAIDhC
+	5wmRmNMtsBQrETyej/SEoGhR2Ulgn4xPC9zqRpjvZaGyST8cRX4YElOOAH/vtEV7A9pEtk8nyGU
+	ryVL1EHQkVkp5U+rIi4kBuAfX1UuYTBiWcCspT2GZ2v28WgOGHY3ArhoZSqt34f3m7XsXPzpJ0A
+	022xKGZIlSI4xoAkyRuFYzAnQk10AToQxFHYT738K+WrxluVXBk3sCPxIdT/fbrAM8Seqxtg03t
+	fqUomtB9Eeui59+W3MtqAa4iw9SWDG8qWjQzWSjHuhWwODspOzPz0Afw1BRzc3QVSTq5VX3ZQJW
+	XwYMirdRl3Lm1K/tu0rEMv2SRP9Aw8PsGyZh8QvaaP4FwKVKTyFkn914nk9uUzktrnfbdYy6E1s
+	ao=
+X-Received: by 2002:a05:600c:1909:b0:480:1d16:2538 with SMTP id 5b1f17b1804b1-4805cf67512mr87311085e9.23.1769441868640;
+        Mon, 26 Jan 2026 07:37:48 -0800 (PST)
+Received: from localhost (p200300f65f20eb04e3c7513b867411b3.dip0.t-ipconnect.de. [2003:f6:5f20:eb04:e3c7:513b:8674:11b3])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4804d8b4fc3sm281495245e9.13.2026.01.26.07.37.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Jan 2026 07:37:48 -0800 (PST)
+From: =?UTF-8?B?IlV3ZSBLbGVpbmUtS8O2bmln?= <ukleinek@baylibre.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Quentin Schulz <quentin.schulz@cherry.de>
-X-Mailer: b4 0.14.3
-X-Infomaniak-Routing: alpha
+Subject: [meta-selinux][PATCH] systemd: Explain background of creating /var/lib/systemd/backlight
+Date: Mon, 26 Jan 2026 16:37:30 +0100
+Message-ID: <20260126153729.2758442-2-u.kleine-koenig@baylibre.com>
+X-Mailer: git-send-email 2.47.3
+MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1102; i=u.kleine-koenig@baylibre.com; h=from:subject; bh=IeCbl2qD1fd7ZxOw8R2QJ4AR1wPLlH0N+kSKxy+0GhI=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBpd4o5a6mIybiKYcZoFzPZTvuaVTqlUJKJt6a/4 wpHqMbAAA2JATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCaXeKOQAKCRCPgPtYfRL+ ToeoCACkKLAu0AAQG9GqrLnP+5GCfY8WJrMyEBVoCiF+hOhfKNKXTPV+uD4jiPN3OLUt7DB00tH Sczlad06zLMl203l8iEqgPpFsOHAdNrFoajnaeGDFOcEE+5ajlS8h8oA7/YS9+N7IFl601sMunn rA1X/vhgJx/9DfYhX46gBbKmpED/Qy9FZSRtwbmb59OSS+YLgEIotyCrIp7s0R05dwaoEdJHjHL Wn6v2rSalwem0JUdS3uBzKaWAKvqMF8UlyReE4VPvx7s2ICLVZvcWNxMHz/juI2zf/vJL78F0z1 KbzH+fOK8Q9TzdC5ehAkLkw2WGXOOLjF0pXX7/A1It67cSyh
+X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 26 Jan 2026 14:48:57 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3085
+ <yocto-patches@lists.yoctoproject.org>; Mon, 26 Jan 2026 15:43:58 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3086
 
-From: Quentin Schulz <quentin.schulz@cherry.de>
-
-TF-A has support for loading OP-TEE OS as BL32 which allows us to have
-the following boot flow on supported Rockchip SoCs:
-
-BootROM -> U-Boot TPL/SPL -> TF-A (BL31) -> OP-TEE OS (BL32) -> U-Boot
-proper -> Linux kernel
-
-TF-A must be built with support for the opteed payload via the SPD
-variable. It can always be set, the downside is that if it's set and no
-OP-TEE OS is available to load, it'll complain with
-
-  ERROR:   Error initializing runtime service opteed_fast
-
-but will still continue the boot flow.
-
-U-Boot proper must be built with OPTEE_LIB enabled (forced enabled on
-U-Boot v2026.01 when a TEE environment variable is set) otherwise random
-crashes may happen while in Linux as the memory marked as secure for
-OP-TEE OS isn't reserved and the kernel may use it and trigger a
-security exception.
-
-This has only been tested with `xtest` on PX30, RK3399 and RK3588
-platforms, all tests pass. Note that this is unsecure by default as it's
-using the default development key in OP-TEE OS tree which isn't secret
-at all. I have not looked into how to provide your own key pair.
-
-Note that xtest has two fails on RK3588 with OP-TEE OS v4.7.0. They are
-fixed since v4.8.0 (v4.9.0 series for meta-arm has been posted
-already[1]).
-
-We also pass a few variables to make such that we avoid panics when an
-FDT is passed by TF-A (happens when SPL_ATF_NO_PLATFORM_PARAM is not
-set) due to the memory area to store the FDT being too small, also avoid
-panics when the device is using a different console than the default in
-OP-TEE OS by simply disabling the early console (thus relying on FDT to
-find which one to write to) and enable Arm Cryptographic Extensions on
-PX30 for faster crypto (xtest in 3m11s vs 3min32s).
-
-[1] https://lore.kernel.org/yocto-meta-arm/20260121140356.16818-1-hugues.kambampiana@arm.com/
-Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+The reasoning is taken from commit 5d203f903979 ("systemd: create
+/var/lib/systemd/backlight in advance").
 ---
- README                                             | 42 ++++++++++++++++++++++
- conf/machine/include/px30.inc                      |  7 ++++
- conf/machine/include/rk3399.inc                    |  7 ++++
- conf/machine/include/rk3588s.inc                   |  7 ++++
- recipes-bsp/u-boot/u-boot-rockchip.inc             |  6 ++++
- .../optee/optee-os-tadevkit_%.bbappend             |  3 ++
- recipes-security/optee/optee-os_%.bbappend         | 19 ++++++++++
- recipes-security/optee/optee-test_%.bbappend       |  3 ++
- 8 files changed, 94 insertions(+)
+ recipes-core/systemd/systemd_selinux.inc | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/README b/README
-index c2697d1..f49fdb5 100644
---- a/README
-+++ b/README
-@@ -222,6 +222,48 @@ Notes:
- 	NOTE: this variable must be set before any include/require in the
- 	      machine configuration file
+diff --git a/recipes-core/systemd/systemd_selinux.inc b/recipes-core/systemd/systemd_selinux.inc
+index 7d466ee608c8..4eb7194444d2 100644
+--- a/recipes-core/systemd/systemd_selinux.inc
++++ b/recipes-core/systemd/systemd_selinux.inc
+@@ -1,5 +1,11 @@
+ inherit enable-selinux enable-audit
  
-+  OP-TEE
-+
-+	PX30, RK3399 and RK3588 are all supported by upstream OP-TEE OS. By
-+	default, OP-TEE OS is not baked into U-Boot.
-+
-+	You can bake OP-TEE OS in U-Boot by setting:
-+
-+		RK_UBOOT_TEE = "1"
-+
-+	in a configuration file.
-+
-+	Your U-Boot defconfig must enable CONFIG_OPTEE_LIB otherwise random
-+	crashes in Linux will occur. It is force-enabled since v2026.01 so you
-+	may omit this if running that or a more recent version.
-+
-+	Note that this has only been tested with upstream OP-TEE OS and upstream
-+	TF-A. Please consider disabling CONFIG_SPL_ATF_NO_PLATFORM_PARAM in your
-+	U-Boot's defconfig such that both upstream TF-A and OP-TEE OS are passed
-+	the FDT (useful for debugging since it specifies the serial console).
-+
-+	Note that this is only adding OP-TEE OS to the U-Boot proper
-+	(u-boot.itb) binary. It is *NOT* secure by default as it'll use
-+	development keys contained in-tree, see
-+	https://optee.readthedocs.io/en/latest/architecture/porting_guidelines.html#trusted-application-private-public-keypair.
-+	How to properly specify the private/public key pair is left to the user
-+	for now.
-+
-+	By default, early console is disabled because a misconfiguration of the
-+	serial console will silently crash your device. You may enable it again
-+	by setting:
-+
-+		OPTEE_OS_EARLY_CONSOLE = "y"
-+
-+	This only controls early console, before OP-TEE OS finds the FDT and
-+	parse it to know which UART controller to use.
-+	If you are not using the default serial controller (UART2), you must
-+	change CFG_EARLY_CONSOLE_BASE to the appropriate UART controller base
-+	address. You may have to set CFG_EARLY_CONSOLE_SIZE if it isn't set by
-+	default.
-+	CFG_EARLY_CONSOLE_* variables must be passed directly via EXTRA_OEMAKE
-+	BitBake variable.
-+
- U-Boot Environment:
- ------------------
- 	In order to configure U-Boot to be able to store its environment into the
-diff --git a/conf/machine/include/px30.inc b/conf/machine/include/px30.inc
-index 1997f6f..689a745 100644
---- a/conf/machine/include/px30.inc
-+++ b/conf/machine/include/px30.inc
-@@ -14,6 +14,13 @@ KBUILD_DEFCONFIG ?= "defconfig"
- 
- TFA_PLATFORM = "px30"
- TFA_BUILD_TARGET = "bl31"
-+# Allow TF-A to load OP-TEE OS
-+# If no OP-TEE OS, it'll simply print
-+#  ERROR:   Error initializing runtime service opteed_fast
-+# and the boot process will continue.
-+TFA_SPD ?= "opteed"
-+
-+OPTEEMACHINE = "rockchip-px30"
- 
- UBOOT_SUFFIX ?= "itb"
- UBOOT_ENTRYPOINT ?= "0x06000000"
-diff --git a/conf/machine/include/rk3399.inc b/conf/machine/include/rk3399.inc
-index 166db7b..93594bc 100644
---- a/conf/machine/include/rk3399.inc
-+++ b/conf/machine/include/rk3399.inc
-@@ -14,6 +14,13 @@ KBUILD_DEFCONFIG ?= "defconfig"
- 
- TFA_PLATFORM = "rk3399"
- TFA_BUILD_TARGET = "bl31"
-+# Allow TF-A to load OP-TEE OS
-+# If no OP-TEE OS, it'll simply print
-+#  ERROR:   Error initializing runtime service opteed_fast
-+# and the boot process will continue.
-+TFA_SPD ?= "opteed"
-+
-+OPTEEMACHINE = "rockchip-rk3399"
- 
- UBOOT_SUFFIX ?= "itb"
- UBOOT_ENTRYPOINT ?= "0x06000000"
-diff --git a/conf/machine/include/rk3588s.inc b/conf/machine/include/rk3588s.inc
-index 18c2fb2..ab16e1a 100644
---- a/conf/machine/include/rk3588s.inc
-+++ b/conf/machine/include/rk3588s.inc
-@@ -18,5 +18,12 @@ UBOOT_ENTRYPOINT ?= "0x06000000"
- 
- TFA_PLATFORM = "rk3588"
- TFA_BUILD_TARGET = "bl31"
-+# Allow TF-A to load OP-TEE OS
-+# If no OP-TEE OS, it'll simply print
-+#  ERROR:   Error initializing runtime service opteed_fast
-+# and the boot process will continue.
-+TFA_SPD ?= "opteed"
-+
-+OPTEEMACHINE = "rockchip-rk3588"
- 
- ENABLE_STATELESS_VPU_GST ?= "1"
-diff --git a/recipes-bsp/u-boot/u-boot-rockchip.inc b/recipes-bsp/u-boot/u-boot-rockchip.inc
-index 2b5bbd7..19f7c8a 100644
---- a/recipes-bsp/u-boot/u-boot-rockchip.inc
-+++ b/recipes-bsp/u-boot/u-boot-rockchip.inc
-@@ -7,6 +7,12 @@ TFA_DEPENDS ??= ""
- TFA_DEPENDS:rockchip:aarch64 = " trusted-firmware-a:do_deploy"
- do_compile[depends] .= "${TFA_DEPENDS}"
- 
-+EXTRA_OEMAKE:append:rockchip = "${@' TEE=${DEPLOY_DIR_IMAGE}/optee/tee.bin' if bb.utils.to_boolean(d.getVar('RK_UBOOT_TEE'), False) else ''}"
-+
-+TEE_DEPENDS ??= ""
-+TEE_DEPENDS:rockchip = "${@' optee-os:do_deploy' if bb.utils.to_boolean(d.getVar('RK_UBOOT_TEE'), False) else ''}"
-+do_compile[depends] .= "${TEE_DEPENDS}"
-+
- # No open-source TPL (yet)
- ROCKCHIP_TPL:closed-tpl = "${DEPLOY_DIR_IMAGE}/ddr-${SOC_FAMILY}.bin"
- # SOC_FAMILY for RK3588S is rk3588s but it should use the binaries from rk3588
-diff --git a/recipes-security/optee/optee-os-tadevkit_%.bbappend b/recipes-security/optee/optee-os-tadevkit_%.bbappend
-new file mode 100644
-index 0000000..e4fc87b
---- /dev/null
-+++ b/recipes-security/optee/optee-os-tadevkit_%.bbappend
-@@ -0,0 +1,3 @@
-+COMPATIBLE_MACHINE:px30 = "px30"
-+COMPATIBLE_MACHINE:rk3399 = "rk3399"
-+COMPATIBLE_MACHINE:rk3588s = "rk3588s"
-diff --git a/recipes-security/optee/optee-os_%.bbappend b/recipes-security/optee/optee-os_%.bbappend
-new file mode 100644
-index 0000000..2a5ec8b
---- /dev/null
-+++ b/recipes-security/optee/optee-os_%.bbappend
-@@ -0,0 +1,19 @@
-+# Increase size for FDT in OP-TEE OS to the one in TF-A since v2.13 to avoid
-+# panics on 64+KiB FDT passed by U-Boot to TF-A to OP-TEE OS.
-+# Can be removed once https://github.com/OP-TEE/optee_os/pull/7687 is merged.
-+EXTRA_OEMAKE:append:rockchip:aarch64 = " CFG_DTB_MAX_SIZE=0x60000"
-+
-+# Disable early console by default to avoid OP-TEE OS panicking on boards with
-+# their UART console different from OP-TEE OS default (UART2 for rk322x, rk3399
-+# and rk3588(s)).
-+# In-tree default changes if https://github.com/OP-TEE/optee_os/pull/7688 merged
-+OPTEE_OS_EARLY_CONSOLE ?= "n"
-+EXTRA_OEMAKE:append:rockchip = " CFG_EARLY_CONSOLE=${OPTEE_OS_EARLY_CONSOLE}"
-+
-+# Enable hardware acceleration using Arm Cryptography Extensions on PX30.
-+# Can be removed once https://github.com/OP-TEE/optee_os/pull/7689 is merged.
-+EXTRA_OEMAKE:append:px30 = " CFG_CRYPTO_WITH_CE=y"
-+
-+COMPATIBLE_MACHINE:px30 = "px30"
-+COMPATIBLE_MACHINE:rk3399 = "rk3399"
-+COMPATIBLE_MACHINE:rk3588s = "rk3588s"
-diff --git a/recipes-security/optee/optee-test_%.bbappend b/recipes-security/optee/optee-test_%.bbappend
-new file mode 100644
-index 0000000..e4fc87b
---- /dev/null
-+++ b/recipes-security/optee/optee-test_%.bbappend
-@@ -0,0 +1,3 @@
-+COMPATIBLE_MACHINE:px30 = "px30"
-+COMPATIBLE_MACHINE:rk3399 = "rk3399"
-+COMPATIBLE_MACHINE:rk3588s = "rk3588s"
++# The systemd-backlight@.service which is called after selinux-init.service
++# will create /var/lib/systemd/backlight with incorrect security labels,
++# this causes the systemd-backlight service to fail to start and to stop.
++#
++# Creating /var/lib/systemd/backlight in advance to make sure it could
++# always be relabelled by selinux-init while first booting.
+ do_install:append() {
+ 	if ${@bb.utils.contains('PACKAGECONFIG', 'backlight', 'true', 'false', d)}; then
+ 		install -d ${D}${localstatedir}/lib/systemd/backlight
 
+base-commit: 1db6bf1b573b9c908752602c1e2b6a30368da3b7
 -- 
-2.52.0
+2.47.3
 
 
