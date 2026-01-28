@@ -1,452 +1,232 @@
-Return-Path: <quentin.schulz@cherry.de>
+Return-Path: <yi.zhao@eng.windriver.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C048CD3569F
-	for <webhook@archiver.kernel.org>; Wed, 28 Jan 2026 10:35:31 +0000 (UTC)
-Received: from AM0PR02CU008.outbound.protection.outlook.com (AM0PR02CU008.outbound.protection.outlook.com [52.101.72.23])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.10232.1769596524054039750
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C1D7D25B49
+	for <webhook@archiver.kernel.org>; Wed, 28 Jan 2026 12:01:02 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.11640.1769601652312491728
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 28 Jan 2026 02:35:24 -0800
+ Wed, 28 Jan 2026 04:00:53 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@cherry.de header.s=selector1 header.b=T/saEhX9;
- spf=pass (domain: cherry.de, ip: 52.101.72.23, mailfrom: quentin.schulz@cherry.de)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@windriver.com header.s=PPS06212021 header.b=gT0BXGAM;
+ spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.178.238, mailfrom: prvs=6488f9fe8e=yi.zhao@windriver.com)
+Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60SB2cfh763255
+	for <yocto-patches@lists.yoctoproject.org>; Wed, 28 Jan 2026 12:00:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
+	 h=content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=PPS06212021;
+	 bh=QnynKvQTLvbNg5W7p+LJrLpu6oRYnxlHt5+eFrLUC3E=; b=gT0BXGAMIcY5
+	gUOjVqbmO5cUWe3eWtgcPNSyBU1SmNW8N0QhAmTGZHOslywUZZvlmFm/D3i96oFf
+	/KiFK125O09ProO0xbGZZ4zc3wEMIXRfjKqvn9XL7hrUYGuStmdbQ97PdwGw+jln
+	tZEtblqh4K9ca3IsL0Kv6wilftEqY882hhdjxx4BSjAvEtGyariQTI4r2WXWMJWB
+	yjFUEmTfLqfpcyYeCrvX2NTf+gVe7mWj3ET2ts5e5EwAgvda94f8ON0USGdrF+iF
+	m3CtRG/LicZBTm3DJh2TlRFg/XLnk6Jy1khFIVHA04na961K6wv+03JiUUf6VVVZ
+	fCfJ1Lxjlw==
+Received: from mw6pr02cu001.outbound.protection.outlook.com (mail-westus2azon11012013.outbound.protection.outlook.com [52.101.48.13])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4bvn28cyhu-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT)
+	for <yocto-patches@lists.yoctoproject.org>; Wed, 28 Jan 2026 12:00:50 +0000 (GMT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YBYP85FheS5fdVAhgoaLK0Ceyhm2MO3RGXKWxfDX14P4walfMkFadR9LfD3KdBgKcc+tQaMgIG1ll9o1BOdmiTsmF2KQ4+IpkFQd1N9DtHKQRcmS4yuXIN4ht7v2Zo6fxNahShZO7chSK9kRg9ErjGsyTYCoWF9+wujpYm24WX57GKdlqVk0aNxkghX3oXqpvkw205HeDzFH1ZbhsK6ObBllr3UnE6Xd631XYGcWkDVyDpOKIYn/eut/kjy+CJJ8O7S/0Vkpn396aCboor+7IQ4knIwqJs7i1829FE7VwsmFt7jyEKhAQtqSWqBqzW+SiTrv4a6RXXfwRQEQxTpiKA==
+ b=G90KsTlPfSqU5W8i9MF6B72CGwLe8pTfdd1VUTHiQXrJeluqukNwNfDj1LZCCdYijjMzFPXwA9eRo8lnwuEKcoqo2fw+QdaMzdED+M6DOcQOvhvikeb51n8D8CTWScSOvm3n7uCb2rBqaV91Lf4cc+II157ubaElYOe0UDkLsnboGIa84HSFeU2Eil8JYPq39ATDWrXEi7Wk3lH1QR4xNJAxmkZSO7Ygeb0apuI7Hw1eyvEGIFryG3RVtt7/tJgGUjlK05y5/AmPDOUk7Q7WaB999FkZgOi3wMai8//HHLQtYHLUd5CqDHoov11j6hecjqBIRvmjh0Two8G1O7ARkA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lKa37tg9XWAugdsUQUzRlWK8zQ6X9YLg9+MO5SAMeFI=;
- b=NePQxXhQeJ5GguyAFHLYz9LY1vJ6DIrkAV6MfAfoa6zs4Wei/Xa7F4Jl/8mmGNRkjKa4jIZgrNmTNVwfgKCnTxgExd32UvNM1OYW7i4vx0Yl22HOsQqe9m14h0JVuBeHx9b6dLblIFwo5vziqtswEcTNXOhxZwD1ourT5RHyewCXBcCDJjlY9oBiLq/aM1zP11YBHEwV6lJCexD1hKBz6P1LCHaAh1OpXGbxAKb2+7UoOqPcgKL3O1hBHgftnicGU0woKwks4g/YZth0HfKnS/hVheVBQYRMcKRI1SZZWNv3jWfo9LEThE7PCo+eiBaujCsjTz2A4ovKLMS3DOhIZA==
+ bh=QnynKvQTLvbNg5W7p+LJrLpu6oRYnxlHt5+eFrLUC3E=;
+ b=VyJD7pu4ZOCpeHA6PHhZOPD9V4+ePa61hQoTY9uK93XsiDLi6VU0OYN5vKGclUIg9RrOAei5I1PnkXhxNWJrPys/sU9IucN5+nb9lvhI0Qg7BXqHSMoe0o8kSUzWc/UWdRZsMyliVCdS7N4h4pkAeEsgEp7KldA3lRMQg4hdWTsUVB3IPnQsXff4RXLniiOeBPrORzaLXHAH80ESrvqOD0v7MeOu7fDEFnydG3fns8K1PlntML3qtP38Y8LryyywqmYUKWDDNy5ExdVor/+UCOiy7BdaCI8L2qFjh76MphNX5vy8BO1aJToc7kqiNte8x25U2j2aeCN6O7WDetyRbw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lKa37tg9XWAugdsUQUzRlWK8zQ6X9YLg9+MO5SAMeFI=;
- b=T/saEhX9tetDfl+Zqh1+NpQWqqJgs4HT1Minmh6TtGb73TvaCTpo3pBE404nltSXn0LW1Y1+G+tpA2sKwjM2Uag5vR0mu7D9bLExbYd50oVoZS0d8mxrFtpe3/y29Ev5I/0auySxTj7pL/7UDzbO9PYqnzo3sWIjgm8aSPP/RRE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from GVXPR04MB12038.eurprd04.prod.outlook.com (2603:10a6:150:2be::5)
- by AS8PR04MB7733.eurprd04.prod.outlook.com (2603:10a6:20b:288::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9542.14; Wed, 28 Jan
- 2026 10:35:19 +0000
-Received: from GVXPR04MB12038.eurprd04.prod.outlook.com
- ([fe80::6c04:8947:f2f0:5e78]) by GVXPR04MB12038.eurprd04.prod.outlook.com
- ([fe80::6c04:8947:f2f0:5e78%6]) with mapi id 15.20.9564.006; Wed, 28 Jan 2026
- 10:35:19 +0000
-Message-ID: <2bf93914-dd8a-4e3c-9c97-74acb1c975ab@cherry.de>
-Date: Wed, 28 Jan 2026 11:35:17 +0100
+ smtp.mailfrom=windriver.com; dmarc=pass action=none
+ header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
+Received: from DS0PR11MB6399.namprd11.prod.outlook.com (2603:10b6:8:c8::5) by
+ CY8PR11MB7687.namprd11.prod.outlook.com (2603:10b6:930:74::14) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9542.15; Wed, 28 Jan 2026 12:00:47 +0000
+Received: from DS0PR11MB6399.namprd11.prod.outlook.com
+ ([fe80::3432:2eb3:d0a5:7831]) by DS0PR11MB6399.namprd11.prod.outlook.com
+ ([fe80::3432:2eb3:d0a5:7831%6]) with mapi id 15.20.9542.010; Wed, 28 Jan 2026
+ 12:00:47 +0000
+Message-ID: <0b4d6f99-36c7-4224-9020-a1e6ad85d0d8@windriver.com>
+Date: Wed, 28 Jan 2026 20:00:41 +0800
 User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [meta-rockchip][PATCH] luckfox-lyra-plus: add
+Subject: Re: [yocto-patches] [meta-selinux][PATCH] systemd: Explain background
+ of creating /var/lib/systemd/backlight
 To: yocto-patches@lists.yoctoproject.org
-Cc: mbober1@gmail.com
-References: <20260127205141.26089-1-mbober1@gmail.com>
+References: <20260126153729.2758442-2-u.kleine-koenig@baylibre.com>
 Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <20260127205141.26089-1-mbober1@gmail.com>
+From: Yi Zhao <yi.zhao@windriver.com>
+In-Reply-To: <20260126153729.2758442-2-u.kleine-koenig@baylibre.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR3P281CA0050.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:4a::19) To GVXPR04MB12038.eurprd04.prod.outlook.com
- (2603:10a6:150:2be::5)
+X-ClientProxiedBy: SGBP274CA0006.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b0::18)
+ To DS0PR11MB6399.namprd11.prod.outlook.com (2603:10b6:8:c8::5)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GVXPR04MB12038:EE_|AS8PR04MB7733:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0d5da490-134a-48a3-58db-08de5e58ef04
+X-MS-TrafficTypeDiagnostic: DS0PR11MB6399:EE_|CY8PR11MB7687:EE_
+X-MS-Office365-Filtering-Correlation-Id: 93daffd3-7791-4476-3807-08de5e64df69
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|10070799003|366016|1800799024;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
 X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?OEFGR3dUUlhHK0R0NjVlamo2eW9xK0xrZjBmWSsySS81dkxCNXRUYkZ6T0Za?=
- =?utf-8?B?Q2lvSGFqMmxOQ0pYaTFoeTY3WUdVb1cwZnBtejFFNVJobVBnYk1yTmZyRkRM?=
- =?utf-8?B?dkdGdFdhM1dNa29QNEZONTk5c1p6eDN4dy93WXNPT2RPRmN4d1MyZ01uUmxS?=
- =?utf-8?B?aWxGaE9PVkNFKzFIN01DdFhZbHppNC9pMUlXQ2xweGQyTmt1MGNNaXFRa0Fo?=
- =?utf-8?B?Q00wQlRTQ1VmUldnVTRJeTZnMnE5RzhSWW13RUdKc2xvdk5oRzdNNWpJTmhQ?=
- =?utf-8?B?ZHVXN0lsazROczlBMC92UURRVWd0R1l6M0FBZWFGS1ZjM2lhVFkvdUFTdXFj?=
- =?utf-8?B?LzR0U3A5TVlLUzRsYnh5R2lTOHdYOTdsc1NKM29nTVRuSnFOaWFva05FWERp?=
- =?utf-8?B?ZitXTWFCN1RKNWdCdnltVDlla0pabTFVc0d3TmJ0VU04TGdldGxVd2tjNDB2?=
- =?utf-8?B?ZE42MlZxSVFoZ0FyZUVFY3FYNERtZkUxZTYrbnlMV2xqLytCRk5lTnNJU1l5?=
- =?utf-8?B?YkJUUEtxVFgwbEl2bnJuNGdaSzhua1ovUFk4bzNRcjRBa3gwcEZrVVFFaW4z?=
- =?utf-8?B?OGZZZVVPQzlrM2MzSXYyMzIwV3JveEd3aUxxRTNUY2Ywbm5FQTUrU3ZSWkds?=
- =?utf-8?B?SUo5SktYT0RhOFEwbjdDUWRDcGlJc01YK1hrQy9HeExCZGhQZlc3SjYyZWxJ?=
- =?utf-8?B?VGE1R0hWanNDNVRlNjVLQm03NzZ0SjJSMWU5UTA4YnoySmNXN1o4L1lyajV2?=
- =?utf-8?B?NmRlN1NLaHNCRFVoc1FWbXZlVng2VW1ibTdIUHRZcXVDOGQ1aEN2QkdmLzBQ?=
- =?utf-8?B?RFBrcU9sTFpqZmF3MG1GZlJuSFRqUmNZNytic1h2bzlveXNDM00zME92dW1x?=
- =?utf-8?B?MTcraUVGdkNlbWxZdXlKRmJnQVRURjN3d0lRczdEOFpDSis3WTd6ajF1dTFr?=
- =?utf-8?B?YWlhb1ErRG9yMlEwSVhSTG1KMitrSkcxVG1OdUJxc0VudndOdWFOelhFWmZk?=
- =?utf-8?B?RHFEZDliL0NOK29JNmpKcVFFTVQ0WkYwWnlSTi9qZ0dvVUJhVHFnOWMyWFRJ?=
- =?utf-8?B?SUtqRHpVSVlLS2FwV0syTDd3cTQ5WmxUQmxIZ2RneG5UY0xPVklJUTF4M0gr?=
- =?utf-8?B?UDBrRDRuQ1JYOTE4MjZPM0plejVUY2VaYnU2NW1hbTZhRTRtT05idVVjdm0x?=
- =?utf-8?B?SU14am5JVVFNTSt4d2pQeFZ5K0hQYUZsNkpOUHhKMkl0bDhadWVONFUwcE5I?=
- =?utf-8?B?TVdITkk1ZitGdC81UjMwR1g0ajJIWUhvR0JHbUVsTUQwUTljcW5HYzNnc3Qz?=
- =?utf-8?B?R0g4S2ZXTkF5eTFxM2J6dlkyemxJQ3BMUDNQcFFsYXR0d3JoanVpQVFLNjNn?=
- =?utf-8?B?MWdEN2czbjF0VEhFRXQ1aDFmZ3pqVnI4V2lWR3RIdFEwMThDU3AwMzlxNXY4?=
- =?utf-8?B?V05ZcWl0WFRGaUlycWZsTDZ6SVZJUTJrbFZPN0RYY1RzdDg2dXZkdHZERnBS?=
- =?utf-8?B?WE9EckZiczc1YStKcE9GZ0c5NjhnZEFNdTlaWmEyODB6WUkxb2FmRDZDaU4r?=
- =?utf-8?B?Ym5zbjNwajNXdHBTRnBtVGdZQlJKaTUxanlreHpDSSsrdWpZNkJYbE53VUtt?=
- =?utf-8?B?ZU9SYUc4emh3dFcxbDYybzdHL2MvaHNObXBZY0ZEbTJVOGRFbHB6RWlMWFRR?=
- =?utf-8?B?WFRMZnRJZEc4cGd3VG43ZXpTamJWbStQSEUwazZsRllScENNS2VTQk9yNzQv?=
- =?utf-8?B?SXlaVnh5WW5EenU2SmFsVElBaVlJTTdyZktKOU4vUlN5ZGV0WmxmallFYTRN?=
- =?utf-8?B?N1hNV2VBMzZURG9DRU04RjYrSXVLTjZGdk9QajFvMGl4U2dMOWpmNzNMczZa?=
- =?utf-8?B?c0t1OXB5c3BESVh0YWNmNWxnTEI2di9hYmhDUkxMcEE0bzBkZjJTdkhNWkZV?=
- =?utf-8?B?MGprckFYbFhSeDZ4bVRqeENKK3BrNGppRHpTL2JPQ0FPMVI0cHV0T2NQeVdF?=
- =?utf-8?B?RFF6RnpjaFpITmc2UithaXhBU0hzSmFVZmpMSk5FWmptb05TaWMvYWJ1RFls?=
- =?utf-8?Q?CTYoNQ?=
+	=?utf-8?B?Z0dBa0V4RDhIQkx0bHdGSTBNcmo0NDhoZHN3MUVKbFZTS01kRWJISVFSbWxk?=
+ =?utf-8?B?bmxGTWNyQXlwUE5oY04zaEtBODdFNldmT1IxL1VURWRtYWJLdDd5V1psZnh0?=
+ =?utf-8?B?ZjMwaEtvcnhrSGtobVA2RnVYZXRaM2NZdThiOEJhT0N6SmFSdEg5dTRZejl4?=
+ =?utf-8?B?azBlY2NPZk1mWjlRVFU1d3FjYktlUEt2OUpmNWhKV2pBU1RzdlBJZi9mZW5o?=
+ =?utf-8?B?STQyNHhHK0NaRVhHazYvMUcvUGV6TlBLTXFsUyt2SVdYY2xuY3haMWpla1JY?=
+ =?utf-8?B?dWdxb3ZWaURIZ3c3T3YzN3ZGV2pIcXpZYVJMVTBDczJWajFIRzJ4K0hYQlVW?=
+ =?utf-8?B?aDVzWXNJeDZmQ3ZlY2xtR1QzQ2RqMzlScTlUalhzUW5LSFdROU93R1NwM2Y4?=
+ =?utf-8?B?dFhmM1pzSlRKUEQ3VS8rVFNoS3c0ZFJVSmJrTTA1MFQ3VTRXbkIwdlROcDVi?=
+ =?utf-8?B?b0hOc2xrOFZDQTlkSTRRN3FFN3ZqQW13c1pnWldoQ1FDTFl3SHRkTTMxMkdN?=
+ =?utf-8?B?VGZqR1RCa1FFN01Pb0lFMjkySjZ5TXYyZ0JKSFFPQnZIMjhMdXdqTjZZTENX?=
+ =?utf-8?B?Sm9ibzRacVdOVlZyRng3OVd0TmFRRXpoWkR5eHhnd1c1RXBxN0F5STZsc2Rk?=
+ =?utf-8?B?Wk1tN1haNDBXVzlIb0hRNHR2UnQ1U1dhT2hLMUI5dVlKQXlNUS9VZ01tYXZH?=
+ =?utf-8?B?OGhXdEZHb3grMzdTSktMWEF3UVV6dTN0dUlxaGsxNjErd1NSQkVIOWh1TGla?=
+ =?utf-8?B?YmRIR0Nna1lETFpTRW5QK3ByS054ampFOWwvZDQ2aktDUEdpWGZScklJL1pi?=
+ =?utf-8?B?VEtaMGJySldYbHczeFlaaGsyaC9tQm1hcmprTGR5OXQrYkw2b3pmWG5CZ0c1?=
+ =?utf-8?B?alQ3Y2tQNTBSOGJodVRsMWFkYVMvbTFrRjlmUUcrNkNJL3VFQW1CSzk0Q2ln?=
+ =?utf-8?B?dWNGa0hDT3FOZnpEMDdsMDVyN1p3T21wWm5yeUFTTzljM25mNUNJZ1phckxx?=
+ =?utf-8?B?elo2cmxlZ1lzbGIwOVVnT3FrNGhrR2lsSzdnNDZhcFBCek5FN0N4dlhxRCtO?=
+ =?utf-8?B?ZXVuQ0w5YjNtVEJackQ5WU1TZ1Z4Rlc1aG83N0tia29kRUdGUm1GNzZlN0pJ?=
+ =?utf-8?B?VUZCQ0NXcEtwNEYza2ZsenVGbFJ0VXBNN0VmV3ZaakFlMmUxT2liSDhFYXZQ?=
+ =?utf-8?B?RUY5QktFblFTWktPRjkzeGRZTWlVYml1dWtkYlFteGluZVVCYUhxaUI5YkZK?=
+ =?utf-8?B?T2FOdWozL3NpOGY3SmlKY3cxMjlBcVFIN3RjMzJkeUZvNUVpVm9mNksrc1Z4?=
+ =?utf-8?B?eWFsc0E2cUYvMVZBMkVLaFh4Mm1iMityWHFzQkN4cjZkZXVSQmU0SkMxSHMz?=
+ =?utf-8?B?R2tpK2tON1hvWjdGY01FdGZWRGJsblBDMVlMdVJiYXBzeXYwLy81TTVidjh4?=
+ =?utf-8?B?V0tTVFgyNWlwUVhYY2dMRzRyZDNJbzBRTUh1T1JPQlBqMDB4QUxKYXBwaElk?=
+ =?utf-8?B?VVBqM05DWU1QWmVtbjF2WXZaMXl1V2ZuSlQwbG1GQjFwcGU2TEFnRU51Y3pG?=
+ =?utf-8?B?U25ST0M3cGY1eEQ5MFNGcjRnT0VFTDVCT0dwa2RrNWtZN042cFFPMEdUT0lj?=
+ =?utf-8?B?cWdIakhJVjFUaE9rN3dVeEM2bHNFelIrcE5zZDJkMkJDV01vZ2gxSXRhS1I1?=
+ =?utf-8?B?RUtValZGVms4Zm8zN1hDNDdVWm11bHZwVUdrbVNic3Rwd01jWmxxOHk5ZzN5?=
+ =?utf-8?B?cTRaN2o1L0tJVU02cmp0enpNakxKMGpyTi9nOFR3MGZqTWd3ZDdaaUtBSkR5?=
+ =?utf-8?B?WUxvaGdvU0pDMSs4UjBlVUc2YXgwOGE2eTM1UTQ2bjVCQXFKRUpoNEgwQWN0?=
+ =?utf-8?B?QytLaFBjaDJLZ0lVYXpwZXB0eVJyVU45VVV0WU5EQkY5d1hiSHMyVWVLb3Jy?=
+ =?utf-8?B?N0ZHcUt0Y0tqQmIwUDBTVlExaUFVN1l6RGhTU3Y0b3RXT1kxZ2RjYllPKzJx?=
+ =?utf-8?B?bjd0MnFxSVgxZHB5dHkyOWEzV1hEeWREaENRK0FibzdJaEdrR2dUc2MwZ2g5?=
+ =?utf-8?B?MVpxcUNpQ2x1N0VnaWRJUHRzcDJjaU5hWklLZjE5eUQyUnBaeTJFaW5GMFND?=
+ =?utf-8?Q?pIF0=3D?=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GVXPR04MB12038.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(10070799003)(366016)(1800799024);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB6399.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?V2NhaFQwNXU3NHN5ODJscHNXbHNMcEVOQmxENVg4S3cwMU0vM2dYNHhPeFR4?=
- =?utf-8?B?dnJ1cHFxNTNqSnBVRk9rdkhkN3lSREl0K2NHNjcvUzlodUYxWW5CTU9hN1k4?=
- =?utf-8?B?Z0xxeHNIWWFOcGZ0ekh5TmR3VjhWTmhYWEVGREZhbHY4aGNvb3hWQjVJMXZm?=
- =?utf-8?B?ZnNGeU9VYmd5LzBmSHBFMVJPdVJ6TDlXdGlDSzROZmNTcVVYTnZOdjU0UDZY?=
- =?utf-8?B?Z2RlQk43WnBsV1JWK0hvT3Q5bGNlYXJIeVptSHRmNnJTbXdGVldpc2Y1elVm?=
- =?utf-8?B?QUJHdzhVZzlDc09vbW9POTJMdkhOeWsybFI5djV4QnBhaUp1Tm1RREpDZUhD?=
- =?utf-8?B?YkxiWkU3TVVmOE1kQTRxODJlKzNQVG1WU3YxQStNaTl5QitldGpNWHl6RE4v?=
- =?utf-8?B?OCt0QzcyL0pKZGVvOWpkMUNXQ0FhaER2WW1QeU9qdnZQbmdqT0dsLzIyZHdx?=
- =?utf-8?B?ajhFWi9WdituQW5RcGFZaEdIaEF1OStjbjl4ajBXMWRWcnQveVVoS2hhdTZy?=
- =?utf-8?B?SW53aEtSMVAydnNBZDBpc04yLzdJelA1MzdrQXVoY3JGQjBpNi9rSjBqMUpj?=
- =?utf-8?B?cnRTTkh3OG9hS29WUzhYdE5zNkgzcnBMK2VXRW9iM0NOMXAvM0FJTnhvTW81?=
- =?utf-8?B?c2RxZkh5MVNOSkVwRXUvZS9scW02d1pLeldmdTdLNnd6OTZlQlJvYU9USytE?=
- =?utf-8?B?RGw4UStGc1YrQUIvbVZpYjNVZWg2Nm9ETm5vQVBPVjU5a2trMEZ2ZCtBNmZJ?=
- =?utf-8?B?ZkdBSXF2VEJpcVVFYnZEWUZiT0V4LzRhVnZZTjUrSEtkWTdlUURqeUtzbUdW?=
- =?utf-8?B?WThkWXpMckJlVEJNZUhZbk1EVXZsYWxCcDBlTHRzdFVWejFmUXRGQXB1QmRY?=
- =?utf-8?B?bThNVlJLMVZQaVdhb2NTR3N4TDFPL24xTnp4N1NaWGViTGN3UFlSSytHeXBG?=
- =?utf-8?B?aEV6akpmamRxeVpETFgxSXhaZzUyWlloeUpPQ2oydWRtb3M2TEwwWEljbWxE?=
- =?utf-8?B?emlhZHM5MEJBSi82VjYxQjRYOGNwTENDMFBLTkxUWnhzZTVOQXFTWjBpdFkr?=
- =?utf-8?B?SWdka0ZCdDh5Tk5aNFp3UVRyalF0RXozY2pYOUxuZnE0QzczbXdDY1czVHJm?=
- =?utf-8?B?bCtMempNYTBYUysyaXlyZTF6RlgzNUQxc1k1Q05pbnJSS0g5VTB2eWhxMlFa?=
- =?utf-8?B?Y0ZCMnA2Ry9nYjMyaWtEWVJCU3M2M1VYMWJCVUJMdytqVzN4U3lDRHo0UUlE?=
- =?utf-8?B?eElPRmhxcTVEdHo3QWR4VUtEakJWcENTc2RSSzkxOXFqUlF6SzJjODNLZUxL?=
- =?utf-8?B?cUtrVEdNQStVNElpTlIxeERsclgwMkJQeTFpQVlPcy9CN0c1RG5ETThnSnJI?=
- =?utf-8?B?RXB4Z3ZOaHc2S3lya3E5djM4TVYvOWFTTkFXbXVmWER1dnR2K0hWVXVkREpH?=
- =?utf-8?B?SHQ1SnRzUVJONVZxRVZZYlkzRTN3MWhNT0MrN3dUK0hySmgyTWVWT1FyTi9z?=
- =?utf-8?B?TmJaeFhLNnN4NTZpdjA2bU9FYXQvVTNGTzJTQ0lqYXRZV1R0M1JkTVNWV1Y0?=
- =?utf-8?B?c0svU1FrYlhRODBOQTR5N0NrdDFNOVNMTUVBcTNUMnlQTTkxWEpPVERlS0hj?=
- =?utf-8?B?bWlZKzFreWNUNzk4ejZwNGRMMW51MzMzeFczeEVvRHlPNUI0TjEzVnF1K0tD?=
- =?utf-8?B?WVEycFdPZDYzOTZWM0VsQjdiU2pJa3laTFBWc0dHVFlnL1p0RzlBM2R4OEN0?=
- =?utf-8?B?Z09ROGNQY1BtdGxYZkRjbHR1RFBDbk1kTFN3Unp1M1FUV3FrMUN2c294cVRx?=
- =?utf-8?B?Rm5xYnloYjdMZWM3VVNIOVNIT1NWMEhGYmYwdkxvdGlmRVByZWdJSjNsS28r?=
- =?utf-8?B?bkUvaFFqNHZiZkpHTHpLRUpKZXRjVnRGdUVMaW5WbDZlb0NNOEdMZzQ0Ty9m?=
- =?utf-8?B?TXVSNm9HRHpKdW4xOEJOeWZoeVl2cS9SQnVOajBERGdqUDdPZ3hRYXhFUy9l?=
- =?utf-8?B?d1E1ZXdTQXZvd3Zvd0hmdXQyN1R4ZU5MdjM4bU94RjNSQjl0N09CMzhleWRs?=
- =?utf-8?B?QXZqclFvbXh5bTlJV1lHNU03U3pGV1VtVWdSTjBlMzVGWGZqaUFuMnM4TW5w?=
- =?utf-8?B?a1crek9UYklPTm5tZHcrZU0vRWlDWUFpc0JiaWFvYXV6VHZHNDJIN3FycURV?=
- =?utf-8?B?c1lCRjU3dmdCSWJMVm1YMFJUTTMwUi94R3Z6MndMcGhBKzhUdm9jdk1CZjcr?=
- =?utf-8?B?OFoxYkpxSTAxSGhBVHQ2L3FOVDJGQkw2bWVZaFllWkZRNkp5VzBRWVl3eGF6?=
- =?utf-8?B?dnhwQXlIcFRCdmk3dFYvbDB1TDcvOG1udW1OR2hiNGpDZTMzcmlYM05pRldC?=
- =?utf-8?Q?H/RdGO140NNH6fx8zcxf6nhF10xUGMl9DSwXE?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0d5da490-134a-48a3-58db-08de5e58ef04
-X-MS-Exchange-CrossTenant-AuthSource: GVXPR04MB12038.eurprd04.prod.outlook.com
+	=?utf-8?B?K3FZRmtiZi9PcC9WNDByaEc1dXVtZjVxTmFZL2xibEpsOUxwTzVVNUJHNUkz?=
+ =?utf-8?B?eitZbEF5ZWZ4MWR3dDhNQy9GZ1JDdkh5RVUvRC92VnVBVXIzSjk3QlhibjBP?=
+ =?utf-8?B?T2xnQ1RnQk5Gb3lIWStHd2dqMFVaelBqa1I3ekhaSUFzdnJReURnUTJrRjVY?=
+ =?utf-8?B?bE5vMk1oK0FWc09BYjNzaU1sV1RhRGRYSHJ3UFZOOXg4Y3NoU1ArQ013dkZp?=
+ =?utf-8?B?SWJad0Y4V3VjZzF3NUVBNjJ0TDdmR0pmSzJXUitZSFA1VVYxZ0gwemFEV2ha?=
+ =?utf-8?B?UFZmajVZT2twc0RsWEhQY1pjbkk0d20vbnlPRjBSVDhvNVcwN2pSY1d4ZlB6?=
+ =?utf-8?B?Nm9PN2xld1RKRGhFUGtFMlJzdlg1K0YwdWlJci9wL2djVUsyWVV1VFhtNmxK?=
+ =?utf-8?B?N2wwekNkRGd4MkZMQ2wwcElLQzM3cW9QSCtseHFBaUZvTCtURGtZRHVuNVJn?=
+ =?utf-8?B?aXFuOENJK3E3OUloTERpdUE3ZkZRaTFmYTBpWmpWeGlZU0FGY3pucVlEVDMv?=
+ =?utf-8?B?ZUFVWlVodVBRcFJwUXJDKzVqOGI0Q3hlbVV2MElVemRrN01Qdk8xOGYycm1P?=
+ =?utf-8?B?ZUZMWURORHB2MGl6bUIzN1ZhUnF0VnE1TGJKVmRtTEsrRWRPam8rWEdEeUdF?=
+ =?utf-8?B?MGFXQUQ1UkViODZyR3E1VjFvV3pZc0ZmK2I3bG5MMkNpTVNrMmZ5dEhSdTJn?=
+ =?utf-8?B?dWlHcXpjQ1pxREJNbmFmSEFzdWxaSCtLeFhEODFKaU5MWHpCTTZncEp5ME0r?=
+ =?utf-8?B?VlpyZHBRWndiUzFNSU9FUjhGNWRURUlMZFhvVVBrNzlQUWRuaGExVE1FWFhD?=
+ =?utf-8?B?UGkxMGpCK3ZXeCt4NEpFZjVSUkxqVXBrQ01EaHNpNGkvcTBNZWxrbm5aeWJz?=
+ =?utf-8?B?S1V4bmN1amM0T1NwalhmS0ZIaS9tb24zMEdwNlFGbXRpZTAyV21tTGFxOXZi?=
+ =?utf-8?B?bGZIOU1ocE02WW1ONGNzVDJtQUhMQ0NKejhTSU9JU1J0UkpKQnUzRDVxWk9w?=
+ =?utf-8?B?OXBzdzA3bGpOalRNb0h1WTVGWnVHanhBTkZJQldUNVBSVkFEREhKSy8vTVhw?=
+ =?utf-8?B?UCtqc2tBd2tuOVgwSzJISGxBVUVxbDJwaVp5RjRISnp2ZUhrcW1lZmdsMHpD?=
+ =?utf-8?B?TTZ3VXlRM2tPaDgwMjhRb0dmYThNaU5LWnNleXk2cEpuS1dkbjcwZTl1TmVZ?=
+ =?utf-8?B?cU03YnNLVnZTU1hYdzFVTFRzeGs5SjBWV0NFMU56bHpCZ0xXNWgwaFNIOEVP?=
+ =?utf-8?B?dDF4QlZSNW9tNjZRUDVJTXR0YVg4Z2sxdXZRYlkrdWhWOUd5QUxTMEVUOHJJ?=
+ =?utf-8?B?MloxSFdsSnBZanBRMWl4Sm5PdFFPQmRxNFltM01tV3UzRE1EUzg4QjNZc21l?=
+ =?utf-8?B?NTAwZlI1NlRLdVN4WURKdzlEcWZYb1FhbmZ1RDN2c2h2OGtOV3R6WUhUQlBY?=
+ =?utf-8?B?ZnRxNWdJVkJmT1BNcitISHhGa3dHWDMraVdBYlJ1NnRtcDN1REVMT2lHTVUy?=
+ =?utf-8?B?SHJvQzFqTDlBT09IUS9naExjQ1Rqa0ZGaHV6SnFYaURpRTZWMjNYWWcvVUx4?=
+ =?utf-8?B?WkhhYzZyK3Mwb3J3alNDWW43YnlaTlphVnpIaGloaU90aDdlYzJvbUQ1M2pJ?=
+ =?utf-8?B?OWpDdjA1VmpsVkFmQ3JCTVdvWEh0b1pPWDFXTWI3bUJaNjRUd1VnOWV2VlBP?=
+ =?utf-8?B?cW5SS0Vwb1VJUDZNSDgrbFZPMlcrcE55SkdSVG5GQ28wRDB4QUhPMnd1RGpo?=
+ =?utf-8?B?dnQwMWZDUi95bkZpOTgxNlJtNjdrZnJHUUxlRXJGUkcwL3U4enR3ZkdzVUtE?=
+ =?utf-8?B?Sk1SRjJqVkZHWTZyaFloSVJOcVh4YWJ4VXFjSWRHOTVNcjdFMEo5LzlHNzJB?=
+ =?utf-8?B?SG5XU05xOHhDcXVsY1hNWjBTYWYyZ3Y3MWFBMGpkc2l2a1BlYS85ZTh0VnB3?=
+ =?utf-8?B?a3gzbkNFcGNDVXd4OWY2ZWRvc2NDMWxTbG1yRGt5dkk4OU9ocUFaQzdLRHll?=
+ =?utf-8?B?TjFIV3llK3lFTW9GTUVncVB3M2JoTmdLb2ZVM0FZZ1lrL2QxYzB2VDJPMHV6?=
+ =?utf-8?B?R1JWVUdQTWpmak9iUU52ZlQxMDZzMFdXN3Q3NmljWVdGZy9SNnlMdHg4RWgr?=
+ =?utf-8?B?ZXU4UTVWK0ZDWTBNZ2lHWFNFSXFlT2kybVFBMUxEeVdxMFVnUWtWamNxSWJx?=
+ =?utf-8?B?VEpFT005dXl2dWpsUVZIVk1NVHpHV1RLSkVRUnZwVCs5Q011dDM1bEVQQy8r?=
+ =?utf-8?B?RnRVb3NRV2JhYTVkNHY0dFdxK2NHWUlWKzFaUjBUdXVtcUNxakxrTVBqbGI3?=
+ =?utf-8?B?bmx6UzNSOFl5TlBvTC9YTm9kTTFTRThNUTV6STJPWk5NV05VRmNxdz09?=
+X-OriginatorOrg: windriver.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 93daffd3-7791-4476-3807-08de5e64df69
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB6399.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jan 2026 10:35:19.4582
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jan 2026 12:00:47.4270
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
+X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hcDzSuXYLLWbSZENvNyHbuzGm1dr4Zr06mPcdXHC4yus5oHRmBMvfk4Ntz4EyO/Eyobvl4qz9wNCrdnzHOjbSGVSuFPyLd62xySXCtRiSAs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7733
+X-MS-Exchange-CrossTenant-UserPrincipalName: qQ7EiZsZUks4GaHzyoqO+5N/6W+q/U/ZtiGn6L9yDxguaqUtu2bi/UPi/9acwEvHDPVDdqz8fswmp81C4TRLqQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7687
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTI4MDA5OCBTYWx0ZWRfX0yvpVpMpTr0m
+ xhQ/h85dBrSwf9GBdjjMv7e/OD8eC9eirZQANi0dCBhWlZvPPktsBQh4KLcC96dj8GOpHFKCma7
+ 6pgxNKI20mC5GOej4S1TyrllxLNlzBOCybFf+wm2Z22gc9lncN1aks6+oUwbp9yQcUxKOlDigqs
+ D64qiDrfARt31KQWpLWl5yTAiQkqsE/vilc7ggHjb4u0dgudivkor46VQFStP2wM9rMkrJj/pE7
+ i8djw593iUc1l14UYMQxODMVWKSj6lNRML3A51cA8oXB+xMQasrN1/7arOqMUrWKhlHH9ypE+HA
+ /Fbi2QO2B0OprQdc8sutLu44VR48bwt5Pky2oYbs09QyDtU8YVYL1uSq7/Zpxi8k0jpq1Zgkrhj
+ R1yV+oLSd6sq8gY5izNBWrQO++7F6MK8bxWdo+pcroZwI6PiFzSBnm3yVCq5QYwG662wGxcYE/N
+ 5mTXvud+lP6yhq+5txQ==
+X-Authority-Analysis: v=2.4 cv=CpCys34D c=1 sm=1 tr=0 ts=6979fa72 cx=c_pps
+ a=xOYz1KraVtwoi73AohHYLg==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
+ a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=vUbySO9Y5rIA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=iGHA9ds3AAAA:8 a=I1k7tfx8jKYhpOTj2UgA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=nM-MV4yxpKKO9kiQg6Ot:22
+X-Proofpoint-ORIG-GUID: qVPQXRPcSTFTiilBh9t_9WfU6-vdrFOh
+X-Proofpoint-GUID: qVPQXRPcSTFTiilBh9t_9WfU6-vdrFOh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-01-28_02,2026-01-27_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 malwarescore=0 clxscore=1015 priorityscore=1501
+ lowpriorityscore=0 impostorscore=0 phishscore=0 spamscore=0 bulkscore=0
+ adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2601150000
+ definitions=main-2601280098
+Content-Transfer-Encoding: quoted-printable
+X-MIME-Autoconverted: from 8bit to quoted-printable by mx0a-0064b401.pphosted.com id 60SB2cfh763255
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 28 Jan 2026 10:35:31 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3129
+ <yocto-patches@lists.yoctoproject.org>; Wed, 28 Jan 2026 12:01:02 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3130
 
-Hi Marcin,
 
-On 1/27/26 9:51 PM, Marcin Bober via lists.yoctoproject.org wrote:
-> [You don't often get email from mbober1=gmail.com@lists.yoctoproject.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
-> 
-> The Luckfox Lyra Plus is ultra-small, tri-core single board computer
-> based on the Rockchip RK3506G2, with a very compact form factor.
-> 
-> Signed-off-by: Marcin Bober <mbober1@gmail.com>
+On 1/26/26 23:37, "Uwe Kleine-K=C3=B6nig wrote:
+> The reasoning is taken from commit 5d203f903979 ("systemd: create
+> /var/lib/systemd/backlight in advance").
 > ---
->   README                                        |  1 +
->   conf/machine/include/rk3506.inc               | 20 +++++++++++++
->   conf/machine/include/rk3568.inc               |  1 -
->   conf/machine/include/rk3588s.inc              |  1 -
->   conf/machine/luckfox-lyra-plus.conf           | 27 +++++++++++++++++
->   recipes-bsp/rkbin/rockchip-rkbin-ddr_git.bb   |  9 ++++++
->   .../rkbin/rockchip-rkbin-optee-os_git.bb      |  5 ++++
->   recipes-bsp/rkbin/rockchip-rkbin.inc          |  1 +
->   recipes-bsp/u-boot/u-boot-rockchip.inc        |  2 ++
->   recipes-bsp/u-boot/u-boot_%.bbappend          |  4 +++
->   recipes-kernel/linux/linux-armbian_git.bb     | 29 +++++++++++++++++++
->   11 files changed, 98 insertions(+), 2 deletions(-)
->   create mode 100644 conf/machine/include/rk3506.inc
->   create mode 100644 conf/machine/luckfox-lyra-plus.conf
->   create mode 100644 recipes-kernel/linux/linux-armbian_git.bb
-> 
-> diff --git a/README b/README
-> index 6bceba0..3991415 100644
-> --- a/README
-> +++ b/README
-> @@ -23,6 +23,7 @@ Status of supported boards:
->                          tinker-board
->                          tinker-board-s
->                          vyasa-rk3288
-> +                       luckfox-lyra-plus
+>   recipes-core/systemd/systemd_selinux.inc | 6 ++++++
+>   1 file changed, 6 insertions(+)
+>
+> diff --git a/recipes-core/systemd/systemd_selinux.inc b/recipes-core/sy=
+stemd/systemd_selinux.inc
+> index 7d466ee608c8..4eb7194444d2 100644
+> --- a/recipes-core/systemd/systemd_selinux.inc
+> +++ b/recipes-core/systemd/systemd_selinux.inc
+> @@ -1,5 +1,11 @@
+>   inherit enable-selinux enable-audit
+>  =20
+> +# The systemd-backlight@.service which is called after selinux-init.se=
+rvice
+> +# will create /var/lib/systemd/backlight with incorrect security label=
+s,
+> +# this causes the systemd-backlight service to fail to start and to st=
+op.
+> +#
+> +# Creating /var/lib/systemd/backlight in advance to make sure it could
+> +# always be relabelled by selinux-init while first booting.
+>   do_install:append() {
+>   	if ${@bb.utils.contains('PACKAGECONFIG', 'backlight', 'true', 'false=
+', d)}; then
+>   		install -d ${D}${localstatedir}/lib/systemd/backlight
 
-Please keep the list ordered alphabetically.
+This file has been removed in commit:=20
+https://git.yoctoproject.org/meta-selinux/commit/?id=3D4507f3ad747c750761=
+1d718d10c7da8bd602660e
 
-> 
->                  64-bit:
->                          nanopi-m4
-> diff --git a/conf/machine/include/rk3506.inc b/conf/machine/include/rk3506.inc
-> new file mode 100644
-> index 0000000..e204283
-> --- /dev/null
-> +++ b/conf/machine/include/rk3506.inc
-> @@ -0,0 +1,20 @@
-> +MACHINEOVERRIDES =. "rk3506:"
-> +SOC_FAMILY = "rk3506"
-> +DEFAULTTUNE = "cortexa7thf-neon-vfpv4"
-> +
-> +ROCKCHIP_CLOSED_TPL ?= "1"
-> +
-> +require conf/machine/include/soc-family.inc
-> +require conf/machine/include/rockchip-defaults.inc
-> +require conf/machine/include/arm/armv7a/tune-cortexa7.inc
-> +require conf/machine/include/rockchip-wic.inc
-> +
-> +PREFERRED_PROVIDER_optee-os = "rockchip-rkbin-optee-os"
-> +
 
-Ooooh, I believe this would mean OP-TEE OS blob from Rockchip can be 
-used with upstream U-Boot? Have you actually tried? This would be 
-interesting for me for 
-https://lore.kernel.org/yocto-patches/20260126-optee-os-v1-0-874261a77dad@cherry.de/ 
-to check if I got it right for rockchip-rkbin-optee-os as well.
+//Yi
 
-Is OP-TEE OS *required* on rk3506 to be able to boot? Do you know?
-
-Essentially, with the patch series listed above applied, you would need 
-to set RK_UBOOT_TEE = "1" and then U-Boot would automatically add the 
-necessary dependency and add the correct filepath to the TEE environment 
-variable.
-
-> +KBUILD_DEFCONFIG ?= "rk3506_defconfig"
-
-Usually we would rather have multi_v7_defconfig and if needed apply 
-.scc+.cfg config fragments (see what's been done for nanopi-r4s).
-
-> +KERNEL_CLASSES = "kernel-fitimage"
-> +KERNEL_IMAGETYPE ?= "fitImage"
-> +
-
-Isn't a FIT image the default when you include rockchip-defaults? See 
-RK_KERNEL_FITIMAGE variable.
-
-> +UBOOT_SUFFIX ?= "itb"
-> +UBOOT_ENTRYPOINT ?= "0x02800000"
-> +UBOOT_EXTLINUX_FDT = "${@bb.utils.contains('KERNEL_IMAGETYPE', 'fitImage', '', '/boot', d)}"
-
-isn't that already handled with RK_KERNEL_FITIMAGE from within 
-conf/machine/include/rockchip-extlinux.inc (you may then want to require 
-this file).
-
-> diff --git a/conf/machine/include/rk3568.inc b/conf/machine/include/rk3568.inc
-> index bcf9dd8..12f0ba2 100644
-> --- a/conf/machine/include/rk3568.inc
-> +++ b/conf/machine/include/rk3568.inc
-> @@ -10,7 +10,6 @@ require conf/machine/include/arm/armv8-2a/tune-cortexa55.inc
->   require conf/machine/include/rockchip-wic.inc
-> 
->   KBUILD_DEFCONFIG ?= "defconfig"
-> -KERNEL_FEATURES:append:rk3568 = " bsp/rockchip/remove-non-rockchip-arch-arm64.scc"
-
-This has nothing to do with adding support for this new device no?
-
->   KERNEL_CLASSES = "kernel-fitimage"
->   KERNEL_IMAGETYPE ?= "fitImage"
-> 
-> diff --git a/conf/machine/include/rk3588s.inc b/conf/machine/include/rk3588s.inc
-> index 6ec344a..d0654c1 100644
-> --- a/conf/machine/include/rk3588s.inc
-> +++ b/conf/machine/include/rk3588s.inc
-> @@ -9,7 +9,6 @@ require conf/machine/include/arm/armv8-2a/tune-cortexa76-cortexa55.inc
->   require conf/machine/include/rockchip-wic.inc
-> 
->   KBUILD_DEFCONFIG ?= "defconfig"
-> -KERNEL_FEATURES:append:rk3588s = " bsp/rockchip/remove-non-rockchip-arch-arm64.scc"
-
-This has nothing to do with adding support for this new device no?
-
->   KERNEL_CLASSES = "kernel-fitimage"
->   KERNEL_IMAGETYPE ?= "fitImage"
-> 
-> diff --git a/conf/machine/luckfox-lyra-plus.conf b/conf/machine/luckfox-lyra-plus.conf
-> new file mode 100644
-> index 0000000..529a472
-> --- /dev/null
-> +++ b/conf/machine/luckfox-lyra-plus.conf
-> @@ -0,0 +1,27 @@
-> +#@TYPE: Machine
-> +#@NAME: Luckfox Lyra Plus
-> +#@DESCRIPTION: RK3506G2 based Linux Micro Development Board
-> +#https://www.luckfox.com/Luckfox-Lyra-Plus
-> +
-> +require conf/machine/include/rk3506.inc
-> +
-> +KERNEL_DEVICETREE ?= "rk3506g-luckfox-lyra-plus-sd.dtb"
-> +MACHINE_EXTRA_RRECOMMENDS += "kernel-modules"
-> +PREFERRED_PROVIDER_virtual/kernel = "linux-armbian"
-
-I believe we only take boards which are supported by linux-yocto or 
-linux-yocto-dev from the master branch of OE-Core. I don't even see 
-patches on the linux-rockchip mailing list
-
-> +EXTERNAL_KERNEL_DEVICETREE = "${DEPLOY_DIR_IMAGE}/devicetree"
-> +
-> +UBOOT_MACHINE = "luckfox-lyra-rk3506_defconfig"
-> +
-> +MACHINE_FEATURES = " \
-> +  rtc \
-> +  screen \
-> +  serial \
-> +  usbgadget \
-> +  usbhost \
-> +  vfat \
-> +"
-> +
-> +KERNEL_FEATURES += " \
-> +  cfg/fs/ext4.scc \
-> +  features/cgroups/cgroups.scc \
-> +"
-
-KERNEL_FEATURES must be listed in the kernel recipe not in the machine.
-
-> diff --git a/recipes-bsp/rkbin/rockchip-rkbin-ddr_git.bb b/recipes-bsp/rkbin/rockchip-rkbin-ddr_git.bb
-> index 3227a53..7f654ff 100644
-> --- a/recipes-bsp/rkbin/rockchip-rkbin-ddr_git.bb
-> +++ b/recipes-bsp/rkbin/rockchip-rkbin-ddr_git.bb
-> @@ -10,6 +10,15 @@ do_deploy:rk3308() {
->          install -m 644 ${S}/bin/rk33/${DDRBIN_FILE} ${DEPLOYDIR}/ddr-rk3308.bin
->   }
-> 
-
-Wait.... This doesn't exist anymore. Against which branch did you 
-develop this patch?
-
-The master branch has a completely different mechanism which is much 
-more automatic than what's needed below.
-
-> +DDRBIN_VERS:rk3506 ?= "v1.02"
-> +DDRBIN_FILE:rk3506 ?= "rk3506_ddr_750MHz_${DDRBIN_VERS}.bin"
-> +
-> +do_deploy:rk3506() {
-> +       # Prebuilt U-Boot TPL (DDR init)
-> +       install -m 644 ${S}/bin/rk35/${DDRBIN_FILE} ${DEPLOYDIR}/ddr-rk3506.bin
-> +       install -m 644 ${S}/bin/rk35/rk3506_tee_v1.23.bin ${DEPLOYDIR}/tee-rk3506.bin
-
-This is TEE, not DRAM init blob so shouldn't be deployed in this recipe.
-
-> +}
-> +>   DDRBIN_VERS:rk3566 ?= "v1.23"
->   DDRBIN_FILE:rk3566 ?= "rk3566_ddr_1056MHz_${DDRBIN_VERS}.bin"
-> 
-> diff --git a/recipes-bsp/rkbin/rockchip-rkbin-optee-os_git.bb b/recipes-bsp/rkbin/rockchip-rkbin-optee-os_git.bb
-> index 6d25368..cbd376c 100644
-> --- a/recipes-bsp/rkbin/rockchip-rkbin-optee-os_git.bb
-> +++ b/recipes-bsp/rkbin/rockchip-rkbin-optee-os_git.bb
-> @@ -9,6 +9,11 @@ do_deploy:rk3308() {
->          install -m 644 ${S}/bin/rk33/rk3308_bl32_v*.bin ${DEPLOYDIR}/tee-rk3308.bin
->   }
-> 
-> +do_deploy:rk3506() {
-> +       # Prebuilt OPTEE-OS
-> +       install -m 644 ${S}/bin/rk35/rk3506_tee_v*.bin ${DEPLOYDIR}/tee-rk3506.bin
-> +}
-> +
->   # NOTE: the following are not typos
->   #       the rk3566 uses the same bl32 as the rk3568
->   do_deploy:rk3566() {
-> diff --git a/recipes-bsp/rkbin/rockchip-rkbin.inc b/recipes-bsp/rkbin/rockchip-rkbin.inc
-> index 9264db9..8dfdc09 100644
-> --- a/recipes-bsp/rkbin/rockchip-rkbin.inc
-> +++ b/recipes-bsp/rkbin/rockchip-rkbin.inc
-> @@ -11,6 +11,7 @@ S = "${WORKDIR}/git"
-> 
->   COMPATIBLE_MACHINE = "^$"
->   COMPATIBLE_MACHINE:rk3308 = "rk3308"
-> +COMPATIBLE_MACHINE:rk3506 = "rk3506"
->   COMPATIBLE_MACHINE:rk3566 = "rk3566"
->   COMPATIBLE_MACHINE:rk3568 = "rk3568"
->   COMPATIBLE_MACHINE:rk3588s = "rk3588s"
-> diff --git a/recipes-bsp/u-boot/u-boot-rockchip.inc b/recipes-bsp/u-boot/u-boot-rockchip.inc
-> index 2b5bbd7..67c4418 100644
-> --- a/recipes-bsp/u-boot/u-boot-rockchip.inc
-> +++ b/recipes-bsp/u-boot/u-boot-rockchip.inc
-> @@ -11,7 +11,9 @@ do_compile[depends] .= "${TFA_DEPENDS}"
->   ROCKCHIP_TPL:closed-tpl = "${DEPLOY_DIR_IMAGE}/ddr-${SOC_FAMILY}.bin"
->   # SOC_FAMILY for RK3588S is rk3588s but it should use the binaries from rk3588
->   ROCKCHIP_TPL:closed-tpl:rk3588s = "${DEPLOY_DIR_IMAGE}/ddr-rk3588.bin"
-> +ROCKCHIP_TEE:closed-tpl:rk3506 = "${DEPLOY_DIR_IMAGE}/tee-rk3506.bin"
->   EXTRA_OEMAKE:append:closed-tpl = " ROCKCHIP_TPL=${ROCKCHIP_TPL}"
-> +EXTRA_OEMAKE:append:closed-tpl:rk3506 = " TEE=${ROCKCHIP_TEE}"
-> 
-
-I think you only want
-
-ROCKCHIP_TEE:rk3506
-
-and
-
-EXTRA_OEMAKE:append:rk3506
-
-as I believe TEE has nothing to do with whether we're using a DRAM init 
-blob?
-
-Also, this isn't working because you forgot to add the dependency on 
-optee-os (see do_compile[depends] .= "${TFA_DEPENDS}" for how we have 
-the dependency for trsuted-firmware-a on Aarch64).
-
->   INIT_FIRMWARE_DEPENDS ??= ""
->   INIT_FIRMWARE_DEPENDS:closed-tpl = " rockchip-rkbin-ddr:do_deploy"
-> diff --git a/recipes-bsp/u-boot/u-boot_%.bbappend b/recipes-bsp/u-boot/u-boot_%.bbappend
-> index 08e1730..fc6a36e 100644
-> --- a/recipes-bsp/u-boot/u-boot_%.bbappend
-> +++ b/recipes-bsp/u-boot/u-boot_%.bbappend
-> @@ -8,6 +8,10 @@ DEPENDS:append:rk3308 = " u-boot-tools-native"
->   DEPENDS:append:rock-pi-4 = " gnutls-native"
->   DEPENDS:append:rk-u-boot-env = " u-boot-mkenvimage-native"
-> 
-> +BRANCH:luckfox-lyra-plus = "rk3506"
-> +SRC_URI:luckfox-lyra-plus = "git://source.denx.de/u-boot/contributors/kwiboo/u-boot.git;protocol=https;branch=${BRANCH}"
-> +SRCREV:luckfox-lyra-plus = "c6782a37feee4a8aee08d321c01b4ca0b0562f0b"
-> +
-
-That's a BIG no-no.
-
-Have a separate recipe for this.
-
-Knowing Jonas, there are chances this branch will get rebased, so I 
-don't think we want this at all.
-
-I see patches on the U-Boot mailing list for RK3506 support in U-Boot, 
-see 
-https://lore.kernel.org/u-boot/20260109005008.101506-1-jonas@kwiboo.se/ 
-and Jonas "promised" a v2. Maybe work with him on getting the v2 sent 
-upstream?
-
->   do_compile:append:rock2-square () {
->          # copy to default search path
->          if [ "${SPL_BINARY}" = "u-boot-spl-dtb.bin" ]; then
-> diff --git a/recipes-kernel/linux/linux-armbian_git.bb b/recipes-kernel/linux/linux-armbian_git.bb
-> new file mode 100644
-> index 0000000..42dad4f
-> --- /dev/null
-> +++ b/recipes-kernel/linux/linux-armbian_git.bb
-
-I'll let Trevor speak his mind here but I don't think Armbian Linux 
-kernel is something we're interested in supporting. Work with upstream 
-to get the board supported in upstream Linux and then we can have it here.
-
-Cheers,
-Quentin
+>
+> base-commit: 1db6bf1b573b9c908752602c1e2b6a30368da3b7
 
