@@ -1,298 +1,140 @@
-Return-Path: <mbober1@gmail.com>
+Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C55BDD2FEE3
-	for <webhook@archiver.kernel.org>; Tue, 27 Jan 2026 20:52:02 +0000 (UTC)
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.22358.1769547116159554688
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABE87D2F006
+	for <webhook@archiver.kernel.org>; Wed, 28 Jan 2026 00:41:38 +0000 (UTC)
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.2541.1769560894679142721
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 27 Jan 2026 12:51:56 -0800
+ Tue, 27 Jan 2026 16:41:34 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=Pj8/xJ3q;
- spf=pass (domain: gmail.com, ip: 209.85.208.42, mailfrom: mbober1@gmail.com)
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-64bea6c5819so9171002a12.3
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 27 Jan 2026 12:51:55 -0800 (PST)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=WRQgHVI6;
+ spf=pass (domain: konsulko.com, ip: 209.85.222.182, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-8c655e0ee70so765553585a.3
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 27 Jan 2026 16:41:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769547114; x=1770151914; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PYoYtgTWllXTfROBqEyAaPc/BS6Li+4t7IPMzTe1GyU=;
-        b=Pj8/xJ3qn3xyh+8RE+ouDShsVusMAvCvlo5t44GqlPlt7nN3FuwBF+mvRhqO5fJl4c
-         mqSwMK6elrq1pMtoD5zAIAunXESXRwyRMoW9UWU/qXOPYGgW/3E7fBcKanNMLJpHRRT0
-         bFgZVDmWR3Xu53pWAjEArW3adgVJVaCpEmn9nH63BJjKdfjjTRA7Vgmn4i789/qcMAll
-         LPN5XxDfoC3HefIRSXwPyu+y35NkBPflanXyukahk3RqFtK8KdwbUoCt12Myrx+FQFCz
-         H03cW4PMJH226f1sCt3NSBj9zLu/USi+F7YgV3BNc7e+p+FVN7olYAyNETaJ+WnTsj8r
-         UUUQ==
+        d=konsulko.com; s=google; t=1769560893; x=1770165693; darn=lists.yoctoproject.org;
+        h=mime-version:references:message-id:in-reply-to:subject:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UZOETYx4pQg3Aa2bt/KlSKNc83sucJ728NCTBdTwzG0=;
+        b=WRQgHVI6MeuSnFCzvbrnTENn42Ve/m8nl8T4AhyUOi0CnTO5Ql45ZsbjAo9io67MxA
+         d6a9nHqcZk95EcHsgMzhdQAJGEB7ymibKmWpVK2hpjxfddw9b3Y2M7Tee0TeCIBYV4rI
+         MBPe51ljVeivpbL/4IjrXKs9Fyi6wQRsK8X50=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769547114; x=1770151914;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PYoYtgTWllXTfROBqEyAaPc/BS6Li+4t7IPMzTe1GyU=;
-        b=lG5nd2maO94f3lt3CZpNrlt7vBoZ7Rcmi3uE0wfAD1/DBd8i78nWFFipIbtN4ABeKn
-         RrpQ5z6NeaekvQktmkBzc17Hbs6WnU5OCWR92hM0JOJVsKPguVnDbqtsQ3kUVDt5aap3
-         2vgXBsDLEhESX6usxmW+stia9k13gVEOLV9RwOEdwxLaFa6zlRaeYYFRPsKNPDJjPYdy
-         SlwENEVJH24nhErp3ZfA3HLEiNrvUjSjPEt7aFClXWZ64fmAd1v+9hGr0WsbMNK7AbPc
-         Nm9Fpj7Ujr45+2lSuH/nOkan7l+4Yny/GQc9jWjzIJCWj3hlkkJthc4BE0/UBzrYNhh0
-         3scQ==
-X-Gm-Message-State: AOJu0YzldQrDa2HAv0RNfHRC269Ps8QyH1+4Fz80AwTPo3M76DOfI8kN
-	KfvELwkeAkX836DPhHZaRwYshS+773lq8GtK3ET0Y5KOCLW4e2mnFkAjZmE4pA==
-X-Gm-Gg: AZuq6aKsjScSxEHV1YqKncPzP+FvjY/zOu4bMg6CFRRUKgOQLiUPyR1QuZvCKQRXZjD
-	1jbEnsS1XX1+geV701UBAvRIS6WLANLRPOlNZDmUzatyFWUcYyeg79R9NV1qC7uUvRVUUluBTVv
-	qLNJquEstJyUAhoGMvElBdTCO/nUkW+2H6kMiG5vCYpOmU4d/Xa5VbRW/6N0EL278OaQMnHJ76J
-	IO4OHdOxwGJhCR4ieGW7CiHM0aDWRChqcs0BDtMVN+0c7dhHcszZbojI93Yo3oV+YWLRgsri43h
-	AD0LgUxtm1taWbAY1CgVh7Yw2kAo09EghrDLXo9QkmpTM7SJp1hzhyqDoWb2mbHkSLidhU5Dm4v
-	BRZAcdxbpJvlbp4Npqe/LaPcKpVOGBGvUMFAhJ2nSNnOEE+eMdf+Wt8Hs2ClDCOa6aukoKubz6g
-	NS0pV5W+JNsm5zeqLioKIdAJKDLtZcI+jejJEWEsdievpakkedDA2tc8Xa+XVHJKBDB4JnJl+Ma
-	4H4MnkJvM8=
-X-Received: by 2002:a17:907:3e90:b0:b86:f194:9ee9 with SMTP id a640c23a62f3a-b8dab2e793bmr217818566b.19.1769547113958;
-        Tue, 27 Jan 2026 12:51:53 -0800 (PST)
-Received: from fedora (87-205-19-211.static.ip.netia.com.pl. [87.205.19.211])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8dbeffe6edsm29561066b.30.2026.01.27.12.51.53
+        d=1e100.net; s=20230601; t=1769560893; x=1770165693;
+        h=mime-version:references:message-id:in-reply-to:subject:to:from:date
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UZOETYx4pQg3Aa2bt/KlSKNc83sucJ728NCTBdTwzG0=;
+        b=IqRE2th43yE6wkDPMn2iDWQa9PHwzVdTFa6o7dfCu40H+ktqYzGSfnlBE7WzfemL3k
+         9mo1rTStLh/kSoQfDf34c/jE/8Vk5uxNs2x4FaY7nZHWZU2VAO9F7rZLeZgwQLGIRo7M
+         KEezS3AoqNUpgxLzo/7pjgnCkypUtkJZR1HaJT633WDo+JNW3Tbtm8edWDgMG7O7NpmS
+         gmBafQBvzK2ybC+wHFN42Zm5TFFrNw2tchqOBQwNzEn7e7zXOCoOSAN4z1Uk+HFeXbcf
+         wT5yDtLIxNJn+gv3RPVTHwhyWu14sk7hYnOHwRjlAh9UgeI3WBEDogMxGHIqMLDUGfrr
+         GHQA==
+X-Gm-Message-State: AOJu0YzMKYQWrpXa35RVBDhIpAPSnFi8LLMACz4HuHru0GTtjYwte6Hb
+	+02JZYmMO7GEuL9wtiPt5aEjxvk5gqbv8+iTn5j/mvk5KoYwkAS1zGHqUmvN+BK5uxNck+LxLJX
+	JpnKLhl4=
+X-Gm-Gg: AZuq6aIZp/guy1mr31xwa8mEvI2ANoQU4lnSBAFoemjLVlctBIGsibve7t/Zmt30BEy
+	l6JUJBnIu8TecnHnFnYyLHZranAc6IqmcXs42wlN6y+K01O+eM6JN+O8PosP3JYu+AIUvltI4QN
+	P863ne+7+zfve7daGJ8xpPbieAsGIGeD1zUVQ5KiegSI0uoGHXPjKl2Jb6U93kit9M+ne6ESSlj
+	70Sy9kR4PGF4PQKSQV1ynRK9MqaRAykLhVUm/VCkc2BxEL51zpnuxISuOS5KxD17CdE900Z3cFy
+	aEkY9DHPsFnk3usxDD4dq3eSvu0+yF2xB2dPeyPeAK3yV2Vo/NaSR2iY7qGHM8k3QzTVqMb96Un
+	ikCeomvzFG3I7SEPLU10L8DmFIZGO/OmmiaLXlskKS2FnHa79WwPpXoOm0ZhRNiPtacB74fnBN3
+	tRRe5otLzHkkOULPIVbvMxfvOrtKmfFUUCRfyqajoSdsMtjNH80azLW55ctQtALuAlSsoAyBQgz
+	/8oJ4+rH4ShTLY3vPvhZJ286VuoaPVx8u4=
+X-Received: by 2002:a05:620a:bcb:b0:8b2:dd0a:8809 with SMTP id af79cd13be357-8c70b92cbf2mr444710585a.89.1769560893242;
+        Tue, 27 Jan 2026 16:41:33 -0800 (PST)
+Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-894d3740e62sm7059866d6.26.2026.01.27.16.41.32
+        for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Jan 2026 12:51:53 -0800 (PST)
-From: Marcin Bober <mbober1@gmail.com>
+        Tue, 27 Jan 2026 16:41:32 -0800 (PST)
+Date: Tue, 27 Jan 2026 19:41:31 -0500 (EST)
+From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: mbober1@gmail.com
-Subject: [meta-rockchip][PATCH] luckfox-lyra-plus: add
-Date: Tue, 27 Jan 2026 21:51:41 +0100
-Message-ID: <20260127205141.26089-1-mbober1@gmail.com>
-X-Mailer: git-send-email 2.52.0
+Subject: Re: [yocto-patches] [meta-lts-mixins][scarthgap/rust][PATCH 00/11]
+ Update to Rust 1.92.0
+In-Reply-To: <188E6CF1C67DE384.3837557@lists.yoctoproject.org>
+Message-ID: <bccfa78b-27be-0151-2521-639da5f616c2@konsulko.com>
+References: <188E6CF1C67DE384.3837557@lists.yoctoproject.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 27 Jan 2026 20:52:02 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3119
+ <yocto-patches@lists.yoctoproject.org>; Wed, 28 Jan 2026 00:41:38 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3120
 
-The Luckfox Lyra Plus is ultra-small, tri-core single board computer
-based on the Rockchip RK3506G2, with a very compact form factor.
+On Mon, 26 Jan 2026, Scott Murray via lists.yoctoproject.org wrote:
 
-Signed-off-by: Marcin Bober <mbober1@gmail.com>
----
- README                                        |  1 +
- conf/machine/include/rk3506.inc               | 20 +++++++++++++
- conf/machine/include/rk3568.inc               |  1 -
- conf/machine/include/rk3588s.inc              |  1 -
- conf/machine/luckfox-lyra-plus.conf           | 27 +++++++++++++++++
- recipes-bsp/rkbin/rockchip-rkbin-ddr_git.bb   |  9 ++++++
- .../rkbin/rockchip-rkbin-optee-os_git.bb      |  5 ++++
- recipes-bsp/rkbin/rockchip-rkbin.inc          |  1 +
- recipes-bsp/u-boot/u-boot-rockchip.inc        |  2 ++
- recipes-bsp/u-boot/u-boot_%.bbappend          |  4 +++
- recipes-kernel/linux/linux-armbian_git.bb     | 29 +++++++++++++++++++
- 11 files changed, 98 insertions(+), 2 deletions(-)
- create mode 100644 conf/machine/include/rk3506.inc
- create mode 100644 conf/machine/luckfox-lyra-plus.conf
- create mode 100644 recipes-kernel/linux/linux-armbian_git.bb
+> This patch series for the scarthgap/rust mixin layer backports the
+> recent Rust toolchain changes in oe-core master branch to pull in
+> the 1.90.0 -> 1.91.0 -> 1.91.1 -> 1.92.0 updates and other fixes.
+>
+> I intend to push this series to scarthgap/rust by end of day tomorrow
+> (January 26, EST) unless a serious showstopper is pointed out.
 
-diff --git a/README b/README
-index 6bceba0..3991415 100644
---- a/README
-+++ b/README
-@@ -23,6 +23,7 @@ Status of supported boards:
- 			tinker-board
- 			tinker-board-s
- 			vyasa-rk3288
-+			luckfox-lyra-plus
- 
- 		64-bit:
- 			nanopi-m4
-diff --git a/conf/machine/include/rk3506.inc b/conf/machine/include/rk3506.inc
-new file mode 100644
-index 0000000..e204283
---- /dev/null
-+++ b/conf/machine/include/rk3506.inc
-@@ -0,0 +1,20 @@
-+MACHINEOVERRIDES =. "rk3506:"
-+SOC_FAMILY = "rk3506"
-+DEFAULTTUNE = "cortexa7thf-neon-vfpv4"
-+
-+ROCKCHIP_CLOSED_TPL ?= "1"
-+
-+require conf/machine/include/soc-family.inc
-+require conf/machine/include/rockchip-defaults.inc
-+require conf/machine/include/arm/armv7a/tune-cortexa7.inc
-+require conf/machine/include/rockchip-wic.inc
-+
-+PREFERRED_PROVIDER_optee-os = "rockchip-rkbin-optee-os"
-+
-+KBUILD_DEFCONFIG ?= "rk3506_defconfig"
-+KERNEL_CLASSES = "kernel-fitimage"
-+KERNEL_IMAGETYPE ?= "fitImage"
-+
-+UBOOT_SUFFIX ?= "itb"
-+UBOOT_ENTRYPOINT ?= "0x02800000"
-+UBOOT_EXTLINUX_FDT = "${@bb.utils.contains('KERNEL_IMAGETYPE', 'fitImage', '', '/boot', d)}"
-diff --git a/conf/machine/include/rk3568.inc b/conf/machine/include/rk3568.inc
-index bcf9dd8..12f0ba2 100644
---- a/conf/machine/include/rk3568.inc
-+++ b/conf/machine/include/rk3568.inc
-@@ -10,7 +10,6 @@ require conf/machine/include/arm/armv8-2a/tune-cortexa55.inc
- require conf/machine/include/rockchip-wic.inc
- 
- KBUILD_DEFCONFIG ?= "defconfig"
--KERNEL_FEATURES:append:rk3568 = " bsp/rockchip/remove-non-rockchip-arch-arm64.scc"
- KERNEL_CLASSES = "kernel-fitimage"
- KERNEL_IMAGETYPE ?= "fitImage"
- 
-diff --git a/conf/machine/include/rk3588s.inc b/conf/machine/include/rk3588s.inc
-index 6ec344a..d0654c1 100644
---- a/conf/machine/include/rk3588s.inc
-+++ b/conf/machine/include/rk3588s.inc
-@@ -9,7 +9,6 @@ require conf/machine/include/arm/armv8-2a/tune-cortexa76-cortexa55.inc
- require conf/machine/include/rockchip-wic.inc
- 
- KBUILD_DEFCONFIG ?= "defconfig"
--KERNEL_FEATURES:append:rk3588s = " bsp/rockchip/remove-non-rockchip-arch-arm64.scc"
- KERNEL_CLASSES = "kernel-fitimage"
- KERNEL_IMAGETYPE ?= "fitImage"
- 
-diff --git a/conf/machine/luckfox-lyra-plus.conf b/conf/machine/luckfox-lyra-plus.conf
-new file mode 100644
-index 0000000..529a472
---- /dev/null
-+++ b/conf/machine/luckfox-lyra-plus.conf
-@@ -0,0 +1,27 @@
-+#@TYPE: Machine
-+#@NAME: Luckfox Lyra Plus
-+#@DESCRIPTION: RK3506G2 based Linux Micro Development Board
-+#https://www.luckfox.com/Luckfox-Lyra-Plus
-+
-+require conf/machine/include/rk3506.inc
-+
-+KERNEL_DEVICETREE ?= "rk3506g-luckfox-lyra-plus-sd.dtb"
-+MACHINE_EXTRA_RRECOMMENDS += "kernel-modules"
-+PREFERRED_PROVIDER_virtual/kernel = "linux-armbian"
-+EXTERNAL_KERNEL_DEVICETREE = "${DEPLOY_DIR_IMAGE}/devicetree"
-+
-+UBOOT_MACHINE = "luckfox-lyra-rk3506_defconfig"
-+
-+MACHINE_FEATURES = " \
-+  rtc \
-+  screen \
-+  serial \
-+  usbgadget \
-+  usbhost \
-+  vfat \
-+"
-+
-+KERNEL_FEATURES += " \
-+  cfg/fs/ext4.scc \
-+  features/cgroups/cgroups.scc \
-+"
-diff --git a/recipes-bsp/rkbin/rockchip-rkbin-ddr_git.bb b/recipes-bsp/rkbin/rockchip-rkbin-ddr_git.bb
-index 3227a53..7f654ff 100644
---- a/recipes-bsp/rkbin/rockchip-rkbin-ddr_git.bb
-+++ b/recipes-bsp/rkbin/rockchip-rkbin-ddr_git.bb
-@@ -10,6 +10,15 @@ do_deploy:rk3308() {
- 	install -m 644 ${S}/bin/rk33/${DDRBIN_FILE} ${DEPLOYDIR}/ddr-rk3308.bin
- }
- 
-+DDRBIN_VERS:rk3506 ?= "v1.02"
-+DDRBIN_FILE:rk3506 ?= "rk3506_ddr_750MHz_${DDRBIN_VERS}.bin"
-+
-+do_deploy:rk3506() {
-+	# Prebuilt U-Boot TPL (DDR init)
-+	install -m 644 ${S}/bin/rk35/${DDRBIN_FILE} ${DEPLOYDIR}/ddr-rk3506.bin
-+	install -m 644 ${S}/bin/rk35/rk3506_tee_v1.23.bin ${DEPLOYDIR}/tee-rk3506.bin
-+}
-+
- DDRBIN_VERS:rk3566 ?= "v1.23"
- DDRBIN_FILE:rk3566 ?= "rk3566_ddr_1056MHz_${DDRBIN_VERS}.bin"
- 
-diff --git a/recipes-bsp/rkbin/rockchip-rkbin-optee-os_git.bb b/recipes-bsp/rkbin/rockchip-rkbin-optee-os_git.bb
-index 6d25368..cbd376c 100644
---- a/recipes-bsp/rkbin/rockchip-rkbin-optee-os_git.bb
-+++ b/recipes-bsp/rkbin/rockchip-rkbin-optee-os_git.bb
-@@ -9,6 +9,11 @@ do_deploy:rk3308() {
- 	install -m 644 ${S}/bin/rk33/rk3308_bl32_v*.bin ${DEPLOYDIR}/tee-rk3308.bin
- }
- 
-+do_deploy:rk3506() {
-+	# Prebuilt OPTEE-OS
-+	install -m 644 ${S}/bin/rk35/rk3506_tee_v*.bin ${DEPLOYDIR}/tee-rk3506.bin
-+}
-+
- # NOTE: the following are not typos
- #       the rk3566 uses the same bl32 as the rk3568
- do_deploy:rk3566() {
-diff --git a/recipes-bsp/rkbin/rockchip-rkbin.inc b/recipes-bsp/rkbin/rockchip-rkbin.inc
-index 9264db9..8dfdc09 100644
---- a/recipes-bsp/rkbin/rockchip-rkbin.inc
-+++ b/recipes-bsp/rkbin/rockchip-rkbin.inc
-@@ -11,6 +11,7 @@ S = "${WORKDIR}/git"
- 
- COMPATIBLE_MACHINE = "^$"
- COMPATIBLE_MACHINE:rk3308 = "rk3308"
-+COMPATIBLE_MACHINE:rk3506 = "rk3506"
- COMPATIBLE_MACHINE:rk3566 = "rk3566"
- COMPATIBLE_MACHINE:rk3568 = "rk3568"
- COMPATIBLE_MACHINE:rk3588s = "rk3588s"
-diff --git a/recipes-bsp/u-boot/u-boot-rockchip.inc b/recipes-bsp/u-boot/u-boot-rockchip.inc
-index 2b5bbd7..67c4418 100644
---- a/recipes-bsp/u-boot/u-boot-rockchip.inc
-+++ b/recipes-bsp/u-boot/u-boot-rockchip.inc
-@@ -11,7 +11,9 @@ do_compile[depends] .= "${TFA_DEPENDS}"
- ROCKCHIP_TPL:closed-tpl = "${DEPLOY_DIR_IMAGE}/ddr-${SOC_FAMILY}.bin"
- # SOC_FAMILY for RK3588S is rk3588s but it should use the binaries from rk3588
- ROCKCHIP_TPL:closed-tpl:rk3588s = "${DEPLOY_DIR_IMAGE}/ddr-rk3588.bin"
-+ROCKCHIP_TEE:closed-tpl:rk3506 = "${DEPLOY_DIR_IMAGE}/tee-rk3506.bin"
- EXTRA_OEMAKE:append:closed-tpl = " ROCKCHIP_TPL=${ROCKCHIP_TPL}"
-+EXTRA_OEMAKE:append:closed-tpl:rk3506 = " TEE=${ROCKCHIP_TEE}"
- 
- INIT_FIRMWARE_DEPENDS ??= ""
- INIT_FIRMWARE_DEPENDS:closed-tpl = " rockchip-rkbin-ddr:do_deploy"
-diff --git a/recipes-bsp/u-boot/u-boot_%.bbappend b/recipes-bsp/u-boot/u-boot_%.bbappend
-index 08e1730..fc6a36e 100644
---- a/recipes-bsp/u-boot/u-boot_%.bbappend
-+++ b/recipes-bsp/u-boot/u-boot_%.bbappend
-@@ -8,6 +8,10 @@ DEPENDS:append:rk3308 = " u-boot-tools-native"
- DEPENDS:append:rock-pi-4 = " gnutls-native"
- DEPENDS:append:rk-u-boot-env = " u-boot-mkenvimage-native"
- 
-+BRANCH:luckfox-lyra-plus = "rk3506"
-+SRC_URI:luckfox-lyra-plus = "git://source.denx.de/u-boot/contributors/kwiboo/u-boot.git;protocol=https;branch=${BRANCH}"
-+SRCREV:luckfox-lyra-plus = "c6782a37feee4a8aee08d321c01b4ca0b0562f0b"
-+
- do_compile:append:rock2-square () {
- 	# copy to default search path
- 	if [ "${SPL_BINARY}" = "u-boot-spl-dtb.bin" ]; then
-diff --git a/recipes-kernel/linux/linux-armbian_git.bb b/recipes-kernel/linux/linux-armbian_git.bb
-new file mode 100644
-index 0000000..42dad4f
---- /dev/null
-+++ b/recipes-kernel/linux/linux-armbian_git.bb
-@@ -0,0 +1,29 @@
-+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
-+
-+DESCRIPTION = "Linux Kernel"
-+SECTION = "kernel"
-+LICENSE = "GPL-2.0-only"
-+LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
-+
-+LINUX_VERSION = "6.1.115"
-+KBRANCH = "rk-6.1-rkr5.1"
-+SRCREV_kernel = "b908c7339f51eddcfe8402cd15d1e1f8f4e67c29"
-+SRCREV_yocto-meta = "7545dc5bc77560f4b1b6efc47b56e953dc86572d"
-+PV = "${LINUX_VERSION}"
-+
-+SRC_URI = " \
-+	git://github.com/armbian/linux-rockchip.git;name=kernel;protocol=https;branch=${KBRANCH} \
-+	git://git.yoctoproject.org/yocto-kernel-cache;type=kmeta;name=yocto-meta;branch=yocto-6.1;destsuffix=kernel-meta;protocol=https \
-+"
-+
-+DEPENDS += "lzop-native"
-+FIT_KERNEL_COMP_ALG ?= "lzo"
-+FIT_KERNEL_COMP_ALG_EXTENSION ?= ".lzo"
-+
-+COMPATIBLE_MACHINE:luckfox-lyra-plus = "luckfox-lyra-plus"
-+
-+inherit kernel
-+inherit kernel-yocto
-+require recipes-kernel/linux/linux-yocto.inc
-+
-+INSANE_SKIP:${PN}-src += "buildpaths"
+These have now been merged to scarthgap/rust.
+
+Scott
+
+> Changes:
+>
+> Alexander Kanavin (3):
+>   rust-target-config.bbclass: add RUST_TARGET_ABI to sstate signature
+>     exclusions
+>   rust-target-config.bbclass: apply signature exclusions only to
+>     native/nativesdk
+>   librsvg: upgrade 2.61.0 -> 2.61.3
+>
+> Deepesh Varatharajan (2):
+>   cargo-c: update 0.10.16 -> 0.10.18
+>   cargo-c: update 0.10.18 -> 0.10.19
+>
+> Hemanth Kumar M D (2):
+>   rust: Upgrade 1.91.1 -> 1.92.0
+>   rust: enable default uwtable and ignore arm no_std test
+>
+> Yash Shinde (4):
+>   oeqa/selftest/rust: Exclude tier-check and fix openssl-sys build error
+>   rust: Upgrade 1.90.0 -> 1.91.0
+>   rust: remove passing tests from excluded and ignored list.
+>   rust: Upgrade 1.91.0 -> 1.91.1
+>
+>  classes-recipe/rust-target-config.bbclass     |   9 +-
+>  conf/layer.conf                               |   2 +-
+>  lib/oeqa/selftest/cases/rust_mixin.py         |   9 +-
+>  recipes-devtools/rust/cargo-c-crates.inc      | 658 +++++++++---------
+>  ...Use-libc-SYS_futex_time64-on-riscv32.patch |  36 -
+>  ...1.0.bb => cargo-c_0.10.19+cargo-0.93.0.bb} |   5 +-
+>  .../rust/{cargo_1.90.0.bb => cargo_1.92.0.bb} |   0
+>  ...-gcs-instead-of-gcs-target-attribute.patch |  66 --
+>  ...teps-tool.rs-switch-off-lto-for-rust.patch |  20 +-
+>  .../rust/files/rust-oe-selftest.patch         | 163 +----
+>  ...ibstd-rs_1.90.0.bb => libstd-rs_1.92.0.bb} |   0
+>  ....90.0.bb => rust-cross-canadian_1.92.0.bb} |   0
+>  ...ust-llvm_1.90.0.bb => rust-llvm_1.92.0.bb} |   2 +-
+>  recipes-devtools/rust/rust-snapshot.inc       |  78 +--
+>  recipes-devtools/rust/rust-source.inc         |   3 +-
+>  .../rust/{rust_1.90.0.bb => rust_1.92.0.bb}   |   4 +-
+>  recipes-gnome/librsvg/librsvg-crates.inc      | 624 ++++++++---------
+>  ...ld-do-not-force-disable-gdk-pixbuf-l.patch |   2 +-
+>  ...append-RUSTFLAGS-to-rustc-executable.patch |   2 +-
+>  ...e-care-of-deprecated-assert_cmd-Comm.patch |  42 ++
+>  .../{librsvg_2.61.0.bb => librsvg_2.61.3.bb}  |   4 +-
+>  21 files changed, 790 insertions(+), 939 deletions(-)
+>  delete mode 100644 recipes-devtools/rust/cargo-c/0001-getrandom-Use-libc-SYS_futex_time64-on-riscv32.patch
+>  rename recipes-devtools/rust/{cargo-c_0.10.16+cargo-0.91.0.bb => cargo-c_0.10.19+cargo-0.93.0.bb} (70%)
+>  rename recipes-devtools/rust/{cargo_1.90.0.bb => cargo_1.92.0.bb} (100%)
+>  delete mode 100644 recipes-devtools/rust/files/0001-libunwind-Use-gcs-instead-of-gcs-target-attribute.patch
+>  rename recipes-devtools/rust/{libstd-rs_1.90.0.bb => libstd-rs_1.92.0.bb} (100%)
+>  rename recipes-devtools/rust/{rust-cross-canadian_1.90.0.bb => rust-cross-canadian_1.92.0.bb} (100%)
+>  rename recipes-devtools/rust/{rust-llvm_1.90.0.bb => rust-llvm_1.92.0.bb} (99%)
+>  rename recipes-devtools/rust/{rust_1.90.0.bb => rust_1.92.0.bb} (99%)
+>  create mode 100644 recipes-gnome/librsvg/librsvg/0001-tests-revert-Take-care-of-deprecated-assert_cmd-Comm.patch
+>  rename recipes-gnome/librsvg/{librsvg_2.61.0.bb => librsvg_2.61.3.bb} (95%)
+>
+>
 
