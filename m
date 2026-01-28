@@ -1,232 +1,156 @@
-Return-Path: <yi.zhao@eng.windriver.com>
+Return-Path: <alba@thehoodiefirm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C1D7D25B49
-	for <webhook@archiver.kernel.org>; Wed, 28 Jan 2026 12:01:02 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.11640.1769601652312491728
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C031D3569D
+	for <webhook@archiver.kernel.org>; Wed, 28 Jan 2026 14:02:53 +0000 (UTC)
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.13576.1769608966303241165
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 28 Jan 2026 04:00:53 -0800
+ Wed, 28 Jan 2026 06:02:46 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@windriver.com header.s=PPS06212021 header.b=gT0BXGAM;
- spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.178.238, mailfrom: prvs=6488f9fe8e=yi.zhao@windriver.com)
-Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60SB2cfh763255
-	for <yocto-patches@lists.yoctoproject.org>; Wed, 28 Jan 2026 12:00:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
-	 h=content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=PPS06212021;
-	 bh=QnynKvQTLvbNg5W7p+LJrLpu6oRYnxlHt5+eFrLUC3E=; b=gT0BXGAMIcY5
-	gUOjVqbmO5cUWe3eWtgcPNSyBU1SmNW8N0QhAmTGZHOslywUZZvlmFm/D3i96oFf
-	/KiFK125O09ProO0xbGZZ4zc3wEMIXRfjKqvn9XL7hrUYGuStmdbQ97PdwGw+jln
-	tZEtblqh4K9ca3IsL0Kv6wilftEqY882hhdjxx4BSjAvEtGyariQTI4r2WXWMJWB
-	yjFUEmTfLqfpcyYeCrvX2NTf+gVe7mWj3ET2ts5e5EwAgvda94f8ON0USGdrF+iF
-	m3CtRG/LicZBTm3DJh2TlRFg/XLnk6Jy1khFIVHA04na961K6wv+03JiUUf6VVVZ
-	fCfJ1Lxjlw==
-Received: from mw6pr02cu001.outbound.protection.outlook.com (mail-westus2azon11012013.outbound.protection.outlook.com [52.101.48.13])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4bvn28cyhu-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT)
-	for <yocto-patches@lists.yoctoproject.org>; Wed, 28 Jan 2026 12:00:50 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=G90KsTlPfSqU5W8i9MF6B72CGwLe8pTfdd1VUTHiQXrJeluqukNwNfDj1LZCCdYijjMzFPXwA9eRo8lnwuEKcoqo2fw+QdaMzdED+M6DOcQOvhvikeb51n8D8CTWScSOvm3n7uCb2rBqaV91Lf4cc+II157ubaElYOe0UDkLsnboGIa84HSFeU2Eil8JYPq39ATDWrXEi7Wk3lH1QR4xNJAxmkZSO7Ygeb0apuI7Hw1eyvEGIFryG3RVtt7/tJgGUjlK05y5/AmPDOUk7Q7WaB999FkZgOi3wMai8//HHLQtYHLUd5CqDHoov11j6hecjqBIRvmjh0Two8G1O7ARkA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QnynKvQTLvbNg5W7p+LJrLpu6oRYnxlHt5+eFrLUC3E=;
- b=VyJD7pu4ZOCpeHA6PHhZOPD9V4+ePa61hQoTY9uK93XsiDLi6VU0OYN5vKGclUIg9RrOAei5I1PnkXhxNWJrPys/sU9IucN5+nb9lvhI0Qg7BXqHSMoe0o8kSUzWc/UWdRZsMyliVCdS7N4h4pkAeEsgEp7KldA3lRMQg4hdWTsUVB3IPnQsXff4RXLniiOeBPrORzaLXHAH80ESrvqOD0v7MeOu7fDEFnydG3fns8K1PlntML3qtP38Y8LryyywqmYUKWDDNy5ExdVor/+UCOiy7BdaCI8L2qFjh76MphNX5vy8BO1aJToc7kqiNte8x25U2j2aeCN6O7WDetyRbw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=windriver.com; dmarc=pass action=none
- header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
-Received: from DS0PR11MB6399.namprd11.prod.outlook.com (2603:10b6:8:c8::5) by
- CY8PR11MB7687.namprd11.prod.outlook.com (2603:10b6:930:74::14) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9542.15; Wed, 28 Jan 2026 12:00:47 +0000
-Received: from DS0PR11MB6399.namprd11.prod.outlook.com
- ([fe80::3432:2eb3:d0a5:7831]) by DS0PR11MB6399.namprd11.prod.outlook.com
- ([fe80::3432:2eb3:d0a5:7831%6]) with mapi id 15.20.9542.010; Wed, 28 Jan 2026
- 12:00:47 +0000
-Message-ID: <0b4d6f99-36c7-4224-9020-a1e6ad85d0d8@windriver.com>
-Date: Wed, 28 Jan 2026 20:00:41 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [meta-selinux][PATCH] systemd: Explain background
- of creating /var/lib/systemd/backlight
+ dkim=pass header.i=@thehoodiefirm-com.20230601.gappssmtp.com header.s=20230601 header.b=s3IdbgIj;
+ spf=neutral (domain: thehoodiefirm.com, ip: 209.85.208.44, mailfrom: alba@thehoodiefirm.com)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-65808bb859cso11163965a12.2
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 28 Jan 2026 06:02:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=thehoodiefirm-com.20230601.gappssmtp.com; s=20230601; t=1769608964; x=1770213764; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j8KI7ZnEXAV3RIphTroGT8ONysuJq9YNK7lXmfbXtPk=;
+        b=s3IdbgIjy87UwHa7nfRyt2mUX7gQ6pAGcdC5gJvh8aUPdtaVXNNO7H4DVFczaG48Uz
+         VWZeQpSRDggRhz/3MGsa69K3u/Vx846wi7x9ILi+cjlTWFP6i4Fdt6Paqg3xakmWF2ns
+         ATsy8Gn0PQAHsjEyuuVfmzuWKdXET+Tq3tm6lKEZWRcJlXP4wDTqsz4OwXOKZYMc0EaT
+         cKwedCVOMHgtlfzFRBL4j+AJjrkr2itM1AoQQ9L8+Za+GCJMTxNBJMfxTI44bjrqh5X5
+         O0KeoZyb7T4a7RYnEXNGQwD2hoJEyH5jZA/wHEZo3irplZemk3fw5pRNGlYDXwBETjjR
+         /LcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769608964; x=1770213764;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:sender:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=j8KI7ZnEXAV3RIphTroGT8ONysuJq9YNK7lXmfbXtPk=;
+        b=lutX+6CF+HUZaA4EjeTDVxU7ie4Uimkj0H4g6dg8Ocy4pnPr/RZHOG4Z22WionmGCz
+         U+TryI+QHwOWRvKa1+dFTN5pySdpQo51a5Kumixe9Vl+25Z7U28pNR84Cq8/WhnI4oqJ
+         toS/MBHTACa6a7cclNHCtTreMDTJWk9igQNiSndaxYQTbwRQsbxUOlMnRLFpaUto0Ao+
+         4UDO1An545JT7OK6DbvTKoVJghDHo7xUQv7Glv+4lZbIq5xGbrV1VxWxqxqbgwu/e++p
+         eRafN58sLxxL3UwEHPmfmFol2p6EeVA+hJDvULCirmIXeKIqeTVnXyI7Sz7IVnlAxYRB
+         hY7Q==
+X-Gm-Message-State: AOJu0YwTrvky1twzkPZb8hWmlYhMK4NIkMSLYStSQT4qzAxUOE8HIY7+
+	GOhPHd2GLGXGfvsv+52vSTN5LHrHrWjWNMNMWxCG/vOf8izPMUbuXx7JA2BXTBESklhBlaBetn2
+	4u+cPvms=
+X-Gm-Gg: AZuq6aJzgzjIak9pFVbh87afZ0JFySMMxlh5ZKqXvCwkY4tKGFh7V+0rKpGYgFhPCj7
+	d5j2unPSEdKR6BtVenPrAAmAkgdV6xAzj8Bgkn/3fs7bmSqabe7pCiiL68lrs8VA1Tui4AsW0uv
+	sg6yo2lTyZw/2debGw6wWumRJ95woO7qRgtyhT2jy9sOJyxb1Sbpq8X5VHzq9PlSSXqy84bmvnP
+	DCmVtS8RoHzNaUdls0ULEii5MXGyUbmkpyaAGF/WhjOoZFEKqym9MieuR3zF/P7f5Rot+p1995g
+	Jl3BIkSedz2LLSR38N4m+WoF8H6qEavK3d2hsWyOFGWj8nGxVnYOtoQ9wH3v9digwUHU8Ijpql7
+	mJq8t48OcL8FwDSzJ156fnNwvfHLWRvqO7FEQyPChRf0IhpL+nVvUZJPwk7QoYuIMTkwvq7msbK
+	had/S6a0yDQ12EuKNJUWU5n3oYVASpfPtUZx4eW0X3YHGweRlaK5/x4+wZMhBAbVgtAn+JduBC2
+	7zex8a3Bw11moA=
+X-Received: by 2002:a17:906:209a:b0:b8d:cbb5:c072 with SMTP id a640c23a62f3a-b8dcbb5c7c6mr92124166b.57.1769608964208;
+        Wed, 28 Jan 2026 06:02:44 -0800 (PST)
+Received: from localhost.localdomain (253.red-83-57-139.dynamicip.rima-tde.net. [83.57.139.253])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4806cdd78d3sm68522105e9.1.2026.01.28.06.02.42
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 28 Jan 2026 06:02:43 -0800 (PST)
+Sender: =?UTF-8?B?QWxiYSBIZXJyZXLDrWFzIFJhbcOtcmV6?= <alba@thehoodiefirm.com>
+From: Alba Herrerias <alba@neighbourhood.ie>
+X-Google-Original-From: Alba Herrerias <albaherreriasdev@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-References: <20260126153729.2758442-2-u.kleine-koenig@baylibre.com>
-Content-Language: en-US
-From: Yi Zhao <yi.zhao@windriver.com>
-In-Reply-To: <20260126153729.2758442-2-u.kleine-koenig@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-ClientProxiedBy: SGBP274CA0006.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b0::18)
- To DS0PR11MB6399.namprd11.prod.outlook.com (2603:10b6:8:c8::5)
+Cc: engineering@neighbourhood.ie,
+	Alba Herrerias <albaherreriasdev@gmail.com>
+Subject: [yocto-autobuilder-helper][PATCH 0/4] Update dashboard, Bugzilla stats, bug triage page and autobuilder issues page
+Date: Wed, 28 Jan 2026 14:02:03 +0000
+Message-Id: <20260128140207.61443-1-albaherreriasdev@gmail.com>
+X-Mailer: git-send-email 2.40.1
+Reply-To: engineering@neighbourhood.ie
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB6399:EE_|CY8PR11MB7687:EE_
-X-MS-Office365-Filtering-Correlation-Id: 93daffd3-7791-4476-3807-08de5e64df69
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?Z0dBa0V4RDhIQkx0bHdGSTBNcmo0NDhoZHN3MUVKbFZTS01kRWJISVFSbWxk?=
- =?utf-8?B?bmxGTWNyQXlwUE5oY04zaEtBODdFNldmT1IxL1VURWRtYWJLdDd5V1psZnh0?=
- =?utf-8?B?ZjMwaEtvcnhrSGtobVA2RnVYZXRaM2NZdThiOEJhT0N6SmFSdEg5dTRZejl4?=
- =?utf-8?B?azBlY2NPZk1mWjlRVFU1d3FjYktlUEt2OUpmNWhKV2pBU1RzdlBJZi9mZW5o?=
- =?utf-8?B?STQyNHhHK0NaRVhHazYvMUcvUGV6TlBLTXFsUyt2SVdYY2xuY3haMWpla1JY?=
- =?utf-8?B?dWdxb3ZWaURIZ3c3T3YzN3ZGV2pIcXpZYVJMVTBDczJWajFIRzJ4K0hYQlVW?=
- =?utf-8?B?aDVzWXNJeDZmQ3ZlY2xtR1QzQ2RqMzlScTlUalhzUW5LSFdROU93R1NwM2Y4?=
- =?utf-8?B?dFhmM1pzSlRKUEQ3VS8rVFNoS3c0ZFJVSmJrTTA1MFQ3VTRXbkIwdlROcDVi?=
- =?utf-8?B?b0hOc2xrOFZDQTlkSTRRN3FFN3ZqQW13c1pnWldoQ1FDTFl3SHRkTTMxMkdN?=
- =?utf-8?B?VGZqR1RCa1FFN01Pb0lFMjkySjZ5TXYyZ0JKSFFPQnZIMjhMdXdqTjZZTENX?=
- =?utf-8?B?Sm9ibzRacVdOVlZyRng3OVd0TmFRRXpoWkR5eHhnd1c1RXBxN0F5STZsc2Rk?=
- =?utf-8?B?Wk1tN1haNDBXVzlIb0hRNHR2UnQ1U1dhT2hLMUI5dVlKQXlNUS9VZ01tYXZH?=
- =?utf-8?B?OGhXdEZHb3grMzdTSktMWEF3UVV6dTN0dUlxaGsxNjErd1NSQkVIOWh1TGla?=
- =?utf-8?B?YmRIR0Nna1lETFpTRW5QK3ByS054ampFOWwvZDQ2aktDUEdpWGZScklJL1pi?=
- =?utf-8?B?VEtaMGJySldYbHczeFlaaGsyaC9tQm1hcmprTGR5OXQrYkw2b3pmWG5CZ0c1?=
- =?utf-8?B?alQ3Y2tQNTBSOGJodVRsMWFkYVMvbTFrRjlmUUcrNkNJL3VFQW1CSzk0Q2ln?=
- =?utf-8?B?dWNGa0hDT3FOZnpEMDdsMDVyN1p3T21wWm5yeUFTTzljM25mNUNJZ1phckxx?=
- =?utf-8?B?elo2cmxlZ1lzbGIwOVVnT3FrNGhrR2lsSzdnNDZhcFBCek5FN0N4dlhxRCtO?=
- =?utf-8?B?ZXVuQ0w5YjNtVEJackQ5WU1TZ1Z4Rlc1aG83N0tia29kRUdGUm1GNzZlN0pJ?=
- =?utf-8?B?VUZCQ0NXcEtwNEYza2ZsenVGbFJ0VXBNN0VmV3ZaakFlMmUxT2liSDhFYXZQ?=
- =?utf-8?B?RUY5QktFblFTWktPRjkzeGRZTWlVYml1dWtkYlFteGluZVVCYUhxaUI5YkZK?=
- =?utf-8?B?T2FOdWozL3NpOGY3SmlKY3cxMjlBcVFIN3RjMzJkeUZvNUVpVm9mNksrc1Z4?=
- =?utf-8?B?eWFsc0E2cUYvMVZBMkVLaFh4Mm1iMityWHFzQkN4cjZkZXVSQmU0SkMxSHMz?=
- =?utf-8?B?R2tpK2tON1hvWjdGY01FdGZWRGJsblBDMVlMdVJiYXBzeXYwLy81TTVidjh4?=
- =?utf-8?B?V0tTVFgyNWlwUVhYY2dMRzRyZDNJbzBRTUh1T1JPQlBqMDB4QUxKYXBwaElk?=
- =?utf-8?B?VVBqM05DWU1QWmVtbjF2WXZaMXl1V2ZuSlQwbG1GQjFwcGU2TEFnRU51Y3pG?=
- =?utf-8?B?U25ST0M3cGY1eEQ5MFNGcjRnT0VFTDVCT0dwa2RrNWtZN042cFFPMEdUT0lj?=
- =?utf-8?B?cWdIakhJVjFUaE9rN3dVeEM2bHNFelIrcE5zZDJkMkJDV01vZ2gxSXRhS1I1?=
- =?utf-8?B?RUtValZGVms4Zm8zN1hDNDdVWm11bHZwVUdrbVNic3Rwd01jWmxxOHk5ZzN5?=
- =?utf-8?B?cTRaN2o1L0tJVU02cmp0enpNakxKMGpyTi9nOFR3MGZqTWd3ZDdaaUtBSkR5?=
- =?utf-8?B?WUxvaGdvU0pDMSs4UjBlVUc2YXgwOGE2eTM1UTQ2bjVCQXFKRUpoNEgwQWN0?=
- =?utf-8?B?QytLaFBjaDJLZ0lVYXpwZXB0eVJyVU45VVV0WU5EQkY5d1hiSHMyVWVLb3Jy?=
- =?utf-8?B?N0ZHcUt0Y0tqQmIwUDBTVlExaUFVN1l6RGhTU3Y0b3RXT1kxZ2RjYllPKzJx?=
- =?utf-8?B?bjd0MnFxSVgxZHB5dHkyOWEzV1hEeWREaENRK0FibzdJaEdrR2dUc2MwZ2g5?=
- =?utf-8?B?MVpxcUNpQ2x1N0VnaWRJUHRzcDJjaU5hWklLZjE5eUQyUnBaeTJFaW5GMFND?=
- =?utf-8?Q?pIF0=3D?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB6399.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?K3FZRmtiZi9PcC9WNDByaEc1dXVtZjVxTmFZL2xibEpsOUxwTzVVNUJHNUkz?=
- =?utf-8?B?eitZbEF5ZWZ4MWR3dDhNQy9GZ1JDdkh5RVUvRC92VnVBVXIzSjk3QlhibjBP?=
- =?utf-8?B?T2xnQ1RnQk5Gb3lIWStHd2dqMFVaelBqa1I3ekhaSUFzdnJReURnUTJrRjVY?=
- =?utf-8?B?bE5vMk1oK0FWc09BYjNzaU1sV1RhRGRYSHJ3UFZOOXg4Y3NoU1ArQ013dkZp?=
- =?utf-8?B?SWJad0Y4V3VjZzF3NUVBNjJ0TDdmR0pmSzJXUitZSFA1VVYxZ0gwemFEV2ha?=
- =?utf-8?B?UFZmajVZT2twc0RsWEhQY1pjbkk0d20vbnlPRjBSVDhvNVcwN2pSY1d4ZlB6?=
- =?utf-8?B?Nm9PN2xld1RKRGhFUGtFMlJzdlg1K0YwdWlJci9wL2djVUsyWVV1VFhtNmxK?=
- =?utf-8?B?N2wwekNkRGd4MkZMQ2wwcElLQzM3cW9QSCtseHFBaUZvTCtURGtZRHVuNVJn?=
- =?utf-8?B?aXFuOENJK3E3OUloTERpdUE3ZkZRaTFmYTBpWmpWeGlZU0FGY3pucVlEVDMv?=
- =?utf-8?B?ZUFVWlVodVBRcFJwUXJDKzVqOGI0Q3hlbVV2MElVemRrN01Qdk8xOGYycm1P?=
- =?utf-8?B?ZUZMWURORHB2MGl6bUIzN1ZhUnF0VnE1TGJKVmRtTEsrRWRPam8rWEdEeUdF?=
- =?utf-8?B?MGFXQUQ1UkViODZyR3E1VjFvV3pZc0ZmK2I3bG5MMkNpTVNrMmZ5dEhSdTJn?=
- =?utf-8?B?dWlHcXpjQ1pxREJNbmFmSEFzdWxaSCtLeFhEODFKaU5MWHpCTTZncEp5ME0r?=
- =?utf-8?B?VlpyZHBRWndiUzFNSU9FUjhGNWRURUlMZFhvVVBrNzlQUWRuaGExVE1FWFhD?=
- =?utf-8?B?UGkxMGpCK3ZXeCt4NEpFZjVSUkxqVXBrQ01EaHNpNGkvcTBNZWxrbm5aeWJz?=
- =?utf-8?B?S1V4bmN1amM0T1NwalhmS0ZIaS9tb24zMEdwNlFGbXRpZTAyV21tTGFxOXZi?=
- =?utf-8?B?bGZIOU1ocE02WW1ONGNzVDJtQUhMQ0NKejhTSU9JU1J0UkpKQnUzRDVxWk9w?=
- =?utf-8?B?OXBzdzA3bGpOalRNb0h1WTVGWnVHanhBTkZJQldUNVBSVkFEREhKSy8vTVhw?=
- =?utf-8?B?UCtqc2tBd2tuOVgwSzJISGxBVUVxbDJwaVp5RjRISnp2ZUhrcW1lZmdsMHpD?=
- =?utf-8?B?TTZ3VXlRM2tPaDgwMjhRb0dmYThNaU5LWnNleXk2cEpuS1dkbjcwZTl1TmVZ?=
- =?utf-8?B?cU03YnNLVnZTU1hYdzFVTFRzeGs5SjBWV0NFMU56bHpCZ0xXNWgwaFNIOEVP?=
- =?utf-8?B?dDF4QlZSNW9tNjZRUDVJTXR0YVg4Z2sxdXZRYlkrdWhWOUd5QUxTMEVUOHJJ?=
- =?utf-8?B?MloxSFdsSnBZanBRMWl4Sm5PdFFPQmRxNFltM01tV3UzRE1EUzg4QjNZc21l?=
- =?utf-8?B?NTAwZlI1NlRLdVN4WURKdzlEcWZYb1FhbmZ1RDN2c2h2OGtOV3R6WUhUQlBY?=
- =?utf-8?B?ZnRxNWdJVkJmT1BNcitISHhGa3dHWDMraVdBYlJ1NnRtcDN1REVMT2lHTVUy?=
- =?utf-8?B?SHJvQzFqTDlBT09IUS9naExjQ1Rqa0ZGaHV6SnFYaURpRTZWMjNYWWcvVUx4?=
- =?utf-8?B?WkhhYzZyK3Mwb3J3alNDWW43YnlaTlphVnpIaGloaU90aDdlYzJvbUQ1M2pJ?=
- =?utf-8?B?OWpDdjA1VmpsVkFmQ3JCTVdvWEh0b1pPWDFXTWI3bUJaNjRUd1VnOWV2VlBP?=
- =?utf-8?B?cW5SS0Vwb1VJUDZNSDgrbFZPMlcrcE55SkdSVG5GQ28wRDB4QUhPMnd1RGpo?=
- =?utf-8?B?dnQwMWZDUi95bkZpOTgxNlJtNjdrZnJHUUxlRXJGUkcwL3U4enR3ZkdzVUtE?=
- =?utf-8?B?Sk1SRjJqVkZHWTZyaFloSVJOcVh4YWJ4VXFjSWRHOTVNcjdFMEo5LzlHNzJB?=
- =?utf-8?B?SG5XU05xOHhDcXVsY1hNWjBTYWYyZ3Y3MWFBMGpkc2l2a1BlYS85ZTh0VnB3?=
- =?utf-8?B?a3gzbkNFcGNDVXd4OWY2ZWRvc2NDMWxTbG1yRGt5dkk4OU9ocUFaQzdLRHll?=
- =?utf-8?B?TjFIV3llK3lFTW9GTUVncVB3M2JoTmdLb2ZVM0FZZ1lrL2QxYzB2VDJPMHV6?=
- =?utf-8?B?R1JWVUdQTWpmak9iUU52ZlQxMDZzMFdXN3Q3NmljWVdGZy9SNnlMdHg4RWgr?=
- =?utf-8?B?ZXU4UTVWK0ZDWTBNZ2lHWFNFSXFlT2kybVFBMUxEeVdxMFVnUWtWamNxSWJx?=
- =?utf-8?B?VEpFT005dXl2dWpsUVZIVk1NVHpHV1RLSkVRUnZwVCs5Q011dDM1bEVQQy8r?=
- =?utf-8?B?RnRVb3NRV2JhYTVkNHY0dFdxK2NHWUlWKzFaUjBUdXVtcUNxakxrTVBqbGI3?=
- =?utf-8?B?bmx6UzNSOFl5TlBvTC9YTm9kTTFTRThNUTV6STJPWk5NV05VRmNxdz09?=
-X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 93daffd3-7791-4476-3807-08de5e64df69
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB6399.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jan 2026 12:00:47.4270
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qQ7EiZsZUks4GaHzyoqO+5N/6W+q/U/ZtiGn6L9yDxguaqUtu2bi/UPi/9acwEvHDPVDdqz8fswmp81C4TRLqQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7687
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTI4MDA5OCBTYWx0ZWRfX0yvpVpMpTr0m
- xhQ/h85dBrSwf9GBdjjMv7e/OD8eC9eirZQANi0dCBhWlZvPPktsBQh4KLcC96dj8GOpHFKCma7
- 6pgxNKI20mC5GOej4S1TyrllxLNlzBOCybFf+wm2Z22gc9lncN1aks6+oUwbp9yQcUxKOlDigqs
- D64qiDrfARt31KQWpLWl5yTAiQkqsE/vilc7ggHjb4u0dgudivkor46VQFStP2wM9rMkrJj/pE7
- i8djw593iUc1l14UYMQxODMVWKSj6lNRML3A51cA8oXB+xMQasrN1/7arOqMUrWKhlHH9ypE+HA
- /Fbi2QO2B0OprQdc8sutLu44VR48bwt5Pky2oYbs09QyDtU8YVYL1uSq7/Zpxi8k0jpq1Zgkrhj
- R1yV+oLSd6sq8gY5izNBWrQO++7F6MK8bxWdo+pcroZwI6PiFzSBnm3yVCq5QYwG662wGxcYE/N
- 5mTXvud+lP6yhq+5txQ==
-X-Authority-Analysis: v=2.4 cv=CpCys34D c=1 sm=1 tr=0 ts=6979fa72 cx=c_pps
- a=xOYz1KraVtwoi73AohHYLg==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
- a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
- a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=vUbySO9Y5rIA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=iGHA9ds3AAAA:8 a=I1k7tfx8jKYhpOTj2UgA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=nM-MV4yxpKKO9kiQg6Ot:22
-X-Proofpoint-ORIG-GUID: qVPQXRPcSTFTiilBh9t_9WfU6-vdrFOh
-X-Proofpoint-GUID: qVPQXRPcSTFTiilBh9t_9WfU6-vdrFOh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-01-28_02,2026-01-27_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 malwarescore=0 clxscore=1015 priorityscore=1501
- lowpriorityscore=0 impostorscore=0 phishscore=0 spamscore=0 bulkscore=0
- adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2601150000
- definitions=main-2601280098
-Content-Transfer-Encoding: quoted-printable
-X-MIME-Autoconverted: from 8bit to quoted-printable by mx0a-0064b401.pphosted.com id 60SB2cfh763255
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 28 Jan 2026 12:01:02 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3130
+ <yocto-patches@lists.yoctoproject.org>; Wed, 28 Jan 2026 14:02:53 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3131
 
+This branch constitutes the entirety of the work on the STA Milestones 2 
+and 3 for Yocto in 2025: Improved design and unified website pages, 
+concerning Yocto’s dashboard page, the Bugzilla stats page, the bug 
+triage page, and the Autobuilder Issues page (abint). In general, the 
+work consisted of: unifying all pages to a common design that matches 
+our previous work on the CVE/Metrics pages, and also unifying the rendering 
+of charts to use Apache eCharts. Also: adding proper support for small 
+screens and dark mode, as well as general refactoring, optimisation and 
+simplification where possible. More details and screenshots are available 
+at: https://github.com/neighbourhoodie/yocto-autobuilder-helper/pull/11.
 
-On 1/26/26 23:37, "Uwe Kleine-K=C3=B6nig wrote:
-> The reasoning is taken from commit 5d203f903979 ("systemd: create
-> /var/lib/systemd/backlight in advance").
-> ---
->   recipes-core/systemd/systemd_selinux.inc | 6 ++++++
->   1 file changed, 6 insertions(+)
->
-> diff --git a/recipes-core/systemd/systemd_selinux.inc b/recipes-core/sy=
-stemd/systemd_selinux.inc
-> index 7d466ee608c8..4eb7194444d2 100644
-> --- a/recipes-core/systemd/systemd_selinux.inc
-> +++ b/recipes-core/systemd/systemd_selinux.inc
-> @@ -1,5 +1,11 @@
->   inherit enable-selinux enable-audit
->  =20
-> +# The systemd-backlight@.service which is called after selinux-init.se=
-rvice
-> +# will create /var/lib/systemd/backlight with incorrect security label=
-s,
-> +# this causes the systemd-backlight service to fail to start and to st=
-op.
-> +#
-> +# Creating /var/lib/systemd/backlight in advance to make sure it could
-> +# always be relabelled by selinux-init while first booting.
->   do_install:append() {
->   	if ${@bb.utils.contains('PACKAGECONFIG', 'backlight', 'true', 'false=
-', d)}; then
->   		install -d ${D}${localstatedir}/lib/systemd/backlight
+Alex Feyerke (4):
+  dashboard: update to unify styles with CVE/Patch Metrics pages
+  dashboard/bugzilla: update to unify styles with CVE/Patch Metrics
+    pages
+  dashboard/bugtriage: update to unify styles with CVE/Patch Metrics
+    pages
+  abint: update to unify styles with CVE/Patch Metrics pages
 
-This file has been removed in commit:=20
-https://git.yoctoproject.org/meta-selinux/commit/?id=3D4507f3ad747c750761=
-1d718d10c7da8bd602660e
+ scripts/abint/abint.html.j2                   |   87 -
+ scripts/abint/abint.py                        |   46 +-
+ scripts/abint/index.html                      |  290 ++
+ scripts/abint/requirements.txt                |    2 -
+ scripts/abint/resources/apple-touch-icon.png  |  Bin 0 -> 7683 bytes
+ scripts/abint/resources/dark.js               |   76 +
+ scripts/abint/resources/date_helper.js        |   36 +
+ scripts/abint/resources/favicon-16x16.png     |  Bin 0 -> 792 bytes
+ scripts/abint/resources/favicon-32x32.png     |  Bin 0 -> 1246 bytes
+ .../resources/pico.fluid.classless.min.css    |    4 +
+ scripts/abint/resources/shared-styles.css     |   75 +
+ scripts/abint/resources/tablesort.date.js     |   23 +
+ scripts/abint/resources/tablesort.min.js      |    6 +
+ scripts/abint/resources/tablesort.number.js   |   26 +
+ ...to.echarts.with_heatmap_single-axis.min.js |    1 +
+ scripts/abint/sorttable.js                    |  495 ---
+ scripts/dashboard/bugtriage/index.html        |  588 ++-
+ scripts/dashboard/bugtriage/tablesort.min.js  |    6 +
+ .../dashboard/bugtriage/tablesort.number.js   |   26 +
+ scripts/dashboard/bugzilla_stats.html         |  256 ++
+ scripts/dashboard/data/wdd-weekly-recent.txt  | 3490 +++++++++++++++++
+ scripts/dashboard/index.html                  |   77 +-
+ .../dashboard/resources/apple-touch-icon.png  |  Bin 0 -> 7683 bytes
+ scripts/dashboard/resources/dark.js           |   76 +
+ scripts/dashboard/resources/favicon-16x16.png |  Bin 0 -> 792 bytes
+ scripts/dashboard/resources/favicon-32x32.png |  Bin 0 -> 1246 bytes
+ .../resources/pico.fluid.classless.min.css    |    4 +
+ scripts/dashboard/resources/shared-styles.css |   75 +
+ .../dashboard/resources/yocto.echarts.min.js  |    1 +
+ scripts/run-abint                             |    2 +-
+ 30 files changed, 4958 insertions(+), 810 deletions(-)
+ delete mode 100644 scripts/abint/abint.html.j2
+ create mode 100644 scripts/abint/index.html
+ create mode 100644 scripts/abint/resources/apple-touch-icon.png
+ create mode 100644 scripts/abint/resources/dark.js
+ create mode 100644 scripts/abint/resources/date_helper.js
+ create mode 100644 scripts/abint/resources/favicon-16x16.png
+ create mode 100644 scripts/abint/resources/favicon-32x32.png
+ create mode 100644 scripts/abint/resources/pico.fluid.classless.min.css
+ create mode 100644 scripts/abint/resources/shared-styles.css
+ create mode 100644 scripts/abint/resources/tablesort.date.js
+ create mode 100644 scripts/abint/resources/tablesort.min.js
+ create mode 100644 scripts/abint/resources/tablesort.number.js
+ create mode 100644 scripts/abint/resources/yocto.echarts.with_heatmap_single-axis.min.js
+ delete mode 100644 scripts/abint/sorttable.js
+ create mode 100644 scripts/dashboard/bugtriage/tablesort.min.js
+ create mode 100644 scripts/dashboard/bugtriage/tablesort.number.js
+ create mode 100644 scripts/dashboard/bugzilla_stats.html
+ create mode 100644 scripts/dashboard/data/wdd-weekly-recent.txt
+ create mode 100644 scripts/dashboard/resources/apple-touch-icon.png
+ create mode 100644 scripts/dashboard/resources/dark.js
+ create mode 100644 scripts/dashboard/resources/favicon-16x16.png
+ create mode 100644 scripts/dashboard/resources/favicon-32x32.png
+ create mode 100644 scripts/dashboard/resources/pico.fluid.classless.min.css
+ create mode 100644 scripts/dashboard/resources/shared-styles.css
+ create mode 100644 scripts/dashboard/resources/yocto.echarts.min.js
 
+-- 
+2.40.1
 
-//Yi
-
->
-> base-commit: 1db6bf1b573b9c908752602c1e2b6a30368da3b7
 
