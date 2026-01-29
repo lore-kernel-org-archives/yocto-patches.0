@@ -1,105 +1,159 @@
-Return-Path: <majortomtosourcecontrol@gmail.com>
+Return-Path: <ross.burton@arm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB2D8D46BE6
-	for <webhook@archiver.kernel.org>; Wed, 28 Jan 2026 17:42:03 +0000 (UTC)
-Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.548.1769622116767541231
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0BAAD358ED
+	for <webhook@archiver.kernel.org>; Thu, 29 Jan 2026 09:35:45 +0000 (UTC)
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.10739.1769675291062720952
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 28 Jan 2026 09:41:56 -0800
+ Thu, 29 Jan 2026 00:28:11 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=B9t777yT;
- spf=pass (domain: gmail.com, ip: 209.85.167.170, mailfrom: majortomtosourcecontrol@gmail.com)
-Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-45c838069e5so99009b6e.0
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 28 Jan 2026 09:41:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769622116; x=1770226916; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4EfxL1jgKPUwv92IMrYI8OOxunNj4JpfQDsEmoucOEQ=;
-        b=B9t777yTnlsU/K0CxL2jMf1JU+YfGPMySAdijwvxmoOFGKMkAJ78DpbtpwsJhz4UAZ
-         oc0PGOrPMGPddKoejzo6p2cscs85eozvRCCvip9OlDElFCxHbQyqTsldDv0iEiBHiFae
-         XQbqzqdvY9lCAaRY7U75MaspsUVbhuwGvKwY2kR/ksJHU1yfrI8P4x+Imx3RhqJQjywL
-         L33hOLF8TaicuzzxVtQNEtGYJ+3JKXWsXNP4v7vEDyCxA09HQzJ+9iyMXPZWMDjFWl4T
-         kNDD/a10duiEVJGgiedquotNr6ADXSguh6ql9fqNweHsHCVxe8DOo792BnWDASYpTPCH
-         DLnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769622116; x=1770226916;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4EfxL1jgKPUwv92IMrYI8OOxunNj4JpfQDsEmoucOEQ=;
-        b=w1fgtqEi13SyzbG+aXKb0ORsyUnsWBTqm0/JOFyALeiJaF8S+KmQqwj4HLAr/+2fHS
-         sD8nLPrMnDKxuex+0yTUwgJ2SC4uZuwhbdEl45fetLxXjLjbYMTTb25jTo4g1dDKPFM8
-         WJawKUjEK3KQdprB7dHBul8JB5u2BQnpvmY1geJy0GGANz9by0kDobGsDN01p5V9ju93
-         pTGNiTprCbZwsOOkHEhi33+qTuzUQeuoyJ5ZcAEp2aolTcJ2ZvqJD2z6QP4tQgO0LyBe
-         HfcU6AM5L0gEeewFiu0tgq9SjXNNGeCMxIBvHMEHbUOSLvXl8cUbNVfixMmBKM8yjjYn
-         KP7g==
-X-Gm-Message-State: AOJu0YzFymeEp/EMK0x3agtCvNxzhZDkfKIYwoCSt2msp6mOc53a9WsV
-	kfqqIcr3kkXM8WQukIycyLyq/xQmAm20yzlzM0CB8TeF0H0vXOfws05zeqU9Ug==
-X-Gm-Gg: AZuq6aJloBEbuaSr9tlUKKwSiZPqQgfT/4vKYkcOPu8C3w8ujfLZuKnxgO81VHeF15+
-	fFRxX9Irri09Ovp+5jj5M5xaAiHog0PWta9sGvQJRgiwEvSagibK9rNDtzRuDmaLcoZ0mquGHQm
-	uhqeIrmaE5bmNaMhIEZCM/6b8TuCxEcLEPCqz04QXBZJjUw2bAw7LFMEmEMfq95HBTF8YX7A/gZ
-	tRZT0tw4PgtKUAo6UIg0le7IB4r3/eWp/AOaTdQBb77DjYHJTre30/IFPkXbqczIr1uNCVveyay
-	6m4guBWz++QnVuaDvx3k68xGK7JUD8h/IxMn0NgqTThGV+lMSpj0rxjLeWGTk4J4cwuglaiJ0Ls
-	6HX3ViistB/zyOrj8AijQTe8fRBLNyRlAIpS9/9GB5UoLp4W6kNwtk7yeYgC9Kfbg3rgdbOBYMr
-	DUf3NNsDf0W87JgDVCKXwIulSvqFPAUgOGH5ont2DqXO3e3hxZcOCDxG1wQQyOTEQdooXJHXqtI
-	Og=
-X-Received: by 2002:a05:6808:5284:b0:45e:a68b:30fb with SMTP id 5614622812f47-45efc6d0ad5mr3350885b6e.47.1769622115990;
-        Wed, 28 Jan 2026 09:41:55 -0800 (PST)
-Received: from [172.26.252.3] (97-118-253-141.hlrn.qwest.net. [97.118.253.141])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7d18c69e63esm2127754a34.11.2026.01.28.09.41.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Jan 2026 09:41:55 -0800 (PST)
-Message-ID: <5458dad2-27ec-4826-be91-4fa5428a8f11@gmail.com>
-Date: Wed, 28 Jan 2026 10:41:55 -0700
+ dkim=fail reason="dkim: body hash did not verify" header.i=@qualcomm.com header.s=qcppdkim1 header.b=GSc1tuoo;
+ spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: qti.qualcomm.com, ip: 205.220.180.131, mailfrom: gyenugul@qti.qualcomm.com)
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60T2pQKf1523185
+	for <yocto-patches@lists.yoctoproject.org>; Thu, 29 Jan 2026 08:28:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=+wTuyMWcf2RzOxWwSHkCQA
+	XESqXW/1O5lJzvMYdeyYI=; b=GSc1tuoo24gKG5MUSCx1D6Oxe4LMgx7F+NJRCv
+	a2ndW+TFJh7v72Vkm6w/OyvxTxYJ6jNrqETP50HpshoJHjMOrMAPIj1iXpuJprkU
+	oYLzr+ppRHeNrMntmzKFI7Os3BLLs9KjxQivXyJF3uacTcnJsBK/C7zCmsO5+551
+	32+gOVf52qY2wRjJKzzQ9U/MBgLzvIKN47rB1IB+G/dh5operD43Px4L5GYBd11M
+	/tdExi1yfg75F6aZ0Xpkhz7J7k/PcLsbaQmq3euRGKzmUDkw77FtslJJPNbyihkJ
+	0+3LPRoL27/PW7ohWbPYfx5GSVi7h3RsdL/FervDwdzQ6/cA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4byjxhufrf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+	for <yocto-patches@lists.yoctoproject.org>; Thu, 29 Jan 2026 08:28:09 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 60T8S8Cg031799
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+	for <yocto-patches@lists.yoctoproject.org>; Thu, 29 Jan 2026 08:28:08 GMT
+Received: from hyd-e160-a01-2-02.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Thu, 29 Jan 2026 00:28:07 -0800
+From: "Ganga Bhavani Yenugula" <gyenugul@qti.qualcomm.com>
+To: <yocto-patches@lists.yoctoproject.org>
+CC: Gangabhavani Yenugula <gyenugul@qti.qualcomm.com>
+Subject: [meta-selinux][PATCH] pd-mapper: Introduce SELinux domain for pd-mapper
+Date: Thu, 29 Jan 2026 13:57:50 +0530
+Message-ID: <20260129082750.221574-1-gyenugul@qti.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: yocto-patches@lists.yoctoproject.org, joe.macdonald@siemens.com,
- Yi Zhao <yi.zhao@windriver.com>
-Cc: mingli.yu@windriver.com, mathieu.dubois-briand@bootlin.com,
- richard.purdie@linuxfoundation.org
-From: Clayton Casciato <majortomtosourcecontrol@gmail.com>
-Subject: [meta-selinux][PATCH 1/1] openssh: Add pam_env support
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: J5jQQVAqWrtxCIW2zxFNUmr_ETN1ugd1
+X-Proofpoint-GUID: J5jQQVAqWrtxCIW2zxFNUmr_ETN1ugd1
+X-Authority-Analysis: v=2.4 cv=b9G/I9Gx c=1 sm=1 tr=0 ts=697b1a1a cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=vUbySO9Y5rIA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=NEAV23lmAAAA:8 a=EUspDBNiAAAA:8
+ a=KY-vJS-pLNiqLzBXIH4A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTI5MDA1MSBTYWx0ZWRfX2sGBOKyKAjsw
+ oyx2IkWLSnCQT7Ao7ybuuBK71j8J3e5NjymA6EQXuAg+7AX+MNRB5xQBr+GgGiAlu38dKqfBXm3
+ +KanxbpkwGGyWJWvFzhS7YWSd3sA076NxHmw7gcgywUIxM4sxGpU0cnMa2hFhqHm6PRMEt07yI7
+ 4CFVGvQhVTmhhljQLZ6DR8EC1TsTQ+GKrP4iGIuWr9Rl/4QF35fXugNYw6ZlpKtcrKntb51Yw7h
+ lGNlcBJUYkRQxz/qk62VyBtlEVkVQhiQpuG7XuOJJEw0GIRzgSzS31bADWSXmNoMjskYY5SdwcP
+ H0op+Y9F9AmSLDUhsSElpFi+LHyUJamMP9Gh7bXXSIecgmuheMd035bX2ImKJlfkBT/P6sAdbqA
+ 5AwO73gVzxg8AtFx3xnBISDNF/bLYVAOEK3juMWl/cKz3eD2L13z3iFzkm9tkE/bpjorAxC7xqY
+ WFLM5RPhPw9lswwJN8Q==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-01-29_01,2026-01-28_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 spamscore=0 suspectscore=0 bulkscore=0 clxscore=1015
+ impostorscore=0 lowpriorityscore=0 malwarescore=0 adultscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2601150000 definitions=main-2601290051
+X-MIME-Autoconverted: from 8bit to quoted-printable by mx0a-0031df01.pphosted.com id 60T2pQKf1523185
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 28 Jan 2026 17:42:03 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3139
+ <yocto-patches@lists.yoctoproject.org>; Thu, 29 Jan 2026 09:35:45 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3140
 
-From:
-https://git.openembedded.org/openembedded-core/commit/meta/recipes-connectivity/openssh/openssh/sshd?id=4e6762f5967b1996cf31ae100fa49e775dfb2866
+From: Gangabhavani Yenugula <gyenugul@qti.qualcomm.com>
 
-Make setting environment variables in /etc/environment or
-/etc/security/pam_env.conf take effect for ssh session.
+Define a dedicated domain (`pd_mapper_t`) to confine pd-mapper service, e=
+nsuring
+it operates in a restricted environment isolated from other init processe=
+s.
 
-[ YOCTO # 15767]
+Grant the necessary permissions to resolve AVC denials observed during
+the transition to enforcing mode:
 
-Signed-off-by: Mingli Yu <mingli.yu@windriver.com>
-Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
+ - Filesystem: Authorize read access to `/sys`.
+ - Socket: Allow creation and basic use of qipcrtr_socket
+
+Signed-off-by: Gangabhavani Yenugula <gyenugul@qti.qualcomm.com>
 ---
-Sponsor: 21SoftWare LLC
+ policy/modules/services/pd_mapper.fc |  1 +
+ policy/modules/services/pd_mapper.if | 10 ++++++++++
+ policy/modules/services/pd_mapper.te | 15 +++++++++++++++
+ 3 files changed, 26 insertions(+)
+ create mode 100644 policy/modules/services/pd_mapper.fc
+ create mode 100644 policy/modules/services/pd_mapper.if
+ create mode 100644 policy/modules/services/pd_mapper.te
 
- recipes-connectivity/openssh/files/sshd | 1 +
- 1 file changed, 1 insertion(+)
+diff --git a/policy/modules/services/pd_mapper.fc b/policy/modules/servic=
+es/pd_mapper.fc
+new file mode 100644
+index 000000000..3d83d46b1
+--- /dev/null
++++ b/policy/modules/services/pd_mapper.fc
+@@ -0,0 +1 @@
++/usr/bin/pd-mapper      --      gen_context(system_u:object_r:pd_mapper_=
+exec_t,s0)
+diff --git a/policy/modules/services/pd_mapper.if b/policy/modules/servic=
+es/pd_mapper.if
+new file mode 100644
+index 000000000..34da5143f
+--- /dev/null
++++ b/policy/modules/services/pd_mapper.if
+@@ -0,0 +1,10 @@
++## <summary>pd-mapper</summary>
++#
++## <desc>
++## Qualcomm=E2=80=99s pd=E2=80=91mapper service is the userspace Protect=
+ion Domain mapper
++## that enables applications to access remote processors
++## (Wi=E2=80=91Fi, modem, sensors, etc.)
++## on Qualcomm SoCs via the QRTR protocol.
++##
++## https://github.com/linux-msm/pd-mapper
++## </desc>
+diff --git a/policy/modules/services/pd_mapper.te b/policy/modules/servic=
+es/pd_mapper.te
+new file mode 100644
+index 000000000..34a8d6bcc
+--- /dev/null
++++ b/policy/modules/services/pd_mapper.te
+@@ -0,0 +1,15 @@
++policy_module(pd_mapper)
++
++########################################
++#
++# Declarations
++#
++
++type pd_mapper_t;
++type pd_mapper_exec_t;
++init_daemon_domain(pd_mapper_t, pd_mapper_exec_t)
++
++allow pd_mapper_t self:qipcrtr_socket connected_socket_perms;
++
++# Read /sys/devices/platform/soc@0/2a300000.remoteproc/remoteproc/remote=
+proc2/firmware
++dev_read_sysfs(pd_mapper_t)
+--=20
+2.34.1
 
-diff --git a/recipes-connectivity/openssh/files/sshd b/recipes-connectivity/openssh/files/sshd
-index 72303eb..06d4e78 100644
---- a/recipes-connectivity/openssh/files/sshd
-+++ b/recipes-connectivity/openssh/files/sshd
-@@ -15,6 +15,7 @@ password   include      common-password
- session    optional     pam_keyinit.so force revoke
- session    include      common-session
- session    required     pam_loginuid.so
-+session    required     pam_env.so
- 
- # SELinux needs to intervene at login time to ensure that the process
- # starts in the proper default security context. Only sessions which are
 
