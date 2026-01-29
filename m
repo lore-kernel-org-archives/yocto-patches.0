@@ -2,45 +2,45 @@ Return-Path: <ross.burton@arm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0BAAD358ED
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1FC2D358EC
 	for <webhook@archiver.kernel.org>; Thu, 29 Jan 2026 09:35:45 +0000 (UTC)
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.10739.1769675291062720952
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.10981.1769675740598995132
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 29 Jan 2026 00:28:11 -0800
+ Thu, 29 Jan 2026 00:35:40 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@qualcomm.com header.s=qcppdkim1 header.b=GSc1tuoo;
+ dkim=fail reason="dkim: body hash did not verify" header.i=@qualcomm.com header.s=qcppdkim1 header.b=HHdyAbsL;
  spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: qti.qualcomm.com, ip: 205.220.180.131, mailfrom: gyenugul@qti.qualcomm.com)
 Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60T2pQKf1523185
-	for <yocto-patches@lists.yoctoproject.org>; Thu, 29 Jan 2026 08:28:10 GMT
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60T2omK61521286
+	for <yocto-patches@lists.yoctoproject.org>; Thu, 29 Jan 2026 08:35:39 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=+wTuyMWcf2RzOxWwSHkCQA
-	XESqXW/1O5lJzvMYdeyYI=; b=GSc1tuoo24gKG5MUSCx1D6Oxe4LMgx7F+NJRCv
-	a2ndW+TFJh7v72Vkm6w/OyvxTxYJ6jNrqETP50HpshoJHjMOrMAPIj1iXpuJprkU
-	oYLzr+ppRHeNrMntmzKFI7Os3BLLs9KjxQivXyJF3uacTcnJsBK/C7zCmsO5+551
-	32+gOVf52qY2wRjJKzzQ9U/MBgLzvIKN47rB1IB+G/dh5operD43Px4L5GYBd11M
-	/tdExi1yfg75F6aZ0Xpkhz7J7k/PcLsbaQmq3euRGKzmUDkw77FtslJJPNbyihkJ
-	0+3LPRoL27/PW7ohWbPYfx5GSVi7h3RsdL/FervDwdzQ6/cA==
+	:mime-version:subject:to; s=qcppdkim1; bh=UEFMFS3Fv0X2RsoTCft/0u
+	atsrMLpS5xXBte9XlaCCs=; b=HHdyAbsLZDDHL5JuZJ4Ft7IYePh1EeZuuVt3KS
+	LKsBD+dIqrAyo8wmJuOUSEyUy7rvC5XDGvALPl63G3f4K8WYxw7xf73ylHfD5INy
+	b4Gw5mBDunDh79kJ/hWi5l02Vj70GOKLUpch4CSDwhA+ZXTmYB8t0rFptWH+v2xs
+	VjIBio77k1zu8SciGt7TiAkjmKAKrrl5sEJi0bZZcUiSav8ROFII7R2PWTbcJk76
+	YEBpY6aJulO7ngcYJKb6KQ8tXs6rMs2tvF3vGx1gLFVyl7m9GpHe7YttgE0dXtXU
+	cmf3ElSl1J/lu2SfUdLHvqvFej6g3NkuEDcOV5qsBUQyYjHg==
 Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4byjxhufrf-1
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4byjxhugpy-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <yocto-patches@lists.yoctoproject.org>; Thu, 29 Jan 2026 08:28:09 +0000 (GMT)
+	for <yocto-patches@lists.yoctoproject.org>; Thu, 29 Jan 2026 08:35:39 +0000 (GMT)
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 60T8S8Cg031799
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 60T8ZckV013763
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <yocto-patches@lists.yoctoproject.org>; Thu, 29 Jan 2026 08:28:08 GMT
+	for <yocto-patches@lists.yoctoproject.org>; Thu, 29 Jan 2026 08:35:38 GMT
 Received: from hyd-e160-a01-2-02.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Thu, 29 Jan 2026 00:28:07 -0800
+ 15.2.2562.17; Thu, 29 Jan 2026 00:35:37 -0800
 From: "Ganga Bhavani Yenugula" <gyenugul@qti.qualcomm.com>
 To: <yocto-patches@lists.yoctoproject.org>
 CC: Gangabhavani Yenugula <gyenugul@qti.qualcomm.com>
-Subject: [meta-selinux][PATCH] pd-mapper: Introduce SELinux domain for pd-mapper
-Date: Thu, 29 Jan 2026 13:57:50 +0530
-Message-ID: <20260129082750.221574-1-gyenugul@qti.qualcomm.com>
+Subject: [PATCH] pd-mapper: Introduce SELinux domain for pd-mapper
+Date: Thu, 29 Jan 2026 14:05:16 +0530
+Message-ID: <20260129083517.647116-1-gyenugul@qti.qualcomm.com>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 X-Originating-IP: [10.80.80.8]
@@ -48,21 +48,21 @@ X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: J5jQQVAqWrtxCIW2zxFNUmr_ETN1ugd1
-X-Proofpoint-GUID: J5jQQVAqWrtxCIW2zxFNUmr_ETN1ugd1
-X-Authority-Analysis: v=2.4 cv=b9G/I9Gx c=1 sm=1 tr=0 ts=697b1a1a cx=c_pps
+X-Proofpoint-ORIG-GUID: 87k2SCiHCWeNax_pRpyjbbKUdkW2lJu8
+X-Proofpoint-GUID: 87k2SCiHCWeNax_pRpyjbbKUdkW2lJu8
+X-Authority-Analysis: v=2.4 cv=b9G/I9Gx c=1 sm=1 tr=0 ts=697b1bdb cx=c_pps
  a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
  a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=vUbySO9Y5rIA:10
  a=VkNPw1HP01LnGYTKEx00:22 a=NEAV23lmAAAA:8 a=EUspDBNiAAAA:8
  a=KY-vJS-pLNiqLzBXIH4A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTI5MDA1MSBTYWx0ZWRfX2sGBOKyKAjsw
- oyx2IkWLSnCQT7Ao7ybuuBK71j8J3e5NjymA6EQXuAg+7AX+MNRB5xQBr+GgGiAlu38dKqfBXm3
- +KanxbpkwGGyWJWvFzhS7YWSd3sA076NxHmw7gcgywUIxM4sxGpU0cnMa2hFhqHm6PRMEt07yI7
- 4CFVGvQhVTmhhljQLZ6DR8EC1TsTQ+GKrP4iGIuWr9Rl/4QF35fXugNYw6ZlpKtcrKntb51Yw7h
- lGNlcBJUYkRQxz/qk62VyBtlEVkVQhiQpuG7XuOJJEw0GIRzgSzS31bADWSXmNoMjskYY5SdwcP
- H0op+Y9F9AmSLDUhsSElpFi+LHyUJamMP9Gh7bXXSIecgmuheMd035bX2ImKJlfkBT/P6sAdbqA
- 5AwO73gVzxg8AtFx3xnBISDNF/bLYVAOEK3juMWl/cKz3eD2L13z3iFzkm9tkE/bpjorAxC7xqY
- WFLM5RPhPw9lswwJN8Q==
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTI5MDA1MSBTYWx0ZWRfX+kja8hfWh4/u
+ 1f10R8jhnIsZisGQ4rCDdSHAoKYezCOnlQkwqwh/15zfCkgzuZGl9Yy11i+3E6s7Ld3GZwjUuqT
+ fOSdESOaxNytrg0NNJEBvq8g5iFb9oxzT/Zu7a9W20IXzHS88FGQuICdGN+rG+BCao6pKAzSvYs
+ dnJdDbd3c5NjIMJ/pPxrkeARb9GpeAvKtMk8qopyTwv2T+ZWZnqU0Uu55i67LvY6UGCBvESHn8o
+ B4T+hKLgCCCjHlOQ+hyqpSfpa3HDrD2WaaZ50PRt13ZjfrCJ7molB2m8DNZpb7FRoWYCVkN7dpi
+ kKvfvI0Z9lBr0QGlGs8eyJWedfMcT3ZKGZ8qKCnD2+FqVm0JGHZKYGMigdz9dkxGgBH0SE+J41/
+ 8mEQ4+JDjAdlJFlaaV+gc5mIJfyCMn2b86dSzuwggbIjSoMZ40fsP3+XSfROdQiiLIx0rt+fKBQ
+ I2H6HEcoCSCIV2chdcg==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-01-29_01,2026-01-28_03,2025-10-01_01
@@ -71,14 +71,14 @@ X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
  impostorscore=0 lowpriorityscore=0 malwarescore=0 adultscore=0 phishscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2601150000 definitions=main-2601290051
-X-MIME-Autoconverted: from 8bit to quoted-printable by mx0a-0031df01.pphosted.com id 60T2pQKf1523185
+X-MIME-Autoconverted: from 8bit to quoted-printable by mx0a-0031df01.pphosted.com id 60T2omK61521286
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Thu, 29 Jan 2026 09:35:45 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3140
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3141
 
 From: Gangabhavani Yenugula <gyenugul@qti.qualcomm.com>
 
@@ -94,6 +94,10 @@ the transition to enforcing mode:
  - Socket: Allow creation and basic use of qipcrtr_socket
 
 Signed-off-by: Gangabhavani Yenugula <gyenugul@qti.qualcomm.com>
+
+Upstream-Status: Backport [https://github.com/SELinuxProject/refpolicy/pu=
+ll/1070/changes/c8aef7c55e8768378c6adeda7e8edfaeecb9fa28]
+
 ---
  policy/modules/services/pd_mapper.fc |  1 +
  policy/modules/services/pd_mapper.if | 10 ++++++++++
