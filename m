@@ -2,162 +2,99 @@ Return-Path: <ross.burton@arm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1FC2D358EC
-	for <webhook@archiver.kernel.org>; Thu, 29 Jan 2026 09:35:45 +0000 (UTC)
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.10981.1769675740598995132
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81C8CD358F9
+	for <webhook@archiver.kernel.org>; Thu, 29 Jan 2026 10:33:56 +0000 (UTC)
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.12035.1769682492331632793
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 29 Jan 2026 00:35:40 -0800
+ Thu, 29 Jan 2026 02:28:12 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@qualcomm.com header.s=qcppdkim1 header.b=HHdyAbsL;
- spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: qti.qualcomm.com, ip: 205.220.180.131, mailfrom: gyenugul@qti.qualcomm.com)
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60T2omK61521286
-	for <yocto-patches@lists.yoctoproject.org>; Thu, 29 Jan 2026 08:35:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=UEFMFS3Fv0X2RsoTCft/0u
-	atsrMLpS5xXBte9XlaCCs=; b=HHdyAbsLZDDHL5JuZJ4Ft7IYePh1EeZuuVt3KS
-	LKsBD+dIqrAyo8wmJuOUSEyUy7rvC5XDGvALPl63G3f4K8WYxw7xf73ylHfD5INy
-	b4Gw5mBDunDh79kJ/hWi5l02Vj70GOKLUpch4CSDwhA+ZXTmYB8t0rFptWH+v2xs
-	VjIBio77k1zu8SciGt7TiAkjmKAKrrl5sEJi0bZZcUiSav8ROFII7R2PWTbcJk76
-	YEBpY6aJulO7ngcYJKb6KQ8tXs6rMs2tvF3vGx1gLFVyl7m9GpHe7YttgE0dXtXU
-	cmf3ElSl1J/lu2SfUdLHvqvFej6g3NkuEDcOV5qsBUQyYjHg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4byjxhugpy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <yocto-patches@lists.yoctoproject.org>; Thu, 29 Jan 2026 08:35:39 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 60T8ZckV013763
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <yocto-patches@lists.yoctoproject.org>; Thu, 29 Jan 2026 08:35:38 GMT
-Received: from hyd-e160-a01-2-02.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Thu, 29 Jan 2026 00:35:37 -0800
-From: "Ganga Bhavani Yenugula" <gyenugul@qti.qualcomm.com>
-To: <yocto-patches@lists.yoctoproject.org>
-CC: Gangabhavani Yenugula <gyenugul@qti.qualcomm.com>
-Subject: [PATCH] pd-mapper: Introduce SELinux domain for pd-mapper
-Date: Thu, 29 Jan 2026 14:05:16 +0530
-Message-ID: <20260129083517.647116-1-gyenugul@qti.qualcomm.com>
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=cZHHru3m;
+ spf=pass (domain: gmail.com, ip: 209.85.216.43, mailfrom: nitin.wankhade333@gmail.com)
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-34ab4ac9a34so60286a91.0
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 29 Jan 2026 02:28:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769682491; x=1770287291; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ipYt3VSz5xdn4iFPwBHOIwEvmpEG+Drii0237Ses+L8=;
+        b=cZHHru3mBFI56PUjHILNrZ2j0LhU5/67nO3ZzOG7iCGYNk7akuGptX/WG7MwmHzXLg
+         a6dfvdp7kakVxS8pW4Mz2uE8cnlkEPFIEmnnzcDD9hoMcIiX+IF5HVPLh6u0qleLAM4Z
+         DTKRqTpuoCHtSQRpgMUkq55VqhgHVxsMV20q/nAlkB2YTyXaif4F6WZ07VqDBss3zL6E
+         MMSOW2MMrsaXhS9+TXNfrThORKEA1arO9wDB47mPWuVzpwbhPI5LCTEdLgHrxSfjvbgO
+         mMkfiD3pNOnfwGudxBd4y4nxXHwBozU0lJLIN3FzW1aOfqILaux81StgaxiQJrXkPWOd
+         7UGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769682491; x=1770287291;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ipYt3VSz5xdn4iFPwBHOIwEvmpEG+Drii0237Ses+L8=;
+        b=wWMpI7706JuLGtgsH3LdSRfzkZ5Y6WlN/HYApMQR+qXh9B+TB2NqdeIH9up3ZV32uK
+         Mr4JCPgH5cG7ByjUWS+dTiwepO1r/hupE0DAdx7yVit7TWGy6iSMIczK2FeIusv6SAQy
+         60Oniq8AxB40mwuLbiT4VY1yi93BzfVS8QpVg19I45z5Nc5rFIGe2S8VVvC0kBym2S2/
+         36/57vV1IrJCSINbJDXlOZN7PIC9x1pilZ0/jGdzYvCF9j6i+BWfIL/5NgLeDBaZsPVN
+         Qlb3ZcFjGEJoz0bCn6OLnox812vGAlwg0omBF/AZd3cuMhAI9uvYnagBejSSzzmj07W8
+         W/gg==
+X-Gm-Message-State: AOJu0YwmsqqFTlXqvF8R06N1E4xU5zYRmhVVM3MtmyAVnKj7nhyc3zkw
+	+f5B/RKhHtp0cVm2ScwX1rA/KNgZANr5039Mh4U4KiBL+PZ1k7iI5/Gmmd7g2w==
+X-Gm-Gg: AZuq6aK8mMcmPFmUTEe1PIJJigFohPL3J5elV9W/dWAUIzzU2RKV1ChhPYXJhMADN7D
+	vb8Rc+rAj/soHH60Nzj6XoSXNuXuDOKfpBb7hEIVsvtoKIVdJAvb8Xty/OaczwpZjYNQ5IEOpck
+	hSpqvWzVrdFVfWbyMjoBqkxj+befU5rFPcmIr1O3flLcHfZaGz+L77uBYlYvNuwpa/Ocu+qJAXd
+	csalCVQSKOFidbNWTodYZ5CTZMlQ6ArUmadw1E/0CxczKWbu58dMwdf7BA3yYtMGHFBhQWMqB9o
+	ecD5xv4RdFiKnYaXfrjJlHzmGs92t2mYHZZ69FA7UdhMs0al9ae7wve4yxflpT9lUggJfOxVkM+
+	A22K4tDOBHPhbvWsW+8VgFNayrwDsF1lr8mKtVquLA+Nlm5z3B5DIywDqWoq3u3/Cv8c3KPRBcb
+	VJzkZqTfvhz3rTH7aNbDwIcZnC
+X-Received: by 2002:a17:90b:564f:b0:34f:4416:33b5 with SMTP id 98e67ed59e1d1-35426d46080mr2151985a91.8.1769682491234;
+        Thu, 29 Jan 2026 02:28:11 -0800 (PST)
+Received: from LL-3324L.kpit.com ([122.167.116.169])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-353f61e0230sm8119613a91.11.2026.01.29.02.28.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Jan 2026 02:28:10 -0800 (PST)
+From: "Nitin Wankhade" <nitin.wankhade333@gmail.com>
+X-Google-Original-From: Nitin Wankhade <nitin.wankhade@kpit.com>
+To: yocto-patches@lists.yoctoproject.org,
+	scott.murray@konsulko.com
+Cc: mail2szahir@gmail.com,
+	zahir.basha@kpit.com
+Subject: [meta-lts-mixins][kirkstone/rust-1.75][PATCH] rust-cross-canadian: Ignore CVE-2024-43402
+Date: Thu, 29 Jan 2026 16:01:57 +0530
+Message-Id: <20260129103157.1739640-1-nitin.wankhade@kpit.com>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 87k2SCiHCWeNax_pRpyjbbKUdkW2lJu8
-X-Proofpoint-GUID: 87k2SCiHCWeNax_pRpyjbbKUdkW2lJu8
-X-Authority-Analysis: v=2.4 cv=b9G/I9Gx c=1 sm=1 tr=0 ts=697b1bdb cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=vUbySO9Y5rIA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=NEAV23lmAAAA:8 a=EUspDBNiAAAA:8
- a=KY-vJS-pLNiqLzBXIH4A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTI5MDA1MSBTYWx0ZWRfX+kja8hfWh4/u
- 1f10R8jhnIsZisGQ4rCDdSHAoKYezCOnlQkwqwh/15zfCkgzuZGl9Yy11i+3E6s7Ld3GZwjUuqT
- fOSdESOaxNytrg0NNJEBvq8g5iFb9oxzT/Zu7a9W20IXzHS88FGQuICdGN+rG+BCao6pKAzSvYs
- dnJdDbd3c5NjIMJ/pPxrkeARb9GpeAvKtMk8qopyTwv2T+ZWZnqU0Uu55i67LvY6UGCBvESHn8o
- B4T+hKLgCCCjHlOQ+hyqpSfpa3HDrD2WaaZ50PRt13ZjfrCJ7molB2m8DNZpb7FRoWYCVkN7dpi
- kKvfvI0Z9lBr0QGlGs8eyJWedfMcT3ZKGZ8qKCnD2+FqVm0JGHZKYGMigdz9dkxGgBH0SE+J41/
- 8mEQ4+JDjAdlJFlaaV+gc5mIJfyCMn2b86dSzuwggbIjSoMZ40fsP3+XSfROdQiiLIx0rt+fKBQ
- I2H6HEcoCSCIV2chdcg==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-01-29_01,2026-01-28_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 spamscore=0 suspectscore=0 bulkscore=0 clxscore=1015
- impostorscore=0 lowpriorityscore=0 malwarescore=0 adultscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2601150000 definitions=main-2601290051
-X-MIME-Autoconverted: from 8bit to quoted-printable by mx0a-0031df01.pphosted.com id 60T2omK61521286
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 29 Jan 2026 09:35:45 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3141
+ <yocto-patches@lists.yoctoproject.org>; Thu, 29 Jan 2026 10:33:56 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3142
 
-From: Gangabhavani Yenugula <gyenugul@qti.qualcomm.com>
+From: Zahir Hussain <zahir.basha@kpit.com>
 
-Define a dedicated domain (`pd_mapper_t`) to confine pd-mapper service, e=
-nsuring
-it operates in a restricted environment isolated from other init processe=
-s.
+Ignore CVE-2024-43402 as it is not applicable for Linux;
+the CVEs are specific to Microsoft Windows.
 
-Grant the necessary permissions to resolve AVC denials observed during
-the transition to enforcing mode:
+CVE-2024-43402 is still reporting under the rust-cross-canadian component,so
+the same change has been added to rust-cross-canadian.inc to ignore this CVE.
 
- - Filesystem: Authorize read access to `/sys`.
- - Socket: Allow creation and basic use of qipcrtr_socket
+CVE: CVE-2024-43402
 
-Signed-off-by: Gangabhavani Yenugula <gyenugul@qti.qualcomm.com>
-
-Upstream-Status: Backport [https://github.com/SELinuxProject/refpolicy/pu=
-ll/1070/changes/c8aef7c55e8768378c6adeda7e8edfaeecb9fa28]
-
+Signed-off-by: Zahir Hussain <zahir.basha@kpit.com>
 ---
- policy/modules/services/pd_mapper.fc |  1 +
- policy/modules/services/pd_mapper.if | 10 ++++++++++
- policy/modules/services/pd_mapper.te | 15 +++++++++++++++
- 3 files changed, 26 insertions(+)
- create mode 100644 policy/modules/services/pd_mapper.fc
- create mode 100644 policy/modules/services/pd_mapper.if
- create mode 100644 policy/modules/services/pd_mapper.te
+ recipes-devtools/rust/rust-cross-canadian.inc | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/policy/modules/services/pd_mapper.fc b/policy/modules/servic=
-es/pd_mapper.fc
-new file mode 100644
-index 000000000..3d83d46b1
---- /dev/null
-+++ b/policy/modules/services/pd_mapper.fc
-@@ -0,0 +1 @@
-+/usr/bin/pd-mapper      --      gen_context(system_u:object_r:pd_mapper_=
-exec_t,s0)
-diff --git a/policy/modules/services/pd_mapper.if b/policy/modules/servic=
-es/pd_mapper.if
-new file mode 100644
-index 000000000..34da5143f
---- /dev/null
-+++ b/policy/modules/services/pd_mapper.if
-@@ -0,0 +1,10 @@
-+## <summary>pd-mapper</summary>
-+#
-+## <desc>
-+## Qualcomm=E2=80=99s pd=E2=80=91mapper service is the userspace Protect=
-ion Domain mapper
-+## that enables applications to access remote processors
-+## (Wi=E2=80=91Fi, modem, sensors, etc.)
-+## on Qualcomm SoCs via the QRTR protocol.
-+##
-+## https://github.com/linux-msm/pd-mapper
-+## </desc>
-diff --git a/policy/modules/services/pd_mapper.te b/policy/modules/servic=
-es/pd_mapper.te
-new file mode 100644
-index 000000000..34a8d6bcc
---- /dev/null
-+++ b/policy/modules/services/pd_mapper.te
-@@ -0,0 +1,15 @@
-+policy_module(pd_mapper)
-+
-+########################################
-+#
-+# Declarations
-+#
-+
-+type pd_mapper_t;
-+type pd_mapper_exec_t;
-+init_daemon_domain(pd_mapper_t, pd_mapper_exec_t)
-+
-+allow pd_mapper_t self:qipcrtr_socket connected_socket_perms;
-+
-+# Read /sys/devices/platform/soc@0/2a300000.remoteproc/remoteproc/remote=
-proc2/firmware
-+dev_read_sysfs(pd_mapper_t)
---=20
+diff --git a/recipes-devtools/rust/rust-cross-canadian.inc b/recipes-devtools/rust/rust-cross-canadian.inc
+index 45cb402..996e8c8 100644
+--- a/recipes-devtools/rust/rust-cross-canadian.inc
++++ b/recipes-devtools/rust/rust-cross-canadian.inc
+@@ -90,3 +90,5 @@ do_install () {
+ 
+ FILES:${PN} += "${base_prefix}/environment-setup.d"
+ 
++# These CVEs are specific to Microsoft Windows
++CVE_CHECK_IGNORE += "CVE-2024-43402"
+-- 
 2.34.1
 
 
