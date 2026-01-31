@@ -2,138 +2,151 @@ Return-Path: <ecordonnier@snap.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 826C2E7C6EC
-	for <webhook@archiver.kernel.org>; Sat, 31 Jan 2026 20:59:20 +0000 (UTC)
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.17426.1769893156050661149
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C735E7C6EC
+	for <webhook@archiver.kernel.org>; Sat, 31 Jan 2026 21:10:40 +0000 (UTC)
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.17606.1769893833627960023
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 31 Jan 2026 12:59:16 -0800
+ Sat, 31 Jan 2026 13:10:34 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@snap.com header.s=google header.b=Qu9kIIaX;
- spf=pass (domain: snapchat.com, ip: 209.85.128.42, mailfrom: ecordonnier@snapchat.com)
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4806b43beb6so23773625e9.3
-        for <yocto-patches@lists.yoctoproject.org>; Sat, 31 Jan 2026 12:59:15 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769893154; cv=none;
+ dkim=pass header.i=@snap.com header.s=google header.b=NgmbalQB;
+ spf=pass (domain: snapchat.com, ip: 209.85.221.41, mailfrom: ecordonnier@snapchat.com)
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-4358fb60802so1982524f8f.1
+        for <yocto-patches@lists.yoctoproject.org>; Sat, 31 Jan 2026 13:10:33 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769893831; cv=none;
         d=google.com; s=arc-20240605;
-        b=cRTx0Krc/mv0rZ+ajT0TrSgIqjCYvicRJKbcQUREUGL2cqfHl1Us7pwJZ6g4wiLgbL
-         cHeP8R6m2ybzW7oYMnh9wpv5LS+dmYNr62e1qP5R5eg/GBZBtdWCQJk1LonJwaF26YJ2
-         /kvw+nsHMhrGhAVswny/8/gynTxj2qVVa65hcObEdy6uHB2Dr8RuXO4U3/ioL/ZLT+a4
-         qtQhfEtcVzUl3dkcsYKgJlN04towFIRkdOnG/BgQBUGDmvREtZdq0o/vsmb9PGmtp1Ql
-         WUY7mqGmMiBsjnpDMQKgUT31rclWTblQs/doJrlavQoNfS1knB+sQWJAlbCarAm3tHhr
-         q6JQ==
+        b=RzxESLSn70IJSwATOshIHG3AzSi/tI94lHC2mEoE9oGwCvvrk4Gv/8ibUy9G7i+/+J
+         8bcl5P/RQHYC/TMPnH91EYDCQ3mbtuWNWdb73BrfxrblkjWZzxPAI+tsHsjqQlW0R9Yc
+         AEGLL77HIKt7oA2jXn3aJY86pPABC1DVV86UzKPKb6BlrweTZ/NyZM1XXfXVOrE86e8V
+         OA59Vf4ZRW/IiwSoqPfTNSicOYD3vWjOXqgCpL4FC0dLECCFSRZKf/x/i1lr+nfZ7eRy
+         CFp+al+rX32/OJiJuC8nii+0EpKnDGGYpJYvuSNTAYoPh4alqTVjYRAK18NXv48J0cGv
+         0srQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:dkim-signature;
-        bh=oE3atSTI0e2qKZIiMDQMA6tZwWC6g1/9rqYxHc0/td0=;
+        bh=rKmCjnJp/654jA+3pntvHLTMo/woPdtk+0ymQIsJ+98=;
         fh=vnwvjJBmT4xP5bZnotRs811IpgK/To6PNpBe4whKe/M=;
-        b=jIw757AfU5vYyAjvsmJ5TUAy6nSDMtgEt1wJApGdQ7seUzmivzhsxHIa4wYT3MbTTy
-         Uqp5gXzQdRq/gaaY7XCfHk5G/ijgHFFal+ISDeQKRejX1IkhByb8KQaupfLNYT7nkYmE
-         Uzpx4a5XaMjoC9unSwkDX/Zs6uAzqOfkbPbPXH1a2SZy7e/vxUPFhs9wsLXHc5i7qgGV
-         nwoPmRIruVRlQVTgyJmQt7HPZ+zr7rY8XnWs8FbZp8PYLFK67QAcxrwUBZfWl8EsGVoP
-         0YSrL3k3O5IaIGwCWLRm4Y/N6cVAlXef42/J34pSHltLkXumusqoEnry7JbVbd684c/q
-         ngpw==;
+        b=MY8+dbpdVAEkYSvDIq7yXVTpBACfh37rq4VmNO5xnfX5e7EhH6lMbUJCjvhQp1ROnG
+         ig+HSoQ+W7env6X2164UaTXIqCk36MNcTy1gbjagm6kKWNNnwN7kFjMloF8hyze5v+dq
+         nRX2CMYy+RXFxfnIWd6gc7pfE3sL1qPH2VQxwTKyVGOBmQO9ONNvv3SGyXaMWzD19NcQ
+         0Ei5M3fPtJYAv9jDWf5g/tIRkm4BaX365Q3bD8pNKKKZ8B/KzAxbEAdGetMuXTV8TYOe
+         cYYoSMJqIfa3ld8vcQG8E2/Z1B9NGK4ylE/1Kap8p1h9WxaGQB8w7Aqi1nez2Werm/fh
+         9RaQ==;
         darn=lists.yoctoproject.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=snap.com; s=google; t=1769893154; x=1770497954; darn=lists.yoctoproject.org;
+        d=snap.com; s=google; t=1769893831; x=1770498631; darn=lists.yoctoproject.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=oE3atSTI0e2qKZIiMDQMA6tZwWC6g1/9rqYxHc0/td0=;
-        b=Qu9kIIaXxDDKSQsDjVFrKySHr4Ur0pqiCBD2v8Jk+GIYNpuzNh0z73cCDSEFvX1Xgi
-         ww9GgIwKDFrVkfAUjPxelpr+1EYNDBEtoJD+8QpeqT0fQ0YEHtGAWZfLeKhY6Ry2a7+U
-         mpELSzzDnFngcVD6IVf3vPoVhlWYvKQupO5zI=
+        bh=rKmCjnJp/654jA+3pntvHLTMo/woPdtk+0ymQIsJ+98=;
+        b=NgmbalQBAbpzwhcbQ+GeaaNNd010Cb9hxLPScJIBD74RZFaFmb13oj8TqtBdZS9Y31
+         1TDFguQBURIW2qXa18uSwmTAheZlKsMEjjrEV7bnB+rsZaeeL9iPjlNivNkGBcoTV/w0
+         w4+zhPfyY2xOYY9oVXHJnaPbCCqBrS4d3Qq+g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769893154; x=1770497954;
+        d=1e100.net; s=20230601; t=1769893831; x=1770498631;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oE3atSTI0e2qKZIiMDQMA6tZwWC6g1/9rqYxHc0/td0=;
-        b=YnjzuiEzuWix+5H6QJIkw+BPV+fD+W8XqErhVxApXBw3XfQFSX+6JUHqTR1mu+NJq8
-         687hH4SxqmzLSJ4r6UGERFgydg5GCVt6BbtyqGxNSXA/DGTgG9aFEO4acSA3DSBrAw8o
-         GPuIAA5qGnwiIjAh3XP0gbfmTiTjQXLwZ775obEgO8k0rdODr7vq7h7uVw0P/Vr31r4H
-         YRP3coSbu6dhvSoig+kvfpKUiIaXUEoEkDuJ++GGyknWAJXi6dakuHC30hCjLwmfLnPx
-         GVQCzjLoddSOtr/H6q8zkRoU7HmjFu1diXff4lDvQN2TGAsIh8eD91h3qicupAToXH51
-         X17Q==
-X-Gm-Message-State: AOJu0Yw4z+oCsSiLKSBV+8/AvkGcGJlKNqWkFtljHY2W7OjrhLOBWnTb
-	EjiIKhCPDRFZ1pKBXJ00egJb0TPyVIk55iLkte59qS7Bn6YhkvfWtyIS9zyIIfUg9Xde9dA8FxX
-	XmrgOPl0IPikOdYkftLAwTDBr07cIhFxzQU6/O2fMr2e/H5/xEoDTviLWcQ==
-X-Gm-Gg: AZuq6aLkNcuRdwkvY0cjAWOviOS4h4Hd7pf5b/Vbbmfwac8eMIme8qvYaaSUKeqT1nS
-	5+vXLabg1QeYhduysNeXaoCh5pLZtUdWoWAD9oZllqIF2jDQMb2haa/anLuAgIzjnB0gSfRphld
-	O3fRxuED46njQahyGvxdUfZpJowMLsfsVDjokXHRETd/sTbzA7aE9XL9mUZjU7wy9Xl45cQi3Rg
-	kb/AHEGp4Tc31brU1EXTwXSIkcllF7pYlmfNmS7JMbIWYNJ7BMGXyMhzaVRZUrNw6199h0afhAw
-	1/dQ4HC9SQ9D7mjhnTbrtK2e54g=
-X-Received: by 2002:a05:600c:8b0a:b0:480:1b65:b744 with SMTP id
- 5b1f17b1804b1-482db49d43bmr81871535e9.28.1769893153825; Sat, 31 Jan 2026
- 12:59:13 -0800 (PST)
+        bh=rKmCjnJp/654jA+3pntvHLTMo/woPdtk+0ymQIsJ+98=;
+        b=vmW50VDaz6AJPHNK3Ot3VBex0guvEzzedwoUW8pud7jQv0n+T/2+9Bz97sbpQcnbyg
+         W/IVetRPeEFX6yR5Pcl4CBmyO928zbTaNHIsUpo7pvoJeiiIbHvZ4i/d67qRvCpl1ZUA
+         CM+msI6xGVtCVfhs9rh9Xgo7rRBW8cHQU2jhV9ElxC94kUKK5AyGKnOHxbhUf/HoHv7t
+         HOw5eUDn6Qjb0hgh+9AGfutQnQ7ujrBZHGaKOIR6RbCGLaqYRYNuTAmoeGaUX5I9pBpT
+         eKd+u+WpguXusRZ1SthV0epI8BOw8vzOmc5YNlxENTQPgTTgfsBLl4LLUWQSmNLP7CiQ
+         xNxg==
+X-Gm-Message-State: AOJu0Yzrj1TOG12zUBidQdbr9pMlHBplftbRLSMFNA7T1EjtEvwWvv5T
+	vQe9pmp6G8qDPv+EHxHvULtTxKWNlsRb0MGfu/IE2MmqhB4HxMSfBwqKnw5oAg52GBLPwlXUTNf
+	JWqTbSlGKJJzRiCGWXkf3x6deBNT4V2NLMGRT3QJlrbjOFlf4prbu+ROP3w==
+X-Gm-Gg: AZuq6aI07XM4IXgNpwGQFAGxbGAk+kwq25pYe5ieN7+gyCQ6jpIQqT4jnEzlyjnHfDx
+	Wa5jKxGVOPwrZK/VREshydyHYVAGdNGWSMpe+rNKz47d8FCz8Fr2YxhcXapmyI/sYP8YoRoIPPA
+	yiMhNCwpDYn/TTjShMGULmiPQRQVyFKvsoUp5ZFq2HI8oQkozHKn6x7d6mY3WXoBvz30tdqRRIz
+	9m0fOrb7qiUwVmKiHBqmBbPIoG0k0k+Ct27c3KaLjwx1ejt2K2oXwhyHblhsK0ctTaXZFEicqqP
+	T1WWp51qAuqo90NPySlh5oOuV3w=
+X-Received: by 2002:a5d:5d86:0:b0:432:c03e:a78e with SMTP id
+ ffacd0b85a97d-435ea220d54mr14279136f8f.27.1769893831320; Sat, 31 Jan 2026
+ 13:10:31 -0800 (PST)
 MIME-Version: 1.0
-References: <20260128063648.1422-1-dev@qinc.tv> <20260128063648.1422-2-dev@qinc.tv>
-In-Reply-To: <20260128063648.1422-2-dev@qinc.tv>
+References: <20260128063648.1422-1-dev@qinc.tv> <20260128063648.1422-3-dev@qinc.tv>
+In-Reply-To: <20260128063648.1422-3-dev@qinc.tv>
 From: Etienne Cordonnier <ecordonnier@snap.com>
-Date: Sat, 31 Jan 2026 21:59:02 +0100
-X-Gm-Features: AZwV_Qg1MKlAddTmeYiUEvdCdtG6Kn4nO9_59N8P5vyv9Vfl9MB-_rsG5byQGMI
-Message-ID: <CAHUKmYaU-UUJmpKnwzjjO_DP_A0WF63Ed_6fpWEQ9mMe1pPP=Q@mail.gmail.com>
-Subject: Re: [yocto-patches] [meta-darwin][PATCH 2/3] add recipe for libdmg-hfsplus
+Date: Sat, 31 Jan 2026 22:10:20 +0100
+X-Gm-Features: AZwV_QjK568XrgGDXtRTNe8pl67JNbglaVJZqcuaX1GGkKF3jo11jY9Y_M1p-Xg
+Message-ID: <CAHUKmYYpunLBV3NPLKiEk9Lm9=7MpasLa2Pk9ujTOcvXZGew3A@mail.gmail.com>
+Subject: Re: [yocto-patches] [meta-darwin][PATCH 3/3] add bomutils recipe
 To: yocto-patches@lists.yoctoproject.org
 Cc: "Eric L. Hernes" <dev@qinc.tv>
-Content-Type: multipart/alternative; boundary="000000000000b98f900649b55c3f"
+Content-Type: multipart/alternative; boundary="0000000000001b50300649b585a4"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sat, 31 Jan 2026 20:59:20 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3160
+ <yocto-patches@lists.yoctoproject.org>; Sat, 31 Jan 2026 21:10:40 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3161
 
---000000000000b98f900649b55c3f
+--0000000000001b50300649b585a4
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 Hi Eric,
 thanks for the patch! Applied as
-https://git.yoctoproject.org/meta-darwin/commit/?id=3Dbc61b22dba483ddd43c9a=
-012efd581e743ddc4db
-
-
-=C3=89tienne
+https://git.yoctoproject.org/meta-darwin/commit/?id=3D34593df0e9bd4746b02b4=
+e2aed79088f15b3fe88
 
 On Wed, Jan 28, 2026 at 7:37=E2=80=AFAM Eric L. Hernes via lists.yoctoproje=
 ct.org
 <dev=3Dqinc.tv@lists.yoctoproject.org> wrote:
 
-> libdmg-hfsplus contains the `hfsplus` program which copies files from
-> the filesystem to the .dmg image
+> bomutils is used to build the bill of materials files for macOS .pkg
+> installers
 >
 > Signed-off-by: Eric L. Hernes <dev@qinc.tv>
 > ---
->  .../libdmg-hfsplus/libdmg-hfsplus_git.bb         | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
->  create mode 100644 recipes-support/libdmg-hfsplus/libdmg-hfsplus_git.bb
+>  recipes-support/bomutils/bomutils_git.bb | 34 ++++++++++++++++++++++++
+>  1 file changed, 34 insertions(+)
+>  create mode 100644 recipes-support/bomutils/bomutils_git.bb
 >
-> diff --git a/recipes-support/libdmg-hfsplus/libdmg-hfsplus_git.bb
-> b/recipes-support/libdmg-hfsplus/libdmg-hfsplus_git.bb
+> diff --git a/recipes-support/bomutils/bomutils_git.bb
+> b/recipes-support/bomutils/bomutils_git.bb
 > new file mode 100644
-> index 0000000..77ac88e
+> index 0000000..04e6dbd
 > --- /dev/null
-> +++ b/recipes-support/libdmg-hfsplus/libdmg-hfsplus_git.bb
-> @@ -0,0 +1,16 @@
-> +SUMMARY =3D "Utilities for manipulating macOS dmg files"
-> +DESCRIPTION =3D "This is a set of utilities for manipulating macOS dmg a=
-nd
-> hfs files"
-> +HOMEPAGE =3D "https://github.com/elhernes/libdmg-hfsplus "
+> +++ b/recipes-support/bomutils/bomutils_git.bb
+> @@ -0,0 +1,34 @@
+> +SUMMARY =3D "Bill Of Materials Utils"
+> +HOMEPAGE =3D "https://github.com/hogliux/bomutils "
+> +LICENSE =3D "GPL-2.0-only"
 > +
-> +LICENSE =3D "GPL-3.0-only"
-> +
-> +SRC_URI =3D "git://
-> github.com/elhernes/libdmg-hfsplus.git;branch=3Dmaster;protocol=3Dhttps"
-> +SRCREV =3D "3c3ce87a7e2f036f771f81147f9e125a2bb207f1"
+> +SRCREV =3D "f62b59c659b1e57788661dadf87765e226824f67"
+> +SRC_URI =3D " \
+> +    git://github.com/elhernes/bomutils.git;branch=3Dmaster;protocol=3Dht=
+tps \
+> +"
 > +
 > +LIC_FILES_CHKSUM =3D
-> "file://${WORKDIR}/git/LICENSE;md5=3Dd32239bcb673463ab874e80d47fae504"
-> +
-> +S =3D "${WORKDIR}/git"
-> +
-> +inherit cmake
+> "file://${WORKDIR}/git/LICENSE;md5=3D55d923cdeef7e46b4d6415cb173b345a"
 > +
 > +BBCLASSEXTEND =3D "native"
+> +
+> +S =3D "${WORKDIR}/git"
+> +B =3D "${WORKDIR}/git/build"
+> +
+> +do_compile() {
+> +    make -C ${S}
+> +}
+> +
+> +do_install() {
+> +    install -d ${D}${bindir}
+> +    install -d ${D}${mandir}/man1
+> +
+> +    install -m 0755 ${B}/bin/ls4mkbom ${D}${bindir}
+> +    install -m 0755 ${B}/bin/dumpbom ${D}${bindir}
+> +    install -m 0755 ${B}/bin/lsbom ${D}${bindir}
+> +    install -m 0755 ${B}/bin/mkbom ${D}${bindir}
+> +
+> +    install -m 0444 ${B}/man/ls4mkbom.1.gz ${D}${mandir}/man1
+> +    install -m 0444 ${B}/man/dumpbom.1.gz ${D}${mandir}/man1
+> +    install -m 0444 ${B}/man/lsbom.1.gz ${D}${mandir}/man1
+> +    install -m 0444 ${B}/man/mkbom.1.gz ${D}${mandir}/man1
+> +}
 > --
 > 2.50.1 (Apple Git-155)
 >
@@ -141,93 +154,107 @@ nd
 >
 > -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 > Links: You receive all messages sent to this group.
-> View/Reply Online (#3126):
+> View/Reply Online (#3127):
 > https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.yoctoproject=
-.org_g_yocto-2Dpatches_message_3126&d=3DDwIFAg&c=3DncDTmphkJTvjIDPh0hpF_4vC=
-HvabgGkICC2epckfdiw&r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&m=3DiKG=
-nzdwRLbZyGpj0w-beuZvVkxOKHPOeFdKM30KyhTYwjjsiGHydEkbK7_OAcAo_&s=3DoZ8lqaK7k=
-_wEZkmswYmAzAg9nBpTbhGZpBwMQe4wHzQ&e=3D
+.org_g_yocto-2Dpatches_message_3127&d=3DDwIFAg&c=3DncDTmphkJTvjIDPh0hpF_4vC=
+HvabgGkICC2epckfdiw&r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&m=3DLJM=
+eCNzx7PX_6mimmV7tx47v1nKUUHpsO1WPaxzzFUFBJ0otVGRKSliQypZjt6hw&s=3DXT2YhK68v=
+YAXijX0OuBr26F6m50HAyJ32IfUzQcyoqQ&e=3D
 > Mute This Topic:
 > https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.yoctoproject=
-.org_mt_117504011_7048771&d=3DDwIFAg&c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC=
-2epckfdiw&r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&m=3DiKGnzdwRLbZyG=
-pj0w-beuZvVkxOKHPOeFdKM30KyhTYwjjsiGHydEkbK7_OAcAo_&s=3Doq9vuEEVu17uPtAT2n8=
-u9JOnhjPalMtb1V7wX3d5pnI&e=3D
+.org_mt_117504015_7048771&d=3DDwIFAg&c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC=
+2epckfdiw&r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&m=3DLJMeCNzx7PX_6=
+mimmV7tx47v1nKUUHpsO1WPaxzzFUFBJ0otVGRKSliQypZjt6hw&s=3D8MJuqwlOtNqUcnEyKA3=
+uXO0Ts4cIXJbRHMZtOxeqcAg&e=3D
 > Group Owner: yocto-patches+owner@lists.yoctoproject.org
 > Unsubscribe:
 > https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.yoctoproject=
 .org_g_yocto-2Dpatches_leave_13184993_7048771_1814342232_xyzzy&d=3DDwIFAg&c=
 =3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&r=3DAhkbNonVuMIGRfPx_Qj9TsRi=
-h1DULJTKUkSGa66m67E&m=3DiKGnzdwRLbZyGpj0w-beuZvVkxOKHPOeFdKM30KyhTYwjjsiGHy=
-dEkbK7_OAcAo_&s=3DL5DQRi-A1fgi00El9sxBWhrfOBY1HMqZJWBhbIgV7q0&e=3D
+h1DULJTKUkSGa66m67E&m=3DLJMeCNzx7PX_6mimmV7tx47v1nKUUHpsO1WPaxzzFUFBJ0otVGR=
+KSliQypZjt6hw&s=3DtcvWqZxBfxDdYsbTIzHwlAAy1O4G_DnNuDXzP5kOSig&e=3D
 > [ecordonnier@snap.com]
 > -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 >
 >
 >
 
---000000000000b98f900649b55c3f
+--0000000000001b50300649b585a4
 Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 <div dir=3D"ltr">Hi Eric,<br>thanks for the patch! Applied as=C2=A0<a href=
-=3D"https://git.yoctoproject.org/meta-darwin/commit/?id=3Dbc61b22dba483ddd4=
-3c9a012efd581e743ddc4db">https://git.yoctoproject.org/meta-darwin/commit/?i=
-d=3Dbc61b22dba483ddd43c9a012efd581e743ddc4db</a>=C2=A0<br><br>=C3=89tienne<=
-/div><br><div class=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr" =
-class=3D"gmail_attr">On Wed, Jan 28, 2026 at 7:37=E2=80=AFAM Eric L. Hernes=
- via <a href=3D"http://lists.yoctoproject.org">lists.yoctoproject.org</a> &=
-lt;dev=3D<a href=3D"mailto:qinc.tv@lists.yoctoproject.org">qinc.tv@lists.yo=
-ctoproject.org</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" st=
-yle=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padd=
-ing-left:1ex">libdmg-hfsplus contains the `hfsplus` program which copies fi=
-les from<br>
-the filesystem to the .dmg image<br>
+=3D"https://git.yoctoproject.org/meta-darwin/commit/?id=3D34593df0e9bd4746b=
+02b4e2aed79088f15b3fe88">https://git.yoctoproject.org/meta-darwin/commit/?i=
+d=3D34593df0e9bd4746b02b4e2aed79088f15b3fe88</a></div><br><div class=3D"gma=
+il_quote gmail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On We=
+d, Jan 28, 2026 at 7:37=E2=80=AFAM Eric L. Hernes via <a href=3D"http://lis=
+ts.yoctoproject.org">lists.yoctoproject.org</a> &lt;dev=3D<a href=3D"mailto=
+:qinc.tv@lists.yoctoproject.org">qinc.tv@lists.yoctoproject.org</a>&gt; wro=
+te:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px =
+0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">bomutils is =
+used to build the bill of materials files for macOS .pkg installers<br>
 <br>
 Signed-off-by: Eric L. Hernes &lt;<a href=3D"mailto:dev@qinc.tv" target=3D"=
 _blank">dev@qinc.tv</a>&gt;<br>
 ---<br>
-=C2=A0.../libdmg-hfsplus/<a href=3D"http://libdmg-hfsplus_git.bb" rel=3D"no=
-referrer" target=3D"_blank">libdmg-hfsplus_git.bb</a>=C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0| 16 ++++++++++++++++<br>
-=C2=A01 file changed, 16 insertions(+)<br>
-=C2=A0create mode 100644 recipes-support/libdmg-hfsplus/<a href=3D"http://l=
-ibdmg-hfsplus_git.bb" rel=3D"noreferrer" target=3D"_blank">libdmg-hfsplus_g=
-it.bb</a><br>
+=C2=A0recipes-support/bomutils/<a href=3D"http://bomutils_git.bb" rel=3D"no=
+referrer" target=3D"_blank">bomutils_git.bb</a> | 34 ++++++++++++++++++++++=
+++<br>
+=C2=A01 file changed, 34 insertions(+)<br>
+=C2=A0create mode 100644 recipes-support/bomutils/<a href=3D"http://bomutil=
+s_git.bb" rel=3D"noreferrer" target=3D"_blank">bomutils_git.bb</a><br>
 <br>
-diff --git a/recipes-support/libdmg-hfsplus/<a href=3D"http://libdmg-hfsplu=
-s_git.bb" rel=3D"noreferrer" target=3D"_blank">libdmg-hfsplus_git.bb</a> b/=
-recipes-support/libdmg-hfsplus/<a href=3D"http://libdmg-hfsplus_git.bb" rel=
-=3D"noreferrer" target=3D"_blank">libdmg-hfsplus_git.bb</a><br>
+diff --git a/recipes-support/bomutils/<a href=3D"http://bomutils_git.bb" re=
+l=3D"noreferrer" target=3D"_blank">bomutils_git.bb</a> b/recipes-support/bo=
+mutils/<a href=3D"http://bomutils_git.bb" rel=3D"noreferrer" target=3D"_bla=
+nk">bomutils_git.bb</a><br>
 new file mode 100644<br>
-index 0000000..77ac88e<br>
+index 0000000..04e6dbd<br>
 --- /dev/null<br>
-+++ b/recipes-support/libdmg-hfsplus/<a href=3D"http://libdmg-hfsplus_git.b=
-b" rel=3D"noreferrer" target=3D"_blank">libdmg-hfsplus_git.bb</a><br>
-@@ -0,0 +1,16 @@<br>
-+SUMMARY =3D &quot;Utilities for manipulating macOS dmg files&quot;<br>
-+DESCRIPTION =3D &quot;This is a set of utilities for manipulating macOS dm=
-g and hfs files&quot;<br>
-+HOMEPAGE =3D &quot;<a href=3D"https://github.com/elhernes/libdmg-hfsplus" =
-rel=3D"noreferrer" target=3D"_blank">https://github.com/elhernes/libdmg-hfs=
-plus</a> &quot;<br>
++++ b/recipes-support/bomutils/<a href=3D"http://bomutils_git.bb" rel=3D"no=
+referrer" target=3D"_blank">bomutils_git.bb</a><br>
+@@ -0,0 +1,34 @@<br>
++SUMMARY =3D &quot;Bill Of Materials Utils&quot;<br>
++HOMEPAGE =3D &quot;<a href=3D"https://github.com/hogliux/bomutils" rel=3D"=
+noreferrer" target=3D"_blank">https://github.com/hogliux/bomutils</a> &quot=
+;<br>
++LICENSE =3D &quot;GPL-2.0-only&quot;<br>
 +<br>
-+LICENSE =3D &quot;GPL-3.0-only&quot;<br>
++SRCREV =3D &quot;f62b59c659b1e57788661dadf87765e226824f67&quot;<br>
++SRC_URI =3D &quot; \<br>
++=C2=A0 =C2=A0 git://<a href=3D"http://github.com/elhernes/bomutils.git;bra=
+nch=3Dmaster;protocol=3Dhttps" rel=3D"noreferrer" target=3D"_blank">github.=
+com/elhernes/bomutils.git;branch=3Dmaster;protocol=3Dhttps</a> \<br>
++&quot;<br>
 +<br>
-+SRC_URI =3D &quot;git://<a href=3D"http://github.com/elhernes/libdmg-hfspl=
-us.git;branch=3Dmaster;protocol=3Dhttps" rel=3D"noreferrer" target=3D"_blan=
-k">github.com/elhernes/libdmg-hfsplus.git;branch=3Dmaster;protocol=3Dhttps<=
-/a>&quot;<br>
-+SRCREV =3D &quot;3c3ce87a7e2f036f771f81147f9e125a2bb207f1&quot;<br>
-+<br>
-+LIC_FILES_CHKSUM =3D &quot;file://${WORKDIR}/git/LICENSE;md5=3Dd32239bcb67=
-3463ab874e80d47fae504&quot;<br>
-+<br>
-+S =3D &quot;${WORKDIR}/git&quot;<br>
-+<br>
-+inherit cmake<br>
++LIC_FILES_CHKSUM =3D &quot;file://${WORKDIR}/git/LICENSE;md5=3D55d923cdeef=
+7e46b4d6415cb173b345a&quot;<br>
 +<br>
 +BBCLASSEXTEND =3D &quot;native&quot;<br>
++<br>
++S =3D &quot;${WORKDIR}/git&quot;<br>
++B =3D &quot;${WORKDIR}/git/build&quot;<br>
++<br>
++do_compile() {<br>
++=C2=A0 =C2=A0 make -C ${S}<br>
++}<br>
++<br>
++do_install() {<br>
++=C2=A0 =C2=A0 install -d ${D}${bindir}<br>
++=C2=A0 =C2=A0 install -d ${D}${mandir}/man1<br>
++<br>
++=C2=A0 =C2=A0 install -m 0755 ${B}/bin/ls4mkbom ${D}${bindir}<br>
++=C2=A0 =C2=A0 install -m 0755 ${B}/bin/dumpbom ${D}${bindir}<br>
++=C2=A0 =C2=A0 install -m 0755 ${B}/bin/lsbom ${D}${bindir}<br>
++=C2=A0 =C2=A0 install -m 0755 ${B}/bin/mkbom ${D}${bindir}<br>
++<br>
++=C2=A0 =C2=A0 install -m 0444 ${B}/man/ls4mkbom.1.gz ${D}${mandir}/man1<br=
+>
++=C2=A0 =C2=A0 install -m 0444 ${B}/man/dumpbom.1.gz ${D}${mandir}/man1<br>
++=C2=A0 =C2=A0 install -m 0444 ${B}/man/lsbom.1.gz ${D}${mandir}/man1<br>
++=C2=A0 =C2=A0 install -m 0444 ${B}/man/mkbom.1.gz ${D}${mandir}/man1<br>
++}<br>
 -- <br>
 2.50.1 (Apple Git-155)<br>
 <br>
@@ -235,47 +262,47 @@ k">github.com/elhernes/libdmg-hfsplus.git;branch=3Dmaster;protocol=3Dhttps<=
 <br>
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-<br>
 Links: You receive all messages sent to this group.<br>
-View/Reply Online (#3126): <a href=3D"https://urldefense.proofpoint.com/v2/=
-url?u=3Dhttps-3A__lists.yoctoproject.org_g_yocto-2Dpatches_message_3126&amp=
+View/Reply Online (#3127): <a href=3D"https://urldefense.proofpoint.com/v2/=
+url?u=3Dhttps-3A__lists.yoctoproject.org_g_yocto-2Dpatches_message_3127&amp=
 ;d=3DDwIFAg&amp;c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhk=
-bNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3DiKGnzdwRLbZyGpj0w-beuZvVkx=
-OKHPOeFdKM30KyhTYwjjsiGHydEkbK7_OAcAo_&amp;s=3DoZ8lqaK7k_wEZkmswYmAzAg9nBpT=
-bhGZpBwMQe4wHzQ&amp;e=3D" rel=3D"noreferrer" target=3D"_blank">https://urld=
+bNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3DLJMeCNzx7PX_6mimmV7tx47v1n=
+KUUHpsO1WPaxzzFUFBJ0otVGRKSliQypZjt6hw&amp;s=3DXT2YhK68vYAXijX0OuBr26F6m50H=
+AyJ32IfUzQcyoqQ&amp;e=3D" rel=3D"noreferrer" target=3D"_blank">https://urld=
 efense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.yoctoproject.org_g_yocto-2=
-Dpatches_message_3126&amp;d=3DDwIFAg&amp;c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgG=
-kICC2epckfdiw&amp;r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3Di=
-KGnzdwRLbZyGpj0w-beuZvVkxOKHPOeFdKM30KyhTYwjjsiGHydEkbK7_OAcAo_&amp;s=3DoZ8=
-lqaK7k_wEZkmswYmAzAg9nBpTbhGZpBwMQe4wHzQ&amp;e=3D</a> <br>
+Dpatches_message_3127&amp;d=3DDwIFAg&amp;c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgG=
+kICC2epckfdiw&amp;r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3DL=
+JMeCNzx7PX_6mimmV7tx47v1nKUUHpsO1WPaxzzFUFBJ0otVGRKSliQypZjt6hw&amp;s=3DXT2=
+YhK68vYAXijX0OuBr26F6m50HAyJ32IfUzQcyoqQ&amp;e=3D</a> <br>
 Mute This Topic: <a href=3D"https://urldefense.proofpoint.com/v2/url?u=3Dht=
-tps-3A__lists.yoctoproject.org_mt_117504011_7048771&amp;d=3DDwIFAg&amp;c=3D=
+tps-3A__lists.yoctoproject.org_mt_117504015_7048771&amp;d=3DDwIFAg&amp;c=3D=
 ncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhkbNonVuMIGRfPx_Qj9TsR=
-ih1DULJTKUkSGa66m67E&amp;m=3DiKGnzdwRLbZyGpj0w-beuZvVkxOKHPOeFdKM30KyhTYwjj=
-siGHydEkbK7_OAcAo_&amp;s=3Doq9vuEEVu17uPtAT2n8u9JOnhjPalMtb1V7wX3d5pnI&amp;=
+ih1DULJTKUkSGa66m67E&amp;m=3DLJMeCNzx7PX_6mimmV7tx47v1nKUUHpsO1WPaxzzFUFBJ0=
+otVGRKSliQypZjt6hw&amp;s=3D8MJuqwlOtNqUcnEyKA3uXO0Ts4cIXJbRHMZtOxeqcAg&amp;=
 e=3D" rel=3D"noreferrer" target=3D"_blank">https://urldefense.proofpoint.co=
-m/v2/url?u=3Dhttps-3A__lists.yoctoproject.org_mt_117504011_7048771&amp;d=3D=
+m/v2/url?u=3Dhttps-3A__lists.yoctoproject.org_mt_117504015_7048771&amp;d=3D=
 DwIFAg&amp;c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhkbNonV=
-uMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3DiKGnzdwRLbZyGpj0w-beuZvVkxOKHPO=
-eFdKM30KyhTYwjjsiGHydEkbK7_OAcAo_&amp;s=3Doq9vuEEVu17uPtAT2n8u9JOnhjPalMtb1=
-V7wX3d5pnI&amp;e=3D</a> <br>
+uMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3DLJMeCNzx7PX_6mimmV7tx47v1nKUUHp=
+sO1WPaxzzFUFBJ0otVGRKSliQypZjt6hw&amp;s=3D8MJuqwlOtNqUcnEyKA3uXO0Ts4cIXJbRH=
+MZtOxeqcAg&amp;e=3D</a> <br>
 Group Owner: <a href=3D"mailto:yocto-patches%2Bowner@lists.yoctoproject.org=
 " target=3D"_blank">yocto-patches+owner@lists.yoctoproject.org</a><br>
 Unsubscribe: <a href=3D"https://urldefense.proofpoint.com/v2/url?u=3Dhttps-=
 3A__lists.yoctoproject.org_g_yocto-2Dpatches_leave_13184993_7048771_1814342=
 232_xyzzy&amp;d=3DDwIFAg&amp;c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdi=
-w&amp;r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3DiKGnzdwRLbZyG=
-pj0w-beuZvVkxOKHPOeFdKM30KyhTYwjjsiGHydEkbK7_OAcAo_&amp;s=3DL5DQRi-A1fgi00E=
-l9sxBWhrfOBY1HMqZJWBhbIgV7q0&amp;e=3D" rel=3D"noreferrer" target=3D"_blank"=
+w&amp;r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3DLJMeCNzx7PX_6=
+mimmV7tx47v1nKUUHpsO1WPaxzzFUFBJ0otVGRKSliQypZjt6hw&amp;s=3DtcvWqZxBfxDdYsb=
+TIzHwlAAy1O4G_DnNuDXzP5kOSig&amp;e=3D" rel=3D"noreferrer" target=3D"_blank"=
 >https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.yoctoproject.=
 org_g_yocto-2Dpatches_leave_13184993_7048771_1814342232_xyzzy&amp;d=3DDwIFA=
 g&amp;c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhkbNonVuMIGR=
-fPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3DiKGnzdwRLbZyGpj0w-beuZvVkxOKHPOeFdKM=
-30KyhTYwjjsiGHydEkbK7_OAcAo_&amp;s=3DL5DQRi-A1fgi00El9sxBWhrfOBY1HMqZJWBhbI=
-gV7q0&amp;e=3D</a>=C2=A0 [<a href=3D"mailto:ecordonnier@snap.com" target=3D=
+fPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3DLJMeCNzx7PX_6mimmV7tx47v1nKUUHpsO1WP=
+axzzFUFBJ0otVGRKSliQypZjt6hw&amp;s=3DtcvWqZxBfxDdYsbTIzHwlAAy1O4G_DnNuDXzP5=
+kOSig&amp;e=3D</a>=C2=A0 [<a href=3D"mailto:ecordonnier@snap.com" target=3D=
 "_blank">ecordonnier@snap.com</a>]<br>
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-<br>
 <br>
 <br>
 </blockquote></div>
 
---000000000000b98f900649b55c3f--
+--0000000000001b50300649b585a4--
 
