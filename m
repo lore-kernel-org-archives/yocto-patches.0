@@ -1,215 +1,328 @@
-Return-Path: <ross.burton@arm.com>
+Return-Path: <piotr@qbee.io>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D37DD79773
-	for <webhook@archiver.kernel.org>; Sat, 31 Jan 2026 14:07:08 +0000 (UTC)
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.7539.1769768957512878015
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDEC1D79773
+	for <webhook@archiver.kernel.org>; Sat, 31 Jan 2026 14:33:58 +0000 (UTC)
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.9953.1769870028252218165
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 30 Jan 2026 02:29:17 -0800
+ Sat, 31 Jan 2026 06:33:48 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@qualcomm.com header.s=qcppdkim1 header.b=RX4/rHm/;
- spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: qti.qualcomm.com, ip: 205.220.168.131, mailfrom: gyenugul@qti.qualcomm.com)
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60U4bTpa1485353
-	for <yocto-patches@lists.yoctoproject.org>; Fri, 30 Jan 2026 10:29:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=Fjq4w3SvKw8LQyrqKyFGPz
-	WHRxjrqHO/ZhrPXE+PRIY=; b=RX4/rHm/9egYQlPIwZBx14fn6G1NsS3eLBXKDI
-	hqcPwOO+irW0LoSMveNkeU0g5VytHmNVIkyq2e38qb64R2l2ssUBjsYXELT8FjaE
-	zTco58fBuwKd7nu2XxUxxyIAVfQkGWvnFYqqxpZM7SnKu6/F7h9YmXO9zfLwK3PL
-	GvbuPXy65mMhL+LT+UYAPFiV734iVRIjRuw1M8sYQ4nBZVH6QL7JZESKthwAgHdH
-	LtYZnoCUViYrzqHjus5YKFqO6ORO/lIADlhC+QI4w9Ak2IRVclOPhoFQKGD2CzV/
-	rBK/C2/vaoKNMxc3fKT8Ta90WOiHMkL7JovETA63AlmF/a8g==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4c0nsf90cm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <yocto-patches@lists.yoctoproject.org>; Fri, 30 Jan 2026 10:29:16 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 60UATGtM013874
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <yocto-patches@lists.yoctoproject.org>; Fri, 30 Jan 2026 10:29:16 GMT
-Received: from hu-gyenugul-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Fri, 30 Jan 2026 02:29:14 -0800
-From: "Ganga Bhavani Yenugula" <gyenugul@qti.qualcomm.com>
-To: <yocto-patches@lists.yoctoproject.org>
-CC: Gangabhavani Yenugula <gyenugul@qti.qualcomm.com>
-Subject: [meta-selinux][PATCH] pd-mapper: Introduce SELinux domain for pd-mapper
-Date: Fri, 30 Jan 2026 15:58:53 +0530
-Message-ID: <20260130102853.2437991-1-gyenugul@qti.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
+ dkim=pass header.i=@qbee.io header.s=google header.b=H0pdTI0X;
+ spf=pass (domain: qbee.io, ip: 209.85.167.53, mailfrom: piotr@qbee.io)
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-59dea72099eso3615839e87.0
+        for <yocto-patches@lists.yoctoproject.org>; Sat, 31 Jan 2026 06:33:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=qbee.io; s=google; t=1769870026; x=1770474826; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=B9B+OTyvujt9XvW/VIxCKgCqDr1WrbkMdLdRMWyv61A=;
+        b=H0pdTI0XkPRSJKUi5rzPbj5n4wxjImX8M+IoZEpV0ezYibjW8Zb7/SkKAQBj05kuKe
+         BJuMAJR8iFkDa1xq4Z8eTn+GZRJEVRdZlHcN43Bs/Y50hzBkA3QBkXU5q7W0FBzckYtL
+         YcrKh1EW34o+zCdCP3H6uokCoToxd4X/Ra5Qs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769870026; x=1770474826;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B9B+OTyvujt9XvW/VIxCKgCqDr1WrbkMdLdRMWyv61A=;
+        b=LQP8LLUd4QCeKaiI1fjIE4kN+1okiM+FFkbiYWLnJ02joSyeubNbpFZP062VCqTMqp
+         GpizAFC2LSmV7ZA7PGL2VAEROL0gIzvo7+646EHn4vE5g7n5TjkaDJ2sg3J9uozdwdCg
+         j7v8yAknTaCTRy8/k24hzPVHQL4At5FOxHUIY78AK7QhI+R5fhLpoMQRSsdxoeh7vBal
+         lge0t9+8490TzzhTrlNNTkcoLrwTJovZKQdsS9Vb+Gxy/qJgWBZdP9aEP0lhIpbxgNim
+         RNUpG5vMRKXHm8wq/QeRR1JkZN7pGwOMv2/ungj488PZFmHxBXbKhJmR7ZbvtHiClFmm
+         72OQ==
+X-Gm-Message-State: AOJu0YwN4f0tIo30XKQ1q8n+m42GLYDGSJrZmgRHms17sUcu3H5DAJoV
+	oNFQUxYrTYi5bK5DNL+IOO9sT6bIW/oopiNDGrYIBrbzUYrV0DgLmkA0mLvqs1cCZ75QBrf+V87
+	5gQvCryE=
+X-Gm-Gg: AZuq6aJT4nPf9DQJN8+7tVIXZ2vwutI9hlxvHP44pM6dhTc847ZIZ1l8YVi7g67oOvY
+	lndB8gxg0/1dsQTD8aFr1DX7qw/NOT4iegOZQCQeNryhHW3wfxB9kQVISo4kU7iMueo4JB6wBgF
+	G5ZrSRKLVqtArNRPa/5isrvpMWza2YP2id81T/JPwF63jh9ahPiQDSsBL09bbNk2GrCAwnMqr4o
+	PrPOlfasdzwTLZJYqnAhM4T9jkLxzwiLUwDtrtR0w5tGloUhU97Y3knD0dymBmdgwp5u4lU3JEB
+	SqKAuYUzRwr+iUqNcH0d1UFgXK2FYFlJuukHn2q3lCoSx9QZGNOKemLM+MpT2QvDIEfb91Kzhhn
+	sZW30BxCCoygbAtNb94tax2sObwCPVs7/g+VF9llSGlvqcVT1T9tTMA8HJv1YAG64qFlsAHQBay
+	VuB8Vdd8gBeuCtuBE9SlGG1vYN+jER23Y/u2t/aF+YldL9SBC2wVM=
+X-Received: by 2002:a05:6512:1114:b0:59d:f2f3:7e9a with SMTP id 2adb3069b0e04-59e16443c97mr2240318e87.36.1769870025593;
+        Sat, 31 Jan 2026 06:33:45 -0800 (PST)
+Received: from localhost (telia-5908f8-154.connect.netcom.no. [89.8.248.154])
+        by smtp.gmail.com with UTF8SMTPSA id 2adb3069b0e04-59e074b2d89sm2331914e87.49.2026.01.31.06.33.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 31 Jan 2026 06:33:45 -0800 (PST)
+From: =?UTF-8?q?Piotr=20Buli=C5=84ski?= <piotr@qbee.io>
+To: yocto-patches@lists.yoctoproject.org
+Cc: =?UTF-8?q?Piotr=20Buli=C5=84ski?= <piotr@qbee.io>
+Subject: [layerindex-web][PATCH] Re-implement pagination using built-in Django's Paginator.
+Date: Sat, 31 Jan 2026 15:33:43 +0100
+Message-ID: <20260131143343.23359-1-piotr@qbee.io>
+X-Mailer: git-send-email 2.50.1
 MIME-Version: 1.0
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: WbuD0kIRqoGIgerdepCm0sA1j4soq5uj
-X-Authority-Analysis: v=2.4 cv=EvjfbCcA c=1 sm=1 tr=0 ts=697c87fc cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=vUbySO9Y5rIA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=NEAV23lmAAAA:8 a=EUspDBNiAAAA:8
- a=3yM-Fun2whKcO63rMjIA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: WbuD0kIRqoGIgerdepCm0sA1j4soq5uj
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTMwMDA4NCBTYWx0ZWRfXzHLBZiBGvMWy
- 3bXOa8WR978a1VMNlwOACrz4eucPsUxNxIg5iZERB/2DBoWnQUEZwWkt+JcOKGxBRrQKCaZuwAR
- wQpCUnU5UccTRRfs+vujZKm5w3WFku2PN6RPzEU73KFeVqON6b4JjDZqNUEBRl/WpruhhqTjxOW
- /wQV+EnTO21cWXHlFz6BH/74u1d2W+u21CGgo9SEkfVohid0A4ygSYTfDl16D8wKVWu3S0mpquh
- ehb7JVghVsgojyeDhMQ0Sw3Uy0AQwJKRw3LCVdYBKzSAWsRB/Yh0wAaaOry+6qtFk8AFcWlCs/H
- hSmymyK45UHZCXn91Qi/q9tLHnwKrS/q9H0KEA66+Vgqv2G+6dXK6VetnsvoqvpQpHH4pdfiQXb
- hKU20Rw21KjiTM/XOx5Sy51mGJ6JGse3qGnp9LUSqHmPbNQQyxB9JQTUUZkhCi7yir4N5FMqOsM
- MvOE7EmXMjzon1z34Yg==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-01-30_01,2026-01-29_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 spamscore=0 priorityscore=1501 bulkscore=0 suspectscore=0
- adultscore=0 malwarescore=0 impostorscore=0 lowpriorityscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2601150000 definitions=main-2601300084
-X-MIME-Autoconverted: from 8bit to quoted-printable by mx0a-0031df01.pphosted.com id 60U4bTpa1485353
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sat, 31 Jan 2026 14:07:08 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3154
+ <yocto-patches@lists.yoctoproject.org>; Sat, 31 Jan 2026 14:33:58 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3155
 
-From: Gangabhavani Yenugula <gyenugul@qti.qualcomm.com>
-
-Define a dedicated domain (`pd_mapper_t`) to confine pd-mapper service, e=
-nsuring
-it operates in a restricted environment isolated from other init processe=
-s.
-
-Grant the necessary permissions to resolve AVC denials observed during
-the transition to enforcing mode:
-
- - Filesystem: Authorize read access to `/sys`.
- - Socket: Allow creation and basic use of qipcrtr_socket
-
-Signed-off-by: Gangabhavani Yenugula <gyenugul@qti.qualcomm.com>
+Signed-off-by: Piotr Buliński <piotr@qbee.io>
 ---
- ...troduce-SELinux-domain-for-pd-mapper.patch | 73 +++++++++++++++++++
- .../refpolicy/refpolicy_common.inc            |  1 +
- 2 files changed, 74 insertions(+)
- create mode 100644 recipes-security/refpolicy/refpolicy/0057-pd-mapper-I=
-ntroduce-SELinux-domain-for-pd-mapper.patch
+ layerindex/templatetags/paginator.py       | 28 ++++++++++++++++++++++
+ templates/layerindex/bulkchangesearch.html |  7 +-----
+ templates/layerindex/classes.html          |  7 +-----
+ templates/layerindex/classicrecipes.html   |  7 +-----
+ templates/layerindex/distros.html          |  7 +-----
+ templates/layerindex/history.html          |  7 +-----
+ templates/layerindex/layers.html           |  7 +-----
+ templates/layerindex/machines.html         |  7 +-----
+ templates/layerindex/paginator.html        | 20 ++++++++++++++++
+ templates/layerindex/recipes.html          |  7 +-----
+ templates/layerindex/reviewlist.html       |  7 +-----
+ templates/layerindex/updatelist.html       |  7 +-----
+ 12 files changed, 58 insertions(+), 60 deletions(-)
+ create mode 100644 layerindex/templatetags/paginator.py
+ create mode 100644 templates/layerindex/paginator.html
 
-diff --git a/recipes-security/refpolicy/refpolicy/0057-pd-mapper-Introduc=
-e-SELinux-domain-for-pd-mapper.patch b/recipes-security/refpolicy/refpoli=
-cy/0057-pd-mapper-Introduce-SELinux-domain-for-pd-mapper.patch
+diff --git a/layerindex/templatetags/paginator.py b/layerindex/templatetags/paginator.py
 new file mode 100644
-index 0000000..ec89ca9
+index 0000000..60ada6e
 --- /dev/null
-+++ b/recipes-security/refpolicy/refpolicy/0057-pd-mapper-Introduce-SELin=
-ux-domain-for-pd-mapper.patch
-@@ -0,0 +1,73 @@
-+From 29630f1034ebaaccdf10366f23616367ae138f1e Mon Sep 17 00:00:00 2001
-+From: Gangabhavani Yenugula <gyenugul@qti.qualcomm.com>
-+Date: Thu, 22 Jan 2026 16:14:50 +0530
-+Subject: [PATCH] pd-mapper: Introduce SELinux domain for pd-mapper
++++ b/layerindex/templatetags/paginator.py
+@@ -0,0 +1,28 @@
++from django import template
++from django.http import HttpRequest
++from django.core.paginator import Paginator
 +
-+Define a dedicated domain (`pd_mapper_t`) to confine pd-mapper service, =
-ensuring
-+it operates in a restricted environment isolated from other init process=
-es.
++register = template.Library()
 +
-+Grant the necessary permissions to resolve AVC denials observed during
-+the transition to enforcing mode:
 +
-+ - Filesystem: Authorize read access to `/sys`.
-+ - Socket: Allow creation and basic use of qipcrtr_socket
++# Return new page URL for the current view.
++# Usage: {% page_url request 2 %}
++@register.simple_tag
++def page_url(request: "HttpRequest", page: int) -> "str":
++    new_query = request.GET.copy()
++    new_query['page'] = f'{page}'
++    return '?' + new_query.urlencode()
 +
-+Upstream-Status: Backport [https://github.com/SELinuxProject/refpolicy/p=
-ull/1070/changes/c8aef7c55e8768378c6adeda7e8edfaeecb9fa28]
 +
-+Signed-off-by: Gangabhavani Yenugula <gyenugul@qti.qualcomm.com>
-+---
-+ policy/modules/services/pd_mapper.fc |  1 +
-+ policy/modules/services/pd_mapper.if | 10 ++++++++++
-+ policy/modules/services/pd_mapper.te | 15 +++++++++++++++
-+ 3 files changed, 26 insertions(+)
-+ create mode 100644 policy/modules/services/pd_mapper.fc
-+ create mode 100644 policy/modules/services/pd_mapper.if
-+ create mode 100644 policy/modules/services/pd_mapper.te
++# Return elided page range for the current page object.
++# Usage: {% page_obj|elided_page_range  %}
++@register.filter
++def elided_page_range(page_obj: "Paginator.page") -> "list[int]":
++    if not isinstance(page_obj.paginator, Paginator):
++        return []
 +
-+diff --git a/policy/modules/services/pd_mapper.fc b/policy/modules/servi=
-ces/pd_mapper.fc
-+new file mode 100644
-+index 000000000..3d83d46b1
-+--- /dev/null
-++++ b/policy/modules/services/pd_mapper.fc
-+@@ -0,0 +1 @@
-++/usr/bin/pd-mapper      --      gen_context(system_u:object_r:pd_mapper=
-_exec_t,s0)
-+diff --git a/policy/modules/services/pd_mapper.if b/policy/modules/servi=
-ces/pd_mapper.if
-+new file mode 100644
-+index 000000000..34da5143f
-+--- /dev/null
-++++ b/policy/modules/services/pd_mapper.if
-+@@ -0,0 +1,10 @@
-++## <summary>pd-mapper</summary>
-++#
-++## <desc>
-++## Qualcomm=E2=80=99s pd=E2=80=91mapper service is the userspace Protec=
-tion Domain mapper
-++## that enables applications to access remote processors
-++## (Wi=E2=80=91Fi, modem, sensors, etc.)
-++## on Qualcomm SoCs via the QRTR protocol.
-++##
-++## https://github.com/linux-msm/pd-mapper
-++## </desc>
-+diff --git a/policy/modules/services/pd_mapper.te b/policy/modules/servi=
-ces/pd_mapper.te
-+new file mode 100644
-+index 000000000..34a8d6bcc
-+--- /dev/null
-++++ b/policy/modules/services/pd_mapper.te
-+@@ -0,0 +1,15 @@
-++policy_module(pd_mapper)
-++
-++########################################
-++#
-++# Declarations
-++#
-++
-++type pd_mapper_t;
-++type pd_mapper_exec_t;
-++init_daemon_domain(pd_mapper_t, pd_mapper_exec_t)
-++
-++allow pd_mapper_t self:qipcrtr_socket connected_socket_perms;
-++
-++# Read /sys/devices/platform/soc@0/2a300000.remoteproc/remoteproc/remot=
-eproc2/firmware
-++dev_read_sysfs(pd_mapper_t)
-+--=20
-+2.34.1
-+
-diff --git a/recipes-security/refpolicy/refpolicy_common.inc b/recipes-se=
-curity/refpolicy/refpolicy_common.inc
-index 59dfecd..9d74c85 100644
---- a/recipes-security/refpolicy/refpolicy_common.inc
-+++ b/recipes-security/refpolicy/refpolicy_common.inc
-@@ -72,6 +72,7 @@ SRC_URI +=3D " \
-         file://0054-policy-modules-system-setrans-allow-setrans_t-use-fd=
-.patch \
-         file://0055-policy-modules-system-systemd-make-_systemd_t-MLS-tr=
-.patch \
-         file://0056-policy-modules-system-logging-make-syslogd_runtime_t=
-.patch \
-+        file://0057-pd-mapper-Introduce-SELinux-domain-for-pd-mapper.pat=
-ch \
-         "
-=20
- S =3D "${UNPACKDIR}/refpolicy"
---=20
-2.34.1
-
++    return page_obj.paginator.get_elided_page_range(
++        number=page_obj.number,
++        on_each_side=3,
++        on_ends=1,
++    )
+\ No newline at end of file
+diff --git a/templates/layerindex/bulkchangesearch.html b/templates/layerindex/bulkchangesearch.html
+index e8d6bd8..fad7975 100644
+--- a/templates/layerindex/bulkchangesearch.html
++++ b/templates/layerindex/bulkchangesearch.html
+@@ -90,12 +90,7 @@
+                     <input type="submit" class="btn btn-default" name="add_all" value="Add all"></input>
+ 
+     {% if is_paginated %}
+-    {% comment %}
+-        {% load bootstrap_pagination %}
+-        <div class="text-center">
+-        {% bootstrap_paginate page_obj range=10 show_prev_next="false" show_first_last="true" %}
+-        </div>
+-    {% endcomment %}
++    {% include "layerindex/paginator.html" %}
+     {% endif %}
+ {% else %}
+     {% if searched %}
+diff --git a/templates/layerindex/classes.html b/templates/layerindex/classes.html
+index e99761b..0ba93ad 100644
+--- a/templates/layerindex/classes.html
++++ b/templates/layerindex/classes.html
+@@ -65,12 +65,7 @@
+                 </table>
+ 
+     {% if is_paginated %}
+-    {% comment %}
+-        {% load bootstrap_pagination %}
+-        <div class="text-center">
+-        {% bootstrap_paginate page_obj range=10 show_prev_next="false" show_first_last="true" %}
+-        </div>
+-    {% endcomment %}
++    {% include "layerindex/paginator.html" %}
+     {% endif %}
+ {% else %}
+     {% if search_keyword %}
+diff --git a/templates/layerindex/classicrecipes.html b/templates/layerindex/classicrecipes.html
+index cf911a5..c4fe13c 100644
+--- a/templates/layerindex/classicrecipes.html
++++ b/templates/layerindex/classicrecipes.html
+@@ -287,12 +287,7 @@
+                 </table>
+ 
+     {% if is_paginated %}
+-    {% comment %}
+-        {% load bootstrap_pagination %}
+-        <div class="text-center">
+-        {% bootstrap_paginate page_obj range=10 show_prev_next="false" show_first_last="true" %}
+-        </div>
+-    {% endcomment %}
++    {% include "layerindex/paginator.html" %}
+     {% endif %}
+ {% else %}
+     {% if searched %}
+diff --git a/templates/layerindex/distros.html b/templates/layerindex/distros.html
+index 0c1b276..4cacd84 100644
+--- a/templates/layerindex/distros.html
++++ b/templates/layerindex/distros.html
+@@ -65,12 +65,7 @@
+                 </table>
+ 
+     {% if is_paginated %}
+-    {% comment %}
+-        {% load bootstrap_pagination %}
+-        <div class="text-center">
+-        {% bootstrap_paginate page_obj range=10 show_prev_next="false" show_first_last="true" %}
+-        </div>
+-    {% endcomment %}
++    {% include "layerindex/paginator.html" %}
+     {% endif %}
+ {% else %}
+     {% if search_keyword %}
+diff --git a/templates/layerindex/history.html b/templates/layerindex/history.html
+index 9ae4431..b4a1f62 100644
+--- a/templates/layerindex/history.html
++++ b/templates/layerindex/history.html
+@@ -60,12 +60,7 @@
+ </table>
+ 
+     {% if is_paginated %}
+-    {% comment %}
+-        {% load bootstrap_pagination %}
+-        <div class="text-center">
+-        {% bootstrap_paginate page_obj range=10 show_prev_next="false" show_first_last="true" %}
+-        </div>
+-    {% endcomment %}
++    {% include "layerindex/paginator.html" %}
+     {% endif %}
+ 
+ 
+diff --git a/templates/layerindex/layers.html b/templates/layerindex/layers.html
+index ae9befb..daae8cb 100644
+--- a/templates/layerindex/layers.html
++++ b/templates/layerindex/layers.html
+@@ -105,12 +105,7 @@
+             </table>
+ 
+     {% if is_paginated %}
+-    {% comment %}
+-        {% load bootstrap_pagination %}
+-        <div class="text-center">
+-        {% bootstrap_paginate page_obj range=10 show_prev_next="false" show_first_last="true" %}
+-        </div>
+-    {% endcomment %}
++    {% include "layerindex/paginator.html" %}
+     {% endif %}
+ {% else %}
+     <p>No matching layers in database.</p>
+diff --git a/templates/layerindex/machines.html b/templates/layerindex/machines.html
+index 685506d..3b4971c 100644
+--- a/templates/layerindex/machines.html
++++ b/templates/layerindex/machines.html
+@@ -64,12 +64,7 @@
+                 </table>
+ 
+     {% if is_paginated %}
+-    {% comment %}
+-        {% load bootstrap_pagination %}
+-        <div class="text-center">
+-        {% bootstrap_paginate page_obj range=10 show_prev_next="false" show_first_last="true" %}
+-        </div>
+-    {% endcomment %}
++    {% include "layerindex/paginator.html" %}
+     {% endif %}
+ {% else %}
+     {% if search_keyword %}
+diff --git a/templates/layerindex/paginator.html b/templates/layerindex/paginator.html
+new file mode 100644
+index 0000000..99abff9
+--- /dev/null
++++ b/templates/layerindex/paginator.html
+@@ -0,0 +1,20 @@
++{% load paginator %}
++<nav aria-label="Pagination Navigation" class="text-center">
++    <ul class="pagination">
++        {% for i in page_obj|elided_page_range %}
++        {% if page_obj.number == i %}
++            <li class="page-item active">
++            <span aria-current="page">{{ i }}</span>
++            </li>
++        {% else %}
++            {% if i == page_obj.paginator.ELLIPSIS %}
++            <li class="pagination-ellipsis" aria-hidden="true"><span>{{ i }}</span></li>
++            {% else %}
++            <li class="page-item">
++                <a href="{% page_url request i %}" aria-label="Go to page {{ i }}">{{ i }}</a>
++            </li>
++            {% endif %}
++        {% endif %}
++        {% endfor %}
++    </ul>
++</nav>
+\ No newline at end of file
+diff --git a/templates/layerindex/recipes.html b/templates/layerindex/recipes.html
+index 9c15e6c..cea7e2a 100644
+--- a/templates/layerindex/recipes.html
++++ b/templates/layerindex/recipes.html
+@@ -90,12 +90,7 @@
+                 </table>
+ 
+     {% if is_paginated %}
+-    {% comment %}
+-        {% load bootstrap_pagination %}
+-        <div class="text-center">
+-        {% bootstrap_paginate page_obj range=10 show_prev_next="false" show_first_last="true" %}
+-        </div>
+-    {% endcomment %}
++    {% include "layerindex/paginator.html" %}
+     {% endif %}
+ {% else %}
+     {% if search_keyword %}
+diff --git a/templates/layerindex/reviewlist.html b/templates/layerindex/reviewlist.html
+index 18e0d78..c431621 100644
+--- a/templates/layerindex/reviewlist.html
++++ b/templates/layerindex/reviewlist.html
+@@ -69,12 +69,7 @@
+     </div>
+ 
+     {% if is_paginated %}
+-    {% comment %}
+-        {% load bootstrap_pagination %}
+-        <div class="text-center">
+-        {% bootstrap_paginate page_obj range=10 show_prev_next="false" show_first_last="true" %}
+-        </div>
+-    {% endcomment %}
++    {% include "layerindex/paginator.html" %}
+     {% endif %}
+ {% else %}
+     <p>No unpublished layers to review.</p>
+diff --git a/templates/layerindex/updatelist.html b/templates/layerindex/updatelist.html
+index b68a860..55091a9 100644
+--- a/templates/layerindex/updatelist.html
++++ b/templates/layerindex/updatelist.html
+@@ -54,12 +54,7 @@
+ </div>
+ 
+ {% if is_paginated %}
+-{% comment %}
+-    {% load bootstrap_pagination %}
+-    <div class="text-center">
+-    {% bootstrap_paginate page_obj range=10 show_prev_next="false" show_first_last="true" %}
+-    </div>
+-{% endcomment %}
++{% include "layerindex/paginator.html" %}
+ {% endif %}
+ 
+ {% endautoescape %}
 
