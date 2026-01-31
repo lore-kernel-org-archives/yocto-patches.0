@@ -1,242 +1,484 @@
-Return-Path: <peter.marko@siemens.com>
+Return-Path: <ecordonnier@snap.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B0B4E7C6E7
-	for <webhook@archiver.kernel.org>; Sat, 31 Jan 2026 20:18:40 +0000 (UTC)
-Received: from DUZPR83CU001.outbound.protection.outlook.com (DUZPR83CU001.outbound.protection.outlook.com [52.101.66.31])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.16768.1769890718408036649
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37FB8E7C6E8
+	for <webhook@archiver.kernel.org>; Sat, 31 Jan 2026 20:19:30 +0000 (UTC)
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.16732.1769890763672276602
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 31 Jan 2026 12:18:38 -0800
+ Sat, 31 Jan 2026 12:19:24 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=OV3YkXbv;
- spf=pass (domain: siemens.com, ip: 52.101.66.31, mailfrom: peter.marko@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VoObXWBYUNQvM00HrL6QiI2Ml6Z8oByCVltQNNSKwf5cyCxMnY6PdKWnnEEs8d8t1+GWTCKdGCeN3DooMKfQUp36woc165blHOdYOkI/MplBtEGNdps5w6wMtxSqvQM74H3PW16Cv+gIaM904ykSy/ENJfG9/1OS1q0MJthP4MDmLTp6eZ5YymjmtOHHTtmjgqOfQsdybxxgxpYeF+joRj3+1HbS8dj7R3NxRohfyPr9Tr9DaJhZ5ZHvB/pbanpYOvPyCW3yQGh7OqG7MKPQgLix2UHeTvngQIWc5gw4p+eea+zv94AAGmsOc3qKQ/vTXnf2xbWFS4ZZNsL2ZdOHzA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tcWdHVqNcxOnML+shWk5QU4s+1jBGTs2UEplAN3TQf8=;
- b=EDio6fGX6eGoriSeznH5H73SZ570MEs9Yb0HlR6PKTgOQh27ED/1TGeMvKLPNM1IU3zPNn/xD0xQSxofFBjpLUpTqieDpmtKDzr7auNHxx3iKCGjZKeOfZmLNo58QCJNpytGf7ypwI3RLMtEs6as4PkunIkqf+Ii/bONnwOXuk3OD1FINwiGPVzzW1o+1+9FJCz0xXHTmquPKihuknVpYflMIxWrWqH09rsSXgymu/1Y1sOvVeOEtE/5wPMLkN78DecNNJDpbt1HElTbj3C7P7rOcv4HXRofPlymT7uJZAnQQy5JdrplravagTNJuguz4HbhXksLMuaDcxVInUkqMA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tcWdHVqNcxOnML+shWk5QU4s+1jBGTs2UEplAN3TQf8=;
- b=OV3YkXbvOSPgQ6UO1i1a8dZ9Qps6Kbcn5zQU1PYgvW2/WfonCnhddgDCfnk5Ziq4YMXL2bBsYXpNXRt61WTFxUhuDtGDyrC6W8Tj7qR3MkVl26Jzb8n/pVVeSw6medu0B5hFE0LfZ7xRfCh78m2xFAnz/RqOXgUhRbymjy6E/DvYzk9KopTp7Ggic04bdNzfEAECrMQ0k7WnFWgghBrQhFcc/xYQ3oTQqXjBsNQ8wXRBQwyXVRlnwNAZCZBIEPUCF0GHJIMG3o5seuepHjNWG2861GxOIJJuCPahrxAzzUGPdvP/diARwmaDpDq2FbeUb3ax0X7exh5SlI0+82hIgw==
-Received: from AS1PR10MB5697.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:479::20)
- by PA4PR10MB5705.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:263::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9564.14; Sat, 31 Jan
- 2026 20:18:34 +0000
-Received: from AS1PR10MB5697.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::b54d:255a:1abf:2dc7]) by AS1PR10MB5697.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::b54d:255a:1abf:2dc7%6]) with mapi id 15.20.9564.006; Sat, 31 Jan 2026
- 20:18:33 +0000
-From: "Marko, Peter" <Peter.Marko@siemens.com>
-To: Ross Burton <Ross.Burton@arm.com>, "yocto-patches@lists.yoctoproject.org"
-	<yocto-patches@lists.yoctoproject.org>, Richard Purdie
-	<richard.purdie@linuxfoundation.org>
-Subject: RE: [yocto-patches] [yocto-metrics][PATCH] patch-status: add
- whinlatter
-Thread-Topic: [yocto-patches] [yocto-metrics][PATCH] patch-status: add
- whinlatter
-Thread-Index: AQHcjWuAwMxr74XhokudBJW3gjI6XbVkStiAgAh3ZkA=
-Date: Sat, 31 Jan 2026 20:18:33 +0000
-Message-ID: 
- <AS1PR10MB569754E2254D487C56FCE53DFD9CA@AS1PR10MB5697.EURPRD10.PROD.OUTLOOK.COM>
-References: <20260124195614.1874743-1-peter.marko@siemens.com>
- <F7383EE9-2EE0-44C5-91CC-AF540D574E5C@arm.com>
-In-Reply-To: <F7383EE9-2EE0-44C5-91CC-AF540D574E5C@arm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
- MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ActionId=4633944f-af9f-4e92-95d7-ba9b8dd53bc4;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ContentBits=0;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Enabled=true;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Method=Standard;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Name=restricted;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SetDate=2026-01-31T20:16:54Z;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SiteId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Tag=10,
- 3, 0, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AS1PR10MB5697:EE_|PA4PR10MB5705:EE_
-x-ms-office365-filtering-correlation-id: f7ba9731-a7f7-4f2e-8ecc-08de6105e8aa
-x-ms-exchange-atpmessageproperties: SA
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230040|366016|376014|1800799024|4022899009|13003099007|38070700021;
-x-microsoft-antispam-message-info: 
- =?utf-8?B?NGpXY1kzZ3BsZWN0UStiT2NaV1B6RG5GNHFLd0FUQXNKQ0pIWFJaNEJKODNO?=
- =?utf-8?B?dXloS3lnUXJwV0dwSGpTcnBBSXd1TGlvaHdkMWdybTZicDJja3gwclZ4TnZh?=
- =?utf-8?B?V0UvNTJKbktoWFBuSTQ4dmpkQUdkSkRMeWtIc1pPL0c2Z2kxQ1Jvc3h6U01r?=
- =?utf-8?B?dUdmS1hjbjlNM1hRWW9Sb0JHVi9DOXV4L01OYnBHeGphOXIzNExMR21mbjJX?=
- =?utf-8?B?aHhNQkNxT1MyVTlUUmJ5MUpmWFJsRDlyYVgyZXgvdXdiQlpFeCtpcm5ua2VI?=
- =?utf-8?B?Q1dmYitBaURLTUFldFA5WTE4OHJBbUJLbXltUGQ2aDZSai9NbEdWM0cxS0dX?=
- =?utf-8?B?YkxnWnEvbWIvekxhUnJIWWk1MFFCeFN6dlRJR2QzQXJEcENjWmhuTTZYUkhU?=
- =?utf-8?B?K0J2QVBaRDZBbi9DdWRqTDlNYitPbmovWFFMQ01takZ0Vnl6dzBCNHZOM2Fy?=
- =?utf-8?B?cWtBempkaVhVQ1dSYmNpc2daTEtJN3RTek9zRmpDYUkvQVFSaXFISmw4TUs3?=
- =?utf-8?B?RHU3ZVhWWnFQRkZRdXpvekNkeDAwK0xHWEt3QUNnU0RZc0dCU0d6Zm8rbEp5?=
- =?utf-8?B?YVY5Q0twMERHL0JBbGJMREJwR2VnVEhFSVJtSmpKQmNlNDZNcVdXVzNlT2xn?=
- =?utf-8?B?dlJKSFh3cTRNOVhzaDIzWDBRSUtpOGljdzVjZFl6ZW5hUDcycGlxaUVKZkpP?=
- =?utf-8?B?YmJCSGRBdm5udVFmR0N4R2NoTUNYTFlvcGlNM243WTFEdFBJQVcvM3F4VGV1?=
- =?utf-8?B?eDl6NDhXdk1JbFFrVUdHUjJKNG01V3J6c2Q1SCtjSFVWTkFjWEVNL2YxUk10?=
- =?utf-8?B?cDdFL05HdnVyMTQ1UEh5OFhDVlJUOVJydVhhM0ZwdFN6RkJndVBDSnZXak4y?=
- =?utf-8?B?MndwOTI2NHRaOTNVeTRpOVFFYkFUVXZpWURIR1A2cGtLZTVFMUpHNUEvd2Ey?=
- =?utf-8?B?eUd5d0xCMG1FaGJhenlDVXVqVkoraGJpOFlVQlg1RVpQaHNmMytPUHl0Slcz?=
- =?utf-8?B?THVrN1ZiQ3BUdXJtcDB2TGRzclE4NFVkK0FNL3ZaMVYyWTNaME85Rk9HUGRq?=
- =?utf-8?B?Y1RrdWlxWVZMYXRtRlRMeStiV3F4UXpnQ3RoQUs5N3ZUN2ZIZGkvVHVzZzg5?=
- =?utf-8?B?M1J1T1ROTllRSUJEKzVJd2FRVU9lK1RrQkRvYkI4NE1oQ2hvNjRYY29aYnhx?=
- =?utf-8?B?THlVek5lSlVoQ25KMmxiRnEzWmQ3UjdvY0pxT2E2TDhUUTUrY2RCNmFGN3A0?=
- =?utf-8?B?NFQzWTJSTUlFZ0ZocnBKQVpBUzFkT05sWmQxanl5Wm5IVmxHQ0d4L1BHRk55?=
- =?utf-8?B?YU1DRUk5MTU3dytpQVVJbHFEcGdsZmpPMVkxeXZ4c1VMbTROckpqRGtLNVZ0?=
- =?utf-8?B?dmpxNFRMVEpqNUNmcEV4eFB5YklWQjh6VUhZbW5BQ3c0RklhQ0lhL25ncTc2?=
- =?utf-8?B?dk1XeXkrWDNnRTc2ZU05WlkvWDlsQWVVTkdqRFlzbXo3WkRUVk1USlpxNVF5?=
- =?utf-8?B?emZtbHEyNmNGM0xseTJXZGxabExSVVFhbnlQeXN1T0dreHdVbUNwdkx6dGgy?=
- =?utf-8?B?Um1RTjhiS2c0TXJOUXZpWkJ1K0VobDJkRjRsOTZjUVpVdVdrKzMxQk5aZExy?=
- =?utf-8?B?ZEo3RVRRbnVENy9IUHhUZVB0c2YzMlhiMnBPMWxzYnZDbG4wNEU0a0prRXB0?=
- =?utf-8?B?bFJqVTRPUXY2eExRMHFGWjJyVkFSRjRKUkpESkJyZVhUZllsZkpEUFRKdzJ6?=
- =?utf-8?B?TExvNEtNd0hGZDA0bkx0SHQyc1ZGQTZ2RUszQlpldCs3SitpQ1lqbHU4dnU2?=
- =?utf-8?B?aERXZXlqY0kza0g5ei9xTUQzTG9yS2QyWVc3bGRMTU5ReUErcmN0bEJPT0d4?=
- =?utf-8?B?cDF4V0VFQ0JlbThtM3FNbnA3OHdMQ2VxSVc0aUVLNVpGOEx3aHZrRHREYmJ4?=
- =?utf-8?B?a01uT2xnSEF3aGJ1bE4ydzlkNW9JVVNPUlU3RnZaQmhDaElXVWJtTUNXUXpM?=
- =?utf-8?B?LytTRVcrU0RxbkNsOENmSG9VK1ZYZmwyU2kwdHU3cDMxNmFhWjRDRFNzQU5y?=
- =?utf-8?B?eGNzRFVGZTV3YTFqSVIwVFJUZlBwUnFONkFBVTdudVRSRmg2ajZBK0lyL3lS?=
- =?utf-8?Q?TE9Y=3D?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS1PR10MB5697.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(4022899009)(13003099007)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?utf-8?B?ZTdsMThmcFB0bjg3TjE0ZHBMMVZWdkVxNjFDcTBDd2tPVzFGeWN1REpRZ2RF?=
- =?utf-8?B?SFdlTGs1Y0t3Q2krVzZGL2ZRVmNHSWFhTXIybTJZRnVGVmJ4ZWwrQnU2b2I4?=
- =?utf-8?B?TjhVRnp6MElQR1N1ZkRPUjZqMDJYS2p2MjQyZk1aSUhiMFlDNjFQVVVjejIv?=
- =?utf-8?B?ZGFFcjhIak5adUZUZkNLTWp5NzZEQUY4dUFqL0RQaWRzVVFuSHJ3d2ROdkhO?=
- =?utf-8?B?cyt4TW5RTFpIZmpZZm9oQnZvN3lFR2tHbkZtNUxqbEFidzhOSzJyNk1wUTQr?=
- =?utf-8?B?K0tBRXo5dG9pRlA4UEJiQWFaYmZhMy9MUmlXZlZXcElzQzRKOElpWmhUMlg1?=
- =?utf-8?B?OTVrUXdFQmRMS1IwTnZCOEJyWjMyb0Yvb1ZKREEwYUVJek92NFNtdUtiTkFi?=
- =?utf-8?B?dGFOeml1MDNLdmF6b1hwcFhhbUJzKytpcVE2Nlc2b1hrOTFRaUlCOFE5eFd2?=
- =?utf-8?B?cVg0VGZxTUdPdWdrcTRsa1NTWnFVY0hmR3gwZXBnMWI1SEVXSWJGcks1RDFF?=
- =?utf-8?B?bjI5MVNvU1kzUVh6R3NmN05vZndpTTVBUkRGWHBEeXNML01MUktrWkVRY0w3?=
- =?utf-8?B?bjkvN3JmZlpuYW5rM3NQQWRvQmhidnEvcUhxNWFlM3BEK09uTGpuSytIVjRL?=
- =?utf-8?B?SC8rRFVZTCtoVC9RRjZhSWQrZFVkVjNDNjhDbEtJV3liNGh1Y2RaOVJVMkp6?=
- =?utf-8?B?bkJ0Vk1yc0NDTUpQZHRqNjB0TlhPWU1yTjhTbTl6cXhKL3lydW4rOHlaYnl0?=
- =?utf-8?B?ckg2Wnc0VExiaEVTUWEyNlNIQ1BQYjVRNWpoa0QrUy82WmlNVXlFc05pODRS?=
- =?utf-8?B?RW9IOGtUcGZsVWppTW9YZlBRb0gzRWtOMkIyWEZkdlpTcHBWWm00MVNHYkY3?=
- =?utf-8?B?cTk4SDZJZEFneVJZNC9zcFRISnNXR1pHNzdBYjdUKzY5UnYxRkdrOERUSDlW?=
- =?utf-8?B?RGlBWUg3YmNMQ1FDWmVJRFJWVG5DVzRzcThMYVRFQXhlL25VN0pibERzd2h6?=
- =?utf-8?B?SWFyL2MzRVkzVmFVNHlsUW1kSW5qRzlYRDg5WGFJdkk0bkt0eis0OTN6a3g3?=
- =?utf-8?B?S3FiY1V3YmdjZHlJVHhLbFAyT3pENURMVWU5cWxBd3d2UGNEQVpHWkNtNHJu?=
- =?utf-8?B?VDBoa0R6TTFjM0RKSVE3SnZIaEhEQzZqek0zcjJCWDFMem9mNy9qejZCQ2ZB?=
- =?utf-8?B?a1J0SmEwU2ovUnZyWnpMdlc0VERJQlRnSHBWUDlqVmVYZXl0RlZTbkV2R1dW?=
- =?utf-8?B?NytqbFhGVjZBQUs1UGxRVnpjZ3ZQQU9CZVFackpDWGxmc0JmUDNpb3ZHclYw?=
- =?utf-8?B?bUt6VGVtYXUvVW5JSVVVWlp4b0VlL1VvQVRBYnRyemw1NWthNi9xaTNwcTVa?=
- =?utf-8?B?N0xLakUyMW5sdUlZS3UrcEFPSURmRHhJa2RXb0R5Q2hpSjlaNmhSbzcwQ0NQ?=
- =?utf-8?B?b1MwRmxxL1hCRUYwTmJ4ZFczaktWMVFuRmJqS0kvNDY1TEI2cU5xTzZlQ3ZL?=
- =?utf-8?B?bzBpTXdmd1UxcVhIcXh5QkJodUJad0VWRWtUMkhEQkY5dnl4SXRkRVBneXl5?=
- =?utf-8?B?eU95eVhOL09oclg4U1hHL3R2L0RxYzJnbys3eEJDMVNGYWJRMFdienZ2TlZ0?=
- =?utf-8?B?b1kwbWdwKzE1UGhmdy9SVDlwV1VPRzBscmE4cmhjYjkwSVdEZGJzU0NrbHFo?=
- =?utf-8?B?SXg4WXFRVGlOOWIrNUw3OHJwdVZJZW0yUHVXK3JUa0JKei9mTWE0dnFmY0xq?=
- =?utf-8?B?ZlduSDVxR2t6c0RsY3VEWXh6aXp2eXFvVlRwcnRtRWZkZTF3U0k5WDh5TFcw?=
- =?utf-8?B?NFU5bXVaSWloeE11ZHRPZGo3WmRCblR0VVM4ekQzb2tvdVF0VlVFUFp6dU5C?=
- =?utf-8?B?TjFsMTUzanE0bHovY0MraVc2elByMHlkSjZLL2RwTGRycXpLbnA5ZGZtWnY3?=
- =?utf-8?B?MlhIelloYmJKQVdUTUtCbG9EVm85eWhkWWd4YzZiNlZWVTl2cmY1NkpjNWFj?=
- =?utf-8?B?OUI5b2JLNlp4TDAzM0pUMmtlNjdWQ1FWYVUzZTBmOU5QRWdRbmxrb2ZPd0px?=
- =?utf-8?B?YnZhdmFKVnRRUy9xR3UxdVF5QVpjaUMyaGY3Qk1QQk9SZUJlcXRYd0dobE5W?=
- =?utf-8?B?UTBwYys0Sy9OeGRlQVBCWEM2ZUNRQUY1cVBrWXBxY0NGQU1FdXMwT3VhME5O?=
- =?utf-8?B?Z0ZaeVNzZ0dnN20yT0RuM3JjZlpMSVlQdWluT0lGbmlYZGJDQld5TnJKRjZI?=
- =?utf-8?B?S1MyWWZic29RcUVmVzFTbG5Wblc1a0VMcVJkWklrNXdoQk9tQUI0ZmQ5Zngx?=
- =?utf-8?B?VEFiQTVveVk3Vkt6Z2xsdEI1dHJpeUo3WkZzblo0QW1qOG96dHNTdz09?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ dkim=pass header.i=@snap.com header.s=google header.b=fVOFHJ74;
+ spf=pass (domain: snapchat.com, ip: 209.85.221.43, mailfrom: ecordonnier@snapchat.com)
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-435903c4040so2159976f8f.3
+        for <yocto-patches@lists.yoctoproject.org>; Sat, 31 Jan 2026 12:19:23 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769890761; cv=none;
+        d=google.com; s=arc-20240605;
+        b=Sy8cAgzSNZbuBDS8wa8v61j7LYaf/hGM0hb9K6yIh/oOPyP2sXuM4H6I0e1tednWtg
+         3kL0yrViuyitXepheiu5yRo0ROVxlFtb5vTgZuNAnN7ieug/q+EnU7x+XRHS7HNQOhtq
+         fj9JUSDplP5VF5bbn/lJsSVLzmTvYJJW437T4cVcOm6/aolRLFBDVgUrmuODVnQ6Yjqg
+         dTVKRO3FtXPL7kfUYzhaNH6KiXCC8PLdMX+xEuMfVstGGwc6TW44QU3x3k3+oTmdSSLK
+         lWHKAxl/o8DmOJ8x651AMKTcYdkVyRrJWWZWmHu/6kts9kB4oqzglwfxqcpeTynPsII7
+         llyA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=qlMaRMiwep6f4muT3ZpY7r4fZ1Qqfbat7UFg4L4u8AY=;
+        fh=hK1LeuTgB4bRbLKT41uWVXhdrSsml4D7If2/NW6+UAo=;
+        b=EwiYkb1arwEARrvtbL19mG8DJvGhXcj+w0XktLJseB9dSPF6Vp8WQPrh6+CoHI5pVJ
+         gNY79Ufg9nplxqPWXYiEok7Xp1aiferVyjMXCcYLPFtN8R8QNZkH46q7103jHBlxy5/O
+         FhyMbSEvDDuR3TmhyFDdwyWT+iFG/AMAhlUl2QGoEAx+FaIDMbvUDOkETbQTQNp4nnmn
+         KirAx0ribDUVpzvpO9yFrOpqNaDIJiwdEAGaQyVeTrnndLe58TbqQmX+S/uxCa0Sp6WC
+         oh62NkRzL0KopmiYF9I281JlgxwV4iZPwT9ykgrpf0IPENUN9QNW0cljVE5VHCzdzhqk
+         xAvg==;
+        darn=lists.yoctoproject.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=snap.com; s=google; t=1769890761; x=1770495561; darn=lists.yoctoproject.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qlMaRMiwep6f4muT3ZpY7r4fZ1Qqfbat7UFg4L4u8AY=;
+        b=fVOFHJ74Ddup1q3MKPMD/sky4Q40x7AancNqWa7rzxHbdAs8Fo22DVs/jzQy4neH55
+         98kv49uz5DSUpzU74bkWMOkycReJupWaiRnJUbWmpKHlw4hSkQWaH0C6tmlC/0jYT0ZI
+         nvLsGZpJTyW9AfSeDUJ7JpudNp9CS/TOKeBJE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769890761; x=1770495561;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qlMaRMiwep6f4muT3ZpY7r4fZ1Qqfbat7UFg4L4u8AY=;
+        b=Mo/I9USwh4on8uo8Kqz4huqYzsq0tR6tFKCZh4xRfU2bePAO8rWXMblXGvcK6RJeB/
+         FAKZTGYyk53N/WZsbVjl8SVTnMg2jGQ5uYpmUu2/a32e26LHWZhwgW3qTt0QLXD7N6C7
+         blQ/DxnuqwjDEO/RyPcbkVX79AWb7rFZxr3dhoc33r5pjaTDJp+CizfaBmIhs7jFLcyW
+         uoxGS9+HCM9QDWXi+Dqj+ILzGF2MGdhXDf03kjUbwzAOnxV3CkF+35dJ22wRIy1j1PmC
+         iqcZd+kIhp1FePpsFUIhycp9xntMqCnRJx32HwQKn2MgPA17gBWn0O3ql08BUiNPzard
+         22lg==
+X-Gm-Message-State: AOJu0Yy3ext6MrcDhzxGilpgcGACJX4W+LVwo35MdZkOrepqrMGrL5v4
+	KGOzYX1LdajYHrTizYep8FScNBPLyO8R9G3HKexi0mLWlX64uz97Sl+Mk7Bd+jtXouISg+8lSNz
+	f0Gsq5MAlfFWuZJz4Ay3vuJBW5oOVHNVPIK/psar3m9W5GQJ7KUjxvncPVA==
+X-Gm-Gg: AZuq6aLfkLm/d37ymwLGtYGtEMo2tvIhThlRM/EczhgFiSFPJGVNg+nWHqk+7Cyvvk6
+	py8CvuUGLVyw6s5+APxIiQ3WV3y0sz0bwvswTTa2ivbOzGjPgZurI1ZrJW0zjJWINp5vNFySgxU
+	oT3pJrPcprWe87Bws6/dbA4DLh0pLxftRkKFnwI4hQ4pi0kIkETrT7rJ0bMMTxYGdGLGaWhzR6A
+	iXmy/wFsoBfAOJS5ygat7iSauvYrTJhEk2xCqXiYPWL9rt+R1rQtUov7YVUtPdfWlcSwKOP5MVw
+	SNgypMChgbiJTxKvRpkGJaFClR0=
+X-Received: by 2002:a05:6000:2004:b0:435:b755:c67e with SMTP id
+ ffacd0b85a97d-435f3ab5999mr9673355f8f.49.1769890761393; Sat, 31 Jan 2026
+ 12:19:21 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AS1PR10MB5697.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: f7ba9731-a7f7-4f2e-8ecc-08de6105e8aa
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jan 2026 20:18:33.8978
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: KFsHkyCrTDH6KQqjs7Pd7LMqiUQ+Re9w7P3rWnNwF3oFPrJT1hUyol0oIAL6sd0RswUN/ki5PO3JhTVwwUDIVw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR10MB5705
+References: <20260128063200.99314-1-dev@qinc.tv>
+In-Reply-To: <20260128063200.99314-1-dev@qinc.tv>
+From: Etienne Cordonnier <ecordonnier@snap.com>
+Date: Sat, 31 Jan 2026 21:19:10 +0100
+X-Gm-Features: AZwV_QgdTB6pOR6uAQ0OupbqewRipOUCb83cuGo52LNGyGJDGdXnxjDwA3ob8qE
+Message-ID: <CAHUKmYazFb34hVzmxPKrk+oJhBw4v9=Eos=Bio4PxVSuwd=mig@mail.gmail.com>
+Subject: Re: [yocto-patches] [meta-darwin][PATCH] Add GDB and CLANG
+ (conditionally) to the SDK builds
+To: yocto-patches@lists.yoctoproject.org
+Cc: "Eric L. Hernes" <eric@qinc.tv>, "Eric L. Hernes" <dev@qinc.tv>
+Content-Type: multipart/alternative; boundary="0000000000001fe9ce0649b4ced2"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sat, 31 Jan 2026 20:18:40 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3157
+ <yocto-patches@lists.yoctoproject.org>; Sat, 31 Jan 2026 20:19:30 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3158
 
-DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFJvc3MgQnVydG9uIDxSb3Nz
-LkJ1cnRvbkBhcm0uY29tPg0KPiBTZW50OiBNb25kYXksIEphbnVhcnkgMjYsIDIwMjYgMTE6NTkN
-Cj4gVG86IHlvY3RvLXBhdGNoZXNAbGlzdHMueW9jdG9wcm9qZWN0Lm9yZw0KPiBDYzogTWFya28s
-IFBldGVyIChGVCBEIEVVIFNLIEJGUzEpIDxQZXRlci5NYXJrb0BzaWVtZW5zLmNvbT4NCj4gU3Vi
-amVjdDogUmU6IFt5b2N0by1wYXRjaGVzXSBbeW9jdG8tbWV0cmljc11bUEFUQ0hdIHBhdGNoLXN0
-YXR1czogYWRkIHdoaW5sYXR0ZXINCj4gDQo+IEkgYWN0dWFsbHkgaGF2ZSBhIHBhdGNoIHRvIGRy
-b3AgdGhlIGhhcmRjb2RlZCBuYW1lcyBlbnRpcmVseSBhbmQgdXNlIHRoZSBleGlzdGluZw0KPiBy
-ZWxlYXNlcy5qc29uIGZpbGUsIGJ1dCB0aGF0IHdhcyBwZW5kaW5nIG9uIHNvbWUgcGF0Y2hlcyB0
-aGF0IEkgYmVsaWV2ZSBoYXZlIGp1c3QNCj4gbWVyZ2VkLiAgSWYgaXTigJlzIGdvb2QgSeKAmWxs
-IHBvc3Qgd2hhdCBJIGhhdmUgYW5kIHNlZSBpZiBJIG1pc3NlZCBhbnl0aGluZyBmcm9tIHlvdXIN
-Cj4gcGF0Y2hlcyAoSSBkaWRu4oCZdCBkbyBtZXRhLW9lLCBmb3Igb25lKS4NCg0KTG9va3MgbGlr
-ZSBhIGdlbmVyaWMgcGF0Y2ggd2lsbCB0YWtlIGEgd2hpbGUuDQpDb3VsZCB3ZSBtZXJnZSB0aGlz
-IG1lYW53aGlsZSB0byBmaW5hbGx5IHNob3cgd2hpbmxhdHRlciBpbiBtZXRyaWNzPw0KDQpQZXRl
-cg0KDQo+IA0KPiBSb3NzDQo+IA0KPiA+IE9uIDI0IEphbiAyMDI2LCBhdCAxOTo1NiwgUGV0ZXIg
-TWFya28gdmlhIGxpc3RzLnlvY3RvcHJvamVjdC5vcmcNCj4gPHBldGVyLm1hcmtvPXNpZW1lbnMu
-Y29tQGxpc3RzLnlvY3RvcHJvamVjdC5vcmc+IHdyb3RlOg0KPiA+DQo+ID4gRnJvbTogUGV0ZXIg
-TWFya28gPHBldGVyLm1hcmtvQHNpZW1lbnMuY29tPg0KPiA+DQo+ID4gU2VlIGh0dHBzOi8vbGlz
-dHMueW9jdG9wcm9qZWN0Lm9yZy9nL3lvY3RvLWFubm91bmNlL21lc3NhZ2UvMzY2DQo+ID4NCj4g
-PiBTaWduZWQtb2ZmLWJ5OiBQZXRlciBNYXJrbyA8cGV0ZXIubWFya29Ac2llbWVucy5jb20+DQo+
-ID4gLS0tDQo+ID4gcGF0Y2gtc3RhdHVzL2luZGV4Lmh0bWwgICB8IDEyICsrKysrKysrKysrLQ0K
-PiA+IHBhdGNoLXN0YXR1cy9yZWxlYXNlcy5jc3YgfCAgMSArDQo+ID4gMiBmaWxlcyBjaGFuZ2Vk
-LCAxMiBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEv
-cGF0Y2gtc3RhdHVzL2luZGV4Lmh0bWwgYi9wYXRjaC1zdGF0dXMvaW5kZXguaHRtbA0KPiA+IGlu
-ZGV4IDliZGNkNDc4Li5kZDQwNzUwMiAxMDA2NDQNCj4gPiAtLS0gYS9wYXRjaC1zdGF0dXMvaW5k
-ZXguaHRtbA0KPiA+ICsrKyBiL3BhdGNoLXN0YXR1cy9pbmRleC5odG1sDQo+ID4gQEAgLTE3MCw2
-ICsxNzAsMTAgQEAgU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IE1JVA0KPiA+ICAgICAgICAgICA8
-c3VtbWFyeT5tYXN0ZXI8L3N1bW1hcnk+DQo+ID4gICAgICAgICAgIDxkaXYgaWQ9ImN2ZV9zdGF0
-dXNfbWFzdGVyIj48L2Rpdj4NCj4gPiAgICAgICAgIDwvZGV0YWlscz4NCj4gPiArICAgICAgICA8
-ZGV0YWlscz4NCj4gPiArICAgICAgICAgIDxzdW1tYXJ5PndoaW5sYXR0ZXI8L3N1bW1hcnk+DQo+
-ID4gKyAgICAgICAgICA8ZGl2IGlkPSJjdmVfc3RhdHVzX3doaW5sYXR0ZXIiPjwvZGl2Pg0KPiA+
-ICsgICAgICAgIDwvZGV0YWlscz4NCj4gPiAgICAgICAgIDxkZXRhaWxzPg0KPiA+ICAgICAgICAg
-ICA8c3VtbWFyeT53YWxuYXNjYXI8L3N1bW1hcnk+DQo+ID4gICAgICAgICAgIDxkaXYgaWQ9ImN2
-ZV9zdGF0dXNfd2FsbmFzY2FyIj48L2Rpdj4NCj4gPiBAQCAtMzY5LDYgKzM3MywxMiBAQCBTUERY
-LUxpY2Vuc2UtSWRlbnRpZmllcjogTUlUDQo+ID4gICAgICAgICBjcmVhdGVDVkVMaXN0KCdjdmVf
-c3RhdHVzX21hc3RlcicsIGRhdGEpOw0KPiA+ICAgICAgIH0pDQo+ID4NCj4gPiArICAgIGZldGNo
-KCdjdmUtc3RhdHVzLXdoaW5sYXR0ZXIudHh0JykNCj4gPiArICAgICAgLnRoZW4ocmVzcG9uc2Ug
-PT4gcmVzcG9uc2UudGV4dCgpKQ0KPiA+ICsgICAgICAudGhlbihkYXRhID0+IHsNCj4gPiArICAg
-ICAgICBjcmVhdGVDVkVMaXN0KCdjdmVfc3RhdHVzX3doaW5sYXR0ZXInLCBkYXRhKTsNCj4gPiAr
-ICAgICAgfSkNCj4gPiArDQo+ID4gICAgIGZldGNoKCdjdmUtc3RhdHVzLXdhbG5hc2Nhci50eHQn
-KQ0KPiA+ICAgICAgIC50aGVuKHJlc3BvbnNlID0+IHJlc3BvbnNlLnRleHQoKSkNCj4gPiAgICAg
-ICAudGhlbihkYXRhID0+IHsNCj4gPiBAQCAtNDUxLDcgKzQ2MSw3IEBAIFNQRFgtTGljZW5zZS1J
-ZGVudGlmaWVyOiBNSVQNCj4gPiAgICAgICB1cHN0cmVhbV9zdGF0dXM6ICdNYWxmb3JtZWQgVXBz
-dHJlYW0tU3RhdHVzJywNCj4gPiAgICAgICBpbmFjdGl2ZV91cHN0cmVhbTogJ0luYWN0aXZlLVVw
-c3RyZWFtJw0KPiA+ICAgICB9Ow0KPiA+IC0gICAgY29uc3QgYnJhbmNoZXMgPSBbJ21hc3Rlcics
-ICd3YWxuYXNjYXInLCAnc3R5aGVhZCcsICdzY2FydGhnYXAnLCAnbmFuYmllbGQnLA0KPiAnbWlj
-a2xlZG9yZScsICdsYW5nZGFsZScsICdraXJrc3RvbmUnLCAnaG9uaXN0ZXInLCAnaGFyZGtub3R0
-JywgJ2dhdGVzZ2FydGgnLCAnZHVuZmVsbCddDQo+ID4gKyAgICBjb25zdCBicmFuY2hlcyA9IFsn
-bWFzdGVyJywgJ3doaW5sYXR0ZXInLCAnd2FsbmFzY2FyJywgJ3N0eWhlYWQnLCAnc2NhcnRoZ2Fw
-JywNCj4gJ25hbmJpZWxkJywgJ21pY2tsZWRvcmUnLCAnbGFuZ2RhbGUnLCAna2lya3N0b25lJywg
-J2hvbmlzdGVyJywgJ2hhcmRrbm90dCcsICdnYXRlc2dhcnRoJywNCj4gJ2R1bmZlbGwnXQ0KPiA+
-DQo+ID4gICAgIGNvbnN0IGdlbmVyYWxfb3B0aW9ucyA9IHsNCj4gPiAgICAgICB0b29sdGlwOiB7
-DQo+ID4gZGlmZiAtLWdpdCBhL3BhdGNoLXN0YXR1cy9yZWxlYXNlcy5jc3YgYi9wYXRjaC1zdGF0
-dXMvcmVsZWFzZXMuY3N2DQo+ID4gaW5kZXggOTFiOTRiZDkuLjFlOGQ5NWYzIDEwMDY0NA0KPiA+
-IC0tLSBhL3BhdGNoLXN0YXR1cy9yZWxlYXNlcy5jc3YNCj4gPiArKysgYi9wYXRjaC1zdGF0dXMv
-cmVsZWFzZXMuY3N2DQo+ID4gQEAgLTEsNCArMSw1IEBADQo+ID4gTmFtZSxEYXRlDQo+ID4gKzUu
-MyAoV2hpbmxhdHRlciksMjAyNS0xMi0xNg0KPiA+IDUuMiAoV2FsbmFzY2FyKSwyMDI1LTA1LTA4
-DQo+ID4gNS4xIChTdHloZWFkKSwyMDI0LTEwLTE3DQo+ID4gNS4wIChTY2FydGhnYXApLDIwMjQt
-MDQtMzANCj4gPg0KPiA+DQo+ID4gLT0tPS09LT0tPS09LT0tPS09LT0tPS0NCj4gPiBMaW5rczog
-WW91IHJlY2VpdmUgYWxsIG1lc3NhZ2VzIHNlbnQgdG8gdGhpcyBncm91cC4NCj4gPiBWaWV3L1Jl
-cGx5IE9ubGluZSAoIzMwNzApOiBodHRwczovL2xpc3RzLnlvY3RvcHJvamVjdC5vcmcvZy95b2N0
-by0NCj4gcGF0Y2hlcy9tZXNzYWdlLzMwNzANCj4gPiBNdXRlIFRoaXMgVG9waWM6IGh0dHBzOi8v
-bGlzdHMueW9jdG9wcm9qZWN0Lm9yZy9tdC8xMTc0NDA4MjYvNjg3NTg4OA0KPiA+IEdyb3VwIE93
-bmVyOiB5b2N0by1wYXRjaGVzK293bmVyQGxpc3RzLnlvY3RvcHJvamVjdC5vcmcNCj4gPiBVbnN1
-YnNjcmliZTogaHR0cHM6Ly9saXN0cy55b2N0b3Byb2plY3Qub3JnL2cveW9jdG8tDQo+IHBhdGNo
-ZXMvbGVhdmUvMTMxNjIyMTEvNjg3NTg4OC8xMzM5NzQ1MjQveHl6enkgW3Jvc3MuYnVydG9uQGFy
-bS5jb21dDQo+ID4gLT0tPS09LT0tPS09LT0tPS09LT0tPS0NCj4gPg0KPiA+DQo+IA0KPiBJTVBP
-UlRBTlQgTk9USUNFOiBUaGUgY29udGVudHMgb2YgdGhpcyBlbWFpbCBhbmQgYW55IGF0dGFjaG1l
-bnRzIGFyZQ0KPiBjb25maWRlbnRpYWwgYW5kIG1heSBhbHNvIGJlIHByaXZpbGVnZWQuIElmIHlv
-dSBhcmUgbm90IHRoZSBpbnRlbmRlZCByZWNpcGllbnQsDQo+IHBsZWFzZSBub3RpZnkgdGhlIHNl
-bmRlciBpbW1lZGlhdGVseSBhbmQgZG8gbm90IGRpc2Nsb3NlIHRoZSBjb250ZW50cyB0byBhbnkg
-b3RoZXINCj4gcGVyc29uLCB1c2UgaXQgZm9yIGFueSBwdXJwb3NlLCBvciBzdG9yZSBvciBjb3B5
-IHRoZSBpbmZvcm1hdGlvbiBpbiBhbnkgbWVkaXVtLg0KPiBUaGFuayB5b3UuDQo=
+--0000000000001fe9ce0649b4ced2
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hi Eric,
+thanks for the patch! Applied as
+https://git.yoctoproject.org/meta-darwin/commit/?id=3Dc6cd4d7f83d079bc03419=
+872c57269e8bbded95b
+
+On Wed, Jan 28, 2026 at 7:32=E2=80=AFAM Eric L. Hernes via lists.yoctoproje=
+ct.org
+<dev=3Dqinc.tv@lists.yoctoproject.org> wrote:
+
+> From: "Eric L. Hernes" <eric@qinc.tv>
+>
+> GDB and CLANG are not included in the SDK builds on Darwin. This patch
+> adds them. GDB is added to the packagegroup files.  I had to disable
+> some of the advanced options for gdb to get a compile.
+>
+> CLANG is added conditionally from the `CLANGSDK=3D1` variable.  This
+> also was missing from the *packagegroup* files.
+>
+> Signed-off-by: Eric L. Hernes <dev@qinc.tv>
+> ---
+>  .../openssl/openssl_%.bbappend                | 25 +++++++++++++++++++
+>  .../nativesdk-packagegroup-sdk-host.bbappend  |  3 +++
+>  .../packagegroup-cross-canadian.bbappend      |  5 ++++
+>  .../gcc/gcc-cross-canadian_%.bbappend         |  2 +-
+>  .../gdb/gdb-cross-canadian_%.bbappend         | 19 ++++++++++++++
+>  5 files changed, 53 insertions(+), 1 deletion(-)
+>  create mode 100644 recipes-connectivity/openssl/openssl_%.bbappend
+>  create mode 100644 recipes-devtools/gdb/gdb-cross-canadian_%.bbappend
+>
+> diff --git a/recipes-connectivity/openssl/openssl_%.bbappend
+> b/recipes-connectivity/openssl/openssl_%.bbappend
+> new file mode 100644
+> index 0000000..3b0674c
+> --- /dev/null
+> +++ b/recipes-connectivity/openssl/openssl_%.bbappend
+> @@ -0,0 +1,25 @@
+> +
+> +do_configure:darwin21 () {
+> +    target=3D"${@'darwin64-arm64-cc' if d.getVar('SDK_ARCH') =3D=3D 'aar=
+ch64'
+> else 'darwin64-x86_64-cc'}"
+> +
+> +    useprefix=3D${prefix}
+> +    if [ "x$useprefix" =3D "x" ]; then
+> +        useprefix=3D/
+> +    fi
+> +    # WARNING: do not set compiler/linker flags (-I/-D etc.) in
+> EXTRA_OECONF, as they will fully replace the
+> +    # environment variables set by bitbake. Adjust the environment
+> variables instead.
+> +    PERLEXTERNAL=3D"$(realpath ${S}/external/perl/Text-Template-*/lib)"
+> +    test -d "$PERLEXTERNAL" || bberror "PERLEXTERNAL '$PERLEXTERNAL' not
+> found!"
+> +    HASHBANGPERL=3D"/usr/bin/env perl" PERL=3Dperl PERL5LIB=3D"$PERLEXTE=
+RNAL" \
+> +    perl ${S}/Configure ${EXTRA_OECONF} ${PACKAGECONFIG_CONFARGS}
+> ${DEPRECATED_CRYPTO_FLAGS} --prefix=3D$useprefix --openssldir=3D${libdir}=
+/ssl-3
+> --libdir=3D${libdir} $target
+> +    perl ${B}/configdata.pm --dump
+> +}
+> +
+> +RDEPENDS:remove:${PN}-misc =3D "perl"
+> +RDEPENDS:remove:${PN}-ptest =3D "openssl-bin"
+> +RDEPENDS:remove:${PN}-ptest =3D "perl"
+> +RDEPENDS:remove:${PN}-ptest =3D "perl-modules"
+> +RDEPENDS:remove:${PN}-ptest =3D "bash"
+> +RDEPENDS:remove:${PN}-ptest =3D "sed"
+> +RDEPENDS:remove:${PN}-ptest =3D "openssl-engines"
+> +RDEPENDS:remove:${PN}-ptest =3D "openssl-ossl-module-legacy"
+> diff --git
+> a/recipes-core/packagegroups/nativesdk-packagegroup-sdk-host.bbappend
+> b/recipes-core/packagegroups/nativesdk-packagegroup-sdk-host.bbappend
+> index 170a8c1..d1191e7 100644
+> --- a/recipes-core/packagegroups/nativesdk-packagegroup-sdk-host.bbappend
+> +++ b/recipes-core/packagegroups/nativesdk-packagegroup-sdk-host.bbappend
+> @@ -4,3 +4,6 @@ RDEPENDS:${PN}:darwin21 =3D "\
+>      nativesdk-bison \
+>      nativesdk-sdk-provides-dummy \
+>      "
+> +
+> +RDEPENDS:${PN}:darwin21 +=3D "${@bb.utils.contains('CLANGSDK', '1',
+> 'nativesdk-clang', '', d)}"
+> +
+> diff --git
+> a/recipes-core/packagegroups/packagegroup-cross-canadian.bbappend
+> b/recipes-core/packagegroups/packagegroup-cross-canadian.bbappend
+> index de29f47..4e46eae 100644
+> --- a/recipes-core/packagegroups/packagegroup-cross-canadian.bbappend
+> +++ b/recipes-core/packagegroups/packagegroup-cross-canadian.bbappend
+> @@ -1,9 +1,14 @@
+>  # Use indirection to stop these being expanded prematurely
+>  BINUTILS =3D "binutils-cross-canadian-${TRANSLATED_TARGET_ARCH}"
+>  GCC =3D "gcc-cross-canadian-${TRANSLATED_TARGET_ARCH}"
+> +GDB =3D "gdb-cross-canadian-${TRANSLATED_TARGET_ARCH}"
+> +CLANG =3D "clang-cross-canadian-${TRANSLATED_TARGET_ARCH}"
+>
+>  RDEPENDS:${PN}:darwinsdk =3D "\
+>      ${@all_multilib_tune_values(d, 'BINUTILS')} \
+>      ${@all_multilib_tune_values(d, 'GCC')} \
+> +    ${GDB} \
+>      meta-environment-${MACHINE} \
+>      "
+> +
+> +RDEPENDS:${PN}:darwinsdk +=3D "${@bb.utils.contains('CLANGSDK', '1',
+> '${CLANGCROSSCANADIANDEPS}', '', d)}"
+> diff --git a/recipes-devtools/gcc/gcc-cross-canadian_%.bbappend
+> b/recipes-devtools/gcc/gcc-cross-canadian_%.bbappend
+> index 192ee0d..5a4b8f9 100644
+> --- a/recipes-devtools/gcc/gcc-cross-canadian_%.bbappend
+> +++ b/recipes-devtools/gcc/gcc-cross-canadian_%.bbappend
+> @@ -3,7 +3,7 @@ ELFUTILS:darwinsdk =3D ""
+>
+>  EXTRA_OECONF:append:darwinsdk =3D " \
+>      --with-gmp=3D${STAGING_EXECPREFIXDIR} \
+> -    --with-mpft=3D${STAGING_EXECPREFIXDIR} \
+> +    --with-mpfr=3D${STAGING_EXECPREFIXDIR} \
+>      --with-mpc=3D${STAGING_EXECPREFIXDIR} \
+>  "
+>
+> diff --git a/recipes-devtools/gdb/gdb-cross-canadian_%.bbappend
+> b/recipes-devtools/gdb/gdb-cross-canadian_%.bbappend
+> new file mode 100644
+> index 0000000..3f69019
+> --- /dev/null
+> +++ b/recipes-devtools/gdb/gdb-cross-canadian_%.bbappend
+> @@ -0,0 +1,19 @@
+> +PACKAGECONFIG:remove =3D "python"
+> +PACKAGECONFIG:remove =3D "debuginfod"
+> +
+> +EXTRA_OECONF:append:darwinsdk =3D " \
+> +    --with-gmp=3D${STAGING_EXECPREFIXDIR} \
+> +    --with-mpfr=3D${STAGING_EXECPREFIXDIR} \
+> +    --with-mpc=3D${STAGING_EXECPREFIXDIR} \
+> +"
+> +
+> +EXTRA_OECONF:remove:darwinsdk =3D "--disable-gas"
+> +EXTRA_OECONF:remove:darwinsdk =3D "--disable-binutils"
+> +EXTRA_OECONF:remove:darwinsdk =3D "--disable-ld"
+> +EXTRA_OECONF:remove:darwinsdk =3D "--disable-gold"
+> +EXTRA_OECONF:remove:darwinsdk =3D "--with-system-readline"
+> +
+> +# Remove -rpath-link and -rpath
+> +LDFLAGS:darwinsdk =3D "${BUILDSDK_LDFLAGS}"
+> +
+> +INSANE_SKIP:append:darwin21 =3D " buildpaths"
+> --
+> 2.50.1 (Apple Git-155)
+>
+>
+>
+> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+> Links: You receive all messages sent to this group.
+> View/Reply Online (#3124):
+> https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.yoctoproject=
+.org_g_yocto-2Dpatches_message_3124&d=3DDwIFAg&c=3DncDTmphkJTvjIDPh0hpF_4vC=
+HvabgGkICC2epckfdiw&r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&m=3DFp2=
+eoTk4Zck92dmwd9nMaE-SHRvw9vw8S8ErdK_olZxHo2hZ8DjEEFQys_fZni3S&s=3Dhj8tOSn4d=
+9fQ908oAmpEbnRkgmin_r0W0NVabMqJSgc&e=3D
+> Mute This Topic:
+> https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.yoctoproject=
+.org_mt_117366396_7048771&d=3DDwIFAg&c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC=
+2epckfdiw&r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&m=3DFp2eoTk4Zck92=
+dmwd9nMaE-SHRvw9vw8S8ErdK_olZxHo2hZ8DjEEFQys_fZni3S&s=3DxeJ1pU9u9JWzdF43Uku=
+TGVRK_mS6RIG-x0s5uXn6Wy4&e=3D
+> Group Owner: yocto-patches+owner@lists.yoctoproject.org
+> Unsubscribe:
+> https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.yoctoproject=
+.org_g_yocto-2Dpatches_leave_13184993_7048771_1814342232_xyzzy&d=3DDwIFAg&c=
+=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&r=3DAhkbNonVuMIGRfPx_Qj9TsRi=
+h1DULJTKUkSGa66m67E&m=3DFp2eoTk4Zck92dmwd9nMaE-SHRvw9vw8S8ErdK_olZxHo2hZ8Dj=
+EEFQys_fZni3S&s=3Drx3_LvbCd61-o8p9w2FT181MqA-v-vky8JEbc8kjyW0&e=3D
+> [ecordonnier@snap.com]
+> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+>
+>
+>
+
+--0000000000001fe9ce0649b4ced2
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Hi Eric,<br>thanks for the patch! Applied as=C2=A0<a href=
+=3D"https://git.yoctoproject.org/meta-darwin/commit/?id=3Dc6cd4d7f83d079bc0=
+3419872c57269e8bbded95b">https://git.yoctoproject.org/meta-darwin/commit/?i=
+d=3Dc6cd4d7f83d079bc03419872c57269e8bbded95b</a></div><br><div class=3D"gma=
+il_quote gmail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On We=
+d, Jan 28, 2026 at 7:32=E2=80=AFAM Eric L. Hernes via <a href=3D"http://lis=
+ts.yoctoproject.org">lists.yoctoproject.org</a> &lt;dev=3D<a href=3D"mailto=
+:qinc.tv@lists.yoctoproject.org">qinc.tv@lists.yoctoproject.org</a>&gt; wro=
+te:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px =
+0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">From: &quot;=
+Eric L. Hernes&quot; &lt;<a href=3D"mailto:eric@qinc.tv" target=3D"_blank">=
+eric@qinc.tv</a>&gt;<br>
+<br>
+GDB and CLANG are not included in the SDK builds on Darwin. This patch<br>
+adds them. GDB is added to the packagegroup files.=C2=A0 I had to disable<b=
+r>
+some of the advanced options for gdb to get a compile.<br>
+<br>
+CLANG is added conditionally from the `CLANGSDK=3D1` variable.=C2=A0 This<b=
+r>
+also was missing from the *packagegroup* files.<br>
+<br>
+Signed-off-by: Eric L. Hernes &lt;<a href=3D"mailto:dev@qinc.tv" target=3D"=
+_blank">dev@qinc.tv</a>&gt;<br>
+---<br>
+=C2=A0.../openssl/openssl_%.bbappend=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 | 25 +++++++++++++++++++<br>
+=C2=A0.../nativesdk-packagegroup-sdk-host.bbappend=C2=A0 |=C2=A0 3 +++<br>
+=C2=A0.../packagegroup-cross-canadian.bbappend=C2=A0 =C2=A0 =C2=A0 |=C2=A0 =
+5 ++++<br>
+=C2=A0.../gcc/gcc-cross-canadian_%.bbappend=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0|=C2=A0 2 +-<br>
+=C2=A0.../gdb/gdb-cross-canadian_%.bbappend=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0| 19 ++++++++++++++<br>
+=C2=A05 files changed, 53 insertions(+), 1 deletion(-)<br>
+=C2=A0create mode 100644 recipes-connectivity/openssl/openssl_%.bbappend<br=
+>
+=C2=A0create mode 100644 recipes-devtools/gdb/gdb-cross-canadian_%.bbappend=
+<br>
+<br>
+diff --git a/recipes-connectivity/openssl/openssl_%.bbappend b/recipes-conn=
+ectivity/openssl/openssl_%.bbappend<br>
+new file mode 100644<br>
+index 0000000..3b0674c<br>
+--- /dev/null<br>
++++ b/recipes-connectivity/openssl/openssl_%.bbappend<br>
+@@ -0,0 +1,25 @@<br>
++<br>
++do_configure:darwin21 () {<br>
++=C2=A0 =C2=A0 target=3D&quot;${@&#39;darwin64-arm64-cc&#39; if d.getVar(&#=
+39;SDK_ARCH&#39;) =3D=3D &#39;aarch64&#39; else &#39;darwin64-x86_64-cc&#39=
+;}&quot;<br>
++<br>
++=C2=A0 =C2=A0 useprefix=3D${prefix}<br>
++=C2=A0 =C2=A0 if [ &quot;x$useprefix&quot; =3D &quot;x&quot; ]; then<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 useprefix=3D/<br>
++=C2=A0 =C2=A0 fi<br>
++=C2=A0 =C2=A0 # WARNING: do not set compiler/linker flags (-I/-D etc.) in =
+EXTRA_OECONF, as they will fully replace the<br>
++=C2=A0 =C2=A0 # environment variables set by bitbake. Adjust the environme=
+nt variables instead.<br>
++=C2=A0 =C2=A0 PERLEXTERNAL=3D&quot;$(realpath ${S}/external/perl/Text-Temp=
+late-*/lib)&quot;<br>
++=C2=A0 =C2=A0 test -d &quot;$PERLEXTERNAL&quot; || bberror &quot;PERLEXTER=
+NAL &#39;$PERLEXTERNAL&#39; not found!&quot;<br>
++=C2=A0 =C2=A0 HASHBANGPERL=3D&quot;/usr/bin/env perl&quot; PERL=3Dperl PER=
+L5LIB=3D&quot;$PERLEXTERNAL&quot; \<br>
++=C2=A0 =C2=A0 perl ${S}/Configure ${EXTRA_OECONF} ${PACKAGECONFIG_CONFARGS=
+} ${DEPRECATED_CRYPTO_FLAGS} --prefix=3D$useprefix --openssldir=3D${libdir}=
+/ssl-3 --libdir=3D${libdir} $target<br>
++=C2=A0 =C2=A0 perl ${B}/<a href=3D"http://configdata.pm" rel=3D"noreferrer=
+" target=3D"_blank">configdata.pm</a> --dump<br>
++}<br>
++<br>
++RDEPENDS:remove:${PN}-misc =3D &quot;perl&quot;<br>
++RDEPENDS:remove:${PN}-ptest =3D &quot;openssl-bin&quot;<br>
++RDEPENDS:remove:${PN}-ptest =3D &quot;perl&quot;<br>
++RDEPENDS:remove:${PN}-ptest =3D &quot;perl-modules&quot;<br>
++RDEPENDS:remove:${PN}-ptest =3D &quot;bash&quot;<br>
++RDEPENDS:remove:${PN}-ptest =3D &quot;sed&quot;<br>
++RDEPENDS:remove:${PN}-ptest =3D &quot;openssl-engines&quot;<br>
++RDEPENDS:remove:${PN}-ptest =3D &quot;openssl-ossl-module-legacy&quot;<br>
+diff --git a/recipes-core/packagegroups/nativesdk-packagegroup-sdk-host.bba=
+ppend b/recipes-core/packagegroups/nativesdk-packagegroup-sdk-host.bbappend=
+<br>
+index 170a8c1..d1191e7 100644<br>
+--- a/recipes-core/packagegroups/nativesdk-packagegroup-sdk-host.bbappend<b=
+r>
++++ b/recipes-core/packagegroups/nativesdk-packagegroup-sdk-host.bbappend<b=
+r>
+@@ -4,3 +4,6 @@ RDEPENDS:${PN}:darwin21 =3D &quot;\<br>
+=C2=A0 =C2=A0 =C2=A0nativesdk-bison \<br>
+=C2=A0 =C2=A0 =C2=A0nativesdk-sdk-provides-dummy \<br>
+=C2=A0 =C2=A0 =C2=A0&quot;<br>
++<br>
++RDEPENDS:${PN}:darwin21 +=3D &quot;${@bb.utils.contains(&#39;CLANGSDK&#39;=
+, &#39;1&#39;, &#39;nativesdk-clang&#39;, &#39;&#39;, d)}&quot;<br>
++<br>
+diff --git a/recipes-core/packagegroups/packagegroup-cross-canadian.bbappen=
+d b/recipes-core/packagegroups/packagegroup-cross-canadian.bbappend<br>
+index de29f47..4e46eae 100644<br>
+--- a/recipes-core/packagegroups/packagegroup-cross-canadian.bbappend<br>
++++ b/recipes-core/packagegroups/packagegroup-cross-canadian.bbappend<br>
+@@ -1,9 +1,14 @@<br>
+=C2=A0# Use indirection to stop these being expanded prematurely<br>
+=C2=A0BINUTILS =3D &quot;binutils-cross-canadian-${TRANSLATED_TARGET_ARCH}&=
+quot;<br>
+=C2=A0GCC =3D &quot;gcc-cross-canadian-${TRANSLATED_TARGET_ARCH}&quot;<br>
++GDB =3D &quot;gdb-cross-canadian-${TRANSLATED_TARGET_ARCH}&quot;<br>
++CLANG =3D &quot;clang-cross-canadian-${TRANSLATED_TARGET_ARCH}&quot;<br>
+<br>
+=C2=A0RDEPENDS:${PN}:darwinsdk =3D &quot;\<br>
+=C2=A0 =C2=A0 =C2=A0${@all_multilib_tune_values(d, &#39;BINUTILS&#39;)} \<b=
+r>
+=C2=A0 =C2=A0 =C2=A0${@all_multilib_tune_values(d, &#39;GCC&#39;)} \<br>
++=C2=A0 =C2=A0 ${GDB} \<br>
+=C2=A0 =C2=A0 =C2=A0meta-environment-${MACHINE} \<br>
+=C2=A0 =C2=A0 =C2=A0&quot;<br>
++<br>
++RDEPENDS:${PN}:darwinsdk +=3D &quot;${@bb.utils.contains(&#39;CLANGSDK&#39=
+;, &#39;1&#39;, &#39;${CLANGCROSSCANADIANDEPS}&#39;, &#39;&#39;, d)}&quot;<=
+br>
+diff --git a/recipes-devtools/gcc/gcc-cross-canadian_%.bbappend b/recipes-d=
+evtools/gcc/gcc-cross-canadian_%.bbappend<br>
+index 192ee0d..5a4b8f9 100644<br>
+--- a/recipes-devtools/gcc/gcc-cross-canadian_%.bbappend<br>
++++ b/recipes-devtools/gcc/gcc-cross-canadian_%.bbappend<br>
+@@ -3,7 +3,7 @@ ELFUTILS:darwinsdk =3D &quot;&quot;<br>
+<br>
+=C2=A0EXTRA_OECONF:append:darwinsdk =3D &quot; \<br>
+=C2=A0 =C2=A0 =C2=A0--with-gmp=3D${STAGING_EXECPREFIXDIR} \<br>
+-=C2=A0 =C2=A0 --with-mpft=3D${STAGING_EXECPREFIXDIR} \<br>
++=C2=A0 =C2=A0 --with-mpfr=3D${STAGING_EXECPREFIXDIR} \<br>
+=C2=A0 =C2=A0 =C2=A0--with-mpc=3D${STAGING_EXECPREFIXDIR} \<br>
+=C2=A0&quot;<br>
+<br>
+diff --git a/recipes-devtools/gdb/gdb-cross-canadian_%.bbappend b/recipes-d=
+evtools/gdb/gdb-cross-canadian_%.bbappend<br>
+new file mode 100644<br>
+index 0000000..3f69019<br>
+--- /dev/null<br>
++++ b/recipes-devtools/gdb/gdb-cross-canadian_%.bbappend<br>
+@@ -0,0 +1,19 @@<br>
++PACKAGECONFIG:remove =3D &quot;python&quot;<br>
++PACKAGECONFIG:remove =3D &quot;debuginfod&quot;<br>
++<br>
++EXTRA_OECONF:append:darwinsdk =3D &quot; \<br>
++=C2=A0 =C2=A0 --with-gmp=3D${STAGING_EXECPREFIXDIR} \<br>
++=C2=A0 =C2=A0 --with-mpfr=3D${STAGING_EXECPREFIXDIR} \<br>
++=C2=A0 =C2=A0 --with-mpc=3D${STAGING_EXECPREFIXDIR} \<br>
++&quot;<br>
++<br>
++EXTRA_OECONF:remove:darwinsdk =3D &quot;--disable-gas&quot;<br>
++EXTRA_OECONF:remove:darwinsdk =3D &quot;--disable-binutils&quot;<br>
++EXTRA_OECONF:remove:darwinsdk =3D &quot;--disable-ld&quot;<br>
++EXTRA_OECONF:remove:darwinsdk =3D &quot;--disable-gold&quot;<br>
++EXTRA_OECONF:remove:darwinsdk =3D &quot;--with-system-readline&quot;<br>
++<br>
++# Remove -rpath-link and -rpath<br>
++LDFLAGS:darwinsdk =3D &quot;${BUILDSDK_LDFLAGS}&quot;<br>
++<br>
++INSANE_SKIP:append:darwin21 =3D &quot; buildpaths&quot;<br>
+-- <br>
+2.50.1 (Apple Git-155)<br>
+<br>
+<br>
+<br>
+-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-<br>
+Links: You receive all messages sent to this group.<br>
+View/Reply Online (#3124): <a href=3D"https://urldefense.proofpoint.com/v2/=
+url?u=3Dhttps-3A__lists.yoctoproject.org_g_yocto-2Dpatches_message_3124&amp=
+;d=3DDwIFAg&amp;c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhk=
+bNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3DFp2eoTk4Zck92dmwd9nMaE-SHR=
+vw9vw8S8ErdK_olZxHo2hZ8DjEEFQys_fZni3S&amp;s=3Dhj8tOSn4d9fQ908oAmpEbnRkgmin=
+_r0W0NVabMqJSgc&amp;e=3D" rel=3D"noreferrer" target=3D"_blank">https://urld=
+efense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.yoctoproject.org_g_yocto-2=
+Dpatches_message_3124&amp;d=3DDwIFAg&amp;c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgG=
+kICC2epckfdiw&amp;r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3DF=
+p2eoTk4Zck92dmwd9nMaE-SHRvw9vw8S8ErdK_olZxHo2hZ8DjEEFQys_fZni3S&amp;s=3Dhj8=
+tOSn4d9fQ908oAmpEbnRkgmin_r0W0NVabMqJSgc&amp;e=3D</a> <br>
+Mute This Topic: <a href=3D"https://urldefense.proofpoint.com/v2/url?u=3Dht=
+tps-3A__lists.yoctoproject.org_mt_117366396_7048771&amp;d=3DDwIFAg&amp;c=3D=
+ncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhkbNonVuMIGRfPx_Qj9TsR=
+ih1DULJTKUkSGa66m67E&amp;m=3DFp2eoTk4Zck92dmwd9nMaE-SHRvw9vw8S8ErdK_olZxHo2=
+hZ8DjEEFQys_fZni3S&amp;s=3DxeJ1pU9u9JWzdF43UkuTGVRK_mS6RIG-x0s5uXn6Wy4&amp;=
+e=3D" rel=3D"noreferrer" target=3D"_blank">https://urldefense.proofpoint.co=
+m/v2/url?u=3Dhttps-3A__lists.yoctoproject.org_mt_117366396_7048771&amp;d=3D=
+DwIFAg&amp;c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhkbNonV=
+uMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3DFp2eoTk4Zck92dmwd9nMaE-SHRvw9vw=
+8S8ErdK_olZxHo2hZ8DjEEFQys_fZni3S&amp;s=3DxeJ1pU9u9JWzdF43UkuTGVRK_mS6RIG-x=
+0s5uXn6Wy4&amp;e=3D</a> <br>
+Group Owner: <a href=3D"mailto:yocto-patches%2Bowner@lists.yoctoproject.org=
+" target=3D"_blank">yocto-patches+owner@lists.yoctoproject.org</a><br>
+Unsubscribe: <a href=3D"https://urldefense.proofpoint.com/v2/url?u=3Dhttps-=
+3A__lists.yoctoproject.org_g_yocto-2Dpatches_leave_13184993_7048771_1814342=
+232_xyzzy&amp;d=3DDwIFAg&amp;c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdi=
+w&amp;r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3DFp2eoTk4Zck92=
+dmwd9nMaE-SHRvw9vw8S8ErdK_olZxHo2hZ8DjEEFQys_fZni3S&amp;s=3Drx3_LvbCd61-o8p=
+9w2FT181MqA-v-vky8JEbc8kjyW0&amp;e=3D" rel=3D"noreferrer" target=3D"_blank"=
+>https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.yoctoproject.=
+org_g_yocto-2Dpatches_leave_13184993_7048771_1814342232_xyzzy&amp;d=3DDwIFA=
+g&amp;c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhkbNonVuMIGR=
+fPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3DFp2eoTk4Zck92dmwd9nMaE-SHRvw9vw8S8Er=
+dK_olZxHo2hZ8DjEEFQys_fZni3S&amp;s=3Drx3_LvbCd61-o8p9w2FT181MqA-v-vky8JEbc8=
+kjyW0&amp;e=3D</a>=C2=A0 [<a href=3D"mailto:ecordonnier@snap.com" target=3D=
+"_blank">ecordonnier@snap.com</a>]<br>
+-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-<br>
+<br>
+<br>
+</blockquote></div>
+
+--0000000000001fe9ce0649b4ced2--
 
