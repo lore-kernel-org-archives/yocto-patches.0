@@ -1,334 +1,289 @@
-Return-Path: <yi.zhao@eng.windriver.com>
+Return-Path: <ecordonnier@snap.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62FB1E73147
-	for <webhook@archiver.kernel.org>; Mon,  2 Feb 2026 08:48:56 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.48634.1770022135283570813
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F5EDE7314E
+	for <webhook@archiver.kernel.org>; Mon,  2 Feb 2026 09:22:36 +0000 (UTC)
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.49185.1770024151651545327
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 02 Feb 2026 00:48:55 -0800
+ Mon, 02 Feb 2026 01:22:32 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@windriver.com header.s=PPS06212021 header.b=khnq1oND;
- spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.178.238, mailfrom: prvs=649358f35e=yi.zhao@windriver.com)
-Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6124vKsx2225996;
-	Mon, 2 Feb 2026 08:48:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
-	 h=cc:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	PPS06212021; bh=A5q4zWtbrlDG3VsUT0sx3zUxiZWHYnWFpaIAQVWBoZg=; b=
-	khnq1oNDl8kaIDBgYO8rixxOBLxgaCseQoHw3cPpeg9286oHVx6wSapNlaEes/Ra
-	l5KZWzwPAA89rfvUL78zCHz14wG6K/81qqvLnUsjXsJr342apDZWv8sv6XgnPEy4
-	Z79FYMmuC5vTZjxiIey6xgjmdsYtXiK6y+z2Xu8mQfzWqf0b3dbbYqJRXP+yuRxM
-	T6Q5Q+ZRuO2xs+rCoPJg+Mnhft3H80dxH6c5HZqC4SA/1nN3hn7X241h9O0Vr4qc
-	2lDhrPIHFSgJu9s5gwHetv8dLc7X7Eb5GfWWggof8RbcgfzctlTkUYFkiWoV0/84
-	8Q38Zh4HjpnkPyFSAlA0pA==
-Received: from ch4pr04cu002.outbound.protection.outlook.com (mail-northcentralusazon11013053.outbound.protection.outlook.com [40.107.201.53])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4c188jst83-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Mon, 02 Feb 2026 08:48:54 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gTbmzEAa/7d3MMuFutwjnjggHNTnZQUP2ZlZlOY2rFBlYl6ggv1Xiwjmr6cPYXsvblPQh88z+SZvcwk7N+WVWmWO66RG39jvQoxU1f4MwlkJ95JOkMOOrHanfoM+Rvs9qrAGyR5MI2GjVfSO3uMJzhYM0Pd8hCGc+mGUp5GqGFvM0ePGBUNT9elnP9vmUwCeFhQbqmpvt96F2TdMGpurggTkpCBfxblxL5steJD0yDefhyWBHMmuX0TU/6g4mi9vfbOob0tSVAOQDQgReLay1aSZuDr8nSTnJXJejOTqkMVmukBQNfNSLdtdCGyl2DcoVNHxG9KLaSWDkp5rUlqKtA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=A5q4zWtbrlDG3VsUT0sx3zUxiZWHYnWFpaIAQVWBoZg=;
- b=j2/xBURCQnw0Mvo4/wqTHXgGpBRPAYKtw5U3FBkz9ZCGuZj8vU9Ot1FEg9Zt3IB/LJd/IcJHytZKPutYC8zZuijtjDn3zP9Jfd6yOc1JT3JxMKjA2CLBm8AVYnmhMmmqgRmLmOhb8IgY65QzuchpiDF1dTrMqL09cnRgBSP8dJjDWcv8/RZ7CWpIccKXHj0+8IykPxbAERDSjRjicRxl6pdq/vkL/fgeg3sdZFTjEE+EjfQN8u05emXaR+9zC/WE5apkwdbrrRPDP27fn6VU98wO7qprpcOeJF0CSkNLK4ogaHpZul2amygXNbweehVmq5nJIzQGlHFydHz7iVJwqg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=windriver.com; dmarc=pass action=none
- header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
-Received: from DS0PR11MB6399.namprd11.prod.outlook.com (2603:10b6:8:c8::5) by
- SJ0PR11MB5789.namprd11.prod.outlook.com (2603:10b6:a03:424::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9564.16; Mon, 2 Feb
- 2026 08:48:51 +0000
-Received: from DS0PR11MB6399.namprd11.prod.outlook.com
- ([fe80::3432:2eb3:d0a5:7831]) by DS0PR11MB6399.namprd11.prod.outlook.com
- ([fe80::3432:2eb3:d0a5:7831%6]) with mapi id 15.20.9564.016; Mon, 2 Feb 2026
- 08:48:50 +0000
-Message-ID: <00839a86-21d3-4de4-bad8-f301f6aaa050@windriver.com>
-Date: Mon, 2 Feb 2026 16:48:45 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [meta-selinux][PATCH] pd-mapper: Introduce
- SELinux domain for pd-mapper
-To: Gangabhavani Yenugula <gyenugul@qti.qualcomm.com>
-Cc: "yocto-patches@lists.yoctoproject.org"
- <yocto-patches@lists.yoctoproject.org>
-References: <20260130102853.2437991-1-gyenugul@qti.qualcomm.com>
-Content-Language: en-US
-From: Yi Zhao <yi.zhao@windriver.com>
-In-Reply-To: <20260130102853.2437991-1-gyenugul@qti.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-ClientProxiedBy: TY1PR01CA0206.jpnprd01.prod.outlook.com (2603:1096:403::36)
- To DS0PR11MB6399.namprd11.prod.outlook.com (2603:10b6:8:c8::5)
+ dkim=pass header.i=@snap.com header.s=google header.b=DJSfd1Ot;
+ spf=pass (domain: snapchat.com, ip: 209.85.128.48, mailfrom: ecordonnier@snapchat.com)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-480706554beso45646065e9.1
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 02 Feb 2026 01:22:31 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1770024149; cv=none;
+        d=google.com; s=arc-20240605;
+        b=UXJ38TSmaZTMp2oz7llPMMch4VoIuyXaIIoHiPM6jjXZAl/K4hCoYqEs2A1GlsE7AV
+         DVBrn5bZ0mSyuomc7lAwToUXcgOEXm19AfEYILEyg7aaGwj3otrBb3oMRTmE0C5gJP0I
+         a32BvHh8t+jekCXWqvYINQcMEOyGpPfqeyadRaaVo1XOB6R8WOGRPDnk40A3gDQNL/WN
+         mWv6pSUa1BS9RGdTdwXwy1lFrJL2gUlolKp8LddoM+xG3f+2EH//K/g+d+d1JPStmK9V
+         xwK8pft5usCzPn2iGIRBqZ+ZNpxD08N6Vv0aRIZPwZ98pV4PUMGQpeXIAdURUyuCbEbL
+         T3+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=0KbE1RWZkkZjbw+g76Xua4LbrmzllCplo6zbBpj8Dxc=;
+        fh=vnwvjJBmT4xP5bZnotRs811IpgK/To6PNpBe4whKe/M=;
+        b=cew8ISh9JxwR3UhQBjjQDExLA2RXD4kI+8OulkA6cLxNGvDFOT9GEtmnjJQg5TSGpU
+         1jC9rUc4HA0RTYizusUg9igMmQdAK4eSYijUdQzLQoNuu53KzL+ZfqC7voUTJHdFMkLL
+         9se6A2em5eXR0rEBHberTvmkMwzAyGCITugps1I+Rx9ZUT9I8nvgO2PSUlmkgcHXvV7e
+         1uLS1HQI6cuwhF0iJ8yb7uRFjWlXpAtbsoYbVsuGjNxp8BBGNKdl+Ny1d+9+dZCBha7/
+         7EegIntNoK9DfOChwFwGdZkTrClA9EotwkzIg4FQwjnM+hExrdS0qWl6AqXIM/669rf4
+         PasA==;
+        darn=lists.yoctoproject.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=snap.com; s=google; t=1770024149; x=1770628949; darn=lists.yoctoproject.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=0KbE1RWZkkZjbw+g76Xua4LbrmzllCplo6zbBpj8Dxc=;
+        b=DJSfd1Ot3CtS5xYgNWuY4h9io5rad0W1IxPgz7NiqphBv/7LLQQZMOdkkbjxtOMZkv
+         NOxlS4XZcF45izM2ODI0/B665MSSmO6DWU2UNhyfCeFETjnFGamExn5yJFHYzFSVyXtZ
+         r2xECWDjOElxMFdF2KnKEmkjW2bKKHmuh4x9Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770024149; x=1770628949;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0KbE1RWZkkZjbw+g76Xua4LbrmzllCplo6zbBpj8Dxc=;
+        b=Is6RqzuwOqsaS859hwiy9eBsFgN1E9sREm3/vQxBtRryrL8+FVVs5z7TO4Nri/xOdz
+         lhBZGqGHLP56Qz77lz5zCoS2glhb1V5woSGKiq6rnlwgr1sas0MfsBK7daJAyiqTAu4w
+         +1x/K1y+laK+XvLWKJC5P0YY3JF3pzn8NXfsVAjq0wZpwxf8UKd4Z3E454lpCkb89vxe
+         UMmE4YmxsPb0b7mob3kfdH4Z9DBDyQiiTTBPS10TlfGP6VjECGUeg0lw4giHBmk8Z8U1
+         RVF0un8wXp/1AcpSFeaqwubmxy9GIGeGqwixXU8uAZe0IkiIHIJ0CBkQkUy7iQpidz2r
+         x8hQ==
+X-Gm-Message-State: AOJu0Ywp9Q1ozuRjPHfQBN1rbu6TbxCC5stfn3KaEdaEdgcA93YUtVX+
+	74EPyEBsfWX9TmB2LdvLU4A6wrnHU+Y8LSaVEngEyuQF1KHIM0SjaLkdHZcfWbM8+TCOZ4BcmLt
+	hAifBJI126bBZK6TCC5nAG6GnJJblMN/d9yyzE4TxQjqti614LTs7cV47eQ==
+X-Gm-Gg: AZuq6aKu1dS8BfUhVKX/2pIsCpQxrSEH/aJ9QIUQA4No8bZ0zTdsq6W0qewJYd0Y4MH
+	X1k11MGLq5qf/WdZVhe8lD91M/NmpWTnGeXtRQla4V0piNrh0IYU57VIzSxPzQurzOYrjDLI+0x
+	ImkYbh6OU+YrzIkN91vxxYuW+EW1KnG/whulLZ7lKi5mWGR4O7Y/LOWzEPI1IaOzp9QltZAkWjO
+	9CidgQQctiZQrizx1INoPvdpxPf1yaZzwa71HHm8WKyxs4GIGuZPJCKGz9YQ3xLje8IVZ7QYnZr
+	YgkyciJVYBDiuF191GF7DkUHELgb
+X-Received: by 2002:a05:600c:6814:b0:477:9b4a:a82 with SMTP id
+ 5b1f17b1804b1-482db4af871mr137985695e9.35.1770024149126; Mon, 02 Feb 2026
+ 01:22:29 -0800 (PST)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB6399:EE_|SJ0PR11MB5789:EE_
-X-MS-Office365-Filtering-Correlation-Id: c834d204-f2db-4a16-e37e-08de6237e312
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?TlNLYVhVSVRZZVJFSkhLSXNXM2pXbW5VVk9VNDAvaU1tekgzSEgxSk94ZTJF?=
- =?utf-8?B?WFRSeXJOL2s0d2Raekx3bDAzL05TdWM5bENzQW8weDZxdUM4SzR6OXE1cGxC?=
- =?utf-8?B?cWFlc3VaRFc5eDFSUnVSeHVrZnBqRk5oWEFPRTk4U0hMZ0dqR0M5QjVUWWgv?=
- =?utf-8?B?dmluVU1qUGViRUJJcElseVZ6YnNYcWE1aUpXRXVqSUhwVGIxMm9MeTh5cmow?=
- =?utf-8?B?VG9EZ1pEdUdiNDVyMjd3K1JHcWZNekkvbExKOE1YcWY5S3VPSXpSOWJWN3BK?=
- =?utf-8?B?RWdZd2pLSktCbFluSmo3VmJ0WHVxY0ovZEtoRzlUQ3NXL2ozNzc4R29SeWxX?=
- =?utf-8?B?NkVCbE9MQ2NhT1ljVlQ0dlQ4dVpaZml2VHFmNlppUkpwc0Y1cFpWZmROVW9W?=
- =?utf-8?B?Zk9XUElKOUNReTg0N3lwYzN2V2ZuYVRiSjFxMjVOVlh3QWhwSUFySkoyWEps?=
- =?utf-8?B?SlF1QjFtanVjUXBNSkIweTJKM3NIZGk4WUNhRmRoRm0xTWhVeHhpVklkbVE5?=
- =?utf-8?B?RDAzZjF3L0cvRkF5Q1RVczFmZ2R5N0hSd0p1UUNvZFVFdlV3SEx4bEowYW44?=
- =?utf-8?B?bGw4a3ZRSUlXRVFSdmdpejdjd2g2SDBpOGZPamZuTmVFSlVXSTVUd054UnVZ?=
- =?utf-8?B?d3VXZnZsTDAxb3N1c2ZnZ2NPZ1hWOHBjOUFES3MzQjZMZ2R5RzRSQTVTdlRF?=
- =?utf-8?B?V2xSNXVENjlXY0FNNi9ZVzFSSjl1ZERNRW1OY0E4V3ZnUkcraFBEWEFHL2tl?=
- =?utf-8?B?aE42dG9QZDNHU1VjNVl2L052N1FYakpmMkVWSG9iZlhsZUcxdGRSKythM3Az?=
- =?utf-8?B?aEJWYWpEZmlBY3liNm1QZGlvSTEyNHhhVjUxWm5VaUczL29rZHBWa1ByTUlV?=
- =?utf-8?B?KzZlTXd3YlRHcjNiamd5OUxYRVVmMHNFeW9hRUxTcHlXdHc2MlJXNXdqYlk3?=
- =?utf-8?B?dHBIUzhBMWRLRklsOVNTN214ZlhqWkVQbUx1ZVhMVWt4eUZiMWJZY24yemtR?=
- =?utf-8?B?YzV6V2dKMVQvdnp2Ui9KNnFWVlA3aGFTcVlJcS8vd25XOFFVeWd1aGZ6ZUlU?=
- =?utf-8?B?ajRMd3dDWWpmNytrTGxNcmdyMm03UVNXQXBpV3pRTVBsS3paSjc5anJhejJm?=
- =?utf-8?B?TFZ0ZEZRMkpMcVNLVmJNc0pGZlhycjdNSFBLQkJKU1J5cmt4bEI0T1drKzE3?=
- =?utf-8?B?TzYvT3pGeS8rTHViWTh3cHJIMDRDT04rd1o1Sk0zbHIxUG5yU1ZQbkxOQlJC?=
- =?utf-8?B?VGhQNmtGYzI2RGNDSUZrMXBXUEhVUEg5Z0UvTkoySGVxSlZmb2duVVU5V20r?=
- =?utf-8?B?M3dSYWwrQ1g1RWtQT3p1M0RnalBvcml0TjUxL0JpWnNqS3kyL2tHVmRtYnoz?=
- =?utf-8?B?b3JMUy9SdFgrbnh5aWQycjRqMks3WkpRY2pNWXRFNVZjWXJnVHM3ekRsdGJj?=
- =?utf-8?B?VCt0NENFWjFBd0NackNoNlNGQzNiVkhnMjBQWUgvNjM0cnZIOUlRd3ZrejFo?=
- =?utf-8?B?WmpqZllqNGdZZ2pRQTIzd3RSbEZET1RXR3diQ2lyeEloSXhIbHhXaVQvNGF3?=
- =?utf-8?B?blJHN0VIa1RWUEJKbHJkcUxBNHpUQXRjSDRuZ0xoTE8yd2wwb0ZIVmkzM3FG?=
- =?utf-8?B?NmwvSVRiZk9US3FyY2Z6blg2cFhiZFhJanVDV1BrVG0vV3RuL2JuZi9mckwv?=
- =?utf-8?B?WlZQZDRlUkhuOWp1bjh1SGVtUnRzL1pidzE3Q1p4V2dQcFFvTVZuRFpiYXJQ?=
- =?utf-8?B?aURtc3A0RWhxNFZzYnJUVXlVZktOeVZWemhndzdRdHhTbEVQcVFoVVpLQjBq?=
- =?utf-8?B?MDRSODRiUmZTRkVwZVMyMXJTYVFpYnNjRk04bENhalN4c1I3c2NFQ0o0ZGlR?=
- =?utf-8?B?WTRqNG1hSzFGYkRsS25mRk03aitGa21tOEcwZWYrdW84UWtrM0V0cXUzUjBF?=
- =?utf-8?B?eFVjS1lDWVZSUlNIOFkxSUZPSkFwZWhYbkgzR1BVSVdUTU9mazBDbnJyVkVM?=
- =?utf-8?B?NXRJRmdHS1oxUWJCMWRRc1doaVJ6U0RkUkdWdDVIQmJsUlhjak0xYmg0aERI?=
- =?utf-8?Q?2vdi1k?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB6399.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?THcwQVRaWXlhVDBDbnBIWFFoc0h4RUNQbkZXR0IxaU81ZytxVWFTRGh0MS9U?=
- =?utf-8?B?RGhmeGU0WlV5WTlLSnN1b015YjlZViswbml2NThhb0E4YTgvaXdzTHZRSXBG?=
- =?utf-8?B?TFJjWmdIT000OEh5T2Jic3hsckMwZlNQZG1kMFJ3SzBCZnN2R3NkZnlnM3Ir?=
- =?utf-8?B?K3pTNkFDT2dvdlhCS1o5clZXWHlPN2pQQXlpOXVJSHV6YkdNL0hxR3labDFw?=
- =?utf-8?B?QnNKT3V5OXVjVEVWUGxUUnlDcS9JSE9MSytFSC9qei9jcjZEd2pNcDRNRTdS?=
- =?utf-8?B?NEp4OUJqVGZLelVtdml6YXVPZEV2TEQ5ZFJ6UlVNdmFtY2pjVFpDTm1pOWVq?=
- =?utf-8?B?YThWaE91dU1oRUJEOTJ5OW9oNjFibGJkWERwYXBDVnN2UEFsMFJTOWhudmlC?=
- =?utf-8?B?WW91TlNXN1M1M0orMXo3aThzTUFMWVVyVE5wdENPbHpLVlJNSTZnaFVoSjNx?=
- =?utf-8?B?ZDFrRmJNaUM4ODRQY3lDTTZBMk04dGxibS9iMTdTKzVlWFdyWXRWdkhoZnhw?=
- =?utf-8?B?bWdra2o0RytWeHRKZkpkb3c2a08zQ2xpWS80YnNpcm1WMm1JWUtvY2VuMm5V?=
- =?utf-8?B?c1p6TEZ4THM0ZkVlRVJ6Z3Z6SmQ3d0lCRmVJYnYybzBrR1pmRUVtcjhrMkJN?=
- =?utf-8?B?UTRyZXBEZjJRVVlJbWxVMEJPa3dUMkNoaDVIQlhOdkJpcEhYYURYOGVpNVVB?=
- =?utf-8?B?REV5VGViVFBEdElwRi9yeVdPOERwUjlnUGhJdkxRRU0xTzhXNVFoREM4NHZp?=
- =?utf-8?B?Tlh4MFBzUGU2UEVVQ0VZeGVUbDhUaUUvNDl2cTNDUFBWZWR5RjlSZ0VSamJh?=
- =?utf-8?B?cHdBR0hRVU1RSDk2TmNEMUhJUE1DaVNQRG1hcUpZVjhwMDBGUVR5YSsrbHlD?=
- =?utf-8?B?SFIxOVpES0V0bWhQUlF4emVydjdkT2RTWjVFNFVTMGhEOGlTZ3J4S0hRa2Q2?=
- =?utf-8?B?VEZLR1dtQmY2WjRLR2xHMEJWdkV6SHMwMmxUaFB0RTNMUnFXMk5xdHdXRml3?=
- =?utf-8?B?ZmZtbU1wQk5EVFJLbjRIUlpUaUI3UThrVkZMSGZLR2hycWpjU1htWHJYUmQ2?=
- =?utf-8?B?Z3ZjMEMwdWcwMzBBSW9SS0FIb041Tm8vTHRVRFdudzZBdnJxeW5zM2xPekl5?=
- =?utf-8?B?UE1MZlJRV2UwdTBpbkw3Rm9VT2xNRXNmdFd5ZVFqNEJmWTZXNFl6M3EvQkIy?=
- =?utf-8?B?czhSMWdlSHc5aGlnZWhTMlllbGVxUlJpRGhvbnlsVFZ5QmVNeThSVCtvODgy?=
- =?utf-8?B?bERSeEZMYkM4RE9leEhBUElPK3ovekI1NzRCUE1xci9CeGJkOUJRMkUxNzc4?=
- =?utf-8?B?UDBKSS90ZnNQbUoybU9aaUxDcjlGaDZJWHg4MHlhRis3K2VDYUw3bHNYL3U2?=
- =?utf-8?B?eTlveG05TUg2MXY5WXpDeExMWndsUEFRbWI0ZVlkdGFGZXl2MWdyT1RMVGFh?=
- =?utf-8?B?V0dJTnc5NWJZeHVQbVl0ZFpTMzBYMGdkU3E5SnUyY3JZVzJOeU5LYk9KYVVp?=
- =?utf-8?B?SWcwc1dWQkJoNFBmek54SVlDMXFUdHphSTh1Qk5Wb2EzNVJZRUN5UVVlT1Nq?=
- =?utf-8?B?M3VEZGV5SkRwTk5sb2pvL2ZleGdaR2Ztc1o5L0ZMd2dXTGdLb25YNlNmZ2Z2?=
- =?utf-8?B?NHBabGRKdFZZYVBGdkc2Y2FSVHp2eXlERmVvd0FaQlpsZHVJbEZJemtZOFl6?=
- =?utf-8?B?NjJSYmVISitQeHN6WDdTSW1vSmd2K2dYUEhUYVZlYmFlNTNwVU1NWmFQbGw4?=
- =?utf-8?B?N2xOSnJiQnJWZWFBWGNFTmVtUWRKTEhIcWwvTDB4MU9PbGVYQlR5Z2ZZaWFa?=
- =?utf-8?B?VzBVN3dzVFFKTE9ySzZXcEZnZGw3ZEJNbWpseGFnUmxMYmN2VHdRNEN1ZEFx?=
- =?utf-8?B?NEhoSlBhZ3NkK2F0b3Q4QWlPS29paklSaittQVhKL0JtOGNPVnhhLzc1Y2pH?=
- =?utf-8?B?d0VkTi90TXBtTVVPcUhCZDdBZzN1Tzc5S2l3SjNibmFQa1F2aWlwUGZiaHFz?=
- =?utf-8?B?eitCTnVGbHpsUHEvSHMvNFBSd2NvQURjVWFXU3h6b2t5UTNsZjd1eHZKUWdw?=
- =?utf-8?B?RGI3ZFd4ZU41cXJsUU93WTc3Sk0xdXRKbGR6bFlvcnlmdHJjNUJKdVRocnVO?=
- =?utf-8?B?UFJHRzFRc3NpL0t1dXFrWjhHSWZZeEYvMTd4a1I1MlMwOHhRUWVqcVgrdFY4?=
- =?utf-8?B?TzJmZmswUklReFVYQnJxNnA1ZzJZb1BRUks4anRqV3pLbTZXUmZmbFEzYzRX?=
- =?utf-8?B?S0I4U2dKQWswVGNJR0lQMUo0dzJNMHM1MkhQS2huekFUVGVMZGlidEl0OWZy?=
- =?utf-8?B?N2JJVGNoUGQ5NUF5MjdnY29WM1kxSWt5MXNvQzFISnM0bWpvWXluUT09?=
-X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c834d204-f2db-4a16-e37e-08de6237e312
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB6399.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Feb 2026 08:48:50.7168
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aFnuVEVruM+8bEHPNhs5/mnIzVN/xl8ZJ/m30Uc8s5mTVtC1pXK2jC1ZsH6zGNhOEfDTXtPcjO42JRMmf9LYsg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5789
-X-Proofpoint-GUID: 1PVgil7FBlRUeXCcdn8JaB0SDxvIN5nx
-X-Authority-Analysis: v=2.4 cv=JqL8bc4C c=1 sm=1 tr=0 ts=698064f6 cx=c_pps
- a=5+LGht9gDMVyy/gYI/Qwww==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
- a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
- a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=HzLeVaNsDn8A:10
- a=VkNPw1HP01LnGYTKEx00:22 a=NEAV23lmAAAA:8 a=iGHA9ds3AAAA:8 a=EUspDBNiAAAA:8
- a=aNy1ewBffa6aY2lXQ1IA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=nM-MV4yxpKKO9kiQg6Ot:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjAyMDA3NCBTYWx0ZWRfX+nmtGOfeernh
- WvhADvF787uDsDnx+UT//POTsjk4dK6eIA0r9glLfEqI66Lf4GvEmzt5DukG00Nv6W7WJIV1gG2
- YeQQsK+TD+7utOu3Xep262Rw9wpCv3tJ7pK5c9khaKN48725jpwG30QSVdi7FtMgEWPcfhw+2Z9
- o+agshQT/CrqUdhTU2YkKnCuBgW/aUQClfGRbW4RZoEIhuYvFLhLl1bPSFsI5A3vvCrdUCURrh5
- WOa1SWwOkA/ucGf5541WZTQUlX2caHNYTqcWcUTF3K3MwVRrzm0mGjD+bSZsaBd0820W4w9U3mL
- sx/Ug1WYcJgZpvWC/NhnlsHeYqCA5sq/3Y3nCFdNl2jH2zNTP8ZzXx1qQMvnQJr538v725mLMj6
- +JFpu2D0W6WmqFy8KvusTxaGQ4ylvWVABHwuUcDUyvl63EsNJ+8Ebu84Yqudo3fgr6GdnnS4VAU
- zziQan3rTPZvonwn+Zg==
-X-Proofpoint-ORIG-GUID: 1PVgil7FBlRUeXCcdn8JaB0SDxvIN5nx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-02-02_03,2026-01-30_04,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 phishscore=0 suspectscore=0 clxscore=1011 priorityscore=1501
- lowpriorityscore=0 bulkscore=0 spamscore=0 adultscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2601150000 definitions=main-2602020074
-Content-Transfer-Encoding: quoted-printable
-X-MIME-Autoconverted: from 8bit to quoted-printable by mx0a-0064b401.pphosted.com id 6124vKsx2225996
+References: <20260201042755.18458-1-dev@qinc.tv>
+In-Reply-To: <20260201042755.18458-1-dev@qinc.tv>
+From: Etienne Cordonnier <ecordonnier@snap.com>
+Date: Mon, 2 Feb 2026 10:22:17 +0100
+X-Gm-Features: AZwV_QhhY_LUe5Ta7moTgFQMnk2qDbdaEIUGALovVc34uGGaA3SKmA0VlcSG-xY
+Message-ID: <CAHUKmYZd7HfVy0qvtg+SccK4c3UtV-nTqXsq_BS=EKZr=tC4gA@mail.gmail.com>
+Subject: Re: [yocto-patches] [meta-darwin][PATCH] fix dylib paths with install_name_tool
+To: yocto-patches@lists.yoctoproject.org
+Cc: "Eric L. Hernes" <dev@qinc.tv>
+Content-Type: multipart/alternative; boundary="000000000000a74a6f0649d3dc3a"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 02 Feb 2026 08:48:56 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3164
+ <yocto-patches@lists.yoctoproject.org>; Mon, 02 Feb 2026 09:22:36 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3165
 
-Thanks for your patch. I won't merge it at this time because I am=20
-currently working on updating refpolicy, and this backport patch will be=20
-included in the updated version.
+--000000000000a74a6f0649d3dc3a
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hi Eric,
+thanks for the patch! Can you please add a short description of what the
+issue was in the commit message?
+Also can you use the PV variable instead of hard-coding 18.1.6?
 
 
-//Yi
+#   set meta-clang/recipes-devtools/clang/clang.inc:12
+#     "${MAJOR_VER}.${MINOR_VER}.${PATCH_VER}${VER_SUFFIX}"
+# pre-expansion value:
+#   "${MAJOR_VER}.${MINOR_VER}.${PATCH_VER}${VER_SUFFIX}"
+PV=3D"18.1.6"
 
-On 1/30/26 18:28, Ganga Bhavani Yenugula via lists.yoctoproject.org wrote=
-:
-> From: Gangabhavani Yenugula <gyenugul@qti.qualcomm.com>
->
-> Define a dedicated domain (`pd_mapper_t`) to confine pd-mapper service,=
- ensuring
-> it operates in a restricted environment isolated from other init proces=
-ses.
->
-> Grant the necessary permissions to resolve AVC denials observed during
-> the transition to enforcing mode:
->
->   - Filesystem: Authorize read access to `/sys`.
->   - Socket: Allow creation and basic use of qipcrtr_socket
->
-> Signed-off-by: Gangabhavani Yenugula <gyenugul@qti.qualcomm.com>
+On Sun, Feb 1, 2026 at 5:28=E2=80=AFAM Eric L. Hernes via lists.yoctoprojec=
+t.org
+<dev=3Dqinc.tv@lists.yoctoproject.org> wrote:
+
+> Signed-off-by: Eric L. Hernes <dev@qinc.tv>
 > ---
->   ...troduce-SELinux-domain-for-pd-mapper.patch | 73 ++++++++++++++++++=
-+
->   .../refpolicy/refpolicy_common.inc            |  1 +
->   2 files changed, 74 insertions(+)
->   create mode 100644 recipes-security/refpolicy/refpolicy/0057-pd-mappe=
-r-Introduce-SELinux-domain-for-pd-mapper.patch
+>  recipes-devtools/clang/clang_%.bbappend            | 4 ++++
+>  recipes-devtools/gdb/gdb-cross-canadian_%.bbappend | 9 ++++++++-
+>  2 files changed, 12 insertions(+), 1 deletion(-)
 >
-> diff --git a/recipes-security/refpolicy/refpolicy/0057-pd-mapper-Introd=
-uce-SELinux-domain-for-pd-mapper.patch b/recipes-security/refpolicy/refpo=
-licy/0057-pd-mapper-Introduce-SELinux-domain-for-pd-mapper.patch
-> new file mode 100644
-> index 0000000..ec89ca9
-> --- /dev/null
-> +++ b/recipes-security/refpolicy/refpolicy/0057-pd-mapper-Introduce-SEL=
-inux-domain-for-pd-mapper.patch
-> @@ -0,0 +1,73 @@
-> +From 29630f1034ebaaccdf10366f23616367ae138f1e Mon Sep 17 00:00:00 2001
-> +From: Gangabhavani Yenugula <gyenugul@qti.qualcomm.com>
-> +Date: Thu, 22 Jan 2026 16:14:50 +0530
-> +Subject: [PATCH] pd-mapper: Introduce SELinux domain for pd-mapper
+> diff --git a/recipes-devtools/clang/clang_%.bbappend
+> b/recipes-devtools/clang/clang_%.bbappend
+> index e55dff6..6c0a757 100644
+> --- a/recipes-devtools/clang/clang_%.bbappend
+> +++ b/recipes-devtools/clang/clang_%.bbappend
+> @@ -83,4 +83,8 @@ FILES:${PN} +=3D " \
+>     ${libdir}/LLVMgold.dylib \
+>  "
+>
+> +do_compile:append:class-nativesdk:darwin21() {
+> +    ${SDK_PREFIX}install_name_tool -change liblldb.18.1.6.dylib
+> @loader_path/../lib/liblldb.18.1.6.dylib ${B}/bin/lldb-dap
+> +}
 > +
-> +Define a dedicated domain (`pd_mapper_t`) to confine pd-mapper service=
-, ensuring
-> +it operates in a restricted environment isolated from other init proce=
-sses.
+>  INSANE_SKIP:${PN}:class-nativesdk:darwin21 +=3D " file-rdeps"
+> diff --git a/recipes-devtools/gdb/gdb-cross-canadian_%.bbappend
+> b/recipes-devtools/gdb/gdb-cross-canadian_%.bbappend
+> index 3f69019..5fa29a7 100644
+> --- a/recipes-devtools/gdb/gdb-cross-canadian_%.bbappend
+> +++ b/recipes-devtools/gdb/gdb-cross-canadian_%.bbappend
+> @@ -16,4 +16,11 @@ EXTRA_OECONF:remove:darwinsdk =3D "--with-system-readl=
+ine"
+>  # Remove -rpath-link and -rpath
+>  LDFLAGS:darwinsdk =3D "${BUILDSDK_LDFLAGS}"
+>
+> -INSANE_SKIP:append:darwin21 =3D " buildpaths"
+> +do_compile:append:darwinsdk() {
+> +    ${SDK_PREFIX}install_name_tool -change libexpat.1.dylib
+> @loader_path/../../lib/libexpat.1.dylib ${B}/gdb/gdb
+> +}
 > +
-> +Grant the necessary permissions to resolve AVC denials observed during
-> +the transition to enforcing mode:
+> +DEPENDS:append:darwinsdk =3D " nativesdk-zlib "
 > +
-> + - Filesystem: Authorize read access to `/sys`.
-> + - Socket: Allow creation and basic use of qipcrtr_socket
+> +INSANE_SKIP:append:darwinsdk =3D " buildpaths"
 > +
-> +Upstream-Status: Backport [https://github.com/SELinuxProject/refpolicy=
-/pull/1070/changes/c8aef7c55e8768378c6adeda7e8edfaeecb9fa28]
-> +
-> +Signed-off-by: Gangabhavani Yenugula <gyenugul@qti.qualcomm.com>
-> +---
-> + policy/modules/services/pd_mapper.fc |  1 +
-> + policy/modules/services/pd_mapper.if | 10 ++++++++++
-> + policy/modules/services/pd_mapper.te | 15 +++++++++++++++
-> + 3 files changed, 26 insertions(+)
-> + create mode 100644 policy/modules/services/pd_mapper.fc
-> + create mode 100644 policy/modules/services/pd_mapper.if
-> + create mode 100644 policy/modules/services/pd_mapper.te
-> +
-> +diff --git a/policy/modules/services/pd_mapper.fc b/policy/modules/ser=
-vices/pd_mapper.fc
-> +new file mode 100644
-> +index 000000000..3d83d46b1
-> +--- /dev/null
-> ++++ b/policy/modules/services/pd_mapper.fc
-> +@@ -0,0 +1 @@
-> ++/usr/bin/pd-mapper      --      gen_context(system_u:object_r:pd_mapp=
-er_exec_t,s0)
-> +diff --git a/policy/modules/services/pd_mapper.if b/policy/modules/ser=
-vices/pd_mapper.if
-> +new file mode 100644
-> +index 000000000..34da5143f
-> +--- /dev/null
-> ++++ b/policy/modules/services/pd_mapper.if
-> +@@ -0,0 +1,10 @@
-> ++## <summary>pd-mapper</summary>
-> ++#
-> ++## <desc>
-> ++## Qualcomm=E2=80=99s pd=E2=80=91mapper service is the userspace Prot=
-ection Domain mapper
-> ++## that enables applications to access remote processors
-> ++## (Wi=E2=80=91Fi, modem, sensors, etc.)
-> ++## on Qualcomm SoCs via the QRTR protocol.
-> ++##
-> ++## https://github.com/linux-msm/pd-mapper
-> ++## </desc>
-> +diff --git a/policy/modules/services/pd_mapper.te b/policy/modules/ser=
-vices/pd_mapper.te
-> +new file mode 100644
-> +index 000000000..34a8d6bcc
-> +--- /dev/null
-> ++++ b/policy/modules/services/pd_mapper.te
-> +@@ -0,0 +1,15 @@
-> ++policy_module(pd_mapper)
-> ++
-> ++########################################
-> ++#
-> ++# Declarations
-> ++#
-> ++
-> ++type pd_mapper_t;
-> ++type pd_mapper_exec_t;
-> ++init_daemon_domain(pd_mapper_t, pd_mapper_exec_t)
-> ++
-> ++allow pd_mapper_t self:qipcrtr_socket connected_socket_perms;
-> ++
-> ++# Read /sys/devices/platform/soc@0/2a300000.remoteproc/remoteproc/rem=
-oteproc2/firmware
-> ++dev_read_sysfs(pd_mapper_t)
-> +--
-> +2.34.1
-> +
-> diff --git a/recipes-security/refpolicy/refpolicy_common.inc b/recipes-=
-security/refpolicy/refpolicy_common.inc
-> index 59dfecd..9d74c85 100644
-> --- a/recipes-security/refpolicy/refpolicy_common.inc
-> +++ b/recipes-security/refpolicy/refpolicy_common.inc
-> @@ -72,6 +72,7 @@ SRC_URI +=3D " \
->           file://0054-policy-modules-system-setrans-allow-setrans_t-use=
--fd.patch \
->           file://0055-policy-modules-system-systemd-make-_systemd_t-MLS=
--tr.patch \
->           file://0056-policy-modules-system-logging-make-syslogd_runtim=
-e_t.patch \
-> +        file://0057-pd-mapper-Introduce-SELinux-domain-for-pd-mapper.p=
-atch \
->           "
->  =20
->   S =3D "${UNPACKDIR}/refpolicy"
+> --
+> 2.50.1 (Apple Git-155)
+>
+>
+>
+> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+> Links: You receive all messages sent to this group.
+> View/Reply Online (#3162):
+> https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.yoctoproject=
+.org_g_yocto-2Dpatches_message_3162&d=3DDwIFAg&c=3DncDTmphkJTvjIDPh0hpF_4vC=
+HvabgGkICC2epckfdiw&r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&m=3D9ND=
+zehceBAtFxwQjf1ZvZF9kKQABoDheAwKSAe0d37qN299gtRECv3HBuclcyzeD&s=3DYFvsep7CM=
+9Cpi1V7Rc1wCVPKFjXvJEj2MufVcn4CutQ&e=3D
+> Mute This Topic:
+> https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.yoctoproject=
+.org_mt_117572910_7048771&d=3DDwIFAg&c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC=
+2epckfdiw&r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&m=3D9NDzehceBAtFx=
+wQjf1ZvZF9kKQABoDheAwKSAe0d37qN299gtRECv3HBuclcyzeD&s=3Dj288T9KVEzDNpVSW_cA=
+HfDDzkNZ95Jgvl99IfK3plL4&e=3D
+> Group Owner: yocto-patches+owner@lists.yoctoproject.org
+> Unsubscribe:
+> https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.yoctoproject=
+.org_g_yocto-2Dpatches_leave_13184993_7048771_1814342232_xyzzy&d=3DDwIFAg&c=
+=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&r=3DAhkbNonVuMIGRfPx_Qj9TsRi=
+h1DULJTKUkSGa66m67E&m=3D9NDzehceBAtFxwQjf1ZvZF9kKQABoDheAwKSAe0d37qN299gtRE=
+Cv3HBuclcyzeD&s=3Del0hw-GP_LKsJfZmmG3hjdMTqgLtjur_jIxZUTN0ZhQ&e=3D
+> [ecordonnier@snap.com]
+> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+>
+>
+>
+
+--000000000000a74a6f0649d3dc3a
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Hi Eric,<br>thanks for the patch! Can you please add a sho=
+rt description of what the issue was in the commit message?<br>Also can you=
+ use the PV variable instead of hard-coding 18.1.6?<br><br><br># =C2=A0 set=
+ meta-clang/recipes-devtools/clang/clang.inc:12<br># =C2=A0 =C2=A0 &quot;${=
+MAJOR_VER}.${MINOR_VER}.${PATCH_VER}${VER_SUFFIX}&quot;<br># pre-expansion =
+value:<br># =C2=A0 &quot;${MAJOR_VER}.${MINOR_VER}.${PATCH_VER}${VER_SUFFIX=
+}&quot;<br>PV=3D&quot;18.1.6&quot;<br></div><br><div class=3D"gmail_quote g=
+mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Sun, Feb 1, =
+2026 at 5:28=E2=80=AFAM Eric L. Hernes via <a href=3D"http://lists.yoctopro=
+ject.org">lists.yoctoproject.org</a> &lt;dev=3D<a href=3D"mailto:qinc.tv@li=
+sts.yoctoproject.org">qinc.tv@lists.yoctoproject.org</a>&gt; wrote:<br></di=
+v><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;borde=
+r-left:1px solid rgb(204,204,204);padding-left:1ex">Signed-off-by: Eric L. =
+Hernes &lt;<a href=3D"mailto:dev@qinc.tv" target=3D"_blank">dev@qinc.tv</a>=
+&gt;<br>
+---<br>
+=C2=A0recipes-devtools/clang/clang_%.bbappend=C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 | 4 ++++<br>
+=C2=A0recipes-devtools/gdb/gdb-cross-canadian_%.bbappend | 9 ++++++++-<br>
+=C2=A02 files changed, 12 insertions(+), 1 deletion(-)<br>
+<br>
+diff --git a/recipes-devtools/clang/clang_%.bbappend b/recipes-devtools/cla=
+ng/clang_%.bbappend<br>
+index e55dff6..6c0a757 100644<br>
+--- a/recipes-devtools/clang/clang_%.bbappend<br>
++++ b/recipes-devtools/clang/clang_%.bbappend<br>
+@@ -83,4 +83,8 @@ FILES:${PN} +=3D &quot; \<br>
+=C2=A0 =C2=A0 ${libdir}/LLVMgold.dylib \<br>
+=C2=A0&quot;<br>
+<br>
++do_compile:append:class-nativesdk:darwin21() {<br>
++=C2=A0 =C2=A0 ${SDK_PREFIX}install_name_tool -change liblldb.18.1.6.dylib =
+@loader_path/../lib/liblldb.18.1.6.dylib ${B}/bin/lldb-dap<br>
++}<br>
++<br>
+=C2=A0INSANE_SKIP:${PN}:class-nativesdk:darwin21 +=3D &quot; file-rdeps&quo=
+t;<br>
+diff --git a/recipes-devtools/gdb/gdb-cross-canadian_%.bbappend b/recipes-d=
+evtools/gdb/gdb-cross-canadian_%.bbappend<br>
+index 3f69019..5fa29a7 100644<br>
+--- a/recipes-devtools/gdb/gdb-cross-canadian_%.bbappend<br>
++++ b/recipes-devtools/gdb/gdb-cross-canadian_%.bbappend<br>
+@@ -16,4 +16,11 @@ EXTRA_OECONF:remove:darwinsdk =3D &quot;--with-system-re=
+adline&quot;<br>
+=C2=A0# Remove -rpath-link and -rpath<br>
+=C2=A0LDFLAGS:darwinsdk =3D &quot;${BUILDSDK_LDFLAGS}&quot;<br>
+<br>
+-INSANE_SKIP:append:darwin21 =3D &quot; buildpaths&quot;<br>
++do_compile:append:darwinsdk() {<br>
++=C2=A0 =C2=A0 ${SDK_PREFIX}install_name_tool -change libexpat.1.dylib @loa=
+der_path/../../lib/libexpat.1.dylib ${B}/gdb/gdb<br>
++}<br>
++<br>
++DEPENDS:append:darwinsdk =3D &quot; nativesdk-zlib &quot;<br>
++<br>
++INSANE_SKIP:append:darwinsdk =3D &quot; buildpaths&quot;<br>
++<br>
+-- <br>
+2.50.1 (Apple Git-155)<br>
+<br>
+<br>
+<br>
+-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-<br>
+Links: You receive all messages sent to this group.<br>
+View/Reply Online (#3162): <a href=3D"https://urldefense.proofpoint.com/v2/=
+url?u=3Dhttps-3A__lists.yoctoproject.org_g_yocto-2Dpatches_message_3162&amp=
+;d=3DDwIFAg&amp;c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhk=
+bNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3D9NDzehceBAtFxwQjf1ZvZF9kKQ=
+ABoDheAwKSAe0d37qN299gtRECv3HBuclcyzeD&amp;s=3DYFvsep7CM9Cpi1V7Rc1wCVPKFjXv=
+JEj2MufVcn4CutQ&amp;e=3D" rel=3D"noreferrer" target=3D"_blank">https://urld=
+efense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.yoctoproject.org_g_yocto-2=
+Dpatches_message_3162&amp;d=3DDwIFAg&amp;c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgG=
+kICC2epckfdiw&amp;r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3D9=
+NDzehceBAtFxwQjf1ZvZF9kKQABoDheAwKSAe0d37qN299gtRECv3HBuclcyzeD&amp;s=3DYFv=
+sep7CM9Cpi1V7Rc1wCVPKFjXvJEj2MufVcn4CutQ&amp;e=3D</a> <br>
+Mute This Topic: <a href=3D"https://urldefense.proofpoint.com/v2/url?u=3Dht=
+tps-3A__lists.yoctoproject.org_mt_117572910_7048771&amp;d=3DDwIFAg&amp;c=3D=
+ncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhkbNonVuMIGRfPx_Qj9TsR=
+ih1DULJTKUkSGa66m67E&amp;m=3D9NDzehceBAtFxwQjf1ZvZF9kKQABoDheAwKSAe0d37qN29=
+9gtRECv3HBuclcyzeD&amp;s=3Dj288T9KVEzDNpVSW_cAHfDDzkNZ95Jgvl99IfK3plL4&amp;=
+e=3D" rel=3D"noreferrer" target=3D"_blank">https://urldefense.proofpoint.co=
+m/v2/url?u=3Dhttps-3A__lists.yoctoproject.org_mt_117572910_7048771&amp;d=3D=
+DwIFAg&amp;c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhkbNonV=
+uMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3D9NDzehceBAtFxwQjf1ZvZF9kKQABoDh=
+eAwKSAe0d37qN299gtRECv3HBuclcyzeD&amp;s=3Dj288T9KVEzDNpVSW_cAHfDDzkNZ95Jgvl=
+99IfK3plL4&amp;e=3D</a> <br>
+Group Owner: <a href=3D"mailto:yocto-patches%2Bowner@lists.yoctoproject.org=
+" target=3D"_blank">yocto-patches+owner@lists.yoctoproject.org</a><br>
+Unsubscribe: <a href=3D"https://urldefense.proofpoint.com/v2/url?u=3Dhttps-=
+3A__lists.yoctoproject.org_g_yocto-2Dpatches_leave_13184993_7048771_1814342=
+232_xyzzy&amp;d=3DDwIFAg&amp;c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdi=
+w&amp;r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3D9NDzehceBAtFx=
+wQjf1ZvZF9kKQABoDheAwKSAe0d37qN299gtRECv3HBuclcyzeD&amp;s=3Del0hw-GP_LKsJfZ=
+mmG3hjdMTqgLtjur_jIxZUTN0ZhQ&amp;e=3D" rel=3D"noreferrer" target=3D"_blank"=
+>https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.yoctoproject.=
+org_g_yocto-2Dpatches_leave_13184993_7048771_1814342232_xyzzy&amp;d=3DDwIFA=
+g&amp;c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhkbNonVuMIGR=
+fPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3D9NDzehceBAtFxwQjf1ZvZF9kKQABoDheAwKS=
+Ae0d37qN299gtRECv3HBuclcyzeD&amp;s=3Del0hw-GP_LKsJfZmmG3hjdMTqgLtjur_jIxZUT=
+N0ZhQ&amp;e=3D</a>=C2=A0 [<a href=3D"mailto:ecordonnier@snap.com" target=3D=
+"_blank">ecordonnier@snap.com</a>]<br>
+-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-<br>
+<br>
+<br>
+</blockquote></div>
+
+--000000000000a74a6f0649d3dc3a--
 
