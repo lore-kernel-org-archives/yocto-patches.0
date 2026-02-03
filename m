@@ -1,203 +1,96 @@
-Return-Path: <c.schlegel@televic.com>
+Return-Path: <charles.embedded@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66695E6E80E
-	for <webhook@archiver.kernel.org>; Tue,  3 Feb 2026 11:09:35 +0000 (UTC)
-Subject: [meta-lts-mixins][scarthgap/rust][PATCH] 
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DE1CE8783D
+	for <webhook@archiver.kernel.org>; Tue,  3 Feb 2026 14:35:36 +0000 (UTC)
+Received: from mail-dy1-f170.google.com (mail-dy1-f170.google.com [74.125.82.170])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.17789.1770129331034172648
+ for <yocto-patches@lists.yoctoproject.org>;
+ Tue, 03 Feb 2026 06:35:31 -0800
+Authentication-Results: mx.groups.io;
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=i9QKDIxG;
+ spf=pass (domain: gmail.com, ip: 74.125.82.170, mailfrom: charles.embedded@gmail.com)
+Received: by mail-dy1-f170.google.com with SMTP id 5a478bee46e88-2b71557299dso5786189eec.1
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 03 Feb 2026 06:35:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1770129330; x=1770734130; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Lne13+uNLzspNhX5rrl7K59lZSUggQWAOwo5cTV/+dU=;
+        b=i9QKDIxGzYSZ/5/T5yes2rsXcW9JUSeFnwqQUqh+BMixfQzMDIcKQ/+aIdl8SQtW/a
+         lPf7SszsMTnjWRCR8I/RKX4eR+Jc77VgW6tblR12hFb+lXpnr+7u42GHwpfzaSblJl5L
+         76LGMnlxvTiL5QCSa9sIJKqrPeHDQBXQeuI0GNlBtIRw8ie1Yw3dTCbe1nGLFWhki0YP
+         SvO0D07fsbzTvNPJINdNw7JlrFovAS8hjPfez1PCBO+1yP1gbLyCcObi0UYCdYi6SJ95
+         Ja249psBqhs1ArwlkbptOPBEesGxVLxLQSTVynXx13jiv58SirY/wMXH0Df0x/o4WlL/
+         rWhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770129330; x=1770734130;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Lne13+uNLzspNhX5rrl7K59lZSUggQWAOwo5cTV/+dU=;
+        b=gHO1H/3Vovrbgdl/6W8mELP5VEZqyj1OMVPphjNNwRydtu3Z6UL8IOTlervUrwi8gY
+         yOVDB0akn24+ILCSIN1Z9hgvWQZk7tzN0VmWAO1lEqkJpZDYi44SBrPWTAom7rSkaOYG
+         2Ud1+W93hpEHEbFHF/RwWz8wHO+61z7vXQcIeJ1wdBJyFS4U6RIk2OIT8qh0KUtrnOx2
+         E6E4m45UhIpPufaBDqz0MlU81KzGeN4qD5yOR9P1o5GqBeMdm6UfPPXz2vV9MtOyH7ZX
+         fpVQGyhrJC6ITb7D3NA5bXiKGMr8u4fZEQPcqGwddZCFklfRF+vgGH9WkjczUV+3CqLO
+         Nlhg==
+X-Gm-Message-State: AOJu0YzKAYkN+KHzvJENDHXiSiDgJCTYQnYcBvTyGOjUTZv5i8eHfFpN
+	/+F2iUTK5HhCXQxx68Rp7StF+uapr4sQCO+739vgYyvR0qwCbFRMhP/Nqxw1vg==
+X-Gm-Gg: AZuq6aIn0IVnpMtDlDR2o2112wCEef2MJshOxGbW9/Sjc/QT9YOIr4ySJxOsLygQko6
+	tASWMYFWFGJkw/XG4C/7Sn2JtQ7uUsUr7UZjYNziTOX7AUHe/AYoX7Z+QA4Wp3CoSqXfN5hrINJ
+	9uveWJ2AU/U8PLcRV7kxkk1eqn1LRSvAgygEfo8BOLYO9WBSR43HGkZVDrZceFunhKeynpOvpNv
+	BWf/b6Se0U5SKnM710RMpktZ1f16kQuObuJbb0kgX9FyeDz7/DlyXpKnPI2RAaTS3Ejw4qAPUYr
+	0zYqOjZWAIAUbU1jmhsr+oz+a4E/HJDKD3wbGsQwI3C4aqIQQkBgDJuc2UWbD46SF8+acF0p4wG
+	OyuN5SWkVRPyyekKkDsTwdpmojGaIZhRQq8AhrxSNT8ysW1/8H+uw/azbbGT+490ou4vN9PK0oN
+	t6lk7Yx59aA6op48TI0rTZJ7Jk
+X-Received: by 2002:a05:7300:434f:b0:2b7:1abc:a6e9 with SMTP id 5a478bee46e88-2b7c864e186mr6122045eec.12.1770129329890;
+        Tue, 03 Feb 2026 06:35:29 -0800 (PST)
+Received: from charlesdias.. ([2804:14c:daa3:8233:8473:de65:79dd:cac4])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2b7a16d01c4sm22347273eec.2.2026.02.03.06.35.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Feb 2026 06:35:29 -0800 (PST)
+From: charles.embedded@gmail.com
 To: yocto-patches@lists.yoctoproject.org
-From: c.schlegel@televic.com
-X-Originating-Location: Sint-Martens-Latem, Flanders, BE (84.199.255.188)
-X-Originating-Platform: Linux Firefox 147
-User-Agent: GROUPS.IO Web Poster
+Cc: Charles Dias <charlesdias.cd@outlook.com>
+Subject: [meta-zephyr][master][PATCH 1/2] qemu-x86: update QEMU configuration
+Date: Tue,  3 Feb 2026 11:35:05 -0300
+Message-Id: <20260203143506.119483-2-charles.embedded@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260203143506.119483-1-charles.embedded@gmail.com>
+References: <20260203143506.119483-1-charles.embedded@gmail.com>
 MIME-Version: 1.0
-Date: Tue, 03 Feb 2026 03:09:30 -0800
-Message-ID: <icKu.1770116970811561631.kJ0f@lists.yoctoproject.org>
-Content-Type: multipart/mixed; boundary="1Ugscv74l3mMMkScwo4n"
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 03 Feb 2026 11:09:35 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3174
+ <yocto-patches@lists.yoctoproject.org>; Tue, 03 Feb 2026 14:35:36 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3176
 
---1Ugscv74l3mMMkScwo4n
-Content-Type: multipart/alternative; boundary="8QvuB7eMGouw9QriF1g0"
+From: Charles Dias <charlesdias.cd@outlook.com>
 
---8QvuB7eMGouw9QriF1g0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Remove QB_MACHINE and use generic q35 machine, type=pc-q35-2.10 is not
+supported.
 
-Hi,
+Signed-off-by: Charles Dias <charlesdias.cd@outlook.com>
+---
+ meta-zephyr-bsp/conf/machine/qemu-x86.conf | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-We are using meta-lts-mixins for Rust support in our Yocto image and SDK.
-Our devices use arm hf.
-When looking at the resulted toolchain json, we get
-cat ./x86_64-pokysdk-linux/usr/lib/arm-poky-linux-gnueabi/rustlib/armv7-pok=
-y-linux-gnueabihf.json
-{
-"llvm-target": "armv7-poky-linux-gnueabihf",
-"data-layout": "e-m:e-p:32:32-Fi8-i64:64-v128:64:128-a:0:32-n32-S64",
-"max-atomic-width": 64,
-"target-pointer-width": "32",
-"target-c-int-width": 32,
-"target-endian": "little",
-"arch": "arm",
-"os": "linux",
-"env": "gnu",
-"vendor": "unknown",
-"target-family": "unix",
-"linker": "arm-poky-linux-gnueabi-gcc",
-"cpu": "generic",
-"features": "+vfp2,+neon,+v7,+thumb2,+thumb-mode,+a9",
-"llvm-floatabi": "hard",
-"dynamic-linking": true,
-"executables": true,
-"linker-is-gnu": true,
-"linker-flavor": "gcc",
-"has-rpath": true,
-"has-thread-local": true,
-"position-independent-executables": true,
-"panic-strategy": "unwind"
-}
-With this it builds, but when running on target there is a linkage issue an=
-d resulting in a file not found error when running.
-After investigating, we think that the gcc flag -mfloat-abi=3Dhard is missi=
-ng.
-
-root@tracs-a9:/tmp# ./test_app
--sh: ./test_app: No such file or directory
-root@tracs-a9:/tmp# ldd test_app
-linux-vdso.so.1 (0xbeca9000)
-libc.so.6 =3D> /lib/libc.so.6 (0xb6de0000)
-/lib/ld-linux.so.3 =3D> /lib/ld-linux-armhf.so.3 (0xb6f5a000)
-libgcc_s.so.1 =3D> /lib/libgcc_s.so.1 (0xb6db0000)
-
-When adding this, things are fine.
-...
-"llvm-floatabi": "hard",
-"pre-link-args": {
-"gcc": [
-"-mfloat-abi=3Dhard"
-]
-},
-"dynamic-linking": true,
-...
-
-root@tracs-a9:/tmp# ./test_app
-Guess the number!
-Please input your guess.
-0
-You guessed: 0
-Too small!
-Please input your guess.
-^C
-root@tracs-a9:/tmp# ldd ./test_app
-linux-vdso.so.1 (0xbed96000)
-libc.so.6 =3D> /lib/libc.so.6 (0xb6d80000)
-/lib/ld-linux-armhf.so.3 (0xb6ef8000)
-libgcc_s.so.1 =3D> /lib/libgcc_s.so.1 (0xb6d50000)
-root@tracs-a9:/tmp#
-
-Attached you find a patch for including this flag in the rust-target-config=
-.bbclass if armhf is detected.
-Patch ids identical for both Kirkstone/Scarthgap
-Let me know your thoughts! First time I submit a patch here, so if anything=
- I should do different let me know!
-
-Kind regards,
-Clemens Schlegel
-
---8QvuB7eMGouw9QriF1g0
-Content-Type: text/html; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div>Hi,</div>
-<div>&nbsp;</div>
-<div>We are using meta-lts-mixins for Rust support in our Yocto image and S=
-DK.</div>
-<div>Our devices use arm hf.</div>
-<div>When looking at the resulted toolchain json, we get</div>
-<div>cat ./x86_64-pokysdk-linux/usr/lib/arm-poky-linux-gnueabi/rustlib/armv=
-7-poky-linux-gnueabihf.json&nbsp;<br />{<br />&nbsp; &nbsp; "llvm-target": =
-"armv7-poky-linux-gnueabihf",<br />&nbsp; &nbsp; "data-layout": "e-m:e-p:32=
-:32-Fi8-i64:64-v128:64:128-a:0:32-n32-S64",<br />&nbsp; &nbsp; "max-atomic-=
-width": 64,<br />&nbsp; &nbsp; "target-pointer-width": "32",<br />&nbsp; &n=
-bsp; "target-c-int-width": 32,<br />&nbsp; &nbsp; "target-endian": "little"=
-,<br />&nbsp; &nbsp; "arch": "arm",<br />&nbsp; &nbsp; "os": "linux",<br />=
-&nbsp; &nbsp; "env": "gnu",<br />&nbsp; &nbsp; "vendor": "unknown",<br />&n=
-bsp; &nbsp; "target-family": "unix",<br />&nbsp; &nbsp; "linker": "arm-poky=
--linux-gnueabi-gcc",<br />&nbsp; &nbsp; "cpu": "generic",<br />&nbsp; &nbsp=
-; "features": "+vfp2,+neon,+v7,+thumb2,+thumb-mode,+a9",<br />&nbsp; &nbsp;=
- "llvm-floatabi": "hard",<br />&nbsp; &nbsp; "dynamic-linking": true,<br />=
-&nbsp; &nbsp; "executables": true,<br />&nbsp; &nbsp; "linker-is-gnu": true=
-,<br />&nbsp; &nbsp; "linker-flavor": "gcc",<br />&nbsp; &nbsp; "has-rpath"=
-: true,<br />&nbsp; &nbsp; "has-thread-local": true,<br />&nbsp; &nbsp; "po=
-sition-independent-executables": true,<br />&nbsp; &nbsp; "panic-strategy":=
- "unwind"</div>
-<div>}</div>
-<div>With this it builds, but when running on target there is a linkage iss=
-ue and resulting in a file not found error when running.</div>
-<div>After investigating, we think that the gcc flag -mfloat-abi=3Dhard is =
-missing.</div>
-<div>&nbsp;</div>
-<div>root@tracs-a9:/tmp# ./test_app&nbsp;<br />-sh: ./test_app: No such fil=
-e or directory<br />root@tracs-a9:/tmp# ldd test_app&nbsp;<br />&nbsp; &nbs=
-p; linux-vdso.so.1 (0xbeca9000)<br />&nbsp; &nbsp; libc.so.6 =3D&gt; /lib/l=
-ibc.so.6 (0xb6de0000)<br />&nbsp; &nbsp; /lib/ld-linux.so.3 =3D&gt; /lib/ld=
--linux-armhf.so.3 (0xb6f5a000)<br />&nbsp; &nbsp; libgcc_s.so.1 =3D&gt; /li=
-b/libgcc_s.so.1 (0xb6db0000)</div>
-<div>&nbsp;</div>
-<div>When adding this, things are fine.</div>
-<div>...</div>
-<div>&nbsp; &nbsp; "llvm-floatabi": "hard",</div>
-<div>&nbsp; &nbsp; "pre-link-args": {<br />&nbsp; &nbsp; &nbsp; &nbsp; "gcc=
-": [<br />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "-mfloat-abi=3Dhard"<br=
- />&nbsp; &nbsp; &nbsp; &nbsp; ]<br />&nbsp; &nbsp; },<br />&nbsp; &nbsp; "=
-dynamic-linking": true,</div>
-<div>...</div>
-<div>&nbsp;</div>
-<div>root@tracs-a9:/tmp# ./test_app&nbsp;<br />Guess the number!<br />Pleas=
-e input your guess.<br />0<br />You guessed: 0<br />Too small!<br />Please =
-input your guess.<br />^C<br />root@tracs-a9:/tmp# ldd ./test_app&nbsp;<br =
-/>&nbsp; &nbsp; linux-vdso.so.1 (0xbed96000)<br />&nbsp; &nbsp; libc.so.6 =
-=3D&gt; /lib/libc.so.6 (0xb6d80000)<br />&nbsp; &nbsp; /lib/ld-linux-armhf.=
-so.3 (0xb6ef8000)<br />&nbsp; &nbsp; libgcc_s.so.1 =3D&gt; /lib/libgcc_s.so=
-.1 (0xb6d50000)<br />root@tracs-a9:/tmp#</div>
-<div>&nbsp;</div>
-<div>Attached you find a patch for including this flag in the rust-target-c=
-onfig.bbclass if armhf is detected.</div>
-<div>Patch ids identical for both Kirkstone/Scarthgap</div>
-<div>Let me know your thoughts! First time I submit a patch here, so if any=
-thing I should do different let me know!</div>
-<div>&nbsp;</div>
-<div>Kind regards,</div>
-<div>Clemens Schlegel</div>
-
---8QvuB7eMGouw9QriF1g0--
-
---1Ugscv74l3mMMkScwo4n
-Content-Type: text/x-patch; name="0001-rust-target-config.bbclass-set-gcc-compile-flag-in-c.patch"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="0001-rust-target-config.bbclass-set-gcc-compile-flag-in-c.patch"
-
-RnJvbSBlYWE5NmUyMGE1MDlhMzUwNjg1ZGM4OTQ0OGMxZWU5NjE3YTQxZWRkIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBDbGVtZW5zIFNjaGxlZ2VsIDxjLnNjaGxlZ2VsQHRlbGV2aWMu
-Y29tPgpEYXRlOiBXZWQsIDcgSmFuIDIwMjYgMTQ6MDM6MjMgKzAxMDAKU3ViamVjdDogW1BBVENI
-XSBydXN0LXRhcmdldC1jb25maWcuYmJjbGFzczogc2V0IGdjYyBjb21waWxlIGZsYWcgaW4gY2Fz
-ZSBoZgogaXMgbmVlZGVkCgotLS0KIGNsYXNzZXMtcmVjaXBlL3J1c3QtdGFyZ2V0LWNvbmZpZy5i
-YmNsYXNzIHwgNCArKysrCiAxIGZpbGUgY2hhbmdlZCwgNCBpbnNlcnRpb25zKCspCgpkaWZmIC0t
-Z2l0IGEvY2xhc3Nlcy1yZWNpcGUvcnVzdC10YXJnZXQtY29uZmlnLmJiY2xhc3MgYi9jbGFzc2Vz
-LXJlY2lwZS9ydXN0LXRhcmdldC1jb25maWcuYmJjbGFzcwppbmRleCAwZjFlMmUxLi45ZjJhYTU5
-IDEwMDY0NAotLS0gYS9jbGFzc2VzLXJlY2lwZS9ydXN0LXRhcmdldC1jb25maWcuYmJjbGFzcwor
-KysgYi9jbGFzc2VzLXJlY2lwZS9ydXN0LXRhcmdldC1jb25maWcuYmJjbGFzcwpAQCAtNDAxLDYg
-KzQwMSwxMCBAQCBkZWYgcnVzdF9nZW5fdGFyZ2V0KGQsIHRoaW5nLCB3ZCwgYXJjaCk6CiAgICAg
-ICAgIHRzcGVjWydsbHZtLWZsb2F0YWJpJ10gPSAic29mdCIKICAgICBlbGlmIGZwdSA9PSAiaGFy
-ZCI6CiAgICAgICAgIHRzcGVjWydsbHZtLWZsb2F0YWJpJ10gPSAiaGFyZCIKKyAgICAgICAgaWYg
-ImFybSIgaW4gdHNwZWNbJ2xsdm0tdGFyZ2V0J106CisgICAgICAgICAgICB0c3BlY1sncHJlLWxp
-bmstYXJncyddID0geworICAgICAgICAgICAgICAgICJnY2MiOiBbIi1tZmxvYXQtYWJpPWhhcmQi
-XQorICAgICAgICAgICAgfQogICAgIHRzcGVjWydkZWZhdWx0LXV3dGFibGUnXSA9IFRydWUKICAg
-ICB0c3BlY1snZHluYW1pYy1saW5raW5nJ10gPSBUcnVlCiAgICAgdHNwZWNbJ2V4ZWN1dGFibGVz
-J10gPSBUcnVlCi0tIAoyLjQ3LjMKCg==
-
---1Ugscv74l3mMMkScwo4n--
+diff --git a/meta-zephyr-bsp/conf/machine/qemu-x86.conf b/meta-zephyr-bsp/conf/machine/qemu-x86.conf
+index 9551523..288504f 100644
+--- a/meta-zephyr-bsp/conf/machine/qemu-x86.conf
++++ b/meta-zephyr-bsp/conf/machine/qemu-x86.conf
+@@ -9,8 +9,7 @@ ZEPHYR_INHERIT_CLASSES += "zephyr-qemuboot"
+ 
+ # For runqemu
+ QB_SYSTEM_NAME = "qemu-system-i386"
+-QB_MACHINE = "-machine type=pc-q35-2.10"
+-QB_GRAPHICS = "-nographic -machine acpi=off"
++QB_MACHINE = "-machine type=q35,acpi=off"
+ QB_CPU:x86 = "-cpu qemu32,+nx,+pae"
+ QB_CPU_KVM:x86 = "-cpu kvm32"
+ 
 
