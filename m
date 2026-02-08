@@ -2,111 +2,107 @@ Return-Path: <charles.embedded@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DFF6EF06F2
-	for <webhook@archiver.kernel.org>; Sun,  8 Feb 2026 21:45:02 +0000 (UTC)
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.34784.1770587094738025878
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E89DEF06F5
+	for <webhook@archiver.kernel.org>; Sun,  8 Feb 2026 21:45:22 +0000 (UTC)
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.34827.1770587114185800239
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 08 Feb 2026 13:44:54 -0800
+ Sun, 08 Feb 2026 13:45:14 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=gtP74hAL;
- spf=pass (domain: gmail.com, ip: 209.85.128.181, mailfrom: charles.embedded@gmail.com)
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-7927b1620ddso53855357b3.0
-        for <yocto-patches@lists.yoctoproject.org>; Sun, 08 Feb 2026 13:44:54 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=kEpCBIbH;
+ spf=pass (domain: gmail.com, ip: 209.85.128.182, mailfrom: charles.embedded@gmail.com)
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-7950881727cso24430397b3.3
+        for <yocto-patches@lists.yoctoproject.org>; Sun, 08 Feb 2026 13:45:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770587093; x=1771191893; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+Rgw0WvVtFsX32H1ytGOcAiUJz4PLrpoRVfeHaUuVlg=;
-        b=gtP74hAL6z5CNOAqHmJZ8rwaXvY2+NEPZysseQ6bsVgbR4KDlSCVXFjvKvSr8KAgnz
-         aILQCc4/PkL3knMHeU9/uqnUQaDjkKX5XlNG76/kgCxbuOdxoaU2+Ont4GYDqbNvIRW5
-         rsZ7zeoB0yxGGvNM3rG8o9VNiA71a1bZLC9Zevz9Xjcpeb87wL1CfG24VKSGIMpu1r8I
-         hPCCAU3L1KSpEYpLBaVWeFu/Mbbm3Kfc2reDqEN3asiThW8JyIEIXFO4ecFgAbFbleoG
-         dnTjM92OMFpGCdxJ8OnOzuq3uwWSN5H7z0hCe3pWYWM9DypYZrSqVUBd6Ji3Fvgl/kqf
-         mK3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770587093; x=1771191893;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1770587113; x=1771191913; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+Rgw0WvVtFsX32H1ytGOcAiUJz4PLrpoRVfeHaUuVlg=;
-        b=lPoUyf9rCqDJgl/d+FzY92EmQYJYOF5IARFKCQsmifNbpAjFo1DfDKTLvcqVjfKiSW
-         Xu0zx5vxLOlm1/n+DGB3M4SGI57RLPkIqghnj10UCHutViS3zjhP2+FkhS9eSz4D9TMo
-         ZrBMvKg6H8LqIINqfcs3DjvXgRxxqNBdcQh29LCU5oA2/7Pf/4F2tVcWSXZw1pvL0oux
-         CThVhRx616KCxwHJzYMbJGtMKD/kOiQWFc/zg0tPQy0VDEYSlS25b1b9eYlUfNZ39Erh
-         hxFDd6Eciy/qguv3Dg7J87Df3Q1LL4xOadQqhWb9NTHxZLdDMut+QY3ZdSw15R9RvDIv
-         qBXg==
-X-Gm-Message-State: AOJu0Yw6frfMV1HO1SSRz9gmSRpR62wklm92gNxGL77LWe8UIzGI3x6s
-	iPhGvL6bM9WF/1nItxgRAZy8C/GhE68ToKZPcc+MfxXSRu3BrYcSXHXt7ZyP3Q==
-X-Gm-Gg: AZuq6aJgMuWmBlMDcv0RbiuXtrheQft1976cLnUwwcO6jakvzGglvbtfcXza+C3WSeC
-	E2LuB8nD4R2nqjuU/khyRxo07WE9w0o+iDd37nMLwvUzTvwHHoEohpJtywHQlgfR1vAlHQuCGbx
-	t19XbTfbrNBgPfD9woLNgZ3aphgVXFGFTK3+PnzOGAPgaXX0nndup4czW7rGu+Txtv3NfpsH1MO
-	lSsVU0BOus7jynP8lciRiTnaHFmqXyOG2nQ7+tUNQ3UkCKbNz0/p2TQ5xuhacz0dfQ8o/dY10Ij
-	Du6FQzA6E1Ygvrhw8bn/cPGqGnl9M4Lj9IAN+Nmu5y11ROOVgZ8rGV+ARYoj04YpSLidbrvPo/B
-	beDXdBH71DSApjNHQmyDa7bRUUaCHO6zeDmta2PMgLJlZhHB2Z8q0dyb2t6tVrerxooySnm07yZ
-	tAGTmRNkan7fdxjEbPw+d59A==
-X-Received: by 2002:a05:690c:fca:b0:796:3a4f:68fc with SMTP id 00721157ae682-7963a4f794fmr33996177b3.8.1770587093244;
-        Sun, 08 Feb 2026 13:44:53 -0800 (PST)
+        bh=wvojsvIrEv+sQ558nFi9E71EiqJSpbYjIO8R4DIu6VE=;
+        b=kEpCBIbHxA26s7/pyANU+ErDmM9WzZFFkk8UqAm0fpi/EVNji2QNXVloK7EsASHDFk
+         pf6rIHXLM6qrGbIOh/vV/BSr3lg63EoAvc6YE7w6jl8d4+0WMbWgXPA1uOw17m1SaNFT
+         oIijie10udLI6jaZASjyTm2SIDfa/TJHN8Avip0pAqpBURjODsSiPtIGnmKxWsCjzCS9
+         Occ47bjVxVEJNaJRixr1Ahw9MakhQD2pDCqIeNcSxHEXMH4X8/GRSmHFzSU2gzsWxkEe
+         JOYCu/zUjI0YQZlkFhkqo1Wz4ViQQevf2aJf004ws4TQZrD/QuS1dPzI3WA/+LDd15pQ
+         VADw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770587113; x=1771191913;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=wvojsvIrEv+sQ558nFi9E71EiqJSpbYjIO8R4DIu6VE=;
+        b=d+RriiWCWvfMSPuSiig1iPbJ9+/v7i2m4xYrT37czlhU8FTntYlqcWBbcfLoCnA+Lr
+         x/s2iap4V15L4KtvEeAaUJT/jEDDV4TistiRmYaotY7c/psaVBY8BVibTa448GVlFBG4
+         aPuFEnaEdaPJ9Z/NC2QBT0ZxJpAKAnR3pHvc1i66OiJBv7ajkSSupSjCghtlgExEO/i4
+         CTR3g8/2+OvxZMUz4XUg+/gZshmZVkesgZOPVKc3aRbQMEqR6rJCnh4okugH6bmiJJsC
+         KjzXlb64MmfUG1CQGg4VpNL0wNfDzmkFgcA3kR1w1QPLPUVj1P7sxHpO55W42OwqhNGb
+         W+DA==
+X-Gm-Message-State: AOJu0YwYnII5yfBzQL5sSwYtx/bBb3arvszwF5Et7oLklz58XJOjk6Nh
+	qGAT+AjffDlBxoPPUs8hbQYZ2KiV8IEhbz2/WxItGE8plWdF0ZjJr03ls2arzA==
+X-Gm-Gg: AZuq6aL8S3TFtJMlG3xgg93oWPU+VVqgwEcn+T20KiVSsIQVvkMnL0cKK8+lVQWAiUC
+	sQxFAYfYhaiV0tMll8TL3O4PrNhe8DpkcswmUyRsqVDclYNR0uTik6AFJtrVTfAp/cK60Wl6rcx
+	CSJdkDH63rP3xyZRaggp4R8U4fBZDO++iFacg2FfzJHWwur2RPzA8YVCAsAxiAPLvUKHMeKG+xH
+	khViShAtH4ZlO1yo1zEbEjoB/jmEvB/CandSpfz6aMSNUEkcl5/a1qhBAZ2h8Ca5ItJccBYf9dc
+	UV3NSNfMIYkSFs9a8k2A0h4eZaIpIJ/DE0Ei/4v9XpjZzprifIxJm08K49gNw9T4oZu+LtSnyuJ
+	UtKRoKYoqp90zneCWhbJVkmkalUWrsnE1EN0BtigolU53PMj8kwcXNjGqVWiYVQltjiE6sTYJfc
+	dDTaqMd21ByPGejOUVKAOzWQ==
+X-Received: by 2002:a05:690c:498f:b0:796:3124:6565 with SMTP id 00721157ae682-796312469e8mr98125347b3.1.1770587112848;
+        Sun, 08 Feb 2026 13:45:12 -0800 (PST)
 Received: from charlesdias.. ([191.22.19.155])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-796335b9d29sm38549047b3.37.2026.02.08.13.44.50
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-796335b9d29sm38549047b3.37.2026.02.08.13.45.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Feb 2026 13:44:52 -0800 (PST)
+        Sun, 08 Feb 2026 13:45:12 -0800 (PST)
 From: charles.embedded@gmail.com
 To: yocto-patches@lists.yoctoproject.org
 Cc: chee.yang.lee@intel.com,
 	sandeep.gundlupet-raju@amd.com,
 	Charles Dias <charlesdias.cd@outlook.com>
-Subject: [meta-zephyr][master][PATCH 0/5] Update QEMU machine configs and README
-Date: Sun,  8 Feb 2026 18:44:25 -0300
-Message-ID: <20260208214430.1048640-1-charles.embedded@gmail.com>
+Subject: [meta-zephyr][master][PATCH 1/5] zephyr-bsp: drop nios2 machine fragments (unsupported in Zephyr 4.2)
+Date: Sun,  8 Feb 2026 18:44:26 -0300
+Message-ID: <20260208214430.1048640-2-charles.embedded@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260208214430.1048640-1-charles.embedded@gmail.com>
+References: <20260208214430.1048640-1-charles.embedded@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sun, 08 Feb 2026 21:45:02 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3200
+ <yocto-patches@lists.yoctoproject.org>; Sun, 08 Feb 2026 21:45:22 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3201
 
 From: Charles Dias <charlesdias.cd@outlook.com>
 
-This series updates QEMU machine configurations and improves the
-README documentation.
+Zephyr 4.2 removed Nios II support, so building Zephyr targets for nios2
+no longer works.
 
-Patches 1-2 clean up the QEMU machine configs: removing the nios2
-machine (dropped in Zephyr 4.2) and dropping -nographic from
-QB_GRAPHICS (it should be controlled by runqemu, not the machine
-config).
-
-Patch 3 adds missing QEMU and Zephyr board settings for the mps2/mps3
-machines (ZEPHYR_BOARD, QB_RNG, QB_MEM).
-
-Patch 4 fixes the qemu-cortex-a9 DEFAULTTUNE to use hard-float with
-NEON as expected by Zephyr.
-
-Patch 5 updates the README with consistent runqemu nographic usage
-and adds a section on listing supported machines.
-
-Charles Dias (5):
-  zephyr-bsp: drop nios2 machine fragments (unsupported in Zephyr 4.2)
-  machine: remove -nographic from QB_GRAPHICS
-  machine: mps2/mps3: add missing QEMU and Zephyr board settings
-  qemu-cortex-a9: fix DEFAULTTUNE to cortexa9hf-neon
-  README: improve runqemu examples and add supported machines section
-
- README.md                                     | 26 ++++++++++++++-----
- meta-zephyr-bsp/conf/machine/mps2-an385.conf  |  5 +++-
- meta-zephyr-bsp/conf/machine/mps2-an521.conf  |  4 ++-
- meta-zephyr-bsp/conf/machine/mps3-an547.conf  |  5 +++-
- .../conf/machine/qemu-cortex-a53.conf         |  2 +-
- .../conf/machine/qemu-cortex-a9.conf          |  4 +--
- .../conf/machine/qemu-cortex-m0.conf          |  2 +-
- .../conf/machine/qemu-cortex-m3.conf          |  2 +-
- .../conf/machine/qemu-cortex-r5.conf          |  2 +-
- meta-zephyr-bsp/conf/machine/qemu-nios2.conf  | 17 ------------
- .../conf/machine/v2m-musca-b1.conf            |  2 +-
- .../conf/machine/v2m-musca-s1.conf            |  2 +-
- 12 files changed, 38 insertions(+), 35 deletions(-)
+Signed-off-by: Charles Dias <charlesdias.cd@outlook.com>
+---
+ meta-zephyr-bsp/conf/machine/qemu-nios2.conf | 17 -----------------
+ 1 file changed, 17 deletions(-)
  delete mode 100644 meta-zephyr-bsp/conf/machine/qemu-nios2.conf
 
+diff --git a/meta-zephyr-bsp/conf/machine/qemu-nios2.conf b/meta-zephyr-bsp/conf/machine/qemu-nios2.conf
+deleted file mode 100644
+index e9420b5..0000000
+--- a/meta-zephyr-bsp/conf/machine/qemu-nios2.conf
++++ /dev/null
+@@ -1,17 +0,0 @@
+-#@TYPE: Machine
+-#@NAME: qemu-nios2
+-#@DESCRIPTION: Machine for Zephyr BOARD qemu_nios2
+-
+-require conf/machine/include/qemu.inc
+-require conf/machine/include/tune-nios2.inc
+-
+-ZEPHYR_INHERIT_CLASSES += "zephyr-qemuboot"
+-
+-# For runqemu
+-QB_SYSTEM_NAME = "qemu-system-nios2"
+-QB_MACHINE = "-machine altera_10m50_zephyr"
+-QB_OPT_APPEND = "-nographic"
+-QB_CPU = "-cpu nios2"
+-
+-
+-TCLIBC = "glibc"
 
