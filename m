@@ -1,94 +1,112 @@
-Return-Path: <scott.murray@konsulko.com>
+Return-Path: <charles.embedded@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11771EE6B60
-	for <webhook@archiver.kernel.org>; Fri,  6 Feb 2026 21:25:32 +0000 (UTC)
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.1340.1770413122817687445
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FF64EF06E1
+	for <webhook@archiver.kernel.org>; Sun,  8 Feb 2026 16:45:50 +0000 (UTC)
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.28861.1770569147224668278
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 06 Feb 2026 13:25:23 -0800
+ Sun, 08 Feb 2026 08:45:47 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=o01GCqw2;
- spf=pass (domain: konsulko.com, ip: 209.85.222.175, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-8c7146b0854so273162985a.2
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 06 Feb 2026 13:25:22 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=SXJvZizX;
+ spf=pass (domain: gmail.com, ip: 209.85.128.173, mailfrom: charles.embedded@gmail.com)
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-794e95357cfso34230507b3.0
+        for <yocto-patches@lists.yoctoproject.org>; Sun, 08 Feb 2026 08:45:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1770413121; x=1771017921; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1770569146; x=1771173946; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=se5IdQcJQ+8P3BkBwYoSlpo752wa65d9zkcXwNAVZ1M=;
-        b=o01GCqw2H2nmMhtDOtIcMa6CTLU65wsUKYGW3eJxRizkGYiUwLOcE0EQPrVDeofXY6
-         DVWO7XTN5uiDlFUoaF4wnMB9PAeUCU+lvdkG7OwI6T2g4Lse8xRN5ZPT5b03Ri5YispD
-         MSYvi+SGsjbYeAORS7Z4sGQbuDmjn248wjPAc=
+        bh=IEavUQyVe7EF7PVFGFcSWBhIEQLbdRnm3b27+3PObG4=;
+        b=SXJvZizXuRNDhGQvJrZKqV3tS2lNbcMXTUrVBW4fpBz3Mzf12IZ5hZTN8uhmADA/XC
+         3ln5HVw9k48PCCWv56q63Q+P8zZCOkefV5qLiwoxEByHruX/xrUQTB3HOYx3yk0OEfc4
+         bdfAwMEdqawqTCtwO4B3gnfc+9FRBnpUDOPk8MZfW5cRJqbgbheKmQiiz4ZNktfiC9V/
+         V50LvJYBnxAj2+n9/BoEg669V1O7TGyH79bGacUfgG7u+hpZPOcj2SJRIkqDl6XQkV03
+         qVJ8aU2zbFj1K/dAao+AzD14NVqeExZWwy1tTTlYlgrvBKXDw6RDIN9lvf38nHCmEK7j
+         RDsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770413121; x=1771017921;
+        d=1e100.net; s=20230601; t=1770569146; x=1771173946;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=se5IdQcJQ+8P3BkBwYoSlpo752wa65d9zkcXwNAVZ1M=;
-        b=Z5oPhvKFhV1hs+/lOBUSP7cX/AD3rgEJ+FZL1x1EVNu6duzxX+/m0wwwErBSzID+F2
-         6vORgH9WkV51fAOqAs1krl8dqj2LJVRNntwoNw6XsqmwsVgb1Vh0qjGik+nMXyelykMi
-         aSC0AQu76xsgv7bWljAerYTXaDfk5QnZLKsCrv8CKIF2K/Lf2A7y1HgP+IY9Fp3Lspgv
-         VbPAdPq4Mpw/IlmplrFolM5+xsUuBZCPi4mm+wW6yh3xRT7/KxMisjLzCV/gKAFUVDkm
-         mFthJydSczXmLYG1cqRKCkSM8+mNGEUL3jatAT02b4YOcu1dBTkJawc8qeQgMI7O7+7U
-         YW5A==
-X-Gm-Message-State: AOJu0YxgTWKrWSY2tHVA15hsEN9lpoMuvcmMiX1+Yjm27Iiwf2ecVJ3A
-	7Lgx1PZ15o4Blogm1i6GSNTxfU0YpjPCmOThIIhZOszXpwBjnJoZ42UzD/rS7VbXNuY+C5erxOU
-	oA09S
-X-Gm-Gg: AZuq6aJrM+oBmr8q5UTcPtuU74czkAsSKAJJguuP7p5uAXq0dVQuvJb0BPlf1uZqaFa
-	Bd8niXW3UjI1VMWBp88sSexgBZWkCNf6jsW8ALvCa4Wk2exBlwhIMX9UhF+eM+MGCPCWWcegSdA
-	TMiJhGVrLzsZg8A6MRv9oYeF7M+shF1ZQK5UHiQ/W/eB+tK6wQ4zLkqZ4fbONN/uvCVgprKpyyj
-	gcE7/cDqeF0N5+05s1nkgXhsa5+lr4NrCyvr1R5WlxW2KowJ/F9kOLyDKW+xVt3xFKhBhKQUBQq
-	kih0VO0uhBnKbh3Lb0NPbVJsbi1pvhBrrubctgv4Hda5JenEY/EO6/tV8GiUZS3bijyIelJRZj/
-	/yG0GHBUGTw94tllY1/sHHZSG+DGp2cE04QIJo2FiI+vV8HxgALXE9AcGYBGo1srMyofN7AURzc
-	Ua6SsE/aCRAbhbDX2fgBXwklCs2Egi2puULl1eW7DmPUQpWVD1cvpZlPMF30x7WGMyaUmbuVUVD
-	Iv4hL6bZTP6HHNQAkDX8IR72LYCVBQsIcgF0yt6E55vX0txQk18
-X-Received: by 2002:a05:620a:459f:b0:8ca:2baa:770 with SMTP id af79cd13be357-8caefbcb25emr584525385a.21.1770413121400;
-        Fri, 06 Feb 2026 13:25:21 -0800 (PST)
-Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8caf77f6f05sm241509385a.1.2026.02.06.13.25.20
+        bh=IEavUQyVe7EF7PVFGFcSWBhIEQLbdRnm3b27+3PObG4=;
+        b=ZGM9/uQacSkE6Rav0nlS3feimiSt9d5LV2QLDgmBZogEtHYtoNK5yL1lRIBMzuF04W
+         dMkgO7tUIP0rPXbUo1LiR+kliIR5/C2lcayMfVFudT60Si5TJ4OKsmYrW+2IIQK+b9Kf
+         xlWkCl7jrVvLrQIgOyvoaoN/HX7YF2iWI2AjHoQZY+bYLKXKtxiVmcSCDqAfeEruu3DC
+         OW/syUnZyjVphYxBGC6MoV1vWXdM1OY7aUu5GYpSGhC5hSvU2SI6hXZD1NFcOX8ZtpX9
+         BbfuBk5f3OrZz6a0x7JAN6Byhpfnrt6IT7lmMi6cR2waeFpWcVjDbwnrB+ytZWFnQypt
+         4fSQ==
+X-Gm-Message-State: AOJu0YzI+WFKGkQ0d/lN++2gwLCk3X/nCSuQaz27wo2j/p2nXwuf1A7G
+	70G0+Y6AEeVZCgtkMUtAkEBU/8xSbqbFBZ3NcOszplDwCNFHxJJ9oNpF3NNWzw==
+X-Gm-Gg: AZuq6aICUpmzsv9pPv12myhX63f5nh7Ow9bsyg+nhnGbQC2D4TqqoDrmIwk+/T+MP7G
+	ac3Ze6mwGXFPt8QOrFF1vbLhj9f1N7k5seDMrObmPJOrz1UBWh613G2yuE9tKlrW1UwWPCZmgHu
+	o2vlQIHZT9W75SPuHUm+aO5+Mgt9cmNlfsjRxoXILbfpTN5cqQUtuLp5glQ6MtNPbPsMn7Dma00
+	aOz8VyTcseovkAkfmJpPqZY9qjSKg4H9AJO3b7UhxZxZd198gaJ3YahnCvhkOKeTIVM5eZqAJnZ
+	vHp3BMBEY+f7VIKJqApnZmEWQSW7ulWQDyoEzhsWFvtHCCnTqCdoJoIbLKbLuVyEGADHocCAvgl
+	b5Ykneu3GPSAl7MPy18yzMdR0MCI3wWrRuPt1XXFA4lDjhm5m/a+Q0Z2qTuCllOfJBmQN6EVVXS
+	JBubv6uZeRVUa4C3/7XoJS5g==
+X-Received: by 2002:a05:690c:6c90:b0:794:77da:aa55 with SMTP id 00721157ae682-7952ab3fbabmr73672317b3.42.1770569145842;
+        Sun, 08 Feb 2026 08:45:45 -0800 (PST)
+Received: from charlesdias.. ([191.22.19.155])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-79641ed89c7sm11843387b3.44.2026.02.08.08.45.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Feb 2026 13:25:21 -0800 (PST)
-From: Scott Murray <scott.murray@konsulko.com>
+        Sun, 08 Feb 2026 08:45:45 -0800 (PST)
+From: charles.embedded@gmail.com
 To: yocto-patches@lists.yoctoproject.org
-Cc: Zahir Hussain <zahir.basha@kpit.com>,
-	Nitin Wankhade <nitin.wankhade333@gmail.com>,
-	aszh07 <mail2szahir@gmail.com>
-Subject: [meta-lts-mixins][kirkstone/rust-1.75][PATCH 0/1] Ignore Windows CVEs
-Date: Fri,  6 Feb 2026 16:25:12 -0500
-Message-ID: <cover.1770412335.git.scott.murray@konsulko.com>
-X-Mailer: git-send-email 2.51.0
+Cc: chee.yang.lee@intel.com,
+	sandeep.gundlupet-raju@amd.com,
+	Charles Dias <charlesdias.cd@outlook.com>
+Subject: [meta-zephyr][master][PATCH] zephyr-qemuboot: use stable ELF symlink to avoid broken runqemu rootfs
+Date: Sun,  8 Feb 2026 13:44:58 -0300
+Message-ID: <20260208164458.101865-1-charles.embedded@gmail.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 06 Feb 2026 21:25:32 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3197
+ <yocto-patches@lists.yoctoproject.org>; Sun, 08 Feb 2026 16:45:50 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3199
 
-This kept falling to the bottom of my TODO list, but I did some testing with
-cve-check last week, and decided to update the patch since CVE-2024-24576 was
-also showing as unpatched.  I intend to merge this to kirkstone/rust-1.75 at
-end of day Monday (5 pm Eastern, Feb. 9th) if no issues are pointed out.
+From: Charles Dias <charlesdias.cd@outlook.com>
 
-Note that I considered applying this to the 1.68 and 1.70 mixin branches, but
-it does not seem worth the effort, as they do have other unpatched CVEs that
-would require some further investigation into addressing.  I would recommend
-folks using those mixin layers that are concerned about CVEs take the likely
-easier path of moving to at least kirkstone/rust-1.75 instead.
+do_bootconf_write() may update qemuboot.conf and the QEMU ELF symlink to a
+new timestamped name while the ELF itself is reused from sstate and not
+deployed, leaving a broken symlink and causing runqemu to fail with
+"Can't find rootfs: ... .elf".
 
-Scott
+Fix by making zephyr-qemuboot use the stable link name
+(${ZEPHYR_IMAGE_LINK_NAME}.elf / ${PN}-${MACHINE}.elf), which is
+guaranteed to exist as a symlink created by zephyr-image.inc and always
+points at the most recently deployed ELF.
 
-Changes:
+Signed-off-by: Charles Dias <charlesdias.cd@outlook.com>
+---
+ meta-zephyr-core/classes-recipe/zephyr-qemuboot.bbclass | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Zahir Hussain (1):
-  rust-cross-canadian: Ignore Windows CVEs
-
- recipes-devtools/rust/rust-cross-canadian.inc | 2 ++
- 1 file changed, 2 insertions(+)
-
--- 
-2.51.0
-
+diff --git a/meta-zephyr-core/classes-recipe/zephyr-qemuboot.bbclass b/meta-zephyr-core/classes-recipe/zephyr-qemuboot.bbclass
+index ab0a281..4d8920f 100644
+--- a/meta-zephyr-core/classes-recipe/zephyr-qemuboot.bbclass
++++ b/meta-zephyr-core/classes-recipe/zephyr-qemuboot.bbclass
+@@ -1,8 +1,8 @@
+ inherit qemuboot
+ 
+-ZEPHYR_IMAGE_BASE_NAME ?= "${PN}-${MACHINE}${IMAGE_VERSION_SUFFIX}"
++ZEPHYR_IMAGE_LINK_NAME ?= "${PN}-${MACHINE}"
+ 
+-KERNEL_IMAGETYPE = "${ZEPHYR_IMAGE_BASE_NAME}.elf"
++KERNEL_IMAGETYPE = "${ZEPHYR_IMAGE_LINK_NAME}.elf"
+ QB_DEFAULT_FSTYPE = "elf"
+ QB_NETWORK_DEVICE = "none"
+ QB_NET = "none"
+@@ -29,7 +29,7 @@ python bootconf_clean() {
+ python do_bootconf_write() {
+     bb.build.exec_func("do_write_qemuboot_conf", d)
+ 
+-    qemuimage = "%s/%s.elf" % (d.getVar('DEPLOY_DIR_IMAGE', True), d.getVar('ZEPHYR_IMAGE_BASE_NAME', True))
++    qemuimage = "%s/%s.elf" % (d.getVar('DEPLOY_DIR_IMAGE', True), d.getVar('ZEPHYR_IMAGE_LINK_NAME', True))
+     qemuimage_link = d.getVar('QEMU_IMAGE_LINK', True)
+     if os.path.lexists(qemuimage_link):
+         os.remove(qemuimage_link)
 
