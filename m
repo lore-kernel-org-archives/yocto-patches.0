@@ -1,120 +1,99 @@
-Return-Path: <twoerner@gmail.com>
+Return-Path: <antonin.godard@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A416EA3F08
-	for <webhook@archiver.kernel.org>; Tue, 10 Feb 2026 05:37:02 +0000 (UTC)
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.13825.1770701821239885421
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDD44EA810E
+	for <webhook@archiver.kernel.org>; Tue, 10 Feb 2026 13:07:04 +0000 (UTC)
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.19145.1770728814188203279
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 09 Feb 2026 21:37:01 -0800
+ Tue, 10 Feb 2026 05:06:55 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=kfI4OnH7;
- spf=pass (domain: gmail.com, ip: 209.85.222.180, mailfrom: twoerner@gmail.com)
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-8c5349ba802so520096385a.1
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 09 Feb 2026 21:37:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770701820; x=1771306620; darn=lists.yoctoproject.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=aaBuQHJGrKwAyhE8TeUdLT48G06z3qIitTV86hGv4PQ=;
-        b=kfI4OnH7qe9xOG6CaQH5iSRo/KHyrTJU02Z6PXUrnCpbD4Ho499F5ORQFeGMno74A8
-         b5kNWcui6zoeJwQY6BGHBTd1vfms64GHEO0zn/WQWzOiDTzVP2y91/ZDSG3jxddRrMnv
-         rxZNVRHEfSku//eKPqNffIj+cdEyGtR7ebeQDVHWq6mwUdv99UGBEOwup+ga7AIBdhgs
-         y0DER9o2ykURzExDOUNuFs1bJIG4bYJnGxRNOjw+csyHATaXTg/clVvMcLWF6iHTNlOl
-         RqRHhHG3LceR8p7icSK49kBRl++N/JoUQTCrCipNkPM41STjS6SQdpGeIb1Xbsq/Vl5t
-         0/Og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770701820; x=1771306620;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aaBuQHJGrKwAyhE8TeUdLT48G06z3qIitTV86hGv4PQ=;
-        b=fIl/fUpdmebp2uUMN+rM4VgwhsanX6CmrKO0g0CazdQTODeBPSybjuq53CId1QmkPU
-         i7hApSmiZC3Ac0tQjWExbWghMA3QLRtnDDAkmejgISzNj0Npe6ebZ0mPzazkb65inA0d
-         T3eH2eIl4aAkch6+nq8le8agntRWyKPhu5Yj3dD9CUdAaNkrPc2a78GKLA8sOTuiHUmk
-         UBQ3ByvUw4Ra5A3PUfotSb7LWvDh2x44heP3dgaEzy4NY8EC1eITPRW0D4wTMN+SHhzc
-         8rE3r+OWYYlJZkcYaKiod1sBX4WGDsbY/GeEOneGJdu0Lif3S8WDXkR0NUk0uQFPPdgp
-         Os7Q==
-X-Gm-Message-State: AOJu0YyLzIEyvETPiBtYmmCQYlEo2Ep504r6CR5HNlfdHea/t2LWYOCB
-	jXpaJ5p5HMvttBMhEFsIjFOOYbvPBSL2Fn7kGj+jTkENytbyW7Va3j4G
-X-Gm-Gg: AZuq6aJZOOMAHPO2azotiZNlvWHDhJO6IsVcEqXvO91q1Fw4D0zmyOiWdem3jrfx/2q
-	W8+7vOzAPtM3ynouOALIYNxh9lGWBeADOSzS78j1TnUlrDlZsX+qxJCmriG+nWp92aCdKvtuLc2
-	s7xi125KBBtT2e/fvnJ++w8TvvSanT+8KI2h6TErjQZFfcgWpNULeRjAEBTYzkxHvt05ov1q/al
-	ilKr6rLxQYFe3IE0HrsIlPBg4nUreI1jBam953mgErJxKjed4YfEfKqwO8RD/IrMFE+nRMVl2d+
-	d236b4xrBWLD+tOGi5HDd7mYv1ufTC8jOl2X19vXnoIwXU30BlK8hn7R1mmHGQyqbDAlSpYrOz1
-	bInyvX74UM1VPfjUXOW34OdJ0j58RKQaqcCh47KjVncNjnCft5NySQs/umnQXtogCxVC4DrAycc
-	BIEpkZGsZwaIZG0hHm1dbykgXVREYybLYMl5GmUBi8CGtl9aVCXX34DUXpiVvy0/KGew==
-X-Received: by 2002:a05:620a:4055:b0:8b2:dcde:b668 with SMTP id af79cd13be357-8caf057f2b2mr1824721685a.62.1770701820182;
-        Mon, 09 Feb 2026 21:37:00 -0800 (PST)
-Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8caf7aeed7dsm926865585a.18.2026.02.09.21.36.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Feb 2026 21:36:59 -0800 (PST)
-Date: Tue, 10 Feb 2026 00:36:56 -0500
-From: Trevor Woerner <twoerner@gmail.com>
-To: Quentin Schulz <foss+yocto@0leil.net>
-Cc: yocto-patches@lists.yoctoproject.org, Peter Hoyes <peter.hoyes@arm.com>,
-	Quentin Schulz <quentin.schulz@cherry.de>
-Subject: Re: [PATCH meta-rockchip] bsp: fix upstream TF-A deploy desync
-Message-ID: <aYrD-LsfeSn64ckx@localhost.localdomain>
-References: <20260121-tf-a-fix-v1-1-02f7b61db7f8@cherry.de>
+ dkim=pass header.i=@bootlin.com header.s=dkim header.b=zGCOieC/;
+ spf=pass (domain: bootlin.com, ip: 185.246.85.4, mailfrom: antonin.godard@bootlin.com)
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 11B654E40BE3
+	for <yocto-patches@lists.yoctoproject.org>; Tue, 10 Feb 2026 13:06:52 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id DC135606BD
+	for <yocto-patches@lists.yoctoproject.org>; Tue, 10 Feb 2026 13:06:51 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EDB92119D0B2E;
+	Tue, 10 Feb 2026 14:06:50 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1770728811; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=CtGRsR2/kR0MocfefS5IFNTG7EbG3Z169pCgjL8hr/4=;
+	b=zGCOieC/S7zeZDtBSolRuMX5Io3Sn/6DynwiBNNZjRZ9EnpAVqpYJcZc3GqZcbI+i9GOR+
+	JHS6HkBOlvpok3EVC0GzcWu0/xuhOiYq8s270pbfBVaumsH7WSqui/MyB3hSWrft9Mo4Zn
+	2UwJNyVz9rvvLsJpAMH6bnGG/mmlp0ddj7Oi/tohZZF1+bDeuCDq+k7stup5wSMjkvVpZx
+	QAdGxzqrDLRdjQ0Lb9rD3QnQVgrASwR5nL8tYKjkzfl9aH3dmwkROTtdF3tMEFlQpy1tJR
+	xcl4Hht746QXo/WzlcPzkC2jKDN+STV8h5zzVfkomFIx/j6OmzZN8OnV6ZT4eQ==
+From: Antonin Godard <antonin.godard@bootlin.com>
+Date: Tue, 10 Feb 2026 14:06:47 +0100
+Subject: [yocto-autobuilder-helper][PATCH] scripts/run-docs-build: update
+ buildtools docs tarball to 6.0_M1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260121-tf-a-fix-v1-1-02f7b61db7f8@cherry.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260210-update-buildtools-docs-v1-1-1be3664c0d29@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMywrCMBCF4Vcps3YgDSWir1K6SJPRjoROyKUop
+ e9urMsfzvl2yJSYMty7HRJtnFnWFv2lA7fY9UnIvjVopY3SvcIavS2Ec+Xgi0jI6MVlvN6GNrC
+ GBjLQzjHRg98nPE7/znV+kSs/bfyIK4K2FjkhSrhQiJQmOI4vmdVOzJQAAAA=
+X-Change-ID: 20260210-update-buildtools-docs-794260a6e4e6
+To: yocto-patches@lists.yoctoproject.org
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Antonin Godard <antonin.godard@bootlin.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1689;
+ i=antonin.godard@bootlin.com; h=from:subject:message-id;
+ bh=7fPCsOt/wtnnWMKv3hR8AZEgq+0N+M8+Q7atE1MCUCQ=;
+ b=owEBbQKS/ZANAwAKAdGAQUApo6g2AcsmYgBpiy1qdHCSJrgQ/to8veybm6Aupt+At11bbLN2b
+ hheS/nB8T6JAjMEAAEKAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCaYstagAKCRDRgEFAKaOo
+ NmN3D/904kyZpxCOkzCv8z67zX81ZmHDGXn1LjoiNlsyEIumAxhyJWJN6O2Fepj1ENWelRYLRPm
+ afziVFzcd3SAhNPEmAfCQ7msqEtkGaGr5ACsbNP4QjtZBrgpfRCy4UeF2Fbtggcrk7BM+xfSJev
+ KuQcv9l1d7D5u4pt35YDvVK1WeMbRThP+ksIjhYpc2fq6jSByknZlN9sNbWXvgJ4dcaRxdCtih1
+ baFePydTxqK5BDzETauv1BsQ6N5h18JxpwULHM9JQQIqK9UU/SsQx6VdnooZEdm3fGj4o4q7NwY
+ PPp/iHFlCDruF5bW/RjUvEItPHXpDqZ6K64zVXUo1Qey7b/WO/AIV7lbrmVq9ht3iZewIiBlvlo
+ 8Uz52bul1kl9szmzQtKjxhFTHW+ibwhaQqM4g7IqueTzJHmPvM7p+bL5lyLME9lxK9cEYYuEj24
+ ll60fZcNQOZdTA/gsYIncfuSw7gy0Kz6OQuD9I9oHCMQkevUo5HtjMLLRHT0m7Lir6YCWX2DOD6
+ E3tgNmUdp/Ki1VstRpqOUxrSs2Kn16emP5zyQjf/ZpPMNqxj43JAO5g6eIIB0/iiG+bkvvJoYLS
+ hwKG1mJ2KlDvFCC9K138bPXBeirwjttZqaTj6MzvCE8dbvxAEMAmCf2Yt8wcyV5ioW0bM7570rT
+ f3pFMkER4gWbaDA==
+X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
+ fpr=8648725188DD401BB9A0D3FFD180414029A3A836
+X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 10 Feb 2026 05:37:02 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3209
+ <yocto-patches@lists.yoctoproject.org>; Tue, 10 Feb 2026 13:07:04 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3210
 
-On Wed 2026-01-21 @ 06:06:56 PM, Quentin Schulz wrote:
-> From: Quentin Schulz <quentin.schulz@cherry.de>
-> 
-> Since commit 7bce36a2c64b ("arm/trusted-firmware-a: Use
-> firmware.bbclass") in meta-arm, the BL31 firmware is deployed in a
-> subdirectory named trusted-firmware-a and the binary is simply called
-> bl31.elf without any other string.
-> 
-> This differs from what it used to be by the use of the subdirectory and
-> the name of the file itself. This is an issue for us because the U-Boot
-> recipe is given the path to the BL31 binary in deploy directory and that
-> now was wrong.
-> 
-> The second issue is that we want rockchip-rkbin-tf-a to be a drop-in
-> replacement for the upstream recipe and have nothing to change in other
-> recipes dependent on *an* implementation of TF-A (such as the U-Boot
-> recipe).
-> 
-> We can either fixup the path like was done in 2a13a49da4af ("fix u-boot
-> for tf-a firmware") but we'll need to do that for all current and future
-> SoCs (and also wasn't a complete fix as for example px30 didn't have the
-> fixup applied). Or we can simply adapt the rockchip-rkbin-tf-a recipe to
-> deploy the same way that the upstream trusted-firmware-a recipe does by
-> installing in a trusted-firmware-a subdirectory, simply name the binary
-> bl31.elf and update the BL31 environment variable in the U-Boot recipe
-> to use the new path.
-> 
-> Because RKBIN_DEPLOY_FILENAME now contains a directory in it, we need to
-> make sure the directory is created (with install -D).
-> 
-> This was tested with upstream+downstream TF-A for RK3588, upstream TF-A
-> for RK3399 and PX30.
-> 
-> Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
-> ---
-> This is a follow-up to
-> https://lore.kernel.org/yocto-meta-arm/28377373-a3e8-4416-aa7f-488cdfdbcf55@cherry.de/T/#m76f7d4b56849cc28fe80a76953f4e6e61ff0f7cc
-> and
-> https://lore.kernel.org/yocto-patches/dd990ccd-a418-45bc-b708-d3b1fc763ea5@cherry.de/
-> ---
->  recipes-bsp/rkbin/rk3308-rkbin_git.bb                        |  2 +-
->  recipes-bsp/rkbin/rockchip-rkbin-tf-a_git.bb                 |  9 +++++----
->  recipes-bsp/rkbin/rockchip-rkbin.inc                         |  2 +-
->  recipes-bsp/trusted-firmware-a/trusted-firmware-a_%.bbappend | 11 -----------
->  recipes-bsp/u-boot/u-boot-rockchip.inc                       |  4 +---
->  5 files changed, 8 insertions(+), 20 deletions(-)
+Update the buildtools tarball to 6.0_M1, which contains the recently
+added python3-sphinxcontrib-svg2pdfconverter. This should help up
+proceed with the changes suggested in [1].
 
-Applied to meta-rockchip master branch (with added -D), thanks!
+[1]: https://lore.kernel.org/r/20251202-fix-make-multi-target-v2-1-7eea1d64cf6b@cherry.de
+
+Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
+---
+ scripts/run-docs-build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/run-docs-build b/scripts/run-docs-build
+index b83799a..7c16470 100755
+--- a/scripts/run-docs-build
++++ b/scripts/run-docs-build
+@@ -26,7 +26,7 @@ scriptdir="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+ PUBLISH=${PUBLISH:-1}
+ sharedir=`jq -r '.["BASE_SHAREDDIR"]' < $HOME/config-local.json`
+ # Modified 5.1 tools image to include rsvg, switch to next released version
+-buildtools_url=${buildtools_url:-https://downloads.yoctoproject.org/releases/yocto/yocto-5.3/buildtools/x86_64-buildtools-docs-nativesdk-standalone-5.2.99%2Bsnapshot-8519978592483bb096ed5192fff7af6c887b799e.sh}
++buildtools_url=${buildtools_url:https://downloads.yoctoproject.org/releases/yocto/milestones/yocto-6.0_M1/buildtools/x86_64-buildtools-docs-nativesdk-standalone-5.3.99%2Bsnapshot-6c31c2a731858108e790acaf38679a01b0d1a035.sh}
+ buildtools_url_old=${buildtools_url_old:-https://downloads.yoctoproject.org/releases/yocto/yocto-4.1.2/buildtools/x86_64-buildtools-docs-nativesdk-standalone-4.1.2.sh}
+ docbookarchive_url=${docbookarchive_url:-https://downloads.yoctoproject.org/mirror/docbook-mirror/docbook-archives-20201105.tar.xz}
+ 
+
+---
+base-commit: ec17abb0b2d759b800cefec4fcac61cee74dbefc
+change-id: 20260210-update-buildtools-docs-794260a6e4e6
+
 
