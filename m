@@ -2,143 +2,95 @@ Return-Path: <ticotimo@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D54F0ECD6E3
-	for <webhook@archiver.kernel.org>; Wed, 11 Feb 2026 19:55:49 +0000 (UTC)
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.27914.1770839746952061513
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F9E9ECD6E7
+	for <webhook@archiver.kernel.org>; Wed, 11 Feb 2026 19:55:59 +0000 (UTC)
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.28225.1770839755698619084
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 11 Feb 2026 11:55:47 -0800
+ Wed, 11 Feb 2026 11:55:55 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=khRHQ3lC;
- spf=pass (domain: gmail.com, ip: 209.85.210.179, mailfrom: ticotimo@gmail.com)
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-824adc96ad2so326489b3a.3
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 11 Feb 2026 11:55:46 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=TQNJQJz7;
+ spf=pass (domain: gmail.com, ip: 209.85.210.182, mailfrom: ticotimo@gmail.com)
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-8230f8f27cfso3500055b3a.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 11 Feb 2026 11:55:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770839746; x=1771444546; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZOCIcp29lq/M55SkmhIQVIhdbqF4388ZhmRXwUEe9P4=;
-        b=khRHQ3lC3HW+/LFmWH4dg9E6OPGkD6SLsUAS+RP3JKos8bcth7ihfwj+TQCQTThPuR
-         eK1XNFpqGap8q9Cty3CKtWUiQKScT4aEGBNOTOlzFJp1U8FDpE7Q6qu39a59tNhcwIfl
-         0sX4qdYEMD8pzEmLNoE7YrPfE5qacWg1SxgaXGQzzpjVXr77B1ZhpVBWGViyr6wUZH2X
-         mtG3tCllf9bN3MaHK0Hj13D6Sp14SoB/D5M4CV1p5FxijjvcqPfjWsDYwcrX5TQQS85c
-         oAUkL6iEprNhtwm3DqeHI9I+o2X53iOZjkWMBT95L6mjVMqJx3TkZnlb53fXABHDDaGu
-         YXUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770839746; x=1771444546;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1770839754; x=1771444554; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZOCIcp29lq/M55SkmhIQVIhdbqF4388ZhmRXwUEe9P4=;
-        b=kD69v10mxkQ477OTpsCwS+hlxUUZkjNX0GRCJJ9V1k/fjvVgDXAbWDSV+DNSq9XxPV
-         7CdZdSLOut+OFTEMoTeaco3RIdJY4pKmG8M5ZJi1t8AyjpqGJyzMg7Z+iQmO+mpcCc4U
-         Sg4/AJfwoXT3x4yTcoByUVsF80lnhcYYlddV23cHgT9n2/rL3IANa+d3FbLr9PMrAZwB
-         rJG+nr/bkAkCzPMP9mM/uKApe+6Y76jj5h3mDk0bPPKg6OAvUmmacFnl5/h1w2AFgR3z
-         WNTaEPeR1vfAO271YR7DXWDxwodgp1MliHEaVqjGVqmglVlF32sReg8hnePp+7YccaHm
-         LFCA==
-X-Gm-Message-State: AOJu0YwmapHqKwQnVLcyoeVxzt8ogHSXsNCH1z2Y03VGPns/emdfPyQf
-	3lLL5MLU3wQw1A+YC7YlGDkw6VnOhqm8CJlY8FAX0VC0olqinINYDpNJLSif4Q==
-X-Gm-Gg: AZuq6aLrNW3zuIPbTLMXyeeZDhhwPviOerkMZNw4ITo3NIZgrcYmVdjSsxVFylK8dfY
-	BPkCKRD9vfMid+CdrKdgK4YCfnzQ/xLjJ65SuqkzTOwpQRaz0Evkz7oF7AcI6JXwX4/aHjdqWX+
-	QOFthu84U8ns2M73aQyfzFuWbBTwFBf/e2snxvYVoZyGS9iOj8KWX2zvLcDtwcCjbLp8RzQ3yFl
-	3WKhj/DubsuFR+PJXm1eub0vZ3FPxHfSKgKj00UQLKbS/Pw8wqXMiR0KGyTLiMtGSq7sZhRKIKq
-	U5vH0Fx02Yuoby5AzzaDpYuruqBjtwg5InfGTygTVkBcGe5xMEFPFafPJsGpCxv8ZHp7lzXhe3V
-	ZCkJeZaL9aWn7ww8XKeBPnA4zsYGr+T6AVN1yra9QrLJE2pyvL7w6240+Yr9f4SEGr20ivq2do3
-	RrJ5ET76kSx/V/s1hoC35rPoPcdxhhe8S2OCjr1I30p+bYo8/BBRlDto+9DbYcxZRGXE4yOO3b7
-	xfb1BL4yVwhGrgbQOQfAu0=
-X-Received: by 2002:a05:6a00:2492:b0:823:52b6:1633 with SMTP id d2e1a72fcca58-824b0543412mr166389b3a.40.1770839745699;
-        Wed, 11 Feb 2026 11:55:45 -0800 (PST)
+        bh=tNUxCa6agjApiCbIcLn82ht+gQrxWhACHscn1SDu34I=;
+        b=TQNJQJz7gwDoH4KHIntnZirpmARm/WX2ZYAxfb7NDg61zaOHDMKRU1zR3S7nMyCphl
+         ZOrA7zEgDw5BTnxC3at4oyOdN6S625CI779fc7IAn4QI8cDqF9lNDdj5DbQKnH7gHJV7
+         p0FVFuUcby2li53plzaKuMYqUsHDcigEjinl7hHLEVvCDHYKs81pH7kFAdH//9hWl0sU
+         YUoyd7WTpS+FPmQZeQ0rrDNtkknslm60FHwc9rkBq7cPEkrGjTq0uH3c+u0R/fcjTiDW
+         us1zob2rks+eH8vhHtdKchgZR2y6FCieQ5T3YL/8UeNzjkKpa3JrAbB03cWemuDA9ctr
+         qBmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770839754; x=1771444554;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=tNUxCa6agjApiCbIcLn82ht+gQrxWhACHscn1SDu34I=;
+        b=aoSNqNhDoXnwtR36EIqfAwJldMiGTsIWGwCA/UPax7TPQaSrgDtYZBTvxrJgRT/rv8
+         yiys9uzEfnW/p5ZjOTVk3K5hd2l6gy7/DoF+hoIdTjOY3oRhbhhhdTD9mUiWHXipsuR/
+         XwUTjnWciWVbWLJEzLwz7tWlDGUazyP/FUtgupFPGahupiMUcqq9EDTgowT7uUEzwg4V
+         zLBxLDJIIj5RtXOVqhUi6hcn/MFSD81FLIm3ZQ0Vh6BgzqDtVIgVcrrpCj4p2/h6wtbK
+         GnF5Eber5ZPYehykcnn1BD4Ypa5rJwBKup87qurQ6akx0z+2SjgN4WpUwbVQ3ufLwAvg
+         QJuQ==
+X-Gm-Message-State: AOJu0YyY6UzNgL75GTWhihrl5CwjA4BQ648fBb70kvXeSnfPcVBm0M23
+	Ue9Wwq7gUEyc0jwbzMNzMWN99f57Ao6uMZyJzmckoaxnD8sDfW6C4wapApileA==
+X-Gm-Gg: AZuq6aKJnPYPm5gJWnxC8Xu/egiqz/pr2LQJjbU8PKzeqLt9timEojFV7Pmk5Ects6a
+	YjBI49o9GwaO4zbyrQUz6oT3ijoZNjJa9GAMtdL+2NyF5m4GYwNJ+i1C5LuCIFeNXfvG/fMtnpX
+	PDY08hrTcdyQuTWfg6ZYxJ/oTHl/dR/3GH3c5ntyX+TLPsmk8QR3uJvS6MlSxW3X85qvaHgq6xN
+	ljDL86ts6hh5GcPjLIK9osO/Zy/SnahlDd6efrEa5vChuOS+h5SoFMUbsKnTkPe++ynjVkyl1By
+	MfnT8vo0YQ5bsTRQUkmkkk2hbNiNh+IBGklWsWFwu8pZONsXXNJXbPEOuLuz8Q4DaJ5NpALbnKU
+	iCcS+QeZ2+OI1Bfb36oPcLUknjlQ91BpK+Ga0zVRjQets50WUElFD8uajJKmOhDnOUv/6cPce3G
+	kpo8cffEBhc9BlnMd7Qu3Tiev6zgOTIeyPPVOwpAyNvt7IC/4yJEe9U4VaCvjtRwfh//wcwpcgq
+	fUIm2NT5gzpBnA19DjUAuWJDgsge6Oh9Q==
+X-Received: by 2002:a05:6a00:1da1:b0:81f:4884:4fed with SMTP id d2e1a72fcca58-824b03db50emr249740b3a.7.1770839754531;
+        Wed, 11 Feb 2026 11:55:54 -0800 (PST)
 Received: from localhost.localdomain (c-98-232-159-17.hsd1.or.comcast.net. [98.232.159.17])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8249e7d621esm2810293b3a.32.2026.02.11.11.55.44
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8249e7d621esm2810293b3a.32.2026.02.11.11.55.53
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 11 Feb 2026 11:55:45 -0800 (PST)
+        Wed, 11 Feb 2026 11:55:53 -0800 (PST)
 From: Tim Orling <ticotimo@gmail.com>
 X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Tim Orling <tim.orling@konsulko.com>
-Subject: [layerindex-web][PATCH 1/4] requirements: bump to fix vulnerabilities
-Date: Wed, 11 Feb 2026 11:55:33 -0800
-Message-ID: <20260211195536.10278-1-tim.orling@konsulko.com>
+Subject: [layerindex-web][PATCH 4/4] BranchComparison: use mime type text/x-rst rST
+Date: Wed, 11 Feb 2026 11:55:36 -0800
+Message-ID: <20260211195536.10278-4-tim.orling@konsulko.com>
 X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20260211195536.10278-1-tim.orling@konsulko.com>
+References: <20260211195536.10278-1-tim.orling@konsulko.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 11 Feb 2026 19:55:49 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3214
+ <yocto-patches@lists.yoctoproject.org>; Wed, 11 Feb 2026 19:55:59 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3217
 
--Django>=4.2,<4.3
-+Django>=4.2.28,<4.3
-https://docs.djangoproject.com/en/dev/releases/4.2.28/
-CVE: CVE-2025-13473
-CVE: CVE-2025-14550
-CVE: CVE-2026-1207
-CVE: CVE-2026-1285
-CVE: CVE-2026-1287
-CVE: CVE-2026-1312
-
--django-simple-captcha==0.6.0
-+django-simple-captcha==0.6.3
-https://django-simple-captcha.readthedocs.io/en/latest/changes.html#version-0-6-3
-
--Pillow==10.4.0
-+Pillow==12.1.1
-https://pillow.readthedocs.io/en/stable/releasenotes/12.1.1.html
-CVE: CVE-2026-25990
-
--sqlparse==0.5.1
-+sqlparse==0.5.5
-https://sqlparse.readthedocs.io/en/stable/changes.html#release-0-5-5-dec-19-2025
+https://docutils.sourceforge.io/FAQ.html#what-s-the-official-mime-type-for-restructuredtext-data
 
 Signed-off-by: Tim Orling <tim.orling@konsulko.com>
 ---
- requirements.txt | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ layerindex/urls.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/requirements.txt b/requirements.txt
-index 15530a6..7a3806c 100644
---- a/requirements.txt
-+++ b/requirements.txt
-@@ -1,3 +1,4 @@
-+-i https://pkgs.safetycli.com/repository/self-d8782/project/layerindex-web/pypi/simple/
- amqp==5.2.0
- asgiref==3.8.1
- beautifulsoup4==4.12.3
-@@ -9,7 +10,7 @@ click-plugins==1.1.1
- click-repl==0.3.0
- confusable-homoglyphs==3.3.1
- diff-match-patch==20230430
--Django>=4.2,<4.3
-+Django>=4.2.28,<4.3
- django-appconf==1.0.6
- django-axes==6.5.1
- django-cors-headers==4.4.0
-@@ -18,21 +19,21 @@ django-ranged-response==0.2.0
- django-registration==3.4
- django-reversion==5.1.0
- django-reversion-compare==0.17.0
--django-simple-captcha==0.6.0
-+django-simple-captcha==0.6.3
- djangorestframework==3.15.2
- gitdb==4.0.11
- GitPython==3.1.43
- kombu==5.4.0
- mysqlclient==2.2.4
- packaging_legacy==23.0.post0
--Pillow==10.4.0
-+Pillow==12.1.1
- prompt-toolkit==3.0.47
- python-dateutil==2.9.0.post0
- pytz==2024.1
- six==1.16.0
- smmap==5.0.1
- soupsieve==2.6
--sqlparse==0.5.1
-+sqlparse==0.5.5
- typing_extensions==4.12.2
- tzdata==2024.1
- vine==5.1.0
+diff --git a/layerindex/urls.py b/layerindex/urls.py
+index 7555907..51a832d 100644
+--- a/layerindex/urls.py
++++ b/layerindex/urls.py
+@@ -197,7 +197,7 @@ urlpatterns = [
+         name='branch_comparison_plain'),
+     re_path(r'^branch_comparison_rst/$',
+         BranchCompareView.as_view(
+-            content_type='text/plain; charset=utf-8',
++            content_type='text/x-rst; charset=utf-8',
+             template_name='layerindex/branchcompare_rst.txt'),
+         name='branch_comparison_rst'),
+     re_path(r'^branch_comparison_csv/$',
 -- 
 2.50.1 (Apple Git-155)
 
