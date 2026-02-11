@@ -1,106 +1,145 @@
-Return-Path: <yoann.congal@smile.fr>
+Return-Path: <ticotimo@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06D71EA3F3D
-	for <webhook@archiver.kernel.org>; Wed, 11 Feb 2026 15:50:08 +0000 (UTC)
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.22012.1770825003160367999
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D54F0ECD6E3
+	for <webhook@archiver.kernel.org>; Wed, 11 Feb 2026 19:55:49 +0000 (UTC)
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.27914.1770839746952061513
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 11 Feb 2026 07:50:03 -0800
+ Wed, 11 Feb 2026 11:55:47 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@smile.fr header.s=google header.b=ac1Gzufl;
- spf=pass (domain: smile.fr, ip: 209.85.128.42, mailfrom: yoann.congal@smile.fr)
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-48327b8350dso48303005e9.1
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 11 Feb 2026 07:50:02 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=khRHQ3lC;
+ spf=pass (domain: gmail.com, ip: 209.85.210.179, mailfrom: ticotimo@gmail.com)
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-824adc96ad2so326489b3a.3
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 11 Feb 2026 11:55:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=smile.fr; s=google; t=1770825001; x=1771429801; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1770839746; x=1771444546; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yvivBjVkxt/qhUwkrw0iPlWq3i1GQkR6PUp3rXj7RJA=;
-        b=ac1GzuflUBa28SdxQ5jV0bC7GaHG0sx7tVz0y/7xWrB5t1NxmASKJQ4kuLjtDYXZwD
-         6r8rGy6DfUNYzp1K1swRQLCpGGWuS4vTi7axvXJuq5/B19wSvvfbrvwIoriSgUphOq3c
-         D4ABkuGAOnFDR1l/q/jshbNcH7ii/qLYnyRBg=
+        bh=ZOCIcp29lq/M55SkmhIQVIhdbqF4388ZhmRXwUEe9P4=;
+        b=khRHQ3lC3HW+/LFmWH4dg9E6OPGkD6SLsUAS+RP3JKos8bcth7ihfwj+TQCQTThPuR
+         eK1XNFpqGap8q9Cty3CKtWUiQKScT4aEGBNOTOlzFJp1U8FDpE7Q6qu39a59tNhcwIfl
+         0sX4qdYEMD8pzEmLNoE7YrPfE5qacWg1SxgaXGQzzpjVXr77B1ZhpVBWGViyr6wUZH2X
+         mtG3tCllf9bN3MaHK0Hj13D6Sp14SoB/D5M4CV1p5FxijjvcqPfjWsDYwcrX5TQQS85c
+         oAUkL6iEprNhtwm3DqeHI9I+o2X53iOZjkWMBT95L6mjVMqJx3TkZnlb53fXABHDDaGu
+         YXUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770825001; x=1771429801;
+        d=1e100.net; s=20230601; t=1770839746; x=1771444546;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yvivBjVkxt/qhUwkrw0iPlWq3i1GQkR6PUp3rXj7RJA=;
-        b=Hy77BaWGXaIG/Fq3on81MkYR3mMAtpL4a4jNMwuHOV2Lpa/tH8QrRXnpfCeup5qDQv
-         9c+e6c4xu4NDm+0f8pHdXy9GzhS9NrezAIXN1MLLCD7SNBVHN31KUzGkJBHEjRnP2ScK
-         Iuct34O5eozPvtIr38v2QxUQEByXMvMIsy4sRErXYY+gDcowmo6Yk7n0G1tJGn8xS+T8
-         pN+9rtcy5aDi+Jn74bzUHxYnfW7dxGr1/2dNlm1j6YHNIBffviMDHLPdpZ6pi9FOroGN
-         K6FtPgr56Pen01omtNFKlPuz2vKhp+++0tBOm6SIKFuZ/d3Efp/ZPSNi1VqNJa252v7R
-         Zyyg==
-X-Gm-Message-State: AOJu0Yybp1ISfUGFW2kMnaSAI90eZ9LdcgeGmPp+/N+7Wkra5dCMYJoO
-	qpuw+ettdm/4ao/qmjWLHWWcGfRRv3SstNfVLPrNv9E2hnHwpbKV7j1jFqbfVs2AUWxlkb44B5R
-	+3krs
-X-Gm-Gg: AZuq6aKObTtxUqpNF1538XyQTDAFIvIVnbblGYnGziLxeh2o1Fnd/ofXbGE9nJ9yTNX
-	4mxjBP16F+PiwmI7SNRq9H4RMZsd/7Vk9Ib4FshP5UDM4CwOetnFTrrUHHjgxSCIqY267Vt0ztI
-	JlV8rN3tmH540BmbpZu4t9uYcj4jyq771uBRx+ZOBv1wc8L/0pEO48X7OVqPnZaq14S/BjvrMmE
-	lZRoOx42KBRi2Syn9MTMSEPjPkkryhPd+fEUiy8CMRDXpBxGAZfoIJIVAWAFASirLe8OMiwmxI9
-	x6FwvwOanz4IiMz2+PhKHRPWnHsVMvmvrcHhsEoHamHivK2rKG5f//4AjEptxGOWPbzpJHb3n9y
-	if4ibT0nt5LEDIp+5L/TSLaFMVOmKu531VzjgJRnnBhv/xQPdZsXxvPgrl8xrYyhlPXWmkAEH5m
-	rcLNb3Vz+Ur6Z8gRsYvafJBdIS5tsHLXpLw7+7KMGgQgfUZt+tpCpw2081aVh82LmdvPWyNQWSF
-	CK5vilTMCgfBseLYeJe4qzKMMU=
-X-Received: by 2002:a05:600c:1d1e:b0:47e:e20e:bba3 with SMTP id 5b1f17b1804b1-4835b8bbf9bmr46456975e9.7.1770825000780;
-        Wed, 11 Feb 2026 07:50:00 -0800 (PST)
-Received: from FRSMI25-LASER.home (2a01cb001331aa00a2e4fb7b0d887544.ipv6.abo.wanadoo.fr. [2a01:cb00:1331:aa00:a2e4:fb7b:d88:7544])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4834d5d78cfsm189642995e9.1.2026.02.11.07.50.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Feb 2026 07:50:00 -0800 (PST)
-From: Yoann Congal <yoann.congal@smile.fr>
+        bh=ZOCIcp29lq/M55SkmhIQVIhdbqF4388ZhmRXwUEe9P4=;
+        b=kD69v10mxkQ477OTpsCwS+hlxUUZkjNX0GRCJJ9V1k/fjvVgDXAbWDSV+DNSq9XxPV
+         7CdZdSLOut+OFTEMoTeaco3RIdJY4pKmG8M5ZJi1t8AyjpqGJyzMg7Z+iQmO+mpcCc4U
+         Sg4/AJfwoXT3x4yTcoByUVsF80lnhcYYlddV23cHgT9n2/rL3IANa+d3FbLr9PMrAZwB
+         rJG+nr/bkAkCzPMP9mM/uKApe+6Y76jj5h3mDk0bPPKg6OAvUmmacFnl5/h1w2AFgR3z
+         WNTaEPeR1vfAO271YR7DXWDxwodgp1MliHEaVqjGVqmglVlF32sReg8hnePp+7YccaHm
+         LFCA==
+X-Gm-Message-State: AOJu0YwmapHqKwQnVLcyoeVxzt8ogHSXsNCH1z2Y03VGPns/emdfPyQf
+	3lLL5MLU3wQw1A+YC7YlGDkw6VnOhqm8CJlY8FAX0VC0olqinINYDpNJLSif4Q==
+X-Gm-Gg: AZuq6aLrNW3zuIPbTLMXyeeZDhhwPviOerkMZNw4ITo3NIZgrcYmVdjSsxVFylK8dfY
+	BPkCKRD9vfMid+CdrKdgK4YCfnzQ/xLjJ65SuqkzTOwpQRaz0Evkz7oF7AcI6JXwX4/aHjdqWX+
+	QOFthu84U8ns2M73aQyfzFuWbBTwFBf/e2snxvYVoZyGS9iOj8KWX2zvLcDtwcCjbLp8RzQ3yFl
+	3WKhj/DubsuFR+PJXm1eub0vZ3FPxHfSKgKj00UQLKbS/Pw8wqXMiR0KGyTLiMtGSq7sZhRKIKq
+	U5vH0Fx02Yuoby5AzzaDpYuruqBjtwg5InfGTygTVkBcGe5xMEFPFafPJsGpCxv8ZHp7lzXhe3V
+	ZCkJeZaL9aWn7ww8XKeBPnA4zsYGr+T6AVN1yra9QrLJE2pyvL7w6240+Yr9f4SEGr20ivq2do3
+	RrJ5ET76kSx/V/s1hoC35rPoPcdxhhe8S2OCjr1I30p+bYo8/BBRlDto+9DbYcxZRGXE4yOO3b7
+	xfb1BL4yVwhGrgbQOQfAu0=
+X-Received: by 2002:a05:6a00:2492:b0:823:52b6:1633 with SMTP id d2e1a72fcca58-824b0543412mr166389b3a.40.1770839745699;
+        Wed, 11 Feb 2026 11:55:45 -0800 (PST)
+Received: from localhost.localdomain (c-98-232-159-17.hsd1.or.comcast.net. [98.232.159.17])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8249e7d621esm2810293b3a.32.2026.02.11.11.55.44
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 11 Feb 2026 11:55:45 -0800 (PST)
+From: Tim Orling <ticotimo@gmail.com>
+X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Yoann Congal <yoann.congal@smile.fr>,
-	Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>,
-	Richard Purdie <richard.purdie@linuxfoundation.org>
-Subject: [yocto-autobuilder-helper][whinlatter][PATCH] send_qa_email: Only copy logs when we are pushing tags
-Date: Wed, 11 Feb 2026 16:46:44 +0100
-Message-ID: <20260211154643.3053476-2-yoann.congal@smile.fr>
-X-Mailer: git-send-email 2.47.3
+Cc: Tim Orling <tim.orling@konsulko.com>
+Subject: [layerindex-web][PATCH 1/4] requirements: bump to fix vulnerabilities
+Date: Wed, 11 Feb 2026 11:55:33 -0800
+Message-ID: <20260211195536.10278-1-tim.orling@konsulko.com>
+X-Mailer: git-send-email 2.50.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 11 Feb 2026 15:50:08 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3213
+ <yocto-patches@lists.yoctoproject.org>; Wed, 11 Feb 2026 19:55:49 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3214
 
-From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+-Django>=4.2,<4.3
++Django>=4.2.28,<4.3
+https://docs.djangoproject.com/en/dev/releases/4.2.28/
+CVE: CVE-2025-13473
+CVE: CVE-2025-14550
+CVE: CVE-2026-1207
+CVE: CVE-2026-1285
+CVE: CVE-2026-1287
+CVE: CVE-2026-1312
 
-Resulttool creates tags in yocto-testresults and copies logs in an NFS
-shared folder whose name is based on this tag. If we are never going to
-push this tag, we should not copy the logs, in order to maintain some
-coherency.
+-django-simple-captcha==0.6.0
++django-simple-captcha==0.6.3
+https://django-simple-captcha.readthedocs.io/en/latest/changes.html#version-0-6-3
 
-Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(cherry picked from commit 904d5722ced282b58474e3b605ce87897994f4f7)
-Signed-off-by: Yoann Congal <yoann.congal@smile.fr>
+-Pillow==10.4.0
++Pillow==12.1.1
+https://pillow.readthedocs.io/en/stable/releasenotes/12.1.1.html
+CVE: CVE-2026-25990
+
+-sqlparse==0.5.1
++sqlparse==0.5.5
+https://sqlparse.readthedocs.io/en/stable/changes.html#release-0-5-5-dec-19-2025
+
+Signed-off-by: Tim Orling <tim.orling@konsulko.com>
 ---
- scripts/send_qa_email.py | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ requirements.txt | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/scripts/send_qa_email.py b/scripts/send_qa_email.py
-index d8c060f..6384001 100755
---- a/scripts/send_qa_email.py
-+++ b/scripts/send_qa_email.py
-@@ -190,7 +190,15 @@ def send_qa_email():
-             utils.printheader("Storing results")
- 
-             if not args.dry_run:
--                subprocess.check_call([resulttool, "store", "--revision", revision, "-l", args.results_dir + "/../../testresult-logarchives" , args.results_dir, tempdir])
-+                cmd = [resulttool, "store", "--revision", revision, args.results_dir, tempdir]
-+
-+                # Ask resulttool to store logs in log archive folder. We should
-+                # also ask to push the tags before copying these logs, as tags
-+                # and log folder names have to match.
-+                if basebranch or targetbranch:
-+                    cmd.extend(["-l", args.results_dir + "/../../testresult-logarchives", "-p"])
-+
-+                subprocess.check_call(cmd)
-                 if basebranch:
-                     subprocess.check_call(["git", "push", "--all", "--force"], cwd=tempdir)
-                     subprocess.check_call(["git", "push", "--tags", "--force"], cwd=tempdir)
+diff --git a/requirements.txt b/requirements.txt
+index 15530a6..7a3806c 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,3 +1,4 @@
++-i https://pkgs.safetycli.com/repository/self-d8782/project/layerindex-web/pypi/simple/
+ amqp==5.2.0
+ asgiref==3.8.1
+ beautifulsoup4==4.12.3
+@@ -9,7 +10,7 @@ click-plugins==1.1.1
+ click-repl==0.3.0
+ confusable-homoglyphs==3.3.1
+ diff-match-patch==20230430
+-Django>=4.2,<4.3
++Django>=4.2.28,<4.3
+ django-appconf==1.0.6
+ django-axes==6.5.1
+ django-cors-headers==4.4.0
+@@ -18,21 +19,21 @@ django-ranged-response==0.2.0
+ django-registration==3.4
+ django-reversion==5.1.0
+ django-reversion-compare==0.17.0
+-django-simple-captcha==0.6.0
++django-simple-captcha==0.6.3
+ djangorestframework==3.15.2
+ gitdb==4.0.11
+ GitPython==3.1.43
+ kombu==5.4.0
+ mysqlclient==2.2.4
+ packaging_legacy==23.0.post0
+-Pillow==10.4.0
++Pillow==12.1.1
+ prompt-toolkit==3.0.47
+ python-dateutil==2.9.0.post0
+ pytz==2024.1
+ six==1.16.0
+ smmap==5.0.1
+ soupsieve==2.6
+-sqlparse==0.5.1
++sqlparse==0.5.5
+ typing_extensions==4.12.2
+ tzdata==2024.1
+ vine==5.1.0
+-- 
+2.50.1 (Apple Git-155)
+
 
