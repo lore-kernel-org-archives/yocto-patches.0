@@ -1,140 +1,107 @@
-Return-Path: <peter.marko@siemens.com>
+Return-Path: <richard.purdie@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF42EEEA84C
-	for <webhook@archiver.kernel.org>; Thu, 12 Feb 2026 19:26:06 +0000 (UTC)
-Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.54010.1770924357050016712
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8E4FEDF152
+	for <webhook@archiver.kernel.org>; Fri, 13 Feb 2026 11:06:32 +0000 (UTC)
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.69334.1770980789381125377
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 12 Feb 2026 11:25:58 -0800
+ Fri, 13 Feb 2026 03:06:29 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=peter.marko@siemens.com header.s=fm2 header.b=G7dZcNA/;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.226, mailfrom: fm-256628-20260212192553c218cdddf100020772-nyer2r@rts-flowmailer.siemens.com)
-Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 20260212192553c218cdddf100020772
-        for <yocto-patches@lists.yoctoproject.org>;
-        Thu, 12 Feb 2026 20:25:54 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
- d=siemens.com; i=peter.marko@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=U2S8d5oCn9PPXBZU92gez+GAF5yvfKOOksOj3bGyhNY=;
- b=G7dZcNA/WXJKBpqMS7bsb221Y33OEFQyxIXtZGf/j4tKk5oKz3Ng6EsrjR5tje2EuP/Asa
- FkGFghCCXbardo5vh7z3AU5suOxNy/ossNxDDb7onjJrmlcpCHccIF9dhwIMbmyzYnfHGvSq
- 3kPrICGQYWpuh/wo8pN26Qq9NaIVkpudrnFl/ry7Ppz9EVhbmo6fNxYinao8xjgESAGKGrVM
- pxwYppxakohJKpVomq4Cm73Jcs3tQFdDTrhPeG6HYTeMAp2Jww3mzqlwWimyqe05xjPNypr6
- v62t0rhqVEcp3HehQsZsqerIW47KFdk432WdgaWVWmxJ2MPatglOn9qg==;
-From: Peter Marko <peter.marko@siemens.com>
+ dkim=pass header.i=@linuxfoundation.org header.s=google header.b=UpgLsM7j;
+ spf=pass (domain: linuxfoundation.org, ip: 209.85.128.41, mailfrom: richard.purdie@linuxfoundation.org)
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-481188b7760so6945865e9.0
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 13 Feb 2026 03:06:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1770980787; x=1771585587; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7zg8FfiGAY4GTopMRWIEApHne6QvvPGzpX2kT+SXIpw=;
+        b=UpgLsM7j6eqIWtWyh9WMzrRUmutunaEhbtIOUPgvt5kME+l9eiwM57UgseaOJiJcN6
+         Mte534NPmWi5mHK+3Mxq+OWQzSi9WIYwnTYC53fHWWBlsE09oLeOdfMEIoOVqKeUHhRs
+         yVema6VaEMV+inrvHVfhLqobf+r74SnnJJ65M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770980787; x=1771585587;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7zg8FfiGAY4GTopMRWIEApHne6QvvPGzpX2kT+SXIpw=;
+        b=g6uBUxhdPsLZvB24ScXCT8I7nmjr1F8yPR4xWu9+OqmsxgvtSGP7BSEeMfBGt+IS/L
+         DLVvMmi9jEhuoo2DDjTDEQGfsOYn5TQowpeSHDWgyDvZ37g3NmCEG8fRfeHENtoZpKRV
+         j8pnZWohJOQnffQikAjwyNCqxHFarg0Y1UPoIz/RvxOLHiiAdnE2nOX5vJw6OoEyofeJ
+         hcwNxh4flROikbOWm4NRR1fq8/PJaTcNSuU0d5vULSs2jFUOrgNWDlSCtVO4Tx9ZgK3l
+         IdpzLwoTEFJLXHdNW/eLSZcUo3+/ys10nyRVCOy8vogiXjHhGvd4REW/T0ldjmAkpKdZ
+         1w/g==
+X-Gm-Message-State: AOJu0YwLgQ/V9qHMOtrLjjCJEnC9K8tS3Yglm6d5sMA87PIWGmSdMoJj
+	9NbDmZHcEBjf+kkexzx9iW35y9MHUc818U4Suzo9OBvzssnhN9nA9FkrzifNr7LZbppaPamf/Qz
+	XJdsiqNU=
+X-Gm-Gg: AZuq6aJHkIZsDT7DYLl/XyC5Njj+icdXNZ0jbI+d39mI9xMZdKKo0EiAFCk+VEztcLR
+	lDObh0i99tfpQEvviJvOC/DzyUY4NtugBGTlGxEHpxS1ezFpcHJioI1rKSAAByN+757Cw3cM3If
+	He8IIN/cJRwl8NOStIe4kv4lJu2JvBYgCKSs/somOSl/FeIP7ERbYUreaUqyPKYnfW5coAybBTZ
+	3x5JUgQZpdOY772AgNyVzbeGbhpBN02UCbxAoLyy1Q+CzJ6ES3lYf0qml2VwrUveX4IaPGMq1VY
+	KjC+lB5Zuhb3aUidpL7k8la0dySfZNMa4iRep47qeVZWEDo8yZlVT4517qB90ZEU7hdp5olFlPc
+	xESowHWFm4MmQruth1mTd/ybCae+RO1NCnfciKcMHm1Av4nUtsm8mldc3q6/os2d1sHAkkLEgGX
+	bojDvDt/280Biw3+ebymLgNyfAnbaIE2FgCmEo3fowNUnHwR2P1Gk=
+X-Received: by 2002:a05:600c:a43:b0:477:89d5:fdb2 with SMTP id 5b1f17b1804b1-48373a0808amr20114805e9.14.1770980787118;
+        Fri, 13 Feb 2026 03:06:27 -0800 (PST)
+Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:e20e:afdc:37ec:38d1])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4834d82a4c4sm445473825e9.10.2026.02.13.03.06.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Feb 2026 03:06:26 -0800 (PST)
+From: Richard Purdie <richard.purdie@linuxfoundation.org>
 To: yocto-patches@lists.yoctoproject.org
-Cc: peter.marko@siemens.com
-Subject: [meta-lts-mixins][scarthgap/go][PATCH] go: upgrade 1.25.6 -> 1.25.7
-Date: Thu, 12 Feb 2026 20:25:46 +0100
-Message-Id: <20260212192546.1634939-1-peter.marko@siemens.com>
+Cc: seebs@seebs.net,
+	mark.hatle@kernel.crashing.org
+Subject: [pseudo] [PATCH 1/2] ports/linux: Ensure SYS_openat2 is defined
+Date: Fri, 13 Feb 2026 11:06:23 +0000
+Message-ID: <20260213110624.1659480-1-richard.purdie@linuxfoundation.org>
+X-Mailer: git-send-email 2.48.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-256628:519-21489:flowmailer
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 12 Feb 2026 19:26:06 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3230
+ <yocto-patches@lists.yoctoproject.org>; Fri, 13 Feb 2026 11:06:32 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3232
 
-From: Peter Marko <peter.marko@siemens.com>
+Some systems such as Debian 11 and OpenSUSE 15.5 don't define SYS_openat2
+which means the syscall intercept doesn't work if pseudo compiled on those
+systems and then used on others which do use that syscall.
 
-Upgrade to latest 1.25.x release [1]:
+Add a define to catch this situation and resolve it. Also add a error
+if the value is undefined to prevent us getting into this situation again.
 
-$ git --no-pager log --oneline go1.25.6..go1.25.7
-eaf3bc799a (tag: go1.25.7) [release-branch.go1.25] go1.25.7
-c7d189e65c [release-branch.go1.25] crypto/tls: document resumption behavior across Configs
-4512014530 [release-branch.go1.25] crypto/tls: revalidate whole chain on resumption on Windows and macOS
-d5987bff8a [release-branch.go1.25] crypto/tls: check verifiedChains roots when resuming sessions
-c2d04c0994 [release-branch.go1.25] crypto/tls: add verifiedChains expiration checking during resumption
-6b1110a40f [release-branch.go1.25] Revert "crypto/tls: don't copy auto-rotated session ticket keys in Config.Clone"
-0765a9d624 [release-branch.go1.25] crypto/x509: fix single label excluded name constraints handling
-b19100991a [release-branch.go1.25] cmd/go: remove user-content from doc strings in cgo ASTs.
-738bc3a33c [release-branch.go1.25] cmd/compile: during regalloc, fixedreg values are always available
-
-Fixes CVE-2025-61732 and CVE-2025-68121.
-
-Release information: [2]
-
-[1] https://github.com/golang/go/compare/go1.25.6...go1.25.7
-[2] https://groups.google.com/g/golang-announce/c/K09ubi9FQFk
-
-(From OE-Core rev: 7a5237b7ae557136eee9ff3f98e2b0a74f39ebb7)
-
-Signed-off-by: Peter Marko <peter.marko@siemens.com>
-Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Signed-off-by: Ross Burton <ross.burton@arm.com>
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
 ---
- recipes-devtools/go/{go-1.25.6.inc => go-1.25.7.inc}        | 2 +-
- ...o-binary-native_1.25.6.bb => go-binary-native_1.25.7.bb} | 6 +++---
- ...cross-canadian_1.25.6.bb => go-cross-canadian_1.25.7.bb} | 0
- .../go/{go-cross_1.25.6.bb => go-cross_1.25.7.bb}           | 0
- .../go/{go-crosssdk_1.25.6.bb => go-crosssdk_1.25.7.bb}     | 0
- .../go/{go-runtime_1.25.6.bb => go-runtime_1.25.7.bb}       | 0
- recipes-devtools/go/{go_1.25.6.bb => go_1.25.7.bb}          | 0
- 7 files changed, 4 insertions(+), 4 deletions(-)
- rename recipes-devtools/go/{go-1.25.6.inc => go-1.25.7.inc} (91%)
- rename recipes-devtools/go/{go-binary-native_1.25.6.bb => go-binary-native_1.25.7.bb} (79%)
- rename recipes-devtools/go/{go-cross-canadian_1.25.6.bb => go-cross-canadian_1.25.7.bb} (100%)
- rename recipes-devtools/go/{go-cross_1.25.6.bb => go-cross_1.25.7.bb} (100%)
- rename recipes-devtools/go/{go-crosssdk_1.25.6.bb => go-crosssdk_1.25.7.bb} (100%)
- rename recipes-devtools/go/{go-runtime_1.25.6.bb => go-runtime_1.25.7.bb} (100%)
- rename recipes-devtools/go/{go_1.25.6.bb => go_1.25.7.bb} (100%)
+ ports/linux/portdefs.h        | 5 +++++
+ ports/linux/pseudo_wrappers.c | 2 ++
+ 2 files changed, 7 insertions(+)
 
-diff --git a/recipes-devtools/go/go-1.25.6.inc b/recipes-devtools/go/go-1.25.7.inc
-similarity index 91%
-rename from recipes-devtools/go/go-1.25.6.inc
-rename to recipes-devtools/go/go-1.25.7.inc
-index 2c31c4a..ab58f71 100644
---- a/recipes-devtools/go/go-1.25.6.inc
-+++ b/recipes-devtools/go/go-1.25.7.inc
-@@ -18,4 +18,4 @@ SRC_URI += "\
-     file://0011-cmd-link-stop-forcing-binutils-gold-dependency-on-aa.patch \
-     file://0001-runtime-when-using-cgo-on-386-call-C-sigaction-funct.patch \
- "
--SRC_URI[main.sha256sum] = "58cbf771e44d76de6f56d19e33b77d745a1e489340922875e46585b975c2b059"
-+SRC_URI[main.sha256sum] = "178f2832820274b43e177d32f06a3ebb0129e427dd20a5e4c88df2c1763cf10a"
-diff --git a/recipes-devtools/go/go-binary-native_1.25.6.bb b/recipes-devtools/go/go-binary-native_1.25.7.bb
-similarity index 79%
-rename from recipes-devtools/go/go-binary-native_1.25.6.bb
-rename to recipes-devtools/go/go-binary-native_1.25.7.bb
-index 4326dbe..74f8e3b 100644
---- a/recipes-devtools/go/go-binary-native_1.25.6.bb
-+++ b/recipes-devtools/go/go-binary-native_1.25.7.bb
-@@ -9,9 +9,9 @@ PROVIDES = "go-native"
+diff --git a/ports/linux/portdefs.h b/ports/linux/portdefs.h
+index 1b4ce74..a8b2be6 100644
+--- a/ports/linux/portdefs.h
++++ b/ports/linux/portdefs.h
+@@ -53,3 +53,8 @@ GLIBC_COMPAT_SYMBOL(memcpy,2.0);
+ #define _MKNOD_VER 1
+ #endif
+ #endif
++
++/* Debian 11 and Opensuse 15.5 need this */
++#ifndef SYS_openat2
++#define SYS_openat2 __NR_openat2
++#endif
+diff --git a/ports/linux/pseudo_wrappers.c b/ports/linux/pseudo_wrappers.c
+index df7de09..300b5a5 100644
+--- a/ports/linux/pseudo_wrappers.c
++++ b/ports/linux/pseudo_wrappers.c
+@@ -96,6 +96,8 @@ syscall(long number, ...) {
  
- # Checksums available at https://go.dev/dl/
- SRC_URI = "https://dl.google.com/go/go${PV}.${BUILD_GOOS}-${BUILD_GOARCH}.tar.gz;name=go_${BUILD_GOTUPLE}"
--SRC_URI[go_linux_amd64.sha256sum] = "f022b6aad78e362bcba9b0b94d09ad58c5a70c6ba3b7582905fababf5fe0181a"
--SRC_URI[go_linux_arm64.sha256sum] = "738ef87d79c34272424ccdf83302b7b0300b8b096ed443896089306117943dd5"
--SRC_URI[go_linux_ppc64le.sha256sum] = "bee02dbe034b12b839ae7807a85a61c13bee09ee38f2eeba2074bd26c0c0ab73"
-+SRC_URI[go_linux_amd64.sha256sum] = "12e6d6a191091ae27dc31f6efc630e3a3b8ba409baf3573d955b196fdf086005"
-+SRC_URI[go_linux_arm64.sha256sum] = "ba611a53534135a81067240eff9508cd7e256c560edd5d8c2fef54f083c07129"
-+SRC_URI[go_linux_ppc64le.sha256sum] = "42124c0edc92464e2b37b2d7fcd3658f0c47ebd6a098732415a522be8cb88e3f"
+ 		return wrap_openat2(dirfd, path, how, size);
+ 	}
++#else
++#error SYS_openat2 not defined
+ #endif
  
- UPSTREAM_CHECK_URI = "https://golang.org/dl/"
- UPSTREAM_CHECK_REGEX = "go(?P<pver>\d+(\.\d+)+)\.linux"
-diff --git a/recipes-devtools/go/go-cross-canadian_1.25.6.bb b/recipes-devtools/go/go-cross-canadian_1.25.7.bb
-similarity index 100%
-rename from recipes-devtools/go/go-cross-canadian_1.25.6.bb
-rename to recipes-devtools/go/go-cross-canadian_1.25.7.bb
-diff --git a/recipes-devtools/go/go-cross_1.25.6.bb b/recipes-devtools/go/go-cross_1.25.7.bb
-similarity index 100%
-rename from recipes-devtools/go/go-cross_1.25.6.bb
-rename to recipes-devtools/go/go-cross_1.25.7.bb
-diff --git a/recipes-devtools/go/go-crosssdk_1.25.6.bb b/recipes-devtools/go/go-crosssdk_1.25.7.bb
-similarity index 100%
-rename from recipes-devtools/go/go-crosssdk_1.25.6.bb
-rename to recipes-devtools/go/go-crosssdk_1.25.7.bb
-diff --git a/recipes-devtools/go/go-runtime_1.25.6.bb b/recipes-devtools/go/go-runtime_1.25.7.bb
-similarity index 100%
-rename from recipes-devtools/go/go-runtime_1.25.6.bb
-rename to recipes-devtools/go/go-runtime_1.25.7.bb
-diff --git a/recipes-devtools/go/go_1.25.6.bb b/recipes-devtools/go/go_1.25.7.bb
-similarity index 100%
-rename from recipes-devtools/go/go_1.25.6.bb
-rename to recipes-devtools/go/go_1.25.7.bb
+ #ifdef SYS_renameat2
 
