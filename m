@@ -1,315 +1,228 @@
-Return-Path: <peter.marko@siemens.com>
+Return-Path: <sandeep.gundlupet-raju@amd.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8012CEF5845
-	for <webhook@archiver.kernel.org>; Sat, 14 Feb 2026 15:44:54 +0000 (UTC)
-Received: from AS8PR04CU009.outbound.protection.outlook.com (AS8PR04CU009.outbound.protection.outlook.com [52.101.70.41])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.8078.1771083884134697351
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80F09EF584F
+	for <webhook@archiver.kernel.org>; Sat, 14 Feb 2026 18:43:45 +0000 (UTC)
+Received: from BL0PR03CU003.outbound.protection.outlook.com (BL0PR03CU003.outbound.protection.outlook.com [52.101.53.53])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.11657.1771094623952299219
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 14 Feb 2026 07:44:44 -0800
+ Sat, 14 Feb 2026 10:43:44 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=UI/aurfs;
- spf=pass (domain: siemens.com, ip: 52.101.70.41, mailfrom: peter.marko@siemens.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@amd.com header.s=selector1 header.b=HrzxG8aJ;
+ spf=permerror, err=parse error for token &{10 18 %{i}._ip.%{h}._ehlo.%{d}._spf.vali.email}: invalid domain name (domain: amd.com, ip: 52.101.53.53, mailfrom: sandeep.gundlupet-raju@amd.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BRCnXiV3QQHC0IiTktoDV6nKrZ3Nfj3ZyMTvnGxyMxr5XatNgV+NW70b/NZH2ZNK8og/r4GbU6UPlZmjgO4M8Ox34+04odOCp4NewaHQvzZg5oBKFIIQXp2cAcAE+K4LpfrKNue5s3sWCOwjkh5OH03WKmcTcXxjKM+BkBqfzwebjav1p/AysM/TMhfNU1QaSxHGHwbeYUlyte2FpndLaYhVqd8FbgEARABaTgsg7zvoQWn4kU03Z6Ofp/A9q0nyxipwgc2gTu96pvOjwLjBPRQVIvBiqqfi4jWJiHZKqlmA/0RgH13/iSn31m9iIMnnykb2gqTLf5toWquntXZvWQ==
+ b=RjbtPs8qH+o6jwhoIfr9caUoPt80ticBhGKthUis3Emt+V1xFm9IX/tyFpMURT52EAnHXU/dXl/UZO3WrsslrU6vTwEiNQtih7kz/Hej2Se6RTr1/iJKd5x5HIBjz9FqsRZwMl0nW6mIM2pqVP8sgf8g+r6Tj9jp+FwCDzFf6xe64tDXOCoOUYtR3TAQtIfDkSwqrUXh9oDo77b9Ex0a6R6Aen+IaPVq0Kzl2F8vF7N8HTvfeossTvtoA+KXFD3okN7yPu8QdLf85nSpuZnbYcZCMOk8Myi6uUn2qGYxmnmahwV5z2CFK2/nZbPVdxRLpM5WEt0pj51leTVUpUnPEg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NwR2BSch4GchfwM0H9ZbfdQILRVG4fhifLDnsqnxNCY=;
- b=i8w6pzJynyBMxuTOq8W3c/OKpI6BM4DdKMI557VnDnrr2ShOcy/qlJxzRoZgpTKscp9S/4EkC7zgTS4ymWVN11NM93jmpDIemMctqXr59KVrUR6vAwhnXAc0gQ+BoKClNOfNyMNV9f5/tLy+8ODsJeyAnA4hdPWlx6b7h5BZdmrbdJcftGK2OJ/D2XlpGWIbVBDLOrMXuHK0WQM0qI7z0qbb+4S3/cSQOFcwRfQkLOICQIXD9yC7SU9ec+Cd+BFvR7hb6aTBGnZGOO3VeIzAd8axLqfrncd0ZWIWhsPZ66CjkLLHUsmahVqDqCz7HXuoFu0skj70LwZqByW+Fvq9Bg==
+ bh=3QhdKnX55wIOtqwPCPFCrSCpjDb248Jwyuszg/wPD8Y=;
+ b=mXntIV+N8tpjgg15p5uUGKwhltAWMDhdA89YFgag4b6k1Z5IB0eQku/gMvw0DoEQtkm4nDCDAC6XzLg5++TtHlXWkS1ZgZoHaiiAwPBqIbr539/0GmFKrHPHps+FWsqDjNyDWkboFwGlG5tyZhoD372VYkfJxkBg0EQ+6QCk0GxhUfm+eVHlCQjQC0v8sufoJiFM70v0LpdDF7391ys6pW6k9gHwbM0ymzyEIwijTn8iKGQiSHWp27BoWXidvGhCQKp65uHHlvImMhLhC5YiPyNHQpEgr5p05+UOImN+FtgGVttb7c5QqUSQZEPajB8Ihb7pkLqljMxK5zWfCbnonw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NwR2BSch4GchfwM0H9ZbfdQILRVG4fhifLDnsqnxNCY=;
- b=UI/aurfsoel/7B4CDWHBE/hSsPTM+sbTQP/WBlcnstl7EI/dlwf/W7FmlSzqt3g3mi6zGtroFW4z2ZaZTzgM2SXP/LQeJdJ89G165d2kRNAerA1oz7hXbxwvdkgAAvi9eShLjc8fNoT9dyzcFXe1HGljMc1iDaEIO0XbJVT4k60zh57JvdCnDESjRT2ypOwOqgYbdHVLjDx8QfmBbHhr/YkEGwZDm5k6DSWydTrNo0piaENgTpnIqkoRvoO6gE+ktpxkWUMp6zAHsGMvh6DggXSUPnecLvR4OTtVg3OVBf+rBmUbVX6EkXlIDKq637Qj04LCZnzfZ3iV2YkkOLLu7Q==
-Received: from AS1PR10MB5697.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:479::20)
- by VI1PR10MB3728.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:800:131::14) with
+ bh=3QhdKnX55wIOtqwPCPFCrSCpjDb248Jwyuszg/wPD8Y=;
+ b=HrzxG8aJgdvnUwP0rOrZQjMA4a7DiLLmPkdcB4unu+YSU6hKbRiwnyjqdxxKDLXgPeP4ZT42pI7aA2P0/2lfegWiFLeWeOm+9nv3BSuRvpP00CVE7Q4ciDn1TMDHr6AdFoblHj0J0jLXOVW4IdqLfXEKvgFLiWo2KxyURzFdZ3M=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from SN7PR12MB8770.namprd12.prod.outlook.com (2603:10b6:806:34b::21)
+ by LV8PR12MB9181.namprd12.prod.outlook.com (2603:10b6:408:18d::13) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9611.15; Sat, 14 Feb
- 2026 15:44:41 +0000
-Received: from AS1PR10MB5697.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::b54d:255a:1abf:2dc7]) by AS1PR10MB5697.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::b54d:255a:1abf:2dc7%6]) with mapi id 15.20.9611.008; Sat, 14 Feb 2026
- 15:44:41 +0000
-From: "Marko, Peter" <Peter.Marko@siemens.com>
-To: "yocto-patches@lists.yoctoproject.org"
-	<yocto-patches@lists.yoctoproject.org>
-Subject: RE: [yocto-patches] [meta-lts-mixins][kirkstone/go][PATCH] go:
- upgrade 1.25.6 -> 1.25.7
-Thread-Topic: [yocto-patches] [meta-lts-mixins][kirkstone/go][PATCH] go:
- upgrade 1.25.6 -> 1.25.7
-Thread-Index: AQHcnFVyhXoddl593UqN8SeRGKH3UbWCWPwA
-Date: Sat, 14 Feb 2026 15:44:40 +0000
-Message-ID: 
- <AS1PR10MB5697F0D0732F502474E84B9EFD6EA@AS1PR10MB5697.EURPRD10.PROD.OUTLOOK.COM>
-References: <189396539B11C41B.4089548@lists.yoctoproject.org>
-In-Reply-To: <189396539B11C41B.4089548@lists.yoctoproject.org>
-Accept-Language: en-US
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9611.13; Sat, 14 Feb
+ 2026 18:43:41 +0000
+Received: from SN7PR12MB8770.namprd12.prod.outlook.com
+ ([fe80::9fec:220a:a205:ec68]) by SN7PR12MB8770.namprd12.prod.outlook.com
+ ([fe80::9fec:220a:a205:ec68%3]) with mapi id 15.20.9611.012; Sat, 14 Feb 2026
+ 18:43:41 +0000
+Message-ID: <0c7c97d1-bb06-4cda-9917-436ad7209320@amd.com>
+Date: Sat, 14 Feb 2026 11:43:38 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [meta-zephyr][master][PATCH] zephyr-qemuboot: use stable ELF
+ symlink to avoid broken runqemu rootfs
+To: charles.embedded@gmail.com, yocto-patches@lists.yoctoproject.org
+CC: chee.yang.lee@intel.com, Charles Dias <charlesdias.cd@outlook.com>
+References: <20260208164458.101865-1-charles.embedded@gmail.com>
 Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
- MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ActionId=16d95f32-7124-4bbe-a292-053094119d18;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ContentBits=0;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Enabled=true;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Method=Standard;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Name=restricted;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SetDate=2026-02-14T15:44:38Z;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SiteId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Tag=10,
- 3, 0, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AS1PR10MB5697:EE_|VI1PR10MB3728:EE_
-x-ms-office365-filtering-correlation-id: 96c37b7c-d162-49a5-854c-08de6bdff7b8
-x-ms-exchange-atpmessageproperties: SA
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230040|1800799024|4022899009|366016|376014|38070700021|13003099007|7053199007;
-x-microsoft-antispam-message-info: 
- =?us-ascii?Q?escCqBdJYEcMAXkCDMGK13HKAbJj1yT6MjOKhiw5YdErVLvJLG+jMqJ1AdLj?=
- =?us-ascii?Q?Z7rpQiPkYw6T4YAOtOtXZdbZ4AdkrHPzEWiqeJZ5MscIoZ9KxFZ30rNo3CzE?=
- =?us-ascii?Q?uT0DsdXBIyC9kn81BcGwSfd/DWPpYshXtSIGRqjCIcqO3xhV77W8kyOlgGo0?=
- =?us-ascii?Q?b6XopO8+mPWQ83D5ZCyWW+cpMlJ/Uac6rTo/LhiKWf99vhQh5qt0A9td9Fd6?=
- =?us-ascii?Q?P4MwmBnXbdK9dzhTMXyOiDwvHZ07BOUTGRQWLzXL0vq06eK5i4A7mzKtBWks?=
- =?us-ascii?Q?w/9RlYHG7+Y0YpbJd/klaPHnxmKvoIRZta1iRm1xHv99JA8CNNWd/Pkwe4tI?=
- =?us-ascii?Q?dfV/9Z/Ki/ayhRPzD4WiVhKhJa6Vl0ee9lZuP8R9HmzzZ1VytVsDB1lK8D3l?=
- =?us-ascii?Q?5mB6xomJAyAuuXV4HKsrxOPho/DzgKcDwaVHKKj5DHpXH084pTOq9C0yJ17p?=
- =?us-ascii?Q?6wXy0M+R43ShoEuE3vg6THc2IxWmzxqB25vYziLU3nF+wYwihAABUajB5bta?=
- =?us-ascii?Q?iQ5H7XJlAGbeULRlO6Jj1D1mzkCii2KlfKsyrT+T55c56sZ3aTQVD40aDIXT?=
- =?us-ascii?Q?fHkZyOcTdfOLa/WMUNfBlMSHuN50GB1ma1LY9LdrtBo+HX8dGwK/OmM+y7ej?=
- =?us-ascii?Q?igpp01oUpYiW8stK77rb6iJP9twPR7YvtqfXIf9kmS74uOvCiL7NbzDViqVx?=
- =?us-ascii?Q?Cq9pwJxvPGWx4XmFlMMijO4jooQkGY1kBEwot8LqkKRENectyAY69CdDEIil?=
- =?us-ascii?Q?RIKZ61wzl1iRYMt75O4n6FOSzde4lLxWFOkh4tpsW8wfs0btk27rw2hSIMJB?=
- =?us-ascii?Q?WtXpoJb8ZxHAhQy1LpB/Wh4q74MTIMAchz0T3FtMXN9LXmWtqWanxHwy4qSi?=
- =?us-ascii?Q?s3bUJV5lOGtNQNX8l7gAIlL/rQMc/8GcUmlPSBbh5OkS6/EWQQwyBEWqDQcp?=
- =?us-ascii?Q?2oGYOITIWtgPm0HrF9B4UkQoOycekdbui659swWfDGeDr8VXGrlduxAqDVWe?=
- =?us-ascii?Q?PVrn9WiBP159wuF8Lr4KUmyQxLGypR9VcT7g79tWTiUoQPA0F+TgUay/LGWf?=
- =?us-ascii?Q?NaDjrH/adPVXcpYAHgZcMwps/Al4r8sRDDul0GhFwLN8HRdYAw7YGbYKgx3W?=
- =?us-ascii?Q?g2DrKdo8F4A9tdusmuyYTe3J7Qhzt/WPgH5Zq7YGeDrxoTAUdDgNWWlnZu6K?=
- =?us-ascii?Q?3X/hNW3LliPN8VLJfjViRDkWnlfMxr4ouFMFYN8ABFwNzVKWDAkGiV+1mLGE?=
- =?us-ascii?Q?DY99DtQkjW7tAGO+bk0kZeFAim1wxAvdcj54/HygbZ7FKRNlW7qxb8bFn1MW?=
- =?us-ascii?Q?CmnGCDbwsilfxL7bc8fkCKPNgvkkxiXSuDDZboAyja/pgovWo1pQovNBOKIU?=
- =?us-ascii?Q?NVtCoRoat2OiYqIKQbkY5eiiHQ+JQN0a0JLekZ7cov8TslJXKhK4Q8zERX9k?=
- =?us-ascii?Q?mfctgkINKidlVxCUbK2gUTofPX24oLB8Ao35OGpkukiFFl2fXdz9JepTmqhg?=
- =?us-ascii?Q?NVSrhFgjP2rrPcDnwAIwAtEEWJqmYcnpdiv9/kejmMUyjH1eoDMVcrH9iA9H?=
- =?us-ascii?Q?Uw8YXY7xlq6w7CvxVhfUSZcRMGaUxS4kUJIjtDEV?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS1PR10MB5697.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(4022899009)(366016)(376014)(38070700021)(13003099007)(7053199007);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?us-ascii?Q?lVaSX5X+EvJmF0xbsp2K6JrczM4/UKVWSy7HTwg4ti6x/nz+iIsdwNMrJQtK?=
- =?us-ascii?Q?LLdSGC9YNslJDXcswELdqSyPcK0fDI/34oDPDMqe3YnC8/0xL2gk9ousVKbb?=
- =?us-ascii?Q?qEV6OSY9uWAYhoYwiJqlgYsLWdsVkhVtmMl6G+yAx0KX2ZaLBTCiYHVSNGy6?=
- =?us-ascii?Q?gvoxPwRZTk07vqA1QJDnmL3/9xrf11W9FfxOGQ05KL62p6ty/Xz266bbwX+G?=
- =?us-ascii?Q?94k+Y7joyh6xA+3VyDebG6TT600Axq62y7BLKpBpP9AiXqP+baicc0gwtS3S?=
- =?us-ascii?Q?MeSsoIx3nIBBeYJR8q7tDf1CDDyLA6io6XHjDlvqeVz4QenH++YZf4KjGpDf?=
- =?us-ascii?Q?Yd4IDDP5DewwzC7vtk1mzPoON49ut3vHeiyQ/DypY6MRD4MUQ1lohSBsfMNq?=
- =?us-ascii?Q?8YdgNcAB2hIXVsJnYzjOGYN+ywpQPtEuUlDGJ6iUlnxXjWfCmMFioHr3BnnC?=
- =?us-ascii?Q?UXbX806HVOS5lpfMhhPVRahHBJx9qTfIsFPbUed3LrYOStOJK1ff0oxybhAS?=
- =?us-ascii?Q?a9SaKI8f5qeET3ZF4kFfm9R0bDfBz/bMhcAtGZAx0y8Fs+PqJNeA8fIbgjL1?=
- =?us-ascii?Q?fsNR19vHUPElV7tm5lzMdY/OkdjdZ88ZSzFlUJ3+pdRimG8R6eVsDHcOJvzh?=
- =?us-ascii?Q?V9PBCBgZLg2AEPsbBFnjQkzFiy8bknV+5OIvikI0lEktcN/lEyAoXBoqaQDG?=
- =?us-ascii?Q?hyXWnJTAsftZJJGdQIZXuZ0xXPQtpHcXrGTHEdF5u3xXbjblb7CMY69iz5u9?=
- =?us-ascii?Q?kT+ywtXK6kz3oE31sLgsBl4C7EpDXMtKEQvXpxZaclrBQrkE5b6PiBkIlXJi?=
- =?us-ascii?Q?B982RvBefrE1oQzY6BPxBPt6VJJsjWWgTeIiRvWrS8OBUEENVeNWaCt6jseU?=
- =?us-ascii?Q?nNV6XhN/+QD/E2qQMF1NSgI2qJH+2KxpNzvucO+vi7608CRiLNpOBv+mzZtM?=
- =?us-ascii?Q?0eVnMTpuvUxmM2We78IXfLguuvmqeA2mcdP/LEKz6YsDblmHT7oEqxEV5epS?=
- =?us-ascii?Q?qonb1GGuf2+M1VyFvo0cveBDimlmtYrQB0N/XzK6d6l23NFZM5OYeLF1pXwg?=
- =?us-ascii?Q?8TsIWCt3FufEt9wmKa6c/4yIcgVZkbCUK2I4gRRWvLHQzCqqoTKV945PIJR8?=
- =?us-ascii?Q?yBQ6/0XLE0FApbPPWbBe3Dpin7/YlYRU60RzfNQzkyaSFMv3GydXDv+PyXWh?=
- =?us-ascii?Q?lQHdJGG71h6Klq24e6H8Yiu/AZ8P95wmRAR7+pUolrFm8CtXuN7GY7lalwEx?=
- =?us-ascii?Q?a/MZZLCE2VdJhojPMpWt5tEL6ejmsOmcR/ofN/InlvouplkfFPA58oFQsHR5?=
- =?us-ascii?Q?YGGF7dmvgL5o7gnyBqWD8YjZEXwYl/sXM8fcNlm8hVWyGc+Uzdkqt+6W9jMY?=
- =?us-ascii?Q?VlMDBkeM9Q05pFHyrwSv8yCGnnN3WYgN365/XWcYXnWxq/4aez0ufZnmbAoM?=
- =?us-ascii?Q?F0B0fGGkKWuUBNXiK+NXIuhn+OeAUouaRS4KyKi+amwxgsrpUWzlbe/2HrbL?=
- =?us-ascii?Q?FOAHNlNMahuk37fRbpBvAhqWM2BahwuKt27LinnujGOMA7Cs48+/81IUXKFs?=
- =?us-ascii?Q?G8LB5DQLtZP2oMN+QJedJaOjZYX14dW8xhqoJVLp2cEvOpgJw/mn8vyCwby+?=
- =?us-ascii?Q?+dhgXr012LENQyqgiDqDVPECNZqE77clv8NjWHbsGwogju3I0Gmwpgus9fwf?=
- =?us-ascii?Q?KMAmOu87Pltc4pTvFiWyKksmc2vhmv3Ds4qlTmFwXAoy2d2jtMDBu7I7vRvf?=
- =?us-ascii?Q?O2J68N54KQ=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
+From: "Gundlupet Raju, Sandeep" <sandeep.gundlupet-raju@amd.com>
+In-Reply-To: <20260208164458.101865-1-charles.embedded@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: CH2PR04CA0004.namprd04.prod.outlook.com
+ (2603:10b6:610:52::14) To SN7PR12MB8770.namprd12.prod.outlook.com
+ (2603:10b6:806:34b::21)
 MIME-Version: 1.0
-X-OriginatorOrg: siemens.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8770:EE_|LV8PR12MB9181:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5c606840-02cc-4adc-d2bc-08de6bf8f927
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
+X-Microsoft-Antispam-Message-Info: 
+	=?us-ascii?Q?fERGpoRCXeEa3FlnOHFF1s5LRqAdamCX7yYBiQiHBQ84tn9ChTHcZlSjS0RC?=
+ =?us-ascii?Q?0tAHz4IrCL7lV37BUzI3s/t7j7HtF5h8olY4vDhyaZe16tiyKBWIyPdAfW5A?=
+ =?us-ascii?Q?JDV/95oFoyXMKPOLjQIQ+cDyn33Z7bzvksc7+/3aMBqLWrMJcyPmZZUMuryY?=
+ =?us-ascii?Q?WDtZy0+vIEgYrghRUFEmZ9lvpCe9/grC7dvnOHU4zxryifQ9uP5367o/3sok?=
+ =?us-ascii?Q?fGoCMBa7xaEKGIr/ty4+XVaUrVSMo/cAFPm815EnC3FE4fLrmjGWniprtvd3?=
+ =?us-ascii?Q?PoWf/H98V/dvzgLhwzPnGU7ysoPADGEE16XLbLxA2Uo9GuHnUmOVnmRc/DP2?=
+ =?us-ascii?Q?YRQW/0XpsVHi07kv/I6bjn71HUIL+nmvOT00Mjtnq4L9CKhlYhg63zZ9jXKv?=
+ =?us-ascii?Q?DbBH+WxRM3jqM3e0dVwMY0nrXnqpzQ+K/ue1vX7AHxsZPXpXW6x5yJ38lkDi?=
+ =?us-ascii?Q?0nCabMTFIVTtyV7w2EHnCiDyRb3qgpczov1gR7qZdkuxKTjC2jqSVaybyHPd?=
+ =?us-ascii?Q?8DyhUiHBSd8BIepe3/E8zfCcsTroIFiDJFr7dUzKRDU4MwkBvuW1PPcDf34S?=
+ =?us-ascii?Q?oy459K5lyVqOcrwo1ZM8p8/6pWVTF8lSP6ydYdm+GFi1ks3W0NjUxS62CN7s?=
+ =?us-ascii?Q?k0Tx2MoLdscJL5TaDuHSi/HzTlR55sDtFZjcWdrOz3VynwFfly/f5EDddbuw?=
+ =?us-ascii?Q?B22dNm+oPagRC0YWbl7qfcgU8w5+sWlxhkVnJO0OSSCgrKKG3YUVx/XeNN/v?=
+ =?us-ascii?Q?2SsxogKRxNkfcSk7VdqOJJpf/LEZkpXfop0oCi7G5483Eyr65k6BZ6+dlu3s?=
+ =?us-ascii?Q?KAIi+Bl9dEZlXMFJEi8KXPHT+xmU0fe26n2IvzIwGXCsbNHTjl79yG5JEgRw?=
+ =?us-ascii?Q?Uvm6Fzo03j8OCYF9sKx8wJaBjaUjTt/ZK9ZIiaOU3KfQN/IOAHW6vAWQ2Zyj?=
+ =?us-ascii?Q?enj/PoIHNFD0eAHkjpWu/Ult8EoZUfp2EnA007D2BvBbht/er83TXGgPon1W?=
+ =?us-ascii?Q?xvi4OFtuBnbERw9UTZC6OiYz0pdyauMNQJa0+otMJ2c6Ao23OY439vDYsYSi?=
+ =?us-ascii?Q?0GLqMAAiD9wF1HaMpBpD20K4rwISSRVI6KDUnVmhzaUEJRPeCvsyvuuWuqWI?=
+ =?us-ascii?Q?DGn+KETLolWS3PAe4K1K8+Nxjt6ffnZvaWpig8AfIL+o7tsLTf66YpK06xsJ?=
+ =?us-ascii?Q?XcH0WLpO75DpkmI5rfMWFoKDK9vnMHvExyFf1sHJ7wJAPuc7aDreV8hw69L3?=
+ =?us-ascii?Q?mO+RNDuEUO2M8DxAlaCOR8bWH3m77TPEnwucXq6QWLJklowDPXR4cw7fDaTD?=
+ =?us-ascii?Q?MlfAFgG1Ol1ApwhrT9b4rPGNCAYKcoyOnyFCROCH0Q5+wTMab9WluR5LbLo+?=
+ =?us-ascii?Q?Qc5861R/ZFv61TIyMOWXoKLlEIUQrpfiGu3rUQHycw3Jnp2N5Fz9X11oQw9s?=
+ =?us-ascii?Q?ysUpmqxB7wkdAec58cb5C2Y0M/l9hlEIWcjIxCkCcru/aAxw6BdMPpcg96yY?=
+ =?us-ascii?Q?ujZXJ7H3fp81WOKI4bvxFEstCFokg3FXYyOQhRmLelSlSYYyBTmJgL+isoQl?=
+ =?us-ascii?Q?NETIrG8SR5agsOO690A=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8770.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?v1KNhGU28727+AK4HJ7jkrRl71U2eANZafa2V0eK0RazWXafsLeleMhvQKwK?=
+ =?us-ascii?Q?0H90rcM7oH62QayqsIy15VH924Yh93sKOM+P5AokBFfXEpw4renDllTM2xrc?=
+ =?us-ascii?Q?AN/kNlqY1jJcD/U/e2QP3lK1Q2q5gDZ5NKoBb9qqt4VIeyehGd/GEWuTEdB6?=
+ =?us-ascii?Q?NI9IMXLnNcSuFRVvYfvJKotFYCY7axRzdqewYRPaG55SG959sNUeeflrlt33?=
+ =?us-ascii?Q?lJ5eYSbRiY6l1JRWqBmMSght/Rv4+45ciREmiHmQhSEPEQHTA7wiIvx1qoUS?=
+ =?us-ascii?Q?w2pFFer6e9q1jdAfTkzJZlDi28azsuc1/VkWKm9h2R1b5acX/jeBHr8+lpaN?=
+ =?us-ascii?Q?OGIiRRE/KaKhBsOJmwCWiJBmIcT6yYngz0RaH4HRIaXp1FOxeXW8qi3hawux?=
+ =?us-ascii?Q?boH10VIupWVHBGzc6wEyg5kC/TfO5Mo9OoQYQS7bMDLUPqE91Q+cKSmR0hbO?=
+ =?us-ascii?Q?mx6BydsKUHeK+zOKh+tjWgdpkyNez8Z3bydfKVF6SsUxG0W/5op6FA0Lp5bT?=
+ =?us-ascii?Q?HmuXbNt8z2mc4jg5wG0vFEbcAjTasnu9utKjix/j9O8wEGEFRXC8VL3hvQ0V?=
+ =?us-ascii?Q?x+ACUoxaTRMGI9hXXp2WBJ4PdPuQGci0xmSlpUfi2pdolRlOJySee6rToo1J?=
+ =?us-ascii?Q?n6zvAgJeupNsH05EcgUlfjRkj++13kxUEYKtPdK8vhXSGHdWu/cPRmpdGQOf?=
+ =?us-ascii?Q?HTHkhbI9D89ykvHFm1O2yNUhEofKKVrvknmCeEtPHH/6jkJGQl3+oVH/KbDq?=
+ =?us-ascii?Q?svGK10MWc4E5x2C/ZIqU+Y2OKJRBOeJt7BgEbFaNvGB2+cErFA2YlyXzbPrC?=
+ =?us-ascii?Q?tgMLm175SPehF3DuzQl8Bq+Fw/jgNpI2CJ5kUgn0i2y0EziapKsRYVEBLf1H?=
+ =?us-ascii?Q?CaP+WvR4jgTZBSp+5jcribGNeFeh0rx6syKM7iBr1MwISLg9yfr0Hfyjvc1t?=
+ =?us-ascii?Q?TQTu18YFyECE/6aNDDKuTf3dNy0s/VfYgMcIAbVB7I3Ajcpffo4g+XEj8Un6?=
+ =?us-ascii?Q?5OqcK4xRTAKEON4M0Dz4bez0CwXt9WnnriBlUyPjaxrMh/Otog2gNKIC1uAH?=
+ =?us-ascii?Q?E0I5OkhaQMon498H7A0no1sEyO8p+AAqiinyPdCxpJwEFHw6oSOsaYwWS6kk?=
+ =?us-ascii?Q?dx7YQYA6AYmZS0er/VsbyFWhf7dETSWqrm5D7ojOArl0q1K4FthQq+Y6Od23?=
+ =?us-ascii?Q?Di9Q7k+XKGnBdAbLhtkFnTaMQXqvDZVVnlp8JdgBHovZIqSWcgbVZs1n1ehC?=
+ =?us-ascii?Q?hQvlFknPrz2F2IoWW6ovkv3Q7+T0QhaLFN+sIsaq2wkqnIQqoAd0RiJaatjV?=
+ =?us-ascii?Q?JgXdma8/ZHOmmoT4Uj62tB0n0OUwg/WoT66wenYCKuy37/dG798EhpX2EZ5u?=
+ =?us-ascii?Q?KSJbAcBQ6MIlDBp44qCiY36qA8iSAfWQBgOSPlz724fzbGSUo0H67+m92XPW?=
+ =?us-ascii?Q?Y4XMTdfovVcprjwU4tXw/7Zh27HY8pfx5d+K9GpNobT+vCCc/QKNSQ9Eo/rC?=
+ =?us-ascii?Q?eOzMJsYCB/pSvUkke3CvE9xPlaPLuTY6Ruteisr+9SPd1oNRAt0GhRG28pyW?=
+ =?us-ascii?Q?IL/q/OE/Cx4yk2tfckEmBQp/ZeK/huaAsAEhEsJ7GBG1jWsIWpKDWK++wZPM?=
+ =?us-ascii?Q?1Ge8icXqoeIw7lmSsadbIywaGoQairW89DGJtb7bDbeHLFH8dSlgiqboFrF/?=
+ =?us-ascii?Q?25HVKPDBmDMaDr+coOOpLQ5ol4+RwSVjMX7F0YrGyjFIyYLxnes/BWAE7mI5?=
+ =?us-ascii?Q?x0Fq0zN5dA=3D=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5c606840-02cc-4adc-d2bc-08de6bf8f927
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8770.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AS1PR10MB5697.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 96c37b7c-d162-49a5-854c-08de6bdff7b8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Feb 2026 15:44:41.0518
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2026 18:43:41.1451
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: MxoNFXSTWQgJEZ53Zlg3KFzZHhgbWeJX/TeTsvWS75Xy9Domaqo7GvayPDhE7lOJqh8DvgLa6GkYp5pBqTh7lQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR10MB3728
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 08XXGJrbuLY1WTZHDQmXzhFr5B2bmphQdNQl8vaZd8W98LVrq02lhm3HN36jmr5m/whRZwkd/pVm2iIjRdNMrQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9181
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sat, 14 Feb 2026 15:44:54 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3240
+ <yocto-patches@lists.yoctoproject.org>; Sat, 14 Feb 2026 18:43:45 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3241
 
-This is now merged.
 
-> -----Original Message-----
-> From: yocto-patches@lists.yoctoproject.org <yocto-
-> patches@lists.yoctoproject.org> On Behalf Of Peter Marko via
-> lists.yoctoproject.org
-> Sent: Thursday, February 12, 2026 20:26
-> To: yocto-patches@lists.yoctoproject.org
-> Cc: Marko, Peter (FT D EU SK BFS1) <Peter.Marko@siemens.com>
-> Subject: [yocto-patches] [meta-lts-mixins][kirkstone/go][PATCH] go: upgra=
-de
-> 1.25.6 -> 1.25.7
->=20
-> From: Peter Marko <peter.marko@siemens.com>
->=20
-> Upgrade to latest 1.25.x release [1]:
->=20
-> $ git --no-pager log --oneline go1.25.6..go1.25.7
-> eaf3bc799a (tag: go1.25.7) [release-branch.go1.25] go1.25.7
-> c7d189e65c [release-branch.go1.25] crypto/tls: document resumption behavi=
-or
-> across Configs
-> 4512014530 [release-branch.go1.25] crypto/tls: revalidate whole chain on
-> resumption on Windows and macOS
-> d5987bff8a [release-branch.go1.25] crypto/tls: check verifiedChains roots=
- when
-> resuming sessions
-> c2d04c0994 [release-branch.go1.25] crypto/tls: add verifiedChains expirat=
-ion
-> checking during resumption
-> 6b1110a40f [release-branch.go1.25] Revert "crypto/tls: don't copy auto-ro=
-tated
-> session ticket keys in Config.Clone"
-> 0765a9d624 [release-branch.go1.25] crypto/x509: fix single label excluded=
- name
-> constraints handling
-> b19100991a [release-branch.go1.25] cmd/go: remove user-content from doc
-> strings in cgo ASTs.
-> 738bc3a33c [release-branch.go1.25] cmd/compile: during regalloc, fixedreg
-> values are always available
->=20
-> Fixes CVE-2025-61732 and CVE-2025-68121.
->=20
-> Release information: [2]
->=20
-> [1] https://github.com/golang/go/compare/go1.25.6...go1.25.7
-> [2] https://groups.google.com/g/golang-announce/c/K09ubi9FQFk
->=20
-> (From OE-Core rev: 7a5237b7ae557136eee9ff3f98e2b0a74f39ebb7)
->=20
-> Signed-off-by: Peter Marko <peter.marko@siemens.com>
-> Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-> Signed-off-by: Ross Burton <ross.burton@arm.com>
-> Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+On 2/8/2026 9:44 AM, charles.embedded@gmail.com wrote:
+> From: Charles Dias <charlesdias.cd@outlook.com>
+>
+> do_bootconf_write() may update qemuboot.conf and the QEMU ELF symlink to =
+a
+> new timestamped name while the ELF itself is reused from sstate and not
+> deployed, leaving a broken symlink and causing runqemu to fail with
+> "Can't find rootfs: ... .elf".
+[Sandeep]: Can you provide me the reproducibility steps for this issue.=20
+I didn't see this issue when I run the test a month ago.
+
+ =C2=A0$ MACHINE=3Dqemu-cortex-a9 runqemu nographic
+runqemu - INFO - Running MACHINE=3Dqemu-cortex-a9 bitbake -e=C2=A0 ...
+runqemu - INFO - Continuing with the following parameters:
+KERNEL:=20
+[/scratch/sandeep/yocto/yp-master/build-zep/tmp/deploy/images/qemu-cortex-a=
+9/zephyr-helloworld-qemu-cortex-a9-20260116230612.elf]
+MACHINE: [qemu-cortex-a9]
+FSTYPE: [elf]
+ROOTFS:=20
+[/scratch/sandeep/yocto/yp-master/build-zep/tmp/deploy/images/qemu-cortex-a=
+9/zephyr-helloworld-image-qemu-cortex-a9.elf]
+Disabled. Changes on rootfs will be kept after QEMU shutdown.
+CONFFILE:=20
+[/scratch/sandeep/yocto/yp-master/build-zep/tmp/deploy/images/qemu-cortex-a=
+9/zephyr-helloworld-image-qemu-cortex-a9-20260116230612.qemuboot.conf]
+
+runqemu - INFO - Running=20
+/scratch/sandeep/yocto/yp-master/build-zep/tmp/work/x86_64-linux/qemu-helpe=
+r-native/1.0/recipe-sysroot-native/usr/bin/qemu-system-arm=20
+-nic none=C2=A0 =C2=A0-icount shift=3D3,align=3Doff,sleep=3Doff -rtc clock=
+=3Dvm -machine=20
+xilinx-zynq-a9 -cpu cortex-a9=C2=A0 -m 256 -serial mon:stdio -serial null=20
+-nographic -nographic -vga none -kernel=20
+/scratch/sandeep/yocto/yp-master/build-zep/tmp/deploy/images/qemu-cortex-a9=
+/zephyr-helloworld-qemu-cortex-a9-20260116230612.elf=20
+-append '=C2=A0 mem=3D256M swiotlb=3D0 '
+
+runqemu - INFO - Host uptime: 2514957.76
+
+*** Booting Zephyr OS build v4.2.0 ***
+Hello World! qemu_cortex_a9/xc7z007s
+QEMU: Terminated
+runqemu - INFO - Cleaning up
+runqemu - INFO - Host uptime: 2514968.61
+
+$
+
+>
+> Fix by making zephyr-qemuboot use the stable link name
+> (${ZEPHYR_IMAGE_LINK_NAME}.elf / ${PN}-${MACHINE}.elf), which is
+> guaranteed to exist as a symlink created by zephyr-image.inc and always
+> points at the most recently deployed ELF.
+>
+> Signed-off-by: Charles Dias <charlesdias.cd@outlook.com>
 > ---
->  recipes-devtools/go/{go-1.25.6.inc =3D> go-1.25.7.inc}        | 2 +-
->  ...o-binary-native_1.25.6.bb =3D> go-binary-native_1.25.7.bb} | 6 +++---
->  ...cross-canadian_1.25.6.bb =3D> go-cross-canadian_1.25.7.bb} | 0
->  .../go/{go-cross_1.25.6.bb =3D> go-cross_1.25.7.bb}           | 0
->  .../go/{go-crosssdk_1.25.6.bb =3D> go-crosssdk_1.25.7.bb}     | 0
->  .../go/{go-runtime_1.25.6.bb =3D> go-runtime_1.25.7.bb}       | 0
->  recipes-devtools/go/{go_1.25.6.bb =3D> go_1.25.7.bb}          | 0
->  7 files changed, 4 insertions(+), 4 deletions(-)
->  rename recipes-devtools/go/{go-1.25.6.inc =3D> go-1.25.7.inc} (91%)
->  rename recipes-devtools/go/{go-binary-native_1.25.6.bb =3D> go-binary-
-> native_1.25.7.bb} (79%)
->  rename recipes-devtools/go/{go-cross-canadian_1.25.6.bb =3D> go-cross-
-> canadian_1.25.7.bb} (100%)
->  rename recipes-devtools/go/{go-cross_1.25.6.bb =3D> go-cross_1.25.7.bb} =
-(100%)
->  rename recipes-devtools/go/{go-crosssdk_1.25.6.bb =3D> go-crosssdk_1.25.=
-7.bb}
-> (100%)
->  rename recipes-devtools/go/{go-runtime_1.25.6.bb =3D> go-runtime_1.25.7.=
-bb}
-> (100%)
->  rename recipes-devtools/go/{go_1.25.6.bb =3D> go_1.25.7.bb} (100%)
->=20
-> diff --git a/recipes-devtools/go/go-1.25.6.inc b/recipes-devtools/go/go-1=
-.25.7.inc
-> similarity index 91%
-> rename from recipes-devtools/go/go-1.25.6.inc
-> rename to recipes-devtools/go/go-1.25.7.inc
-> index 2c31c4a..ab58f71 100644
-> --- a/recipes-devtools/go/go-1.25.6.inc
-> +++ b/recipes-devtools/go/go-1.25.7.inc
-> @@ -18,4 +18,4 @@ SRC_URI +=3D "\
->      file://0011-cmd-link-stop-forcing-binutils-gold-dependency-on-aa.pat=
-ch \
->      file://0001-runtime-when-using-cgo-on-386-call-C-sigaction-funct.pat=
-ch \
->  "
-> -SRC_URI[main.sha256sum] =3D
-> "58cbf771e44d76de6f56d19e33b77d745a1e489340922875e46585b975c2b059"
-> +SRC_URI[main.sha256sum] =3D
-> "178f2832820274b43e177d32f06a3ebb0129e427dd20a5e4c88df2c1763cf10a"
-> diff --git a/recipes-devtools/go/go-binary-native_1.25.6.bb b/recipes-
-> devtools/go/go-binary-native_1.25.7.bb
-> similarity index 79%
-> rename from recipes-devtools/go/go-binary-native_1.25.6.bb
-> rename to recipes-devtools/go/go-binary-native_1.25.7.bb
-> index 261f7dc..ec6fa10 100644
-> --- a/recipes-devtools/go/go-binary-native_1.25.6.bb
-> +++ b/recipes-devtools/go/go-binary-native_1.25.7.bb
-> @@ -9,9 +9,9 @@ PROVIDES =3D "go-native"
->=20
->  # Checksums available at https://go.dev/dl/
->  SRC_URI =3D "https://dl.google.com/go/go${PV}.${BUILD_GOOS}-
-> ${BUILD_GOARCH}.tar.gz;name=3Dgo_${BUILD_GOTUPLE}"
-> -SRC_URI[go_linux_amd64.sha256sum] =3D
-> "f022b6aad78e362bcba9b0b94d09ad58c5a70c6ba3b7582905fababf5fe0181a"
-> -SRC_URI[go_linux_arm64.sha256sum] =3D
-> "738ef87d79c34272424ccdf83302b7b0300b8b096ed443896089306117943dd5"
-> -SRC_URI[go_linux_ppc64le.sha256sum] =3D
-> "bee02dbe034b12b839ae7807a85a61c13bee09ee38f2eeba2074bd26c0c0ab73"
-> +SRC_URI[go_linux_amd64.sha256sum] =3D
-> "12e6d6a191091ae27dc31f6efc630e3a3b8ba409baf3573d955b196fdf086005"
-> +SRC_URI[go_linux_arm64.sha256sum] =3D
-> "ba611a53534135a81067240eff9508cd7e256c560edd5d8c2fef54f083c07129"
-> +SRC_URI[go_linux_ppc64le.sha256sum] =3D
-> "42124c0edc92464e2b37b2d7fcd3658f0c47ebd6a098732415a522be8cb88e3f"
->=20
->  UPSTREAM_CHECK_URI =3D "https://golang.org/dl/"
->  UPSTREAM_CHECK_REGEX =3D "go(?P<pver>\d+(\.\d+)+)\.linux"
-> diff --git a/recipes-devtools/go/go-cross-canadian_1.25.6.bb b/recipes-
-> devtools/go/go-cross-canadian_1.25.7.bb
-> similarity index 100%
-> rename from recipes-devtools/go/go-cross-canadian_1.25.6.bb
-> rename to recipes-devtools/go/go-cross-canadian_1.25.7.bb
-> diff --git a/recipes-devtools/go/go-cross_1.25.6.bb b/recipes-devtools/go=
-/go-
-> cross_1.25.7.bb
-> similarity index 100%
-> rename from recipes-devtools/go/go-cross_1.25.6.bb
-> rename to recipes-devtools/go/go-cross_1.25.7.bb
-> diff --git a/recipes-devtools/go/go-crosssdk_1.25.6.bb b/recipes-devtools=
-/go/go-
-> crosssdk_1.25.7.bb
-> similarity index 100%
-> rename from recipes-devtools/go/go-crosssdk_1.25.6.bb
-> rename to recipes-devtools/go/go-crosssdk_1.25.7.bb
-> diff --git a/recipes-devtools/go/go-runtime_1.25.6.bb b/recipes-devtools/=
-go/go-
-> runtime_1.25.7.bb
-> similarity index 100%
-> rename from recipes-devtools/go/go-runtime_1.25.6.bb
-> rename to recipes-devtools/go/go-runtime_1.25.7.bb
-> diff --git a/recipes-devtools/go/go_1.25.6.bb b/recipes-devtools/go/go_1.=
-25.7.bb
-> similarity index 100%
-> rename from recipes-devtools/go/go_1.25.6.bb
-> rename to recipes-devtools/go/go_1.25.7.bb
->=20
->=20
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-> Links: You receive all messages sent to this group.
-> View/Reply Online (#3231): https://lists.yoctoproject.org/g/yocto-
-> patches/message/3231
-> Mute This Topic: https://lists.yoctoproject.org/mt/117780647/4454441
-> Group Owner: yocto-patches+owner@lists.yoctoproject.org
-> Unsubscribe: https://lists.yoctoproject.org/g/yocto-
-> patches/leave/13703729/4454441/683413657/xyzzy [peter.marko@siemens.com]
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
->=20
-
+>   meta-zephyr-core/classes-recipe/zephyr-qemuboot.bbclass | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/meta-zephyr-core/classes-recipe/zephyr-qemuboot.bbclass b/me=
+ta-zephyr-core/classes-recipe/zephyr-qemuboot.bbclass
+> index ab0a281..4d8920f 100644
+> --- a/meta-zephyr-core/classes-recipe/zephyr-qemuboot.bbclass
+> +++ b/meta-zephyr-core/classes-recipe/zephyr-qemuboot.bbclass
+> @@ -1,8 +1,8 @@
+>   inherit qemuboot
+>  =20
+> -ZEPHYR_IMAGE_BASE_NAME ?=3D "${PN}-${MACHINE}${IMAGE_VERSION_SUFFIX}"
+> +ZEPHYR_IMAGE_LINK_NAME ?=3D "${PN}-${MACHINE}"
+>  =20
+> -KERNEL_IMAGETYPE =3D "${ZEPHYR_IMAGE_BASE_NAME}.elf"
+> +KERNEL_IMAGETYPE =3D "${ZEPHYR_IMAGE_LINK_NAME}.elf"
+>   QB_DEFAULT_FSTYPE =3D "elf"
+>   QB_NETWORK_DEVICE =3D "none"
+>   QB_NET =3D "none"
+> @@ -29,7 +29,7 @@ python bootconf_clean() {
+>   python do_bootconf_write() {
+>       bb.build.exec_func("do_write_qemuboot_conf", d)
+>  =20
+> -    qemuimage =3D "%s/%s.elf" % (d.getVar('DEPLOY_DIR_IMAGE', True), d.g=
+etVar('ZEPHYR_IMAGE_BASE_NAME', True))
+> +    qemuimage =3D "%s/%s.elf" % (d.getVar('DEPLOY_DIR_IMAGE', True), d.g=
+etVar('ZEPHYR_IMAGE_LINK_NAME', True))
+>       qemuimage_link =3D d.getVar('QEMU_IMAGE_LINK', True)
+>       if os.path.lexists(qemuimage_link):
+>           os.remove(qemuimage_link)
 
