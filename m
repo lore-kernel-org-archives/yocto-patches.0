@@ -2,70 +2,68 @@ Return-Path: <hprajapati@mvista.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF6AE7BD9B
-	for <webhook@archiver.kernel.org>; Mon, 16 Feb 2026 11:23:21 +0000 (UTC)
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.17567.1771240992065461692
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30685E7BD9F
+	for <webhook@archiver.kernel.org>; Mon, 16 Feb 2026 11:28:52 +0000 (UTC)
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.17633.1771241329873876334
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 16 Feb 2026 03:23:12 -0800
+ Mon, 16 Feb 2026 03:28:49 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@mvista.com header.s=google header.b=VVSU1OOU;
- spf=pass (domain: mvista.com, ip: 209.85.214.175, mailfrom: hprajapati@mvista.com)
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2a79998d35aso20064895ad.0
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Feb 2026 03:23:11 -0800 (PST)
+ dkim=pass header.i=@mvista.com header.s=google header.b=Orf0LXJ8;
+ spf=pass (domain: mvista.com, ip: 209.85.214.177, mailfrom: hprajapati@mvista.com)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2a962230847so26316185ad.3
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Feb 2026 03:28:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mvista.com; s=google; t=1771240991; x=1771845791; darn=lists.yoctoproject.org;
+        d=mvista.com; s=google; t=1771241329; x=1771846129; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YIQ6/vwyTZZUWGkfFM3ly0fRXOX4L9pPj0Huqnrcwus=;
-        b=VVSU1OOUBdPA61K9zEpAh8lvM60JbmNsvAp3Y1Lj9D/+1fdAzX2QyDBm1DHk7hNLyC
-         wXyBke9D9usQS0E8BUN8emmDuLt56OfnSI7vLab7dZzedFRlnMtSpHl40lRC6yUbYDbc
-         go2bhOBM12SDBaPYHc6naSW9WPDz2jXoqxC9Q=
+        bh=ZGEQxeD3+usbbN/S84uEjH3wdUtFlnQaCYaGa7T2oho=;
+        b=Orf0LXJ87y5g/IP8cn6cYRnizC5dAnpAKyTTbvsRlCsIxZiUg0RxZp+F1d3qPxIXc8
+         vsjVXcf2DX+FWikU6bMhFhqkx9yYCssvbqqnvQHvhD763xwre5EBxVpCWBEt3Ss6a/AX
+         +KmXJbcxsvj6ykw8DA3X1Zxe/oQmtSuJxaJT4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771240991; x=1771845791;
+        d=1e100.net; s=20230601; t=1771241329; x=1771846129;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YIQ6/vwyTZZUWGkfFM3ly0fRXOX4L9pPj0Huqnrcwus=;
-        b=S86Qcf67RHMbyqrDKP6qE9bffR8PvVmqhlt2T9FowWLurEobCrva3g8V4a0Q5cxV62
-         gOHmTrsKIwCXfIko2VkW3GWlszhBrAzaYGyFagBJiAX0h1rT4eIRcDbGzMj2jRCPzc0h
-         gKpBeI7wP8jaNAcgBnBd3zhCN5rgjoDWd/g8ug6km8OzqgyvMIfDufROJx2qld8DeVw2
-         DIzHnMHAPn6DyuCB8Kne3O2RXJB47J1VPz6jCVNw/lyCGgs/YD4s7cnDMsIppTBXhBbK
-         1H4fn6GwKGsm67v2USUTTmLsUGa6A+D3vMxhk4k1IhnoLZyUmY3yOp8LMN7Q8jYvMinj
-         ni+A==
-X-Gm-Message-State: AOJu0Yxz+8VR0wUxq+aaLApP1ad30DGlffGlZqx5ZF3B+epQh9h7pRZm
-	hKFsu4MNDoXkuhhNeqhmiIq2g3rVd3emLcqAz2PrHAwWkCqy0NVAvVmDGpoceuYOyynFAPQR09e
-	rZj9tYCc=
-X-Gm-Gg: AZuq6aIiAa9ZM3LhYUutDncZTALP/HkzJBFb+/fa72dYzamOqWY6M7Rm6K7eGr+R82w
-	+3yB9Nmvdii247Ml8WFb9aTcPfp+e3VrN7UAopgsnEfxsjXpMYmuf1YW4QfMgEiHjaTRJBoRwzy
-	rnAjnP/SKgXXJ+2vMLfIl0AbCfFMm1RecMcbrDjcU/Rm/dGy5CxeCT1ZTrkuPzj6LLJNGx+NQOm
-	wFvokt5/CacY+1XkE4fv1/Fw0m3YUDhq4Dq6A1abkPHVsg0epA7AuDfZgc08lsMJZA+7Y2SMdr9
-	K6xLOChHB1I3bKtp95mly9g7dc2meC54mG76Q/32+Bh723emJoNNTKxVQVQZ5nWNmk6cv3uHm0l
-	O7W/KTN9IlICNWJZmtYNfGRZFGP+qYqqISRY57PNox1m5hmJYkpVWR/4XQkTRGHNdzkWfC0+x33
-	ufPQQh0li6Hbn9rxt+f3srIazBPvQlfOnu5siu
-X-Received: by 2002:a17:902:ce82:b0:2a9:410:2428 with SMTP id d9443c01a7336-2ab50649b79mr99162775ad.60.1771240990260;
-        Mon, 16 Feb 2026 03:23:10 -0800 (PST)
+        bh=ZGEQxeD3+usbbN/S84uEjH3wdUtFlnQaCYaGa7T2oho=;
+        b=D5kNPYsNvT7O85ANSj/uNjPJCM7FDDeNn5fX8drzQ3vuXjAGXWAokwWZ9xcH4KwvzO
+         v+4A1DVtBp3kymao5Nmxt45+7/rh4A6+SDpojtBUTzpsHIWMDSyKssZPp2aFGBuAMAKr
+         eO6XcPL1yFPAVJPc1CyR+akrzAim3Bx5LdpcH52xxJyQE7DYpA8b8mrSDOSaNYcaqc0o
+         J/yhe6fPQG/3pSohPPjDOpBxRl8oyqkGnxrwzQ2V5xoDhycqaQE/ElHJ+ZndFrR0+ME2
+         1qtYyZ3X7ULMN/M3TNLUKKMxKX2FP+CHEZCwrfhLvb4+zIVoTygfuujoJqkYl076LwYB
+         TERw==
+X-Gm-Message-State: AOJu0YzQ/MfNStlfv9DmN0LVWiu27zjxdRWstjs5me7b6fwOZ5Z8hvWq
+	cD7S4v3QyHessdT1VZ6DE7lD9LH/pVUzUnDId5pR/0VoZ/ROH8tPQIft+xJRpfmm49oZGOkUuqZ
+	Fw+xGkgU=
+X-Gm-Gg: AZuq6aLIWMq7ycuQT/tdmSy31tQpaaDeWXUUP1eiAgbovoOJ595sjgo341VRJMBQPkF
+	4ihgtFpq5HOD+FNqPztd+CeW62GyAxGHV1I/MAYgzlq0PBkG/psNICmqc9ZezEDD0mJrkIsS/+j
+	+yqChirs2k7S+wfmKhLmf0CPxDCMhcH9UUODQDuLWitHd5Aqtucc5HARauXSaz3uwBTZ3ulVr1s
+	Dol4ugQDh3fl7v4s8qQMXsL7RD4i19R0JAEEmYRGqVdkmLKVmmaC09ivU1ul3eTOxu9320SikOm
+	egyfCcn3UC6inMfoq1u1xT+shdJ9Ng7grLnCm3uefXBeFKgINzEkIweDcSWycYSPXCmXDzsIRJT
+	ssguwB5NMchiVWIxnVATrH7I6Z083nGCRDukTOU0DestqV3U3OveIAie9hUXXFX5ghMXpXL5o0A
+	k9N3wf9J9FcBYWPBTn42ixylIBklg9N5M6juUN
+X-Received: by 2002:a17:902:ced0:b0:2a9:47d0:12cf with SMTP id d9443c01a7336-2ab504e9742mr93186785ad.4.1771241328423;
+        Mon, 16 Feb 2026 03:28:48 -0800 (PST)
 Received: from MVIN00013.mvista.com ([103.250.136.232])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ad1a738220sm70259525ad.37.2026.02.16.03.23.07
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ad1aadca84sm67186445ad.70.2026.02.16.03.28.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Feb 2026 03:23:09 -0800 (PST)
+        Mon, 16 Feb 2026 03:28:48 -0800 (PST)
 From: Hitendra Prajapati <hprajapati@mvista.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: scott.murray@konsulko.com,
 	Hitendra Prajapati <hprajapati@mvista.com>
 Subject: [meta-security][scarthgap][PATCH] suricata: update to 7.0.13
-Date: Mon, 16 Feb 2026 16:52:58 +0530
-Message-ID: <20260216112258.17746-1-hprajapati@mvista.com>
+Date: Mon, 16 Feb 2026 16:58:38 +0530
+Message-ID: <20260216112838.17952-1-hprajapati@mvista.com>
 X-Mailer: git-send-email 2.50.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 16 Feb 2026 11:23:21 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3244
-
-From: Scott Murray <scott.murray@konsulko.com>
+ <yocto-patches@lists.yoctoproject.org>; Mon, 16 Feb 2026 11:28:52 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3245
 
 Release notes:
 https://suricata.io/2025/11/06/suricata-8-0-2-and-7-0-13-released/
