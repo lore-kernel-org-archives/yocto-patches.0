@@ -2,34 +2,34 @@ Return-Path: <peter.marko@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A95FFE9A04B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B620EE9A02C
 	for <webhook@archiver.kernel.org>; Wed, 18 Feb 2026 19:46:42 +0000 (UTC)
-Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.2786.1771443992469039456
+Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.2826.1771443999746325681
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 18 Feb 2026 11:46:33 -0800
+ Wed, 18 Feb 2026 11:46:40 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=peter.marko@siemens.com header.s=fm2 header.b=Hp3KyeF9;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.227, mailfrom: fm-256628-20260218194628f942f9b93d0002076e-r2ravd@rts-flowmailer.siemens.com)
-Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 20260218194628f942f9b93d0002076e
+ dkim=pass header.i=peter.marko@siemens.com header.s=fm2 header.b=HFQSyOop;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.225, mailfrom: fm-256628-20260218194637021e1a6c6300020798-ukxgpo@rts-flowmailer.siemens.com)
+Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 20260218194637021e1a6c6300020798
         for <yocto-patches@lists.yoctoproject.org>;
-        Wed, 18 Feb 2026 20:46:29 +0100
+        Wed, 18 Feb 2026 20:46:38 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
  d=siemens.com; i=peter.marko@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=y1fcOhMfcQ/fYRGxSdO4CNRi/Lf4uN1vlQYCQ9FoQ7c=;
- b=Hp3KyeF9KrzSxkdfa90cFXC1lupJJwPIIKA9u7c/aGcH8+STwB1chEYIQrKNZFhztKB5DS
- wdBMV/xppCAVqogRlnBXIV3WnToQuG+Ece5YvOF7blPLw4sIu4/WqOzHLLpv34PzIsm537uJ
- 1A4hrS14Oju9AMMKI0iVP2zI7XuvF1HnnMYDa2m9Qs3SuA/EsYqGprf+YkM9DpW4/Zyj+sPy
- Nq+9zlsHL4KjLxV35m7/nxrkKq4PzBxA8SiA0Ge5ojsr7+wT1YW7aIWvfG4CrI5HetFAziLK
- q7iua0ufmjCRqajk+xkqhXFeNCFWHwQhWZlcW3aW7goHZqci0R6gD7iQ==;
+ bh=E4gHE6pFFfiPTyEd59yei+qpYM2nAm73EaqT4lGtRWI=;
+ b=HFQSyOopklrttf+3H8G9Tf2LouigcKgEZQk1PY0WHcLBBRrAFLtfbMXNjmCYikB9db4UJs
+ DHYwmxeNwOFwXj07VqE06kCJgu7n+/lweRcjNMMi+cq1gg1HuG65XFEtv2tWBd9JiavlZWaf
+ hmwCVvaifJOZT4vbck6Jbxma5GbBjTE4IAN5DVxOer/5JE9ZiRSFOMLAdtDk7ZeuJo3Zn0BB
+ L+9/klUuOdy86uhgBMs6Vf7paUi+7I9Gf3QTnpz7ogVZ0NhGulU1oG/FitBULHfcy2TADA0p
+ FrObinqTu9CcCB9EQfYtB4RIR+nWdXeVFKcmUkPvw0u3g4KCFQPDZnyg==;
 From: Peter Marko <peter.marko@siemens.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: peter.marko@siemens.com,
 	jose.quaresma@foundries.io
-Subject: [meta-lts-mixins][scarthgap/go][PATCH 1/2] go: upgrade 1.25.7 -> 1.26.0
-Date: Wed, 18 Feb 2026 20:46:14 +0100
-Message-Id: <20260218194615.4136681-1-peter.marko@siemens.com>
+Subject: [meta-lts-mixins][kirkstone/go][PATCH 1/2] go: upgrade 1.25.7 -> 1.26.0
+Date: Wed, 18 Feb 2026 20:46:34 +0100
+Message-Id: <20260218194635.4136702-1-peter.marko@siemens.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -39,7 +39,7 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Wed, 18 Feb 2026 19:46:42 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3257
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3259
 
 From: Peter Marko <peter.marko@siemens.com>
 
@@ -102,7 +102,7 @@ diff --git a/recipes-devtools/go/go-binary-native_1.25.7.bb b/recipes-devtools/g
 similarity index 79%
 rename from recipes-devtools/go/go-binary-native_1.25.7.bb
 rename to recipes-devtools/go/go-binary-native_1.26.0.bb
-index 74f8e3b..9b06301 100644
+index ec6fa10..9eb84fa 100644
 --- a/recipes-devtools/go/go-binary-native_1.25.7.bb
 +++ b/recipes-devtools/go/go-binary-native_1.26.0.bb
 @@ -9,9 +9,9 @@ PROVIDES = "go-native"
