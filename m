@@ -1,95 +1,105 @@
-Return-Path: <antonin.godard@bootlin.com>
+Return-Path: <yoann.congal@smile.fr>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6196EA4FA9
-	for <webhook@archiver.kernel.org>; Mon, 23 Feb 2026 11:03:34 +0000 (UTC)
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.32896.1771844612508128705
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB3B9EA4FC3
+	for <webhook@archiver.kernel.org>; Mon, 23 Feb 2026 14:08:05 +0000 (UTC)
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.35678.1771855675178000803
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 23 Feb 2026 03:03:33 -0800
+ Mon, 23 Feb 2026 06:07:55 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=dkim header.b=U9siGw+F;
- spf=pass (domain: bootlin.com, ip: 185.171.202.116, mailfrom: antonin.godard@bootlin.com)
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 0879CC143C7
-	for <yocto-patches@lists.yoctoproject.org>; Mon, 23 Feb 2026 11:03:45 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id E9ADE5FD43
-	for <yocto-patches@lists.yoctoproject.org>; Mon, 23 Feb 2026 11:03:30 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 485D610368F7E;
-	Mon, 23 Feb 2026 12:03:30 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1771844610; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=CuuNpanEYjJYuoAz29oS8474lJyfTYYvlAB9PXJiQdI=;
-	b=U9siGw+F2kbSfFldXTrZ/6+TvhNQSjK7Vgur53j1B5jPjoA5OYIDczDzHHQmE2K+3TL5b8
-	z4ahhXsgxfceiKDX5yk5NcdXibAJ69Z8HS6n6hSEAnqXxq5opzsAFOb37utduzTNawmmvr
-	OiO+Vj0TieLYlxDBWqnW7qtYfSJXJebJmDr4Scq63U8tEMRPTMRz0I84XDtgJlvZhg4JLJ
-	WZ+OaPiUw2bjsBF2YH+dLpNduy3/93sm6sM8O/ICVjLHg/oes99e7VPNK98MoRIkIz2D4K
-	pM1xvb83inQuZY79l1ktqPc8A7b8An11BSE4Q2HsY55sGQ0J3E5vK+o7kyE/6A==
-From: Antonin Godard <antonin.godard@bootlin.com>
-Date: Mon, 23 Feb 2026 12:03:22 +0100
-Subject: [yocto-autobuilder-helper][PATCH 3/4] scripts/run-docs-build: use
- git apply to apply patches
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260223-fix-switchers-js-ydocs-v1-3-6f58a78ee8c3@bootlin.com>
-References: <20260223-fix-switchers-js-ydocs-v1-0-6f58a78ee8c3@bootlin.com>
-In-Reply-To: <20260223-fix-switchers-js-ydocs-v1-0-6f58a78ee8c3@bootlin.com>
+ dkim=pass header.i=@smile.fr header.s=google header.b=dOUTlt9V;
+ spf=pass (domain: smile.fr, ip: 209.85.128.43, mailfrom: yoann.congal@smile.fr)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4806cc07ce7so41191695e9.1
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 23 Feb 2026 06:07:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=smile.fr; s=google; t=1771855673; x=1772460473; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GYoxSKLrz+cwCXVfS/TACRQBb4iohTW85YSVIvA859Q=;
+        b=dOUTlt9VrqRotB15AzToDVGx3yu0E+P4BRr61r/NCr5+nl+9NMOUj+ds0zBCs4trhw
+         nVQ5vEPsMc2+piCXASP4XlSDMhLlPuvf8iYpv9P+p3Vmh9ofIKZPDXzSJ/JA+NNz1DKV
+         oovx3SunJ0vV6Gef613Ark7rBEdXXULk6SAls=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771855673; x=1772460473;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GYoxSKLrz+cwCXVfS/TACRQBb4iohTW85YSVIvA859Q=;
+        b=q2fs2+B8aa87e4ndBith7VON783SpxC+0bSQ2gsvtOhhyaYK4sLvi2SKm494xOK67E
+         lRA5JqwrlYl5nEznOTuBSewvLuUVh9nMKDZoAoUAXGgEJlGdoavFePaScfZQcx/10dyV
+         YJOv64o4eCQWJZ8hrXDghPMwaVkMH6fnI1ZicuCy8qKNCJ07DJ6FzqsSoFP8CHCoryYf
+         urpd7rxWbVOSx7im14MWMT5/JY2nYdb1RGXBo5dA2GohcC61IVz4t/vKstIE3cHiOFf5
+         e8dlb90SVTFKIrd4YHV1zKWF83DhaXapXX6l5tUkgxSg2GGyHIl4A8tGQdJkoIwFl1vD
+         hdyw==
+X-Gm-Message-State: AOJu0Yz5JpBZullkGgKI8ExtzCkIbTrx1shd1+heTuMpw5s8KifmfwKR
+	ODW1JBeQe/f+7suYBzRuCl9gmL7cMbymXnnSBDdAy6nh2ALWxpjb1//Vvy6xHixFgHPUxn7y3tR
+	GS9Xj
+X-Gm-Gg: AZuq6aL1/4nkfPLVfFEVUyLZy1qm7/OLjULOfWQ24+v/ORAc1z1c5jV20rgconDZQBw
+	N9VyqG2VDQfYTwcUzFB/J+XE4p8tbHAHT3ueI8sXEEQJQT2sjZJk+dCuU70tTGc6qLChgWl1UyC
+	7+y5kZkiQVJA6QzeD3ytxpkvfbbgZ7WNkQLfTDcIHRm8KVYpbDf9PcBvciDTuVYbspeybZmJ+yN
+	aP3ksyXF40g/oJe0t0TVGAvACgoFNeJhgklSQMVV7bkMIL1u0o/b92xm7HC8TXDsZHNx+XrO0sU
+	3Xkl+KuDMoHj0DsW4Gr0sjBHklMei4JyncK/w263yjjaK7YrmSI0JKlwWc8cpl9YTW4VhLRJkA+
+	guHGvqDCkGIgSGEv3fWfffoAQlxtRkML58grcMj1d3icjisfYI+Q9AVqz/Aoq/GMsWiIi4l3N52
+	vVVu94oWi1trIu0vjC2SghjX3tDXcbZzIasYHZrtMB49DkxmDNqI29UIAkClmP1lnfJeQa6VkMD
+	dBqYLpOYrRXYeKLeeTJNtPF66Kt
+X-Received: by 2002:a05:600c:45cc:b0:483:4807:210c with SMTP id 5b1f17b1804b1-483a95f5611mr162527495e9.24.1771855673273;
+        Mon, 23 Feb 2026 06:07:53 -0800 (PST)
+Received: from FRSMI25-LASER.home (2a01cb001331aa00f13df544104db802.ipv6.abo.wanadoo.fr. [2a01:cb00:1331:aa00:f13d:f544:104d:b802])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483a8df83bcsm218081765e9.13.2026.02.23.06.07.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Feb 2026 06:07:52 -0800 (PST)
+From: Yoann Congal <yoann.congal@smile.fr>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Antonin Godard <antonin.godard@bootlin.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=953;
- i=antonin.godard@bootlin.com; h=from:subject:message-id;
- bh=HUB/CrgX0BZ0rYQ2nj4iiGkerpk8A+STYZzwmFCFcAU=;
- b=owEBbQKS/ZANAwAKAdGAQUApo6g2AcsmYgBpnDP/i9cLnbb2DGoLmYvN3lsC2XB1LC0WGG9we
- eFAUSWUPbOJAjMEAAEKAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCaZwz/wAKCRDRgEFAKaOo
- NiEGD/4x0U22crWnmJrLyzK8b0a9W8Fw1nQz6qcCbSIu1vn4GAi3oGzUk47dtGHjS2yuqhvKuM4
- iqEBGWNSyj0l7QtC24wDbWuZ2xEW52o+p++rb6FsYQ5iWBPszsChbjmc13G2gqxUUM9zzYk4CZL
- R70dTAN/Djp0NsxyiOVzyo6PPqmZQYqybzfqVOxYIp1O68DIarb1rIbvocs/GBCtcqBzP3DdHEE
- xbMv5FkFhJB1mVaK6d3+1OeP6rncgD+siESIQZGAzCD43oUCLzn26W5hGGMJ1ReISgTlD5WGIZo
- YtDUYjbDfkXXU7x2OkvPRe+NoRjrXNzwxNQlmOP4OiylOMiyyfwWT5FJxFK80h3WTMqDzaDTrgS
- 2u7B7fYiY/UTYdUueyGxkbd59gbytXwDFeDOsVkCvUqj6XeQgdCNWXcAuGWdDTHIXwvMNvW/Bt3
- G1taUxKheuJE/e8ys4sYE7Oh6r5ij9eUjrUGBTZgnUBwJw0clsAfzcwSF7Wo6HqxfqTJTRJU1tc
- P8eRgXW2KE64zBqTvsOUSUsmakw/xSoDy3UPz1IwWiRL7j4dr0B/o/jJiMl8hT1p+WaxNPq4naV
- aULXFq7emIolTehkliIManyEiM0YDAtqm80XMRRicBFNM/JdsUVbuajfzbFk7WrW0HSsar6dg2D
- 8Qh53OHjBOQV5dw==
-X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
- fpr=8648725188DD401BB9A0D3FFD180414029A3A836
-X-Last-TLS-Session-Version: TLSv1.3
+Cc: Yoann Congal <yoann.congal@smile.fr>
+Subject: [yocto-autobuilder-helper][whinlatter][PATCH] config: remove meta-agl-core
+Date: Mon, 23 Feb 2026 15:07:31 +0100
+Message-ID: <20260223140732.40312-1-yoann.congal@smile.fr>
+X-Mailer: git-send-email 2.47.3
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 23 Feb 2026 11:03:34 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3266
+ <yocto-patches@lists.yoctoproject.org>; Mon, 23 Feb 2026 14:08:05 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3268
 
-Since we're now using set_versions.py from every tag, if we use git
-am it creates a new commit and so we do not point on the tag anymore.
-Use git apply instead so that our HEAD does not move.
+From: Yoann Congal <yoann.congal@smile.fr>
 
-Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
+AGL does not support whinlatter, no point in running this build.
+
+Signed-off-by: Yoann Congal <yoann.congal@smile.fr>
 ---
- scripts/run-docs-build | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ config.json | 17 -----------------
+ 1 file changed, 17 deletions(-)
 
-diff --git a/scripts/run-docs-build b/scripts/run-docs-build
-index 924b446..fed5e61 100755
---- a/scripts/run-docs-build
-+++ b/scripts/run-docs-build
-@@ -196,7 +196,7 @@ for branch in "$ypdocsbranch" dunfell $(git branch --remote --contains "$first_s
- 
-     if [ -e "${scriptdir}/docs-build-patches/${branch}/" ]; then
-         echo Adding patch for $branch
--        git am "${scriptdir}/docs-build-patches/${branch}/"000*
-+        git apply -3 "${scriptdir}/docs-build-patches/${branch}/"000*
-     fi
- 
-     git checkout origin/master sphinx-static/switchers.js.in set_versions.py
-
--- 
-2.52.0
-
+diff --git a/config.json b/config.json
+index e08507e..24caba7 100644
+--- a/config.json
++++ b/config.json
+@@ -658,23 +658,6 @@
+                 "SANITYTARGETS" : "core-image-minimal:do_testimage core-image-sato:do_testimage core-image-weston:do_testimage"
+             }
+         },
+-        "meta-agl-core" : {
+-            "NEEDREPOS" : ["bitbake", "meta-agl"],
+-            "ADDLAYER" : [
+-                "${BUILDDIR}/../meta-agl/meta-agl-core"
+-            ],
+-            "DISTRO" : "agl",
+-            "BUILDINFO" : true,
+-            "BUILDHISTORY" : true,
+-            "PACKAGE_CLASSES" : "package_rpm",
+-            "extravars" : [
+-                "AGL_FEATURES = 'aglcore'"
+-            ],
+-            "step1" : {
+-                "MACHINE": "qemux86-64",
+-                "BBTARGETS": "agl-image-core-autobuilder"
+-            }
+-        },
+         "meta-aws" : {
+             "NEEDREPOS" : ["bitbake", "meta-openembedded", "meta-aws"],
+             "ADDLAYER" : [
 
