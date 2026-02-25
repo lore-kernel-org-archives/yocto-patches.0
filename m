@@ -1,335 +1,155 @@
-Return-Path: <ecordonnier@snap.com>
+Return-Path: <majortomtosourcecontrol@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DDDBFD374D
-	for <webhook@archiver.kernel.org>; Wed, 25 Feb 2026 12:16:03 +0000 (UTC)
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.43949.1772021760701864269
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AED7EFB7F2
+	for <webhook@archiver.kernel.org>; Wed, 25 Feb 2026 19:03:35 +0000 (UTC)
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.52918.1772046212555196153
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 25 Feb 2026 04:16:01 -0800
+ Wed, 25 Feb 2026 11:03:32 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@snap.com header.s=google header.b=bwKQ4XRz;
- spf=pass (domain: snapchat.com, ip: 209.85.221.42, mailfrom: ecordonnier@snapchat.com)
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-4398ebdf520so479028f8f.0
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 25 Feb 2026 04:16:00 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1772021759; cv=none;
-        d=google.com; s=arc-20240605;
-        b=lEdWhKtxYsrsTvycdXQt2geXV7EbOw0zF1uXXEJ8aB3dfXncwzHzFG0FVb6jHnFcsB
-         rhAbnvqLrl/UQgiNQgm5hmP9V3oLpROKqwsVXb28RFZf5nNXh2VOe63XIOlXUJqBMrXH
-         lz0wfLSE2ukK2oIHAixFbzxL9vWDIlg8321Q3FLwJN18A9c1dHT5pcYIuZ6BQjq2YmID
-         nNUo8AGH/od0GgcVapTumOlwEQ/WzDX0vpeiO7qKMMRTj07kTM7FWpRz8WDgzD+Hp/7k
-         S6An+IQxrUz1OWTJBm09DFBSSSpmZmILnhbYXgFb4RWvXOQoscK6TMTVxEXW8XX6T1VZ
-         Mlqg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=E+wQ5T/qN6sUmvTM4gqyuRox/HfN23tEbR64ryiwfU0=;
-        fh=vnwvjJBmT4xP5bZnotRs811IpgK/To6PNpBe4whKe/M=;
-        b=NyYQe5PWgQmI6wyhBhnVjorpXYDw9tnPLHAu68/fvavEcpWPaCrRM6ZA1EsRJAkONw
-         Q/AcJwl/PrD7zFKbW/3OOaPtWVZVAOKJcZxdE1aYxZWu/Ey0VZ5hfMulXsiSAFn/geMp
-         BpQa1X5OqmjzEJQDudzjSKjFoQ8/kkt8B3felj4xsoI1AC9LgmhDlCYNhAxMeI1j9rhE
-         CfUZvGxYMOQMZX25HexsuqeS34t+g/Qtypmc2LRjtdSoLg4KUTvLMd6XAcf9gNyM6kvA
-         XhAcXG/ekMGQW3s/MVVVDmMWB6A6gYvcFuwwCzaF5TjiKdXmpHuXOuQcoDJywKBCXT4J
-         Pimw==;
-        darn=lists.yoctoproject.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=ZBh46n0q;
+ spf=pass (domain: gmail.com, ip: 209.85.210.51, mailfrom: majortomtosourcecontrol@gmail.com)
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-7d18d0e6d71so5038493a34.1
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 25 Feb 2026 11:03:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=snap.com; s=google; t=1772021759; x=1772626559; darn=lists.yoctoproject.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=E+wQ5T/qN6sUmvTM4gqyuRox/HfN23tEbR64ryiwfU0=;
-        b=bwKQ4XRzRUMMppPJ2VFN9kic0WuBh/8gp3qif4T8uIuk6dMDqYDWpHaKt1vbvUAaoc
-         SX0hEH43zeHQInuuKnN+Y2WKFcstpcaVKVMXwquTWX0Xm+onaZPibYOuJCnD5ydGCg1v
-         RpuUzxiOucMPGkMzj/8/+g31Ieyho0vGJEosk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772021759; x=1772626559;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1772046212; x=1772651012; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:content-language:to:subject:from
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=E+wQ5T/qN6sUmvTM4gqyuRox/HfN23tEbR64ryiwfU0=;
-        b=ZI2mfZ9Ofkoa+YLMf9wsKqFcYO4Vi/CvZ5f1GWrWKXOUOmEK4tQDChbbsgS91v/Feo
-         LjyVPRY5ZDAmRESfJrNPcGhHCFRSTPCsDoZZPeJJ3ppGzhvUwIu0hHk2FL99oIIlREeg
-         2BQ4hNzfCriKVG4kUPxQNilWW//+E7Iy1p1nedrD32ZfzVHvPhWtPUH0Ucg0e0VA0h8K
-         2JDOoUnDLF3XJxtebKHypDqOcl69uzJdJQfZKPy+Nvv+AlSSKMfyerd/xNYekqKe14Bf
-         KMrjHrWpi2zgfkgGLlDXiodBnbFzzgrX7GP84dSn2OeXwTk00+NdVR4MHuq0gM2gXcFd
-         zP4g==
-X-Gm-Message-State: AOJu0Yz8GDtKw97y8ub8Mbc8Fq9Zq0Gny+A4UUGYDLH4PjYgVSEmTTFU
-	DBgxB4R6Exof2EdwBXHuABdOOlRnkexYkSNZPHIo/VdJIwZoGoDidD0subZDUgUppi7cuAVwYXG
-	DltAxKx6lIWubh2iMeZq/FaF8AA6aOpmmKw94MNCcL2Uzc/RRMrl8aLYzpw==
-X-Gm-Gg: ATEYQzxK216ayike5tMT4AbseQCZrGjTr25MvQoEztcynINJytGvIZmZqg2LNjFNDkr
-	CGGZ0unEzzBEgSTKuSQmMkZU+YDZ/3BueJM8W7n4RyhZ5GvGw6tKaF0oRbN3JsvoDDRHVV2VpUh
-	7/ISYkHZ2EYpElFIiRkUVTr4cxMgrY2zQPYJ278C1xl9ojTpkagxz9gnAPAYhQVOobcrambNEPs
-	vMrHTo1dFPwtzoPnh3w7ywv4NURYnVaiIVYZ3wgki3cr/4exDIby4xXvKa0JfztvKbPY8wUksnq
-	3Isl5BEiuH9QmHA5xIVkPnjCwUOp0XIB/T7MeELQ
-X-Received: by 2002:a05:6000:4301:b0:435:96e9:cde8 with SMTP id
- ffacd0b85a97d-4398d83f2d7mr6158285f8f.12.1772021758039; Wed, 25 Feb 2026
- 04:15:58 -0800 (PST)
+        bh=0HECP2NSJAtvaMyPCj+kDWt1k0Lb1CUUsxXViLAY7uA=;
+        b=ZBh46n0qobeCK7zc/NqAm9ppxzG0NVw7f+u60ETmUnTSgewtGJUiOoFGPm/sU3EIKf
+         iMpo4c9bl/66t51fuvn5UVlryPdHPjRH9J7z29H9jVvFCBIqOBMpTwKnDoGLQO2Pm92z
+         0ngphSzdn88ui035DLfcD9qM5F3GyJ9xMbsq/jIAWLiyi2HmiZqAK8xGjeleAy4cFFjB
+         e75EYPL7q4mzM6/KIhii5B2lCkNpw46ZZAkYIJ51RNiSVSvMK0DwOy1LM8jY3xb3LtPD
+         dE3fjECcUd8jk1oO5RL09xchuD/Cfko+HMLSELDAawScTotbPmMzYZ090ReBc/+CmFBA
+         M2Mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772046212; x=1772651012;
+        h=content-transfer-encoding:content-language:to:subject:from
+         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0HECP2NSJAtvaMyPCj+kDWt1k0Lb1CUUsxXViLAY7uA=;
+        b=aUxNgedEzJk7ohoErAQHukxvPItoMON1UMSBqULir+z997YuiPUnHWmJAevKxoFCgU
+         JXd8P2/BrRJoHavuZSpdluPFT/LL/KdZG3VZgeAUAoZM5+D9E77ZIgvFzNS2jwpBae3M
+         EhAhC7vOv0sFCBNjv3LnZxYnyJOjmD1frrXUQddkfvf/ZZO7ehApheyKIBI5WkN1aEAF
+         EScA8EZXcY4Ju5mx4L+cq2tRevEq5S7gMpJzRqiX4lRBZN/3FUTC9iSd3gUHT/I2HSOn
+         4TK8exVpcMSbZFHnCpLMPjM8C5WAcjH1q8jD+Y+4hRklPX83NctxrJFSk6m//rhrHmX3
+         Cdqg==
+X-Forwarded-Encrypted: i=1; AJvYcCX0UQbKZZMQLF01IMb3bCvqCNNdAHG1iCYakd8fCLpDIJ6RIRVAz5aVpBbyIVK0ckqqr1h/icfgu/Cy65N2@lists.yoctoproject.org
+X-Gm-Message-State: AOJu0Yyc2YzuY9w2bI5OQb4hk+CPSWSD2faifGC5jHwYVWEAhizt3SzY
+	TDGM+6ewMtgDDzpR8jA+28Vl4HhlBeIawCiCrQGgSm3AOPRUYEJdEczL
+X-Gm-Gg: ATEYQzyzFWqeKC0w8i71Vb8eUXrjjld0+QxsclO8dF26RVRqrQHMYE3r/Pa24sxnA4m
+	QeoOW8HqUuobTB6dgciqKBwQPV6MFU7dDbEviTiBcW270LOZmtO7GHFQL+5s001jbr4dUgoQlOd
+	Wpe7PQMZcDrJmJCsg76kdI1C5AHWrySjSHwnDcXEjK2uPlDHPmkgqbX2ZVMkBexiRx6Ua8YYKsi
+	rc34w3Q1X4ZNOcMayDwJ1TwWCoojDQ+g2GDNeSa6rV38FnIWYtW8OfLLyqquzIVC2emfqMy1Lqp
+	wT59z2d8YehjM/Zpi/THOIGcE9uEVEFYLX9SBa36S2VDGcKtMtPpL9mK5byj/FFa/zOmXxK9Nzs
+	/w+FlE5bCOIlPwgCbadGxm2QP7ARdkbQsoiXOd+rsE8BcrUJSF6ijBnlqfCAItcOeB2zcdBKFA7
+	XEAxa8lE0csiD9IsOdgSMx5ZwvGHYjHRWhn0bYSwiCTab5r5BswxycAH2J/6Z7+VOud0DvXc2uc
+	es6
+X-Received: by 2002:a05:6830:6d09:b0:7d1:9217:94e with SMTP id 46e09a7af769-7d582a8a148mr753103a34.26.1772046211803;
+        Wed, 25 Feb 2026 11:03:31 -0800 (PST)
+Received: from [172.26.252.3] (97-118-253-141.hlrn.qwest.net. [97.118.253.141])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7d52d04de97sm12587924a34.21.2026.02.25.11.03.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Feb 2026 11:03:31 -0800 (PST)
+Message-ID: <27ab84e9-7adb-4322-a251-afcdd234eda9@gmail.com>
+Date: Wed, 25 Feb 2026 12:03:29 -0700
 MIME-Version: 1.0
-References: <20260202155852.76192-2-dev@qinc.tv>
-In-Reply-To: <20260202155852.76192-2-dev@qinc.tv>
-From: Etienne Cordonnier <ecordonnier@snap.com>
-Date: Wed, 25 Feb 2026 13:15:47 +0100
-X-Gm-Features: AaiRm50EZhRNqu_OIPJfbvCqXa__aJdYM-XX5bVaKX6pu9ARWvLLjNKKWVms5Ek
-Message-ID: <CAHUKmYZexyroFHEwKebtw7QQCOptjgfwO-MRY8kfvAYt25V7dg@mail.gmail.com>
-Subject: Re: [yocto-patches] [meta-darwin][PATCH] Fix dylib paths for gdb and lldb
-To: yocto-patches@lists.yoctoproject.org
-Cc: "Eric L. Hernes" <dev@qinc.tv>
-Content-Type: multipart/alternative; boundary="0000000000006c4704064ba4f77d"
+User-Agent: Mozilla Thunderbird
+From: Clayton Casciato <majortomtosourcecontrol@gmail.com>
+Subject: [meta-selinux][whinlatter][PATCH] refpolicy: logging - allow
+ syslogd_t syslog_tls_port_t name_connect
+To: Yi Zhao <yi.zhao@windriver.com>, joe.macdonald@siemens.com,
+ yocto-patches@lists.yoctoproject.org
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 25 Feb 2026 12:16:03 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3278
+ <yocto-patches@lists.yoctoproject.org>; Wed, 25 Feb 2026 19:03:35 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3279
 
---0000000000006c4704064ba4f77d
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
+---
+ ...ystem-logging-allow-syslogd_t-syslog.patch | 55 +++++++++++++++++++
+ .../refpolicy/refpolicy_common.inc            |  1 +
+ 2 files changed, 56 insertions(+)
+ create mode 100644 recipes-security/refpolicy/refpolicy/0057-policy-modules-system-logging-allow-syslogd_t-syslog.patch
 
-Hi Eric,
-
-Thanks for the patch!
-Merged to main as
-https://git.yoctoproject.org/meta-darwin/commit/?id=3D11f796b19e30c20b7f432=
-b3a11d501e1e66f4956
-
-On Mon, Feb 2, 2026 at 4:59=E2=80=AFPM Eric L. Hernes via lists.yoctoprojec=
-t.org
-<dev=3Dqinc.tv@lists.yoctoproject.org> wrote:
-
-> The installed path to expat and liblldb are wrong.  This results in
-> the binaries not running on the macOS host. With gdb, we have
->
-> $ ./aarch64-oe-linux-gdb
-> dyld[...]: Library not loaded: libexpat.1.dylib
->   Referenced from: <4F097B37-76EC-308F-8022-448023624AD3>
-> /.../aarch64-oe-linux-gdb
->   Reason: tried: 'libexpat.1.dylib' (no such file),
->   '/System/Volumes/Preboot/Cryptexes/OSlibexpat.1.dylib' (no such
->   file), 'libexpat.1.dylib' (no such file), '....'
->
-> Running otool shows (some output omitted for clarity):
-> $ otool -L ./aarch64-oe-linux-gdb
-> ./aarch64-oe-linux-gdb:
->         libexpat.1.dylib (compatibility version 12.0.0, current version
-> 12.0.0)
->         @loader_path/../../lib/libmpfr.6.dylib (compatibility version
-> 9.0.0, current
->
-> One fix would be to patch the configure/build/install scripts to have
-> the proper path to expat.
->
-> The macOS tools give us a simpler option to just run
-> `install_name_tool` to set it correctly.
->
-> lldb-dap has a similar problem with `liblldb`.
->
-> Signed-off-by: Eric L. Hernes <dev@qinc.tv>
-> ---
->  recipes-devtools/clang/clang_%.bbappend            | 4 ++++
->  recipes-devtools/gdb/gdb-cross-canadian_%.bbappend | 8 +++++++-
->  2 files changed, 11 insertions(+), 1 deletion(-)
->
-> diff --git a/recipes-devtools/clang/clang_%.bbappend
-> b/recipes-devtools/clang/clang_%.bbappend
-> index e55dff6..9aa2c83 100644
-> --- a/recipes-devtools/clang/clang_%.bbappend
-> +++ b/recipes-devtools/clang/clang_%.bbappend
-> @@ -83,4 +83,8 @@ FILES:${PN} +=3D " \
->     ${libdir}/LLVMgold.dylib \
->  "
->
-> +do_compile:append:class-nativesdk:darwin21() {
-> +    ${SDK_PREFIX}install_name_tool -change liblldb.${PV}.dylib
-> @loader_path/../lib/liblldb.${PV}.dylib ${B}/bin/lldb-dap
-> +}
-> +
->  INSANE_SKIP:${PN}:class-nativesdk:darwin21 +=3D " file-rdeps"
-> diff --git a/recipes-devtools/gdb/gdb-cross-canadian_%.bbappend
-> b/recipes-devtools/gdb/gdb-cross-canadian_%.bbappend
-> index 3f69019..8d30ffb 100644
-> --- a/recipes-devtools/gdb/gdb-cross-canadian_%.bbappend
-> +++ b/recipes-devtools/gdb/gdb-cross-canadian_%.bbappend
-> @@ -16,4 +16,10 @@ EXTRA_OECONF:remove:darwinsdk =3D "--with-system-readl=
-ine"
->  # Remove -rpath-link and -rpath
->  LDFLAGS:darwinsdk =3D "${BUILDSDK_LDFLAGS}"
->
-> -INSANE_SKIP:append:darwin21 =3D " buildpaths"
-> +do_compile:append:darwinsdk() {
-> +    ${SDK_PREFIX}install_name_tool -change libexpat.1.dylib
-> @loader_path/../../lib/libexpat.1.dylib ${B}/gdb/gdb
-> +}
-> +
-> +DEPENDS:append:darwinsdk =3D " nativesdk-zlib "
-> +
-> +INSANE_SKIP:append:darwinsdk =3D " buildpaths"
-> --
-> 2.50.1 (Apple Git-155)
->
->
->
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-> Links: You receive all messages sent to this group.
-> View/Reply Online (#3168):
-> https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.yoctoproject=
-.org_g_yocto-2Dpatches_message_3168&d=3DDwIFAg&c=3DncDTmphkJTvjIDPh0hpF_4vC=
-HvabgGkICC2epckfdiw&r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&m=3DDnn=
-aXiF2bjQKM8-IDWXut7OR6YYymC-9FFg1oCZNLUcdV64-OGGRKx_9gy78azAW&s=3DTLgX480aR=
-6uD74bbLAUYHubl1Gonl_cEleuc6hdcpWs&e=3D
-> Mute This Topic:
-> https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.yoctoproject=
-.org_mt_117598468_7048771&d=3DDwIFAg&c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC=
-2epckfdiw&r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&m=3DDnnaXiF2bjQKM=
-8-IDWXut7OR6YYymC-9FFg1oCZNLUcdV64-OGGRKx_9gy78azAW&s=3DDzvuKyl9Gzy0y3mKfDY=
-l2vuXLIjSF7z7Uwl5TJFa9cc&e=3D
-> Group Owner: yocto-patches+owner@lists.yoctoproject.org
-> Unsubscribe:
-> https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.yoctoproject=
-.org_g_yocto-2Dpatches_leave_13184993_7048771_1814342232_xyzzy&d=3DDwIFAg&c=
-=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&r=3DAhkbNonVuMIGRfPx_Qj9TsRi=
-h1DULJTKUkSGa66m67E&m=3DDnnaXiF2bjQKM8-IDWXut7OR6YYymC-9FFg1oCZNLUcdV64-OGG=
-RKx_9gy78azAW&s=3DUq4tnTshRts6qa5baONv8242u3SWFU2ydn5U_gRKMto&e=3D
-> [ecordonnier@snap.com]
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
->
->
->
-
---0000000000006c4704064ba4f77d
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr">Hi Eric,<br><br>Thanks for the patch!<br>Merged to main as=
-=C2=A0<a href=3D"https://git.yoctoproject.org/meta-darwin/commit/?id=3D11f7=
-96b19e30c20b7f432b3a11d501e1e66f4956">https://git.yoctoproject.org/meta-dar=
-win/commit/?id=3D11f796b19e30c20b7f432b3a11d501e1e66f4956</a></div><br><div=
- class=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr" class=3D"gmai=
-l_attr">On Mon, Feb 2, 2026 at 4:59=E2=80=AFPM Eric L. Hernes via <a href=
-=3D"http://lists.yoctoproject.org">lists.yoctoproject.org</a> &lt;dev=3D<a =
-href=3D"mailto:qinc.tv@lists.yoctoproject.org">qinc.tv@lists.yoctoproject.o=
-rg</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"margi=
-n:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex=
-">The installed path to expat and liblldb are wrong.=C2=A0 This results in<=
-br>
-the binaries not running on the macOS host. With gdb, we have<br>
-<br>
-$ ./aarch64-oe-linux-gdb<br>
-dyld[...]: Library not loaded: libexpat.1.dylib<br>
-=C2=A0 Referenced from: &lt;4F097B37-76EC-308F-8022-448023624AD3&gt; /.../a=
-arch64-oe-linux-gdb<br>
-=C2=A0 Reason: tried: &#39;libexpat.1.dylib&#39; (no such file),<br>
-=C2=A0 &#39;/System/Volumes/Preboot/Cryptexes/OSlibexpat.1.dylib&#39; (no s=
-uch<br>
-=C2=A0 file), &#39;libexpat.1.dylib&#39; (no such file), &#39;....&#39;<br>
-<br>
-Running otool shows (some output omitted for clarity):<br>
-$ otool -L ./aarch64-oe-linux-gdb<br>
-./aarch64-oe-linux-gdb:<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 libexpat.1.dylib (compatibility version 12.0.0,=
- current version 12.0.0)<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 @loader_path/../../lib/libmpfr.6.dylib (compati=
-bility version 9.0.0, current<br>
-<br>
-One fix would be to patch the configure/build/install scripts to have<br>
-the proper path to expat.<br>
-<br>
-The macOS tools give us a simpler option to just run<br>
-`install_name_tool` to set it correctly.<br>
-<br>
-lldb-dap has a similar problem with `liblldb`.<br>
-<br>
-Signed-off-by: Eric L. Hernes &lt;<a href=3D"mailto:dev@qinc.tv" target=3D"=
-_blank">dev@qinc.tv</a>&gt;<br>
----<br>
-=C2=A0recipes-devtools/clang/clang_%.bbappend=C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 | 4 ++++<br>
-=C2=A0recipes-devtools/gdb/gdb-cross-canadian_%.bbappend | 8 +++++++-<br>
-=C2=A02 files changed, 11 insertions(+), 1 deletion(-)<br>
-<br>
-diff --git a/recipes-devtools/clang/clang_%.bbappend b/recipes-devtools/cla=
-ng/clang_%.bbappend<br>
-index e55dff6..9aa2c83 100644<br>
---- a/recipes-devtools/clang/clang_%.bbappend<br>
-+++ b/recipes-devtools/clang/clang_%.bbappend<br>
-@@ -83,4 +83,8 @@ FILES:${PN} +=3D &quot; \<br>
-=C2=A0 =C2=A0 ${libdir}/LLVMgold.dylib \<br>
-=C2=A0&quot;<br>
-<br>
-+do_compile:append:class-nativesdk:darwin21() {<br>
-+=C2=A0 =C2=A0 ${SDK_PREFIX}install_name_tool -change liblldb.${PV}.dylib @=
-loader_path/../lib/liblldb.${PV}.dylib ${B}/bin/lldb-dap<br>
-+}<br>
-+<br>
-=C2=A0INSANE_SKIP:${PN}:class-nativesdk:darwin21 +=3D &quot; file-rdeps&quo=
-t;<br>
-diff --git a/recipes-devtools/gdb/gdb-cross-canadian_%.bbappend b/recipes-d=
-evtools/gdb/gdb-cross-canadian_%.bbappend<br>
-index 3f69019..8d30ffb 100644<br>
---- a/recipes-devtools/gdb/gdb-cross-canadian_%.bbappend<br>
-+++ b/recipes-devtools/gdb/gdb-cross-canadian_%.bbappend<br>
-@@ -16,4 +16,10 @@ EXTRA_OECONF:remove:darwinsdk =3D &quot;--with-system-re=
-adline&quot;<br>
-=C2=A0# Remove -rpath-link and -rpath<br>
-=C2=A0LDFLAGS:darwinsdk =3D &quot;${BUILDSDK_LDFLAGS}&quot;<br>
-<br>
--INSANE_SKIP:append:darwin21 =3D &quot; buildpaths&quot;<br>
-+do_compile:append:darwinsdk() {<br>
-+=C2=A0 =C2=A0 ${SDK_PREFIX}install_name_tool -change libexpat.1.dylib @loa=
-der_path/../../lib/libexpat.1.dylib ${B}/gdb/gdb<br>
-+}<br>
-+<br>
-+DEPENDS:append:darwinsdk =3D &quot; nativesdk-zlib &quot;<br>
-+<br>
-+INSANE_SKIP:append:darwinsdk =3D &quot; buildpaths&quot;<br>
--- <br>
-2.50.1 (Apple Git-155)<br>
-<br>
-<br>
-<br>
--=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-<br>
-Links: You receive all messages sent to this group.<br>
-View/Reply Online (#3168): <a href=3D"https://urldefense.proofpoint.com/v2/=
-url?u=3Dhttps-3A__lists.yoctoproject.org_g_yocto-2Dpatches_message_3168&amp=
-;d=3DDwIFAg&amp;c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhk=
-bNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3DDnnaXiF2bjQKM8-IDWXut7OR6Y=
-YymC-9FFg1oCZNLUcdV64-OGGRKx_9gy78azAW&amp;s=3DTLgX480aR6uD74bbLAUYHubl1Gon=
-l_cEleuc6hdcpWs&amp;e=3D" rel=3D"noreferrer" target=3D"_blank">https://urld=
-efense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.yoctoproject.org_g_yocto-2=
-Dpatches_message_3168&amp;d=3DDwIFAg&amp;c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgG=
-kICC2epckfdiw&amp;r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3DD=
-nnaXiF2bjQKM8-IDWXut7OR6YYymC-9FFg1oCZNLUcdV64-OGGRKx_9gy78azAW&amp;s=3DTLg=
-X480aR6uD74bbLAUYHubl1Gonl_cEleuc6hdcpWs&amp;e=3D</a> <br>
-Mute This Topic: <a href=3D"https://urldefense.proofpoint.com/v2/url?u=3Dht=
-tps-3A__lists.yoctoproject.org_mt_117598468_7048771&amp;d=3DDwIFAg&amp;c=3D=
-ncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhkbNonVuMIGRfPx_Qj9TsR=
-ih1DULJTKUkSGa66m67E&amp;m=3DDnnaXiF2bjQKM8-IDWXut7OR6YYymC-9FFg1oCZNLUcdV6=
-4-OGGRKx_9gy78azAW&amp;s=3DDzvuKyl9Gzy0y3mKfDYl2vuXLIjSF7z7Uwl5TJFa9cc&amp;=
-e=3D" rel=3D"noreferrer" target=3D"_blank">https://urldefense.proofpoint.co=
-m/v2/url?u=3Dhttps-3A__lists.yoctoproject.org_mt_117598468_7048771&amp;d=3D=
-DwIFAg&amp;c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhkbNonV=
-uMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3DDnnaXiF2bjQKM8-IDWXut7OR6YYymC-=
-9FFg1oCZNLUcdV64-OGGRKx_9gy78azAW&amp;s=3DDzvuKyl9Gzy0y3mKfDYl2vuXLIjSF7z7U=
-wl5TJFa9cc&amp;e=3D</a> <br>
-Group Owner: <a href=3D"mailto:yocto-patches%2Bowner@lists.yoctoproject.org=
-" target=3D"_blank">yocto-patches+owner@lists.yoctoproject.org</a><br>
-Unsubscribe: <a href=3D"https://urldefense.proofpoint.com/v2/url?u=3Dhttps-=
-3A__lists.yoctoproject.org_g_yocto-2Dpatches_leave_13184993_7048771_1814342=
-232_xyzzy&amp;d=3DDwIFAg&amp;c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdi=
-w&amp;r=3DAhkbNonVuMIGRfPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3DDnnaXiF2bjQKM=
-8-IDWXut7OR6YYymC-9FFg1oCZNLUcdV64-OGGRKx_9gy78azAW&amp;s=3DUq4tnTshRts6qa5=
-baONv8242u3SWFU2ydn5U_gRKMto&amp;e=3D" rel=3D"noreferrer" target=3D"_blank"=
->https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.yoctoproject.=
-org_g_yocto-2Dpatches_leave_13184993_7048771_1814342232_xyzzy&amp;d=3DDwIFA=
-g&amp;c=3DncDTmphkJTvjIDPh0hpF_4vCHvabgGkICC2epckfdiw&amp;r=3DAhkbNonVuMIGR=
-fPx_Qj9TsRih1DULJTKUkSGa66m67E&amp;m=3DDnnaXiF2bjQKM8-IDWXut7OR6YYymC-9FFg1=
-oCZNLUcdV64-OGGRKx_9gy78azAW&amp;s=3DUq4tnTshRts6qa5baONv8242u3SWFU2ydn5U_g=
-RKMto&amp;e=3D</a>=C2=A0 [<a href=3D"mailto:ecordonnier@snap.com" target=3D=
-"_blank">ecordonnier@snap.com</a>]<br>
--=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-<br>
-<br>
-<br>
-</blockquote></div>
-
---0000000000006c4704064ba4f77d--
+diff --git a/recipes-security/refpolicy/refpolicy/0057-policy-modules-system-logging-allow-syslogd_t-syslog.patch b/recipes-security/refpolicy/refpolicy/0057-policy-modules-system-logging-allow-syslogd_t-syslog.patch
+new file mode 100644
+index 0000000..e9b50e3
+--- /dev/null
++++ b/recipes-security/refpolicy/refpolicy/0057-policy-modules-system-logging-allow-syslogd_t-syslog.patch
+@@ -0,0 +1,55 @@
++From 2d837226bb685e837046e1be1d0d7d6b67957387 Mon Sep 17 00:00:00 2001
++From: Clayton Casciato <ccasciato@21sw.us>
++Date: Wed, 10 Dec 2025 18:32:41 -0700
++Subject: [PATCH] logging: allow syslogd_t syslog_tls_port_t name_connect
++
++rsyslogd[492]: cannot connect to example.home.arpa:6514: Permission
++denied [v8.2402.0 try https://www.rsyslog.com/e/2027 ]
++
++--
++
++type=PROCTITLE proctitle=/usr/sbin/rsyslogd -n -iNONE
++
++type=SOCKADDR saddr={ saddr_fam=inet laddr=1.2.3.4 lport=6514 }
++
++type=SYSCALL arch=aarch64 syscall=connect success=no
++exit=EACCES(Permission denied) a0=0x6 a1=0x7fff38060bc0 a2=0x10 a3=0x0
++items=0 ppid=1 pid=492 auid=unset uid=root gid=root euid=root suid=root
++fsuid=root egid=root sgid=root fsgid=root tty=(none) ses=unset
++comm=rs:main Q:Reg exe=/usr/sbin/rsyslogd
++subj=system_u:system_r:syslogd_t:s0 key=(null)
++
++type=AVC avc:  denied  { name_connect } for  pid=492 comm=rs:main Q:Reg
++dest=6514 scontext=system_u:system_r:syslogd_t:s0
++tcontext=system_u:object_r:syslog_tls_port_t:s0 tclass=tcp_socket
++
++--
++
++Fedora:
++
++https://github.com/fedora-selinux/selinux-policy/commit/42504eb364b73234bd622fe674427bdfb68dc043
++
++$ sesearch -A --source syslogd_t --target syslog_tls_port_t --perm name_connect
++allow syslogd_t syslog_tls_port_t:tcp_socket { name_bind name_connect };
++
++Signed-off-by: Clayton Casciato <ccasciato@21sw.us>
++
++Upstream-Status: Backport [https://github.com/SELinuxProject/refpolicy/commit/7c0a3dff6916b19b9842ace9f6a49123f6f1bbb4]
++
++Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
++---
++ policy/modules/system/logging.te | 1 +
++ 1 file changed, 1 insertion(+)
++
++diff --git a/policy/modules/system/logging.te b/policy/modules/system/logging.te
++index 4de798007..121468ef6 100644
++--- a/policy/modules/system/logging.te
+++++ b/policy/modules/system/logging.te
++@@ -627,6 +627,7 @@ tunable_policy(`logging_syslog_can_network',`
++ 	corenet_tcp_connect_rsh_port(syslogd_t)
++ 	# Allow users to define additional syslog ports to connect to
++ 	corenet_tcp_bind_syslogd_port(syslogd_t)
+++	corenet_tcp_connect_syslog_tls_port(syslogd_t)
++ 	corenet_tcp_connect_syslogd_port(syslogd_t)
++ 	corenet_tcp_connect_postgresql_port(syslogd_t)
++ 	corenet_tcp_connect_mysqld_port(syslogd_t)
+diff --git a/recipes-security/refpolicy/refpolicy_common.inc b/recipes-security/refpolicy/refpolicy_common.inc
+index 964906b..dc700f0 100644
+--- a/recipes-security/refpolicy/refpolicy_common.inc
++++ b/recipes-security/refpolicy/refpolicy_common.inc
+@@ -72,6 +72,7 @@ SRC_URI += " \
+         file://0054-policy-modules-system-setrans-allow-setrans_t-use-fd.patch \
+         file://0055-policy-modules-system-systemd-make-_systemd_t-MLS-tr.patch \
+         file://0056-policy-modules-system-logging-make-syslogd_runtime_t.patch \
++        file://0057-policy-modules-system-logging-allow-syslogd_t-syslog.patch \
+         "
+ 
+ S = "${UNPACKDIR}/refpolicy"
 
