@@ -2,150 +2,126 @@ Return-Path: <yoann.congal@smile.fr>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AC30FD8FE0
-	for <webhook@archiver.kernel.org>; Thu, 26 Feb 2026 17:18:32 +0000 (UTC)
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.75237.1772126303425896923
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B3FFD8FE2
+	for <webhook@archiver.kernel.org>; Thu, 26 Feb 2026 17:22:52 +0000 (UTC)
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.75440.1772126568229329645
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 26 Feb 2026 09:18:23 -0800
+ Thu, 26 Feb 2026 09:22:48 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@smile.fr header.s=google header.b=CIyymnLY;
- spf=pass (domain: smile.fr, ip: 209.85.221.44, mailfrom: yoann.congal@smile.fr)
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-43984d7e49bso1001593f8f.2
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 26 Feb 2026 09:18:23 -0800 (PST)
+ dkim=pass header.i=@smile.fr header.s=google header.b=UAMsnkeq;
+ spf=pass (domain: smile.fr, ip: 209.85.128.52, mailfrom: yoann.congal@smile.fr)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-48371bb515eso15317905e9.1
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 26 Feb 2026 09:22:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=smile.fr; s=google; t=1772126301; x=1772731101; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=x6rcgMzytMTKoXffQnCWwkMkEJA4bmmWbsJruCpGa7w=;
-        b=CIyymnLY6Hq9aeL0P1PhbYQadGScnnnJZoNeU/rFu/LoL6R7WfaxAjFn9i0nBYLCmJ
-         tRfWA2RpsH0dtNayMkRshhPmb23tDGQrr03F9HBtZrY9tslYa7q2rehErI/8pn0g0/WW
-         5/8ICzMDZXlEMcKNvs6WjdotBYw4LF9OUC18k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772126301; x=1772731101;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=smile.fr; s=google; t=1772126567; x=1772731367; darn=lists.yoctoproject.org;
+        h=in-reply-to:references:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=x6rcgMzytMTKoXffQnCWwkMkEJA4bmmWbsJruCpGa7w=;
-        b=E1ATR57Z2zv/Vbfaiy25HvHFbIAR/4lj3iErgY7JQ7dt2o4d7Q4rUADmmRQZ0b82vi
-         Qg/UuPy2uAg1ZR0yLGQl2O0EnRnAfTvm6GfSv74KA41GA8CVIScwX6bAUxcWliaw2m8N
-         X6wtv7m+eNn2pY/jVssEzX35vf8zIwBjM7YwcyoIadYIYVBtxeo1/45fUDVCxV8fc8EA
-         avtp/gJ+TzqlJCWloCxgSV99EqU41OzPnqHBn8PHN280G79qPZsxUbJE8bcUTZneQT+c
-         jJDEXgerzGB1Hq4h7MfEkrmmiIWKxIHUthobbRliKGKDimVW4dkkP8NS2W8CoNUOgzzr
-         Qq7Q==
-X-Gm-Message-State: AOJu0Yz/tCL/VQcJFWyQjZrifTt/d2oN7oUSGzulAl11Jvh7D6SM4I5E
-	+MEzbvf9KmYdgt5QeZr2gk2qsJhsrVQAa/btSGTnDndKfuizoe93gfC7ZwNRYEF43qH9WMumWt9
-	fk+JF
-X-Gm-Gg: ATEYQzwpXg5jUyy75EHsR895qv1kuZ7o8tNO2vAPYX27vHm4BB30Uz8u75sBUL1c4M/
-	IHdrvFDuzyQQQH9ISrLZV5JUMH63mSpxLGyPgVmDYSRv8TRJerbPFNDYeC65ONcCQ95NKSpzoWB
-	h/yjRzL1JNrrBVhUT6WZeSY0bFJ39VokLmrO3ecVbyUZcRvgRsL8Kmfh7liw04QGjMS2ufq1cKT
-	afENwq7VnpSQiBKqTA2HSphdx2OAkqVQ5KNW+zNFAwijmnCnsbOWaLL80YzVMsOtcpq+8lH5fhu
-	/ZahoLPTrzDHZuOrfpz9eB43PmJ+Jagatsbu97VihuO76GVQkjLvrv8VpBcO9eMvV3xWUiuFrH/
-	D+uEdehewVYrM6EHjLctv3sM/rzj2FqR+4BaoJh3irWyuiEFkh0U7kTQ+1D3RZt6RraLHtCEJsO
-	I005uDkgj9J9Ag6wv8FSN7lXO2r0FbXimOlW7Wpea6C4KHyAtffZQt285cUaViXJ6QEzsu16MMl
-	v//c3PusIC98yJX2HrgFcIGpK8R
-X-Received: by 2002:a05:6000:26cb:b0:436:37e4:594d with SMTP id ffacd0b85a97d-43997ed999emr5711745f8f.6.1772126301450;
-        Thu, 26 Feb 2026 09:18:21 -0800 (PST)
-Received: from FRSMI25-LASER.home (2a01cb001331aa002c0b752a8b25831e.ipv6.abo.wanadoo.fr. [2a01:cb00:1331:aa00:2c0b:752a:8b25:831e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4399c76b40esm645888f8f.36.2026.02.26.09.18.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Feb 2026 09:18:21 -0800 (PST)
-From: Yoann Congal <yoann.congal@smile.fr>
-To: yocto-patches@lists.yoctoproject.org
-Cc: Yoann Congal <yoann.congal@smile.fr>
-Subject: [yocto-autobuilder2][PATCH v3] schedulers: Add stable -nut builds to the branch selector
-Date: Thu, 26 Feb 2026 18:17:44 +0100
-Message-ID: <20260226171743.61885-2-yoann.congal@smile.fr>
-X-Mailer: git-send-email 2.47.3
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        bh=hBwFFIxo6ed/8QkbLTyg4gEbFrLDjPQH24auctv1/h4=;
+        b=UAMsnkeqyJhrdixbXyshb50rtmztD1fxaNBaUe2sn//trS/qeeI42QMSH0cflq8rPO
+         sHjmdpGGhYgET0Se6+gnT49VOyYBEOnVNQuABMnR14W7CudHe/BTu916ZHG9vMJdk5Sh
+         9JHu29+mTxpzjjnfMWK3zUCg1qqaYlWRGFGYU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772126567; x=1772731367;
+        h=in-reply-to:references:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hBwFFIxo6ed/8QkbLTyg4gEbFrLDjPQH24auctv1/h4=;
+        b=XXOKFnKd4LYHPgB4RRUjxXn+ph5+ae/qtap17XBWqgBdvmqHHiuF9gxTBtLLFSGCpi
+         F7msJcaFjYTxXBE/LLYeTBOY9CIkX9rotEGtXcO6lOhgE3cqafzjNUC6tyzWqxxs0Yu0
+         7B8zAiPf8qJxWIlQQP7V9JagLszmQLcYR5ak20wJiiHaLYUOG1SoKLn/p0edraXBa5dz
+         vJbK+hyLHgdifkv7Ujjt8e3s+NwtFL1h0NG7FrvpMZuq05R1Lbl7iCiPU7CYq9BF7vD9
+         Tpja2IbCm6r/+t0uo1e//WxkAJz4UWz45yXz7BnOM3+VuAdahVgkqI01rgsd0Z8/kBxT
+         Lsdg==
+X-Forwarded-Encrypted: i=1; AJvYcCVTZhFc+ME2IOrCPRSlupbkRxIpBFkPAe0X5HlI6WIUnVjzUy/qQ305TbubdgS0xi23vBGU/Hh1sZLdo/Ng@lists.yoctoproject.org
+X-Gm-Message-State: AOJu0YxMZIhNnbOUbFj8RyJiqsHXVSCCCEnZvrPYImfDoHx+vmCGu43O
+	GrFbo+af9hb+CMn5vZGCvU1KzKRmdf591VrZMZ3Hq53Tphls/JZDe6Bw8rHmQAkNdtw=
+X-Gm-Gg: ATEYQzys1nc4XbuB2kvJ7o6dAYUiHMC104RX+bhcoFt1fqSFczFTxEShTuA4An3rG72
+	iCGrG5tNxPJ8KXX1YyLIeVIYixacwgVWkIRMzkRwgF1Ud/LddVe9F9/jcWQy/w/vjkMu8JWIUn+
+	5rEwoOA6xUQCF12O7+HQD3dJg1c95aIzSdhEuR+xuY6TFzBIGI5lFEhzTnS+fY5hVBKITH/4OJ5
+	6DoMkCapThE5cRgPgbMazuy9AO8bH710iHVGzSOLKUsBWAnMUcmWwqHQXu5FL1sy433mUtGGK9c
+	RGGAB1IVM6TzNKf0HHW3eXc9L4tYiyUjPfd1MyCdHUdxHWxpllrVEk98E5zB6TYDP5rfLZpkElU
+	+enoGwELAOh1KgmqaY6Z/6CqvUN11OX4Nd2c5o6fUlixHgYGOaMTdlkyEAWUGqJw+Vo+dcrnUTM
+	R90p4sPpOaPxgM32/HnYYPjxwg/cKcvstVVhwhdNCb1+JxRLHUD7sY+wi0tmeIL+OMtZHpaFedy
+	QwALUyIrcHvaSnTekZWdpJ+6+Q=
+X-Received: by 2002:a05:600c:1d1d:b0:483:498f:7963 with SMTP id 5b1f17b1804b1-483c3deae7cmr48980785e9.26.1772126566568;
+        Thu, 26 Feb 2026 09:22:46 -0800 (PST)
+Received: from localhost (2a01cb001331aa002c0b752a8b25831e.ipv6.abo.wanadoo.fr. [2a01:cb00:1331:aa00:2c0b:752a:8b25:831e])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4399c75b19esm697605f8f.25.2026.02.26.09.22.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Feb 2026 09:22:46 -0800 (PST)
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 26 Feb 2026 18:22:45 +0100
+Message-Id: <DGP2FTGRLVW6.2YKYDHP4SZRCI@smile.fr>
+Subject: Re: [yocto-patches] [yocto-autobuilder2][PATCH v2] schedulers: Add
+ stable -next/-nut builds to the branch selector
+From: "Yoann Congal" <yoann.congal@smile.fr>
+To: "Richard Purdie" <richard.purdie@linuxfoundation.org>,
+ <yocto-patches@lists.yoctoproject.org>
+X-Mailer: aerc 0.20.0
+References: <20260226144201.47577-1-yoann.congal@smile.fr>
+ <433b819f2977f580713495429fab3cad59a5c430.camel@linuxfoundation.org>
+ <DGOZSACRJBVH.18WU5AD0T6D8@smile.fr>
+ <2caa358b916e7cc6e76b3f51d4ec2dda6e9b95bd.camel@linuxfoundation.org>
+In-Reply-To: <2caa358b916e7cc6e76b3f51d4ec2dda6e9b95bd.camel@linuxfoundation.org>
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 26 Feb 2026 17:18:32 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3293
+ <yocto-patches@lists.yoctoproject.org>; Thu, 26 Feb 2026 17:22:52 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3294
 
-From: Yoann Congal <yoann.congal@smile.fr>
+On Thu Feb 26, 2026 at 4:20 PM CET, Richard Purdie wrote:
+> On Thu, 2026-02-26 at 16:17 +0100, Yoann Congal wrote:
+>> On Thu Feb 26, 2026 at 4:11 PM CET, Richard Purdie wrote:
+>> > On Thu, 2026-02-26 at 15:42 +0100, Yoann Congal via
+>> > lists.yoctoproject.org wrote:
+>> > > From: Yoann Congal <yoann.congal@smile.fr>
+>> > >=20
+>> > > These build setups are frequently used for stable maintenance
+>> > > work. A shortcut is appreciated.
+>> > >=20
+>> > > Signed-off-by: Yoann Congal <yoann.congal@smile.fr>
+>> > > ---
+>> > > =C2=A0schedulers.py | 76
+>> > > ++++++++++++++++++++++++++++++++++++++++++++++++++-
+>> > > =C2=A01 file changed, 75 insertions(+), 1 deletion(-)
+>> >=20
+>> > Do we need both -next and -nut?
+>>=20
+>> It depends on what you want to see in my pull requests for stable
+>> branches. If you find a -nut AB build convincing enough, -nut is
+>> enough
+>> and I don't need -next.
+>>=20
+>> I will send a v3 without -next.
+>
+> There isn't any point in me duplicating your builds!
+>
+> I did wonder if it would be clearer if you just use the -next
+> namespace, as long as it is in the contrib repos? "nut" is a bit
+> convoluted. The only reason we have the differences was to differ
+> between my builds and those of Mathieu, Ross or others.
 
-These build setups are frequently used for stable maintenance
-work. A shortcut is appreciated.
+For the records, we did discuss this after the bugtriage call:
+* I only need the -nut selector (I sent a v3 with -next selector
+  removed)
+* I keep the -nut branches (for testing on AB and during the review
+  request period) as well as the -next branches (for the Pull request
+  period)
 
-Signed-off-by: Yoann Congal <yoann.congal@smile.fr>
----
-v3: only -nut is really useful here (-next was removed from the patch)
----
- schedulers.py | 39 ++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 38 insertions(+), 1 deletion(-)
+Regards,
 
-diff --git a/schedulers.py b/schedulers.py
-index dd692a4..38957ed 100644
---- a/schedulers.py
-+++ b/schedulers.py
-@@ -85,6 +85,17 @@ branchdefaults = {
-         'branch_poky': 'master',
-         'branch_yocto-docs': 'whinlatter',
-     },
-+    'whinlatter-nut': {
-+        'reason': 'Stable maintenance - whinlatter-nut',
-+        'branch': 'whinlatter',
-+        'swat_monitor': False,
-+        'repo_bitbake': 'ssh://git@push.openembedded.org/bitbake-contrib',
-+        'branch_bitbake': 'stable/2.16-nut',
-+        'repo_oecore': 'ssh://git@push.openembedded.org/openembedded-core-contrib',
-+        'branch_oecore': 'stable/whinlatter-nut',
-+        'repo_meta-yocto': 'ssh://git@push.yoctoproject.org/meta-yocto-contrib',
-+        'branch_meta-yocto': 'stable/whinlatter-nut',
-+    },
-     'walnascar': {
-         'branch': 'walnascar',
-         'branch_poky': 'walnascar',
-@@ -141,6 +152,19 @@ branchdefaults = {
-         'branch_poky': 'scarthgap',
-         'branch_yocto-docs': 'scarthgap',
-     },
-+    'scarthgap-nut': {
-+        'reason': 'Stable maintenance - scarthgap-nut',
-+        'branch': 'scarthgap',
-+        'swat_monitor': False,
-+        'repo_bitbake': 'ssh://git@push.openembedded.org/bitbake-contrib',
-+        'branch_bitbake': 'stable/2.8-nut',
-+        'repo_poky': 'ssh://git@push.yoctoproject.org/poky-contrib',
-+        'branch_poky': 'stable/scarthgap-nut',
-+        'repo_oecore': 'ssh://git@push.openembedded.org/openembedded-core-contrib',
-+        'branch_oecore': 'stable/scarthgap-nut',
-+        'repo_meta-yocto': 'ssh://git@push.yoctoproject.org/meta-yocto-contrib',
-+        'branch_meta-yocto': 'stable/scarthgap-nut',
-+    },
-     'nanbield': {
-         'branch': 'nanbield',
-         'branch_poky': 'nanbield',
-@@ -208,6 +232,19 @@ branchdefaults = {
-         'branch_poky': 'kirkstone',
-         'branch_yocto-docs': 'kirkstone',
-     },
-+    'kirkstone-nut': {
-+        'reason': 'Stable maintenance - kirkstone-nut',
-+        'branch': 'kirkstone',
-+        'swat_monitor': False,
-+        'repo_bitbake': 'ssh://git@push.openembedded.org/bitbake-contrib',
-+        'branch_bitbake': 'stable/2.0-nut',
-+        'repo_poky': 'ssh://git@push.yoctoproject.org/poky-contrib',
-+        'branch_poky': 'stable/kirkstone-nut',
-+        'repo_oecore': 'ssh://git@push.openembedded.org/openembedded-core-contrib',
-+        'branch_oecore': 'stable/kirkstone-nut',
-+        'repo_meta-yocto': 'ssh://git@push.yoctoproject.org/meta-yocto-contrib',
-+        'branch_meta-yocto': 'stable/kirkstone-nut',
-+    },
-     'honister': {
-         'branch': 'honister',
-         'branch_poky': 'honister',
-@@ -504,7 +541,7 @@ def parent_scheduler(target):
-             name="branchselector",
-             default="master",
-             label="Release Shortcut Selector",
--            choices=["master", "master-next", "mathieu-next", "antonin-next", "mut", "whinlatter", "walnascar", "styhead", "scarthgap", "nanbield", "mickledore", "langdale", "kirkstone", "honister", "hardknott", "gatesgarth", "dunfell", "zeus", "warrior", "thud", "sumo", "rocko", "pyro", "morty"],
-+            choices=["master", "master-next", "mathieu-next", "antonin-next", "mut", "whinlatter", "whinlatter-nut", "walnascar", "styhead", "scarthgap", "scarthgap-nut", "nanbield", "mickledore", "langdale", "kirkstone", "kirkstone-nut", "honister", "hardknott", "gatesgarth", "dunfell", "zeus", "warrior", "thud", "sumo", "rocko", "pyro", "morty"],
-             selectors=branchdefaults),
-         util.BooleanParameter(
-             name="swat_monitor",
+>
+> Cheers,
+>
+> Richard
+
+
+--=20
+Yoann Congal
+Smile ECS
+
 
