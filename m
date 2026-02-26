@@ -1,87 +1,101 @@
-Return-Path: <richard.purdie@linuxfoundation.org>
+Return-Path: <antonin.godard@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13004FC5937
-	for <webhook@archiver.kernel.org>; Thu, 26 Feb 2026 11:44:50 +0000 (UTC)
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.68117.1772106285602691437
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 235D4FC592F
+	for <webhook@archiver.kernel.org>; Thu, 26 Feb 2026 11:56:40 +0000 (UTC)
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.68250.1772106989452270668
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 26 Feb 2026 03:44:46 -0800
+ Thu, 26 Feb 2026 03:56:30 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=THfCI7jT;
- spf=pass (domain: linuxfoundation.org, ip: 209.85.221.45, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-4376acce52eso501972f8f.1
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 26 Feb 2026 03:44:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1772106283; x=1772711083; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=T3BuZ4CFyTv3J+5rVtfDHz7YMLjKClqE3yO1WBJVtZk=;
-        b=THfCI7jTA28euJH0fMkFoOmjPJBTyjD3/TYcFKXR7a66dlYGgtDXQzoTsUF/C7TpJ8
-         eLOp2FiQxbjnLsaDcPlREU0H7P98rqxtG+LXxKnpHJKsDEwW1SY08I7odmEn6QCLWfOo
-         rdqbmL3G2IpX51gTZulQXMCEeIrOZi8smIu5g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772106283; x=1772711083;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=T3BuZ4CFyTv3J+5rVtfDHz7YMLjKClqE3yO1WBJVtZk=;
-        b=jGBq1OwlNb2035+M9DHHsl/vcnrc3I7zPbbPA2ZPT7STbCjlgSnx0lRWW72XyflTwl
-         dwaZAcHhajCtHBmG8Rt+RzdAbXVJC/zBnLkoNflMhQQSsiSlmoiD3GatLAzXUUp5ga6v
-         orAlbYSUic/w9FeXlH9tBi/wIlMXFCx2UDHeIBMfu+fLyFmlf846GDwTs7QZQOaN+Qmz
-         OsgQr6mtdNN1rSxjWDRXqIQ2rrX63yf9BwjzmKkbsQclKgyyX9EpXgHrCRxWB3dSG94F
-         sNcKcgtRWAD/2qcfOfF5ioWsdSgAUwlPQvIzanX22vSd/13g4pPfboozXvGc6e3FjhpF
-         Kvqw==
-X-Gm-Message-State: AOJu0YwMTe1xOMFVC+hActUEmviTFL/E50dxG5i73PuTk9jhKZzZJ/6G
-	kQECPCGQjeRFwud9p3C+aZMu+9EPxHOA3yZ9LI2Oz+Qvv7EyM77giU6wK2WfUsLj8vFNQ84IUUZ
-	IiyNAIu4=
-X-Gm-Gg: ATEYQzyjd8WYAMkF9pF3noNJUZYUR0VwmSDLsH/NP2mXbadSfvgY5Fwsk4F/NnVceOv
-	Owzbs1mN3KAi7E6qA0cKYMPYYVoeHyu/2mU4mSLIuE0cy33Dt7hSulF4BinNyDxqpYXY2/aG7jM
-	i5eknxFVHJNNHgjaocvEFUwDfLBgMQcFY0ahAGUxh9TEzkkaCoEVuVGA29kOS2hNb6/pKib5yIc
-	OKDlD0qcrULFaUYjfl1tCGE3iASonk+SvokK1XvWrtGCp9gsfwl8uxlozmfgPp3P+FTP91O7tHt
-	UABxxsZPNZZ2RmVPWIPv89U9OioehddwWO3wa4EIFqhnSuEX5vlXzl0HRvZbRdCqghOVlNIFQHs
-	UX8vXDqPh0P//O9psMvFrQmhvo1XYCCSpKmKEe7bzvKeHrB/bNGnwmrqZnwbUq0621xHps4Hr2g
-	YjpFMLP4S1gLBYyCXWHrB2AXWgMESNKJFIsiHEyHLOMe6mQ0yTFOQ=
-X-Received: by 2002:a05:6000:290f:b0:436:2f66:5d1a with SMTP id ffacd0b85a97d-43997eda5d9mr3835726f8f.8.1772106283318;
-        Thu, 26 Feb 2026 03:44:43 -0800 (PST)
-Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:caa1:9aad:9b9e:38c6])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4398a09aad0sm16165745f8f.2.2026.02.26.03.44.42
-        for <yocto-patches@lists.yoctoproject.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Feb 2026 03:44:42 -0800 (PST)
-From: Richard Purdie <richard.purdie@linuxfoundation.org>
-To: yocto-patches@lists.yoctoproject.org
-Subject: [yocto-autobuilder-helper] [PATCH] config.json: Update oecore build to match default changes to nodistro
-Date: Thu, 26 Feb 2026 11:44:42 +0000
-Message-ID: <20260226114442.705162-1-richard.purdie@linuxfoundation.org>
-X-Mailer: git-send-email 2.48.1
+ dkim=pass header.i=@bootlin.com header.s=dkim header.b=Mechzebp;
+ spf=pass (domain: bootlin.com, ip: 185.246.84.56, mailfrom: antonin.godard@bootlin.com)
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 434EE1A13BA
+	for <yocto-patches@lists.yoctoproject.org>; Thu, 26 Feb 2026 11:56:27 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 100A25FDEB
+	for <yocto-patches@lists.yoctoproject.org>; Thu, 26 Feb 2026 11:56:27 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 56F8C1036934B;
+	Thu, 26 Feb 2026 12:56:25 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1772106986; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=EWs6t7GKd6a2PRmZWwG4hNOzQpatVRmKSNd2dHSHlrw=;
+	b=MechzebpTmoUN7yt1BkZmhjw5qMPMXufU/ECmNG+hbsj37yoCx3Ifv+uT5JbS96c/xOErW
+	hurqnhOPWb54xf0V1nfpetjNXapV1XWOPZF0HUr5lgxRwZHf+c1o/oSSUoznYGebEuEgHn
+	AJzKei8vey5YChGiR2cqxKmd/WcnPgPX+gkXCnLwOXPVHLbk9SstCezB4hbzuHrljQRi0c
+	0zpMj+SRmedZVsDhqI//7K5umpV4NuSI3UPOVYqvkzrZbpfDnzHaGddBkENiCvNpgpwIx3
+	nCUKuuZX4ezY9dyWz6D2a35+KC60gxou+GmFvtNigfGYmjPp+nspWGDGwp91Yg==
+From: Antonin Godard <antonin.godard@bootlin.com>
+Date: Thu, 26 Feb 2026 12:56:19 +0100
+Subject: [yocto-autobuilder-helper][PATCH] scripts/run-docs-build: export
+ LATEXMKOPTS to make latexmk silent
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260226-docs-silent-latexmk-v1-1-c8aceabe2357@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMTQrCMBBA4auUWTsQBwzqVUoXaTKxozEp+ZFK6
+ d2tuvwW761QOAsXuHYrZH5JkRR3HA8d2MnEG6O43UCKtCLS6JItWCRwrBhM5eX5wMtZaU8nZcg
+ T7OWc2cvyu/bD36WNd7b1u+rfydaEptU0NgmOM04cZs4DbNsHQGyvH5EAAAA=
+X-Change-ID: 20260226-docs-silent-latexmk-9806f250a2f2
+To: yocto-patches@lists.yoctoproject.org
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Antonin Godard <antonin.godard@bootlin.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1207;
+ i=antonin.godard@bootlin.com; h=from:subject:message-id;
+ bh=GRhgUhdgg/JfQFC5TVWxhWH8ME2gSXTK4nZDkbRT8xE=;
+ b=owEBbQKS/ZANAwAKAdGAQUApo6g2AcsmYgBpoDTpg0PiDenlB/CoXSRdLhrbG4p/S0RduVyu/
+ 2QZDqTpUsyJAjMEAAEKAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCaaA06QAKCRDRgEFAKaOo
+ Nmq7EADIEtONTT3kjxiCyNXzT7GZdhWdkLgLpAf540IYX1V8Z4HQ7XZqw3xOkfWPCMRs6lPbvpQ
+ TRBxXO7JP+VAAUvs6bocnO91Lh4fdPpGCLm7HlgN4k1SByB5dPw6opaoZm4xdUDbo2XCULA0xdu
+ hm+ql8TzRcjW600dvXzDuW/NBG0DXNzHOAq/qQlPaHDc4Crd7PEdfAU/pRvCJCe4yyvDX4r13l8
+ 7GBYUCSH4PhomADFbd2jIfkslWkHZI2ddwI5/l2f76nDPMefJ7i4CIQYrx2JOsy3he2OP/PAZy1
+ AE0BFvaOHs2G5QL9cbT+zxIctE3oLh0Rp1aWBep05z/M8A06iQy3PvOfsosIIOgMvIeuWRAC+JK
+ 8P8A4g8oR+VhwrXYGHzQinGM1sz9Y14DLOBn3l8AekJI26aqoqWhV6XwXLwMC7JXgpRK7nV5AKX
+ Kofe9SrBL8n2t8VLYqstsb9LYPET2BNCw7B3LJrIcWyzfbLWP9q71/fTMo73vj3i7cdYQY41Im5
+ mIml2cU8LMqh0yIMXELQAQZPXRDqDeJce923PmYlM0mwBPatSnlHdxEL0qTJV/lNP6R3sAOV8Io
+ UlnbC7LSFYUM6aO/oV7erdZUiXpDCMjHOphcet90DAEiCBHa8BfZAjFf+Jj91F8+mYNyjVsQE90
+ 2CkrOEdu0msJHmQ==
+X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
+ fpr=8648725188DD401BB9A0D3FFD180414029A3A836
+X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 26 Feb 2026 11:44:50 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3280
+ <yocto-patches@lists.yoctoproject.org>; Thu, 26 Feb 2026 11:56:40 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3281
 
-This config is now the default for OE-Core, remove the unneeded options.
+Like what is done in [1], make latexmk silent to drastically reduce the
+amount of lines printed on the console. We already have this on
+yocto-docs, but since we build old tags on the Autobuilder we would
+still have the output for these. Export here so it applies to all
+builds.
 
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+[1]: https://lore.kernel.org/yocto-docs/20260219-latexmk-quiet-v1-1-acc137bc88b9@bootlin.com/
+
+Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
 ---
- config.json | 2 --
- 1 file changed, 2 deletions(-)
+ scripts/run-docs-build | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/config.json b/config.json
-index 05db992..9c5d294 100644
---- a/config.json
-+++ b/config.json
-@@ -500,8 +500,6 @@
-             "DISTRO" : "",
-             "BBSETUP_CONFIG" : ["oe-nodistro-master", "nodistro"],
-             "extravars" : [
--                "INHERIT += 'uninative'",
--                "require conf/distro/include/yocto-uninative.inc",
-                 "BB_SIGNATURE_HANDLER = 'OEEquivHash'"
-             ],
-             "step1" : {
+diff --git a/scripts/run-docs-build b/scripts/run-docs-build
+index b97f20c..97c5d7a 100755
+--- a/scripts/run-docs-build
++++ b/scripts/run-docs-build
+@@ -173,6 +173,8 @@ latest_tag=$(./set_versions.py getlatest)
+ git reset --hard
+ git clean -ffdx
+ 
++export LATEXMKOPTS="-silent"
++
+ for branch in "$ypdocsbranch" dunfell $(git branch --remote --contains "$first_sphinx_commit" --format '%(refname:lstrip=3)') $(git tag --contains "$first_sphinx_commit" --contains "$first_dunfell_sphinx_commit" 'yocto-*'); do
+     if [ "$branch" = "HEAD" ]; then
+         continue
+
+---
+base-commit: 50c2af6d82e6af4d42d99cee5614212c6cfd272f
+change-id: 20260226-docs-silent-latexmk-9806f250a2f2
+
 
