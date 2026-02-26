@@ -1,101 +1,95 @@
-Return-Path: <antonin.godard@bootlin.com>
+Return-Path: <richard.purdie@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 235D4FC592F
-	for <webhook@archiver.kernel.org>; Thu, 26 Feb 2026 11:56:40 +0000 (UTC)
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.68250.1772106989452270668
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BE76FCE06D
+	for <webhook@archiver.kernel.org>; Thu, 26 Feb 2026 12:47:30 +0000 (UTC)
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.69246.1772110048239878217
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 26 Feb 2026 03:56:30 -0800
+ Thu, 26 Feb 2026 04:47:28 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=dkim header.b=Mechzebp;
- spf=pass (domain: bootlin.com, ip: 185.246.84.56, mailfrom: antonin.godard@bootlin.com)
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 434EE1A13BA
-	for <yocto-patches@lists.yoctoproject.org>; Thu, 26 Feb 2026 11:56:27 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 100A25FDEB
-	for <yocto-patches@lists.yoctoproject.org>; Thu, 26 Feb 2026 11:56:27 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 56F8C1036934B;
-	Thu, 26 Feb 2026 12:56:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1772106986; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=EWs6t7GKd6a2PRmZWwG4hNOzQpatVRmKSNd2dHSHlrw=;
-	b=MechzebpTmoUN7yt1BkZmhjw5qMPMXufU/ECmNG+hbsj37yoCx3Ifv+uT5JbS96c/xOErW
-	hurqnhOPWb54xf0V1nfpetjNXapV1XWOPZF0HUr5lgxRwZHf+c1o/oSSUoznYGebEuEgHn
-	AJzKei8vey5YChGiR2cqxKmd/WcnPgPX+gkXCnLwOXPVHLbk9SstCezB4hbzuHrljQRi0c
-	0zpMj+SRmedZVsDhqI//7K5umpV4NuSI3UPOVYqvkzrZbpfDnzHaGddBkENiCvNpgpwIx3
-	nCUKuuZX4ezY9dyWz6D2a35+KC60gxou+GmFvtNigfGYmjPp+nspWGDGwp91Yg==
-From: Antonin Godard <antonin.godard@bootlin.com>
-Date: Thu, 26 Feb 2026 12:56:19 +0100
-Subject: [yocto-autobuilder-helper][PATCH] scripts/run-docs-build: export
- LATEXMKOPTS to make latexmk silent
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260226-docs-silent-latexmk-v1-1-c8aceabe2357@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMTQrCMBBA4auUWTsQBwzqVUoXaTKxozEp+ZFK6
- d2tuvwW761QOAsXuHYrZH5JkRR3HA8d2MnEG6O43UCKtCLS6JItWCRwrBhM5eX5wMtZaU8nZcg
- T7OWc2cvyu/bD36WNd7b1u+rfydaEptU0NgmOM04cZs4DbNsHQGyvH5EAAAA=
-X-Change-ID: 20260226-docs-silent-latexmk-9806f250a2f2
+ dkim=pass header.i=@linuxfoundation.org header.s=google header.b=HUzneNuI;
+ spf=pass (domain: linuxfoundation.org, ip: 209.85.221.46, mailfrom: richard.purdie@linuxfoundation.org)
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-43994aa265eso475347f8f.3
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 26 Feb 2026 04:47:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1772110046; x=1772714846; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cikgZIsPbSfuFgC+I++kshqfZoNh6Eq3VNsb+EpXtn4=;
+        b=HUzneNuI2yuyVae0P8SxYyHLhZW3hRnGd7nnXc+9902VNjY9L/buUKxhSAo7uq6KRP
+         c7iusNvXcBOpl7vSL5kY2IwgLYLRaVi+B0V9krkWIsg5sM9xsyds1OSIK0DrqpzyEXjc
+         5vpYaG4owiPZ/HlcOLZyUVmRZUI1r+hl1pPbM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772110046; x=1772714846;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=cikgZIsPbSfuFgC+I++kshqfZoNh6Eq3VNsb+EpXtn4=;
+        b=c6bgKPreoc+V+0r3kO1DHbjMdndX2ow65RbZz6dpASL18vv/m9ncTMT9fNSgMvAshL
+         d2eq+N/qe8n4HEzS4eKdZQ7USnYiqYb+cbf6Zm2hZHtWaZkEuWyS2RmK8dPXHIxcxANs
+         /+XApOHGAuIswHaLiEKrLFx0tBYWHhYl8ukJaLHcPX1kWze8G4EaxS8jazHLBUwYJd+Q
+         gqFEne2vJqXkN2iJM2pR37Wp1/E/5Of8syTcG+rfeeC5ShVgP9fq5Dt8pPeZ5D2e3Ab9
+         STxqpudMYhsDIdF6hwJM1CpJrV68in8+SBVgubFM7EQ9nTpsmnYqaCV0gND6l2+bC4Cd
+         gnmw==
+X-Gm-Message-State: AOJu0YxnehGG7KVnmVKzAPVWyR1PuIHim9c+aK7r3/NnD/sY7mm7AZTS
+	BNHw2q+buwZ4Oy0DhNHVfebEd6lo5gnSKtL3yOx341wAEYeHOLOnIdVqTrTyApePhi4W9hgBd5H
+	rc9dX0Fw=
+X-Gm-Gg: ATEYQzwuMHdD95+q+a6fA3ZR0WMEYxCAnsQe0d1FKy+mt/L/9ctfzu2gKOfyk/p01KO
+	W4511sakk8abBqdKarmg8qOW1LmyggiXZmwpHbJ14RTdxMfTvue5NJr9pTWQM/CzVFpYKV9/BIp
+	ic8+AoE3ns/fiRzEGtXNBewAnfxrpBRmOw8ioLxr4nJOf2pAd9i+WTYbjRFIrZ0hT5wPUyG/aGW
+	vEBTle3BzdYufEG3/BpnckzhgiYS8dO/LJaO2lvlfjO5fL/FJSRk2ka73e5yM9pHQc8dva7SAhR
+	To+9F7bgvGQzFwabOFuIXuGnHorxOSp3igZtM/wcCzgaf0gBIcbPEDJDiQBnAFV6eXgsoRr4Mgv
+	I7q5OxMYUH49Jsb3Q0PJ8puyFFodoe8lancNFlHl+8P3ez/FeU9+ls7zr6hCLYK0/a8jZ4SlHTs
+	l11AEyuTD//Pul/WUOY+rOQ+jhE7CEPG60BhG5otvXgtXkLWTXqRo=
+X-Received: by 2002:a05:6000:310e:b0:439:869a:a18 with SMTP id ffacd0b85a97d-43997f42357mr3813464f8f.51.1772110046191;
+        Thu, 26 Feb 2026 04:47:26 -0800 (PST)
+Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:caa1:9aad:9b9e:38c6])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4398fefa3f8sm10855302f8f.36.2026.02.26.04.47.25
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Feb 2026 04:47:25 -0800 (PST)
+From: Richard Purdie <richard.purdie@linuxfoundation.org>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Antonin Godard <antonin.godard@bootlin.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1207;
- i=antonin.godard@bootlin.com; h=from:subject:message-id;
- bh=GRhgUhdgg/JfQFC5TVWxhWH8ME2gSXTK4nZDkbRT8xE=;
- b=owEBbQKS/ZANAwAKAdGAQUApo6g2AcsmYgBpoDTpg0PiDenlB/CoXSRdLhrbG4p/S0RduVyu/
- 2QZDqTpUsyJAjMEAAEKAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCaaA06QAKCRDRgEFAKaOo
- Nmq7EADIEtONTT3kjxiCyNXzT7GZdhWdkLgLpAf540IYX1V8Z4HQ7XZqw3xOkfWPCMRs6lPbvpQ
- TRBxXO7JP+VAAUvs6bocnO91Lh4fdPpGCLm7HlgN4k1SByB5dPw6opaoZm4xdUDbo2XCULA0xdu
- hm+ql8TzRcjW600dvXzDuW/NBG0DXNzHOAq/qQlPaHDc4Crd7PEdfAU/pRvCJCe4yyvDX4r13l8
- 7GBYUCSH4PhomADFbd2jIfkslWkHZI2ddwI5/l2f76nDPMefJ7i4CIQYrx2JOsy3he2OP/PAZy1
- AE0BFvaOHs2G5QL9cbT+zxIctE3oLh0Rp1aWBep05z/M8A06iQy3PvOfsosIIOgMvIeuWRAC+JK
- 8P8A4g8oR+VhwrXYGHzQinGM1sz9Y14DLOBn3l8AekJI26aqoqWhV6XwXLwMC7JXgpRK7nV5AKX
- Kofe9SrBL8n2t8VLYqstsb9LYPET2BNCw7B3LJrIcWyzfbLWP9q71/fTMo73vj3i7cdYQY41Im5
- mIml2cU8LMqh0yIMXELQAQZPXRDqDeJce923PmYlM0mwBPatSnlHdxEL0qTJV/lNP6R3sAOV8Io
- UlnbC7LSFYUM6aO/oV7erdZUiXpDCMjHOphcet90DAEiCBHa8BfZAjFf+Jj91F8+mYNyjVsQE90
- 2CkrOEdu0msJHmQ==
-X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
- fpr=8648725188DD401BB9A0D3FFD180414029A3A836
-X-Last-TLS-Session-Version: TLSv1.3
+Subject: [yocto-autobuilder2] [PATCH 2/3] config: Drop meta-clang from builds as a default test target
+Date: Thu, 26 Feb 2026 12:47:22 +0000
+Message-ID: <20260226124724.717336-2-richard.purdie@linuxfoundation.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20260226124724.717336-1-richard.purdie@linuxfoundation.org>
+References: <20260226124724.717336-1-richard.purdie@linuxfoundation.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 26 Feb 2026 11:56:40 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3281
+ <yocto-patches@lists.yoctoproject.org>; Thu, 26 Feb 2026 12:47:30 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3283
 
-Like what is done in [1], make latexmk silent to drastically reduce the
-amount of lines printed on the console. We already have this on
-yocto-docs, but since we build old tags on the Autobuilder we would
-still have the output for these. Export here so it applies to all
-builds.
+meta-clang isn't being tested now by default as this doesn't mean sense after
+the merges to oe-core. Clean up the config to remove the remained of the
+triggerings as this is obsolete.
 
-[1]: https://lore.kernel.org/yocto-docs/20260219-latexmk-quiet-v1-1-acc137bc88b9@bootlin.com/
-
-Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
 ---
- scripts/run-docs-build | 2 ++
- 1 file changed, 2 insertions(+)
+ config.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/scripts/run-docs-build b/scripts/run-docs-build
-index b97f20c..97c5d7a 100755
---- a/scripts/run-docs-build
-+++ b/scripts/run-docs-build
-@@ -173,6 +173,8 @@ latest_tag=$(./set_versions.py getlatest)
- git reset --hard
- git clean -ffdx
+diff --git a/config.py b/config.py
+index 70e41109..947b15f2 100644
+--- a/config.py
++++ b/config.py
+@@ -117,9 +117,9 @@ old_arch_full = ["qemumips", "qemumips-alt", "qemumips64", "qemuppc", "qemuppc-a
+ riscv = ["qemuriscv64", "qemuriscv64-tc", "qemuriscv64-ptest"]
  
-+export LATEXMKOPTS="-silent"
-+
- for branch in "$ypdocsbranch" dunfell $(git branch --remote --contains "$first_sphinx_commit" --format '%(refname:lstrip=3)') $(git tag --contains "$first_sphinx_commit" --contains "$first_dunfell_sphinx_commit" 'yocto-*'); do
-     if [ "$branch" = "HEAD" ]; then
-         continue
-
----
-base-commit: 50c2af6d82e6af4d42d99cee5614212c6cfd272f
-change-id: 20260226-docs-silent-latexmk-9806f250a2f2
-
+ trigger_builders_wait_full_releases = {
+-    "master" : trigger_builders_wait_full + ["meta-clang"] + riscv,
++    "master" : trigger_builders_wait_full + riscv,
+     "whinlatter" : trigger_builders_wait_full + ["meta-mingw"],
+-    "walnascar" : trigger_builders_wait_full + ["meta-clang", "meta-mingw"],
++    "walnascar" : trigger_builders_wait_full + ["meta-mingw"],
+     "styhead" : trigger_builders_wait_full + old_arch_full,
+     "scarthgap" : trigger_builders_wait_full + old_arch_full,
+     "kirkstone" : trigger_builders_wait_full + ["edgerouter", "edgerouter-alt", "non-gpl3"] + old_arch_full,
 
