@@ -1,100 +1,65 @@
-Return-Path: <yoann.congal@smile.fr>
+Return-Path: <ross.burton@arm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D95D9E67A9E
-	for <webhook@archiver.kernel.org>; Tue,  3 Mar 2026 10:20:07 +0000 (UTC)
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.15132.1772533199211175993
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01A0BEC1428
+	for <webhook@archiver.kernel.org>; Tue,  3 Mar 2026 10:46:28 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.15511.1772534785689667437
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 03 Mar 2026 02:19:59 -0800
+ Tue, 03 Mar 2026 02:46:26 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@smile.fr header.s=google header.b=R3J8y7AM;
- spf=pass (domain: smile.fr, ip: 209.85.128.46, mailfrom: yoann.congal@smile.fr)
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-48371bb515eso83165375e9.1
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 03 Mar 2026 02:19:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=smile.fr; s=google; t=1772533197; x=1773137997; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aOlDlaSFOJWOWTuVjuOaPa/rgsHathkGQfC153lJf64=;
-        b=R3J8y7AMFawtw0/qOaA7RfCM93aW2bcan7+7pYdci9RndVTWgtj6KewZ1AFqMjVjMH
-         T6c2fKnncl7YgZjlFwJgIJUcV5Ar2f1E7RWODcwEZgPnV2R1K/f7XP6dFIPFzszc37Sh
-         spMCDhZn7x27kBr552dTYeS0RX1oMJ8QhHhVE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772533197; x=1773137997;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aOlDlaSFOJWOWTuVjuOaPa/rgsHathkGQfC153lJf64=;
-        b=iKrfatJSm7liKjPLMHELrqYOhklk+3dZRcPkIi7i85a24HlA1q9p6tYNVOpJ/3Tytr
-         UzlrZcJl3w51OIOz0wLLiJmBQJlu9GjxiF9dB54x8Je4PCtjpOaORS+8weep+FL748iA
-         iCWYPuF+aOHsQ1LSL/4fo/H/toWgM/fmWxgdeFTvgQfm4sPWIp9IiFKJ6Np8cVncKQGL
-         KS8nkqH7LqbK8EqSJ2ivIR9k3Hnpv7g6gLZ/6pycD5z8UUFqnHuqMc022q8FjHiy5e7L
-         HTkTeiyAsSDNKctlsoK8U/ZzLPpHHZhAVkWwVuFY4IO8Ke6idFtOrL0dphcVy0ZeBWxW
-         DZ1Q==
-X-Gm-Message-State: AOJu0Yyui7gGg/cDLmU5ieY0OLL3xklbk27kqWi+zYx3/wiUGF1eyZjG
-	bu9zwULhrgFBjb2aE+fBxq4rpVlsCjxKti8CJGEV0HIPZJIbsGy6AlErZ1a9Kk7GwxoIHHykD1z
-	pg4Hf
-X-Gm-Gg: ATEYQzzgWmVHSW4S/OjXLiPslbm7ZMZE+FhBBY65Ox0c725ZnQtAoH/ZJXmz1MIpW0d
-	+Q0K4N9T7BCSR2aHj0s3brhFVTavIlHClS+W92tbKgUDJq98j3vQDiBYqsSkV3z4G/BvP8elp7U
-	YVFFHiyjErlFVAl00uNt18S7Ra93pgisDQ73VDSloBCgTLvoHbMFNygAYMMi0exZdd72NTZjT66
-	J3w8MuBWkTBmTo6PTt3JM2+ccOksLFRODYy3jZQ5rS1PRPuqoaQJyaC++OLjrXoF9y6pA0JDCa3
-	li0D0ddVPN6q/XlNNheCD5dzyyA9OP+a2tZGdd2y+DFQSzgfs03m2rjQVoJYeHP9trVLhVdBSNa
-	h9ZsuhdSfTMlNNPLnT/6abQEwhagpWgkSE07b1y7ExYwbCSg6O3TkPXnr4H/woTwNH0/dYbDdtJ
-	D60JkhdWryoh3XANzAK6e9i6ZYACwOg+xnHdccdbAVVBJNDMm5nl/dLS9Db4vspj0LxCSj4B+ux
-	vVzkugBLQvmAcLlHJajjDk3GHM1137ckFBxGOTtVDiy
-X-Received: by 2002:a05:600c:4f50:b0:477:6d96:b3e5 with SMTP id 5b1f17b1804b1-483c9bb8ef7mr286003325e9.7.1772533197277;
-        Tue, 03 Mar 2026 02:19:57 -0800 (PST)
-Received: from FRSMI25-LASER.idf.intranet (static-css-ccs-204145.business.bouyguestelecom.com. [176.157.204.145])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483c3b3ce8fsm341597785e9.4.2026.03.03.02.19.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Mar 2026 02:19:56 -0800 (PST)
-From: Yoann Congal <yoann.congal@smile.fr>
+ dkim=none (message not signed); spf=pass (domain: arm.com, ip: 217.140.110.172, mailfrom: ross.burton@arm.com)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D784B497
+	for <yocto-patches@lists.yoctoproject.org>; Tue,  3 Mar 2026 02:46:18 -0800 (PST)
+Received: from cesw-amp-gbt-1s-m12830-04.lab.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id CBF263F7BD
+	for <yocto-patches@lists.yoctoproject.org>; Tue,  3 Mar 2026 02:46:24 -0800 (PST)
+From: Ross Burton <ross.burton@arm.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Yoann Congal <yoann.congal@smile.fr>
-Subject: [yocto-autobuilder2][PATCH] schedulers: add missing stable branch selector for non-core repos
-Date: Tue,  3 Mar 2026 11:19:37 +0100
-Message-ID: <20260303101937.375207-1-yoann.congal@smile.fr>
-X-Mailer: git-send-email 2.47.3
+Subject: [PATCH][yocto-autobuilder-helper] config.json: update meta-arm checklayer invocation
+Date: Tue,  3 Mar 2026 10:46:19 +0000
+Message-ID: <20260303104619.2755812-1-ross.burton@arm.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 03 Mar 2026 10:20:07 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3316
+ <yocto-patches@lists.yoctoproject.org>; Tue, 03 Mar 2026 10:46:28 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3317
 
-From: Yoann Congal <yoann.congal@smile.fr>
+meta-gem5 and meta-arm-autonomy were deleted long ago.
 
-* whinlatter for meta-clang and meta-intel
-* kirkstone for meta-qcom
-
-Signed-off-by: Yoann Congal <yoann.congal@smile.fr>
+Signed-off-by: Ross Burton <ross.burton@arm.com>
 ---
- schedulers.py | 3 +++
- 1 file changed, 3 insertions(+)
+ config.json | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/schedulers.py b/schedulers.py
-index 38957ed..da9f906 100644
---- a/schedulers.py
-+++ b/schedulers.py
-@@ -76,7 +76,9 @@ branchdefaults = {
-         'branch_bitbake': '2.16',
-         'branch_meta-arm': 'whinlatter',
-         'branch_meta-aws': 'whinlatter',
-+        'branch_meta-clang': 'whinlatter',
-         'branch_meta-gplv2': 'master',
-+        'branch_meta-intel': 'whinlatter',
-         'branch_meta-mingw': 'whinlatter',
-         'branch_meta-openembedded': 'whinlatter',
-         'branch_meta-virtualization': 'whinlatter',
-@@ -222,6 +224,7 @@ branchdefaults = {
-         'branch_meta-intel': 'kirkstone',
-         'branch_meta-mingw': 'kirkstone',
-         'branch_meta-openembedded': 'kirkstone',
-+        'branch_meta-qcom': 'kirkstone',
-         'branch_meta-qt6': '6.8.1',
-         'branch_meta-security': 'kirkstone',
-         'branch_meta-ti': 'kirkstone',
+diff --git a/config.json b/config.json
+index c7c92c3a..1a8284cd 100644
+--- a/config.json
++++ b/config.json
+@@ -1305,7 +1305,7 @@
+             "step2" : {
+                 "shortname" : "Test meta-arm YP Compatibility",
+                 "MACHINE" : "qemuarm64",
+-                "EXTRACMDS" : ["yocto-check-layer-wrapper ../meta-arm/me=
+ta-arm ../meta-arm/meta-arm-toolchain ../meta-arm/meta-arm-bsp ../meta-ar=
+m/meta-gem5 ../meta-arm/meta-arm-autonomy --dependency ../meta-openembedd=
+ed/meta-oe ../meta-openembedded/meta-networking ../meta-openembedded/meta=
+-python ../meta-poky ../meta-openembedded/meta-filesystems ../meta-virtua=
+lization --no-auto-dependency"]
++                "EXTRACMDS" : ["yocto-check-layer-wrapper ../meta-arm/me=
+ta-arm ../meta-arm/meta-arm-toolchain ../meta-arm/meta-arm-bsp --dependen=
+cy ../meta-openembedded/meta-oe ../meta-openembedded/meta-networking ../m=
+eta-openembedded/meta-python ../meta-poky ../meta-openembedded/meta-files=
+ystems ../meta-virtualization --no-auto-dependency"]
+             },
+             "step3" : {
+                 "shortname" : "Test meta-aws YP Compatibility",
+--=20
+2.43.0
+
 
