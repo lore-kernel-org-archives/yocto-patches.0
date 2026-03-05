@@ -1,186 +1,158 @@
-Return-Path: <antonin.godard@bootlin.com>
+Return-Path: <majortomtosourcecontrol@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 663E6F3095F
-	for <webhook@archiver.kernel.org>; Thu,  5 Mar 2026 13:24:13 +0000 (UTC)
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.43980.1772717042743379800
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 136B0F33A8F
+	for <webhook@archiver.kernel.org>; Thu,  5 Mar 2026 15:24:35 +0000 (UTC)
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.46750.1772724271309359818
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 05 Mar 2026 05:24:03 -0800
+ Thu, 05 Mar 2026 07:24:31 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=dkim header.b=Ab8Llj2N;
- spf=pass (domain: bootlin.com, ip: 185.246.84.56, mailfrom: antonin.godard@bootlin.com)
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 148D91A2CDD
-	for <yocto-patches@lists.yoctoproject.org>; Thu,  5 Mar 2026 13:24:01 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id D88A25FDEB
-	for <yocto-patches@lists.yoctoproject.org>; Thu,  5 Mar 2026 13:24:00 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9D146103698A9;
-	Thu,  5 Mar 2026 14:23:59 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1772717040; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=h0FdB3uLgFFz4/GYvC7AZ0SqU3dpSzaksxWFmQPD0ic=;
-	b=Ab8Llj2NL9dxz4xxMeW1TNi9EQC7p43+VbYmJvddWJXIGct1azwJQbh91baRTMFuz5HNXE
-	cIxCtS/b3jX3AwexnTXJCx23D7y8czpuXsN5tazXYQXR8l1+U6wjKY1cSI/HZ/7aCFYf2g
-	HLzi3FMpXCiuUFHNZxjllC9sN97HA/FxMsFyNu3DBH7QcwFW9q/+3E0RBrZnsMjhyZ0C4z
-	0kZgIUSg4d5lLnLck96U8sCA3tafmLCbzoF0zxmRGQW6/b5LacrNXEnIfPUDJKieZM6b+V
-	KX9h9VOOmIW3PxaQa3owMNk9bYrXDtymQE58FPkdR1Q20YT1Ug308rybkawaAw==
-From: Antonin Godard <antonin.godard@bootlin.com>
-Date: Thu, 05 Mar 2026 14:23:45 +0100
-Subject: [yocto-autobuilder-helper][PATCH] scripts/release-parser.py: add
- bitbake version mappings to releases.json
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=hiK2XrsZ;
+ spf=pass (domain: gmail.com, ip: 209.85.210.44, mailfrom: majortomtosourcecontrol@gmail.com)
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-7d4c4b494fcso5029070a34.3
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 05 Mar 2026 07:24:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1772724270; x=1773329070; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c1zEkydG/KF1JPn4EcLHdigbXcp60AaQUtEuTo8tC+U=;
+        b=hiK2XrsZu63kjpfozvSuYgUturHu+bXzYkQDkgMoDxjP5VeF5XusLljCIwiokNQocD
+         LHj3/Pim/UZtNYdPy3l+pPC4o+SKCm3r0f0DUCoAxffev7TjUiJWicb1T8DbCs5Ogch9
+         ZfHm3CmdDQpt1fDF/jQ/IPPp7aFhVvgO+69/EJOJejeYoay5GsZN+M0LT3UZ47OPFdYx
+         Nof57SPIzztXmdAwh4k9cdKSXfElOxriz093W4MfHuXheL/WEu0cGyOkhU5nOJuelGgg
+         uYdPq7B/o47mqgUtCH4F6HMbWRN/Do6FLSOgx/kav3W1LebY4Bhoo6JxngLZXlrJR+K3
+         vehw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772724270; x=1773329070;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=c1zEkydG/KF1JPn4EcLHdigbXcp60AaQUtEuTo8tC+U=;
+        b=FNHqEXZYL/Pp1wy9LCHpe3UfpSl7U6+zcr9sEGqz6O/yLaoMkNcaKmvaj5SmJ06er4
+         SvjzCYrQSEF6aID7q4LhQOkMfso8h6NljfbkUnZ+Z+g6tQOmpTNumi/xuM5WqS2R9ioI
+         z97cEhNuDrKPXBW0UBmioBzmxrT8r02INz7y023IqWXL6FuoB/qB1LwP6Xc83uX9y10h
+         ZXZqoqkidaoeHccyvTnJNxq+NBWaHDqC6W0Z8akwOZ+ALGrVac9KukCs/i/1WlVGBkld
+         v7DUMinLe45ufOnOZTJupkSn/SIucj/m9w57J0AR0PEsS1p/DW2hEPW2H9q9wEtCp8Dp
+         ui3w==
+X-Forwarded-Encrypted: i=1; AJvYcCXLerxfqtYrLY4f1TMuZPb1Zy7tHg7hDDMeqb1KYe8ugTbDPMXYSj/xq3hGt3VEY+XuYrDK1j6smoW1SeNr@lists.yoctoproject.org
+X-Gm-Message-State: AOJu0YymarplNGYZN0KuNGnFpqecd7ysxQGY32FvXmIJ62JWXoTohemW
+	LT7pJj8bw0tFNr2VSL5M6OjYkjW6wwy6Frv1YjdRfN+JEPHkHKaOdSph
+X-Gm-Gg: ATEYQzy+FP55B6IhYGixMzvV6XoUX6dFemW2wzsYtstNzdHcdka9PwRcVyMwR+11kVE
+	innq27Qct+/iUbcNI7nf9TaM+d8uF11NsmRNfHWd4Rh4J8NM66apBTNjuEmsdAqbReCO0Cdk/2s
+	7oRTDrpuYgO5XccmYYZZsz+SeysYeDIKdJ0oR6iaxdk2Zlp9tLhlsqWrc34acoXJAfEetASp51A
+	L3AD15Eqba2DpFOFuVkX9KVsNM8bHU+E3uLnoOKkv0v/OAaenfHQjZz+PJvMS5TroBGLEOZPuir
+	bFpKGRR9Fiqv+IIlq4jnfMGPHsbE5uwEAb/bkvhnnd7HPZm1lvgCkWzKAnKQi7gvDQWhhCvDMwf
+	BFq3RYX9I1H64JVELz1C7Zy5h4/B8OWZKr62BPTeeNIo4NtX1Z5aP09dbC/1DSnNaI8jVHTkrn4
+	9CbELZ48TAQV/NIKiZJw39qVqiHt8UJwepZvpnarusxy1FxzIPDCln9lWzT/2bHpVGEPJI46qI8
+	1gr
+X-Received: by 2002:a05:6830:410b:b0:7c7:5770:d2bd with SMTP id 46e09a7af769-7d6d1255297mr4629124a34.12.1772724270469;
+        Thu, 05 Mar 2026 07:24:30 -0800 (PST)
+Received: from [172.26.252.3] (97-118-253-141.hlrn.qwest.net. [97.118.253.141])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7d5866701cdsm17856309a34.29.2026.03.05.07.24.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Mar 2026 07:24:30 -0800 (PST)
+Message-ID: <22d9a4e9-073c-4359-a6bd-a81a74e525b2@gmail.com>
+Date: Thu, 5 Mar 2026 08:24:29 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Yi Zhao <yi.zhao@windriver.com>, joe.macdonald@siemens.com,
+ yocto-patches@lists.yoctoproject.org
+From: Clayton Casciato <majortomtosourcecontrol@gmail.com>
+Subject: [meta-selinux][whinlatter][PATCH] refpolicy: logging - allow
+ miscfiles_read_generic_certs(syslogd_t)
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260305-release-parser-bitbake-mapping-v1-1-f023e03bb484@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXNyw6CMBCF4Vchs3aSClQTX4WwmJYRRittejEaw
- rtbdfktzn82SByFE1yaDSI/JYlfK46HBuxC68woUzW0qj2pTvUY2TElxkCxTtFINnRnfFAIss5
- oiNqz1pqs6qFGQuSrvH4Hw/h3KubGNn+rw9vb7JFK9qaIm2pwYRc4jrDvH6QzWkqcAAAA
-X-Change-ID: 20260304-release-parser-bitbake-mapping-baa27555ac04
-To: yocto-patches@lists.yoctoproject.org
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Antonin Godard <antonin.godard@bootlin.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4262;
- i=antonin.godard@bootlin.com; h=from:subject:message-id;
- bh=waEa1EGvYQu27ZbTFYW7ILaSVxZNsZ25LlRYgNgiBpI=;
- b=owEBbQKS/ZANAwAKAdGAQUApo6g2AcsmYgBpqYPvtAe8rJI9owAdPF4dasE2ZtJ5+VvczKdSU
- E+OZkuAh0mJAjMEAAEKAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCaamD7wAKCRDRgEFAKaOo
- Nq5aD/9VvZx+9cRj9WD9YbIWJyCphDV/D0W6rAbjWT2ZrzHg3lpP58Un444LOmspu45QYo/u5N3
- Qev5tKkIgVAv3dBq8rMZMN3f8RNE+hfQHjl2mTqZ04n64X9cIksRJSJ27/qferTdalX7hRjbLJI
- hWCyfYXtfN6mqjqp0T7t91L/gBwcgrEMc3IShqRDbqGfSFDeCND4TquKgC1E8B/Rx7hPDncAyh2
- njfAqGzhsLvMEHweTbobVoYIok37EY108szKMm4QoOvQiycWODdRn1RvczRuKoBM4MHUwZEEDes
- 5yzTpaWHRdw3hUo5tJ3C1MLccVvZeecAljANqFmJoewajw+TWgjA/hptWm2OGnvqbWcnV/GS3wM
- wSH8/bVrJ/wk8I26p4RnoGy71hjpeehHqdbYrJUkImScWl2tzm3A0hpwe6KhBBReMn0RmgMMmDo
- iASu5XmW3a0KiVheOVmXDwMNhEv7sGW9k4HI5GzQBUZGTWkKWtwW4rhg+HSb2SMLZNJyIwguseL
- y3qd0altIY/8cG2IyE4Pni92qKlx1OotxbptYVJLS4gK0YFwq6LBafaTwSbpDoNEw0/Yqyn7o7W
- ceTWXKd5MSy2mEuqjpUTxToQV2W/OpLXjamqpCEiFT2/I4AWn2X827O/SSouiIfXWn+TBJQ6jeW
- ZRUH2f+MqDrmnpQ==
-X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
- fpr=8648725188DD401BB9A0D3FFD180414029A3A836
-X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 05 Mar 2026 13:24:13 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3337
+ <yocto-patches@lists.yoctoproject.org>; Thu, 05 Mar 2026 15:24:35 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3338
 
-Instead of maintaining the bitbake <-> yocto version mappings in
-yocto-docs[1] and bitbake[2], let's maintain it here instead. This is
-part of a work-in-progress to use the generated releases.json file in
-these two repositories to generate the documentation.
-
-[1]: https://git.yoctoproject.org/yocto-docs/tree/documentation/set_versions.py?id=d97cfeaa55ed42722998d3313c1857aa377f6881#n66
-[2]: https://git.openembedded.org/bitbake/tree/doc/setversions.py?id=1d0d4a0066603461eacb92a766fec616c1e91257#n25
-
-Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
+Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
 ---
-Tested on this build:
-https://autobuilder.yoctoproject.org/valkyrie/#/builders/104/builds/48264
+ ...ystem-logging-allow-miscfiles_read_g.patch | 58 +++++++++++++++++++
+ .../refpolicy/refpolicy_common.inc            |  1 +
+ 2 files changed, 59 insertions(+)
+ create mode 100644 recipes-security/refpolicy/refpolicy/0058-policy-modules-system-logging-allow-miscfiles_read_g.patch
 
-Output: https://0x0.st/PjSE.json
----
- scripts/release-parser.py   | 37 +++++++++++++++++++++++++++++++++++++
- scripts/run-dashboard-index |  2 +-
- 2 files changed, 38 insertions(+), 1 deletion(-)
-
-diff --git a/scripts/release-parser.py b/scripts/release-parser.py
-index 15ef017..70fcac1 100755
---- a/scripts/release-parser.py
-+++ b/scripts/release-parser.py
-@@ -7,7 +7,10 @@ import sys
- 
- from git import Repo
- 
-+# this is the repository where we fetch most of our tag data
- GIT_REPO = sys.argv[1]
-+# the bitbake repository is used to associate bitbake versions to them
-+BITBAKE_REPO = sys.argv[2]
- 
- print(f"Reading tag information in {GIT_REPO}")
- 
-@@ -19,8 +22,38 @@ SUPPORTED_RELEASES = {
- CURRENT_ACTIVE_DEV_CODENAME = "Wrynose"
- CURRENT_ACTIVE_DEV_VERSION = "6.0"
- CURRENT_STABLE_BRANCH = "5.3"
-+CURRENT_ACTIVE_DEV_BITBAKE_MAPPING = "2.18"
- 
- repo = Repo(GIT_REPO)
-+bitbake_repo = Repo(BITBAKE_REPO)
+diff --git a/recipes-security/refpolicy/refpolicy/0058-policy-modules-system-logging-allow-miscfiles_read_g.patch b/recipes-security/refpolicy/refpolicy/0058-policy-modules-system-logging-allow-miscfiles_read_g.patch
+new file mode 100644
+index 0000000..42e53d2
+--- /dev/null
++++ b/recipes-security/refpolicy/refpolicy/0058-policy-modules-system-logging-allow-miscfiles_read_g.patch
+@@ -0,0 +1,58 @@
++From 889a18a54c568fb6ca2eb7238e85eb464ac21416 Mon Sep 17 00:00:00 2001
++From: Clayton Casciato <ccasciato@21sw.us>
++Date: Fri, 12 Dec 2025 11:56:45 -0700
++Subject: [PATCH] logging: allow miscfiles_read_generic_certs(syslogd_t)
 +
-+def get_bitbake_mapping(yocto_tag: str) -> str:
-+    """
-+    Get the bitbake mapping for a yocto project tag ("yocto-X.Y").
-+    If the tag does not exist in bitbake, return an empty string.
-+    For any tag lower than yocto-3.1 there were no bitbake mappings, return an empty string.
-+    """
-+    if yocto_tag not in bitbake_repo.tags:
-+        return ""
++rsyslog needs to be able to access certificates to validate encrypted
++communications.
 +
-+    semver_tag = yocto_tag.replace("yocto-", "")
-+    try:
-+        semver_tag = semver.VersionInfo.parse(semver_tag)
-+    except ValueError:
-+        semver_tag = semver.VersionInfo.parse(semver_tag + ".0")
++https://docs.redhat.com/de/documentation/red_hat_enterprise_linux/10/html/risk_reduction_and_recovery_operations/configuring-a-remote-logging-solution#configuring-tls-encrypted-remote-logging
 +
-+    if semver_tag < semver.VersionInfo(major=3, minor=1, patch=0):
-+        return ""
++--
 +
-+    branches = bitbake_repo.git.branch(
-+        "--remotes",
-+        "--sort=version:refname",
-+        "--contains", yocto_tag,
-+        "origin/*.*").splitlines()
-+    if not branches:
-+        return ""
++rsyslogd: error: defaultnetstreamdrivercafile file
++'/etc/pki/ca-trust/source/anchors/ca-cert.pem' could not be accessed:
++Permission denied [v8.2402.0 try https://www.rsyslog.com/e/2039 ]
 +
-+    return branches[0].strip().replace("origin/", "")
- 
- def get_git_tags():
-     tagmap = {}
-@@ -88,6 +121,8 @@ def get_git_tags():
- 
-         status = SUPPORTED_RELEASES.get(branch, "EOL")
- 
-+        bitbake_mapping = get_bitbake_mapping(tags[0].name)
++--
 +
-         # Create a dictionary for the series entry
-         tag_dict = {
-             "series_version": re.sub(r"[^\d\.]", "", tags[0].name),
-@@ -99,6 +134,7 @@ def get_git_tags():
-             "status": status,
-             "download": download,
-             "release_notes": release_notes,
-+            "bitbake_version": bitbake_mapping,
-         }
-         tag_list.append(tag_dict)
++type=PROCTITLE proctitle=/usr/sbin/rsyslogd -n -iNONE
++
++type=SYSCALL arch=aarch64 syscall=openat success=no
++exit=EACCES(Permission denied) a0=AT_FDCWD a1=0x5555d6951ce0
++a2=O_RDONLY|O_CLOEXEC a3=0x0 items=0 ppid=1 pid=258 auid=unset uid=root
++gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root
++tty=(none) ses=unset comm=rs:main Q:Reg exe=/usr/sbin/rsyslogd
++subj=system_u:system_r:syslogd_t:s0 key=(null)
++
++type=AVC avc:  denied  { search } for  pid=258 comm=rs:main Q:Reg
++name=pki dev="vda" ino=234 scontext=system_u:system_r:syslogd_t:s0
++tcontext=system_u:object_r:cert_t:s0 tclass=dir permissive=0
++
++--
++
++Fedora:
++
++https://github.com/fedora-selinux/selinux-policy/commit/66742ce1af1d752fbefe8a512f16c9165634d07f
++
++Signed-off-by: Clayton Casciato <ccasciato@21sw.us>
++
++Upstream-Status: Backport [https://github.com/SELinuxProject/refpolicy/commit/5cd787409c9c3add25da61ea7ad8edf51490df26]
++
++Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
++---
++ policy/modules/system/logging.te | 1 +
++ 1 file changed, 1 insertion(+)
++
++diff --git a/policy/modules/system/logging.te b/policy/modules/system/logging.te
++index 121468ef6..87b4779ff 100644
++--- a/policy/modules/system/logging.te
+++++ b/policy/modules/system/logging.te
++@@ -520,6 +520,7 @@ auth_use_nsswitch(syslogd_t)
++ 
++ init_use_fds(syslogd_t)
++ 
+++miscfiles_read_generic_certs(syslogd_t)
++ miscfiles_read_localization(syslogd_t)
++ 
++ seutil_read_config(syslogd_t)
+diff --git a/recipes-security/refpolicy/refpolicy_common.inc b/recipes-security/refpolicy/refpolicy_common.inc
+index dc700f0..8486203 100644
+--- a/recipes-security/refpolicy/refpolicy_common.inc
++++ b/recipes-security/refpolicy/refpolicy_common.inc
+@@ -73,6 +73,7 @@ SRC_URI += " \
+         file://0055-policy-modules-system-systemd-make-_systemd_t-MLS-tr.patch \
+         file://0056-policy-modules-system-logging-make-syslogd_runtime_t.patch \
+         file://0057-policy-modules-system-logging-allow-syslogd_t-syslog.patch \
++        file://0058-policy-modules-system-logging-allow-miscfiles_read_g.patch \
+         "
  
-@@ -118,6 +154,7 @@ tags.append(
-         "releases" : list(e.name for e in filter(lambda e: e.name.startswith(CURRENT_ACTIVE_DEV_VERSION), repo.tags)),
-         "status": "Active Development",
-         "download": "",
-+        "bitbake_version": CURRENT_ACTIVE_DEV_BITBAKE_MAPPING,
-     }
- )
- 
-diff --git a/scripts/run-dashboard-index b/scripts/run-dashboard-index
-index c3fb8fa..c7beca3 100755
---- a/scripts/run-dashboard-index
-+++ b/scripts/run-dashboard-index
-@@ -16,7 +16,7 @@ scriptdir="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
- dest=${DEST:-docs@docs.yoctoproject.org:dashboard/}
- 
- cd $builddir
--$scriptdir/release-parser.py $builddir/yocto-docs
-+$scriptdir/release-parser.py $builddir/yocto-docs $builddir/repos/bitbake
- $scriptdir/layer-parser.py
- curl --silent --output $scriptdir/dashboard/testresults.json https://git.yoctoproject.org/yocto-testresults/plain/oeselftest/reproducible/qemux86-64/testresults.json
- 
-
----
-base-commit: 6c6c7e0d8291b32cf09570f3d819df4d465a7962
-change-id: 20260304-release-parser-bitbake-mapping-baa27555ac04
-
+ S = "${UNPACKDIR}/refpolicy"
 
