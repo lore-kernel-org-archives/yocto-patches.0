@@ -1,93 +1,115 @@
-Return-Path: <yoann.congal@smile.fr>
+Return-Path: <majortomtosourcecontrol@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18980F01834
-	for <webhook@archiver.kernel.org>; Fri,  6 Mar 2026 12:50:18 +0000 (UTC)
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.68525.1772801416158338836
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5CFEFCB614
+	for <webhook@archiver.kernel.org>; Fri,  6 Mar 2026 15:19:10 +0000 (UTC)
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.71328.1772810349718726667
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 06 Mar 2026 04:50:16 -0800
+ Fri, 06 Mar 2026 07:19:09 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@smile.fr header.s=google header.b=ax/sqcP4;
- spf=pass (domain: smile.fr, ip: 209.85.221.49, mailfrom: yoann.congal@smile.fr)
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-439d8df7620so522394f8f.0
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 06 Mar 2026 04:50:15 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=bTGZvwvG;
+ spf=pass (domain: gmail.com, ip: 209.85.160.177, mailfrom: majortomtosourcecontrol@gmail.com)
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-506a321cc53so103055181cf.3
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 06 Mar 2026 07:19:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=smile.fr; s=google; t=1772801414; x=1773406214; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=N7nbZNpBdc5TdxLJJ0k9D30v9PhyYPB15GORXFizXrE=;
-        b=ax/sqcP4Dm9EP4q0YiVIv4StG0Nw6OOlNhqmF/FLKCaYIA4vAXnUdG2JHJoTT3ElMJ
-         MidT4cTJsx+ncpfDWVjpTw3t7ZnSsSsq0OTz5RqiZ/e9XRiLNCtkwQESYgHaWYdszy+I
-         txaii9rZJnmeLAQuLA/7LdoGQx/M6ESs+qry8=
+        d=gmail.com; s=20230601; t=1772810349; x=1773415149; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:in-reply-to:cc:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=dVhkAM9bTIv6Loi/jx4NNrggcq0daVvnFXx8zkMF6Hk=;
+        b=bTGZvwvGJ2GITh3v2j65v84Z7erpS/zzoGa59tKVMToIApJ4gWta1/xF9B8599m9j6
+         Yrhfk6AY2kUfWNFIxpEWMoWe31CksPe08OQE5JsqbdE8MRcEVj+EUjIq/kQ4ceIpjiSD
+         pwV23tYR+VbQgTlb75M8ETOyOB4dbp/QUXH1yajlwCWTECSC5SHcmnLgWrTvMmJzfgVD
+         EQTjATfm4H5YJPh+3PeX65e/KLEniLOAdMKxOBAdjL6Tk9Dcu4wRIjlR/Mxkh0xhfBCC
+         Y2lRrY08RNWQcfVIucFdDJQLWUkE7Otuj1cfCh9Az+25oVGbgm6CHqYbr3zW9wQhwv22
+         FA9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772801414; x=1773406214;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N7nbZNpBdc5TdxLJJ0k9D30v9PhyYPB15GORXFizXrE=;
-        b=vhm8JyozznnNMkCop9ZLtP0neIIhqkPTj8cgRe3pNKSGCpgvpnW6gimaM1gwVCTcq9
-         a9L9tlvA1j1MAUEb+h8NKj+Q+Vlo9jD/WRkGoBp7F2BfpqIaAbWDsB+Jd0t61li4ps3g
-         jSC1ZWxxUtlSBdsUh3tujT4tCs2gvFaun0zGurcU9x2RyiMn4ewrqaVgzGLLhpf2ocLA
-         lNm6c+Bwg2ix4fBYQ2SHKewbXx1ox1JMW2qKAJ4DqK5ikB3xti6jdFOOH6NO1Sh8ETiF
-         NwHzS5dmsjzMQZUE3MeUgKLY7NrPwAbalTrJicjSgw+rc0+CQ7psNwExGfWvBmHpUxNI
-         n6sw==
-X-Gm-Message-State: AOJu0YxwdW2oopEk98QxuO5cn/WSJ0lorrAy/WjhHa2MA4f9r/wAhubj
-	2RxBVtc1tG8uV3Hs0T/D6BYzQkBCl7eoDithuiCakSPt/70ZXfFfW85Kgq07PcDzFyvx5xkyV+0
-	VMIBX
-X-Gm-Gg: ATEYQzx35By79kNs6gi+Q6a4htOATxH84YNZhlG4Q9DbID2Ud35ur6X8IiPx9veRXc5
-	79hKg1YdwLXKLUSkd/otfunvXAT6fz1Gu27J7CR6fwtRZuCzpkKkhTsaQk0mLayLPaQLysEMReP
-	bTP/Ejg+9hO3myexLNtT4Xa423+DN8dOaBpY1hMFiBTsPKtnugvW0aohvth6SHM7k0Rtb6Fgxct
-	4XzDt9/SaUWetoEjm8fHmFABLl2T3mPY5duINAiGbXiYREJiCCX/fwQmI/EXWDRaxuiYkqHQZin
-	Zs9gywZn1gAAVnf72j/SOIoymdlv9lzrVz7FOExu2Y8jpcvD7ydMoq9d+6Sw6pESBYllFRE2hol
-	5Ga7PDNAoytocJGBg165fzctAxCSdj2EM2ltoloG6NTTE289laXIkWydk0cRqsMQ7IvcyGzVcwh
-	r1MD2HS3KIBSfhB34tUsKaNHR7CqzGGrwY/cMBGqTmoqwSr57yfBvWXWbipE+/I6u0IUbmEW2cT
-	YDg4Wqz9ZLP2hVl76I2ryV6MCpx
-X-Received: by 2002:a05:600c:314f:b0:480:4be7:4f53 with SMTP id 5b1f17b1804b1-4852697842dmr29241885e9.31.1772801414194;
-        Fri, 06 Mar 2026 04:50:14 -0800 (PST)
-Received: from FRSMI25-LASER.home (2a01cb001331aa00bdeac353f6fa5aa8.ipv6.abo.wanadoo.fr. [2a01:cb00:1331:aa00:bdea:c353:f6fa:5aa8])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-485246f3429sm16003325e9.21.2026.03.06.04.50.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Mar 2026 04:50:13 -0800 (PST)
-From: Yoann Congal <yoann.congal@smile.fr>
-To: yocto-patches@lists.yoctoproject.org
-Cc: Yoann Congal <yoann.congal@smile.fr>
-Subject: [yocto-autobuilder2][PATCH] config: add stream9 to scarthgap worker list
-Date: Fri,  6 Mar 2026 13:49:52 +0100
-Message-ID: <20260306124952.402090-1-yoann.congal@smile.fr>
-X-Mailer: git-send-email 2.47.3
+        d=1e100.net; s=20230601; t=1772810349; x=1773415149;
+        h=content-transfer-encoding:in-reply-to:cc:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dVhkAM9bTIv6Loi/jx4NNrggcq0daVvnFXx8zkMF6Hk=;
+        b=Ty/J4Vjx4xFI2+6REvceZkl5ribnidCueGqgOhy1hvtkxwMaXdLDUQZ4Zsh/dyqAp6
+         gR3ZZlyLopcb6ADoLGw3gXDSwzqFHgnfZyCls+uoK6tnCavcwwyMaxHDE3KyJlQC1h7M
+         KdrE4DIYBKLKKPVCvFs3VvqoZzNPM/QUdVTG6Rq0ZVU4kYXmrPHsP7Mz+Hs4cz9oLE0l
+         9kxJ9x2JVejl7pyMLPlNzP2+P7pidZ0NBv8TgVxpiJIvvzDeNyRvZE/78jh7D8wFF9mz
+         Itrwhf9UEOj3FOv5wbIfVHNisjLrwfu9x9Xy1RrPu8ETa4jgaM1tlT+5VDrcUEblCBJY
+         TTSA==
+X-Forwarded-Encrypted: i=1; AJvYcCXtYPGcokVtQg/wlsi5xv1yKzhZAZTRoN65QY3y4wF7L2KTYlyS2UHy1nBdzrfGzlkg4gGfIIjcHdPtAzMK@lists.yoctoproject.org
+X-Gm-Message-State: AOJu0YyC7h+k0t4mMK6oyA8jwGTtbcDgN4NoX/vW4ofIP5tXFy0/OROS
+	OF0Lciwgi5vi7VXoiBEcmiCQ6vqqVQDzKwV3jEdBeGIS6/F6qavyXy7W
+X-Gm-Gg: ATEYQzxuApSRv8j54EFXyzsEiZB5wZ8SXj6MMgdgeKnbpAGq1rNBHeUKRqZ6rpLfFvt
+	zU7NVaxvvaMMRy0QYnOaS/4MNOZMZa/IyXuiiuEZ2bQ+t5xKns5ReICGGSC9hQu/KGBNQzbcUNL
+	FWM/ynnlfZNMdFOLVBzHfJp+yrx3ArY/GG2lphB3jMeNCI2qF3NjmlOrPEc0y3mQB/iIV0D7LYj
+	fFetLBwxOx915lTTzSXbv8Tb3gIA+NsNueiLkosq1tXyQggx5NNUUbDQtqiyPVzG2XE8qhH4hRe
+	gK/zMvlIdxqmCA0sSnp6pfdFO2rrVN02Ue1NNWT0EZZ/yMJ6WojKwW4Quid2FSEnVTuALoJCavb
+	is12nEMGW80QAqyMiYfNgDIgprGpC4HvRrJIE/6Iz6q4kUoEmOWzXYFvaJnAouBkSukHCGky3TD
+	B1vCTaIehPiIWj9+QcVXzYu35LoWe4nJ04ypdoquEgxSkbeNr2MdtNC9z4FYnKFAin5q+AkxvXH
+	mVZ
+X-Received: by 2002:a05:622a:1a9c:b0:4ff:c884:31ad with SMTP id d75a77b69052e-508f495b840mr30956371cf.53.1772810348662;
+        Fri, 06 Mar 2026 07:19:08 -0800 (PST)
+Received: from [172.26.252.3] (97-118-253-141.hlrn.qwest.net. [97.118.253.141])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-508f66b64cesm11694871cf.24.2026.03.06.07.19.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Mar 2026 07:19:08 -0800 (PST)
+Message-ID: <c637869c-3fda-42b5-ba53-5ada2cb22d1a@gmail.com>
+Date: Fri, 6 Mar 2026 08:19:02 -0700
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [yocto-patches] [meta-selinux][PATCH] Introduce a new SELinux
+ domain for the Qualcomm tee_supplicant to ensure proper labeling, isolation
+ and access control under the target refpolicy.
+To: Wenjia Zhang <wenjia.zhang@oss.qualcomm.com>,
+ yocto-patches@lists.yoctoproject.org
+References: <20260306034719.1998371-1-wenjia.zhang@oss.qualcomm.com>
+Content-Language: en-US
+From: Clayton Casciato <majortomtosourcecontrol@gmail.com>
+Cc: Yi Zhao <yi.zhao@windriver.com>, joe.macdonald@siemens.com
+In-Reply-To: <20260306034719.1998371-1-wenjia.zhang@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 06 Mar 2026 12:50:18 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3348
+ <yocto-patches@lists.yoctoproject.org>; Fri, 06 Mar 2026 15:19:10 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3349
 
-From: Yoann Congal <yoann.congal@smile.fr>
+> diff --git a/recipes-security/refpolicy/refpolicy_common.inc b/recipes-security/refpolicy/refpolicy_common.inc
+> index 2e1a929..e3d38ee 100644
+> --- a/recipes-security/refpolicy/refpolicy_common.inc
+> +++ b/recipes-security/refpolicy/refpolicy_common.inc
+> @@ -74,6 +74,7 @@ SRC_URI += " \ 
+>          file://0056-policy-modules-system-setrans-allow-setrans_t-use-fd.patch \
+>          file://0057-policy-modules-system-systemd-make-_systemd_t-MLS-tr.patch \
+>          file://0058-policy-modules-system-logging-make-syslogd_runtime_t.patch \
+> +		file://0059-tee_supplicant-Introduce-SELinux-domain-for-tee_supp.patch \
+>          "   
+>@@
+>  S = "${UNPACKDIR}/refpolicy"
 
-This is preliminary work for the official support of Centos Stream9 for
-scarthgap: this will allow to test scarthgap on stream9* workers.
+Hi, Wenjia
 
-Related to [YOCTO #16156]
+Here are a few suggestions:
 
-Signed-off-by: Yoann Congal <yoann.congal@smile.fr>
----
- config.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Follow the naming convention used in the other patches:
+0059-policy-modules-services[...]
 
-diff --git a/config.py b/config.py
-index 46d17c6..8aa1817 100644
---- a/config.py
-+++ b/config.py
-@@ -196,7 +196,7 @@ workers_prev_releases = {
-     "whinlatter" : ("alma8", "alma9", "debian11", "debian12", "debian13", "fedora39", "fedora40", "fedora41", "fedora42", "opensuse155", "opensuse156", "rocky8", "rocky9", "stream9", "ubuntu2204", "ubuntu2404", "ubuntu2504", "ubuntu2510", "perf-"),
-     "walnascar" : ("alma8", "alma9", "debian11", "debian12", "fedora39", "fedora40", "fedora41", "opensuse155", "opensuse156", "rocky8", "rocky9", "stream9", "ubuntu2004","ubuntu2204", "ubuntu2304", "ubuntu2404", "ubuntu2410", "perf-"),
-     "styhead" : ("alma8", "alma9", "debian11", "debian12", "fedora38", "fedora39", "fedora40", "opensuse154", "opensuse155", "opensuse156", "rocky8", "rocky9", "stream8", "ubuntu1804", "ubuntu2004","ubuntu2204", "ubuntu2304", "ubuntu2404", "perf-"),
--    "scarthgap" : ("alma8", "alma9", "debian11", "debian12", "fedora38", "fedora39", "fedora40", "fedora41", "opensuse154", "rocky8", "rocky9", "stream8", "ubuntu1804", "ubuntu2004","ubuntu2204", "ubuntu2304", "ubuntu2404", "perf-"),
-+    "scarthgap" : ("alma8", "alma9", "debian11", "debian12", "fedora38", "fedora39", "fedora40", "fedora41", "opensuse154", "rocky8", "rocky9", "stream8", "stream9", "ubuntu1804", "ubuntu2004","ubuntu2204", "ubuntu2304", "ubuntu2404", "perf-"),
-     "nanbield" : ("alma8", "alma9", "debian11", "debian12", "fedora37", "fedora38", "opensuse153", "opensuse154", "rocky9", "stream8", "ubuntu1804", "ubuntu2004","ubuntu2204", "ubuntu2304", "perf-"),
-     "mickledore" : ("alma8", "alma9", "debian10", "debian11", "fedora35", "fedora36", "fedora37", "fedora38", "opensuse153", "opensuse154", "ubuntu1804", "ubuntu2004","ubuntu2204", "perf-"),
-     "langdale" : ("alma8", "alma9", "debian10", "debian11", "fedora35", "fedora36", "opensuse153", "opensuse154", "ubuntu1804", "ubuntu2004","ubuntu2204", "perf-"),
+Follow the commit subject pattern:
+https://git.yoctoproject.org/meta-selinux/log/recipes-security/refpolicy/refpolicy
+
+Shorten the patch subject:
+https://git-scm.com/docs/git-commit/2.53.0#_discussion
+
+Use space indentation for the SRC_URI addition (as used in the other entries).
+
+Include the maintainers in your mailing:
+https://git.yoctoproject.org/meta-selinux/tree/MAINTAINERS
+
+Here is a recent accepted patch for reference:
+https://lists.yoctoproject.org/g/yocto-patches/message/3279
+
+Clayton Casciato
 
