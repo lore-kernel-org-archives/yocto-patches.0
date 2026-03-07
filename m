@@ -2,104 +2,98 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EA3AFC9EE5
-	for <webhook@archiver.kernel.org>; Sat,  7 Mar 2026 10:30:15 +0000 (UTC)
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.6727.1772879414466595898
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A829FC9EE7
+	for <webhook@archiver.kernel.org>; Sat,  7 Mar 2026 10:30:25 +0000 (UTC)
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.6729.1772879415713983701
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 07 Mar 2026 02:30:14 -0800
+ Sat, 07 Mar 2026 02:30:15 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=mTDiqDRX;
- spf=pass (domain: konsulko.com, ip: 209.85.219.46, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-89a000f5adeso115613896d6.3
-        for <yocto-patches@lists.yoctoproject.org>; Sat, 07 Mar 2026 02:30:14 -0800 (PST)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=Tz3r/xwf;
+ spf=pass (domain: konsulko.com, ip: 209.85.219.53, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-89a1d7cc7f0so32353276d6.1
+        for <yocto-patches@lists.yoctoproject.org>; Sat, 07 Mar 2026 02:30:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1772879413; x=1773484213; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GAMS4yzRMGH+2fXLA3Sj/A7gS/SBJwIyDxX3Fz3PWzU=;
-        b=mTDiqDRXiZ8d16WrersiXIy9oDJQCc8hWhBS4JWgWiSX1mWJ4H8BDZ0VEEohp+AkeL
-         SUwuVmoJM77OeOaOoTVWbbPUF+hW7TTBhVBrM8AoHJR29WFf5g1n0TtPJ8TCELUdNI8Q
-         XIVrxjIwCZrnZF1BW11XEjSGR+EttlNGvQ/04=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772879413; x=1773484213;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=konsulko.com; s=google; t=1772879414; x=1773484214; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=GAMS4yzRMGH+2fXLA3Sj/A7gS/SBJwIyDxX3Fz3PWzU=;
-        b=pO7SU9iWsWxBc/Q5Di4kF+SEuk/8p5LFZkYo3Dh+wyZFN6gBet0O0qx1GtioCQlDaO
-         naSBbQ9JW3GTZI5k4vGIrMUhSyoxMUhzRVuPwRPh29Yy2HlRxrWaUHjzoCd/5fFOZ4N9
-         OHnp2dueszVMM4wMXpb0/XeY+SN6ZJU2JXUysewVbA3uscp2d70qNqGdVyFeQCvRF44p
-         NCu9oypY0A0Z1/khOha6vpImpao1TxAz32Uq9zpYo4IwWdQbfFTcZf05m512LAX+qorm
-         Rw4AHRk9PITZw56BrTiX6yzdkKkbBe5GTzx6d4qg6DqCyn7/+FRTXNGZS5XCui5Zkccc
-         PyYw==
-X-Gm-Message-State: AOJu0Ywfcuyp5Lo7Z49eklDIOfNXTLQaYhq20pV7P5xxlU/vExDVegYT
-	PdZnoR5dL+QQNDNimMTW/6kIejlj0NOg+OABR839omKPPue6nZpKh0WlrQGjw0iSpYItfNVyzPI
-	B/9Latas=
-X-Gm-Gg: ATEYQzz4Ppd35UX+2iH1XjP9DHNMcOnX0psBa7e9/CIZdXixyyCknB/vEg6BWRfl8aq
-	ByWgHxVkf1cDub/V7KZ4rdJPbsQnJgC37TH0U19jG0QFCFicd+DhIY5A1KHK2l4DCegjMivdcrt
-	/WuXUjTC7Ku2pUHgcCvQTekKPPD2Flbp+X8ejbskZzGEU/VWBkMcV7PTKP9DV7yif5/uVyDg5y9
-	wUP1ddE3n4jSyNDmIGlJrtkHTQ89JZMfq9cFBMB4VD4mU5NRtGlH2mnjaKY3UY/bgtzfMxBEtC1
-	ysgUr2LrmF0R1wtjsCHniX9L4clOpQp2hYlwTeaajI9Z2CUATZMPVAjnJz09iXdYmCepgtAsfNI
-	Y207A+Vr9kdMhq0G5a4H1x/iq9GWXCNBPzZVNWaV4eUJiNprLWROAUJ/g4SWlS6ROuaPCKYNo5v
-	Rd5N1B5kWyDOXCw/+Fs96WmjmZuhPvGv/m4xlUGLFfn9ccVwTE+dSZb8EIVfvKr1kf8hputZQu1
-	H/GYmdZxbjxK4FP9vbsWxcloVBLgWx2Smz1AViD0x+Cq977dmnbIfw3SBQXqaeaLKz079blFDM=
-X-Received: by 2002:a05:6214:da5:b0:895:7864:f69d with SMTP id 6a1803df08f44-89a30aa0ce4mr77172166d6.40.1772879412899;
-        Sat, 07 Mar 2026 02:30:12 -0800 (PST)
+        bh=0GFirBgdGIBdelKg5t6JXlYw2LzFry/SQMuuwP9JCqM=;
+        b=Tz3r/xwfuivc+Nc6bcffoG6VRrlkdWD7DqH/isHAb0sWepgcqIyYNdOL4U2vzXYg8Z
+         u0l5k7lKHG4phM2RE30+piIiicomsk7TLIcsGtAmWjUVzPFGgElD36EhiOWkqFoK93KE
+         3lomgDG6nyE+ByBGGqtxPTLV1e/ZN72jY/zD4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772879414; x=1773484214;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=0GFirBgdGIBdelKg5t6JXlYw2LzFry/SQMuuwP9JCqM=;
+        b=DT8jytL5Aticidu5VSi5CDmRJzyyhT9Ru1E3dx/nB+UWz6aUCjIhJ2pELFDGtRNZTk
+         k0oS7/PLng3x4B6oc/S0cPrEddf+FLfI0LzXqvttbztwHueDucvP9htO/+n0OeA96nxQ
+         0Qv9OTB+jwTfkaNwn9VAbpWUGDGvhbGa5vSq6r5Nqel1CSLdu/Lw3U6vmBXsTa1b2fNi
+         gtORe/6t5g0+i3K4YuA7BKwd/P8sJVvJf15H2D2KTcG0z+Bk7+Ucs2kGoJg6V3+JDAB8
+         wOPsaGm3W5Z0gMBT7VJ+U7t958xZhkREBjVoilivcXyHzg702hndv5GaFa3bGhAk7hyN
+         aFbw==
+X-Gm-Message-State: AOJu0YwsttGwzROiqt55eYyxJgTNh2dcrQkSgDJn0dZA9MmRRsJ1h+yk
+	9nBPhJOwFasuK5EVMfsnLh6LGIyPM6JOMwFm1RfAKrs2zZIR8gpkoqpfhZelPtzw5yiy8NUmMqz
+	sFM/hnCI=
+X-Gm-Gg: ATEYQzy79nMGHOSU0gbmJp+vAZuQI0evC69gqNnU5iY6J04WTYcCkn4qimEBHzQMPFJ
+	0SvYrCkwALQhesWE9ct0jI6XLBA8NaobwqB5KTA1K9utxnaPgGvvyZsNzxLoL88wzHTmO/mYX16
+	l15N7GrwtEUBmgaiEiXDmrHtOhtDuz+ba7qH7T3OyuJjVNAmWxPjee4+V8Ktrgv9/PplzJsKl3F
+	XWoa0PdT0ZoYaOJCOtwDO8gvx8tjsuPQDfWEGEObG9Jcn0SSPxbMXW0eZ1yudAelILovwHYtCWb
+	X95ZMnvApzS95DMEttb4vv9ygD1X347+3D8Cgv/h/zxM3+xqr98IwXgRdyv/Gf43fiXWsUZF2No
+	lRWGyWBEo9AO75LxsTnMCLtxSw90lvRKNOkIhSMy9VMpX8/RLE/0MkqTKJsbZPQ6IyZqheD6TX6
+	Hm9yyFTJybqxuPV4SA1iW1WcYBn5RnwO9jufAODlzgPOVfoD9ZIsuzybUK+USgCNBFt/S1DEo4g
+	TTpjoHUhe3pdXZalIDna1XK4xnRpex1Xten2brhDsVCIl1Ul0Vo/mLlK1iGcYLW
+X-Received: by 2002:a05:6214:2b08:b0:89a:ec6:1028 with SMTP id 6a1803df08f44-89a30a65275mr70724376d6.30.1772879414128;
+        Sat, 07 Mar 2026 02:30:14 -0800 (PST)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-89a316ea1b1sm31472556d6.36.2026.03.07.02.30.12
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-89a316ea1b1sm31472556d6.36.2026.03.07.02.30.13
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Mar 2026 02:30:12 -0800 (PST)
+        Sat, 07 Mar 2026 02:30:13 -0800 (PST)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-security][PATCH 0/7] Assorted updates 03/07
-Date: Sat,  7 Mar 2026 05:29:54 -0500
-Message-ID: <cover.1772879169.git.scott.murray@konsulko.com>
+Subject: [meta-security][PATCH 2/7] python3-tpm2-pytss: BBCLASSEXTEND native and nativesdk
+Date: Sat,  7 Mar 2026 05:29:56 -0500
+Message-ID: <f04f6fede966257d765ccdd22d671f93142afe57.1772879169.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <cover.1772879169.git.scott.murray@konsulko.com>
+References: <cover.1772879169.git.scott.murray@konsulko.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sat, 07 Mar 2026 10:30:15 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3365
+ <yocto-patches@lists.yoctoproject.org>; Sat, 07 Mar 2026 10:30:25 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3367
 
-This patch series rolls up the contributed patches from the past few
-weeks, plus a nikto fix from myself.  These changes are queued on the
-master-next branch if you would like to check them out to test yourself.
-I intend to merge these to master branch at end of day Monday (Eastern
-Time, March 9) unless there are objections.
+From: Peter Marko <peter.marko@siemens.com>
 
-Scott
+Commit cd729862f68152bc76db02cd4a93ca12a9424f88 added native/nativesdk
+possibility to tpm2-pkcs11.
+After 784ca4b6584101e971b2d5d76ec7b716ad1301b5 which added rdepends on
+python3-tpm2-pytss, there are errors like:
 
+Missing or unbuildable dependency chain was:
+['<image>', 'swtpm-native', 'tpm2-pkcs11-tools-native', 'python3-tpm2-pytss-native']
 
-Changes:
+Signed-off-by: Peter Marko <peter.marko@siemens.com>
+Signed-off-by: Scott Murray <scott.murray@konsulko.com>
+---
+ meta-tpm/recipes-tpm2/tpm2-pytss/python3-tpm2-pytss_2.3.0.bb | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Clayton Casciato (1):
-  suricata: improve PACKAGECONFIG[unittests] control
-
-Peter Kjellerstedt (3):
-  fscrypt: Correct the spelling of DESCRIPTION
-  fscryptctl: Use ${prefix} rather than /usr
-  fscryptctl: Correct the spelling of DESCRIPTION
-
-Peter Marko (1):
-  python3-tpm2-pytss: BBCLASSEXTEND native and nativesdk
-
-Scott Murray (2):
-  nikto: fix branch
-  A couple of small CI fixes
-
- .gitlab-ci.yml                                                | 2 +-
- .../meta-perl/recipes-security/nikto/nikto_2.1.6.bb           | 2 +-
- kas/kas-security-base.yml                                     | 2 +-
- meta-tpm/recipes-tpm2/tpm2-pytss/python3-tpm2-pytss_2.3.0.bb  | 2 ++
- recipes-ids/suricata/suricata_7.0.13.bb                       | 2 +-
- recipes-security/fscrypt/fscrypt_1.1.0.bb                     | 2 +-
- recipes-security/fscryptctl/fscryptctl_1.1.0.bb               | 4 ++--
- 7 files changed, 9 insertions(+), 7 deletions(-)
-
+diff --git a/meta-tpm/recipes-tpm2/tpm2-pytss/python3-tpm2-pytss_2.3.0.bb b/meta-tpm/recipes-tpm2/tpm2-pytss/python3-tpm2-pytss_2.3.0.bb
+index 4ddf287..63ed8cf 100644
+--- a/meta-tpm/recipes-tpm2/tpm2-pytss/python3-tpm2-pytss_2.3.0.bb
++++ b/meta-tpm/recipes-tpm2/tpm2-pytss/python3-tpm2-pytss_2.3.0.bb
+@@ -19,3 +19,5 @@ DEPENDS = " \
+ "
+ 
+ RDEPENDS:${PN} = "libtss2 python3-asn1crypto"
++
++BBCLASSEXTEND = "native nativesdk"
 -- 
 2.51.0
 
