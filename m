@@ -2,61 +2,61 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1234FC9EED
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ECF7FC9EEB
 	for <webhook@archiver.kernel.org>; Sat,  7 Mar 2026 10:30:25 +0000 (UTC)
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.6854.1772879418237306464
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.6731.1772879417313540041
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 07 Mar 2026 02:30:18 -0800
+ Sat, 07 Mar 2026 02:30:17 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=HhOJ16Ut;
- spf=pass (domain: konsulko.com, ip: 209.85.219.54, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-89a133cdd4aso56794846d6.0
-        for <yocto-patches@lists.yoctoproject.org>; Sat, 07 Mar 2026 02:30:18 -0800 (PST)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=qxUxz/7L;
+ spf=pass (domain: konsulko.com, ip: 209.85.219.53, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-899a9f445cbso124252956d6.0
+        for <yocto-patches@lists.yoctoproject.org>; Sat, 07 Mar 2026 02:30:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1772879417; x=1773484217; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1772879416; x=1773484216; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=14OPcfiAbDG74HChmLSdgIawGkkN8YDoRBA2KOLwm+s=;
-        b=HhOJ16Ut/CYz8zi/S7RbBWD1vh0Nxino1T+sQwv4v4dImOoOiSkRH50B0Ia6th1oMV
-         PZ4V8O9a+ZS8PZVSKZB2NvMQh1q/KK/9Mouf90nSwMkvnh5ArSk/4tEHR1k9A7Zsv3br
-         33hTdJJSJgrNLC2lSdBncwfosO+Jslh3ICcL0=
+        bh=RwC1L+bUrWU1MvMN/+EZsfC8wocMbm/+GuqsfxpatoI=;
+        b=qxUxz/7LGeWYLyGVK7LypJmoec629jvjgecQwv6dtb3OP1dToNScv4/YQVbQo57W1q
+         S+Ih8EMVcA2Phk+HK8Pf0r5dtl/kTFgTJjbnKUMybj/I1FrgRf347ccKzSKfxboUl7nQ
+         +/XuPc51cKHiwummyEK+an3Ix3FuusdwrfuNI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772879417; x=1773484217;
+        d=1e100.net; s=20230601; t=1772879416; x=1773484216;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=14OPcfiAbDG74HChmLSdgIawGkkN8YDoRBA2KOLwm+s=;
-        b=jclcre9umUMmiohtSYZlb/IguAnX+SgUSaGST23QAuF/8KqzYGTPVyz7AnvUnK8fPh
-         20ryV5RalRCgDUPRafz+K4LBq5SKSgnufprmNPUr/YKNMEaNpD85bIr0TweFserr5Rdz
-         U+E7G238Tq7L7vEx+KVwnk/A7RHZHi0vQzedeV1LzqUV9A4BKOFKRxliL66wM+rI9VsE
-         dBGNOx26sTPXkLketWB9AEcydmG2HoA8uQrfz+J/nDC7ScrUzQip/wp/sO4OIbiOMUgS
-         7WeNWxh1wdjhgIBiP2BEMNyI3uGVxvyYs/+R8yrNw87ckLxLBIg0E1Iqo6SBXnTXZ9TE
-         YIdg==
-X-Gm-Message-State: AOJu0YxuM93Xm/dJGlaDNMJQTCbLqxjSf1remkqM0fcvfFZUVlbBHyDH
-	afVN9WZSxPQc8nu8JWbygkqGWeY396OuboXTkXJuC01bnpBWbM7IlqOHjMoRYoUToa9u+QVKJEy
-	NKkMEXs8=
-X-Gm-Gg: ATEYQzwjOepdFdoTgcV2+hR/HLsUp3b54pJ8eGfiAP2J+1pKRU4FChBFL6yR2DzmR3y
-	PfUbtUoehaP8e2Smhc5d5F0gYXKLag6eSvJ/Qbfifpb+l13E8I9nTVVPYETdD3BFWM2L9ocETO6
-	yOFcYI+QbdIG2U4nDfYfLWr5MNSuXFDewf4PS3Lv15pAVO0QCy40VzZF1nl0QA/g83oAKhKmv2D
-	7GOFzZksZalh0wa6jk6QTShNlT+LtMyMVJwAY4nFXEE0INZzidElQa0a0RYB7AMTaHMTWTMoUca
-	aCLSIklBhOWDoqa0UNHuYgGy1p5uC2umKyfAFkMfnqxbJ/BKmbFH0hGjOT6qgAQPvnsfeyoZzKy
-	MgMUL96GCf4VDEFPV+em2O2hizPg5EV/s/YkfTFNFG8VZgjujxYr1bk7Tz6Rjj9NVhR3I0vHc3r
-	ksxdMJ/5F9ODAcTsOxLqJQX2fQWjvf4CgAL6w+ZOrTmh99K+h7FU5HngyLqOZAoJnxI5DD+xn/X
-	vtN8OeC1m8KzxrWQs65nwBl+n+oL3+5baM14ldVhr1BPLAfCPBd9U4Ro9MkkFO2
-X-Received: by 2002:ad4:5de3:0:b0:89a:110f:894d with SMTP id 6a1803df08f44-89a30a80aa7mr77120546d6.30.1772879416985;
+        bh=RwC1L+bUrWU1MvMN/+EZsfC8wocMbm/+GuqsfxpatoI=;
+        b=uf2jtCzcLb+IAfZREufNVLi5inE8bzZ+EypVC8Si2WvmKsqo5H2TRSaPbhLon8epoe
+         JcBzH8cz8P0gEFLHsjZS01Hv4YIiEUYBwpO7EdcAV3tWWOHP3ZxBdb7oZ2IMNkKTlQ74
+         HDWG2HHqDCfaUC/xsxhVmJIHDESFwcwm8ECJW+qzzdo1w4qyvnTVO5+ddzRPUuCaeWA4
+         UcZI6JmgsgMiR/Dg8tJf4H6KQIf60zPwx5q9KJZMIOl5Gbeu3LI616Zp620oLEoRfV1G
+         2pi3ZBZnkSthK+wQaufI7EALeJ/r9pC2xNCYsgZUrklNSxcmwHvnhYmwa+G+JNWv2BRI
+         FJtw==
+X-Gm-Message-State: AOJu0Yw8ugHZOQ2F2uhWM0/D2wx38HP4JFG3mXT+N8dhUr8AUWPLBTj4
+	tb8jaur4c9BExaXIAYYiX7hGjef5Urv58uIf+g/ngU9H+XfcK7bMZ0NWVlf/nZW1q5ayFHAXAXz
+	or8PS9Ag=
+X-Gm-Gg: ATEYQzw6qiauGJx/0a7oQddN7RduUFaw+fW0S08EXx0eSnlfwb7HHXvNsHcTrPZ99Z6
+	zbGL9zZoAFOfeNFrcmt3cRffZf282ECSwdDPkyR+jCFBoUArax9XR1iCiroqD1GE4Qlo3CPIH8Y
+	4Az7OPPA3MkVu5XMqce/wIyehtMTDhD2i5NS5/e4qZhrloq7dL8d6kpppwIF7dhG/uYkMOOe4EZ
+	jt1ypSm2u8NTSXnOZezaZw+tpu/uDHcxZYZ7KvQnn0+t4mSh7TyOT9SU8ThrVyUCO586UPQLQAf
+	h3w5hJzKKNYpqlw/bXxU35GjfOIQ7bocYplkhU2UHNqOkWrYy6MvkIa+OunDexuIyAAvzc3J5PV
+	I5p4sj5YjqST7v4NwFuylulH9s6dUKsAShiuqzYlV93hX6TkteGAIU3tfgpOr8Kbe0DuMnNeJ9J
+	kX21N9PVAbqaqYTrvf4Lbo23id2Al+awAMwLYBEk7YUhZ4tWaF0KsY3NnadkIWJFriM159CIuWD
+	SHQY/qs61PLowujh4d9Bt4c8ltCEsBE/1a2FIjsdiz7RRFgFikeVSWWi28kPfSW
+X-Received: by 2002:a05:6214:519e:b0:896:f5b1:87b2 with SMTP id 6a1803df08f44-89a30acec5cmr72098406d6.40.1772879416019;
         Sat, 07 Mar 2026 02:30:16 -0800 (PST)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-89a316ea1b1sm31472556d6.36.2026.03.07.02.30.16
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-89a316ea1b1sm31472556d6.36.2026.03.07.02.30.15
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Mar 2026 02:30:16 -0800 (PST)
+        Sat, 07 Mar 2026 02:30:15 -0800 (PST)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-security][PATCH 5/7] fscryptctl: Correct the spelling of DESCRIPTION
-Date: Sat,  7 Mar 2026 05:29:59 -0500
-Message-ID: <f79853e907d5f11ca78529cebb47b6eb38234b8f.1772879169.git.scott.murray@konsulko.com>
+Subject: [meta-security][PATCH 4/7] fscryptctl: Use ${prefix} rather than /usr
+Date: Sat,  7 Mar 2026 05:29:58 -0500
+Message-ID: <e47afa9ea40319effbf52af6451d82ebb3adced3.1772879169.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <cover.1772879169.git.scott.murray@konsulko.com>
 References: <cover.1772879169.git.scott.murray@konsulko.com>
@@ -66,7 +66,7 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Sat, 07 Mar 2026 10:30:25 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3370
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3369
 
 From: Peter Kjellerstedt <peter.kjellerstedt@axis.com>
 
@@ -77,16 +77,18 @@ Signed-off-by: Scott Murray <scott.murray@konsulko.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/recipes-security/fscryptctl/fscryptctl_1.1.0.bb b/recipes-security/fscryptctl/fscryptctl_1.1.0.bb
-index 81cc1ea..4c9b99a 100644
+index edd6943..81cc1ea 100644
 --- a/recipes-security/fscryptctl/fscryptctl_1.1.0.bb
 +++ b/recipes-security/fscryptctl/fscryptctl_1.1.0.bb
-@@ -1,5 +1,5 @@
- SUMMARY = "low-level tool handling Linux filesystem encryption"
--DESCIPTION = "fscryptctl is a low-level tool written in C that handles raw keys and manages \
-+DESCRIPTION = "fscryptctl is a low-level tool written in C that handles raw keys and manages \
- policies for Linux filesystem encryption (https://lwn.net/Articles/639427). \
- For a tool that presents a higher level interface and manages metadata, key \
- generation, key wrapping, PAM integration, and passphrase hashing, see \
+@@ -18,7 +18,7 @@ do_compile:prepend() {
+ }
+ 
+ do_install() {
+-    oe_runmake DESTDIR=${D} PREFIX=/usr install
++    oe_runmake DESTDIR=${D} PREFIX=${prefix} install
+ }
+ 
+ RRECOMMENDS:${PN} += "\
 -- 
 2.51.0
 
