@@ -2,63 +2,67 @@ Return-Path: <sandeep.gundlupet-raju@amd.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D26DBFC9ED1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E45ABFC9ED3
 	for <webhook@archiver.kernel.org>; Sat,  7 Mar 2026 04:44:08 +0000 (UTC)
-Received: from CY3PR05CU001.outbound.protection.outlook.com (CY3PR05CU001.outbound.protection.outlook.com [40.93.201.44])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.3307.1772858642673368169
+Received: from DM5PR21CU001.outbound.protection.outlook.com (DM5PR21CU001.outbound.protection.outlook.com [52.101.62.50])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.3304.1772858639000310271
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 06 Mar 2026 20:44:02 -0800
+ Fri, 06 Mar 2026 20:43:59 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@amd.com header.s=selector1 header.b=W/9xQHlU;
- spf=permerror, err=parse error for token &{10 18 %{i}._ip.%{h}._ehlo.%{d}._spf.vali.email}: invalid domain name (domain: amd.com, ip: 40.93.201.44, mailfrom: sandeep.gundlupet-raju@amd.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@amd.com header.s=selector1 header.b=vTX4kejk;
+ spf=permerror, err=parse error for token &{10 18 %{i}._ip.%{h}._ehlo.%{d}._spf.vali.email}: invalid domain name (domain: amd.com, ip: 52.101.62.50, mailfrom: sandeep.gundlupet-raju@amd.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=G6dVxkQwMAdWxQjzztXUj8fVlh+uHuu5NmUahUJ++MhZ+CyPh5I1zgjRCkLI2j1gz+e4NsGqnZiiiOiFfeSDs6AxmOyGOAoRGG1X56wKV4KpHbo2nu4K78h21e536JaxsghMTqdu2mv8D8TRcXEoFc0tPfsZ9FfRZMXrkGmsbJA5dyfyMMuptSg08PRdtpMvsD9ghPDI4ge6AD21NHE86dICZl/BjLBlF9Ihp5rhk3v7Dff9W+JkdT9GSw+d/355sUnDOoPS6rKejdSaYi8lusRlUBORb/V1piQ4UvCzhJ0y1DagiISDUgexRd9CBgmmZg6HH/se+nurDsZULTAR/w==
+ b=mGDd5Bq3pBnmxWCoZemKWy5THvKOGQuA1hVCP7GInZzlOedmtQkjLA3SVpI9C7F2cnWKdZ8sfiimObA5de0L2DljLdwuuaqGi4IyJCXbzCzCeT6gXFzaf1wggL/7lVHSJuaJzPXAl6fH07J4LpCfEXaEJXL7PtnZLioosp79BuyJDOM9IEq2V+K4vzgg4FiBVmKuxtCy7xNoUhwRDkddoE/MFug0COZFdS12U4vxd2pywNn9AMte/Q2CJc8M1w6vLJ3+91md+h07INVW/jjKTIJ4f6Y3zsOhS1iGBzeNMotAiHNNDuXHiJbHFSLdbddcicmp0RtLGoWmWDC2RWS2pA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xcmOvgnON0OEdc+oPsVJPAzSYrn4Z/QYSLfoM9Cqevs=;
- b=XeLM3KGJ7FmJ8mJTQgyjRAClXmYRgD+kA2GTol155RpQ5aumSh41g4uKBqj8Q8K88O+EqlXC9WvvAVenakKgY1XGyhvMVSHFrohXvGj6bODkBtsUgVHBFfr95bLFYnps7FsG92iUyct2BsA7QJpIL3nKlURNf/q+AKrkJnK5NUWhwTghMc5OKYZMcWmRy9R9T5e8dNsaqLXIu38imw9Xtk5ITir7C39miPBzVjty+niKunFg9uSN3PlqBUz6Bsq9npBxy0Dp6pHVhl87xXezJWScRKT1LZuts8aG+dGvldFvKD2VJs22FdNDZaE9ebX5d1cPucbL7EFs+oQDkGsfsQ==
+ bh=1SA2WVe6ZwqPklAHDBdKSGPkEIshVqaLQQg+4vl6dCQ=;
+ b=Jc8jhMjUf4GPFN+SIcma0tASf/uWoRQL+6GTqPoyjqJSHvKcwG7bgmS28MJ86Zc4/4TUPlWXQ5GkTt+s+leUNufxD2SmSlyHiPq6M4taaRLH/y3/PAGx9IFjqzxJm5ZFlvx9nwKDg9pQuJpe/ocP9a2yHm/1XVCNvwM8CYFPEPn34prbHvfcT2vEL4p4+iu9v6LMDXz4cho/ZQgb4/X74RaBlQsLXpLL4wlIZ3QDeVU6Ht9eTccuFGTAKI0BWvfG2cfx38izXn/8cBSWL7vbyXCCYi0KoM0FKzYzlJTpdgEoSIH3ows5kv/Ctmr5Yzw/bCyaTLs7PzAUTi+OsRLl0A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=lists.yoctoproject.org
  smtp.mailfrom=amd.com; dmarc=pass (p=quarantine sp=quarantine pct=100)
  action=none header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xcmOvgnON0OEdc+oPsVJPAzSYrn4Z/QYSLfoM9Cqevs=;
- b=W/9xQHlU76bEhjqKQEQOwfIFESL+aXEbICAMxYqEENLfAYys8vaKMtV3RSBt5LwwQwcpbO4U3fE4CpE7vmpd1VXXzdXs6BjgoGMeb6NZw9btVXCJAOnq1o5vwVnb4yw4wKo7P9XTnLvnP/eL4FjXP2gnxHQpgFTpWRH/SCCvmcA=
-Received: from SA1PR02CA0009.namprd02.prod.outlook.com (2603:10b6:806:2cf::14)
- by SA1PR12MB7296.namprd12.prod.outlook.com (2603:10b6:806:2ba::21) with
+ bh=1SA2WVe6ZwqPklAHDBdKSGPkEIshVqaLQQg+4vl6dCQ=;
+ b=vTX4kejkW2MXlVftB0u+lvpozEnAmEcyoPJEvyMZWZiHixLxaq/brmcV2EKhL7YeP3ec3wsYhwVWTUvKyCcgRjBKcfG0BQ+CVUoMNsqf2GCAZx2vDESQSnA+JXRL1BVtQXzRGO9wbgflXqqq+Y5MkPFhBspjf1jKuQijMllg0rw=
+Received: from DM6PR11CA0063.namprd11.prod.outlook.com (2603:10b6:5:14c::40)
+ by LV8PR12MB9184.namprd12.prod.outlook.com (2603:10b6:408:18f::9) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9700.6; Sat, 7 Mar
- 2026 04:43:57 +0000
-Received: from SN1PEPF000252A1.namprd05.prod.outlook.com
- (2603:10b6:806:2cf:cafe::24) by SA1PR02CA0009.outlook.office365.com
- (2603:10b6:806:2cf::14) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9678.20 via Frontend Transport; Sat,
- 7 Mar 2026 04:43:56 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9700.7; Sat, 7 Mar
+ 2026 04:43:55 +0000
+Received: from DM2PEPF00003FC3.namprd04.prod.outlook.com
+ (2603:10b6:5:14c:cafe::2b) by DM6PR11CA0063.outlook.office365.com
+ (2603:10b6:5:14c::40) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9678.19 via Frontend Transport; Sat,
+ 7 Mar 2026 04:43:57 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
 Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
-Received: from satlexmb08.amd.com (165.204.84.17) by
- SN1PEPF000252A1.mail.protection.outlook.com (10.167.242.8) with Microsoft
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ DM2PEPF00003FC3.mail.protection.outlook.com (10.167.23.21) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9678.18 via Frontend Transport; Sat, 7 Mar 2026 04:43:57 +0000
-Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.9678.18 via Frontend Transport; Sat, 7 Mar 2026 04:43:55 +0000
+Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Fri, 6 Mar
- 2026 22:43:55 -0600
+ 2026 22:43:54 -0600
+Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb10.amd.com
+ (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Fri, 6 Mar
+ 2026 22:43:54 -0600
 Received: from xcosswyocto01.xilinx.com (10.180.168.240) by satlexmb08.amd.com
  (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Fri, 6 Mar 2026 22:43:55 -0600
+ Transport; Fri, 6 Mar 2026 22:43:54 -0600
 From: Sandeep Gundlupet Raju <sandeep.gundlupet-raju@amd.com>
 To: <yocto-patches@lists.yoctoproject.org>
 CC: <chee.yang.lee@intel.com>
-Subject: [yocto-patches][meta-zephyr][master][PATCH 6/9]  zephyr-kernel-src.inc: Conditionally add python3-jsonschema-native
-Date: Fri, 6 Mar 2026 21:43:50 -0700
-Message-ID: <20260307044353.1936182-7-sandeep.gundlupet-raju@amd.com>
+Subject: [yocto-patches][meta-zephyr][master][PATCH 3/9] layer: Fix PREFERRED_VERSION for zephyr-sdk-native
+Date: Fri, 6 Mar 2026 21:43:47 -0700
+Message-ID: <20260307044353.1936182-4-sandeep.gundlupet-raju@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20260307044353.1936182-1-sandeep.gundlupet-raju@amd.com>
 References: <20260307044353.1936182-1-sandeep.gundlupet-raju@amd.com>
@@ -67,109 +71,60 @@ Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF000252A1:EE_|SA1PR12MB7296:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1e4f9daf-c193-4ba5-e648-08de7c0424b6
+X-MS-TrafficTypeDiagnostic: DM2PEPF00003FC3:EE_|LV8PR12MB9184:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5cd7e504-5001-43f0-610c-08de7c0423a1
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|1800799024|82310400026|36860700016|376014;
+	BCL:0;ARA:13230040|1800799024|376014|82310400026|36860700016;
 X-Microsoft-Antispam-Message-Info: 
-	61lWtw/EKVTJo7HMolynifhNdCc5yfkS6IXA5JHecgLSn5XRtIJARF7Fgyt3I3M4+9ilPAwwr0fTq0OUV4CsqF0VhgfcIyKwjIcsO5Te1lhxXiW+435PMNCyD674JOAVe/osSzcn2Dg/9diO9nsyMvgk2MBMcYbhKTbAS7ZbOaPYtl26g5QwHrOs/SnwWGhteF0mb1vKdnam+8BFLXjq6VsWr7aAEE+TpDbKJR7XPzMKtq74GHyGucrlUlz0pIY7XBFjwD6DBPDkQWVqLAhGOGwGhyiuUbEKioPBTRp6nPPhqKqTTN3vhv1yuKe6nD8szfDhl360LPuD8vxbR/uiQIAsuXRkeeSw2UksfqHZBbxJX7xA+mHZxNw2BDAhGobmv02CVUscYbtApinjcidpzILzjKjelCBVYXhCfWGgGyByiKFOxbMUbhSEoEOAliPhaRotSQq5nFCgHpLomrwdtiemEbbbQoDGvAuIkckhFA9sgjMHACAouwWnaYbVogAZTomajXkx6ovIYHI/+m9i6zNP/XHXcNuM5wWfsA2+e/i/vlA4p0sk1ajd9TJ/EFziHsxze4VqMMSl4+wu1f2tvvb52fhGw97M+WbIdA8Fn9VxD4r6v0B+TjpAPA6IF6QvtP4luP1XC8CyHpIJDfjigsRQYWlUYH0RqgXC9V7F6VK5mXUjMYD/qGM2cQHXjByZ6ZTl68XU1DwfgocCfguphteTyKBiI13uzuNYLp0IRjzBob/WLN54hgJprNSoDoHqbt+CJQ/SW33SQv5E15+nKQ==
+	CLb6dyAcHiQQvMFDhdGw4G0yuJMk3bkBXrChjsLzRfxi+EBdx9s9fvY38lmYFAzH6JAAaVBphBCuLZkgd/hpGr9fyu60rALOMVFJM1s/q2nzUGhVeV931KJp0nSG4qxFNWiLMqecnVED5NW1CmfIaZCNeGfp5E6nC4oSZ3SN1zcB2k8EwkmTCQxuY2G/Sc6hUOiJU2bOSdP+GpH6W4+cSl4pxa6aDmJ9dz8nR7EUTG66w6cEYsgJa2pm7s1k+Tb6OMJTp6DS/XTDMPRFoqnZjBmj9HH19Cnx0x9SqEC+oUxL/D3Rpze2fd3fPcCFX4TERb8MVlsYN26DHxbx7NF3hwob0zAuXNnsUh9hNbosT6oBVM2NNJNmg8fTDkGtU/LEqtcZoNGUCybx2yd4s02ckhmoTDf0XVyraaeDtXEvSlQFUEteTcDKVTXRY2qWfhrzDiFbasKdTguogLGPEMWqpwM0Sx6y3vOwsQ1xZQaxPdjC2WrHTsgGZJfivDprwXiFBKzng3PEwaS6AtX+1NYEh/ydwwLay3bs4xW8OuYYEEIoF/qNi27wOhrYphcx7SBSG+3qPlxXsWnz+45d0+W/6MzQ392vwTwTefeHm8r8YVrIjbQ/VEXs3AF9UBJ0mxa+pMoP838PJQBUMu79fDE0Cb6RzZISKU4jWQCLCSQ49B2rug4EqqsSyqZFUkG6vw/DMhNMe20sn1+FFmJPnZTSGAqejPE5GuLO56gLFWZ4sayIKn9qME2RrlaW2PNouJOD7+kKVQcYz3yLApC+FSGoyg==
 X-Forefront-Antispam-Report: 
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700016)(376014);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(36860700016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	sPsGb898lQURBhmTN/mq3GHXWENIpGCs5JqG6G/ciHULACN0RvMs372vOzkBU3R3OVIYLh6qgSQAoRwWVyAUks+nevD8iCz/VGiTc7ljcCiu0k1wugs54H/iC4r9d400HOVyYA8GsJJsdy0zjXx2ycpYyxmI/+r9NxnZxZmsn2byPy4wnVtJ+tSStbPRdRUWhbPkNRGFphtpzzqkta8n2tIKJ7xeZmf+1b0QUPIjpDeoLr55MdLO9las6ywLYltTBxJBqOzc0/Ls4P3ti4a+XqHqExfRm1ae4QomsP+2Y4ORX+E3YsVjT5d8oPfs9lhsZ42w3izKD6ZGsOc7PtH3dITW8Q+wvKCxwz8f6f3iKMZGqKWRVKXfsDihPwOppt6p2MbB+LyMT+X9emHA1kUkq+t6h3IQbyggTZdq3tIHocJAwQ+RVZ5WcGmaYadHS7w4
+	0f3+YgB7DOImmUFLMK0evxt14AuiAPKQo8Ural+rXwdu74rlqGI7f8wDjuiNChnk2oFS9EDno9mCphZauzmrZfTrEBD81YZyD/oMKjFIYKzlguzIaxfMSNAF135PbcYQDPKvCvTHIE5C1fSrQrUh3j+GjePSheOSrZcgWHy6y/GAyRvciyHRagJlLy6tc8ykw7AqddxeYBHCvC+GVXhZHaWfLUtMJMLGiEIxTUK39DumuOtfXVKncrwSaht1hJ/KQw/2Y9I3wnzA2SfZlrx5nKy3TEcKXOgYwQKABmXtc8wvcHEz1L59uxdmIkgXPh5wi0O//DXk7pwfCpq109w25bzBtryoEsFQW90uXy2u4HwFEJICkrqGYa8aVMtY78v4K15sjSRfpQaalJiWJXzvXN5LFdL7GtNuhu8UsjRnSVLOs+CiqbMWSOJT2N7QhC93
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2026 04:43:57.0258
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2026 04:43:55.1890
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1e4f9daf-c193-4ba5-e648-08de7c0424b6
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5cd7e504-5001-43f0-610c-08de7c0423a1
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource: 
-	SN1PEPF000252A1.namprd05.prod.outlook.com
+	DM2PEPF00003FC3.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7296
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9184
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Sat, 07 Mar 2026 04:44:08 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3358
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3354
 
-python3-jsonschema-native is only required for Zephyr 4.3.0 and later
-to fix below errors.
+zephyr-sdk is a native recipe, So fix PREFERRED_VERSION for
+zephyr-sdk-native.
 
-| DEBUG: Python function extend_recipe_sysroot finished
-| DEBUG: Executing shell function do_configure
-| Loading Zephyr default modules (Zephyr base (cached)).
-| -- Application: /scratch/sandeep/yocto/yp-master/build-zep/tmp/work/qemu-=
-cortex-a9-zephyr/zephyr-helloworld/4.3.0+git/sources/zephyr-helloworld-4.3.=
-0+git/zephyr/samples/hello_world
-| -- CMake version: 4.2.3
-| -- Found Python3: /scratch/sandeep/yocto/yp-master/build-zep/tmp/work/qem=
-u-cortex-a9-zephyr/zephyr-helloworld/4.3.0+git/recipe-sysroot-native/usr/bi=
-n/python3-native/python3 (found suitable version "3.14.3", minimum required=
- is "3.10") found components: Interpreter
-| -- Cache files will be written to: /scratch/sandeep/yocto/yp-master/build=
--zep/tmp/work/qemu-cortex-a9-zephyr/zephyr-helloworld/4.3.0+git/build/.cach=
-e
-| -- Zephyr version: 4.3.0 (/scratch/sandeep/yocto/yp-master/build-zep/tmp/=
-work/qemu-cortex-a9-zephyr/zephyr-helloworld/4.3.0+git/sources/zephyr-hello=
-world-4.3.0+git/zephyr)
-| CMake Error at /scratch/sandeep/yocto/yp-master/build-zep/tmp/work/qemu-c=
-ortex-a9-zephyr/zephyr-helloworld/4.3.0+git/sources/zephyr-helloworld-4.3.0=
-+git/zephyr/cmake/modules/boards.cmake:195 (message):
-|   Error finding board: qemu_cortex_a9
-|
-|   Error message: Traceback (most recent call last):
-|
-|     File "/scratch/sandeep/yocto/yp-master/build-zep/tmp/work/qemu-cortex=
--a9-zephyr/zephyr-helloworld/4.3.0+git/sources/zephyr-helloworld-4.3.0+git/=
-zephyr/scripts/list_boards.py", line 13, in <module>
-|       import jsonschema
-|
-|   ModuleNotFoundError: No module named 'jsonschema'
-|
-| Call Stack (most recent call first):
-|   /scratch/sandeep/yocto/yp-master/build-zep/tmp/work/qemu-cortex-a9-zeph=
-yr/zephyr-helloworld/4.3.0+git/sources/zephyr-helloworld-4.3.0+git/zephyr/c=
-make/modules/zephyr_default.cmake:131 (include)
-|   /scratch/sandeep/yocto/yp-master/build-zep/tmp/work/qemu-cortex-a9-zeph=
-yr/zephyr-helloworld/4.3.0+git/sources/zephyr-helloworld-4.3.0+git/zephyr/s=
-hare/zephyr-package/cmake/ZephyrConfig.cmake:66 (include)
-|   /scratch/sandeep/yocto/yp-master/build-zep/tmp/work/qemu-cortex-a9-zeph=
-yr/zephyr-helloworld/4.3.0+git/sources/zephyr-helloworld-4.3.0+git/zephyr/s=
-hare/zephyr-package/cmake/ZephyrConfig.cmake:97 (include_boilerplate)
-|   CMakeLists.txt:5 (find_package)
-|
-|
-| -- Configuring incomplete, errors occurred!
-
-Use bb.utils.vercmp_string() to conditionally add it to DEPENDS based
-on the configured PREFERRED_VERSION_zephyr-kernel.
+Also update PREFERRED_VERSION for zephyr-sdk-native to 0.17.4 which is the
+latest SDK version for Zephyr 4.x releases and to match with default
+zephyr kernel version.
 
 Signed-off-by: Sandeep Gundlupet Raju <sandeep.gundlupet-raju@amd.com>
 ---
- .../recipes-kernel/zephyr-kernel/zephyr-kernel-src.inc       | 5 +++++
- 1 file changed, 5 insertions(+)
+ meta-zephyr-core/conf/layer.conf | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-kernel-sr=
-c.inc b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-kernel-src.inc
-index 34b2cbe..a1ee973 100644
---- a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-kernel-src.inc
-+++ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-kernel-src.inc
-@@ -11,3 +11,8 @@ inherit cmake
- FILESEXTRAPATHS:prepend :=3D "${THISDIR}/files:"
+diff --git a/meta-zephyr-core/conf/layer.conf b/meta-zephyr-core/conf/layer=
+.conf
+index e5d0ae3..519c4b8 100644
+--- a/meta-zephyr-core/conf/layer.conf
++++ b/meta-zephyr-core/conf/layer.conf
+@@ -22,4 +22,4 @@ PYTHON3_NATIVE_SITEPACKAGES_DIR =3D "${libdir_native}/${P=
+YTHON3_DIR}/site-packages
+ addpylib ${LAYERDIR}/lib oeqa
 =20
- require recipes-kernel/zephyr-kernel/zephyr-kernel-src-${PREFERRED_VERSION=
-_zephyr-kernel}.inc
-+
-+# python3-jsonschema-native is required starting from Zephyr 4.3.0
-+DEPENDS +=3D "\
-+    ${@'python3-jsonschema-native' if bb.utils.vercmp_string(d.getVar('PRE=
-FERRED_VERSION_zephyr-kernel'), '4.3.0') >=3D 0 else ''} \
-+    "
+ PREFERRED_VERSION_zephyr-kernel ??=3D "4.2.0"
+-PREFERRED_VERSION_zephyr-sdk ??=3D "0.16.9"
++PREFERRED_VERSION_zephyr-sdk-native ??=3D "0.17.4"
 --=20
 2.34.1
 
