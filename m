@@ -1,104 +1,137 @@
-Return-Path: <richard.purdie@linuxfoundation.org>
+Return-Path: <ticotimo@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25074FC9EEF
-	for <webhook@archiver.kernel.org>; Sat,  7 Mar 2026 10:35:26 +0000 (UTC)
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.6909.1772879719952117433
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75EB4F55115
+	for <webhook@archiver.kernel.org>; Sat,  7 Mar 2026 22:49:56 +0000 (UTC)
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.18985.1772923789098715546
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 07 Mar 2026 02:35:20 -0800
+ Sat, 07 Mar 2026 14:49:49 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=J52R6sPV;
- spf=pass (domain: linuxfoundation.org, ip: 209.85.128.46, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4807068eacbso84527165e9.2
-        for <yocto-patches@lists.yoctoproject.org>; Sat, 07 Mar 2026 02:35:19 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=Ycf2q0rc;
+ spf=pass (domain: gmail.com, ip: 209.85.214.174, mailfrom: ticotimo@gmail.com)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2ae41544dcfso82421805ad.1
+        for <yocto-patches@lists.yoctoproject.org>; Sat, 07 Mar 2026 14:49:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1772879718; x=1773484518; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20230601; t=1772923788; x=1773528588; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VHVv1LNScAk6nAZyd/bzP27zLyacwJLbAW1pqGWObvE=;
-        b=J52R6sPVlGLOzaPB7STtsLijbqy0WeR3Ldn4GpP5BbnEi0BNfUXaDS3s3Ol+biPNad
-         MteLEV1L2Nov1AVfQNmnatqBQ4X+Tl0sRw+83vmn55zMUKvcDCpV7juP7GuOXmo1ffAw
-         FTPnajCQU44C1o5C4IIe7nC58LbwRAwt68LkQ=
+        bh=yHbJQ2jNpymj1qdF9UaKj0UI9Uu9bkQuerjXBx6a1W8=;
+        b=Ycf2q0rcqjUvn2uGjIc/KRGiUyf2z6DGwWq92WlUE2lhDDn2gJIFnjRg/7umFkdpBJ
+         pAu/S+b/oJR9uLQdb+dTnWoeVQmn1ZjBKZlaYAF1g2+N9JiKJaI3BmzHcP87bC2v+BGf
+         OJzPDGbktQx7mwdbOo/Tt2EezMxiuIxxfQ+U9Ehz8jyhG5mbDymg1sOftvGbAeAwpwEp
+         xHY+S5ILdSBcvP++dDB9lvJie0entBtK0XZYTNwXxwa5IyYj/l2GONJ/HacxT1a9tPkt
+         bdZq6/vyuAfemrpo1PzxVfcTJ7Eq8Thu+Q1FUEkBdPgtTDQirigVa0oGELM7cBLTIA/e
+         X3Qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772879718; x=1773484518;
+        d=1e100.net; s=20230601; t=1772923788; x=1773528588;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VHVv1LNScAk6nAZyd/bzP27zLyacwJLbAW1pqGWObvE=;
-        b=uZh0Oq/CgdXYOlK8SeGY/K/EeLr78gC/JYyhY0H21hvG4R8qiEW18RKcpVzhNEhP8J
-         Z+vkAF8AkmtwN6wLvBhAxkGUSzyWFhxH0+5OB9pbUEXg9/OvtslNyRnvT3noFOhiavI2
-         UvQdLBevV0Q4k/VqJ7nxaYL2BVT6bF9YoNsppjVBEVfWoU5KzTWBUMLhdhGOG3LjnUyQ
-         LprnB12mP4wt3fO4lnO8u3KQFvKsAQwhZLZMnEye7+kGShQxmUBBVa1bbNfphrv57/cw
-         ZmZIab1nb5+lgV9AGxxkoigIjYvI+XQU/8MJwoDPKtw0OAK4LH7WR/tJQTZaDYfRVx1c
-         fdsg==
-X-Gm-Message-State: AOJu0Yy2x0J7YrAFxv8HfXKSPEzbUi6nCiuQydszdbLX5ZRMGGiUwowU
-	h6ecJdD9tc8Nj84A0nGFnbWI4lEJJ6SnvdWJzLDtO0k8uYtzOjHRdCQrXDUCt4DutR3gOKywMNv
-	YKeTVB0E=
-X-Gm-Gg: ATEYQzwNTbFNIWksWRD2PUUMngK+ejd38beWlyZrJN/w55Fo7enwCs7QG2KavNiqD/E
-	jUhFDanHww+I6ZZ8zoB3VxYGaNpesGo87I1+86ynh78xV1qdw/uzQc3L9z3lqlcBCvV4tSmZcjR
-	P/vQDvW7jXBGjnEh2eZxE2Cbfd2GwFTJ03Rx5Eh9cn/dADVQIETmJ2ahu6znT/00Isqo8WLE4q1
-	8dRjL0nI1PZj1kFWrc+sRDxp2ck16jg36D648x8dHEITNz1D42fAX85SkfXu6JcN6KRpaYHUEFe
-	RHzKlr+G0sdw8wLrbyHCwUAzD0yQ9NHZVYPUta3bb6vMx29EZX5tk0Y1ezftbcWHvIXkhF+TA38
-	Jt4y3H1AhoeUu7U85pfHA1LyYYaXVzPDSRysHGMvHBaxGt3xtEr1mcWa8x9lrVBu+/m7Q0UMRxx
-	EP1WbKonnnigAH9nV3sHSHswkY9p+dkWwdoXbIShTvLL1FyRbcFiI1AC9ymUoIEg==
-X-Received: by 2002:a05:600c:3483:b0:483:7783:5382 with SMTP id 5b1f17b1804b1-485269612d7mr82109635e9.27.1772879717786;
-        Sat, 07 Mar 2026 02:35:17 -0800 (PST)
-Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:d746:2cdc:e7ea:aa72])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4851fb27a20sm377916495e9.9.2026.03.07.02.35.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Mar 2026 02:35:17 -0800 (PST)
-From: Richard Purdie <richard.purdie@linuxfoundation.org>
+        bh=yHbJQ2jNpymj1qdF9UaKj0UI9Uu9bkQuerjXBx6a1W8=;
+        b=ZL0tvoR5AoKxPXqgWlqZ/wIg4I5JyHf0VS9/hblsluOvpqTyqUkLlEgevMTBi0WvR3
+         bhMN9YGoaDxPDDeipVfgY1mX7uL7lx3PaYEU9UagPpnzICWO5pW0EAIcUV1KrPSVgwVG
+         BqwPq7YC3wWWQT3N7J98izsSrsXolxsWKUv+rQRdohxGptaWW0u4yGLfEjFCC9Lw6SB7
+         Fc0ezZOAf2mAmmRev+2XXFexk9DVWd/yqxlJdCm4CUbVYOunpSPnBKQOofXwsjlXQZol
+         C7eZSH/IIpULE/8HN5Teirhd4Ppdq49WZEiDt80rpR9JEtu08odQMJrY9xt96ZqcX24y
+         arCw==
+X-Gm-Message-State: AOJu0YzdUl2jHJaFQhk07PlfxsGbBqXXKSLLmSMzjIS0SBNZ0ST+oGIh
+	7rmRc6QXt8fewWAS7y0RJYq4wGeljgO15BD2IXXkQEUQ65cdbArQbt4451Bp6A==
+X-Gm-Gg: ATEYQzxT0zp2VBEez5rV3vk6tlZiZCj6U6Q7E0Gd1v6RPTU4rl4SXf2nX/eyNSVobYz
+	Wd/0NU+9B5x7i9rJAzmLZI1lFl7AGBqcZdqfLmcs/81BiSP7y1B2xnWnzRIf31uutrdYLMHOzya
+	AdOBji0Sk4mNbGykg3Z5SztlcQurUVoaojQPBVOT9kTBI1khbrG06d2cCicumEryqF62/5Lkvqj
+	PblDYqBN4UOD3UvQZRGlZxXpq5xgPy6J03vS9uVJRWn4lcFNanQdgXaZjG7Ycr6wsf5H/PoV/5o
+	AWIT2HWXypifdJP3vP4maBmGflUR0KqM8+m0vOdk75tlrr1WgnycLkUQ41jiYNn0TT3qbj/8z2M
+	YxU8pnJBc+sSMr1wZJ9dlhCjmtaFB7XRfILwv0d/JbiC18csXKcC6S9B1Um8Ic4j7nOyf0oTKXU
+	CCJSycWUNxvR6PqIjES4NICwwy8Ijt7gu5WTSIGFeGpLJ6TuNvyefxe4IaZk5SVFBROaarwhpJ8
+	9gke+xrdPnzm2OVJd4KUA==
+X-Received: by 2002:a17:903:17c6:b0:2aa:d11d:5c36 with SMTP id d9443c01a7336-2ae8242e038mr62207205ad.30.1772923787861;
+        Sat, 07 Mar 2026 14:49:47 -0800 (PST)
+Received: from localhost.localdomain (c-98-232-159-17.hsd1.or.comcast.net. [98.232.159.17])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ae83f759fdsm81608215ad.57.2026.03.07.14.49.46
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Sat, 07 Mar 2026 14:49:47 -0800 (PST)
+From: Tim Orling <ticotimo@gmail.com>
+X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: anibal@limonsoftware.com
-Subject: [ptest-runner] [PATCH] utils: Ensure output buffers are always line based
-Date: Sat,  7 Mar 2026 10:35:16 +0000
-Message-ID: <20260307103516.2584088-1-richard.purdie@linuxfoundation.org>
-X-Mailer: git-send-email 2.48.1
+Cc: Tim Orling <tim.orling@konsulko.com>
+Subject: [layerindex-web][PATCH] layerindex/models.py: increase size of fields; add migration
+Date: Sat,  7 Mar 2026 14:49:01 -0800
+Message-ID: <20260307224900.55581-2-tim.orling@konsulko.com>
+X-Mailer: git-send-email 2.50.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sat, 07 Mar 2026 10:35:26 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3376
+ <yocto-patches@lists.yoctoproject.org>; Sat, 07 Mar 2026 22:49:56 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3377
 
-When running slow ptests, we can see an issue where the tests are writing output
-but it doesn't make it to the process (e.g. ssh connection) running ptest-runner.
+Fixes:
+WARNING: Recipe.license: recipes-kernel/linux-firmware/linux-firmware_20260221.bb: length 3042 exceeds maximum (2048), truncating
 
-The issue is that the standard buffering for non-interactive terminals is 8kb and
-some ptests don't output enough data to trigger a write. This can lead to
-the controlling connection timing out.
+Fixes (many similar):
+WARNING: Recipe.inherits: recipes-graphics/images/core-image-x11.bb: length 298 exceeds maximum (255), truncating
 
-This change forces the output streams to be line buffered in all cases. Most
-ptest output would contain newlines so this should work well. stderr can be
-unbuffered by default but making it consistent here seems the best approach.
+Also add necessary migration.
 
-Testing with this change on slow ptest runs (e.g. qemu emulated) showed much
-more consistent data with this change.
-
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+Signed-off-by: Tim Orling <tim.orling@konsulko.com>
 ---
- utils.c | 2 ++
- 1 file changed, 2 insertions(+)
+ ...er_recipe_inherits_alter_recipe_license.py | 23 +++++++++++++++++++
+ layerindex/models.py                          |  4 ++--
+ 2 files changed, 25 insertions(+), 2 deletions(-)
+ create mode 100644 layerindex/migrations/0050_alter_recipe_inherits_alter_recipe_license.py
 
-diff --git a/utils.c b/utils.c
-index 6cfa26f..192d3d0 100644
---- a/utils.c
-+++ b/utils.c
-@@ -434,11 +434,13 @@ run_ptests(struct ptest_list *head, const struct ptest_options opts,
- 				set_nonblocking(pipefd_stdout[PIPE_READ]);
- 				pfds[0].fd = pipefd_stdout[PIPE_READ];
- 				pfds[0].events = POLLIN;
-+				setlinebuf(fp);
- 				dest_fps[0] = fp;
- 
- 				set_nonblocking(pipefd_stderr[PIPE_READ]);
- 				pfds[1].fd = pipefd_stderr[PIPE_READ];
- 				pfds[1].events = POLLIN;
-+				setlinebuf(fp_stderr);
- 				dest_fps[1] = fp_stderr;
- 
- 				while (true) {
+diff --git a/layerindex/migrations/0050_alter_recipe_inherits_alter_recipe_license.py b/layerindex/migrations/0050_alter_recipe_inherits_alter_recipe_license.py
+new file mode 100644
+index 0000000..247d134
+--- /dev/null
++++ b/layerindex/migrations/0050_alter_recipe_inherits_alter_recipe_license.py
+@@ -0,0 +1,23 @@
++# Generated by Django 4.2.28 on 2026-03-07 22:43
++
++from django.db import migrations, models
++
++
++class Migration(migrations.Migration):
++
++    dependencies = [
++        ('layerindex', '0049_alter_layerbranch_vcs_subdir'),
++    ]
++
++    operations = [
++        migrations.AlterField(
++            model_name='recipe',
++            name='inherits',
++            field=models.CharField(blank=True, max_length=383),
++        ),
++        migrations.AlterField(
++            model_name='recipe',
++            name='license',
++            field=models.CharField(blank=True, max_length=3072),
++        ),
++    ]
+diff --git a/layerindex/models.py b/layerindex/models.py
+index 50be60f..e43d1df 100644
+--- a/layerindex/models.py
++++ b/layerindex/models.py
+@@ -467,12 +467,12 @@ class Recipe(models.Model):
+     summary = models.CharField(max_length=200, blank=True)
+     description = models.TextField(blank=True)
+     section = models.CharField(max_length=100, blank=True)
+-    license = models.CharField(max_length=2048, blank=True)
++    license = models.CharField(max_length=3072, blank=True)
+     homepage = models.URLField(blank=True)
+     bugtracker = models.URLField(blank=True)
+     provides = models.CharField(max_length=2048, blank=True)
+     bbclassextend = models.CharField(max_length=100, blank=True)
+-    inherits = models.CharField(max_length=255, blank=True)
++    inherits = models.CharField(max_length=383, blank=True)
+     updated = models.DateTimeField(auto_now=True)
+     blacklisted = models.CharField(max_length=255, blank=True)
+     configopts = models.CharField(max_length=4096, blank=True)
+-- 
+2.50.1 (Apple Git-155)
+
 
