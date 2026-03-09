@@ -1,142 +1,82 @@
-Return-Path: <richard.purdie@linuxfoundation.org>
+Return-Path: <sebastian.trahm@googlemail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EB03F3C269
-	for <webhook@archiver.kernel.org>; Mon,  9 Mar 2026 14:21:57 +0000 (UTC)
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.15451.1773066115888131753
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BD54FCA187
+	for <webhook@archiver.kernel.org>; Mon,  9 Mar 2026 20:24:50 +0000 (UTC)
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.24375.1773087886902948989
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 09 Mar 2026 07:21:56 -0700
+ Mon, 09 Mar 2026 13:24:47 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=WV6oVZLE;
- spf=pass (domain: linuxfoundation.org, ip: 209.85.128.42, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4853c1ca73aso7853185e9.2
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 09 Mar 2026 07:21:55 -0700 (PDT)
+ dkim=pass header.i=@googlemail.com header.s=20230601 header.b=To8IWYGi;
+ spf=pass (domain: googlemail.com, ip: 209.85.128.43, mailfrom: sebastian.trahm@googlemail.com)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-48539cbb7b1so11117195e9.3
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 09 Mar 2026 13:24:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1773066114; x=1773670914; darn=lists.yoctoproject.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S1lm5MAY6d9Z3ljXgUv+fM85XoPq9rQUmJSQ6LDFVWw=;
-        b=WV6oVZLEKANwS7tUVJu2CXdalXBhRaimgAZ4NQviDvaXWVJ4VN4PnBHyE4ZhKPonq6
-         8o8aam++o8O5n3SOZEtOBMaQI/ijx75akvGFvVACWl/Ht5EKeN9k/dZveJK1273Yw9qP
-         mQPcJhIBXE9EGRpJ9lryNPGRJQ2WCmh5NeZdc=
+        d=googlemail.com; s=20230601; t=1773087885; x=1773692685; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ykx0Cp4sVchh2yjqgVIkLtyPhS7RUSJvcLxHeaGLpMs=;
+        b=To8IWYGiFth79/cswTLyzWmRMzgvfNwAkETFqTIgpAGK/LwlIl7jBdmXX7nuCTK1gi
+         AHE1ydyjg9UnDw9GGp9VQPjcXUmbVRweIAodgKdfMCtF1d59SRzI2bgiObDluUBHaxmi
+         v4WwaHmvLN0dV4eFkQQTv3iPzQegGnOJ0mGXmNkcBM3IrGODdHsk0FusZVQmY3c2cSXI
+         JE8PdWh0b1UkZwgOCq50taOBOvq66/yYZMTM1k58vEwzztWdUDxi2lEAQfFe7/gfJX/T
+         clc4wyd1nmQKXxYaJRkePVRuG+brouqIHQ2M4rXTUmHkv2kNHolWBOCtj59Tc49NiUoB
+         BdPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773066114; x=1773670914;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S1lm5MAY6d9Z3ljXgUv+fM85XoPq9rQUmJSQ6LDFVWw=;
-        b=tnlrx7BgVdxh6EXfcLV3VyN8DBt/oVmfFFU3YbTM0nFkJ1rg+2xUmqwrWZ5DPXT9Sm
-         zj638ZkQ6dxoFMYTVY1du4k5S+SahwW5xr9zE9bu49KPj+pRV9XOzvdLnR7/bkedSeXp
-         bIrtGxr9qj88bJWABq9L8Q+2rKPzMd7eJWta/4CTsW0aSciu+Kgz63KLhIBuQzBJU2kO
-         +MLmbWtPuKSIFFJekHDXuhz0khmmDrvhi3ic/YBGiFVLohxvYdGDvx2kMDcQ0xMgGD3B
-         n00Dim//cvYIp5OmA2oZAT91fvSYkCTgk5UdPCA1CbPGZkkM4+UVk8ckVvzKWIkBWW/v
-         DssA==
-X-Gm-Message-State: AOJu0Yxh3hMb9Q5dYyHnxc59b1ZI7sZPGHMFgq60xSCqPnHDpYJR3Pr2
-	8GSeBXVU2pnCIZ3Nzm/+V5Sle/qZSMHNrOG2I94LQ3lTa9wIBl2olwF01Zgxiej71BgSyL60GdV
-	PMiGEZrI=
-X-Gm-Gg: ATEYQzyNcDMEKIgGmqvUDQKqkSnqjHLGdVlD/pZCwxbj+i3LDbZCJVgMiHmZDG6nv5o
-	vHWhYhcxam3sEIsb0Y+D5olFRNlxsvpMc0b4uy3IkI3Fq+F6baP1//QN2GZxOeYM6FPicEE8dP+
-	5qTyXcRkgLXzACdI86xUazbHcRk23lhK/1xZfQ3E5tzzG5b9I2KWQ0ZGGvO1jsQe9d0XdMLilI0
-	aGn5kYetovNFawMIh1b2kcvB0YleetXJGpCOWAsFX4lfqhpBN/q7AViyvFEKliJjshuSgc+FEXz
-	Woltz/r+Ma3zUQoHu1WYEaDsYQVOtQghhyJBiZr/NOPtOH/GZLYHCVXQgQqq9THMv4eWMw+ZmLr
-	IjA94/mDRokfl4XgLumsZ9ObkpfWftH6oOVAShEFe/whtxY+1llgom/hgwiWcENt0xVpdxVVMIv
-	+gAQ9+59HiaALFcMNOwYBWhS/qfC49CbUi4+wXWx8YlNmn5agPXnbUH+GfVWKLuRwqGkcPkRMB5
-	0t1VtsZMrB5uUU=
-X-Received: by 2002:a05:600c:1e2a:b0:480:69b6:dfed with SMTP id 5b1f17b1804b1-4852695d16fmr187153685e9.24.1773066113219;
-        Mon, 09 Mar 2026 07:21:53 -0700 (PDT)
-Received: from ?IPv6:2001:8b0:aba:5f3c:24aa:67b9:6ef1:bd24? ([2001:8b0:aba:5f3c:24aa:67b9:6ef1:bd24])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48536150e61sm159373215e9.1.2026.03.09.07.21.52
-        for <yocto-patches@lists.yoctoproject.org>
+        d=1e100.net; s=20230601; t=1773087885; x=1773692685;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ykx0Cp4sVchh2yjqgVIkLtyPhS7RUSJvcLxHeaGLpMs=;
+        b=E288k9m3pDKJcA5bbo365xwmgiGbWNU51sMpxFyYeb9E9pHbEPCNvnF4z0pB83Z+GS
+         vKVSOmUKmJyK8EYNcZWPboxHQ59OsIqxDOtgW1Ajj7+IY2dpCG30UNBVomacORo+ZKpV
+         KlbjhI4RggJrf4WbwosjE9MIsAF7Y6+ZFWVv4jERJBoWlSYTVyFeYEugn4oQicyQ/qa7
+         XY7g+YPB2H8qp9R9TYWi9P5f8sdH5AJXgOJz1/sWuqXxbcJyN8v4d2W4HmPNIU9f6qPK
+         a48aCc7vgMLNcWamKv2dEFNh7WC+Xg8diGMiRTNA5f7hkr2bmU75hBQP/omkjOZ9Heos
+         YlSA==
+X-Gm-Message-State: AOJu0YzV3cRbnMpcIiZHmvRJVk4COUrbSU7CHroP2Z62r73jBH/BlCBH
+	AKQJe7WmjS5LiEOwI1oPCELSeLlcNdg8BwpqCmQRtDhgEXsLsEeyQpkCsDjT+NKq
+X-Gm-Gg: ATEYQzwXDLMdBP92EVMiTV1C43dFGMAaBJvYNhFJpbjgVQrEpJAv5N6RtpdA8uB5pYA
+	5SN4qWr3JBmvsSmk2FHl240VZogsMbqfoNuJWOSqkpIK7fO5eRHsaJIcCQUcL4YqknVTGOhfLWi
+	Iwkbe7xDbd8d7I7PdUN661QZcZI/2a7EyL+KdAtjZnDIEz6N+r4LyqqC/gWvRg9bpI+wJZwonCY
+	kwokDNsBKblZFMDvbwh1DrmPsF5rsxKsk3Lw+/Plez2Kn3nPapVrYontr1ZvUfLh5QZKVW5nu9U
+	Sm+daUCMLV4pgn7Sjatuy6R6GOBaUOD5dg94S70AZ0mtuBoxIQfOr9MwVLPzQ6c9xBaoG2Go/Px
+	UCDssldXq2Br8SJXs1mIw+bqJo5gliIK3nyFJ5jEA2rTsHR8kB4Cy0xD4trsqIBlKYXzxKC/CLQ
+	WptPcCHKCofEbPL091PS5/7A/8yyabdnfyZ/1MD6L0DqQ=
+X-Received: by 2002:a05:600c:c0d2:20b0:485:2a4b:7bc3 with SMTP id 5b1f17b1804b1-4852a4b7e63mr137120735e9.4.1773087885018;
+        Mon, 09 Mar 2026 13:24:45 -0700 (PDT)
+Received: from aerie.fritz.box ([2a05:fa40:39e:3200:afca:d5ad:bc4e:39c0])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48541a8d4desm15126145e9.8.2026.03.09.13.24.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Mar 2026 07:21:52 -0700 (PDT)
-Message-ID: <14ad3c9da707249caf3f5157cf9be0b936ebfe5e.camel@linuxfoundation.org>
-Subject: Re: [yocto-patches] [meta-selinux][PATCH] Enable SELinux support in
- native packages
-From: Richard Purdie <richard.purdie@linuxfoundation.org>
+        Mon, 09 Mar 2026 13:24:44 -0700 (PDT)
+From: Sebastian Trahm <sebastian.trahm@googlemail.com>
+X-Google-Original-From: Sebastian Trahm <sebastian.trahm+oss@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Date: Mon, 09 Mar 2026 14:21:51 +0000
-In-Reply-To: <baff51f1-f0d9-4ae3-ba7f-bcbf1c0272c3@windriver.com>
-References: <20260213154238.4093604-2-u.kleine-koenig@baylibre.com>
-	 <baff51f1-f0d9-4ae3-ba7f-bcbf1c0272c3@windriver.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.0-1ubuntu0.1 
+Cc: alex@linutronix.de,
+	Sebastian Trahm <sebastian.trahm+oss@gmail.com>
+Subject: [yocto-patches] [meta-lts-mixins][scarthgap/rust][PATCH 1/1] librsvg
+Date: Mon,  9 Mar 2026 21:24:40 +0100
+Message-ID: <20260309202441.295553-1-sebastian.trahm+oss@gmail.com>
+X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 09 Mar 2026 14:21:57 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3385
+ <yocto-patches@lists.yoctoproject.org>; Mon, 09 Mar 2026 20:24:50 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3386
 
-On Mon, 2026-03-09 at 20:23 +0800, Yi Zhao via lists.yoctoproject.org wrote=
-:
->=20
-> On 2/13/26 23:42, "Uwe Kleine-K=C3=B6nig wrote:
-> > With SELinux enabled for the target it makes sense to have SELinux
-> > support enabled for the native tools, too.
-> >=20
-> > Note that for native packages DISTRO_FEATURES is filtered, thus up to n=
-ow
-> > it never contained "selinux". Append to DISTRO_FEATURES_FILTER_NATIVE t=
-o
-> > make "selinux" propagate also to DISTRO_FEATURES for native packages.
-> > ---
-> > Hello,
-> >=20
-> > I use this on scarthgap, but the patch applies fine to master, too.
-> >=20
-> > During a debug session it took me quite a while to find out why
-> >=20
-> > 	ls -lZ "${IMAGE_ROOTFS}
-> >=20
-> > at the end of selinux_set_labels() didn't show the labels added by
-> > setfiles.
-> >=20
-> > Best regards
-> > Uwe
-> >=20
-> > =C2=A0 classes/enable-selinux.bbclass | 2 +-
-> > =C2=A0 conf/layer.conf=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 4 ++++
-> > =C2=A0 2 files changed, 5 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/classes/enable-selinux.bbclass b/classes/enable-selinux.bb=
-class
-> > index 3dc61d6931ff..0c9f52e74cec 100644
-> > --- a/classes/enable-selinux.bbclass
-> > +++ b/classes/enable-selinux.bbclass
-> > @@ -1,3 +1,3 @@
-> > =C2=A0 inherit selinux
-> > =C2=A0=20
-> > -PACKAGECONFIG:append =3D " ${@target_selinux(d, 'selinux')}"
-> > +PACKAGECONFIG:append =3D " ${@bb.utils.filter('DISTRO_FEATURES', 'seli=
-nux', d)}"
-> > diff --git a/conf/layer.conf b/conf/layer.conf
-> > index 4e04e5cc7e6a..ca981db57019 100644
-> > --- a/conf/layer.conf
-> > +++ b/conf/layer.conf
-> > @@ -25,3 +25,7 @@ LAYERDEPENDS_selinux =3D " \
-> > =C2=A0 "
-> > =C2=A0=20
-> > =C2=A0 PREFERRED_PROVIDER_virtual/refpolicy ??=3D "refpolicy-targeted"
-> > +
-> > +# With target support for SELinux it is very helpful during debug when=
- the
-> > +# native tools support SELinux, too.
-> > +DISTRO_FEATURES_FILTER_NATIVE:append =3D " selinux"
->=20
-> Can we add this to the doc (e.g. README) instead of enabling it directly=
-=20
-> in layer.conf? Since we haven't directly enabled DISTRO_FEATURES =3D=20
-> "selinux" in layer.conf either.
+Add LDFLAGS in order to address linking issue when building nativesdk-librsvg
 
-I just wanted to add that putting that directly in layer.conf will mean
-the layer isn't Yocto Project Compatible too.
+Sebastian Trahm (1):
+  Unbreak build of nativesdk-librsvg
 
-Cheers,
+ recipes-gnome/librsvg/librsvg_2.61.3.bb | 1 +
+ 1 file changed, 1 insertion(+)
 
-Richard
+-- 
+2.53.0
+
 
