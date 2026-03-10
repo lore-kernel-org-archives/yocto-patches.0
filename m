@@ -1,157 +1,153 @@
-Return-Path: <mhalstead@linuxfoundation.org>
+Return-Path: <peter.marko@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DD07FD4F1A
-	for <webhook@archiver.kernel.org>; Tue, 10 Mar 2026 18:34:42 +0000 (UTC)
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.2465.1773167678296327943
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA1D7FD88CE
+	for <webhook@archiver.kernel.org>; Tue, 10 Mar 2026 23:24:29 +0000 (UTC)
+Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.8614.1773185062238993915
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 10 Mar 2026 11:34:38 -0700
+ Tue, 10 Mar 2026 16:24:22 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=K8mXDvqU;
- spf=pass (domain: linuxfoundation.org, ip: 209.85.167.42, mailfrom: mhalstead@linuxfoundation.org)
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5a1273de95aso7862852e87.0
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 10 Mar 2026 11:34:38 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1773167676; cv=none;
-        d=google.com; s=arc-20240605;
-        b=hgWEkIyFPJ4hyvLznud+H4xwvaalxSN/mzBgqudCcjY10kdiEW4Itq0AasQmy5GV3C
-         fFTkDLLIH+expnkEoukBzOVTu4cBuRcbaxFusisQDabdad/eO7BACdj/rHMdbdD/uWmf
-         tx5cjc85sRaVFcRF2LStV9yObS37cHqIg3uKYcrdo1AzdFE8sZYa7MRuowoFlkeWreHh
-         mW9iGLCRiGq2Kvsya99NoAoAzzjwlZ4KWCrN8Q4O9rZaZgZ5Vl1R9axi+ho5TIYVWpNX
-         8A4pWC5PwlY1pYl/g3VUU3R9r0x59FJdvrsLhQLOLnirJjZBmYcY9S8CMmPn76ITVbOF
-         Ea9A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=to:subject:message-id:date:from:mime-version:dkim-signature;
-        bh=KmjJLCkXk+4o6uE0CJpCM3MZD5fkSsowQerBmcOC2/U=;
-        fh=moagCLbVVFQO5kw1aLdWVpJz+dpYgsdIWNCHzBu4K0w=;
-        b=SY8swPwhMJ7Lz+LZuNabGTKBxDTTaClBoTiOZlOMZI8YB2Jm3TevJJnR0ldBpqilzc
-         z980E2s4ewjhoZbkVbbWIjAazvLpGQPkLZKNk0kwX9beOxUxxLIGSiSiNxwr2uu0kWts
-         hIrT1QA0Dd58pFPiCTbjrnM0TG9WBdR/+pgHkQk7o3xO+Chh4Aoj7HFwjDGNRAHzzoju
-         DHYFPl4k0FvIF9dcpD3PO2t2Zj2VR6c8iJfzc0L7cr2nxqzYHCKh7ypQdudJDmD4N5br
-         el1OWuiJssVV8F3TiF0PQ6bNv2sAOGRDrE0GEWKc4lat0Iid59JfABOfXsPhQdM5vwKu
-         D82A==;
-        darn=lists.yoctoproject.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1773167676; x=1773772476; darn=lists.yoctoproject.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=KmjJLCkXk+4o6uE0CJpCM3MZD5fkSsowQerBmcOC2/U=;
-        b=K8mXDvqU0BKxdZahr8jy1nmWVW/0lKE/Dx1cUllbq8BiQeZSR+pY4rYixL16j1/tlv
-         2X5JqrboG7E66ZE8JmTZ4ULYT1Vrz9SIQERcAn749aSeZTKjxfihJTp6NpGd6bRYPzpc
-         O/7DDkMFMayDi4CHDt2DzVOIcRpUNnx37kuZI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773167676; x=1773772476;
-        h=to:subject:message-id:date:from:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KmjJLCkXk+4o6uE0CJpCM3MZD5fkSsowQerBmcOC2/U=;
-        b=TKt4xGaDCfvYlTMvLQQJiCBQ7OKOE+0Kuqjzj9VinPEUlgDEJsS3VZpqdeSXcLKfaG
-         xSVdp4vGEzEliwUCKi4I2kDRQZaAk/gd5JQK1l5qmY+KdCAUw5MGS//Dqg6fxEY2ikou
-         rA5tvwBr1pSwPHJMXLPH8aPY8PVNm1GfzXY5rX6MKGxdtDEexgFhHswlWr10MIvroR6G
-         WcuROGHwnMOLHvqDbUSVFPvb/Of8TT/Wi/Kg7VZ4IZcinTPEi98tvezUrqP+s61PcgB6
-         hB0lIBNx9FdFaLcPupW1OhFEQV4gC3z1VDMbRpc5XR/3Kb91RAT95/CwZD8YE7MNO52V
-         Ss9g==
-X-Gm-Message-State: AOJu0YyPshP2bUZ7B5LhIEd1zJKVnOwxbhJ1++K3WOTKMgsrwK+X8yTI
-	vLvM7lZ0YJeEs4jKrYqhLMw35LRJBDc2rkDSzH4EZ73DEZyjzxmt7v807DuM27SuIOi+wIUav7L
-	41gLgndoa81vmGXycbQFp7vuZC1jDQGYB7Ud1KcQTR2AKM0yZIHaSGJJl0g==
-X-Gm-Gg: ATEYQzzbQXt8r2o0quYRanYRa/khYiHxXyJJBV+Ugg+eG4VV1J1/WZs7CsAD+5KTCi2
-	sacuuMreJ1wFoIpkSLWDEVR+lLBpMwV2MsYFxe2yqtJJeLwpg+1r6RNPEROOb8IkKubMNl5dlic
-	vrokn0z3/oR6acw1eYiMyKwHDdV+s8TGgJjkxZ2KZ0NUMVADfAnp5B5Wh0zFqHii/w/n/2l2VMm
-	PinwggHvEHiPNaI7zCxsK5QSO8EqdXoKhf2/slQ0UnrBCaso0RvGalhBySh1fPqMaJtxLfiL478
-	EAoInMufWVAc3IwOniGtE5YRwMBe0Qk=
-X-Received: by 2002:a05:6512:39cb:b0:5a1:3d21:7b55 with SMTP id
- 2adb3069b0e04-5a13d217d7cmr5424458e87.43.1773167675361; Tue, 10 Mar 2026
- 11:34:35 -0700 (PDT)
-MIME-Version: 1.0
-From: Michael Halstead <mhalstead@linuxfoundation.org>
-Date: Tue, 10 Mar 2026 11:34:23 -0700
-X-Gm-Features: AaiRm50BYH_mpawUgaKKbF02ufcH3bhV2hVMp2RopykKs6YiXTOTtmdwZ6I2-IE
-Message-ID: <CADfgfoawtdjc3=oMd6TBY88MdgNBtBD_qijtK5uT1U2gO0_zwA@mail.gmail.com>
-Subject: [PATCH error-report-web] models: Add index to avoid denial of service
+ dkim=pass header.i=peter.marko@siemens.com header.s=fm1 header.b=fe4YEBl1;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.225, mailfrom: fm-256628-20260310232418d1df75801f000207da-asch22@rts-flowmailer.siemens.com)
+Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 20260310232418d1df75801f000207da
+        for <yocto-patches@lists.yoctoproject.org>;
+        Wed, 11 Mar 2026 00:24:19 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=peter.marko@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=Yo7vqZSBj/HUP5Tep7wlRwCAODjxNbgVMaeqYzbaXdw=;
+ b=fe4YEBl1N0efMEVg6Js5lfdYqaAEr81rQNGG906snW3dneQyv7h4mRw1emsU5VCwOcjW6g
+ Sq3UnnokPwNGkBGN3JEaJbN7Q11HeAtFDJoOArSE81g1tbkxEA1a9r7dw+odfh5QHwdaGZPJ
+ Q5326waIDQ3wMux2kgTAIOBzIrxyQs69+enZyEYm3LuGaLuYaIVFC4CppBAudzuKpIPy2hsU
+ w7HMnTM5CwdA3PWCU1jHTqQgI7C4/jvw0oW0nW3EuHEa82VTA0DpMiuajno3rM49R45TCvuN
+ nxyIrG9ojmkZoALREHfO1Qamw2t6ZMLthbBweCkCcTnA0w4XS+3E5Rpg==;
+From: Peter Marko <peter.marko@siemens.com>
 To: yocto-patches@lists.yoctoproject.org
-Content-Type: text/plain; charset="UTF-8"
+Cc: jose.quaresma@foundries.io,
+	Peter Marko <peter.marko@siemens.com>
+Subject: [meta-lts-mixins][scarthgap/go][PATCH] go: upgrade 1.26.0 -> 1.26.1
+Date: Wed, 11 Mar 2026 00:24:05 +0100
+Message-Id: <20260310232405.1471770-1-peter.marko@siemens.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-256628:519-21489:flowmailer
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 10 Mar 2026 18:34:42 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3397
+ <yocto-patches@lists.yoctoproject.org>; Tue, 10 Mar 2026 23:24:29 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3398
 
-models: Add index to avoid denial of service
+From: Peter Marko <peter.marko@siemens.com>
 
-Requests for /Errors/SimilarTo/ can cause a denial of service since it
-runs unindexed queries.
+Upgrade to latest 1.26.x release [1]:
 
-1000 UTF-8 characters is too long to index properly. In a decade of
-production use, our max task length is under 700 characters. Reduce the
-field to an indexable size and add the needed index.
+$ git --no-pager log --oneline go1.26.0..go1.26.1
+e87b10ea2a (tag: go1.26.1) [release-branch.go1.26] go1.26.1
+e792d6aa95 [release-branch.go1.26] crypto/x509: fix name constraint checking panic
+a761c9ff70 [release-branch.go1.26] crypto/x509: fix full email constraint matching
+994692847a [release-branch.go1.26] html/template: properly escape URLs in meta content attributes
+65c7d7a9fb [release-branch.go1.26] net/url: reject IPv6 literal not at start of host
+e28ac674af [release-branch.go1.26] cmd/go: revert update default go directive in mod or work init
+4d1051fdc9 [release-branch.go1.26] cmd: re-vendor x/tools for Go 1.26.1
+8cce3ab20c [release-branch.go1.26] os: avoid escape from Root via ReadDir or Readdir
+ef041913a8 [release-branch.go1.26] cmd/compile: ensure StructMake/ArrayMake1 of direct interfaces are unwrapped
+155c25e249 [release-branch.go1.26] cmd/compile: pointer-shaped types are SSAable even if lots of 0-sized fields
+c5723195a6 [release-branch.go1.26] net/smtp: prevent test failures due to expired test certificate
+f67a1f4c76 [release-branch.go1.26] cmd/go: fix pkg-config flag sanitization
+4659d630da [release-branch.go1.26] cmd/compile: avoid folding 64-bit integers into 32-bit constants
+6fb3df88d4 [release-branch.go1.26] go/analysis/passes/modernize: add vendored code
+85050c90ee [release-branch.go1.26] cmd/compile: fix mis-compilation for static array initialization
+12c0690eeb [release-branch.go1.26] cmd/compile: don't drop same register twice
+e8df1a6697 [release-branch.go1.26] reflect: use &zeroVal[0] instead of nil for data field for zero-sized payloads
+167ef716ba [release-branch.go1.26] cmd/compile: rewriteFixedLoad: ensure AuxInt is sign-extended
+495e6c6b09 [release-branch.go1.26] internal/syscall/windows: correct some enums and syscall signatures
+29618c4439 [release-branch.go1.26] cmd/link: don't pass -Wl,-S on illumos
+c283d1f762 [release-branch.go1.26] os: support deleting inaccessible files in RemoveAll
 
-Signed-off-by: Michael Halstead <mhalstead@linuxfoundation.org>
+Fixes CVE-2026-27137, CVE-2026-27138, CVE-2026-27142, CVE-2026-25679 and
+      CVE-2026-27139.
+
+Release information: [2]
+
+[1] https://github.com/golang/go/compare/go1.26.0...go1.26.1
+[2] https://groups.google.com/g/golang-announce/c/EdhZqrQ98hk
+
+(From OE-Core rev: 124a43b74b7a8494dd13dac1294a237fb8a02e6c)
+
+Signed-off-by: Peter Marko <peter.marko@siemens.com>
+Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
 ---
- ...dfailure_task_buildfailure_idx_task_lev.py | 20 +++++++++++++++++++
- Post/models.py                                |  7 ++++++-
- 2 files changed, 26 insertions(+), 1 deletion(-)
- create mode 100644
-Post/migrations/0008_alter_buildfailure_task_buildfailure_idx_task_lev.py
+ recipes-devtools/go/{go-1.26.0.inc => go-1.26.1.inc}        | 2 +-
+ ...o-binary-native_1.26.0.bb => go-binary-native_1.26.1.bb} | 6 +++---
+ ...cross-canadian_1.26.0.bb => go-cross-canadian_1.26.1.bb} | 0
+ .../go/{go-cross_1.26.0.bb => go-cross_1.26.1.bb}           | 0
+ .../go/{go-crosssdk_1.26.0.bb => go-crosssdk_1.26.1.bb}     | 0
+ .../go/{go-runtime_1.26.0.bb => go-runtime_1.26.1.bb}       | 0
+ recipes-devtools/go/{go_1.26.0.bb => go_1.26.1.bb}          | 0
+ 7 files changed, 4 insertions(+), 4 deletions(-)
+ rename recipes-devtools/go/{go-1.26.0.inc => go-1.26.1.inc} (91%)
+ rename recipes-devtools/go/{go-binary-native_1.26.0.bb => go-binary-native_1.26.1.bb} (79%)
+ rename recipes-devtools/go/{go-cross-canadian_1.26.0.bb => go-cross-canadian_1.26.1.bb} (100%)
+ rename recipes-devtools/go/{go-cross_1.26.0.bb => go-cross_1.26.1.bb} (100%)
+ rename recipes-devtools/go/{go-crosssdk_1.26.0.bb => go-crosssdk_1.26.1.bb} (100%)
+ rename recipes-devtools/go/{go-runtime_1.26.0.bb => go-runtime_1.26.1.bb} (100%)
+ rename recipes-devtools/go/{go_1.26.0.bb => go_1.26.1.bb} (100%)
 
-diff --git a/Post/migrations/0008_alter_buildfailure_task_buildfailure_idx_task_lev.py
-b/Post/migrations/0008_alter_buildfailure_task_buildfailure_idx_task_lev.py
-new file mode 100644
-index 0000000..9bb1f2a
---- /dev/null
-+++ b/Post/migrations/0008_alter_buildfailure_task_buildfailure_idx_task_lev.py
-@@ -0,0 +1,20 @@
-+from django.db import migrations, models
-+
-+
-+class Migration(migrations.Migration):
-+
-+    dependencies = [
-+        ('Post', '0007_alter_build_date_alter_build_error_type_and_more'),
-+    ]
-+
-+    operations = [
-+        migrations.AlterField(
-+            model_name='buildfailure',
-+            name='TASK',
-+            field=models.CharField(max_length=750),
-+        ),
-+        migrations.AddIndex(
-+            model_name='buildfailure',
-+            index=models.Index(fields=['TASK', 'LEV_DISTANCE'],
-name='idx_task_lev'),
-+        ),
-+    ]
-diff --git a/Post/models.py b/Post/models.py
-index bb05d61..f7c0916 100644
---- a/Post/models.py
-+++ b/Post/models.py
-@@ -57,7 +57,7 @@ class Build(models.Model):
-         super(Build, self).save(*args, **kwargs)
-
- class BuildFailure(models.Model):
--    TASK = models.CharField(max_length=1024)
-+    TASK = models.CharField(max_length=750)
-     RECIPE= models.CharField(max_length=250)
-     RECIPE_VERSION = models.CharField(max_length=200)
-     ERROR_DETAILS = models.TextField(max_length=int(settings.MAX_UPLOAD_SIZE))
-@@ -74,6 +74,11 @@ class BuildFailure(models.Model):
-             default = 'NOT_VISITED'
-     )
-
-+    class Meta:
-+        indexes = [
-+            models.Index(fields=['TASK', 'LEV_DISTANCE'], name='idx_task_lev'),
-+        ]
-+
-     def get_similar_fails(self):
-         if self.LEV_DISTANCE is None:
-             return BuildFailure.objects.none()
--- 
-2.53.0
-
--- 
-Michael Halstead
-Linux Foundation / Yocto Project
-Staff IT Engineer
+diff --git a/recipes-devtools/go/go-1.26.0.inc b/recipes-devtools/go/go-1.26.1.inc
+similarity index 91%
+rename from recipes-devtools/go/go-1.26.0.inc
+rename to recipes-devtools/go/go-1.26.1.inc
+index 7d8a68e..2e3464e 100644
+--- a/recipes-devtools/go/go-1.26.0.inc
++++ b/recipes-devtools/go/go-1.26.1.inc
+@@ -17,4 +17,4 @@ SRC_URI += "\
+     file://0010-cmd-go-clear-GOROOT-for-func-ldShared-when-trimpath-.patch \
+     file://0011-cmd-link-stop-forcing-binutils-gold-dependency-on-aa.patch \
+ "
+-SRC_URI[main.sha256sum] = "c9132a8a1f6bd2aa4aad1d74b8231d95274950483a4950657ee6c56e6e817790"
++SRC_URI[main.sha256sum] = "3172293d04b209dc1144698e7ba13f0477f6ba8c5ffd0be66c20fdbc9785dfbb"
+diff --git a/recipes-devtools/go/go-binary-native_1.26.0.bb b/recipes-devtools/go/go-binary-native_1.26.1.bb
+similarity index 79%
+rename from recipes-devtools/go/go-binary-native_1.26.0.bb
+rename to recipes-devtools/go/go-binary-native_1.26.1.bb
+index 9b06301..d2652ef 100644
+--- a/recipes-devtools/go/go-binary-native_1.26.0.bb
++++ b/recipes-devtools/go/go-binary-native_1.26.1.bb
+@@ -9,9 +9,9 @@ PROVIDES = "go-native"
+ 
+ # Checksums available at https://go.dev/dl/
+ SRC_URI = "https://dl.google.com/go/go${PV}.${BUILD_GOOS}-${BUILD_GOARCH}.tar.gz;name=go_${BUILD_GOTUPLE}"
+-SRC_URI[go_linux_amd64.sha256sum] = "aac1b08a0fb0c4e0a7c1555beb7b59180b05dfc5a3d62e40e9de90cd42f88235"
+-SRC_URI[go_linux_arm64.sha256sum] = "bd03b743eb6eb4193ea3c3fd3956546bf0e3ca5b7076c8226334afe6b75704cd"
+-SRC_URI[go_linux_ppc64le.sha256sum] = "3066b2284b554da76cf664d217490792ba6f292ec0fc20bf9615e173cc0d2800"
++SRC_URI[go_linux_amd64.sha256sum] = "031f088e5d955bab8657ede27ad4e3bc5b7c1ba281f05f245bcc304f327c987a"
++SRC_URI[go_linux_arm64.sha256sum] = "a290581cfe4fe28ddd737dde3095f3dbeb7f2e4065cab4eae44dfc53b760c2f7"
++SRC_URI[go_linux_ppc64le.sha256sum] = "f56eed002998f5f51fa07fd4ed0c5de5e02d51cec7a4007f771c7576620d9d45"
+ 
+ UPSTREAM_CHECK_URI = "https://golang.org/dl/"
+ UPSTREAM_CHECK_REGEX = "go(?P<pver>\d+(\.\d+)+)\.linux"
+diff --git a/recipes-devtools/go/go-cross-canadian_1.26.0.bb b/recipes-devtools/go/go-cross-canadian_1.26.1.bb
+similarity index 100%
+rename from recipes-devtools/go/go-cross-canadian_1.26.0.bb
+rename to recipes-devtools/go/go-cross-canadian_1.26.1.bb
+diff --git a/recipes-devtools/go/go-cross_1.26.0.bb b/recipes-devtools/go/go-cross_1.26.1.bb
+similarity index 100%
+rename from recipes-devtools/go/go-cross_1.26.0.bb
+rename to recipes-devtools/go/go-cross_1.26.1.bb
+diff --git a/recipes-devtools/go/go-crosssdk_1.26.0.bb b/recipes-devtools/go/go-crosssdk_1.26.1.bb
+similarity index 100%
+rename from recipes-devtools/go/go-crosssdk_1.26.0.bb
+rename to recipes-devtools/go/go-crosssdk_1.26.1.bb
+diff --git a/recipes-devtools/go/go-runtime_1.26.0.bb b/recipes-devtools/go/go-runtime_1.26.1.bb
+similarity index 100%
+rename from recipes-devtools/go/go-runtime_1.26.0.bb
+rename to recipes-devtools/go/go-runtime_1.26.1.bb
+diff --git a/recipes-devtools/go/go_1.26.0.bb b/recipes-devtools/go/go_1.26.1.bb
+similarity index 100%
+rename from recipes-devtools/go/go_1.26.0.bb
+rename to recipes-devtools/go/go_1.26.1.bb
 
