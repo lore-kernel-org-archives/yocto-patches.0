@@ -1,95 +1,113 @@
-Return-Path: <dburgener@linux.microsoft.com>
+Return-Path: <alex.kanavin@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28CF21125863
-	for <webhook@archiver.kernel.org>; Wed, 11 Mar 2026 17:59:22 +0000 (UTC)
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.2572.1773251952840540240
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF6101125875
+	for <webhook@archiver.kernel.org>; Wed, 11 Mar 2026 19:10:32 +0000 (UTC)
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.4375.1773256224201407655
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 11 Mar 2026 10:59:12 -0700
+ Wed, 11 Mar 2026 12:10:24 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@linux.microsoft.com header.s=default header.b=oMIl/nxS;
- spf=pass (domain: linux.microsoft.com, ip: 13.77.154.182, mailfrom: dburgener@linux.microsoft.com)
-Received: from DESKTOP-NVB873J.corp.microsoft.com (unknown [52.167.112.163])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 1A21120B710C
-	for <yocto-patches@lists.yoctoproject.org>; Wed, 11 Mar 2026 10:59:11 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1A21120B710C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1773251952;
-	bh=rP3LlOZh8yTNm4ZOBSvmqED9NBSS5TBFc6/lZFvvIn4=;
-	h=From:To:Subject:Date:From;
-	b=oMIl/nxSXtGaQ4mDgBzxmHnZZYbO4JrcsXOCU00jUSUohkLE64JDDL1WDVFU/U3dw
-	 6g7OOsEtZmLcTxM8zLHDMWIDTxtDP1ZJ10/oG7MTbWmAU653y2p8uzdVnoK6Kq7xju
-	 BIiClM5akOHE3++DqcXyMfIQlWn6QftOhl9XCYko=
-From: Daniel Burgener <dburgener@linux.microsoft.com>
-To: yocto-patches@lists.yoctoproject.org
-Subject: [pseudo] [PATCH] Only copy xattrs on a rename if it's cross-filesystem
-Date: Wed, 11 Mar 2026 13:59:06 -0400
-Message-Id: <20260311175906.193167-1-dburgener@linux.microsoft.com>
-X-Mailer: git-send-email 2.34.1
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=QbA9EUTZ;
+ spf=pass (domain: gmail.com, ip: 209.85.219.48, mailfrom: alex.kanavin@gmail.com)
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-899ee491af3so2493406d6.1
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 11 Mar 2026 12:10:24 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1773256223; cv=none;
+        d=google.com; s=arc-20240605;
+        b=VzHfM8Fyt87CV307sc2vvHLfImA+QkBt5hyNsASpcb5jUMPjwghuRBn06Z9tk5cxPt
+         9ueWs+4ZyUnTevx5Q9TgM4Ylk5mD9s3Gw8FTBVPtXQWCHFkZNtIGEx8Ynn+rx6xHc5yy
+         eZrvNJXKl0usqohN06wq8idUCCBm+lCy7kCIzMJVE0ImVkyDg8y7B/ih/IXmjmfQHZFl
+         PM5718KSWmAdBjKZxpBCpbl1IVIfj1orfPiw+ohZlWZ2v9ztY2FnTCyg6qK6iFih6dyw
+         EAx5JgrGlwJMxBBFv8cA3lK734KV1EOitbfVUIk14mdDI4dM2XZlgs06lFsiOhI/GksH
+         3WPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=h6leZ7WrrgA6LeuwuObtB/kYKKtM4bJIX8s7hcbU0Pw=;
+        fh=dl6hDswrRM/UxJNnYCvEBdIZalBhgR71Ri7j4SsRvWI=;
+        b=dLochXAsRIAb7E5SOaEabgyBbieuwar05V1QsnFkZIE2fZkyktD+wogEOyLmnAeLmL
+         wc4eJoNZ85/OebICWB9PQsGZrAFSJP2K3eYSutn0UTMmqsFCySoZyX7p1XKbeUomWZVd
+         kZ2OaOWsTQosBY1Mut7yBoZTwe5b2XmhKukAvlEgOQ+/fbNGNjMi772pz5s2VILmKuWg
+         5Kn3l55rqtinU+EzUef0/q2pV7+hjBqouUXbAwahSAnCJczdI7nezSh1Ls2vhXoOKhZo
+         bpOytWEHl8fjCDGwl+IZFIPvuSOYEAXgDAGqdIIklc31Ew5NjUdvnha0rYlw81ZXNq1+
+         xjmg==;
+        darn=lists.yoctoproject.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1773256223; x=1773861023; darn=lists.yoctoproject.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=h6leZ7WrrgA6LeuwuObtB/kYKKtM4bJIX8s7hcbU0Pw=;
+        b=QbA9EUTZnaHl1pWiGqjm+Lon6B7Se0g2HbX8aKhKkesOe5Kmb5sSI7fL2SEueBM7iq
+         RRNDzegA+Z7yipQKPOqWT2v5gHHje44nU+Iw0C4Lirfso1jL00JGy3kpP1im64e6v+N7
+         F2ztSwGAtr6JF1ucpKhwlZ5GOSASKEYmfxnn0BlC66cCnClvqjxOswhQUeyR4eT4RKK/
+         f52DNQzikCxKfGHOAyLYx7ILpfH9rQQm6vGpe2bEHvstHMmg19jUm76yOn3FuMaQu4+G
+         NDiQpSzwAgrhdwCaYa9/As66SRZtpZ+G1sVWLX/7lZ6zkFUpMRodqpjibuwR2TPCthKQ
+         wwPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1773256223; x=1773861023;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h6leZ7WrrgA6LeuwuObtB/kYKKtM4bJIX8s7hcbU0Pw=;
+        b=tYQAL4mTFNZsAX1zg8uNCO6pMBeIgLvTARSrFjWK5goTOr1hp7KwZvpRYze2mKtiKh
+         mLvOvoj28zjThVvtEewjbMi39RRcGvVjodah5WPTE8Q2YbpEbXvUEOZojZijy9HUeSwr
+         Wrjqv719mN7C+OVKk/6ppRfq8rR3H+2ZzKfCAjmkz2B3vmEd2KrCUHwHa6JRNsB/UHFH
+         49z2pzlKXvhy/CXNHgVjEBA6DUF3DtE+xBpdlWvYK/BdQu9zNjoMwgsSBQanzMZJDKUa
+         +ns6UwDM3wzixgdpVxiZFS9F3QJbJ3XKKr0KPQlLrNBatqBV2v4NbXIuJUi+jmjlR6Jm
+         s4Vw==
+X-Gm-Message-State: AOJu0YwENUjd1u8tUorSqbHEDN+PHRSaGPwPEbYWqmqL0lqQfMRf1nZ8
+	UC4SIQjmufDpvxLIYoRTTRtP1jyfYuRRTOriVi9F5PU1d23b0oY2RZVEVfFORPjaJFs0VEuhkDf
+	Fx5niMPQpovo+e2cfXiJcbvZFparWXs8=
+X-Gm-Gg: ATEYQzz/lIgj2j+Lnlk9zO1uBApucy6vEtKS6cTEYha3cvAWylX/3/InlhXoKRUeMvC
+	XFYOiTJaILkqXD2JJcBKYa+Ej8orBE7fXPlZ7AI9dzOKZoqdr87havu7T3xjDlkGh+RBBupVEzJ
+	jnHYrEXYtTTdJHVZPhnPfUnnp2fv/5n7DvSTJZPncuKl7o3xKoAT/JFlLN5Bwgd/33V4ydXx2QG
+	qsJHGXj90ArgGzYIc+GMghauTzgxrAD9BKb36SZDiyxBzlVW+YYiYTF21yq989AA+fHu6i9pWE1
+	E7Fq7LxQcI4sj0MN6CzGUjw+2m6tVgWbdGKK3DMcGw==
+X-Received: by 2002:a05:6214:768:b0:89a:f10:996e with SMTP id
+ 6a1803df08f44-89a66a24057mr54475846d6.6.1773256223083; Wed, 11 Mar 2026
+ 12:10:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+References: <20260311064813.619683-1-Qi.Chen@windriver.com> <20260311064813.619683-6-Qi.Chen@windriver.com>
+In-Reply-To: <20260311064813.619683-6-Qi.Chen@windriver.com>
+From: Alexander Kanavin <alex.kanavin@gmail.com>
+Date: Wed, 11 Mar 2026 20:10:11 +0100
+X-Gm-Features: AaiRm50QDGYt834HbtiY0H61JWuVIj5WXmd3wZ1ED53MPky3uqqusEdd5lE7wYo
+Message-ID: <CANNYZj8ZA0vN3FuUNaUktXvL_XpFm_GT=nB6g0KJQCz2Yx-5eA@mail.gmail.com>
+Subject: Re: [auh][PATCH V2 06/12] modules/utils/git.py: include repo_dir
+ information in the raised exception
+To: Qi.Chen@windriver.com
+Cc: yocto-patches@lists.yoctoproject.org, randy.macleod@windriver.com
+Content-Type: text/plain; charset="UTF-8"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 11 Mar 2026 17:59:22 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3434
+ <yocto-patches@lists.yoctoproject.org>; Wed, 11 Mar 2026 19:10:32 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3435
 
-On same file-system renames, the path update in the db means that the
-xattrs are already present, and copying results in duplicates.  This was
-previously masked by the bug fixed in d1db9c219abf92f15303486a409292237f1=
-fc790, since that prevented the
-xattr copying.  Now that that bug is fixed, we started observing this
-issue in 1.9.3.
+On Wed, 11 Mar 2026 at 07:48, <Qi.Chen@windriver.com> wrote:
+>              stdout, stderr = bb.process.run(cmd)
+>          except bb.process.ExecutionError as e:
+>              W("%s executed from %s returned:\n%s" % (cmd, self.repo_dir, e.__str__()))
+> -            raise Error("The following git command failed: " + operation,
+> +            raise Error("The following git command failed in %s: %s" % (self.repo_dir, operation),
+>                          e.stdout, e.stderr)
 
-AI-Generated: Code fix by Claude Haiku 4.5.  Test code by me.
+Hello Chen,
 
-Signed-off-by: Daniel Burgener <dburgener@linux.microsoft.com>
----
- pseudo_db.c        |  4 +++-
- test/test-xattr.sh | 12 ++++++++++++
- 2 files changed, 15 insertions(+), 1 deletion(-)
+can you combine patch 4 and 6 (this one) into a single patch that
+removes the debug/warning print, and just puts all relevant
+information into the exception?
 
-diff --git a/pseudo_db.c b/pseudo_db.c
-index 9713e0c..6a33f20 100644
---- a/pseudo_db.c
-+++ b/pseudo_db.c
-@@ -2196,7 +2196,9 @@ pdb_update_inode(pseudo_msg_t *msg) {
- 	found_existing =3D !pdb_find_file_path(oldmsg);
- 	if (found_existing) {
- 		/* we have an existing file entry */
--		pdb_copy_xattrs(oldmsg, msg);
-+		if (oldmsg->dev !=3D msg->dev || oldmsg->ino !=3D msg->ino) {
-+			pdb_copy_xattrs(oldmsg, msg);
-+		}
- 	}
- 	sqlite3_bind_int(update, 1, msg->dev);
- 	sqlite3_bind_int64(update, 2, signed_ino(msg->ino));
-diff --git a/test/test-xattr.sh b/test/test-xattr.sh
-index 6ac6b3c..89fbd35 100755
---- a/test/test-xattr.sh
-+++ b/test/test-xattr.sh
-@@ -65,6 +65,18 @@ then
-     exit 1
- fi
-=20
-+mv f1 f2
-+attrs=3D`getfattr -d -m - f2 | grep -v '^#'`
-+expected=3D$'security.dummy=3D"test_f2"\nuser.dummy=3D"test_f1"'
-+if [ "$attrs" !=3D "$expected" ]
-+then
-+	#echo "Fail, unpexected getfattr result '$attrs'"
-+	rm -f f1
-+	rm -f f2
-+	exit 1
-+fi
-+
- #echo "Passed."
- rm -f f1
-+rm -f f2
- exit 0
---=20
-2.34.1
+The reason is that:
+- auh works in such a way that having git fail is sometimes okay, and
+the caller will handle the exception (e.g. see the 'nothing to commit'
+handling in upgrade-helper.py)
+- if git does fail, we don't want to flood the console with warnings
+when it is not a real failure. Rather just handle the exception, or if
+there's no handler, then it will be raised and print everything
+relevant.
 
+Alex
 
