@@ -1,110 +1,87 @@
-Return-Path: <alex.kanavin@gmail.com>
+Return-Path: <richard.purdie@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E073104951F
-	for <webhook@archiver.kernel.org>; Wed, 11 Mar 2026 09:44:35 +0000 (UTC)
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.17313.1773222269619883480
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E724A104C001
+	for <webhook@archiver.kernel.org>; Wed, 11 Mar 2026 10:05:17 +0000 (UTC)
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.17314.1773223492450406825
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 11 Mar 2026 02:44:29 -0700
+ Wed, 11 Mar 2026 03:04:52 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=E8bm2n/p;
- spf=pass (domain: gmail.com, ip: 209.85.219.49, mailfrom: alex.kanavin@gmail.com)
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-899fbf92bdbso138351006d6.0
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 11 Mar 2026 02:44:29 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1773222269; cv=none;
-        d=google.com; s=arc-20240605;
-        b=TeVDaiWI5y/9JFbQwaNELDc/1aX6lbOxNMOAtPyPtIwXL6yRf9D1inQVWN/94Pf04d
-         pv6MPHMdwaFa7yrDPcBXVDkpGwzduFXUJQT79dxKJI4ioSLxllLkVsKdiXXhNmf8IlN4
-         7T+V0bn8LdVdqNK7t45KowQXLF4ltMKB+IEdGS5fzJMGJqIh0ssGewRtag4W5RhxuA1I
-         VsbQQNB8fRs78vUXFmZklORfL13UpnRSep7wRBnQZQSyXLu0E8N/J9h7JBCzEA2wL0Ri
-         xV66rMx6fQ2cPJn9k9EIlEtgzESE2TkE//W4dqN8VctQgqrnMlC6q3TEYblk5JrrxAyw
-         ST4A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=BxfiaSL5wkqIWGu4Bynu9nlGqSrGm6nJsjo9oc0++s8=;
-        fh=/MH4wvhPUtbRPiZV7Tvq3PiOTTSvYSOpadHYMgLRw3c=;
-        b=jz/9WAq+yPgOn99uFR2KSy4IpnBbhlpXPP5xxceZ9TyAs0DfBubw+gnJHCNw0XYZep
-         jsMwBIUcE35HppyGMtsBznlC3Zvcuah9+qRMWLjgSWLY0cBKlwB8Rplk1f/WO+VTKmqZ
-         xTkg1smLzSDRAV7lQbDN8MiM8kwvcEkAnLzk+XNcgnmx6GmlKpMrIt2PfK+otQEbKaC1
-         TZpYtqOetHz1rpgtlW4p2/AiJkYVPsflHK2mtsdRyuEugEa1PuRs2tk0lx5/YDD8m4pW
-         +5iFD/IpJaLeFrOUhl0pXYuA90MuT3IEeImmc/wIqJ3nM1z+ZELrQkSKW7O/CDrDR8el
-         OBQw==;
-        darn=lists.yoctoproject.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+ dkim=pass header.i=@linuxfoundation.org header.s=google header.b=SPJI1lMr;
+ spf=pass (domain: linuxfoundation.org, ip: 209.85.221.52, mailfrom: richard.purdie@linuxfoundation.org)
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-439af00d33cso11122571f8f.1
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 11 Mar 2026 03:04:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773222269; x=1773827069; darn=lists.yoctoproject.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=BxfiaSL5wkqIWGu4Bynu9nlGqSrGm6nJsjo9oc0++s8=;
-        b=E8bm2n/pbQhfu2w+S1oGB4DTZ+keK8EnR7MX2alojhjWAdHTi0L/69Hl5aPUYyyM8Q
-         WUK1giMDY5DUmVxv0HWv9DZsF3orS6YpNM6hRdNLQu0oh+pdj+KoBJenlF+IwpY23C7R
-         VmPrT2wz5EHRbh1LPSoxmOey0OYlML+m3nBpmWX3Wv5k0xvwF5HPZ/H1X4qKUu+Y/NNE
-         D/o+raSqO+RyPEG2pCpcG5mA/6A/pZBcHoLZNPaJTXA47VjRcFw1NXSiIinHMN7OQ9XL
-         gVh0XJq5CPwpPIvR3fUe1DDNGW+Vfb3RCQgQHBffx77D+duRLnha7BSngwquGlOTiUSG
-         xY8w==
+        d=linuxfoundation.org; s=google; t=1773223490; x=1773828290; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ohiE+MGFBoRKu1zbEGV6P8m6OKgr2bn50AfqSUkjm/c=;
+        b=SPJI1lMrLG7QyOzds5iWtYeeC0DeGA75cHcbTFD4HUBhbg6Vh3mm7ALg+3zAhHLwBG
+         PAVBbqff3UNtzGFUnRNfHF7b9tl0yjxgL9U4KN0a32DK5ZuKzN2BA9FwQ/0ms5y73F0/
+         8S08K+rlwZ8vwgmOARdck1TS9yHYBPRTRqUrQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773222269; x=1773827069;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BxfiaSL5wkqIWGu4Bynu9nlGqSrGm6nJsjo9oc0++s8=;
-        b=pDsgXYNjqVnQKmT0+pGD7bzXHM2NLk1rJfHBuqGBUpMncXL0lKg6S/mbVwzboHd4bK
-         jEV9FBzVCLRvqsLfUL6XW5M3aKgqg43d5b/BqYUr8wA9QzZ/+f9uAKRQDh0GSiKn4toa
-         iL6NYIdoBbnJkYiBGrUJZoL2j60l2JBwbouWN0qY8MWe4e0d/AJv5FciGbREbh7hERHD
-         dZPL562PH4L6533sZaUp4cZeYUDQPTZ+vYG3/Y/YApQxJPEzK5aRiM3PXGh43m/pK/Xl
-         OTMva7M9RXVSNXYnjVL3SfH40XytiEn2/xodEQ8xla3jCsz/T7nhmY084ISmCNcVUU0i
-         F0+A==
-X-Gm-Message-State: AOJu0YzYzQcbzsI4ivN5S7H5jdemk5OVZrx7Cgj3ltyIf//xVzMqSUIi
-	p5wkvB3KIBLRBez4RgKZ25j5iryRIsjfhfds4X03RapIymH8rqPA0HiIC8cz0c/pFWTPL5QA7f9
-	+h0gUXPT45F1gcZidkTiHMCLFxqmqyvQ=
-X-Gm-Gg: ATEYQzywvc8AhP57VlJGiOqt9DI6Yhg+OQptbpfrnMK/xfuQoN59ZzLAJtYdfR1kUJw
-	Pb03KrQ5mhbiZBuA/yZlmmYfWMs8FEYdZZSAo8atw7Gh/P2xtIEbsmCGnFgVrJlJXZzvzRId26L
-	qzgWYrozHCIKINklqmlrauqpK4JSejWJwcZTAVDOoZxmmsRLQrYjQnhJxAuwmMiQv+m1BOBUC63
-	5NeOulZ5MVWk4IhhhmK55kyR923N53DNNgrDoe6Xe0gLUoLeNd3lAGwysYNOpjeEEBJW+0No80W
-	n/6ly6TgUiT2JwXGKlxvfc5hdh0m2EhkXUWjMyz4Se/30RgU9r7/
-X-Received: by 2002:a05:6214:2681:b0:89a:3bb:3c4d with SMTP id
- 6a1803df08f44-89a66a8241amr22421256d6.34.1773222268534; Wed, 11 Mar 2026
- 02:44:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1773223490; x=1773828290;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ohiE+MGFBoRKu1zbEGV6P8m6OKgr2bn50AfqSUkjm/c=;
+        b=Mu+39fV03oMHVbIna2JP4aehHWnS/mMsl/M+9Dt/K6Y65rSEnacvziL94JxrwUeDoo
+         LADDrToASPorgt62AmueTnwStK3KFGb8/tvXvDYQ/CXWl8jukNFfunuf0+u7XShxi4gD
+         TsnRfE3qM93s0nKQFFReULHufHZj8I5xtUED/xHdbxgeIWvTIoG5a4U5DABGyASnTzyD
+         eQcq0R9O6GU3C6/QKOd8vLIzZL8ZmPdKJB7UJzONh4NltnwDAkCLznVI0nNUfL+oKwzx
+         fmvxFgitVYSB7C4JiPeOGeMvectIbjClwT1U54UxnsQ8eLA0fofks7Jz4z3LsZgAOuOX
+         FHdA==
+X-Gm-Message-State: AOJu0YxCHOAJiygnYNlAGtd/J2I/Nz/MaLk+pLbI6oQmxQVaTUqtVwY3
+	KvukYGzXQ8C0t2pRKsHsD/LAjlbG8Sz1aSj0lA/WPRPbVJCmQ2obYL922O/s19IkRGa2R09/P/A
+	FGj9iQos=
+X-Gm-Gg: ATEYQzyyNPYT52qbDKHaf74tk2rGdD2PXDe9b69iZ64k33m5PMns83rRovhfpWk5L+G
+	ACmeCH0cODMxs6CT9NHhXNThngx/uZ/d0G4Dhb25OV3/Tbq9BaEOEkRx5wQnrFO/4wXRcKasszN
+	FswJsM8m1DSfPoiNT3XqZBeyLR71QHnv/iMwaFQalopsrBc0/EW292mPJfYntCv+1Y+uh7SedEE
+	j2K5Rzb/PEredvPwNCF1ZM1fQ8l7PoA3CIU87Z1q539oCFEbHDrUYm72P77Prywvr3Ss7kxR+Av
+	Ii5OaBZUOEI/IzY239JhnLgn8CBnGdN04vAGyutNdmrLOxfk8pQF5j94RaTBjwIc6C3AbfMFxsp
+	Y/l+KCgenubDUf+/ERstvLlVdbkMooJpBxyWcdUT3kbGfQqS2MXJ6F5QOHO/o4L4Uf4x65zVNva
+	fazYpkeSo51/UOQ8xRV5cSMbKQ+VwlfKucgZUZljqn5q1X9JSQYCE=
+X-Received: by 2002:a05:6000:24c2:b0:439:c62a:6dc2 with SMTP id ffacd0b85a97d-439f821deb7mr3794819f8f.41.1773223490234;
+        Wed, 11 Mar 2026 03:04:50 -0700 (PDT)
+Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:7fc5:b1af:c486:ad0b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439f81a3b91sm5939994f8f.13.2026.03.11.03.04.49
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Mar 2026 03:04:49 -0700 (PDT)
+From: Richard Purdie <richard.purdie@linuxfoundation.org>
+To: yocto-patches@lists.yoctoproject.org
+Subject: [yocto-autobuilder-helper] [PATCH] config.json: Set OEQA_TESTDISPLAY in autobuilder config
+Date: Wed, 11 Mar 2026 10:04:48 +0000
+Message-ID: <20260311100448.3407168-1-richard.purdie@linuxfoundation.org>
+X-Mailer: git-send-email 2.48.1
 MIME-Version: 1.0
-References: <189B9F01010B1521.2412760@lists.yoctoproject.org>
- <b8f3d35149f5b2a8e144da24fa6d1b4e777c6419.camel@linuxfoundation.org>
- <189BBF57BD2F5917.2412760@lists.yoctoproject.org> <CANNYZj-Ex5LUpa=5TO6QSHDaSDZTRjRMLUmJsAJzgk3OJhRNUA@mail.gmail.com>
- <294e7021b4370ce4b3a0b9ddac188ca842a9955c.camel@linuxfoundation.org>
-In-Reply-To: <294e7021b4370ce4b3a0b9ddac188ca842a9955c.camel@linuxfoundation.org>
-From: Alexander Kanavin <alex.kanavin@gmail.com>
-Date: Wed, 11 Mar 2026 10:44:17 +0100
-X-Gm-Features: AaiRm532VBWurF-qQzG7KBQRfPOtoj-6vmUHDXwWkgr5F8GprxGlKot_xrnGIF4
-Message-ID: <CANNYZj9CBhbBudgMecv_w9KoHN1Hk1Gvjn4=Yc=1c_N-8wgH2w@mail.gmail.com>
-Subject: Re: [yocto-patches] [yocto-autobuilder-helper] [PATCH 1/2]
- config.json: Drop vnc usage
-To: Richard Purdie <richard.purdie@linuxfoundation.org>
-Cc: yocto-patches@lists.yoctoproject.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 11 Mar 2026 09:44:35 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3431
+ <yocto-patches@lists.yoctoproject.org>; Wed, 11 Mar 2026 10:05:17 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3432
 
-On Wed, 11 Mar 2026 at 10:39, Richard Purdie
-<richard.purdie@linuxfoundation.org> wrote:
-> > One option is that the test would start weston-native in headless
-> > mode, and direct qemu to use that (via WAYLAND_DISPLAY). No special
-> > setup needed on the autobuilder.
->
-> If you have a patch for that, I'd take it!
->
-> Is weston-native able to build and run effectively currently?
+To allow the small number of important tests that really need a DISPLAY set to
+run, set the new variable to point at that display.
 
-I don't have a patch. It's all thought experiments, triggered by your
-email :) Weston-native variant is not even available currently.
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+---
+ config.json | 1 +
+ 1 file changed, 1 insertion(+)
 
-So please don't hold any patches, as long as we can maintain existing
-tests. SDL/Gtk qemu frontends, and accelerated gl pass through from
-the guest into them are important use cases.
-
-Alex
+diff --git a/config.json b/config.json
+index cf27ae4..96aa62e 100644
+--- a/config.json
++++ b/config.json
+@@ -46,6 +46,7 @@
+         "extravars" : [
+             "SANITY_TESTED_DISTROS = ''",
+             "BB_HASHSERVE = '${AUTOBUILDER_HASHSERV}'",
++            "OEQA_TESTDISPLAY = ':1'",
+             "OE_FRAGMENTS += 'core/yocto-autobuilder/autobuilder core/yocto-autobuilder/autobuilder-resource-constraints'",
+             "EXTRA_IMAGE_FEATURES ?= 'allow-empty-password empty-root-password allow-root-login'"
+         ]
 
