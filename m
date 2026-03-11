@@ -2,39 +2,39 @@ Return-Path: <Qi.Chen@windriver.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66FCDFD062E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C73DFD062D
 	for <webhook@archiver.kernel.org>; Wed, 11 Mar 2026 06:36:37 +0000 (UTC)
 Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.14665.1773210989067893924
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.14667.1773210993901897134
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 10 Mar 2026 23:36:29 -0700
+ Tue, 10 Mar 2026 23:36:34 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@windriver.com header.s=PPS06212021 header.b=k0nGdNYm;
+ dkim=pass header.i=@windriver.com header.s=PPS06212021 header.b=sjZpZcUr;
  spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.178.238, mailfrom: prvs=7530ed8fe6=qi.chen@windriver.com)
-Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62B49hOQ2711153;
-	Wed, 11 Mar 2026 06:36:28 GMT
+Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62B5nvh1621223;
+	Wed, 11 Mar 2026 06:36:32 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
 	 h=cc:content-transfer-encoding:content-type:date:from
 	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	PPS06212021; bh=bFZc5xJ/TvTV8AhL45TFCAR6bz2x6rUZ2aoXODq9lVU=; b=
-	k0nGdNYm1NL4+zwYapm1B2l93ZmoXAnpRtNSIzJrVEQYemEwzeYFGUJPXOpgfDIw
-	XIvfCAJr2kyNbDRCMy2PHkxCNbgW538neFNukgP5ZBBWdpg+casG4ej8UL3yDU0M
-	4DRvuG+UzCWZvv7105AAxQgMbTrcPxGczNXhzr5mNSKWXs6eaEfKO8d5iqpaq4l8
-	1p/qakdroHHCZxy5i2OBEImbb0w/F+pP5kWEXH2/2Yk+RUG++XHY8awNPrOu2WXj
-	guYaR1yGz3r9NsgQGpi3PR/yvgqof9hZe0Job2aRF7Eus8UbpcFAjBEMLUkmHHy/
-	WhehNtWSHklp0OtgbyAzHQ==
-Received: from co1pr03cu002.outbound.protection.outlook.com (mail-westus2azon11010057.outbound.protection.outlook.com [52.101.46.57])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4cty22r76v-1
+	PPS06212021; bh=wFtNsDXT1K24bs3pRfrSaayXlAaRyTMOoI2jebRkNVM=; b=
+	sjZpZcUrJMmQRg4GXv4DwnogyX0Tqc42OO8r4RXqQC8gmNHSIS9Kfk9CxBF1i+O1
+	CPZR54vLc1W7+3+hGsDQruJ3UCzLw+ECY8Ypfjtl3uMKRr/cgwScIW9vWUryr1BC
+	jkFFNyBTgMN2Q6evpS0f2cYa4gGFF4qMq851xCZAvYa+GhYYMGyNSq4IIh24y+dY
+	Z1XPd8LCVAG6bMOj5WAf8gjA8my2EYKY7xt5s1+9SQb52aST9vc4y2pDMih8NClk
+	M9HwomDqCdkJMkh1PLGMk8txSQipq/2XpdNKf6qKpApQs3rkL56IB6BVs/NgnNAe
+	r7CMuHqscUAIuu8vpktUfg==
+Received: from co1pr03cu002.outbound.protection.outlook.com (mail-westus2azon11010065.outbound.protection.outlook.com [52.101.46.65])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4cty57870w-1
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Wed, 11 Mar 2026 06:36:27 +0000 (GMT)
+	Wed, 11 Mar 2026 06:36:32 +0000 (GMT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=B7bPiv52/VrqKvoUCcE8hAZdxy8lanoT8ynad0A967zTeybPsUzw6A4PnDNf0m2LLk4Ia4TjTSUV+UgzLM+udsKUX+xkPJ3LggLBZc3pSXSSwEjV2QYEYdohAadY8DK8R5BzkWl7zvY3L/S+OuTGeHAnuYf+2VkVKWX/L0eAJ6m9MQCrotaMXCHLwx3XsOwpw9dCE6OA8SyzYl5YkdxHBno3RFKc327r/TGS9vD3M7n8iCvXn5y+DUmQ6K0t3y1iLtiCNRJq830yg5ZlnBsqgJvC03Y/9oXRIGgbZQmhsr9l3Sr6gZ+8ukpGQDBjV88njd9ucDUU6zN8SilAU6GhrA==
+ b=yGYhh+h0FYqo+2wkin/jxsdCWEcJD55785rAo1TzH41NUlJxqrmFZ8jKUZIuCb2d01BI/2n3/ZVMtD3tql/QPskX6XMTPWcIclD0C1hpbLP+OdbE5jULdAdHjREtcj9rTuJiZ9PTZoBOzMCpK0+k8vopEqzCWbGjja3PWyAaPwjWzjlh41Y/GUV3ilYYv2WMlfnQ15T3tcOYlNozVH0ASg5NxivZCuLDItvRiBTh+CByNuFT3EKun66DYH4ApxyXt+or4DERyiBOLvoOOq7QeHYmteFy8t+FfokYEHqp7GfHzacMQGu7WRlFskKCmh/ySppUyUL6n1aTHHJ1H6aacg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bFZc5xJ/TvTV8AhL45TFCAR6bz2x6rUZ2aoXODq9lVU=;
- b=VZlofBfBlTetkzv79pbbGzB+YK2nVb8wgLM1i5vSvlyg7NrhR16jbDD96f1kQxKerbZSER7y0aPccPbBnmKdDkknOh+dOxh0ekSrgEJt/KeMmESMmVNoQ7uCqF4wFRGrEoR7MPEn5zoSJdF0VXQbq+9S4tLinv+7Ss4+YCfsehYYGDk6REJhLy8aVs66X2j25WsIudc6JvCSjz1KteHQECzUNR5wbaiflVjXnLzVWKRBE31J5rYbOpTWybQxYBeFgxTqwO8nRu6TjZz97yTcXfUFwuC902B82B9gL8Dg1aDhvMqgp/I5h+YBDBu8YgDd1oqGHOr2jCm3/9nfWyQk2w==
+ bh=wFtNsDXT1K24bs3pRfrSaayXlAaRyTMOoI2jebRkNVM=;
+ b=soZ/yaGQ/5sNoGJM2VX/YfS0iFXAajELzUUJYK909PcUDq1jVhqsCDSOPHyi4pT125lCWulO794vq4m9nQLXXiwrnMxNlSNXfjLahrKysTetazlUETDIYFzhTcuhqJqJkIWv8r4u/sR9kSMZwYJM4/3Pbl2Ld76Iv3JSPzj7+LEBr2EOvAslDrfAcGGKKpADW32A0v9WiIt4RYOj+l57I/6RZwIrtNi5uNkffISZxjrXU+1vw581o/zR2frE5M38qHd0H5Xh8ozdEvXhWpbv1ql4VLjTqINoe+bd7lg6hb+yVL/N4yfehLtoc9u7Lm8ULhT+dpPsxqB4gDE70gJbsg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=windriver.com; dmarc=pass action=none
  header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
@@ -42,17 +42,17 @@ Received: from CO6PR11MB5602.namprd11.prod.outlook.com (2603:10b6:303:13a::5)
  by IA1PR11MB8787.namprd11.prod.outlook.com (2603:10b6:208:598::6) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9700.11; Wed, 11 Mar
- 2026 06:36:25 +0000
+ 2026 06:36:30 +0000
 Received: from CO6PR11MB5602.namprd11.prod.outlook.com
  ([fe80::5ad6:8f90:b01d:2c62]) by CO6PR11MB5602.namprd11.prod.outlook.com
  ([fe80::5ad6:8f90:b01d:2c62%4]) with mapi id 15.20.9700.009; Wed, 11 Mar 2026
- 06:36:25 +0000
+ 06:36:30 +0000
 From: Qi.Chen@windriver.com
 To: yocto-patches@lists.yoctoproject.org
 Cc: alex.kanavin@gmail.com, randy.macleod@windriver.com
-Subject: [auh][PATCH 06/11] modules/utils/git.py: include repo_dir information in the raised exception
-Date: Wed, 11 Mar 2026 14:35:52 +0800
-Message-Id: <20260311063557.229656-6-Qi.Chen@windriver.com>
+Subject: [auh][PATCH 09/11] upgrade-helper.conf: remove layer_machines from reference config file
+Date: Wed, 11 Mar 2026 14:35:55 +0800
+Message-Id: <20260311063557.229656-9-Qi.Chen@windriver.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20260311063557.229656-1-Qi.Chen@windriver.com>
 References: <20260311063557.229656-1-Qi.Chen@windriver.com>
@@ -64,112 +64,119 @@ X-ClientProxiedBy: SI2PR02CA0004.apcprd02.prod.outlook.com
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: CO6PR11MB5602:EE_|IA1PR11MB8787:EE_
-X-MS-Office365-Filtering-Correlation-Id: f5177acc-f56c-40cf-1cdc-08de7f388475
+X-MS-Office365-Filtering-Correlation-Id: 71e1f7d0-5e1e-489d-90ae-08de7f388797
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
 	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|22082099003|18002099003|56012099003|38350700014;
 X-Microsoft-Antispam-Message-Info: 
-	Bjxg/ozmlzy1b6Xk+U6ACafWnH+nAP6fhHNfSgHvKM1md/Dj8PWNr9lKfTpY/fcRc2Oh3CZMEl5jmPl9nqDlpRE8uO5eRil5JJ69uuxg9OxAK9lHmx81h2FeILctQ83tvSihUE5pwdTIbi/KocsE9ycBCqQFmipr7z0QWProKw+1z/reT8ZmNQOhLrjc+tmrdfwBW3txf90BvHstGqqu5Ets3Zf2cOolj/7LHgjXu2QzyFgkSuu+Pslw0fCXUEUOd4LpYL+yXgYx23wU1oIXxpOMRwBas1l11eDEsc05FfJHd84TAiJJ5oVLcFlG9sjk0nCfBftAKZd51eCX7Ou3CGi+K8NaXgfY85cbXAU9hAy1UQ9V/amQ8xWhhHeqgYTOapFcP0HzqqiGXG4AuiNWGlPBNJTpJwX2nwQjcgynIl/WXNZZV8s1kaaZcvYrHuTm/vkqEs3XIVJOuCnQLrhXEnkewFJz8/s3uY00HPE6FedZnWxCuJ8Eg+E0ki5avchQWx/Y1WJOIYL4il7HwMgh2aWL57xo+g2Ya5mpFCsiU48fCkuCpgFQJelApQcZHfOqnddsuSk10NOkRv7SKFxNmKG+Q1dH4ixavPh1MtMHgszZ1teNM5iSvt97IFx4JQYE832EOH1M3U4LpaCnuXbTcVLAMYUwjw5aaoh1J07ZOFkSWmu3tEnVAjUrsdNiEaBx77m22ecLBayhVYCEn77IWzZph4/82Je4SKGr0htWqdGFNuFrk8zXmm++mwyvkZZlkFpAhxtiK8LudMhCd5cOgcO9JeA8kiMG+RnuOkmZE9E=
+	0SMC/kO77eJHA6EHd+SX9I1CH8KifEiJcK5EV1YOGAAjGb5vKnX6UsM/mJ43buTyH3SAlkeOnaQLu3Q1i0xyx6+JzZnpUf+hJ9nUS7/Chx4mY4NvxObs7ExJSBIokEjA46rftjoGMwby5rTMQ3o1PkhwD7Y0S0v+LJziU4sFVJTbA3RF4Uv3DXbljhFJn+8VC1j1NmMF231DhehyMvQxCeygfYECMTFMY3iVSSjqcI5PL4PKdqblKBT5HSqYCDHeSZzGSgFEAUdoNCa1Nr8TsoU5sVW7ic2ckkVfJ0WUeGCp75rQQ3HmfpBXrd3hCrVki5MDWqie3e4OSS6PIjH5x/aDOcRilpKKvfkEG/QxXSvzbHx69zXYoM0xRcIsm7LT45qcUuGCWCex42fGkOJOZD9Dsv2CUxHOI+7M6tuX2UMeIaTbxtbDBQQSv02ZQm1hfwbneqzGC0qHb5Va9LafAesR3SMYTdBXOfEhxM+hjECobXJM7ncIVQui7DqEqDA7VO45LCLiFCO+5ihuh8H+/xlI+MsfrDrmverauNs1ph+1jWhg5tk3Rf/WskQBpTQ4+K+T1L4V7skb8Ct/CuO4wkFrzagGdPoVbdbinOEKAWUxCdW+i5OxWDS0ZxYwZWmMk3w4ZL5vpAKJi0ANY4kVp7xgiaJNhO3wRhKtcuqDSQpQvZA0674R+xyAnAe8u5YXsRaFXOqezuOKBa+NFfRdcVHmMAkz4CXZrlrUyu9bdTzdaKNKGcQ0EacC2aipsTVFZDeJStOmQgj4qf6KL/bHIFRKx1l/2bxUs9EHS2u1pWM=
 X-Forefront-Antispam-Report: 
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR11MB5602.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(22082099003)(18002099003)(56012099003)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?YxvjJdv0PPFdTI7J9qOn5mU8vvytUJyzmcP/Sh9nW6n7/aFrgzjJMMNj8YXR?=
- =?us-ascii?Q?QTx6qHQ0YmI+cubaJKeEWNYGsnBN3wzEFZ/F83OB1EYNdJ9Wg4E4DTFg6eQd?=
- =?us-ascii?Q?JpWc3RLixrNpsIK7ddrXysT+I8D3YaxowqcY+EUlqv2/xTbq0FmTDrlvorAi?=
- =?us-ascii?Q?ZApjlH5Bt/3CCekTcIusN5rPFQ0UQ47kHgksQIS0ZUtBy2B4knzCKuKpmYCs?=
- =?us-ascii?Q?N7qsSDCzjyhx8t7wjPZAU5CvBUjabqgR+WJCDijc1fRKtF4RIm0HnLMbEmy4?=
- =?us-ascii?Q?vDtV5kHSg1NemETnIowdQez3AJKLl9nJtoZ37NlDZC/X5d+Nf9YSjddUhvOx?=
- =?us-ascii?Q?oU1GZQSb0N8kKI55ZW/ycY15VHQ2ee53gneTghlyB7W7AZYGfzpnKkM/TLVO?=
- =?us-ascii?Q?94IiP3MldQP7y/xVxyBF28mx5Np+PPdm3dubW0Db4t6FaJjvgCMoPAg4KS0/?=
- =?us-ascii?Q?C/YKaGFL4KgWo8BJmb8jLxARvCYzna8ZDFHwHRn6RJxAPNYVD03t08Fu+uPw?=
- =?us-ascii?Q?wQ8pysGNXdGnCswWu1z4u47V68R0evEgO05zC9Rjr3Y3vfWuyY4fI23on3tT?=
- =?us-ascii?Q?y/rRf26r1Q/IXrI5OVDPBV0OuakDK1+ebi/g0nxzR8BMygCSzgSIbXjCFVVw?=
- =?us-ascii?Q?HA0/jv4dgdABcOAsYrYwBu6KtgYYSiUZLtd5K1xoUobX6hvFylxlu/grRXS5?=
- =?us-ascii?Q?DmAsYfyk7mDh4G4malmWFPW6zZ1HHHCs69x/NAAqJTdN85tRIrFpclyrxiR0?=
- =?us-ascii?Q?LKTq0iXbjARoAqwhsh6r25tiv+zy0rrgXqeZTFt9N2yPPEhut8FdC2o1Wq6o?=
- =?us-ascii?Q?c+grD4I74G4sBRXpcNxh7GwMeGgrMg3Ir6eakIAOG1fuC793F8XfOtD6k9eV?=
- =?us-ascii?Q?zU6HXs/q7DNwfOnfyvLFzQxzBpd5djeuWVFnvcIAv5Z9bKVSzW9fSiJAR6qs?=
- =?us-ascii?Q?40y433XWXsa35/WSKN6m8mjiPPjrK0M0GZEg2MMgANXd4XfZFskkXOruWjpF?=
- =?us-ascii?Q?fWwJA/U0sVwB0LsSsQM4n69hqtnnftEaRTJZMAocED5StFDDe9pkOxTcfVX6?=
- =?us-ascii?Q?cSI0X2Zd/mQzGgW8xoutCZIRtoY7FIJBeU0PCNCPUyXAP2RlKHsGmPJ1w1wb?=
- =?us-ascii?Q?slCtm3MAV4wyefZTzSgJrLiLBK5Hj4Bz123MpYVm/cQeyAsght+dMJywQfhC?=
- =?us-ascii?Q?IkjmIwD8E4ZyHtW8pG0pcBqCRLLtogG+y4Rzfw97//Tp6f4c5xMUXoXz+Vhl?=
- =?us-ascii?Q?UWFkZ+61YK6alIluaY7GnFgHVe9eY6akfw80itROCXReADZzUixmeDZnJAkn?=
- =?us-ascii?Q?DgDEmbHknxNffue7qb1cP68udSbymYYX5lWyUFFf3K4hngeNhBhDl6a+9Ymm?=
- =?us-ascii?Q?kOojvTcU1Y3gu4bftd/YiAtJ2Mod+IEgaTgk2fQCRmqrqtPuq1B2zqbZx8+H?=
- =?us-ascii?Q?A9V/dGRNDAIjeiPj3pZ8EUGpPCJnnrBs+o8FCXIl6VoMFHnvWMOrJbnngxcM?=
- =?us-ascii?Q?TuP3QAnDsH0lN9g+nWlKmBonRwlFtDBeuhvVpXt8eKEVOXQY8F/ilqpdnTaf?=
- =?us-ascii?Q?0kS0j+iy0kSS7aFz8WOLCcn5IbSslD1elDrf8kQ9bMe+cPAuplM9OdaV8jGv?=
- =?us-ascii?Q?9mw+C79rOs6kwcdGSdB3Cu7FZ1vu6NB+lZGs7Rp0O4DfwEqs+DTA7rIvAX3E?=
- =?us-ascii?Q?pdf5sDJ21aQXx/IE/pR4Oe83WiAGEMePW7Bxu6Cq2ZVviRh6EuaHGMDnBtse?=
- =?us-ascii?Q?fTr+FDJ6Rw=3D=3D?=
+	=?us-ascii?Q?IAgr+4Fe7ZQS0ueI1iyEmTG/9OkgadOxspItMnt/rW89SHCwl07BetyxLQyE?=
+ =?us-ascii?Q?Fcy3oRuWl7XNfV3014oVKfCT4ozI5s+eLhhw2JGJJhiZIdVrg87U08OtaK6S?=
+ =?us-ascii?Q?Vl4l4S6TbVSVoPOalFncgHbMQ45PL+YexsZRcmLYx3rcfJW21X2zo33RYajW?=
+ =?us-ascii?Q?7ObYDdPilxo/tUA2tc6VG8LGZ3LIUd13ORVStx9+2rx+XeJRj/vL8sV/TTDi?=
+ =?us-ascii?Q?HHI3l/BFo2ughsUd0085Rqn4TV72LP3pQajEQTgNOD1mz2KyOMzFJGKmIUls?=
+ =?us-ascii?Q?3q73ER6RAesD2eRL7h39jTsb1PVCWW/8oCzIegIHlNSo8TU/OtrIEHrLB3qE?=
+ =?us-ascii?Q?eSGPXL7vD4qsSxduodVIdCNCXw9ZWwvRc9AOloLGW4mQ/RLjSO8UEvNxpOgf?=
+ =?us-ascii?Q?3uRcMR6b8NKWhtckgZKPNpi+T/gheHJtAYDXDntUvDgDTFdjK9HpervDXm5B?=
+ =?us-ascii?Q?AMBPDjddXRgY1CbZvokiwmscXOVufy+YKVyOWvT504QzOH42ouVedxW9H49q?=
+ =?us-ascii?Q?EfLyiaJyRRr3WQiidG9xnYNCEE+Fl5Il5EF2DGJuX6j+5t8ls30blDz2AqFn?=
+ =?us-ascii?Q?iDKOR6XoD1MhB9uCJ0x4IdppB35L7jvZ+X/fUBszkCdKHMuiFB8y7TU3qetJ?=
+ =?us-ascii?Q?n3HYhDSlJz2OzIJprnYexC2oCYf8FyKhRquTmHlOOURhyrkIMJuYEXxQecHZ?=
+ =?us-ascii?Q?ENq/vGV5jOq/Se5fpZzVFXnri7L4Mxe10l1dIEiOOcuIVCcRZeOx4IFnkKSc?=
+ =?us-ascii?Q?LBS7naoBthiiks+dGUuMLxSc8QyC7wtxcz89o/I3m6rZUqyeK6+StiSFO1pU?=
+ =?us-ascii?Q?caR9UCYDZSaDGT8kFObiQifBjbFP6oHYPCx36V4i91U9GjVyqqQ2cUFrhBcV?=
+ =?us-ascii?Q?A69+sAf4wde3tcrzsvhYqyhhikmvLIaE9M+wa817WX/ItfA7ZzlRmJbrArKd?=
+ =?us-ascii?Q?zFN/fpvG7PlVhw12YVJLvt0Wxddgp39/I+qvBpViKje50HEF5StC/IfGaYna?=
+ =?us-ascii?Q?FNcdlDh+dobF6k5Q7swuNifbKodh6iGt4/rB5skHtrMQROFGb1+6DGJ7LXnX?=
+ =?us-ascii?Q?KaYhKCPNsWgX8yM4SMzy6uqsvBLEvJ8SdZI/R3SGlTnowRUMuVmp7EeZ7MI2?=
+ =?us-ascii?Q?tIs6CjZBi9tS4MIrfQssfGAi9/5z9eHjPdi3FTK/oUQcKWLnw+Ksz4qFHir+?=
+ =?us-ascii?Q?1+4ZPTbbYX8vW1pmdM2nxGQwKIwYcNYi7iU0IiEVIZ1sm606K5t7n+Kh/czn?=
+ =?us-ascii?Q?4y9HRW8n7vew0TDYz2bq4NQyrHjZ4GtbVIwc/kcXZq2sE/oqLGCCNnsnzJxv?=
+ =?us-ascii?Q?9CHdKU2Pb0b/CTQ+fyBU3/nj5VvFiXVRRujE8VxOkLfnUe0JRrtePgp6SuQY?=
+ =?us-ascii?Q?NlywIorI0n0TwhZNbN34YOgh8Irf1xWJ6+xkzRbgculE4BCI1HDvDrzqbeAI?=
+ =?us-ascii?Q?uYR1PbyWlubrTIL1lv0TC6zVzR9G2tfkSenGOVEjTiy6wZYojvh4xBfHXRdr?=
+ =?us-ascii?Q?lU9ARgjHcrGfeAsTICwZo99qUEv/G6+umyRHwvQIPbEzAyu+dS1Z1eaNXYad?=
+ =?us-ascii?Q?UbSWfk6ajTWBc06ANiqgZzNLKahKNcsie2CIRkDySsRHLfKwaXqWMhrdps8+?=
+ =?us-ascii?Q?qzGdIe/VCTi9y3YYa7p7bNKT2sEMVmp4JRAPOuiMKahyOY/+uJLOhyCf5Tno?=
+ =?us-ascii?Q?ZlE8arDxKZ9UUnMBu5JW8/lj5NQQtHZhhDzJVaLXE7Z8oZi7ZowRoAcE350f?=
+ =?us-ascii?Q?2EdI2ofscw=3D=3D?=
 X-Exchange-RoutingPolicyChecked: 
-	E9M1slj7mb4VQjMSDUOKQFlsXw4fzDt7AxU5wqGHg0PfHNwzeCIFT1AgRVDAJ2LouFDJNJO+/C3BF56GWAVfIXQyqpi75mdsIbx89RY0PU6ShTiyvG6rUIXvINt6bhcMN6qmtJCM+INurXiZOIzyUpDoPLizR/BAZ6AHCvk26gf+7kqrlwdgqDgMwd6b4iPiLSlE/11yP6qnKH3QXxjJcGnunACFLzlissCmgvdHtA5+3rW/25ZR0kUO8iFxOXob+T05MtJKncLyY58B0dFthTWOc55XpWhudZRZbTWhniNiw45+//UKlFtw8qr2Pvue5nImFfuVmNqSkJRjAOzZKw==
+	OQJKQrmksgdpLp5WP//H+dxEGbW7IknQFFXZnCdKICYw8pDBZIlc7//TbeW9X03AqqfkTrDSTvymRO/s309sypAEBHuzslW8ZyGOGPupZ3PRn1QXPWhtyIpTQPJJ3HY7vNrIB80XWi8Y7qd9+znZ/DLAnT0JEO50VoIgKMFs3oirEOioIhtneGeo6mD0T+Fr+l87wu5JDEWnNgiGaskbcbRhHyardbPuxz0kaYzR3Kw0xgFZeYmVEg3H32/s9jP8wHZL8aI3ye5XtgykgLAOFgheFpv4sDDzSgYA6HtiYdwPmE4TLvYulKqJ75xUfAQDMxFEc7An85+eWlVnjES5Sw==
 X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f5177acc-f56c-40cf-1cdc-08de7f388475
+X-MS-Exchange-CrossTenant-Network-Message-Id: 71e1f7d0-5e1e-489d-90ae-08de7f388797
 X-MS-Exchange-CrossTenant-AuthSource: CO6PR11MB5602.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Mar 2026 06:36:25.3400
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Mar 2026 06:36:30.5971
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mrUkSnPOBaPAjStxjqDhud5bPgSknk5NZU2qXy14HI10wuear5vdo5g+514BC6j9woIkpr9ro5q03WGA5GMDtQ==
+X-MS-Exchange-CrossTenant-UserPrincipalName: Mzkt3aTRW0Qa7JKNeIZhBIUwwCRUXF3A2a1MhlCk+7RBxszPS/wcrh5bKe2wVhL/Bc1ic3Biekd35l78OeICuQ==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB8787
-X-Authority-Analysis: v=2.4 cv=LqOfC3dc c=1 sm=1 tr=0 ts=69b10d6b cx=c_pps
- a=GxUr472PnxEa6H6od3s2nA==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
+X-Proofpoint-ORIG-GUID: _ZZiAjO5AHr1htQqzYLGwmF_SgGVRCoL
+X-Authority-Analysis: v=2.4 cv=fpnRpV4f c=1 sm=1 tr=0 ts=69b10d70 cx=c_pps
+ a=0FlYyfQadWprtAtRvkXThA==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
  a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
  a=xqWC_Br6kY4A:10 a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=bi6dqmuHe4P4UrxVR6um:22 a=klDOsUkWDRETUCZYPvoE:22 a=t7CeM3EgAAAA:8
- a=jz8R8Z8616863Q2mrucA:9 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-ORIG-GUID: rrp7oohj2KY6_q3Il1rXPG04_XzaWu0S
-X-Proofpoint-GUID: rrp7oohj2KY6_q3Il1rXPG04_XzaWu0S
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzExMDA1NCBTYWx0ZWRfX5Uukwl27OvFq
- MeG3hK1VhbMX0wjqEBHfq6+XXnKgpNuj9ghpoabcjYs74CVu1OWspfkaYq8T173m1eGoRgNkwRB
- EXKtSj20+n6HQnzXTLPN/HEij/0RrvGo5IpINRba1ecDKKgT9W+1JLUB/s3u5394I3gztzptWcs
- WdXoctHWbheiAilFp4YnL9ljxIcRA8yM8cEsd1Q2pw8wbxXVrao8U+aJT2KScPkwiFHUCunlrQz
- PoLMBscUCuZYcjvJ4qTvz4ORPuYdCZEApNWKOtVC9/3GKNqCeEbiSv0c5vEmlVl4gkPY2BzvZw5
- uJMawbeSczUaON/8kuV5wsCGKJuqBvGhC439wWhNlpaRcil/EJye56kzFtQ6Tw7cKoXLt9vUzZ2
- iKWm8efs6WOBMM3CWuu0WFY7UaY5lNPDBnGKeggPLEjcLdCwfDYKHVRtmRrx9tyFFWWOmMtrAQQ
- aNjyHmi/3Jj6RXXe5Pg==
+ a=bi6dqmuHe4P4UrxVR6um:22 a=fTW__CHxibyLmBMfj2wP:22 a=t7CeM3EgAAAA:8
+ a=ieWZEeq6gUxmCoMFNBsA:9 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-GUID: _ZZiAjO5AHr1htQqzYLGwmF_SgGVRCoL
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzExMDA1NCBTYWx0ZWRfX7zAGHqNKjSyg
+ dDEiu6QPyxv1mYnL6uGntVVuHB7a96uaC5WJVqnotCP8Dxau07j1XN57rIObTNpf0w1aHmcf1el
+ 4gN5rIbnKJsS1bq8DKUG3oza18dTb6mtWhZEg7KeDdQB0UTAGVVkgabZVfbtQdspBknUjwXSbaq
+ FBey6Aw/kNed03phhg1o/LS3JocdA1F8lO+T+Ggd9PHAhtsk3wUPU5tv+et5zhGURWKYiEugmM+
+ kIlK6Qf8J0dofGE+VR5EBCoXbI99fYI3l8WaiuMjx9JhmupKbbM08jqSV2XrGGlWyCCI2YWZx9+
+ NOo2PsKY9Tebt+pGE3xCWJ/sad0QLjLQQbTClaVnt5gaaLUfCwBmKAdbY3Mx5ixhTzjDGR+A900
+ 8MVxCkIy8ZxbZBF3ZxcNUN8mxt+6ofakW/7aNGdKR+uXA8PJ/cC2oIN67fiK7dnwur3OKgbDC9n
+ vzHgoobt/ZkP7kyksxg==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-03-10_05,2026-03-09_02,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 bulkscore=0 priorityscore=1501 adultscore=0 clxscore=1011
- impostorscore=0 spamscore=0 malwarescore=0 suspectscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2602130000 definitions=main-2603110054
+ malwarescore=0 adultscore=0 bulkscore=0 clxscore=1015 suspectscore=0
+ phishscore=0 impostorscore=0 lowpriorityscore=0 priorityscore=1501
+ spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.22.0-2602130000
+ definitions=main-2603110054
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Wed, 11 Mar 2026 06:36:37 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3407
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3410
 
 From: Chen Qi <Qi.Chen@windriver.com>
 
-This help people know where the git command is actually executed.
+The layer_machines has been dropped by the following commit:
+0ea93cb upgrade-helper: Drop layer_machines
+
+Let's also remove it from the reference configuration file to
+reflect the current status.
 
 Signed-off-by: Chen Qi <Qi.Chen@windriver.com>
 ---
- modules/utils/git.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ upgrade-helper.conf | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/modules/utils/git.py b/modules/utils/git.py
-index b504ab0..38c6a72 100644
---- a/modules/utils/git.py
-+++ b/modules/utils/git.py
-@@ -41,7 +41,7 @@ class Git(object):
-             stdout, stderr = bb.process.run(cmd)
-         except bb.process.ExecutionError as e:
-             W("%s executed from %s returned:\n%s" % (cmd, self.repo_dir, e.__str__()))
--            raise Error("The following git command failed: " + operation,
-+            raise Error("The following git command failed in %s: %s" % (self.repo_dir, operation),
-                         e.stdout, e.stderr)
- 
-         return stdout
+diff --git a/upgrade-helper.conf b/upgrade-helper.conf
+index 251c36a..269bde3 100644
+--- a/upgrade-helper.conf
++++ b/upgrade-helper.conf
+@@ -116,9 +116,8 @@
+ # This can be used to upgrade recipes in a specific layer,
+ # for example meta-intel, instead of upgrading oe-core recipes.
+ #
+-# When layer_mode is enabled, layer_name, layer_dir and layer_machines are
++# When layer_mode is enabled, layer_name, layer_dir are
+ # mandatory. 'blacklist' setting does not apply when in layer_mode.
+ #layer_mode=no
+ #layer_name=meta-intel
+ #layer_dir=DIR/meta-intel
+-#layer_machines=intel-core2-32 intel-corei7-64 intel-quark
 -- 
 2.34.1
 
