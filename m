@@ -1,141 +1,108 @@
-Return-Path: <richard.purdie@linuxfoundation.org>
+Return-Path: <yoann.congal@smile.fr>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 345EF106FD9D
-	for <webhook@archiver.kernel.org>; Fri, 13 Mar 2026 08:19:04 +0000 (UTC)
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.11108.1773389938130989798
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ED66105F7AE
+	for <webhook@archiver.kernel.org>; Fri, 13 Mar 2026 14:00:53 +0000 (UTC)
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.16493.1773410448064965117
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 13 Mar 2026 01:18:58 -0700
+ Fri, 13 Mar 2026 07:00:48 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=eMGpiauR;
- spf=pass (domain: linuxfoundation.org, ip: 209.85.221.51, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-439cd6b09f8so1548166f8f.3
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 13 Mar 2026 01:18:57 -0700 (PDT)
+ dkim=pass header.i=@smile.fr header.s=google header.b=opd1ZkI9;
+ spf=pass (domain: smile.fr, ip: 209.85.128.51, mailfrom: yoann.congal@smile.fr)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4852e09e23dso19560045e9.0
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 13 Mar 2026 07:00:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1773389936; x=1773994736; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZGzSmaWOkhgkU4AaHnZEhwVLNRex57HXYxU1RsB33uY=;
-        b=eMGpiauRT7/sH3srjWGhGWd9mufPPAUVxYmOhc+Ow4FI0Chfr/SAnFlTNk4hRiW7EM
-         fnUPhMiw9XQN8//j8E0ZvunbxQUZ1sxqv5Aqbjfwsw5z+oqJDxYrDr/Q4Lfy2H698WS1
-         epc/MH69B92Lv+b4QZzpM2Hzr0kCJ8Fj0+3Xg=
+        d=smile.fr; s=google; t=1773410446; x=1774015246; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lyLS62qLx7mQ3DdaSfUYV5LShnWZFQRe7XJrhoyUpu4=;
+        b=opd1ZkI9RhpNgE7lIgERC55Os8Br8QZZkWKZt/E/gYMRfqIUVJ2d3CuF1+SBqQAW6b
+         Kji1wmkVCNpG6bjp4MsM8GzB+6oc9iJYYcSxt6uFslJCHzg4uHKnVIHLpIegmEllO7DD
+         HXI6LrncrV0rfCT95OOvk8l18HDX5tArsMZbE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773389936; x=1773994736;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZGzSmaWOkhgkU4AaHnZEhwVLNRex57HXYxU1RsB33uY=;
-        b=dE3UtBTLTxtL0QzgxaLPo+lPkyregwsZE5XsQfIYy+FUyuUNQfIhfro4ZJ+aYNUSoj
-         t/Gsbr7Qen3Ujpyi0fSbzymbxSuRoweyPIFJr50BcmUezx+jX2ZkvaaGZB8c0FNqCEBS
-         wMZ1AA1gaJmVrpLdmui4/iMS1nUfui0K6u7elPxOAmt45LvZ9o6DvgKJZN1rJc8r7yg8
-         atZkzxuMxSyhtR9sagDoOiz9AYE9NCYkhMhpG93KZ4mmXZQv1biNl+hN1yUZrFXFu11/
-         lZYodfr00Vum7M/aT/ty+j4Z0PovQtbk09EQ8aq81/unOa2ae0r1cOE4P1FnSVq+SPwz
-         xEPw==
-X-Gm-Message-State: AOJu0YzToHIsOOTqFPLThFGMm2AS5ngft0SJT7FiY4skz3WHRrWy3dJS
-	RAY9c6u9TR5o5Wd/VRMyk/aKXeyI21Y376WGv7EI3XmkkT4Xy/Z+stPzaNIg2MsJmf5WOs0zgNT
-	6EKyqSCI=
-X-Gm-Gg: ATEYQzxrW9mtB3nweUwfCQDqLiP9qI7wCkvIqYKU0Q2A9CqAI7PtNvER3i+ytIxU35p
-	llnslWw6RMhl4WFap/NSpkCOpNVxZeNtG+x9qA4c2dv+uH5ikDnQjAgqpxSfHjdncSsp5Ctty4T
-	3f6epz1etM4ROxVkKs0yxE2yNsnD4d/pZpC4e/A7ox8t/WZlhGgIeuyV9uU0TNsjvZXPBmwWyWA
-	3TLdrMpUPLsUnR7MY+fQNPMDJV6crEZKQgV6PgYkYbHWqHTORkONd27VdZKRUHaDiN4UDIu1jyj
-	FMGPSLZIiJ3iF0nejcACBkn+5vTEFG82wo4C9EbYysSlDxjGe2Vp54B3KZqv62r1TQOWOkG+lP3
-	hFXliD5RrO06W9x6sQ8IIBSBKxuAYFSWXQ+zmUu1cRoRX3FeurK/uMoSs4KePWGulu06TdXQdg2
-	fv0RL/HXtQO+GLi09mR4s4HGBM0Zx8pWJLXLwmbh4pbNtfz7JL1hw=
-X-Received: by 2002:a05:6000:2505:b0:439:be3b:ddb6 with SMTP id ffacd0b85a97d-43a04dc5084mr4728436f8f.59.1773389935446;
-        Fri, 13 Mar 2026 01:18:55 -0700 (PDT)
-Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:8f77:c880:e027:e164])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439fe20b4dasm15522827f8f.18.2026.03.13.01.18.54
-        for <yocto-patches@lists.yoctoproject.org>
+        d=1e100.net; s=20251104; t=1773410446; x=1774015246;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=lyLS62qLx7mQ3DdaSfUYV5LShnWZFQRe7XJrhoyUpu4=;
+        b=EH2uh0/N+HJLaVjhGEK3uV8+PL+VlksIi2mJuVWdpp8cc3qHbF9MzlWd7Rmh/A1nr6
+         qS//BIky8G3kY+uaG+yOJCG385M5Z1zmarzi47UqiYr0pdFUjemxklGfJTSex0RvdRcn
+         qjlYYd33hBuhGC9HEKYUYWJ4gd/6dojVuDrZXMqp7I6e8v0EHYZksNqc+m8UNGBXTkZf
+         0wWd5pRVfa7eRvx1OLyD2scCodGs+UP7L7whJoJmh3wJpfTKGP5upyju+s2vnY83nS4D
+         8YbLc1deLwMTw/EzFeR4FSzCYPKc5Qxf8KUyaRzmgLoBPiwEMb935KF2LgxuQfhPcUN0
+         aY4g==
+X-Gm-Message-State: AOJu0YzdAYhjIcINyMDzs3cFxdK4ERh1KtJPhfZuRLCTHXfFZhvjemBi
+	kfxmUh/kWS4x8djW+1Vbx53bAf8jU8MtO5YqBaWilNGKwzTwMaUFAHJ3eaZornJanYHNbQvoDMo
+	Ggl+j
+X-Gm-Gg: ATEYQzwVvI2Rz91xvzR6mZDjqpSk/8jPb9Bvn/5T0NzqR4OxK8h1NrM2wpAhQxheXth
+	491+4gzNTYJCpchn/TmGn/ZhT85sn9E5w2SOqWno9TlaSl1MHJ0robsBwar/9f3mYypviBWitCU
+	KMxqqBRSjGx/bBC6P3abI7t8EaM/TB5FVTGzF347QbTAJTcKNAV/4YYaUubP7f6K0bhhFELR6ML
+	vRhSAK4YJKxnXDo681bB2wHhDOJDvJaaGk426BU6MTJs/gjcL6h0sFlehfzPdoG28b//h78puLE
+	KvvnDs/znXqT7RY9OQ7kPjfnsmEfAiSRrgtAHc9iEe1qj3c7cLEPZBOB7nr5bv/m3XR7pRpDJrm
+	Z8z6g9C8jTDJ8ITFgFEMB0hyEW/2WjTFq+NzVHhxgI2wOaKD2YwaM45rHChhrRic6BkhfXFg8Vz
+	1sVfI4EsHo7xlwiZijcz/Rej4UvejrVU8GTnfFW5ZBp06l6sfjQZiCozuqH+mWaUzVEV99fRrzc
+	12saTneVDGgjnMMDfIOi9KvsKMmzaexvhxo/+Y=
+X-Received: by 2002:a05:600c:c162:b0:485:35ee:f836 with SMTP id 5b1f17b1804b1-485566c94a6mr54514005e9.2.1773410446049;
+        Fri, 13 Mar 2026 07:00:46 -0700 (PDT)
+Received: from FRSMI25-LASER.home (2a01cb001331aa001ac8ae6baecd7e1d.ipv6.abo.wanadoo.fr. [2a01:cb00:1331:aa00:1ac8:ae6b:aecd:7e1d])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43a0b2db487sm2056109f8f.28.2026.03.13.07.00.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Mar 2026 01:18:54 -0700 (PDT)
-From: Richard Purdie <richard.purdie@linuxfoundation.org>
+        Fri, 13 Mar 2026 07:00:45 -0700 (PDT)
+From: Yoann Congal <yoann.congal@smile.fr>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [yocto-autobuilder-helper] [PATCH] config.json: Fix bring up after bitbake-setup changes
-Date: Fri, 13 Mar 2026 08:18:53 +0000
-Message-ID: <20260313081853.3779726-1-richard.purdie@linuxfoundation.org>
-X-Mailer: git-send-email 2.48.1
+Cc: Ross Burton <ross.burton@arm.com>,
+	Yoann Congal <yoann.congal@smile.fr>
+Subject: [yocto-autobuilder-helper][PATCH 2/4] dashboard/bugtriage: Setup params before creating HTML elements
+Date: Fri, 13 Mar 2026 15:00:27 +0100
+Message-ID: <20260313140029.805927-2-yoann.congal@smile.fr>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260313140029.805927-1-yoann.congal@smile.fr>
+References: <20260313140029.805927-1-yoann.congal@smile.fr>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 13 Mar 2026 08:19:04 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3453
+ <yocto-patches@lists.yoctoproject.org>; Fri, 13 Mar 2026 14:00:53 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3455
 
-We have to leave MACHINE/DISTRO unset via fragments for oe-selftest, tweak the bringup
-target setup to handle this.
+From: Yoann Congal <yoann.congal@smile.fr>
 
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+No change.
+
+This is preparation work for the creation of a "View in bugzilla" link.
+
+Signed-off-by: Yoann Congal <yoann.congal@smile.fr>
 ---
- config.json | 35 +++++++++++++++++++++++++----------
- 1 file changed, 25 insertions(+), 10 deletions(-)
+ scripts/dashboard/bugtriage/index.html | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/config.json b/config.json
-index 1a8284c..45262c6 100644
---- a/config.json
-+++ b/config.json
-@@ -192,36 +192,51 @@
-        "bringup" : {
-             "BUILDINFO" : true,
-             "SSTATEDIR" : ["SSTATE_DIR = '${HELPERBUILDDIR}/sstate'"],
--            "MACHINE" : "qemuarm64",
--             "step1" : {
--                 "SDKMACHINE" : "x86_64",
--                 "BBTARGETS" : "core-image-sato core-image-sato-sdk core-image-minimal core-image-sato:do_populate_sdk core-image-minimal:do_populate_sdk_ext core-image-sato:do_populate_sdk_ext",
--                 "SANITYTARGETS" : "core-image-minimal:do_testimage core-image-sato:do_testimage core-image-sato-sdk:do_testimage core-image-sato:do_testsdk core-image-minimal:do_testsdkext core-image-sato:do_testsdkext"
--             },
-+            "MACHINE" : "unset",
-+            "DISTRO" : "unset",
-+            "step1" : {
-+                "SDKMACHINE" : "x86_64",
-+                "extravars" : [
-+                    "MACHINE = 'qemuarm64'",
-+                    "DISTRO = 'poky'"
-+                ],
-+                "BBTARGETS" : "core-image-sato core-image-sato-sdk core-image-minimal core-image-sato:do_populate_sdk core-image-minimal:do_populate_sdk_ext core-image-sato:do_populate_sdk_ext",
-+                "SANITYTARGETS" : "core-image-minimal:do_testimage core-image-sato:do_testimage core-image-sato-sdk:do_testimage core-image-sato:do_testsdk core-image-minimal:do_testsdkext core-image-sato:do_testsdkext"
-+            },
-             "step2" : {
-                 "SDKMACHINE" : "x86_64",
--                "MACHINE" : "qemux86-64",
-+                "extravars" : [
-+                    "MACHINE = 'qemux86-64'",
-+                    "DISTRO = 'poky'"
-+                ],
-                 "BBTARGETS" : "core-image-sato core-image-sato-sdk core-image-minimal core-image-ptest-all core-image-sato:do_populate_sdk core-image-minimal:do_populate_sdk_ext",
-                 "SANITYTARGETS" : "core-image-sato:do_testsdk"
+diff --git a/scripts/dashboard/bugtriage/index.html b/scripts/dashboard/bugtriage/index.html
+index 8e2d3a0..72090af 100644
+--- a/scripts/dashboard/bugtriage/index.html
++++ b/scripts/dashboard/bugtriage/index.html
+@@ -238,16 +238,16 @@
+     }
  
-             },
-             "step3" : {
-                  "SDKMACHINE" : "i686",
-+                 "extravars" : [
-+                    "MACHINE = 'qemuarm64'",
-+                    "DISTRO = 'poky'"
-+                 ],
-                  "BBTARGETS" : "core-image-sato:do_populate_sdk",
-                  "SANITYTARGETS" : "core-image-sato:do_testsdk"
--             },
-+            },
-             "step4" : {
--                "MACHINE" : "qemux86-64",
-                 "SDKMACHINE" : "i686",
-+                 "extravars" : [
-+                    "MACHINE = 'qemux86-64'",
-+                    "DISTRO = 'poky'"
-+                 ],
-                 "BBTARGETS" : "core-image-sato:do_populate_sdk",
-                 "SANITYTARGETS" : "core-image-sato:do_testsdk"
-             },
-             "step5" : {
-                 "BUILDINFO" : false,
--                "MACHINE" : "qemux86-64",
-                 "SDKMACHINE" : "x86_64",
-                 "PACKAGE_CLASSES" : "package_rpm",
-                 "extravars" : [
-+                    "MACHINE = 'qemux86-64'",
-                     "RPM_GPG_SIGN_CHUNK = '1'"
-                 ],
-                 "EXTRACMDS" : ["${SCRIPTSDIR}/checkvnc; DISPLAY=:1 oe-selftest -a --skip-tests distrodata.Distrodata.test_checkpkg -T yocto-mirrors -T machine -T toolchain-user -T toolchain-system -j 15"],
+     async function searchBugs(selector, params) {
++      params.append("include_fields", Array.from(fields.keys()).join());
++      params.append("f0", "product",)
++      params.append("o0", "notregexp",)
++      params.append("v0", `^(${ignoreProducts.map((s) => escapeRegExp(s)).join("|")})$`)
+       const spinner = document.createElement("div");
+       spinner.setAttribute("class", "progress")
+       spinner.innerHTML = `<div class="indeterminate"></div>`;
+       document.querySelector(selector).replaceChildren(spinner);
+ 
+       try {
+-        params.append("include_fields", Array.from(fields.keys()).join());
+-        params.append("f0", "product",)
+-        params.append("o0", "notregexp",)
+-        params.append("v0", `^(${ignoreProducts.map((s) => escapeRegExp(s)).join("|")})$`)
+ 
+         const response = await fetch(`${serverUrl}/rest/bug?${params}`);
+         if (!response.ok) {
 
