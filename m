@@ -2,33 +2,33 @@ Return-Path: <peter.marko@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95B1310706DB
-	for <webhook@archiver.kernel.org>; Sat, 14 Mar 2026 13:13:05 +0000 (UTC)
-Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.9320.1773493977711618310
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57DA910706DC
+	for <webhook@archiver.kernel.org>; Sat, 14 Mar 2026 13:14:05 +0000 (UTC)
+Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.9338.1773494043934410423
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 14 Mar 2026 06:12:58 -0700
+ Sat, 14 Mar 2026 06:14:04 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=peter.marko@siemens.com header.s=fm1 header.b=NJieoqpc;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.227, mailfrom: fm-256628-20260314131254550581dac400020728-_59yeh@rts-flowmailer.siemens.com)
-Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 20260314131254550581dac400020728
+ dkim=pass header.i=peter.marko@siemens.com header.s=fm1 header.b=CniX+xSQ;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227, mailfrom: fm-256628-20260314131401a00ea096a70002079c-5b3xeh@rts-flowmailer.siemens.com)
+Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 20260314131401a00ea096a70002079c
         for <yocto-patches@lists.yoctoproject.org>;
-        Sat, 14 Mar 2026 14:12:54 +0100
+        Sat, 14 Mar 2026 14:14:01 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=peter.marko@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
  bh=dWIke7cfTiLRUlR/5VD33aVdGfXalnUEELLLmHxpm3M=;
- b=NJieoqpcjUsrWMLcZkltco5lBbFRb6Z/sQT18cdq3lysk3NvLhtoEd8eagSRNFmMsYNbaz
- RjeZYWbobbTEq/YTI7kBE2QX0tJk21PTROVrmBJkz2LSJ/95GCz7P7zi3Ymvout8ppZTsEEJ
- iZVl3nwmYxqpDvXyabzXqurrEzMtN+DFAdv+EE+jM6UdQTIYT12+EYIRz7uTEeCDCctzouC0
- NveDkf9SH5nW4CNJErF3Qp0FZKpGa0RYEVrh8n+cVLYSyjyMMtGNFed9oCUhMme53G/K87Sm
- 0NWcDjIrfucsP4iAyJv5z0P82t/Wu4KosW+cgs9HW9njiIVHVbrjOo3A==;
+ b=CniX+xSQ1jx3QgQp6E35fJhCGEydaskJNyxKuTsPtGb7S/hLeaGI9EWUJ29zLdnp/OPWdH
+ bs8cxyAqu6RtM3zdfsV410yZWnipetVqBIDxJOL4U07U34t5k9nJJAzljh5k0BsBsSep3/Lb
+ STso9TCmyfuRexo4HlzAAdKk2CF+1xVuWMqDTQJLALFuGZE9IZXCO2B1bDz4h5RUJENQUpTb
+ uIGanq6aMWrWFSt4rMTU0wn6uawcPcdDoY+RVvAcltCoC1B2Rlk0MX+0WxTMPcn21Wuu9xNv
+ UiPP670GUQzuOzFXfldQDNvubZI8Jvy3b6SWnDVX8ZvS3dJ7K6YJds/g==;
 From: Peter Marko <peter.marko@siemens.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Peter Marko <peter.marko@siemens.com>
-Subject: [yocto-security][PATCH] libtpms: fix build with glibc 2.43
-Date: Sat, 14 Mar 2026 14:12:25 +0100
-Message-Id: <20260314131225.306660-1-peter.marko@siemens.com>
+Subject: [meta-security][PATCH] libtpms: fix build with glibc 2.43
+Date: Sat, 14 Mar 2026 14:13:58 +0100
+Message-Id: <20260314131358.318029-1-peter.marko@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Flowmailer-Platform: Siemens
@@ -36,8 +36,8 @@ Feedback-ID: 519:519-256628:519-21489:flowmailer
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sat, 14 Mar 2026 13:13:05 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3460
+ <yocto-patches@lists.yoctoproject.org>; Sat, 14 Mar 2026 13:14:05 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3461
 
 From: Peter Marko <peter.marko@siemens.com>
 
