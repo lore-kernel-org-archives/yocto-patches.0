@@ -1,58 +1,58 @@
-Return-Path: <youenn.lejeune@savoirfairelinux.com>
+Return-Path: <ross.burton@arm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DD52F4645C
-	for <webhook@archiver.kernel.org>; Mon, 16 Mar 2026 12:12:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B44AF4645F
+	for <webhook@archiver.kernel.org>; Mon, 16 Mar 2026 12:17:43 +0000 (UTC)
 Received: from mail.savoirfairelinux.com (mail.savoirfairelinux.com [208.88.110.44])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.49069.1773663118952442076
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.49021.1773662921298960062
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 16 Mar 2026 05:11:59 -0700
+ Mon, 16 Mar 2026 05:08:41 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@savoirfairelinux.com header.s=DFC430D2-D198-11EC-948E-34200CB392D2 header.b=T7m/2P4d;
+ dkim=pass header.i=@savoirfairelinux.com header.s=DFC430D2-D198-11EC-948E-34200CB392D2 header.b=sFqdskJw;
  spf=pass (domain: savoirfairelinux.com, ip: 208.88.110.44, mailfrom: youenn.lejeune@savoirfairelinux.com)
 Received: from localhost (localhost [127.0.0.1])
-	by mail.savoirfairelinux.com (Postfix) with ESMTP id 21EDE3D816AD
-	for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Mar 2026 08:11:58 -0400 (EDT)
+	by mail.savoirfairelinux.com (Postfix) with ESMTP id 822113D816AD
+	for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Mar 2026 08:08:40 -0400 (EDT)
 Received: from mail.savoirfairelinux.com ([127.0.0.1])
  by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10032)
- with ESMTP id qnmyvD41WeRc; Mon, 16 Mar 2026 08:11:57 -0400 (EDT)
+ with ESMTP id GL6D0X_czjYv; Mon, 16 Mar 2026 08:08:39 -0400 (EDT)
 Received: from localhost (localhost [127.0.0.1])
-	by mail.savoirfairelinux.com (Postfix) with ESMTP id 3C0D83D817AD;
-	Mon, 16 Mar 2026 08:11:57 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.savoirfairelinux.com 3C0D83D817AD
+	by mail.savoirfairelinux.com (Postfix) with ESMTP id CBF473D81729;
+	Mon, 16 Mar 2026 08:08:39 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.savoirfairelinux.com CBF473D81729
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=savoirfairelinux.com; s=DFC430D2-D198-11EC-948E-34200CB392D2;
-	t=1773663117; bh=lDP9GH9H1fRHTWA/YkbSKXq9NzGciHhp+265nFRSoQ0=;
+	t=1773662919; bh=lDP9GH9H1fRHTWA/YkbSKXq9NzGciHhp+265nFRSoQ0=;
 	h=From:To:Date:Message-ID:MIME-Version;
-	b=T7m/2P4dh/kc75EcVd/HNrGT7bnHVTU8jgI5K4mPIIK+R8lz8u8yid5nKdSS9Y0u4
-	 qVnf8wK0sTxqWM97LkkmUKU+ipJfzonj+uWQ6bREXStbuc5q1XiD8b0P+jpQC2mty7
-	 Y9SuBdTu2lNXacwxaAkPkU30VppVbcCy04z6dnC7ndPGIUheu+wMTfq6vxsPX6o1m+
-	 h3w6Gvb+RevIuRpxzr8iGW1eAy9mZCG4mw2w9NpUIv0Bs/hTzB7GGLoKvub2jCTMLi
-	 SIHret0LcDY72xzW5Pc5w8ecMOlplGoQ3PzWsNA6nhJI2BFCxMasI68x5l/o+7dsGh
-	 3dTB8j5oXILTg==
+	b=sFqdskJwyLzHioJMUQcfSBdwwpIoI90gIoXdpkX04wX2Y32TbpFoBDMrxGPkiRMZX
+	 amwgQcmsfOV+mM4l3+6FuQ+M0YC3G2thO9QblQ8mBwwdjt98FO9sptRcIwatuXplgB
+	 BoTpIOB3tpCeouMGmrwk7zV2WDI0zdJS5N/WC0Sh+rQNlyXR3C+cvZN3I5pIyfvCKo
+	 TpvYmxD5242H8phtsrqUZsz8XUyO/ft1t0ooHLw70dFOOuPiu2BtoXB2kUNRUjLy5w
+	 SS3wsFDcLYZrKKSF3N1pjOC9KUN2huaQjhJdtqQ9L+YDkSpGSnZUBdFDzVBIwGHigq
+	 Of7D99bk1zHcA==
 X-Virus-Scanned: amavis at mail.savoirfairelinux.com
 Received: from mail.savoirfairelinux.com ([127.0.0.1])
  by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10026)
- with ESMTP id bDObtmLiqUjG; Mon, 16 Mar 2026 08:11:57 -0400 (EDT)
+ with ESMTP id 8KklFbhckH7p; Mon, 16 Mar 2026 08:08:39 -0400 (EDT)
 Received: from krampouz.rennes.sfl (80-15-101-118.ftth.fr.orangecustomers.net [80.15.101.118])
-	by mail.savoirfairelinux.com (Postfix) with ESMTPSA id A56D13D816AD;
-	Mon, 16 Mar 2026 08:11:56 -0400 (EDT)
-From: Youenn Le Jeune <youenn.lejeune@savoirfairelinux.com>
+	by mail.savoirfairelinux.com (Postfix) with ESMTPSA id 405E93D816AD;
+	Mon, 16 Mar 2026 08:08:39 -0400 (EDT)
+From: "Youenn Le Jeune" <youenn.lejeune@savoirfairelinux.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Youenn Le Jeune <youenn.lejeune@savoirfairelinux.com>,
 	Erwann Roussy <erwann.roussy@savoirfairelinux.com>
 Subject: [PATCH] dpdk: replace CVE_CHECK_IGNORE with CVE_STATUS
-Date: Mon, 16 Mar 2026 13:11:33 +0100
-Message-ID: <20260316121133.66539-1-youenn.lejeune@savoirfairelinux.com>
+Date: Mon, 16 Mar 2026 13:08:27 +0100
+Message-ID: <20260316120827.65760-1-youenn.lejeune@savoirfairelinux.com>
 X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 16 Mar 2026 12:12:03 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3472
+ <yocto-patches@lists.yoctoproject.org>; Mon, 16 Mar 2026 12:17:43 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3473
 
 CVE_CHECK_IGNORE is obsolete since Yocto 4.3 and has been
 replaced by CVE_STATUS.
