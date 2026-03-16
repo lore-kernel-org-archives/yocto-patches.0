@@ -2,66 +2,65 @@ Return-Path: <hfranco@baylibre.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D520FB5E8D
-	for <webhook@archiver.kernel.org>; Mon, 16 Mar 2026 23:23:23 +0000 (UTC)
-Received: from mail-dl1-f45.google.com (mail-dl1-f45.google.com [74.125.82.45])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.64465.1773703401626566946
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B20AFB5E88
+	for <webhook@archiver.kernel.org>; Mon, 16 Mar 2026 23:23:33 +0000 (UTC)
+Received: from mail-dl1-f42.google.com (mail-dl1-f42.google.com [74.125.82.42])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.64610.1773703403581777357
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 16 Mar 2026 16:23:22 -0700
+ Mon, 16 Mar 2026 16:23:23 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@baylibre-com.20230601.gappssmtp.com header.s=20230601 header.b=C4tzEp3q;
- spf=pass (domain: baylibre.com, ip: 74.125.82.45, mailfrom: hfranco@baylibre.com)
-Received: by mail-dl1-f45.google.com with SMTP id a92af1059eb24-126ea4e9694so1393945c88.1
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Mar 2026 16:23:21 -0700 (PDT)
+ dkim=pass header.i=@baylibre-com.20230601.gappssmtp.com header.s=20230601 header.b=wYtUaKFs;
+ spf=pass (domain: baylibre.com, ip: 74.125.82.42, mailfrom: hfranco@baylibre.com)
+Received: by mail-dl1-f42.google.com with SMTP id a92af1059eb24-12713e56abdso209373c88.1
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Mar 2026 16:23:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1773703401; x=1774308201; darn=lists.yoctoproject.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1773703403; x=1774308203; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=893CgwWRFld5w0uSHF7/Ak2Osln/xGz+Yq9DN9i8fRs=;
-        b=C4tzEp3qYAwKZclJ21cM/AC8RhH8T+71ptipRWqTT145vnGz/lxjZTXQRg4PVmdkNH
-         rdWViKWtrhfPUku0PcnhXbhSPP/xU1s3XA/8G/mSYsPJoPCXBb3Ju/lAHRR5B5nrpdHV
-         UTKdAZwmIHcirKDKj4OJiZoSmAGNmCgS74yxjLRYwtw1l/Qz1NPWw/HloynMZPK1QiFR
-         TsfzKAwR0uwK21MkxM59W7Iy/IjXDoojx3lhyFBISbdB9i+s3RqTF5sOAkAO4wFq1dvC
-         t9Jl0h71xrnyBaRnbOGWkfaZsZs71AKHiRpeOujXKeIbCKH455N7nRK7lSFqrKkfo8i7
-         o6Yg==
+        bh=4p6wJyigSwZNpCWteK6HQ3zig8RAAVMi6rpVjMhXUOg=;
+        b=wYtUaKFs+4BlvEVusMEVGuNrujCI/5KBbFr9JXLgzGzgAxeGFGEXB2EFds2xWnjEV8
+         Vtoy+MWZnqQvrwiii/DIJVQdjNmvn7qMs1cnRctLEqaQOyVLnbMYCVa+GJ6wtNBEWlcO
+         1gFztXCAUTm+DE6CM9d6gOh/MsbUGnT1RdjuONS2PFUyYU9gJ+rPL/e2WnTg6UVjr+0q
+         dwNjxbAChJDlHJFaTvtQmINL2IsCVhaw3zNQGjgMfOz6jn+lkuX7qrHI79JgPtn1j3pH
+         cfmzUZLHx+aqSQpjgfpq3EBL3tw46zN2emM+0pakKgf0yDnI2a6ae0HXG5lFiNrQS5ib
+         xJXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773703401; x=1774308201;
+        d=1e100.net; s=20251104; t=1773703403; x=1774308203;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=893CgwWRFld5w0uSHF7/Ak2Osln/xGz+Yq9DN9i8fRs=;
-        b=CWqJ/Fj0RRARkYWDxIpPQXUSb1VaetHfaHWu8cnMeDnI1gPwQ1nHyBdGpemwojiJMr
-         Fyvd7T5yKJcvRE27lPxKGS+f2q2cp/erlMPl4iwzN9fR1lONlhbBSeXCiCBr9kWgY1GQ
-         nkOWrQDOV/HZeYtOvReppmIN+nrVwS/okal5/i3IntmOeW7KmwNPhNExq8qyOSlcs4Px
-         zIjtuKVpqRbsRs61wh6img606fuZQeSwCXldWkwz5vfo+7gmnlQjreGvFdw5/6uegfRe
-         dPD5B5QX6/zEGnQ4YlAEdzesMgbV6H/JLlf/71IZi96/SBmYRP2Qv+49RcjGwpjQnDu5
-         3Czg==
-X-Gm-Message-State: AOJu0YyAoJaxyF1Ruu3YI2/zHEO8Bd4Z9yEtsHQwfMuTAS0jgJ8DJVYd
-	DQd4KvX+n8ENfUhowUgw5xYn4X4DeI7TVliO5p423B5qAiGIHYZfTyj55WVprsaNsdYAp5REKAz
-	JPGByESw=
-X-Gm-Gg: ATEYQzziGpZhOYtkQ30wjeYbw9HcH1gkSkfQkXMryn3o8Bd/wy1VPvYWdjkGJ2aNS4a
-	nRKZuWifi8IX3BzllxQPRYNWQIZqATYIk0zjmF8PjxRWrtRO0WALoBpF0OueulVeGNVX8hHXJGI
-	WQc63NSCYJqSqdCA6sl6icInIBfaRp7lb4uqsyRMHvub5AGxu0tog4XD4IPqXAtN2MvSb82cPBJ
-	q17f6qH+laj3SHr+tAe1TPWwRSunqkfDy+H633HBz95SoQIUwya2JyF599yHLd6KBkf1kJbmSfp
-	wcdxQ4Ds54bzJNiO387kUCKqk7L7UcD2KH5o5TfB4P6+0UOLWhs33zwgrrr8DOjWNREykdDy9zm
-	Xb5soiqYS1Xub5xJMf80cjU9ecXRW6jIjyJWsbjRiTfXkKBs9HAmC4yy0ILU+lXcNdyR6LmNgw8
-	qguRfnRykVdcTRua0b2HNYvLf7Cc2Z1X2PTqtMeHjhFtw85dMpUI5Nh0RU6O3kJHmBM0lSleMTc
-	zC8GqlmhjONIfk6c+49
-X-Received: by 2002:a05:7022:2393:b0:11b:2de8:6271 with SMTP id a92af1059eb24-128f3e350bcmr7711765c88.39.1773703400576;
-        Mon, 16 Mar 2026 16:23:20 -0700 (PDT)
+        bh=4p6wJyigSwZNpCWteK6HQ3zig8RAAVMi6rpVjMhXUOg=;
+        b=kkDnlVXzI1YEULpusOJiA/JQ6V9glASv8g1AVSK6WFkSPhhYmlRPDxcaDgaxoU1X8e
+         /f8TNXCN33El+QOjp1v3b5hUsu66pn83MelTWxxHHdwvRTl+ehdaAHfEhBf3MPKYB0Ap
+         we1X9X+zr2tT8u6guNuMLGb4i35V91XxljljWJBPZwJ+uu8Bhw+GaCx8I0TKG3IWgauX
+         NRjTBU/XATPJQ2tYV5phamXUhhBSVxswEUNcfWvPsAZvUZ5ucIgr0VPZivYoBabmlJVl
+         F3ZvAIVhzB7ZyZjxluSbsXGv8gZqdw6d7rCUtWlb1vBFsy3eEP5bzIOaysekpRkDwUTx
+         lF+A==
+X-Gm-Message-State: AOJu0YzK3m53KRw3gKQl9v18VJMr1s6DxyDYS5YQlC1WONpa42rJpmfr
+	Pt+5tA/BYSklfux3TPJWcLaDWRUcrzvRmlG2fdPZ8ykCr67pwoDXeaE10hlclwZ0gewFgAkgZY0
+	KZpwpI40=
+X-Gm-Gg: ATEYQzzZBwVXd2/0PHJNzbSS53otMiuxhcOvTxN5NIFUuvx4G0U11cAUGPmctwNKYX6
+	mXEGwgeS5T5m/n/oIO2q8aHFJfB51+4Ija6PW2/lAbNL5iE0YNI1+xV4Zz98G/Peh7wUtAusxQG
+	fZ1pMXGShXIMosYn5QxvdY/t0b6T0WjtOQZ3CllCR9sGiquACY2ba+/vO33mdNyzOyZXBD3D9Tv
+	/MkXuTviXm8r2arUZQ1k+bjnaRemBL9K8MfUfHARLXof16Sb0mqHd3+fgSmWMZPlvgBAM4IrPjc
+	3owyGnGn98S0CDL5Ww7TEZNoWL7on3xEExUFhlODCj/VYtR4up6JrwQitJ5zIqTh3HPgx/JDtES
+	OyJcQCetwmF63b+nuQqF2xE4AY6ZFZRNH5rXE39YRw1kAi4Nf3Q1PirsXiFdrxevwMIzxvDhvPX
+	kCkyqlBHOGhpApTDJd6TOReCRi7G05ZgcYS68ERhLWubsQDmw2495ATnv13T9dP5KsNrlxsFmGX
+	LdpdwT8Z7SMQbuvAV5kIN6Qk1jJObc=
+X-Received: by 2002:a05:7022:1609:b0:123:331f:978f with SMTP id a92af1059eb24-1291721758amr564984c88.7.1773703402589;
+        Mon, 16 Mar 2026 16:23:22 -0700 (PDT)
 Received: from localhost.localdomain ([2804:1b3:a7c0:c4f1:ec8d:3c3c:583d:3ed])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-128f6384e7asm13492586c88.11.2026.03.16.16.23.18
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-128f6384e7asm13492586c88.11.2026.03.16.16.23.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Mar 2026 16:23:20 -0700 (PDT)
+        Mon, 16 Mar 2026 16:23:22 -0700 (PDT)
 From: Hiago De Franco <hfranco@baylibre.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Sasi Kumar Maddineni <sasikuma@qti.qualcomm.com>,
-	Sasi Kumar Maddineni <quic_sasikuma@quicinc.com>,
+Cc: Sasi Kumar Maddineni <quic_sasikuma@quicinc.com>,
 	Yi Zhao <yi.zhao@windriver.com>
-Subject: [meta-selinux][scarthgap][PATCH 1/2] selinux-image: Preserve SELinux contexts in tarballs
-Date: Mon, 16 Mar 2026 20:21:57 -0300
-Message-ID: <20260316232253.937832-2-hfranco@baylibre.com>
+Subject: [meta-selinux][scarthgap][PATCH 2/2] refpolicy: Add support to configure policy store root
+Date: Mon, 16 Mar 2026 20:21:58 -0300
+Message-ID: <20260316232253.937832-3-hfranco@baylibre.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260316232253.937832-1-hfranco@baylibre.com>
 References: <20260316232253.937832-1-hfranco@baylibre.com>
@@ -70,38 +69,122 @@ Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 16 Mar 2026 23:23:23 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3480
+ <yocto-patches@lists.yoctoproject.org>; Mon, 16 Mar 2026 23:23:33 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3481
 
-From: Sasi Kumar Maddineni <sasikuma@qti.qualcomm.com>
+From: Sasi Kumar Maddineni <quic_sasikuma@quicinc.com>
 
-Tarball images were created without SELinux context information,
-causing loss of security labels during extraction while working with
-features like:ostree. This breaks SELinux policy enforcement and requires
-relabeling after deployment, adding runtime overhead.
+By default, policy modules(*.pp) are stored in /var directory.
+Features like: ostree remove files in folders like /var
+variable data directory while build time.
 
-Append "--selinux" to IMAGE_CMD_TAR to include SELinux file contexts
-when generating tarball images. This ensures security labels are
-preserved across image creation and deployment.
+Added support for custom policy store. We can now configure
+path to custom policy store to variable `POLICY_STORE_ROOT`.
 
 Signed-off-by: Sasi Kumar Maddineni <quic_sasikuma@quicinc.com>
 Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
-(cherry picked from commit 9a913243ffaf26e06f151c3c293b62e28ec549f1)
+(cherry picked from commit 8572e130415dfa9fb48aec6ae1758e10dab7b1e7)
+Signed-off-by: Hiago De Franco <hfranco@baylibre.com>
 ---
- classes/selinux-image.bbclass | 2 ++
- 1 file changed, 2 insertions(+)
+ .../refpolicy/refpolicy-minimum_git.bb        |  2 +-
+ .../refpolicy/refpolicy_common.inc            |  9 ++++++---
+ recipes-security/selinux/libsemanage_3.7.bb   | 20 ++++++++++++++++---
+ 3 files changed, 24 insertions(+), 7 deletions(-)
 
-diff --git a/classes/selinux-image.bbclass b/classes/selinux-image.bbclass
-index b4f9321..852db5f 100644
---- a/classes/selinux-image.bbclass
-+++ b/classes/selinux-image.bbclass
-@@ -26,4 +26,6 @@ python selinux_setlabels_handler() {
- addhandler selinux_setlabels_handler
- selinux_setlabels_handler[eventmask] = "bb.event.RecipePreFinalise"
+diff --git a/recipes-security/refpolicy/refpolicy-minimum_git.bb b/recipes-security/refpolicy/refpolicy-minimum_git.bb
+index 562ccac..b224b46 100644
+--- a/recipes-security/refpolicy/refpolicy-minimum_git.bb
++++ b/recipes-security/refpolicy/refpolicy-minimum_git.bb
+@@ -65,7 +65,7 @@ prepare_policy_store() {
+     oe_runmake 'DESTDIR=${D}' 'prefix=${D}${prefix}' install
+     POL_PRIORITY=100
+     POL_SRC=${D}${datadir}/selinux/${POLICY_NAME}
+-    POL_STORE=${D}${localstatedir}/lib/selinux/${POLICY_NAME}
++    POL_STORE=${D}${POLICY_STORE_ROOT}/${POLICY_NAME}
+     POL_ACTIVE_MODS=${POL_STORE}/active/modules/${POL_PRIORITY}
  
-+IMAGE_CMD_TAR:append = " --selinux"
+     # Prepare to create policy store
+diff --git a/recipes-security/refpolicy/refpolicy_common.inc b/recipes-security/refpolicy/refpolicy_common.inc
+index 9d4f68a..b1d2701 100644
+--- a/recipes-security/refpolicy/refpolicy_common.inc
++++ b/recipes-security/refpolicy/refpolicy_common.inc
+@@ -98,10 +98,12 @@ SRC_URI += " \
+ S = "${WORKDIR}/refpolicy"
+ 
+ CONFFILES:${PN} = "${sysconfdir}/selinux/config"
 +
- inherit core-image
++POLICY_STORE_ROOT ?= "${localstatedir}/lib/selinux"
+ FILES:${PN} += " \
+     ${sysconfdir}/selinux/${POLICY_NAME}/ \
+     ${datadir}/selinux/${POLICY_NAME}/*.pp \
+-    ${localstatedir}/lib/selinux/${POLICY_NAME}/ \
++    ${POLICY_STORE_ROOT}/${POLICY_NAME}/ \
+     "
+ FILES:${PN}-dev =+ " \
+     ${datadir}/selinux/${POLICY_NAME}/include/ \
+@@ -184,7 +186,7 @@ prepare_policy_store() {
+     oe_runmake 'DESTDIR=${D}' 'prefix=${D}${prefix}' install
+     POL_PRIORITY=100
+     POL_SRC=${D}${datadir}/selinux/${POLICY_NAME}
+-    POL_STORE=${D}${localstatedir}/lib/selinux/${POLICY_NAME}
++    POL_STORE=${D}${POLICY_STORE_ROOT}/${POLICY_NAME}
+     POL_ACTIVE_MODS=${POL_STORE}/active/modules/${POL_PRIORITY}
+ 
+     # Prepare to create policy store
+@@ -225,13 +227,14 @@ args = \$@
+ [end]
+ 
+ policy-version = 33
++store-root = "${POLICY_STORE_ROOT}"
+ EOF
+ 
+     # Create policy store and build the policy
+     semodule -p ${D} -s ${POLICY_NAME} -n -B
+     rm -f ${D}${sysconfdir}/selinux/semanage.conf
+     # No need to leave final dir created by semanage laying around
+-    rm -rf ${D}${localstatedir}/lib/selinux/final
++    rm -rf ${D}${POLICY_STORE_ROOT}/final
+ }
+ 
+ install_misc_files() {
+diff --git a/recipes-security/selinux/libsemanage_3.7.bb b/recipes-security/selinux/libsemanage_3.7.bb
+index 93eb870..67af26f 100644
+--- a/recipes-security/selinux/libsemanage_3.7.bb
++++ b/recipes-security/selinux/libsemanage_3.7.bb
+@@ -34,6 +34,8 @@ FILES:${PN}-python = "${PYTHON_SITEPACKAGES_DIR}/* \
+ FILES:${PN}-dbg += "${PYTHON_SITEPACKAGES_DIR}/.debug/*"
+ FILES:${PN} += "${libexecdir}"
+ 
++POLICY_STORE_ROOT ?= "${localstatedir}/lib/selinux"
++
+ do_compile:append() {
+     oe_runmake pywrap \
+         PYLIBVER='python${PYTHON_BASEVERSION}' \
+@@ -48,9 +50,21 @@ do_install:append() {
+         PYLIBVER='python${PYTHON_BASEVERSION}' \
+         PYTHONLIBDIR='${PYTHON_SITEPACKAGES_DIR}'
+ 
+-    # Update "policy-version" for semanage.conf
+-    sed -i 's/^#\s*\(policy-version\s*=\).*$/\1 33/' \
+-        ${D}/etc/selinux/semanage.conf
++    conf_file="${D}/etc/selinux/semanage.conf"
++
++    if [ -f "${conf_file}" ]; then
++        # Update "policy-version" for semanage.conf
++        sed -i 's/^#\s*\(policy-version\s*=\).*$/\1 33/' \
++            ${D}/etc/selinux/semanage.conf
++
++        # Update "store-root" for semanage.conf
++        if grep -q '^store-root=' "${conf_file}"; then
++            sed -i "s|^store-root=.*$|store-root=${POLICY_STORE_ROOT}|" "${conf_file}"
++        else
++            printf 'store-root=%s\n' "${POLICY_STORE_ROOT}" >> "${conf_file}"
++        fi
++    fi
++
+ }
+ 
+ BBCLASSEXTEND = "native"
 -- 
 2.47.3
 
