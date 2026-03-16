@@ -1,150 +1,108 @@
-Return-Path: <richard.purdie@linuxfoundation.org>
+Return-Path: <alex.kanavin@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F9C3F46440
-	for <webhook@archiver.kernel.org>; Mon, 16 Mar 2026 09:47:30 +0000 (UTC)
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.46967.1773653792339919344
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2C76F4644E
+	for <webhook@archiver.kernel.org>; Mon, 16 Mar 2026 11:05:00 +0000 (UTC)
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.47812.1773659100471461913
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 16 Mar 2026 02:36:32 -0700
+ Mon, 16 Mar 2026 04:05:00 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@qualcomm.com header.s=qcppdkim1 header.b=LxRWlsve;
- spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: qti.qualcomm.com, ip: 205.220.168.131, mailfrom: jaihindy@qti.qualcomm.com)
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62G64hpo1724726
-	for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Mar 2026 09:36:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=TOFAGUdinMuqK/qmNga01H
-	s2aKGLrJbRR1pCu1EqGoc=; b=LxRWlsveRonQ8uN6ZuPP0YfRqFZrwpoUUiS18C
-	C1JML2WUU06c4TLFAL/uzCqeL1nBirBwV4LHKI/imYuW94NdJtr75vr6OGu6PtZF
-	XDMfGs6xfY+T8nTSM4QbNhjGnMSAjqqr+JNejsRHyGbSXXgYxCuwWOxyI+W2wfTj
-	+aHAYAi//mV06eGvc9iHnOW7JxHrW6el1iQBc0G8aRdqCm839SFVL9PuYszzQd5D
-	Dh9PaQd1eOvRZxGn2/YrhyAlmJbk9cR/GRppuH0bDS1rwAMpdZTZzEpL4mUsv2KW
-	VggSmXul/I7B0TdGvJGaBa/5d0/bqBeY3kC2r7YHq4Uui4xQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cw0udmxvv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Mar 2026 09:36:31 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 62G9aVW6012813
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Mar 2026 09:36:31 GMT
-Received: from quicinc.com (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 16 Mar
- 2026 02:36:29 -0700
-From: "Jaihind Yadav" <jaihindy@qti.qualcomm.com>
-To: <yocto-patches@lists.yoctoproject.org>
-CC: Jaihind Yadav <jaihindy@qti.qualcomm.com>
-Subject: [meta-selinux][PATCH] refpolicy: backport systemd user runtime userdb fix
-Date: Mon, 16 Mar 2026 15:06:19 +0530
-Message-ID: <20260316093619.3748852-1-jaihindy@qti.qualcomm.com>
-X-Mailer: git-send-email 2.43.0
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=CEW4nFwP;
+ spf=pass (domain: gmail.com, ip: 209.85.219.49, mailfrom: alex.kanavin@gmail.com)
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-89c4f7f8650so14601136d6.0
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Mar 2026 04:05:00 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1773659099; cv=none;
+        d=google.com; s=arc-20240605;
+        b=bvHlhM8feuA/U6udzAfn+/AbWt05AytM/3rQuDp6k2EDWlUsRkdnPwBPjIFIUdDvq4
+         TQA/VwMl+E7mjZ4sZWNzCBlmBysy5hypuUCyQFHLy5z887gc/F0Ko5o0XrKtzUzaRdxR
+         2taKE0mL2bSWZugrjX04P5AQ3AAJAIUccVoOaVB7xOVz2+jqL8eSdwyuj6Ry/6Kva+Cr
+         w+a4BNkm662v+kae0JrclatTnlIHkXldFZF7YDhJg8UE54DV1Wxmfjo+YZ9GCal89vFH
+         tU8N6cp80fPMVDIvPVJ8bl3nuA4Is0/vICGLG9bNjnKmd5eaZocB08exvD7ku2Jk/S3p
+         kJew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=NnI9yv+5FV4s8S5cuozma7xQi93ydTj0dFD429xbvII=;
+        fh=JxB+xQQzxzn4TJjBaUAIIoi4TXXQzOwT96M8B+ERoSg=;
+        b=V/j59wCVgzcx8pZieLcZM0vq0pq5revws/VaJOQ7b6Xk+H+S0bsqrzJOGk0ZcZXrpE
+         qR7T2IoSnGEKEUryP9waJQQ4Z6iWkxp0qqvWVxL2vK2o2bO4P+DSC5Hwj4FkiKwc1hlo
+         FU6kNdpZDSB58b+eDc9ZYMG1xNp3ScDJooWbWdKuiuB8zqtG7FQXBzeuAPxAgKBK5FW0
+         G+05BAXZge2aQM9UpDoOyZvNAjHYtVlfBRDN3WhXbWWtu4h+g4qUTRAvj2j2nloC9uoD
+         7MT+jjGTJI5Qhn6MO6xXZ69o26ggjfigYCBLpuchtua3lJ0+PrQNEGjzbxulW71I8nA+
+         nWdw==;
+        darn=lists.yoctoproject.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1773659099; x=1774263899; darn=lists.yoctoproject.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=NnI9yv+5FV4s8S5cuozma7xQi93ydTj0dFD429xbvII=;
+        b=CEW4nFwP9dzh9G2v7UVOwCN/HfzVVGZGITn6f5bdazR+YpB7snMYuJnvo0iN5MuoLA
+         gcj5DjUtO5ocHNelkkJ5AWjRTh5z3+QKqmd2/KNBiTXCH5sb8Nl81DBAOypBwW9TrdwS
+         GRyJLmJ5mbIoMArn/HR3Wh/9yy15U7bnZSuCyXSEuL1nohPkgRtPSnnK0pgiR2ObPa1B
+         eyFxC/EtSdsVHO4LaSICmtCgdC7p9e3ptoxomDSdgATGkTJ3LCl/3+EMQHaWvXne0vXx
+         v/gSg69fzbcsnDpe3kaNU3SeMW3UNfIWMxBMK+pUaEtFVkiz6XXYwAF8VYG5GwSOpSUf
+         2E+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1773659099; x=1774263899;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NnI9yv+5FV4s8S5cuozma7xQi93ydTj0dFD429xbvII=;
+        b=SZ/umV01c6YW6j0FaUDjU4nRRbaD0BHuCuk489Rdx5M44dkQJAMud65LsNgfbmObm/
+         x044yqFNU6fHWk3h2xmjXZn51sBBCGNSDW8S3TC7LxeXo+iV0U23N1hX8t1A1iSExzu/
+         R5faJQyargX0VooBe63rF2wrB3P4cjnsHzyrgpWrItadiORQCAwvJPuSVZ4Q2sqFwJGO
+         8TWNQZAre3oM+1HEfyktIwF54FvKq2rbpVkXT/pfY+aPLauX64gMJWfwkZIA23/eTEdq
+         xZfF7JHwhKpfHiLEM6TEecK+i5Sio8XFlO0P3GS/8OHNF9apKmaykRQ51jEoTUFy6jgL
+         rdmg==
+X-Gm-Message-State: AOJu0Ywr+ExLfJ4z3ypQrd3NM97YkWXxf5NTR/ZFPo4ZOcE5CPWXYamv
+	ZYxHSC5le0KaZRPsC1IVU+qgYvBVbTQaAjBuAPqSrIIO51KbX7rCXRfGJqQsjxpaOVKCm/IEpPM
+	bdoFvT8rq4gSIeUyI6nsMWMN7jLY9Qhk=
+X-Gm-Gg: ATEYQzwqHfLSxTA2+Hni64AT6f790mEXUSQNPFKbg1bg9oLt3mE6qdY2un1pWKprZyA
+	4wRToBR4FZesZjsDskkCPXhS0Izjh9U0QTtCYBeFaBUeZuzkTyhffb/WlLK7g4xD6xvdBJAALQ4
+	Vblh3LaAFCO18VFVEXEbdXewTJQNhPqGJKV+khdztjHpc3qMiLSrvRhTyrUHrdPu1civKp5m4zg
+	87EzKv1fmvWZ/CmXCWfBeRL8SSY7KA1hMvt0wHMZNaASCulOxbgAI27JbsmdYk2MzBq3bVekhXr
+	lxc2UB+MXuu/Ovmj9ROYLNLSWSEZux+Mw5wvmXOgYA==
+X-Received: by 2002:a05:6214:124c:b0:895:7864:f69d with SMTP id
+ 6a1803df08f44-89a81f605femr183259746d6.40.1773659099357; Mon, 16 Mar 2026
+ 04:04:59 -0700 (PDT)
 MIME-Version: 1.0
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=BJ2+bVQG c=1 sm=1 tr=0 ts=69b7cf1f cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22 a=NEAV23lmAAAA:8
- a=EUspDBNiAAAA:8 a=nvOdHxuAUMFyEE8N2rIA:9
-X-Proofpoint-GUID: vyYpT-6HHy1eLzS_4QIB8BAWZT_5GaqH
-X-Proofpoint-ORIG-GUID: vyYpT-6HHy1eLzS_4QIB8BAWZT_5GaqH
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzE2MDA3MyBTYWx0ZWRfX3zhQpsfViFUi
- RHIK0AvVevVHAcj9E6xtGviZ4coqkWTBUSiod+8E9eCWsZrN7vVIrQA3PP8KaSLNewhSht4UdaB
- aBISccZ2QScCflv2zplEJQhaUBYJJBVLusKzVT8tMcOOyy+PzScnh7Qk5Tf88tDvr/pP7mNg9M5
- mJ9DxLOqYGxQhnBrPRz0AWVLqWK68tBY1+WCroYuY2Eg1QlBzCI5dJDGclVEy+GYhcWAvjmFMMU
- 9xFfxhOOj4LCU0+5GVzuHXAddVhmOwgIV0Z9QzlquTcsNAl2gUvUdq7pdL81VSo3KT9Lm5iY+jq
- VCv3r3zzp3DhGENv2bt2R5c9Lw2UGWn8jcT+cmBe4ERphmwlcHXWTBMHAKALNk5BK3oL5OboXcy
- 2lT//76VMUd8dpDpe+1QgTAkxve9fj7S0p65UZv5gtYhJSV20PPuZ9Yd2wkJOeFadRM9pm92MMz
- hqdLs6eNhPWzjf0w/xw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-03-16_03,2026-03-13_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 lowpriorityscore=0 adultscore=0 priorityscore=1501 phishscore=0
- bulkscore=0 impostorscore=0 spamscore=0 suspectscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603160073
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+References: <20260311064813.619683-1-Qi.Chen@windriver.com>
+ <20260311064813.619683-6-Qi.Chen@windriver.com> <CANNYZj8ZA0vN3FuUNaUktXvL_XpFm_GT=nB6g0KJQCz2Yx-5eA@mail.gmail.com>
+ <CO6PR11MB560222D0F854CBBC58C8518DED44A@CO6PR11MB5602.namprd11.prod.outlook.com>
+ <CANNYZj8u5mVc4cjpsDeDv+L+PPt1rrsUqzPsvUHzsniKeFzuAA@mail.gmail.com> <827fea73-d96e-4ee0-ba19-7da4a1e58b87@windriver.com>
+In-Reply-To: <827fea73-d96e-4ee0-ba19-7da4a1e58b87@windriver.com>
+From: Alexander Kanavin <alex.kanavin@gmail.com>
+Date: Mon, 16 Mar 2026 12:04:47 +0100
+X-Gm-Features: AaiRm500_nLu-t1shy2xl3w-jvtBNBfESJScnOfk1A7qIg9PePN-xC3shhxp2Mo
+Message-ID: <CANNYZj-k74E6WisEG5cnrWyjV=J92Ve8O+LOjr=fqyCuhrcKFw@mail.gmail.com>
+Subject: Re: [yocto-patches] [auh][PATCH V2 06/12] modules/utils/git.py:
+ include repo_dir information in the raised exception
+To: ChenQi <Qi.Chen@windriver.com>
+Cc: yocto-patches@lists.yoctoproject.org, 
+	"MacLeod, Randy" <Randy.MacLeod@windriver.com>
+Content-Type: text/plain; charset="UTF-8"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 16 Mar 2026 09:47:30 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3470
+ <yocto-patches@lists.yoctoproject.org>; Mon, 16 Mar 2026 11:05:00 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3471
 
-Backport upstream refpolicy change that switches systemd user runtime
-client to use systemd_stream_connect_userdb().
+On Fri, 13 Mar 2026 at 04:10, ChenQi <Qi.Chen@windriver.com> wrote:
+> > I applied and pushed all 11 patches from v3. Note that AUH does not
+> > have a test suite, it's basically tested twice a month by running
+> > updates for oe-core, and fixing any possible issues after the fact.
+> >
+> > Unfortunately AUH is prone to even simple and straightforward looking
+> > changes causing some kind of regression in an unanticipated corner
+> > case, so let's see how the next round goes, and I'd appreciate if you
+> > are around, if/when problems occur.
+> Of course. If any program occurs, please let me know and I'll fix it.
 
-This fixes AVC denials for connectto and sock_file write on
-io.systemd.Multiplexer when systemd-userdbd is enabled.
+I just went over the latest AUH-made round of oe-core upgrade patches,
+and I'm not seeing anything unusual, so I think it's all good :)
 
-Upstream-Commit: b3060023318b474d0112fbe70cdbbf6dbb1f37ab
-Link: https://github.com/SELinuxProject/refpolicy/pull/1092
-
-Signed-off-by: Jaihind Yadav <jaihindy@qti.qualcomm.com>
----
- ...d-fix-user-runtime-userdb-connection.patch | 34 +++++++++++++++++++
- .../refpolicy/refpolicy_common.inc            |  1 +
- 2 files changed, 35 insertions(+)
- create mode 100644 recipes-security/refpolicy/refpolicy/0059-policy-modules-systemd-fix-user-runtime-userdb-connection.patch
-
-diff --git a/recipes-security/refpolicy/refpolicy/0059-policy-modules-systemd-fix-user-runtime-userdb-connection.patch b/recipes-security/refpolicy/refpolicy/0059-policy-modules-systemd-fix-user-runtime-userdb-connection.patch
-new file mode 100644
-index 0000000..0b15d9b
---- /dev/null
-+++ b/recipes-security/refpolicy/refpolicy/0059-policy-modules-systemd-fix-user-runtime-userdb-connection.patch
-@@ -0,0 +1,34 @@
-+From b3060023318b474d0112fbe70cdbbf6dbb1f37ab Mon Sep 17 00:00:00 2001
-+From: Jaihind Yadav <jaihindy@qti.qualcomm.com>
-+Date: Thu, 5 Mar 2026 11:59:31 +0530
-+Subject: [PATCH] systemd: use systemd_stream_connect_userdb() for user runtime
-+ client
-+
-+Replace a direct stream_connect_pattern() usage with the existing
-+systemd_stream_connect_userdb() interface. This allows systemd user
-+runtime helper to connect to systemd-userdbd and access the related
-+runtime socket/link objects under /run/systemd/userdb.
-+
-+Fixes AVCs for connectto and sock_file write on io.systemd.Multiplexer.
-+
-+Upstream-Status: Backport [b3060023318b474d0112fbe70cdbbf6dbb1f37ab]
-+Link: https://github.com/SELinuxProject/refpolicy/pull/1092
-+
-+Signed-off-by: Jaihind Yadav <jaihindy@qti.qualcomm.com>
-+---
-+ policy/modules/system/systemd.te | 2 +-
-+ 1 file changed, 1 insertion(+), 1 deletion(-)
-+
-+diff --git a/policy/modules/system/systemd.te b/policy/modules/system/systemd.te
-+index 4c81584706..d8a62eb882 100644
-+--- a/policy/modules/system/systemd.te
-++++ b/policy/modules/system/systemd.te
-+@@ -2443,7 +2443,7 @@ allow systemd_user_runtime_dir_t systemd_user_runtime_notify_t:sock_file delete_
-+ 
-+ allow systemd_user_runtime_dir_t systemd_userdbd_runtime_t:dir list_dir_perms;
-+ 
-+-stream_connect_pattern(systemd_user_runtime_dir_t, systemd_userdbd_runtime_t, systemd_userdbd_runtime_t, systemd_userdbd_t)
-++systemd_stream_connect_userdb(systemd_user_runtime_dir_t)
-+ 
-+ files_read_etc_files(systemd_user_runtime_dir_t)
-+ # read /etc/machine-id
-diff --git a/recipes-security/refpolicy/refpolicy_common.inc b/recipes-security/refpolicy/refpolicy_common.inc
-index 2e1a929..998be7c 100644
---- a/recipes-security/refpolicy/refpolicy_common.inc
-+++ b/recipes-security/refpolicy/refpolicy_common.inc
-@@ -74,6 +74,7 @@ SRC_URI += " \
-         file://0056-policy-modules-system-setrans-allow-setrans_t-use-fd.patch \
-         file://0057-policy-modules-system-systemd-make-_systemd_t-MLS-tr.patch \
-         file://0058-policy-modules-system-logging-make-syslogd_runtime_t.patch \
-+        file://0059-policy-modules-systemd-fix-user-runtime-userdb-connection.patch \
-         "
- 
- S = "${UNPACKDIR}/refpolicy"
+Alex
 
