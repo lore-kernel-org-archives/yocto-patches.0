@@ -2,67 +2,67 @@ Return-Path: <richard.purdie@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 582F6F53D97
-	for <webhook@archiver.kernel.org>; Mon, 16 Mar 2026 20:32:13 +0000 (UTC)
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.60846.1773693128640822268
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 400E7F53D98
+	for <webhook@archiver.kernel.org>; Mon, 16 Mar 2026 20:32:33 +0000 (UTC)
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.60851.1773693151932035119
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 16 Mar 2026 13:32:09 -0700
+ Mon, 16 Mar 2026 13:32:32 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=W9odf27I;
- spf=pass (domain: linuxfoundation.org, ip: 209.85.128.51, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4852b81c73aso44523935e9.3
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Mar 2026 13:32:08 -0700 (PDT)
+ dkim=pass header.i=@linuxfoundation.org header.s=google header.b=MLN8pqpP;
+ spf=pass (domain: linuxfoundation.org, ip: 209.85.128.54, mailfrom: richard.purdie@linuxfoundation.org)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4855dbfc129so25012525e9.0
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Mar 2026 13:32:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1773693126; x=1774297926; darn=lists.yoctoproject.org;
+        d=linuxfoundation.org; s=google; t=1773693150; x=1774297950; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:to
          :from:from:to:cc:subject:date:message-id:reply-to;
         bh=miDjVRxKeEKiKSM1y7ixkYR65hj1N9Kneq9GLpCYRsA=;
-        b=W9odf27IeDXAeZPbhKZxLPA6JufNWTF5vl851NyB1QNdJ8JEU2UQKXRYPrchlqiNGl
-         f4ap8hav8oDiMnwy7TxwpUXyGslqOuVsj9hp8izPTWu+gS2n7F59TF8ejdAdr3WU12vB
-         JbRnOWen5jwDUmEIwIs6lpc1+NgN/y2dKkFrI=
+        b=MLN8pqpPx5eCiCRPRB//hx73HXJFneXGAvml8tMx5i/lLyQKO5FhBwdfAngHn3xqbM
+         1eqHoWuLSY2dx+++nEZPUptDuPbRUf6gcU9mIwCg+6xmruuMuFONX7jVLkgj7+6rdBht
+         1XbTAFuheZTBS0at5dObnFGIauHYKH+xp8DT4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773693126; x=1774297926;
+        d=1e100.net; s=20251104; t=1773693150; x=1774297950;
         h=content-transfer-encoding:mime-version:message-id:date:subject:to
          :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
         bh=miDjVRxKeEKiKSM1y7ixkYR65hj1N9Kneq9GLpCYRsA=;
-        b=RUJgIweHlvqPs2o4B2JsWUXBkRQwzuj2Wp32wIMZyDyVbUm4lzg97NLPgv/MwiMJjG
-         Gx1aP4YZUDbyax4RqxIDJJFRmKJhsEX09ee4XqqYu3mKfYiuG4FxneGDxDuzr2OArpmR
-         S3mmz1G/iNXtxqUMUBYf/V66YNStRcPr5R0jBHhuhPPa2UHiYovD1S8QtAWmXx0TbeU8
-         fPy+PmBNFcfuRZOgCQ9FSnLc5EEfrQ80erI3kk4+LV9lcSnV2UrekiWt/y1Y9c5pIQRm
-         mnZcUEZBQIW1TgZ/IS6r8S32laKkbGn5rGRP80hgFtfpbZkAVvvDcvYrEEcyD8pbRu0V
-         U88Q==
-X-Gm-Message-State: AOJu0YzofjmS5+z6/Ge8pORTfv+pK/CANFb70fEwfRKwpIMyJ8mtRSBV
-	u8DHvLMDUUxslpOauGE0OJmECZ1aSwUfgDC7t/YZcZ+FgWY3M6z2niBVWOUOaYWEYidhMQVKK75
-	EQ1Gp6sM=
-X-Gm-Gg: ATEYQzw6uU/2FZhWWpM586JruBAcL327wkD+EIQRMnYgIPqGhaoIKiV+ZZ8eZICw2jo
-	RPTZLp/v6aGQvMha98N8rsfK0HqxqneF7f26NIeeYcCxjujM+ZpL369r2FKOtPzFRbf91ptK5PD
-	e3ActmzeFOGuKnnimSjjaj3tXwQlvgkP/jI7JYFNmhDm0iff57O+s5CaLhjP0ckcJp5tVswTwxr
-	NZGuh0HPUTQ3Dsh4rCr7X+wdze0Kg8T46EJ3jyWYiGFxZMJeHNLP0pwiFg+lmwfmp2brV6joyJk
-	Lt7I7b5JC7ZSDjEGgZAD7RkRnAcyv2WXbwnmp/4qdpjkQFQmXV+/AEg/SjJQS2x60jIywuXVTb9
-	FPrR5ySDM77QkrCGJELW3gpDmOwqilSKoWINflrbDCvOWrKlDOYm/Y96DxwOKQMujyjVqZii6XK
-	fFTv5XJTeTDSzkC1kT3NngsuzwLuNJQ/FBhM5PPJ6GyWMJPX696pLlYaawBA8CYQ==
-X-Received: by 2002:a05:600c:4514:b0:485:2f6a:6ed with SMTP id 5b1f17b1804b1-4855670b701mr236100175e9.28.1773693126152;
-        Mon, 16 Mar 2026 13:32:06 -0700 (PDT)
+        b=rIETmaQ9W9IU9FGhgPXiMQWPiwMafomBQNjXyaNvjsaSpJxrpAyqtuOhbpv8KlrWqQ
+         tcQQXl2VrBWU/tOpmAPHqBhKTYuT8bN2f+Xa0VhCne00ExM1YTVFd/nWCOUZkBmNJ3Vi
+         hhSTJpWMzp8l0B048+ytkYbEu+Vpn+RbHUI8uNLegG1k3UCCHJCs60QMqSAQjP/gOrxt
+         aaVJdIwZEEEU2NpYTnSlZ69zOq/5A5Qb7H5ZfPuaYaKRDd7FrQd7NLd/EFkqeSC7smio
+         acPDBVR1LEtbHEBZZJEXU3NB4H0DZPSgqgPR9kKmJHndqL06c6kKc96E4MWmgKqP/eiS
+         gxxQ==
+X-Gm-Message-State: AOJu0YyB5vDTaWkEF/fOzSFYDX+ZLZa//CqElPOc3CVg7iIJV9B53f1D
+	jG2oTDEjl3lQsUo96bNhrBd8pncKdnZnVdUUI0r6Gdh1VVSB8SnWoEhUXD5KqyPD0M1oOBiZk92
+	/UQU83bo=
+X-Gm-Gg: ATEYQzwv2uWFjI+nWXzQb5swlE+0rYHfgweSeiH5RHK+6Ugp2K6kD57vSbqtHylE7fY
+	SKrUbF01zsSnOA/zzQ8aQQepRvp2gqL4P+J+0sNd+i/p2wRNbK3PeTw0Z/hehi+jQ3G/vN8Ooa5
+	FDrJoSOa2zOyxoymlZzzp3o9nzYTQtKpwiCheUwhF9wegQgiuY6CjHxfiUbYcJWJr1zI2nSTqq9
+	jpKyploXIQR6O7EGkleL9TpBDDcTB7b8kS3GqYcRau/wEBMGdl0Q+yvnqx9IyaX8w1H1malVJvI
+	UA+hQLa0nQTNcrRNcXMVZ66Jtae4B5wHY29O6sDHBfHi6cSXt3vukQwZxCib7ODGgLl64EPGQc1
+	pJRCCEuKE1abhz8Y0d7gs/4pUC5Pe4hBSHXZUKRwK9kUXxbSHysmK7LFynlKAy6ZtVP7NhIpnDP
+	veQLgXbqmSshs40EMdULgUcqkhOkwzLgeoUtozXMiKMDsQQSIKRQ9RZ81GpBD2/Q==
+X-Received: by 2002:a05:600c:3b10:b0:485:3ec6:e634 with SMTP id 5b1f17b1804b1-485566db72dmr238513895e9.15.1773693149565;
+        Mon, 16 Mar 2026 13:32:29 -0700 (PDT)
 Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:15f8:fc87:2277:10bc])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48557c6ece3sm100183045e9.29.2026.03.16.13.32.05
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48556401521sm104447025e9.2.2026.03.16.13.32.27
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Mar 2026 13:32:05 -0700 (PDT)
+        Mon, 16 Mar 2026 13:32:28 -0700 (PDT)
 From: Richard Purdie <richard.purdie@linuxfoundation.org>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [yocto-autobuilder-helper][scarthgap][PATCH] config.json: Drop checkvnc usage
-Date: Mon, 16 Mar 2026 20:32:03 +0000
-Message-ID: <20260316203203.818480-1-richard.purdie@linuxfoundation.org>
+Subject: [yocto-autobuilder-helper][whinlatter][PATCH] config.json: Drop checkvnc usage
+Date: Mon, 16 Mar 2026 20:32:25 +0000
+Message-ID: <20260316203225.818521-1-richard.purdie@linuxfoundation.org>
 X-Mailer: git-send-email 2.48.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 16 Mar 2026 20:32:13 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3476
+ <yocto-patches@lists.yoctoproject.org>; Mon, 16 Mar 2026 20:32:33 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3477
 
 The autobuilder workers take care of setting up DISPLAY themselves, we don't need
 the checkvnc script any more and haven't for a while.
