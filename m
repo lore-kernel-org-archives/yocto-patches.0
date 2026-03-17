@@ -2,62 +2,61 @@ Return-Path: <antonin.godard@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3628AFD875F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52EB1FD8761
 	for <webhook@archiver.kernel.org>; Tue, 17 Mar 2026 12:35:08 +0000 (UTC)
 Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.74875.1773750903165041017
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.74877.1773750904034160502
  for <yocto-patches@lists.yoctoproject.org>;
  Tue, 17 Mar 2026 05:35:04 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=dkim header.b=W4cmCATd;
+ dkim=pass header.i=@bootlin.com header.s=dkim header.b=FYV414C3;
  spf=pass (domain: bootlin.com, ip: 185.246.84.56, mailfrom: antonin.godard@bootlin.com)
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 12D3E1A2DED
-	for <yocto-patches@lists.yoctoproject.org>; Tue, 17 Mar 2026 12:35:01 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 5AA2E1A2DF9
+	for <yocto-patches@lists.yoctoproject.org>; Tue, 17 Mar 2026 12:35:02 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id DD6CB5FC9A
-	for <yocto-patches@lists.yoctoproject.org>; Tue, 17 Mar 2026 12:35:00 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F2340104504AE;
-	Tue, 17 Mar 2026 13:34:59 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 321155FC9A
+	for <yocto-patches@lists.yoctoproject.org>; Tue, 17 Mar 2026 12:35:02 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CE78F104504BB;
+	Tue, 17 Mar 2026 13:35:00 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1773750900; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=pJVai99z0ntJ6LNP4mzFN/cAYuiPJ+DrHJoPl/egP14=;
-	b=W4cmCATdUAgBblB7p7bhKOdeR8Tz84f8FqPnfJW/tHj1DxMVFoGp/qwYYRlkqq6kivy8u9
-	M1xRF6xVfvvdbwY9hLaPQVhID6Xup7pFhLMmfYdDOHhWk3BBV5J/qPn9XNu4jOxW0C7wMv
-	wW0wq4vve/CmQsQ103znDZSTE9NlRw6RFbH9+2nupfmM/We5rs0djwQL0HkSjoBMEt61Kz
-	1FkmX2b5j3fVOYfqjMJFU2+qvRVA6YoaWwFxoHdFJtFrsAaCgSfcQd4Jv5Somi3WUjmkMW
-	iaoYSLKUutkHNxW+M3GK40oAZYdkMpaWCGchxG97oHS82H4jsuEbRRV2XEQurA==
+	t=1773750901; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=ik266wcMDGJdykG6JTxUF/FgzmW1hDfZuIqc2+wb5UI=;
+	b=FYV414C3caQpDElvAV4ePuLr9qX5EVXI1/xAVR1fGqNoekZOZ3wSxoCkUwH2DvcButtvhV
+	0zsWPcj7ODkBeJSxOk0FoNwiIYuKSMLzMizGxOXQixwq8n7F9Qu/N66TEibWhUvfypBGM2
+	5fmFvLeEOTjNYqy8G+rpMpJuCSq8faTyiRIjDVSZPj+xOgrgyExJJj7FqgNIPISMGeHxN9
+	qFu2atfJlqu/AVHVAJJkd5sXcjGK/t07yxkatgt20HyJbFUScKB1vUxF71lBkwNwygMxcT
+	xLsVjr0jsPGyT6Usj1nOPbpoM6JaEjmcncf4gu+/fT0UMBdubM66BmG9Avy1ag==
 From: Antonin Godard <antonin.godard@bootlin.com>
-Subject: [yocto-autobuilder-helper][PATCH 0/3] run-docs-build: fixes after
- bitbake docs generation updates
-Date: Tue, 17 Mar 2026 13:34:52 +0100
-Message-Id: <20260317-fix-releases-json-generation-v1-0-f57f3267c88a@bootlin.com>
+Date: Tue, 17 Mar 2026 13:34:53 +0100
+Subject: [yocto-autobuilder-helper][PATCH 1/3] scripts/run-docs-build: fix
+ the releases.json file generation
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMSwqDQBCE4atIr9OgJhjIVcTFPEodkRnpHkOCe
- PdMkuUPVd9BCglQelQHCZ5BQ4olmktFbjZxAgdfmtq67eprc+cxvFiwwiiUF02RJ0SIyeXI1gG
- t96MduxsVYhOU/Y/vh3/rbhe4/DX7d3I5sdlzsntYPYRnrBtkoPP8AFtIQvGaAAAA
-X-Change-ID: 20260317-fix-releases-json-generation-bcee2ddfbf64
+Message-Id: <20260317-fix-releases-json-generation-v1-1-f57f3267c88a@bootlin.com>
+References: <20260317-fix-releases-json-generation-v1-0-f57f3267c88a@bootlin.com>
+In-Reply-To: <20260317-fix-releases-json-generation-v1-0-f57f3267c88a@bootlin.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
  Antonin Godard <antonin.godard@bootlin.com>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=530;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=850;
  i=antonin.godard@bootlin.com; h=from:subject:message-id;
- bh=FHZrD475jyzB6fyOfGBYdverScpxfaizy5FeuzWcC3M=;
- b=owEBbQKS/ZANAwAKAdGAQUApo6g2AcsmYgBpuUpyp8ygpXcXX4fh3TwiVJw8IuZ/hf9AdLhv7
- irzGoN5FmiJAjMEAAEKAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCablKcgAKCRDRgEFAKaOo
- Nr8ND/wLDOY7QKQzbQer/zW+d8wGhzivwSwSl6lUiL/CXOeMHv9htC5n1Hs0+pn2AHclykNLoY1
- k9IhpMwz3+gk0PIlqV49EoEtpB55Xhsa2Dn7sMZnnK1HNYdahDeiTf2nb0kzUuofT6TMiuIPzce
- ndJ3b3G2thizqqm4268pHqMGrxHhoLrc3q1FlRigRiRwpDfJpWsnn3/FL6LmE7bbvWtGCrHewtf
- tJ4oGE3J0P0VGCNipjR5lKH5EsOT8dWE5+NGz6B+KJmc7kbUeGlBQb/NliBXeG6UlxU4JyM0xQW
- AZJ/co4MEqtc3ETAhz5C8Svl0DTjue6xlYiadlxxBX6G24+CyEdFlp5f4VCLYFpbePaBxr47p11
- g7yz5/RoRwH2vX6q7xQb9QAHNzMFvBRn03G2mmO2hJbX1vjpTHj43NwCi8RgZ1a/AhNcWggDZ0R
- ZkQlH2sFabyyLpsfmv/Z50o3OwQmNWRaGK4ch/MAPogLSvA6uu30cOeG6y5U33R154CAUoRYv7N
- OSeaRIoRYvox16H4kdE53A3+azBEDFAfvk1g/qTFNu/dJokVtfrH+MlvztoUybVbken+X7WSRI6
- wTBZQEo4xvWx//lH6Z98ShCnh5wr///KAHRcbx5BRtBnU2rr3rzmZ5NQSO4xB9UnhdAXyD3l4Ti
- h+8/AqCLGk3gaSA==
+ bh=9WwpPWxzRylIvkWt8timR9mV99v9rBQwaGrXsNLMvxg=;
+ b=owEBbQKS/ZANAwAKAdGAQUApo6g2AcsmYgBpuUpy4eyA8H0usyYW82dvCybeBNdqkhVbUfcd5
+ 1lioxi13TuJAjMEAAEKAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCablKcgAKCRDRgEFAKaOo
+ NjzFD/wKxd8kbm6glLxKaIWe+Po1H+zkok6IoQftRMzCPrFsZ+EHrhhsYjsvEnackYL20f7Gojy
+ t6wwB8u1RVVS8ntvqUv2KSpE46cgVkTiy1G1EVm09Nb3qbL28px++ijYZeYCDfZQjP/g5mZixNG
+ OR1fOQ0jTgRb0cUPXP9o86dNz/jsm9ROsPyfm5ACvfcpLd8PZ5jZ0EjWP9pSOIcv2C1x+ZPM7KU
+ lfHwxGhORFcGF5UxnqU4eg2ucGQ3lFqe9UF9R61wa5M1boruoj4OW3eEDCh7pLSmYZbk2M4osCr
+ O3BRURRPFHYkAwtjO5hGICoUhyg1n/tnr3HnXlLjHZ1Ct3vsAMeQVrR9HGTz+fK/7S7uG+Yi1M9
+ Ykx9d0f4Q2FXPwAcvyihephmaBH1+7ObvU7uQN6KH/799B6lJMf66okvBhaoSUtmHKbKvTVZUi8
+ jrHSokm1TqPwToGMARoTGSxS0bHP33KyhMXvBhFcSamtwJqFdRj8tHN/NMVKgBrt/dGUYEzMIW7
+ ovr7M60054ZguQPU3VXX0nqxF4wxPBN8q7WBnPWro8jb1RFwOoxaiiWETBSgLqF5APi6M0Dj0WY
+ 8Hg9u2gcSq+WEhGV/FHs9Y/wcuv5AGY/TmcFthNLVR8MgMTMhjTad7powTVBPwzVfZ0+YM0aK5x
+ a3OTLeDFgoTALKg==
 X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
  fpr=8648725188DD401BB9A0D3FFD180414029A3A836
 X-Last-TLS-Session-Version: TLSv1.3
@@ -65,19 +64,33 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Tue, 17 Mar 2026 12:35:08 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3484
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3485
+
+After [1], we need to update the call to release-parser.py to pass the
+bitbake repo path to get tags from the bitbake repo.
+
+[1]: https://git.yoctoproject.org/yocto-autobuilder-helper/commit/?id=62d06a23f8168863777b85fa106cf5a1ebb1eade
 
 Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
 ---
-Antonin Godard (3):
-      scripts/run-docs-build: fix the releases.json file generation
-      scripts/run-docs-build: do not checkout releases.rst from master for bitbake
-      scripts/run-docs-build: copy the releases.json file for the bitbake build
+ scripts/run-docs-build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- scripts/run-docs-build | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
----
-base-commit: 62d06a23f8168863777b85fa106cf5a1ebb1eade
-change-id: 20260317-fix-releases-json-generation-bcee2ddfbf64
+diff --git a/scripts/run-docs-build b/scripts/run-docs-build
+index edd0574..ed32412 100755
+--- a/scripts/run-docs-build
++++ b/scripts/run-docs-build
+@@ -98,7 +98,7 @@ tar --exclude=eclipse -xJf ${docbookarchive_localpath}
+ $scriptdir/docs_add_banner.py
+ 
+ # generate the releases.json in PWD
+-$scriptdir/release-parser.py $ypdocs/..
++$scriptdir/release-parser.py "$ypdocs/.." "$bbdocs/.."
+ cp releases.json "$builddir"
+ 
+ cd $bbdocs
+
+-- 
+2.53.0
 
 
