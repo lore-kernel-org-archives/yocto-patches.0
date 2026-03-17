@@ -1,191 +1,195 @@
-Return-Path: <hfranco@baylibre.com>
+Return-Path: <antonin.godard@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B20AFB5E88
-	for <webhook@archiver.kernel.org>; Mon, 16 Mar 2026 23:23:33 +0000 (UTC)
-Received: from mail-dl1-f42.google.com (mail-dl1-f42.google.com [74.125.82.42])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.64610.1773703403581777357
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4490F3380E
+	for <webhook@archiver.kernel.org>; Tue, 17 Mar 2026 08:11:28 +0000 (UTC)
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.71000.1773735084197228692
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 16 Mar 2026 16:23:23 -0700
+ Tue, 17 Mar 2026 01:11:25 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@baylibre-com.20230601.gappssmtp.com header.s=20230601 header.b=wYtUaKFs;
- spf=pass (domain: baylibre.com, ip: 74.125.82.42, mailfrom: hfranco@baylibre.com)
-Received: by mail-dl1-f42.google.com with SMTP id a92af1059eb24-12713e56abdso209373c88.1
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 16 Mar 2026 16:23:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1773703403; x=1774308203; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4p6wJyigSwZNpCWteK6HQ3zig8RAAVMi6rpVjMhXUOg=;
-        b=wYtUaKFs+4BlvEVusMEVGuNrujCI/5KBbFr9JXLgzGzgAxeGFGEXB2EFds2xWnjEV8
-         Vtoy+MWZnqQvrwiii/DIJVQdjNmvn7qMs1cnRctLEqaQOyVLnbMYCVa+GJ6wtNBEWlcO
-         1gFztXCAUTm+DE6CM9d6gOh/MsbUGnT1RdjuONS2PFUyYU9gJ+rPL/e2WnTg6UVjr+0q
-         dwNjxbAChJDlHJFaTvtQmINL2IsCVhaw3zNQGjgMfOz6jn+lkuX7qrHI79JgPtn1j3pH
-         cfmzUZLHx+aqSQpjgfpq3EBL3tw46zN2emM+0pakKgf0yDnI2a6ae0HXG5lFiNrQS5ib
-         xJXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773703403; x=1774308203;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=4p6wJyigSwZNpCWteK6HQ3zig8RAAVMi6rpVjMhXUOg=;
-        b=kkDnlVXzI1YEULpusOJiA/JQ6V9glASv8g1AVSK6WFkSPhhYmlRPDxcaDgaxoU1X8e
-         /f8TNXCN33El+QOjp1v3b5hUsu66pn83MelTWxxHHdwvRTl+ehdaAHfEhBf3MPKYB0Ap
-         we1X9X+zr2tT8u6guNuMLGb4i35V91XxljljWJBPZwJ+uu8Bhw+GaCx8I0TKG3IWgauX
-         NRjTBU/XATPJQ2tYV5phamXUhhBSVxswEUNcfWvPsAZvUZ5ucIgr0VPZivYoBabmlJVl
-         F3ZvAIVhzB7ZyZjxluSbsXGv8gZqdw6d7rCUtWlb1vBFsy3eEP5bzIOaysekpRkDwUTx
-         lF+A==
-X-Gm-Message-State: AOJu0YzK3m53KRw3gKQl9v18VJMr1s6DxyDYS5YQlC1WONpa42rJpmfr
-	Pt+5tA/BYSklfux3TPJWcLaDWRUcrzvRmlG2fdPZ8ykCr67pwoDXeaE10hlclwZ0gewFgAkgZY0
-	KZpwpI40=
-X-Gm-Gg: ATEYQzzZBwVXd2/0PHJNzbSS53otMiuxhcOvTxN5NIFUuvx4G0U11cAUGPmctwNKYX6
-	mXEGwgeS5T5m/n/oIO2q8aHFJfB51+4Ija6PW2/lAbNL5iE0YNI1+xV4Zz98G/Peh7wUtAusxQG
-	fZ1pMXGShXIMosYn5QxvdY/t0b6T0WjtOQZ3CllCR9sGiquACY2ba+/vO33mdNyzOyZXBD3D9Tv
-	/MkXuTviXm8r2arUZQ1k+bjnaRemBL9K8MfUfHARLXof16Sb0mqHd3+fgSmWMZPlvgBAM4IrPjc
-	3owyGnGn98S0CDL5Ww7TEZNoWL7on3xEExUFhlODCj/VYtR4up6JrwQitJ5zIqTh3HPgx/JDtES
-	OyJcQCetwmF63b+nuQqF2xE4AY6ZFZRNH5rXE39YRw1kAi4Nf3Q1PirsXiFdrxevwMIzxvDhvPX
-	kCkyqlBHOGhpApTDJd6TOReCRi7G05ZgcYS68ERhLWubsQDmw2495ATnv13T9dP5KsNrlxsFmGX
-	LdpdwT8Z7SMQbuvAV5kIN6Qk1jJObc=
-X-Received: by 2002:a05:7022:1609:b0:123:331f:978f with SMTP id a92af1059eb24-1291721758amr564984c88.7.1773703402589;
-        Mon, 16 Mar 2026 16:23:22 -0700 (PDT)
-Received: from localhost.localdomain ([2804:1b3:a7c0:c4f1:ec8d:3c3c:583d:3ed])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-128f6384e7asm13492586c88.11.2026.03.16.16.23.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Mar 2026 16:23:22 -0700 (PDT)
-From: Hiago De Franco <hfranco@baylibre.com>
-To: yocto-patches@lists.yoctoproject.org
-Cc: Sasi Kumar Maddineni <quic_sasikuma@quicinc.com>,
-	Yi Zhao <yi.zhao@windriver.com>
-Subject: [meta-selinux][scarthgap][PATCH 2/2] refpolicy: Add support to configure policy store root
-Date: Mon, 16 Mar 2026 20:21:58 -0300
-Message-ID: <20260316232253.937832-3-hfranco@baylibre.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260316232253.937832-1-hfranco@baylibre.com>
-References: <20260316232253.937832-1-hfranco@baylibre.com>
+ dkim=pass header.i=@bootlin.com header.s=dkim header.b=b4XEqcb1;
+ spf=pass (domain: bootlin.com, ip: 185.171.202.116, mailfrom: antonin.godard@bootlin.com)
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 01076C55054
+	for <yocto-patches@lists.yoctoproject.org>; Tue, 17 Mar 2026 08:11:45 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id EE04B5FC9A
+	for <yocto-patches@lists.yoctoproject.org>; Tue, 17 Mar 2026 08:11:21 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A36A8104504E6;
+	Tue, 17 Mar 2026 09:11:19 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1773735081; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=neAIogLjm989O+fDe7kWAZG1qwcqrcZOvl7STV2RxvI=;
+	b=b4XEqcb1OAqQDkm0/TGYCdeUfEoO/ffwv1A2JevlQRH9UDlP1rr6ZrdM/5Rfl87B2Feotz
+	mvK/C4iTvw/1NOz22CgQ3+0GLTRuQocs4eLCkCCIn69Y4Edjw7TG32Wh9BVSM4YRg6e7cy
+	suJNg8msXbOUbUyxjnufXGNGYaMDr0edGz/i1bVAvAB5RRWEJEhoINlbTEj+uZA6aMD8cE
+	ssRqd/p2MsyAabWvA6tivv51Fgy94d+mVTUuAqRs4HYXrue2I1tmhwSbgX5I3d58CnHuch
+	B6lxAgq1vGwBvrS2CtpdtAsl36z7vZXuEnCV1ES3byBuQ/oKj4Vm7CAuQ6144w==
+From: Antonin Godard <antonin.godard@bootlin.com>
+Date: Tue, 17 Mar 2026 09:11:12 +0100
+Subject: [yocto-autobuilder-helper][PATCH v2] scripts/release-parser.py:
+ add bitbake version mappings to releases.json
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260317-release-parser-bitbake-mapping-v2-1-1368b57dbf40@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/4WOQQ6CMBBFr0K6dkwpoMaV9yAspmWEUaRNW4jGc
+ HcLxrXLt/jvv7cI5JmCOGdv4WnmwHZMoHaZMD2OHQG3iYWS6iALWYKngTAQOPRpCpqjxjvBA53
+ jsQONqI5VVaGRpUgS5+nKz+2gbr4cJn0jE1dr/bImWsApWj3x0CZhT4Mj36zbnkO0/rW1zflq+
+ GVU/zLmHHK4SlWQLLQuT+VFWxsHHvfGPkSzLMsHDZFfh/oAAAA=
+X-Change-ID: 20260304-release-parser-bitbake-mapping-baa27555ac04
+To: yocto-patches@lists.yoctoproject.org
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Antonin Godard <antonin.godard@bootlin.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4678;
+ i=antonin.godard@bootlin.com; h=from:subject:message-id;
+ bh=9hYtu1mcolK9l21T9aEyNzWgGHmfSPwfNCsPSdsGplg=;
+ b=owEBbQKS/ZANAwAKAdGAQUApo6g2AcsmYgBpuQynyj8Yu03llplcwug1EiUyEBRmbk3RpSi0K
+ TjdF66nkjqJAjMEAAEKAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCabkMpwAKCRDRgEFAKaOo
+ NorUEACjkrehD54iuR3+Of1Bqe88Kbav1Md+c+vSWRBpNTEpPzFHNNbPWCYeZjNHPrjJBr76w89
+ U81CSAQXGEfcZFP5E9UwvjOsM9SHSvHtR9ZcX6hJYCVledqgid2Dy50lCbbFY+rE9TNLDafmaOw
+ Mx1suE23rw0rK4etcBzZTYs272Ta89jtkZXVmjgPHwiY2ARkiQePL0sxFHFtNjI0CgVsMV6Reoi
+ 2naa83Bqkgq9Rw/zs/f7yZzcXb2nlvMFVwXZH1VV5feNV6XDc3Jmqi60TpS98rleFV2RIy4A9GY
+ G5MjDuP/MxLYPzm/MaDh9ZQ2TRE4kxOvtn53Elx/MVBQN2lcMQmk+nDGrlNifHa2z/BJkgEr5Gd
+ W9oICTNQ/p1AQMN/k87bvtaSTzIBIw7tKX40wd955+RUPd4EKDIPzUxPciMk3dzHJLd+f/OCfvx
+ Sl+cUSOpX+pNsVa488FHQwUorAH0bFghssoiXZ5b40G/8OFkDLm5scBJzY5M/n4y2NVJ/psZEdv
+ gkG/oTOLau94n4BfWOXqlRdXq6MbhM8mlpvssEx+5rqf1YlEbi64oAPntp5U1lxB1NDlSMSOK2O
+ 4ZiuhFbMkI9YdSR/tXHAMOXwxKJe1NsTGk626Fz8B79DjC7x0XEjp4I3JV6dTU2jKAq8WvljfFn
+ sOlS1kZNEaqUINw==
+X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
+ fpr=8648725188DD401BB9A0D3FFD180414029A3A836
+X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 16 Mar 2026 23:23:33 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3481
+ <yocto-patches@lists.yoctoproject.org>; Tue, 17 Mar 2026 08:11:28 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3482
 
-From: Sasi Kumar Maddineni <quic_sasikuma@quicinc.com>
+Instead of maintaining the bitbake <-> yocto version mappings in
+yocto-docs[1] and bitbake[2], let's maintain it here instead. This is
+part of a work-in-progress to use the generated releases.json file in
+these two repositories to generate the documentation.
 
-By default, policy modules(*.pp) are stored in /var directory.
-Features like: ostree remove files in folders like /var
-variable data directory while build time.
+[1]: https://git.yoctoproject.org/yocto-docs/tree/documentation/set_versions.py?id=d97cfeaa55ed42722998d3313c1857aa377f6881#n66
+[2]: https://git.openembedded.org/bitbake/tree/doc/setversions.py?id=1d0d4a0066603461eacb92a766fec616c1e91257#n25
 
-Added support for custom policy store. We can now configure
-path to custom policy store to variable `POLICY_STORE_ROOT`.
-
-Signed-off-by: Sasi Kumar Maddineni <quic_sasikuma@quicinc.com>
-Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
-(cherry picked from commit 8572e130415dfa9fb48aec6ae1758e10dab7b1e7)
-Signed-off-by: Hiago De Franco <hfranco@baylibre.com>
+Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
 ---
- .../refpolicy/refpolicy-minimum_git.bb        |  2 +-
- .../refpolicy/refpolicy_common.inc            |  9 ++++++---
- recipes-security/selinux/libsemanage_3.7.bb   | 20 ++++++++++++++++---
- 3 files changed, 24 insertions(+), 7 deletions(-)
+Tested on this build:
+https://autobuilder.yoctoproject.org/valkyrie/#/builders/104/builds/49344
 
-diff --git a/recipes-security/refpolicy/refpolicy-minimum_git.bb b/recipes-security/refpolicy/refpolicy-minimum_git.bb
-index 562ccac..b224b46 100644
---- a/recipes-security/refpolicy/refpolicy-minimum_git.bb
-+++ b/recipes-security/refpolicy/refpolicy-minimum_git.bb
-@@ -65,7 +65,7 @@ prepare_policy_store() {
-     oe_runmake 'DESTDIR=${D}' 'prefix=${D}${prefix}' install
-     POL_PRIORITY=100
-     POL_SRC=${D}${datadir}/selinux/${POLICY_NAME}
--    POL_STORE=${D}${localstatedir}/lib/selinux/${POLICY_NAME}
-+    POL_STORE=${D}${POLICY_STORE_ROOT}/${POLICY_NAME}
-     POL_ACTIVE_MODS=${POL_STORE}/active/modules/${POL_PRIORITY}
+Output: https://0x0.st/P9zd.json
+---
+Changes in v2:
+- Rebased on master
+- Link to v1: https://patch.msgid.link/20260305-release-parser-bitbake-mapping-v1-1-f023e03bb484@bootlin.com
+---
+ scripts/release-parser.py   | 39 ++++++++++++++++++++++++++++++++++++++-
+ scripts/run-dashboard-index |  2 +-
+ 2 files changed, 39 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/release-parser.py b/scripts/release-parser.py
+index 4bac558..a38824f 100755
+--- a/scripts/release-parser.py
++++ b/scripts/release-parser.py
+@@ -7,7 +7,10 @@ import sys
  
-     # Prepare to create policy store
-diff --git a/recipes-security/refpolicy/refpolicy_common.inc b/recipes-security/refpolicy/refpolicy_common.inc
-index 9d4f68a..b1d2701 100644
---- a/recipes-security/refpolicy/refpolicy_common.inc
-+++ b/recipes-security/refpolicy/refpolicy_common.inc
-@@ -98,10 +98,12 @@ SRC_URI += " \
- S = "${WORKDIR}/refpolicy"
+ from git import Repo
  
- CONFFILES:${PN} = "${sysconfdir}/selinux/config"
++# this is the repository where we fetch most of our tag data
+ GIT_REPO = sys.argv[1]
++# the bitbake repository is used to associate bitbake versions to them
++BITBAKE_REPO = sys.argv[2]
+ 
+ print(f"Reading tag information in {GIT_REPO}")
+ 
+@@ -20,10 +23,40 @@ SUPPORTED_RELEASES = {
+ CURRENT_ACTIVE_DEV_CODENAME = "Wrynose"
+ CURRENT_ACTIVE_DEV_VERSION = "6.0"
+ CURRENT_ACTIVE_DEV_MAINTAINER = "Richard Purdie <richard.purdie@linuxfoundation.org>"
++CURRENT_ACTIVE_DEV_BITBAKE_MAPPING = "2.18"
+ CURRENT_STABLE_BRANCH = "5.3"
+ CURRENT_STABLE_MAINTAINER = "Yoann Congal <yoann.congal@smile.fr>"
+ 
+ repo = Repo(GIT_REPO)
++bitbake_repo = Repo(BITBAKE_REPO)
 +
-+POLICY_STORE_ROOT ?= "${localstatedir}/lib/selinux"
- FILES:${PN} += " \
-     ${sysconfdir}/selinux/${POLICY_NAME}/ \
-     ${datadir}/selinux/${POLICY_NAME}/*.pp \
--    ${localstatedir}/lib/selinux/${POLICY_NAME}/ \
-+    ${POLICY_STORE_ROOT}/${POLICY_NAME}/ \
-     "
- FILES:${PN}-dev =+ " \
-     ${datadir}/selinux/${POLICY_NAME}/include/ \
-@@ -184,7 +186,7 @@ prepare_policy_store() {
-     oe_runmake 'DESTDIR=${D}' 'prefix=${D}${prefix}' install
-     POL_PRIORITY=100
-     POL_SRC=${D}${datadir}/selinux/${POLICY_NAME}
--    POL_STORE=${D}${localstatedir}/lib/selinux/${POLICY_NAME}
-+    POL_STORE=${D}${POLICY_STORE_ROOT}/${POLICY_NAME}
-     POL_ACTIVE_MODS=${POL_STORE}/active/modules/${POL_PRIORITY}
- 
-     # Prepare to create policy store
-@@ -225,13 +227,14 @@ args = \$@
- [end]
- 
- policy-version = 33
-+store-root = "${POLICY_STORE_ROOT}"
- EOF
- 
-     # Create policy store and build the policy
-     semodule -p ${D} -s ${POLICY_NAME} -n -B
-     rm -f ${D}${sysconfdir}/selinux/semanage.conf
-     # No need to leave final dir created by semanage laying around
--    rm -rf ${D}${localstatedir}/lib/selinux/final
-+    rm -rf ${D}${POLICY_STORE_ROOT}/final
- }
- 
- install_misc_files() {
-diff --git a/recipes-security/selinux/libsemanage_3.7.bb b/recipes-security/selinux/libsemanage_3.7.bb
-index 93eb870..67af26f 100644
---- a/recipes-security/selinux/libsemanage_3.7.bb
-+++ b/recipes-security/selinux/libsemanage_3.7.bb
-@@ -34,6 +34,8 @@ FILES:${PN}-python = "${PYTHON_SITEPACKAGES_DIR}/* \
- FILES:${PN}-dbg += "${PYTHON_SITEPACKAGES_DIR}/.debug/*"
- FILES:${PN} += "${libexecdir}"
- 
-+POLICY_STORE_ROOT ?= "${localstatedir}/lib/selinux"
++def get_bitbake_mapping(yocto_tag: str) -> str:
++    """
++    Get the bitbake mapping for a yocto project tag ("yocto-X.Y").
++    If the tag does not exist in bitbake, return an empty string.
++    For any tag lower than yocto-3.1 there were no bitbake mappings, return an empty string.
++    """
++    if yocto_tag not in bitbake_repo.tags:
++        return ""
 +
- do_compile:append() {
-     oe_runmake pywrap \
-         PYLIBVER='python${PYTHON_BASEVERSION}' \
-@@ -48,9 +50,21 @@ do_install:append() {
-         PYLIBVER='python${PYTHON_BASEVERSION}' \
-         PYTHONLIBDIR='${PYTHON_SITEPACKAGES_DIR}'
++    semver_tag = yocto_tag.replace("yocto-", "")
++    try:
++        semver_tag = semver.VersionInfo.parse(semver_tag)
++    except ValueError:
++        semver_tag = semver.VersionInfo.parse(semver_tag + ".0")
++
++    if semver_tag < semver.VersionInfo(major=3, minor=1, patch=0):
++        return ""
++
++    branches = bitbake_repo.git.branch(
++        "--remotes",
++        "--sort=version:refname",
++        "--contains", yocto_tag,
++        "origin/*.*").splitlines()
++    if not branches:
++        return ""
++
++    return branches[0].strip().replace("origin/", "")
  
--    # Update "policy-version" for semanage.conf
--    sed -i 's/^#\s*\(policy-version\s*=\).*$/\1 33/' \
--        ${D}/etc/selinux/semanage.conf
-+    conf_file="${D}/etc/selinux/semanage.conf"
-+
-+    if [ -f "${conf_file}" ]; then
-+        # Update "policy-version" for semanage.conf
-+        sed -i 's/^#\s*\(policy-version\s*=\).*$/\1 33/' \
-+            ${D}/etc/selinux/semanage.conf
-+
-+        # Update "store-root" for semanage.conf
-+        if grep -q '^store-root=' "${conf_file}"; then
-+            sed -i "s|^store-root=.*$|store-root=${POLICY_STORE_ROOT}|" "${conf_file}"
-+        else
-+            printf 'store-root=%s\n' "${POLICY_STORE_ROOT}" >> "${conf_file}"
-+        fi
-+    fi
-+
- }
+ def get_git_tags():
+     tagmap = {}
+@@ -92,6 +125,8 @@ def get_git_tags():
+         status = SUPPORTED_RELEASES.get(branch, "EOL")
+         maintainer = CURRENT_STABLE_MAINTAINER if branch in SUPPORTED_RELEASES else "N/A"
  
- BBCLASSEXTEND = "native"
--- 
-2.47.3
++        bitbake_mapping = get_bitbake_mapping(tags[0].name)
++
+         # Create a dictionary for the series entry
+         tag_dict = {
+             "series_version": re.sub(r"[^\d\.]", "", tags[0].name),
+@@ -103,7 +138,8 @@ def get_git_tags():
+             "status": status,
+             "download": download,
+             "release_notes": release_notes,
+-            "maintainer": maintainer
++            "maintainer": maintainer,
++            "bitbake_version": bitbake_mapping,
+         }
+         tag_list.append(tag_dict)
+ 
+@@ -124,6 +160,7 @@ tags.append(
+         "status": "Active Development",
+         "download": "",
+         "maintainer": CURRENT_ACTIVE_DEV_MAINTAINER,
++        "bitbake_version": CURRENT_ACTIVE_DEV_BITBAKE_MAPPING,
+     }
+ )
+ 
+diff --git a/scripts/run-dashboard-index b/scripts/run-dashboard-index
+index c3fb8fa..c7beca3 100755
+--- a/scripts/run-dashboard-index
++++ b/scripts/run-dashboard-index
+@@ -16,7 +16,7 @@ scriptdir="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+ dest=${DEST:-docs@docs.yoctoproject.org:dashboard/}
+ 
+ cd $builddir
+-$scriptdir/release-parser.py $builddir/yocto-docs
++$scriptdir/release-parser.py $builddir/yocto-docs $builddir/repos/bitbake
+ $scriptdir/layer-parser.py
+ curl --silent --output $scriptdir/dashboard/testresults.json https://git.yoctoproject.org/yocto-testresults/plain/oeselftest/reproducible/qemux86-64/testresults.json
+ 
+
+---
+base-commit: 1e27bfd901292297c8471e287d62226f4555a2e1
+change-id: 20260304-release-parser-bitbake-mapping-baa27555ac04
 
 
