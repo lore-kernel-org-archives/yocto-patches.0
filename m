@@ -1,95 +1,112 @@
-Return-Path: <antonin.godard@bootlin.com>
+Return-Path: <richard.purdie@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B656FD8763
-	for <webhook@archiver.kernel.org>; Tue, 17 Mar 2026 12:35:09 +0000 (UTC)
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.74878.1773750904375113697
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCBA6FD876E
+	for <webhook@archiver.kernel.org>; Tue, 17 Mar 2026 13:40:09 +0000 (UTC)
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.76196.1773754803816040609
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 17 Mar 2026 05:35:04 -0700
+ Tue, 17 Mar 2026 06:40:04 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=dkim header.b=ewnFr20z;
- spf=pass (domain: bootlin.com, ip: 185.246.84.56, mailfrom: antonin.godard@bootlin.com)
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id D939E1A2E0A
-	for <yocto-patches@lists.yoctoproject.org>; Tue, 17 Mar 2026 12:35:02 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id ADF895FC9A
-	for <yocto-patches@lists.yoctoproject.org>; Tue, 17 Mar 2026 12:35:02 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2412B104504BD;
-	Tue, 17 Mar 2026 13:35:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1773750902; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=IlkeDJAxot3SDdiwxW6khtKOOcvi0so1bs6u4bzQLGU=;
-	b=ewnFr20zy6kFkd7mt/OknLIkjTUDFUNm0Ao5AXAgPiQDpGO/G24UsQPoDYFSnNMFVGBhkK
-	J0cnQuAeUwbXVWleuInQGP6B5glaxPIs7SwRw3Gpmu+zEEyvGhHqapCvk+jNjsMCFbTWJ1
-	OjeumEJQWHbqf+1x+a1sQk0a8rwBOJu4fo+4SP88qf6GwRh3wTIMDcMR8R6lERNMCuN39M
-	m7Zk5NCqwP7dvoKUVaNsKPlHEIc5UFuMmW4SkeyTjrZ5y2UzmWUcyd5Jf/V3qf9M/28KPR
-	E1Bl+/H9QlSlXq3eE5568PAJ8OHignKVNujt2HNhVNN+svccsX7erIBJXOA7jA==
-From: Antonin Godard <antonin.godard@bootlin.com>
-Date: Tue, 17 Mar 2026 13:34:54 +0100
-Subject: [yocto-autobuilder-helper][PATCH 2/3] scripts/run-docs-build: do
- not checkout releases.rst from master for bitbake
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260317-fix-releases-json-generation-v1-2-f57f3267c88a@bootlin.com>
-References: <20260317-fix-releases-json-generation-v1-0-f57f3267c88a@bootlin.com>
-In-Reply-To: <20260317-fix-releases-json-generation-v1-0-f57f3267c88a@bootlin.com>
+ dkim=pass header.i=@linuxfoundation.org header.s=google header.b=DHhhPlTP;
+ spf=pass (domain: linuxfoundation.org, ip: 209.85.128.47, mailfrom: richard.purdie@linuxfoundation.org)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4852c9b4158so51145235e9.0
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 17 Mar 2026 06:40:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1773754802; x=1774359602; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=753ZXByJLL9rOwhNqQN/BJRbrkIrYLdXfuXJQci2B+0=;
+        b=DHhhPlTPvz+yi8qQfcBpWRZbET30vXi8yW3rj7hvOR5ANS8eMG541QbCp03Pbcj8IL
+         Vc/gnQ3DUYr9fatxO2DkfzqUrWHeuZ6nnWP9jVrcVDJU5OszrJeujqgZo00boQn9MLSg
+         I9WA79blsBG3Ws8Ic/EQcX+178LDpVAZAVRhk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1773754802; x=1774359602;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=753ZXByJLL9rOwhNqQN/BJRbrkIrYLdXfuXJQci2B+0=;
+        b=j32AWrPA7CaJJ28FxTgIQKvx2t84x4/BlPZY/nxedTmM+bgBETbP4QlktHMXiz7d4u
+         Y3aq89mA70REncUnQN/t5tlCJM7LfbUjfVVcM+LMPvVDlQzLZ2iKlqhzDBi4mD14sZN4
+         oqCBJ5RGjJYLYy2pzuUpcsO4xRMsz3NZ4ZGix7DMZV7GSAdPxsntnmbO0cIkYwx3rzm9
+         IJWWvyu6sqF03PYcDrTugVbwvbXegjadI1dYHXJbiFoScT8ErCvGq6TMVAvSjepCcabW
+         c7Gpgg+XzNRbPs6ixrPa1tktB9xyNfWRaYZWuYoMWx8N719LV7kr54R7AqdGItAQp4uF
+         vapg==
+X-Gm-Message-State: AOJu0YwjiL9mwmFiQymRmJx2bw4t1ItYiTXwBodu3EGsP6xTqcsw5t1h
+	2uR0ELh9EXcnDXc+maIE1ZW48jPAyRsb04Ue2LKa9nxujJRgEmh2USa8D62k7AoUbg3P96Wur3t
+	Ipih80XI=
+X-Gm-Gg: ATEYQzxDpJCXvWoddYyvOogSusw3xf2XvaQMeUUTMCMCWqOgc+uDA5gicHdGYWFqBJ2
+	CIrsdtnILTE+14BBScSiyuih7J2rc8x5wiPB9hZPXFHsN8hTD0FmL5ffxBr3NeGYfuKj97CXIZX
+	4z6TAQyxdpa4W8T7O0LrRXsOw7ZjX/ArR1pvb2+lC5MR5JCmsW8257eZkYymm0BVey0a27mLoUy
+	+Kc3W5Lc/Rg0Jam7b8U+bhzjbD7qsP/YTc8Je40LiyAyagKxtEM2KJ7p8pfWOUj1FFFHfGtoXdF
+	+0mIQAq6SGQvm2yLtEzAK5R3FaV9fES2RQpWdkAZIeDWYqz5Wl226XWTJ40EE9Ocj4oTiVYGuve
+	IxmcD9z8B6znCK1cT7R4H3X+XarnycORTLLfp2kfnjlZ7zfbdVa+2KuL0CIFv7trwQSqUoSEsgr
+	Ngc8xs0N5YWzWzu1Ln7/cDzOP5p7LuD4zSRxkI2yHh8rPepmXLPw==
+X-Received: by 2002:a05:600c:4753:b0:485:531d:28b9 with SMTP id 5b1f17b1804b1-485566d709dmr284845735e9.14.1773754801734;
+        Tue, 17 Mar 2026 06:40:01 -0700 (PDT)
+Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:4129:32d:cefa:7330])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4856ea96cefsm66232495e9.4.2026.03.17.06.40.00
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Mar 2026 06:40:01 -0700 (PDT)
+From: Richard Purdie <richard.purdie@linuxfoundation.org>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Antonin Godard <antonin.godard@bootlin.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=901;
- i=antonin.godard@bootlin.com; h=from:subject:message-id;
- bh=8Jr96pHS/4WckbG6fTzhMVNeoC8zMxtkyFSfjOwljMM=;
- b=owEBbQKS/ZANAwAKAdGAQUApo6g2AcsmYgBpuUpznsdKmBWw9uQ6mL6/s1TNHwkqFwqOyCEBD
- nIve0g2o4+JAjMEAAEKAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCablKcwAKCRDRgEFAKaOo
- NhY7EACkPI+c3cntbyRzlXURLlx2NQ2lQQPeI4MBI/E80Dhn7Hwh2ZqEEgedt5jD/XMbzGDw0xe
- DnwviSZhvWNkFIZbW1vYkUQZe52//I5twX9DyMkmEZ7JXa64td779QMgGSXqMqzq/lYDgUd2HyY
- GCgTJ5DUqAK526RKZC3gP59QJkVzwg4v86JpiYDurGEmlMz7+wTbcqvsrkWyXUMUmSgfo86ufAL
- arNOG985C0UzD98xtRZosHkfof5/t1vbiX4B00kyJr4ZoT2vaXN1W38FvG4vuMceZchwihqFJ8R
- 3zGnemgSYwvXUNVc9QeGAcZa9iOBKQ5F5JnlxFWLVevVuf2uor0dr+x/MuytgUFacTagySh8pFx
- 0BAhH9SAciHWJ9gyPFxpWBhLyoVOQyMthsF3MwsP6hvqQzMUK6V8m4RgXpdXgraGRmL6KpK/0oH
- ngRvEn21lA1uABaD+OWikxojvjCNwCc5SvbR1xSdrblJVRWQXhmLV7X1kJic0R8Y5Q6DIlP2Ztl
- ay+IZ2hDqgI0K+w8tocQaXvhTds3UtbgZKHtHKuQ8saIekc7nMPQku1eAmd0ZBxwUD2rDkh/CI6
- KtEE62RO5kPYPemNkD1q5V/YT5rwRMRWD86qWFy7cDmkFsquXMYL0ol+bONxdbPCYQz15B9ZkgO
- /AJlSl662PtZP+w==
-X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
- fpr=8648725188DD401BB9A0D3FFD180414029A3A836
-X-Last-TLS-Session-Version: TLSv1.3
+Subject: [yocto-autobuilder2] [PATCH] config: Add musl-ptest for qemuarm64 and qemux86-64
+Date: Tue, 17 Mar 2026 13:40:00 +0000
+Message-ID: <20260317134000.975734-1-richard.purdie@linuxfoundation.org>
+X-Mailer: git-send-email 2.48.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 17 Mar 2026 12:35:09 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3486
+ <yocto-patches@lists.yoctoproject.org>; Tue, 17 Mar 2026 13:40:09 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3488
 
-This file is now auto-generated with setversions.py after [1].
+A lot of work was done to get ptests running properly on musl. As a result, enable
+ptests on qemuarm64 and qemux86-64 with musl. The policy is any intermittent ptests
+get disabled as we can't afford to stack up new intermittent ptest failures.
 
-[1]: https://git.openembedded.org/bitbake/commit/?id=02cebba47b3d2b415c4aa8098a6af53da448f71e
-
-Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
 ---
- scripts/run-docs-build | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ config.py | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/scripts/run-docs-build b/scripts/run-docs-build
-index ed32412..a58abe1 100755
---- a/scripts/run-docs-build
-+++ b/scripts/run-docs-build
-@@ -128,7 +128,7 @@ for branch in 1.46 $(git branch --remote --contains "$first_sphinx_commit" --for
-         git am -3 "${scriptdir}/docs-build-patches/bitbake/${branch}/"000*
-     fi
+diff --git a/config.py b/config.py
+index 2a8ee082..86a6f5e0 100644
+--- a/config.py
++++ b/config.py
+@@ -86,6 +86,7 @@ trigger_builders_wait_shared = [
+     "build-appliance", "buildtools",
+     "wic", "poky-tiny", "no-x11",
+     "musl-qemuarm64", "musl-qemux86", "musl-qemux86-64",
++    "qemux86-64-musl-ptest", "qemuarm64-musl-ptest",
+     "qa-extras", "qa-extras2",
+     "check-layer",
+     "reproducible",
+@@ -118,11 +119,12 @@ trigger_builders_wait_quick_releases = {
+ }
  
--    git checkout origin/master releases.rst sphinx-static/switchers.js.in setversions.py
-+    git checkout origin/master sphinx-static/switchers.js.in setversions.py
+ old_arch_full = ["qemumips", "qemumips-alt", "qemumips64", "qemuppc", "qemuppc-alt", "qemumips-tc", "qemumips64-tc", "qemuppc-tc", "meta-mingw"]
+-trigger_builders_wait_full_noriscv = [x for x in trigger_builders_wait_full if 'riscv' not in x]
++trigger_builders_wait_full_noriscv = [x for x in trigger_builders_wait_full if 'riscv' not in x and "musl-ptest" not in x]
++trigger_builders_wait_full_nomuslptest = [x for x in trigger_builders_wait_full if "musl-ptest" not in x]
  
-     (
-         . $builddir/buildtools/environment-setup*
-
--- 
-2.53.0
-
+ trigger_builders_wait_full_releases = {
+     "master" : trigger_builders_wait_full,
+-    "whinlatter" : trigger_builders_wait_full + ["meta-mingw"],
++    "whinlatter" : trigger_builders_wait_full_nomuslptest + ["meta-mingw"],
+     "walnascar" : trigger_builders_wait_full_noriscv + ["meta-mingw"],
+     "styhead" : trigger_builders_wait_full_noriscv + old_arch_full,
+     "scarthgap" : trigger_builders_wait_full_noriscv + old_arch_full,
+@@ -142,7 +144,7 @@ builders_others = [
+     "qemuriscv32", "qemuriscv32-tc",
+     "qemuppc64", "qemuppc64-tc",
+     "qemux86-ptest", "qemux86-ptest-fast",
+-    "qemux86-musl-ptest", "qemux86-64-musl-ptest", "qemuarm64-musl-ptest",
++    "qemux86-musl-ptest",
+     "musl-qemuarm64",
+     "buildperf-debian11",
+     "buildperf-alma8",
 
