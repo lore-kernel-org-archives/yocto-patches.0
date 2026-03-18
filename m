@@ -1,97 +1,83 @@
-Return-Path: <antonin.godard@bootlin.com>
+Return-Path: <richard.purdie@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D632103D925
-	for <webhook@archiver.kernel.org>; Wed, 18 Mar 2026 09:58:13 +0000 (UTC)
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.10549.1773827889824380805
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98327103D926
+	for <webhook@archiver.kernel.org>; Wed, 18 Mar 2026 10:01:03 +0000 (UTC)
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.10546.1773828062167341710
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 18 Mar 2026 02:58:10 -0700
+ Wed, 18 Mar 2026 03:01:02 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=dkim header.b=ioUoiQ90;
- spf=pass (domain: bootlin.com, ip: 185.246.84.56, mailfrom: antonin.godard@bootlin.com)
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 975331A2EA5
-	for <yocto-patches@lists.yoctoproject.org>; Wed, 18 Mar 2026 09:58:07 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 6E1DD6004F
-	for <yocto-patches@lists.yoctoproject.org>; Wed, 18 Mar 2026 09:58:07 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2466C10450766;
-	Wed, 18 Mar 2026 10:58:06 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1773827887; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=NiJV1I1oQRxbgzYC3ZBiNBH/t8xdp2CjJyumYeq6ofI=;
-	b=ioUoiQ900dLdNSqydgd5pKSEnDMtIAPwrjvCoibd2asDNmoxVwFHHJvBMvrOhzn6HvWWcU
-	zt83LTU0gjducuUuPV/Pd4Ttrg5GWjhQ2gCbq81ZkYwLlhL2seW+G3ZGsyT4250A1uEStJ
-	yvj0jC9hU0mEDxy6dB2gfgn4XfjoZPAv9ZW6sQUc5kW54o1qpvR7EDRQ9h4rmsQy8+K45g
-	ZsNsEUwmx6A51ht8m2zCqIz4l1a7zjWgLKjozlWaFrdutb5/OUF13EIwmqjTaS9RdfJf7P
-	nwySYNMhK8ARCND+bxJlhHxzBfa2FjFUqIWBKnOnuOpq+k3aim/K8h96Ygdbhg==
-From: Antonin Godard <antonin.godard@bootlin.com>
-Date: Wed, 18 Mar 2026 10:57:52 +0100
-Subject: [yocto-autobuilder-helper][PATCH] scripts/run-docs-build: update
- buildtools tarball to 6.0_M2
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260318-update-buildtools-tarball-docs-v1-1-c25b8626c445@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXNTQ6CMBBA4auQWTsJYFLQqxAW/RmkpmGaTms0h
- Ltbcfk239tBKHkSuDc7JHp58bzV6C4N2FVvD0LvakPf9qq9diOW6HQmNMUHl5mDYNbJ6BDQsRU
- c1TDYXi3aqhtUJCZa/PscTPO/pZgn2fxTpw/bzKhL5hOkhCuFSGmG4/gCEjPdR5wAAAA=
-X-Change-ID: 20260318-update-buildtools-tarball-docs-8677c26fac69
+ dkim=pass header.i=@linuxfoundation.org header.s=google header.b=GLeJzanW;
+ spf=pass (domain: linuxfoundation.org, ip: 209.85.128.47, mailfrom: richard.purdie@linuxfoundation.org)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4852fdb36a8so77813795e9.2
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 18 Mar 2026 03:01:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1773828060; x=1774432860; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bReCzuKEZ+Z6bOtHjqfIDuU8cA52wh9mwA3zqX5CJA0=;
+        b=GLeJzanW9jCrS2f9jcWPRmzQBhJMYUxw0KRM1KtodEmowP4JK3N4KhfbsAl1Ped7cI
+         fJwhlp/f2CDFxSod/D60/Nl/gSknYF6IcgLGgZU3SQXxLx2PElmdX2va4pRQNKcAoCUz
+         9CYfHrm5xub3hMTaAlE9Cst3tv+mU0fK6sGeE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1773828060; x=1774432860;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bReCzuKEZ+Z6bOtHjqfIDuU8cA52wh9mwA3zqX5CJA0=;
+        b=KEA6MAg9a11S2fwIGObkOIdHw8P1wS2c//b2g4dLebTdJ53FPzGi3g8Kg64sE91yGg
+         iJqqLTes2L2zin8pOit0Szd5d8r+TotCStbHiuMVVT3VqnD4ls+27ToY0KHVCyFHP6+C
+         JO8/EiN5a4uIbNWYfYitcE0vy/oN08ajskVFYYtXW8Cu61StalGlyz2QinKHBwuArooO
+         Badwh7FV46cfXyVcNH6NyOfP/LAlfiNf7GPpu144rn0JhLg97aUo1eMPgvtjxWTcgh5o
+         aaiojk0+VU9rrkWv/whruQkDAgnaOC/JbA5ozzMEK1yJN2aHV9L1DdxRCR7subgyOfNF
+         bjNQ==
+X-Gm-Message-State: AOJu0Yxy2Fiqwyt8MVYn/FWT7N2t3QztSEjP+Vk9PEunjh04BNZlrQne
+	ZNoW+NwN4vJLFBXbQvNRcpAu8sh0BUQLOHeKa61l6UabDpSDTCxe45wrxRuC0kUYKauOhswsK/Z
+	V9Ya0h8o=
+X-Gm-Gg: ATEYQzwkcJxEmKiOVJ7FAs0KxyZ5sELN9Op2x0SqvFo8BBdYMnD1i9EOHrzRyVNQQGd
+	LlIaAEvFqY00L7Z+1GiIvpmBmRGBNxgdJCMwSbcN44RPl/+LWCbZm21l/3qkE/oyE8tasexF2/2
+	3SRFZwvf7ap1ejyHcJcKBYgtiqq5nz5IqBg5Ulq81/WKVFdfgtkz5ouwGWP2oHHQ82r9lStL8Xh
+	jw8ehkthdhTrVnpZCySStsxYFycTmtWDmqnfS+JMyqxu/Zv2ajzqHIk8NoQT5b0bDL+yBhBfb6F
+	X/ABnN6AHOcwTJnh//SGZ4oEWc6k0nGXC6+EPuMKBhdlonM73f+iqMqxhljMIKsUMF3EppGMTXc
+	stbMmZ5Uw9vIrE6d84z4xUm2X03cwFBBQOUSjpNFadHcYQiWbGmdlQyJaBax8i9u35dtu3n+b48
+	n1wmJa3pTW666z61QrHy1OG+XZTcQRJXCMSul6a5CIc6WkWvZgUXjRT7KzD8qy4Q==
+X-Received: by 2002:a05:600c:3551:b0:485:3e00:9440 with SMTP id 5b1f17b1804b1-486f4474b56mr45883355e9.24.1773828059836;
+        Wed, 18 Mar 2026 03:00:59 -0700 (PDT)
+Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:ccd1:68ee:ff8c:5895])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-486f442d5d0sm49832775e9.9.2026.03.18.03.00.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Mar 2026 03:00:59 -0700 (PDT)
+From: Richard Purdie <richard.purdie@linuxfoundation.org>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Antonin Godard <antonin.godard@bootlin.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1606;
- i=antonin.godard@bootlin.com; h=from:subject:message-id;
- bh=14d1Z2UU7bYhXkl9TuX0eR5cN3aIVNLYkbaV2RZMoOk=;
- b=owEBbQKS/ZANAwAKAdGAQUApo6g2AcsmYgBpunctNpCT6B/jMnxSFiZNaUO+94lPJoTF34LFc
- 3WO+GpGsn2JAjMEAAEKAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCabp3LQAKCRDRgEFAKaOo
- No+gD/9sJYnYT1+NVbUAWn3Ye30GHZ5CNppx7EGtLlZO6hffYtfh+67oF4/J7QdsjwKMFsjVfyD
- 7REg/CsAjJ658nOAPavYpflDX/JoQhCIhIM7TLVKlxVRCMxSyeSmh1SiEVIahXcoHEWNDFFLsUn
- kQhmMkUKkYvJuwQNk+9352Uw9PpTu9YjBxOT2SBDSvjisLP6OX2BnhdU8WCZ0aT58mZxqPOLvHg
- 9KjSdwtqNeoERKt1xCEVw3g5TnDI/iMvWoLzJ27+2fLWDmLduyAP9aNsSvyM32qFU85+qdrg1u5
- klrCrdqAXG+KZQsr5CbYE2lFHK3w3U5sJvAWGHmKg6J429weHXfatp5Qdhe484BWRF4+0op+ytP
- uIkOnAAza7uzFGjagcIus/7iQqm0d2QA98i/OfVEDt55j6QQS1UFyxo35uOirNp9BdSIIEotmpF
- hG4K6S0jrF1Gl8B7UsRVhsvEXVNqFzHpZDmIccUQZeDc6l96pjuaatim3LqeqeauIINZTzQKnJU
- WRMHlFfyVcxieAcZvDqdXwWs8djwls3iXCZ7dzXYvH+0I0dEfa8iayyGhmUIFXyQXc4myJ2T6FP
- wJuxOHGUNkf/UYzIDrWbn2xPvkVFYKe1QN+pzbmUt2fPsZIfTqia1PniB+JtxNEwJORUTkqOtRY
- IJKX6d95P/fcjqw==
-X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
- fpr=8648725188DD401BB9A0D3FFD180414029A3A836
-X-Last-TLS-Session-Version: TLSv1.3
+Cc: jpewhacker@gmail.com
+Subject: [meta-mingw] [PATCH] lasyer.conf: Update whinlatter -> wrynose
+Date: Wed, 18 Mar 2026 10:00:58 +0000
+Message-ID: <20260318100058.1105184-1-richard.purdie@linuxfoundation.org>
+X-Mailer: git-send-email 2.48.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 18 Mar 2026 09:58:13 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3508
+ <yocto-patches@lists.yoctoproject.org>; Wed, 18 Mar 2026 10:01:03 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3509
 
-This will fix broken links with the singlehtml document[1].
-
-[1]: https://git.openembedded.org/openembedded-core/commit/?id=1fdcc2fae5a8748fd0eef7d1c60fd844b9ad07da
-
-Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
 ---
- scripts/run-docs-build | 2 +-
+ conf/layer.conf | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/scripts/run-docs-build b/scripts/run-docs-build
-index cc902c6..3271328 100755
---- a/scripts/run-docs-build
-+++ b/scripts/run-docs-build
-@@ -26,7 +26,7 @@ scriptdir="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
- PUBLISH=${PUBLISH:-1}
- sharedir=`jq -r '.["BASE_SHAREDDIR"]' < $HOME/config-local.json`
- # Modified 5.1 tools image to include rsvg, switch to next released version
--buildtools_url=${buildtools_url:-https://downloads.yoctoproject.org/releases/yocto/milestones/yocto-6.0_M1/buildtools/x86_64-buildtools-docs-nativesdk-standalone-5.3.99%2Bsnapshot-6c31c2a731858108e790acaf38679a01b0d1a035.sh}
-+buildtools_url=${buildtools_url:-https://downloads.yoctoproject.org/releases/yocto/milestones/yocto-6.0_M2/buildtools/x86_64-buildtools-docs-nativesdk-standalone-5.3.99%2Bsnapshot-be8cdcf13a658e9e81ff2f7b71d1c8c37a920ce7.sh}
- buildtools_url_old=${buildtools_url_old:-https://downloads.yoctoproject.org/releases/yocto/yocto-4.1.2/buildtools/x86_64-buildtools-docs-nativesdk-standalone-4.1.2.sh}
- docbookarchive_url=${docbookarchive_url:-https://downloads.yoctoproject.org/mirror/docbook-mirror/docbook-archives-20201105.tar.xz}
+diff --git a/conf/layer.conf b/conf/layer.conf
+index 4110f08..0dddb81 100644
+--- a/conf/layer.conf
++++ b/conf/layer.conf
+@@ -16,5 +16,5 @@ addpylib ${LAYERDIR}/lib oeqa
  
-
----
-base-commit: 4f720a0d94c1281018e60b6b19102cdba98d9bea
-change-id: 20260318-update-buildtools-tarball-docs-8677c26fac69
-
+ LAYERDEPENDS_meta-mingw = "core"
+ 
+-LAYERSERIES_COMPAT_meta-mingw = "whinlatter"
++LAYERSERIES_COMPAT_meta-mingw = "wrynose"
+ 
 
