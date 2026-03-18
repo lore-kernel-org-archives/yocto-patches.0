@@ -1,397 +1,302 @@
-Return-Path: <ukleinek@baylibre.com>
+Return-Path: <peter.marko@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5C2C103E18F
-	for <webhook@archiver.kernel.org>; Wed, 18 Mar 2026 14:22:50 +0000 (UTC)
-Received: from mail-wm1-f68.google.com (mail-wm1-f68.google.com [209.85.128.68])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.15267.1773843768305923617
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6E2810775ED
+	for <webhook@archiver.kernel.org>; Wed, 18 Mar 2026 17:20:47 +0000 (UTC)
+Received: from AM0PR83CU005.outbound.protection.outlook.com (AM0PR83CU005.outbound.protection.outlook.com [52.101.69.32])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.19897.1773854439466452360
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 18 Mar 2026 07:22:49 -0700
+ Wed, 18 Mar 2026 10:20:40 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@baylibre-com.20230601.gappssmtp.com header.s=20230601 header.b=D5E8JlzE;
- spf=pass (domain: baylibre.com, ip: 209.85.128.68, mailfrom: ukleinek@baylibre.com)
-Received: by mail-wm1-f68.google.com with SMTP id 5b1f17b1804b1-48628ce9ab5so27212415e9.2
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 18 Mar 2026 07:22:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1773843766; x=1774448566; darn=lists.yoctoproject.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hEfnA2ba+zXEwbThRXQFkoKIIFVYelwRrvLPWLQWFxg=;
-        b=D5E8JlzEK+hFOP+0fsftMYCCqCr7XOWFhPH9bzxJlRY3JuR2arEnYQPV55WFputKKq
-         zcP9XSfobsfe6JgR5QXHpebsVqX7gkFsH1tdbfOxOfelQm3CqvHH7qFmjlgAv+Q7+vEP
-         G2mrG7yrbmrK35EujVtEpuizs5mgJBg3TusUnLNZ/cz+7YQ68Y7LcpdYFvwPfr6ba/h+
-         qxPCTOhbMHh7nCBvqubek1GC+b7Etwa2gCPUqhYMTBKxqlpvEetFPGPi9H7yw4Fo7dXC
-         0pt212quG8jQZp6yY7JYYYECQ4FlzCPRsDHFpfO5/ZmyuDzDmhNpYtBqrsl60068Vj0F
-         CocA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773843766; x=1774448566;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hEfnA2ba+zXEwbThRXQFkoKIIFVYelwRrvLPWLQWFxg=;
-        b=YwioNmi/BPJyWROdE3jYcJeaYIopO74Qip4SB7cwkOPALJV9CMkJ7iCDhUovdEp3im
-         ynbnhLn18mJVntL2SoW9GNHvlQz8P+pVgOxKQZcr7tB8zyBhw2Spd+adrR8aMQaOzu5s
-         gWLvCU4Z58wJjB2Mjk6oEiMaV2O32LAB8F5pRQXDlCxtj7kdEDhpXb4ueAqypWW9aN6Z
-         QpihpvWdRroVqPijAn8NqFKkVXWoKlhttiOW5ixUlMjoO66VnHyvsPY4wW8KAlsNRt7F
-         +jmLhcXUamYny3mlJhzAGsGeJDgopknO8+KqLQq0/na4f4sJ4noqCXUUMMiS/JFH4FHv
-         kjGg==
-X-Forwarded-Encrypted: i=1; AJvYcCUu9WwJgygZPoYPEWTQleyOqrqSQdZK7ZOjLXgrkQugYd2GdXzKwzqaAwED2hRPHnhtE+P3+xBXgSXzNLN5@lists.yoctoproject.org
-X-Gm-Message-State: AOJu0YxhtuoEotTq2ZSSPreDf5jMJn+vaMZmp1a2+GJGO8eRqWXN9o8X
-	MseFoZN3FQRkJIMqhj6F5O7cKqsjXiHwUpf4H2s9D8D+vCgUFaSQ8h8+KvkRC6Qccjk=
-X-Gm-Gg: ATEYQzy2thKsO9wcYfW3C+rqqxE8mC2vLeA3kzQ9QqLZGCiBono0RaiUNASMJ9HTFP8
-	vKoxGp8L3Td3iLwNxghsQ5G3eBiSNL4bx8LNNh/O76Wcnya8T8CLCl2+FJTGIrSpllKv8AsIus0
-	SnoFFKTC8ngEhRlxQHrvUCS2FkC2Ogv4ZCA10owriTHdSpFAXb8ABjqskkT9DSh0WJGQOyffB6t
-	vqeC970wk0x9RYkDyHJ7Q7zlm1v06D8qu5VcRnaft8D8WoYVDn36hKqoXgIktJxVdQIUlLBn3+0
-	9b2dtR2PzerGxKjIHpO8P8aUhhozb0vuMk6om5v+fjUQVwik59eyovZzVisEEQBGVggP30zQ1ih
-	oz4VrExHSSCZhjfPMk7uh2+Pm2bEcvQEckMLuVf1r1eHnH2ngnA0pzYBtijv4D5SzgvYKVu2dfq
-	d60doKXaEb7BjDOJ1ARKNmPxlvk71SKfttEKoCnJT1lMQyAGcCujpUipbTI7z9/3EqpSUilx7jB
-	d7pgPFxu3NY0yq98DO+4DtUBQ==
-X-Received: by 2002:a05:600c:4712:b0:485:3aa1:a7f0 with SMTP id 5b1f17b1804b1-486f442e6damr60206535e9.4.1773843766219;
-        Wed, 18 Mar 2026 07:22:46 -0700 (PDT)
-Received: from localhost (p200300f65f20eb0420fbc0befea5de02.dip0.t-ipconnect.de. [2003:f6:5f20:eb04:20fb:c0be:fea5:de02])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4856ea8fad1sm261958135e9.1.2026.03.18.07.22.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Mar 2026 07:22:45 -0700 (PDT)
-Date: Wed, 18 Mar 2026 15:22:44 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Richard Purdie <richard.purdie@linuxfoundation.org>
-Cc: Yoann Congal <yoann.congal@smile.fr>, 
-	yocto-patches@lists.yoctoproject.org, Yi Zhao <yi.zhao@windriver.com>, 
-	Hiago De Franco <hfranco@baylibre.com>
-Subject: Re: [yocto-patches] [meta-selinux][PATCH] Enable SELinux support in
- native packages
-Message-ID: <abqvgTxKOJxWCxAB@monoceros>
-References: <20260213154238.4093604-2-u.kleine-koenig@baylibre.com>
- <baff51f1-f0d9-4ae3-ba7f-bcbf1c0272c3@windriver.com>
- <14ad3c9da707249caf3f5157cf9be0b936ebfe5e.camel@linuxfoundation.org>
- <pfqfrlcduuigcvfdvn5ljjmjomee2wwn7xxu5ikibinoz57udn@dusca2fnhwja>
- <DH59MQQ8LHWC.25HPETRJUAGLI@smile.fr>
- <abpXXjX8C23hL8RO@monoceros>
- <e5bcfc29f4ab15e0ac21e2273a679821373530c6.camel@linuxfoundation.org>
- <abqEzAjosilonVNP@monoceros>
- <d8f70ee878b8101ef7a5f1b11c1bb52aa172c89b.camel@linuxfoundation.org>
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=zUSCiI/s;
+ spf=pass (domain: siemens.com, ip: 52.101.69.32, mailfrom: peter.marko@siemens.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sgluKknTa6zKRy8hO//rcdq2uj0c8q4wYVIwuabxaPfWoJbCQeSaCpFAkx5VQmKxNzPVwBFFZO3QSUpKnHpjTYZZlrjxWx+EdrAjXcXCoNIbDdHRfFXRsB27DqJ5D8H6gfHcLvU+22Z/4idf+SfqwajXB0vpcBD5tnquvgCuMY0SdeVVFxzqoZjC0wBGt7B3Z9A3AF7fwsMXqduXwYOC7/vp5sdurWKWcKrFFvCSBatC0NRrBzgQa88rZb/6fKPvfFrgcT9A+jmCMpbUzWpbSBI21DBZmuY0zz6B1pDoq0EtReZH8Xwx7BYTSCnajQSJ138uoD/+HiRZN7SfiEpkXw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qYxb8/Ss9LbPTKLLU+DUSIoJlYt/hPGVUJbXE/YVPxM=;
+ b=GwVFP3AA6ioDPt6vXIndrpjjvY8pPMQTLxlBaJRiXpjkz6u6QidQLjobzCp/NVt9WYtltv2VhjQw4V4Z2q9IbT3eK392gx37QI5bNKn2fVHBJJ5Fc4e3XKnOIOlHwYuxeHOcp6FO8fK8cAI3NNBgga8ayUdJDCSTRddfN1CtgFYWRqfwYiiTKrBWxxP3uKS9XRo6QTyY+PpNPxhXNen/3bzsn8cehTs4IQUzNTyrfz4wIjEhxF9D78HF1TZeB5W+MWDAIhBKcJKhpt+snCai52Ih1ibHNTKF69U7BMjVdxN/ENYcwY/ys6KYmswUpswchwVjaZ0vo2e8ZUYlB2sJ7w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qYxb8/Ss9LbPTKLLU+DUSIoJlYt/hPGVUJbXE/YVPxM=;
+ b=zUSCiI/sS+muYBxGtKXOhRjwQr6KI/v0O1xxeQ3xeGw2g17w5L2yRwMqGstDuYGZl0ABo183BuuaNUIwhFkr3SihYRbGgEfrtAgpCnJ08yIDwZqBytcHj8fPkCGQQeSh7/TQKDgYAyUnCMSSdmhoK5hTHxdp9DpmZWsHTrj/l+4L38EJzWyaxYi9vi9f0j8P09qMeCgmT5sgbEsxbXJZs+Ag35oNPQk2of9hBH6JHVJ8D5nNsAA3cNtGhaWB7/LGChTWb/Zg5GD9qJXBqgIEIM625LLAiYqe4/qXNO3FhOz8GDzbl67TAxl/Q3WQyonsLl6YzMWUTZNl9DR2nNiH+g==
+Received: from AS1PR10MB5697.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:479::20)
+ by AS2PR10MB7779.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:647::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9723.19; Wed, 18 Mar
+ 2026 17:20:34 +0000
+Received: from AS1PR10MB5697.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::b54d:255a:1abf:2dc7]) by AS1PR10MB5697.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::b54d:255a:1abf:2dc7%6]) with mapi id 15.20.9723.018; Wed, 18 Mar 2026
+ 17:20:34 +0000
+From: "Marko, Peter (FT D EU SK BFS1)" <Peter.Marko@siemens.com>
+To: "yocto-patches@lists.yoctoproject.org"
+	<yocto-patches@lists.yoctoproject.org>
+Subject: RE: [meta-lts-mixins][scarthgap/go][PATCH] go: upgrade 1.26.0 ->
+ 1.26.1
+Thread-Topic: [meta-lts-mixins][scarthgap/go][PATCH] go: upgrade 1.26.0 ->
+ 1.26.1
+Thread-Index: AQHcsOUG2yZgaPR1OkaRWe2ZacQJbrW0lTbw
+Date: Wed, 18 Mar 2026 17:20:34 +0000
+Message-ID: 
+ <AS1PR10MB5697FA63D6088090E9D0B273FD4EA@AS1PR10MB5697.EURPRD10.PROD.OUTLOOK.COM>
+References: <20260310232405.1471770-1-peter.marko@siemens.com>
+In-Reply-To: <20260310232405.1471770-1-peter.marko@siemens.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+ MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ActionId=3f8a4a6e-2bd9-4043-9b25-a602b530c1bb;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ContentBits=0;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Enabled=true;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Method=Standard;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Name=restricted;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SetDate=2026-03-18T17:20:21Z;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SiteId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Tag=10,
+ 3, 0, 1;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AS1PR10MB5697:EE_|AS2PR10MB7779:EE_
+x-ms-office365-filtering-correlation-id: 6c418e19-711e-4af8-6469-08de8512aa62
+x-ms-exchange-atpmessageproperties: SA
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|366016|1800799024|376014|18002099003|22082099003|55112099003|56012099003|7053199007|38070700021;
+x-microsoft-antispam-message-info: 
+ WMnyTz/RDsKOngFU63OqlsaLbZwT8NEF6vh+BwQEtIxgZk0QBpZao73+J5jendu2rYok03grWHbyOeQa7fW1gZi+bx/JwYNnTc0c5sYT4ws7YSe19xFg7MlN74yf+2R4L3+Wk4YM4FCJ5OR1D6povr6NMUjRrGvjAqoFTkfIWfCBtcxHaYYDGr2j3/uPHUsW/SpNg8GW1x8irRLXbkgCWnZndBpYRUb7mHHLIAA81gM+dyCskfKQqooaUBWI2f15HwR/DrjWlniv1LgVy0G8y2dOUecrIIQ8LtMd7Cx7zffD/7mYLTeEhfsr0ClKiTYrb+VMmi5TmvVX43DessHjtH9piRJJSkIyqK30YYiDStIfjYayj1QQ5QSaLkiVfyLpDLjBkG1jihv9JkRsME545Xy33QU46UJNXdur0jDlmiDtkXI/crjM3oe0DM60qaZwMk7K/LYL22Kkj+MrAZRGGRoeRpin1SdbYE5fyF8cyM+QRgBg7VxwnIKeFZX7wu8AQTPgghs35+J529tSDLR8sxpBdKmIL8WMq0qwmyckwpXseDNJsPXoRI9LCSnsFAsDqIzRhA1raAVwgqOzN4+IBf9cgs+r6MJWTM/r9OxcyrDcYuU2Evd/eb28RuDiKku3saCOGpYX9QZJjQKANHhEQYQf3l7H9P7dMqR3ArsbtUg7IZK+NfPOGXEJnn+WwxBmmGn9aLMyhjqEU4o3qdJ45vQtFnnTrtjDxKUcvYnT8AA=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS1PR10MB5697.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(18002099003)(22082099003)(55112099003)(56012099003)(7053199007)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?us-ascii?Q?nuRsZBXsnACMOByhw/0nNyM4YOosvWrmu3cyammWP23JA5rL2oou2wRbVTX2?=
+ =?us-ascii?Q?MHQ8R/ZgnLj9V2cOOB3SlOHytE2PrpVfkyAAiGahIxUZqFvoXYLF6TC/zKN9?=
+ =?us-ascii?Q?P6VFYXeYjTWM4L5nsH/EvgYqwUlu5rd0kJT6OmV3f1H+JqRCD7VMYF1z3ySO?=
+ =?us-ascii?Q?OZanOkKPhWW449WEcQQjj5Fe1xNy6wDsn939k18BSP/k/Xx7KamGDqv4EtOQ?=
+ =?us-ascii?Q?8jiXOCgXbJx1nuhnPgCSJt9CrvwAgjHhaRPp/vUVk19Tt73fl4wS00tHPOLP?=
+ =?us-ascii?Q?kbb1AWA6ZrNRKd4IC4arqMUDOKqLM2bsFaFZiQ8iRoEUkCnZa9E1VAGw2swp?=
+ =?us-ascii?Q?R9Gc1xozeNOo5IuxYZgTZD/Z9xOA1O4W3SHoSpY3R20bn41WzfBonZD96nFx?=
+ =?us-ascii?Q?S+mGhQjUT+9+jARKqeGt4nXt5FIPxr2s7atQg3lhyp76qa3hkl1799IPqIKs?=
+ =?us-ascii?Q?vLhiUlgUJ4PJfSGaaAGAEaAengRR2khhuH/J/G6jddRR1SdBZ7jqHBHMmVHC?=
+ =?us-ascii?Q?5HK7NVID4PvH5UbYMhR/GSgs85Lz+SbZUgdwfdrAh4Y0163ir+ABzfP8/zCz?=
+ =?us-ascii?Q?CYBHXCjrZP2egPZVIrU+anX7eaGgBfvUIe7glEdXwQtHKBeBNkTqcpMutxjK?=
+ =?us-ascii?Q?da/7G4rJurp6uagp0U71lMifhXXTmKXo0w+IKh5/J/fCMiGUjfBR/s3ThE1a?=
+ =?us-ascii?Q?ojv6Px2Jprx7GvwyCI6b/HgQ7A5Ut0boFMUKjzT1YOaoPS7emYD4wpg7fvJH?=
+ =?us-ascii?Q?dG8RCjHB0fc3RetUmgQUIgyimklnT3lxHdxQ8Xl2trjkl6avwaOedx56Vs5B?=
+ =?us-ascii?Q?NnAFCBSYDCJXfqINUtkKsW/1eYHw/GFmAj2d1A+Qm9BiXY44L/KiF8G6/CiQ?=
+ =?us-ascii?Q?cRSONj+Qvrh+SDwZNpZUL24w/0POO5ZjCFiIzhUAfgVikAiQKpEa7fPwVh43?=
+ =?us-ascii?Q?UMQzKBGpzh0WGprZ2Bw8fdNmkV6/7oMr/ZrYcibiq5qvygXktIeeAImDULfC?=
+ =?us-ascii?Q?NJdQaH5hUGi99UY85xvz3/PCaNsJfOpvJVao50IIP7nb6jeMuVtjJ9EGTdae?=
+ =?us-ascii?Q?xjeXJ+BX1Yp2XIBp+RAvE2Ewsc2KsLDVRX/7x2kpk+Kk0u6Kz9Rw94pJUZkY?=
+ =?us-ascii?Q?ppNP+tLxRaSfHuBE5G1AQHWkethOavPBsqQLpBvqTOAucYXNZeqXMHMf5rHh?=
+ =?us-ascii?Q?QqrIABloGwXitbXNjzIEiAzwpyR7aeYrDfg8AQFi8jqMWCSq7Y2PLw3VvK3m?=
+ =?us-ascii?Q?sB8nNZlYI9azfwEugNpc2w1Ve8G8K8R76okQwPwrHK/ymT5Vuhka+YoHfwi9?=
+ =?us-ascii?Q?MWvMxhXDFxEQvFve5Y4LDCC4Y3dAK0gI4X+6xK01iZPq4LIKIVPmrlK0WNOI?=
+ =?us-ascii?Q?t+VSxnQ64oqNXbpvqVkwsqH176v044AuepY5kZieyLofWLerIBvrdhwzP4FZ?=
+ =?us-ascii?Q?VqWM+0gMhcn4wKHfNmrB3Q3dJufP8IjFpVZ5XGgP46cC54oIjhZ0ovOrHWe9?=
+ =?us-ascii?Q?aMKv6RT19cDG+RguEHW2YqCIXlf+u9b28DsJPp5zOHfIdRYe7PMXm9Yel9i/?=
+ =?us-ascii?Q?xJa2mmGk2XgQp8J/Wb/aL7NrEy+wT38ov2TR2tCvbIouRv4trHFlAiL+A6Nm?=
+ =?us-ascii?Q?BBOvlwTGmkIeCcaklFVAVYOpzEaYJyZPCIx44NDi2aUo0+6KTmJQXuGa+KJ+?=
+ =?us-ascii?Q?XAUhggjBUEN3jJ9xZW6/Dp32ZqgcCMVhVdADmbpHTv8c4KXxClk5uVlrBcaD?=
+ =?us-ascii?Q?uwV9AhjLFQ=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="opl3hzvtw6rihrfw"
-Content-Disposition: inline
-In-Reply-To: <d8f70ee878b8101ef7a5f1b11c1bb52aa172c89b.camel@linuxfoundation.org>
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AS1PR10MB5697.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6c418e19-711e-4af8-6469-08de8512aa62
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Mar 2026 17:20:34.7250
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: fGJMyp0ShisNQsPe5I2kkXkhTiT0dwTrID6yP1kAx2tudRiSP7xxE+QYUtia2F5PphOT5sUpb0S/WTR/0p2SNw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR10MB7779
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 18 Mar 2026 14:22:50 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3514
+ <yocto-patches@lists.yoctoproject.org>; Wed, 18 Mar 2026 17:20:47 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3515
 
+This is merged now
 
---opl3hzvtw6rihrfw
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [yocto-patches] [meta-selinux][PATCH] Enable SELinux support in
- native packages
-MIME-Version: 1.0
-
-Hey Richard,
-
-On Wed, Mar 18, 2026 at 12:37:42PM +0000, Richard Purdie wrote:
-> On Wed, 2026-03-18 at 12:13 +0100, Uwe Kleine-K=F6nig wrote:
-> > On Wed, Mar 18, 2026 at 09:12:52AM +0000, Richard Purdie wrote:
-> > > On Wed, 2026-03-18 at 08:50 +0100, Uwe Kleine-K=F6nig wrote:
-> > > > On Tue, Mar 17, 2026 at 07:23:35PM +0100, Yoann Congal wrote:
-> > > > > On Tue Mar 17, 2026 at 6:40 PM CET, Hiago De Franco via lists.yoc=
-toproject.org wrote:
-> > > > > > On Mon, Mar 09, 2026 at 02:21:51PM +0000, Richard Purdie wrote:
-> > > > > > > On Mon, 2026-03-09 at 20:23 +0800, Yi Zhao via lists.yoctopro=
-ject.org wrote:
-> > > > > > > >=20
-> > > > > > > > On 2/13/26 23:42, "Uwe Kleine-K=F6nig wrote:
-> > > > > > > > > With SELinux enabled for the target it makes sense to hav=
-e SELinux
-> > > > > > > > > support enabled for the native tools, too.
-> > > > > > > > >=20
-> > > > > > > > > Note that for native packages DISTRO_FEATURES is filtered=
-, thus up to now
-> > > > > > > > > it never contained "selinux". Append to DISTRO_FEATURES_F=
-ILTER_NATIVE to
-> > > > > > > > > make "selinux" propagate also to DISTRO_FEATURES for nati=
-ve packages.
-> > > > > > > > > ---
-> > > > > > > > > Hello,
-> > > > > > > > >=20
-> > > > > > > > > I use this on scarthgap, but the patch applies fine to ma=
-ster, too.
-> > > > > > > > >=20
-> > > > > > > > > During a debug session it took me quite a while to find o=
-ut why
-> > > > > > > > >=20
-> > > > > > > > > 	ls -lZ "${IMAGE_ROOTFS}
-> > > > > > > > >=20
-> > > > > > > > > at the end of selinux_set_labels() didn't show the labels=
- added by
-> > > > > > > > > setfiles.
-> > > > > > > > >=20
-> > > > > > > > > Best regards
-> > > > > > > > > Uwe
-> > > > > > > > >=20
-> > > > > > > > > =A0 classes/enable-selinux.bbclass | 2 +-
-> > > > > > > > > =A0 conf/layer.conf=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0 | 4 ++++
-> > > > > > > > > =A0 2 files changed, 5 insertions(+), 1 deletion(-)
-> > > > > > > > >=20
-> > > > > > > > > diff --git a/classes/enable-selinux.bbclass b/classes/ena=
-ble-selinux.bbclass
-> > > > > > > > > index 3dc61d6931ff..0c9f52e74cec 100644
-> > > > > > > > > --- a/classes/enable-selinux.bbclass
-> > > > > > > > > +++ b/classes/enable-selinux.bbclass
-> > > > > > > > > @@ -1,3 +1,3 @@
-> > > > > > > > > =A0 inherit selinux
-> > > > > > > > > =A0=20
-> > > > > > > > > -PACKAGECONFIG:append =3D " ${@target_selinux(d, 'selinux=
-')}"
-> > > > > > > > > +PACKAGECONFIG:append =3D " ${@bb.utils.filter('DISTRO_FE=
-ATURES', 'selinux', d)}"
-> > > > > > > > > diff --git a/conf/layer.conf b/conf/layer.conf
-> > > > > > > > > index 4e04e5cc7e6a..ca981db57019 100644
-> > > > > > > > > --- a/conf/layer.conf
-> > > > > > > > > +++ b/conf/layer.conf
-> > > > > > > > > @@ -25,3 +25,7 @@ LAYERDEPENDS_selinux =3D " \
-> > > > > > > > > =A0 "
-> > > > > > > > > =A0=20
-> > > > > > > > > =A0 PREFERRED_PROVIDER_virtual/refpolicy ??=3D "refpolicy=
--targeted"
-> > > > > > > > > +
-> > > > > > > > > +# With target support for SELinux it is very helpful dur=
-ing debug when the
-> > > > > > > > > +# native tools support SELinux, too.
-> > > > > > > > > +DISTRO_FEATURES_FILTER_NATIVE:append =3D " selinux"
-> > > > > > > >=20
-> > > > > > > > Can we add this to the doc (e.g. README) instead of enablin=
-g it directly=20
-> > > > > > > > in layer.conf? Since we haven't directly enabled DISTRO_FEA=
-TURES =3D=20
-> > > > > > > > "selinux" in layer.conf either.
-> > > > > > >=20
-> > > > > > > I just wanted to add that putting that directly in layer.conf=
- will mean
-> > > > > > > the layer isn't Yocto Project Compatible too.
-> > > > > >=20
-> > > > > > I am going to send a v2 and take over this work, already asked =
-Uwe about
-> > > > > > that.
-> > > > > >=20
-> > > > > > But before doing it, I was wondering why changing layer.conf wi=
-ll make
-> > > > > > the layer not compatible with Yocto Project anymore. Can you ex=
-plain to
-> > > > > > us the reason?
-> > > > >=20
-> > > > > I'd guess it is from this criteria of the Yocto Compatible layer[=
-0]:
-> > > > > > Inclusion of any layer in the submission does not change the
-> > > > > > behavior/configuration of the overall system without the user
-> > > > > > explicitly opting into those changes
-> > > > >=20
-> > > > > By putting a 'DISTRO_FEATURES +=3D "selinux"' in layer.conf, the
-> > > > > configuration changes globally without explicit opt-in of the use=
-r.
-> > > >=20
-> > > > Note that the patch didn't change DISTRO_FEATURES, it appended "sel=
-inux"
-> > > > to DISTRO_FEATURES_FILTER_NATIVE. If DISTRO_FEATURES doesn't already
-> > > > contain "selinux", this is a noop. So I don't see how this violates=
- the
-> > > > quoted critera.
-> > > >=20
-> > > > What am I missing?
-> > >=20
-> > > I guess it would depend whether any of the functions/variables in core
-> > > have hard dependencies on that variable. I was assuming that they do
-> > > but that might not be the case, I'm not sure without checking and you
-> > > may be right.
-> >=20
-> > Wouldn't that be a bug if a function changes behaviour depending on
-> > DISTRO_FEATURES_FILTER_NATIVE containing "selinux" or not? (Apart from
-> > having "selinux" for native packages iff the global DISTRO_FEATURES has
-> > "selinux".)
+> -----Original Message-----
+> From: Marko, Peter (FT D EU SK BFS1) <Peter.Marko@siemens.com>
+> Sent: Wednesday, March 11, 2026 0:24
+> To: yocto-patches@lists.yoctoproject.org
+> Cc: jose.quaresma@foundries.io; Marko, Peter (FT D EU SK BFS1)
+> <Peter.Marko@siemens.com>
+> Subject: [meta-lts-mixins][scarthgap/go][PATCH] go: upgrade 1.26.0 -> 1.2=
+6.1
 >=20
-> It depends on how that variable is being used. Some usages would be an
-> issue, some would not. I have not checked how it is being used and what
-> the implications of that are.
+> From: Peter Marko <peter.marko@siemens.com>
 >=20
-> > I grepped for DISTRO_FEATURES_FILTER_NATIVE in oe-core, bitbake and
-> > meta-openembedded, there are only matches in the first and these are
-> > about default settings, appending DISTRO_FEATURES_OVERRIDES and
-> > providing a filtered version of the global DISTRO_FEATURES for native
-> > packages.
-> >=20
-> > So unless I missed something, I'd claim setting
-> > DISTRO_FEATURES_FILTER_NATIVE:append in a layer doesn't result in a
-> > relevant change without an explicit opt-in (by adding "selinux" to
-> > DISTRO_FEATURES) and then this (implicit) v1 is better than the v2 that
-> > Hiago sent.
+> Upgrade to latest 1.26.x release [1]:
 >=20
-> I'm starting to wish I'd just never said anything :/.
-
-:-\
-
-> It would be nice if meta-selinux passes yocto-check-layer but that
-> isn't my call, I don't know if it does currently pass or not. I wanted
-> to caution that changing DISTRO_FEATURES or things related to
-> DISTRO_FEATURES from layer.conf is generally a bad idea. In this case
-> you might get away with it, I don't know. Has anyone tested it?
-
-I tried that:
-
-	uwe@monoceros:~/work/ashjk/poky/build$ yocto-check-layer ../meta-selinux
-	INFO: Detected layers:
-	INFO: meta-selinux: LayerType.SOFTWARE, /home/uwe/work/ashjk/poky/meta-sel=
-inux
-	ERROR: Layer meta-selinux depends on meta-python and isn't found.
-	INFO:
-	INFO: Setting up for meta-selinux(LayerType.SOFTWARE), /home/uwe/work/ashj=
-k/poky/meta-selinux
-	ERROR: Layer meta-selinux depends on meta-python and isn't found.
-	INFO: Skipping meta-selinux due to missing dependencies.
-	INFO:
-	INFO: Summary of results:
-	INFO:
-	INFO: meta-selinux ... SKIPPED (Missing dependencies)
-
-hmm, so maybe I need to add this using --dependency:
-
-	uwe@monoceros:~/work/ashjk/poky/build$ yocto-check-layer ../meta-selinux -=
--dependency ../meta-openembedded/meta-python --dependency ../meta-openembed=
-ded
-	INFO: Detected layers:
-	INFO: meta-selinux: LayerType.SOFTWARE, /home/uwe/work/ashjk/poky/meta-sel=
-inux
-	INFO: Adding meta-python to the list of layers to test, as a dependency
-	INFO: Adding meta-oe to the list of layers to test, as a dependency
-	INFO:=20
-	INFO: Setting up for meta-selinux(LayerType.SOFTWARE), /home/uwe/work/ashj=
-k/poky/meta-selinux
-	INFO: Adding layer meta-python
-	INFO: meta-python is already in /home/uwe/work/ashjk/poky/build/conf/bblay=
-ers.conf
-	INFO: Adding layer meta-oe
-	INFO: meta-oe is already in /home/uwe/work/ashjk/poky/build/conf/bblayers.=
-conf
-	INFO: Getting initial bitbake variables ...
-	INFO: Getting initial signatures ...
-	INFO: Generating signatures failed. This might be due to some parse error =
-and/or general layer incompatibilities.
-	Command: BB_ENV_PASSTHROUGH_ADDITIONS=3D"$BB_ENV_PASSTHROUGH_ADDITIONS BB_=
-SIGNATURE_HANDLER" BB_SIGNATURE_HANDLER=3D"OEBasicHash" bitbake -S lockedsi=
-gs world
-	Output:
-	WARNING: Host distribution "debian-13" has not been validated with this ve=
-rsion of the build system; you may possibly experience unexpected failures.=
- It is recommended that you use a tested distribution.
-	Loading cache...done.
-	Loaded 0 entries from dependency cache.
-	Parsing recipes...done.
-	Parsing of 2472 .bb files complete (0 cached, 2472 parsed). 4316 targets, =
-86 skipped, 0 masked, 0 errors.
-	Removing 14 recipes from the core2-64 sysroot...done.
-	Removing 19 recipes from the qemux86_64 sysroot...done.
-	Removing 6 recipes from the x86_64 sysroot...done.
-	NOTE: Resolving any missing task queue dependencies
-	ERROR: Nothing PROVIDES 'libselinux' (but /home/uwe/work/ashjk/poky/meta-o=
-penembedded/meta-oe/recipes-extended/hwloc/hwloc_2.9.3.bb, /home/uwe/work/a=
-shjk/poky/meta-openembedded/meta-oe/recipes-devtools/squashfs-tools-ng/squa=
-shfs-tools-ng_1.2.0.bb, /home/uwe/work/ashjk/poky/meta-openembedded/meta-oe=
-/recipes-support/augeas/augeas_1.12.0.bb, /home/uwe/work/ashjk/poky/meta-op=
-enembedded/meta-oe/recipes-support/lvm2/lvm2_2.03.22.bb, /home/uwe/work/ash=
-jk/poky/meta/recipes-extended/at/at_3.2.5.bb, /home/uwe/work/ashjk/poky/met=
-a-openembedded/meta-oe/recipes-extended/ostree/ostree_2024.5.bb, /home/uwe/=
-work/ashjk/poky/meta-openembedded/meta-oe/recipes-extended/smartmontools/sm=
-artmontools_7.4.bb, /home/uwe/work/ashjk/poky/meta/recipes-extended/logrota=
-te/logrotate_3.21.0.bb, /home/uwe/work/ashjk/poky/meta/recipes-core/udev/eu=
-dev_3.2.14.bb, /home/uwe/work/ashjk/poky/meta/recipes-support/vim/vim_9.1.b=
-b, /home/uwe/work/ashjk/poky/meta/recipes-core/base-passwd/base-passwd_3.6.=
-3.bb, /home/uwe/work/ashjk/poky/meta-openembedded/meta-oe/recipes-security/=
-bubblewrap/bubblewrap_0.8.0.bb, /home/uwe/work/ashjk/poky/meta-openembedded=
-/meta-oe/recipes-support/lvm2/libdevmapper_2.03.22.bb, /home/uwe/work/ashjk=
-/poky/meta-openembedded/meta-oe/recipes-devtools/ltrace/ltrace_git.bb DEPEN=
-DS on or otherwise requires it)
-	ERROR: Required build target 'meta-world-pkgdata' has no buildable provide=
-rs.
-	Missing or unbuildable dependency chain was: ['meta-world-pkgdata', 'hwloc=
-', 'libselinux']
-
-	Summary: There was 1 WARNING message.
-	Summary: There were 2 ERROR messages, returning a non-zero exit code.
-
-	INFO: meta-python already in /home/uwe/work/ashjk/poky/build/conf/bblayers=
-=2Econf. To capture initial signatures, layer under test should not present=
- in BBLAYERS. Please remove meta-python from BBLAYERS.
-	INFO: meta-oe already in /home/uwe/work/ashjk/poky/build/conf/bblayers.con=
-f. To capture initial signatures, layer under test should not present in BB=
-LAYERS. Please remove meta-oe from BBLAYERS.
-	INFO:=20
-	INFO: Summary of results:
-	INFO:=20
-	INFO: meta-selinux ... FAIL (Generating world signatures)
-	INFO: meta-python ... SKIPPED (Layer under test should not present in BBLA=
-YERS)
-	INFO: meta-oe ... SKIPPED (Layer under test should not present in BBLAYERS)
-
-Maybe I'm holding it wrong, maybe meta-selinux just doesn't pass?!
-
-Ah, when removing "selinux" from DISTRO_FEATURES it works better. Then
-it says things like:
-
-	...
-	INFO: Traceback (most recent call last):
-	  File "/home/uwe/work/ashjk/poky/scripts/lib/checklayer/cases/common.py",=
- line 99, in test_signatures
-	    self.fail('Adding layer %s changed signatures.\n%s' % (self.tc.layer['=
-name'], msg))
-	    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^=
-^^^^^^^^^^^^^
-	AssertionError: Adding layer meta-selinux changed signatures.
-	1789 signatures changed, initial differences (first hash before, second af=
-ter):
-	   android-tools-conf:do_recipe_qa: 0b9fecbec98924f57499d5d53c4b08bebe50de=
-ac72f025ed0f4b5b2274c57463 -> d7473d9aba93fba170cd904225f22485c12a8cbfbb909=
-84d90014bc29ce47856
-	      bitbake-diffsigs --task android-tools-conf do_recipe_qa --signature =
-0b9fecbec98924f57499d5d53c4b08bebe50deac72f025ed0f4b5b2274c57463 d7473d9aba=
-93fba170cd904225f22485c12a8cbfbb90984d90014bc29ce47856
-	...
-
-(That's without my change BTW.)
-
-> I am generally worried about the amount of things people "load" up
-> layer.conf with as whilst it seems easy, the scope of it can be
-> problematic as it affects other layers, and in general you don't want
-> to be doing that unless it is configurable.
-
-I understand your motivation, adding things there (even if they are ok)
-add to the things you stumble over.
-
-There is nothing I can say to rebut that objection. Still I think the
-addition we're discussing about is technically fine and reduces the
-surprises when working with meta-selinux. So in my subjective opinion
-it's a net win to add it.
-
-Best regards
-Uwe
-
---opl3hzvtw6rihrfw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmm6tSkACgkQj4D7WH0S
-/k4RKwf+Ii+kNzovO2zKIPinRTCkG3liO729nR9x88gkGm+FwLECpE4U34OgG9Cf
-vYapp5+q6Q5UKC74JkFA1/Lva+oH1Fkf9rtwp4Nw9X/v1NzSYhqRaMrfVlZVyPAW
-qs9BeSfU6MolYJ5BFq1yRM2/j1cZi/46egrpZEv/9GIoxt4zQjf9t77swU6ZXUcM
-TwrytfgPM9zyqoKVPxUemF3MoCAyjLDUAHAcyAYopLqxJ031z65euamfA9/OPccw
-5wZixoNbhKQ3/01WY6bcyDi5nUvq4JdfDq0pZH6F6FIXq+q06gnum8H0g1zs28Ra
-pZ15MWmysS1z+RHVWEVeSv0RMsQTew==
-=LoU9
------END PGP SIGNATURE-----
-
---opl3hzvtw6rihrfw--
+> $ git --no-pager log --oneline go1.26.0..go1.26.1
+> e87b10ea2a (tag: go1.26.1) [release-branch.go1.26] go1.26.1
+> e792d6aa95 [release-branch.go1.26] crypto/x509: fix name constraint check=
+ing
+> panic
+> a761c9ff70 [release-branch.go1.26] crypto/x509: fix full email constraint=
+ matching
+> 994692847a [release-branch.go1.26] html/template: properly escape URLs in=
+ meta
+> content attributes
+> 65c7d7a9fb [release-branch.go1.26] net/url: reject IPv6 literal not at st=
+art of host
+> e28ac674af [release-branch.go1.26] cmd/go: revert update default go direc=
+tive in
+> mod or work init
+> 4d1051fdc9 [release-branch.go1.26] cmd: re-vendor x/tools for Go 1.26.1
+> 8cce3ab20c [release-branch.go1.26] os: avoid escape from Root via ReadDir=
+ or
+> Readdir
+> ef041913a8 [release-branch.go1.26] cmd/compile: ensure StructMake/ArrayMa=
+ke1
+> of direct interfaces are unwrapped
+> 155c25e249 [release-branch.go1.26] cmd/compile: pointer-shaped types are
+> SSAable even if lots of 0-sized fields
+> c5723195a6 [release-branch.go1.26] net/smtp: prevent test failures due to=
+ expired
+> test certificate
+> f67a1f4c76 [release-branch.go1.26] cmd/go: fix pkg-config flag sanitizati=
+on
+> 4659d630da [release-branch.go1.26] cmd/compile: avoid folding 64-bit inte=
+gers
+> into 32-bit constants
+> 6fb3df88d4 [release-branch.go1.26] go/analysis/passes/modernize: add vend=
+ored
+> code
+> 85050c90ee [release-branch.go1.26] cmd/compile: fix mis-compilation for s=
+tatic
+> array initialization
+> 12c0690eeb [release-branch.go1.26] cmd/compile: don't drop same register =
+twice
+> e8df1a6697 [release-branch.go1.26] reflect: use &zeroVal[0] instead of ni=
+l for data
+> field for zero-sized payloads
+> 167ef716ba [release-branch.go1.26] cmd/compile: rewriteFixedLoad: ensure
+> AuxInt is sign-extended
+> 495e6c6b09 [release-branch.go1.26] internal/syscall/windows: correct some
+> enums and syscall signatures
+> 29618c4439 [release-branch.go1.26] cmd/link: don't pass -Wl,-S on illumos
+> c283d1f762 [release-branch.go1.26] os: support deleting inaccessible file=
+s in
+> RemoveAll
+>=20
+> Fixes CVE-2026-27137, CVE-2026-27138, CVE-2026-27142, CVE-2026-25679 and
+>       CVE-2026-27139.
+>=20
+> Release information: [2]
+>=20
+> [1] https://github.com/golang/go/compare/go1.26.0...go1.26.1
+> [2] https://groups.google.com/g/golang-announce/c/EdhZqrQ98hk
+>=20
+> (From OE-Core rev: 124a43b74b7a8494dd13dac1294a237fb8a02e6c)
+>=20
+> Signed-off-by: Peter Marko <peter.marko@siemens.com>
+> Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+> Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+> ---
+>  recipes-devtools/go/{go-1.26.0.inc =3D> go-1.26.1.inc}        | 2 +-
+>  ...o-binary-native_1.26.0.bb =3D> go-binary-native_1.26.1.bb} | 6 +++---
+>  ...cross-canadian_1.26.0.bb =3D> go-cross-canadian_1.26.1.bb} | 0
+>  .../go/{go-cross_1.26.0.bb =3D> go-cross_1.26.1.bb}           | 0
+>  .../go/{go-crosssdk_1.26.0.bb =3D> go-crosssdk_1.26.1.bb}     | 0
+>  .../go/{go-runtime_1.26.0.bb =3D> go-runtime_1.26.1.bb}       | 0
+>  recipes-devtools/go/{go_1.26.0.bb =3D> go_1.26.1.bb}          | 0
+>  7 files changed, 4 insertions(+), 4 deletions(-)
+>  rename recipes-devtools/go/{go-1.26.0.inc =3D> go-1.26.1.inc} (91%)
+>  rename recipes-devtools/go/{go-binary-native_1.26.0.bb =3D> go-binary-
+> native_1.26.1.bb} (79%)
+>  rename recipes-devtools/go/{go-cross-canadian_1.26.0.bb =3D> go-cross-
+> canadian_1.26.1.bb} (100%)
+>  rename recipes-devtools/go/{go-cross_1.26.0.bb =3D> go-cross_1.26.1.bb} =
+(100%)
+>  rename recipes-devtools/go/{go-crosssdk_1.26.0.bb =3D> go-crosssdk_1.26.=
+1.bb}
+> (100%)
+>  rename recipes-devtools/go/{go-runtime_1.26.0.bb =3D> go-runtime_1.26.1.=
+bb}
+> (100%)
+>  rename recipes-devtools/go/{go_1.26.0.bb =3D> go_1.26.1.bb} (100%)
+>=20
+> diff --git a/recipes-devtools/go/go-1.26.0.inc b/recipes-devtools/go/go-1=
+.26.1.inc
+> similarity index 91%
+> rename from recipes-devtools/go/go-1.26.0.inc
+> rename to recipes-devtools/go/go-1.26.1.inc
+> index 7d8a68e..2e3464e 100644
+> --- a/recipes-devtools/go/go-1.26.0.inc
+> +++ b/recipes-devtools/go/go-1.26.1.inc
+> @@ -17,4 +17,4 @@ SRC_URI +=3D "\
+>      file://0010-cmd-go-clear-GOROOT-for-func-ldShared-when-trimpath-.pat=
+ch \
+>      file://0011-cmd-link-stop-forcing-binutils-gold-dependency-on-aa.pat=
+ch \
+>  "
+> -SRC_URI[main.sha256sum] =3D
+> "c9132a8a1f6bd2aa4aad1d74b8231d95274950483a4950657ee6c56e6e817790"
+> +SRC_URI[main.sha256sum] =3D
+> "3172293d04b209dc1144698e7ba13f0477f6ba8c5ffd0be66c20fdbc9785dfbb"
+> diff --git a/recipes-devtools/go/go-binary-native_1.26.0.bb b/recipes-
+> devtools/go/go-binary-native_1.26.1.bb
+> similarity index 79%
+> rename from recipes-devtools/go/go-binary-native_1.26.0.bb
+> rename to recipes-devtools/go/go-binary-native_1.26.1.bb
+> index 9b06301..d2652ef 100644
+> --- a/recipes-devtools/go/go-binary-native_1.26.0.bb
+> +++ b/recipes-devtools/go/go-binary-native_1.26.1.bb
+> @@ -9,9 +9,9 @@ PROVIDES =3D "go-native"
+>=20
+>  # Checksums available at https://go.dev/dl/
+>  SRC_URI =3D "https://dl.google.com/go/go${PV}.${BUILD_GOOS}-
+> ${BUILD_GOARCH}.tar.gz;name=3Dgo_${BUILD_GOTUPLE}"
+> -SRC_URI[go_linux_amd64.sha256sum] =3D
+> "aac1b08a0fb0c4e0a7c1555beb7b59180b05dfc5a3d62e40e9de90cd42f88235"
+> -SRC_URI[go_linux_arm64.sha256sum] =3D
+> "bd03b743eb6eb4193ea3c3fd3956546bf0e3ca5b7076c8226334afe6b75704cd"
+> -SRC_URI[go_linux_ppc64le.sha256sum] =3D
+> "3066b2284b554da76cf664d217490792ba6f292ec0fc20bf9615e173cc0d2800"
+> +SRC_URI[go_linux_amd64.sha256sum] =3D
+> "031f088e5d955bab8657ede27ad4e3bc5b7c1ba281f05f245bcc304f327c987a"
+> +SRC_URI[go_linux_arm64.sha256sum] =3D
+> "a290581cfe4fe28ddd737dde3095f3dbeb7f2e4065cab4eae44dfc53b760c2f7"
+> +SRC_URI[go_linux_ppc64le.sha256sum] =3D
+> "f56eed002998f5f51fa07fd4ed0c5de5e02d51cec7a4007f771c7576620d9d45"
+>=20
+>  UPSTREAM_CHECK_URI =3D "https://golang.org/dl/"
+>  UPSTREAM_CHECK_REGEX =3D "go(?P<pver>\d+(\.\d+)+)\.linux"
+> diff --git a/recipes-devtools/go/go-cross-canadian_1.26.0.bb b/recipes-
+> devtools/go/go-cross-canadian_1.26.1.bb
+> similarity index 100%
+> rename from recipes-devtools/go/go-cross-canadian_1.26.0.bb
+> rename to recipes-devtools/go/go-cross-canadian_1.26.1.bb
+> diff --git a/recipes-devtools/go/go-cross_1.26.0.bb b/recipes-devtools/go=
+/go-
+> cross_1.26.1.bb
+> similarity index 100%
+> rename from recipes-devtools/go/go-cross_1.26.0.bb
+> rename to recipes-devtools/go/go-cross_1.26.1.bb
+> diff --git a/recipes-devtools/go/go-crosssdk_1.26.0.bb b/recipes-devtools=
+/go/go-
+> crosssdk_1.26.1.bb
+> similarity index 100%
+> rename from recipes-devtools/go/go-crosssdk_1.26.0.bb
+> rename to recipes-devtools/go/go-crosssdk_1.26.1.bb
+> diff --git a/recipes-devtools/go/go-runtime_1.26.0.bb b/recipes-devtools/=
+go/go-
+> runtime_1.26.1.bb
+> similarity index 100%
+> rename from recipes-devtools/go/go-runtime_1.26.0.bb
+> rename to recipes-devtools/go/go-runtime_1.26.1.bb
+> diff --git a/recipes-devtools/go/go_1.26.0.bb b/recipes-devtools/go/go_1.=
+26.1.bb
+> similarity index 100%
+> rename from recipes-devtools/go/go_1.26.0.bb
+> rename to recipes-devtools/go/go_1.26.1.bb
 
