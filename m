@@ -1,190 +1,97 @@
-Return-Path: <richard.purdie@linuxfoundation.org>
+Return-Path: <antonin.godard@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9704710854D9
-	for <webhook@archiver.kernel.org>; Wed, 18 Mar 2026 09:12:58 +0000 (UTC)
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.9960.1773825176069968123
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D632103D925
+	for <webhook@archiver.kernel.org>; Wed, 18 Mar 2026 09:58:13 +0000 (UTC)
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.10549.1773827889824380805
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 18 Mar 2026 02:12:56 -0700
+ Wed, 18 Mar 2026 02:58:10 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=JCudnqBb;
- spf=pass (domain: linuxfoundation.org, ip: 209.85.221.45, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-439c6fc2910so5015095f8f.0
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 18 Mar 2026 02:12:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1773825174; x=1774429974; darn=lists.yoctoproject.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=omQsVE3JjaL6s+zNiSx186Quq64xCxZ1tRsKNyGftGg=;
-        b=JCudnqBb6xCwdmLfAVPZcXg0mAGsNHRvncqenmJx6XjXxcP47awsLeOfRXpfj4gn9v
-         hMEYREGMc8+xxxqcXTQ26p4BBhDB8W5kYRyNd7F5iMjdd6LQrvirMf5oJgkWd+t2jOti
-         Tu4GEPtZJNUnNNUVoBmlV8pNxfZbFjA9d3CBc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773825174; x=1774429974;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=omQsVE3JjaL6s+zNiSx186Quq64xCxZ1tRsKNyGftGg=;
-        b=Iso7/bdL5FxWZ9PguCfWVnRripD7ER6h9AbAA6QreSIJsCbH/+DnqNVxfitvn1DDB1
-         qMEtzNbr93uaG7INO+xg0qmRdN3puy62S+TPKp3XLnj5Nj3sO5G1spaY1Q0dv9K29NQS
-         T2+tvXg08oNDW1AX+KxGoRhitrLZ27VyHUzztEzEHifwsLRhdkVIYXamboWWPbBFapOX
-         8lVSSKpYdxyC1faWnvGpbISsmsa8ORAdQZwLi5RopkYTHUTk6n33ztSQFsSYkhqntAUm
-         45iQiG7jYDVivLR7vqoW0kGT8kav3qNeAC4M+7MeZeBWqKsymDq+uZukmPnt/Z/nxA82
-         Ndbw==
-X-Gm-Message-State: AOJu0YzwV3Q46V5GJvF9NKBEt/7s3/AFofo3iDxRdrfdydA5aGE4pilJ
-	+6u67pV/LXnzfokyQwkdRPQi4UFBMSZ89QoLaKVK6WJJQF/C6HEC5qYpVYGy2A/5lGE=
-X-Gm-Gg: ATEYQzzUXm2nb6vs/2tUVCQV1OWW9ZonKxMQy5IPIKCi+OOscsrx13rBigeCyR/tEJg
-	HsQrX7vnQ2t5Ptqi2m1C0M9pNF33HklY4q3nUzwfjKhZd7cO5ktUWYMDW43SaGdsF6GnekE/9Id
-	bpfTBPIGwW1ymDTvf4BUJrbcbOG3HahUbKcuMt0lVaIiF2xmG/d3ibDN2jNy1UXQKl+0Kf1LvQw
-	FV1RWsu7E3q5jbNtFUHoyS2ADjxumj4Jo0c7Y7ZY6heKyCFMJ55jadbnrzxdtkmV40i4i5xPNZp
-	/WjZAhRSWXKWQFYdeVF+NqLvoRo7THP7IIvzGiRgOZw2F22qGS0SiPEpmsKApGMtn+Gzc8AIl5H
-	CRG6s/j712wZCR2ZqsGPOJJFyyvNBW6/fWAlWOi/TSHy8GhOiVioXeQq73snu8wu4dthWITLbMM
-	ttc304OtAXLzUEQgOXy7XEWlxVXyYpRlEVM9r+ho3aM5qzpzGX8EaRu5WaAO5RV1GHHOjtuMz4+
-	3XcZz9M/3/vR1JUGD0yAn8V2w==
-X-Received: by 2002:a05:6000:2211:b0:43b:4592:f91b with SMTP id ffacd0b85a97d-43b527a3aeemr4231303f8f.5.1773825174115;
-        Wed, 18 Mar 2026 02:12:54 -0700 (PDT)
-Received: from ?IPv6:2001:8b0:aba:5f3c:ccd1:68ee:ff8c:5895? ([2001:8b0:aba:5f3c:ccd1:68ee:ff8c:5895])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b51852ab3sm6389126f8f.12.2026.03.18.02.12.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Mar 2026 02:12:53 -0700 (PDT)
-Message-ID: <e5bcfc29f4ab15e0ac21e2273a679821373530c6.camel@linuxfoundation.org>
-Subject: Re: [yocto-patches] [meta-selinux][PATCH] Enable SELinux support in
- native packages
-From: Richard Purdie <richard.purdie@linuxfoundation.org>
-To: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>, 
- Yoann Congal <yoann.congal@smile.fr>
-Cc: yocto-patches@lists.yoctoproject.org, Yi Zhao <yi.zhao@windriver.com>
-Date: Wed, 18 Mar 2026 09:12:52 +0000
-In-Reply-To: <abpXXjX8C23hL8RO@monoceros>
-References: <20260213154238.4093604-2-u.kleine-koenig@baylibre.com>
-	 <baff51f1-f0d9-4ae3-ba7f-bcbf1c0272c3@windriver.com>
-	 <14ad3c9da707249caf3f5157cf9be0b936ebfe5e.camel@linuxfoundation.org>
-	 <pfqfrlcduuigcvfdvn5ljjmjomee2wwn7xxu5ikibinoz57udn@dusca2fnhwja>
-	 <DH59MQQ8LHWC.25HPETRJUAGLI@smile.fr> <abpXXjX8C23hL8RO@monoceros>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.0-1ubuntu0.1 
+ dkim=pass header.i=@bootlin.com header.s=dkim header.b=ioUoiQ90;
+ spf=pass (domain: bootlin.com, ip: 185.246.84.56, mailfrom: antonin.godard@bootlin.com)
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 975331A2EA5
+	for <yocto-patches@lists.yoctoproject.org>; Wed, 18 Mar 2026 09:58:07 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 6E1DD6004F
+	for <yocto-patches@lists.yoctoproject.org>; Wed, 18 Mar 2026 09:58:07 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2466C10450766;
+	Wed, 18 Mar 2026 10:58:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1773827887; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=NiJV1I1oQRxbgzYC3ZBiNBH/t8xdp2CjJyumYeq6ofI=;
+	b=ioUoiQ900dLdNSqydgd5pKSEnDMtIAPwrjvCoibd2asDNmoxVwFHHJvBMvrOhzn6HvWWcU
+	zt83LTU0gjducuUuPV/Pd4Ttrg5GWjhQ2gCbq81ZkYwLlhL2seW+G3ZGsyT4250A1uEStJ
+	yvj0jC9hU0mEDxy6dB2gfgn4XfjoZPAv9ZW6sQUc5kW54o1qpvR7EDRQ9h4rmsQy8+K45g
+	ZsNsEUwmx6A51ht8m2zCqIz4l1a7zjWgLKjozlWaFrdutb5/OUF13EIwmqjTaS9RdfJf7P
+	nwySYNMhK8ARCND+bxJlhHxzBfa2FjFUqIWBKnOnuOpq+k3aim/K8h96Ygdbhg==
+From: Antonin Godard <antonin.godard@bootlin.com>
+Date: Wed, 18 Mar 2026 10:57:52 +0100
+Subject: [yocto-autobuilder-helper][PATCH] scripts/run-docs-build: update
+ buildtools tarball to 6.0_M2
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260318-update-buildtools-tarball-docs-v1-1-c25b8626c445@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXNTQ6CMBBA4auQWTsJYFLQqxAW/RmkpmGaTms0h
+ Ltbcfk239tBKHkSuDc7JHp58bzV6C4N2FVvD0LvakPf9qq9diOW6HQmNMUHl5mDYNbJ6BDQsRU
+ c1TDYXi3aqhtUJCZa/PscTPO/pZgn2fxTpw/bzKhL5hOkhCuFSGmG4/gCEjPdR5wAAAA=
+X-Change-ID: 20260318-update-buildtools-tarball-docs-8677c26fac69
+To: yocto-patches@lists.yoctoproject.org
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Antonin Godard <antonin.godard@bootlin.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1606;
+ i=antonin.godard@bootlin.com; h=from:subject:message-id;
+ bh=14d1Z2UU7bYhXkl9TuX0eR5cN3aIVNLYkbaV2RZMoOk=;
+ b=owEBbQKS/ZANAwAKAdGAQUApo6g2AcsmYgBpunctNpCT6B/jMnxSFiZNaUO+94lPJoTF34LFc
+ 3WO+GpGsn2JAjMEAAEKAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCabp3LQAKCRDRgEFAKaOo
+ No+gD/9sJYnYT1+NVbUAWn3Ye30GHZ5CNppx7EGtLlZO6hffYtfh+67oF4/J7QdsjwKMFsjVfyD
+ 7REg/CsAjJ658nOAPavYpflDX/JoQhCIhIM7TLVKlxVRCMxSyeSmh1SiEVIahXcoHEWNDFFLsUn
+ kQhmMkUKkYvJuwQNk+9352Uw9PpTu9YjBxOT2SBDSvjisLP6OX2BnhdU8WCZ0aT58mZxqPOLvHg
+ 9KjSdwtqNeoERKt1xCEVw3g5TnDI/iMvWoLzJ27+2fLWDmLduyAP9aNsSvyM32qFU85+qdrg1u5
+ klrCrdqAXG+KZQsr5CbYE2lFHK3w3U5sJvAWGHmKg6J429weHXfatp5Qdhe484BWRF4+0op+ytP
+ uIkOnAAza7uzFGjagcIus/7iQqm0d2QA98i/OfVEDt55j6QQS1UFyxo35uOirNp9BdSIIEotmpF
+ hG4K6S0jrF1Gl8B7UsRVhsvEXVNqFzHpZDmIccUQZeDc6l96pjuaatim3LqeqeauIINZTzQKnJU
+ WRMHlFfyVcxieAcZvDqdXwWs8djwls3iXCZ7dzXYvH+0I0dEfa8iayyGhmUIFXyQXc4myJ2T6FP
+ wJuxOHGUNkf/UYzIDrWbn2xPvkVFYKe1QN+pzbmUt2fPsZIfTqia1PniB+JtxNEwJORUTkqOtRY
+ IJKX6d95P/fcjqw==
+X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
+ fpr=8648725188DD401BB9A0D3FFD180414029A3A836
+X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 18 Mar 2026 09:12:58 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3507
+ <yocto-patches@lists.yoctoproject.org>; Wed, 18 Mar 2026 09:58:13 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3508
 
-On Wed, 2026-03-18 at 08:50 +0100, Uwe Kleine-K=C3=B6nig wrote:
-> On Tue, Mar 17, 2026 at 07:23:35PM +0100, Yoann Congal wrote:
-> > On Tue Mar 17, 2026 at 6:40 PM CET, Hiago De Franco via lists.yoctoproj=
-ect.org wrote:
-> > > Hi Richard,
-> > >=20
-> > > On Mon, Mar 09, 2026 at 02:21:51PM +0000, Richard Purdie wrote:
-> > > > On Mon, 2026-03-09 at 20:23 +0800, Yi Zhao via lists.yoctoproject.o=
-rg wrote:
-> > > > >=20
-> > > > > On 2/13/26 23:42, "Uwe Kleine-K=C3=B6nig wrote:
-> > > > > > With SELinux enabled for the target it makes sense to have SELi=
-nux
-> > > > > > support enabled for the native tools, too.
-> > > > > >=20
-> > > > > > Note that for native packages DISTRO_FEATURES is filtered, thus=
- up to now
-> > > > > > it never contained "selinux". Append to DISTRO_FEATURES_FILTER_=
-NATIVE to
-> > > > > > make "selinux" propagate also to DISTRO_FEATURES for native pac=
-kages.
-> > > > > > ---
-> > > > > > Hello,
-> > > > > >=20
-> > > > > > I use this on scarthgap, but the patch applies fine to master, =
-too.
-> > > > > >=20
-> > > > > > During a debug session it took me quite a while to find out why
-> > > > > >=20
-> > > > > > 	ls -lZ "${IMAGE_ROOTFS}
-> > > > > >=20
-> > > > > > at the end of selinux_set_labels() didn't show the labels added=
- by
-> > > > > > setfiles.
-> > > > > >=20
-> > > > > > Best regards
-> > > > > > Uwe
-> > > > > >=20
-> > > > > > =C2=A0 classes/enable-selinux.bbclass | 2 +-
-> > > > > > =C2=A0 conf/layer.conf=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 4 ++++
-> > > > > > =C2=A0 2 files changed, 5 insertions(+), 1 deletion(-)
-> > > > > >=20
-> > > > > > diff --git a/classes/enable-selinux.bbclass b/classes/enable-se=
-linux.bbclass
-> > > > > > index 3dc61d6931ff..0c9f52e74cec 100644
-> > > > > > --- a/classes/enable-selinux.bbclass
-> > > > > > +++ b/classes/enable-selinux.bbclass
-> > > > > > @@ -1,3 +1,3 @@
-> > > > > > =C2=A0 inherit selinux
-> > > > > > =C2=A0=20
-> > > > > > -PACKAGECONFIG:append =3D " ${@target_selinux(d, 'selinux')}"
-> > > > > > +PACKAGECONFIG:append =3D " ${@bb.utils.filter('DISTRO_FEATURES=
-', 'selinux', d)}"
-> > > > > > diff --git a/conf/layer.conf b/conf/layer.conf
-> > > > > > index 4e04e5cc7e6a..ca981db57019 100644
-> > > > > > --- a/conf/layer.conf
-> > > > > > +++ b/conf/layer.conf
-> > > > > > @@ -25,3 +25,7 @@ LAYERDEPENDS_selinux =3D " \
-> > > > > > =C2=A0 "
-> > > > > > =C2=A0=20
-> > > > > > =C2=A0 PREFERRED_PROVIDER_virtual/refpolicy ??=3D "refpolicy-ta=
-rgeted"
-> > > > > > +
-> > > > > > +# With target support for SELinux it is very helpful during de=
-bug when the
-> > > > > > +# native tools support SELinux, too.
-> > > > > > +DISTRO_FEATURES_FILTER_NATIVE:append =3D " selinux"
-> > > > >=20
-> > > > > Can we add this to the doc (e.g. README) instead of enabling it d=
-irectly=20
-> > > > > in layer.conf? Since we haven't directly enabled DISTRO_FEATURES =
-=3D=20
-> > > > > "selinux" in layer.conf either.
-> > > >=20
-> > > > I just wanted to add that putting that directly in layer.conf will =
-mean
-> > > > the layer isn't Yocto Project Compatible too.
-> > >=20
-> > > I am going to send a v2 and take over this work, already asked Uwe ab=
-out
-> > > that.
-> > >=20
-> > > But before doing it, I was wondering why changing layer.conf will mak=
-e
-> > > the layer not compatible with Yocto Project anymore. Can you explain =
-to
-> > > us the reason?
-> >=20
-> > I'd guess it is from this criteria of the Yocto Compatible layer[0]:
-> > > Inclusion of any layer in the submission does not change the
-> > > behavior/configuration of the overall system without the user
-> > > explicitly opting into those changes
-> >=20
-> > By putting a 'DISTRO_FEATURES +=3D "selinux"' in layer.conf, the
-> > configuration changes globally without explicit opt-in of the user.
->=20
-> Note that the patch didn't change DISTRO_FEATURES, it appended "selinux"
-> to DISTRO_FEATURES_FILTER_NATIVE. If DISTRO_FEATURES doesn't already
-> contain "selinux", this is a noop. So I don't see how this violates the
-> quoted critera.
->=20
-> What am I missing?
+This will fix broken links with the singlehtml document[1].
 
-I guess it would depend whether any of the functions/variables in core
-have hard dependencies on that variable. I was assuming that they do
-but that might not be the case, I'm not sure without checking and you
-may be right.
+[1]: https://git.openembedded.org/openembedded-core/commit/?id=1fdcc2fae5a8748fd0eef7d1c60fd844b9ad07da
 
-Cheers,
+Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
+---
+ scripts/run-docs-build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Richard
+diff --git a/scripts/run-docs-build b/scripts/run-docs-build
+index cc902c6..3271328 100755
+--- a/scripts/run-docs-build
++++ b/scripts/run-docs-build
+@@ -26,7 +26,7 @@ scriptdir="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+ PUBLISH=${PUBLISH:-1}
+ sharedir=`jq -r '.["BASE_SHAREDDIR"]' < $HOME/config-local.json`
+ # Modified 5.1 tools image to include rsvg, switch to next released version
+-buildtools_url=${buildtools_url:-https://downloads.yoctoproject.org/releases/yocto/milestones/yocto-6.0_M1/buildtools/x86_64-buildtools-docs-nativesdk-standalone-5.3.99%2Bsnapshot-6c31c2a731858108e790acaf38679a01b0d1a035.sh}
++buildtools_url=${buildtools_url:-https://downloads.yoctoproject.org/releases/yocto/milestones/yocto-6.0_M2/buildtools/x86_64-buildtools-docs-nativesdk-standalone-5.3.99%2Bsnapshot-be8cdcf13a658e9e81ff2f7b71d1c8c37a920ce7.sh}
+ buildtools_url_old=${buildtools_url_old:-https://downloads.yoctoproject.org/releases/yocto/yocto-4.1.2/buildtools/x86_64-buildtools-docs-nativesdk-standalone-4.1.2.sh}
+ docbookarchive_url=${docbookarchive_url:-https://downloads.yoctoproject.org/mirror/docbook-mirror/docbook-archives-20201105.tar.xz}
+ 
+
+---
+base-commit: 4f720a0d94c1281018e60b6b19102cdba98d9bea
+change-id: 20260318-update-buildtools-tarball-docs-8677c26fac69
 
 
