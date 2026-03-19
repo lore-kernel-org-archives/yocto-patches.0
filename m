@@ -2,223 +2,170 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CB28108E1ED
-	for <webhook@archiver.kernel.org>; Thu, 19 Mar 2026 11:20:37 +0000 (UTC)
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.8661.1773919232954514345
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02AD4108E1ED
+	for <webhook@archiver.kernel.org>; Thu, 19 Mar 2026 11:24:07 +0000 (UTC)
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.8708.1773919444251167392
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 19 Mar 2026 04:20:33 -0700
+ Thu, 19 Mar 2026 04:24:04 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=pmp53aZp;
- spf=pass (domain: konsulko.com, ip: 209.85.222.182, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-8cd8c6e365eso90831985a.0
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 19 Mar 2026 04:20:32 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=Ea0bwGIi;
+ spf=pass (domain: konsulko.com, ip: 209.85.222.170, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-8cfc2d1fdbfso18315585a.3
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 19 Mar 2026 04:24:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1773919232; x=1774524032; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1773919443; x=1774524243; darn=lists.yoctoproject.org;
         h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KxbVKIB187sqaID98U6fuPEXhKVWxGNMqbuE6FaP1r8=;
-        b=pmp53aZp8lnm/soW8PJgVFLQMHEIfumrX+fP9dTqZVspm9DRixqyDuQ6ExDM6i0Tfw
-         zfC+Y6exO0xHnQhaG4qniU1b4aczJsjAmzr1BgFMMmdL76GNuoGmS2Vnh9T1/hL4fSpo
-         oj48VyJAKACvV6JDpBLDPUhqc24ah5fkCGepc=
+        bh=jOFWrvCvnB9Y8VsfKxKQwsrs7bDzFiGYFzVzgCO8E6U=;
+        b=Ea0bwGIilD+wRTE6gGXfqLGFqhmwWkB2fFtX4tT6Yx0YBXPG/MqYONGa59xhJ709Xz
+         bSbDzkyH/J5816j9PIz8Z7exIv5rxJZQtzXTlYrpzDpMOtyis14nIhc9wXPPfHRSehlY
+         TwStufPKrdS4ffUY2eQdbceLLvbqxl5auyXkk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773919232; x=1774524032;
+        d=1e100.net; s=20251104; t=1773919443; x=1774524243;
         h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
          :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=KxbVKIB187sqaID98U6fuPEXhKVWxGNMqbuE6FaP1r8=;
-        b=YbagbfiPediT/Vg/pI7L6VWX0yQa0QXJQ8/hEUeVYyye5hNdYQXbq0mC7kPsdcj67F
-         opBoz3n48VxmPx7j32BnSFwaizy1nQVoeya9NUvLzyW7ncolCOCNp1EnXlYmOaNAkpdM
-         xTRtZ3WvHqHzS/M7THT2LzrAO7jQeiu5l5dAzDWlGnUZiDfXpJaaq1gRczJ1kejU7RaG
-         FEOD4+8TCeXnzKiK0OOxGlQHZ8Wh0rUjnk1V/wQwRst4I/aKulz1bNr9TOY5iAzpIn/v
-         HoU9CsIdLlo7/rqvvTESQeOJHXWeT1kqbWphU2O024xiC/5/LRhw0IJGzQwE2QJXM5bz
-         nE3w==
-X-Gm-Message-State: AOJu0Yw3/5ogxdhAaT09Nh9rwOyvZm5AT/wdMEA6Qe2V7DuXN5TrCqY1
-	VBoU/Q43UB/2fg1WgvWmIyraPbebKB3kqqObkkHVFP4qY/80782Cy24ktzf1WJdbRtw=
-X-Gm-Gg: ATEYQzwMMrkePtMJKgpmz57dBnglO+yuQoPAcMRhbwIeFOqWWZkRN7c/C8lsYDGtg3R
-	05jJP20xSION0Tj5Oqs8LE0WWC+lC8A+5wF1bi0kO060ZrB31g5avhqptuEyTAniL8H31Zfc9th
-	bY+hfacG4MsKG32Cyek00P+JEXArCCXXdKABkHyAcSbyUvjXEf/4xRGfhSqZxFUpm70kXZ005H3
-	nUgXMM14ttBUMFYhbfwzpWWgxI+gOPxb/5SlJ0UWm9ej2E3k+wTdnRlqFdF1rLH/gwjGnsfzufK
-	1n3Rmd1h1pZsX943ZWQVtMbBVOxJWidgTa0DTXvyF8Thv/LExh25L+cY+oEcqm1WuwkTwHxq+En
-	gYETko1e6yhWUW542PWFoacp4XtnK1V+TJ7hZLbmaHyDj2YKE06yT76jmqt0EPSIIhu9kF5IXuR
-	WUSOhDP8dd/yVGV0pREmUVyZRTb5vUhl6M8ThWkCC9D5MxoyQM+wWKyuSM/wnQjm9tQC7icGHBu
-	Ry6sdcNiMlVzvX6kVIFJnPeX1OsXxDVQx6LoOe9NeM6THA=
-X-Received: by 2002:a05:620a:400b:b0:8cd:e189:535b with SMTP id af79cd13be357-8cfad260d85mr957132785a.31.1773919231621;
-        Thu, 19 Mar 2026 04:20:31 -0700 (PDT)
+        bh=jOFWrvCvnB9Y8VsfKxKQwsrs7bDzFiGYFzVzgCO8E6U=;
+        b=Va9WU0yaiPSOjABDXbEvY955nlcpPP0d7fu8ZFlh01ww6osu4KHjiWjOs/nPKcWjTX
+         5U4K91NwCZ4ygeplG7egCbcI4ODdBcVAIbxGWFG7SFhJNQ/wajYCVFWXfnsDoA/mt64s
+         M+RPbX82oXtG3gc4cSLy+HVSVYlOXtEamZjplVDnTBgAaAkQbYYStKXMOo/blE/YHg5S
+         0kXONRtTtkSTdvu5LuGNIZhiNkLEHAAKRZ+1YJkPJM2/6BEephCIrMSZhb7Dxy9dnQhG
+         GPxT07UHMf0v92hs9q2BKER0smR780anhkZInys22GYt/0uDQ75JGjfCS16gp079muWr
+         VYSg==
+X-Gm-Message-State: AOJu0YwaUB6meujzaby7TpN3PkZEt6qScCmiTtheOwbIspbQgY7ytkdr
+	lpRvCXnYWNrjIcpn9JAt7iOnWs+iEXiJh8NHNPoYe4fMGLI02ag7FO1LOsvKVkuWMcKlT/QEuCx
+	IE8U4
+X-Gm-Gg: ATEYQzyDLlLC4J7N31h2o1LkrADKX2ybNVqIoHcwwCDHscipGCrcj7GQdlHE0UbU187
+	Wq+YtRwTDbOjy75JACWslpchdb5YCZcR30u7OY+457v69pUKou1zzP70MHdOXAmDO9s+oi7WOM0
+	7+5jRokxmEZONqA0quHsFSzEZDE8npUufogNlLZlMnYFjuWm7gVFQ7TGZq6rKnahr9wyPUwI67c
+	azo79HWXYs9bTzyBqVPns4A8ryW0lWlJEkZVZOsQGbKGCoIFll4aFCE4Lqu4wslugTOyJaV4psa
+	194fKLXFHfKqtp/454kZJvT/ENGieMiEzArXe1484s9UGg3RjojgGMyjRL7YUKQct1J8oQYBC5a
+	TP6QUVs3pT6+FOdFBCwDzreMcQFUQPLy8vZ7TXHD9tPCepdUSg6gjJDksOP/UhurnRJ5CU+SfzO
+	bJ/URgNKObqZ3mR9et1vtOdCuwYetioJc4ATlfnivyQviXaLi+vd9W4mtal0F4YEpruo/5x+nPC
+	M9P+WuYoOoOW87tcKSogwFBge9zmqibDDEDtYG3zonNj3Czr7RdiNDHLA==
+X-Received: by 2002:a05:620a:4490:b0:8ca:105a:298e with SMTP id af79cd13be357-8cfad3b6dc0mr930677085a.63.1773919442830;
+        Thu, 19 Mar 2026 04:24:02 -0700 (PDT)
 Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-89c6b8de534sm42302086d6.10.2026.03.19.04.20.30
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8cfad167ee1sm444257585a.28.2026.03.19.04.24.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Mar 2026 04:20:30 -0700 (PDT)
-Date: Thu, 19 Mar 2026 07:20:30 -0400 (EDT)
+        Thu, 19 Mar 2026 04:24:02 -0700 (PDT)
+Date: Thu, 19 Mar 2026 07:24:01 -0400 (EDT)
 From: Scott Murray <scott.murray@konsulko.com>
-To: Hitendra Prajapati <hprajapati@mvista.com>
-cc: yocto-patches@lists.yoctoproject.org
-Subject: Re: [meta-security][scarthgap][PATCH] suricata: Fix CVE-2026-22262
-In-Reply-To: <20260309115038.329072-1-hprajapati@mvista.com>
-Message-ID: <9d09b303-3391-97b2-6290-88a2dee5083c@konsulko.com>
-References: <20260309115038.329072-1-hprajapati@mvista.com>
+To: yocto-patches@lists.yoctoproject.org
+cc: Martin Jansa <martin.jansa@gmail.com>
+Subject: Re: [yocto-patches] [meta-security][PATCH] layer.conf: Update to
+ wrynose release series
+In-Reply-To: <20260318074110.111350-1-martin.jansa@gmail.com>
+Message-ID: <e6a0b47d-5216-0dda-b8eb-c0c027ff2833@konsulko.com>
+References: <20260318074110.111350-1-martin.jansa@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 19 Mar 2026 11:20:37 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3521
+ <yocto-patches@lists.yoctoproject.org>; Thu, 19 Mar 2026 11:24:07 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3522
 
-On Mon, 9 Mar 2026, Hitendra Prajapati wrote:
+On Wed, 18 Mar 2026, Martin Jansa via lists.yoctoproject.org wrote:
 
-> Pick patch mentioned in NVD report [1]
+> From: Martin Jansa <martin.jansa@gmail.com>
 >
-> [1] https://nvd.nist.gov/vuln/detail/CVE-2026-22262
+> Changed in:
+> https://git.openembedded.org/openembedded-core/commit/?id=cd1179544d74026c99a4938824146cec4f5acfca
 >
-> Signed-off-by: Hitendra Prajapati <hprajapati@mvista.com>
+> Signed-off-by: Martin Jansa <martin.jansa@gmail.com>
 
-This is probably better solved by upgrading to 7.0.15 in master and
-scarthgap branches.  I'll look at it in the next week if no one beats
-me to it.
+I had started on this yesterday, but sanity testing was blocked by
+meta-openembedded not having updated.  I have some personal travel
+the next few days (about to board a flight), but I'll push it out
+this evening.
 
 Scott
 
+
 > ---
->  .../suricata/files/CVE-2026-22262-01.patch    | 42 ++++++++++++
->  .../suricata/files/CVE-2026-22262-02.patch    | 66 +++++++++++++++++++
->  recipes-ids/suricata/suricata_7.0.13.bb       |  2 +
->  3 files changed, 110 insertions(+)
->  create mode 100644 recipes-ids/suricata/files/CVE-2026-22262-01.patch
->  create mode 100644 recipes-ids/suricata/files/CVE-2026-22262-02.patch
+>  conf/layer.conf                | 2 +-
+>  meta-hardening/conf/layer.conf | 2 +-
+>  meta-integrity/conf/layer.conf | 2 +-
+>  meta-parsec/conf/layer.conf    | 2 +-
+>  meta-tpm/conf/layer.conf       | 2 +-
+>  5 files changed, 5 insertions(+), 5 deletions(-)
 >
-> diff --git a/recipes-ids/suricata/files/CVE-2026-22262-01.patch b/recipes-ids/suricata/files/CVE-2026-22262-01.patch
-> new file mode 100644
-> index 0000000..de54c28
-> --- /dev/null
-> +++ b/recipes-ids/suricata/files/CVE-2026-22262-01.patch
-> @@ -0,0 +1,42 @@
-> +From 32609e6896f9079c175665a94005417cec7637eb Mon Sep 17 00:00:00 2001
-> +From: Philippe Antoine <pantoine@oisf.net>
-> +Date: Mon, 17 Nov 2025 13:27:54 +0100
-> +Subject: [PATCH] datasets: explicitly errors on too long string
-> +
-> +Also avoids stack allocation
-> +
-> +Ticket: 8110
-> +(cherry picked from commit 0eff24213763c2aa2bb0957901d5dc1e18414dbf)
-> +
-> +CVE: CVE-2026-22262
-> +Upstream-Status: Backport [https://github.com/OISF/suricata/commit/32609e6896f9079c175665a94005417cec7637eb]
-> +Signed-off-by: Hitendra Prajapati <hprajapati@mvista.com>
-> +---
-> + src/datasets-string.c | 9 +++++----
-> + 1 file changed, 5 insertions(+), 4 deletions(-)
-> +
-> +diff --git a/src/datasets-string.c b/src/datasets-string.c
-> +index 0a8f499..524a60a 100644
-> +--- a/src/datasets-string.c
-> ++++ b/src/datasets-string.c
-> +@@ -49,12 +49,13 @@ int StringAsBase64(const void *s, char *out, size_t out_size)
-> +     const StringType *str = s;
-> +
-> +     unsigned long len = Base64EncodeBufferSize(str->len);
-> +-    uint8_t encoded_data[len];
-> +-    if (Base64Encode((unsigned char *)str->ptr, str->len,
-> +-        encoded_data, &len) != SC_BASE64_OK)
-> ++    if (len + 2 > out_size) {
-> ++        // linefeed and final zero
-> ++        return 0;
-> ++    }
-> ++    if (Base64Encode((unsigned char *)str->ptr, str->len, (uint8_t *)out, &len) != SC_BASE64_OK)
-> +         return 0;
-> +
-> +-    strlcpy(out, (const char *)encoded_data, out_size);
-> +     strlcat(out, "\n", out_size);
-> +     return strlen(out);
-> + }
-> +--
-> +2.50.1
-> +
-> diff --git a/recipes-ids/suricata/files/CVE-2026-22262-02.patch b/recipes-ids/suricata/files/CVE-2026-22262-02.patch
-> new file mode 100644
-> index 0000000..93e6546
-> --- /dev/null
-> +++ b/recipes-ids/suricata/files/CVE-2026-22262-02.patch
-> @@ -0,0 +1,66 @@
-> +From 27a2180bceaa3477419c78c54fce364398d011f1 Mon Sep 17 00:00:00 2001
-> +From: Philippe Antoine <pantoine@oisf.net>
-> +Date: Tue, 25 Nov 2025 14:43:18 +0100
-> +Subject: [PATCH] datasets: allocates on the heap if string base64 is long
-> +
-> +Ticket: 8110
-> +(cherry picked from commit d6bc718e303ecbec5999066b8bc88eeeca743658)
-> +
-> +CVE: CVE-2026-22262
-> +Upstream-Status: Backport [https://github.com/OISF/suricata/commit/32609e6896f9079c175665a94005417cec7637eb]
-> +Signed-off-by: Hitendra Prajapati <hprajapati@mvista.com>
-> +---
-> + src/datasets-string.c |  4 ++--
-> + src/util-thash.c      | 21 ++++++++++++++++++++-
-> + 2 files changed, 22 insertions(+), 3 deletions(-)
-> +
-> +diff --git a/src/datasets-string.c b/src/datasets-string.c
-> +index 524a60a..53a179a 100644
-> +--- a/src/datasets-string.c
-> ++++ b/src/datasets-string.c
-> +@@ -50,8 +50,8 @@ int StringAsBase64(const void *s, char *out, size_t out_size)
-> +
-> +     unsigned long len = Base64EncodeBufferSize(str->len);
-> +     if (len + 2 > out_size) {
-> +-        // linefeed and final zero
-> +-        return 0;
-> ++        // linefeed and final zero : signal we need more space
-> ++        return len + 2;
-> +     }
-> +     if (Base64Encode((unsigned char *)str->ptr, str->len, (uint8_t *)out, &len) != SC_BASE64_OK)
-> +         return 0;
-> +diff --git a/src/util-thash.c b/src/util-thash.c
-> +index 5486379..c6df02c 100644
-> +--- a/src/util-thash.c
-> ++++ b/src/util-thash.c
-> +@@ -390,7 +390,26 @@ int THashWalk(THashTableContext *ctx, THashFormatFunc FormatterFunc, THashOutput
-> +             char output_string[1024] = "";
-> +             int size = FormatterFunc(h->data, output_string, sizeof(output_string));
-> +             if (size > 0) {
-> +-                if (OutputterFunc(output_ctx, (const uint8_t *)output_string, size) < 0) {
-> ++                if (size > 1024) {
-> ++                    // we did not provide enough space on the stack, let's allocate on the heap
-> ++                    char *out_alloc = SCCalloc(1, size);
-> ++                    if (out_alloc == NULL) {
-> ++                        err = true;
-> ++                        break;
-> ++                    }
-> ++                    size = FormatterFunc(h->data, out_alloc, size);
-> ++                    if (size == 0) {
-> ++                        err = true;
-> ++                        SCFree(out_alloc);
-> ++                        break;
-> ++                    }
-> ++                    if (OutputterFunc(output_ctx, (const uint8_t *)out_alloc, size) < 0) {
-> ++                        err = true;
-> ++                        SCFree(out_alloc);
-> ++                        break;
-> ++                    }
-> ++                    SCFree(out_alloc);
-> ++                } else if (OutputterFunc(output_ctx, (const uint8_t *)output_string, size) < 0) {
-> +                     err = true;
-> +                     break;
-> +                 }
-> +--
-> +2.50.1
-> +
-> diff --git a/recipes-ids/suricata/suricata_7.0.13.bb b/recipes-ids/suricata/suricata_7.0.13.bb
-> index 75e523e..728c7f1 100644
-> --- a/recipes-ids/suricata/suricata_7.0.13.bb
-> +++ b/recipes-ids/suricata/suricata_7.0.13.bb
-> @@ -16,6 +16,8 @@ SRC_URI += " \
->      file://suricata.service \
->      file://run-ptest \
->      file://0001-Skip-pkg-Makefile-from-using-its-own-rust-steps.patch \
-> +    file://CVE-2026-22262-01.patch \
-> +    file://CVE-2026-22262-02.patch \
->      "
+> diff --git a/conf/layer.conf b/conf/layer.conf
+> index 7a86054..e08a58a 100644
+> --- a/conf/layer.conf
+> +++ b/conf/layer.conf
+> @@ -9,7 +9,7 @@ BBFILE_COLLECTIONS += "security"
+>  BBFILE_PATTERN_security = "^${LAYERDIR}/"
+>  BBFILE_PRIORITY_security = "8"
 >
->  inherit autotools pkgconfig python3native systemd ptest cargo cargo-update-recipe-crates
+> -LAYERSERIES_COMPAT_security = "whinlatter"
+> +LAYERSERIES_COMPAT_security = "whinlatter wrynose"
+>
+>  LAYERDEPENDS_security = "core openembedded-layer"
+>
+> diff --git a/meta-hardening/conf/layer.conf b/meta-hardening/conf/layer.conf
+> index 367d3d7..dcc4fa8 100644
+> --- a/meta-hardening/conf/layer.conf
+> +++ b/meta-hardening/conf/layer.conf
+> @@ -8,7 +8,7 @@ BBFILE_COLLECTIONS += "harden-layer"
+>  BBFILE_PATTERN_harden-layer = "^${LAYERDIR}/"
+>  BBFILE_PRIORITY_harden-layer = "6"
+>
+> -LAYERSERIES_COMPAT_harden-layer = "whinlatter"
+> +LAYERSERIES_COMPAT_harden-layer = "whinlatter wrynose"
+>
+>  LAYERDEPENDS_harden-layer = "core openembedded-layer"
+>
+> diff --git a/meta-integrity/conf/layer.conf b/meta-integrity/conf/layer.conf
+> index 23d6848..f907385 100644
+> --- a/meta-integrity/conf/layer.conf
+> +++ b/meta-integrity/conf/layer.conf
+> @@ -20,7 +20,7 @@ INTEGRITY_BASE := '${LAYERDIR}'
+>  # interactive shell is enough.
+>  OE_TERMINAL_EXPORTS += "INTEGRITY_BASE"
+>
+> -LAYERSERIES_COMPAT_integrity = "whinlatter"
+> +LAYERSERIES_COMPAT_integrity = "whinlatter wrynose"
+>  # ima-evm-utils depends on keyutils from meta-oe
+>  LAYERDEPENDS_integrity = "core openembedded-layer"
+>
+> diff --git a/meta-parsec/conf/layer.conf b/meta-parsec/conf/layer.conf
+> index 39d1265..79acc89 100644
+> --- a/meta-parsec/conf/layer.conf
+> +++ b/meta-parsec/conf/layer.conf
+> @@ -8,7 +8,7 @@ BBFILE_COLLECTIONS += "parsec-layer"
+>  BBFILE_PATTERN_parsec-layer = "^${LAYERDIR}/"
+>  BBFILE_PRIORITY_parsec-layer = "5"
+>
+> -LAYERSERIES_COMPAT_parsec-layer = "whinlatter walnascar scarthgap"
+> +LAYERSERIES_COMPAT_parsec-layer = "whinlatter wrynose walnascar scarthgap"
+>
+>  LAYERDEPENDS_parsec-layer = "core"
+>  BBLAYERS_LAYERINDEX_NAME_parsec-layer = "meta-parsec"
+> diff --git a/meta-tpm/conf/layer.conf b/meta-tpm/conf/layer.conf
+> index 582fe1e..94ca4c6 100644
+> --- a/meta-tpm/conf/layer.conf
+> +++ b/meta-tpm/conf/layer.conf
+> @@ -8,7 +8,7 @@ BBFILE_COLLECTIONS += "tpm-layer"
+>  BBFILE_PATTERN_tpm-layer = "^${LAYERDIR}/"
+>  BBFILE_PRIORITY_tpm-layer = "6"
+>
+> -LAYERSERIES_COMPAT_tpm-layer = "whinlatter"
+> +LAYERSERIES_COMPAT_tpm-layer = "whinlatter wrynose"
+>
+>  LAYERDEPENDS_tpm-layer = " \
+>      core \
+>
+>
+> -=-=-=-=-=-=-=-=-=-=-=-
+> Links: You receive all messages sent to this group.
+> View/Reply Online (#3504): https://lists.yoctoproject.org/g/yocto-patches/message/3504
+> Mute This Topic: https://lists.yoctoproject.org/mt/118379316/2167468
+> Group Owner: yocto-patches+owner@lists.yoctoproject.org
+> Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/13170805/2167468/856840347/xyzzy [scott.murray@konsulko.com]
+> -=-=-=-=-=-=-=-=-=-=-=-
+>
 >
 
