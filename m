@@ -2,112 +2,113 @@ Return-Path: <paul@pbarker.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7782B108B90A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD7CF108B910
 	for <webhook@archiver.kernel.org>; Fri, 20 Mar 2026 12:01:29 +0000 (UTC)
 Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.10934.1774008080953221979
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.10937.1774008083711401325
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 20 Mar 2026 05:01:21 -0700
+ Fri, 20 Mar 2026 05:01:23 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@pbarker.dev header.s=fm3 header.b=fHBfI/Gn;
- dkim=pass header.i=@messagingengine.com header.s=fm1 header.b=n09Q1V/4;
+ dkim=pass header.i=@pbarker.dev header.s=fm3 header.b=h7Q7QxW8;
+ dkim=pass header.i=@messagingengine.com header.s=fm1 header.b=2kNGCKo7;
  spf=pass (domain: pbarker.dev, ip: 202.12.124.149, mailfrom: paul@pbarker.dev)
 Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfout.stl.internal (Postfix) with ESMTP id 201631D001A7;
-	Fri, 20 Mar 2026 08:01:19 -0400 (EDT)
+	by mailfout.stl.internal (Postfix) with ESMTP id 3D9A91D001A6;
+	Fri, 20 Mar 2026 08:01:23 -0400 (EDT)
 Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Fri, 20 Mar 2026 08:01:20 -0400
+  by phl-compute-04.internal (MEProxy); Fri, 20 Mar 2026 08:01:23 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pbarker.dev; h=
 	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm3; t=1774008079; x=1774094479; bh=/u
-	YAus+gQti4HdaW613QUbR17HVS2URAK1Qj5/rbSCU=; b=fHBfI/Gn/hyL9xe3eB
-	RlkhEO1BVzxEqPdjMlmo0LJiVDZVPbL2yEEGrpnicH3nVo7QJa0owWOMyj7KtPuG
-	bs2JbtJ9jBOwxEw39tLC5Nc0/GPigKKowFEPSEi0/ieN5yTQV9V9wYhFTeRJ4XPY
-	Kx9tEvaQPGWYAvNm/J3xXdnmSE3ndB68LExXzNC/kvLnhpFdU1PSWcIaO6uO8qVO
-	Ja5BAN+ri/VG/EFhonDHfs/eEZE56+zdeG662gJtDaJU++dUCJZAY1iePtGBtztG
-	MBwG1R39Bvq+IGSrL0VwfPwKeaUJBKFH9FWCh1jdws4IcetVZo/UvXjiPKuQH7MP
-	4hMw==
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1774008083;
+	 x=1774094483; bh=akHPv8e0JALNFBebyjsnywAATX/3T3YQ0OWx1DZiyZU=; b=
+	h7Q7QxW8YIZudg3g1C3C3sEn20qT7gCtUVMIS9TH2JPOkZSuZyzJaBbY18A9Kcly
+	Fhi6ss/fQhkNhY75lS13pl7PRZ2wAE++FeLrDiIoiVUgB8xKqLkgRLxAsXxGJMm0
+	iXgNhBF2Y5/iHSbQUXuL/AXlJbYHJqlNUMZiNpSVihePnUSjwAiG2iQTbj1GH+2H
+	mIQTAa7R3+s+S9JAhqCH8yNTkFRik/3GEeUmco0JF/AVqw+cxR25SegTEJ+SzgM+
+	FDXqTG1loV/gqeLLq2QkfoQZYkURSVUowbJCYxMgCJXxgkxoEAaWetjPkD1yYE3A
+	7j8Xf3JS7N/ftfou4KzEIg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1774008079; x=1774094479; bh=/uYAus+gQti4HdaW613QUbR17HVS
-	2URAK1Qj5/rbSCU=; b=n09Q1V/49QQbPY/ZsJGWswKmx5+WETE7Q/Th0eAOYUUr
-	F9nEmc4x7Y30IkGDVkeLWFOskZESE3RideN3L1RFo66gC75VXda5XbKMo0Q+Gpiw
-	w8ix3utb2f8dBzb8JRMPoG0+6GdskhOpV+9SAAVgmBljHMsp6gKxHOFwAjBoCAuV
-	GrIrTHN5VWD73rYpY9sP+6mSZWXtS6SRjQ2SYow147WPCiexCu4ye+2wHI/8MRh/
-	+aAYIgOzLYf6Ra4VfuJvX2pWqILGOnOdoezG5DX3Qf+TPxDknTm6VYyO9Zfl1Ehz
-	r5w8eLXElC4CiRje1cz2lxczdCWreO+I1jt6uG6d5w==
-X-ME-Sender: <xms:Dze9aVkCxGgJtJyyF3arDRdI_6DrsYR1rG3KZ_jeK3GGZnuDV6ehzg>
-    <xme:Dze9aW2VMOZC7h2Kxt72NttPx9aMKNMb8-dLx6oSRurrjgGZNat1FCd6jLFm64E_X
-    YD7sRL3mNk8WtAf3XqDjfNOm1UXOfpFitxzyKXaxRzXqaq679brx5A>
-X-ME-Received: <xmr:Dze9aZSDtCOuMx_hbZQy334yeIjq9xFF4Gx-78Hnx3HSmLFpPZCS-XopFvpwWqQKtdO4xLioVt0OBhFbgbTO3oUSJ6B4-OY>
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1774008083; x=
+	1774094483; bh=akHPv8e0JALNFBebyjsnywAATX/3T3YQ0OWx1DZiyZU=; b=2
+	kNGCKo7H/MfJSTvTaGcS7In0TcJVRlPH04tsLYZztSrZnvy9hRYCR7XRCMWI93t+
+	TJZHFU9bCRHzclvxKqOImyAur7hm8N5J5snw+Q2U2yfVE2el28IopsT5RTvTvY2h
+	gnMvcMgBbFI/kAvLnXtMDeATZiyTrxEl/EY7RkMJgl/TCNOul4EPjxMqAh8K57/R
+	DN9zxzafv8xhDPHCLbCgozaj4fOkcL/I5MMVME5GbaTjeVIx+AG/hYbv8uwaWvSR
+	vSaKyfdYzXdRW5rF0mgGku281MoUl42lDMjZTr4W5Uo6s+Wt9JrrfO4i5EN9iVZq
+	Ao8X7ajNU5B2i3wfHDnMw==
+X-ME-Sender: <xms:Eze9abHqY7mUQO8cA9Q250KzL7oj27jX87TONivNnhmFULLWdqnKnw>
+    <xme:Eze9aeWSJWZ3Dc_bn976LTWbyEvPrtLfN7ADcAgqoZYqkfXA3yAFtlU-OPDXb2QG2
+    OgJKHRWbPw3-QLFQ7oUdBnkKsCTuW7Qp7LZ_ec7RR9pTc186qklDH8>
+X-ME-Received: <xmr:Eze9aaw_XnU4vQCsbyuuYfoiuwNCGX4IzaiW4BB877_8chjOhExWmGQsRlSzyqxh6sDjPcJAUYUvefAm8i4_0EqeAXJjsZU>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdeftdelkeehucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucenucfjughrpefhufffkfggtgfgvfevofesthejredtre
-    dtjeenucfhrhhomheprfgruhhluceurghrkhgvrhcuoehprghulhesphgsrghrkhgvrhdr
-    uggvvheqnecuggftrfgrthhtvghrnhepjeduueevffdtudejgeeiffduhfefgfdvheehtd
-    duiefgjeelleelvddtkeeuhfejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghm
-    pehmrghilhhfrhhomhepphgruhhlsehpsggrrhhkvghrrdguvghvpdhnsggprhgtphhtth
-    hopedvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehprghulhesphgsrghrkhgv
-    rhdruggvvhdprhgtphhtthhopeihohgtthhoqdhprghttghhvghssehlihhsthhsrdihoh
-    gtthhophhrohhjvggtthdrohhrgh
-X-ME-Proxy: <xmx:Dze9aQtHXS6jkvv_MZHKwHU3qqeg9k5fY99n9KSGIgNuaJBnfIPhlg>
-    <xmx:Dze9aWafdX26-znG8t4KcVZyQnsyRPPoPNSnmjQz_Mz9sS7r53iGXQ>
-    <xmx:Dze9adtt6htUDg5cbjvBAYY7wLdpHmYTKA9NL_voGYdStmx0JXdjcw>
-    <xmx:Dze9aQE7_IwypPmrLhuY7o2k4GOu7wrxfAvGcvx5SJybmFgzdThpbQ>
-    <xmx:Dze9abKSPZcSv23KsSN3mAbG7kSnI7RQyIw2Z5xxMrAM5oNeWoZLTL8V>
+    rghilhhouhhtmecufedttdenucenucfjughrpefhfffugggtgffkfhgjvfevofesthejre
+    dtredtjeenucfhrhhomheprfgruhhluceurghrkhgvrhcuoehprghulhesphgsrghrkhgv
+    rhdruggvvheqnecuggftrfgrthhtvghrnheptdffvdffjeevhfelieegudfgieefleefue
+    efffelvdehfeeviedtieeukefhleeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghr
+    rghmpehmrghilhhfrhhomhepphgruhhlsehpsggrrhhkvghrrdguvghvpdhnsggprhgtph
+    htthhopedvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehprghulhesphgsrghr
+    khgvrhdruggvvhdprhgtphhtthhopeihohgtthhoqdhprghttghhvghssehlihhsthhsrd
+    ihohgtthhophhrohhjvggtthdrohhrgh
+X-ME-Proxy: <xmx:Eze9aUPtv6iKIWDrCPCnRridlUWgHrxdquVvMHZlkZNfNkYA-SE4RQ>
+    <xmx:Eze9aT61bAYWZ0KguCEiwJs2XW5NkHYLpfXf9Vx4WePU6P1wC39TxA>
+    <xmx:Eze9adPK3t3iCqghTB2h9iYd2NtXbz7LoGZYU_zUIspK9GXNWFOiOQ>
+    <xmx:Eze9aZmgLnIpnti-yyzBfCIxhxi7Ge7BOtI4fuGrbF4Mmz-cv6-8cA>
+    <xmx:Eze9aYp0bJLSqgslrJrpBdDzBFr-nvR3qsGNNIGZFt83jLvVwV4MmnOJ>
 Feedback-ID: i51494658:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 20 Mar 2026 08:01:18 -0400 (EDT)
+ 20 Mar 2026 08:01:22 -0400 (EDT)
 From: Paul Barker <paul@pbarker.dev>
-Subject: [PATCH pseudo 0/3] Memory management fixes and b4 config
-Date: Fri, 20 Mar 2026 12:01:05 +0000
-Message-Id: <20260320-some-fixes-v1-0-f5ca33dbf180@pbarker.dev>
+Date: Fri, 20 Mar 2026 12:01:08 +0000
+Subject: [PATCH pseudo 3/3] Add b4 configuration
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAE3vWkC/x2LOwqAMBAFryJbG4gRv1cRC2OeuoVGsihC8O4Gy
- 2FmIgkCQ6jPIgXcLOyPBEWe0bxNxwrFLjEZbWpdGq3E71ALPxDl2kZ3zewsbEVpOAN+kfqBTsH
- lPI3v+wHIOCCfZAAAAA==
-X-Change-ID: 20260320-some-fixes-d87097cdbeb5
+Message-Id: <20260320-some-fixes-v1-3-f5ca33dbf180@pbarker.dev>
+References: <20260320-some-fixes-v1-0-f5ca33dbf180@pbarker.dev>
+In-Reply-To: <20260320-some-fixes-v1-0-f5ca33dbf180@pbarker.dev>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Paul Barker <paul@pbarker.dev>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=549; i=paul@pbarker.dev;
- h=from:subject:message-id; bh=tnLlp9hJ+OT61V+ag2bjPH3/j2nopMDVhPI1BKWrOc8=;
- b=owGbwMvMwCW2OjnkzdxdX/IYT6slMWTuNecreVGy5da1OWX3bHO3h56bxJqjfbyp9Xe5cL9iQ
- 0HVlqX1HaUsDGJcDLJiiiybe77ef9rryJsRcksBZg4rE8gQBi5OAZjIfQZGht122078OHqKv/vd
- ZZmm2fP5HP92xVz59dD9mLjR8e3FF98yMrwSvnk8f3LJ2T11q3d/eMmdadjAc3oL7/5XwklewgX
- lPSwA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=573; i=paul@pbarker.dev;
+ h=from:subject:message-id; bh=c0uFsMCw8vx3AUj5xR+MNGWjcTep+8DZxcb6V37TSCI=;
+ b=owGbwMvMwCW2OjnkzdxdX/IYT6slMWTuNedbr/4z1m/m5Lq3YhFXDgY/X2bt1WRd1s91UK/zm
+ HOQ0sSPHaUsDGJcDLJiiiybe77ef9rryJsRcksBZg4rE8gQBi5OAZgIwzuG/xHBvz6I8HFqPLmv
+ FnnKqZrzIYfW5Ucsgqm/ntsJvk+RLWT4K7BUp1Va7UMY88XDx9KeVU+efnlmhmX6tcXX5/w9a7P
+ TngkA
 X-Developer-Key: i=paul@pbarker.dev; a=openpgp;
  fpr=98B2AAC100AC3F82BB5D546774975C81B7E66BAC
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Fri, 20 Mar 2026 12:01:29 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3524
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3527
 
-Fix memory management issues found by Claude Opus 4.6, and add
-configuration for b4 to simplify sending patches.
+Make contribution easier by including a .b4-config file, pointing at the
+correct mailing list and prepending [pseudo] to patches.
 
+Signed-off-by: Paul Barker <paul@pbarker.dev>
 ---
-Paul Barker (3):
-      pseudo_setupenvp: Allocate space for new env vars if needed
-      pseudo_setupenvp: Handle malloc failure safely
-      Add b4 configuration
+ .b4-config | 4 ++++
+ 1 file changed, 4 insertions(+)
 
- .b4-config    |  4 ++++
- pseudo_util.c | 18 ++++++++++++++----
- 2 files changed, 18 insertions(+), 4 deletions(-)
----
-base-commit: 56e1f8df4761da60e41812fc32b1de797d1765e9
-change-id: 20260320-some-fixes-d87097cdbeb5
+diff --git a/.b4-config b/.b4-config
+new file mode 100644
+index 000000000000..92f549d8b44e
+--- /dev/null
++++ b/.b4-config
+@@ -0,0 +1,4 @@
++[b4]
++  send-series-to = yocto-patches@lists.yoctoproject.org
++  prep-pre-flight-checks = disable-needs-auto-to-cc, disable-needs-checking
++  send-prefixes = pseudo
 
-Best regards,
 -- 
-Paul Barker
+2.43.0
 
 
