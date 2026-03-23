@@ -1,249 +1,140 @@
-Return-Path: <majortomtosourcecontrol@gmail.com>
+Return-Path: <sandeep.gundlupet-raju@amd.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB189F46134
-	for <webhook@archiver.kernel.org>; Mon, 23 Mar 2026 14:49:06 +0000 (UTC)
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.19385.1774277345764106187
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 914E8F483F5
+	for <webhook@archiver.kernel.org>; Mon, 23 Mar 2026 20:14:08 +0000 (UTC)
+Received: from DM5PR21CU001.outbound.protection.outlook.com (DM5PR21CU001.outbound.protection.outlook.com [52.101.62.28])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.4313.1774296847558078651
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 23 Mar 2026 07:49:05 -0700
+ Mon, 23 Mar 2026 13:14:07 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=c1AjNP5x;
- spf=pass (domain: gmail.com, ip: 209.85.167.179, mailfrom: majortomtosourcecontrol@gmail.com)
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-46703fb602fso982072b6e.0
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 23 Mar 2026 07:49:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1774277345; x=1774882145; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r7r0MmBnbp43zztf5AVh0t9evk0N7c2IHk7g3e7qOko=;
-        b=c1AjNP5xmFXN/ddwI05f+jWYX/5rI3bw6JYHAKUjwcmPYwLhbY4W46gwYC5bDQZ6VF
-         ezvU09syUVv5WGpsKpmJr+ab6duuiJzn1riyS5iZNERKaVK47YTK8Ne+7xBcUV1qa/Y2
-         KHMzGql4k0W1rPr5W26vblqE3tHrOGCYGO9tICms2vXxEi/UxIqtrJ+aO1I2ny679mY7
-         6wJcTDXdBWhU58mrhr7Xr/s87ul/5WvDY/9tMuLSO0iyuMkWE/h48t48lbmxGXcR/MBc
-         VU1unA6S9L1zsMTeHiJcgl8GdMM6wzQLlONfTfbPhUoB/8x8zBbLfYuyzxih8MjehcB9
-         /ZsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774277345; x=1774882145;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=r7r0MmBnbp43zztf5AVh0t9evk0N7c2IHk7g3e7qOko=;
-        b=mi6FHN8qQaxVH2Iiu67ERXlLI+VuW1Zf0CLCDZPCpbYeM+5YJ++W6bVj67neszrmXb
-         OloaxhqnbTRXlMEyNXceSP0JY/c+xNXemeFLV9+h6r0B1veb7ilRNRZzpJ6EHDIgjvJ7
-         h1PlZ0i4AWMCnNg64G2HznHDbWoXCAwFmKpAgDwPp788JgXorKY1NlDQWbQ3etBsfeMl
-         NJ7SOvAXEMXjuIWCz3Ta/jYY0BkCyjO4j2u7d41Z99aTJOa5GyS7kLoxHgqfivHH/wV0
-         bSQjuWtKDUZ2skTNlkj3mmzsDXE8t4tGmrUauRiAZgQzfuRIvOWrdlfXXivDJX1etd8Y
-         NJuw==
-X-Forwarded-Encrypted: i=1; AJvYcCV9OB+ZvIX8QJUHH/Z/XNwbByPF3iQWuuTVbEoNkyrP7ny9yzhsM07BpcmNKkvTVYqrtAqzs0a1kXx12TJk@lists.yoctoproject.org
-X-Gm-Message-State: AOJu0YwrWvC5yxbah/1rEFCnN2bO4x7QUSlHMA3z+LFSGtZqJgqPbx18
-	Rls4r8XBZZ/PlWxinb3TTECtxjL3rWFxp+eP38cS2Aj7NXjsc2bB+1uB
-X-Gm-Gg: ATEYQzyWCWaO1AnVw6k96hcG+fncgXVTxtWowCGYy3+l9D3/QAB/NckqjHvNWcXFS8i
-	60s3RRw/sZJ7o1TJsHrYpVZRAeAiP8Sm43q33ysXI1UTou8iqByyWZ8GOW9WTW3LAE0MbPqmcQb
-	1seFtRh5fjbIIO7t6jEj+sgSfwXTrKpi1DozoVNurzGzlMcqFzf8aCbXY/G1Dq/jTIOHsBZv5Dj
-	Keu20WbDzdnEcnmMmCPKPfAi7GY4BUv1/0btORZ2OSzqKKhKWlszXrkj2S+X9TwTLlLq5npZte/
-	MuxiMAuL77tQ79nspR0wCsVBzkYJ63fHdTlG98WZA37/YnQ5yqKgy+AnnqClNaXC6XzgTz3AjtH
-	OyvQmKxEgRtRg8raWRWz13vQOu2aD+kCVM35HAVL99KXvaS0PtUMxc9vY0iieFOLSendpQbn4YA
-	YPa8+zLdwifUJJ83cJ+vxYKwNhAM/9/k6BwPmWzPiHdFMJxFCghkFGbwH6QLe8eng/oM6Jh52ao
-	dKj
-X-Received: by 2002:a05:6808:5243:b0:467:f567:d609 with SMTP id 5614622812f47-467f567ee57mr6136395b6e.34.1774277344800;
-        Mon, 23 Mar 2026 07:49:04 -0700 (PDT)
-Received: from [172.26.252.3] (97-118-253-141.hlrn.qwest.net. [97.118.253.141])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-467e7f45ce7sm6989499b6e.17.2026.03.23.07.49.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Mar 2026 07:49:04 -0700 (PDT)
-Message-ID: <1f404d2a-dfb4-4d42-936c-0877fdd58ee1@gmail.com>
-Date: Mon, 23 Mar 2026 08:49:04 -0600
+ dkim=fail reason="dkim: body hash did not verify" header.i=@amd.com header.s=selector1 header.b=VYEcPirB;
+ spf=permerror, err=parse error for token &{10 18 %{i}._ip.%{h}._ehlo.%{d}._spf.vali.email}: invalid domain name (domain: amd.com, ip: 52.101.62.28, mailfrom: sandeep.gundlupet-raju@amd.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vIT1PfnnML3yB8RfhU/GBbQMSgUbL1Z+vkklcZzOIASyzaGPGIxga1ya/j0nSIqqww8tbbrKndzs35SJdlnyYcgA8WqX/fvP988K0hpeyLESXoCOtLqCktGH+LqtzUDj1eGBBl1FsQrIY08R1qUyMQ2OVTVreJX26Xe8E+EwIbfnqcw472ysfmWeSsl8lYnKXNXaMZKfc+jhezt9FeWzmI99hHab8/hG+VDWlwblkU8/ixAk9MJnhCC6cZm7WsWH7Rg3y+0gRSuOzSv9sule+o1r9a/+FNXseJmEh0CZTPh2jWdF6s5qhw0AMOX0eDC8LlRTbvOFiYawMXhVFs2DHg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IjtYWsk7OJ9p1GMPylDEy1mq0vm8xYavwYHYEFV/Cu4=;
+ b=CRJpiAKAzf556LlOwZ95e6SQjBOyMvWVa0QbavR7n/6kT+jhqA6/Emvv+Ksd2rWrl4t7gUJlKQRGR9VZ6VqKKlxUnH3ccHb5Pbhpy2kxIZ38fStDBUEn/vBfoizuMHvT7LUXcYx1Q/39vPpJv/KyPzAfnEUWPm23OwbxqxauUmzBC/7uLdtAEA9a3nmkOBq4BaxUpJjQ97d+JSnKcHIQru7aKedxvAgiu637q9PLlSqNMROD5EdAHL9dQ0JOumIlLJ/VfL51By+jENplbk6WZmBNChgUFgtDcqTsKVWFvpf+WgqoR+joPwRfA5MviaG3twEDtQa6QKXg5+3iBh0VXg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=lists.yoctoproject.org
+ smtp.mailfrom=amd.com; dmarc=pass (p=quarantine sp=quarantine pct=100)
+ action=none header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IjtYWsk7OJ9p1GMPylDEy1mq0vm8xYavwYHYEFV/Cu4=;
+ b=VYEcPirBgwbW+0UnDU1EvZRMWGyZ70MiZA7TaLyCT+lQZ6K9ZEVFClRoulUl5YByntA0ni2XV6VteBWV77d5Cl9Gom6L6sbW7b3UJxQQ8Rl9v+C9/UjIbWpXp4lWRIEDezruEv3QsXQGvSTKzEvX+s3y5tKG3uh/Mq/C7nNpsKc=
+Received: from BL1PR13CA0071.namprd13.prod.outlook.com (2603:10b6:208:2b8::16)
+ by CH3PR12MB9341.namprd12.prod.outlook.com (2603:10b6:610:1cd::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.20; Mon, 23 Mar
+ 2026 20:14:03 +0000
+Received: from BL6PEPF0001AB50.namprd04.prod.outlook.com
+ (2603:10b6:208:2b8:cafe::9e) by BL1PR13CA0071.outlook.office365.com
+ (2603:10b6:208:2b8::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9723.31 via Frontend Transport; Mon,
+ 23 Mar 2026 20:13:41 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ BL6PEPF0001AB50.mail.protection.outlook.com (10.167.242.74) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9723.19 via Frontend Transport; Mon, 23 Mar 2026 20:14:03 +0000
+Received: from Satlexmb09.amd.com (10.181.42.218) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 23 Mar
+ 2026 15:14:03 -0500
+Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb09.amd.com
+ (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 23 Mar
+ 2026 13:14:03 -0700
+Received: from xcosswyocto01.xilinx.com (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Mon, 23 Mar 2026 15:14:02 -0500
+From: Sandeep Gundlupet Raju <sandeep.gundlupet-raju@amd.com>
+To: <yocto-patches@lists.yoctoproject.org>
+CC: <chee.yang.lee@intel.com>
+Subject: [yocto-patches][meta-zephyr][master][PATCH 1/1] layer.conf: Update to wrynose
+Date: Mon, 23 Mar 2026 14:13:57 -0600
+Message-ID: <20260323201357.1085876-1-sandeep.gundlupet-raju@amd.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Yi Zhao <yi.zhao@windriver.com>, joe.macdonald@siemens.com,
- yocto-patches@lists.yoctoproject.org
-From: Clayton Casciato <majortomtosourcecontrol@gmail.com>
-Subject: [meta-selinux][whinlatter][PATCH] refpolicy: locallogin - allow
- local_login_t lastlog_t create,delete
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB50:EE_|CH3PR12MB9341:EE_
+X-MS-Office365-Filtering-Correlation-Id: df6ce466-43b0-41c0-2a3e-08de8918ba9e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: 
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700016|376014|18002099003|56012099003;
+X-Microsoft-Antispam-Message-Info: 
+	vRy8lubgHCeZEhF09yWyLdf3ZXF+3RfbISXL3klmg0alxZ5P9f0vESht4j/exz8jZ1lzCkcyYMTPTCRbAXyYAemXcQPGc9MaXdnSvwLbZb8rt8H2d4JVatP5qJYKgrtYAEzfGw1KHcVjqpK+7gFeLrRIqFhIiKYLNjb5+yMQu5ZpbxKSXP0TyNO4goNH3D9YSeVARwp5dkzq+xwJKu9qGkFFglP/QozvNNcC3CnxJXnTJsoMMzfO8KjSa9sUHTdsBihEMZ+l0ymzZfpCh+7XPT7/k6kNbyjIVmavj55Rt0ETxa/eQJCrI1d0XlKHjiRYcndGI0//FJUSk9ER4v5GyyINzoomkwIp5k6NpgX96eumpM5BBZdpO7vG6tFXUuTMJgx1i/sec9VzUIyU0YApAMESDYvAKQ4W2uG6/wJMOUT7SbR7Mwl4/XkU+eeHgwlhZhdHqANcrAg3+4qWMdWXfJnoamJSVshHmt6ycnkcegaMD6sMLtcF/E8VWoZ0aktqdv/XJrKxf2WxufN8CrQDDcxtaOWdJgmLpNEixf/b32C084UchKvMCVKktAYj1DTbVlFi4XlQa+9SBNrXa+v8imvtd//sFlRm31JQFCAgclGzfyv3VEavfV/nVaBcwYKPSWa5H4HsQrqBrSLC7sJRPmIZUVwIEdsHFXAVWsLPF/nzmyx39XDxDHl4WVEo0RbTIeWf8sGYtDYjTj5Rom4Ha3vEDgWoxZ24hk2x2ZXes0UNzVfIRBkd1rnELMO7rDRTrhiKqwt6ZzXXaLX9wCuqPg==
+X-Forefront-Antispam-Report: 
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700016)(376014)(18002099003)(56012099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	UGpkTsct2nRmvk6XmWfHNeesqjcx6DRXkrUHYwtJ+kumI6A7nNukstTCyFreWfkfBF0WgdXz1Tm8l7sakQkYgbw2Od2W24+Adry7swGHrvX/TIMK22A9nTAaHIrLavGRKgboyZEO0ykdZr6u0WX6Z8i7pp2D/YMbkN/l3kJhRREl4Dyk1qvqGIzdwCQng2827XwLvg7mnOwPF5XpGnsK+/4Bjzi4JtF7G1NtBuj6zF+Uudn4hR1TRK/qqqREkQqe1envBdKyI+IkwAYKOvizmZ9PXDAUndsfpJE9uO4pEf9Mm46ox+9/gAY97rmPFHSKh+qhil3M9aNyxKtZhS0wbamPRtQq3TIHGqDaEZZtv/tgIHmd4lB30ewPmdqqUJpJ0JCza8gyE/s9jLuprNm2YZnwfnIbbglus60V+2Dr2dU/bkqzF1fhL/uxlrs3v5vA
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Mar 2026 20:14:03.5973
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: df6ce466-43b0-41c0-2a3e-08de8918ba9e
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource: 
+	BL6PEPF0001AB50.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9341
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 23 Mar 2026 14:49:06 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3533
+ <yocto-patches@lists.yoctoproject.org>; Mon, 23 Mar 2026 20:14:08 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3534
 
-Signed-off-by: Clayton Casciato <majortomtosourecontrol@gmail.com>
+Prepare for the next release and update to the new wrynose release
+series.
+
+Signed-off-by: Sandeep Gundlupet Raju <sandeep.gundlupet-raju@amd.com>
 ---
- ...ystem-locallogin-allow-local_login_t.patch | 149 ++++++++++++++++++
- .../refpolicy/refpolicy_common.inc            |   1 +
- 2 files changed, 150 insertions(+)
- create mode 100644 recipes-security/refpolicy/refpolicy/0061-policy-modules-system-locallogin-allow-local_login_t.patch
+ meta-zephyr-bsp/conf/layer.conf  | 2 +-
+ meta-zephyr-core/conf/layer.conf | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/recipes-security/refpolicy/refpolicy/0061-policy-modules-system-locallogin-allow-local_login_t.patch b/recipes-security/refpolicy/refpolicy/0061-policy-modules-system-locallogin-allow-local_login_t.patch
-new file mode 100644
-index 0000000..d5a63bb
---- /dev/null
-+++ b/recipes-security/refpolicy/refpolicy/0061-policy-modules-system-locallogin-allow-local_login_t.patch
-@@ -0,0 +1,149 @@
-+From 9cee0ec6ec9bb0af826f0f2af88e36159429e1e7 Mon Sep 17 00:00:00 2001
-+From: Clayton Casciato <ccasciato@21sw.us>
-+Date: Thu, 15 Jan 2026 16:27:43 -0700
-+Subject: [PATCH] locallogin: allow local_login_t lastlog_t create,delete
-+
-+Note that the { read } AVC denial was not addressed.
-+
-+It is currently unknown what specifically triggers this and Fedora
-+policy does not appear to allow this.
-+
-+--
-+
-+Fedora:
-+
-+https://github.com/fedora-selinux/selinux-policy/commit/fe29879463b7176dab24c0a9210131fa6e7cd130
-+"Allow systemd (PID 1) create lastlog entries"
-+
-+--
-+
-+pam_lastlog2(login:session): Cannot open database
-+(/var/lib/lastlog/lastlog2.db): unable to open database file
-+
-+PROCTITLE proctitle=2F62696E2F6C6F67696E002D70002D2D00726F6F74
-+
-+AVC avc:  denied  { getattr } for  pid=244 comm="login"
-+path="/var/lib/lastlog" dev="vda" ino=32776
-+scontext=system_u:system_r:local_login_t:s0
-+tcontext=system_u:object_r:lastlog_t:s0 tclass=dir permissive=1
-+
-+SYSCALL arch=c00000b7 syscall=79 success=yes exit=0 a0=ffffffffffffff9c
-+a1=55557ab4db98 a2=7ffff6dd39c0 a3=100 items=0 ppid=1 pid=244
-+auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0
-+tty=ttyAMA0 ses=4294967295 comm="login" exe="/usr/bin/login.shadow"
-+subj=system_u:system_r:local_login_t:s0 key=(null)
-+
-+--
-+
-+PROCTITLE proctitle=2F62696E2F6C6F67696E002D70002D2D00726F6F74
-+
-+AVC avc:  denied  { search } for  pid=244 comm="login" name="lastlog"
-+dev="vda" ino=32776 scontext=system_u:system_r:local_login_t:s0
-+tcontext=system_u:object_r:lastlog_t:s0 tclass=dir permissive=1
-+
-+SYSCALL arch=c00000b7 syscall=79 success=no exit=-2 a0=ffffffffffffff9c
-+a1=55557ab4db98 a2=7ffff6dd39c0 a3=100 items=0 ppid=1 pid=244
-+auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0
-+tty=ttyAMA0 ses=4294967295 comm="login" exe="/usr/bin/login.shadow"
-+subj=system_u:system_r:local_login_t:s0 key=(null)
-+
-+--
-+
-+PROCTITLE proctitle=2F62696E2F6C6F67696E002D70002D2D00726F6F74
-+
-+AVC avc:  denied  { write } for  pid=244 comm="login" name="lastlog"
-+dev="vda" ino=32776 scontext=system_u:system_r:local_login_t:s0
-+tcontext=system_u:object_r:lastlog_t:s0 tclass=dir permissive=1
-+
-+AVC avc:  denied  { add_name } for  pid=244 comm="login"
-+name="lastlog2.db" scontext=system_u:system_r:local_login_t:s0
-+tcontext=system_u:object_r:lastlog_t:s0 tclass=dir permissive=1
-+
-+AVC avc:  denied  { create } for  pid=244 comm="login"
-+name="lastlog2.db" scontext=system_u:system_r:local_login_t:s0
-+tcontext=system_u:object_r:lastlog_t:s0 tclass=file permissive=1
-+
-+SYSCALL arch=c00000b7 syscall=56 success=yes exit=4 a0=ffffffffffffff9c
-+a1=55557ab4e2b4 a2=88042 a3=1a4 items=4 ppid=1 pid=244 auid=4294967295
-+uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=ttyAMA0
-+ses=4294967295 comm="login" exe="/usr/bin/login.shadow"
-+subj=system_u:system_r:local_login_t:s0 key=(null)
-+
-+CWD cwd="/"
-+
-+PATH item=0 name=(null) inode=32776 dev=fe:00 mode=040755 ouid=0 ogid=0
-+rdev=00:00 obj=system_u:object_r:lastlog_t:s0 nametype=PARENT cap_fp=0
-+cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0
-+
-+PATH item=1 name=(null) nametype=CREATE cap_fp=0 cap_fi=0 cap_fe=0
-+cap_fver=0 cap_frootid=0
-+
-+PATH item=2 name=(null) inode=32776 dev=fe:00 mode=040755 ouid=0 ogid=0
-+rdev=00:00 obj=system_u:object_r:lastlog_t:s0 nametype=PARENT cap_fp=0
-+cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0
-+
-+PATH item=3 name=(null) inode=32867 dev=fe:00 mode=0100644 ouid=0 ogid=0
-+rdev=00:00 obj=system_u:object_r:lastlog_t:s0 nametype=CREATE cap_fp=0
-+cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0
-+
-+--
-+
-+PROCTITLE proctitle=2F62696E2F6C6F67696E002D70002D2D00726F6F74
-+
-+AVC avc:  denied  { read } for  pid=244 comm="login" name="lastlog"
-+dev="vda" ino=32776 scontext=system_u:system_r:local_login_t:s0
-+tcontext=system_u:object_r:lastlog_t:s0 tclass=dir permissive=1
-+
-+AVC avc:  denied  { open } for  pid=244 comm="login"
-+path="/var/lib/lastlog" dev="vda" ino=32776
-+scontext=system_u:system_r:local_login_t:s0
-+tcontext=system_u:object_r:lastlog_t:s0 tclass=dir permissive=1
-+
-+SYSCALL arch=c00000b7 syscall=56 success=yes exit=6 a0=ffffffffffffff9c
-+a1=7ffff6dd5740 a2=80000 a3=0 items=0 ppid=1 pid=244 auid=4294967295
-+uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=ttyAMA0
-+ses=4294967295 comm="login" exe="/usr/bin/login.shadow"
-+subj=system_u:system_r:local_login_t:s0 key=(null)
-+
-+--
-+
-+PROCTITLE proctitle=2F62696E2F6C6F67696E002D70002D2D00726F6F74
-+
-+AVC avc:  denied  { remove_name } for  pid=244 comm="login"
-+name="lastlog2.db-journal" dev="vda" ino=32868
-+scontext=system_u:system_r:local_login_t:s0
-+tcontext=system_u:object_r:lastlog_t:s0 tclass=dir permissive=1
-+
-+AVC avc:  denied  { unlink } for  pid=244 comm="login"
-+name="lastlog2.db-journal" dev="vda" ino=32868
-+scontext=system_u:system_r:local_login_t:s0
-+tcontext=system_u:object_r:lastlog_t:s0 tclass=file permissive=1
-+
-+SYSCALL arch=c00000b7 syscall=35 success=yes exit=0 a0=ffffffffffffff9c
-+a1=55557ab4e2d2 a2=0 a3=7fff4a1abb68 items=0 ppid=1 pid=244
-+auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0
-+tty=ttyAMA0 ses=4294967295 comm="login" exe="/usr/bin/login.shadow"
-+subj=system_u:system_r:local_login_t:s0 key=(null)
-+
-+Signed-off-by: Clayton Casciato <ccasciato@21sw.us>
-+
-+Upstream-Status: Backport [https://github.com/SELinuxProject/refpolicy/commit/93a6a53391f13d13a1d7e84872ccc227b5c550ec]
-+
-+Signed-off-by: Clayton Casciato <majortomtosourcecontrol@gmail.com>
-+---
-+ policy/modules/system/locallogin.te | 2 ++
-+ 1 file changed, 2 insertions(+)
-+
-+diff --git a/policy/modules/system/locallogin.te b/policy/modules/system/locallogin.te
-+index 75ee52efd..5840ad5a9 100644
-+--- a/policy/modules/system/locallogin.te
-++++ b/policy/modules/system/locallogin.te
-+@@ -122,6 +122,8 @@ term_relabel_all_ttys(local_login_t)
-+ term_setattr_all_ttys(local_login_t)
-+ term_setattr_unallocated_ttys(local_login_t)
-+ 
-++auth_create_lastlog(local_login_t)
-++auth_delete_lastlog(local_login_t)
-+ auth_rw_login_records(local_login_t)
-+ auth_rw_faillog(local_login_t)
-+ auth_manage_pam_runtime_dirs(local_login_t)
-diff --git a/recipes-security/refpolicy/refpolicy_common.inc b/recipes-security/refpolicy/refpolicy_common.inc
-index b69cc31..3af37c5 100644
---- a/recipes-security/refpolicy/refpolicy_common.inc
-+++ b/recipes-security/refpolicy/refpolicy_common.inc
-@@ -76,6 +76,7 @@ SRC_URI += " \
-         file://0058-policy-modules-system-logging-allow-miscfiles_read_g.patch \
-         file://0059-policy-modules-system-authlogin-label-var_lib_lastlo.patch \
-         file://0060-policy-modules-system-authlogin-add-auth_create_last.patch \
-+        file://0061-policy-modules-system-locallogin-allow-local_login_t.patch \
-         "
- 
- S = "${UNPACKDIR}/refpolicy"
+diff --git a/meta-zephyr-bsp/conf/layer.conf b/meta-zephyr-bsp/conf/layer.c=
+onf
+index 6c16722..a00d3f1 100644
+--- a/meta-zephyr-bsp/conf/layer.conf
++++ b/meta-zephyr-bsp/conf/layer.conf
+@@ -15,4 +15,4 @@ LAYERVERSION_zephyrbsp =3D "1"
+=20
+ LAYERDEPENDS_zephyrbsp =3D "zephyrcore core meta-python"
+=20
+-LAYERSERIES_COMPAT_zephyrbsp =3D "whinlatter"
++LAYERSERIES_COMPAT_zephyrbsp =3D "wrynose"
+diff --git a/meta-zephyr-core/conf/layer.conf b/meta-zephyr-core/conf/layer=
+.conf
+index 48a0066..29bc671 100644
+--- a/meta-zephyr-core/conf/layer.conf
++++ b/meta-zephyr-core/conf/layer.conf
+@@ -15,7 +15,7 @@ LAYERVERSION_zephyrcore =3D "1"
+=20
+ LAYERDEPENDS_zephyrcore =3D "core meta-python"
+=20
+-LAYERSERIES_COMPAT_zephyrcore =3D "whinlatter"
++LAYERSERIES_COMPAT_zephyrcore =3D "wrynose"
+=20
+ PYTHON3_NATIVE_SITEPACKAGES_DIR =3D "${libdir_native}/${PYTHON3_DIR}/site-=
+packages"
+=20
+--=20
+2.34.1
+
 
