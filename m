@@ -2,2254 +2,2540 @@ Return-Path: <hongxu.jia@windriver.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 720C9103A98B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6DAA103A98F
 	for <webhook@archiver.kernel.org>; Wed, 25 Mar 2026 02:17:38 +0000 (UTC)
 Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.13929.1774405054626372039
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.13689.1774405056742786747
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 24 Mar 2026 19:17:35 -0700
+ Tue, 24 Mar 2026 19:17:37 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@windriver.com header.s=PPS06212021 header.b=qyrXZ/9l;
+ dkim=pass header.i=@windriver.com header.s=PPS06212021 header.b=sGkPpy1f;
  spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.178.238, mailfrom: prvs=7544e4345f=hongxu.jia@windriver.com)
-Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62P1tN893429809
-	for <yocto-patches@lists.yoctoproject.org>; Wed, 25 Mar 2026 02:17:33 GMT
+Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62P1fbE51660237
+	for <yocto-patches@lists.yoctoproject.org>; Wed, 25 Mar 2026 02:17:35 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
 	 h=content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=PPS06212021;
-	 bh=47nZ9N3VgoUyyKRANIRjtxNpC6NLcI1yviWZgzIDd1o=; b=qyrXZ/9lwiS2
-	vlCBPk01k4thbrLZC3l5vEx9WB/DvHNPyfUWhlWfUhw5IJalucpvoLBzwtawYvHq
-	vR1/iCrQAoUzYhKuYv6TEMzT/rxioUUr01zpTJVOQ0hT5dqLRIrKpeUwfwB8Ay2i
-	+P7UcOpCmRBq0sIx5iCYTbKpCwVwGmF0tvL1SbPJneJyff9iDSzZmu863+Mx876R
-	nhStEol1aqdV0TaxVf7pnVSOcIsauPMhmMUs38vrESf8GYSTeDjs+uHsHrjGRMsS
-	4O9spbVCDKsJ01Ug20xfaH6d0dmwyGKnwBCT1y58JxB5Vg+jPLoztIuucgM8milW
-	fI/u4Yx9Tw==
+	 bh=bVpNZrtpDZ5erc4tpYwn2020gMS8BB1OyIb4EKbIQ5g=; b=sGkPpy1f++Qw
+	uJ9xbU+gZBIQqk85hEhCYQZv5G7fBzsI2stvlqrOH868fDou459FhbDmnC2Fpr/d
+	o1rWF+ws0HxZDf+tcf15VrcpFjK15Voyr/Q/rTy9LGLw0aCXLEJqlqNnyOn2uNsU
+	dxmkH8gnNNbXMMRM4yzbfZRRi+8IZfGtGuxoyBOiy0VUmeAwGU1soV3GtVj2S9O0
+	J/JUivDXO0zy+nFONTQ5E/VqRAWcDMDJ1eQqWuLT8EHFG+ExoN6GAgsk5RtFVzZg
+	HskA0gutsIohpzNEf0c0ne6mXrty6p4GNV7clB9tllLglKz0tgP+6fxMt7xrIxLR
+	2LrStVr+4g==
 Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [128.224.246.37])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4d1gj84duv-1
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4d1ja6vcpr-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <yocto-patches@lists.yoctoproject.org>; Wed, 25 Mar 2026 02:17:33 +0000 (GMT)
+	for <yocto-patches@lists.yoctoproject.org>; Wed, 25 Mar 2026 02:17:35 +0000 (GMT)
 Received: from ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) by
  ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.61; Tue, 24 Mar 2026 19:17:32 -0700
+ 15.1.2507.61; Tue, 24 Mar 2026 19:17:33 -0700
 Received: from pek-lpg-core5.wrs.com (10.11.232.110) by
  ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) with Microsoft SMTP Server id
- 15.1.2507.61 via Frontend Transport; Tue, 24 Mar 2026 19:17:31 -0700
+ 15.1.2507.61 via Frontend Transport; Tue, 24 Mar 2026 19:17:33 -0700
 From: Hongxu Jia <hongxu.jia@windriver.com>
 To: <yocto-patches@lists.yoctoproject.org>
-Subject: [meta-tensorflow][PATCH 12/14]  tensorflow/tensorflow-native/tensorflow-lite: upgrade 2.19.0 -> 2.21.0
-Date: Wed, 25 Mar 2026 10:17:17 +0800
-Message-ID: <20260325021719.1526525-13-hongxu.jia@windriver.com>
+Subject: [meta-tensorflow][PATCH 14/14] tensorflow: remove obsolete patches
+Date: Wed, 25 Mar 2026 10:17:19 +0800
+Message-ID: <20260325021719.1526525-15-hongxu.jia@windriver.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20260325021719.1526525-1-hongxu.jia@windriver.com>
 References: <20260325021719.1526525-1-hongxu.jia@windriver.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: W2k_agSo_YSOBTr515BmotwRFTi2GvIv
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzI1MDAxNSBTYWx0ZWRfX+0svFHdZL2ER
- /6oYC4XcFL/Q1HSyFzmos+ppxKxoccjVLUdhpJ5n4DStiY1Iv/evvmoS+3809f5xFrY8+CKQLNu
- hCNXX0szoAJjLyQUNRDde8T3u3GGgJxijHK0V2cmrswOR83xZS/W6JgO4dgfPNKh2cn/Np4Cuax
- YBlf+3h9pyXzs8IPeZcpwwhbFkNZe0lN+wPNT82n1LywzMm6xhmSLtyXkTPPdvEfu7YbC8ufxlw
- xp7nvtom8SPlxsMfonmlzq3rzDk9eiuxDERxTVcCZGS13NFoDgHGbE6BkzJFE8OWKrWZvfhi5j4
- vxrr3YeddYcEZE4ObRUbt7azHriohycyly66ITEDcGzkuwid7bnmmd4xVtOI7lW6DO8u0oOpxvd
- 6/MX6I23Ygaa2+bdcKRjElZKCKR4rrSx/iPQnmiEb5j1xw9DG81cM3HKgMbipHnRlhTM/WYXvja
- MIxz7SUybdWb4/ayOjw==
-X-Authority-Analysis: v=2.4 cv=LtqfC3dc c=1 sm=1 tr=0 ts=69c345bd cx=c_pps
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzI1MDAxNSBTYWx0ZWRfX1MjmHBhz7kxl
+ 3/pzqLUIJ3OAd79SclGC/MeqzPcYQrqkVUsHHsJKiRBkmIxFaZPfDuDi9e8y3M58KOaQ2ANYnS0
+ rqZCqxlNGJxiGKh1UvzQ17oY0gtISVDRiUgoVTQRBZAMO0zael7RRPvpWvMVGmuIoAI1WA0++b5
+ +OH+X2wDsiWXCyvs0yyK2SbdHSyAXrsfF8f7tAcdjH58d87nNW+2QcB0h0yH4nV/ZMvv2pTQjba
+ nGY9TXOR/om0C4SX4DuklcRn0C+3CMxSBLtgX6gt+rXEAV4R7Ei4/QYzSwWwOq1T6fOqqOtqZBZ
+ 7/GPhSZdXOQV9xplevpb9MO1Al0wFHA/bt2HDBXrG/M52We9S29P0q0+nXwKusNjv9RNjWb43Rz
+ TKg7WWcL8lqmutas74pSpKJXUhdHgFIrNX/JwPIu1g/wSSpPVdFsH4541o2ulmHoGU4zlp6U4db
+ FwJIe3ckOhwhPXE+kOw==
+X-Authority-Analysis: v=2.4 cv=Q5vfIo2a c=1 sm=1 tr=0 ts=69c345bf cx=c_pps
  a=Lg6ja3A245NiLSnFpY5YKQ==:117 a=Lg6ja3A245NiLSnFpY5YKQ==:17
  a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22 a=bi6dqmuHe4P4UrxVR6um:22
- a=klDOsUkWDRETUCZYPvoE:22 a=01C68wJfAAAA:8 a=NEAV23lmAAAA:8 a=mV9VRH-2AAAA:8
- a=PlsyGhjiAAAA:8 a=3g80flMcAAAA:8 a=jPeWQ6RjAAAA:8 a=t7CeM3EgAAAA:8
- a=BfMjbrftotS1NrJGdKwA:9 a=BhMdqm2Wqc4Q2JL7t0yJfBCtM/Y=:19
- a=slFVYn995OdndYK6izCD:22 a=DY59otl68eHIR0tbHspE:22 a=ES-fD_9M07-1p2amA5gm:22
- a=3urWGuTZa-U-TZ_dHwj2:22 a=jPTqSWBWhtiCoVT8egAu:22 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-GUID: W2k_agSo_YSOBTr515BmotwRFTi2GvIv
+ a=fTW__CHxibyLmBMfj2wP:22 a=NEAV23lmAAAA:8 a=pbPJX3KNAAAA:8 a=mDV3o1hIAAAA:8
+ a=p0WdMEafAAAA:8 a=01C68wJfAAAA:8 a=t7CeM3EgAAAA:8 a=jPeWQ6RjAAAA:8
+ a=pGLkceISAAAA:8 a=uChsZFC9AAAA:8 a=yW1WcBqm262dE0-6Qa0A:9 a=O8hF6Hzn-FEA:10
+ a=DY59otl68eHIR0tbHspE:22 a=FdTzh2GWekK77mhwV6Dw:22 a=jPTqSWBWhtiCoVT8egAu:22
+ a=ULtXvzFHYWHLyBAuiDia:22
+X-Proofpoint-ORIG-GUID: ldETZ_i3WRYxB8xTzq2t7CuMHuRiUuQ9
+X-Proofpoint-GUID: ldETZ_i3WRYxB8xTzq2t7CuMHuRiUuQ9
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-03-25_01,2026-03-24_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 bulkscore=0 suspectscore=0 malwarescore=0 lowpriorityscore=0
- adultscore=0 clxscore=1015 impostorscore=0 spamscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603250015
+ suspectscore=0 spamscore=0 bulkscore=0 clxscore=1015 phishscore=0
+ adultscore=0 impostorscore=0 malwarescore=0 priorityscore=1501
+ lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2603050001
+ definitions=main-2603250015
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Wed, 25 Mar 2026 02:17:38 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3548
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3550
 
-1. Support python 3.14
-- 0001-Add-support-for-Python-3.14-to-TensorFlow-build-conf.patch
-- 0001-Update-grpcio-to-1.78.0-for-Python-3.14.patch
-- 0001-correct-h5py-version-for-python-3.14.patch
-- 0001-fix-pypi_keras-is-not-defined.patch
-
-2. Swith toolchain to clang
-- BUILD.yocto_compiler
-- cc_config.bzl.tpl
-- Clean up gcc specific CFALGS and patches
-
-3. Migrating to Platforms [1]
-- 0001-set-x83_64-to-arch-of-whl.patch
-- 0001-support-cross-compile-for-target-aarch64.patch
-- BUILD.in
-
-[1] https://bazel.build/concepts/platforms
-
-4. Remove TF_ENABLE_XLA=0 otherwise `import tensorflow' failed
-[snip]
-$ python3 -c "import tensorflow"
-...
-|    from tensorflow.python.platform import _pywrap_cpu_feature_guard
-|ImportError: .venv/lib/python3.13/site-packages/tensorflow/python/
-platform/../lib_pywrap_tensorflow_common.so: undefined symbol: _ZN4mlir3sdy18TensorShardingAttr13getClosedLikeES1_
-[snip]
-
-5. According to [2], revert to use external Yocto toolchains
-- 0001-use-external-toolchains.patch
-
-[2] https://github.com/tensorflow/tensorflow/commit/ac56b0e840919cea88ed847f364468c8332b5333
-
-6. Fix tensorflow-lite compile failed
-- 0001-do-not-use-pywrap-rules.patch
+They are not required any more
+- 0001-fix-compile-XNNPACK-failed-for-aarch64.patch
+- 0001-fix-compile-failed.patch
+- 0001-tensorflow-BUILD-fix-build-failure-for-aarch64.patch
+- 0001-third_party-ducc-fix-ambiguous-failure.patch
+- 0002-third_party-eigen_archive-workaround-ice-failure-whi.patch
+- 0004-drop-v2-config.patch
+- 0006-fix-build-failure.patch
+- 0007-support-hermetic-Python.patch
+- 0009-Fix-build-with-gcc-12.patch
+- 0012-disable-avxvnni-and-avx512fp16-for-x86.patch
+- 0013-fix-build-tensorflow-lite-examples-label_image-label.patch
+- 0016-CheckFeatureOrDie-use-warning-to-avoid-die.patch
+- 0017-support-32-bit-x64-and-arm-for-yocto.patch
+- 0019-fix-build-failure-for-2.19.patch
+- 0020-tensorflow-compiler-mlir-lite-fix-tensorflow_lite_qu.patch
+- 0001-Add-hermetic-PYTHON-3.13-requirements-lock-file-in-T.patch
+- 0001-support-gcc-15.patch
+- 0001-support-python-3.33.patch
+- 0010-fix-patchelf-not-found.patch
+- 0011-fix-llvm-project-timeout-occasionally.patch
+- 0021-build_pip_package_with_bazel.sh-correct-version.patch
 
 Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
 ---
- classes/tensorflow_ver.bbclass                |   12 +-
- ...Python-3.14-to-TensorFlow-build-conf.patch | 1098 +++++++++++++++++
- ...ate-grpcio-to-1.78.0-for-Python-3.14.patch |  165 +++
- ...correct-h5py-version-for-python-3.14.patch |   28 +
- .../files/0001-do-not-use-pywrap-rules.patch  |   28 +
- .../0001-fix-pypi_keras-is-not-defined.patch  |   33 +
- .../0001-set-x83_64-to-arch-of-whl.patch      |   36 +
- ...ort-cross-compile-for-target-aarch64.patch |  108 ++
- .../files/0001-use-external-toolchains.patch  |   53 +
- recipes-framework/tensorflow/files/BUILD.in   |   16 +
- .../tensorflow/files/BUILD.yocto_compiler     |   14 +-
- .../tensorflow/files/cc_config.bzl.tpl        |   22 +-
- ...te_2.19.0.bb => tensorflow-lite_2.21.0.bb} |   21 +-
- ..._2.19.0.bb => tensorflow-native_2.21.0.bb} |   18 +-
- recipes-framework/tensorflow/tensorflow.inc   |   32 +-
- ...sorflow_2.19.0.bb => tensorflow_2.21.0.bb} |   38 +-
- 16 files changed, 1617 insertions(+), 105 deletions(-)
- create mode 100644 recipes-framework/tensorflow/files/0001-Add-support-for-Python-3.14-to-TensorFlow-build-conf.patch
- create mode 100644 recipes-framework/tensorflow/files/0001-Update-grpcio-to-1.78.0-for-Python-3.14.patch
- create mode 100644 recipes-framework/tensorflow/files/0001-correct-h5py-version-for-python-3.14.patch
- create mode 100644 recipes-framework/tensorflow/files/0001-do-not-use-pywrap-rules.patch
- create mode 100644 recipes-framework/tensorflow/files/0001-fix-pypi_keras-is-not-defined.patch
- create mode 100644 recipes-framework/tensorflow/files/0001-set-x83_64-to-arch-of-whl.patch
- create mode 100644 recipes-framework/tensorflow/files/0001-support-cross-compile-for-target-aarch64.patch
- create mode 100644 recipes-framework/tensorflow/files/0001-use-external-toolchains.patch
- rename recipes-framework/tensorflow/{tensorflow-lite_2.19.0.bb => tensorflow-lite_2.21.0.bb} (88%)
- rename recipes-framework/tensorflow/{tensorflow-native_2.19.0.bb => tensorflow-native_2.21.0.bb} (64%)
- rename recipes-framework/tensorflow/{tensorflow_2.19.0.bb => tensorflow_2.21.0.bb} (82%)
+ ...HON-3.13-requirements-lock-file-in-T.patch | 816 ------------------
+ ...x-compile-XNNPACK-failed-for-aarch64.patch | 146 ----
+ .../files/0001-fix-compile-failed.patch       |  33 -
+ .../files/0001-support-gcc-15.patch           | 125 ---
+ .../files/0001-support-python-3.33.patch      |  87 --
+ ...-BUILD-fix-build-failure-for-aarch64.patch |  27 -
+ ...ird_party-ducc-fix-ambiguous-failure.patch | 117 ---
+ ...n_archive-workaround-ice-failure-whi.patch | 110 ---
+ .../files/0004-drop-v2-config.patch           |  29 -
+ .../files/0006-fix-build-failure.patch        |  54 --
+ .../files/0007-support-hermetic-Python.patch  |  75 --
+ .../files/0009-Fix-build-with-gcc-12.patch    |  35 -
+ .../files/0010-fix-patchelf-not-found.patch   |  33 -
+ ...ix-llvm-project-timeout-occasionally.patch |  97 ---
+ ...sable-avxvnni-and-avx512fp16-for-x86.patch |  99 ---
+ ...flow-lite-examples-label_image-label.patch |  51 --
+ ...eatureOrDie-use-warning-to-avoid-die.patch |  41 -
+ ...support-32-bit-x64-and-arm-for-yocto.patch | 123 ---
+ .../0019-fix-build-failure-for-2.19.patch     |  79 --
+ ...ler-mlir-lite-fix-tensorflow_lite_qu.patch |  42 -
+ ...ackage_with_bazel.sh-correct-version.patch |  43 -
+ 21 files changed, 2262 deletions(-)
+ delete mode 100644 recipes-framework/tensorflow/files/0001-Add-hermetic-PYTHON-3.13-requirements-lock-file-in-T.patch
+ delete mode 100644 recipes-framework/tensorflow/files/0001-fix-compile-XNNPACK-failed-for-aarch64.patch
+ delete mode 100644 recipes-framework/tensorflow/files/0001-fix-compile-failed.patch
+ delete mode 100644 recipes-framework/tensorflow/files/0001-support-gcc-15.patch
+ delete mode 100644 recipes-framework/tensorflow/files/0001-support-python-3.33.patch
+ delete mode 100644 recipes-framework/tensorflow/files/0001-tensorflow-BUILD-fix-build-failure-for-aarch64.patch
+ delete mode 100644 recipes-framework/tensorflow/files/0001-third_party-ducc-fix-ambiguous-failure.patch
+ delete mode 100644 recipes-framework/tensorflow/files/0002-third_party-eigen_archive-workaround-ice-failure-whi.patch
+ delete mode 100644 recipes-framework/tensorflow/files/0004-drop-v2-config.patch
+ delete mode 100644 recipes-framework/tensorflow/files/0006-fix-build-failure.patch
+ delete mode 100644 recipes-framework/tensorflow/files/0007-support-hermetic-Python.patch
+ delete mode 100644 recipes-framework/tensorflow/files/0009-Fix-build-with-gcc-12.patch
+ delete mode 100644 recipes-framework/tensorflow/files/0010-fix-patchelf-not-found.patch
+ delete mode 100644 recipes-framework/tensorflow/files/0011-fix-llvm-project-timeout-occasionally.patch
+ delete mode 100644 recipes-framework/tensorflow/files/0012-disable-avxvnni-and-avx512fp16-for-x86.patch
+ delete mode 100644 recipes-framework/tensorflow/files/0013-fix-build-tensorflow-lite-examples-label_image-label.patch
+ delete mode 100644 recipes-framework/tensorflow/files/0016-CheckFeatureOrDie-use-warning-to-avoid-die.patch
+ delete mode 100644 recipes-framework/tensorflow/files/0017-support-32-bit-x64-and-arm-for-yocto.patch
+ delete mode 100644 recipes-framework/tensorflow/files/0019-fix-build-failure-for-2.19.patch
+ delete mode 100644 recipes-framework/tensorflow/files/0020-tensorflow-compiler-mlir-lite-fix-tensorflow_lite_qu.patch
+ delete mode 100644 recipes-framework/tensorflow/files/0021-build_pip_package_with_bazel.sh-correct-version.patch
 
-diff --git a/classes/tensorflow_ver.bbclass b/classes/tensorflow_ver.bbclass
-index 911e8b7..902fc87 100644
---- a/classes/tensorflow_ver.bbclass
-+++ b/classes/tensorflow_ver.bbclass
-@@ -6,19 +6,19 @@ TF_ARGS_EXTRA ??= "--config=v2"
- 
- python __anonymous() {
-     if not bb.utils.contains("DISTRO_FEATURES", "tensorflow", True, False, d):
--        msg = "\nThe official TensorFlow is tested and supported under Python 3.13\n"
-+        msg = "\nThe official TensorFlow is tested and supported under Python 3.14\n"
-         msg += "Please add the following to local.conf\n"
-         msg += "    DISTRO_FEATURES:append = ' tensorflow'\n"
-         msg += "    DISTRO_FEATURES_NATIVE:append = ' tensorflow'\n"
-         msg += "    DISTRO_FEATURES_NATIVESDK:append = ' tensorflow'\n"
-         raise bb.parse.SkipPackage(msg)
- 
--    if d.getVar("PYTHON_BASEVERSION") != "3.13":
--        msg = "\nThe official TensorFlow is tested and supported under Python 3.13\n"
-+    if d.getVar("PYTHON_BASEVERSION") != "3.14":
-+        msg = "\nThe official TensorFlow is tested and supported under Python 3.14\n"
-         msg += "Please add the following to local.conf\n"
--        msg += "    PYTHON_BASEVERSION:class-target = '3.13'\n"
--        msg += "    PYTHON_BASEVERSION:class-native = '3.13'\n"
--        msg += "    PYTHON_BASEVERSION:class-nativesdk = '3.13'\n"
-+        msg += "    PYTHON_BASEVERSION:class-target = '3.14'\n"
-+        msg += "    PYTHON_BASEVERSION:class-native = '3.14'\n"
-+        msg += "    PYTHON_BASEVERSION:class-nativesdk = '3.14'\n"
-         msg += "It will apply python3 modules for 3.13"
-         raise bb.parse.SkipPackage(msg)
- }
-diff --git a/recipes-framework/tensorflow/files/0001-Add-support-for-Python-3.14-to-TensorFlow-build-conf.patch b/recipes-framework/tensorflow/files/0001-Add-support-for-Python-3.14-to-TensorFlow-build-conf.patch
-new file mode 100644
-index 0000000..ec9ad29
---- /dev/null
-+++ b/recipes-framework/tensorflow/files/0001-Add-support-for-Python-3.14-to-TensorFlow-build-conf.patch
-@@ -0,0 +1,1098 @@
-+From 1197ce36253c6d8af96dab0ad23947aef677193d Mon Sep 17 00:00:00 2001
-+From: "A. Unique TensorFlower" <gardener@tensorflow.org>
-+Date: Fri, 27 Feb 2026 03:25:26 -0800
-+Subject: [PATCH] Add support for Python 3.14 to TensorFlow build
-+ configurations.
-+
-+PiperOrigin-RevId: 876164454
-+
-+Upstream-Status: Backport [https://github.com/tensorflow/tensorflow/commit/7278d07c06e4b05d06a5a6a45ab4e2f749c9bd81]
-+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
-+---
-+ WORKSPACE                                     |   1 +
-+ ci/official/envs/py314                        |  15 +
-+ .../requirements_updater/requirements.in      |  10 +-
-+ requirements_lock_3_14.txt                    | 983 ++++++++++++++++++
-+ .../tools/toolchains/python/python_repo.bzl   |   2 +-
-+ .../tools/toolchains/python/python_repo.bzl   |   2 +-
-+ 6 files changed, 1007 insertions(+), 6 deletions(-)
-+ create mode 100644 ci/official/envs/py314
-+ create mode 100644 requirements_lock_3_14.txt
-+
-+diff --git a/WORKSPACE b/WORKSPACE
-+index 6e4a63ff480..4813611b836 100644
-+--- a/WORKSPACE
-++++ b/WORKSPACE
-+@@ -79,6 +79,7 @@ python_init_repositories(
-+         "3.11": "//:requirements_lock_3_11.txt",
-+         "3.12": "//:requirements_lock_3_12.txt",
-+         "3.13": "//:requirements_lock_3_13.txt",
-++        "3.14": "//:requirements_lock_3_14.txt",
-+     },
-+ )
-+ 
-+diff --git a/ci/official/envs/py314 b/ci/official/envs/py314
-+new file mode 100644
-+index 00000000000..6b1dd7bdbce
-+--- /dev/null
-++++ b/ci/official/envs/py314
-+@@ -0,0 +1,15 @@
-++# Copyright 2023 The TensorFlow Authors. All Rights Reserved.
-++#
-++# Licensed under the Apache License, Version 2.0 (the "License");
-++# you may not use this file except in compliance with the License.
-++# You may obtain a copy of the License at
-++#
-++#     http://www.apache.org/licenses/LICENSE-2.0
-++#
-++# Unless required by applicable law or agreed to in writing, software
-++# distributed under the License is distributed on an "AS IS" BASIS,
-++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-++# See the License for the specific language governing permissions and
-++# limitations under the License.
-++# ==============================================================================
-++TFCI_PYTHON_VERSION=3.14
-+diff --git a/ci/official/requirements_updater/requirements.in b/ci/official/requirements_updater/requirements.in
-+index ddeabbdd4e3..6e3da3cdd0a 100644
-+--- a/ci/official/requirements_updater/requirements.in
-++++ b/ci/official/requirements_updater/requirements.in
-+@@ -1,7 +1,8 @@
-+-# Note that numpy 2.1.0 does not support python 3.9
-+-numpy >= 2.0.0, < 2.2.0
-++numpy >= 2.0.0, < 2.2.0 ; python_version <= "3.13"
-++numpy>=2.2.6 ; python_version == "3.14"
-+ wheel ~= 0.41.2
-+-h5py >= 3.11.0, < 3.15.0
-++h5py >= 3.11.0, < 3.15.0 ; python_version <= "3.13"
-++h5py ~= 3.15.1 ; python_version == "3.14"
-+ lit ~= 17.0.2
-+ opt_einsum == 3.3.0
-+ astunparse == 1.6.3
-+@@ -27,7 +28,8 @@ protobuf >= 5.28.0, < 7.0
-+ grpcio >= 1.68.1, < 2.0
-+ portpicker == 1.6.0
-+ # Scipy 15.x and above have misc.derivative removed, but we still use it
-+-scipy >= 1.13.0, < 1.15.0
-++scipy >= 1.13.0, < 1.15.0 ; python_version <= "3.13"
-++scipy >=1.15.0 ; python_version == "3.14"
-+ requests >= 2.31.0
-+ packaging==23.2
-+ setuptools==78.1.1
-+diff --git a/requirements_lock_3_14.txt b/requirements_lock_3_14.txt
-+new file mode 100644
-+index 00000000000..09a8e5cc66b
-+--- /dev/null
-++++ b/requirements_lock_3_14.txt
-+@@ -0,0 +1,983 @@
-++#
-++# This file is autogenerated by pip-compile with Python 3.14
-++# by the following command:
-++#
-++#    bazel run //ci/official/requirements_updater:requirements.update
-++#
-++absl-py==2.3.0 \
-++    --hash=sha256:9824a48b654a306168f63e0d97714665f8490b8d89ec7bf2efc24bf67cf579b3 \
-++    --hash=sha256:d96fda5c884f1b22178852f30ffa85766d50b99e00775ea626c23304f582fc4f
-++    # via
-++    #   keras-nightly
-++    #   tb-nightly
-++astor==0.7.1 \
-++    --hash=sha256:95c30d87a6c2cf89aa628b87398466840f0ad8652f88eb173125a6df8533fb8d \
-++    --hash=sha256:fb503b9e2fdd05609fbf557b916b4a7824171203701660f0c55bbf5a7a68713e
-++    # via -r ci/official/requirements_updater/requirements.in
-++astunparse==1.6.3 \
-++    --hash=sha256:5ad93a8456f0d084c3456d059fd9a92cce667963232cbf763eac3bc5b7940872 \
-++    --hash=sha256:c2652417f2c8b5bb325c885ae329bdf3f86424075c4fd1a128674bc6fba4b8e8
-++    # via -r ci/official/requirements_updater/requirements.in
-++auditwheel==6.3.0 \
-++    --hash=sha256:05c70a234fa14c140aa6d9076135d9550962d95849911b8d5d0419a3add09f00 \
-++    --hash=sha256:31cbd8045d4ff6776f79bef328b5fd563e5ecc8ae82ea34b6fe5e76efe2a84eb
-++    # via -r ci/official/requirements_updater/requirements.in
-++certifi==2025.1.31 \
-++    --hash=sha256:3d5da6925056f6f18f119200434a4780a94263f10d1c21d032a6f6b2baa20651 \
-++    --hash=sha256:ca78db4565a652026a4db2bcdf68f2fb589ea80d0be70e03929ed730746b84fe
-++    # via requests
-++charset-normalizer==3.4.1 \
-++    --hash=sha256:0167ddc8ab6508fe81860a57dd472b2ef4060e8d378f0cc555707126830f2537 \
-++    --hash=sha256:01732659ba9b5b873fc117534143e4feefecf3b2078b0a6a2e925271bb6f4cfa \
-++    --hash=sha256:01ad647cdd609225c5350561d084b42ddf732f4eeefe6e678765636791e78b9a \
-++    --hash=sha256:04432ad9479fa40ec0f387795ddad4437a2b50417c69fa275e212933519ff294 \
-++    --hash=sha256:0907f11d019260cdc3f94fbdb23ff9125f6b5d1039b76003b5b0ac9d6a6c9d5b \
-++    --hash=sha256:0924e81d3d5e70f8126529951dac65c1010cdf117bb75eb02dd12339b57749dd \
-++    --hash=sha256:09b26ae6b1abf0d27570633b2b078a2a20419c99d66fb2823173d73f188ce601 \
-++    --hash=sha256:09b5e6733cbd160dcc09589227187e242a30a49ca5cefa5a7edd3f9d19ed53fd \
-++    --hash=sha256:0af291f4fe114be0280cdd29d533696a77b5b49cfde5467176ecab32353395c4 \
-++    --hash=sha256:0f55e69f030f7163dffe9fd0752b32f070566451afe180f99dbeeb81f511ad8d \
-++    --hash=sha256:1a2bc9f351a75ef49d664206d51f8e5ede9da246602dc2d2726837620ea034b2 \
-++    --hash=sha256:22e14b5d70560b8dd51ec22863f370d1e595ac3d024cb8ad7d308b4cd95f8313 \
-++    --hash=sha256:234ac59ea147c59ee4da87a0c0f098e9c8d169f4dc2a159ef720f1a61bbe27cd \
-++    --hash=sha256:2369eea1ee4a7610a860d88f268eb39b95cb588acd7235e02fd5a5601773d4fa \
-++    --hash=sha256:237bdbe6159cff53b4f24f397d43c6336c6b0b42affbe857970cefbb620911c8 \
-++    --hash=sha256:28bf57629c75e810b6ae989f03c0828d64d6b26a5e205535585f96093e405ed1 \
-++    --hash=sha256:2967f74ad52c3b98de4c3b32e1a44e32975e008a9cd2a8cc8966d6a5218c5cb2 \
-++    --hash=sha256:2a75d49014d118e4198bcee5ee0a6f25856b29b12dbf7cd012791f8a6cc5c496 \
-++    --hash=sha256:2bdfe3ac2e1bbe5b59a1a63721eb3b95fc9b6817ae4a46debbb4e11f6232428d \
-++    --hash=sha256:2d074908e1aecee37a7635990b2c6d504cd4766c7bc9fc86d63f9c09af3fa11b \
-++    --hash=sha256:2fb9bd477fdea8684f78791a6de97a953c51831ee2981f8e4f583ff3b9d9687e \
-++    --hash=sha256:311f30128d7d333eebd7896965bfcfbd0065f1716ec92bd5638d7748eb6f936a \
-++    --hash=sha256:329ce159e82018d646c7ac45b01a430369d526569ec08516081727a20e9e4af4 \
-++    --hash=sha256:345b0426edd4e18138d6528aed636de7a9ed169b4aaf9d61a8c19e39d26838ca \
-++    --hash=sha256:363e2f92b0f0174b2f8238240a1a30142e3db7b957a5dd5689b0e75fb717cc78 \
-++    --hash=sha256:3a3bd0dcd373514dcec91c411ddb9632c0d7d92aed7093b8c3bbb6d69ca74408 \
-++    --hash=sha256:3bed14e9c89dcb10e8f3a29f9ccac4955aebe93c71ae803af79265c9ca5644c5 \
-++    --hash=sha256:44251f18cd68a75b56585dd00dae26183e102cd5e0f9f1466e6df5da2ed64ea3 \
-++    --hash=sha256:44ecbf16649486d4aebafeaa7ec4c9fed8b88101f4dd612dcaf65d5e815f837f \
-++    --hash=sha256:4532bff1b8421fd0a320463030c7520f56a79c9024a4e88f01c537316019005a \
-++    --hash=sha256:49402233c892a461407c512a19435d1ce275543138294f7ef013f0b63d5d3765 \
-++    --hash=sha256:4c0907b1928a36d5a998d72d64d8eaa7244989f7aaaf947500d3a800c83a3fd6 \
-++    --hash=sha256:4d86f7aff21ee58f26dcf5ae81a9addbd914115cdebcbb2217e4f0ed8982e146 \
-++    --hash=sha256:5777ee0881f9499ed0f71cc82cf873d9a0ca8af166dfa0af8ec4e675b7df48e6 \
-++    --hash=sha256:5df196eb874dae23dcfb968c83d4f8fdccb333330fe1fc278ac5ceeb101003a9 \
-++    --hash=sha256:619a609aa74ae43d90ed2e89bdd784765de0a25ca761b93e196d938b8fd1dbbd \
-++    --hash=sha256:6e27f48bcd0957c6d4cb9d6fa6b61d192d0b13d5ef563e5f2ae35feafc0d179c \
-++    --hash=sha256:6ff8a4a60c227ad87030d76e99cd1698345d4491638dfa6673027c48b3cd395f \
-++    --hash=sha256:73d94b58ec7fecbc7366247d3b0b10a21681004153238750bb67bd9012414545 \
-++    --hash=sha256:7461baadb4dc00fd9e0acbe254e3d7d2112e7f92ced2adc96e54ef6501c5f176 \
-++    --hash=sha256:75832c08354f595c760a804588b9357d34ec00ba1c940c15e31e96d902093770 \
-++    --hash=sha256:7709f51f5f7c853f0fb938bcd3bc59cdfdc5203635ffd18bf354f6967ea0f824 \
-++    --hash=sha256:78baa6d91634dfb69ec52a463534bc0df05dbd546209b79a3880a34487f4b84f \
-++    --hash=sha256:7974a0b5ecd505609e3b19742b60cee7aa2aa2fb3151bc917e6e2646d7667dcf \
-++    --hash=sha256:7a4f97a081603d2050bfaffdefa5b02a9ec823f8348a572e39032caa8404a487 \
-++    --hash=sha256:7b1bef6280950ee6c177b326508f86cad7ad4dff12454483b51d8b7d673a2c5d \
-++    --hash=sha256:7d053096f67cd1241601111b698f5cad775f97ab25d81567d3f59219b5f1adbd \
-++    --hash=sha256:804a4d582ba6e5b747c625bf1255e6b1507465494a40a2130978bda7b932c90b \
-++    --hash=sha256:807f52c1f798eef6cf26beb819eeb8819b1622ddfeef9d0977a8502d4db6d534 \
-++    --hash=sha256:80ed5e856eb7f30115aaf94e4a08114ccc8813e6ed1b5efa74f9f82e8509858f \
-++    --hash=sha256:8417cb1f36cc0bc7eaba8ccb0e04d55f0ee52df06df3ad55259b9a323555fc8b \
-++    --hash=sha256:8436c508b408b82d87dc5f62496973a1805cd46727c34440b0d29d8a2f50a6c9 \
-++    --hash=sha256:89149166622f4db9b4b6a449256291dc87a99ee53151c74cbd82a53c8c2f6ccd \
-++    --hash=sha256:8bfa33f4f2672964266e940dd22a195989ba31669bd84629f05fab3ef4e2d125 \
-++    --hash=sha256:8c60ca7339acd497a55b0ea5d506b2a2612afb2826560416f6894e8b5770d4a9 \
-++    --hash=sha256:91b36a978b5ae0ee86c394f5a54d6ef44db1de0815eb43de826d41d21e4af3de \
-++    --hash=sha256:955f8851919303c92343d2f66165294848d57e9bba6cf6e3625485a70a038d11 \
-++    --hash=sha256:97f68b8d6831127e4787ad15e6757232e14e12060bec17091b85eb1486b91d8d \
-++    --hash=sha256:9b23ca7ef998bc739bf6ffc077c2116917eabcc901f88da1b9856b210ef63f35 \
-++    --hash=sha256:9f0b8b1c6d84c8034a44893aba5e767bf9c7a211e313a9605d9c617d7083829f \
-++    --hash=sha256:aabfa34badd18f1da5ec1bc2715cadc8dca465868a4e73a0173466b688f29dda \
-++    --hash=sha256:ab36c8eb7e454e34e60eb55ca5d241a5d18b2c6244f6827a30e451c42410b5f7 \
-++    --hash=sha256:b010a7a4fd316c3c484d482922d13044979e78d1861f0e0650423144c616a46a \
-++    --hash=sha256:b1ac5992a838106edb89654e0aebfc24f5848ae2547d22c2c3f66454daa11971 \
-++    --hash=sha256:b7b2d86dd06bfc2ade3312a83a5c364c7ec2e3498f8734282c6c3d4b07b346b8 \
-++    --hash=sha256:b97e690a2118911e39b4042088092771b4ae3fc3aa86518f84b8cf6888dbdb41 \
-++    --hash=sha256:bc2722592d8998c870fa4e290c2eec2c1569b87fe58618e67d38b4665dfa680d \
-++    --hash=sha256:c0429126cf75e16c4f0ad00ee0eae4242dc652290f940152ca8c75c3a4b6ee8f \
-++    --hash=sha256:c30197aa96e8eed02200a83fba2657b4c3acd0f0aa4bdc9f6c1af8e8962e0757 \
-++    --hash=sha256:c4c3e6da02df6fa1410a7680bd3f63d4f710232d3139089536310d027950696a \
-++    --hash=sha256:c75cb2a3e389853835e84a2d8fb2b81a10645b503eca9bcb98df6b5a43eb8886 \
-++    --hash=sha256:c96836c97b1238e9c9e3fe90844c947d5afbf4f4c92762679acfe19927d81d77 \
-++    --hash=sha256:d7f50a1f8c450f3925cb367d011448c39239bb3eb4117c36a6d354794de4ce76 \
-++    --hash=sha256:d973f03c0cb71c5ed99037b870f2be986c3c05e63622c017ea9816881d2dd247 \
-++    --hash=sha256:d98b1668f06378c6dbefec3b92299716b931cd4e6061f3c875a71ced1780ab85 \
-++    --hash=sha256:d9c3cdf5390dcd29aa8056d13e8e99526cda0305acc038b96b30352aff5ff2bb \
-++    --hash=sha256:dad3e487649f498dd991eeb901125411559b22e8d7ab25d3aeb1af367df5efd7 \
-++    --hash=sha256:dccbe65bd2f7f7ec22c4ff99ed56faa1e9f785482b9bbd7c717e26fd723a1d1e \
-++    --hash=sha256:dd78cfcda14a1ef52584dbb008f7ac81c1328c0f58184bf9a84c49c605002da6 \
-++    --hash=sha256:e218488cd232553829be0664c2292d3af2eeeb94b32bea483cf79ac6a694e037 \
-++    --hash=sha256:e358e64305fe12299a08e08978f51fc21fac060dcfcddd95453eabe5b93ed0e1 \
-++    --hash=sha256:ea0d8d539afa5eb2728aa1932a988a9a7af94f18582ffae4bc10b3fbdad0626e \
-++    --hash=sha256:eab677309cdb30d047996b36d34caeda1dc91149e4fdca0b1a039b3f79d9a807 \
-++    --hash=sha256:eb8178fe3dba6450a3e024e95ac49ed3400e506fd4e9e5c32d30adda88cbd407 \
-++    --hash=sha256:ecddf25bee22fe4fe3737a399d0d177d72bc22be6913acfab364b40bce1ba83c \
-++    --hash=sha256:eea6ee1db730b3483adf394ea72f808b6e18cf3cb6454b4d86e04fa8c4327a12 \
-++    --hash=sha256:f08ff5e948271dc7e18a35641d2f11a4cd8dfd5634f55228b691e62b37125eb3 \
-++    --hash=sha256:f30bf9fd9be89ecb2360c7d94a711f00c09b976258846efe40db3d05828e8089 \
-++    --hash=sha256:fa88b843d6e211393a37219e6a1c1df99d35e8fd90446f1118f4216e307e48cd \
-++    --hash=sha256:fc54db6c8593ef7d4b2a331b58653356cf04f67c960f584edb7c3d8c97e8f39e \
-++    --hash=sha256:fd4ec41f914fa74ad1b8304bbc634b3de73d2a0889bd32076342a573e0779e00 \
-++    --hash=sha256:ffc9202a29ab3920fa812879e95a9e78b2465fd10be7fcbd042899695d75e616
-++    # via requests
-++dill==0.3.7 \
-++    --hash=sha256:76b122c08ef4ce2eedcd4d1abd8e641114bfc6c2867f49f3c41facf65bf19f5e \
-++    --hash=sha256:cc1c8b182eb3013e24bd475ff2e9295af86c1a38eb1aff128dac8962a9ce3c03
-++    # via -r ci/official/requirements_updater/requirements.in
-++flatbuffers==25.9.23 \
-++    --hash=sha256:255538574d6cb6d0a79a17ec8bc0d30985913b87513a01cce8bcdb6b4c44d0e2 \
-++    --hash=sha256:676f9fa62750bb50cf531b42a0a2a118ad8f7f797a511eda12881c016f093b12
-++    # via -r ci/official/requirements_updater/requirements.in
-++gast==0.4.0 \
-++    --hash=sha256:40feb7b8b8434785585ab224d1568b857edb18297e5a3047f1ba012bc83b42c1 \
-++    --hash=sha256:b7adcdd5adbebf1adf17378da5ba3f543684dbec47b1cda1f3997e573cd542c4
-++    # via -r ci/official/requirements_updater/requirements.in
-++google-pasta==0.2.0 \
-++    --hash=sha256:4612951da876b1a10fe3960d7226f0c7682cf901e16ac06e473b267a5afa8954 \
-++    --hash=sha256:b32482794a366b5366a32c92a9a9201b107821889935a02b3e51f6b432ea84ed \
-++    --hash=sha256:c9f2c8dfc8f96d0d5808299920721be30c9eec37f2389f28904f454565c8a16e
-++    # via -r ci/official/requirements_updater/requirements.in
-++grpcio==1.71.0 \
-++    --hash=sha256:0ab8b2864396663a5b0b0d6d79495657ae85fa37dcb6498a2669d067c65c11ea \
-++    --hash=sha256:0fa05ee31a20456b13ae49ad2e5d585265f71dd19fbd9ef983c28f926d45d0a7 \
-++    --hash=sha256:0ff35c8d807c1c7531d3002be03221ff9ae15712b53ab46e2a0b4bb271f38537 \
-++    --hash=sha256:1be857615e26a86d7363e8a163fade914595c81fec962b3d514a4b1e8760467b \
-++    --hash=sha256:20e8f653abd5ec606be69540f57289274c9ca503ed38388481e98fa396ed0b41 \
-++    --hash=sha256:22c3bc8d488c039a199f7a003a38cb7635db6656fa96437a8accde8322ce2366 \
-++    --hash=sha256:24e867651fc67717b6f896d5f0cac0ec863a8b5fb7d6441c2ab428f52c651c6b \
-++    --hash=sha256:2b85f7820475ad3edec209d3d89a7909ada16caab05d3f2e08a7e8ae3200a55c \
-++    --hash=sha256:39983a9245d37394fd59de71e88c4b295eb510a3555e0a847d9965088cdbd033 \
-++    --hash=sha256:3d081e859fb1ebe176de33fc3adb26c7d46b8812f906042705346b314bde32c3 \
-++    --hash=sha256:469f42a0b410883185eab4689060a20488a1a0a00f8bbb3cbc1061197b4c5a79 \
-++    --hash=sha256:47be9584729534660416f6d2a3108aaeac1122f6b5bdbf9fd823e11fe6fbaa29 \
-++    --hash=sha256:4be74ddeeb92cc87190e0e376dbc8fc7736dbb6d3d454f2fa1f5be1dee26b9d7 \
-++    --hash=sha256:4dd0dfbe4d5eb1fcfec9490ca13f82b089a309dc3678e2edabc144051270a66e \
-++    --hash=sha256:5b08d03ace7aca7b2fadd4baf291139b4a5f058805a8327bfe9aece7253b6d67 \
-++    --hash=sha256:63e41b91032f298b3e973b3fa4093cbbc620c875e2da7b93e249d4728b54559a \
-++    --hash=sha256:652350609332de6dac4ece254e5d7e1ff834e203d6afb769601f286886f6f3a8 \
-++    --hash=sha256:693bc706c031aeb848849b9d1c6b63ae6bcc64057984bb91a542332b75aa4c3d \
-++    --hash=sha256:74258dce215cb1995083daa17b379a1a5a87d275387b7ffe137f1d5131e2cfbb \
-++    --hash=sha256:789d5e2a3a15419374b7b45cd680b1e83bbc1e52b9086e49308e2c0b5bbae6e3 \
-++    --hash=sha256:7c9c80ac6091c916db81131d50926a93ab162a7e97e4428ffc186b6e80d6dda4 \
-++    --hash=sha256:7d6ac9481d9d0d129224f6d5934d5832c4b1cddb96b59e7eba8416868909786a \
-++    --hash=sha256:85da336e3649a3d2171e82f696b5cad2c6231fdd5bad52616476235681bee5b3 \
-++    --hash=sha256:8700a2a57771cc43ea295296330daaddc0d93c088f0a35cc969292b6db959bf3 \
-++    --hash=sha256:8997d6785e93308f277884ee6899ba63baafa0dfb4729748200fcc537858a509 \
-++    --hash=sha256:9182e0063112e55e74ee7584769ec5a0b4f18252c35787f48738627e23a62b97 \
-++    --hash=sha256:9b91879d6da1605811ebc60d21ab6a7e4bae6c35f6b63a061d61eb818c8168f6 \
-++    --hash=sha256:a2242d6950dc892afdf9e951ed7ff89473aaf744b7d5727ad56bdaace363722b \
-++    --hash=sha256:a371e6b6a5379d3692cc4ea1cb92754d2a47bdddeee755d3203d1f84ae08e03e \
-++    --hash=sha256:a76d39b5fafd79ed604c4be0a869ec3581a172a707e2a8d7a4858cb05a5a7637 \
-++    --hash=sha256:ad9f30838550695b5eb302add33f21f7301b882937460dd24f24b3cc5a95067a \
-++    --hash=sha256:b2266862c5ad664a380fbbcdbdb8289d71464c42a8c29053820ee78ba0119e5d \
-++    --hash=sha256:b78a99cd1ece4be92ab7c07765a0b038194ded2e0a26fd654591ee136088d8d7 \
-++    --hash=sha256:c200cb6f2393468142eb50ab19613229dcc7829b5ccee8b658a36005f6669fdd \
-++    --hash=sha256:c30f393f9d5ff00a71bb56de4aa75b8fe91b161aeb61d39528db6b768d7eac69 \
-++    --hash=sha256:c6a0a28450c16809f94e0b5bfe52cabff63e7e4b97b44123ebf77f448534d07d \
-++    --hash=sha256:cebc1b34ba40a312ab480ccdb396ff3c529377a2fce72c45a741f7215bfe8379 \
-++    --hash=sha256:d2c170247315f2d7e5798a22358e982ad6eeb68fa20cf7a820bb74c11f0736e7 \
-++    --hash=sha256:d35a95f05a8a2cbe8e02be137740138b3b2ea5f80bd004444e4f9a1ffc511e32 \
-++    --hash=sha256:d5170929109450a2c031cfe87d6716f2fae39695ad5335d9106ae88cc32dc84c \
-++    --hash=sha256:d6aa986318c36508dc1d5001a3ff169a15b99b9f96ef5e98e13522c506b37eef \
-++    --hash=sha256:d6de81c9c00c8a23047136b11794b3584cdc1460ed7cbc10eada50614baa1444 \
-++    --hash=sha256:dc1a1231ed23caac1de9f943d031f1bc38d0f69d2a3b243ea0d664fc1fbd7fec \
-++    --hash=sha256:e6beeea5566092c5e3c4896c6d1d307fb46b1d4bdf3e70c8340b190a69198594 \
-++    --hash=sha256:e6d8de076528f7c43a2f576bc311799f89d795aa6c9b637377cc2b1616473804 \
-++    --hash=sha256:e6f83a583ed0a5b08c5bc7a3fe860bb3c2eac1f03f1f63e0bc2091325605d2b7 \
-++    --hash=sha256:f250ff44843d9a0615e350c77f890082102a0318d66a99540f54769c8766ab73 \
-++    --hash=sha256:f71574afdf944e6652203cd1badcda195b2a27d9c83e6d88dc1ce3cfb73b31a5 \
-++    --hash=sha256:f903017db76bf9cc2b2d8bdd37bf04b505bbccad6be8a81e1542206875d0e9db \
-++    --hash=sha256:f9a412f55bb6e8f3bb000e020dbc1e709627dcb3a56f6431fa7076b4c1aab0db \
-++    --hash=sha256:f9c30c464cb2ddfbc2ddf9400287701270fdc0f14be5f08a1e3939f1e749b455
-++    # via
-++    #   -r ci/official/requirements_updater/requirements.in
-++    #   tb-nightly
-++h5py==3.15.1 ; python_version == "3.14" \
-++    --hash=sha256:01f55111ca516f5568ae7a7fc8247dfce607de331b4467ee8a9a6ed14e5422c7 \
-++    --hash=sha256:0e2f471688402c3404fa4e13466e373e622fd4b74b47b56cfdff7cc688209422 \
-++    --hash=sha256:121b2b7a4c1915d63737483b7bff14ef253020f617c2fb2811f67a4bed9ac5e8 \
-++    --hash=sha256:25c8843fec43b2cc368aa15afa1cdf83fc5e17b1c4e10cd3771ef6c39b72e5ce \
-++    --hash=sha256:28a20e1a4082a479b3d7db2169f3a5034af010b90842e75ebbf2e9e49eb4183e \
-++    --hash=sha256:2cbc4104d3d4aca9d6db8c0c694555e255805bfeacf9eb1349bda871e26cacbe \
-++    --hash=sha256:316dd0f119734f324ca7ed10b5627a2de4ea42cc4dfbcedbee026aaa361c238c \
-++    --hash=sha256:4411c1867b9899a25e983fff56d820a66f52ac326bbe10c7cdf7d832c9dcd883 \
-++    --hash=sha256:4c45802bcb711e128a6839cb6c01e9ac648dc55df045c9542a675c771f15c8d5 \
-++    --hash=sha256:550e51131376889656feec4aff2170efc054a7fe79eb1da3bb92e1625d1ac878 \
-++    --hash=sha256:59b0d63b318bf3cc06687def2b45afd75926bbc006f7b8cd2b1a231299fc8599 \
-++    --hash=sha256:59b25cf02411bf12e14f803fef0b80886444c7fe21a5ad17c6a28d3f08098a1e \
-++    --hash=sha256:5aaa330bcbf2830150c50897ea5dcbed30b5b6d56897289846ac5b9e529ec243 \
-++    --hash=sha256:5b849ba619a066196169763c33f9f0f02e381156d61c03e000bb0100f9950faf \
-++    --hash=sha256:5f4fb0567eb8517c3ecd6b3c02c4f4e9da220c8932604960fd04e24ee1254763 \
-++    --hash=sha256:61d5a58a9851e01ee61c932bbbb1c98fe20aba0a5674776600fb9a361c0aa652 \
-++    --hash=sha256:64ce3f6470adb87c06e3a8dd1b90e973699f1759ad79bfa70c230939bff356c9 \
-++    --hash=sha256:67e59f6c2f19a32973a40f43d9a088ae324fe228c8366e25ebc57ceebf093a6b \
-++    --hash=sha256:80e5bb5b9508d5d9da09f81fd00abbb3f85da8143e56b1585d59bc8ceb1dba8b \
-++    --hash=sha256:8a33bfd5dfcea037196f7778534b1ff7e36a7f40a89e648c8f2967292eb6898e \
-++    --hash=sha256:954e480433e82d3872503104f9b285d369048c3a788b2b1a00e53d1c47c98dd2 \
-++    --hash=sha256:99d374a21f7321a4c6ab327c4ab23bd925ad69821aeb53a1e75dd809d19f67fa \
-++    --hash=sha256:9c73d1d7cdb97d5b17ae385153472ce118bed607e43be11e9a9deefaa54e0734 \
-++    --hash=sha256:a308fd8681a864c04423c0324527237a0484e2611e3441f8089fd00ed56a8171 \
-++    --hash=sha256:a6d8c5a05a76aca9a494b4c53ce8a9c29023b7f64f625c6ce1841e92a362ccdf \
-++    --hash=sha256:ab2219dbc6fcdb6932f76b548e2b16f34a1f52b7666e998157a4dfc02e2c4123 \
-++    --hash=sha256:b39239947cb36a819147fc19e86b618dcb0953d1cd969f5ed71fc0de60392427 \
-++    --hash=sha256:b51469890e58e85d5242e43aab29f5e9c7e526b951caab354f3ded4ac88e7b76 \
-++    --hash=sha256:c256254a8a81e2bddc0d376e23e2a6d2dc8a1e8a2261835ed8c1281a0744cd97 \
-++    --hash=sha256:c8440fd8bee9500c235ecb7aa1917a0389a2adb80c209fa1cc485bd70e0d94a5 \
-++    --hash=sha256:c86e3ed45c4473564de55aa83b6fc9e5ead86578773dfbd93047380042e26b69 \
-++    --hash=sha256:c970fb80001fffabb0109eaf95116c8e7c0d3ca2de854e0901e8a04c1f098509 \
-++    --hash=sha256:ca8a3a22458956ee7b40d8e39c9a9dc01f82933e4c030c964f8b875592f4d831 \
-++    --hash=sha256:d8cb02c3a96255149ed3ac811eeea25b655d959c6dd5ce702c9a95ff11859eb5 \
-++    --hash=sha256:dea78b092fd80a083563ed79a3171258d4a4d307492e7cf8b2313d464c82ba52 \
-++    --hash=sha256:e02fe77a03f652500d8bff288cbf3675f742fc0411f5a628fa37116507dc7cc0 \
-++    --hash=sha256:e7f6c841efd4e6e5b7e82222eaf90819927b6d256ab0f3aca29675601f654f3c \
-++    --hash=sha256:f4a016df3f4a8a14d573b496e4d1964deb380e26031fc85fb40e417e9131888a \
-++    --hash=sha256:fa8df5267f545b4946df8ca0d93d23382191018e4cda2deda4c2cedf9a010e13 \
-++    --hash=sha256:fd125c131889ebbef0849f4a0e29cf363b48aba42f228d08b4079913b576bb3a
-++    # via
-++    #   -r ci/official/requirements_updater/requirements.in
-++    #   keras-nightly
-++idna==3.10 \
-++    --hash=sha256:12f65c9b470abda6dc35cf8e63cc574b1c52b11df2c86030af0ac09b01b13ea9 \
-++    --hash=sha256:946d195a0d259cbba61165e88e65941f16e9b36ea6ddb97f00452bae8b1287d3
-++    # via requests
-++jax==0.4.7 \
-++    --hash=sha256:5e7002d74db25f97c99b979d4ba1233b1ef26e1597e5fc468ad11d1c8a9dc4f8
-++    # via -r ci/official/requirements_updater/requirements.in
-++keras-nightly==3.12.0.dev2025100703 \
-++    --hash=sha256:6b9dfb3814d707abf5555f56268f072daec13f2540da3aeeb7531a819ebb4567 \
-++    --hash=sha256:e29434e49bac3360f86af6e1548d94b0a2fda4e793685bc43b49867132ab16e5
-++    # via -r ci/official/requirements_updater/requirements.in
-++libclang==18.1.1 \
-++    --hash=sha256:0b2e143f0fac830156feb56f9231ff8338c20aecfe72b4ffe96f19e5a1dbb69a \
-++    --hash=sha256:3f0e1f49f04d3cd198985fea0511576b0aee16f9ff0e0f0cad7f9c57ec3c20e8 \
-++    --hash=sha256:4dd2d3b82fab35e2bf9ca717d7b63ac990a3519c7e312f19fa8e86dcc712f7fb \
-++    --hash=sha256:54dda940a4a0491a9d1532bf071ea3ef26e6dbaf03b5000ed94dd7174e8f9592 \
-++    --hash=sha256:69f8eb8f65c279e765ffd28aaa7e9e364c776c17618af8bff22a8df58677ff4f \
-++    --hash=sha256:6f14c3f194704e5d09769108f03185fce7acaf1d1ae4bbb2f30a72c2400cb7c5 \
-++    --hash=sha256:83ce5045d101b669ac38e6da8e58765f12da2d3aafb3b9b98d88b286a60964d8 \
-++    --hash=sha256:a1214966d08d73d971287fc3ead8dfaf82eb07fb197680d8b3859dbbbbf78250 \
-++    --hash=sha256:c533091d8a3bbf7460a00cb6c1a71da93bffe148f172c7d03b1c31fbf8aa2a0b \
-++    --hash=sha256:cf4a99b05376513717ab5d82a0db832c56ccea4fd61a69dbb7bccf2dfb207dbe
-++    # via -r ci/official/requirements_updater/requirements.in
-++lit==17.0.6 \
-++    --hash=sha256:dfa9af9b55fc4509a56be7bf2346f079d7f4a242d583b9f2e0b078fd0abae31b
-++    # via -r ci/official/requirements_updater/requirements.in
-++markdown==3.8 \
-++    --hash=sha256:794a929b79c5af141ef5ab0f2f642d0f7b1872981250230e72682346f7cc90dc \
-++    --hash=sha256:7df81e63f0df5c4b24b7d156eb81e4690595239b7d70937d0409f1b0de319c6f
-++    # via tb-nightly
-++markdown-it-py==3.0.0 \
-++    --hash=sha256:355216845c60bd96232cd8d8c40e8f9765cc86f46880e43a8fd22dc1a1a8cab1 \
-++    --hash=sha256:e3f60a94fa066dc52ec76661e37c851cb232d92f9886b15cb560aaada2df8feb
-++    # via rich
-++markupsafe==3.0.2 \
-++    --hash=sha256:0bff5e0ae4ef2e1ae4fdf2dfd5b76c75e5c2fa4132d05fc1b0dabcd20c7e28c4 \
-++    --hash=sha256:0f4ca02bea9a23221c0182836703cbf8930c5e9454bacce27e767509fa286a30 \
-++    --hash=sha256:1225beacc926f536dc82e45f8a4d68502949dc67eea90eab715dea3a21c1b5f0 \
-++    --hash=sha256:131a3c7689c85f5ad20f9f6fb1b866f402c445b220c19fe4308c0b147ccd2ad9 \
-++    --hash=sha256:15ab75ef81add55874e7ab7055e9c397312385bd9ced94920f2802310c930396 \
-++    --hash=sha256:1a9d3f5f0901fdec14d8d2f66ef7d035f2157240a433441719ac9a3fba440b13 \
-++    --hash=sha256:1c99d261bd2d5f6b59325c92c73df481e05e57f19837bdca8413b9eac4bd8028 \
-++    --hash=sha256:1e084f686b92e5b83186b07e8a17fc09e38fff551f3602b249881fec658d3eca \
-++    --hash=sha256:2181e67807fc2fa785d0592dc2d6206c019b9502410671cc905d132a92866557 \
-++    --hash=sha256:2cb8438c3cbb25e220c2ab33bb226559e7afb3baec11c4f218ffa7308603c832 \
-++    --hash=sha256:3169b1eefae027567d1ce6ee7cae382c57fe26e82775f460f0b2778beaad66c0 \
-++    --hash=sha256:3809ede931876f5b2ec92eef964286840ed3540dadf803dd570c3b7e13141a3b \
-++    --hash=sha256:38a9ef736c01fccdd6600705b09dc574584b89bea478200c5fbf112a6b0d5579 \
-++    --hash=sha256:3d79d162e7be8f996986c064d1c7c817f6df3a77fe3d6859f6f9e7be4b8c213a \
-++    --hash=sha256:444dcda765c8a838eaae23112db52f1efaf750daddb2d9ca300bcae1039adc5c \
-++    --hash=sha256:48032821bbdf20f5799ff537c7ac3d1fba0ba032cfc06194faffa8cda8b560ff \
-++    --hash=sha256:4aa4e5faecf353ed117801a068ebab7b7e09ffb6e1d5e412dc852e0da018126c \
-++    --hash=sha256:52305740fe773d09cffb16f8ed0427942901f00adedac82ec8b67752f58a1b22 \
-++    --hash=sha256:569511d3b58c8791ab4c2e1285575265991e6d8f8700c7be0e88f86cb0672094 \
-++    --hash=sha256:57cb5a3cf367aeb1d316576250f65edec5bb3be939e9247ae594b4bcbc317dfb \
-++    --hash=sha256:5b02fb34468b6aaa40dfc198d813a641e3a63b98c2b05a16b9f80b7ec314185e \
-++    --hash=sha256:6381026f158fdb7c72a168278597a5e3a5222e83ea18f543112b2662a9b699c5 \
-++    --hash=sha256:6af100e168aa82a50e186c82875a5893c5597a0c1ccdb0d8b40240b1f28b969a \
-++    --hash=sha256:6c89876f41da747c8d3677a2b540fb32ef5715f97b66eeb0c6b66f5e3ef6f59d \
-++    --hash=sha256:6e296a513ca3d94054c2c881cc913116e90fd030ad1c656b3869762b754f5f8a \
-++    --hash=sha256:70a87b411535ccad5ef2f1df5136506a10775d267e197e4cf531ced10537bd6b \
-++    --hash=sha256:7e94c425039cde14257288fd61dcfb01963e658efbc0ff54f5306b06054700f8 \
-++    --hash=sha256:846ade7b71e3536c4e56b386c2a47adf5741d2d8b94ec9dc3e92e5e1ee1e2225 \
-++    --hash=sha256:88416bd1e65dcea10bc7569faacb2c20ce071dd1f87539ca2ab364bf6231393c \
-++    --hash=sha256:88b49a3b9ff31e19998750c38e030fc7bb937398b1f78cfa599aaef92d693144 \
-++    --hash=sha256:8c4e8c3ce11e1f92f6536ff07154f9d49677ebaaafc32db9db4620bc11ed480f \
-++    --hash=sha256:8e06879fc22a25ca47312fbe7c8264eb0b662f6db27cb2d3bbbc74b1df4b9b87 \
-++    --hash=sha256:9025b4018f3a1314059769c7bf15441064b2207cb3f065e6ea1e7359cb46db9d \
-++    --hash=sha256:93335ca3812df2f366e80509ae119189886b0f3c2b81325d39efdb84a1e2ae93 \
-++    --hash=sha256:9778bd8ab0a994ebf6f84c2b949e65736d5575320a17ae8984a77fab08db94cf \
-++    --hash=sha256:9e2d922824181480953426608b81967de705c3cef4d1af983af849d7bd619158 \
-++    --hash=sha256:a123e330ef0853c6e822384873bef7507557d8e4a082961e1defa947aa59ba84 \
-++    --hash=sha256:a904af0a6162c73e3edcb969eeeb53a63ceeb5d8cf642fade7d39e7963a22ddb \
-++    --hash=sha256:ad10d3ded218f1039f11a75f8091880239651b52e9bb592ca27de44eed242a48 \
-++    --hash=sha256:b424c77b206d63d500bcb69fa55ed8d0e6a3774056bdc4839fc9298a7edca171 \
-++    --hash=sha256:b5a6b3ada725cea8a5e634536b1b01c30bcdcd7f9c6fff4151548d5bf6b3a36c \
-++    --hash=sha256:ba8062ed2cf21c07a9e295d5b8a2a5ce678b913b45fdf68c32d95d6c1291e0b6 \
-++    --hash=sha256:ba9527cdd4c926ed0760bc301f6728ef34d841f405abf9d4f959c478421e4efd \
-++    --hash=sha256:bbcb445fa71794da8f178f0f6d66789a28d7319071af7a496d4d507ed566270d \
-++    --hash=sha256:bcf3e58998965654fdaff38e58584d8937aa3096ab5354d493c77d1fdd66d7a1 \
-++    --hash=sha256:c0ef13eaeee5b615fb07c9a7dadb38eac06a0608b41570d8ade51c56539e509d \
-++    --hash=sha256:cabc348d87e913db6ab4aa100f01b08f481097838bdddf7c7a84b7575b7309ca \
-++    --hash=sha256:cdb82a876c47801bb54a690c5ae105a46b392ac6099881cdfb9f6e95e4014c6a \
-++    --hash=sha256:cfad01eed2c2e0c01fd0ecd2ef42c492f7f93902e39a42fc9ee1692961443a29 \
-++    --hash=sha256:d16a81a06776313e817c951135cf7340a3e91e8c1ff2fac444cfd75fffa04afe \
-++    --hash=sha256:d8213e09c917a951de9d09ecee036d5c7d36cb6cb7dbaece4c71a60d79fb9798 \
-++    --hash=sha256:e07c3764494e3776c602c1e78e298937c3315ccc9043ead7e685b7f2b8d47b3c \
-++    --hash=sha256:e17c96c14e19278594aa4841ec148115f9c7615a47382ecb6b82bd8fea3ab0c8 \
-++    --hash=sha256:e444a31f8db13eb18ada366ab3cf45fd4b31e4db1236a4448f68778c1d1a5a2f \
-++    --hash=sha256:e6a2a455bd412959b57a172ce6328d2dd1f01cb2135efda2e4576e8a23fa3b0f \
-++    --hash=sha256:eaa0a10b7f72326f1372a713e73c3f739b524b3af41feb43e4921cb529f5929a \
-++    --hash=sha256:eb7972a85c54febfb25b5c4b4f3af4dcc731994c7da0d8a0b4a6eb0640e1d178 \
-++    --hash=sha256:ee55d3edf80167e48ea11a923c7386f4669df67d7994554387f84e7d8b0a2bf0 \
-++    --hash=sha256:f3818cb119498c0678015754eba762e0d61e5b52d34c8b13d770f0719f7b1d79 \
-++    --hash=sha256:f8b3d067f2e40fe93e1ccdd6b2e1d16c43140e76f02fb1319a05cf2b79d99430 \
-++    --hash=sha256:fcabf5ff6eea076f859677f5f0b6b5c1a51e70a376b0579e0eadef8db48c6b50
-++    # via werkzeug
-++mdurl==0.1.2 \
-++    --hash=sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8 \
-++    --hash=sha256:bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba
-++    # via markdown-it-py
-++ml-dtypes==0.5.1 \
-++    --hash=sha256:023ce2f502efd4d6c1e0472cc58ce3640d051d40e71e27386bed33901e201327 \
-++    --hash=sha256:05f23447a1c20ddf4dc7c2c661aa9ed93fcb2658f1017c204d1e758714dc28a8 \
-++    --hash=sha256:12651420130ee7cc13059fc56dac6ad300c3af3848b802d475148c9defd27c23 \
-++    --hash=sha256:141b2ea2f20bb10802ddca55d91fe21231ef49715cfc971998e8f2a9838f3dbe \
-++    --hash=sha256:15ad0f3b0323ce96c24637a88a6f44f6713c64032f27277b069f285c3cf66478 \
-++    --hash=sha256:1b7fbe5571fdf28fd3aaab3ef4aafc847de9ebf263be959958c1ca58ec8eadf5 \
-++    --hash=sha256:26ebcc69d7b779c8f129393e99732961b5cc33fcff84090451f448c89b0e01b4 \
-++    --hash=sha256:6f462f5eca22fb66d7ff9c4744a3db4463af06c49816c4b6ac89b16bfcdc592e \
-++    --hash=sha256:6f76232163b5b9c34291b54621ee60417601e2e4802a188a0ea7157cd9b323f4 \
-++    --hash=sha256:7000b6e4d8ef07542c05044ec5d8bbae1df083b3f56822c3da63993a113e716f \
-++    --hash=sha256:810512e2eccdfc3b41eefa3a27402371a3411453a1efc7e9c000318196140fed \
-++    --hash=sha256:8f2c028954f16ede77902b223a8da2d9cbb3892375b85809a5c3cfb1587960c4 \
-++    --hash=sha256:9626d0bca1fb387d5791ca36bacbba298c5ef554747b7ebeafefb4564fc83566 \
-++    --hash=sha256:ac5b58559bb84a95848ed6984eb8013249f90b6bab62aa5acbad876e256002c9 \
-++    --hash=sha256:ad4953c5eb9c25a56d11a913c2011d7e580a435ef5145f804d98efa14477d390 \
-++    --hash=sha256:aefedc579ece2f8fb38f876aa7698204ee4c372d0e54f1c1ffa8ca580b54cc60 \
-++    --hash=sha256:afb2009ac98da274e893e03162f6269398b2b00d947e7057ee2469a921d58135 \
-++    --hash=sha256:b8a9d46b4df5ae2135a8e8e72b465448ebbc1559997f4f9304a9ecc3413efb5b \
-++    --hash=sha256:bd73f51957949069573ff783563486339a9285d72e2f36c18e0c1aa9ca7eb190 \
-++    --hash=sha256:bf9975bda82a99dc935f2ae4c83846d86df8fd6ba179614acac8e686910851da \
-++    --hash=sha256:c09526488c3a9e8b7a23a388d4974b670a9a3dd40c5c8a61db5593ce9b725bab \
-++    --hash=sha256:c9945669d3dadf8acb40ec2e57d38c985d8c285ea73af57fc5b09872c516106d \
-++    --hash=sha256:d13755f8e8445b3870114e5b6240facaa7cb0c3361e54beba3e07fa912a6e12b \
-++    --hash=sha256:fd918d4e6a4e0c110e2e05be7a7814d10dc1b95872accbf6512b80a109b71ae1
-++    # via
-++    #   -r ci/official/requirements_updater/requirements.in
-++    #   jax
-++    #   keras-nightly
-++namex==0.0.9 \
-++    --hash=sha256:7bd4e4a2cc3876592111609fdf4cbe6ff19883adbe6b3b40d842fd340f77025e \
-++    --hash=sha256:8adfea9da5cea5be8f4e632349b4669e30172c7859e1fd97459fdf3b17469253
-++    # via keras-nightly
-++numpy==2.4.2 ; python_version == "3.14" \
-++    --hash=sha256:00ab83c56211a1d7c07c25e3217ea6695e50a3e2f255053686b081dc0b091a82 \
-++    --hash=sha256:068cdb2d0d644cdb45670810894f6a0600797a69c05f1ac478e8d31670b8ee75 \
-++    --hash=sha256:0f01dcf33e73d80bd8dc0f20a71303abbafa26a19e23f6b68d1aa9990af90257 \
-++    --hash=sha256:0fece1d1f0a89c16b03442eae5c56dc0be0c7883b5d388e0c03f53019a4bfd71 \
-++    --hash=sha256:12e26134a0331d8dbd9351620f037ec470b7c75929cb8a1537f6bfe411152a1a \
-++    --hash=sha256:1ae241bbfc6ae276f94a170b14785e561cb5e7f626b6688cf076af4110887413 \
-++    --hash=sha256:1f92f53998a17265194018d1cc321b2e96e900ca52d54c7c77837b71b9465181 \
-++    --hash=sha256:209fae046e62d0ce6435fcfe3b1a10537e858249b3d9b05829e2a05218296a85 \
-++    --hash=sha256:20abd069b9cda45874498b245c8015b18ace6de8546bf50dfa8cea1696ed06ef \
-++    --hash=sha256:21982668592194c609de53ba4933a7471880ccbaadcc52352694a59ecc860b3a \
-++    --hash=sha256:25f2059807faea4b077a2b6837391b5d830864b3543627f381821c646f31a63c \
-++    --hash=sha256:2653de5c24910e49c2b106499803124dde62a5a1fe0eedeaecf4309a5f639390 \
-++    --hash=sha256:2b8f157c8a6f20eb657e240f8985cc135598b2b46985c5bccbde7616dc9c6b1e \
-++    --hash=sha256:2fb882da679409066b4603579619341c6d6898fc83a8995199d5249f986e8e8f \
-++    --hash=sha256:40397bda92382fcec844066efb11f13e1c9a3e2a8e8f318fb72ed8b6db9f60f1 \
-++    --hash=sha256:444be170853f1f9d528428eceb55f12918e4fda5d8805480f36a002f1415e09b \
-++    --hash=sha256:47c5a6ed21d9452b10227e5e8a0e1c22979811cad7dcc19d8e3e2fb8fa03f1a3 \
-++    --hash=sha256:4f069069931240b3fc703f1e23df63443dbd6390614c8c44a87d96cd0ec81eb1 \
-++    --hash=sha256:52b913ec40ff7ae845687b0b34d8d93b60cb66dcee06996dd5c99f2fc9328657 \
-++    --hash=sha256:5633c0da313330fd20c484c78cdd3f9b175b55e1a766c4a174230c6b70ad8262 \
-++    --hash=sha256:5daf6f3914a733336dab21a05cdec343144600e964d2fcdabaac0c0269874b2a \
-++    --hash=sha256:5eea80d908b2c1f91486eb95b3fb6fab187e569ec9752ab7d9333d2e66bf2d6b \
-++    --hash=sha256:602f65afdef699cda27ec0b9224ae5dc43e328f4c24c689deaf77133dbee74d0 \
-++    --hash=sha256:659a6107e31a83c4e33f763942275fd278b21d095094044eb35569e86a21ddae \
-++    --hash=sha256:66cb9422236317f9d44b67b4d18f44efe6e9c7f8794ac0462978513359461554 \
-++    --hash=sha256:6d82351358ffbcdcd7b686b90742a9b86632d6c1c051016484fa0b326a0a1548 \
-++    --hash=sha256:6e9f61981ace1360e42737e2bae58b27bf28a1b27e781721047d84bd754d32e7 \
-++    --hash=sha256:6ed0be1ee58eef41231a5c943d7d1375f093142702d5723ca2eb07db9b934b05 \
-++    --hash=sha256:7cdde6de52fb6664b00b056341265441192d1291c130e99183ec0d4b110ff8b1 \
-++    --hash=sha256:7df2de1e4fba69a51c06c28f5a3de36731eb9639feb8e1cf7e4a7b0daf4cf622 \
-++    --hash=sha256:7edc794af8b36ca37ef5fcb5e0d128c7e0595c7b96a2318d1badb6fcd8ee86b1 \
-++    --hash=sha256:7f54844851cdb630ceb623dcec4db3240d1ac13d4990532446761baede94996a \
-++    --hash=sha256:805cc8de9fd6e7a22da5aed858e0ab16be5a4db6c873dde1d7451c541553aa27 \
-++    --hash=sha256:8906e71fd8afcb76580404e2a950caef2685df3d2a57fe82a86ac8d33cc007ba \
-++    --hash=sha256:89f7268c009bc492f506abd6f5265defa7cb3f7487dc21d357c3d290add45082 \
-++    --hash=sha256:8c50dd1fc8826f5b26a5ee4d77ca55d88a895f4e4819c7ecc2a9f5905047a443 \
-++    --hash=sha256:8e4549f8a3c6d13d55041925e912bfd834285ef1dd64d6bc7d542583355e2e98 \
-++    --hash=sha256:8e9afaeb0beff068b4d9cd20d322ba0ee1cecfb0b08db145e4ab4dd44a6b5110 \
-++    --hash=sha256:98f16a80e917003a12c0580f97b5f875853ebc33e2eaa4bccfc8201ac6869308 \
-++    --hash=sha256:9e35d3e0144137d9fdae62912e869136164534d64a169f86438bc9561b6ad49f \
-++    --hash=sha256:9e4424677ce4b47fe73c8b5556d876571f7c6945d264201180db2dc34f676ab5 \
-++    --hash=sha256:adb6ed2ad29b9e15321d167d152ee909ec73395901b70936f029c3bc6d7f4460 \
-++    --hash=sha256:aea4f66ff44dfddf8c2cffd66ba6538c5ec67d389285292fe428cb2c738c8aef \
-++    --hash=sha256:b21041e8cb6a1eb5312dd1d2f80a94d91efffb7a06b70597d44f1bd2dfc315ab \
-++    --hash=sha256:b2f0073ed0868db1dcd86e052d37279eef185b9c8db5bf61f30f46adac63c909 \
-++    --hash=sha256:b3a24467af63c67829bfaa61eecf18d5432d4f11992688537be59ecd6ad32f5e \
-++    --hash=sha256:b9c618d56a29c9cb1c4da979e9899be7578d2e0b3c24d52079c166324c9e8695 \
-++    --hash=sha256:bba37bc29d4d85761deed3954a1bc62be7cf462b9510b51d367b769a8c8df325 \
-++    --hash=sha256:bd3a7a9f5847d2fb8c2c6d1c862fa109c31a9abeca1a3c2bd5a64572955b2979 \
-++    --hash=sha256:be71bf1edb48ebbbf7f6337b5bfd2f895d1902f6335a5830b20141fc126ffba0 \
-++    --hash=sha256:c02ef4401a506fb60b411467ad501e1429a3487abca4664871d9ae0b46c8ba32 \
-++    --hash=sha256:c3cd545784805de05aafe1dde61752ea49a359ccba9760c1e5d1c88a93bbf2b7 \
-++    --hash=sha256:c7ac672d699bf36275c035e16b65539931347d68b70667d28984c9fb34e07fa7 \
-++    --hash=sha256:cb7bbb88aa74908950d979eeaa24dbdf1a865e3c7e45ff0121d8f70387b55f73 \
-++    --hash=sha256:cd2bd2bbed13e213d6b55dc1d035a4f91748a7d3edc9480c13898b0353708920 \
-++    --hash=sha256:cda077c2e5b780200b6b3e09d0b42205a3d1c68f30c6dceb90401c13bff8fe74 \
-++    --hash=sha256:cf28c0c1d4c4bf00f509fa7eb02c58d7caf221b50b467bcb0d9bbf1584d5c821 \
-++    --hash=sha256:d0d9b7c93578baafcbc5f0b83eaf17b79d345c6f36917ba0c67f45226911d499 \
-++    --hash=sha256:d1240d50adff70c2a88217698ca844723068533f3f5c5fa6ee2e3220e3bdb000 \
-++    --hash=sha256:d30291931c915b2ab5717c2974bb95ee891a1cf22ebc16a8006bd59cd210d40a \
-++    --hash=sha256:d9f64d786b3b1dd742c946c42d15b07497ed14af1a1f3ce840cce27daa0ce913 \
-++    --hash=sha256:da6cad4e82cb893db4b69105c604d805e0c3ce11501a55b5e9f9083b47d2ffe8 \
-++    --hash=sha256:df1b10187212b198dd45fa943d8985a3c8cf854aed4923796e0e019e113a1bda \
-++    --hash=sha256:e04ae107ac591763a47398bb45b568fc38f02dbc4aa44c063f67a131f99346cb \
-++    --hash=sha256:e6dee3bb76aa4009d5a912180bf5b2de012532998d094acee25d9cb8dee3e44a \
-++    --hash=sha256:e7e88598032542bd49af7c4747541422884219056c268823ef6e5e89851c8825 \
-++    --hash=sha256:e98c97502435b53741540a5717a6749ac2ada901056c7db951d33e11c885cc7d \
-++    --hash=sha256:ec055f6dae239a6299cace477b479cca2fc125c5675482daf1dd886933a1076f \
-++    --hash=sha256:f74f0f7779cc7ae07d1810aab8ac6b1464c3eafb9e283a40da7309d5e6e48fbb \
-++    --hash=sha256:fbde1b0c6e81d56f5dccd95dd4a711d9b95df1ae4009a60887e56b27e8d903fa \
-++    --hash=sha256:fcf92bee92742edd401ba41135185866f7026c502617f422eb432cfeca4fe236 \
-++    --hash=sha256:fd49860271d52127d61197bb50b64f58454e9f578cb4b2c001a6de8b1f50b0b1
-++    # via
-++    #   -r ci/official/requirements_updater/requirements.in
-++    #   h5py
-++    #   jax
-++    #   keras-nightly
-++    #   ml-dtypes
-++    #   opt-einsum
-++    #   scipy
-++    #   tb-nightly
-++nvidia-cublas-cu12==12.5.3.2 \
-++    --hash=sha256:4960f3dc5f39699acadf76fa6d94b10a2a00f2956c2c442efa299fb22b0748f3 \
-++    --hash=sha256:7d0191251180de606023d396b94d66f66470a0ae96d1dbb906c7656ea0f71eda \
-++    --hash=sha256:ca070ad70e9fa6654084575d01bd001f30cc4665e33d4bb9fc8e0f321caa034b
-++    # via
-++    #   -c ci/official/requirements_updater/nvidia-constraints.txt
-++    #   -r ci/official/requirements_updater/nvidia-constraints.txt
-++    #   -r ci/official/requirements_updater/nvidia-requirements.txt
-++    #   nvidia-cudnn-cu12
-++    #   nvidia-cusolver-cu12
-++nvidia-cuda-cupti-cu12==12.5.82 \
-++    --hash=sha256:4f835281cf492e2bedd153f5c3de9da8f1d775a419468305e64ce73b3b0c6dc3 \
-++    --hash=sha256:bde77a5feb66752ec61db2adfe47f56b941842825b4c7e2068aff27c9d107953 \
-++    --hash=sha256:d32c06490c6ba35c4323730820c7d0c4c126c04ed58d2f57275adb8d54b138fe
-++    # via
-++    #   -c ci/official/requirements_updater/nvidia-constraints.txt
-++    #   -r ci/official/requirements_updater/nvidia-constraints.txt
-++    #   -r ci/official/requirements_updater/nvidia-requirements.txt
-++nvidia-cuda-nvcc-cu12==12.5.82 \
-++    --hash=sha256:6eaa264da57a893ae7606dd80b169d9783444af941697822cb82c8379ffc4957 \
-++    --hash=sha256:ab02fe922cee01235b7950f045042219fe83e15aceb4cd3c1d36db30b034dec7 \
-++    --hash=sha256:b03e545b8e8c3ce7ebcd7fc44063180ff52ff01d064ece2127ed90a04ef12cd0
-++    # via
-++    #   -c ci/official/requirements_updater/nvidia-constraints.txt
-++    #   -r ci/official/requirements_updater/nvidia-constraints.txt
-++    #   -r ci/official/requirements_updater/nvidia-requirements.txt
-++nvidia-cuda-nvrtc-cu12==12.5.82 \
-++    --hash=sha256:3dbd97b0104b4bfbc3c4f8c79cd2496307c89c43c29a9f83125f1d76296ff3fd \
-++    --hash=sha256:5bb6a0eb01d4974bb7ca3d48bd3859472debb3c3057a5e7de2b08fbdf35eed7e \
-++    --hash=sha256:e5db37e990056c70953b7772dd778336ef9da0a0b5bb28f9f2a61c2e42b51d78
-++    # via
-++    #   -c ci/official/requirements_updater/nvidia-constraints.txt
-++    #   -r ci/official/requirements_updater/nvidia-constraints.txt
-++    #   -r ci/official/requirements_updater/nvidia-requirements.txt
-++nvidia-cuda-runtime-cu12==12.5.82 \
-++    --hash=sha256:0fd5fbca289bceb9f0690aa9858f06187b554fdeb7e2711dfd5bb3ce58900b46 \
-++    --hash=sha256:3e79a060e126df40fd3a068f3f787eb000fa51b251ec6cd97d09579632687115 \
-++    --hash=sha256:71f015dbf9df05dd71f7480132c6ebf47a6ceb2ab53d7db8e08e4b30ebb87e14
-++    # via
-++    #   -c ci/official/requirements_updater/nvidia-constraints.txt
-++    #   -r ci/official/requirements_updater/nvidia-constraints.txt
-++    #   -r ci/official/requirements_updater/nvidia-requirements.txt
-++nvidia-cudnn-cu12==9.3.0.75 \
-++    --hash=sha256:9ad9c6929ebb5295eb4a1728024666d1c88283373e265a0c5c883e6f9d5cd76d \
-++    --hash=sha256:c5cf7ff3415e446adf195a5b7dd2ba56cd00c3ee78bfdc566e51698931aa4b7f \
-++    --hash=sha256:c819e82eed8cf564b9d37478ea4eab9e87194bb3b7f7f8098bc1f67c9b80f1b6
-++    # via
-++    #   -c ci/official/requirements_updater/nvidia-constraints.txt
-++    #   -r ci/official/requirements_updater/nvidia-constraints.txt
-++    #   -r ci/official/requirements_updater/nvidia-requirements.txt
-++nvidia-cufft-cu12==11.2.3.61 \
-++    --hash=sha256:4a8f6f0ce93c52a50ee83422a80472b5f376054a63f38532d0eab4007e7ef28b \
-++    --hash=sha256:6d45b48a5ee7599e57131129cda2c58544d9b78b95064d3ec3e5c6b96e2b58cc \
-++    --hash=sha256:9a6e8df162585750f61983a638104a48c756aa13f9f48e19ab079b38e3c828b8
-++    # via
-++    #   -c ci/official/requirements_updater/nvidia-constraints.txt
-++    #   -r ci/official/requirements_updater/nvidia-constraints.txt
-++    #   -r ci/official/requirements_updater/nvidia-requirements.txt
-++nvidia-curand-cu12==10.3.6.82 \
-++    --hash=sha256:0631ba65231260ad832ce233ddda57e7b3b7158eabf000d78e46cbb5bd5b7aae \
-++    --hash=sha256:2823fb27de4e44dbb22394a6adf53aa6e1b013aca0f8c22867d1cfae58405536 \
-++    --hash=sha256:36aabeb5990297bbce3df324ea7c7c13c3aabb140c86d50ab3b23e4ec61672f1
-++    # via
-++    #   -c ci/official/requirements_updater/nvidia-constraints.txt
-++    #   -r ci/official/requirements_updater/nvidia-constraints.txt
-++    #   -r ci/official/requirements_updater/nvidia-requirements.txt
-++nvidia-cusolver-cu12==11.6.3.83 \
-++    --hash=sha256:1b8b77d2fe8abe72bb722dafb708cceaeb81f1a03999477f20b33b34f46ab885 \
-++    --hash=sha256:6224732963cba312a84c78114b9a38c4ffabb2e2a6a120923ac99ba6f895c8cf \
-++    --hash=sha256:93cfafacde4428b71778eeb092ec615a02a3d05404da1bcf91c53e3fa1bce42b
-++    # via
-++    #   -c ci/official/requirements_updater/nvidia-constraints.txt
-++    #   -r ci/official/requirements_updater/nvidia-constraints.txt
-++    #   -r ci/official/requirements_updater/nvidia-requirements.txt
-++nvidia-cusparse-cu12==12.5.1.3 \
-++    --hash=sha256:016df8e993c437e8301e62739f01775cba988fd5253cd4c64173f8e8d2f8e752 \
-++    --hash=sha256:33520db374e2f5ebc976d6faa1852b98c398a57e6f71150fe59705928596ffd1 \
-++    --hash=sha256:7b97fd01f0a61628af99d0efd52132fccc8c18fc5c509f13802dccf0574a19c2
-++    # via
-++    #   -c ci/official/requirements_updater/nvidia-constraints.txt
-++    #   -r ci/official/requirements_updater/nvidia-constraints.txt
-++    #   -r ci/official/requirements_updater/nvidia-requirements.txt
-++    #   nvidia-cusolver-cu12
-++nvidia-nccl-cu12==2.27.7 \
-++    --hash=sha256:4617839f3bb730c3845bf9adf92dbe0e009bc53ca5022ed941f2e23fb76e6f17 \
-++    --hash=sha256:de5ba5562f08029a19cb1cd659404b18411ed0d6c90ac5f52f30bf99ad5809aa
-++    # via
-++    #   -c ci/official/requirements_updater/nvidia-constraints.txt
-++    #   -r ci/official/requirements_updater/nvidia-constraints.txt
-++    #   -r ci/official/requirements_updater/nvidia-requirements.txt
-++nvidia-nvjitlink-cu12==12.5.82 \
-++    --hash=sha256:98103729cc5226e13ca319a10bbf9433bbbd44ef64fe72f45f067cacc14b8d27 \
-++    --hash=sha256:e782564d705ff0bf61ac3e1bf730166da66dd2fe9012f111ede5fc49b64ae697 \
-++    --hash=sha256:f9b37bc5c8cf7509665cb6ada5aaa0ce65618f2332b7d3e78e9790511f111212
-++    # via
-++    #   -c ci/official/requirements_updater/nvidia-constraints.txt
-++    #   -r ci/official/requirements_updater/nvidia-constraints.txt
-++    #   -r ci/official/requirements_updater/nvidia-requirements.txt
-++    #   nvidia-cufft-cu12
-++    #   nvidia-cusolver-cu12
-++    #   nvidia-cusparse-cu12
-++nvidia-nvshmem-cu12==3.2.5 \
-++    --hash=sha256:2f5798d65f1a08f9878aae17cf4d3dcbfe884d1f12cf170556cd40f2be90ca96 \
-++    --hash=sha256:e076957d5cc72e51061a04f2d46f55df477be53e8a55d0d621be08f7aefe1d00
-++    # via
-++    #   -c ci/official/requirements_updater/nvidia-constraints.txt
-++    #   -r ci/official/requirements_updater/nvidia-constraints.txt
-++    #   -r ci/official/requirements_updater/nvidia-requirements.txt
-++opt-einsum==3.3.0 \
-++    --hash=sha256:2455e59e3947d3c275477df7f5205b30635e266fe6dc300e3d9f9646bfcea147 \
-++    --hash=sha256:59f6475f77bbc37dcf7cd748519c0ec60722e91e63ca114e68821c0c54a46549
-++    # via
-++    #   -r ci/official/requirements_updater/requirements.in
-++    #   jax
-++optree==0.16.0 \
-++    --hash=sha256:0dd607bfbf59ecf92b069af18e8a41b0d8628e21f2de5a738fad039d0a89d9d4 \
-++    --hash=sha256:0deafe21b6605bcc24f07743543e3656b2dd631772fcd152eaa26fb8a2bc0e66 \
-++    --hash=sha256:0f81e5055c51f862f68dd0ffce110ed3263c3934ecd37aae0210ce65e6a939bd \
-++    --hash=sha256:18d73a7957463d3d22060828314e6cef9fa61787bdb61024c29bde99d3165bae \
-++    --hash=sha256:1a8d25e57b6cbd45ac2915a8a42d9a09aa1b7d8e7d4d61470525dd15f1acf039 \
-++    --hash=sha256:1c88be69d791fb5bc72f1ead2fb48abe20775fc95356eba09fc79ca84b8924d3 \
-++    --hash=sha256:1fa5d12a43a615073e5f93c2b780f25466c44dd24bdd75b159cfbef58b99bbf8 \
-++    --hash=sha256:22b015d8d7b948d7815924763d473cc7f691731f3b67198f83cea835ae3e2c98 \
-++    --hash=sha256:22f06cd5a35676bad9ca26787f160b267f61d1b33f4edca72be8888fdb3d5c68 \
-++    --hash=sha256:232cbc7d29d90d03a5d4febb3f37fc3f136cf8a7bf2775c750f6e145d398ea67 \
-++    --hash=sha256:236c1d26e98ae469f56eb6e7007e20b6d7a99cb11113119b1b5efb0bb627ac2a \
-++    --hash=sha256:2d1698d88016747e01c09121a2c0a8a482236d44ff2369c4420f7c9acb615e46 \
-++    --hash=sha256:317595e4018f99b4f1dc6d357fe40c7db4ee1252bb3d578b5c15e17a5c6e8c1f \
-++    --hash=sha256:330a47cc6e016190512c5af0f665d7e6c0ff7ba48c2803204a66cf305f981adc \
-++    --hash=sha256:33a839c1740c73de589bf2a8154f27e4729df6fc0ca9fee5c11ccbeb167a5f4e \
-++    --hash=sha256:3b3432754b0753f5166a0899c693e99fe00e02c48f90b511c0604aa6e4b4a59e \
-++    --hash=sha256:3b9ec4bda865042c8a8ff618bcaae5488b624cea0f48e67507c1f0b9d97be383 \
-++    --hash=sha256:408203ecdff202d34c31f49daec9b3a279e1c027e24729a8b13ab19d5f1b19e6 \
-++    --hash=sha256:4dc00c14c39b5fef9f71ac0a74591039eb97a40ab56e75fe6eea8c5916118b27 \
-++    --hash=sha256:4e1618d1fbe4ebc3f977aba80575c84c2ad1c54153b8a3d500fd3303bdb02be1 \
-++    --hash=sha256:4e223640146950d2da4576d2b1a0944ee2413ed38c30f7bfe95dd02644530b91 \
-++    --hash=sha256:52e1c48220a9b95d30cde4e1f2506db8bf1f5c2ee5c74013bf74bf0b796c8a17 \
-++    --hash=sha256:690440c8296bc8b9e76f830066ed899186dcfa51d404c9b72dca3acced17ca6f \
-++    --hash=sha256:69dea72a039f04549ca9d759e7037c9d3106ec6b7b7223bb66b6a9d07fba4b3b \
-++    --hash=sha256:6ae2bf009f2a6a7c38f69d70eb0d8e9afd7a871b80c8682d98ce8f25cc50df40 \
-++    --hash=sha256:6ec096061cd4a4c5573a25e6eb7cf45786af2d89acd3baefc1f78e70088dba03 \
-++    --hash=sha256:71e667b1dd0d331590e1356af506ab9896803acb85aea114f9e76a16a4e1be36 \
-++    --hash=sha256:74390ac8c1f72e439de3f7cf8e67f3b541fac7adbfff6b48bf8be79014e80120 \
-++    --hash=sha256:768d2e12d3626a3d37f8594b7e0d7e633ff66d5de420ca6a1df7132c6a8cdc15 \
-++    --hash=sha256:76ee013fdf8c7d0eb70e5d1910cc3d987e9feb609a9069fef68aec393ec26b92 \
-++    --hash=sha256:774f5d97dbb94691f3543a09dafd83555b34fbce7cf195d7d28bd62aa153a13e \
-++    --hash=sha256:78d54dbc082fc5a3402ca73c129f997dc7a13e3d64ea457a7e5688a99af36d3f \
-++    --hash=sha256:7c58a7e5cb783166606103e4f0992a0d7dc48da4b8febbe7df5369801c79b0af \
-++    --hash=sha256:84c93c2ade2eba3d32085f7091c6d3aa959585f65691b785c54b8a966b1046fe \
-++    --hash=sha256:854b97cc98ac540a4ddfa4f079597642368dbeea14016f7f5ff0817cd943762b \
-++    --hash=sha256:86d5b19975bb043fbba4715d90579054af11d8fab950f1ca11f0ccfd3538c1c0 \
-++    --hash=sha256:8a6ad6d9156be08206b25599e4d198da37ddc389754a905e94a154a04e3e0835 \
-++    --hash=sha256:9185e76a826a3e0c10f73917b05e3a79a969e9b6a9e83b26d9b4130fa9d3fc06 \
-++    --hash=sha256:95f0f9b05dbd53cb04f37c49a508f6462ce06fbdb1bb0e0552129de91f8d36b6 \
-++    --hash=sha256:9dbdbdbff6e25f3d27de8201e05ffec43c504117a48ba3ed0a2bc17ec32a1f7a \
-++    --hash=sha256:9e9627f89d9294553e162ee04548b53baa74c4fb55ad53306457b8b74dbceed7 \
-++    --hash=sha256:a010c919cf9652dcf0152c14a948f502c5ca7cb34a61157b4eb9c4766d3eea43 \
-++    --hash=sha256:a1a89c4a03cbf5dd6533faa05659d1288f41d53d13e241aa862d69b07dca533a \
-++    --hash=sha256:a51f2f11d2a6e7e13be49dc585090a8032485f08feb83a11dda90f8669858454 \
-++    --hash=sha256:a5581ac117e62c15f7d48a43fb2049c4667c28294fafe2c5a7e7308226d8a21a \
-++    --hash=sha256:a7150b7008583aba9bf0ee4dabeaec98a8dfcdd2563543c0915dc28f7dd63449 \
-++    --hash=sha256:aa37afcb8ed7cf9492cdd34d7abc0495c32496ae870a9abd09445dc69f9109db \
-++    --hash=sha256:ad03dd9abfb4347ceed4cdce58a94ac8a32ad0279ddc894660fd054ab5ede8d7 \
-++    --hash=sha256:af2e95499f546bdb8dcd2a3e2d7f5b515a1d298d785ea51f95ee912642e07252 \
-++    --hash=sha256:b0451ee3e28ce6bb7b66e97cc3b17ac1cd7f84b39be289da67eff9a886d5f207 \
-++    --hash=sha256:b08eee60cd0756cd9874ffb44f5e47337c698100fd19dcdc18b86eb1518e3a0a \
-++    --hash=sha256:b7390b7f65809555ed43598c1df18a8757b3a4396c279e5f9fcfab88ad0bc59b \
-++    --hash=sha256:b885f8f447bf7b8f844203b11af36834696eec52dfc899b407dbebef77f243f7 \
-++    --hash=sha256:bc302fd0b0fa5c981a22ba583a7d9d2923f3779aad0340c527790c3b0fb2edb8 \
-++    --hash=sha256:bed06e3d5af706943afd14a425b4475871e97f5e780cea8506f709f043436808 \
-++    --hash=sha256:c090cc8dd98d32a3e2ffd702cf84f126efd57ea05a4c63c3675b4e413d99e978 \
-++    --hash=sha256:c9ba09623fc287a1c887a1e070d780369df561c78acb51281d8bf373a0fcef27 \
-++    --hash=sha256:cc89c7aaec64af13b78ad0018cc235599a3768310557e6dcb6e11032743f4fb7 \
-++    --hash=sha256:cd498cf726856ba6b9a49b29c72021940e6a0c4ae475d7a91094a00372eebdfb \
-++    --hash=sha256:d20b50e9ba079221a770daa5519d1a11745b77058cdfd0dc99b1524303bfeffb \
-++    --hash=sha256:d4545602ab8eb1da3669c4dd6dd73b81fb68e575c5dd9c2147e1d4db395a6ebf \
-++    --hash=sha256:d5d0f2afdcdafdb95b28af058407f6c6a7903b1151ed36d050bcc76847115b7b \
-++    --hash=sha256:d6f807965bc8ca5e2af453d77f0f6a64cc0ece1420297d194a52f250aa15f4ce \
-++    --hash=sha256:d7147cef7950eee1dd8a06815f7f7be71ae0e75874d7fad1aa822a88a954b5e4 \
-++    --hash=sha256:e2dced5d55f1ae100f475e217eab5fec8ba884e9d03f688cc654e388ec882266 \
-++    --hash=sha256:e424fdfb6ff3240de98e236571581220872363c5ff7fe3beb4020dc8cfc8d824 \
-++    --hash=sha256:e974f28c699baf1565765645a71cfe5a47886fd6297225090c18204f49b4037c \
-++    --hash=sha256:ea26056208854a2c23ff0316bca637e1666796a36d67f3bb64d478f50340aa9e \
-++    --hash=sha256:ecb34c46af996c6d7ed9eda4ea0bf01671aee84a5503cf3f4445502d0c01a853 \
-++    --hash=sha256:ee655396cc90ba37828403949c295059c8e1afeafc05b5ca9efac833ee29903e \
-++    --hash=sha256:eeccc740b72b58efa9795ab831a678a42341def48b9e5956c6b1e588c6fa3ddf \
-++    --hash=sha256:f08aaa1c2ae092b3e662125ad19860046c63d7451d41be133ddd6594920e295e \
-++    --hash=sha256:f703d7926c36eebdd56fc08aabefcf32a8b7292a9dd4468e56b0ab61bf6214bd
-++    # via keras-nightly
-++packaging==23.2 \
-++    --hash=sha256:048fb0e9405036518eaaf48a55953c750c11e1a1b68e0dd1a9d62ed0c092cfc5 \
-++    --hash=sha256:8c491190033a9af7e1d931d0b5dacc2ef47509b34dd0de67ed209b5203fc88c7
-++    # via
-++    #   -r ci/official/requirements_updater/requirements.in
-++    #   auditwheel
-++    #   keras-nightly
-++    #   tb-nightly
-++portpicker==1.6.0 \
-++    --hash=sha256:b2787a41404cf7edbe29b07b9e0ed863b09f2665dcc01c1eb0c2261c1e7d0755 \
-++    --hash=sha256:bd507fd6f96f65ee02781f2e674e9dc6c99bbfa6e3c39992e3916204c9d431fa
-++    # via -r ci/official/requirements_updater/requirements.in
-++protobuf==6.31.1 \
-++    --hash=sha256:0414e3aa5a5f3ff423828e1e6a6e907d6c65c1d5b7e6e975793d5590bdeecc16 \
-++    --hash=sha256:426f59d2964864a1a366254fa703b8632dcec0790d8862d30034d8245e1cd447 \
-++    --hash=sha256:4ee898bf66f7a8b0bd21bce523814e6fbd8c6add948045ce958b73af7e8878c6 \
-++    --hash=sha256:6f1227473dc43d44ed644425268eb7c2e488ae245d51c6866d19fe158e207402 \
-++    --hash=sha256:720a6c7e6b77288b85063569baae8536671b39f15cc22037ec7045658d80489e \
-++    --hash=sha256:7fa17d5a29c2e04b7d90e5e32388b8bfd0e7107cd8e616feef7ed3fa6bdab5c9 \
-++    --hash=sha256:8764cf4587791e7564051b35524b72844f845ad0bb011704c3736cce762d8fe9 \
-++    --hash=sha256:a40fc12b84c154884d7d4c4ebd675d5b3b5283e155f324049ae396b95ddebc39 \
-++    --hash=sha256:d8cac4c982f0b957a4dc73a80e2ea24fab08e679c0de9deb835f4a12d69aca9a
-++    # via
-++    #   -r ci/official/requirements_updater/requirements.in
-++    #   tb-nightly
-++psutil==7.0.0 \
-++    --hash=sha256:101d71dc322e3cffd7cea0650b09b3d08b8e7c4109dd6809fe452dfd00e58b25 \
-++    --hash=sha256:1e744154a6580bc968a0195fd25e80432d3afec619daf145b9e5ba16cc1d688e \
-++    --hash=sha256:1fcee592b4c6f146991ca55919ea3d1f8926497a713ed7faaf8225e174581e91 \
-++    --hash=sha256:39db632f6bb862eeccf56660871433e111b6ea58f2caea825571951d4b6aa3da \
-++    --hash=sha256:4b1388a4f6875d7e2aff5c4ca1cc16c545ed41dd8bb596cefea80111db353a34 \
-++    --hash=sha256:4cf3d4eb1aa9b348dec30105c55cd9b7d4629285735a102beb4441e38db90553 \
-++    --hash=sha256:7be9c3eba38beccb6495ea33afd982a44074b78f28c434a1f51cc07fd315c456 \
-++    --hash=sha256:84df4eb63e16849689f76b1ffcb36db7b8de703d1bc1fe41773db487621b6c17 \
-++    --hash=sha256:a5f098451abc2828f7dc6b58d44b532b22f2088f4999a937557b603ce72b1993 \
-++    --hash=sha256:ba3fcef7523064a6c9da440fc4d6bd07da93ac726b5733c29027d7dc95b39d99
-++    # via portpicker
-++pyelftools==0.32 \
-++    --hash=sha256:013df952a006db5e138b1edf6d8a68ecc50630adbd0d83a2d41e7f846163d738 \
-++    --hash=sha256:6de90ee7b8263e740c8715a925382d4099b354f29ac48ea40d840cf7aa14ace5
-++    # via auditwheel
-++pygments==2.19.1 \
-++    --hash=sha256:61c16d2a8576dc0649d9f39e089b5f02bcd27fba10d8fb4dcc28173f7a45151f \
-++    --hash=sha256:9ea1544ad55cecf4b8242fab6dd35a93bbce657034b0611ee383099054ab6d8c
-++    # via rich
-++requests==2.32.4 \
-++    --hash=sha256:27babd3cda2a6d50b30443204ee89830707d396671944c998b5975b031ac2b2c \
-++    --hash=sha256:27d0316682c8a29834d3264820024b62a36942083d52caf2f14c0591336d3422
-++    # via -r ci/official/requirements_updater/requirements.in
-++rich==14.0.0 \
-++    --hash=sha256:1c9491e1951aac09caffd42f448ee3d04e58923ffe14993f6e83068dc395d7e0 \
-++    --hash=sha256:82f1bc23a6a21ebca4ae0c45af9bdbc492ed20231dcb63f297d6d1021a9d5725
-++    # via keras-nightly
-++scipy==1.17.1 ; python_version == "3.14" \
-++    --hash=sha256:010f4333c96c9bb1a4516269e33cb5917b08ef2166d5556ca2fd9f082a9e6ea0 \
-++    --hash=sha256:02ae3b274fde71c5e92ac4d54bc06c42d80e399fec704383dcd99b301df37458 \
-++    --hash=sha256:08b900519463543aa604a06bec02461558a6e1cef8fdbb8098f77a48a83c8118 \
-++    --hash=sha256:131f5aaea57602008f9822e2115029b55d4b5f7c070287699fe45c661d051e39 \
-++    --hash=sha256:158dd96d2207e21c966063e1635b1063cd7787b627b6f07305315dd73d9c679e \
-++    --hash=sha256:1cc682cea2ae55524432f3cdff9e9a3be743d52a7443d0cba9017c23c87ae2f6 \
-++    --hash=sha256:1f95b894f13729334fb990162e911c9e5dc1ab390c58aa6cbecb389c5b5e28ec \
-++    --hash=sha256:200e1050faffacc162be6a486a984a0497866ec54149a01270adc8a59b7c7d21 \
-++    --hash=sha256:2040ad4d1795a0ae89bfc7e8429677f365d45aa9fd5e4587cf1ea737f927b4a1 \
-++    --hash=sha256:2b64ca7d4aee0102a97f3ba22124052b4bd2152522355073580bf4845e2550b6 \
-++    --hash=sha256:2ceb2d3e01c5f1d83c4189737a42d9cb2fc38a6eeed225e7515eef71ad301dce \
-++    --hash=sha256:35c3a56d2ef83efc372eaec584314bd0ef2e2f0d2adb21c55e6ad5b344c0dcb8 \
-++    --hash=sha256:37425bc9175607b0268f493d79a292c39f9d001a357bebb6b88fdfaff13f6448 \
-++    --hash=sha256:3877ac408e14da24a6196de0ddcace62092bfc12a83823e92e49e40747e52c19 \
-++    --hash=sha256:3fd1fcdab3ea951b610dc4cef356d416d5802991e7e32b5254828d342f7b7e0b \
-++    --hash=sha256:41b71f4a3a4cab9d366cd9065b288efc4d4f3c0b37a91a8e0947fb5bd7f31d87 \
-++    --hash=sha256:43af8d1f3bea642559019edfe64e9b11192a8978efbd1539d7bc2aaa23d92de4 \
-++    --hash=sha256:45abad819184f07240d8a696117a7aacd39787af9e0b719d00285549ed19a1e9 \
-++    --hash=sha256:4b400bdc6f79fa02a4d86640310dde87a21fba0c979efff5248908c6f15fad1b \
-++    --hash=sha256:4eb6c25dd62ee8d5edf68a8e1c171dd71c292fdae95d8aeb3dd7d7de4c364082 \
-++    --hash=sha256:581b2264fc0aa555f3f435a5944da7504ea3a065d7029ad60e7c3d1ae09c5464 \
-++    --hash=sha256:5cf36e801231b6a2059bf354720274b7558746f3b1a4efb43fcf557ccd484a87 \
-++    --hash=sha256:5e3c5c011904115f88a39308379c17f91546f77c1667cea98739fe0fccea804c \
-++    --hash=sha256:6609bc224e9568f65064cfa72edc0f24ee6655b47575954ec6339534b2798369 \
-++    --hash=sha256:6e3dcd57ab780c741fde8dc68619de988b966db759a3c3152e8e9142c26295ad \
-++    --hash=sha256:6fac755ca3d2c3edcb22f479fceaa241704111414831ddd3bc6056e18516892f \
-++    --hash=sha256:744b2bf3640d907b79f3fd7874efe432d1cf171ee721243e350f55234b4cec4c \
-++    --hash=sha256:74cbb80d93260fe2ffa334efa24cb8f2f0f622a9b9febf8b483c0b865bfb3475 \
-++    --hash=sha256:766e0dc5a616d026a3a1cffa379af959671729083882f50307e18175797b3dfd \
-++    --hash=sha256:7bdf2da170b67fdf10bca777614b1c7d96ae3ca5794fd9587dce41eb2966e866 \
-++    --hash=sha256:7ff200bf9d24f2e4d5dc6ee8c3ac64d739d3a89e2326ba68aaf6c4a2b838fd7d \
-++    --hash=sha256:844e165636711ef41f80b4103ed234181646b98a53c8f05da12ca5ca289134f6 \
-++    --hash=sha256:8a604bae87c6195d8b1045eddece0514d041604b14f2727bbc2b3020172045eb \
-++    --hash=sha256:94055a11dfebe37c656e70317e1996dc197e1a15bbcc351bcdd4610e128fe1ca \
-++    --hash=sha256:95d8e012d8cb8816c226aef832200b1d45109ed4464303e997c5b13122b297c0 \
-++    --hash=sha256:9cdc1a2fcfd5c52cfb3045feb399f7b3ce822abdde3a193a6b9a60b3cb5854ca \
-++    --hash=sha256:9ecb4efb1cd6e8c4afea0daa91a87fbddbce1b99d2895d151596716c0b2e859d \
-++    --hash=sha256:a3472cfbca0a54177d0faa68f697d8ba4c80bbdc19908c3465556d9f7efce9ee \
-++    --hash=sha256:a4328d245944d09fd639771de275701ccadf5f781ba0ff092ad141e017eccda4 \
-++    --hash=sha256:a48a72c77a310327f6a3a920092fa2b8fd03d7deaa60f093038f22d98e096717 \
-++    --hash=sha256:a720477885a9d2411f94a93d16f9d89bad0f28ca23c3f8daa521e2dcc3f44d49 \
-++    --hash=sha256:a77cbd07b940d326d39a1d1b37817e2ee4d79cb30e7338f3d0cddffae70fcaa2 \
-++    --hash=sha256:a9956e4d4f4a301ebf6cde39850333a6b6110799d470dbbb1e25326ac447f52a \
-++    --hash=sha256:adb2642e060a6549c343603a3851ba76ef0b74cc8c079a9a58121c7ec9fe2350 \
-++    --hash=sha256:beeda3d4ae615106d7094f7e7cef6218392e4465cc95d25f900bebabfded0950 \
-++    --hash=sha256:c80be5ede8f3f8eded4eff73cc99a25c388ce98e555b17d31da05287015ffa5b \
-++    --hash=sha256:cc90d2e9c7e5c7f1a482c9875007c095c3194b1cfedca3c2f3291cdc2bc7c086 \
-++    --hash=sha256:cd96a1898c0a47be4520327e01f874acfd61fb48a9420f8aa9f6483412ffa444 \
-++    --hash=sha256:d2650c1fb97e184d12d8ba010493ee7b322864f7d3d00d3f9bb97d9c21de4068 \
-++    --hash=sha256:d30e57c72013c2a4fe441c2fcb8e77b14e152ad48b5464858e07e2ad9fbfceff \
-++    --hash=sha256:d59c30000a16d8edc7e64152e30220bfbd724c9bbb08368c054e24c651314f0a \
-++    --hash=sha256:dbc12c9f3d185f5c737d801da555fb74b3dcfa1a50b66a1a93e09190f41fab50 \
-++    --hash=sha256:e18f12c6b0bc5a592ed23d3f7b891f68fd7f8241d69b7883769eb5d5dfb52696 \
-++    --hash=sha256:e19ebea31758fac5893a2ac360fedd00116cbb7628e650842a6691ba7ca28a21 \
-++    --hash=sha256:e30bdeaa5deed6bc27b4cc490823cd0347d7dae09119b8803ae576ea0ce52e4c \
-++    --hash=sha256:eb092099205ef62cd1782b006658db09e2fed75bffcae7cc0d44052d8aa0f484 \
-++    --hash=sha256:eee2cfda04c00a857206a4330f0c5e3e56535494e30ca445eb19ec624ae75118 \
-++    --hash=sha256:f4115102802df98b2b0db3cce5cb9b92572633a1197c77b7553e5203f284a5b3 \
-++    --hash=sha256:f590cd684941912d10becc07325a3eeb77886fe981415660d9265c4c418d0bea \
-++    --hash=sha256:f8885db0bc2bffa59d5c1b72fad7a6a92d3e80e7257f967dd81abb553a90d293 \
-++    --hash=sha256:fcb310ddb270a06114bb64bbe53c94926b943f5b7f0842194d585c65eb4edd76
-++    # via
-++    #   -r ci/official/requirements_updater/requirements.in
-++    #   jax
-++six==1.17.0 \
-++    --hash=sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274 \
-++    --hash=sha256:ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81
-++    # via
-++    #   astunparse
-++    #   google-pasta
-++    #   tb-nightly
-++tb-nightly==2.20.0a20250424 \
-++    --hash=sha256:62ad3a4ce94cba2bb59538dd481999ede10927304d6f7fa0e9a23df9d24a779e
-++    # via -r ci/official/requirements_updater/requirements.in
-++tblib==2.0.0 \
-++    --hash=sha256:9100bfa016b047d5b980d66e7efed952fbd20bd85b56110aaf473cb97d18709a \
-++    --hash=sha256:a6df30f272c08bf8be66e0775fad862005d950a6b8449b94f7c788731d70ecd7
-++    # via -r ci/official/requirements_updater/requirements.in
-++tensorboard-data-server==0.7.2 \
-++    --hash=sha256:7e0610d205889588983836ec05dc098e80f97b7e7bbff7e994ebb78f578d0ddb \
-++    --hash=sha256:9fe5d24221b29625dbc7328b0436ca7fc1c23de4acf4d272f1180856e32f9f60 \
-++    --hash=sha256:ef687163c24185ae9754ed5650eb5bc4d84ff257aabdc33f0cc6f74d8ba54530
-++    # via tb-nightly
-++termcolor==2.3.0 \
-++    --hash=sha256:3afb05607b89aed0ffe25202399ee0867ad4d3cb4180d98aaf8eefa6a5f7d475 \
-++    --hash=sha256:b5b08f68937f138fe92f6c089b99f1e2da0ae56c52b78bf7075fd95420fd9a5a
-++    # via -r ci/official/requirements_updater/requirements.in
-++typing-extensions==4.14.1 \
-++    --hash=sha256:38b39f4aeeab64884ce9f74c94263ef78f3c22467c8724005483154c26648d36 \
-++    --hash=sha256:d1e1e3b58374dc93031d6eda2420a48ea44a36c2b4766a4fdeb3710755731d76
-++    # via
-++    #   -r ci/official/requirements_updater/requirements.in
-++    #   optree
-++urllib3==2.6.3 \
-++    --hash=sha256:1b62b6884944a57dbe321509ab94fd4d3b307075e0c2eae991ac71ee15ad38ed \
-++    --hash=sha256:bf272323e553dfb2e87d9bfd225ca7b0f467b919d7bbd355436d3fd37cb0acd4
-++    # via requests
-++werkzeug==3.1.5 \
-++    --hash=sha256:5111e36e91086ece91f93268bb39b4a35c1e6f1feac762c9c822ded0a4e322dc \
-++    --hash=sha256:6a548b0e88955dd07ccb25539d7d0cc97417ee9e179677d22c7041c8f078ce67
-++    # via tb-nightly
-++wheel==0.41.3 \
-++    --hash=sha256:488609bc63a29322326e05560731bf7bfea8e48ad646e1f5e40d366607de0942 \
-++    --hash=sha256:4d4987ce51a49370ea65c0bfd2234e8ce80a12780820d9dc462597a6e60d0841
-++    # via
-++    #   -r ci/official/requirements_updater/requirements.in
-++    #   astunparse
-++wrapt==1.16.0 \
-++    --hash=sha256:0d2691979e93d06a95a26257adb7bfd0c93818e89b1406f5a28f36e0d8c1e1fc \
-++    --hash=sha256:14d7dc606219cdd7405133c713f2c218d4252f2a469003f8c46bb92d5d095d81 \
-++    --hash=sha256:1a5db485fe2de4403f13fafdc231b0dbae5eca4359232d2efc79025527375b09 \
-++    --hash=sha256:1acd723ee2a8826f3d53910255643e33673e1d11db84ce5880675954183ec47e \
-++    --hash=sha256:1ca9b6085e4f866bd584fb135a041bfc32cab916e69f714a7d1d397f8c4891ca \
-++    --hash=sha256:1dd50a2696ff89f57bd8847647a1c363b687d3d796dc30d4dd4a9d1689a706f0 \
-++    --hash=sha256:2076fad65c6736184e77d7d4729b63a6d1ae0b70da4868adeec40989858eb3fb \
-++    --hash=sha256:2a88e6010048489cda82b1326889ec075a8c856c2e6a256072b28eaee3ccf487 \
-++    --hash=sha256:3ebf019be5c09d400cf7b024aa52b1f3aeebeff51550d007e92c3c1c4afc2a40 \
-++    --hash=sha256:418abb18146475c310d7a6dc71143d6f7adec5b004ac9ce08dc7a34e2babdc5c \
-++    --hash=sha256:43aa59eadec7890d9958748db829df269f0368521ba6dc68cc172d5d03ed8060 \
-++    --hash=sha256:44a2754372e32ab315734c6c73b24351d06e77ffff6ae27d2ecf14cf3d229202 \
-++    --hash=sha256:490b0ee15c1a55be9c1bd8609b8cecd60e325f0575fc98f50058eae366e01f41 \
-++    --hash=sha256:49aac49dc4782cb04f58986e81ea0b4768e4ff197b57324dcbd7699c5dfb40b9 \
-++    --hash=sha256:5eb404d89131ec9b4f748fa5cfb5346802e5ee8836f57d516576e61f304f3b7b \
-++    --hash=sha256:5f15814a33e42b04e3de432e573aa557f9f0f56458745c2074952f564c50e664 \
-++    --hash=sha256:5f370f952971e7d17c7d1ead40e49f32345a7f7a5373571ef44d800d06b1899d \
-++    --hash=sha256:66027d667efe95cc4fa945af59f92c5a02c6f5bb6012bff9e60542c74c75c362 \
-++    --hash=sha256:66dfbaa7cfa3eb707bbfcd46dab2bc6207b005cbc9caa2199bcbc81d95071a00 \
-++    --hash=sha256:685f568fa5e627e93f3b52fda002c7ed2fa1800b50ce51f6ed1d572d8ab3e7fc \
-++    --hash=sha256:6906c4100a8fcbf2fa735f6059214bb13b97f75b1a61777fcf6432121ef12ef1 \
-++    --hash=sha256:6a42cd0cfa8ffc1915aef79cb4284f6383d8a3e9dcca70c445dcfdd639d51267 \
-++    --hash=sha256:6dcfcffe73710be01d90cae08c3e548d90932d37b39ef83969ae135d36ef3956 \
-++    --hash=sha256:6f6eac2360f2d543cc875a0e5efd413b6cbd483cb3ad7ebf888884a6e0d2e966 \
-++    --hash=sha256:72554a23c78a8e7aa02abbd699d129eead8b147a23c56e08d08dfc29cfdddca1 \
-++    --hash=sha256:73870c364c11f03ed072dda68ff7aea6d2a3a5c3fe250d917a429c7432e15228 \
-++    --hash=sha256:73aa7d98215d39b8455f103de64391cb79dfcad601701a3aa0dddacf74911d72 \
-++    --hash=sha256:75ea7d0ee2a15733684badb16de6794894ed9c55aa5e9903260922f0482e687d \
-++    --hash=sha256:7bd2d7ff69a2cac767fbf7a2b206add2e9a210e57947dd7ce03e25d03d2de292 \
-++    --hash=sha256:807cc8543a477ab7422f1120a217054f958a66ef7314f76dd9e77d3f02cdccd0 \
-++    --hash=sha256:8e9723528b9f787dc59168369e42ae1c3b0d3fadb2f1a71de14531d321ee05b0 \
-++    --hash=sha256:9090c9e676d5236a6948330e83cb89969f433b1943a558968f659ead07cb3b36 \
-++    --hash=sha256:9153ed35fc5e4fa3b2fe97bddaa7cbec0ed22412b85bcdaf54aeba92ea37428c \
-++    --hash=sha256:9159485323798c8dc530a224bd3ffcf76659319ccc7bbd52e01e73bd0241a0c5 \
-++    --hash=sha256:941988b89b4fd6b41c3f0bfb20e92bd23746579736b7343283297c4c8cbae68f \
-++    --hash=sha256:94265b00870aa407bd0cbcfd536f17ecde43b94fb8d228560a1e9d3041462d73 \
-++    --hash=sha256:98b5e1f498a8ca1858a1cdbffb023bfd954da4e3fa2c0cb5853d40014557248b \
-++    --hash=sha256:9b201ae332c3637a42f02d1045e1d0cccfdc41f1f2f801dafbaa7e9b4797bfc2 \
-++    --hash=sha256:a0ea261ce52b5952bf669684a251a66df239ec6d441ccb59ec7afa882265d593 \
-++    --hash=sha256:a33a747400b94b6d6b8a165e4480264a64a78c8a4c734b62136062e9a248dd39 \
-++    --hash=sha256:a452f9ca3e3267cd4d0fcf2edd0d035b1934ac2bd7e0e57ac91ad6b95c0c6389 \
-++    --hash=sha256:a86373cf37cd7764f2201b76496aba58a52e76dedfaa698ef9e9688bfd9e41cf \
-++    --hash=sha256:ac83a914ebaf589b69f7d0a1277602ff494e21f4c2f743313414378f8f50a4cf \
-++    --hash=sha256:aefbc4cb0a54f91af643660a0a150ce2c090d3652cf4052a5397fb2de549cd89 \
-++    --hash=sha256:b3646eefa23daeba62643a58aac816945cadc0afaf21800a1421eeba5f6cfb9c \
-++    --hash=sha256:b47cfad9e9bbbed2339081f4e346c93ecd7ab504299403320bf85f7f85c7d46c \
-++    --hash=sha256:b935ae30c6e7400022b50f8d359c03ed233d45b725cfdd299462f41ee5ffba6f \
-++    --hash=sha256:bb2dee3874a500de01c93d5c71415fcaef1d858370d405824783e7a8ef5db440 \
-++    --hash=sha256:bc57efac2da352a51cc4658878a68d2b1b67dbe9d33c36cb826ca449d80a8465 \
-++    --hash=sha256:bf5703fdeb350e36885f2875d853ce13172ae281c56e509f4e6eca049bdfb136 \
-++    --hash=sha256:c31f72b1b6624c9d863fc095da460802f43a7c6868c5dda140f51da24fd47d7b \
-++    --hash=sha256:c5cd603b575ebceca7da5a3a251e69561bec509e0b46e4993e1cac402b7247b8 \
-++    --hash=sha256:d2efee35b4b0a347e0d99d28e884dfd82797852d62fcd7ebdeee26f3ceb72cf3 \
-++    --hash=sha256:d462f28826f4657968ae51d2181a074dfe03c200d6131690b7d65d55b0f360f8 \
-++    --hash=sha256:d5e49454f19ef621089e204f862388d29e6e8d8b162efce05208913dde5b9ad6 \
-++    --hash=sha256:da4813f751142436b075ed7aa012a8778aa43a99f7b36afe9b742d3ed8bdc95e \
-++    --hash=sha256:db2e408d983b0e61e238cf579c09ef7020560441906ca990fe8412153e3b291f \
-++    --hash=sha256:db98ad84a55eb09b3c32a96c576476777e87c520a34e2519d3e59c44710c002c \
-++    --hash=sha256:dbed418ba5c3dce92619656802cc5355cb679e58d0d89b50f116e4a9d5a9603e \
-++    --hash=sha256:dcdba5c86e368442528f7060039eda390cc4091bfd1dca41e8046af7c910dda8 \
-++    --hash=sha256:decbfa2f618fa8ed81c95ee18a387ff973143c656ef800c9f24fb7e9c16054e2 \
-++    --hash=sha256:e4fdb9275308292e880dcbeb12546df7f3e0f96c6b41197e0cf37d2826359020 \
-++    --hash=sha256:eb1b046be06b0fce7249f1d025cd359b4b80fc1c3e24ad9eca33e0dcdb2e4a35 \
-++    --hash=sha256:eb6e651000a19c96f452c85132811d25e9264d836951022d6e81df2fff38337d \
-++    --hash=sha256:ed867c42c268f876097248e05b6117a65bcd1e63b779e916fe2e33cd6fd0d3c3 \
-++    --hash=sha256:edfad1d29c73f9b863ebe7082ae9321374ccb10879eeabc84ba3b69f2579d537 \
-++    --hash=sha256:f2058f813d4f2b5e3a9eb2eb3faf8f1d99b81c3e51aeda4b168406443e8ba809 \
-++    --hash=sha256:f6b2d0c6703c988d334f297aa5df18c45e97b0af3679bb75059e0e0bd8b1069d \
-++    --hash=sha256:f8212564d49c50eb4565e502814f694e240c55551a5f1bc841d4fcaabb0a9b8a \
-++    --hash=sha256:ffa565331890b90056c01db69c0fe634a776f8019c143a5ae265f9c6bc4bd6d4
-++    # via -r ci/official/requirements_updater/requirements.in
-++zstandard==0.23.0 \
-++    --hash=sha256:034b88913ecc1b097f528e42b539453fa82c3557e414b3de9d5632c80439a473 \
-++    --hash=sha256:0a7f0804bb3799414af278e9ad51be25edf67f78f916e08afdb983e74161b916 \
-++    --hash=sha256:11e3bf3c924853a2d5835b24f03eeba7fc9b07d8ca499e247e06ff5676461a15 \
-++    --hash=sha256:12a289832e520c6bd4dcaad68e944b86da3bad0d339ef7989fb7e88f92e96072 \
-++    --hash=sha256:1516c8c37d3a053b01c1c15b182f3b5f5eef19ced9b930b684a73bad121addf4 \
-++    --hash=sha256:157e89ceb4054029a289fb504c98c6a9fe8010f1680de0201b3eb5dc20aa6d9e \
-++    --hash=sha256:1bfe8de1da6d104f15a60d4a8a768288f66aa953bbe00d027398b93fb9680b26 \
-++    --hash=sha256:1e172f57cd78c20f13a3415cc8dfe24bf388614324d25539146594c16d78fcc8 \
-++    --hash=sha256:1fd7e0f1cfb70eb2f95a19b472ee7ad6d9a0a992ec0ae53286870c104ca939e5 \
-++    --hash=sha256:203d236f4c94cd8379d1ea61db2fce20730b4c38d7f1c34506a31b34edc87bdd \
-++    --hash=sha256:27d3ef2252d2e62476389ca8f9b0cf2bbafb082a3b6bfe9d90cbcbb5529ecf7c \
-++    --hash=sha256:29a2bc7c1b09b0af938b7a8343174b987ae021705acabcbae560166567f5a8db \
-++    --hash=sha256:2ef230a8fd217a2015bc91b74f6b3b7d6522ba48be29ad4ea0ca3a3775bf7dd5 \
-++    --hash=sha256:2ef3775758346d9ac6214123887d25c7061c92afe1f2b354f9388e9e4d48acfc \
-++    --hash=sha256:2f146f50723defec2975fb7e388ae3a024eb7151542d1599527ec2aa9cacb152 \
-++    --hash=sha256:2fb4535137de7e244c230e24f9d1ec194f61721c86ebea04e1581d9d06ea1269 \
-++    --hash=sha256:32ba3b5ccde2d581b1e6aa952c836a6291e8435d788f656fe5976445865ae045 \
-++    --hash=sha256:34895a41273ad33347b2fc70e1bff4240556de3c46c6ea430a7ed91f9042aa4e \
-++    --hash=sha256:379b378ae694ba78cef921581ebd420c938936a153ded602c4fea612b7eaa90d \
-++    --hash=sha256:38302b78a850ff82656beaddeb0bb989a0322a8bbb1bf1ab10c17506681d772a \
-++    --hash=sha256:3aa014d55c3af933c1315eb4bb06dd0459661cc0b15cd61077afa6489bec63bb \
-++    --hash=sha256:4051e406288b8cdbb993798b9a45c59a4896b6ecee2f875424ec10276a895740 \
-++    --hash=sha256:40b33d93c6eddf02d2c19f5773196068d875c41ca25730e8288e9b672897c105 \
-++    --hash=sha256:43da0f0092281bf501f9c5f6f3b4c975a8a0ea82de49ba3f7100e64d422a1274 \
-++    --hash=sha256:445e4cb5048b04e90ce96a79b4b63140e3f4ab5f662321975679b5f6360b90e2 \
-++    --hash=sha256:48ef6a43b1846f6025dde6ed9fee0c24e1149c1c25f7fb0a0585572b2f3adc58 \
-++    --hash=sha256:50a80baba0285386f97ea36239855f6020ce452456605f262b2d33ac35c7770b \
-++    --hash=sha256:519fbf169dfac1222a76ba8861ef4ac7f0530c35dd79ba5727014613f91613d4 \
-++    --hash=sha256:53dd9d5e3d29f95acd5de6802e909ada8d8d8cfa37a3ac64836f3bc4bc5512db \
-++    --hash=sha256:53ea7cdc96c6eb56e76bb06894bcfb5dfa93b7adcf59d61c6b92674e24e2dd5e \
-++    --hash=sha256:576856e8594e6649aee06ddbfc738fec6a834f7c85bf7cadd1c53d4a58186ef9 \
-++    --hash=sha256:59556bf80a7094d0cfb9f5e50bb2db27fefb75d5138bb16fb052b61b0e0eeeb0 \
-++    --hash=sha256:5d41d5e025f1e0bccae4928981e71b2334c60f580bdc8345f824e7c0a4c2a813 \
-++    --hash=sha256:61062387ad820c654b6a6b5f0b94484fa19515e0c5116faf29f41a6bc91ded6e \
-++    --hash=sha256:61f89436cbfede4bc4e91b4397eaa3e2108ebe96d05e93d6ccc95ab5714be512 \
-++    --hash=sha256:62136da96a973bd2557f06ddd4e8e807f9e13cbb0bfb9cc06cfe6d98ea90dfe0 \
-++    --hash=sha256:64585e1dba664dc67c7cdabd56c1e5685233fbb1fc1966cfba2a340ec0dfff7b \
-++    --hash=sha256:65308f4b4890aa12d9b6ad9f2844b7ee42c7f7a4fd3390425b242ffc57498f48 \
-++    --hash=sha256:66b689c107857eceabf2cf3d3fc699c3c0fe8ccd18df2219d978c0283e4c508a \
-++    --hash=sha256:6a41c120c3dbc0d81a8e8adc73312d668cd34acd7725f036992b1b72d22c1772 \
-++    --hash=sha256:6f77fa49079891a4aab203d0b1744acc85577ed16d767b52fc089d83faf8d8ed \
-++    --hash=sha256:72c68dda124a1a138340fb62fa21b9bf4848437d9ca60bd35db36f2d3345f373 \
-++    --hash=sha256:752bf8a74412b9892f4e5b58f2f890a039f57037f52c89a740757ebd807f33ea \
-++    --hash=sha256:76e79bc28a65f467e0409098fa2c4376931fd3207fbeb6b956c7c476d53746dd \
-++    --hash=sha256:774d45b1fac1461f48698a9d4b5fa19a69d47ece02fa469825b442263f04021f \
-++    --hash=sha256:77da4c6bfa20dd5ea25cbf12c76f181a8e8cd7ea231c673828d0386b1740b8dc \
-++    --hash=sha256:77ea385f7dd5b5676d7fd943292ffa18fbf5c72ba98f7d09fc1fb9e819b34c23 \
-++    --hash=sha256:80080816b4f52a9d886e67f1f96912891074903238fe54f2de8b786f86baded2 \
-++    --hash=sha256:80a539906390591dd39ebb8d773771dc4db82ace6372c4d41e2d293f8e32b8db \
-++    --hash=sha256:82d17e94d735c99621bf8ebf9995f870a6b3e6d14543b99e201ae046dfe7de70 \
-++    --hash=sha256:837bb6764be6919963ef41235fd56a6486b132ea64afe5fafb4cb279ac44f259 \
-++    --hash=sha256:84433dddea68571a6d6bd4fbf8ff398236031149116a7fff6f777ff95cad3df9 \
-++    --hash=sha256:8c24f21fa2af4bb9f2c492a86fe0c34e6d2c63812a839590edaf177b7398f700 \
-++    --hash=sha256:8ed7d27cb56b3e058d3cf684d7200703bcae623e1dcc06ed1e18ecda39fee003 \
-++    --hash=sha256:9206649ec587e6b02bd124fb7799b86cddec350f6f6c14bc82a2b70183e708ba \
-++    --hash=sha256:983b6efd649723474f29ed42e1467f90a35a74793437d0bc64a5bf482bedfa0a \
-++    --hash=sha256:98da17ce9cbf3bfe4617e836d561e433f871129e3a7ac16d6ef4c680f13a839c \
-++    --hash=sha256:9c236e635582742fee16603042553d276cca506e824fa2e6489db04039521e90 \
-++    --hash=sha256:9da6bc32faac9a293ddfdcb9108d4b20416219461e4ec64dfea8383cac186690 \
-++    --hash=sha256:a05e6d6218461eb1b4771d973728f0133b2a4613a6779995df557f70794fd60f \
-++    --hash=sha256:a0817825b900fcd43ac5d05b8b3079937073d2b1ff9cf89427590718b70dd840 \
-++    --hash=sha256:a4ae99c57668ca1e78597d8b06d5af837f377f340f4cce993b551b2d7731778d \
-++    --hash=sha256:a8c86881813a78a6f4508ef9daf9d4995b8ac2d147dcb1a450448941398091c9 \
-++    --hash=sha256:a8fffdbd9d1408006baaf02f1068d7dd1f016c6bcb7538682622c556e7b68e35 \
-++    --hash=sha256:a9b07268d0c3ca5c170a385a0ab9fb7fdd9f5fd866be004c4ea39e44edce47dd \
-++    --hash=sha256:ab19a2d91963ed9e42b4e8d77cd847ae8381576585bad79dbd0a8837a9f6620a \
-++    --hash=sha256:ac184f87ff521f4840e6ea0b10c0ec90c6b1dcd0bad2f1e4a9a1b4fa177982ea \
-++    --hash=sha256:b0e166f698c5a3e914947388c162be2583e0c638a4703fc6a543e23a88dea3c1 \
-++    --hash=sha256:b2170c7e0367dde86a2647ed5b6f57394ea7f53545746104c6b09fc1f4223573 \
-++    --hash=sha256:b2d8c62d08e7255f68f7a740bae85b3c9b8e5466baa9cbf7f57f1cde0ac6bc09 \
-++    --hash=sha256:b4567955a6bc1b20e9c31612e615af6b53733491aeaa19a6b3b37f3b65477094 \
-++    --hash=sha256:b69bb4f51daf461b15e7b3db033160937d3ff88303a7bc808c67bbc1eaf98c78 \
-++    --hash=sha256:b8c0bd73aeac689beacd4e7667d48c299f61b959475cdbb91e7d3d88d27c56b9 \
-++    --hash=sha256:be9b5b8659dff1f913039c2feee1aca499cfbc19e98fa12bc85e037c17ec6ca5 \
-++    --hash=sha256:bf0a05b6059c0528477fba9054d09179beb63744355cab9f38059548fedd46a9 \
-++    --hash=sha256:c16842b846a8d2a145223f520b7e18b57c8f476924bda92aeee3a88d11cfc391 \
-++    --hash=sha256:c363b53e257246a954ebc7c488304b5592b9c53fbe74d03bc1c64dda153fb847 \
-++    --hash=sha256:c7c517d74bea1a6afd39aa612fa025e6b8011982a0897768a2f7c8ab4ebb78a2 \
-++    --hash=sha256:d20fd853fbb5807c8e84c136c278827b6167ded66c72ec6f9a14b863d809211c \
-++    --hash=sha256:d2240ddc86b74966c34554c49d00eaafa8200a18d3a5b6ffbf7da63b11d74ee2 \
-++    --hash=sha256:d477ed829077cd945b01fc3115edd132c47e6540ddcd96ca169facff28173057 \
-++    --hash=sha256:d50d31bfedd53a928fed6707b15a8dbeef011bb6366297cc435accc888b27c20 \
-++    --hash=sha256:dc1d33abb8a0d754ea4763bad944fd965d3d95b5baef6b121c0c9013eaf1907d \
-++    --hash=sha256:dc5d1a49d3f8262be192589a4b72f0d03b72dcf46c51ad5852a4fdc67be7b9e4 \
-++    --hash=sha256:e2d1a054f8f0a191004675755448d12be47fa9bebbcffa3cdf01db19f2d30a54 \
-++    --hash=sha256:e7792606d606c8df5277c32ccb58f29b9b8603bf83b48639b7aedf6df4fe8171 \
-++    --hash=sha256:ed1708dbf4d2e3a1c5c69110ba2b4eb6678262028afd6c6fbcc5a8dac9cda68e \
-++    --hash=sha256:f2d4380bf5f62daabd7b751ea2339c1a21d1c9463f1feb7fc2bdcea2c29c3160 \
-++    --hash=sha256:f3513916e8c645d0610815c257cbfd3242adfd5c4cfa78be514e5a3ebb42a41b \
-++    --hash=sha256:f8346bfa098532bc1fb6c7ef06783e969d87a99dd1d2a5a18a892c1d7a643c58 \
-++    --hash=sha256:f83fa6cae3fff8e98691248c9320356971b59678a17f20656a9e59cd32cee6d8 \
-++    --hash=sha256:fa6ce8b52c5987b3e34d5674b0ab529a4602b632ebab0a93b07bfb4dfc8f8a33 \
-++    --hash=sha256:fb2b1ecfef1e67897d336de3a0e3f52478182d6a47eda86cbd42504c5cbd009a \
-++    --hash=sha256:fc9ca1c9718cb3b06634c7c8dec57d24e9438b2aa9a0f02b8bb36bf478538880 \
-++    --hash=sha256:fd30d9c67d13d891f2360b2a120186729c111238ac63b43dbd37a5a40670b8ca \
-++    --hash=sha256:fd7699e8fd9969f455ef2926221e0233f81a2542921471382e77a9e2f2b57f4b \
-++    --hash=sha256:fe3b385d996ee0822fd46528d9f0443b880d4d05528fd26a9119a54ec3f91c69
-++    # via -r ci/official/requirements_updater/requirements.in
-++
-++# The following packages are considered to be unsafe in a requirements file:
-++setuptools==78.1.1 \
-++    --hash=sha256:c3a9c4211ff4c309edb8b8c4f1cbfa7ae324c4ba9f91ff254e3d305b9fd54561 \
-++    --hash=sha256:fcc17fd9cd898242f6b4adfaca46137a9edef687f43e6f78469692a5e70d851d
-++    # via
-++    #   -r ci/official/requirements_updater/requirements.in
-++    #   tb-nightly
-+diff --git a/tensorflow/tools/toolchains/python/python_repo.bzl b/tensorflow/tools/toolchains/python/python_repo.bzl
-+index 14b9de5b147..2b9c6763b96 100644
-+--- a/tensorflow/tools/toolchains/python/python_repo.bzl
-++++ b/tensorflow/tools/toolchains/python/python_repo.bzl
-+@@ -7,7 +7,7 @@ Defaults to 3.10.
-+ To set wheel name, add "--repo_env=WHEEL_NAME=tensorflow_cpu"
-+ """
-+ 
-+-VERSIONS = ["3.10", "3.11", "3.12", "3.13"]
-++VERSIONS = ["3.10", "3.11", "3.12", "3.13", "3.14"]
-+ DEFAULT_VERSION = "3.11"
-+ WARNING = """
-+ TF_PYTHON_VERSION environment variable was not set correctly; using Python {}.
-+diff --git a/third_party/xla/tools/toolchains/python/python_repo.bzl b/third_party/xla/tools/toolchains/python/python_repo.bzl
-+index 14b9de5b147..2b9c6763b96 100644
-+--- a/third_party/xla/tools/toolchains/python/python_repo.bzl
-++++ b/third_party/xla/tools/toolchains/python/python_repo.bzl
-+@@ -7,7 +7,7 @@ Defaults to 3.10.
-+ To set wheel name, add "--repo_env=WHEEL_NAME=tensorflow_cpu"
-+ """
-+ 
-+-VERSIONS = ["3.10", "3.11", "3.12", "3.13"]
-++VERSIONS = ["3.10", "3.11", "3.12", "3.13", "3.14"]
-+ DEFAULT_VERSION = "3.11"
-+ WARNING = """
-+ TF_PYTHON_VERSION environment variable was not set correctly; using Python {}.
-+-- 
-+2.49.0
-+
-diff --git a/recipes-framework/tensorflow/files/0001-Update-grpcio-to-1.78.0-for-Python-3.14.patch b/recipes-framework/tensorflow/files/0001-Update-grpcio-to-1.78.0-for-Python-3.14.patch
-new file mode 100644
-index 0000000..148b1d0
---- /dev/null
-+++ b/recipes-framework/tensorflow/files/0001-Update-grpcio-to-1.78.0-for-Python-3.14.patch
-@@ -0,0 +1,165 @@
-+From 860c4de34195bce8fc63709ed0cc2ea97c3e8199 Mon Sep 17 00:00:00 2001
-+From: "A. Unique TensorFlower" <gardener@tensorflow.org>
-+Date: Mon, 2 Mar 2026 10:04:32 -0800
-+Subject: [PATCH] Update grpcio to 1.78.0 for Python 3.14. This version
-+ contains built in packages for Python 3.14
-+
-+PiperOrigin-RevId: 877452973
-+
-+Upstream-Status: Backport [https://github.com/tensorflow/tensorflow/commit/d092faf39944a21ab9aebf3550e7cb209c372100]
-+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
-+---
-+ .../requirements_updater/requirements.in      |   3 +-
-+ requirements_lock_3_14.txt                    | 115 ++++++++++--------
-+ 2 files changed, 65 insertions(+), 53 deletions(-)
-+
-+diff --git a/ci/official/requirements_updater/requirements.in b/ci/official/requirements_updater/requirements.in
-+index 6e3da3cdd0a..157ca520f11 100644
-+--- a/ci/official/requirements_updater/requirements.in
-++++ b/ci/official/requirements_updater/requirements.in
-+@@ -25,7 +25,8 @@ keras ~= 3.12.0
-+ # More info at https://protobuf.dev/support/cross-version-runtime-guarantee/
-+ protobuf >= 5.28.0, < 7.0
-+ # Test dependencies
-+-grpcio >= 1.68.1, < 2.0
-++grpcio >= 1.68.1, < 2.0 ; python_version <= "3.13"
-++grpcio >= 1.78.0 ; python_version == "3.14"
-+ portpicker == 1.6.0
-+ # Scipy 15.x and above have misc.derivative removed, but we still use it
-+ scipy >= 1.13.0, < 1.15.0 ; python_version <= "3.13"
-+diff --git a/requirements_lock_3_14.txt b/requirements_lock_3_14.txt
-+index 09a8e5cc66b..80970e1011f 100644
-+--- a/requirements_lock_3_14.txt
-++++ b/requirements_lock_3_14.txt
-+@@ -137,58 +137,68 @@ google-pasta==0.2.0 \
-+     --hash=sha256:b32482794a366b5366a32c92a9a9201b107821889935a02b3e51f6b432ea84ed \
-+     --hash=sha256:c9f2c8dfc8f96d0d5808299920721be30c9eec37f2389f28904f454565c8a16e
-+     # via -r ci/official/requirements_updater/requirements.in
-+-grpcio==1.71.0 \
-+-    --hash=sha256:0ab8b2864396663a5b0b0d6d79495657ae85fa37dcb6498a2669d067c65c11ea \
-+-    --hash=sha256:0fa05ee31a20456b13ae49ad2e5d585265f71dd19fbd9ef983c28f926d45d0a7 \
-+-    --hash=sha256:0ff35c8d807c1c7531d3002be03221ff9ae15712b53ab46e2a0b4bb271f38537 \
-+-    --hash=sha256:1be857615e26a86d7363e8a163fade914595c81fec962b3d514a4b1e8760467b \
-+-    --hash=sha256:20e8f653abd5ec606be69540f57289274c9ca503ed38388481e98fa396ed0b41 \
-+-    --hash=sha256:22c3bc8d488c039a199f7a003a38cb7635db6656fa96437a8accde8322ce2366 \
-+-    --hash=sha256:24e867651fc67717b6f896d5f0cac0ec863a8b5fb7d6441c2ab428f52c651c6b \
-+-    --hash=sha256:2b85f7820475ad3edec209d3d89a7909ada16caab05d3f2e08a7e8ae3200a55c \
-+-    --hash=sha256:39983a9245d37394fd59de71e88c4b295eb510a3555e0a847d9965088cdbd033 \
-+-    --hash=sha256:3d081e859fb1ebe176de33fc3adb26c7d46b8812f906042705346b314bde32c3 \
-+-    --hash=sha256:469f42a0b410883185eab4689060a20488a1a0a00f8bbb3cbc1061197b4c5a79 \
-+-    --hash=sha256:47be9584729534660416f6d2a3108aaeac1122f6b5bdbf9fd823e11fe6fbaa29 \
-+-    --hash=sha256:4be74ddeeb92cc87190e0e376dbc8fc7736dbb6d3d454f2fa1f5be1dee26b9d7 \
-+-    --hash=sha256:4dd0dfbe4d5eb1fcfec9490ca13f82b089a309dc3678e2edabc144051270a66e \
-+-    --hash=sha256:5b08d03ace7aca7b2fadd4baf291139b4a5f058805a8327bfe9aece7253b6d67 \
-+-    --hash=sha256:63e41b91032f298b3e973b3fa4093cbbc620c875e2da7b93e249d4728b54559a \
-+-    --hash=sha256:652350609332de6dac4ece254e5d7e1ff834e203d6afb769601f286886f6f3a8 \
-+-    --hash=sha256:693bc706c031aeb848849b9d1c6b63ae6bcc64057984bb91a542332b75aa4c3d \
-+-    --hash=sha256:74258dce215cb1995083daa17b379a1a5a87d275387b7ffe137f1d5131e2cfbb \
-+-    --hash=sha256:789d5e2a3a15419374b7b45cd680b1e83bbc1e52b9086e49308e2c0b5bbae6e3 \
-+-    --hash=sha256:7c9c80ac6091c916db81131d50926a93ab162a7e97e4428ffc186b6e80d6dda4 \
-+-    --hash=sha256:7d6ac9481d9d0d129224f6d5934d5832c4b1cddb96b59e7eba8416868909786a \
-+-    --hash=sha256:85da336e3649a3d2171e82f696b5cad2c6231fdd5bad52616476235681bee5b3 \
-+-    --hash=sha256:8700a2a57771cc43ea295296330daaddc0d93c088f0a35cc969292b6db959bf3 \
-+-    --hash=sha256:8997d6785e93308f277884ee6899ba63baafa0dfb4729748200fcc537858a509 \
-+-    --hash=sha256:9182e0063112e55e74ee7584769ec5a0b4f18252c35787f48738627e23a62b97 \
-+-    --hash=sha256:9b91879d6da1605811ebc60d21ab6a7e4bae6c35f6b63a061d61eb818c8168f6 \
-+-    --hash=sha256:a2242d6950dc892afdf9e951ed7ff89473aaf744b7d5727ad56bdaace363722b \
-+-    --hash=sha256:a371e6b6a5379d3692cc4ea1cb92754d2a47bdddeee755d3203d1f84ae08e03e \
-+-    --hash=sha256:a76d39b5fafd79ed604c4be0a869ec3581a172a707e2a8d7a4858cb05a5a7637 \
-+-    --hash=sha256:ad9f30838550695b5eb302add33f21f7301b882937460dd24f24b3cc5a95067a \
-+-    --hash=sha256:b2266862c5ad664a380fbbcdbdb8289d71464c42a8c29053820ee78ba0119e5d \
-+-    --hash=sha256:b78a99cd1ece4be92ab7c07765a0b038194ded2e0a26fd654591ee136088d8d7 \
-+-    --hash=sha256:c200cb6f2393468142eb50ab19613229dcc7829b5ccee8b658a36005f6669fdd \
-+-    --hash=sha256:c30f393f9d5ff00a71bb56de4aa75b8fe91b161aeb61d39528db6b768d7eac69 \
-+-    --hash=sha256:c6a0a28450c16809f94e0b5bfe52cabff63e7e4b97b44123ebf77f448534d07d \
-+-    --hash=sha256:cebc1b34ba40a312ab480ccdb396ff3c529377a2fce72c45a741f7215bfe8379 \
-+-    --hash=sha256:d2c170247315f2d7e5798a22358e982ad6eeb68fa20cf7a820bb74c11f0736e7 \
-+-    --hash=sha256:d35a95f05a8a2cbe8e02be137740138b3b2ea5f80bd004444e4f9a1ffc511e32 \
-+-    --hash=sha256:d5170929109450a2c031cfe87d6716f2fae39695ad5335d9106ae88cc32dc84c \
-+-    --hash=sha256:d6aa986318c36508dc1d5001a3ff169a15b99b9f96ef5e98e13522c506b37eef \
-+-    --hash=sha256:d6de81c9c00c8a23047136b11794b3584cdc1460ed7cbc10eada50614baa1444 \
-+-    --hash=sha256:dc1a1231ed23caac1de9f943d031f1bc38d0f69d2a3b243ea0d664fc1fbd7fec \
-+-    --hash=sha256:e6beeea5566092c5e3c4896c6d1d307fb46b1d4bdf3e70c8340b190a69198594 \
-+-    --hash=sha256:e6d8de076528f7c43a2f576bc311799f89d795aa6c9b637377cc2b1616473804 \
-+-    --hash=sha256:e6f83a583ed0a5b08c5bc7a3fe860bb3c2eac1f03f1f63e0bc2091325605d2b7 \
-+-    --hash=sha256:f250ff44843d9a0615e350c77f890082102a0318d66a99540f54769c8766ab73 \
-+-    --hash=sha256:f71574afdf944e6652203cd1badcda195b2a27d9c83e6d88dc1ce3cfb73b31a5 \
-+-    --hash=sha256:f903017db76bf9cc2b2d8bdd37bf04b505bbccad6be8a81e1542206875d0e9db \
-+-    --hash=sha256:f9a412f55bb6e8f3bb000e020dbc1e709627dcb3a56f6431fa7076b4c1aab0db \
-+-    --hash=sha256:f9c30c464cb2ddfbc2ddf9400287701270fdc0f14be5f08a1e3939f1e749b455
-++grpcio==1.78.0 ; python_version == "3.14" \
-++    --hash=sha256:082653eecbdf290e6e3e2c276ab2c54b9e7c299e07f4221872380312d8cf395e \
-++    --hash=sha256:10a9a644b5dd5aec3b82b5b0b90d41c0fa94c85ef42cb42cf78a23291ddb5e7d \
-++    --hash=sha256:12a771591ae40bc65ba67048fa52ef4f0e6db8279e595fd349f9dfddeef571f9 \
-++    --hash=sha256:185dea0d5260cbb2d224c507bf2a5444d5abbb1fa3594c1ed7e4c709d5eb8383 \
-++    --hash=sha256:1afa62af6e23f88629f2b29ec9e52ec7c65a7176c1e0a83292b93c76ca882558 \
-++    --hash=sha256:2045397e63a7a0ee7957c25f7dbb36ddc110e0cfb418403d110c0a7a68a844e9 \
-++    --hash=sha256:207db540302c884b8848036b80db352a832b99dfdf41db1eb554c2c2c7800f65 \
-++    --hash=sha256:271c73e6e5676afe4fc52907686670c7cea22ab2310b76a59b678403ed40d670 \
-++    --hash=sha256:2777b783f6c13b92bd7b716667452c329eefd646bfb3f2e9dabea2e05dbd34f6 \
-++    --hash=sha256:2bf5e2e163b356978b23652c4818ce4759d40f4712ee9ec5a83c4be6f8c23a3a \
-++    --hash=sha256:35eb275bf1751d2ffbd8f57cdbc46058e857cf3971041521b78b7db94bdaf127 \
-++    --hash=sha256:391e93548644e6b2726f1bb84ed60048d4bcc424ce5e4af0843d28ca0b754fec \
-++    --hash=sha256:3c586ac70e855c721bda8f548d38c3ca66ac791dc49b66a8281a1f99db85e452 \
-++    --hash=sha256:3f8904a8165ab21e07e58bf3e30a73f4dffc7a1e0dbc32d51c61b5360d26f43e \
-++    --hash=sha256:459ab414b35f4496138d0ecd735fed26f1318af5e52cb1efbc82a09f0d5aa911 \
-++    --hash=sha256:4c5533d03a6cbd7f56acfc9cfb44ea64f63d29091e40e44010d34178d392d7eb \
-++    --hash=sha256:51b13f9aed9d59ee389ad666b8c2214cc87b5de258fa712f9ab05f922e3896c6 \
-++    --hash=sha256:5361a0630a7fdb58a6a97638ab70e1dae2893c4d08d7aba64ded28bb9e7a29df \
-++    --hash=sha256:5397fff416b79e4b284959642a4e95ac4b0f1ece82c9993658e0e477d40551ec \
-++    --hash=sha256:57bab6deef2f4f1ca76cc04565df38dc5713ae6c17de690721bdf30cb1e0545c \
-++    --hash=sha256:6092beabe1966a3229f599d7088b38dfc8ffa1608b5b5cdda31e591e6500f856 \
-++    --hash=sha256:684083fd383e9dc04c794adb838d4faea08b291ce81f64ecd08e4577c7398adf \
-++    --hash=sha256:735e38e176a88ce41840c21bb49098ab66177c64c82426e24e0082500cc68af5 \
-++    --hash=sha256:7382b95189546f375c174f53a5fa873cef91c4b8005faa05cc5b3beea9c4f1c5 \
-++    --hash=sha256:748b6138585379c737adc08aeffd21222abbda1a86a0dca2a39682feb9196c20 \
-++    --hash=sha256:74be1268d1439eaaf552c698cdb11cd594f0c49295ae6bb72c34ee31abbe611b \
-++    --hash=sha256:7cc47943d524ee0096f973e1081cb8f4f17a4615f2116882a5f1416e4cfe92b5 \
-++    --hash=sha256:859b13906ce098c0b493af92142ad051bf64c7870fa58a123911c88606714996 \
-++    --hash=sha256:85f93781028ec63f383f6bc90db785a016319c561cc11151fbb7b34e0d012303 \
-++    --hash=sha256:86ce2371bfd7f212cf60d8517e5e854475c2c43ce14aa910e136ace72c6db6c1 \
-++    --hash=sha256:86f85dd7c947baa707078a236288a289044836d4b640962018ceb9cd1f899af5 \
-++    --hash=sha256:8dfffba826efcf366b1e3ccc37e67afe676f290e13a3b48d31a46739f80a8724 \
-++    --hash=sha256:8f2ac84905d12918e4e55a16da17939eb63e433dc11b677267c35568aa63fc84 \
-++    --hash=sha256:94309f498bcc07e5a7d16089ab984d42ad96af1d94b5a4eb966a266d9fcabf68 \
-++    --hash=sha256:94f95cf5d532d0e717eed4fc1810e8e6eded04621342ec54c89a7c2f14b581bf \
-++    --hash=sha256:9566fe4ababbb2610c39190791e5b829869351d14369603702e890ef3ad2d06e \
-++    --hash=sha256:9dca934f24c732750389ce49d638069c3892ad065df86cb465b3fa3012b70c9e \
-++    --hash=sha256:a9f136fbafe7ccf4ac7e8e0c28b31066e810be52d6e344ef954a3a70234e1702 \
-++    --hash=sha256:ab399ef5e3cd2a721b1038a0f3021001f19c5ab279f145e1146bb0b9f1b2b12c \
-++    --hash=sha256:b0c689c02947d636bc7fab3e30cc3a3445cca99c834dfb77cd4a6cabfc1c5597 \
-++    --hash=sha256:b2342d87af32790f934a79c3112641e7b27d63c261b8b4395350dad43eff1dc7 \
-++    --hash=sha256:b58f37edab4a3881bc6c9bca52670610e0c9ca14e2ea3cf9debf185b870457fb \
-++    --hash=sha256:bd8cb8026e5f5b50498a3c4f196f57f9db344dad829ffae16b82e4fdbaea2813 \
-++    --hash=sha256:be63c88b32e6c0f1429f1398ca5c09bc64b0d80950c8bb7807d7d7fb36fb84c7 \
-++    --hash=sha256:c3f293fdc675ccba4db5a561048cca627b5e7bd1c8a6973ffedabe7d116e22e2 \
-++    --hash=sha256:c41bc64626db62e72afec66b0c8a0da76491510015417c127bfc53b2fe6d7f7f \
-++    --hash=sha256:ce3a90455492bf8bfa38e56fbbe1dbd4f872a3d8eeaf7337dc3b1c8aa28c271b \
-++    --hash=sha256:ce7599575eeb25c0f4dc1be59cada6219f3b56176f799627f44088b21381a28a \
-++    --hash=sha256:dce09d6116df20a96acfdbf85e4866258c3758180e8c49845d6ba8248b6d0bbb \
-++    --hash=sha256:de8cb00d1483a412a06394b8303feec5dcb3b55f81d83aa216dbb6a0b86a94f5 \
-++    --hash=sha256:df2c8f3141f7cbd112a6ebbd760290b5849cda01884554f7c67acc14e7b1758a \
-++    --hash=sha256:e87cbc002b6f440482b3519e36e1313eb5443e9e9e73d6a52d43bd2004fcfd8e \
-++    --hash=sha256:e888474dee2f59ff68130f8a397792d8cb8e17e6b3434339657ba4ee90845a8c \
-++    --hash=sha256:f12857d24d98441af6a1d5c87442d624411db486f7ba12550b07788f74b67b04 \
-++    --hash=sha256:f2d4e43ee362adfc05994ed479334d5a451ab7bc3f3fee1b796b8ca66895acb4 \
-++    --hash=sha256:f3d6379493e18ad4d39537a82371c5281e153e963cecb13f953ebac155756525 \
-++    --hash=sha256:f8dff3d9777e5d2703a962ee5c286c239bf0ba173877cc68dc02c17d042e29de \
-++    --hash=sha256:f9ab915a267fc47c7e88c387a3a28325b58c898e23d4995f765728f4e3dedb97 \
-++    --hash=sha256:fbe6e89c7ffb48518384068321621b2a69cab509f58e40e4399fdd378fa6d074 \
-++    --hash=sha256:fd5f135b1bd58ab088930b3c613455796dfa0393626a6972663ccdda5b4ac6ce \
-++    --hash=sha256:ff870aebe9a93a85283837801d35cd5f8814fe2ad01e606861a7fb47c762a2b7
-+     # via
-+     #   -r ci/official/requirements_updater/requirements.in
-+     #   tb-nightly
-+@@ -787,6 +797,7 @@ typing-extensions==4.14.1 \
-+     --hash=sha256:d1e1e3b58374dc93031d6eda2420a48ea44a36c2b4766a4fdeb3710755731d76
-+     # via
-+     #   -r ci/official/requirements_updater/requirements.in
-++    #   grpcio
-+     #   optree
-+ urllib3==2.6.3 \
-+     --hash=sha256:1b62b6884944a57dbe321509ab94fd4d3b307075e0c2eae991ac71ee15ad38ed \
-+-- 
-+2.49.0
-+
-diff --git a/recipes-framework/tensorflow/files/0001-correct-h5py-version-for-python-3.14.patch b/recipes-framework/tensorflow/files/0001-correct-h5py-version-for-python-3.14.patch
-new file mode 100644
-index 0000000..3904469
---- /dev/null
-+++ b/recipes-framework/tensorflow/files/0001-correct-h5py-version-for-python-3.14.patch
-@@ -0,0 +1,28 @@
-+From c5cac23197ae35f0714fbba034738724898e02fc Mon Sep 17 00:00:00 2001
-+From: Hongxu Jia <hongxu.jia@windriver.com>
-+Date: Fri, 20 Mar 2026 14:30:44 +0800
-+Subject: [PATCH] correct h5py version for python 3.14
-+
-+Upstream-Status: Pending
-+
-+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
-+---
-+ tensorflow/tools/pip_package/setup.py.tpl | 2 +-
-+ 1 file changed, 1 insertion(+), 1 deletion(-)
-+
-+diff --git a/tensorflow/tools/pip_package/setup.py.tpl b/tensorflow/tools/pip_package/setup.py.tpl
-+index 9480a3d3..f591d395 100644
-+--- a/tensorflow/tools/pip_package/setup.py.tpl
-++++ b/tensorflow/tools/pip_package/setup.py.tpl
-+@@ -126,7 +126,7 @@ REQUIRED_PACKAGES = [
-+     'keras >= 3.12.0',
-+     'numpy >= 1.26.0',
-+     # Starting with 3.15, only MacOS 14 and 15 are supported.
-+-    'h5py >= 3.11.0, < 3.15.0',
-++    'h5py > 3.15.0',
-+     'ml_dtypes >= 0.5.1, < 1.0.0',
-+ ]
-+ 
-+-- 
-+2.34.1
-+
-diff --git a/recipes-framework/tensorflow/files/0001-do-not-use-pywrap-rules.patch b/recipes-framework/tensorflow/files/0001-do-not-use-pywrap-rules.patch
-new file mode 100644
-index 0000000..34ee214
---- /dev/null
-+++ b/recipes-framework/tensorflow/files/0001-do-not-use-pywrap-rules.patch
-@@ -0,0 +1,28 @@
-+From 87cff6a2e5e5c8f72243f4cdb947b95e3c33dd03 Mon Sep 17 00:00:00 2001
-+From: Hongxu Jia <hongxu.jia@windriver.com>
-+Date: Fri, 20 Mar 2026 17:29:31 +0800
-+Subject: [PATCH] do not use pywrap rules
-+
-+The lite does not require it
-+
-+Upstream-Status: Pending
-+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
-+---
-+ .bazelrc | 1 -
-+ 1 file changed, 1 deletion(-)
-+
-+diff --git a/.bazelrc b/.bazelrc
-+index cc8ca5e3..90790235 100644
-+--- a/.bazelrc
-++++ b/.bazelrc
-+@@ -92,7 +92,6 @@ common --define=allow_oversize_protos=true
-+ common --spawn_strategy=standalone
-+ common -c opt
-+ 
-+-common --repo_env=USE_PYWRAP_RULES=True
-+ common --copt=-DGRPC_BAZEL_BUILD
-+ common --host_copt=-DGRPC_BAZEL_BUILD
-+ common --action_env=GRPC_BAZEL_RUNTIME=1
-+-- 
-+2.34.1
-+
-diff --git a/recipes-framework/tensorflow/files/0001-fix-pypi_keras-is-not-defined.patch b/recipes-framework/tensorflow/files/0001-fix-pypi_keras-is-not-defined.patch
-new file mode 100644
-index 0000000..90eb739
---- /dev/null
-+++ b/recipes-framework/tensorflow/files/0001-fix-pypi_keras-is-not-defined.patch
-@@ -0,0 +1,33 @@
-+From f6db063151ad23a39c86fbbda8c1de8dbbb8f72c Mon Sep 17 00:00:00 2001
-+From: Hongxu Jia <hongxu.jia@windriver.com>
-+Date: Mon, 16 Mar 2026 15:02:46 +0800
-+Subject: [PATCH] fix '@@pypi_keras' is not defined
-+
-+|tmp/work/x86_64-linux/tensorflow-native/2.21.0/sources/tensorflow-2.21.0/
-+tensorflow/BUILD:1729:18: no such package '@@pypi_keras//': The repository
-+'@@pypi_keras' could not be resolved: Repository '@@pypi_keras' is not defined
-+and referenced by '//tensorflow:tensorflow_py_no_contrib
-+
-+Upstream-Status: Pending
-+
-+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
-+---
-+ tensorflow/BUILD | 2 +-
-+ 1 file changed, 1 insertion(+), 1 deletion(-)
-+
-+diff --git a/tensorflow/BUILD b/tensorflow/BUILD
-+index da5ba2a8..07061a29 100644
-+--- a/tensorflow/BUILD
-++++ b/tensorflow/BUILD
-+@@ -1742,7 +1742,7 @@ py_strict_library(
-+         "//tensorflow/lite/python/authoring",
-+         "//tensorflow/python:no_contrib",
-+         "//tensorflow/python/profiler:profiler_client",
-+-        "@pypi_keras//:pkg",
-++        "@pypi//keras_nightly",
-+         "@pypi//protobuf",
-+     ],
-+ )
-+-- 
-+2.34.1
-+
-diff --git a/recipes-framework/tensorflow/files/0001-set-x83_64-to-arch-of-whl.patch b/recipes-framework/tensorflow/files/0001-set-x83_64-to-arch-of-whl.patch
-new file mode 100644
-index 0000000..432a7ec
---- /dev/null
-+++ b/recipes-framework/tensorflow/files/0001-set-x83_64-to-arch-of-whl.patch
-@@ -0,0 +1,36 @@
-+From 203536dbe9dbb5ba874f0febf21a93c773723645 Mon Sep 17 00:00:00 2001
-+From: Hongxu Jia <hongxu.jia@windriver.com>
-+Date: Mon, 23 Mar 2026 16:11:32 +0800
-+Subject: [PATCH] set x83_64 to arch of whl
-+
-+Yocto will extract whl at do_install, explicitly set x86_64 otherwise
-+extract failed for aarch64 target on x86_64 host
-+
-+Upstream-Status: Inappropriate [Yocto specific]
-+
-+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
-+---
-+ tensorflow/tools/pip_package/BUILD | 7 +------
-+ 1 file changed, 1 insertion(+), 6 deletions(-)
-+
-+diff --git a/tensorflow/tools/pip_package/BUILD b/tensorflow/tools/pip_package/BUILD
-+index 3437fa02..04bfc895 100644
-+--- a/tensorflow/tools/pip_package/BUILD
-++++ b/tensorflow/tools/pip_package/BUILD
-+@@ -324,12 +324,7 @@ tf_wheel(
-+         "@platforms//os:windows": "win",
-+         "@platforms//os:linux": "linux",
-+     }),
-+-    platform_tag = select({
-+-        "@platforms//cpu:aarch64": "arm64",
-+-        "@platforms//cpu:arm64": "arm64",
-+-        "@platforms//cpu:x86_64": "x86_64",
-+-        "@platforms//cpu:ppc": "ppc64le",
-+-    }),
-++    platform_tag = "x86_64",
-+     source_files = [
-+         "MANIFEST.in",
-+         "//tensorflow/tools/pip_package:THIRD_PARTY_NOTICES.txt",
-+-- 
-+2.34.1
-+
-diff --git a/recipes-framework/tensorflow/files/0001-support-cross-compile-for-target-aarch64.patch b/recipes-framework/tensorflow/files/0001-support-cross-compile-for-target-aarch64.patch
-new file mode 100644
-index 0000000..f0fdf48
---- /dev/null
-+++ b/recipes-framework/tensorflow/files/0001-support-cross-compile-for-target-aarch64.patch
-@@ -0,0 +1,108 @@
-+From bc95bec67e4fb515600701e8b409e940cddccdd8 Mon Sep 17 00:00:00 2001
-+From: Hongxu Jia <hongxu.jia@windriver.com>
-+Date: Mon, 23 Mar 2026 14:27:58 +0800
-+Subject: [PATCH] support cross compile for target aarch64
-+
-+While using --platforms=@local_config_yocto_compiler//:linux_aarch64
-+for cross compile of target aarch64, run aarch64 hermetic python on
-+host, this commit tricky uses x86_64 hermetic python on host
-+used aarch64 python, and remove duplicated x86_64
-+
-+Upstream-Status: Inappropriate [Yocto specific]
-+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
-+---
-+ third_party/py/python_init_rules.bzl          |  1 +
-+ ...ort-cross-compile-for-target-aarch64.patch | 58 +++++++++++++++++++
-+ .../xla/third_party/py/python_init_rules.bzl  |  1 +
-+ 3 files changed, 60 insertions(+)
-+ create mode 100644 third_party/xla/third_party/py/0001-support-cross-compile-for-target-aarch64.patch
-+
-+diff --git a/third_party/py/python_init_rules.bzl b/third_party/py/python_init_rules.bzl
-+index 8f27c46d..59f4bcf5 100644
-+--- a/third_party/py/python_init_rules.bzl
-++++ b/third_party/py/python_init_rules.bzl
-+@@ -42,5 +42,6 @@ def python_init_rules(extra_patches = []):
-+             "@xla//third_party/py:rules_python_freethreaded.patch",
-+             "@xla//third_party/py:rules_python_versions.patch",
-+             "@xla//third_party/py:third_party:0001-support-offline-build.patch",
-++            "@xla//third_party/py:third_party:0001-support-cross-compile-for-target-aarch64.patch",
-+         ] + extra_patches,
-+     )
-+diff --git a/third_party/xla/third_party/py/0001-support-cross-compile-for-target-aarch64.patch b/third_party/xla/third_party/py/0001-support-cross-compile-for-target-aarch64.patch
-+new file mode 100644
-+index 00000000..7ac3a28c
-+--- /dev/null
-++++ b/third_party/xla/third_party/py/0001-support-cross-compile-for-target-aarch64.patch
-+@@ -0,0 +1,58 @@
-++From b37ed959765fc0877f80fc40b3875c565564e002 Mon Sep 17 00:00:00 2001
-++From: Hongxu Jia <hongxu.jia@windriver.com>
-++Date: Mon, 23 Mar 2026 14:18:21 +0800
-++Subject: [PATCH] support cross compile for target aarch64
-++
-++While using --platforms=@local_config_yocto_compiler//:linux_aarch64
-++for cross compile of target aarch64, run aarch64 hermetic python on
-++host, this commit tricky uses x86_64 hermetic python on host
-++used aarch64 python, and remove duplicated x86_64
-++
-++Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
-++---
-++ python/versions.bzl | 15 ++-------------
-++ 1 file changed, 2 insertions(+), 13 deletions(-)
-++
-++diff --git a/python/versions.bzl b/python/versions.bzl
-++index df4a9a9..d6f1e70 100644
-++--- a/python/versions.bzl
-+++++ b/python/versions.bzl
-++@@ -1024,7 +1024,7 @@ def _generate_platforms():
-++             os_name = WINDOWS_NAME,
-++             arch = "aarch64",
-++         ),
-++-        "aarch64-unknown-linux-gnu": platform_info(
-+++        "x86_64-unknown-linux-gnu": platform_info(
-++             compatible_with = [
-++                 "@platforms//os:linux",
-++                 "@platforms//cpu:aarch64",
-++@@ -1033,7 +1033,7 @@ def _generate_platforms():
-++                 is_libc_glibc,
-++             ],
-++             os_name = LINUX_NAME,
-++-            arch = "aarch64",
-+++            arch = "x86_64",
-++         ),
-++         "armv7-unknown-linux-gnu": platform_info(
-++             compatible_with = [
-++@@ -1106,17 +1106,6 @@ def _generate_platforms():
-++             os_name = WINDOWS_NAME,
-++             arch = "x86_64",
-++         ),
-++-        "x86_64-unknown-linux-gnu": platform_info(
-++-            compatible_with = [
-++-                "@platforms//os:linux",
-++-                "@platforms//cpu:x86_64",
-++-            ],
-++-            target_settings = [
-++-                is_libc_glibc,
-++-            ],
-++-            os_name = LINUX_NAME,
-++-            arch = "x86_64",
-++-        ),
-++         "x86_64-unknown-linux-musl": platform_info(
-++             compatible_with = [
-++                 "@platforms//os:linux",
-++-- 
-++2.34.1
-++
-+diff --git a/third_party/xla/third_party/py/python_init_rules.bzl b/third_party/xla/third_party/py/python_init_rules.bzl
-+index 2fc861b5..19eb9210 100644
-+--- a/third_party/xla/third_party/py/python_init_rules.bzl
-++++ b/third_party/xla/third_party/py/python_init_rules.bzl
-+@@ -42,5 +42,6 @@ def python_init_rules(extra_patches = []):
-+             "@xla//third_party/py:rules_python_freethreaded.patch",
-+             "@xla//third_party/py:rules_python_versions.patch",
-+             "@xla//third_party/py:0001-support-offline-build.patch",
-++            "@xla//third_party/py:0001-support-cross-compile-for-target-aarch64.patch",
-+         ] + extra_patches,
-+     )
-+-- 
-+2.34.1
-+
-diff --git a/recipes-framework/tensorflow/files/0001-use-external-toolchains.patch b/recipes-framework/tensorflow/files/0001-use-external-toolchains.patch
-new file mode 100644
-index 0000000..df5c59d
---- /dev/null
-+++ b/recipes-framework/tensorflow/files/0001-use-external-toolchains.patch
-@@ -0,0 +1,53 @@
-+From 24f32620fc5d598363067fed4b657634be3fa848 Mon Sep 17 00:00:00 2001
-+From: Hongxu Jia <hongxu.jia@windriver.com>
-+Date: Mon, 16 Mar 2026 13:11:46 +0800
-+Subject: [PATCH] use external toolchains
-+
-+According to [1], revert to use external Yocto toolchains
-+
-+[1] https://github.com/tensorflow/tensorflow/commit/ac56b0e840919cea88ed847f364468c8332b5333
-+
-+Upstream-Status: Pending
-+
-+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
-+---
-+ .bazelrc                 | 6 ++++--
-+ third_party/xla/.bazelrc | 5 +++--
-+ 2 files changed, 7 insertions(+), 4 deletions(-)
-+
-+diff --git a/.bazelrc b/.bazelrc
-+index 6a6161727fc..cc8ca5e3ba6 100644
-+--- a/.bazelrc
-++++ b/.bazelrc
-+@@ -163,8 +163,10 @@ common --incompatible_enforce_config_setting_visibility
-+ common --noenable_bzlmod
-+ common --enable_workspace
-+ 
-+-common --incompatible_enable_cc_toolchain_resolution
-+-common --repo_env USE_HERMETIC_CC_TOOLCHAIN=1
-++common --noincompatible_enable_cc_toolchain_resolution
-++common --repo_env USE_HERMETIC_CC_TOOLCHAIN=0
-++common --@rules_ml_toolchain//common:enable_hermetic_cc=False
-++common --noincompatible_enable_android_toolchain_resolution
-+ 
-+ # TODO: Migrate for https://github.com/bazelbuild/bazel/issues/7260
-+ common:clang_local --noincompatible_enable_cc_toolchain_resolution
-+diff --git a/third_party/xla/.bazelrc b/third_party/xla/.bazelrc
-+index 6667d9b9986..88178e2be4d 100644
-+--- a/third_party/xla/.bazelrc
-++++ b/third_party/xla/.bazelrc
-+@@ -2,8 +2,9 @@
-+ common --noenable_bzlmod
-+ common:bzlmod --enable_bzlmod --noenable_workspace
-+ 
-+-common --incompatible_enable_cc_toolchain_resolution
-+-common --repo_env USE_HERMETIC_CC_TOOLCHAIN=1
-++common --noincompatible_enable_cc_toolchain_resolution
-++common --repo_env USE_HERMETIC_CC_TOOLCHAIN=0
-++common --@rules_ml_toolchain//common:enable_hermetic_cc=False
-+ 
-+ # TODO: Migrate for https://github.com/bazelbuild/bazel/issues/7260
-+ common:clang_local --noincompatible_enable_cc_toolchain_resolution
-+-- 
-+2.49.0
-+
-diff --git a/recipes-framework/tensorflow/files/BUILD.in b/recipes-framework/tensorflow/files/BUILD.in
-index 2e230a6..90df867 100644
---- a/recipes-framework/tensorflow/files/BUILD.in
-+++ b/recipes-framework/tensorflow/files/BUILD.in
-@@ -38,3 +38,19 @@ cc_toolchain(
-     toolchain_config = ":yocto_config",
-     toolchain_identifier = "yocto-linux-toolchain",
- )
-+
-+platform(
-+    name = "linux_aarch64",
-+    constraint_values = [
-+        "@platforms//cpu:aarch64",
-+        "@platforms//os:linux",
-+    ],
-+)
-+
-+platform(
-+    name = "linux_k8",
-+    constraint_values = [
-+        "@platforms//cpu:x86_64",
-+        "@platforms//os:linux",
-+    ],
-+)
-diff --git a/recipes-framework/tensorflow/files/BUILD.yocto_compiler b/recipes-framework/tensorflow/files/BUILD.yocto_compiler
-index 0dd84d3..952b4be 100644
---- a/recipes-framework/tensorflow/files/BUILD.yocto_compiler
-+++ b/recipes-framework/tensorflow/files/BUILD.yocto_compiler
-@@ -3,7 +3,7 @@ package(default_visibility = ['//visibility:public'])
- filegroup(
-   name = 'gcc',
-   srcs = [
--    'recipe-sysroot-native/usr/bin/%%CT_NAME%%/%%CT_NAME%%-gcc',
-+    'recipe-sysroot-native/usr/bin/%%CT_NAME%%/%%CT_NAME%%-clang',
-   ],
- )
- 
-@@ -24,35 +24,35 @@ filegroup(
- filegroup(
-   name = 'nm',
-   srcs = [
--    'recipe-sysroot-native/usr/bin/%%CT_NAME%%/%%CT_NAME%%-nm',
-+    'recipe-sysroot-native/usr/bin/%%CT_NAME%%/%%CT_NAME%%-llvm-nm',
-   ],
- )
- 
- filegroup(
-   name = 'objcopy',
-   srcs = [
--    'recipe-sysroot-native/usr/bin/%%CT_NAME%%/%%CT_NAME%%-objcopy',
-+    'recipe-sysroot-native/usr/bin/%%CT_NAME%%/%%CT_NAME%%-llvm-objcopy',
-   ],
- )
- 
- filegroup(
-   name = 'objdump',
-   srcs = [
--    'recipe-sysroot-native/usr/bin/%%CT_NAME%%/%%CT_NAME%%-objdump',
-+    'recipe-sysroot-native/usr/bin/%%CT_NAME%%/%%CT_NAME%%-llvm-objdump',
-   ],
- )
- 
- filegroup(
-   name = 'strip',
-   srcs = [
--    'recipe-sysroot-native/usr/bin/%%CT_NAME%%/%%CT_NAME%%-strip',
-+    'recipe-sysroot-native/usr/bin/%%CT_NAME%%/%%CT_NAME%%-llvm-strip',
-   ],
- )
- 
- filegroup(
-   name = 'as',
-   srcs = [
--    'recipe-sysroot-native/usr/bin/%%CT_NAME%%/%%CT_NAME%%-as',
-+    'recipe-sysroot-native/usr/bin/%%CT_NAME%%/%%CT_NAME%%-llvm-as',
-   ],
- )
- 
-@@ -61,8 +61,6 @@ filegroup(
-   srcs = glob([
-     'recipe-sysroot-native/usr/include/**',
-     'recipe-sysroot-native/usr/lib/%%CT_NAME%%/**',
--    'recipe-sysroot-native/usr/lib/%%CT_NAME%%/gcc/**',
--    'recipe-sysroot-native/usr/libexec/%%CT_NAME%%/**',
-     'recipe-sysroot/usr/include/**',
-   ]),
- )
-diff --git a/recipes-framework/tensorflow/files/cc_config.bzl.tpl b/recipes-framework/tensorflow/files/cc_config.bzl.tpl
-index 3dfeab6..cbb78eb 100644
---- a/recipes-framework/tensorflow/files/cc_config.bzl.tpl
-+++ b/recipes-framework/tensorflow/files/cc_config.bzl.tpl
-@@ -145,7 +145,6 @@ def _impl(ctx):
-                             "-D__TIMESTAMP__=\"redacted\"",
-                             "-D__TIME__=\"redacted\"",
-                             "-no-canonical-prefixes",
--                            "-fno-canonical-system-headers",
-                         ],
-                     ),
-                 ],
-@@ -265,7 +264,6 @@ def _impl(ctx):
-                             "-lstdc++",
-                             "-Wl,-z,relro,-z,now",
-                             "-no-canonical-prefixes",
--                            "-pass-exit-codes",
-                             "-Wl,--build-id=md5",
-                             "-Wl,--hash-style=gnu",
-                         ],
-@@ -340,19 +338,11 @@ def _impl(ctx):
-         tool_path(name = "compat-ld", path = "/bin/false"),
-         tool_path(
-             name = "cpp",
--            path = "%{YOCTO_COMPILER_PATH}%/recipe-sysroot-native/usr/bin/%{CT_NAME}%/%{CT_NAME}%-cpp",
--        ),
--        tool_path(
--            name = "dwp",
--            path = "%{YOCTO_COMPILER_PATH}%/recipe-sysroot-native/usr/bin/%{CT_NAME}%/%{CT_NAME}%-dwp",
-+            path = "%{YOCTO_COMPILER_PATH}%/recipe-sysroot-native/usr/bin/%{CT_NAME}%/%{CT_NAME}%-clang",
-         ),
-         tool_path(
-             name = "gcc",
--            path = "%{YOCTO_COMPILER_PATH}%/recipe-sysroot-native/usr/bin/%{CT_NAME}%/%{CT_NAME}%-gcc",
--        ),
--        tool_path(
--            name = "gcov",
--            path = "%{YOCTO_COMPILER_PATH}%/recipe-sysroot-native/usr/bin/%{CT_NAME}%/%{CT_NAME}%-gcov",
-+            path = "%{YOCTO_COMPILER_PATH}%/recipe-sysroot-native/usr/bin/%{CT_NAME}%/%{CT_NAME}%-clang",
-         ),
-         tool_path(
-             name = "ld",
-@@ -360,19 +350,19 @@ def _impl(ctx):
-         ),
-         tool_path(
-             name = "nm",
--            path = "%{YOCTO_COMPILER_PATH}%/recipe-sysroot-native/usr/bin/%{CT_NAME}%/%{CT_NAME}%-nm",
-+            path = "%{YOCTO_COMPILER_PATH}%/recipe-sysroot-native/usr/bin/%{CT_NAME}%/%{CT_NAME}%-llvm-nm",
-         ),
-         tool_path(
-             name = "objcopy",
--            path = "%{YOCTO_COMPILER_PATH}%/recipe-sysroot-native/usr/bin/%{CT_NAME}%/%{CT_NAME}%-objcopy",
-+            path = "%{YOCTO_COMPILER_PATH}%/recipe-sysroot-native/usr/bin/%{CT_NAME}%/%{CT_NAME}%-llvm-objcopy",
-         ),
-         tool_path(
-             name = "objdump",
--            path = "%{YOCTO_COMPILER_PATH}%/recipe-sysroot-native/usr/bin/%{CT_NAME}%/%{CT_NAME}%-objdump",
-+            path = "%{YOCTO_COMPILER_PATH}%/recipe-sysroot-native/usr/bin/%{CT_NAME}%/%{CT_NAME}%-llvm-objdump",
-         ),
-         tool_path(
-             name = "strip",
--            path = "%{YOCTO_COMPILER_PATH}%/recipe-sysroot-native/usr/bin/%{CT_NAME}%/%{CT_NAME}%-strip",
-+            path = "%{YOCTO_COMPILER_PATH}%/recipe-sysroot-native/usr/bin/%{CT_NAME}%/%{CT_NAME}%-llvm-strip",
-         ),
-     ]
- 
-diff --git a/recipes-framework/tensorflow/tensorflow-lite_2.19.0.bb b/recipes-framework/tensorflow/tensorflow-lite_2.21.0.bb
-similarity index 88%
-rename from recipes-framework/tensorflow/tensorflow-lite_2.19.0.bb
-rename to recipes-framework/tensorflow/tensorflow-lite_2.21.0.bb
-index 786507e..41646df 100644
---- a/recipes-framework/tensorflow/tensorflow-lite_2.19.0.bb
-+++ b/recipes-framework/tensorflow/tensorflow-lite_2.21.0.bb
-@@ -2,25 +2,18 @@ include tensorflow.inc
- 
- SRC_URI += " \
-     file://0012-add-yocto-toolchain-to-support-cross-compiling.patch \
--    file://0013-fix-build-tensorflow-lite-examples-label_image-label.patch \
-     file://0014-label_image-tweak-default-model-location.patch \
-     file://0015-label_image.lite-tweak-default-model-location.patch \
--    file://0016-CheckFeatureOrDie-use-warning-to-avoid-die.patch \
--    file://0017-support-32-bit-x64-and-arm-for-yocto.patch \
-     file://0018-build-api_gen_binary_target-as-host-tools.patch \
--    file://0019-fix-build-failure-for-2.19.patch \
--    file://0020-tensorflow-compiler-mlir-lite-fix-tensorflow_lite_qu.patch \
--    file://0021-build_pip_package_with_bazel.sh-correct-version.patch \
--    file://0001-Add-hermetic-PYTHON-3.13-requirements-lock-file-in-T.patch \
--    file://0001-support-python-3.33.patch \
-+    file://0001-use-external-toolchains.patch \
-+    file://0001-do-not-use-pywrap-rules.patch \
-     file://BUILD.in \
-     file://BUILD.yocto_compiler \
-     file://cc_config.bzl.tpl \
-     file://yocto_compiler_configure.bzl \
- "
- SRC_URI:append:aarch64 = " \
--   file://0001-fix-compile-XNNPACK-failed-for-aarch64.patch \
--   file://0001-tensorflow-BUILD-fix-build-failure-for-aarch64.patch \
-+   file://0001-support-cross-compile-for-target-aarch64.patch \
- "
- 
- SRC_URI += "https://storage.googleapis.com/download.tensorflow.org/models/inception_v3_2016_08_28_frozen.pb.tar.gz;name=model-inv3"
-@@ -58,6 +51,8 @@ do_configure:append () {
-     ./configure
- }
- 
-+TOOLCHAIN = "clang"
-+
- TF_TARGET_EXTRA ??= ""
- 
- export CUSTOM_BAZEL_FLAGS = " \
-@@ -67,6 +62,7 @@ export CUSTOM_BAZEL_FLAGS = " \
-     --cpu=${BAZEL_TARGET_CPU} \
-     --crosstool_top=@local_config_yocto_compiler//:toolchain \
-     --host_crosstool_top=@bazel_tools//tools/cpp:toolchain \
-+    --platforms=@local_config_yocto_compiler//:linux_${BAZEL_TARGET_CPU} \
- "
- 
- do_compile () {
-@@ -76,7 +72,7 @@ do_compile () {
-     ${BAZEL} build \
-         ${CUSTOM_BAZEL_FLAGS} \
-         --copt -DTF_LITE_DISABLE_X86_NEON --copt -DMESA_EGL_NO_X11_HEADERS \
--        --repo_env=TF_PYTHON_VERSION=3.13 \
-+        --repo_env=TF_PYTHON_VERSION=3.14 \
-         --define tflite_with_xnnpack=false \
-         tensorflow/lite:libtensorflowlite.so \
-         tensorflow/lite/tools/benchmark:benchmark_model \
-@@ -92,7 +88,6 @@ do_install() {
-     install -d ${D}${libdir}
-     install -m 644 ${S}/bazel-bin/tensorflow/lite/libtensorflowlite.so \
-         ${D}${libdir}
+diff --git a/recipes-framework/tensorflow/files/0001-Add-hermetic-PYTHON-3.13-requirements-lock-file-in-T.patch b/recipes-framework/tensorflow/files/0001-Add-hermetic-PYTHON-3.13-requirements-lock-file-in-T.patch
+deleted file mode 100644
+index 71f1d3d..0000000
+--- a/recipes-framework/tensorflow/files/0001-Add-hermetic-PYTHON-3.13-requirements-lock-file-in-T.patch
++++ /dev/null
+@@ -1,816 +0,0 @@
+-From 215e6b4adbffdf794b74d8cf9b87c383dbcb79b1 Mon Sep 17 00:00:00 2001
+-From: "A. Unique TensorFlower" <gardener@tensorflow.org>
+-Date: Wed, 11 Dec 2024 11:22:46 -0800
+-Subject: [PATCH] Add hermetic PYTHON 3.13 requirements lock file in Tensorflow
+- project.
 -
-     install -d ${D}${sbindir}
-     install -m 755 ${S}/bazel-bin/tensorflow/lite/tools/benchmark/benchmark_model \
-         ${D}${sbindir}
-@@ -141,7 +136,7 @@ do_install() {
-     install -d ${D}/${PYTHON_SITEPACKAGES_DIR}
-     ${STAGING_BINDIR_NATIVE}/pip3 install --disable-pip-version-check -v \
-         -t ${D}/${PYTHON_SITEPACKAGES_DIR} --no-cache-dir --no-deps \
--        ${S}/tensorflow/lite/tools/pip_package/gen/tflite_pip/python3/dist/tflite_runtime-${PV}*cp313*.whl
-+        ${S}/tensorflow/lite/tools/pip_package/gen/tflite_pip/python3/dist/tflite_runtime-${PV}*cp31*.whl
- 
-     rm -rf ${D}${PYTHON_SITEPACKAGES_DIR}/tflite_runtime-${PV}.dist-info
- 
-diff --git a/recipes-framework/tensorflow/tensorflow-native_2.19.0.bb b/recipes-framework/tensorflow/tensorflow-native_2.21.0.bb
-similarity index 64%
-rename from recipes-framework/tensorflow/tensorflow-native_2.19.0.bb
-rename to recipes-framework/tensorflow/tensorflow-native_2.21.0.bb
-index 089122a..7e72a33 100644
---- a/recipes-framework/tensorflow/tensorflow-native_2.19.0.bb
-+++ b/recipes-framework/tensorflow/tensorflow-native_2.21.0.bb
-@@ -1,22 +1,8 @@
- include tensorflow.inc
- 
--SRC_URI += " \
--    file://0012-disable-avxvnni-and-avx512fp16-for-x86.patch \
--    file://0019-fix-build-failure-for-2.19.patch \
--    file://0020-tensorflow-compiler-mlir-lite-fix-tensorflow_lite_qu.patch \
--    file://0001-Add-hermetic-PYTHON-3.13-requirements-lock-file-in-T.patch \
--    file://0001-support-python-3.33.patch \
--"
+-PiperOrigin-RevId: 705175049
 -
- inherit native
- 
- do_configure:append () {
+-Upstream-Status: Backport [https://github.com/tensorflow/tensorflow/commit/91fb8b166fb06f948f83364ed0fe7bd224cdc764]
+-Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+----
+- WORKSPACE                                     |   1 +
+- .../numpy1_requirements/requirements.in       |   2 +-
+- .../requirements_updater/requirements.in      |   5 +-
+- requirements_lock_3_12.txt                    |  19 -
+- requirements_lock_3_13.txt                    | 712 ++++++++++++++++++
+- 5 files changed, 717 insertions(+), 22 deletions(-)
+- create mode 100644 requirements_lock_3_13.txt
 -
--    cat >> "${S}/bazelrc" <<-EOF
--build --conlyopt=-Wno-stringop-overflow
--build --conlyopt=-Wno-dangling-pointer
--EOF
+-diff --git a/WORKSPACE b/WORKSPACE
+-index 0171c60d..0c83b695 100644
+---- a/WORKSPACE
+-+++ b/WORKSPACE
+-@@ -43,6 +43,7 @@ python_init_repositories(
+-         "3.10": "//:requirements_lock_3_10.txt",
+-         "3.11": "//:requirements_lock_3_11.txt",
+-         "3.12": "//:requirements_lock_3_12.txt",
+-+        "3.13": "//:requirements_lock_3_13.txt",
+-     },
+- )
+- 
+-diff --git a/ci/official/requirements_updater/numpy1_requirements/requirements.in b/ci/official/requirements_updater/numpy1_requirements/requirements.in
+-index 15b0d1a6..fecaa43d 100644
+---- a/ci/official/requirements_updater/numpy1_requirements/requirements.in
+-+++ b/ci/official/requirements_updater/numpy1_requirements/requirements.in
+-@@ -43,7 +43,7 @@ nvidia-cusparse-cu12 == 12.5.1.3
+- nvidia-nccl-cu12 == 2.23.4
+- nvidia-nvjitlink-cu12 == 12.5.82
+- # The dependencies below are needed for TF wheel testing.
+--tensorflow-io-gcs-filesystem==0.37.1
+-+tensorflow-io-gcs-filesystem >= 0.23.1 ; python_version < "3.12"
+- libclang >= 13.0.0
+- google_pasta ~= 0.2
+- flatbuffers ~= 24.3.25
+-diff --git a/ci/official/requirements_updater/requirements.in b/ci/official/requirements_updater/requirements.in
+-index 68871582..dc481c0d 100644
+---- a/ci/official/requirements_updater/requirements.in
+-+++ b/ci/official/requirements_updater/requirements.in
+-@@ -1,5 +1,6 @@
+- # Note that numpy 2.1.0 does not support python 3.9
+--numpy >= 2.0.0, < 2.2.0
+-+numpy~=2.0.0; python_version<="3.12"
+-+numpy~=2.1.0; python_version>="3.13"
+- wheel ~= 0.41.2
+- h5py >= 3.11.0
+- lit ~= 17.0.2
+-@@ -43,7 +44,7 @@ nvidia-cusparse-cu12 == 12.5.1.3
+- nvidia-nccl-cu12 == 2.23.4
+- nvidia-nvjitlink-cu12 == 12.5.82
+- # The dependencies below are needed for TF wheel testing.
+--tensorflow-io-gcs-filesystem==0.37.1
+-+tensorflow-io-gcs-filesystem >= 0.23.1 ; python_version < "3.12"
+- libclang >= 13.0.0
+- google_pasta ~= 0.2
+- flatbuffers ~= 24.3.25
+-diff --git a/requirements_lock_3_12.txt b/requirements_lock_3_12.txt
+-index c7b9317e..92e34d4d 100644
+---- a/requirements_lock_3_12.txt
+-+++ b/requirements_lock_3_12.txt
+-@@ -663,25 +663,6 @@ tensorboard-data-server==0.7.2 \
+-     --hash=sha256:7e0610d205889588983836ec05dc098e80f97b7e7bbff7e994ebb78f578d0ddb \
+-     --hash=sha256:9fe5d24221b29625dbc7328b0436ca7fc1c23de4acf4d272f1180856e32f9f60 \
+-     --hash=sha256:ef687163c24185ae9754ed5650eb5bc4d84ff257aabdc33f0cc6f74d8ba54530
+--    # via tensorboard
+--tensorflow-io-gcs-filesystem==0.37.1 \
+--    --hash=sha256:0df00891669390078a003cedbdd3b8e645c718b111917535fa1d7725e95cdb95 \
+--    --hash=sha256:249c12b830165841411ba71e08215d0e94277a49c551e6dd5d72aab54fe5491b \
+--    --hash=sha256:257aab23470a0796978efc9c2bcf8b0bc80f22e6298612a4c0a50d3f4e88060c \
+--    --hash=sha256:286389a203a5aee1a4fa2e53718c661091aa5fea797ff4fa6715ab8436b02e6c \
+--    --hash=sha256:32c50ab4e29a23c1f91cd0f9ab8c381a0ab10f45ef5c5252e94965916041737c \
+--    --hash=sha256:426de1173cb81fbd62becec2012fc00322a295326d90eb6c737fab636f182aed \
+--    --hash=sha256:6e1f2796b57e799a8ca1b75bf47c2aaa437c968408cc1a402a9862929e104cda \
+--    --hash=sha256:8943036bbf84e7a2be3705cb56f9c9df7c48c9e614bb941f0936c58e3ca89d6f \
+--    --hash=sha256:8febbfcc67c61e542a5ac1a98c7c20a91a5e1afc2e14b1ef0cb7c28bc3b6aa70 \
+--    --hash=sha256:9679b36e3a80921876f31685ab6f7270f3411a4cc51bc2847e80d0e4b5291e27 \
+--    --hash=sha256:b02f9c5f94fd62773954a04f69b68c4d576d076fd0db4ca25d5479f0fbfcdbad \
+--    --hash=sha256:ee5da49019670ed364f3e5fb86b46420841a6c3cb52a300553c63841671b3e6d \
+--    --hash=sha256:ee7c8ee5fe2fd8cb6392669ef16e71841133041fee8a330eff519ad9b36e4556 \
+--    --hash=sha256:fbb33f1745f218464a59cecd9a18e32ca927b0f4d77abd8f8671b645cc1a182f \
+--    --hash=sha256:fe8dcc6d222258a080ac3dfcaaaa347325ce36a7a046277f6b3e19abc1efb3c5 \
+--    --hash=sha256:ffebb6666a7bfc28005f4fbbb111a455b5e7d6cd3b12752b7050863ecb27d5cc
+--    # via -r ci/official/requirements_updater/requirements.in
+- termcolor==2.3.0 \
+-     --hash=sha256:3afb05607b89aed0ffe25202399ee0867ad4d3cb4180d98aaf8eefa6a5f7d475 \
+-     --hash=sha256:b5b08f68937f138fe92f6c089b99f1e2da0ae56c52b78bf7075fd95420fd9a5a
+-diff --git a/requirements_lock_3_13.txt b/requirements_lock_3_13.txt
+-new file mode 100644
+-index 00000000..73766a3f
+---- /dev/null
+-+++ b/requirements_lock_3_13.txt
+-@@ -0,0 +1,712 @@
+-+#
+-+# This file is autogenerated by pip-compile with Python 3.13
+-+# by the following command:
+-+#
+-+#    bazel run //ci/official/requirements_updater:requirements.update
+-+#
+-+absl-py==2.1.0 \
+-+    --hash=sha256:526a04eadab8b4ee719ce68f204172ead1027549089702d99b9059f129ff1308 \
+-+    --hash=sha256:7820790efbb316739cde8b4e19357243fc3608a152024288513dd968d7d959ff
+-+    # via
+-+    #   keras-nightly
+-+    #   tb-nightly
+-+astor==0.7.1 \
+-+    --hash=sha256:95c30d87a6c2cf89aa628b87398466840f0ad8652f88eb173125a6df8533fb8d \
+-+    --hash=sha256:fb503b9e2fdd05609fbf557b916b4a7824171203701660f0c55bbf5a7a68713e
+-+    # via -r ci/official/requirements_updater/requirements.in
+-+astunparse==1.6.3 \
+-+    --hash=sha256:5ad93a8456f0d084c3456d059fd9a92cce667963232cbf763eac3bc5b7940872 \
+-+    --hash=sha256:c2652417f2c8b5bb325c885ae329bdf3f86424075c4fd1a128674bc6fba4b8e8
+-+    # via -r ci/official/requirements_updater/requirements.in
+-+auditwheel==6.1.0 \
+-+    --hash=sha256:3bdc686e774cf9e355e924b0fe5a562d55caa385d72234ffe7b81b378dba360f \
+-+    --hash=sha256:e52f734861859e3743eb29fcac7da9c4921a1e4bea58f954b52f2926f8e9e364
+-+    # via -r ci/official/requirements_updater/requirements.in
+-+certifi==2024.8.30 \
+-+    --hash=sha256:922820b53db7a7257ffbda3f597266d435245903d80737e34f8a45ff3e3230d8 \
+-+    --hash=sha256:bec941d2aa8195e248a60b31ff9f0558284cf01a52591ceda73ea9afffd69fd9
+-+    # via requests
+-+charset-normalizer==3.4.0 \
+-+    --hash=sha256:0099d79bdfcf5c1f0c2c72f91516702ebf8b0b8ddd8905f97a8aecf49712c621 \
+-+    --hash=sha256:0713f3adb9d03d49d365b70b84775d0a0d18e4ab08d12bc46baa6132ba78aaf6 \
+-+    --hash=sha256:07afec21bbbbf8a5cc3651aa96b980afe2526e7f048fdfb7f1014d84acc8b6d8 \
+-+    --hash=sha256:0b309d1747110feb25d7ed6b01afdec269c647d382c857ef4663bbe6ad95a912 \
+-+    --hash=sha256:0d99dd8ff461990f12d6e42c7347fd9ab2532fb70e9621ba520f9e8637161d7c \
+-+    --hash=sha256:0de7b687289d3c1b3e8660d0741874abe7888100efe14bd0f9fd7141bcbda92b \
+-+    --hash=sha256:1110e22af8ca26b90bd6364fe4c763329b0ebf1ee213ba32b68c73de5752323d \
+-+    --hash=sha256:130272c698667a982a5d0e626851ceff662565379baf0ff2cc58067b81d4f11d \
+-+    --hash=sha256:136815f06a3ae311fae551c3df1f998a1ebd01ddd424aa5603a4336997629e95 \
+-+    --hash=sha256:14215b71a762336254351b00ec720a8e85cada43b987da5a042e4ce3e82bd68e \
+-+    --hash=sha256:1db4e7fefefd0f548d73e2e2e041f9df5c59e178b4c72fbac4cc6f535cfb1565 \
+-+    --hash=sha256:1ffd9493de4c922f2a38c2bf62b831dcec90ac673ed1ca182fe11b4d8e9f2a64 \
+-+    --hash=sha256:2006769bd1640bdf4d5641c69a3d63b71b81445473cac5ded39740a226fa88ab \
+-+    --hash=sha256:20587d20f557fe189b7947d8e7ec5afa110ccf72a3128d61a2a387c3313f46be \
+-+    --hash=sha256:223217c3d4f82c3ac5e29032b3f1c2eb0fb591b72161f86d93f5719079dae93e \
+-+    --hash=sha256:27623ba66c183eca01bf9ff833875b459cad267aeeb044477fedac35e19ba907 \
+-+    --hash=sha256:285e96d9d53422efc0d7a17c60e59f37fbf3dfa942073f666db4ac71e8d726d0 \
+-+    --hash=sha256:2de62e8801ddfff069cd5c504ce3bc9672b23266597d4e4f50eda28846c322f2 \
+-+    --hash=sha256:2f6c34da58ea9c1a9515621f4d9ac379871a8f21168ba1b5e09d74250de5ad62 \
+-+    --hash=sha256:309a7de0a0ff3040acaebb35ec45d18db4b28232f21998851cfa709eeff49d62 \
+-+    --hash=sha256:35c404d74c2926d0287fbd63ed5d27eb911eb9e4a3bb2c6d294f3cfd4a9e0c23 \
+-+    --hash=sha256:3710a9751938947e6327ea9f3ea6332a09bf0ba0c09cae9cb1f250bd1f1549bc \
+-+    --hash=sha256:3d59d125ffbd6d552765510e3f31ed75ebac2c7470c7274195b9161a32350284 \
+-+    --hash=sha256:40d3ff7fc90b98c637bda91c89d51264a3dcf210cade3a2c6f838c7268d7a4ca \
+-+    --hash=sha256:425c5f215d0eecee9a56cdb703203dda90423247421bf0d67125add85d0c4455 \
+-+    --hash=sha256:43193c5cda5d612f247172016c4bb71251c784d7a4d9314677186a838ad34858 \
+-+    --hash=sha256:44aeb140295a2f0659e113b31cfe92c9061622cadbc9e2a2f7b8ef6b1e29ef4b \
+-+    --hash=sha256:47334db71978b23ebcf3c0f9f5ee98b8d65992b65c9c4f2d34c2eaf5bcaf0594 \
+-+    --hash=sha256:4796efc4faf6b53a18e3d46343535caed491776a22af773f366534056c4e1fbc \
+-+    --hash=sha256:4a51b48f42d9358460b78725283f04bddaf44a9358197b889657deba38f329db \
+-+    --hash=sha256:4b67fdab07fdd3c10bb21edab3cbfe8cf5696f453afce75d815d9d7223fbe88b \
+-+    --hash=sha256:4ec9dd88a5b71abfc74e9df5ebe7921c35cbb3b641181a531ca65cdb5e8e4dea \
+-+    --hash=sha256:4f9fc98dad6c2eaa32fc3af1417d95b5e3d08aff968df0cd320066def971f9a6 \
+-+    --hash=sha256:54b6a92d009cbe2fb11054ba694bc9e284dad30a26757b1e372a1fdddaf21920 \
+-+    --hash=sha256:55f56e2ebd4e3bc50442fbc0888c9d8c94e4e06a933804e2af3e89e2f9c1c749 \
+-+    --hash=sha256:5726cf76c982532c1863fb64d8c6dd0e4c90b6ece9feb06c9f202417a31f7dd7 \
+-+    --hash=sha256:5d447056e2ca60382d460a604b6302d8db69476fd2015c81e7c35417cfabe4cd \
+-+    --hash=sha256:5ed2e36c3e9b4f21dd9422f6893dec0abf2cca553af509b10cd630f878d3eb99 \
+-+    --hash=sha256:5ff2ed8194587faf56555927b3aa10e6fb69d931e33953943bc4f837dfee2242 \
+-+    --hash=sha256:62f60aebecfc7f4b82e3f639a7d1433a20ec32824db2199a11ad4f5e146ef5ee \
+-+    --hash=sha256:63bc5c4ae26e4bc6be6469943b8253c0fd4e4186c43ad46e713ea61a0ba49129 \
+-+    --hash=sha256:6b40e8d38afe634559e398cc32b1472f376a4099c75fe6299ae607e404c033b2 \
+-+    --hash=sha256:6b493a043635eb376e50eedf7818f2f322eabbaa974e948bd8bdd29eb7ef2a51 \
+-+    --hash=sha256:6dba5d19c4dfab08e58d5b36304b3f92f3bd5d42c1a3fa37b5ba5cdf6dfcbcee \
+-+    --hash=sha256:6fd30dc99682dc2c603c2b315bded2799019cea829f8bf57dc6b61efde6611c8 \
+-+    --hash=sha256:707b82d19e65c9bd28b81dde95249b07bf9f5b90ebe1ef17d9b57473f8a64b7b \
+-+    --hash=sha256:7706f5850360ac01d80c89bcef1640683cc12ed87f42579dab6c5d3ed6888613 \
+-+    --hash=sha256:7782afc9b6b42200f7362858f9e73b1f8316afb276d316336c0ec3bd73312742 \
+-+    --hash=sha256:79983512b108e4a164b9c8d34de3992f76d48cadc9554c9e60b43f308988aabe \
+-+    --hash=sha256:7f683ddc7eedd742e2889d2bfb96d69573fde1d92fcb811979cdb7165bb9c7d3 \
+-+    --hash=sha256:82357d85de703176b5587dbe6ade8ff67f9f69a41c0733cf2425378b49954de5 \
+-+    --hash=sha256:84450ba661fb96e9fd67629b93d2941c871ca86fc38d835d19d4225ff946a631 \
+-+    --hash=sha256:86f4e8cca779080f66ff4f191a685ced73d2f72d50216f7112185dc02b90b9b7 \
+-+    --hash=sha256:8cda06946eac330cbe6598f77bb54e690b4ca93f593dee1568ad22b04f347c15 \
+-+    --hash=sha256:8ce7fd6767a1cc5a92a639b391891bf1c268b03ec7e021c7d6d902285259685c \
+-+    --hash=sha256:8ff4e7cdfdb1ab5698e675ca622e72d58a6fa2a8aa58195de0c0061288e6e3ea \
+-+    --hash=sha256:9289fd5dddcf57bab41d044f1756550f9e7cf0c8e373b8cdf0ce8773dc4bd417 \
+-+    --hash=sha256:92a7e36b000bf022ef3dbb9c46bfe2d52c047d5e3f3343f43204263c5addc250 \
+-+    --hash=sha256:92db3c28b5b2a273346bebb24857fda45601aef6ae1c011c0a997106581e8a88 \
+-+    --hash=sha256:95c3c157765b031331dd4db3c775e58deaee050a3042fcad72cbc4189d7c8dca \
+-+    --hash=sha256:980b4f289d1d90ca5efcf07958d3eb38ed9c0b7676bf2831a54d4f66f9c27dfa \
+-+    --hash=sha256:9ae4ef0b3f6b41bad6366fb0ea4fc1d7ed051528e113a60fa2a65a9abb5b1d99 \
+-+    --hash=sha256:9c98230f5042f4945f957d006edccc2af1e03ed5e37ce7c373f00a5a4daa6149 \
+-+    --hash=sha256:9fa2566ca27d67c86569e8c85297aaf413ffab85a8960500f12ea34ff98e4c41 \
+-+    --hash=sha256:a14969b8691f7998e74663b77b4c36c0337cb1df552da83d5c9004a93afdb574 \
+-+    --hash=sha256:a8aacce6e2e1edcb6ac625fb0f8c3a9570ccc7bfba1f63419b3769ccf6a00ed0 \
+-+    --hash=sha256:a8e538f46104c815be19c975572d74afb53f29650ea2025bbfaef359d2de2f7f \
+-+    --hash=sha256:aa41e526a5d4a9dfcfbab0716c7e8a1b215abd3f3df5a45cf18a12721d31cb5d \
+-+    --hash=sha256:aa693779a8b50cd97570e5a0f343538a8dbd3e496fa5dcb87e29406ad0299654 \
+-+    --hash=sha256:ab22fbd9765e6954bc0bcff24c25ff71dcbfdb185fcdaca49e81bac68fe724d3 \
+-+    --hash=sha256:ab2e5bef076f5a235c3774b4f4028a680432cded7cad37bba0fd90d64b187d19 \
+-+    --hash=sha256:ab973df98fc99ab39080bfb0eb3a925181454d7c3ac8a1e695fddfae696d9e90 \
+-+    --hash=sha256:af73657b7a68211996527dbfeffbb0864e043d270580c5aef06dc4b659a4b578 \
+-+    --hash=sha256:b197e7094f232959f8f20541ead1d9862ac5ebea1d58e9849c1bf979255dfac9 \
+-+    --hash=sha256:b295729485b06c1a0683af02a9e42d2caa9db04a373dc38a6a58cdd1e8abddf1 \
+-+    --hash=sha256:b8831399554b92b72af5932cdbbd4ddc55c55f631bb13ff8fe4e6536a06c5c51 \
+-+    --hash=sha256:b8dcd239c743aa2f9c22ce674a145e0a25cb1566c495928440a181ca1ccf6719 \
+-+    --hash=sha256:bcb4f8ea87d03bc51ad04add8ceaf9b0f085ac045ab4d74e73bbc2dc033f0236 \
+-+    --hash=sha256:bd7af3717683bea4c87acd8c0d3d5b44d56120b26fd3f8a692bdd2d5260c620a \
+-+    --hash=sha256:bf4475b82be41b07cc5e5ff94810e6a01f276e37c2d55571e3fe175e467a1a1c \
+-+    --hash=sha256:c3e446d253bd88f6377260d07c895816ebf33ffffd56c1c792b13bff9c3e1ade \
+-+    --hash=sha256:c57516e58fd17d03ebe67e181a4e4e2ccab1168f8c2976c6a334d4f819fe5944 \
+-+    --hash=sha256:c94057af19bc953643a33581844649a7fdab902624d2eb739738a30e2b3e60fc \
+-+    --hash=sha256:cab5d0b79d987c67f3b9e9c53f54a61360422a5a0bc075f43cab5621d530c3b6 \
+-+    --hash=sha256:ce031db0408e487fd2775d745ce30a7cd2923667cf3b69d48d219f1d8f5ddeb6 \
+-+    --hash=sha256:cee4373f4d3ad28f1ab6290684d8e2ebdb9e7a1b74fdc39e4c211995f77bec27 \
+-+    --hash=sha256:d5b054862739d276e09928de37c79ddeec42a6e1bfc55863be96a36ba22926f6 \
+-+    --hash=sha256:dbe03226baf438ac4fda9e2d0715022fd579cb641c4cf639fa40d53b2fe6f3e2 \
+-+    --hash=sha256:dc15e99b2d8a656f8e666854404f1ba54765871104e50c8e9813af8a7db07f12 \
+-+    --hash=sha256:dcaf7c1524c0542ee2fc82cc8ec337f7a9f7edee2532421ab200d2b920fc97cf \
+-+    --hash=sha256:dd4eda173a9fcccb5f2e2bd2a9f423d180194b1bf17cf59e3269899235b2a114 \
+-+    --hash=sha256:dd9a8bd8900e65504a305bf8ae6fa9fbc66de94178c420791d0293702fce2df7 \
+-+    --hash=sha256:de7376c29d95d6719048c194a9cf1a1b0393fbe8488a22008610b0361d834ecf \
+-+    --hash=sha256:e7fdd52961feb4c96507aa649550ec2a0d527c086d284749b2f582f2d40a2e0d \
+-+    --hash=sha256:e91f541a85298cf35433bf66f3fab2a4a2cff05c127eeca4af174f6d497f0d4b \
+-+    --hash=sha256:e9e3c4c9e1ed40ea53acf11e2a386383c3304212c965773704e4603d589343ed \
+-+    --hash=sha256:ee803480535c44e7f5ad00788526da7d85525cfefaf8acf8ab9a310000be4b03 \
+-+    --hash=sha256:f09cb5a7bbe1ecae6e87901a2eb23e0256bb524a79ccc53eb0b7629fbe7677c4 \
+-+    --hash=sha256:f19c1585933c82098c2a520f8ec1227f20e339e33aca8fa6f956f6691b784e67 \
+-+    --hash=sha256:f1a2f519ae173b5b6a2c9d5fa3116ce16e48b3462c8b96dfdded11055e3d6365 \
+-+    --hash=sha256:f28f891ccd15c514a0981f3b9db9aa23d62fe1a99997512b0491d2ed323d229a \
+-+    --hash=sha256:f3e73a4255342d4eb26ef6df01e3962e73aa29baa3124a8e824c5d3364a65748 \
+-+    --hash=sha256:f606a1881d2663630ea5b8ce2efe2111740df4b687bd78b34a8131baa007f79b \
+-+    --hash=sha256:fe9f97feb71aa9896b81973a7bbada8c49501dc73e58a10fcef6663af95e5079 \
+-+    --hash=sha256:ffc519621dce0c767e96b9c53f09c5d215578e10b02c285809f76509a3931482
+-+    # via requests
+-+dill==0.3.7 \
+-+    --hash=sha256:76b122c08ef4ce2eedcd4d1abd8e641114bfc6c2867f49f3c41facf65bf19f5e \
+-+    --hash=sha256:cc1c8b182eb3013e24bd475ff2e9295af86c1a38eb1aff128dac8962a9ce3c03
+-+    # via -r ci/official/requirements_updater/requirements.in
+-+dm-tree==0.1.8 \
+-+    --hash=sha256:054b461f8176f4bce7a21f7b1870f873a1ced3bdbe1282c816c550bb43c71fa6 \
+-+    --hash=sha256:09964470f76a5201aff2e8f9b26842976de7889300676f927930f6285e256760 \
+-+    --hash=sha256:0d3172394079a86c3a759179c65f64c48d1a42b89495fcf38976d11cc3bb952c \
+-+    --hash=sha256:0e9620ccf06393eb6b613b5e366469304622d4ea96ae6540b28a33840e6c89cf \
+-+    --hash=sha256:0fcaabbb14e7980377439e7140bd05552739ca5e515ecb3119f234acee4b9430 \
+-+    --hash=sha256:1607ce49aa42f010d1e5e616d92ce899d66835d4d8bea49679582435285515de \
+-+    --hash=sha256:181c35521d480d0365f39300542cb6cd7fd2b77351bb43d7acfda15aef63b317 \
+-+    --hash=sha256:1d7c26e431fc93cc7e0cba867eb000db6a05f6f2b25af11ac4e9dada88fc5bca \
+-+    --hash=sha256:1fe962015b2fe1282892b28ebe962faed53c7f98d942da9a4625cbf27baef913 \
+-+    --hash=sha256:250b692fb75f45f02e2f58fbef9ab338904ef334b90557565621fa251df267cf \
+-+    --hash=sha256:2869228d9c619074de501a3c10dc7f07c75422f8fab36ecdcb859b6f1b1ec3ef \
+-+    --hash=sha256:28c52cbf4f8b3dbd0beaedf44f69fa85eec5e9dede612e08035e06ada6ec9426 \
+-+    --hash=sha256:2f7915660f59c09068e428613c480150180df1060561fd0d1470684ae7007bd1 \
+-+    --hash=sha256:343a4a4ebaa127451ff971254a4be4084eb4bdc0b2513c32b46f6f728fd03f9e \
+-+    --hash=sha256:35cc164a79336bfcfafb47e5f297898359123bbd3330c1967f0c4994f9cf9f60 \
+-+    --hash=sha256:378cc8ad93c5fe3590f405a309980721f021c790ca1bdf9b15bb1d59daec57f5 \
+-+    --hash=sha256:39070ba268c0491af9fe7a58644d99e8b4f2cde6e5884ba3380bddc84ed43d5f \
+-+    --hash=sha256:435227cf3c5dc63f4de054cf3d00183790bd9ead4c3623138c74dde7f67f521b \
+-+    --hash=sha256:5483dca4d7eb1a0d65fe86d3b6a53ae717face83c1f17e0887b1a4a64ae5c410 \
+-+    --hash=sha256:694c3654cfd2a81552c08ec66bb5c4a3d48fa292b9a181880fb081c36c5b9134 \
+-+    --hash=sha256:75c5d528bb992981c20793b6b453e91560784215dffb8a5440ba999753c14ceb \
+-+    --hash=sha256:803bfc53b4659f447ac694dbd04235f94a73ef7c1fd1e0df7c84ac41e0bc963b \
+-+    --hash=sha256:81fce77f22a302d7a5968aebdf4efafef4def7ce96528719a354e6990dcd49c7 \
+-+    --hash=sha256:83b7764de0d855338abefc6e3ee9fe40d301668310aa3baea3f778ff051f4393 \
+-+    --hash=sha256:8c60a7eadab64c2278861f56bca320b2720f163dca9d7558103c3b77f2416571 \
+-+    --hash=sha256:8ed3564abed97c806db122c2d3e1a2b64c74a63debe9903aad795167cc301368 \
+-+    --hash=sha256:94d3f0826311f45ee19b75f5b48c99466e4218a0489e81c0f0167bda50cacf22 \
+-+    --hash=sha256:96a548a406a6fb15fe58f6a30a57ff2f2aafbf25f05afab00c8f5e5977b6c715 \
+-+    --hash=sha256:a5d819c38c03f0bb5b3b3703c60e4b170355a0fc6b5819325bf3d4ceb3ae7e80 \
+-+    --hash=sha256:ad16ceba90a56ec47cf45b21856d14962ac314787975ef786efb5e6e9ca75ec7 \
+-+    --hash=sha256:af4b3d372f2477dcd89a6e717e4a575ca35ccc20cc4454a8a4b6f8838a00672d \
+-+    --hash=sha256:b095ba4f8ca1ba19350fd53cf1f8f3eb0bd406aa28af64a6dfc86707b32a810a \
+-+    --hash=sha256:b9bd9b9ccb59409d33d51d84b7668010c04c2af7d4a371632874c1ca356cff3d \
+-+    --hash=sha256:b9f89a454e98806b44fe9d40ec9eee61f848388f7e79ac2371a55679bd5a3ac6 \
+-+    --hash=sha256:bb2d109f42190225112da899b9f3d46d0d5f26aef501c61e43529fe9322530b5 \
+-+    --hash=sha256:c0a94aba18a35457a1b5cd716fd7b46c5dafdc4cf7869b4bae665b91c4682a8e \
+-+    --hash=sha256:c5c8c12e3fda754ef6af94161bacdaeda816d941995fac415d6855c6c386af68 \
+-+    --hash=sha256:d1612fcaecd79023dbc6a6ae48d51a80beb5c385d6f3f6d71688e57bc8d07de8 \
+-+    --hash=sha256:d16e1f2a073604cfcc09f7131ae8d534674f43c3aef4c25742eae295bc60d04f \
+-+    --hash=sha256:d20f2faa3672b52e5013f4077117bfb99c4cfc0b445d3bde1584c34032b57436 \
+-+    --hash=sha256:d40fa4106ca6edc66760246a08f500ec0c85ef55c762fb4a363f6ee739ba02ee \
+-+    --hash=sha256:de287fabc464b8734be251e46e06aa9aa1001f34198da2b6ce07bd197172b9cb \
+-+    --hash=sha256:e4d714371bb08839e4e5e29024fc95832d9affe129825ef38836b143028bd144 \
+-+    --hash=sha256:ea9e59e0451e7d29aece402d9f908f2e2a80922bcde2ebfd5dcb07750fcbfee8 \
+-+    --hash=sha256:f7ac31b9aecccb2c6e1ab29706f6ded3eba0c2c69c770322c9c685929c3d6afb \
+-+    --hash=sha256:fa42a605d099ee7d41ba2b5fb75e21423951fd26e5d50583a00471238fb3021d
+-+    # via keras-nightly
+-+flatbuffers==24.3.25 \
+-+    --hash=sha256:8dbdec58f935f3765e4f7f3cf635ac3a77f83568138d6a2311f524ec96364812 \
+-+    --hash=sha256:de2ec5b203f21441716617f38443e0a8ebf3d25bf0d9c0bb0ce68fa00ad546a4
+-+    # via -r ci/official/requirements_updater/requirements.in
+-+gast==0.4.0 \
+-+    --hash=sha256:40feb7b8b8434785585ab224d1568b857edb18297e5a3047f1ba012bc83b42c1 \
+-+    --hash=sha256:b7adcdd5adbebf1adf17378da5ba3f543684dbec47b1cda1f3997e573cd542c4
+-+    # via -r ci/official/requirements_updater/requirements.in
+-+google-pasta==0.2.0 \
+-+    --hash=sha256:4612951da876b1a10fe3960d7226f0c7682cf901e16ac06e473b267a5afa8954 \
+-+    --hash=sha256:b32482794a366b5366a32c92a9a9201b107821889935a02b3e51f6b432ea84ed \
+-+    --hash=sha256:c9f2c8dfc8f96d0d5808299920721be30c9eec37f2389f28904f454565c8a16e
+-+    # via -r ci/official/requirements_updater/requirements.in
+-+grpcio==1.68.1 \
+-+    --hash=sha256:025f790c056815b3bf53da850dd70ebb849fd755a4b1ac822cb65cd631e37d43 \
+-+    --hash=sha256:04cfd68bf4f38f5bb959ee2361a7546916bd9a50f78617a346b3aeb2b42e2161 \
+-+    --hash=sha256:0feb02205a27caca128627bd1df4ee7212db051019a9afa76f4bb6a1a80ca95e \
+-+    --hash=sha256:1098f03dedc3b9810810568060dea4ac0822b4062f537b0f53aa015269be0a76 \
+-+    --hash=sha256:12941d533f3cd45d46f202e3667be8ebf6bcb3573629c7ec12c3e211d99cfccf \
+-+    --hash=sha256:255b1635b0ed81e9f91da4fcc8d43b7ea5520090b9a9ad9340d147066d1d3613 \
+-+    --hash=sha256:298ee7f80e26f9483f0b6f94cc0a046caf54400a11b644713bb5b3d8eb387600 \
+-+    --hash=sha256:2c4cec6177bf325eb6faa6bd834d2ff6aa8bb3b29012cceb4937b86f8b74323c \
+-+    --hash=sha256:2cc1fd04af8399971bcd4f43bd98c22d01029ea2e56e69c34daf2bf8470e47f5 \
+-+    --hash=sha256:334ab917792904245a028f10e803fcd5b6f36a7b2173a820c0b5b076555825e1 \
+-+    --hash=sha256:3522c77d7e6606d6665ec8d50e867f13f946a4e00c7df46768f1c85089eae515 \
+-+    --hash=sha256:37ea3be171f3cf3e7b7e412a98b77685eba9d4fd67421f4a34686a63a65d99f9 \
+-+    --hash=sha256:390eee4225a661c5cd133c09f5da1ee3c84498dc265fd292a6912b65c421c78c \
+-+    --hash=sha256:3aed6544e4d523cd6b3119b0916cef3d15ef2da51e088211e4d1eb91a6c7f4f1 \
+-+    --hash=sha256:3ceb56c4285754e33bb3c2fa777d055e96e6932351a3082ce3559be47f8024f0 \
+-+    --hash=sha256:44a8502dd5de653ae6a73e2de50a401d84184f0331d0ac3daeb044e66d5c5054 \
+-+    --hash=sha256:4b177f5547f1b995826ef529d2eef89cca2f830dd8b2c99ffd5fde4da734ba73 \
+-+    --hash=sha256:4efac5481c696d5cb124ff1c119a78bddbfdd13fc499e3bc0ca81e95fc573684 \
+-+    --hash=sha256:52fbf85aa71263380d330f4fce9f013c0798242e31ede05fcee7fbe40ccfc20d \
+-+    --hash=sha256:55857c71641064f01ff0541a1776bfe04a59db5558e82897d35a7793e525774c \
+-+    --hash=sha256:66a24f3d45c33550703f0abb8b656515b0ab777970fa275693a2f6dc8e35f1c1 \
+-+    --hash=sha256:6ab2d912ca39c51f46baf2a0d92aa265aa96b2443266fc50d234fa88bf877d8e \
+-+    --hash=sha256:77d65165fc35cff6e954e7fd4229e05ec76102d4406d4576528d3a3635fc6172 \
+-+    --hash=sha256:7dfc914cc31c906297b30463dde0b9be48e36939575eaf2a0a22a8096e69afe5 \
+-+    --hash=sha256:7f20ebec257af55694d8f993e162ddf0d36bd82d4e57f74b31c67b3c6d63d8b2 \
+-+    --hash=sha256:80af6f1e69c5e68a2be529990684abdd31ed6622e988bf18850075c81bb1ad6e \
+-+    --hash=sha256:83bbf5807dc3ee94ce1de2dfe8a356e1d74101e4b9d7aa8c720cc4818a34aded \
+-+    --hash=sha256:8720c25cd9ac25dd04ee02b69256d0ce35bf8a0f29e20577427355272230965a \
+-+    --hash=sha256:8829924fffb25386995a31998ccbbeaa7367223e647e0122043dfc485a87c666 \
+-+    --hash=sha256:8a3869a6661ec8f81d93f4597da50336718bde9eb13267a699ac7e0a1d6d0bea \
+-+    --hash=sha256:8cb620037a2fd9eeee97b4531880e439ebfcd6d7d78f2e7dcc3726428ab5ef63 \
+-+    --hash=sha256:919d7f18f63bcad3a0f81146188e90274fde800a94e35d42ffe9eadf6a9a6330 \
+-+    --hash=sha256:95c87ce2a97434dffe7327a4071839ab8e8bffd0054cc74cbe971fba98aedd60 \
+-+    --hash=sha256:963cc8d7d79b12c56008aabd8b457f400952dbea8997dd185f155e2f228db079 \
+-+    --hash=sha256:96f473cdacfdd506008a5d7579c9f6a7ff245a9ade92c3c0265eb76cc591914f \
+-+    --hash=sha256:9d1fae6bbf0816415b81db1e82fb3bf56f7857273c84dcbe68cbe046e58e1ccd \
+-+    --hash=sha256:a0c8ddabef9c8f41617f213e527254c41e8b96ea9d387c632af878d05db9229c \
+-+    --hash=sha256:a1b988b40f2fd9de5c820f3a701a43339d8dcf2cb2f1ca137e2c02671cc83ac1 \
+-+    --hash=sha256:a47faedc9ea2e7a3b6569795c040aae5895a19dde0c728a48d3c5d7995fda385 \
+-+    --hash=sha256:a8040f85dcb9830d8bbb033ae66d272614cec6faceee88d37a88a9bd1a7a704e \
+-+    --hash=sha256:b33bd114fa5a83f03ec6b7b262ef9f5cac549d4126f1dc702078767b10c46ed9 \
+-+    --hash=sha256:c08079b4934b0bf0a8847f42c197b1d12cba6495a3d43febd7e99ecd1cdc8d54 \
+-+    --hash=sha256:c28848761a6520c5c6071d2904a18d339a796ebe6b800adc8b3f474c5ce3c3ad \
+-+    --hash=sha256:cb400138e73969eb5e0535d1d06cae6a6f7a15f2cc74add320e2130b8179211a \
+-+    --hash=sha256:cbb5780e2e740b6b4f2d208e90453591036ff80c02cc605fea1af8e6fc6b1bbe \
+-+    --hash=sha256:ccf2ebd2de2d6661e2520dae293298a3803a98ebfc099275f113ce1f6c2a80f1 \
+-+    --hash=sha256:d35740e3f45f60f3c37b1e6f2f4702c23867b9ce21c6410254c9c682237da68d \
+-+    --hash=sha256:d99abcd61760ebb34bdff37e5a3ba333c5cc09feda8c1ad42547bea0416ada78 \
+-+    --hash=sha256:ddda1aa22495d8acd9dfbafff2866438d12faec4d024ebc2e656784d96328ad0 \
+-+    --hash=sha256:dffd29a2961f3263a16d73945b57cd44a8fd0b235740cb14056f0612329b345e \
+-+    --hash=sha256:e4842e4872ae4ae0f5497bf60a0498fa778c192cc7a9e87877abd2814aca9475 \
+-+    --hash=sha256:e8dbe3e00771bfe3d04feed8210fc6617006d06d9a2679b74605b9fed3e8362c \
+-+    --hash=sha256:ee2e743e51cb964b4975de572aa8fb95b633f496f9fcb5e257893df3be854746 \
+-+    --hash=sha256:eeb38ff04ab6e5756a2aef6ad8d94e89bb4a51ef96e20f45c44ba190fa0bcaad \
+-+    --hash=sha256:f8261fa2a5f679abeb2a0a93ad056d765cdca1c47745eda3f2d87f874ff4b8c9
+-+    # via
+-+    #   -r ci/official/requirements_updater/requirements.in
+-+    #   tb-nightly
+-+h5py==3.12.1 \
+-+    --hash=sha256:018a4597f35092ae3fb28ee851fdc756d2b88c96336b8480e124ce1ac6fb9166 \
+-+    --hash=sha256:050a4f2c9126054515169c49cb900949814987f0c7ae74c341b0c9f9b5056834 \
+-+    --hash=sha256:06a903a4e4e9e3ebbc8b548959c3c2552ca2d70dac14fcfa650d9261c66939ed \
+-+    --hash=sha256:1473348139b885393125126258ae2d70753ef7e9cec8e7848434f385ae72069e \
+-+    --hash=sha256:2f0f1a382cbf494679c07b4371f90c70391dedb027d517ac94fa2c05299dacda \
+-+    --hash=sha256:326d70b53d31baa61f00b8aa5f95c2fcb9621a3ee8365d770c551a13dbbcbfdf \
+-+    --hash=sha256:3b15d8dbd912c97541312c0e07438864d27dbca857c5ad634de68110c6beb1c2 \
+-+    --hash=sha256:3fdf95092d60e8130ba6ae0ef7a9bd4ade8edbe3569c13ebbaf39baefffc5ba4 \
+-+    --hash=sha256:4532c7e97fbef3d029735db8b6f5bf01222d9ece41e309b20d63cfaae2fb5c4d \
+-+    --hash=sha256:513171e90ed92236fc2ca363ce7a2fc6f2827375efcbb0cc7fbdd7fe11fecafc \
+-+    --hash=sha256:52ab036c6c97055b85b2a242cb540ff9590bacfda0c03dd0cf0661b311f522f8 \
+-+    --hash=sha256:577d618d6b6dea3da07d13cc903ef9634cde5596b13e832476dd861aaf651f3e \
+-+    --hash=sha256:59400f88343b79655a242068a9c900001a34b63e3afb040bd7cdf717e440f653 \
+-+    --hash=sha256:59685fe40d8c1fbbee088c88cd4da415a2f8bee5c270337dc5a1c4aa634e3307 \
+-+    --hash=sha256:5c4b41d1019322a5afc5082864dfd6359f8935ecd37c11ac0029be78c5d112c9 \
+-+    --hash=sha256:62be1fc0ef195891949b2c627ec06bc8e837ff62d5b911b6e42e38e0f20a897d \
+-+    --hash=sha256:6fdf6d7936fa824acfa27305fe2d9f39968e539d831c5bae0e0d83ed521ad1ac \
+-+    --hash=sha256:7b3b8f3b48717e46c6a790e3128d39c61ab595ae0a7237f06dfad6a3b51d5351 \
+-+    --hash=sha256:84342bffd1f82d4f036433e7039e241a243531a1d3acd7341b35ae58cdab05bf \
+-+    --hash=sha256:ad8a76557880aed5234cfe7279805f4ab5ce16b17954606cca90d578d3e713ef \
+-+    --hash=sha256:ba51c0c5e029bb5420a343586ff79d56e7455d496d18a30309616fdbeed1068f \
+-+    --hash=sha256:cb65f619dfbdd15e662423e8d257780f9a66677eae5b4b3fc9dca70b5fd2d2a3 \
+-+    --hash=sha256:ccd9006d92232727d23f784795191bfd02294a4f2ba68708825cb1da39511a93 \
+-+    --hash=sha256:d2b8dd64f127d8b324f5d2cd1c0fd6f68af69084e9e47d27efeb9e28e685af3e \
+-+    --hash=sha256:d3e465aee0ec353949f0f46bf6c6f9790a2006af896cee7c178a8c3e5090aa32 \
+-+    --hash=sha256:e4d51919110a030913201422fb07987db4338eba5ec8c5a15d6fab8e03d443fc
+-+    # via
+-+    #   -r ci/official/requirements_updater/requirements.in
+-+    #   keras-nightly
+-+idna==3.10 \
+-+    --hash=sha256:12f65c9b470abda6dc35cf8e63cc574b1c52b11df2c86030af0ac09b01b13ea9 \
+-+    --hash=sha256:946d195a0d259cbba61165e88e65941f16e9b36ea6ddb97f00452bae8b1287d3
+-+    # via requests
+-+jax==0.4.7 \
+-+    --hash=sha256:5e7002d74db25f97c99b979d4ba1233b1ef26e1597e5fc468ad11d1c8a9dc4f8
+-+    # via -r ci/official/requirements_updater/requirements.in
+-+keras==3.5.0 \
+-+    --hash=sha256:53ae4f9472ec9d9c6941c82a3fda86969724ace3b7630a94ba0a1f17ba1065c3 \
+-+    --hash=sha256:d37a3c623935713473ceb25241b52bce9d1e0ff5b36e5d0f6f47ed55f8500c9a
+-+    # via -r ci/official/requirements_updater/requirements.in
+-+libclang==18.1.1 \
+-+    --hash=sha256:0b2e143f0fac830156feb56f9231ff8338c20aecfe72b4ffe96f19e5a1dbb69a \
+-+    --hash=sha256:3f0e1f49f04d3cd198985fea0511576b0aee16f9ff0e0f0cad7f9c57ec3c20e8 \
+-+    --hash=sha256:4dd2d3b82fab35e2bf9ca717d7b63ac990a3519c7e312f19fa8e86dcc712f7fb \
+-+    --hash=sha256:54dda940a4a0491a9d1532bf071ea3ef26e6dbaf03b5000ed94dd7174e8f9592 \
+-+    --hash=sha256:69f8eb8f65c279e765ffd28aaa7e9e364c776c17618af8bff22a8df58677ff4f \
+-+    --hash=sha256:6f14c3f194704e5d09769108f03185fce7acaf1d1ae4bbb2f30a72c2400cb7c5 \
+-+    --hash=sha256:83ce5045d101b669ac38e6da8e58765f12da2d3aafb3b9b98d88b286a60964d8 \
+-+    --hash=sha256:a1214966d08d73d971287fc3ead8dfaf82eb07fb197680d8b3859dbbbbf78250 \
+-+    --hash=sha256:c533091d8a3bbf7460a00cb6c1a71da93bffe148f172c7d03b1c31fbf8aa2a0b \
+-+    --hash=sha256:cf4a99b05376513717ab5d82a0db832c56ccea4fd61a69dbb7bccf2dfb207dbe
+-+    # via -r ci/official/requirements_updater/requirements.in
+-+lit==17.0.6 \
+-+    --hash=sha256:dfa9af9b55fc4509a56be7bf2346f079d7f4a242d583b9f2e0b078fd0abae31b
+-+    # via -r ci/official/requirements_updater/requirements.in
+-+markdown==3.7 \
+-+    --hash=sha256:2ae2471477cfd02dbbf038d5d9bc226d40def84b4fe2986e49b59b6b472bbed2 \
+-+    --hash=sha256:7eb6df5690b81a1d7942992c97fad2938e956e79df20cbc6186e9c3a77b1c803
+-+    # via tb-nightly
+-+markdown-it-py==3.0.0 \
+-+    --hash=sha256:355216845c60bd96232cd8d8c40e8f9765cc86f46880e43a8fd22dc1a1a8cab1 \
+-+    --hash=sha256:e3f60a94fa066dc52ec76661e37c851cb232d92f9886b15cb560aaada2df8feb
+-+    # via rich
+-+markupsafe==3.0.2 \
+-+    --hash=sha256:0bff5e0ae4ef2e1ae4fdf2dfd5b76c75e5c2fa4132d05fc1b0dabcd20c7e28c4 \
+-+    --hash=sha256:0f4ca02bea9a23221c0182836703cbf8930c5e9454bacce27e767509fa286a30 \
+-+    --hash=sha256:1225beacc926f536dc82e45f8a4d68502949dc67eea90eab715dea3a21c1b5f0 \
+-+    --hash=sha256:131a3c7689c85f5ad20f9f6fb1b866f402c445b220c19fe4308c0b147ccd2ad9 \
+-+    --hash=sha256:15ab75ef81add55874e7ab7055e9c397312385bd9ced94920f2802310c930396 \
+-+    --hash=sha256:1a9d3f5f0901fdec14d8d2f66ef7d035f2157240a433441719ac9a3fba440b13 \
+-+    --hash=sha256:1c99d261bd2d5f6b59325c92c73df481e05e57f19837bdca8413b9eac4bd8028 \
+-+    --hash=sha256:1e084f686b92e5b83186b07e8a17fc09e38fff551f3602b249881fec658d3eca \
+-+    --hash=sha256:2181e67807fc2fa785d0592dc2d6206c019b9502410671cc905d132a92866557 \
+-+    --hash=sha256:2cb8438c3cbb25e220c2ab33bb226559e7afb3baec11c4f218ffa7308603c832 \
+-+    --hash=sha256:3169b1eefae027567d1ce6ee7cae382c57fe26e82775f460f0b2778beaad66c0 \
+-+    --hash=sha256:3809ede931876f5b2ec92eef964286840ed3540dadf803dd570c3b7e13141a3b \
+-+    --hash=sha256:38a9ef736c01fccdd6600705b09dc574584b89bea478200c5fbf112a6b0d5579 \
+-+    --hash=sha256:3d79d162e7be8f996986c064d1c7c817f6df3a77fe3d6859f6f9e7be4b8c213a \
+-+    --hash=sha256:444dcda765c8a838eaae23112db52f1efaf750daddb2d9ca300bcae1039adc5c \
+-+    --hash=sha256:48032821bbdf20f5799ff537c7ac3d1fba0ba032cfc06194faffa8cda8b560ff \
+-+    --hash=sha256:4aa4e5faecf353ed117801a068ebab7b7e09ffb6e1d5e412dc852e0da018126c \
+-+    --hash=sha256:52305740fe773d09cffb16f8ed0427942901f00adedac82ec8b67752f58a1b22 \
+-+    --hash=sha256:569511d3b58c8791ab4c2e1285575265991e6d8f8700c7be0e88f86cb0672094 \
+-+    --hash=sha256:57cb5a3cf367aeb1d316576250f65edec5bb3be939e9247ae594b4bcbc317dfb \
+-+    --hash=sha256:5b02fb34468b6aaa40dfc198d813a641e3a63b98c2b05a16b9f80b7ec314185e \
+-+    --hash=sha256:6381026f158fdb7c72a168278597a5e3a5222e83ea18f543112b2662a9b699c5 \
+-+    --hash=sha256:6af100e168aa82a50e186c82875a5893c5597a0c1ccdb0d8b40240b1f28b969a \
+-+    --hash=sha256:6c89876f41da747c8d3677a2b540fb32ef5715f97b66eeb0c6b66f5e3ef6f59d \
+-+    --hash=sha256:6e296a513ca3d94054c2c881cc913116e90fd030ad1c656b3869762b754f5f8a \
+-+    --hash=sha256:70a87b411535ccad5ef2f1df5136506a10775d267e197e4cf531ced10537bd6b \
+-+    --hash=sha256:7e94c425039cde14257288fd61dcfb01963e658efbc0ff54f5306b06054700f8 \
+-+    --hash=sha256:846ade7b71e3536c4e56b386c2a47adf5741d2d8b94ec9dc3e92e5e1ee1e2225 \
+-+    --hash=sha256:88416bd1e65dcea10bc7569faacb2c20ce071dd1f87539ca2ab364bf6231393c \
+-+    --hash=sha256:88b49a3b9ff31e19998750c38e030fc7bb937398b1f78cfa599aaef92d693144 \
+-+    --hash=sha256:8c4e8c3ce11e1f92f6536ff07154f9d49677ebaaafc32db9db4620bc11ed480f \
+-+    --hash=sha256:8e06879fc22a25ca47312fbe7c8264eb0b662f6db27cb2d3bbbc74b1df4b9b87 \
+-+    --hash=sha256:9025b4018f3a1314059769c7bf15441064b2207cb3f065e6ea1e7359cb46db9d \
+-+    --hash=sha256:93335ca3812df2f366e80509ae119189886b0f3c2b81325d39efdb84a1e2ae93 \
+-+    --hash=sha256:9778bd8ab0a994ebf6f84c2b949e65736d5575320a17ae8984a77fab08db94cf \
+-+    --hash=sha256:9e2d922824181480953426608b81967de705c3cef4d1af983af849d7bd619158 \
+-+    --hash=sha256:a123e330ef0853c6e822384873bef7507557d8e4a082961e1defa947aa59ba84 \
+-+    --hash=sha256:a904af0a6162c73e3edcb969eeeb53a63ceeb5d8cf642fade7d39e7963a22ddb \
+-+    --hash=sha256:ad10d3ded218f1039f11a75f8091880239651b52e9bb592ca27de44eed242a48 \
+-+    --hash=sha256:b424c77b206d63d500bcb69fa55ed8d0e6a3774056bdc4839fc9298a7edca171 \
+-+    --hash=sha256:b5a6b3ada725cea8a5e634536b1b01c30bcdcd7f9c6fff4151548d5bf6b3a36c \
+-+    --hash=sha256:ba8062ed2cf21c07a9e295d5b8a2a5ce678b913b45fdf68c32d95d6c1291e0b6 \
+-+    --hash=sha256:ba9527cdd4c926ed0760bc301f6728ef34d841f405abf9d4f959c478421e4efd \
+-+    --hash=sha256:bbcb445fa71794da8f178f0f6d66789a28d7319071af7a496d4d507ed566270d \
+-+    --hash=sha256:bcf3e58998965654fdaff38e58584d8937aa3096ab5354d493c77d1fdd66d7a1 \
+-+    --hash=sha256:c0ef13eaeee5b615fb07c9a7dadb38eac06a0608b41570d8ade51c56539e509d \
+-+    --hash=sha256:cabc348d87e913db6ab4aa100f01b08f481097838bdddf7c7a84b7575b7309ca \
+-+    --hash=sha256:cdb82a876c47801bb54a690c5ae105a46b392ac6099881cdfb9f6e95e4014c6a \
+-+    --hash=sha256:cfad01eed2c2e0c01fd0ecd2ef42c492f7f93902e39a42fc9ee1692961443a29 \
+-+    --hash=sha256:d16a81a06776313e817c951135cf7340a3e91e8c1ff2fac444cfd75fffa04afe \
+-+    --hash=sha256:d8213e09c917a951de9d09ecee036d5c7d36cb6cb7dbaece4c71a60d79fb9798 \
+-+    --hash=sha256:e07c3764494e3776c602c1e78e298937c3315ccc9043ead7e685b7f2b8d47b3c \
+-+    --hash=sha256:e17c96c14e19278594aa4841ec148115f9c7615a47382ecb6b82bd8fea3ab0c8 \
+-+    --hash=sha256:e444a31f8db13eb18ada366ab3cf45fd4b31e4db1236a4448f68778c1d1a5a2f \
+-+    --hash=sha256:e6a2a455bd412959b57a172ce6328d2dd1f01cb2135efda2e4576e8a23fa3b0f \
+-+    --hash=sha256:eaa0a10b7f72326f1372a713e73c3f739b524b3af41feb43e4921cb529f5929a \
+-+    --hash=sha256:eb7972a85c54febfb25b5c4b4f3af4dcc731994c7da0d8a0b4a6eb0640e1d178 \
+-+    --hash=sha256:ee55d3edf80167e48ea11a923c7386f4669df67d7994554387f84e7d8b0a2bf0 \
+-+    --hash=sha256:f3818cb119498c0678015754eba762e0d61e5b52d34c8b13d770f0719f7b1d79 \
+-+    --hash=sha256:f8b3d067f2e40fe93e1ccdd6b2e1d16c43140e76f02fb1319a05cf2b79d99430 \
+-+    --hash=sha256:fcabf5ff6eea076f859677f5f0b6b5c1a51e70a376b0579e0eadef8db48c6b50
+-+    # via werkzeug
+-+mdurl==0.1.2 \
+-+    --hash=sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8 \
+-+    --hash=sha256:bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba
+-+    # via markdown-it-py
+-+ml-dtypes==0.5.0 \
+-+    --hash=sha256:099e09edd54e676903b4538f3815b5ab96f5b119690514602d96bfdb67172cbe \
+-+    --hash=sha256:2e7534392682c3098bc7341648c650864207169c654aed83143d7a19c67ae06f \
+-+    --hash=sha256:3e7d3a380fe73a63c884f06136f8baa7a5249cc8e9fdec677997dd78549f8128 \
+-+    --hash=sha256:54415257f00eb44fbcc807454efac3356f75644f1cbfc2d4e5522a72ae1dacab \
+-+    --hash=sha256:5f2b59233a0dbb6a560b3137ed6125433289ccba2f8d9c3695a52423a369ed15 \
+-+    --hash=sha256:60275f2b51b56834e840c4809fca840565f9bf8e9a73f6d8c94f5b5935701215 \
+-+    --hash=sha256:76942f6aeb5c40766d5ea62386daa4148e6a54322aaf5b53eae9e7553240222f \
+-+    --hash=sha256:7ee9c320bb0f9ffdf9f6fa6a696ef2e005d1f66438d6f1c1457338e00a02e8cf \
+-+    --hash=sha256:8c32138975797e681eb175996d64356bcfa124bdbb6a70460b9768c2b35a6fa4 \
+-+    --hash=sha256:968fede07d1f9b926a63df97d25ac656cac1a57ebd33701734eaf704bc55d8d8 \
+-+    --hash=sha256:a03fc861b86cc586728e3d093ba37f0cc05e65330c3ebd7688e7bae8290f8859 \
+-+    --hash=sha256:a38df8df61194aeaae1ab7579075779b4ad32cd1cffd012c28be227fa7f2a70a \
+-+    --hash=sha256:a988bac6572630e1e9c2edd9b1277b4eefd1c86209e52b0d061b775ac33902ff \
+-+    --hash=sha256:ab046f2ff789b1f11b2491909682c5d089934835f9a760fafc180e47dcb676b8 \
+-+    --hash=sha256:afa08343069874a30812871d639f9c02b4158ace065601406a493a8511180c02 \
+-+    --hash=sha256:c7a9152f5876fef565516aa5dd1dccd6fc298a5891b2467973905103eb5c7856 \
+-+    --hash=sha256:cb5cc7b25acabd384f75bbd78892d0c724943f3e2e1986254665a1aa10982e07 \
+-+    --hash=sha256:d3b3db9990c3840986a0e70524e122cfa32b91139c3653df76121ba7776e015f \
+-+    --hash=sha256:d4b1a70a3e5219790d6b55b9507606fc4e02911d1497d16c18dd721eb7efe7d0 \
+-+    --hash=sha256:dc74fd9995513d33eac63d64e436240f5494ec74d522a9f0920194942fc3d2d7 \
+-+    --hash=sha256:e04fde367b2fe901b1d47234426fe8819909bd1dd862a5adb630f27789c20599
+-+    # via
+-+    #   -r ci/official/requirements_updater/requirements.in
+-+    #   jax
+-+    #   keras-nightly
+-+namex==0.0.8 \
+-+    --hash=sha256:32a50f6c565c0bb10aa76298c959507abdc0e850efe085dc38f3440fcb3aa90b \
+-+    --hash=sha256:7ddb6c2bb0e753a311b7590f84f6da659dd0c05e65cb89d519d54c0a250c0487
+-+    # via keras-nightly
+-+numpy==2.1.1 ; python_version >= "3.13" \
+-+    --hash=sha256:046356b19d7ad1890c751b99acad5e82dc4a02232013bd9a9a712fddf8eb60f5 \
+-+    --hash=sha256:0b8cc2715a84b7c3b161f9ebbd942740aaed913584cae9cdc7f8ad5ad41943d0 \
+-+    --hash=sha256:0d07841fd284718feffe7dd17a63a2e6c78679b2d386d3e82f44f0108c905550 \
+-+    --hash=sha256:13cc11c00000848702322af4de0147ced365c81d66053a67c2e962a485b3717c \
+-+    --hash=sha256:13ce49a34c44b6de5241f0b38b07e44c1b2dcacd9e36c30f9c2fcb1bb5135db7 \
+-+    --hash=sha256:24c2ad697bd8593887b019817ddd9974a7f429c14a5469d7fad413f28340a6d2 \
+-+    --hash=sha256:251105b7c42abe40e3a689881e1793370cc9724ad50d64b30b358bbb3a97553b \
+-+    --hash=sha256:2ca4b53e1e0b279142113b8c5eb7d7a877e967c306edc34f3b58e9be12fda8df \
+-+    --hash=sha256:3269c9eb8745e8d975980b3a7411a98976824e1fdef11f0aacf76147f662b15f \
+-+    --hash=sha256:397bc5ce62d3fb73f304bec332171535c187e0643e176a6e9421a6e3eacef06d \
+-+    --hash=sha256:3fc5eabfc720db95d68e6646e88f8b399bfedd235994016351b1d9e062c4b270 \
+-+    --hash=sha256:50a95ca3560a6058d6ea91d4629a83a897ee27c00630aed9d933dff191f170cd \
+-+    --hash=sha256:52ac2e48f5ad847cd43c4755520a2317f3380213493b9d8a4c5e37f3b87df504 \
+-+    --hash=sha256:53e27293b3a2b661c03f79aa51c3987492bd4641ef933e366e0f9f6c9bf257ec \
+-+    --hash=sha256:57eb525e7c2a8fdee02d731f647146ff54ea8c973364f3b850069ffb42799647 \
+-+    --hash=sha256:5889dd24f03ca5a5b1e8a90a33b5a0846d8977565e4ae003a63d22ecddf6782f \
+-+    --hash=sha256:59ca673ad11d4b84ceb385290ed0ebe60266e356641428c845b39cd9df6713ab \
+-+    --hash=sha256:6435c48250c12f001920f0751fe50c0348f5f240852cfddc5e2f97e007544cbe \
+-+    --hash=sha256:6e5a9cb2be39350ae6c8f79410744e80154df658d5bea06e06e0ac5bb75480d5 \
+-+    --hash=sha256:7be6a07520b88214ea85d8ac8b7d6d8a1839b0b5cb87412ac9f49fa934eb15d5 \
+-+    --hash=sha256:7c803b7934a7f59563db459292e6aa078bb38b7ab1446ca38dd138646a38203e \
+-+    --hash=sha256:7dd86dfaf7c900c0bbdcb8b16e2f6ddf1eb1fe39c6c8cca6e94844ed3152a8fd \
+-+    --hash=sha256:8661c94e3aad18e1ea17a11f60f843a4933ccaf1a25a7c6a9182af70610b2313 \
+-+    --hash=sha256:8ae0fd135e0b157365ac7cc31fff27f07a5572bdfc38f9c2d43b2aff416cc8b0 \
+-+    --hash=sha256:910b47a6d0635ec1bd53b88f86120a52bf56dcc27b51f18c7b4a2e2224c29f0f \
+-+    --hash=sha256:913cc1d311060b1d409e609947fa1b9753701dac96e6581b58afc36b7ee35af6 \
+-+    --hash=sha256:920b0911bb2e4414c50e55bd658baeb78281a47feeb064ab40c2b66ecba85553 \
+-+    --hash=sha256:950802d17a33c07cba7fd7c3dcfa7d64705509206be1606f196d179e539111ed \
+-+    --hash=sha256:981707f6b31b59c0c24bcda52e5605f9701cb46da4b86c2e8023656ad3e833cb \
+-+    --hash=sha256:98ce7fb5b8063cfdd86596b9c762bf2b5e35a2cdd7e967494ab78a1fa7f8b86e \
+-+    --hash=sha256:99f4a9ee60eed1385a86e82288971a51e71df052ed0b2900ed30bc840c0f2e39 \
+-+    --hash=sha256:9a8e06c7a980869ea67bbf551283bbed2856915f0a792dc32dd0f9dd2fb56728 \
+-+    --hash=sha256:ae8ce252404cdd4de56dcfce8b11eac3c594a9c16c231d081fb705cf23bd4d9e \
+-+    --hash=sha256:afd9c680df4de71cd58582b51e88a61feed4abcc7530bcd3d48483f20fc76f2a \
+-+    --hash=sha256:b49742cdb85f1f81e4dc1b39dcf328244f4d8d1ded95dea725b316bd2cf18c95 \
+-+    --hash=sha256:b5613cfeb1adfe791e8e681128f5f49f22f3fcaa942255a6124d58ca59d9528f \
+-+    --hash=sha256:bab7c09454460a487e631ffc0c42057e3d8f2a9ddccd1e60c7bb8ed774992480 \
+-+    --hash=sha256:c8a0e34993b510fc19b9a2ce7f31cb8e94ecf6e924a40c0c9dd4f62d0aac47d9 \
+-+    --hash=sha256:caf5d284ddea7462c32b8d4a6b8af030b6c9fd5332afb70e7414d7fdded4bfd0 \
+-+    --hash=sha256:cea427d1350f3fd0d2818ce7350095c1a2ee33e30961d2f0fef48576ddbbe90f \
+-+    --hash=sha256:d0cf7d55b1051387807405b3898efafa862997b4cba8aa5dbe657be794afeafd \
+-+    --hash=sha256:d10c39947a2d351d6d466b4ae83dad4c37cd6c3cdd6d5d0fa797da56f710a6ae \
+-+    --hash=sha256:d2b9cd92c8f8e7b313b80e93cedc12c0112088541dcedd9197b5dee3738c1201 \
+-+    --hash=sha256:d4c57b68c8ef5e1ebf47238e99bf27657511ec3f071c465f6b1bccbef12d4136 \
+-+    --hash=sha256:d51fc141ddbe3f919e91a096ec739f49d686df8af254b2053ba21a910ae518bf \
+-+    --hash=sha256:e097507396c0be4e547ff15b13dc3866f45f3680f789c1a1301b07dadd3fbc78 \
+-+    --hash=sha256:e30356d530528a42eeba51420ae8bf6c6c09559051887196599d96ee5f536468 \
+-+    --hash=sha256:e8d5f8a8e3bc87334f025194c6193e408903d21ebaeb10952264943a985066ca \
+-+    --hash=sha256:e8dfa9e94fc127c40979c3eacbae1e61fda4fe71d84869cc129e2721973231ef \
+-+    --hash=sha256:f212d4f46b67ff604d11fff7cc62d36b3e8714edf68e44e9760e19be38c03eb0 \
+-+    --hash=sha256:f7506387e191fe8cdb267f912469a3cccc538ab108471291636a96a54e599556 \
+-+    --hash=sha256:fac6e277a41163d27dfab5f4ec1f7a83fac94e170665a4a50191b545721c6521 \
+-+    --hash=sha256:fcd8f556cdc8cfe35e70efb92463082b7f43dd7e547eb071ffc36abc0ca4699b
+-+    # via
+-+    #   -r ci/official/requirements_updater/requirements.in
+-+    #   h5py
+-+    #   jax
+-+    #   keras-nightly
+-+    #   ml-dtypes
+-+    #   opt-einsum
+-+    #   scipy
+-+    #   tb-nightly
+-+opt-einsum==3.3.0 \
+-+    --hash=sha256:2455e59e3947d3c275477df7f5205b30635e266fe6dc300e3d9f9646bfcea147 \
+-+    --hash=sha256:59f6475f77bbc37dcf7cd748519c0ec60722e91e63ca114e68821c0c54a46549
+-+    # via
+-+    #   -r ci/official/requirements_updater/requirements.in
+-+    #   jax
+-+optree==0.14.0 \
+-+    --hash=sha256:176c9e2908133957513b20370be93d72f8f2e4b3acbc94a1b8186cc715f05403 \
+-+    --hash=sha256:9d0f576c01b6ecf669d6fbc1db9dd43f380dc604fec76475886fe71604bd21a7 \
+-+    --hash=sha256:220e987ed6d92ac5be51d8cdba21d99229cfec00f5a4d2ca3846c208a69709ac \
+-+    --hash=sha256:0bac8873fa99f8d4e58548e04b66c310ad65ed966238a00c7eaf61378da6d017
+-+packaging==23.2 \
+-+    --hash=sha256:048fb0e9405036518eaaf48a55953c750c11e1a1b68e0dd1a9d62ed0c092cfc5 \
+-+    --hash=sha256:8c491190033a9af7e1d931d0b5dacc2ef47509b34dd0de67ed209b5203fc88c7
+-+    # via
+-+    #   -r ci/official/requirements_updater/requirements.in
+-+    #   auditwheel
+-+    #   tb-nightly
+-+portpicker==1.6.0 \
+-+    --hash=sha256:b2787a41404cf7edbe29b07b9e0ed863b09f2665dcc01c1eb0c2261c1e7d0755 \
+-+    --hash=sha256:bd507fd6f96f65ee02781f2e674e9dc6c99bbfa6e3c39992e3916204c9d431fa
+-+    # via -r ci/official/requirements_updater/requirements.in
+-+protobuf==5.29.1 \
+-+    --hash=sha256:012ce28d862ff417fd629285aca5d9772807f15ceb1a0dbd15b88f58c776c98c \
+-+    --hash=sha256:027fbcc48cea65a6b17028510fdd054147057fa78f4772eb547b9274e5219331 \
+-+    --hash=sha256:1fc55267f086dd4050d18ef839d7bd69300d0d08c2a53ca7df3920cc271a3c34 \
+-+    --hash=sha256:22c1f539024241ee545cbcb00ee160ad1877975690b16656ff87dde107b5f110 \
+-+    --hash=sha256:32600ddb9c2a53dedc25b8581ea0f1fd8ea04956373c0c07577ce58d312522e0 \
+-+    --hash=sha256:50879eb0eb1246e3a5eabbbe566b44b10348939b7cc1b267567e8c3d07213853 \
+-+    --hash=sha256:5a41deccfa5e745cef5c65a560c76ec0ed8e70908a67cc8f4da5fce588b50d57 \
+-+    --hash=sha256:683be02ca21a6ffe80db6dd02c0b5b2892322c59ca57fd6c872d652cb80549cb \
+-+    --hash=sha256:8ee1461b3af56145aca2800e6a3e2f928108c749ba8feccc6f5dd0062c410c0d \
+-+    --hash=sha256:b5ba1d0e4c8a40ae0496d0e2ecfdbb82e1776928a205106d14ad6985a09ec155 \
+-+    --hash=sha256:d473655e29c0c4bbf8b69e9a8fb54645bc289dead6d753b952e7aa660254ae18
+-+    # via tb-nightly
+-+psutil==6.1.0 \
+-+    --hash=sha256:000d1d1ebd634b4efb383f4034437384e44a6d455260aaee2eca1e9c1b55f047 \
+-+    --hash=sha256:045f00a43c737f960d273a83973b2511430d61f283a44c96bf13a6e829ba8fdc \
+-+    --hash=sha256:0895b8414afafc526712c498bd9de2b063deaac4021a3b3c34566283464aff8e \
+-+    --hash=sha256:1209036fbd0421afde505a4879dee3b2fd7b1e14fee81c0069807adcbbcca747 \
+-+    --hash=sha256:1ad45a1f5d0b608253b11508f80940985d1d0c8f6111b5cb637533a0e6ddc13e \
+-+    --hash=sha256:353815f59a7f64cdaca1c0307ee13558a0512f6db064e92fe833784f08539c7a \
+-+    --hash=sha256:498c6979f9c6637ebc3a73b3f87f9eb1ec24e1ce53a7c5173b8508981614a90b \
+-+    --hash=sha256:5cd2bcdc75b452ba2e10f0e8ecc0b57b827dd5d7aaffbc6821b2a9a242823a76 \
+-+    --hash=sha256:6d3fbbc8d23fcdcb500d2c9f94e07b1342df8ed71b948a2649b5cb060a7c94ca \
+-+    --hash=sha256:6e2dcd475ce8b80522e51d923d10c7871e45f20918e027ab682f94f1c6351688 \
+-+    --hash=sha256:9118f27452b70bb1d9ab3198c1f626c2499384935aaf55388211ad982611407e \
+-+    --hash=sha256:9dcbfce5d89f1d1f2546a2090f4fcf87c7f669d1d90aacb7d7582addece9fb38 \
+-+    --hash=sha256:a8506f6119cff7015678e2bce904a4da21025cc70ad283a53b099e7620061d85 \
+-+    --hash=sha256:a8fb3752b491d246034fa4d279ff076501588ce8cbcdbb62c32fd7a377d996be \
+-+    --hash=sha256:c0e0c00aa18ca2d3b2b991643b799a15fc8f0563d2ebb6040f64ce8dc027b942 \
+-+    --hash=sha256:d905186d647b16755a800e7263d43df08b790d709d575105d419f8b6ef65423a \
+-+    --hash=sha256:ff34df86226c0227c52f38b919213157588a678d049688eded74c76c8ba4a5d0
+-+    # via portpicker
+-+pyelftools==0.31 \
+-+    --hash=sha256:c774416b10310156879443b81187d182d8d9ee499660380e645918b50bc88f99 \
+-+    --hash=sha256:f52de7b3c7e8c64c8abc04a79a1cf37ac5fb0b8a49809827130b858944840607
+-+    # via auditwheel
+-+pygments==2.18.0 \
+-+    --hash=sha256:786ff802f32e91311bff3889f6e9a86e81505fe99f2735bb6d60ae0c5004f199 \
+-+    --hash=sha256:b8e6aca0523f3ab76fee51799c488e38782ac06eafcf95e7ba832985c8e7b13a
+-+    # via rich
+-+requests==2.32.3 \
+-+    --hash=sha256:55365417734eb18255590a9ff9eb97e9e1da868d4ccd6402399eaf68af20a760 \
+-+    --hash=sha256:70761cfe03c773ceb22aa2f671b4757976145175cdfca038c02654d061d6dcc6
+-+    # via -r ci/official/requirements_updater/requirements.in
+-+rich==13.9.4 \
+-+    --hash=sha256:439594978a49a09530cff7ebc4b5c7103ef57baf48d5ea3184f21d9a2befa098 \
+-+    --hash=sha256:6049d5e6ec054bf2779ab3358186963bac2ea89175919d699e378b99738c2a90
+-+    # via keras-nightly
+-+scipy==1.14.1 \
+-+    --hash=sha256:0c2f95de3b04e26f5f3ad5bb05e74ba7f68b837133a4492414b3afd79dfe540e \
+-+    --hash=sha256:1729560c906963fc8389f6aac023739ff3983e727b1a4d87696b7bf108316a79 \
+-+    --hash=sha256:278266012eb69f4a720827bdd2dc54b2271c97d84255b2faaa8f161a158c3b37 \
+-+    --hash=sha256:2843f2d527d9eebec9a43e6b406fb7266f3af25a751aa91d62ff416f54170bc5 \
+-+    --hash=sha256:2da0469a4ef0ecd3693761acbdc20f2fdeafb69e6819cc081308cc978153c675 \
+-+    --hash=sha256:2ff0a7e01e422c15739ecd64432743cf7aae2b03f3084288f399affcefe5222d \
+-+    --hash=sha256:2ff38e22128e6c03ff73b6bb0f85f897d2362f8c052e3b8ad00532198fbdae3f \
+-+    --hash=sha256:30ac8812c1d2aab7131a79ba62933a2a76f582d5dbbc695192453dae67ad6310 \
+-+    --hash=sha256:3a1b111fac6baec1c1d92f27e76511c9e7218f1695d61b59e05e0fe04dc59617 \
+-+    --hash=sha256:4079b90df244709e675cdc8b93bfd8a395d59af40b72e339c2287c91860deb8e \
+-+    --hash=sha256:5149e3fd2d686e42144a093b206aef01932a0059c2a33ddfa67f5f035bdfe13e \
+-+    --hash=sha256:5a275584e726026a5699459aa72f828a610821006228e841b94275c4a7c08417 \
+-+    --hash=sha256:631f07b3734d34aced009aaf6fedfd0eb3498a97e581c3b1e5f14a04164a456d \
+-+    --hash=sha256:716e389b694c4bb564b4fc0c51bc84d381735e0d39d3f26ec1af2556ec6aad94 \
+-+    --hash=sha256:8426251ad1e4ad903a4514712d2fa8fdd5382c978010d1c6f5f37ef286a713ad \
+-+    --hash=sha256:8475230e55549ab3f207bff11ebfc91c805dc3463ef62eda3ccf593254524ce8 \
+-+    --hash=sha256:8bddf15838ba768bb5f5083c1ea012d64c9a444e16192762bd858f1e126196d0 \
+-+    --hash=sha256:8e32dced201274bf96899e6491d9ba3e9a5f6b336708656466ad0522d8528f69 \
+-+    --hash=sha256:8f9ea80f2e65bdaa0b7627fb00cbeb2daf163caa015e59b7516395fe3bd1e066 \
+-+    --hash=sha256:97c5dddd5932bd2a1a31c927ba5e1463a53b87ca96b5c9bdf5dfd6096e27efc3 \
+-+    --hash=sha256:a49f6ed96f83966f576b33a44257d869756df6cf1ef4934f59dd58b25e0327e5 \
+-+    --hash=sha256:af29a935803cc707ab2ed7791c44288a682f9c8107bc00f0eccc4f92c08d6e07 \
+-+    --hash=sha256:b05d43735bb2f07d689f56f7b474788a13ed8adc484a85aa65c0fd931cf9ccd2 \
+-+    --hash=sha256:b28d2ca4add7ac16ae8bb6632a3c86e4b9e4d52d3e34267f6e1b0c1f8d87e389 \
+-+    --hash=sha256:b99722ea48b7ea25e8e015e8341ae74624f72e5f21fc2abd45f3a93266de4c5d \
+-+    --hash=sha256:baff393942b550823bfce952bb62270ee17504d02a1801d7fd0719534dfb9c84 \
+-+    --hash=sha256:c0ee987efa6737242745f347835da2cc5bb9f1b42996a4d97d5c7ff7928cb6f2 \
+-+    --hash=sha256:d0d2821003174de06b69e58cef2316a6622b60ee613121199cb2852a873f8cf3 \
+-+    --hash=sha256:e0cf28db0f24a38b2a0ca33a85a54852586e43cf6fd876365c86e0657cfe7d73 \
+-+    --hash=sha256:e4f5a7c49323533f9103d4dacf4e4f07078f360743dec7f7596949149efeec06 \
+-+    --hash=sha256:eb58ca0abd96911932f688528977858681a59d61a7ce908ffd355957f7025cfc \
+-+    --hash=sha256:edaf02b82cd7639db00dbff629995ef185c8df4c3ffa71a5562a595765a06ce1 \
+-+    --hash=sha256:fef8c87f8abfb884dac04e97824b61299880c43f4ce675dd2cbeadd3c9b466d2
+-+    # via
+-+    #   -r ci/official/requirements_updater/requirements.in
+-+    #   jax
+-+six==1.17.0 \
+-+    --hash=sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274 \
+-+    --hash=sha256:ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81
+-+    # via
+-+    #   astunparse
+-+    #   google-pasta
+-+    #   tb-nightly
+-+tb-nightly==2.19.0a20241211 \
+-+    --hash=sha256:c31799150cc76a710c641bdf75481282a21564ecf6a8ee276c191aece43a812f
+-+    # via -r ci/official/requirements_updater/requirements.in
+-+tblib==2.0.0 \
+-+    --hash=sha256:9100bfa016b047d5b980d66e7efed952fbd20bd85b56110aaf473cb97d18709a \
+-+    --hash=sha256:a6df30f272c08bf8be66e0775fad862005d950a6b8449b94f7c788731d70ecd7
+-+    # via -r ci/official/requirements_updater/requirements.in
+-+tensorboard==2.19.0 \
+-+    --hash=sha256:5e71b98663a641a7ce8a6e70b0be8e1a4c0c45d48760b076383ac4755c35b9a0
+-+tensorboard-data-server==0.7.2 \
+-+    --hash=sha256:7e0610d205889588983836ec05dc098e80f97b7e7bbff7e994ebb78f578d0ddb \
+-+    --hash=sha256:9fe5d24221b29625dbc7328b0436ca7fc1c23de4acf4d272f1180856e32f9f60 \
+-+    --hash=sha256:ef687163c24185ae9754ed5650eb5bc4d84ff257aabdc33f0cc6f74d8ba54530
+-+    # via tb-nightly
+-+termcolor==2.3.0 \
+-+    --hash=sha256:3afb05607b89aed0ffe25202399ee0867ad4d3cb4180d98aaf8eefa6a5f7d475 \
+-+    --hash=sha256:b5b08f68937f138fe92f6c089b99f1e2da0ae56c52b78bf7075fd95420fd9a5a
+-+    # via -r ci/official/requirements_updater/requirements.in
+-+typing-extensions==4.8.0 \
+-+    --hash=sha256:8f92fc8806f9a6b641eaa5318da32b44d401efaac0f6678c9bc448ba3605faa0 \
+-+    --hash=sha256:df8e4339e9cb77357558cbdbceca33c303714cf861d1eef15e1070055ae8b7ef
+-+    # via -r ci/official/requirements_updater/requirements.in
+-+urllib3==2.2.3 \
+-+    --hash=sha256:ca899ca043dcb1bafa3e262d73aa25c465bfb49e0bd9dd5d59f1d0acba2f8fac \
+-+    --hash=sha256:e7d814a81dad81e6caf2ec9fdedb284ecc9c73076b62654547cc64ccdcae26e9
+-+    # via requests
+-+werkzeug==3.1.3 \
+-+    --hash=sha256:54b78bf3716d19a65be4fceccc0d1d7b89e608834989dfae50ea87564639213e \
+-+    --hash=sha256:60723ce945c19328679790e3282cc758aa4a6040e4bb330f53d30fa546d44746
+-+    # via tb-nightly
+-+wheel==0.41.3 \
+-+    --hash=sha256:488609bc63a29322326e05560731bf7bfea8e48ad646e1f5e40d366607de0942 \
+-+    --hash=sha256:4d4987ce51a49370ea65c0bfd2234e8ce80a12780820d9dc462597a6e60d0841
+-+    # via
+-+    #   -r ci/official/requirements_updater/requirements.in
+-+    #   astunparse
+-+wrapt==1.16.0 \
+-+    --hash=sha256:0d2691979e93d06a95a26257adb7bfd0c93818e89b1406f5a28f36e0d8c1e1fc \
+-+    --hash=sha256:14d7dc606219cdd7405133c713f2c218d4252f2a469003f8c46bb92d5d095d81 \
+-+    --hash=sha256:1a5db485fe2de4403f13fafdc231b0dbae5eca4359232d2efc79025527375b09 \
+-+    --hash=sha256:1acd723ee2a8826f3d53910255643e33673e1d11db84ce5880675954183ec47e \
+-+    --hash=sha256:1ca9b6085e4f866bd584fb135a041bfc32cab916e69f714a7d1d397f8c4891ca \
+-+    --hash=sha256:1dd50a2696ff89f57bd8847647a1c363b687d3d796dc30d4dd4a9d1689a706f0 \
+-+    --hash=sha256:2076fad65c6736184e77d7d4729b63a6d1ae0b70da4868adeec40989858eb3fb \
+-+    --hash=sha256:2a88e6010048489cda82b1326889ec075a8c856c2e6a256072b28eaee3ccf487 \
+-+    --hash=sha256:3ebf019be5c09d400cf7b024aa52b1f3aeebeff51550d007e92c3c1c4afc2a40 \
+-+    --hash=sha256:418abb18146475c310d7a6dc71143d6f7adec5b004ac9ce08dc7a34e2babdc5c \
+-+    --hash=sha256:43aa59eadec7890d9958748db829df269f0368521ba6dc68cc172d5d03ed8060 \
+-+    --hash=sha256:44a2754372e32ab315734c6c73b24351d06e77ffff6ae27d2ecf14cf3d229202 \
+-+    --hash=sha256:490b0ee15c1a55be9c1bd8609b8cecd60e325f0575fc98f50058eae366e01f41 \
+-+    --hash=sha256:49aac49dc4782cb04f58986e81ea0b4768e4ff197b57324dcbd7699c5dfb40b9 \
+-+    --hash=sha256:5eb404d89131ec9b4f748fa5cfb5346802e5ee8836f57d516576e61f304f3b7b \
+-+    --hash=sha256:5f15814a33e42b04e3de432e573aa557f9f0f56458745c2074952f564c50e664 \
+-+    --hash=sha256:5f370f952971e7d17c7d1ead40e49f32345a7f7a5373571ef44d800d06b1899d \
+-+    --hash=sha256:66027d667efe95cc4fa945af59f92c5a02c6f5bb6012bff9e60542c74c75c362 \
+-+    --hash=sha256:66dfbaa7cfa3eb707bbfcd46dab2bc6207b005cbc9caa2199bcbc81d95071a00 \
+-+    --hash=sha256:685f568fa5e627e93f3b52fda002c7ed2fa1800b50ce51f6ed1d572d8ab3e7fc \
+-+    --hash=sha256:6906c4100a8fcbf2fa735f6059214bb13b97f75b1a61777fcf6432121ef12ef1 \
+-+    --hash=sha256:6a42cd0cfa8ffc1915aef79cb4284f6383d8a3e9dcca70c445dcfdd639d51267 \
+-+    --hash=sha256:6dcfcffe73710be01d90cae08c3e548d90932d37b39ef83969ae135d36ef3956 \
+-+    --hash=sha256:6f6eac2360f2d543cc875a0e5efd413b6cbd483cb3ad7ebf888884a6e0d2e966 \
+-+    --hash=sha256:72554a23c78a8e7aa02abbd699d129eead8b147a23c56e08d08dfc29cfdddca1 \
+-+    --hash=sha256:73870c364c11f03ed072dda68ff7aea6d2a3a5c3fe250d917a429c7432e15228 \
+-+    --hash=sha256:73aa7d98215d39b8455f103de64391cb79dfcad601701a3aa0dddacf74911d72 \
+-+    --hash=sha256:75ea7d0ee2a15733684badb16de6794894ed9c55aa5e9903260922f0482e687d \
+-+    --hash=sha256:7bd2d7ff69a2cac767fbf7a2b206add2e9a210e57947dd7ce03e25d03d2de292 \
+-+    --hash=sha256:807cc8543a477ab7422f1120a217054f958a66ef7314f76dd9e77d3f02cdccd0 \
+-+    --hash=sha256:8e9723528b9f787dc59168369e42ae1c3b0d3fadb2f1a71de14531d321ee05b0 \
+-+    --hash=sha256:9090c9e676d5236a6948330e83cb89969f433b1943a558968f659ead07cb3b36 \
+-+    --hash=sha256:9153ed35fc5e4fa3b2fe97bddaa7cbec0ed22412b85bcdaf54aeba92ea37428c \
+-+    --hash=sha256:9159485323798c8dc530a224bd3ffcf76659319ccc7bbd52e01e73bd0241a0c5 \
+-+    --hash=sha256:941988b89b4fd6b41c3f0bfb20e92bd23746579736b7343283297c4c8cbae68f \
+-+    --hash=sha256:94265b00870aa407bd0cbcfd536f17ecde43b94fb8d228560a1e9d3041462d73 \
+-+    --hash=sha256:98b5e1f498a8ca1858a1cdbffb023bfd954da4e3fa2c0cb5853d40014557248b \
+-+    --hash=sha256:9b201ae332c3637a42f02d1045e1d0cccfdc41f1f2f801dafbaa7e9b4797bfc2 \
+-+    --hash=sha256:a0ea261ce52b5952bf669684a251a66df239ec6d441ccb59ec7afa882265d593 \
+-+    --hash=sha256:a33a747400b94b6d6b8a165e4480264a64a78c8a4c734b62136062e9a248dd39 \
+-+    --hash=sha256:a452f9ca3e3267cd4d0fcf2edd0d035b1934ac2bd7e0e57ac91ad6b95c0c6389 \
+-+    --hash=sha256:a86373cf37cd7764f2201b76496aba58a52e76dedfaa698ef9e9688bfd9e41cf \
+-+    --hash=sha256:ac83a914ebaf589b69f7d0a1277602ff494e21f4c2f743313414378f8f50a4cf \
+-+    --hash=sha256:aefbc4cb0a54f91af643660a0a150ce2c090d3652cf4052a5397fb2de549cd89 \
+-+    --hash=sha256:b3646eefa23daeba62643a58aac816945cadc0afaf21800a1421eeba5f6cfb9c \
+-+    --hash=sha256:b47cfad9e9bbbed2339081f4e346c93ecd7ab504299403320bf85f7f85c7d46c \
+-+    --hash=sha256:b935ae30c6e7400022b50f8d359c03ed233d45b725cfdd299462f41ee5ffba6f \
+-+    --hash=sha256:bb2dee3874a500de01c93d5c71415fcaef1d858370d405824783e7a8ef5db440 \
+-+    --hash=sha256:bc57efac2da352a51cc4658878a68d2b1b67dbe9d33c36cb826ca449d80a8465 \
+-+    --hash=sha256:bf5703fdeb350e36885f2875d853ce13172ae281c56e509f4e6eca049bdfb136 \
+-+    --hash=sha256:c31f72b1b6624c9d863fc095da460802f43a7c6868c5dda140f51da24fd47d7b \
+-+    --hash=sha256:c5cd603b575ebceca7da5a3a251e69561bec509e0b46e4993e1cac402b7247b8 \
+-+    --hash=sha256:d2efee35b4b0a347e0d99d28e884dfd82797852d62fcd7ebdeee26f3ceb72cf3 \
+-+    --hash=sha256:d462f28826f4657968ae51d2181a074dfe03c200d6131690b7d65d55b0f360f8 \
+-+    --hash=sha256:d5e49454f19ef621089e204f862388d29e6e8d8b162efce05208913dde5b9ad6 \
+-+    --hash=sha256:da4813f751142436b075ed7aa012a8778aa43a99f7b36afe9b742d3ed8bdc95e \
+-+    --hash=sha256:db2e408d983b0e61e238cf579c09ef7020560441906ca990fe8412153e3b291f \
+-+    --hash=sha256:db98ad84a55eb09b3c32a96c576476777e87c520a34e2519d3e59c44710c002c \
+-+    --hash=sha256:dbed418ba5c3dce92619656802cc5355cb679e58d0d89b50f116e4a9d5a9603e \
+-+    --hash=sha256:dcdba5c86e368442528f7060039eda390cc4091bfd1dca41e8046af7c910dda8 \
+-+    --hash=sha256:decbfa2f618fa8ed81c95ee18a387ff973143c656ef800c9f24fb7e9c16054e2 \
+-+    --hash=sha256:e4fdb9275308292e880dcbeb12546df7f3e0f96c6b41197e0cf37d2826359020 \
+-+    --hash=sha256:eb1b046be06b0fce7249f1d025cd359b4b80fc1c3e24ad9eca33e0dcdb2e4a35 \
+-+    --hash=sha256:eb6e651000a19c96f452c85132811d25e9264d836951022d6e81df2fff38337d \
+-+    --hash=sha256:ed867c42c268f876097248e05b6117a65bcd1e63b779e916fe2e33cd6fd0d3c3 \
+-+    --hash=sha256:edfad1d29c73f9b863ebe7082ae9321374ccb10879eeabc84ba3b69f2579d537 \
+-+    --hash=sha256:f2058f813d4f2b5e3a9eb2eb3faf8f1d99b81c3e51aeda4b168406443e8ba809 \
+-+    --hash=sha256:f6b2d0c6703c988d334f297aa5df18c45e97b0af3679bb75059e0e0bd8b1069d \
+-+    --hash=sha256:f8212564d49c50eb4565e502814f694e240c55551a5f1bc841d4fcaabb0a9b8a \
+-+    --hash=sha256:ffa565331890b90056c01db69c0fe634a776f8019c143a5ae265f9c6bc4bd6d4
+-+    # via -r ci/official/requirements_updater/requirements.in
+-+
+-+# The following packages are considered to be unsafe in a requirements file:
+-+setuptools==70.0.0 \
+-+    --hash=sha256:54faa7f2e8d2d11bcd2c07bed282eef1046b5c080d1c32add737d7b5817b1ad4 \
+-+    --hash=sha256:f211a66637b8fa059bb28183da127d4e86396c991a942b028c6650d4319c3fd0
+-+    # via
+-+    #   -r ci/official/requirements_updater/requirements.in
+--- 
+-2.25.1
 -
-     SED_COMMAND="s#%%WORKDIR%%#${WORKDIR}#g"
-     sed -i "${SED_COMMAND}" ${S}/configure.py
- 
-@@ -31,7 +17,7 @@ do_compile () {
-         -c opt \
-         --subcommands --explain=${T}/explain.log \
-         --verbose_explanations --verbose_failures \
--        --repo_env=TF_PYTHON_VERSION=3.13 \
-+        --repo_env=TF_PYTHON_VERSION=3.14 \
-         --verbose_failures \
-         //tensorflow/tools/pip_package:wheel
- }
-@@ -41,7 +27,7 @@ do_install() {
-     install -d ${D}/${PYTHON_SITEPACKAGES_DIR}
-     ${STAGING_BINDIR_NATIVE}/pip3 install --disable-pip-version-check -v --no-deps \
-         -t ${D}/${PYTHON_SITEPACKAGES_DIR} --no-cache-dir \
--         ${S}/bazel-bin/tensorflow/tools/pip_package/wheel_house/tensorflow-${PV}*cp313*.whl
-+         ${S}/bazel-bin/tensorflow/tools/pip_package/wheel_house/tensorflow-${PV}*cp314*.whl
- 
-     install -d ${D}${sbindir}
-     (
-diff --git a/recipes-framework/tensorflow/tensorflow.inc b/recipes-framework/tensorflow/tensorflow.inc
-index 06b92e4..9930b17 100644
---- a/recipes-framework/tensorflow/tensorflow.inc
-+++ b/recipes-framework/tensorflow/tensorflow.inc
-@@ -9,25 +9,20 @@ DEPENDS = " \
-     patchelf-native \
-     protobuf \
- "
--SRCREV = "e36baa302922ea3c7131b302c2996bd2051ee5c4"
--SRC_URI = "git://github.com/tensorflow/tensorflow.git;branch=r2.19;protocol=https \
-+SRCREV = "a481b10260dfdf833a1b16007eead49c1d7febf3"
-+SRC_URI = "git://github.com/tensorflow/tensorflow.git;branch=r2.21;protocol=https \
-+    file://0001-Add-support-for-Python-3.14-to-TensorFlow-build-conf.patch \
-+    file://0001-Update-grpcio-to-1.78.0-for-Python-3.14.patch \
-+    file://0001-correct-h5py-version-for-python-3.14.patch \
-     file://0001-lite-fix-compile-failure-without-XNNPACK-engine.patch \
--    file://0001-support-gcc-15.patch \
-     file://0001-use-local-bazel-to-workaround-bazel-paralle-issue.patch \
--    file://0002-third_party-eigen_archive-workaround-ice-failure-whi.patch \
-     file://0003-drop-bazel_toolchains_repositories-to-support-offlin.patch \
--    file://0004-drop-v2-config.patch \
-     file://0005-hardcode-go-SDKS.patch \
--    file://0006-fix-build-failure.patch \
--    file://0007-support-hermetic-Python.patch \
-     file://0008-make-hermetic-python3-support-offline-build.patch \
--    file://0009-Fix-build-with-gcc-12.patch \
--    file://0010-fix-patchelf-not-found.patch \
--    file://0011-fix-llvm-project-timeout-occasionally.patch \
-     file://0001-do-not-patch-.so-files-for-linux.patch \
--    file://0001-third_party-ducc-fix-ambiguous-failure.patch \
-     file://0001-third_party-tf_runtime-fix-compile-failure.patch \
--    file://0001-fix-compile-failed.patch \
-+    file://0001-fix-pypi_keras-is-not-defined.patch \
-+    file://0001-set-x83_64-to-arch-of-whl.patch \
- "
- 
- DEPENDS += " \
-@@ -39,6 +34,7 @@ DEPENDS += " \
-     python3-pip-native \
-     python3-wheel-native \
-     python3-packaging-native \
-+    xxd-native \
- "
- 
- inherit python3native bazel
-@@ -49,7 +45,6 @@ TF_CONFIG ?= " \
-     TF_NEED_OPENCL=0 \
-     TF_CUDA_CLANG=0 \
-     TF_DOWNLOAD_CLANG=0 \
--    TF_ENABLE_XLA=0 \
-     TF_NEED_MPI=0 \
-     TF_SET_ANDROID_WORKSPACE=0 \
-     TF_NEED_CLANG=0 \
-@@ -60,10 +55,10 @@ inherit tensorflow_ver
- 
- CC:append:arm = " -mfp16-format=ieee"
- 
--CFLAGS += "-Wno-stringop-overflow -Wno-dangling-pointer -Wno-maybe-uninitialized"
+diff --git a/recipes-framework/tensorflow/files/0001-fix-compile-XNNPACK-failed-for-aarch64.patch b/recipes-framework/tensorflow/files/0001-fix-compile-XNNPACK-failed-for-aarch64.patch
+deleted file mode 100644
+index 81f0386..0000000
+--- a/recipes-framework/tensorflow/files/0001-fix-compile-XNNPACK-failed-for-aarch64.patch
++++ /dev/null
+@@ -1,146 +0,0 @@
+-From 73d7b97c01d2ce17e1fbbac1a422aa4730097c33 Mon Sep 17 00:00:00 2001
+-From: Hongxu Jia <hongxu.jia@windriver.com>
+-Date: Tue, 18 Mar 2025 16:40:51 +0800
+-Subject: [PATCH] fix compile XNNPACK failed for aarch64
 -
- export TS_DL_DIR
- 
-+export PIP_CACHE_DIR = "${S}/.cache"
-+
- do_compile[network] = "1"
- 
- REMOVE_NVIDIA_FILE ?= "1"
-@@ -77,12 +72,5 @@ remove_nvidia_files() {
- }
- do_unpack[postfuncs] += "remove_nvidia_files"
- 
--# Missing write permission prevents the WORKDIR to be deleted, e.g. when recipe becames unreachable
--do_compile:append() {
--    chmod a+w ${BAZEL_DIR}/output_base/execroot/org_tensorflow/bazel-out/*/bin/tensorflow/lite/python/conversion_metadata_schema_py_srcs_no_include_all || true
--    chmod a+w ${BAZEL_DIR}/output_base/execroot/org_tensorflow/bazel-out/*/bin/tensorflow/lite/python/schema_py_srcs_no_include_all || true
--    chmod a+w ${BAZEL_DIR}/output_base/execroot/org_tensorflow/bazel-out/*/bin/tensorflow/tools/pip_package/wheel_house || true
--}
+-Upstream-Status: Pending
 -
- DEBUG_OPTIMIZATION:remove:aarch64 = "${@oe.utils.conditional('PACKAGE_ARCH','cortexa53',' -Og','',d)}"
- DEBUG_OPTIMIZATION:append:aarch64 = "${@oe.utils.conditional('PACKAGE_ARCH','cortexa53',' -O','',d)}"
-diff --git a/recipes-framework/tensorflow/tensorflow_2.19.0.bb b/recipes-framework/tensorflow/tensorflow_2.21.0.bb
-similarity index 82%
-rename from recipes-framework/tensorflow/tensorflow_2.19.0.bb
-rename to recipes-framework/tensorflow/tensorflow_2.21.0.bb
-index 6722c1b..142a3a6 100644
---- a/recipes-framework/tensorflow/tensorflow_2.19.0.bb
-+++ b/recipes-framework/tensorflow/tensorflow_2.21.0.bb
-@@ -2,25 +2,17 @@ include tensorflow.inc
- 
- SRC_URI += " \
-     file://0012-add-yocto-toolchain-to-support-cross-compiling.patch \
--    file://0013-fix-build-tensorflow-lite-examples-label_image-label.patch \
-     file://0014-label_image-tweak-default-model-location.patch \
-     file://0015-label_image.lite-tweak-default-model-location.patch \
--    file://0016-CheckFeatureOrDie-use-warning-to-avoid-die.patch \
--    file://0017-support-32-bit-x64-and-arm-for-yocto.patch \
-     file://0018-build-api_gen_binary_target-as-host-tools.patch \
--    file://0019-fix-build-failure-for-2.19.patch \
--    file://0020-tensorflow-compiler-mlir-lite-fix-tensorflow_lite_qu.patch \
--    file://0021-build_pip_package_with_bazel.sh-correct-version.patch \
--    file://0001-Add-hermetic-PYTHON-3.13-requirements-lock-file-in-T.patch \
--    file://0001-support-python-3.33.patch \
-+    file://0001-use-external-toolchains.patch \
-     file://BUILD.in \
-     file://BUILD.yocto_compiler \
-     file://cc_config.bzl.tpl \
-     file://yocto_compiler_configure.bzl \
- "
- SRC_URI:append:aarch64 = " \
--   file://0001-fix-compile-XNNPACK-failed-for-aarch64.patch \
--   file://0001-tensorflow-BUILD-fix-build-failure-for-aarch64.patch \
-+    file://0001-support-cross-compile-for-target-aarch64.patch \
- "
- 
- SRC_URI += "https://storage.googleapis.com/download.tensorflow.org/models/inception_v3_2016_08_28_frozen.pb.tar.gz;name=model-inv3"
-@@ -53,8 +45,9 @@ RDEPENDS:python3-tensorflow += " \
-     python3-mldtypes \
-     python3-pybind11 \
-     python3-requests \
--    tensorflow-estimator \
--    tf-keras \
-+    python3-keras \
-+    python3-rich \
-+    python3-optree \
- "
- 
- do_configure:append () {
-@@ -78,6 +71,8 @@ do_configure:append () {
-     ./configure
- }
- 
-+TOOLCHAIN = "clang"
-+
- TF_TARGET_EXTRA ??= ""
- do_compile () {
-     export CT_NAME=$(echo ${HOST_PREFIX} | rev | cut -c 2- | rev)
-@@ -90,13 +85,11 @@ do_compile () {
-         --verbose_explanations --verbose_failures \
-         --crosstool_top=@local_config_yocto_compiler//:toolchain \
-         --host_crosstool_top=@bazel_tools//tools/cpp:toolchain \
-+        --platforms=@local_config_yocto_compiler//:linux_${BAZEL_TARGET_CPU} \
-         --verbose_failures \
-         --copt -DTF_LITE_DISABLE_X86_NEON \
--        --repo_env=TF_PYTHON_VERSION=3.13 \
-+        --repo_env=TF_PYTHON_VERSION=3.14 \
-         --define tflite_with_xnnpack=false \
--        //tensorflow:libtensorflow.so \
--        //tensorflow:libtensorflow_cc.so \
--        //tensorflow:libtensorflow_framework.so \
-         //tensorflow/tools/benchmark:benchmark_model \
-         //tensorflow/tools/pip_package:wheel \
-         tensorflow/examples/label_image/... \
-@@ -106,10 +99,6 @@ do_compile () {
- 
- do_install() {
-     install -d ${D}${libdir}
--    install -m 644 ${S}/bazel-bin/tensorflow/libtensorflow.so \
--        ${D}${libdir}
--    install -m 644 ${S}/bazel-bin/tensorflow/libtensorflow_cc.so \
--        ${D}${libdir}
- 
-     install -d ${D}${sbindir}
-     install -m 755 ${S}/bazel-bin/tensorflow/tools/benchmark/benchmark_model \
-@@ -138,7 +127,7 @@ do_install() {
-     install -d ${D}/${PYTHON_SITEPACKAGES_DIR}
-     ${STAGING_BINDIR_NATIVE}/pip3 install --disable-pip-version-check -v \
-         -t ${D}/${PYTHON_SITEPACKAGES_DIR} --no-cache-dir --no-deps \
--         ${S}/bazel-bin/tensorflow/tools/pip_package/wheel_house/tensorflow-${PV}*cp313*.whl
-+         ${S}/bazel-bin/tensorflow/tools/pip_package/wheel_house/tensorflow-${PV}*cp314*.whl
- 
-     (
-         cd ${D}${PYTHON_SITEPACKAGES_DIR}/bin;
-@@ -148,6 +137,7 @@ do_install() {
-         done
- 
-         mv ${D}${PYTHON_SITEPACKAGES_DIR}/tensorflow/libtensorflow_framework.so*  ${D}${libdir}
-+        mv ${D}${PYTHON_SITEPACKAGES_DIR}/tensorflow/libtensorflow_cc.so*  ${D}${libdir}
- 
-         rm -rf ${D}${PYTHON_SITEPACKAGES_DIR}/tensorflow-${PV}.dist-info
-     )
-@@ -161,7 +151,7 @@ INSANE_SKIP:${PN} += "dev-so \
- PACKAGE_BEFORE_PN += "libtensorflow-c libtensorflow-framework label-image label-image-lite python3-tensorflow"
- 
- RDEPENDS:label-image += "libtensorflow-framework"
--RDEPENDS:python3-tensorflow += "libtensorflow-framework"
-+RDEPENDS:python3-tensorflow += "libtensorflow-framework libtensorflow-c"
- RDEPENDS:${PN} += "libtensorflow-c libtensorflow-framework label-image label-image-lite python3-tensorflow"
- 
- ALLOW_EMPTY:${PN} = "1"
-@@ -169,8 +159,8 @@ ALLOW_EMPTY:${PN} = "1"
- PRIVATE_LIBS:python3-tensorflow = "libtensorflow_cc.so.2"
- 
- FILES:python3-tensorflow += "${libdir}/* ${datadir}/* ${sbindir}/*"
--FILES:libtensorflow-c = "${libdir}/libtensorflow.so ${libdir}/libtensorflow_cc.so"
--FILES:libtensorflow-framework = "${libdir}/libtensorflow.so ${libdir}/libtensorflow_framework.so*"
-+FILES:libtensorflow-c = "${libdir}/libtensorflow_cc.so*"
-+FILES:libtensorflow-framework = "${libdir}/libtensorflow_framework.so*"
- FILES:label-image = "${sbindir}/label_image"
- FILES:label-image-lite = "${sbindir}/label_image.lite"
- 
+-Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+----
+- tensorflow/workspace2.bzl                     |   2 +-
+- ...0001-fix-compile-failure-for-aarch64.patch | 110 ++++++++++++++++++
+- 2 files changed, 111 insertions(+), 1 deletion(-)
+- create mode 100644 third_party/0001-fix-compile-failure-for-aarch64.patch
+-
+-diff --git a/tensorflow/workspace2.bzl b/tensorflow/workspace2.bzl
+-index 652f271d2e6..7a7bbe286ca 100644
+---- a/tensorflow/workspace2.bzl
+-+++ b/tensorflow/workspace2.bzl
+-@@ -164,7 +164,7 @@ def _tf_repositories():
+-         name = "XNNPACK",
+-         sha256 = "435a5360d1c30b5130270afff32b398b239713e97f1aa7ea1e0a02c6c5247e17",
+-         strip_prefix = "XNNPACK-6a834a09c53765bea56b8aea9a644a90564fe3a5",
+--        patch_file = ["//third_party:0001-XNNPACK-support-32-bit-x86.patch"],
+-+        patch_file = ["//third_party:0001-XNNPACK-support-32-bit-x86.patch", "//third_party:0001-fix-compile-failure-for-aarch64.patch"],
+-         urls = tf_mirror_urls("https://github.com/google/XNNPACK/archive/6a834a09c53765bea56b8aea9a644a90564fe3a5.zip"),
+-     )
+-     # LINT.ThenChange(//tensorflow/lite/tools/cmake/modules/xnnpack.cmake)
+-diff --git a/third_party/0001-fix-compile-failure-for-aarch64.patch b/third_party/0001-fix-compile-failure-for-aarch64.patch
+-new file mode 100644
+-index 00000000000..cb0716f10c4
+---- /dev/null
+-+++ b/third_party/0001-fix-compile-failure-for-aarch64.patch
+-@@ -0,0 +1,110 @@
+-+From 37486c6b81d0298cfcbb8879253936e6c8f93b2c Mon Sep 17 00:00:00 2001
+-+From: Hongxu Jia <hongxu.jia@windriver.com>
+-+Date: Tue, 18 Mar 2025 16:06:46 +0800
+-+Subject: [PATCH] fix compile failure for aarch64
+-+
+-+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+-+---
+-+ src/f16-maxpool/f16-maxpool-9p8x-minmax-neonfp16arith-c8.c  | 4 ++--
+-+ .../f16-pavgpool-9p8x-minmax-neonfp16arith-c8.c             | 6 +++---
+-+ src/f16-pavgpool/f16-pavgpool-9x-minmax-neonfp16arith-c8.c  | 6 +++---
+-+ src/u8-maxpool/u8-maxpool-9p8x-minmax-neon-c16.c            | 4 ++--
+-+ src/u8-vclamp/u8-vclamp-neon-u64.c                          | 4 ++--
+-+ 5 files changed, 12 insertions(+), 12 deletions(-)
+-+
+-+diff --git a/src/f16-maxpool/f16-maxpool-9p8x-minmax-neonfp16arith-c8.c b/src/f16-maxpool/f16-maxpool-9p8x-minmax-neonfp16arith-c8.c
+-+index f4ce992..dd14a0c 100644
+-+--- a/src/f16-maxpool/f16-maxpool-9p8x-minmax-neonfp16arith-c8.c
+-++++ b/src/f16-maxpool/f16-maxpool-9p8x-minmax-neonfp16arith-c8.c
+-+@@ -25,8 +25,8 @@ void xnn_f16_maxpool_minmax_ukernel_9p8x__neonfp16arith_c8(
+-+   assert(kernel_elements != 0);
+-+   assert(channels != 0);
+-+ 
+-+-  const float16x8_t voutput_min = vreinterpretq_f16_u16(vld1q_dup_u16(&params->scalar.min));
+-+-  const float16x8_t voutput_max = vreinterpretq_f16_u16(vld1q_dup_u16(&params->scalar.max));
+-++  const float16x8_t voutput_min = vreinterpretq_f16_u16(vld1q_dup_u16((const uint16_t*)&params->scalar.min));
+-++  const float16x8_t voutput_max = vreinterpretq_f16_u16(vld1q_dup_u16((const uint16_t*)&params->scalar.max));
+-+   do {
+-+     uint16_t* o = (uint16_t*) output;
+-+     {
+-+diff --git a/src/f16-pavgpool/f16-pavgpool-9p8x-minmax-neonfp16arith-c8.c b/src/f16-pavgpool/f16-pavgpool-9p8x-minmax-neonfp16arith-c8.c
+-+index 29b6fa8..3cc6daf 100644
+-+--- a/src/f16-pavgpool/f16-pavgpool-9p8x-minmax-neonfp16arith-c8.c
+-++++ b/src/f16-pavgpool/f16-pavgpool-9p8x-minmax-neonfp16arith-c8.c
+-+@@ -28,8 +28,8 @@ void xnn_f16_pavgpool_minmax_ukernel_9p8x__neonfp16arith_c8(
+-+   assert(kernel_elements > 9);
+-+   assert(channels != 0);
+-+ 
+-+-  const float16x8_t voutput_min = vreinterpretq_f16_u16(vld1q_dup_u16(&params->scalar.min));
+-+-  const float16x8_t voutput_max = vreinterpretq_f16_u16(vld1q_dup_u16(&params->scalar.max));
+-++  const float16x8_t voutput_min = vreinterpretq_f16_u16(vld1q_dup_u16((const uint16_t*)&params->scalar.min));
+-++  const float16x8_t voutput_max = vreinterpretq_f16_u16(vld1q_dup_u16((const uint16_t*)&params->scalar.max));
+-+ 
+-+   do {
+-+     {
+-+@@ -236,7 +236,7 @@ void xnn_f16_pavgpool_minmax_ukernel_9p8x__neonfp16arith_c8(
+-+         i7 = (const uint16_t*) ((uintptr_t) i7 + input_offset);
+-+       }
+-+ 
+-+-      const float16x8_t vmultiplier = vreinterpretq_f16_u16(vld1q_dup_u16(multiplier)); multiplier = (const xnn_float16*) multiplier + 1;
+-++      const float16x8_t vmultiplier = vreinterpretq_f16_u16(vld1q_dup_u16((const uint16_t*)multiplier)); multiplier = (const xnn_float16*) multiplier + 1;
+-+ 
+-+       size_t c = channels;
+-+       const uint16_t* b = (const uint16_t*) buffer;
+-+diff --git a/src/f16-pavgpool/f16-pavgpool-9x-minmax-neonfp16arith-c8.c b/src/f16-pavgpool/f16-pavgpool-9x-minmax-neonfp16arith-c8.c
+-+index 79206c0..74b3da6 100644
+-+--- a/src/f16-pavgpool/f16-pavgpool-9x-minmax-neonfp16arith-c8.c
+-++++ b/src/f16-pavgpool/f16-pavgpool-9x-minmax-neonfp16arith-c8.c
+-+@@ -28,8 +28,8 @@ void xnn_f16_pavgpool_minmax_ukernel_9x__neonfp16arith_c8(
+-+   assert(kernel_elements <= 9);
+-+   assert(channels != 0);
+-+ 
+-+-  const float16x8_t voutput_min = vreinterpretq_f16_u16(vld1q_dup_u16(&params->scalar.min));
+-+-  const float16x8_t voutput_max = vreinterpretq_f16_u16(vld1q_dup_u16(&params->scalar.max));
+-++  const float16x8_t voutput_min = vreinterpretq_f16_u16(vld1q_dup_u16((const uint16_t*)&params->scalar.min));
+-++  const float16x8_t voutput_max = vreinterpretq_f16_u16(vld1q_dup_u16((const uint16_t*)&params->scalar.max));
+-+ 
+-+   do {
+-+     const uint16_t* i0 = (const uint16_t*) input[0];
+-+@@ -103,7 +103,7 @@ void xnn_f16_pavgpool_minmax_ukernel_9x__neonfp16arith_c8(
+-+       i8 = (const uint16_t*) ((uintptr_t) i8 + input_offset);
+-+     }
+-+ 
+-+-    const float16x8_t vmultiplier = vreinterpretq_f16_u16(vld1q_dup_u16(multiplier)); multiplier = (const xnn_float16*) multiplier + 1;
+-++    const float16x8_t vmultiplier = vreinterpretq_f16_u16(vld1q_dup_u16((const uint16_t*)multiplier)); multiplier = (const xnn_float16*) multiplier + 1;
+-+ 
+-+     size_t c = channels;
+-+     while (c >= 8) {
+-+diff --git a/src/u8-maxpool/u8-maxpool-9p8x-minmax-neon-c16.c b/src/u8-maxpool/u8-maxpool-9p8x-minmax-neon-c16.c
+-+index 2fb7c3f..322201b 100644
+-+--- a/src/u8-maxpool/u8-maxpool-9p8x-minmax-neon-c16.c
+-++++ b/src/u8-maxpool/u8-maxpool-9p8x-minmax-neon-c16.c
+-+@@ -28,8 +28,8 @@ void xnn_u8_maxpool_minmax_ukernel_9p8x__neon_c16(
+-+   assert(kernel_elements != 0);
+-+   assert(channels != 0);
+-+ 
+-+-  const uint8x16_t voutput_max = vld1q_dup_u8(&params->scalar.max);
+-+-  const uint8x16_t voutput_min = vld1q_dup_u8(&params->scalar.min);
+-++  const uint8x16_t voutput_max = vld1q_dup_u8((uint8_t const *)&params->scalar.max);
+-++  const uint8x16_t voutput_min = vld1q_dup_u8((uint8_t const *)&params->scalar.min);
+-+   do {
+-+     uint8_t* o = output;
+-+     {
+-+diff --git a/src/u8-vclamp/u8-vclamp-neon-u64.c b/src/u8-vclamp/u8-vclamp-neon-u64.c
+-+index c75f8d6..7387563 100644
+-+--- a/src/u8-vclamp/u8-vclamp-neon-u64.c
+-++++ b/src/u8-vclamp/u8-vclamp-neon-u64.c
+-+@@ -21,8 +21,8 @@ void xnn_u8_vclamp_ukernel__neon_u64(
+-+   assert(input != NULL);
+-+   assert(output != NULL);
+-+ 
+-+-  const uint8x16_t voutput_max = vld1q_dup_u8(&params->scalar.max);
+-+-  const uint8x16_t voutput_min = vld1q_dup_u8(&params->scalar.min);
+-++  const uint8x16_t voutput_max = vld1q_dup_u8((uint8_t const *)&params->scalar.max);
+-++  const uint8x16_t voutput_min = vld1q_dup_u8((uint8_t const *)&params->scalar.min);
+-+ 
+-+   for (; batch >= 64; batch -= 64) {
+-+     uint8x16_t vacc0 = vld1q_u8(input); input += 16;
+-+-- 
+-+2.34.1
+-+
+--- 
+-2.34.1
+-
+diff --git a/recipes-framework/tensorflow/files/0001-fix-compile-failed.patch b/recipes-framework/tensorflow/files/0001-fix-compile-failed.patch
+deleted file mode 100644
+index 26bdd5c..0000000
+--- a/recipes-framework/tensorflow/files/0001-fix-compile-failed.patch
++++ /dev/null
+@@ -1,33 +0,0 @@
+-From 26efc0555710a00ffb76deb6048637cd1309c183 Mon Sep 17 00:00:00 2001
+-From: Hongxu Jia <hongxu.jia@windriver.com>
+-Date: Tue, 23 Dec 2025 13:35:04 +0800
+-Subject: [PATCH] fix compile failed
+-
+-|tensorflow/lite/toco/graph_transformations/resolve_tensorflow_matmul.cc:177:48: error: ignoring return value of 'constexpr __gnu_cxx::__normal_iterator<_Iterator, _Container> __gnu_cxx::__normal_iterator<_Iterator, _Container>::operator+(difference_type) const [with _Iterator = std::unique_ptr<toco::Operator>*; _Container = std::vector<std::unique_ptr<toco::Operator> >; difference_type = long int]', declared with attribute 'nodiscard' [-Werror=unused-result]
+-|  177 |   model->operators.emplace(matmul_it, fc_op) + 1;
+-
+-Remove useless `+ 1';
+-
+-Upstream-Status: Pending
+-
+-Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+----
+- .../toco/graph_transformations/resolve_tensorflow_matmul.cc     | 2 +-
+- 1 file changed, 1 insertion(+), 1 deletion(-)
+-
+-diff --git a/tensorflow/lite/toco/graph_transformations/resolve_tensorflow_matmul.cc b/tensorflow/lite/toco/graph_transformations/resolve_tensorflow_matmul.cc
+-index ccca3f7a..e961891d 100644
+---- a/tensorflow/lite/toco/graph_transformations/resolve_tensorflow_matmul.cc
+-+++ b/tensorflow/lite/toco/graph_transformations/resolve_tensorflow_matmul.cc
+-@@ -174,7 +174,7 @@ TransposeOperator* FindTransposeOpWithInput(const Model& model,
+-   fc_op->outputs = matmul_op->outputs;
+- 
+-   // Insert the newly constructed FullyConnectedOperator.
+--  model->operators.emplace(matmul_it, fc_op) + 1;
+-+  model->operators.emplace(matmul_it, fc_op);
+- 
+-   // Find the op producing the array passed to this MatMul
+-   auto previous_op_it = model->operators.begin();
+--- 
+-2.34.1
+-
+diff --git a/recipes-framework/tensorflow/files/0001-support-gcc-15.patch b/recipes-framework/tensorflow/files/0001-support-gcc-15.patch
+deleted file mode 100644
+index 0914ff3..0000000
+--- a/recipes-framework/tensorflow/files/0001-support-gcc-15.patch
++++ /dev/null
+@@ -1,125 +0,0 @@
+-From 7f7553fdd8cc6b12eb7f0ceae734c8a928a9527f Mon Sep 17 00:00:00 2001
+-From: Hongxu Jia <hongxu.jia@windriver.com>
+-Date: Tue, 25 Mar 2025 22:38:37 -0700
+-Subject: [PATCH] support to build with gcc 15
+-
+-Upstream-Status: Pending
+-
+-Suggested-by: Martin Jansa <martin.jansa@gmail.com>
+-Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+----
+- ...r-internal-Explicitly-include-cstdin.patch | 35 +++++++++++++++++++
+- third_party/absl/workspace.bzl                |  1 +
+- ...r-internal-Explicitly-include-cstdin.patch | 35 +++++++++++++++++++
+- .../tsl/third_party/absl/workspace.bzl        |  1 +
+- 4 files changed, 72 insertions(+)
+- create mode 100644 third_party/absl/0001-PR-1739-container-internal-Explicitly-include-cstdin.patch
+- create mode 100644 third_party/xla/third_party/tsl/third_party/absl/0001-PR-1739-container-internal-Explicitly-include-cstdin.patch
+-
+-diff --git a/third_party/absl/0001-PR-1739-container-internal-Explicitly-include-cstdin.patch b/third_party/absl/0001-PR-1739-container-internal-Explicitly-include-cstdin.patch
+-new file mode 100644
+-index 00000000..02f6385b
+---- /dev/null
+-+++ b/third_party/absl/0001-PR-1739-container-internal-Explicitly-include-cstdin.patch
+-@@ -0,0 +1,35 @@
+-+From 809e5de7b92950849289236a5a09e9cb4f32c7b9 Mon Sep 17 00:00:00 2001
+-+From: Christopher Fore <csfore@posteo.net>
+-+Date: Mon, 5 Aug 2024 12:09:18 -0700
+-+Subject: [PATCH] PR #1739: container/internal: Explicitly include <cstdint>
+-+
+-+Imported from GitHub PR https://github.com/abseil/abseil-cpp/pull/1739
+-+
+-+GCC 15 will no longer include <cstdint> by default, resulting in build failures in projects that do not explicitly include it.
+-+
+-+Merge faf1b03a591f06933da02976119da5743f428e4f into 9cb5e5d15c142e5cc43a2c1db87c8e4e5b6d38a5
+-+
+-+Merging this change closes #1739
+-+
+-+COPYBARA_INTEGRATE_REVIEW=https://github.com/abseil/abseil-cpp/pull/1739 from csfore:gcc-15-fix faf1b03a591f06933da02976119da5743f428e4f
+-+PiperOrigin-RevId: 659637669
+-+Change-Id: If14cb0e3522774cb700bd5a74abffb75feb7a0f5
+-+---
+-+ absl/container/internal/container_memory.h | 1 +
+-+ 1 file changed, 1 insertion(+)
+-+
+-+diff --git a/absl/container/internal/container_memory.h b/absl/container/internal/container_memory.h
+-+index ba8e08a2..e7031797 100644
+-+--- a/absl/container/internal/container_memory.h
+-++++ b/absl/container/internal/container_memory.h
+-+@@ -17,6 +17,7 @@
+-+ 
+-+ #include <cassert>
+-+ #include <cstddef>
+-++#include <cstdint>
+-+ #include <cstring>
+-+ #include <memory>
+-+ #include <new>
+-+-- 
+-+2.25.1
+-+
+-diff --git a/third_party/absl/workspace.bzl b/third_party/absl/workspace.bzl
+-index d5973b13..c9004e92 100644
+---- a/third_party/absl/workspace.bzl
+-+++ b/third_party/absl/workspace.bzl
+-@@ -46,5 +46,6 @@ def repo():
+-         urls = tf_mirror_urls("https://github.com/abseil/abseil-cpp/archive/{commit}.tar.gz".format(commit = ABSL_COMMIT)),
+-         patch_file = [
+-             "//third_party/absl:nvidia_jetson.patch",
+-+            "//third_party/absl:0001-PR-1739-container-internal-Explicitly-include-cstdin.patch",
+-         ],
+-     )
+-diff --git a/third_party/xla/third_party/tsl/third_party/absl/0001-PR-1739-container-internal-Explicitly-include-cstdin.patch b/third_party/xla/third_party/tsl/third_party/absl/0001-PR-1739-container-internal-Explicitly-include-cstdin.patch
+-new file mode 100644
+-index 00000000..02f6385b
+---- /dev/null
+-+++ b/third_party/xla/third_party/tsl/third_party/absl/0001-PR-1739-container-internal-Explicitly-include-cstdin.patch
+-@@ -0,0 +1,35 @@
+-+From 809e5de7b92950849289236a5a09e9cb4f32c7b9 Mon Sep 17 00:00:00 2001
+-+From: Christopher Fore <csfore@posteo.net>
+-+Date: Mon, 5 Aug 2024 12:09:18 -0700
+-+Subject: [PATCH] PR #1739: container/internal: Explicitly include <cstdint>
+-+
+-+Imported from GitHub PR https://github.com/abseil/abseil-cpp/pull/1739
+-+
+-+GCC 15 will no longer include <cstdint> by default, resulting in build failures in projects that do not explicitly include it.
+-+
+-+Merge faf1b03a591f06933da02976119da5743f428e4f into 9cb5e5d15c142e5cc43a2c1db87c8e4e5b6d38a5
+-+
+-+Merging this change closes #1739
+-+
+-+COPYBARA_INTEGRATE_REVIEW=https://github.com/abseil/abseil-cpp/pull/1739 from csfore:gcc-15-fix faf1b03a591f06933da02976119da5743f428e4f
+-+PiperOrigin-RevId: 659637669
+-+Change-Id: If14cb0e3522774cb700bd5a74abffb75feb7a0f5
+-+---
+-+ absl/container/internal/container_memory.h | 1 +
+-+ 1 file changed, 1 insertion(+)
+-+
+-+diff --git a/absl/container/internal/container_memory.h b/absl/container/internal/container_memory.h
+-+index ba8e08a2..e7031797 100644
+-+--- a/absl/container/internal/container_memory.h
+-++++ b/absl/container/internal/container_memory.h
+-+@@ -17,6 +17,7 @@
+-+ 
+-+ #include <cassert>
+-+ #include <cstddef>
+-++#include <cstdint>
+-+ #include <cstring>
+-+ #include <memory>
+-+ #include <new>
+-+-- 
+-+2.25.1
+-+
+-diff --git a/third_party/xla/third_party/tsl/third_party/absl/workspace.bzl b/third_party/xla/third_party/tsl/third_party/absl/workspace.bzl
+-index d5973b13..c9004e92 100644
+---- a/third_party/xla/third_party/tsl/third_party/absl/workspace.bzl
+-+++ b/third_party/xla/third_party/tsl/third_party/absl/workspace.bzl
+-@@ -46,5 +46,6 @@ def repo():
+-         urls = tf_mirror_urls("https://github.com/abseil/abseil-cpp/archive/{commit}.tar.gz".format(commit = ABSL_COMMIT)),
+-         patch_file = [
+-             "//third_party/absl:nvidia_jetson.patch",
+-+            "//third_party/absl:0001-PR-1739-container-internal-Explicitly-include-cstdin.patch",
+-         ],
+-     )
+--- 
+-2.25.1
+-
+diff --git a/recipes-framework/tensorflow/files/0001-support-python-3.33.patch b/recipes-framework/tensorflow/files/0001-support-python-3.33.patch
+deleted file mode 100644
+index 22be5e7..0000000
+--- a/recipes-framework/tensorflow/files/0001-support-python-3.33.patch
++++ /dev/null
+@@ -1,87 +0,0 @@
+-From 27edd4d7142d5e0ade3941b3c946b875a199334d Mon Sep 17 00:00:00 2001
+-From: Hongxu Jia <hongxu.jia@windriver.com>
+-Date: Wed, 26 Mar 2025 00:41:51 -0700
+-Subject: [PATCH] support python 3.33
+-
+-_PyArg_NoKeywords related upstream commit [1]
+-_PyObject_VisitManagedDict/_PyObject_ClearManagedDict related upstream commit [2]
+-
+-tensorflow/python/eager/pywrap_tensor.cc:689:8: error: '_PyArg_NoKeywords' was not declared in this scope
+-  689 |   if (!_PyArg_NoKeywords("copy_to_device", kwds)) return nullptr;
+-      |        ^~~~~~~~~~~~~~~~~
+-
+-[1] https://github.com/python/cpython/commit/be5e8a010341c4d2d28ef53a1baed402ee06466e
+-[2] https://github.com/python/cpython/commit/fc2cb86d210555d509debaeefd370d5331cd9d93
+-
+-Upstream-Status: Pending
+-
+-Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+----
+- tensorflow/python/eager/pywrap_tensor.cc | 35 ++++++++++++++++++++++--
+- 1 file changed, 33 insertions(+), 2 deletions(-)
+-
+-diff --git a/tensorflow/python/eager/pywrap_tensor.cc b/tensorflow/python/eager/pywrap_tensor.cc
+-index 5bfa389e..2e44351f 100644
+---- a/tensorflow/python/eager/pywrap_tensor.cc
+-+++ b/tensorflow/python/eager/pywrap_tensor.cc
+-@@ -47,6 +47,33 @@ limitations under the License.
+- #include "tensorflow/python/lib/core/pybind11_status.h"
+- #include "tensorflow/python/lib/core/safe_pyobject_ptr.h"
+- 
+-+
+-+#if PY_VERSION_HEX > 0x030C0000
+-+/* For type constructors that don't take keyword args
+-+ *
+-+ * Sets a TypeError and returns 0 if the args/kwargs is
+-+ * not empty, returns 1 otherwise
+-+ */
+-+static int
+-+_PyArg_NoKeywords(const char *funcname, PyObject *kwargs)
+-+{
+-+    if (kwargs == NULL) {
+-+        return 1;
+-+    }
+-+    if (!PyDict_CheckExact(kwargs)) {
+-+        PyErr_BadInternalCall();
+-+        return 0;
+-+    }
+-+    if (PyDict_GET_SIZE(kwargs) == 0) {
+-+        return 1;
+-+    }
+-+
+-+    PyErr_Format(PyExc_TypeError, "%.200s() takes no keyword arguments",
+-+                    funcname);
+-+    return 0;
+-+}
+-+#endif //PY_VERSION_HEX > 0x030C0000
+-+
+- // forward declare
+- struct EagerTensor;
+- namespace tensorflow {
+-@@ -873,8 +900,10 @@ static int EagerTensor_traverse(PyObject* self, visitproc visit, void* arg) {
+- #if PY_VERSION_HEX < 0x030C0000  // < Python 3.12
+-   PyObject*& dict = *_PyObject_GetDictPtr(self);
+-   Py_VISIT(dict);
+--#else
+-+#elif PY_VERSION_HEX == 0x030C0000
+-   _PyObject_VisitManagedDict(self, visit, arg);
+-+#else
+-+  PyObject_VisitManagedDict(self, visit, arg);
+- #endif  // PY_VERSION_HEX < 0x030C0000
+-   Py_VISIT(((EagerTensor*)self)->handle_data);
+-   Py_VISIT(((EagerTensor*)self)->tensor_shape);
+-@@ -896,8 +925,10 @@ extern int EagerTensor_clear(PyObject* self) {
+- #if PY_VERSION_HEX < 0x030C0000  // < Python 3.12
+-   PyObject*& dict = *_PyObject_GetDictPtr(self);
+-   Py_CLEAR(dict);
+--#else
+-+#elif PY_VERSION_HEX == 0x030C0000
+-   _PyObject_ClearManagedDict(self);
+-+#else
+-+  PyObject_ClearManagedDict(self);
+- #endif  // PY_VERSION_HEX < 0x030C0000
+- 
+-   Py_CLEAR(((EagerTensor*)self)->handle_data);
+--- 
+-2.25.1
+-
+diff --git a/recipes-framework/tensorflow/files/0001-tensorflow-BUILD-fix-build-failure-for-aarch64.patch b/recipes-framework/tensorflow/files/0001-tensorflow-BUILD-fix-build-failure-for-aarch64.patch
+deleted file mode 100644
+index fa7f79c..0000000
+--- a/recipes-framework/tensorflow/files/0001-tensorflow-BUILD-fix-build-failure-for-aarch64.patch
++++ /dev/null
+@@ -1,27 +0,0 @@
+-From e5226c083e7546b368e28c13ab02a32b146688e8 Mon Sep 17 00:00:00 2001
+-From: Hongxu Jia <hongxu.jia@windriver.com>
+-Date: Tue, 18 Mar 2025 16:41:36 +0800
+-Subject: [PATCH] tensorflow/BUILD: fix build failure for aarch64
+-
+-Upstream-Status: Pending
+-
+-Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+----
+- tensorflow/BUILD | 1 +
+- 1 file changed, 1 insertion(+)
+-
+-diff --git a/tensorflow/BUILD b/tensorflow/BUILD
+-index e6815552ef5..6811e99be1d 100644
+---- a/tensorflow/BUILD
+-+++ b/tensorflow/BUILD
+-@@ -148,6 +148,7 @@ PACKAGE_STATIC_DEPS = [
+-     "@cuda_nvml//:__subpackages__",
+-     "@cuda_nvjitlink//:__subpackages__",
+-     "@shardy//:__subpackages__",
+-+    "@KleidiAI//:__subpackages__",
+- ] + tsl_async_value_deps()
+- 
+- package(
+--- 
+-2.34.1
+-
+diff --git a/recipes-framework/tensorflow/files/0001-third_party-ducc-fix-ambiguous-failure.patch b/recipes-framework/tensorflow/files/0001-third_party-ducc-fix-ambiguous-failure.patch
+deleted file mode 100644
+index df1cac5..0000000
+--- a/recipes-framework/tensorflow/files/0001-third_party-ducc-fix-ambiguous-failure.patch
++++ /dev/null
+@@ -1,117 +0,0 @@
+-From 064773580ba0f61ce256d995de1c3ffa13b01e23 Mon Sep 17 00:00:00 2001
+-From: Hongxu Jia <hongxu.jia@windriver.com>
+-Date: Mon, 14 Jul 2025 15:35:54 +0800
+-Subject: [PATCH] third_party/ducc: fix ambiguous failure
+-
+-...
+-bazel-out/k8-opt/bin/external/ducc/_virtual_includes/fft/ducc/src/ducc0/fft/fftnd_impl.h:1393:20: error: call of '(ducc0::detail_mav::vmav<std::complex<float>, 2>) (long unsigned int&, size_t&)' is ambiguous
+- 1393 |                 tmp(i,j) *= conj(roots[i*j]);
+-      |                 ~~~^~~~~
+-In file included from bazel-out/k8-opt/bin/external/ducc/_virtual_includes/fft/ducc/src/ducc0/fft/fft.h:65,
+-                 from external/ducc/google/fft.cc:26:
+-external/ducc/src/ducc0/infra/mav.h:803:41: note: there are 2 candidates
+-  803 | template<typename T, size_t ndim> class vmav: public cmav<T, ndim>
+-      |                                         ^~~~
+-external/ducc/src/ducc0/infra/mav.h:765:39: note: candidate 1: 'const T& ducc0::detail_mav::cmav<T, ndim>::operator()(Ns ...) const [with Ns = {long unsigned int, long unsigned int}; T = std::complex<float>; long unsigned int ndim = 2]'
+-  765 |     template<typename... Ns> const T &operator()(Ns... ns) const
+-      |                                       ^~~~~~~~
+-external/ducc/src/ducc0/infra/mav.h:856:33: note: candidate 2: 'T& ducc0::detail_mav::vmav<T, ndim>::operator()(Ns ...) const [with Ns = {long unsigned int, long unsigned int}; T = std::complex<float>; long unsigned int ndim = 2]'
+-  856 |     template<typename... Ns> T &operator()(Ns... ns) const
+-...
+-
+-Upstream-Status: Pending
+-
+-Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+----
+- .../ducc/0001-fix-ambiguous-failure.patch     | 51 +++++++++++++++++++
+- third_party/ducc/ducc.BUILD                   |  1 +
+- third_party/ducc/workspace.bzl                |  3 ++
+- 3 files changed, 55 insertions(+)
+- create mode 100644 third_party/ducc/0001-fix-ambiguous-failure.patch
+-
+-diff --git a/third_party/ducc/0001-fix-ambiguous-failure.patch b/third_party/ducc/0001-fix-ambiguous-failure.patch
+-new file mode 100644
+-index 00000000000..2abb2848952
+---- /dev/null
+-+++ b/third_party/ducc/0001-fix-ambiguous-failure.patch
+-@@ -0,0 +1,51 @@
+-+From e297a09e813aa001be02737bddd2a7a1555518a7 Mon Sep 17 00:00:00 2001
+-+From: Hongxu Jia <hongxu.jia@windriver.com>
+-+Date: Mon, 14 Jul 2025 15:21:20 +0800
+-+Subject: [PATCH] fix ambiguous failure
+-+
+-+...
+-+bazel-out/k8-opt/bin/external/ducc/_virtual_includes/fft/ducc/src/ducc0/fft/fftnd_impl.h:1393:20: error: call of '(ducc0::detail_mav::vmav<std::complex<float>, 2>) (long unsigned int&, size_t&)' is ambiguous
+-+ 1393 |                 tmp(i,j) *= conj(roots[i*j]);
+-+      |                 ~~~^~~~~
+-+In file included from bazel-out/k8-opt/bin/external/ducc/_virtual_includes/fft/ducc/src/ducc0/fft/fft.h:65,
+-+                 from external/ducc/google/fft.cc:26:
+-+external/ducc/src/ducc0/infra/mav.h:803:41: note: there are 2 candidates
+-+  803 | template<typename T, size_t ndim> class vmav: public cmav<T, ndim>
+-+      |                                         ^~~~
+-+external/ducc/src/ducc0/infra/mav.h:765:39: note: candidate 1: 'const T& ducc0::detail_mav::cmav<T, ndim>::operator()(Ns ...) const [with Ns = {long unsigned int, long unsigned int}; T = std::complex<float>; long unsigned int ndim = 2]'
+-+  765 |     template<typename... Ns> const T &operator()(Ns... ns) const
+-+      |                                       ^~~~~~~~
+-+external/ducc/src/ducc0/infra/mav.h:856:33: note: candidate 2: 'T& ducc0::detail_mav::vmav<T, ndim>::operator()(Ns ...) const [with Ns = {long unsigned int, long unsigned int}; T = std::complex<float>; long unsigned int ndim = 2]'
+-+  856 |     template<typename... Ns> T &operator()(Ns... ns) const
+-+...
+-+
+-+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+-+---
+-+ src/ducc0/infra/mav.h | 4 ++--
+-+ 1 file changed, 2 insertions(+), 2 deletions(-)
+-+
+-+diff --git a/src/ducc0/infra/mav.h b/src/ducc0/infra/mav.h
+-+index 73f0441..87a9bc9 100644
+-+--- a/src/ducc0/infra/mav.h
+-++++ b/src/ducc0/infra/mav.h
+-+@@ -640,7 +640,7 @@ template<typename T> class vfmav: public cfmav<T>
+-+ 
+-+     T *data() const
+-+      { return const_cast<T *>(tbuf::d); }
+-+-    template<typename I> T &raw(I i) const
+-++    template<typename I> const T &raw(I i) const
+-+       { return data()[i]; }
+-+ 
+-+     // no-op. Needed for template tricks.
+-+@@ -853,7 +853,7 @@ template<typename T, size_t ndim> class vmav: public cmav<T, ndim>
+-+     vfmav<T> to_fmav() const { return operator vfmav<T>(); }
+-+ 
+-+     using parent::operator();
+-+-    template<typename... Ns> T &operator()(Ns... ns) const
+-++    template<typename... Ns> const T &operator()(Ns... ns) const
+-+       { return const_cast<T &>(parent::operator()(ns...)); }
+-+ 
+-+     template<size_t nd2> vmav<T,nd2> subarray(const vector<slice> &slices) const
+-+-- 
+-+2.34.1
+-+
+-diff --git a/third_party/ducc/ducc.BUILD b/third_party/ducc/ducc.BUILD
+-index a1c4956d0a7..c82f1247629 100644
+---- a/third_party/ducc/ducc.BUILD
+-+++ b/third_party/ducc/ducc.BUILD
+-@@ -9,6 +9,7 @@ DUCC_COPTS = [
+-     "-frtti",
+-     "-fexceptions",
+-     "-ffp-contract=fast",
+-+    "-fpermissive",
+- ]
+- 
+- # This library exposes the raw DUCC fft API.  It should be used
+-diff --git a/third_party/ducc/workspace.bzl b/third_party/ducc/workspace.bzl
+-index 99c8b14cd9f..0168c5e9886 100644
+---- a/third_party/ducc/workspace.bzl
+-+++ b/third_party/ducc/workspace.bzl
+-@@ -11,6 +11,9 @@ def repo():
+-         sha256 = DUCC_SHA256,
+-         urls = tf_mirror_urls("https://gitlab.mpcdf.mpg.de/mtr/ducc/-/archive/{commit}/ducc-{commit}.tar.gz".format(commit = DUCC_COMMIT)),
+-         build_file = "//third_party/ducc:ducc.BUILD",
+-+        patch_file = [
+-+            "//third_party/ducc:0001-fix-ambiguous-failure.patch",
+-+        ],
+-         link_files = {
+-             "//third_party/ducc:ducc0_custom_lowlevel_threading.h": "google/ducc0_custom_lowlevel_threading.h",
+-             "//third_party/ducc:fft.h": "google/fft.h",
+--- 
+-2.34.1
+-
+diff --git a/recipes-framework/tensorflow/files/0002-third_party-eigen_archive-workaround-ice-failure-whi.patch b/recipes-framework/tensorflow/files/0002-third_party-eigen_archive-workaround-ice-failure-whi.patch
+deleted file mode 100644
+index 0f867b8..0000000
+--- a/recipes-framework/tensorflow/files/0002-third_party-eigen_archive-workaround-ice-failure-whi.patch
++++ /dev/null
+@@ -1,110 +0,0 @@
+-From 8ee3c4b846567938ca9369177be74fa8b8d8f178 Mon Sep 17 00:00:00 2001
+-From: Hongxu Jia <hongxu.jia@windriver.com>
+-Date: Mon, 16 May 2022 23:15:47 -0700
+-Subject: [PATCH 02/21] third_party/eigen_archive:workaround ice failure while
+- building from source with gcc 7.3.1
+-
+-The root cause is gcc ice issue:
+-https://gcc.gnu.org/bugzilla/show_bug.cgi?id=89752
+-
+-But we could not patch on native gcc,so try to workaround,
+-Refer: https://github.com/tensorflow/tensorflow/issues/25323
+-
+-Upstream-Status: Inappropriate [wr-installer specific]
+-
+-Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+----
+- ...ailure-while-building-from-source-wi.patch | 68 +++++++++++++++++++
+- third_party/eigen3/workspace.bzl              |  1 +
+- 2 files changed, 69 insertions(+)
+- create mode 100644 third_party/eigen3/0001-workaround-ice-failure-while-building-from-source-wi.patch
+-
+-diff --git a/third_party/eigen3/0001-workaround-ice-failure-while-building-from-source-wi.patch b/third_party/eigen3/0001-workaround-ice-failure-while-building-from-source-wi.patch
+-new file mode 100644
+-index 00000000000..82ef62a0d9a
+---- /dev/null
+-+++ b/third_party/eigen3/0001-workaround-ice-failure-while-building-from-source-wi.patch
+-@@ -0,0 +1,68 @@
+-+From 649d0b938aab1b7081c3895aa1f527d034edb735 Mon Sep 17 00:00:00 2001
+-+From: Hongxu Jia <hongxu.jia@windriver.com>
+-+Date: Fri, 23 Aug 2024 10:49:54 +0800
+-+Subject: [PATCH] workaround ice failure while building from source with gcc
+-+ 7.3.1
+-+
+-+The root cause is gcc ice issue:
+-+https://gcc.gnu.org/bugzilla/show_bug.cgi?id=89752
+-+
+-+But we could not patch on native gcc,so try to workaround,
+-+Refer: https://github.com/tensorflow/tensorflow/issues/25323
+-+
+-+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+-+---
+-+ unsupported/Eigen/CXX11/src/Tensor/TensorImagePatch.h | 4 +++-
+-+ unsupported/Eigen/CXX11/src/Tensor/TensorReduction.h  | 9 ++++++---
+-+ 2 files changed, 9 insertions(+), 4 deletions(-)
+-+
+-+diff --git a/unsupported/Eigen/CXX11/src/Tensor/TensorImagePatch.h b/unsupported/Eigen/CXX11/src/Tensor/TensorImagePatch.h
+-+index 291301a..94e78ba 100644
+-+--- a/unsupported/Eigen/CXX11/src/Tensor/TensorImagePatch.h
+-++++ b/unsupported/Eigen/CXX11/src/Tensor/TensorImagePatch.h
+-+@@ -531,7 +531,9 @@ struct TensorEvaluator<const TensorImagePatchOp<Rows, Cols, ArgType>, Device> {
+-+     EIGEN_ALIGN_MAX std::remove_const_t<CoeffReturnType> values[PacketSize];
+-+     EIGEN_UNROLL_LOOP
+-+     for (int i = 0; i < PacketSize; ++i) {
+-+-      values[i] = coeff(index + i);
+-++      Self::CoeffReturnType a = coeff(index+i);
+-++      values[i] = a;
+-++
+-+     }
+-+     PacketReturnType rslt = internal::pload<PacketReturnType>(values);
+-+     return rslt;
+-+diff --git a/unsupported/Eigen/CXX11/src/Tensor/TensorReduction.h b/unsupported/Eigen/CXX11/src/Tensor/TensorReduction.h
+-+index 2ecbb7c..ae0f745 100644
+-+--- a/unsupported/Eigen/CXX11/src/Tensor/TensorReduction.h
+-++++ b/unsupported/Eigen/CXX11/src/Tensor/TensorReduction.h
+-+@@ -838,8 +838,9 @@ struct TensorReductionEvaluatorBase<const TensorReductionOp<Op, Dims, ArgType, M
+-+       const Index firstIndex = firstInput(index);
+-+       for (Index i = 0; i < PacketSize; ++i) {
+-+         Op reducer(m_reducer);
+-+-        values[i] = internal::InnerMostDimReducer<Self, Op>::reduce(*this, firstIndex + i * num_values_to_reduce,
+-++        Self::CoeffReturnType a = internal::InnerMostDimReducer<Self, Op>::reduce(*this, firstIndex + i * num_values_to_reduce,
+-+                                                                     num_values_to_reduce, reducer);
+-++        values[i] = a;
+-+       }
+-+     } else if (PreservingInnerMostDims) {
+-+       const Index firstIndex = firstInput(index);
+-+@@ -852,12 +853,14 @@ struct TensorReductionEvaluatorBase<const TensorReductionOp<Op, Dims, ArgType, M
+-+         return reducer.finalizePacket(accum);
+-+       } else {
+-+         for (int i = 0; i < PacketSize; ++i) {
+-+-          values[i] = coeff(index + i);
+-++          Self::CoeffReturnType a = coeff(index + i);
+-++          values[i] = a;
+-+         }
+-+       }
+-+     } else {
+-+       for (int i = 0; i < PacketSize; ++i) {
+-+-        values[i] = coeff(index + i);
+-++        Self::CoeffReturnType a = coeff(index + i);
+-++        values[i] = a;
+-+       }
+-+     }
+-+     PacketReturnType rslt = internal::pload<PacketReturnType>(values);
+-+-- 
+-+2.27.0
+-+
+-diff --git a/third_party/eigen3/workspace.bzl b/third_party/eigen3/workspace.bzl
+-index f06eca368c1..40bdebd6796 100644
+---- a/third_party/eigen3/workspace.bzl
+-+++ b/third_party/eigen3/workspace.bzl
+-@@ -14,6 +14,7 @@ def repo():
+-     tf_http_archive(
+-         name = "eigen_archive",
+-         build_file = "//third_party/eigen3:eigen_archive.BUILD",
+-+        patch_file = ["//third_party/eigen3:0001-workaround-ice-failure-while-building-from-source-wi.patch"],
+-         sha256 = EIGEN_SHA256,
+-         strip_prefix = "eigen-{commit}".format(commit = EIGEN_COMMIT),
+-         urls = tf_mirror_urls("https://gitlab.com/libeigen/eigen/-/archive/{commit}/eigen-{commit}.tar.gz".format(commit = EIGEN_COMMIT)),
+--- 
+-2.25.1
+-
+diff --git a/recipes-framework/tensorflow/files/0004-drop-v2-config.patch b/recipes-framework/tensorflow/files/0004-drop-v2-config.patch
+deleted file mode 100644
+index 0757479..0000000
+--- a/recipes-framework/tensorflow/files/0004-drop-v2-config.patch
++++ /dev/null
+@@ -1,29 +0,0 @@
+-From c8b9cc1bdfcfd9aedd4f79a50cc3c3e3e6a289ee Mon Sep 17 00:00:00 2001
+-From: Hongxu Jia <hongxu.jia@windriver.com>
+-Date: Fri, 14 Mar 2025 20:52:17 -0700
+-Subject: [PATCH 04/21] drop v2 config
+-
+-Upstream-Status: Inappropriate [oe specific]
+-
+-Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+----
+- .bazelrc | 3 ---
+- 1 file changed, 3 deletions(-)
+-
+-diff --git a/.bazelrc b/.bazelrc
+-index b9f83146895..be80729ac91 100644
+---- a/.bazelrc
+-+++ b/.bazelrc
+-@@ -111,9 +111,6 @@ build --define=with_xla_support=true
+- # TODO(mihaimaruseac): Document this option or remove if no longer needed
+- build --config=short_logs
+- 
+--# TODO(mihaimaruseac): Document this option or remove if no longer needed
+--build --config=v2
+--
+- # TF now has `cc_shared_library` targets, so it needs the experimental flag
+- # TODO(rostam): Remove when `cc_shared_library` is enabled by default
+- build --experimental_cc_shared_library
+--- 
+-2.25.1
+-
+diff --git a/recipes-framework/tensorflow/files/0006-fix-build-failure.patch b/recipes-framework/tensorflow/files/0006-fix-build-failure.patch
+deleted file mode 100644
+index 874445d..0000000
+--- a/recipes-framework/tensorflow/files/0006-fix-build-failure.patch
++++ /dev/null
+@@ -1,54 +0,0 @@
+-From 070c20a48baa430740b127e05d840ae4d8781606 Mon Sep 17 00:00:00 2001
+-From: Hongxu Jia <hongxu.jia@windriver.com>
+-Date: Mon, 4 Mar 2024 15:07:58 +0800
+-Subject: [PATCH 06/21] fix build failure
+-
+-...
+-ERROR: /buildarea/raid5/hjia/wrlinux-24/build_master-wr_ts_intel_2024030114/build/tmp-glibc/work/x86_64-linux/tensorflow-native/2.16.0/git/tensorflow/BUILD:1173:21: in cc_shared_library rule //tensorflow:libtensorflow_framework.so.2.16.0:
+-Traceback (most recent call last):
+-    File "/virtual_builtins_bzl/common/cc/experimental_cc_shared_library.bzl", line 453, column 105, in _cc_shared_library_impl
+-    File "/virtual_builtins_bzl/common/cc/experimental_cc_shared_library.bzl", line 349, column 37, in _filter_inputs
+-    File "/virtual_builtins_bzl/common/cc/experimental_cc_shared_library.bzl", line 386, column 9, in _throw_error_if_unaccounted_libs
+-Error in fail: The following libraries cannot be linked either statically or dynamically:
+-@riegeli//riegeli/bytes:fd_reader
+-@riegeli//riegeli/bytes:fd_internal
+-@riegeli//riegeli/bytes:fd_internal_for_headers
+-@riegeli//riegeli/bytes:buffered_writer
+-@riegeli//riegeli/records:record_reader
+-@riegeli//riegeli/records:chunk_reader
+-@riegeli//riegeli/records:record_position
+-@riegeli//riegeli/records:block
+-@riegeli//riegeli/bytes:string_writer
+-@riegeli//riegeli/ordered_varint:ordered_varint_reading
+-(and 74 others)
+-
+-To ignore which libraries get linked statically for now, add the following to 'static_deps':
+-        "@riegeli//:__subpackages__",
+-        "@org_brotli//:__subpackages__",
+-        "@net_zstd//:__subpackages__",
+-...
+-
+-Upstream-Status: Inappropriate [Yocto specific]
+-
+-Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+----
+- tensorflow/BUILD | 3 +++
+- 1 file changed, 3 insertions(+)
+-
+-diff --git a/tensorflow/BUILD b/tensorflow/BUILD
+-index 0a74d6a9613..7f5e0172c59 100644
+---- a/tensorflow/BUILD
+-+++ b/tensorflow/BUILD
+-@@ -129,6 +129,9 @@ PACKAGE_STATIC_DEPS = [
+-     "@triton//:__subpackages__",
+-     "@local_tsl//:__subpackages__",
+-     "@local_xla//:__subpackages__",
+-+    "@riegeli//:__subpackages__",
+-+    "@org_brotli//:__subpackages__",
+-+    "@net_zstd//:__subpackages__",
+- ] + tsl_async_value_deps()
+- 
+- package(
+--- 
+-2.25.1
+-
+diff --git a/recipes-framework/tensorflow/files/0007-support-hermetic-Python.patch b/recipes-framework/tensorflow/files/0007-support-hermetic-Python.patch
+deleted file mode 100644
+index 160fe8c..0000000
+--- a/recipes-framework/tensorflow/files/0007-support-hermetic-Python.patch
++++ /dev/null
+@@ -1,75 +0,0 @@
+-From e9292d3cd7aa826b9e268c47e8d642631abc3428 Mon Sep 17 00:00:00 2001
+-From: Hongxu Jia <hongxu.jia@windriver.com>
+-Date: Mon, 4 Mar 2024 17:44:35 +0800
+-Subject: [PATCH 07/21] support hermetic Python
+-
+-Due to commit [e85860e8382 use hermetic Python in Tensorflow. See
+-ci/official/requirements_updater/README.md for details.] applied
+-
+-It use hermetic Python to instead of external Python
+-
+-Upstream-Status: Inappropriate [Yocto specific]
+-
+-Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+----
+- tensorflow/BUILD                      | 3 +++
+- tensorflow/compiler/tf2tensorrt/BUILD | 1 +
+- tensorflow/python/BUILD               | 2 ++
+- tensorflow/tensorflow.bzl             | 2 ++
+- 4 files changed, 8 insertions(+)
+-
+-diff --git a/tensorflow/BUILD b/tensorflow/BUILD
+-index 7f5e0172c59..94c9a9721ac 100644
+---- a/tensorflow/BUILD
+-+++ b/tensorflow/BUILD
+-@@ -132,6 +132,9 @@ PACKAGE_STATIC_DEPS = [
+-     "@riegeli//:__subpackages__",
+-     "@org_brotli//:__subpackages__",
+-     "@net_zstd//:__subpackages__",
+-+    "@ducc//:__subpackages__",
+-+    "@pybind11//:__subpackages__",
+-+    "@python_x86_64-unknown-linux-gnu//:__subpackages__",
+- ] + tsl_async_value_deps()
+- 
+- package(
+-diff --git a/tensorflow/compiler/tf2tensorrt/BUILD b/tensorflow/compiler/tf2tensorrt/BUILD
+-index 777ee26c975..26031381521 100644
+---- a/tensorflow/compiler/tf2tensorrt/BUILD
+-+++ b/tensorflow/compiler/tf2tensorrt/BUILD
+-@@ -1093,6 +1093,7 @@ pybind_extension(
+-         "@zlib//:__subpackages__",
+-         "@local_tsl//tsl:__subpackages__",
+-         "@local_xla//xla:__subpackages__",
+-+        "@python_x86_64-unknown-linux-gnu//:__subpackages__",
+-     ],
+-     deps = [
+-         ":common_utils",
+-diff --git a/tensorflow/python/BUILD b/tensorflow/python/BUILD
+-index 8a781badc68..d79d3f204ee 100644
+---- a/tensorflow/python/BUILD
+-+++ b/tensorflow/python/BUILD
+-@@ -754,6 +754,8 @@ pywrap_tensorflow_macro(
+-         "@zlib//:__subpackages__",
+-         "@local_tsl//tsl:__subpackages__",
+-         "@local_xla//xla:__subpackages__",
+-+        "@pypi_numpy//:__subpackages__",
+-+        "@python_x86_64-unknown-linux-gnu//:__subpackages__",
+-     ] + tsl_async_value_deps(),
+-     win_def_file = ":pywrap_tensorflow_filtered_def_file",
+-     deps = [
+-diff --git a/tensorflow/tensorflow.bzl b/tensorflow/tensorflow.bzl
+-index 34193f2580b..e2c01533dba 100644
+---- a/tensorflow/tensorflow.bzl
+-+++ b/tensorflow/tensorflow.bzl
+-@@ -3433,6 +3433,8 @@ def tf_python_pybind_static_deps(testonly = False):
+-         "@upb//:__subpackages__",
+-         "@zlib//:__subpackages__",
+-         "@local_tsl//tsl:__subpackages__",
+-+        "@python_x86_64-unknown-linux-gnu//:__subpackages__",
+-+        "@pypi_numpy//:__subpackages__",
+-     ]
+-     static_deps += tsl_async_value_deps()
+-     static_deps += [] if not testonly else [
+--- 
+-2.25.1
+-
+diff --git a/recipes-framework/tensorflow/files/0009-Fix-build-with-gcc-12.patch b/recipes-framework/tensorflow/files/0009-Fix-build-with-gcc-12.patch
+deleted file mode 100644
+index 78fe772..0000000
+--- a/recipes-framework/tensorflow/files/0009-Fix-build-with-gcc-12.patch
++++ /dev/null
+@@ -1,35 +0,0 @@
+-From 97064d09e1ae84a70462b7f4375ae7c83f346530 Mon Sep 17 00:00:00 2001
+-From: Hongxu Jia <hongxu.jia@windriver.com>
+-Date: Fri, 28 Jun 2024 11:27:15 +0800
+-Subject: [PATCH 09/21] Fix build with gcc-12
+-
+-```
+-external/net_zstd/compress/zstd_lazy.c:603:30: error: inlining failed in call to 'always_inline' 'ZSTD_HcFindBestMatch_extDict_selectMLS': function not considered for inlining
+-  603 | FORCE_INLINE_TEMPLATE size_t ZSTD_HcFindBestMatch_extDict_selectMLS (
+-      |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-```
+-
+-Upstream-Status: Pending
+-
+-Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+----
+- third_party/net_zstd.BUILD | 5 +++++
+- 1 file changed, 5 insertions(+)
+-
+-diff --git a/third_party/net_zstd.BUILD b/third_party/net_zstd.BUILD
+-index 4bd4c2960e1..45e73ec3831 100644
+---- a/third_party/net_zstd.BUILD
+-+++ b/third_party/net_zstd.BUILD
+-@@ -16,4 +16,9 @@ cc_library(
+-         "decompress/*.h",
+-     ]),
+-     hdrs = ["zstd.h"],
+-+    copts = select({
+-+        "//conditions:default": [
+-+            "-DZSTD_NO_INLINE",
+-+        ],
+-+    }),
+- )
+--- 
+-2.25.1
+-
+diff --git a/recipes-framework/tensorflow/files/0010-fix-patchelf-not-found.patch b/recipes-framework/tensorflow/files/0010-fix-patchelf-not-found.patch
+deleted file mode 100644
+index 02afff3..0000000
+--- a/recipes-framework/tensorflow/files/0010-fix-patchelf-not-found.patch
++++ /dev/null
+@@ -1,33 +0,0 @@
+-From 83b45279d16ce25d3134c2549c76dcf3624f6868 Mon Sep 17 00:00:00 2001
+-From: Hongxu Jia <hongxu.jia@windriver.com>
+-Date: Fri, 14 Mar 2025 21:20:49 -0700
+-Subject: [PATCH 10/21] fix patchelf not found
+-
+-Set use_default_shell_env=True [1] use the default shell environment
+-PATH to provide command patchelf
+-
+-[1] https://bazel.build/rules/lib/builtins/actions#run
+-
+-Upstream-Status: Inappropriate [wr-installer specific]
+-
+-Rebase  to 2.19
+-Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+----
+- tensorflow/tools/pip_package/utils/tf_wheel.bzl | 1 +
+- 1 file changed, 1 insertion(+)
+-
+-diff --git a/tensorflow/tools/pip_package/utils/tf_wheel.bzl b/tensorflow/tools/pip_package/utils/tf_wheel.bzl
+-index 057779e946e..01effece9d2 100644
+---- a/tensorflow/tools/pip_package/utils/tf_wheel.bzl
+-+++ b/tensorflow/tools/pip_package/utils/tf_wheel.bzl
+-@@ -119,6 +119,7 @@ def _tf_wheel_impl(ctx):
+-         inputs = srcs + headers + xla_aot,
+-         outputs = [output_file],
+-         executable = executable,
+-+        use_default_shell_env = True,
+-     )
+-     return [DefaultInfo(files = depset(direct = [output_file]))]
+- 
+--- 
+-2.25.1
+-
+diff --git a/recipes-framework/tensorflow/files/0011-fix-llvm-project-timeout-occasionally.patch b/recipes-framework/tensorflow/files/0011-fix-llvm-project-timeout-occasionally.patch
+deleted file mode 100644
+index a49c48f..0000000
+--- a/recipes-framework/tensorflow/files/0011-fix-llvm-project-timeout-occasionally.patch
++++ /dev/null
+@@ -1,97 +0,0 @@
+-From af8cc2dcef0bf3adcb98acb1d432f2f8c8fd108b Mon Sep 17 00:00:00 2001
+-From: Hongxu Jia <hongxu.jia@windriver.com>
+-Date: Wed, 16 Oct 2024 14:48:23 +0800
+-Subject: [PATCH 11/21] fix llvm-project timeout occasionally
+-
+-While CPU and memory usage is hight during building, llvm-project timeout occasionally
+-'''
+-ERROR: An error occurred during the fetch of repository 'llvm-project':
+-   Traceback (most recent call last):
+-    File "bazel/output_base/external/llvm-raw/utils/bazel/configure.bzl", line 150, column 25, in _llvm_configure_impl
+-        _overlay_directories(repository_ctx)
+-    File "bazel/output_base/external/llvm-raw/utils/bazel/configure.bzl", line 60, column 13, in _overlay_directories
+-        fail(("Failed to execute overlay script: '{cmd}'\n" +
+-Error in fail: Failed to execute overlay script: 'python3 bazel/output_base/external/llvm-raw/utils/bazel/overlay_directories.py --src bazel/output_base/external/llvm-raw --overlay bazel/output_base/external/llvm-raw/utils/bazel/llvm-project-overlay --target .'
+-Exited with code 256
+-stdout:
+-
+-stderr:
+-Timed out
+-'''
+-
+-Set timeout to 600s as workaround
+-
+-Upstream-Status: Pending
+-
+-Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+----
+- .../llvm/0001-Set-timeout-to-600s.patch       | 44 +++++++++++++++++++
+- third_party/llvm/workspace.bzl                |  1 +
+- 2 files changed, 45 insertions(+)
+- create mode 100644 third_party/llvm/0001-Set-timeout-to-600s.patch
+-
+-diff --git a/third_party/llvm/0001-Set-timeout-to-600s.patch b/third_party/llvm/0001-Set-timeout-to-600s.patch
+-new file mode 100644
+-index 00000000000..c48ce980474
+---- /dev/null
+-+++ b/third_party/llvm/0001-Set-timeout-to-600s.patch
+-@@ -0,0 +1,44 @@
+-+From 601ffb61604d2bb2d4ac04630175f096d031caae Mon Sep 17 00:00:00 2001
+-+From: Hongxu Jia <hongxu.jia@windriver.com>
+-+Date: Wed, 16 Oct 2024 14:43:21 +0800
+-+Subject: [PATCH] Set timeout to 600s
+-+
+-+While CPU and memory usage is hight during building, llvm-project timeout occasionally
+-+'''
+-+ERROR: An error occurred during the fetch of repository 'llvm-project':
+-+   Traceback (most recent call last):
+-+    File "bazel/output_base/external/llvm-raw/utils/bazel/configure.bzl", line 150, column 25, in _llvm_configure_impl
+-+        _overlay_directories(repository_ctx)
+-+    File "bazel/output_base/external/llvm-raw/utils/bazel/configure.bzl", line 60, column 13, in _overlay_directories
+-+        fail(("Failed to execute overlay script: '{cmd}'\n" +
+-+Error in fail: Failed to execute overlay script: 'python3 bazel/output_base/external/llvm-raw/utils/bazel/overlay_directories.py --src bazel/output_base/external/llvm-raw --overlay bazel/output_base/external/llvm-raw/utils/bazel/llvm-project-overlay --target .'
+-+Exited with code 256
+-+stdout:
+-+
+-+stderr:
+-+Timed out
+-+'''
+-+
+-+Set timeout to 600s as workaround
+-+
+-+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+-+---
+-+ utils/bazel/configure.bzl | 2 +-
+-+ 1 file changed, 1 insertion(+), 1 deletion(-)
+-+
+-+diff --git a/utils/bazel/configure.bzl b/utils/bazel/configure.bzl
+-+index 717b86d..75a0275 100644
+-+--- a/utils/bazel/configure.bzl
+-++++ b/utils/bazel/configure.bzl
+-+@@ -54,7 +54,7 @@ def _overlay_directories(repository_ctx):
+-+         "--target",
+-+         ".",
+-+     ]
+-+-    exec_result = repository_ctx.execute(cmd, timeout = 20)
+-++    exec_result = repository_ctx.execute(cmd, timeout = 600)
+-+ 
+-+     if exec_result.return_code != 0:
+-+         fail(("Failed to execute overlay script: '{cmd}'\n" +
+-+-- 
+-+2.27.0
+-+
+-diff --git a/third_party/llvm/workspace.bzl b/third_party/llvm/workspace.bzl
+-index dc3ceaddaea..dfd9104b22c 100644
+---- a/third_party/llvm/workspace.bzl
+-+++ b/third_party/llvm/workspace.bzl
+-@@ -22,6 +22,7 @@ def repo(name):
+-             "//third_party/llvm:mathextras.patch",
+-             "//third_party/llvm:toolchains.patch",
+-             "//third_party/llvm:zstd.patch",
+-+            "//third_party/llvm:0001-Set-timeout-to-600s.patch",
+-         ],
+-         link_files = {"//third_party/llvm:run_lit.sh": "mlir/run_lit.sh"},
+-     )
+--- 
+-2.25.1
+-
+diff --git a/recipes-framework/tensorflow/files/0012-disable-avxvnni-and-avx512fp16-for-x86.patch b/recipes-framework/tensorflow/files/0012-disable-avxvnni-and-avx512fp16-for-x86.patch
+deleted file mode 100644
+index eda7399..0000000
+--- a/recipes-framework/tensorflow/files/0012-disable-avxvnni-and-avx512fp16-for-x86.patch
++++ /dev/null
+@@ -1,99 +0,0 @@
+-From de2ce94a7b3b9d2475c98858257c9abe7a41819c Mon Sep 17 00:00:00 2001
+-From: Hongxu Jia <hongxu.jia@windriver.com>
+-Date: Fri, 14 Mar 2025 21:46:17 -0700
+-Subject: [PATCH] disable avxvnni and avx512fp16 for x86
+-
+-If host gcc is too old to support option -mavxvnni, the compile failed
+-...
+-DEBUG:  | gcc: error: unrecognized command line option '-mavxvnni'; did you mean '-mavx512vnni'?
+-...
+-DEBUG:  | gcc: error: unrecognized command-line option '-mavx512fp16'; did you mean '-mavx512bf16'?
+-...
+-
+-Disable avxvnni and avx512fp16 for x86, use android as workaround
+-for native build
+-
+-Upstream-Status: Inappropriate [Yocto specific]
+-
+-Rebase to 2.19
+-Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+----
+- tensorflow/workspace2.bzl                     |  1 +
+- .../0001-disable-avxvnni-and-avx512fp16.patch | 53 +++++++++++++++++++
+- 2 files changed, 54 insertions(+)
+- create mode 100644 third_party/0001-disable-avxvnni-and-avx512fp16.patch
+-
+-diff --git a/tensorflow/workspace2.bzl b/tensorflow/workspace2.bzl
+-index 146e7353c3e..b356c665fb6 100644
+---- a/tensorflow/workspace2.bzl
+-+++ b/tensorflow/workspace2.bzl
+-@@ -156,6 +156,7 @@ def _tf_repositories():
+-         name = "XNNPACK",
+-         sha256 = "435a5360d1c30b5130270afff32b398b239713e97f1aa7ea1e0a02c6c5247e17",
+-         strip_prefix = "XNNPACK-6a834a09c53765bea56b8aea9a644a90564fe3a5",
+-+        patch_file = ["//third_party:0001-disable-avxvnni-and-avx512fp16.patch"],
+-         urls = tf_mirror_urls("https://github.com/google/XNNPACK/archive/6a834a09c53765bea56b8aea9a644a90564fe3a5.zip"),
+-     )
+-     # LINT.ThenChange(//tensorflow/lite/tools/cmake/modules/xnnpack.cmake)
+-diff --git a/third_party/0001-disable-avxvnni-and-avx512fp16.patch b/third_party/0001-disable-avxvnni-and-avx512fp16.patch
+-new file mode 100644
+-index 00000000000..b08793892a4
+---- /dev/null
+-+++ b/third_party/0001-disable-avxvnni-and-avx512fp16.patch
+-@@ -0,0 +1,53 @@
+-+From b76589ac2c2cd8dd56913dd21ab3c74653b7f8c5 Mon Sep 17 00:00:00 2001
+-+From: Hongxu Jia <hongxu.jia@windriver.com>
+-+Date: Tue, 15 Oct 2024 15:05:44 +0800
+-+Subject: [PATCH] disable avxvnni and avx512fp16
+-+
+-+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+-+---
+-+ BUILD.bazel | 8 ++++----
+-+ 1 file changed, 4 insertions(+), 4 deletions(-)
+-+
+-+diff --git a/BUILD.bazel b/BUILD.bazel
+-+index a5ce1d0..05d6660 100644
+-+--- a/BUILD.bazel
+-++++ b/BUILD.bazel
+-+@@ -1834,7 +1834,7 @@ alias(
+-+ selects.config_setting_group(
+-+     name = "avx512vnnigfni_enabled_by_default",
+-+     match_any = [
+-+-        "//build_config:x86",
+-++        "//build_config:android",
+-+     ],
+-+ )
+-+ 
+-+@@ -1850,7 +1850,7 @@ alias(
+-+ selects.config_setting_group(
+-+     name = "avx512amx_enabled_by_default",
+-+     match_any = [
+-+-        "//build_config:x86",
+-++        "//build_config:android",
+-+     ],
+-+ )
+-+ 
+-+@@ -1867,7 +1867,7 @@ alias(
+-+ selects.config_setting_group(
+-+     name = "avx512fp16_enabled_by_default",
+-+     match_any = [
+-+-        "//build_config:x86",
+-++        "//build_config:android",
+-+     ],
+-+ )
+-+ 
+-+@@ -1883,7 +1883,7 @@ alias(
+-+ selects.config_setting_group(
+-+     name = "avxvnni_enabled_by_default",
+-+     match_any = [
+-+-        "//build_config:x86",
+-++        "//build_config:android",
+-+     ],
+-+ )
+-+ 
+-+-- 
+-+2.25.1
+-+
+--- 
+-2.25.1
+-
+diff --git a/recipes-framework/tensorflow/files/0013-fix-build-tensorflow-lite-examples-label_image-label.patch b/recipes-framework/tensorflow/files/0013-fix-build-tensorflow-lite-examples-label_image-label.patch
+deleted file mode 100644
+index 11d4b69..0000000
+--- a/recipes-framework/tensorflow/files/0013-fix-build-tensorflow-lite-examples-label_image-label.patch
++++ /dev/null
+@@ -1,51 +0,0 @@
+-From 8c8f8475ed29f1d160820b38ef89330413746814 Mon Sep 17 00:00:00 2001
+-From: Hongxu Jia <hongxu.jia@windriver.com>
+-Date: Tue, 17 Aug 2021 16:00:24 +0800
+-Subject: [PATCH 13/21] fix build
+- //tensorflow/lite/examples/label_image:label_image failure
+-
+-It caused undefined reference neon_tensor_utils failure
+-...
+-|tensor_utils.cc:(.text._ZN6tflite12tensor_utils18ReductionSumVectorEPKfPfii+0x0):
+-undefined reference to
+-`tflite::tensor_utils::NeonReductionSumVector(float const*,
+-float*, int, int)'
+-...
+-
+-Define Yocto specific cpu `armeabi' for lite label_image
+-Upstream-Status: Inappropriate [oe specific]
+-
+-Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+----
+- tensorflow/lite/kernels/internal/BUILD | 8 ++++++++
+- 1 file changed, 8 insertions(+)
+-
+-diff --git a/tensorflow/lite/kernels/internal/BUILD b/tensorflow/lite/kernels/internal/BUILD
+-index 2a1f510c131..90710e7751e 100644
+---- a/tensorflow/lite/kernels/internal/BUILD
+-+++ b/tensorflow/lite/kernels/internal/BUILD
+-@@ -135,6 +135,13 @@ config_setting(
+-     },
+- )
+- 
+-+config_setting(
+-+    name = "armeabi",
+-+    values = {
+-+        "cpu": "armeabi",
+-+    },
+-+)
+-+
+- config_setting(
+-     name = "haswell",
+-     values = {
+-@@ -287,6 +294,7 @@ selects.config_setting_group(
+-         ":arm",
+-         ":arm64-v8a",
+-         ":armeabi-v7a",
+-+        ":armeabi",
+-         ":armhf",
+-         ":armv7a",
+-         ":ios_armv7",
+--- 
+-2.25.1
+-
+diff --git a/recipes-framework/tensorflow/files/0016-CheckFeatureOrDie-use-warning-to-avoid-die.patch b/recipes-framework/tensorflow/files/0016-CheckFeatureOrDie-use-warning-to-avoid-die.patch
+deleted file mode 100644
+index 535577f..0000000
+--- a/recipes-framework/tensorflow/files/0016-CheckFeatureOrDie-use-warning-to-avoid-die.patch
++++ /dev/null
+@@ -1,41 +0,0 @@
+-From 1e8c86efa405e738cf0d166d1ffc08b2cad180e1 Mon Sep 17 00:00:00 2001
+-From: Hongxu Jia <hongxu.jia@windriver.com>
+-Date: Mon, 16 May 2022 00:39:33 -0700
+-Subject: [PATCH 16/21] CheckFeatureOrDie: use warning to avoid die
+-
+-Run 32-bit tensorflow on qemux86-64, it broke at CheckFeatureOrDie,
+-use warning to workaround.
+-
+-Upstream-Status: Inappropriate [oe specific]
+-
+-Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+----
+- tensorflow/core/platform/cpu_feature_guard.cc | 7 -------
+- 1 file changed, 7 deletions(-)
+-
+-diff --git a/tensorflow/core/platform/cpu_feature_guard.cc b/tensorflow/core/platform/cpu_feature_guard.cc
+-index 748dc21090a..ecc9504864d 100644
+---- a/tensorflow/core/platform/cpu_feature_guard.cc
+-+++ b/tensorflow/core/platform/cpu_feature_guard.cc
+-@@ -36,18 +36,11 @@ void CheckFeatureOrDie(CPUFeature feature, const std::string& feature_name) {
+-     const auto error_msg =
+-         "The TensorFlow library was compiled to use " + feature_name +
+-         " instructions, but these aren't available on your machine.";
+--#ifdef __ANDROID__
+-     // Some Android emulators seem to indicate they don't support SSE, so we
+-     // only issue a warning to avoid crashes when testing. We use the logging
+-     // framework here because std::cout and std::cerr made some Android targets
+-     // crash.
+-     LOG(WARNING) << error_msg;
+--#else
+--    // Avoiding use of the logging framework here as that might trigger a SIGILL
+--    // by itself.
+--    std::cerr << error_msg << std::endl;
+--    std::abort();
+--#endif
+-   }
+- }
+- 
+--- 
+-2.25.1
+-
+diff --git a/recipes-framework/tensorflow/files/0017-support-32-bit-x64-and-arm-for-yocto.patch b/recipes-framework/tensorflow/files/0017-support-32-bit-x64-and-arm-for-yocto.patch
+deleted file mode 100644
+index 52c0242..0000000
+--- a/recipes-framework/tensorflow/files/0017-support-32-bit-x64-and-arm-for-yocto.patch
++++ /dev/null
+@@ -1,123 +0,0 @@
+-From af21da31255daa2aac1f09e81b449c234c6e2bbb Mon Sep 17 00:00:00 2001
+-From: Hongxu Jia <hongxu.jia@windriver.com>
+-Date: Fri, 14 Mar 2025 21:37:30 -0700
+-Subject: [PATCH 17/21] support 32 bit x64 and arm for yocto
+-
+-Upstream-Status: Inappropriate [oe specific]
+-
+-Rebase to 2.19
+-
+-Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+----
+- tensorflow/BUILD                              |  3 ---
+- tensorflow/workspace2.bzl                     |  3 ++-
+- .../0001-XNNPACK-support-32-bit-x86.patch     | 27 +++++++++++++++++++
+- .../0001-cpuinfo-support-32-bit-x86.patch     | 27 +++++++++++++++++++
+- 4 files changed, 56 insertions(+), 4 deletions(-)
+- create mode 100644 third_party/0001-XNNPACK-support-32-bit-x86.patch
+- create mode 100644 third_party/0001-cpuinfo-support-32-bit-x86.patch
+-
+-diff --git a/tensorflow/BUILD b/tensorflow/BUILD
+-index c7d4410cbbd..17cec29b1f9 100644
+---- a/tensorflow/BUILD
+-+++ b/tensorflow/BUILD
+-@@ -273,9 +273,6 @@ config_setting(
+-         [],
+-     ),
+-     values = dict(
+--        if_oss(
+--            {"crosstool_top": "//external:android/crosstool"},
+--        ),
+-         cpu = "x86",
+-     ),
+-     visibility = ["//visibility:public"],
+-diff --git a/tensorflow/workspace2.bzl b/tensorflow/workspace2.bzl
+-index 48b5b385211..652f271d2e6 100644
+---- a/tensorflow/workspace2.bzl
+-+++ b/tensorflow/workspace2.bzl
+-@@ -164,6 +164,7 @@ def _tf_repositories():
+-         name = "XNNPACK",
+-         sha256 = "435a5360d1c30b5130270afff32b398b239713e97f1aa7ea1e0a02c6c5247e17",
+-         strip_prefix = "XNNPACK-6a834a09c53765bea56b8aea9a644a90564fe3a5",
+-+        patch_file = ["//third_party:0001-XNNPACK-support-32-bit-x86.patch"],
+-         urls = tf_mirror_urls("https://github.com/google/XNNPACK/archive/6a834a09c53765bea56b8aea9a644a90564fe3a5.zip"),
+-     )
+-     # LINT.ThenChange(//tensorflow/lite/tools/cmake/modules/xnnpack.cmake)
+-@@ -194,7 +195,7 @@ def _tf_repositories():
+-         name = "cpuinfo",
+-         sha256 = "4bf314b3f04db2fd984fef38a7e278e702b74297ef0af592b73296edba02b9d4",
+-         strip_prefix = "cpuinfo-8a1772a0c5c447df2d18edf33ec4603a8c9c04a6",
+--        patch_file = ["//third_party/cpuinfo:cpuinfo_ppc64le_support.patch"],
+-+        patch_file = ["//third_party/cpuinfo:cpuinfo_ppc64le_support.patch", "//third_party:0001-cpuinfo-support-32-bit-x86.patch"],
+-         urls = tf_mirror_urls("https://github.com/pytorch/cpuinfo/archive/8a1772a0c5c447df2d18edf33ec4603a8c9c04a6.zip"),
+-     )
+- 
+-diff --git a/third_party/0001-XNNPACK-support-32-bit-x86.patch b/third_party/0001-XNNPACK-support-32-bit-x86.patch
+-new file mode 100644
+-index 00000000000..397405a74c1
+---- /dev/null
+-+++ b/third_party/0001-XNNPACK-support-32-bit-x86.patch
+-@@ -0,0 +1,27 @@
+-+From 13f013db421c5aefa021f3b75d9d8554ad4fde52 Mon Sep 17 00:00:00 2001
+-+From: Hongxu Jia <hongxu.jia@eng.windriver.com>
+-+Date: Fri, 1 Mar 2024 00:35:18 -0800
+-+Subject: [PATCH] XNNPACK: support 32 bit x86
+-+
+-+Use android_x86 as a workaround to support 32 bit x86
+-+
+-+Signed-off-by: Hongxu Jia <hongxu.jia@eng.windriver.com>
+-+---
+-+ build_config/BUILD.bazel | 1 -
+-+ 1 file changed, 1 deletion(-)
+-+
+-+diff --git a/build_config/BUILD.bazel b/build_config/BUILD.bazel
+-+index d0b8902..75dfb79 100644
+-+--- a/build_config/BUILD.bazel
+-++++ b/build_config/BUILD.bazel
+-+@@ -73,7 +73,6 @@ config_setting(
+-+ config_setting(
+-+     name = "android_x86",
+-+     values = {
+-+-        "crosstool_top": "//external:android/crosstool",
+-+         "cpu": "x86",
+-+     },
+-+ )
+-+-- 
+-+2.42.0
+-+
+-diff --git a/third_party/0001-cpuinfo-support-32-bit-x86.patch b/third_party/0001-cpuinfo-support-32-bit-x86.patch
+-new file mode 100644
+-index 00000000000..cd6b27eaea3
+---- /dev/null
+-+++ b/third_party/0001-cpuinfo-support-32-bit-x86.patch
+-@@ -0,0 +1,27 @@
+-+From f5e52b2db5516954dab9026e4f386982c4c3c3a4 Mon Sep 17 00:00:00 2001
+-+From: Hongxu Jia <hongxu.jia@windriver.com>
+-+Date: Mon, 19 Sep 2022 00:10:18 -0700
+-+Subject: [PATCH] cpuinfo: support 32 bit x86
+-+
+-+Use android_x86 as a workaround to support 32 bit x86
+-+
+-+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+-+---
+-+ BUILD.bazel | 1 -
+-+ 1 file changed, 1 deletion(-)
+-+
+-+diff --git a/BUILD.bazel b/BUILD.bazel
+-+index 7c002fe..68fd5b5 100644
+-+--- a/BUILD.bazel
+-++++ b/BUILD.bazel
+-+@@ -274,7 +274,6 @@ config_setting(
+-+ config_setting(
+-+     name = "android_x86",
+-+     values = {
+-+-        "crosstool_top": "//external:android/crosstool",
+-+         "cpu": "x86",
+-+     },
+-+     visibility = ["//visibility:public"],
+-+-- 
+-+2.37.1
+-+
+--- 
+-2.25.1
+-
+diff --git a/recipes-framework/tensorflow/files/0019-fix-build-failure-for-2.19.patch b/recipes-framework/tensorflow/files/0019-fix-build-failure-for-2.19.patch
+deleted file mode 100644
+index 2ff2bcc..0000000
+--- a/recipes-framework/tensorflow/files/0019-fix-build-failure-for-2.19.patch
++++ /dev/null
+@@ -1,79 +0,0 @@
+-From 469cb6be17bd591ad84ac2b9b3350696180466c8 Mon Sep 17 00:00:00 2001
+-From: Hongxu Jia <hongxu.jia@windriver.com>
+-Date: Sat, 15 Mar 2025 06:17:46 +0000
+-Subject: [PATCH 19/21] fix build failure for 2.19
+-
+-Upstream-Status: Inappropriate [oe specific]
+-
+-Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+----
+- tensorflow/BUILD                      | 13 +++++++++++++
+- tensorflow/compiler/tf2tensorrt/BUILD |  1 +
+- tensorflow/python/BUILD               |  1 +
+- tensorflow/tensorflow.bzl             |  2 ++
+- 4 files changed, 17 insertions(+)
+-
+-diff --git a/tensorflow/BUILD b/tensorflow/BUILD
+-index 17cec29b1f9..e6815552ef5 100644
+---- a/tensorflow/BUILD
+-+++ b/tensorflow/BUILD
+-@@ -135,6 +135,19 @@ PACKAGE_STATIC_DEPS = [
+-     "@ducc//:__subpackages__",
+-     "@pybind11//:__subpackages__",
+-     "@python_x86_64-unknown-linux-gnu//:__subpackages__",
+-+    "@cuda_cudart//:__subpackages__",
+-+    "@cuda_cublas//:__subpackages__",
+-+    "@cuda_cccl//:__subpackages__",
+-+    "@cuda_nvtx//:__subpackages__",
+-+    "@cuda_nvcc//:__subpackages__",
+-+    "@cuda_cusolver//:__subpackages__",
+-+    "@cuda_cufft//:__subpackages__",
+-+    "@cuda_cusparse//:__subpackages__",
+-+    "@cuda_curand//:__subpackages__",
+-+    "@cuda_cupti//:__subpackages__",
+-+    "@cuda_nvml//:__subpackages__",
+-+    "@cuda_nvjitlink//:__subpackages__",
+-+    "@shardy//:__subpackages__",
+- ] + tsl_async_value_deps()
+- 
+- package(
+-diff --git a/tensorflow/compiler/tf2tensorrt/BUILD b/tensorflow/compiler/tf2tensorrt/BUILD
+-index 26031381521..dc233729dbf 100644
+---- a/tensorflow/compiler/tf2tensorrt/BUILD
+-+++ b/tensorflow/compiler/tf2tensorrt/BUILD
+-@@ -1094,6 +1094,7 @@ pybind_extension(
+-         "@local_tsl//tsl:__subpackages__",
+-         "@local_xla//xla:__subpackages__",
+-         "@python_x86_64-unknown-linux-gnu//:__subpackages__",
+-+        "@local_tsl//:__subpackages__",
+-     ],
+-     deps = [
+-         ":common_utils",
+-diff --git a/tensorflow/python/BUILD b/tensorflow/python/BUILD
+-index d79d3f204ee..d73a7793c79 100644
+---- a/tensorflow/python/BUILD
+-+++ b/tensorflow/python/BUILD
+-@@ -756,6 +756,7 @@ pywrap_tensorflow_macro(
+-         "@local_xla//xla:__subpackages__",
+-         "@pypi_numpy//:__subpackages__",
+-         "@python_x86_64-unknown-linux-gnu//:__subpackages__",
+-+        "@local_tsl//:__subpackages__",
+-     ] + tsl_async_value_deps(),
+-     win_def_file = ":pywrap_tensorflow_filtered_def_file",
+-     deps = [
+-diff --git a/tensorflow/tensorflow.bzl b/tensorflow/tensorflow.bzl
+-index e2c01533dba..76c240d3141 100644
+---- a/tensorflow/tensorflow.bzl
+-+++ b/tensorflow/tensorflow.bzl
+-@@ -3435,6 +3435,8 @@ def tf_python_pybind_static_deps(testonly = False):
+-         "@local_tsl//tsl:__subpackages__",
+-         "@python_x86_64-unknown-linux-gnu//:__subpackages__",
+-         "@pypi_numpy//:__subpackages__",
+-+        "@local_tsl//:__subpackages__",
+-+        "@local_xla//:__subpackages__",
+-     ]
+-     static_deps += tsl_async_value_deps()
+-     static_deps += [] if not testonly else [
+--- 
+-2.25.1
+-
+diff --git a/recipes-framework/tensorflow/files/0020-tensorflow-compiler-mlir-lite-fix-tensorflow_lite_qu.patch b/recipes-framework/tensorflow/files/0020-tensorflow-compiler-mlir-lite-fix-tensorflow_lite_qu.patch
+deleted file mode 100644
+index 3d93e20..0000000
+--- a/recipes-framework/tensorflow/files/0020-tensorflow-compiler-mlir-lite-fix-tensorflow_lite_qu.patch
++++ /dev/null
+@@ -1,42 +0,0 @@
+-From 0b3f0f175f473d1efd8b6b66aafcdc2e7318f87b Mon Sep 17 00:00:00 2001
+-From: Hongxu Jia <hongxu.jia@windriver.com>
+-Date: Sat, 15 Mar 2025 08:36:02 +0000
+-Subject: [PATCH 20/21] tensorflow/compiler/mlir/lite: fix
+- tensorflow_lite_quantize fail to build with gcc 13
+-
+-...
+-|In file included from /usr/include/c++/13/memory:78,
+-|from tensorflow/compiler/mlir/lite/transforms/default_quant_params.cc:16:
+-|/usr/include/c++/13/bits/unique_ptr.h: In instantiation of 'std::__detail::__unique_ptr_t<_Tp> std::make_unique(_Args&& ...) [with _Tp = mlir::TFL::{anonymous}::DefaultQuantParamsPass; _Args = {const mlir::TFL::DefaultQuantParamsPassOptions&}; __detail::__unique_ptr_t<_Tp> = __detail::__unique_ptr_tmlir::TFL::{anonymous}::DefaultQuantParamsPass]':
+-|tensorflow/compiler/mlir/lite/transforms/default_quant_params.cc:249:50: required from here
+-/usr/include/c++/13/bits/unique_ptr.h:1070:30: error: call of overloaded 'DefaultQuantParamsPass(const mlir::TFL::DefaultQuantParamsPassOptions&)' is ambiguous
+-...
+-
+-See https://github.com/tensorflow/tensorflow/issues/84977 for details
+-
+-Upstream-Status: Pending
+-
+-Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+----
+- .../compiler/mlir/lite/transforms/default_quant_params.cc    | 5 ++++-
+- 1 file changed, 4 insertions(+), 1 deletion(-)
+-
+-diff --git a/tensorflow/compiler/mlir/lite/transforms/default_quant_params.cc b/tensorflow/compiler/mlir/lite/transforms/default_quant_params.cc
+-index f1b602a6763..ee5abf3899f 100644
+---- a/tensorflow/compiler/mlir/lite/transforms/default_quant_params.cc
+-+++ b/tensorflow/compiler/mlir/lite/transforms/default_quant_params.cc
+-@@ -246,7 +246,10 @@ std::unique_ptr<OperationPass<func::FuncOp>> CreateDefaultQuantParamsPass(
+- 
+- std::unique_ptr<OperationPass<func::FuncOp>> CreateDefaultQuantParamsPass(
+-     const DefaultQuantParamsPassOptions &options) {
+--  return std::make_unique<DefaultQuantParamsPass>(options);
+-+  return std::make_unique<DefaultQuantParamsPass>(
+-+      options.default_min_,
+-+      options.default_max_,
+-+      options.is_signed_);
+- }
+- 
+- std::unique_ptr<OperationPass<func::FuncOp>> CreateDefaultQuantParamsPass() {
+--- 
+-2.25.1
+-
+diff --git a/recipes-framework/tensorflow/files/0021-build_pip_package_with_bazel.sh-correct-version.patch b/recipes-framework/tensorflow/files/0021-build_pip_package_with_bazel.sh-correct-version.patch
+deleted file mode 100644
+index 7c07610..0000000
+--- a/recipes-framework/tensorflow/files/0021-build_pip_package_with_bazel.sh-correct-version.patch
++++ /dev/null
+@@ -1,43 +0,0 @@
+-From 14683f97b5b1bf9d9bf0c8dce31d617c9bb3889e Mon Sep 17 00:00:00 2001
+-From: Hongxu Jia <hongxu.jia@windriver.com>
+-Date: Sat, 15 Mar 2025 09:55:16 +0000
+-Subject: [PATCH 21/21] build_pip_package_with_bazel.sh: correct version
+-
+-Due to commit[Update libtpu installation index path][1], grep "_VERSION = "
+-does not accurate
+-
+-$ grep "_VERSION = " "./tensorflow/tools/pip_package/setup.py"
+-_VERSION = '2.19.0'
+-LATEST_RELEASE_LIBTPU_VERSION = '0.0.10'
+-NEXT_LIBTPU_VERSION = '0.0.11'
+-...
+-|packaging.version.InvalidVersion: Invalid version: '2.19.0\n0.0.10\n0.0.11'
+-...
+-
+-Use "^_VERSION = " to instead
+-
+-[1] https://github.com/tensorflow/tensorflow/commit/993392ca2f63be3a344603409e27a39b284c3e36
+-
+-Upstream-Status: Pending
+-
+-Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+----
+- .../lite/tools/pip_package/build_pip_package_with_bazel.sh      | 2 +-
+- 1 file changed, 1 insertion(+), 1 deletion(-)
+-
+-diff --git a/tensorflow/lite/tools/pip_package/build_pip_package_with_bazel.sh b/tensorflow/lite/tools/pip_package/build_pip_package_with_bazel.sh
+-index 8528dd4b5ec..0a7e2e93f10 100755
+---- a/tensorflow/lite/tools/pip_package/build_pip_package_with_bazel.sh
+-+++ b/tensorflow/lite/tools/pip_package/build_pip_package_with_bazel.sh
+-@@ -20,7 +20,7 @@ PYTHON="${CI_BUILD_PYTHON:-python3}"
+- VERSION_SUFFIX=${VERSION_SUFFIX:-}
+- export TENSORFLOW_DIR="${SCRIPT_DIR}/../../../.."
+- TENSORFLOW_LITE_DIR="${TENSORFLOW_DIR}/tensorflow/lite"
+--TENSORFLOW_VERSION=$(grep "_VERSION = " "${TENSORFLOW_DIR}/tensorflow/tools/pip_package/setup.py" | cut -d= -f2 | sed "s/[ '-]//g")
+-+TENSORFLOW_VERSION=$(grep "^_VERSION = " "${TENSORFLOW_DIR}/tensorflow/tools/pip_package/setup.py" | cut -d= -f2 | sed "s/[ '-]//g")
+- export PACKAGE_VERSION="${TENSORFLOW_VERSION}${VERSION_SUFFIX}"
+- export PROJECT_NAME=${WHEEL_PROJECT_NAME:-tflite_runtime}
+- BUILD_DIR="${SCRIPT_DIR}/gen/tflite_pip/${PYTHON}"
+--- 
+-2.25.1
+-
 -- 
 2.34.1
 
