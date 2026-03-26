@@ -1,406 +1,194 @@
-Return-Path: <hfranco@baylibre.com>
+Return-Path: <hongxu.jia@windriver.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28B6F106B521
-	for <webhook@archiver.kernel.org>; Wed, 25 Mar 2026 12:28:33 +0000 (UTC)
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.20974.1774441706951879549
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC9C8109E547
+	for <webhook@archiver.kernel.org>; Thu, 26 Mar 2026 04:11:48 +0000 (UTC)
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.40465.1774498306113659949
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 25 Mar 2026 05:28:27 -0700
+ Wed, 25 Mar 2026 21:11:46 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@baylibre-com.20230601.gappssmtp.com header.s=20230601 header.b=gQtjc4b8;
- spf=pass (domain: baylibre.com, ip: 209.85.221.181, mailfrom: hfranco@baylibre.com)
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-56cde757d3dso1833842e0c.2
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 25 Mar 2026 05:28:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1774441706; x=1775046506; darn=lists.yoctoproject.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=jq8ETNI3w4t3jsiMTqi4vx7eQ4O6s+5L5g5ocThhE9k=;
-        b=gQtjc4b87kP4X71w1bxFkwFIx2l+eUZPq7qWHFu/r9FExBjnTb0VMYOpOrZYUvNIIo
-         BvnbTlxEmp4/Fl9J+YzeA13sSxGy+OFhEszF0GwpGzJTsIo/9HJvpIo8A5pdC1KhuCRr
-         THRyN+Ec468/F6cYCXyVGpo0xxj8gEq5KwdzuC3FiqPTqnN/Jij8SMG1uZ810nfBZ/MS
-         j61Qn03+Ye428djq8bdAyhsS7Foeo0VLmGuQZk3caRYjwGMBJvuXjqPoASPRQ43wPjV/
-         KIse2AlocT9RyjddN1AmfNivsQUUpQcguzk/rbjWZ3lOLBycssDLXfuV3UGBDehgR//r
-         XaDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774441706; x=1775046506;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jq8ETNI3w4t3jsiMTqi4vx7eQ4O6s+5L5g5ocThhE9k=;
-        b=bqdke9AosfW0rRBkIqjoEc2X9yB97smrN0fXNAa/pjE8mIFxNDIBMYhitc77kAKJqe
-         M//iw6lcE6yKPoaf4efBT1b+Jv54FLYCz4a9cGH4aZ8Qjh9cGl0KWHUE4TumTAxSQwSq
-         jGewNN0GXbju3L+Fqdd69/1MVfAfWpN6b9ntdskcuQmVEfqc6fWZHeJcefoKNFJqqIjG
-         YlrT4YyNLMXUWi6gOLhfLNJBWDoI/xV/PuXJt9xhFPMAze36ty3nQ+n6MEUodNgrcTOa
-         ypx7sPhhCgiwI9kV2jeTspJJ2dc8BUW3ibNSKSe43tpfRRsyKN9jqSP7+VgHUKv0sDMs
-         rt5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWOaqwRSdPAMOY9WsbfGYyxMeAwcWoRyTVf+ca26eW0fd9rA3XNZi2LIa2s2l4b+JekDtIGz0H04WhQFItG@lists.yoctoproject.org
-X-Gm-Message-State: AOJu0Yyakv114eLjNdo+hdVn/x3ZNIYYpx454JUo1E2kEydTwTgA+n8M
-	MOMYObib7wYb9NQtaG84HqyBqkhqGUgGsL1vax2Nwbt4Q5gDP9aVH9hztDKXnuw3d04=
-X-Gm-Gg: ATEYQzwdVkJhpZvCm+loPgmiEfggOH2w2NV0s4ZYqjHzEOgkPnzvhLVuG2XxHVsa4nE
-	DOW8xKrFT0ckmwbBPFJ20e2LIqyXKkl0RuoUTj7OMJY0/n3iK8vLJ4uD2I1WCPH93zxe6DUc/WM
-	LoA02gh9C8CL+obR5wKrQz9QxzuKfDa8nTfMrS2TDgCrhjsZfWGTLz+1HN0PXvlEB6U+0j6SGOi
-	kifQ7DUvrJt7uVhSiyB1vcsVOdsANJr6igePxyp3nD+Tk/pLEv4CzttiDWGM5HashUHcx0HqbvT
-	TX9pDio91H3ekVwDzqRlgMxonOh5uNtYNpU12NEgC7fQAMpyPEW5l/eY4CI/Dk1rMzzmYImLDC+
-	RGXFzVMl4Ya39MQuFWOqbnexBUDvCSOuG1Q/qW6dDwaH7D8Sx9qqVgb0OY0ZEhCYfXIyfDtDnyq
-	jT/yHVVqszuI9uAOQtjLBuaYb2Yt0PuAhB63nlNCmOGhahDEfrPCCaouKFRKMohWPa/+weUw8Rt
-	wM=
-X-Received: by 2002:a05:6122:3788:b0:56b:9ba4:1372 with SMTP id 71dfb90a1353d-56d220694cdmr1336137e0c.9.1774441705566;
-        Wed, 25 Mar 2026 05:28:25 -0700 (PDT)
-Received: from hiagonb ([2804:1b3:a7c1:6f5c:a800:78aa:29b8:c09d])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-56cea30c727sm18367434e0c.2.2026.03.25.05.28.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2026 05:28:24 -0700 (PDT)
-Date: Wed, 25 Mar 2026 09:28:19 -0300
-From: Hiago De Franco <hfranco@baylibre.com>
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Richard Purdie <richard.purdie@linuxfoundation.org>, 
-	Yoann Congal <yoann.congal@smile.fr>, yocto-patches@lists.yoctoproject.org, 
-	Yi Zhao <yi.zhao@windriver.com>
-Subject: Re: [yocto-patches] [meta-selinux][PATCH] Enable SELinux support in
- native packages
-Message-ID: <s3dvnilzp3mv6xstf7syd42ru3pgjaiebooacljibgf5zpe4ba@ezu4xnouvw26>
-References: <20260213154238.4093604-2-u.kleine-koenig@baylibre.com>
- <baff51f1-f0d9-4ae3-ba7f-bcbf1c0272c3@windriver.com>
- <14ad3c9da707249caf3f5157cf9be0b936ebfe5e.camel@linuxfoundation.org>
- <pfqfrlcduuigcvfdvn5ljjmjomee2wwn7xxu5ikibinoz57udn@dusca2fnhwja>
- <DH59MQQ8LHWC.25HPETRJUAGLI@smile.fr>
- <abpXXjX8C23hL8RO@monoceros>
- <e5bcfc29f4ab15e0ac21e2273a679821373530c6.camel@linuxfoundation.org>
- <abqEzAjosilonVNP@monoceros>
- <d8f70ee878b8101ef7a5f1b11c1bb52aa172c89b.camel@linuxfoundation.org>
- <abqvgTxKOJxWCxAB@monoceros>
+ dkim=fail reason="dkim: body hash did not verify" header.i=@windriver.com header.s=PPS06212021 header.b=SrLaPbc+;
+ spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.166.238, mailfrom: prvs=7545558680=hongxu.jia@windriver.com)
+Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62Q3keNM2717040
+	for <yocto-patches@lists.yoctoproject.org>; Wed, 25 Mar 2026 21:11:45 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
+	 h=content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=PPS06212021;
+	 bh=Coa/rxzS8rIPXKGAQFLXvp6iaYPHJ57rJnqcbPaBiXI=; b=SrLaPbc+HIcA
+	0oYhg2ohs2PVKFe19haXw78CI6tPZOTzGPIw+LuOWmmXwxm5U26Ym47R4hRFCcwa
+	fBlQNrX/xXTxupa+IpYEI6DiILKYqVMjc2Lr2mCTSoGiyE6DP+quGPc4T2RTTDZg
+	mjmzsBJNFdzsTB1czFv2sym1a48yI9O7BsE+gm6uEh075eQqrfeECgPKsBJmxIZe
+	pXuTm4PMTeZubCkm8k+nRelJVkgwFIal+qYdvzAaL2kPQm/8LOYSq6oh4GkRqb5U
+	16FOfofyYh3Ms33Xs20zwUE/Ni5T1PRcRl9azuha4myMFcRUwsypBj0OYpNfsXSP
+	gTuK2Rf3mA==
+Received: from dm1pr04cu001.outbound.protection.outlook.com (mail-centralusazon11010033.outbound.protection.outlook.com [52.101.61.33])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4d1tucwp4h-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT)
+	for <yocto-patches@lists.yoctoproject.org>; Wed, 25 Mar 2026 21:11:45 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UA6OWpMzywa3SyeGSHg5uDApV4cRuJRI00IUUcY/SEAgHBS4fcZi4zsZjEA+SxHC0F8RIroB4lsiPLtZRYvVgtFyvqogASCL4YzofD02h0SFn/p9meKP88Y6E9H5AOX3taJQYG29b6jP0j8Tct6YWcz8mM52E/NuB5kg1mmDM98q72y8gJzzyFAXs373i3p55VrR5d58TJsw1faTuFGVeqIOakKxMzCwAlXWrtTdYx19Eqe/h9ndlN+w3fxgHtZ8AzGcyd/Qri1rL1mxkdPii+RUo7QnYWepGY4CoYhgwQJggABVkKBSMMOtLkqY6yr3hN4u/7WAKP/dLbfmFH2Rvg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Coa/rxzS8rIPXKGAQFLXvp6iaYPHJ57rJnqcbPaBiXI=;
+ b=bxEqpB48J+UCs/jUDdWWBBE+T7pbcqk9+5aKfHHcB3/c8I5dd0LoggRkvMEVScDjq42VgeA6N2W/sFvzYmYWGMxzfQH/hP5OJqlbaLoJKz3XDivzdA9dhLgugIS4yaD/JcjgXLr+O9RQW8OncppyFeGdETncqvnJckhkJEZX9CF8Gp0R0Zo8vW/Xy4XmTQzPXQf+4nJgTxqqzVvvJpLYimrqGDzntaESZVPR8y9ushWL2u/097SK/hlc6rylRaz4/A2+ntcsU9W3aLiCXgAL3LF+wsqmTjtDz8OlwN5t2WT347SvAAQJFQ9px2jOa3dTvGZ1zyXfh/ZHMqAeoCy7Hg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=windriver.com; dmarc=pass action=none
+ header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
+Received: from PH7PR11MB7608.namprd11.prod.outlook.com (2603:10b6:510:269::20)
+ by DS4PPFDA9EFDFDB.namprd11.prod.outlook.com (2603:10b6:f:fc02::55) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.12; Thu, 26 Mar
+ 2026 04:11:41 +0000
+Received: from PH7PR11MB7608.namprd11.prod.outlook.com
+ ([fe80::c84c:d2c3:1102:cf45]) by PH7PR11MB7608.namprd11.prod.outlook.com
+ ([fe80::c84c:d2c3:1102:cf45%3]) with mapi id 15.20.9769.004; Thu, 26 Mar 2026
+ 04:11:41 +0000
+Message-ID: <e38ab632-69b6-4296-b679-0b60d79eca22@windriver.com>
+Date: Thu, 26 Mar 2026 12:11:36 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [yocto-patches] [meta-tensorflow][master][0/14] Upgrade
+ tensorflow from 2.19.0 to 2.21.0
+To: yocto-patches@lists.yoctoproject.org
+References: <20260325021719.1526525-1-hongxu.jia@windriver.com>
+ <CA+chaQe_-D3ei532xoP8UVqXE=KdQ0EtPkXwD_fqZZtdpOwwyw@mail.gmail.com>
+Content-Language: en-US
+From: Hongxu Jia <hongxu.jia@windriver.com>
+In-Reply-To: <CA+chaQe_-D3ei532xoP8UVqXE=KdQ0EtPkXwD_fqZZtdpOwwyw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-ClientProxiedBy: SG2PR06CA0186.apcprd06.prod.outlook.com (2603:1096:4:1::18)
+ To PH7PR11MB7608.namprd11.prod.outlook.com (2603:10b6:510:269::20)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR11MB7608:EE_|DS4PPFDA9EFDFDB:EE_
+X-MS-Office365-Filtering-Correlation-Id: f9962d09-0280-45af-229f-08de8aedc896
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: 
+	BCL:0;ARA:13230040|366016|4022899009|1800799024|376014|18002099003|22082099003|56012099003;
+X-Microsoft-Antispam-Message-Info: 
+	7aPVOywP3MMU9gtxMMOijjsJB9LJYk5cKLHLEJT3olKaZWK87FXilha/OYXAy85Rf33k8eLg3zgYhxKp8D6ydfnmCLh2m4e94+c5yeaE3cATLcz8t5xdayLiZBKW5G0+H4aZPiJDjnTZt+dXg2nAebzz4gZt5SHsZxiUt4D8bjGN+3qn7Rb3VE5x2EnmQaPxY551dh311LVSTGX2s6iLCzpodFwYwaqio53nKi2L7u41g7Gfzbfb922jdZaQV7S/wTceGRssQp9afv1gvUbpi4ykvZlo0quOYS5oESnawX25OzSRLPGS3aUCRVZzFu6zDo3wQwp0LsMQsxa8pxpYXvdgLJVWc3OusbikaQYnIpG/mPq25ZfJS9oi0Po7Z+sVwTY0BtDJQKURFXqKHeRGvJrOUSVh1j6Sf6WPYPll7sUV6fCb9RECsGOy3LRCCEnZDdIXvJq5UjOj1Xsx/cR3WGHs7YqqOPM23FQFfXba6zGXkIO29C0Pyhor3DE8MtnvetkGCG95dY9Ds1D8h3YGgAx8y4JceGUgMmoMMvh70iCrwTU/UcYz4p57v260c4DiPwSMYTYyToUXiARLavCJvgGMOaELwjkmuAAThRkQg+vIApd+v4oljwfX3m5v0dG4063CX4BmbkEzvAy+PlFf6IH+Q+uwCWG6vHw9m+8kd2/ykYzSYAY+GJxPbnsDWUIT
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB7608.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(4022899009)(1800799024)(376014)(18002099003)(22082099003)(56012099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?eDlnYkwyd0w0ZmZJY1JzK01CMVZEZThEU3BDek5GYWVvNDFXRGFhNU4vM3BR?=
+ =?utf-8?B?eFRZZE9nVUFhT3ZxZmJZaWJ1eEFDTWlRU1RPSEs4Q3N2aERxMHVuMG8zVWNm?=
+ =?utf-8?B?eU9aQWpjWkhzaEF6T2h2YXJxUkM2VlVYZndvN2lsUEFuS2FFQzdZYlR4WEFj?=
+ =?utf-8?B?cCtDbjNQdWNZYUVOM2wrK2pZK3F1c2lmT3c3L2tGTm0zMlVvTnNueXdVUlov?=
+ =?utf-8?B?SzIwNWI2Y1BCd2hjeVRJYmdIMGJYOUJGMTR4YnlIR1RlWE5tWmtnQytGdHpq?=
+ =?utf-8?B?bEdnMGkrVG5uYm9McU1JMlhEbWpWaTZ6dGoxT0tXS3U0MDBTUTBzV1I4UkM3?=
+ =?utf-8?B?T1c4SU45Z3lSQURVdzlVNGJsMVBucmNsUjNQU2d3V0FqVkpFUXZYMlhiSDF4?=
+ =?utf-8?B?aDJIZFJ5OGV3MnFUNXp0eTBSZFNtbUNkZDJLQi9jWnU2RVI3bkwvbkxRZXFi?=
+ =?utf-8?B?ckVqSDFlR0tuTmRMVUFVTGhTblFjY2pzRHI3QXVqQlZodDE3Zi9EUURhczZD?=
+ =?utf-8?B?TDlsWkJvalVSYWdxMGVMcTE2bks1SUtJYmZSNlQzeVBybWNQTTNOY3BsMWhZ?=
+ =?utf-8?B?NDZIMWxrZnhHcURMa05SUEpsRnlyRnRMeEV0S2k2ckVrczFvSDRhZ21qL2t1?=
+ =?utf-8?B?UTRCa2Y1WTI1ZVZsWGlEZGw2VU11bVNyUGd3cXBjZC9BRFViZjgzN1BDTXV2?=
+ =?utf-8?B?SmZBR25EVWQ4VkVBNHRmWjRqMW1TRFhqaERKeHZpcCtmUUpBMkQxVTRaMTlX?=
+ =?utf-8?B?RE1NZFczS3M5dUVVUGZPTmEwNjVqbUZzbXd1aHlOQkFkdUU4VVJXeTIxVmth?=
+ =?utf-8?B?ODFVY2g5R2RMckcwWm5tNTUwZ29oODZDNlhIWmdoeXVlUFVOSmZYb3laZzlr?=
+ =?utf-8?B?T3g5aXo4WnlFY0pjTWN6MzBCWDVPZXB4eVRHNTU0WXRZNTdUNlNIbXRVUWN4?=
+ =?utf-8?B?SmQ4dnNtWjdFV1pYMEJ2VUhSRDZsdng5b0VGV25pNnF6TFRiZXJic2tPR2RQ?=
+ =?utf-8?B?YUlTY2toUEF5QkJpY0dkcGxMOGNEUkRTS2kyWU5YeG5mYzBLa2phNm50ZGd6?=
+ =?utf-8?B?VzJINkV6dmdWd1VXakVKTFlpRHRGSzRMUHRnTll4dTFmVVFBVlZKNHZwZVM4?=
+ =?utf-8?B?V3JyNVFJaTZSVnpEbTZxeGRNb2lMQ3R3QnV5R2F1OFpUVmUwTjU2SjBXdUtB?=
+ =?utf-8?B?L3pDQkxBZEIxWE5ERjZMbGtQMXR4RHc3V3Uxc2hQMGo2MzRDS3U4dVY5dWNP?=
+ =?utf-8?B?Rm5EcVBRdGpKc3ZiUmlwSURoSi9NY3hwWnl6KzhseDEwZUlSdkt1ZkhDY3g5?=
+ =?utf-8?B?cnJQckFOUW5WNU4vRWx5T3dUWWNyZEg2OFowMS9hd1hkYWM5dEpHYW5henUz?=
+ =?utf-8?B?aCtJZ3pVR0kvWlgxVlE3ZlUxVEJpS2hxSVJBc1R3M2RPVEZTak5HTUFEVUs5?=
+ =?utf-8?B?aFJYbDUyY2ZRYTBnVGIvTzZ3L1ExSzlQVDRhb0ZaUFMzWlAxOTdKNVI5dEpK?=
+ =?utf-8?B?cTVkQXRTWldBT2V4dlp3SzRoMzJmQ29ZYnlEWWszckhLSG5FMHVDZmJQd2ZD?=
+ =?utf-8?B?Qk1LVzR3dkRQbHBUOUcrRXR0YVFuL1VRWXhSY1A0c3RPelFBSUtuRjZQdTRk?=
+ =?utf-8?B?aWxYc2J5Uk16RlY3a1pwb25TM1F6K2l0bEIycWZKczBWamZ4bVhyM01xa1di?=
+ =?utf-8?B?TXZqUDR6N0h1L1dkd2dpTFJVOU5IcFFNSmZXUzU0UlRnMW84NWpGVjBhMjl6?=
+ =?utf-8?B?NURoKzRyd3BvKzdDbW1zWGRmTkJZT0FHRGdkbjM5aEt2anV5NGFob3p6TUdy?=
+ =?utf-8?B?emFtMHVUNjdHTzNBZ1VyNWZVdUJmUThyQ0haUjl4RzdvM1RMQzRmQS9iZmZm?=
+ =?utf-8?B?K0JwOUNXWHBoa0hDSzdSWEt5Q2N2SVJJcTRSbWx4SVJWS0NrelFteTg1SkNz?=
+ =?utf-8?B?ZDl2eW5MRklrelYxYmVkN051SXFIdjl6L1hmREE5WnB3N1lkZ29QZWR6Tjg5?=
+ =?utf-8?B?TmRmNFdXaFNsaXkxNkxwM081WWE5YmhyUFc0OGNZUkhmZkpYWnQyK1d4OEJQ?=
+ =?utf-8?B?YjVMTi93ckxmRlhoMXRMeEc5MC9mT2pwZGJJUDFkb3JodG82SkNWakwvMXhM?=
+ =?utf-8?B?SU9KK3orTGRvSDEzM1V6M3NUaG5LL21rdU9HT0hXelVKN1pGSTZoTldiRlRJ?=
+ =?utf-8?B?TTJzckw3VkRsSXViNVlUdVg5NmJUVzFUZmdXV3JidW4vYjdzQTA1TVk1Qit6?=
+ =?utf-8?B?c01RWUV6a01NSUsvVU9sOTgzMExHWklIN2phcHk4cWczQU0vcjRpMlBsNkpJ?=
+ =?utf-8?B?N2RTUWFadWdEeEtIWUo4endyM0crNkUwS2pFWWxvMUNMc2VjTi9sdz09?=
+X-Exchange-RoutingPolicyChecked: 
+	a+RMkkPr2fi02ASoq8JDSx5rcd27sx+2fYgGClq6eWVqxVnAB2f9ySxsmTb0wjMjlGz01lyz6hS3WPYKA60FaXgXYiPLYxCTYcrhKmvdzbP54qMh27HCk7AUcTuYw/YIgZ9dKg3z7sosjcDnv8bU3d32OCMfopRCMHrgoOflBY5vyJhaiu/TXsyNommZ+EjjaOOlnyvdsHX72uv6piTM3r5NwbmZ7WWQN9m7i+blyCMGG5iWNi35Ptx8VTvPcY+vznByEXJ0AulQsUfJvJcdTBZUSump4jPCDpDRT1IyCWlVmsCHPEWQxYGPgJxmR2g0w7AwJuuW20RU76X4SLf1fQ==
+X-OriginatorOrg: windriver.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f9962d09-0280-45af-229f-08de8aedc896
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB7608.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2026 04:11:41.3307
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: KsSMhUBUgr6u6O0qB4LalYB7/5m5JQV7PCBSRNLa6/CULx5d7G/aAn73PZKB8hVIqiR/G5kO5bkuFR8368Czqm15lv46tDhXjp+qP8RO6og=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PPFDA9EFDFDB
+X-Proofpoint-GUID: hZ6-YCryTsTnUNgWwymNeAvoH2ko65DA
+X-Proofpoint-ORIG-GUID: hZ6-YCryTsTnUNgWwymNeAvoH2ko65DA
+X-Authority-Analysis: v=2.4 cv=deCNHHXe c=1 sm=1 tr=0 ts=69c4b201 cx=c_pps
+ a=hcnkadelB84e5vzkSSmvUA==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
+ a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=bi6dqmuHe4P4UrxVR6um:22 a=iKiJcTA2PjBS6x5JeXcw:22
+ a=iGHA9ds3AAAA:8 a=t7CeM3EgAAAA:8 a=Jwo5Om6_zlnLbLYMLfEA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=nM-MV4yxpKKO9kiQg6Ot:22 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzI2MDAzMCBTYWx0ZWRfXy4cKntW9L4cy
+ rX4FDyzNu2nNH/97tPB4zXiJCibO9iFjo6PlVuhsFiNA36IreqXxgkXd4JBthyYg64OkRlBJGTq
+ 7Rd3Nwg16cHode1H84o7RT1kXTQkS2ZP1ctV9rvicX/kwMhjFFEDFdDMhCRl5jAJGVRxbhe+A9q
+ d4n3jMXk37QyXibr50cyZ8ojPRPgFsB/jpZTIYZRmvHvJskIqKjeQmCFHIb9zdyknXS2RpyAVrW
+ ruT3y78HBFjtWoK9g+mtyckCmdliaYyMi1K/IdLDPwBdQJMTOX4vHNRxgNdPdFla8ol9IAPHaLn
+ 5LG+3px3Hai62pcC3Kp6qoOjYllNx/42vO9U4G53mSeJVVq2ImVdlM/tsgYdPh7yMLSY8wJ7phI
+ vvnnm8IsFoN7xYN3aPmxCNYqTOGMT5G0Nv7rpqiuS6vzRaCB/B6vlgVXchRJXVSy3Lq0WSiPcnD
+ xs8KKVyMRN7ITTO2aXQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-26_01,2026-03-24_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 malwarescore=0 spamscore=0 phishscore=0 priorityscore=1501
+ impostorscore=0 lowpriorityscore=0 suspectscore=0 adultscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603260030
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <abqvgTxKOJxWCxAB@monoceros>
+X-MIME-Autoconverted: from 8bit to quoted-printable by mx0a-0064b401.pphosted.com id 62Q3keNM2717040
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 25 Mar 2026 12:28:33 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3553
+ <yocto-patches@lists.yoctoproject.org>; Thu, 26 Mar 2026 04:11:48 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3554
 
-Hello,
+On 3/25/26 15:34, Martin Jansa via lists.yoctoproject.org wrote:
+> CAUTION: This email comes from a non Wind River email account!
+> Do not click links or open attachments unless you recognize the sender =
+and know the content is safe.
+>
+> On Wed, Mar 25, 2026 at 3:17=E2=80=AFAM hongxu via lists.yoctoproject.o=
+rg
+> <hongxu.jia=3Dwindriver.com@lists.yoctoproject.org> wrote:
+>> Summary: Upgrade meta-tensorflow from 2.19.0 to 2.21.0
+> Thanks you, can you please push it to master-next or somewhere else to
+> make it easier to test these changes in our CI as well? Or what's ETA
+> for merging this to master (as it cannot be used with latest oe-core
+> without wrynose in compatibility list)?
 
-On Wed, Mar 18, 2026 at 03:22:44PM +0100, Uwe Kleine-K=F6nig wrote:
-> Hey Richard,
->=20
-> On Wed, Mar 18, 2026 at 12:37:42PM +0000, Richard Purdie wrote:
-> > On Wed, 2026-03-18 at 12:13 +0100, Uwe Kleine-K=F6nig wrote:
-> > > On Wed, Mar 18, 2026 at 09:12:52AM +0000, Richard Purdie wrote:
-> > > > On Wed, 2026-03-18 at 08:50 +0100, Uwe Kleine-K=F6nig wrote:
-> > > > > On Tue, Mar 17, 2026 at 07:23:35PM +0100, Yoann Congal wrote:
-> > > > > > On Tue Mar 17, 2026 at 6:40 PM CET, Hiago De Franco via lists.y=
-octoproject.org wrote:
-> > > > > > > On Mon, Mar 09, 2026 at 02:21:51PM +0000, Richard Purdie wrot=
-e:
-> > > > > > > > On Mon, 2026-03-09 at 20:23 +0800, Yi Zhao via lists.yoctop=
-roject.org wrote:
-> > > > > > > > >=20
-> > > > > > > > > On 2/13/26 23:42, "Uwe Kleine-K=F6nig wrote:
-> > > > > > > > > > With SELinux enabled for the target it makes sense to h=
-ave SELinux
-> > > > > > > > > > support enabled for the native tools, too.
-> > > > > > > > > >=20
-> > > > > > > > > > Note that for native packages DISTRO_FEATURES is filter=
-ed, thus up to now
-> > > > > > > > > > it never contained "selinux". Append to DISTRO_FEATURES=
-_FILTER_NATIVE to
-> > > > > > > > > > make "selinux" propagate also to DISTRO_FEATURES for na=
-tive packages.
-> > > > > > > > > > ---
-> > > > > > > > > > Hello,
-> > > > > > > > > >=20
-> > > > > > > > > > I use this on scarthgap, but the patch applies fine to =
-master, too.
-> > > > > > > > > >=20
-> > > > > > > > > > During a debug session it took me quite a while to find=
- out why
-> > > > > > > > > >=20
-> > > > > > > > > > 	ls -lZ "${IMAGE_ROOTFS}
-> > > > > > > > > >=20
-> > > > > > > > > > at the end of selinux_set_labels() didn't show the labe=
-ls added by
-> > > > > > > > > > setfiles.
-> > > > > > > > > >=20
-> > > > > > > > > > Best regards
-> > > > > > > > > > Uwe
-> > > > > > > > > >=20
-> > > > > > > > > > =A0 classes/enable-selinux.bbclass | 2 +-
-> > > > > > > > > > =A0 conf/layer.conf=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0 | 4 ++++
-> > > > > > > > > > =A0 2 files changed, 5 insertions(+), 1 deletion(-)
-> > > > > > > > > >=20
-> > > > > > > > > > diff --git a/classes/enable-selinux.bbclass b/classes/e=
-nable-selinux.bbclass
-> > > > > > > > > > index 3dc61d6931ff..0c9f52e74cec 100644
-> > > > > > > > > > --- a/classes/enable-selinux.bbclass
-> > > > > > > > > > +++ b/classes/enable-selinux.bbclass
-> > > > > > > > > > @@ -1,3 +1,3 @@
-> > > > > > > > > > =A0 inherit selinux
-> > > > > > > > > > =A0=20
-> > > > > > > > > > -PACKAGECONFIG:append =3D " ${@target_selinux(d, 'selin=
-ux')}"
-> > > > > > > > > > +PACKAGECONFIG:append =3D " ${@bb.utils.filter('DISTRO_=
-FEATURES', 'selinux', d)}"
-> > > > > > > > > > diff --git a/conf/layer.conf b/conf/layer.conf
-> > > > > > > > > > index 4e04e5cc7e6a..ca981db57019 100644
-> > > > > > > > > > --- a/conf/layer.conf
-> > > > > > > > > > +++ b/conf/layer.conf
-> > > > > > > > > > @@ -25,3 +25,7 @@ LAYERDEPENDS_selinux =3D " \
-> > > > > > > > > > =A0 "
-> > > > > > > > > > =A0=20
-> > > > > > > > > > =A0 PREFERRED_PROVIDER_virtual/refpolicy ??=3D "refpoli=
-cy-targeted"
-> > > > > > > > > > +
-> > > > > > > > > > +# With target support for SELinux it is very helpful d=
-uring debug when the
-> > > > > > > > > > +# native tools support SELinux, too.
-> > > > > > > > > > +DISTRO_FEATURES_FILTER_NATIVE:append =3D " selinux"
-> > > > > > > > >=20
-> > > > > > > > > Can we add this to the doc (e.g. README) instead of enabl=
-ing it directly=20
-> > > > > > > > > in layer.conf? Since we haven't directly enabled DISTRO_F=
-EATURES =3D=20
-> > > > > > > > > "selinux" in layer.conf either.
-> > > > > > > >=20
-> > > > > > > > I just wanted to add that putting that directly in layer.co=
-nf will mean
-> > > > > > > > the layer isn't Yocto Project Compatible too.
-> > > > > > >=20
-> > > > > > > I am going to send a v2 and take over this work, already aske=
-d Uwe about
-> > > > > > > that.
-> > > > > > >=20
-> > > > > > > But before doing it, I was wondering why changing layer.conf =
-will make
-> > > > > > > the layer not compatible with Yocto Project anymore. Can you =
-explain to
-> > > > > > > us the reason?
-> > > > > >=20
-> > > > > > I'd guess it is from this criteria of the Yocto Compatible laye=
-r[0]:
-> > > > > > > Inclusion of any layer in the submission does not change the
-> > > > > > > behavior/configuration of the overall system without the user
-> > > > > > > explicitly opting into those changes
-> > > > > >=20
-> > > > > > By putting a 'DISTRO_FEATURES +=3D "selinux"' in layer.conf, the
-> > > > > > configuration changes globally without explicit opt-in of the u=
-ser.
-> > > > >=20
-> > > > > Note that the patch didn't change DISTRO_FEATURES, it appended "s=
-elinux"
-> > > > > to DISTRO_FEATURES_FILTER_NATIVE. If DISTRO_FEATURES doesn't alre=
-ady
-> > > > > contain "selinux", this is a noop. So I don't see how this violat=
-es the
-> > > > > quoted critera.
-> > > > >=20
-> > > > > What am I missing?
-> > > >=20
-> > > > I guess it would depend whether any of the functions/variables in c=
-ore
-> > > > have hard dependencies on that variable. I was assuming that they do
-> > > > but that might not be the case, I'm not sure without checking and y=
-ou
-> > > > may be right.
-> > >=20
-> > > Wouldn't that be a bug if a function changes behaviour depending on
-> > > DISTRO_FEATURES_FILTER_NATIVE containing "selinux" or not? (Apart from
-> > > having "selinux" for native packages iff the global DISTRO_FEATURES h=
-as
-> > > "selinux".)
-> >=20
-> > It depends on how that variable is being used. Some usages would be an
-> > issue, some would not. I have not checked how it is being used and what
-> > the implications of that are.
-> >=20
-> > > I grepped for DISTRO_FEATURES_FILTER_NATIVE in oe-core, bitbake and
-> > > meta-openembedded, there are only matches in the first and these are
-> > > about default settings, appending DISTRO_FEATURES_OVERRIDES and
-> > > providing a filtered version of the global DISTRO_FEATURES for native
-> > > packages.
-> > >=20
-> > > So unless I missed something, I'd claim setting
-> > > DISTRO_FEATURES_FILTER_NATIVE:append in a layer doesn't result in a
-> > > relevant change without an explicit opt-in (by adding "selinux" to
-> > > DISTRO_FEATURES) and then this (implicit) v1 is better than the v2 th=
-at
-> > > Hiago sent.
-> >=20
-> > I'm starting to wish I'd just never said anything :/.
->=20
-> :-\
->=20
-> > It would be nice if meta-selinux passes yocto-check-layer but that
-> > isn't my call, I don't know if it does currently pass or not. I wanted
-> > to caution that changing DISTRO_FEATURES or things related to
-> > DISTRO_FEATURES from layer.conf is generally a bad idea. In this case
-> > you might get away with it, I don't know. Has anyone tested it?
->=20
-> I tried that:
->=20
-> 	uwe@monoceros:~/work/ashjk/poky/build$ yocto-check-layer ../meta-selinux
-> 	INFO: Detected layers:
-> 	INFO: meta-selinux: LayerType.SOFTWARE, /home/uwe/work/ashjk/poky/meta-s=
-elinux
-> 	ERROR: Layer meta-selinux depends on meta-python and isn't found.
-> 	INFO:
-> 	INFO: Setting up for meta-selinux(LayerType.SOFTWARE), /home/uwe/work/as=
-hjk/poky/meta-selinux
-> 	ERROR: Layer meta-selinux depends on meta-python and isn't found.
-> 	INFO: Skipping meta-selinux due to missing dependencies.
-> 	INFO:
-> 	INFO: Summary of results:
-> 	INFO:
-> 	INFO: meta-selinux ... SKIPPED (Missing dependencies)
->=20
-> hmm, so maybe I need to add this using --dependency:
->=20
-> 	uwe@monoceros:~/work/ashjk/poky/build$ yocto-check-layer ../meta-selinux=
- --dependency ../meta-openembedded/meta-python --dependency ../meta-openemb=
-edded
-> 	INFO: Detected layers:
-> 	INFO: meta-selinux: LayerType.SOFTWARE, /home/uwe/work/ashjk/poky/meta-s=
-elinux
-> 	INFO: Adding meta-python to the list of layers to test, as a dependency
-> 	INFO: Adding meta-oe to the list of layers to test, as a dependency
-> 	INFO:=20
-> 	INFO: Setting up for meta-selinux(LayerType.SOFTWARE), /home/uwe/work/as=
-hjk/poky/meta-selinux
-> 	INFO: Adding layer meta-python
-> 	INFO: meta-python is already in /home/uwe/work/ashjk/poky/build/conf/bbl=
-ayers.conf
-> 	INFO: Adding layer meta-oe
-> 	INFO: meta-oe is already in /home/uwe/work/ashjk/poky/build/conf/bblayer=
-s.conf
-> 	INFO: Getting initial bitbake variables ...
-> 	INFO: Getting initial signatures ...
-> 	INFO: Generating signatures failed. This might be due to some parse erro=
-r and/or general layer incompatibilities.
-> 	Command: BB_ENV_PASSTHROUGH_ADDITIONS=3D"$BB_ENV_PASSTHROUGH_ADDITIONS B=
-B_SIGNATURE_HANDLER" BB_SIGNATURE_HANDLER=3D"OEBasicHash" bitbake -S locked=
-sigs world
-> 	Output:
-> 	WARNING: Host distribution "debian-13" has not been validated with this =
-version of the build system; you may possibly experience unexpected failure=
-s. It is recommended that you use a tested distribution.
-> 	Loading cache...done.
-> 	Loaded 0 entries from dependency cache.
-> 	Parsing recipes...done.
-> 	Parsing of 2472 .bb files complete (0 cached, 2472 parsed). 4316 targets=
-, 86 skipped, 0 masked, 0 errors.
-> 	Removing 14 recipes from the core2-64 sysroot...done.
-> 	Removing 19 recipes from the qemux86_64 sysroot...done.
-> 	Removing 6 recipes from the x86_64 sysroot...done.
-> 	NOTE: Resolving any missing task queue dependencies
-> 	ERROR: Nothing PROVIDES 'libselinux' (but /home/uwe/work/ashjk/poky/meta=
--openembedded/meta-oe/recipes-extended/hwloc/hwloc_2.9.3.bb, /home/uwe/work=
-/ashjk/poky/meta-openembedded/meta-oe/recipes-devtools/squashfs-tools-ng/sq=
-uashfs-tools-ng_1.2.0.bb, /home/uwe/work/ashjk/poky/meta-openembedded/meta-=
-oe/recipes-support/augeas/augeas_1.12.0.bb, /home/uwe/work/ashjk/poky/meta-=
-openembedded/meta-oe/recipes-support/lvm2/lvm2_2.03.22.bb, /home/uwe/work/a=
-shjk/poky/meta/recipes-extended/at/at_3.2.5.bb, /home/uwe/work/ashjk/poky/m=
-eta-openembedded/meta-oe/recipes-extended/ostree/ostree_2024.5.bb, /home/uw=
-e/work/ashjk/poky/meta-openembedded/meta-oe/recipes-extended/smartmontools/=
-smartmontools_7.4.bb, /home/uwe/work/ashjk/poky/meta/recipes-extended/logro=
-tate/logrotate_3.21.0.bb, /home/uwe/work/ashjk/poky/meta/recipes-core/udev/=
-eudev_3.2.14.bb, /home/uwe/work/ashjk/poky/meta/recipes-support/vim/vim_9.1=
-=2Ebb, /home/uwe/work/ashjk/poky/meta/recipes-core/base-passwd/base-passwd_=
-3.6.3.bb, /home/uwe/work/ashjk/poky/meta-openembedded/meta-oe/recipes-secur=
-ity/bubblewrap/bubblewrap_0.8.0.bb, /home/uwe/work/ashjk/poky/meta-openembe=
-dded/meta-oe/recipes-support/lvm2/libdevmapper_2.03.22.bb, /home/uwe/work/a=
-shjk/poky/meta-openembedded/meta-oe/recipes-devtools/ltrace/ltrace_git.bb D=
-EPENDS on or otherwise requires it)
-> 	ERROR: Required build target 'meta-world-pkgdata' has no buildable provi=
-ders.
-> 	Missing or unbuildable dependency chain was: ['meta-world-pkgdata', 'hwl=
-oc', 'libselinux']
->=20
-> 	Summary: There was 1 WARNING message.
-> 	Summary: There were 2 ERROR messages, returning a non-zero exit code.
->=20
-> 	INFO: meta-python already in /home/uwe/work/ashjk/poky/build/conf/bblaye=
-rs.conf. To capture initial signatures, layer under test should not present=
- in BBLAYERS. Please remove meta-python from BBLAYERS.
-> 	INFO: meta-oe already in /home/uwe/work/ashjk/poky/build/conf/bblayers.c=
-onf. To capture initial signatures, layer under test should not present in =
-BBLAYERS. Please remove meta-oe from BBLAYERS.
-> 	INFO:=20
-> 	INFO: Summary of results:
-> 	INFO:=20
-> 	INFO: meta-selinux ... FAIL (Generating world signatures)
-> 	INFO: meta-python ... SKIPPED (Layer under test should not present in BB=
-LAYERS)
-> 	INFO: meta-oe ... SKIPPED (Layer under test should not present in BBLAYE=
-RS)
->=20
-> Maybe I'm holding it wrong, maybe meta-selinux just doesn't pass?!
->=20
-> Ah, when removing "selinux" from DISTRO_FEATURES it works better. Then
-> it says things like:
->=20
-> 	...
-> 	INFO: Traceback (most recent call last):
-> 	  File "/home/uwe/work/ashjk/poky/scripts/lib/checklayer/cases/common.py=
-", line 99, in test_signatures
-> 	    self.fail('Adding layer %s changed signatures.\n%s' % (self.tc.layer=
-['name'], msg))
-> 	    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^=
-^^^^^^^^^^^^^^^
-> 	AssertionError: Adding layer meta-selinux changed signatures.
-> 	1789 signatures changed, initial differences (first hash before, second =
-after):
-> 	   android-tools-conf:do_recipe_qa: 0b9fecbec98924f57499d5d53c4b08bebe50=
-deac72f025ed0f4b5b2274c57463 -> d7473d9aba93fba170cd904225f22485c12a8cbfbb9=
-0984d90014bc29ce47856
-> 	      bitbake-diffsigs --task android-tools-conf do_recipe_qa --signatur=
-e 0b9fecbec98924f57499d5d53c4b08bebe50deac72f025ed0f4b5b2274c57463 d7473d9a=
-ba93fba170cd904225f22485c12a8cbfbb90984d90014bc29ce47856
-> 	...
->=20
-> (That's without my change BTW.)
->=20
-> > I am generally worried about the amount of things people "load" up
-> > layer.conf with as whilst it seems easy, the scope of it can be
-> > problematic as it affects other layers, and in general you don't want
-> > to be doing that unless it is configurable.
->=20
-> I understand your motivation, adding things there (even if they are ok)
-> add to the things you stumble over.
->=20
-> There is nothing I can say to rebut that objection. Still I think the
-> addition we're discussing about is technically fine and reduces the
-> surprises when working with meta-selinux. So in my subjective opinion
-> it's a net win to add it.
->=20
-> Best regards
-> Uwe
+Merged to master to compit wrynose
 
-I would like to add something to the discussion that I just found
-yesterday.
+//Hongxu
 
-By enabling the native patckages to have SELinux by default, GPG=20
-breaks if secureboot is also being used. See the error below:
+>
+> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+> Links: You receive all messages sent to this group.
+> View/Reply Online (#3552): https://lists.yoctoproject.org/g/yocto-patch=
+es/message/3552
+> Mute This Topic: https://lists.yoctoproject.org/mt/118495505/3617049
+> Group Owner: yocto-patches+owner@lists.yoctoproject.org
+> Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/13176=
+071/3617049/43253763/xyzzy [hongxu.jia@windriver.com]
+> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+>
+>
 
-ERROR: linux-yocto-6.6.129+git-r0 do_sign: Failed to import gpg key
-(user-keys/boot_keys/BOOT-GPG-PRIVKEY-BOOT-SecureCore): gpg: importing
-secret keys not allowed
-gpg: Total number processed: 1
-gpg:=A0=A0=A0=A0=A0=A0 secret keys read: 1
-
-This happens becaus of [0]. I had to specifically disable SELinux for
-the GPG native package.
-
-So, in this case, if we would to like to proceed with this patch, v2
-would be a better option to prevent such errors.
-
-[0] https://github.com/gpg/gnupg/blob/master/g10/import.c#L3319
-
-Regards,
-Hiago.
 
