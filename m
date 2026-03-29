@@ -2,93 +2,113 @@ Return-Path: <piotr@qbee.io>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B11BF3D613
-	for <webhook@archiver.kernel.org>; Sun, 29 Mar 2026 17:11:18 +0000 (UTC)
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.33123.1774804275132156339
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DEB1F3D616
+	for <webhook@archiver.kernel.org>; Sun, 29 Mar 2026 17:11:28 +0000 (UTC)
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.33125.1774804282477462226
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 29 Mar 2026 10:11:15 -0700
+ Sun, 29 Mar 2026 10:11:22 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@qbee.io header.s=google header.b=gbruQ5K5;
- spf=pass (domain: qbee.io, ip: 209.85.167.45, mailfrom: piotr@qbee.io)
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5a12cd0bd79so4296712e87.2
-        for <yocto-patches@lists.yoctoproject.org>; Sun, 29 Mar 2026 10:11:14 -0700 (PDT)
+ dkim=pass header.i=@qbee.io header.s=google header.b=AK1mA1sZ;
+ spf=pass (domain: qbee.io, ip: 209.85.208.177, mailfrom: piotr@qbee.io)
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-38a2e62b893so32804511fa.1
+        for <yocto-patches@lists.yoctoproject.org>; Sun, 29 Mar 2026 10:11:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=qbee.io; s=google; t=1774804273; x=1775409073; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TWYy+T93EIIar0rKrB9teQpNxYpVxivbCqtpLCSIr7c=;
-        b=gbruQ5K513vB7uDD1cWbwJENU2OTGdQgmNMO0EyyHOIiUSO/Lp2yIMVTdyoGckBFOO
-         pnvT2mXB74hbLxUAZL3bl6y8uUuIK0sZCHPRct6Xw2WYbzv+X1NvPrePEDWrGib1kUCZ
-         DedONWQgHsy8Asd+jmn4LdzORmpu1hdMNiR+Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774804273; x=1775409073;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=qbee.io; s=google; t=1774804280; x=1775409080; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TWYy+T93EIIar0rKrB9teQpNxYpVxivbCqtpLCSIr7c=;
-        b=o8Di+E70q7Rv7B0czrOfpZAVugV47B11DAbokW7WgeCnm/qAZPp9mQYWmtIgA0Z1I1
-         XEVKdJgNNOQWBbwn+SlBz2YvmZXKZcWoVIZ5N84umY/GhM4K20tdGYnmN/dNXh5I5kc1
-         ZeBiK6RYR4Vcxd0gMAtWEPoqT/rv8LgZg2VMUI68IsR//Y9cNUYALB/lOUwbt6z1CYgd
-         WmxqldoMjHCa4ynoK3u9WtwhToaOG1L3XE0EADzqrriTL/ahiJhi5p5Mda1yWhNzPTM8
-         XHdbslQ+mFQDJ1Ok8ZKNsM1/KVEzF2IE2QAJJnHhEEDJeXyKawv69kgzuc4HrzkVsKkc
-         hZXg==
-X-Gm-Message-State: AOJu0YyQwa4exyUdumGqKwv7v/A/rla8+tUccPjL/EsYl0sOAsTAkfQi
-	rpnvK0c+IaiDZQcCJqjU3JbEyxRy1C9axopFzLXHwHw/aViZDnj5Vw3L1Rh9hZLNRSaXqdilCe2
-	L9OyYLJCVmg==
-X-Gm-Gg: ATEYQzxvWAw0WAOeL8bDNJ357Aj9w1MkwQPfAuu4BxsLBEDJYqSnY/pqYJOzxZllYGz
-	aPcSt6780u2fKczGLnO0DXCtCAJ8OjEMi2P+94bMQd8pl+GxRBOvPKOk7pe3onEKpoqQe2Jn0QW
-	/0DK81gTnH1lZ72Ya6HGtGUDhAquqVoDx6juveuocAGZk8BO/bTT5i4lAsXwqKz17dFjlrMMf5Z
-	1KPxDZKjyQB4MN91tMTWs2tK2ZUArE38nQLea7Akygkml5jVmH+F029UIxnGVg/cuBxvVtdiIYp
-	qZw+a2iOdBqlV2t40m0vVNnjo1h3h7QxCpGc9Lp+GyTFFoPFgAvO8BAi1gWeaD6F/3wcrEkLCGw
-	ZuaFdZi16ZAVpTQihyUKpVqmvo2j9O8xjouMmpKUGqYvC9bCR92ThZPAxHpCzQq9KWjy2MouG9z
-	xIoHEw7itFIxzM0YCV/5ZVaJ1hHnvnXSBBXzeZLetngN5aZGMScJNpENnzR8aBQpw=
-X-Received: by 2002:a05:6512:3a83:b0:5a2:b43d:ac47 with SMTP id 2adb3069b0e04-5a2b43daf66mr928778e87.5.1774804272529;
-        Sun, 29 Mar 2026 10:11:12 -0700 (PDT)
+        bh=dDgjUS6fCuKETuz9IUfLTTUaD7VOWv6wuooEvdyyZL0=;
+        b=AK1mA1sZDAlH+wFCV9rseiiwxmBWxZuzE49CAXlrRo5nJxF3auuX1P/FChOkcn1zXX
+         pLmq99YT1/5ekO0LtFRuaVKaTUX2r66X6jjONLBXwVsOmvGVrVk7ZfN1IkJwT76kS+bL
+         +OPR9geK5WYQoMK4voKCUDrqsKnPAWggIuVzg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774804280; x=1775409080;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=dDgjUS6fCuKETuz9IUfLTTUaD7VOWv6wuooEvdyyZL0=;
+        b=Sx0rjAqjYELeVQThpk047Va+GpHWpNQXtde6NbD19CKiJjzevRX3shBkoWTv92Fdi1
+         AkHww4oYnH0vKad+JnBQ0Ebeuw2TyecQgd/YFTM/nUN5yWRvyezw0bp7E0pIgGI9QBqo
+         3vw0JDkXiIhvEdXNJIouZlM/plifuQdm0bVB0HvwhjxzTijGDhW5IXHgdJALPXF/aUUt
+         TSFS9efbXVotWwxpAtZzlF4fWh2VldTw+STraQc6Jetn7XvG6eQ7ineTUfcpG/y8vyVZ
+         pLdVgUiQHrx8aKDbexPZlRRe+yZ/iWMwphm94OugagB7J4H9hLKqHJwMuLnTTXCx29K7
+         od+A==
+X-Gm-Message-State: AOJu0YzA+QA2t0C+sZANEQE1u2FVNCzqreMGOFZ48os7qR9NcBRRRBP3
+	sUrDJ4KsgP0vsqijYynmCrcDUeFEY4cyUXoDUzFqmtsu11ATht/SLeyJwTNZ9asr1Rl9BpLpAm3
+	Cuo8O0au5Qg==
+X-Gm-Gg: ATEYQzzZ5dmQp5r4gwsrzwja7VNq7alT0MtB6wA0BgnUga+HoVnW/0vNCx46JVEHaR3
+	WjKlFit+vRi2olczAzI7EGX+vKnWyxSJIVPwalhjPCA2ANT/R+v3wciPgAJV0p6DFK31wPtsata
+	OctKLeCmbYh1RrB8VIdm/p95kQZcw70BxHhYKASC+sTp6Tg3UsMJbj68OwJ/+zZ2hNwFyokpKG9
+	3cm3ys7Acbf7Z1cVj2CXaNQbbUJ8rMSnNVyCklpbBmgPn9FgUaiER5cHQ2y39FUn2VRKxd49VEe
+	caUhBdHJup9fQF88SIE70DamJodeJEAk/OTWqcvZknC4K58QJ+VmdHDU/Oq3ormG1jiVUPlTPKs
+	gZClpXigfC5gJlLdx3mUuxQclzLbnpQN2Dv0WmJKGE+w15DsGJ77jQjiCNPaIWd3HQ0Yn0j194j
+	0+IWlUy0b0M0yxEPA3Rtt8XJxFyUNm0Sm+3yBZIVJbruX5ZDHW7qoL
+X-Received: by 2002:a05:651c:f0a:b0:38a:347c:4e03 with SMTP id 38308e7fff4ca-38c740342e4mr32206671fa.34.1774804279847;
+        Sun, 29 Mar 2026 10:11:19 -0700 (PDT)
 Received: from localhost (80.89-10-247.nextgentel.com. [89.10.247.80])
-        by smtp.gmail.com with UTF8SMTPSA id 38308e7fff4ca-38c837349dfsm10400601fa.17.2026.03.29.10.11.11
+        by smtp.gmail.com with UTF8SMTPSA id 38308e7fff4ca-38c838ff4c0sm10651501fa.39.2026.03.29.10.11.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 29 Mar 2026 10:11:11 -0700 (PDT)
+        Sun, 29 Mar 2026 10:11:19 -0700 (PDT)
 From: =?UTF-8?q?Piotr=20Buli=C5=84ski?= <piotr@qbee.io>
 To: yocto-patches@lists.yoctoproject.org
 Cc: =?UTF-8?q?Piotr=20Buli=C5=84ski?= <piotr@qbee.io>
-Subject: [layerindex-web][PATCH 1/3] Convert logout to a POST request, as GET is not longer supported by the new Djang 5.2 TLS.
-Date: Sun, 29 Mar 2026 19:11:07 +0200
-Message-ID: <20260329171109.34764-1-piotr@qbee.io>
+Subject: [layerindex-web][PATCH 2/3] Update settings.py to work with Django 5.2
+Date: Sun, 29 Mar 2026 19:11:08 +0200
+Message-ID: <20260329171109.34764-2-piotr@qbee.io>
 X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20260329171109.34764-1-piotr@qbee.io>
+References: <20260329171109.34764-1-piotr@qbee.io>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sun, 29 Mar 2026 17:11:18 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3575
+ <yocto-patches@lists.yoctoproject.org>; Sun, 29 Mar 2026 17:11:28 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3576
+
+1. Remove USE_L10N, as it's removed since Django version 5.0
+2. Set USE_TZ = False, as in Django 5.0 the default was changed to True
 
 Signed-off-by: Piotr Buliński <piotr@qbee.io>
 ---
- templates/base.html | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ docker/settings.py | 6 +++---
+ settings.py        | 6 +++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/templates/base.html b/templates/base.html
-index e167139..e31238c 100644
---- a/templates/base.html
-+++ b/templates/base.html
-@@ -30,6 +30,7 @@
- <body>
-     {% block header %}
-     {% autoescape on %}
-+    <form id="logout-form" method="post" action="{% url 'logout' %}">{% csrf_token %}</form>
-     <nav class="navbar navbar-default navbar-fixed-top">
-         <div class="container-fluid">
-             <div class="navbar-header">
-@@ -53,7 +54,7 @@
-                             <b class="caret"></b>
-                         </button>
-                         <ul class="dropdown-menu">
--                            <li><a href="{% url 'logout' %}">{% trans "Log out" %}</a></li>
-+                            <li><a href="#" onclick="document.getElementById('logout-form').submit(); return false;">{% trans "Log out" %}</a></li>
-                             <li><a href="{% url 'password_change' %}">{% trans "Change password" %}</a></li>
-                             <li><a href="{% url 'profile' %}?return_to={{ request.path }}">{% trans "Edit profile" %}</a></li>
-                         </ul>
+diff --git a/docker/settings.py b/docker/settings.py
+index 9a96e83..fdf09de 100644
+--- a/docker/settings.py
++++ b/docker/settings.py
+@@ -45,9 +45,9 @@ SITE_ID = 1
+ # to load the internationalization machinery.
+ USE_I18N = True
+ 
+-# If you set this to False, Django will not format dates, numbers and
+-# calendars according to the current locale
+-USE_L10N = True
++# As of Django 5.0 the defaults has changed to True, so set it to False to avoid
++# timezone-aware datetimes which require more complex handling in the codebase.
++USE_TZ = False
+ 
+ # Avoid specific paths
+ BASE_DIR = os.getenv('BASE_DIR', os.path.dirname(__file__))
+diff --git a/settings.py b/settings.py
+index fa303b1..bbc5aca 100644
+--- a/settings.py
++++ b/settings.py
+@@ -45,9 +45,9 @@ SITE_ID = 1
+ # to load the internationalization machinery.
+ USE_I18N = True
+ 
+-# If you set this to False, Django will not format dates, numbers and
+-# calendars according to the current locale
+-USE_L10N = True
++# As of Django 5.0 the defaults has changed to True, so set it to False to avoid
++# timezone-aware datetimes which require more complex handling in the codebase.
++USE_TZ = False
+ 
+ # Avoid specific paths
+ BASE_DIR = os.path.dirname(__file__)
 
