@@ -1,78 +1,94 @@
-Return-Path: <thomas.perrot@bootlin.com>
+Return-Path: <piotr@qbee.io>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4DA810F3DEC
-	for <webhook@archiver.kernel.org>; Sat, 28 Mar 2026 16:05:32 +0000 (UTC)
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.13560.1774713923826179069
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B11BF3D613
+	for <webhook@archiver.kernel.org>; Sun, 29 Mar 2026 17:11:18 +0000 (UTC)
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.33123.1774804275132156339
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 28 Mar 2026 09:05:24 -0700
+ Sun, 29 Mar 2026 10:11:15 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@bootlin.com header.s=dkim header.b=U4xpt9HD;
- spf=pass (domain: bootlin.com, ip: 185.171.202.116, mailfrom: thomas.perrot@bootlin.com)
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id D409BC5875B
-	for <yocto-patches@lists.yoctoproject.org>; Sat, 28 Mar 2026 16:05:50 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 8720D6029A
-	for <yocto-patches@lists.yoctoproject.org>; Sat, 28 Mar 2026 16:05:21 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BE0CB104509EF;
-	Sat, 28 Mar 2026 17:05:20 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1774713921; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=AyiRlG0FRCkpojqoD8RupvrKrDksmEs5XMyNzmbvt+U=;
-	b=U4xpt9HD7HPB04YGUaOpvi2dxMOkKflVDwO5P+NHGLuMMQQZ1mGyCnic0n3l/QYuNSx0iE
-	3KWBOXMv/TMa3hRp4v6jPMf+e1/MOLX1EiZEent3WL+fMZiVSokgVp6VCyaYrB7w0MMnf2
-	NoMS3y9/e5aA1UWiOypQGQY6xX08rd84nuAOV2O8EZlObStdOwS+u24azN8mUTjP7QHxsi
-	+u6fDsc0cZp8jUJQhgT1oHtNrxY4MIL0pqh1rwsToBgxu3EZWIgxi676f7DJE2MXOZvo9A
-	h4GPGlIk2+ynJvXqGZg6T52rh4/mpv5c6/HmoLkce1DRoQzzjB+LyxFOFnWfFA==
-From: thomas.perrot@bootlin.com
+ dkim=pass header.i=@qbee.io header.s=google header.b=gbruQ5K5;
+ spf=pass (domain: qbee.io, ip: 209.85.167.45, mailfrom: piotr@qbee.io)
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5a12cd0bd79so4296712e87.2
+        for <yocto-patches@lists.yoctoproject.org>; Sun, 29 Mar 2026 10:11:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=qbee.io; s=google; t=1774804273; x=1775409073; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TWYy+T93EIIar0rKrB9teQpNxYpVxivbCqtpLCSIr7c=;
+        b=gbruQ5K513vB7uDD1cWbwJENU2OTGdQgmNMO0EyyHOIiUSO/Lp2yIMVTdyoGckBFOO
+         pnvT2mXB74hbLxUAZL3bl6y8uUuIK0sZCHPRct6Xw2WYbzv+X1NvPrePEDWrGib1kUCZ
+         DedONWQgHsy8Asd+jmn4LdzORmpu1hdMNiR+Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774804273; x=1775409073;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TWYy+T93EIIar0rKrB9teQpNxYpVxivbCqtpLCSIr7c=;
+        b=o8Di+E70q7Rv7B0czrOfpZAVugV47B11DAbokW7WgeCnm/qAZPp9mQYWmtIgA0Z1I1
+         XEVKdJgNNOQWBbwn+SlBz2YvmZXKZcWoVIZ5N84umY/GhM4K20tdGYnmN/dNXh5I5kc1
+         ZeBiK6RYR4Vcxd0gMAtWEPoqT/rv8LgZg2VMUI68IsR//Y9cNUYALB/lOUwbt6z1CYgd
+         WmxqldoMjHCa4ynoK3u9WtwhToaOG1L3XE0EADzqrriTL/ahiJhi5p5Mda1yWhNzPTM8
+         XHdbslQ+mFQDJ1Ok8ZKNsM1/KVEzF2IE2QAJJnHhEEDJeXyKawv69kgzuc4HrzkVsKkc
+         hZXg==
+X-Gm-Message-State: AOJu0YyQwa4exyUdumGqKwv7v/A/rla8+tUccPjL/EsYl0sOAsTAkfQi
+	rpnvK0c+IaiDZQcCJqjU3JbEyxRy1C9axopFzLXHwHw/aViZDnj5Vw3L1Rh9hZLNRSaXqdilCe2
+	L9OyYLJCVmg==
+X-Gm-Gg: ATEYQzxvWAw0WAOeL8bDNJ357Aj9w1MkwQPfAuu4BxsLBEDJYqSnY/pqYJOzxZllYGz
+	aPcSt6780u2fKczGLnO0DXCtCAJ8OjEMi2P+94bMQd8pl+GxRBOvPKOk7pe3onEKpoqQe2Jn0QW
+	/0DK81gTnH1lZ72Ya6HGtGUDhAquqVoDx6juveuocAGZk8BO/bTT5i4lAsXwqKz17dFjlrMMf5Z
+	1KPxDZKjyQB4MN91tMTWs2tK2ZUArE38nQLea7Akygkml5jVmH+F029UIxnGVg/cuBxvVtdiIYp
+	qZw+a2iOdBqlV2t40m0vVNnjo1h3h7QxCpGc9Lp+GyTFFoPFgAvO8BAi1gWeaD6F/3wcrEkLCGw
+	ZuaFdZi16ZAVpTQihyUKpVqmvo2j9O8xjouMmpKUGqYvC9bCR92ThZPAxHpCzQq9KWjy2MouG9z
+	xIoHEw7itFIxzM0YCV/5ZVaJ1hHnvnXSBBXzeZLetngN5aZGMScJNpENnzR8aBQpw=
+X-Received: by 2002:a05:6512:3a83:b0:5a2:b43d:ac47 with SMTP id 2adb3069b0e04-5a2b43daf66mr928778e87.5.1774804272529;
+        Sun, 29 Mar 2026 10:11:12 -0700 (PDT)
+Received: from localhost (80.89-10-247.nextgentel.com. [89.10.247.80])
+        by smtp.gmail.com with UTF8SMTPSA id 38308e7fff4ca-38c837349dfsm10400601fa.17.2026.03.29.10.11.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 29 Mar 2026 10:11:11 -0700 (PDT)
+From: =?UTF-8?q?Piotr=20Buli=C5=84ski?= <piotr@qbee.io>
 To: yocto-patches@lists.yoctoproject.org
-Cc: thomas.petazzoni@bootlin.com,
-	Thomas Perrot <thomas.perrot@bootlin.com>
-Subject: [yocto-patches][meta-selinux][PATCH] libselinux: disable LTO to fix buildpaths QA failure
-Date: Sat, 28 Mar 2026 17:02:51 +0100
-Message-ID: <20260328160251.417665-1-thomas.perrot@bootlin.com>
-X-Mailer: git-send-email 2.53.0
+Cc: =?UTF-8?q?Piotr=20Buli=C5=84ski?= <piotr@qbee.io>
+Subject: [layerindex-web][PATCH 1/3] Convert logout to a POST request, as GET is not longer supported by the new Djang 5.2 TLS.
+Date: Sun, 29 Mar 2026 19:11:07 +0200
+Message-ID: <20260329171109.34764-1-piotr@qbee.io>
+X-Mailer: git-send-email 2.50.1
 MIME-Version: 1.0
-X-Last-TLS-Session-Version: TLSv1.3
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sat, 28 Mar 2026 16:05:32 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3574
+ <yocto-patches@lists.yoctoproject.org>; Sun, 29 Mar 2026 17:11:18 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3575
 
-From: Thomas Perrot <thomas.perrot@bootlin.com>
-
-Fat LTO objects in the static library embed original source paths in
-.gnu.lto_* IR sections. Unlike DWARF output, these sections are not
-affected by -ffile-prefix-map, causing TMPDIR references to survive
-into the installed libselinux-staticdev package.
-
-Signed-off-by: Thomas Perrot <thomas.perrot@bootlin.com>
+Signed-off-by: Piotr Buliński <piotr@qbee.io>
 ---
- recipes-security/selinux/libselinux_3.10.bb | 4 ++++
- 1 file changed, 4 insertions(+)
+ templates/base.html | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/recipes-security/selinux/libselinux_3.10.bb b/recipes-securi=
-ty/selinux/libselinux_3.10.bb
-index 9cfcf65b5020..86c9168a002d 100644
---- a/recipes-security/selinux/libselinux_3.10.bb
-+++ b/recipes-security/selinux/libselinux_3.10.bb
-@@ -28,4 +28,8 @@ def get_policyconfigarch(d):
- EXTRA_OEMAKE =3D "${@get_policyconfigarch(d)}"
- EXTRA_OEMAKE:append:libc-musl =3D " FTS_LDLIBS=3D-lfts"
-=20
-+# LTO fat objects in static library embed original source paths in .gnu.=
-lto_* IR
-+# sections which are not affected by -ffile-prefix-map, causing buildpat=
-hs QA failure
-+LTO =3D ""
-+
- BBCLASSEXTEND =3D "native"
---=20
-2.53.0
-
+diff --git a/templates/base.html b/templates/base.html
+index e167139..e31238c 100644
+--- a/templates/base.html
++++ b/templates/base.html
+@@ -30,6 +30,7 @@
+ <body>
+     {% block header %}
+     {% autoescape on %}
++    <form id="logout-form" method="post" action="{% url 'logout' %}">{% csrf_token %}</form>
+     <nav class="navbar navbar-default navbar-fixed-top">
+         <div class="container-fluid">
+             <div class="navbar-header">
+@@ -53,7 +54,7 @@
+                             <b class="caret"></b>
+                         </button>
+                         <ul class="dropdown-menu">
+-                            <li><a href="{% url 'logout' %}">{% trans "Log out" %}</a></li>
++                            <li><a href="#" onclick="document.getElementById('logout-form').submit(); return false;">{% trans "Log out" %}</a></li>
+                             <li><a href="{% url 'password_change' %}">{% trans "Change password" %}</a></li>
+                             <li><a href="{% url 'profile' %}?return_to={{ request.path }}">{% trans "Edit profile" %}</a></li>
+                         </ul>
 
