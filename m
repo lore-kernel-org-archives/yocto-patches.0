@@ -1,98 +1,109 @@
-Return-Path: <chee.yang.lee@intel.com>
+Return-Path: <yoann.congal@smile.fr>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E54A0FD0052
-	for <webhook@archiver.kernel.org>; Mon, 30 Mar 2026 09:02:03 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.46844.1774861322538621306
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33C9A10F3DCD
+	for <webhook@archiver.kernel.org>; Mon, 30 Mar 2026 14:17:21 +0000 (UTC)
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.52625.1774880231686185016
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 30 Mar 2026 02:02:03 -0700
+ Mon, 30 Mar 2026 07:17:12 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@intel.com header.s=Intel header.b=CB0g4Rxz;
- spf=pass (domain: intel.com, ip: 198.175.65.20, mailfrom: chee.yang.lee@intel.com)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1774861323; x=1806397323;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version:content-transfer-encoding;
-  bh=LZQKSan57/9yv2/PryuDi4y+RHo5nMqt2TiX3MZWzeY=;
-  b=CB0g4RxzzVP+b/lffObo0QqiQSnMyh0JghvIIWsqqhBeD32I3rJEnG2h
-   jFahZ4uDAqIHLwzcX+yQUxksMewVyv+zZHHHIzV9H1au8RYVJMC+6a1JX
-   xcwECwWAYMLOIuA+C5L3H8lLhqxmh3UNZU5PTHLxuJc1VKB8JDv12wSQR
-   IJQHzvyVYtrp6A97pGLhOwjchCVJtTXcoVZ4LF+jSUowIPIJ8RHF5DAhG
-   AMZONnvHBbzu1j4uA6bmNNrFJpiWIEiyvTXWFtr5Grt/pvXmOqQHif0Xt
-   rwJ/qmHOPsxqnD1FxBYDt96gyn+Qj3EdhvPcR7ou9oqDKx7DLP12t7KMv
-   A==;
-X-CSE-ConnectionGUID: ca7GNem+QySmCIXLKMtm/w==
-X-CSE-MsgGUID: TYCaEHDZQL2+x0d5ZILshg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11743"; a="75559316"
-X-IronPort-AV: E=Sophos;i="6.23,149,1770624000"; 
-   d="scan'208";a="75559316"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2026 02:02:03 -0700
-X-CSE-ConnectionGUID: CjR8OHKpQQOdiN2DSs7nag==
-X-CSE-MsgGUID: ZXh+xrCNRN+MATiEe95Kcw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,149,1770624000"; 
-   d="scan'208";a="225992887"
-Received: from andromeda02.png.intel.com ([10.107.232.49])
-  by orviesa008.jf.intel.com with ESMTP; 30 Mar 2026 02:02:02 -0700
-From: chee.yang.lee@intel.com
+ dkim=pass header.i=@smile.fr header.s=google header.b=ROHv9y6Y;
+ spf=pass (domain: smile.fr, ip: 209.85.128.54, mailfrom: yoann.congal@smile.fr)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-486fd5360d4so60535015e9.1
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 30 Mar 2026 07:17:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=smile.fr; s=google; t=1774880230; x=1775485030; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HgjbZuVNQk5u6q2sJuq+IlunG94WdQeiaypXSMwpYFQ=;
+        b=ROHv9y6Yji2Xe5r/vDK7+1HpxZX3r11OZFm0ojMsnoXWggQPeWoKMdo/wfIXcgAMTu
+         t1e3jMA8La7rId8cSgEK5zo/dRYmvuMEPfHuAhSFXNOe8m71GtpbsZTZ2mzHn61gsluK
+         zBJ5cDTcl8DlDH/ZdQuxelFy5BDSFRCByZWm4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774880230; x=1775485030;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HgjbZuVNQk5u6q2sJuq+IlunG94WdQeiaypXSMwpYFQ=;
+        b=DqcfKWKa7ifPbHZHbb2XgzlgPvYkssgMqRFJSB6LR+pgGuUUP90u3Sg1XDjyAAxCz/
+         J/feg55iYyolmMWe2Afvt1JA4mA95nHoyRUsbyH6tverYRtZC81lgWCh65j3ppoTQa4I
+         82uVKK1GgzONHpMaAr0O5+Oc08ouahXfjildtHCmlsSU+VElflIJbu0j+ReYphdB1srQ
+         UoOEmlRkkCppkVs0KhbWHb6efQiXUj55TwCVRdNFy9HyQudXPtHV18i6nh1FQZjoHpIX
+         0XsvgMAU3aQzpBlZ73Mt1ItONRr5TrnTPdk67WY6rt7XRdhPdg8rC1Kqm3rtF2JQAyu/
+         qcAQ==
+X-Gm-Message-State: AOJu0YxfXyi1Sd+K3K6xgkjtW+YqDhSe70rQaIUy24nSPVBErjmPSaAF
+	1dkoi5lPyr3E7uOszxDK4jpHvnWQi5HYbh6xFjmYvi8GOUtcQosDMpDOOAYml6V/xIybsnoP4Vy
+	U/0LrqJE=
+X-Gm-Gg: ATEYQzxd6HwaAFhn/VM71p8NY4Y44+UIDI1+RGzOeiSkZrsDiUJFiaqYJa3GZJaKbux
+	XVneJzgh3iM7S0vehyVDrpsPVkFB5RMqVfUj8uxMy84tWbhPv3NGD2leUCdF6U9Q8NieoFmIm4u
+	KvUvPVhH2Rq3y8ft5rqB+JyS6xwzHWF9ptCObS39xUtqg9tvaFnOUML0qZpVMiT32Jh56okyDWA
+	MwkD7/TC8BtJ+74eIFjYHpDc0+WRW8BGwPFAMzaIlStxJcGia/1uZEkNrMWV0FdwCJ64fzaKb8x
+	XYoXwVntG3FjrmYw4jRiu7ceHXuDdk6ursl65ejknECzdeTZCXt9AkaHrNdm6TpBeApvVsRFBXD
+	uKCw8VA6L5CTCnZ+WQb3/owbl3zFKLWrl4ZlOiTJKwkQgYHV4lZuO7yu1+zBAsuV8SqLEYFG0zN
+	F0w3D+9PiLtK58eT3KJ+JdKw+z79yQKwGhQxbFrttHw7VC8VBQMvfcnrJMOae0C/TxINzQBdi36
+	iLkP8IZGn6ghalILrvFkUYqMsRxAiPwHQ1mJ9KHpEuR
+X-Received: by 2002:a05:600c:4e02:b0:485:3b9e:caa7 with SMTP id 5b1f17b1804b1-48727edf669mr204672735e9.23.1774880229583;
+        Mon, 30 Mar 2026 07:17:09 -0700 (PDT)
+Received: from FRSMI25-LASER.idf.intranet (static-css-ccs-204145.business.bouyguestelecom.com. [176.157.204.145])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-487351fb38csm193616055e9.4.2026.03.30.07.17.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Mar 2026 07:17:08 -0700 (PDT)
+From: Yoann Congal <yoann.congal@smile.fr>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-zephyr][PATCH 2/2] README: update for testimage and machine
-Date: Mon, 30 Mar 2026 15:46:26 +0800
-Message-Id: <20260330074626.3818977-2-chee.yang.lee@intel.com>
-X-Mailer: git-send-email 2.37.3
-In-Reply-To: <20260330074626.3818977-1-chee.yang.lee@intel.com>
-References: <20260330074626.3818977-1-chee.yang.lee@intel.com>
+Cc: Yoann Congal <yoann.congal@smile.fr>
+Subject: [yocto-autobuilder-helper][scarthgap][PATCH] run-config: drop one more checkvnc usage
+Date: Mon, 30 Mar 2026 16:16:40 +0200
+Message-ID: <20260330141640.3531342-1-yoann.congal@smile.fr>
+X-Mailer: git-send-email 2.47.3
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 30 Mar 2026 09:02:03 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3582
+ <yocto-patches@lists.yoctoproject.org>; Mon, 30 Mar 2026 14:17:21 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3583
 
-From: Lee Chee Yang <chee.yang.lee@intel.com>
+From: Yoann Congal <yoann.congal@smile.fr>
 
-remove reference to qemu-nios2
+Reference was missed during a global removal in
+commit e45f35e484b1 ("config.json: Drop checkvnc usage").
 
-Signed-off-by: Lee Chee Yang <chee.yang.lee@intel.com>
+This should prevent this warning on AB:
+  Xvnc not running, attempting restart
+
+  WARNING: vncserver has been replaced by a systemd unit and is now considered deprecated and removed in upstream.
+  Please read /usr/share/doc/tigervnc/HOWTO.md for more information.
+  Killing Xvnc process ID 4057
+  Xvnc process ID 4057 already killed
+
+  WARNING: vncserver has been replaced by a systemd unit and is now considered deprecated and removed in upstream.
+  Please read /usr/share/doc/tigervnc/HOWTO.md for more information.
+
+  New 'stream9-vk1:1 (pokybuild)' desktop is stream9-vk1:1
+
+  Starting applications specified in /srv/pokybuild/.vnc/xstartup
+  Log file is /srv/pokybuild/.vnc/stream9-vk1:1.log
+
+[0]: https://autobuilder.yoctoproject.org/valkyrie/#/builders/68/builds/3580/steps/14/logs/stdio
+
+Signed-off-by: Yoann Congal <yoann.congal@smile.fr>
 ---
- README.md | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ scripts/run-config | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/README.md b/README.md
-index 4a7d75a..e66f158 100644
---- a/README.md
-+++ b/README.md
-@@ -163,12 +163,12 @@ metadata, you can also inject its value from command line with something like:
+diff --git a/scripts/run-config b/scripts/run-config
+index fb71721..02bb8cc 100755
+--- a/scripts/run-config
++++ b/scripts/run-config
+@@ -290,7 +290,7 @@ def handle_stepnum(stepnum):
+             addstepentry("test-targets", "QA targets", shortdesc, desc, str(sanitytargets), str(stepnum))
+         elif args.stepname == "test-targets":
+             hp.printheader("Step %s/%s: Running bitbake %s" % (stepnum, maxsteps, sanitytargets))
+-            bitbakecmd(args.builddir, "%s/checkvnc; DISPLAY=:1 bitbake %s -k" % (scriptsdir, sanitytargets), report, stepnum, args.stepname)
++            bitbakecmd(args.builddir, "DISPLAY=:1 bitbake %s -k" % sanitytargets, report, stepnum, args.stepname)
  
- ## Building and Running Zephyr Tests
- 
--Presently only toolchains for ARM, x86, IAMCU and Nios2 are supported.
-+Presently only toolchains for ARM, x86 and IAMCU are supported.
- (For ARM we use CortexM3 toolchain)
- 
- To run Zephyr Test using Yocto Image Tests, ensure following in local.conf:
- ```
--    INHERIT += "testimage"
-+    IMAGE_CLASSES += "testimage"
- ```
- 
- You can build and test an individual existing Zephyr test.
-@@ -187,9 +187,6 @@ zephyr-kernel-test.inc). For example:
- or 
-     $ MACHINE=qemu-cortex-m3 bitbake zephyr-kernel-test-all
-     $ MACHINE=qemu-cortex-m3 bitbake zephyr-kernel-test-all -c testimage
--or 
--    $ MACHINE=qemu-nios2 bitbake zephyr-kernel-test-all
--    $ MACHINE=qemu-nios2 bitbake zephyr-kernel-test-all -c testimage
- ```
- 
- ## Generating OE Machines based on Zephyr board definitions
--- 
-2.37.3
-
+     # Run any extra commands specified
+     cmds = utils.getconfiglist("EXTRACMDS", ourconfig, args.target, stepnum)
 
