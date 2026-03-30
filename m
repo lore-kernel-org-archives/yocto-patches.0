@@ -2,73 +2,73 @@ Return-Path: <yoann.congal@smile.fr>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33C9A10F3DCD
-	for <webhook@archiver.kernel.org>; Mon, 30 Mar 2026 14:17:21 +0000 (UTC)
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.52625.1774880231686185016
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B83210F3DF1
+	for <webhook@archiver.kernel.org>; Mon, 30 Mar 2026 14:22:31 +0000 (UTC)
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.52733.1774880541431670350
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 30 Mar 2026 07:17:12 -0700
+ Mon, 30 Mar 2026 07:22:21 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@smile.fr header.s=google header.b=ROHv9y6Y;
- spf=pass (domain: smile.fr, ip: 209.85.128.54, mailfrom: yoann.congal@smile.fr)
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-486fd5360d4so60535015e9.1
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 30 Mar 2026 07:17:11 -0700 (PDT)
+ dkim=pass header.i=@smile.fr header.s=google header.b=avua8PGD;
+ spf=pass (domain: smile.fr, ip: 209.85.128.46, mailfrom: yoann.congal@smile.fr)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-486fe655187so59461405e9.2
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 30 Mar 2026 07:22:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=smile.fr; s=google; t=1774880230; x=1775485030; darn=lists.yoctoproject.org;
+        d=smile.fr; s=google; t=1774880539; x=1775485339; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HgjbZuVNQk5u6q2sJuq+IlunG94WdQeiaypXSMwpYFQ=;
-        b=ROHv9y6Yji2Xe5r/vDK7+1HpxZX3r11OZFm0ojMsnoXWggQPeWoKMdo/wfIXcgAMTu
-         t1e3jMA8La7rId8cSgEK5zo/dRYmvuMEPfHuAhSFXNOe8m71GtpbsZTZ2mzHn61gsluK
-         zBJ5cDTcl8DlDH/ZdQuxelFy5BDSFRCByZWm4=
+        bh=MDnPflWYOG4Gt9dJ1ydVNl4r96B0szCEsdShvoL8wG8=;
+        b=avua8PGDCHtHG2M2A/LxgiDbLOSFhPZl/3/f7LJh1GXTzLNccSQ62M6FFgivx+ELa/
+         efmwiivWseKkbLirRQOqQwy7+rKOxrDEIsdowht15vdNy0YhFCedRp43EgZhiCTs1Tyd
+         juV2iFgPy//FCHWoezRqbW0mAeRJGe4iK6Ld0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774880230; x=1775485030;
+        d=1e100.net; s=20251104; t=1774880539; x=1775485339;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HgjbZuVNQk5u6q2sJuq+IlunG94WdQeiaypXSMwpYFQ=;
-        b=DqcfKWKa7ifPbHZHbb2XgzlgPvYkssgMqRFJSB6LR+pgGuUUP90u3Sg1XDjyAAxCz/
-         J/feg55iYyolmMWe2Afvt1JA4mA95nHoyRUsbyH6tverYRtZC81lgWCh65j3ppoTQa4I
-         82uVKK1GgzONHpMaAr0O5+Oc08ouahXfjildtHCmlsSU+VElflIJbu0j+ReYphdB1srQ
-         UoOEmlRkkCppkVs0KhbWHb6efQiXUj55TwCVRdNFy9HyQudXPtHV18i6nh1FQZjoHpIX
-         0XsvgMAU3aQzpBlZ73Mt1ItONRr5TrnTPdk67WY6rt7XRdhPdg8rC1Kqm3rtF2JQAyu/
-         qcAQ==
-X-Gm-Message-State: AOJu0YxfXyi1Sd+K3K6xgkjtW+YqDhSe70rQaIUy24nSPVBErjmPSaAF
-	1dkoi5lPyr3E7uOszxDK4jpHvnWQi5HYbh6xFjmYvi8GOUtcQosDMpDOOAYml6V/xIybsnoP4Vy
-	U/0LrqJE=
-X-Gm-Gg: ATEYQzxd6HwaAFhn/VM71p8NY4Y44+UIDI1+RGzOeiSkZrsDiUJFiaqYJa3GZJaKbux
-	XVneJzgh3iM7S0vehyVDrpsPVkFB5RMqVfUj8uxMy84tWbhPv3NGD2leUCdF6U9Q8NieoFmIm4u
-	KvUvPVhH2Rq3y8ft5rqB+JyS6xwzHWF9ptCObS39xUtqg9tvaFnOUML0qZpVMiT32Jh56okyDWA
-	MwkD7/TC8BtJ+74eIFjYHpDc0+WRW8BGwPFAMzaIlStxJcGia/1uZEkNrMWV0FdwCJ64fzaKb8x
-	XYoXwVntG3FjrmYw4jRiu7ceHXuDdk6ursl65ejknECzdeTZCXt9AkaHrNdm6TpBeApvVsRFBXD
-	uKCw8VA6L5CTCnZ+WQb3/owbl3zFKLWrl4ZlOiTJKwkQgYHV4lZuO7yu1+zBAsuV8SqLEYFG0zN
-	F0w3D+9PiLtK58eT3KJ+JdKw+z79yQKwGhQxbFrttHw7VC8VBQMvfcnrJMOae0C/TxINzQBdi36
-	iLkP8IZGn6ghalILrvFkUYqMsRxAiPwHQ1mJ9KHpEuR
-X-Received: by 2002:a05:600c:4e02:b0:485:3b9e:caa7 with SMTP id 5b1f17b1804b1-48727edf669mr204672735e9.23.1774880229583;
-        Mon, 30 Mar 2026 07:17:09 -0700 (PDT)
+        bh=MDnPflWYOG4Gt9dJ1ydVNl4r96B0szCEsdShvoL8wG8=;
+        b=BbDFcKbrmFoxyKXUJEfMTtXGPZltwx/SkND69aWTNsm/6SBUcQHN3zypMSkW+uop45
+         jUGnqKzqugu+qQ5UdQsWJwyG7wx6/39fJaB492sC9omzfY+lqplNEf2fLaxBz+n+0Rdc
+         F5lgwh9xWq+JEeS9bif8ccF7UNhegsvfhVgvFTeZcdKYE9Dhlnz8EkWlMi4wto86b0r4
+         fDQuvzbLVxU7MbPFoG2s8JrTSsq+BbztPR32q7/1qOgnHSOQEZocVogrnoFJrOKYfisw
+         BqiGqJL00/qaHBZbO0Qph0tsg4vmPhOpMeW3PMwBaYs6fKne+LPsn1/D/z+whAhusIgk
+         B+rQ==
+X-Gm-Message-State: AOJu0Yz1UK5yxC4EK1p+ndDAP6/MZ0qmRtSqNmZmqhzyclAFwNk2um8B
+	HFscRSc5RGyy1ShcPUBdAoDINtDHNnrgiVCJODrUilQ4zhWxg5fsPJ0uTKRa4wqbxkWi0LMSeWF
+	5VsRzHyk=
+X-Gm-Gg: ATEYQzwhowC8yizEH/PzAOb7hAY6bC538KGGTesLvuVOT8NT3X9YE7RVuBrnpJBqxNO
+	v4ZQZMCMf2nQv0BFvIBM8dVQRPz7mH6AXGln3ry8pr7ypREAQh+Jz1XeT/BjA42l6YcX4GKCqsP
+	+vuhkf96xlCRLjtFADQf6KQEvFzN3IWsZB8P6tlwwLswzioiuuQzcyQ4myq2bsDrwxXjRkS5dD4
+	PQ+EN1uafaKGXnzh09gJh358X3D039CnphjdKeaFW3fQ5DsjduaQ+pDk49sOh80S+RXyXMxXQpx
+	Pq3aeT8+p5/4X/e5MpJWkYcK0Y8pgZgt36PbtE+EUfmC0P34oJ3kV/KzL9X4djfP6W3SVLiIR4n
+	ibZvvuMc9Zmn8RLk2RT44D7Q/wJr9EPqxVq9P9O7AJ093HClD9rX6OsAd4b/kU0vm9hlEC4t5RN
+	oczBNw5Wcujjtz9JEAQ0iNZiGneSmcREK8WnpQ2DtN4oToN7P5UVAaG1/jisnzhBraPCibz2RHC
+	RqrdEtraRSOt3LAcqmHdB4/KU7WaFmCAQ==
+X-Received: by 2002:a05:600c:a11a:b0:483:709e:f238 with SMTP id 5b1f17b1804b1-48727ee5405mr145870955e9.29.1774880539287;
+        Mon, 30 Mar 2026 07:22:19 -0700 (PDT)
 Received: from FRSMI25-LASER.idf.intranet (static-css-ccs-204145.business.bouyguestelecom.com. [176.157.204.145])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-487351fb38csm193616055e9.4.2026.03.30.07.17.07
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4873bbcac33sm84715235e9.15.2026.03.30.07.22.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2026 07:17:08 -0700 (PDT)
+        Mon, 30 Mar 2026 07:22:18 -0700 (PDT)
 From: Yoann Congal <yoann.congal@smile.fr>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Yoann Congal <yoann.congal@smile.fr>
-Subject: [yocto-autobuilder-helper][scarthgap][PATCH] run-config: drop one more checkvnc usage
-Date: Mon, 30 Mar 2026 16:16:40 +0200
-Message-ID: <20260330141640.3531342-1-yoann.congal@smile.fr>
+Subject: [yocto-autobuilder-helper][whinlatter][PATCH] run-config: drop one more checkvnc usage
+Date: Mon, 30 Mar 2026 16:22:14 +0200
+Message-ID: <20260330142214.3533859-1-yoann.congal@smile.fr>
 X-Mailer: git-send-email 2.47.3
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 30 Mar 2026 14:17:21 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3583
+ <yocto-patches@lists.yoctoproject.org>; Mon, 30 Mar 2026 14:22:31 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3584
 
 From: Yoann Congal <yoann.congal@smile.fr>
 
 Reference was missed during a global removal in
-commit e45f35e484b1 ("config.json: Drop checkvnc usage").
+commit 29abc96b6310 ("config.json: Drop checkvnc usage").
 
 This should prevent this warning on AB:
   Xvnc not running, attempting restart
@@ -94,10 +94,10 @@ Signed-off-by: Yoann Congal <yoann.congal@smile.fr>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/scripts/run-config b/scripts/run-config
-index fb71721..02bb8cc 100755
+index 7da11c4..a13cc58 100755
 --- a/scripts/run-config
 +++ b/scripts/run-config
-@@ -290,7 +290,7 @@ def handle_stepnum(stepnum):
+@@ -300,7 +300,7 @@ def handle_stepnum(stepnum):
              addstepentry("test-targets", "QA targets", shortdesc, desc, str(sanitytargets), str(stepnum))
          elif args.stepname == "test-targets":
              hp.printheader("Step %s/%s: Running bitbake %s" % (stepnum, maxsteps, sanitytargets))
