@@ -1,221 +1,162 @@
-Return-Path: <amanna@qti.qualcomm.com>
+Return-Path: <martin.jansa@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD810D35149
-	for <webhook@archiver.kernel.org>; Wed,  1 Apr 2026 06:47:12 +0000 (UTC)
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.7004.1775026024325270571
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61A41D3517E
+	for <webhook@archiver.kernel.org>; Wed,  1 Apr 2026 13:21:10 +0000 (UTC)
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.13036.1775049664334664831
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 31 Mar 2026 23:47:04 -0700
+ Wed, 01 Apr 2026 06:21:04 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@qualcomm.com header.s=qcppdkim1 header.b=AKJZqGyF;
- spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: qti.qualcomm.com, ip: 205.220.180.131, mailfrom: amanna@qti.qualcomm.com)
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6314H5Ha1579948
-	for <yocto-patches@lists.yoctoproject.org>; Wed, 1 Apr 2026 06:47:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=OMxO3rSKWxBT0UtW+I3nGy
-	Xla1OGMscVuZ4i9u7p5Xk=; b=AKJZqGyF57h/+2jAqAR9RplBNSskgwrx18w8C7
-	3tU7ZjPRdPjZH90Vy38aZJN75zfJP3sPalFmAf1nnd38UenX8O2+qg0uLNkqiDTQ
-	FBSgYQINDUDN3ELoiBfCKGeqLikIRP5WpyRkrCXKdVWfXTzvQB5RvBnOQ5bDndL2
-	51DEzR9N3lR6NGXbaOpvnn120YrR1mErr5068dbejfrPCWAgJQUGd0F64xHDizjR
-	Ave11DNe4/QLIV5D9wclFE3PuulK+fE/16gFJcLQNo3vte8e3e0XT95e4kAvmfbx
-	mj/fjcP7uxCFIqZpni2oO3XYd1hrr2bvaIDevS2sxFOvWSsg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4d8mr2t6ar-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <yocto-patches@lists.yoctoproject.org>; Wed, 01 Apr 2026 06:47:03 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.7/8.18.1.7) with ESMTPS id 6316l22n006409
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <yocto-patches@lists.yoctoproject.org>; Wed, 1 Apr 2026 06:47:02 GMT
-Received: from hu-amanna-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Tue, 31 Mar 2026 23:47:00 -0700
-From: Abhilasha Manna <amanna@qti.qualcomm.com>
-To: <yocto-patches@lists.yoctoproject.org>
-CC: Abhilasha Manna <amanna@qti.qualcomm.com>
-Subject: [meta-selinux][PATCH] refpolicy: backport fix from upstream (PR#1096)
-Date: Wed, 1 Apr 2026 12:16:25 +0530
-Message-ID: <20260401064624.2548716-2-amanna@qti.qualcomm.com>
-X-Mailer: git-send-email 2.43.0
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=ZEGzh9bP;
+ spf=pass (domain: gmail.com, ip: 209.85.167.52, mailfrom: martin.jansa@gmail.com)
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5a279ce9475so1018576e87.1
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 01 Apr 2026 06:21:04 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1775049662; cv=none;
+        d=google.com; s=arc-20240605;
+        b=G4wPLXF9Xk4Cwh9K8k4LlzGZAzYg7OdDOF3Php9DdrbOEeuWxaUdhoDUfUS7Vuei/k
+         xOMvC0MJgnJ5GFjl9jCBG8TB5aywYJUg7G9kNS/QqC0SXdoz7fQLZVrHKQu4+F6A3pED
+         0bJrGSQCoiREhCUti+gARDmwy4hgr2BerS43kr51FE4LRoy0gRcFW9bsgAJeXK1C+vhy
+         wRjwIWtLveAbFDqlTeCCeHNE5MHkUNmz5vAWQyPe+eHSQ33TvUrt2GQUHq3UlnKt7H8Q
+         LFCmmGnbYyi/5KTBFBLTKvkwWZRBmKZk1y4hBcDiIcI6ZH82UBnu1Zp5sAJZIk9sE6WF
+         5YSA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=j2vjJ4u7YS6RAvUB3QpjEne7I5hkObFF4ItvG2JKcZo=;
+        fh=RTkyzoiqblVhgEJsCuNYhsna0iEHGBcVxJL5KX48Uz8=;
+        b=AQVOro41J/2EhQjphKTaWg7TRGTShSUXXQccw9oeuVS7cJDCCKYR89aohcYLY6QXTe
+         KbQd6W+NaMLeDc1pVvt6YNuDFPB4q2khq0LzrMIEmsFB4bVUL66zZWVzquAnU4xFUefF
+         ETY5zPznFniocsMgl9218AFCXHfCNFC5mT76xS7aRsm9crZ1BpBquhys9kQBCZ+/aUSG
+         ZSMkFCEP7PTw4akORMfwBT62BacjlQfTL4VvfWvbFGXbmaFVsYexWpSu3AMtxzF32kVQ
+         JBNA1wwiMG1iYo6gnJhK+FgmDphJxxuax4NsN5+4+wPPn97zpSgupygDGJrsDJRYjzju
+         d5KQ==;
+        darn=lists.yoctoproject.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1775049662; x=1775654462; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j2vjJ4u7YS6RAvUB3QpjEne7I5hkObFF4ItvG2JKcZo=;
+        b=ZEGzh9bPBcaS4s0rEz6I3632LrOJpxP31QO8wvMWQGDhKzbIbwHXiq4c5ggQ7YDbbm
+         fqMBJpYo2kRq+R87GCcCRulBln3RDEeN8xMOYJVh23cM1RcolzeOVWM86gsdHVQ444BU
+         XDFgkx8rMfTKlRA9e/ECy3NqCwwPPFAuOQ6T2QhcACQ4kAWd0Xe9vNzJlx85XTc9Vn/G
+         6XLcY/ysjm0a+vYp3+keEZ9F7njLAGsXVPW2MdCXS4uDDmqwAXZashK766krojZ+fseD
+         AAdjV2T4PyuoOyVx7Ls5FnmoD4owBKNbI3/VGwIjOKH/AKypKb2rlijDrcL+05j8I2s9
+         xwTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1775049662; x=1775654462;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=j2vjJ4u7YS6RAvUB3QpjEne7I5hkObFF4ItvG2JKcZo=;
+        b=ZEAq/thfkcd/lFBP4RxoIXOyn2cKHBIeFnVGK8pr02sLso/7lMbElOzhmRbrVC0MJs
+         jLzXi4hymCrPCF6ojMnNYKiJ3uTog6tba0Go4QpbnC5xu1iYPpZcu1uuuyde9D0I0De/
+         UhrLbMAxGHN5vg3mGYPV7lLPyXGfLjtHrhRzDaL0xTTDpY9Xtjx1iTzm/nBEteaEQDXM
+         IcOYGW2PLWUo8YO8tbis6k812YoFtAVt3azn4V8VcU9dVuqN4N/fQWAgC2zr3/hfO/vL
+         dm9/Pp7gffQAdWKPE5/E58Mqs8drv7C0vAY+LAgMBwiWGzbvxYCJmwFzS2Hw9rjuWJVS
+         EGlA==
+X-Gm-Message-State: AOJu0YyLA6s4LHrt7MiBKUgWYhrcTgDJpMNa8rUdn7p/PVvN8etzjYQ0
+	4LVQKMKdfEjyzfrQ/dJM4xT7N2R0bW7aIbPdWH6iQ4LYZiT8dWY+sBhCKJBejaGnE7NX9vMGPZv
+	Qv3Z2nVmzbgDmsYBVN4kugMi88FLo/UiyWbNG
+X-Gm-Gg: ATEYQzzUt0g2Ntk+1eCvelYZ9Egx9bUNGyAsew+whSrQt3Lht8bTnzKaYMLm7oQJHUm
+	so1J4fWwNFaIabCMRGUg04L5Kd6m+/7HWkg/CiQt3wQxoLADwfllrUcOz459W3ftKbetBXudkqM
+	m2N/8FqiLimPptliTpIYHclPUotj/6+Jqno8L/jNwizg2TDTADJ4UoZ8iA2I/HAFJnmld19OZe3
+	9Ch/ILgWGUxhYmi01HZ88viQRTKq2LyDnRYLW9G1NAEJj5Mz6whHHQ3DbmRDX0CVpQu56LG5eiq
+	VS+957pY1w==
+X-Received: by 2002:a05:6512:a8c:b0:5a2:b259:5569 with SMTP id
+ 2adb3069b0e04-5a2c220464bmr1131926e87.15.1775049661694; Wed, 01 Apr 2026
+ 06:21:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Authority-Analysis: v=2.4 cv=B+O0EetM c=1 sm=1 tr=0 ts=69ccbf67 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=A5OVakUREuEA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22 a=NEAV23lmAAAA:8
- a=EUspDBNiAAAA:8 a=9Ho48WRPCDnwLr7njrAA:9
-X-Proofpoint-ORIG-GUID: ARwnvvyFd53lmunj9nBcfQX9gD5q1y1G
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDAxMDA1OCBTYWx0ZWRfX3CBnaRFqL7sV
- D9rsLRyoq3aqNMJdafHj/G4dp90f5bk5z8kLSyxJVvoggGtePAUwfaNDWrp6f0MxOeoV+pSrvDn
- q4PDHqdcWsgYLLG8S4qkQr+ZGI0W6CnVcCaXP8gduvHzIkE4T00VfWukFJ4sofkcbAUJclhUoPt
- Z2WRkB2wke1zx5wC+vZ9l1NRcu9jMbYvv14P3wUe10Nz5gItAwNOBcPLZo5U/Zn8OJs6T8fUjrd
- oSLQ5Tp5k0n7i5JucUn/xc7PiaeVK1ohsrZ+LcDifo/MBHZ1/Dl+1NDEeNCRhlNofQrCY65mPge
- fZDfxyiyxPxuuEWunCZzwyzabXU2CcnRzNcnczQAYFG8AoGIhSgPGkhzzH29+OyAg8n9kfdrLWS
- wfFsWfLCdsPgUWjel6ZVpwszEXhHVqDey/eY5zgExaCc0GsDIolAgRxoohGFQepUsX+knfgwr1U
- fShIvjaArSf0+3UAiAA==
-X-Proofpoint-GUID: ARwnvvyFd53lmunj9nBcfQX9gD5q1y1G
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-04-01_02,2026-03-31_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 impostorscore=0 adultscore=0 malwarescore=0
- lowpriorityscore=0 spamscore=0 clxscore=1015 suspectscore=0 phishscore=0
- bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2603050001
- definitions=main-2604010058
+References: <20260401053022.96757-1-martin.jansa@gmail.com> <9d3a3b8c-2b03-41ed-8ac9-49ae7ec174a6@windriver.com>
+In-Reply-To: <9d3a3b8c-2b03-41ed-8ac9-49ae7ec174a6@windriver.com>
+From: Martin Jansa <martin.jansa@gmail.com>
+Date: Wed, 1 Apr 2026 15:20:47 +0200
+X-Gm-Features: AQROBzA4OSVxb5pn1z0SrTzb7CQ_s_eJUl8XEejXGH0Xc48erJeiaJpWsa1WO3Y
+Message-ID: <CA+chaQfQg0Wo0emSgeyjEgqJ4TYvOmRGZykNQmYjMr-FwdCC_A@mail.gmail.com>
+Subject: Re: [meta-tensorflow][PATCH] tensorflow-lite: don't install
+ flatbuffers header files
+To: Hongxu Jia <hongxu.jia@windriver.com>
+Cc: yocto-patches@lists.yoctoproject.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 01 Apr 2026 06:47:12 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3594
+ <yocto-patches@lists.yoctoproject.org>; Wed, 01 Apr 2026 13:21:10 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3595
 
-Backport upstream SELinux refpolicy change from:
+On Wed, Apr 1, 2026 at 7:34=E2=80=AFAM Hongxu Jia <hongxu.jia@windriver.com=
+> wrote:
+>
+> On 4/1/26 13:30, martin.jansa@gmail.com wrote:
+> > CAUTION: This email comes from a non Wind River email account!
+> > Do not click links or open attachments unless you recognize the sender =
+and know the content is safe.
+> >
+> > From: Martin Jansa <martin.jansa@gmail.com>
+> >
+> > https://lists.yoctoproject.org/g/yocto-patches/message/2186
+> > breaks a build for recipes which depend on both tensorflow-lite and fla=
+tbuffers because of conflicts in RSS as in:
+> > ERROR: foo-1.0-r0 do_prepare_recipe_sysroot: The file /usr/include/flat=
+buffers/array.h is installed by both tensorflow-lite and flatbuffers, abort=
+ing
+> >
+> > Signed-off-by: Martin Jansa <martin.jansa@gmail.com>
+> > ---
+> >   recipes-framework/tensorflow/tensorflow-lite_2.21.0.bb | 7 -------
+> >   1 file changed, 7 deletions(-)
+>
+> Merged
+>
+> //Hongxu
 
-   https://github.com/SELinuxProject/refpolicy/pull/1096/changes/2aad2d57fa7e6873d3e59e6bc2848623713e46f0
+Thank you for quick update.
 
-This change is required to keep meta-selinux in sync with
-upstream refpolicy and to fix issues observed when building
-or running SELinux-enabled images.
+With newer ubuntu on host I'm seeing one more issue with bazel-native,
+will send a patch or more details when I figure out what's wrong, but
+it fails with ubuntu-25.04 and newer while in ubuntu-24.04 and 24.10
+it built bazel-native fine.
 
-No functional changes beyond the upstream fix.
+I'm sharing it now just in case you've already seen this issue and
+might have some pending fix already.
 
-Signed-off-by: Abhilasha Manna <amanna@qti.qualcomm.com>
----
- .../refpolicy/refpolicy-targeted_git.bb       |   1 +
- ...l_read_transparent_hugepage_sysfs-in.patch | 103 ++++++++++++++++++
- 2 files changed, 104 insertions(+)
- create mode 100644 recipes-security/refpolicy/refpolicy/0079-kernel-add-kernel_read_transparent_hugepage_sysfs-in.patch
+The log from 24.04 doesn't show "Linking src/main/cpp/util/libport.a"
+at all, so I guess it's util:port dependency somehow not required, but
+I'm still searching why (in all that bazel output which is a bit
+confusing to me :)).
 
-diff --git a/recipes-security/refpolicy/refpolicy-targeted_git.bb b/recipes-security/refpolicy/refpolicy-targeted_git.bb
-index de81d46..9d23e84 100644
---- a/recipes-security/refpolicy/refpolicy-targeted_git.bb
-+++ b/recipes-security/refpolicy/refpolicy-targeted_git.bb
-@@ -14,4 +14,5 @@ include refpolicy_${PV}.inc
- 
- SRC_URI += " \
-         file://0001-refpolicy-targeted-make-unconfined_u-the-default-sel.patch \
-+		file://0079-kernel-add-kernel_read_transparent_hugepage_sysfs-in.patch \
-         "
-diff --git a/recipes-security/refpolicy/refpolicy/0079-kernel-add-kernel_read_transparent_hugepage_sysfs-in.patch b/recipes-security/refpolicy/refpolicy/0079-kernel-add-kernel_read_transparent_hugepage_sysfs-in.patch
-new file mode 100644
-index 0000000..463fc17
---- /dev/null
-+++ b/recipes-security/refpolicy/refpolicy/0079-kernel-add-kernel_read_transparent_hugepage_sysfs-in.patch
-@@ -0,0 +1,103 @@
-+From fbf9e9a5c3086b53f46f9f07378af5466d7a6ee9 Mon Sep 17 00:00:00 2001
-+From: Abhilasha Manna <amanna@qti.qualcomm.com>
-+Date: Wed, 25 Mar 2026 14:49:46 +0530
-+Subject: [PATCH] kernel: add kernel_read_transparent_hugepage_sysfs interface
-+
-+Add a new interface kernel_read_transparent_hugepage_sysfs() to allow
-+specific domains to read sysfs files under the transparent hugepage
-+path (/sys/kernel/mm/transparent_hugepage).
-+
-+Introduce sysfs_transparent_hugepage_t as a dedicated type for the
-+transparent hugepage sysfs path, replacing the use of the generic
-+sysfs_t.
-+
-+Upstream-Status: Inappropriate [meta-qcom specific]
-+
-+Signed-off-by: Abhilasha Manna <amanna@qti.qualcomm.com>
-+---
-+ policy/modules/kernel/domain.te |  3 +++
-+ policy/modules/kernel/kernel.if | 37 +++++++++++++++++++++++++++++++++
-+ policy/modules/kernel/kernel.te |  8 +++++++
-+ 3 files changed, 48 insertions(+)
-+
-+diff --git a/policy/modules/kernel/domain.te b/policy/modules/kernel/domain.te
-+index 0f38015b6..7c7fe8f32 100644
-+--- a/policy/modules/kernel/domain.te
-++++ b/policy/modules/kernel/domain.te
-+@@ -120,6 +120,9 @@ allow domain self:lockdown { confidentiality integrity };
-+ # glibc get_nprocs requires read access to /sys/devices/system/cpu/online
-+ dev_read_cpu_online(domain)
-+ 
-++# read and search access to sys/kernel/mm/transparent_hugepage
-++kernel_read_transparent_hugepage_sysfs(domain)
-++
-+ # Use trusted objects in /dev
-+ dev_rw_null(domain)
-+ dev_rw_zero(domain)
-+diff --git a/policy/modules/kernel/kernel.if b/policy/modules/kernel/kernel.if
-+index 01a06eb37..84d76dc3a 100644
-+--- a/policy/modules/kernel/kernel.if
-++++ b/policy/modules/kernel/kernel.if
-+@@ -4108,3 +4108,40 @@ interface(`kernel_ib_manage_subnet_unlabeled_endports',`
-+ 
-+ 	allow $1 unlabeled_t:infiniband_endport manage_subnet;
-+ ')
-++
-++########################################
-++## <summary>
-++##      Search the transparent hugepage sysfs directory.
-++## </summary>
-++## <param name="domain">
-++##      <summary>
-++##      Domain allowed access.
-++##      </summary>
-++## </param>
-++#
-++interface(`kernel_search_transparent_hugepage_sysfs',`
-++        gen_require(`
-++                type sysfs_transparent_hugepage_t;
-++        ')
-++
-++        allow $1 sysfs_transparent_hugepage_t:dir search;
-++')
-++
-++########################################
-++## <summary>
-++##      Read transparent hugepage sysfs files.
-++## </summary>
-++## <param name="domain">
-++##      <summary>
-++##      Domain allowed access.
-++##      </summary>
-++## </param>
-++#
-++interface(`kernel_read_transparent_hugepage_sysfs',`
-++        gen_require(`
-++                type sysfs_transparent_hugepage_t;
-++        ')
-++
-++        allow $1 sysfs_transparent_hugepage_t:file read_file_perms;
-++        kernel_search_transparent_hugepage_sysfs($1)
-++')
-+diff --git a/policy/modules/kernel/kernel.te b/policy/modules/kernel/kernel.te
-+index 26578a26d..57aa13fb0 100644
-+--- a/policy/modules/kernel/kernel.te
-++++ b/policy/modules/kernel/kernel.te
-+@@ -69,6 +69,14 @@ type kvmfs_t;
-+ fs_type(kvmfs_t)
-+ genfscon kvmfs / gen_context(system_u:object_r:kvmfs_t,s0)
-+ 
-++#
-++#transparent_hugepage
-++#
-++
-++type sysfs_transparent_hugepage_t;
-++files_type(sysfs_transparent_hugepage_t)
-++genfscon sysfs /kernel/mm/transparent_hugepage gen_context(system_u:object_r:sysfs_transparent_hugepage_t,s0)
-++
-+ #
-+ # Procfs types
-+ #
-+-- 
-+2.43.0
-+
--- 
-2.43.0
+Regards,
 
+tmp/work/x86_64-linux/bazel-native/7.7.0/sources/src/main/cpp/util/BUILD:95=
+:11:
+Linking src/main/cpp/util/libport.a failed: (Exit 1): ar failed: error
+executing CppArchive command (from target //src/main/cpp/util:port)
+  (cd tmp/bazel/bazel_EExPgtfN/out/execroot/_main && \
+  exec env - \
+    PATH=3Doe-core/scripts/native-intercept:tmp/work/x86_64-linux/bazel-nat=
+ive/7.7.0/recipe-sysroot-native/usr/bin/python3-native:oe-core/scripts:tmp/=
+work/x86_64-linux/bazel-native/7.7.0/recipe-sysroot-native/usr/bin/x86_64-l=
+inux:tmp/work/x86_64-linux/bazel-native/7.7.0/recipe-sysroot-native/usr/bin=
+:tmp/work/x86_64-linux/bazel-native/7.7.0/recipe-sysroot-native/usr/sbin:tm=
+p/work/x86_64-linux/bazel-native/7.7.0/recipe-sysroot-native/usr/bin:tmp/wo=
+rk/x86_64-linux/bazel-native/7.7.0/recipe-sysroot-native/sbin:tmp/work/x86_=
+64-linux/bazel-native/7.7.0/recipe-sysroot-native/bin:bitbake/bin:tmp/hostt=
+ools
+\
+    PWD=3D/proc/self/cwd \
+    ZERO_AR_DATE=3D1 \
+  oe-core/scripts/native-intercept/ar
+@bazel-out/k8-opt/bin/src/main/cpp/util/libport.a-2.params)
+# Configuration:
+d26135a3254147264e37dd42dcbe81f92695ccaa36573733091ed4b195d3bf62
+# Execution platform: //:default_host_platform
+oe-core/scripts/native-intercept/ar: invalid option -- '@'
+Usage: oe-core/scripts/native-intercept/ar [emulation options]
+[-]{dmpqrstx}[abcDfilMNoOPsSTuvV] [--plugin <name>] [member-name]
+[count] archive-file file...
+       oe-core/scripts/native-intercept/ar -M [<mri-script]
 
