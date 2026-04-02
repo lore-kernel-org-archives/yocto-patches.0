@@ -1,206 +1,132 @@
-Return-Path: <yi.zhao@eng.windriver.com>
+Return-Path: <sandeep.gundlupet-raju@amd.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92E36D39414
-	for <webhook@archiver.kernel.org>; Thu,  2 Apr 2026 11:09:42 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.13250.1775128175210193443
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A881D6AB00
+	for <webhook@archiver.kernel.org>; Thu,  2 Apr 2026 19:51:21 +0000 (UTC)
+Received: from CY7PR03CU001.outbound.protection.outlook.com (CY7PR03CU001.outbound.protection.outlook.com [40.93.198.56])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.4875.1775159478794999956
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 02 Apr 2026 04:09:35 -0700
+ Thu, 02 Apr 2026 12:51:19 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@windriver.com header.s=PPS06212021 header.b=rwwJYZjl;
- spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.178.238, mailfrom: prvs=8552b40fc7=yi.zhao@windriver.com)
-Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63203LTm2296855
-	for <yocto-patches@lists.yoctoproject.org>; Thu, 2 Apr 2026 11:09:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
-	 h=content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=PPS06212021; bh=+c3pZYtvIBzzC8fVXIgB
-	kOTkwkRnMDlZEyivnMStVc0=; b=rwwJYZjloXuJElAE88AJ8sToV5GSkXJsKrH2
-	LXIOwxzoixSL1xygshz2zw/rXCUw5ezTbmRXNke5ThoRCQUz0aCGlNd5RftUlPE8
-	cOpVwBzywjdHHbD5A13/Z/2BR1/KUAxOfpX3BAR8EnkTek/J34pIv1UQm3cVLI3w
-	QRQziFWWVqJbZXKAiwItzLwX7gBg30mg5pkQ7c+IM4OM2skjJad1Oj/CVLeP+9h9
-	0jhWIpCfrdw8Iv2eB74jsefpNYY7qiYitaJVhV8P7sZ4K4dzOrT2BcmOeL9YXsLY
-	3h38tTi8fquc/gDV5Xe8fEoEfdCEGfOjmbts9nfxLSqQpEBZZg==
-Received: from mw6pr02cu001.outbound.protection.outlook.com (mail-westus2azon11012043.outbound.protection.outlook.com [52.101.48.43])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4d646vyrfg-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT)
-	for <yocto-patches@lists.yoctoproject.org>; Thu, 02 Apr 2026 11:09:33 +0000 (GMT)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@amd.com header.s=selector1 header.b=2CJ1dku4;
+ spf=permerror, err=parse error for token &{10 18 %{i}._ip.%{h}._ehlo.%{d}._spf.vali.email}: invalid domain name (domain: amd.com, ip: 40.93.198.56, mailfrom: sandeep.gundlupet-raju@amd.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LXvL0e5Zr9+uOCnS/NmEja10IJvJa5n3+RmsCf2mxz0Rf5B/qWMEk8D5bGL/6M7pAvQe7BeYj73naMMmuRZBcEUfeqt+1XbYjPjtiavwLXjBefBJzgnTgSaKiVLmovgat5uCaDpul+EC+gi7hXtL5TnfvgM0a/2BkIkW0E5C5W/drd4jrMfgP8J3hLatGZdc6VQJM+V8kPfnIPCfu4a3xIXlJ31m+ObmoStPEIpxu2pocGR5T5hwAhMCneIrLOinokmQUWbkewq62bUG6Jt+8jsMQ1hMHbMZnge1JFsWO7pTv1gidfQ6T6pxOQVNmWZKt3E9RgC6otuv4ZeCIgugWA==
+ b=ml9wilE561z1Q9bcgRE8MPMhge/jsa9pRkjfK2yK+DvpQc+0EIUIbJ2jC8fBVLmkehgnR+6MPhVSB1P06ghBw0eMp8CkfyxkOGZcoA/XusAkZuHIiTimCwKhsqLW7oggFJl23a3WJl5SQWbB7RHG3jSHsw+u5kMD5Dj6n9v9PhCP7ilqJrdycObEME7KP21G5z77C5u4oG6JuUxep1dIWtkdyP9irEakMu9fQWUI2CIm0wZklGM+lSL748yGM8A5i/JE2VG5LUTQD9FrBUK1yIx5Ybri2QU4q7lDePexQPXGhNCNvyNzEFyn4YiRGba0GCavCYUYYKf5n5oL/OKAnw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+c3pZYtvIBzzC8fVXIgBkOTkwkRnMDlZEyivnMStVc0=;
- b=etgXQFCBdPY5ZKYAhq/LVv8ysYLxup19c3aICVp2D7vn/WESi0MntJcWPzd+WgMjKLITLHOZq1J67d53ibItw1NIK5IjCuKrnLkjZZ24UWcGGtSgtSMhHQu72nIZwRFM/bWw2YyjoBxMKSjDZtgDLZitSLsUbwdwaIV2+a4bLuKVbO7QCxcNSMkCpH2i8Qh2REu7DNu+RMCfLAciwr0I5+61ScSYbIrzldWUDifDhN+Qv/Oo5JTMjp5md5SPKnpHEeAw2LJSIahGebw2gLE2Eh4W98UT6mdkLA5Hw+kpUDM7Gb/Vifn2B8Cfc28bMDVG/SBPsss1U6LuoTWk13Swsg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=windriver.com; dmarc=pass action=none
- header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
-Received: from DS0PR11MB6399.namprd11.prod.outlook.com (2603:10b6:8:c8::5) by
- SN7PR11MB7708.namprd11.prod.outlook.com (2603:10b6:806:352::11) with
+ bh=QzsJbfp+iI8vNZWA4BV/x1WbeOqC9hLdJPBQrALd+8k=;
+ b=ynd5tb+1PQbrLzZ4gfCjennhgONucPu3yrC/jSMrGUgUT5KXU9T4SK4l8GheY2n5QyAvOQtFuNqEozFX/nPExpXMdSWPHSTfbg+KgmfaCsQJtCXpC+71UgwUE82kfk1W5Ee8zMZYX71HM0pV9fTpm5V8TWHARVHSUKMhhXpXNtvGxVTH6/ay3KDLkSUbjmLDYh5qEWKLzLStXlbmCjWNmi0B9PHJVqzrecsc2Rg1U/CjMAVNRjCLM0Rh9r8ko7eH1hT8nlebAAMAsGRxWgXw51ZPqIbXd0WhCTWfeL9uwYGUk3TLW4m7MTyOzAKob5JIhVfOyQTLZ4Wz+vFeUpSrTw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=lists.yoctoproject.org
+ smtp.mailfrom=amd.com; dmarc=pass (p=quarantine sp=quarantine pct=100)
+ action=none header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QzsJbfp+iI8vNZWA4BV/x1WbeOqC9hLdJPBQrALd+8k=;
+ b=2CJ1dku4o/4FZ3jsJ/BtjQ1LD+hw3z8bqScR39EtHYMoWefB1OzrpbzTqYYx8vuo2Y8YuM0O1D5++GzJjZaI7oaIowP0FcnyltrcV6v1K3cm2uwv7DwwMNQBPeIeTsCbc0Mk77XB7qbjOAa/6UtqHR8pXDU2zkSB9n5Bx2JWOes=
+Received: from PH7P220CA0051.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:32b::13)
+ by CH3PR12MB7668.namprd12.prod.outlook.com (2603:10b6:610:14d::5) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.19; Thu, 2 Apr
- 2026 11:09:30 +0000
-Received: from DS0PR11MB6399.namprd11.prod.outlook.com
- ([fe80::3432:2eb3:d0a5:7831]) by DS0PR11MB6399.namprd11.prod.outlook.com
- ([fe80::3432:2eb3:d0a5:7831%6]) with mapi id 15.20.9769.016; Thu, 2 Apr 2026
- 11:09:30 +0000
-From: Yi Zhao <yi.zhao@windriver.com>
-To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-selinux][PATCH] refpolicy: update to latest git rev
-Date: Thu,  2 Apr 2026 19:09:16 +0800
-Message-Id: <20260402110916.1089259-1-yi.zhao@windriver.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.20; Thu, 2 Apr
+ 2026 19:51:15 +0000
+Received: from CY4PEPF0000E9CF.namprd03.prod.outlook.com
+ (2603:10b6:510:32b:cafe::52) by PH7P220CA0051.outlook.office365.com
+ (2603:10b6:510:32b::13) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9769.18 via Frontend Transport; Thu,
+ 2 Apr 2026 19:51:14 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ CY4PEPF0000E9CF.mail.protection.outlook.com (10.167.241.134) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9769.17 via Frontend Transport; Thu, 2 Apr 2026 19:51:14 +0000
+Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Thu, 2 Apr
+ 2026 14:51:13 -0500
+Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb10.amd.com
+ (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Thu, 2 Apr
+ 2026 14:51:13 -0500
+Received: from xcosswyocto01.xilinx.com (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Thu, 2 Apr 2026 14:51:12 -0500
+From: Sandeep Gundlupet Raju <sandeep.gundlupet-raju@amd.com>
+To: <yocto-patches@lists.yoctoproject.org>
+CC: <tim.orling@konsulko.com>, <mark.hatle@kernel.crashing.org>
+Subject: [layerindex-web][PATCH 2/4] connectivity_check.sh: Use yoctoproject.org for HTTPS check
+Date: Thu, 2 Apr 2026 13:51:10 -0600
+Message-ID: <20260402195112.1369295-3-sandeep.gundlupet-raju@amd.com>
 X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SL2P216CA0121.KORP216.PROD.OUTLOOK.COM (2603:1096:101::18)
- To DS0PR11MB6399.namprd11.prod.outlook.com (2603:10b6:8:c8::5)
+In-Reply-To: <20260402195112.1369295-1-sandeep.gundlupet-raju@amd.com>
+References: <20260402195112.1369295-1-sandeep.gundlupet-raju@amd.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB6399:EE_|SN7PR11MB7708:EE_
-X-MS-Office365-Filtering-Correlation-Id: df0ecf13-bd81-4e66-c572-08de90a85018
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9CF:EE_|CH3PR12MB7668:EE_
+X-MS-Office365-Filtering-Correlation-Id: b704d759-11f0-4232-b413-08de90f132e4
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|38350700014|56012099003|18002099003;
+	BCL:0;ARA:13230040|82310400026|376014|36860700016|1800799024|13003099007|56012099003|22082099003|18002099003;
 X-Microsoft-Antispam-Message-Info: 
-	h/ZZS6htRNKES207O0T9s2vUsapdfSXLQXrHUdJfGqwo8BSmpLCqtdRV62cqQ6/+ILQ9aIpDbtYW1Qpmk9is2m0AEDg+GeEmSQgz1OMOzI78/5Xpi0iM3Yg5DUvRTVqM30MuDv2+GycDkH02Xdz+dnGNhHjH8Mt+pyYWfZhqqSdfvP0xQaOmvP3k8di6n6HAJCsAZYWjc0DXJ1qv0ETopbuvODVKEQSCKr54ZUf2G+kF2taAXPnu1ug7GEsqop50XUi03Ts/3uMFrO24hQ8vFVtkcmPp/TVb54aHBLPGatrUX9+jb7CSoAL09iGqqK/7TBG7M/l+HXTV6URwXdxE4B2BCt1OmBSLxuXlrscuZHbNIpjt+zdrkyFE/+Qx67qDDlmz8FI/aTPqQkhPJ37kfEFD3pVq8JO0RSZJucwOyQKAx7jES+r16caOT0Pl9V/oQBJcHhP0D5xjgMNbHeUnvWepF8nBEbVQly8XFbWBMYBBwnM0V3mAnkgI9bIsFTEXFKNe8R5N47prLypib/2vIUrJa1Av3Hyho+Qs44Bm06IiKj6abDzu1OLXAOT58mIyr3dYb/frFdgH+zrpdW3IVuCxSZxg3foHghYQB6GQljZtuASOOH5VveczDbBCW4fiz0yujNtrxycUfrVBGPAkcb09LDiDiq+Hq7s78N40miqrs7LI4MK9bthubcsCZ7Qwv2T1B45H+iZFjkLi0nW4jTT6uRujV14pw7xWJ80zqKyy5deV15FKt9W8665ARd8SakLGteagFLY4C+ErpQRqMyhENCLg+y0ZmtY69T7mKuQ=
+	/Vp5zvZRplrR6cyVgYQ3fN1Eo+yus58udDTZAkoHI+dn8cLc2/YJDX6bUu4HLb/rUv5bJrxfOzBVTUKg45Mk+Ld1R1P+m+9DbDDjB2I790zS25TJkzaZKr3kXG7Xx9oXRyIShNsowgKmpnCCEtEsOQDW7XGKlwtnb4IfkIL5hhF3qAfSVG1M2mhnhXWSgslKtForkfsFHnEbe1GV+FOd0Kji5XZNyKXrfTGoQxZL/KJbkSBIgSCKJ0X6Ie2GYbEf7CTicfAuo0TAFT3G6OIVNxnLepFdz7UcHwpRF/TZ9t0h3cpf08Jkwr94bIqKBEtr165hWnouTIy2gE70VGgWL13IP3G/lJRaNLHftXym29Nil4Lk0S+JyZims6j/ZLsxHaZxJMJZuh5Uqy3KyBeC++3000xa32FfmyA2iPeHf5SRRgEmFd/DrQ9Am22afbNv4OtNcDDBxHJtG2qd332pRh5kC1Z7YZHh8j6HVkv9kSuCl6jZtSbqqbVfJsApyYWXudl0oRZ7AJ/uI6OWYdkBNkzdq3mE3hHIW4wzuCKt/wTOp7eS9Aw/DCp4fNU/AZ4h+3eumdhrUCKVK9dlhVMDjKCrUojctHMx1ratzuVwo7shPQczpYGYqROkEDugELiKMxHoliRwsEFTWfS1APz07Nx6Y2we+DfMTgcqwcVRNm1JBIReMbei+1GVOcfbUIvQCk0qE7DtfW0jy+DTf7qMYg==
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB6399.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(38350700014)(56012099003)(18002099003);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700016)(1800799024)(13003099007)(56012099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?xXz/gvJeOJXniV6KElV/R9fWcOBELlFRaJtQyX2MnibzrvejvtsvAiBm7b31?=
- =?us-ascii?Q?bgaHxbkGvZC4RI2aWtf3dtU2qxPUW/7JR7W1yQdd+PN7aNpv6fvfpf0YiCxa?=
- =?us-ascii?Q?4Vi062UiOAa/7ZSrnL0E+745PKU3WAZV/MS1AgINBABzeMv/Md6+r1Qi/wZZ?=
- =?us-ascii?Q?yc35xiyD9AYuh0SZgT05voPmxV3LfIO3i4tTGTgQaYuDG3O6y1e5P3OHoHX6?=
- =?us-ascii?Q?WkFMne0jcSHExKUW5yk5VANOCstvWcNUbQv15eKI5pESxUsx4NLrJOSjXQ/4?=
- =?us-ascii?Q?tGeXJkmZXR+PhSITIyLBjd19lSs03/ckTsTaev2tKRxsR/FLzTEwmTokpFMa?=
- =?us-ascii?Q?oyiqmgcNlu7RuDsbWcw2vBdWe94UMO0CQcoFQ3Xg3fW810SoaKD4XhfxvqDc?=
- =?us-ascii?Q?yNexXx4iTmRgrO57KYMoXU6HOsSP/inciXhCCkFZUnlQRMiLoq/9QsEhnGl0?=
- =?us-ascii?Q?Smtvow7gQ2fRsTCzrbCm1ab0huVdtHMJ19To1jo3bOO9jc+O1/XUfaaCBoMD?=
- =?us-ascii?Q?i1oNHTey544QsBWkBdXteMAbJczJr8usfRHmY0FR2svhq6cNMeNf3uy7KMO6?=
- =?us-ascii?Q?r9QCfu3XvSlZv0b1zC1zBJcvRIMIhNnKDDOhGPBf3ING0pla/BBW6mvas9BS?=
- =?us-ascii?Q?3ScHuCv/Ti4EKqm7kaqfQROVus8DRPaZIE9nU4hpvXaHI8D3B7p4lJOPvQoV?=
- =?us-ascii?Q?CXXxTVdc0udyKL5HgJJNWRgtQVZUGQsOScPVvD6XSw7su2pYY7yYQNvI1BYa?=
- =?us-ascii?Q?B5pWsizqvukfQmRsNLCec5e1fCRrne0qlSuehRbDlD8Ux0j90hrUBs7AhCtp?=
- =?us-ascii?Q?8fNvO8zVYeIselXCzTAWb2CSihvI+pKcOS7paz5uvDWUAQMhn7uTDEZ9ztIY?=
- =?us-ascii?Q?4q/gD3abE8UeHed0DsiybDeec1noN/YkZ91fW8uNjDICfqwrGb5JCu7O3F3/?=
- =?us-ascii?Q?1WKx9DxeeRMfBd0xaIEDIzCZjSpLAwuLwMOsthWoNvhilucBbww+DwM3XzbU?=
- =?us-ascii?Q?HGFZaVK1HhfW2ZWOMT++80H8tkpGvvMTrIy/p/RlnT2CC2ZYMCwT0b7NCaur?=
- =?us-ascii?Q?H+1pL07pEs7CrcURaO838tKSdc2fSliallDd3S+UJa4VX4oNcI4SMAIKsS0u?=
- =?us-ascii?Q?NdZalE0n4IvfewogtnbSdm+dG2msmitbFLoTI0THfUKX9ETEXe+r8Bq1COKV?=
- =?us-ascii?Q?shKO8BkvzNG2YJS8DYtJtnb8iy87VqophDpc8qpO0qKG+hrHdNeCMfkQhnYL?=
- =?us-ascii?Q?JjqiJDSCdB5gpEBERnK8oTn/Xt7m+TEySYxnTiIwmO7ed5I+jQJ9uL0C7Xg9?=
- =?us-ascii?Q?8ErS7SJZXhW7EaFu1eXCzmK68xv0sUuRffVXRfcqsBUU6EtbViVlqGv8A5MI?=
- =?us-ascii?Q?0IfTlBrjw1mq4eAdST0U1nkCJKhAHtmPPYoHofTGEZHKwL+tZuTfH3yEW+EM?=
- =?us-ascii?Q?hjGYYwM1NBTWDTdlY7WOzQvvPmnUkP2e5xd6KJNynppShDgdS/2qVLns3+2I?=
- =?us-ascii?Q?Ngap91nfIZqHIUR3k/mCatDyCMFYRfRayEJNH+CzTlnDp2bncKV7ib4OApHT?=
- =?us-ascii?Q?KtZyR0EDq1IEHYLJDhKA/BnEkR/dpdKE9Q3SgClB6v1vw9rz+4OCyPhlKG8U?=
- =?us-ascii?Q?W/nb/PD+5wmUi8hJDeKUAVqKXH9cVLu7ehKIHAv5SmZrOBHkVfsTrhWfd5Kq?=
- =?us-ascii?Q?Lbf7lMaXXjai90yNAmsZ+eKFwVrX5HZsF/Sj76FNBJhWlXqMSd14ugwyldOo?=
- =?us-ascii?Q?uclreEKnOA=3D=3D?=
-X-Exchange-RoutingPolicyChecked: 
-	UgLwlM3xNZu+fYSWkwHgtuM6OaPe8jsdrqAvVTcNao2ld2fFSdknAPDF6HzJg8lRed34kGC7/sr9JlFgeZ5FhzVLCgzmIJ6xfIEScL7TetTz2+GArqXEnGotnDWx8gizgUwNEGUWTbU2z2WPK/D/azTVZu76r8HMvwZoSzt71cRYzmkh+g5PWDoCetyymb5A3dbRcIpiPSBbCccZpprLgrhs/K/7HERAtDZtDNVU9bAHgMCuqnWnKXWgLjfWOZ3CCseGLGxQo+P7uyKYj5HpADjQ6nmhZzF52I9ZsUzX6YpiKoYptAi0vi47JWplOPhxeaC2cnTbTzUTpw1NBLtmmw==
-X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: df0ecf13-bd81-4e66-c572-08de90a85018
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB6399.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Apr 2026 11:09:30.8096
+	JJ1c8VSg+S8zA4rzdze5q2vGXFa8yxKo4cd/7YGBl8fjOOlP6vX4GBjXbNzAQSYKLHPZRz4angwktr1PH/qnnHAnk35m8i264231XOg4MNjhaPr7ru89ByP5DpXB0SjA2V8secqKwvmKwW3q13esy35Kz/xc3XpAOh7Lv0h5figQeRvrdIZRsxz6+M1u3rvr6C0HLHCDXrNGy0Iwn6UC+FlE4BJ9gd+QyZ4KzKDZe8EYpyEv3lFZAFzvMkVm3m0FsWb0NCoIruGgVQbXh25kCK3eTnwibTan0eJAqOFl8p2fKNQYHpsoqv/NoI0snYO1snBvc16fXMg0dZlK0iQzSNMRUVOBFleAr+tXisa70m/8bwrlbeAS8CX7ajPe5v+2vZkX1i2K55EF/0MKOa6FGUm+sG668iP5Ku2UcihRPYTMdWtlvlTZOdlbcUjMCXb6
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Apr 2026 19:51:14.7677
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: AtjmARtDFDM6RBFFGnPQgKANrqBQpTqD3FraPbp3Wli+SKrt5gX4AVH328pk6VFYsaN6AaeMNJBs+03TziziOQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB7708
-X-Authority-Analysis: v=2.4 cv=Zqjg6t7G c=1 sm=1 tr=0 ts=69ce4e6d cx=c_pps
- a=5ROfPwdIRWh2zNeQ7OwrBw==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
- a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
- a=xqWC_Br6kY4A:10 a=A5OVakUREuEA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=bi6dqmuHe4P4UrxVR6um:22 a=klDOsUkWDRETUCZYPvoE:22 a=t7CeM3EgAAAA:8
- a=NEAV23lmAAAA:8 a=HEPJ--p_9Lqn54SzGH4A:9 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-ORIG-GUID: FLXMuyc1efwVlMlubG2Ng5NvyjMZBRFP
-X-Proofpoint-GUID: FLXMuyc1efwVlMlubG2Ng5NvyjMZBRFP
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDAyMDEwMCBTYWx0ZWRfX58zqOK/TX0e9
- PR6Xp/EiARRaLtC7K1HXciqaQV3nCjw6IoYpoYS+kauQ605nNeB8JM2kSh1NCJTYKHe81Rz1lov
- Pi/+xcI09/rThowjlwWc9cGGUHBFughuOVjI4Ww64lsuUJ8CNLYXjYWoBHlhJYuncZEyTWtuW2r
- vmZWpURxXftlo54e3/v23xstpmWy/hCFjwCPPRyDjmK2H3YD6Y7iuYZ1YnbNtv+pjbUROMC4tbA
- EVq/y1ed7Z5gtaiQIgsVDQ9InI53FI6SODKrwzSTlHuI8gT/Yqzp3IM2jLPRklvnOVNaNSH3Fi8
- SbDz6APZ/5RcZrTvCAcLohL4coREKUF15z9gJon9i4TXoWrSa4uPc8z3SwRJyMKNb1qFp5aS8KT
- B4Dzz6B9whDQSCT89hC0+eIX3mGzOQawe1Pl73KQeI+mBgSMGMjL0iNLhp6Q9vOoXv9WhVmdubF
- JmqAiOIXH0X5S552RNw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-04-02_01,2026-04-02_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 spamscore=0 suspectscore=0 phishscore=0 impostorscore=0
- bulkscore=0 priorityscore=1501 malwarescore=0 lowpriorityscore=0
- clxscore=1015 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2603050001
- definitions=main-2604020100
+X-MS-Exchange-CrossTenant-Network-Message-Id: b704d759-11f0-4232-b413-08de90f132e4
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource: 
+	CY4PEPF0000E9CF.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7668
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 02 Apr 2026 11:09:42 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3616
+ <yocto-patches@lists.yoctoproject.org>; Thu, 02 Apr 2026 19:51:21 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3617
 
-* 9ff571c79 refpolicy: donotaudit rsyslogd for net_admin capability on self
-* aa350841e refpolicy: Added policy for modprob to read blacklist-video.conf lnk_file
-* eef80d415 refpolicy: Added policy for systemd_user_runtime_dir_t to read tmp_t directory
-* 2a85bb850 refpolicy: Added policy for rpcbind
-* bd3c6e00e refpolicy: Added dontaudit on docker_t to manage /usr directory
-* 2aad2d57f kernel: add kernel_read_transparent_hugepage_sysfs interface
-* aacef5aae varnishd: update fcontexts for vinyl-cache rename
-* e393fdc3c virt: label libvirt hook scripts with dedicated exec type
+Replace google.com with yoctoproject.org as the HTTPS test URL.
+google.com may be blocked or considered unsafe on some Linux host
+environments, while yoctoproject.org is a more appropriate and
+reliable choice for a Yocto/OE layer index deployment.
 
-Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
+AI-Generated: GitHub Copilot (Claude Sonnet 4.6)
+
+Signed-off-by: Sandeep Gundlupet Raju <sandeep.gundlupet-raju@amd.com>
 ---
- ...licy-modules-system-logging-grant-getpcap-capabili.patch | 6 +++---
- recipes-security/refpolicy/refpolicy_git.inc                | 2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ docker/connectivity_check.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/recipes-security/refpolicy/refpolicy/0035-policy-modules-system-logging-grant-getpcap-capabili.patch b/recipes-security/refpolicy/refpolicy/0035-policy-modules-system-logging-grant-getpcap-capabili.patch
-index bbd40e8..8c0ba66 100644
---- a/recipes-security/refpolicy/refpolicy/0035-policy-modules-system-logging-grant-getpcap-capabili.patch
-+++ b/recipes-security/refpolicy/refpolicy/0035-policy-modules-system-logging-grant-getpcap-capabili.patch
-@@ -1,4 +1,4 @@
--From 1960cf45c37cdd9c11a012fe641dd37537b6f6e4 Mon Sep 17 00:00:00 2001
-+From 2b90866ebd50527fb3cf099e16a6f5bcd09a9e39 Mon Sep 17 00:00:00 2001
- From: Yi Zhao <yi.zhao@windriver.com>
- Date: Tue, 28 May 2024 11:21:48 +0800
- Subject: [PATCH] policy/modules/system/logging: grant getpcap capability to
-@@ -21,7 +21,7 @@ Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
-  1 file changed, 2 insertions(+)
- 
- diff --git a/policy/modules/system/logging.te b/policy/modules/system/logging.te
--index d22a3207c..b1d9c20d2 100644
-+index 950aa3f8d..089ffc768 100644
- --- a/policy/modules/system/logging.te
- +++ b/policy/modules/system/logging.te
- @@ -406,6 +406,8 @@ optional_policy(`
-@@ -30,7 +30,7 @@ index d22a3207c..b1d9c20d2 100644
-  allow syslogd_t self:capability { chown dac_override fsetid setgid setuid sys_admin sys_nice sys_resource sys_tty_config };
- +# Rsyslog configures with --enable-libcap-ng
- +allow syslogd_t self:capability setpcap;
-- dontaudit syslogd_t self:capability { sys_ptrace };
-+ dontaudit syslogd_t self:capability { sys_ptrace net_admin };
-  dontaudit syslogd_t self:cap_userns { kill sys_ptrace };
-  # setpgid for metalog
- -- 
-diff --git a/recipes-security/refpolicy/refpolicy_git.inc b/recipes-security/refpolicy/refpolicy_git.inc
-index 3c6ca0f..4b2b186 100644
---- a/recipes-security/refpolicy/refpolicy_git.inc
-+++ b/recipes-security/refpolicy/refpolicy_git.inc
-@@ -2,7 +2,7 @@ PV = "2.20260312+git"
- 
- SRC_URI = "git://github.com/SELinuxProject/refpolicy.git;protocol=https;branch=main;name=refpolicy;destsuffix=refpolicy"
- 
--SRCREV_refpolicy = "440d3f5f129985c0193edff9948a1add42469692"
-+SRCREV_refpolicy = "cffa6e2c93e9f9be74ffbd65237f45ad6e9d7c55"
- 
- UPSTREAM_CHECK_GITTAGREGEX = "RELEASE_(?P<pver>\d+_\d+)"
- 
--- 
-2.34.1
+diff --git a/docker/connectivity_check.sh b/docker/connectivity_check.sh
+index 59b26b8..89931b0 100755
+--- a/docker/connectivity_check.sh
++++ b/docker/connectivity_check.sh
+@@ -18,7 +18,7 @@ if ! wget -q $HTTP_TEST_URL ; then
+     exit 1
+ fi
+=20
+-HTTPS_TEST_URL=3D"https://google.com"
++HTTPS_TEST_URL=3D"https://yoctoproject.org"
+ if ! wget -q $HTTPS_TEST_URL ; then
+     echo "ERROR: failed to fetch $HTTPS_TEST_URL"
+     cleanup_tmp
+--=20
+2.43.0
 
 
