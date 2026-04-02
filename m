@@ -2,67 +2,63 @@ Return-Path: <sandeep.gundlupet-raju@amd.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFFC4D6AB05
-	for <webhook@archiver.kernel.org>; Thu,  2 Apr 2026 19:51:21 +0000 (UTC)
-Received: from BL0PR03CU003.outbound.protection.outlook.com (BL0PR03CU003.outbound.protection.outlook.com [52.101.53.46])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.4914.1775159480741078231
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE9B3D6AB04
+	for <webhook@archiver.kernel.org>; Thu,  2 Apr 2026 19:51:31 +0000 (UTC)
+Received: from BL2PR02CU003.outbound.protection.outlook.com (BL2PR02CU003.outbound.protection.outlook.com [52.101.52.61])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.4915.1775159481642459175
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 02 Apr 2026 12:51:21 -0700
+ Thu, 02 Apr 2026 12:51:22 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@amd.com header.s=selector1 header.b=CrFVO3Ct;
- spf=permerror, err=parse error for token &{10 18 %{i}._ip.%{h}._ehlo.%{d}._spf.vali.email}: invalid domain name (domain: amd.com, ip: 52.101.53.46, mailfrom: sandeep.gundlupet-raju@amd.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@amd.com header.s=selector1 header.b=L7V5bylb;
+ spf=permerror, err=parse error for token &{10 18 %{i}._ip.%{h}._ehlo.%{d}._spf.vali.email}: invalid domain name (domain: amd.com, ip: 52.101.52.61, mailfrom: sandeep.gundlupet-raju@amd.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Vd1qE8Bz4K9+gtpzcaW9zBlKUSpw7kcr6pXyCv0Ekw6qQMAzJr6mIGn3yAPEVoYHQjgD1fmt4Fag82L6N0EHh3lm6YOleFk0LaudOuYvVuvXh/x0xVvqBjIrAD7dWfLfkOMQn/74aZRmFYspXV+3bkQBP/TltUUEidDk7NPyAEsLZY/Zs3h0syaa5BYKrwx7WzpSlXwuTpjTpeNnaLzPn/1h87OtaONbEOJs8Tbb5PwQUg+i5GQ7qHPNMbTVfF5q8bZcdX75JDu4iHkpRUEg1UZUSWc19lIDEI+Z3LrXQooRFOxR0zoAkYI3P2ld9hxLZzPBZWKerOjx3E4PqXrEnA==
+ b=DsiZbkuqWZckhcJX05kzar5AvqrHDZVCeAPkBVjuLtqsCXZ9TUjEevEf5wD4BSDjNUj/Y14PhOWbneQg1U9Q5CFkTsAfexz3O3S/R39H8tYvgvdjHzACHoVTJss2pFJIS7lhohlc1nYR5F1sfGgBvIy60cCQPRJi84+d8EHmXyKn7cKyWtYHxXHFIETZxdC9lxEwWSsNSW6HKekF90iBFdje3AFeY/9kZMTUvycDdtPF36TsKR3pl+towMyl2Y7MPaCTtxHLS6zIbMYNdyYxVqKm9j9AJNOmGVpwFE3Q1XcaY8Mb7xtxa513qa7V4t1lr8dRBvDh8oxfx0ycSnhWuQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5dlOB8mhFSXhaWBWBo7nsPT04aVN9/4msVUjcpjB3J4=;
- b=WvhXr51AskbYt6wf51p9yzjhr/SctUvoPOnBGSJQeHr3Sx41c+n4STmuhxS6s2WxKWaEPkEIgy9mLoNE5MoJbNDiOHHPPN0Y2QVq2UVKMd65teNtEKrUy9ZgzXBhGxcXq155jPjllrdACKjzvu2iqfvz18T0E8JbD/JZOa5zS86Wq0RGojxRpgQNV8WlfFYkxAGAJGFVrdvPdsBUztBI5hnFgbIxhzz7AXcjf5cMloA7WY5bSeQAbJjZ7PPC7xpb48et4nVhhOtKAhlRB7zbLo1xjiGBqK7OV45zMKSxaVljpQ8hK+igneOX7yovnhg8nUqbWlW1YwxqnLU3PrssjQ==
+ bh=RZSdL1tVRdoZ66WOLUKLLXBb8nsnYG+0CL3m/r44Tgo=;
+ b=JV083KsRTwMw4cW6i3goLzWH2p6qVzjgtWZc9U7QOdEM5aGuHKrUEWSzWuE1iPWk9w6IJMAxcwd4dCdjvxXZoXJ9e+8z6ztVglHQcAOyoUAKI8XW0hglSQ1UnYiLUGsnac2SHCjhSIJZ5HdXP+SFdVEe3Tf24ifaenlNrQi2Aj2ckYmkSflaId84P/PhpSp35x8L7CcEM7ceJjEVrCtDvnDIHE4lxiU/h5kVhNzBztFkE3o99PwQDId+OmIJdq4YBTSkSbwzebr2c92ZIGsoa1tLUR5mxj2YNabnr5jpnIclJefeCiiF4GxvTe7ciqmz4UBuCMV2SDUbGAo/cg4/wA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=lists.yoctoproject.org
  smtp.mailfrom=amd.com; dmarc=pass (p=quarantine sp=quarantine pct=100)
  action=none header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5dlOB8mhFSXhaWBWBo7nsPT04aVN9/4msVUjcpjB3J4=;
- b=CrFVO3CtQSEGL2kA0tmeWrLipkE7hyHcG4VnJ0D3ArwmE0EaVOwIAgLYVkkA1HbWLftqI13so+At2njYz3pPURGcbsH9u9fl2sxds8Oz6KBwM0ARZjZWocyu8ZNs57oRrPmP3axXW3mWPHe9Q6rhFVaPZ97kL5S8TvaN6DXNT94=
-Received: from SJ0PR13CA0217.namprd13.prod.outlook.com (2603:10b6:a03:2c1::12)
- by DM6PR12MB4355.namprd12.prod.outlook.com (2603:10b6:5:2a3::21) with
+ bh=RZSdL1tVRdoZ66WOLUKLLXBb8nsnYG+0CL3m/r44Tgo=;
+ b=L7V5bylbpOVoJpDnFHJ5gDUbgRlMlQknzBF7Fy7z48myodjllpv9iUlGWxVHKQxj649ZhJxDhZT3c+XNHmB8orQbDpFB5ETrgzvgd15fVaboOA/eGLqH6h2JrWo67YJ6Q0t0eLLTU0vkcxXx7cn+iHXkbuRds/b4Dmln/MGShKo=
+Received: from PH7P220CA0047.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:32b::6)
+ by MW3PR12MB4457.namprd12.prod.outlook.com (2603:10b6:303:2e::20) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.20; Thu, 2 Apr
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.15; Thu, 2 Apr
  2026 19:51:14 +0000
-Received: from CO1PEPF000075F2.namprd03.prod.outlook.com
- (2603:10b6:a03:2c1:cafe::7) by SJ0PR13CA0217.outlook.office365.com
- (2603:10b6:a03:2c1::12) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9769.18 via Frontend Transport; Thu,
+Received: from CY4PEPF0000E9CF.namprd03.prod.outlook.com
+ (2603:10b6:510:32b:cafe::56) by PH7P220CA0047.outlook.office365.com
+ (2603:10b6:510:32b::6) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9745.30 via Frontend Transport; Thu,
  2 Apr 2026 19:51:14 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
 Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
-Received: from satlexmb08.amd.com (165.204.84.17) by
- CO1PEPF000075F2.mail.protection.outlook.com (10.167.249.41) with Microsoft
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ CY4PEPF0000E9CF.mail.protection.outlook.com (10.167.241.134) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9745.21 via Frontend Transport; Thu, 2 Apr 2026 19:51:14 +0000
-Received: from Satlexmb09.amd.com (10.181.42.218) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.9769.17 via Frontend Transport; Thu, 2 Apr 2026 19:51:13 +0000
+Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Thu, 2 Apr
- 2026 14:51:14 -0500
-Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb09.amd.com
- (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Thu, 2 Apr
- 2026 12:51:13 -0700
+ 2026 14:51:12 -0500
 Received: from xcosswyocto01.xilinx.com (10.180.168.240) by satlexmb07.amd.com
  (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Thu, 2 Apr 2026 14:51:13 -0500
+ Transport; Thu, 2 Apr 2026 14:51:12 -0500
 From: Sandeep Gundlupet Raju <sandeep.gundlupet-raju@amd.com>
 To: <yocto-patches@lists.yoctoproject.org>
 CC: <tim.orling@konsulko.com>, <mark.hatle@kernel.crashing.org>
-Subject: [layerindex-web][PATCH 4/4] README: Document --app-dir option usage
-Date: Thu, 2 Apr 2026 13:51:12 -0600
-Message-ID: <20260402195112.1369295-5-sandeep.gundlupet-raju@amd.com>
+Subject: [layerindex-web][PATCH 1/4] layerindex: Add app dir support for configurable container
+Date: Thu, 2 Apr 2026 13:51:09 -0600
+Message-ID: <20260402195112.1369295-2-sandeep.gundlupet-raju@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20260402195112.1369295-1-sandeep.gundlupet-raju@amd.com>
 References: <20260402195112.1369295-1-sandeep.gundlupet-raju@amd.com>
@@ -71,191 +67,386 @@ Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000075F2:EE_|DM6PR12MB4355:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3cd1512f-a2af-4764-7ce0-08de90f132ce
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9CF:EE_|MW3PR12MB4457:EE_
+X-MS-Office365-Filtering-Correlation-Id: 13a4235e-8a61-4a97-129f-08de90f13265
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|82310400026|376014|36860700016|1800799024|13003099007|56012099003|18002099003|22082099003;
+	BCL:0;ARA:13230040|82310400026|36860700016|376014|1800799024|18002099003|56012099003|22082099003;
 X-Microsoft-Antispam-Message-Info: 
-	L4W5xCUPOH0ks7B1dYV4WKLpMu6TWyd2x+N+lkuMjqPx20TugSMAOADhW+4ECyq6VzV3cTjk7Q0nIe7W9OvBY1R6ht0GQRfFwnztCEKWTebJgdapwEek35dhtYTHAiLtwjsKCM+JeFSzlhNXm3CkUxt8DX01riJfqiwLrVoJys8foMW7jLSbQL+VDx3msmSmEZSdtSLAYiNt1m1g3N52M2/nnQepK3iHzF3qxqeY8UtpsMNG/oHU0BN7ziA+BEr1V5UPI+Y+utpxMaIJYsWSUgPGhptr9vs5Vd9zKz1Rv9kZZf12XlsNkqNxbH6saAAEZbClgJFTFuggDadV7ji7bAcXNQDTkaECdUFPPhfK9VW85srtxXa1+o+VtIIc3xL4yhO09GKAe24348WVOBJgkDU0wFk1DF5juB/yukk+sn6SZJCBvmkSZUGVqnl+WVA6e+GgwJ0zxI/+KXbYHY+kmpL8f9TtK8UMX4GpAYjwvIPKadXxlIGVGWh64OoGaREcF2OGr5UHpdZ9Lz62oE2d967YBjljMWpHJd2EYBM40nx1WlVr578MvQKPXf3K6eQtKXsMVVf1nbklaszM9YxGnN7YPYh+nM0Kll2bNz5xTdUVw94YNs0UER4Oivg6ytzsGae525TKSUA+ZsaXsLa5C7SEh0gDrIFmG+LwPsOHpFzlsrfaJWe6aDPhEre1uyEsfd3TZ5jYAL/vhxh6pGoDng==
+	sI3j83Vvlmx+LZ/85r2Hq6FA7vJvxiZu+xQKOT+gZq+uwYs7NL5S6BAvNoX2RVGdcvVhGpExuI41ld1lNsXfY9RcUTY4c2Nhd38CUoZ7PU0VgPYOrxoTo+KJ5WF2+4eWGyYSVAHtOqOBw7rKg+uVCRfEIfBMIYCZbZhaiBRxBlk1ZB+qgtN1t63DTtgJg8Pf5dO9rN1wCw4me81G+hUj14DV95WtkzebnpektfuPDsv9LYhx4Vqg1t0FTOj8aE4Mq7P4d2fo+NsWdOHQcUQ2fisB/zJtM4XhiP2jrja3kgjynfRKSvRVW3+C2oGDKnBCB/0xMlU3456yNJM2vwvaXikRQOYcyXmfn7maVwHBGPC+v3invgsAeAIYtlePyKddkoKpcfW+IQM7J1462drz9c5vnioM6z2zuJ3TYO/6hH05rqfvXVlme/th4zXwY2i3IybKt/ihQC7SjtLJ1F3Qc3YlTJoYFUNbhvUqDwet1ml9OApMQhAcuUv4goMOnWj6+KTkhp74nKCI56bdrMjRgQp9yWOG7nFl0hKrN36HnnHV6ea7c0F1l8TpsIfeARcBTFfR4s+7SAOIJPtc5OzSD4UOn2J7xpDwWxlX/O5k04I9pZ1ddplxrg+yfcKjv9pXu+23ykyRmVyK6DNRjuxeBpTuOZpT/ZmnVWP+XKr8CBg7sXrlwVmaTOA6DDW7oUIAgzH5s67U/D0kV4G4qoEzPcqys69u4dbF/YFQFHSazUGFwpZZgwWK9o5WeJwygMdbW8zG4BzV/79ch6BWA57XBg==
 X-Forefront-Antispam-Report: 
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700016)(1800799024)(13003099007)(56012099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700016)(376014)(1800799024)(18002099003)(56012099003)(22082099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	wz0hOIP6rP+KeY70dDREzvF96RI0sjQlLQ5CzKqkf7Gqlu5JdY7Z7pzBrH9HXbtfHNTtgFpN2qPHBP5wdVAQsaTs3R1hX+8JHZO1zIAhRsHGNUg12mNxiwdGMH9kHXCWoDQLslHLmdUXgZboW2YZ5hMetBUdxYe5IDGmc4gv6X85W3NMnCLnBSB4lKPlxHZg4csHc8z/Dfr50aKh2EV6iQluY0Bj//tMeWtSdOQ6ff0yRdyiUXPRG0Qkdge0cfs8c5owheCnDfalcBinaPXAjDRnqazQZoU+qKFnioRGtf4uCLLB02AAnW3GjkTJVjIXsjc3+rWWSC78ABhU/a4FtVKBXOvcPnfC5qT0lOMw0H5hUDVf9DJqEEQNsJbCANd2+QeYZsGvfoL1+0BcY5ynoonc+WF5XlrhbSEpy+Iy1MOCpAU6B//mChvyBuoWRlzp
+	fJfsBXvQ1Q6K7tNNxEyu7xBnkf9OElZy8WiyjiIt731O8o42WuDii8vPTM7zw1zFaZRUS+AHH8/v8APfSYquIyVAfwhFhS6Ap0Nfi8/dCXKR/BBuOZCxrYPudtf7DILbTMK3KncYBLUnrPomU4gA3AdEpadC25UPK8Do+aoWCv2zvKv0jY0hk5kmz2Qjq78sFgQE0SWiYb0lxC+xggpumLcXeSH2KHhPuiBDfjltA6ipD2F6J3zUxBZoRKJMV9Kp0R2sVFbqaJNjgmbqvEjwnmRhk2Qgn/DIV93YKDZtlQP6UkR5PGS3iaqy4JRJUy65XU7ZAzlRUcCeFMUCS2u10v4glWP6ls2vVS++nAkHviBJ2qlOq1/bDMMUhzPO6GBYrbh67/Bd1D5mEmV5SDuRjVDQDNkp3nfnxRsaibFOmRu3qP/H+OemBfyOJpsYxStE
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Apr 2026 19:51:14.5759
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Apr 2026 19:51:13.9317
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3cd1512f-a2af-4764-7ce0-08de90f132ce
+X-MS-Exchange-CrossTenant-Network-Message-Id: 13a4235e-8a61-4a97-129f-08de90f13265
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource: 
-	CO1PEPF000075F2.namprd03.prod.outlook.com
+	CY4PEPF0000E9CF.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4355
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4457
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 02 Apr 2026 19:51:21 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3619
+ <yocto-patches@lists.yoctoproject.org>; Thu, 02 Apr 2026 19:51:31 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3620
 
-Update README to reflect the new --app-dir support added to
-dockersetup.py:
+Add a new --app-dir command-line argument (default: /opt) to allow the
+base directory used inside the containers to be configurable instead of
+being hardcoded to /opt.
 
-- Step 2: Add a note explaining that the default installation base
-  directory inside the containers is /opt (requiring the repo to be
-  cloned at /opt/layerindex), and document the --app-dir option for
-  using a custom  directory (e.g. when the repo is cloned to a
-  non-default path)
-- Database Setup: add note to replace /opt with --app-dir value if used
-- Updating OE data: add same note
-- Security section: add reminder to substitute --app-dir value in the
-  changepassword and axes_reset commands
+Changes:
+- dockersetup.py: add --app-dir argument; write APP_DIR to .env file via
+  new write_env_file() so docker-compose passes it as a build arg; update
+  edit_dockercompose() to expand build: block and inject APP_DIR build arg
+  reference, and rewrite volume mounts and celery --workdir accordingly;
+  propagate app_dir through setup_https(), check_connectivity(), and all
+  direct docker-compose run call sites
+- Dockerfile: add ARG APP_DIR=3D/opt + ENV APP_DIR=3D${APP_DIR}; replace al=
+l
+  hardcoded /opt paths with ${APP_DIR} in COPY, RUN and CMD instructions
+- docker/migrate.sh: replace /opt with ${APP_DIR:-/opt}
+- docker/refreshlayers.sh: replace /opt with ${APP_DIR:-/opt}
+- docker/updatelayers.sh: replace /opt with ${APP_DIR:-/opt}
 
-  AI-Generated: GitHub Copilot (Claude Sonnet 4.6)
+AI-Generated: GitHub Copilot (Claude Sonnet 4.6)
 
 Signed-off-by: Sandeep Gundlupet Raju <sandeep.gundlupet-raju@amd.com>
 ---
- README | 39 +++++++++++++++++++++++++++++++--------
- 1 file changed, 31 insertions(+), 8 deletions(-)
+ Dockerfile              | 24 +++++++------
+ docker/migrate.sh       |  2 +-
+ docker/refreshlayers.sh |  2 +-
+ docker/updatelayers.sh  |  2 +-
+ dockersetup.py          | 79 +++++++++++++++++++++++++++++++++--------
+ 5 files changed, 80 insertions(+), 29 deletions(-)
 
-diff --git a/README b/README
-index 1335b7a..e40ff25 100644
---- a/README
-+++ b/README
-@@ -49,6 +49,19 @@ instructions will walk you through the setup.
+diff --git a/Dockerfile b/Dockerfile
+index 72f57d2..8e6e508 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -3,6 +3,8 @@
+ FROM ubuntu:jammy
+ LABEL maintainer=3D"Michael Halstead <mhalstead@linuxfoundation.org>"
 =20
-         ./dockersetup.py -d ~/databasedump.sql -p http://<proxyserver>:<po=
-rt>
++ARG APP_DIR=3D/opt
++ENV APP_DIR=3D${APP_DIR}
+ ENV PYTHONUNBUFFERED=3D1 \
+     LANGUAGE=3Den_US \
+     LANG=3Den_US.UTF-8 \
+@@ -55,22 +57,22 @@ RUN DEBIAN_FRONTEND=3Dnoninteractive apt-get update \
+ 	&& rm -rf /var/lib/apt/lists/* \
+ 	&& apt-get clean
 =20
-+   NOTE: By default, the application is installed inside the containers un=
-der
-+   /opt (e.g. /opt/layerindex, /opt/migrate.sh). This means you should clo=
-ne
-+   this repository into /opt/layerindex on the host before running the scr=
-ipt,
-+   or alternatively use the --app-dir option to specify a different base
-+   directory inside the container:
+-COPY . /opt/layerindex
+-RUN rm -rf /opt/layerindex/docker
+-COPY docker/settings.py /opt/layerindex/settings.py
+-COPY docker/refreshlayers.sh /opt/refreshlayers.sh
+-COPY docker/updatelayers.sh /opt/updatelayers.sh
+-COPY docker/migrate.sh /opt/migrate.sh
+-COPY docker/connectivity_check.sh /opt/connectivity_check.sh
++COPY . ${APP_DIR}/layerindex
++RUN rm -rf ${APP_DIR}/layerindex/docker
++COPY docker/settings.py ${APP_DIR}/layerindex/settings.py
++COPY docker/refreshlayers.sh ${APP_DIR}/refreshlayers.sh
++COPY docker/updatelayers.sh ${APP_DIR}/updatelayers.sh
++COPY docker/migrate.sh ${APP_DIR}/migrate.sh
++COPY docker/connectivity_check.sh ${APP_DIR}/connectivity_check.sh
+=20
+-RUN mkdir /opt/workdir \
++RUN mkdir ${APP_DIR}/workdir \
+ 	&& adduser --system --uid=3D500 layers \
+-	&& chown -R layers /opt/workdir
++	&& chown -R layers ${APP_DIR}/workdir
+ USER layers
+=20
+ # Always copy in .gitconfig and proxy helper script (they need editing to =
+be active)
+ COPY docker/.gitconfig /home/layers/.gitconfig
+-COPY docker/git-proxy /opt/bin/git-proxy
++COPY docker/git-proxy ${APP_DIR}/bin/git-proxy
+=20
+ # Start Gunicorn
+-CMD ["/usr/local/bin/gunicorn", "wsgi:application", "--workers=3D4", "--bi=
+nd=3D:5000", "--timeout=3D60", "--log-level=3Ddebug", "--chdir=3D/opt/layer=
+index"]
++CMD ["/bin/sh", "-c", "/usr/local/bin/gunicorn wsgi:application --workers=
+=3D4 --bind=3D:5000 --timeout=3D60 --log-level=3Ddebug --chdir=3D${APP_DIR}=
+/layerindex"]
+diff --git a/docker/migrate.sh b/docker/migrate.sh
+index ca15368..bb9f646 100755
+--- a/docker/migrate.sh
++++ b/docker/migrate.sh
+@@ -1,2 +1,2 @@
+ #!/bin/bash
+-python3 /opt/layerindex/manage.py migrate "$@"
++python3 ${APP_DIR:-/opt}/layerindex/manage.py migrate "$@"
+diff --git a/docker/refreshlayers.sh b/docker/refreshlayers.sh
+index 0c550bd..5adaf86 100755
+--- a/docker/refreshlayers.sh
++++ b/docker/refreshlayers.sh
+@@ -1,3 +1,3 @@
+ #!/bin/bash
+-update=3D/opt/layerindex/layerindex/update.py
++update=3D${APP_DIR:-/opt}/layerindex/layerindex/update.py
+ $update -q -r
+diff --git a/docker/updatelayers.sh b/docker/updatelayers.sh
+index 21640ba..6f0e8f0 100755
+--- a/docker/updatelayers.sh
++++ b/docker/updatelayers.sh
+@@ -1,3 +1,3 @@
+ #!/bin/bash
+-update=3D/opt/layerindex/layerindex/update.py
++update=3D${APP_DIR:-/opt}/layerindex/layerindex/update.py
+ $update -q
+diff --git a/dockersetup.py b/dockersetup.py
+index bc7478c..920b2c8 100755
+--- a/dockersetup.py
++++ b/dockersetup.py
+@@ -70,6 +70,7 @@ def get_args():
+     parser.add_argument('--no-migrate', action=3D"store_true", default=3DF=
+alse, help=3D'Skip running database migrations')
+     parser.add_argument('--no-admin-user', action=3D"store_true", default=
+=3DFalse, help=3D'Skip adding admin user')
+     parser.add_argument('--no-connectivity', action=3D"store_true", defaul=
+t=3DFalse, help=3D'Skip checking external network connectivity')
++    parser.add_argument('--app-dir', type=3Dstr, help=3D'Base directory in=
+side the container for application files. Default is %(default)s', required=
+=3DFalse, default=3D'/opt')
+=20
+     args =3D parser.parse_args()
+=20
+@@ -253,14 +254,16 @@ def yaml_comment(line):
+=20
+=20
+ # Add hostname, secret key, db info, and email host in docker-compose.yml
+-def edit_dockercompose(hostname, dbpassword, dbapassword, secretkey, rmqpa=
+ssword, portmapping, letsencrypt, email_host, email_port, email_user, email=
+_password, email_ssl, email_tls):
++def edit_dockercompose(hostname, dbpassword, dbapassword, secretkey, rmqpa=
+ssword, portmapping, letsencrypt, email_host, email_port, email_user, email=
+_password, email_ssl, email_tls, app_dir=3D'/opt'):
 +
-+        ./dockersetup.py --app-dir /path/to/appdir
++    in_layersapp_build =3D False
+=20
+     def adjust_cert_mount_line(ln):
+         linesplit =3D ln.split(':')
+         if letsencrypt:
+             linesplit[1] =3D '/etc/letsencrypt'
+         else:
+-            linesplit[1] =3D '/opt/cert'
++            linesplit[1] =3D app_dir + '/cert'
+         # This allows us to handle if there is a ":ro" or similar on the e=
+nd
+         return ':'.join(linesplit)
+=20
+@@ -305,6 +308,33 @@ def edit_dockercompose(hostname, dbpassword, dbapasswo=
+rd, secretkey, rmqpassword
+                 newlines.append(ucline + '\n')
+             else:
+                 newlines.append(yaml_comment(line) + '\n')
++        elif re.match(r'^\s+build:\s+\.$', line):
++            # Convert inline 'build: .' to block form so we can pass APP_D=
+IR as a build arg
++            indent =3D line[:len(line) - len(line.lstrip())]
++            newlines.append(indent + 'build:\n')
++            newlines.append(indent + '  context: .\n')
++            newlines.append(indent + '  args:\n')
++            newlines.append(indent + '    - APP_DIR=3D${APP_DIR}\n')
++            in_layersapp_build =3D True
++            continue
++        elif '- APP_DIR=3D' in line:
++            # Keep APP_DIR referencing the .env file (do not embed value h=
+ere)
++            format =3D line[:line.find('- APP_DIR=3D')].replace('#', '')
++            newlines.append(format + '- APP_DIR=3D${APP_DIR}\n')
++            continue
++        elif re.match(r'^\s+context:\s+\.$', line) and in_layersapp_build:
++            in_layersapp_build =3D False
++            newlines.append(line + '\n')
++            continue
++        elif ':/opt/workdir' in line:
++            newlines.append(line.replace(':/opt/workdir', ':' + app_dir + =
+'/workdir') + '\n')
++            continue
++        elif ':/opt/layerindex-task-logs' in line:
++            newlines.append(line.replace(':/opt/layerindex-task-logs', ':'=
+ + app_dir + '/layerindex-task-logs') + '\n')
++            continue
++        elif '--workdir=3D/opt/layerindex' in line:
++            newlines.append(line.replace('--workdir=3D/opt/layerindex', '-=
+-workdir=3D' + app_dir + '/layerindex') + '\n')
++            continue
+         elif "layersweb:" in line:
+             in_layersweb =3D True
+             newlines.append(line + "\n")
+@@ -474,9 +504,9 @@ def edit_dockerfile_web(hostname, no_https):
+     writefile("Dockerfile.web", ''.join(newlines))
+=20
+=20
+-def setup_https(hostname, http_port, https_port, letsencrypt, letsencrypt_=
+production, cert, cert_key, emailaddr):
++def setup_https(hostname, http_port, https_port, letsencrypt, letsencrypt_=
+production, cert, cert_key, emailaddr, app_dir=3D'/opt'):
+     local_cert_dir =3D os.path.abspath('docker/certs')
+-    container_cert_dir =3D '/opt/cert'
++    container_cert_dir =3D app_dir + '/cert'
+     if letsencrypt:
+         # Create dummy cert
+         container_cert_dir =3D '/etc/letsencrypt'
+@@ -578,8 +608,26 @@ def edit_options_file(project_name):
+         f.write('project_name=3D%s\n' % project_name)
+=20
+=20
+-def check_connectivity():
+-    return_code =3D subprocess.call(['docker-compose', 'run', '--rm', 'lay=
+ersapp', '/opt/connectivity_check.sh'], shell=3DFalse)
++def write_env_file(app_dir):
++    """Write APP_DIR to .env so docker-compose passes it as a build arg.""=
+"
++    env_vars =3D {}
++    try:
++        with open('.env', 'r') as f:
++            for line in f:
++                line =3D line.strip()
++                if '=3D' in line and not line.startswith('#'):
++                    k, v =3D line.split('=3D', 1)
++                    env_vars[k.strip()] =3D v.strip()
++    except FileNotFoundError:
++        pass
++    env_vars['APP_DIR'] =3D app_dir
++    with open('.env', 'w') as f:
++        for k, v in env_vars.items():
++            f.write('%s=3D%s\n' % (k, v))
 +
-+   For example, if you have cloned the repository to
-+   /scratch2/myuser/layerindex-web, you would run:
 +
-+        ./dockersetup.py --app-dir /scratch2/myuser/layerindex-web
-+
-    NOTE: If you want email sending to work (required for user registration=
- and
-    password resets), you should use the -e/--email-host option to specify =
-your
-    outgoing email server.
-@@ -99,11 +112,14 @@ Database Setup
- Once the application is running you'll need to do a bit of further
- setup within it:
++def check_connectivity(app_dir=3D'/opt'):
++    return_code =3D subprocess.call(['docker-compose', 'run', '--rm', 'lay=
+ersapp', app_dir + '/connectivity_check.sh'], shell=3DFalse)
+     if return_code !=3D 0:
+         print("Connectivity check failed - if you are behind a proxy, plea=
+se check that you have correctly specified the proxy settings on the comman=
+d line (see --help for details)")
+         sys.exit(1)
+@@ -741,15 +789,16 @@ if args.uninstall:
+ if args.update:
+     args.no_https =3D read_dockerfile_web()
+     if not args.no_https:
+-        container_cert_dir =3D '/opt/cert'
++        container_cert_dir =3D args.app_dir + '/cert'
+         args.hostname, https_port, certdir, certfile, keyfile =3D read_ngi=
+nx_ssl_conf(container_cert_dir)
+         edit_nginx_ssl_conf(args.hostname, https_port, certdir, certfile, =
+keyfile)
+ else:
+     # Always edit these in case we switch from proxy to no proxy
+     edit_gitproxy(socks_proxy_host, socks_proxy_port, args.no_proxy)
+     edit_dockerfile(args.http_proxy, args.https_proxy, args.no_proxy)
++    write_env_file(args.app_dir)
 =20
-+NOTE: The following commands use /opt as the default base directory. If yo=
-u
-+ran dockersetup.py with --app-dir, replace /opt with the value you specifi=
-ed.
-+
- 1. For a fresh database (without importing any database dump) you will
-    need layer data. To import the full set for the master branch from the
-    public instance at layers.openembedded.org you can run the following:
+-    edit_dockercompose(args.hostname, dbpassword, dbapassword, secretkey, =
+rmqpassword, args.portmapping, args.letsencrypt, email_host, email_port, ar=
+gs.email_user, args.email_password, args.email_ssl, args.email_tls)
++    edit_dockercompose(args.hostname, dbpassword, dbapassword, secretkey, =
+rmqpassword, args.portmapping, args.letsencrypt, email_host, email_port, ar=
+gs.email_user, args.email_password, args.email_ssl, args.email_tls, args.ap=
+p_dir)
 =20
--   docker-compose run --rm layersapp /opt/layerindex/layerindex/tools/impo=
-rt_layers.py https://layers.openembedded.org
-+   docker-compose -f docker-compose.yml run --rm layersapp /opt/layerindex=
-/layerindex/tools/import_layers.py https://layers.openembedded.org
+     edit_dockerfile_web(args.hostname, args.no_https)
 =20
-    Alternatively, you can populate the database manually -
-    you'll need to add at least the openembedded-core layer to the
-@@ -169,19 +185,22 @@ You will likely want to update the OpenEmbedded layer=
- information on a regular
- basis. To do that by fetching and parsing all layer repositories, run the
- following:
+@@ -758,7 +807,7 @@ else:
+     edit_options_file(args.project_name)
 =20
-+NOTE: The following commands use /opt as the default base directory. If yo=
-u
-+ran dockersetup.py with --app-dir, replace /opt with the value you specifi=
-ed.
-+
-    Incremental update:
+     if not args.no_https:
+-        setup_https(args.hostname, http_port, https_port, args.letsencrypt=
+, args.letsencrypt_production, args.cert, args.cert_key, emailaddr)
++        setup_https(args.hostname, http_port, https_port, args.letsencrypt=
+, args.letsencrypt_production, args.cert, args.cert_key, emailaddr, args.ap=
+p_dir)
 =20
--       docker-compose run --rm layersapp /opt/layerindex/layerindex/update=
-.py
-+       docker-compose -f docker-compose.yml run --rm layersapp /opt/layeri=
-ndex/layerindex/update.py
+ ## Start up containers
+ return_code =3D subprocess.call(['docker-compose', 'up', '-d', '--build'],=
+ shell=3DFalse)
+@@ -768,7 +817,7 @@ if return_code !=3D 0:
 =20
-    Reload all data (should only be needed if the database structure has
-    changed as part of an upgrade of the application code):
+ if not (args.update or args.no_connectivity):
+     ## Run connectivity check
+-    check_connectivity()
++    check_connectivity(args.app_dir)
 =20
--       docker-compose run --rm layersapp /opt/layerindex/layerindex/update=
-.py -r
-+       docker-compose -f docker-compose.yml run --rm layersapp /opt/layeri=
-ndex/layerindex/update.py -r
+ # Get real project name (if only there were a reasonable way to do this...=
+ ugh)
+ real_project_name =3D ''
+@@ -830,7 +879,7 @@ if not args.no_migrate:
+     env =3D os.environ.copy()
+     env['DATABASE_USER'] =3D 'root'
+     env['DATABASE_PASSWORD'] =3D dbapassword
+-    return_code =3D subprocess.call(['docker-compose', 'run', '--rm', '-e'=
+, 'DATABASE_USER', '-e', 'DATABASE_PASSWORD', 'layersapp', '/opt/migrate.sh=
+'], shell=3DFalse, env=3Denv)
++    return_code =3D subprocess.call(['docker-compose', 'run', '--rm', '-e'=
+, 'DATABASE_USER', '-e', 'DATABASE_PASSWORD', 'layersapp', args.app_dir + '=
+/migrate.sh'], shell=3DFalse, env=3Denv)
+     if return_code !=3D 0:
+         print("Applying migrations failed")
+         sys.exit(1)
+@@ -864,13 +913,13 @@ if not args.update:
+                 break
+     for volume in volumes:
+         volname =3D '%s_%s' % (real_project_name, volume)
+-        return_code =3D subprocess.call(['docker', 'run', '--rm', '-v', '%=
+s:/opt/mount' % volname, 'debian:stretch', 'chown', '500', '/opt/mount'], s=
+hell=3DFalse)
++        return_code =3D subprocess.call(['docker', 'run', '--rm', '-v', '%=
+s:%s/mount' % (volname, args.app_dir), 'debian:stretch', 'chown', '500', ar=
+gs.app_dir + '/mount'], shell=3DFalse)
+         if return_code !=3D 0:
+             print("Setting volume permissions for volume %s failed" % volu=
+me)
+             sys.exit(1)
 =20
- Alternatively, you can update the data from an existing layer index instan=
-ce
- (as per above during setup):
+ ## Generate static assets. Run this command again to regenerate at any tim=
+e (when static assets in the code are updated)
+-return_code =3D subprocess.call("docker-compose run --rm -e STATIC_ROOT=3D=
+/usr/share/nginx/html -v %s_layersstatic:/usr/share/nginx/html layersapp /o=
+pt/layerindex/manage.py collectstatic --noinput" % quote(real_project_name)=
+, shell =3D True)
++return_code =3D subprocess.call("docker-compose run --rm -e STATIC_ROOT=3D=
+/usr/share/nginx/html -v %s_layersstatic:/usr/share/nginx/html layersapp %s=
+/layerindex/manage.py collectstatic --noinput" % (quote(real_project_name),=
+ args.app_dir), shell =3D True)
+ if return_code !=3D 0:
+     print("Collecting static files failed")
+     sys.exit(1)
+@@ -891,12 +940,12 @@ else:
+ if not args.update:
+     if not args.databasefile:
+         ## Set site name
+-        return_code =3D subprocess.call(['docker-compose', 'run', '--rm', =
+'layersapp', '/opt/layerindex/layerindex/tools/site_name.py', host, 'OpenEm=
+bedded Layer Index'], shell=3DFalse)
++        return_code =3D subprocess.call(['docker-compose', 'run', '--rm', =
+'layersapp', args.app_dir + '/layerindex/layerindex/tools/site_name.py', ho=
+st, 'OpenEmbedded Layer Index'], shell=3DFalse)
 =20
--    docker-compose run --rm layersapp /opt/layerindex/layerindex/tools/imp=
-ort_layers.py https://layers.openembedded.org
-+    docker-compose -f docker-compose.yml run --rm layersapp /opt/layerinde=
-x/layerindex/tools/import_layers.py https://layers.openembedded.org
-=20
-=20
-=20
-@@ -356,7 +375,9 @@ REGISTRATION_OPEN =3D False
-   reset function ( /accounts/password_reset/ ) or alternatively from the
-   backend you can run the following command:
-=20
--  docker-compose exec layersapp /opt/layerindex/manage.py changepassword <=
-username>
-+  docker-compose -f docker-compose.yml exec layersapp /opt/layerindex/mana=
-ge.py changepassword <username>
-+
-+  (Replace /opt with your --app-dir value if you used a custom directory.)
-=20
- * The web-based password reset function will ask the user answers to
-   security questions they selected and answered when they created the
-@@ -387,7 +408,9 @@ REGISTRATION_OPEN =3D False
-     (default 4, resets after an hour). The lockout can be removed
-     immediately using the following command:
-=20
--    docker-compose exec layersapp /opt/layerindex/manage.py axes_reset
-+    docker-compose -f docker-compose.yml exec layersapp /opt/layerindex/ma=
-nage.py axes_reset
-+
-+    (Replace /opt with your --app-dir value if you used a custom directory=
-.)
-=20
-     If you wish to disable this, remove or comment out "axes" in
-     INSTALLED_APPS. For more information on configuring axes, see:
-@@ -412,12 +435,12 @@ To back up the database within the docker-based setup=
-, you can run the
- following command (no need to substitute ${MYSQL_ROOT_PASSWORD}, it's
- already present within the container environment):
-=20
--docker-compose exec layersdb /bin/sh -c '/usr/bin/mariadb-dump -u root --p=
-assword=3D${MYSQL_ROOT_PASSWORD} --max_allowed_packet=3D512M layersdb' | gz=
-ip > backup-`date +%Y_%m_%d_%H%M`.sql.gz
-+docker-compose -f docker-compose.yml exec layersdb /bin/sh -c '/usr/bin/ma=
-riadb-dump -u root --password=3D${MYSQL_ROOT_PASSWORD} --max_allowed_packet=
-=3D512M layersdb' | gzip > backup-`date +%Y_%m_%d_%H%M`.sql.gz
-=20
- To restore one of these backups you would run the following command (take
- care, this will overwrite the data immediately without prompting!):
-=20
--zcat backupfile.sql.gz | docker-compose exec -T layersdb /bin/sh -c '/usr/=
-bin/mariadb -u root --password=3D${MYSQL_ROOT_PASSWORD} layersdb'
-+zcat backupfile.sql.gz | docker-compose -f docker-compose.yml exec -T laye=
-rsdb /bin/sh -c '/usr/bin/mariadb -u root --password=3D${MYSQL_ROOT_PASSWOR=
-D} layersdb'
-=20
-=20
-=20
+     if not args.no_admin_user:
+         ## For a fresh database, create an admin account
+         print("Creating database superuser. Input user name and password w=
+hen prompted.")
+-        return_code =3D subprocess.call(['docker-compose', 'run', '--rm', =
+'layersapp', '/opt/layerindex/manage.py', 'createsuperuser', '--email', ema=
+iladdr], shell=3DFalse)
++        return_code =3D subprocess.call(['docker-compose', 'run', '--rm', =
+'layersapp', args.app_dir + '/layerindex/manage.py', 'createsuperuser', '--=
+email', emailaddr], shell=3DFalse)
+         if return_code !=3D 0:
+             print("Creating superuser failed")
+             sys.exit(1)
 --=20
 2.43.0
 
