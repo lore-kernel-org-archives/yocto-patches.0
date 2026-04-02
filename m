@@ -2,38 +2,38 @@ Return-Path: <gmisra@qti.qualcomm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54C41CC6B03
-	for <webhook@archiver.kernel.org>; Thu,  2 Apr 2026 07:03:56 +0000 (UTC)
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.10315.1775113428681450847
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 703DFCC6B00
+	for <webhook@archiver.kernel.org>; Thu,  2 Apr 2026 07:05:36 +0000 (UTC)
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.10288.1775113531089268877
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 02 Apr 2026 00:03:49 -0700
+ Thu, 02 Apr 2026 00:05:31 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@qualcomm.com header.s=qcppdkim1 header.b=GWOU5L4E;
- spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: qti.qualcomm.com, ip: 205.220.180.131, mailfrom: gmisra@qti.qualcomm.com)
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6326mD6c2798761
-	for <yocto-patches@lists.yoctoproject.org>; Thu, 2 Apr 2026 07:03:47 GMT
+ dkim=pass header.i=@qualcomm.com header.s=qcppdkim1 header.b=PxZM6M/5;
+ spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: qti.qualcomm.com, ip: 205.220.168.131, mailfrom: gmisra@qti.qualcomm.com)
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6326q04M3745952
+	for <yocto-patches@lists.yoctoproject.org>; Thu, 2 Apr 2026 07:05:30 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	content-type:date:from:message-id:mime-version:subject:to; s=
-	qcppdkim1; bh=nMV2hbsq8iQ8S9qto9alPtDOp36f6AYDGEdL0rnL25E=; b=GW
-	OU5L4EBuFL5TjA3fX4yNZsgidXb+lGPpzfRAAC5DvCTBBavAaWs9YNQM1tbcuT7d
-	dmpftUUU1I+c42t8RQ99W5yXkZP0L/Sr9jKSoBOazg43U3CvbSfdiKKV6lkKoQou
-	cCg0s8hTLF68mXCbkTyggQbj886CHMOKiOrTCj7iaqSAtpVNeftT+z2l0vyFSK9v
-	jCtrPTi4O8z1mAt9M8jXp/nFCxJNBtqa77eJJVpS/77CdaYWDlw5+76HtrR8mAQy
-	i9G+32qvg4WwlA6qIYAPDlsK3zuXUSwMNQ95CtG9G+VvL4LcBOR7GFrcRuvRUnnk
-	6zQrZeCP6rEDl25IizTQ==
-Received: from dm2pr04cu003.outbound.protection.outlook.com (mail-dm2pr04cu00301.outbound.protection.outlook.com [40.93.13.57])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4d96hk2sgh-1
+	qcppdkim1; bh=daiEkRZYPnThkUinlctOnzBQpkom7HdC5bN1wMi0rD8=; b=Px
+	ZM6M/5DOxwXLTKfA1neuBUNsgD/qAcrdKnKkKMip4OlygHW+7E/GKj560RfXqWAt
+	qXG0rnOJqg5vKP9xwFvlkQ2ILxe7nstELJc/Wf6/v1w2kch6+Y5w0t5l/8lVVk98
+	Kgi+Z3EP0aaMe0rJTxNi5RVfkq/4iG7IbewpGpA6VN0tb6fihAthioG5f4dbvkGN
+	SBNNJ6uuJ48E8hPbrOcxTplODEIfob6EZ3vja/2/tpXUU3tJpgIDss1/q2t9Aqbe
+	IjX8J8Zs1qIbVwjsalYEA8qcg1qNZhU0jhyaL7VaVxXaV77pP1vEZAJW8od0BWXn
+	oAUyApyw0Mvs+WoDlPPA==
+Received: from dm2pr04cu003.outbound.protection.outlook.com (mail-dm2pr04cu00302.outbound.protection.outlook.com [40.93.13.58])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4d9324kwau-1
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT)
-	for <yocto-patches@lists.yoctoproject.org>; Thu, 02 Apr 2026 07:03:47 +0000 (GMT)
+	for <yocto-patches@lists.yoctoproject.org>; Thu, 02 Apr 2026 07:05:30 +0000 (GMT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Xz/GNuwlQZXMFGzAvgOIXhu5Yl7+PzJeIhT11z1iGVJn7/2Z25lyVPc53xarBHsHBo2/AA7I35tANl1qmftwOkvcWFw8aM157P4nnCkF1T9d4YfdPDAyfEryr+QEKTreD8m6FdGZZLanyt9tRKIJaieND19omxwmODnUvjmT82A/g5C8tqjvIj5OlNkNKxJQw+JXsiAUL7t1J09F4f/7bKT/507UjxWth2GoPf4atMRIFEx3gvo+tApfpcTs1b0Mn6uOC4ItvYOBZ/mBS5widBaoouvZMeuHd7/Vd6hVMPCITEj8FHnqw+TxoaYAtEDrDYMjxt6oL5F8+jmjaLlPUw==
+ b=AaQHf5A7US5FnfK4CFeHxpNeF2GzMJCaEfhxtAKLZAeH2mjH+8LxviwxHxyfSAz28CyVbice2QqWyhyOcGFgP0xNgF52qN3HIOxCrKSEqE94zoc1V6/TCEwwJRynR34vcFcbPcLiBue8t2Gf225GR1LLnFY/UkM/dF3vEO+1+EzzvJUAqWY508Kqk2eaiqkXATvWFZTjpSz+R8bqKvfbeBOBSpeaRICFUHbK5Rq0SyFOEtDUDVu6Max8zlIyS9oKMgvOFc7WafIwhvNK8El3NykPmzq0JmfJWR+f/uMFZETLwE8dYSpsvf0h4B4TCkxTflpgDBXdAKPnawM1rGLTJw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nMV2hbsq8iQ8S9qto9alPtDOp36f6AYDGEdL0rnL25E=;
- b=tI0oWOj0dSnkPZKdJ5KDXBecM5Rz6jPmsDa4ZSidm/Jq4FIbMzYyAcNfH9lwq+W6gQugd5tn607Reas/tdFlSeQk2s9TW7QPfDDsBjIpRxMVzyClRWdZz2Cth+agZON3JwXSTHmsigZKiNfuylvwZAOaKlTQ4PRFrs+f1GMDbhS0qqKLizj13beFLBhYBI8h0xzC1gEyaLsHoRtTcR7D2DqkWc3k8M7w46XsEPyK5gAPjcZGmHT7FTOmZzhmk9du/fAg225AGOvKME78XHRdVn55MFhj7qrBM9iiW9hsi7KiV99jKPxumLdKzmISr8EYw8Ts/HNjqEehklKyceTfHg==
+ bh=daiEkRZYPnThkUinlctOnzBQpkom7HdC5bN1wMi0rD8=;
+ b=lUNYAGd4xTTPpRih5cSkqxemQYgbwEs6AkNv2T+26hCBOtAnrU2ltA1kJLGRaK6sR0i18rOzkVGcsnHg/3eb3EekvTsEJ7A0fgwgyrLPz+QTTVPzuniZIWgr+l1bFcAYiIAMFJsHrsHZSA8+b7s4CvyDQHsIabBTaXDaVWmzraauYZOo9buwDIk1eydM9k7hdSnCTj7MlfmlhfQMc9ICg0tprJC9xkGBDbryicayYl5JP9X/ESLqocTx0jfy0Xjs7PuvYgz828vfJYeYNQXXWjAEWt5Dy0W36jeGboOSFJfoJf8KKxkbD39aGlrw7HnQSrHktiwTxB3ymODUzxj4YQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=qti.qualcomm.com; dmarc=pass action=none
  header.from=qti.qualcomm.com; dkim=pass header.d=qti.qualcomm.com; arc=none
@@ -41,157 +41,157 @@ Received: from IA3PR02MB11199.namprd02.prod.outlook.com
  (2603:10b6:208:542::12) by PH0PR02MB11318.namprd02.prod.outlook.com
  (2603:10b6:510:38f::8) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.17; Thu, 2 Apr
- 2026 07:03:44 +0000
+ 2026 07:05:28 +0000
 Received: from IA3PR02MB11199.namprd02.prod.outlook.com
  ([fe80::d20f:d3d6:cceb:337d]) by IA3PR02MB11199.namprd02.prod.outlook.com
  ([fe80::d20f:d3d6:cceb:337d%6]) with mapi id 15.20.9769.014; Thu, 2 Apr 2026
- 07:03:44 +0000
+ 07:05:28 +0000
 From: Gargi Misra <gmisra@qti.qualcomm.com>
 To: "yocto-patches@lists.yoctoproject.org"
 	<yocto-patches@lists.yoctoproject.org>
-Subject: [meta-selinux][PATCH 4/5] refpolicy: Added policy for modprob to read
- blacklist-video.conf lnk_file
-Thread-Topic: [meta-selinux][PATCH 4/5] refpolicy: Added policy for modprob to
- read blacklist-video.conf lnk_file
-Thread-Index: AdzCbsJH+/vXbT5JQdyjwFlA1F8gxg==
-Date: Thu, 2 Apr 2026 07:03:44 +0000
+Subject: [meta-selinux][PATCH 5/5] refpolicy: donotaudit rsyslogd for
+ net_admin capability on self
+Thread-Topic: [meta-selinux][PATCH 5/5] refpolicy: donotaudit rsyslogd for
+ net_admin capability on self
+Thread-Index: AdzCbveT7eMirkQsSPWTlkv+Wf+gHA==
+Date: Thu, 2 Apr 2026 07:05:28 +0000
 Message-ID: 
- <IA3PR02MB11199A73D31A8C41023F0CC25F151A@IA3PR02MB11199.namprd02.prod.outlook.com>
+ <IA3PR02MB111995AD3CC1BADED7E4CDCEAF151A@IA3PR02MB11199.namprd02.prod.outlook.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-ms-publictraffictype: Email
 x-ms-traffictypediagnostic: IA3PR02MB11199:EE_|PH0PR02MB11318:EE_
-x-ms-office365-filtering-correlation-id: 9df6d9fa-9cfc-41c5-3176-08de9085fab8
+x-ms-office365-filtering-correlation-id: cc985978-943f-4436-8245-08de908638e2
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: 
  BCL:0;ARA:13230040|1800799024|366016|376014|38070700021|8096899003|56012099003|18002099003;
 x-microsoft-antispam-message-info: 
- O560LODjPY3EaHGcF4Tm1FB/hK+VZq/HGJy9LD9ueQJLLeId8pGByHNhVzEwfnET/FVukDAVAB3l9eexTvpS6iaglRFbV1grAXLfMsTUAj1U/Ctn31uFt7SNGfT7e+Ef0BsraQtFPgg7gPdpISC2Lt0HybcueaOMIs85u1glM1t+t0MoShVGZvKd97IJ7srNOqW3nJQLEVic6dWiCxMcH6uFV1BP+C+7OJgPmFuvRp+6UG43cismoSnFUcaOa9wsqdWdYIEc3kAXvTXBY47JiEsmhQx8Ou9JrxGTr4OkQFtXoUVpAiQVubE1tKoS5Di9m86FOI/amEc7RmZvU6Nn+BJXNRLcWcHOTvxjdc6BiQ2cAL051H9QPT6LpaYzoTDEZ/esr2fRNLJOT6AiUYcatZhgNDfe3qt4JdBfdtPpsHnDhisB21Kr1UCYeFtIhxB3HKxVpHde7sdh56keOKWEISOLPa9BjFCWTGs+gurX21aGL0cEnlOM++SEdWIIHXuiWII0bJ6i2hePkzirLcGrRebDoBHPUpRQHH82kN8opLS5gKmuuzlIBjlBFCAARtMctFp+tnGkQ2eZJ2rj1qqrG/0D3jtJccaaRvY7sevUHhlTEclPFhGJ3XvY7VaHnDySBAwuBGh7NjgkInCXjEZemVEo4IdXsugEoLUIuDNzZfUNTvP84nZiXdBtL5weWjVlRRNdBTG9NmKa35aEPQXYHZprKXgsGrIGHNhE2n9Wdr+hUitcAaGN/HE2V6XKtXjC
+ JCesEKbspU7ES2fk8etHevD9070FhaROyERc6/SWiKyMwvDgo++Lg1ppgROfKufMGB4XiyL9uDWV+oSrVej4yVyZk7XDziKxC9IsxagQanBkaUh2fYM5a1hsPRJ3ZJuyzNVqBDHRLtoYv5UO9Pq/3T2PmZhNgYeU+YaeqgPdnS/xFuaordm4je7coTJqWUGjHQ8cZxN5swXdifRpIejCBzcwU5xmovH35n3Y4M2mblbU2n1nxbmbXaxTFzOgZUEyFZZAzbAglqYd2zGRnSOhfC5J8MmBHzJfgT9KZjj9vDzhJ7ESUXXQaQzyE5eUcbv+ugltmvlX3feBYLqsJfX8KnhoO3iM8B4jCfHwZM5Mz8CeBlIM8cQiboej9qZERjSbDgwdMgDRU0Fl4GiYDoEt6EJt2F/l/7GEZfvaZqXPu4Xjmu63zyV9LnPXNhG+tisa46RUo32SwpxicVHU6cXB4N28Dft0iAF3Z1kJXmFkhVXvlMoXmNGxlPjEgiHnciFxdV1Y1Kt/8jeI/mTxYXwEPouSvo5kMV3/LmZfceakTdJKWq38u/W/TFAUBYli63GnBUheOV4T28zqdnvcQhQoj+b/Swk1vehvw/hZljAN3vzjfVkvgJ0o9gQJAbblihiLrEl84eA82HHCZYEBo/BbEFGIRv3SiUNXy6eFuLIdFu3VHas0PpVqzwsjdKMDpnBJyrwGhBA3XAK6L55HPjLFpq05HVeMElWyuzbgbVmlf+0lnMO2b+56iekTpTIepUSF
 x-forefront-antispam-report: 
  CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA3PR02MB11199.namprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700021)(8096899003)(56012099003)(18002099003);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
- =?us-ascii?Q?AnTUbfYn6HFc2wB3Qbr32RPsapwKrNrsFYATaF+JbAZYBWY0T1f5GaDfWBT+?=
- =?us-ascii?Q?IoYW9emVAQR0Fpm7e3vAZhsrBH2EtC/SDZ29FiyBX4/Q/L4F7KDnGIYzBcx1?=
- =?us-ascii?Q?Rgur7hdAekWpbwvhwuPCSvBHGOlkSW8kCYg36JAyfL26f27bzY1edRBT90Dq?=
- =?us-ascii?Q?kQGuudaXMwkMP0JlRN9EAEsjs/mxTeOGe1Q4tik3CshjiVY/LcOuCU7rHNsQ?=
- =?us-ascii?Q?0xP/arcSgvmg4dFPrp0+wiV9pJCSzI5x+52pXst6IyUuCIfZ3hRNF0EXrlOL?=
- =?us-ascii?Q?OJ/pLZyo+hbZ+39ioWqnVBdCvV7XUHOLxEPE1gZkT4/lBQ3/WQaZXmAFovvJ?=
- =?us-ascii?Q?fruAVirEJa8wp+TUc/Bjpje6pozneoEI4aBUZyptuhgTiA918jPMDQIbD+cD?=
- =?us-ascii?Q?HDSj56xlpXBfgFw+mtWmPpfq2yJshoeTb4T9eTG+NtTDu2kpCNOCDMWFDX4n?=
- =?us-ascii?Q?DblYJ7STaxetaX/j046sFpieONuvM4bYgcIpMbYjbYTimpuwYD/U63rX+6xc?=
- =?us-ascii?Q?mdsxMznEw37PjAwmZEcIAq8ymWHOlEJGCoJT+KaysRjwzS+awAEBMhkS8MZD?=
- =?us-ascii?Q?WHfuPw/2LKOfiA+10Pd6w9ADdIEsrH0V+XK9DvhMTP3ApbM4qc3XkDOmLIzo?=
- =?us-ascii?Q?fSANzyQTOMGT9EuQ2n3ktzYvdol0MqrvgHWVqAddwVZVKsvgHSgvQTveXs4I?=
- =?us-ascii?Q?bcrxwMSa+9M6c3EjsK/VUVarICmR03YW9MRP1Z8/rWGplWLw+ZPMnt+4F6ox?=
- =?us-ascii?Q?DYq+trQ+LQQTbjjyUdEW8sOdtNPqHmTkI2LOsOgo72MXEIV9jC+23eSjnlIM?=
- =?us-ascii?Q?MwMP65hf2kKLxfJipOkxqZ6V+3YmKevh9NK+9ak4OmtlavUTum0ZBGNVXgzu?=
- =?us-ascii?Q?j+elte1q1c+Z8nQ3H9ZS0TVjFxGlA0qzqEjZJJiwCh+JT4hZ2LQilIphnlm+?=
- =?us-ascii?Q?yVelQ+aQ99hTb2pV/PHlAA2s8B3u2jEpJr4c9TV1ZcA3jPxHskxzXFjRZyZs?=
- =?us-ascii?Q?NLsQnf9FpCpOzGPxEXLwH6zfEsrJqTR9MtLQPZnGHypnrzd2/rdIq1A15k3o?=
- =?us-ascii?Q?bdLBmbGllaXQUCwIlr7wIRphS6t1RD0NdpQ6GRRrt06pS6eWbR8c3bj1wCXM?=
- =?us-ascii?Q?/qhJJoQ3pds8rGAvAYh5jvHm6iP+X+u4S43dq5TyOwC9TvroafmXhB7VjPQg?=
- =?us-ascii?Q?h+28UhjujwoZe3A9v0E/5nFb9N/PCPgguMKzIn9U+45JPmZhjbjeO/2lLO0K?=
- =?us-ascii?Q?lzhtdd2fWG7QEyvN5HkRlPfUUw4I8aSIMaON/u7SyZIffpRBC2iYzTZONqWv?=
- =?us-ascii?Q?3PNtjxXXCi+QLoAvGYoQbcq+3V+zCtU7/mM0x684yAKkEMaHiVEYZncWAazZ?=
- =?us-ascii?Q?x/Lc7ve//uLptmUDDRf5tcZhrbXVgzGenhICz1j25IV6nzwvnWlIxjoi+KmZ?=
- =?us-ascii?Q?UMH8IjsjS1X4ykIu+43nEvDbovRFigClct3iqq4FsLeBtB1TuEdKO6Lh0CMb?=
- =?us-ascii?Q?XoXvQScUNKQvhB7cI1+zCAx7XjB95mb2lrSwkw0tl+pZxrYJm32mGGvmelvg?=
- =?us-ascii?Q?nipS8GgVsYGsoDPnsEjDXkUvD8lwyQGoTStmJhl3YE/F6dVU8O67zcehfWon?=
- =?us-ascii?Q?SfkbwuftRTtgSmHCeiLguBoVc2TQx3GgVIYuOEinEZn6oCAdUNE8wkO8YRIR?=
- =?us-ascii?Q?JqvSS0juJKOWNjmzezJOFwzjc5gPX3/lzHpag2bzkAiQusFS4iwnsITLgjb4?=
- =?us-ascii?Q?+MYJSC/Hpw=3D=3D?=
+ =?us-ascii?Q?dqP5Qkdca/daCIm4/RYcLTBhd96gvTb63On3+5K9IsoM5mcm9ufZlYlr4k7T?=
+ =?us-ascii?Q?crlWQ1zP2sOK+Vc695XG2xUgNKhrd6u7BSnlTkRH8EzqXJdvEpmKYQKEfwO1?=
+ =?us-ascii?Q?ilFV3ejkxxvF2vNvpMbggGOeCWRITT88iMKz55Ed3IGJqW/S7i15I8VxQ22N?=
+ =?us-ascii?Q?mem0b7fpHQq4z9mbekdzLkOhLssDAPYklfKD8WMwkvJcqBTDMiZWAcYTqfB/?=
+ =?us-ascii?Q?e3rPAwub1bH7reL/BU7Uf2oZRDZqFwPYqFmVc6WRWw1IVw1hle8S5ydCUJww?=
+ =?us-ascii?Q?LIQXHm7akY1Eew37gHF7JcESa9G4JU1qzWOjg2A+A+Hofax8Cfbe0KHimBHm?=
+ =?us-ascii?Q?FmDwCvRLdQFXjEnJOocLDfbB+MO6V7Yh9BzAjWH1qHRKjlp27mxTircUAG16?=
+ =?us-ascii?Q?HYV3/ToWW09nn+x92HOhwg576fqNxbjbsxevke8OLAL26eMcWOUUq3fgx7gT?=
+ =?us-ascii?Q?C6kVVhLu8QAoswL7w/FoZ7EqGw988ol8ZF2//TUROkBAK7Lu/q1fS9QwNm2u?=
+ =?us-ascii?Q?ActxD81u4b8g/k47cAfo52RLGuQ8n6wUQiS2fnlKHR+5HTXPhFmZrroqC3Zb?=
+ =?us-ascii?Q?P7gFMIcJgp69htK2MFHoXOgjRxjSx9LXVN7adXvyRiNIwMU7d3TqhqOckgYC?=
+ =?us-ascii?Q?y8zU5XCoajWqxmC0aNYtB8sJXemRPPqIRzwVnhvvSTy0oAMul2wMWHlNn7qM?=
+ =?us-ascii?Q?aGyGLDFBD6Ik+PaojxPkWW/8zLgn52H8nVN1x8hIkcBfoLRvU383ezARA3Gi?=
+ =?us-ascii?Q?JgX3zFPmKXByTDa3mj5YhEaVd2vuW8tUfuGAqEz9ULagtOpyXjCMIbfgZV0K?=
+ =?us-ascii?Q?r6GIaRv4TyV22ot9Tt2u1QN/RBRQDssw+lzLtofbpcMoqcKT5ELmhu00PLUG?=
+ =?us-ascii?Q?NO6lWuwy9hKMU8sHlW+9MFFW3qF+x+9/p7BhryvbLdDWl9qisA8+WTZV1M5z?=
+ =?us-ascii?Q?jAFzWOG2bngaZ94uweuWEOowGqO08a2+w6dkj9DDmpEOqI1QAxacViSbQHOT?=
+ =?us-ascii?Q?wfAr1U152peb0pyB95uYrv8HLmijCd1BpsNRKyDS0x319r/tAwPZaKbq2j5R?=
+ =?us-ascii?Q?X5Q4f1VIOdGzc+dfkIZItbF2qQeG1PreuRWkbvPMReuL7INKoCxcOSQMTuf6?=
+ =?us-ascii?Q?q2iVg+RFhF7LDzReaGvqxrCXLV7avo94DuaVxjt9kHIyLvXNlanAZo1P+9/y?=
+ =?us-ascii?Q?X8B/8acc9A2x7lTKInTAf/mleQXdlSWMthkOE7Y435XNMY+0sYxWxDycm1g1?=
+ =?us-ascii?Q?BBrJK5QJer3oObcYp3d6CKjoPklir8wAMLnjGIrIlV3xAeN4NJfKHp9XzT/8?=
+ =?us-ascii?Q?m+DeI/7oEbVSFfM1c6TTsqb6QRqqavp5/7O/OaXrpF1voK+cKoR2m5bTietu?=
+ =?us-ascii?Q?w9QYvXhFhIuXfGGyNOEr0IBd2YzrhN9VSciaq+OHTqeyl8SG0m+jxBaIiaEV?=
+ =?us-ascii?Q?K05zFLygr8tPdb7fevluwHmIial01xRGGxhaIVrszLC0eHTf8Oxk0nnsIGT1?=
+ =?us-ascii?Q?V0cUaGkISkhDuzHUUzM+C64YDk0SfB3jbv/DeM131JAO8D3tvb84W7uaWmG7?=
+ =?us-ascii?Q?U56cTnW8HML8p31qL1m3sQkK7Tgclmy+AoJsuupNvRUfvL8uGBkPc6LJFBMP?=
+ =?us-ascii?Q?6CDbbDr4jtSVy/afa/8iJm9hMBJqhy2rzjREbaKIGZwf/ebFcVdp5fNaaVM9?=
+ =?us-ascii?Q?mxZ4zBNgBMYPlccxiMBh++3je33ppsTpnVq6WbTp5fkVycsozIpl152yS5+f?=
+ =?us-ascii?Q?/FPFR/NqhQ=3D=3D?=
 Content-Type: multipart/alternative;
-	boundary="_000_IA3PR02MB11199A73D31A8C41023F0CC25F151AIA3PR02MB11199na_"
+	boundary="_000_IA3PR02MB111995AD3CC1BADED7E4CDCEAF151AIA3PR02MB11199na_"
 MIME-Version: 1.0
 X-Exchange-RoutingPolicyChecked: 
-	Pb1qWk/KkF7qGUUnx5I6joJ2VY1yi4eVHo5w67u3tphLuIwa0K5+ScD6O0DBx9ZKAIQ8mqcipvjXLHQ8lnKdR3V6cX/RhLZhLZAOTqzVCSBVS3ximFGt1eLqHJSQ8urEMNb6iqKnOCUM76Suufqd9x5dqv4ywOv8EPdpS8Cvpb57Jloiym3pXq6ELx6iuBdVKxHy6KeWgKyhnKqbfINIKgnoqhHcUGxY6HWb2Fv2pi1/a0Ka3ULDZyCDiUzLtI9zDt/AqbefENIp+7LnalhWI5gVU32kJB1cyPrjSMFQi4LpeIDS2siFeCTsD2iIcsXBseIcL6NZCYIcphopYYcaKA==
+	kMOOF7RFXvxW1EiCgRfWdaIrKEN0lhDwlglRgEmjU3X5vVI8HzXLO6JDZ7uXU44NdpE1Ed3zaxRavDqbNoBEezi6LPfi3iYL1mgQRwN+Pvep4OF9wzBpOekVtS6bC8jwK0IYLkDxktUG5+YofJ/upChUc4BWewHudJjmMh0CICwLQe4ihwFkuePniXnZRPJ0fQvLAI15qEH+jg7QI/P3DqFm5bPzGpOuXXo/Dwkln8WyMJnMyjvi4bllDF2o+kgdCm1dwSaO4D5gOI6zjZMooqiLwG1lUQilKsM7gvbrqiS/oQrayk9rIw6bf42iCBoK3wx5XWSRBtfbi/XIDBxPlw==
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	Vd/HyDBl+FBLr7FqJGE9SMruRPJtp0iHw+MSEPpfBYcj1BLLw8OOsTOgFILEHl61tmGy68+puR6bthn+TKthIPI+c/y4Sx8AHcly6F95NWTWsrX8apcAGS7o9zcudJeOZrd+CMIBujLBJp25vifF0mbN7BhCWyD7AgbAGjWCA0ZclAkP7rOJdJXWeu2yg3uPyixZQoEQEkCGhuys7SSzi9vkbMQJaejdWMzwCFdDKwWURNh5f/RSvUsDNi/DA9bbfXPZ8aOUfGEX0tGCcC0NS8qIPUk2/z3UFnhKmhjdinUldSEEwQGRpTaBFt6yfMqTKTd0a0RK6lhefflgtMSjQ9RRFz2yI5xO4rKN2Jz+ipjBgdHssPpRpIL9FIK6C9FybCuyeR0wrOV9pOdbE6bV2tUK60c33kY6SUJUzK4BJUHzRNiP1OfrhzfzAsxlYjeXx3wUfgsRk1iNw7v4gjgMO6KAJJV4AtrtSa6G9KqCvdWyRa2gt5uFjh1QrXx8uDjMQe0z/ekDCzdAvigH7TSGMfLalDBS5c8+oN/GqX4eHY6NuOWoypx3W1B9lYxF6wTe2e98t/PXehInYhnW3j1sIi1bgsMHWYxiPuAHEIxrtjeqxlkDKVGsrBVeSJ2E0YJU
+	toy8bp2E9tOJdgfkFD7isazVPffMq2vOcUBoNOhPNn0iXkSEkNMfNpuEcwSLL7avQ2i/Nii1VFjvUNPuHjL0sXVS+wX//KLB2yT/Ad5NqeZaevea2JBWnN/R7HR2mhzlhNLQzA3SxDNSRR4MfokzIVn/nR0lY5YRLroiFnI71mJnrqQyFvzJnWtOBUO5Xbp4rNp6F+ZW/GYNf3pvnFSk/z0QIiFdOtrzXoRRfZWz2UN6lJd+ZtjWjbLil3BJTb52ROnpp427zhz0KPS4e5/6HV9brKJrr03ky1hOPWoPC7hPiV/HEtBeJIkT65Y+GCf+OoPJwwTTFwn51Vr4RGISdo51wUFjD1+VKjQ2mwLhF/s3rPwEnixWbWpfQ58PjhEhm8W3+r0xiGVlcQI3sdqejfMPADbhg6UWNdwlYY1sIAfXiX8juk7O8lJrnCbeM5b14Lf/6Wgx6Scyuu2PXNwzJ+SEYMCCifDgK/Nqvg1qamE4aNpW5XaA5bBHY27mIi0pdMvzx724aSX8lszLjlVxzNKi72O41HtQR7JYZuhufJQsIqRPnya2XYrQP4KXr8/FaCY0gTtIOJTz6qMvvRV4nY0GTU5yR+VWol41LSPBnvvt2o638guhSx6I3o0wNS9E
 X-OriginatorOrg: qti.qualcomm.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: IA3PR02MB11199.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9df6d9fa-9cfc-41c5-3176-08de9085fab8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Apr 2026 07:03:44.4166
+X-MS-Exchange-CrossTenant-Network-Message-Id: cc985978-943f-4436-8245-08de908638e2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Apr 2026 07:05:28.7050
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 98e9ba89-e1a1-4e38-9007-8bdabc25de1d
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: AeITOQ/hZbHpUqevttiySIwYpz6RxwJo8pSy0R0jFt5DtZWN7EvdTCxsO3WXAF+r3cMwy+r6K3SPH85qBifcZw==
+X-MS-Exchange-CrossTenant-userprincipalname: vtAuXkiK52rQhkI72nOzY11Cj8QLbJa3PDkZ3n1MWtkIShin81zjJhs9g8pUKRYESvQR+v4/h+yG9K1gSJCWfQ==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR02MB11318
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDAyMDA2MSBTYWx0ZWRfX8kx6CsDcuqqg
- DX0IsiLL/4k7/5DW8NIIsHwKYQNUglgSBd+AQTs9vm5mbgCYP5beFvJRiR+4K7qPhmnZkm8ycWt
- 3lUn/iPhPgD2ky1AR7+whmYcamnC046HXHan5HSnY5MU3+qGGPlQLspMnPCaZi6XIKZ/3mWxLkr
- ETpyks2cr4gjUxM8c5UWIanZLvLDRbeZA7osjZ53vy9Sxy8c9UdgPmOVXcEHauebzWm1wZKLmK1
- nv1z78ToXB3NrsU8V3ppD9xjqCC98kra++V8GRChw7OF2hjKsh7mRsAJLllBLHIV1QGB9E+LJrG
- 0OtP9IY+j8f3u+nArwfoWDEW8skSo4VwzBPQaEzIOGBUSEFYPRX+PigErDAD35bCvgWp+b1lUao
- Qka4WAsNFvWEvwQWPdqnrhHYqN58URT/cVuNDpKHsVjJ9PmeY1KNYW7P4YkEHSps46gTEGJxtN8
- R/mJWY2sc+GiM11Oogg==
-X-Proofpoint-GUID: 0Un5oISU79c0TIaIfy4wMvdkUD303-4X
-X-Proofpoint-ORIG-GUID: 0Un5oISU79c0TIaIfy4wMvdkUD303-4X
-X-Authority-Analysis: v=2.4 cv=e9ULiKp/ c=1 sm=1 tr=0 ts=69ce14d3 cx=c_pps
- a=y3Q9mg33rxtftU4vhVNh8Q==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+X-Proofpoint-GUID: DDBGfp2km0iHfKXooM6sQW_gD-46TMpa
+X-Authority-Analysis: v=2.4 cv=TKBIilla c=1 sm=1 tr=0 ts=69ce153a cx=c_pps
+ a=1HtwilQDvHI2YA4O/KCv+g==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
  a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=A5OVakUREuEA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22
- a=NEAV23lmAAAA:8 a=EUspDBNiAAAA:8 a=oK2_imTTR0HNk6CiXMEA:9 a=CjuIK1q_8ugA:10
- a=yMhMjlubAAAA:8 a=SSmOFEACAAAA:8 a=n6xKDSJxxDTCZPJOP1AA:9
- a=JkReuXt4R72UMrVb:21 a=gKO2Hq4RSVkA:10 a=UiCQ7L4-1S4A:10 a=hTZeC7Yk6K0A:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22
+ a=NEAV23lmAAAA:8 a=EUspDBNiAAAA:8 a=50YQJQeRvSoVMKN6iSgA:9 a=CjuIK1q_8ugA:10
+ a=yMhMjlubAAAA:8 a=SSmOFEACAAAA:8 a=t3Xqqeb88XhHY6j-vlAA:9
+ a=xOvUGthomhZvmT7E:21 a=gKO2Hq4RSVkA:10 a=UiCQ7L4-1S4A:10 a=hTZeC7Yk6K0A:10
  a=frz4AuCg-hUA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDAyMDA2MSBTYWx0ZWRfX8gQDrNXQi2mp
+ 2LZDldCUYPVibYHVrSZ1ETERQl+0VJJhQOZI4uFGQH0hSBZffRs6tOgjWq7TndMvsxgk3kuegbV
+ LhUWyk2dF25GQqx4swFtfKU4MPsB4KLxDZJp4ZAvFF7v8UKHKVXk6SDhDtwvvDC8MVi2zoHme1v
+ dWFR3UExl9szQW2s9wkzf/dHySlr3xylz9mjOUL5qeSqoDO5eYEs/dp7mLvO/OfHkbe0xUc2IYH
+ h5qCp25Q32v1spGZ5w4MKbQMVEPlTC/hsDHzASscFeOxOMwpeQH7V1HumAj64pvc8wjpmdDAcBT
+ pyhyu59+8E3cfsvQpc2oewpIESV+eZOgN89Uux/ivzytHquxVEJ5LEob/7oJpBNvGqNHRZHhrKZ
+ VnuKSvuS56XjtTQVeXr0DHKAcvttRK2oIO06ZHOHGdOqsTgXzzr9cNkgjZBQ+hPP55ef7r2yqNd
+ dxY8qgF1+AxD2gnDW9w==
+X-Proofpoint-ORIG-GUID: DDBGfp2km0iHfKXooM6sQW_gD-46TMpa
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-04-02_01,2026-04-01_02,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 priorityscore=1501 phishscore=0 bulkscore=0 malwarescore=0
- clxscore=1015 suspectscore=0 adultscore=0 spamscore=0 lowpriorityscore=0
+ clxscore=1015 adultscore=0 spamscore=0 priorityscore=1501 impostorscore=0
+ malwarescore=0 lowpriorityscore=0 suspectscore=0 bulkscore=0 phishscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2604020061
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 02 Apr 2026 07:03:56 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3608
+ <yocto-patches@lists.yoctoproject.org>; Thu, 02 Apr 2026 07:05:36 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3609
 
---_000_IA3PR02MB11199A73D31A8C41023F0CC25F151AIA3PR02MB11199na_
+--_000_IA3PR02MB111995AD3CC1BADED7E4CDCEAF151AIA3PR02MB11199na_
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 
-refpolicy: Added policy for modprob to read blacklist-video.conf lnk_file
+refpolicy: donotaudit rsyslogd for net_admin capability on self
 
-avc:  denied  { read } for  pid=3D774 comm=3D"modprobe" name=3D"blacklist-v=
-ideo.conf" dev=3D"sda2" ino=3D342 scontext=3Dsystem_u:system_r:kmod_t:s0 tc=
-ontext=3Dsystem_u:object_r:modules_conf_t:s0 tclass=3Dlnk_file permissive=
-=3D1
+avc:  denied  { net_admin } for  pid=3D1360 comm=3D"rsyslogd" capability=3D=
+12  scontext=3Dsystem_u:system_r:syslogd_t:s0 tcontext=3Dsystem_u:system_r:=
+syslogd_t:s0 tclass=3Dcapability permissive=3D1
 
-Upstream-Status: Backport [refpolicy: Added policy for modprob to read blac=
-klist-video.conf lnk_... * SELinuxProject/refpolicy@aa35084<https://github.=
-com/SELinuxProject/refpolicy/commit/aa350841e9dcaa525c0f8716c2854ca9dd72896=
-1>]
+Upstream-Status: Backport [refpolicy: donotaudit rsyslogd for net_admin cap=
+ability on self * SELinuxProject/refpolicy@9ff571c<https://github.com/SELin=
+uxProject/refpolicy/commit/9ff571c7998d62b75df2d575a3eeeff58fde12f4>]
 
 Signed-off-by: Gargi Misra <gmisra@qti.qualcomm.com>
 ---
-policy/modules/system/modutils.te | 1 +
-1 file changed, 1 insertion(+)
+policy/modules/system/logging.te | 2 +-
+1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/policy/modules/system/modutils.te b/policy/modules/system/modu=
-tils.te
-index 7355255e0d..fa06e9ec37 100644
---- a/policy/modules/system/modutils.te
-+++ b/policy/modules/system/modutils.te
-@@ -45,6 +45,7 @@ allow kmod_t self:key write;
-# Read module config and dependency information
-list_dirs_pattern(kmod_t, modules_conf_t, modules_conf_t)
-read_files_pattern(kmod_t, modules_conf_t, modules_conf_t)
-+read_lnk_files_pattern(kmod_t, modules_conf_t, modules_conf_t)
-allow kmod_t modules_dep_t:file map;
-list_dirs_pattern(kmod_t, modules_dep_t, modules_dep_t)
-manage_files_pattern(kmod_t, modules_dep_t, modules_dep_t)
+diff --git a/policy/modules/system/logging.te b/policy/modules/system/loggi=
+ng.te
+index 0ba5d3d8b6..314b2559bf 100644
+--- a/policy/modules/system/logging.te
++++ b/policy/modules/system/logging.te
+@@ -399,7 +399,7 @@ optional_policy(`
+# sys_admin for the integrated klog of syslog-ng and metalog
+# sys_nice for rsyslog
+allow syslogd_t self:capability { chown dac_override fsetid setgid setuid s=
+ys_admin sys_nice sys_resource sys_tty_config };
+-dontaudit syslogd_t self:capability { sys_ptrace };
++dontaudit syslogd_t self:capability { sys_ptrace net_admin };
+dontaudit syslogd_t self:cap_userns { kill sys_ptrace };
+# setpgid for metalog
+# setrlimit for syslog-ng
 
 
---_000_IA3PR02MB11199A73D31A8C41023F0CC25F151AIA3PR02MB11199na_
+--_000_IA3PR02MB111995AD3CC1BADED7E4CDCEAF151AIA3PR02MB11199na_
 Content-Type: text/html; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 
@@ -241,23 +241,22 @@ div.WordSection1
 <body lang=3D"EN-US" link=3D"#467886" vlink=3D"#96607D" style=3D"word-wrap:=
 break-word">
 <div class=3D"WordSection1">
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt">refpolicy: Added po=
-licy for modprob to read blacklist-video.conf lnk_file<o:p></o:p></span></p=
->
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt">refpolicy: donotaud=
+it rsyslogd for net_admin capability on self<o:p></o:p></span></p>
 <p class=3D"MsoNormal"><span style=3D"font-size:11.0pt"><o:p>&nbsp;</o:p></=
 span></p>
 <p class=3D"MsoNormal"><span style=3D"font-size:11.0pt">avc:&nbsp; denied&n=
-bsp; { read } for&nbsp; pid=3D774 comm=3D&quot;modprobe&quot; name=3D&quot;=
-blacklist-video.conf&quot; dev=3D&quot;sda2&quot; ino=3D342 scontext=3Dsyst=
-em_u:system_r:kmod_t:s0 tcontext=3Dsystem_u:object_r:modules_conf_t:s0 tcla=
-ss=3Dlnk_file permissive=3D1<o:p></o:p></span></p>
+bsp; { net_admin } for&nbsp; pid=3D1360 comm=3D&quot;rsyslogd&quot; capabil=
+ity=3D12&nbsp; scontext=3Dsystem_u:system_r:syslogd_t:s0 tcontext=3Dsystem_=
+u:system_r:syslogd_t:s0 tclass=3Dcapability permissive=3D1<o:p></o:p></span=
+></p>
 <p class=3D"MsoNormal"><span style=3D"font-size:11.0pt"><o:p>&nbsp;</o:p></=
 span></p>
 <p class=3D"MsoNormal"><span style=3D"font-size:11.0pt">Upstream-Status: Ba=
-ckport [<a href=3D"https://github.com/SELinuxProject/refpolicy/commit/aa350=
-841e9dcaa525c0f8716c2854ca9dd728961">refpolicy: Added policy for modprob to=
- read blacklist-video.conf lnk_&#8230; &middot; SELinuxProject/refpolicy@aa=
-35084</a>]<o:p></o:p></span></p>
+ckport [<a href=3D"https://github.com/SELinuxProject/refpolicy/commit/9ff57=
+1c7998d62b75df2d575a3eeeff58fde12f4">refpolicy: donotaudit rsyslogd for net=
+_admin capability on self &middot; SELinuxProject/refpolicy@9ff571c</a>]<o:=
+p></o:p></span></p>
 <p class=3D"MsoNormal"><span style=3D"font-size:11.0pt"><o:p>&nbsp;</o:p></=
 span></p>
 <p class=3D"MsoNormal"><span style=3D"font-size:11.0pt">Signed-off-by: Garg=
@@ -265,41 +264,44 @@ i Misra &lt;gmisra@qti.qualcomm.com&gt;<o:p></o:p></span></p>
 <p class=3D"MsoNormal"><span style=3D"font-size:11.0pt">---<o:p></o:p></spa=
 n></p>
 <p class=3D"MsoNormal"><span style=3D"font-size:11.0pt">policy/modules/syst=
-em/modutils.te | 1 +<o:p></o:p></span></p>
+em/logging.te | 2 +-<o:p></o:p></span></p>
 <p class=3D"MsoNormal"><span style=3D"font-size:11.0pt">1 file changed, 1 i=
-nsertion(+)<o:p></o:p></span></p>
+nsertion(+), 1 deletion(-)<o:p></o:p></span></p>
 <p class=3D"MsoNormal"><span style=3D"font-size:11.0pt"><o:p>&nbsp;</o:p></=
 span></p>
 <p class=3D"MsoNormal"><span style=3D"font-size:11.0pt">diff --git a/policy=
-/modules/system/modutils.te b/policy/modules/system/modutils.te<o:p></o:p><=
-/span></p>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt">index 7355255e0d..f=
-a06e9ec37 100644<o:p></o:p></span></p>
+/modules/system/logging.te b/policy/modules/system/logging.te<o:p></o:p></s=
+pan></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt">index 0ba5d3d8b6..3=
+14b2559bf 100644<o:p></o:p></span></p>
 <p class=3D"MsoNormal"><span style=3D"font-size:11.0pt">--- a/policy/module=
-s/system/modutils.te<o:p></o:p></span></p>
+s/system/logging.te<o:p></o:p></span></p>
 <p class=3D"MsoNormal"><span style=3D"font-size:11.0pt">+++ b/policy/module=
-s/system/modutils.te<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt">@@ -45,6 +45,7 @@ a=
-llow kmod_t self:key write;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt"># Read module confi=
-g and dependency information<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt">list_dirs_pattern(k=
-mod_t, modules_conf_t, modules_conf_t)<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt">read_files_pattern(=
-kmod_t, modules_conf_t, modules_conf_t)<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt">+read_lnk_files_pat=
-tern(kmod_t, modules_conf_t, modules_conf_t)<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt">allow kmod_t module=
-s_dep_t:file map;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt">list_dirs_pattern(k=
-mod_t, modules_dep_t, modules_dep_t)<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt">manage_files_patter=
-n(kmod_t, modules_dep_t, modules_dep_t)<o:p></o:p></span></p>
+s/system/logging.te<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt">@@ -399,7 +399,7 @@=
+ optional_policy(`<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt"># sys_admin for the=
+ integrated klog of syslog-ng and metalog<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt"># sys_nice for rsys=
+log<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt">allow syslogd_t sel=
+f:capability { chown dac_override fsetid setgid setuid sys_admin sys_nice s=
+ys_resource sys_tty_config };<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt">-dontaudit syslogd_=
+t self:capability { sys_ptrace };<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt">+dontaudit syslogd_=
+t self:capability { sys_ptrace net_admin };<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt">dontaudit syslogd_t=
+ self:cap_userns { kill sys_ptrace };<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt"># setpgid for metal=
+og<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt"># setrlimit for sys=
+log-ng<o:p></o:p></span></p>
 <p class=3D"MsoNormal"><span style=3D"font-size:11.0pt"><o:p>&nbsp;</o:p></=
 span></p>
 </div>
 </body>
 </html>
 
---_000_IA3PR02MB11199A73D31A8C41023F0CC25F151AIA3PR02MB11199na_--
+--_000_IA3PR02MB111995AD3CC1BADED7E4CDCEAF151AIA3PR02MB11199na_--
 
