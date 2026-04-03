@@ -2,63 +2,63 @@ Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83514E85397
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 850B9E85398
 	for <webhook@archiver.kernel.org>; Fri,  3 Apr 2026 18:37:06 +0000 (UTC)
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.2219.1775241425311318703
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.2222.1775241418722233852
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 03 Apr 2026 11:37:05 -0700
+ Fri, 03 Apr 2026 11:36:58 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=QcNgbDd7;
- spf=pass (domain: gmail.com, ip: 209.85.222.178, mailfrom: twoerner@gmail.com)
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-8d1b746f522so249005485a.0
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 03 Apr 2026 11:37:05 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=eCKq7cTt;
+ spf=pass (domain: gmail.com, ip: 209.85.222.169, mailfrom: twoerner@gmail.com)
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-8cfc497a604so247417585a.3
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 03 Apr 2026 11:36:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1775241424; x=1775846224; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20251104; t=1775241417; x=1775846217; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=udBvFrM9zqiSWuKj8GsYYdaVTL93eR8UGvYeG61dTus=;
-        b=QcNgbDd7IJaTOd7EkWhD8eiCITQPjRAUPW6/2QrXoJwoTLd26d00Y/3ImBBad0x+Pv
-         k1HRn4wtzGzZn4EMlqnN7cD/t/E0xkGh2h087D2a9pj2hCkr2H5wRxm5CQCV12/zDbLg
-         rNz6CqCfBEqf2LQRivVZK9ECDLUuUQ+B6zUdERoyQrDgClgT54tthyFaTEOTdCXd4y1C
-         y2lCT+P1Ikh4N4RiyK6YDhuo3QWI+efOgwT8GA/oLWFk0NwyKHAiR2HWFb198KY9oONp
-         QmJrciyE/mWsP64DClainZl0nIbpiU/7YnlvbI41g3OFO9Yds92fO2ifqEl5c/hFXewl
-         kaWg==
+        bh=9x9jOo5gg9/yUB0n46hVXNpm0ppxkpPClIg/kzzfCCI=;
+        b=eCKq7cTtpE3FTpx4caiJfAawCRc19Xsq9OUjv8/dn5DbDQiZUh2D+LmgfWbrV3wBph
+         pe0bNgfZciJ7HowZ0d6/84Z4KBs14c4AZAKkkBcBRYY5UzDYxK4K/Wd3CCWCyEWUi6dc
+         K4yRRVtZ2BMJtxTrdMEQpJATn9ebUlZnoOv1ZYvJwcW2O7Q8oJi5Lul+Pw14nDSKxxYi
+         FH6F4MrlgjCxB5VCyoNruJy98RtFS55ac+znBov9TE78jN2gkPMVCyTv2yQVYK4Fk9N/
+         MEMPFOiHlIFFmSd3ey2HJ3250VfZfaJBwu/f8g97y5KZkfRexwhbrcmibiL74CtP7uvJ
+         zb/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775241424; x=1775846224;
+        d=1e100.net; s=20251104; t=1775241417; x=1775846217;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=udBvFrM9zqiSWuKj8GsYYdaVTL93eR8UGvYeG61dTus=;
-        b=SATb8Ro7gHeWHbO7SYPIBNnK++nRkGxNl6vVy+ElEk6lGp++CQFb0ZpLs9TuacLJop
-         nMz+6VvUbkAlIv/1hMIuCKsxC+lBOXD+khS0tlYluyQ5iHL6QXnN603sWDNlSE8WlL1t
-         b4RTCKvHsdL+OZsyYP9dSuK0WOGp4pnPvWg9vEOC+Vbbtt8KmT9rOV1lEZw9FQyp1n4Q
-         626oY4ML+RvlLHughGT1bFbvLTv5L65O6jCjPhdqCZND6LnECgA5w2QinffLMC5L7hW1
-         YeJvvbOgFUm6xBbcBsPRM/8Xqcwwqew9BVJFUsOkwvLVhKKsG5ctPU0UQN+L2vuawKl9
-         08Kg==
-X-Gm-Message-State: AOJu0YwIVJ50uhjveKWb534aOuG62eShy6Eo5Ttmtir++vHbHWUCTely
-	QsQcpQ9mt4RYLbEBD+zrWGkNYOLEO+STsRAd6jDUt33EflQpDZtTsVveFj5SMKUN
-X-Gm-Gg: ATEYQzwOkxQTBBkrF6uMJoZoMd+FG5dJPfMxdT7j86FTlZ2erUpNjVAJvsj6gEn2LBa
-	aLS9pxPl9IWkkjKBKoynmqAcCokhcrGC8iBrDhR5HAKMff0YC3rNEMF8D0Jh2nTMi+x38hBpI+S
-	E69UXYaCDnm7D0wE+d/lNlUXPtzLdu0iaI0Nq/ciTZiY+kA+EH7c8J2k2TrxKz8WrIORBhWiH/q
-	ef5YR6Hevq5N9h0JIWdN/bwXDxIInaC9eCd/TbE5gyTzceJpu06KYh5lbuPrutzucSY0embC/9X
-	GKzOFPTHuY1w2noVRIjYnBf4Wpt+OMVE9PAocJf0ErsFfr14dbdLJdzfDmncfEv+dpO9oekyzNH
-	nM9ZyuW/Pj9S+bDr7E+463jHa2cUBIOXkNhPkqWd3Z6DnBGvGVBHbZ+Rz+y1QWhBjv12dwaUOBq
-	RKL6bBmxlvojznBVJqspBrs/WCkIZVCW57gKHmu/jbFRiu0YNeNk/hE5gSYPuiOro7jA==
-X-Received: by 2002:a05:620a:440a:b0:8c7:13b8:8b55 with SMTP id af79cd13be357-8d41e2413d7mr583867285a.46.1775241423687;
-        Fri, 03 Apr 2026 11:37:03 -0700 (PDT)
+        bh=9x9jOo5gg9/yUB0n46hVXNpm0ppxkpPClIg/kzzfCCI=;
+        b=M0cllqVv6/Go6OhH4bLuus4mVXwnWX9LjZ1aM7LE93tAMIos28WV7gJabA+W0AoaSc
+         ScblhAzq7PJvOKGCZ0UUb9kEf0hFnhIgx+g4wf0ck2aI9DWevX39DjIO+i2V+XIRiEm5
+         DTz3jPeU3KCb5f324nW8/SkP7k+xXXB8NC7n30akdHZslxhjDcsZtIu66mQGieBciqnn
+         S1usRCALunVgNERBpepUugFe2Jk8oXylg7KIdunC+eMlEutq1x/TaGC/ORXDODS/jzRM
+         Kawa1Qcbt4b5Kg/xi9hEqmuDf9LhDmBnz+SSdESM/3r1wOzH2dL9EA6yLnMgNE2pvtGp
+         ULZQ==
+X-Gm-Message-State: AOJu0YyL8wf6WDxPPPtzT4P1MtGEHVQuzak/4JMl2OuhbyTGHe5yu/ZS
+	W7Gb9mvXS4PqmJjf6G6FKGAqiZC0XK9zpADMkg5eqqpWGtCeycvs5HeO0U1FCztK
+X-Gm-Gg: ATEYQzzvFmxNyQk2cO6Y2FQ4s9+O6YQfJfGlyb/piHEeeMAc6v7bvHgNROQhZvjcqyX
+	yqpkKG3L8cjll4QUuXsk9yf1A8zGpTHe3arHfjH6Rpi+A+9LRgY+tbbaNqreb97Str+ZcidaWNY
+	GUNUpeK2t0AumQHD9OPC+eILVQS537VuA1rgEcNeAXVVbIwcl/DnVgwnwojKkwGJkc51JyApNVu
+	6yknUlaHlQhQQeNFWcBy9PBWpmBxMtRNRlYLNEFgKkinP02F3rI4Zf7NosG/wra0kLQPSp75RlI
+	+CS5y2sRHKQUcuXtILdxrP9i8JCa/fyQacn/nvLSECjVXIdymGXK2yHuQk5P44i8pQiuQf6IFzO
+	n6CP38gaMHi8AauEOgK0iitZnzMvcjCzidkEBV6WfhWtTY/u/ErceLkPAg3qdHj6jHyACYfMbex
+	ED+aXTLBB7nZ8eIuwFf7Mct9fTpj88j65EyHWzJkYp6mgbIXSNcNRE16cPdRZWxibPgw==
+X-Received: by 2002:a05:620a:472a:b0:8cd:8fe4:537b with SMTP id af79cd13be357-8d41d961e4bmr566017185a.37.1775241417050;
+        Fri, 03 Apr 2026 11:36:57 -0700 (PDT)
 Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8d2a874459asm472401785a.39.2026.04.03.11.37.02
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8d2a874459asm472401785a.39.2026.04.03.11.36.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Apr 2026 11:37:02 -0700 (PDT)
+        Fri, 03 Apr 2026 11:36:56 -0700 (PDT)
 From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Bruce Ashfield <bruce.ashfield@gmail.com>,
 	Mark Hatle <mark.hatle@kernel.crashing.org>
-Subject: [wic][PATCH 6/9] cli.py: remove bitbake coupling
-Date: Fri,  3 Apr 2026 14:36:41 -0400
-Message-ID: <20260403183644.2783267-7-twoerner@gmail.com>
+Subject: [wic][PATCH 1/9] re-organize for python src layout packaging
+Date: Fri,  3 Apr 2026 14:36:36 -0400
+Message-ID: <20260403183644.2783267-2-twoerner@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260403183644.2783267-1-twoerner@gmail.com>
 References: <20260403183644.2783267-1-twoerner@gmail.com>
@@ -68,17 +68,20 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Fri, 03 Apr 2026 18:37:06 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3632
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3627
 
-The code that is being removed in this commit uses the scriptpath module
-to add more paths to sys.path in order to find oe-core-specific and
-bitbake-specific modules by using relative paths. In other words, this
-code assumes it is located within oe-core or bitbake. By splitting out
-wic, it is no longer located where these relative searches have any
-chance of working, therefore remove this coupling.
+The git-filter-repo tool was used to take OpenEmbedded's wic utility and
+import it (without any modification whatsoever) into its own source code
+repository while preserving the entire git history, removing any files
+and git history not related to wic. The specific command used to perform
+this conversion on a clean checkout of the OpenEmbedded repository was:
+    $ git-filter-repo --force --path scripts/wic --path scripts/lib/wic/
 
-Additionally, the bitbake_path variable does not appear to be used
-anywhere, so it is removed as well.
+The goal of this conversion process is to end up with an independent
+Python package for wic. This commit moves the wic components into the
+Python de facto standard packaging "src layout" order. All components
+are moved as they are; the main wic program is moved and renamed to
+`src/wic/cli.py`.
 
 NOTE: this commit does not work as-is, but is being provided in order to
       explicitly show a clean transition from oe-core
@@ -87,34 +90,212 @@ Reviewed-by: Bruce Ashfield <bruce.ashfield@gmail.com>
 Reviewed-by: Mark Hatle <mark.hatle@kernel.crashing.org>
 Signed-off-by: Trevor Woerner <twoerner@gmail.com>
 ---
- src/wic/cli.py | 7 -------
- 1 file changed, 7 deletions(-)
+ {scripts/lib => src}/wic/__init__.py                              | 0
+ {scripts/lib => src}/wic/canned-wks/common.wks.inc                | 0
+ .../lib => src}/wic/canned-wks/directdisk-bootloader-config.cfg   | 0
+ .../lib => src}/wic/canned-wks/directdisk-bootloader-config.wks   | 0
+ {scripts/lib => src}/wic/canned-wks/directdisk-gpt.wks            | 0
+ {scripts/lib => src}/wic/canned-wks/directdisk-multi-rootfs.wks   | 0
+ {scripts/lib => src}/wic/canned-wks/directdisk.wks                | 0
+ {scripts/lib => src}/wic/canned-wks/efi-bootdisk.wks.in           | 0
+ {scripts/lib => src}/wic/canned-wks/efi-uki-bootdisk.wks.in       | 0
+ {scripts/lib => src}/wic/canned-wks/mkefidisk.wks                 | 0
+ {scripts/lib => src}/wic/canned-wks/mkhybridiso.wks               | 0
+ {scripts/lib => src}/wic/canned-wks/qemuloongarch.wks             | 0
+ {scripts/lib => src}/wic/canned-wks/qemuriscv.wks                 | 0
+ {scripts/lib => src}/wic/canned-wks/qemux86-directdisk.wks        | 0
+ {scripts/lib => src}/wic/canned-wks/sdimage-bootpart.wks          | 0
+ {scripts/lib => src}/wic/canned-wks/systemd-bootdisk.wks          | 0
+ scripts/wic => src/wic/cli.py                                     | 0
+ {scripts/lib => src}/wic/engine.py                                | 0
+ {scripts/lib => src}/wic/filemap.py                               | 0
+ {scripts/lib => src}/wic/help.py                                  | 0
+ {scripts/lib => src}/wic/ksparser.py                              | 0
+ {scripts/lib => src}/wic/misc.py                                  | 0
+ {scripts/lib => src}/wic/partition.py                             | 0
+ {scripts/lib => src}/wic/pluginbase.py                            | 0
+ {scripts/lib => src}/wic/plugins/imager/direct.py                 | 0
+ {scripts/lib => src}/wic/plugins/source/bootimg_biosplusefi.py    | 0
+ {scripts/lib => src}/wic/plugins/source/bootimg_efi.py            | 0
+ {scripts/lib => src}/wic/plugins/source/bootimg_partition.py      | 0
+ {scripts/lib => src}/wic/plugins/source/bootimg_pcbios.py         | 0
+ {scripts/lib => src}/wic/plugins/source/empty.py                  | 0
+ {scripts/lib => src}/wic/plugins/source/extra_partition.py        | 0
+ {scripts/lib => src}/wic/plugins/source/isoimage_isohybrid.py     | 0
+ {scripts/lib => src}/wic/plugins/source/rawcopy.py                | 0
+ {scripts/lib => src}/wic/plugins/source/rootfs.py                 | 0
+ 34 files changed, 0 insertions(+), 0 deletions(-)
+ rename {scripts/lib => src}/wic/__init__.py (100%)
+ rename {scripts/lib => src}/wic/canned-wks/common.wks.inc (100%)
+ rename {scripts/lib => src}/wic/canned-wks/directdisk-bootloader-config.cfg (100%)
+ rename {scripts/lib => src}/wic/canned-wks/directdisk-bootloader-config.wks (100%)
+ rename {scripts/lib => src}/wic/canned-wks/directdisk-gpt.wks (100%)
+ rename {scripts/lib => src}/wic/canned-wks/directdisk-multi-rootfs.wks (100%)
+ rename {scripts/lib => src}/wic/canned-wks/directdisk.wks (100%)
+ rename {scripts/lib => src}/wic/canned-wks/efi-bootdisk.wks.in (100%)
+ rename {scripts/lib => src}/wic/canned-wks/efi-uki-bootdisk.wks.in (100%)
+ rename {scripts/lib => src}/wic/canned-wks/mkefidisk.wks (100%)
+ rename {scripts/lib => src}/wic/canned-wks/mkhybridiso.wks (100%)
+ rename {scripts/lib => src}/wic/canned-wks/qemuloongarch.wks (100%)
+ rename {scripts/lib => src}/wic/canned-wks/qemuriscv.wks (100%)
+ rename {scripts/lib => src}/wic/canned-wks/qemux86-directdisk.wks (100%)
+ rename {scripts/lib => src}/wic/canned-wks/sdimage-bootpart.wks (100%)
+ rename {scripts/lib => src}/wic/canned-wks/systemd-bootdisk.wks (100%)
+ rename scripts/wic => src/wic/cli.py (100%)
+ rename {scripts/lib => src}/wic/engine.py (100%)
+ rename {scripts/lib => src}/wic/filemap.py (100%)
+ rename {scripts/lib => src}/wic/help.py (100%)
+ rename {scripts/lib => src}/wic/ksparser.py (100%)
+ rename {scripts/lib => src}/wic/misc.py (100%)
+ rename {scripts/lib => src}/wic/partition.py (100%)
+ rename {scripts/lib => src}/wic/pluginbase.py (100%)
+ rename {scripts/lib => src}/wic/plugins/imager/direct.py (100%)
+ rename {scripts/lib => src}/wic/plugins/source/bootimg_biosplusefi.py (100%)
+ rename {scripts/lib => src}/wic/plugins/source/bootimg_efi.py (100%)
+ rename {scripts/lib => src}/wic/plugins/source/bootimg_partition.py (100%)
+ rename {scripts/lib => src}/wic/plugins/source/bootimg_pcbios.py (100%)
+ rename {scripts/lib => src}/wic/plugins/source/empty.py (100%)
+ rename {scripts/lib => src}/wic/plugins/source/extra_partition.py (100%)
+ rename {scripts/lib => src}/wic/plugins/source/isoimage_isohybrid.py (100%)
+ rename {scripts/lib => src}/wic/plugins/source/rawcopy.py (100%)
+ rename {scripts/lib => src}/wic/plugins/source/rootfs.py (100%)
 
-diff --git a/src/wic/cli.py b/src/wic/cli.py
-index 9de5efbb5aec..04b2ad25cac5 100755
---- a/src/wic/cli.py
-+++ b/src/wic/cli.py
-@@ -28,10 +28,6 @@ from collections import namedtuple
- 
- # External modules
- scripts_path = os.path.dirname(os.path.realpath(__file__))
--lib_path = scripts_path + '/lib'
--sys.path.insert(0, lib_path)
--import scriptpath
--scriptpath.add_oe_lib_path()
- 
- # Check whether wic is running within eSDK environment
- sdkroot = scripts_path
-@@ -48,9 +44,6 @@ if os.environ.get('SDKTARGETSYSROOT'):
-         sdkroot = os.path.dirname(sdkroot)
- 
- bitbake_exe = shutil.which('bitbake')
--if bitbake_exe:
--    bitbake_path = scriptpath.add_bitbake_lib_path()
--    import bb
- 
- from wic import WicError
- from wic.misc import get_bitbake_var, BB_VARS
+diff --git a/scripts/lib/wic/__init__.py b/src/wic/__init__.py
+similarity index 100%
+rename from scripts/lib/wic/__init__.py
+rename to src/wic/__init__.py
+diff --git a/scripts/lib/wic/canned-wks/common.wks.inc b/src/wic/canned-wks/common.wks.inc
+similarity index 100%
+rename from scripts/lib/wic/canned-wks/common.wks.inc
+rename to src/wic/canned-wks/common.wks.inc
+diff --git a/scripts/lib/wic/canned-wks/directdisk-bootloader-config.cfg b/src/wic/canned-wks/directdisk-bootloader-config.cfg
+similarity index 100%
+rename from scripts/lib/wic/canned-wks/directdisk-bootloader-config.cfg
+rename to src/wic/canned-wks/directdisk-bootloader-config.cfg
+diff --git a/scripts/lib/wic/canned-wks/directdisk-bootloader-config.wks b/src/wic/canned-wks/directdisk-bootloader-config.wks
+similarity index 100%
+rename from scripts/lib/wic/canned-wks/directdisk-bootloader-config.wks
+rename to src/wic/canned-wks/directdisk-bootloader-config.wks
+diff --git a/scripts/lib/wic/canned-wks/directdisk-gpt.wks b/src/wic/canned-wks/directdisk-gpt.wks
+similarity index 100%
+rename from scripts/lib/wic/canned-wks/directdisk-gpt.wks
+rename to src/wic/canned-wks/directdisk-gpt.wks
+diff --git a/scripts/lib/wic/canned-wks/directdisk-multi-rootfs.wks b/src/wic/canned-wks/directdisk-multi-rootfs.wks
+similarity index 100%
+rename from scripts/lib/wic/canned-wks/directdisk-multi-rootfs.wks
+rename to src/wic/canned-wks/directdisk-multi-rootfs.wks
+diff --git a/scripts/lib/wic/canned-wks/directdisk.wks b/src/wic/canned-wks/directdisk.wks
+similarity index 100%
+rename from scripts/lib/wic/canned-wks/directdisk.wks
+rename to src/wic/canned-wks/directdisk.wks
+diff --git a/scripts/lib/wic/canned-wks/efi-bootdisk.wks.in b/src/wic/canned-wks/efi-bootdisk.wks.in
+similarity index 100%
+rename from scripts/lib/wic/canned-wks/efi-bootdisk.wks.in
+rename to src/wic/canned-wks/efi-bootdisk.wks.in
+diff --git a/scripts/lib/wic/canned-wks/efi-uki-bootdisk.wks.in b/src/wic/canned-wks/efi-uki-bootdisk.wks.in
+similarity index 100%
+rename from scripts/lib/wic/canned-wks/efi-uki-bootdisk.wks.in
+rename to src/wic/canned-wks/efi-uki-bootdisk.wks.in
+diff --git a/scripts/lib/wic/canned-wks/mkefidisk.wks b/src/wic/canned-wks/mkefidisk.wks
+similarity index 100%
+rename from scripts/lib/wic/canned-wks/mkefidisk.wks
+rename to src/wic/canned-wks/mkefidisk.wks
+diff --git a/scripts/lib/wic/canned-wks/mkhybridiso.wks b/src/wic/canned-wks/mkhybridiso.wks
+similarity index 100%
+rename from scripts/lib/wic/canned-wks/mkhybridiso.wks
+rename to src/wic/canned-wks/mkhybridiso.wks
+diff --git a/scripts/lib/wic/canned-wks/qemuloongarch.wks b/src/wic/canned-wks/qemuloongarch.wks
+similarity index 100%
+rename from scripts/lib/wic/canned-wks/qemuloongarch.wks
+rename to src/wic/canned-wks/qemuloongarch.wks
+diff --git a/scripts/lib/wic/canned-wks/qemuriscv.wks b/src/wic/canned-wks/qemuriscv.wks
+similarity index 100%
+rename from scripts/lib/wic/canned-wks/qemuriscv.wks
+rename to src/wic/canned-wks/qemuriscv.wks
+diff --git a/scripts/lib/wic/canned-wks/qemux86-directdisk.wks b/src/wic/canned-wks/qemux86-directdisk.wks
+similarity index 100%
+rename from scripts/lib/wic/canned-wks/qemux86-directdisk.wks
+rename to src/wic/canned-wks/qemux86-directdisk.wks
+diff --git a/scripts/lib/wic/canned-wks/sdimage-bootpart.wks b/src/wic/canned-wks/sdimage-bootpart.wks
+similarity index 100%
+rename from scripts/lib/wic/canned-wks/sdimage-bootpart.wks
+rename to src/wic/canned-wks/sdimage-bootpart.wks
+diff --git a/scripts/lib/wic/canned-wks/systemd-bootdisk.wks b/src/wic/canned-wks/systemd-bootdisk.wks
+similarity index 100%
+rename from scripts/lib/wic/canned-wks/systemd-bootdisk.wks
+rename to src/wic/canned-wks/systemd-bootdisk.wks
+diff --git a/scripts/wic b/src/wic/cli.py
+similarity index 100%
+rename from scripts/wic
+rename to src/wic/cli.py
+diff --git a/scripts/lib/wic/engine.py b/src/wic/engine.py
+similarity index 100%
+rename from scripts/lib/wic/engine.py
+rename to src/wic/engine.py
+diff --git a/scripts/lib/wic/filemap.py b/src/wic/filemap.py
+similarity index 100%
+rename from scripts/lib/wic/filemap.py
+rename to src/wic/filemap.py
+diff --git a/scripts/lib/wic/help.py b/src/wic/help.py
+similarity index 100%
+rename from scripts/lib/wic/help.py
+rename to src/wic/help.py
+diff --git a/scripts/lib/wic/ksparser.py b/src/wic/ksparser.py
+similarity index 100%
+rename from scripts/lib/wic/ksparser.py
+rename to src/wic/ksparser.py
+diff --git a/scripts/lib/wic/misc.py b/src/wic/misc.py
+similarity index 100%
+rename from scripts/lib/wic/misc.py
+rename to src/wic/misc.py
+diff --git a/scripts/lib/wic/partition.py b/src/wic/partition.py
+similarity index 100%
+rename from scripts/lib/wic/partition.py
+rename to src/wic/partition.py
+diff --git a/scripts/lib/wic/pluginbase.py b/src/wic/pluginbase.py
+similarity index 100%
+rename from scripts/lib/wic/pluginbase.py
+rename to src/wic/pluginbase.py
+diff --git a/scripts/lib/wic/plugins/imager/direct.py b/src/wic/plugins/imager/direct.py
+similarity index 100%
+rename from scripts/lib/wic/plugins/imager/direct.py
+rename to src/wic/plugins/imager/direct.py
+diff --git a/scripts/lib/wic/plugins/source/bootimg_biosplusefi.py b/src/wic/plugins/source/bootimg_biosplusefi.py
+similarity index 100%
+rename from scripts/lib/wic/plugins/source/bootimg_biosplusefi.py
+rename to src/wic/plugins/source/bootimg_biosplusefi.py
+diff --git a/scripts/lib/wic/plugins/source/bootimg_efi.py b/src/wic/plugins/source/bootimg_efi.py
+similarity index 100%
+rename from scripts/lib/wic/plugins/source/bootimg_efi.py
+rename to src/wic/plugins/source/bootimg_efi.py
+diff --git a/scripts/lib/wic/plugins/source/bootimg_partition.py b/src/wic/plugins/source/bootimg_partition.py
+similarity index 100%
+rename from scripts/lib/wic/plugins/source/bootimg_partition.py
+rename to src/wic/plugins/source/bootimg_partition.py
+diff --git a/scripts/lib/wic/plugins/source/bootimg_pcbios.py b/src/wic/plugins/source/bootimg_pcbios.py
+similarity index 100%
+rename from scripts/lib/wic/plugins/source/bootimg_pcbios.py
+rename to src/wic/plugins/source/bootimg_pcbios.py
+diff --git a/scripts/lib/wic/plugins/source/empty.py b/src/wic/plugins/source/empty.py
+similarity index 100%
+rename from scripts/lib/wic/plugins/source/empty.py
+rename to src/wic/plugins/source/empty.py
+diff --git a/scripts/lib/wic/plugins/source/extra_partition.py b/src/wic/plugins/source/extra_partition.py
+similarity index 100%
+rename from scripts/lib/wic/plugins/source/extra_partition.py
+rename to src/wic/plugins/source/extra_partition.py
+diff --git a/scripts/lib/wic/plugins/source/isoimage_isohybrid.py b/src/wic/plugins/source/isoimage_isohybrid.py
+similarity index 100%
+rename from scripts/lib/wic/plugins/source/isoimage_isohybrid.py
+rename to src/wic/plugins/source/isoimage_isohybrid.py
+diff --git a/scripts/lib/wic/plugins/source/rawcopy.py b/src/wic/plugins/source/rawcopy.py
+similarity index 100%
+rename from scripts/lib/wic/plugins/source/rawcopy.py
+rename to src/wic/plugins/source/rawcopy.py
+diff --git a/scripts/lib/wic/plugins/source/rootfs.py b/src/wic/plugins/source/rootfs.py
+similarity index 100%
+rename from scripts/lib/wic/plugins/source/rootfs.py
+rename to src/wic/plugins/source/rootfs.py
 -- 
 2.51.0
 
