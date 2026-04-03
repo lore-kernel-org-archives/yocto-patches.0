@@ -2,64 +2,63 @@ Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03667E85399
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D151D73094
 	for <webhook@archiver.kernel.org>; Fri,  3 Apr 2026 18:37:17 +0000 (UTC)
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.2220.1775241428609077688
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.2229.1775241427038947269
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 03 Apr 2026 11:37:08 -0700
+ Fri, 03 Apr 2026 11:37:07 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=CazRYbDJ;
- spf=pass (domain: gmail.com, ip: 209.85.222.176, mailfrom: twoerner@gmail.com)
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-8d583bfc415so7437085a.2
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 03 Apr 2026 11:37:08 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=SqXcRewo;
+ spf=pass (domain: gmail.com, ip: 209.85.222.170, mailfrom: twoerner@gmail.com)
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-8d00cf835b7so280060585a.1
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 03 Apr 2026 11:37:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1775241427; x=1775846227; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20251104; t=1775241425; x=1775846225; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rVlXJdTy+svRvIiWFlY0lVUTfly3eo0gZhZ3HhtXLLs=;
-        b=CazRYbDJgt83qVlfUzFiYuNFNcpXT+7AeXXZv8ir5wrbbB6sGm8oh5IuJISpw8VMSp
-         mngGQ1uUB7AyofoAHDuvW8AUlsFggZ7nmnik6FzREmqv21S173JGGOpwbhvnT2NizULs
-         nxrHxz6AAHruq9+zi1SCSDVqLyjN2Fy3tpITg0iIKPI7eC2xVElG7DcQlkbZZw/RsEYI
-         vz8rkAXYiRDJ+OjklFHc+w+47Ew0LRdboO1lq57gKnVuBPZnggfF9vpjIgsLRpujUKyF
-         U7UE1qaADDy0Az4CiMYtUvKLkqp5K+TxA7PGG8abG9Fvl/fQskQZIaZ2X3Df409pxG0N
-         1GgQ==
+        bh=i68CMJ/r48OkCGm9ByfM55xhCEziPkDtNTzDoKQwgDo=;
+        b=SqXcRewoVwZua8MdYQ8rECsrkroCa/BS5PHWANzrADKRMY4/fp1FguWM3sIbCc4sTn
+         8qOZGFer4QsdIxzgo6q9lKQDZN7zkNr+d3AJhwVp4ciDnqCq1EQP5kuATvuKnNBzADB+
+         4I6tWDQwDXXNTWmRlWhgNXyLNcROQajXzx+p0CHMieYtVyLWNp6FMnqUof7yQS2I3H3s
+         aRn2epltTCM3P0GwBZ51uJHJ8Q9s5KBk5X9Z+1oq68wJXHeGVWjhkBD63jfXEascX4le
+         Sw+xhkjvudHakFRcaB9sHKz1OWDXKhUB3Q6fqatzIaLXajS4hlAqUINOmJBKD9cwmfls
+         pwGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775241427; x=1775846227;
+        d=1e100.net; s=20251104; t=1775241425; x=1775846225;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=rVlXJdTy+svRvIiWFlY0lVUTfly3eo0gZhZ3HhtXLLs=;
-        b=K/04+S7Ckmhzu+eDeNd6qvLpdyqZHpU0idlDe+/cQi7nSTJ9qdKJqOpHYl38NAeqxg
-         uEbwMyO3Kv1Ucjh82nWzg+MzUE4JONZ+TNkp2uFAHDmhKHw5foE9KdIBatHxEFFusFFo
-         E/kjtTPeJ9ufUnAZQtigqZtFORtqdWet7TdKcokvA9+8n2JqhH8laWELbXfxCdonGucN
-         BVHTE70R+py3wmfhztnyNAcZ4Ykg2wHBa8cuvgoaKkOfcqKC0SvPmihPKUU/DCUKxE3D
-         uUhV4Uv5gj6tUFmypSIdf56ePl6GSZWhghekfbdMc9hrJRIRYjJUWx5YISIx4vObJJ9w
-         PXgA==
-X-Gm-Message-State: AOJu0Ywwl3B0iqxqxeVfbhxLi7XfDpmDCfOAQGkLjVkeGnCQUK8kpsYe
-	37QkNmBX30tP2u2y3BpSlKdymyffx/CiYP81CsFTSwQVdFKHjGZy5bW2XgzWdnH3
-X-Gm-Gg: ATEYQzyx3i+HH0NkTtonhbtsNlZbLZoHpujCqMp0FSbFfHhvTFFMLVThD1DcrZIppDv
-	ma4obqgn6VSPgiU0EMN1vf+lbsoo9pl5Ommi7+7S0YYCD+91Lep6eSBdu6Evb7PDADfaV6qBnPb
-	s/El6ZfaZ85z31q/D/Sv6aVV7fWgyUKcH1DrYKxQ+25uOUZVVT7uOg6pz4kUwtsTiR3nsJTHsdT
-	uGhS7edKcbJAFRTTS81/fLyVv5OSaMV0EYHT6n2OJm41IvByvMJUyZ2+EfXkMKIhDTP44pTsI0N
-	FcTAiqptplAIKvgmRhuMPy7UtliuyJq08VNoOp5n/Klld7wERtcev2vKU4JcLSjFRciLarsnxXL
-	eNHgb3MYS81yyHISscNbNZirxjmpaiqWbpydfPy7d5AOP2yQCwCbOfXvU0bAqKLVSOahUpF4YM4
-	AV0boC0axT2pEsRrsgyBr8SvbPIkgujrliihy9nmc/+SAkAXXCKweOllfygi8NtEyxiiqC6/zzL
-	sTj
-X-Received: by 2002:a05:620a:1788:b0:8cf:d3a9:60d4 with SMTP id af79cd13be357-8d4188c2077mr563797585a.5.1775241427149;
-        Fri, 03 Apr 2026 11:37:07 -0700 (PDT)
-Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8d2a874459asm472401785a.39.2026.04.03.11.37.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        bh=i68CMJ/r48OkCGm9ByfM55xhCEziPkDtNTzDoKQwgDo=;
+        b=tHu2VVa+tIMIVjJap5X0NtPnhvojs0n64hWUCogRjXlpAG9Z5EBBd1ye9MfiEz5PJF
+         bzsE6AGRyP1/LP5+VmRS0U3dMXBgo/47/M24giSmUbrgaio9FV6Hpw9vIEh0ZhkFycHk
+         mLSy0Hvmz1k8X39EuBGYe7PHFvBDM2+4kLSsPMHOalPBaUbQ2d9dpxif8auCZEDNNAp/
+         jilvPk86tD09ZHU0N1Sb71BS9ih2eag0WrqGFyCTaKlCN2Fh+WaZQ9B+UY7DrbpIC8+r
+         4OHua0kOn76gi7QfO3eySCL0p79jdZEpbu4HWymsC/Uy4bT0wYH2QGn/6dbh9RV100Nn
+         EFjg==
+X-Gm-Message-State: AOJu0Yy/XF6jB9p1yh396DpT8A15iOjc8L6GwSP/tnD6w+eIerNxJC8q
+	3onsBk4sFJMYSKE2kcG7D0SrFlJqMu5jNsMoLux6zfjjp9gVkNgGfwAdZfueSti8
+X-Gm-Gg: ATEYQzzEiZRaNt3IC1YPJtFsQImy+uuc69RtO+e0LZOiJ0MR0JwaaJNUrN4yZEB6F1Z
+	wmc/4m+PFci0STGd5qf8TApyInfZQJKuV4ILl9mNuNAddFVvLLbgszSJ/Xrh+5jqE8SG62kKUYZ
+	Epqpe3RDDYJCwHFleC5hWQn37mQ9Y5Kn4ue7kXomsBd8HkIPeTTi4lIMi9ppr2zY/TGz1l9hYTa
+	oI/9ADwfo28YUa521jG44daeaTVVKPe5b7oyUeYfFkPQK8+Y2swDDZ7r6NAIGv0hs82yWj+LH2C
+	GjawirevgtURfkA90TvhlSoKD5IcRjyajTECVV3jdya6/bojcRT2PzygLLG4/aFgZ2zKMcCgSIk
+	en0obPyR9dNhGfQVr2dFuRz91nY61Nw8CdsWV7C9o7VtqOMR5PZMdvI+aaDjTPORfCLht9SDlIs
+	7/K/S73YEEWauuL+TBz2LHPuamyxYmBcc/TNeTdVfDFbL4cKoR14voUHPWYZsNlJf1eg==
+X-Received: by 2002:a05:620a:4442:b0:8b2:ea5a:4149 with SMTP id af79cd13be357-8d41ec08f6cmr540410385a.65.1775241425096;
         Fri, 03 Apr 2026 11:37:05 -0700 (PDT)
+Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8d2a874459asm472401785a.39.2026.04.03.11.37.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Apr 2026 11:37:04 -0700 (PDT)
 From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Bruce Ashfield <bruce.ashfield@gmail.com>,
 	Mark Hatle <mark.hatle@kernel.crashing.org>
-Subject: [wic][PATCH 8/9] ksparser.py: search for *inc files
-Date: Fri,  3 Apr 2026 14:36:43 -0400
-Message-ID: <20260403183644.2783267-9-twoerner@gmail.com>
+Subject: [wic][PATCH 7/9] plugins/source/bootimg_biosplusefi.py: add import os
+Date: Fri,  3 Apr 2026 14:36:42 -0400
+Message-ID: <20260403183644.2783267-8-twoerner@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260403183644.2783267-1-twoerner@gmail.com>
 References: <20260403183644.2783267-1-twoerner@gmail.com>
@@ -69,65 +68,59 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Fri, 03 Apr 2026 18:37:17 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3634
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3633
 
-If a *wks file has an "include" directive, try looking for the include
-file at the path where the *wks file was found.
+BitBake's bb/build.py:55 deliberately injects os (and bb) into Python's
+__builtins__ at the module level:
+
+    # When we execute a Python function, we'd like certain things
+    # in all namespaces, hence we add them to __builtins__.
+    # If we do not do this and use the exec globals, they will
+    # not be available to subfunctions.
+    if hasattr(__builtins__, '__setitem__'):
+        builtins = __builtins__
+    else:
+        builtins = __builtins__.__dict__
+
+    builtins['bb'] = bb
+    builtins['os'] = os
+
+When wic was part of oe-core this injection would occur, and once
+os is in __builtins__, Python's name resolution (locals -> globals
+-> builtins) finds it for any code in the process, even modules
+that never explicitly import os. So when bootimg_biosplusefi.py's
+__instanciateSubClasses referenced os.path.join(...), Python resolved os
+from builtins rather than the module's own globals.
+
+Since wic is now split out from oe-core (and bitbake) this plugin fails
+with:
+	NameError: name 'os' is not defined.
+
+Therefore, add "import os" to bootimg_biosplusefi.py.
 
 NOTE: this commit does not work as-is, but is being provided in order to
       explicitly show a clean transition from oe-core
 
-AI-Generated: codex/gpt-5.4 (high)
+AI-Generated: codex/claude-opus-4-6 (xhigh)
 Reviewed-by: Bruce Ashfield <bruce.ashfield@gmail.com>
 Reviewed-by: Mark Hatle <mark.hatle@kernel.crashing.org>
 Signed-off-by: Trevor Woerner <twoerner@gmail.com>
 ---
- src/wic/ksparser.py | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+ src/wic/plugins/source/bootimg_biosplusefi.py | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/src/wic/ksparser.py b/src/wic/ksparser.py
-index 4ccd70dc555a..8e5fbfadd81f 100644
---- a/src/wic/ksparser.py
-+++ b/src/wic/ksparser.py
-@@ -101,6 +101,15 @@ def overheadtype(arg):
+diff --git a/src/wic/plugins/source/bootimg_biosplusefi.py b/src/wic/plugins/source/bootimg_biosplusefi.py
+index 4279ddded83a..cd7cd270a970 100644
+--- a/src/wic/plugins/source/bootimg_biosplusefi.py
++++ b/src/wic/plugins/source/bootimg_biosplusefi.py
+@@ -19,6 +19,7 @@
+ # William Bourque <wbourque [at) gmail.com>
  
-     return result
+ import types
++import os
  
-+def resolve_canned_path(arg, current_confpath=None):
-+    if current_confpath:
-+        current_dir = os.path.dirname(os.path.abspath(current_confpath))
-+        relative_path = os.path.join(current_dir, arg)
-+        if os.path.exists(relative_path):
-+            return relative_path
-+
-+    return None
-+
- def cannedpathtype(arg):
-     """
-     Custom type for ArgumentParser
-@@ -202,7 +211,7 @@ class KickStart():
-         bootloader.add_argument('--source')
- 
-         include = subparsers.add_parser('include')
--        include.add_argument('path', type=cannedpathtype)
-+        include.add_argument('path')
- 
-         self._parse(parser, confpath)
-         if not self.bootloader:
-@@ -289,7 +298,12 @@ class KickStart():
-                         self.partnum += 1
-                         self.partitions.append(Partition(parsed, self.partnum))
-                     elif line.startswith('include'):
--                        self._parse(parser, parsed.path)
-+                        include_path = resolve_canned_path(parsed.path, confpath)
-+                        if not include_path:
-+                            err = "%s:%d: argument path: file not found: %s" % \
-+                                  (confpath, lineno, parsed.path)
-+                            raise KickStartError(err)
-+                        self._parse(parser, include_path)
-                     elif line.startswith('bootloader'):
-                         if not self.bootloader:
-                             self.bootloader = parsed
+ from wic.pluginbase import SourcePlugin
+ from importlib.machinery import SourceFileLoader
 -- 
 2.51.0
 
