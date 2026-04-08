@@ -1,85 +1,131 @@
-Return-Path: <twoerner@gmail.com>
+Return-Path: <antonin.godard@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 159E9FD5F84
-	for <webhook@archiver.kernel.org>; Wed,  8 Apr 2026 06:39:12 +0000 (UTC)
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.100447.1775630344289863397
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C32AFD5F91
+	for <webhook@archiver.kernel.org>; Wed,  8 Apr 2026 07:25:42 +0000 (UTC)
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.101083.1775633137541080139
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 07 Apr 2026 23:39:04 -0700
+ Wed, 08 Apr 2026 00:25:38 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=CncDqnSP;
- spf=pass (domain: gmail.com, ip: 209.85.219.53, mailfrom: twoerner@gmail.com)
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-89e8e352dc1so36173606d6.1
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 07 Apr 2026 23:39:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1775630343; x=1776235143; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EI/N86wZRVhUvjhprE8d7ImGvuJBrM8QefSPITP8HZ4=;
-        b=CncDqnSPBQXwfFWK2hTok3cXrETs6GuNQrUB17gI2/Voypmrti8ifC7R8W4xzEHEkg
-         aWjvvRgJlOEmI4zpkc/moCi77cnt/NjOH4knRiPOjHkenMKJIjlNpdQaU2V4ZpX3AmYu
-         yM6w8vulAC1Hh/Szvt0N4HHtGxV+izBThiqrnsNKuOXimtzIX7Q4Q2ecYdGTkLqaNonX
-         aTQSWk0w2UGYAs+F9o78zT5mN2e4Onbi8sdicHSNI7+sAFBJreHP8yVm0caQlh44/FZd
-         60AJYr1WbR39tLYL7f6QUWkevI9z4HkdRfsWVp2x1hbURqRSbrEXyjzJX3cfwDXkwtTD
-         zWlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775630343; x=1776235143;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EI/N86wZRVhUvjhprE8d7ImGvuJBrM8QefSPITP8HZ4=;
-        b=Q/5G9dBaWOPe4uF4YD6kqQifuhJOkeqimpuycWunZnBerJnHzHi2QZ6U41/DS5WDDM
-         h7FUwpP7akD47Rj+r31poiQC9VYXhn0+jJS0d+Xd9vryYJ4fyKxm9yNFIUThqJWAgaRO
-         mNZLR36poWKHob6qDp0Sz9/P5ca2MEoI+p6KINzfZgng5+G9E6UEbqtH2lWkhSHvacmt
-         aLd1vwZ1IzL6eeXIqVbRzqnB95LNbBHIei45UucQkNRRPWYeyCkrbF+odb3U4hshM7XF
-         UeLRluKJiRkufzrW8CSmGusRJfxXn6F0Tx4TtKM1yoEMUAfSjO3Pt26u03vN/BDQphRW
-         dtPQ==
-X-Gm-Message-State: AOJu0YzBo0rDgJnoyAzfex/1ZDJrrv+r4jiZNO/9oK0POyDJL768pQzz
-	ATFhdN5veidU7ThjGeb3VMZ+7EY0FdAafjGyz9EFwbCJR8OcnTDh/XE48Ex48Q==
-X-Gm-Gg: AeBDiesR3VwPuOxpmz18+C5hSB73F0dhgFiLdYIc1Yj56WTzDz2DLfRzTWRToUJ9L6o
-	cFKNB0YyYDAif+IUXsVZEM/wjNVsMRRGKWcNx7DgNuhBi4KRYMLCad/oKz98WJgBYP/MltTvOGS
-	/3lOlNbOVYoESijhype8B4+oyvIXtGrV16FWXbN2nR3xjcJK1g2bMxGD1dJDd6NvfqzaIMPi2eU
-	T1lW5mx4k0WqcRzXgo2KdirFNGRYjXfGHLPamHaNkBt3Z40UnEaNNAvkgHwoYRMApWrz+CgyeKZ
-	M2Igwcfi/JdhcqpGEaV7gt3aSPzweupdJo8lshJmrXQpWckPIIoIKYOpBlcTdtFLDYArigOtdKW
-	247G0/3OTdpYit+gQqhMjKmlPF8kcUMbf/OwGK2XcqFLGmNd3q/i8YAaSH+kQ10CR3+hyC+Tym3
-	Be2E9QT7BbsP3PSDXzZtKOZ0L4Ye7989iw6rFWEtgcTxoOit01TMPVG4YxUevIHpFGPA==
-X-Received: by 2002:ad4:5aeb:0:b0:89a:1536:251f with SMTP id 6a1803df08f44-8a704abb88cmr330153596d6.28.1775630342625;
-        Tue, 07 Apr 2026 23:39:02 -0700 (PDT)
-Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8a5979d92fbsm204574216d6.48.2026.04.07.23.39.00
-        for <yocto-patches@lists.yoctoproject.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Apr 2026 23:39:01 -0700 (PDT)
-From: Trevor Woerner <twoerner@gmail.com>
-To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-rockchip][PATCH] wic: move wks files
-Date: Wed,  8 Apr 2026 02:38:58 -0400
-Message-ID: <20260408063858.3845081-1-twoerner@gmail.com>
-X-Mailer: git-send-email 2.51.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+ dkim=pass header.i=@bootlin.com header.s=dkim header.b=sRDu6jLn;
+ spf=pass (domain: bootlin.com, ip: 185.246.85.4, mailfrom: antonin.godard@bootlin.com)
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 45C314E42974
+	for <yocto-patches@lists.yoctoproject.org>; Wed,  8 Apr 2026 07:25:35 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 182B6603CB;
+	Wed,  8 Apr 2026 07:25:35 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9E69B104503D0;
+	Wed,  8 Apr 2026 09:25:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1775633134; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=q1hdjU9xywO67xNWy+yzg3e1drJbM6VDYLLoNUG6KWg=;
+	b=sRDu6jLnzUsxvhg3b0nV2FaSd0kujD7auH5g+XE0oSqwKdBr3i0kPY99foZ07yryi6MkxA
+	7C/8hjmPBnJZFNI58Hf08wo+Xqmeh/n/DL+mMRTiFbJlgkc6N1Uz6AFo+sw2iWJ/WbvpzX
+	6WH2dLtrVETp6LzouEwJuNG2vM9xv52Mq781PHrg4Ih5EJkx4p8oAqERqIdcGCUD+fZ+fV
+	iW60sl50hBXBWewq4d2lGDzb26cQoQiX36/WNot2YofKOncQxQEwG3wEvgjdiJG/1JuCuu
+	WOwh4/l109tx1+wXAkSbeEjm24QgXnZaKIgu+V3zvMCEJA4az8RZUteHUuxuDg==
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 08 Apr 2026 09:25:32 +0200
+Message-Id: <DHNLEVZSJENP.8TRZXPDC4RO3@bootlin.com>
+Cc: "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>, "Yoann Congal"
+ <yoann.congal@smile.fr>
+From: "Antonin Godard" <antonin.godard@bootlin.com>
+To: <yocto-patches@lists.yoctoproject.org>
+Subject: Re: [yocto-patches] [yocto-autobuilder-helper][PATCH]
+ scripts/yocto-supported-distros: fix an incorrect regular expression for
+ stream
+References: <20260326-ysd-fix-centos-regexp-v1-1-e41c6cbe1a18@bootlin.com>
+ <054abea2ac9beedac71d4142a14f0bdf8fccec21.camel@pbarker.dev>
+In-Reply-To: <054abea2ac9beedac71d4142a14f0bdf8fccec21.camel@pbarker.dev>
+X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 08 Apr 2026 06:39:12 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3659
+ <yocto-patches@lists.yoctoproject.org>; Wed, 08 Apr 2026 07:25:42 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3660
 
-The new, default, only location wic will look for wks files in a layer
-is files/wic. Move the wks files to suit.
+Hi,
 
-Signed-off-by: Trevor Woerner <twoerner@gmail.com>
----
- {wic => files/wic}/rockchip.wks | 0
- 1 file changed, 0 insertions(+), 0 deletions(-)
- rename {wic => files/wic}/rockchip.wks (100%)
+On Mon Apr 6, 2026 at 10:49 AM CEST, Paul Barker wrote:
+> On Thu, 2026-03-26 at 17:22 +0100, Antonin Godard via
+> lists.yoctoproject.org wrote:
+>> The lsb string for CentOS Stream is actually centosstream-*, not
+>> centos-*. It was thus not detecting centosstream entries in
+>> SANITY_TESTED_DISTROS.
+>>=20
+>> This was preventing the script from outputting the docs-formatted CentOS
+>> strings.
+>>=20
+>> Reported-by: Yoann Congal <yoann.congal@smile.fr>
+>> Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
+>> ---
+>>  scripts/yocto-supported-distros | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>=20
+>> diff --git a/scripts/yocto-supported-distros b/scripts/yocto-supported-d=
+istros
+>> index 11b05b7..f1dac04 100755
+>> --- a/scripts/yocto-supported-distros
+>> +++ b/scripts/yocto-supported-distros
+>> @@ -83,7 +83,7 @@ INPUT_REGEXES =3D {
+>>      },
+>>      "centosstream": {
+>>          "ab": re.compile(r"^stream(\d+)"),
+>> -        "lsb": re.compile(r"^stream-(\d+)"),
+>> +        "lsb": re.compile(r"^centosstream-(\d+)"),
+>
+> Hi Antonin,
+>
+> Where do you see centosstream-* reported?
+>
+> On the stream9-vk-1 autobuilder worker and on a local centos stream 9
+> instance I see "centos-9":
+>
+>     $ ( source /etc/os-release && echo $ID-$VERSION_ID )
+>     centos-9
+>
+> We currently have "centosstream-9" listed as a supported distro, but if
+> I build on stream9-vk-1 I see:
+>
+>     WARNING: Host distribution "centos-9" has not been validated with
+>     this version of the build system; you may possibly experience
+>     unexpected failures. It is recommended that you use a tested
+>     distribution.
+>
+> So, I sent a patch for meta-yocto [1]. We should try to resolve which
+> one is correct.
+>
+> [1]: https://lore.kernel.org/poky/20260403-centos-9-v1-1-e5324bd74ea3@pba=
+rker.dev/T/
 
-diff --git a/wic/rockchip.wks b/files/wic/rockchip.wks
-similarity index 100%
-rename from wic/rockchip.wks
-rename to files/wic/rockchip.wks
--- 
-2.51.0
+I'm a bit confused, why was this not a problem on whinlatter and scarthgap =
+then?
+Both of them have either centosstream-8 or centosstream-9 as their lsb stri=
+ng in
+poky.conf.
 
+https://git.yoctoproject.org/meta-yocto/tree/meta-poky/conf/distro/poky.con=
+f?h=3Dwhinlatter
+https://git.yoctoproject.org/meta-yocto/tree/meta-poky/conf/distro/poky.con=
+f?h=3Dscarthgap
+
+Even CentOS Stream 8 images report centos-8 (with a local docker image):
+
+$ docker run --rm -it quay.io/centos/centos:stream8 bash
+[root@c33732bb804a /]# cat /etc/os-release
+NAME=3D"CentOS Stream"
+VERSION=3D"8"
+ID=3D"centos"
+ID_LIKE=3D"rhel fedora"
+VERSION_ID=3D"8"
+
+Should we backport your change to both of these branches?
+
+Antonin
 
