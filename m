@@ -1,98 +1,102 @@
-Return-Path: <gouravsingh@siemens.com>
+Return-Path: <antonin.godard@bootlin.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BE38EA3C51
-	for <webhook@archiver.kernel.org>; Thu,  9 Apr 2026 11:19:32 +0000 (UTC)
-Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.129505.1775733566063725760
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6163F31E43
+	for <webhook@archiver.kernel.org>; Thu,  9 Apr 2026 15:42:17 +0000 (UTC)
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.131407.1775739331523287013
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 09 Apr 2026 04:19:27 -0700
+ Thu, 09 Apr 2026 05:55:32 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=gouravsingh@siemens.com header.s=fm2 header.b=Rm+xOLzf;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227, mailfrom: fm-1333022-202604091119225899ef34ba000207ce-pbpcjf@rts-flowmailer.siemens.com)
-Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 202604091119225899ef34ba000207ce
-        for <yocto-patches@lists.yoctoproject.org>;
-        Thu, 09 Apr 2026 13:19:23 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
- d=siemens.com; i=gouravsingh@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=t45p/aWvLp63c88KaUITPoFQxrEcTByo7zHrA+8KKX8=;
- b=Rm+xOLzfeetNFQzO8DQiQf9IF7zfln/pzEIFQAOwAMy8QPrOXYBLXA/Ujjnn2QgGUHAVjq
- kwyeYql1Dk1WcRE6PkvUphVSKT9i0wVsotbYmUa0MKOito4dxtDW4ksff1+SuXwX6D5hdbex
- vYo5/t/umdcDekZFbAriESeGoUmOPvqGebRKjvSU9VfCoW5LhbECsjIfYeq+OACZRQsff+F/
- vW7AgE8Lm/uapPJ32/A8GuS7ttcTTCrlrqrVdkgrAl4v6V/U7n/E7u3vNKX248tN0Y+vkqnB
- 2lnq9RGB3PHMmkDnljHEJgVT95k047KqFr30zD4mQz2o2zscmXZQAvEQ==;
-From: Gourav Singh <gouravsingh@siemens.com>
-To: yocto-patches@lists.yoctoproject.org
-Cc: cedric.hombourger@siemens.com,
-	Gourav Singh <gouravsingh@siemens.com>
-Subject: [wic][PATCH] wic/plugins: gate root= with creator.rootdev for efi and pcbios
-Date: Thu,  9 Apr 2026 16:47:52 +0530
-Message-Id: <20260409111752.3441850-1-gouravsingh@siemens.com>
+ dkim=pass header.i=@bootlin.com header.s=dkim header.b=rA/t3FJX;
+ spf=pass (domain: bootlin.com, ip: 185.246.84.56, mailfrom: antonin.godard@bootlin.com)
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 950261A31F7
+	for <yocto-patches@lists.yoctoproject.org>; Thu,  9 Apr 2026 12:55:29 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 661AA5FDEB
+	for <yocto-patches@lists.yoctoproject.org>; Thu,  9 Apr 2026 12:55:29 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 36690104500B3;
+	Thu,  9 Apr 2026 14:55:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1775739328; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=CfpFvwxIsh8YIsPlQdgxlpqtQJjxx+oshPLAZT6H2ss=;
+	b=rA/t3FJXWrTE2Nbi0TTwNRsb8C21oPuPjYabbjXJCmV3079CiuWupIyLQgIjTj5SJD0JA0
+	PvjArVjxptS5dADOLsYYEiV0tZA0Vx0Cq/9UlUvV9TYkPHTYPC2o4DE9mwGaZD+BtU1qID
+	Y+OTsvYkcaowboOQ/qJ6njqlH4VJqfi7XknzQtbQKM28ZnyU5hbyQxLpof/cMvoCGcaKyx
+	1c9cCvVtStnLEZuUU213Jf6Stl0WjJXT84itlw4dypV/ztp7Q4ZOLploec0GfskKz3ayO7
+	hfdK8JncN+pwT4nANjesr73LPFEsB0bM25OrCAjstODL3SZybeeiMQlA+aHQFA==
+From: Antonin Godard <antonin.godard@bootlin.com>
+Date: Thu, 09 Apr 2026 14:55:18 +0200
+Subject: [yocto-autobuilder-helper][PATCH] scripts/run-docs-build: skip
+ milestone tags
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-1333022:519-21489:flowmailer
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260409-docs-skip-milestone-tags-v1-1-f78f1f9bdeed@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMQQ6CMBBG4auQWTtJbQhGr0JYlPYHRpGSTiEaw
+ t1FXX6L9zZSJIHSrdgoYRWVOB04nwryg5t6sITDZI2tTGmuHKJX1ofM/JQRmuMEzq5XtvbiTFm
+ hQhfoyOeETl6/dd38rUt7h8/fX/2OPkd2S47tImNA4gHjjNTQvn8Am7+255YAAAA=
+X-Change-ID: 20260409-docs-skip-milestone-tags-227a046e6efd
+To: yocto-patches@lists.yoctoproject.org
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Antonin Godard <antonin.godard@bootlin.com>
+X-Mailer: b4 0.16-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=999;
+ i=antonin.godard@bootlin.com; h=from:subject:message-id;
+ bh=ir/yLZ+QRS7ElvGJYmhOAuU3sTR+EXquPU5IEZYvTFI=;
+ b=owEBbQKS/ZANAwAKAdGAQUApo6g2AcsmYgBp16G/A/8hRdhFOc0QQ4dQZEi5ect0/0QQa83fP
+ RZz2PVrQ8GJAjMEAAEKAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCadehvwAKCRDRgEFAKaOo
+ NtsYD/9pGcYkVylcZl7U34Q20uNzt6zeFZ87tMvZDIOgHrHV+YMLFPpoC4KdPBxhHnBZxQfqNsY
+ VYUYuMPjzFvbUljqBILTQ2i0KNQQN79pwkaSdUWypcMrjoszWbvnC15BcZ3SAFfgplOHjKlg4nC
+ rE0B5xmspkS710w1c+mQuXaH9zoSXRHC0i6zd0x/PM0ZLbi0B4QxXSEZkUlaDMT8kj+z9JGU39S
+ ctJ8v+atxtczg3Ats4J57r8AwCYZHMa+eLNKs9y5lnqi4qKC2cwXiThkbweJ5zDn4LztagmYO20
+ pIN6lWnAgCsPTpwhOAjcs2k04veG913b/CeQETUm9F6b1Kuu9pbTh9T7o+YpsZJc7nEkN1Bym0z
+ a9aSjxbsKhuJ6KYwgEkNx2tK147x8jPoUxyf4yNhc1owhS2qr4zLMswlyV6ayNv02VQJu+HA1iV
+ bIHHllnmgUcaUSiZ0kh/hQKDLOhcpZYmY5wmQn2EhVpIFAgAeQDREWvz2hHs/8VlW5ngjg2Wbeh
+ cr3WB/kbUUealxfJ0By2Q8ExLIEDRcs8R3m34wx2khOQH9TWLSjXD5G8SF0utcPcei3/98G0meT
+ h/n6gkuE7/tpbfVxn3rosiSe45RwLCsv1s7Hak05J2CLx4HgvuI/nTr4qVLvAWUCV3+6w5ivKzf
+ gNpyGTg6JI/aYjw==
+X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
+ fpr=8648725188DD401BB9A0D3FFD180414029A3A836
+X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 09 Apr 2026 11:19:32 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3674
+ <yocto-patches@lists.yoctoproject.org>; Thu, 09 Apr 2026 15:42:17 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3678
 
-Checks for creator.rootdev not being None were missing and would cause
-the kernel command line to read "root=None". When using the Discoverable
-Partitions Specification, we really want no root= parameter on the
-kernel command line (and root=None is anyhow not a valid option).
+Milestones tags in the form of "yocto-X.Y_MZ" were recently introduced
+but we don't need to build them, and they're currently breaking the
+build of the docs. Skip them when we match them.
 
-Signed-off-by: Cedric Hombourger <cedric.hombourger@siemens.com>
-Signed-off-by: Gourav Singh <gouravsingh@siemens.com>
+Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
 ---
- src/wic/plugins/source/bootimg_efi.py    | 5 +++--
- src/wic/plugins/source/bootimg_pcbios.py | 6 ++++--
- 2 files changed, 7 insertions(+), 4 deletions(-)
+A fix to the docs is also planned to be sent for building on these tags.
+---
+ scripts/run-docs-build | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/src/wic/plugins/source/bootimg_efi.py b/src/wic/plugins/source/bootimg_efi.py
-index 69aa38b..7d2175d 100644
---- a/src/wic/plugins/source/bootimg_efi.py
-+++ b/src/wic/plugins/source/bootimg_efi.py
-@@ -97,7 +97,7 @@ class BootimgEFIPlugin(SourcePlugin):
-                         (get_bitbake_var("KERNEL_IMAGETYPE"), get_bitbake_var("INITRAMFS_LINK_NAME"))
-
-             label = source_params.get('label')
--            label_conf = "root=%s" % creator.rootdev
-+            label_conf = f"root={creator.rootdev}" if creator.rootdev else ""
-             if label:
-                 label_conf = "LABEL=%s" % label
-
-@@ -186,7 +186,8 @@ class BootimgEFIPlugin(SourcePlugin):
-             boot_conf += "linux /%s\n" % kernel
-
-             label = source_params.get('label')
--            label_conf = "LABEL=Boot root=%s" % creator.rootdev
-+            label_conf = "LABEL=Boot"
-+            label_conf += f" root={creator.rootdev}" if creator.rootdev else ""
-             if label:
-                 label_conf = "LABEL=%s" % label
-
-diff --git a/src/wic/plugins/source/bootimg_pcbios.py b/src/wic/plugins/source/bootimg_pcbios.py
-index 1e5ec3a..b49d48d 100644
---- a/src/wic/plugins/source/bootimg_pcbios.py
-+++ b/src/wic/plugins/source/bootimg_pcbios.py
-@@ -231,8 +231,10 @@ class BootimgPcbiosPlugin(SourcePlugin):
-             kernel = "/" + get_bitbake_var("KERNEL_IMAGETYPE")
-             syslinux_conf += "KERNEL " + kernel + "\n"
-
--            syslinux_conf += "APPEND label=boot root=%s %s\n" % \
--                             (creator.rootdev, bootloader.append)
-+            # Check if rootdev exists
-+            root_param = f"root={creator.rootdev}" if creator.rootdev else ""
+diff --git a/scripts/run-docs-build b/scripts/run-docs-build
+index dfe3265..268ce73 100755
+--- a/scripts/run-docs-build
++++ b/scripts/run-docs-build
+@@ -196,6 +196,11 @@ for branch in "$ypdocsbranch" dunfell $(git branch --remote --contains "$first_s
+         continue
+     fi
+ 
++    # skip milestone tags
++    if [[ $branch =~ yocto-.*_M[0-9] ]]; then
++      continue
++    fi
 +
-+            syslinux_conf += f"APPEND label=boot {root_param} {bootloader.append}\n"
+     echo Building $branch
+     git checkout $branch
+     git reset --hard
 
-         logger.debug("Writing syslinux config %s/syslinux.cfg", hdddir)
-         cfg = open("%s/hdd/boot/syslinux.cfg" % cr_workdir, "w")
---
-2.39.5
+---
+base-commit: 0742f9ec479b344a987e800dd0ca7e25850d7450
+change-id: 20260409-docs-skip-milestone-tags-227a046e6efd
 
 
