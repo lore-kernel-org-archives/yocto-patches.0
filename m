@@ -1,136 +1,98 @@
-Return-Path: <daniel.turull@ericsson.com>
+Return-Path: <gouravsingh@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AF07E9DE7C
-	for <webhook@archiver.kernel.org>; Thu,  9 Apr 2026 09:08:44 +0000 (UTC)
-Received: from AM0PR02CU008.outbound.protection.outlook.com (AM0PR02CU008.outbound.protection.outlook.com [52.101.72.22])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.127864.1775725713569419448
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BE38EA3C51
+	for <webhook@archiver.kernel.org>; Thu,  9 Apr 2026 11:19:32 +0000 (UTC)
+Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.129505.1775733566063725760
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 09 Apr 2026 02:08:33 -0700
+ Thu, 09 Apr 2026 04:19:27 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@ericsson.com header.s=selector1 header.b=DTXKlH/5;
- spf=pass (domain: ericsson.com, ip: 52.101.72.22, mailfrom: edaturu@ericsson.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aFk8mIb5eKpKGGZHSRx1770mWzGXP2MQjYuR+YFWqjwcn9UVW757kM66ygmY2iOHLI4qDp/0AHS5ONQBS8DbJ7ibCLI3fmmgfZeW3hKueRBpnuZ26MvYbJiDnUay98+B7Zivb6T/izGEy3lnpTI/S77eQyq8Y2/0Gs6zYHMaJJbAvihYKWml5QXw3LlMxE9VGL/1t+mcF7HDl+sA8Q5uVAPUEqsCjEtvbBwxJTE7joLwvyTfl5+aO0TJ7srAUmqwM4Unht2SdHjfPK8b3aYawdguWwrTzoB/x2AyxrEj27D7bzWx2rYe54SD8HyRM9wUOxYdVl/0I5NEi4gfKGYoPw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tUoG7FNUdNEaWKma5NKUBg8pvMW/W4yZfW6npQHVvuc=;
- b=APpVs9UvAis7i8Apq+FOtIU5d425jiidQPqTAZYb/HRKSU5iHpBKEZUFAhLiprBZ1TGD/dJpAul3ZKQOhrz1WeajmM5RF7nmyAFuH9gXUZR9T5+NRIfJFqSB/a7OBICRQOOlyRPxrhVAPnXe9+K0qHq6C0c423125Xs57jZtu09aI6x/cKJPbNXUL6idAntnC559mH1CVOaL//nGGD6oB7HGzsMOzQnE3f+A9HDmjliSF2y3OFVE+JGTePROnQaf5JZwn7ROe8LZZohVPBJPxqRiXdk0JEnhGB5HE5cqYuLNfrl1QAjB7RSbm7VYROwKf7kkd1cge0S+i7Qw4PL/qg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 192.176.1.74) smtp.rcpttodomain=arm.com smtp.mailfrom=ericsson.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=ericsson.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ericsson.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tUoG7FNUdNEaWKma5NKUBg8pvMW/W4yZfW6npQHVvuc=;
- b=DTXKlH/5hBKwSUI5ry2Pnuv3MpjVLDDcz26Z9rT60iGZzwL1/L4PgdU8R0e9CmfUIKtqCTwKX3NitB4EGx5OxqqG3V4BrxF/0wpABxpJiAu58Fwarf2xhTh0xEd/kYp3OgHYBx4aAKgRKhcm56kyH9AGuYhxDwln6o+xWjfh257Bb1L4HI5SxKHeBN5UKxB+SaXW0bEov/Ov0LpMkS1aYQwcJuHiFK+akhMiCETZGHfTnAVnWZzr5q3aUhQxlCVXNlfNnf5x01GJ2DgB7PtxeHAqsKlV34wLeF0sRvqviEA//T7rXKBAkI5n4QBllzqE0JX1SoD9sKa8LztflMNOxg==
-Received: from CWLP265CA0435.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:1d7::8)
- by PR3PR07MB6491.eurprd07.prod.outlook.com (2603:10a6:102:67::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.24; Thu, 9 Apr
- 2026 09:08:29 +0000
-Received: from AM3PEPF0000A794.eurprd04.prod.outlook.com
- (2603:10a6:400:1d7:cafe::4) by CWLP265CA0435.outlook.office365.com
- (2603:10a6:400:1d7::8) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9769.38 via Frontend Transport; Thu,
- 9 Apr 2026 09:08:29 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 192.176.1.74)
- smtp.mailfrom=ericsson.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=ericsson.com;
-Received-SPF: Pass (protection.outlook.com: domain of ericsson.com designates
- 192.176.1.74 as permitted sender) receiver=protection.outlook.com;
- client-ip=192.176.1.74; helo=oa.msg.ericsson.com; pr=C
-Received: from oa.msg.ericsson.com (192.176.1.74) by
- AM3PEPF0000A794.mail.protection.outlook.com (10.167.16.123) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9769.17 via Frontend Transport; Thu, 9 Apr 2026 09:08:29 +0000
-Received: from seroius18813.sero.gic.ericsson.se (153.88.142.248) by
- smtp-central.internal.ericsson.com (100.87.178.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.29; Thu, 9 Apr 2026 11:08:28 +0200
-Received: from seroius08462.sero.gic.ericsson.se (seroius08462.sero.gic.ericsson.se [10.63.237.245])
-	by seroius18813.sero.gic.ericsson.se (Postfix) with ESMTP id 2376A9569F;
-	Thu,  9 Apr 2026 11:08:28 +0200 (CEST)
-Received: by seroius08462.sero.gic.ericsson.se (Postfix, from userid 160155)
-	id 1079B700DB93; Thu,  9 Apr 2026 11:08:28 +0200 (CEST)
-From: <daniel.turull@ericsson.com>
-To: <daniel.turull@ericsson.com>, <yocto-patches@lists.yoctoproject.org>
-CC: <alex.kanavin@gmail.com>, <paul@pbarker.dev>, <ross.burton@arm.com>
-Subject: [AUH] PATCH 2/6] upgrade-helper.py: allow to set the git directory from layer-dir
-Date: Thu, 9 Apr 2026 11:08:11 +0200
-Message-ID: <20260409090815.1731294-3-daniel.turull@ericsson.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260409090815.1731294-1-daniel.turull@ericsson.com>
-References: <20260409090815.1731294-1-daniel.turull@ericsson.com>
+ dkim=pass header.i=gouravsingh@siemens.com header.s=fm2 header.b=Rm+xOLzf;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227, mailfrom: fm-1333022-202604091119225899ef34ba000207ce-pbpcjf@rts-flowmailer.siemens.com)
+Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 202604091119225899ef34ba000207ce
+        for <yocto-patches@lists.yoctoproject.org>;
+        Thu, 09 Apr 2026 13:19:23 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
+ d=siemens.com; i=gouravsingh@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=t45p/aWvLp63c88KaUITPoFQxrEcTByo7zHrA+8KKX8=;
+ b=Rm+xOLzfeetNFQzO8DQiQf9IF7zfln/pzEIFQAOwAMy8QPrOXYBLXA/Ujjnn2QgGUHAVjq
+ kwyeYql1Dk1WcRE6PkvUphVSKT9i0wVsotbYmUa0MKOito4dxtDW4ksff1+SuXwX6D5hdbex
+ vYo5/t/umdcDekZFbAriESeGoUmOPvqGebRKjvSU9VfCoW5LhbECsjIfYeq+OACZRQsff+F/
+ vW7AgE8Lm/uapPJ32/A8GuS7ttcTTCrlrqrVdkgrAl4v6V/U7n/E7u3vNKX248tN0Y+vkqnB
+ 2lnq9RGB3PHMmkDnljHEJgVT95k047KqFr30zD4mQz2o2zscmXZQAvEQ==;
+From: Gourav Singh <gouravsingh@siemens.com>
+To: yocto-patches@lists.yoctoproject.org
+Cc: cedric.hombourger@siemens.com,
+	Gourav Singh <gouravsingh@siemens.com>
+Subject: [wic][PATCH] wic/plugins: gate root= with creator.rootdev for efi and pcbios
+Date: Thu,  9 Apr 2026 16:47:52 +0530
+Message-Id: <20260409111752.3441850-1-gouravsingh@siemens.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM3PEPF0000A794:EE_|PR3PR07MB6491:EE_
-X-MS-Office365-Filtering-Correlation-Id: f6c62690-1509-4c50-f986-08de96179116
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|36860700016|82310400026|376014|1800799024|18002099003|56012099003|22082099003;
-X-Microsoft-Antispam-Message-Info: 
-	VFHJK7eRWM1ST5kQV2IB/ZVLRHy+6bqNMfKzAAmvbsIjvj6nVHXAH7ER8/plDw/vWs199IpCHgsvbmelEnGYKA3Rjw4WkmDIp2MKyNC3Pn4nBfY+www3hXO4ZzHrcH3Ynp2EAcwtDG5M+qqkbWXC6n3Uugue+Skmo5yhmwJJR3un6N7ILYUvw1hD9D10ld7Wo72zXisqxEYLmTGhW54FGC8EDrjSofLgJGXLkEVHTCVHh/tFe55Q6G4AekXfygceExA3wcQTletOglhmNCLv5a0oggMMi9KE4Mbp7OYKlU7uBrklqPn1H+Gd0fcWqfegmWK0Tx7VKsXTLvyMyac09bCQeGwoJ0e9pevmLAT+Xtxuz+tixzWcHqtsy/TH/nukBSv38b56zwf7j/xDfpBgHHk/Ktr9yorRlxajMzXzbRlY7ZZtAOQBPmpegKOwtT49cXXB/7CrD4MMnhHiTkTNgDp6Wt70oxMc7WFHVJ/fGebKL8GnpT5EkD8EdCvjUTzrS7FaXhHCLdaczcF7LtQniTylfXRi8aAiSRDqQaIFpZqXvNZsT6d6WFoD817WM7G2y9DCzIfnNLEJc/5GrYkIISl+3bckEgAdT0QnPftTtEEh7gfwt1/k8DPDdfZcDAcE+CL+S0Wl/sANy2K/IVDQjcVeA0TqcQ/IYoSfPWHO2UW1IQSnnbFxAG/IbAAMEuGBsNAi+6WO+6fwrfFOtRrg26KEA0Z/qzOiGP6vsG9lwaKEmD3jVDpeFPNRgCnk1hxnNHOyeNjKvfKXGY3Cbk2UWA==
-X-Forefront-Antispam-Report: 
-	CIP:192.176.1.74;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:oa.msg.ericsson.com;PTR:office365.se.ericsson.net;CAT:NONE;SFS:(13230040)(36860700016)(82310400026)(376014)(1800799024)(18002099003)(56012099003)(22082099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	AN4sbQK+oaV9bPkkG6oMVyum+TiAefi8+mFfTiQ3UHH2b1ZFl14V79wAu2rF0ZracIngE/V+b1aN0tmGn4caNvROtVUvoC2i9G61/tALw0V9iO+nxxhH9BDucah5qgKErg7aJPM3xhyXJ3VdgQKM4Sv0tCQ9FQSiTAuF4vcZGqiGnKhscnZfRkW21y1PMjuzhaSaaqXQ6yRHCzMK2fL2GJCM2kGwwgo4NXSqTdNhMl/XvmCId0FkrnGrYVywP4Y4QgoRjVz06WlG7/C3X3vopA4Bhcbm0BSBVqTildH5tzIRREfURcJkMI+RvWaVi6MPZ0VsgMkU0exi35wzP6bw79gZpVA+M+VX3J1B4UxLR/H9cgDjFp5rMzZ28ws9pNz4dxZzppJf/7zrMcwSw96L47IDocgyOlfZZMctwBx6Emr4hFNWuSk4wxtMxb2ARG++
-X-OriginatorOrg: ericsson.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Apr 2026 09:08:29.5196
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f6c62690-1509-4c50-f986-08de96179116
-X-MS-Exchange-CrossTenant-Id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=92e84ceb-fbfd-47ab-be52-080c6b87953f;Ip=[192.176.1.74];Helo=[oa.msg.ericsson.com]
-X-MS-Exchange-CrossTenant-AuthSource: 
-	AM3PEPF0000A794.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR07MB6491
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1333022:519-21489:flowmailer
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 09 Apr 2026 09:08:44 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3667
+ <yocto-patches@lists.yoctoproject.org>; Thu, 09 Apr 2026 11:19:32 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3674
 
-From: Daniel Turull <daniel.turull@ericsson.com>
+Checks for creator.rootdev not being None were missing and would cause
+the kernel command line to read "root=None". When using the Discoverable
+Partitions Specification, we really want no root= parameter on the
+kernel command line (and root=None is anyhow not a valid option).
 
-Replace the assumption that the poky directory is the first PATH entry
-and reuse --layer-dir to setup directory for git repo.
-
-This is useful when not using poky and each meta-layer is its own git.
-Without this fix, commit_changes fails in non-poky layouts:
-
-  git add .../openembedded-core/meta/recipes-support/gnupg
-  fatal: '.../openembedded-core/meta/recipes-support/gnupg'
-  is outside repository at '.../yocto-scarthgap'
-
-Assisted-by: Claude, Anthropic
-Signed-off-by: Daniel Turull <daniel.turull@ericsson.com>
+Signed-off-by: Cedric Hombourger <cedric.hombourger@siemens.com>
+Signed-off-by: Gourav Singh <gouravsingh@siemens.com>
 ---
- upgrade-helper.py | 3 +++
- 1 file changed, 3 insertions(+)
+ src/wic/plugins/source/bootimg_efi.py    | 5 +++--
+ src/wic/plugins/source/bootimg_pcbios.py | 6 ++++--
+ 2 files changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/upgrade-helper.py b/upgrade-helper.py
-index 68f315b..67ca54b 100755
---- a/upgrade-helper.py
-+++ b/upgrade-helper.py
-@@ -184,6 +184,9 @@ class Updater(object):
-                     _layer_settings_error(s)
-=20
-             self.git =3D Git(self.opts['layer_dir'])
-+        elif settings.get('layer_dir'):
-+            # allow to set the git repo directory without enabling layer_m=
-ode
-+            self.git =3D Git(settings.get('layer_dir'))
-         else:
-             # use scripts_path to get oe-core directory
-             self.git =3D Git(os.path.dirname(scripts_path))
+diff --git a/src/wic/plugins/source/bootimg_efi.py b/src/wic/plugins/source/bootimg_efi.py
+index 69aa38b..7d2175d 100644
+--- a/src/wic/plugins/source/bootimg_efi.py
++++ b/src/wic/plugins/source/bootimg_efi.py
+@@ -97,7 +97,7 @@ class BootimgEFIPlugin(SourcePlugin):
+                         (get_bitbake_var("KERNEL_IMAGETYPE"), get_bitbake_var("INITRAMFS_LINK_NAME"))
+
+             label = source_params.get('label')
+-            label_conf = "root=%s" % creator.rootdev
++            label_conf = f"root={creator.rootdev}" if creator.rootdev else ""
+             if label:
+                 label_conf = "LABEL=%s" % label
+
+@@ -186,7 +186,8 @@ class BootimgEFIPlugin(SourcePlugin):
+             boot_conf += "linux /%s\n" % kernel
+
+             label = source_params.get('label')
+-            label_conf = "LABEL=Boot root=%s" % creator.rootdev
++            label_conf = "LABEL=Boot"
++            label_conf += f" root={creator.rootdev}" if creator.rootdev else ""
+             if label:
+                 label_conf = "LABEL=%s" % label
+
+diff --git a/src/wic/plugins/source/bootimg_pcbios.py b/src/wic/plugins/source/bootimg_pcbios.py
+index 1e5ec3a..b49d48d 100644
+--- a/src/wic/plugins/source/bootimg_pcbios.py
++++ b/src/wic/plugins/source/bootimg_pcbios.py
+@@ -231,8 +231,10 @@ class BootimgPcbiosPlugin(SourcePlugin):
+             kernel = "/" + get_bitbake_var("KERNEL_IMAGETYPE")
+             syslinux_conf += "KERNEL " + kernel + "\n"
+
+-            syslinux_conf += "APPEND label=boot root=%s %s\n" % \
+-                             (creator.rootdev, bootloader.append)
++            # Check if rootdev exists
++            root_param = f"root={creator.rootdev}" if creator.rootdev else ""
++
++            syslinux_conf += f"APPEND label=boot {root_param} {bootloader.append}\n"
+
+         logger.debug("Writing syslinux config %s/syslinux.cfg", hdddir)
+         cfg = open("%s/hdd/boot/syslinux.cfg" % cr_workdir, "w")
+--
+2.39.5
+
 
