@@ -1,210 +1,203 @@
-Return-Path: <peter.marko@siemens.com>
+Return-Path: <daniel.turull@ericsson.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50C1B105D9B9
-	for <webhook@archiver.kernel.org>; Wed,  8 Apr 2026 14:13:49 +0000 (UTC)
-Received: from PA4PR04CU001.outbound.protection.outlook.com (PA4PR04CU001.outbound.protection.outlook.com [40.107.162.21])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.107537.1775657620796007332
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E14EE9DE70
+	for <webhook@archiver.kernel.org>; Thu,  9 Apr 2026 09:08:44 +0000 (UTC)
+Received: from OSPPR02CU001.outbound.protection.outlook.com (OSPPR02CU001.outbound.protection.outlook.com [40.107.159.63])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.127865.1775725714806929004
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 08 Apr 2026 07:13:41 -0700
+ Thu, 09 Apr 2026 02:08:35 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=HDFNliuM;
- spf=pass (domain: siemens.com, ip: 40.107.162.21, mailfrom: peter.marko@siemens.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@ericsson.com header.s=selector1 header.b=fUR6FwC+;
+ spf=pass (domain: ericsson.com, ip: 40.107.159.63, mailfrom: edaturu@ericsson.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AQRKpbWV2YYg8rz3HS83G64/6xqVX10Jb6bP9evtL0IMxGi90spKySfLcaxpj+0sDTe1Usy34XOflOT3BYZDNFmLJhgNhTecWLLS9Hth3XeHSqOHycAkU30aLJojapMk0SIPeHgWXh73MbgB1g3IfSjAFKqSkeitn0qA8/rP93407msTjIMU/aTmOTFSh8Bu8PoYgZBxOlWJbjHySbInsoes6X8oTktOQRu4lcyLhLWVfXlkgsWfCOnf6IYieTB6O9unlCisfjqtVhUxnJOLJo9Ii04ILaqnKn/ueVSeSsGtepS5ooY8pJLbVJ0j8MDeeHpiUZgmbQ/91b1AwS+tbA==
+ b=TRSnx8qRenQu2w/bYP2HMdo3oGXr0V7rv1LsvSPt8+g/w1D9yPviahJ0Fz9TteMd1uFLx1Qqltxc96O9EEXyNWAjndg0Nf53BLXDo5ruF9V9yLvwrPVB4qnMdarLqta/De9l87eXXJos7Nvcw2plE9DQCRQeNSyProhYZkAHe8vlTjT9aAgxT0toeIAsdSVnvhYSDvKYBcAjtWhjcHQOGNIn0VO1Cqu0hr8Ob04/ShsSuDTR4eFwINkGstasllH23yYCvqnojSMjOu8Dofnq4ExkBdRmbkal/V+i4FOn76XqCtUcUH2rtzlgXCombz5lsYwMCF/5KDy7Uw+ukKa3TQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=n2QIehtnf8s9sewwHH1GKZErQFJcRCyBenKP96bvehY=;
- b=W/DPnZamTxMVzj9kA0ebUqgAb9Q70cXE/s+t8+g5aXB1wwCsu6AbmZMLvwao1tUzF6iktyqPD7hK1vgTSVZHiFbA2vQ6QdGHKcZ+Cm3iAbFsRZXfB25gUxLOGspd9kqQp2jIVregZIBfzXhizyMgpEpYD/Mn7MdcnyQ7HECkrTRjN0LLIkMkQhWRLBCKi6oZba+9ccCbjb4s7cfbRcGH4Trapd/FVvWypwZ0VWyut71rUGXYdVg1n1OfOX3uODKyE5vf4Doptjm8Yhdx8J12Cbbt9pTxd0G0cQiCyxSZDp1b3gCCCF2/PrKoWSk/v+OU2paLRMNPnJ4K1WxO8PkmzA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
+ bh=svLAzzyfu3lCNFUOub7AezKO/5oZ5Ejo5SVI5D+37wg=;
+ b=QuS5yWHWo4J1YBPW9OA7l/dgYZ+KdoMoqcxz1wmr516VD9JB/O2c3R1ezD0b9cBOM9w2SaOl588CE7G6XHsLXflWCCDAJmm5eeNODqSO494X65CljbFENayGrSIJsSAQ4Ki/gxJlDaAGNjLuK5bEgjQdg27ESTNHJBzBG3qvS6HinK5WlOqxsg31SzEmEcrcDbQK/F3csFhgHLfSQRCcDCykLZT7daBUr+fWsOFu3my4lPZgQ084wIJQn9NdFLTnOmh85Gq7LppszxbJ5xNaeDTZbsgYVWWXmkMloupEsgNKlpC55Q8CfiPnmufCw4FUwitdMlS6+OUwrkZCa8VOIg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 192.176.1.74) smtp.rcpttodomain=arm.com smtp.mailfrom=ericsson.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=ericsson.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ericsson.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n2QIehtnf8s9sewwHH1GKZErQFJcRCyBenKP96bvehY=;
- b=HDFNliuMktq6KI+GZ5c8y7ADMaq01S53ttiK3e4KFP94w6ukwcQxiY6DgWaFtjgnUfUWDMYKi/I6Hb9j2awG8rbsY6WMLVdDz5gii64QrSd7be4ew2in+YsCCOK7451pqdJlq60sKzwm6Iy5cnERZpiYFICJYEEXEOIrY5/cq3Yh/mR818WicnWzzuRtDtf8jXWKd/KkE16di/SmNPvWUNLphB5yEy8/6M1UDnKUMWmbWFZladCX9IvvDIkvDmKDFejh9PIE8eiP1el1PfOJzgENWkf8SB4pauNQYW+Qhy+ku0rCU7Xd3UvwAm12N4euzx9KXxC5J0qZhnMRtaTzTw==
-Received: from AS1PR10MB5697.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:479::20)
- by DU0PR10MB9198.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:5dd::7) with
+ bh=svLAzzyfu3lCNFUOub7AezKO/5oZ5Ejo5SVI5D+37wg=;
+ b=fUR6FwC+FyNoUUlnSRa766rC4n5TP/O825x/I0pIqEz7pGFwQFx9KH5Veqf4QuJLv91PMnpJnpKGR3zuuXGvkVBk0Z1XBTFNfj4lyn/b6MJcHCKkA03xu6XXkJPZZ7F9IzYTd7I88ax47aTdkzS0HVEvbAKrK6zdmovcsUdz4wjcfYNjTk5UMwnw9GcE9HGlz/0yApIur6heKQW72GOn5U+6gkmJs0b7/wE9E6PAT/ts/n+2/KZZvt4yrVwIeC1oM1wpJRLn93UKVMF7Or/lkvgMLFfAgdobom4Apk6cGrNyxaYmYqfpKe4Im3QuRXPCRp+cz0H3mWGsxEvkVvMSvw==
+Received: from DU2PR04CA0246.eurprd04.prod.outlook.com (2603:10a6:10:28e::11)
+ by PR3PR07MB7020.eurprd07.prod.outlook.com (2603:10a6:102:5f::7) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.18; Wed, 8 Apr
- 2026 14:13:37 +0000
-Received: from AS1PR10MB5697.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::b54d:255a:1abf:2dc7]) by AS1PR10MB5697.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::b54d:255a:1abf:2dc7%6]) with mapi id 15.20.9769.014; Wed, 8 Apr 2026
- 14:13:37 +0000
-From: "Marko, Peter" <Peter.Marko@siemens.com>
-To: "yocto-patches@lists.yoctoproject.org"
-	<yocto-patches@lists.yoctoproject.org>, Scott Murray
-	<scott.murray@konsulko.com>
-Subject: RE: [meta-security][PATCH] libtpms: fix build with glibc 2.43
-Thread-Topic: [meta-security][PATCH] libtpms: fix build with glibc 2.43
-Thread-Index: AQHcs7RudEtUpMuQWkOuVeFbSQBPH7XVXBEA
-Date: Wed, 8 Apr 2026 14:13:36 +0000
-Message-ID: 
- <AS1PR10MB5697969D53B2F31FEC1BD0A4FD5BA@AS1PR10MB5697.EURPRD10.PROD.OUTLOOK.COM>
-References: <20260314131358.318029-1-peter.marko@siemens.com>
-In-Reply-To: <20260314131358.318029-1-peter.marko@siemens.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
- MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ActionId=e2858827-ba59-4613-b0de-03e0c3cb6a28;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ContentBits=0;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Enabled=true;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Method=Standard;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Name=restricted;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SetDate=2026-04-08T14:12:30Z;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SiteId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Tag=10,
- 3, 0, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AS1PR10MB5697:EE_|DU0PR10MB9198:EE_
-x-ms-office365-filtering-correlation-id: 5cacac5c-59ae-4363-b423-08de957906ca
-x-ms-exchange-atpmessageproperties: SA
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230040|1800799024|366016|376014|55112099003|18002099003|22082099003|56012099003|38070700021;
-x-microsoft-antispam-message-info: 
- Zcs5WpQYHbKxa0+4ssyGXpEdra75Re29Aqk/SlbHphoZL9FwI5ZOpm/eSbiifbaKR/us2dFxpmWgYhGQsApAr4wbXKbC3Y0ny2QLqC4+0BomDqAJrmN/g71pl1D3HiL6RQ1I5rcDFXfldbXNizrbHdKGcnAuqVVd29bUzegjwQIMShq5dG1fMts42jDvKjlNjHei8B9rVeItFzxKx/qB5dVemJdypMm1+tf12XT9KpziUbPe2Srn1nlFy08ngVJynbCbtrMPv2dMcfyEXjpNQEij4F1ca2wr0UQIx1Kkblbq9rAuwtFsWUOigYQOT8qzcK8qafh4cwdz6EVys72KQpSSZbh40ME2uqLEnn9CDTEH1SP05i43r92Ec0KbA6OkDH15zhKE+vGYGigb7LxDRKjGRfE0s5yWt5PkELow6FCxSeb4mQ8+tIyYvpJx39GmClRIpYLLdTCIfhM9l5afHfUS7VZEHKlF3G5L1yiokqqGM53/8hCEICqqv0bs7VR8TUmwNyAfeIJajhbPddIX2PCPTTe2ClyzT/Lj7lXrj05EQjLzYtmRceeRHkYXsF96RNeBf45NKnd7EWrQuSx4GIdXUy1Cu3zcEkqwmJz0MRtHR0awisppgHqyFMBuzdoH0VHNa6lh9bb7JXRI50oS3DYs81F9Y9uzz1AbZgr+l4wnMBA48MFCt0Fs2ni1ns3BbqeLGvME4i5R/2jYSqxjKQZT4NwyY2SNcjyun6jrKo6DVF1b/wKrQalQCSVRetA/K/2RgUElOtythy47Pt7HWue91SB9fbJ/LoJ8WQL/f4M=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS1PR10MB5697.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(55112099003)(18002099003)(22082099003)(56012099003)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?us-ascii?Q?wrfl65B6NUgnKl1T8iHwfViw5GgHz6SCTOq2pPghbB84NqAYHVFY2JiaMsvQ?=
- =?us-ascii?Q?Vi4eFrSfaDafTdn30/4bvmewGTEQbwYunO4Rw+1VPbGjK776xKlQN2yLZmMC?=
- =?us-ascii?Q?TPBQaze3ngPe1t2rt4tBRSI7hI7H6vQcthq1OVscT/ajzb8xVREHJYPq7OAt?=
- =?us-ascii?Q?r5ysTKLtXohlYk8f7WSK14GlzI4H9+rvXOW+y1zTJEI//RD7mPk+1Ijxb4bo?=
- =?us-ascii?Q?7j8DXOmwCnTKyMWYdZrTqnsYs6ZV+Gu6N6NukLOKRaW+Tw84r5XJEZiaVjDD?=
- =?us-ascii?Q?+TlXoQhEXJiGsy7aza3JonCiqUUYTz+wqIxX1aHVB73ArhUCuyNGl0FTlf0V?=
- =?us-ascii?Q?DSdoVIxzZRabVlQ2ZxybwNBnD2HKOcZ8wmtrxPLFQOHAgEz7sukABMnV+d9c?=
- =?us-ascii?Q?Foo7ag4VX4rZD30ffcoDTwMQWm5SQaqV+LqI8EFCGVc8VzP87G0i7Grjx2Tu?=
- =?us-ascii?Q?IkHVoMtVE1cq+6eEfDbEC8dwx2poJ0Qzcq7E0doeExZuGA8zJaVqnYyAiKzl?=
- =?us-ascii?Q?N/3cyWIc/HPtYJejzxUSQchjFSKu3XHmmPOwe/mqnilBx5170g6/UX3qwvBp?=
- =?us-ascii?Q?TkeQhxUV/je8COxr9uqQmF3QCu+u4WpqXpdHrsQlCcSTqq/LXm2sA9LbR5hh?=
- =?us-ascii?Q?UhUv7ioSPvngykIUBXPa6gGBty7ey35rVvezpjEpznwtVhzBg/e5F2g5TN+4?=
- =?us-ascii?Q?YI6vB+4qvQrDgh+RGSpg7ffDyFfDJtRfsgu6VvHL4yYHhwZAsZkHgnH7yf4S?=
- =?us-ascii?Q?OHBb8wKo/upAy4YBsXE22u9sLFhh3bTsNxwJInC8uNdaYuw0OpGtKaErYI9f?=
- =?us-ascii?Q?dYd6Yf3a2VxLLDE4Zi9EehSEdgZlhjMklL816VH8IcGp25Rj91f3K6pKe6EC?=
- =?us-ascii?Q?1tcAotM6pyGEcfJQCVjzde9bH2ZqcAi3ikkuaZkfcIBW2iHVX5Nw5rMlm8qE?=
- =?us-ascii?Q?6G2j0fgAxstNpjF35q2uV3OZbDaphDjmWDc3cNQC18fBn1E19VYkGEyfiR+Z?=
- =?us-ascii?Q?DMD8md9IRbHJ1hOBiMBSc6MTjyC1hlaH86MOwvTTjcqnQqTn9Ntugp2qH9z6?=
- =?us-ascii?Q?EgRmTG95IXSMHSVI1ksot7MxofSNCJyVlh5rtO0euXRRWAOLXxJq8vmCSxiv?=
- =?us-ascii?Q?2tddmFNAk9C1haujHFElXtJS01X/Ry4oXumw6/0EJWX8H/SR3YOaej4PagoB?=
- =?us-ascii?Q?OLdA0drxkmASCWuLh/uPcROMglOtvhk3nVCXPNdxQP+462+1pZeVZ9cMOBc6?=
- =?us-ascii?Q?tHIFlJ7rwYXRz2UM6bHmUzsdQNj0Yp+qU18NxBYCauZYS+lp5RTCKIY6H4NP?=
- =?us-ascii?Q?ZSIwkJ0LC1h3pPOEQP0s+DUrwRq2ny6TShNdr7HcuL16IC83SN7QYil7qUwy?=
- =?us-ascii?Q?iMUhKi7oT/cFXFxVI+jycbYbO5A4R96tRg3W7YaLhg1PuQ81uSk59dDUdXut?=
- =?us-ascii?Q?wcjaeolIEBUZjnuZZKKMlrhitQI0HbPso8aVVGldXPh7NO5ZXohbEJ0o7/Bs?=
- =?us-ascii?Q?GgBH6eeseCgqLw4t3Xw3gPlT61b6HPNC983t6bT+NX5Opjak/yJglSHSTZ9+?=
- =?us-ascii?Q?OPhgoXjRYIvuupICu4CsuiUpJFy5GNMPz2YlgRXY7FkF8ps/YcPKN19ywVqP?=
- =?us-ascii?Q?8rw4t5bYCpFmMm6krPAr4poAHas27HeRExwhOXCuIr/WRdMMISd6Jj31YQd2?=
- =?us-ascii?Q?I0YkXwV1MACjzK0UWOR4UonOx2TA1tyaSzMgavyZ7Hx/4cY52iR3MfNYrSJn?=
- =?us-ascii?Q?j93FXikVUQ=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.20; Thu, 9 Apr
+ 2026 09:08:29 +0000
+Received: from DB1PEPF000509F0.eurprd03.prod.outlook.com
+ (2603:10a6:10:28e:cafe::53) by DU2PR04CA0246.outlook.office365.com
+ (2603:10a6:10:28e::11) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9769.40 via Frontend Transport; Thu,
+ 9 Apr 2026 09:08:29 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 192.176.1.74)
+ smtp.mailfrom=ericsson.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=ericsson.com;
+Received-SPF: Pass (protection.outlook.com: domain of ericsson.com designates
+ 192.176.1.74 as permitted sender) receiver=protection.outlook.com;
+ client-ip=192.176.1.74; helo=oa.msg.ericsson.com; pr=C
+Received: from oa.msg.ericsson.com (192.176.1.74) by
+ DB1PEPF000509F0.mail.protection.outlook.com (10.167.242.74) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9745.21 via Frontend Transport; Thu, 9 Apr 2026 09:08:28 +0000
+Received: from seroius18814.sero.gic.ericsson.se (153.88.142.248) by
+ smtp-central.internal.ericsson.com (100.87.178.63) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29; Thu, 9 Apr 2026 11:08:28 +0200
+Received: from seroius08462.sero.gic.ericsson.se (seroius08462.sero.gic.ericsson.se [10.63.237.245])
+	by seroius18814.sero.gic.ericsson.se (Postfix) with ESMTP id 1F7A54020B70;
+	Thu,  9 Apr 2026 11:08:28 +0200 (CEST)
+Received: by seroius08462.sero.gic.ericsson.se (Postfix, from userid 160155)
+	id 0C58B700DB92; Thu,  9 Apr 2026 11:08:28 +0200 (CEST)
+From: <daniel.turull@ericsson.com>
+To: <daniel.turull@ericsson.com>, <yocto-patches@lists.yoctoproject.org>
+CC: <alex.kanavin@gmail.com>, <paul@pbarker.dev>, <ross.burton@arm.com>
+Subject: [AUH] PATCH 1/6] upgrade-helper.py: Add compatibility with Yocto scarthgap
+Date: Thu, 9 Apr 2026 11:08:10 +0200
+Message-ID: <20260409090815.1731294-2-daniel.turull@ericsson.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260409090815.1731294-1-daniel.turull@ericsson.com>
+References: <20260409090815.1731294-1-daniel.turull@ericsson.com>
 MIME-Version: 1.0
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AS1PR10MB5697.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5cacac5c-59ae-4363-b423-08de957906ca
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Apr 2026 14:13:37.0184
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB1PEPF000509F0:EE_|PR3PR07MB7020:EE_
+X-MS-Office365-Filtering-Correlation-Id: ea40926e-c882-4114-6d1c-08de961790c5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: 
+	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700016|13003099007|18002099003|56012099003|22082099003;
+X-Microsoft-Antispam-Message-Info: 
+	MZ1b0U9XsVDE87EMHHG++ownPzxBXV9KUdiRzFh6MVIAIoLgTqf8nwbF8NgFFA+wBHQ5okscF9qZmOYv1BJeJtKAgsXXgVcs6sAVjCTDBedpU/2JvRlF/olV/OU4Engl3b9L6wvLQ2qcRdJ8quUdwlXHIjK+zWebu97Tly4ydiV5+uHUGjKEcrVBuynP0P8Nr4rB2d4RpHqKulxZ6ln5rBIKLfkgBif5/SrM4RDLhTQnFMGtCgh99FkZ/kxM0GBvu4qOgpYSsVf4YNuKfTCdWg6U67Q9ktMcXofmOxkqnGkbbRH9Y7y8+fyeTsonnCdP4umTBXmRLqlzpfvMAxcTP6LyZF/KPV43jyLznXS8tDKfMWZhjj3tHz8b9ew2aeVTkH76JkukjU3FSJN/uGiYqjmImPvxGznIKIdrJ8O4oUWM6gt9SqEbSJi0QoEGwVGdNTvdMwpEeAr/hiVdHfol1YdI/9au+3vt9Z826Z19hCiPXW+LnoRA2So4nJQO2KO+qp8YcqEeT4WUlIjPadGCbR9B1q0iTkHrFtkgR6BNLchHCgZImXb9vwIMjfE9yE66UIQK0z6YTHpFCJ6HcZgvViAxbvW6eHUY7IBcjLQjpGykF5gHxNuqhlkhRc8NhnnPXiau76b5P2NoIGEX4n4WSXOBaN4wOOpsoU/FOaKHhe4yBCoAwjaLOe7WpMRsy7h08EateVsgX3Mq+n+fHwI5l8A2kERNwIEFFSqmeZpHPhkl+aO/Rk0ocAlYBHE6yUuoHXbeVcnoWkrXB/n3Vxy90g==
+X-Forefront-Antispam-Report: 
+	CIP:192.176.1.74;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:oa.msg.ericsson.com;PTR:office365.se.ericsson.net;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700016)(13003099007)(18002099003)(56012099003)(22082099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	Y2B0GYnRnTElTqFIqlwfjhXwrGurqoi1buhQJ30fqQ2l4UbD+I9z5K062cS/ebiqqMve7rGy37ZXaBJhxb1WVSsCSSJqILRhesksfSnu9F7ji9/Fg4fJuft2v0nNhhJlW0KwEJMJNYRTJfpFYBF3HBwJ/7ldpJMnyi6NeLQfafhB7O14O63VvXIfrFLD1GKNp6i9KvKAKddxAJYIj16Nlj6ZbwS0TdTG215YjfF9c+BCr2CB+tWEcI5z724MJxQbOvQtVPjrWxs5G6j6XJG99wxReToSe3X2TgyRQ3xz67nAjTlteR2B2nsWCMpAWX3y7EWBjRgezzayuW6eDv7TOy/1qi63XqgrAjKU2xRzpWN7R6cjYXmsdNgqomWnOsKeFtQklSzfScRWEEnz0LXGCpb/unHXvcU4JK2ydd34mJs9fjhQXqvJivFOiAU/Pspb
+X-OriginatorOrg: ericsson.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Apr 2026 09:08:28.9652
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: mhozBsKV1deWHgPTsiFKtLiiCenZfCTD0Of8WBgPYVkty01+pWIAOX8RTzvltu/bnHnf7Mu0JlcJUTRkCHlVoA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB9198
+X-MS-Exchange-CrossTenant-Network-Message-Id: ea40926e-c882-4114-6d1c-08de961790c5
+X-MS-Exchange-CrossTenant-Id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=92e84ceb-fbfd-47ab-be52-080c6b87953f;Ip=[192.176.1.74];Helo=[oa.msg.ericsson.com]
+X-MS-Exchange-CrossTenant-AuthSource: 
+	DB1PEPF000509F0.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR07MB7020
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 08 Apr 2026 14:13:49 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3666
+ <yocto-patches@lists.yoctoproject.org>; Thu, 09 Apr 2026 09:08:44 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3668
 
-gentle ping
+From: Daniel Turull <daniel.turull@ericsson.com>
 
------Original Message-----
-From: Marko, Peter (FT D EU SK BFS1) <Peter.Marko@siemens.com>=20
-Sent: Saturday, March 14, 2026 2:14 PM
-To: yocto-patches@lists.yoctoproject.org
-Cc: Marko, Peter (FT D EU SK BFS1) <Peter.Marko@siemens.com>
-Subject: [meta-security][PATCH] libtpms: fix build with glibc 2.43
+- Handle flat tuple format from get_recipe_upgrade_status (scarthgap)
+  in addition to the list-of-dicts format (master)
+- Fallback to MACHINE env var when bitbake-config-build is not available
+- Resolve symlinks in recipe_dir with os.path.realpath()
+- Handle fetch errors gracefully when iterating upgrade candidates,
+  skipping unreachable upstreams instead of aborting the entire run
 
-From: Peter Marko <peter.marko@siemens.com>
+  Without this fix, a single unreachable upstream crashes the run:
 
-Backport patch stable-0.10 branch (not tagged yet).
+  bb.fetch2.FetchError: Fetcher failure: Fetch command [...]
+  git ls-remote https://git.savannah.gnu.org/git/config.git
+  failed with exit code 128, output:
+  fatal: unable to access [...]: Failed to connect to
+  git.savannah.gnu.org port 443: Couldn't connect to server
 
-Signed-off-by: Peter Marko <peter.marko@siemens.com>
+Assisted-by: Claude, Anthropic
+Signed-off-by: Daniel Turull <daniel.turull@ericsson.com>
 ---
- ...ilation-error-in-TPMLIB_GetPlaintext.patch | 34 +++++++++++++++++++
- meta-tpm/recipes-tpm/libtpm/libtpms_0.10.0.bb |  4 ++-
- 2 files changed, 37 insertions(+), 1 deletion(-)
- create mode 100644 meta-tpm/recipes-tpm/libtpm/libtpms/0001-Fix-a-compilat=
-ion-error-in-TPMLIB_GetPlaintext.patch
+ modules/steps.py         |  2 +-
+ modules/utils/bitbake.py |  8 ++++++--
+ upgrade-helper.py        | 21 ++++++++++++++++++++-
+ 3 files changed, 27 insertions(+), 4 deletions(-)
 
-diff --git a/meta-tpm/recipes-tpm/libtpm/libtpms/0001-Fix-a-compilation-err=
-or-in-TPMLIB_GetPlaintext.patch b/meta-tpm/recipes-tpm/libtpm/libtpms/0001-=
-Fix-a-compilation-error-in-TPMLIB_GetPlaintext.patch
-new file mode 100644
-index 0000000..3a82473
---- /dev/null
-+++ b/meta-tpm/recipes-tpm/libtpm/libtpms/0001-Fix-a-compilation-error-in-T=
-PMLIB_GetPlaintext.patch
-@@ -0,0 +1,34 @@
-+From a20f8b6a22f1ae60d96ae7e554f5e13dd431471b Mon Sep 17 00:00:00 2001
-+From: Stefan Berger <stefanb@linux.ibm.com>
-+Date: Fri, 2 Jan 2026 11:37:31 -0500
-+Subject: [PATCH] Fix a compilation error in TPMLIB_GetPlaintext
-+
-+Fix a compilation error that newer gcc versions may complain about:
-+
-+tpm_library.c: In function 'TPMLIB_GetPlaintext':
-+tpm_library.c:441:11: error: assignment discards 'const' qualifier from po=
-inter target type [-Werror=3Ddiscarded-qualifiers]
-+  441 |     start =3D strstr(stream, starttag);
-+      |           ^
-+At top level:
-+cc1: note: unrecognized command-line option '-Wno-self-assign' may have be=
-en intended to silence earlier diagnostics
-+cc1: all warnings being treated as errors
-+
-+Upstream-Status: Backport [https://github.com/stefanberger/libtpms/commit/=
-a20f8b6a22f1ae60d96ae7e554f5e13dd431471b]
-+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-+---
-+ src/tpm_library.c | 2 +-
-+ 1 file changed, 1 insertion(+), 1 deletion(-)
-+
-+diff --git a/src/tpm_library.c b/src/tpm_library.c
-+index f48f4fd3..7b2ea687 100644
-+--- a/src/tpm_library.c
-++++ b/src/tpm_library.c
-+@@ -435,7 +435,7 @@ static unsigned char *TPMLIB_GetPlaintext(const char *=
-stream,
-+                                           const char *endtag,
-+                                           size_t *length)
-+ {
-+-    char *start, *end;
-++    const char *start, *end;
-+     unsigned char *plaintext =3D NULL;
-+=20
-+     start =3D strstr(stream, starttag);
-diff --git a/meta-tpm/recipes-tpm/libtpm/libtpms_0.10.0.bb b/meta-tpm/recip=
-es-tpm/libtpm/libtpms_0.10.0.bb
-index 3727bb3..7f00216 100644
---- a/meta-tpm/recipes-tpm/libtpm/libtpms_0.10.0.bb
-+++ b/meta-tpm/recipes-tpm/libtpm/libtpms_0.10.0.bb
-@@ -3,7 +3,9 @@ LICENSE =3D "BSD-3-Clause"
- LIC_FILES_CHKSUM =3D "file://LICENSE;md5=3De73f0786a936da3814896df06ad225a=
-9"
+diff --git a/modules/steps.py b/modules/steps.py
+index a6ec341..b3ec61c 100644
+--- a/modules/steps.py
++++ b/modules/steps.py
+@@ -36,7 +36,7 @@ def load_env(devtool, bb, git, opts, group):
+     os.mkdir(group['workdir'])
+     for pkg_ctx in group['pkgs']:
+         pkg_ctx['env'] =3D bb.env(pkg_ctx['PN'])
+-        pkg_ctx['recipe_dir'] =3D os.path.dirname(pkg_ctx['env']['FILE'])
++        pkg_ctx['recipe_dir'] =3D os.path.realpath(os.path.dirname(pkg_ctx=
+['env']['FILE']))
 =20
- SRCREV =3D "17f253a767f6b5b7813ae33f12bc79c479576cdc"
--SRC_URI =3D "git://github.com/stefanberger/libtpms.git;branch=3Dstable-0.1=
-0;protocol=3Dhttps"
-+SRC_URI =3D "git://github.com/stefanberger/libtpms.git;branch=3Dstable-0.1=
-0;protocol=3Dhttps \
-+    file://0001-Fix-a-compilation-error-in-TPMLIB_GetPlaintext.patch \
-+"
+ def buildhistory_init(devtool, bb, git, opts, group):
+     if not opts['buildhistory']:
+diff --git a/modules/utils/bitbake.py b/modules/utils/bitbake.py
+index 5514c98..f6821bc 100644
+--- a/modules/utils/bitbake.py
++++ b/modules/utils/bitbake.py
+@@ -123,8 +123,12 @@ class Bitbake(object):
+             env =3D "TCLIBC=3D{}".format(libc)
+         else:
+             env =3D ""
+-        bb.process.run("bitbake-config-build enable-fragment machine/{}".f=
+ormat(machine))
+-        return self._cmd(recipe, env_var=3Denv)
++        try:
++            bb.process.run("bitbake-config-build enable-fragment machine/{=
+}".format(machine))
++        except bb.process.ExecutionError:
++            # bitbake-config-build not available (e.g. scarthgap), use MAC=
+HINE env var
++            env =3D "MACHINE=3D{} {}".format(machine, env).strip()
++        return self._cmd(recipe, env_var=3Denv if env else None)
 =20
- PE =3D "2"
+     def dependency_graph(self, package_list):
+         return self._cmd(package_list, "-g")
+diff --git a/upgrade-helper.py b/upgrade-helper.py
+index 40f31c4..68f315b 100755
+--- a/upgrade-helper.py
++++ b/upgrade-helper.py
+@@ -713,7 +713,26 @@ class UniverseUpdater(Updater):
+         for layer_name, layer_recipes in self.recipes:
+             pkggroups =3D oe.recipeutils.get_recipe_upgrade_status(layer_r=
+ecipes)
 =20
+-            for group in pkggroups:
++            # Consume the generator one item at a time so that a fetch
++            # failure for one recipe (e.g. unreachable upstream) does not
++            # abort the entire upgrade run.
++            while True:
++                try:
++                    group =3D next(pkggroups)
++                except StopIteration:
++                    break
++                except Exception as e:
++                    W(" Skipping recipe due to fetch error: %s" % str(e))
++                    continue
++
++                # Scarthgap returns flat tuples; normalize to list-of-dict=
+s
++                # so the existing loop handles both formats.
++                if not isinstance(group, (list, tuple)) or not group or no=
+t isinstance(group[0], dict):
++                    pn, status, cur_ver, next_ver, maintainer, revision, n=
+o_upgrade_reason =3D group
++                    group =3D [{'pn': pn, 'status': status, 'cur_ver': cur=
+_ver,
++                              'next_ver': next_ver, 'maintainer': maintain=
+er,
++                              'revision': revision, 'no_upgrade_reason': n=
+o_upgrade_reason}]
++
+                 upgrade_group =3D []
+                 for pkg in group:
+                     maintainer =3D pkg['maintainer']
 
