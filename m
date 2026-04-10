@@ -1,220 +1,219 @@
-Return-Path: <peter.marko@siemens.com>
+Return-Path: <piotr@qbee.io>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF1C1F364A4
-	for <webhook@archiver.kernel.org>; Thu,  9 Apr 2026 16:55:18 +0000 (UTC)
-Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.137498.1775753713783697564
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A14ECE9904C
+	for <webhook@archiver.kernel.org>; Fri, 10 Apr 2026 07:25:25 +0000 (UTC)
+Received: from mail-lj1-f193.google.com (mail-lj1-f193.google.com [209.85.208.193])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.150848.1775805916479214087
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 09 Apr 2026 09:55:15 -0700
+ Fri, 10 Apr 2026 00:25:16 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=peter.marko@siemens.com header.s=fm2 header.b=PLEkd1/u;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.225, mailfrom: fm-256628-2026040916551188a868b33d00020746-xrwkes@rts-flowmailer.siemens.com)
-Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 2026040916551188a868b33d00020746
-        for <yocto-patches@lists.yoctoproject.org>;
-        Thu, 09 Apr 2026 18:55:11 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
- d=siemens.com; i=peter.marko@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=MbQLxfNb4m85qzNSUjUDTwP4FR/9a3Yo1wldPE7khOM=;
- b=PLEkd1/ujtSHc9Rjro/HK69FioVkmmKmu9OUqkrBYELUyoS39YGPsqRfUh3Bv4Prs29r1+
- dMuRhlb5mT0nk6kVW3uwz74Vs6beXkTSxcfjdkJpc5QlfMJ2cA/sOgutLJtOWqHrm1Y+ecUs
- WZx97fpSRX9VsIOUBUq29UXpXeMZepXUzMxlaVOzVHlwvwvs6lUNhGuElqm+NHH8DxfP1Trt
- j6pujlf1v/dwuyjgoz01Af/Q26W8RQwu9rzob4vej8EK8TY6AvVdg4MtGp0ebFFmBBUISSrw
- A0QKClhDQP+cobC0iiHo9fyL3aaDExkYSQVRbLRPvtH8dHQBPGc/QsXA==;
-From: Peter Marko <peter.marko@siemens.com>
+ dkim=pass header.i=@qbee.io header.s=google header.b=AAhTqEPv;
+ spf=pass (domain: qbee.io, ip: 209.85.208.193, mailfrom: piotr@qbee.io)
+Received: by mail-lj1-f193.google.com with SMTP id 38308e7fff4ca-38ddc25ce01so14945801fa.0
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 10 Apr 2026 00:25:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=qbee.io; s=google; t=1775805914; x=1776410714; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=h9IY+gdPOGWasbPwt8Zq2JVNAMswxEqq7f5wCfRL5OM=;
+        b=AAhTqEPvxVAMkDux/wdYlKiJ10By/ptU5Oi5FKSiB4WtYQ8eMq6mAFDmJlvDLSziC/
+         FNYdvJRKWAc0Emzh4XkM6+jt0Sbr4cLsvkayTSqwYanrxc9iBFO6EwrL2M4NxfGOCn3l
+         gyxzRCNYBrgHZ0jCYMZ6KL/GYdIxtyQYxc4Zg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1775805914; x=1776410714;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h9IY+gdPOGWasbPwt8Zq2JVNAMswxEqq7f5wCfRL5OM=;
+        b=bmXrXWGFZf4W6djKY3Plc2hkVVAQxBPHpdjjqiUzJhNVPF9YOFbWymzG9rRCiJ0B91
+         74l1Dt2wl0RZK0CvWerG0pSxMHC2CMsP4f7wOMH6cnwULNobyVXYqvgRUpqrB1DL+cSa
+         5sxSj2dUNhPy6u5kHlJRASvgHkUIZSKu7y+v65ArLZ8exzv16A24lkZ5kJZ9F81WJ+E6
+         orARRtPf2zmfWZ3AaxpBov2R/IaW4eWBdaEj0QkCkPA3SiM3Vp1pvghKUrFY3+TC1YUG
+         eVvfErWB1z3mul79e+jUIN3UCIEURqQCgHHsDja8XCKVkkcmBVIi4+N0/C4nKKc0PZud
+         5YHA==
+X-Gm-Message-State: AOJu0YwJ/YcJEvpRU+Yt/jFjpRuiBWRwK0BdQsnVV/QfSbzKlMzk0Zbz
+	tXmun9cewR041efTHPDUp5ehp/+tuQut1JrVbhjd9/kbB+sx6NzQzaDm+pOZEwmH0gg6sTQ+JWZ
+	d6Z768VQSzg==
+X-Gm-Gg: AeBDievT0LN0ukh6QuNh8m/WvvuGLg/S/aYjdTcd2KuT1zoW4C4L30VFyo2dYX3fnvU
+	y93gmbCEmSGEjbBQYHaKMmgx32jn6lfFjUOzNdLqUEjSGY97SdtPHogmSXQZqOQ3nNC/w4lTuFf
+	1EzPVR4lcbgDmMOp473cQBkh8skKkwjX9mfutO4YsYBxzq7vysK969ROGc0nBRPQAT/xlH5eOtI
+	lxlHLIRVvS8cYNmJpMSEQm2MFKy6H9hoVplVDNdPajvqabfsQP4s7zbC1fxbZCsOfPOmyNfexi7
+	BrnAd3oTxnf5gx52U0JIcQRrTZWJkWEDCDWt4Xvq7ZJN51QV9eB/fZyRnk6gTpaTMyzvDr1Y81G
+	ViHM+gDcwB9BB7mUGuaCEbgXhY8ZW2oOmEH07My38bgXP9pef4pZyKK3T5tM6tWQhAbeXHkj0Rf
+	PRwD6ie4Zj56d7Fkjnjx5yNanmNarept2+U+K0rT9aibAVtQuYgVFP
+X-Received: by 2002:a05:651c:1604:b0:383:20cd:52fe with SMTP id 38308e7fff4ca-38e4bef91bdmr6324911fa.17.1775805914038;
+        Fri, 10 Apr 2026 00:25:14 -0700 (PDT)
+Received: from localhost (80.89-10-247.nextgentel.com. [89.10.247.80])
+        by smtp.gmail.com with UTF8SMTPSA id 38308e7fff4ca-38e495461b7sm4745941fa.26.2026.04.10.00.25.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Apr 2026 00:25:13 -0700 (PDT)
+From: =?UTF-8?q?Piotr=20Buli=C5=84ski?= <piotr@qbee.io>
 To: yocto-patches@lists.yoctoproject.org
-Cc: jose.quaresma@foundries.io,
-	Peter Marko <peter.marko@siemens.com>
-Subject: [meta-lts-mixins][kirkstone/go][PATCH] go: upgrade 1.26.1 -> 1.26.2
-Date: Thu,  9 Apr 2026 18:54:28 +0200
-Message-ID: <20260409165428.2968042-1-peter.marko@siemens.com>
+Cc: =?UTF-8?q?Piotr=20Buli=C5=84ski?= <piotr@qbee.io>
+Subject: [layerindex-web][PATCH] Update git.yoctoproject.org URLs from old cgit paths to new direct paths
+Date: Fri, 10 Apr 2026 09:24:59 +0200
+Message-ID: <20260410072459.52859-1-piotr@qbee.io>
+X-Mailer: git-send-email 2.50.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-256628:519-21489:flowmailer
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 09 Apr 2026 16:55:18 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3684
+ <yocto-patches@lists.yoctoproject.org>; Fri, 10 Apr 2026 07:25:25 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3685
 
-From: Peter Marko <peter.marko@siemens.com>
+The old /cgit/cgit.cgi/ URL scheme is no longer used by
+git.yoctoproject.org. Update all references to use the new shorter
+URLs and switch from http to https. Add a data migration to fix
+existing LayerItem records in the database.
 
-Upgrade to latest 1.26.x release [1]:
-
-$ git --no-pager log --oneline go1.26.1..go1.26.2
-9c8bf0e72a (tag: go1.26.2) [release-branch.go1.26] go1.26.2
-096f21b1c5 [release-branch.go1.26] cmd/go: disallow cgo trust boundary bypass
-7cafb4140d [release-branch.go1.26] crypto/tls: prevent deadlock when client sends multiple key update messages
-a34b5e4d55 [release-branch.go1.26] archive/tar: limit the number of old GNU sparse format entries
-c4b4bd7b3a [release-branch.go1.26] cmd/compile: fix loopbce overflow check logic
-3a4577a268 [release-branch.go1.26] cmd/compile: fix mem access overlap detection
-ceb4da6626 [release-branch.go1.26] crypto/x509: fix wildcard constraint map case sensitivity
-babb1c32c2 [release-branch.go1.26] html/template: properly track JS template literal brace depth across contexts
-b6176f459a [release-branch.go1.26] internal/syscall/unix: properly support AT_SYMLINK_NOFOLLOW on Linux
-917949cc1d [release-branch.go1.26] net/url: permit colons in the host subcomponent of non-http/https URLs
-7b4ed1d7d9 [release-branch.go1.26] crypto/x509: fix signature checking limit
-8028a51430 [release-branch.go1.26] crypto/x509: hoist policy pruning out of loop
-4ef278779f [release-branch.go1.26] runtime/race: apply LLVM zero-initialization fix
-608303dd6e [release-branch.go1.26] cmd/link: skip special symbols for label symbol generation
-e27183eff8 [release-branch.go1.26] cmd/compile: fix internal compiler error: bad write barrier type
-98d4c11d8f [release-branch.go1.26] cmd/compile: treat all zero-sized values as SSA-able
-cce667a91e [release-branch.go1.26] cmd/compile: handle zero-sized values more generally
-3206e141fb [release-branch.go1.26] net/url: reattach package doc comment
-82b95c14ec [release-branch.go1.26] cmd/compile: ternary rewrite of rewrite should skip, not panic
-f14d3a8e91 [release-branch.go1.26] cmd/compile: skip race detector test failure for unsupported VMA
-68f42c591d [release-branch.go1.26] cmd/compile: gate instrumentEnterExit on NoRaceFunc check
-9fe1db7e7e [release-branch.go1.26] runtime: fix value of ENOSYS on mips from 38 to 89
-08edcb8d3f [release-branch.go1.26] test/fixedbugs: remove issue46234 test timeout
-895fbaecf5 [release-branch.go1.26] doc: remove template use in godebug.md
-26548d4981 [release-branch.go1.26] cmd/fix: pull in CL 755980
-12bf7d8cd2 [release-branch.go1.26] builtin: incorporate all feedback into doc string for new
-943235a5e5 [release-branch.go1.26] builtin: update new function comment
-1a44be4cec [release-branch.go1.26] internal/poll: move rsan to heap on windows
-3bf3014fe7 [release-branch.go1.26] test/convert5: skip mipsle
-e29f35511d [release-branch.go1.26] cmd/go/internal/cache: update trim timestamp before trimming
-2b01132c9f [release-branch.go1.26] runtime/poll: fix race condition in Window's SendFile
-ba8c3d07a7 [release-branch.go1.26] net/http: restore accidentally removed package doc
-99df9bdb2a [release-branch.go1.26] net: correctly handle non-nil empty cmsg buffer on windows
-ace2cf6652 [release-branch.go1.26] cmd/compile/internal/typecheck: simplify tcSliceHeader
-1368bc269e [release-branch.go1.26] cmd/compile: fix bloop test
-840d86c060 [release-branch.go1.26] runtime: fix printfloat, printcomplex buffer sizes
-
-Fixes CVE-2026-32282, CVE-2026-32289, CVE-2026-33810, CVE-2026-27144,
-      CVE-2026-27143, CVE-2026-32288, CVE-2026-32283, CVE-2026-27140,
-      CVE-2026-32280 and CVE-2026-32281.
-
-Release information: [2]
-
-[1] https://github.com/golang/go/compare/go1.26.1...go1.26.2
-[2] https://groups.google.com/g/golang-announce/c/0uYbvbPZRWU
-
-Signed-off-by: Peter Marko <peter.marko@siemens.com>
+Signed-off-by: Piotr Buliński <piotr@qbee.io>
 ---
- recipes-devtools/go/{go-1.26.1.inc => go-1.26.2.inc}      | 2 +-
- ...binary-native_1.26.1.bb => go-binary-native_1.26.2.bb} | 6 +++---
- ...oss-canadian_1.26.1.bb => go-cross-canadian_1.26.2.bb} | 0
- .../go/{go-cross_1.26.1.bb => go-cross_1.26.2.bb}         | 0
- .../go/{go-crosssdk_1.26.1.bb => go-crosssdk_1.26.2.bb}   | 0
- .../go/{go-runtime_1.26.1.bb => go-runtime_1.26.2.bb}     | 0
- ...go-make-content-based-hash-generation-less-pedan.patch | 8 ++++----
- .../go/0006-cmd-go-make-GOROOT-precious-by-default.patch  | 2 +-
- recipes-devtools/go/{go_1.26.1.bb => go_1.26.2.bb}        | 0
- 9 files changed, 9 insertions(+), 9 deletions(-)
- rename recipes-devtools/go/{go-1.26.1.inc => go-1.26.2.inc} (91%)
- rename recipes-devtools/go/{go-binary-native_1.26.1.bb => go-binary-native_1.26.2.bb} (79%)
- rename recipes-devtools/go/{go-cross-canadian_1.26.1.bb => go-cross-canadian_1.26.2.bb} (100%)
- rename recipes-devtools/go/{go-cross_1.26.1.bb => go-cross_1.26.2.bb} (100%)
- rename recipes-devtools/go/{go-crosssdk_1.26.1.bb => go-crosssdk_1.26.2.bb} (100%)
- rename recipes-devtools/go/{go-runtime_1.26.1.bb => go-runtime_1.26.2.bb} (100%)
- rename recipes-devtools/go/{go_1.26.1.bb => go_1.26.2.bb} (100%)
+ README                                        |  2 +-
+ .../0051_fix_yoctoproject_cgit_urls.py        | 29 +++++++++++++++++++
+ layerindex/models.py                          |  2 +-
+ layerindex/tools/import_layer.py              |  8 ++---
+ layerindex/tools/import_wiki_layers.py        |  8 ++---
+ templates/layerindex/about.html               |  2 +-
+ templates/layerindex/editlayer.html           |  8 ++---
+ 7 files changed, 44 insertions(+), 15 deletions(-)
+ create mode 100644 layerindex/migrations/0051_fix_yoctoproject_cgit_urls.py
 
-diff --git a/recipes-devtools/go/go-1.26.1.inc b/recipes-devtools/go/go-1.26.2.inc
-similarity index 91%
-rename from recipes-devtools/go/go-1.26.1.inc
-rename to recipes-devtools/go/go-1.26.2.inc
-index 2e3464e..8bb10bc 100644
---- a/recipes-devtools/go/go-1.26.1.inc
-+++ b/recipes-devtools/go/go-1.26.2.inc
-@@ -17,4 +17,4 @@ SRC_URI += "\
-     file://0010-cmd-go-clear-GOROOT-for-func-ldShared-when-trimpath-.patch \
-     file://0011-cmd-link-stop-forcing-binutils-gold-dependency-on-aa.patch \
- "
--SRC_URI[main.sha256sum] = "3172293d04b209dc1144698e7ba13f0477f6ba8c5ffd0be66c20fdbc9785dfbb"
-+SRC_URI[main.sha256sum] = "2e91ebb6947a96e9436fb2b3926a8802efe63a6d375dffec4f82aa9dbd6fd43b"
-diff --git a/recipes-devtools/go/go-binary-native_1.26.1.bb b/recipes-devtools/go/go-binary-native_1.26.2.bb
-similarity index 79%
-rename from recipes-devtools/go/go-binary-native_1.26.1.bb
-rename to recipes-devtools/go/go-binary-native_1.26.2.bb
-index a21b415..67196d9 100644
---- a/recipes-devtools/go/go-binary-native_1.26.1.bb
-+++ b/recipes-devtools/go/go-binary-native_1.26.2.bb
-@@ -9,9 +9,9 @@ PROVIDES = "go-native"
+diff --git a/README b/README
+index 1335b7a..9e1e659 100644
+--- a/README
++++ b/README
+@@ -428,7 +428,7 @@ The code for this application is maintained by the Yocto Project.
  
- # Checksums available at https://go.dev/dl/
- SRC_URI = "https://dl.google.com/go/go${PV}.${BUILD_GOOS}-${BUILD_GOARCH}.tar.gz;name=go_${BUILD_GOTUPLE}"
--SRC_URI[go_linux_amd64.sha256sum] = "031f088e5d955bab8657ede27ad4e3bc5b7c1ba281f05f245bcc304f327c987a"
--SRC_URI[go_linux_arm64.sha256sum] = "a290581cfe4fe28ddd737dde3095f3dbeb7f2e4065cab4eae44dfc53b760c2f7"
--SRC_URI[go_linux_ppc64le.sha256sum] = "f56eed002998f5f51fa07fd4ed0c5de5e02d51cec7a4007f771c7576620d9d45"
-+SRC_URI[go_linux_amd64.sha256sum] = "990e6b4bbba816dc3ee129eaeaf4b42f17c2800b88a2166c265ac1a200262282"
-+SRC_URI[go_linux_arm64.sha256sum] = "c958a1fe1b361391db163a485e21f5f228142d6f8b584f6bef89b26f66dc5b23"
-+SRC_URI[go_linux_ppc64le.sha256sum] = "62b7645dd2404052535617c59e91cf03c7aa28e332dbaddbe4c0d7de7bcc6736"
+ The latest version of the code can always be found here:
  
- UPSTREAM_CHECK_URI = "https://golang.org/dl/"
- UPSTREAM_CHECK_REGEX = "go(?P<pver>\d+(\.\d+)+)\.linux"
-diff --git a/recipes-devtools/go/go-cross-canadian_1.26.1.bb b/recipes-devtools/go/go-cross-canadian_1.26.2.bb
-similarity index 100%
-rename from recipes-devtools/go/go-cross-canadian_1.26.1.bb
-rename to recipes-devtools/go/go-cross-canadian_1.26.2.bb
-diff --git a/recipes-devtools/go/go-cross_1.26.1.bb b/recipes-devtools/go/go-cross_1.26.2.bb
-similarity index 100%
-rename from recipes-devtools/go/go-cross_1.26.1.bb
-rename to recipes-devtools/go/go-cross_1.26.2.bb
-diff --git a/recipes-devtools/go/go-crosssdk_1.26.1.bb b/recipes-devtools/go/go-crosssdk_1.26.2.bb
-similarity index 100%
-rename from recipes-devtools/go/go-crosssdk_1.26.1.bb
-rename to recipes-devtools/go/go-crosssdk_1.26.2.bb
-diff --git a/recipes-devtools/go/go-runtime_1.26.1.bb b/recipes-devtools/go/go-runtime_1.26.2.bb
-similarity index 100%
-rename from recipes-devtools/go/go-runtime_1.26.1.bb
-rename to recipes-devtools/go/go-runtime_1.26.2.bb
-diff --git a/recipes-devtools/go/go/0001-cmd-go-make-content-based-hash-generation-less-pedan.patch b/recipes-devtools/go/go/0001-cmd-go-make-content-based-hash-generation-less-pedan.patch
-index af4243e..077bebe 100644
---- a/recipes-devtools/go/go/0001-cmd-go-make-content-based-hash-generation-less-pedan.patch
-+++ b/recipes-devtools/go/go/0001-cmd-go-make-content-based-hash-generation-less-pedan.patch
-@@ -109,7 +109,7 @@ index 7b073165d5..1f618be0bb 100644
-  	}
-  
-  	// Configuration specific to compiler toolchain.
--@@ -2807,8 +2809,25 @@ func envList(key, def string) []string {
-+@@ -2804,8 +2806,25 @@ func envList(key, def string) []string {
-  	return args
-  }
-  
-@@ -136,7 +136,7 @@ index 7b073165d5..1f618be0bb 100644
-  	if cppflags, err = buildFlags("CPPFLAGS", "", p.CgoCPPFLAGS, checkCompilerFlags); err != nil {
-  		return
-  	}
--@@ -2824,6 +2843,13 @@ func (b *Builder) CFlags(p *load.Package) (cppflags, cflags, cxxflags, fflags, l
-+@@ -2821,6 +2840,13 @@ func (b *Builder) CFlags(p *load.Package) (cppflags, cflags, cxxflags, fflags, l
-  	if ldflags, err = buildFlags("LDFLAGS", DefaultCFlags, p.CgoLDFLAGS, checkLinkerFlags); err != nil {
-  		return
-  	}
-@@ -150,7 +150,7 @@ index 7b073165d5..1f618be0bb 100644
-  
-  	return
-  }
--@@ -2912,7 +2938,7 @@ func (b *Builder) runCgo(ctx context.Context, a *Action) error {
-+@@ -2909,7 +2935,7 @@ func (b *Builder) runCgo(ctx context.Context, a *Action) error {
-  	cgoExe := base.Tool("cgo")
-  	cgofiles = mkAbsFiles(p.Dir, cgofiles)
-  
-@@ -159,7 +159,7 @@ index 7b073165d5..1f618be0bb 100644
-  	if err != nil {
-  		return err
-  	}
--@@ -3461,7 +3487,7 @@ func (b *Builder) swigOne(a *Action, file, objdir string, pcCFLAGS []string, cxx
-+@@ -3462,7 +3488,7 @@ func (b *Builder) swigOne(a *Action, file, objdir string, pcCFLAGS []string, cxx
-  	p := a.Package
-  	sh := b.Shell(a)
-  
-diff --git a/recipes-devtools/go/go/0006-cmd-go-make-GOROOT-precious-by-default.patch b/recipes-devtools/go/go/0006-cmd-go-make-GOROOT-precious-by-default.patch
-index e2a0cd6..9aebc2f 100644
---- a/recipes-devtools/go/go/0006-cmd-go-make-GOROOT-precious-by-default.patch
-+++ b/recipes-devtools/go/go/0006-cmd-go-make-GOROOT-precious-by-default.patch
-@@ -94,7 +94,7 @@ index 1f618be0bb..651fa64582 100644
-  	if err := sh.Mkdir(buildAction.Objdir); err != nil {
-  		return nil, err
-  	}
--@@ -1891,6 +1908,14 @@ func (b *Builder) linkShared(ctx context.Context, a *Action) (err error) {
-+@@ -1888,6 +1905,14 @@ func (b *Builder) linkShared(ctx context.Context, a *Action) (err error) {
-  		return err
-  	}
-  
-diff --git a/recipes-devtools/go/go_1.26.1.bb b/recipes-devtools/go/go_1.26.2.bb
-similarity index 100%
-rename from recipes-devtools/go/go_1.26.1.bb
-rename to recipes-devtools/go/go_1.26.2.bb
+-  http://git.yoctoproject.org/cgit/cgit.cgi/layerindex-web/
++  https://git.yoctoproject.org/layerindex-web/
+ 
+ Contributions are welcome. Please send patches / pull requests to
+ yocto-patches@lists.yoctoproject.org with '[layerindex-web]' in the
+diff --git a/layerindex/migrations/0051_fix_yoctoproject_cgit_urls.py b/layerindex/migrations/0051_fix_yoctoproject_cgit_urls.py
+new file mode 100644
+index 0000000..2303a7f
+--- /dev/null
++++ b/layerindex/migrations/0051_fix_yoctoproject_cgit_urls.py
+@@ -0,0 +1,29 @@
++# Generated by Django 5.2.12 on 2026-04-09 18:51
++
++from django.db import migrations
++
++
++def fix_yoctoproject_cgit_urls(apps, schema_editor):
++    """Update git.yoctoproject.org URLs from old cgit paths to new direct paths."""
++    LayerItem = apps.get_model('layerindex', 'LayerItem')
++
++    old = 'http://git.yoctoproject.org/cgit/cgit.cgi/'
++    new = 'https://git.yoctoproject.org/'
++
++    for layer in LayerItem.objects.filter(vcs_web_url__contains='git.yoctoproject.org/cgit/cgit.cgi/'):
++        layer.vcs_web_url = layer.vcs_web_url.replace(old, new)
++        layer.vcs_web_tree_base_url = layer.vcs_web_tree_base_url.replace(old, new)
++        layer.vcs_web_file_base_url = layer.vcs_web_file_base_url.replace(old, new)
++        layer.vcs_web_commit_url = layer.vcs_web_commit_url.replace(old, new)
++        layer.save()
++
++
++class Migration(migrations.Migration):
++
++    dependencies = [
++        ('layerindex', '0050_alter_recipe_inherits_alter_recipe_license'),
++    ]
++
++    operations = [
++        migrations.RunPython(fix_yoctoproject_cgit_urls, migrations.RunPython.noop),
++    ]
+diff --git a/layerindex/models.py b/layerindex/models.py
+index e43d1df..6e96342 100644
+--- a/layerindex/models.py
++++ b/layerindex/models.py
+@@ -542,7 +542,7 @@ class Source(models.Model):
+         elif self.url.startswith('git://github.com'):
+             return drop_dotgit('https' + self.url[3:])
+         elif self.url.startswith('git://git.yoctoproject.org'):
+-            return drop_dotgit('https://git.yoctoproject.org/cgit/cgit.cgi' + self.url[26:])
++            return drop_dotgit('https://git.yoctoproject.org' + self.url[26:])
+         elif self.url.startswith('git://git.kernel.org'):
+             return 'https' + self.url[3:]
+         return None
+diff --git a/layerindex/tools/import_layer.py b/layerindex/tools/import_layer.py
+index dfe887c..4af062e 100755
+--- a/layerindex/tools/import_layer.py
++++ b/layerindex/tools/import_layer.py
+@@ -40,10 +40,10 @@ def set_vcs_fields(layer, repoval):
+         layer.vcs_web_commit_url = 'http://cgit.openembedded.org/' + reponame + '/commit/?id=%hash%'
+     elif repoval.startswith('git://git.yoctoproject.org/'):
+         reponame = re.sub('^.*/', '', repoval)
+-        layer.vcs_web_url = 'http://git.yoctoproject.org/cgit/cgit.cgi/' + reponame
+-        layer.vcs_web_tree_base_url = 'http://git.yoctoproject.org/cgit/cgit.cgi/' + reponame + '/tree/%path%?h=%branch%'
+-        layer.vcs_web_file_base_url = 'http://git.yoctoproject.org/cgit/cgit.cgi/' + reponame + '/tree/%path%?h=%branch%'
+-        layer.vcs_web_commit_url = 'http://git.yoctoproject.org/cgit/cgit.cgi/' + reponame + '/commit/?id=%hash%'
++        layer.vcs_web_url = 'https://git.yoctoproject.org/' + reponame
++        layer.vcs_web_tree_base_url = 'https://git.yoctoproject.org/' + reponame + '/tree/%path%?h=%branch%'
++        layer.vcs_web_file_base_url = 'https://git.yoctoproject.org/' + reponame + '/tree/%path%?h=%branch%'
++        layer.vcs_web_commit_url = 'https://git.yoctoproject.org/' + reponame + '/commit/?id=%hash%'
+     elif repoval.startswith('git://github.com/') or repoval.startswith('http://github.com/') or repoval.startswith('https://github.com/'):
+         reponame = re.sub('^.*github.com/', '', repoval)
+         reponame = re.sub('.git$', '', reponame)
+diff --git a/layerindex/tools/import_wiki_layers.py b/layerindex/tools/import_wiki_layers.py
+index 2c82411..a9508de 100755
+--- a/layerindex/tools/import_wiki_layers.py
++++ b/layerindex/tools/import_wiki_layers.py
+@@ -104,10 +104,10 @@ def main():
+                             layer.vcs_web_commit_url = 'http://cgit.openembedded.org/' + reponame + '/commit/?id=%hash%'
+                         elif repoval.startswith('git://git.yoctoproject.org/'):
+                             reponame = re.sub('^.*/', '', repoval)
+-                            layer.vcs_web_url = 'http://git.yoctoproject.org/cgit/cgit.cgi/' + reponame
+-                            layer.vcs_web_tree_base_url = 'http://git.yoctoproject.org/cgit/cgit.cgi/' + reponame + '/tree/%path%?h=%branch%'
+-                            layer.vcs_web_file_base_url = 'http://git.yoctoproject.org/cgit/cgit.cgi/' + reponame + '/tree/%path%?h=%branch%'
+-                            layer.vcs_web_commit_url = 'http://git.yoctoproject.org/cgit/cgit.cgi/' + reponame + '/commit/?id=%hash%'
++                            layer.vcs_web_url = 'https://git.yoctoproject.org/' + reponame
++                            layer.vcs_web_tree_base_url = 'https://git.yoctoproject.org/' + reponame + '/tree/%path%?h=%branch%'
++                            layer.vcs_web_file_base_url = 'https://git.yoctoproject.org/' + reponame + '/tree/%path%?h=%branch%'
++                            layer.vcs_web_commit_url = 'https://git.yoctoproject.org/' + reponame + '/commit/?id=%hash%'
+                         elif repoval.startswith('git://github.com/') or repoval.startswith('http://github.com/') or repoval.startswith('https://github.com/'):
+                             reponame = re.sub('^.*github.com/', '', repoval)
+                             reponame = re.sub('.git$', '', reponame)
+diff --git a/templates/layerindex/about.html b/templates/layerindex/about.html
+index f79bf22..a2055fb 100644
+--- a/templates/layerindex/about.html
++++ b/templates/layerindex/about.html
+@@ -55,7 +55,7 @@
+ <li>Tim Orling</li>
+ </ul>
+ 
+-<p>The code is Open Source and can be found on <a href="http://git.yoctoproject.org/cgit/cgit.cgi/layerindex-web/">git.yoctoproject.org</a>. Patches welcome!</p>
++<p>The code is Open Source and can be found on <a href="https://git.yoctoproject.org/layerindex-web/">git.yoctoproject.org</a>. Patches welcome!</p>
+ 
+ {% endautoescape %}
+ {% endblock %}
+diff --git a/templates/layerindex/editlayer.html b/templates/layerindex/editlayer.html
+index e21e649..f6d4967 100644
+--- a/templates/layerindex/editlayer.html
++++ b/templates/layerindex/editlayer.html
+@@ -206,10 +206,10 @@
+         }
+         else if( repoval.startsWith('git://git.yoctoproject.org/') ) {
+             reponame = repoval.replace(/^.*\//, '')
+-            this.vcs_web_url = 'http://git.yoctoproject.org/cgit/cgit.cgi/' + reponame
+-            this.vcs_web_tree_base_url = 'http://git.yoctoproject.org/cgit/cgit.cgi/' + reponame + '/tree/%path%?h=%branch%'
+-            this.vcs_web_file_base_url = 'http://git.yoctoproject.org/cgit/cgit.cgi/' + reponame + '/tree/%path%?h=%branch%'
+-            this.vcs_web_commit_url = 'http://git.yoctoproject.org/cgit/cgit.cgi/' + reponame + '/commit/?id=%hash%'
++            this.vcs_web_url = 'https://git.yoctoproject.org/' + reponame
++            this.vcs_web_tree_base_url = 'https://git.yoctoproject.org/' + reponame + '/tree/%path%?h=%branch%'
++            this.vcs_web_file_base_url = 'https://git.yoctoproject.org/' + reponame + '/tree/%path%?h=%branch%'
++            this.vcs_web_commit_url = 'https://git.yoctoproject.org/' + reponame + '/commit/?id=%hash%'
+             this.vcs_web_type = 'cgit'
+         }
+         else if( repoval.startsWith('git://github.com/') ) {
+-- 
+2.34.1
+
 
