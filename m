@@ -2,39 +2,39 @@ Return-Path: <Qi.Chen@windriver.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A632BF531EA
-	for <webhook@archiver.kernel.org>; Tue, 14 Apr 2026 05:32:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08E81F531F0
+	for <webhook@archiver.kernel.org>; Tue, 14 Apr 2026 05:32:21 +0000 (UTC)
 Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.12276.1776144734583929898
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.12277.1776144735025923867
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 13 Apr 2026 22:32:14 -0700
+ Mon, 13 Apr 2026 22:32:15 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@windriver.com header.s=PPS06212021 header.b=TLwGjW1p;
+ dkim=pass header.i=@windriver.com header.s=PPS06212021 header.b=hG6zlsys;
  spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.178.238, mailfrom: prvs=85642e362d=qi.chen@windriver.com)
 Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63DNiTW41269595;
+	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63DNiTW51269595;
 	Tue, 14 Apr 2026 05:32:13 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
 	 h=cc:content-transfer-encoding:content-type:date:from
 	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	PPS06212021; bh=hUK1j8mgDET6VpiNrqLnKwN40TUKYfkJQR2G97lZfQ0=; b=
-	TLwGjW1pS04U2gJiFdslOXZgPyMyguisEKiy72HsGT2AAmxeQBXnpEd7uMPNwf2r
-	sTMhGUeqywY2cNQMn+ljbLKfWNPKAPO/rB1kd83FN/9eF2HjKS3IXVN4s1Ch28uI
-	Jz6hJ64h+J2F4PMLb2J8o1R9usYBVIRMqPFD6RPJe+/MyUlZ4ukuBS8ryAIjxKWx
-	uQBr0U11C9wBRH/CJ+/2pGIFnOFKtcPpllMyxhjdYZE8kBO27hhi1J+6he/+Z2ks
-	77yUtgQk3AUyEBSgyqzu7G6NGptOSmDpqu8m8znSwTCQHqWolpay/vgsrxLIQFi2
-	uECClt2KEpG6GKx1EPEy3Q==
+	PPS06212021; bh=eTTGIpIZJkhbTVmSQ/bC9GdQK74nLoa8QGNyuOhCmpw=; b=
+	hG6zlsysll2bY7aTPnggwNIq957luo0OuHsWWfiswkHmZJiXHfctRhJGwpJg566U
+	yMqdsK0yTg/zo1ge+jy0Q/hZbaZkNJelg9bJV+jFqpmL2cVjPoVrgB9YzMTCSZsf
+	4zbyvTY4352N9gOibF0g5t4Ttv56LfK8prsFXaMbChPIN+xR1FA4NEkKIwsSxPG2
+	nH4IFMZKYsCOaiSF1Y5lVfVvnIP/SFnhOwgyJhgbjk2fQo3FnSy4R8T5VWnyzyMr
+	aoYKw8NncGkSyLn9rYnXoUZVFq6qXmpREMxAm6Al91dGcG1QUJHeBFqRTo+ONAtR
+	Cyufg3l7Zrp/1aI/jxpLKg==
 Received: from bl0pr03cu003.outbound.protection.outlook.com (mail-eastusazon11012052.outbound.protection.outlook.com [52.101.53.52])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4dh877gatx-2
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4dh877gatx-3
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Tue, 14 Apr 2026 05:32:12 +0000 (GMT)
+	Tue, 14 Apr 2026 05:32:13 +0000 (GMT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cj2mx8dlMbs1PIl9Sf4dkSuY7n9QQe7ffx4weyTiiJMPzcMfuWRY9QAf4TiJhgJI101LKFqRQptDWSSphBdaFY/Ab4B9fRXMaeGCjHOXyN7/ecWCUAWiJLJ9X0ogUACsFR+xyX2cNnxZtMC5SsAwH7Mc6lPfc5xYEhG5mCPFYyTVOmPOjQblZkDHfKw2vbmu1+Qmjjgr5e7vykNT0evaqZLYDgpJtoRPDfnNqjmsCKyDjpiAycFrMNDSKpruc3dbUb2jnLlLg13IBcsbd2NFkQDmq8Tn6eI8JfWm3Xj1czSv9rVJDpb/ylXuB2BKl3r0TV8h+aYMt5b2vLGxNFE5fg==
+ b=IwQu7LlGepEEbwZAGN34Kkm+fK1nkxFo3mlgoYwCyZat7ozxRZAIbqW8n45ZI4nL/MFHwBdDwO0UTHLBJ3HrhmN12VDZkFSsyCMVOYf6QeTaGjr5joCKT/Y+GXp8vQK47SlhrnhRFXKWrcDoWd6kGV5j8E0+uEAMupU8OBnbknIr//1BGUxWLPffeQUFWkSGvvhVHOxkHKt4VYT1Aue2cw93gpDlDsNROFg4LEyiGSg3wNwFh/JmnFjidnPcaXaTVV8zrZOpMTpaq303XWVQ6za/G6fx9wlOXm+u8QPO+nFIpLa3Xs5U2ZDDHiOD478EPZHyhrPf/85aMUXG2dsCjA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hUK1j8mgDET6VpiNrqLnKwN40TUKYfkJQR2G97lZfQ0=;
- b=gXyj6BqNCmW8sviqcl9R8bIPPyCRvBO/ACcGDkMC8+zwaFz98LFNcPusS1Nf+OWCgX1RiDZhOJRMxm+lfcl4+Y1EPMrxy5CKmkv50EkGZ4A8k25YbASWHHdiVLwDMNLzWGG02N91YoAKO5ZDl25pKObczfYGyoncd6LfncqZo/ZmDqrexrMvNAzgg4G1qB16ZOvZWryVxNzuv99may5W7kzZR8bNddSAg91dXJOjbm+SW+mCU33hKxEIJm4KN1sBBPEzBe6d8Z0h+yo8MjeLKem4pbHx5qI3EpgusQMbnPjk7xS2noGPYzSqguJwTpCKVlA54AnZMb7OyRCsf+4mdg==
+ bh=eTTGIpIZJkhbTVmSQ/bC9GdQK74nLoa8QGNyuOhCmpw=;
+ b=Wn4xTraI++4nlJIIKUvAtspWiC/y8O1wbBRrlQgBWykRdotNkqJuWuJn99lBCXdXm8sH1DC6ZA8bTkGTsdwEHSAnqosd9z+q8tIenBs1XR0VUNgcqAKJIY6vPvjPYI9OIO0Sf9Vqb8Tdpqm0UlegnqLQs7w7m8YbEMrAniv8KIDN/X5hKZQPH+9uksKcrLgBrU+5pbPUdBNR8xOtEJlcHjVSRBcXompj5Yfwlvk+DlQZ5n9mEjc4YXVOW7bsIPFMePa9KufezqPxRdmV97h9Y2Hv0vTHJimCyGcdVL/jBnKFQjqh6FAG/yBxMg0udvEfzK5XBSdAqFevKIBud/UvUw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=windriver.com; dmarc=pass action=none
  header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
@@ -42,17 +42,17 @@ Received: from PH0PR11MB5611.namprd11.prod.outlook.com (2603:10b6:510:ed::9)
  by CH3PR11MB7916.namprd11.prod.outlook.com (2603:10b6:610:131::15) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9818.20; Tue, 14 Apr
- 2026 05:32:10 +0000
+ 2026 05:32:11 +0000
 Received: from PH0PR11MB5611.namprd11.prod.outlook.com
  ([fe80::ecf9:dbb:16bf:5b2d]) by PH0PR11MB5611.namprd11.prod.outlook.com
  ([fe80::ecf9:dbb:16bf:5b2d%4]) with mapi id 15.20.9818.017; Tue, 14 Apr 2026
- 05:32:10 +0000
+ 05:32:11 +0000
 From: Qi.Chen@windriver.com
 To: yocto-patches@lists.yoctoproject.org
 Cc: alex.kanavin@gmail.com, randy.macleod@windriver.com
-Subject: [auh][PATCH 2/3] modules/steps.py: refactor compile() to use parallel per-machine builds
-Date: Mon, 13 Apr 2026 22:32:01 -0700
-Message-ID: <20260414053202.3869771-2-Qi.Chen@windriver.com>
+Subject: [auh][PATCH 3/3] upgrade-helper.py: use more combinations for default machines setting
+Date: Mon, 13 Apr 2026 22:32:02 -0700
+Message-ID: <20260414053202.3869771-3-Qi.Chen@windriver.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20260414053202.3869771-1-Qi.Chen@windriver.com>
 References: <20260414053202.3869771-1-Qi.Chen@windriver.com>
@@ -64,76 +64,76 @@ X-ClientProxiedBy: BY3PR04CA0028.namprd04.prod.outlook.com
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: PH0PR11MB5611:EE_|CH3PR11MB7916:EE_
-X-MS-Office365-Filtering-Correlation-Id: 42210831-1a9e-4f9a-9400-08de99e72d04
+X-MS-Office365-Filtering-Correlation-Id: 30ea776d-8928-4444-ffac-08de99e72d54
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
 	BCL:0;ARA:13230040|1800799024|52116014|376014|366016|38350700014|56012099003|22082099003|18002099003;
 X-Microsoft-Antispam-Message-Info: 
-	pwNnAPx7JFUPa/Q+QL1a5VmLVIIdMiLjOTlW3GE3UdKXBD3I/HFRFR/DY82RSnaYwR4eFkdCCkw4eQWrBK40Zs8RsKM+htrEiSUUSV9slW6imr5vw4Ep2D0Ioi1mMcjPsUdXw5UNgTqCeOzsDN9HRnMJf7Le+lbpBrtfBYXp4TMrfkbZwjWS0DCWeyPgCGbKxR+HOWsrQB09xucDSPw+ecv0JtcXSb6fP5P4ECTypGg5LVTgi7MTy0VPnPOb6ZrhAY+iDgh2Clxorb/1BnruhUiHn4FFR0gzsbXKbJ9LIjwcvi7X/NBqmp6bh+iUiVJEi5o+GndlyfkfXEIKxFMwRxYAc/16etP2W2udD6Y616l7ynkRLhZ7UbYAMZnLAUzSLNm0tr7T9PfYVlbvaB8iovdMeZdCavrlbQ+Uhg3A9eH5ojCp4GfILoeq1PJT5H8mNWiMfrL7HxJALAp784RdMDrM0WIcj6NAC98uLmT+Wz2SB1JhGG/PDX5FI/mTfdTHWn7apO3lywTQuVNDN5TMaER2CMBN4/QCA3S4AxUnjRx06Rwf3rvxAjrWZprTMtvCDRpvPAuNDGULXdZpYvdfK93lxrbE/Aj8lo3mwKRCFUVW4R398fL7NxDRl6WjJhBl59poc8M+36BtzSvsXxMvfZdblNCvo3KvSQ05YhPnO2FxE2b2fRtERyTq40ipcULUm/Jh3QmTdcL6JeSgvthiyC9B9MZzguTXFh/esgRb6e2H3ElzwSMIkkrn6rvbKdla+OjslxClY39Y29+WnGNyAv5P97g7Xd2AbwKO4s7J/YE=
+	DrmHXW+wSQ73x0bT575dUI2KwmEldbHrtnDcJa0DSIVunBG0rkj3qn63CI6j3Rsc3cxNJIKkixMNwAUlllqh3Y5teloCBbY6l5YNAiZV2cvoNlc642ptfhg/U4mMlV//aJuxEwt9YWUhfzzXLMOgaj23n8IpzQHYsL/Vn4kDxkceCH0XzzIJUdLiPsIgcuELH52DjTl4+mliETc2vzOSTXnJMxViMSvLP975S8vVSvg0GlcCNyRQ33Egwgtqa+9abokFxQutIeyZDFSWv42ccD+J4dQE1x1PDE9F8a+rJAc5dCpwRL0wgyeAHHOGrgkaDgpS61XdUXh5Dd9WnwUKt/UF5IEdpwzG9knBTWp9PAwIhd1UG6CElsmpTSRVyfveyN5ZABP7qy267nyelsCG6sZPgHSdRg12oQekd+6jbdJQ66ULCdD4R8gzEHsYxmAyJN6FrdJDDLBFt9z6wRk+DSlZZmyVwVQTuVwaiuCrnTwOs++n64TU7cqTdNnaOv42WljmpyPH7OjV3cFmjfs8oAGxlHvvwTPHE+U8/XQJGCcYK+K43p44hOmsAS5q9ITdR8PtCdqiKP3CtFAMfDyhMe9rdVt7XpEf8X7LNENm0MH52dqytJ69BBCek3FIrfRzxO09HDhm6lV1mHbmXILJv9Go1svbaGRNmitoRCKz6MnLUGpebBeZlkWjlnqjFWuIdTtJZ1n07UHMSIP35xb7+I/gsYwy5a7vwF8yy8rXFQG6iZhgFYEHzSIOh6VdwJoesKYesJzCtKza/LkLlMd/ncPUiG6A9RnleNqCZoG4Ab4=
 X-Forefront-Antispam-Report: 
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR11MB5611.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(376014)(366016)(38350700014)(56012099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?2eGMIH416KuqpByVw3Fa6upN/VbpKfXH28C87adxfhjLZVzKZcpRPWW4QJOV?=
- =?us-ascii?Q?rCv9IoTWYxs9szT3F7AvX/qxaPbexp9fIwQ85wePrDtwh7xXFiKaAobH12Y8?=
- =?us-ascii?Q?xnsXxUoX5TG8P6v+W/Ym0+Gn4k7tYRf1aykB1dYJck96TTnfk5F1nsu1JMFb?=
- =?us-ascii?Q?7O+IpPUt6rKpStAYDybD5UIZlnvGFXp6MX8b3uragvjIdiNRqeK+1GFMxHSK?=
- =?us-ascii?Q?DpoKODZQKPvYz6Btm1pprbdfNNiVbE0PDbv6x9vh3VX8Dr9UOxRq1f5uKhJK?=
- =?us-ascii?Q?S8mvNPBC6CRph7+qVdoVKcfPC5FmpFebevcR1boYjAgNUsK7CsUGUTKwXxSH?=
- =?us-ascii?Q?O9JyqJAWNvxyPVev4Y9FGyRMtM0hmvuUUItc5GK0cFDjBFOHy9/Ge7nasUmT?=
- =?us-ascii?Q?UY9dEtH4vPE9zD7J20gu8m8MCxHwBQoHJuJqxhy1JEDmu955EYCtvRu1tsTJ?=
- =?us-ascii?Q?WkfbG/XuErBhaha+mZh925YscF+tjG5iA9plnTZV0mhoI06wXshzdESv9J6q?=
- =?us-ascii?Q?Cnu0KxA5IQrggNbj6aQsrkmLSIIclWNhzY7hbhkp2CO7Bqu97SwmhZSQlv3G?=
- =?us-ascii?Q?AL4zqee4A0rHxLAKRqR/5l6MW+BdAmhXRcugBTYyIDblScHgicFsq/yo1nSD?=
- =?us-ascii?Q?DyiEgDEPRaCpqF6UHlZRLtSrJQ2/ZhoQtD2q/uHNyKVQxFEJLRc2CzUO/Rkt?=
- =?us-ascii?Q?Tr/P/zUFYrTNZLSlV7n58kQtHolVvrnLWkYnvrSzuDdD4b7syw/B5LwmA6f0?=
- =?us-ascii?Q?AKirSQZwpAsA7GgftAyOa0PYRduErZzRcJ0dlizsX9CYKaFEB1Evbgpcgz69?=
- =?us-ascii?Q?lQkGB40d98VBajsxH1V+CrHE5eq9Vbz4hrUvemZXEp2ZhklP3A0HimgX+Pqy?=
- =?us-ascii?Q?9OYd/kfcV+iJUFV0XcuU1NdphJtqIfAHEyy6yyqTSsRXgDB/XJ5aSY5rTSNL?=
- =?us-ascii?Q?/JtFpuUeo5n793mKqmwcxVfeVW6s8waS/IyzwF1Ux0wxS86nFXYhR5m0gf4r?=
- =?us-ascii?Q?fXNq8KWcjbZqXyC8zbXkwBu/lnzBnb6vnxva9pJfmHRgBfD5myMVrQasZBE7?=
- =?us-ascii?Q?+k15Hn9g4+QRqbH9mt2f/5Yr9esADGCVeeISSnYNZCC7vMP/YLMfnJvtItN6?=
- =?us-ascii?Q?u+PiB2GGz0VIFvteih/MCqqkGEkBQCU+kZmUOzxZp1jvg40IWbPhNUmI246A?=
- =?us-ascii?Q?pue/rSwKEuUSyKPWqfxQVHPO1nE4ReihpfOnC/GegrPFkeV8rzTrlMwd9qk+?=
- =?us-ascii?Q?DmLRr68mlc0TnuFNK9AnR51RaEUkh5Xatu4mtlsMz4Rhbx1X0mIrR3YJF8AU?=
- =?us-ascii?Q?BrlWaunKtqDCKxnZ0uJzMeDSxMCuOk01qCY5xff2APUcshS/D4+OW9V7qZpY?=
- =?us-ascii?Q?cfQkjn+mTBIf/TkYCnBK0fivWNNLl4yELPXkJhNLQBJOlXU3w46OeX4Tf7R4?=
- =?us-ascii?Q?m9fs4a+kPNeNKxf2g+X4Df1lrnw9avQpGD6jwArDdih4dbn+bpICKUA8tQ4W?=
- =?us-ascii?Q?QmFDcZbAmNG+iX3xugLuO7OBg6GqSTCXfUm7ijT5Gm3l5iE0LLlIFQz6oiNa?=
- =?us-ascii?Q?dEDlL3fNt9S3n8qnIWU2mxQCoTq/Q3VUzR9D5KI0zplHBjL71iQhalwR3wLo?=
- =?us-ascii?Q?VsVTz5WESUYMogNjgKBDMq7v4BFE/NYRCU5p7AEhtBQeyzonVLPj3r9JrkWP?=
- =?us-ascii?Q?Yd3610pL1PicNFM0kyax31JbSTGMZqFoEELp3Uqghn3UYjZyetyohsYlf20s?=
- =?us-ascii?Q?YeR4Th0BZg=3D=3D?=
+	=?us-ascii?Q?IAUWgnkinIqs3PBM/C7+wW2oZrEBeOWzc8YiODmZqmWSMV0pM8JBy5Js/NF4?=
+ =?us-ascii?Q?f+JntjoAuL4wBc8qaSvPdaT6lPC6VcgNDpNo5I9IhFxQnmOiHhpD3ZWwSntB?=
+ =?us-ascii?Q?sCKDFnJ1IwvLCcQT0X9kuIwa4md3u30RQeNTrKWfyqxAniXDKNk7L0YS/9zk?=
+ =?us-ascii?Q?u12N05jNBHBVL95ZEMBaCu5ef71VFcLJl6FrwsSHxsX8mEgoEjJt/ybG3jqr?=
+ =?us-ascii?Q?cEUK589rJO8ybQScqgfpSQuAuXaMZPJPcik1qCRQ63d3jXhNsh/V9hd3Ammu?=
+ =?us-ascii?Q?X5rqf8J9JJOEQwL1NQgKP4j48C1VBB9laGlXv/PsSHwsRxWC5hSY264+8wbF?=
+ =?us-ascii?Q?XslI5R1tlG4GwDNs43hAqpqo1mzBdYHMM7qnoPqC+V9oA2DIkvCuvUgEE/SH?=
+ =?us-ascii?Q?jKdo8GGBkrcWacmVtDDV3TrOXUL9HzzGRGVI7ctwkgAXZKK1qyqs183Kx75/?=
+ =?us-ascii?Q?6Eo+gwSLRYjB7E9Kar6dkwS/7+3JlhPoUxv3TC8i9zYdsQwjpw3iRSM5kYBP?=
+ =?us-ascii?Q?Ivr5eLFLnTfoJlHu3Y4EVBUsx9SACHCfEy6puvIjIl0/ulYemlwJXDylvHR/?=
+ =?us-ascii?Q?4vqn0Y6anIRguWrsq6PsbLZGGIRXdxINJGpEy+6UIVGJD50HtB8jI1MIyyJ7?=
+ =?us-ascii?Q?debQdk507sUd5y5FzudSfE/NSKqTXEkHhiHgHvwaaK9Y3w86STgwh8YcZKYf?=
+ =?us-ascii?Q?IkHLma3Ft988ZbJuGspgWwjzAJlD/5AdQPQG55GtDyVOPuWeK+3/hb7DZWly?=
+ =?us-ascii?Q?DCbVwh193FHDVPP9I302FducfAsqG4C/3KiN5TvuuDTAL8LtEPrBJ/HScd2O?=
+ =?us-ascii?Q?LM6HC3p9JCSSIXUbn3890BEAr+TK7Px3nF5bM8/EOXFh3M/m9+SpnZw73Hga?=
+ =?us-ascii?Q?+G0C76NUF/r0xkTDWZhhVY/St5o00zX/pkxv+Wq3zHythflOeXgdpbxq5lW2?=
+ =?us-ascii?Q?04CLuup865AU/ZpsLLrmQu0ZWtO3ILoASwV9XuPCXaVEaPvkwyFNABA5e/Fc?=
+ =?us-ascii?Q?39wMLSpwoeBG78aKTdEFjDDImbuCAicJ41p2BNalk7ziiG3DbKE1YOA/cIco?=
+ =?us-ascii?Q?6cQ7nqZKEESDbJj11h1dpo8+wwAX8a9izxd5nW3lsf57iWopaPNlrDT9jAVd?=
+ =?us-ascii?Q?u9cA5/HVM8tJiaF5DBokMvnUd1Mc4v3KeoJYL7lu60jUHnDwW0KRljhifSJT?=
+ =?us-ascii?Q?XFCdc49YUrCO1JXROiw2TXuON6BGhPgVzoFobAZE7xgM1cWc4dPCP1HqDWRv?=
+ =?us-ascii?Q?YE7tMin4BCkWlMBfPPyQmG0TrBZTk/XJcnwW4rYNL0EdMjfisjYbBxn2obK2?=
+ =?us-ascii?Q?qkstsa6uW0tB4PxTt5+QvyfqA98tA9k6SN2SfYCelhQr1PWWPgQ4OLBD1d2s?=
+ =?us-ascii?Q?QdQLYIYVUDSjmb+LJglcK25ag0FOufQJtA6O++1VJT72p0755mfSZbfm/H82?=
+ =?us-ascii?Q?/S2tWf8o+alIUsigo/yVDnHyJN1+ZDTRrMYE4idv03kEwbLrzH+LeLdJdyF5?=
+ =?us-ascii?Q?9Cy/DaY5a8hChj5AmYlwT4siuI7zyOsz4S7CIFqVaNSVFjE2rT3i+DqStNbn?=
+ =?us-ascii?Q?mr5fZ7E/VUih5vay/vJPhY8xbuiqzUE7q7PVDNWCBuTm8uoe2pLYhoeiuPMg?=
+ =?us-ascii?Q?fmkzB9OauTwyqB7zq/nY4ivgwxPQUGWAf4cbRCjICeK1U7oFdQzIDA9dpdjp?=
+ =?us-ascii?Q?hycpnsrCBPBxPQ7VKbkm96FX2O7g83uKoKMunvOMxCj62Curf5gMtkyXMIoW?=
+ =?us-ascii?Q?Ah2HUjjrjA=3D=3D?=
 X-Exchange-RoutingPolicyChecked: 
-	nJCHewZM4UnI0qiEqfVpOnyvkFoEKxmRlYrkXURbwBW/jv+l4aopqnEsu51DOXCApdsg3ORhH6lUj7JMcE61EOM/4EhS6KcgYizJVy3jOgNTX4e3nghCz4uHYTSv2HZR8TYS5brp/Il1ohTozDUC3E2ncwUiI3o4l/B0ewhmKLPbsxnVb8ps0B3hvjBtiM2TAsf24EKxaixRZZgutx17KIAhNns82lKXZornZcPBP9iRLBjdSgYgVsoYclc8gP9UB7mL4AygGKPDeVA2BdTckzk/ZI4QcJJQbGe41hRAJfhSly0jvZi16QPPs8n7B2O49N9eR4rXOJT4FdTqrryKAQ==
+	l3CQthziaRP856Tn1+rJkfJ5nmVockPMUBMDMdjJidzqf/Fw3wzQoqojJoPIkLsNK5aZV8844wdCYZatgeQpA4M+f5BY6/HYwpYr8OXvylvcEy1PXkS/hxIA0dzzbLvPCNWayKQJBqfpBJnawLM75uEzwWOr5R/dO+pv2LDVceva/HflqKKwxqWrSiG7Jasw8s3Zn5uoxlubB3QQ2d7AJPgUt28gUAFYlzitg6lN4ZM2J7P3HfpbTQ2Q30R6Zu+p6nYb43VS761iXtRWIImY1dVEAdiqRm0HqHzavybfQ5cINFrYEG9SRM99o4OKmllfu4lWd5JWSNuClJj+bsorLQ==
 X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 42210831-1a9e-4f9a-9400-08de99e72d04
+X-MS-Exchange-CrossTenant-Network-Message-Id: 30ea776d-8928-4444-ffac-08de99e72d54
 X-MS-Exchange-CrossTenant-AuthSource: PH0PR11MB5611.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Apr 2026 05:32:10.7105
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Apr 2026 05:32:11.2501
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Y/x2gDmHb/Yf3qJM34pLjlbmoihdHmZ/Y7ZpysqwbukAgh9vyORnSzvVn1irgM6Dq8wak4LJkRYu9c4g3jncow==
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3D3IDHEftpfLU+Tu5rRmeJ3Ty2qOgF9NOJT7AUYx0G6bwUvaSClNe4/wGPrg8OdiMFIZJyJ9brkDr/BmHq3R2w==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB7916
-X-Proofpoint-ORIG-GUID: GB4fIvEJx3caI8PDurkzd0f8S7bB2tCX
-X-Authority-Analysis: v=2.4 cv=ZtHd7d7G c=1 sm=1 tr=0 ts=69ddd15c cx=c_pps
+X-Proofpoint-ORIG-GUID: Sfvcv9W1bf-SmlWCvjqSM6Hb8b9wyDnB
+X-Authority-Analysis: v=2.4 cv=ZtHd7d7G c=1 sm=1 tr=0 ts=69ddd15d cx=c_pps
  a=Bsy78vmKOeQIAJqgrxlU3A==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
  a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
  a=xqWC_Br6kY4A:10 a=A5OVakUREuEA:10 a=VkNPw1HP01LnGYTKEx00:22
  a=bi6dqmuHe4P4UrxVR6um:22 a=fTW__CHxibyLmBMfj2wP:22 a=t7CeM3EgAAAA:8
- a=7tNdCL_qoV_6EZ841JMA:9 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-GUID: GB4fIvEJx3caI8PDurkzd0f8S7bB2tCX
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDE0MDA1MCBTYWx0ZWRfX36AokghEk4bA
- pVgvPYgbwTuPlNxWjUbcwMg6Ygr2IQULF3TALgT4KcFpLYYhbxMapdJ7CUulDbCj6C5KF3VzNfx
- Q7dMgwWI2CSDG0Bx6baihigCsO7nY1dFrYD3QffYLesIUguufmdHF4ZQsnJvAv1xruZuQG3vTQ8
- LbeZHsIRAwhUTPDY0M5Tdwb9mAJurrvFf3/QJfF0b5UzXm9+cvAwSB7c4AXz5lKw3u5SbKSgVzJ
- ZmphzMyrp+OQ8BY4Lb/uRTpOV+Qg1Y1t8Vm5Ad1xBAdh2Zgvpgp0nm4uX333jLoTK+fxNDPP/I7
- /vL82FWnikKxfhmw3FqEQVAmL6uF6Ri78FuzaWW50W5ToqygiXB/cRH4VxMacNvpGY54YTz9wsi
- 4Z7BUk/VkzK1O1jR9vTqz3Pq+F3BsHU2xL8A6yG6MqxKbEyg8srlBzh1yfpHPwHuJvG4zQaqw+9
- TqImFlA6OgPiZi4/bFA==
+ a=Z_CKyMobp_yLbMhdY8kA:9 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-GUID: Sfvcv9W1bf-SmlWCvjqSM6Hb8b9wyDnB
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDE0MDA1MCBTYWx0ZWRfX8vIwt9VcuJro
+ c0dSWLfXGMLgOMfQ+fIw546iFHALucbH/VgexqpUgetz+VUcOtD9h/xzROL0UxH5SErIvWM2iLu
+ fHMlxPYKzXNxAE7nKJNcaCU/CUNAoiiRsdwTpiW4Ml/xZKqEHaIQOXkuLKexaW2duGIFMvpva1L
+ iYiAgSgAMQ9JT1OukPlkfPhdIYPcx8eiMA74khOjhyYE7upLDZ55n9UWc0+fwGmZ1HgHwQoHq7V
+ vi2g2CFRaxAeuYLh0VqgpNSK2f5rnAokDL685NeNY1mIZ9RZXeuVIrNZ9oj0KEQ51qBE7o6mn+/
+ rFMbZVYwxTzDjeoKDAKZOurcDQCHB7/RdK0898cvCs0WSMx2oIIR/2C6drW8A+pu1vEn8PSPGGO
+ XHV2yxEF7mcf2Ivm0NTVNnjfHggAUUgfQGGk6Nj6aNNKNaaj1jn2p3wZPuBUvWNsKzevbeciHIZ
+ 3C3QkRHECj+INfPnejA==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-04-14_01,2026-04-13_04,2025-10-01_01
@@ -145,199 +145,34 @@ X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 14 Apr 2026 05:32:20 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3696
+ <yocto-patches@lists.yoctoproject.org>; Tue, 14 Apr 2026 05:32:21 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3697
 
 From: Chen Qi <Qi.Chen@windriver.com>
 
-Reasons:
-
-1. Building recipes one by one consumes little build resource. In practice,
-   when building one recipe machine by machine in a serialized way, the
-   machine load is very very low. This means AUH is not making use of
-   the machines' computing resources.
-2. Yocto project has good and mature technique to control the build to
-   not exhaust machines' resource, e.g., BB_NUMBER_THREADS, BB_PRESSURE_MAX_XXX.
-   So we really don't need to worry about AUH exhausting server resources.
-
-Technical Details:
-
-1. Each machine gets its own build directory ($BUILDDIR-{machine}) with
-   BUILDDIR and BBPATH env vars set accordingly, and conf/ copied from the
-   original build directory. All machines compile in parallel via
-   multiprocessing.Pool, with errors collected and reported after all
-   workers complete.
-
-2. Use original build directory for the first machine in parallel build.
-   Skip creating a separate build directory for the first machine and
-   build directly in the original BUILDDIR. Only the remaining machines
-   get their own $BUILDDIR-{machine} copies. The purpose is that if testimage
-   is enabled, then the build can just the previous results.
-
-3. Always refresh per-machine conf/ directory before compilation. This
-   ensure anything new in the main build directory will get into new
-   build directory.
-
-4. Add --serial-build option to use sequential per-machine compilation.
-   When --serial-build is passed, compile each machine serially using the
-   original build logic instead of the parallel multiprocessing approach.
-
-Note:
-
-After this change, AUH will use parallel build by default. The '--serial-build'
-is there if users really need to use serial build for some reason.
+Now that we've changed to use parallel build for machines, we can
+change the default machines setting to cover more cases. This is
+because such change will not result in significant build time increase,
+and maintainers can have more data.
 
 Signed-off-by: Chen Qi <Qi.Chen@windriver.com>
 ---
- modules/steps.py  | 96 +++++++++++++++++++++++++++++++++++++----------
- upgrade-helper.py |  3 ++
- 2 files changed, 80 insertions(+), 19 deletions(-)
+ upgrade-helper.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/modules/steps.py b/modules/steps.py
-index a6ec341..300ae72 100644
---- a/modules/steps.py
-+++ b/modules/steps.py
-@@ -22,10 +22,12 @@
- import os
- import shutil
- import re
-+import multiprocessing
- 
- from logging import debug as D
- from logging import info as I
- from logging import warning as W
-+from logging import error as E
- 
- from errors import Error, DevtoolError, CompilationError
- from buildhistory import BuildHistory
-@@ -104,31 +106,87 @@ def devtool_upgrade(devtool, bb, git, opts, group):
-     for p in group['pkgs']:
-         _devtool_upgrade(devtool, bb, git, opts, p)
- 
--def _compile(bb, pkg, machine, workdir):
--        try:
--            bb.complete(pkg, machine)
--        except Error as e:
--            with open("{}/bitbake-output-{}.txt".format(workdir, machine), 'w') as f:
--                f.write(e.stdout + e.stderr)
--            for line in e.stdout.split("\n") + e.stderr.split("\n"):
--                # version going backwards is not a real error
--                if re.match(".* went backwards which would break package feeds .*", line):
--                    break
--                # 'not in COMPATIBLE_HOST/MACHINE is not a real error
--                if re.match(".*not in COMPATIBLE.*", line):
--                    break
--            else:
--                raise CompilationError()
-+def _compile_worker(args):
-+    """Worker function for multiprocess compilation. Runs in a separate process."""
-+    pkg, machine, workdir, orig_builddir, use_orig = args
-+    from utils.bitbake import Bitbake
-+
-+    if use_orig:
-+        builddir = orig_builddir
-+    else:
-+        builddir = "{}-{}".format(orig_builddir, machine)
-+        os.makedirs(builddir, exist_ok=True)
-+
-+        new_conf = os.path.join(builddir, "conf")
-+        if os.path.isdir(new_conf):
-+            shutil.rmtree(new_conf)
-+        shutil.copytree(os.path.join(orig_builddir, "conf"), new_conf)
-+
-+    os.environ["BUILDDIR"] = builddir
-+    os.environ["BBPATH"] = builddir
-+
-+    bb = Bitbake(builddir)
-+    try:
-+        bb.complete(pkg, machine)
-+        return (machine, True, None)
-+    except Error as e:
-+        with open("{}/bitbake-output-{}.txt".format(workdir, machine), 'w') as f:
-+            f.write(e.stdout + e.stderr)
-+        for line in e.stdout.split("\n") + e.stderr.split("\n"):
-+            if re.match(".* went backwards which would break package feeds .*", line):
-+                return (machine, True, None)
-+            if re.match(".*not in COMPATIBLE.*", line):
-+                return (machine, True, None)
-+        return (machine, False, e.stdout + e.stderr)
-+
-+def _compile_serial(bb, pkg, machine, workdir):
-+    """Compile a single machine serially (original behaviour)."""
-+    try:
-+        bb.complete(pkg, machine)
-+    except Error as e:
-+        with open("{}/bitbake-output-{}.txt".format(workdir, machine), 'w') as f:
-+            f.write(e.stdout + e.stderr)
-+        for line in e.stdout.split("\n") + e.stderr.split("\n"):
-+            if re.match(".* went backwards which would break package feeds .*", line):
-+                break
-+            if re.match(".*not in COMPATIBLE.*", line):
-+                break
-+        else:
-+            raise CompilationError()
- 
- def compile(devtool, bb, git, opts, group):
-     if opts['skip_compilation']:
-         W(" %s: Compilation was skipped by user choice!" % group['name'])
-         return
- 
--    for machine in opts['machines']:
--        I(" %s: compiling upgraded version for %s ..." % (group['name'], machine))
--        _compile(bb, " ".join([pkg_ctx['PN'] for pkg_ctx in group['pkgs']]), machine, group['workdir'])
--        if opts['buildhistory'] and machine == opts['machines'][0]:
-+    pkg = " ".join([pkg_ctx['PN'] for pkg_ctx in group['pkgs']])
-+    machines = opts['machines']
-+
-+    if opts.get('serial_build'):
-+        for machine in machines:
-+            I(" %s: compiling upgraded version for %s ..." % (group['name'], machine))
-+            _compile_serial(bb, pkg, machine, group['workdir'])
-+            if opts['buildhistory'] and machine == machines[0]:
-+                I(" %s: Checking buildhistory ..." % group['name'])
-+                group['buildhistory'].diff()
-+    else:
-+        orig_builddir = os.environ.get("BUILDDIR", "")
-+        worker_args = [(pkg, m, group['workdir'], orig_builddir, i == 0) for i, m in enumerate(machines)]
-+
-+        I(" %s: compiling upgraded version for %s in parallel ..." % (group['name'], machines))
-+        with multiprocessing.Pool(processes=len(machines)) as pool:
-+            results = pool.map(_compile_worker, worker_args)
-+
-+        os.environ["BUILDDIR"] = orig_builddir
-+        os.environ["BBPATH"] = orig_builddir
-+
-+        failed = [(m, err) for m, ok, err in results if not ok]
-+        if failed:
-+            for m, err in failed:
-+                E(" %s: compilation failed for %s" % (group['name'], m))
-+            raise CompilationError()
-+
-+        if opts['buildhistory'] and machines:
-             I(" %s: Checking buildhistory ..." % group['name'])
-             group['buildhistory'].diff()
- 
 diff --git a/upgrade-helper.py b/upgrade-helper.py
-index 2ceb722..1c05333 100755
+index 1c05333..59af392 100755
 --- a/upgrade-helper.py
 +++ b/upgrade-helper.py
-@@ -108,6 +108,8 @@ def parse_cmdline():
-                         help="layers to include in the upgrade research")
-     parser.add_argument("--layer-dir", action="store", default='',
-                         help="the layers root directory")
-+    parser.add_argument("--serial-build", action="store_true", default=False,
-+                        help="compile for each machine serially instead of in parallel")
-     return parser.parse_args()
+@@ -189,7 +189,7 @@ class Updater(object):
+         else:
+             # use scripts_path to get oe-core directory
+             self.git = Git(os.path.dirname(scripts_path))
+-        self.opts['machines'] = settings.get('machines', 'qemux86-64 qemuarm_musl').split()
++        self.opts['machines'] = settings.get('machines', 'qemux86-64 qemux86 qemuarm64_musl qemuarm_musl').split()
  
- def parse_config_file(config_file):
-@@ -193,6 +195,7 @@ class Updater(object):
+         self.opts['send_email'] = self.args.send_emails
          self.opts['author'] = "Upgrade Helper <%s>" % \
-                 settings.get('from', 'uh@not.set')
-         self.opts['skip_compilation'] = self.args.skip_compilation
-+        self.opts['serial_build'] = self.args.serial_build
-         self.opts['buildhistory'] = self._buildhistory_is_enabled()
-         self.opts['testimage'] = self._testimage_is_enabled()
- 
 -- 
 2.49.0
 
