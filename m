@@ -1,97 +1,148 @@
-Return-Path: <haiqing.bai@windriver.com>
+Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCAF0ED7B92
-	for <webhook@archiver.kernel.org>; Tue, 14 Apr 2026 09:22:18 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.14698.1776158531135789841
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9557DF9D0D4
+	for <webhook@archiver.kernel.org>; Tue, 14 Apr 2026 14:32:24 +0000 (UTC)
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.20291.1776177134949969693
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 14 Apr 2026 02:22:11 -0700
+ Tue, 14 Apr 2026 07:32:15 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@windriver.com header.s=PPS06212021 header.b=LqwMqkg3;
- spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.178.238, mailfrom: prvs=85643c0fe9=haiqing.bai@windriver.com)
-Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63DNiTfw1269595
-	for <yocto-patches@lists.yoctoproject.org>; Tue, 14 Apr 2026 09:22:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
-	 h=content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=PPS06212021; bh=4uBd4qjLjvjKGFCw3KtI
-	ywCuhF0AkAsCh96iahbABao=; b=LqwMqkg3imdF3FUGFRTrzrkbgknTUqZ/lfy/
-	CcdmaTbIDfR2R5irqd4IDz88U2j+l8SBnSk2+L4zC3QzEKjxpJLLWFJw2spTTjP0
-	xUxpXGX5OakykysxlnEKcTo3o9Bix7ErhWg7+4SRgkZtU/uUMs5etTfrFqSVrwSQ
-	p4R7hvzxsfa+JMIBzPtiIvdG5ARjWMUhKKZRd/lCZC7VuZpwnnLGHEwbBdpASI83
-	QsUfGs0tUY1OEuiMAA4KKn3ZjtCXdYfcMaLm69SqUX/1sAR3eI0vRYAf69KPqtyI
-	2oH5o8JdEgXaaJ1z1CPJjC7DKTrHfkl5KJDY8EoclLfpyHmUFw==
-Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [128.224.246.36])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4dh877gh89-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <yocto-patches@lists.yoctoproject.org>; Tue, 14 Apr 2026 09:22:09 +0000 (GMT)
-Received: from ala-exchng01.corp.ad.wrs.com (10.11.224.121) by
- ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.61; Tue, 14 Apr 2026 02:22:08 -0700
-Received: from pek-lpggp2.wrs.com (10.11.232.110) by
- ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server id
- 15.1.2507.61 via Frontend Transport; Tue, 14 Apr 2026 02:22:08 -0700
-From: <haiqing.bai@windriver.com>
-To: <yocto-patches@lists.yoctoproject.org>
-Subject: [meta-security][PATCH] isic: fix RDEPNEDS typo
-Date: Tue, 14 Apr 2026 17:22:07 +0800
-Message-ID: <20260414092207.1915814-1-haiqing.bai@windriver.com>
-X-Mailer: git-send-email 2.43.0
+ dkim=pass header.i=@konsulko.com header.s=google header.b=eF81/WJc;
+ spf=pass (domain: konsulko.com, ip: 209.85.222.173, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-8d76492e51bso538354685a.0
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 14 Apr 2026 07:32:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=konsulko.com; s=google; t=1776177134; x=1776781934; darn=lists.yoctoproject.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7Gu4mhwQTPwPz8D9hEOnOyVoppb5jTid8jPs/eF20gg=;
+        b=eF81/WJcmfO6Uy5ZKNeI6Cr8tkhqbyxerjbEMvWD/90eZ33mFc6O1Vym3Ie6uxCdEU
+         gS5TXY+rhzSM7lXIi7QhitMl0IXCDjA44Q7Tku35gD4tDCW15mnzxLWcKFcAZ9WWaWhE
+         uoZViPqoCqGDZraFvPH+wj/Ng7FCMSMJGuQFc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776177134; x=1776781934;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7Gu4mhwQTPwPz8D9hEOnOyVoppb5jTid8jPs/eF20gg=;
+        b=QJ32kQW8ArL86fxEmbiyfoElAvMjuoz3Hpn4OmUWCGTvWIGFGAvNv4TZ33sMwofgoq
+         NauniL56Z4a9B/HjXveIJlXaVdin9NN1gYQBp6RLTaxVGzrfq6rtjiIB7w6u3/OixirD
+         ZPT8PWePcYKX81NVv34NsyKpwMX3uz8izlN+jH8/b9cLjG77HyXOQfgea5jRhN3wBopt
+         PxM2nANlU1G3iba7R3FzS352eyXLT3PsryNJo9dSwr94oGCuZkp3B8fmjDqq9n6Ec5rG
+         7SwboWFZGIGImynkMMlEw5dtNy77I79Eb4XPR1p4eDZ9/q7eweMUXbgLe+Vu5hhI+det
+         oSRA==
+X-Gm-Message-State: AOJu0Yy0fTgDtSk5qqsmrC75Rwmhoex9H/Mpt6kqOq2g5ZOaB6j0gvGP
+	dxETGZXmkc1NFPtOpclE/3RJmO6LfTd1+k9dXNFCyjPcUvJZhvG/4egvnBWaHwHb+rA=
+X-Gm-Gg: AeBDietxHW9cwjQ5OnPEhWBCtzDSc74SzlNQuJuwDJG2GxtMaZos/uhbSAP87LyJOZE
+	Nuk+wWUmkLsSJS+f3GWbfsYO3rQM9CWKX8i40QOTyFfRswriU5mGftdCQbMwkFasdJ1M6MH63ZN
+	GMda5PqpP+h1XOHeVUoDVS0CnM1hGjlEzaPKq7Xgc1MA5IYZOczhv4p5LMXkLQT0BhBvbvD9ZRu
+	57VWVNKnAOErXEwsL49e2aO9YcUlkVIaZHHcqGoVGdC2pKq4bpjW1jDtc5SAdogjO6HLEqBrg+U
+	HMRssqub0Py+DmmGYHZ95yFnJuVU8RlaJAaNbSpeRru0/b09SvbwZ5XciF427JdKRyHC3UaSabi
+	r1OWLEm6QWPbVFH4XwSkYuutWis85UcXwAcepOcBtz0OVPDQsFQ7Dt/ohazfu7hFhAbgA0idtLD
+	BrZJ4pZiV8KKgbIPaRH5cnCN9MrfaUvB48JpHjjEKIWCbNhHIxVidlqKXgQhTddviCjSXy2nGJP
+	HLEnGhlY1QggMnLLEIeCeaUn7pBIu3cOxi4noIGrWgf96E=
+X-Received: by 2002:a05:620a:1a11:b0:8cf:d386:1db1 with SMTP id af79cd13be357-8ddcefc1235mr2631617285a.31.1776177133588;
+        Tue, 14 Apr 2026 07:32:13 -0700 (PDT)
+Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8deb5d9b336sm912430785a.9.2026.04.14.07.32.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Apr 2026 07:32:12 -0700 (PDT)
+Date: Tue, 14 Apr 2026 10:32:00 -0400 (EDT)
+From: Scott Murray <scott.murray@konsulko.com>
+To: Martin Jansa <martin.jansa@gmail.com>
+cc: yocto-patches@lists.yoctoproject.org, 
+    Marta Rybczynska <rybczynska@gmail.com>
+Subject: Re: [yocto-patches] [meta-security][PATCH] wic: move to files/wic
+In-Reply-To: <CA+chaQeUfObYUY=iKFdz5YmZkCq8bp9Ex44uqn4Xf8VTgo=w5w@mail.gmail.com>
+Message-ID: <75455d5a-4119-ec29-7700-d31f20479e3d@konsulko.com>
+References: <18A45B2EA8F8EC11.657799@lists.yoctoproject.org> <CA+chaQeUfObYUY=iKFdz5YmZkCq8bp9Ex44uqn4Xf8VTgo=w5w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: 2tZGiN_-xQLL9vXw19_zDU8YlmjaRyls
-X-Authority-Analysis: v=2.4 cv=ZtHd7d7G c=1 sm=1 tr=0 ts=69de0741 cx=c_pps
- a=AbJuCvi4Y3V6hpbCNWx0WA==:117 a=AbJuCvi4Y3V6hpbCNWx0WA==:17
- a=A5OVakUREuEA:10 a=VkNPw1HP01LnGYTKEx00:22 a=bi6dqmuHe4P4UrxVR6um:22
- a=fTW__CHxibyLmBMfj2wP:22 a=t7CeM3EgAAAA:8 a=nftxCnANBx9OJ7JKsVYA:9
- a=ZXulRonScM0A:10 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-GUID: 2tZGiN_-xQLL9vXw19_zDU8YlmjaRyls
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDE0MDA4NyBTYWx0ZWRfX4Nwf0rkyiHiv
- pB/MM9utSoLiAHXD39Y4Z9KcZGuWKcwLFF34H10z3NZmmmAIZceX7EZcGWbvh++MOyOaLNyNrVr
- gXy86NXFnrD2KjSzBv0axd7Ziww9sWKnQM+AsDd2pyfjrmA8PYKWN2g+OGPliyEDznGuXPGGw9u
- GiJX26Tq9mg7vCaHcgIuE5d7aEsNoGhyOnlKC6ohSJ4UodVrwOirEPCSVEj9z/7hvJSRF6eqp8Q
- V4Vhu7pA3kdp1uDeemnLoMyPIZtmcZrxg0sm432f5mX/m6Nojn+YqT8yRJlg0hHLsIec8pGOckD
- Flc95j2fP+wDddHRwk30/m3svo1UIsObt/ljD1x1x/9HVPMscKXabNCDSO86YJlpFHucPZzSOfv
- L+ipzPE0g8NWpPch6kJOU+fcSGKxXuGDaYwzhbq8xQumu5wn0tnBIV4GuA1wAwVSDZU36g9Cmpo
- qDv+ZkbjrEdHAhd1GVw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-04-14_02,2026-04-13_04,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 clxscore=1011 malwarescore=0 impostorscore=0 adultscore=0
- suspectscore=0 bulkscore=0 priorityscore=1501 spamscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2604070000 definitions=main-2604140087
+Content-Type: multipart/mixed; boundary="-1463811583-1193958172-1776177132=:4425"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 14 Apr 2026 09:22:18 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3701
+ <yocto-patches@lists.yoctoproject.org>; Tue, 14 Apr 2026 14:32:24 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3702
 
-From: Haiqing Bai <haiqing.bai@windriver.com>
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Fix typo: RDEPNEDS -> RDEPENDS
+---1463811583-1193958172-1776177132=:4425
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-Signed-off-by: Haiqing Bai <haiqing.bai@windriver.com>
----
- recipes-security/isic/isic_0.07.bb | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue, 14 Apr 2026, Martin Jansa wrote:
 
-diff --git a/recipes-security/isic/isic_0.07.bb b/recipes-security/isic/isic_0.07.bb
-index 8e0f5ce..ac637b8 100644
---- a/recipes-security/isic/isic_0.07.bb
-+++ b/recipes-security/isic/isic_0.07.bb
-@@ -31,4 +31,4 @@ do_configure () {
-     oe_runconf
- }
- 
--RDEPNEDS += "libnet"
-+RDEPENDS += "libnet"
--- 
-2.43.0
+> Gentle ping as the builds cannot be started with recent oe-core (since
+> last week) when meta-security is included.
 
+My apologies, I have been dealing with some family matters the past couple
+of weeks, but aim to get recent submissions pushed out in the next day or
+two.
+
+Scott
+
+
+> oe-core $ bitbake -k ovmf-native
+> NOTE: Started PRServer with DBfile:
+> /OE/build/oe-core/cache/prserv.sqlite3, Address: 127.0.0.1:36907, PID:
+> 407062
+> ERROR:  OE-core's config sanity checker detected a potential misconfiguration.
+>     Either fix the cause of this error or at your own risk disable the
+> checker (see sanity.conf).
+>     Following is the list of potential problems / advisories:
+>
+>     wic/wks files at /OE/build/oe-core/meta-security/wic need to be
+> moved to files/wic within the layer to be found/used
+> wic/wks files at /OE/build/oe-core/meta-security/wic need to be moved
+> to files/wic within the layer to be found/used
+>
+> Cheers,
+>
+> On Wed, Apr 8, 2026 at 12:33 PM Martin Jansa via
+> lists.yoctoproject.org <martin.jansa=gmail.com@lists.yoctoproject.org>
+> wrote:
+> >
+> > From: Martin Jansa <martin.jansa@gmail.com>
+> >
+> > To avoid sanity check failure
+> > https://git.openembedded.org/openembedded-core/commit/?id=07e410600c41103098b670f12abe87f64419a624
+> >
+> > Signed-off-by: Martin Jansa <martin.jansa@gmail.com>
+> > ---
+> >  {wic => files/wic}/beaglebone-yocto-verity.wks.in        | 0
+> >  {wic => files/wic}/systemd-bootdisk-dmverity-hash.wks.in | 0
+> >  {wic => files/wic}/systemd-bootdisk-dmverity.wks.in      | 0
+> >  3 files changed, 0 insertions(+), 0 deletions(-)
+> >  rename {wic => files/wic}/beaglebone-yocto-verity.wks.in (100%)
+> >  rename {wic => files/wic}/systemd-bootdisk-dmverity-hash.wks.in (100%)
+> >  rename {wic => files/wic}/systemd-bootdisk-dmverity.wks.in (100%)
+> >
+> > diff --git a/wic/beaglebone-yocto-verity.wks.in b/files/wic/beaglebone-yocto-verity.wks.in
+> > similarity index 100%
+> > rename from wic/beaglebone-yocto-verity.wks.in
+> > rename to files/wic/beaglebone-yocto-verity.wks.in
+> > diff --git a/wic/systemd-bootdisk-dmverity-hash.wks.in b/files/wic/systemd-bootdisk-dmverity-hash.wks.in
+> > similarity index 100%
+> > rename from wic/systemd-bootdisk-dmverity-hash.wks.in
+> > rename to files/wic/systemd-bootdisk-dmverity-hash.wks.in
+> > diff --git a/wic/systemd-bootdisk-dmverity.wks.in b/files/wic/systemd-bootdisk-dmverity.wks.in
+> > similarity index 100%
+> > rename from wic/systemd-bootdisk-dmverity.wks.in
+> > rename to files/wic/systemd-bootdisk-dmverity.wks.in
+> >
+> >
+> > -=-=-=-=-=-=-=-=-=-=-=-
+> > Links: You receive all messages sent to this group.
+> > View/Reply Online (#3662): https://lists.yoctoproject.org/g/yocto-patches/message/3662
+> > Mute This Topic: https://lists.yoctoproject.org/mt/118722653/3617156
+> > Group Owner: yocto-patches+owner@lists.yoctoproject.org
+> > Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/13388836/3617156/66960823/xyzzy [martin.jansa@gmail.com]
+> > -=-=-=-=-=-=-=-=-=-=-=-
+> >
+> >
+>
+---1463811583-1193958172-1776177132=:4425--
 
