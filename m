@@ -2,147 +2,236 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9557DF9D0D4
-	for <webhook@archiver.kernel.org>; Tue, 14 Apr 2026 14:32:24 +0000 (UTC)
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.20291.1776177134949969693
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CFD7F9D0F8
+	for <webhook@archiver.kernel.org>; Tue, 14 Apr 2026 21:37:23 +0000 (UTC)
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.5585.1776202633736385436
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 14 Apr 2026 07:32:15 -0700
+ Tue, 14 Apr 2026 14:37:13 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=eF81/WJc;
- spf=pass (domain: konsulko.com, ip: 209.85.222.173, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-8d76492e51bso538354685a.0
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 14 Apr 2026 07:32:14 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=sfNwk7sJ;
+ spf=pass (domain: konsulko.com, ip: 209.85.160.173, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-50d6b9bca48so79161431cf.2
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 14 Apr 2026 14:37:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1776177134; x=1776781934; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1776202632; x=1776807432; darn=lists.yoctoproject.org;
         h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7Gu4mhwQTPwPz8D9hEOnOyVoppb5jTid8jPs/eF20gg=;
-        b=eF81/WJcmfO6Uy5ZKNeI6Cr8tkhqbyxerjbEMvWD/90eZ33mFc6O1Vym3Ie6uxCdEU
-         gS5TXY+rhzSM7lXIi7QhitMl0IXCDjA44Q7Tku35gD4tDCW15mnzxLWcKFcAZ9WWaWhE
-         uoZViPqoCqGDZraFvPH+wj/Ng7FCMSMJGuQFc=
+        bh=/+hmiR98zs8khf2UZwJn51WtzYEb57dM2Lpl/EJgEtw=;
+        b=sfNwk7sJKenz7imhGkHNw6AvY80VnxQ6aVSrwLvRUVKPoyJMM14+wegKGoLklpaSv+
+         LNtuT9Giva7+KUa1XVmimFkJyItYt6T15AZdlZX4GCLammT7jD1qbeTbO46ec9mJNW8T
+         HvdZkOjEHRu5DU1XDGfi91d+W492SgSmYs24A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776177134; x=1776781934;
+        d=1e100.net; s=20251104; t=1776202632; x=1776807432;
         h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
          :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7Gu4mhwQTPwPz8D9hEOnOyVoppb5jTid8jPs/eF20gg=;
-        b=QJ32kQW8ArL86fxEmbiyfoElAvMjuoz3Hpn4OmUWCGTvWIGFGAvNv4TZ33sMwofgoq
-         NauniL56Z4a9B/HjXveIJlXaVdin9NN1gYQBp6RLTaxVGzrfq6rtjiIB7w6u3/OixirD
-         ZPT8PWePcYKX81NVv34NsyKpwMX3uz8izlN+jH8/b9cLjG77HyXOQfgea5jRhN3wBopt
-         PxM2nANlU1G3iba7R3FzS352eyXLT3PsryNJo9dSwr94oGCuZkp3B8fmjDqq9n6Ec5rG
-         7SwboWFZGIGImynkMMlEw5dtNy77I79Eb4XPR1p4eDZ9/q7eweMUXbgLe+Vu5hhI+det
-         oSRA==
-X-Gm-Message-State: AOJu0Yy0fTgDtSk5qqsmrC75Rwmhoex9H/Mpt6kqOq2g5ZOaB6j0gvGP
-	dxETGZXmkc1NFPtOpclE/3RJmO6LfTd1+k9dXNFCyjPcUvJZhvG/4egvnBWaHwHb+rA=
-X-Gm-Gg: AeBDietxHW9cwjQ5OnPEhWBCtzDSc74SzlNQuJuwDJG2GxtMaZos/uhbSAP87LyJOZE
-	Nuk+wWUmkLsSJS+f3GWbfsYO3rQM9CWKX8i40QOTyFfRswriU5mGftdCQbMwkFasdJ1M6MH63ZN
-	GMda5PqpP+h1XOHeVUoDVS0CnM1hGjlEzaPKq7Xgc1MA5IYZOczhv4p5LMXkLQT0BhBvbvD9ZRu
-	57VWVNKnAOErXEwsL49e2aO9YcUlkVIaZHHcqGoVGdC2pKq4bpjW1jDtc5SAdogjO6HLEqBrg+U
-	HMRssqub0Py+DmmGYHZ95yFnJuVU8RlaJAaNbSpeRru0/b09SvbwZ5XciF427JdKRyHC3UaSabi
-	r1OWLEm6QWPbVFH4XwSkYuutWis85UcXwAcepOcBtz0OVPDQsFQ7Dt/ohazfu7hFhAbgA0idtLD
-	BrZJ4pZiV8KKgbIPaRH5cnCN9MrfaUvB48JpHjjEKIWCbNhHIxVidlqKXgQhTddviCjSXy2nGJP
-	HLEnGhlY1QggMnLLEIeCeaUn7pBIu3cOxi4noIGrWgf96E=
-X-Received: by 2002:a05:620a:1a11:b0:8cf:d386:1db1 with SMTP id af79cd13be357-8ddcefc1235mr2631617285a.31.1776177133588;
-        Tue, 14 Apr 2026 07:32:13 -0700 (PDT)
+        bh=/+hmiR98zs8khf2UZwJn51WtzYEb57dM2Lpl/EJgEtw=;
+        b=Qm+gPjGstP9HrIB9j0KK3b8FTIpSvWrrmqT+xhQa72BIR+kCAXBdD9xPDgUeIFvUmb
+         +9n9ZY7sqld2OWtBOycvlSX1MUvg4HqMKdTwH0IbjzgQYahu248CUqgtUqsTobB/b5RE
+         bPL5lnA8jTU51FrVgIi5k2aP1A/uVsAbgwm9WhXXVs0XlCzj4vfgcruttIa+h1VgEfIz
+         AGvzPehbJfHz5Bi4duljFkP52JDdaGg++eXdVzA+54z3qXydy/yhYI1S8iGaRYWuXT/L
+         Y44vxZgtH/XR1CKioqH8ctvsoUkNJCRd4qmbWoS/Cmam1TO48OwouEcimEIYc85AN+PW
+         NhaA==
+X-Forwarded-Encrypted: i=1; AFNElJ990+uY52QXhJOselyVPrr6O/uwiema1AV6vRQcDJiccOBg8mB5C4U/z4iPXqylp8KFPN8SYDKKoPJaAmLh@lists.yoctoproject.org
+X-Gm-Message-State: AOJu0YxFHbfxoOYd8BC9nd8+Iz56BCC4EeyiB85FLQPm01ZznUf0JpBp
+	U/29BngJ1TwDm+2bsIUiZ9beEzHbJNIeN3lVP5YRR9z2h/WBF6mo+kkyJ9ZThRHgDCw=
+X-Gm-Gg: AeBDievXt+XS9XUptEpe1DxiXJnQsfscyEqPtGayW+DWcT9A6vHasRBCAfe067jo5ts
+	iN7QuoT3TKJgnBXzVUACJK5Jwdn26b+OusQCP8C9t2zPwi0AeJDlw1VsjLZmFAySjkXhITWF4MP
+	YYgl8aaqCP2+FvfR7b1TEGagenHDK95BS1ip0BubB9dBXPgLDcOab2tBUFTud2nQId0jXTW9bW4
+	eq/ulj8PxvZLl1wH99XPFD96Xzt/eIws9WV5gvYHplzsoQnS/MaQv5vxKu3xp4soip8h2nmii3L
+	Bv8VwOS45p1nPOV8zXNj33u0n81iEiGGlDiF+zzfRUABxk7NA24qlqCDV1apMh15ANGfn+Y1D7k
+	5DLhCnH3W+3lq5FhNAdsgnA7ywVXSphWusOGDKNtMOn/kM0uzy6udKMJpNOaRjf8wD1wRrqUlvU
+	1iNCRV36wY5cPWWjBM+DCEkkXb30vV6V3u98TNKmi0TpmVZubXIl5CCfn4LIOf4xDjUwLDimq/t
+	czlDmNc6NxZEk7N+hjS6P/R7CtJGvxElem7sV+vkZrYuWI=
+X-Received: by 2002:a05:622a:96:b0:50d:a9a9:fbfa with SMTP id d75a77b69052e-50dd5cf56edmr275781881cf.43.1776202632212;
+        Tue, 14 Apr 2026 14:37:12 -0700 (PDT)
 Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8deb5d9b336sm912430785a.9.2026.04.14.07.32.12
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-50dd525fa23sm136654061cf.0.2026.04.14.14.37.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Apr 2026 07:32:12 -0700 (PDT)
-Date: Tue, 14 Apr 2026 10:32:00 -0400 (EDT)
+        Tue, 14 Apr 2026 14:37:11 -0700 (PDT)
+Date: Tue, 14 Apr 2026 17:37:10 -0400 (EDT)
 From: Scott Murray <scott.murray@konsulko.com>
-To: Martin Jansa <martin.jansa@gmail.com>
-cc: yocto-patches@lists.yoctoproject.org, 
-    Marta Rybczynska <rybczynska@gmail.com>
-Subject: Re: [yocto-patches] [meta-security][PATCH] wic: move to files/wic
-In-Reply-To: <CA+chaQeUfObYUY=iKFdz5YmZkCq8bp9Ex44uqn4Xf8VTgo=w5w@mail.gmail.com>
-Message-ID: <75455d5a-4119-ec29-7700-d31f20479e3d@konsulko.com>
-References: <18A45B2EA8F8EC11.657799@lists.yoctoproject.org> <CA+chaQeUfObYUY=iKFdz5YmZkCq8bp9Ex44uqn4Xf8VTgo=w5w@mail.gmail.com>
+To: Clayton Casciato <majortomtosourcecontrol@gmail.com>
+cc: rybczynska@gmail.com, yocto-patches@lists.yoctoproject.org, 
+    Yash.Shinde@windriver.com
+Subject: Re: [meta-security][PATCH 0/1] suricata: update 7.0.13 -> 8.0.4
+In-Reply-To: <336649dc-b99f-4e1c-b23d-c9520187c7b0@gmail.com>
+Message-ID: <bef0bbaa-1a32-aaed-52ca-34f007504510@konsulko.com>
+References: <336649dc-b99f-4e1c-b23d-c9520187c7b0@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="-1463811583-1193958172-1776177132=:4425"
+Content-Type: text/plain; charset=US-ASCII
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 14 Apr 2026 14:32:24 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3702
+ <yocto-patches@lists.yoctoproject.org>; Tue, 14 Apr 2026 21:37:23 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3703
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Fri, 20 Mar 2026, Clayton Casciato wrote:
 
----1463811583-1193958172-1776177132=:4425
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+> Tested against:
+> Poky - 6.0 M2
+> Image - core-image-selinux
+> Target - qemuarm64 (2 GB RAM)
+>
+> Previous results (7.0.12):
+> https://lists.yoctoproject.org/g/yocto-patches/topic/116119035
+>
+> Tooling note:
+> update_crates behaves much better.
+> I only had to add SRC_URI checksums (prompted).
 
-On Tue, 14 Apr 2026, Martin Jansa wrote:
+It looks like the Lua 5.5.0 upgrade in oe-core has non-trivially broken
+the 8.0.x suricata build.  There's a somewhat straightforward issue with
+a new argument to lua_newstate, but after that there are link errors that
+the more I poked around the more I'm thinking there's some oddness wrt
+their vendoring a copy of Lua (5.4.8) for the Rust side of things.  I
+don't see any signs of the build process for the .c files under src
+pointing at that source, but then AFAICT everything kind of gets lumped
+together when linking the final suricata binary...  If you have the time
+to try to untangle this, please do so, as I cannot guarantee that I get
+to it in the next week or two.
 
-> Gentle ping as the builds cannot be started with recent oe-core (since
-> last week) when meta-security is included.
-
-My apologies, I have been dealing with some family matters the past couple
-of weeks, but aim to get recent submissions pushed out in the next day or
-two.
+Thanks,
 
 Scott
 
 
-> oe-core $ bitbake -k ovmf-native
-> NOTE: Started PRServer with DBfile:
-> /OE/build/oe-core/cache/prserv.sqlite3, Address: 127.0.0.1:36907, PID:
-> 407062
-> ERROR:  OE-core's config sanity checker detected a potential misconfiguration.
->     Either fix the cause of this error or at your own risk disable the
-> checker (see sanity.conf).
->     Following is the list of potential problems / advisories:
+> Target testing:
+> ```
+> root@qemuarm64:~# systemctl status suricata
+> * suricata.service - Suricata IDS/IDP daemon
+>      Loaded: loaded (/usr/lib/systemd/system/suricata.service; enabled; preset: enabled)
+>      Active: active (running) since Fri 2026-03-20 22:23:37 UTC; 21s ago
+>  Invocation: 0a0439fe27d84ec19eaff6f718822f53
+>        Docs: man:suricata(8)
+>              man:suricatasc(8)
+>              https://redmine.openinfosecfoundation.org/projects/suricata/wiki
+>    Main PID: 489 (Suricata-Main)
+>       Tasks: 10 (limit: 296)
+>      Memory: 63.2M (peak: 64.6M)
+>         CPU: 1.732s
+>      CGroup: /system.slice/suricata.service
+>              `-489 /usr/bin/suricata -c /etc/suricata/suricata.yaml -i eth0
 >
->     wic/wks files at /OE/build/oe-core/meta-security/wic need to be
-> moved to files/wic within the layer to be found/used
-> wic/wks files at /OE/build/oe-core/meta-security/wic need to be moved
-> to files/wic within the layer to be found/used
+> Mar 20 22:23:37 qemuarm64 systemd[1]: Started Suricata IDS/IDP daemon.
+> Mar 20 22:23:38 qemuarm64 suricata[489]: i: suricata: This is Suricata version 8.0.4 RELEASE running in SYSTEM mode
+> Mar 20 22:23:38 qemuarm64 suricata[489]: W: detect: No rule files match the pattern /var/lib/suricata/rules/suricata.rules
+> Mar 20 22:23:38 qemuarm64 suricata[489]: W: detect: 1 rule files specified, but no rules were loaded!
+> Mar 20 22:23:38 qemuarm64 suricata[489]: i: threads: Threads created -> W: 4 FM: 1 FR: 1   Engine started.
 >
-> Cheers,
+> root@qemuarm64:~# suricata-update
+> 20/3/2026 -- 22:28:36 - <Info> -- Using data-directory /var/lib/suricata.
+> 20/3/2026 -- 22:28:36 - <Info> -- Using Suricata configuration /etc/suricata/suricata.yaml
+> 20/3/2026 -- 22:28:36 - <Info> -- Using /usr/share/suricata/rules for Suricata provided rules.
+> 20/3/2026 -- 22:28:36 - <Info> -- Found Suricata version 8.0.4 at /bin/suricata.
+> 20/3/2026 -- 22:28:36 - <Info> -- Loading /etc/suricata/suricata.yaml
+> 20/3/2026 -- 22:28:36 - <Info> -- Disabling rules for protocol pgsql
+> 20/3/2026 -- 22:28:36 - <Info> -- Disabling rules for protocol modbus
+> 20/3/2026 -- 22:28:36 - <Info> -- Disabling rules for protocol dnp3
+> 20/3/2026 -- 22:28:36 - <Info> -- Disabling rules for protocol enip
+> 20/3/2026 -- 22:28:36 - <Info> -- No sources configured, will use Emerging Threats Open
+> 20/3/2026 -- 22:28:36 - <Info> -- Fetching https://rules.emergingthreats.net/open/suricata-8.0.4/emerging.rules.tar.gz.
+>  100% - 5398510/5398510
+> 20/3/2026 -- 22:28:37 - <Info> -- Done.
+> 20/3/2026 -- 22:28:37 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/app-layer-events.rules
+> 20/3/2026 -- 22:28:37 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/decoder-events.rules
+> 20/3/2026 -- 22:28:37 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/dhcp-events.rules
+> 20/3/2026 -- 22:28:37 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/dnp3-events.rules
+> 20/3/2026 -- 22:28:37 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/dns-events.rules
+> 20/3/2026 -- 22:28:37 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/files.rules
+> 20/3/2026 -- 22:28:37 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/http2-events.rules
+> 20/3/2026 -- 22:28:37 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/http-events.rules
+> 20/3/2026 -- 22:28:37 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/ipsec-events.rules
+> 20/3/2026 -- 22:28:37 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/kerberos-events.rules
+> 20/3/2026 -- 22:28:37 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/modbus-events.rules
+> 20/3/2026 -- 22:28:37 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/mqtt-events.rules
+> 20/3/2026 -- 22:28:37 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/nfs-events.rules
+> 20/3/2026 -- 22:28:37 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/ntp-events.rules
+> 20/3/2026 -- 22:28:37 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/quic-events.rules
+> 20/3/2026 -- 22:28:37 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/rfb-events.rules
+> 20/3/2026 -- 22:28:37 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/smb-events.rules
+> 20/3/2026 -- 22:28:37 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/smtp-events.rules
+> 20/3/2026 -- 22:28:37 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/ssh-events.rules
+> 20/3/2026 -- 22:28:37 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/stream-events.rules
+> 20/3/2026 -- 22:28:37 - <Info> -- Loading distribution rule file /usr/share/suricata/rules/tls-events.rules
+> 20/3/2026 -- 22:28:39 - <Info> -- Ignoring file e8e18dbaadbcd7eebb54ecdb5c78f603/rules/emerging-deleted.rules
+> 20/3/2026 -- 22:29:04 - <Info> -- Loaded 65077 rules.
+> 20/3/2026 -- 22:29:08 - <Info> -- Disabled 15 rules.
+> 20/3/2026 -- 22:29:08 - <Info> -- Enabled 0 rules.
+> 20/3/2026 -- 22:29:08 - <Info> -- Modified 0 rules.
+> 20/3/2026 -- 22:29:08 - <Info> -- Dropped 0 rules.
+> 20/3/2026 -- 22:29:10 - <Info> -- Enabled 136 rules for flowbit dependencies.
+> 20/3/2026 -- 22:29:10 - <Info> -- Creating directory /var/lib/suricata/rules.
+> 20/3/2026 -- 22:29:10 - <Info> -- Backing up current rules.
+> 20/3/2026 -- 22:29:10 - <Info> -- Writing rules to /var/lib/suricata/rules/suricata.rules: total: 65077; enabled: 49217; added: 65077; removed 0; modified: 0
+> 20/3/2026 -- 22:29:11 - <Info> -- Writing /var/lib/suricata/rules/classification.config
+> 20/3/2026 -- 22:29:12 - <Info> -- Testing with suricata -T.
+> 20/3/2026 -- 22:29:54 - <Info> -- Done.
 >
-> On Wed, Apr 8, 2026 at 12:33 PM Martin Jansa via
-> lists.yoctoproject.org <martin.jansa=gmail.com@lists.yoctoproject.org>
-> wrote:
-> >
-> > From: Martin Jansa <martin.jansa@gmail.com>
-> >
-> > To avoid sanity check failure
-> > https://git.openembedded.org/openembedded-core/commit/?id=07e410600c41103098b670f12abe87f64419a624
-> >
-> > Signed-off-by: Martin Jansa <martin.jansa@gmail.com>
-> > ---
-> >  {wic => files/wic}/beaglebone-yocto-verity.wks.in        | 0
-> >  {wic => files/wic}/systemd-bootdisk-dmverity-hash.wks.in | 0
-> >  {wic => files/wic}/systemd-bootdisk-dmverity.wks.in      | 0
-> >  3 files changed, 0 insertions(+), 0 deletions(-)
-> >  rename {wic => files/wic}/beaglebone-yocto-verity.wks.in (100%)
-> >  rename {wic => files/wic}/systemd-bootdisk-dmverity-hash.wks.in (100%)
-> >  rename {wic => files/wic}/systemd-bootdisk-dmverity.wks.in (100%)
-> >
-> > diff --git a/wic/beaglebone-yocto-verity.wks.in b/files/wic/beaglebone-yocto-verity.wks.in
-> > similarity index 100%
-> > rename from wic/beaglebone-yocto-verity.wks.in
-> > rename to files/wic/beaglebone-yocto-verity.wks.in
-> > diff --git a/wic/systemd-bootdisk-dmverity-hash.wks.in b/files/wic/systemd-bootdisk-dmverity-hash.wks.in
-> > similarity index 100%
-> > rename from wic/systemd-bootdisk-dmverity-hash.wks.in
-> > rename to files/wic/systemd-bootdisk-dmverity-hash.wks.in
-> > diff --git a/wic/systemd-bootdisk-dmverity.wks.in b/files/wic/systemd-bootdisk-dmverity.wks.in
-> > similarity index 100%
-> > rename from wic/systemd-bootdisk-dmverity.wks.in
-> > rename to files/wic/systemd-bootdisk-dmverity.wks.in
-> >
-> >
-> > -=-=-=-=-=-=-=-=-=-=-=-
-> > Links: You receive all messages sent to this group.
-> > View/Reply Online (#3662): https://lists.yoctoproject.org/g/yocto-patches/message/3662
-> > Mute This Topic: https://lists.yoctoproject.org/mt/118722653/3617156
-> > Group Owner: yocto-patches+owner@lists.yoctoproject.org
-> > Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/13388836/3617156/66960823/xyzzy [martin.jansa@gmail.com]
-> > -=-=-=-=-=-=-=-=-=-=-=-
-> >
-> >
+> root@qemuarm64:~# systemctl restart suricata
 >
----1463811583-1193958172-1776177132=:4425--
+> root@qemuarm64:~# systemctl status suricata
+> * suricata.service - Suricata IDS/IDP daemon
+>      Loaded: loaded (/usr/lib/systemd/system/suricata.service; enabled; preset: enabled)
+>      Active: active (running) since Fri 2026-03-20 22:30:33 UTC; 59s ago
+>  Invocation: a95034e5d76f418fa530bcb8027f0183
+>        Docs: man:suricata(8)
+>              man:suricatasc(8)
+>              https://redmine.openinfosecfoundation.org/projects/suricata/wiki
+>    Main PID: 623 (Suricata-Main)
+>       Tasks: 10 (limit: 2406)
+>      Memory: 1.1G (peak: 1.1G)
+>         CPU: 38.435s
+>      CGroup: /system.slice/suricata.service
+>              `-623 /usr/bin/suricata -c /etc/suricata/suricata.yaml -i eth0
+>
+> Mar 20 22:30:33 qemuarm64 systemd[1]: Started Suricata IDS/IDP daemon.
+> Mar 20 22:30:34 qemuarm64 suricata[623]: i: suricata: This is Suricata version 8.0.4 RELEASE running in SYSTEM mode
+> Mar 20 22:31:11 qemuarm64 suricata[623]: i: threads: Threads created -> W: 4 FM: 1 FR: 1   Engine started.
+>
+> root@qemuarm64:~# wget -O /tmp/arst http://testmynids.org/uid/index.html
+> Connecting to testmynids.org (18.238.176.2:80)
+> [...]
+> '/tmp/arst' saved
+>
+> root@qemuarm64:~# tail /var/log/suricata/fast.log
+> 03/20/2026-22:31:56.562766  [**] [1:2100498:7] GPL ATTACK_RESPONSE id check returned root [**] [Classification: Potentially Bad Traffic] [Priority: 2] {TCP} 18.238.176.2:80 -> 10.0.2.15:38026
+>
+> root@qemuarm64:~# suricatactl -h
+> Usage: suricatactl [OPTIONS] <COMMAND>
+>
+> Commands:
+>   filestore  Filestore management commands
+>   help       Print this message or the help of the given subcommand(s)
+>
+> Options:
+>   -v, --verbose...
+>   -q, --quiet       Quiet mode, only warnings and errors will be logged
+>   -h, --help        Print help
+>
+> root@qemuarm64:~# suricatasc -h
+> Usage: suricatasc [OPTIONS] [SOCKET]
+>
+> Arguments:
+>   [SOCKET]  Optional path to Suricata unix socket
+>
+> Options:
+>   -v, --verbose            Enable verbose output
+>   -c, --command <COMMAND>  Execute command and return JSON
+>   -h, --help               Print help
+>
+> root@qemuarm64:~# journalctl -u suricata -p notice
+> -- No entries --
+> ```
+>
+> Clayton Casciato (1):
+>   suricata: update 7.0.13 -> 8.0.4
+>
+>  ...kefile-from-using-its-own-rust-steps.patch |   36 +-
+>  recipes-ids/suricata/libhtp_0.5.52.bb         |   23 -
+>  recipes-ids/suricata/suricata-crates.inc      | 3282 +++++++++++++----
+>  .../{suricata_7.0.13.bb => suricata_8.0.4.bb} |   22 +-
+>  4 files changed, 2673 insertions(+), 690 deletions(-)
+>
 
