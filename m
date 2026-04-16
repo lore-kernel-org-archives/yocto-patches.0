@@ -1,95 +1,117 @@
-Return-Path: <alex@colossuscompute.com>
+Return-Path: <richard.purdie@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62C86F8D74A
-	for <webhook@archiver.kernel.org>; Thu, 16 Apr 2026 13:56:05 +0000 (UTC)
-Received: from mail-dl1-f52.google.com (mail-dl1-f52.google.com [74.125.82.52])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.14732.1776347762036880913
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A653AF8D75A
+	for <webhook@archiver.kernel.org>; Thu, 16 Apr 2026 15:43:19 +0000 (UTC)
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.17695.1776354192705114797
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 16 Apr 2026 06:56:02 -0700
+ Thu, 16 Apr 2026 08:43:13 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@colossuscompute.com header.s=google header.b=R0MuZ2/I;
- spf=pass (domain: colossuscompute.com, ip: 74.125.82.52, mailfrom: alex@colossuscompute.com)
-Received: by mail-dl1-f52.google.com with SMTP id a92af1059eb24-12713e56abdso440409c88.1
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 16 Apr 2026 06:56:02 -0700 (PDT)
+ dkim=pass header.i=@linuxfoundation.org header.s=google header.b=SRziW1je;
+ spf=pass (domain: linuxfoundation.org, ip: 209.85.221.52, mailfrom: richard.purdie@linuxfoundation.org)
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-43d7badbd7dso2323496f8f.2
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 16 Apr 2026 08:43:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=colossuscompute.com; s=google; t=1776347761; x=1776952561; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1EAwSRFHK/z7shVAkJt1dmcZFQKGWovlByYoIOiwP9Y=;
-        b=R0MuZ2/IwUXic2CrvwDvGzLHpkFBNK9Lin5PpVVDnCrt0ebTUySuN77qOb3XiMrgbT
-         h+0i4zjoTSdAT5DmPAmOlTDbjYs8WmMNeGL7CQIeGarni/CgNtl0fcu1NsQBu/k6h/DE
-         Zg8yhKL2Bp2mi7gZvoGVDO0ps2dFjPNTel8k4pE5hILRqrrNhpBenNHcJQo+ca21JpOb
-         VfGK1iX/I8YXZLk4EKMrpDwZNQ0ldBiUqb5lg4dbXg4CL2AU8swEUJG2I66Hjst7Bc1q
-         q/r2MmoNyupgoaZZJ0fq3oDRw+1+8zfN9JIGCZIuO/OroyqpWnDObxQKeoSaNeYYKL8m
-         OnVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776347761; x=1776952561;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=linuxfoundation.org; s=google; t=1776354191; x=1776958991; darn=lists.yoctoproject.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1EAwSRFHK/z7shVAkJt1dmcZFQKGWovlByYoIOiwP9Y=;
-        b=p89EiK2mVnY7HIC5UYxVMllcmI9xkK79QQ6YIXIxjq6lEApJIkUVbK+pViBF38z6Nz
-         jVB6xkxQUsv0F0EpzAamTr4qEfHFk1Qy21X6ITACK7Hj2k7ZfZLo0+YEN+GoV5Xk3Kz3
-         KCqQe6MpCrajt5OE+2pEapCpb5F4Kpy/ISm+HU3KRM8nPRRWUQGMlXvuCzYs5wsuITSP
-         lCrvQn19oXVn44n7yh9Yjq03pa58/XY6WvFhlSfJJEEuFJnayz+fecQnZDusJsHNNXHH
-         xryNMKHJcFGCAGXUDUDhL5L7WYyxPlAy9/qYrhJnDP3n3l4p72jKVbeV3Zfd0Ao57YFs
-         iwEQ==
-X-Gm-Message-State: AOJu0YwZ74tpIW28qxQVRCzDS5uKRQjsLfHLLuG4PshJs0qB9tOoOkk5
-	OydXIPHdEmpFVkS4RuIMlZvA+ByG15OoicIsc8CjBW/tkG33K9m0kA/xbL+te277sw++lo3ViLB
-	furLA
-X-Gm-Gg: AeBDietiyMDkZGt5bcdhjzQR/gqcqIzJ2IgL1jMGKqiuZBMzNREuOb/POGOWxkIXczM
-	vrBf1RhGYbmzKM14eZsHeteN9vZYvrlc5wq7CBv8m02xpJKTdSRN5/TKM0QHcBtZUhLH3j1yhb+
-	jWVTl5NqsAcAUychXCeuTkJmp4NuMgBT8oCezDJYuONoERATus5BgLEPo9Hs8uEItrt2f97QCe1
-	8WcvnxKYnHLZEVH8qKrEOpBoud2tG8fqQyloGYVuD0npepsuC2yby224sdrhK1iwY/oddmQyP+s
-	2zrwN+Nd/8TTH06OAmFdFXT4Fzjm/pgmHm8tuEk2YqJrYGfR2DEMXu1YqWhx5kOEGK8WRH2+6Qk
-	RwhsMnUjiaGY6vqpisHANlT5Edchygdg78Er6DY9DhORcuC8vH6HBc87h0nqR1nikzXKNZxuqqW
-	+UNIBksEgBCmsduY3QMIYX3C5SiXivgqRv2mNNbX6n2UwlvJE4yJQUH4Us5VEieBhIRLHBq3MGx
-	oO/5b4lgTRXGaKctUFJm/S5DeST/ICg3qJO38BHDAhmpomx
-X-Received: by 2002:a05:7022:921:b0:12c:2c8:d490 with SMTP id a92af1059eb24-12c630651a8mr1862296c88.5.1776347760679;
-        Thu, 16 Apr 2026 06:56:00 -0700 (PDT)
-Received: from localhost ([216.38.147.180])
-        by smtp.gmail.com with UTF8SMTPSA id a92af1059eb24-12c5e630143sm8480913c88.6.2026.04.16.06.55.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Apr 2026 06:56:00 -0700 (PDT)
-From: Alex Swehla <alex@colossuscompute.com>
+        bh=RNwZD34Z3m5/I0Q7wUDCJ7NEnNB7ZmNVS9Iqi/mMSdA=;
+        b=SRziW1jeoSx08lZhNECW+lndDyRT6iXV//GTCihcahpfeVqK01EGZ35/+sRADKADjU
+         7sZvFM17DWi+AnegbPwXVNZJc1wKbn3lyOceeex9gv6OpowCLlZ1r/QbwT8GH8iX6q7i
+         iKJ0R0X40zCOZwSP37WcQaFrScyZ/il+ZpZaY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776354191; x=1776958991;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RNwZD34Z3m5/I0Q7wUDCJ7NEnNB7ZmNVS9Iqi/mMSdA=;
+        b=ZEKBZzwvJtmQTEfm37QnocwjfBbtbPc4GFhCgfHEV5wSvxNY+Al0elgr8XnAZzp4LU
+         NLCB8k9RoQRnfYf3MZ7FRpmA8OfHebCLVq1bIELYN7eBccdbB9GFdrP2ma2zbasQhr0s
+         NeL8nlbus2WVNSifeaq1VX9mJj7ELF/ot6adP+2Mnmx6dGihfCWrzlyvzkS+ZDAboKlz
+         nJpIIzeNcOaGMo6TeIjDgJ9xChLscDx+K8VDcGOKz5eD8yHEekT5iTi8VjoKknmssnXp
+         3C7KLuA6smUjIOZP5QvvS4dxLxAs9qxnOcFun/F5BTmr8n7ABukQmSjgKQdeynEG2/2/
+         VCrg==
+X-Gm-Message-State: AOJu0Ywm+AIV7AY/PqWmLo/W2N1VMHdk7sYRb4DdD1A0L4SAOSRiF3w1
+	IzUW0aQBXi7utlEE5cKmrwbHUo9nnD0KkDf4zKIPD8VVtaP/CaAGQMTOUFqpAkv9YiEgzFYmadY
+	hsA6ICHg=
+X-Gm-Gg: AeBDietx1/56fLb4xT6dU2u+oo5WFtXOKCXy1NYYmxxs498pcf5FBJboKdOc8hhiEcD
+	q3MMVWvlAVzAKrLVmTSGSoYBkZUR3yDeEtRnIWm6fgnKS5KlZvFefBpE5UImNkVMyagNhiK6I9+
+	vhzTxQHcebcGHtFxbkkJGZau31GOf+mzTUsJf/VoqQ/OQ5WwLrynlof+eJaD9duAyH9pQkR3K/b
+	EyPiYfyX+IfVcrreRPIwldrMi5izxtaVLV98hkMfbqxb2f5DFzWz/ljz4GB5douhaWW54p2HASg
+	qBlmc+ne63IzfTRyJYMSNU/NtfHiJ4+6P5K1VIAAo+cXMrSrn5QZOkOkpGSH0AR17FMjnvVu192
+	fUJVB8/cA4Ox/HxxIgDffQOYZzaQjkT/nbiKyer2I17HQJA6hukUiT20IjHaPB+Tq1cQdMXpgIV
+	dEp0gk3jq+Zxc0XZX2/FUUC2W4ZehWZj1S15N4th2H5WCrAnZ1LDHAF940P0aTVOKqhp21piCfM
+	H+7oH23SRyM0tRu+klySbGr/KKswUFJ0DDSGQ==
+X-Received: by 2002:a05:6000:25c4:b0:439:c299:4d8f with SMTP id ffacd0b85a97d-43d64271215mr43352940f8f.17.1776354190428;
+        Thu, 16 Apr 2026 08:43:10 -0700 (PDT)
+Received: from ?IPv6:2001:8b0:aba:5f3c:9444:ba74:dc4b:e8c7? ([2001:8b0:aba:5f3c:9444:ba74:dc4b:e8c7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43ead33d6e9sm14538324f8f.1.2026.04.16.08.43.09
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Apr 2026 08:43:09 -0700 (PDT)
+Message-ID: <3ac212e2eb03e20e559ffb387af332dc98e1e18a.camel@linuxfoundation.org>
+Subject: Re: [yocto-patches] [yocto-autobuilder-helper][whinlatter 0/5]
+ Patch review
+From: Richard Purdie <richard.purdie@linuxfoundation.org>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Alex Swehla <alex@colossuscompute.com>
-Subject: [meta-security][PATCH] update wic kickstart path to fix fatal error in sanity checks
-Date: Thu, 16 Apr 2026 06:55:57 -0700
-Message-ID: <20260416135557.2009759-1-alex@colossuscompute.com>
-X-Mailer: git-send-email 2.53.0
+Date: Thu, 16 Apr 2026 16:43:09 +0100
+In-Reply-To: <cover.1776323183.git.yoann.congal@smile.fr>
+References: <cover.1776323183.git.yoann.congal@smile.fr>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-9 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 16 Apr 2026 13:56:05 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3723
+ <yocto-patches@lists.yoctoproject.org>; Thu, 16 Apr 2026 15:43:19 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3724
 
----
- {wic => files/wic}/beaglebone-yocto-verity.wks.in        | 0
- {wic => files/wic}/systemd-bootdisk-dmverity-hash.wks.in | 0
- {wic => files/wic}/systemd-bootdisk-dmverity.wks.in      | 0
- 3 files changed, 0 insertions(+), 0 deletions(-)
- rename {wic => files/wic}/beaglebone-yocto-verity.wks.in (100%)
- rename {wic => files/wic}/systemd-bootdisk-dmverity-hash.wks.in (100%)
- rename {wic => files/wic}/systemd-bootdisk-dmverity.wks.in (100%)
+On Thu, 2026-04-16 at 09:07 +0200, Yoann Congal via lists.yoctoproject.org =
+wrote:
+> The following changes since commit
+> 29abc96b6310fef8dd5ff34c22f0ff0d313ebe0a:
+>=20
+> =C2=A0 config.json: Drop checkvnc usage (2026-03-16 20:28:25 +0000)
+>=20
+> are available in the Git repository at:
+>=20
+> =C2=A0
+> https://git.yoctoproject.org/yocto-autobuilder-helper=C2=A0contrib/yconga=
+l
+> /whinlatter
+> =C2=A0
+> https://git.yoctoproject.org/yocto-autobuilder-helper/log/?h=3Dcontrib/yc=
+ongal/whinlatter
+>=20
+> for you to fetch changes up to
+> 93894832c9a4ce0b96d16e503bed99a959f3d232:
+>=20
+> =C2=A0 scripts/yocto-supported-distros: fix the centos stream regular
+> expression (2026-04-14 10:10:51 +0200)
+>=20
+> ----------------------------------------------------------------
+>=20
+> Antonin Godard (1):
+> =C2=A0 scripts/yocto-supported-distros: fix the centos stream regular
+> =C2=A0=C2=A0=C2=A0 expression
+>=20
+> Richard Purdie (3):
+> =C2=A0 config.json: Set SSTATE_DIR unconditionally
+> =C2=A0 config.json: Fix bring up after bitbake-setup changes
+> =C2=A0 scripts/utils: Milestones are now yocto- prefixed
+>=20
+> Yoann Congal (1):
+> =C2=A0 run-config: drop one more checkvnc usage
 
-diff --git a/wic/beaglebone-yocto-verity.wks.in b/files/wic/beaglebone-yocto-verity.wks.in
-similarity index 100%
-rename from wic/beaglebone-yocto-verity.wks.in
-rename to files/wic/beaglebone-yocto-verity.wks.in
-diff --git a/wic/systemd-bootdisk-dmverity-hash.wks.in b/files/wic/systemd-bootdisk-dmverity-hash.wks.in
-similarity index 100%
-rename from wic/systemd-bootdisk-dmverity-hash.wks.in
-rename to files/wic/systemd-bootdisk-dmverity-hash.wks.in
-diff --git a/wic/systemd-bootdisk-dmverity.wks.in b/files/wic/systemd-bootdisk-dmverity.wks.in
-similarity index 100%
-rename from wic/systemd-bootdisk-dmverity.wks.in
-rename to files/wic/systemd-bootdisk-dmverity.wks.in
--- 
-2.53.0
+I've merged this series as they all look to make sense to me for
+whinlatter, thanks.
+
+Cheers,
+
+Richard
 
 
