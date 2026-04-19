@@ -1,104 +1,81 @@
-Return-Path: <richard.purdie@linuxfoundation.org>
+Return-Path: <michael@amarulasolutions.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C57A6F43684
-	for <webhook@archiver.kernel.org>; Fri, 17 Apr 2026 09:00:25 +0000 (UTC)
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.40677.1776416419755138434
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27ED6EA718F
+	for <webhook@archiver.kernel.org>; Sun, 19 Apr 2026 06:37:24 +0000 (UTC)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.3967.1776580636676733229
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 17 Apr 2026 02:00:20 -0700
+ Sat, 18 Apr 2026 23:37:17 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=JNPZ00tq;
- spf=pass (domain: linuxfoundation.org, ip: 209.85.221.42, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-43eada6d900so401233f8f.0
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 17 Apr 2026 02:00:19 -0700 (PDT)
+ dkim=pass header.i=@amarulasolutions.com header.s=google header.b=bZvuBb1U;
+ spf=pass (domain: amarulasolutions.com, ip: 209.85.218.50, mailfrom: michael@amarulasolutions.com)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b9910707d82so307106966b.1
+        for <yocto-patches@lists.yoctoproject.org>; Sat, 18 Apr 2026 23:37:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1776416417; x=1777021217; darn=lists.yoctoproject.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WT2sslmjx4t57LDWykZkCgArmtoADXpj5BRNUPgqBK0=;
-        b=JNPZ00tqgMCg7aVfacjOZGjROSLbXkwy7ZMwm3LTVb5DqWRN28VZJK3jCbXZ8c8eFa
-         8TijZmklJY41Dfl7pIbjakbCVRC3SyL2PnlXfvhFN1p9uZ4EeIOEMaREEHg39zKgfTVw
-         GSnrq4S346IdaCYSK7mIiSb5ShmRNnCSMvnc4=
+        d=amarulasolutions.com; s=google; t=1776580634; x=1777185434; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yAmgv2lVZpE/SE7DC82GpSZeFh3YqtMiZpzr9WufvnE=;
+        b=bZvuBb1UwA5fgri2YdAVVY3Qk9jBR9g5atJwfmw/k0YyZHDcZEZoGLYgsG5eSIGcWR
+         Ie66+JD8KywDF2za+Jjxw94uM2JhwodlEC4tcR2OyrRx3srisURWficIb/99glPf2fS+
+         kdP5Is1iE69MmTFpLRl52+1Y37XFwmGb7I3KQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776416417; x=1777021217;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WT2sslmjx4t57LDWykZkCgArmtoADXpj5BRNUPgqBK0=;
-        b=R9Z3q0TKu1NfnW0ev+/aeRgFWwsUtny3CmAEJID+xwC44DTrP3voakf2WUtMX1C9+g
-         LHRXKa5vcx7A0rwWIdVsZ0XLKfKZlzMcBLm1Cp4a5mqcrSCS3nSh4pLYqwj2LBz3f25f
-         omjyyRc2xk6ppuX0vGvoyX0lRbCQ03OeTYe/t80Xb6947tN0VDTZ0cQ6+4Z7plX2oCvn
-         JrixMipfVA5SJ2FuknrateOr4K7ndfj1CDYbvnXKpQ6KDQtgi4gyeOXLvQlOU2KCKXE4
-         YjcGXuFEpW/ViQfuIlbZs3aj7+q1PqCM7ucrNaG83DUR27+EZ02+RF98iL0BNIVXRV8M
-         bSJg==
-X-Gm-Message-State: AOJu0YyjvG61zZFgVxkTYp3k9OjzjFe8jDTNylDbfEh1h95AxrRkFxgN
-	ZYHzIh+utj/e+T3b+zcaWiq9ZnQAdh7libfqGtniq52/Sh1R3VfStQIoOdewfYRybxJm+EWeSWh
-	qbzoZrws=
-X-Gm-Gg: AeBDies621hyBuWBfiy5I9K2+2JIPdnxGCuixUsNwkzXPTLREYcohZ3sQsByZ214T1o
-	pNJFJsfPFJ6KJMw2d1xLWGnixjJfI4Yk9I4CS9PZwnJi1zVnw1eR5Rc4mNvZYkxa2ld2FOAKSdr
-	243a+1Bee/dCU86BpIZSUVrwmUKX8mC9jW/C6WvsiKHIlfEdB0nbRdw69Eqe5gmDETa9hF8wSTx
-	3c6wrOcpzEYvBb2/F2VP3F4bH9R1GJO7vnAHD3/Ngww+z7/GcLOz6Umele9eXuTL6R9dJ2NZ1Zf
-	FDf84vA7HePyVyJs9pv0TaVttlTcsjRIhVZjvKLdQqqvqAoF+v7rq2GBa6GrMQX0pKOJylhUWbI
-	mV19AHlydSJvS3mRURAOW9QVkmPWR/dAi1cDuzfTZE8bnShLa+RFGzVvjcmO3vglLgxC0t0f5RA
-	pvs7dHVztvbuaKh49mHW5X0rTHfDRh1d9eU1uTshUpkjo18LzD886AL28qi5AhvgTyWwu02ECRH
-	PSc/V4ZWBVdc0aJeToV4R+deIM=
-X-Received: by 2002:a05:6000:2508:b0:43d:7e6f:3816 with SMTP id ffacd0b85a97d-43fe3e14ecbmr2709998f8f.40.1776416417369;
-        Fri, 17 Apr 2026 02:00:17 -0700 (PDT)
-Received: from ?IPv6:2001:8b0:aba:5f3c:d1f3:409a:3cf5:1213? ([2001:8b0:aba:5f3c:d1f3:409a:3cf5:1213])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43fe4e44f69sm2922396f8f.25.2026.04.17.02.00.16
+        d=1e100.net; s=20251104; t=1776580634; x=1777185434;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yAmgv2lVZpE/SE7DC82GpSZeFh3YqtMiZpzr9WufvnE=;
+        b=QGE35BPf++EgoenS2BVu0Qy4KqWmbgQv3Cn9QIcpG6Sx1mTDpIF8hqas+Cu79Ft6V4
+         ewzJ2KU/ndLpFLABSOcBJsWfQvS9yvaeHeJeXIyDV9EqE75mwNfkss2OCljPpIK3rtWn
+         fYQSD9QFpAZ2AMn1THEXfuM/Knljus8ryReGXcUx7evK1SjougsbVDDfsPHqi/X4ruzG
+         QclHs9uzRaVfFuuSm1YRE5WhPwSVcd443av9ycLCYDCQfykQjSlhuIZuNWeRHgloOiWg
+         AqytI+547DxQXETnPNu/9A3RfQteAMbQAIiDGcxff2hUkIROf7f2CW2XGe9OJEK8YT/q
+         ELoQ==
+X-Gm-Message-State: AOJu0YwIaWNyrnJirypxHvIquC2DdXgX40KXWtmGVGnmwQXqqXmMXaPV
+	mvnfE65FSYcW86ZGNeyeG7ualCgG2YIqPxLlFZmcHMJPb6R6/XtE3LwMpA1ZnW9rUrdv8Tl3JId
+	F5sGbhG6e1g==
+X-Gm-Gg: AeBDievwWpNUSMZN4C8x0ADvBcB5ZBh+iLNE2dr/357U/RfXQWayoOsz6SPnXaOmpUD
+	35eumgmqd9GqU0qaI1Ct9Pze68YLb6sGffIH6fGPWE128AYKRb6nH704LItCxuwSHliCCX/rNJN
+	/GJpacp852e+sw5KE6pUPBCJeqx8pxYniQl6eokeQLr3vdW9bFU0eEnSdorfXL+Be23cCgxFVD9
+	F+ftwYPqwDZNnig7pqHcQfMmZFTkXR53myxDHH/HGBqaIfut2ePz0Y3HHG+NBpTCimcqpKfdtF9
+	NxFQWmLcGKclGpbV0BLWJ1r5kUhepfzAmWQbBZzUAi2y8Jv04IpCNQBgDu9iPoeQu1SfHwUfchn
+	+/WVuXb9aMIvg8FKgSQEa3AxuhVg0EA9VfQdueQRUQ3vm8OVFTkgsKTYGKf3TAy/S+YDcrKhalQ
+	Vol64RAz9kGDwuBXW/5TRpddN3WT4mlFE6jW7yCXpNMvLQ02qnybb2q49udSBjkGDNsPei7AZ7f
+	jjjikHIxxJUlise4CSK7RjDVaDwMvo42d3d+4G+088=
+X-Received: by 2002:a17:907:9453:b0:b9b:5164:9057 with SMTP id a640c23a62f3a-ba4189818ddmr444804366b.3.1776580634338;
+        Sat, 18 Apr 2026 23:37:14 -0700 (PDT)
+Received: from panicking.station (mob-5-91-87-238.net.vodafone.it. [5.91.87.238])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ba45503c414sm230333866b.44.2026.04.18.23.37.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Apr 2026 02:00:16 -0700 (PDT)
-Message-ID: <7fe5f6f964889ffc37d62cc0d2fb734dc53c6434.camel@linuxfoundation.org>
-Subject: Re: [yocto-patches] [yocto-autobuilder2][RFC] master.cfg: Replace
- pkg_resources with importlib.metadata
-From: Richard Purdie <richard.purdie@linuxfoundation.org>
+        Sat, 18 Apr 2026 23:37:13 -0700 (PDT)
+From: Michael Trimarchi <michael@amarulasolutions.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Tim Orling <tim.orling@konsulko.com>
-Date: Fri, 17 Apr 2026 10:00:16 +0100
-In-Reply-To: <20260417013758.91120-2-tim.orling@konsulko.com>
-References: <20260417013758.91120-2-tim.orling@konsulko.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-9 
+Cc: Michael Trimarchi <michael@amarulasolutions.com>
+Subject: [meta-rockchip] [PATCH] wic: wic need to be moved to files/wic within the layer to be found/used
+Date: Sun, 19 Apr 2026 08:37:04 +0200
+Message-ID: <20260419063704.851653-1-michael@amarulasolutions.com>
+X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 17 Apr 2026 09:00:25 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3727
+ <yocto-patches@lists.yoctoproject.org>; Sun, 19 Apr 2026 06:37:24 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3728
 
-On Thu, 2026-04-16 at 18:37 -0700, Tim Orling via lists.yoctoproject.org wr=
-ote:
-> pkg_resources (from setuptools) is deprecated. Replace the fake
-> Distribution/EntryPoint/working_set manipulation with
-> importlib.metadata equivalents:
->=20
-> - Intercept importlib.metadata.version() for the local plugin, since
-> =C2=A0 buildbot's Application() calls it at import time before the plugin
-> =C2=A0 is registered.
-> - Use importlib.metadata.EntryPoint directly instead of the old
-> =C2=A0 pkg_resources.EntryPoint.parse() plus fake Distribution approach.
-> - Remove the now-unused os import.
->=20
-> Signed-off-by: Tim Orling <tim.orling@konsulko.com>
-> ---
-> This has been working for me on my local AB cluster, where the
-> controller is running on a Debian 13 AMD Ryzen system.
+Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
+---
+ {wic => files}/rockchip.wks | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ rename {wic => files}/rockchip.wks (100%)
 
-Nice!
+diff --git a/wic/rockchip.wks b/files/rockchip.wks
+similarity index 100%
+rename from wic/rockchip.wks
+rename to files/rockchip.wks
+-- 
+2.53.0
 
-I think Michael gave up on the local install and is building/running
-things a bit differently. I did find this approach handy for local
-development and did try and get it working again but failed and
-couldn't spend more time on it.
-
-I'm happy to merge this and replace what is there as it has to be an
-improvement, thanks!
-
-Cheers,
-
-Richard
 
