@@ -1,437 +1,170 @@
-Return-Path: <ayoub.zaki@embetrix.com>
+Return-Path: <ross.burton@arm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50B44F99357
-	for <webhook@archiver.kernel.org>; Thu, 23 Apr 2026 09:11:19 +0000 (UTC)
-Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.15515.1776935467264948898
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5110CF99359
+	for <webhook@archiver.kernel.org>; Thu, 23 Apr 2026 09:11:49 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.15447.1776935482665814606
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 23 Apr 2026 02:11:10 -0700
+ Thu, 23 Apr 2026 02:11:23 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@embetrix.com header.s=rsa2 header.b=FJC71Vap;
- dkim=pass header.i=@embetrix.com header.s=ed2 header.b=BXP8zP+A;
- spf=none, err=permanent DNS error (domain: embetrix.com, ip: 46.30.212.3, mailfrom: ayoub.zaki@embetrix.com)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1776935464; x=1777540264;
-	d=embetrix.com; s=rsa2;
-	h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
-	 from;
-	bh=wARMW9RcUSGzi5WyvphG6uUL+fD7DfAkASkntlzFM/8=;
-	b=FJC71VapFcH1gZzeb1rDkjeF3hF4/sKK1QeosBaJDwbHiZHDamII0jhhcdpd+8Yg9WeIkwgvi/VC6
-	 0Qqrls+L0bwPKukvy6u1V+h4OL2WFdnF8/XBxE2kK9brkWIwow+rFh/jusjCOEy3nkiSSrRprXXPo6
-	 mKr7zEz0qS/I5FPRbfwhC0+XvMYyK0tDvWtEvk8IUR2yOfTP8+hDN7SldcdZsd4JR1/ZjYAukOTV33
-	 tStXAreUANwiQT7TB7DD2mFf8MZ+gjlckTBF1ReFIgDfiJSbBIGmzfGZkzLGV7FilhmU8Ws+/V/64N
-	 sO5mPfhDbjXZW+ZaZINPjJTzzQstw7w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1776935464; x=1777540264;
-	d=embetrix.com; s=ed2;
-	h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
-	 from;
-	bh=wARMW9RcUSGzi5WyvphG6uUL+fD7DfAkASkntlzFM/8=;
-	b=BXP8zP+AQtuzgH/NRXRbTMkwvOJ+8Bo2LO/UCTc4w4obW7GU6bGYO2+uVH2+6NJGon/SP6y61pYhi
-	 p/ALVBdCg==
-X-HalOne-ID: 59ad1710-3ef4-11f1-839b-f3c0f7fef5ee
-Received: from xps-13.fritz.box (dynamic-2a02-3102-8c10-1ae0-a909-1220-fcba-3163.310.pool.telefonica.de [2a02:3102:8c10:1ae0:a909:1220:fcba:3163])
-	by mailrelay4.pub.mailoutpod2-cph3.one.com (Halon) with ESMTPSA
-	id 59ad1710-3ef4-11f1-839b-f3c0f7fef5ee;
-	Thu, 23 Apr 2026 09:11:03 +0000 (UTC)
-From: Ayoub Zaki <ayoub.zaki@embetrix.com>
+ dkim=pass header.i=@windriver.com header.s=PPS06212021 header.b=NiCh/FJe;
+ spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.178.238, mailfrom: prvs=8573f998c0=xiaozhan.li.cn@windriver.com)
+Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63N3ZHTd985311
+	for <yocto-patches@lists.yoctoproject.org>; Thu, 23 Apr 2026 09:11:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
+	 h=content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PPS06212021; bh=+3CWSfuJoI4Apj7HKCPi
+	yjfMQN94hgcoOoqIYuBH+9U=; b=NiCh/FJevnSj5CYvbKWE0Qj6EBZfAKwfiI54
+	cKRa6F+MzHRxiSQ/nLH3vQ4xPLLtXh2b/KREqKek+Pq2LxNhuSg0GaiNucZ8ELCi
+	8dOVqJAhx9vvaTpH4SYLJ+WA0CAmNZFWny3AgTDUg0Jl1a4rBZfE9U8Pd7SOayUJ
+	j5yfW9rUEvKWJUYiBDZ1MaLkGvsYh+9croyVKvZ7D+cr1mvH+3gZrumVpU/6LxHF
+	QWszU+qt3btGsrzE0CrabnGVQw5SJR++5UbbpB94R3NfNJRdJDLxI+LL3vfOddDf
+	VWGTtYwpJGB9DkyphT0NV48zI0RpVt6hV52H0GdTqemZZi6CbA==
+Received: from cy3pr05cu001.outbound.protection.outlook.com (mail-westcentralusazon11013058.outbound.protection.outlook.com [40.93.201.58])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4dq8qc0d1m-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT)
+	for <yocto-patches@lists.yoctoproject.org>; Thu, 23 Apr 2026 09:11:21 +0000 (GMT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bc//KeYcLdBvMxIG+qBZR9+qX35vdGzTbvIa6uvwBJvpGm8AB1nwlkMCMyQGhTWldnJNjARPnRQaR5AhRPcoxp0OHSxlbE58uvpqwEih4AL+N2TrfGlbTYiSc5uFrVIHTNSiAH1hjUgCjzhKhU7poafT5ra4QVvPizmgjhZTj1J6yDITSK2K6Npm5whCaByif7caIPzrGqXl82SgqDB+sMcuEdP4N0+Lg02khN+XYK9IduG4Vd0AwpKAACha6KZAfvaBd+4pQTttsuszO/Cjhhn9Qv7iikASeMyRQ0sGlYEhWVSoz4spNUK75Eyt3OORA5ifeADsy1RqNWwwD1KHDA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+3CWSfuJoI4Apj7HKCPiyjfMQN94hgcoOoqIYuBH+9U=;
+ b=ZV/TPdUVjBg/AkV6iqeV5nf+bwebh8YrE2M41S1bBn6vnImYaXak4FU26NMOo0XFE1wl9QOtuBqpuzB0rVgaSLa4NeoSvrdpreLrP628AlzXetEqUQUCUeaSzGmDMNl3MAE3WZxPtWWTCPhGMFsVcagzNq8b5pFPOAu2TaCMktwcc0z9DLu0UYF1m6EToCQ5Lr/Tjfwis3CRz4kmpW7IM4vYVZ+88u81Tv9h9wS+eDVmw+cjlARmVfoisQVwlOqtL00D5CsngPa79v/ZpPuxu5GNbV0Bl1uNfQPdG76GKRu80DBMWyzToqcPudXZbvqMZP3ZSkwx7nz7rO+6IXhEOg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=windriver.com; dmarc=pass action=none
+ header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
+Received: from CH3PR11MB8344.namprd11.prod.outlook.com (2603:10b6:610:17f::13)
+ by SA1PR11MB6823.namprd11.prod.outlook.com (2603:10b6:806:2b0::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9846.16; Thu, 23 Apr
+ 2026 09:11:18 +0000
+Received: from CH3PR11MB8344.namprd11.prod.outlook.com
+ ([fe80::5596:e734:3fd5:4fc4]) by CH3PR11MB8344.namprd11.prod.outlook.com
+ ([fe80::5596:e734:3fd5:4fc4%6]) with mapi id 15.20.9846.019; Thu, 23 Apr 2026
+ 09:11:18 +0000
+From: "Xiaozhan Li" <xiaozhan.li.cn@windriver.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Ayoub Zaki <ayoub.zaki@embetrix.com>
-Subject: [meta-security][PATCH v2] dm-verity: add PKCS#7 root hash signature support
-Date: Thu, 23 Apr 2026 11:11:02 +0200
-Message-ID: <20260423091102.26875-1-ayoub.zaki@embetrix.com>
+Subject: [meta-security][PATCH] arpwatch: fix wrong init script permissions
+Date: Thu, 23 Apr 2026 17:11:05 +0800
+Message-ID: <20260423091105.3247841-1-Xiaozhan.Li.CN@windriver.com>
 X-Mailer: git-send-email 2.43.0
+X-ClientProxiedBy: SG2P153CA0021.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c7::8)
+ To CH3PR11MB8344.namprd11.prod.outlook.com (2603:10b6:610:17f::13)
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR11MB8344:EE_|SA1PR11MB6823:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7217c74e-7287-4121-6a71-08dea1184736
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: 
+	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|18002099003|56012099003|38350700014;
+X-Microsoft-Antispam-Message-Info: 
+	P5BgS1fGwHREMz7XDYMoUUIadatldnHWDp2cfofR4heRO8h2uUdKmuxRSTY9ocM3KSrn6Mwb5uKcrw2vtmMNgoX7kVzKfdncVP9D2oX6yHNHrA3P5VUnkmLChO4J46CkcxoPZbLMu9QmKFfHgP+X3wi6hlInGbvj/pmg1P9D9VXkZO9OKAxMjahRA7bfhRB26GnH8/2xhs5rm83kcJObP4dsiTGQmQDduGhrECRWg5BbV9mtS1U3kPnY4XkYwGyNCbJDud6UDqR35gonuiv2IJUC8JYS4mSQaDbtlGjsKXsMHFnVmsv+rzez4PD3RAQ1w+GRoOoI7I16rAkSmg3/05+fxFPznoS9XAADIb1Eu7MsewEtwyPX1xENtj4DTXOPD0ROaBV5q7+WS4x6rQR5C/llxISAdWKOShyQNUsWBiTUi6HoRlkFAXKysyj8F7QHpa3Dsl5Ts8CwjwXVb1rGEl1yolb1cNgUP6bhcQ7YjsuwL+WTNxtVLbVbygcS5Pv5TYQB0lOQgBFrL76wApi7VdBhaDN/2oO7jP8fN0AlasWfx7c+s2+sFuhJlwfq02BzOEWrqPQwLLs8MOqIwshlcEZV2V26hEBNyDOjxa/ahvqdHzP5s50RZTvPXQMuQJ4bFI88OVgekTwwtvVgMEBo7G03D/xJPjkqD/uNSzMg6XJrxW8tGPMzDB2AwyWBxnks90KxRkMzx5465mlDvVPkZ+Tn7+HXVQ07JRIoiotApI4N2ijx0PMdeNcqXquvUtPrA+5XXRrVY7CTUePoxLTcGdl0K7gEgDaeaJQS7qOaKfc=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8344.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(18002099003)(56012099003)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?xkLGJXi42vAhqaegB1mwy5z/r0Vj+vAuGRiK2KutNg4hDeS+tCKA5Nheda4B?=
+ =?us-ascii?Q?UH33CD5zgJFx0MkUM9JF1Tmklm6+tEoCoR8/r+tg9T2v9fMnHfmJ8Li9Mtzp?=
+ =?us-ascii?Q?zL4mGNxKqChqmA95wg0HfmDNNW7hDGaXvsrwzE/XT1/l0t0xA7W5HPfNJkuQ?=
+ =?us-ascii?Q?eZnqFYkDY9hwdOX4sfgDuI63H9OnVtuPfTx8hdnKK+X7pPWX3jIXOWLdLPZo?=
+ =?us-ascii?Q?+tq03/insxCIFoqqV/+EudbYaLeMaDCwVvUIBwrrxOmcHUY6Rd/283jVdmDF?=
+ =?us-ascii?Q?uYIQ3X23FEO4tO+UTZSsD5AxS0nD9zszaq9mLJkPa215EW23sEVe1H6/j1sK?=
+ =?us-ascii?Q?3z2QK0uBqrjblLnA1yjyMDB6GYQEj5msKCrXzvpFkRzrzdx3zaloMa+7kxie?=
+ =?us-ascii?Q?7SK4gljqabvE5ulUjeTOomkJfrVAMgdDhmor5H5+Wipl52EStd7PhBFofMiY?=
+ =?us-ascii?Q?0Q7PLPZuUkFCSkIofkafrKkUp4pqWCKmwvCtb7cp3VD9GiPHLJBpYT6bARo7?=
+ =?us-ascii?Q?aL1Hl+kNW3z31I3QS57V0W4mBs0eOiuJY2rUK/l/ASe8ASzPgHWaN24dosNN?=
+ =?us-ascii?Q?Vb7UIVBa3OOHaxfDhmm0XpPPjFoqKvbDUuzU+xDMkcFMmSestT0vEm8obKP2?=
+ =?us-ascii?Q?PcgrdMire8B+wE11DJOwIr9x1zRekQA2nyGuSNGk3HY/vBfilZpthW9vhBtr?=
+ =?us-ascii?Q?V6aRBQM2vfqYOnH1ANC+6F0nRZHFhbHfHow7kc8oAF5ATK3hrd1lUeLgne9P?=
+ =?us-ascii?Q?pkEsWvXad7EUUYlfejY8qjC41BZJEFMu4fRUS+jYTkdeC5np17zKrGWUjV/a?=
+ =?us-ascii?Q?T8xeChGZWNYsldDvEDJnPwBRZZ0weW9ouuUqBPd7E/5FQg6O8ASTuq+F1W5v?=
+ =?us-ascii?Q?45sqhU6DtkAeDJqtx3fpP27eqH3BNkoB/WaOZJCSRuxfah2DAd2wSAyDQerp?=
+ =?us-ascii?Q?6ZsNTXtN0IChcmgLzI/lnGnc3GEi6N+8dZnh8e3BwAkMo4dXx0LB7N9Ah5/D?=
+ =?us-ascii?Q?rnESeI13b+XoPdjN4UUVrZHS0Q3gtiYYKh2MX4SGnfv27BDjMqxt8yZdyTbw?=
+ =?us-ascii?Q?0xVOblqa3vkaNkCb6NZPywtB18OqziONXZ4Xnu2sfvhiEizLKAtAllyC8heU?=
+ =?us-ascii?Q?KZNwelnLgVQYeevztfWUgNNXGoumBFbimWsQuT8DPPjw9NJnvi1SHmd8tolw?=
+ =?us-ascii?Q?Zz6vFkpXWslJ7WmlMcC7syomU2bV87bUQ7DMCKyDuE5BTHgjgfuGk9eGPe6N?=
+ =?us-ascii?Q?Lc5UwjYt9IwVoBEuNfaxpQmzkbbBkoDnZM6gqltDdhsyZIsgygOlbQHXvfk4?=
+ =?us-ascii?Q?DxHZ1usB9Fanea9PexFhaeVFdklqejA1uu/+63LMLxR7VuFMxHqClVThBD1e?=
+ =?us-ascii?Q?3A7GL54xzBPGP2m+dJ7/BeBjIxAtUiYuRg9nsdYh/8LM3F9etnpexT7k3jLU?=
+ =?us-ascii?Q?8ztSl+BDaormMjfFR7pVxnJJn9lpwX1jnageroSQTUzS9WWmdww1A7MNXgA+?=
+ =?us-ascii?Q?DLSMRBSFJY96YWCRJ7Hnx3yV0YvdhTPcwYFsv7/mSH84JNevZrG0b+wkDPzB?=
+ =?us-ascii?Q?ISZJszFqmWrXzV7zQvHTvKyoi8emYE52i59+q2pbh13MroXHCHOHyPes6uhj?=
+ =?us-ascii?Q?iN4y1CPWvkP4DwOjQC9Zq7n/IbzEPwNhRmfS1M+GoNQyKQMIoKatILJvMqvd?=
+ =?us-ascii?Q?OchIXEO+3CSaepCAgPb8G+nfLOtm4lcch9v/HUWgu99Zt8YH5wOFWQsD4tYy?=
+ =?us-ascii?Q?wm9/u1kwHhsCyE87cSfbdX046vNDkaA=3D?=
+X-Exchange-RoutingPolicyChecked: 
+	GiLefdOcjFyk18q1l7MGaV09WxH5h4avSou/G32ubP67iDpsY8mA18zv7XwcqN0sykE/7V4/ETbTCDQd5hE5BSMG5Vv2m2nlAyuMSySNxXB9A8tc5WCaoQDOtIkjR3LAO0z3unTjhN5mivkNqjAg7ULdFZ1KP0znIpsAdJ2TURHAXYIJAR339HANYQA5sWzKK8/7cJgFCY5QDuxtIFbkcE2i5wMXVxO5MInzBypK4f72jhyGqb4s0nKcTq5QG6zAJSPEt1zdaB6p07xzOdNK+ZIFuREzLluG/T0vFi2pjkx4Du03zErQ9F5chDc/4J4M7hXYZ6UBGdyg6EUS0HUiFw==
+X-OriginatorOrg: windriver.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7217c74e-7287-4121-6a71-08dea1184736
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8344.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Apr 2026 09:11:18.2990
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: oJ4xq50ZBZds2VaRQ1RfVhr0Qq9yA3wQt/XqYZ8h82UkY7fpfjo9/tyAjoMSBSeA8p5Frxi9ODil6ubLbZchtaDCvPUh0PwjYec9KDK5UpA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB6823
+X-Proofpoint-GUID: 3pB6ffM5hxfwELlibyvdTLXb7No7nFzz
+X-Proofpoint-ORIG-GUID: 3pB6ffM5hxfwELlibyvdTLXb7No7nFzz
+X-Authority-Analysis: v=2.4 cv=EY74hvmC c=1 sm=1 tr=0 ts=69e9e239 cx=c_pps
+ a=+UayH2mdqs80qU9+PBkj6w==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
+ a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=xqWC_Br6kY4A:10 a=A5OVakUREuEA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=bi6dqmuHe4P4UrxVR6um:22 a=klDOsUkWDRETUCZYPvoE:22 a=t7CeM3EgAAAA:8
+ a=-HhFvLZS0_GLIt-yJWcA:9 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDIzMDA4OSBTYWx0ZWRfX7AAyLv7cyi3v
+ LJICEBIgilBPVIC2x42olulnKjAoMTtWjn7A1TTCAMw3tm/w+t1pkGd7fHidO88J/2AYsXTq/2e
+ BOZRFPiLMwEUzCgEdTyJd/qwjaymhHuljsnFiYx6mCFPIPEa7+B5mM2HGejpdA7TUzr/o2tnwf5
+ jt4/30WWuQcTGAz0JxWfxr58XeLjXIt+oSC8Ce/iUSgfRi5ox5SzHLrYw4slXBvSFqoAOaXU9Tx
+ eEn7xz9T6uAopqvpJ2NUCIncDMPjFcZFIoSBm6FHN8sLexs+kXzVY8WxdRpf1wqXnOZs07RCdJ8
+ BaDdp54RkkmuoDt9RjsPaqmiccaMWR8KCW5ef/jQlNlVEXkFn4/6vDZbF4sliWsxgNXOtfNmlyK
+ nvSiNs/W7VobRQS630ngfFYevd6M7xUJj8OGwZXPbMiK+i5pAb1uAGl90u/ujY2FmReBnnlVOCJ
+ QZdOFSNRp5zLHFdwftg==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-04-23_02,2026-04-21_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 priorityscore=1501 impostorscore=0 malwarescore=0
+ adultscore=0 clxscore=1011 phishscore=0 bulkscore=0 spamscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2604200000
+ definitions=main-2604230089
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 23 Apr 2026 09:11:19 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3773
+ <yocto-patches@lists.yoctoproject.org>; Thu, 23 Apr 2026 09:11:49 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3774
 
-The dm-verity root hash stored in the initramfs is vulnerable to TOCTOU
-attacks. Mitigate this by signing the root hash at build time and
-verifying it from the kernel via CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG.
-The signature is deployed into the initramfs while the signing certificate
-is embedded in the kernel's built-in trusted keyring.
+The permission in "install -m 655 ${UNPACKDIR}/arpwatch_init ${D}${sysconfdir}/init.d/arpwatch"
+should be changed to 755.
 
-- dm-verity-img.bbclass: sign root hash with openssl smime when DM_VERITY_SIGN=1
-- kernel-trusted-keys.bbclass: new shared class to collect PEM certs
-  into trusted_keys.pem via KERNEL_TRUSTED_CERTS variable
-- linux-yocto_security.inc: add kernel config fragments and append
-  signing cert via KERNEL_TRUSTED_CERTS
-- dm-verity-image-initramfs.bb: deploy .p7s signature
-- dmverity initrd script: pass --root-hash-signature to veritysetup
-- linux_ima.inc: use KERNEL_TRUSTED_CERTS instead of absolute path in
-  CONFIG_SYSTEM_TRUSTED_KEYS, fixing buildpaths QA
-- Add documentation
-
-Signing is not enabled by default for backward compatibility but is
-strongly recommended for production deployments.
-
-Signed-off-by: Ayoub Zaki <ayoub.zaki@embetrix.com>
+Signed-off-by: Xiaozhan Li <Xiaozhan.Li.CN@windriver.com>
 ---
- classes/dm-verity-img.bbclass                 |  46 +++++++-
- classes/kernel-trusted-keys.bbclass           |  34 ++++++
- docs/dm-verity.txt                            | 110 ++++++++++++++++++
- .../recipes-kernel/linux/linux_ima.inc        |   9 +-
- .../images/dm-verity-image-initramfs.bb       |   6 +
- .../initramfs-framework-dm/dmverity           |   7 ++
- .../linux/files/dm-verity-verify.cfg          |  10 ++
- .../linux/files/dm-verity-verify.scc          |   5 +
- recipes-kernel/linux/linux-yocto_security.inc |  10 ++
- 9 files changed, 231 insertions(+), 6 deletions(-)
- create mode 100644 classes/kernel-trusted-keys.bbclass
- create mode 100644 recipes-kernel/linux/files/dm-verity-verify.cfg
- create mode 100644 recipes-kernel/linux/files/dm-verity-verify.scc
+ recipes-scanners/arpwatch/arpwatch_3.3.bb | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/classes/dm-verity-img.bbclass b/classes/dm-verity-img.bbclass
-index 48557e9..4eec085 100644
---- a/classes/dm-verity-img.bbclass
-+++ b/classes/dm-verity-img.bbclass
-@@ -3,6 +3,12 @@
- # Copyright (C) 2020 BayLibre SAS
- # Author: Bartosz Golaszewski <bgolaszewski@baylibre.com>
- #
-+# Copyright (C) 2026 Embetrix Embedded Systems Solutions <ayoub.zaki@embetrix.com>
-+# - Added PKCS#7 root hash signature support to mitigate TOCTOU attacks.
-+#   The root hash is signed at build time and verified by the kernel at boot
-+#   via CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG, removing the need to trust
-+#   the initramfs as the sole root hash storage.
-+#
- # This bbclass allows creating of dm-verity protected partition images. It
- # generates a device image file with dm-verity hash data appended at the end
- # plus the corresponding .env file containing additional information needed
-@@ -49,6 +55,21 @@ DM_VERITY_SEPARATE_HASH ?= "0"
- # Additional arguments for veritysetup
- DM_VERITY_SETUP_ARGS ?= ""
+diff --git a/recipes-scanners/arpwatch/arpwatch_3.3.bb b/recipes-scanners/arpwatch/arpwatch_3.3.bb
+index 3ab5993..3769706 100644
+--- a/recipes-scanners/arpwatch/arpwatch_3.3.bb
++++ b/recipes-scanners/arpwatch/arpwatch_3.3.bb
+@@ -65,7 +65,7 @@ do_install () {
  
-+# Root hash signing: set to "1" to generate a PKCS#7 signature of the root
-+# hash that the kernel verifies via CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG.
-+DM_VERITY_SIGN ?= "0"
-+
-+# No default! Either this or DM_VERITY_SIGN_KEY/DM_VERITY_SIGN_CERT have
-+# to be set explicitly in a local.conf before enabling DM_VERITY_SIGN.
-+DM_VERITY_SIGN_KEY_DIR ?= "DM_VERITY_SIGN_KEY_DIR_NOT_SET"
-+
-+# Private key (PEM) used to sign the root hash.
-+DM_VERITY_SIGN_KEY ?= "${DM_VERITY_SIGN_KEY_DIR}/privkey_verity.pem"
-+
-+# X.509 certificate (PEM) corresponding to the signing key. This cert must
-+# also be embedded in the kernel via CONFIG_SYSTEM_TRUSTED_KEYS.
-+DM_VERITY_SIGN_CERT ?= "${DM_VERITY_SIGN_KEY_DIR}/x509_verity.crt"
-+
- # These are arch specific.  We could probably intelligently auto-assign these?
- # Take x86-64 values as defaults. No impact on functionality currently.
- # See SD_GPT_ROOT_X86_64 and SD_GPT_ROOT_X86_64_VERITY in the spec.
-@@ -56,7 +77,7 @@ DM_VERITY_SETUP_ARGS ?= ""
- DM_VERITY_ROOT_GUID ?= "4f68bce3-e8cd-4db1-96e7-fbcaf984b709"
- DM_VERITY_RHASH_GUID ?= "2c7357ed-ebd2-46d9-aec1-23d437ec2bf5"
- 
--DEPENDS += "bc-native"
-+DEPENDS += "bc-native ${@bb.utils.contains('DM_VERITY_SIGN', '1', 'openssl-native', '', d)}"
- 
- # Process the output from veritysetup and generate the corresponding .env
- # file. The output from veritysetup is not very machine-friendly so we need to
-@@ -160,6 +181,29 @@ verity_setup() {
-     # Let's drop the first line of output (doesn't contain any useful info)
-     # and feed the rest to another function.
-     veritysetup $SETUP_ARGS | tail -n +2 | process_verity
-+
-+    if [ ${DM_VERITY_SIGN} -eq 1 ]; then
-+        if [ ! -f "${DM_VERITY_SIGN_KEY}" ]; then
-+            bbfatal "DM_VERITY_SIGN_KEY not found: ${DM_VERITY_SIGN_KEY}"
-+        fi
-+        if [ ! -f "${DM_VERITY_SIGN_CERT}" ]; then
-+            bbfatal "DM_VERITY_SIGN_CERT not found: ${DM_VERITY_SIGN_CERT}"
-+        fi
-+
-+        local ENV="${STAGING_VERITY_DIR}/${DM_VERITY_IMAGE}.$TYPE.verity.env"
-+        local SIG="${ENV}.p7s"
-+        local ROOTHASH=$(cat $ENV | grep ^ROOT_HASH | sed 's/ROOT_HASH=//')
-+        local HASH_HEX=$(mktemp)
-+
-+        echo -n "$ROOTHASH" > $HASH_HEX
-+
-+        openssl smime -sign -nocerts -noattr -binary \
-+            -in $HASH_HEX \
-+            -inkey ${DM_VERITY_SIGN_KEY} -signer ${DM_VERITY_SIGN_CERT} \
-+            -outform der -out $SIG
-+
-+        rm -f $HASH_HEX
-+    fi
+     oe_runmake install DESTDIR=${D}
+     install -m 644 ${UNPACKDIR}/arpwatch.conf  ${D}${sysconfdir}
+-    install -m 655 ${UNPACKDIR}/arpwatch_init  ${D}${sysconfdir}/init.d/arpwatch
++    install -m 755 ${UNPACKDIR}/arpwatch_init  ${D}${sysconfdir}/init.d/arpwatch
+     install -m 644 ${UNPACKDIR}/arpwatch.default  ${D}${sysconfdir}/default
  }
  
- # make "dateless" symlink for the hash so the wks can find it.
-diff --git a/classes/kernel-trusted-keys.bbclass b/classes/kernel-trusted-keys.bbclass
-new file mode 100644
-index 0000000..3f30e68
---- /dev/null
-+++ b/classes/kernel-trusted-keys.bbclass
-@@ -0,0 +1,34 @@
-+#
-+# Copyright (C) 2026 Embetrix Embedded Systems Solutions <ayoub.zaki@embetrix.com>
-+#
-+# Collect PEM certificates into a shared trusted_keys.pem bundle
-+# for CONFIG_SYSTEM_TRUSTED_KEYS. Multiple features (IMA, dm-verity
-+# signing, etc.) can append their certs to KERNEL_TRUSTED_CERTS.
-+#
-+# Usage from other classes or .inc files:
-+#   KERNEL_TRUSTED_CERTS:append = " ${MY_CERT_PATH}"
-+#   inherit kernel-trusted-keys
-+
-+KERNEL_TRUSTED_CERTS ?= ""
-+
-+do_configure:append() {
-+    if [ -f .config ]; then
-+        for cert in ${KERNEL_TRUSTED_CERTS}; do
-+            if [ -f "$cert" ]; then
-+                if ! grep -q "BEGIN CERTIFICATE" "$cert"; then
-+                    bbfatal "$cert is not in PEM format"
-+                fi
-+                cat "$cert" >> "${B}/trusted_keys.pem"
-+            fi
-+        done
-+        if [ -f "${B}/trusted_keys.pem" ]; then
-+            echo 'CONFIG_SYSTEM_TRUSTED_KEYS="trusted_keys.pem"' >> .config
-+        fi
-+    fi
-+}
-+
-+do_shared_workdir:append() {
-+    if [ -f trusted_keys.pem ]; then
-+        cp trusted_keys.pem $kerneldir/
-+    fi
-+}
-diff --git a/docs/dm-verity.txt b/docs/dm-verity.txt
-index a538fa2..75bb801 100644
---- a/docs/dm-verity.txt
-+++ b/docs/dm-verity.txt
-@@ -121,3 +121,113 @@ INFO: The image(s) were created using OE kickstart file:
- The "direct" image contains the partition table, bootloader, and dm-verity
- enabled ext4 image all in one -- ready to write to a raw device, such as a
- u-SD card in the case of the beaglebone.
-+
-+Root Hash Signature Verification
-+--------------------------------
-+By default, dm-verity stores the root hash as plain text in the initramfs
-+at /usr/share/misc/dm-verity.env. Even when the initramfs is verified at
-+an earlier boot stage (e.g. bundled with the kernel or part of a signed
-+FIT image), there is a window between that verification and the actual use
-+of the root hash during which memory contents can potentially be modified
-+using hardware-based techniques. This creates a TOCTOU (time-of-check to
-+time-of-use) vulnerability that can defeat dm-verity.
-+
-+To mitigate this, the root hash can be cryptographically signed at build
-+time using PKCS#7. The signature is deployed into the initramfs and passed
-+to veritysetup via --root-hash-signature. The kernel then verifies the
-+signature against certificates embedded in its built-in trusted keyring
-+(CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG). No certificate is stored in the
-+initramfs and the trust anchor is the kernel binary itself.
-+
-+This feature requires a secure boot chain to protect the kernel image.
-+
-+Signing Setup
-+~~~~~~~~~~~~~
-+1. Generate a signing key pair (do this once, keep the private key safe):
-+
-+   openssl req -new -x509 -newkey rsa:4096 -nodes \
-+       -keyout privkey_verity.pem -out x509_verity.crt \
-+       -days 3650 -subj "/CN=dm-verity signing key"
-+
-+2. Add the following to your conf/local.conf or distro config:
-+
-+   DM_VERITY_SIGN = "1"
-+   DM_VERITY_SIGN_KEY_DIR = "/path/to/keys"
-+
-+   The key directory should contain privkey_verity.pem (private key) and
-+   x509_verity.crt (X.509 certificate). The certificate serves a dual
-+   purpose:
-+   - It is used by openssl at build time to create the PKCS#7 signature
-+   - It is embedded into the kernel via CONFIG_SYSTEM_TRUSTED_KEYS so the
-+     kernel can verify the signature at boot
-+
-+   Alternatively, set DM_VERITY_SIGN_KEY and DM_VERITY_SIGN_CERT
-+   individually to override the default filenames.
-+
-+3. The build will automatically:
-+   - Enable CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG in the kernel
-+   - Embed the signing certificate in the kernel's trusted keyring
-+   - Sign the root hash and produce a .p7s signature file
-+   - Deploy the signature into the initramfs
-+
-+4. At boot, the initramfs dmverity script passes the signature to
-+   veritysetup, which forwards it to the kernel. The kernel verifies
-+   the root hash against its built-in trusted keys before activating
-+   the dm-verity target. If verification fails, the device will not
-+   be created and the boot will fail.
-+
-+Hardening
-+~~~~~~~~~
-+By default CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG only verifies the
-+signature when one is provided. A dm-verity target created without a
-+signature will still be accepted. To enforce that ALL dm-verity targets
-+must have a valid root hash signature, add the following to the kernel
-+command line:
-+
-+   dm_verity.require_signatures=1
-+
-+With this parameter set, any attempt to create a dm-verity device
-+without a valid PKCS#7 signature will be rejected by the kernel. This
-+is strongly recommended for production deployments.
-+
-+Note on trusted_keys.pem
-+~~~~~~~~~~~~~~~~~~~~~~~~
-+The kernel-trusted-keys.bbclass aggregates certificates into a file called
-+trusted_keys.pem in the kernel build directory and in work-shared. Despite
-+the name (inherited from the kernel's CONFIG_SYSTEM_TRUSTED_KEYS), this
-+file contains only X.509 certificates (public keys). No private key
-+material is handled by the kernel's built-in trusted keyring.
-+
-+Vendor Kernel Integration
-+~~~~~~~~~~~~~~~~~~~~~~~~~
-+Since meta-security only bbappends linux-yocto, integrating root hash
-+signature verification with a vendor kernel requires adding the following
-+kernel configuration options:
-+
-+   CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG=y
-+   CONFIG_KEYS=y
-+   CONFIG_ASYMMETRIC_KEY_TYPE=y
-+   CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE=y
-+   CONFIG_X509_CERTIFICATE_PARSER=y
-+   CONFIG_PKCS7_MESSAGE_PARSER=y
-+   CONFIG_SYSTEM_TRUSTED_KEYRING=y
-+   CONFIG_SYSTEM_TRUSTED_KEYS="trusted_keys.pem"
-+   CONFIG_CRYPTO_RSA=y
-+   CONFIG_CRYPTO_SHA256=y
-+
-+These can be applied as a fragment or via your kernel's
-+configuration mechanism.
-+
-+Additionally, ensure your kernel recipe inherits kernel-trusted-keys and
-+points the signing certificate via KERNEL_TRUSTED_CERTS:
-+
-+   KERNEL_TRUSTED_CERTS:append = "${DM_VERITY_SIGN_CERT}"
-+   inherit kernel-trusted-keys
-+
-+Compatibility Notes
-+~~~~~~~~~~~~~~~~~~~
-+- Signing is optional but strongly recommended. It is backward compatible;
-+  when DM_VERITY_SIGN is "0" (the default) the behavior is unchanged.
-+- Both appended hash and separate hash partition modes support signing.
-+- The signing certificate can coexist with other certificates already set
-+  in CONFIG_SYSTEM_TRUSTED_KEYS (e.g. for IMA/EVM).
-diff --git a/meta-integrity/recipes-kernel/linux/linux_ima.inc b/meta-integrity/recipes-kernel/linux/linux_ima.inc
-index 415476a..fbedaf9 100644
---- a/meta-integrity/recipes-kernel/linux/linux_ima.inc
-+++ b/meta-integrity/recipes-kernel/linux/linux_ima.inc
-@@ -1,9 +1,8 @@
-+IMA_EVM_KEY_DIR ?= "IMA_EVM_KEY_DIR_NOT_SET"
-+IMA_EVM_ROOT_CA ?= "${IMA_EVM_KEY_DIR}/ima-local-ca.pem"
- 
--do_configure:append() {
--    if [ "${@bb.utils.contains('DISTRO_FEATURES', 'ima', 'yes', '', d)}" = "yes" ] && [ -f .config ] ; then
--        sed -i "s|^CONFIG_SYSTEM_TRUSTED_KEYS=.*|CONFIG_SYSTEM_TRUSTED_KEYS=\"${IMA_EVM_ROOT_CA}\"|" .config
--    fi
--}
-+KERNEL_TRUSTED_CERTS:append = " ${@d.getVar('IMA_EVM_ROOT_CA') if bb.utils.contains('DISTRO_FEATURES', 'ima', True, False, d) else ''}"
-+inherit kernel-trusted-keys
- 
- KERNEL_FEATURES:append = " ${@bb.utils.contains('DISTRO_FEATURES', 'modsign', ' features/ima/modsign.scc', '', d)}"
- KERNEL_FEATURES:append = " ${@bb.utils.contains('DISTRO_FEATURES', 'ima', ' features/ima/ima.scc', '', d)}"
-diff --git a/recipes-core/images/dm-verity-image-initramfs.bb b/recipes-core/images/dm-verity-image-initramfs.bb
-index 7ed83dc..41fa53a 100644
---- a/recipes-core/images/dm-verity-image-initramfs.bb
-+++ b/recipes-core/images/dm-verity-image-initramfs.bb
-@@ -39,5 +39,11 @@ deploy_verity_hash() {
-     install -D -m 0644 \
-         ${STAGING_VERITY_DIR}/${DM_VERITY_IMAGE}.${DM_VERITY_IMAGE_TYPE}.verity.env \
-         ${IMAGE_ROOTFS}${datadir}/misc/dm-verity.env
-+
-+    local SIG="${STAGING_VERITY_DIR}/${DM_VERITY_IMAGE}.${DM_VERITY_IMAGE_TYPE}.verity.env.p7s"
-+    if [ -f "$SIG" ]; then
-+        install -D -m 0644 "$SIG" \
-+            ${IMAGE_ROOTFS}${datadir}/misc/dm-verity.sig
-+    fi
- }
- IMAGE_PREPROCESS_COMMAND += "deploy_verity_hash;"
-diff --git a/recipes-core/initrdscripts/initramfs-framework-dm/dmverity b/recipes-core/initrdscripts/initramfs-framework-dm/dmverity
-index 1923490..20b06f2 100644
---- a/recipes-core/initrdscripts/initramfs-framework-dm/dmverity
-+++ b/recipes-core/initrdscripts/initramfs-framework-dm/dmverity
-@@ -12,6 +12,11 @@ dmverity_run() {
- 
-     . /usr/share/misc/dm-verity.env
- 
-+    ROOTHASH_SIG_ARG=""
-+    if [ -f /usr/share/misc/dm-verity.sig ]; then
-+        ROOTHASH_SIG_ARG="--root-hash-signature=/usr/share/misc/dm-verity.sig"
-+    fi
-+
-     C=0
-     delay=${bootparam_rootdelay:-1}
-     timeout=${bootparam_roottimeout:-5}
-@@ -30,6 +35,7 @@ dmverity_run() {
- 
-         veritysetup \
-             --data-block-size=${DATA_BLOCK_SIZE} \
-+            ${ROOTHASH_SIG_ARG} \
-             create rootfs \
-             /dev/disk/by-partuuid/${ROOT_UUID} \
-             /dev/disk/by-partuuid/${RHASH_UUID} \
-@@ -81,6 +87,7 @@ dmverity_run() {
-     veritysetup \
-         --data-block-size=${DATA_BLOCK_SIZE} \
-         --hash-offset=${DATA_SIZE} \
-+        ${ROOTHASH_SIG_ARG} \
-         create rootfs \
-         ${RDEV} \
-         ${RDEV} \
-diff --git a/recipes-kernel/linux/files/dm-verity-verify.cfg b/recipes-kernel/linux/files/dm-verity-verify.cfg
-new file mode 100644
-index 0000000..aba6a67
---- /dev/null
-+++ b/recipes-kernel/linux/files/dm-verity-verify.cfg
-@@ -0,0 +1,10 @@
-+CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG=y
-+CONFIG_KEYS=y
-+CONFIG_ASYMMETRIC_KEY_TYPE=y
-+CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE=y
-+CONFIG_X509_CERTIFICATE_PARSER=y
-+CONFIG_PKCS7_MESSAGE_PARSER=y
-+CONFIG_SYSTEM_TRUSTED_KEYRING=y
-+CONFIG_SYSTEM_TRUSTED_KEYS="trusted_keys.pem"
-+CONFIG_CRYPTO_RSA=y
-+CONFIG_CRYPTO_SHA256=y
-diff --git a/recipes-kernel/linux/files/dm-verity-verify.scc b/recipes-kernel/linux/files/dm-verity-verify.scc
-new file mode 100644
-index 0000000..2af676a
---- /dev/null
-+++ b/recipes-kernel/linux/files/dm-verity-verify.scc
-@@ -0,0 +1,5 @@
-+# SPDX-License-Identifier: MIT
-+define KFEATURE_DESCRIPTION "Enable dm-verity root hash signature verification"
-+define KFEATURE_COMPATIBILITY board
-+
-+kconf hardware dm-verity-verify.cfg
-diff --git a/recipes-kernel/linux/linux-yocto_security.inc b/recipes-kernel/linux/linux-yocto_security.inc
-index 3a2ff96..505f0db 100644
---- a/recipes-kernel/linux/linux-yocto_security.inc
-+++ b/recipes-kernel/linux/linux-yocto_security.inc
-@@ -5,3 +5,13 @@ KERNEL_FEATURES:append = " ${@bb.utils.contains("DISTRO_FEATURES", "smack", " fe
- KERNEL_FEATURES:append = " ${@bb.utils.contains("IMAGE_CLASSES", "dm-verity-img", " features/device-mapper/dm-verity.scc", "" ,d)}"
- KERNEL_FEATURES:append = " features/ecryptfs/ecryptfs.scc"
- SRC_URI += " ${@bb.utils.contains("DISTRO_FEATURES", "lkrg", "file://lkrg.scc", "" ,d)}"
-+
-+DM_VERITY_SIGN ?= "0"
-+DM_VERITY_SIGN_KEY_DIR ?= "DM_VERITY_SIGN_KEY_DIR_NOT_SET"
-+DM_VERITY_SIGN_CERT ?= "${DM_VERITY_SIGN_KEY_DIR}/x509_verity.crt"
-+
-+SRC_URI += " ${@bb.utils.contains("DM_VERITY_SIGN", "1", "file://dm-verity-verify.scc file://dm-verity-verify.cfg", "" ,d)}"
-+KERNEL_FEATURES:append = " ${@bb.utils.contains("DM_VERITY_SIGN", "1", " dm-verity-verify.scc", "" ,d)}"
-+
-+KERNEL_TRUSTED_CERTS:append = " ${@d.getVar('DM_VERITY_SIGN_CERT') if d.getVar('DM_VERITY_SIGN') == '1' else ''}"
-+inherit kernel-trusted-keys
 -- 
 2.43.0
 
