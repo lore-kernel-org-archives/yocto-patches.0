@@ -1,105 +1,107 @@
-Return-Path: <richard.purdie@linuxfoundation.org>
+Return-Path: <alex.kanavin@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93ED6FED3F2
-	for <webhook@archiver.kernel.org>; Fri, 24 Apr 2026 17:04:14 +0000 (UTC)
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.27358.1777050244064090868
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 218FBFED3F9
+	for <webhook@archiver.kernel.org>; Fri, 24 Apr 2026 18:52:05 +0000 (UTC)
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.29533.1777056720506825534
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 24 Apr 2026 10:04:04 -0700
+ Fri, 24 Apr 2026 11:52:00 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=HrkCx6xn;
- spf=pass (domain: linuxfoundation.org, ip: 209.85.221.50, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-43d572f7437so5330851f8f.1
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 24 Apr 2026 10:04:03 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=QNLLowuN;
+ spf=pass (domain: gmail.com, ip: 209.85.222.174, mailfrom: alex.kanavin@gmail.com)
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-8d7e7f48499so928404385a.1
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 24 Apr 2026 11:52:00 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1777056719; cv=none;
+        d=google.com; s=arc-20240605;
+        b=kVP+mggFcX6EU5cwoh4HywGagtVbulMvBc6uArsUF/xB+BCt3K6LMd5ibq7Ixsq3TG
+         ShB2G0VprzbyERzN4jhwNue9kvT6OwpoLqH3u2ncddYiQ2xD0moNqeHGFT+HATKtIPd6
+         vOKuQIKPxwUSkUjlRCxMa8mdJNDEYrEM+g4M9PGK3Q+XYTcU6oynRAg3N6E1pcJ61TN9
+         JSYNfBpJdYE5KxHk9T9PJPEOjOoFNUeWYlLTL+oKj0jnb5zg7XGIUDDHz8tCZNFVRHtZ
+         7S7cTjRyuIudJgIjxkB6OEQuiI2w7IyURJslpE3whXZEjXX5JofuNQuvKvmL9OHUu2Ui
+         gtMw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=rkQKBHeVu0fAJ+5wh2EOXeH2Ip4+5ZQ9D9eCmd4f318=;
+        fh=ZKASkXXDbWkLXZ2ZMTZBRo+mbZPSuSOHP+oAS3wPBOA=;
+        b=Vj6Wpp+g3vBJjwtAuMhn7ZBJXuueOl3TW/RfQ7WbmbDNaal6SSe5v2HTGdHPYQTQhx
+         59M6Ynd0C57Yn1+qBMuuIkCOClsxb88uLn15Fnu91IAy6oFzbP84S09iAh4rnPPm6rP/
+         QiC9O4BqTQPMrZ+rc0Ghibt+aim7TnmApJv3ILYtSkNtXz0nlw0dboBpHuARMzBHW+1V
+         hpm0P2PHuWSOy4+rFCdNaJ8Z5f/lrJDozj3Dv9vlGtd3HVWNokvDvNf65h7BNdxo5+YF
+         o8lHMBzzEJ6ecv5QQzrJcitlcEzQuzKJoRoJi/Yz2vu739XN/3K//tY7ggMA1vbDbAbv
+         5sFQ==;
+        darn=lists.yoctoproject.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1777050242; x=1777655042; darn=lists.yoctoproject.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xU0rIaPZGErw9F7pBJ8ww++leUpGhD91izNLwR//yME=;
-        b=HrkCx6xnfZ6POevMaMau035XQxRoz41D4wUyimW3OuvQf07Jibg0OU1nSKiTtPL/pn
-         VeR+4hvtNt5xjXlo8PvpcSWaZQtWsrAhFk5PoAFUgW07qhyb1L9BVWCTj/9Nnba476M4
-         XXmIKFomy7Q8Yla66tSUfEmGj+4Cv2t+niY04=
+        d=gmail.com; s=20251104; t=1777056719; x=1777661519; darn=lists.yoctoproject.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=rkQKBHeVu0fAJ+5wh2EOXeH2Ip4+5ZQ9D9eCmd4f318=;
+        b=QNLLowuNIiKWHJsm6/V7RTpfDjad8s7zc3xIE7hotXx04T/JbASIZsrjtg0LoydGYO
+         aHYzAGhETt0CB5heHrScFt4CPNVgturvkLQlrKaEqyiI3tKubXxFgipAuVgDlF/wQyJZ
+         Fe4hCmknVjaYlhU6vVlcROxNFxBSfyBXZ5wn2rm8buMEqhP03P2hZvUUXg0KxuZKvsAr
+         vEDDukBAteMhVpigvsQy2nBVcN9738RDj37EfJxDohstf4NPKvK/FwEoNVvwPZad1Kcp
+         JFrsNezdcFCkaCwB2Mqvg++dazDbfsfE46L7xFwj0CcN3aELPu+WYXTC+rMAxfdEXLQf
+         0IoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777050242; x=1777655042;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xU0rIaPZGErw9F7pBJ8ww++leUpGhD91izNLwR//yME=;
-        b=QjZ9w9efnkbHAl81ANnttJ1hFNTk2Np3fGIn4Y3fJfdN550y/H9USGzhWqbemloFCl
-         JebtQ/NX7cyWk1qgbHXTpo90SQx5JDEsMcXC9uFc9WVGAqgx3BQn+7P3rSv+eV2UbOB4
-         LiHDQ/TiejpreJPMvrIfb6tH7/iEUDMUsqjg9zRB8Unl+B9WEUYWkjAi8misVOIglVKo
-         817/WAWTiqtQ0s9U2q2e/xoJlDtT/q8jT67/b4XmalgghXJHOIJDopg9H2Dnb1WmpH99
-         sQTuobeNEtdDbID+82Wku/nYpxRFmstUyf8Owz4QmvIfz3wkZvIU16n2m8UziambpuqJ
-         WY7Q==
-X-Gm-Message-State: AOJu0Yy0J0CEpUCGKBqJWLCxypME2WObEt5bOJQumxAuU6Aiud1vHHYy
-	wDL2y202Z+t0mUfqx6jTBDupGl/jr7k/4zYDi75GVdOPXYezbzvoKyGFnYC92cPhIcfStvFGCUr
-	rFobmTtI=
-X-Gm-Gg: AeBDieugC/MWhDey++MdLbZ1NGrCPSND47wTvDQwotfyWppb+clSZo1zBMEZt5vgX5L
-	pPcK9eEEwa/2mZTWXkGjABYXVYvu4Q8bXgXy6QAq9QgwSd5a/v+KgbD3eVvlUea1YjPhL6nDaW1
-	mjzxiLD4l8kF8azuknKIyDZUgwEkCMa9vUC1wfuVN39eqgI091FbiBoxKfNlMz+ScDRwYp83cFT
-	z1D3ycsbJhVlLUBivoy7LbbKN+6OejeFvKh5HwBWkkH7ThFPSoSKvyqr7JtTzIRv01gnuXkxf0q
-	fwQVv0NT5u7ZdYPeGD2Ju8gxbBcu/jRoGAj4qEVHzLOHOO6UdznyIvc7yejoZFt22xogu30O7EZ
-	Ikgh7JPpAYPk7aNRlLHPhpqAvEvnC38fkwd75A4Bxkazz2eR7xlmt7Hpv+NveYsYLsQvYu9KOhl
-	r0QdaY9Tv78UC0oGQpZN+IVqKHBv8O2oaOgkx6pjI+BgxXfTCiaRF63JFwJxBQxO0kGWRYLyifg
-	M/Cxi5oSDNZSdzbsEMvw4uuOdg=
-X-Received: by 2002:a05:600c:8587:b0:488:a797:f0ac with SMTP id 5b1f17b1804b1-488fb7880bdmr339705315e9.28.1777050241635;
-        Fri, 24 Apr 2026 10:04:01 -0700 (PDT)
-Received: from ?IPv6:2001:8b0:aba:5f3c:6633:2b7d:813b:8534? ([2001:8b0:aba:5f3c:6633:2b7d:813b:8534])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-488fc1c01cfsm628433395e9.10.2026.04.24.10.04.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Apr 2026 10:04:01 -0700 (PDT)
-Message-ID: <de8caefe20ca7301a8f104e8d9751ffd8ca50e38.camel@linuxfoundation.org>
+        d=1e100.net; s=20251104; t=1777056719; x=1777661519;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rkQKBHeVu0fAJ+5wh2EOXeH2Ip4+5ZQ9D9eCmd4f318=;
+        b=tZwN58zE1RouSKqa8d1lL1eY4ozGCKJcqxyNt+6SmqZiksJH+c+1XwtBLLHR8uwn+6
+         4m2kJswW4oi6aPjV5rMphQCekUjaNF1lsuMo8VRJy9p/UgJF6E4OhHS6Wczcs/npB/iC
+         emYBLrpbTVAzOLmmzpJk0tGqIzjVzQ5mFq0uXIpiaW9aPNE1Tb9pc+X/1lNUWZJtoX3b
+         8lMqJkFXqBKvoEf/KVTPxjCISwE5nNJAplAsJgEZ74x5X1EJMW8SlHa2AKmMFPEV2B5V
+         xbywhNQ5My2lgtBoM2zznqEjbrmS/btgcJ9wVOf3/xF7jwTpDsUJjEKCt0WtdwjowfJO
+         83AA==
+X-Gm-Message-State: AOJu0YzDfYtV2azpFgdUIySwgqmRXskIzvZal6IaTYnXVKzbL82FDnEX
+	Wfof1tb6Q2+3f+mBx9avyImSS932uE3U+TaHggWcZ8tCqVCbY4H/EuW9/PmpWaxFsMKw5NOz21F
+	vLcXKFGHWuS2Rl9B3jld728KMZZgTMbM4cJOP
+X-Gm-Gg: AeBDiesZlCNJLFIfEr0jbrU9lSJaJKSOLB24Ku+fA3GxXMTSJn18gVzGOjY2zMUaoJ8
+	uMh4Ypad4HMu3nrA/aqe3dABBe3gAzitSFupARikzDXqjmeV8WLmNOWMxaUw+EumES8YHKO2kad
+	dWwc8sq8dc5JYE302zrbEAgbJHbkHsqiVru549GAxQYAGxPq8zhmkkW4JERvHCHQYsVG1aG8TtC
+	BXdWiS5q/5WCJArNdiNY7yP0UpdKw3tzDs7ps9QWlVAAHULwi5JXtr9np2vhr+gJM21UywRoKRs
+	SoH32++VOYQ21VZwxUHaeAMBJib+KO8tDXlDTdWWK0FfmT+4CQty
+X-Received: by 2002:a05:620a:29c3:b0:8cf:cfdf:733e with SMTP id
+ af79cd13be357-8e7918a1473mr4453692585a.32.1777056719352; Fri, 24 Apr 2026
+ 11:51:59 -0700 (PDT)
+MIME-Version: 1.0
+References: <20260414053202.3869771-1-Qi.Chen@windriver.com>
+ <20260414053202.3869771-2-Qi.Chen@windriver.com> <CANNYZj9PmjiMDbz6jknMrYubDx=xk5cW2KeGJXVyHCNbFhkpAw@mail.gmail.com>
+ <de8caefe20ca7301a8f104e8d9751ffd8ca50e38.camel@linuxfoundation.org>
+In-Reply-To: <de8caefe20ca7301a8f104e8d9751ffd8ca50e38.camel@linuxfoundation.org>
+From: Alexander Kanavin <alex.kanavin@gmail.com>
+Date: Fri, 24 Apr 2026 20:51:47 +0200
+X-Gm-Features: AQROBzDxsEW__3e4q8fQr_Ac0OvcsSBtwrAC7glTNDuT0jBNyaNgRjLjJAC2488
+Message-ID: <CANNYZj-r9mM0sOHT+cMF2WK6x-odOT-CTRcwbg4b5xVSf2yVuQ@mail.gmail.com>
 Subject: Re: [yocto-patches] [auh][PATCH 2/3] modules/steps.py: refactor
  compile() to use parallel per-machine builds
-From: Richard Purdie <richard.purdie@linuxfoundation.org>
-To: yocto-patches@lists.yoctoproject.org, Qi.Chen@windriver.com
-Cc: randy.macleod@windriver.com
-Date: Fri, 24 Apr 2026 18:04:00 +0100
-In-Reply-To: <CANNYZj9PmjiMDbz6jknMrYubDx=xk5cW2KeGJXVyHCNbFhkpAw@mail.gmail.com>
-References: <20260414053202.3869771-1-Qi.Chen@windriver.com>
-	 <20260414053202.3869771-2-Qi.Chen@windriver.com>
-	 <CANNYZj9PmjiMDbz6jknMrYubDx=xk5cW2KeGJXVyHCNbFhkpAw@mail.gmail.com>
+To: yocto-patches@lists.yoctoproject.org
+Cc: Qi.Chen@windriver.com, randy.macleod@windriver.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-9 
-MIME-Version: 1.0
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 24 Apr 2026 17:04:14 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3806
+ <yocto-patches@lists.yoctoproject.org>; Fri, 24 Apr 2026 18:52:05 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3807
 
-On Fri, 2026-04-24 at 16:04 +0200, Alexander Kanavin via lists.yoctoproject=
-.org wrote:
-> I understand the idea, but unfortunately I do not think we can put
-> this (and the following patch) on the Yocto autobuilder. The
-> expectation for the builder jobs is that they are expected to run
-> only
-> one Yocto build at a time, and the autobuilder will:
->=20
-> - configure each builder to use carefully adjusted limited resources
-> for that one build (via the fragment in oe-core)
-> - start several builders on each worker machine to parallelize large
-> builds (e.g. a-full), but no more than a certain upper limit, and
-> queue them if the limit is reached on all workers
->=20
-> This patch breaks that expectation, as auh build is not using an
-> exclusive worker for itself, and shares workers with other builds.
->=20
-> It also isn't clear how this patch was tested and benchmarked. Did
-> you
-> run a substantial upgrade job with it? Did you see a significant
-> speedup?
+On Fri, 24 Apr 2026 at 19:04, Richard Purdie via
+lists.yoctoproject.org
+<richard.purdie=linuxfoundation.org@lists.yoctoproject.org> wrote:
+> Whilst we do need to be mindful of this, I suspect there is some room
+> to parallelise a bit. How much parallelism is this expected to have?
+> Some existing jobs like oe-selftest do run a lot in parallel already so
+> this could be not that much different to that...
 
-Whilst we do need to be mindful of this, I suspect there is some room
-to parallelise a bit. How much parallelism is this expected to have?
-Some existing jobs like oe-selftest do run a lot in parallel already so
-this could be not that much different to that...
+Patch 3/3 sets the parallelism to four:
 
-Cheers,
+-        self.opts['machines'] = settings.get('machines', 'qemux86-64
+qemuarm_musl').split()
++        self.opts['machines'] = settings.get('machines', 'qemux86-64
+qemux86 qemuarm64_musl qemuarm_musl').split()
 
-Richard
+Alex
 
