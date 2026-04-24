@@ -2,22 +2,22 @@ Return-Path: <daniel.turull@ericsson.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 938A9FE5210
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1CE6FE5213
 	for <webhook@archiver.kernel.org>; Fri, 24 Apr 2026 11:46:24 +0000 (UTC)
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (DB3PR0202CU003.outbound.protection.outlook.com [52.101.84.57])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.19327.1777031175730191117
+Received: from PA4PR04CU001.outbound.protection.outlook.com (PA4PR04CU001.outbound.protection.outlook.com [40.107.162.58])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.19020.1777031175964861904
  for <yocto-patches@lists.yoctoproject.org>;
  Fri, 24 Apr 2026 04:46:16 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@ericsson.com header.s=selector1 header.b=l3dMQAis;
- spf=pass (domain: ericsson.com, ip: 52.101.84.57, mailfrom: edaturu@ericsson.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@ericsson.com header.s=selector1 header.b=rp09l2yD;
+ spf=pass (domain: ericsson.com, ip: 40.107.162.58, mailfrom: edaturu@ericsson.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=S4HDIHAZ6EWo/KDOMxlxxYweIivbXcpFBiNsnwDMV7RwrdGGZ8ZKOOO664Cd/edO5lM5VKLVx+K8BJkTK9pF9VMSnyT9YR6RA9mC9B6cVVUW4m068Hk8QksfPUP9Jnd9zpIgAs30xb4mofOPyotrWeBwFnCaeSVquZDYy+TkuLx8Cgga0nJFbp9bdMH4+YQD4v7hfJlElhY3dw8EoD9B7T03dOCiNoqn00QH5SBYl0H10vrldl2JNDar5TqrR9d3VT9jdIh38vYu8+N00MviI8lmgIaOc2FmKSAM+UWhe+pp1x7BIaSV3b+mPLkAstRpCB/zmisA2hBcOiElFEpkcg==
+ b=Waea+o2BUQ0L8juvYOB/taGs2onCRXP4KjGcirwTo+9nRLDiH1G49RFyvBxmaudG5FRHsq2KkUg/oyEhB/AbaTN9nFftvtCcx9NfyV/eKxvbB8252P/VDgATyCiT8/dr7kyyYXoa3jPnGpFpHB979SYJlKI5sw43jLgjd4pJmgcCuRnermUA7O4OxulisPEH77lK/A4IkWk+lJkrK0XfjCPyjyl3vzCQrNKs2nsxaLtnRjIvO/pKw2IUlAFB5c5Zd7ChD/B+bC81fmvldO6Xis/2yBGuVzSVtlXP+T+0vP70vgFxAGqQEgvofX2WKZ7JC3BFd9o5RzRb1G1oiW+IwA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ho30g4I1ujBGrv3V0wW9BB8Rupz2/VYv+LsZhi/P5c8=;
- b=E7XGUVFAbXvJpfbaFpkqjUDNhNGoe27n05/IDr265JJFYSNxenANix5t0b7jVkXi6Jhgg+4Ib/zdUb/E9DjexLbnB2OGYW6KNZKPE7NUOeX/lY4WaKymBGe34cQ/PF7Faid3HSPiPDXFFqO0Dm02LcOO5GqFsnbnkM2uCR3bdTh9lFEItASWN6cUJ966YKIcat99taHolwCHqJOP6esjEGWEzh/zghmi/A2lBNmoQDkeDjvntcskPf0eyKfAapU+yKt8FFAMFR6Vur/zFT/6St7eQLfPppeGEK7sg+CNq7FgyWVmqLnub9q8EF1wuNzpXlQvqF9N+4GZw0KvgsYdDg==
+ bh=0eCPw5bcmjGwT94EaDKbTMYTwSLJgOKTQdVyzw6kZUI=;
+ b=PtIvAVWjH/nh4JWq8h9Yr5u4FI/S9nuW1VMw3bpCBMV6d460hg/cQy/+VQ5dgO5Eu0JjSrDm0nOGTTNa+PlOmFhlMsPx6rfGEXSoLKD6lveL1Fa1cWpR7q+vwg0LpxDRKFFZDsBrjGNeiLWfVIhfKJLd6p0/eP8SXWrpQCPKEi47gWzKLairojK7W2e2Lk5kLnNd/cEr53+eY8FMLbtFbcvlbxq3iK0510mTEoWqQRfQXlIRde0WGL+Fa5ayvVh7v7PpoLAOzeFFS2vT5S5M6e/Y0hBFeUoorWoFAlhXLSGynGp7qD9/6cPA77AUYsVQK3hw/OOdkfm6FdXm1jU6Vg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  192.176.1.74) smtp.rcpttodomain=arm.com smtp.mailfrom=ericsson.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=ericsson.com;
@@ -25,16 +25,16 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ericsson.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ho30g4I1ujBGrv3V0wW9BB8Rupz2/VYv+LsZhi/P5c8=;
- b=l3dMQAisuVW0L9oRQf5/jSERKcvY7E7pQT3/v3h8dj+gybnSXO9JA8/2yuY0XSOHsmM5niKm2OdchCq5jj8qFYKdWWhvelShP7XLRKuEZmSvSWnOudtwo5LqSZLxPWU1D37ZKFQkitLTeBDMBHMwZTaU6rORmwlmk7ggRz+/NeBDHG7+tvveZibsjrkXgZeUhGO6Z0MlSlhI3DlWNTv+zlH9GYOJRPWZIrCJXjIVeVa2uw7tHZh/rFbFms5exJN3DJSmpgkzmFlqTLp5V96sM+z51vH7Fpht+VsYoo8Hk02Y/7Uc47TZmZcNjVF9FFedbuAwexWQ6XGShj94jOVTQQ==
-Received: from DUZPR01CA0156.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4bd::19) by AM7PR07MB6376.eurprd07.prod.outlook.com
- (2603:10a6:20b:131::11) with Microsoft SMTP Server (version=TLS1_2,
+ bh=0eCPw5bcmjGwT94EaDKbTMYTwSLJgOKTQdVyzw6kZUI=;
+ b=rp09l2yDKBkAF6DsXB59ogdpbwtVp2sfzx9MJuMEUbU4Y9o1mTQyiS2TGVdrLHZBiZ3mSdzFGfKdSY4lX9BjIe0WTrhWj8DnkwevDeCdHcsYx3v1eD/uBK6pUyCKwTCgo9rhzGlManEBN1+Wqa80RXzze5g2vTwls7j8yyAcfAT9PMJPNvthk/+OOOePts0yHZ37814K8cN3XBfPvIzincC7Dg45h/38j/AhvTJ1QdV7Gtz5cG8mE/m6/qsxuTxSuXckRTM1nRwJk+u4+pKgcleTVn3lLwAmAafAeGlHEo0QqnlEUHzjSuEUcTQOzlp4F82IMWTI6wLl8teTvU2kxw==
+Received: from AS4P192CA0002.EURP192.PROD.OUTLOOK.COM (2603:10a6:20b:5da::9)
+ by PR3PR07MB8209.eurprd07.prod.outlook.com (2603:10a6:102:174::22) with
+ Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9846.22; Fri, 24 Apr
- 2026 11:46:11 +0000
-Received: from DB1PEPF000509EC.eurprd03.prod.outlook.com
- (2603:10a6:10:4bd:cafe::17) by DUZPR01CA0156.outlook.office365.com
- (2603:10a6:10:4bd::19) with Microsoft SMTP Server (version=TLS1_3,
+ 2026 11:46:12 +0000
+Received: from AM4PEPF00027A68.eurprd04.prod.outlook.com
+ (2603:10a6:20b:5da:cafe::25) by AS4P192CA0002.outlook.office365.com
+ (2603:10a6:20b:5da::9) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.9846.22 via Frontend Transport; Fri,
  24 Apr 2026 11:46:11 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 192.176.1.74)
@@ -44,25 +44,25 @@ Received-SPF: Pass (protection.outlook.com: domain of ericsson.com designates
  192.176.1.74 as permitted sender) receiver=protection.outlook.com;
  client-ip=192.176.1.74; helo=oa.msg.ericsson.com; pr=C
 Received: from oa.msg.ericsson.com (192.176.1.74) by
- DB1PEPF000509EC.mail.protection.outlook.com (10.167.242.70) with Microsoft
+ AM4PEPF00027A68.mail.protection.outlook.com (10.167.16.85) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9791.48 via Frontend Transport; Fri, 24 Apr 2026 11:46:11 +0000
-Received: from seroius18815.sero.gic.ericsson.se (153.88.142.248) by
- smtp-central.internal.ericsson.com (100.87.178.63) with Microsoft SMTP Server
+ 15.20.9846.18 via Frontend Transport; Fri, 24 Apr 2026 11:46:11 +0000
+Received: from seroius18814.sero.gic.ericsson.se (153.88.142.248) by
+ smtp-central.internal.ericsson.com (100.87.178.62) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
  15.2.2562.29; Fri, 24 Apr 2026 13:46:10 +0200
 Received: from seroius08462.sero.gic.ericsson.se (seroius08462.sero.gic.ericsson.se [10.63.237.245])
-	by seroius18815.sero.gic.ericsson.se (Postfix) with ESMTP id 3DCF640215A8;
-	Fri, 24 Apr 2026 13:46:10 +0200 (CEST)
+	by seroius18814.sero.gic.ericsson.se (Postfix) with ESMTP id 00B344020B71;
+	Fri, 24 Apr 2026 13:46:09 +0200 (CEST)
 Received: by seroius08462.sero.gic.ericsson.se (Postfix, from userid 160155)
-	id EE31E700DBB5; Fri, 24 Apr 2026 13:46:09 +0200 (CEST)
+	id DC943700DB94; Fri, 24 Apr 2026 13:46:09 +0200 (CEST)
 From: <daniel.turull@ericsson.com>
 To: <yocto-patches@lists.yoctoproject.org>
 CC: <alex.kanavin@gmail.com>, <paul@pbarker.dev>, <ross.burton@arm.com>,
 	<yoann.congal@smile.fr>, Daniel Turull <daniel.turull@ericsson.com>
-Subject: [AUH][PATCH v2 7/9] upgrade-helper.py: Add prebuild option
-Date: Fri, 24 Apr 2026 13:46:01 +0200
-Message-ID: <20260424114603.2444938-8-daniel.turull@ericsson.com>
+Subject: [AUH][PATCH v2 3/9] upgrade-helper.py: allow to set the git directory from layer-dir
+Date: Fri, 24 Apr 2026 13:45:57 +0200
+Message-ID: <20260424114603.2444938-4-daniel.turull@ericsson.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260424114603.2444938-1-daniel.turull@ericsson.com>
 References: <20260424114603.2444938-1-daniel.turull@ericsson.com>
@@ -71,109 +71,70 @@ Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB1PEPF000509EC:EE_|AM7PR07MB6376:EE_
-X-MS-Office365-Filtering-Correlation-Id: 195e733e-47a0-41cd-f9ef-08dea1f71503
+X-MS-TrafficTypeDiagnostic: AM4PEPF00027A68:EE_|PR3PR07MB8209:EE_
+X-MS-Office365-Filtering-Correlation-Id: 69c8fac0-36d9-4ad7-9955-08dea1f71551
 X-SMTP-Server: smtp-central.internal.ericsson.com
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|376014|82310400026|36860700016|1800799024|56012099003|22082099003|18002099003;
+	BCL:0;ARA:13230040|376014|36860700016|1800799024|82310400026|56012099003|22082099003|18002099003;
 X-Microsoft-Antispam-Message-Info: 
-	E/6ECrHXY/oE+igJFVyrvK/Lp4unsagoQcfnmJthNEpFr4IacNF9ogaNDP9oZVUKdGir0Xv0WZvnf1eORhId+WAd+dfcPrx512aD2CZzvQG+TL+hLlAlggfkWSrDUT/5UTRKKnRHs3POHM6SfGByN9+abYrKEZGz/XWFXGeE8tlYXjkio/fW55v2fx/RTWaga31S0EYFClm2J4skW4Sa16FI2BH184CLJgctA7lMCJQk+StuGkDx/hkZGJgpx0rMJJc+0YgAvbZNYKHON1rDPvJNIJ0Sep5/un++XOItSfiuta0hAS0AOwQgut6U8EZA3GBcX01pfb5qnxh2C0oRD8lMTl1GGYAVQvwL/T29a9xbhpJp7aF6+FTLtOT7ohlgghJAnu32sEzr4HReEyYDD11qHq59UPsTRvEwYDSqUj8HN6UK79G8QCDC8TAbkJjbLIrzQs091EIuzKHRYzka/ICkjvZx0Y1ZDoAfdFWqQ2qoBA0Yf1WBmGlJISZ1gXQdDMPAMIFrg18sGgLlvDXF+cTvLSZLMlJrtyOHMBpBQouJRYZ7RuGeljUpj1MewaKjhJUbejp0P/iphQbmZMXaKXc9OSODh5qPVBvlqNSgQ9lMEsnwBjJzCHqypEq0ed6VBh2PnSOWDiG7zfgL/xW+cpwxetAVODlPZkwQ4vs7qsAqlyEI+grwdjfB+5A0JLv319RQ3mnLNGmaeqObL5moBmC32ehgquIrOEj4qs+FTSRG+21Hs9JiJtHplMJ0rf0nfKgYgyismynZEt4hCO7Kpg==
+	zSjDG1JZYo3qiEoW8bSJAOpGNVtwbYsk10Ky2oxk0hiVqqyapCmaWeHorc9+FBzBlITyqKVH+z5fqoYOGsiBEsK9dqYz5waOn7JrawxLlulMW8Kf4qajlwvxGDa376RpAmI/JHPmPIKfg69HRm9A+3go8l3cEtgzdomV9pbp83/F/BqSA38Pvp++PswvuoPjlicW9/sLnIEW2hHXCVnvMPGKcDcbjivzk1s4WPtWnCqm4jTWY8qeM8bthaliiKlbJh+jFcDjmwM7j0jv5jf1yk35OYATSB3K6u431JsfbjsTDjkvHmDdvimtOhXTphHNp/aprsXaXqE5zHsmLMNuF1eWLxIgvwzxeui5n0QdpyDplqHlUJoUTZHvV/mYMSe8OTO32HeI0GJO9dEFCWSlv0QSOZezRV9s4KbOyqajOmnma5Pchqp9Je6MvoKgtIRNW92RSfTb5yjqL7lLNlfbV4y8hElJn3/3hlfgzmiDpzllbyCM+a9zbsjGBemikmmISdpWkvehnwIUPnmrc8ayM8XDKpC7lvxIEAQ7+b0TwlF6ytnpMrq8LsJZn1b0P2/xZ3OKsfl6BCcwVy07fpyXAkOzEVF+VPmifX65iAGaLuZ0euHS9koF77nqIABkUIcqIJg5HrYB7Z+fLpHZ4CXGUqW2NcLeQOIFG9lgXxkTtN17m81kPxrZW26Mkyzs1r7Yk1ZnZv3x4xrniXTGmGS901oGrBARozDLOHstYoAutlhDooiztAeYO2I4Yb49sNzWe58v9PoiMpdbB7+DNVvR6Q==
 X-Forefront-Antispam-Report: 
-	CIP:192.176.1.74;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:oa.msg.ericsson.com;PTR:office365.se.ericsson.net;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700016)(1800799024)(56012099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+	CIP:192.176.1.74;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:oa.msg.ericsson.com;PTR:office365.se.ericsson.net;CAT:NONE;SFS:(13230040)(376014)(36860700016)(1800799024)(82310400026)(56012099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	Kb3ruZyQ+W08P3V4Nw7arOTvIxuNXPdNl8ALeRrpouVZ5aYRBJKeTw5LJu6/6Mdl4nvJeMSiy4pnzKWsq+tOS7Xvak7KLc9OyeFwdmgwai9xYcgx3h+uiwapY+j9QjL5UQ65mhz8eanHdHeC9aiysHMrvCdenqP81IcuvxxtdvqyzI33jOY/faOtG0LDiUrJk9FuQ2NhwXAGfSdRjiJhhob9A3AKPz40bgQuuBKZLKE2ha+hc4dx/g+wNOLxKPnr/Nr//ta5Yoeies3CxGzrli08JwHGGRya+DDuEDWiM1tPeBT3+RxmrflYIktxd/FgD/sezL/AOhP+AhT4JdPNPzbfETLAeSlt2w/o+t7YUAal9Cz1lfBGT2AePM5My29FxdMmpqm7izWuqnffbgwyy6MuRGJOjj1/9btbtrz0rez0doutQ8CwWKVWeml+BNBA
+	ss8PIvImIIWNXdE+RuE1rIG89Mo6hWdKMl2vwa91gVcMplYbPNABhBW0OABXz0Z+FvvqFbXTI4AiIvG1ATUsTii+115POYGDkpmqMlJ3MSyw/nfj86XI6HAQuDXFh6mNhBalEe1tmZhryhzdFkekLXAF60nFXyMAPn3dPXaGht1IdmPyvNRIhlzV4ZTTP/qsdV1YBVC71A0uLb6NYxIrbbSktYnezz9R+zUC96InbjN/wzOlKKYqRYfcF0bQJb3IYxJ36F6XhS8+UG/MnI7+F3OntScOvVZOQUkE0otu5RnuA3o2xo2rXLu/O5FMHbEnGDXwTHRH5J75NRJK+FpK36k1769iRQgVrKxSTKPKE2HBTmYfrFTHH3OZaHIdOzQRwGOhTfWFxAXPeJdzPsaxv7Pbyy2xK6N7zi37741xEsnkb+q/O+PO4gO+JZhqeswA
 X-OriginatorOrg: ericsson.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Apr 2026 11:46:11.3960
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Apr 2026 11:46:11.9219
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 195e733e-47a0-41cd-f9ef-08dea1f71503
+X-MS-Exchange-CrossTenant-Network-Message-Id: 69c8fac0-36d9-4ad7-9955-08dea1f71551
 X-MS-Exchange-CrossTenant-Id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=92e84ceb-fbfd-47ab-be52-080c6b87953f;Ip=[192.176.1.74];Helo=[oa.msg.ericsson.com]
 X-MS-Exchange-CrossTenant-AuthSource: 
-	DB1PEPF000509EC.eurprd03.prod.outlook.com
+	AM4PEPF00027A68.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR07MB6376
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR07MB8209
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Fri, 24 Apr 2026 11:46:24 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3790
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3791
 
 From: Daniel Turull <daniel.turull@ericsson.com>
 
-Add --prebuild option to build each recipe at its current version before
-attempting the upgrade. This allows verifying that recipes build before
-applying the upgrade and enables comparing binaries produced before and
-after, for example for build size or ABI compatibility checks.
+Replace the assumption that the poky directory is the first PATH entry
+and reuse --layer-dir to setup directory for git repo.
 
-Recipes that fail the pre-build are skipped and recorded as failures.
+This is useful when not using poky and each meta-layer is its own git.
+Without this fix, commit_changes fails in non-poky layouts:
+
+  git add .../openembedded-core/meta/recipes-support/gnupg
+  fatal: '.../openembedded-core/meta/recipes-support/gnupg'
+  is outside repository at '.../yocto-scarthgap'
 
 Assisted-by: Claude, Anthropic
 Signed-off-by: Daniel Turull <daniel.turull@ericsson.com>
 ---
- upgrade-helper.py | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ upgrade-helper.py | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/upgrade-helper.py b/upgrade-helper.py
-index ffa7449..11a97d2 100755
+index 98391f3..df927d1 100755
 --- a/upgrade-helper.py
 +++ b/upgrade-helper.py
-@@ -105,6 +105,9 @@ def parse_cmdline():
-     parser.add_argument("--minor", action=3D"store_true", default=3DFalse,
-                         help=3D"allow upgrades within the same major versi=
-on (e.g. 3.5.2 -> 3.6.0, 3.99.0)")
+@@ -184,6 +184,9 @@ class Updater(object):
+                     _layer_settings_error(s)
 =20
-+    parser.add_argument("--prebuild", action=3D"store_true", default=3DFal=
-se,
-+                        help=3D"build each recipe at its current version b=
-efore attempting upgrade")
-+
-     parser.add_argument("-d", "--debug-level", type=3Dint, default=3D4, ch=
-oices=3Drange(1, 6),
-                         help=3D"set the debug level: CRITICAL=3D1, ERROR=
-=3D2, WARNING=3D3, INFO=3D4, DEBUG=3D5")
-     parser.add_argument("-e", "--send-emails", action=3D"store_true", defa=
-ult=3DFalse,
-@@ -516,6 +519,21 @@ class Updater(object):
-             attempted_pkggroups +=3D 1
-             pkggroup_name =3D g["name"]
-             I(" ATTEMPT PACKAGE GROUP %d/%d" % (attempted_pkggroups, total=
-_pkggroups))
-+
-+            # Build current version first to verify it builds and seed ABI=
- reference
-+            if self.args.prebuild and not self.args.skip_compilation:
-+                I(" %s: Pre-building current version ..." % pkggroup_name)
-+                try:
-+                    for machine in self.opts['machines']:
-+                        self.bb.complete(" ".join([p['PN'] for p in g['pkg=
-s']]), machine)
-+                except Exception as e:
-+                    E(" %s: Pre-build FAILED, skipping upgrade" % pkggroup=
-_name)
-+                    if isinstance(e, Error):
-+                        E(e.stdout + e.stderr)
-+                    g['error'] =3D e if isinstance(e, Error) else Error(me=
-ssage=3Dstr(e))
-+                    failed_pkggroups_ctx.append(g)
-+                    continue
-+
-             try:
-                 for pkg_ctx in g['pkgs']:
-                     I(" %s: Upgrading to %s" % (pkg_ctx['PN'], pkg_ctx['NP=
-V']))
-@@ -571,6 +589,8 @@ class Updater(object):
-             tim.run()
-=20
-         for g in pkggroups_ctx:
-+            if 'workdir' not in g:
-+                continue
-=20
-             if g in succeeded_pkggroups_ctx:
-                 os.symlink(g['workdir'], os.path.join( \
+             self.git =3D Git(self.opts['layer_dir'])
++        elif settings.get('layer_dir'):
++            # allow to set the git repo directory without enabling layer_m=
+ode
++            self.git =3D Git(settings.get('layer_dir'))
+         else:
+             # use scripts_path to get oe-core directory
+             self.git =3D Git(os.path.dirname(scripts_path))
 --=20
 2.34.1
 
