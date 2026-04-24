@@ -1,210 +1,118 @@
-Return-Path: <sputnik@on-the-web.ch>
+Return-Path: <yoann.congal@smile.fr>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EA3FFED3FA
-	for <webhook@archiver.kernel.org>; Fri, 24 Apr 2026 18:53:15 +0000 (UTC)
-Received: from mail-106116.protonmail.ch (mail-106116.protonmail.ch [79.135.106.116])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.29554.1777056789507778377
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84538FF884F
+	for <webhook@archiver.kernel.org>; Fri, 24 Apr 2026 21:08:55 +0000 (UTC)
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.32237.1777064930548769103
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 24 Apr 2026 11:53:12 -0700
+ Fri, 24 Apr 2026 14:08:50 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@on-the-web.ch header.s=protonmail header.b=THinPUI+;
- spf=pass (domain: on-the-web.ch, ip: 79.135.106.116, mailfrom: sputnik@on-the-web.ch)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=on-the-web.ch;
-	s=protonmail; t=1777056785; x=1777315985;
-	bh=gk8upH6WgY2WIB3yICP/9NbTNzuubHYruBbd3yBC4Uo=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=THinPUI+bfr9xHjWb2uHx6FtUupd6uPRQvVGAFq+hFi9kheXKZP7qSVxYhhhI1TUx
-	 tv/IwSjMoY5RtarU/QRs+mdmJ+IFpc0cB7wUpqY3fTjswuShcZPhcepf5gB2ONBfCh
-	 Hsg8DX3YKBdUg0ziZ0xg/uzhA1YcBeD1/c/ubIvA5kFLsbBqKBp7eGo1oJsjaRCF9t
-	 pmHfFnMy9UQUyruXB36Hv7x7b4w88orsCX6c4CdXsm43lfRa0BZMigCWAvu4Pl3FQx
-	 URPZuCIi2pr/VhwbLP9f73ZBYavwP/NVyZaLlIcR671ZHvgHVnn0zYnRqz25+lu0Tz
-	 bdJNSLYwrBMoA==
-Date: Fri, 24 Apr 2026 18:53:02 +0000
+ dkim=pass header.i=@smile.fr header.s=google header.b=S1i++e4o;
+ spf=pass (domain: smile.fr, ip: 209.85.221.53, mailfrom: yoann.congal@smile.fr)
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-43d73422431so7278017f8f.2
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 24 Apr 2026 14:08:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=smile.fr; s=google; t=1777064929; x=1777669729; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mi2emXBi6DZfWnZxH1gC22Qh5wRVPN5SxRhyVHM2SYI=;
+        b=S1i++e4ofrEC6nyRa2W2Vjfqu+u4veB3UmtDlyvR5MtYqbL8IFpB4YvX1E7nvxhTlt
+         FHBEKp/GhNNlHyy3zyUhoyMUaap8YNDxnaAeeCjvjEPYky+UIOJ9uF0dIDyIERMlAVI9
+         s++qQfC74sVLvZKnPeadx9YpNkMWkwT1FbuB4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777064929; x=1777669729;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=mi2emXBi6DZfWnZxH1gC22Qh5wRVPN5SxRhyVHM2SYI=;
+        b=Z+ut8W6cyKc0Y98l0zGyBQ3oCbgeSvIfSOCt/fzxVCwHcxhFLlv6j4ov1FyMgJzCp5
+         hBNtH5SuNXJBNykgiwYplsjHwLvapr6yteYCGfkcb6a1K+Vm3JNjNyIVU1HfwMyoR2vm
+         qJtR6Ajy7Dz1t13ZHweVNsyjGsDa4jNc3ya2uWLoAS2RqB7FX6D1vwmsDut3GWTrWf+8
+         RyRmeNFSTbhWn15och2RgbOL1WK+ILryZyKyx1Pvv0dd0iZfZZyriL9uCVwlG8eJa2y9
+         bAAQheNT/btU8qjXidzNXO3GeeorN/1zcGTJZdzCoWsNk9mlh7K+bLn/pzLtgGEzm2Ax
+         yo0Q==
+X-Gm-Message-State: AOJu0Yyq90MfO8gPq4R9H5W1AFxyBqdzrCBDzzuMTjO4ZUrdNkX2Nrn+
+	k0DSzYcw9Nl+hQSNcHTu0AyFtaGLOEWH3LzCVlmVEHWP635w95THtnWC0pTKaO2zl7/Tar967fD
+	HoLy6pjGjkg==
+X-Gm-Gg: AeBDieunAGtg2jaASVXt4eHK7ll77TJmfgPIx+PIOEtZgGClBIL6/CmmKnWsXOcAYFk
+	oU5G/v37uBgZ5294IfMXs0wB3AYTYK3Q+v9lE5kZEi1Qt8adHi1+wXeRDz8BCne05Ay/dFq5u3H
+	rXiRNYfqvwhv/Gs9Bpv63PW8rkHRVarnuCyaedyEEeUbbRGxQpM/aMBz+UvrYMUTS57lFC5EPOl
+	/RRwlOOD9x8I5VR3H1ONensH0488u9/9RqRjuMLzkqvtQG8IbTEkcJXNICgHVUu5UZbYC88UzkL
+	Pe0qjqt9XF9S5HJ4W9GiOK18ZulSSdsHl+Ws6VKN2laQuo2BL5osuugmUGGqWmWZZBF9AshNhsE
+	IFQtSqUOrI1PqYI8fuZ7vbI9Z8ZZKd5Ct+0bWIY4C/+dbUofLNVNQ7W7MrWDt+T3ND0acqGWe9c
+	t5HB1emY84tTFqV5Qu8vlCeBzb8fx/yFaoiBrIA3awuGQrTEhfeRu3JSYkBqgf9qebGe7DfoV+x
+	78Ql7fVKU5sWNGshvJNxfks11IqM2Uws7F7VQ==
+X-Received: by 2002:a5d:64c4:0:b0:43d:7c6c:a0dd with SMTP id ffacd0b85a97d-43fe3e1603dmr50848987f8f.35.1777064928670;
+        Fri, 24 Apr 2026 14:08:48 -0700 (PDT)
+Received: from FRSMI25-LASER.home (2a01cb001331aa00a2e4fb7b0d887544.ipv6.abo.wanadoo.fr. [2a01:cb00:1331:aa00:a2e4:fb7b:d88:7544])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43fe4dc24cfsm61436286f8f.16.2026.04.24.14.08.48
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Apr 2026 14:08:48 -0700 (PDT)
+From: Yoann Congal <yoann.congal@smile.fr>
 To: yocto-patches@lists.yoctoproject.org
-From: Martin Herren <sputnik@on-the-web.ch>
-Cc: Trevor Woerner <twoerner@gmail.com>, Martin Herren <sputnik@on-the-web.ch>, Quentin Schulz <quentin.schulz@cherry.de>
-Subject: Re: [yocto-patches] [meta-rockchip] Backport patches to Whinlatter
-Message-ID: <iQJoQfWKbRog-jkkVJwDe0fWDrDmIjvWi92pjP25nihmlNmBcKTI7i4lB0ul7Z_IVElJkBmQwkROWxapz6V_nFkCpwcOZilRyFpnVnu7erk=@on-the-web.ch>
-In-Reply-To: <4f8aafff-585f-436a-a986-26d331b8687b@cherry.de>
-References: <5bj70loXmt_k9cZvIDWvVux-3no88K7lhbMDcRw9jh3ylLLz-YDZhyOr6fM8PeXSnC88wg6wk34A9A3uz8ljvNTE_nEurXpatMj2VxFsw8c=@on-the-web.ch> <f458ad76-2eda-41f2-b6a5-1f6bba342752@cherry.de> <D_T0vfLiZ7iT-Zdru_yLBe3ZScLI_weV-fDDAFnDD4aJybbieGUfMXTEA-X5vakiZbsQeTAZ3DjRdyJRCZjM2FxdcR1WwxO4rk1cUUCTg7w=@on-the-web.ch> <4f8aafff-585f-436a-a986-26d331b8687b@cherry.de>
-Feedback-ID: 61562450:user:proton
-X-Pm-Message-ID: 1e460884dc03a7bcd6cf8619c6133988e84658a7
+Subject: [yocto-autobuilder-helper][scarthgap 2/2]  scripts/yocto-supported-distros: fix the centos stream regular expression
+Date: Fri, 24 Apr 2026 23:08:42 +0200
+Message-ID: <b7119bff3aa6faf31a2e72b33a8fe2040d407bd7.1777064869.git.yoann.congal@smile.fr>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <cover.1777064869.git.yoann.congal@smile.fr>
+References: <cover.1777064869.git.yoann.congal@smile.fr>
 MIME-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature"; micalg=pgp-sha512; boundary="------e72b74e0ccf4ebe69365336ce7fa27dee81832a87db041becf37d2c467184ef6"; charset=utf-8
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 24 Apr 2026 18:53:15 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3808
+ <yocto-patches@lists.yoctoproject.org>; Fri, 24 Apr 2026 21:08:55 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3811
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------e72b74e0ccf4ebe69365336ce7fa27dee81832a87db041becf37d2c467184ef6
-Content-Type: multipart/mixed;boundary=---------------------09cffec8c5b6ca26a5602bc63b234070
+From: Antonin Godard <antonin.godard@bootlin.com>
 
------------------------09cffec8c5b6ca26a5602bc63b234070
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;charset=utf-8
+The poky.conf file was wrongly referring these distros with
+centosstream-*, but this is now fixed. Change the regular expression for CentOS
+Stream to match this. Remove the CentOS (no Stream) definition as we do not
+support it anymore and it conflicts with this one.
 
-Hi Quentin,
+Cc: Yoann Congal <yoann.congal@smile.fr>
+Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
+Signed-off-by: Yoann Congal <yoann.congal@smile.fr>
+---
+ scripts/yocto-supported-distros | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
 
-On Friday, April 24th, 2026 at 6:45 PM, Quentin Schulz via lists.yoctoproj=
-ect.org <quentin.schulz=3Dcherry.de@lists.yoctoproject.org> wrote:
-
-> Hi Martin,
-> =
-
-
-> On 4/20/26 7:27 PM, Martin Herren via lists.yoctoproject.org wrote:
-> > Hej,
-> >
-> >> Hi Martin, Trevor,
-> >>
-> >
-> >> On 4/20/26 12:14 PM, Martin Herren wrote:
-> >>> Dear maintainers,
-> >>>
-> >>> May I suggest the following 2 patches from meta-rockchip master to b=
-e back ported to the Whinlatter branch ?
-> >>>
-> >>> fitimage rework: fe7cfa748bb132cfbe322c1c6d586f09557dbeb2
-> >>>
-> >>
-> >
-> >> This one is tricky. We shouldn't break existing users but this is a
-> >> patch that isn't backward compatible as we would require users to set
-> >> the RK_KERNEL_FITIMAGE variable to match the modifications they made =
-to
-> >> KERNEL_IMAGETYPE/KERNEL_CLASSES in their own machine configuration fi=
-le
-> >> based on the SoC machine include file. Can you tell us more about wha=
-t
-> >> is broken before this is backported? Maybe there's another way to
-> >> implement a fix without breaking backward compatibility.
-> >
-> > Doing a `bitbake core-image-base` for `MACHINE =3D "rock-5b"` on curre=
-nt whinlatter (including all other layers also on whinlatter) without this=
- patch leads to:
-> >
-> > ```
-> > =E2=9D=AF bitbake core-image-base
-> > Loading cache: 100% |#################################################=
-##########################################################################=
-############################| Time: 0:00:00
-> > Loaded 0 entries from dependency cache.
-> > ERROR: ParseError at /home/martin/dev/yocto/rockchip/layers/openembedd=
-ed-core/meta/classes-recipe/kernel.bbclass:188: Could not inherit file cla=
-sses/kernel-fitimage.bbclass| ETA:  0:00:17
-> > ERROR: Parsing halted due to errors, see error messages above
-> >
-> > Summary: There were 2 ERROR messages, returning a non-zero exit code.
-> > ```
-> >
-> =
-
-
-> OK. So... The issue is that we don't know what third-party layers do.
-> They may very well include rk3588s.inc or extend rock-5b.conf and modify
-> KERNEL_CLASSES and KERNEL_IMAGETYPE to not use fitImage. I couldn't
-> think of a way to not break them. The issue being that KERNEL_CLASSES
-> cannot contain kernel-fitimage so we cannot check for its presence, and
-> KERNEL_IMAGETYPE cannot contain fitImage anymore as well, so we also
-> cannot check for its presence. Do you have an idea maybe?
-> =
-
-
-> I'm tempted to say "wait for wrynose" which now should be 2-3 weeks
-> away.
-
-Yes, that's fine for me. I switch to master and wrynose which is the goal =
-anyway.
-
-For info I just tested all available machines on whinlatter, the 7 machine=
-s based on rk3066, rk3188 and rk3288 are not using fitImage and build fine=
-. The rest, based on rk33xx and rk35xx, doesn't build out of the box. So e=
-ither not used or overridden. No complaints, no real problem.
-
-> The fact that nobody complained about this issue before is either
-> because nobody uses the whinlatter branch (I don't for example) or
-> because they already adapted their third-party layer to accommodate. The
-> former isn't an issue, the latter is (well, wrt backporting this commit)=
-.
-> =
-
-
-> I haven't tested but I'm suspecting you could use the content of
-> conf/machine/include/rockchip-fitimage.inc and add it to your layer in
-> your machine conf file after the other includes. Replace ?=3D with =3D,
-> replace the +=3D with an =3D. Adapt in that same file the UBOOT_EXTLINUX=
-_*
-> variables to use the value as if KERNEL_IMAGETYPE was set to fitImage
-> (and use =3D instead of ?=3D). From a cursory look, that may be enough.
-> =
-
-
-> > Applying this patch goes further:
-> >
-> > ```
-> > ERROR: rockchip-rkbin-tf-a-git-r0 do_unpack: Recipes that set S =3D "$=
-{WORKDIR}/git" or S =3D "${UNPACKDIR}/git" should remove that assignment, =
-as S set by bitbake.conf in oe-core now works.
-> > ERROR: Logfile of failure stored in: /home/martin/dev/yocto/rockchip/l=
-ayers/build/tmp/work/rock_5b-oe-linux/rockchip-rkbin-tf-a/git/temp/log.do_=
-unpack.34439
-> > ERROR: Task (/home/martin/dev/yocto/rockchip/layers/meta-rockchip/reci=
-pes-bsp/rkbin/rockchip-rkbin-tf-a_git.bb:do_unpack) failed with exit code =
-'1'
-> > ERROR: rockchip-rkbin-ddr-git-r0 do_unpack: Recipes that set S =3D "${=
-WORKDIR}/git" or S =3D "${UNPACKDIR}/git" should remove that assignment, a=
-s S set by bitbake.conf in oe-core now works.
-> > ERROR: Logfile of failure stored in: /home/martin/dev/yocto/rockchip/l=
-ayers/build/tmp/work/rock_5b-oe-linux/rockchip-rkbin-ddr/git/temp/log.do_u=
-npack.34438
-> > ERROR: Task (/home/martin/dev/yocto/rockchip/layers/meta-rockchip/reci=
-pes-bsp/rkbin/rockchip-rkbin-ddr_git.bb:do_unpack) failed with exit code '=
-1'
-> > ```
-> >
-> > Thus the 2nd suggested backport.
-> >
-> =
-
-
-> We would also need 61505560d494 ("bsp: rkbin-native: fix build since
-> ${WORKDIR} isn't allowed in S anymore") for completeness.
-> =
-
-
-> Cheers,
-> Quentin
-
-So happily switching to master now !
-
-Thanks and Cheers,
-
-Martin
------------------------09cffec8c5b6ca26a5602bc63b234070--
-
---------e72b74e0ccf4ebe69365336ce7fa27dee81832a87db041becf37d2c467184ef6
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: ProtonMail
-
-wrsEARYKAG0Fgmnru/wJEIiu+thqKlAPRRQAAAAAABwAIHNhbHRAbm90YXRp
-b25zLm9wZW5wZ3Bqcy5vcme72RnCIQ+G/IbLG2F5Qz8coA1dZyn6bASlLBX1
-tCwNIhYhBCYHlZbYUMXC4ILtW4iu+thqKlAPAAAhLAD+Kx+K0vgzCcHMBoHy
-TmgBPAgCZ3SGeidQKTpEEjSvYXwBAJC7lLqD4uLItD1AE83SP9aSZRDbP2S4
-uMKmgQVk9tYM
-=525s
------END PGP SIGNATURE-----
-
-
---------e72b74e0ccf4ebe69365336ce7fa27dee81832a87db041becf37d2c467184ef6--
-
+diff --git a/scripts/yocto-supported-distros b/scripts/yocto-supported-distros
+index cdd3967..3266d52 100755
+--- a/scripts/yocto-supported-distros
++++ b/scripts/yocto-supported-distros
+@@ -77,13 +77,9 @@ INPUT_REGEXES = {
+         "ab": re.compile(r"^opensuse(\d{2})(\d{1})"),
+         "lsb": re.compile(r"^opensuse-(\d{2})\.(\d{1})"),
+     },
+-    "centos": {
+-        "ab": re.compile(r"^centos(\d+)"),
+-        "lsb": re.compile(r"^centos-(\d+)"),
+-    },
+     "centosstream": {
+         "ab": re.compile(r"^stream(\d+)"),
+-        "lsb": re.compile(r"^stream-(\d+)"),
++        "lsb": re.compile(r"^centos-(\d+)"),
+     },
+     "rocky": {
+         "ab": re.compile(r"^rocky(\d+)"),
+@@ -112,12 +108,8 @@ OUTPUT_FORMATS = {
+         "lsb": "opensuseleap-{}.{}",
+         "docs": "-  OpenSUSE Leap {}.{}",
+     },
+-    "centos": {
+-        "lsb": "centos-{}",
+-        "docs": "-  CentOS {}",
+-    },
+     "centosstream": {
+-        "lsb": "centosstream-{}",
++        "lsb": "centos-{}",
+         "docs": "-  CentOS Stream {}",
+     },
+     "rocky": {
 
