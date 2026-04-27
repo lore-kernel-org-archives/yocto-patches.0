@@ -2,23 +2,23 @@ Return-Path: <mark.hatle@kernel.crashing.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A691FF8868
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA44FF8860
 	for <webhook@archiver.kernel.org>; Mon, 27 Apr 2026 17:56:58 +0000 (UTC)
 Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.2116.1777312611172000411
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.2122.1777312615422348099
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 27 Apr 2026 10:56:51 -0700
+ Mon, 27 Apr 2026 10:56:55 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: kernel.crashing.org, ip: 63.228.1.57, mailfrom: mark.hatle@kernel.crashing.org)
 Received: from kernel.crashing.org.net (70-99-78-136.nuveramail.net [70.99.78.136] (may be forged))
-	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 63RHugAf876837;
-	Mon, 27 Apr 2026 12:56:43 -0500
+	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 63RHugAk876837;
+	Mon, 27 Apr 2026 12:56:45 -0500
 From: Mark Hatle <mark.hatle@kernel.crashing.org>
 To: yocto-patches@lists.yoctoproject.org, richard.purdie@linuxfoundation.org
 Cc: dburgener@linux.microsoft.com, peter.kjellerstedt@axis.com
-Subject: [pseudo][PATCH 02/11] linkat: Avoid a segmentation fault
-Date: Mon, 27 Apr 2026 12:56:32 -0500
-Message-Id: <1777312601-1393-3-git-send-email-mark.hatle@kernel.crashing.org>
+Subject: [pseudo][PATCH 07/11] test: Add test cases for canonicalize functions
+Date: Mon, 27 Apr 2026 12:56:37 -0500
+Message-Id: <1777312601-1393-8-git-send-email-mark.hatle@kernel.crashing.org>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1777312601-1393-1-git-send-email-mark.hatle@kernel.crashing.org>
 References: <1777312601-1393-1-git-send-email-mark.hatle@kernel.crashing.org>
@@ -26,86 +26,218 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Mon, 27 Apr 2026 17:56:58 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3849
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3859
 
-From: Peter Kjellerstedt <peter.kjellerstedt@axis.com>
+From: Mark Hatle <mark.hatle@amd.com>
 
-This avoids the following segmentation fault (in useradd):
+Verify canonicalize, which calls realpath, both in a normal and
+emulated chroot environment.
 
-  Program terminated with signal SIGSEGV, Segmentation fault.
-  #0  0x0000795b22562f49 in wrap_linkat (olddirfd=olddirfd@entry=-100,
-      oldname=oldname@entry=0x6016835f1fb0 "/etc/group.3167327",
-      newdirfd=newdirfd@entry=-100,
-      newname=newname@entry=0x6016835f1fd0 "/etc/group.lock",
-      flags=flags@entry=0) at ports/unix/guts/linkat.c:37
-  37              oldpath = oldname;
-  (gdb) bt
-  #0  0x0000795b22562f49 in wrap_linkat (olddirfd=olddirfd@entry=-100,
-      oldname=oldname@entry=0x6016835f1fb0 "/etc/group.3167327",
-      newdirfd=newdirfd@entry=-100,
-      newname=newname@entry=0x6016835f1fd0 "/etc/group.lock",
-      flags=flags@entry=0) at ports/unix/guts/linkat.c:37
-  #1  0x0000795b2257b95c in wrap_link (newname=0x6016835f1fd0 "/etc/group.lock",
-      oldname=0x6016835f1fb0 "/etc/group.3167327") at ports/unix/guts/link.c:17
-  #2  link (oldname=0x6016835f1fb0 "/etc/group.3167327",
-      newname=0x6016835f1fd0 "/etc/group.lock") at pseudo_wrapfuncs.c:8968
-  #3  0x00006016814d45dd in do_lock_file (file=file@entry=0x6016835f1fb0 "/etc/group.3167327",
-      lock=lock@entry=0x6016835f1fd0 "/etc/group.lock", log=log@entry=true)
-      at ../../sources/shadow-4.19.4/lib/commonio.c:167
-  #4  0x00006016814d4e88 in commonio_lock_nowait (db=db@entry=0x6016814df9e0 <group_db>,
-      log=log@entry=true) at ../../sources/shadow-4.19.4/lib/commonio.c:373
-  #5  0x00006016814d4f09 in commonio_lock (db=db@entry=0x6016814df9e0 <group_db>)
-      at ../../sources/shadow-4.19.4/lib/commonio.c:413
-  #6  0x00006016814cfc9a in gr_lock () at ../../sources/shadow-4.19.4/lib/groupio.c:141
-  #7  0x00006016814c981f in open_group_files (process_selinux=process_selinux@entry=false)
-      at ../../sources/shadow-4.19.4/src/useradd.c:1797
-  #8  0x00006016814cacdc in open_files (process_selinux=process_selinux@entry=false)
-      at ../../sources/shadow-4.19.4/src/useradd.c:1759
-  #9  0x00006016814cc388 in main (argc=<optimized out>, argv=<optimized out>)
-      at ../../sources/shadow-4.19.4/src/useradd.c:2585
-  (gdb) l
-  32              if (olddirfd != AT_FDCWD || newdirfd != AT_FDCWD) {
-  33                      errno = ENOSYS;
-  34                      return -1;
-  35              }
-  36      #endif
-  37              oldpath = oldname;
-  38              if (pseudo_chroot_len && strncmp(oldpath, pseudo_chroot, pseudo_chroot_len) &&
-  39                      oldpath[pseudo_chroot_len] == '/') {
-  40                      oldpath += pseudo_chroot_len;
-  41              }
-  (gdb) p oldname
-  $1 = 0x6016835f1fb0 "/etc/group.3167327"
-  (gdb) p oldpath
-  $2 = 0x6016835f1fb0 "/etc/group.3167327"
-  (gdb) p pseudo_chroot_len
-  $3 = 91
+AI-Generated: test cases generated by github copilot (claude opus 6.4)
 
-The above code (on line 38) is supposed to check if oldpath is prefixed
-by pseudo_chroot, but instead it checks the opposite, and then the check
-for the slash on the next line is made outside oldpath if it is shorter
-than pseudo_chroot.
-
-Signed-off-by: Peter Kjellerstedt <peter.kjellerstedt@axis.com>
 Signed-off-by: Mark Hatle <mark.hatle@amd.com>
 Signed-off-by: Mark Hatle <mark.hatle@kernel.crashing.org>
 ---
- ports/unix/guts/linkat.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ test/test-canonicalize.c  | 171 ++++++++++++++++++++++++++++++++++++++++++++++
+ test/test-canonicalize.sh |  11 +++
+ 2 files changed, 182 insertions(+)
+ create mode 100644 test/test-canonicalize.c
+ create mode 100755 test/test-canonicalize.sh
 
-diff --git a/ports/unix/guts/linkat.c b/ports/unix/guts/linkat.c
-index e1712a9..60fbf63 100644
---- a/ports/unix/guts/linkat.c
-+++ b/ports/unix/guts/linkat.c
-@@ -35,7 +35,7 @@
- 	}
- #endif
- 	oldpath = oldname;
--	if (pseudo_chroot_len && strncmp(oldpath, pseudo_chroot, pseudo_chroot_len) &&
-+	if (pseudo_chroot_len && !strncmp(oldpath, pseudo_chroot, pseudo_chroot_len) &&
- 		oldpath[pseudo_chroot_len] == '/') {
- 		oldpath += pseudo_chroot_len;
- 	}
+diff --git a/test/test-canonicalize.c b/test/test-canonicalize.c
+new file mode 100644
+index 0000000..db20f25
+--- /dev/null
++++ b/test/test-canonicalize.c
+@@ -0,0 +1,171 @@
++/*
++ * Test canonicalize_file_name
++ * SPDX-License-Identifier: LGPL-2.1-only
++ */
++#define _GNU_SOURCE
++
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <fcntl.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <unistd.h>
++#include <string.h>
++#include <limits.h>
++
++static int failures = 0;
++
++static void check(const char *desc, int condition) {
++    if (!condition) {
++        fprintf(stderr, "FAIL: %s\n", desc);
++        failures++;
++    }
++}
++
++static int test_basic(void) {
++    char *result;
++    char cwd[PATH_MAX];
++    int fd;
++
++    if (!getcwd(cwd, sizeof(cwd))) {
++        perror("getcwd");
++        return 1;
++    }
++
++    /* Create a test file and symlink */
++    fd = open("test_canon_file", O_CREAT | O_WRONLY, 0644);
++    close(fd);
++    if (symlink("test_canon_file", "test_canon_link") != 0) {
++        perror("symlink");
++        return 1;
++    }
++
++    /* canonicalize_file_name on regular file */
++    result = canonicalize_file_name("test_canon_file");
++    check("canon file", result != NULL);
++    if (result) {
++        check("canon file starts with /", result[0] == '/');
++        check("canon file contains name", strstr(result, "test_canon_file") != NULL);
++        free(result);
++    }
++
++    /* canonicalize_file_name on symlink (should resolve) */
++    result = canonicalize_file_name("test_canon_link");
++    check("canon link", result != NULL);
++    if (result) {
++        check("canon link resolves", strstr(result, "test_canon_file") != NULL);
++        /* Should NOT contain the link name */
++        check("canon link not link", strstr(result, "test_canon_link") == NULL);
++        free(result);
++    }
++
++    /* canonicalize_file_name on . */
++    result = canonicalize_file_name(".");
++    check("canon dot", result != NULL);
++    if (result) {
++        check("canon dot matches cwd", strcmp(result, cwd) == 0);
++        free(result);
++    }
++
++    /* canonicalize_file_name on nonexistent should return NULL */
++    result = canonicalize_file_name("test_canon_noexist");
++    check("canon noexist NULL", result == NULL);
++
++    unlink("test_canon_link");
++    unlink("test_canon_file");
++
++    return 0;
++}
++
++static int test_chroot(const char *chroot_dir) {
++    char *result;
++    char path[PATH_MAX];
++    int fd;
++
++    /* Create test file and symlink inside the chroot directory */
++    snprintf(path, sizeof(path), "%s/cr_canon_file", chroot_dir);
++    fd = open(path, O_CREAT | O_WRONLY, 0644);
++    if (fd < 0) { perror("open chroot file"); return 1; }
++    close(fd);
++
++    snprintf(path, sizeof(path), "%s/cr_canon_link", chroot_dir);
++    if (symlink("cr_canon_file", path) != 0) {
++        perror("symlink in chroot dir");
++        return 1;
++    }
++
++    /* Also create an absolute-target symlink */
++    snprintf(path, sizeof(path), "%s/cr_abs_link", chroot_dir);
++    if (symlink("/cr_canon_file", path) != 0) {
++        perror("abs symlink in chroot dir");
++        return 1;
++    }
++
++    if (chroot(chroot_dir) != 0) {
++        perror("chroot");
++        return 1;
++    }
++    if (chdir("/") != 0) {
++        perror("chdir /");
++        return 1;
++    }
++
++    /* canonicalize on a file: result must be /cr_canon_file, not
++     * /real/path/to/chroot/cr_canon_file */
++    result = canonicalize_file_name("/cr_canon_file");
++    check("chroot: canon abs file", result != NULL);
++    if (result) {
++        check("chroot: canon abs file path", strcmp(result, "/cr_canon_file") == 0);
++        free(result);
++    }
++
++    /* canonicalize on a relative symlink */
++    result = canonicalize_file_name("/cr_canon_link");
++    check("chroot: canon rel symlink", result != NULL);
++    if (result) {
++        check("chroot: canon rel symlink resolves", strcmp(result, "/cr_canon_file") == 0);
++        free(result);
++    }
++
++    /* canonicalize on an absolute-target symlink */
++    result = canonicalize_file_name("/cr_abs_link");
++    check("chroot: canon abs symlink", result != NULL);
++    if (result) {
++        check("chroot: canon abs symlink resolves", strcmp(result, "/cr_canon_file") == 0);
++        free(result);
++    }
++
++    /* canonicalize on . should return / */
++    result = canonicalize_file_name(".");
++    check("chroot: canon dot", result != NULL);
++    if (result) {
++        check("chroot: canon dot is /", strcmp(result, "/") == 0);
++        free(result);
++    }
++
++    /* path traversal: /../cr_canon_file must stay confined */
++    result = canonicalize_file_name("/../cr_canon_file");
++    check("chroot: canon traverse", result != NULL);
++    if (result) {
++        check("chroot: canon traverse resolves", strcmp(result, "/cr_canon_file") == 0);
++        free(result);
++    }
++
++    return 0;
++}
++
++int main(int argc, char *argv[]) {
++    int rc;
++
++    rc = test_basic();
++    if (rc)
++        return rc;
++
++    if (argc > 1) {
++        rc = test_chroot(argv[1]);
++        if (rc)
++            return rc;
++    }
++
++    return failures;
++}
+diff --git a/test/test-canonicalize.sh b/test/test-canonicalize.sh
+new file mode 100755
+index 0000000..4a1c321
+--- /dev/null
++++ b/test/test-canonicalize.sh
+@@ -0,0 +1,11 @@
++#!/bin/bash
++#
++# SPDX-License-Identifier: LGPL-2.1-only
++#
++# Test canonicalize_file_name (basic + chroot)
++
++CHROOT_DIR=$(mktemp -d "${PWD}/chroot_canon_XXXXXX")
++trap "rm -rf '$CHROOT_DIR'" 0
++
++rm -f test_canon_file test_canon_link
++./test/test-canonicalize "$CHROOT_DIR"
 -- 
 1.8.3.1
 
