@@ -1,160 +1,143 @@
-Return-Path: <daniel.turull@ericsson.com>
+Return-Path: <anuj.mittal@oss.qualcomm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18627FF885E
-	for <webhook@archiver.kernel.org>; Mon, 27 Apr 2026 12:31:23 +0000 (UTC)
-Received: from MRWPR03CU001.outbound.protection.outlook.com (MRWPR03CU001.outbound.protection.outlook.com [40.107.130.49])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.44095.1777293079626535049
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94241FF885E
+	for <webhook@archiver.kernel.org>; Mon, 27 Apr 2026 13:06:23 +0000 (UTC)
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.44446.1777295182095628782
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 27 Apr 2026 05:31:19 -0700
+ Mon, 27 Apr 2026 06:06:22 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@ericsson.com header.s=selector1 header.b=jBRu8WNa;
- spf=pass (domain: ericsson.com, ip: 40.107.130.49, mailfrom: daniel.turull@ericsson.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Gk6DipQqIkoHPl3vwqwNYX8vFxovAwohQ9R6KMoh6dUEGLw6lXdPqZ8ggGf70JFKQOq+etl+yD+KI33HMaCDlJzDFRIDqTxgUceOkhEetdcy9rCStWiKqAmqmZdEqOnXSXPmDv1OupNoZbhvfSctB8Wwgiohb6/j1xbhY8LPU81FqFtRGzcDjEyK1SLOqPaOTIFJBI5u1gVyg4ad+lvgIexfYIzptdRHkYhI5uT+S3+U7udHt8vVyIrM5d2hA+K5xdvDUlJQpP2m/eXv6n/Y2mBoSoURtw1a6ipXZKqwndchSw3r/VT20mYccC2dlki5Qh+1rYDeuc5Qp2YGRrlCxQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XWsDRCda60g1gM52c75Tbz9+q0r7lAMtg++EoJQvirA=;
- b=b64XmJER2Sr2gTmydjhyABTzacp9nRzYF7z4jTHwhzU82ZUzZkEeI7X9bN+K2AS+vAA5gAQ1MTJygbrHa7axpJkgIY4elV/ikHoEBH4tHodIKyX+fdq0DBTC9ehoyt7CrholM5saLI0gYBTrlOC61tTgq83hlpJXn9SLFc1ZDRVBF3H8GIn/jWrKu2YiZEqIoPuBl3MEUg5kA+C0Ouy3fpePWzgJ/0AjAoitlYtFM71+svkwU7K1FG1/87ISpaD3gza5PqGeTV3I5O562Es5d6g9d9OAsR1xhlQOA387UXfdo9VSs3nfrfkZHiCTXY9MViDlwCR3uKhCJoHxuOAa9g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=ericsson.com; dmarc=pass action=none header.from=ericsson.com;
- dkim=pass header.d=ericsson.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ericsson.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XWsDRCda60g1gM52c75Tbz9+q0r7lAMtg++EoJQvirA=;
- b=jBRu8WNa5w2+H2LlUoGc9tBTeajMAVmIRttls5zJ6xZ2RkNznN24COQX06xXjTse2DxCa6yYcloZJLDXFvdd1r+1RKW3KL45U9qj0lamdR9Drsyx3cgOOzkUQeJrj0XxpoFYa5aRm/q2flwp2pxOUvEUSsgCGCNePIMoQHrNCYjNG0sjnsL0qRVBjp194xNI4oo9B7YFVj1cUl3gvlmf0jKslZoPM9vh1F4xc2Duxo9zrFoBvnEDfpYry+Jnc2mQ0Ug2kEudua50l4402QU1wr4RyttfC1eFJ2QXr9TiClZN3Q7cCA3tifypylbvjQs7duSH3NbROKAWIC6DwJmR0Q==
-Received: from PA3PR07MB10721.eurprd07.prod.outlook.com (2603:10a6:102:4af::6)
- by VI2PR07MB11055.eurprd07.prod.outlook.com (2603:10a6:800:29e::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9846.26; Mon, 27 Apr
- 2026 12:31:14 +0000
-Received: from PA3PR07MB10721.eurprd07.prod.outlook.com
- ([fe80::afd3:17e5:1663:7ce7]) by PA3PR07MB10721.eurprd07.prod.outlook.com
- ([fe80::afd3:17e5:1663:7ce7%7]) with mapi id 15.20.9846.025; Mon, 27 Apr 2026
- 12:31:14 +0000
-From: Daniel Turull <daniel.turull@ericsson.com>
-To: Alexander Kanavin <alex.kanavin@gmail.com>
-CC: "yocto-patches@lists.yoctoproject.org"
-	<yocto-patches@lists.yoctoproject.org>, "paul@pbarker.dev"
-	<paul@pbarker.dev>, "ross.burton@arm.com" <ross.burton@arm.com>,
-	"yoann.congal@smile.fr" <yoann.congal@smile.fr>
-Subject: RE: [AUH][PATCH v2 9/9] upgrade-helper.py: Limit number of requests
- to remote servers
-Thread-Topic: [AUH][PATCH v2 9/9] upgrade-helper.py: Limit number of requests
- to remote servers
-Thread-Index: AQHc09/4ajKMlmo5Nkid+nuFfxwmqLXyu1IAgAADiYA=
-Date: Mon, 27 Apr 2026 12:31:14 +0000
-Message-ID: 
- <PA3PR07MB10721AE3B885739E9601C2E6A8A362@PA3PR07MB10721.eurprd07.prod.outlook.com>
-References: <20260424114603.2444938-1-daniel.turull@ericsson.com>
- <20260424114603.2444938-10-daniel.turull@ericsson.com>
- <CANNYZj8sG7A+o2tmNr2EXVd2td7+CGxRuvB6X9YWPRmWUFAYJQ@mail.gmail.com>
-In-Reply-To: 
- <CANNYZj8sG7A+o2tmNr2EXVd2td7+CGxRuvB6X9YWPRmWUFAYJQ@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=ericsson.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PA3PR07MB10721:EE_|VI2PR07MB11055:EE_
-x-ms-office365-filtering-correlation-id: 9b7e616f-93da-4e68-20d7-08dea458df6c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230040|366016|1800799024|376014|56012099003|18002099003|22082099003|38070700021;
-x-microsoft-antispam-message-info: 
- s2G5G/XKbUYO7GTZX7TneHhMPpcVlS24iSAHYs2dhAzTpPjzzWfF1Oha4maYvYWDfnduj9IEAMdB8HmnYUcYvvu2aRhq0L4xdRjGVfxnfjKMKSEH0yxwyQQtCbYk/p96tFg7eFgU7lK0/rzxfJbhH5AEieVEtlZLHJW2aOrnMP9JeQ+pElijcL+T21vVvKhPdk2sasIYoUXgGNJo/BMHkfmzu2Pbfta67n1x814aYpyXhkkQ/LfuMcXeUWABoqrdh5ALqVnb9OxqeOcjoUBiR+J6TUYhWOF53NvxgOt4MFh5VWIUO5YMyBdoGfjDi89pz/Dn//SrV21y3fQmcKl2VLNMVYXG83KLs0rINnt2Zi/yM3BZ8IaPwwRGk3QgKfuUtw5paXh638/Vv5r2dfhlhsaZsQuGaRUuZL5bvWLv42W9RDX00n2mpWdx0yXqdLgO/huDRaUNyJHkqfK0Wyj3NsRF3YY/xZA6Kl4TOCJ6vxkm2bxL8mSIaFqHVV37funxYmTeIpOPPErtAddIsGUFyihpt3GU3BwyNAlnnaNvEXGOaJbOPHNkG/FbU3xGQ8CeaAuzHazKfozqsMlWzF1S8U/Be2HAZRMUHDFKBLHLCUH43RfnrAkeHT2uc5ODqkKoTkGG0jdnbi7bvZPCaP6qeH7egYtbszV2HqLnmYLlsL9pTgLMGBcoYtMz7h+Mef00bxRMINTioQJujTEg68FblAw1HCuqxyd9Hx3cdls5Uqs8/70OTDYUx9IVGsMCsw+x
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA3PR07MB10721.eurprd07.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(56012099003)(18002099003)(22082099003)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?utf-8?B?anBMOGlIU21tRmx6cldBdnJWbTRaUi9hMUFxVDZqNTJGRXEwa2dvOTh5cUVk?=
- =?utf-8?B?NUI2T21HZldmeHNaYUdjV1pGMllJVzZUOVl1ZSsxd3A1OUt2VFRsTEZxK1Bj?=
- =?utf-8?B?ZjdQaGR3RWdXZ2xFUFVLQzROc043UWl0S1Bha0pqUE9Rcm5NQzZwUXRvQjZv?=
- =?utf-8?B?MmtvM1BRdXloNTJIdW9PTXAxS1hCcnlXbnM3eHlXRFg0VHZqclhPaFA4Ym92?=
- =?utf-8?B?NFVZbjFGNEd1MjROT2ovZG5wV2dGeWxjK3MyOFZabWlzWE45MEVHTVNTTG1B?=
- =?utf-8?B?NTR0dUpjRTdKc09Ob0F5OStoUC9xTGxZUFVMRC9pVmZuV0l3V1JPN1pZSHJK?=
- =?utf-8?B?UGYwZGZqZkU5d1JKdjdyMDRuUmZkNzA2eHJabGlmQWhnanJEaGw4TmxwSm0w?=
- =?utf-8?B?K0pzQVlGSk5jWXlVYk9tRHU2ZVNIUlJjaXZuZ1pFZWdBamxpOEdiTGdJM2Rr?=
- =?utf-8?B?eUJrMi95eFNteWgwTEhHcXFPMW05Zm9hQ1gxbEVQUmRFazNDSjlkODdsVk44?=
- =?utf-8?B?dGMvZnV3UnpJaWRIeDF3d2hVWDZFaDBPci9HYnBmRnQ3Zk92WmhJQnVtdXNN?=
- =?utf-8?B?Rk5FMVhsZ3d6UXNmVDFaLzRqVTl5cFR2YlRodFYvTGtXTlVTeFA5bUV5WUJW?=
- =?utf-8?B?MjVVYXVXZUluWDgxMGdaNkM3KzEzWFhza2x4V1ZVNE1VWGhDblcxQi9nZjZ4?=
- =?utf-8?B?K0lXYjZyS09TT1hNYVlKY1ROenZPbE1jRkV5NHAvZlhlRXdjdUZwMEdZUWor?=
- =?utf-8?B?bGlHYkZBTnhrVzFOQU1oOTM1TWlPZ0lDQkxKbXBlOGFZSzhWWGpsZHpKcDB1?=
- =?utf-8?B?MmY4QzBTZGVhRWtsSkN4UE9NTGhIMFNyZEUrem9GY3lsN0JaOVJVVkZNZFFx?=
- =?utf-8?B?Y2QwSUhQblRpUlVYOWdPbjA5c2h1K2VQRHJLUEZ6RG5vU1l6RVowL1lSY3lz?=
- =?utf-8?B?TWYxNUVvNHRnS0NEMUswMUxpUGFERm1PSGZJVmsyeHp0VEhKRUlqYjZuMzBm?=
- =?utf-8?B?cmdIU0VMVXhielFWcFhlRjB0RzBWQkZLNEdBUFhwSWorRkxEcXB2anVKSDEx?=
- =?utf-8?B?QmtuUVQ3YllTZE1rTjExbGd6eUpUckgrdHd5eUFwK2VzWlc5SW16bFd5UmFr?=
- =?utf-8?B?SlplaHJzRUhYaTVIcDA3dUZ0U1JHSDFpYkJuR3UxSDBmV3JjZTNBVkpONHQ4?=
- =?utf-8?B?YVRqbllWVjdMTlg1Q0hKZmVPQ0J6ODZRVHBHNUlua2U0aHZ6ZTAxV2x4YXFs?=
- =?utf-8?B?V2pPTmY0a05HRmFvaGk3YmlqV1BWYTkxSHBtaFZucEo2TU1aU3NOSmpvMVp6?=
- =?utf-8?B?NXBpcnM1NDc5Rk04NFowaTlHSFpQQmtnOU90UDB0VjVXMWw3TkM3VW1kcFBJ?=
- =?utf-8?B?c2NtbnEraFRUY1VmbmdsV3RqdnJrR3ovcTZ3ekdLaDYzQjQ0UU5PNUo0QWVZ?=
- =?utf-8?B?ODVlNERBQ3FWeHJoVldGSjRlVWdHV2hiV20vbWZnVHZlclFBL0pKL283Y0ZW?=
- =?utf-8?B?em9hSzVpNjN5T2ZWZ3ZqejJTZDBvd3JMRUZxVitERUpEeWFzd04rQTMvN3Rx?=
- =?utf-8?B?YVlaSXpSNWN4NlFzTFNZVjNBSVdmT0VkSUkveG53RVpvWHh4U3lFdlEyVkQ3?=
- =?utf-8?B?empEdkJMV0dtYjU3cWRINEVlQnEwcEFqYnNPbktyOG1qanFXbTlOdTEvWTJ5?=
- =?utf-8?B?Rm5vUjFncTU3NXBvSVlnaER5aWZXUHVMWFdzOHdMOXgwS25rMmdGVW96dDBz?=
- =?utf-8?B?dUxNVHdGWUtoMHh0SWtkRUFKM1l4Ukh2UGEwTzF2YTdQRHB6N244aWxJV3pF?=
- =?utf-8?B?SnVkdUtxN3VDWGVFdnNRQUlYaWM1dVlEb2FpaHRBWERjaTVzRnRSWXZNZ0Nt?=
- =?utf-8?B?M1FPQzd1eElvaUlmQkV5bkFsdWo4WEV0Y3ZHWCtMcFZjNnc5RUU3VGdDR2FJ?=
- =?utf-8?B?VEZEWCt6OUYrMDZ4bk9FbXRRWU1qTnhtUjN6WjBaeW1tbzFYcWJXZXprSTRs?=
- =?utf-8?B?SEwvOHh1dXg2WWd6SnlDS3NQZkJmZWpxQzRMTTdueS9MM0RsSGs3bnV3ajBY?=
- =?utf-8?B?bnFOSlNWdzNRczg4MXJvQ1VaNFdhUGMwRkFpUER0elkrbTQ1QjFsU2FKckVF?=
- =?utf-8?B?cFZkK2M0N01jU1krSkZlNUhEclFVWlg4WGwzT3RNRFQyUHZGTEp6MVMydXp0?=
- =?utf-8?B?MjNaK2dwLzU2SUVJMDU0Nmh1cVB6dVBGTFBBVE0vbUMxY2gyUyt3MWlWSHhp?=
- =?utf-8?B?d0tVaXZQZjRKV0JlZVJlbkRzSWVpMmJQc1pYdzR2cnQySlVtWlk4SGo5ck9y?=
- =?utf-8?B?Rm5BajdBejBzejh6UHh1UllPcHF5K1owalQ3bFBUclFhajFOQzFZQT09?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ dkim=pass header.i=@qualcomm.com header.s=qcppdkim1 header.b=jUlGTVbM;
+ dkim=pass header.i=@oss.qualcomm.com header.s=google header.b=BdU5fmWf;
+ spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: oss.qualcomm.com, ip: 205.220.168.131, mailfrom: anuj.mittal@oss.qualcomm.com)
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63R8TAql2793094
+	for <yocto-patches@lists.yoctoproject.org>; Mon, 27 Apr 2026 13:06:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=qcppdkim1; bh=k9FwshEeqNU
+	RbCYrHFRk9WlDkRCgfZpI3AWOioJLMe4=; b=jUlGTVbMa+jP5nFltZ9WCX6c1ge
+	s2ND/cufOUtwtbrYakR+YzL02QRbfAXkSR07LVEGRIpLyBWLiAkhOMlvVAVOFo3h
+	D5Y6+N/5Ub1P14YlT4SAevVQIXRY/E+hNIFpDEAQiw+Ya5Z4Yc7pxytkx/T0yzro
+	Q/QVlGQ1oAPfUOemAbimWZOmEHfKUUkyxtEPd/0UWvB1GYIHe4BwOi30oH6UTLIM
+	7AV4KvrhFWTs51+em7TpxJn4UCVjUMPctVZ/Ff8fIInk14Cq464byOfGdWxzqf2z
+	Aopw8zlF8sgf566o5dKDIa6r6SQ2hV7dhCgaLGCnWQEklVp5i4+r6czMbwA==
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4dsa4uv9vc-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <yocto-patches@lists.yoctoproject.org>; Mon, 27 Apr 2026 13:06:21 +0000 (GMT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-82f6e6a3a76so12327977b3a.0
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 27 Apr 2026 06:06:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1777295181; x=1777899981; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=k9FwshEeqNURbCYrHFRk9WlDkRCgfZpI3AWOioJLMe4=;
+        b=BdU5fmWfYYjsthE6FZyLakl7szlLnyj5iGZAQEJ54P0Ju+kVLkYrd6lH4gawRRwcgd
+         5V0+mYtTQoEC9lM4PuN26c9vw0QBpxvtbiA3oIEtrNUHaxXJjvTtDLef0uVonNjmF8Sj
+         +XUglMHgHSX0L2U3m6OTYiIaJxVBJyj+86XKjSrrbGkP1r0EFNPAfwW+wQKWeYNrrCdl
+         lNjxBC+F1rTZFf9y96JSjhyp7IYzuN2tAlrrqf/s9+Y2MhHuXfr2optv7/RwBYX+3KNn
+         WFiiObW0LRCQw6IH8GHcpRIhXSFDcppAzL043vUO1e6UlNWsv21X3yFKS6oyOOSRl0Ds
+         v9Xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777295181; x=1777899981;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=k9FwshEeqNURbCYrHFRk9WlDkRCgfZpI3AWOioJLMe4=;
+        b=kO3/OGwix+9OghgcpC2EwZoDRrEyvaCRSB3eTl279UbX0xjG3pCE7EhqQtucEl/OKh
+         BLnBj8me22aHhDI9PU5HBfqEhi5u8NgnR/DEPKHXSx0X2EFG5v9OzUQ63rRrQqhRgQtr
+         XyeKw433JWbE1HopQGimnF9BLeRGG7cVilZz7NWTer03ZwgZXokjgVdNRfclftEa7TAi
+         F27KhRwyFC0+A6Wtc+RjemzjQw7q/f1JRw5JWsYl+1nvQ5thIC+XoE9eVw3541igIqP2
+         1v/DRHwz1mxnmdvPMPen+J1gCMIIDlMwWlVI9WEq7W8UA425Ubg+iYALM8W9ZTluaGul
+         qjrw==
+X-Gm-Message-State: AOJu0YySFs1deHXMj+QMe+sy7n43/Nc/k3os2QscvE+SReepg/GDxpzA
+	MVeF7wUYoVwADjb+qcAutD1n88lvk66B8fJgx2K+Z72i9A43S6GFFRJ1WWNknhtyBocmUFji0JT
+	gtTOp6neUxXMfVWM/5k6/dqOSQO36hFCvDIOMkR6WZ3jdt6zvpA1GLQOvaPE4lU4GU/o8I8rLyi
+	DZkO5W8jz2mh2I
+X-Gm-Gg: AeBDieva0iu9yPeCqPKx4vYAGC8Ytt7xDwhpS9ud2jytltAA5xlAdgNF65wpmDF8sgS
+	y8EQkNjXAKovUSSADQviA3R/I6U3nSBHZrv5T5+uURRjXlo2DXzI9ycEG3iQz/VbgBl5dmg/vkt
+	+tC608Lo2l6v1V4DwPJHxrNUqsIxaTY3yWVU4/3q73xGC5p/n6FIeHQdH4zON6cPn4g1c8ZL3iE
+	2AzvgWfzUqP7zW080KKuqn/+OPGN6C4kou0BGivJSAzAUPTIRFKoXhRAts8MXdH7muky0/D6lKO
+	HfEyN4TgbRkRGezbTj14qie69GAQsqtD/cR6LcspqfIt0OlE4LTeaioXIS1BZfpbEPjcdsrm4FT
+	vPBz2dwoudIw7p/AVZGloJIla28HmvNVSMUhIHA==
+X-Received: by 2002:a05:6a00:c8a:b0:82f:4428:f2f with SMTP id d2e1a72fcca58-82f8c8f907emr42918909b3a.38.1777295180629;
+        Mon, 27 Apr 2026 06:06:20 -0700 (PDT)
+X-Received: by 2002:a05:6a00:c8a:b0:82f:4428:f2f with SMTP id d2e1a72fcca58-82f8c8f907emr42918872b3a.38.1777295180135;
+        Mon, 27 Apr 2026 06:06:20 -0700 (PDT)
+Received: from fedora ([2001:f40:970:6089:46ff:e946:5748:5ddc])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-82f8e981d00sm31912823b3a.5.2026.04.27.06.06.19
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Apr 2026 06:06:19 -0700 (PDT)
+From: Anuj Mittal <anuj.mittal@oss.qualcomm.com>
+To: yocto-patches@lists.yoctoproject.org
+Subject: [meta-dpdk][PATCH 2/2] dpdk: fix builds for ARM machines
+Date: Mon, 27 Apr 2026 21:06:03 +0800
+Message-ID: <20260427130603.2142929-2-anuj.mittal@oss.qualcomm.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260427130603.2142929-1-anuj.mittal@oss.qualcomm.com>
+References: <20260427130603.2142929-1-anuj.mittal@oss.qualcomm.com>
 MIME-Version: 1.0
-X-OriginatorOrg: ericsson.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PA3PR07MB10721.eurprd07.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9b7e616f-93da-4e68-20d7-08dea458df6c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Apr 2026 12:31:14.5146
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: uB+UlpV2tnkUQd7LNVNbetu9PYvI3vBH5V3IZjZLF15oxKqc5U15ZFVHjc1ocEDHKbH/7SdQtf+hNmIM5wFTzkFdIchYaRKdvX4kHzNNS4Y=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR07MB11055
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: VWLMBfExUtsFr4L_5fro7TdZRq6s2O3-
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDI3MDEzOSBTYWx0ZWRfX6dU1P9/cEry3
+ hSFZPSpZZwTiZ3VFNGMZdO7NQQdVrpk8pU5NH7hdIJNHGCodMj9DBlB+YUWHeSwazJjFANuoTFT
+ sQB2RmuNydIW4vJ7mVlXv/6776gPkFVsvM2buag/n94J5Cgw8zSPRc6Zrmb8WG67HdVzdAFPK2/
+ DrVWk7sLImcsa935Q2EMDx3bobSx6wjV/2zXlG7OnQvs8/P3HoZ/U0wsqCb4ZL9vlRB2qnvVhET
+ GMF5GWRVg6AIziRKIiNO5JpPlCEDe1UTP4zc1pWM2NS4GeECNrFoqlMm8l19J4AJAfZ7zSuga12
+ hzdcFnny6XAdXZsGBbjF1K1D1efwgpsT4NS1f3wsB8+2o99ws5vjM/VbwnzOd9LNhMmihuM0NfY
+ 8Du4ck4Nszda+o+CS4qtbvBPgDHqxopQxJ83N5lVSwUwVhKEPL0KCt4rmCW/cyqggtyqRrPPvF8
+ yZ0JBqRNYZmZqmmdEsA==
+X-Proofpoint-ORIG-GUID: VWLMBfExUtsFr4L_5fro7TdZRq6s2O3-
+X-Authority-Analysis: v=2.4 cv=J/GaKgnS c=1 sm=1 tr=0 ts=69ef5f4d cx=c_pps
+ a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=xqWC_Br6kY4A:10 a=A5OVakUREuEA:10
+ a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22
+ a=eoimf2acIAo5FJnRuUoq:22 a=EUspDBNiAAAA:8 a=TBWujI5UlwArnwUfSjAA:9
+ a=OpyuDcXvxspvyRM73sMx:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-04-27_04,2026-04-21_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 bulkscore=0 spamscore=0 phishscore=0 lowpriorityscore=0
+ impostorscore=0 priorityscore=1501 adultscore=0 suspectscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2604200000 definitions=main-2604270139
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 27 Apr 2026 12:31:23 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3843
+ <yocto-patches@lists.yoctoproject.org>; Mon, 27 Apr 2026 13:06:23 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3845
 
-SGksDQoNCkkgd2FzIGV4cGVyaW1lbnRpbmcgdG8gcnVuIGl0IHdpdGggYW4gZWFybHkgdmVyc2lv
-biBpZiBzY2FydGhnYXAgYW5kIEdOVV9NSVJST1Igd2FzIG5vdCBjb3JyZWN0ZWQuDQoNCi1HTlVf
-TUlSUk9SID0gImh0dHBzOi8vZnRwLmdudS5vcmcvZ251Ig0KK0dOVV9NSVJST1IgPSAiaHR0cHM6
-Ly9mdHBtaXJyb3IuZ251Lm9yZy9nbnUiDQoNCldlIGNhbiBwcm9iYWJseSBkcm9wIGl0LCBqdXN0
-IHdhbnRlZCB0byBiZSBhIGJpdCBtb3JlIGdlbnRsZSBhZ2FpbnN0IHVwc3RyZWFtIHNlcnZlcnMu
-IEknbGwgcmVtb3ZlIGl0IGZyb20gdjMNCg0KRGFuaWVsDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNz
-YWdlLS0tLS0NCj4gRnJvbTogQWxleGFuZGVyIEthbmF2aW4gPGFsZXgua2FuYXZpbkBnbWFpbC5j
-b20+DQo+IFNlbnQ6IE1vbmRheSwgMjcgQXByaWwgMjAyNiAxMjozNQ0KPiBUbzogRGFuaWVsIFR1
-cnVsbCA8ZGFuaWVsLnR1cnVsbEBlcmljc3Nvbi5jb20+DQo+IENjOiB5b2N0by1wYXRjaGVzQGxp
-c3RzLnlvY3RvcHJvamVjdC5vcmc7IHBhdWxAcGJhcmtlci5kZXY7DQo+IHJvc3MuYnVydG9uQGFy
-bS5jb207IHlvYW5uLmNvbmdhbEBzbWlsZS5mcg0KPiBTdWJqZWN0OiBSZTogW0FVSF1bUEFUQ0gg
-djIgOS85XSB1cGdyYWRlLWhlbHBlci5weTogTGltaXQgbnVtYmVyIG9mDQo+IHJlcXVlc3RzIHRv
-IHJlbW90ZSBzZXJ2ZXJzDQo+IA0KPiBPbiBGcmksIDI0IEFwciAyMDI2IGF0IDEzOjQ2LCA8ZGFu
-aWVsLnR1cnVsbEBlcmljc3Nvbi5jb20+IHdyb3RlOg0KPiA+ICsgICAgICAgICAgICAgICAgcGtn
-Z3JvdXBzX2l0ZXIgPQ0KPiA+ICsgb2UucmVjaXBldXRpbHMuZ2V0X3JlY2lwZV91cGdyYWRlX3N0
-YXR1cyhsYXllcl9yZWNpcGVzKQ0KPiANCj4gQW55IHN1Y2ggcmF0ZSBsaW1pdGluZyBuZWVkcyB0
-byBiZSBoYW5kbGVkIGluc2lkZSB0aGlzIGZ1bmN0aW9uIGJ5IHBhc3NpbmcgaW4gYQ0KPiBwYXJh
-bWV0ZXIsIGFuZCBjZXJ0YWlubHkgbm90IGJ5IGhhY2tpbmcgb2UudXRpbHMuY3B1X2NvdW50LiBB
-bHNvLCBJJ20gbm90DQo+IHNlZWluZyB0aGUgaXNzdWUgbG9jYWxseSAoMjU2IGNvcmVzLA0KPiA2
-NCB3b3JrZXIgdGhyZWFkcyBpbiAnZGV2dG9vbCBjaGVjay11cGdyYWRlLXN0YXR1cycpLCBhcmUg
-eW91IHJlZGlyZWN0ZWQgdG8NCj4gc29tZSBnbnUgbWlycm9yIHdoaWNoIGRvZXMgaXQ/DQo+IA0K
-PiBJIHVuZGVyc3RhbmQgdGhhdCB5b3Ugd2FudCB0byBhdXRvbWF0ZSBzY2FydGhnYXAgdXBkYXRl
-cywgYW5kIHN1Y2ggdHdlYWtzDQo+IGNhbid0IGJlIGVhc2lseSBiYWNrcG9ydGVkIGluIG9lLWNv
-cmUsIGJ1dCBjb2RlIHNob3VsZG4ndCBqdXN0ICdmaXggaXNzdWVzJywgaXQNCj4gYWxzbyBuZWVk
-cyB0byBiZSBtYWludGFpbmFibGUgaW4gdGhlIGxvbmcgdGVybS4NCj4gDQo+IEFsZXgNCg==
+cpu_instruction_set variable is neither recommended nor effective for
+ARM builds. DPDK recommends setting the platform to SoC to properly
+tailor the build instead.
+
+Ensure that we set the platform value for aarch64 and
+cpu_instruction_set for all others.
+
+Signed-off-by: Anuj Mittal <anuj.mittal@oss.qualcomm.com>
+---
+ recipes-extended/dpdk/dpdk.inc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/recipes-extended/dpdk/dpdk.inc b/recipes-extended/dpdk/dpdk.inc
+index 63f8191..6c76a1d 100644
+--- a/recipes-extended/dpdk/dpdk.inc
++++ b/recipes-extended/dpdk/dpdk.inc
+@@ -18,7 +18,7 @@ def get_cpu_instruction_set(bb, d):
+         return "core2"
+ 
+ EXTRA_OEMESON = " -Dcpu_instruction_set=${@get_cpu_instruction_set(bb, d)}"
+-EXTRA_OEMESON:append:class-target = " --cross-file ${WORKDIR}/dpdk.cross"
++EXTRA_OEMESON:aarch64 = " --cross-file ${WORKDIR}/dpdk.cross"
+ 
+ COMPATIBLE_HOST:libc-musl:class-target = "null"
+ COMPATIBLE_HOST:linux-gnux32 = "null"
+-- 
+2.53.0
+
 
