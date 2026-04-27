@@ -1,185 +1,176 @@
-Return-Path: <rong.fu.cn@windriver.com>
+Return-Path: <quentin.schulz@cherry.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D39AFF8850
-	for <webhook@archiver.kernel.org>; Mon, 27 Apr 2026 06:20:45 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.36756.1777270839475976485
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEE3EFF8862
+	for <webhook@archiver.kernel.org>; Mon, 27 Apr 2026 08:18:25 +0000 (UTC)
+Received: from DU2PR03CU002.outbound.protection.outlook.com (DU2PR03CU002.outbound.protection.outlook.com [52.101.65.68])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.38364.1777277896589011713
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 26 Apr 2026 23:20:40 -0700
+ Mon, 27 Apr 2026 01:18:17 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@windriver.com header.s=PPS06212021 header.b=AaXo++q0;
- spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.166.238, mailfrom: prvs=857708df19=rong.fu.cn@windriver.com)
-Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63R60ldS3525652;
-	Sun, 26 Apr 2026 23:20:38 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
-	 h=cc:content-transfer-encoding:content-type:date:from
-	:message-id:mime-version:subject:to; s=PPS06212021; bh=MscwQQS4D
-	BpN2r6LVKEbw5Vow+cakxtxl/gY7T2vWAk=; b=AaXo++q0egp/UShvrOcc9IBF6
-	9kXJNV2ZTrmGOs8hOGcRFGuzfXetCREkd8s0Tevfb3mC5usN99jJmSzrvJKYpqIE
-	76rYv2rr5cHD3zV3tBzIuXYyOaHM0JShu4VqNUS2uXnf/dg0P1zc5ZTvhjUshR9b
-	4iXvGxgF7vjHfa+ViYBUFYv+w25i6S7/mee0o2IOIBqQ5MT6NghTdBrYassUoXVr
-	b1eCKtHLl17MkNGmFyeKgoRahIyY1ZNNrfnG8YdTd93y4duhU/nDtAxCO0xiWKKD
-	P2HTvlW146WLLqZ+ntj5thxdPZ3eZjM23mEMTiCMzRVa4ax31hFbfyaW5+CwQ==
-Received: from ch1pr05cu001.outbound.protection.outlook.com (mail-northcentralusazon11010045.outbound.protection.outlook.com [52.101.193.45])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4drw4j19jm-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Sun, 26 Apr 2026 23:20:37 -0700 (PDT)
+ dkim=pass header.i=@cherry.de header.s=selector1 header.b=EizyBdko;
+ spf=pass (domain: cherry.de, ip: 52.101.65.68, mailfrom: quentin.schulz@cherry.de)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=S0hqlsxyV1sLEtG2QsPsBYmdykYDSNgCgwy7H+CmNbuatKcjM0liNKVsJ3czAuvGIq27kouaedVEEaCzNWgOXGxsjU1RSOStoZoMHqDFMsCdZidamcCx4Z7jk8jBadCeu+VO9+Z2qt8NxrbYtKuuKhczIb5e6qjya7L+jVkWC1b82rBUPmy2b7G+twtrhRh5STM+F6NUXt3hrSFnRbWc36Tsqy0+c32mKkdHABu+dka3j+/bAi5QAUHDJl1OyOR/XBkYEdr5DB6oswRgAaaF7nCyW+mM9UdiGDOJFlY823H56qxY/JtTaEl5JZxyfIDN0NvTOVlwv0Y/htd9MGN1gw==
+ b=Pn8UHk8rPUqptG1ZajJmKJSjfXG+5hfyJ5RZUuMWy5ODoNQeevk3pGThamKoEuuqK5CKTldOXhU8eijLGU4qmcsT9+S9qppg/rUg2ee86TvvotsJEt4Lh024g1Y6ZGH1pSs/urS6v5hCWuR9Bg6T5Cp0GZ1KtsJkh28vEmvILMYHX76RHqEm2WyQO52Aq75Ll1IsvoTtuaPF9AaxtYqsKO1oU3tLenR7gdcDyWmjVvFW1dzrNTbJ5AT3M1E/H39PZEuJ1SPeMMIJJ1UdpvW4QA2ZlK5Hlc7yQrl/g8jP+xtGZRDGtRdF7dTSOR+GueR8csH5o6Auth1duJJqcmgvhQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MscwQQS4DBpN2r6LVKEbw5Vow+cakxtxl/gY7T2vWAk=;
- b=ZHZmoMZBKuVpnBFklXntqdXNvvSnXGS5EodranPADGf3eNsyvTo/bMljendBf5J+5kZsMuTGYCwhlVgrhqi6TuYQd3vKbqxHliJLvpf19sd1qchkqFt/6n7BqPuGuMeT+xzTomJn6eBIZYE8e+63ZEBJp1ueRnC6Zyid8X3clw+F5Jb9cke1cUsJjc3MOF3givokb8DmCHtbQ4QtBf9AY0gwtqOFGNLUjpTSbXzt2cStj7KLnmPp9O6ILdeH1D7a6gUoTm8mDUjpTm8pzC/ixQHE6rfTjmf79tlHmr2b7YXR4TbAQqpR2yHNYhA612T1qSf/mevfFGEl8g4DP0wGsw==
+ bh=WaRGHLB6ftAaDNBMmcVfB3ssWqJA2IJlXnzNbDyciTw=;
+ b=QJH6j4kcVwU3O+rpVh7LTFYkMi2zqCsiXBzyHCv67eNEqUcyNcbKEjSrCEP1ZKlookKyj7KzkzQk7n1MYFhzxib/7Dfe7pzRLoVG9sCAgtU9050j1sg1f1Y1ODGGRykO4Ym3d2yjBZmuxlTsZoFYUs6KJtFonGdv9QKkLqRV59GIjIQ18v/zv2Z3XK2mU6KQOTXzxLye3vozifMwizIai9yR+EYCO98GystkriEk2105JiEEaQFzXl3CRJbe75N4dhOqzWgbR8k/kddOKzhGCjuz97C0AY4H3i3YwVGiSoLr0o6JTMm5Kjc620sp99IqtR6A3u3Qo+UyzWG9YGBLGA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=windriver.com; dmarc=pass action=none
- header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
-Received: from LV2PR11MB6069.namprd11.prod.outlook.com (2603:10b6:408:17a::9)
- by SA1PR11MB8279.namprd11.prod.outlook.com (2603:10b6:806:25c::10) with
+ smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
+ dkim=pass header.d=cherry.de; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WaRGHLB6ftAaDNBMmcVfB3ssWqJA2IJlXnzNbDyciTw=;
+ b=EizyBdkoaGNwajwJQTlbqNkEo/X9op0tUfeGGOuPtv1w8EwmIPYm8eiAMqgKvGOfGl1Q+JTGXpe7wOQoglMm1BRKEbvUzy+cUQ+y4OV/uhIY647pyKuCkauwQtrNMHhKKUXzOAEv4QpPT4kenH9NuG4Rp0qRtI7Oyx5zDPUWag8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=cherry.de;
+Received: from PA4PR04MB7743.eurprd04.prod.outlook.com (2603:10a6:102:b8::20)
+ by OSKPR04MB11320.eurprd04.prod.outlook.com (2603:10a6:e10:9c::21) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9870.15; Mon, 27 Apr
- 2026 06:20:33 +0000
-Received: from LV2PR11MB6069.namprd11.prod.outlook.com
- ([fe80::d94b:502e:dc16:ad36]) by LV2PR11MB6069.namprd11.prod.outlook.com
- ([fe80::d94b:502e:dc16:ad36%4]) with mapi id 15.20.9870.012; Mon, 27 Apr 2026
- 06:20:33 +0000
-From: rong.fu.cn@windriver.com
-To: yocto-patches@lists.yoctoproject.org
-Cc: jpewhacker@gmail.com
-Subject: [meta-mingw][PATCH v2] mingw32-common.inc: disable meson exe wrapper for mingw targets
-Date: Mon, 27 Apr 2026 14:20:20 +0800
-Message-Id: <20260427062020.2393600-1-rong.fu.cn@windriver.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCP286CA0066.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:31a::10) To LV2PR11MB6069.namprd11.prod.outlook.com
- (2603:10b6:408:17a::9)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9846.26; Mon, 27 Apr
+ 2026 08:18:09 +0000
+Received: from PA4PR04MB7743.eurprd04.prod.outlook.com
+ ([fe80::9a4e:252f:2fd:97b7]) by PA4PR04MB7743.eurprd04.prod.outlook.com
+ ([fe80::9a4e:252f:2fd:97b7%6]) with mapi id 15.20.9846.016; Mon, 27 Apr 2026
+ 08:18:09 +0000
+Message-ID: <3a6e4a35-4a9b-43b5-82f9-1e5d25b015e7@cherry.de>
+Date: Mon, 27 Apr 2026 10:18:08 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [meta-rockchip PATCH v2] add support for upstream
+ RKNPU/RKNN/Rocket HW AI accelerator
+To: Quentin Schulz <foss+yocto@0leil.net>,
+ yocto-patches@lists.yoctoproject.org
+References: <20260423-rknn-v2-1-b9457a38c140@cherry.de>
+Content-Language: en-US
+From: Quentin Schulz <quentin.schulz@cherry.de>
+In-Reply-To: <20260423-rknn-v2-1-b9457a38c140@cherry.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-ClientProxiedBy: VI1P190CA0033.EURP190.PROD.OUTLOOK.COM
+ (2603:10a6:802:2b::46) To PA4PR04MB7743.eurprd04.prod.outlook.com
+ (2603:10a6:102:b8::20)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV2PR11MB6069:EE_|SA1PR11MB8279:EE_
-X-MS-Office365-Filtering-Correlation-Id: d21fef21-3280-4db6-8a83-08dea4251682
+X-MS-TrafficTypeDiagnostic: PA4PR04MB7743:EE_|OSKPR04MB11320:EE_
+X-MS-Office365-Filtering-Correlation-Id: e019e5d4-512c-4a32-dfbe-08dea4358445
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|38350700014|18002099003|56012099003;
+	BCL:0;ARA:13230040|366016|1800799024|376014|10070799003|56012099003|18002099003|22082099003;
 X-Microsoft-Antispam-Message-Info: 
-	61v1RxJEF0/pbCV9qcE/95xPoiayplcOXM9Dc02vD/JGxO6nbVVwcNr0/p6utE0oGwOBsFycgJ2NfWOcV6fwd0GPCe0ggzonX00f5C8zCpSesMb7s3zDOyWwZBHc/I4fe58jScTqYZt7qxzPF+U3vAv4uJGRHCJYUqQAgNjh4s+HrxAXsRvqoqmktXDLorNCrJ1ACq+v/P8QdEzLmyKNRxJKtelx/jXERlY08ZYQW0g/qYFrv7EdvN4P1oCOdHWl3r2HXq5Zw/jHgdrSlFhSJcKEoTPafgq8iKsX7pTqjcI/KrCQ6DAukEC2ZWEvoui/3Qv1WgVvKkYpkcBIWbIY9LUixhPRt3JE8zajRzD5ekj7OiywQWkwrpf4TaE0QCNFFshGMVC8taWeU53oVl9UzJkqnoStvNt7pL/peEGFhR9mIsrIa7kM27h4l8RaKKTuHj0HR5aNpM694Ggp1CV74dAFekTthvFHkb6QkUb7Z/SeC9QnfYrLHiN5HbE2f0FY1S+/78TsOIrkL9jdjMrwvf9Vt3NaNMpXAz2zwl57Vy1fjZbWGAPgbtUjOWfdSJgnRRhtowfCZbaRpOzXHMMA649ez331Scd9KSDpz/QyGSplKKatHpNEcaUWXPWTghdyOhqtPZuYZde1MlWIGMAEDQ3p3eHljheXFbCTzO2vpniGvkD6vl3kiTx87ReUhl3eVMTpLLcq+OJ3ihbIFkWSFkjUEoJ8QtppfL+REh7rmo1eEmlLJhO4upMhvSURWgqYdSisqpTHjr/jO5XsYcDy68F4/Vw3xpvaHp/elwsA/K8=
+	8XXfeqTvhaDH0/tNj6wfwobjman0ruKgBtmbKWY7lS98+rQWW69rwO4n/UbXsm6kaA/O3sgL6gZ5EUsflddaxCs3XzddUr09d+EttnMFpq81wExVZQM4rimE1i5t1RBQSL1KgGhz6iNp+supuDyxyXWWEE503RScbAJv2Inq75BymgQErw+I3luyzhx8Vn1eI3YGpbJ0dITIIUy12C2aV5ehWE+rCqsDqc1YW6kOonEigZRcFWJfVX9GjSjj3px29HMG0Dx9J5g27eaagYjD0wLdVXgkIZ8xK62E+2lKkzhY6vcip6Mnr9uI7p0HLsSrs+gB/ZGDf6qsZL7dLXowmIdD47+F1F685BSu9YI5EKqYa/C6M0lVK4yaeFtl5WbmPURN5A5MlSGvfwBFT7AAsl1XJT8APb31tsuwi6Py0S7DlhBAbYZ+tb875ILZYiLHoKI0uBeEywyXWjLCpR0TDuJGye35l1ndrQ6PMH2IerkeE2tYerhGKVhrGmVS2VT8c+IzozW5TvlBHw6DT/IlU294NomxGeL2unaiKO6YJN4Naws7vXHrsmtH1Gp0RPTmWw49YtmnzHupurGJdcfnGAE6KHcJA1O+wRDxULsHdaouXIIW5mNwgqwfPZZOkgAb3Omz89TwOhiRZC4G6tQGbwwcdDp5HHsaU8Li4itCXMg=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR11MB6069.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(38350700014)(18002099003)(56012099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB7743.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(10070799003)(56012099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?/06VSnAxs2PQRYgBIZAXyhhGkaJ7JKL5NlM3yFQzaLqZg4zS64w1q2tj/HDe?=
- =?us-ascii?Q?4YHHu52hdh9nqqiZKqiK7Hg0qZob6ywFiv5r35wP7enRf/EPNtqED8wcOBcj?=
- =?us-ascii?Q?WHp1Eiaiq94rTDZPuTp2JTCKtvEiYv87p9MAymmx7CXVS6PFkQrMbcfykVGM?=
- =?us-ascii?Q?jJk/fnBPQL2mXS/RO0yjOe09FeX5fCG1QUu6ptc53GhiLtQvRDcji3TbcKlP?=
- =?us-ascii?Q?UuQp+SsY/L6X7euGBy6ncNrC56Ndi7hpRDhr6STS4AUC0go0Ag3yO5DumWD4?=
- =?us-ascii?Q?/1vbObNKZwbKNws6ZeYmpUh2HRin9vSzG2QRhoCXIrgQSjZ1Rybnz2wbfvmb?=
- =?us-ascii?Q?5IbzYqEkfecX5kaVgt/xzMrgRimQQ4f7gjq4uenE9196Kl7qvz9IgwgfNtj4?=
- =?us-ascii?Q?p7l+FNE/Ro/snaX9is2RQyYbvulFWEPGVcruRNvCBpQhA6nvEzFUdMuwuKBC?=
- =?us-ascii?Q?sJngL80VLyEp6oy/rQvSyOm7y7eSLn+toWCAIwPNgG4WuTugG7iodNMZ1C3C?=
- =?us-ascii?Q?8dZG/plqQTEGmujBDp9htBo71sXY+i3PmvW6Gr+KOATM5SCTbdaIUegold7D?=
- =?us-ascii?Q?3iBKhYv7QPFi9ceMzWsNiBrS5Wt4bmeVkPp62qB04RFxPWxBmNd/+M1d3BnY?=
- =?us-ascii?Q?H8HAcO5yynL04f/AMiX2IrKTvrX2Nsu1kT8hAAtuWqHznEG5/5Kw+2NLSbke?=
- =?us-ascii?Q?wOxaDaf3LYXDKgvT3w99kGEfbcRj50h+/bsXMTI6QvbEqYTX38P2gTIGn8rz?=
- =?us-ascii?Q?w2Tl0R8T7GBgdNwg0VWzShvrimtd4wMBV1JenV1whmgBQrZxnJ4E2pNDXj6w?=
- =?us-ascii?Q?MDgAvtJ5DK3cFekRqT55y+wkCobf3s/xQPFYgFvSNat7E/Bf7KwDFX7O6e1q?=
- =?us-ascii?Q?2lsBRTXb7CU912B+Lftv1rycy+ZV8oaQrhyJkWn8vJVIf0bAa521CF2USaoz?=
- =?us-ascii?Q?ZmrtWLmJqPLM7LGXT1xsgq3Ox4cz26/RuSotIQpRddOMtQ7+TyhkMIQY9u/E?=
- =?us-ascii?Q?MvBVFyinOIgL5VoRYdKg7tqyAwlZpBAIbU34+ce7yEhQsxG7X8QdtdIF5Y8S?=
- =?us-ascii?Q?3pJclV9XCmRTJ++FWh1ZmhnpmKn1THSF2Ygkvi41DxIMyPUqUswjM1j2/h7n?=
- =?us-ascii?Q?c7WKuDsCo8CUn3VmVwk66NQXNml9UOXo9tfAk9Cv1dAJV56R7tDrC39HeIFt?=
- =?us-ascii?Q?7dSryNka6qbFS14vgxDrIQG904vIXNFQSHisuHLKQ8vgtB10ltSu12mnafC6?=
- =?us-ascii?Q?qfgqowmb18SzdYpCLxNh6ir8+/kpPLan8txyRPRcZNRKCTfNmDLFmnCYZoqd?=
- =?us-ascii?Q?0C53ell+Kqa5QYcLawbfqmIGtZh/rUofNNLK6aKG8fRdZHU+fFzFKGbJrbYw?=
- =?us-ascii?Q?K6NcjRc7qGR3lgWb0amT//0QSS5scTP1RSI87pMrIS3LKd46GjLDWxaa5aMt?=
- =?us-ascii?Q?kVa7rsgVRXqeMUIellLJYmFnaYDuXIeT2UDwbklp+pVSUMdNZ3IbMHcI/NhD?=
- =?us-ascii?Q?unDcS1cRDdXTCYfMtn5CrP3rEBteLUVLUiyVnlltDxg9mGKadarnYn0024m5?=
- =?us-ascii?Q?/oVdoLbJG5ZKGWaNRmZ7mSlruNrDV5Ce6MfkToKj7YoXsHLqZSLEDIXMIbWc?=
- =?us-ascii?Q?KoqRh3QBSa1s52QiIpv/IghWcI+2WHuB1kx3C0c8JKccFBPESnY8n9j1IYRb?=
- =?us-ascii?Q?gBuFiDXJAV5FXHTEX3Bo85FzoIIVxQ5q2mD9byq8JurPor65h/sjD4wRdBCG?=
- =?us-ascii?Q?dFlplqJRBQ=3D=3D?=
-X-Exchange-RoutingPolicyChecked: 
-	LL/2wAj3cneAr9w5nSPmtQ2x7uOCJYjZeuOFyZEZsMayKLSf+fiLkPjYjSs9sZMQ3O5Us4qnYYdsKFgPERo3supeqjMjFXf+hsFVS0kH7M6hauEY4f+shIWJLMpulmIhyFFHR22y7LXAwPX5nR6j1EHA316FJunWOUKTrREkbeksdzGCoIU9cQ5mwGGWwplCnP6NfrNr1gBlZo7VeJI5GIFwmt0fk85b3zuYDPgHMcNjFmKARy7tOzZKvGDDdP2UwI2LI+8hTPdQVLSv8ua78iqlCxMoKCUEgMrMI7YsZGscKzXIHEoKuLelJ66CRJ7W32dYZEk5mcCHAiGWnplVpg==
-X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d21fef21-3280-4db6-8a83-08dea4251682
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR11MB6069.namprd11.prod.outlook.com
+	=?utf-8?B?TDhQMDUrN1JMT0sveUt2alhSRnJ4UWYwajVBdEFsekQ2L1AwdlJrQlR0c0lr?=
+ =?utf-8?B?RDFvbElIR2JDdFJrYjBBUnJjTGc2cUh6OXg0aWlaclp1aWNzTE5XQWJZbVc1?=
+ =?utf-8?B?TXQrU0JoR0Rrb2o5STgxNVlzNXRySUFTclk5ejZBcWNuYzZuUXJZMU9QQzQx?=
+ =?utf-8?B?Tk9FY2V2WHA0cWVPcEoyMkdTQnJyenhsMnBaUVkvMEJFaWUwSGRsRjd1R2hi?=
+ =?utf-8?B?ekc1ai9pN2E0Nld4dmNVN1NBWWxEOWR5U2FGV3BHTEFvYTVaQTU2dTNESkVZ?=
+ =?utf-8?B?R2hWdTIvU1pGZmlRZWU1WmFmR29VQlJVdm1SMjFUb2hNKzVpZFY4WE1zNlht?=
+ =?utf-8?B?bThxSFVVOXNCazc2KzgxMFNDT2dqKzdPYTJuNnQwU0xxVzV1TmtvZDVFQjNF?=
+ =?utf-8?B?R3NCZXVkZWhOS0dzVkVOS245Ny92cG05V2o0d0M1M0RUNUIzQmh3M3NFbnk3?=
+ =?utf-8?B?SFNza2gvL3QyODJTeGtnV1c3NVpCVTZoTjAycGVGazNYeGwvdXNwTWlRS0pC?=
+ =?utf-8?B?dXRhQ05SVno5bHFFQndlanIwY05RUEdMUzJlZlduTE9qaG1IdnIwSHpEVHhP?=
+ =?utf-8?B?dHVzV2lTUjdNTHJnWjRVNmlnR213Y3ByTi9vZ2xNWnBwWUxPRlQySjVpbmRl?=
+ =?utf-8?B?UXpoSUZaRmhJY1ZON3JLQWVXM2VrajdBL05JZ2ZUcm51d3IrbW1NSG14VkhV?=
+ =?utf-8?B?MkJMZnZSdTBSNmtjM1l3Z3VEWWFZMGtRY0tXZUNFTTB3ZzYzeFViN0RWR05V?=
+ =?utf-8?B?MXZaeVllY0tINGFCdmFLejU5WHhQR0FSYkNpNitmV3lDUWp1c1FycUpXdmoy?=
+ =?utf-8?B?RzZrRFlNWXlQVDdDS3VoSU1XZUdQYU5BYitIS055eXdCSkJRSUpsY2grdDBB?=
+ =?utf-8?B?ZTA0dm5saUtKK1ViSDZsRE5mZEFBdGEwdXB5RjY1RnIrTFFvd083cWhsbkJN?=
+ =?utf-8?B?aDJ3OElWVVQ3RlorRENoSXFCQXovaU9mODBnWDBLUVVzU2RYOXEzN3dIZitY?=
+ =?utf-8?B?Sjh5Yk10RWY3K3RqaldTamtyVWt6a2N6eFAzaWUxb1M2ZHhoV3J1SnlLdkpj?=
+ =?utf-8?B?MGJ6bkEvdEpxbFVzSWdLTHJGK0ppUGhreFZWQVZzUUVaVjMwOGM2OWk2ZFc1?=
+ =?utf-8?B?VDhlRERKYWlzMVJMVjZjV3dlTUUveFVCWithbTN4VjZ3OVhqLzd2SktLOWt3?=
+ =?utf-8?B?QW41RUNOMFJjakJPVk9kUVd1bEgvd2dEMnJOUzVPNTBDSmt0SldLYzFJT1FC?=
+ =?utf-8?B?Y3c5aU4rRlgxNWdJUkpWckJtS3lmbXFMdWRNT1NDMFRCcVZXQTZJaUlLT0lW?=
+ =?utf-8?B?K0pONjR2akRkenFXRDZFYzRjbjVRTkppd2VVb1k1ZTNnUEFJVER0OUF2QjRL?=
+ =?utf-8?B?a2Q2QU9zRFpSak9sOVowOVF0cU1yd2dLaitIN1dRWlVDSzBSaUJRemc2L3RT?=
+ =?utf-8?B?eVNoQ2xVOGxzZ0puQ0JRalVLY3FMamUzWlE3WHdYSFVWNTJ1R1dQZUxjdVlI?=
+ =?utf-8?B?aTlpQVF1UllzL0t2NUVMeHJtS3ZMNWRFRHhYV3VqQjhpdTBvYWFDSVpoS0NE?=
+ =?utf-8?B?azBxZjdYNURqT2s1d3V3QjJpUjM2Sy9qUU9IVUs2c2JRK3VWejBkNUNwUVdo?=
+ =?utf-8?B?QTFnOE9PRXhrZTZPSGJSVmxEbmg5c1FvRjE4clZlTis3L2RWa1BQbzZWWG5P?=
+ =?utf-8?B?UU5aalowUjJBVFVRUFpQK2s1cDNhengzVm8zTGc0aEhmc0c0VWFyM0dscjlX?=
+ =?utf-8?B?dlhwcjJkcm0zbDdIYlVFNmxkTk14dFdFVEd2bEp5TGlBdDBqeFZkUk5lUDF6?=
+ =?utf-8?B?SXpQYkg5NkZha0VYVGphVmFscnd6c3hBT1kxZ3hSclNwMjZlSTVzQWZETUV2?=
+ =?utf-8?B?akRLekFULzczNlNaN2dNMGxEQ2g3ZTZZaWVSL0orUW5XQUpMVk5CU0E4ZG5B?=
+ =?utf-8?B?L2IvM2U1NEhsUG9UMExWL1NLdVMrMkhsSTVRVERERW9oU25CMG9OMWZKbW9I?=
+ =?utf-8?B?OVdsNVZUVVpwMDZUekhpWGhtTWRSbG8rTjdqTExwS0pCYVdSTzhvK3dpZ2FU?=
+ =?utf-8?B?Yjk2WkROdTlianNMelhVMDVkWExrb1czRWVwS3A1YVVyYXE1NGxBWFpENmdz?=
+ =?utf-8?B?elBVZ1pVL3VwelNzclo4RTU2dFB4NXRNeWtqbnQzemZoTjhDZ0hKVVJJM25s?=
+ =?utf-8?B?TWtERGJQOUc4Q200L2FWOGdreTFzZGE1S1Z3TUVxbHN1ZTBNZkhXNHUyRlp4?=
+ =?utf-8?B?Z2RCUWhHSFVmeUFmQUl3V3JRV0FDNEFURURldVRQaFZjcGVGRlhxdTkzYzVk?=
+ =?utf-8?B?SDdmZm5lSzMvMHNsRlZlcVZGNi9ES21TMXUxWGpYNHhXWTBac3NBdlpha2VN?=
+ =?utf-8?Q?Q3W4Y2QoaS6331X+CMrPHKAFMOtpweMo6TZYX?=
+X-OriginatorOrg: cherry.de
+X-MS-Exchange-CrossTenant-Network-Message-Id: e019e5d4-512c-4a32-dfbe-08dea4358445
+X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB7743.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Apr 2026 06:20:33.4606
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Apr 2026 08:18:09.5715
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
+X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: //PGXl6AsOjugh6onpxKCLerKgqBH/7wLqK8bO1IyAMCgOGa0VIOlsej48qOB3VuyRwo/YP9XzK9Iq9r1mbJ3sA4mDL/mem7MWPHck8Qvbs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8279
-X-Proofpoint-GUID: qvwNR9j6lJQHcmSFGkaNcQmQONxsI5IN
-X-Proofpoint-ORIG-GUID: qvwNR9j6lJQHcmSFGkaNcQmQONxsI5IN
-X-Authority-Analysis: v=2.4 cv=Iroutr/g c=1 sm=1 tr=0 ts=69ef0035 cx=c_pps
- a=ksElJwkXcxqN7TVlQt8uAA==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
- a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
- a=xqWC_Br6kY4A:10 a=A5OVakUREuEA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=bi6dqmuHe4P4UrxVR6um:22 a=iKiJcTA2PjBS6x5JeXcw:22 a=t7CeM3EgAAAA:8
- a=5E7aB64u_DvsIhRDXwkA:9 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDI3MDA2NSBTYWx0ZWRfX7FMZGqWxImLf
- KU8t8qdkKjWqQDYDg4ev0ody9nGhzqOgT3Tm2MGoAII2vZ87pbQ40groveqhhY/k5D7RoHt3kca
- VB32XnhoApMX9q5goOigm3ng7+5riE4UicqzzjzZuR9N5C8r5T7MUWua/OKJe0gZhWQYnZtxN5A
- XXOEJ9YaPlRzSaeoUmO7w8j9UF7zbaOjPqXHIMV5UCQjTwlgLZ66vz3bOgV5sCr8qlC3spq088Y
- LJdhBMrpvB729U7K7cMk0wfMXHxw0GuLltMIDiYumU0bt3u8V0zaXbhzERm1RBCC11UO4rjdJqk
- Bm0gbmsOujW9Mj3w2/CAF4IQ1cVrC/ieYbF1Ord2pCfdgylxxky5d+qbh+XEjEpN2yZXQ33vUhG
- znfuT1jpqHB4cujde5NCZN9gqacZmb/TpSCjE+gHyvfYWxaLhf/WJ0ojO8ULOl2lGXWeA4NtyPZ
- gUROKkVF2AkQzMVCLtA==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-04-27_01,2026-04-21_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 bulkscore=0 priorityscore=1501 malwarescore=0
- lowpriorityscore=0 adultscore=0 phishscore=0 spamscore=0 clxscore=1011
- impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2604200000
- definitions=main-2604270065
+X-MS-Exchange-CrossTenant-UserPrincipalName: bva2Xy3Si36LtaXYUe0LZAt1+GuqitCVkPTwohG1wUhs7D/MOIqJ26HmZK8rLucAopUeY0jj0NVi9mNXFOCNA9jX3uED+I5xVBIxqqqN0ZQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSKPR04MB11320
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 27 Apr 2026 06:20:45 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3828
+ <yocto-patches@lists.yoctoproject.org>; Mon, 27 Apr 2026 08:18:25 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3829
 
-From: Rong Fu <rong.fu.cn@windriver.com>
+Hi all,
 
-The meson bbclass uses qemu as an exe_wrapper to run cross-compiled
-binaries for sanity checks. However, qemu-i386 cannot execute Windows
-PE format executables (.exe), causing meson setup to fail with:
+On 4/23/26 6:19 PM, Quentin Schulz wrote:
+> From: Quentin Schulz <quentin.schulz@cherry.de>
+> 
+> This adds support for the NPU (Neural Processing Unit) found on the
+> RK3588(S).
+> 
+> The NPU is supported by a kernel driver (CONFIG_DRM_ACCEL_ROCKET),
+> Device Tree nodes (so not all RK3588 devices supported upstream
+> necessarily have the NPU declared properly!) and a userspace driver in
+> mesa (teflon delegate with rocket gallium driver).
+> 
+> This adds a config fragment for linux-rockchip kernels such that the
+> disabled-by-default Rocket driver is built and enables the Rocket
+> gallium mesa driver with the teflon delegate, but only when the user
+> requests its support.
+> 
+> This was tested by running the following:
+> 
+> """
+> wget https://gitlab.freedesktop.org/mesa/mesa/-/raw/main/src/gallium/frontends/teflon/tests/classification.py
+> 
+> TEFLON_DEBUG=verbose python3 classification.py \
+> 	     -i /usr/share/label_image/grace_hopper.bmp \
+> 	     -m /usr/share/label_image/mobilenet_v1_1.0_224_quant.tflite \
+> 	     -l /usr/share/label_image/labels_mobilenet_quant_v1_224.txt \
+> 	     -e /usr/lib/libteflon.so
+> """
+> 
+> from an image built with meta-tensorflow's tensorflow-lite, mesa's
+> libteflon, meta-openembedded's python3-pillow and OE-Core's
+> python3-numpy packages.
+> 
+> Note that the Aarch64 RK35xx SoCs all have an NPU, but only RK3588's is
+> currently supported in the kernel.
+> 
+> Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+> ---
+> This was tested on RK3588 Jaguar with linux-yocto 6.18 +
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=843b912c7241ed0259f6234243da05e10ce67c0f
+> 
+> Note this (lightly) depends on
+> https://lore.kernel.org/yocto-patches/20260423-python3-14-tflite-v1-3-68bca178a550@cherry.de/
+> being merged in meta-tensorflow. Another option is to simply add
 
-  Executables created by c compiler i686-w64-mingw32-gcc are not runnable.
+This has now merged in meta-tensorflow.
 
-This affects all meson-based nativesdk recipes when SDKMACHINE is set
-to a mingw target (e.g. i686-mingw32), such as nativesdk-dtc.
-
-Disable EXEWRAPPER_ENABLED for mingw32 to skip the qemu exe wrapper
-since it is not functional for Windows targets.
-
-Signed-off-by: Rong Fu <rong.fu.cn@windriver.com>
----
- conf/machine-sdk/include/mingw32-common.inc | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/conf/machine-sdk/include/mingw32-common.inc b/conf/machine-sdk/include/mingw32-common.inc
-index bf3f14e..6014c51 100644
---- a/conf/machine-sdk/include/mingw32-common.inc
-+++ b/conf/machine-sdk/include/mingw32-common.inc
-@@ -57,6 +57,9 @@ DISABLE_STATIC:mingw32 = ""
- # disable security flags
- GCCPIE:mingw32 = ""
- 
-+# qemu cannot run Windows PE executables, disable meson exe wrapper
-+EXEWRAPPER_ENABLED:mingw32 = "False"
-+
- # wine and wineserver are required to test MinGW SDKs
- HOSTTOOLS_NONFATAL += "wine wineserver"
- 
--- 
-2.34.1
-
+Cheers,
+Quentin
 
