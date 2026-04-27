@@ -2,80 +2,81 @@ Return-Path: <alex.kanavin@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7914FF8861
-	for <webhook@archiver.kernel.org>; Mon, 27 Apr 2026 10:01:39 +0000 (UTC)
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.40059.1777284097875954486
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD654FF8861
+	for <webhook@archiver.kernel.org>; Mon, 27 Apr 2026 10:15:30 +0000 (UTC)
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.40254.1777284922838451990
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 27 Apr 2026 03:01:38 -0700
+ Mon, 27 Apr 2026 03:15:23 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=DtyTrM0W;
- spf=pass (domain: gmail.com, ip: 209.85.222.179, mailfrom: alex.kanavin@gmail.com)
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-8d7e7f48499so1135631385a.1
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 27 Apr 2026 03:01:37 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1777284097; cv=none;
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=gQwwWblZ;
+ spf=pass (domain: gmail.com, ip: 209.85.160.178, mailfrom: alex.kanavin@gmail.com)
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-50e614fdb42so78002461cf.3
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 27 Apr 2026 03:15:22 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1777284922; cv=none;
         d=google.com; s=arc-20240605;
-        b=j8VeToeQocQDrWDDhH4NMjz73LNYmYMAgmZWzGCGzw8pfJmzrQ+z8bnCRxJ/ebDgLW
-         DidQuxKqc2QqHHeNFqboW560dohBNGx7y/O5rVDGneIZbuJpRoNnMXdp/CAc/Zlh7hES
-         ik7T0FCKF7dt+ZMCPk0w9nP1PmEBg1jaMPbnAMRZQAObqK+k26FiptTrNvJgQdN0QKns
-         oP0cK/uCZPFLs0mR2O/q6+UJXD45+CwD40+W8h5e57n+80B4ywcj/wBNHI4h6fUrf2EA
-         epVa3mcjXE6IjG/1u+0zKtI6DRy8N+gnG5H/VimDvRUKvEHl9Z/wSQ6WwN+mCnZGynbz
-         jDpg==
+        b=CSx71rIY7g+Tyt7q0Ebvdf1R4E/0Eipf+muKs5KFaOdkI9Q6m6T/rhTaY4KZoS4j7v
+         0Uprg1TRNByzulcEoYg8s3vNOKtGrD5Py09k2m7eA3tdyjioQAFEzUvSan4iN4CNU/iU
+         5BAoSPRA9Zoe6zNJtKSSgQh9A5CzuqCfsKTjydS2GJ09gsTDUpQB65y5yyrgqypXC8lB
+         4LB9bMWo1TX4GNqSxrG+Jt92/xNsX+le1V/wRS9nlKCb8GVD2YJrT9iZX0mKuLunjiRf
+         /jey+Ob9g2LLTrPDXCB0ndnEm3NrWeOxUv95yWQoi5Gumbc4tG3OXB2R0ZUOXEHqacjj
+         LEBg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:dkim-signature;
-        bh=dg/n5+6kbBQxRorPeum98h3SXFNSQAOd+nDPVbXYaAU=;
+        bh=8hHfd8E5OLET7TqmwSJiX1dtnoOrIdoZTogByWvBopU=;
         fh=B6+dp47eghNzyj8BrWGHk2n/ObAtmJy/gW8Hzrmb+f8=;
-        b=XLhV08oeS7yptZJXkbYI4vmw13jLoinkVLseroxN16dvF1RvDZZ7WqvTKfeI8iefQD
-         7wg1gvySOWcWlk2/JfoMMUEI5JIzp3CUN5G91TlPQip/6OeX0fU6cZfGbIN49hnlYiea
-         O1FrtWRdYxqqEFDaFgFvpafNBaVJrCcSeq3e8BwEFF287DbNZRvMWXB0V3yUB/agVO97
-         tSYc2aMAM0xGTqybb0qCHa9W/EzXRj6syuD8pVGiJ5WXJHpxhSccI3YXjJ0nv622WOPw
-         +lgx6/Nd6AiLWFmzHFpTbmCep+aMe7tB8yZ3rm5OLRdVHSNmmFW4rNHgo6RjsxjtAJ9z
-         P/Og==;
+        b=G8eEiVeNEjfgYOFTLz2QoR7SNJxYV8h8VM8keaxb7PdO2Epx7XCMxUxhFX+aaHnSeu
+         Oh3LiE0fIO+x5cvGrPODuw6TU+dAn3i5EryPSCQx9J7W0iBiL3Sg+bLOM/w2GfSzkYRT
+         t6+I71AH0+h0JIxuYdlgZttNC2eCbx+YhifMo2wsyBItHdhfffsgtb8U4bAkCO+nNznH
+         /RzWNombZamWjazkNBPTj2HtNLlkx/qlKthERL4pYcGKY1vbmm6SWbswoJAursUfhy0N
+         4/Qwg7jKoHdGHpwYVzXtmvg+S8LJv00uvMxomB1qxF2ek/fR4fjU6VneM4eNamAIQ2/Z
+         udEw==;
         darn=lists.yoctoproject.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1777284097; x=1777888897; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20251104; t=1777284922; x=1777889722; darn=lists.yoctoproject.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=dg/n5+6kbBQxRorPeum98h3SXFNSQAOd+nDPVbXYaAU=;
-        b=DtyTrM0WlRy9V5A0ASlAMsRFhMZykGRZQSf5OegjZcRtB6bBmbhNlY5WgjbF7asaue
-         GeQ3De8ABBa5xy8/mYzwr2Clc36do3EJNXcLAdGtlKZxVkZ5S7yHJI720kMikGNMDDoj
-         tYHSvLXTDJ+W4REvSmIo6NIZIhk6T39JNtgoyP10JJF05Hu6LatsR+dnWarlsWnws+NE
-         DOQDrvU0H5NyVRPgeV1iYa3zSlbxGh6koLuPJIFkNeACNmlGv1n8JxEX96DceVTbGsDm
-         4lGkDEEIOhqA3k1nsOsKpX6YNyzadexA3yWIU7hsm2gczdFgZJGUdUo2TZJk1FjVfcCp
-         Md8g==
+        bh=8hHfd8E5OLET7TqmwSJiX1dtnoOrIdoZTogByWvBopU=;
+        b=gQwwWblZq0peq+BVgDxS4kc4CcdTwupXeu64DVqZfR5vIfojYmUnrmiFqDlZBdOA17
+         L02LGBZ4mZFX/SK2coDONrbPvxuz0mWGJaLcvmfA9tx4JHTzkiHoCiKemOVs8mYD9uUb
+         Vxdr9rV5XWEH7HNIgtImwMltYShisMpexs0DrjJLB1Pw+QwfwsD97eN4O1PVI36+fYFx
+         HBXrB5qgo/iYZb2Pe5EhXArchifrJWK4Xndizfvk11nor5G3XlohhEwLruB+udiVYmL4
+         X/7WND4xVO9WGdhy4O/opM96XAJCsk3Ssx2DbF0qSeXygMgyRLApp/zG11CxHKG6i0Gf
+         p58A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777284097; x=1777888897;
+        d=1e100.net; s=20251104; t=1777284922; x=1777889722;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dg/n5+6kbBQxRorPeum98h3SXFNSQAOd+nDPVbXYaAU=;
-        b=OAbM1591Lg2p/tn+NcltpnU/eJFTGdeVYnRclLXbJyuoxkGzEK6iUylJbZXq9mR2Nc
-         QH3pdp+mEkk4eJftsHA2KbrfaQ4yUNYUr4ysf1my9Di/KNoYKWqNh3R9Ipn5HAOInoan
-         fI1XSWZyfD6tLueh8D2Ettf855yje86+Yp+d6m0SihdjR0hPvRwxry9UPc5aCZB8PSS7
-         OPakP4G+Z56NRqJ4utjvGNFvYvDBRciBA81OfkqZL5y3lpNVO/CgRB0XQCINIOEIL7HS
-         3sIYz0NYb3yOF7QItvUMH59ssdf6Q8eNYhR+YTBlWl3KR5Y9YSS/w7YKtdxpZG+wpCX3
-         1rkw==
-X-Gm-Message-State: AOJu0Yygu2hW49ShJHlefgxaettnemxjymVFsiEDOhLIm6tExhE82uNM
-	W/oABr7sl40F4oO7bORxA3uYa8xF7j09Ax63wdf+MxwSXct6VQW+pZnZuJJT8qRxC7aNuPt5Dtu
-	rViOKCYY2Gl/y7QewGgQ3zhGqv1VjPls=
-X-Gm-Gg: AeBDiet6drGoZxlrxTB1POOFCtGOny1gqes2Vmsn96a+6wFvykA4sbuZX9kxJvR3BGt
-	4mgwePVga/fr2eoIJOHtHeST2YC0AovEWTy8RrplvOLh7ojMRgKu95am1NYM08OEcfvyPPW7O0h
-	sjaBnqzhRYD1EwK1yY5bj0eAfhp8l/P1jExm9yc6K53gFfe1lU2lXxPFDP4DqYMkCtxeYc9AB0t
-	w7GLJactjQWuibeDDwy+lzI6oXSpo1zeOzCZQKxQLGlo8IDAEUqhxbXpn5DB6tXEP/K5YlMBu+h
-	/3GOJ/MZLD9lb81qXkRUTCdTyW80jygIOuDiYTESINC6Hs1ARfX5
-X-Received: by 2002:a05:6214:3a82:b0:8ac:a9d2:9404 with SMTP id
- 6a1803df08f44-8b0280cc33fmr648885266d6.30.1777284096618; Mon, 27 Apr 2026
- 03:01:36 -0700 (PDT)
+        bh=8hHfd8E5OLET7TqmwSJiX1dtnoOrIdoZTogByWvBopU=;
+        b=VQpgZtiZfSWk0M7bPVMz/t9CIomxG9SSYzopr1DiF5yBW7e3pNzE1B2mPuZJKs0Z8y
+         Prj0QMQv9d/P1BX80KN3QUw9EActqNMPK3V0zvLYPcvXWetR1OSzG5fasPLKops2EAge
+         Njd4nnTzp9EmeCo4keSgaNut5K7xI6d9W1UHnOcaoY8lB5HXotzQuQGYK3bi7mAbAJ84
+         qDDr3LGlYHdoWYObe9evBNxqN7f4RYzIQUhbnaW5d4VjMXrlH+ENRGbhxSIC0zOvBJut
+         XesGbNt2AdhEuNqV98HBERqany5TPJ5gs03FSvz5DnHncgZDJDnYBMoAp8OX4v4lc61H
+         xPdQ==
+X-Gm-Message-State: AOJu0YzQecmZlR2JRjUVC2tHX1uuOG5cmq2i9GvV34b28N7wu52K2XIr
+	BlsPsQsTvBvIlRLMCQ73G3Z0kjCg6ebeCZOYxVkGpMz064hSMu0eiH7dd6+/aiO9Fqx6VAjb4z8
+	m9kVQjUeRbt7OfhaE+x+CmriReHuH3F0=
+X-Gm-Gg: AeBDieuW52oVBAL4ewigeR2FxuzRmPjTCaJRHsq5O1wRcgXRg5MiRDYmvNBbKYu92za
+	Ah8l78LwpWGI/o/jnUX2Sx1N+XEAn+jMr68rB4OEMOb4hl3anhkOhfeKGcB8/62QseQcZM7OTdZ
+	mvpWDpc6pC79i8klFsq/JlLHrExKt/rWKdfo6D3Aq7S3/Nvx69T4SSzUxiXsvNgnWuHC0SB//lH
+	o3icUa4f8QMXVJ1KA5OCPD6qyHf+pHDXxeVxHwDUGe/PO9ObTnL3Q0qCYxAkblAqResmL8zrTui
+	VTlQaxDNOx96iZ2sZPvriEdxze2QMFsVv2OhnFpKjEgbzs5t5JdVcHNvQ0uVTS8=
+X-Received: by 2002:a05:622a:4c87:b0:50f:bdeb:1e47 with SMTP id
+ d75a77b69052e-50fbdeb24e1mr403745011cf.44.1777284921709; Mon, 27 Apr 2026
+ 03:15:21 -0700 (PDT)
 MIME-Version: 1.0
-References: <20260424114603.2444938-1-daniel.turull@ericsson.com> <20260424114603.2444938-5-daniel.turull@ericsson.com>
-In-Reply-To: <20260424114603.2444938-5-daniel.turull@ericsson.com>
+References: <20260424114603.2444938-1-daniel.turull@ericsson.com> <20260424114603.2444938-6-daniel.turull@ericsson.com>
+In-Reply-To: <20260424114603.2444938-6-daniel.turull@ericsson.com>
 From: Alexander Kanavin <alex.kanavin@gmail.com>
-Date: Mon, 27 Apr 2026 12:01:23 +0200
-X-Gm-Features: AVHnY4JnZv4OcD3SWG0-ezGZp9mVo06bDbKUlEU9rVqZIh0c8vXY8Wv1R88hg_E
-Message-ID: <CANNYZj9bFF__twkBcn+xPp-Tf+utqciW1b80c1L70XH6o_Ec1w@mail.gmail.com>
-Subject: Re: [AUH][PATCH v2 4/9] upgrade-helper.py: add changelog flag
+Date: Mon, 27 Apr 2026 12:15:10 +0200
+X-Gm-Features: AVHnY4JXUQaoIbkbToKJiiwBrvhiSWEW1_l_tNzQ4W8Y9sjhpuNGSetjCLqSwuw
+Message-ID: <CANNYZj-fo-N=O2FLAi4KM2neUoy6f9u6ucKAozMzGpvfEtHy2w@mail.gmail.com>
+Subject: Re: [AUH][PATCH v2 5/9] upgrade-helper.py: Add stable option for
+ patch-only upgrades
 To: daniel.turull@ericsson.com
 Cc: yocto-patches@lists.yoctoproject.org, paul@pbarker.dev, 
 	ross.burton@arm.com, yoann.congal@smile.fr
@@ -83,17 +84,18 @@ Content-Type: text/plain; charset="UTF-8"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 27 Apr 2026 10:01:39 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3833
+ <yocto-patches@lists.yoctoproject.org>; Mon, 27 Apr 2026 10:15:30 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3834
 
-Can you add examples please? This implements three different
-'strategies', all of them are doing 'guessing', so it would be really
-beneficial to see what they actually produce.
+This functionality really needs to go to oe-core, and it should be
+based on recipe metadata, e.g. for things like openssl we could
+indicate in the recipe that stable maintenance is done with point
+version releases, or systemd is maintained via minor versions (259.3
+-> 259.4) or glibc has commits on a maintenance branch. You can't
+assume that point releases are equivalent to bugfix-only maintenance.
 
-It would also be super nice to have tests for this module, especially
-if people start tweaking it further. It looks like something that can
-break super easily. I know AUH has no tests (I inherited it in that
-condition), but at least this particular part could.
+So that you could run e.g. 'devtool check-upgrade-status --stable' and
+it would print a list of possible maintenance updates.
 
 Alex
 
@@ -101,364 +103,275 @@ On Fri, 24 Apr 2026 at 13:46, <daniel.turull@ericsson.com> wrote:
 >
 > From: Daniel Turull <daniel.turull@ericsson.com>
 >
-> Add --changelog option to extract git log between old and new versions,
-> highlighting CVE references. The changelog summary is appended to the
-> commit message and included in the email notification.
+> Add --stable flag to restrict upgrades to the next patch version within
+> the current stable branch (e.g. 1.2.3 -> 1.2.4). When the latest
+> upstream version is a major/minor bump, AUH queries all available
+> versions and picks the best patch-level update.
 >
 > Signed-off-by: Daniel Turull <daniel.turull@ericsson.com>
 > Assisted-by: Claude, Anthropic
 > ---
->  modules/changelog.py | 256 +++++++++++++++++++++++++++++++++++++++++++
->  modules/steps.py     |  20 ++++
->  upgrade-helper.py    |  16 +++
->  3 files changed, 292 insertions(+)
->  create mode 100644 modules/changelog.py
+>  modules/utils/version.py | 160 +++++++++++++++++++++++++++++++++++++++
+>  upgrade-helper.py        |  51 +++++++++++++
+>  2 files changed, 211 insertions(+)
+>  create mode 100644 modules/utils/version.py
 >
-> diff --git a/modules/changelog.py b/modules/changelog.py
+> diff --git a/modules/utils/version.py b/modules/utils/version.py
 > new file mode 100644
-> index 0000000..c1cc14b
+> index 0000000..b40eb1c
 > --- /dev/null
-> +++ b/modules/changelog.py
-> @@ -0,0 +1,256 @@
+> +++ b/modules/utils/version.py
+> @@ -0,0 +1,160 @@
 > +# SPDX-License-Identifier: GPL-2.0-or-later
+> +#
+> +# Version utilities for --stable patch-only upgrades.
+> +#
+> +# get_all_upstream_versions() collects *all* available upstream versions so
+> +# that we can pick the highest patch-level release within the current stable
+> +# branch.  The existing bitbake/oe-core APIs (latest_versionstring,
+> +# get_recipe_upstream_version) only return the single highest version, so we
+> +# must re-implement the inner loops here.
+> +#
+> +# The HTTP path mirrors bb.fetch2.wget.Wget._check_latest_version() and the
+> +# git path mirrors bb.fetch2.git.Git.latest_versionstring(), both from
+> +# bitbake scarthgap.  We cannot modify oe-core on a stable release, hence
+> +# the duplication.
 > +
-> +import os
-> +import re
-> +import glob
 > +import functools
-> +import subprocess
-> +
-> +from logging import info as I
-> +from logging import debug as D
+> +import re
+> +from logging import warning as W
 > +
 > +import bb.utils
-> +
-> +CHANGELOG_FILENAMES = [
-> +    'ChangeLog', 'CHANGELOG', 'CHANGELOG.md', 'CHANGELOG.txt',
-> +    'Changes', 'CHANGES', 'NEWS', 'NEWS.md', 'NEWS.txt',
-> +    'RELEASE_NOTES', 'RELEASE_NOTES.md', 'RELEASE-NOTES',
-> +    'HISTORY', 'HISTORY.md',
-> +    'debian/changelog',
-> +]
-> +
-> +CVE_PATTERN = re.compile(r'(CVE-\d{4}-\d{4,})', re.IGNORECASE)
+> +import bb.fetch2
+> +from bs4 import BeautifulSoup, SoupStrainer
 > +
 > +
-> +def _find_changelog_files(srcdir):
-> +    found = []
-> +    for name in CHANGELOG_FILENAMES:
-> +        for f in glob.glob(os.path.join(srcdir, '**', name), recursive=True):
-> +            if os.path.isfile(f) and f not in found:
-> +                found.append(f)
-> +    return found
-> +
-> +
-> +RST_INCLUDE_RE = re.compile(r'^\.\.\s+include::\s+(.+)$')
-> +RST_COMMENT_RE = re.compile(r'^\.\.\s*$|^\.\.\s')
-> +
-> +
-> +def _strip_rst_comments(text):
-> +    """Remove RST comment blocks (license headers etc.)."""
-> +    lines = text.split('\n')
+> +def _split_version(ver):
+> +    # Split on '.', '-', '_' and letter-digit boundaries (e.g. 10.0p2 -> [10, 0, p, 2])
+> +    parts = re.split(r'[\.\-_]', ver)
 > +    result = []
-> +    in_comment = False
-> +    for line in lines:
-> +        if RST_COMMENT_RE.match(line):
-> +            in_comment = True
-> +            continue
-> +        if in_comment:
-> +            if line.startswith('   ') or line.strip() == '':
-> +                continue
-> +            in_comment = False
-> +        result.append(line)
-> +    return '\n'.join(result)
+> +    for p in parts:
+> +        result.extend(re.split(r'(?<=[a-zA-Z])(?=\d)|(?<=\d)(?=[a-zA-Z])', p))
+> +    return result
 > +
 > +
-> +def _resolve_rst_includes(content, base_dir, srcdir):
-> +    """Inline RST .. include:: directives."""
-> +    lines = content.split('\n')
-> +    result = []
-> +    for line in lines:
-> +        m = RST_INCLUDE_RE.match(line.strip())
-> +        if m:
-> +            inc_rel = m.group(1).strip()
-> +            inc_path = os.path.normpath(os.path.join(base_dir, inc_rel))
-> +            if not os.path.isfile(inc_path):
-> +                # Search for the filename within the source tree
-> +                fname = os.path.basename(inc_rel)
-> +                for f in glob.glob(os.path.join(srcdir, '**', fname),
-> +                                   recursive=True):
-> +                    if os.path.isfile(f):
-> +                        inc_path = f
-> +                        break
-> +            if os.path.isfile(inc_path):
-> +                try:
-> +                    with open(inc_path, 'r', encoding='utf-8',
-> +                              errors='replace') as f:
-> +                        result.append(f.read())
-> +                    continue
-> +                except OSError:
-> +                    pass
-> +        result.append(line)
-> +    return '\n'.join(result)
+> +def is_patch_update(current_ver, candidate_ver):
+> +    cur = _split_version(current_ver)
+> +    cand = _split_version(candidate_ver)
+> +    if len(cur) != len(cand) or len(cur) < 3:
+> +        return False
+> +    if cur[:-1] != cand[:-1]:
+> +        return False
+> +    try:
+> +        return int(cand[-1]) > int(cur[-1])
+> +    except ValueError:
+> +        return bb.utils.vercmp_string(candidate_ver, current_ver) > 0
 > +
 > +
-> +GIT_LOG_RE = re.compile(r'^commit [0-9a-f]{7,}', re.MULTILINE)
-> +
-> +
-> +def _condense_git_log(text):
-> +    """Condense git-log-style content to subject lines only."""
-> +    if not GIT_LOG_RE.search(text):
-> +        return text
-> +    lines = text.split('\n')
-> +    subjects = []
-> +    i = 0
-> +    while i < len(lines):
-> +        if GIT_LOG_RE.match(lines[i]):
-> +            short = lines[i].split()[1][:12]
-> +            # Skip Author/Date, blank line, then grab subject
-> +            i += 1
-> +            while i < len(lines) and (lines[i].startswith('Author:') or
-> +                    lines[i].startswith('Date:') or not lines[i].strip()):
-> +                i += 1
-> +            if i < len(lines):
-> +                subjects.append('%s %s' % (short, lines[i].strip()))
-> +            continue
-> +        i += 1
-> +    return '\n'.join(subjects) if subjects else text
-> +
-> +
-> +def _extract_entries_between_versions(content, old_ver, new_ver):
-> +    lines = content.split('\n')
-> +    new_pattern = re.compile(re.escape(new_ver))
-> +    old_pattern = re.compile(re.escape(old_ver))
-> +
-> +    start_idx = None
-> +    end_idx = None
-> +
-> +    for i, line in enumerate(lines):
-> +        if start_idx is None and new_pattern.search(line):
-> +            start_idx = i
-> +        elif start_idx is not None and old_pattern.search(line):
-> +            end_idx = i
-> +            break
-> +
-> +    if start_idx is not None:
-> +        return '\n'.join(lines[start_idx:end_idx])
-> +    return None
-> +
-> +
-> +def _find_per_version_files(srcdir, old_ver, new_ver):
-> +    """Find individual per-version changelog files (e.g. changelog-1.2.3.rst)."""
-> +    ver_file_re = re.compile(
-> +        r'(?:changelog|changes|news|release|relnotes)[-_./\\]?'
-> +        r'v?(?P<pver>(\d+[\.\-_])*\d+)\.\w+$',
-> +        re.IGNORECASE)
-> +
-> +    candidates = {}
-> +    for f in glob.glob(os.path.join(srcdir, '**', '*'), recursive=True):
-> +        if not os.path.isfile(f):
-> +            continue
-> +        # Match against last two path components (e.g. RelNotes/v1.47.4.txt)
-> +        tail = os.sep.join(f.rsplit(os.sep, 2)[-2:])
-> +        m = ver_file_re.search(tail)
-> +        if m:
-> +            ver = m.group('pver').replace('_', '.').replace('-', '.')
-> +            candidates[ver] = f
-> +
-> +    # Select versions > old_ver and <= new_ver
-> +    selected = []
-> +    for ver, path in candidates.items():
-> +        if bb.utils.vercmp_string(ver, old_ver) > 0 and \
-> +           bb.utils.vercmp_string(ver, new_ver) <= 0:
-> +            selected.append((ver, path))
-> +
-> +    selected.sort(key=lambda x: functools.cmp_to_key(
-> +        bb.utils.vercmp_string)(x[0]))
-> +    return [path for _, path in selected]
-> +
-> +
-> +def extract_changelog(srcdir, pn, old_ver, new_ver, workdir):
-> +    if not srcdir or not os.path.isdir(srcdir):
-> +        D(" %s: source directory %s not available" % (pn, srcdir))
+> +def _find_best_version(current_ver, all_versions, filter_fn):
+> +    candidates = [v for v in all_versions if filter_fn(current_ver, v)]
+> +    if not candidates:
 > +        return None
+> +    candidates.sort(
+> +        key=functools.cmp_to_key(bb.utils.vercmp_string), reverse=True
+> +    )
+> +    return candidates[0]
 > +
-> +    entries = []
-> +    cves = []
 > +
-> +    # Strategy 1: extract sections between version markers in changelog files
-> +    changelog_files = _find_changelog_files(srcdir)
-> +    for fpath in changelog_files:
-> +        try:
-> +            with open(fpath, 'r', encoding='utf-8', errors='replace') as f:
-> +                content = f.read()
-> +        except OSError:
-> +            continue
-> +        content = _resolve_rst_includes(content, os.path.dirname(fpath), srcdir)
-> +        section = _extract_entries_between_versions(content, old_ver, new_ver)
-> +        if section:
-> +            section = _condense_git_log(section)
-> +            entries.append(section)
-> +            cves.extend(CVE_PATTERN.findall(section))
+> +def find_patch_version(current_ver, all_versions):
+> +    return _find_best_version(current_ver, all_versions, is_patch_update)
+> +
+> +
+> +def get_all_upstream_versions(rd):
+> +    """Get all upstream versions using the fetcher infrastructure.
+> +
+> +    Unlike ud.method.latest_versionstring() which returns only the highest
+> +    version, this collects every version so the caller can filter for
+> +    patch-only updates.
+> +    """
+> +    src_uris = rd.getVar('SRC_URI')
+> +    if not src_uris:
+> +        return []
+> +
+> +    src_uri = src_uris.split()[0]
+> +    ud = bb.fetch2.FetchData(src_uri, rd)
+> +
+> +    if ud.type == 'git':
+> +        return _get_git_versions(ud, rd)
+> +    return _get_http_versions(ud, rd)
+> +
+> +
+> +def _get_http_versions(ud, rd):
+> +    """Collect all upstream versions from an HTTP index page.
+> +
+> +    Adapted from bb.fetch2.wget.Wget._check_latest_version() and
+> +    ._init_regexes().  The upstream code only keeps the highest version;
+> +    we collect them all.  Uses BeautifulSoup to parse <a> tags, matching
+> +    the upstream behaviour.
+> +    """
+> +    try:
+> +        package = ud.path.split("/")[-1]
+> +
+> +        regex_uri = rd.getVar('UPSTREAM_CHECK_URI')
+> +        if not regex_uri:
+> +            path = ud.path.split(package)[0]
+> +            regex_uri = bb.fetch.encodeurl([ud.type, ud.host, path,
+> +                                            ud.user, ud.pswd, {}])
+> +
+> +        page = ud.method._fetch_index(regex_uri, ud, rd)
+> +        if not page:
+> +            return []
+> +
+> +        regex = rd.getVar('UPSTREAM_CHECK_REGEX')
+> +        if regex:
+> +            regex = re.compile(regex)
+> +        else:
+> +            regex = ud.method._init_regexes(package, ud, rd)
+> +        if not regex:
+> +            return []
+> +
+> +        # Parse HTML links, same as Wget._check_latest_version()
+> +        soup = BeautifulSoup(page, "html.parser",
+> +                             parse_only=SoupStrainer("a"))
+> +        if not soup:
+> +            return []
+> +
+> +        versions = set()
+> +        for link in soup.find_all('a', href=True):
+> +            for text in (link['href'], str(link)):
+> +                m = regex.search(text)
+> +                if m and 'pver' in m.groupdict() and m.group('pver'):
+> +                    versions.add(re.sub('_', '.', m.group('pver')))
+> +                    break
+> +        return list(versions)
+> +    except Exception as e:
+> +        W(" Failed to get HTTP versions: %s" % str(e))
+> +        return []
+> +
+> +
+> +def _get_git_versions(ud, rd):
+> +    """Collect all tagged versions from a git remote.
+> +
+> +    Adapted from bb.fetch2.git.Git.latest_versionstring().  The upstream
+> +    code only keeps the highest version; we collect them all.
+> +    """
+> +    try:
+> +        output = ud.method._lsremote(ud, rd, "refs/tags/*")
+> +    except (bb.fetch2.FetchError, bb.fetch2.NetworkAccess, OSError) as e:
+> +        W(" Failed to list remote tags: %s" % str(e))
+> +        return []
+> +
+> +    rev_tag_re = re.compile(r"([0-9a-f]{40})\s+refs/tags/(.*)")
+> +    pver_re = re.compile(
+> +        rd.getVar('UPSTREAM_CHECK_GITTAGREGEX')
+> +        or r"(?P<pver>([0-9][\.|_]?)+)"
+> +    )
+> +    nonrel_re = re.compile(r"(alpha|beta|rc|final)+")
+> +
+> +    versions = set()
+> +    for line in output.split("\n"):
+> +        if not line:
 > +            break
-> +
-> +    # Strategy 2: concatenate per-version files (e.g. changelog-9.18.42.rst)
-> +    if not entries:
-> +        ver_files = _find_per_version_files(srcdir, old_ver, new_ver)
-> +        for fpath in ver_files:
-> +            try:
-> +                with open(fpath, 'r', encoding='utf-8', errors='replace') as f:
-> +                    content = f.read()
-> +            except OSError:
-> +                continue
-> +            entries.append(content)
-> +            cves.extend(CVE_PATTERN.findall(content))
-> +
-> +    # Strategy 3: git log between version tags
-> +    if not entries and os.path.isdir(os.path.join(srcdir, '.git')):
-> +        tag_prefixes = ['v', '', pn + '-']
-> +        old_tag = new_tag = None
-> +        for prefix in tag_prefixes:
-> +            try:
-> +                subprocess.check_output(
-> +                    ['git', 'rev-parse', prefix + old_ver],
-> +                    cwd=srcdir, stderr=subprocess.DEVNULL)
-> +                subprocess.check_output(
-> +                    ['git', 'rev-parse', prefix + new_ver],
-> +                    cwd=srcdir, stderr=subprocess.DEVNULL)
-> +                old_tag, new_tag = prefix + old_ver, prefix + new_ver
-> +                break
-> +            except (subprocess.CalledProcessError, OSError):
-> +                continue
-> +        if old_tag and new_tag:
-> +            try:
-> +                out = subprocess.check_output(
-> +                    ['git', 'log', '--oneline', '%s..%s' % (old_tag, new_tag)],
-> +                    cwd=srcdir, stderr=subprocess.DEVNULL).decode('utf-8', errors='replace')
-> +                if out.strip():
-> +                    entries.append(out.strip())
-> +                    cves.extend(CVE_PATTERN.findall(out))
-> +            except (subprocess.CalledProcessError, OSError):
-> +                pass
-> +
-> +    if not entries:
-> +        D(" %s: no changelog entries found" % pn)
-> +        return None
-> +
-> +    I(" %s: found %d changelog entries" % (pn, len(entries)))
-> +
-> +    cves = sorted(set(cves))
-> +    text = "Changelog for %s: %s -> %s\n" % (pn, old_ver, new_ver)
-> +    text += "=" * 60 + "\n\n"
-> +    if cves:
-> +        text += "SECURITY FIXES / CVEs FOUND:\n"
-> +        for cve in cves:
-> +            text += "  - %s\n" % cve
-> +        text += "\n" + "-" * 60 + "\n\n"
-> +    text += CVE_PATTERN.sub(r'*** \1 ***', _strip_rst_comments('\n\n'.join(entries)))
-> +
-> +    # Collapse multiple blank lines into one
-> +    text = re.sub(r'\n{3,}', '\n\n', text)
-> +
-> +    changelog_path = os.path.join(workdir, "changelog-%s.txt" % pn)
-> +    with open(changelog_path, 'w', encoding='utf-8') as f:
-> +        f.write(text)
-> +
-> +    I(" %s: changelog saved to %s" % (pn, os.path.basename(changelog_path)))
-> +    if cves:
-> +        I(" %s: CVEs found: %s" % (pn, ', '.join(cves)))
-> +
-> +    commit_text = text
-> +    if len(commit_text) > 3000:
-> +        commit_text = commit_text[:3000] + "\n\n[... changelog truncated ...]\n"
-> +    # Sanitize for shell-safe git commit -m "..."
-> +    for ch in '"', '`', '$', '\\':
-> +        commit_text = commit_text.replace(ch, '')
-> +
-> +    return {'text': text, 'commit_text': commit_text, 'cves': cves, 'file': changelog_path}
-> diff --git a/modules/steps.py b/modules/steps.py
-> index b3ec61c..78fcbbe 100644
-> --- a/modules/steps.py
-> +++ b/modules/steps.py
-> @@ -29,6 +29,7 @@ from logging import warning as W
->
->  from errors import Error, DevtoolError, CompilationError
->  from buildhistory import BuildHistory
-> +from changelog import extract_changelog
->
->  def load_env(devtool, bb, git, opts, group):
->      group['workdir'] = os.path.join(group['base_dir'], group['name'])
-> @@ -150,10 +151,29 @@ def devtool_finish(devtool, bb, git, opts, group):
->              pass
->          raise e1
->
-> +def changelog_extract(devtool, bb, git, opts, group):
-> +    if not opts.get('changelog'):
-> +        return
-> +    for p in group['pkgs']:
-> +        # After devtool_upgrade, source is in workspace/sources/<pn>/
-> +        srcdir = os.path.join(os.environ.get('BUILDDIR', ''),
-> +                              'workspace', 'sources', p['PN'])
-> +        if not os.path.isdir(srcdir):
-> +            # Fallback: derive from env S, replacing old version
-> +            srcdir = p['env'].get('S', '')
-> +            if p['PV'] in srcdir:
-> +                srcdir = srcdir.replace(p['PV'], p['NPV'])
-> +        result = extract_changelog(srcdir, p['PN'], p['PV'],
-> +                                   p['NPV'], group['workdir'])
-> +        if result:
-> +            p['changelog'] = result
-> +            group['commit_msg'] += "\n\n" + result['commit_text']
-> +
->  upgrade_steps = [
->      (load_env, "Loading environment ..."),
->      (buildhistory_init, None),
->      (devtool_upgrade, "Running 'devtool upgrade' ..."),
-> +    (changelog_extract, "Extracting changelog ..."),
->      (devtool_finish, "Running 'devtool finish' ..."),
->      (compile, None),
->  ]
+> +        m = rev_tag_re.match(line)
+> +        if not m:
+> +            continue
+> +        tag = m.group(2)
+> +        if nonrel_re.search(tag):
+> +            continue
+> +        m = pver_re.search(tag)
+> +        if m:
+> +            versions.add(m.group('pver').replace("_", "."))
+> +    return list(versions)
 > diff --git a/upgrade-helper.py b/upgrade-helper.py
-> index df927d1..327bb6d 100755
+> index 327bb6d..b7b8ddf 100755
 > --- a/upgrade-helper.py
 > +++ b/upgrade-helper.py
-> @@ -95,6 +95,8 @@ def parse_cmdline():
+> @@ -59,6 +59,7 @@ from utils.emailhandler import Email
+>  from statistics import Statistics
+>  from steps import upgrade_steps
+>  from testimage import TestImage
+> +from utils.version import is_patch_update, find_patch_version, get_all_upstream_versions
 >
->      parser.add_argument("-t", "--to_version",
+>  if not os.getenv('BUILDDIR', False):
+>      E(" You must source oe-init-build-env before running this script!\n")
+> @@ -74,6 +75,7 @@ scriptpath.add_bitbake_lib_path()
+>  scriptpath.add_oe_lib_path()
+>
+>  import oe.recipeutils
+> +import bb.tinfoil
+>
+>  help_text = """Usage examples:
+>  * To upgrade xmodmap recipe to the latest available version:
+> @@ -97,6 +99,8 @@ def parse_cmdline():
 >                          help="version to upgrade the recipe to")
-> +    parser.add_argument("--changelog", action="store_true", default=False,
-> +                        help="extract changelog between old and new versions, highlighting CVEs")
+>      parser.add_argument("--changelog", action="store_true", default=False,
+>                          help="extract changelog between old and new versions, highlighting CVEs")
+> +    parser.add_argument("--stable", action="store_true", default=False,
+> +                        help="only upgrade to the next patch version within the stable branch (e.g. 1.2.3 -> 1.2.4)")
 >
 >      parser.add_argument("-d", "--debug-level", type=int, default=4, choices=range(1, 6),
 >                          help="set the debug level: CRITICAL=1, ERROR=2, WARNING=3, INFO=4, DEBUG=5")
-> @@ -198,6 +200,7 @@ class Updater(object):
->          self.opts['skip_compilation'] = self.args.skip_compilation
->          self.opts['buildhistory'] = self._buildhistory_is_enabled()
->          self.opts['testimage'] = self._testimage_is_enabled()
-> +        self.opts['changelog'] = self.args.changelog
+> @@ -698,6 +702,30 @@ class UniverseUpdater(Updater):
 >
->      def _make_dirs(self, build_dir):
->          self.uh_dir = os.path.join(build_dir, "upgrade-helper")
-> @@ -358,6 +361,19 @@ class Updater(object):
->          if 'patch_file' in g and g['patch_file'] is not None:
->              msg_body += next_steps_info % (os.path.basename(g['patch_file']))
+>      def _get_packagegroups_to_upgrade(self, packages=None):
 >
-> +        # Add changelog summary if available
-> +        for pkg_ctx in g['pkgs']:
-> +            if 'changelog' in pkg_ctx:
-> +                cl = pkg_ctx['changelog']
-> +                msg_body += ("\n--- Changelog Summary for %s ---\n"
-> +                             % pkg_ctx['PN'])
-> +                if cl['cves']:
-> +                    msg_body += "\nSECURITY FIXES / CVEs:\n"
-> +                    for cve in cl['cves']:
-> +                        msg_body += "  - %s\n" % cve
-> +                    msg_body += "\n"
-> +                msg_body += cl['text'] + "\n"
+> +        def _resolve_stable_version(pn, cur_ver, next_ver, tinfoil):
+> +            """Find the latest patch version within the current stable branch."""
+> +            if is_patch_update(cur_ver, next_ver):
+> +                return next_ver, None
+> +            I(" %s: latest version %s is not a patch update from %s,"
+> +              " searching for versions..." %
+> +              (pn, next_ver, cur_ver))
+> +            try:
+> +                rd = tinfoil.parse_recipe(pn)
+> +                if not rd:
+> +                    I(" %s: could not parse recipe, skipping" % pn)
+> +                    return None, None
+> +                all_versions = get_all_upstream_versions(rd)
+> +                ver = find_patch_version(cur_ver, all_versions)
+> +                if ver:
+> +                    I(" %s: found version %s" % (pn, ver))
+> +                    return ver, "N/A"
+> +                else:
+> +                    I(" %s: no suitable version available, skipping" % pn)
+> +                    return None, None
+> +            except Exception as e:
+> +                I(" %s: failed to search for versions: %s" % (pn, e))
+> +                return None, None
 > +
->          msg_body += mail_footer
+>          # Prepare a single pkg dict data (or None is not upgradable) from recipeutils.get_recipe_upgrade_status data.
+>          def _get_pkg_to_upgrade(self, layer_name, pn, status, cur_ver, next_ver, maintainer, revision, no_upgrade_reason):
+>              pkg_to_upgrade = None
+> @@ -763,6 +791,29 @@ class UniverseUpdater(Updater):
+>                          upgrade_group.append(pkg_to_upgrade)
+>                  if upgrade_group:
+>                      upgrade_pkggroups.append(upgrade_group)
+> +
+> +        if self.args.stable and upgrade_pkggroups:
+> +            stable_tinfoil = bb.tinfoil.Tinfoil()
+> +            stable_tinfoil.prepare(config_only=False)
+> +            try:
+> +                filtered = []
+> +                for group in upgrade_pkggroups:
+> +                    filtered_group = []
+> +                    for pkg in group:
+> +                        stable_ver, stable_rev = _resolve_stable_version(
+> +                            pkg['pn'], pkg['cur_ver'], pkg['next_ver'],
+> +                            stable_tinfoil)
+> +                        if stable_ver is not None:
+> +                            pkg['next_ver'] = stable_ver
+> +                            if stable_rev is not None:
+> +                                pkg['revision'] = stable_rev
+> +                            filtered_group.append(pkg)
+> +                    if filtered_group:
+> +                        filtered.append(filtered_group)
+> +                upgrade_pkggroups = filtered
+> +            finally:
+> +                stable_tinfoil.shutdown()
+> +
+>          return upgrade_pkggroups
 >
->          # Add possible attachments to email
+>      def pkg_upgrade_handler(self, pkg_ctx):
 > --
 > 2.34.1
 >
