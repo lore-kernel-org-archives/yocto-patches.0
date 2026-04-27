@@ -2,80 +2,81 @@ Return-Path: <alex.kanavin@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB871FF885E
-	for <webhook@archiver.kernel.org>; Mon, 27 Apr 2026 10:20:10 +0000 (UTC)
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.40670.1777285202714354964
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C77CCFF8861
+	for <webhook@archiver.kernel.org>; Mon, 27 Apr 2026 10:22:20 +0000 (UTC)
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.40690.1777285339734048588
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 27 Apr 2026 03:20:02 -0700
+ Mon, 27 Apr 2026 03:22:19 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=XfK8aEUA;
- spf=pass (domain: gmail.com, ip: 209.85.219.41, mailfrom: alex.kanavin@gmail.com)
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-8a093c784b0so115104576d6.3
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 27 Apr 2026 03:20:02 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1777285202; cv=none;
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=Qfl/IyVD;
+ spf=pass (domain: gmail.com, ip: 209.85.160.173, mailfrom: alex.kanavin@gmail.com)
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-50e63771d91so87840911cf.0
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 27 Apr 2026 03:22:19 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1777285339; cv=none;
         d=google.com; s=arc-20240605;
-        b=AWFsFdyjy+JTqyBrgHrf+r7s0BtC++JVwJLSkD4Pvc46JXCRwS0vGi9LLf96tHrpb0
-         SLsEjTEi0XoYEGHFSgpyDHCHliWVwoc/0xBDH39EVVqNdyLX8GqVr8UIjHX7guXu8tJ/
-         22wbVnCxwLsO9eUZ+ebJFu/QG4YqWFUhCwwy4x4RaLhQLAX7fPVKpSay3wdlAoZn3Krg
-         rsvshfWXLbST7wEqrt82mpRRr/Jx1zH/JGaNWclIpI9MhEbhCkZWBirULXQbt5EnvYDJ
-         z0ml6ysGDTZJYrK6yJLrDblXTabZjxiYn7ZdEaDqB3pRzvgkX9x5RkwwS1RhJ32hIzsi
-         EThA==
+        b=CQA963J04bq6RWfkjKNGCtKQjy1IWI/16tsSfzYTFYUYA8KyonZTG/eSOxiRP+5h/6
+         LPivD2bXDkXoD2c7egi7A33tfqJmg2yc/7nrRsqok4OdFYtsTmf1QbUokqWctO/iZK0j
+         fq7zDyWrT/ICWbh2xD7dMz9x7tpkpnhuD8at/5LeZN7qUNHmpQEtrkfHtE0+EGy3IGeC
+         2ZkN34XQUDKPlyMqZ0QQYFsOEdwF6fDg0zecLiyJnzWe7Zd2DGWk95gSAKDA49BzW88M
+         qp3QUowk3rVfkG5RKsO3zSXX7umeRacKDX9DrNqJH4jjjECf+PCtB5CyXRVGRgC9hFtf
+         wpYw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:dkim-signature;
-        bh=E8+ydvxF/qDrhO2HWKQVNwFR4S6k12PLVWTuSnVfTMQ=;
+        bh=MorTDcolzApXe/cSKM3nGfSpm0ixcNX607wgfQVK49c=;
         fh=B6+dp47eghNzyj8BrWGHk2n/ObAtmJy/gW8Hzrmb+f8=;
-        b=WAlTR1s6L+WlJLhxG/JVXtwsDsRXctckqGaG2p/y6jmedMPI913FOIAJO0qZHDz3+U
-         TSv3ULlWXCx55NnSH8WEKTAjoynjUNQ9BYU6xZN8Hh0Bvo25ru9lef/PtPmVZsgqZ8U+
-         6ASdVv29JCwEIHJ2fbbjbLo6uYXK0UuzErPfVQyBVSDj6cL4PVkQf+9WldSXYOi3LzXr
-         4nQkFbxzhG3DQYE9ahYlHiJhfe4W3UI2EoknGgn71lVBOm0umXOQO1ycSzX//mY82UA2
-         hiExf9NWou3gHp7GQzyj87fQtZr5qat5UvKYE4Jfk3wfDGv/CzoywGaGMrJZMdZMAebT
-         VG6g==;
+        b=RJ8P+4uw+qqia1qrl5VBJIuPf+FaiYCm6zEchdG1rAQPC4iA1z0NJ2i1RpsXtNvf7w
+         dRRwhwtmyPWri76nGnTIqH0XisPkXT2BRUlOaFZpgdf4Hz5yVvXA560qMMy+CXZnbv0a
+         bb/wJNM00bJVT+6+NB0U6PELz7OyTtmw4XqSEyICpjLpovhS4bAkIr4RO676N6VMWegN
+         jJUIEs1JHZ4t1mKkYQcjWuV03s4/cJNW3tpgyEeR+kg9YabMhJVzUm8rKLp+FvJLBUhD
+         gTvXKiydGcPYI2xj/vBLNLm3kw9F2BEfCgMW+lCDhRV/7ksgdpvZjfuwxvXP2ZK2ZAXQ
+         JkAg==;
         darn=lists.yoctoproject.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1777285202; x=1777890002; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20251104; t=1777285339; x=1777890139; darn=lists.yoctoproject.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=E8+ydvxF/qDrhO2HWKQVNwFR4S6k12PLVWTuSnVfTMQ=;
-        b=XfK8aEUAkgu1WsYaVPTpWdEn2CZIfAqJizrnFqJWL+6EquHGtj3RAaCUL2qXN69YIF
-         OAYSXzCjtT4sLckhFQvgG3NGe9Zzu+LP7j3MyEUapF6B5bDx5InzeshjdDVgPjmCLt+c
-         50pczDsxvq9HPe4LrjKpSm2Hmg3pv6xQLWWNx7FDGhker+cdwgCGkiHStiBawrLli8k0
-         SMUDgOFN/2rr5eXAQooqxDfzo8zzVLlc17dLp+xUGlLwdcFSCfAFfno/LTkTH43KilRI
-         0fjedbcrN+I+NtRArHHnZ4JB53Zp8bm52VBAtAB/erUt/A02IDQxGzJAeZF3bxvY33W0
-         miAA==
+        bh=MorTDcolzApXe/cSKM3nGfSpm0ixcNX607wgfQVK49c=;
+        b=Qfl/IyVDlv764glyCsubrqWxoZPqCPhBSDC5IUc/piOp8HtfoU25h7JgqxdYxKQ8n6
+         URXPbyJO8fbjw3hvtKwfTBIqxrrxG8R3rlg6kcN1a5qGh6MVm+3zw0+c5p4ZocZzC7nF
+         6PcJRP1/qqxLk5Al1Ihfh7TixilLAn0tVTk+r365kEZDD/wbIhUn9/Y74bVUeZU1BONP
+         mOMbP0TkOZA11gDjrTxgzejPBE0ZDvnT+YL/vVBWfxoF8vImi3/St6Uae22D0KBEO/SE
+         IGDnW7URewTtjTJBD8QaFNXp3DXDrBuZddek226OUanqIPFkIAKYObrl+lzVUVKp6a87
+         C7Rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777285202; x=1777890002;
+        d=1e100.net; s=20251104; t=1777285339; x=1777890139;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=E8+ydvxF/qDrhO2HWKQVNwFR4S6k12PLVWTuSnVfTMQ=;
-        b=jA/h+M9KTY2aewk7cK1oCIAO2b+ptjCmGf6ngnUuXP94tKcZhjl9C6KUxn2uIzTLJY
-         ck2leDjHwGbRCGaKKpWXd85APqo5SIk45Q78hBE5wOjMt3CA4024KcEE1Ro2MuFz4Q5k
-         ifUeWCNcG58piLZgiwDQJ9MJsA70Iq8Qv5Kl0KmdUG4lJB7jDShd+Ems6lP3fBFKrdo9
-         T82RN9pvNY9XAWKXqYNAxM/kIiGT/ArqFctN3h8HDq3s+MEXvDasB98rOytpQozSBOXu
-         o9xPulwhCe7g4TM3pybjU1w5tHlN+Vord6w2AVd86Lr/BmLyZ4MZWyODuP4nv/A2bif0
-         /TJw==
-X-Gm-Message-State: AOJu0YySapwKemWtGHKp1cArC66upbwGWrv6ntSNaZ3sp6zCEkdymFOG
-	4hvGfesxhnPEKBqVmIv7DbEumK3wmswNufmk0jDypIx/Zp/d9MHZ6Kxxq9OzyQzu3DbzwQdUYIa
-	M6OoaRic0cUlGTwYzYp28wjaXL2O4dV4=
-X-Gm-Gg: AeBDieuYQ65KlI7XofSQWUlNaAznsh8GnGUuJAr9kAh8TGnvjLFtrHUJttYH2bN4FCR
-	IkLjxNjCMVkhUNb0GltqcpxO6MR1ZVopiq2Gez1Trh9fP0oKoumThvq7hHv0U/t9VhsP1j+2bHN
-	fLhtf/g6D1LuiL1y6jKCFjPX4RFMETq/j6GIVFkKlw4bD1G18LKqGo9lAgmMmDpiasGp7vK7zIo
-	7PHZPZHwHNMDDkglx0WV8MJDF1sVYFUS3679Rdd4NC3JckBmzuVwA07CluJddjLgDXqJTWaSpgD
-	qKI+UZzorwfW2iIhaytZzX+7mVNyFCvn+lo/sDmLOPIWWHyek6dO
-X-Received: by 2002:a05:6214:2a47:b0:8a7:16f8:442a with SMTP id
- 6a1803df08f44-8b028139a98mr645284586d6.39.1777285201469; Mon, 27 Apr 2026
- 03:20:01 -0700 (PDT)
+        bh=MorTDcolzApXe/cSKM3nGfSpm0ixcNX607wgfQVK49c=;
+        b=NyGCvCw6S7tJoJFSg3FkAadnbNi2BtdFQdty5fGXoFObGOvA7XBykgmWcnwL8YdcdE
+         6/gI6FDkz7dVO3yvd7xwFAqEbXzr0VgmYndbF/c788zAzrHpNDTeDYPL2U/3kQXUSy5W
+         aHUxHQ2xETZChFqXPKEr/ijQkZDzeNrseFLrWcCJ836QH7QfGo1Zu2LEkM6b1/ML8ZrY
+         jvhEB0q8cttRfQcCM3g+fkxXp89/9gU3zTvUXgapqDlFnb4RNcELCzLAldvKPrImKAMg
+         2fxA4wBUK2pCtcF/JfhxBDWD6oHpnM24Mzwxcgo+r3goq1isXAkPszBiEKF1/mg+sMe0
+         D4vQ==
+X-Gm-Message-State: AOJu0Yy2edn44aNBW7HRz+NaIYdgvHSL9OtPHTQk/V0qOteUgtY+je5Z
+	0FOmR0tT7QfUExAFxadrdSv5FoD8+VJl26WgbSpeHyIeBvUFaX+EEHYSSSFrhzWbSxE/YLII2OM
+	PdeKnZipmrMsFcWjc1nB4jK/VtIWAcFw=
+X-Gm-Gg: AeBDieuJaLbdMlm0T2NjQlQhKB4fjOC8C8+hYmYSlPHHLY6yBbIokQRK2MQrkV6wukB
+	8VM695qmfB7OfAmj94MRFbzoNz1CUij8/RSuvfNLwBNiiVeG38EW53AKe0d04xkAnr3W+/8B72I
+	GdrPgYmVhHtKJ8LPoWjsPMvh8O8rq2aUM9TCLVoDhnWadYrA/ptugT2lOWJZJMTa1hKXtjuBPN7
+	31uiMuIIDVcp9qM9MXyRXXeRfFhRIzX1Sq7G9fJavo6+K5J1Zu0paXYONBl0JpRMcwsT1k60Srx
+	9kNzl1aMBbxRxzt4nxaQLecMmFvqjdlYrd1bCzCweFUDbiZm2tUvxWeMY0KA8kQ=
+X-Received: by 2002:a05:622a:4cb:b0:50e:614e:4433 with SMTP id
+ d75a77b69052e-50e614e4701mr434327611cf.30.1777285338655; Mon, 27 Apr 2026
+ 03:22:18 -0700 (PDT)
 MIME-Version: 1.0
-References: <20260424114603.2444938-1-daniel.turull@ericsson.com> <20260424114603.2444938-8-daniel.turull@ericsson.com>
-In-Reply-To: <20260424114603.2444938-8-daniel.turull@ericsson.com>
+References: <20260424114603.2444938-1-daniel.turull@ericsson.com> <20260424114603.2444938-7-daniel.turull@ericsson.com>
+In-Reply-To: <20260424114603.2444938-7-daniel.turull@ericsson.com>
 From: Alexander Kanavin <alex.kanavin@gmail.com>
-Date: Mon, 27 Apr 2026 12:19:49 +0200
-X-Gm-Features: AVHnY4IJ4DhbA-k2e8rbbsHb7MnW-XKX6wrxzF4q4s2_-HJGmQkyPuUKeMqJyYw
-Message-ID: <CANNYZj_e0Ms7DhyaxUT2Jx_ijkarVGSzuHW+NPpf1Q2ikPCOoQ@mail.gmail.com>
-Subject: Re: [AUH][PATCH v2 7/9] upgrade-helper.py: Add prebuild option
+Date: Mon, 27 Apr 2026 12:22:07 +0200
+X-Gm-Features: AVHnY4Luk0lBtiO45LSN8Ik2AsHMh3FhDkR0CWAgcGRbcuzsv-vW3nHG_k5UUk4
+Message-ID: <CANNYZj9xmzFLVb0ECP7LYbvtf09rafXc0CbAz7o31gNdZE6CkQ@mail.gmail.com>
+Subject: Re: [AUH][PATCH v2 6/9] upgrade-helper.py: Add minor option for minor
+ version upgrades
 To: daniel.turull@ericsson.com
 Cc: yocto-patches@lists.yoctoproject.org, paul@pbarker.dev, 
 	ross.burton@arm.com, yoann.congal@smile.fr
@@ -83,78 +84,21 @@ Content-Type: text/plain; charset="UTF-8"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 27 Apr 2026 10:20:10 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3835
-
-There's already a buildhistory option which does such a pre-build and
-size comparison? Perhaps you can extend buildhistory with hooks into
-additional external checks?
-
-Alex
+ <yocto-patches@lists.yoctoproject.org>; Mon, 27 Apr 2026 10:22:20 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3836
 
 On Fri, 24 Apr 2026 at 13:46, <daniel.turull@ericsson.com> wrote:
->
-> From: Daniel Turull <daniel.turull@ericsson.com>
->
-> Add --prebuild option to build each recipe at its current version before
-> attempting the upgrade. This allows verifying that recipes build before
-> applying the upgrade and enables comparing binaries produced before and
-> after, for example for build size or ABI compatibility checks.
->
-> Recipes that fail the pre-build are skipped and recorded as failures.
->
-> Assisted-by: Claude, Anthropic
-> Signed-off-by: Daniel Turull <daniel.turull@ericsson.com>
-> ---
->  upgrade-helper.py | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
->
-> diff --git a/upgrade-helper.py b/upgrade-helper.py
-> index ffa7449..11a97d2 100755
-> --- a/upgrade-helper.py
-> +++ b/upgrade-helper.py
-> @@ -105,6 +105,9 @@ def parse_cmdline():
->      parser.add_argument("--minor", action="store_true", default=False,
->                          help="allow upgrades within the same major version (e.g. 3.5.2 -> 3.6.0, 3.99.0)")
->
-> +    parser.add_argument("--prebuild", action="store_true", default=False,
-> +                        help="build each recipe at its current version before attempting upgrade")
-> +
->      parser.add_argument("-d", "--debug-level", type=int, default=4, choices=range(1, 6),
->                          help="set the debug level: CRITICAL=1, ERROR=2, WARNING=3, INFO=4, DEBUG=5")
->      parser.add_argument("-e", "--send-emails", action="store_true", default=False,
-> @@ -516,6 +519,21 @@ class Updater(object):
->              attempted_pkggroups += 1
->              pkggroup_name = g["name"]
->              I(" ATTEMPT PACKAGE GROUP %d/%d" % (attempted_pkggroups, total_pkggroups))
-> +
-> +            # Build current version first to verify it builds and seed ABI reference
-> +            if self.args.prebuild and not self.args.skip_compilation:
-> +                I(" %s: Pre-building current version ..." % pkggroup_name)
-> +                try:
-> +                    for machine in self.opts['machines']:
-> +                        self.bb.complete(" ".join([p['PN'] for p in g['pkgs']]), machine)
-> +                except Exception as e:
-> +                    E(" %s: Pre-build FAILED, skipping upgrade" % pkggroup_name)
-> +                    if isinstance(e, Error):
-> +                        E(e.stdout + e.stderr)
-> +                    g['error'] = e if isinstance(e, Error) else Error(message=str(e))
-> +                    failed_pkggroups_ctx.append(g)
-> +                    continue
-> +
->              try:
->                  for pkg_ctx in g['pkgs']:
->                      I(" %s: Upgrading to %s" % (pkg_ctx['PN'], pkg_ctx['NPV']))
-> @@ -571,6 +589,8 @@ class Updater(object):
->              tim.run()
->
->          for g in pkggroups_ctx:
-> +            if 'workdir' not in g:
-> +                continue
->
->              if g in succeeded_pkggroups_ctx:
->                  os.symlink(g['workdir'], os.path.join( \
-> --
-> 2.34.1
->
+>                          help="extract changelog between old and new versions, highlighting CVEs")
+>      parser.add_argument("--stable", action="store_true", default=False,
+>                          help="only upgrade to the next patch version within the stable branch (e.g. 1.2.3 -> 1.2.4)")
+> +    parser.add_argument("--minor", action="store_true", default=False,
+> +                        help="allow upgrades within the same major version (e.g. 3.5.2 -> 3.6.0, 3.99.0)")
+
+I'm somewhat confused. When and how one would be using either of these
+options? What's the workflow for them?
+
+I still think it's better to place stable maintenance information
+directly into recipes.
+
+Alex
 
