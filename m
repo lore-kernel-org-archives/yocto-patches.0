@@ -1,111 +1,97 @@
-Return-Path: <antonin.godard@bootlin.com>
+Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38D75FF8864
-	for <webhook@archiver.kernel.org>; Wed, 29 Apr 2026 09:15:31 +0000 (UTC)
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.7337.1777454123950910725
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07472CD13D2
+	for <webhook@archiver.kernel.org>; Wed, 29 Apr 2026 15:40:21 +0000 (UTC)
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.14496.1777477211755827075
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 29 Apr 2026 02:15:24 -0700
+ Wed, 29 Apr 2026 08:40:12 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=dkim header.b=XfDI+xvU;
- spf=pass (domain: bootlin.com, ip: 185.171.202.116, mailfrom: antonin.godard@bootlin.com)
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id D006EC5CD50
-	for <yocto-patches@lists.yoctoproject.org>; Wed, 29 Apr 2026 09:16:05 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id BAF2B601DF
-	for <yocto-patches@lists.yoctoproject.org>; Wed, 29 Apr 2026 09:15:21 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D8AB810729A19;
-	Wed, 29 Apr 2026 11:15:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1777454121; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=O0xQyOzA25+7rTrXCR3aB4lPesH0gumukNTaWF9UF3E=;
-	b=XfDI+xvU4i6pCt32lRMaKi14yImxMl3rRAOYT+gCjoCrDjKpGDWLOLjwTZooyUO6B/mtL3
-	Ls55cqD7IdW+KKjcrJenVIYNa+wCsODIHBXCj6z6IxD+TABjgwFEughgSbAfE9vkiEElN3
-	BBnMGl1hqQY/NoCzcKXaSlfOTlPUw/br9f2K0wc/3LRrGG9RwPyepGd50ZXnb7E0RmSv4z
-	8ie8QBlZHvPzB5mgSb4I2Tq0vUVqDmSIQNx6lMrVX7cRh6SQchRuGkeQx3wCKJMQXk5Jhi
-	1+joDiXEe/yUV3P4XIAOiEu41VJXGE8ZRNk6ZqU6tWVP3vpSxK8LwXKiDlOWLQ==
-From: Antonin Godard <antonin.godard@bootlin.com>
-Date: Wed, 29 Apr 2026 11:15:16 +0200
-Subject: [yocto-autobuilder-helper][PATCH] scripts/run-docs-build: use
- bitbake's setversions.py to get the latest branch
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260429-fix-docs-bitbake-latest-branch-v1-1-25cce6bf4f26@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXNQQ6CMBCF4auQWTsJVALEqxAW03aUUdKSdjAaw
- t2tuvwW7387ZE7CGS7VDomfkiWGguZUgZsp3BjFF4OpTVe3ZsCrvNBHl9GKWnowLqScFW2i4Gb
- s2r5xNQ3cnwlKZE1cFr+Dcfo7b/bOTr/V8R2dRqRNo91k8Zxw5mXlNMFxfABZ0JxxnAAAAA==
-X-Change-ID: 20260428-fix-docs-bitbake-latest-branch-6471c0a8e73a
+ dkim=pass header.i=@konsulko.com header.s=google header.b=j8aRBPfI;
+ spf=pass (domain: konsulko.com, ip: 209.85.222.170, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-8ef45a6d9dfso958647685a.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 29 Apr 2026 08:40:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=konsulko.com; s=google; t=1777477210; x=1778082010; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vDyVB9c+FVpxNiJUobNiuafFMmPamuEmZ7kjudrXBl8=;
+        b=j8aRBPfIdPAsjOrc/N1a1vKzZBRaCeIRn+cGovlAuoGpWWypRIRdOkLXZirbKUoM4u
+         Q/Cx2nIsO/MIlspnI2lszT9waQjL3jACI4zSd2iH2uFN8l26aEZqIz0HExEOYgsLdhT4
+         0Y1qZphUjvknqijg8gvi0WGItXBVnUaiLbfMk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777477210; x=1778082010;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=vDyVB9c+FVpxNiJUobNiuafFMmPamuEmZ7kjudrXBl8=;
+        b=npSHyfczJie70hpE+0iJsAS2FhGZdZM/h3QkoSMAODs4kkW6jX0Qu/9m+DBnjqEsNo
+         cQi9m/EsXkNN6Elxev/ejSMC6tnmvywvVdSLaQppkWAj/KmsA5Ob6+QK3ESBl10bzhiI
+         tHafGXBzqom97x/L8gkScXgfYR/NzECS/yyQMqeAm0AlR7B3YZWAIwQRLHuvuRbd8NXW
+         fNuo27iMaJ5Rrk+jUas/t/5pB6jA5Q6lXOVq9Ho/Bgp5LB1mfZfueSEoxRUGvT6Drh6Y
+         UlkMBnf2KTMC48kPwC2S3Va1sEcExAxYIaX+lFihEeueNkvt2gf38HjuzK+h7/CH27zN
+         +Bfg==
+X-Gm-Message-State: AOJu0Yy7IWSTY9iMR7GaKlUlxosqb/meZ5AIPInOfwnPpmuHuMW7mG6n
+	XWQH1ONzgT8tBQGjkPJyWjKVPCAmVECejka84bi3x4QIKykxbtVkpaQf6W8NWr4lqqShxD+EBfr
+	1tXAQ
+X-Gm-Gg: AeBDieuYBT+2gH9L1cde+Vw5X0Ucz0a/y20QtJDcLBnV7PfHGAuQfSu79mDuGdmXTEm
+	Vf1mRLuGHXbdGmv9JF2f13SdFeH1Bgufamx1hUOp14C1xE3XQysCq0cTAjp8Wmm1J/qxH6PDWZH
+	XeEYq3Q20LXAVeGg3RqGqzeVeJ0hc+OVOVdcpl/8xBoW5wpMvK4MbqlDjUhOzJukJ54Z7oNGA7j
+	YKQWm2iqaUniR6nS8whqDReb591t9MhFnkfv4JfDN6qQLAmc3MWWcTaduC2qajZ32kAKp7TtkMp
+	cWjN/troSlPeeExm5+snvA1hntIiVl8DquSilM0DtKdk1GkOUX19z8+ny4tQgh9EoEPk//9Zo1C
+	a30BNIVxWBXfKN+M8IspjL5Eye7064OhRRD9OCs2HPlBebAP5tlVz3SepoqpNOcFKSdVaYZ78jQ
+	/lU48BMPzZANUPCd4PvoJlbcUiZAV8DZ44EwAG9dNQjC3Ld3eRGUfpJiVVoi/9Vt9v2u1YQWZuc
+	Peljb10PD5yJp1oOtWUzUj36BJBitChRNoz7XOdABNZB0YURbBvoYxDlgRgQtc3ZM4U721KGis=
+X-Received: by 2002:a05:620a:4115:b0:8cd:871c:909d with SMTP id af79cd13be357-8f7d9c094a9mr1115297585a.53.1777477210338;
+        Wed, 29 Apr 2026 08:40:10 -0700 (PDT)
+Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8f940340f1csm207924185a.44.2026.04.29.08.40.09
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Apr 2026 08:40:10 -0700 (PDT)
+From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Antonin Godard <antonin.godard@bootlin.com>
-X-Mailer: b4 0.16-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1777;
- i=antonin.godard@bootlin.com; h=from:subject:message-id;
- bh=ZDSq9Te20a3EfOIMgpsJxxt+rvjuOkiBpATVZggc9Cs=;
- b=owEBbQKS/ZANAwAKAdGAQUApo6g2AcsmYgBp8cwoK0luAcysvycy2p+DJwIn07/RJi5EKp1rW
- 1aY4D1FOwyJAjMEAAEKAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCafHMKAAKCRDRgEFAKaOo
- NvYJEACfDlMpQ4BHUSS5/WK4/YboXj8wAHYvkQcq7DB8S3MTFL5XwOIm72IST8ic3Y7QiAypByz
- Mzyylw2M1LbHcz+qcRFO2NRQ51HFayCAkD4lJC5MP7LTN6W4wL+Bz+EBRcy01y2Hkl5/YWpxB/f
- mFcjnnDUNyXcLe+ZZAQbl6sRF93fBcKVWdt+8tsqIxnWY3oDwuIeQRoPLglZQn+xoZlYcBmDfY8
- 0gjeWZ1LdKDfamxDUxWi+XJzyAmbNjOF3rM+rCAbrTv8tnC7AXvFDfN7vgTXcITUlXaBQ04QH0D
- hDT3NyA3kW4dG4HBKpPQTBng8eNvSIKbana1tVPnHScW5PvwkF7mHJ32OIZh+Ilp74owtayS1YI
- HMSuNLYmtSIAqxv+6f6ZYNMahZykpfKd6/y0k0uFUHZW0KfUG33L4WqTiNuMhZOsmhAPr0YMQUE
- 3RqBmOXJVVQ3sivEzATlj3QtqPSorAcyxconsPxwvlE9HlRlKdAblQhcU744qt+S7iM5+Z2FDLA
- UydK9KlILeTidZG7SLoHEW4emP2WK09/jcyNKTNbIEe45rcLAQ5OMWjT2R7sElGs4Zc5XMfeJ7S
- ucPpTlm1a09FpIN9YfFzWEZoLZDbGYEPwPcfXcwVbOL/07w8JFVh810XoZmEl6+hZu+7+0nsVS0
- uoJmns+4tkwTjAw==
-X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
- fpr=8648725188DD401BB9A0D3FFD180414029A3A836
-X-Last-TLS-Session-Version: TLSv1.3
+Subject: [meta-security][PATCH 01/13] krill: fix missing dollar sign in FILES
+Date: Wed, 29 Apr 2026 11:39:31 -0400
+Message-ID: <731c5fc0b8146a59b721567f7c045b66ac75c46e.1777476608.git.scott.murray@konsulko.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <cover.1777476608.git.scott.murray@konsulko.com>
+References: <cover.1777476608.git.scott.murray@konsulko.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 29 Apr 2026 09:15:31 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3873
+ <yocto-patches@lists.yoctoproject.org>; Wed, 29 Apr 2026 15:40:21 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3875
 
-The current script uses the list of branches to determine the current
-latest bitbake version to show as the default page on
-https://docs.yoctoproject.org/bitbake. However, this is not necessarily
-the right branch, for example if the branch was created before it was
-officially released.
+From: Wenlin Kang <wenlin.kang@windriver.com>
 
-Use the setversions.py script's --get-latest-branch argument for that,
-which returns the latest branch based on what is found in the
-releases.json file. Double check that this branch looks correct and exit
-if not.
+{sysconfdir} -> ${sysconfdir}
 
-Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
+Signed-off-by: Wenlin Kang <wenlin.kang@windriver.com>
+Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
-NOTE: depends on https://lore.kernel.org/r/20260429-doc-get-latest-branch-v1-1-e5a0ce87cec4@bootlin.com
----
- scripts/run-docs-build | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ recipes-security/krill/krill_0.12.3.bb | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/scripts/run-docs-build b/scripts/run-docs-build
-index acd8a24..090e5b0 100755
---- a/scripts/run-docs-build
-+++ b/scripts/run-docs-build
-@@ -111,7 +111,12 @@ mkdir $outputdir/bitbake
- # see the latest releases.
- first_sphinx_commit=84ccba0f4aff91528f764523fe1205a354c889ed
+diff --git a/recipes-security/krill/krill_0.12.3.bb b/recipes-security/krill/krill_0.12.3.bb
+index 472bac9..2a10584 100644
+--- a/recipes-security/krill/krill_0.12.3.bb
++++ b/recipes-security/krill/krill_0.12.3.bb
+@@ -37,7 +37,7 @@ USERADD_PARAM:${PN} = "--system -g ${KRILL_GID} --home-dir  \
+                        /var/lib/krill/ --no-create-home  \
+                        --shell /sbin/nologin ${BPN}"
  
--latest_branch=$(git branch --remote --contains "$first_sphinx_commit" --format '%(refname:lstrip=3)' --sort='-version:refname' | grep --max-count=1 "[0-9]*\.[0-9]*")
-+latest_branch=$(./setversions.py --get-latest-branch 2>/dev/null)
-+if ! echo "$latest_branch" | grep -qE "^[0-9]+\.[0-9]+$"; then
-+  echo "Got unexpected branch from ./set_versions.py: $latest_branch"
-+  echo "Should be in X.Y format"
-+  exit 1
-+fi
+-FILES:${PN} += "{sysconfdir}/defaults ${datadir}"
++FILES:${PN} += "${sysconfdir}/defaults ${datadir}"
+ INSANE_SKIP:${PN} = "already-stripped"
  
- for branch in 1.46 $(git branch --remote --contains "$first_sphinx_commit" --format '%(refname:lstrip=3)'); do
-     if [ "$branch" = "HEAD" ]; then
-
----
-base-commit: 7ba82651cae130890e2120dccca939153ec7042e
-change-id: 20260428-fix-docs-bitbake-latest-branch-6471c0a8e73a
+ COMPATIBLE_HOST = "(i.86|x86_64|aarch64).*-linux"
+-- 
+2.53.0
 
 
