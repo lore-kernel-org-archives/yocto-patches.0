@@ -1,462 +1,430 @@
-Return-Path: <alex.kanavin@gmail.com>
+Return-Path: <daniel.turull@ericsson.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1712CD3423
-	for <webhook@archiver.kernel.org>; Mon,  4 May 2026 07:28:04 +0000 (UTC)
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.9726.1777879674426965772
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5972FF885A
+	for <webhook@archiver.kernel.org>; Mon,  4 May 2026 07:34:54 +0000 (UTC)
+Received: from MRWPR03CU001.outbound.protection.outlook.com (MRWPR03CU001.outbound.protection.outlook.com [40.107.130.37])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.9833.1777880087332965100
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 04 May 2026 00:27:54 -0700
+ Mon, 04 May 2026 00:34:47 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=cXSDAlEl;
- spf=pass (domain: gmail.com, ip: 209.85.219.45, mailfrom: alex.kanavin@gmail.com)
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-8b6c9fdb68cso14596956d6.2
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 04 May 2026 00:27:54 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1777879673; cv=none;
-        d=google.com; s=arc-20240605;
-        b=T/6JLTjpyuE+e8GAkEQgzvitwgfbP5qOzjENukzTZzf9oRE+/dOEbY0ca9nL3hV0xi
-         rpZVdjuYK2QhInebv1l+I9qIS7kYjnDH4mEoZbM8W3P1CkQR1I8fn3WaSbF2ZcNm7OzL
-         cWeRvvpTrvUGdjAN32XT3qG26YNQExhPT12V0Xpil7tai/V1vCloCXL0T7w7TDaJS0ct
-         5nC68kV/iaZioRnjVtM84a8z6+ohiYTnpNu/As7syJCbhdL9mY/ooGcbAVWcI26look7
-         6xzDqnimBkwOjO1Fx2hYZgoRU83ioeBGmdBRfG0PtAWVfipb4iE2Pqmi/P/x6D5TU9qD
-         2Jtg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=qvJglj5BeZA88u3v8uY+7Jo+XZZRNq1N7tJgqVYUoyw=;
-        fh=B6+dp47eghNzyj8BrWGHk2n/ObAtmJy/gW8Hzrmb+f8=;
-        b=ERq4rC//IdJwDRj8+EjgiK1eUZMnqPxdjpDU6RyzQeJAo8uqg6iDRWyPfGrcRGkfwg
-         JvhVIfOcRA5t9GZPHBzyaYa4QgKAxBvewgYHnKKv/gAtrUIQzaVrqh7PhO4W+iPtyFN5
-         3O3FwdVc2/pifAHNG9dRXLlagzZoIDWqZYi/bgT5LVw4ROGKM6xgjRZ5TCuH1FODd3SY
-         iYch8U4bZbLyYipVhlJ8R7PgdZyJ3hHMTTz4qKKPjgnw5YLzsmEMqBagBDFeNqbSfp55
-         WQbTgTc6zGymdmPNpBUcrMEQyWe2Nmo8Q1Sgfo0keBGCQDiqBkMnl5Cm+0D8pKBHT7A8
-         iU2A==;
-        darn=lists.yoctoproject.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1777879673; x=1778484473; darn=lists.yoctoproject.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qvJglj5BeZA88u3v8uY+7Jo+XZZRNq1N7tJgqVYUoyw=;
-        b=cXSDAlElN/fOzaUZpitQ8q86JnV6jFiVFr6fWGisRW1u5Izbg3GH5DhMGe0ifxGmM3
-         B06H+CVtkvWWCrOdlEDvRTXfYOrqt4LczmP4N40Z+TLleDFzXoMUdiZE9t8vq7NbVTRv
-         g21FHIZ3RGICE/k9bMdyp0jbEWsfW2SvHyJOYcd4BvrHKdOh1I6D+V3TY0WJXA5KIMe4
-         o6Gb+52FTc+00V9G2Y+p+r3mJeOrVr5+JRNbre+hxT2RIymTTSrviFJd6/eBUALaTMzi
-         BEo7iF8KXO80P/LCzr+yrOCvQEaeG/lm6CsrFQDrrSKvAIKuUL8/iYffEr/KDLds8J1r
-         +Lbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777879673; x=1778484473;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qvJglj5BeZA88u3v8uY+7Jo+XZZRNq1N7tJgqVYUoyw=;
-        b=azNZ8YVWkufx8woP4NWpBU8kYTp7g+W6xZdP7iv6CVtQ7N5X4OEl2YblfsAnlKXiY6
-         lx3SbS2hVrHQpEYCgjKsnqysemYzgLix+xfJVa28mxVkytyfNM3XtvjNyxFcKxkIrTjz
-         4INZRmyGcbu7/sgxznJ968iNeJYZlGUIeBx6R9xHAfTbamXKlaPubCV4DpAj5VUOBI+v
-         EhLf8d6IJjJKlNn4bZazpa3bC81hDLgXTJSwRouUi0L//HuXTOQZEDogyR+BOX2+T6LS
-         XqLpuylKiWpDA3Se4bAgJJShTTdSnfGdsYpMbDXPUdOwMUedW7U0dF+7Nr5nWI3vxtIt
-         EEoA==
-X-Gm-Message-State: AOJu0Yy/m6C4Vs3EyuVpLk/NmrEmqc2wwHxBQ7YgC7dLMX76aHJUB3fM
-	oOj/jLKZVSKcbT6RfTv7JrNrjw3aDaE8P0zrG5l9n8kIp9lk32kbgKOgIoqQaxycUvRxjTng0V/
-	g1/FO/Z0zpNLh5/DkSe8g/pxhoxip6iM=
-X-Gm-Gg: AeBDieuqP2okScVk/+E3DBLX7Gr3S9zGL5WPJp0HW+GalgOZvxggrr5Vt08zsOC2cNF
-	ddffPubBizrjLyQFmVQRJSMpPOTTytudUWi18ZZgBPmkojMNF2RSf16IJSwHd0FnGo8JO2aV7w2
-	4IM9yvUMdkKxllKOl7JXvHLAc3XyBmDhMFVqpJwaYZgnWkmPslNmFE/k7cqvhGovyb4Zfj+PSuz
-	l+0w8euu06CxjZuosTTh6mDuE2ccQ+x9wn274Ztv9GRmze9YY7+f6a07EXWUpAWwoQTZVrmiH0L
-	9KLuzilB5Yu9nsmNeNeE22LntkPqwqGV8wH8rNm6YvSW8C3aAjHQ
-X-Received: by 2002:a05:6214:3d07:b0:8ac:ae66:8eb9 with SMTP id
- 6a1803df08f44-8b6693eb878mr151472266d6.46.1777879673330; Mon, 04 May 2026
- 00:27:53 -0700 (PDT)
-MIME-Version: 1.0
-References: <20260504063614.3831203-1-daniel.turull@ericsson.com> <20260504063614.3831203-4-daniel.turull@ericsson.com>
-In-Reply-To: <20260504063614.3831203-4-daniel.turull@ericsson.com>
-From: Alexander Kanavin <alex.kanavin@gmail.com>
-Date: Mon, 4 May 2026 09:27:42 +0200
-X-Gm-Features: AVHnY4JVPoqibWTr83LsOcM-KwMewwvuPx0bkSIl67H3oSAazW55-d8RNpSJ9hA
-Message-ID: <CANNYZj9O=uZJ-VvnMP+2TOfqEmzQ18dmDu3VA+19R==XHKPwTg@mail.gmail.com>
-Subject: Re: [AUH][PATCH v3 3/4] upgrade-helper.py: Add stable option for
+ dkim=pass header.i=@ericsson.com header.s=selector1 header.b=TDQmZUWP;
+ spf=pass (domain: ericsson.com, ip: 40.107.130.37, mailfrom: daniel.turull@ericsson.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FlATw9L6l7WGDLpI2C87eNAMyZ2AO9GOBfqot4jJtVvRqbi0FeaKu1t561a0KNl3VrhpoKIQx0PYMJErn9e1qtPv4pmhoh5+04pMzUwn0dODav0hKIhrld/03/0jo0f1oSxe1xMaFxLhHUYEao45WrIrLYEHE892u07Cer/4rBlz2mGCj7WITqiQCdXyJejzexaq7jNMIfD2p/q3wO/Ci1WG22GgDbpITwGAtrgLxy3yqAap4wms2nPyzUxUhCLg6gjQW9NcSYeOdnXeoR9wCUyNOMFirkOyu1AUf2Tciiz57SRBvoI8RJk2SEpcrunmqMsttpwGxOmsa84x45vjtQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7Bn2ARdVEBTQjUhnU1kkalTCGXFLJQAAi95a+aW65EE=;
+ b=oOncEJTG5noYI071Hnqw+la8vNESMs63Uwgg3s/jZfvcp/KOrEYHYDXUA7ojncUmj0+GZf1xrEpYVwAm21LDDNEt9pSNOfkKZogfYlwG7yAfeZNq+VZwMQEGZ8GcK5iZCXCaa4NAo6KBxWEaiPqjZ0vG6ZKjjSxxWSkY+qa4dTuH6yO0WCo5/I1+6GQr8NEHww9cbJuOfmBpLX/X+MBxDyIN1fFzJhkMWMdVzdlcfwJ/yNykVDbilnu1hOU3bPi4c2jGJgu0Yk1rdOvVvae9H3wt/nbgQ9r+qt2cY9wGu19avdZR/81F2c1uM1y+lU9ZrH0WeYyQM0043rqUe/0ugQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=ericsson.com; dmarc=pass action=none header.from=ericsson.com;
+ dkim=pass header.d=ericsson.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ericsson.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7Bn2ARdVEBTQjUhnU1kkalTCGXFLJQAAi95a+aW65EE=;
+ b=TDQmZUWPs0CBcEFWiQWUAsBcFJsjFoQCo1Ags/PPU9DqE/VozppbgFuveBpydTN3ya00iXheUi2Cwp1/iua/FHk4Gcr6DUlpxmwkxBM/03p5wjZOvLb9g9nFiYfHTTLPFFQEbpVCOjE/tZBBlV2ZdLs6ChNDql3m1QpZrUAm/dkPHpi6qwprDjtPRL54RwqMT8phmCkh4wey9ij609rGXA5JB0tx4Yp+xfd7ulenYQWrjhijKPp5uGysOuXujuJ7Nvh6Frsir0odHLfR6zUXpvHi1d1a6s7LpUKvnBMgFZ4w9QpNzvvlgzP+twDUbBTJ7HDiSwVlrVm9kxBgFz48Pw==
+Received: from PA3PR07MB10721.eurprd07.prod.outlook.com (2603:10a6:102:4af::6)
+ by VI1PR0701MB6912.eurprd07.prod.outlook.com (2603:10a6:800:19b::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9870.25; Mon, 4 May
+ 2026 07:34:41 +0000
+Received: from PA3PR07MB10721.eurprd07.prod.outlook.com
+ ([fe80::afd3:17e5:1663:7ce7]) by PA3PR07MB10721.eurprd07.prod.outlook.com
+ ([fe80::afd3:17e5:1663:7ce7%7]) with mapi id 15.20.9870.023; Mon, 4 May 2026
+ 07:34:41 +0000
+From: Daniel Turull <daniel.turull@ericsson.com>
+To: Alexander Kanavin <alex.kanavin@gmail.com>
+CC: "yocto-patches@lists.yoctoproject.org"
+	<yocto-patches@lists.yoctoproject.org>, "paul@pbarker.dev"
+	<paul@pbarker.dev>, "ross.burton@arm.com" <ross.burton@arm.com>,
+	"yoann.congal@smile.fr" <yoann.congal@smile.fr>
+Subject: RE: [AUH][PATCH v3 3/4] upgrade-helper.py: Add stable option for
  patch-only upgrades
-To: daniel.turull@ericsson.com
-Cc: yocto-patches@lists.yoctoproject.org, paul@pbarker.dev, 
-	ross.burton@arm.com, yoann.congal@smile.fr
-Content-Type: text/plain; charset="UTF-8"
+Thread-Topic: [AUH][PATCH v3 3/4] upgrade-helper.py: Add stable option for
+ patch-only upgrades
+Thread-Index: AQHc25BVkoKIR+9+yUGtU7sK2q+J/bX9d9sAgAAA37A=
+Date: Mon, 4 May 2026 07:34:41 +0000
+Message-ID: 
+ <PA3PR07MB107217FDB43D6E8BF8639C0138A312@PA3PR07MB10721.eurprd07.prod.outlook.com>
+References: <20260504063614.3831203-1-daniel.turull@ericsson.com>
+ <20260504063614.3831203-4-daniel.turull@ericsson.com>
+ <CANNYZj9O=uZJ-VvnMP+2TOfqEmzQ18dmDu3VA+19R==XHKPwTg@mail.gmail.com>
+In-Reply-To: 
+ <CANNYZj9O=uZJ-VvnMP+2TOfqEmzQ18dmDu3VA+19R==XHKPwTg@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=ericsson.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PA3PR07MB10721:EE_|VI1PR0701MB6912:EE_
+x-ms-office365-filtering-correlation-id: 2a9c138d-4c55-4176-08be-08dea9af9ad3
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|366016|1800799024|376014|38070700021|22082099003|18002099003|56012099003;
+x-microsoft-antispam-message-info: 
+ 028RdtjW6q4Z1dn4NMtI0mI8JFqyjDRC8xn0xn3hyiQSblVwyy0ojplZcikeEnNyWJq+NMQmETGHlgpVi9zyeJ4h24iCEej+NoxNqYq9oAYVCf7W8rUbK4XzVLa7dwKYkuhDN2QmzX0vVJl1uC/qKcQvTkeDSJWFDL1XEEO3D3qf4zltS0PnHfQMxltazHsKa+B+BjlWJTf2GWgTdD91N4I5RrHFg1AyfYrqHcOjkzBLXYU1T0X2T9J21kaJgEsnIiaKY2KCFTQKVr5OesKZs2T6JSWhViOnp3sfVxxjl4/Iqom140GVqVkTv7e/qhcQNi5B82gB2naB3/bw7LJByuzWmsPiHd2lZ5C3sPDSPubhm7ugy3cUtESuX91UyMOJ/i0nlaZfQEIe+6IoEBYX08JYALywir9qxHgMyQdopvYuFRrqX+NqfCWpqS3zmnibih0HU3H1vGNGQ8Dsdw01+oyrOITxoJT9Rmg3hq4Kdyo8gjpm73D7uyaKANor3pwUQ1UiZpx2Bzzg0ZZd2yHew0me4oL1CPw1n1VOCjdX8TP1+qH1n56cFoIQc4mQVDuIksfsrsr3G+NdyZ5RWiViwPmxCxnNYb+iX9Pggxkf2U3mXdEQa6JsO1744El1GGtikO0JkcJQxIRZAtq380BORmpfQXIo4IRw27JJ9yfbI5fRCMgjdXguG818+dtLfEZj7fJFApC7tQNctlgIzN2GBM1fpH7k3GFyef9VmYpodCznHYGCV8pv3RPB6Ky6oR8Z
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA3PR07MB10721.eurprd07.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700021)(22082099003)(18002099003)(56012099003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?utf-8?B?MlJsRWpkb0p2aHVkZFJCay9lQmJZcTdWR3JNZVZvVDNHMGR4QUVzdFNJUWRJ?=
+ =?utf-8?B?d0UraHR6VkVyY1VVTjVBSk43ZGc5QXhoSWdyQjVRaGFLazQyMUdBRlBrZ016?=
+ =?utf-8?B?NlkzNWZCVDNHRmUxZVpEYXhSMlNaUWtHanNKVk1vUlBuL0FpSWtVY21WRXc4?=
+ =?utf-8?B?ejc3QjlzYWt2T1BLeTJiRE5XaTh2M3JuTmFXZkFrNk1aUVhNZVJwcHVzWDFh?=
+ =?utf-8?B?Q1M3WFMxTEpFNmZsdW9KZkFkamQ3cXZPY1pHUkhDUDJ3VGJ0NjFPbGZzYVVu?=
+ =?utf-8?B?WkRuZEFWL2NCSTRGWWI3UWp6TEh6UlA3NG01TVZqNHVuc2YzcEFkTVd0YU1Q?=
+ =?utf-8?B?Z0hCUU9XR0g1c3lVV2dmOGgrMU5td1NFTEsyQVpWV05WK3ljQ08zczlhMmk3?=
+ =?utf-8?B?UDZ5RnFmcDNQTGVMbnNKc0ZJd1J2dG9STUMzRXpPeXFQV2JlRXRHZ0Q2MHFU?=
+ =?utf-8?B?ZnBDcndaQjQxSUxRQjIzSG13VUhKQlRGYmlXREFXN2d6cyt3Q0taNGxOd2JX?=
+ =?utf-8?B?RFI1MGkvazU2TVNHMlFEK3NwL0dFVzFYWE1LNFJYMFlaVSsxeG9DQ2paTVB0?=
+ =?utf-8?B?SFV5QmZkQ0ljWXcxNGZWcUhQd0t1WXlIdG1QeWp4WGludnJxTEcxdFFibU1z?=
+ =?utf-8?B?TjRGWi9KRzI2bVZNTkFaZkJSTlMxdGlFbGdaaGw0LzRXVk1SSTArNlRSYlpp?=
+ =?utf-8?B?eWlTb3JPMjBxdi9wdXQrTTZBZ2J3WVZzMnpUYXpySnJhNjFpYWVvcXRjQ25u?=
+ =?utf-8?B?MGRBR09YMkZUcE0zRkgzb3RQeTBWNGQyMEtWUHhhVUxORC9HbTNMbjRXdFQ1?=
+ =?utf-8?B?cVZVb08zVUllZFg0VkFtejFweUgxOUJMcFNqanBPMXhDODJ1dFQxZ3VRQmRy?=
+ =?utf-8?B?L1BRQ2pRKzQ3WEVVemJldmFDZ0pZK1ZUckhJK1BnT3ZteWhXampFWEFIV2gy?=
+ =?utf-8?B?VEVIRHhOb0RZRDVTWlhVZnB2QzR2Zm05bFY4UXBzTXYxRkRlaEFiMmRUMlpl?=
+ =?utf-8?B?c1J6d0IxMUdaalRtbDlnZnJjNFRDNDBnUDZKZkJodHpDRkIySEFJUGNqTlh3?=
+ =?utf-8?B?RVdlUVdJVWVLNFM4TC8rOGQ0SDVDdFVnRDNvS1hPZXdZbW01UjlYQ01OMXFh?=
+ =?utf-8?B?REVEZXJOVXZOd1Zsd2NuU3VLL2U1MnF4TFF1YjFjQTRSK0g3OTM3QnErTUhu?=
+ =?utf-8?B?QlU2MTBnUEkvVTdYOXpZYzdqOVltdDk3S2RSWlRQMS9VRmwwM2Q4UUpvY1ov?=
+ =?utf-8?B?Z0lqQ0FkOFVkTVJsaTNDejR1QjBvczJ5eTRyNGxZeHZtUzJQdmh6T1ZmQzVy?=
+ =?utf-8?B?UVN4cys1Zk0yb0IveTEza203aHR3Qi9ETlcyaDhxbTQ0N05jME0rZnBYSWJO?=
+ =?utf-8?B?anRJVWlXYmlVdzhlbGZudUpqdThzTG5vcE9qZ1ZLWGJyNHd0N1hQRWdudHlV?=
+ =?utf-8?B?bkg4aHZSdkJIVkx1Q09ZV200UW1oZTUwTEFublV0Z3pjYnJTaEhWaSt5K3gw?=
+ =?utf-8?B?aFN5eGtNNVc5WXl6V1dIek5hdmV4T0psc0dJK3c1MjZqdFhaWG5RSTFFbjJK?=
+ =?utf-8?B?czRoUExCYlR3WmhreXEzMXRYdk81dC9LNzlLeVdieHh4aDM3dWYvbzRJU0Uy?=
+ =?utf-8?B?ZHN4ZTVJa3lFNkpNYzNETlJvdFhSUUlzbEFDMFJWQUpvOXgzVDRveUJtclFu?=
+ =?utf-8?B?dUV0VDFlOEdyM0dUTnNxaFBXZGtDNDQxT1RSR1lPanp0YlpWTmJzckU4Yms3?=
+ =?utf-8?B?VzUrRUFxcUtJRkM5ZGVxVlphR2xCektqWnFuRllTU1huQUl3RXVDVXJ6Vm4x?=
+ =?utf-8?B?VkhYWDBBZ2hwd2tRRjlhbjQ5dG1yZkdNeVVhRy9HaGNFVitRbTA1NkpyUjF0?=
+ =?utf-8?B?T2JGVk9DaUx4d3hvZXE4UkNhV2pOYWpsU3lFeFQ1TldIeDZRa1V1ZVgzZ25X?=
+ =?utf-8?B?L1FObUR1Tm9nT3grblNwVlNCdzFLemxoN3I1LzZvbSt2NkhwWWp4N0c5QUhk?=
+ =?utf-8?B?NGVXeXhPc3daNmkrenorSUZmVHpwNGp4YjQrWUJUN1IwRzZaUEREUFlubVcz?=
+ =?utf-8?B?ci9qKzViS3RadWUrcnUzVFhJTG5Pd0lGN0RYaHIrR2QvTUM1TEUxeWp4dDkr?=
+ =?utf-8?B?Z0c0c0d1cVQ0OGJscC9XbkI5VzdKOEhNZXRkUTB5bGwxMGlMZXoxRW9mOE9T?=
+ =?utf-8?B?RkVSVnBlb3BrNmlkUTB2TnVoRWtUZVlqa3h0NDh1dG90bFdUUHJDNWl1YW12?=
+ =?utf-8?B?R3Q5WmU3RFVtQko5R1I1cEJJdGR4SXZJZ2JrYXNvOHVsVGp5K1JsNlNRZTh4?=
+ =?utf-8?B?SkZQMTJuQ3haNGVrYy9qemhFbmNHRGxKbmx4UkdQcjJNb3B2d0xGZz09?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: ericsson.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PA3PR07MB10721.eurprd07.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2a9c138d-4c55-4176-08be-08dea9af9ad3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 May 2026 07:34:41.3928
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: /q5dc9yn90MlQgt8a0A39T2wyoJKDLchSo7K/qDgc+Ny0Plew8u0HIkkdzwyrje3fqsEYAfjiBBQpDYbTiSPC4tjPnYhyiyAKcxOsanuZUA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0701MB6912
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 04 May 2026 07:28:04 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3903
+ <yocto-patches@lists.yoctoproject.org>; Mon, 04 May 2026 07:34:54 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3904
 
-This was already discussed, I'm not taking the patch in its current
-form. The functionality needs to go to oe-core.
-
-Note also the recent discussion in bitbake-devel list around how to
-determine stable versions properly ("add optional major_version
-parameter to latest_versionstring").
-
-
-Alex
-
-
-On Mon, 4 May 2026 at 08:36, <daniel.turull@ericsson.com> wrote:
->
-> From: Daniel Turull <daniel.turull@ericsson.com>
->
-> Add --stable flag to restrict upgrades to the next patch version within
-> the current stable branch (e.g. 1.2.3 -> 1.2.4). When the latest
-> upstream version is a major/minor bump, AUH queries all available
-> versions and picks the best patch-level update.
->
-> Per-recipe policy can be overridden via AUH_UPGRADE_POLICY (read from
-> tinfoil), supporting 'patch' (default), 'minor', and 'none' values.
->
-> Quick-path optimization: recipes where next_ver is already a patch
-> update are accepted without opening tinfoil. Tinfoil is only opened
-> for recipes that need policy lookup or version scanning.
->
-> Assisted-by: kiro:claude-opus-4.6
-> Signed-off-by: Daniel Turull <daniel.turull@ericsson.com>
-> ---
->  modules/utils/version.py | 185 +++++++++++++++++++++++++++++++++++++++
->  upgrade-helper.py        | 104 ++++++++++++++++++++++
->  2 files changed, 289 insertions(+)
->  create mode 100644 modules/utils/version.py
->
-> diff --git a/modules/utils/version.py b/modules/utils/version.py
-> new file mode 100644
-> index 0000000..4417bd5
-> --- /dev/null
-> +++ b/modules/utils/version.py
-> @@ -0,0 +1,185 @@
-> +# SPDX-License-Identifier: GPL-2.0-or-later
-> +#
-> +# Version utilities for --stable patch-only upgrades.
-> +#
-> +# get_all_upstream_versions() collects *all* available upstream versions so
-> +# that we can pick the highest patch-level release within the current stable
-> +# branch.  The existing bitbake/oe-core APIs (latest_versionstring,
-> +# get_recipe_upstream_version) only return the single highest version, so we
-> +# must re-implement the inner loops here.
-> +#
-> +# The HTTP path mirrors bb.fetch2.wget.Wget._check_latest_version() and the
-> +# git path mirrors bb.fetch2.git.Git.latest_versionstring(), both from
-> +# bitbake scarthgap.  We cannot modify oe-core on a stable release, hence
-> +# the duplication.
-> +#
-> +# Requires: beautifulsoup4 (python3-beautifulsoup4 in oe-core)
-> +
-> +import functools
-> +import re
-> +from logging import warning as W
-> +
-> +import bb.utils
-> +import bb.fetch2
-> +from bs4 import BeautifulSoup, SoupStrainer
-> +
-> +
-> +def _split_version(ver):
-> +    # Split on '.', '-', '_' and letter-digit boundaries (e.g. 10.0p2 -> [10, 0, p, 2])
-> +    parts = re.split(r'[\.\-_]', ver)
-> +    result = []
-> +    for p in parts:
-> +        result.extend(re.split(r'(?<=[a-zA-Z])(?=\d)|(?<=\d)(?=[a-zA-Z])', p))
-> +    return result
-> +
-> +
-> +def is_patch_update(current_ver, candidate_ver):
-> +    """Check if candidate is a patch-level update.
-> +
-> +    A patch update changes only the last version component while keeping
-> +    all preceding components identical. Also accepts sub-patch extensions
-> +    (e.g. 1.2.3 -> 1.2.3.1).
-> +    """
-> +    cur = _split_version(current_ver)
-> +    cand = _split_version(candidate_ver)
-> +    if len(cur) < 2 or len(cand) < 2:
-> +        return False
-> +    if bb.utils.vercmp_string(candidate_ver, current_ver) <= 0:
-> +        return False
-> +    # All but the last component of the current version must match
-> +    # the corresponding prefix of the candidate
-> +    if len(cand) < len(cur):
-> +        return False
-> +    return cur[:-1] == cand[:len(cur) - 1]
-> +
-> +
-> +def is_minor_update(current_ver, candidate_ver):
-> +    """Check if candidate is a newer release within the same major version."""
-> +    cur = _split_version(current_ver)
-> +    cand = _split_version(candidate_ver)
-> +    if len(cur) < 2 or len(cand) < 2:
-> +        return False
-> +    if cur[0] != cand[0]:
-> +        return False
-> +    return bb.utils.vercmp_string(candidate_ver, current_ver) > 0
-> +
-> +
-> +def _find_best_version(current_ver, all_versions, filter_fn):
-> +    candidates = [v for v in all_versions if filter_fn(current_ver, v)]
-> +    if not candidates:
-> +        return None
-> +    candidates.sort(
-> +        key=functools.cmp_to_key(bb.utils.vercmp_string), reverse=True
-> +    )
-> +    return candidates[0]
-> +
-> +
-> +def find_patch_version(current_ver, all_versions):
-> +    return _find_best_version(current_ver, all_versions, is_patch_update)
-> +
-> +
-> +def find_minor_version(current_ver, all_versions):
-> +    return _find_best_version(current_ver, all_versions, is_minor_update)
-> +
-> +
-> +def get_all_upstream_versions(rd):
-> +    """Get all upstream versions using the fetcher infrastructure.
-> +
-> +    Unlike ud.method.latest_versionstring() which returns only the highest
-> +    version, this collects every version so the caller can filter for
-> +    patch-only updates.
-> +    """
-> +    src_uris = rd.getVar('SRC_URI')
-> +    if not src_uris:
-> +        return []
-> +
-> +    src_uri = src_uris.split()[0]
-> +    fetch = bb.fetch2.Fetch([src_uri], rd)
-> +    ud = fetch.ud[fetch.urls[0]]
-> +
-> +    if ud.type == 'git':
-> +        return _get_git_versions(ud, rd)
-> +    return _get_http_versions(ud, rd)
-> +
-> +
-> +def _get_http_versions(ud, rd):
-> +    """Collect all upstream versions from an HTTP index page.
-> +
-> +    Adapted from bb.fetch2.wget.Wget._check_latest_version() and
-> +    ._init_regexes().  The upstream code only keeps the highest version;
-> +    we collect them all.  Uses BeautifulSoup to parse <a> tags, matching
-> +    the upstream behaviour.
-> +    """
-> +    try:
-> +        package = ud.path.split("/")[-1]
-> +
-> +        regex_uri = rd.getVar('UPSTREAM_CHECK_URI')
-> +        if not regex_uri:
-> +            path = ud.path.split(package)[0]
-> +            regex_uri = bb.fetch2.encodeurl([ud.type, ud.host, path,
-> +                                            ud.user, ud.pswd, {}])
-> +
-> +        page = ud.method._fetch_index(regex_uri, ud, rd)
-> +        if not page:
-> +            return []
-> +
-> +        regex = rd.getVar('UPSTREAM_CHECK_REGEX')
-> +        if regex:
-> +            regex = re.compile(regex)
-> +        else:
-> +            regex = ud.method._init_regexes(package, ud, rd)
-> +        if not regex:
-> +            return []
-> +
-> +        # Parse HTML links, same as Wget._check_latest_version()
-> +        soup = BeautifulSoup(page, "html.parser",
-> +                             parse_only=SoupStrainer("a"))
-> +        if not soup:
-> +            return []
-> +
-> +        versions = set()
-> +        for link in soup.find_all('a', href=True):
-> +            for text in (link['href'], str(link)):
-> +                m = regex.search(text)
-> +                if m and 'pver' in m.groupdict() and m.group('pver'):
-> +                    versions.add(re.sub('_', '.', m.group('pver')))
-> +                    break
-> +        return list(versions)
-> +    except Exception as e:
-> +        W(" Failed to get HTTP versions: %s" % e)
-> +        return []
-> +
-> +
-> +def _get_git_versions(ud, rd):
-> +    """Collect all tagged versions from a git remote.
-> +
-> +    Adapted from bb.fetch2.git.Git.latest_versionstring().  The upstream
-> +    code only keeps the highest version; we collect them all.
-> +    """
-> +    try:
-> +        output = ud.method._lsremote(ud, rd, "refs/tags/*")
-> +    except (bb.fetch2.FetchError, bb.fetch2.NetworkAccess, OSError) as e:
-> +        W(" Failed to list remote tags: %s" % e)
-> +        return []
-> +
-> +    rev_tag_re = re.compile(r"([0-9a-f]{40})\s+refs/tags/(.*)")
-> +    pver_re = re.compile(
-> +        rd.getVar('UPSTREAM_CHECK_GITTAGREGEX')
-> +        or r"(?P<pver>([0-9][\.|_]?)+)"
-> +    )
-> +    nonrel_re = re.compile(r"(alpha|beta|rc|final)+")
-> +
-> +    versions = set()
-> +    for line in output.split("\n"):
-> +        if not line:
-> +            continue
-> +        m = rev_tag_re.match(line)
-> +        if not m:
-> +            continue
-> +        tag = m.group(2)
-> +        if nonrel_re.search(tag):
-> +            continue
-> +        m = pver_re.search(tag)
-> +        if m:
-> +            versions.add(m.group('pver').replace("_", "."))
-> +    return list(versions)
-> diff --git a/upgrade-helper.py b/upgrade-helper.py
-> index 9954a66..aecb207 100755
-> --- a/upgrade-helper.py
-> +++ b/upgrade-helper.py
-> @@ -59,6 +59,9 @@ from utils.emailhandler import Email
->  from statistics import Statistics
->  from steps import upgrade_steps
->  from testimage import TestImage
-> +from utils.version import (is_patch_update, find_patch_version,
-> +                           is_minor_update, find_minor_version,
-> +                           get_all_upstream_versions)
->
->  if not os.getenv('BUILDDIR', False):
->      E(" You must source oe-init-build-env before running this script!\n")
-> @@ -74,6 +77,7 @@ scriptpath.add_bitbake_lib_path()
->  scriptpath.add_oe_lib_path()
->
->  import oe.recipeutils
-> +import bb.tinfoil
->
->  help_text = """Usage examples:
->  * To upgrade xmodmap recipe to the latest available version:
-> @@ -96,6 +100,9 @@ def parse_cmdline():
->      parser.add_argument("-t", "--to_version",
->                          help="version to upgrade the recipe to")
->
-> +    parser.add_argument("--stable", action="store_true", default=False,
-> +                        help="only upgrade to the next patch version within the stable branch (e.g. 1.2.3 -> 1.2.4)")
-> +
->      parser.add_argument("-d", "--debug-level", type=int, default=4, choices=range(1, 6),
->                          help="set the debug level: CRITICAL=1, ERROR=2, WARNING=3, INFO=4, DEBUG=5")
->      parser.add_argument("-e", "--send-emails", action="store_true", default=False,
-> @@ -679,6 +686,67 @@ class UniverseUpdater(Updater):
->
->      def _get_packagegroups_to_upgrade(self, packages=None):
->
-> +        def _resolve_stable_version(pn, cur_ver, next_ver, tinfoil):
-> +            """Find the best version within the policy allowed by AUH_UPGRADE_POLICY.
-> +
-> +            Only called when --stable is active. --stable enables version
-> +            filtering globally; AUH_UPGRADE_POLICY overrides the policy
-> +            per-recipe within that filtering.
-> +
-> +            AUH_UPGRADE_POLICY can be set per-recipe in local.conf or in the
-> +            recipe itself:
-> +              "patch" (default) - only patch-level updates (e.g. 1.2.3 -> 1.2.4)
-> +              "minor"           - same-major updates (e.g. 1.2.3 -> 1.3.0)
-> +              "none"            - skip this recipe entirely
-> +            """
-> +            # Quick path: if next_ver is already a patch update, accept it
-> +            # without parsing the recipe (covers the common case).
-> +            if is_patch_update(cur_ver, next_ver):
-> +                return next_ver, None
-> +
-> +            try:
-> +                rd = tinfoil.parse_recipe(pn)
-> +            except Exception:
-> +                rd = None
-> +            if not rd:
-> +                I(" %s: could not parse recipe, skipping" % pn)
-> +                return None, None
-> +
-> +            policy = (rd.getVar('AUH_UPGRADE_POLICY') or 'patch').strip().lower()
-> +            if policy not in ('patch', 'minor', 'none'):
-> +                W(" %s: unrecognized AUH_UPGRADE_POLICY '%s',"
-> +                  " defaulting to 'patch'" % (pn, policy))
-> +                policy = 'patch'
-> +            if policy == 'none':
-> +                I(" %s: AUH_UPGRADE_POLICY=none, skipping" % pn)
-> +                return None, None
-> +
-> +            if policy == 'minor':
-> +                check_fn = is_minor_update
-> +                find_fn = find_minor_version
-> +            else:
-> +                check_fn = is_patch_update
-> +                find_fn = find_patch_version
-> +
-> +            if check_fn(cur_ver, next_ver):
-> +                return next_ver, None
-> +
-> +            I(" %s: latest version %s is not a %s update from %s,"
-> +              " searching for versions..." %
-> +              (pn, next_ver, policy, cur_ver))
-> +            try:
-> +                all_versions = get_all_upstream_versions(rd)
-> +                ver = find_fn(cur_ver, all_versions)
-> +                if ver:
-> +                    I(" %s: found version %s" % (pn, ver))
-> +                    return ver, "N/A"
-> +                else:
-> +                    I(" %s: no suitable version available, skipping" % pn)
-> +                    return None, None
-> +            except Exception as e:
-> +                I(" %s: failed to search for versions: %s" % (pn, e))
-> +                return None, None
-> +
->          # Prepare a single pkg dict data (or None is not upgradable) from recipeutils.get_recipe_upgrade_status data.
->          def _get_pkg_to_upgrade(self, layer_name, pn, status, cur_ver, next_ver, maintainer, revision, no_upgrade_reason):
->              pkg_to_upgrade = None
-> @@ -736,6 +804,42 @@ class UniverseUpdater(Updater):
->                          upgrade_group.append(pkg_to_upgrade)
->                  if upgrade_group:
->                      upgrade_pkggroups.append(upgrade_group)
-> +
-> +        if self.args.stable and upgrade_pkggroups:
-> +            # Quick-path: accept packages where next_ver is already a patch
-> +            # update without opening tinfoil.  For the rest, tinfoil must
-> +            # remain open because bb.fetch2.Fetch needs a live rd object.
-> +            needs_tinfoil = []
-> +            for group in upgrade_pkggroups:
-> +                quick_group = []
-> +                slow_pkgs = []
-> +                for pkg in group:
-> +                    if is_patch_update(pkg['cur_ver'], pkg['next_ver']):
-> +                        quick_group.append(pkg)
-> +                    else:
-> +                        slow_pkgs.append(pkg)
-> +                if quick_group or slow_pkgs:
-> +                    needs_tinfoil.append((quick_group, slow_pkgs))
-> +
-> +            if any(slow for _, slow in needs_tinfoil):
-> +                stable_tinfoil = bb.tinfoil.Tinfoil()
-> +                stable_tinfoil.prepare(config_only=False)
-> +                try:
-> +                    for quick_group, slow_pkgs in needs_tinfoil:
-> +                        for pkg in slow_pkgs:
-> +                            ver, rev = _resolve_stable_version(
-> +                                pkg['pn'], pkg['cur_ver'],
-> +                                pkg['next_ver'], stable_tinfoil)
-> +                            if ver is not None:
-> +                                pkg['next_ver'] = ver
-> +                                if rev is not None:
-> +                                    pkg['revision'] = rev
-> +                                quick_group.append(pkg)
-> +                finally:
-> +                    stable_tinfoil.shutdown()
-> +
-> +            upgrade_pkggroups = [g for g, _ in needs_tinfoil if g]
-> +
->          return upgrade_pkggroups
->
->      def pkg_upgrade_handler(self, pkg_ctx):
-> --
-> 2.34.1
->
+U29ycnksIEkgbWlzdW5kZXJzdG9vZCB5b3UuIEkgdGhvdWdoIGl0IHdhcyBvbmx5IHRoZSBjaGFu
+Z2Vsb2cgZ29pbmcgaW50byBkZXZ0b29sLg0KDQpJJ2xsIGNoZWNrIHRoZSBiaXRiYWtlLWxldmVs
+LiBJIG1pc3NlZCBpdC4NCg0KU28gd2Uga2VlcCBwYXRjaCAxLCAyIGFuZCA0PyBQcm9iYWJseSB0
+aGUgbW9zdCBpbXBvcnRhbnQgaXMgMiBbUEFUQ0ggdjMgMi80XSB1cGdyYWRlLWhlbHBlci5weTog
+QWRkIGNvbXBhdGliaWxpdHkgd2l0aCBZb2N0byBzY2FydGhnYXAsIHRoZSBvdGhlciB0d28gY2Fu
+IGJlIG9wdGlvbmFsLg0KDQpCZXN0IHJlZ2FyZHMsDQpEYW5pZWwNCg0KPiAtLS0tLU9yaWdpbmFs
+IE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBBbGV4YW5kZXIgS2FuYXZpbiA8YWxleC5rYW5hdmluQGdt
+YWlsLmNvbT4NCj4gU2VudDogTW9uZGF5LCA0IE1heSAyMDI2IDA5OjI4DQo+IFRvOiBEYW5pZWwg
+VHVydWxsIDxkYW5pZWwudHVydWxsQGVyaWNzc29uLmNvbT4NCj4gQ2M6IHlvY3RvLXBhdGNoZXNA
+bGlzdHMueW9jdG9wcm9qZWN0Lm9yZzsgcGF1bEBwYmFya2VyLmRldjsNCj4gcm9zcy5idXJ0b25A
+YXJtLmNvbTsgeW9hbm4uY29uZ2FsQHNtaWxlLmZyDQo+IFN1YmplY3Q6IFJlOiBbQVVIXVtQQVRD
+SCB2MyAzLzRdIHVwZ3JhZGUtaGVscGVyLnB5OiBBZGQgc3RhYmxlIG9wdGlvbiBmb3INCj4gcGF0
+Y2gtb25seSB1cGdyYWRlcw0KPiANCj4gVGhpcyB3YXMgYWxyZWFkeSBkaXNjdXNzZWQsIEknbSBu
+b3QgdGFraW5nIHRoZSBwYXRjaCBpbiBpdHMgY3VycmVudCBmb3JtLiBUaGUNCj4gZnVuY3Rpb25h
+bGl0eSBuZWVkcyB0byBnbyB0byBvZS1jb3JlLg0KPiANCj4gTm90ZSBhbHNvIHRoZSByZWNlbnQg
+ZGlzY3Vzc2lvbiBpbiBiaXRiYWtlLWRldmVsIGxpc3QgYXJvdW5kIGhvdyB0byBkZXRlcm1pbmUN
+Cj4gc3RhYmxlIHZlcnNpb25zIHByb3Blcmx5ICgiYWRkIG9wdGlvbmFsIG1ham9yX3ZlcnNpb24g
+cGFyYW1ldGVyIHRvDQo+IGxhdGVzdF92ZXJzaW9uc3RyaW5nIikuDQo+IA0KPiANCj4gQWxleA0K
+PiANCj4gDQo+IE9uIE1vbiwgNCBNYXkgMjAyNiBhdCAwODozNiwgPGRhbmllbC50dXJ1bGxAZXJp
+Y3Nzb24uY29tPiB3cm90ZToNCj4gPg0KPiA+IEZyb206IERhbmllbCBUdXJ1bGwgPGRhbmllbC50
+dXJ1bGxAZXJpY3Nzb24uY29tPg0KPiA+DQo+ID4gQWRkIC0tc3RhYmxlIGZsYWcgdG8gcmVzdHJp
+Y3QgdXBncmFkZXMgdG8gdGhlIG5leHQgcGF0Y2ggdmVyc2lvbg0KPiA+IHdpdGhpbiB0aGUgY3Vy
+cmVudCBzdGFibGUgYnJhbmNoIChlLmcuIDEuMi4zIC0+IDEuMi40KS4gV2hlbiB0aGUNCj4gPiBs
+YXRlc3QgdXBzdHJlYW0gdmVyc2lvbiBpcyBhIG1ham9yL21pbm9yIGJ1bXAsIEFVSCBxdWVyaWVz
+IGFsbA0KPiA+IGF2YWlsYWJsZSB2ZXJzaW9ucyBhbmQgcGlja3MgdGhlIGJlc3QgcGF0Y2gtbGV2
+ZWwgdXBkYXRlLg0KPiA+DQo+ID4gUGVyLXJlY2lwZSBwb2xpY3kgY2FuIGJlIG92ZXJyaWRkZW4g
+dmlhIEFVSF9VUEdSQURFX1BPTElDWSAocmVhZCBmcm9tDQo+ID4gdGluZm9pbCksIHN1cHBvcnRp
+bmcgJ3BhdGNoJyAoZGVmYXVsdCksICdtaW5vcicsIGFuZCAnbm9uZScgdmFsdWVzLg0KPiA+DQo+
+ID4gUXVpY2stcGF0aCBvcHRpbWl6YXRpb246IHJlY2lwZXMgd2hlcmUgbmV4dF92ZXIgaXMgYWxy
+ZWFkeSBhIHBhdGNoDQo+ID4gdXBkYXRlIGFyZSBhY2NlcHRlZCB3aXRob3V0IG9wZW5pbmcgdGlu
+Zm9pbC4gVGluZm9pbCBpcyBvbmx5IG9wZW5lZA0KPiA+IGZvciByZWNpcGVzIHRoYXQgbmVlZCBw
+b2xpY3kgbG9va3VwIG9yIHZlcnNpb24gc2Nhbm5pbmcuDQo+ID4NCj4gPiBBc3Npc3RlZC1ieTog
+a2lybzpjbGF1ZGUtb3B1cy00LjYNCj4gPiBTaWduZWQtb2ZmLWJ5OiBEYW5pZWwgVHVydWxsIDxk
+YW5pZWwudHVydWxsQGVyaWNzc29uLmNvbT4NCj4gPiAtLS0NCj4gPiAgbW9kdWxlcy91dGlscy92
+ZXJzaW9uLnB5IHwgMTg1DQo+ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+Kw0KPiA+ICB1cGdyYWRlLWhlbHBlci5weSAgICAgICAgfCAxMDQgKysrKysrKysrKysrKysrKysr
+KysrKw0KPiA+ICAyIGZpbGVzIGNoYW5nZWQsIDI4OSBpbnNlcnRpb25zKCspDQo+ID4gIGNyZWF0
+ZSBtb2RlIDEwMDY0NCBtb2R1bGVzL3V0aWxzL3ZlcnNpb24ucHkNCj4gPg0KPiA+IGRpZmYgLS1n
+aXQgYS9tb2R1bGVzL3V0aWxzL3ZlcnNpb24ucHkgYi9tb2R1bGVzL3V0aWxzL3ZlcnNpb24ucHkg
+bmV3DQo+ID4gZmlsZSBtb2RlIDEwMDY0NCBpbmRleCAwMDAwMDAwLi40NDE3YmQ1DQo+ID4gLS0t
+IC9kZXYvbnVsbA0KPiA+ICsrKyBiL21vZHVsZXMvdXRpbHMvdmVyc2lvbi5weQ0KPiA+IEBAIC0w
+LDAgKzEsMTg1IEBADQo+ID4gKyMgU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQTC0yLjAtb3It
+bGF0ZXIgIyAjIFZlcnNpb24gdXRpbGl0aWVzIGZvcg0KPiA+ICstLXN0YWJsZSBwYXRjaC1vbmx5
+IHVwZ3JhZGVzLg0KPiA+ICsjDQo+ID4gKyMgZ2V0X2FsbF91cHN0cmVhbV92ZXJzaW9ucygpIGNv
+bGxlY3RzICphbGwqIGF2YWlsYWJsZSB1cHN0cmVhbQ0KPiA+ICt2ZXJzaW9ucyBzbyAjIHRoYXQg
+d2UgY2FuIHBpY2sgdGhlIGhpZ2hlc3QgcGF0Y2gtbGV2ZWwgcmVsZWFzZSB3aXRoaW4NCj4gPiAr
+dGhlIGN1cnJlbnQgc3RhYmxlICMgYnJhbmNoLiAgVGhlIGV4aXN0aW5nIGJpdGJha2Uvb2UtY29y
+ZSBBUElzDQo+ID4gKyhsYXRlc3RfdmVyc2lvbnN0cmluZywgIyBnZXRfcmVjaXBlX3Vwc3RyZWFt
+X3ZlcnNpb24pIG9ubHkgcmV0dXJuIHRoZQ0KPiA+ICtzaW5nbGUgaGlnaGVzdCB2ZXJzaW9uLCBz
+byB3ZSAjIG11c3QgcmUtaW1wbGVtZW50IHRoZSBpbm5lciBsb29wcyBoZXJlLg0KPiA+ICsjDQo+
+ID4gKyMgVGhlIEhUVFAgcGF0aCBtaXJyb3JzIGJiLmZldGNoMi53Z2V0LldnZXQuX2NoZWNrX2xh
+dGVzdF92ZXJzaW9uKCkNCj4gPiArYW5kIHRoZSAjIGdpdCBwYXRoIG1pcnJvcnMgYmIuZmV0Y2gy
+LmdpdC5HaXQubGF0ZXN0X3ZlcnNpb25zdHJpbmcoKSwNCj4gPiArYm90aCBmcm9tICMgYml0YmFr
+ZSBzY2FydGhnYXAuICBXZSBjYW5ub3QgbW9kaWZ5IG9lLWNvcmUgb24gYSBzdGFibGUNCj4gPiAr
+cmVsZWFzZSwgaGVuY2UgIyB0aGUgZHVwbGljYXRpb24uDQo+ID4gKyMNCj4gPiArIyBSZXF1aXJl
+czogYmVhdXRpZnVsc291cDQgKHB5dGhvbjMtYmVhdXRpZnVsc291cDQgaW4gb2UtY29yZSkNCj4g
+PiArDQo+ID4gK2ltcG9ydCBmdW5jdG9vbHMNCj4gPiAraW1wb3J0IHJlDQo+ID4gK2Zyb20gbG9n
+Z2luZyBpbXBvcnQgd2FybmluZyBhcyBXDQo+ID4gKw0KPiA+ICtpbXBvcnQgYmIudXRpbHMNCj4g
+PiAraW1wb3J0IGJiLmZldGNoMg0KPiA+ICtmcm9tIGJzNCBpbXBvcnQgQmVhdXRpZnVsU291cCwg
+U291cFN0cmFpbmVyDQo+ID4gKw0KPiA+ICsNCj4gPiArZGVmIF9zcGxpdF92ZXJzaW9uKHZlcik6
+DQo+ID4gKyAgICAjIFNwbGl0IG9uICcuJywgJy0nLCAnXycgYW5kIGxldHRlci1kaWdpdCBib3Vu
+ZGFyaWVzIChlLmcuIDEwLjBwMiAtPiBbMTAsIDAsIHAsDQo+IDJdKQ0KPiA+ICsgICAgcGFydHMg
+PSByZS5zcGxpdChyJ1tcLlwtX10nLCB2ZXIpDQo+ID4gKyAgICByZXN1bHQgPSBbXQ0KPiA+ICsg
+ICAgZm9yIHAgaW4gcGFydHM6DQo+ID4gKyAgICAgICAgcmVzdWx0LmV4dGVuZChyZS5zcGxpdChy
+Jyg/PD1bYS16QS1aXSkoPz1cZCl8KD88PVxkKSg/PVthLXpBLVpdKScsIHApKQ0KPiA+ICsgICAg
+cmV0dXJuIHJlc3VsdA0KPiA+ICsNCj4gPiArDQo+ID4gK2RlZiBpc19wYXRjaF91cGRhdGUoY3Vy
+cmVudF92ZXIsIGNhbmRpZGF0ZV92ZXIpOg0KPiA+ICsgICAgIiIiQ2hlY2sgaWYgY2FuZGlkYXRl
+IGlzIGEgcGF0Y2gtbGV2ZWwgdXBkYXRlLg0KPiA+ICsNCj4gPiArICAgIEEgcGF0Y2ggdXBkYXRl
+IGNoYW5nZXMgb25seSB0aGUgbGFzdCB2ZXJzaW9uIGNvbXBvbmVudCB3aGlsZSBrZWVwaW5nDQo+
+ID4gKyAgICBhbGwgcHJlY2VkaW5nIGNvbXBvbmVudHMgaWRlbnRpY2FsLiBBbHNvIGFjY2VwdHMg
+c3ViLXBhdGNoIGV4dGVuc2lvbnMNCj4gPiArICAgIChlLmcuIDEuMi4zIC0+IDEuMi4zLjEpLg0K
+PiA+ICsgICAgIiIiDQo+ID4gKyAgICBjdXIgPSBfc3BsaXRfdmVyc2lvbihjdXJyZW50X3ZlcikN
+Cj4gPiArICAgIGNhbmQgPSBfc3BsaXRfdmVyc2lvbihjYW5kaWRhdGVfdmVyKQ0KPiA+ICsgICAg
+aWYgbGVuKGN1cikgPCAyIG9yIGxlbihjYW5kKSA8IDI6DQo+ID4gKyAgICAgICAgcmV0dXJuIEZh
+bHNlDQo+ID4gKyAgICBpZiBiYi51dGlscy52ZXJjbXBfc3RyaW5nKGNhbmRpZGF0ZV92ZXIsIGN1
+cnJlbnRfdmVyKSA8PSAwOg0KPiA+ICsgICAgICAgIHJldHVybiBGYWxzZQ0KPiA+ICsgICAgIyBB
+bGwgYnV0IHRoZSBsYXN0IGNvbXBvbmVudCBvZiB0aGUgY3VycmVudCB2ZXJzaW9uIG11c3QgbWF0
+Y2gNCj4gPiArICAgICMgdGhlIGNvcnJlc3BvbmRpbmcgcHJlZml4IG9mIHRoZSBjYW5kaWRhdGUN
+Cj4gPiArICAgIGlmIGxlbihjYW5kKSA8IGxlbihjdXIpOg0KPiA+ICsgICAgICAgIHJldHVybiBG
+YWxzZQ0KPiA+ICsgICAgcmV0dXJuIGN1cls6LTFdID09IGNhbmRbOmxlbihjdXIpIC0gMV0NCj4g
+PiArDQo+ID4gKw0KPiA+ICtkZWYgaXNfbWlub3JfdXBkYXRlKGN1cnJlbnRfdmVyLCBjYW5kaWRh
+dGVfdmVyKToNCj4gPiArICAgICIiIkNoZWNrIGlmIGNhbmRpZGF0ZSBpcyBhIG5ld2VyIHJlbGVh
+c2Ugd2l0aGluIHRoZSBzYW1lIG1ham9yDQo+IHZlcnNpb24uIiIiDQo+ID4gKyAgICBjdXIgPSBf
+c3BsaXRfdmVyc2lvbihjdXJyZW50X3ZlcikNCj4gPiArICAgIGNhbmQgPSBfc3BsaXRfdmVyc2lv
+bihjYW5kaWRhdGVfdmVyKQ0KPiA+ICsgICAgaWYgbGVuKGN1cikgPCAyIG9yIGxlbihjYW5kKSA8
+IDI6DQo+ID4gKyAgICAgICAgcmV0dXJuIEZhbHNlDQo+ID4gKyAgICBpZiBjdXJbMF0gIT0gY2Fu
+ZFswXToNCj4gPiArICAgICAgICByZXR1cm4gRmFsc2UNCj4gPiArICAgIHJldHVybiBiYi51dGls
+cy52ZXJjbXBfc3RyaW5nKGNhbmRpZGF0ZV92ZXIsIGN1cnJlbnRfdmVyKSA+IDANCj4gPiArDQo+
+ID4gKw0KPiA+ICtkZWYgX2ZpbmRfYmVzdF92ZXJzaW9uKGN1cnJlbnRfdmVyLCBhbGxfdmVyc2lv
+bnMsIGZpbHRlcl9mbik6DQo+ID4gKyAgICBjYW5kaWRhdGVzID0gW3YgZm9yIHYgaW4gYWxsX3Zl
+cnNpb25zIGlmIGZpbHRlcl9mbihjdXJyZW50X3ZlciwgdildDQo+ID4gKyAgICBpZiBub3QgY2Fu
+ZGlkYXRlczoNCj4gPiArICAgICAgICByZXR1cm4gTm9uZQ0KPiA+ICsgICAgY2FuZGlkYXRlcy5z
+b3J0KA0KPiA+ICsgICAgICAgIGtleT1mdW5jdG9vbHMuY21wX3RvX2tleShiYi51dGlscy52ZXJj
+bXBfc3RyaW5nKSwgcmV2ZXJzZT1UcnVlDQo+ID4gKyAgICApDQo+ID4gKyAgICByZXR1cm4gY2Fu
+ZGlkYXRlc1swXQ0KPiA+ICsNCj4gPiArDQo+ID4gK2RlZiBmaW5kX3BhdGNoX3ZlcnNpb24oY3Vy
+cmVudF92ZXIsIGFsbF92ZXJzaW9ucyk6DQo+ID4gKyAgICByZXR1cm4gX2ZpbmRfYmVzdF92ZXJz
+aW9uKGN1cnJlbnRfdmVyLCBhbGxfdmVyc2lvbnMsDQo+ID4gK2lzX3BhdGNoX3VwZGF0ZSkNCj4g
+PiArDQo+ID4gKw0KPiA+ICtkZWYgZmluZF9taW5vcl92ZXJzaW9uKGN1cnJlbnRfdmVyLCBhbGxf
+dmVyc2lvbnMpOg0KPiA+ICsgICAgcmV0dXJuIF9maW5kX2Jlc3RfdmVyc2lvbihjdXJyZW50X3Zl
+ciwgYWxsX3ZlcnNpb25zLA0KPiA+ICtpc19taW5vcl91cGRhdGUpDQo+ID4gKw0KPiA+ICsNCj4g
+PiArZGVmIGdldF9hbGxfdXBzdHJlYW1fdmVyc2lvbnMocmQpOg0KPiA+ICsgICAgIiIiR2V0IGFs
+bCB1cHN0cmVhbSB2ZXJzaW9ucyB1c2luZyB0aGUgZmV0Y2hlciBpbmZyYXN0cnVjdHVyZS4NCj4g
+PiArDQo+ID4gKyAgICBVbmxpa2UgdWQubWV0aG9kLmxhdGVzdF92ZXJzaW9uc3RyaW5nKCkgd2hp
+Y2ggcmV0dXJucyBvbmx5IHRoZSBoaWdoZXN0DQo+ID4gKyAgICB2ZXJzaW9uLCB0aGlzIGNvbGxl
+Y3RzIGV2ZXJ5IHZlcnNpb24gc28gdGhlIGNhbGxlciBjYW4gZmlsdGVyIGZvcg0KPiA+ICsgICAg
+cGF0Y2gtb25seSB1cGRhdGVzLg0KPiA+ICsgICAgIiIiDQo+ID4gKyAgICBzcmNfdXJpcyA9IHJk
+LmdldFZhcignU1JDX1VSSScpDQo+ID4gKyAgICBpZiBub3Qgc3JjX3VyaXM6DQo+ID4gKyAgICAg
+ICAgcmV0dXJuIFtdDQo+ID4gKw0KPiA+ICsgICAgc3JjX3VyaSA9IHNyY191cmlzLnNwbGl0KClb
+MF0NCj4gPiArICAgIGZldGNoID0gYmIuZmV0Y2gyLkZldGNoKFtzcmNfdXJpXSwgcmQpDQo+ID4g
+KyAgICB1ZCA9IGZldGNoLnVkW2ZldGNoLnVybHNbMF1dDQo+ID4gKw0KPiA+ICsgICAgaWYgdWQu
+dHlwZSA9PSAnZ2l0JzoNCj4gPiArICAgICAgICByZXR1cm4gX2dldF9naXRfdmVyc2lvbnModWQs
+IHJkKQ0KPiA+ICsgICAgcmV0dXJuIF9nZXRfaHR0cF92ZXJzaW9ucyh1ZCwgcmQpDQo+ID4gKw0K
+PiA+ICsNCj4gPiArZGVmIF9nZXRfaHR0cF92ZXJzaW9ucyh1ZCwgcmQpOg0KPiA+ICsgICAgIiIi
+Q29sbGVjdCBhbGwgdXBzdHJlYW0gdmVyc2lvbnMgZnJvbSBhbiBIVFRQIGluZGV4IHBhZ2UuDQo+
+ID4gKw0KPiA+ICsgICAgQWRhcHRlZCBmcm9tIGJiLmZldGNoMi53Z2V0LldnZXQuX2NoZWNrX2xh
+dGVzdF92ZXJzaW9uKCkgYW5kDQo+ID4gKyAgICAuX2luaXRfcmVnZXhlcygpLiAgVGhlIHVwc3Ry
+ZWFtIGNvZGUgb25seSBrZWVwcyB0aGUgaGlnaGVzdCB2ZXJzaW9uOw0KPiA+ICsgICAgd2UgY29s
+bGVjdCB0aGVtIGFsbC4gIFVzZXMgQmVhdXRpZnVsU291cCB0byBwYXJzZSA8YT4gdGFncywgbWF0
+Y2hpbmcNCj4gPiArICAgIHRoZSB1cHN0cmVhbSBiZWhhdmlvdXIuDQo+ID4gKyAgICAiIiINCj4g
+PiArICAgIHRyeToNCj4gPiArICAgICAgICBwYWNrYWdlID0gdWQucGF0aC5zcGxpdCgiLyIpWy0x
+XQ0KPiA+ICsNCj4gPiArICAgICAgICByZWdleF91cmkgPSByZC5nZXRWYXIoJ1VQU1RSRUFNX0NI
+RUNLX1VSSScpDQo+ID4gKyAgICAgICAgaWYgbm90IHJlZ2V4X3VyaToNCj4gPiArICAgICAgICAg
+ICAgcGF0aCA9IHVkLnBhdGguc3BsaXQocGFja2FnZSlbMF0NCj4gPiArICAgICAgICAgICAgcmVn
+ZXhfdXJpID0gYmIuZmV0Y2gyLmVuY29kZXVybChbdWQudHlwZSwgdWQuaG9zdCwgcGF0aCwNCj4g
+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB1ZC51c2VyLCB1
+ZC5wc3dkLCB7fV0pDQo+ID4gKw0KPiA+ICsgICAgICAgIHBhZ2UgPSB1ZC5tZXRob2QuX2ZldGNo
+X2luZGV4KHJlZ2V4X3VyaSwgdWQsIHJkKQ0KPiA+ICsgICAgICAgIGlmIG5vdCBwYWdlOg0KPiA+
+ICsgICAgICAgICAgICByZXR1cm4gW10NCj4gPiArDQo+ID4gKyAgICAgICAgcmVnZXggPSByZC5n
+ZXRWYXIoJ1VQU1RSRUFNX0NIRUNLX1JFR0VYJykNCj4gPiArICAgICAgICBpZiByZWdleDoNCj4g
+PiArICAgICAgICAgICAgcmVnZXggPSByZS5jb21waWxlKHJlZ2V4KQ0KPiA+ICsgICAgICAgIGVs
+c2U6DQo+ID4gKyAgICAgICAgICAgIHJlZ2V4ID0gdWQubWV0aG9kLl9pbml0X3JlZ2V4ZXMocGFj
+a2FnZSwgdWQsIHJkKQ0KPiA+ICsgICAgICAgIGlmIG5vdCByZWdleDoNCj4gPiArICAgICAgICAg
+ICAgcmV0dXJuIFtdDQo+ID4gKw0KPiA+ICsgICAgICAgICMgUGFyc2UgSFRNTCBsaW5rcywgc2Ft
+ZSBhcyBXZ2V0Ll9jaGVja19sYXRlc3RfdmVyc2lvbigpDQo+ID4gKyAgICAgICAgc291cCA9IEJl
+YXV0aWZ1bFNvdXAocGFnZSwgImh0bWwucGFyc2VyIiwNCj4gPiArICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICBwYXJzZV9vbmx5PVNvdXBTdHJhaW5lcigiYSIpKQ0KPiA+ICsgICAgICAgIGlm
+IG5vdCBzb3VwOg0KPiA+ICsgICAgICAgICAgICByZXR1cm4gW10NCj4gPiArDQo+ID4gKyAgICAg
+ICAgdmVyc2lvbnMgPSBzZXQoKQ0KPiA+ICsgICAgICAgIGZvciBsaW5rIGluIHNvdXAuZmluZF9h
+bGwoJ2EnLCBocmVmPVRydWUpOg0KPiA+ICsgICAgICAgICAgICBmb3IgdGV4dCBpbiAobGlua1sn
+aHJlZiddLCBzdHIobGluaykpOg0KPiA+ICsgICAgICAgICAgICAgICAgbSA9IHJlZ2V4LnNlYXJj
+aCh0ZXh0KQ0KPiA+ICsgICAgICAgICAgICAgICAgaWYgbSBhbmQgJ3B2ZXInIGluIG0uZ3JvdXBk
+aWN0KCkgYW5kIG0uZ3JvdXAoJ3B2ZXInKToNCj4gPiArICAgICAgICAgICAgICAgICAgICB2ZXJz
+aW9ucy5hZGQocmUuc3ViKCdfJywgJy4nLCBtLmdyb3VwKCdwdmVyJykpKQ0KPiA+ICsgICAgICAg
+ICAgICAgICAgICAgIGJyZWFrDQo+ID4gKyAgICAgICAgcmV0dXJuIGxpc3QodmVyc2lvbnMpDQo+
+ID4gKyAgICBleGNlcHQgRXhjZXB0aW9uIGFzIGU6DQo+ID4gKyAgICAgICAgVygiIEZhaWxlZCB0
+byBnZXQgSFRUUCB2ZXJzaW9uczogJXMiICUgZSkNCj4gPiArICAgICAgICByZXR1cm4gW10NCj4g
+PiArDQo+ID4gKw0KPiA+ICtkZWYgX2dldF9naXRfdmVyc2lvbnModWQsIHJkKToNCj4gPiArICAg
+ICIiIkNvbGxlY3QgYWxsIHRhZ2dlZCB2ZXJzaW9ucyBmcm9tIGEgZ2l0IHJlbW90ZS4NCj4gPiAr
+DQo+ID4gKyAgICBBZGFwdGVkIGZyb20gYmIuZmV0Y2gyLmdpdC5HaXQubGF0ZXN0X3ZlcnNpb25z
+dHJpbmcoKS4gIFRoZSB1cHN0cmVhbQ0KPiA+ICsgICAgY29kZSBvbmx5IGtlZXBzIHRoZSBoaWdo
+ZXN0IHZlcnNpb247IHdlIGNvbGxlY3QgdGhlbSBhbGwuDQo+ID4gKyAgICAiIiINCj4gPiArICAg
+IHRyeToNCj4gPiArICAgICAgICBvdXRwdXQgPSB1ZC5tZXRob2QuX2xzcmVtb3RlKHVkLCByZCwg
+InJlZnMvdGFncy8qIikNCj4gPiArICAgIGV4Y2VwdCAoYmIuZmV0Y2gyLkZldGNoRXJyb3IsIGJi
+LmZldGNoMi5OZXR3b3JrQWNjZXNzLCBPU0Vycm9yKSBhcyBlOg0KPiA+ICsgICAgICAgIFcoIiBG
+YWlsZWQgdG8gbGlzdCByZW1vdGUgdGFnczogJXMiICUgZSkNCj4gPiArICAgICAgICByZXR1cm4g
+W10NCj4gPiArDQo+ID4gKyAgICByZXZfdGFnX3JlID0gcmUuY29tcGlsZShyIihbMC05YS1mXXs0
+MH0pXHMrcmVmcy90YWdzLyguKikiKQ0KPiA+ICsgICAgcHZlcl9yZSA9IHJlLmNvbXBpbGUoDQo+
+ID4gKyAgICAgICAgcmQuZ2V0VmFyKCdVUFNUUkVBTV9DSEVDS19HSVRUQUdSRUdFWCcpDQo+ID4g
+KyAgICAgICAgb3IgciIoP1A8cHZlcj4oWzAtOV1bXC58X10/KSspIg0KPiA+ICsgICAgKQ0KPiA+
+ICsgICAgbm9ucmVsX3JlID0gcmUuY29tcGlsZShyIihhbHBoYXxiZXRhfHJjfGZpbmFsKSsiKQ0K
+PiA+ICsNCj4gPiArICAgIHZlcnNpb25zID0gc2V0KCkNCj4gPiArICAgIGZvciBsaW5lIGluIG91
+dHB1dC5zcGxpdCgiXG4iKToNCj4gPiArICAgICAgICBpZiBub3QgbGluZToNCj4gPiArICAgICAg
+ICAgICAgY29udGludWUNCj4gPiArICAgICAgICBtID0gcmV2X3RhZ19yZS5tYXRjaChsaW5lKQ0K
+PiA+ICsgICAgICAgIGlmIG5vdCBtOg0KPiA+ICsgICAgICAgICAgICBjb250aW51ZQ0KPiA+ICsg
+ICAgICAgIHRhZyA9IG0uZ3JvdXAoMikNCj4gPiArICAgICAgICBpZiBub25yZWxfcmUuc2VhcmNo
+KHRhZyk6DQo+ID4gKyAgICAgICAgICAgIGNvbnRpbnVlDQo+ID4gKyAgICAgICAgbSA9IHB2ZXJf
+cmUuc2VhcmNoKHRhZykNCj4gPiArICAgICAgICBpZiBtOg0KPiA+ICsgICAgICAgICAgICB2ZXJz
+aW9ucy5hZGQobS5ncm91cCgncHZlcicpLnJlcGxhY2UoIl8iLCAiLiIpKQ0KPiA+ICsgICAgcmV0
+dXJuIGxpc3QodmVyc2lvbnMpDQo+ID4gZGlmZiAtLWdpdCBhL3VwZ3JhZGUtaGVscGVyLnB5IGIv
+dXBncmFkZS1oZWxwZXIucHkgaW5kZXgNCj4gPiA5OTU0YTY2Li5hZWNiMjA3IDEwMDc1NQ0KPiA+
+IC0tLSBhL3VwZ3JhZGUtaGVscGVyLnB5DQo+ID4gKysrIGIvdXBncmFkZS1oZWxwZXIucHkNCj4g
+PiBAQCAtNTksNiArNTksOSBAQCBmcm9tIHV0aWxzLmVtYWlsaGFuZGxlciBpbXBvcnQgRW1haWwg
+IGZyb20NCj4gPiBzdGF0aXN0aWNzIGltcG9ydCBTdGF0aXN0aWNzICBmcm9tIHN0ZXBzIGltcG9y
+dCB1cGdyYWRlX3N0ZXBzICBmcm9tDQo+ID4gdGVzdGltYWdlIGltcG9ydCBUZXN0SW1hZ2UNCj4g
+PiArZnJvbSB1dGlscy52ZXJzaW9uIGltcG9ydCAoaXNfcGF0Y2hfdXBkYXRlLCBmaW5kX3BhdGNo
+X3ZlcnNpb24sDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgIGlzX21pbm9yX3VwZGF0
+ZSwgZmluZF9taW5vcl92ZXJzaW9uLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICBn
+ZXRfYWxsX3Vwc3RyZWFtX3ZlcnNpb25zKQ0KPiA+DQo+ID4gIGlmIG5vdCBvcy5nZXRlbnYoJ0JV
+SUxERElSJywgRmFsc2UpOg0KPiA+ICAgICAgRSgiIFlvdSBtdXN0IHNvdXJjZSBvZS1pbml0LWJ1
+aWxkLWVudiBiZWZvcmUgcnVubmluZyB0aGlzDQo+ID4gc2NyaXB0IVxuIikgQEAgLTc0LDYgKzc3
+LDcgQEAgc2NyaXB0cGF0aC5hZGRfYml0YmFrZV9saWJfcGF0aCgpDQo+ID4gIHNjcmlwdHBhdGgu
+YWRkX29lX2xpYl9wYXRoKCkNCj4gPg0KPiA+ICBpbXBvcnQgb2UucmVjaXBldXRpbHMNCj4gPiAr
+aW1wb3J0IGJiLnRpbmZvaWwNCj4gPg0KPiA+ICBoZWxwX3RleHQgPSAiIiJVc2FnZSBleGFtcGxl
+czoNCj4gPiAgKiBUbyB1cGdyYWRlIHhtb2RtYXAgcmVjaXBlIHRvIHRoZSBsYXRlc3QgYXZhaWxh
+YmxlIHZlcnNpb246DQo+ID4gQEAgLTk2LDYgKzEwMCw5IEBAIGRlZiBwYXJzZV9jbWRsaW5lKCk6
+DQo+ID4gICAgICBwYXJzZXIuYWRkX2FyZ3VtZW50KCItdCIsICItLXRvX3ZlcnNpb24iLA0KPiA+
+ICAgICAgICAgICAgICAgICAgICAgICAgICBoZWxwPSJ2ZXJzaW9uIHRvIHVwZ3JhZGUgdGhlIHJl
+Y2lwZSB0byIpDQo+ID4NCj4gPiArICAgIHBhcnNlci5hZGRfYXJndW1lbnQoIi0tc3RhYmxlIiwg
+YWN0aW9uPSJzdG9yZV90cnVlIiwgZGVmYXVsdD1GYWxzZSwNCj4gPiArICAgICAgICAgICAgICAg
+ICAgICAgICAgaGVscD0ib25seSB1cGdyYWRlIHRvIHRoZSBuZXh0IHBhdGNoIHZlcnNpb24NCj4g
+PiArIHdpdGhpbiB0aGUgc3RhYmxlIGJyYW5jaCAoZS5nLiAxLjIuMyAtPiAxLjIuNCkiKQ0KPiA+
+ICsNCj4gPiAgICAgIHBhcnNlci5hZGRfYXJndW1lbnQoIi1kIiwgIi0tZGVidWctbGV2ZWwiLCB0
+eXBlPWludCwgZGVmYXVsdD00LA0KPiBjaG9pY2VzPXJhbmdlKDEsIDYpLA0KPiA+ICAgICAgICAg
+ICAgICAgICAgICAgICAgICBoZWxwPSJzZXQgdGhlIGRlYnVnIGxldmVsOiBDUklUSUNBTD0xLCBF
+UlJPUj0yLA0KPiBXQVJOSU5HPTMsIElORk89NCwgREVCVUc9NSIpDQo+ID4gICAgICBwYXJzZXIu
+YWRkX2FyZ3VtZW50KCItZSIsICItLXNlbmQtZW1haWxzIiwgYWN0aW9uPSJzdG9yZV90cnVlIiwN
+Cj4gPiBkZWZhdWx0PUZhbHNlLCBAQCAtNjc5LDYgKzY4Niw2NyBAQCBjbGFzcyBVbml2ZXJzZVVw
+ZGF0ZXIoVXBkYXRlcik6DQo+ID4NCj4gPiAgICAgIGRlZiBfZ2V0X3BhY2thZ2Vncm91cHNfdG9f
+dXBncmFkZShzZWxmLCBwYWNrYWdlcz1Ob25lKToNCj4gPg0KPiA+ICsgICAgICAgIGRlZiBfcmVz
+b2x2ZV9zdGFibGVfdmVyc2lvbihwbiwgY3VyX3ZlciwgbmV4dF92ZXIsIHRpbmZvaWwpOg0KPiA+
+ICsgICAgICAgICAgICAiIiJGaW5kIHRoZSBiZXN0IHZlcnNpb24gd2l0aGluIHRoZSBwb2xpY3kg
+YWxsb3dlZCBieQ0KPiBBVUhfVVBHUkFERV9QT0xJQ1kuDQo+ID4gKw0KPiA+ICsgICAgICAgICAg
+ICBPbmx5IGNhbGxlZCB3aGVuIC0tc3RhYmxlIGlzIGFjdGl2ZS4gLS1zdGFibGUgZW5hYmxlcyB2
+ZXJzaW9uDQo+ID4gKyAgICAgICAgICAgIGZpbHRlcmluZyBnbG9iYWxseTsgQVVIX1VQR1JBREVf
+UE9MSUNZIG92ZXJyaWRlcyB0aGUgcG9saWN5DQo+ID4gKyAgICAgICAgICAgIHBlci1yZWNpcGUg
+d2l0aGluIHRoYXQgZmlsdGVyaW5nLg0KPiA+ICsNCj4gPiArICAgICAgICAgICAgQVVIX1VQR1JB
+REVfUE9MSUNZIGNhbiBiZSBzZXQgcGVyLXJlY2lwZSBpbiBsb2NhbC5jb25mIG9yIGluIHRoZQ0K
+PiA+ICsgICAgICAgICAgICByZWNpcGUgaXRzZWxmOg0KPiA+ICsgICAgICAgICAgICAgICJwYXRj
+aCIgKGRlZmF1bHQpIC0gb25seSBwYXRjaC1sZXZlbCB1cGRhdGVzIChlLmcuIDEuMi4zIC0+IDEu
+Mi40KQ0KPiA+ICsgICAgICAgICAgICAgICJtaW5vciIgICAgICAgICAgIC0gc2FtZS1tYWpvciB1
+cGRhdGVzIChlLmcuIDEuMi4zIC0+IDEuMy4wKQ0KPiA+ICsgICAgICAgICAgICAgICJub25lIiAg
+ICAgICAgICAgIC0gc2tpcCB0aGlzIHJlY2lwZSBlbnRpcmVseQ0KPiA+ICsgICAgICAgICAgICAi
+IiINCj4gPiArICAgICAgICAgICAgIyBRdWljayBwYXRoOiBpZiBuZXh0X3ZlciBpcyBhbHJlYWR5
+IGEgcGF0Y2ggdXBkYXRlLCBhY2NlcHQgaXQNCj4gPiArICAgICAgICAgICAgIyB3aXRob3V0IHBh
+cnNpbmcgdGhlIHJlY2lwZSAoY292ZXJzIHRoZSBjb21tb24gY2FzZSkuDQo+ID4gKyAgICAgICAg
+ICAgIGlmIGlzX3BhdGNoX3VwZGF0ZShjdXJfdmVyLCBuZXh0X3Zlcik6DQo+ID4gKyAgICAgICAg
+ICAgICAgICByZXR1cm4gbmV4dF92ZXIsIE5vbmUNCj4gPiArDQo+ID4gKyAgICAgICAgICAgIHRy
+eToNCj4gPiArICAgICAgICAgICAgICAgIHJkID0gdGluZm9pbC5wYXJzZV9yZWNpcGUocG4pDQo+
+ID4gKyAgICAgICAgICAgIGV4Y2VwdCBFeGNlcHRpb246DQo+ID4gKyAgICAgICAgICAgICAgICBy
+ZCA9IE5vbmUNCj4gPiArICAgICAgICAgICAgaWYgbm90IHJkOg0KPiA+ICsgICAgICAgICAgICAg
+ICAgSSgiICVzOiBjb3VsZCBub3QgcGFyc2UgcmVjaXBlLCBza2lwcGluZyIgJSBwbikNCj4gPiAr
+ICAgICAgICAgICAgICAgIHJldHVybiBOb25lLCBOb25lDQo+ID4gKw0KPiA+ICsgICAgICAgICAg
+ICBwb2xpY3kgPSAocmQuZ2V0VmFyKCdBVUhfVVBHUkFERV9QT0xJQ1knKSBvcg0KPiAncGF0Y2gn
+KS5zdHJpcCgpLmxvd2VyKCkNCj4gPiArICAgICAgICAgICAgaWYgcG9saWN5IG5vdCBpbiAoJ3Bh
+dGNoJywgJ21pbm9yJywgJ25vbmUnKToNCj4gPiArICAgICAgICAgICAgICAgIFcoIiAlczogdW5y
+ZWNvZ25pemVkIEFVSF9VUEdSQURFX1BPTElDWSAnJXMnLCINCj4gPiArICAgICAgICAgICAgICAg
+ICAgIiBkZWZhdWx0aW5nIHRvICdwYXRjaCciICUgKHBuLCBwb2xpY3kpKQ0KPiA+ICsgICAgICAg
+ICAgICAgICAgcG9saWN5ID0gJ3BhdGNoJw0KPiA+ICsgICAgICAgICAgICBpZiBwb2xpY3kgPT0g
+J25vbmUnOg0KPiA+ICsgICAgICAgICAgICAgICAgSSgiICVzOiBBVUhfVVBHUkFERV9QT0xJQ1k9
+bm9uZSwgc2tpcHBpbmciICUgcG4pDQo+ID4gKyAgICAgICAgICAgICAgICByZXR1cm4gTm9uZSwg
+Tm9uZQ0KPiA+ICsNCj4gPiArICAgICAgICAgICAgaWYgcG9saWN5ID09ICdtaW5vcic6DQo+ID4g
+KyAgICAgICAgICAgICAgICBjaGVja19mbiA9IGlzX21pbm9yX3VwZGF0ZQ0KPiA+ICsgICAgICAg
+ICAgICAgICAgZmluZF9mbiA9IGZpbmRfbWlub3JfdmVyc2lvbg0KPiA+ICsgICAgICAgICAgICBl
+bHNlOg0KPiA+ICsgICAgICAgICAgICAgICAgY2hlY2tfZm4gPSBpc19wYXRjaF91cGRhdGUNCj4g
+PiArICAgICAgICAgICAgICAgIGZpbmRfZm4gPSBmaW5kX3BhdGNoX3ZlcnNpb24NCj4gPiArDQo+
+ID4gKyAgICAgICAgICAgIGlmIGNoZWNrX2ZuKGN1cl92ZXIsIG5leHRfdmVyKToNCj4gPiArICAg
+ICAgICAgICAgICAgIHJldHVybiBuZXh0X3ZlciwgTm9uZQ0KPiA+ICsNCj4gPiArICAgICAgICAg
+ICAgSSgiICVzOiBsYXRlc3QgdmVyc2lvbiAlcyBpcyBub3QgYSAlcyB1cGRhdGUgZnJvbSAlcywi
+DQo+ID4gKyAgICAgICAgICAgICAgIiBzZWFyY2hpbmcgZm9yIHZlcnNpb25zLi4uIiAlDQo+ID4g
+KyAgICAgICAgICAgICAgKHBuLCBuZXh0X3ZlciwgcG9saWN5LCBjdXJfdmVyKSkNCj4gPiArICAg
+ICAgICAgICAgdHJ5Og0KPiA+ICsgICAgICAgICAgICAgICAgYWxsX3ZlcnNpb25zID0gZ2V0X2Fs
+bF91cHN0cmVhbV92ZXJzaW9ucyhyZCkNCj4gPiArICAgICAgICAgICAgICAgIHZlciA9IGZpbmRf
+Zm4oY3VyX3ZlciwgYWxsX3ZlcnNpb25zKQ0KPiA+ICsgICAgICAgICAgICAgICAgaWYgdmVyOg0K
+PiA+ICsgICAgICAgICAgICAgICAgICAgIEkoIiAlczogZm91bmQgdmVyc2lvbiAlcyIgJSAocG4s
+IHZlcikpDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgcmV0dXJuIHZlciwgIk4vQSINCj4gPiAr
+ICAgICAgICAgICAgICAgIGVsc2U6DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgSSgiICVzOiBu
+byBzdWl0YWJsZSB2ZXJzaW9uIGF2YWlsYWJsZSwgc2tpcHBpbmciICUgcG4pDQo+ID4gKyAgICAg
+ICAgICAgICAgICAgICAgcmV0dXJuIE5vbmUsIE5vbmUNCj4gPiArICAgICAgICAgICAgZXhjZXB0
+IEV4Y2VwdGlvbiBhcyBlOg0KPiA+ICsgICAgICAgICAgICAgICAgSSgiICVzOiBmYWlsZWQgdG8g
+c2VhcmNoIGZvciB2ZXJzaW9uczogJXMiICUgKHBuLCBlKSkNCj4gPiArICAgICAgICAgICAgICAg
+IHJldHVybiBOb25lLCBOb25lDQo+ID4gKw0KPiA+ICAgICAgICAgICMgUHJlcGFyZSBhIHNpbmds
+ZSBwa2cgZGljdCBkYXRhIChvciBOb25lIGlzIG5vdCB1cGdyYWRhYmxlKSBmcm9tDQo+IHJlY2lw
+ZXV0aWxzLmdldF9yZWNpcGVfdXBncmFkZV9zdGF0dXMgZGF0YS4NCj4gPiAgICAgICAgICBkZWYg
+X2dldF9wa2dfdG9fdXBncmFkZShzZWxmLCBsYXllcl9uYW1lLCBwbiwgc3RhdHVzLCBjdXJfdmVy
+LA0KPiBuZXh0X3ZlciwgbWFpbnRhaW5lciwgcmV2aXNpb24sIG5vX3VwZ3JhZGVfcmVhc29uKToN
+Cj4gPiAgICAgICAgICAgICAgcGtnX3RvX3VwZ3JhZGUgPSBOb25lDQo+ID4gQEAgLTczNiw2ICs4
+MDQsNDIgQEAgY2xhc3MgVW5pdmVyc2VVcGRhdGVyKFVwZGF0ZXIpOg0KPiA+ICAgICAgICAgICAg
+ICAgICAgICAgICAgICB1cGdyYWRlX2dyb3VwLmFwcGVuZChwa2dfdG9fdXBncmFkZSkNCj4gPiAg
+ICAgICAgICAgICAgICAgIGlmIHVwZ3JhZGVfZ3JvdXA6DQo+ID4gICAgICAgICAgICAgICAgICAg
+ICAgdXBncmFkZV9wa2dncm91cHMuYXBwZW5kKHVwZ3JhZGVfZ3JvdXApDQo+ID4gKw0KPiA+ICsg
+ICAgICAgIGlmIHNlbGYuYXJncy5zdGFibGUgYW5kIHVwZ3JhZGVfcGtnZ3JvdXBzOg0KPiA+ICsg
+ICAgICAgICAgICAjIFF1aWNrLXBhdGg6IGFjY2VwdCBwYWNrYWdlcyB3aGVyZSBuZXh0X3ZlciBp
+cyBhbHJlYWR5IGEgcGF0Y2gNCj4gPiArICAgICAgICAgICAgIyB1cGRhdGUgd2l0aG91dCBvcGVu
+aW5nIHRpbmZvaWwuICBGb3IgdGhlIHJlc3QsIHRpbmZvaWwgbXVzdA0KPiA+ICsgICAgICAgICAg
+ICAjIHJlbWFpbiBvcGVuIGJlY2F1c2UgYmIuZmV0Y2gyLkZldGNoIG5lZWRzIGEgbGl2ZSByZCBv
+YmplY3QuDQo+ID4gKyAgICAgICAgICAgIG5lZWRzX3RpbmZvaWwgPSBbXQ0KPiA+ICsgICAgICAg
+ICAgICBmb3IgZ3JvdXAgaW4gdXBncmFkZV9wa2dncm91cHM6DQo+ID4gKyAgICAgICAgICAgICAg
+ICBxdWlja19ncm91cCA9IFtdDQo+ID4gKyAgICAgICAgICAgICAgICBzbG93X3BrZ3MgPSBbXQ0K
+PiA+ICsgICAgICAgICAgICAgICAgZm9yIHBrZyBpbiBncm91cDoNCj4gPiArICAgICAgICAgICAg
+ICAgICAgICBpZiBpc19wYXRjaF91cGRhdGUocGtnWydjdXJfdmVyJ10sIHBrZ1snbmV4dF92ZXIn
+XSk6DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgIHF1aWNrX2dyb3VwLmFwcGVuZChwa2cp
+DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgZWxzZToNCj4gPiArICAgICAgICAgICAgICAgICAg
+ICAgICAgc2xvd19wa2dzLmFwcGVuZChwa2cpDQo+ID4gKyAgICAgICAgICAgICAgICBpZiBxdWlj
+a19ncm91cCBvciBzbG93X3BrZ3M6DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgbmVlZHNfdGlu
+Zm9pbC5hcHBlbmQoKHF1aWNrX2dyb3VwLCBzbG93X3BrZ3MpKQ0KPiA+ICsNCj4gPiArICAgICAg
+ICAgICAgaWYgYW55KHNsb3cgZm9yIF8sIHNsb3cgaW4gbmVlZHNfdGluZm9pbCk6DQo+ID4gKyAg
+ICAgICAgICAgICAgICBzdGFibGVfdGluZm9pbCA9IGJiLnRpbmZvaWwuVGluZm9pbCgpDQo+ID4g
+KyAgICAgICAgICAgICAgICBzdGFibGVfdGluZm9pbC5wcmVwYXJlKGNvbmZpZ19vbmx5PUZhbHNl
+KQ0KPiA+ICsgICAgICAgICAgICAgICAgdHJ5Og0KPiA+ICsgICAgICAgICAgICAgICAgICAgIGZv
+ciBxdWlja19ncm91cCwgc2xvd19wa2dzIGluIG5lZWRzX3RpbmZvaWw6DQo+ID4gKyAgICAgICAg
+ICAgICAgICAgICAgICAgIGZvciBwa2cgaW4gc2xvd19wa2dzOg0KPiA+ICsgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgdmVyLCByZXYgPSBfcmVzb2x2ZV9zdGFibGVfdmVyc2lvbigNCj4gPiAr
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBwa2dbJ3BuJ10sIHBrZ1snY3VyX3Zlcidd
+LA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHBrZ1snbmV4dF92ZXInXSwg
+c3RhYmxlX3RpbmZvaWwpDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICBpZiB2ZXIg
+aXMgbm90IE5vbmU6DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcGtnWydu
+ZXh0X3ZlciddID0gdmVyDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaWYg
+cmV2IGlzIG5vdCBOb25lOg0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICBwa2dbJ3JldmlzaW9uJ10gPSByZXYNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICBxdWlja19ncm91cC5hcHBlbmQocGtnKQ0KPiA+ICsgICAgICAgICAgICAgICAgZmluYWxs
+eToNCj4gPiArICAgICAgICAgICAgICAgICAgICBzdGFibGVfdGluZm9pbC5zaHV0ZG93bigpDQo+
+ID4gKw0KPiA+ICsgICAgICAgICAgICB1cGdyYWRlX3BrZ2dyb3VwcyA9IFtnIGZvciBnLCBfIGlu
+IG5lZWRzX3RpbmZvaWwgaWYgZ10NCj4gPiArDQo+ID4gICAgICAgICAgcmV0dXJuIHVwZ3JhZGVf
+cGtnZ3JvdXBzDQo+ID4NCj4gPiAgICAgIGRlZiBwa2dfdXBncmFkZV9oYW5kbGVyKHNlbGYsIHBr
+Z19jdHgpOg0KPiA+IC0tDQo+ID4gMi4zNC4xDQo+ID4NCg==
 
