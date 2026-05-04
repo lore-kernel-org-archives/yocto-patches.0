@@ -1,124 +1,99 @@
-Return-Path: <alex.kanavin@gmail.com>
+Return-Path: <elmehdi.younes@smile.fr>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0069DFF885A
-	for <webhook@archiver.kernel.org>; Mon,  4 May 2026 08:14:05 +0000 (UTC)
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.10176.1777882443286702447
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23AD0FF885A
+	for <webhook@archiver.kernel.org>; Mon,  4 May 2026 09:35:26 +0000 (UTC)
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.11075.1777887317967830323
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 04 May 2026 01:14:03 -0700
+ Mon, 04 May 2026 02:35:18 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=aiYkL9xG;
- spf=pass (domain: gmail.com, ip: 209.85.160.181, mailfrom: alex.kanavin@gmail.com)
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-50e5dbd8e0eso42279951cf.1
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 04 May 2026 01:14:03 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1777882442; cv=none;
-        d=google.com; s=arc-20240605;
-        b=NOxCDdwqqx29dNAjGFpn6o7p3y1aHQGmk5CIDIuuaSTBSaDPi60LDekKNx7M1xyDZG
-         C477e6lcbDvKZL73BZaL4gnvQRIbnwyXO20ZXEgHDd8cMv64B94H9LHM0qKjAv5kXKZx
-         SuS1Ljv3MBtCRlN3s/rCGoviNPV34K9A72ICccAVutzwptx4SPuu6amEYXkUAiDNtDQz
-         hNLL5B8qt8/q+nAx1yDJfrwejBGnVT8OpQbYtIf8P8wLmJ3z8Z7d7rIXN8wDy9j9Vnbj
-         W1HAinLdr9NyeJuEQydncor3XKKr4qJIf9/hqyCMbQmXXwbRSqcygURQonUll5Izyo+e
-         sdEw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=BhWQuRiHbtXaHuqyo/B9XOfKxCuknL+3pnwbc4Syk6Y=;
-        fh=B6+dp47eghNzyj8BrWGHk2n/ObAtmJy/gW8Hzrmb+f8=;
-        b=TzAfDt16FwmH1v2tp69lvz5VuK1WojYQ+7SfTmWkllnC9AIyv8VIKIVv1NILZQ9wte
-         Flm9/costEuv+dHPCA7Ldw82a3C4xrO7pBtW6R0pnZdPGBXxz/CY06hG/0dar2Pt70Ir
-         PABL5/EyjY3WDcvwv27y75vIdfOkEwXrEldz6GudptccIjrVgVBAjM8zra4msWjr4/M0
-         a1b/4fjUF2t+Ap9ITgUJj85sMnNa9Ze9KCXHgiBrMnNcpBEkn9fLlC+PaJ3QmClA4pYr
-         xj6XItoOtEZCKwqZSSS14iBJ+DHHnyPXO5/HN325/W6Mey589Ci4ZdCD8cFbu+xxEX39
-         ZiEA==;
-        darn=lists.yoctoproject.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+ dkim=pass header.i=@smile.fr header.s=google header.b=m4fE9lY0;
+ spf=pass (domain: smile.fr, ip: 209.85.221.43, mailfrom: elmehdi.younes@smile.fr)
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-44ccbd3290aso1227070f8f.2
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 04 May 2026 02:35:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1777882442; x=1778487242; darn=lists.yoctoproject.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=BhWQuRiHbtXaHuqyo/B9XOfKxCuknL+3pnwbc4Syk6Y=;
-        b=aiYkL9xGMNp40BNQbWBorT6ZnRqy7QYZjRcXYt0JO+8YzTPHWhBrPrkTP9SvPoa6S+
-         zDX7OLU5TWjmG6TNvVA0dpQEnzZ77/D+k97Z52080mJFu2RWSNry7Dm7w533ExL5lKUl
-         vgtxl3A/ik3jqhfNVdAjU1+/IMWrujEnN4hDsjm/idznxUf3+/13SXKbaQrPHVEYy+UP
-         fb5gChDw4B0RxD/qbFmAj0osxDQp08gkcDQv85RdLp+Qz3G9Upc59nxz057n4diScyEv
-         CIjLgnOvvlNvEXowk8IpIYsNbq/C/BKhbY2vQlRurNlO5duUFFzjk6I6OOao+uCx/mLW
-         6ExA==
+        d=smile.fr; s=google; t=1777887316; x=1778492116; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=n8rg0UrKN1mXfmCzYtogPWbhx2DFoCN1UwST3/+MOpg=;
+        b=m4fE9lY0XE0dXDU+9JvyXGWsGZqNNJaCf/Wb8iHfE+p37IcLjGC6caLWq7lE03Dizi
+         I5p5qFrrwqMgiT7JS+jvpI2keC0Q7C/1R0EDCESHzqRbcF5qdJoDye9bvUBgyb0OjoZI
+         dLv3v0FaSUIw4l39Nx1Rf6q/gJLCrabIwtF/w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777882442; x=1778487242;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20251104; t=1777887316; x=1778492116;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BhWQuRiHbtXaHuqyo/B9XOfKxCuknL+3pnwbc4Syk6Y=;
-        b=BHt0EvnptnD/p5SWIvlBZvODeIE/LsqZYVbqO3CnbSdb/ILUOsv50PwzCKQ7u0wDf4
-         +9pKpQiIixxvzNBVpcaigOKD0/wXzVcHJ0ES531pIeyhHMrcqZJcj6oSrT5NTJzLT94J
-         LG3hQIOg+h8r94KuhDvivgO9Et+wU26cFkHcqnTEK27sRJiJaboAx9JZH0vVzZIQZ1Wl
-         gz72EcDHa3xeYRJEJlJpbpLdQVSnrLukm9Od9U3ExJ1G30E0bstNv0rTR5uJQBFrBuCF
-         akyGLZ9zlU6uEPKXFhHFvQv4uIL9CixgqOhQLC72cDzqYeI1zDaZRPoMZilSOEs9Sit+
-         yelg==
-X-Gm-Message-State: AOJu0Yw9HBtgMcZcUpcWOWSXj18K8+p/26NCtn+9TAiYYmGXa/TH0/aL
-	huCSgkbp2UPw5Q/nrdOt9e29zaEiFaSGBvHK2MB1XX0GSwv0zDchuBMiy2mnlrF0ni67MA1vqfc
-	DezlKQ0z1OzmEzmXIX6tYaMFP3DXIWAM=
-X-Gm-Gg: AeBDiev6F3iucrdQqa9KrHPFOsjddI5MLucvQvH+WcejZJmwdKcRDiLtKanPhtGgeIL
-	K15xKLhdBp1hyG5t2UfoKqDfPQNOLIq0LwzHaf7SO0R1OEjpAYIBpB/XpMV8lMCSamWk2j040Go
-	4FMWbUAJU7C+ePPfoVqgK+CX6ux/EURpqc6Roq+F/KECQq1PjjDJfzPsmGwiOb04gFzRxMjiP6g
-	PIA/m8oSWNdQuNTyIBvlh4IwpkEe4O5EOn5rIR+0l6fx0GRFnLI+ia8OruzByevp8LHJBcZm5EK
-	XDu7+pQEP/Md9Sd6x04XlKL/c6rMpPTbO2+c6pOw+4+qGYb63mBu
-X-Received: by 2002:ac8:5a0c:0:b0:50f:ade2:2e0 with SMTP id
- d75a77b69052e-5104bf3b91cmr127765821cf.39.1777882442304; Mon, 04 May 2026
- 01:14:02 -0700 (PDT)
+        bh=n8rg0UrKN1mXfmCzYtogPWbhx2DFoCN1UwST3/+MOpg=;
+        b=fRulaFCpGNDaFmg5eZ8UxFkKT2bLOT0+CqtMCpG8LcMC+eJ/W6Xsh01VySwpFnj+IE
+         SJEXdKn3vlZTnNbTemyFA23J7en67UN8wUgF2cqPFiC+1ByDyru7p+0lOSgP+ePVC6AM
+         +Y8PdkecAauVxpm6603z9ovd1GrKikmYzVu5+NT/3aDzx0kxLmEGNJyUwq6VmS1tfrnn
+         mGeDWbzCzQ0udzwcQY/ycgfQVNQWLywUfEV0CKSwxNHTHcevtdOQb+Q8owtX8U3ok025
+         vGI61bVhEZn04WHYuQRts81Mzkxyvlh2MgVYoudXVcQqQjr7BOjmzsxXhIgAnpcyq/Jh
+         j6Sw==
+X-Gm-Message-State: AOJu0YxoUeqScjXUoZyAAjYDDig1o+xTmfE0V0R4WbHrABWaoy+fRsBi
+	i+yEWvlA05tduF8E8a8lujjWotYObUq8qfNqqE4L1uETHLbtDS33jUsVCvOtHQ3GFp9lNidhlQn
+	1LtW9Soc=
+X-Gm-Gg: AeBDiesY9HbhQ0jFV77nVE5fNKwpVLVM4y9l5pbN1WPqgJaxfMQm6tJ0/Q3gRKXQFYY
+	dHj9Pc+CSjtQK18rBysyHAFYJ9FYl0RQYDr1kVrs5nVgYe7VwoLDV4qqJ3IMz3/Ep2T/X05YIyW
+	WM9nIUEAfpbgEWhM7Twxb+HjGjDnp5F5jQniTVSl0a8Bk0w7O11KY+eTIZFWVDHrfcMOp3J3djc
+	yaecsdSVMiKMTRpXYdXGpHF3EsXgTxLwDXJKUJP8ft7wxUnwbmFAn2tnuxzlwqgN/DmnIHm0NGC
+	3px1EWmoIVsQCD+Bqm/jO+lBI5BXii01jtBsxSMa/pZM2iEFFKnLXB9RsXGDpuz04OyRtS3cvpy
+	GR6oOdSjS1ylBw+yXc4p5Ylo86LM2YYU69tM0lHQNXN6wJXTmcS+fvV1rIf/s49XHLLOba9iR4j
+	zmmBdVRFqOuEFNt3kBF7TNWR0r+smHVv7caUyd90RXDKtvV7QdTooM3tO4GdT2bXt2ZF7D58i20
+	583B35O9DBMb9qUMTa5Hhewfs1wzfkZ
+X-Received: by 2002:a05:6000:603:b0:446:ef9a:8f41 with SMTP id ffacd0b85a97d-44bb6e8e014mr14167666f8f.40.1777887316013;
+        Mon, 04 May 2026 02:35:16 -0700 (PDT)
+Received: from FRSMI25-BOLET.. (static-css-ccs-204145.business.bouyguestelecom.com. [176.157.204.145])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-44a8ef50e59sm23970090f8f.10.2026.05.04.02.35.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 May 2026 02:35:15 -0700 (PDT)
+From: El Mehdi YOUNES <elmehdi.younes@smile.fr>
+To: yocto-patches@lists.yoctoproject.org
+Cc: El Mehdi YOUNES <elmehdi.younes@smile.fr>
+Subject: [yocto-autobuilder-helper][PATCH] meta-oe-mirror: select systemd through INIT_MANAGER
+Date: Mon,  4 May 2026 11:35:06 +0200
+Message-ID: <20260504093506.1434307-1-elmehdi.younes@smile.fr>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-References: <20260504063614.3831203-1-daniel.turull@ericsson.com> <20260504063614.3831203-2-daniel.turull@ericsson.com>
-In-Reply-To: <20260504063614.3831203-2-daniel.turull@ericsson.com>
-From: Alexander Kanavin <alex.kanavin@gmail.com>
-Date: Mon, 4 May 2026 10:13:50 +0200
-X-Gm-Features: AVHnY4Kk-hzBZPn6H-Oh61_CTBW6Sf6gGB7wurdd7JbW6YM_qdiA1-5TXQi3iAc
-Message-ID: <CANNYZj-QYHE_YJcEtP7zvzeX+KX7iiJHOa_Biyq5bZUqzwxgMg@mail.gmail.com>
-Subject: Re: [AUH][PATCH v3 1/4] steps.py: resolve symlinks in recipe_dir
-To: daniel.turull@ericsson.com
-Cc: yocto-patches@lists.yoctoproject.org, paul@pbarker.dev, 
-	ross.burton@arm.com, yoann.congal@smile.fr
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 04 May 2026 08:14:04 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3908
+ <yocto-patches@lists.yoctoproject.org>; Mon, 04 May 2026 09:35:26 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3909
 
-Thanks, this has been applied.
+The current configuration appends systemd and usrmerge directly to
+DISTRO_FEATURES. This leaves VIRTUAL-RUNTIME_init_manager set to
+sysvinit while systemd is also present in DISTRO_FEATURES.
+Init manager selection is expected to be done through INIT_MANAGER.
 
-Alex
+see https://git.openembedded.org/openembedded-core/commit/?id=0b4061c5d50261f826d0edb4b478d2d305274b7c
 
-On Mon, 4 May 2026 at 08:36, <daniel.turull@ericsson.com> wrote:
->
-> From: Daniel Turull <daniel.turull@ericsson.com>
->
-> Use os.path.realpath() on recipe_dir so that git operations work
-> when bblayers.conf references layers through symlinks (e.g.
-> meta -> openembedded-core/meta). Without this, git add fails
-> because the symlinked path is outside the git repo.
->
-> Assisted-by: kiro:claude-opus-4.6
-> Signed-off-by: Daniel Turull <daniel.turull@ericsson.com>
-> ---
->  modules/steps.py | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/modules/steps.py b/modules/steps.py
-> index a6ec341..b3ec61c 100644
-> --- a/modules/steps.py
-> +++ b/modules/steps.py
-> @@ -36,7 +36,7 @@ def load_env(devtool, bb, git, opts, group):
->      os.mkdir(group['workdir'])
->      for pkg_ctx in group['pkgs']:
->          pkg_ctx['env'] = bb.env(pkg_ctx['PN'])
-> -        pkg_ctx['recipe_dir'] = os.path.dirname(pkg_ctx['env']['FILE'])
-> +        pkg_ctx['recipe_dir'] = os.path.realpath(os.path.dirname(pkg_ctx['env']['FILE']))
->
->  def buildhistory_init(devtool, bb, git, opts, group):
->      if not opts['buildhistory']:
-> --
-> 2.34.1
->
+The current meta-oe-mirror configuration breaks the autobuilder with a
+large number of "Nothing PROVIDES" warnings/errors, as seen in build 717:
+
+see  https://autobuilder.yoctoproject.org/valkyrie/#/builders/82/builds/717
+
+Signed-off-by: El Mehdi YOUNES <elmehdi.younes@smile.fr>
+---
+ config.json | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/config.json b/config.json
+index 3c067d2..beef339 100644
+--- a/config.json
++++ b/config.json
+@@ -1813,7 +1813,8 @@
+             ],
+             "extravars" : [
+                 "LICENSE_FLAGS_ACCEPTED = 'commercial'",
+-                "DISTRO_FEATURES:append = ' pam systemd usrmerge opencl'",
++                "INIT_MANAGER = 'systemd'",
++                "DISTRO_FEATURES:append = ' pam opencl'",
+                 "FORTRAN:forcevariable = ',fortran'",
+                 "RUNTIMETARGET:append:pn-gcc-runtime = ' libquadmath'"
+             ],
 
