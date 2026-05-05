@@ -1,73 +1,141 @@
-Return-Path: <ross.burton@arm.com>
+Return-Path: <richard.purdie@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6BD8CD3440
-	for <webhook@archiver.kernel.org>; Tue,  5 May 2026 15:44:36 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.151.1777995874071490347
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92E9ECD3427
+	for <webhook@archiver.kernel.org>; Tue,  5 May 2026 19:04:17 +0000 (UTC)
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.1449.1778007847206351509
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 05 May 2026 08:44:34 -0700
+ Tue, 05 May 2026 12:04:07 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@arm.com header.s=foss header.b=PRf1yo2e;
- spf=pass (domain: arm.com, ip: 217.140.110.172, mailfrom: ross.burton@arm.com)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 036362681
-	for <yocto-patches@lists.yoctoproject.org>; Tue,  5 May 2026 08:44:28 -0700 (PDT)
-Received: from cesw-amp-gbt-1s-m12830-04.lab.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 006153F836
-	for <yocto-patches@lists.yoctoproject.org>; Tue,  5 May 2026 08:44:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1777995873; bh=2n9E36Kt1lyg0V481K3Gz0vdylQQVb8ENLSxe2UAK3Q=;
-	h=From:To:Subject:Date:From;
-	b=PRf1yo2eg58Dn2EAJ4nMtD9ITg/ZYVRzseCUGvQuCKzj0U+CiHHdbuvOFhuPfBo4A
-	 /KM6rNLcun1N7nIKIpkLW0jCvT/3DE7+zwEcuKHtqDcVKo0+GZy/9pVh3Dlochic/z
-	 V1rv5ej1kBRAfIGPydS18lvXD6QRFfNzfB5dL+f4=
-From: Ross Burton <ross.burton@arm.com>
+ dkim=pass header.i=@linuxfoundation.org header.s=google header.b=D4WRVGwG;
+ spf=pass (domain: linuxfoundation.org, ip: 209.85.128.48, mailfrom: richard.purdie@linuxfoundation.org)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4891e5b9c1fso54111375e9.2
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 05 May 2026 12:04:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1778007845; x=1778612645; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lPRbIsTj4l9gHipk9vLqCaNLK/qYn0Vwug0CdC0rCP8=;
+        b=D4WRVGwGNEmj+qoTiiwZH5h+yu2ZJ8OTDoEq3mKwISlk2lW/KD56Rw/Ulu8OzWp+bb
+         L/1V1deovuAlrX5NSgPYlfH+ROGeQbowAX/cwP2ZDsXTd5EFcdZ++kE0TQ4B2OnUX1eg
+         D/cDV+kCXKDftWBWR39IZYMeCATcQ6C+9U5dQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778007845; x=1778612645;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lPRbIsTj4l9gHipk9vLqCaNLK/qYn0Vwug0CdC0rCP8=;
+        b=Z0ApYOBf4us1p5WbTVDhewuCCj4A55DNU340wRQU+rNiPXqKb61VjXlw0xsMWiW7OB
+         WfCJtLHcvnVUmsKbugJlOwzpQrJKNWnktpJH/8GUJLPhjMsxSn6k1afk7mryrIpzEo/B
+         /YbZOr4aWeFz1s0k96ukHrdAH1YKuBtQjK2ybrlbzZaohpqleaTM4xqMNG7R4jxXiPZc
+         iSIMWsvvCz7rwq+Xq4VBsMby0XLtn2bbI4BSzFQcslr7loWeD3u9wjzxZLIAuii326XP
+         ubWSlzlGzf5wV74JddIeFqvFrMfcVBN29CJ96VrydBBZSpaY0H5TiprexTeQVskP7wWE
+         YhJA==
+X-Gm-Message-State: AOJu0Yzjc0vLYtTxKybYoySm70m3bigD+piaLgpxT7YAULWu0ZHlfvpv
+	ReeCz7S9HvV3MCekxf+guM2sf1rjccvotIR5XbhPyZdt3i8clQ60DJHHdeMxubKviEjoKA33xqc
+	byZTS
+X-Gm-Gg: AeBDiesrInA+t7XQYDigmeIdQvVtl75DVgD1TAkVP07gUlfw8A/1hVAN347CLugIG00
+	xKk1Fy+E/ews+h5Oxm9dds4U6dyIDnvYKJrqNfDeQZPFiBj1XlWxN6VLdUcDDGeWtUC94cod2UB
+	eQ7iIuQI6ssM0G85L8MiaHa/5rpBt4Hrp9ZlRwVh9AIBnCHhhubKC4Syq0vvSRNUM2eNEK/QMpd
+	y69Xp+1yH8ZEVXK69ZUbLrc51nspyRhZhbcltrtNgA6B4ySr6pDcoYyx3ePpqNlsQt1RWlGPddp
+	nLR3tdfILk1N9ketssn1tDEVzUDVIGirYKrQ6Xx5bGEQo269jWIcEE6b5z4Ehtbu9MorLkiAum3
+	WzElCoAn0T9YOZTv1cfLfESomKSf20+muMh/EDnf4poA/HSPCKI9AW9ZZ5YvxkXnsb7CkrAj8o9
+	9uLYMR2hXYOAmO3XOhqJVvgeOrVrpuPwd8Rsi2X8KU+vU/PWi02zxleAbEuttPxJk=
+X-Received: by 2002:a05:600c:45c6:b0:48a:93f8:dd02 with SMTP id 5b1f17b1804b1-48e521e6090mr5707375e9.14.1778007845005;
+        Tue, 05 May 2026 12:04:05 -0700 (PDT)
+Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:561f:9420:ad01:54f6])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48a82308d77sm486660775e9.14.2026.05.05.12.04.04
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 May 2026 12:04:04 -0700 (PDT)
+From: Richard Purdie <richard.purdie@linuxfoundation.org>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [PATCH][meta-security][meta-parsec 1/3] parsec-service: assign PACKAGECONFIG in one line
-Date: Tue,  5 May 2026 16:44:21 +0100
-Message-ID: <20260505154423.535572-1-ross.burton@arm.com>
-X-Mailer: git-send-email 2.43.0
+Subject: [yocto-autobuilder-helper] [PATCH] config.json: Remove wic images from IMAGE_FSTYPES
+Date: Tue,  5 May 2026 20:04:03 +0100
+Message-ID: <20260505190403.3235944-1-richard.purdie@linuxfoundation.org>
+X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 05 May 2026 15:44:36 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3916
+ <yocto-patches@lists.yoctoproject.org>; Tue, 05 May 2026 19:04:17 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3919
 
-By :appending the TPM option we make it impossible for distros to simply
-assign to PACKAGECONFIG.
+We have several uncompressed duplicate wic images being generated by the
+autobuilder.
 
-Signed-off-by: Ross Burton <ross.burton@arm.com>
+genericx86 already sets wic.zst in the machine definitions so this was
+simply uneeded.
+
+It is unclear where wic images for qemux86 and qemux86-64 were needed, if
+they are needed, we should use wic.zst, so remove wic.
+
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
 ---
- .../recipes-parsec/parsec-service/parsec-service_1.5.0.bb      | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ config.json | 28 ++++------------------------
+ 1 file changed, 4 insertions(+), 24 deletions(-)
 
-diff --git a/meta-parsec/recipes-parsec/parsec-service/parsec-service_1.5=
-.0.bb b/meta-parsec/recipes-parsec/parsec-service/parsec-service_1.5.0.bb
-index d88f1b2..c5f9978 100644
---- a/meta-parsec/recipes-parsec/parsec-service/parsec-service_1.5.0.bb
-+++ b/meta-parsec/recipes-parsec/parsec-service/parsec-service_1.5.0.bb
-@@ -16,9 +16,8 @@ SRC_URI[parsec-service-1.5.0.sha256sum] =3D "819f1f658a=
-1c62fee1b4986fe33232d5dc539
-=20
- B =3D "${CARGO_VENDORING_DIRECTORY}/${BP}"
-=20
--PACKAGECONFIG ??=3D "PKCS11 MBED-CRYPTO"
- have_TPM =3D "${@bb.utils.contains('DISTRO_FEATURES', 'tpm2', 'TPM', '',=
- d)}"
--PACKAGECONFIG:append =3D " ${@bb.utils.contains('BBFILE_COLLECTIONS', 't=
-pm-layer', '${have_TPM}', '', d)}"
-+PACKAGECONFIG ??=3D "PKCS11 MBED-CRYPTO ${@bb.utils.contains('BBFILE_COL=
-LECTIONS', 'tpm-layer', '${have_TPM}', '', d)}"
-=20
- PACKAGECONFIG[TPM] =3D "-F tpm-provider -F tss-esapi/generate-bindings,,=
-tpm2-tss,tpm2-tss libtss2-tcti-device"
- PACKAGECONFIG[PKCS11] =3D "-F pkcs11-provider -F cryptoki/generate-bindi=
-ngs,"
---=20
-2.43.0
-
+diff --git a/config.json b/config.json
+index 3c067d2..6c1a932 100644
+--- a/config.json
++++ b/config.json
+@@ -766,12 +766,7 @@
+         },
+         "qemux86" : {
+             "MACHINE" : "qemux86",
+-            "TEMPLATE" : "arch-qemu",
+-            "step1" : {
+-                "extravars" : [
+-                     "IMAGE_FSTYPES:append = ' wic wic.bmap'"
+-                ]
+-            }
++            "TEMPLATE" : "arch-qemu"
+         },
+         "qemux86-tc" : {
+             "MACHINE" : "qemux86",
+@@ -803,12 +798,7 @@
+         },
+         "genericx86" : {
+             "MACHINE" : "genericx86",
+-            "TEMPLATE" : "arch-hw",
+-            "step1" : {
+-                "extravars" : [
+-                     "IMAGE_FSTYPES:append = ' wic wic.bmap'"
+-                ]
+-            }
++            "TEMPLATE" : "arch-hw"
+         },
+         "genericx86-alt" : {
+             "MACHINE" : "genericx86",
+@@ -816,12 +806,7 @@
+         },
+         "qemux86-64" : {
+             "MACHINE" : "qemux86-64",
+-            "TEMPLATE" : "arch-qemu",
+-            "step1" : {
+-                "extravars" : [
+-                     "IMAGE_FSTYPES:append = ' wic wic.bmap'"
+-                ]
+-            }
++            "TEMPLATE" : "arch-qemu"
+         },
+         "qemux86-64-tc" : {
+             "MACHINE" : "qemux86-64",
+@@ -834,12 +819,7 @@
+         },
+         "genericx86-64" : {
+             "MACHINE" : "genericx86-64",
+-            "TEMPLATE" : "arch-hw",
+-            "step1" : {
+-                "extravars" : [
+-                     "IMAGE_FSTYPES:append = ' wic wic.bmap'"
+-                ]
+-            }
++            "TEMPLATE" : "arch-hw"
+         },
+         "meta-intel" : {
+             "NEEDREPOS" : ["bitbake", "meta-intel"],
 
