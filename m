@@ -1,70 +1,101 @@
-Return-Path: <peter.marko@siemens.com>
+Return-Path: <ross.burton@arm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC4FCFF8855
-	for <webhook@archiver.kernel.org>; Tue,  5 May 2026 14:14:18 +0000 (UTC)
-Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.40138.1777990450839808108
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACD8BFF8855
+	for <webhook@archiver.kernel.org>; Tue,  5 May 2026 15:44:36 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.153.1777995874603152705
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 05 May 2026 07:14:11 -0700
+ Tue, 05 May 2026 08:44:34 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=peter.marko@siemens.com header.s=fm2 header.b=KTLVZKDz;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.227, mailfrom: fm-256628-2026050514140652c43f27ae00020715-zbahgf@rts-flowmailer.siemens.com)
-Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 2026050514140652c43f27ae00020715
-        for <yocto-patches@lists.yoctoproject.org>;
-        Tue, 05 May 2026 16:14:07 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
- d=siemens.com; i=peter.marko@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=I3dpCckGVddBRpjk7r29mVXSP5FJX6Ahf3qCqSWh1nI=;
- b=KTLVZKDzaF+rVe6y7QjH772ogHLaYuV2OnVcjJzsblbLDMYujSa/Xt/hAAuXzCmn0TEN5X
- VXHdOtPKPCrViL8sOm4Fccsqe+ovUy6fs8ULRV321mjDz7JOyS+GAZwrrSvDDAmMHmmp8wi7
- kevDYj63l35EZs123uy0QXHF5WKQh3/o3VUDtS2Z4R/G5r/QHTw+DS8w6VquGfBe9ZK66ZEc
- sZnmtCH+uOL1mqwUENveBhIAvZpbEC0DvD2xhT/5N+Z3sBEMhyowW2WDd2pwucApjYpgE3wG
- 1RVV+avMdch5K9POOgGV11/SLCNZkOqT6c9mbRs14lE/6N2JQYbiBa2A==;
-From: Peter Marko <peter.marko@siemens.com>
+ dkim=fail reason="dkim: body hash did not verify" header.i=@arm.com header.s=foss header.b=dzXsuHIn;
+ spf=pass (domain: arm.com, ip: 217.140.110.172, mailfrom: ross.burton@arm.com)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A8665293B
+	for <yocto-patches@lists.yoctoproject.org>; Tue,  5 May 2026 08:44:28 -0700 (PDT)
+Received: from cesw-amp-gbt-1s-m12830-04.lab.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id AE0873F836
+	for <yocto-patches@lists.yoctoproject.org>; Tue,  5 May 2026 08:44:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1777995874; bh=gyIWnNl+Y/TkBM87iKwgWboQRfyqTb8wHAk3Sw4KUzY=;
+	h=From:To:Subject:Date:In-Reply-To:References:From;
+	b=dzXsuHInlSeGSspxxJi5H/S7xIsUqW0JeiLeaPnk5yVcbr5g0dxoWdVQMkCohxNlC
+	 h+ljeokeXwZgyrhb2byRMEPhARRrWGfk5AudvU8VOww/DpZMXYU6H3RHYJ/brUdMBB
+	 AtNmQ3ey6p3i9qAPloePGm8dwGzKsu4P4sV00o18=
+From: Ross Burton <ross.burton@arm.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Peter Marko <peter.marko@siemens.com>
-Subject: [meta-security][PATCH] tpm2-pkcs11: upgrade 1.9.1 -> 1.9.2
-Date: Tue,  5 May 2026 16:13:53 +0200
-Message-ID: <20260505141353.3142456-1-peter.marko@siemens.com>
+Subject: [PATCH][meta-security][meta-parsec 2/3] parsec-service: do group membership modifications in useradd
+Date: Tue,  5 May 2026 16:44:22 +0100
+Message-ID: <20260505154423.535572-2-ross.burton@arm.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260505154423.535572-1-ross.burton@arm.com>
+References: <20260505154423.535572-1-ross.burton@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-256628:519-21489:flowmailer
+Content-Transfer-Encoding: quoted-printable
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 05 May 2026 14:14:18 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3915
+ <yocto-patches@lists.yoctoproject.org>; Tue, 05 May 2026 15:44:36 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3917
 
-From: Peter Marko <peter.marko@siemens.com>
+Instead of calling groupmems after creating the user, we can tell useradd
+to do the group membership when creating the user.  There are several
+reasons for this:
 
-This contains fix for building native recipe with security flags
-enabled:
-* https://github.com/tpm2-software/tpm2-pkcs11/commit/be97b21ae641303ce83a8fbb54002701c1aede31
+1) Consolidation of the calls into a single call means creation is atomic=
+,
+   it either worked or it did not.
+2) The existing logic doesn't work if both TPM and TS were enabled.
+3) GROUPMEMS_PARAM is broken in oe-core master[1] and this will not be
+   fixed as groupmems has been removed from shadow[2].
 
-Signed-off-by: Peter Marko <peter.marko@siemens.com>
+Instead, construct a list of groups that parsec needs to be a member of,
+and pass them to useradd.
+
+[1] https://bugzilla.yoctoproject.org/show_bug.cgi?id=3D16277
+[2] shadow 388ce70 "*/: groupmems(8): Remove program"
+
+Signed-off-by: Ross Burton <ross.burton@arm.com>
 ---
- .../tpm2-pkcs11/{tpm2-pkcs11_1.9.1.bb => tpm2-pkcs11_1.9.2.bb}  | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
- rename meta-tpm/recipes-tpm2/tpm2-pkcs11/{tpm2-pkcs11_1.9.1.bb => tpm2-pkcs11_1.9.2.bb} (95%)
+ .../parsec-service/parsec-service_1.5.0.bb    | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
-diff --git a/meta-tpm/recipes-tpm2/tpm2-pkcs11/tpm2-pkcs11_1.9.1.bb b/meta-tpm/recipes-tpm2/tpm2-pkcs11/tpm2-pkcs11_1.9.2.bb
-similarity index 95%
-rename from meta-tpm/recipes-tpm2/tpm2-pkcs11/tpm2-pkcs11_1.9.1.bb
-rename to meta-tpm/recipes-tpm2/tpm2-pkcs11/tpm2-pkcs11_1.9.2.bb
-index 762b82f..3d04e5b 100644
---- a/meta-tpm/recipes-tpm2/tpm2-pkcs11/tpm2-pkcs11_1.9.1.bb
-+++ b/meta-tpm/recipes-tpm2/tpm2-pkcs11/tpm2-pkcs11_1.9.2.bb
-@@ -9,7 +9,7 @@ DEPENDS = "autoconf-archive pkgconfig sqlite3 openssl libtss2-dev tpm2-tools lib
- SRC_URI = "https://github.com/tpm2-software/${BPN}/releases/download/${PV}/${BPN}-${PV}.tar.gz"
- SRC_URI += "file://0001-src-lib-tpm-return-NULL-for-twist-on-auth-failure.patch"
- 
--SRC_URI[sha256sum] = "ce24aa5ec2471545576e892b6f64fd873a424371bbf9be4ca3a0e689ea11c9b7"
-+SRC_URI[sha256sum] = "1bdabdaed6a5fa4ce8a1e82307f4612c30e30b0a0415e1bc7d9c30f713227480"
- 
- UPSTREAM_CHECK_URI = "https://github.com/tpm2-software/${BPN}/releases"
- 
+diff --git a/meta-parsec/recipes-parsec/parsec-service/parsec-service_1.5=
+.0.bb b/meta-parsec/recipes-parsec/parsec-service/parsec-service_1.5.0.bb
+index c5f9978..0268c0e 100644
+--- a/meta-parsec/recipes-parsec/parsec-service/parsec-service_1.5.0.bb
++++ b/meta-parsec/recipes-parsec/parsec-service/parsec-service_1.5.0.bb
+@@ -72,9 +72,22 @@ do_install () {
+ inherit useradd
+ USERADD_PACKAGES =3D "${PN}"
+ GROUPADD_PARAM:${PN} =3D "-r parsec"
+-USERADD_PARAM:${PN} =3D "-r -g parsec -s /usr/sbin/nologin -d ${localsta=
+tedir}/lib/parsec parsec"
+-GROUPMEMS_PARAM:${PN} =3D "${@bb.utils.contains('PACKAGECONFIG_CONFARGS'=
+, 'tpm-provider', '-a parsec -g tss ;', '', d)}"
+-GROUPMEMS_PARAM:${PN} +=3D "${@bb.utils.contains('PACKAGECONFIG_CONFARGS=
+', 'trusted-service-provider', '-a parsec -g tee', '', d)}"
++USERADD_PARAM:${PN} =3D "\
++    --system \
++    --gid parsec \
++    --shell /usr/sbin/nologin \
++    --home-dir ${localstatedir}/lib/parsec \
++    ${@parsec_groups(d)} \
++    parsec"
++
++def parsec_groups(d):
++    groups =3D []
++    config =3D d.getVar("PACKAGECONFIG").split()
++    if "TPM" in config:
++        groups.append("tss")
++    if "TS" in config:
++        groups.append("teeclnt")
++    return "--groups " + ",".join(groups) if groups else ""
+=20
+ FILES:${PN} +=3D " \
+     ${sysconfdir}/parsec/config.toml \
+--=20
+2.43.0
+
 
