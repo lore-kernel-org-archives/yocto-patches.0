@@ -2,61 +2,61 @@ Return-Path: <tim.orling@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51FFDCD343F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61EE0CD3427
 	for <webhook@archiver.kernel.org>; Fri,  8 May 2026 02:01:14 +0000 (UTC)
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.4512.1778205668116700911
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.4663.1778205664818438544
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 07 May 2026 19:01:08 -0700
+ Thu, 07 May 2026 19:01:04 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=CheiWr83;
- spf=pass (domain: konsulko.com, ip: 209.85.215.170, mailfrom: tim.orling@konsulko.com)
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-c801912c903so641177a12.0
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 07 May 2026 19:01:08 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=RycwRQqr;
+ spf=pass (domain: konsulko.com, ip: 209.85.210.181, mailfrom: tim.orling@konsulko.com)
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-838d0b7c950so963810b3a.3
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 07 May 2026 19:01:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1778205667; x=1778810467; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1778205664; x=1778810464; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ebl3YGTub9MrTIEoegIDvC3JC2jHUfps/hvTT6lZxpw=;
-        b=CheiWr83nqcpnIjAz1vewu3LeIGlSvWGFpOtdNRurOoJBjljLj9zdEDqKn+zjfobOa
-         hUEOmlpb/0J4oDjYp91/94M8dhGqJzRsLT49Dt6e9gDoYahrl7dk4J6OuouWT684qEl7
-         Ce7KJ0z/pUt4io3Wyzs/h6QJf1hNBvBWaVFHg=
+        bh=Ek0wk7Jhu8BEqFxB1TRIiJokVIKU2hYC5xqez6fDbs0=;
+        b=RycwRQqrgk0rTV/pMlPudurn0RziqDqeWQW5o1wabF6fSOyVK4MKBh9Bv0IqsG99tC
+         ZsbCmD5yqMTUQ+WiF32RvxC+hGY+HD7XHhGSDF3TBzxZrsm9yTkUXKokR1GOuO+kC1CR
+         SJiSPsVsHJ7BFZccCAUjUTY0TeqJoI18Ts12E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778205667; x=1778810467;
+        d=1e100.net; s=20251104; t=1778205664; x=1778810464;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=ebl3YGTub9MrTIEoegIDvC3JC2jHUfps/hvTT6lZxpw=;
-        b=hXNGwKsDdfOQq/82aKZrcwW7lwtj4aiqQXvKPfn+qPqv2bvBO7o+fSZmFgL1nfRCEd
-         42C19mwF1RFcUVDksGSUahutVCH6/eNGOukXMTmhbvuQl8KnXo2w34oNXicuscUR1IQH
-         zGvbKxNBkKGhvZdwp8aN4jcf3chcHk3tTmyXyOLexqlR2vStM6KSfHemTJxGGaye1GIJ
-         83350fXIP24ctJpD8Lg2BH5E9lvAwPFY1FHbL6l3D/342y7+smifsOSrf7kmYeSU/34S
-         M5vfO9LkWzcvBixvmGuYfpLI1obZiaN3/SC3VCyOu8PUn2neY5JXgWyf2p2p2LaRy9v5
-         ltpA==
-X-Gm-Message-State: AOJu0Yxjp3iK9ADbZ8vBzuM1QTCbjZIKCUxS08RE/MTczGiFNL5vAfRJ
-	58TjpGEcIGYZ91Ub6h9FLJsbx3lWO+h+KymQOJZqWF52lWZQTGmrzOybC+M8RoQrdcUe5DyNknP
-	zMrQq
-X-Gm-Gg: AeBDieth42cYHA3if0fXKXBO06S8pGIRLZa9bVXWJGcEdeNVxcjnxhib/T7BS+IPMLk
-	ZczuftwX9POfeYFJLM+x+ab2ev01f0xxw9B+Lp4zg6MIm9YYGxfAQpFHWZRVkdJbUOauRVimN9p
-	FsjE00mi0zw/AnLCUWdfR2WN3KDy70X4xc/J1V4OiCHFZC7pT1EaS/UzIumy+gC4RSPkejJA2aJ
-	nkWR+PfxAnJQ0F4SRQuSLWSJXfKNcUylqfuZAjQ7agPrbCEFblxH/zUhH2D98Nb5kX/+BQsKE+n
-	Yrci94m95QCrmac/cWbpogU9AaZwB+cucfpjNhpF6NCqn26vHh0fEGRJd5wKimIyp71VQe9Dquf
-	r3kc61Q2xKPZs3qdw+hhTUFoYOi0KYjezrWOit410Vr445VjO0njgq1O9SJ5xHCL++FrrPJeZmE
-	J1RsIvQuG5ia4W8I4rzpb++WupwjA0Zao5gM10MM5WWUg3iaqDPgL2tg6J8W6TguGB6q/dvKwj1
-	y0ZWOK4yU0f
-X-Received: by 2002:a05:6a20:7292:b0:3a3:33bd:319b with SMTP id adf61e73a8af0-3aa5a99f71emr11485161637.39.1778205667288;
-        Thu, 07 May 2026 19:01:07 -0700 (PDT)
+        bh=Ek0wk7Jhu8BEqFxB1TRIiJokVIKU2hYC5xqez6fDbs0=;
+        b=Zc69lWHmILMYjUWQBnXN+Q6FQqxaGUCj2AE/DL6web0mHeRFLD8QCKZjYwcI9Eo690
+         gP5jepj0C3JpqleElil39a87dfjNhDV8TsLFaH85nosdWxKorNEVwwCPYrlBRjW7Gmey
+         T/ni2E+GGQYPTkrb/i5GqepdfZZMmkzxSvCyqo67v5mcy195EAr+GYy1Z5e//toekAD6
+         qH9jugySxsU2COJzPJ0vfCnNd23sEi3LwYGU8929N989SEurjb8y4TkBXgRQIiluNov/
+         f3VRhFxfdXG3EgX3J1XXJJpEuwKpQFXOoNjIdL+Sd/7DjrP8HbBpuQcmmwcCqz5fZIhW
+         JDzA==
+X-Gm-Message-State: AOJu0Yz1hagRgqnDDz5tPeL7rw2IVcVGVNkkCTlKjzSSRApjQr/XlNGo
+	1O4i48G6MNwYlSbdnd59L0myf2Dv2fZeA30ryCrocc9eRKYuZgS5Y0c5y75BtKmqIVx/OF6B+sW
+	XjxoH
+X-Gm-Gg: AeBDieumAmsEqNJPEyj7HB3ChtrzPLTH/rboMY6sI6ncG4QHxl5gphCdamJBMk6KTkH
+	8skTABkvYG3kbr3GdJhnE4KjNRxZtzG4WC8OJQgCXulD5gIeUKHpdgJ4bcjp7JWPLkibotejqQt
+	VV00bJOroHmHyda95UX25fnyeZ31sD7jVjmmfPb/MgYIsGNbuzLw0CMsL/R0jvDO7koGRmU8Bxt
+	SNsgsW/xer7aBAi9SYz/ydXu57qoAFzuSX5tKt9uG7se9FZgdmxGEayjv5UXAWtDkazASPYtCkK
+	TNfOMEh/pneaCJv1bXtdWuFxVu6ao2HyJjCPUZbnNdnemFm7yb9RfN46qPMOon62VkufWukTlLr
+	bPHBBCLi/rHe67/xTipFYFFo/Wd+0gJvNaCR7HOBXH2XY9bHhO14x5IARuIipcAtdMl1ahHCmPW
+	ZcCuIvuT20LYk1z5jFf8c8gvpBSoaieJ0i3IS1+qtcriyTvqo+EhKkwjD4Pl3d7lpZXkhAxwx72
+	A==
+X-Received: by 2002:a05:6a00:4097:b0:82f:425b:4c27 with SMTP id d2e1a72fcca58-83a5bfbf782mr11566694b3a.14.1778205663745;
+        Thu, 07 May 2026 19:01:03 -0700 (PDT)
 Received: from localhost (c-98-232-159-17.hsd1.or.comcast.net. [98.232.159.17])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c8267735eccsm132092a12.32.2026.05.07.19.01.06
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-83965d35b3bsm9526633b3a.24.2026.05.07.19.01.03
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 May 2026 19:01:06 -0700 (PDT)
+        Thu, 07 May 2026 19:01:03 -0700 (PDT)
 From: tim.orling@konsulko.com
 To: yocto-patches@lists.yoctoproject.org
-Subject: [yocto-autobuilder-helper][PATCH 11/11] config.json: containers-library: add mosquitto and valkey demos
-Date: Thu,  7 May 2026 19:00:34 -0700
-Message-ID: <601c281165450b2be14de46bb9601e82229ca5f6.1778202125.git.tim.orling@konsulko.com>
+Subject: [yocto-autobuilder-helper][PATCH 09/11] config.json: add vcontainer-tests, vdkr-tests, vpdmn-tests jobs
+Date: Thu,  7 May 2026 19:00:32 -0700
+Message-ID: <fedb9a114f294f1d1dc80d1df086a41e3419b490.1778202125.git.tim.orling@konsulko.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1778202125.git.tim.orling@konsulko.com>
 References: <cover.1778202125.git.tim.orling@konsulko.com>
@@ -66,44 +66,117 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Fri, 08 May 2026 02:01:14 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3950
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3948
 
 From: Tim Orling <tim.orling@konsulko.com>
 
-Extend containers-library with two additional demo images sourced
-from meta-yocto-containers-demo:
+Add three pytest job overrides that run the meta-virtualization test
+suites against the vcontainer standalone SDK published by the
+vcontainer-tarball builder.
 
-  * app-container-mosquitto: the Eclipse Mosquitto MQTT broker.
-  * app-container-valkey: Valkey (Redis-compatible) key/value datastore.
+Each job runs the new scripts/run-vcontainer-tests helper via
+EXTRACMDS (we need BUILDDIR variable so EXTRAPLAINCMDS is not
+sufficient) with both NOBUILDTOOLS and NOVCONTAINER set, so the
+workers don't spend time setting up either tarball: the test runner
+gets the published SDK installer through VCONTAINER_SDK and manages
+its own pytest venv.
 
+vcontainer-tests covers the broader bbclass/tooling tests (and so
+brings in meta-openembedded layers it transitively exercises);
+vdkr-tests and vpdmn-tests cover their respective CLI harnesses.
+
+AI-Generated: Claude Cowork Opus 4.7
 Signed-off-by: Tim Orling <tim.orling@konsulko.com>
 ---
- config.json | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ config.json                  | 42 +++++++++++++++++++++++++++++++++++-
+ scripts/run-vcontainer-tests |  7 +++---
+ 2 files changed, 44 insertions(+), 5 deletions(-)
 
 diff --git a/config.json b/config.json
-index 7cdf91a..a9a2e9c 100644
+index 86c1ffb..dda5b12 100644
 --- a/config.json
 +++ b/config.json
-@@ -1950,6 +1950,18 @@
-                 "BBTARGETS" : "app-container-python",
-                 "CONTAINER_IMAGES" : {"app-container-python": "python"},
-                 "CONTAINER_VERSION_RECIPE" : "python3"
-+            },
-+            "step2" : {
-+                "shortname" : "Build 'mosquitto' container",
-+                "BBTARGETS" : "app-container-mosquitto",
-+                "CONTAINER_IMAGES" : {"app-container-mosquitto": "mosquitto"},
-+                "CONTAINER_VERSION_RECIPE" : "mosquitto"
-+            },
-+            "step3" : {
-+                "shortname" : "Build 'valkey' container",
-+                "BBTARGETS" : "app-container-valkey",
-+                "CONTAINER_IMAGES" : {"app-container-valkey": "valkey"},
-+                "CONTAINER_VERSION_RECIPE" : "valkey"
+@@ -1891,7 +1891,7 @@
+             },
+             "step2" : {
+                 "shortname" : "Publish vcontainer SDK for test reuse",
+-                "EXTRAPLAINCMDS" : [
++                "EXTRACMDS" : [
+                     "install -d ${BASE_SHAREDDIR}/pub/vcontainer-tarball-latest && install -m 0755 ${BUILDDIR}/tmp/deploy/sdk/vcontainer-standalone.sh ${BASE_SHAREDDIR}/pub/vcontainer-tarball-latest/vcontainer-standalone.sh.new && mv -f ${BASE_SHAREDDIR}/pub/vcontainer-tarball-latest/vcontainer-standalone.sh.new ${BASE_SHAREDDIR}/pub/vcontainer-tarball-latest/vcontainer-standalone.sh"
+                 ]
              }
-         },
-         "vcontainer-tests": {
+@@ -1938,6 +1938,46 @@
+                 "shortname" : "Build 'python' container",
+                 "BBTARGETS" : "app-container-python"
+             }
++        },
++        "vcontainer-tests": {
++            "NEEDREPOS" : ["bitbake", "meta-openembedded", "meta-virtualization"],
++            "ADDLAYER" : [
++                "${BUILDDIR}/../meta-openembedded/meta-oe",
++                "${BUILDDIR}/../meta-openembedded/meta-python",
++                "${BUILDDIR}/../meta-openembedded/meta-networking",
++                "${BUILDDIR}/../meta-openembedded/meta-filesystems",
++                "${BUILDDIR}/../meta-virtualization"
++            ],
++            "step1" : {
++                "shortname" : "Run vcontainer pytest suite",
++                "NOBUILDTOOLS" : 1,
++                "NOVCONTAINER" : 1,
++                "EXTRACMDS" : [
++                    "VCONTAINER_SDK=${BASE_SHAREDDIR}/pub/vcontainer-tarball-latest/vcontainer-standalone.sh RESULTS_DIR=${HELPERRESULTSDIR} ${SCRIPTSDIR}/run-vcontainer-tests vcontainer ${BUILDDIR} ${BUILDDIR}/../meta-virtualization"
++                ]
++            }
++        },
++        "vdkr-tests": {
++            "NEEDREPOS" : ["bitbake", "meta-openembedded", "meta-virtualization"],
++            "step1" : {
++                "shortname" : "Run vdkr pytest suite",
++                "NOBUILDTOOLS" : 1,
++                "NOVCONTAINER" : 1,
++                "EXTRACMDS" : [
++                    "VCONTAINER_SDK=${BASE_SHAREDDIR}/pub/vcontainer-tarball-latest/vcontainer-standalone.sh RESULTS_DIR=${HELPERRESULTSDIR} ${SCRIPTSDIR}/run-vcontainer-tests vdkr ${BUILDDIR} ${BUILDDIR}/../meta-virtualization"
++                ]
++            }
++        },
++        "vpdmn-tests": {
++            "NEEDREPOS" : ["bitbake", "meta-openembedded", "meta-virtualization"],
++            "step1" : {
++                "shortname" : "Run vpdmn pytest suite",
++                "NOBUILDTOOLS" : 1,
++                "NOVCONTAINER" : 1,
++                "EXTRACMDS" : [
++                    "VCONTAINER_SDK=${BASE_SHAREDDIR}/pub/vcontainer-tarball-latest/vcontainer-standalone.sh RESULTS_DIR=${HELPERRESULTSDIR} ${SCRIPTSDIR}/run-vcontainer-tests vpdmn ${BUILDDIR} ${BUILDDIR}/../meta-virtualization"
++                ]
++            }
+         }
+     },
+     "repo-defaults" : {
+diff --git a/scripts/run-vcontainer-tests b/scripts/run-vcontainer-tests
+index cbb5544..1394c7c 100755
+--- a/scripts/run-vcontainer-tests
++++ b/scripts/run-vcontainer-tests
+@@ -3,7 +3,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ #
+ # Run meta-virtualization pytest test suites against the vcontainer
+-# standalone SDK (vdkr/vpdmn) that was built by the previous bitbake
++# standalone SDK (vdkr/vpdmn) that was built in a previous bitbake
+ # step.
+ #
+ # Arguments:
+@@ -21,9 +21,8 @@
+ #
+ # The script is intentionally conservative: any pytest tests that cannot run
+ # in the CI environment (those marked "slow", "network", "boot") are skipped
+-# are skipped so that the autobuilder step completes without needing network
+-# access. Those can be re-enabled by exporting META_VIRT_PYTEST_MARKERS
+-# before invocation.
++# so that the autobuilder step completes without needing network access. Those
++# can be re-enabled by exporting META_VIRT_PYTEST_MARKERS before invocation.
+ #
+ # It is assumed that /dev/kvm is writable by the CI user running the tests,
+ # since the performance is significantly faster with 'memres'.
 -- 
 2.43.0
 
