@@ -2,195 +2,190 @@ Return-Path: <zhixiong.chi@windriver.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF2B4CD37AF
-	for <webhook@archiver.kernel.org>; Sat,  9 May 2026 04:56:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D767FCD343F
+	for <webhook@archiver.kernel.org>; Sat,  9 May 2026 05:18:19 +0000 (UTC)
 Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.6442.1778302576306035048
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.6747.1778303894210250738
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 08 May 2026 21:56:17 -0700
+ Fri, 08 May 2026 22:18:14 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@windriver.com header.s=PPS06212021 header.b=GNPWYZoC;
+ dkim=pass header.i=@windriver.com header.s=PPS06212021 header.b=QOhdLMAC;
  spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.178.238, mailfrom: prvs=95892e51f6=zhixiong.chi@windriver.com)
-Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6494j1iF2286268
-	for <yocto-patches@lists.yoctoproject.org>; Sat, 9 May 2026 04:56:15 GMT
+Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6494wF9I220146
+	for <yocto-patches@lists.yoctoproject.org>; Sat, 9 May 2026 05:18:13 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
-	 h=content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=PPS06212021; bh=kn3DbGg2oF0KJL2WMGC5
-	3wNfLGhIUxT/YT8vQ0sWSco=; b=GNPWYZoCzwiH0xsy7sLK9l6FB5G+qq+ycpEQ
-	PCmNuup6mWmXwdHl/T1UnFmec2iLixqDRFUPJuFjWDSbVDvcXTOv+9cb21sec58R
-	XZTUCSztylCfS9XkDO1ERFNavC3sVXEwypJ1MPRJhysurJzjeI9Cq+8piXojCj0k
-	rS5uw4TofgV4fkrx5ghR37f8FVh6ilgXagILRU28mO0+TAizyZocyU+z69qDjSX6
-	0LdMC7rb6T9dkU+g+tztt4DYg/f70nVWT8e9uoayAkwID26ct2M9NkMw0jrLvh6P
-	9JQpVog/dj8ucsO4h8dqvL6AxRmFfwI0YtZgnDwrqEB7gqNtPA==
-Received: from ch1pr05cu001.outbound.protection.outlook.com (mail-northcentralusazon11010004.outbound.protection.outlook.com [52.101.193.4])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4e1uw6g3b6-1
+	 h=content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=PPS06212021;
+	 bh=z+L9Bbk5os6gnMZeAspniAhGTf1OHuWHMQNKKBtko7I=; b=QOhdLMACghki
+	xuTyRtHtU18phr/UWWeUWdbB+4exxI+KWycGZOoDQ4Led8aodBlz4cpIvbna2dh1
+	SbW7hrL8i1IHVod8LvmL7a4RQfZod4LaSe9vqAaygAJwCGbU9S4FZs8DK1t01hz3
+	qw1UHAoFmLg1V7KAqVjtl6FSNnfhUqKEM95KaeKlnR6NaEjfKNBdjq3S5sGzb6ms
+	6EImYJXpjgLkwK4aMI2fYxtudyRtuBX6p/TDtqYhrxtb2ECLIVznvk021mHA+cta
+	JSw9wsGzsSnZ3ISXSTx6fyvwH7MKUIsrjYnGivhwVQjUfoyesoiQ2mPYPP02J7sJ
+	nN5Iavgduw==
+Received: from sj2pr03cu001.outbound.protection.outlook.com (mail-westusazon11012057.outbound.protection.outlook.com [52.101.43.57])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4e1t50067f-2
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT)
-	for <yocto-patches@lists.yoctoproject.org>; Sat, 09 May 2026 04:56:10 +0000 (GMT)
+	for <yocto-patches@lists.yoctoproject.org>; Sat, 09 May 2026 05:18:13 +0000 (GMT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=njwHpgUKzSPlks5sxa+E+Hm2ij0WtEIKqz1H784iZUaL/hGsim4lyok75eLWU2xF/6iqcx0Adk8FyugjkpFWSDICqwF+UASdUONcu23/t6EhSvCnf9Q/NTry3wz6U8eH81IdB4ThT9/EFb5Pgqt3Ltzbdcn5W+R99zueHNs/g9iKihKHhsJOQ7Ydjrvp3VgDtyIsUGy5Qta4XHxGKypTlEdVRK+FrSa6VC7hLnTkzpQjSnqJP1C0nXdqebYHGIw1DZwpIbgbNk/9AESUbms7jTjkznyFXk3FXgaoILcVosIXOTdJl+BJwgmJWW3YZw/4Hcl+/ILUYkjXZx53JjJNGA==
+ b=ff/kiGsIbEP5HqYPXi8kNRbfmpGJEms3qavYBJtQuRh7993pdFQDmd9UsuZsMTu4fP+vY0Icy7HN1wxePlxS+byXs+NURcVxHYNH7Lygb2kaSzLptMdmp4OcQnCJqdXSkxxztO/9J9cCU6U39WZ6YQwyj2v+EaKKgFSJj+i9rTKO2+I9tcAwF4vAZ74W2TMC3xwUNEXwNByUu9eOcVsMUfIj0Ybgbnl1TrXq4/mSbX49DYWZoazyEGCNf/cPqfJkFBpAG3iW2IUm3HvfpiE6vZzh43uroJitWg5nAE5jsr7QHPH4qHjB0AJ9z84Zty/17x4QoHIqm0JUwrk4i2AwFg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kn3DbGg2oF0KJL2WMGC53wNfLGhIUxT/YT8vQ0sWSco=;
- b=DXyuHKQo88a6r8RgpTgDF3Bpj0EhXem85p+X0LiRLEMhwzt3+8NTGbRAOt5cHEo5J4Lp/LeCGTGu+ZMbDJ4SKo1Cq3x4SbD2sY5V4dxwMv0NtuTbT3HmlV6Skg9CqUOKq6fboZ/8nLVkbD5LeBgWnsCDYNSs4GxDGcXJ0iIwUqpHeS1nbFFCu7JVuvbkcp33Ggsk5r/lD4ZmiEdA40gdhiG0FUUGm51miL6mqd6O3CDc1DA0PSb4y/DxAkW1NCkjtTww/ICxrgtStmvXflbEBoAnUCBIX9c07QnMFEnB4QvT0kpDkNPqMIiYSqdRVyieV0VgwhMof5JCrFyec66mBA==
+ bh=z+L9Bbk5os6gnMZeAspniAhGTf1OHuWHMQNKKBtko7I=;
+ b=FVZKegmh0LY3Ywp3hEyOplmFiEtCKXLyKHgtRwE09R6iTGs75dR4hfYZFKGpEo4X6pjadwIvzrXHhps+bmVoU2wqTNlLbkov0rTc0gqRIZu3QujLicCAN52LG/DAsbcjvmdVCersVwERwI1INfdfjxymNfH4HnrHwviD2C4+TgoYNAm+Kq9qfgdiOoRIi1f8fzswJx6W7FeJQWV3wXia4EjxJ6mx7dLr5e+KcgpmmWR4Yt/XOEsz5HNZetQhjtJKJZJDGCYFRRhAGIL+A3ontOvmPOIIpCaIX+SbQtBHeAOkv366REoS/bTKfB8Ta8SRBabW2GP1lQi301Xeqpi2XA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=windriver.com; dmarc=pass action=none
  header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
 Received: from DS4PPF75D68BA1B.namprd11.prod.outlook.com
- (2603:10b6:f:fc02::32) by PH0PR11MB4903.namprd11.prod.outlook.com
- (2603:10b6:510:36::6) with Microsoft SMTP Server (version=TLS1_2,
+ (2603:10b6:f:fc02::32) by IA1PR11MB7677.namprd11.prod.outlook.com
+ (2603:10b6:208:3fd::5) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9891.20; Sat, 9 May
- 2026 04:56:07 +0000
+ 2026 05:18:07 +0000
 Received: from DS4PPF75D68BA1B.namprd11.prod.outlook.com
  ([fe80::881a:ac0:4717:712a]) by DS4PPF75D68BA1B.namprd11.prod.outlook.com
  ([fe80::881a:ac0:4717:712a%8]) with mapi id 15.20.9891.019; Sat, 9 May 2026
- 04:56:07 +0000
+ 05:18:06 +0000
 From: Zhixiong Chi <zhixiong.chi@windriver.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [v2][meta-selinux][wrynose][PATCH 1/2] selinux-python: remove all RECORD files
-Date: Fri,  8 May 2026 21:56:00 -0700
-Message-ID: <20260509045601.212844-1-zhixiong.chi@windriver.com>
+Subject: [v2][meta-selinux][PATCH 2/2] libselinux-python: remove all RECORD files
+Date: Fri,  8 May 2026 22:18:00 -0700
+Message-ID: <20260509051800.243345-2-zhixiong.chi@windriver.com>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20260509051800.243345-1-zhixiong.chi@windriver.com>
+References: <20260509051800.243345-1-zhixiong.chi@windriver.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: BY1P220CA0024.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:a03:5c3::9) To DS4PPF75D68BA1B.namprd11.prod.outlook.com
+X-ClientProxiedBy: BY3PR05CA0007.namprd05.prod.outlook.com
+ (2603:10b6:a03:254::12) To DS4PPF75D68BA1B.namprd11.prod.outlook.com
  (2603:10b6:f:fc02::32)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS4PPF75D68BA1B:EE_|PH0PR11MB4903:EE_
-X-MS-Office365-Filtering-Correlation-Id: 07d27dc9-caf6-49b2-9e2e-08dead8747e9
+X-MS-TrafficTypeDiagnostic: DS4PPF75D68BA1B:EE_|IA1PR11MB7677:EE_
+X-MS-Office365-Filtering-Correlation-Id: 62f8df5c-b273-475d-dd25-08dead8a5a76
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|366016|376014|52116014|1800799024|18002099003|38350700014|56012099003|3023799003;
+	BCL:0;ARA:13230040|1800799024|52116014|366016|376014|38350700014|18002099003|56012099003|22082099003;
 X-Microsoft-Antispam-Message-Info: 
-	CVBg/wYodUWyzqN/piL2ddwZFVKvfJrbqp67rXjA+3tM+hNMAjkYCvGCULkA1G9NPOksyfa9NQprexd6UdReOkU66GgmmtQvxlx7TR+8eCZ0SDtbpUPvUXe9D2TvOApiImQ5iwfynCTc4a8eghU4OGiSa/yvFbHMAN2sM1s+WQej3VDGnmwB1HxGaN3zXZLp+ghuUXAOX9IXel7g9aVo7Fbcdzd/b0FSqfiBQwujv+FnyXWBLbW5dnNZya8acmRfVBdrD2+ATR8/6khDr05BRGdbzDBgvxQG/Pf8/IqdHb69BnlDyE7ecBtA0jqpwkgm86b9vi4ePhgWdlLDv4w3jXH7ZRl5kuh6AVJSspDSUwiveAnCUXPZPrHfHVqMSJgdLAHpPAsWbl2Ur0AwG4rJzQeCXXkROW+xLXtCgHEoIz1RqgjX98vN92K1Q+atmve34td2afTSzdFjCL+YxvhD616GQg8ZOp5x1VqAi7JwLc3E5dcOCWZccCB4V389HTvEMfXX9yK4uTj4jsemPwRi5P1e9mnLaXA16TruJ82M11lG6MetYtkDM+2Bif0/cg2uTNwQnkT7DFFmz7QePvytpZGAQm2evi1pvQGm4D5z8qbvJY+j7aFpzd6l+mjbk96E9xYq8+V9UJmbx2IZTftNCh81FaUVBdxw1q17N0CLSjAA09EkN0FWf1vCLHkKEIT3cEHdjv1VK0/+ZDZI05NkFA==
+	Z4dOZHKOvBTEq8w7GWiXKOyv5PjyLF1w/dW+/SgwAM0GMfWkgSBA11RELvNSgSRFPlOTsJ8SPKq6iIbowU+S2Tf1PyUpErwbRFnDxKAF+9lRZD6pMJUZs0hgn89/ztTLUWOKQJnyoKXEXcpBM73nFe3wIp5dv5eT4bC+sfEp+W69FuH6DIL9jk/xzLnSVVHiaVB1xC+qblfwQDk4kfEyOY8FO5CgBxO1vjJBZc/f2XEdsUJoVw+1j9T/eUEXBmMpUAUN8Muytxc3qox1Yz26iVWkIzvL+D6aVSXRoAY0s2DJeU1QO0F1Yq+yMxOWLa8my4fFVIxbiZsXZOBNIM4ltMHiPJ/y0NcI+l69p9zUonjrQzrUIEOMyeXPGAJ4FWQSfvt00bQg70Nl3INC45BrXZogzmiuLts/zCWPhn+YMCwL3Zh0K/7ix2jLXIgz5wgdjouytu9u90cpPdwUrQJiKC+UJ5+3JvT3rsW7o1dXp3Osg51BMU6VrnXgBrFfPazPZ49F+umVbVOrm6+KMP2mAbCPp1lnRU8naOyrAujApzWPSCFSh0z53H1Q4Ybd974cXNxSTNEvCs+/UH9MlKuHli5dMXr3+w8KRtQv5KYqaSUxav+ng1CCRd4oDpvrZ2ggL+U5O1vojVMRLbAeDjgtjgeOvw4kfoms+AkzhQm18T65ogC20ull3YrvV0FU/cef
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS4PPF75D68BA1B.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(1800799024)(18002099003)(38350700014)(56012099003)(3023799003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS4PPF75D68BA1B.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(366016)(376014)(38350700014)(18002099003)(56012099003)(22082099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?mpjzq30Nmcb2HOc88bhQkIxPCpfbEnwB6WNJ4+qwL5ajrFeRHBZ5hCn5VaQg?=
- =?us-ascii?Q?yNFQHUYXu1H+pJzAAaD8xcDhddeFfSMlb6uZdZDZZ1lBv4G5nGBFQnzC78JS?=
- =?us-ascii?Q?IGK/+AkgiEDUjxNAmlz1lVPC4zen7lmmdmu6fgz1XdZeFgns8SexPyXqbYKe?=
- =?us-ascii?Q?rZiuQWbRSCtEXinamub3PjN6SxEBnLNZ+v60gkaX7JUY5b3WYmH4J2TH7/i3?=
- =?us-ascii?Q?ePRWKvGIJIAslqK7dddrlQt71BqodRdXvgqeVeiOmXMK34dTMIQJXMiKKhzz?=
- =?us-ascii?Q?/OSN2mv/U3Nh6+lC3T7WhTR1afAQ4PMbuCbkI/QlTWW7CjFvRwuuTVZFzMwU?=
- =?us-ascii?Q?3ppobG1LwybxEx0JIttMWbgLyiaGlzU0HyBv9msWBPC/mHFEp6OSVqO01+sV?=
- =?us-ascii?Q?pOuK10SpHaKe9Tc3Dunpl1B4d1diIbh5rDZqfBLWkUYKiFCr4xIBLBMRli1S?=
- =?us-ascii?Q?Kqs5cWJIRyFiuZ/YFVer7ipXTlYO6/dVAkZHMT8OtTKY/9onHuY06Widjh7x?=
- =?us-ascii?Q?eOSn05USCworouAmK4oZR0m30jBxoPusaRPPOEzPjqWY4mVpdyPIzanj5zGM?=
- =?us-ascii?Q?ed7Fuw4NLFTefF39IRHHwybI5QHdqMnJ+4s1+UaLf4CyXa8x6nwLUDynpgwJ?=
- =?us-ascii?Q?st0UH40KsD5NpCj2yqDUNfoAylussJFl81HXbyCYEmOCcef7l6fFWxtZ4m1Q?=
- =?us-ascii?Q?qeSreAJJgGDSogigG3gcciAUcpkUkpsGfOhTgRqxG3AZ7hfxzXE3cGyko92P?=
- =?us-ascii?Q?AbPUeUZsJAjr3UEFLUed+7oVrtn4z9uu+C/P3l2+WSpXDKFs1GP8UD7GwIFW?=
- =?us-ascii?Q?ABpe1UzUL56h9xH98lfLF+94RWokdAigmM+gZayRnEuNlrQV5TDw/Pz9Ghwz?=
- =?us-ascii?Q?R6MV3K2Jl9ZvqealVYwlhLN9SzANJCjsXK9F00C85c+zEg1meXfK8rldXIzL?=
- =?us-ascii?Q?LEPuWX5okhoIh4UZ2XrS7wH2pONmjabBFFo1jCG9cDNSbaEThTz0g4bwHQMk?=
- =?us-ascii?Q?xqGPQqwYUBWRgdMSB5BodOYLZVtdQ/qc5K5Sry/odTSnhoydKyRHuoBx+KCe?=
- =?us-ascii?Q?BnWPVUj+oaJ8I9or8R1m+0XD/COLoHvP+bdzng2uGvhDNqXDzzHeSfej7F2K?=
- =?us-ascii?Q?8z8oL3p88mEOsiQ+0IQ/m5W0yn9WbXVnaTZpAICPArj9hnv/buURtOjAdZeA?=
- =?us-ascii?Q?VnNtXzTiSlJejHc4lWiUBiYd2VqZvWmvPtczNPN3yFaE1vjHj+v9W2jZHahL?=
- =?us-ascii?Q?SRrK+CmYun+r0gVYlmiyjeNLHROEhM4a0sJngQv9Jp7mOOUqitfmTsMrhRol?=
- =?us-ascii?Q?FBgXaWW7ZGlYvpIxfYnwNKyhazaa3edrO7k2iWr5Xsvb1RQTUcGFmhkPCKHV?=
- =?us-ascii?Q?1HbnKJgKdCf17gU8gRtH9V9W3y8w7q+H3Z6xjVQZCNzOXac8rR7APIrsRQ1G?=
- =?us-ascii?Q?CDc62F2SBzq8sgzVHnNbpkcidkPQT6WSEvLDD/qTapIVbjSJS0nE/acU6tUw?=
- =?us-ascii?Q?3+wLdRvpJbwcBVvrnTfYzTqV//IzrxgofEF1pwrZb2kmGrlizsn4SuncQV1t?=
- =?us-ascii?Q?sXmY4zVcMS0rTKtHuqSk14iLZR4nkdbz6dKi3ankwNGEQLVdrrSrsykUXpOC?=
- =?us-ascii?Q?+NSuBta1CCvb96ID6DW7/AzRdZiS2Mhil3sJKtCnjKYlWSwwMpieGHHl1isQ?=
- =?us-ascii?Q?Lc/fBF5k45C35FVgFioak1e0Ng4Fj/vyQemyuICbKHqVEfgWDlBVnhZNhZ03?=
- =?us-ascii?Q?WgXKf/nftq5VEOgBay35x63HkAY+k2I=3D?=
+	=?us-ascii?Q?/uhuvmfqT1ULPOIFr04r0MpNsZDtZGHyGpt01rzk4HJDxD7ZxgA+APdrqnT0?=
+ =?us-ascii?Q?nzvncH26b8y9MGHZKJDCb6+IZaGqHL2OTqiyMvJeNrOVr0Kb7uWnmY+BCufM?=
+ =?us-ascii?Q?YWz4jD7j9zd6TfFnanrQOmkfNebv8W+IynL2eMdSGouObKYkmHCpuXSjpCEc?=
+ =?us-ascii?Q?LyGMj3j/Keq1GvMuzoH28jni6M9Ku6PEPRZU/GGaPQksvWlTvwCf0hqyK7tE?=
+ =?us-ascii?Q?0We3NvW4C4rfVBdssNrGDkq3dbLUZmPCCti8LiIytLDIH44RpnVQECwfLnDc?=
+ =?us-ascii?Q?9rgGA8oA+tgPdGKm09e/zoh2pVP5B1o0LRuWJVOxpxQU637gMgyUap2Lz9Sx?=
+ =?us-ascii?Q?OHqB03jkULVFps3XIxPx+9BPpZpHMKNmb8bGSPY240R6ABUEBHQpDnKdA8EH?=
+ =?us-ascii?Q?RqHulPULiW2nMzpXyvkluDdDXigcYkG3SiLEqoqy90Dtm+r2dfUtHOIE85jc?=
+ =?us-ascii?Q?Th6p59FKaFgIYFumPz3wsyr2ndlrqYSW3hkK0EdemfVJxm0xARatqJs8yWjp?=
+ =?us-ascii?Q?1ACH7BDSBmJF9Y4P4GL7coKMCUy8oQizBUA12JpA5/dWXv4wXZ+YAATfBjI9?=
+ =?us-ascii?Q?vmg8HB2JH6jkLQTJWygTj9XM1AQoIuWuCFZ4BxeSa81vMbDNcAry/vtDJ0qT?=
+ =?us-ascii?Q?HlX7W9dCBQiZ/P+ar7I5pepTMW+0qFzCdcAs38GRjLM8sjGxL/qKuGO2rHKl?=
+ =?us-ascii?Q?r7hdSqtsUSJO99Mlf+MBEZ39/BgQi2wR4yDdl45bDUBuFevbmiPJZEcpQTaC?=
+ =?us-ascii?Q?qOdPynQlWvB/8wCWZmpPe+rEBMRoNmDP2WpSmDWgVTt5WVyfucMZpWBbfKU3?=
+ =?us-ascii?Q?VGGcxATOq2KVSotFGKyc5BWnplkg1ZhVLUe913+C83MR1iyI9Y3CCW9Szrh5?=
+ =?us-ascii?Q?C/4jtDI5dtOXvpynd7WDVTT/eArk89ZTBGmYI+LDtwU8dJLPmQ86bP9jVTk0?=
+ =?us-ascii?Q?BkpIrinrtat31mZbJ1c6PURIcAbN1Mj3BwoxpISg06cLeFn/0LnE7D/TicT7?=
+ =?us-ascii?Q?lwjRlwmsrAYK8DxQ1mUp5CFCf3LJS6jgZ/T+Gv1jR+S3eYxLaZzaDQ4aZZQt?=
+ =?us-ascii?Q?P1QOY1ftWH9Xo0JonmGHQtgxynL6WZfTlBegO9q52BQVMyqfuPuhbwpKDqnl?=
+ =?us-ascii?Q?diogWC330f+e/bAE06zHA/XklBvkeT+TYThf55kUBMK+caU8R6fquxIMnNkj?=
+ =?us-ascii?Q?pDaEXcNoe9au8kpTuKzW9BQ17g9ioExYkwmyCRVlcfMAt60oFr8IJBl9Jh8J?=
+ =?us-ascii?Q?pr7Gk31/0rCPxKyu0CEFtgS1zV5M+sVFYkGekdMbwTi0aixxU9igi/uEmrvA?=
+ =?us-ascii?Q?mYVLO6Ef6m3MQ0o1zZTaVAyuZf1e8unvasY+ZyeaJdNh+RM1ztBT0kylGsZo?=
+ =?us-ascii?Q?9ONiP4HcZXnr+4Bqxwe737m6R2rgw+N+IdtRmWh9Ib2BzD3KZEJHeBnaS60W?=
+ =?us-ascii?Q?JGr6bfpsQayPKUtU4m/6YM3VvKY/hyiZac51jBWkaWAA3sC7xUgx/44y7+d4?=
+ =?us-ascii?Q?WbTtSKMBQqZBNGsQA2HnVM+LJq760SyD4ONUpoGzeqEKDykLQn4dLcgpMpLy?=
+ =?us-ascii?Q?YoRcAcA/TYH11SgOEWzzR6uzYw31IukqKg79rjyI4pckQR5SEoQqqauxnn37?=
+ =?us-ascii?Q?bXMepRv9xv77CJF+Rd4wZ3vbQbMVivaApcFtuhLIi6FPVIRBWWNazmvaCMLw?=
+ =?us-ascii?Q?fIwlksVmAsIEyHEcPGdPtGaO+1msvvLvz/2eLvqFLgn86yJdxFJG2rgnUjW+?=
+ =?us-ascii?Q?3F3GkodHKoFMfi8avHOl+HCW7wCvt+I=3D?=
 X-Exchange-RoutingPolicyChecked: 
-	ShNzHAOYzobc/nsWnPMBQOU9VgDutMCwNyX37TRNaglWIT+1tedkiqK3unDu02qlyz1QJddRxuT0JfHlVb46JTNnRKuhc2N+6TuqhlPtnKCGHvIsW8XSH+ONvVggls1ZWxS+YKzuf23Oyj4PfVS+b9MuPDxLedisgEIFQvqbJJCuI6TFkwO/sJ6+t8CzKnwIy0dsVYUBFZBZhbsowAekXGkGiU2SdRfapl41ShunbbVhDXFv3VQsJU/YSdEfkGel9LRsY8JlGUyMmR5Oi5IbPlYyJQoWv7+/DtyKyD57PasDClC2L3Ot+Ed3wdgKUTIwmY5TcMVa8v66O92IOrOBaA==
+	W6eqWgYgjRAFPxFRTn+rmaSDu5mONSc+V4W2812KkdMHrbiuLZpUf9ZBACKVmAxdqBVW1Og4cObg47Y0cCUhXFArUa4H2wUgPvAQ0+Gur+wQH5uMkM3jO8pEjgHa/BSfhwVGGNRyLtXVvePOAqHLncsUgckkImMAwoNfvbNKpbeBgqTh4Mgad9XCvPkwOISfjXKWr6K0ngaKGQOfpcSWnLE/83z3OoadKVMjA3PnNTnR2yD3c9eynl8X8fyHART5kG5DuR8hQs3RCxOQHpw4K4oIBrW0q7OZMjcYHQyIg9XNJBwJW5jUiaWhKu+dZ0i6BJxj8Cl0y6cIQ6adAWGISg==
 X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 07d27dc9-caf6-49b2-9e2e-08dead8747e9
+X-MS-Exchange-CrossTenant-Network-Message-Id: 62f8df5c-b273-475d-dd25-08dead8a5a76
 X-MS-Exchange-CrossTenant-AuthSource: DS4PPF75D68BA1B.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2026 04:56:07.2876
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2026 05:18:06.8577
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: J7ue418+gp8yPx7C5hXTMtBYZnGN/ipqHj5KuywX0fEFS49Rofo9/4TKYcAWd7WKDJMh1SLVxwnUxDwra+7JDDW2zqD2SR71MXIVzoB++qw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB4903
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTA5MDA0NyBTYWx0ZWRfXxoG+ea817HhE
- TygGJIGh0OqJdNVKOHT2IsboGpaVB6ict5nXIWmAG7VVICB2iebYTABP8CnsY9iLR2lUDlGWAvG
- 5mLkvD9qfYuufy0EPfACtrQ2UEl8iNHfItcygPBs4UisgguNE6hWjrhmmzyRuLcWXTNmmWYuKId
- 45HDf61j0StbdR037MVE2m8nCs2ALKjZP0QryUnFzG525iX0p2u1xfmn/muWteIYZ/bJ8OV/nwi
- Jhk9+hXQ+zOYajKSaRUr5pWBxmENxvFfvrEKtIJjzfcoLZYTTBGOd3HKf7Xj3s/lrMQkKgMwYt2
- qPuMkTL5u6TG5jj/a1ZlnwJBSZ9DuC2KWSS8w8es7z9HYHbM7IcuRR0IhOUWQmRIHSYsMseXoVu
- xzQyxybV8ugj0ocPvWoSrbJls24fqQ==
-X-Authority-Analysis: v=2.4 cv=d6nFDxjE c=1 sm=1 tr=0 ts=69febe6a cx=c_pps
- a=Q+OuU4uwq9JOSoz6MpkFfA==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZOpDt29r9ktIpOP7NGxNTAba8XduAnmtR/Ffn8QY2Bj1PMoGAfQps/4m1QiVK1iNdBG3ZWCJRaUbKk3DrkuwoBrui0gpfzA3R8wYY+oog/U=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB7677
+X-Proofpoint-GUID: sK99nroRxexj0bEAcPy9pDsx0Yiqw66W
+X-Authority-Analysis: v=2.4 cv=C9fZDwP+ c=1 sm=1 tr=0 ts=69fec395 cx=c_pps
+ a=Y/Y9x3HtMOqQL+YbCjVQEg==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
  a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
  a=xqWC_Br6kY4A:10 a=NGcC8JguVDcA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=bi6dqmuHe4P4UrxVR6um:22 a=fTW__CHxibyLmBMfj2wP:22 a=8AHkEIZyAAAA:8
- a=xNf9USuDAAAA:8 a=vTr9H3xdAAAA:8 a=7mOBRU54AAAA:8 a=t7CeM3EgAAAA:8
- a=qxTolJBQgbHWKOguPvoA:9 a=wa9RWnbW_A1YIeRBVszw:22 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-GUID: 7ElKYbxAL0OyxTLH0eziXxUJL55s66zn
-X-Proofpoint-ORIG-GUID: 7ElKYbxAL0OyxTLH0eziXxUJL55s66zn
+ a=bi6dqmuHe4P4UrxVR6um:22 a=klDOsUkWDRETUCZYPvoE:22 a=SsMK-6ewAAAA:8
+ a=t7CeM3EgAAAA:8 a=o8dCtG0ciBTDBm6uPjcA:9 a=49hUO6naoDravHwzbBTq:22
+ a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-ORIG-GUID: sK99nroRxexj0bEAcPy9pDsx0Yiqw66W
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTA5MDA1MiBTYWx0ZWRfX/yAfHELTie2i
+ T2X17RGW9ADBgCfsZYMQI98jAz1oTL4w1FKe3SGguA+QI6NSB0gJGwweX9+PiyXLmLDfzgKFBng
+ kr1USM3tkqt1yUxAcDkKRMnWPQr+bbXg/jAyCFLquL6eY7UatjNtVl1U25RRMXCtG1kfgwGjgxH
+ D1Rg95+OLdDwiJ//onYetjC/ztSH79CRrRf1yMukgr2B5hsavDoFc8DrpSG1fnGvPy/7SGIvDZz
+ /odyyAwpJ0lJtGdA3y1P7ZqOyUqstE9FcsKipS57LHVYqVC1FcA4nM1POKEWi+u1AThB0cxspB6
+ ow2ZZGotKJxoCRT/lJBNg2QamkASmFrP0X8lD8iJMRiplIPjDwp+RgGTjGercGxY9jp6zH/D8x9
+ 35UVIyY2kLX/asMDF4/gSkcPvup3pHhyRxk8b/SQJRWapGQgQQGHoyg4f2fCTwReRcgKQr9xtCh
+ L3M+n1GVpPaiO01JlHw==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-05-09_02,2026-05-08_02,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 adultscore=0 spamscore=0 suspectscore=0 phishscore=0
- malwarescore=0 bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2604200000
- definitions=main-2605090047
+ clxscore=1015 priorityscore=1501 suspectscore=0 bulkscore=0 malwarescore=0
+ spamscore=0 adultscore=0 impostorscore=0 phishscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2604200000 definitions=main-2605090052
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sat, 09 May 2026 04:56:19 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3954
+ <yocto-patches@lists.yoctoproject.org>; Sat, 09 May 2026 05:18:19 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3957
 
-Python modules install metadata into a .dist-info directory, one of which
-is RECORD, which contains the files that were installed and their
-checksum[1].  This is typically used by pip to validate the install, or
-to know what files to remove when the module is uninstalled.
+In order to support reproducible builds[1], we delete the RECORD
+file for selinux-python recipe, please refer the details in the
+patch comments for the selinux-python recipes.
+Here we do the same behavior to keep the solution consistency.
 
-This is slightly problematic when we need to do patching of installed
-.py files in do_install(), as the RECORD file has already been written
-at that point.
-
-However, the RECORD files only really have a use outside of a system-
-managed environment, which our python packages are.  We already have
-commands to verify and remove modules (opkg, dpkg, rpm) and the RECORD
-file existing simply allows people to 'sudo pip' and alter the package-
-managed directories outside of the package manager.
-
-This is not a good idea, and some other distros remove the RECORD file
-to stop this possibility:
-- Debian[2]
-- Fedora[3]
-- Gentoo[4]
-
-[1] https://peps.python.org/pep-0491/#the-dist-info-directory
-[2] https://salsa.debian.org/python-team/tools/dh-python/-/blob/master/dhpython/fs.py?ref_type=heads#L185
-[3] https://src.fedoraproject.org/rpms/pyproject-rpm-macros/blob/rawhide/f/macros.pyproject#_105
-[4] https://gitweb.gentoo.org/repo/gentoo.git/commit/?id=73c49f3c00415dee99407dabba8d3b22895c9d25
+[1] https://reproducible-builds.org/
 
 Signed-off-by: Zhixiong Chi <zhixiong.chi@windriver.com>
 ---
- recipes-security/selinux/selinux-python_3.10.bb | 3 +++
- 1 file changed, 3 insertions(+)
+ recipes-security/selinux/libselinux-python_3.10.bb | 13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
 
-diff --git a/recipes-security/selinux/selinux-python_3.10.bb b/recipes-security/selinux/selinux-python_3.10.bb
-index 7a4b781..61abd77 100644
---- a/recipes-security/selinux/selinux-python_3.10.bb
-+++ b/recipes-security/selinux/selinux-python_3.10.bb
-@@ -122,8 +122,11 @@ do_install() {
+diff --git a/recipes-security/selinux/libselinux-python_3.10.bb b/recipes-security/selinux/libselinux-python_3.10.bb
+index 98296e1..139e6df 100644
+--- a/recipes-security/selinux/libselinux-python_3.10.bb
++++ b/recipes-security/selinux/libselinux-python_3.10.bb
+@@ -53,18 +53,11 @@ do_install() {
+         PYTHONLIBDIR='${PYTHON_SITEPACKAGES_DIR}'
  
-     # Remove .pyc files
-     find ${D} -name *.pyc -delete
+     direct_url_json="${D}${PYTHON_SITEPACKAGES_DIR}/selinux-${PV}.dist-info/direct_url.json"
+-    oldhash=$(nativepython3 -c "from pip._internal.operations.install.wheel import rehash; hash,len = rehash('$direct_url_json'); print(f'{hash},{len}')")
+-
+     # Fix buildpaths issue
+-    sed -i -e 's,${WORKDIR},,g' \
+-        $direct_url_json
+-
+-    newhash=$(nativepython3 -c "from pip._internal.operations.install.wheel import rehash; hash,len = rehash('$direct_url_json'); print(f'{hash},{len}')")
+-
+-    # Update hash of direct_url.json in RECORD after build path was removed
+-    sed -i -e "s/$oldhash/$newhash/g" \
+-        ${D}${PYTHON_SITEPACKAGES_DIR}/selinux-${PV}.dist-info/RECORD
++    sed -i -e 's,${WORKDIR},,g' $direct_url_json
+ 
 +    # Remove RECORD file
 +    find ${D} -path *.dist-info/RECORD -delete
- 
-     # Fix buildpaths issue
-     sed -i -e 's,${WORKDIR},,g' \
-         ${D}${PYTHON_SITEPACKAGES_DIR}/sepolicy-${PV}.dist-info/direct_url.json
-+
  }
+ 
+ BBCLASSEXTEND += "native"
 -- 
 2.49.0
 
