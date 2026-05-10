@@ -2,150 +2,380 @@ Return-Path: <ticotimo@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2CDFCD37AF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB87BCD37B2
 	for <webhook@archiver.kernel.org>; Sun, 10 May 2026 00:47:41 +0000 (UTC)
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.22356.1778374053294611309
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.22359.1778374060063043499
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 09 May 2026 17:47:33 -0700
+ Sat, 09 May 2026 17:47:40 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=XWWfiwuA;
- spf=pass (domain: gmail.com, ip: 209.85.216.46, mailfrom: ticotimo@gmail.com)
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3660daea6a5so1590542a91.1
-        for <yocto-patches@lists.yoctoproject.org>; Sat, 09 May 2026 17:47:33 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=q+RoSm2U;
+ spf=pass (domain: gmail.com, ip: 209.85.216.42, mailfrom: ticotimo@gmail.com)
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-366be8040a9so704737a91.3
+        for <yocto-patches@lists.yoctoproject.org>; Sat, 09 May 2026 17:47:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778374051; x=1778978851; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20251104; t=1778374059; x=1778978859; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8OlDScb9F8nFAbC6DFC0VEwl/qfbCVhiqUFTueUzwV0=;
-        b=XWWfiwuAQRvdMAtuvhSg7pjyFNvmEbjOwFvosJWd+JNS2aMsDMYGtf0lDaFgyCaxxI
-         WAIMiAlo7522vkEIeFD18y34x6rcNG8uVeEmEEJEf2Pr8Ztyq6D5gP0Ej3gh79zZpD7Q
-         7WCB3oP6dop58trZ7lfFQDGyIuSwmCG840QZnti77Ox3bMolopPLUk2Onwb5M30pzF1j
-         JmB1M8L8qvHLDP/tT4PNVOCAnZ2LxOggMhm+D7LjF1ignPEwqh93RO8wAQW1ZLECqIOv
-         CS16c+xuhDAG8viEj827Z8zJhnrQRDdaGfqSV9E8o+iI7BNz8DOnlVF2eHrKpNshjloU
-         d6nw==
+        bh=rWUHzosjP56wsLW+5LHup3T6f9+ajPtvKbgLXdesrqU=;
+        b=q+RoSm2UvjNDzdZCq8uiNqEivKte9PfRWOJlH7hl6Bk9kZoF6D6aVPIyc/uX9mhE2F
+         67cL3N/NyjfvMETzbJbt4lPGcO53kX7l5ZaSExIx9jrY7ER5up6kdumiVuMgXdo0P8fM
+         fud4RAHjT2NBwoAgayXVfpdJTKmApCGlpmhCE05/wIBjvDROmbQ7AYUxWeQc9dU6kMy8
+         4E4fLRd9oEIh1BgiVogdHb08C0nzWHfMChh2ri+h2cQ3YtTim0xDwDyv/UPCx60E3zKl
+         nsTTc1WmR/wuuxu4lzkeJRIBejpXvmXYAs0HRXalz0ds6NLWVgWPqpStWKpRx539+Bl+
+         VUkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778374051; x=1778978851;
+        d=1e100.net; s=20251104; t=1778374059; x=1778978859;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=8OlDScb9F8nFAbC6DFC0VEwl/qfbCVhiqUFTueUzwV0=;
-        b=r6FzJm9NI6i3bqHBbctXkg1X/ZwpACd5h1xlbXWeitwx4/DWc8fqaN5htmqdUUCZAM
-         +vsJnKG114mtiuq5LPRecu6Vd8u211iTCFjeROG9Jk3/nQ++phctxqvEs/D/ijhgzJkH
-         pqHbdw5PZYwPZasFAagXhv09USmmZqFkSAf49KE9H7M1ABh1r23cjbt4rBlwqioyxyKI
-         MA8M0XAxKI1Ruk0+MUzpE3X8IjwDhS0aCLWLH+WA5rhOir3F4v2ziS3PdZQ9nxHnP+3+
-         zgqAPjLCGXcUGi2DmzeDye8kuTWeXGn364sUjadfdghx0Mo7k21Mym7E/JRrpv3Anyno
-         omBQ==
-X-Gm-Message-State: AOJu0Yz/ptuqmbcQ1MUkCkPq4/VsbNFPpxm6y+xZf1UTRr+owTZ+l9YQ
-	As2yIGnm9+WNoIP4S1uOh79Y4E1gQL6v6Z3+1RsxXwCQU6G8UOaLFRWDIvmuP165
-X-Gm-Gg: Acq92OGIWPb+Wn84XJPGvyKdeZlVLi2DmYUw7i8oPiTxGHI3oc+WPXR4RsFD5cBO2C6
-	pZUNdMinTUI2T5XQyNAyooCKUGeerkOGqi1qOOKvHdQmG1SfzUViXU3oCwIKX7unV2bZd5wc0ue
-	8YEOPGrpeZoT03x0nqD+wXlqHIR7AKugIs/4SK86uS/mbM6VrpgsengVSid5AusJ5Q8nro9xJog
-	83xIn55AmfJVZtJgNs9ee9eB6/scJCQmg/8KzB3lNb1h9E+fLB6fvdou7BcYKr4lHB6h0Jq8y5K
-	wEx2Gt6XS7HRf64gIHPkKNz354jNLIAqF8MX2aE2I9rho1Bzl0LhvbMnBsjri4U+9jPsLUluu9E
-	HMQPYU0EsUJZ8abKW+VMFax30LNZBIssZydHJ/6TjnrecUzhL7XK3ogv7Th0cAFg1L9YbMSlF6n
-	gmu06nE2L19NUzkjBqVLBfVY0Buo9TQVTX9MscrzLSfgVX0IXek64c9qNiVz4SrR+krzEOFnhtj
-	N5bhH3HtDyihiTrz9l9WMd5otq5WRAItg==
-X-Received: by 2002:a17:90a:d003:b0:366:173c:9a94 with SMTP id 98e67ed59e1d1-366173c9ea1mr12599455a91.14.1778374051409;
-        Sat, 09 May 2026 17:47:31 -0700 (PDT)
+        bh=rWUHzosjP56wsLW+5LHup3T6f9+ajPtvKbgLXdesrqU=;
+        b=lHseR+9lZ4VE/ABCtW2pukVt0vLxrD8AhO5HFsx6RXsGnoman/YdnH54UUSURtFW5n
+         G8pjqEM704VmoNPfoeol0bGU9u9ap4qGHg1Eb0lfVhch6o+yEeOQk3KcBCIfRxhRo2ca
+         FLfOzVZwzcKLInWUVsvuWZrW1fFErCzJRapmtlKnzoi76b4vkgCMQZbY9RRo2Y/PUAIV
+         zp+zOf0s7fRraNL6EZgHK9wgE40TIrHMWysyPsejK2h0FCeplzIf/ttTJLkZyftil32k
+         maITRWjBLxuiqjWNlI4f0MSNqf3ZQo1RUfIYH9CVPjxmQVSrhfaVTcCYLEPDB/2mvLLU
+         nZlA==
+X-Gm-Message-State: AOJu0YzT+i8FW/oxDwD00SxinrT81j+ckVATdzuvfwRnUOJufA+fJUUy
+	m0+/hmqulIR/hJ4cA9txGa0WzfbIaB61Rn9f1tkDlkvj+6+KiNhL/6ZsWIOss7qp
+X-Gm-Gg: Acq92OEsWsozvL+FJVT9XCHNBymfv+3qmXkplZEb2vw8o2oVD7KHbOfz+4bS10P2VJm
+	+XYqNcM2M52SzakHxoRRSHW9+I4KlzCqVp/INC3sa8iWHS5yg0tOZ/2hS8e9VB29wQurKj25+kq
+	rOddJjMw/wkzhBtSdUhkrvnufeB5spzjFN/Hra2X3hFOvEGNCZNy5HnwFeFqEw6g+hy7Hgqappc
+	3UpZ8MY9pLrrY1nokfneT69w3TbpB/GDv/tcygJtf835HaM0WZe9UnNXSnlt+fsvTzAI48qZBSd
+	Gy82xjXZolDiCFEK+GCXj4y57gpkbSMY4yT6Dh0QQswgBDgL54D2WvNmTJc5LCE/FgRggNodhzW
+	thCpAyZgjyor546kOTM+PYYbEC/AW6fXk4RGMYwQaac5Ina4i6nUksLSv1jA7cRmzNknOnba4Gf
+	VDVAqNI62U/9tKCO4t8giZxvb4OZ3A8TpRkmv9Kw+KvPsXBtXXTE5hov/Id1LEySHbIcF/SWEGc
+	7FDt2xYH15G7+5WFztuaio=
+X-Received: by 2002:a17:90b:224f:b0:35f:b69d:7292 with SMTP id 98e67ed59e1d1-365ac080dc9mr18646828a91.15.1778374058637;
+        Sat, 09 May 2026 17:47:38 -0700 (PDT)
 Received: from localhost.localdomain (c-98-232-159-17.hsd1.or.comcast.net. [98.232.159.17])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-367d627bc2bsm3178257a91.7.2026.05.09.17.47.30
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-367d627bc2bsm3178257a91.7.2026.05.09.17.47.37
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sat, 09 May 2026 17:47:30 -0700 (PDT)
+        Sat, 09 May 2026 17:47:38 -0700 (PDT)
 From: Tim Orling <ticotimo@gmail.com>
 X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Tim Orling <tim.orling@konsulko.com>
-Subject: [layerindex-web][PATCH 3/5] layerindex/views.py: fix DuplicatesView timeout
-Date: Sat,  9 May 2026 17:47:01 -0700
-Message-ID: <20260510004706.81282-3-tim.orling@konsulko.com>
+Subject: [layerindex-web][PATCH 5/5] layerindex/views.py: fix DuplicatesView 504 from per-row correlated subquery
+Date: Sat,  9 May 2026 17:47:03 -0700
+Message-ID: <20260510004706.81282-5-tim.orling@konsulko.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260510004706.81282-1-tim.orling@konsulko.com>
 References: <20260510004706.81282-1-tim.orling@konsulko.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Sun, 10 May 2026 00:47:41 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3960
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3962
 
-Two performance problems caused the duplicates page to take over 115
-seconds to respond at production data volumes, eventually causing clients
-to disconnect (SIGPIPE / broken pipe):
+The previous fix (subquery IN clause + select_related) resolved the Python
+memory overhead but the 504 Gateway Timeout persisted because
+recipes_preferred_count() uses .extra(select={...}) to embed a correlated
+multi-table subquery that the database evaluates once for every result row.
+With hundreds of duplicate recipes on the master branch this creates an
+O(N) compounding scan that dominates page load time.
 
-1. Python list comprehension IN clause: each get_recipes/get_classes/
-   get_incfiles method evaluated its 'dupes' queryset in Python with a
-   list comprehension to build a filter:
+Replace the call to recipes_preferred_count() in DuplicatesView.get_recipes
+with a two-step batch approach:
 
-     filter(pn__in=[item['pn'] for item in dupes])
+1. Fetch all duplicate recipes into a list using the existing subquery +
+   select_related (one SQL query).
 
-   This loaded all matching values into memory and emitted a potentially
-   huge SQL IN (...) literal. Replace with a Django ORM subquery by
-   passing the queryset directly:
+2. Run a single aggregating query to find, for each pn, the maximum
+   index_preference among S/A-type layers in this branch that carry that
+   pn (one SQL query returning one row per distinct pn).
 
-     filter(pn__in=dupes)   # dupes is a .values('pn') queryset
+3. Annotate each recipe object in Python: preferred_count is set to 1 if
+   another S/A layer has a strictly higher index_preference for the same
+   pn, otherwise 0.  The template only checks preferred_count > 0, so the
+   boolean semantics are identical to the original COUNT.
 
-   Django translates this into a SQL subquery (WHERE pn IN (SELECT pn
-   FROM ... GROUP BY pn HAVING COUNT(...) > 1)), which the database can
-   optimise without a round-trip through Python.
+recipes_preferred_count() is intentionally left unchanged — it is still
+used by RecipeSearchView where result sets are paginated to 50 rows and
+the per-row cost is negligible.
 
-2. N+1 queries: the template renders recipe.layerbranch.layer.name,
-   class.layerbranch.layer.name and incfile.layerbranch.layer.name for
-   every row. Without select_related these trigger one extra query per
-   row. Add select_related('layerbranch__layer') to each queryset so the
-   JOIN is done once up front.
+Also add Max to the django.db.models import line.
 
 [YOCTO #16175]
 
 AI-Generated: Claude Cowork Sonnet 4.6
 Signed-off-by: Tim Orling <tim.orling@konsulko.com>
 ---
- layerindex/views.py | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+ layerindex/views.py           |  30 ++++++++-
+ tests/test_duplicates_view.py | 113 ++++++++++++++++++++++------------
+ 2 files changed, 100 insertions(+), 43 deletions(-)
 
 diff --git a/layerindex/views.py b/layerindex/views.py
-index 23bafd0..742e5d5 100644
+index 742e5d5..84750f7 100644
 --- a/layerindex/views.py
 +++ b/layerindex/views.py
-@@ -656,24 +656,30 @@ class DuplicatesView(TemplateView):
-         init_qs = Recipe.objects.filter(layerbranch__branch__name=self.kwargs['branch'])
-         if layer_ids:
-             init_qs = init_qs.filter(layerbranch__layer__in=layer_ids)
--        dupes = init_qs.values('pn').annotate(Count('layerbranch', distinct=True)).filter(layerbranch__count__gt=1)
--        qs = init_qs.all().filter(pn__in=[item['pn'] for item in dupes]).order_by('pn', 'layerbranch__layer', '-pv')
-+        # Use a subquery instead of a Python list comprehension so that Django
-+        # emits a single SQL subquery rather than loading all duplicate pn values
-+        # into memory and building a potentially huge IN (...) clause.
-+        # See: https://bugzilla.yoctoproject.org/show_bug.cgi?id=16175
-+        dupes = init_qs.values('pn').annotate(Count('layerbranch', distinct=True)).filter(layerbranch__count__gt=1).values('pn')
-+        qs = init_qs.filter(pn__in=dupes).select_related('layerbranch__layer').order_by('pn', 'layerbranch__layer', '-pv')
-         return recipes_preferred_count(qs)
+@@ -25,7 +25,7 @@ from django.contrib.sites.models import Site
+ from django.core.exceptions import PermissionDenied
+ from django.urls import resolve, reverse, reverse_lazy
+ from django.db import transaction
+-from django.db.models import Count, Q
++from django.db.models import Count, Max, Q
+ from django.db.models.functions import Lower
+ from django.db.models.query import QuerySet
+ from django.db.models.signals import pre_save
+@@ -661,8 +661,32 @@ class DuplicatesView(TemplateView):
+         # into memory and building a potentially huge IN (...) clause.
+         # See: https://bugzilla.yoctoproject.org/show_bug.cgi?id=16175
+         dupes = init_qs.values('pn').annotate(Count('layerbranch', distinct=True)).filter(layerbranch__count__gt=1).values('pn')
+-        qs = init_qs.filter(pn__in=dupes).select_related('layerbranch__layer').order_by('pn', 'layerbranch__layer', '-pv')
+-        return recipes_preferred_count(qs)
++        recipes = list(init_qs.filter(pn__in=dupes).select_related('layerbranch__layer').order_by('pn', 'layerbranch__layer', '-pv'))
++        if not recipes:
++            return recipes
++        # recipes_preferred_count() attaches a correlated subquery via .extra() that
++        # the database evaluates once per result row.  With hundreds of duplicate
++        # recipes that compounds into a slow multi-table correlated scan that causes
++        # a 504 Gateway Timeout.  Instead, compute preferred_count with a single
++        # batch MAX query across all pns and annotate the results in Python.
++        #
++        # A recipe is "non-preferred" (preferred_count > 0) when another layer of
++        # type S or A carries the same pn and has a higher index_preference.
++        pns = {r.pn for r in recipes}
++        pn_max_pref = dict(
++            Recipe.objects.filter(
++                layerbranch__branch__name=self.kwargs['branch'],
++                pn__in=pns,
++                layerbranch__layer__layer_type__in=['S', 'A'],
++            ).values('pn').annotate(
++                max_pref=Max('layerbranch__layer__index_preference')
++            ).values_list('pn', 'max_pref')
++        )
++        for recipe in recipes:
++            own_pref = recipe.layerbranch.layer.index_preference
++            max_pref = pn_max_pref.get(recipe.pn)
++            recipe.preferred_count = 1 if (max_pref is not None and max_pref > own_pref) else 0
++        return recipes
  
      def get_classes(self, layer_ids):
          init_qs = BBClass.objects.filter(layerbranch__branch__name=self.kwargs['branch'])
-         if layer_ids:
-             init_qs = init_qs.filter(layerbranch__layer__in=layer_ids)
--        dupes = init_qs.values('name').annotate(Count('layerbranch', distinct=True)).filter(layerbranch__count__gt=1)
--        qs = init_qs.all().filter(name__in=[item['name'] for item in dupes]).order_by('name', 'layerbranch__layer')
-+        # Use a subquery instead of a Python list comprehension (see bug #16175)
-+        dupes = init_qs.values('name').annotate(Count('layerbranch', distinct=True)).filter(layerbranch__count__gt=1).values('name')
-+        qs = init_qs.filter(name__in=dupes).select_related('layerbranch__layer').order_by('name', 'layerbranch__layer')
-         return qs
+diff --git a/tests/test_duplicates_view.py b/tests/test_duplicates_view.py
+index 304a35c..78d1036 100644
+--- a/tests/test_duplicates_view.py
++++ b/tests/test_duplicates_view.py
+@@ -9,9 +9,17 @@
+ # Tests for bug #16175 - Duplicates page timeout
+ # https://bugzilla.yoctoproject.org/show_bug.cgi?id=16175
+ #
+-# The fix replaces Python list comprehensions used to build IN (...) clauses
+-# with Django ORM subqueries, and adds select_related to avoid N+1 queries
+-# when the template resolves layerbranch__layer names.
++# The original code had two performance problems:
++#
++# 1. Python list comprehension IN clause: each get_* method pulled all
++#    duplicate names into Python memory and built a huge IN (...) literal.
++#    Fixed by passing the 'dupes' queryset directly so Django emits a subquery.
++#
++# 2. Per-row correlated subquery: get_recipes() called recipes_preferred_count()
++#    which embeds a correlated subquery via .extra() evaluated once per result
++#    row by the database.  With hundreds of duplicate recipes this caused a 504
++#    Gateway Timeout.  Fixed by computing preferred_count with a single batch
++#    MAX query over all pns, then annotating results in Python.
  
-     def get_incfiles(self, layer_ids):
-         init_qs = IncFile.objects.filter(layerbranch__branch__name=self.kwargs['branch'])
-         if layer_ids:
-             init_qs = init_qs.filter(layerbranch__layer__in=layer_ids)
--        dupes = init_qs.values('path').annotate(Count('layerbranch', distinct=True)).filter(layerbranch__count__gt=1)
--        qs = init_qs.all().filter(path__in=[item['path'] for item in dupes]).order_by('path', 'layerbranch__layer')
-+        # Use a subquery instead of a Python list comprehension (see bug #16175)
-+        dupes = init_qs.values('path').annotate(Count('layerbranch', distinct=True)).filter(layerbranch__count__gt=1).values('path')
-+        qs = init_qs.filter(path__in=dupes).select_related('layerbranch__layer').order_by('path', 'layerbranch__layer')
-         return qs
+ import pytest
+ from django.test import TestCase
+@@ -35,7 +43,7 @@ class TestDuplicatesView(TestCase):
+             updates_enabled=True,
+         )
  
-     def get_context_data(self, **kwargs):
+-        # Two layers — objects in both will appear as duplicates
++        # layer_a: base layer (type A), lower preference
+         self.layer_a = LayerItem.objects.create(
+             name='meta-alpha',
+             status='P',
+@@ -43,7 +51,9 @@ class TestDuplicatesView(TestCase):
+             summary='Alpha layer',
+             description='Alpha test layer',
+             vcs_url='git://example.com/meta-alpha.git',
++            index_preference=0,
+         )
++        # layer_b: software layer (type S), higher preference — recipes here win
+         self.layer_b = LayerItem.objects.create(
+             name='meta-beta',
+             status='P',
+@@ -51,8 +61,9 @@ class TestDuplicatesView(TestCase):
+             summary='Beta layer',
+             description='Beta test layer',
+             vcs_url='git://example.com/meta-beta.git',
++            index_preference=10,
+         )
+-        # A third layer whose objects are unique (should NOT appear as duplicates)
++        # layer_c: unique objects only, should never appear as duplicates
+         self.layer_c = LayerItem.objects.create(
+             name='meta-gamma',
+             status='P',
+@@ -60,36 +71,42 @@ class TestDuplicatesView(TestCase):
+             summary='Gamma layer',
+             description='Gamma test layer',
+             vcs_url='git://example.com/meta-gamma.git',
++            index_preference=5,
+         )
+ 
+         self.lb_a = LayerBranch.objects.create(layer=self.layer_a, branch=self.branch)
+         self.lb_b = LayerBranch.objects.create(layer=self.layer_b, branch=self.branch)
+         self.lb_c = LayerBranch.objects.create(layer=self.layer_c, branch=self.branch)
+ 
+-        # Duplicate recipe (same pn in layer_a and layer_b)
+-        Recipe.objects.create(layerbranch=self.lb_a, filename='shared_1.0.bb',
+-                               pn='shared', pv='1.0', filepath='recipes-test')
+-        Recipe.objects.create(layerbranch=self.lb_b, filename='shared_1.0.bb',
+-                               pn='shared', pv='1.0', filepath='recipes-test')
+-        # Unique recipe (only in layer_c — should NOT appear)
+-        Recipe.objects.create(layerbranch=self.lb_c, filename='unique_1.0.bb',
+-                               pn='unique', pv='1.0', filepath='recipes-test')
+-
+-        # Duplicate class (same name in layer_a and layer_b)
++        # Duplicate recipe in both layer_a (pref=0) and layer_b (pref=10)
++        self.recipe_a = Recipe.objects.create(
++            layerbranch=self.lb_a, filename='shared_1.0.bb',
++            pn='shared', pv='1.0', filepath='recipes-test')
++        self.recipe_b = Recipe.objects.create(
++            layerbranch=self.lb_b, filename='shared_1.0.bb',
++            pn='shared', pv='1.0', filepath='recipes-test')
++        # Unique recipe only in layer_c — must NOT appear
++        Recipe.objects.create(
++            layerbranch=self.lb_c, filename='unique_1.0.bb',
++            pn='unique', pv='1.0', filepath='recipes-test')
++
++        # Duplicate class in layer_a and layer_b
+         BBClass.objects.create(layerbranch=self.lb_a, name='sharedclass')
+         BBClass.objects.create(layerbranch=self.lb_b, name='sharedclass')
+-        # Unique class (only in layer_c — should NOT appear)
++        # Unique class only in layer_c — must NOT appear
+         BBClass.objects.create(layerbranch=self.lb_c, name='uniqueclass')
+ 
+-        # Duplicate include file (same path in layer_a and layer_b)
++        # Duplicate include file in layer_a and layer_b
+         IncFile.objects.create(layerbranch=self.lb_a, path='conf/shared.inc')
+         IncFile.objects.create(layerbranch=self.lb_b, path='conf/shared.inc')
+-        # Unique include file (only in layer_c — should NOT appear)
++        # Unique include file only in layer_c — must NOT appear
+         IncFile.objects.create(layerbranch=self.lb_c, path='conf/unique.inc')
+ 
+     def _url(self, branch='main'):
+         return reverse('duplicates', kwargs={'branch': branch})
+ 
++    # --- Basic page health ---
++
+     def test_duplicates_view_returns_200(self):
+         """DuplicatesView should return HTTP 200."""
+         response = self.client.get(self._url())
+@@ -110,11 +127,38 @@ class TestDuplicatesView(TestCase):
+         self.assertNotIn('unique', pns)
+ 
+     def test_duplicate_recipes_have_two_rows(self):
+-        """Each layer's entry for the duplicate recipe should be present."""
++        """Each layer's copy of the duplicate recipe should be present."""
+         response = self.client.get(self._url())
+         shared = [r for r in response.context['recipes'] if r.pn == 'shared']
+         self.assertEqual(len(shared), 2)
+ 
++    # --- preferred_count (batch MAX computation, replaces per-row correlated subquery) ---
++
++    def test_lower_preference_recipe_is_deemphasised(self):
++        """The layer_a recipe (pref=0) should have preferred_count > 0 because
++        layer_b (pref=10, type S) has a higher-preference copy of the same pn."""
++        response = self.client.get(self._url())
++        recipe_from_a = next(
++            r for r in response.context['recipes']
++            if r.pn == 'shared' and r.layerbranch.layer.name == 'meta-alpha')
++        self.assertGreater(recipe_from_a.preferred_count, 0)
++
++    def test_higher_preference_recipe_is_not_deemphasised(self):
++        """The layer_b recipe (pref=10) should have preferred_count == 0 because
++        no other S/A layer has a higher preference for the same pn."""
++        response = self.client.get(self._url())
++        recipe_from_b = next(
++            r for r in response.context['recipes']
++            if r.pn == 'shared' and r.layerbranch.layer.name == 'meta-beta')
++        self.assertEqual(recipe_from_b.preferred_count, 0)
++
++    def test_preferred_count_attribute_present_on_all_recipes(self):
++        """Every recipe in the context must have a preferred_count attribute."""
++        response = self.client.get(self._url())
++        for recipe in response.context['recipes']:
++            self.assertTrue(hasattr(recipe, 'preferred_count'),
++                            f"preferred_count missing on {recipe.pn}")
++
+     # --- Classes ---
+ 
+     def test_duplicate_classes_included(self):
+@@ -158,20 +202,15 @@ class TestDuplicatesView(TestCase):
+     # --- Layer filter ---
+ 
+     def test_layer_filter_restricts_recipes(self):
+-        """Passing ?l=<layer_id> should restrict results to that layer."""
++        """With only one layer selected, nothing can be a duplicate."""
+         response = self.client.get(self._url() + f'?l={self.layer_a.id}')
+         self.assertEqual(response.status_code, 200)
+-        # With only one layer selected, nothing can be a duplicate
+         pns = [r.pn for r in response.context['recipes']]
+         self.assertNotIn('shared', pns)
+ 
+     def test_wrong_branch_returns_empty(self):
+-        """A branch with no data should return empty querysets."""
+-        other = Branch.objects.create(
+-            name='other',
+-            bitbake_branch='other',
+-            sort_priority=50,
+-        )
++        """A branch with no data should return empty result sets."""
++        Branch.objects.create(name='other', bitbake_branch='other', sort_priority=50)
+         response = self.client.get(reverse('duplicates', kwargs={'branch': 'other'}))
+         self.assertEqual(response.status_code, 200)
+         self.assertEqual(len(list(response.context['recipes'])), 0)
+@@ -179,30 +218,24 @@ class TestDuplicatesView(TestCase):
+         self.assertEqual(len(list(response.context['incfiles'])), 0)
+ 
+     def test_select_related_avoids_extra_queries(self):
+-        """Ensure layerbranch and layer are fetched with select_related.
+-
+-        Checks that accessing layerbranch.layer.name on query results does not
+-        trigger additional database queries (i.e. select_related is working).
+-        """
++        """Accessing layerbranch.layer.name after list evaluation fires no new queries."""
+         from django.db import connection, reset_queries
+         from django.conf import settings
++        import layerindex.views as views_module
+ 
+         settings.DEBUG = True
+         reset_queries()
+ 
+-        view = __import__('layerindex.views', fromlist=['DuplicatesView']).DuplicatesView
+-        v = view()
++        v = views_module.DuplicatesView()
+         v.kwargs = {'branch': 'main'}
+-        v.request = None
++        v.request = type('req', (), {'GET': {}})()
+ 
+-        recipes = list(v.get_recipes([]))
++        recipes = v.get_recipes([])
+         classes = list(v.get_classes([]))
+         incfiles = list(v.get_incfiles([]))
+ 
+-        # Record query count after fetching
+         query_count_after_fetch = len(connection.queries)
+ 
+-        # Access layerbranch.layer.name on every result — should NOT fire new queries
+         for r in recipes:
+             _ = r.layerbranch.layer.name
+         for c in classes:
+@@ -214,5 +247,5 @@ class TestDuplicatesView(TestCase):
+         settings.DEBUG = False
+ 
+         self.assertEqual(query_count_after_fetch, query_count_after_access,
+-                         "Unexpected extra queries when accessing layerbranch.layer.name — "
+-                         "select_related may not be working")
++                         "Extra queries fired when accessing layerbranch.layer.name — "
++                         "select_related may not be effective")
 -- 
 2.54.0
 
