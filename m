@@ -1,192 +1,203 @@
-Return-Path: <paul@pbarker.dev>
+Return-Path: <tim.orling@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78512CD37B9
-	for <webhook@archiver.kernel.org>; Mon, 11 May 2026 09:00:35 +0000 (UTC)
-Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.45779.1778490033017250517
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9894BCD484C
+	for <webhook@archiver.kernel.org>; Mon, 11 May 2026 17:36:43 +0000 (UTC)
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.56498.1778520995623837434
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 11 May 2026 02:00:33 -0700
+ Mon, 11 May 2026 10:36:35 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@pbarker.dev header.s=fm1 header.b=L652DmTW;
- dkim=pass header.i=@messagingengine.com header.s=fm3 header.b=eO84v8JB;
- spf=pass (domain: pbarker.dev, ip: 202.12.124.155, mailfrom: paul@pbarker.dev)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 449147A00F9;
-	Mon, 11 May 2026 05:00:32 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Mon, 11 May 2026 05:00:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pbarker.dev; h=
-	cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1778490032; x=1778576432; bh=vdPNU6+cEQ
-	ryonMYOVWpdZP3Y09folnd6ivL1XbCOOI=; b=L652DmTWkFBSS1rHg7iHn60FWz
-	ByaKD5NzttCgLjbgrxKOMNEZ6A74py64x4BiU7tVRQ7/iW4PtjqCUdaX8iZe1wLm
-	LUsaSoWJci97PetYfSOizsUjV/6t5iAy0U3v88SuNNwtekleQyK9SH3KllMyr+mJ
-	tRrLUDUu7BLDPZkH1Z2obrGLnO2hk7ytohcBPKL90zZw3wt8dskMjFU2QAGxS+G7
-	UdN4q6PiUws1w3CK+EWWwLZpw+P6tmh1qT0v5NLkAS1znXfFA3YRJBJlYCZZ18Be
-	oDTJPAwbaiqCBWBbWQ08NKlufaYLlNm0y/lOtLZGL1Q9WKglyXXVJj4DngMA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1778490032; x=1778576432; bh=vdPNU6+cEQryonMYOVWpdZP3Y09folnd6iv
-	L1XbCOOI=; b=eO84v8JB0NURysKwUrTjGUbYKzdXzbodQRFKmeYrOYXEOaUXfPv
-	FKIPVQIC085gFaNBPW+jqxejfDo1wqsEJY3W6QqkC1ZdInNwdzjmCRbX2lUUEn5t
-	3ctrSW6/AKnjqpUOefCIsVxVofKAwD5qUVEhJgZMvXDNf0BZiNVRKEQcTwEIYiwC
-	9TfqRL70poogaGoZSNuyHA/9/D/BuWHV5FK10hlnoY2uQraq8cySCzUarZBU5zbu
-	A25QAL5jhuCmbUG+4k8XPUspwfGXeEgFXuRmCE2orqWEl9u8jOPJFI9CADebbSMT
-	NFo5DwZCTdkme3xojbxf/GHJzmZ4kTvgW8w==
-X-ME-Sender: <xms:r5oBau7D41aWcWTfKOu5AYA5O1u3LXTfO0ZiowjBFfkQZKP3NzhJZg>
-    <xme:r5oBavrDNI3X2id-dtL2hu1TCOkbDJ57wMxKR2nMMy1ZDBy9sgxiRnUn8vUZ2C3Oz
-    T03GN1kBJ_Ih7eyS_LeXTnoCj5dapF9vni-_t0pMQe36b6wwo5CHxA>
-X-ME-Received: <xmr:r5oBagiJY2hb9Kv7joAZxgUgNRuvStdt7YKodB_7KDhpTbMzquOabnHw2sbHNnhh4SikP3t90wyl5Hicx1eiczXpAwOmJGmLJI6LBq0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgdduudekheegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucenucfjughrpefkuffhvfffjghftggfggesghdtreertd
-    erjeenucfhrhhomheprfgruhhluceurghrkhgvrhcuoehprghulhesphgsrghrkhgvrhdr
-    uggvvheqnecuggftrfgrthhtvghrnhepfeeileehudffvdeljedvgfetieeugfetteekfe
-    dtgeeggfevtddutddvheegfeeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghm
-    pehmrghilhhfrhhomhepphgruhhlsehpsggrrhhkvghrrdguvghvpdhnsggprhgtphhtth
-    hopeefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehtihhmrdhorhhlihhnghes
-    khhonhhsuhhlkhhordgtohhmpdhrtghpthhtohephihotghtohdqphgrthgthhgvsheslh
-    hishhtshdrhihotghtohhprhhojhgvtghtrdhorhhgpdhrtghpthhtohephihotghtohes
-    lhhishhtshdrhihotghtohhprhhojhgvtghtrdhorhhg
-X-ME-Proxy: <xmx:r5oBapIJcC385bXLqEpNDbZoEUFPSRHpt1DKhXa0oOdyhX23b763eA>
-    <xmx:r5oBagBJuN0TewmHTg3kROPAok6EUnpfZYjxW-AohvTfOut0jDahuQ>
-    <xmx:r5oBapjVO6jTY1r0U1ZEMgroWt66639bBGNp7trqQX42ZYxeoeeSdA>
-    <xmx:r5oBaomPaonAfpk5-rXJS24rzS0kUiq6ugju00Nplwdsffu631YtVA>
-    <xmx:sJoBaopJOxOvh1mX0Kg3hJgbzuIko_3pjQGfBrmydDPxRi-Q9Juq0Jms>
-Feedback-ID: i51494658:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 11 May 2026 05:00:31 -0400 (EDT)
-Message-ID: <a12dbd29263557679eeeb5dbaabeac9266fcabe3.camel@pbarker.dev>
-Subject: Re: [yocto-autobuilder-helper][PATCH 11/11] config.json:
- containers-library: add mosquitto and valkey demos
-From: Paul Barker <paul@pbarker.dev>
-To: tim.orling@konsulko.com, yocto-patches@lists.yoctoproject.org, 
-	yocto@lists.yoctoproject.org
-Date: Mon, 11 May 2026 10:00:28 +0100
-In-Reply-To: <601c281165450b2be14de46bb9601e82229ca5f6.1778202125.git.tim.orling@konsulko.com>
-References: <cover.1778202125.git.tim.orling@konsulko.com>
-	 <601c281165450b2be14de46bb9601e82229ca5f6.1778202125.git.tim.orling@konsulko.com>
-Autocrypt: addr=paul@pbarker.dev; prefer-encrypt=mutual;
- keydata=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
- LUewj8JVy0aJsGTwI4invl
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-lXwOW81+IiPGPfQ2nbk2"
-User-Agent: Evolution 3.52.3-0ubuntu1.1 
+ dkim=pass header.i=@konsulko.com header.s=google header.b=HAXkosXZ;
+ spf=pass (domain: konsulko.com, ip: 209.85.128.169, mailfrom: tim.orling@konsulko.com)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-7bde9d73678so48929647b3.0
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 11 May 2026 10:36:35 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1778520995; cv=none;
+        d=google.com; s=arc-20240605;
+        b=gqcVbuEETREbs9yN6FbgPdBIk/YZHRajL3jGOpf1g2QAGnYfjPvmgUTkBPDAP7lIbn
+         23b1tc7033cIXRMSIoBmjJwALI7eFVYL7bctq9FCaSqz/O0k7ioygch+zalp1uQqlg4a
+         ILZLKganssequlDCE/xtiaQ5nc3mLDeuBwcGr4CKsADZYxYDBaEJNW/AqG0mqasSFIJf
+         gIt63hT5DXQvFs//rkz7pTdduLneJPpobDrT7KN2a7eSlEqeYw0ch9ut8NvlmoWhgtWR
+         3vW8TmDNJSB+DGtc4BhXegnhiViqPxZOoHv2YRTOm2fjWpxcFaEDUo0FVOjQSQ7bT7Vo
+         ipvA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=p+aXM3wUy2VlufaonbLEjbWnU2PAkqFPpNj7/qxHjtA=;
+        fh=1xQzWt/W4EAmz/F47cA+kLIU/CAhbmRrVZxZ7KbnavU=;
+        b=FDdGDI2Riy2z6qh2Hs9SA5FK8uFPf6vq4K9bQnJo4iC3ubqad3NOOFa1CaYF6T+r7v
+         RwUZ24vzzGfdGv+4zHfFNRhI7kTfnAFCbMEypcVH1ixrSMlKFMdcTqYENY5NR2EqpqKE
+         f91HxEKgXO5HT/nc8hQHUdFN2m0/3No9i8waBMADjkTh8dagx3tHJ2mWTs28q4RQMCxL
+         l61ekGnqDbZfN8NeoXXOhVucz9MHwkERPNYEyqna0dyWLFXPwsAd11mPrMDk2nrnWWOI
+         Bruy7SobGVYPJVFGRtR2lix5cF80OPn+eenERVy5l9H58GuvAKKUugBd2EQp7bzuLifx
+         f9OA==;
+        darn=lists.yoctoproject.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=konsulko.com; s=google; t=1778520995; x=1779125795; darn=lists.yoctoproject.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=p+aXM3wUy2VlufaonbLEjbWnU2PAkqFPpNj7/qxHjtA=;
+        b=HAXkosXZ1joUpa55013Tzq3Sc3F3Q716coPGRCAj7D3my1Tru6e6EMibVuusy+X0xi
+         2KIbbYoZ8UGJzQtmBNOi7BngJiZ8xtlyUX52mfQXocsMBhYBEj43H8uE8nLmva3F+hnl
+         xjUiNbrtLlgfg4hfCf0mdjqwMoxOBM9/wh2cE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778520995; x=1779125795;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p+aXM3wUy2VlufaonbLEjbWnU2PAkqFPpNj7/qxHjtA=;
+        b=XobQ09cgo+ltjOyrKpwl2hC8Bpb/bwSfzQwUmyHj7Lfdn5qDIt1pWKsu7lpLIGYIcU
+         Ty+Ikq2PVEYjshpvZvugk69VU/XaTVnjv2kx6gYWM9pRj5wDCBTVeI6p2fyxrSa9fJoe
+         Ki5zCD62SUPYati1sgMstr8ZZjHRAHeJ7HWvUbitLM7CJqMjDU59cC48tDW3uODHsRo2
+         /BAqImrBcYuwNUI86BX2yO+HRII43+8QhbdULtNZSRPUi/K1qirVQEbr2Fwci7UPBpin
+         Hq42KLweOXo9+T9t3whjykD5gNDGr3qBJBiuzf9oVwrcZDW/ikzQy5dJjmij6pTj+1/1
+         hA6w==
+X-Gm-Message-State: AOJu0YzwZJHG/yuKwrWNuqZHSoyG9Cnhy2FqvUize8kZtqeTWWFnlFyx
+	V4kF+7n0p/7d/LKrO274dO0nJUh6hNtj+LrDC3jGdebjnNCwe3OyKmK10qUC8cix2hjkkQdMrrh
+	bkmcAmach3KisBCx8h/aD2JsYJPPTphjtVo0bgVXZ97PHnE4JHyWQ
+X-Gm-Gg: Acq92OFZi7iKpdVERiaw9O6sUAAWrlU7Bz8e2yAnAMilYUQo0kP+61hxE6l7HtpkSJ2
+	uXKZ+909e1zZVw/PWBo22XJggkC/snrXlMkVaUCCRDiI1Fm8bk++Lh3Vdj+CY3KBJp88OrHL9JQ
+	I7ufIP0fwkvYaNTqnRcdK4yUvDtF5rEx4SCSMryez+sO4THgnNX6Z5H6VdtC9UZPB8FoMWm0G0E
+	jI0PNerkLMeeqz6vCjUdJUHjjrUzKmz3mJxHdzIKLx1Isl8/zniI0rheriftN1/PdKo2gPlymeg
+	Lu8ab6uV4HlaiiPsNw==
+X-Received: by 2002:a05:690c:3:b0:7b2:bf20:cdc9 with SMTP id
+ 00721157ae682-7c50e421dd6mr5143977b3.7.1778520994535; Mon, 11 May 2026
+ 10:36:34 -0700 (PDT)
 MIME-Version: 1.0
+References: <cover.1778202125.git.tim.orling@konsulko.com> <1c444ecb2272a384e77a786f7ca32767f791ce34.1778202125.git.tim.orling@konsulko.com>
+ <dcfc99d7b81e1083ef3607adde6055f4a81d3534.camel@pbarker.dev>
+In-Reply-To: <dcfc99d7b81e1083ef3607adde6055f4a81d3534.camel@pbarker.dev>
+From: Tim Orling <tim.orling@konsulko.com>
+Date: Mon, 11 May 2026 10:36:23 -0700
+X-Gm-Features: AVHnY4Ixdb0_j5INGt40jZ_HnpQa79pnh908KOL3MQ7O_LUYruEmTam9ijDt3OU
+Message-ID: <CAOyo-86bcAxxBy8bDi+dJmqnxUqbGaYhr-OXuAob0pvk9N-T4Q@mail.gmail.com>
+Subject: Re: [yocto-autobuilder-helper][PATCH 07/11] config.json: add
+ 'containers-' build jobs
+To: Paul Barker <paul@pbarker.dev>
+Cc: yocto-patches@lists.yoctoproject.org, yocto@lists.yoctoproject.org
+Content-Type: multipart/alternative; boundary="0000000000001aeacc06518e30d5"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 11 May 2026 09:00:35 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3967
+ <yocto-patches@lists.yoctoproject.org>; Mon, 11 May 2026 17:36:43 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3968
 
-
---=-lXwOW81+IiPGPfQ2nbk2
+--0000000000001aeacc06518e30d5
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2026-05-07 at 18:25 -0700, tim.orling@konsulko.com wrote:
-> From: Tim Orling <tim.orling@konsulko.com>
->=20
-> Extend containers-library with two additional demo images sourced
-> from meta-yocto-containers-demo:
->=20
->   * app-container-mosquitto: the Eclipse Mosquitto MQTT broker.
->   * app-container-valkey: Valkey (Redis-compatible) key/value datastore.
->=20
-> Signed-off-by: Tim Orling <tim.orling@konsulko.com>
-> ---
->  config.json | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
->=20
-> diff --git a/config.json b/config.json
-> index 7cdf91a..a9a2e9c 100644
-> --- a/config.json
-> +++ b/config.json
-> @@ -1950,6 +1950,18 @@
->                  "BBTARGETS" : "app-container-python",
->                  "CONTAINER_IMAGES" : {"app-container-python": "python"},
->                  "CONTAINER_VERSION_RECIPE" : "python3"
-> +            },
-> +            "step2" : {
-> +                "shortname" : "Build 'mosquitto' container",
-> +                "BBTARGETS" : "app-container-mosquitto",
-> +                "CONTAINER_IMAGES" : {"app-container-mosquitto": "mosqui=
-tto"},
-> +                "CONTAINER_VERSION_RECIPE" : "mosquitto"
-> +            },
-> +            "step3" : {
-> +                "shortname" : "Build 'valkey' container",
-> +                "BBTARGETS" : "app-container-valkey",
-> +                "CONTAINER_IMAGES" : {"app-container-valkey": "valkey"},
-> +                "CONTAINER_VERSION_RECIPE" : "valkey"
+On Mon, May 11, 2026 at 1:52=E2=80=AFAM Paul Barker <paul@pbarker.dev> wrot=
+e:
 
-This makes me wonder: can we build multiple app container images with
-one bitbake command? If so, can we combine these into one step?
+> On Thu, 2026-05-07 at 18:25 -0700, tim.orling@konsulko.com wrote:
+> > From: Tim Orling <tim.orling@konsulko.com>
+> >
+> > Add 'containers-' build jobs that build container images on top
+> > of the vcontainer-tarball SDK:
+> >
+> >   * containers-meta-virt: the original app-container-* images that
+> >     ship in meta-virtualization itself (e.g. app-container-curl).
+> >   * containers-library: a layer for additional images modelled
+> >     after docker.io/library/*, sourced from meta-yocto-containers-demo
+>
+> I think we should combine these into one build job.
+>
 
-Best regards,
+For now, that is impractical unless we use a branch of meta-virt that I can
+control (because the container recipes are in flux). Or I would have to
+continue running builds with a custom yocto-autobuilder-helper and a custom
+meta-virt branch which defeats the purpose of pushing the containers to the
+official registry.yocto.io and quay.io/yocto.
 
---=20
-Paul Barker
+Let me put it another way: the container recipes in meta-virt are a simpler
+demonstration. The container recipes in meta-yocto-containers-demo are
+heading towards being fully signed/attested and hardened. So to me it made
+sense to keep the jobs separate.
 
 
---=-lXwOW81+IiPGPfQ2nbk2
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+>
+> What's the plan for meta-yocto-containers-demo? Should we host that on
+> git.yoctoproject.org, or will the contents eventually be merged into
+> meta-virtualization?
+>
 
------BEGIN PGP SIGNATURE-----
+I haven't discussed this with Bruce, but I think it makes sense to have the
+official list in meta-virtualization, when they are ready. The other main
+reason for the meta-yocto-container-demo layer is for things like the
+slsa-provenance.bbclass before submitting that to oe-core.
 
-iIcEABYKAC8WIQSzjPXf5Y1BDWhU2iCrY1Tsnbr0bgUCagGarBEccGF1bEBwYmFy
-a2VyLmRldgAKCRCrY1Tsnbr0bnDjAQDz2CI7f2PAueFy/ReDezcMxK2JAjIXxAly
-go8n1y5JPQEAmGfLTv2WJ0z8AbkygimbmyJHIHCYNk/8H1aUFZFbSgc=
-=gTyw
------END PGP SIGNATURE-----
 
---=-lXwOW81+IiPGPfQ2nbk2--
+> Best regards,
+>
+> --
+> Paul Barker
+>
+>
+
+--0000000000001aeacc06518e30d5
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
+mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Mon, May 11,=
+ 2026 at 1:52=E2=80=AFAM Paul Barker &lt;<a href=3D"mailto:paul@pbarker.dev=
+">paul@pbarker.dev</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote=
+" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);=
+padding-left:1ex">On Thu, 2026-05-07 at 18:25 -0700, <a href=3D"mailto:tim.=
+orling@konsulko.com" target=3D"_blank">tim.orling@konsulko.com</a> wrote:<b=
+r>
+&gt; From: Tim Orling &lt;<a href=3D"mailto:tim.orling@konsulko.com" target=
+=3D"_blank">tim.orling@konsulko.com</a>&gt;<br>
+&gt; <br>
+&gt; Add &#39;containers-&#39; build jobs that build container images on to=
+p<br>
+&gt; of the vcontainer-tarball SDK:<br>
+&gt; <br>
+&gt;=C2=A0 =C2=A0* containers-meta-virt: the original app-container-* image=
+s that<br>
+&gt;=C2=A0 =C2=A0 =C2=A0ship in meta-virtualization itself (e.g. app-contai=
+ner-curl).<br>
+&gt;=C2=A0 =C2=A0* containers-library: a layer for additional images modell=
+ed<br>
+&gt;=C2=A0 =C2=A0 =C2=A0after <a href=3D"http://docker.io/library/*" rel=3D=
+"noreferrer" target=3D"_blank">docker.io/library/*</a>, sourced from meta-y=
+octo-containers-demo<br>
+<br>
+I think we should combine these into one build job.<br></blockquote><div><b=
+r></div><div>For now, that is impractical unless we use a branch of meta-vi=
+rt that I can control (because the container recipes are in flux). Or I wou=
+ld have to continue running builds with a custom yocto-autobuilder-helper a=
+nd a custom meta-virt branch which defeats the purpose of pushing the conta=
+iners to the official <a href=3D"http://registry.yocto.io">registry.yocto.i=
+o</a> and <a href=3D"http://quay.io/yocto">quay.io/yocto</a>.</div><div><br=
+></div><div>Let me put it another way: the container recipes in meta-virt a=
+re a simpler demonstration. The container recipes in meta-yocto-containers-=
+demo are heading towards being fully signed/attested and hardened. So to me=
+ it made sense to keep the jobs separate.</div><div>=C2=A0</div><blockquote=
+ class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px so=
+lid rgb(204,204,204);padding-left:1ex">
+<br>
+What&#39;s the plan for meta-yocto-containers-demo? Should we host that on<=
+br>
+<a href=3D"http://git.yoctoproject.org" rel=3D"noreferrer" target=3D"_blank=
+">git.yoctoproject.org</a>, or will the contents eventually be merged into<=
+br>
+meta-virtualization?<br></blockquote><div><br></div><div>I haven&#39;t disc=
+ussed this with Bruce, but I think it makes sense to have the official list=
+ in meta-virtualization, when they are ready. The other main reason for the=
+ meta-yocto-container-demo layer is for things like the slsa-provenance.bbc=
+lass before submitting that to oe-core.</div><div><br></div><blockquote cla=
+ss=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid =
+rgb(204,204,204);padding-left:1ex">
+<br>
+Best regards,<br>
+<br>
+-- <br>
+Paul Barker<br>
+<br>
+</blockquote></div></div>
+
+--0000000000001aeacc06518e30d5--
 
