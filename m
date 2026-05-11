@@ -1,323 +1,173 @@
-Return-Path: <ticotimo@gmail.com>
+Return-Path: <rong.fu.cn@windriver.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF8D5CD3447
-	for <webhook@archiver.kernel.org>; Sun, 10 May 2026 00:47:41 +0000 (UTC)
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.22529.1778374055170712861
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D360CD37B2
+	for <webhook@archiver.kernel.org>; Mon, 11 May 2026 01:05:55 +0000 (UTC)
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.40248.1778461549724769829
  for <yocto-patches@lists.yoctoproject.org>;
- Sat, 09 May 2026 17:47:35 -0700
+ Sun, 10 May 2026 18:05:50 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=CjSSVbZp;
- spf=pass (domain: gmail.com, ip: 209.85.216.50, mailfrom: ticotimo@gmail.com)
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-367dd53815fso292196a91.0
-        for <yocto-patches@lists.yoctoproject.org>; Sat, 09 May 2026 17:47:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778374054; x=1778978854; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Vs8RuFCxoBQjFS91jjdCkhuZq7hlN5GJgHV65iNw72c=;
-        b=CjSSVbZpMvv0SMGGBGwxGjBzpI6o8ka3Uc2LOMIeD7oJK+bu5vTm3BcJweXNui3kb3
-         W0IEU///o7g6eHAMXtOOMAhTPsC2/gVtBBciQN+Q1cLaWchNl//yaqF1+cKfeLkBDOR/
-         cU0ZRNce74piDIpnWdC7tU2x7o2T2FBeIj+yF3G3ZRgUVYfCSvqu0OfW7Mpr82rMzgwG
-         uVs989sGmDdakcxWwCezAbAV8raQ4sl8nItwHwhI11x2017VtWRDP608VOQU7YVsMXiF
-         TUQJseFeNXHsR91b31Ty0MpShNbotGGPPIaQXw2m89D8DxDuNnt6MoOeNUjyMv5iCzFT
-         XyAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778374054; x=1778978854;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Vs8RuFCxoBQjFS91jjdCkhuZq7hlN5GJgHV65iNw72c=;
-        b=a0FcpLX+DN8/mNbY85R2Ze4MyoZMQo3zen+aZhTGtr1KjYzIA8/Tpay8iD1EIjILy+
-         4kujwoo1tifvM9VRNwkRmY/AgAS4x96LKEK9Qu83ciyhwqJ853fwiYwvAKVCNK7Id8qX
-         9r6gZwcddKrcSSFB2d84NK5PzpdwQGtxmI5m6GyCchDSK8mup1Uf8SzqrOfWIeg3KPT0
-         Z2XyyWg/i/EOs2xsJFKx1JIsLHDC9W293Z8dUSwaOJKHPWYgp/sN9yW2y3Pij4v0zSdP
-         iJ9vEhbmAB3ukaKePno0e1rydSswHfG0GiPJydS4ofOxRvW5MFwkgpAwlm/U0gRIqjZy
-         yQ6Q==
-X-Gm-Message-State: AOJu0Yx59f+lNYa5aV+C8moVEDHbqAFEaafQPdsHfaMgr0NMAosnplzx
-	I1AbmF2WLaNrSpq6o27TKcaKa6fZhlEMrsplMJ4KUcdvGriVTnGoTlBoU/yyTQek
-X-Gm-Gg: Acq92OGYudnDGX2ZUJmibTOArxS609IjCGhFcG+2LzGyhupQqT7TYGg+ZWbSzu+b6HU
-	n1lX2JEpuj0PMsyQ2Q7KFEcObAbUAMvnY31r6EXDb0D7vpqLKiR2L362qH77EcQWXb0YfTtVhJi
-	KAEHtBjdEnsb4owBNZ61qgBkveNVpYml9qehAVqXCrFdUlIEWkevJHqNQWR5cQwnI7O1jcanyKW
-	Q4PTYfoRsuiXf/OBhb4fzq7FdmDzkrgG/ulcgl6rvMNT1RZbh+vzusyYz6slRRTh7wnWFXMVXbY
-	CTrc+g6Woa6G37jPGu7qNGruu7fQf0pY6A+11Z4HigUIRR75E/g+LxmRQqM7s0rJ1hWoN6K48P/
-	JkSIKUfdmCXx85H6mmIJV26O//p03IpRDIoLb2fPDZ+/hF3BybQIyz8Ea4az8c+aW5IWFFlXatT
-	1YOKn9d/TPsPyIHnQGYJ/hmNu9uZSzU8KHkKcg0M3qAvoYuultkBv/aq53Iz3YwJdEUI3dU25uQ
-	ObHnLsEM2EUs2vEnnqfsBs/ef4s6wzSBA==
-X-Received: by 2002:a17:90b:2d8a:b0:367:e13b:f52 with SMTP id 98e67ed59e1d1-367e13b11cemr2399916a91.0.1778374053880;
-        Sat, 09 May 2026 17:47:33 -0700 (PDT)
-Received: from localhost.localdomain (c-98-232-159-17.hsd1.or.comcast.net. [98.232.159.17])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-367d627bc2bsm3178257a91.7.2026.05.09.17.47.32
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sat, 09 May 2026 17:47:33 -0700 (PDT)
-From: Tim Orling <ticotimo@gmail.com>
-X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
+ dkim=pass header.i=@windriver.com header.s=PPS06212021 header.b=ivvW6rB4;
+ spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.166.238, mailfrom: prvs=9591808096=rong.fu.cn@windriver.com)
+Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64B0wdRU100066
+	for <yocto-patches@lists.yoctoproject.org>; Sun, 10 May 2026 18:05:49 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
+	 h=cc:content-transfer-encoding:content-type:date:from
+	:message-id:mime-version:subject:to; s=PPS06212021; bh=rA0O3HSNp
+	xaKM/CwgXyRlzkcAmaPjT0W9AJhxpGCaao=; b=ivvW6rB4NbWx62kVubjEmK/cp
+	kFa5ULau4cUCEj0owoUv2m8qZG11z/RpHmkixcvbulWs03YBxBvbrTS9EGny6LsE
+	9xcBlI57+2v+CGbixUk7+nk2sl84/PsDhSXRLL5kUYgZqMNtgxLtMW6Y5uhMAYRP
+	0c5WaPR4AY03ru5S7dU0zDtfpzjVI4NIRIukswc71Z3Z/LcsN66+aJ50lH/9m9fX
+	SOhaIJaT3nMbTX4h3LOby2cYihjZDRStnnHgdtrExDj/yFMp2Jiu941Y+EJwwG+i
+	t7LChfU2IhPWAy0FmqcGSduDQ527NfWtm6igaGW+UWwjG4c7K7vzbt86MaIuQ==
+Received: from sa9pr02cu001.outbound.protection.outlook.com (mail-southcentralusazon11013002.outbound.protection.outlook.com [40.93.196.2])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4e206xs83j-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT)
+	for <yocto-patches@lists.yoctoproject.org>; Sun, 10 May 2026 18:05:49 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XLdfu2FeMBK8Yc4r1r6qQhH0ze8dIdGz5IkTvSEIHxuRmu6iqQfo42AS4u7M2w8YdcVj5Gr0/CDSJtpl8FBoFwdTJq/6kQawkJuPlPudDh4uD42oLaClmK1AALdhBBxYucWxB7AmgakSd+k1nyNJXs6ItJ//vocvYo5B7jeHCAC0REop2atb/FYotfwrPJYrCAG/qFMFp6Vz5uj/Wrvo3WNG3AAHh1R1VL1s6GszwD3ZyaLqkhZEqA47XrJnDs42nIKLLeyLrdSzf8v1sTBIjWFknt4QRnV5cxwksB0OIz+ioM2YZ7idijWlCP/0ML3cwWjTpFpyCs+vqzaLCxkkig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rA0O3HSNpxaKM/CwgXyRlzkcAmaPjT0W9AJhxpGCaao=;
+ b=ZobqfkRr7dHaR/57DNzawemsK5EjgBbGxqd8rE+PUlQ1RivL4UbGELWvzjDcj7DJsFgNB9l3RLUNNtOMLMejNon5J9CTFcvyoIjj8TRW/SKnV8sLvfvr5pXOSCB1c8+FxzAwEsEcvveQB7hmWIfdqILYkbPyEcwYf147re5qwq1Cqw3G0R6Mv7ZZMbbh5yB5Vw5qKcB7yjdZcG+yAAkoHODw4KzStSNkPcYamAG/3RqJym3kHR1AKnAoFf5C7jxw0SDjJLoq6dW0JoS26XVA++3KnDhnieExW8nJFx74+TZfX4jf5dvmOUsyR/YLX5hHAfBHpeMPEsDLiXMJrbNxwQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=windriver.com; dmarc=pass action=none
+ header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
+Received: from LV2PR11MB6069.namprd11.prod.outlook.com (2603:10b6:408:17a::9)
+ by IA1PR11MB7199.namprd11.prod.outlook.com (2603:10b6:208:418::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9891.22; Mon, 11 May
+ 2026 01:05:46 +0000
+Received: from LV2PR11MB6069.namprd11.prod.outlook.com
+ ([fe80::d94b:502e:dc16:ad36]) by LV2PR11MB6069.namprd11.prod.outlook.com
+ ([fe80::d94b:502e:dc16:ad36%4]) with mapi id 15.20.9891.021; Mon, 11 May 2026
+ 01:05:46 +0000
+From: Rong Fu <rong.fu.cn@windriver.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Tim Orling <tim.orling@konsulko.com>
-Subject: [layerindex-web][PATCH 4/5] tests: add DuplicatesView tests
-Date: Sat,  9 May 2026 17:47:02 -0700
-Message-ID: <20260510004706.81282-4-tim.orling@konsulko.com>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260510004706.81282-1-tim.orling@konsulko.com>
-References: <20260510004706.81282-1-tim.orling@konsulko.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Cc: rong.fu.cn@windriver.com
+Subject: [meta-selinux][scarthgap][PATCH] libselinux-python: fix do_install line continuation
+Date: Mon, 11 May 2026 09:05:32 +0800
+Message-Id: <20260511010532.813420-1-rong.fu.cn@windriver.com>
+X-Mailer: git-send-email 2.34.1
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TY4P301CA0089.JPNP301.PROD.OUTLOOK.COM
+ (2603:1096:405:37a::10) To LV2PR11MB6069.namprd11.prod.outlook.com
+ (2603:10b6:408:17a::9)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV2PR11MB6069:EE_|IA1PR11MB7199:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5e4386df-e100-458d-acbb-08deaef96ead
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: 
+	BCL:0;ARA:13230040|366016|52116014|376014|1800799024|38350700014|56012099003|18002099003;
+X-Microsoft-Antispam-Message-Info: 
+	oZ3VBbz4K9e9kGjDd1zpoDCR80lHM86SVqoWLUWdMHZXzqUipbfLzRkGR29a8ZfzW3AGejDJQxOXxYPZXa2p22lGA91CCHIW7u3vQfj6bXF3xYEoeTH4qC9TF1SXVJo0eya7I45Bw5S3E/UcscMEbDTq1UqUY5bP9gfW8HLKH7gLn1cRPjhRAzCK9Tqf6kWckH4JhQkoCehsAyNKqPB+eFokPIgILQEx5RJnhpeGY6WHgy/BuQfYLJb9a2i9TctLD2rxkV1QZX1cvAidTftumVW5Z/UIP2y9P6oexb6Z0cW1FtEWx0ElXSQX/GI1JZwFVfyXTM5tgnwn4JThwqDoi3eFDnivHNjJ7CTjwAHZB2eSF1uzW6sRrNpGhgBgl5iUsGVcuRXQXYDRs0XM4Ndmp+JkOBc90tyK+uZcBW4J8tRyPsPmE6fG2ipfyT8B+y+huyrVAxvpmf2NPelYViOyV7rfegL489V1eDSLR4Z9rILjXzA9eJNR4/qZDagUQIKiBPYM7/DSYuMdhXmHuqK5+xzS4Po70pro7Zu1Hs+spzsOKNiYMadSttfIyz903vJkCuETYOMgcVmDIdnb1QMc90kpkiPP3K6k/987Tt9nLfDx9ce3UWZRvIbU+bbZ0RY65Fb/FI2Q3qif90e0BQEoimTjSVXbjvDZxvWLgYHAoXaDSflbytmorQDlKDHT0nn4xWgOonslU0AbvJPNF6P/8tDd3CiSULhx4pREw/KCoy5HPPmdt+PAs6VNFgiQOqZj
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR11MB6069.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(1800799024)(38350700014)(56012099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?wkePHY0+LP/RaNnczxVwCgAiKC6ucb8J8OLvJLvnleo6fmXvAJCvCdhGTaAj?=
+ =?us-ascii?Q?NeIHdZIhLtzIJzkUkujhSkjQtUp9w3xrH1tQHlqXNzA8x5CbuxZNjYWXfq6d?=
+ =?us-ascii?Q?5YVMrQtjn2Wc3U1MN58ehfiddHGYFDPuQs9UByQwJ0vkiyc/2y15ihz38dxu?=
+ =?us-ascii?Q?4YB9BsMXXhui0gThRbZFiWTxVchCbc+AYXp0OATp82Zv9he0FALMPMPpWUvH?=
+ =?us-ascii?Q?JOb/sYsfhSig33carolFH0ZE7sDd1SNLieYQDEt+XkwdYJ1wZk1WBC0izAob?=
+ =?us-ascii?Q?aRFKgZ3ttJmwtUtSHDSy1xhXIKiFXvg2btL/MF1T3OHDq16ACbp9ZTSomCOr?=
+ =?us-ascii?Q?0h6Ve5q+4jLD21I5QWSP82YGJT3IrPF7ySi3qVFx/fAPWLFMYwyxh/0R7COT?=
+ =?us-ascii?Q?mL9uPG51dQEh+Ri4kV/L//XpbnH+EewiUE2k7kblFG+64d7FKyvUBwjmVzS9?=
+ =?us-ascii?Q?Y++mVf1outcavNm6uuppehTFlujfyYv/rozXVzbQQWlR+pr7HlfxL+NlXPGQ?=
+ =?us-ascii?Q?V1D17UeqCyjzwKa9Bn469rxIzcF7q/vkcP5O4VPHlcfV9P2oDLs4d+jHJdaZ?=
+ =?us-ascii?Q?C20fK5KDEZ7UdUmIITdXWNeuilKhAIWlFJXiGRSHPcMcGdrYRWby8WssZVcz?=
+ =?us-ascii?Q?HNbj09MjYK+5MG80dI8Yt/clbZfV/pBPyPgRQLZCamHcoN0Rpr1FC/mtOERH?=
+ =?us-ascii?Q?u8IHQB3iRYXqDx05xWvAWxNzjsXZmCic4w3uaG9Za2+xg7N3W4zWYDXP///S?=
+ =?us-ascii?Q?zTK5zixTZchT9CwpWOQYQLJrasJM/ZcU4gcwrJqcNx8aNU7dk6Cpycj7UlC+?=
+ =?us-ascii?Q?0X4mgv/6DRI5UhVxf2d2tvmygOdwah9RgEGEcAIpJzsJn0KwPmK2ykcr45qr?=
+ =?us-ascii?Q?Py3NYvcPXj1swVjQIqOtEvRfQKMAbiZs7Lg06guyoWCYMwi6IQ8cobst7SlI?=
+ =?us-ascii?Q?WL5psTCbSPvw13pdvjAIyttpDM0SJ07M4ZGAkvSh5olYkf3lizKWE6lQ1PJI?=
+ =?us-ascii?Q?fykYRbEBAm/Hbx5bt//lhgvyBiDVgXbAArjKxZbQYIvizHPz/lGAusnsyy27?=
+ =?us-ascii?Q?kGX1OcgJyLseZEqi8nQ5Co5hslKbIokS9g7cFvYU31lI2AXh9sPsCetjBhDQ?=
+ =?us-ascii?Q?LAIDK76gAieOUNI5UDR9sCvHXz7pKpYkepy1bWyAib754Bm0rOkQYy+/fKxr?=
+ =?us-ascii?Q?8+LEy/W7irGwqEZ/mXwGWhoVFQE9W03YVZmvuaBL+2qWJZZO410QeA/MoPPu?=
+ =?us-ascii?Q?1u/QYzytSteo2a0ug3pC90dUZhAhV5JLVGup6LeOW8xuYSsVXZffuf1vlbwA?=
+ =?us-ascii?Q?CQRyrB9+u7zgqkVMk1Gm1nVkHP2i3ZY+DoWjDdOS0VZ9NJLRDGyq1HtSyTcD?=
+ =?us-ascii?Q?blcyTKRmBpPxU/SJMjQcVmsWiI7jTVbCTvgGMGN67nAqe151YGuy0jcABwsx?=
+ =?us-ascii?Q?oGqpOt6DtEGZrmlXFoC8NqQV1qNVSZPZV9p0KObAdQIK3IbHYS8i+aCVdpik?=
+ =?us-ascii?Q?U61nGrc1ltIkVxGE48BLFCFsQ4cyLOZg0K6dzU1q+pUbebTM1/Mp2B8eCD5u?=
+ =?us-ascii?Q?oEt647g2wXItwHh4FR/l4toAH8pQzuGqZRougSE4hjaVxIlG9ZdQ7M1YwD67?=
+ =?us-ascii?Q?WTdLBE3o1bttygjPgaIeCiILiWsJt8M6Hcpn5z8IssitiHCAYC6EGI33TSgD?=
+ =?us-ascii?Q?kGYdEugKzmsnuwccqaJCpSMLBC+hk7k93H3MD/N4l2i8v0BXeJghqt5YAua5?=
+ =?us-ascii?Q?68kCdGHYWg=3D=3D?=
+X-Exchange-RoutingPolicyChecked: 
+	AeBUU/2kjoa9GjbIKZzBxT2xdkPb2ZlYyk1dnFQh2cllGphI9ZF30ajw9CadJj6hdgugF5duY44u5gB9GtZt35X9b8AuBe42llERlN0HkdUX2TeHmPc9UH3llALkeQGY+Ev/2v9KQciviMiwt2B9aW8wWBacILJurhNf1c2hZwgPwWSRPmcRtI8UAc4q35/CZ3aoCW+0arNckbI4cMLk2LnkaF6ngfMiiQfc8+GDCtg4D7aIqmxnCpiKefl1beHiKEis4NlaFr/8CN4uwv+k9OBNwNiRzZrsG7JhvHoXoMvztTEaouki5TuwJCOnuveAXmQyxlQpq97QmqCGs5K4pg==
+X-OriginatorOrg: windriver.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5e4386df-e100-458d-acbb-08deaef96ead
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR11MB6069.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 May 2026 01:05:46.3267
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: eR1VXS2AstwvRwpcDN0/hAtx+eGXhzjV/6r30oOWTKgWNW1IYcDpS9HxSwklJngSszuIzuooGcMid5kDSoZnzHsxF2tyZyvJZk7BLEajxk0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB7199
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTExMDAwOCBTYWx0ZWRfX1ZnLwnEmyred
+ IJE/7psFxKWQC2JAs/IZDvRNrfaSUvZiEY7s9AHvXkvCQy12OhLS9mtdGaS0ImFbffIQVDFtjcK
+ +MnDDnfpvB4e8WNO/bZkb6gFWn3kMZzs76PbvpYURC5eTlnzOAR5X1gw5zgBVJbCqSc3EeXgdJt
+ OLLPmo7yoLwQbJPPwJ7geBffqoS7o+AiqICXr3HGEH7FFDDRNdRG54qUc8X9r+fpYwwHVB86tE7
+ VnscT56OSBF0CelYqcIppVQomOLlMK5hglVhIe05Pc6mGKMfHDgF/fB/KvhwnovM0R2h7lXD1yk
+ C6ORhAadS4xmjMtJqliQZbnkNM1r2anxXvv+DTbAe8FLwyuUwD8a3QEnTY39sLLLmUkOwlZDO4x
+ 24EilTyr7FsicY1XmLxI+s+MjO/3mQV61cZUvpxcKzVwKa4rHjTszr2RgTC5fjg3TYTQf/Jukvj
+ BCrE0hekKPLrzh58M9w==
+X-Proofpoint-ORIG-GUID: UQOxV3_cyU-CNW5XV4vQDKzwYpCLvbHn
+X-Authority-Analysis: v=2.4 cv=CJMamxrD c=1 sm=1 tr=0 ts=6a012b6d cx=c_pps
+ a=qSv8Sft3UEt4GReRCOm4JQ==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
+ a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=xqWC_Br6kY4A:10 a=NGcC8JguVDcA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=bi6dqmuHe4P4UrxVR6um:22 a=HK-ge7EqtdluswH-FwHe:22 a=t7CeM3EgAAAA:8
+ a=Sl6XQQimaeeO5uW2YNIA:9 a=ZXulRonScM0A:10 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-GUID: UQOxV3_cyU-CNW5XV4vQDKzwYpCLvbHn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-05-10_06,2026-05-08_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 spamscore=0 bulkscore=0 adultscore=0 malwarescore=0
+ impostorscore=0 phishscore=0 suspectscore=0 clxscore=1015 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2604200000 definitions=main-2605110008
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sun, 10 May 2026 00:47:41 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3961
+ <yocto-patches@lists.yoctoproject.org>; Mon, 11 May 2026 01:05:55 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3963
 
-Add test_duplicates_view.py covering the DuplicatesView duplicates page:
+Backport fix from master commit f7306d7af4425553684a860df6f6d0ee66efba31
+to add missing line continuation backslash after PREFIX=${prefix} in
+do_install().
 
-- HTTP 200 response
-- Duplicate recipes/classes/include files are included in context
-- Unique (non-duplicate) objects are excluded from context
-- Each duplicate appears once per layer (two rows for two layers)
-- Layer filter (?l=id) restricts results to the selected layer,
-  suppressing duplicates when only one layer is in scope
-- Branch with no data returns empty querysets
-- select_related check: accessing layerbranch.layer.name after list
-  evaluation fires no additional queries
-
-[YOCTO #16175]
-
-AI-Generated: Claude Cowork Sonnet 4.6
-Signed-off-by: Tim Orling <tim.orling@konsulko.com>
+Signed-off-by: Rong Fu <rong.fu.cn@windriver.com>
 ---
- tests/test_duplicates_view.py | 218 ++++++++++++++++++++++++++++++++++
- 1 file changed, 218 insertions(+)
- create mode 100644 tests/test_duplicates_view.py
+ recipes-security/selinux/libselinux-python_3.7.bb | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tests/test_duplicates_view.py b/tests/test_duplicates_view.py
-new file mode 100644
-index 0000000..304a35c
---- /dev/null
-+++ b/tests/test_duplicates_view.py
-@@ -0,0 +1,218 @@
-+# layerindex-web - tests for DuplicatesView
-+#
-+# Copyright (C) 2026 Tim Orling <tim.orling@konsulko.com>
-+#
-+# Licensed under the MIT license, see COPYING.MIT for details
-+#
-+# SPDX-License-Identifier: MIT
-+
-+# Tests for bug #16175 - Duplicates page timeout
-+# https://bugzilla.yoctoproject.org/show_bug.cgi?id=16175
-+#
-+# The fix replaces Python list comprehensions used to build IN (...) clauses
-+# with Django ORM subqueries, and adds select_related to avoid N+1 queries
-+# when the template resolves layerbranch__layer names.
-+
-+import pytest
-+from django.test import TestCase
-+from django.urls import reverse
-+
-+from layerindex.models import (Branch, LayerItem, LayerBranch, Recipe,
-+                                BBClass, IncFile)
-+
-+
-+@pytest.mark.django_db
-+class TestDuplicatesView(TestCase):
-+    """Tests for DuplicatesView (bug #16175 - duplicates page timeout fix)."""
-+
-+    def setUp(self):
-+        self.branch = Branch.objects.create(
-+            name='main',
-+            bitbake_branch='master',
-+            short_description='Main branch',
-+            sort_priority=1,
-+            hidden=False,
-+            updates_enabled=True,
-+        )
-+
-+        # Two layers — objects in both will appear as duplicates
-+        self.layer_a = LayerItem.objects.create(
-+            name='meta-alpha',
-+            status='P',
-+            layer_type='A',
-+            summary='Alpha layer',
-+            description='Alpha test layer',
-+            vcs_url='git://example.com/meta-alpha.git',
-+        )
-+        self.layer_b = LayerItem.objects.create(
-+            name='meta-beta',
-+            status='P',
-+            layer_type='S',
-+            summary='Beta layer',
-+            description='Beta test layer',
-+            vcs_url='git://example.com/meta-beta.git',
-+        )
-+        # A third layer whose objects are unique (should NOT appear as duplicates)
-+        self.layer_c = LayerItem.objects.create(
-+            name='meta-gamma',
-+            status='P',
-+            layer_type='S',
-+            summary='Gamma layer',
-+            description='Gamma test layer',
-+            vcs_url='git://example.com/meta-gamma.git',
-+        )
-+
-+        self.lb_a = LayerBranch.objects.create(layer=self.layer_a, branch=self.branch)
-+        self.lb_b = LayerBranch.objects.create(layer=self.layer_b, branch=self.branch)
-+        self.lb_c = LayerBranch.objects.create(layer=self.layer_c, branch=self.branch)
-+
-+        # Duplicate recipe (same pn in layer_a and layer_b)
-+        Recipe.objects.create(layerbranch=self.lb_a, filename='shared_1.0.bb',
-+                               pn='shared', pv='1.0', filepath='recipes-test')
-+        Recipe.objects.create(layerbranch=self.lb_b, filename='shared_1.0.bb',
-+                               pn='shared', pv='1.0', filepath='recipes-test')
-+        # Unique recipe (only in layer_c — should NOT appear)
-+        Recipe.objects.create(layerbranch=self.lb_c, filename='unique_1.0.bb',
-+                               pn='unique', pv='1.0', filepath='recipes-test')
-+
-+        # Duplicate class (same name in layer_a and layer_b)
-+        BBClass.objects.create(layerbranch=self.lb_a, name='sharedclass')
-+        BBClass.objects.create(layerbranch=self.lb_b, name='sharedclass')
-+        # Unique class (only in layer_c — should NOT appear)
-+        BBClass.objects.create(layerbranch=self.lb_c, name='uniqueclass')
-+
-+        # Duplicate include file (same path in layer_a and layer_b)
-+        IncFile.objects.create(layerbranch=self.lb_a, path='conf/shared.inc')
-+        IncFile.objects.create(layerbranch=self.lb_b, path='conf/shared.inc')
-+        # Unique include file (only in layer_c — should NOT appear)
-+        IncFile.objects.create(layerbranch=self.lb_c, path='conf/unique.inc')
-+
-+    def _url(self, branch='main'):
-+        return reverse('duplicates', kwargs={'branch': branch})
-+
-+    def test_duplicates_view_returns_200(self):
-+        """DuplicatesView should return HTTP 200."""
-+        response = self.client.get(self._url())
-+        self.assertEqual(response.status_code, 200)
-+
-+    # --- Recipes ---
-+
-+    def test_duplicate_recipes_included(self):
-+        """Recipes appearing in more than one layer should be in context."""
-+        response = self.client.get(self._url())
-+        pns = [r.pn for r in response.context['recipes']]
-+        self.assertIn('shared', pns)
-+
-+    def test_unique_recipes_excluded(self):
-+        """Recipes appearing in only one layer should not appear."""
-+        response = self.client.get(self._url())
-+        pns = [r.pn for r in response.context['recipes']]
-+        self.assertNotIn('unique', pns)
-+
-+    def test_duplicate_recipes_have_two_rows(self):
-+        """Each layer's entry for the duplicate recipe should be present."""
-+        response = self.client.get(self._url())
-+        shared = [r for r in response.context['recipes'] if r.pn == 'shared']
-+        self.assertEqual(len(shared), 2)
-+
-+    # --- Classes ---
-+
-+    def test_duplicate_classes_included(self):
-+        """Classes appearing in more than one layer should be in context."""
-+        response = self.client.get(self._url())
-+        names = [c.name for c in response.context['classes']]
-+        self.assertIn('sharedclass', names)
-+
-+    def test_unique_classes_excluded(self):
-+        """Classes appearing in only one layer should not appear."""
-+        response = self.client.get(self._url())
-+        names = [c.name for c in response.context['classes']]
-+        self.assertNotIn('uniqueclass', names)
-+
-+    def test_duplicate_classes_have_two_rows(self):
-+        """Both layer entries for the duplicate class should be present."""
-+        response = self.client.get(self._url())
-+        shared = [c for c in response.context['classes'] if c.name == 'sharedclass']
-+        self.assertEqual(len(shared), 2)
-+
-+    # --- Include files ---
-+
-+    def test_duplicate_incfiles_included(self):
-+        """Include files appearing in more than one layer should be in context."""
-+        response = self.client.get(self._url())
-+        paths = [f.path for f in response.context['incfiles']]
-+        self.assertIn('conf/shared.inc', paths)
-+
-+    def test_unique_incfiles_excluded(self):
-+        """Include files appearing in only one layer should not appear."""
-+        response = self.client.get(self._url())
-+        paths = [f.path for f in response.context['incfiles']]
-+        self.assertNotIn('conf/unique.inc', paths)
-+
-+    def test_duplicate_incfiles_have_two_rows(self):
-+        """Both layer entries for the duplicate include file should be present."""
-+        response = self.client.get(self._url())
-+        shared = [f for f in response.context['incfiles'] if f.path == 'conf/shared.inc']
-+        self.assertEqual(len(shared), 2)
-+
-+    # --- Layer filter ---
-+
-+    def test_layer_filter_restricts_recipes(self):
-+        """Passing ?l=<layer_id> should restrict results to that layer."""
-+        response = self.client.get(self._url() + f'?l={self.layer_a.id}')
-+        self.assertEqual(response.status_code, 200)
-+        # With only one layer selected, nothing can be a duplicate
-+        pns = [r.pn for r in response.context['recipes']]
-+        self.assertNotIn('shared', pns)
-+
-+    def test_wrong_branch_returns_empty(self):
-+        """A branch with no data should return empty querysets."""
-+        other = Branch.objects.create(
-+            name='other',
-+            bitbake_branch='other',
-+            sort_priority=50,
-+        )
-+        response = self.client.get(reverse('duplicates', kwargs={'branch': 'other'}))
-+        self.assertEqual(response.status_code, 200)
-+        self.assertEqual(len(list(response.context['recipes'])), 0)
-+        self.assertEqual(len(list(response.context['classes'])), 0)
-+        self.assertEqual(len(list(response.context['incfiles'])), 0)
-+
-+    def test_select_related_avoids_extra_queries(self):
-+        """Ensure layerbranch and layer are fetched with select_related.
-+
-+        Checks that accessing layerbranch.layer.name on query results does not
-+        trigger additional database queries (i.e. select_related is working).
-+        """
-+        from django.db import connection, reset_queries
-+        from django.conf import settings
-+
-+        settings.DEBUG = True
-+        reset_queries()
-+
-+        view = __import__('layerindex.views', fromlist=['DuplicatesView']).DuplicatesView
-+        v = view()
-+        v.kwargs = {'branch': 'main'}
-+        v.request = None
-+
-+        recipes = list(v.get_recipes([]))
-+        classes = list(v.get_classes([]))
-+        incfiles = list(v.get_incfiles([]))
-+
-+        # Record query count after fetching
-+        query_count_after_fetch = len(connection.queries)
-+
-+        # Access layerbranch.layer.name on every result — should NOT fire new queries
-+        for r in recipes:
-+            _ = r.layerbranch.layer.name
-+        for c in classes:
-+            _ = c.layerbranch.layer.name
-+        for f in incfiles:
-+            _ = f.layerbranch.layer.name
-+
-+        query_count_after_access = len(connection.queries)
-+        settings.DEBUG = False
-+
-+        self.assertEqual(query_count_after_fetch, query_count_after_access,
-+                         "Unexpected extra queries when accessing layerbranch.layer.name — "
-+                         "select_related may not be working")
+diff --git a/recipes-security/selinux/libselinux-python_3.7.bb b/recipes-security/selinux/libselinux-python_3.7.bb
+index 9023769..e0207f7 100644
+--- a/recipes-security/selinux/libselinux-python_3.7.bb
++++ b/recipes-security/selinux/libselinux-python_3.7.bb
+@@ -47,7 +47,7 @@ do_compile() {
+ do_install() {
+     oe_runmake install-pywrap \
+         DESTDIR=${D} \
+-        PREFIX=${prefix}
++        PREFIX=${prefix} \
+         PYLIBVER='python${PYTHON_BASEVERSION}' \
+         PYTHONLIBDIR='${PYTHON_SITEPACKAGES_DIR}'
+ 
 -- 
-2.54.0
+2.34.1
 
 
