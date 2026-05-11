@@ -2,147 +2,185 @@ Return-Path: <tim.orling@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9894BCD484C
-	for <webhook@archiver.kernel.org>; Mon, 11 May 2026 17:36:43 +0000 (UTC)
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.56498.1778520995623837434
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB973CD37BE
+	for <webhook@archiver.kernel.org>; Mon, 11 May 2026 17:49:53 +0000 (UTC)
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.56551.1778521787219874185
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 11 May 2026 10:36:35 -0700
+ Mon, 11 May 2026 10:49:47 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=HAXkosXZ;
- spf=pass (domain: konsulko.com, ip: 209.85.128.169, mailfrom: tim.orling@konsulko.com)
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-7bde9d73678so48929647b3.0
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 11 May 2026 10:36:35 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1778520995; cv=none;
+ dkim=pass header.i=@konsulko.com header.s=google header.b=Xs1Zb9Vo;
+ spf=pass (domain: konsulko.com, ip: 209.85.128.173, mailfrom: tim.orling@konsulko.com)
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-7b4ee3a88e1so46226917b3.1
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 11 May 2026 10:49:47 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1778521786; cv=none;
         d=google.com; s=arc-20240605;
-        b=gqcVbuEETREbs9yN6FbgPdBIk/YZHRajL3jGOpf1g2QAGnYfjPvmgUTkBPDAP7lIbn
-         23b1tc7033cIXRMSIoBmjJwALI7eFVYL7bctq9FCaSqz/O0k7ioygch+zalp1uQqlg4a
-         ILZLKganssequlDCE/xtiaQ5nc3mLDeuBwcGr4CKsADZYxYDBaEJNW/AqG0mqasSFIJf
-         gIt63hT5DXQvFs//rkz7pTdduLneJPpobDrT7KN2a7eSlEqeYw0ch9ut8NvlmoWhgtWR
-         3vW8TmDNJSB+DGtc4BhXegnhiViqPxZOoHv2YRTOm2fjWpxcFaEDUo0FVOjQSQ7bT7Vo
-         ipvA==
+        b=efV4gCqfkJNEqPfdlpHYz4EURoAl4sUcs/DlofjMXZBPXyZfCZXW8KY7gHg1yUYLFA
+         FyyejwFIf0TLWA9WMFdEDDbc/QOcuy0tUWUZM7SS0JPmhBcFvtV5u+3tw2sOpcx+Oqsg
+         8uUAsoAyzkw0qWvd8y5Ory38JwetW+DIZsPsxLI3IO7cN9aVrDCyqXTZJgf9kGsgStBC
+         koTfX4nagB1PjqUaxiVfN0paDsESFsmGGFDyTdlSwxckowB+84DgtzrfbrO02wXRlqxs
+         7/u8XNvEf9qCDp10xKRMUxC+FzduP8GRZGOTjUAoLx9BnMWNgmIgL44UhkerZJUPjsxc
+         jL9Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:dkim-signature;
-        bh=p+aXM3wUy2VlufaonbLEjbWnU2PAkqFPpNj7/qxHjtA=;
+        bh=5z2ijEmoDFgx+x9BND7IG/25UhWt4KVbNaceoyPmmnA=;
         fh=1xQzWt/W4EAmz/F47cA+kLIU/CAhbmRrVZxZ7KbnavU=;
-        b=FDdGDI2Riy2z6qh2Hs9SA5FK8uFPf6vq4K9bQnJo4iC3ubqad3NOOFa1CaYF6T+r7v
-         RwUZ24vzzGfdGv+4zHfFNRhI7kTfnAFCbMEypcVH1ixrSMlKFMdcTqYENY5NR2EqpqKE
-         f91HxEKgXO5HT/nc8hQHUdFN2m0/3No9i8waBMADjkTh8dagx3tHJ2mWTs28q4RQMCxL
-         l61ekGnqDbZfN8NeoXXOhVucz9MHwkERPNYEyqna0dyWLFXPwsAd11mPrMDk2nrnWWOI
-         Bruy7SobGVYPJVFGRtR2lix5cF80OPn+eenERVy5l9H58GuvAKKUugBd2EQp7bzuLifx
-         f9OA==;
+        b=GwlEK6oApHJAzU2biJy/He2M3ha4x+iKyN38MTj+QM0/lMiHRj02m4I6CZLWllQqBD
+         Vy5maR9onYUqay3cEeBAqjfbBXcK3uh4NLD7yKkecFRBiw06KLzSN5HZjnX5mRmCH3d7
+         DYt4VXly1PdIUF/TfgTalj84VS7DOQ6MTaWqH4LYO3IhGV3wA8eUVtJavuHZiERnggI5
+         Xv6NZQOlI5Is3R7tEpZvP7aTBNI2ZAnfPmaDUrjQQuAfiYWFGjrkOcUQdHGoabyRan4S
+         t+BS+ec/0p/reSxYfICIEPZHhQf24ah/PQuoXp5Ufi/oMEG4cGEwMtkwgN7l1hSz15Q/
+         HNpA==;
         darn=lists.yoctoproject.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1778520995; x=1779125795; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1778521786; x=1779126586; darn=lists.yoctoproject.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=p+aXM3wUy2VlufaonbLEjbWnU2PAkqFPpNj7/qxHjtA=;
-        b=HAXkosXZ1joUpa55013Tzq3Sc3F3Q716coPGRCAj7D3my1Tru6e6EMibVuusy+X0xi
-         2KIbbYoZ8UGJzQtmBNOi7BngJiZ8xtlyUX52mfQXocsMBhYBEj43H8uE8nLmva3F+hnl
-         xjUiNbrtLlgfg4hfCf0mdjqwMoxOBM9/wh2cE=
+        bh=5z2ijEmoDFgx+x9BND7IG/25UhWt4KVbNaceoyPmmnA=;
+        b=Xs1Zb9VoQ0Q2Efwj4c3QpbufRbiN0uwl9p5KCdt+q86wKV3nB2N0y+kABYBaTvjpIX
+         qCQLxN9aQsCMGJ+RLWC0jz6EcqXkeqIdrSgpJ67Hmgy++vJ0t2nXxjE6QnnboPFSW0Hs
+         ZV4NEv0jl1P9uO4z4q6jcN0zz+N5UqY9rUReI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778520995; x=1779125795;
+        d=1e100.net; s=20251104; t=1778521786; x=1779126586;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=p+aXM3wUy2VlufaonbLEjbWnU2PAkqFPpNj7/qxHjtA=;
-        b=XobQ09cgo+ltjOyrKpwl2hC8Bpb/bwSfzQwUmyHj7Lfdn5qDIt1pWKsu7lpLIGYIcU
-         Ty+Ikq2PVEYjshpvZvugk69VU/XaTVnjv2kx6gYWM9pRj5wDCBTVeI6p2fyxrSa9fJoe
-         Ki5zCD62SUPYati1sgMstr8ZZjHRAHeJ7HWvUbitLM7CJqMjDU59cC48tDW3uODHsRo2
-         /BAqImrBcYuwNUI86BX2yO+HRII43+8QhbdULtNZSRPUi/K1qirVQEbr2Fwci7UPBpin
-         Hq42KLweOXo9+T9t3whjykD5gNDGr3qBJBiuzf9oVwrcZDW/ikzQy5dJjmij6pTj+1/1
-         hA6w==
-X-Gm-Message-State: AOJu0YzwZJHG/yuKwrWNuqZHSoyG9Cnhy2FqvUize8kZtqeTWWFnlFyx
-	V4kF+7n0p/7d/LKrO274dO0nJUh6hNtj+LrDC3jGdebjnNCwe3OyKmK10qUC8cix2hjkkQdMrrh
-	bkmcAmach3KisBCx8h/aD2JsYJPPTphjtVo0bgVXZ97PHnE4JHyWQ
-X-Gm-Gg: Acq92OFZi7iKpdVERiaw9O6sUAAWrlU7Bz8e2yAnAMilYUQo0kP+61hxE6l7HtpkSJ2
-	uXKZ+909e1zZVw/PWBo22XJggkC/snrXlMkVaUCCRDiI1Fm8bk++Lh3Vdj+CY3KBJp88OrHL9JQ
-	I7ufIP0fwkvYaNTqnRcdK4yUvDtF5rEx4SCSMryez+sO4THgnNX6Z5H6VdtC9UZPB8FoMWm0G0E
-	jI0PNerkLMeeqz6vCjUdJUHjjrUzKmz3mJxHdzIKLx1Isl8/zniI0rheriftN1/PdKo2gPlymeg
-	Lu8ab6uV4HlaiiPsNw==
-X-Received: by 2002:a05:690c:3:b0:7b2:bf20:cdc9 with SMTP id
- 00721157ae682-7c50e421dd6mr5143977b3.7.1778520994535; Mon, 11 May 2026
- 10:36:34 -0700 (PDT)
+        bh=5z2ijEmoDFgx+x9BND7IG/25UhWt4KVbNaceoyPmmnA=;
+        b=mzvriSknzWcg3DzoBAOn9BdJz9TKDepcT4HvMWKs3NbvyjvvNe9TH1ewPLn5Oxpw/Q
+         /t50Bb+IxVBc+WnyRWvUUyoqjJet2A+6evytnmJsg7XoNmeQHpSLMdwXLX6asn6UILhj
+         QYStnfJlaii/01fD+uOWWTwvzG7xSIxV+RWAr4SinS4yW+0tkH4m5oj61hzP0vPwQbtr
+         CVlPs8vZAx9E75Z0BHoefU3E4wVREb9fR3frRfJpOJ/jaD78kpm80so47nMvGnop7mIq
+         L0eJY/OykkwimwVEh7wfO85u4r+ggJmCXXO3LQ3l7j1dLs0pbSQA8vRi/iZnQXQjHZ0V
+         Q6Ag==
+X-Gm-Message-State: AOJu0YxdvX9YyfjtCAA0Fsg6Ielxe70A6TwH8PbWaXNXA8J1rqR8p1Wn
+	6TX29NMUEBfwHkjJGgZpETdw7yosbABcotkZDqblBlSd7Ej9eG6pPk8Nb+NSmMrWsqcSWFPFHrl
+	mlZ6nhJiNWAcOFUUlhd+nL4/af/UcmFHMCQdP+UDLbKs+RhwD6XDi4hY=
+X-Gm-Gg: Acq92OHv2ki/YXCC4K0tcS8l7PoM+0gKQBZ9jQlMuJ6ETQGqp/gnZJMdRKGliBH0E6+
+	jT6L3MFVQazNFgkZmcAL4w9CgrKnFhGKODUM5/KrECuPBM1Pur5HFX8k+iW2TMUQrh3ppNWvfCE
+	0QiNC9ur8FU8QPAiiY+OpaGcvsBhtlasVonUHZxgpbj+F0eFG5XI3qb1FaddRgGWJi3rTdihH7T
+	hX21xqqO6s9BfQnqmjQNF44GTM3yKt9fp4LpCYn/r659vh5/CgNiKZLJrh6vT5m9GAkFObCJcKf
+	B4Y64Xg=
+X-Received: by 2002:a05:690c:c4d3:b0:7bd:6114:4002 with SMTP id
+ 00721157ae682-7bdf5efc9a4mr275339057b3.40.1778521786202; Mon, 11 May 2026
+ 10:49:46 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1778202125.git.tim.orling@konsulko.com> <1c444ecb2272a384e77a786f7ca32767f791ce34.1778202125.git.tim.orling@konsulko.com>
- <dcfc99d7b81e1083ef3607adde6055f4a81d3534.camel@pbarker.dev>
-In-Reply-To: <dcfc99d7b81e1083ef3607adde6055f4a81d3534.camel@pbarker.dev>
+References: <cover.1778202125.git.tim.orling@konsulko.com> <f76cfa3158594d6abef88eaea589b9e135158e9f.1778202125.git.tim.orling@konsulko.com>
+ <5356ea1df2a3b640943fed7fd3a358402b9ab644.camel@pbarker.dev>
+In-Reply-To: <5356ea1df2a3b640943fed7fd3a358402b9ab644.camel@pbarker.dev>
 From: Tim Orling <tim.orling@konsulko.com>
-Date: Mon, 11 May 2026 10:36:23 -0700
-X-Gm-Features: AVHnY4Ixdb0_j5INGt40jZ_HnpQa79pnh908KOL3MQ7O_LUYruEmTam9ijDt3OU
-Message-ID: <CAOyo-86bcAxxBy8bDi+dJmqnxUqbGaYhr-OXuAob0pvk9N-T4Q@mail.gmail.com>
-Subject: Re: [yocto-autobuilder-helper][PATCH 07/11] config.json: add
- 'containers-' build jobs
+Date: Mon, 11 May 2026 10:49:34 -0700
+X-Gm-Features: AVHnY4JlapF4vwU2t3Q0osQAUGZSRe07wMUIp-ZzxuL85lhQ-zCtlvHI9TqQnlU
+Message-ID: <CAOyo-84Hywi+Ho7MQdoOA7fjuC4dBFHWgs20te0YH8n+eH36sA@mail.gmail.com>
+Subject: Re: [yocto-autobuilder-helper][PATCH 06/11] config.json: add
+ vcontainer-tarball build target
 To: Paul Barker <paul@pbarker.dev>
 Cc: yocto-patches@lists.yoctoproject.org, yocto@lists.yoctoproject.org
-Content-Type: multipart/alternative; boundary="0000000000001aeacc06518e30d5"
+Content-Type: multipart/alternative; boundary="0000000000004ae3bc06518e5f99"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 11 May 2026 17:36:43 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3968
+ <yocto-patches@lists.yoctoproject.org>; Mon, 11 May 2026 17:49:53 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3969
 
---0000000000001aeacc06518e30d5
+--0000000000004ae3bc06518e5f99
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 11, 2026 at 1:52=E2=80=AFAM Paul Barker <paul@pbarker.dev> wrot=
+On Mon, May 11, 2026 at 1:48=E2=80=AFAM Paul Barker <paul@pbarker.dev> wrot=
 e:
 
 > On Thu, 2026-05-07 at 18:25 -0700, tim.orling@konsulko.com wrote:
 > > From: Tim Orling <tim.orling@konsulko.com>
 > >
-> > Add 'containers-' build jobs that build container images on top
-> > of the vcontainer-tarball SDK:
+> > Add the vcontainer-tarball build target which produces the
+> > meta-virtualization SDK used by downstream container build/test
+> > jobs. Modelled after the buildtools-tarball target.
 > >
-> >   * containers-meta-virt: the original app-container-* images that
-> >     ship in meta-virtualization itself (e.g. app-container-curl).
-> >   * containers-library: a layer for additional images modelled
-> >     after docker.io/library/*, sourced from meta-yocto-containers-demo
+> > The target uses EXTRACMDS to reset BBMULTICONFIG for the worker
+> > shell, places the extravars in the per-step config, and includes
+> > a publish-artefacts step so the resulting SDK tarball is staged
+> > for reuse by container-tests and other consumers.
+> >
+> > Signed-off-by: Tim Orling <tim.orling@konsulko.com>
+> > ---
+> >  config.json | 26 ++++++++++++++++++++++++++
+> >  1 file changed, 26 insertions(+)
+> >
+> > diff --git a/config.json b/config.json
+> > index ab0ad7c..9e6898d 100644
+> > --- a/config.json
+> > +++ b/config.json
+> > @@ -1869,6 +1869,32 @@
+> >          },
+> >          "toaster" : {
+> >              "EXTRACMDS" : ["${SCRIPTSDIR}/run-toaster-tests
+> ${HELPERBUILDDIR} ${HELPERBUILDDIR}/../layers/bitbake"]
+> > +        },
+> > +        "vcontainer-tarball": {
+> > +            "NEEDREPOS" : ["bitbake", "meta-openembedded",
+> "meta-virtualization"],
+> > +            "ADDLAYER" : [
+> > +                "${BUILDDIR}/../meta-openembedded/meta-oe",
+> > +                "${BUILDDIR}/../meta-openembedded/meta-python",
+> > +                "${BUILDDIR}/../meta-openembedded/meta-networking",
+> > +                "${BUILDDIR}/../meta-openembedded/meta-filesystems",
+> > +                "${BUILDDIR}/../meta-virtualization"
+> > +            ],
+> > +            "step1" : {
+> > +                "shortname" : "Build vcontainer-tarballs",
+> > +                "BBTARGETS" : "vcontainer-tarball",
+> > +                "extravars" : [
+> > +                    "DISTRO_FEATURES:append =3D ' virtualization
+> vcontainer'",
+> > +                    "BBMULTICONFIG =3D 'vruntime-aarch64
+> vruntime-x86-64'",
+> > +                    "INIT_MANAGER =3D 'systemd'"
+> > +                ],
+> > +                "EXTRACMDS" : ["sed -i '/vruntime-aarch64
+> vruntime-x86-64/d' ${HELPERBUILDDIR}/conf/auto.conf"]
 >
-> I think we should combine these into one build job.
+> What does this sed command achieve? EXTRACMDS run after building
+> BBTARGETS.
 >
-
-For now, that is impractical unless we use a branch of meta-virt that I can
-control (because the container recipes are in flux). Or I would have to
-continue running builds with a custom yocto-autobuilder-helper and a custom
-meta-virt branch which defeats the purpose of pushing the containers to the
-official registry.yocto.io and quay.io/yocto.
-
-Let me put it another way: the container recipes in meta-virt are a simpler
-demonstration. The container recipes in meta-yocto-containers-demo are
-heading towards being fully signed/attested and hardened. So to me it made
-sense to keep the jobs separate.
-
-
 >
-> What's the plan for meta-yocto-containers-demo? Should we host that on
-> git.yoctoproject.org, or will the contents eventually be merged into
-> meta-virtualization?
->
+Describing the reason was accidentally removed while refactoring and
+slimming down the number of commits.
 
-I haven't discussed this with Bruce, but I think it makes sense to have the
-official list in meta-virtualization, when they are ready. The other main
-reason for the meta-yocto-container-demo layer is for things like the
-slsa-provenance.bbclass before submitting that to oe-core.
+Original squashed commit message:
+"
+Since meta-virtualization is the first layer removed by 'remove-layers', ou=
+r
+BBMULTICONFIGs become invalid immediately after layer removal and throw an
+error.
 
+In scripts/run-config, EXTRACMDS runs after BBTARGETS, but before
+'remove-layers'.
+Use 'sed' to reset BBMULTICONFIG to ''.
+"
 
-> Best regards,
+The error in the 'remove-layers' step can be summarized as:
+
+bb.parse.ParseError: ParseError at
+/home/pokybuild/yocto-worker/vcontainer-tarball/build/layers/openembedded-c=
+ore/meta/conf/bitbake.conf:824:
+Could not include required file conf/multiconfig/vruntime-aarch64.conf
+
+Best regards,
 >
 > --
 > Paul Barker
 >
 >
 
---0000000000001aeacc06518e30d5
+--0000000000004ae3bc06518e5f99
 Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 <div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
 mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Mon, May 11,=
- 2026 at 1:52=E2=80=AFAM Paul Barker &lt;<a href=3D"mailto:paul@pbarker.dev=
+ 2026 at 1:48=E2=80=AFAM Paul Barker &lt;<a href=3D"mailto:paul@pbarker.dev=
 ">paul@pbarker.dev</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote=
 " style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);=
 padding-left:1ex">On Thu, 2026-05-07 at 18:25 -0700, <a href=3D"mailto:tim.=
@@ -151,47 +189,85 @@ r>
 &gt; From: Tim Orling &lt;<a href=3D"mailto:tim.orling@konsulko.com" target=
 =3D"_blank">tim.orling@konsulko.com</a>&gt;<br>
 &gt; <br>
-&gt; Add &#39;containers-&#39; build jobs that build container images on to=
-p<br>
-&gt; of the vcontainer-tarball SDK:<br>
+&gt; Add the vcontainer-tarball build target which produces the<br>
+&gt; meta-virtualization SDK used by downstream container build/test<br>
+&gt; jobs. Modelled after the buildtools-tarball target.<br>
 &gt; <br>
-&gt;=C2=A0 =C2=A0* containers-meta-virt: the original app-container-* image=
-s that<br>
-&gt;=C2=A0 =C2=A0 =C2=A0ship in meta-virtualization itself (e.g. app-contai=
-ner-curl).<br>
-&gt;=C2=A0 =C2=A0* containers-library: a layer for additional images modell=
-ed<br>
-&gt;=C2=A0 =C2=A0 =C2=A0after <a href=3D"http://docker.io/library/*" rel=3D=
-"noreferrer" target=3D"_blank">docker.io/library/*</a>, sourced from meta-y=
-octo-containers-demo<br>
-<br>
-I think we should combine these into one build job.<br></blockquote><div><b=
-r></div><div>For now, that is impractical unless we use a branch of meta-vi=
-rt that I can control (because the container recipes are in flux). Or I wou=
-ld have to continue running builds with a custom yocto-autobuilder-helper a=
-nd a custom meta-virt branch which defeats the purpose of pushing the conta=
-iners to the official <a href=3D"http://registry.yocto.io">registry.yocto.i=
-o</a> and <a href=3D"http://quay.io/yocto">quay.io/yocto</a>.</div><div><br=
-></div><div>Let me put it another way: the container recipes in meta-virt a=
-re a simpler demonstration. The container recipes in meta-yocto-containers-=
-demo are heading towards being fully signed/attested and hardened. So to me=
- it made sense to keep the jobs separate.</div><div>=C2=A0</div><blockquote=
- class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px so=
-lid rgb(204,204,204);padding-left:1ex">
-<br>
-What&#39;s the plan for meta-yocto-containers-demo? Should we host that on<=
+&gt; The target uses EXTRACMDS to reset BBMULTICONFIG for the worker<br>
+&gt; shell, places the extravars in the per-step config, and includes<br>
+&gt; a publish-artefacts step so the resulting SDK tarball is staged<br>
+&gt; for reuse by container-tests and other consumers.<br>
+&gt; <br>
+&gt; Signed-off-by: Tim Orling &lt;<a href=3D"mailto:tim.orling@konsulko.co=
+m" target=3D"_blank">tim.orling@konsulko.com</a>&gt;<br>
+&gt; ---<br>
+&gt;=C2=A0 config.json | 26 ++++++++++++++++++++++++++<br>
+&gt;=C2=A0 1 file changed, 26 insertions(+)<br>
+&gt; <br>
+&gt; diff --git a/config.json b/config.json<br>
+&gt; index ab0ad7c..9e6898d 100644<br>
+&gt; --- a/config.json<br>
+&gt; +++ b/config.json<br>
+&gt; @@ -1869,6 +1869,32 @@<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 },<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;toaster&quot; : {<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;EXTRACMDS&quot; =
+: [&quot;${SCRIPTSDIR}/run-toaster-tests ${HELPERBUILDDIR} ${HELPERBUILDDIR=
+}/../layers/bitbake&quot;]<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 },<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;vcontainer-tarball&quot;: {<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;NEEDREPOS&quot; : [&q=
+uot;bitbake&quot;, &quot;meta-openembedded&quot;, &quot;meta-virtualization=
+&quot;],<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;ADDLAYER&quot; : [<br=
+>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;${BUILD=
+DIR}/../meta-openembedded/meta-oe&quot;,<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;${BUILD=
+DIR}/../meta-openembedded/meta-python&quot;,<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;${BUILD=
+DIR}/../meta-openembedded/meta-networking&quot;,<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;${BUILD=
+DIR}/../meta-openembedded/meta-filesystems&quot;,<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;${BUILD=
+DIR}/../meta-virtualization&quot;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ],<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;step1&quot; : {<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;shortna=
+me&quot; : &quot;Build vcontainer-tarballs&quot;,<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;BBTARGE=
+TS&quot; : &quot;vcontainer-tarball&quot;,<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;extrava=
+rs&quot; : [<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ &quot;DISTRO_FEATURES:append =3D &#39; virtualization vcontainer&#39;&quot=
+;,<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ &quot;BBMULTICONFIG =3D &#39;vruntime-aarch64 vruntime-x86-64&#39;&quot;,<=
 br>
-<a href=3D"http://git.yoctoproject.org" rel=3D"noreferrer" target=3D"_blank=
-">git.yoctoproject.org</a>, or will the contents eventually be merged into<=
-br>
-meta-virtualization?<br></blockquote><div><br></div><div>I haven&#39;t disc=
-ussed this with Bruce, but I think it makes sense to have the official list=
- in meta-virtualization, when they are ready. The other main reason for the=
- meta-yocto-container-demo layer is for things like the slsa-provenance.bbc=
-lass before submitting that to oe-core.</div><div><br></div><blockquote cla=
-ss=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid =
-rgb(204,204,204);padding-left:1ex">
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ &quot;INIT_MANAGER =3D &#39;systemd&#39;&quot;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ],<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;EXTRACM=
+DS&quot; : [&quot;sed -i &#39;/vruntime-aarch64 vruntime-x86-64/d&#39; ${HE=
+LPERBUILDDIR}/conf/auto.conf&quot;]<br>
 <br>
+What does this sed command achieve? EXTRACMDS run after building<br>
+BBTARGETS.<br>
+<br></blockquote><div><br></div><div>Describing the reason was accidentally=
+ removed while refactoring and slimming down the number of commits.</div><d=
+iv><br></div><div>Original squashed commit message:</div><div>&quot;<br>Sin=
+ce meta-virtualization is the first layer removed by &#39;remove-layers&#39=
+;, our<br>BBMULTICONFIGs become invalid immediately after layer removal and=
+ throw an<br>error.<br><br>In scripts/run-config, EXTRACMDS runs after BBTA=
+RGETS, but before &#39;remove-layers&#39;.<br>Use &#39;sed&#39; to reset BB=
+MULTICONFIG to &#39;&#39;.</div><div>&quot;</div><div><br></div><div>The er=
+ror in the &#39;remove-layers&#39; step can be summarized as:</div><div><br=
+></div><div>bb.parse.ParseError: ParseError at /home/pokybuild/yocto-worker=
+/vcontainer-tarball/build/layers/openembedded-core/meta/conf/bitbake.conf:8=
+24: Could not include required file conf/multiconfig/vruntime-aarch64.conf<=
+br><br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px =
+0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">
 Best regards,<br>
 <br>
 -- <br>
@@ -199,5 +275,5 @@ Paul Barker<br>
 <br>
 </blockquote></div></div>
 
---0000000000001aeacc06518e30d5--
+--0000000000004ae3bc06518e5f99--
 
