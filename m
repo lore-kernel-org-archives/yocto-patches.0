@@ -2,76 +2,77 @@ Return-Path: <paul@pbarker.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 401C7CD37AC
-	for <webhook@archiver.kernel.org>; Mon, 11 May 2026 08:48:25 +0000 (UTC)
-Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.46024.1778489295365439408
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AA88CD37B9
+	for <webhook@archiver.kernel.org>; Mon, 11 May 2026 08:52:45 +0000 (UTC)
+Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.46067.1778489560315264926
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 11 May 2026 01:48:15 -0700
+ Mon, 11 May 2026 01:52:40 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@pbarker.dev header.s=fm1 header.b=BWP2Cw5F;
- dkim=pass header.i=@messagingengine.com header.s=fm3 header.b=CVl8W5yz;
- spf=pass (domain: pbarker.dev, ip: 202.12.124.155, mailfrom: paul@pbarker.dev)
+ dkim=pass header.i=@pbarker.dev header.s=fm1 header.b=MMmLWn4x;
+ dkim=pass header.i=@messagingengine.com header.s=fm3 header.b=r2bvAMhW;
+ spf=pass (domain: pbarker.dev, ip: 202.12.124.151, mailfrom: paul@pbarker.dev)
 Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 7F2027A00C1;
-	Mon, 11 May 2026 04:48:14 -0400 (EDT)
+	by mailfout.stl.internal (Postfix) with ESMTP id 8AEF51D000CC;
+	Mon, 11 May 2026 04:52:39 -0400 (EDT)
 Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-07.internal (MEProxy); Mon, 11 May 2026 04:48:14 -0400
+  by phl-compute-07.internal (MEProxy); Mon, 11 May 2026 04:52:39 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pbarker.dev; h=
 	cc:content-type:content-type:date:date:from:from:in-reply-to
 	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1778489294; x=1778575694; bh=LSHLq1LHR2
-	ht67Q4xfckSOmNorQ6v+9xLHrl0eleejk=; b=BWP2Cw5FJLrI2bLCVoz09g9G2o
-	wk3h4c2bnmhsKq8sUEfyiBg67guLUGsD0UesVi7TnDdHV6bEdSX28kmRF3cChM77
-	ebwBnGQD7iseDXQc4oIMcixVAjsfizdiqeeJfkxqYZtRT5A3vBZFSTTG8zbjjqnq
-	oYIopinWP5OHLq/obk+3s8exvzQ75+/jrKMhVitF4b8h5ZS5mtB5fTjRZNxrRIOG
-	dh0m7sdN+pQEr5LW9gzIALeXYQHo1uthphJOFAo2SEp9wfJCdDjQ5Kk84PNF7JFp
-	ydjBp/YLoJ/z1vHfLF6lkSLP8ohNkUsFrYl+oGYDWNK40swRvXZLuNjrbIFA==
+	:subject:to:to; s=fm1; t=1778489559; x=1778575959; bh=XhOsd5p/J7
+	PItXKEeidXFb3pERnEsvn4WPARA/EyI5U=; b=MMmLWn4xDqCmfiEnaObRNUM4Rq
+	4ERn/zoj2aOpjO07F2VI3tANxRXYpjaM008S9MLPQnbk+4525iUJ53vKbNgdWxiQ
+	gQQrieCfJ4qSe6l0wswifxzk8ff59T4oS4FsIVeGCwqBeg6/xEYqOppyUua6J5K6
+	OQD/NDvYhX7ocv44aZFU0o8lE5GriIv4y7R96nafTIx3EuQ/GxYJVCYNk2iooWh/
+	U3oGJXL2hnPyjgpxxOzVMLlU8RV1OAAwbVtqINW4rSTkLv23vswiRD3MNXJOL3ur
+	9ArqoCBo/1H6d7tmLSJ3Z3EzfwTD7aBfgVhb5ImYvyTXeqzAtaa+5STGxQog==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:content-type:content-type:date:date
 	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
 	:message-id:mime-version:references:reply-to:subject:subject:to
 	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1778489294; x=1778575694; bh=LSHLq1LHR2ht67Q4xfckSOmNorQ6v+9xLHr
-	l0eleejk=; b=CVl8W5yzkwKAWY4UBtCs615U8OVtwdYLNHldTAKt/0fbyIFUkgk
-	fFXnBM5dgyTTtwwKvWW3XF9akQVFSNB8u7N9Be338efn1Z5axGONyGsfW9aOe3d4
-	d/fK1Dwl/PeqGtlcbGiMcVf8ojvJUSh16A0er3hzbTuiBWlOeg8jHUOssRKBBk/7
-	1HoIcdKUM4ytQQQ283sasW/H6c1oYyNvKjlovBRn9uoFtg4jjpRAlHG29SVZDRmo
-	jb3lUvW4TDkw9Gj8uflHzmbkYdhMjcm8EuSPniuB4SW/zQOiCX0XJ3O51/ZiL8yV
-	JxHAjAI3f+DlrMNJd2cYCXlIk0WHVsGkzpA==
-X-ME-Sender: <xms:zpcBaqNlqo02SWAqZ5zwZKMxhQrIsvjmqhA44fekNaIvNRycf4p3Lw>
-    <xme:zpcBags87F3Sqrnn1mJJ4KdVTan8kHZqtXPu1MTcRUZEau_Riyv4vUdv3okP8sKtF
-    eNq_m3_ljIR8BmAhVvuvuVgNd7gRf88erx2wkZmqbK7sUu6xHM3BgI>
-X-ME-Received: <xmr:zpcBakXuDIpFcYoANL56VY_i2DpMFBuqAYHKhdiNhwzwIHCgkaU0_W1j1d6LFjsfkASx5idbP80ZavplvZsSmvGeYsw-wkViJ2oQLxUGb5oN>
+	1778489559; x=1778575959; bh=XhOsd5p/J7PItXKEeidXFb3pERnEsvn4WPA
+	RA/EyI5U=; b=r2bvAMhWLlw9tI2x15GsWLLkhGgiq205vQtiKczrgrsf7GXOaLN
+	LE4N5ggfm/XUSTq8udu1uE7KUQoFdMGGNsAu9DLbFntl9VGm/uhTd3LSGOZOZdbz
+	S6ijwWzkHzG0aAsatGsJW5Q6qUQV9sr3vYB8EClMQnQK/D4T1VK/V7AyNCH49UT9
+	RW/Z7XjOI90WtvcAr+Q6Dj81xsHyI0i8rage2YIJc7VMryKiHFt+qHENTNnLspUh
+	WNl5uSZoVcEL7kbdpQ3/hQYj0s7AaiFE3nR84PivbjeCnqKotqmyNJBAXK3lShzv
+	Y6hRCxI2yEQDiuWqsnFN9qaBy5ZMiX+0Oeg==
+X-ME-Sender: <xms:15gBapUFbFR1e-gOrNUIvIK20Lja65hGUz4_JuD3Tvk_jFmviZQj9A>
+    <xme:15gBahXCKEMlzFgVJPRt7qasDSukX9AHomwq3msxXTB8KIPZZFZ1uaAE8Wpe51CSO
+    0Yz-GupRT9Z3fIFYT5Uf61PbOkczVWBJ8lSr6b6wIQHOQZ4j11HKWA>
+X-ME-Received: <xmr:15gBaof8dsKdIdzDfL6u1kevJlRtEUpQJE5itXRWqR0--IiLXQZg8ymisUrgCNNM1IHW-vkSKQX83p6H6SiiTz_WZw9OjToiSrXffRAESpjS>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgdduudekhedvucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
     rghilhhouhhtmecufedttdenucenucfjughrpefkuffhvfffjghftggfggesghdtreertd
     erjeenucfhrhhomheprfgruhhluceurghrkhgvrhcuoehprghulhesphgsrghrkhgvrhdr
-    uggvvheqnecuggftrfgrthhtvghrnhepfeeileehudffvdeljedvgfetieeugfetteekfe
-    dtgeeggfevtddutddvheegfeeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghm
-    pehmrghilhhfrhhomhepphgruhhlsehpsggrrhhkvghrrdguvghvpdhnsggprhgtphhtth
-    hopeefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehtihhmrdhorhhlihhnghes
-    khhonhhsuhhlkhhordgtohhmpdhrtghpthhtohephihotghtohdqphgrthgthhgvsheslh
-    hishhtshdrhihotghtohhprhhojhgvtghtrdhorhhgpdhrtghpthhtohephihotghtohes
-    lhhishhtshdrhihotghtohhprhhojhgvtghtrdhorhhg
-X-ME-Proxy: <xmx:zpcBaovywO1MGxOqG0_AwrKWd_ID1dgSf9WOMpw3kFUlV6-jCQQ73g>
-    <xmx:zpcBagUxByXQObcFPaLQYB5pCr2La_kQvXHnMvOtKtBKyUYW_WQBkA>
-    <xmx:zpcBarkd5SOVYdLXTd3ts3dUOc0Ai-ICBs0ultjpbesEFBQEL18oUA>
-    <xmx:zpcBapbrt2MwVpusDHUyyBekv5T8Hm8zDuc7h0JJqQSNZjHuI_cHRw>
-    <xmx:zpcBapu6j4h1eWVBl3-5ZBdJAZ3zd4EbDKMqZbm_irQO_AFkKHbu80CB>
+    uggvvheqnecuggftrfgrthhtvghrnhephefggfduueeuieelhffhhffgiedugeffkedvhe
+    ffleevfeeuffehueejveehkeelnecuffhomhgrihhnpeguohgtkhgvrhdrihhopdihohgt
+    thhophhrohhjvggtthdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpehprghulhesphgsrghrkhgvrhdruggvvhdpnhgspghrtghpthht
+    ohepfedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepthhimhdrohhrlhhinhhgse
+    hkohhnshhulhhkohdrtghomhdprhgtphhtthhopeihohgtthhoqdhprghttghhvghssehl
+    ihhsthhsrdihohgtthhophhrohhjvggtthdrohhrghdprhgtphhtthhopeihohgtthhose
+    hlihhsthhsrdihohgtthhophhrohhjvggtthdrohhrgh
+X-ME-Proxy: <xmx:15gBaqVQkJxKox1zUDA1Tj1ucZV_3GXh-JiGRGmoE1MdxOIIu9NcRg>
+    <xmx:15gBahee1S04aB8Z3T3jF5WkX1lYOO1EQcG78S5qXNzNaTG9DLe97g>
+    <xmx:15gBamO6X4I9XwyT3VBAicZr3NjsDJuUXUc48B3FryL2z8HR7UVotA>
+    <xmx:15gBavhbZZ-h8c2ziBT5fqSNvRd7SBmcKiTvfbmbibn7W9u8LolNiQ>
+    <xmx:15gBaqVasrE5ye5CYjHXdWt_ZD2RxOrnNFAnJmAE4MqJafZUg9SsO3nF>
 Feedback-ID: i51494658:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 11 May 2026 04:48:13 -0400 (EDT)
-Message-ID: <5356ea1df2a3b640943fed7fd3a358402b9ab644.camel@pbarker.dev>
-Subject: Re: [yocto-autobuilder-helper][PATCH 06/11] config.json: add
- vcontainer-tarball build target
+ 11 May 2026 04:52:38 -0400 (EDT)
+Message-ID: <dcfc99d7b81e1083ef3607adde6055f4a81d3534.camel@pbarker.dev>
+Subject: Re: [yocto-autobuilder-helper][PATCH 07/11] config.json: add
+ 'containers-' build jobs
 From: Paul Barker <paul@pbarker.dev>
 To: tim.orling@konsulko.com, yocto-patches@lists.yoctoproject.org, 
 	yocto@lists.yoctoproject.org
-Date: Mon, 11 May 2026 09:48:10 +0100
-In-Reply-To: <f76cfa3158594d6abef88eaea589b9e135158e9f.1778202125.git.tim.orling@konsulko.com>
+Date: Mon, 11 May 2026 09:52:35 +0100
+In-Reply-To: <1c444ecb2272a384e77a786f7ca32767f791ce34.1778202125.git.tim.orling@konsulko.com>
 References: <cover.1778202125.git.tim.orling@konsulko.com>
-	 <f76cfa3158594d6abef88eaea589b9e135158e9f.1778202125.git.tim.orling@konsulko.com>
+	 <1c444ecb2272a384e77a786f7ca32767f791ce34.1778202125.git.tim.orling@konsulko.com>
 Autocrypt: addr=paul@pbarker.dev; prefer-encrypt=mutual;
  keydata=mQINBGC756sBEADXL6cawsZRrDvICz9Y1SG0/lW1me4xpq36obh7a0IGAzp3ywNRb/4MO
  DTqP4+DD0cIFuDY41/N17g0sNlp8z+/k/IIDmNPtYQOTVmAkrkdDU4BP8dD3Cp1PUw6nrbInfujAJ
@@ -117,72 +118,36 @@ Autocrypt: addr=paul@pbarker.dev; prefer-encrypt=mutual;
  ChZPI3NMLnKZPJC8ZQZ4S8yb5oA3rqTA2DMODvsrEVlaB2cQ6IWHSa/mvBwA8Ias3771cp4fZS7W7
  LUewj8JVy0aJsGTwI4invl
 Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-n3Fq6JmbwTwfcgPQoi+E"
+	protocol="application/pgp-signature"; boundary="=-iJ1lmmcKHAUq1vawPR7W"
 User-Agent: Evolution 3.52.3-0ubuntu1.1 
 MIME-Version: 1.0
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 11 May 2026 08:48:25 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3964
+ <yocto-patches@lists.yoctoproject.org>; Mon, 11 May 2026 08:52:45 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3965
 
 
---=-n3Fq6JmbwTwfcgPQoi+E
+--=-iJ1lmmcKHAUq1vawPR7W
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 On Thu, 2026-05-07 at 18:25 -0700, tim.orling@konsulko.com wrote:
 > From: Tim Orling <tim.orling@konsulko.com>
 >=20
-> Add the vcontainer-tarball build target which produces the
-> meta-virtualization SDK used by downstream container build/test
-> jobs. Modelled after the buildtools-tarball target.
+> Add 'containers-' build jobs that build container images on top
+> of the vcontainer-tarball SDK:
 >=20
-> The target uses EXTRACMDS to reset BBMULTICONFIG for the worker
-> shell, places the extravars in the per-step config, and includes
-> a publish-artefacts step so the resulting SDK tarball is staged
-> for reuse by container-tests and other consumers.
->=20
-> Signed-off-by: Tim Orling <tim.orling@konsulko.com>
-> ---
->  config.json | 26 ++++++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
->=20
-> diff --git a/config.json b/config.json
-> index ab0ad7c..9e6898d 100644
-> --- a/config.json
-> +++ b/config.json
-> @@ -1869,6 +1869,32 @@
->          },
->          "toaster" : {
->              "EXTRACMDS" : ["${SCRIPTSDIR}/run-toaster-tests ${HELPERBUIL=
-DDIR} ${HELPERBUILDDIR}/../layers/bitbake"]
-> +        },
-> +        "vcontainer-tarball": {
-> +            "NEEDREPOS" : ["bitbake", "meta-openembedded", "meta-virtual=
-ization"],
-> +            "ADDLAYER" : [
-> +                "${BUILDDIR}/../meta-openembedded/meta-oe",
-> +                "${BUILDDIR}/../meta-openembedded/meta-python",
-> +                "${BUILDDIR}/../meta-openembedded/meta-networking",
-> +                "${BUILDDIR}/../meta-openembedded/meta-filesystems",
-> +                "${BUILDDIR}/../meta-virtualization"
-> +            ],
-> +            "step1" : {
-> +                "shortname" : "Build vcontainer-tarballs",
-> +                "BBTARGETS" : "vcontainer-tarball",
-> +                "extravars" : [
-> +                    "DISTRO_FEATURES:append =3D ' virtualization vcontai=
-ner'",
-> +                    "BBMULTICONFIG =3D 'vruntime-aarch64 vruntime-x86-64=
-'",
-> +                    "INIT_MANAGER =3D 'systemd'"
-> +                ],
-> +                "EXTRACMDS" : ["sed -i '/vruntime-aarch64 vruntime-x86-6=
-4/d' ${HELPERBUILDDIR}/conf/auto.conf"]
+>   * containers-meta-virt: the original app-container-* images that
+>     ship in meta-virtualization itself (e.g. app-container-curl).
+>   * containers-library: a layer for additional images modelled
+>     after docker.io/library/*, sourced from meta-yocto-containers-demo
 
-What does this sed command achieve? EXTRACMDS run after building
-BBTARGETS.
+I think we should combine these into one build job.
+
+What's the plan for meta-yocto-containers-demo? Should we host that on
+git.yoctoproject.org, or will the contents eventually be merged into
+meta-virtualization?
 
 Best regards,
 
@@ -190,17 +155,17 @@ Best regards,
 Paul Barker
 
 
---=-n3Fq6JmbwTwfcgPQoi+E
+--=-iJ1lmmcKHAUq1vawPR7W
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 
 -----BEGIN PGP SIGNATURE-----
 
-iIcEABYKAC8WIQSzjPXf5Y1BDWhU2iCrY1Tsnbr0bgUCagGXyhEccGF1bEBwYmFy
-a2VyLmRldgAKCRCrY1Tsnbr0bpYYAQDpJ9raayzlLeTIwdWlxEcrQz231OlCpUAI
-PmUGp8ii5AEA1BgTLARXYafWeu1VqwoJGAN+YOK9RIfWFFlCVmpT6QE=
-=RcpM
+iIcEABYKAC8WIQSzjPXf5Y1BDWhU2iCrY1Tsnbr0bgUCagGY0xEccGF1bEBwYmFy
+a2VyLmRldgAKCRCrY1Tsnbr0bjGwAP9jTVp3FtVYjN3ctLIqNMdKe4+Jo9eFxoUR
+cXdAL3T+gwEAvve0WZUXcOJkmqJg0wSsORya9fv46S1VGMV14IHLagU=
+=xDvc
 -----END PGP SIGNATURE-----
 
---=-n3Fq6JmbwTwfcgPQoi+E--
+--=-iJ1lmmcKHAUq1vawPR7W--
 
