@@ -1,99 +1,96 @@
-Return-Path: <peter.marko@siemens.com>
+Return-Path: <jackson.james9803@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C34CDCD37AC
-	for <webhook@archiver.kernel.org>; Wed, 13 May 2026 20:00:47 +0000 (UTC)
-Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.6061.1778702440766709936
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C13E7CD4851
+	for <webhook@archiver.kernel.org>; Fri, 15 May 2026 05:38:15 +0000 (UTC)
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.28837.1778823493637924459
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 13 May 2026 13:00:41 -0700
+ Thu, 14 May 2026 22:38:13 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=peter.marko@siemens.com header.s=fm1 header.b=SN+2oVGu;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.225, mailfrom: fm-256628-20260513200038f7de7d9d57000207ee-qpe1qk@rts-flowmailer.siemens.com)
-Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 20260513200038f7de7d9d57000207ee
-        for <yocto-patches@lists.yoctoproject.org>;
-        Wed, 13 May 2026 22:00:38 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=peter.marko@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=bWEYix8ylcuMQXyWyg2q0CGAU2pKeJUqai8AvRNP34M=;
- b=SN+2oVGuwXnSlTni3dNFvxtNBezxdJNDJg8ULDHRTKInXIMXv1P9R1S/7/HTjV/qh4a3c+
- 6Tdyxl9Iovex9HOkwK8FcLKcOxDT+bgm1kZtzlz9RdXpt36Csqyz1R4Ez2ulXaWd9cD5FUqX
- HqUsNPszM6RebOSvYO3iWn9OqSoiYCPEWsMNgKakvMdGfoheLOcC8uJ0CUfylsjryoz1fUgG
- edT5a2eO/17S2koSSWDzrmrGD+bCi5o022zucij+NgKLwLQMFyC69wejDtSHljtq0luFgUfq
- 1ngMR0mnTh1IjvGNpRn0qjJ43ZB5p+5ByOva+f73Aqmp596HbINKxiJg==;
-From: Peter Marko <peter.marko@siemens.com>
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=Jwqr/uYD;
+ spf=pass (domain: gmail.com, ip: 209.85.216.51, mailfrom: jackson.james9803@gmail.com)
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-36608b2f2dcso6343431a91.2
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 14 May 2026 22:38:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1778823493; x=1779428293; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5k8aB5hjihHq+pEmnmwooFg7HVtSOtussEkv1OqYHGU=;
+        b=Jwqr/uYDM/FJuoTi3wOBFAoVe1w0t9us1Ra+Lo4lWHY8vxFYxs6I3Tr+VMBmEV5NV1
+         osACmlxlx7QULS3NYKVSvk1qQWHHl/pkB27qjC9hH8O0BHHZ7aHvOQ74LwNOEmba1iF5
+         ZS1vNelx8z1pl71fBkyyOXfivjlH3dzuLyrUO7IpDsl45VYaZlJVlR37vjcgYErHwvuv
+         swuzwt2QADX5/h7yQWDUihee4unqZNQJfrUT04gUTLCrJuTDHjQJDVwUUqcp4IJO5LO8
+         O/en/IQ3jJCt71PNRZV+d0KhBYwh07Z6krQKvoS1QZsL55zZaq8JcZ1uq1gF7cU+kUdD
+         VH7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778823493; x=1779428293;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5k8aB5hjihHq+pEmnmwooFg7HVtSOtussEkv1OqYHGU=;
+        b=QQPn51SdySALx1fNZRbt5PnkXC3JmjLE9FWfblUngrodePbgsqbYzpucNgCNVGOfvi
+         JH0cp5hovhgkmKGukej2RDY2EBg/ukA97cJHHsGg0WLK6FD/JSVHLNLSPRqHwFQnvaql
+         LMve6H+BbV4nsBsb2BLsXV+CNQX9pPWVPN2odAAXHlPFCD+wf1mhxW0YS3zVwz/S+Fac
+         LkLn+xBzlMvBtay2yxH6arMU1pVVjQcwgdz8XceAEJ1QfzoO2YohX0dm8BTbmAN5hZ6I
+         qFsZEH1mg2S4Jq8WH3tTOA6NzV+zRRxgBju/AseXLotYbaTpvO74VhOcLEKgpKys9LFO
+         XDdg==
+X-Gm-Message-State: AOJu0YyduqX1S8CJ3KXkFoZEbNmaWJmTr/EjRpvJvzsg8aoy1flVIBH8
+	Gf9xFXW/JpIKSor1mTZA2kybZyKnWyfd3QczcBtxl1q6kF/iU51YHPHMOpQehYhs
+X-Gm-Gg: Acq92OHYi/+8xJIEfPiwUeQh1RvDlwXLEbV6CjF6jfrJZtcUUQFJNypiQ/wj5qohqpz
+	IGra7yiFyPTSHrgZEQqCxnfCu631ypQYPkZO3eG25jbgYg6wKAU0Qr9qZMfTfcO7V1zpg4DDNdC
+	lkr9G8KuCvCwjCFTlS8VgbYDvaeQzJhq+jEU5/3oVhrWvE3OWau/S3hJUcD3JsNJ0UJeAs2bO7Z
+	04LmQaTMQbCtjTsNBF+h1gSK0fNy7KJJL/qiH+OdYsL2QxDRUfKGmnakhsdbvZ1FYY9VCJlkuN1
+	Q41KQnkY3gqaOlTL7lrWdpsEauM7rx5HDaSrC0ccCNbkbMpvZFGHifqhAMFo1yrQmCKkoHvsyaS
+	bdB2FR5Oe+c5fLJ6FwwnstsUq5u3AbPTT0wZtgjLnvijWuUoeuj7WS0fsloZOI0Yc4i7Lg5dfHq
+	ITQ6AcmX8X7ZB3vGJSrvEtqdZtncAqBbOnicXd
+X-Received: by 2002:a17:902:b181:b0:2b0:608d:d8a8 with SMTP id d9443c01a7336-2bd7e862606mr20561545ad.1.1778823492803;
+        Thu, 14 May 2026 22:38:12 -0700 (PDT)
+Received: from LL-868L.kpit.com ([49.206.134.86])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2bd5d0fd279sm45082945ad.62.2026.05.14.22.38.11
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 May 2026 22:38:12 -0700 (PDT)
+From: Jackson James <jackson.james9803@gmail.com>
+X-Google-Original-From: Jackson James <jacksonj2@kpit.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Peter Marko <peter.marko@siemens.com>
-Subject: [yocto-metrics-meta-oe][PATCH] patch-status: add wrynose
-Date: Wed, 13 May 2026 22:00:09 +0200
-Message-ID: <20260513200009.2474228-1-peter.marko@siemens.com>
+Subject: [meta-lts-mixins][scarthgap/rust][PATCH] cargo: set CVE_PRODUCT
+Date: Fri, 15 May 2026 11:07:56 +0530
+Message-Id: <20260515053756.493090-1-jacksonj2@kpit.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-256628:519-21489:flowmailer
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 13 May 2026 20:00:47 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3991
+ <yocto-patches@lists.yoctoproject.org>; Fri, 15 May 2026 05:38:15 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/3992
 
-From: Peter Marko <peter.marko@siemens.com>
+This removes mediawiki:cargo CVEs from CVE metrics.
+* CVE-2026-39837, CVE-2026-39839, CVE-2026-39840, CVE-2026-39841
 
-See https://lists.yoctoproject.org/g/yocto-announce/message/386
+Reference: [https://git.openembedded.org/openembedded-core/commit/?id=a5cb71e7df95925a5c342c341e699e244b1b84f6]
 
-Signed-off-by: Peter Marko <peter.marko@siemens.com>
+Signed-off-by: Jackson James <jacksonj2@kpit.com>
 ---
- patch-status/index.html   | 12 +++++++++++-
- patch-status/releases.csv |  1 +
- 2 files changed, 12 insertions(+), 1 deletion(-)
+ meta/recipes-devtools/rust/cargo_1.75.0.bb | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/patch-status/index.html b/patch-status/index.html
-index cdd89e6e..c784151a 100644
---- a/patch-status/index.html
-+++ b/patch-status/index.html
-@@ -58,6 +58,10 @@ SPDX-License-Identifier: MIT
-         <summary>master</summary>
-         <div id="cve_status_master"></div>
-       </details>
-+      <details>
-+        <summary>wrynose</summary>
-+        <div id="cve_status_wrynose"></div>
-+      </details>
-       <details>
-         <summary>whinlatter</summary>
-         <div id="cve_status_whinlatter"></div>
-@@ -125,6 +129,12 @@ SPDX-License-Identifier: MIT
-       createCVEList('cve_status_master', data);
-    })
+diff --git a/meta/recipes-devtools/rust/cargo_1.75.0.bb b/meta/recipes-devtools/rust/cargo_1.75.0.bb
+index a6d3f1754b..573430ef4e 100644
+--- a/meta/recipes-devtools/rust/cargo_1.75.0.bb
++++ b/meta/recipes-devtools/rust/cargo_1.75.0.bb
+@@ -17,6 +17,8 @@ require rust-snapshot.inc
+ S = "${RUSTSRC}/src/tools/cargo"
+ CARGO_VENDORING_DIRECTORY = "${RUSTSRC}/vendor"
  
-+   fetch('cve-status-wrynose.txt')
-+   .then(response => response.text())
-+   .then(data => {
-+       createCVEList('cve_status_wrynose', data);
-+   })
++CVE_PRODUCT = "rust-lang:cargo"
 +
-    fetch('cve-status-whinlatter.txt')
-    .then(response => response.text())
-    .then(data => {
-@@ -212,7 +222,7 @@ SPDX-License-Identifier: MIT
-       upstream_status: 'Malformed Upstream-Status',
-       inactive_upstream: 'Inactive-Upstream'
-     };
--    const branches = ['master', 'whinlatter', 'walnascar', 'styhead', 'scarthgap', 'nanbield', 'mickledore', 'langdale', 'kirkstone', 'honister', 'hardknott', 'gatesgarth', 'dunfell']
-+    const branches = ['master', 'wrynose', 'whinlatter', 'walnascar', 'styhead', 'scarthgap', 'nanbield', 'mickledore', 'langdale', 'kirkstone', 'honister', 'hardknott', 'gatesgarth', 'dunfell']
+ inherit cargo pkgconfig
  
-     const general_options = {
-       tooltip: {
-diff --git a/patch-status/releases.csv b/patch-status/releases.csv
-index 1e8d95f3..48368ed5 100644
---- a/patch-status/releases.csv
-+++ b/patch-status/releases.csv
-@@ -1,4 +1,5 @@
- Name,Date
-+6.0 (Wrynose),2026-05-13
- 5.3 (Whinlatter),2025-12-16
- 5.2 (Walnascar),2025-05-08
- 5.1 (Styhead),2024-10-17
+ DEBUG_PREFIX_MAP += "-fdebug-prefix-map=${RUSTSRC}/vendor=${TARGET_DBGSRC_DIR}"
+-- 
+2.34.1
+
 
