@@ -2,112 +2,112 @@ Return-Path: <wenjia.zhang@oss.qualcomm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 358C8CD4F3C
-	for <webhook@archiver.kernel.org>; Tue, 19 May 2026 06:55:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DA3FCD4F5E
+	for <webhook@archiver.kernel.org>; Wed, 20 May 2026 06:25:38 +0000 (UTC)
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.16067.1779173728190692564
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.6157.1779258332505934035
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 18 May 2026 23:55:28 -0700
+ Tue, 19 May 2026 23:25:32 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@qualcomm.com header.s=qcppdkim1 header.b=ApSmaWbd;
- dkim=pass header.i=@oss.qualcomm.com header.s=google header.b=ikVr63XC;
+ dkim=pass header.i=@qualcomm.com header.s=qcppdkim1 header.b=GeeB7fn+;
+ dkim=pass header.i=@oss.qualcomm.com header.s=google header.b=cMnryKYa;
  spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: oss.qualcomm.com, ip: 205.220.180.131, mailfrom: wenjia.zhang@oss.qualcomm.com)
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64J5Ooj52482373
-	for <yocto-patches@lists.yoctoproject.org>; Tue, 19 May 2026 06:55:27 GMT
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64JMmFJu341539
+	for <yocto-patches@lists.yoctoproject.org>; Wed, 20 May 2026 06:25:31 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=V1VCe7PCY9cGzwO1VQHanx6UmrQk/Sp3o+U
-	gAOo4knk=; b=ApSmaWbd2RVr8n7AbV0fcmFUmEhmMzk5+CeMBl7XulNS1zxziAY
-	hqnfFT4N/Nr2l+5qXNyezfP0lhkkTKrSnmbhaMiVYPcIfHaOe97J8zn9mde2iSVA
-	u2ezEI5wCNMR1zH8MLvjJRmRVd5p4vuwR4JZSGSD8d9js4mR9ZTIy5/C8sGAFJzf
-	6mkEm9R9WGTgSWiTquV3L595fooOyyzY5bsm6JkrQ0aLDHreZGnpgcdqJ480UZur
-	JcxEuJKVeCEYrkBRCSFdjpRBph4/qHtCFvmzu1eyM6pZLfTn036I3ePTrErsL6S1
-	feDu1Kch2h2XPomMRBqA+L4Awn0Pxqaasew==
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4e81rvkv8q-1
+	:subject:to; s=qcppdkim1; bh=5rTRhXWs6Nch3PaJvCriUXePBD+w2CVA+Dc
+	lst2dvYI=; b=GeeB7fn+3oBBzuH0BzT6EnufOKCaL+Q1josVRv5rs7zpDfYGGey
+	CyRByPYGqNPO23YAEu5NuiR5QqXo2HAzXzt5J8pLYLZJFzPBDC53GcNkaVoBlkQG
+	+2vpJZfJC4dranJovPIOoNCTceI6YeZBfYk5yevK2ZmQdKOa4j4uvFBYq2BVF9gN
+	pRaKP7TgKqpMjS8a5hc9C/gHVH3t0uH5igZDqsb/b7XAIv0jYs5dkvT3ovSwZbnZ
+	4WZmuKieg0cC05GCHDO9W0IlRxzDWRXN0w6rS2DnSBBN04Jql6TQ+qvf5lf4sj8+
+	qt7Ye5Mm/fZuMbER1hhny90BIcQTU0g+QFg==
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4e8t3vb8wv-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <yocto-patches@lists.yoctoproject.org>; Tue, 19 May 2026 06:55:26 +0000 (GMT)
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-369ef27fd09so1217622a91.3
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 18 May 2026 23:55:26 -0700 (PDT)
+	for <yocto-patches@lists.yoctoproject.org>; Wed, 20 May 2026 06:25:31 +0000 (GMT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-36781927b4dso4747852a91.0
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 19 May 2026 23:25:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1779173726; x=1779778526; darn=lists.yoctoproject.org;
+        d=oss.qualcomm.com; s=google; t=1779258330; x=1779863130; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:to
          :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=V1VCe7PCY9cGzwO1VQHanx6UmrQk/Sp3o+UgAOo4knk=;
-        b=ikVr63XCmT1tOACXYSnninrSd7jO57ZPGlzlMV7tumQZd5auEby1L6vgc/V2mBaJRa
-         aucw2g2Fsax8lBfRJdt3OkKozhzVP8Sq41Gsc/3nxYpTewjBkDAmf6xd1uHWOoQuSNsF
-         hhZ+o11gLaSl6QYr0NuOY+Gqcvgs8xofYHYhuDpuy3yh2fS7yeTWcccuCJwgxiZYnXoa
-         QABKkcrojwrX+QB1zyv6vEjFvLhjRnvUvrG+lQMW89bK3mjXF6t26ZNsbfEgQXZqJ70D
-         3iqWRPuEDVzi7NpIUuIyFXIP4MrJKd1xsswpvQuR0RZUmfNNzrpPgV7/MCSTjfNvGuCn
-         rMwA==
+        bh=5rTRhXWs6Nch3PaJvCriUXePBD+w2CVA+Dclst2dvYI=;
+        b=cMnryKYadv2SMMhskz9XTGvAGlJqoL6BVm7LGB+MNqhTP4/8ec3RNOUKaVd4HrIDX1
+         +yl3WvC61RIPKhEIqSDupTPBdF/PQgXMMAoW8aKsBghat+EmqE0tfh1pX9o/3A3PdJ3f
+         sFqi3eCUFVKVbyaHeWVV9zbhhZ8lcTCeb+Dkz9B+fWZnGrHMojjP7CmeeIQYVs219/hT
+         R68wHId5Sm/+f15oHVgmdn7SXxVIwnC+mYaPr3s0/Gb6Y8kYhwBrsRGsXM59bf+t5phM
+         q1nJVO9DHO5r57kUN7pz/gulDVEY/lsVpaCC1i4Qhs8lBEfXXRGxrlt29XOhHO0TC8t2
+         NswA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779173726; x=1779778526;
+        d=1e100.net; s=20251104; t=1779258330; x=1779863130;
         h=content-transfer-encoding:mime-version:message-id:date:subject:to
          :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=V1VCe7PCY9cGzwO1VQHanx6UmrQk/Sp3o+UgAOo4knk=;
-        b=PUc1jddCN6D/D/y6aFAtxXpcg7Dhf44sDgN7JH/khCwoT/kjZYjUo0861bHHCS8xkw
-         qvpwvuwYmIy/XYXclqO74OphSthllD2izzI6AcSwPzYEdrYqMPGaGJ77O97J0f8fRBPu
-         IbM3ZmpHuKDRt01UGld4vl9M6RM6j/7FUqJHs7Vu7kSskUowW+yT7yN4fYp2eyhKf0JM
-         2Kol1fjdfDM08+AmCNxCqorpzseEykgGpDL9HHjKDBXqx7Ea2u8XSFo3lrpvDdOM1Ssp
-         Ji6vgtmkdNqU9Zz3n+Dvz7cMVe7W+Dvd4DYW5G81iTN3xfLA0iBp6Vph5B8cdd8Z50Kn
-         HZmA==
-X-Gm-Message-State: AOJu0YwUdA5zFfS6AeqMiybR28dCTM5KnzkCGZ9BvkeZf/CuiXDlPitq
-	I1zuJ+Q1hvRhvCvwnHANBld0bdCPCyfKuBey/IQdXoYGiQCzkll2ChNo+22YDOT+oiJV5saZdKy
-	dOgHPj993/8FzbVxgNGheEhHM7nMSeb5TutmTI9D2yQ2lUME81ysKOeHOV2tS3VNeatdf6iVsHN
-	4g2xluUChHZUi4
-X-Gm-Gg: Acq92OHTDQ4eJSDT56Qm1KnJRMp8ujPDxCTGW6oyYoSrz/xLJIrQC9Jnl7pPfkvF8/3
-	SvoPna3lSAPGYLaRReIogWATW3aiOSNrHg8x+PG1kHeARaBpjnsbrx1+eqfjpEXaGUNE2lipNx/
-	KkXesjOuvUTgh6rEKAMqv/odINUjpgBhFeMhqGhc3d72C+ZIuZ5slkqAP2KOOKqwmKTvxyin2+0
-	QiYsptc/ui/4She05qHoXXexDN4DY7nmVTwZ/l65jllsEsnjNSZkao5T9FqJKmOzaNbo6hfjX9i
-	ZMb+c5kLcIa6nXDwMYwrG/Aq2z34Ge5yf6/U8WBGgIJEOOYsLqQcoQN9tFS4EIPvDM7ZIvsv8RK
-	JImFr77ETdESYNWpSX3HZB6PxtXI5DdAEn2qS9+Ay1LXhoafT4r4=
-X-Received: by 2002:a17:90b:1d83:b0:366:10f1:3d91 with SMTP id 98e67ed59e1d1-36951889fe9mr16059470a91.1.1779173725650;
-        Mon, 18 May 2026 23:55:25 -0700 (PDT)
-X-Received: by 2002:a17:90b:1d83:b0:366:10f1:3d91 with SMTP id 98e67ed59e1d1-36951889fe9mr16059450a91.1.1779173724828;
-        Mon, 18 May 2026 23:55:24 -0700 (PDT)
+        bh=5rTRhXWs6Nch3PaJvCriUXePBD+w2CVA+Dclst2dvYI=;
+        b=hG5KiO9RjpRUotJfG6z9ONDJy/ONjEFpuryqml8l94WjulE6L7aweVmD2PBuQs3QDz
+         ZEW6MvBMY/SF3WJcBkEytcW8/81CnF54OS7Y66YURE/31a9M+rSWOxRV7ZN+4mgfD3WC
+         qoQlX6HHFqVDNKyJQFTgru5bIoD2+YpRI0SBUw4RGWJ/V7uWpxRC2f1mAj7dEgRmiK+V
+         JXDgw35smQxsyVmONieV9lLwyCXconx0GFO/maA2qzGkfSkfe7JbZ7XsIdhesLuIy98y
+         xgT3jEDToLKas3Y8S7GqRkwdlQcPXIAsEbmDK90bsqoyuV6d1+UI5RMKnMnm+r/YpVPO
+         BA0A==
+X-Gm-Message-State: AOJu0YzIG40Jr1bHnZWljJgMuL/XigyjoiL8gNU9kXet90iDjHux3ogx
+	CZzhRTaM0EMIRKoCeG0rbHGHgJPpgw5j3ay+n4CWn1PEQcL0+CIkqU7Z7PkNK5n1o5+eyIyfERt
+	WEj7sTUNVSETae30yVO6iYET9xGd1dXjkdSPT5Y3q50MBRUvDZgNckJRplgMnihSVmZ/mib06fq
+	eZHUeXHPF/VLmQ
+X-Gm-Gg: Acq92OEGYHSQXcu36UR9HL1Z/x2wSrjl0Q6FwcsHyNLVAIxoUoGLYIKhNP14zuPGGwX
+	Qvhxfs4o3P3isT0/0+0QSoQz1Cm3wMP6dRYN7R8SlGDfPwhpSvKicGd+f9AXrd9imQPtAkmB+RM
+	SXH6K0dVa+I8EjMd4zm8OUkibZbhHvvqifLU3ezVQxEo86QkBfSQCSpG2VjUXd+SSnGCPrAe+eD
+	vy9ywkdv4ldg1ABKVUVp4IzdvImNUeVq8SumwxmJKRAtn6RJjNybBnbWHM8Z+jPzO5+S/LwmeLB
+	aDqcExVyDnPfczIvb1P3Xs97+O66lgKiJ/pZV7qfUYTp2L7o9uTg7oOdsT1vNrN/MYlf08Z+/2t
+	5Nxvh9s+11s9CZ98MwmUCkalYUaq1V7sb18KWpIJuFMNTQJlQNm0=
+X-Received: by 2002:a17:90b:534e:b0:369:bddb:79b5 with SMTP id 98e67ed59e1d1-369bddb84b8mr11879639a91.2.1779258330080;
+        Tue, 19 May 2026 23:25:30 -0700 (PDT)
+X-Received: by 2002:a17:90b:534e:b0:369:bddb:79b5 with SMTP id 98e67ed59e1d1-369bddb84b8mr11879610a91.2.1779258329374;
+        Tue, 19 May 2026 23:25:29 -0700 (PDT)
 Received: from hu-jiaxli-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-369517ede97sm14511880a91.16.2026.05.18.23.55.23
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3695652466dsm8156448a91.0.2026.05.19.23.25.28
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 May 2026 23:55:24 -0700 (PDT)
+        Tue, 19 May 2026 23:25:28 -0700 (PDT)
 From: Wenjia Zhang <wenjia.zhang@oss.qualcomm.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-selinux][PATCH] [meta-selinux][PATCH] Added the necessary policy for domain tee_supplicant_t.
-Date: Tue, 19 May 2026 12:25:18 +0530
-Message-Id: <20260519065518.1865892-1-wenjia.zhang@oss.qualcomm.com>
+Subject: [meta-selinux][PATCH/V2] Added the necessary policy for domain tee_supplicant_t.
+Date: Wed, 20 May 2026 11:55:26 +0530
+Message-Id: <20260520062526.3851830-1-wenjia.zhang@oss.qualcomm.com>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTE5MDA2NiBTYWx0ZWRfX8RBF9ZYNyivX
- e+PcizFNnkcj0uPrbUd/SHyv0pmyk1PTNG9E+dgvaeZFzmn0XmWrYZfKXzoxSEPXVwFPg05QeZq
- 9SxG17MFFLm1fskCRsZqFxAS6+4hBEht/+YrxH5kJmaNzbb6jix13kl+qibL3LLtKRfECYaucl2
- YBC31GCPZ3qpcgj/iwlWNXi8AOcfkC7278tGUidVpioFAEuhkJs6j6/yj2uKdH63iW4HhHcXMWP
- baQCGPqgC+BE2xpgREo51D8A/Efc7oqbovHfSGx1uJU25Ou/NiXK2aLtFT/lByucLJ+RH50yFo9
- DexdsZ+tr52rILNqkCDMV+lflBdHojagKpXYue3kC3eqWHPuoD0bRp/3fm7tBcYdJEnC5hFk/+L
- FQ+U4WshOPEfaZI5pKF3ch0V/+T4PVSj2ixKfvHZdGHPNvBjqe6BZVXTg9zWoPrijNNqXQb7jeI
- bJQOEGxYPA51lkESdQQ==
-X-Proofpoint-GUID: mqJ3ijOQBAe_0PCVif1CZ1gEfLG1Qdxm
-X-Proofpoint-ORIG-GUID: mqJ3ijOQBAe_0PCVif1CZ1gEfLG1Qdxm
-X-Authority-Analysis: v=2.4 cv=Lf0MLDfi c=1 sm=1 tr=0 ts=6a0c095e cx=c_pps
- a=vVfyC5vLCtgYJKYeQD43oA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+X-Proofpoint-GUID: qsg-Hj6HYbn-wJWmALLyBi1KsH0UxQPu
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTIwMDA1OCBTYWx0ZWRfXynPzTQ16sy9P
+ I5RY41NxIxGoKGXdnQDJqLdUT3rfetK/8SGBXXvNw/V3mCehxe3ggup+xkxKsGPOt1iM43pMsM9
+ 8c2R/qz1jhGFnHzpr90kt2xhqGQ4YpAZvsQoVs0v79iYysmUqAi4BiBfIdCQHeeYvyBNamd8Vvb
+ Ggv/RoDBHHazfYKQ2RNdwIjozFQWBF0b2YhpIoMMulZtMbfPLLJC7WSd/ATfUybXOgAzEsVfARf
+ qImFJsi9s57gKNGLeAWOE+m8Z/RJSyJWLGwLF6z3W2wn5aLeFj+ky/aAfYTYShI8hk05P6Xgn/g
+ a/1oX0we5LjJQNUjfc76RfgSgE6FCaUKcTVHO7Nn7ofEbndL/TsSnyjvEWHfEjhSlw1u4qHuIuM
+ gK6x31j1ho0e4InnrvON0KD4Kk5j12S8z8EXlhP3gsQu5TUzhOQtEx1sskUHXhi49uj3mBK9o/G
+ As/CcW3RGIav4jKdRHg==
+X-Authority-Analysis: v=2.4 cv=JuPBas4C c=1 sm=1 tr=0 ts=6a0d53db cx=c_pps
+ a=RP+M6JBNLl+fLTcSJhASfg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
  a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22 a=NEAV23lmAAAA:8
- a=EUspDBNiAAAA:8 a=wnEXS8_1iZlmcswqAMYA:9 a=rl5im9kqc5Lf4LNbBjHf:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22 a=NEAV23lmAAAA:8
+ a=EUspDBNiAAAA:8 a=wnEXS8_1iZlmcswqAMYA:9 a=iS9zxrgQBfv6-_F4QbHw:22
+X-Proofpoint-ORIG-GUID: qsg-Hj6HYbn-wJWmALLyBi1KsH0UxQPu
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-05-19_02,2026-05-18_01,2025-10-01_01
+ definitions=2026-05-20_01,2026-05-18_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 priorityscore=1501 lowpriorityscore=0 bulkscore=0
- adultscore=0 clxscore=1015 impostorscore=0 malwarescore=0 spamscore=0
+ bulkscore=0 suspectscore=0 lowpriorityscore=0 adultscore=0 clxscore=1015
+ phishscore=0 impostorscore=0 malwarescore=0 spamscore=0 priorityscore=1501
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2605130000 definitions=main-2605190066
+ reason=mlx scancount=1 engine=8.22.0-2605130000 definitions=main-2605200058
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 19 May 2026 06:55:33 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4001
+ <yocto-patches@lists.yoctoproject.org>; Wed, 20 May 2026 06:25:38 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4002
 
 Signed-off-by: Wenjia Zhang <wenjia.zhang@oss.qualcomm.com>
 ---
@@ -118,7 +118,7 @@ Signed-off-by: Wenjia Zhang <wenjia.zhang@oss.qualcomm.com>
 
 diff --git a/recipes-security/refpolicy/refpolicy/0059-tee_supplicant-Add-necessary-SELinux-policy-for-qtee.patch b/recipes-security/refpolicy/refpolicy/0059-tee_supplicant-Add-necessary-SELinux-policy-for-qtee.patch
 new file mode 100644
-index 0000000..cf1f56f
+index 0000000..c00c597
 --- /dev/null
 +++ b/recipes-security/refpolicy/refpolicy/0059-tee_supplicant-Add-necessary-SELinux-policy-for-qtee.patch
 @@ -0,0 +1,236 @@
@@ -281,7 +281,7 @@ index 0000000..cf1f56f
 ++##  Enable rules specific to qtee_supplicant.
 ++##  </p>
 ++## </desc>
-++gen_tunable(tee_supplicant_qtee, false)
+++gen_tunable(tee_supplicant_qtee, true)
 ++
 + type tee_supplicant_t;
 + type tee_supplicant_exec_t;
