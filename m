@@ -1,87 +1,113 @@
-Return-Path: <yoann.congal@smile.fr>
+Return-Path: <ross.burton@arm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B93BFCD5BAC
-	for <webhook@archiver.kernel.org>; Thu, 21 May 2026 10:14:18 +0000 (UTC)
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.33290.1779358458035328597
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D54E2CD5BB1
+	for <webhook@archiver.kernel.org>; Fri, 22 May 2026 12:32:30 +0000 (UTC)
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.15072.1779449649817168516
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 21 May 2026 03:14:18 -0700
+ Fri, 22 May 2026 04:34:10 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@smile.fr header.s=google header.b=y1BcDMoO;
- spf=pass (domain: smile.fr, ip: 209.85.221.44, mailfrom: yoann.congal@smile.fr)
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-45e9f4a3510so636019f8f.1
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 21 May 2026 03:14:17 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=iv54kcQf;
+ spf=pass (domain: gmail.com, ip: 209.85.218.41, mailfrom: aleksandar.nikolic010@gmail.com)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-bcd0111ea98so1063025866b.1
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 22 May 2026 04:34:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=smile.fr; s=google; t=1779358456; x=1779963256; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20251104; t=1779449648; x=1780054448; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1lTHarQoq7k//kEp50shwfWk8FSb6nHA18jg31HX7BY=;
-        b=y1BcDMoOQeScApVWL1Av91TCXuDIZK/UXC3Z69n8jnQNPK4xee9yWQ5NOciZDQzUns
-         qch7JEsjMG2x2VN/pYsb1fDIpt571mszHoSfEKdM2116aDJ9WFac75vVll7q5appXryO
-         MO6Hvsg7s+ZIAcYO2b0sHBi3D8zYciIsXB3q8=
+        bh=ZafoTtcN+oRsHXiWNMTGjD3Jdxnj/jbxgyECLs18plE=;
+        b=iv54kcQfF8VXJX1Mf9utr6vJh2KFOJqcmXN8QTBWEr7w6fmAAvUBc276qdRP6vkrvN
+         tmuiLiCVSQJvVs6ebHxtiXGwPGz4HW1xmYKcnCAQFlXQ0CE6QedSF4bhFxAEI3QH95iU
+         S1eZ1m047TgH00LQcs/e1YN1f4LFaTn+OP7IO9MovqX2CPCakHEcLZowFZVnS3Jv0oSg
+         prhmD32fpBhVKomLs1heVcw4OwceocIrg+S7Mo3GQSgGKNjigh9fMprJKgSQr1ppmIYI
+         i63ZjpvWn3ueSQN/QIeGoHKNnZ8AYJzX47FagIcOiWbCyPM//iLzFGMzAvYh5a/lmWKd
+         u+KQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779358456; x=1779963256;
+        d=1e100.net; s=20251104; t=1779449648; x=1780054448;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1lTHarQoq7k//kEp50shwfWk8FSb6nHA18jg31HX7BY=;
-        b=O2Rtc4XewC4/eONfSCjLN+z7RvpDiCo6rdRudZErjOQmx51olicGmWCm9OWktaJj3s
-         U1qP7VDlyUEwhH/D179Xd3iFk0LO/f1RdyM2RLvLZEMJbgtBLrfLSVaGnH61U1tqgkf+
-         07TkRIr1wzimYrRNnDzO3ix7g5zitXf8EwvMtIpCor2e42GeuYpMA9ej5Ln53I7J8YTw
-         m6cbpbZNJmzYaHZdDV4S57xc+Gf9U8GBhpClilfmOK9NekxTtsCBj3YeHXghfZzfZTnH
-         W21nVED+id+lg94L8Lu3xD7086Rv4C7+2bG2dMmWnuP4T8lPADJ4d9hbZy61NgQ3rt5U
-         jqbA==
-X-Gm-Message-State: AOJu0YxWuuCSd/7D0bEb2dSRnnDOYapVhblGT/ALHEjRJnNN+qbN/Qkj
-	7VFEZZPlf7J9od2JvZKpi/zdXn4m5cOkN8OZJ0GWOzjd6228oH3H3CQfS8d70w8mh5AZzUtzDkb
-	lpvRT
-X-Gm-Gg: Acq92OEAQ/1Nx+I9QaxN4lnYQMEpAqAEHs4AFp/bPBESX1a9pCiS+PRKPsFJ0oIwe2u
-	7aAKqLTuZ2BA/3au77mxQLMG540zgiWUclQYf5W3PDujGbRk8hPlwLbuWZVJx3ohi43zYRI0b2F
-	P3pjQ8EqtU+4sljCii+D7BzpJpCmCG79tci5oMTydw+LWvCHDxd7wD7a98FoyMkA07KWp+vwppY
-	T+JwFMPKw5frYcedkmhd2cqCIl54nu6dTEIhnsSVtK8Bjc+ntoMF0TEfUJLrWg6+SuAhnEGPVRc
-	zPuxBcUawEl5NP9n3NzFMlebJWc+kRCmzRdOKwUzYmlYaLg1T4fZ8zfVP/OqfJCwxhicDdbKxo9
-	6qVR3EKlJLRWjAvbcBRcL1/85evEUUH9KXB/EmGQ05FKnDdiSIUOiN6fCgNGuyvrabGqL75e0Uo
-	zr/mB1XEQGE9hvujZI0A2JJjR2BHY6zVYwIi1CXUkdvdsVZ6fOkrosZTfv57fpl2761EyqhJ3+f
-	O+f2fAXn9yhkNbnWbisa8+EzXc=
-X-Received: by 2002:a05:6000:2403:b0:43d:733f:aee6 with SMTP id ffacd0b85a97d-45ea3ae85d0mr3627472f8f.10.1779358456345;
-        Thu, 21 May 2026 03:14:16 -0700 (PDT)
-Received: from FRSMI25-LASER.home (2a01cb001331aa00a2e4fb7b0d887544.ipv6.abo.wanadoo.fr. [2a01:cb00:1331:aa00:a2e4:fb7b:d88:7544])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45eaa7cdcc3sm1856710f8f.8.2026.05.21.03.14.15
+        bh=ZafoTtcN+oRsHXiWNMTGjD3Jdxnj/jbxgyECLs18plE=;
+        b=ha8GLoOuX2ZaYlRmGlU7FzuxksCzZtYcE2etx9eUBk9Ye3hHCMGIiJ36PRx6DpJWcd
+         NaY0Mczzooq4mjuV3zSzzUmZ8TmZ/HQXAfkswrymQbMJsf6uuiUIajMpjvgEyWeSlni4
+         4XgYMgZjPjALaXADNEWWCXYvisKkYpLN0k4gw/wjT8L0lUp571GfwjiyfmSA/2FchFj3
+         i/U7uIOEpZCUYvbwHzYxCPLb96DAZuGvDfH8mojw4iKVthEKqvcxblPj7QDJAMFvBeOL
+         2AzQ0xFuzxMZU6JHIzSyTxGJJZW3cx5evkbUw6g/EqFLv5EiJj6yd7/A/kxnpUZSGqz/
+         U6cg==
+X-Gm-Message-State: AOJu0YwK4LAP9CmG/7c3me+5oBqynrl+YZt08KRbsZVNO7fEHzeIRy2q
+	rMjB+mwfzMA4v1VFc0f7iCkCUUB1opFM5w6ny5mgnkhpLAr5V52xZ1rMiBWGHQ==
+X-Gm-Gg: Acq92OFC++GOdPKlf3UUT53vwWr/a3dgseg+akVsUgaCO1AuvLzYdlbaw4iBx2BOdCT
+	Y5O8zrwLYJagCW/EBjNJ3wKT8AmJdIxI2s/mseIBg7nHbKMm4SqMk6iYk5XIL1Fa4/Yi2TLu8dI
+	ZbZlUWTw6zA/9V/7g6nPDdJDA+zCSYgtiuWRhOT5pD4MHKZoPJEwdGUdQgXccpqoB38J6OMeUWV
+	Xy4NFdFDcHyogv0PboRbEk89eK839+sBG8AzlWSRbtj4W6/mmZ3XbjogV31Vbnw51uGf+RP+I9T
+	ovdPA34nqaxObaXBtji4pOWyGcmHojDR1JabGBdoNRkDfLU/6xJuAA2C6rZwd2WWWBwDcNYnb8A
+	y4ONf3tkvibEUSesc/KKpEXPdOL0O4iVJrEiInWiUWi3i2IlWGEEPuBYpzePgREQqUABM1bpdrl
+	e90xR/rfnQJlht6JFR8avDm+gQCmPTY8NWO0UbaZ7cDMEX7S8=
+X-Received: by 2002:a17:907:ca84:b0:bd8:c9f5:8422 with SMTP id a640c23a62f3a-bdd28b76784mr204795266b.18.1779449647773;
+        Fri, 22 May 2026 04:34:07 -0700 (PDT)
+Received: from acert-swift3.. ([2a02:810d:60a:2b00:c68:3233:6f5a:58be])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-bddc5eca616sm45270566b.30.2026.05.22.04.34.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 May 2026 03:14:15 -0700 (PDT)
-From: Yoann Congal <yoann.congal@smile.fr>
+        Fri, 22 May 2026 04:34:07 -0700 (PDT)
+From: "Aleksandar Nikolic" <aleksandar.nikolic010@gmail.com>
+X-Google-Original-From: Aleksandar Nikolic <aleksandar.nikolic22@pm.me>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Yoann Congal <yoann.congal@smile.fr>
-Subject: [yocto-autobuilder-helper][PATCH] scripts/release-parser: allow whinlatter to go EOL
-Date: Thu, 21 May 2026 12:13:57 +0200
-Message-ID: <20260521101357.2316629-1-yoann.congal@smile.fr>
-X-Mailer: git-send-email 2.47.3
+Cc: twoerner@gmail.com,
+	Aleksandar Nikolic <aleksandar.nikolic@zeiss.com>
+Subject: [wic][PATCH] wic: Fix updating fstab for nvme devices
+Date: Fri, 22 May 2026 13:34:00 +0200
+Message-ID: <20260522113400.192786-1-aleksandar.nikolic22@pm.me>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 21 May 2026 10:14:18 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4004
+ <yocto-patches@lists.yoctoproject.org>; Fri, 22 May 2026 12:32:30 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4005
 
-From: Yoann Congal <yoann.congal@smile.fr>
+From: Aleksandar Nikolic <aleksandar.nikolic@zeiss.com>
 
-Signed-off-by: Yoann Congal <yoann.congal@smile.fr>
+In case wks file references nvme, update_fstab() function will not add
+prefix 'p' before the partition number, as the if condition only takes
+mmcblk into consideration.
+
+In case of nvme0n1 this leads that following entries are added to fstab:
+
+    /dev/nvme0n11
+    /dev/nvme0n13
+
+instead of:
+
+    /dev/nvme0n1p1
+    /dev/nvme0n1p3
+
+The patch fixes this as it extends the if condition and adds prefix 'p' for
+both mmcblk and nvme.
+
+Signed-off-by: Aleksandar Nikolic <aleksandar.nikolic@zeiss.com>
 ---
- scripts/release-parser.py | 1 -
- 1 file changed, 1 deletion(-)
+ src/wic/plugins/imager/direct.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/scripts/release-parser.py b/scripts/release-parser.py
-index 5947dcc..4f928b3 100755
---- a/scripts/release-parser.py
-+++ b/scripts/release-parser.py
-@@ -23,7 +23,6 @@ print(f"Reading tag information in {GIT_REPO}")
- SUPPORTED_RELEASES = {
-      "yocto-6.0": "LTS until Apr. 2030",
-      "yocto-5.0": "LTS until Apr. 2028",
--     "yocto-5.3": "Stable Release until May 2026",
- }
+diff --git a/src/wic/plugins/imager/direct.py b/src/wic/plugins/imager/direct.py
+index 832d0e6..38a675e 100644
+--- a/src/wic/plugins/imager/direct.py
++++ b/src/wic/plugins/imager/direct.py
+@@ -134,8 +134,8 @@ class DirectPlugin(ImagerPlugin):
+             elif part.use_label:
+                 device_name = "LABEL=%s" % part.label
+             else:
+-                # mmc device partitions are named mmcblk0p1, mmcblk0p2..
+-                prefix = 'p' if  part.disk.startswith('mmcblk') else ''
++                # mmc and nvme device partitions start with prefix 'p'
++                prefix = 'p' if  part.disk.startswith(('mmcblk', 'nvme')) else ''
+                 device_name = "/dev/%s%s%d" % (part.disk, prefix, part.realnum)
  
- CURRENT_ACTIVE_DEV_CODENAME = "Blacksail"
+             opts = part.fsopts if part.fsopts else "defaults"
+-- 
+2.43.0
+
 
