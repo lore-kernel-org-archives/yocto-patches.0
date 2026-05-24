@@ -2,61 +2,61 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80748CD5BC7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7421ACD5BB1
 	for <webhook@archiver.kernel.org>; Sun, 24 May 2026 12:16:06 +0000 (UTC)
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.7162.1779624965808596248
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.7160.1779624964365814308
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 24 May 2026 05:16:05 -0700
+ Sun, 24 May 2026 05:16:04 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=aF5/1bVt;
- spf=pass (domain: konsulko.com, ip: 209.85.219.45, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-8cc0ef7c306so57667026d6.3
-        for <yocto-patches@lists.yoctoproject.org>; Sun, 24 May 2026 05:16:05 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=ai54ipBo;
+ spf=pass (domain: konsulko.com, ip: 209.85.219.51, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-8b5de17382cso71943766d6.1
+        for <yocto-patches@lists.yoctoproject.org>; Sun, 24 May 2026 05:16:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1779624965; x=1780229765; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1779624963; x=1780229763; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=kFH7foQyZ/rkNWZkhpDpHnf66hqIv7cllgmxX9Zg674=;
-        b=aF5/1bVt3Wc+y+mxyObLUUM77hfMdbGZQVhK+QnvHUD0tbsGoH747oVyYv6a4wHgfu
-         R+6/VagZrn2T7T9LLiuid7P2TL8te887b0ib152ajgqfPOwkRSnQA+0wpvXMMzmpyKDk
-         g7ceMePzGVom7OWGh2ajY/tXOK+doflIrQpHs=
+        bh=xQaZKN6akvqTWTdzyPcNadu7Fm/4cmzUCE6/MmO51c4=;
+        b=ai54ipBoPI5ys67qgLf8fsL3y/bzHKVmiEWcMTYilRn6tlFachnQx+Ma6DTeSaP8Qp
+         tLOYzx4+ZRCCq9SGB9HnCUe+c5nRUjYtOgRlA61lXxBuElHvyMo7nerwG6pSXPsa2zEu
+         jBSJOTGfVlPNwgzJMXn9L1f1hVOueQbPBB55k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779624965; x=1780229765;
+        d=1e100.net; s=20251104; t=1779624963; x=1780229763;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=kFH7foQyZ/rkNWZkhpDpHnf66hqIv7cllgmxX9Zg674=;
-        b=adFD0GgVoqArLYDHym98OGh24SiwbyQv+6efdSZPesLufrbU4kdvbLDzuXqD/nUO8P
-         rtxj8+G6Uvx638FY8pPj5BLm5Sj81X74sJr7AqYowQJmTi20Gf5or4D8TenXLsoH1ob6
-         DyKBS9jfXQ5o04uZ5VaUCq3H1dcCMvKHmNFRoYTZQKa2PfnD8SYJqRGwgD4UfEVfSivb
-         OrvVXKT5CB3rIptnELu1jhrIs5Xvw7N6X2/aVcVAYNU1nEKTiUK62fXqewJwBcoMH/Ec
-         qCWJsDVRX0F25NwF6yeqlwwzaMTrQNtY91eaRkItIJ9J6Xt0dyPYXEMJN+YU/JaCWfT6
-         kzjQ==
-X-Gm-Message-State: AOJu0Yyn5/xb6OUTLzmkCUuG8DI2ra1FTjaoLRPNRQyB6l1I9UIcFs8r
-	glZaXjtkcmQygSTz1zf9xhPgxVrM5275CDvr/uEzsFZvUfOr7/zt11wYgPR2bkU8Z6kXgbsaRue
-	v67US
-X-Gm-Gg: Acq92OEGiKVaqIN8meo3PJyXgW1qPybO/ELxyQS5eh0rsbDwuZQhvYVg88uHhWLzloB
-	CZyowcJxavWyTNvcD8qEVCQCFJy396fvv2xDAE9hM4Ws36lSjljDJq/O8VO3NVR+OR9+UyGLDdQ
-	xN2rXRNk3w9dfBlMH6HPASHkmUCGDamEJYS2NaLVzqJtLNizXw5yDAmnM06SAYhVOniGaDz2qHk
-	jXD9ODi7cBOjyV2tFVJ7YaOOBXcKiOeGLYSsEKAVNLXfsJfmz0VcLM5Mo5UsBbf5M6ko2Ckejz3
-	8RTfTkF4Fixra8HFkczkmXWjAPBtY9okVRNZB3A5cBHYN5GVeQgLczz8reP5greA+PIFz+6P1d0
-	c2zPy+sSa23WO6TzcM0y58gQBnEYn00w66BcGg4C9v+otGl0sMyOdTy7Hk0Grimf0u3zuutUW79
-	g6YQEBy+RNXSX9R/b1mBtWVI5jbHSo7DHPTeeHSxqjGnO+jDaxnLC419fgskvIj5dg+JZMRgqYU
-	zDGh4pkUGCFYK/g0QoKS9lYD7Pm3sMzWLk2EZwojiqXrlt1lufHCd9ZeR71qYp3
-X-Received: by 2002:a05:6214:29e1:b0:8ac:b4d5:50ec with SMTP id 6a1803df08f44-8cc7b5b94fcmr168599756d6.38.1779624964695;
-        Sun, 24 May 2026 05:16:04 -0700 (PDT)
+        bh=xQaZKN6akvqTWTdzyPcNadu7Fm/4cmzUCE6/MmO51c4=;
+        b=fpp5pW7uPOC+lffVIRCG56vtFNOmcMxbGB3NeVwQ+/5msNEHpv3aIVL/zbKearesbm
+         r9dZVcV/uJroQ6RvOTTVl5sAEi1IxP9e1ukVBbwXkjqFscqncfeoQiR9/hpwQa+4L/Ln
+         QK/WXcSvFmWhDuMdtQIfReOu38AR8jCYlBl/595FgbjlE+0f3fBUXTM6DA1KuZ83KMCa
+         PjfJKD88oB78MGLwDPUzXlNA4m6eJ0TDqZdp6iOFv3r9on3LdQ15I6JBzOQ3VmCdY4Zt
+         dAljWylHvsqZhY4FgU1qVMW8YwEU2gUT1IcZgpXcCEJe8HIXa5dC/mK+K3FgxcSikzaH
+         DsdA==
+X-Gm-Message-State: AOJu0YxmKUKfeFQnP8dwRc2uwdQpseIZgN/z0PWFE0ZoJ1ZjrGK3m9cL
+	FKoz5N04fKAn2jklfriTtnCu1F2JGh2QpCO/uJQnZeCQ5bO3jBqD/Jc5x1xq1apoAdMjBs+ltIo
+	o/yec
+X-Gm-Gg: Acq92OHSuBblUyCQr2D+EQ7WgWOpAokbIL0zqLiVvls1WxJ7qH0hopjvM1Vz8ytg+sd
+	yg1kgfGiHHJ2jKYoHImwWLxNBSaM/QRZdz4KIygzTG07hwEAqAj2D8h6Zb2zTPh1EwbOm6MXWzT
+	enZRE3XEVAf1CH1ZdOY54Fg1JgBWx1mknS7Texbh/7BlP3KHYm04m1qCT2OGBmVCSgy8rjcJ3xr
+	nxuc8kVSfJEdhifyI3j7s7VnVChXDEAa8jKqu2bqj/x9mvdw6XOGqk/E2xtWVkp5eP7Wc/5TfeI
+	/uV44Z07jabdCjBjBW7n7KXbWA/RjB2OzPIXCm+rrczxmbiot4O1JemYfOreQ8arBW1oWMIHnqs
+	dXTeoyGDvOCxXGph0L33TqdgNs9lDA8vz5pPgIysHmsmPuMYPk6CIdOhQbpW4sB4XQQGcADVavl
+	4nyPc8HJITXiyLx5YF7OrUqpSHXwTuM4RbOAQ0jKtD1D+XAokxnT3qYmmE+46IjNEbn6e7P0U7V
+	/6hjXpUttR6hpgGO5FyCtbBjF/x945aR2AospkrmvKiaMm0umCljq1hkJMtTDNqPXG6kmVaXLc=
+X-Received: by 2002:a05:6214:410e:b0:8ac:bb62:fe52 with SMTP id 6a1803df08f44-8cc7b53d6eamr190558676d6.4.1779624963357;
+        Sun, 24 May 2026 05:16:03 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8cc8130d540sm82385186d6.38.2026.05.24.05.16.04
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8cc8130d540sm82385186d6.38.2026.05.24.05.16.02
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 May 2026 05:16:04 -0700 (PDT)
+        Sun, 24 May 2026 05:16:03 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-security][PATCH 12/13] aide: fix pkg_postinst_ontarget shell script
-Date: Sun, 24 May 2026 08:15:39 -0400
-Message-ID: <9d749026dd1054104a946565710152b50c6330ea.1779624335.git.scott.murray@konsulko.com>
+Subject: [meta-security][PATCH 10/13] arpwatch: fix typos
+Date: Sun, 24 May 2026 08:15:37 -0400
+Message-ID: <797df6dca9cbcf735afe92a49bb27e5a3637ba77.1779624335.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <cover.1779624335.git.scott.murray@konsulko.com>
 References: <cover.1779624335.git.scott.murray@konsulko.com>
@@ -66,40 +66,53 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Sun, 24 May 2026 12:16:06 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4018
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4016
 
-From: "jason.lau" <Haitao.Liu@windriver.com>
+From: Yi Zhao <yi.zhao@eng.windriver.com>
 
-- Fix conditional checks for AIDE_SCAN_POSTINIT and AIDE_RESCAN_POSTINIT:
-  '[ 0 ]' always evaluates to true since it's a non-empty string.
-  Use string comparison '= "1"' instead.
-- Fix invalid use of '&&' inside '[ ]' test brackets. Use separate
-  test expressions joined by shell '&&'.
+APRWATCH_FROM -> ARPWATCH_FROM
+ARPWATH_REPLY -> ARPWATCH_REPLY
+CONFFILE_FILES -> CONFFILES:${PN}
 
-Signed-off-by: Haitao Liu <haitao.liu@windriver.com>
-(reworked for 0.19.3, fixed indentation)
+Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- recipes-ids/aide/aide_0.19.3.bb | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ recipes-scanners/arpwatch/arpwatch_3.3.bb | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/recipes-ids/aide/aide_0.19.3.bb b/recipes-ids/aide/aide_0.19.3.bb
-index 9a94ce2..68e3bfa 100644
---- a/recipes-ids/aide/aide_0.19.3.bb
-+++ b/recipes-ids/aide/aide_0.19.3.bb
-@@ -62,10 +62,10 @@ CONF_FILE = "${sysconfdir}/aide.conf"
- FILES:${PN} += "${libdir}/${PN} ${sysconfdir}/aide.conf"
+diff --git a/recipes-scanners/arpwatch/arpwatch_3.3.bb b/recipes-scanners/arpwatch/arpwatch_3.3.bb
+index 3ab5993..bb9c2b5 100644
+--- a/recipes-scanners/arpwatch/arpwatch_3.3.bb
++++ b/recipes-scanners/arpwatch/arpwatch_3.3.bb
+@@ -18,8 +18,8 @@ inherit  autotools-brokensep update-rc.d useradd
  
- pkg_postinst_ontarget:${PN} () {
--    if [ ${AIDE_SCAN_POSTINIT} ]; then
-+    if [ "${AIDE_SCAN_POSTINIT}" = "1" ]; then
-         ${bindir}/aide -i
-     fi
--    if [ ${AIDE_RESCAN_POSTINIT}  && -e ${libdir}/aide/aide.db.gz ]; then
-+    if [ "${AIDE_RESCAN_POSTINIT}" = "1" ] && [ -e ${libdir}/aide/aide.db.gz ]; then
-         ${bindir}/aide -C
-     fi
- }
+ ARPWATCH_UID ?= "arpwatch"
+ ARPWATCH_GID ?= "arpwatch"
+-APRWATCH_FROM ?= "root "
+-ARPWATH_REPLY ?= "${ARPWATCH_UID}"
++ARPWATCH_FROM ?= "root "
++ARPWATCH_REPLY ?= "${ARPWATCH_UID}"
+ 
+ # many configure tests are failing with gcc-14
+ CFLAGS += "-Wno-error=implicit-int -Wno-error=implicit-function-declaration"
+@@ -27,7 +27,7 @@ BUILD_CFLAGS += "-Wno-error=implicit-int -Wno-error=implicit-function-declaratio
+ 
+ PACKAGECONFIG ??= ""
+ 
+-PACKAGECONFIG[email] = "-with-watcher=email=${APRWATCH_FROM} --with-watchee=email=${ARPWATH_REPLY}, , postfix, postfix postfix-cfg"
++PACKAGECONFIG[email] = "--with-watcher=email=${ARPWATCH_FROM} --with-watchee=email=${ARPWATCH_REPLY}, , postfix, postfix postfix-cfg"
+ 
+ CONFIGUREOPTS = " --build=${BUILD_SYS} \
+           --host=${HOST_SYS} \
+@@ -78,7 +78,7 @@ USERADD_PARAM:${PN} = "--system -g ${ARPWATCH_GID} --home-dir  \
+     ${localstatedir}/spool/${BPN} \
+     --no-create-home  --shell /bin/false ${BPN}"
+ 
+-CONFFILE_FILES = "${sysconfdir}/${PN}.conf"
++CONFFILES:${PN} = "${sysconfdir}/${PN}.conf"
+ 
+ FILES:${PN} = "${bindir} ${sbindir} ${prefix}/etc/rc.d \
+                ${sysconfdir} /var/lib/arpwatch"
 -- 
 2.53.0
 
