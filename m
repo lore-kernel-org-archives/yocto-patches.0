@@ -2,61 +2,61 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A7A0CD5BB1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85042CD5BAB
 	for <webhook@archiver.kernel.org>; Sun, 24 May 2026 12:28:28 +0000 (UTC)
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.7245.1779625698314565703
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.7246.1779625698893551720
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 24 May 2026 05:28:18 -0700
+ Sun, 24 May 2026 05:28:19 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=Kjn/Q4N5;
- spf=pass (domain: konsulko.com, ip: 209.85.219.49, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-8acb3daf2aaso157699756d6.0
+ dkim=pass header.i=@konsulko.com header.s=google header.b=JnsjBe/o;
+ spf=pass (domain: konsulko.com, ip: 209.85.219.44, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-8b6dd874471so133123636d6.0
         for <yocto-patches@lists.yoctoproject.org>; Sun, 24 May 2026 05:28:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1779625697; x=1780230497; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1779625698; x=1780230498; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=kFH7foQyZ/rkNWZkhpDpHnf66hqIv7cllgmxX9Zg674=;
-        b=Kjn/Q4N51NmG2pMVQTMtNVLDO4DSDALzPR1M4vJLGdSIst8iyVGQ961y9nTuTV3Z+m
-         da8RuDOEZXTGl2f0QTxYgaToyS0FiUE1fykMD/eQSJq1j3ilWS0AX63qvpfGoZuq+SFP
-         L/98f4mFOfmUNbpfe4GlUIYP8E/UR3B7unL3w=
+        bh=KG3fqPPh9IbFdsP+TWH4RiDpILV0ygthFmsSLpMbxxA=;
+        b=JnsjBe/oCXg24G1d4VgtnWy18HhJgO0kZtT/ZQ5GOAuvVgvvw+8VEXnHs6RIxfl4sn
+         VivvqXwUE7p5Kj1YxuzlnJ3YzqZBqUSSW8awn2ufyr+LQfNe4jaMXalOR4RdkoEVhf5N
+         nLfnnrjbSY4bTW6YICj/NidAHE8rZue/88wxI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779625697; x=1780230497;
+        d=1e100.net; s=20251104; t=1779625698; x=1780230498;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=kFH7foQyZ/rkNWZkhpDpHnf66hqIv7cllgmxX9Zg674=;
-        b=alACOewZdktY9BpXcOFhCNMpf0KKJEs8/Nx0yrqxm3RWrKLsn0MM7OejZEFlEGetZQ
-         ZRi5QCnYkbmVykriFw71CqbG2JQI/swaJAgEoTwOOM/Oatq+RNUcdoDIUJt0RqHUytC2
-         ZMdnMYnaGiBznvKBBj55ncdXIyMNmCsQuW0Dvagem5g9tz6k2lY24/io5jN0OdXUZq1a
-         QpeQsH7mfq0tBUE/z9ydIUm2EoowRnIL85HdJU4YW6ybqnvDaI6mEDE1+RGVVtWhIh9A
-         PyFxUmkbtPF2fUJ8dd+Jprli9Q5icvHKk5UMO9u8jo/bTwD+rUIsggyniQkmOZCay8bw
-         naRA==
-X-Gm-Message-State: AOJu0YyQwqUw2EFH9+Dy98xLyOwJ5kFvIri1uRxSBPdVJsLaJrAtwIn5
-	yy9TjVZE1Q/ZP9Jg387AS/Wu3N6iMHaAvzLjXzAbJCm34Nse8JjH7JOGmXKQOXxPqCkcfN34jwv
-	HLR7H
-X-Gm-Gg: Acq92OEvUd4SnakJZEOw6fV/vcUgxtWTMsE/yHrB6uvaOHGA6iNR3oj2udODIGREMcZ
-	kqosBj/e5oY1zNQ1KUmZU5Im16YkBp5m59JyHsM1jlrZ79yfcYzjP43uSwSQ2cDm2pEf0s6tMMG
-	wS/lyQRpXkh+sK44IQpu0p7AmfWL7tk1qeanBI6fbXttlW9F9aOmoD/NXrzQfCm0rAyNzu71tCG
-	VLPDOZk2e/vQvrPZHJu0DYoRuaZg8Xz+nklgwWFDfeMDRvYYZZeuvkuAgrQ0shAnnuocgRS97UT
-	IFidEbBNqeMxMarU6xNrEglpN0xqURWv610DqAHQSliUVL651oIZx3fZLKSmWxMYO5yivLUgqnk
-	i91ihgzWfw/9lJ5S3TnxjMzEBWpwFGFF2f9NlF8cFZ9yMpvO4SQ4OCg/vAAGwNwzayXejCmi0cy
-	h0YyngjMVrFw1aRB5mvSttiHesA8kry82tEe4bGJakhSJefHBIFOVWG0r9kLAzBrveU70QgC+m6
-	+3VWzGpBVMpeWbM/E6o2af9Z8EzRpF78wWHPCNS4HUxSfiOxz7HU31pvWe+MdVdwGw3OIx3CCc=
-X-Received: by 2002:a05:620a:29d3:b0:914:cb07:447e with SMTP id af79cd13be357-914cb0747b0mr681303685a.5.1779625697280;
+        bh=KG3fqPPh9IbFdsP+TWH4RiDpILV0ygthFmsSLpMbxxA=;
+        b=PGU78ZTfjsVAEi8bk1ptPwja2rDU1KWuEuZHNBUbDNlY9sXeuXjoD64/xs4LHD8M5A
+         IOZPRxBYB97wzaVIz7ewqgyRyLlKViKzM7XfcII+hSmV5qL11lWKTVvbwVpQjlmGPZ3Y
+         oipU55K7ON808FIreykz20GeDNYbCw/TccwWiG2piMCdBqjCl0aC/n6CmWkKeJf549R7
+         1kdKvls664raD2wM2gfgLqN+OE/Ebmsmj64mkyK2bTlZZsk9TGUcDSAz4VlemjnSlzhV
+         93o6Qeuwu9n9Z08v2m13wmBxc9qlsJwbCr2ngvUm1KaHQifrdTlQTuI91BLzVLlZF5sU
+         xVmg==
+X-Gm-Message-State: AOJu0YzWu2oAV9vQ57sMu6SJsY6TVbRs1Xt3ZJlMyeQPfoi+Bft8IK2e
+	Hwu4lrIm5Mw/YmuuL6w7y42PzCRAfs15X0SQ+4j4YFMaWx9rspQEkQx1PLqcEPCDovV+PbVJhUy
+	aKaxa
+X-Gm-Gg: Acq92OGHHu4bnEt/qxRHzwgjotIRMTofpcc6VHCbjw4miVrjn46BIbG3TI/UDnQbjY+
+	WBBWqS3oLEsDigqMwcpfr5K6OdL2B9UrI+FF75MTEmK9zgbJo/fC4mE/zPCjf4mFg1+xbd+nUNn
+	hqdp/2n6H/V/fH3EwnV7snJPLERnunkgLQCFaq3G+bwPWiy/bha9ERmCnq3yA/QwjQy+vOZ1peG
+	NepJc08lJ58Jlu4VFd7p/VNJuo5Fk6MOg18Ay61/3jbpGKM7GI/PdvyScTsz/cnfB0FtN3ag074
+	AtIRHMD7bJh2UM4cNpUgipCjWjCXBuoL3kHcXigp7csCvItCCqmiRxPyDWAuKF5sJnppu1DWKrO
+	1Cp5HjWgiVV9CfoUwu2egbbO8bd5/9Cni5X6kOZX8VToByYbSNPZPV1yUi2zN9aRIlhDzyVjB+L
+	rd58+8A9g/0q225xncTKvFZIZAiqabtdI0FilAMNw9qL/Ie+JGZ0mEjLRjW7Pg0KlmlTczDmptX
+	j4WvKxADxyzvxn/LWxsKfdYo7jfyBrZU57Ka8PWId5Df/Gz4lHWLn6i68b27/Ex
+X-Received: by 2002:a05:620a:254a:b0:8cf:c451:cc1c with SMTP id af79cd13be357-914b49d2121mr1561357585a.58.1779625697864;
         Sun, 24 May 2026 05:28:17 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-914bb8c8034sm751989385a.7.2026.05.24.05.28.16
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-914bb8c8034sm751989385a.7.2026.05.24.05.28.17
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 May 2026 05:28:16 -0700 (PDT)
+        Sun, 24 May 2026 05:28:17 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-security][wrynose][PATCH 12/13] aide: fix pkg_postinst_ontarget shell script
-Date: Sun, 24 May 2026 08:28:01 -0400
-Message-ID: <18c343e92eb815c9ce0d7401c9d48c70baef7aaa.1779625557.git.scott.murray@konsulko.com>
+Subject: [meta-security][wrynose][PATCH 13/13] samhain: upgrade 4.5.2 -> 4.5.3
+Date: Sun, 24 May 2026 08:28:02 -0400
+Message-ID: <f7d6b118f6e2a1bccc6b863584ca25ba74021c46.1779625557.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <cover.1779625557.git.scott.murray@konsulko.com>
 References: <cover.1779625557.git.scott.murray@konsulko.com>
@@ -66,40 +66,42 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Sun, 24 May 2026 12:28:28 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4032
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4033
 
-From: "jason.lau" <Haitao.Liu@windriver.com>
+From: Bin Cao <bin.cao.cn@windriver.com>
 
-- Fix conditional checks for AIDE_SCAN_POSTINIT and AIDE_RESCAN_POSTINIT:
-  '[ 0 ]' always evaluates to true since it's a non-empty string.
-  Use string comparison '= "1"' instead.
-- Fix invalid use of '&&' inside '[ ]' test brackets. Use separate
-  test expressions joined by shell '&&'.
+Update samhain-client, samhain-server, and samhain-standalone to 4.5.3.
 
-Signed-off-by: Haitao Liu <haitao.liu@windriver.com>
-(reworked for 0.19.3, fixed indentation)
+Release notes: https://www.la-samhna.de/samhain/archive.html
+
+Signed-off-by: Bin Cao <bin.cao.cn@windriver.com>
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- recipes-ids/aide/aide_0.19.3.bb | 4 ++--
+ recipes-ids/samhain/samhain.inc | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/recipes-ids/aide/aide_0.19.3.bb b/recipes-ids/aide/aide_0.19.3.bb
-index 9a94ce2..68e3bfa 100644
---- a/recipes-ids/aide/aide_0.19.3.bb
-+++ b/recipes-ids/aide/aide_0.19.3.bb
-@@ -62,10 +62,10 @@ CONF_FILE = "${sysconfdir}/aide.conf"
- FILES:${PN} += "${libdir}/${PN} ${sysconfdir}/aide.conf"
+diff --git a/recipes-ids/samhain/samhain.inc b/recipes-ids/samhain/samhain.inc
+index fc4e423..95413cb 100644
+--- a/recipes-ids/samhain/samhain.inc
++++ b/recipes-ids/samhain/samhain.inc
+@@ -3,7 +3,7 @@ HOMEPAGE    = "http://www.la-samhna.de/samhain/"
+ LICENSE     = "GPL-2.0-only"
+ LIC_FILES_CHKSUM = "file://LICENSE;md5=8ca43cbc842c2336e835926c2166c28b"
  
- pkg_postinst_ontarget:${PN} () {
--    if [ ${AIDE_SCAN_POSTINIT} ]; then
-+    if [ "${AIDE_SCAN_POSTINIT}" = "1" ]; then
-         ${bindir}/aide -i
-     fi
--    if [ ${AIDE_RESCAN_POSTINIT}  && -e ${libdir}/aide/aide.db.gz ]; then
-+    if [ "${AIDE_RESCAN_POSTINIT}" = "1" ] && [ -e ${libdir}/aide/aide.db.gz ]; then
-         ${bindir}/aide -C
-     fi
- }
+-PV = "4.5.2"
++PV = "4.5.3"
+ 
+ SRC_URI = "https://la-samhna.de/archive/samhain_signed-${PV}.tar.gz \
+            file://${INITSCRIPT_NAME}.init \
+@@ -22,7 +22,7 @@ SRC_URI = "https://la-samhna.de/archive/samhain_signed-${PV}.tar.gz \
+            file://0001-Format-test-output-to-match-Automake-standards.patch \
+            "
+ 
+-SRC_URI[sha256sum] = "0b5d3534fd60ecf45dfd79bd415e81f7a56eba7f1755771735e204f334033578"
++SRC_URI[sha256sum] = "e7837adfde3d59a23c59e1bf3ebacdf71bce018619194cfad938cd30cbb9d15b"
+ 
+ UPSTREAM_CHECK_URI = "https://www.la-samhna.de/samhain/archive.html"
+ UPSTREAM_CHECK_REGEX = "samhain_signed-(?P<pver>(\d+(\.\d+)+))\.tar"
 -- 
 2.53.0
 
