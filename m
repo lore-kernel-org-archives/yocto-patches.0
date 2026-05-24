@@ -1,113 +1,100 @@
-Return-Path: <ross.burton@arm.com>
+Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D54E2CD5BB1
-	for <webhook@archiver.kernel.org>; Fri, 22 May 2026 12:32:30 +0000 (UTC)
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.15072.1779449649817168516
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99217CD5BC7
+	for <webhook@archiver.kernel.org>; Sun, 24 May 2026 12:16:04 +0000 (UTC)
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.7104.1779624963147681974
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 22 May 2026 04:34:10 -0700
+ Sun, 24 May 2026 05:16:03 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=iv54kcQf;
- spf=pass (domain: gmail.com, ip: 209.85.218.41, mailfrom: aleksandar.nikolic010@gmail.com)
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-bcd0111ea98so1063025866b.1
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 22 May 2026 04:34:09 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=bBmd+0Jg;
+ spf=pass (domain: konsulko.com, ip: 209.85.160.180, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-50e5c7eb565so95893101cf.3
+        for <yocto-patches@lists.yoctoproject.org>; Sun, 24 May 2026 05:16:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779449648; x=1780054448; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZafoTtcN+oRsHXiWNMTGjD3Jdxnj/jbxgyECLs18plE=;
-        b=iv54kcQfF8VXJX1Mf9utr6vJh2KFOJqcmXN8QTBWEr7w6fmAAvUBc276qdRP6vkrvN
-         tmuiLiCVSQJvVs6ebHxtiXGwPGz4HW1xmYKcnCAQFlXQ0CE6QedSF4bhFxAEI3QH95iU
-         S1eZ1m047TgH00LQcs/e1YN1f4LFaTn+OP7IO9MovqX2CPCakHEcLZowFZVnS3Jv0oSg
-         prhmD32fpBhVKomLs1heVcw4OwceocIrg+S7Mo3GQSgGKNjigh9fMprJKgSQr1ppmIYI
-         i63ZjpvWn3ueSQN/QIeGoHKNnZ8AYJzX47FagIcOiWbCyPM//iLzFGMzAvYh5a/lmWKd
-         u+KQ==
+        d=konsulko.com; s=google; t=1779624962; x=1780229762; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HFYuBZSSoac4B53nRAocpozjYp/LOBBoLX5+1ZSzMV8=;
+        b=bBmd+0JgozafhldN+i/S2o4owSQl5Xv3kYt8wrZXdJmjplWc+rkfxGcNOqPyS0j1p+
+         of9vwS6989oGiL9JzUcWjUicBDb8pJHW4kR/sjfHVnuhq55XGvQF2jjF/Js1pLGBTF73
+         2HQTZb/phWOh6AOr++Z31BKfZGLZKvR74y/ME=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779449648; x=1780054448;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZafoTtcN+oRsHXiWNMTGjD3Jdxnj/jbxgyECLs18plE=;
-        b=ha8GLoOuX2ZaYlRmGlU7FzuxksCzZtYcE2etx9eUBk9Ye3hHCMGIiJ36PRx6DpJWcd
-         NaY0Mczzooq4mjuV3zSzzUmZ8TmZ/HQXAfkswrymQbMJsf6uuiUIajMpjvgEyWeSlni4
-         4XgYMgZjPjALaXADNEWWCXYvisKkYpLN0k4gw/wjT8L0lUp571GfwjiyfmSA/2FchFj3
-         i/U7uIOEpZCUYvbwHzYxCPLb96DAZuGvDfH8mojw4iKVthEKqvcxblPj7QDJAMFvBeOL
-         2AzQ0xFuzxMZU6JHIzSyTxGJJZW3cx5evkbUw6g/EqFLv5EiJj6yd7/A/kxnpUZSGqz/
-         U6cg==
-X-Gm-Message-State: AOJu0YwK4LAP9CmG/7c3me+5oBqynrl+YZt08KRbsZVNO7fEHzeIRy2q
-	rMjB+mwfzMA4v1VFc0f7iCkCUUB1opFM5w6ny5mgnkhpLAr5V52xZ1rMiBWGHQ==
-X-Gm-Gg: Acq92OFC++GOdPKlf3UUT53vwWr/a3dgseg+akVsUgaCO1AuvLzYdlbaw4iBx2BOdCT
-	Y5O8zrwLYJagCW/EBjNJ3wKT8AmJdIxI2s/mseIBg7nHbKMm4SqMk6iYk5XIL1Fa4/Yi2TLu8dI
-	ZbZlUWTw6zA/9V/7g6nPDdJDA+zCSYgtiuWRhOT5pD4MHKZoPJEwdGUdQgXccpqoB38J6OMeUWV
-	Xy4NFdFDcHyogv0PboRbEk89eK839+sBG8AzlWSRbtj4W6/mmZ3XbjogV31Vbnw51uGf+RP+I9T
-	ovdPA34nqaxObaXBtji4pOWyGcmHojDR1JabGBdoNRkDfLU/6xJuAA2C6rZwd2WWWBwDcNYnb8A
-	y4ONf3tkvibEUSesc/KKpEXPdOL0O4iVJrEiInWiUWi3i2IlWGEEPuBYpzePgREQqUABM1bpdrl
-	e90xR/rfnQJlht6JFR8avDm+gQCmPTY8NWO0UbaZ7cDMEX7S8=
-X-Received: by 2002:a17:907:ca84:b0:bd8:c9f5:8422 with SMTP id a640c23a62f3a-bdd28b76784mr204795266b.18.1779449647773;
-        Fri, 22 May 2026 04:34:07 -0700 (PDT)
-Received: from acert-swift3.. ([2a02:810d:60a:2b00:c68:3233:6f5a:58be])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-bddc5eca616sm45270566b.30.2026.05.22.04.34.06
+        d=1e100.net; s=20251104; t=1779624962; x=1780229762;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=HFYuBZSSoac4B53nRAocpozjYp/LOBBoLX5+1ZSzMV8=;
+        b=QC8xBEuhGy2zMvlxt4CpNqlpWsJa2BlOwVCTfm1Zy2v9A3bL48TRiUTUJve0tUyqOp
+         T9T5DsNSPWlfhfI7n2bVUdpRJEcoHntSMMAKxYXIMaZ8H7Dti6QQjFDDbPxK221DX2e3
+         NytIQCU6rk4xisQGxHiACJ2ZGmaA5q0guYo2y77vstKozNDG9X2jgdgq1pKuKCpaf79u
+         dZl7CWOAFbv1bAk9+BG0Of/rItt1l4HQmh44Ct1sw88V/oGHjtZ7aH3DnI2dZJ2PzDAt
+         m1MH5j9hvM6kOf23pj966fcoHM0EJpJ+tHZqs691TuZBgwGkFm6uHrJ9/VYi33KRfJVi
+         waow==
+X-Gm-Message-State: AOJu0YwM7loKuvDqIpDXnRNfbpXSYBifdYfF3UxaGZygkBsqnRRapOTn
+	HpZ/chjgVhKMfdp6JWEm8Q2j3ha17BNKgtHWkNgWl8OUiOsxAbuEmVW+EWazI7zMNbTaXHZdqxE
+	A/WSJ
+X-Gm-Gg: Acq92OFBTT0ea3kpXmW9WLbwyE0anZCn+06ehaKUzo/e222RU+aSPX8RlufaappKrib
+	W0AB3CNGLHePM5nfPQlqmq3eDPzIJ+XgL3NXkhP7EbmWMjXnOisLyEjrKeJw+zC/oQw2On4AGQZ
+	wmPHmnDNMc3BERzxbMIoppWoJ6KTmPtHKyYiRXM1FCrbGh+XPIwXl28Thbx6X6+b3p6U9GYpvNl
+	bQlaBV+beCswTKraBXLs2WUC2ShPXn/U+7YfwT048+miMzUWJbTA6Ma7knJ6RTbg3eehFnv/JeA
+	qfRNGvwpieC3AV1YbZQPaZYHHUQ/VtyjE3mJphZcHxdqFlG0mXydaTK/fwYz9j0gkWwwSlfEfuB
+	Cvo2N8dA9CnOepQgbzbETEYKGr3xN53ceQWPfSu++J+JIGHR3U/n3GwG3rt8UZ+k8jcuLn/rzP3
+	Qw+slgUTKsOyYWa1LYF0M3RYUVIvEVoHNzbhwJGz7F+wqAUSmZGou13U7B0otFLgEiBCnFNhn+4
+	U6tGvEarro7qvD2ROguuYKghOGD581ll+pbIu1QW7mSIv1rrLVOA5Ayn1uQeA9H
+X-Received: by 2002:ac8:594d:0:b0:516:e062:1a83 with SMTP id d75a77b69052e-516e0622067mr88132391cf.51.1779624961995;
+        Sun, 24 May 2026 05:16:01 -0700 (PDT)
+Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8cc8130d540sm82385186d6.38.2026.05.24.05.16.01
+        for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 May 2026 04:34:07 -0700 (PDT)
-From: "Aleksandar Nikolic" <aleksandar.nikolic010@gmail.com>
-X-Google-Original-From: Aleksandar Nikolic <aleksandar.nikolic22@pm.me>
+        Sun, 24 May 2026 05:16:01 -0700 (PDT)
+From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: twoerner@gmail.com,
-	Aleksandar Nikolic <aleksandar.nikolic@zeiss.com>
-Subject: [wic][PATCH] wic: Fix updating fstab for nvme devices
-Date: Fri, 22 May 2026 13:34:00 +0200
-Message-ID: <20260522113400.192786-1-aleksandar.nikolic22@pm.me>
-X-Mailer: git-send-email 2.43.0
+Subject: [meta-security][PATCH 08/13] parsec-service: update TS group name
+Date: Sun, 24 May 2026 08:15:35 -0400
+Message-ID: <921b75fa4aceaeeef388acdd1a3a8e35b5afc4cc.1779624335.git.scott.murray@konsulko.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <cover.1779624335.git.scott.murray@konsulko.com>
+References: <cover.1779624335.git.scott.murray@konsulko.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 22 May 2026 12:32:30 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4005
+ <yocto-patches@lists.yoctoproject.org>; Sun, 24 May 2026 12:16:04 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4014
 
-From: Aleksandar Nikolic <aleksandar.nikolic@zeiss.com>
+From: Ross Burton <ross.burton@arm.com>
 
-In case wks file references nvme, update_fstab() function will not add
-prefix 'p' before the partition number, as the if condition only takes
-mmcblk into consideration.
+meta-arm recently changed the group name that is used by TS[1], so update
+the group name to match.
 
-In case of nvme0n1 this leads that following entries are added to fstab:
+[1] meta-arm 595cb0f1a0 ("arm/trusted-services: fix udev management in libts")
 
-    /dev/nvme0n11
-    /dev/nvme0n13
-
-instead of:
-
-    /dev/nvme0n1p1
-    /dev/nvme0n1p3
-
-The patch fixes this as it extends the if condition and adds prefix 'p' for
-both mmcblk and nvme.
-
-Signed-off-by: Aleksandar Nikolic <aleksandar.nikolic@zeiss.com>
+Signed-off-by: Ross Burton <ross.burton@arm.com>
+Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- src/wic/plugins/imager/direct.py | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ .../recipes-parsec/parsec-service/parsec-service_1.5.0.bb       | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/src/wic/plugins/imager/direct.py b/src/wic/plugins/imager/direct.py
-index 832d0e6..38a675e 100644
---- a/src/wic/plugins/imager/direct.py
-+++ b/src/wic/plugins/imager/direct.py
-@@ -134,8 +134,8 @@ class DirectPlugin(ImagerPlugin):
-             elif part.use_label:
-                 device_name = "LABEL=%s" % part.label
-             else:
--                # mmc device partitions are named mmcblk0p1, mmcblk0p2..
--                prefix = 'p' if  part.disk.startswith('mmcblk') else ''
-+                # mmc and nvme device partitions start with prefix 'p'
-+                prefix = 'p' if  part.disk.startswith(('mmcblk', 'nvme')) else ''
-                 device_name = "/dev/%s%s%d" % (part.disk, prefix, part.realnum)
+diff --git a/meta-parsec/recipes-parsec/parsec-service/parsec-service_1.5.0.bb b/meta-parsec/recipes-parsec/parsec-service/parsec-service_1.5.0.bb
+index 0268c0e..857a3c8 100644
+--- a/meta-parsec/recipes-parsec/parsec-service/parsec-service_1.5.0.bb
++++ b/meta-parsec/recipes-parsec/parsec-service/parsec-service_1.5.0.bb
+@@ -86,7 +86,7 @@ def parsec_groups(d):
+     if "TPM" in config:
+         groups.append("tss")
+     if "TS" in config:
+-        groups.append("teeclnt")
++        groups.append("tee")
+     return "--groups " + ",".join(groups) if groups else ""
  
-             opts = part.fsopts if part.fsopts else "defaults"
+ FILES:${PN} += " \
 -- 
-2.43.0
+2.53.0
 
 
