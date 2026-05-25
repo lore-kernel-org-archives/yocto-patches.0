@@ -2,151 +2,141 @@ Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 531FCCD5BC9
-	for <webhook@archiver.kernel.org>; Mon, 25 May 2026 15:47:29 +0000 (UTC)
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.18423.1779724048627518829
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BA1BCD5BC9
+	for <webhook@archiver.kernel.org>; Mon, 25 May 2026 15:59:09 +0000 (UTC)
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.18798.1779724742915774102
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 25 May 2026 08:47:28 -0700
+ Mon, 25 May 2026 08:59:03 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=Ye+f3SmG;
- spf=pass (domain: gmail.com, ip: 209.85.222.174, mailfrom: twoerner@gmail.com)
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-913cc4d7c71so1057279885a.2
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 25 May 2026 08:47:28 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=Lmzy4pdc;
+ spf=pass (domain: gmail.com, ip: 209.85.219.51, mailfrom: twoerner@gmail.com)
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-8c9166b26b4so115508636d6.0
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 25 May 2026 08:59:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779724048; x=1780328848; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20251104; t=1779724742; x=1780329542; darn=lists.yoctoproject.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7CdUA6m43pDKO8SRbC7nKJ0RnlPnXeDC/iaPY2TSsDI=;
-        b=Ye+f3SmGWq+doygASmk6GBgc+DDleWzgjN/FfjhRM65E9rLG851ykLw12cQuAn79nO
-         QIjGVB6ruXdEgZqNL5ppXEvNZaWfUWyeX/BKXRVb4p2AKFVFTu9HuqJb0XZAWptTtlF2
-         jSoCh8GCxz3U7lXPaVAtvKmhdFJJt9mfhFoFiU3U96S92gMwtYGxZfZce5F/fu8Wzi18
-         WIsX5m3Z/OphlPkiATgxzjFMsFk7IO+IBtHubKb1uL3kAMfG+RdPanoetYkUWUKzWb9F
-         QfgjYYdvckG9oLtIS4NAMG69oCu2mOMx+BSuxVjhWZ3Naw6W/PQKI0EwHEjSfCjSDjy1
-         yM+w==
+         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UM9M9nOrNWMJBqLdJNBTrZ3YpqbZumjLtAFNJ5gsnQI=;
+        b=Lmzy4pdccLg+/Tkm42m/D/eKhr95CiVofNCJb8jLCbau9PJNmplQ+30cNXZ5Q1qSqQ
+         ftCEPxRn+QUw+e+t27FgPemCUphxZqe3cQKN5Ala4lVg0qbLCp0NMY3bFI4dijgAqkvH
+         8QkT6fqmIMoZ8JjfnTeHqBALtS+3/jhnqpWhSOzx5peU0/tTzAzfPS7sk86Bwj/6b4CA
+         +VGxONRQXLWp+HCEqa3tPRVGKFRak46R9AFf4HK65aR0vCWgE0SNt5g3ppiUm41TUcX/
+         Mtn9iH20apDTWSvrtVeH389QnFKa7a07fRnugGlVKLfyx+EIQosN8HVTFwplxdrfHNMO
+         fwJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779724048; x=1780328848;
+        d=1e100.net; s=20251104; t=1779724742; x=1780329542;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7CdUA6m43pDKO8SRbC7nKJ0RnlPnXeDC/iaPY2TSsDI=;
-        b=nbO/tkmUrp3hUqrUAy0fQkWWzZA69YSv95GVDaX+GId0wWKykQNFFgBoWeLfHUXas0
-         uRLocNt5QUO3bmhykb2JiOFtBMeE6SSuV/4CH5guHHQ2NhXGqPvX2dszoE/Eq0J7gbpk
-         YtREJmGh4hPd1zHbgMuCS5B7rnh/9lJw230v14Mv4vwzno7YqDSX11JnbBF3Uxc+zpKL
-         OjLHVqmn2/49eXokMoiA4tHcH8YISZq2vJ2a57sY4FpY++bWKJZtgxqaeGQWh/sndBvB
-         TZW4378OfvanTfuhul03b3MNSb6E4uI1aOzdq4NJPowBmTUkBQrGHAASNPzfEV33JgSj
-         IxUA==
-X-Gm-Message-State: AOJu0YwW9EZ86loEbNeU0PAwKP6Bq8YVjyQAv0HAl/nA58/3YxuH/k9E
-	HaRn1s03UQA2wL+7QD6yE0Db3zvQUed/zxI3fE0NV7a+2SJim1Nh7kzA
-X-Gm-Gg: Acq92OFMG1T8vpxwux1LMQN0O5T2Cx/D+h6S27BRXxjP8vXAf3xuKGjEpxXdD3yY+RZ
-	NYwjP0TSzqmHeR7PfPu0aMflEtgDFLuplP61dxHwG981EBfItTWm3JUmVQvarfpR0Mks+QD3tDK
-	B2NV9orZGzChsNQNDddlGN+70AnmVTUGCC5PVJG12v4khcAxO8WWQezMTepyBfx2uo9vwOOvJh+
-	QXN0KPj024kEOJI1SP0thFV0dkHSLPzCoFQEui5WireS/nF393OX6++q9qHd0HIzeUrtQHGk1Ik
-	V5KQCux0KuEoMnpU/q3R8XPJeteLs+VePKouycK+ncK6yLkIKQiYxZCWq1ksr2FLUgZc7l1x8WH
-	rasdsd71VSnvMt2QFiqbW/IS8QADFacVnyznEgvSfAa8XOuUluFv3LBAyrvg+pd/yfxpjF/f/YP
-	nAlM8O9PAyZ9nN+KkaJXTZ8untHhXQXwhr0KoyopH/rNEJdI5lmrGjbINBXycspyNFeQLtI464r
-	yt2KaHWZOgagus=
-X-Received: by 2002:a05:620a:40cd:b0:911:9e67:44cb with SMTP id af79cd13be357-914b49b93f1mr2074337485a.38.1779724047642;
-        Mon, 25 May 2026 08:47:27 -0700 (PDT)
+         :subject:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=UM9M9nOrNWMJBqLdJNBTrZ3YpqbZumjLtAFNJ5gsnQI=;
+        b=H/gzNT3bOpdAvqyZ4Lp8S6dj4TNDfuNdavGgQdnpGWxURK8iRHFfCHFpy1noMVqtRO
+         0026cP5A1v2T/BaXEbK9gm702vm1x9GbXx9f4lo9o8q4rjKxqQv4qcXHznF5vrCorq0R
+         rsek0tY1EENFpYZ+6aGq8MlmsxR8TkpJAmdPMCoZUfH8RhdBu7PZJqQsqnguTlK+PAvA
+         aG65cYRrOKaw9bK/4160Jd1rN02gqp3GunaW5OFxNI0CHDHK0hdQjLGz+jHbCoOqNEOX
+         p3ars3fipR+mMeNiZzEkAJfJlg45DYPG91GjTUoC7NbHrt2NhQxrZik0PZvJj4ZlpYTG
+         14uw==
+X-Gm-Message-State: AOJu0YyN6/qlI0sFGQ4+qJbDpsJ/5iaNk3hG+IcrNpKcOD/sAwUZShgK
+	YlMmAaHHykNFG7j3JviApGxCKfFeslHTaswzqp1YvfV7lUmLkBSHmhiUCkRBhg==
+X-Gm-Gg: Acq92OEE63Q3Tu800McQr9bFNyOdFo7EwBYBu8oOoi8d2a3Vn6Pv3pnIBJyDYXoQeHU
+	nKdrosO8mPAiKuMqrij4F/x0WINL2xu6jbBDsgbNjVmaUfcRDlO9a8T+Ee79s8uKoexZ1/jJIez
+	PR6CIDeIx8gYDym+Muu8nsRIBZvuERJb1Jl7P8gM+AzfLTRN2IQEireoNYJVAsm0hh9EBHGabAu
+	kqVnfW1DDRMmDjpvd2JSo+FDKvuQ20IbJ8mKbRkp6pjJA8ANv53WiN/jRN/anzgUldEx7vCSWAb
+	+8/zTeJ5VQwS8/BM8sXbWtIxjD4xMbSEjHElR5KUwjU+QoGpJplQNN1jwADgx+Gawrlg7e3r4RG
+	2nEJ49B0/Ne+0FcCEyfhivAgP3nmJmnOtokrI0Cp1QwU6FDplL6KMe3shYqx5EP5Y8nr21hiCcM
+	He/5GBLHislDbsv8+BUon/n1Rv3ICA7brTlygpVVxQq6qr7jnoz1XLfTDl9wtPakExfbITN0Pzo
+	itm
+X-Received: by 2002:a05:6214:500c:b0:8aa:a025:78e3 with SMTP id 6a1803df08f44-8cc7b4ec374mr247691276d6.6.1779724741661;
+        Mon, 25 May 2026 08:59:01 -0700 (PDT)
 Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-914bb8e9ea6sm1045788085a.12.2026.05.25.08.47.26
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8cc80decd3csm112516146d6.12.2026.05.25.08.59.00
+        for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 May 2026 08:47:26 -0700 (PDT)
-Date: Mon, 25 May 2026 11:47:24 -0400
+        Mon, 25 May 2026 08:59:00 -0700 (PDT)
+Date: Mon, 25 May 2026 11:58:59 -0400
 From: Trevor Woerner <twoerner@gmail.com>
-To: Gourav Singh <gouravsingh@siemens.com>
-Cc: yocto-patches@lists.yoctoproject.org, cedric.hombourger@siemens.com
-Subject: Re: [wic][PATCH] wic/plugins: gate root= with creator.rootdev for
- efi and pcbios
-Message-ID: <ahRvDD2Aj-wi3h-0@localhost.localdomain>
-References: <20260424102743.4182065-1-gouravsingh@siemens.com>
+To: yocto-patches@lists.yoctoproject.org
+Subject: Re: [yocto-patches] [wic][PATCH] partition.py: restore selinux label
+ for fstab
+Message-ID: <ahRxw3S7fQd9u4Ei@localhost.localdomain>
+References: <20260417031417.583413-1-yi.zhao@windriver.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260424102743.4182065-1-gouravsingh@siemens.com>
+In-Reply-To: <20260417031417.583413-1-yi.zhao@windriver.com>
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 25 May 2026 15:47:29 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4042
+ <yocto-patches@lists.yoctoproject.org>; Mon, 25 May 2026 15:59:09 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4043
 
 Hi,
 
-Thanks for the patch and the ping. The motivation is clear and the
-change is in the right direction, but I would like to see an update
-before merging:
+Thanks for the patch.
 
-1. extlinux has the same pattern and needs the same fix
-   src/wic/plugins/source/bootimg_partition.py:121 currently has
-
-   	extlinux_conf += "append root=%s rootwait %s\n" \
-			% (cr.rootdev, bootloader.append if bootloader.append else '')
-
-   With cr.rootdev == None on a DPS layout this produces
-   "append root=None rootwait ..."
-
-2. All the surrounding code uses %-formatted strings, please use the
-   same style
-
-On Fri 2026-04-24 @ 03:57:42 PM, Gourav Singh wrote:
-> Checks for creator.rootdev not being None were missing and would cause
-> the kernel command line to read "root=None". When using the Discoverable
-> Partitions Specification, we really want no root= parameter on the
-> kernel command line (and root=None is anyhow not a valid option).
+On Fri 2026-04-17 @ 11:14:17 AM, Yi Zhao via lists.yoctoproject.org wrote:
+> When SELinux is enabled, all files within a wic image retain their
+> SELinux labels except for /etc/fstab, which is replaced by a newly
+> generated one during the build, causing its extended attributes to be
+> lost.
 > 
-> Signed-off-by: Cedric Hombourger <cedric.hombourger@siemens.com>
-> Signed-off-by: Gourav Singh <gouravsingh@siemens.com>
+> Restore the SELinux context on the new fstab using debugfs ea_get and
+> ea_set commands, ensuring all files are correctly labeled at build time
+> and avoiding a full SELinux relabel on first boot.
+> 
+> Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
 > ---
->  src/wic/plugins/source/bootimg_efi.py    | 5 +++--
->  src/wic/plugins/source/bootimg_pcbios.py | 6 ++++--
->  2 files changed, 7 insertions(+), 4 deletions(-)
+>  src/wic/partition.py | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
 > 
-> diff --git a/src/wic/plugins/source/bootimg_efi.py b/src/wic/plugins/source/bootimg_efi.py
-> index 69aa38b..7d2175d 100644
-> --- a/src/wic/plugins/source/bootimg_efi.py
-> +++ b/src/wic/plugins/source/bootimg_efi.py
-> @@ -97,7 +97,7 @@ class BootimgEFIPlugin(SourcePlugin):
->                          (get_bitbake_var("KERNEL_IMAGETYPE"), get_bitbake_var("INITRAMFS_LINK_NAME"))
-> 
->              label = source_params.get('label')
-> -            label_conf = "root=%s" % creator.rootdev
-> +            label_conf = f"root={creator.rootdev}" if creator.rootdev else ""
->              if label:
->                  label_conf = "LABEL=%s" % label
-> 
-> @@ -186,7 +186,8 @@ class BootimgEFIPlugin(SourcePlugin):
->              boot_conf += "linux /%s\n" % kernel
-> 
->              label = source_params.get('label')
-> -            label_conf = "LABEL=Boot root=%s" % creator.rootdev
-> +            label_conf = "LABEL=Boot"
-> +            label_conf += f" root={creator.rootdev}" if creator.rootdev else ""
->              if label:
->                  label_conf = "LABEL=%s" % label
-> 
-> diff --git a/src/wic/plugins/source/bootimg_pcbios.py b/src/wic/plugins/source/bootimg_pcbios.py
-> index 1e5ec3a..b49d48d 100644
-> --- a/src/wic/plugins/source/bootimg_pcbios.py
-> +++ b/src/wic/plugins/source/bootimg_pcbios.py
-> @@ -231,8 +231,10 @@ class BootimgPcbiosPlugin(SourcePlugin):
->              kernel = "/" + get_bitbake_var("KERNEL_IMAGETYPE")
->              syslinux_conf += "KERNEL " + kernel + "\n"
-> 
-> -            syslinux_conf += "APPEND label=boot root=%s %s\n" % \
-> -                             (creator.rootdev, bootloader.append)
-> +            # Check if rootdev exists
-> +            root_param = f"root={creator.rootdev}" if creator.rootdev else ""
+> diff --git a/src/wic/partition.py b/src/wic/partition.py
+> index 435d31d..506ef2b 100644
+> --- a/src/wic/partition.py
+> +++ b/src/wic/partition.py
+> @@ -362,10 +362,21 @@ class Partition():
+>  
+>          if self.updated_fstab_path and self.has_fstab and not self.no_fstab_update:
+>              debugfs_script_path = os.path.join(cr_workdir, "debugfs_script")
+> +            fstab_label_path = os.path.join(cr_workdir, "fstab.selinuxlabel")
+> +            with open(debugfs_script_path, "w") as f:
+> +                f.write("cd etc\n")
+> +                # Retrieve fstab selinux label
+> +                f.write("ea_get -f %s fstab security.selinux\n" % (fstab_label_path))
+> +            debugfs_cmd = "debugfs -w -f %s %s" % (debugfs_script_path, rootfs)
+> +            exec_native_cmd(debugfs_cmd, native_sysroot)
+
+This debugfs call is only *reading* an xattr (ea_get), so it does not
+need the -w flag; please remove.
+
+Also, if the rootfs is non-SELinux, this call will print "xattr
+security.selinux not found" or something like that which ends up in the
+wic log. Can you arrange so this doesn't happen otherwise users will be
+confused by this line appearing in the log and might waste time trying
+to figure out why.
+
 > +
-> +            syslinux_conf += f"APPEND label=boot {root_param} {bootloader.append}\n"
-
-3. This change leaves a double space when rootdev is None. Build the
-   line from only the populated tokens (e.g. " ".join(parts)) so the
-   line looks the same whether or no root= is present
-
+>              with open(debugfs_script_path, "w") as f:
+>                  f.write("cd etc\n")
+>                  f.write("rm fstab\n")
+>                  f.write("write %s fstab\n" % (self.updated_fstab_path))
+> +                if os.path.isfile(fstab_label_path) and os.path.getsize(fstab_label_path) > 0:
+> +                    # Restore fstab selinux label
+> +                    f.write("ea_set -f %s fstab security.selinux\n" % (fstab_label_path))
+>              debugfs_cmd = "debugfs -w -f %s %s" % (debugfs_script_path, rootfs)
+>              exec_native_cmd(debugfs_cmd, native_sysroot)
+>  
+> -- 
+> 2.43.0
 > 
->          logger.debug("Writing syslinux config %s/syslinux.cfg", hdddir)
->          cfg = open("%s/hdd/boot/syslinux.cfg" % cr_workdir, "w")
-> --
-> 2.39.5
+> 
+> 
+> -=-=-=-=-=-=-=-=-=-=-=-
+> Links: You receive all messages sent to this group.
+> View/Reply Online (#3726): https://lists.yoctoproject.org/g/yocto-patches/message/3726
+> Mute This Topic: https://lists.yoctoproject.org/mt/118870524/900817
+> Group Owner: yocto-patches+owner@lists.yoctoproject.org
+> Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/13168745/900817/63955952/xyzzy [twoerner@gmail.com]
+> -=-=-=-=-=-=-=-=-=-=-=-
+> 
 > 
 
