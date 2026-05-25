@@ -1,233 +1,107 @@
-Return-Path: <daniel.turull@ericsson.com>
+Return-Path: <richard.purdie@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 680D5CD5BC0
-	for <webhook@archiver.kernel.org>; Mon, 25 May 2026 08:05:48 +0000 (UTC)
-Received: from MRWPR03CU001.outbound.protection.outlook.com (MRWPR03CU001.outbound.protection.outlook.com [40.107.130.23])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.11559.1779696339451973335
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3AE8CD5BCF
+	for <webhook@archiver.kernel.org>; Mon, 25 May 2026 08:53:58 +0000 (UTC)
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.12161.1779699236901297465
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 25 May 2026 01:05:40 -0700
+ Mon, 25 May 2026 01:53:57 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@ericsson.com header.s=selector1 header.b=OPCpf8Dv;
- spf=pass (domain: ericsson.com, ip: 40.107.130.23, mailfrom: edaturu@ericsson.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=U4bDx4RyaVcIDE6giBppTbxofpujQV7H21J/1EW62JPfcRVHRRQIFCYvDe1mqNOrHU+E6J0MSAYsQYczM3ry+2JZaB1uLaHC/wam1o8lnHKh/NEtwvF622cnNjsrq89ECnuqg6+QfLHa/3KQPHj1SehgrOYW/yysuqRWeNyKbPChgJ/UgtRe7xKtShWXPs1nDLjQKTDNq9h2TZoX1sEG6slyWaXbP6JXE7UXB2RqDsh1tQ+gPbBmmr5SrTt1AoglSCuaP4Q1LSQKgm0nYwcPkkrgZ45Lz7J5XDs2yADCZSsppIysLR+pkTl5uBs7Eox9SWxxxLJ5QXtciPCxO2SnEg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0UoImDsRLoN7ySQ5oNiFWbi1yt7jnM1D1cFWP0t3p7A=;
- b=eYN1H+sKFrG8OisLYpvKu4UXM/Q1wf2a5P+p0H5ABY/Xxa9Z+m1i5Cqy8enx4kEOqDRGYtY5ZaOZfQXcBBS4feqRubJHylBCN3ChEqSFGyidk/4yBiYOwhIX6tCH8VoEGCgt2qUO7EsJ793BWj2ZidlNFSZanfz1dqxmlBQ0XmRPieMSqYR6J+mUMnUM8V/Ax7UmbaftSfa9ud+pgd1kXUi0rP5fbaTV+kbEZyLafoLM5+2lROz1lk/3p7cqgDvwSZ1ZK2Ly9ct3cenkofqztkj3U0i1kZbHK1JW54M2tIw+eVslDO9X2YtQPbLX+fVueyaCloMfoikcMfOS+3uBVg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 192.176.1.74) smtp.rcpttodomain=gmail.com smtp.mailfrom=ericsson.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=ericsson.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ericsson.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0UoImDsRLoN7ySQ5oNiFWbi1yt7jnM1D1cFWP0t3p7A=;
- b=OPCpf8Dv80PRKUNKaxVZguag1S96p6PhwLql2kbEk9yo9KjsvtyG33AHBK8ze8CaQpJuR+3PmFapXL88ZaZL7MbBSH0ALho5gGzj/7GtNRYC9u6D88+Nu9JJTBxyQF2AjtKWgq5PUzqsqug+X0qgkLbrwOHqJFNs2v9ppksdbaeJ3jRjan/0C99GrP7VAdReez7DSb0SbGl++7Pf9huIAavWfMyPnQlWeg6XPTKZ1gDP90wXKSR4XLZ2djcmhx1a1NUfqYSEx2hsbUi8qE5p6bFZdQWnr2uRndMs1ehNNiW80x88sHyVXu8aBtSgm8ggWjIrHnJihskZqiS/0WUkHQ==
-Received: from PA7P264CA0406.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:39b::16)
- by DB9PR07MB7690.eurprd07.prod.outlook.com (2603:10a6:10:211::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.48.19; Mon, 25 May
- 2026 08:05:34 +0000
-Received: from AM4PEPF00025F97.EURPRD83.prod.outlook.com
- (2603:10a6:102:39b:cafe::49) by PA7P264CA0406.outlook.office365.com
- (2603:10a6:102:39b::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.48.20 via Frontend Transport; Mon, 25
- May 2026 08:05:33 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 192.176.1.74)
- smtp.mailfrom=ericsson.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=ericsson.com;
-Received-SPF: Pass (protection.outlook.com: domain of ericsson.com designates
- 192.176.1.74 as permitted sender) receiver=protection.outlook.com;
- client-ip=192.176.1.74; helo=oa.msg.ericsson.com; pr=C
-Received: from oa.msg.ericsson.com (192.176.1.74) by
- AM4PEPF00025F97.mail.protection.outlook.com (10.167.16.6) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.92.0 via Frontend Transport; Mon, 25 May 2026 08:05:33 +0000
-Received: from seroius18815.sero.gic.ericsson.se (153.88.142.248) by
- smtp-central.internal.ericsson.com (100.87.178.62) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.29; Mon, 25 May 2026 10:05:31 +0200
-Received: from seroius08462.sero.gic.ericsson.se (seroius08462.sero.gic.ericsson.se [10.63.237.245])
-	by seroius18815.sero.gic.ericsson.se (Postfix) with ESMTP id 4DB6A4021795;
-	Mon, 25 May 2026 10:05:08 +0200 (CEST)
-Received: by seroius08462.sero.gic.ericsson.se (Postfix, from userid 160155)
-	id 369C67003739; Mon, 25 May 2026 10:05:08 +0200 (CEST)
-From: <daniel.turull@ericsson.com>
-To: <daniel.turull@ericsson.com>, <yocto-patches@lists.yoctoproject.org>
-CC: <alex.kanavin@gmail.com>, <Qi.Chen@windriver.com>
-Subject: [AUH] [PATCH 2/2] steps: include devtool changelog in upgrade report
-Date: Mon, 25 May 2026 10:04:15 +0200
-Message-ID: <20260525080418.942183-2-daniel.turull@ericsson.com>
-X-Mailer: git-send-email 2.53.0
+ dkim=pass header.i=@linuxfoundation.org header.s=google header.b=PatodZ72;
+ spf=pass (domain: linuxfoundation.org, ip: 209.85.221.52, mailfrom: richard.purdie@linuxfoundation.org)
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-44a14580111so7066913f8f.0
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 25 May 2026 01:53:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1779699235; x=1780304035; darn=lists.yoctoproject.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=8DM2+6A9fIqnigZrkQvK8HWkkfYFHn8Jgd4l4jI7C8s=;
+        b=PatodZ72q4D3MNCSFYy1BYW4fdUEOl4hzX9wSpaEl9bbrbPWn0FR/UjhK0QMyLDWI7
+         pNHls+eRHaxySpknM5up7/hUNq2ciNM4HUoliw8WY8ZlHz6SgiAPFu/ct7XUZWDiYxcB
+         /DCiLCFvw7OP9SS6Qy3xzp/vgDQYWnBUtzLy0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779699235; x=1780304035;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8DM2+6A9fIqnigZrkQvK8HWkkfYFHn8Jgd4l4jI7C8s=;
+        b=K5FvVnF+G0RsCRm2jcW3/w1cyDKEmtk383mV/e3StrRaJ4oYDheANr5b11FKiBN+cw
+         MQCAe35k4iCkHRM/W9b/gGOwdI2i1l7n4U3PejFTAxpssmeK5AbtDeFjkSPO6YGvQKRE
+         L5PPOzNav5rzuAB3UaVbqpVVKpvNTDJ9dSwi08qmstqzmfo669O6qvA7chO2DY8LN1nN
+         mQZCqJRXdDTOAjw78Z/sq5wscnjQH4KJXa79gfxzywF8nB0ajvF78wzn6CM9JCyBYLfT
+         ah3rArx+ma37kvuetqezFu/t183zj3B+F6P1uP8DekfNgFhWTK9e6qfXkWIOLsiTs1UC
+         VjMw==
+X-Gm-Message-State: AOJu0Yw5EcTw3Leuw24eYoR5F1GBbQ9Ds+TLDgYef/gyvk7/+86uYOGt
+	/SIzduhak/DPkegAW1pOclvyixDYcYgd4bQxpZpodvmAjTEbsglVA+ae/xJXx5Jg6z5ziDSFAM+
+	cwi/m
+X-Gm-Gg: Acq92OEBCNcwUl0b3dnZkXommT9Z5zeDlwFfivp7lSzx9xUsZeHKO5fkIkfBOEos/M2
+	rysYWFSCkx21QcdKYLOTXZFRe4yGHc+AUimTVSCkbkuwC8ewoNUWRSkiVOP9DazpVmy9470t7NH
+	W+HQAkVgS594AIfhdOnHwSIRaDywLBCk5mzqLp/Ri5i/zac9WCSeDnhZO5JOPd8eC0ZCL3XbEq9
+	H2bsemQhlOA5mmIVOuTomKYGvnvSdyQMcE1u3L7IRhZBZyB9nsmrJ8PhYSFES37Idbp6fwVu4vd
+	wowC+gzWcq7aOoLGbkp9v9kNSaQ1i1D55evgsVf6/RRUYH/5KhrH6XF0wcB7PP25U6KYs6cDQim
+	SqBbHejLD5JnTrRKloVK1A9Rzi7f1DppBXuvfwczWxU06MknsKiXMiv/gnrY4k9pgxkKOW34Wy3
+	GBT3EQkEojpiQzCpV5mKG4aC0wNePlkc8KanpOHbSMD0HwKDHUfgXvucdaLdwBuxi/7ARnHD/Tq
+	3qeUhzKRIinuwaB0IOPoLNd
+X-Received: by 2002:a05:6000:1446:b0:43d:7a97:78af with SMTP id ffacd0b85a97d-45eb38e04e3mr23560307f8f.42.1779699235106;
+        Mon, 25 May 2026 01:53:55 -0700 (PDT)
+Received: from ?IPv6:2001:8b0:aba:5f3c:4698:2a3:881f:e81b? ([2001:8b0:aba:5f3c:4698:2a3:881f:e81b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45eb6d71688sm27104274f8f.33.2026.05.25.01.53.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 May 2026 01:53:54 -0700 (PDT)
+Message-ID: <10353a01dd5b874831051216ed82e0a2569ac2df.camel@linuxfoundation.org>
+Subject: Re: [yocto-patches] [AUH] [PATCH 1/2] git: use temp file for commit
+ message to avoid shell escaping issues
+From: Richard Purdie <richard.purdie@linuxfoundation.org>
+To: yocto-patches@lists.yoctoproject.org, daniel.turull@ericsson.com
+Cc: alex.kanavin@gmail.com, Qi.Chen@windriver.com
+Date: Mon, 25 May 2026 09:53:52 +0100
 In-Reply-To: <20260525080418.942183-1-daniel.turull@ericsson.com>
 References: <20260525080418.942183-1-daniel.turull@ericsson.com>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM4PEPF00025F97:EE_|DB9PR07MB7690:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4b91b937-e9e4-41a2-8916-08deba3465a0
-X-SMTP-Server: smtp-central.internal.ericsson.com
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700016|18002099003|56012099003|22082099003|3023799007|11063799006;
-X-Microsoft-Antispam-Message-Info: 
-	ky15+3oKWCrrBwLf6y+WllH2xXi5CC1ts5qmt3ZATamzhRIlwVwO5a5z1A1lQcuARZZLh1JLgPxFAAMWpaLxSDjUkEyW7I8UworKUvyuguUlEaNZlDKohLAdQCjoOHnV620eJY8T1isZXDKP1SzPekFA701DawBgBiFXAPVXNd/hwiJ1mfOac1n0tP2SfOIUP3LRotp+qM9Ivx/UdhC3bptXPUmgTss6DlBuCCuOkVn699s1FGtTYk3rvouKMMfkuk1wkStYHyO5fxJ2Emr/PCRwbsL60y1H4PNqW85D884DXidAA1w+sh1HS3jwsUJ3t0NssBFLtE7AEcelXqbdvJB9JOZHyXbmtjvWeY8POCVioT8OPqMeMZTK5fhORtRMrAWplG1rjYotV8eYkeOiQneTWtlg2E48c4PKh9M7fOjz6+E/sUtpwqTRMC1Kf4QjPpG1SZSehSR11Vn1p6Nuhjixj+DVY0zElV6UXl5b8o2EOAEAx2jom9SVwdWTTDsx40vEohzjEU+1AicjBcVK3q3RagjSr6rm0Y4WWbR2o03wf/ukRvbdfSNtuNAYvG0NhjOSYOeDSb3NCUVswm1MsoINZWH493l+6PW/GmQMzamC0BHwoX6CXvcL1z+VpFQuPxi2z8VmE8xqwK8KiPxq4BrgNU1/tt1eMpSP8wrkDASWRbBqu2FWEqsj02skfwcPuzAwCBFbOJ1O00gEyRORyj/XEIbwyl81wcmRnVZ9ig8=
-X-Forefront-Antispam-Report: 
-	CIP:192.176.1.74;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:oa.msg.ericsson.com;PTR:office365.se.ericsson.net;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700016)(18002099003)(56012099003)(22082099003)(3023799007)(11063799006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	04iaZB5kdPzmORAqVfIKwtNGFE0RS0HP+MqAWqK1hx7MiQYJFGblCXHWWFpagMNJrJdQFH+XoFVYjIuBs5aYNhin6mQIj7uSm289yn2Y0x3ipgQjwvwaVj2/OSvoCRkmcC1UxQD7tXlnMG+2uUQ2i8WWcTcJOxqrBpGOcAg8wC3TCZfWM70YvWAoPPcJjMsQenmkO3axDnynRhPCNqxj8gzG1ceoX2uoLdtSAQsFlAolPJwexfSsk7/V8KRqm8ztjmVurgMqTheEAE+cbg2+tIBPkz+9NDgpKL4AIl2ZN6MvLxA6l2BvoZ/VxPBNnI8tUESvJmp3PBEJTDELmwe6foWZ3Bqw2QDf2+nG81+JHYnSS0Ud9LQd7Ev5mmfzVvU3hGwt/1iDNArqm6z0xoVxtGLVxYGmsZyVIC4syQp0CyBgjvc+Ygtiwop8HkFGwg22
-X-OriginatorOrg: ericsson.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 May 2026 08:05:33.8702
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4b91b937-e9e4-41a2-8916-08deba3465a0
-X-MS-Exchange-CrossTenant-Id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=92e84ceb-fbfd-47ab-be52-080c6b87953f;Ip=[192.176.1.74];Helo=[oa.msg.ericsson.com]
-X-MS-Exchange-CrossTenant-AuthSource: 
-	AM4PEPF00025F97.EURPRD83.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR07MB7690
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.56.2-9 
+MIME-Version: 1.0
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 25 May 2026 08:05:48 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4037
+ <yocto-patches@lists.yoctoproject.org>; Mon, 25 May 2026 08:53:58 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4038
 
-From: Daniel Turull <daniel.turull@ericsson.com>
+T24gTW9uLCAyMDI2LTA1LTI1IGF0IDEwOjA0ICswMjAwLCBEYW5pZWwgVHVydWxsIHZpYSBsaXN0
+cy55b2N0b3Byb2plY3Qub3JnIHdyb3RlOgo+IEZyb206IERhbmllbCBUdXJ1bGwgPGRhbmllbC50
+dXJ1bGxAZXJpY3Nzb24uY29tPgo+IAo+IFBhc3NpbmcgdGhlIGNvbW1pdCBtZXNzYWdlIHZpYSAt
+bSAiLi4uIiBpbnRlcnBvbGF0ZXMgaXQgZGlyZWN0bHkgaW50bwo+IGEgc2hlbGwgY29tbWFuZCwg
+Y2F1c2luZyBhIHN5bnRheCBlcnJvciB3aGVuIHRoZSBtZXNzYWdlIGNvbnRhaW5zIHNwZWNpYWwK
+PiBjaGFyYWN0ZXJzIHN1Y2ggYXMgYmFja3RpY2tzLCBkb3VibGUgcXVvdGVzLCBvciBzaGVsbCBt
+ZXRhY2hhcmFjdGVycy4KPiAKPiBVc2UgYSB0ZW1wb3JhcnkgZmlsZSB3aXRoIC1GIGluc3RlYWQs
+IHdoaWNoIGJ5cGFzc2VzIHNoZWxsIGludGVycHJldGF0aW9uCj4gZW50aXJlbHkuCj4gCj4gQUkt
+R2VuZXJhdGVkOiBraXJvIHdpdGggY2xhdWRlLW9wdXMtNC42IG1vZGVsCj4gU2lnbmVkLW9mZi1i
+eTogRGFuaWVsIFR1cnVsbCA8ZGFuaWVsLnR1cnVsbEBlcmljc3Nvbi5jb20+Cj4gLS0tCj4gwqBt
+b2R1bGVzL3V0aWxzL2dpdC5weSB8IDE1ICsrKysrKysrKysrLS0tLQo+IMKgMSBmaWxlIGNoYW5n
+ZWQsIDExIGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL21v
+ZHVsZXMvdXRpbHMvZ2l0LnB5IGIvbW9kdWxlcy91dGlscy9naXQucHkKPiBpbmRleCBiMzgzMDQ5
+Li5iNzMyY2RiIDEwMDY0NAo+IC0tLSBhL21vZHVsZXMvdXRpbHMvZ2l0LnB5Cj4gKysrIGIvbW9k
+dWxlcy91dGlscy9naXQucHkKPiBAQCAtNTQsMTAgKzU0LDE3IEBAIGNsYXNzIEdpdChvYmplY3Qp
+Ogo+IMKgwqDCoMKgwqDCoMKgwqAgcmV0dXJuIHNlbGYuX2NtZCgiYWRkICIgKyBzcmMpCj4gwqAK
+PiDCoMKgwqDCoCBkZWYgY29tbWl0KHNlbGYsIGNvbW1pdF9tZXNzYWdlLCBhdXRob3I9Tm9uZSk6
+Cj4gLcKgwqDCoMKgwqDCoMKgIGlmIGF1dGhvciBpcyBOb25lOgo+IC3CoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgIHJldHVybiBzZWxmLl9jbWQoImNvbW1pdCAtYSAtcyAtbSBcIiIgKyBjb21taXRfbWVz
+c2FnZSArICJcIiIpCj4gLcKgwqDCoMKgwqDCoMKgIGVsc2U6Cj4gLcKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgcmV0dXJuIHNlbGYuX2NtZCgiY29tbWl0IC1hIC0tYXV0aG9yPVwiIiArIGF1dGhvciAr
+ICJcIiAtbSBcIiIgKyBjb21taXRfbWVzc2FnZSArICJcIiIpCj4gK8KgwqDCoMKgwqDCoMKgIGlt
+cG9ydCB0ZW1wZmlsZQo+ICvCoMKgwqDCoMKgwqDCoCB3aXRoIHRlbXBmaWxlLk5hbWVkVGVtcG9y
+YXJ5RmlsZShtb2RlPSd3Jywgc3VmZml4PScudHh0JywgZGVsZXRlPUZhbHNlKSBhcyBmOgo+ICvC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgIGYud3JpdGUoY29tbWl0X21lc3NhZ2UpCj4gK8KgwqDCoMKg
+wqDCoMKgwqDCoMKgwqAgdG1wID0gZi5uYW1lCj4gK8KgwqDCoMKgwqDCoMKgIHRyeToKPiArwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoCBpZiBhdXRob3IgaXMgTm9uZToKPiArwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgIHJldHVybiBzZWxmLl9jbWQoImNvbW1pdCAtYSAtcyAtRiAiICsgdG1w
+KQo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGVsc2U6Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoCByZXR1cm4gc2VsZi5fY21kKCJjb21taXQgLWEgLS1hdXRob3I9XCIiICsgYXV0
+aG9yICsgIlwiIC1GICIgKyB0bXApCj4gK8KgwqDCoMKgwqDCoMKgIGZpbmFsbHk6Cj4gK8KgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAgb3MudW5saW5rKHRtcCkKPiAKCgpXaHkgZGVsZXRlPUZhbHNlIGFu
+ZCB0aGVuIHRoZSB0cnkvZmluYWxseT8KCkNoZWVycywKClJpY2hhcmQK
 
-Copy the changelog file generated by 'devtool upgrade' into the
-package workdir so it is included as an email attachment in the
-upgrade report. This gives maintainers immediate visibility into
-what changed upstream without needing to look it up manually.
-
-Also fix a pre-existing bug in _devtool_upgrade where the license
-diff file was written using pkg_ctx['workdir'], which is never set,
-causing a KeyError whenever a license change was detected. Now uses
-the workdir parameter consistently.
-
-This patch depends on "devtool: upgrade: extract changelog between versions=
-"
-Otherwise the output does not change
-
-AI-Generated: kiro with claude-opus-4.6 model
-Signed-off-by: Daniel Turull <daniel.turull@ericsson.com>
----
- modules/steps.py    | 41 ++++++++++++++++++++++++++++++++++++++---
- upgrade-helper.conf |  5 +++++
- upgrade-helper.py   |  1 +
- 3 files changed, 44 insertions(+), 3 deletions(-)
-
-diff --git a/modules/steps.py b/modules/steps.py
-index b3ec61c..a8856c2 100644
---- a/modules/steps.py
-+++ b/modules/steps.py
-@@ -79,10 +79,43 @@ def _make_commit_msg(group):
-     pn =3D group['name']
-     return "{}: upgrade {}".format(pn, ",".join([_get_version(p) for p in =
-group['pkgs']]))
-=20
--def _devtool_upgrade(devtool, bb, git, opts, pkg_ctx):
-+def _get_changelog(pn, workdir):
-+    """Read the changelog generated by devtool upgrade and copy it to work=
-dir.
-+    Returns the changelog text or None."""
-+    changelog_path =3D os.path.join(os.environ.get('BUILDDIR', ''),
-+                                  'workspace', 'changelogs', '{}.txt'.form=
-at(pn))
-+    if os.path.isfile(changelog_path):
-+        try:
-+            with open(changelog_path, 'r', encoding=3D'utf-8', errors=3D'r=
-eplace') as f:
-+                text =3D f.read()
-+            shutil.copy2(changelog_path, os.path.join(workdir, '{}-changel=
-og.txt'.format(pn)))
-+            return text
-+        except OSError as e:
-+            W('Failed to copy changelog for {}: {}'.format(pn, e))
-+    return None
-+
-+
-+def _append_changelog_to_commit_msg(group, opts):
-+    max_len =3D int(opts['changelog_max_len'])
-+    for p in group['pkgs']:
-+        if 'changelog_text' not in p:
-+            continue
-+        text =3D p['changelog_text'].strip()
-+        if text.startswith('Changelog for '):
-+            text =3D text[text.index('\n') + 1:].strip()
-+        if len(text) > max_len:
-+            text =3D text[:max_len] + "\n\n[... changelog truncated ...]"
-+        group['commit_msg'] +=3D "\n\n" + text
-+
-+
-+def _devtool_upgrade(devtool, bb, git, opts, pkg_ctx, workdir):
-     try:
-         devtool_output =3D devtool.upgrade(pkg_ctx['PN'], pkg_ctx['NPV'], =
-pkg_ctx['NSRCREV'])
-         D(" 'devtool upgrade' printed:\n%s" %(devtool_output))
-+        # Copy changelog before checking for conflicts =E2=80=94 it's usef=
-ul even on failure
-+        changelog_text =3D _get_changelog(pkg_ctx['PN'], workdir)
-+        if changelog_text:
-+            pkg_ctx['changelog_text'] =3D changelog_text
-         # If devtool failed to rebase patches, it does not fail, but we sh=
-ould
-         if 'conflict' in devtool_output:
-             raise DevtoolError("Running 'devtool upgrade' for recipe %s fa=
-iled." %(pkg_ctx['PN']), devtool_output)
-@@ -96,13 +129,15 @@ def _devtool_upgrade(devtool, bb, git, opts, pkg_ctx):
-     license_diff_info =3D _extract_license_diff(devtool_output)
-     if len(license_diff_info) > 0:
-         pkg_ctx['license_diff_fn'] =3D "license-diff-{}.txt".format(pkg_ct=
-x['PV'])
--        with open(os.path.join(pkg_ctx['workdir'], pkg_ctx['license_diff_f=
-n']), 'wb') as f:
-+        with open(os.path.join(workdir, pkg_ctx['license_diff_fn']), 'wb')=
- as f:
-             f.write(b"".join(license_diff_info))
-=20
-=20
- def devtool_upgrade(devtool, bb, git, opts, group):
-     for p in group['pkgs']:
--        _devtool_upgrade(devtool, bb, git, opts, p)
-+        _devtool_upgrade(devtool, bb, git, opts, p, group['workdir'])
-+    _append_changelog_to_commit_msg(group, opts)
-+
-=20
- def _compile(bb, pkg, machine, workdir):
-         try:
-diff --git a/upgrade-helper.conf b/upgrade-helper.conf
-index 269bde3..d363c50 100644
---- a/upgrade-helper.conf
-+++ b/upgrade-helper.conf
-@@ -121,3 +121,8 @@
- #layer_mode=3Dno
- #layer_name=3Dmeta-intel
- #layer_dir=3DDIR/meta-intel
-+
-+# Maximum number of characters from the changelog to include in the
-+# commit message. Longer changelogs are truncated. The full changelog
-+# is always available as an attachment.
-+#changelog_max_len=3D3000
-diff --git a/upgrade-helper.py b/upgrade-helper.py
-index 40f31c4..f7a63c0 100755
---- a/upgrade-helper.py
-+++ b/upgrade-helper.py
-@@ -195,6 +195,7 @@ class Updater(object):
-         self.opts['skip_compilation'] =3D self.args.skip_compilation
-         self.opts['buildhistory'] =3D self._buildhistory_is_enabled()
-         self.opts['testimage'] =3D self._testimage_is_enabled()
-+        self.opts['changelog_max_len'] =3D settings.get('changelog_max_len=
-', '3000')
-=20
-     def _make_dirs(self, build_dir):
-         self.uh_dir =3D os.path.join(build_dir, "upgrade-helper")
 
