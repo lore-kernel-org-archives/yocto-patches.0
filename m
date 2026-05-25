@@ -1,227 +1,201 @@
-Return-Path: <peter.marko@siemens.com>
+Return-Path: <bin.cao.cn@windriver.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43965CD5BB1
-	for <webhook@archiver.kernel.org>; Sun, 24 May 2026 18:23:31 +0000 (UTC)
-Received: from OSPPR02CU001.outbound.protection.outlook.com (OSPPR02CU001.outbound.protection.outlook.com [40.107.159.52])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.1694.1779647007691442406
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62FE4CD5BBF
+	for <webhook@archiver.kernel.org>; Mon, 25 May 2026 08:01:08 +0000 (UTC)
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.11508.1779696064354403299
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 24 May 2026 11:23:28 -0700
+ Mon, 25 May 2026 01:01:04 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=jXOgV75B;
- spf=pass (domain: siemens.com, ip: 40.107.159.52, mailfrom: peter.marko@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fQrRdQZq2RJrStMUMMqITKsmH8TRui1kQt3R6hphYc3JQvVy3zsm2gY6C8mEv7PHGAI77xPrR9aqwdTpoxuYcG0ZLkk5Oc+s80kZJqo0NS4Mvqun8KDA4LgXRpTrHnKPV8HnCC1zd9GrDRnQmi8VfIOZUVefH9D4DD3YqzPTAmbMp5PsvWh+wXoS1ObnXCiiMBdvKPQnnpJbwMfqKhVASx8gLuzD2R9Ig05esjEfvuQ9KTBQREyV7uSs7ildquzhJdGhjFsYTNfC0Xp62nmyXBblPj/nc0rP4YiKhTozY6gMsz7xj6JdyHJKIL+/wZ7XndTKcXtctIlD+OIQIgmu9A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xe8aix8Um+Umow/Pf1P4kG88R5PTtQpGu5vA8phiFQY=;
- b=aVvdEZDb+aLXkp+yRNiZ+//v4iRauheClIcFdAgZjCsogUUe8nfVU1Y9CA0hXiXHFFPiuEy3WOq7n/UaAvDgTBjNe/IitEV1G4nltZ0Fyvatjm7IzNfAxvSS9IMd2Zmg+wKnK9nutuasg7MEGuMOnGs1ED/FCvJV1kvJqmoiUQYybjyxZCfEJLQ2aqpubIKbV2D2bnCLm3KmP9HuY9rzLxK6IpatdToPk4H3E28DSNvSPTqCa5OuRCKk3a404o9ZXUUSyyGafkbyuq0150K4XGkS1jOAz3G8QUbyW0A2h88AMIy1nVL94SJf3WuMcjW89+PVkSVsqpwyKQRFpnThIw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xe8aix8Um+Umow/Pf1P4kG88R5PTtQpGu5vA8phiFQY=;
- b=jXOgV75BIFzbbOOewX3g7oQeUc+a3J0wXWwaTY0epJ6NHE3rkwFNuowkiH3fPqeLNLa7DnkUyN6oMgmZatqFJ7YkUUcMp0ZKQS8nxAlwKMZzNMSgau4FQWTBVTGkFt0xSf8UhB84rHqsOU5VRNtnwju7yoEHFCW03yLAroeb8BX7tUioiUzde9FRf1aKc9E0Qqg4B8htkv4UmDqXfKmLsoj6RxZOj9lp6xUwHYOvrOwD/uyCjeOdzv6adfp8HAbn7QX0kI1jI2WSmrpkM/wl+CiYcr1r7PCrKpA7zCfceFAUFtMDJgc5nD/tquWTGSNVg+O8p7x/6/hqhDHBWM09Gg==
-Received: from AS8PR10MB5073.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:420::16)
- by GV2PR10MB7560.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:dc::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.48.19; Sun, 24 May
- 2026 18:23:22 +0000
-Received: from AS8PR10MB5073.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::a905:57e5:8858:d008]) by AS8PR10MB5073.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::a905:57e5:8858:d008%5]) with mapi id 15.21.0048.016; Sun, 24 May 2026
- 18:23:21 +0000
-From: "Marko, Peter" <Peter.Marko@siemens.com>
-To: "yocto-patches@lists.yoctoproject.org"
-	<yocto-patches@lists.yoctoproject.org>, Scott Murray
-	<scott.murray@konsulko.com>
-Subject: RE: [yocto-patches] [meta-security][PATCH 00/13] Assorted updates
- 05/24
-Thread-Topic: [yocto-patches] [meta-security][PATCH 00/13] Assorted updates
- 05/24
-Thread-Index: AQHc63cWZMtKKmedb06hf/fy8EshWrYdfWkw
-Date: Sun, 24 May 2026 18:23:21 +0000
-Message-ID: 
- <AS8PR10MB507361D4510F0DA1C870E1E8FD0D2@AS8PR10MB5073.EURPRD10.PROD.OUTLOOK.COM>
-References: <cover.1779624335.git.scott.murray@konsulko.com>
-In-Reply-To: <cover.1779624335.git.scott.murray@konsulko.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
- MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ActionId=1f25e003-aae3-4d2b-82e5-4efd0f87fb70;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ContentBits=0;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Enabled=true;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Method=Standard;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Name=restricted;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SetDate=2026-05-24T18:21:43Z;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SiteId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Tag=10,
- 3, 0, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AS8PR10MB5073:EE_|GV2PR10MB7560:EE_
-x-ms-office365-filtering-correlation-id: 02eabc5a-f736-46af-e52f-08deb9c1896f
-x-ms-exchange-atpmessageproperties: SA
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230040|366016|376014|1800799024|4022899009|22082099003|56012099003|18002099003|38070700021|55112099003|6133799003|11063799006;
-x-microsoft-antispam-message-info: 
- XuSEwq0ZqvKwCRr+xsozFOzpgta637Rxp3RfFCWN3gvPAC9IpHdgDSJIMJOMpzrbm7EQZSvb0Ho1fImn/4MudW8gszndxxK0NxggjGWxKCCoSWsKkIpmFtFWgVSQ1F8av55O+0mxEibe+CKh1DU+R4IYE9Fb6KvQUy5SXNwKXM21DroU60VEV7TpxBuAyFVGFRvj9IyDkv8S4eBjtmyvEpiAvb6IAjb7czJTksb44aSGdZANH1LHRO6w4GoVOQYvN0aanU21QWit4DX/PrC0jtlQmM2fNftmO21nnGMs+AD3mK3TTHXUkb7F/0I84qNIyA4e/kcZeeKsQAFORrhIluXXgrExk7pwcWde/s8YRs7zvCpOWozTyrnT1Leu6/OC3NhHIrbS7D0D2fmNcjNEAwUPngq9RwVNnyIdsDNTO/WZR5IYIHIbp2HZLiVY2NlqFvRuWyqYU8qaPws4ZM4i+zh7j65WnuiV/mhEzoDvBg/cBms5y29CRQkF68LWEZga3HgJTU2W5pTQw55rmyykx+XwPW1efALgG/dHTBSedxZ+FjAM/s5bsqIWxz9lZgqKLdyOZJ3pZWr5niEJahEG0H5fKn4PUCd4Qs4cqqOT0ZJVBuKTGyz4/wWoX9hlrgWSssuhe5Ycwrmgb/+sUy/kCOKpcunzktr1MfTnQJqaqEiFwieV2WM3N39KnGEwEDHKvAiuoU5S7dif9Y22pF8VNA==
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR10MB5073.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(4022899009)(22082099003)(56012099003)(18002099003)(38070700021)(55112099003)(6133799003)(11063799006);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?us-ascii?Q?W9X/IdwEyvp9Qu2Uxa6yAKxdk4tpyxuKlod8SbdEI2yCtVSZDSLB+zkMX2xK?=
- =?us-ascii?Q?kDI6FnJBS5o1O+fuITARSGXOxgSz3iFOu45Dv8W8vTsOEWlS0BhZuBlShIbM?=
- =?us-ascii?Q?YA4rSgPISO2xH9Bn4kWErIE0UKlzJsmRZohj4qnbNE1DD9S/Jw6M8lcPn27Q?=
- =?us-ascii?Q?nXKXBFq2x441NNmoNI+W0my6dH1Z0u7d+itscI0o3kz43x+GFC+KHHyJqFCu?=
- =?us-ascii?Q?JYrVRU3hzsuSHAdYzRu6u21c4s9UX6vSf44o4947sAHiW6Z0aUDkre1B6HwD?=
- =?us-ascii?Q?V7RWfaMnGVMcNSZ6VOzWaJ+a/mER6GlSfSG6+T//qvGtLRWH7h/8TwiVqmUY?=
- =?us-ascii?Q?Nt77dMVt5nBAPj5IWWzC5rlHiaz8nUJlYP63qEUlN1rWhX7sXanjOtAT2hVp?=
- =?us-ascii?Q?3pMCLdLtSUEalkp+iwRn1976lxX69JR+o5kCQDLd+FGGBYprw3tYgiqd1K/7?=
- =?us-ascii?Q?B/eVcf30k7b+hIcVO7zM+TniGZ0Jw2qO2rBWz+NhyUYXRfqINzlJQHgGr8BQ?=
- =?us-ascii?Q?ZZvqCkNV1CUMnwHTuOckqb6bYR5TIBF45EWI9DZU0Y04aTDJ9lOqzUsY4Yir?=
- =?us-ascii?Q?xcLss5o6LUAJ2v2enHJ8CRyCZf7oW1AC4eiMtwcsgI/S0mBlUngUx4Wo4zjo?=
- =?us-ascii?Q?yLSmvcsFHjSr/wLJ/SANWToKPzqI2sdgLMt4hBVk11KVYEH4P6OzfARF5K5q?=
- =?us-ascii?Q?yLCRn9zun0+f5QYuFR3uDiaR19yAKEglJZJeOZaWqxyClqz+3r1hcs+UsZn+?=
- =?us-ascii?Q?oKB4ZiJcJyaruZwcGSZ7onWXqYAuxHBkIXd0BSUb/MqjCKG0M9GPT8qCx21I?=
- =?us-ascii?Q?YT3KdVmt63w+SDhaH+gZ1JrVoW61w6Ttrn8n1W8xJHVFh45TE6dg2NXSk7fZ?=
- =?us-ascii?Q?ViLqoWYrFWX/h90tPxT7CIei/YlMs+6ET9R4qRit8/88/n6VpEhboihpLYO5?=
- =?us-ascii?Q?oy61aPmlSPBHXOe+H61g3uhKVfLGTz1XGeRihbWclaTgzDEAXrfHAK1Egffg?=
- =?us-ascii?Q?XJvAHmaClc5RXrqc+2bnFVmNA2phUXGKo0a/XohZzcOtXnHNYXi8tCWt3b4Q?=
- =?us-ascii?Q?LPIPfS+QDgj+BQ7sYvG/SzvNf7YZMWPGSFqaRmWqbDib5VzmcLHlKhHoMbeo?=
- =?us-ascii?Q?/Oodtz3K524bO/fZhROXTTJYDkUE+Z8qtLDbpeXAsKX2lnfkNn1llft0A6cO?=
- =?us-ascii?Q?124viqDZZUtoyfdMof/oWdMyvsDFrHcd4krpocAoJBpWuK+9Bv3HbVDMclhp?=
- =?us-ascii?Q?olDNRRzfd6u7MY2HY6mHzGNcB3x/4fN138cUJk5bS06YqlgHB6m1L/gHIMoo?=
- =?us-ascii?Q?DHDQqhu8U1Nr5eXIfdggdCmfyHqhOuu7fPdWbtsKnbKmm8qi0umhwjFFkYTe?=
- =?us-ascii?Q?GNqu3nYo6HazaIVIrf96MBoEBdiyS90nl4bmah7Nh5Y1+qvIF7JgNvChKrBj?=
- =?us-ascii?Q?9epDQ3f1gGhm7uxuZk+3+WvB8MfDSUdE8qoktmY1e0Cs0ZQI5ulVmhJIMTll?=
- =?us-ascii?Q?yVGKXMyEoyp6HVeUaw2noIe5fAK7PMxe+ll8JWCWhOnAeMNZhSAJ7UGFw8IH?=
- =?us-ascii?Q?xpJtfTVxHWo5kJzxk7wVsm6Xe0T+Cxj4fpeRKz+i/hI9jIuE9VwWv4vnIRAG?=
- =?us-ascii?Q?kyePPJu+rY7EOqCDLuW4NAzM89oFI5oaz7krR5EwbKTRLsU5s7IvcEfrKrwn?=
- =?us-ascii?Q?dTyJr3JXUhfeqfVgYCaX2W85l0eF1u8g1q8i01b2BBfqX/PiWDoG5ujjx+Is?=
- =?us-ascii?Q?rciyvH66XA=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ dkim=pass header.i=@windriver.com header.s=PPS06212021 header.b=NAY40G/n;
+ spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: windriver.com, ip: 205.220.166.238, mailfrom: prvs=9605d0fa9a=bin.cao.cn@windriver.com)
+Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64P6R9sn1695407
+	for <yocto-patches@lists.yoctoproject.org>; Mon, 25 May 2026 01:01:03 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
+	 h=content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PPS06212021; bh=zmiZLbWfynwYhTfPj05s
+	iy9yzGvzsZTkv/vEjF8T/x0=; b=NAY40G/nMeSh1xvijNYxs++p1ZXPRzC3IHss
+	DtF0l1ZXdy57ReZu2LvszZ/OhTwYm5eojKWKNuU/zVLM5hu4krl2wx7SSMVmt8Ic
+	tpIFrJnHudP/NKLGMJzrfvSWQ2ngrwFO5fLOWZyHKDo/oxc7k2+gfs1gbw6QUtEw
+	fqzNO8jguRMGhtnPTKvPnAOShCeUDUbGgad8D3rkKjVM5JlxT+7exayMIs8RMka2
+	MTH/u1GqXQoIe/wmxdhcznCy1M9CJcu0nSoDjVj6C8qZZLntmXaM20WmsB3j4exb
+	DNPTRo11YxPJ/0/qPazFfkUXWU/md1A6+mN2dqHBKKMSXuO8yA==
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [128.224.246.36])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4eb7h1t4rk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <yocto-patches@lists.yoctoproject.org>; Mon, 25 May 2026 01:01:03 -0700 (PDT)
+Received: from ala-exchng01.corp.ad.wrs.com (10.11.224.121) by
+ ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.61; Mon, 25 May 2026 01:01:03 -0700
+Received: from pek-lpggp2.wrs.com (10.11.232.110) by
+ ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server id
+ 15.1.2507.61 via Frontend Transport; Mon, 25 May 2026 01:01:02 -0700
+From: Bin Cao <bin.cao.cn@windriver.com>
+To: <yocto-patches@lists.yoctoproject.org>
+Subject: [meta-security][PATCH] samhain: fix server startup failure on systemd-based systems
+Date: Mon, 25 May 2026 16:01:00 +0800
+Message-ID: <20260525080101.29235-1-bin.cao.cn@windriver.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR10MB5073.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 02eabc5a-f736-46af-e52f-08deb9c1896f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 May 2026 18:23:21.8458
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: xF05g+30n3Y7Do0bRqhUma34JZnmihMIVQ2kQu6c+b3mfwm71+rS0wjMCXVYBGKgI8wtViPBi1DPaxMkDD+5hA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR10MB7560
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: E4xf-A-njV-lbVbjpNNGlaTUICvAcdj5
+X-Proofpoint-ORIG-GUID: E4xf-A-njV-lbVbjpNNGlaTUICvAcdj5
+X-Authority-Analysis: v=2.4 cv=OuB/DS/t c=1 sm=1 tr=0 ts=6a1401bf cx=c_pps
+ a=AbJuCvi4Y3V6hpbCNWx0WA==:117 a=AbJuCvi4Y3V6hpbCNWx0WA==:17
+ a=NGcC8JguVDcA:10 a=VkNPw1HP01LnGYTKEx00:22 a=bi6dqmuHe4P4UrxVR6um:22
+ a=HK-ge7EqtdluswH-FwHe:22 a=nDJU2pNIAAAA:8 a=t7CeM3EgAAAA:8
+ a=xFsppLJb4dZK0fmGZ8cA:9 a=cvUpGn6QkLxiVzwzn9tb:22 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTI1MDA4MCBTYWx0ZWRfX7RoSBD5zlGqu
+ sPdajacRNQdRy6CBx59Fw25PWzrVJ9Ef2ZhrRe9XvHmCC3D5IRgB9GqdILymYmuqWLRtCqSdw19
+ XMEFCpv+vuD/a9zgPQOLNDOBIW0Acfj0OQ97htyeCGhv5FjuoIzqIxmFH4yVrchwaYSdwapcPWv
+ HSaGnnOMcol8G0KcweaWcxhjP9YSdWdtYSC1KEz0v/RqDoZBzIhxpqpsrq//Tayr3/5QvRmmP6X
+ Tw8ezW0AmEB+ohKO/ZF7udNJ9sYRCL8o1NYVXIaHr0MZlWYzKBcdorJ4AWbyzFaEckeWUFOtG+w
+ UPjpAIOFebv0eGmzwwNSMboEr/rzZmnTvWCNzjQDUdlQmmQ9EWRRJHX/65TxUl3mK/4aaiythbA
+ Jvr7QlN5JLVPMuoZBzCwb1VMWLAOG/Yl+V+kciGQFI2R0ksx8b/5+HQIqICRdBYEV87/psessde
+ QIcPM3h3f1zoaX+377w==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-05-25_02,2026-05-18_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 phishscore=0 priorityscore=1501 malwarescore=0
+ adultscore=0 suspectscore=0 bulkscore=0 clxscore=1015 impostorscore=0
+ spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.22.0-2605130000
+ definitions=main-2605250080
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Sun, 24 May 2026 18:23:31 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4034
+ <yocto-patches@lists.yoctoproject.org>; Mon, 25 May 2026 08:01:08 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4035
 
-Hello,
+Fix two issues preventing samhain-server (yule) from starting:
 
-Could you also pick following patch to both master-next and wrynose-next?
-May 5 - https://lists.yoctoproject.org/g/yocto-patches/message/3915 - [meta=
--security][PATCH] tpm2-pkcs11: upgrade 1.9.1 -> 1.9.2
+1. The compiled-in PID file path /var/run/samhain.pid fails because
+   /var/run is a symlink to /run on systemd-based systems, and
+   samhain's security check rejects symlinks for PID directories.
+   Add SetLockfilePath = /run/yule.pid to yulerc.template, following
+   the same approach used in 0004-Set-the-PID-Lock-path-for-samhain.pid
+   for the standalone/client configuration.
 
-Peter
+2. The init scripts unconditionally source /etc/default/rcS which does
+   not exist on systemd-based systems, producing a confusing error
+   message. Source it conditionally instead.
 
------Original Message-----
-From: yocto-patches@lists.yoctoproject.org <yocto-patches@lists.yoctoprojec=
-t.org> On Behalf Of Scott Murray via lists.yoctoproject.org
-Sent: Sunday, May 24, 2026 2:15 PM
-To: yocto-patches@lists.yoctoproject.org
-Subject: [yocto-patches] [meta-security][PATCH 00/13] Assorted updates 05/2=
-4
+Signed-off-by: Bin Cao <bin.cao.cn@windriver.com>
+---
+ ...-set-SetLockfilePath-to-run-yule.pid.patch | 41 +++++++++++++++++++
+ recipes-ids/samhain/files/samhain-client.init |  3 +-
+ recipes-ids/samhain/files/samhain-server.init |  3 +-
+ recipes-ids/samhain/samhain.inc               |  5 ++-
+ 4 files changed, 48 insertions(+), 4 deletions(-)
+ create mode 100644 recipes-ids/samhain/files/0013-yulerc-set-SetLockfilePath-to-run-yule.pid.patch
 
-My apologies for the delay in getting this out, this patch series rolls
-up the contributed patches from the past few weeks.  These changes are
-queued on the master-next branch if you would like to check them out to
-test yourself.  I intend to merge these to master branch Tuesday evening
-(CEST, May 26) unless there are objections.
-
-Note that there is one known issue with latest meta-oe that has blocked
-getting clean CI runs that likely will impact anyone using the dm-verity
-bbclass.  The root cause seems to be a new packaging conflict between
-lvm2 and libdevmapper after the recent upgrade in meta-oe, but I have not
-had time to try to dig into it and come up with a clean fix.  I plan to
-look at that if time permits while I am at Embedded Recipes this coming
-week.
-
-Scott
-
-
-Changes:
-
-Anton Antonov (2):
-  parsec-service: Update Parsec service version.
-  meta-parsec: Do not run Parsec CI jobs on 32bit platforms.
-
-Bin Cao (1):
-  samhain: upgrade 4.5.2 -> 4.5.3
-
-Li Zhou (3):
-  firejail: fix COMPATIBLE_MACHINE setting
-  layer.conf: correct WARN_QA
-  aide-base.bbclass: correct STAGING_AIDE_DIR
-
-Peter Marko (1):
-  tpm2-tools: make efivar optional
-
-Ross Burton (3):
-  parsec-service: assign PACKAGECONFIG in one line
-  parsec-service: do group membership modifications in useradd
-  parsec-service: update TS group name
-
-Yi Zhao (1):
-  arpwatch: fix typos
-
-jason.lau (2):
-  google-authenticator-libpam: update 1.0.9 -> 1.11
-  aide: fix pkg_postinst_ontarget shell script
-
- .gitlab-ci.yml                                |  12 -
- classes/aide-base.bbclass                     |   2 +-
- kas/qemuarm-parsec.yml                        |   6 -
- kas/qemux86-parsec.yml                        |   6 -
- ...Fix-unnecessary-qualifications-error.patch |  50 -
- .../parsec-service/parsec-service-crates.inc  | 868 ++++++++++--------
- ...rvice_1.4.1.bb =3D> parsec-service_1.5.0.bb} |  30 +-
- meta-tpm/conf/layer.conf                      |   2 +-
- .../recipes-tpm2/tpm2-tools/tpm2-tools_5.7.bb |   5 +-
- recipes-ids/aide/aide_0.19.3.bb               |   4 +-
- recipes-ids/samhain/samhain.inc               |   4 +-
- recipes-scanners/arpwatch/arpwatch_3.3.bb     |   8 +-
- recipes-security/Firejail/firejail_0.9.72.bb  |   5 +-
- ...bb =3D> google-authenticator-libpam_1.11.bb} |   4 +-
- 14 files changed, 533 insertions(+), 473 deletions(-)
- delete mode 100644 kas/qemuarm-parsec.yml
- delete mode 100644 kas/qemux86-parsec.yml
- delete mode 100644 meta-parsec/recipes-parsec/parsec-service/files/0002-Fi=
-x-unnecessary-qualifications-error.patch
- rename meta-parsec/recipes-parsec/parsec-service/{parsec-service_1.4.1.bb =
-=3D> parsec-service_1.5.0.bb} (78%)
- rename recipes-security/google-authenticator-libpam/{google-authenticator-=
-libpam_1.09.bb =3D> google-authenticator-libpam_1.11.bb} (85%)
-
---=20
-2.53.0
-
-
-
--=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-Links: You receive all messages sent to this group.
-View/Reply Online (#4006): https://lists.yoctoproject.org/g/yocto-patches/m=
-essage/4006
-Mute This Topic: https://lists.yoctoproject.org/mt/119465712/4454441
-Group Owner: yocto-patches+owner@lists.yoctoproject.org
-Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/13703729/=
-4454441/683413657/xyzzy [peter.marko@siemens.com]
--=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-
+diff --git a/recipes-ids/samhain/files/0013-yulerc-set-SetLockfilePath-to-run-yule.pid.patch b/recipes-ids/samhain/files/0013-yulerc-set-SetLockfilePath-to-run-yule.pid.patch
+new file mode 100644
+index 00000000..889fd9b5
+--- /dev/null
++++ b/recipes-ids/samhain/files/0013-yulerc-set-SetLockfilePath-to-run-yule.pid.patch
+@@ -0,0 +1,41 @@
++From 7070832b4652f3cdaa2e37325fc6f9456859cb5d Mon Sep 17 00:00:00 2001
++From: Bin Cao <bin.cao.cn@windriver.com>
++Date: Mon, 25 May 2026 14:55:37 +0800
++Subject: [PATCH] yulerc: set SetLockfilePath to /run/yule.pid
++
++On systemd-based systems, /var/run is a symlink to /run. Samhain's
++security-hardened code uses lstat() to verify the PID file directory
++is a real directory and rejects symlinks. This causes yule (the samhain
++server) to fail to start with "Path of PID directory refers to a
++non-directory object".
++
++Set SetLockfilePath explicitly to /run/yule.pid to bypass the
++compiled-in default of /var/run/samhain.pid.
++
++This is the same approach used in 0004-Set-the-PID-Lock-path-for-
++samhain.pid.patch for the standalone/client configuration.
++
++Upstream-Status: Inappropriate [OE-specific configuration]
++Signed-off-by: Bin Cao <bin.cao.cn@windriver.com>
++---
++ yulerc.template | 4 ++++
++ 1 file changed, 4 insertions(+)
++
++diff --git a/yulerc.template b/yulerc.template
++index 512bc0d..24b437c 100644
++--- a/yulerc.template
+++++ b/yulerc.template
++@@ -173,6 +173,10 @@ Daemon=yes
++ # SetLoopTime = 60
++ SetLoopTime = 600
++ 
+++## Path to the PID file
+++#
+++SetLockfilePath = /run/yule.pid
+++
++ ## Normally, client messages are regarded as data within a
++ ## server message of fixed severity. The following two
++ ## options cause the server to use the original severity/class
++-- 
++2.34.1
++
+diff --git a/recipes-ids/samhain/files/samhain-client.init b/recipes-ids/samhain/files/samhain-client.init
+index d5fabede..c714f8ce 100644
+--- a/recipes-ids/samhain/files/samhain-client.init
++++ b/recipes-ids/samhain/files/samhain-client.init
+@@ -13,7 +13,8 @@ DAEMON=/usr/sbin/samhain
+ RETVAL=0
+ PIDFILE=/var/run/samhain.pid
+ 
+-. /etc/default/rcS
++# Source rcS only if it exists (not present on systemd-based systems)
++[ -f /etc/default/rcS ] && . /etc/default/rcS
+ 
+ . /etc/default/samhain-client
+ 
+diff --git a/recipes-ids/samhain/files/samhain-server.init b/recipes-ids/samhain/files/samhain-server.init
+index c456e51c..49a28de6 100644
+--- a/recipes-ids/samhain/files/samhain-server.init
++++ b/recipes-ids/samhain/files/samhain-server.init
+@@ -13,7 +13,8 @@ DAEMON=/usr/sbin/yule
+ RETVAL=0
+ PIDFILE=/var/run/yule.pid
+ 
+-. /etc/default/rcS
++# Source rcS only if it exists (not present on systemd-based systems)
++[ -f /etc/default/rcS ] && . /etc/default/rcS
+ 
+ . /etc/default/samhain-server
+ 
+diff --git a/recipes-ids/samhain/samhain.inc b/recipes-ids/samhain/samhain.inc
+index fc4e4237..85359cdf 100644
+--- a/recipes-ids/samhain/samhain.inc
++++ b/recipes-ids/samhain/samhain.inc
+@@ -3,7 +3,7 @@ HOMEPAGE    = "http://www.la-samhna.de/samhain/"
+ LICENSE     = "GPL-2.0-only"
+ LIC_FILES_CHKSUM = "file://LICENSE;md5=8ca43cbc842c2336e835926c2166c28b"
+ 
+-PV = "4.5.2"
++PV = "4.5.3"
+ 
+ SRC_URI = "https://la-samhna.de/archive/samhain_signed-${PV}.tar.gz \
+            file://${INITSCRIPT_NAME}.init \
+@@ -20,9 +20,10 @@ SRC_URI = "https://la-samhna.de/archive/samhain_signed-${PV}.tar.gz \
+            file://0009-fix-build-with-new-version-attr.patch \
+            file://0010-Fix-initializer-element-is-not-constant.patch \
+            file://0001-Format-test-output-to-match-Automake-standards.patch \
++           file://0013-yulerc-set-SetLockfilePath-to-run-yule.pid.patch \
+            "
+ 
+-SRC_URI[sha256sum] = "0b5d3534fd60ecf45dfd79bd415e81f7a56eba7f1755771735e204f334033578"
++SRC_URI[sha256sum] = "e7837adfde3d59a23c59e1bf3ebacdf71bce018619194cfad938cd30cbb9d15b"
+ 
+ UPSTREAM_CHECK_URI = "https://www.la-samhna.de/samhain/archive.html"
+ UPSTREAM_CHECK_REGEX = "samhain_signed-(?P<pver>(\d+(\.\d+)+))\.tar"
+-- 
+2.43.0
 
 
