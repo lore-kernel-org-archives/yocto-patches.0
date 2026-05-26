@@ -2,164 +2,198 @@ Return-Path: <peter.marko@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80089CD5BC8
-	for <webhook@archiver.kernel.org>; Tue, 26 May 2026 18:11:48 +0000 (UTC)
-Received: from OSPPR02CU001.outbound.protection.outlook.com (OSPPR02CU001.outbound.protection.outlook.com [40.107.159.34])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.2712.1779819101128637741
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E320CD5BB1
+	for <webhook@archiver.kernel.org>; Tue, 26 May 2026 18:17:08 +0000 (UTC)
+Received: from AM0PR83CU005.outbound.protection.outlook.com (AM0PR83CU005.outbound.protection.outlook.com [52.101.69.1])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.2815.1779819422323912307
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 26 May 2026 11:11:41 -0700
+ Tue, 26 May 2026 11:17:02 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=czFGbR1I;
- spf=pass (domain: siemens.com, ip: 40.107.159.34, mailfrom: peter.marko@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=ff+GI3su;
+ spf=pass (domain: siemens.com, ip: 52.101.69.1, mailfrom: peter.marko@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sPJcmOwlyshdcU0GXgcjXFj29kQospTR5O23DaE5QoU2Na8NzFOETMYmFu4dnFKv81c3hz2fv4bAXYKITAhMUle/xpYlPeBCcXGtO8/2aN16/HAef1+bVTXQr4XxQfHFvAXqR6XdCEoQIXsthMf4ravgRQ4znI0D7Ok2K7PQBBWghYUDELxbsXnBIRvgVm4Eui5pTLPzHuJqfC3AdtWBXi6/DJsEGjLeHkgXTRQDNR/UlBmbNd/CLBCpzrCSIxkIeTWsESEb5d21b8PI42vv5wkboVDVVecvGBS9FhSlKXQ6FuuCOGsJW9iI2YeQWaaQHT4WAEG6+YbTLI5NjaBx1w==
+ b=iBT+teWcTc5eLPwEdIJL5IoEA+52yLPMOh1Wy2LPMTLqSRq7c7LU6IYwEjlDKZmPTQA1LHxGmQibX0Lrt0RdZ06uRM84fZKWimM8VkYrwT94JpaTVAs1y+AcnlLj8I/dwhjIL30h4jyMegza+ExjSR2Idamb4LoGiWM0C4pMjTr3y4Ektep3Ao+uMm3N9mypU7bpx5hnNyykZHUTh1Msof6/BIg1RtkpzsevWE9+Mxi+JdgiQMrMcAb0vjUAEz5wFH7BW75vVGvg5l/eKXKfMwrOVIngbEiUr8pL4vAERN0Fs7Bk2IG3dBz+HvhvKyE/6bWd99AHg7bQwf4U0UgA4A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=u8K+aUsYt+TZyG5XtBUrX4lBMFZjLdPOPT2oWfSVcSk=;
- b=r8seGrYfu2uJiH4OsU1etrgNwxD50Pb2DTDABIBzgmFN3qfiIjV4ap3NWYo2BcfiLOcmgz/TyXuCyEGwC+ACBnigGuSY6M3Qe6kgmJ180X1IpX/2zo9DpBwj8VRdnkBHZRQ/A5KwSZ/TmsJ0p9uD9RQzFxUfFoiSzMdo6/0SMbtAtm69lz9V3IluWpaE6hsp2f2N2cAFOZsCjaTm17HaDb+PWSyI1+L7xZjo9c2A8YphZ0pkNQKyOogvGieDUg62vJaGUsmqfA77oMjQZFwkDsOtZzEj58SX7i9A/3NaxSp3lCSuHaNppkAPqjJb1oc2bX0jXOtvbf0t9D+1Xk1r1Q==
+ bh=Pg6JjwvERnmQHViyo/CQg6QYBlFr7BdEqdiCsDzE350=;
+ b=Ts8Zd/Dmfr+C37G9juxG8hPd6ZPGGN4rFIQo5XS7X3PEdLGNN4Ad9fYIh5ate4HLMy0kz18fjxKH8F1L+3wdmQ4r2N56XaEW5x1GbYbnUgflwLnV8/Zfe/xV5JW/HSjccjZT1736uBXvYD4tE0AjsUcTGUVUT9SgyURPYMmwA+V4gfsibzY2AUQkHIcV9gadstKF4mxwWMkhw7mKSSl5eS7Y+CMJdkW8JC5CUmIep3SpXemmY3wIH/yVtmsDaLnr5S8rEc4/sHLorhW4Qa0MP15m4LxmSZj/my81MHWrygVudbvSAbplFAGO0Z60UYf8qnReEGlzAUJHDY9rZ/xaKg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=u8K+aUsYt+TZyG5XtBUrX4lBMFZjLdPOPT2oWfSVcSk=;
- b=czFGbR1IwLLq0kgxf5v5ZhHOeI7pKirTKnCCAXn72Rt0SWcoXnxQQkxjgrXTJffZQ3ZzAMqs+UF97wur2LIImcegrurlD7LZfl2V8u0U2ZuwZVELk8QyG1W+n8TRfofP5i0IhL8VT3NriiYx0iINz7KbNmh9/Ga4GkTiXJTmYMNzyqLlx7jT6mmAYg6UTKzmEOT4rkzjCS0kMXxfBo18kleG21J4RHEbIQ75HoBioF9/ipNXhbsko5KQj2NF8m1fKauoNU+PgOE6Q1BscggBeMpwgYwKGgsxNh6iNQo6wtCW5KePRfL8bW1wBVVdYyZRLl8a4BV9SGbPkIf5+U2I4g==
+ bh=Pg6JjwvERnmQHViyo/CQg6QYBlFr7BdEqdiCsDzE350=;
+ b=ff+GI3susL+eZnYFmEI8EfZCooSzBQHlBx4iJNJyNLAqZ2sqoRF18hiUtyQmYOEWBa3MseHDIACdp7YwU0tWCt33vkU9p/zdWePrhKS8+RZ89IRj/VtgPQNwezZ++ORoYK8vyFiPqHYQfTfF1Rv6yJAm2QCeQFZ7yQB45ntVI/dAmukrwfiYjryKtzHbm7hOi1uFArT/jxmrX3jA9xpN3msZUmhv0/nsTSO6HppNTJPRAF1LpnpMF0X0q//8metMrk550MqBLh3nVwNNQzSEJ9/s77S1z0UXYK5s7KWVotzZqfJz6kGvNwAMeMNZs36kTk8bRPw/vFswhaLt7Wqs4w==
 Received: from AS8PR10MB5073.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:420::16)
- by AM7PR10MB3825.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:17f::23) with
+ by DU0PR10MB7141.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:44f::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.71.12; Tue, 26 May
- 2026 18:11:37 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.71.11; Tue, 26 May
+ 2026 18:16:58 +0000
 Received: from AS8PR10MB5073.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::a905:57e5:8858:d008]) by AS8PR10MB5073.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::a905:57e5:8858:d008%5]) with mapi id 15.21.0071.010; Tue, 26 May 2026
- 18:11:36 +0000
+ 18:16:58 +0000
 From: "Marko, Peter" <Peter.Marko@siemens.com>
-To: "yocto-patches@lists.yoctoproject.org"
+To: Ross Burton <ross.burton@arm.com>, Richard Purdie
+	<richard.purdie@linuxfoundation.org>
+CC: "yocto-patches@lists.yoctoproject.org"
 	<yocto-patches@lists.yoctoproject.org>
-CC: "jose.quaresma@foundries.io" <jose.quaresma@foundries.io>
-Subject: RE: [meta-lts-mixins][scarthgap/go][PATCH 1/7] go-helloworld: upgrade
- to latest revision
-Thread-Topic: [meta-lts-mixins][scarthgap/go][PATCH 1/7] go-helloworld:
- upgrade to latest revision
-Thread-Index: AQHc4vtf0ArxIwuAUEOZ5mAJgsmBPrYgsA7w
-Date: Tue, 26 May 2026 18:11:36 +0000
+Subject: RE: [yocto-metrics][PATCH] patch-status: add wrynose
+Thread-Topic: [yocto-metrics][PATCH] patch-status: add wrynose
+Thread-Index: AQHc4xMn8rhuvYIXWUCUPaP1IObESbYgsT/g
+Date: Tue, 26 May 2026 18:16:58 +0000
 Message-ID: 
- <AS8PR10MB5073BE5B6275CF3BC2225665FD0B2@AS8PR10MB5073.EURPRD10.PROD.OUTLOOK.COM>
-References: <20260513170902.2468061-1-peter.marko@siemens.com>
-In-Reply-To: <20260513170902.2468061-1-peter.marko@siemens.com>
+ <AS8PR10MB50732B47BD4C0A473B2ADDC8FD0B2@AS8PR10MB5073.EURPRD10.PROD.OUTLOOK.COM>
+References: <20260513195949.2474195-1-peter.marko@siemens.com>
+In-Reply-To: <20260513195949.2474195-1-peter.marko@siemens.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 msip_labels: 
- MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ActionId=1c98f4e9-1305-4b81-88c3-d655ea526688;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ContentBits=0;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Enabled=true;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Method=Standard;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Name=restricted;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SetDate=2026-05-26T18:11:01Z;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SiteId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Tag=10,
+ MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ActionId=a5166893-9e7d-4fc8-9c0a-1bc4e91a0fe0;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ContentBits=0;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Enabled=true;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Method=Standard;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Name=restricted;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SetDate=2026-05-26T18:15:57Z;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SiteId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Tag=10,
  3, 0, 1;
 authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AS8PR10MB5073:EE_|AM7PR10MB3825:EE_
-x-ms-office365-filtering-correlation-id: e0c96e17-db8a-4e8c-0ddf-08debb523a14
+x-ms-traffictypediagnostic: AS8PR10MB5073:EE_|DU0PR10MB7141:EE_
+x-ms-office365-filtering-correlation-id: 55af42a0-2858-4d21-db45-08debb52f9aa
 x-ms-exchange-atpmessageproperties: SA
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: 
- BCL:0;ARA:13230040|1800799024|376014|366016|55112099003|38070700021|56012099006|3023799007|11063799006|22082099003|18002099003;
+ BCL:0;ARA:13230040|376014|366016|1800799024|55112099003|56012099006|38070700021|22082099003|18002099003|11063799006;
 x-microsoft-antispam-message-info: 
- PwctjZwk7OEmOVnOmnn1ZD6C4EMGrzjv3vKuWbtLEcVmnlq+AI3AtF05EIRe8HFHbNfT0ykGYePSIvs/jl3r/FO80Tbpu3MRKpUIZ1hhkneVM/aPkOv+1elmvB4qf8u2VrUvFeHMr0mwyAj8UtzMc331xGl+y7JLb/vOHKrVARvdicoaivVpmZlrWqFckZV1z9+Cr7Lm5726QI/LNYmICLkg5FkNiDpzp+A/uYg8d09Kv9O2AYLdhywBru14G7B9on7F1A/GRt+KIrP7Jhfir+P76q6gf5Ri2s1hXAIfNtN1Xp7ve0R/qZzLpi3im/ue6RvT/GYj9mjnItszzHiauOYLN6q2RgHBfdIJucCy7MdBUYCXNbdWTw+EFV3JUbW97Lc5yJ143AAX1wbYNrxqolV+E525/odfrgHDrRfZBCo21awJg+1OIk0SAFVFQQokX3yv4UkVYZZLepeH2NX/j3CJrU1fBJ3Ear5w7OVl2zr/PLeRGXWwS6GwXSE5NfOYZRZujm0VDwP15/JMqNISVGJ1SR4TU05rb33cAfI+T3mRlIUesTpicwMGSoXoPILg48QbNTqe3SHQfpVAG0CR+lGDbo2n76Cr4CZUMqexTispjVoGELJbTprv8oEjy5j80ltQSY9RJPS7kn6hNb2OnT1FoYj1jAU+pfk2TrM+bMfZCmJgQcLdtZZjwC7+n7m3kjj3q6yNUXzznAHhS3/3ABX7cuRulaJWLaYRu/pt1vAW9OxDxfZ35MaWMsOay53S
+ xFIEas46tlqhvF6ok3w6AHLjjU9kGmNGgyRHxTCP2IpajH5tEAWiHkIb1qn/FMsoeDtx3cuMgXBDrZp8LmLRzh+DJsCLd8lbZcK0rbl1TJmdmVsW/PbMt1y8AH2xp/BBrhpvQlxMZfE43D1N8UoAkzZZGHj2B10qO5O9IxVs/Q5TUc9493JB7CF1PxkkJLTyxnYLqxCei0iUMCJy2fT3OcEcny3jIICjXnbDtaDcqFXs/AMF9zgt6vYp8xWQaSnnFxaGE6IgZH7y185ezX/umpw70Nd+K4m98x1VluJ2MPk2xbrTU6OY/QLlk5DZf/s4dpkknop0nwxZphy6u+VscsUNkEaa7RQepCEGSHfs9OeKuuAoH+nJ090ckEP4MklBS/R66XXPzuBnrwaemYkbe8M1s4jXAWu5HPx81nb8XpJGGl8tZc9g76JUPx3EyLFi+KTzdjPa0+icQGmkXuv/kC2BObFMM2AzQEJI73jmGOKdYBli4NuT3N/jaMldmTRW7ayhR5V6HTk5aiZbyM8NZBjdggnWQttpCSOv8vqWEqQVaYblHZrweAtja6GbsljvvTERQEVzt+bPS0YeXTwbOkc68qKcYxsfPJZk0+5d0kOYfgRgYg/9AnFPPjMLl3/9pu8+Rwyb6W57LTLMgPwvDF2W4D8r+ePY4qika9Qwj3LZb+W1OX8+O33hbhMdJUdFB0gqyeQdYbK0md1NUhWChmN1iuLAVgyphbFTrEFObAtpTwKjoMqZPHb5tmpecAWf
 x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR10MB5073.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(55112099003)(38070700021)(56012099006)(3023799007)(11063799006)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR10MB5073.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(55112099003)(56012099006)(38070700021)(22082099003)(18002099003)(11063799006);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
- =?us-ascii?Q?1aFfkNxPxW9ewoojIXvCSFPw3/C4u1fN2v+lZ+m5uF2ToJ/yukEVtxvFny4W?=
- =?us-ascii?Q?w8cXGIrqpgjmeUdTv8YqSf3UNUJkjmC7hB5J6QfTkoDb+YxqQtWGLlRT+qPX?=
- =?us-ascii?Q?UKOvC8PgapjA4elnsJxyL1W4L/iQZonurvTZeXN6NC0kIB4LRFfb+ru+hr4I?=
- =?us-ascii?Q?EvOhzJSI2f8tQoKtFO/jpzuqCH84NWXxHkYGcl0Y18Z4hzIp58GYhy1DoYvk?=
- =?us-ascii?Q?QrLp4XG7Rs2Y3uyXH1kUwqztAhdieqw3EnhSnHQp1lqPQ2Tgplg5cnDXG73o?=
- =?us-ascii?Q?MpSOEBk4TEQgCkq//TJrSd79AoTXWBo6aNHYvAquU/CHsNWnuuw30AGGdDdN?=
- =?us-ascii?Q?gwVVvLxJ0cHqXpiX9a/nar5hDZ28gWeTNzaivjywoRYBQXKmX9egz7FZcFO2?=
- =?us-ascii?Q?jZpqTfB3o/i4GasviiWVWUZZf/zETI2OtHvRmxzLKJpDZJ/5fI8MIxOrVgs7?=
- =?us-ascii?Q?tgo2jKgcHEV9o1XVG9Rvq/fjjXAhkobTdU2t2SDd9DooCJNOf2Np247wq+tR?=
- =?us-ascii?Q?5IOqLN7tGhBCbvfQNKVU7rvD0v3ot7aM1/hHwtmtwLlZ8hqTcRwx83Gxr5tG?=
- =?us-ascii?Q?jGSnqVDDYdDa1ofj09+zkDEcFn2xYa8SfQfFrgNlUobFUse9CNte5vP8JdLC?=
- =?us-ascii?Q?7563Ew6nwBGK2wnCHbYcxXUIP990JC9B9yHL5LU+VG13VzThAb5E0acO/oIi?=
- =?us-ascii?Q?WAZvs+rNZtd46zPfTFbgoGb16nypt1T+RsmKBJiK2iAjyoY80fTn3bKyo1/+?=
- =?us-ascii?Q?CTEGy+1RaGOcNkbooUHwf8PepaE6DtDDkAQnqQn956NgGcZKB8+76d9F5Ua3?=
- =?us-ascii?Q?T7n2MXJ3OAm5onA6uzExQYuW2wrl6WsCU7JEfWzVSEvReSZTlHbvsVhrBd+I?=
- =?us-ascii?Q?ISthl5SDmT8JTXhrqd1pMY37mfPu8WUDezHtt7ouXuTvWuxzq5to5GGWXKJ0?=
- =?us-ascii?Q?6HGGm3UCmtYohOCM3yz+s8maeIM0UM+e217KhkmSBaFi0ilAHF8zg/LXvNlq?=
- =?us-ascii?Q?BK2sfwxaQtEbWMB4a78gqzWg3SjfqCzNsFAJtx9eAqmKot0pRTeqN4IfYy+h?=
- =?us-ascii?Q?PkbPy1o+OSAgTqWYeaaq/EnQyWOd1zUyBa2zCMih2nw24NdyytnSJ1uXsIBo?=
- =?us-ascii?Q?MPkFjs5HzCUbtENn2c/famavvMnZeIGZtWvCVcGo8Lvy2ZEcDXnTZDIlBvWu?=
- =?us-ascii?Q?JW2+uwVdqjOf/HxQBGgQp4zeF75asTD6CnhI1Fmu9cG93vwWnNhQ7nCSMwQK?=
- =?us-ascii?Q?AZTmQIN9F5yvg8m8bJOSZqSu7j0ewRrp2ytT6ThgB7wbfPiD8pJoTbp678PO?=
- =?us-ascii?Q?+EyUTlR4318hgIBBvNPaEs2TnzU1RC0/frVwT6lh4ZqjrVEfU4Xde/jyBz+L?=
- =?us-ascii?Q?mcHP/zheP1qn0IoONERMkjgA3hK5ZJdHKkjIO/xOn8LSQj0eHZdyNFWy2wOt?=
- =?us-ascii?Q?gRFAICWKxBDH49ZaSiM94d47pRl/yAmX6/ppnBos/8jL8+eF069Ww9AtSkW0?=
- =?us-ascii?Q?8RdlZZspEz03fRQf3vGi1JAIYH6CX8tHufeaWfvplg80jQYLXaN4m1s6phsh?=
- =?us-ascii?Q?hNxm+wMBOG+cwgOlawzID6Wq/X16LRP8BwCrukkUC3Ei+G8AfD6TrAnlBb4u?=
- =?us-ascii?Q?iEbqlMccay2/fDveaxELaJ9NcZ2HL2RkgNRnx2ZUxjlG7YSyn4UOZMZBcygA?=
- =?us-ascii?Q?fmlFst5XdCYATGnUqUONTBHKz6mujJcc+2NXaSDiLBNFb8g2O8NSX6MXN5M7?=
- =?us-ascii?Q?ICNb8VQ9PQ=3D=3D?=
+ =?us-ascii?Q?gJO+pej7uCd1czqrin1LqruyYTS+gRZmMA6xzSF+bEw+yPzgnCo2zLPlUBbl?=
+ =?us-ascii?Q?2V0Xrqx/IX/l/H4LaT+/4VfC8xa9HUU03/Uy4g8NW+YYNZRyjJ/V78na61Zz?=
+ =?us-ascii?Q?1Mhbg30vQ6lpdA0MdIR92bpjPpapyJighcaK2V977uC/nG9J8tm25NoNU7X/?=
+ =?us-ascii?Q?U0uvevXshfj2sax546SJajynXRPlzN9KadYxINvnhCAkYkVqCrxo1A9uqn8p?=
+ =?us-ascii?Q?IkIjH9dDljkahuXnz99GsGqxUwzcVDS2EKAQfPFSAAiI61rBuhYuUMdXyqxH?=
+ =?us-ascii?Q?dH7scDMakl84vAfV6zd1dFJhvF/HVh1b1Vtc1LtXEcKFLm4RnXMAvuGkI1Dg?=
+ =?us-ascii?Q?PWjBAQqWwnNwKo9gIA2jl+gjlt5a0vjMtH62k3IY6jf4w+d7b1PZ1zQ5DmHz?=
+ =?us-ascii?Q?1uWEXzkPoUH2FuqQU+Y+5TI17BJ519Pd74rCoKO9+MUXntw+WNTHPmK4A9an?=
+ =?us-ascii?Q?JXdq3aYSmYIf/6ahbexE4itf6+OPSFRVIOrxXD1JuK0zTVGn9D8HBKYAH+tR?=
+ =?us-ascii?Q?+zJ8NvNJVltPjQr/y60I9DBD5HEr3VUe6g57cXJSFXUvdn/kSPmqmIbqjDz+?=
+ =?us-ascii?Q?kzewv46cLw57RlpRZwOyAkSZ1jlpIOklxsnvAgm8VZ3s+LXi1Ql2hCOGjiSL?=
+ =?us-ascii?Q?WhQQ05svBH49r99b6iwWdB7PgaiBR2QPufbTKhZUVMXxLg3aLOMXs+rgxWz8?=
+ =?us-ascii?Q?JGyiLo5bMh4QlvlK69RLRtMAD2IOEpje3kAyonw4Yq2sYLBder9IVs9DwMxV?=
+ =?us-ascii?Q?P2Vg4uEjYVgg/dWFvRJH09C6cDWNEsi4flS/TkpSmCmvsXMPMAUdhszowohI?=
+ =?us-ascii?Q?3ATC048r/dvNbMW3/DqY2A0SD8EzdTrgxfA33zcoiGvVwPdtN0QgyVpn/J93?=
+ =?us-ascii?Q?9T3dr0oqnvGlsyf+vApxpE8K9rdd3+S7ASrKUgfyMQi+UHVioCupnCacGI4P?=
+ =?us-ascii?Q?LjNb5fVOAyBYQID/HTR2bX0T3ppG32clcFiDqMmpG1y7/UgwYCcSD27/Xvr1?=
+ =?us-ascii?Q?esIUU51qNGsSEVZp8MF0D0++Mc9zmb5+32wPa//9PZDpL24/l2vCp1u5R8eX?=
+ =?us-ascii?Q?l/8awmmgRBib29o1IsmajES4R3z2lng5FSyaJRVMNWTAdSyWSd2StayY1cPH?=
+ =?us-ascii?Q?/3grM5ZsrjPrdLyfLhiG9pcJ10/9LCbfjciZpZJ2G+Y9DjgBS+/Lnt3trq/C?=
+ =?us-ascii?Q?+qww3zPXFMmtZegEIRZYc4dFfsa3dJggzXBg5x92qIzJbghDpPKkQdC3zXeq?=
+ =?us-ascii?Q?cTPLFsn948lx9ZOr/stFX6vQ+/wmknoaeTI3CNzMYhOetmevXo1vj9CMf/5d?=
+ =?us-ascii?Q?XlzTBLQxtDNWEa/JrXe7IsD1+YVCxaHCTmXL4yvlX0Mq9gsKF88Ny1pr96xg?=
+ =?us-ascii?Q?kyEM2q4LqBybvNV33TzNyKOu8f9RQbjLy43pQ15e18TFJgkvSAKBBsWv8Uih?=
+ =?us-ascii?Q?SQFvLRAd130ETDyHXZBR7flEsMq5Jn0s2g73qhaw59mTQhdoT7aT3aV3BhqP?=
+ =?us-ascii?Q?VFkCvdIs2hHP5NcCt0WbrxORMDXGmSPEmI1xJYrrSlbzM4AfmCZvbiDe6MaN?=
+ =?us-ascii?Q?cNCwXSCZZMPfH8xiCW+XAAhJ+v6hjr2xYjtOKOEA5pplQp6M4vRQQp5j8Re8?=
+ =?us-ascii?Q?bgsSBkOTKSfEwO9S6G5U//yQkSctYR2rFkSFbP2DD71wF/YgDUFfFBpMggHa?=
+ =?us-ascii?Q?pQQ5O9bzz5yh4uZwgrybGBR/yzamTgRlp3qcKXWbF2rqCtAWUouWiNoVyGD/?=
+ =?us-ascii?Q?LbgwBkC4lA=3D=3D?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: siemens.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: AS8PR10MB5073.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: e0c96e17-db8a-4e8c-0ddf-08debb523a14
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 May 2026 18:11:36.9068
+X-MS-Exchange-CrossTenant-Network-Message-Id: 55af42a0-2858-4d21-db45-08debb52f9aa
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 May 2026 18:16:58.3021
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: QIPc7tATDyDBYh1RIWNBYj9n6WcIQZJdyEztfDwMsN5MBgZS4yBtlwNg+scJ3O672UJpRK9XTgF6jYicLHu0kQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR10MB3825
+X-MS-Exchange-CrossTenant-userprincipalname: O940KJ1l9ffazsdaUmGlX1+KA/pfwvsKCMUWbNat69Xew2zRxj70VYAqaf0HWDvC/Y04xHWEL2I+S7bT6LzF3Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB7141
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 26 May 2026 18:11:48 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4057
+ <yocto-patches@lists.yoctoproject.org>; Tue, 26 May 2026 18:17:08 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4058
 
-This series is now applied.
-Peter
+Hello,
+
+Are there any plans to bring wrynose to metrics (core and meta-oe)?
+
+Thanks,
+  Peter
 
 -----Original Message-----
 From: Marko, Peter (FT D EU SK BFS1) <Peter.Marko@siemens.com>=20
-Sent: Wednesday, May 13, 2026 7:09 PM
+Sent: Wednesday, May 13, 2026 10:00 PM
 To: yocto-patches@lists.yoctoproject.org
-Cc: Marko, Peter (FT D EU SK BFS1) <Peter.Marko@siemens.com>; jose.quaresma=
-@foundries.io
-Subject: [meta-lts-mixins][scarthgap/go][PATCH 1/7] go-helloworld: upgrade =
-to latest revision
+Cc: Marko, Peter (FT D EU SK BFS1) <Peter.Marko@siemens.com>
+Subject: [yocto-metrics][PATCH] patch-status: add wrynose
 
-From: Alexander Kanavin <alex@linutronix.de>
+From: Peter Marko <peter.marko@siemens.com>
 
-Signed-off-by: Alexander Kanavin <alex@linutronix.de>
-Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(From OE-Core rev: 7f05d217867b2af52b0a28c6d1c91df97e1b5b39)
+See https://lists.yoctoproject.org/g/yocto-announce/message/386
+
 Signed-off-by: Peter Marko <peter.marko@siemens.com>
 ---
- recipes-extended/go-examples/go-helloworld_0.1.bb | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ patch-status/index.html   | 12 +++++++++++-
+ patch-status/releases.csv |  1 +
+ 2 files changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/recipes-extended/go-examples/go-helloworld_0.1.bb b/recipes-ex=
-tended/go-examples/go-helloworld_0.1.bb
-index 3ffe64b..c8401c9 100644
---- a/recipes-extended/go-examples/go-helloworld_0.1.bb
-+++ b/recipes-extended/go-examples/go-helloworld_0.1.bb
-@@ -6,7 +6,7 @@ LICENSE =3D "BSD-3-Clause"
- LIC_FILES_CHKSUM =3D "file://src/${GO_IMPORT}/LICENSE;md5=3D7998cb338f82d1=
-5c0eff93b7004d272a"
+diff --git a/patch-status/index.html b/patch-status/index.html
+index dd407502..9d0ebac6 100644
+--- a/patch-status/index.html
++++ b/patch-status/index.html
+@@ -170,6 +170,10 @@ SPDX-License-Identifier: MIT
+           <summary>master</summary>
+           <div id=3D"cve_status_master"></div>
+         </details>
++        <details>
++          <summary>wrynose</summary>
++          <div id=3D"cve_status_wrynose"></div>
++        </details>
+         <details>
+           <summary>whinlatter</summary>
+           <div id=3D"cve_status_whinlatter"></div>
+@@ -373,6 +377,12 @@ SPDX-License-Identifier: MIT
+         createCVEList('cve_status_master', data);
+       })
 =20
- SRC_URI =3D "git://go.googlesource.com/example;branch=3Dmaster;protocol=3D=
-https;destsuffix=3D${GO_SRCURI_DESTSUFFIX}"
--SRCREV =3D "8b405629c4a5215871be932097e099c05ec5cb2e"
-+SRCREV =3D "7f05d217867b2af52b0a28c6d1c91df97e1b5b39"
- UPSTREAM_CHECK_COMMITS =3D "1"
++    fetch('cve-status-wrynose.txt')
++      .then(response =3D> response.text())
++      .then(data =3D> {
++        createCVEList('cve_status_wrynose', data);
++      })
++
+     fetch('cve-status-whinlatter.txt')
+       .then(response =3D> response.text())
+       .then(data =3D> {
+@@ -461,7 +471,7 @@ SPDX-License-Identifier: MIT
+       upstream_status: 'Malformed Upstream-Status',
+       inactive_upstream: 'Inactive-Upstream'
+     };
+-    const branches =3D ['master', 'whinlatter', 'walnascar', 'styhead', 's=
+carthgap', 'nanbield', 'mickledore', 'langdale', 'kirkstone', 'honister', '=
+hardknott', 'gatesgarth', 'dunfell']
++    const branches =3D ['master', 'wrynose', 'whinlatter', 'walnascar', 's=
+tyhead', 'scarthgap', 'nanbield', 'mickledore', 'langdale', 'kirkstone', 'h=
+onister', 'hardknott', 'gatesgarth', 'dunfell']
 =20
- # drop the 'destsuffix' so we make the oe-core backports easier without co=
-nflits
+     const general_options =3D {
+       tooltip: {
+diff --git a/patch-status/releases.csv b/patch-status/releases.csv
+index 1e8d95f3..48368ed5 100644
+--- a/patch-status/releases.csv
++++ b/patch-status/releases.csv
+@@ -1,4 +1,5 @@
+ Name,Date
++6.0 (Wrynose),2026-05-13
+ 5.3 (Whinlatter),2025-12-16
+ 5.2 (Walnascar),2025-05-08
+ 5.1 (Styhead),2024-10-17
 
