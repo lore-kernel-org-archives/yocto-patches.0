@@ -1,441 +1,159 @@
-Return-Path: <jackson.james9803@gmail.com>
+Return-Path: <gmisra@qti.qualcomm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4133CD4F54
-	for <webhook@archiver.kernel.org>; Wed, 27 May 2026 10:22:24 +0000 (UTC)
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.17394.1779877340426215421
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A55A5CD4F54
+	for <webhook@archiver.kernel.org>; Wed, 27 May 2026 10:24:54 +0000 (UTC)
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.17431.1779877486470154974
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 27 May 2026 03:22:20 -0700
+ Wed, 27 May 2026 03:24:46 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=lkZXJsML;
- spf=pass (domain: gmail.com, ip: 209.85.214.170, mailfrom: jackson.james9803@gmail.com)
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2ba17c8cfacso121011065ad.2
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 27 May 2026 03:22:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779877340; x=1780482140; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=k7tj8Br3oQaCThzxTr7M2FTe8bgDTknZE1U2mdX20xA=;
-        b=lkZXJsMLvYcG64SX5O65Ue+OzOlGaogIOxb6kJZUEm8z9ZKP1aw4QItPawZk0eTKtL
-         hHa3KNBN5jwWKKlfnIZCucD2jQoohE/eoquapfNj/cGlxbMlrz2JOtDSuJtEu0GdFGid
-         dle1Q8Ax+Zmo2oL/A57gQOZ4rYUrWbNCWl/n4TJfe6VT6onJTL4gtGSYRbfXWVecxqW6
-         imA/Qxg9QSq6RkyY9yV1Wf4Ig+2hyYM6SQjJkoO1PaNa4/7fHljeXNhfNx2Q7ne4+rWx
-         nCBiir5j9IpDS65OcmQfwqL9bmlERg9F3ZqGQJERiKCKC2tPX4/np7+VC9zN2p019olO
-         qpxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779877340; x=1780482140;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k7tj8Br3oQaCThzxTr7M2FTe8bgDTknZE1U2mdX20xA=;
-        b=UWKO4BdWHq452/tRRvVmk8zJh1b2tMNDn0fTQSiMvuDa6Z/x3UX57RozAjdXZGwzrw
-         JPK2KwxcP12IcVoPBAt/R64uXOLQj4gYmp7uUaYBf+Qt86yLRuv34vFf3fJEcdprx3wI
-         c2bjJ5nmbGQgSPomcdQpYu6Ydr9FPhfBN6oS02LJcYBYlBBNyN0kDbAtTnpZkpWzYWkG
-         lpRs94yl9rxO/IeMIWYNX/tvM4bo0eaCmrj2dzz3KWC3lgMMKvDF02wp9D/MmSdhjU4u
-         HIH3/N8n9uHZU8piJ1Gq01UoU6V1tnxS56PFq74YBl/jNW4eHJ0vSEqI2gDMVa9Lwlfo
-         2GYQ==
-X-Gm-Message-State: AOJu0Yxag/ZxFG2fcongMEUhnox6qzPbtibkrqG/WmJFwLzHmxZPPf4R
-	rChVLb2vRLBsYax3GxafdPH1HlCyu2YRrJBN/EDXWyCtntRrhni3LX950VVFeA==
-X-Gm-Gg: Acq92OHIjVPYiMq6z/49IxPJ8xdGoFESEYQX6TwED1FaHu1kLynaqDA6wJW0jxSlgXW
-	j16fsSSOGiihp9r9+Km4EZCAG6nTWaKf/a2+wtymH3bCMSQv5uiMJBcBf83Mv3auZqY8Z7/Nmd/
-	+6UgB4+b2N7nSN8rDJ+PuHy/dz/E/qa5/MQtPdTPPOMkiFCkld7KbvPIdqNXI7E6v1nzRIy/LWI
-	vdnnRfo2XwFBTX0f/1KbvicA4uEzUvIIFWZmBEA0c0knMCAn65ydcTAXdhKOItXl+m+e2Jl4tQn
-	NekPYJwmATozrPdGS0kmIfxd+MIyDlA26zn8EGYZ6N27titzUzObTtutnvjzWIGlCPNnk+xcqur
-	1rMZCc64XQSIx2VPfZ/memqXRSlMtvEfnUka/T9i4//2rn3h7HXvPGTRTGsmQPUsccFfRKv1u0b
-	1Wb3BmiJaxyske+qRIyvPkTRUZooI=
-X-Received: by 2002:a17:903:1b6d:b0:2b2:3bb6:fbf8 with SMTP id d9443c01a7336-2beb03884aamr244167915ad.16.1779877339523;
-        Wed, 27 May 2026 03:22:19 -0700 (PDT)
-Received: from LL-868L.kpit.com ([49.206.135.231])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2beb5695c40sm137963575ad.5.2026.05.27.03.22.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 May 2026 03:22:18 -0700 (PDT)
-From: Jackson James <jackson.james9803@gmail.com>
-X-Google-Original-From: Jackson James <jacksonj2@kpit.com>
+ dkim=pass header.i=@qualcomm.com header.s=qcppdkim1 header.b=oH0sweUD;
+ spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: qualcomm.com, ip: 205.220.180.131, mailfrom: gmisra@qualcomm.com)
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64R8mXc31176613
+	for <yocto-patches@lists.yoctoproject.org>; Wed, 27 May 2026 10:24:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=IHFa4SCoepReMUE7zRGoMdaMGU+AGcxtKDq
+	432maU0U=; b=oH0sweUD4LSIne1tgT97nOBJ/EYbCvit3S6zNAPmimcoywjnZFg
+	/4PMLnFlYa2t4h+zQhFy+vmnX0zeCmpq2cgliW2M300bihEBYqBAIATEfL/kz6RE
+	AW71xCcsI0Trh9RvfjcyqnurqpsGZBgerhDRKUaT7ke541CKR1+eE+aIDwKpVYYb
+	fRjuMhgfAB+lKkV/yPfY9pkW6H8TpV90dU6iqBZz3P6n9AQnhe1uf1mpNSY9uDFK
+	zhj7PgIULXre8grkoBEJQuKyIOr/A2Ob/vyVMwyt1nWZuAp6E4vipgPyeBFdRnAH
+	g2r/KGlDAup9yN4/eaIXTtJJzShvq4wDxGw==
+Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4edndnj2fv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+	for <yocto-patches@lists.yoctoproject.org>; Wed, 27 May 2026 10:24:44 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (8.18.1.7/8.18.1.7) with ESMTP id 64RAOfMV008694;
+	Wed, 27 May 2026 10:24:41 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 4eb5ajka2p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+	for <yocto-patches@lists.yoctoproject.org>; Wed, 27 May 2026 10:24:41 +0000 (GMT)
+Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.1.12) with ESMTP id 64RAOfRD008687
+	for <yocto-patches@lists.yoctoproject.org>; Wed, 27 May 2026 10:24:41 GMT
+Received: from hu-devc-hyd-u24-a.qualcomm.com (hu-gmisra-hyd.qualcomm.com [10.213.99.33])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 64RAOf2o008686
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 May 2026 10:24:41 +0000 (GMT)
+Received: by hu-devc-hyd-u24-a.qualcomm.com (Postfix, from userid 4467585)
+	id CC175214EF; Wed, 27 May 2026 15:54:40 +0530 (+0530)
+From: Gargi Misra <gmisra@qti.qualcomm.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Shaik Moin <moin.shaik@partner.bmwgroup.com>
-Subject: [meta-lts-collab][kirkstone][PATCH] binutils: Fix CVE-2025-69652, CVE-2025-69649 and CVE-2026-4647
-Date: Wed, 27 May 2026 15:52:01 +0530
-Message-Id: <20260527102201.520139-1-jacksonj2@kpit.com>
-X-Mailer: git-send-email 2.34.1
+Cc: Gargi Misra <gmisra@qti.qualcomm.com>,
+        Gargi Misra <quic_gmisra@quicinc.com>
+Subject: [meta-selinux][PATCH3/3] libvirt_leasesh: Added read and search permission on kernel  sysctls  avc:  denied  { search } for  pid=1393 comm="libvirt_leasesh" name="kernel"  dev="proc" ino=3693 scontext=system_u:system_r:virt_leaseshelper_t:s0  tcontext=system_u:object_r:sysctl_kernel_t:s0 tclass=dir permissive=0  avc: denied  { read } for  pid=1363 comm="libvirt_leasesh" name="cap_last_cap"  dev="proc" ino=13638 scontext=system_u:system_r:virt_leaseshelper_t:s0  tcontext=system_u:object_r:sysctl_kernel_t:s0 tclass=file permissive=0  avc: denied  { open } for  pid=1359 comm="libvirt_leasesh"  path="/proc/sys/kernel/cap_last_cap" dev="proc" ino=2909  scontext=system_u:system_r:virt_leaseshelper_t:s0  tcontext=system_u:object_r:sysctl_kernel_t:s0 tclass=file permissive=0  avc: denied  { getattr } for  pid=1375 comm="libvirt_leasesh" name="/" dev="proc"  ino=1 scontext=system_u:system_r:virt_leaseshelper_t:s0  tcontext=system_u:object_r:proc_t:s0 tclass=filesystem permissive=0
+Date: Wed, 27 May 2026 15:54:39 +0530
+Message-ID: <20260527102439.1487755-1-gmisra@qti.qualcomm.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Authority-Analysis: v=2.4 cv=PpSjqQM3 c=1 sm=1 tr=0 ts=6a16c66d cx=c_pps
+ a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=-vbZ1Io1qTe7wVCr:21 a=R8wtq3ddXiUA:10 a=NGcC8JguVDcA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22
+ a=NEAV23lmAAAA:8 a=COk6AnOGAAAA:8 a=KTATZuYoSMOckcxMRwEA:9
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: Udb2EsLasdOsHaZnqlVWpxmGHDaoAYh3
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTI3MDEwMCBTYWx0ZWRfXxQguI2tZIMbh
+ D4aZ28P+lxniaz6sQ8g4BXBMWuBeftbhwLgtZiPm807o9Hf5ImgmhKWXw0/PiZ+BU7sgF8BFqDJ
+ PnZVUBDIv+hgQcp3nlSNE9w+oK5KKbndkHC5iygq+Vwj0L860+5SLxSEZzsyftj/WIdZ82ed0vG
+ run8dxz0/PXlEvgjlJJTgOzQq8y5KENKqHT64wMHOL+WHfG2j8fSulc/3p6O6Nwy+zlPg3yoflP
+ H5Ma4VFmwYB732DL7leQ595PtK5meZ0exJovIqIvidSQReKYQL4ybQbzGtphvCqOMpSqsNIKfcS
+ zS/Vb2xtgkNilDbrYM+PEVx56In4y+9exocM6ZRsBxkyRRZMltb0OGk5bh6QGIxpvu8BZjD1j2a
+ 1UdBxq74bDANsWnC85w4OcBXkPXcA7hsXVwScnnOoq6S0Oz3V6cVwhOSMupojuSWvlVPCHzdN0+
+ S9VZqENkWIcsOFUiv/A==
+X-Proofpoint-GUID: Udb2EsLasdOsHaZnqlVWpxmGHDaoAYh3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-05-27_01,2026-05-26_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 priorityscore=1501 malwarescore=0 suspectscore=0 clxscore=1015
+ adultscore=0 phishscore=0 impostorscore=0 lowpriorityscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2605130000 definitions=main-2605270100
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 27 May 2026 10:22:24 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4071
+ <yocto-patches@lists.yoctoproject.org>; Wed, 27 May 2026 10:24:54 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4072
 
-From: Shaik Moin <moin.shaik@partner.bmwgroup.com>
+Upstream-Status: Backport [ https://github.com/SELinuxProject/refpolicy/pull/1117/changes/a7d4c1333edee3ea6b532979ae6d940360489793 ]
 
-Backport fix for CVE-2025-69652, CVE-2025-69649 and CVE-2026-4647
-
-Patches are refreshed based on code base.
-
-Signed-off-by: Jackson James <jacksonj2@kpit.com>
+Signed-off-by: Gargi Misra <quic_gmisra@quicinc.com>
 ---
- .../binutils/binutils/CVE-2025-69649.patch    |  42 ++++
- .../binutils/binutils/CVE-2025-69652.patch    |  45 ++++
- .../binutils/binutils/CVE-2026-4647.patch     | 233 ++++++++++++++++++
- .../binutils/binutils_%.bbappend              |   6 +
- 4 files changed, 326 insertions(+)
- create mode 100644 meta-core/recipes-devtools/binutils/binutils/CVE-2025-69649.patch
- create mode 100644 meta-core/recipes-devtools/binutils/binutils/CVE-2025-69652.patch
- create mode 100644 meta-core/recipes-devtools/binutils/binutils/CVE-2026-4647.patch
- create mode 100644 meta-core/recipes-devtools/binutils/binutils_%.bbappend
+ ...Added-read-and-search-permission-on-.patch | 41 +++++++++++++++++++
+ .../refpolicy/refpolicy_common.inc            |  1 +
+ 2 files changed, 42 insertions(+)
+ create mode 100644 recipes-security/refpolicy/refpolicy/0061-libvirt_leasesh-Added-read-and-search-permission-on-.patch
 
-diff --git a/meta-core/recipes-devtools/binutils/binutils/CVE-2025-69649.patch b/meta-core/recipes-devtools/binutils/binutils/CVE-2025-69649.patch
+diff --git a/recipes-security/refpolicy/refpolicy/0061-libvirt_leasesh-Added-read-and-search-permission-on-.patch b/recipes-security/refpolicy/refpolicy/0061-libvirt_leasesh-Added-read-and-search-permission-on-.patch
 new file mode 100644
-index 0000000..767c2d9
+index 0000000..1897335
 --- /dev/null
-+++ b/meta-core/recipes-devtools/binutils/binutils/CVE-2025-69649.patch
-@@ -0,0 +1,42 @@
-+From 48f8779129c6dcda57a003e81ddabf70451c78bd Mon Sep 17 00:00:00 2001
-+From: Shaik Moin <careers.myinfo@gmail.com>
-+Date: Wed, 6 May 2026 16:20:04 +0530
-+Subject: [PATCH] binutils: Fix CVE-2025-69649
++++ b/recipes-security/refpolicy/refpolicy/0061-libvirt_leasesh-Added-read-and-search-permission-on-.patch
+@@ -0,0 +1,41 @@
++From 977bd13b26fd697a1a01560908974f8a803deba3 Mon Sep 17 00:00:00 2001
++From: Gargi Misra <quic_gmisra@quicinc.com>
++Date: Wed, 27 May 2026 14:35:23 +0530
++Subject: [PATCH] libvirt_leasesh: Added read and search permission on kernel
++ sysctls avc:  denied  { search } for  pid=1393 comm="libvirt_leasesh"
++ name="kernel" dev="proc" ino=3693
++ scontext=system_u:system_r:virt_leaseshelper_t:s0
++ tcontext=system_u:object_r:sysctl_kernel_t:s0 tclass=dir permissive=0 avc: 
++ denied  { read } for  pid=1363 comm="libvirt_leasesh" name="cap_last_cap"
++ dev="proc" ino=13638 scontext=system_u:system_r:virt_leaseshelper_t:s0
++ tcontext=system_u:object_r:sysctl_kernel_t:s0 tclass=file permissive=0 avc: 
++ denied  { open } for  pid=1359 comm="libvirt_leasesh"
++ path="/proc/sys/kernel/cap_last_cap" dev="proc" ino=2909
++ scontext=system_u:system_r:virt_leaseshelper_t:s0
++ tcontext=system_u:object_r:sysctl_kernel_t:s0 tclass=file permissive=0 avc: 
++ denied  { getattr } for  pid=1375 comm="libvirt_leasesh" name="/" dev="proc"
++ ino=1 scontext=system_u:system_r:virt_leaseshelper_t:s0
++ tcontext=system_u:object_r:proc_t:s0 tclass=filesystem permissive=0
 +
-+PR 33697, fuzzer segfault
++Upstream-Status: Backport [ https://github.com/SELinuxProject/refpolicy/pull/1117/changes/a7d4c1333edee3ea6b532979ae6d940360489793 ]
 +
-+PR 33697
-+* readelf.c (process_relocs): Don't segfault on no sections.
-+
-+CVE: CVE-2025-69649
-+
-+Upstream-Status: Backport [https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;h=66a3492ce68e1ae45b2489bd9a815c39ea5d7f66]
-+
-+Patch is refreshed based on code base.
-+
-+Signed-off-by: Alan Modra <amodra@gmail.com>
-+Signed-off-by: Shaik Moin <careers.myinfo@gmail.com>
++Signed-off-by: Gargi Misra <quic_gmisra@quicinc.com>
 +---
-+ binutils/readelf.c | 6 +++---
-+ 1 file changed, 3 insertions(+), 3 deletions(-)
++ policy/modules/services/virt.te | 1 +
++ 1 file changed, 1 insertion(+)
 +
-+diff --git a/binutils/readelf.c b/binutils/readelf.c
-+index 137a505b..8a948703 100644
-+--- a/binutils/readelf.c
-++++ b/binutils/readelf.c
-+@@ -8227,9 +8227,9 @@ process_relocs (Filedata * filedata)
-+       unsigned long i;
-+       bool found = false;
++diff --git a/policy/modules/services/virt.te b/policy/modules/services/virt.te
++index 2241a22b5..0f6dc341e 100644
++--- a/policy/modules/services/virt.te
+++++ b/policy/modules/services/virt.te
++@@ -1161,6 +1161,7 @@ manage_files_pattern(virt_leaseshelper_t, virt_runtime_t, virt_runtime_t)
++ files_runtime_filetrans(virt_leaseshelper_t, virt_runtime_t, file)
 + 
-+-      for (i = 0, section = filedata->section_headers;
-+-	   i < filedata->file_header.e_shnum;
-+-	   i++, section++)
-++      section = filedata->section_headers;
-++      if (section != NULL)
-++       for (i = 0; i < filedata->file_header.e_shnum; i++, section++)
-+ 	{
-+ 	  if (   section->sh_type != SHT_RELA
-+ 	      && section->sh_type != SHT_REL
++ kernel_dontaudit_read_system_state(virt_leaseshelper_t)
+++kernel_read_kernel_sysctls(virt_leaseshelper_t)
++ 
++ # Read /sys/devices/system/node/node*/meminfo
++ dev_list_sysfs(virt_leaseshelper_t)
 +-- 
-+2.34.1
++2.43.0
 +
-diff --git a/meta-core/recipes-devtools/binutils/binutils/CVE-2025-69652.patch b/meta-core/recipes-devtools/binutils/binutils/CVE-2025-69652.patch
-new file mode 100644
-index 0000000..d3c1d61
---- /dev/null
-+++ b/meta-core/recipes-devtools/binutils/binutils/CVE-2025-69652.patch
-@@ -0,0 +1,45 @@
-+From d0970e0cdc93676eb5fec9daf292a8d7ff17db92 Mon Sep 17 00:00:00 2001
-+From: Shaik Moin <careers.myinfo@gmail.com>
-+Date: Thu, 30 Apr 2026 16:52:37 +0530
-+Subject: [PATCH] binutils: Fix CVE-2025-69652
-+
-+PR 33701, abort in byte_get_little_endian
-+
-+PR 33701
-+* dwarf.c (process_debug_info): Set debug_info_p NULL when
-+DEBUG_INFO_UNAVAILABLE.
-+
-+CVE: CVE-2025-69652
-+
-+Upstream-Status: Backport [https://sourceware.org/git/?p=binutils-gdb.git;a=commit;h=44b79abd0fa12e7947252eb4c6e5d16ed6033e01]
-+
-+Patch is refreshed based on code base.
-+
-+Signed-off-by: Alan Modra <amodra@gmail.com>
-+Signed-off-by: Shaik Moin <careers.myinfo@gmail.com>
-+---
-+ binutils/dwarf.c | 8 +++++---
-+ 1 file changed, 5 insertions(+), 3 deletions(-)
-+
-+diff --git a/binutils/dwarf.c b/binutils/dwarf.c
-+index 47fd34b8..ad08466d 100644
-+--- a/binutils/dwarf.c
-++++ b/binutils/dwarf.c
-+@@ -4059,9 +4059,11 @@ process_debug_info (struct dwarf_section * section,
-+ 	      break;
-+ 	    }
-+ 
-+-	  debug_info *debug_info_p =
-+-	    (debug_information && unit < alloc_num_debug_info_entries)
-+-	    ? debug_information + unit : NULL;
-++	  debug_info *debug_info_p = NULL;
-++	  if (debug_information
-++	      && num_debug_info_entries != DEBUG_INFO_UNAVAILABLE
-++		  && unit < alloc_num_debug_info_entries)
-++		debug_info_p = debug_information + unit;
-+ 
-+ 	  assert (!debug_info_p
-+ 		  || (debug_info_p->num_loc_offsets
-+-- 
-+2.34.1
-+
-diff --git a/meta-core/recipes-devtools/binutils/binutils/CVE-2026-4647.patch b/meta-core/recipes-devtools/binutils/binutils/CVE-2026-4647.patch
-new file mode 100644
-index 0000000..a665007
---- /dev/null
-+++ b/meta-core/recipes-devtools/binutils/binutils/CVE-2026-4647.patch
-@@ -0,0 +1,233 @@
-+From 402aadde9f3125f9a5a42ea5a0cdf45bac2fee9f Mon Sep 17 00:00:00 2001
-+From: Shaik Moin <careers.myinfo@gmail.com>
-+Date: Mon, 4 May 2026 10:55:34 +0530
-+Subject: [PATCH] binutils: Fix CVE-2026-4647
-+
-+PR33919 Out-of-bounds read in XCOFF relocation processing
-+
-+PR 33919
-+* coff-rs6000.c (xcoff_calculate_relocation): Don't use explicit
-+array size.
-+(xcoff_complain_overflow): Likewise.
-+(xcoff_rtype2howto): Return a NULL howto rather than aborting.
-+(_bfd_xcoff_reloc_name_lookup): Use ARRAY_SIZE.
-+(xcoff_ppc_relocate_section): Sanity check reloc r_type before
-+accessing xcoff_howto_table.  Print r_type using %#x.  Remove
-+now redundant later reloc r_type sanity check.
-+* coff64-rs6000.c: Similarly.
-+* libxcoff.h (XCOFF_MAX_CALCULATE_RELOCATION): Don't define.
-+(XCOFF_MAX_COMPLAIN_OVERFLOW): Don't define.
-+
-+CVE: CVE-2026-4647
-+
-+Upstream-Status: Backport [https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;h=9e99dbc1f19ffaf18d0250788951706066ebe7f2]
-+
-+Patch is refreshed based on code base.
-+
-+Signed-off-by: Alan Modra <amodra@gmail.com>
-+Signed-off-by: Shaik Moin <careers.myinfo@gmail.com>
-+---
-+ bfd/coff-rs6000.c   | 36 +++++++++++++++++++++---------------
-+ bfd/coff64-rs6000.c | 33 ++++++++++++++++++++-------------
-+ bfd/libxcoff.h      |  3 ---
-+ 3 files changed, 41 insertions(+), 31 deletions(-)
-+
-+diff --git a/bfd/coff-rs6000.c b/bfd/coff-rs6000.c
-+index fa089732..8b52b537 100644
-+--- a/bfd/coff-rs6000.c
-++++ b/bfd/coff-rs6000.c
-+@@ -155,8 +155,7 @@ static xcoff_complain_function xcoff_complain_overflow_bitfield_func;
-+ static xcoff_complain_function xcoff_complain_overflow_signed_func;
-+ static xcoff_complain_function xcoff_complain_overflow_unsigned_func;
-+ 
-+-xcoff_reloc_function *const
-+-xcoff_calculate_relocation[XCOFF_MAX_CALCULATE_RELOCATION] =
-++xcoff_reloc_function *const xcoff_calculate_relocation[] =
-+ {
-+   xcoff_reloc_type_pos,  /* R_POS   (0x00) */
-+   xcoff_reloc_type_neg,  /* R_NEG   (0x01) */
-+@@ -210,8 +209,7 @@ xcoff_calculate_relocation[XCOFF_MAX_CALCULATE_RELOCATION] =
-+   xcoff_reloc_type_toc,  /* R_TOCL    (0x31) */
-+ };
-+ 
-+-xcoff_complain_function *const
-+-xcoff_complain_overflow[XCOFF_MAX_COMPLAIN_OVERFLOW] =
-++xcoff_complain_function *const xcoff_complain_overflow[] =
-+ {
-+   xcoff_complain_overflow_dont_func,
-+   xcoff_complain_overflow_bitfield_func,
-+@@ -1158,8 +1156,11 @@ reloc_howto_type xcoff_howto_table[] =
-+ void
-+ xcoff_rtype2howto (arelent *relent, struct internal_reloc *internal)
-+ {
-+-  if (internal->r_type > R_TOCL)
-+-    abort ();
-++  if (internal->r_type >= ARRAY_SIZE (xcoff_howto_table))
-++    {
-++      relent->howto = NULL;
-++      return;
-++    }
-+ 
-+   /* Default howto layout works most of the time */
-+   relent->howto = &xcoff_howto_table[internal->r_type];
-+@@ -1183,7 +1184,7 @@ xcoff_rtype2howto (arelent *relent, struct internal_reloc *internal)
-+   if (relent->howto->dst_mask != 0
-+       && (relent->howto->bitsize
-+ 	  != ((unsigned int) internal->r_size & 0x1f) + 1))
-+-    abort ();
-++    relent->howto = NULL;
-+ }
-+ 
-+ reloc_howto_type *
-+@@ -1236,9 +1237,7 @@ _bfd_xcoff_reloc_name_lookup (bfd *abfd ATTRIBUTE_UNUSED,
-+ {
-+   unsigned int i;
-+ 
-+-  for (i = 0;
-+-       i < sizeof (xcoff_howto_table) / sizeof (xcoff_howto_table[0]);
-+-       i++)
-++  for (i = 0; i < ARRAY_SIZE (xcoff_howto_table); i++)
-+     if (xcoff_howto_table[i].name != NULL
-+ 	&& strcasecmp (xcoff_howto_table[i].name, r_name) == 0)
-+       return &xcoff_howto_table[i];
-+@@ -3654,6 +3653,14 @@ xcoff_ppc_relocate_section (bfd *output_bfd,
-+ 	 the csect including the symbol which it references.  */
-+       if (rel->r_type == R_REF)
-+ 	continue;
-++      if (rel->r_type >= ARRAY_SIZE (xcoff_howto_table))
-++       {
-++         /* xgettext:c-format */
-++         _bfd_error_handler (_("%pB: unsupported relocation type %#x"),
-++                             input_bfd, rel->r_type);
-++         bfd_set_error (bfd_error_bad_value);
-++         return false;
-++       }
-+ 
-+       /* Retrieve default value in HOWTO table and fix up according
-+ 	 to r_size field, if it can be different.
-+@@ -3677,7 +3684,7 @@ xcoff_ppc_relocate_section (bfd *output_bfd,
-+ 
-+ 		sprintf_vma (vaddr_buf, rel->r_vaddr);
-+ 		_bfd_error_handler
-+-		  (_("%pB: relocation (%d) at 0x%s has wrong r_rsize (0x%x)\n"),
-++		  (_("%pB: relocation (%#x) at 0x%s has wrong r_rsize (0x%x)\n"),
-+ 		   input_bfd, rel->r_type, vaddr_buf, rel->r_size);
-+ 		return false;
-+ 	      }
-+@@ -3754,10 +3761,9 @@ xcoff_ppc_relocate_section (bfd *output_bfd,
-+ 	    }
-+ 	}
-+ 
-+-      if (rel->r_type >= XCOFF_MAX_CALCULATE_RELOCATION
-+-	  || !((*xcoff_calculate_relocation[rel->r_type])
-+-	       (input_bfd, input_section, output_bfd, rel, sym, &howto, val,
-+-		addend, &relocation, contents)))
-++      if (!((*xcoff_calculate_relocation[rel->r_type])
-++	   (input_bfd, input_section, output_bfd, rel, sym, &howto, val,
-++	    addend, &relocation, contents)))
-+ 	return false;
-+ 
-+       /* address */
-+diff --git a/bfd/coff64-rs6000.c b/bfd/coff64-rs6000.c
-+index 01326d45..09998764 100644
-+--- a/bfd/coff64-rs6000.c
-++++ b/bfd/coff64-rs6000.c
-+@@ -177,8 +177,7 @@ static bool xcoff64_bad_format_hook
-+ /* Relocation functions */
-+ static xcoff_reloc_function xcoff64_reloc_type_br;
-+ 
-+-xcoff_reloc_function *const
-+-xcoff64_calculate_relocation[XCOFF_MAX_CALCULATE_RELOCATION] =
-++xcoff_reloc_function *const xcoff64_calculate_relocation[] =
-+ {
-+   xcoff_reloc_type_pos,  /* R_POS     (0x00) */
-+   xcoff_reloc_type_neg,  /* R_NEG     (0x01) */
-+@@ -1415,8 +1414,11 @@ reloc_howto_type xcoff64_howto_table[] =
-+ void
-+ xcoff64_rtype2howto (arelent *relent, struct internal_reloc *internal)
-+ {
-+-  if (internal->r_type > R_TOCL)
-+-    abort ();
-++  if (internal->r_type >= ARRAY_SIZE (xcoff64_howto_table))
-++    {
-++      relent->howto = NULL;
-++      return;
-++    }
-+ 
-+   /* Default howto layout works most of the time */
-+   relent->howto = &xcoff64_howto_table[internal->r_type];
-+@@ -1449,7 +1451,7 @@ xcoff64_rtype2howto (arelent *relent, struct internal_reloc *internal)
-+   if (relent->howto->dst_mask != 0
-+       && (relent->howto->bitsize
-+ 	  != ((unsigned int) internal->r_size & 0x3f) + 1))
-+-    abort ();
-++    relent->howto = NULL;
-+ }
-+ 
-+ reloc_howto_type *
-+@@ -1504,9 +1506,7 @@ xcoff64_reloc_name_lookup (bfd *abfd ATTRIBUTE_UNUSED,
-+ {
-+   unsigned int i;
-+ 
-+-  for (i = 0;
-+-       i < sizeof (xcoff64_howto_table) / sizeof (xcoff64_howto_table[0]);
-+-       i++)
-++  for (i = 0; i < ARRAY_SIZE (xcoff64_howto_table); i++)
-+     if (xcoff64_howto_table[i].name != NULL
-+ 	&& strcasecmp (xcoff64_howto_table[i].name, r_name) == 0)
-+       return &xcoff64_howto_table[i];
-+@@ -1550,6 +1550,14 @@ xcoff64_ppc_relocate_section (bfd *output_bfd,
-+ 	 the csect including the symbol which it references.  */
-+       if (rel->r_type == R_REF)
-+ 	continue;
-++      if (rel->r_type >= ARRAY_SIZE (xcoff64_howto_table))
-++       {
-++         /* xgettext:c-format */
-++         _bfd_error_handler (_("%pB: unsupported relocation type %#x"),
-++                             input_bfd, rel->r_type);
-++         bfd_set_error (bfd_error_bad_value);
-++         return false;
-++       }
-+ 
-+       /* Retrieve default value in HOWTO table and fix up according
-+ 	 to r_size field, if it can be different.
-+@@ -1569,7 +1577,7 @@ xcoff64_ppc_relocate_section (bfd *output_bfd,
-+ 
-+ 	    default:
-+ 	      _bfd_error_handler
-+-		(_("%pB: relocation (%d) at (0x%" BFD_VMA_FMT "x) has wrong"
-++		(_("%pB: relocation (%#x) at (0x%" BFD_VMA_FMT "x) has wrong"
-+ 		   " r_rsize (0x%x)\n"),
-+ 		 input_bfd, rel->r_type, rel->r_vaddr, rel->r_size);
-+ 	      return false;
-+@@ -1642,10 +1650,9 @@ xcoff64_ppc_relocate_section (bfd *output_bfd,
-+ 	    }
-+ 	}
-+ 
-+-      if (rel->r_type >= XCOFF_MAX_CALCULATE_RELOCATION
-+-	  || !((*xcoff64_calculate_relocation[rel->r_type])
-+-	      (input_bfd, input_section, output_bfd, rel, sym, &howto, val,
-+-	       addend, &relocation, contents)))
-++      if (!((*xcoff64_calculate_relocation[rel->r_type])
-++	   (input_bfd, input_section, output_bfd, rel, sym, &howto, val,
-++	    addend, &relocation, contents)))
-+ 	return false;
-+ 
-+       /* address */
-+diff --git a/bfd/libxcoff.h b/bfd/libxcoff.h
-+index 2a71ee58..9e816de0 100644
-+--- a/bfd/libxcoff.h
-++++ b/bfd/libxcoff.h
-+@@ -201,9 +201,6 @@ struct xcoff_backend_data_rec
-+ #define bfd_xcoff_text_align_power(a) ((xcoff_data (a)->text_align_power))
-+ #define bfd_xcoff_data_align_power(a) ((xcoff_data (a)->data_align_power))
-+ 
-+-/* xcoff*_ppc_relocate_section macros  */
-+-#define XCOFF_MAX_CALCULATE_RELOCATION (0x32)
-+-#define XCOFF_MAX_COMPLAIN_OVERFLOW (4)
-+ /* N_ONES produces N one bits, without overflowing machine arithmetic.  */
-+ #ifdef N_ONES
-+ #undef N_ONES
-+-- 
-+2.34.1
-+
-diff --git a/meta-core/recipes-devtools/binutils/binutils_%.bbappend b/meta-core/recipes-devtools/binutils/binutils_%.bbappend
-new file mode 100644
-index 0000000..df278ce
---- /dev/null
-+++ b/meta-core/recipes-devtools/binutils/binutils_%.bbappend
-@@ -0,0 +1,6 @@
-+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
-+
-+SRC_URI += "file://CVE-2025-69649.patch \
-+            file://CVE-2025-69652.patch \
-+            file://CVE-2026-4647.patch \
-+"
+diff --git a/recipes-security/refpolicy/refpolicy_common.inc b/recipes-security/refpolicy/refpolicy_common.inc
+index 2a2cc78..23aadf6 100644
+--- a/recipes-security/refpolicy/refpolicy_common.inc
++++ b/recipes-security/refpolicy/refpolicy_common.inc
+@@ -76,6 +76,7 @@ SRC_URI += " \
+         file://0058-policy-modules-system-logging-make-syslogd_runtime_t.patch \
+         file://0059-refpolicy-Addressing-denial-seen-on-alsa.patch \
+         file://0060-systemd-coredum-Added-sepolicy-permission-to-read-na.patch \
++        file://0061-libvirt_leasesh-Added-read-and-search-permission-on-.patch \
+         "
+ 
+ S = "${UNPACKDIR}/refpolicy"
 -- 
-2.34.1
+2.43.0
 
 
