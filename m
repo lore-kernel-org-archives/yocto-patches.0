@@ -1,146 +1,219 @@
-Return-Path: <jaihindy@qti.qualcomm.com>
+Return-Path: <frezidok1@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C9D0CD5BD0
-	for <webhook@archiver.kernel.org>; Wed, 27 May 2026 11:46:05 +0000 (UTC)
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.18602.1779882357257585300
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75320CD5BD0
+	for <webhook@archiver.kernel.org>; Wed, 27 May 2026 12:08:35 +0000 (UTC)
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.18997.1779883707947797740
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 27 May 2026 04:45:57 -0700
+ Wed, 27 May 2026 05:08:28 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@qualcomm.com header.s=qcppdkim1 header.b=pdg2bzl+;
- spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: qualcomm.com, ip: 205.220.180.131, mailfrom: jaihindy@qualcomm.com)
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64R8mQG7871133
-	for <yocto-patches@lists.yoctoproject.org>; Wed, 27 May 2026 11:45:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=ADCP0omxsIM0KaUhWiO3Te/LkRltAky6vBv
-	4dIbtV30=; b=pdg2bzl+LidTrt+bsSUt8Y5iynyy1iKLwWgCddJ9cRz8T6arLUM
-	kVnv6V6swj7jw46DHO1Z45fzsETNZGMfuBg0bM9T6MkihZSkY5X4IBOElhuwCy8S
-	YFvxDTPOQfm++IBDk6wOWSZbGlS+pY3bFCePSBgcCzMfXlriIbG3/RyFIew67Mj7
-	zrvz+s6tmn4uhclpfg6Y0pFWRulrsltSYx7OVNWo33RrafVRvq9YtbGKAi+Qukmr
-	1HyI4cj3EUbNrxQSe4I59YEvqUhJeW48LJKvHouBfqQrUxtQncZNL4uXlWwhuwL1
-	N7QDh3cfXt0zFCuusdxuAHebV62Rn98Iyvg==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4eduru928d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <yocto-patches@lists.yoctoproject.org>; Wed, 27 May 2026 11:45:55 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.18.1.7/8.18.1.7) with ESMTP id 64RBjqX7010161;
-	Wed, 27 May 2026 11:45:52 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 4eb5ajm09a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <yocto-patches@lists.yoctoproject.org>; Wed, 27 May 2026 11:45:52 +0000 (GMT)
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.1.12) with ESMTP id 64RBjpL8010156
-	for <yocto-patches@lists.yoctoproject.org>; Wed, 27 May 2026 11:45:51 GMT
-Received: from hu-devc-hyd-u24-a.qualcomm.com (hu-jaihindy-hyd.qualcomm.com [10.213.102.234])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 64RBjpuM010155
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 May 2026 11:45:51 +0000 (GMT)
-Received: by hu-devc-hyd-u24-a.qualcomm.com (Postfix, from userid 448081)
-	id E93942195E; Wed, 27 May 2026 17:15:50 +0530 (+0530)
-From: Jaihind Yadav <jaihindy@qti.qualcomm.com>
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=mZIFRjrO;
+ spf=pass (domain: gmail.com, ip: 209.85.167.49, mailfrom: frezidok1@gmail.com)
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5a87782588cso5324380e87.3
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 27 May 2026 05:08:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1779883706; x=1780488506; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lHTOQ4suV6NNySuR0ocPbPr0xmG3h61DRMpN0s+hIO8=;
+        b=mZIFRjrOSEUmFL+fWEKFEY0b6Dzh9ojRSHeq+ZibjDfQaCcHXaSvjFUvJ31QNeflTG
+         VO1q30MuxjxnEYYojTN/s4aLeJ7xMtV/Ls2ctw2ZtuGdp7wlykYuAsozj5knotKLOUex
+         19cwVfKOFxpLX1X1XuPkne11OblSXtFjOO8Oddiw6HTMMOEtE6cUM61hLVjnlM6f1epp
+         oAcmuUICSOnaSrYQg0u1PlwPeXXaLMk2saKIkFhPzOsrgmX6YEA2ULszQ/Jtae6SQa+8
+         Ap47lF/Ptov00re6242CE1vA2OocuO9PLUYqULRQXQ4jd5xva3bF0Q4RAx/S8dZ6ngsV
+         GG+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779883706; x=1780488506;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lHTOQ4suV6NNySuR0ocPbPr0xmG3h61DRMpN0s+hIO8=;
+        b=KF/YxC8xjIh53yC9p8eCW1pedyTpT85tozh4WuLT9rCV3UaCnpWGDX05y02J1zBL+D
+         3/IrRsr1fjUrsTXHI+NXLl6a+pgOoi+rpXny2VV6cT61Uj6ahf0Z8Le/JVbQoirxvEYN
+         YAPdkUv9YcP/JVM7LtbMuc87n3eNVbegYhfHkRf74b0j1FkH4EYHviS1/az5sA3OYPYV
+         UGGlGkqStepKi9y/ARYIjmwd1ySodHRC4pw6moOUI03H908/J0xA8nqP+UCYOUlnGYod
+         uxV6yL2G6dtGXX0dAxeJRPCTr9W75866iVZ1AFWZTR4SzUWs/uvuEcow2bDBEy7p5Hc6
+         gX4Q==
+X-Gm-Message-State: AOJu0YwfuqACjk8vQozvsCZMd5vWwR4hJOI1aslXEyiXugY1JHvTBDqr
+	B8tgXHtuUJZBfshP2nWDNDdWA6kwYeQISx9xSabn5aAo7W4DJV6rZAy4siG8LwrbaT8=
+X-Gm-Gg: Acq92OH10WwOYrsL9C3vuPdalnP3tFUAkj/vihc2dJe7rwqQB+SrXy4DMxnqjcRMbGq
+	+FUKlPsU1m1FWAXwTnz2QVBQE+depd6L6c4+Du/tAuZa5cxJnEXB8IKEiy0Q4cveeRjAlAFz3rx
+	NA+8D3IaOmS3AihDkb9ZeEDCJH/T367rW5fkxVpzN8bsHrBnoqD8Y/O+nEVXCHiHBkzICA5/ZuY
+	IwNlYIcsbgE4d3CevjHRX43BcCRCrt3qwax9Al+gTZIlcC8m7PaSxHCT0SlSN2tPOtx6y3qDzM7
+	smKl9zxhbhMTXqeGgKJE78iANpnZ6GzGMgKUZxgO/q5R5EH+ofV0tPgkDID0xfP+HEyNVfZ8ziu
+	uwxft0Nq7MQUZXZPYJStJLNAmt/Eot8KfNJgxAVOC3YG8gQFImWaiXvqUe8htZnBSW0vVECqqxP
+	9N56UUtjN5FXbBK5SS
+X-Received: by 2002:a05:6512:24c2:10b0:5a8:97d7:8c45 with SMTP id 2adb3069b0e04-5aa323a358fmr4975717e87.36.1779883705813;
+        Wed, 27 May 2026 05:08:25 -0700 (PDT)
+Received: from ubuntu1.. ([89.255.88.34])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-395dcc2f502sm32959511fa.35.2026.05.27.05.08.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 May 2026 05:08:24 -0700 (PDT)
+From: frezidok1@gmail.com
 To: yocto-patches@lists.yoctoproject.org
-Cc: Jaihind Yadav <jaihindy@qti.qualcomm.com>
-Subject: [meta-selinux][PATCH] refpolicy: allow seatd to use unallocated TTYs
-Date: Wed, 27 May 2026 17:15:49 +0530
-Message-ID: <20260527114549.1010287-1-jaihindy@qti.qualcomm.com>
+Cc: Dmitry Sakhonchik <frezidok1@gmail.com>
+Subject: [pseudo] [PATCH] pseudo_util: Add log severity flags
+Date: Wed, 27 May 2026 15:08:20 +0300
+Message-ID: <20260527120820.237469-1-frezidok1@gmail.com>
 X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Authority-Analysis: v=2.4 cv=VY3H+lp9 c=1 sm=1 tr=0 ts=6a16d974 cx=c_pps
- a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=NGcC8JguVDcA:10 a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22
- a=rJkE3RaqiGZ5pbrm-msn:22 a=NEAV23lmAAAA:8 a=EUspDBNiAAAA:8
- a=FKyT-rSJxFxOsl4oL50A:9
-X-Proofpoint-ORIG-GUID: NPKqY-NxHgZVz8CKAmsguNs4TYPZ5LHz
-X-Proofpoint-GUID: NPKqY-NxHgZVz8CKAmsguNs4TYPZ5LHz
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTI3MDExNCBTYWx0ZWRfXyS604rm3UJsj
- fqEcOrhj4mHa0nRvXnYYvlJQaQ0Vb1jUipqvn8A/ExwemVYhPLsQDuJYKXApwG2bkQS9tIFhWym
- rBduzKiSsID9PBSAqHsQ316M9dT7F1nU+VxkcMpydA1P39UF/rGod+ZWQxD/lqwh5WjwjjZWqwH
- toAR/bDfxv768FMFWJKJ7Uh5637uKPsYzcYJIe2xn2d07kktAQOWbyKkS1JDZJm1wOq5TjSXDeQ
- dnAplHWSNICkmObW9t3/bFiImDf469zXv1/X0C4p3bXuiC40Y6KXG19GndmAcM8BptzT3S4/Viq
- BctvhyDi2BqklsZX4KUXReXgxs+FUyP2qTIQmakpgZ7GOPq+bGJ1yagAOFk0EmuIscYHsddPKBL
- jOeNcohZPozYCAfkHDIxn7zticvOVjsE7FMOYs7VSIB53xn4g6QT5+WjreJSHAy80j5iUAL+SM7
- A+gXgqpPxPoCvesWUgQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-05-27_01,2026-05-26_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 suspectscore=0 adultscore=0 clxscore=1015 impostorscore=0
- phishscore=0 malwarescore=0 spamscore=0 bulkscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2605130000 definitions=main-2605270114
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 27 May 2026 11:46:05 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4073
+ <yocto-patches@lists.yoctoproject.org>; Wed, 27 May 2026 12:08:35 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4074
 
-seatd requires access to unallocated TTY devices such as /dev/tty0
-to manage seat activation and VT handling for Wayland compositors.
+From: Dmitry Sakhonchik <frezidok1@gmail.com>
 
-Upstream-Status: Backport [https://github.com/SELinuxProject/refpolicy/pull/1114]
+Create an infrastructure to make use of severity flags from pseudo_tables.
+After that it is now possible to set severity flags from env (PSEUDO_SEVERITY) and from terminal via optargs.
 
-Signed-off-by: Jaihind Yadav <jaihindy@qti.qualcomm.com>
+[YOCTO #12141]
+
+Signed-off-by: Dmitry Sakhonchik <frezidok1@gmail.com>
 ---
- ...ervices-seatd-to-use-unallocated_tty.patch | 27 +++++++++++++++++++
- .../refpolicy/refpolicy_common.inc            |  1 +
- 2 files changed, 28 insertions(+)
- create mode 100644 recipes-security/refpolicy/refpolicy/0060-policy-modules-services-seatd-to-use-unallocated_tty.patch
+ pseudo.c      |  8 +++++++-
+ pseudo.h      |  3 +++
+ pseudo_util.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 54 insertions(+), 1 deletion(-)
 
-diff --git a/recipes-security/refpolicy/refpolicy/0060-policy-modules-services-seatd-to-use-unallocated_tty.patch b/recipes-security/refpolicy/refpolicy/0060-policy-modules-services-seatd-to-use-unallocated_tty.patch
-new file mode 100644
-index 0000000..b5bc03b
---- /dev/null
-+++ b/recipes-security/refpolicy/refpolicy/0060-policy-modules-services-seatd-to-use-unallocated_tty.patch
-@@ -0,0 +1,27 @@
-+From 9b060b28f151316c38dd16068644cbd04969e93d Mon Sep 17 00:00:00 2001
-+From: Jaihind Yadav <jaihindy@qti.qualcomm.com>
-+Date: Tue, 12 May 2026 11:23:17 +0530
-+Subject: [PATCH] refpolicy: allow seatd to use unallocated TTYs
-+
-+seatd requires access to unallocated TTY devices such as /dev/tty0
-+to manage seat activation and VT handling for Wayland compositors.
-+
-+Upstream-Status: Backport [https://github.com/SELinuxProject/refpolicy/pull/1114]
-+
-+Signed-off-by: Jaihind Yadav <jaihindy@qti.qualcomm.com>
-+---
-+ policy/modules/services/seatd.te | 4 ++++
-+ 1 file changed, 4 insertions(+)
-+
-+diff --git a/policy/modules/services/seatd.te b/policy/modules/services/seatd.te
-+index 44ba85ee7..d539dc446 100644
-+--- a/policy/modules/services/seatd.te
-++++ b/policy/modules/services/seatd.te
-+@@ -32,3 +32,7 @@ auth_use_nsswitch(seatd_t)
-+ 
-+ dev_rw_dri(seatd_t)
-+ dev_rw_input_dev(seatd_t)
-++
-++# seatd requires access to unallocated TTYs (e.g. /dev/tty0) to manage
-++# seat activation and VT handling for Wayland compositors.
-++term_use_unallocated_ttys(seatd_t)
-diff --git a/recipes-security/refpolicy/refpolicy_common.inc b/recipes-security/refpolicy/refpolicy_common.inc
-index 6f528d5..9e3b672 100644
---- a/recipes-security/refpolicy/refpolicy_common.inc
-+++ b/recipes-security/refpolicy/refpolicy_common.inc
-@@ -75,6 +75,7 @@ SRC_URI += " \
-         file://0057-policy-modules-system-systemd-make-_systemd_t-MLS-tr.patch \
-         file://0058-policy-modules-system-logging-make-syslogd_runtime_t.patch \
-         file://0059-policy-modules-system-init-allow-ModemManager-to-sen.patch \
-+        file://0060-policy-modules-services-seatd-to-use-unallocated_tty.patch \ 
-         "
+diff --git a/pseudo.c b/pseudo.c
+index 25711b6..8a05d82 100644
+--- a/pseudo.c
++++ b/pseudo.c
+@@ -134,7 +134,10 @@ main(int argc, char *argv[]) {
+ 	 * wrong.  The + suppresses this annoying behavior, but may not
+ 	 * be compatible with sane option libraries.
+ 	 */
+-	while ((o = getopt(argc, argv, "+BCdfhi:lm:M:p:P:r:R:St:vVx:")) != -1) {
++	while ((o = getopt(argc, argv, "+BCdfhi:lm:M:p:P:r:R:St:vVx:k:")) != -1) {
++		/*                                                               ^^^^^    */
++		/* 						which letter to choose for severity is a topic for discussion */
++		/*						I've chosen 'k' simply because it was not used yet 	*/
+ 		switch (o) {
+ 		case 'B': /* rebuild database */
+ 			opt_B = 1;
+@@ -231,6 +234,9 @@ main(int argc, char *argv[]) {
+ 			printf("Set PSEUDO_PREFIX to run with a different prefix.\n");
+ 			exit(0);
+ 			break;
++		case 'k': /* debug severity */
++			pseudo_severity_set(optarg);
++			break;
+ 		case 'x': /* debug flags */
+ 			pseudo_debug_set(optarg);
+ 			break;
+diff --git a/pseudo.h b/pseudo.h
+index b6c13f2..e48d38a 100644
+--- a/pseudo.h
++++ b/pseudo.h
+@@ -26,8 +26,11 @@ extern void pseudo_debug_terse(void);
+ extern void pseudo_debug_set(char *);
+ extern void pseudo_debug_clear(char *);
+ extern void pseudo_debug_flags_finalize(void);
++extern void pseudo_severity_set(char *);
++extern void pseudo_severity_flags_finalize(void);
+ extern unsigned long pseudo_util_debug_flags;
+ extern unsigned long pseudo_util_evlog_flags;
++extern unsigned long pseudo_util_severity_flags;
+ extern int pseudo_util_debug_fd;
+ extern int pseudo_disabled;
+ extern int pseudo_allow_fsync;
+diff --git a/pseudo_util.c b/pseudo_util.c
+index 2b0cc04..f8f2a2f 100644
+--- a/pseudo_util.c
++++ b/pseudo_util.c
+@@ -63,6 +63,7 @@ static struct pseudo_variables pseudo_env[] = {
+ #endif
+ 	{ "PSEUDO_EVLOG", 12, NULL },
+ 	{ "PSEUDO_EVLOG_FILE", 17, NULL },
++	{ "PSEUDO_SEVERITY", 15, NULL },
+ 	{ NULL, 0, NULL } /* Magic terminator */
+ };
  
- S = "${UNPACKDIR}/refpolicy"
--- 
-2.43.0
-
+@@ -90,6 +91,7 @@ static int pseudo_evlog_next_entry = 0;
+ static void pseudo_evlog_set(char *);
+ static void pseudo_evlog_flags_finalize(void);
+ static unsigned long pseudo_debug_flags_in(char *);
++static unsigned long pseudo_severity_flags_in(char *);
+ 
+ /* -1 - init hasn't been run yet
+  * 0 - init has been run
+@@ -247,10 +249,17 @@ pseudo_init_util(void) {
+ 		pseudo_evlog_flags_finalize();
+ 	}
+ 	free(env);
++	env = pseudo_get_value("PSEUDO_SEVERITY");
++	if (env) {
++		pseudo_severity_set(env);
++		pseudo_severity_flags_finalize();
++	}
++	free(env);
+ }
+ 
+ unsigned long pseudo_util_debug_flags = 0;
+ unsigned long pseudo_util_evlog_flags = 0;
++unsigned long pseudo_util_severity_flags = 0;
+ int pseudo_util_debug_fd = 2;
+ int pseudo_util_evlog_fd = 2;
+ static int debugged_newline = 1;
+@@ -433,6 +442,11 @@ pseudo_evlog_set(char *s) {
+ 	pseudo_util_evlog_flags = pseudo_debug_flags_in(s);
+ }
+ 
++void
++pseudo_severity_set(char *s) {
++	pseudo_util_severity_flags = pseudo_severity_flags_in(s);
++}
++
+ /* This exists because we don't want to allocate a bunch of strings
+  * and free them immediately if you have several flags set.
+  */
+@@ -457,6 +471,11 @@ pseudo_evlog_flags_finalize(void) {
+ 	pseudo_flags_finalize(pseudo_util_evlog_flags, "PSEUDO_EVLOG");
+ }
+ 
++void
++pseudo_severity_flags_finalize(void) {
++	pseudo_flags_finalize(pseudo_util_severity_flags, "PSEUDO_SEVERITY");
++}
++
+ static unsigned long
+ pseudo_debug_flags_in(char *s) {
+ 	unsigned long flags = 0;
+@@ -471,6 +490,31 @@ pseudo_debug_flags_in(char *s) {
+ 	return flags;
+ }
+ 
++static unsigned long
++pseudo_severity_flags_in(char *s) {
++	unsigned long flags = 0;
++	char *token = NULL;
++	char *saveptr = NULL;
++	char *s_copy = NULL;
++
++	if (!s)
++		return flags;
++
++	s_copy = strdup(s);
++
++	token = strtok_r(s_copy, " ,;", &saveptr);
++	while (token != NULL) {
++		pseudo_sev_t id = pseudo_sev_id(token);
++		if (id > SEVERITY_NONE && id < SEVERITY_MAX) {
++				flags |= (1UL << id);
++			}
++		token = strtok_r(NULL, " ,;", &saveptr);
++	}
++
++	free(s_copy);
++	return flags;	
++}
++
+ void
+ pseudo_debug_clear(char *s) {
+ 	if (!s)
 
