@@ -1,243 +1,321 @@
-Return-Path: <daniel.turull@ericsson.com>
+Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D256CD5BD5
-	for <webhook@archiver.kernel.org>; Wed, 27 May 2026 14:34:28 +0000 (UTC)
-Received: from OSPPR02CU001.outbound.protection.outlook.com (OSPPR02CU001.outbound.protection.outlook.com [40.107.159.29])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.21820.1779892467252627193
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E18A2CD5BDE
+	for <webhook@archiver.kernel.org>; Wed, 27 May 2026 15:30:28 +0000 (UTC)
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.23315.1779895825727637186
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 27 May 2026 07:34:27 -0700
+ Wed, 27 May 2026 08:30:25 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@ericsson.com header.s=selector1 header.b=q6tZO7JM;
- spf=pass (domain: ericsson.com, ip: 40.107.159.29, mailfrom: edaturu@ericsson.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lUCN9tqBza+wS4x7upR4qJqfYnNo5CgaxbrgDo1MkDPM230Deop/OlAb5t7Qq3jdpA9/6ifnxCTQ2qtCoBQi/LcTSm17MjTKltURrB4NIAmCzZscvvRg4EV7ePzsci9EUd+Tdh/OPIAh/AsblwXgx2b5lQ3OA9T1t+92ua6ILAE//T35EUQUCKKwLqfKYizWGSBahbYMvm8SVz7RodreaykFcIJxEylfemKS3P9HP9PIx1T7luLolN6hDe83DfUQgufeUUEWawTl1nQLpYNU+ZvVd8PBuDAqGkVSifJjDfIt3gFwPuCCGsi/eb/eB2q3zngKCtCl5rQz3VZHqg6JRA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2sEysX4RGf6bF/BiZoeahnPVeTbhjigSzw0+/D1yJFM=;
- b=A/i6kzGn+v9CChbiSewtTK0h71tnywYACj+MgWv6TTrMHivIM6h6h9eKWRn2PgGT9UX5LRhWTVBo0e4j/Ee6AXa+zSBJHOKMRzxrp8tl5oRBdnGRQIBK5aT9hHg3gbXhtlysNoEVCgUwswb0nl/GiR/x4bSt2BOy9fZ57OVshIpXSKR14TWvrmr380lXnRoCp9SZMGjHiZsArTmhC4G3jDpQ7AmJ9AAbnXbW8UasoPpKuV7FCWafchRtrZcJyR7cy4yl5RGQWk0GUH3nprMn/+JwQ7dIcb0AUGz0d/SKqlo2KCCXvxNOqz1Yifn06tvD2txRNU7T5VfPWQ60Cp2qZA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 192.176.1.74) smtp.rcpttodomain=gmail.com smtp.mailfrom=ericsson.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=ericsson.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ericsson.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2sEysX4RGf6bF/BiZoeahnPVeTbhjigSzw0+/D1yJFM=;
- b=q6tZO7JMZoi4N2d8HjRqH6x0XgasU0mKVFPV8XDcDTNYMRytSdMFzVxt/8EbAkiGut98pWC7tHv7pA/nrE62oflgoDw8mZoQ5NvdiV09meW2yEcGQ8w+Nbnnyh8EcRUAj27MmLLAOOuxY/sM8VKYSr/eTQPIEN3cgJRT0BdaW5p3bfquJ61TilFSakPZjs7WHlAOZdbLdgR49mM+0gZ7CcC9XrOwc1giwffTfvgDxGUZZ+eIu7e/sfK7H99F15LZ9dq0m1nyFwQifEgKamlQmbbpIKR6XucKpiV00/xZzwEnwQwZoC95hD6zJ1IlKoWaw46jSfgMcZRNLOYg7CJMkA==
-Received: from AS9PR06CA0329.eurprd06.prod.outlook.com (2603:10a6:20b:45b::35)
- by AM9PR07MB7139.eurprd07.prod.outlook.com (2603:10a6:20b:2d1::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.71.12; Wed, 27 May
- 2026 14:34:22 +0000
-Received: from AMS1EPF00000093.eurprd05.prod.outlook.com
- (2603:10a6:20b:45b:cafe::8f) by AS9PR06CA0329.outlook.office365.com
- (2603:10a6:20b:45b::35) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.71.12 via Frontend Transport; Wed, 27
- May 2026 14:34:22 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 192.176.1.74)
- smtp.mailfrom=ericsson.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=ericsson.com;
-Received-SPF: Pass (protection.outlook.com: domain of ericsson.com designates
- 192.176.1.74 as permitted sender) receiver=protection.outlook.com;
- client-ip=192.176.1.74; helo=oa.msg.ericsson.com; pr=C
-Received: from oa.msg.ericsson.com (192.176.1.74) by
- AMS1EPF00000093.mail.protection.outlook.com (10.167.242.90) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.71.7 via Frontend Transport; Wed, 27 May 2026 14:34:22 +0000
-Received: from seroius18813.sero.gic.ericsson.se (153.88.142.248) by
- smtp-central.internal.ericsson.com (100.87.178.64) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.29; Wed, 27 May 2026 16:34:22 +0200
-Received: from seroius08462.sero.gic.ericsson.se (seroius08462.sero.gic.ericsson.se [10.63.237.245])
-	by seroius18813.sero.gic.ericsson.se (Postfix) with ESMTP id 55876130540;
-	Wed, 27 May 2026 14:48:33 +0200 (CEST)
-Received: by seroius08462.sero.gic.ericsson.se (Postfix, from userid 160155)
-	id 43AAB7003739; Wed, 27 May 2026 14:48:33 +0200 (CEST)
-From: <daniel.turull@ericsson.com>
-To: <daniel.turull@ericsson.com>, <yocto-patches@lists.yoctoproject.org>
-CC: <alex.kanavin@gmail.com>, <Qi.Chen@windriver.com>,
-	<richard.purdie@linuxfoundation.org>
-Subject: [AUH] [PATCH v3 2/2] steps: include devtool changelog in upgrade report
-Date: Wed, 27 May 2026 14:48:25 +0200
-Message-ID: <20260527124827.2486471-2-daniel.turull@ericsson.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260527124827.2486471-1-daniel.turull@ericsson.com>
-References: <20260527124827.2486471-1-daniel.turull@ericsson.com>
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=tHRs1sts;
+ spf=pass (domain: gmail.com, ip: 209.85.219.53, mailfrom: twoerner@gmail.com)
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-8acb09ddbf6so213906296d6.2
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 27 May 2026 08:30:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1779895824; x=1780500624; darn=lists.yoctoproject.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IpCncgddmdwfbXJljZUvb0ZFHdW+OJ4Eqv2wyWvtXfA=;
+        b=tHRs1stsHW4LNp+DGbFiBvxw7HSHdpnknc7jq/S4fxOGCG8iNvwGp+XXweC64h7fQR
+         xqyYcAWyzaWwLIkIRR6L2HN37F/UNmK6moJGWkUlCQbN0sfrE7ldCzB32Vv666jPZYeZ
+         3rRBTpegAZcfnxFny7Nkwf9O/hrrkjficADC/etK3dtsjlUGqt0Aufa4larstLIpXz2y
+         2waqiedw6PfeCDPYY44YrThEri6DkB+a1aCMHEflNr9HwLSyWrRu3jLZk3aK6RjzgrEr
+         hZVTgg+fh0nnnGWG0B2jUQI0A+ZqgXCBfIMNAGYqJWYw6n1HlFFcSRPRtGYjLGhvgeGr
+         vRmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779895824; x=1780500624;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IpCncgddmdwfbXJljZUvb0ZFHdW+OJ4Eqv2wyWvtXfA=;
+        b=Dezwx4+nLnqoarTxaVAuscQTXgo/W75Z/ayz+EJaI6I5hIJYzvD5it79r+DXKKZBdY
+         wRUsvAM236PxiwMxAoJMSnItsj1/6MkhWwppVCfDz6p6a6mBoRxXBBWuM1pl1KeucGUT
+         Fmv2v41Cm26/7FINOvY7jGpymVE4LvmCkntTwbvlKMDv2axzOYoE21O2f6onynfl4Xyu
+         v5EICpkU2ash8r40FC6ZzNFYRlxBnP0k3xvD21LHuZ1QG2Rym1eS1t1KlgsAGZvMqrJu
+         axWUi993zDXLfh/DYXYwrsEDt1RTgU2CLm/jxqeaY3TrFEZZXLgQOi1H9BPHRrI/S32j
+         8UTQ==
+X-Gm-Message-State: AOJu0YxWayw7NFyIAmnhsMacqErShX9ZRohQYfp1zaxTeNCsmWwPmSfO
+	ziNMzEAjNE9JfzVDnU5+iGT0MK/C4Cks8nir0vWtKksBc8308O4UiGjJIx4q7w==
+X-Gm-Gg: Acq92OFNgLwZC2CWyaEkFe4hBN0zizFMrHfoutvF/ZawsYNhW5/FmJHu9YFO4artj+5
+	nJyWu6A8XoXNi5j7qW32ISd5/ngzcku6td+dLxkgo3StFTjejjO6TkrFjn0QWy4vA0V8hUb0TYl
+	/Eggbvb9EddwXyqVa3CNbn47B8vNqgO44HxVdsUMEluYiK9JqwNHQ+puhyFoecMMRjPbdXhIJJ0
+	G715Aegt9YCBcuA0jk2RQKIWVyLTIR3FBlF4M3mWaURMEqFL4JmsOf5GTZecmeqnvLGv7ZAW70c
+	81m3RW+Xri9gxVjZldAo6Vt6q2uiyYX4QrxASJLR1pY5FHssBBMc/mJmDYCbErkiOAJsRSo6OaD
+	ZDlS2CgrVc7kFpB1ZgDhUPTowfjpG0HLv82qWIC6Q0Sts5Q20vI/3JSQchl9saZHLgz0WtQyulE
+	lIPo2O2gSJ7x/aq2EKuEUN9NX8bQEq3w1iBh0wHZ0fGPHcqKeplLNEpC2K5sfbxXVgqA==
+X-Received: by 2002:a05:620a:4686:b0:90e:6dd4:5d6d with SMTP id af79cd13be357-914b46b998amr3504301585a.10.1779895816320;
+        Wed, 27 May 2026 08:30:16 -0700 (PDT)
+Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-914f881b620sm502530685a.42.2026.05.27.08.30.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 May 2026 08:30:14 -0700 (PDT)
+Date: Wed, 27 May 2026 11:30:12 -0400
+From: Trevor Woerner <twoerner@gmail.com>
+To: yocto-patches@lists.yoctoproject.org
+Cc: Quentin Schulz <quentin.schulz@cherry.de>
+Subject: Re: [yocto-patches] [PATCH meta-rockchip 2/2] add support for baking
+ OP-TEE OS into U-Boot proper binary
+Message-ID: <ahcOBJWhevGNqPyF@localhost.localdomain>
+References: <20260126-optee-os-v1-0-874261a77dad@cherry.de>
+ <20260126-optee-os-v1-2-874261a77dad@cherry.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AMS1EPF00000093:EE_|AM9PR07MB7139:EE_
-X-MS-Office365-Filtering-Correlation-Id: 76c155e7-4a38-46f6-55a4-08debbfd0ba8
-X-SMTP-Server: smtp-central.internal.ericsson.com
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|1800799024|36860700016|376014|82310400026|3023799007|22082099003|18002099003|11063799006|56012099006;
-X-Microsoft-Antispam-Message-Info: 
-	McG3l87DUJD6sOFLyvl7JtHobioRxEI21QdLTTl+dzUJ+Qeh/ggPa8XOTe80ihrPZtquejIJNUFeUZvyJp3yebp/KuoHEtLmtZxZbQVffkYfV4Qw7MGIVvw0U4MlXZ0VWB0MmoArTPGYhYYYZ10Kxyf1Fapoq+7WfUFQv7WyDY0EJ+sPx9RxqAnMXSR/5MwhMA/POmxoqSn1eSwmTDXjUXFAWqIaaYEaEyadOlyZkbKsfxuwg1jvdyFdAQC3AmeBOnWapiY5CBMG4LZVyKFrZzbZXpZyRP6mYKdnc4o8Fsslm4ntYFFDyPhv9hA3t+iJGskxBVtCwIuXmF+VnofDU6gygZePpiDR+l2z1FSemnfBL73tCBGncKEUYr/qATd+jaLwFKrwbdqwoXOX5+CcOg/GGsQKwdkLfHas1PG0E1fP/5bDJZEw2PSxeOz/NipHSp62/jNPJ3kxWH3B+t3pICv5cLVnKBBy92RkmTWxePmMBRtsNfiuqCgNbVFOsAxUOwI0TDZ3ZOEw7rKGkLSEthmUuGDbRToAdtOcjbQSlVncb3aI0yDSJINLXt3/s7DF9sKVB7fijpwUbIeRsrtiUlTma0qcpBu27JuGR55z379Lt8rI6jtyGamd4vdBprtc0ScyHLkXp3FhA2JZZfVLHWOHQe43J/ffBr2V1aHcwKHApa9yhdBfHl+uSWXzY/mUheVhDeL7oaF4TlHp+sxz6NT+36VildUERo9MJL+r/Sk=
-X-Forefront-Antispam-Report: 
-	CIP:192.176.1.74;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:oa.msg.ericsson.com;PTR:office365.se.ericsson.net;CAT:NONE;SFS:(13230040)(1800799024)(36860700016)(376014)(82310400026)(3023799007)(22082099003)(18002099003)(11063799006)(56012099006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	K24rNAHVBWjyTM7c/ir+bLCsfy80WAEQaLwUP8PT4syQGXcvXGxEQ2IO9DsjVHbKoM9JdOoAMYUCoUJGPTpk0DhVSTMyODF1mGJ6vfTYdVZUKdHFxDFCCxzZknYmOVK0cgkY+ZMb3i3CFD/o26bTBHAR+oGkPRH15meEbTg9+tm/OaHLwZLLOlTQYPTZnw6YjeOzR6K1UV6EGH02RkapG0GmJsmwCLH8hwcpVbrhmk689vzkaPkFIDeaixKbb9in1vIPhQRacTLYg45resYEDV2lURktHwDoBKM3nA4DQUrMNedIblTLR5ViMt5H7wIT19hYchZ9fjy6OJ5YvuZvBMcyTZQ02jpAKo1mDxosy1olhK2ro/Yz5PoY2bH96mtoFCaLQYJ1jDHdSUiTRgyxk4X1J18Op/hAR83CZ44Mx9NDrVcWvjf9HMkstSgVTkHT
-X-OriginatorOrg: ericsson.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2026 14:34:22.9305
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 76c155e7-4a38-46f6-55a4-08debbfd0ba8
-X-MS-Exchange-CrossTenant-Id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=92e84ceb-fbfd-47ab-be52-080c6b87953f;Ip=[192.176.1.74];Helo=[oa.msg.ericsson.com]
-X-MS-Exchange-CrossTenant-AuthSource: 
-	AMS1EPF00000093.eurprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR07MB7139
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260126-optee-os-v1-2-874261a77dad@cherry.de>
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 27 May 2026 14:34:28 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4075
+ <yocto-patches@lists.yoctoproject.org>; Wed, 27 May 2026 15:30:28 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4076
 
-From: Daniel Turull <daniel.turull@ericsson.com>
+Hi Quentin,
 
-Copy the changelog file generated by 'devtool upgrade' into the
-package workdir so it is included as an email attachment in the
-upgrade report. This gives maintainers immediate visibility into
-what changed upstream without needing to look it up manually.
+Thanks for this patch series!
 
-Also fix a pre-existing bug in _devtool_upgrade where the license
-diff file was written using pkg_ctx['workdir'], which is never set,
-causing a KeyError whenever a license change was detected. Now uses
-the workdir parameter consistently.
+I believe there was a little fuzz required to apply patch 1 (around the
+-D), perhaps a v2 against the current to clean that up?
 
-This patch depends on "devtool: upgrade: extract changelog between versions=
-"
-Otherwise the output does not change
+On Mon 2026-01-26 @ 03:48:30 PM, Quentin Schulz via lists.yoctoproject.org wrote:
+> From: Quentin Schulz <quentin.schulz@cherry.de>
+> 
+> TF-A has support for loading OP-TEE OS as BL32 which allows us to have
+> the following boot flow on supported Rockchip SoCs:
+> 
+> BootROM -> U-Boot TPL/SPL -> TF-A (BL31) -> OP-TEE OS (BL32) -> U-Boot
+> proper -> Linux kernel
+> 
+> TF-A must be built with support for the opteed payload via the SPD
+> variable. It can always be set, the downside is that if it's set and no
+> OP-TEE OS is available to load, it'll complain with
+> 
+>   ERROR:   Error initializing runtime service opteed_fast
+> 
+> but will still continue the boot flow.
+> 
+> U-Boot proper must be built with OPTEE_LIB enabled (forced enabled on
+> U-Boot v2026.01 when a TEE environment variable is set) otherwise random
+> crashes may happen while in Linux as the memory marked as secure for
+> OP-TEE OS isn't reserved and the kernel may use it and trigger a
+> security exception.
+> 
+> This has only been tested with `xtest` on PX30, RK3399 and RK3588
+> platforms, all tests pass. Note that this is unsecure by default as it's
+> using the default development key in OP-TEE OS tree which isn't secret
+> at all. I have not looked into how to provide your own key pair.
+> 
+> Note that xtest has two fails on RK3588 with OP-TEE OS v4.7.0. They are
+> fixed since v4.8.0 (v4.9.0 series for meta-arm has been posted
+> already[1]).
+> 
+> We also pass a few variables to make such that we avoid panics when an
+> FDT is passed by TF-A (happens when SPL_ATF_NO_PLATFORM_PARAM is not
+> set) due to the memory area to store the FDT being too small, also avoid
+> panics when the device is using a different console than the default in
+> OP-TEE OS by simply disabling the early console (thus relying on FDT to
+> find which one to write to) and enable Arm Cryptographic Extensions on
+> PX30 for faster crypto (xtest in 3m11s vs 3min32s).
+> 
+> [1] https://lore.kernel.org/yocto-meta-arm/20260121140356.16818-1-hugues.kambampiana@arm.com/
+> Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+> ---
+>  README                                             | 42 ++++++++++++++++++++++
+>  conf/machine/include/px30.inc                      |  7 ++++
+>  conf/machine/include/rk3399.inc                    |  7 ++++
+>  conf/machine/include/rk3588s.inc                   |  7 ++++
+>  recipes-bsp/u-boot/u-boot-rockchip.inc             |  6 ++++
+>  .../optee/optee-os-tadevkit_%.bbappend             |  3 ++
+>  recipes-security/optee/optee-os_%.bbappend         | 19 ++++++++++
+>  recipes-security/optee/optee-test_%.bbappend       |  3 ++
+>  8 files changed, 94 insertions(+)
+> 
+> diff --git a/README b/README
+> index c2697d1..f49fdb5 100644
+> --- a/README
+> +++ b/README
+> @@ -222,6 +222,48 @@ Notes:
+>  	NOTE: this variable must be set before any include/require in the
+>  	      machine configuration file
+>  
+> +  OP-TEE
+> +
+> +	PX30, RK3399 and RK3588 are all supported by upstream OP-TEE OS. By
+> +	default, OP-TEE OS is not baked into U-Boot.
+> +
+> +	You can bake OP-TEE OS in U-Boot by setting:
+> +
+> +		RK_UBOOT_TEE = "1"
 
-AI-Generated: kiro with claude-opus-4.6 model
-Signed-off-by: Daniel Turull <daniel.turull@ericsson.com>
+Is it worth pointing out this is a boolean so any of
+"1"/"y"/"yes"/"true" or "0"/"n"/"no"/"false" will work?
 
----
-v3: fix truncate message as requested by Alex
----
- modules/steps.py    | 42 +++++++++++++++++++++++++++++++++++++++---
- upgrade-helper.conf |  5 +++++
- upgrade-helper.py   |  1 +
- 3 files changed, 45 insertions(+), 3 deletions(-)
+> +
+> +	in a configuration file.
+> +
+> +	Your U-Boot defconfig must enable CONFIG_OPTEE_LIB otherwise random
+> +	crashes in Linux will occur. It is force-enabled since v2026.01 so you
+> +	may omit this if running that or a more recent version.
+> +
+> +	Note that this has only been tested with upstream OP-TEE OS and upstream
+> +	TF-A. Please consider disabling CONFIG_SPL_ATF_NO_PLATFORM_PARAM in your
+> +	U-Boot's defconfig such that both upstream TF-A and OP-TEE OS are passed
+> +	the FDT (useful for debugging since it specifies the serial console).
+> +
+> +	Note that this is only adding OP-TEE OS to the U-Boot proper
+> +	(u-boot.itb) binary. It is *NOT* secure by default as it'll use
+> +	development keys contained in-tree, see
+> +	https://optee.readthedocs.io/en/latest/architecture/porting_guidelines.html#trusted-application-private-public-keypair.
+> +	How to properly specify the private/public key pair is left to the user
+> +	for now.
+> +
+> +	By default, early console is disabled because a misconfiguration of the
+> +	serial console will silently crash your device. You may enable it again
+> +	by setting:
+> +
+> +		OPTEE_OS_EARLY_CONSOLE = "y"
+> +
+> +	This only controls early console, before OP-TEE OS finds the FDT and
+> +	parse it to know which UART controller to use.
+> +	If you are not using the default serial controller (UART2), you must
+> +	change CFG_EARLY_CONSOLE_BASE to the appropriate UART controller base
+> +	address. You may have to set CFG_EARLY_CONSOLE_SIZE if it isn't set by
+> +	default.
+> +	CFG_EARLY_CONSOLE_* variables must be passed directly via EXTRA_OEMAKE
+> +	BitBake variable.
+> +
+>  U-Boot Environment:
+>  ------------------
+>  	In order to configure U-Boot to be able to store its environment into the
+> diff --git a/conf/machine/include/px30.inc b/conf/machine/include/px30.inc
+> index 1997f6f..689a745 100644
+> --- a/conf/machine/include/px30.inc
+> +++ b/conf/machine/include/px30.inc
+> @@ -14,6 +14,13 @@ KBUILD_DEFCONFIG ?= "defconfig"
+>  
+>  TFA_PLATFORM = "px30"
+>  TFA_BUILD_TARGET = "bl31"
+> +# Allow TF-A to load OP-TEE OS
+> +# If no OP-TEE OS, it'll simply print
+> +#  ERROR:   Error initializing runtime service opteed_fast
+> +# and the boot process will continue.
+> +TFA_SPD ?= "opteed"
+> +
+> +OPTEEMACHINE = "rockchip-px30"
+>  
+>  UBOOT_SUFFIX ?= "itb"
+>  UBOOT_ENTRYPOINT ?= "0x06000000"
+> diff --git a/conf/machine/include/rk3399.inc b/conf/machine/include/rk3399.inc
+> index 166db7b..93594bc 100644
+> --- a/conf/machine/include/rk3399.inc
+> +++ b/conf/machine/include/rk3399.inc
+> @@ -14,6 +14,13 @@ KBUILD_DEFCONFIG ?= "defconfig"
+>  
+>  TFA_PLATFORM = "rk3399"
+>  TFA_BUILD_TARGET = "bl31"
+> +# Allow TF-A to load OP-TEE OS
+> +# If no OP-TEE OS, it'll simply print
+> +#  ERROR:   Error initializing runtime service opteed_fast
+> +# and the boot process will continue.
+> +TFA_SPD ?= "opteed"
+> +
+> +OPTEEMACHINE = "rockchip-rk3399"
+>  
+>  UBOOT_SUFFIX ?= "itb"
+>  UBOOT_ENTRYPOINT ?= "0x06000000"
+> diff --git a/conf/machine/include/rk3588s.inc b/conf/machine/include/rk3588s.inc
+> index 18c2fb2..ab16e1a 100644
+> --- a/conf/machine/include/rk3588s.inc
+> +++ b/conf/machine/include/rk3588s.inc
+> @@ -18,5 +18,12 @@ UBOOT_ENTRYPOINT ?= "0x06000000"
+>  
+>  TFA_PLATFORM = "rk3588"
+>  TFA_BUILD_TARGET = "bl31"
+> +# Allow TF-A to load OP-TEE OS
+> +# If no OP-TEE OS, it'll simply print
+> +#  ERROR:   Error initializing runtime service opteed_fast
+> +# and the boot process will continue.
+> +TFA_SPD ?= "opteed"
+> +
+> +OPTEEMACHINE = "rockchip-rk3588"
+>  
+>  ENABLE_STATELESS_VPU_GST ?= "1"
+> diff --git a/recipes-bsp/u-boot/u-boot-rockchip.inc b/recipes-bsp/u-boot/u-boot-rockchip.inc
+> index 2b5bbd7..19f7c8a 100644
+> --- a/recipes-bsp/u-boot/u-boot-rockchip.inc
+> +++ b/recipes-bsp/u-boot/u-boot-rockchip.inc
+> @@ -7,6 +7,12 @@ TFA_DEPENDS ??= ""
+>  TFA_DEPENDS:rockchip:aarch64 = " trusted-firmware-a:do_deploy"
+>  do_compile[depends] .= "${TFA_DEPENDS}"
+>  
+> +EXTRA_OEMAKE:append:rockchip = "${@' TEE=${DEPLOY_DIR_IMAGE}/optee/tee.bin' if bb.utils.to_boolean(d.getVar('RK_UBOOT_TEE'), False) else ''}"
+> +
+> +TEE_DEPENDS ??= ""
+> +TEE_DEPENDS:rockchip = "${@' optee-os:do_deploy' if bb.utils.to_boolean(d.getVar('RK_UBOOT_TEE'), False) else ''}"
+> +do_compile[depends] .= "${TEE_DEPENDS}"
+> +
+>  # No open-source TPL (yet)
+>  ROCKCHIP_TPL:closed-tpl = "${DEPLOY_DIR_IMAGE}/ddr-${SOC_FAMILY}.bin"
+>  # SOC_FAMILY for RK3588S is rk3588s but it should use the binaries from rk3588
+> diff --git a/recipes-security/optee/optee-os-tadevkit_%.bbappend b/recipes-security/optee/optee-os-tadevkit_%.bbappend
+> new file mode 100644
+> index 0000000..e4fc87b
+> --- /dev/null
+> +++ b/recipes-security/optee/optee-os-tadevkit_%.bbappend
+> @@ -0,0 +1,3 @@
+> +COMPATIBLE_MACHINE:px30 = "px30"
+> +COMPATIBLE_MACHINE:rk3399 = "rk3399"
+> +COMPATIBLE_MACHINE:rk3588s = "rk3588s"
+> diff --git a/recipes-security/optee/optee-os_%.bbappend b/recipes-security/optee/optee-os_%.bbappend
+> new file mode 100644
+> index 0000000..2a5ec8b
+> --- /dev/null
+> +++ b/recipes-security/optee/optee-os_%.bbappend
+> @@ -0,0 +1,19 @@
+> +# Increase size for FDT in OP-TEE OS to the one in TF-A since v2.13 to avoid
+> +# panics on 64+KiB FDT passed by U-Boot to TF-A to OP-TEE OS.
+> +# Can be removed once https://github.com/OP-TEE/optee_os/pull/7687 is merged.
+> +EXTRA_OEMAKE:append:rockchip:aarch64 = " CFG_DTB_MAX_SIZE=0x60000"
+> +
+> +# Disable early console by default to avoid OP-TEE OS panicking on boards with
+> +# their UART console different from OP-TEE OS default (UART2 for rk322x, rk3399
+> +# and rk3588(s)).
+> +# In-tree default changes if https://github.com/OP-TEE/optee_os/pull/7688 merged
+> +OPTEE_OS_EARLY_CONSOLE ?= "n"
+> +EXTRA_OEMAKE:append:rockchip = " CFG_EARLY_CONSOLE=${OPTEE_OS_EARLY_CONSOLE}"
+> +
+> +# Enable hardware acceleration using Arm Cryptography Extensions on PX30.
+> +# Can be removed once https://github.com/OP-TEE/optee_os/pull/7689 is merged.
 
-diff --git a/modules/steps.py b/modules/steps.py
-index b3ec61c..a88e666 100644
---- a/modules/steps.py
-+++ b/modules/steps.py
-@@ -79,10 +79,44 @@ def _make_commit_msg(group):
-     pn =3D group['name']
-     return "{}: upgrade {}".format(pn, ",".join([_get_version(p) for p in =
-group['pkgs']]))
-=20
--def _devtool_upgrade(devtool, bb, git, opts, pkg_ctx):
-+def _get_changelog(pn, workdir):
-+    """Read the changelog generated by devtool upgrade and copy it to work=
-dir.
-+    Returns the changelog text or None."""
-+    changelog_path =3D os.path.join(os.environ.get('BUILDDIR', ''),
-+                                  'workspace', 'changelogs', '{}.txt'.form=
-at(pn))
-+    if os.path.isfile(changelog_path):
-+        try:
-+            with open(changelog_path, 'r', encoding=3D'utf-8', errors=3D'r=
-eplace') as f:
-+                text =3D f.read()
-+            shutil.copy2(changelog_path, os.path.join(workdir, '{}-changel=
-og.txt'.format(pn)))
-+            return text
-+        except OSError as e:
-+            W('Failed to copy changelog for {}: {}'.format(pn, e))
-+    return None
-+
-+
-+def _append_changelog_to_commit_msg(group, opts):
-+    max_len =3D int(opts['changelog_max_len'])
-+    for p in group['pkgs']:
-+        if 'changelog_text' not in p:
-+            continue
-+        text =3D p['changelog_text'].strip()
-+        if text.startswith('Changelog for '):
-+            text =3D text[text.index('\n') + 1:].strip()
-+        if len(text) > max_len:
-+            text =3D (text[:max_len] + "\n\n[Changelog truncated as it exc=
-eeds {} characters; \n"
-+                    "the full changelog can be found in an attachment to t=
-he AUH email]".format(max_len))
-+        group['commit_msg'] +=3D "\n\n" + text
-+
-+
-+def _devtool_upgrade(devtool, bb, git, opts, pkg_ctx, workdir):
-     try:
-         devtool_output =3D devtool.upgrade(pkg_ctx['PN'], pkg_ctx['NPV'], =
-pkg_ctx['NSRCREV'])
-         D(" 'devtool upgrade' printed:\n%s" %(devtool_output))
-+        # Copy changelog before checking for conflicts =E2=80=94 it's usef=
-ul even on failure
-+        changelog_text =3D _get_changelog(pkg_ctx['PN'], workdir)
-+        if changelog_text:
-+            pkg_ctx['changelog_text'] =3D changelog_text
-         # If devtool failed to rebase patches, it does not fail, but we sh=
-ould
-         if 'conflict' in devtool_output:
-             raise DevtoolError("Running 'devtool upgrade' for recipe %s fa=
-iled." %(pkg_ctx['PN']), devtool_output)
-@@ -96,13 +130,15 @@ def _devtool_upgrade(devtool, bb, git, opts, pkg_ctx):
-     license_diff_info =3D _extract_license_diff(devtool_output)
-     if len(license_diff_info) > 0:
-         pkg_ctx['license_diff_fn'] =3D "license-diff-{}.txt".format(pkg_ct=
-x['PV'])
--        with open(os.path.join(pkg_ctx['workdir'], pkg_ctx['license_diff_f=
-n']), 'wb') as f:
-+        with open(os.path.join(workdir, pkg_ctx['license_diff_fn']), 'wb')=
- as f:
-             f.write(b"".join(license_diff_info))
-=20
-=20
- def devtool_upgrade(devtool, bb, git, opts, group):
-     for p in group['pkgs']:
--        _devtool_upgrade(devtool, bb, git, opts, p)
-+        _devtool_upgrade(devtool, bb, git, opts, p, group['workdir'])
-+    _append_changelog_to_commit_msg(group, opts)
-+
-=20
- def _compile(bb, pkg, machine, workdir):
-         try:
-diff --git a/upgrade-helper.conf b/upgrade-helper.conf
-index 269bde3..d363c50 100644
---- a/upgrade-helper.conf
-+++ b/upgrade-helper.conf
-@@ -121,3 +121,8 @@
- #layer_mode=3Dno
- #layer_name=3Dmeta-intel
- #layer_dir=3DDIR/meta-intel
-+
-+# Maximum number of characters from the changelog to include in the
-+# commit message. Longer changelogs are truncated. The full changelog
-+# is always available as an attachment.
-+#changelog_max_len=3D3000
-diff --git a/upgrade-helper.py b/upgrade-helper.py
-index 40f31c4..f7a63c0 100755
---- a/upgrade-helper.py
-+++ b/upgrade-helper.py
-@@ -195,6 +195,7 @@ class Updater(object):
-         self.opts['skip_compilation'] =3D self.args.skip_compilation
-         self.opts['buildhistory'] =3D self._buildhistory_is_enabled()
-         self.opts['testimage'] =3D self._testimage_is_enabled()
-+        self.opts['changelog_max_len'] =3D settings.get('changelog_max_len=
-', '3000')
-=20
-     def _make_dirs(self, build_dir):
-         self.uh_dir =3D os.path.join(build_dir, "upgrade-helper")
---=20
-2.34.1
+Have these 3 merges occurred yet?
 
+> +EXTRA_OEMAKE:append:px30 = " CFG_CRYPTO_WITH_CE=y"
+> +
+> +COMPATIBLE_MACHINE:px30 = "px30"
+> +COMPATIBLE_MACHINE:rk3399 = "rk3399"
+> +COMPATIBLE_MACHINE:rk3588s = "rk3588s"
+> diff --git a/recipes-security/optee/optee-test_%.bbappend b/recipes-security/optee/optee-test_%.bbappend
+> new file mode 100644
+> index 0000000..e4fc87b
+> --- /dev/null
+> +++ b/recipes-security/optee/optee-test_%.bbappend
+> @@ -0,0 +1,3 @@
+> +COMPATIBLE_MACHINE:px30 = "px30"
+> +COMPATIBLE_MACHINE:rk3399 = "rk3399"
+> +COMPATIBLE_MACHINE:rk3588s = "rk3588s"
+> 
+> -- 
+> 2.52.0
+> 
+> 
+> 
+> -=-=-=-=-=-=-=-=-=-=-=-
+> Links: You receive all messages sent to this group.
+> View/Reply Online (#3085): https://lists.yoctoproject.org/g/yocto-patches/message/3085
+> Mute This Topic: https://lists.yoctoproject.org/mt/117469183/900817
+> Group Owner: yocto-patches+owner@lists.yoctoproject.org
+> Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/13168745/900817/63955952/xyzzy [twoerner@gmail.com]
+> -=-=-=-=-=-=-=-=-=-=-=-
+> 
+> 
 
