@@ -1,204 +1,220 @@
-Return-Path: <sasikuma@qti.qualcomm.com>
+Return-Path: <quentin.schulz@cherry.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6392CD5BD5
-	for <webhook@archiver.kernel.org>; Thu, 28 May 2026 08:05:31 +0000 (UTC)
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.6007.1779955528744480206
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07B54CD5BD5
+	for <webhook@archiver.kernel.org>; Thu, 28 May 2026 08:48:42 +0000 (UTC)
+Received: from AS8PR04CU009.outbound.protection.outlook.com (AS8PR04CU009.outbound.protection.outlook.com [52.101.70.16])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.6535.1779958110426559995
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 28 May 2026 01:05:28 -0700
+ Thu, 28 May 2026 01:48:30 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@qualcomm.com header.s=qcppdkim1 header.b=amJacg/A;
- spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: qualcomm.com, ip: 205.220.168.131, mailfrom: sasikuma@qualcomm.com)
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64S6Tdsi3011298
-	for <yocto-patches@lists.yoctoproject.org>; Thu, 28 May 2026 08:05:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=t91hTZMZVG7ZX2bENeU7OqbAustthH8sDxp
-	McToN5Hc=; b=amJacg/AfdQZQB+60bZ7XEDLZhgopq8MjbG3fGw4zwKpgPpjaBF
-	2bBNBdoRi0nDB+LKC0sp9jFcvRQCH1fA/KQQQE/M0L5sop8QmAcIMkT/5pdcpai+
-	5F/50AVee8I8kaYglbWpXfOxHmi5ixw/tB93APzCGf7PULmXCnZi9pp0mReKhqRb
-	c5hf8XFIaZvgkSKCkV8/o53a2I/7NsgjFNCAXLkV71mzx+8+8B5Nfmc85hPvXWXT
-	C1BGAfuaovW0+YoP3KgyZuG8pAOKLKHcJJru14ktjqXKReHBtgApvUSRTosvs/j3
-	+fxPjmSG9xKz7pBaW5vwhWNC1/DvjhLf08w==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ee7yrhwkd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <yocto-patches@lists.yoctoproject.org>; Thu, 28 May 2026 08:05:27 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.18.1.7/8.18.1.7) with ESMTP id 64S85NCf022050;
-	Thu, 28 May 2026 08:05:23 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 4eb5ajy39b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <yocto-patches@lists.yoctoproject.org>; Thu, 28 May 2026 08:05:23 +0000 (GMT)
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.1.12) with ESMTP id 64S85NdJ022044
-	for <yocto-patches@lists.yoctoproject.org>; Thu, 28 May 2026 08:05:23 GMT
-Received: from hu-devc-hyd-u24-a.qualcomm.com ([10.213.102.143])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 64S85N4B022043
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 28 May 2026 08:05:23 +0000 (GMT)
-Received: by hu-devc-hyd-u24-a.qualcomm.com (Postfix, from userid 4060212)
-	id D05BA21C20; Thu, 28 May 2026 13:35:22 +0530 (+0530)
-From: Sasi Kumar Maddineni <sasikuma@qti.qualcomm.com>
+ dkim=pass header.i=@cherry.de header.s=selector1 header.b=aiTZd0PQ;
+ spf=pass (domain: cherry.de, ip: 52.101.70.16, mailfrom: quentin.schulz@cherry.de)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tMrO4vY3j+VPRTTQsMruW5f6hhFAy81JxL2sq4sU0iKUsSltGX4lnFHFb6ai0RMjNLdWKOhKNwwM714stLkaQZdvpZ/owhnPG0P32erY8jfdxXcrGJDuUo40IUQKUiyzdk2tFV3wwoirnJW1O7rhLHD2ytGPZ6nFaHVR1HiZ+Xi4mTRx6XAPXubu3vTeCg/XRfiJkJmuRxUU+zlbSmFcUAPJAgI71fy1sfYaGeRFn7ieL74Qwiu3C8/e5KA/dGm9kFcLjPY/IbLr6wSbzm8dHsoOeNqLN2hr9fcXRKSZDVN2pSp8C54cUUI3etlyBj7sD8ae1kOHzaWOeKpzxMqvog==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IhIO0UvdMBy1j5scTGq7AWDslv4CgtL0RVoRqtgBNvk=;
+ b=tMKMpyfoTHJZCyU0aVG1iX7vhq+RErBsdveTAnPU7biWUyUbC8HI9q7yxRvZ7FWrztDQavPEcMQdV6L6IA9QQNDwtMKrCTuFTDbPHMljR+pn2VXm7dwp6AnyxPQaTCvhCoYcCg78tGOR7mYxXx8jkpPphd24XxyutepGzpBNViMSaxJdVoXrbrIyQ4yRmT0l4Tgg7sklbrURGvbKkrrs4esQ59xlwP+zoknKT5HUlbYv73yHAEppnxmmyIhj2sgk3RmxNbQbInOKgJyGEfYd0ypFot+pkzrhuwlP43p4ub6yZtTJmBePIZQgfjCjt9HVO/abdJE/Bmd0qWT4JTXsVw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
+ dkim=pass header.d=cherry.de; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IhIO0UvdMBy1j5scTGq7AWDslv4CgtL0RVoRqtgBNvk=;
+ b=aiTZd0PQkJLdB5C/C2cs+p0mYIbY1FKYiEfQKOps3MN3iKU7Ep+QDhztilevhOKJxoQYBxGfys2lQ8hr+Nlj9VYAg9bn/NTNcOpWXywt+tP30IUF3l/WZvljz6Gw3r06qF743sVPUpJ4TuQxMSCFPTW3EaXVx/zJlg/tEiefevY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=cherry.de;
+Received: from PA4PR04MB7743.eurprd04.prod.outlook.com (2603:10a6:102:b8::20)
+ by DBBPR04MB7929.eurprd04.prod.outlook.com (2603:10a6:10:1ec::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.71.14; Thu, 28 May
+ 2026 08:48:25 +0000
+Received: from PA4PR04MB7743.eurprd04.prod.outlook.com
+ ([fe80::9a4e:252f:2fd:97b7]) by PA4PR04MB7743.eurprd04.prod.outlook.com
+ ([fe80::9a4e:252f:2fd:97b7%6]) with mapi id 15.21.0071.010; Thu, 28 May 2026
+ 08:48:25 +0000
+Message-ID: <1226166b-a604-4a40-95d1-68d8d5c64d05@cherry.de>
+Date: Thu, 28 May 2026 10:48:24 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [yocto-patches] [PATCH meta-rockchip 2/2] add support for baking
+ OP-TEE OS into U-Boot proper binary
 To: yocto-patches@lists.yoctoproject.org
-Cc: Sasi Kumar Maddineni <sasikuma@qti.qualcomm.com>
-Subject: [meta-selinux][PATCH/V2] refpolicy_targeted: Add op-tee based tee supplicant policy
-Date: Thu, 28 May 2026 13:35:21 +0530
-Message-ID: <20260528080521.2436277-1-sasikuma@qti.qualcomm.com>
-X-Mailer: git-send-email 2.43.0
+References: <20260126-optee-os-v1-0-874261a77dad@cherry.de>
+ <20260126-optee-os-v1-2-874261a77dad@cherry.de>
+ <ahcOBJWhevGNqPyF@localhost.localdomain>
+Content-Language: en-US
+From: Quentin Schulz <quentin.schulz@cherry.de>
+In-Reply-To: <ahcOBJWhevGNqPyF@localhost.localdomain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-ClientProxiedBy: VI1PR04CA0083.eurprd04.prod.outlook.com
+ (2603:10a6:803:64::18) To PA4PR04MB7743.eurprd04.prod.outlook.com
+ (2603:10a6:102:b8::20)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTI4MDA4MCBTYWx0ZWRfX03lkOnKppgeH
- cUUe4ySyAdgyiYWcJz1HI6+V357HCzMCUnTj/j78gYNr7G69PPh5zUqFLWIh+xgCKGkID4cIIQ9
- RHbJ2u1hIinA32A/+YIKJErgiINmO17h3BtkYxz2rvao4s7wq4iEkTEcV9vnH8BGASXa80tsgf3
- +b/Ks1reAd0LGhBKID/ovKKEAudj9D6i/qxd5uFqHXbV4X/k/p0T2MY1zvlCcbu7+ZV95lmk3JD
- ain5s5Tv0fWfJx7RLBQ5ssF2O04C80ZOOqOMLb682UuI0jyOHX87dVZJzV4slf7J2zOfeuWrMe6
- rX13eHU6O/bW0sLwj0Ev8eCWOZqE4rWFn7w7gJ3JqYVA31XHucIrvgxPEj+ucSHcDcNphM/cYZ0
- W2EVhUb4Gx3AEl4ikZPCDUfAyMZxLLXoK0lm5qeAPUVwfTnOyuoX1PioFfJHa2qvb7w5SmqOa3r
- oj8Xqc5+9qeBCm5aosA==
-X-Authority-Analysis: v=2.4 cv=PLo/P/qC c=1 sm=1 tr=0 ts=6a17f748 cx=c_pps
- a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=NGcC8JguVDcA:10 a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22
- a=eoimf2acIAo5FJnRuUoq:22 a=NEAV23lmAAAA:8 a=EUspDBNiAAAA:8 a=yMhMjlubAAAA:8
- a=beBsfdukaq1lzfkYcVoA:9
-X-Proofpoint-GUID: ZiAllX4fDfAkM_gjbyD8VtQtIIj-UWV7
-X-Proofpoint-ORIG-GUID: ZiAllX4fDfAkM_gjbyD8VtQtIIj-UWV7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-05-28_02,2026-05-26_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 clxscore=1015 malwarescore=0 spamscore=0 bulkscore=0
- priorityscore=1501 adultscore=0 lowpriorityscore=0 suspectscore=0
- impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2605210000
- definitions=main-2605280080
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PA4PR04MB7743:EE_|DBBPR04MB7929:EE_
+X-MS-Office365-Filtering-Correlation-Id: d2bf234f-6207-422c-dd5b-08debc95e16d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: 
+	BCL:0;ARA:13230040|376014|366016|1800799024|6133799003|22082099003|18002099003|56012099006|4143699003|4133799003|11063799006;
+X-Microsoft-Antispam-Message-Info: 
+	h0UFIuBpbHd4eTClfTWKWZ+Qg0Ydg4gWl5LSgIw4VLFw+ln2XMh3n6xMbxShg8zQrQW+UidhUzysKmrcAS8OAWJ7Why3uaR22WSfQzmjjmC3D3pYhUOPXVUzviu8Rb1cebZhwQ1ciT16jn054PyB79AyQQKiMXYRP5xY0v5VutKcHc91O+XKjsAbwr3HwlXjlKxxmzbvSNFQo5McoSSnHBCibGdr7Xf7C1jRz5bG6Q4uYg1g2WNFNzW2fx2i7xdw8+KU5nxCf3xo6Mw3Ta39aV/zk9UW8/XMU3nFrwimfdkZaL+8iScyJcz5ktwq4GjkML+UVVTxPMChY/nxvVqQZP5ZsnARnjH4EuNnfBjt/il7kPHH2FaW+FvDDCf236KNAiyifkReLZtl7er0seKaStwY0J6hLXzTCywem7Aqj/S+fhxY3X1FdcPPXyyti20zobY0hsrAl1HWpw6Ah8EfFHprmHDg6H3TAh2aRzz8+4TQjl1nzlNWPU7kT1qIx/h/AH6TxtDNq8VLuO0G8vUypW9IBX+3j/ZO5myUZdamyOaQnLYq95y3M2sT88muXPaqSxOBIoOwDbgtv4ksJ6q8gq7GWE18adsyoD9gvfOsX0ZmUnEYjv8UPiZoX/dKvMAKeHT491pvLlJuskHqP1sLes8v2WX95sPjXFSeJiaIr7sdDTmShTatcyt3BC8BYtbWw5h2o6wfjJ6+WHyeU9R1wQ==
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB7743.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(6133799003)(22082099003)(18002099003)(56012099006)(4143699003)(4133799003)(11063799006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?eDFEcXdGTW9xUVdFWnVSakxYWEJCZTdxMkVpMVRBS0xwbzBDbHVQeGZaUExS?=
+ =?utf-8?B?QjhGRHpPZ0Jldk1jMGlTWlJoK1o5RzJZeHVNZXJxdWhZV2RpdFZKUXY0eTB1?=
+ =?utf-8?B?NFN0S21GelR6Tkd3b294a1czaUxrZ2xqK2ZodXdhS25mQ3U2N0dOSEdOYVY3?=
+ =?utf-8?B?QnJCS1cyK05XbjE1L2tEUkxSeWduNDZxem84UDUzaGsxUnU1cVVaeDJ2clMy?=
+ =?utf-8?B?dDVkWVV2dlk0LzBxRkxtZ1VUM0FacmJJLzI0OEl3Y0tRaXBVVENOYWNBb0ZI?=
+ =?utf-8?B?VjlTOW94YzhaZVNydGV3MVdMb3lVNXBMU013OEVXWEsveG1OYnJ3SVlxb3Aw?=
+ =?utf-8?B?WFFTdFFBM0RyamU1eUMyNjNVSHJLMDRKb2VXeThldWZ4OWw2U1dnS0hCTlZj?=
+ =?utf-8?B?RlpGQ0NXamU3L1ByRkkzdUlHNERtWG1TR0J3c2lhOEdTeEJVb052aFFFNk1k?=
+ =?utf-8?B?N1E5WGJCZFNYdC9Eczk5TG54V3pvVkR3OEdiVzFIRHNGOW5tbU5RTUp3NG1h?=
+ =?utf-8?B?ZTNmL1RpRDF6QllqZGZhTTg0MjRDVFZZdDYzcmp1NHQzY0YrTmFKVGtIOUZk?=
+ =?utf-8?B?NWdPMmdBYnRsQUpkc29rYTRYbTVLZXBFdVliTDArL2xybjEvbDI2WXhmd25R?=
+ =?utf-8?B?eThpUUdBcFFmcjVXUnIxWlpkTGVmbFpZNUxDYVJhaU9iclBBQTgxeFVlZGh1?=
+ =?utf-8?B?ZThlUWc0VndJcnp5YXdsR0x6bjhCWUkwaEVXNVlHRWRqeTM0RHRqTVJRZkRQ?=
+ =?utf-8?B?WEV5NWFTMDNmcmFnSnp1ZmgvSVpKU25yZXJuSFBaWnI5QkVsZHFSOHU4QmNy?=
+ =?utf-8?B?NTc5VVAxek5BNGRNK0xwc3AvWE5NdHUyQWM2czE1RGdUSjBOY1pSZ2J3WTEy?=
+ =?utf-8?B?ZlRKR0g4L1dqN1dsYjV3Smg2bHBnd25Gak13VDBlY1RSb3d5THBHcktjTHhj?=
+ =?utf-8?B?SXVRR1oyTzV0ZGZwRUs2b0FYc3BqdGU5aDFSalJqYWlhcDV1MUVnRnJBWDRG?=
+ =?utf-8?B?eUM4Q2tGeU5DVU5zTG8wSmlONWpPSkU1WkpmanFOVVF6ZWQ5WUliM29DN2tr?=
+ =?utf-8?B?SE1kc3ErckRIbkNFR3IrZEtlTi8zYS93S29oREVsU3Z0M0xkUHJrazVEamJL?=
+ =?utf-8?B?bFc5OE1aMHNUNjhVMWxXcFZoMmhUNXJiRzRnN1I3eFMrc2NDdmJtMlB2eVNE?=
+ =?utf-8?B?NmdYU1VWd3RyVm93UkJZdzFEcTdFWmZUeHBtNGJvU2xaa29vN3dKait5TTJu?=
+ =?utf-8?B?SU1yWXFaZWVvMEJIaTZ5Z21mem9aamFjMmcrb2FhRUpJSUxEMEt1VFIydm5t?=
+ =?utf-8?B?OVREZStyd0x0cWJuSjJTZU5oTm92YmVueE9XaTdJbVlDQkxsd21jemZpZnc1?=
+ =?utf-8?B?dU9aYk1GN2ZXOUpmaC81RlE5ZmtJTGR5RDNRZjFNQ3BRZ3B5Snd6T2NER1Vu?=
+ =?utf-8?B?K2JFdkVVM21jdGlSQ2c4d1Y1ZlI2bDBmby9SL1htSEZhZCtwb2ZyN3k2YXJv?=
+ =?utf-8?B?UzZLYVJ5aG01RnA4dmpuNVVaNnhMaWVZVUxCNWdQS21QWGtxSXR6SGI2ZFQy?=
+ =?utf-8?B?UlhIaCtsZU0rYldNZlF3cjBjUzE2Q0lKZFc2NnhhVFUrVzJpdGIyZ1BwTFRt?=
+ =?utf-8?B?Q3dMZG1ycjFnbUJGQk9HTktiektqa3Z4WnBPUVVuQk1YUmhlYzR4cW9GYkdB?=
+ =?utf-8?B?MmJuNTVlTHpydHM3ZlJRSnduMEJPbU5RbmkrWG83VS8zY0hhWVljUGVQc0pz?=
+ =?utf-8?B?SFNvVUw3Z1ZXWnZONkJOcXdOajd0K0hzcTR0ZVZEbUpWc3pDK2NzZFNPTS92?=
+ =?utf-8?B?TytjaGNiclMveTBRaG10aFZ6MGttcE9HMWlCMU9XS1V5SG5yQkpCMGtEUmQv?=
+ =?utf-8?B?ZkZUNStnTTgvSUJXaGZxaXdOMHNjZDU1c2lLczM4S0oyOUgrY1NrVkFSanlF?=
+ =?utf-8?B?cmNDZGRDN25HUDJ4K3FnTlhYdm1NbmFObFV0S2pXZi9IdktKNGNHWmI2dC82?=
+ =?utf-8?B?UzA5V0JEeEE3aG9qc0xIcnJkMHBjcHJ4QkVhRmxLRFFYWnFMVFlxNjhMU0Rw?=
+ =?utf-8?B?bU5DdVlLOWY4NzJSVjNIN2kxOEFGZmlaN0VKVjNrVlc4bTk2Y2ZTeVJxaDUx?=
+ =?utf-8?B?cmFsMm54a3UrRE5ZRmVjWGtiRFVpS0IwSjlYVms1K3dHUFh6ZnVzWVM4Nncr?=
+ =?utf-8?B?Z1IxSTZ6KzBlQVdaRkIwektDZUdJdEJzdDlKSm8xZ0hXdXVSc3BPMEpYOTZU?=
+ =?utf-8?B?ZVVIQzVlMWN0d0dBOXNWWERmTFB3YlBmWlE2LzBCdW5HNzlDclVKUTdvdWVj?=
+ =?utf-8?B?aWpiTG1YRUU2TzhHNWRwaGRnUEUrTGJENldYdXdMNmxlWFF2VlM1Zz09?=
+X-OriginatorOrg: cherry.de
+X-MS-Exchange-CrossTenant-Network-Message-Id: d2bf234f-6207-422c-dd5b-08debc95e16d
+X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB7743.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 May 2026 08:48:25.3759
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qv7whRq+yf5uh4/AI8fw526FHiVncr9mZ/YQA2uz2TLYgDBdELLfFKBiQnHszECDmHPZIxa3OZmdLW9guyO8ejwFZME708JecvQ7LQ7hHng=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7929
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 28 May 2026 08:05:31 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4081
+ <yocto-patches@lists.yoctoproject.org>; Thu, 28 May 2026 08:48:42 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4082
 
-Some of the op-tee required policies are missing.
+Hi Trevor,
 
-Added required policies for op-tee.
+On 5/27/26 5:30 PM, Trevor Woerner via lists.yoctoproject.org wrote:
+> Hi Quentin,
+> 
+> Thanks for this patch series!
+> 
 
-Upstream-Status: Backport [https://github.com/SELinuxProject/refpolicy/pull/1103]
+Thanks for the review!
 
-Signed-off-by: Sasi Kumar Maddineni <sasikuma@qti.qualcomm.com>
----
- ...d-op-tee-based-tee-supplicant-policy.patch | 83 +++++++++++++++++++
- .../refpolicy/refpolicy_common.inc            |  1 +
- 2 files changed, 84 insertions(+)
- create mode 100644 recipes-security/refpolicy/refpolicy/0064-Add-op-tee-based-tee-supplicant-policy.patch
+> I believe there was a little fuzz required to apply patch 1 (around the
+> -D), perhaps a v2 against the current to clean that up?
+> 
 
-diff --git a/recipes-security/refpolicy/refpolicy/0064-Add-op-tee-based-tee-supplicant-policy.patch b/recipes-security/refpolicy/refpolicy/0064-Add-op-tee-based-tee-supplicant-policy.patch
-new file mode 100644
-index 0000000..71f2eed
---- /dev/null
-+++ b/recipes-security/refpolicy/refpolicy/0064-Add-op-tee-based-tee-supplicant-policy.patch
-@@ -0,0 +1,83 @@
-+From 0e76a2a30d459e9c8416225dc51280927d0f27b1 Mon Sep 17 00:00:00 2001
-+From: Daniel Burgener <Daniel.Burgener@microsoft.com>
-+Date: Wed, 8 Apr 2026 20:43:43 +0000
-+Subject: [PATCH] Add op-tee based tee supplicant policy
-+
-+Some of the op-tee required policies are missing.
-+
-+Added required policies for op-tee.
-+
-+Upstream-Status: Backport [https://github.com/SELinuxProject/refpolicy/pull/1103]
-+
-+Signed-off-by: Daniel Burgener <Daniel.Burgener@microsoft.com>
-+Signed-off-by: Sasi Kumar Maddineni <sasikuma@qti.qualcomm.com>
-+---
-+ policy/modules/kernel/devices.if          | 18 ++++++++++++++++++
-+ policy/modules/services/tee_supplicant.fc |  1 +
-+ policy/modules/services/tee_supplicant.te | 12 +++++++++++-
-+ 3 files changed, 30 insertions(+), 1 deletion(-)
-+
-+diff --git a/policy/modules/kernel/devices.if b/policy/modules/kernel/devices.if
-+index a7ebcc922..1e4ec76e5 100644
-+--- a/policy/modules/kernel/devices.if
-++++ b/policy/modules/kernel/devices.if
-+@@ -5050,6 +5050,24 @@ interface(`dev_rw_tee',`
-+ 	rw_chr_files_pattern($1, device_t, tee_device_t)
-+ ')
-+ 
-++########################################
-++## <summary>
-++##	Read and write the privileged trusted execution environment devices.
-++## </summary>
-++## <param name="domain">
-++##	<summary>
-++##	Domain allowed access.
-++##	</summary>
-++## </param>
-++#
-++interface(`dev_rw_tee_priv',`
-++	gen_require(`
-++		type device_t, tee_priv_device_t;
-++	')
-++
-++	rw_chr_files_pattern($1, device_t, tee_priv_device_t)
-++')
-++
-+ ########################################
-+ ## <summary>
-+ ##	Read and write the TPM device.
-+diff --git a/policy/modules/services/tee_supplicant.fc b/policy/modules/services/tee_supplicant.fc
-+index 9c6e77836..41b654268 100644
-+--- a/policy/modules/services/tee_supplicant.fc
-++++ b/policy/modules/services/tee_supplicant.fc
-+@@ -1 +1,2 @@
-+ /usr/bin/qtee_supplicant      --      gen_context(system_u:object_r:tee_supplicant_exec_t,s0)
-++/usr/sbin/tee-supplicant      --      gen_context(system_u:object_r:tee_supplicant_exec_t,s0)
-+diff --git a/policy/modules/services/tee_supplicant.te b/policy/modules/services/tee_supplicant.te
-+index 2d5905318..0e0b67bc2 100644
-+--- a/policy/modules/services/tee_supplicant.te
-++++ b/policy/modules/services/tee_supplicant.te
-+@@ -9,9 +9,19 @@ type tee_supplicant_t;
-+ type tee_supplicant_exec_t;
-+ init_daemon_domain(tee_supplicant_t, tee_supplicant_exec_t)
-+ 
-+-########################################
-++type tee_supplicant_var_lib_t;
-++files_type(tee_supplicant_var_lib_t)
-++
-++#########################################
-+ #
-+ # Local policy
-+ #
-+ 
-++manage_files_pattern(tee_supplicant_t, tee_supplicant_var_lib_t, tee_supplicant_var_lib_t)
-++manage_dirs_pattern(tee_supplicant_t, tee_supplicant_var_lib_t, tee_supplicant_var_lib_t)
-++files_var_lib_filetrans(tee_supplicant_t, tee_supplicant_var_lib_t, { file dir })
-++
-+ dev_rw_tee(tee_supplicant_t)
-++dev_rw_tee_priv(tee_supplicant_t)
-++
-++kernel_read_vm_overcommit_sysctl(tee_supplicant_t)
-+-- 
-+2.43.0
-+
-diff --git a/recipes-security/refpolicy/refpolicy_common.inc b/recipes-security/refpolicy/refpolicy_common.inc
-index 51ac1d4..e25ce7e 100644
---- a/recipes-security/refpolicy/refpolicy_common.inc
-+++ b/recipes-security/refpolicy/refpolicy_common.inc
-@@ -76,6 +76,7 @@ SRC_URI += " \
-         file://0058-policy-modules-system-logging-make-syslogd_runtime_t.patch \
-         file://0062-selinux-allow-seatd-to-use-unallocated-TTYs.patch \
-         file://0063-dmesg-allow-dmesg_t-access-to-init-script-stream-soc.patch \
-+        file://0064-Add-op-tee-based-tee-supplicant-policy.patch \
-         "
- 
- S = "${UNPACKDIR}/refpolicy"
--- 
-2.43.0
+I'm assuming due to commit 9fb264d42a20 ("bsp: fix upstream TF-A deploy 
+desync") already being merged.
 
+> On Mon 2026-01-26 @ 03:48:30 PM, Quentin Schulz via lists.yoctoproject.org wrote:
+[...]
+>> diff --git a/README b/README
+>> index c2697d1..f49fdb5 100644
+>> --- a/README
+>> +++ b/README
+>> @@ -222,6 +222,48 @@ Notes:
+>>   	NOTE: this variable must be set before any include/require in the
+>>   	      machine configuration file
+>>   
+>> +  OP-TEE
+>> +
+>> +	PX30, RK3399 and RK3588 are all supported by upstream OP-TEE OS. By
+>> +	default, OP-TEE OS is not baked into U-Boot.
+>> +
+>> +	You can bake OP-TEE OS in U-Boot by setting:
+>> +
+>> +		RK_UBOOT_TEE = "1"
+> 
+> Is it worth pointing out this is a boolean so any of
+> "1"/"y"/"yes"/"true" or "0"/"n"/"no"/"false" will work?
+> 
+
+Not sure it's worth the added complexity? We also don't say that for 
+RK_IMAGE_INCLUDES_UBOOT_ENV, RK_RAUC_DEMO, RK_KERNEL_FITIMAGE, 
+RK_OVERLAY_DEMO but we word it differently for them.
+
+Would,
+
+You can bake OP-TEE OS in U-Boot by enabling the RK_UBOOT_TEE variable 
+boolean.
+
+work for you?
+
+[...]
+>> diff --git a/recipes-security/optee/optee-os_%.bbappend b/recipes-security/optee/optee-os_%.bbappend
+>> new file mode 100644
+>> index 0000000..2a5ec8b
+>> --- /dev/null
+>> +++ b/recipes-security/optee/optee-os_%.bbappend
+>> @@ -0,0 +1,19 @@
+>> +# Increase size for FDT in OP-TEE OS to the one in TF-A since v2.13 to avoid
+>> +# panics on 64+KiB FDT passed by U-Boot to TF-A to OP-TEE OS.
+>> +# Can be removed once https://github.com/OP-TEE/optee_os/pull/7687 is merged.
+>> +EXTRA_OEMAKE:append:rockchip:aarch64 = " CFG_DTB_MAX_SIZE=0x60000"
+>> +
+>> +# Disable early console by default to avoid OP-TEE OS panicking on boards with
+>> +# their UART console different from OP-TEE OS default (UART2 for rk322x, rk3399
+>> +# and rk3588(s)).
+>> +# In-tree default changes if https://github.com/OP-TEE/optee_os/pull/7688 merged
+>> +OPTEE_OS_EARLY_CONSOLE ?= "n"
+>> +EXTRA_OEMAKE:append:rockchip = " CFG_EARLY_CONSOLE=${OPTEE_OS_EARLY_CONSOLE}"
+>> +
+>> +# Enable hardware acceleration using Arm Cryptography Extensions on PX30.
+>> +# Can be removed once https://github.com/OP-TEE/optee_os/pull/7689 is merged.
+> 
+> Have these 3 merges occurred yet?
+> 
+
+Yes.
+
+b6c7291c246b ("plat-rockchip: increase FDT max size to 384KiB on all 
+Aarch64 supported SoCs")
+763be3b08c16 ("plat-rockchip: disable early console by default")
+74eb4d9ed3ac ("plat-rockchip: px30: set CFG_CRYPTO_WITH_CE ?= y")
+
+All available in 4.10.0. However, meta-arm currently is still at 4.9.0. 
+I don't see patches on their ML 
+(https://lore.kernel.org/yocto-meta-arm/?q=op-tee) for a version bump so 
+we need to keep those in for now.
+
+I guess I can change the comment to say we need to keep this until 
+4.10.0? At the same time, it shouldn't hurt keeping them in even in 
+4.10.0 or later.
+
+Cheers,
+Quentin
 
