@@ -1,156 +1,155 @@
-Return-Path: <daniel.turull@ericsson.com>
+Return-Path: <sasikuma@qti.qualcomm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BC3FCD5BD0
-	for <webhook@archiver.kernel.org>; Wed, 27 May 2026 18:40:00 +0000 (UTC)
-Received: from OSPPR02CU001.outbound.protection.outlook.com (OSPPR02CU001.outbound.protection.outlook.com [40.107.159.53])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.27653.1779907193142643359
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 588F5CD6E45
+	for <webhook@archiver.kernel.org>; Thu, 28 May 2026 04:10:17 +0000 (UTC)
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.3936.1779941407880990607
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 27 May 2026 11:39:53 -0700
+ Wed, 27 May 2026 21:10:08 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@ericsson.com header.s=selector1 header.b=nmwpt67S;
- spf=pass (domain: ericsson.com, ip: 40.107.159.53, mailfrom: edaturu@ericsson.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=y3oOUknNLEDJkwEDGsqWZWHKYSu2NJOUe+y+QmwWcWMx5+aF4ujmbv4YakRNHQKtF99bVh06SMSecKTke+L1qhoJ0zHUehcxr02P8+GarcGJJtakltzGYwmrPL3tNm/VK+p752fEPCdiHREqc/NLJqPKjrd4DmhatGu1NdRKYmD04hRRNSpKvwjrBpA9r6cc87JjqQJhPRZitjYHS5Iv6ZfrbmFWjNZCzKlNtbhxWevXCw1LTCY0pKYskJHiHkR0o0I/9bRbf+9+w5Hf/SIRhsN8WWfbtIqhCnNGjQaY3wRZ8QveTC6O9vaW3QPpUkl/Y3s/tPDzIk+uWTgQWUrmFA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FS8HMLcWNekUDdMO7ELwCtlnUe7XiIWDrRTv7wpan8Y=;
- b=b9itHBnQxqCAwQOklNGh8V3HJXsz14yGMMJOVfwGnJWc+P2+MUfTxRaQYqc7PFubRPOLepH1R21nocARGH5o4sAxt4+7yRiJQuI6jBjnuxcW6Fg4P9wPVoM8Br3WXect+jtal+IHYvY/5qvOJHlhfTNLxg3Fyk1UFcL4Wutb6dzHndanJ4na9waNAOmShVodyPxatQnSfl+HCLLmAEtdPZcdd/VyT53e5GVd+UByFjPbieOD37K0dnFRnTv9UIrS0CellogQhr8d1/+Yr62zFuyAFks5QEOhllqG6isEvXcTSb92YfNvHuwiSNxz1khvMDckPJ46GtJt036fwteCiw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 192.176.1.74) smtp.rcpttodomain=gmail.com smtp.mailfrom=ericsson.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=ericsson.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ericsson.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FS8HMLcWNekUDdMO7ELwCtlnUe7XiIWDrRTv7wpan8Y=;
- b=nmwpt67SNfgbepygevPzi0+HqLPaVXUsqoKUVmjTqogn6HZ8qjH5kGJ4JGyvxxZjc3w0RN1LdO2TlumkErwRXJtB9wzIbRKbWe0ILHcX+/LxSBA7tWh+Cnrcs2jwhol5tiYD4lOeMcReNvqgApH5uMnfX98VrDysffARUZKXp+yVGOtt8chQu2RtUgMouFmGFz04Sd5yiY8qolFSVJfZJSmsvMPjErLXwq0gNShqp45L3DSqjduMiKbHOIit72b7uK1hv7rFsCm9LJOTeWCsstdM7DoXs1RoMeyAE0zET3EIcQO6amwspFKkI5rUarIVqoekKs3+osyurlgQWgsKVw==
-Received: from DU2PR04CA0028.eurprd04.prod.outlook.com (2603:10a6:10:3b::33)
- by BESPR07MB10609.eurprd07.prod.outlook.com (2603:10a6:b10:f0::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.48.17; Wed, 27 May
- 2026 18:39:48 +0000
-Received: from DB1PEPF000509E7.eurprd03.prod.outlook.com
- (2603:10a6:10:3b:cafe::8d) by DU2PR04CA0028.outlook.office365.com
- (2603:10a6:10:3b::33) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.71.13 via Frontend Transport; Wed, 27
- May 2026 18:39:48 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 192.176.1.74)
- smtp.mailfrom=ericsson.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=ericsson.com;
-Received-SPF: Pass (protection.outlook.com: domain of ericsson.com designates
- 192.176.1.74 as permitted sender) receiver=protection.outlook.com;
- client-ip=192.176.1.74; helo=oa.msg.ericsson.com; pr=C
-Received: from oa.msg.ericsson.com (192.176.1.74) by
- DB1PEPF000509E7.mail.protection.outlook.com (10.167.242.57) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.48.11 via Frontend Transport; Wed, 27 May 2026 18:39:47 +0000
-Received: from seroius18815.sero.gic.ericsson.se (153.88.142.248) by
- smtp-central.internal.ericsson.com (100.87.178.69) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.29; Wed, 27 May 2026 20:39:47 +0200
-Received: from seroius08462.sero.gic.ericsson.se (seroius08462.sero.gic.ericsson.se [10.63.237.245])
-	by seroius18815.sero.gic.ericsson.se (Postfix) with ESMTP id 60E66427CC6C;
-	Wed, 27 May 2026 14:48:30 +0200 (CEST)
-Received: by seroius08462.sero.gic.ericsson.se (Postfix, from userid 160155)
-	id 43D7A7003739; Wed, 27 May 2026 14:48:30 +0200 (CEST)
-From: <daniel.turull@ericsson.com>
-To: <daniel.turull@ericsson.com>, <yocto-patches@lists.yoctoproject.org>
-CC: <alex.kanavin@gmail.com>, <Qi.Chen@windriver.com>,
-	<richard.purdie@linuxfoundation.org>
-Subject: [AUH] [PATCH v3 1/2] git: use temp file for commit message to avoid shell escaping issues
-Date: Wed, 27 May 2026 14:48:24 +0200
-Message-ID: <20260527124827.2486471-1-daniel.turull@ericsson.com>
-X-Mailer: git-send-email 2.53.0
+ dkim=pass header.i=@qualcomm.com header.s=qcppdkim1 header.b=IhwlHcu/;
+ spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: qualcomm.com, ip: 205.220.168.131, mailfrom: sasikuma@qualcomm.com)
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64RKnJSG3010208
+	for <yocto-patches@lists.yoctoproject.org>; Thu, 28 May 2026 04:10:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=TNjNbvjmT21MCcdBB80/kja5JuxKgDxIYML
+	0Bjlf/L4=; b=IhwlHcu/BLxRdDEG4uU9Yz8cC9f7YalRmiHeLf8ZabpFeZZQpbl
+	y5NS3sHZtxrO5kMfWZhOfugVFCc3b3SrbZdNNAmoL9B1zGt37jJtpkIysK2NyG4Q
+	F8au1bqDZcowTRnWEbNgRI7MfyX5VHncYv5RRuCTvBnAMCcvH9/qUhWmcmwpDPCr
+	YJq68tSimLplwdbHvFfFVZleZSE+LD7JeUH7y+sxdHaiRS7CTUZYy8M3bdc9ofn+
+	1RbSyFeUnZLJmGbdjZ7+3ha8VOb3QkcXIKonZkTJa7cM1ZVpjeXDQOk7vpeI0ZBR
+	BdKUmyxn8682j3drfFEKQ8kiguScrp9JqkQ==
+Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ee7yrh9b7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+	for <yocto-patches@lists.yoctoproject.org>; Thu, 28 May 2026 04:10:07 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (8.18.1.7/8.18.1.7) with ESMTP id 64S4A2mN026257;
+	Thu, 28 May 2026 04:10:02 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 4eb5ajw10x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+	for <yocto-patches@lists.yoctoproject.org>; Thu, 28 May 2026 04:10:02 +0000 (GMT)
+Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.1.12) with ESMTP id 64S4A2CA026236
+	for <yocto-patches@lists.yoctoproject.org>; Thu, 28 May 2026 04:10:02 GMT
+Received: from hu-devc-hyd-u24-a.qualcomm.com ([10.213.102.143])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 64S4A2g1026211
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 28 May 2026 04:10:02 +0000 (GMT)
+Received: by hu-devc-hyd-u24-a.qualcomm.com (Postfix, from userid 4060212)
+	id A89DC21C1C; Thu, 28 May 2026 09:40:01 +0530 (+0530)
+From: Sasi Kumar Maddineni <sasikuma@qti.qualcomm.com>
+To: yocto-patches@lists.yoctoproject.org
+Cc: Sasi Kumar Maddineni <sasikuma@qti.qualcomm.com>,
+        Jaihind Yadav <jaihindy@qti.qualcomm.com>
+Subject: [meta-selinux][PATCH] seatd: allow seatd to use unallocated TTYs
+Date: Thu, 28 May 2026 09:39:57 +0530
+Message-ID: <20260528040958.2201296-1-sasikuma@qti.qualcomm.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB1PEPF000509E7:EE_|BESPR07MB10609:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4e72f6ab-4892-406b-3b94-08debc1f547a
-X-SMTP-Server: smtp-central.internal.ericsson.com
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|36860700016|1800799024|376014|82310400026|18002099003|56012099006|11063799006;
-X-Microsoft-Antispam-Message-Info: 
-	k4vInM+aQjEFfNVyLD0QSXeRY7whlMN/qgMO591Ecrq64qNCt3kLGhSiAUThYzuezE6Vm1boOwzgYuIqwUHeQeUOHpVqDBLrRLYfpRewIve2yi8jUG0wtbFHj9IKEajuJFkLt1McQhC4zOmd4qRA56n9QRQ2NxoOhQ3/cNG4eiyke3Sn5IniyitwNNM/Ljk4sg7g8hPORNLjdMIK1C8zE3ZHPHGPGJdHr44FClu+PlOGc3Z8Oe50+YQLNJMlV929ETFdfvwA+qSMPt/QNUM1VGYxVgBl36PpHf9QmwgniPEkxKVuUuoJFiOVPK8Qbx+bYflVWvS9wFicv0tiHYw4hs+Eq166d3HHwBYoqBVjAEo//eN5AJYIXWibDOM51q24fm5tcy5h2izy66wL8Ty0kfDGzGeMPxwQnZzNa+GrULTl1uBAVuy7NGR1FsbsE/Nb2+A2yKS9/pMcY/fuBNURwhkI1aUda68pSQWgunbRTB2OClutaDP1hANejGlpyYr0k90PmTCMnqM9IiwG17WK+J9iQ5Tt1QN25d5K7nWVJD0Zj4rqLq++BCtNiYY3ruI1gsUOEn1tRgzlxR+6MaqHbYtHrNTGWmgJO0i1Osc3dvgzn8axf14WHCmIM5ncxhHTO65rZzYIzouye91hZRRdYCGkcovLptY0xkqI8ESuQPg9R1p3O+zBMKoswPNayeE/bFLFiETSByoNrkO9YE3SpEgdee3pQpbt3XxBpG22aJo=
-X-Forefront-Antispam-Report: 
-	CIP:192.176.1.74;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:oa.msg.ericsson.com;PTR:office365.se.ericsson.net;CAT:NONE;SFS:(13230040)(36860700016)(1800799024)(376014)(82310400026)(18002099003)(56012099006)(11063799006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	tIeyHU80cYNXDSAjJQr+XNEeQEkz9ap9JzMJ3RtAMC4JXfgyndguaJhn8sI3ufDRhvmaB1jzzzsKaBKfeWtDhzG2hGMa0OqKTBRZQK5MqWHXWxbZNK4hkRMs5mKPFwzTW2MVnalkYA59B5DVTWqGvQ//rb+5gmq7yzhFcdF/lqkaLJGNs7qVaJxZYAa/ZyC59iu0kPOlZG24sQeq82qj0qc6u0sbG2h69Pku5f0TnKxwxyCa4AU6Ba86sd+unqOaSeT5FpX2VCklarWNg131ijTyxOaV0q7XDnFdZf9XZ9uX4+E4d3d33sUMyrBvBzBMhv9IGp9jUCJwUV++iHSnXlV+wUA+f2DzU1OxbGJIVpmtAtBetIddac7qJ5yEKb93mnxBgv1X3Mr+ayP4IPTDSsZ8rmqr100/97ANQOCxbn7sciue+zsP1i9jFTIArNh6
-X-OriginatorOrg: ericsson.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2026 18:39:47.9738
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4e72f6ab-4892-406b-3b94-08debc1f547a
-X-MS-Exchange-CrossTenant-Id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=92e84ceb-fbfd-47ab-be52-080c6b87953f;Ip=[192.176.1.74];Helo=[oa.msg.ericsson.com]
-X-MS-Exchange-CrossTenant-AuthSource: 
-	DB1PEPF000509E7.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BESPR07MB10609
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTI4MDAzNyBTYWx0ZWRfX1euL7U1dBnq+
+ SAww62tJzczn6ihwUy5FGYHm19/MU/4o+mIBEYR4wo1JaDVWAS0wlZp+L0DT1r1lUKoEfx9yXxG
+ BFtSMiXSdwcvfFqDkoFC0aFsTG/4uuV/TiuvNC+bUEEVckyMHf3ALrfrBC7N413wPNduRryVXoH
+ 3nUYbCKqg+ezsijpC5+zLGCsWxrf32ro1I17PeCZ0KQfuffb74XlhdvZo8saGbfzYW4hg6O1lxd
+ TTsxcEYt14J7wh2MQT4pUfU1rOwlDjjX7qqm63JjrVC6uhuyKbkG9e7qO2jxUF2n0J74jjPXi2r
+ RCiUHLtLRBDUhoSow8rHB3DDF91KWNifhuxB9lTaW3XF+4frPwKc2zblULPJD/c4+iK4a5Fdr/C
+ IVy24fO2HDweIgDHzmtn2p9gnVLIyiyPYTLxD+zWiLwh40uhfu/2f27EBLKgbdp6B7l6t/0Awv2
+ Bdjlf28spthXw4YxtMQ==
+X-Authority-Analysis: v=2.4 cv=PLo/P/qC c=1 sm=1 tr=0 ts=6a17c01f cx=c_pps
+ a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=NGcC8JguVDcA:10 a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22
+ a=eoimf2acIAo5FJnRuUoq:22 a=NEAV23lmAAAA:8 a=EUspDBNiAAAA:8
+ a=FKyT-rSJxFxOsl4oL50A:9
+X-Proofpoint-GUID: EoTsSDKigoi4eSU0W80cr4_0GUVmy4ik
+X-Proofpoint-ORIG-GUID: EoTsSDKigoi4eSU0W80cr4_0GUVmy4ik
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-05-28_01,2026-05-26_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 clxscore=1011 malwarescore=0 spamscore=0 bulkscore=0
+ priorityscore=1501 adultscore=0 lowpriorityscore=0 suspectscore=0
+ impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2605210000
+ definitions=main-2605280037
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 27 May 2026 18:40:00 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4077
+ <yocto-patches@lists.yoctoproject.org>; Thu, 28 May 2026 04:10:17 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4078
 
-From: Daniel Turull <daniel.turull@ericsson.com>
+seatd requires access to unallocated TTY devices such as /dev/tty0
+to manage seat activation and VT handling for Wayland compositors.
 
-Passing the commit message via -m "..." interpolates it directly into
-a shell command, causing a syntax error when the message contains special
-characters such as backticks, double quotes, or shell metacharacters.
+Added policies to allow seatd to access unallocated TTY devices.
 
-Use a temporary file with -F instead, which bypasses shell interpretation
-entirely.
-
-AI-Generated: kiro with claude-opus-4.6 model
-Signed-off-by: Daniel Turull <daniel.turull@ericsson.com>
+Signed-off-by: Jaihind Yadav <jaihindy@qti.qualcomm.com>
+Signed-off-by: Sasi Kumar Maddineni <sasikuma@qti.qualcomm.com>
 ---
-v2: simplify generation of temporal file
----
- modules/utils/git.py | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ ...-allow-seatd-to-use-unallocated-TTYs.patch | 33 +++++++++++++++++++
+ .../refpolicy/refpolicy_common.inc            |  1 +
+ 2 files changed, 34 insertions(+)
+ create mode 100644 recipes-security/refpolicy/refpolicy/0062-selinux-allow-seatd-to-use-unallocated-TTYs.patch
 
-diff --git a/modules/utils/git.py b/modules/utils/git.py
-index b383049..f86c141 100644
---- a/modules/utils/git.py
-+++ b/modules/utils/git.py
-@@ -24,6 +24,7 @@
- #
-=20
- import os
-+import tempfile
-=20
- from utils.bitbake import bb
- from errors import Error
-@@ -54,10 +55,13 @@ class Git(object):
-         return self._cmd("add " + src)
-=20
-     def commit(self, commit_message, author=3DNone):
--        if author is None:
--            return self._cmd("commit -a -s -m \"" + commit_message + "\"")
--        else:
--            return self._cmd("commit -a --author=3D\"" + author + "\" -m \=
-"" + commit_message + "\"")
-+        with tempfile.NamedTemporaryFile(mode=3D'w', suffix=3D'.txt') as f=
-:
-+            f.write(commit_message)
-+            f.flush()
-+            if author is None:
-+                return self._cmd("commit -a -s -F " + f.name)
-+            else:
-+                return self._cmd("commit -a --author=3D\"" + author + "\" =
--F " + f.name)
-=20
-     def revert(self, commit):
-         return self._cmd("revert --no-edit " + commit)
---=20
-2.34.1
+diff --git a/recipes-security/refpolicy/refpolicy/0062-selinux-allow-seatd-to-use-unallocated-TTYs.patch b/recipes-security/refpolicy/refpolicy/0062-selinux-allow-seatd-to-use-unallocated-TTYs.patch
+new file mode 100644
+index 0000000..3554295
+--- /dev/null
++++ b/recipes-security/refpolicy/refpolicy/0062-selinux-allow-seatd-to-use-unallocated-TTYs.patch
+@@ -0,0 +1,33 @@
++From ebafd639e8d3847d0c8c2313c71994c4ea5e1501 Mon Sep 17 00:00:00 2001
++From: Jaihind Yadav <jaihindy@qti.qualcomm.com>
++Date: Tue, 12 May 2026 11:23:17 +0530
++Subject: [PATCH] selinux: allow seatd to use unallocated TTYs
++
++seatd requires access to unallocated TTY devices such as /dev/tty0
++to manage seat activation and VT handling for Wayland compositors.
++
++Added policies to allow seatd to access unallocated TTY devices.
++
++Upstream-Status: Backport [https://github.com/SELinuxProject/refpolicy/pull/1114]
++
++Signed-off-by: Jaihind Yadav <jaihindy@qti.qualcomm.com>
++Signed-off-by: Sasi Kumar Maddineni <sasikuma@qti.qualcomm.com>
++---
++ policy/modules/services/seatd.te | 4 ++++
++ 1 file changed, 4 insertions(+)
++
++diff --git a/policy/modules/services/seatd.te b/policy/modules/services/seatd.te
++index 44ba85ee7..d539dc446 100644
++--- a/policy/modules/services/seatd.te
+++++ b/policy/modules/services/seatd.te
++@@ -32,3 +32,7 @@ auth_use_nsswitch(seatd_t)
++ 
++ dev_rw_dri(seatd_t)
++ dev_rw_input_dev(seatd_t)
+++
+++# seatd requires access to unallocated TTYs (e.g. /dev/tty0) to manage
+++# seat activation and VT handling for Wayland compositors.
+++term_use_unallocated_ttys(seatd_t)
++-- 
++2.43.0
++
+diff --git a/recipes-security/refpolicy/refpolicy_common.inc b/recipes-security/refpolicy/refpolicy_common.inc
+index 014714c..87c9e39 100644
+--- a/recipes-security/refpolicy/refpolicy_common.inc
++++ b/recipes-security/refpolicy/refpolicy_common.inc
+@@ -74,6 +74,7 @@ SRC_URI += " \
+         file://0056-policy-modules-system-setrans-allow-setrans_t-use-fd.patch \
+         file://0057-policy-modules-system-systemd-make-_systemd_t-MLS-tr.patch \
+         file://0058-policy-modules-system-logging-make-syslogd_runtime_t.patch \
++        file://0062-selinux-allow-seatd-to-use-unallocated-TTYs.patch \
+         "
+ 
+ S = "${UNPACKDIR}/refpolicy"
+-- 
+2.43.0
 
 
