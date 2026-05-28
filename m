@@ -2,87 +2,87 @@ Return-Path: <sasikuma@qti.qualcomm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC37CCD5BD5
-	for <webhook@archiver.kernel.org>; Thu, 28 May 2026 07:57:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6392CD5BD5
+	for <webhook@archiver.kernel.org>; Thu, 28 May 2026 08:05:31 +0000 (UTC)
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.5942.1779955066476439964
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.6007.1779955528744480206
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 28 May 2026 00:57:46 -0700
+ Thu, 28 May 2026 01:05:28 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@qualcomm.com header.s=qcppdkim1 header.b=AVjjkfLE;
+ dkim=pass header.i=@qualcomm.com header.s=qcppdkim1 header.b=amJacg/A;
  spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: qualcomm.com, ip: 205.220.168.131, mailfrom: sasikuma@qualcomm.com)
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64S7U54A4187808;
-	Thu, 28 May 2026 07:57:46 GMT
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64S6Tdsi3011298
+	for <yocto-patches@lists.yoctoproject.org>; Thu, 28 May 2026 08:05:28 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=u14E10rz+/0M0TFVtM3Za2bsS0c4+0i+L14
-	QEORSWAc=; b=AVjjkfLEJwVIBrlrQy9G8ZmytPMignOks3+uixEr58anOtQ3lkd
-	UHVetzYTvhKLO+3+40mN+DA/Ae8UKwqEOGXGixuznX1wvshan2n5AtWMz+X1nfaI
-	LFFKOYYX2B+S0WXGIj64qqcOGi0oH+IhVhQH61V5pUFg76XZtexgF5lsWCZxNIUS
-	lUDdUJv+79JPS5gvy7hOt48YCXJDMH4xzMWIoQtfWKtcOMBteMtIjPsbGMDFCT7i
-	DANwtqql6xZ6OcLFAwTwAlqDyShH8bnEeVISScHCHLQzNx4ZgPB/EDDnSX8oeMNx
-	TiCx/AAN93BNfUdaokHz5TpFwZQKEqt/VZg==
+	:subject:to; s=qcppdkim1; bh=t91hTZMZVG7ZX2bENeU7OqbAustthH8sDxp
+	McToN5Hc=; b=amJacg/AfdQZQB+60bZ7XEDLZhgopq8MjbG3fGw4zwKpgPpjaBF
+	2bBNBdoRi0nDB+LKC0sp9jFcvRQCH1fA/KQQQE/M0L5sop8QmAcIMkT/5pdcpai+
+	5F/50AVee8I8kaYglbWpXfOxHmi5ixw/tB93APzCGf7PULmXCnZi9pp0mReKhqRb
+	c5hf8XFIaZvgkSKCkV8/o53a2I/7NsgjFNCAXLkV71mzx+8+8B5Nfmc85hPvXWXT
+	C1BGAfuaovW0+YoP3KgyZuG8pAOKLKHcJJru14ktjqXKReHBtgApvUSRTosvs/j3
+	+fxPjmSG9xKz7pBaW5vwhWNC1/DvjhLf08w==
 Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ee7y2sv4d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 28 May 2026 07:57:45 +0000 (GMT)
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ee7yrhwkd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+	for <yocto-patches@lists.yoctoproject.org>; Thu, 28 May 2026 08:05:27 +0000 (GMT)
 Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.18.1.7/8.18.1.7) with ESMTP id 64S7vgie011459;
-	Thu, 28 May 2026 07:57:42 GMT
+	by APBLRPPMTA01.qualcomm.com (8.18.1.7/8.18.1.7) with ESMTP id 64S85NCf022050;
+	Thu, 28 May 2026 08:05:23 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 4eb5ajy12h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 28 May 2026 07:57:42 +0000 (GMT)
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 4eb5ajy39b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+	for <yocto-patches@lists.yoctoproject.org>; Thu, 28 May 2026 08:05:23 +0000 (GMT)
 Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.1.12) with ESMTP id 64S7vgT7011452;
-	Thu, 28 May 2026 07:57:42 GMT
+	by pps.reinject (8.18.1.12/8.18.1.12) with ESMTP id 64S85NdJ022044
+	for <yocto-patches@lists.yoctoproject.org>; Thu, 28 May 2026 08:05:23 GMT
 Received: from hu-devc-hyd-u24-a.qualcomm.com ([10.213.102.143])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 64S7vfHI011451
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 64S85N4B022043
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 28 May 2026 07:57:42 +0000 (GMT)
+	Thu, 28 May 2026 08:05:23 +0000 (GMT)
 Received: by hu-devc-hyd-u24-a.qualcomm.com (Postfix, from userid 4060212)
-	id E2AD621C20; Thu, 28 May 2026 13:27:40 +0530 (+0530)
+	id D05BA21C20; Thu, 28 May 2026 13:35:22 +0530 (+0530)
 From: Sasi Kumar Maddineni <sasikuma@qti.qualcomm.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Sasi Kumar Maddineni <sasikuma@qti.qualcomm.com>,
-        Daniel Burgener <Daniel.Burgener@microsoft.com>
-Subject: [meta-selinux][PATCH] refpolicy_targeted: Add op-tee based tee supplicant policy
-Date: Thu, 28 May 2026 13:27:38 +0530
-Message-ID: <20260528075738.2434143-1-sasikuma@qti.qualcomm.com>
+Cc: Sasi Kumar Maddineni <sasikuma@qti.qualcomm.com>
+Subject: [meta-selinux][PATCH/V2] refpolicy_targeted: Add op-tee based tee supplicant policy
+Date: Thu, 28 May 2026 13:35:21 +0530
+Message-ID: <20260528080521.2436277-1-sasikuma@qti.qualcomm.com>
 X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QCInternal: smtphost
 X-QCInternal: smtphost
-X-Authority-Analysis: v=2.4 cv=VeXH+lp9 c=1 sm=1 tr=0 ts=6a17f579 cx=c_pps
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTI4MDA4MCBTYWx0ZWRfX03lkOnKppgeH
+ cUUe4ySyAdgyiYWcJz1HI6+V357HCzMCUnTj/j78gYNr7G69PPh5zUqFLWIh+xgCKGkID4cIIQ9
+ RHbJ2u1hIinA32A/+YIKJErgiINmO17h3BtkYxz2rvao4s7wq4iEkTEcV9vnH8BGASXa80tsgf3
+ +b/Ks1reAd0LGhBKID/ovKKEAudj9D6i/qxd5uFqHXbV4X/k/p0T2MY1zvlCcbu7+ZV95lmk3JD
+ ain5s5Tv0fWfJx7RLBQ5ssF2O04C80ZOOqOMLb682UuI0jyOHX87dVZJzV4slf7J2zOfeuWrMe6
+ rX13eHU6O/bW0sLwj0Ev8eCWOZqE4rWFn7w7gJ3JqYVA31XHucIrvgxPEj+ucSHcDcNphM/cYZ0
+ W2EVhUb4Gx3AEl4ikZPCDUfAyMZxLLXoK0lm5qeAPUVwfTnOyuoX1PioFfJHa2qvb7w5SmqOa3r
+ oj8Xqc5+9qeBCm5aosA==
+X-Authority-Analysis: v=2.4 cv=PLo/P/qC c=1 sm=1 tr=0 ts=6a17f748 cx=c_pps
  a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
  a=NGcC8JguVDcA:10 a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22
- a=_K5XuSEh1TEqbUxoQ0s3:22 a=NEAV23lmAAAA:8 a=yMhMjlubAAAA:8 a=EUspDBNiAAAA:8
+ a=eoimf2acIAo5FJnRuUoq:22 a=NEAV23lmAAAA:8 a=EUspDBNiAAAA:8 a=yMhMjlubAAAA:8
  a=beBsfdukaq1lzfkYcVoA:9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTI4MDA3OSBTYWx0ZWRfXxy9/M0RSMbe+
- Q37h0JpGvT5T3WuUgPUqGpitePyjOOAHIhcjNZsmJEeyJNb6a1mQeuVDrDm26A98wQnNYrzqC2c
- sKtNZBMckIm0P1LcllfAVBnankiU62om9twVQVoxGLPfIpEsPVNgpczOES22J5WevaSy5NJJ6ac
- OVLoKLgTga+1rXkheA2xgvRE92syvQ4KewRwrEhr0R8b6QLq0ZRkKGwOnULwCPY28hf1DcMq6Zb
- IPGP+EP5jc5Kx1NP01SMxaXP0W8bGXRDsqR8IbS6GJ5gtjZp1y35gEOGisQCfy5MMqFUv48LbPF
- 6xg3uNk//+3Hu+aYB/L+NGJhc5oeyuO+msj1jCiEFWX19luPi0IYgIcMispKtv4YeW3+IS3I7AU
- 17jjBYqruFU7sTjMrIPznC/sqvvFkgi50qDb4Xqg43sY/s8ZqeBNLkfdxOSWl458JZDmZu+snzM
- TuDkJf+/lbcPFV1cv0A==
-X-Proofpoint-GUID: O3AhHdf2ZzUWZkGf30BTkpsJV7d1JeuJ
-X-Proofpoint-ORIG-GUID: O3AhHdf2ZzUWZkGf30BTkpsJV7d1JeuJ
+X-Proofpoint-GUID: ZiAllX4fDfAkM_gjbyD8VtQtIIj-UWV7
+X-Proofpoint-ORIG-GUID: ZiAllX4fDfAkM_gjbyD8VtQtIIj-UWV7
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
  definitions=2026-05-28_02,2026-05-26_03,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 priorityscore=1501 adultscore=0 lowpriorityscore=0 malwarescore=0
- impostorscore=0 bulkscore=0 suspectscore=0 clxscore=1011 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2605210000 definitions=main-2605280079
+ phishscore=0 clxscore=1015 malwarescore=0 spamscore=0 bulkscore=0
+ priorityscore=1501 adultscore=0 lowpriorityscore=0 suspectscore=0
+ impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2605210000
+ definitions=main-2605280080
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 28 May 2026 07:57:51 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4080
+ <yocto-patches@lists.yoctoproject.org>; Thu, 28 May 2026 08:05:31 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4081
 
 Some of the op-tee required policies are missing.
 
@@ -90,7 +90,7 @@ Added required policies for op-tee.
 
 Upstream-Status: Backport [https://github.com/SELinuxProject/refpolicy/pull/1103]
 
-Signed-off-by: Daniel Burgener <Daniel.Burgener@microsoft.com>
+Signed-off-by: Sasi Kumar Maddineni <sasikuma@qti.qualcomm.com>
 ---
  ...d-op-tee-based-tee-supplicant-policy.patch | 83 +++++++++++++++++++
  .../refpolicy/refpolicy_common.inc            |  1 +
