@@ -2,218 +2,168 @@ Return-Path: <quentin.schulz@cherry.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07B54CD5BD5
-	for <webhook@archiver.kernel.org>; Thu, 28 May 2026 08:48:42 +0000 (UTC)
-Received: from AS8PR04CU009.outbound.protection.outlook.com (AS8PR04CU009.outbound.protection.outlook.com [52.101.70.16])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.6535.1779958110426559995
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D88D5CD6E44
+	for <webhook@archiver.kernel.org>; Thu, 28 May 2026 10:15:44 +0000 (UTC)
+Received: from DU2PR03CU002.outbound.protection.outlook.com (DU2PR03CU002.outbound.protection.outlook.com [52.101.65.0])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.7661.1779963343882373823
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 28 May 2026 01:48:30 -0700
+ Thu, 28 May 2026 03:15:44 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@cherry.de header.s=selector1 header.b=aiTZd0PQ;
- spf=pass (domain: cherry.de, ip: 52.101.70.16, mailfrom: quentin.schulz@cherry.de)
+ dkim=pass header.i=@cherry.de header.s=selector1 header.b=RkKdSqAF;
+ spf=pass (domain: cherry.de, ip: 52.101.65.0, mailfrom: quentin.schulz@cherry.de)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tMrO4vY3j+VPRTTQsMruW5f6hhFAy81JxL2sq4sU0iKUsSltGX4lnFHFb6ai0RMjNLdWKOhKNwwM714stLkaQZdvpZ/owhnPG0P32erY8jfdxXcrGJDuUo40IUQKUiyzdk2tFV3wwoirnJW1O7rhLHD2ytGPZ6nFaHVR1HiZ+Xi4mTRx6XAPXubu3vTeCg/XRfiJkJmuRxUU+zlbSmFcUAPJAgI71fy1sfYaGeRFn7ieL74Qwiu3C8/e5KA/dGm9kFcLjPY/IbLr6wSbzm8dHsoOeNqLN2hr9fcXRKSZDVN2pSp8C54cUUI3etlyBj7sD8ae1kOHzaWOeKpzxMqvog==
+ b=v2d/cqROMAP5LWDpZSEdoxaS9gh38v6cRn/oSRheKNQF6T3Fe07d0tYNoxq9i4c+QDz3e1jZ4//5hwb91RvAiKmiaDrBLEImqTi/qxovFivKJlEcVHynWztPqv9HN69zt5XUJ/14LKqpqRAF/7+ptMJj47i0HbFQFQq1jP3TF/ePP/z4I8aSSHCprpfOWr8bKnB3Ark28OW5hfAAFwRBm+u7wIhGPXHXzIkGx+HPRpy0ZyPAkystrt8OnHsHpzcFQKJBkKGalGX5V99/9gOB2OlONeSZY7J+kkzpPOK3XKWeHaevKHKmFyoh1WDEDIOQ7ZLgsGeZgT5gJtnJSg3vEQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IhIO0UvdMBy1j5scTGq7AWDslv4CgtL0RVoRqtgBNvk=;
- b=tMKMpyfoTHJZCyU0aVG1iX7vhq+RErBsdveTAnPU7biWUyUbC8HI9q7yxRvZ7FWrztDQavPEcMQdV6L6IA9QQNDwtMKrCTuFTDbPHMljR+pn2VXm7dwp6AnyxPQaTCvhCoYcCg78tGOR7mYxXx8jkpPphd24XxyutepGzpBNViMSaxJdVoXrbrIyQ4yRmT0l4Tgg7sklbrURGvbKkrrs4esQ59xlwP+zoknKT5HUlbYv73yHAEppnxmmyIhj2sgk3RmxNbQbInOKgJyGEfYd0ypFot+pkzrhuwlP43p4ub6yZtTJmBePIZQgfjCjt9HVO/abdJE/Bmd0qWT4JTXsVw==
+ bh=J7bbqFKFd/u1WWLc0Elg0bmffNgcA1fq4dbRjv0oY/Y=;
+ b=CnEslsRB6d1H/BMmAqoEC9BrXlnrxky2ILLd8AhfFrJrFnSCSC1xEmjU0iuAWxiRzopSOIKwlHWbQUY4b/Hsr34nPMiiWc1+I16ApAfu2HFHe4a7hAUWzXsKEPGkzN9SS/oRC/r9MlkSlyWfW4E9KsZkO6KO4+gtvkT5zUzbRuNYBUbQ4bsZFy51dBe0S6amIF0yHmi0kFHx9AQRyj3Uj3SMGiu9S3OumpH4vUJKf8iwGRjq3QfMvBI4yJdDZ2jrz+l2wRSRlm77Qd9IKyxsdZC2NVDwNttCPz1jdfTTxP5QIehz6u+abGVaeWg2aM6nNbhLB1kQwKmpPGn4xZ1UhQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
  dkim=pass header.d=cherry.de; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IhIO0UvdMBy1j5scTGq7AWDslv4CgtL0RVoRqtgBNvk=;
- b=aiTZd0PQkJLdB5C/C2cs+p0mYIbY1FKYiEfQKOps3MN3iKU7Ep+QDhztilevhOKJxoQYBxGfys2lQ8hr+Nlj9VYAg9bn/NTNcOpWXywt+tP30IUF3l/WZvljz6Gw3r06qF743sVPUpJ4TuQxMSCFPTW3EaXVx/zJlg/tEiefevY=
+ bh=J7bbqFKFd/u1WWLc0Elg0bmffNgcA1fq4dbRjv0oY/Y=;
+ b=RkKdSqAF4SPExNAgflhZoR5BEVOicvTRKeqpIWX3WQ/0iOsHzlX2dsDqRpx/N0lNHE5cKUUWbyedFsXDw3ez/Ou8sX5v17IZR/CG5fh7phlk+QLjux/8JjoZWqdSSWuo9OOhlDglWUKzOlla+8o8gHTSPMtBX/o9wp76BZKhdXQ=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=cherry.de;
 Received: from PA4PR04MB7743.eurprd04.prod.outlook.com (2603:10a6:102:b8::20)
- by DBBPR04MB7929.eurprd04.prod.outlook.com (2603:10a6:10:1ec::21) with
+ by PAXPR04MB9667.eurprd04.prod.outlook.com (2603:10a6:102:242::19) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.71.14; Thu, 28 May
- 2026 08:48:25 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.71.12; Thu, 28 May
+ 2026 10:15:39 +0000
 Received: from PA4PR04MB7743.eurprd04.prod.outlook.com
  ([fe80::9a4e:252f:2fd:97b7]) by PA4PR04MB7743.eurprd04.prod.outlook.com
  ([fe80::9a4e:252f:2fd:97b7%6]) with mapi id 15.21.0071.010; Thu, 28 May 2026
- 08:48:25 +0000
-Message-ID: <1226166b-a604-4a40-95d1-68d8d5c64d05@cherry.de>
-Date: Thu, 28 May 2026 10:48:24 +0200
+ 10:15:39 +0000
+Message-ID: <d288802d-3752-4da6-86b2-fd55dd0a6a5e@cherry.de>
+Date: Thu, 28 May 2026 12:15:36 +0200
 User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [PATCH meta-rockchip 2/2] add support for baking
- OP-TEE OS into U-Boot proper binary
-To: yocto-patches@lists.yoctoproject.org
-References: <20260126-optee-os-v1-0-874261a77dad@cherry.de>
- <20260126-optee-os-v1-2-874261a77dad@cherry.de>
- <ahcOBJWhevGNqPyF@localhost.localdomain>
+Subject: Re: [PATCH wic] add basic b4 config file
+To: Trevor Woerner <twoerner@gmail.com>
+Cc: Quentin Schulz <foss+yocto@0leil.net>,
+ yocto-patches@lists.yoctoproject.org
+References: <20260424-b4-v1-1-04ede4cc261f@cherry.de>
+ <6976ce0c-ce97-4adf-bb6c-c75c89a7e674@cherry.de>
+ <ahZz7v5I08_FI6Eu@localhost.localdomain>
 Content-Language: en-US
 From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <ahcOBJWhevGNqPyF@localhost.localdomain>
+In-Reply-To: <ahZz7v5I08_FI6Eu@localhost.localdomain>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-X-ClientProxiedBy: VI1PR04CA0083.eurprd04.prod.outlook.com
- (2603:10a6:803:64::18) To PA4PR04MB7743.eurprd04.prod.outlook.com
+X-ClientProxiedBy: VI6PEPF00000234.AUTP296.PROD.OUTLOOK.COM
+ (2603:10a6:808:1::8f0) To PA4PR04MB7743.eurprd04.prod.outlook.com
  (2603:10a6:102:b8::20)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PA4PR04MB7743:EE_|DBBPR04MB7929:EE_
-X-MS-Office365-Filtering-Correlation-Id: d2bf234f-6207-422c-dd5b-08debc95e16d
+X-MS-TrafficTypeDiagnostic: PA4PR04MB7743:EE_|PAXPR04MB9667:EE_
+X-MS-Office365-Filtering-Correlation-Id: e0faa315-5405-4bc1-9ca8-08debca2102b
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|376014|366016|1800799024|6133799003|22082099003|18002099003|56012099006|4143699003|4133799003|11063799006;
+	BCL:0;ARA:13230040|366016|376014|1800799024|3023799007|4133799003|4143699003|18002099003|11063799006|56012099006|22082099003;
 X-Microsoft-Antispam-Message-Info: 
-	h0UFIuBpbHd4eTClfTWKWZ+Qg0Ydg4gWl5LSgIw4VLFw+ln2XMh3n6xMbxShg8zQrQW+UidhUzysKmrcAS8OAWJ7Why3uaR22WSfQzmjjmC3D3pYhUOPXVUzviu8Rb1cebZhwQ1ciT16jn054PyB79AyQQKiMXYRP5xY0v5VutKcHc91O+XKjsAbwr3HwlXjlKxxmzbvSNFQo5McoSSnHBCibGdr7Xf7C1jRz5bG6Q4uYg1g2WNFNzW2fx2i7xdw8+KU5nxCf3xo6Mw3Ta39aV/zk9UW8/XMU3nFrwimfdkZaL+8iScyJcz5ktwq4GjkML+UVVTxPMChY/nxvVqQZP5ZsnARnjH4EuNnfBjt/il7kPHH2FaW+FvDDCf236KNAiyifkReLZtl7er0seKaStwY0J6hLXzTCywem7Aqj/S+fhxY3X1FdcPPXyyti20zobY0hsrAl1HWpw6Ah8EfFHprmHDg6H3TAh2aRzz8+4TQjl1nzlNWPU7kT1qIx/h/AH6TxtDNq8VLuO0G8vUypW9IBX+3j/ZO5myUZdamyOaQnLYq95y3M2sT88muXPaqSxOBIoOwDbgtv4ksJ6q8gq7GWE18adsyoD9gvfOsX0ZmUnEYjv8UPiZoX/dKvMAKeHT491pvLlJuskHqP1sLes8v2WX95sPjXFSeJiaIr7sdDTmShTatcyt3BC8BYtbWw5h2o6wfjJ6+WHyeU9R1wQ==
+	GYKMA80nLcVpnZ+fNZ/sXdwVlRJOWvbJeCSopWFWY12ooOkJDSNMMuj9CuOhk8Z2hhfIo3nwzMYjSHedYwDbfDdmgzbbBQVXM8fmHAx13XriPYR5SxP45kP4dvG9n3q+vrqFhPiPVUdSFqUzGX+tgvaMhhes07bGidtTk539x2t1gmfIQYbr9Gobou4eCepr1X8UKOTMJ80g1ail02xJR8pRm6FE0zabXiUelSGdVq/sR6PDg3KPDe4rfXA07Oj6h30PrRLtAsMFhajPNmyLRH3XlyNrBaK793ATUCj4PArOF6+F3ufnMdddfJP7c6lF23CFDKItCdGATB2l2exYAq9RmCxziGWatneke5GGQpzVsP3pw3kMRXTSHWypgd2kayb+UaMZ58F3u+iiNE8tzfl+uo3bU2BIB4ElMyp+QXHOx5MpAxF2lW/psOcaKCuwM7U7KvoVngBe8aaD8Lf02dZIzGZ490n9pu/a0LWJvJikWu/R5/Xmu9Gjqvb/Rb54N5pbpARalWTNzUOuf8OoqAT9uiGtcfX3fBloFcgxUL6MSj6MJocCFeS+OOHcBKoXr+dBiDn1KVX10MLugG/WYH9in/xFAL3phyFtP22yitrgH3+r6B6T+b3z+DKvfuPpHjjDFXgPQTi9CQturdACVw==
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB7743.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(6133799003)(22082099003)(18002099003)(56012099006)(4143699003)(4133799003)(11063799006);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB7743.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(3023799007)(4133799003)(4143699003)(18002099003)(11063799006)(56012099006)(22082099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?eDFEcXdGTW9xUVdFWnVSakxYWEJCZTdxMkVpMVRBS0xwbzBDbHVQeGZaUExS?=
- =?utf-8?B?QjhGRHpPZ0Jldk1jMGlTWlJoK1o5RzJZeHVNZXJxdWhZV2RpdFZKUXY0eTB1?=
- =?utf-8?B?NFN0S21GelR6Tkd3b294a1czaUxrZ2xqK2ZodXdhS25mQ3U2N0dOSEdOYVY3?=
- =?utf-8?B?QnJCS1cyK05XbjE1L2tEUkxSeWduNDZxem84UDUzaGsxUnU1cVVaeDJ2clMy?=
- =?utf-8?B?dDVkWVV2dlk0LzBxRkxtZ1VUM0FacmJJLzI0OEl3Y0tRaXBVVENOYWNBb0ZI?=
- =?utf-8?B?VjlTOW94YzhaZVNydGV3MVdMb3lVNXBMU013OEVXWEsveG1OYnJ3SVlxb3Aw?=
- =?utf-8?B?WFFTdFFBM0RyamU1eUMyNjNVSHJLMDRKb2VXeThldWZ4OWw2U1dnS0hCTlZj?=
- =?utf-8?B?RlpGQ0NXamU3L1ByRkkzdUlHNERtWG1TR0J3c2lhOEdTeEJVb052aFFFNk1k?=
- =?utf-8?B?N1E5WGJCZFNYdC9Eczk5TG54V3pvVkR3OEdiVzFIRHNGOW5tbU5RTUp3NG1h?=
- =?utf-8?B?ZTNmL1RpRDF6QllqZGZhTTg0MjRDVFZZdDYzcmp1NHQzY0YrTmFKVGtIOUZk?=
- =?utf-8?B?NWdPMmdBYnRsQUpkc29rYTRYbTVLZXBFdVliTDArL2xybjEvbDI2WXhmd25R?=
- =?utf-8?B?eThpUUdBcFFmcjVXUnIxWlpkTGVmbFpZNUxDYVJhaU9iclBBQTgxeFVlZGh1?=
- =?utf-8?B?ZThlUWc0VndJcnp5YXdsR0x6bjhCWUkwaEVXNVlHRWRqeTM0RHRqTVJRZkRQ?=
- =?utf-8?B?WEV5NWFTMDNmcmFnSnp1ZmgvSVpKU25yZXJuSFBaWnI5QkVsZHFSOHU4QmNy?=
- =?utf-8?B?NTc5VVAxek5BNGRNK0xwc3AvWE5NdHUyQWM2czE1RGdUSjBOY1pSZ2J3WTEy?=
- =?utf-8?B?ZlRKR0g4L1dqN1dsYjV3Smg2bHBnd25Gak13VDBlY1RSb3d5THBHcktjTHhj?=
- =?utf-8?B?SXVRR1oyTzV0ZGZwRUs2b0FYc3BqdGU5aDFSalJqYWlhcDV1MUVnRnJBWDRG?=
- =?utf-8?B?eUM4Q2tGeU5DVU5zTG8wSmlONWpPSkU1WkpmanFOVVF6ZWQ5WUliM29DN2tr?=
- =?utf-8?B?SE1kc3ErckRIbkNFR3IrZEtlTi8zYS93S29oREVsU3Z0M0xkUHJrazVEamJL?=
- =?utf-8?B?bFc5OE1aMHNUNjhVMWxXcFZoMmhUNXJiRzRnN1I3eFMrc2NDdmJtMlB2eVNE?=
- =?utf-8?B?NmdYU1VWd3RyVm93UkJZdzFEcTdFWmZUeHBtNGJvU2xaa29vN3dKait5TTJu?=
- =?utf-8?B?SU1yWXFaZWVvMEJIaTZ5Z21mem9aamFjMmcrb2FhRUpJSUxEMEt1VFIydm5t?=
- =?utf-8?B?OVREZStyd0x0cWJuSjJTZU5oTm92YmVueE9XaTdJbVlDQkxsd21jemZpZnc1?=
- =?utf-8?B?dU9aYk1GN2ZXOUpmaC81RlE5ZmtJTGR5RDNRZjFNQ3BRZ3B5Snd6T2NER1Vu?=
- =?utf-8?B?K2JFdkVVM21jdGlSQ2c4d1Y1ZlI2bDBmby9SL1htSEZhZCtwb2ZyN3k2YXJv?=
- =?utf-8?B?UzZLYVJ5aG01RnA4dmpuNVVaNnhMaWVZVUxCNWdQS21QWGtxSXR6SGI2ZFQy?=
- =?utf-8?B?UlhIaCtsZU0rYldNZlF3cjBjUzE2Q0lKZFc2NnhhVFUrVzJpdGIyZ1BwTFRt?=
- =?utf-8?B?Q3dMZG1ycjFnbUJGQk9HTktiektqa3Z4WnBPUVVuQk1YUmhlYzR4cW9GYkdB?=
- =?utf-8?B?MmJuNTVlTHpydHM3ZlJRSnduMEJPbU5RbmkrWG83VS8zY0hhWVljUGVQc0pz?=
- =?utf-8?B?SFNvVUw3Z1ZXWnZONkJOcXdOajd0K0hzcTR0ZVZEbUpWc3pDK2NzZFNPTS92?=
- =?utf-8?B?TytjaGNiclMveTBRaG10aFZ6MGttcE9HMWlCMU9XS1V5SG5yQkpCMGtEUmQv?=
- =?utf-8?B?ZkZUNStnTTgvSUJXaGZxaXdOMHNjZDU1c2lLczM4S0oyOUgrY1NrVkFSanlF?=
- =?utf-8?B?cmNDZGRDN25HUDJ4K3FnTlhYdm1NbmFObFV0S2pXZi9IdktKNGNHWmI2dC82?=
- =?utf-8?B?UzA5V0JEeEE3aG9qc0xIcnJkMHBjcHJ4QkVhRmxLRFFYWnFMVFlxNjhMU0Rw?=
- =?utf-8?B?bU5DdVlLOWY4NzJSVjNIN2kxOEFGZmlaN0VKVjNrVlc4bTk2Y2ZTeVJxaDUx?=
- =?utf-8?B?cmFsMm54a3UrRE5ZRmVjWGtiRFVpS0IwSjlYVms1K3dHUFh6ZnVzWVM4Nncr?=
- =?utf-8?B?Z1IxSTZ6KzBlQVdaRkIwektDZUdJdEJzdDlKSm8xZ0hXdXVSc3BPMEpYOTZU?=
- =?utf-8?B?ZVVIQzVlMWN0d0dBOXNWWERmTFB3YlBmWlE2LzBCdW5HNzlDclVKUTdvdWVj?=
- =?utf-8?B?aWpiTG1YRUU2TzhHNWRwaGRnUEUrTGJENldYdXdMNmxlWFF2VlM1Zz09?=
+	=?utf-8?B?YkZjamVacENCR0czemtOWkJiREY0NzlnZFBFVStYRFZiaFFBSkI1TEVpTWt4?=
+ =?utf-8?B?MUVaVDdtbTJJbW5TeHhjZERrM0pTenh0RlluRVU1eUZFUjNFVmc3blh4M0U4?=
+ =?utf-8?B?Wmo4bHlNcFQ3TlFQZWxralVQaDFod1d3eTNabCsvUmFsQUdxMmVSUUxWdk9E?=
+ =?utf-8?B?Nnh4OVpmSmQ1SWlMQzdhQ3kwZzAxdEQ0ZGt3Y3RoRzFOTXNmdkw2WUhKOTV4?=
+ =?utf-8?B?VkliaWVrcVc1eHJaWE4wU3RKRmlkTEZtNVdjSS96ZkZialBmekhISlJYK1lD?=
+ =?utf-8?B?UmZjQkpYYWtvaFJKS08vWkF5aHFKVnRBenhVYWxxbm5iNDdWZWg4TyszUmJu?=
+ =?utf-8?B?VUxXTFdmMjNIMGtiMlowSHdTN3pJQzkxS3Npb3pnS2NucG1XNGtGNDU2U3NE?=
+ =?utf-8?B?QTJaZ0YvK3hMYW1ZWXhhbUFNRlpWekNZVjJrTDBJRmFBaFRzMVNzRG5oWDRy?=
+ =?utf-8?B?UDlYc3RzT3M1RnRJVXdyWWhMWUV5eGk4cUNIY0FYQk5WZTlheUV1N055VjJO?=
+ =?utf-8?B?dW1tNmFRVWZDTzFrMUZuWTFhYW5Ta1U4bTYzL0t5WExFRDEyLzlxZDNPYUNQ?=
+ =?utf-8?B?b2kwcTI2dE54ZjJmcDlHM1RIREN4Yk1mY21wdDlRUjRKMzluSVhSVHpZb2JN?=
+ =?utf-8?B?RzgyTnB0c1R5Z24wUk9LN0xmdVZ5RXM4eDNjc3llYzlRRC9YeCt3WFh0aEZl?=
+ =?utf-8?B?cXA0d254T2VBTERFNjVLYVJkMmttdGR1Mlh3eitsTlZrWFZOZjF6cWhvSGJy?=
+ =?utf-8?B?OVJPak5FdGJadytSSXJyakVlckorMkdaaUxnK3FNd0N4VkVRV09jSEUrRUtq?=
+ =?utf-8?B?YmZRN2FhT21EdWZjazRlMjdTOVlkZVlqQmVRL2dIOGFZWVFSU0N1UGpsNmMy?=
+ =?utf-8?B?TmwzVkgvN2NYT1ZuYUVpaHZpam1yQzlCSUpyYUlUM3didVFHTitKVG1Va3E5?=
+ =?utf-8?B?c2t1eE1yejhlS0ZSblJJVkxkRVQ4cDZnUHJNeFF4dThCdTZvWU1IRFhMOTJn?=
+ =?utf-8?B?TjlMdVVLS2FJL0FIa2NlN0g2RzJxYytaUk1ZSmpnUEpTVHlHVVVvMTQyUTJZ?=
+ =?utf-8?B?T2x6MGxCcDlVOU45b0RlWHJ4SHduQjVJYlZISnVmUmpsTVRUTjA3VmFid051?=
+ =?utf-8?B?bmdsUEZPNk5iaHZSdDlXc3g0YW9ENkhhZEFaQkN6VmNUeGFFUWk1MUJGTHVq?=
+ =?utf-8?B?cjZPbXRFZEZiR2pvb0tRQlBaNWZpODFZWDRnRDNpTGpldDVpV1hqaFNMWFpJ?=
+ =?utf-8?B?MVdYVVpydHVrQldlTTl2ZkpHWUloMW8yTy9jMFRqamRFR3pieVFqekdvb1ZZ?=
+ =?utf-8?B?MTRHbnVPZG5jZG1DV1BZTkNoLzVuWmkvV0tPMlk3WitaL1dtQ3NYQklHbzhm?=
+ =?utf-8?B?UE1qSFNNMzJDWXVPY3pKcit4VjMrbksyQm4wQlVudjIzTExkaUZiL2pmZy8y?=
+ =?utf-8?B?WC9nUXp0aWswRHo4aDEwaXBERWxrVEJSR1RwZXUzZWF2MXNId3JZRkREeGRa?=
+ =?utf-8?B?blVXUFFhNmJjdnMvYnM4WnV4U3g1UDR4M2NsS25jNWU3MG1aZGdqQ1hmL1dw?=
+ =?utf-8?B?eUM3aGhPOVpSUHg2UjVmc2pUZHpRbXFlMG9FUTVlRTdiV2doR1hYSkJRTlUx?=
+ =?utf-8?B?WWNlTG5mZXBIMFNQRVZEaGNjeTFEcVFiY1l3L2xSc0VBenVKU2pSTi9Udkc2?=
+ =?utf-8?B?ZklkVHpNUmtOQmcyeUlEZjhDVitoMFI5R3ZoeVVzNFRocWxTVk5aM2MzZ1ha?=
+ =?utf-8?B?VEVRc1Awb1NidE5wVlluU0hFVmRrTjFzeHcxRmdUYXowajNTUk81SnFnMThh?=
+ =?utf-8?B?SXBITWpaZEhMTTBmemZiMVRwL2dLcGZoNU10Vnd6M2t0QnVpWGtZdkhIcXY1?=
+ =?utf-8?B?a0V1M2c0UDl4NXk2WVoxcFllREtRUGYrNzlVdGkzc253ZXR0NEh3dXY1STlQ?=
+ =?utf-8?B?N2lRdVp5b29hOGRjK3lIdkkrc3ZBVlFDQjZGWTV4QUo0N2ZteFlUWU9ZcUJN?=
+ =?utf-8?B?blYrbllGS3ZHTkRQNnIycmFLb1oyMWJEY2Q0VVJTK1BnRmtGVWhpRC8raVBo?=
+ =?utf-8?B?eXlSUm04Mlc0RFZWWnZuamZYWmswR3RpclQ3VStONGtUQnczSjZQb1hpVXhM?=
+ =?utf-8?B?blYvZnBCK0lNQlNKRnR4cmREMU54RWkzaXRHcjJ1dmxxcDFCUmRGRVpBZXJX?=
+ =?utf-8?B?VDFLRHZTSFN6NFhpTUlyWUU4dTg4RjZQYWUzK0lyR2ZoazVFbThGZFphZnhR?=
+ =?utf-8?B?b21Ta01oTTNsdzVPbzJCb3AxaTd5ci9tK2c2SUxwQkI4anVhZUJmb2pxK0J5?=
+ =?utf-8?B?Z1kwaWdJeE9QM3U3Q09nWlZrTnJTUFRqUDJ4WWZTSmQvTWtpZHBhQT09?=
 X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: d2bf234f-6207-422c-dd5b-08debc95e16d
+X-MS-Exchange-CrossTenant-Network-Message-Id: e0faa315-5405-4bc1-9ca8-08debca2102b
 X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB7743.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 May 2026 08:48:25.3759
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 May 2026 10:15:38.9130
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qv7whRq+yf5uh4/AI8fw526FHiVncr9mZ/YQA2uz2TLYgDBdELLfFKBiQnHszECDmHPZIxa3OZmdLW9guyO8ejwFZME708JecvQ7LQ7hHng=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7929
+X-MS-Exchange-CrossTenant-UserPrincipalName: ahmcefAirlaqbkh5eFQahcsCluB8/G4hO6YLcc+Dy8MBOmSWUFJ7yOcf3wPLVdxZuBH+g40BF52Dqj9BfgZb8ARUsVieoKmHH5G1vgh+Y1s=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9667
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 28 May 2026 08:48:42 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4082
+ <yocto-patches@lists.yoctoproject.org>; Thu, 28 May 2026 10:15:44 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4083
 
 Hi Trevor,
 
-On 5/27/26 5:30 PM, Trevor Woerner via lists.yoctoproject.org wrote:
-> Hi Quentin,
+On 5/27/26 6:32 AM, Trevor Woerner wrote:
+> On Fri 2026-04-24 @ 12:26:59 PM, Quentin Schulz wrote:
+>> OK so this is very confusing. The default branch in cgit is
+>> origin/feature/no-create and I got my info from the README.md there, which
+>> differs from the README.md from instructions in the README.md in the master
+>> branch where it isn't requested to Cc Trevor.
 > 
-> Thanks for this patch series!
-> 
-
-Thanks for the review!
-
-> I believe there was a little fuzz required to apply patch 1 (around the
-> -D), perhaps a v2 against the current to clean that up?
-> 
-
-I'm assuming due to commit 9fb264d42a20 ("bsp: fix upstream TF-A deploy 
-desync") already being merged.
-
-> On Mon 2026-01-26 @ 03:48:30 PM, Quentin Schulz via lists.yoctoproject.org wrote:
-[...]
->> diff --git a/README b/README
->> index c2697d1..f49fdb5 100644
->> --- a/README
->> +++ b/README
->> @@ -222,6 +222,48 @@ Notes:
->>   	NOTE: this variable must be set before any include/require in the
->>   	      machine configuration file
->>   
->> +  OP-TEE
->> +
->> +	PX30, RK3399 and RK3588 are all supported by upstream OP-TEE OS. By
->> +	default, OP-TEE OS is not baked into U-Boot.
->> +
->> +	You can bake OP-TEE OS in U-Boot by setting:
->> +
->> +		RK_UBOOT_TEE = "1"
-> 
-> Is it worth pointing out this is a boolean so any of
-> "1"/"y"/"yes"/"true" or "0"/"n"/"no"/"false" will work?
+> I asked Michael Halstead to take a look and change it. We think it's
+> fixed now.
 > 
 
-Not sure it's worth the added complexity? We also don't say that for 
-RK_IMAGE_INCLUDES_UBOOT_ENV, RK_RAUC_DEMO, RK_KERNEL_FITIMAGE, 
-RK_OVERLAY_DEMO but we word it differently for them.
+I think too, thanks!
 
-Would,
-
-You can bake OP-TEE OS in U-Boot by enabling the RK_UBOOT_TEE variable 
-boolean.
-
-work for you?
-
-[...]
->> diff --git a/recipes-security/optee/optee-os_%.bbappend b/recipes-security/optee/optee-os_%.bbappend
->> new file mode 100644
->> index 0000000..2a5ec8b
->> --- /dev/null
->> +++ b/recipes-security/optee/optee-os_%.bbappend
->> @@ -0,0 +1,19 @@
->> +# Increase size for FDT in OP-TEE OS to the one in TF-A since v2.13 to avoid
->> +# panics on 64+KiB FDT passed by U-Boot to TF-A to OP-TEE OS.
->> +# Can be removed once https://github.com/OP-TEE/optee_os/pull/7687 is merged.
->> +EXTRA_OEMAKE:append:rockchip:aarch64 = " CFG_DTB_MAX_SIZE=0x60000"
->> +
->> +# Disable early console by default to avoid OP-TEE OS panicking on boards with
->> +# their UART console different from OP-TEE OS default (UART2 for rk322x, rk3399
->> +# and rk3588(s)).
->> +# In-tree default changes if https://github.com/OP-TEE/optee_os/pull/7688 merged
->> +OPTEE_OS_EARLY_CONSOLE ?= "n"
->> +EXTRA_OEMAKE:append:rockchip = " CFG_EARLY_CONSOLE=${OPTEE_OS_EARLY_CONSOLE}"
->> +
->> +# Enable hardware acceleration using Arm Cryptography Extensions on PX30.
->> +# Can be removed once https://github.com/OP-TEE/optee_os/pull/7689 is merged.
-> 
-> Have these 3 merges occurred yet?
+>>
+>> On 4/24/26 12:18 PM, Quentin Schulz wrote:
+>>> From: Quentin Schulz <quentin.schulz@cherry.de>
+>>>
+>>> b4[1] is a very nice tool for mail-based contribution. A config[2] file
+>>> exists to set up a few defaults. We can use it to set the To recipients
+>>> to always add, in our case the mailing list, and the Cc recipients, in
+>>> our case, Trevor's address.
+>>>
+>>> Additionally, automatically provide a default prefix so that one doesn't
+>>> need to not forget to run `b4 prep --set-prefixes wic` for each series.
+>>>
+>>> [1] https://pypi.org/project/b4/
+>>> [2] https://b4.docs.kernel.org/en/latest/config.html
+>>>
+>>> Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+>>> ---
+>>>    .b4-config | 4 ++++
+>>>    1 file changed, 4 insertions(+)
 > 
 
-Yes.
-
-b6c7291c246b ("plat-rockchip: increase FDT max size to 384KiB on all 
-Aarch64 supported SoCs")
-763be3b08c16 ("plat-rockchip: disable early console by default")
-74eb4d9ed3ac ("plat-rockchip: px30: set CFG_CRYPTO_WITH_CE ?= y")
-
-All available in 4.10.0. However, meta-arm currently is still at 4.9.0. 
-I don't see patches on their ML 
-(https://lore.kernel.org/yocto-meta-arm/?q=op-tee) for a version bump so 
-we need to keep those in for now.
-
-I guess I can change the comment to say we need to keep this until 
-4.10.0? At the same time, it shouldn't hurt keeping them in even in 
-4.10.0 or later.
+Your gmail address is in the Cc recipients, which doesn't match what's 
+been requested in the README.md in the master branch (only the ML in To 
+recipients). Should we patch the README.md to align with .b4-config or 
+the opposite?
 
 Cheers,
 Quentin
