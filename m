@@ -1,373 +1,376 @@
-Return-Path: <ross.burton@arm.com>
+Return-Path: <daniel.turull@ericsson.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2456CD6E56
-	for <webhook@archiver.kernel.org>; Mon,  1 Jun 2026 09:39:44 +0000 (UTC)
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.22955.1780297960245329640
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FD3DCD6E56
+	for <webhook@archiver.kernel.org>; Mon,  1 Jun 2026 12:04:25 +0000 (UTC)
+Received: from AS8PR04CU009.outbound.protection.outlook.com (AS8PR04CU009.outbound.protection.outlook.com [52.101.70.55])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.26851.1780315463604995984
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 01 Jun 2026 00:12:40 -0700
+ Mon, 01 Jun 2026 05:04:24 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=WRrFu5a8;
- spf=pass (domain: gmail.com, ip: 209.85.210.173, mailfrom: nmjain23@gmail.com)
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-8419ab3a297so2984140b3a.2
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 01 Jun 2026 00:12:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780297959; x=1780902759; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XpXbjTaUSgYxbHKMQzQqqVTMsNm06VAI146hHn9ytsw=;
-        b=WRrFu5a8l4KdVSyi2++eSTG/h8UM5cNADJ+n9lcFtJDX015WMc+QgwMdgvwVIT36WJ
-         n6fv65rLjqOMhE7jGFuVhVzJamnt6fLaawCypVSUlTsYcdXPtgnzsQg9djfgeDUwxVJS
-         PwSd6oatytCgT/DCfk/FoCcbO24THWXstLujWk3k+iluOe/3K5ac0Q1Gc75sqLqXBlJZ
-         jVxurpbHDecvmWjsIQeQ1ybustz8GigJ6htPtn4nQwVvKFuPYGaue1cnHFBgEB2gGoW5
-         uPomGU2qT8GgmCjd6W9TW+IAaTM8Sjha1X0wnfP4b4sUD2zaRnwZbklPeQ9oEsF0yrJz
-         FLgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780297959; x=1780902759;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XpXbjTaUSgYxbHKMQzQqqVTMsNm06VAI146hHn9ytsw=;
-        b=DUlsj1/q9HySTs6janWyUq+GNTKolB5hHlfJf/hz+UnnShRyX0+uSJzY1fQWYPexyD
-         tqs8KEwjg2pYhNSQfIhQVNtNm9NW77YvrF3vSyR0kQ4TkKRLWZpfNfKlv5SeE+cpgP7R
-         cXylbpTfXvdmHc51np8rdPkLE3h8x2GS4xegoru14fh2RuRQ9V7WaahaxJay7458x03D
-         W3DxNfB2+eISj517SbQyba11rDBCigqVK5O9mMORpwvwdLxWFDhae1rlD9cCdPwS3ZCP
-         ZLwuL6IhEj2N8oYER2p4TKgEFfM3Vd/Vn7Hme7PdvR+xtNa0fvMhnl2HyI1eZZPFlGim
-         wWVw==
-X-Gm-Message-State: AOJu0YxmSt7sfU879bvF2lBxi5la5z1jr39Oe8MZ93jeO1TxniXp2PNj
-	zhprDfnTA7Yjmey716C+lNnWII5lqMeiAyx4HxINyXDnqaYPX7OI6ZXZZbDnaA==
-X-Gm-Gg: Acq92OFvMRS3XfAE5bfuAkDv9+CCbFdlG7xFdPCOTQhh6d1hJrDH98xNpwbv/QBYwko
-	ndbfMdQ7GA9kQC+J8Fb67giC9YYS75rayRZycWOtl4zMNzi9CrDfpAiZDZC2iUm6O56nvWWmIBY
-	hn57TfBZVYiml2aGJDEH0ARFqhjzVOXOyKVKdh8LEaEbehPEIOa9icZJ7l/5HRvgjTOu7QCBYn9
-	uJZ9XHumAl3FHlJLN5EufoNtI7h+JoX9FZg5pcYNBy8OVVzTgvbGdP7d4f/BOvNCP8WwFjQ5EXw
-	PUkYNgJucxxKGaSq/2K6CbR69Fll/b9QiHqpimw7gQAmTZFpor1TsvY+aNyepM648rnAwJ++BXT
-	gZoyvVLWlv5WOEGLgBZYnuI0yDbU5H99uFrcFflH9EjlD1Oego8N5UfEK8CPc6EL4zO+/rLAQYn
-	xLnlX4jMyyOU/Oi8ivYiKgUjo2zTszuwrsrd+xwXw6hUZO7WJvFyulzZGGnR0O8pKpZ54O1oIuO
-	kkZw0VHs4k=
-X-Received: by 2002:a05:6a00:3904:b0:827:32de:d197 with SMTP id d2e1a72fcca58-842256d98a0mr8070860b3a.40.1780297959398;
-        Mon, 01 Jun 2026 00:12:39 -0700 (PDT)
-Received: from LL-3450LLL.kpit.com ([103.133.67.152])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8423a790c04sm5303193b3a.16.2026.06.01.00.12.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jun 2026 00:12:39 -0700 (PDT)
-From: "Naman Jain" <nmjain23@gmail.com>
-X-Google-Original-From: Naman Jain <naman.jain@partner.bmw.de>
-To: yocto-patches@lists.yoctoproject.org
-Cc: Naman Jain <namanj1@kpit.com>
-Subject: [meta-lts-collab][kirkstone][PATCH] jq: Fix CVEs
-Date: Mon,  1 Jun 2026 12:42:26 +0530
-Message-Id: <20260601071226.2490096-1-naman.jain@partner.bmw.de>
-X-Mailer: git-send-email 2.34.1
+ dkim=fail reason="dkim: body hash did not verify" header.i=@ericsson.com header.s=selector1 header.b=GyVDEfi8;
+ spf=pass (domain: ericsson.com, ip: 52.101.70.55, mailfrom: edaturu@ericsson.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jSwIoxBscezUO60HTsn+uTi6lRlMN4XtJEmDHHWsNgQkAKVD1KG7vcFoWKQPdeKZCg0sm0Q0NFNStymtJTKc0sgstL/9DasWHwC2nLn6TfOomG35ra5Giz19oHITwdIt7Kb6ZL2zjRXVF9WOB4rE0t3ga0wHZz+fxOlk9qNq4QTEpOdXIt/ljOcMbVX08mrWpW+dtwmuspIIwM9lFaZRsh9KqcditGEckIouAQWWBqxNzdbrnsQFtyeHb5rFs/3wV/Yrxx2e4TBA1sVGT6Q82dqRJJyNepXZksdym/dRpLPoo6gl0hps9c4p8Atj0xAziDuW29vwKUTAvY7OMjL6jg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lhguVmTCFVN7WBiWoyUOAaX0tFMVc4nU1YTqCRaB288=;
+ b=Z2CYSCzvuugfYtqCAjf8rms4pG5aaUZkbkYhu9BFk+N9R0wb1/yDAVt6xpCpiLqNGsDy/QXjBikLceICnhUF3rrpUv9kMs64B+ji4Ur4XBUYdoX/PdXbXnOB41dxLwLlAGnOBuk5m4nsCyGK3bhh9CBZx4yL1AL1uXJ6TG/ISAHlStAp7BwA0oWA8mqSYP5zdVCiKpmsB6BkLvvth59p+zZbhwyr9+h5hswfJgMhp91PZJa5JUbt5jN/JKccLLje+rikgeVOZu/CWVJuJy/07qn3YATBSWj8wkwq6JJicWX3qpkUfYZIIyzhsRwwjTMyL0digczhkjI61ThqKVyK+A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 192.176.1.74) smtp.rcpttodomain=gmail.com smtp.mailfrom=ericsson.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=ericsson.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ericsson.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lhguVmTCFVN7WBiWoyUOAaX0tFMVc4nU1YTqCRaB288=;
+ b=GyVDEfi8Y7dAAOTAFXvpZlZFN6AmbYcrb4qYaCgBkLdDaPmqAjvXdarRrZC72WkYO8+UOEnMihpH70eRAGQIdu5lLtfioWjIQGyTHDLDkn3Kk8wPoSV6hcm1IWoCv5r075T2+LUF21w/WwPoeAwvcZl2KXhIfGwlXU80MXiGaMp14NXl9xhH6SH9zDS9Ag+GXDvwQQc3x1X+a6hLu105nNuYa8ceRMUKt7nLUwl5CCB20XKAlSeJCH8Z99TBHM+72CztJZmSO9ysqqzh/HdbIsNULOAGmXpT3RPg2mnyQ+VojAKQnkq7sjeSfR0/ns3ZcZMXTgj/2Z1go55fz4U5vQ==
+Received: from DU2PR04CA0265.eurprd04.prod.outlook.com (2603:10a6:10:28e::30)
+ by AS8PR07MB8314.eurprd07.prod.outlook.com (2603:10a6:20b:37d::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.71.17; Mon, 1 Jun 2026
+ 12:04:17 +0000
+Received: from DB5PEPF00014B90.eurprd02.prod.outlook.com
+ (2603:10a6:10:28e:cafe::40) by DU2PR04CA0265.outlook.office365.com
+ (2603:10a6:10:28e::30) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.71.16 via Frontend Transport; Mon, 1
+ Jun 2026 12:04:17 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 192.176.1.74)
+ smtp.mailfrom=ericsson.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=ericsson.com;
+Received-SPF: Pass (protection.outlook.com: domain of ericsson.com designates
+ 192.176.1.74 as permitted sender) receiver=protection.outlook.com;
+ client-ip=192.176.1.74; helo=oa.msg.ericsson.com; pr=C
+Received: from oa.msg.ericsson.com (192.176.1.74) by
+ DB5PEPF00014B90.mail.protection.outlook.com (10.167.8.228) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.92.5 via Frontend Transport; Mon, 1 Jun 2026 12:04:17 +0000
+Received: from seroius18814.sero.gic.ericsson.se (153.88.142.248) by
+ smtp-central.internal.ericsson.com (100.87.178.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37; Mon, 1 Jun 2026 14:04:17 +0200
+Received: from seroius08462.sero.gic.ericsson.se (seroius08462.sero.gic.ericsson.se [10.63.237.245])
+	by seroius18814.sero.gic.ericsson.se (Postfix) with ESMTP id C55FD4054DC7;
+	Mon,  1 Jun 2026 13:34:15 +0200 (CEST)
+Received: by seroius08462.sero.gic.ericsson.se (Postfix, from userid 160155)
+	id AECEC7003739; Mon,  1 Jun 2026 13:34:15 +0200 (CEST)
+From: <daniel.turull@ericsson.com>
+To: <daniel.turull@ericsson.com>, <yocto-patches@lists.yoctoproject.org>
+CC: <alex.kanavin@gmail.com>
+Subject: [AUH] [PATCH] upgrade-helper: add state module and --incremental mode
+Date: Mon, 1 Jun 2026 13:34:08 +0200
+Message-ID: <20260601113410.1896488-1-daniel.turull@ericsson.com>
+X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB5PEPF00014B90:EE_|AS8PR07MB8314:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9169f62e-7f24-4e02-d402-08debfd5e814
+X-SMTP-Server: smtp-central.internal.ericsson.com
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: 
+	BCL:0;ARA:13230040|36860700016|1800799024|376014|82310400026|6133799003|18002099003|11063799006|5023799004|56012099006;
+X-Microsoft-Antispam-Message-Info: 
+	pjN9Kc4sjCqVZQvUOv02Vkh1dnhlyAbkbcLQKaMnmcALN4g9sS47rU0YwdUN6Yo9Wrs+321umzx+5YvBhGdnrTArzk+oK6jXKDXYNfE94pZ/QyTVWH0oK/KZxEjg988H+85Ym+ECV6ZlGG5OINWevEhB5qys2bjslsqxqhEqvQfbXC4EkREVq7fBCECFcAoaYDN/qKw4XEZcLbYbxOoZZRR/pdyGRJPrMKPCeN5GU/2BdB/ZpwsBlIjvqRchg6l9T5UXRHQ6sgy7w6E3amrbsgWcs4/CV7nWNaI1t3rrbDIaZNJlFAF7HLOPfM9u5hBb5ZQpBy6j2HSM+49HqNVxk+S62v68R+Tacu/byDyQkwICKiyNmjf0f0YJQzRY0QVTqNGYoIp1Uzr8FsShx6Soiuz2Ys/XhA+k1pW+z3NsTGEbXi5IpoX35K0wrH30TtoXtxgwGSpyAzi4oCQyp7rA6PqInW7iuZMthEsCqa6DeeOlVdwF8+FFwYGw8WFirSeGUrrubeGPiGoYrUGi+MbSt8f0HD1hBiY+2jILwgCU45fsAhL1IjBawp1q1G/3dQR0w/qynQ4vGY7EVFmi8+A+3Duqva5V0pxSsar+q7KcjeWAURybr4jm2y0rpargjC2L/3jAWNEjQds556IDIiiOp/hKT3hMSwKJpQG3qivMJz9ViY6Ng5lrEkIilWTQRZvzF585RGnYW7xvMn7L0rXl0+PdnWl6+t/a+DR/MjmIuuc=
+X-Forefront-Antispam-Report: 
+	CIP:192.176.1.74;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:oa.msg.ericsson.com;PTR:office365.se.ericsson.net;CAT:NONE;SFS:(13230040)(36860700016)(1800799024)(376014)(82310400026)(6133799003)(18002099003)(11063799006)(5023799004)(56012099006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	3LogOw5P5Msygv07rdbOLpxyaRbrGXvQCLpJJ7WuBRcDoQCrqFLFG9YCBV62gBthx/RJBFHJN0AhNwHWjlYQ4ICOOmoV5nP2zI16OTrxfMjEsCI2WWmuy4H+BQm0jbKLRVRYFBEMVbIGqlSB0ktFPU8qXLkLyO7V1Lzy21FJJWZkeASuoqCT45UN43BgRXejtUGT8ayj+mQ20DgD06+ktW+Uevo++C5j+TNq5g5z2jQnMH9DiRb4/J6doGGH2ElGQZR+H4+RmKnM567y2EJDsssq4c0DkcYhRCA3OiDLmWVmHOnN6xuCAv64yz1tynnc/3WvCFy1uCtlk9Ik1+/B6bSQiJOQsBokHjWuSvy8J1x2tnfXNsVxEcurgN3OPkQ+jsYyLwtu4p3hwgPmzNBp5Yhm7F2bFIO4GknxrdKKYJ698/hv+rRWEe8jpsexL8dz
+X-OriginatorOrg: ericsson.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jun 2026 12:04:17.5038
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9169f62e-7f24-4e02-d402-08debfd5e814
+X-MS-Exchange-CrossTenant-Id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=92e84ceb-fbfd-47ab-be52-080c6b87953f;Ip=[192.176.1.74];Helo=[oa.msg.ericsson.com]
+X-MS-Exchange-CrossTenant-AuthSource: 
+	DB5PEPF00014B90.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR07MB8314
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 01 Jun 2026 09:39:44 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4090
+ <yocto-patches@lists.yoctoproject.org>; Mon, 01 Jun 2026 12:04:25 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4091
 
-Fix the following CVEs-
-CVE-2026-32316 CVE-2026-33947 CVE-2026-33948
-CVE-2026-39979
+From: Daniel Turull <daniel.turull@ericsson.com>
 
-Signed-off-by: Naman Jain <namanj1@kpit.com>
+Without this, every AUH run retries all candidates regardless of previous
+outcomes, wasting time on recipes that consistently fail or were already
+upgraded recently.
+
+Add modules/state.py which persists upgrade results to a JSON state file
+(auh-state.json in the upgrade-helper work directory, typically
+$BUILDDIR/upgrade-helper/). The new --incremental flag activates this
+tracking and skips package groups where all packages were recently attempte=
+d.
+
+Behavior:
+- Failed attempts are retried after retry_interval days (default 30).
+- Successful/already-current upgrades are suppressed for success_max_age
+  days (default 30).
+
+Tested with master (2026-06-01):
+command: ../auto-upgrade-helper/upgrade-helper.py all --incremental -s
+
+- Run 1 (2026-06-01 07:38): 122 attempted, 98 succeeded, 24 failed, 0 skipp=
+ed
+- Run 2 (2026-06-01 11:17): 1 attempted, 0 succeeded, 1 failed, 26 skipped
+- Run 3 (2026-06-01 11:20): 0 attempted, 0 succeeded, 0 failed, 27 skipped
+
+Link: https://lists.openembedded.org/g/openembedded-architecture/message/23=
+49
+
+AI-Generated: kiro with claude-opus-4.6 model
+Signed-off-by: Daniel Turull <daniel.turull@ericsson.com>
 ---
- .../jq/files/CVE-2026-32316.patch             |  55 +++++++++
- .../jq/files/CVE-2026-33947.patch             | 105 ++++++++++++++++++
- .../jq/files/CVE-2026-33948.patch             |  50 +++++++++
- .../jq/files/CVE-2026-39979.patch             |  33 ++++++
- meta-oe/recipes-devtools/jq/jq_%.bbappend     |   8 ++
- 5 files changed, 251 insertions(+)
- create mode 100644 meta-oe/recipes-devtools/jq/files/CVE-2026-32316.patch
- create mode 100644 meta-oe/recipes-devtools/jq/files/CVE-2026-33947.patch
- create mode 100644 meta-oe/recipes-devtools/jq/files/CVE-2026-33948.patch
- create mode 100644 meta-oe/recipes-devtools/jq/files/CVE-2026-39979.patch
- create mode 100644 meta-oe/recipes-devtools/jq/jq_%.bbappend
+ modules/state.py    | 102 ++++++++++++++++++++++++++++++++++++++++++++
+ upgrade-helper.conf |  10 ++++-
+ upgrade-helper.py   |  41 ++++++++++++++++++
+ 3 files changed, 152 insertions(+), 1 deletion(-)
+ create mode 100644 modules/state.py
 
-diff --git a/meta-oe/recipes-devtools/jq/files/CVE-2026-32316.patch b/meta-oe/recipes-devtools/jq/files/CVE-2026-32316.patch
+diff --git a/modules/state.py b/modules/state.py
 new file mode 100644
-index 0000000..e36c500
+index 0000000..01bc18f
 --- /dev/null
-+++ b/meta-oe/recipes-devtools/jq/files/CVE-2026-32316.patch
-@@ -0,0 +1,55 @@
-+From e47e56d226519635768e6aab2f38f0ab037c09e5 Mon Sep 17 00:00:00 2001
-+From: itchyny <itchyny@cybozu.co.jp>
-+Date: Thu, 12 Mar 2026 20:28:43 +0900
-+Subject: [PATCH] Fix heap buffer overflow in `jvp_string_append` and
-+ `jvp_string_copy_replace_bad`
++++ b/modules/state.py
+@@ -0,0 +1,102 @@
++# SPDX-License-Identifier: GPL-2.0-or-later
++# vim: set ts=3D4 sw=3D4 et:
++#
++# Copyright (c) 2026 Ericsson AB
++#
++# This program is free software; you can redistribute it and/or
++# modify it under the terms of the GNU General Public License
++# as published by the Free Software Foundation; either version 2
++# of the License, or (at your option) any later version.
++#
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with this program; if not, write to the Free Software
++# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-130=
+1, USA.
++#
++# AUTHORS
++# Daniel Turull   <daniel.turull@ericsson.com>
++#
 +
-+In `jvp_string_append`, the allocation size `(currlen + len) * 2` could
-+overflow `uint32_t` when `currlen + len` exceeds `INT_MAX`, causing a small
-+allocation followed by a large `memcpy`.
++import json
++import os
++import time
 +
-+In `jvp_string_copy_replace_bad`, the output buffer size calculation
-+`length * 3 + 1` could overflow `uint32_t`, again resulting in a small
-+allocation followed by a large write.
++from logging import warning as W
 +
-+Add overflow checks to both functions to return an error for strings
-+that would exceed `INT_MAX` in length. Fixes CVE-2026-32316.
++RESULT_SUCCESS =3D "success"
++RESULT_FAILURE =3D "failure"
 +
-+CVE: CVE-2026-32316
++STATE_FILENAME =3D "auh-state.json"
++STATE_VERSION =3D 1
 +
-+Upstream-Status: Backport [https://github.com/jqlang/jq/commit/e47e56d226519635768e6aab2f38f0ab037c09e5]
++SECONDS_PER_DAY =3D 86400
++DEFAULT_COOLDOWN_DAYS =3D 30
++DEFAULT_SUCCESS_MAX_AGE_DAYS =3D 30
 +
-+Comment: Refreshed the orignal patch based on 1.6 version of jq-native
 +
-+Signed-off-by: Naman Jain <namanj1@kpit.com>
-+---
-+ src/jv.c | 11 ++++++++++-
-+ 1 file changed, 10 insertions(+), 1 deletion(-)
-+ 
-+--- a/src/jv.c	2026-05-25 11:15:59.348305000 +0530
-++++ b/src/jv.c	2026-05-25 11:26:08.995124976 +0530
-+@@ -1103,7 +1103,12 @@ static jv jvp_string_copy_replace_bad(co
-+   const char* i = data;
-+   const char* cstart;
-+ 
-+-  uint32_t maxlength = length * 3 + 1; // worst case: all bad bytes, each becomes a 3-byte U+FFFD
-++  // worst case: all bad bytes, each becomes a 3-byte U+FFFD
-++  uint64_t maxlength = (uint64_t)length * 3 + 1;
-++  if (maxlength >= INT_MAX) {
-++    return jv_invalid_with_msg(jv_string("String too long"));
-++  }
-++  
-+   jvp_string* s = jvp_string_alloc(maxlength);
-+   char* out = s->data;
-+   int c = 0;
-+@@ -1163,6 +1168,10 @@ static uint32_t jvp_string_remaining_spa
-+ static jv jvp_string_append(jv string, const char* data, uint32_t len) {
-+   jvp_string* s = jvp_string_ptr(string);
-+   uint32_t currlen = jvp_string_length(s);
-++  if ((uint64_t)currlen + len >= INT_MAX) {
-++    jv_free(string);
-++    return jv_invalid_with_msg(jv_string("String too long"));
-++  }
-+ 
-+   if (jvp_refcnt_unshared(string.u.ptr) &&
-+       jvp_string_remaining_space(s) >= len) {
-diff --git a/meta-oe/recipes-devtools/jq/files/CVE-2026-33947.patch b/meta-oe/recipes-devtools/jq/files/CVE-2026-33947.patch
-new file mode 100644
-index 0000000..6112d36
---- /dev/null
-+++ b/meta-oe/recipes-devtools/jq/files/CVE-2026-33947.patch
-@@ -0,0 +1,105 @@
-+From fb59f1491058d58bdc3e8dd28f1773d1ac690a1f Mon Sep 17 00:00:00 2001
-+From: itchyny <itchyny@cybozu.co.jp>
-+Date: Mon, 13 Apr 2026 11:23:40 +0900
-+Subject: [PATCH] Limit path depth to prevent stack overflow
++class State:
++    """Tracks upgrade attempts as {recipe: {version: {timestamp, result}}}=
+."""
 +
-+Deeply nested path arrays can cause unbounded recursion in
-+`jv_setpath`, `jv_getpath`, and `jv_delpaths`, leading to
-+stack overflow. Add a depth limit of 10000 to match the
-+existing `tojson` depth limit. This fixes CVE-2026-33947.
++    def __init__(self, state_dir, cooldown_days=3DDEFAULT_COOLDOWN_DAYS,
++                 success_max_age_days=3DDEFAULT_SUCCESS_MAX_AGE_DAYS):
++        self.path =3D os.path.join(state_dir, STATE_FILENAME)
++        self.cooldown =3D cooldown_days * SECONDS_PER_DAY
++        self.success_max_age =3D success_max_age_days * SECONDS_PER_DAY
++        self.data =3D self._load()
++        self._prune()
 +
-+CVE: CVE-2026-33947
++    def _load(self):
++        if os.path.exists(self.path):
++            try:
++                with open(self.path) as f:
++                    raw =3D json.load(f)
++            except (json.JSONDecodeError, OSError) as e:
++                W(" %s is corrupt (%s), starting fresh" % (self.path, e))
++                return {}
++            if not isinstance(raw, dict) or raw.get("version") !=3D STATE_=
+VERSION:
++                W(" %s: unsupported or missing version, starting fresh"
++                  % self.path)
++                return {}
++            return raw.get("recipes", {})
++        return {}
 +
-+Upstream-Status: Backport [https://github.com/jqlang/jq/commit/fb59f1491058d58bdc3e8dd28f1773d1ac690a1f]
++    def save(self):
++        with open(self.path, "w") as f:
++            json.dump({"version": STATE_VERSION, "recipes": self.data},
++                      f, indent=3D2)
 +
-+Comment: Refreshed the orignal patch based on 1.6 version of jq-native
++    def record(self, pn, version, result):
++        entry =3D {"timestamp": time.time(), "result": result}
++        if pn not in self.data:
++            self.data[pn] =3D {}
++        self.data[pn][version] =3D entry
 +
-+Signed-off-by: Naman Jain <namanj1@kpit.com>
-+---
-+ src/jv_aux.c  | 21 +++++++++++++++++++++
-+ tests/jq.test | 25 +++++++++++++++++++++++++
-+ 2 files changed, 46 insertions(+)
++    def should_skip(self, pn, version):
++        entry =3D self.data.get(pn, {}).get(version)
++        if not entry:
++            return False
++        age =3D time.time() - entry.get("timestamp", 0)
++        if entry.get("result") =3D=3D RESULT_SUCCESS:
++            return age < self.success_max_age
++        return age < self.cooldown
 +
-+diff -pur r/jv_aux.c f/jv_aux.c
-+--- a/src/jv_aux.c	2026-05-25 11:49:59.581352000 +0530
-++++ a/src/jv_aux.c	2026-05-25 12:06:47.329046949 +0530
-+@@ -333,6 +333,10 @@ static jv jv_dels(jv t, jv keys) {
-+   return t;
-+ }
-+ 
-++#ifndef MAX_PATH_DEPTH
-++#define MAX_PATH_DEPTH (10000)
-++#endif
-++
-+ jv jv_setpath(jv root, jv path, jv value) {
-+   if (jv_get_kind(path) != JV_KIND_ARRAY) {
-+     jv_free(value);
-+@@ -340,6 +344,12 @@ jv jv_setpath(jv root, jv path, jv value
-+     jv_free(path);
-+     return jv_invalid_with_msg(jv_string("Path must be specified as an array"));
-+   }
-++  if (jv_array_length(jv_copy(path)) > MAX_PATH_DEPTH) {
-++    jv_free(value);
-++    jv_free(root);
-++    jv_free(path);
-++    return jv_invalid_with_msg(jv_string("Path too deep"));
-++  }
-+   if (!jv_is_valid(root)){
-+     jv_free(value);
-+     jv_free(path);
-+@@ -390,6 +400,11 @@ jv jv_getpath(jv root, jv path) {
-+     jv_free(path);
-+     return jv_invalid_with_msg(jv_string("Path must be specified as an array"));
-+   }
-++  if (jv_array_length(jv_copy(path)) > MAX_PATH_DEPTH) {
-++    jv_free(root);
-++    jv_free(path);
-++    return jv_invalid_with_msg(jv_string("Path too deep"));
-++  }
-+   if (!jv_is_valid(root)) {
-+     jv_free(path);
-+     return root;
-+@@ -467,6 +482,12 @@ jv jv_delpaths(jv object, jv paths) {
-+       jv_free(elem);
-+       return err;
-+     }
-++    if (jv_array_length(jv_copy(elem)) > MAX_PATH_DEPTH) {
-++      jv_free(object);
-++      jv_free(paths);
-++      jv_free(elem);
-++      return jv_invalid_with_msg(jv_string("Path too deep"));
-++    }
-+     jv_free(elem);
-+   }
-+   if (jv_array_length(jv_copy(paths)) == 0) {
-+--- a/tests/jq.test	2026-05-25 11:50:00.028352000 +0530
-++++ a/tests/jq.test	2026-05-25 12:08:36.488505815 +0530
-+@@ -1736,3 +1736,28 @@ true
-+ "Invalid numeric literal at EOF at line 1, column 7 (while parsing 'NaN1000')"
-+ "Invalid numeric literal at EOF at line 1, column 8 (while parsing 'NaN10000')"
-+ "Invalid numeric literal at EOF at line 1, column 9 (while parsing 'NaN100000')"
-++
-++# regression test for CVE-2026-33947
-++setpath([range(10000) | 0]; 0) | flatten
-++null
-++[0]
-++
-++try setpath([range(10001) | 0]; 0) catch .
-++null
-++"Path too deep"
-++
-++getpath([range(10000) | 0])
-++null
-++null
-++
-++try getpath([range(10001) | 0]) catch .
-++null
-++"Path too deep"
-++
-++delpaths([[range(10000) | 0]])
-++null
-++null
-++
-++try delpaths([[range(10001) | 0]]) catch .
-++null
-++"Path too deep"
-diff --git a/meta-oe/recipes-devtools/jq/files/CVE-2026-33948.patch b/meta-oe/recipes-devtools/jq/files/CVE-2026-33948.patch
-new file mode 100644
-index 0000000..c049ca6
---- /dev/null
-+++ b/meta-oe/recipes-devtools/jq/files/CVE-2026-33948.patch
-@@ -0,0 +1,50 @@
-+From 6374ae0bcdfe33a18eb0ae6db28493b1f34a0a5b Mon Sep 17 00:00:00 2001
-+From: itchyny <itchyny@cybozu.co.jp>
-+Date: Mon, 13 Apr 2026 08:46:11 +0900
-+Subject: [PATCH] Fix NUL truncation in the JSON parser
++    def _prune(self):
++        """Remove stale entries older than their respective max-age."""
++        now =3D time.time()
++        for pn in list(self.data):
++            versions =3D self.data[pn]
++            for ver in list(versions):
++                entry =3D versions[ver]
++                age =3D now - entry.get("timestamp", 0)
++                if entry.get("result") =3D=3D RESULT_SUCCESS:
++                    if age > self.success_max_age:
++                        del versions[ver]
++                else:
++                    if age > self.cooldown:
++                        del versions[ver]
++            if not versions:
++                del self.data[pn]
+diff --git a/upgrade-helper.conf b/upgrade-helper.conf
+index 269bde3..c5dfdde 100644
+--- a/upgrade-helper.conf
++++ b/upgrade-helper.conf
+@@ -50,7 +50,15 @@
+ # passed; does not apply when layer_mode is enabled).
+ #blacklist=3Dpython glibc gcc
+=20
+-# specify the directory where work (patches) will be saved=20
++# When running with --incremental, how many days to wait before retrying
++# a failed upgrade attempt for the same recipe version. Default is 30 days=
+.
++#retry_interval=3D30
 +
-+This fixes CVE-2026-33948.
++# When running with --incremental, how many days to skip a successfully
++# upgraded recipe version before attempting it again. Default is 30 days.
++#success_max_age=3D30
 +
-+CVE: CVE-2026-33948
++# specify the directory where work (patches) will be saved
+ # (optional; default is BUILDDIR/upgrade-helper/)
+ #workdir=3D
+=20
+diff --git a/upgrade-helper.py b/upgrade-helper.py
+index 40f31c4..339f096 100755
+--- a/upgrade-helper.py
++++ b/upgrade-helper.py
+@@ -59,6 +59,8 @@ from utils.emailhandler import Email
+ from statistics import Statistics
+ from steps import upgrade_steps
+ from testimage import TestImage
++from state import (State, RESULT_SUCCESS, RESULT_FAILURE,
++                   DEFAULT_COOLDOWN_DAYS, DEFAULT_SUCCESS_MAX_AGE_DAYS)
+=20
+ if not os.getenv('BUILDDIR', False):
+     E(" You must source oe-init-build-env before running this script!\n")
+@@ -104,6 +106,8 @@ def parse_cmdline():
+                         help=3D"do not compile, just change the checksums,=
+ remove PR, and commit")
+     parser.add_argument("-c", "--config-file", default=3DNone,
+                         help=3D"Path to the configuration file. Default is=
+ $BUILDDIR/upgrade-helper/upgrade-helper.conf")
++    parser.add_argument("--incremental", action=3D"store_true",
++                        help=3D"skip recipes already attempted (uses JSON =
+state file)")
+     parser.add_argument("--layer-names", nargs=3D'*', action=3D"store", de=
+fault=3D'',
+                         help=3D"layers to include in the upgrade research"=
+)
+     parser.add_argument("--layer-dir", action=3D"store", default=3D'',
+@@ -169,6 +173,16 @@ class Updater(object):
+             self.email_handler =3D Email(settings)
+         self.statistics =3D Statistics()
+=20
++        if self.args.incremental:
++            cooldown =3D int(settings.get('retry_interval', DEFAULT_COOLDO=
+WN_DAYS))
++            success_max_age =3D int(settings.get('success_max_age',
++                                               DEFAULT_SUCCESS_MAX_AGE_DAY=
+S))
++            self.state =3D State(self.uh_dir,
++                               cooldown_days=3Dcooldown,
++                               success_max_age_days=3Dsuccess_max_age)
++        else:
++            self.state =3D None
 +
-+Upstream-Status: Backport [https://github.com/jqlang/jq/commit/6374ae0bcdfe33a18eb0ae6db28493b1f34a0a5b]
+     def _set_options(self):
+         self.opts =3D {}
+         self.opts['layer_mode'] =3D settings.get('layer_mode', '')
+@@ -468,6 +482,14 @@ class Updater(object):
+=20
+             pkggroups_ctx.append({"name":",".join([pkg_ctx['PN'] for pkg_c=
+tx in pkgs_ctx]),"pkgs":pkgs_ctx,"error":None, 'base_dir':self.uh_recipes_a=
+ll_dir})
+         I(" ############################################################")
++        if self.state:
++            before =3D len(pkggroups_ctx)
++            pkggroups_ctx =3D [g for g in pkggroups_ctx
++                             if not self.state.should_skip(
++                                 g['pkgs'][0]['PN'], g['pkgs'][0]['NPV'])]
++            I(" %d/%d package groups skipped (incremental mode)"
++              % (before - len(pkggroups_ctx), before))
++            total_pkggroups =3D len(pkggroups_ctx)
+         if pkggroups_ctx and not self.args.skip_compilation:
+             I(" Building gcc runtimes ...")
+             for machine in self.opts['machines']:
+@@ -520,6 +542,10 @@ class Updater(object):
+                 g['error'] =3D e
+                 failed_pkggroups_ctx.append(g)
+=20
++            # Capture upgrade error before commit_changes() which may
++            # overwrite g['error'] with a git commit failure.
++            upgrade_err =3D g.get('error') if self.state else None
 +
-+Comment: Refreshed the orignal patch based on 1.6 version of jq-native
+             try:
+                 self.commit_changes(g)
+             except Exception as e:
+@@ -534,6 +560,21 @@ class Updater(object):
+                     succeeded_pkggroups_ctx.remove(g)
+                     failed_pkggroups_ctx.append(g)
+=20
++            if self.state:
++                # UpgradeNotNeededError means the recipe is already curren=
+t,
++                # which is a successful outcome =E2=80=94 no retry needed.
++                if not upgrade_err or isinstance(upgrade_err, UpgradeNotNe=
+ededError):
++                    result =3D RESULT_SUCCESS
++                else:
++                    result =3D RESULT_FAILURE
++                # All packages in a group share the same result because AU=
+H
++                # upgrades them atomically; individual outcomes are not tr=
+acked.
++                for pkg_ctx in g['pkgs']:
++                    self.state.record(pkg_ctx['PN'], pkg_ctx['NPV'], resul=
+t)
 +
-+Signed-off-by: Naman Jain <namanj1@kpit.com>
-+---
-+ src/util.c   | 8 +-------
-+ tests/shtest | 6 ++++++
-+ 2 files changed, 7 insertions(+), 7 deletions(-)
++        if self.state:
++            self.state.save()
 +
-+diff -pur a/util.c b/util.c
-+--- a/src/util.c	2026-05-25 12:17:04.234082000 +0530
-++++ b/src/util.c	2026-05-25 12:27:35.908436178 +0530
-+@@ -315,13 +315,7 @@ static int jq_util_input_read_more(jq_ut
-+       if (p != NULL)
-+         state->current_line++;
-+ 
-+-      if (p == NULL && state->parser != NULL) {
-+-        /*
-+-         * There should be no NULs in JSON texts (but JSON text
-+-         * sequences are another story).
-+-         */
-+-        state->buf_valid_len = strlen(state->buf);
-+-      } else if (p == NULL && feof(state->current_input)) {
-++      if (p == NULL && feof(state->current_input)) {
-+         size_t i;
-+ 
-+         /*
-+--- a/tests/shtest	2026-05-25 12:17:04.236082000 +0530
-++++ b/tests/shtest	2026-05-25 12:29:18.067642190 +0530
-+@@ -332,4 +332,10 @@ JQ_COLORS="0123456789123:0123456789123:0
-+ cmp $d/color $d/expect
-+ cmp $d/warning $d/expect_warning
-+ 
-++# CVE-2026-33948: No NUL truncation in the JSON parser
-++if printf '{}\x00{}' | $JQ >/dev/null 2> /dev/null; then
-++  printf 'Error expected but jq exited successfully\n' 1>&2
-++  exit 1
-++fi
-++
-+ exit 0
-diff --git a/meta-oe/recipes-devtools/jq/files/CVE-2026-39979.patch b/meta-oe/recipes-devtools/jq/files/CVE-2026-39979.patch
-new file mode 100644
-index 0000000..2e39487
---- /dev/null
-+++ b/meta-oe/recipes-devtools/jq/files/CVE-2026-39979.patch
-@@ -0,0 +1,33 @@
-+From 2f09060afab23fe9390cce7cb860b10416e1bf5f Mon Sep 17 00:00:00 2001
-+From: itchyny <itchyny@cybozu.co.jp>
-+Date: Mon, 13 Apr 2026 11:04:52 +0900
-+Subject: [PATCH] Fix out-of-bounds read in jv_parse_sized()
-+
-+This fixes CVE-2026-39979.
-+
-+Co-authored-by: Mattias Wadman <mattias.wadman@gmail.com>
-+
-+CVE: CVE-2026-39979
-+
-+Upstream-Status: Backport [https://github.com/jqlang/jq/commit/2f09060afab23fe9390cce7cb860b10416e1bf5f]
-+
-+Signed-off-by: Naman Jain <namanj1@kpit.com>
-+---
-+ src/jv_parse.c | 3 ++-
-+ 1 file changed, 2 insertions(+), 1 deletion(-)
-+
-+diff --git a/src/jv_parse.c b/src/jv_parse.c
-+index aa2054cc09..56847b5eaa 100644
-+--- a/src/jv_parse.c
-++++ b/src/jv_parse.c
-+@@ -893,8 +893,9 @@ jv jv_parse_sized_custom_flags(const char* string, int length, int flags) {
-+ 
-+   if (!jv_is_valid(value) && jv_invalid_has_msg(jv_copy(value))) {
-+     jv msg = jv_invalid_get_msg(value);
-+-    value = jv_invalid_with_msg(jv_string_fmt("%s (while parsing '%s')",
-++    value = jv_invalid_with_msg(jv_string_fmt("%s (while parsing '%.*s')",
-+                                               jv_string_value(msg),
-++                                              length,
-+                                               string));
-+     jv_free(msg);
-+   }
-diff --git a/meta-oe/recipes-devtools/jq/jq_%.bbappend b/meta-oe/recipes-devtools/jq/jq_%.bbappend
-new file mode 100644
-index 0000000..2eba699
---- /dev/null
-+++ b/meta-oe/recipes-devtools/jq/jq_%.bbappend
-@@ -0,0 +1,8 @@
-+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
-+
-+SRC_URI += "\
-+    file://CVE-2026-32316.patch \
-+    file://CVE-2026-33947.patch \
-+    file://CVE-2026-33948.patch \
-+    file://CVE-2026-39979.patch \
-+    "
--- 
-2.34.1
+         if self.opts['testimage']:
+             ctxs =3D {}
+             ctxs['succeeded'] =3D succeeded_pkggroups_ctx
+--=20
+2.51.0
 
 
