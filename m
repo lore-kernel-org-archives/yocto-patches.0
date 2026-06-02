@@ -1,205 +1,238 @@
-Return-Path: <daniel.turull@ericsson.com>
+Return-Path: <ticotimo@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5425CCD6E64
-	for <webhook@archiver.kernel.org>; Tue,  2 Jun 2026 13:18:37 +0000 (UTC)
-Received: from PA4PR04CU001.outbound.protection.outlook.com (PA4PR04CU001.outbound.protection.outlook.com [40.107.162.8])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.25004.1780406308656808198
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36A2ECD6E57
+	for <webhook@archiver.kernel.org>; Tue,  2 Jun 2026 15:12:00 +0000 (UTC)
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.688.1780413110886062089
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 02 Jun 2026 06:18:29 -0700
+ Tue, 02 Jun 2026 08:11:51 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@ericsson.com header.s=selector1 header.b=kyhileQ/;
- spf=pass (domain: ericsson.com, ip: 40.107.162.8, mailfrom: daniel.turull@ericsson.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RX0+KYCa9o1eU/ooJEBlDhiwd8ItSxSWIZ87spc1fc4uuSUV5/bu6qL+IgjTrsXWGxWbu+miI06+Jekbxl2cla1BAClOTfh10NcEpLkEnmmjNuyLsrxjBxMsAOmIrBCsEaJpq//1Xx7+FrtDmTCybhhf7egQSHZU2kBaXXFBulhyo+5L5MYkv7cQtnEGVf2AKpfs7zw9lK7CWYZCqo/LNM2OfSUXnk4bZ17dpT6AENLJxWVwJ78tVB69F+5IsfMZyFISRrrPFzgBAQCBR8lGsNFD7PNIzX1dqSo0aImyRmjjvXMDrX5Rh1R/4IjcJD6fmkqx8OEUYTKaQ8PIAP/15A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PqQ0WKfHQm25C+DRioye7aqPeofjL8BHWZRpKxcCg28=;
- b=cJNCLoc4siRq8XGFqVoqtnfLaas7KmZchNhDLFhcdup9nISvwr9o0XfzEgBDbwRkrMbao64LFr+GERkfMee7Rk/4V32CUXGHR/pByw2ZTYW+RAwAcrHn2BcdtVJLtupFePjBkZMz6PNH48HdE6vcbqn0/Javpj3hgtZc9jiSw+rYuencxgJKnePbBcfQadQ45XOsWz9EWhtDY5U9qKmXqO3VA4bLduUcDySHXnYp3V9qBlzM5DZsp+Tj520Ghq3VK1mBr5Y93jXEKepcEiJ7CcbYQrT7Rr6ChwY+ebsTpIjLwhDKKtvV2odN70h6z5qZctZIYkYRz/smV8fGQkTqVA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=ericsson.com; dmarc=pass action=none header.from=ericsson.com;
- dkim=pass header.d=ericsson.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ericsson.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PqQ0WKfHQm25C+DRioye7aqPeofjL8BHWZRpKxcCg28=;
- b=kyhileQ/r20f8p/UWvNP2qBEAaql8yT0wWQDAiODr80MoMwzFBH9OZhThVZW1Sk7NxLAWA/m8eojQntU7cAYRq9JuzYdxdiQ3xn1frmHHh3QDh3p3qVjlze5wQeh2lxGX6kJTa9IVVSO4w57/jH/FsvCkD/3vYK7Mh3bFKsEa/kF4XoeA6MBTlP1hpfEPiXgD/wWlbZyAzwtn8w1atOjggBPc50NRucFvW7sz054ysjTRIwUxu9qEpbqfRxioSKwbAOC5SupgwJbvoj8cUaky6EcqwyFYcJ1mxHEGk84ifYJCB/j8HuLA8s4d2FLHbVWjLq338gjQS0fTNaD6RlG7g==
-Received: from PA3PR07MB10721.eurprd07.prod.outlook.com (2603:10a6:102:4af::6)
- by PAWPR07MB10069.eurprd07.prod.outlook.com (2603:10a6:102:38f::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.71.16; Tue, 2 Jun 2026
- 13:18:24 +0000
-Received: from PA3PR07MB10721.eurprd07.prod.outlook.com
- ([fe80::afd3:17e5:1663:7ce7]) by PA3PR07MB10721.eurprd07.prod.outlook.com
- ([fe80::afd3:17e5:1663:7ce7%7]) with mapi id 15.21.0071.015; Tue, 2 Jun 2026
- 13:18:24 +0000
-From: Daniel Turull <daniel.turull@ericsson.com>
-To: Alexander Kanavin <alex.kanavin@gmail.com>
-CC: "yocto-patches@lists.yoctoproject.org"
-	<yocto-patches@lists.yoctoproject.org>
-Subject: RE: [AUH] [PATCH] upgrade-helper: add state module and --incremental
- mode
-Thread-Topic: [AUH] [PATCH] upgrade-helper: add state module and --incremental
- mode
-Thread-Index: AQHc8b7H+tnvwirvbkisErUGAsN5VbYrCCeAgAAsExA=
-Date: Tue, 2 Jun 2026 13:18:24 +0000
-Message-ID: 
- <PA3PR07MB10721A2F86807E44F9E2650E38A122@PA3PR07MB10721.eurprd07.prod.outlook.com>
-References: <20260601113410.1896488-1-daniel.turull@ericsson.com>
- <CANNYZj-whMyFZ2DRT7xZPafjCx_gQs-9rgSNnm_ao43PouxE2w@mail.gmail.com>
-In-Reply-To: 
- <CANNYZj-whMyFZ2DRT7xZPafjCx_gQs-9rgSNnm_ao43PouxE2w@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=ericsson.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PA3PR07MB10721:EE_|PAWPR07MB10069:EE_
-x-ms-office365-filtering-correlation-id: b0fee6f9-0b0b-4a95-edd8-08dec0a96ccf
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230040|366016|1800799024|376014|38070700021|6133799003|18002099003|22082099003|56012099006|11063799006|4143699003|5023799004;
-x-microsoft-antispam-message-info: 
- 6YJipw28hO7H+r82EqilMKjDE+lMNJT41eG9FH3VTVcGHCUvv8LOrcueQLwjVkQxl3EPUuoERcA4KocEIoBbEIZUMSETchN8+13NZaTE0hpUwKr5ayh7QUpc3PnlBNum0WrASsGM23IvOjFtqJWn4njySbgpzI4m+th2j+7URZeAdhUKUMZV6INj+LX0Lm2JO4c8RF0ibgVJADLhrwNxbKzQAbWq1K0WTYPD4lLd25nalQFxapDtWpFnL0J0GnDzAWgoa6h3QaoZaWMGxYNiWX1p53Ws/7xuwwvJjowvjPlsldtwT97FggxIoGL7sOPyXui08VpLXOuUR8yqfoJOotEKU6KdLKxMIkOvISHO0ImmtfxDsDR1rYQ4e1Tq3TzYO3/vJWsakDOLVHYljaTF4iWCEZtwVML/188UfsrWnccHi/QorzTyc7UZGs+y9d7kbKXO8cndM2zssgcHPcYy/PiNSZ1xt1Klotil7Sb2RicTJs+Icx7tq55Wy45dsxYwAKmfKjJwDoQWl62f3d2+DGqz+yMZz3Xowi/vfjnjwlCRaV54hoiJ1BkQDdkz7yVpfKyi4wnLPDumGHrdozHrTqYofh9Oo1xe+9Yxy6EN31KO8RHMopRS10hBjz3bLpenu+CMvb6Q9cMnSY6Im2ftVpVgdbcprm3cNBKino7xJwzW5cSzcpQ7T1XLnm9/3MtqWXMsv0KC7C9TI8MMQWeSrrqtW2D3WnPEKOFk/aCe0xrgDWqYncyq7e7HohWcMAaX
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA3PR07MB10721.eurprd07.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700021)(6133799003)(18002099003)(22082099003)(56012099006)(11063799006)(4143699003)(5023799004);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?utf-8?B?Q2VETlNGTVdaNUJ6dXNMSDVFYm1IcllFdGRZcHZOd1l3N1lHNE0xMFdmeXJZ?=
- =?utf-8?B?c2F5NTdTWlo4WE9TQmttaEtXL1hZZXF0VDd2MWFnRHgraDNlRkRyWE9OQ2o1?=
- =?utf-8?B?Mk9RSXFXSkdMRG9ic1ZmNm5mUGJwSi9WVEVpS0lqY0E3Nkl3TlZDcVVHd3I1?=
- =?utf-8?B?d2Rab3R0Y3NBaktSaVU1bzJVME1VQ1NtTnkvQjRyMjN5WkxoZFM1UFA2U09B?=
- =?utf-8?B?THBaOVdPbTlwNkZpcTlFTzNOaVNVcjVCOXYzNS91UDJTU1E1cnhyay8vVGw3?=
- =?utf-8?B?b3pvVDhpVHlNMlU0VlUzTFR1YXA3MnZ0MUZMRVRkeWlIQitmWFZUcCtsemlH?=
- =?utf-8?B?bzlrZUFaUlp4ZXVnTksxeTQvb1RucUl2cTl3RFBYTVg2UDBDdHR4ZWtaWmVD?=
- =?utf-8?B?RXV3N0FRMFMrUFlHWUVDT21XZWgzbTVKaXFFVnl5WmgwbFY2V2gzeDhjN2tO?=
- =?utf-8?B?NnljWU9kMjVJK3ppaDlHSVNTaTAwQWp4cWE3Y0hDTGdZZHIxVnloaEUzeXlN?=
- =?utf-8?B?R3BqSXM3V0xlOUtnRjRaQWpGYjhIVEFObjUvdkdramMyWTJvVG5sdzRpRnFZ?=
- =?utf-8?B?VFlrbnEzOTdmZGM0UTZqajhNN2R3dzF0eGI1Nzltay9SMUFQdDV6U3Q4ZTRu?=
- =?utf-8?B?NGp5dGhrVnhLMk9yd292QzlkTCtpSFRUenF4VEp2bGZ5Mm1tZEd3Q0ZPZ2Vn?=
- =?utf-8?B?WjBRemh0elBuUHg4eTNvcGFFRzgzbUFtWXdPc3N2SS9wUXhCZGxtMjZ0blVF?=
- =?utf-8?B?ejRkaGdhOGhXdzhrTkhzbkZ2U1BzcGhZZVRYbWpsRWtyOHo0ZEtxOFpsREh4?=
- =?utf-8?B?Nmp2OGg2ekx0KzJVVlRVamNJK2Jab0puNEN6RGhaRjBkVFdiejZUVERwYWg3?=
- =?utf-8?B?NWg4Rjc0K2RabFAydkgvb2xLeVl4VGFCN2RhSHpWTjh2RTAyK1NTYzROd2lK?=
- =?utf-8?B?a2QvL2hVNVpSKzc5NjJkK2dqVzhIcFRkVjdaZ1VYbGhXbTVBcHBJWTBRYW4z?=
- =?utf-8?B?S3lld0o5SFg1eDVMSmYxUUdnQzN6RmRGUE5paHp5S0QxaXVvZXhBSnVkZTVw?=
- =?utf-8?B?aFJCUWU2NFpjdUdadXh6dkFvYmVnTFAvZHVsa1l6Mmk5TjR6YVRSMWozM0pZ?=
- =?utf-8?B?dEJOc1pRYXhvYkVObjNvREJ3dkJ6aTZWVnJudnVsRHJZa1pPenJVUnJZTmQ0?=
- =?utf-8?B?UjZaZklYamVRUm8xajFWUnVVdHJLMy9scllIY2VOeDBQcnpMMFNmazg3Z1Zx?=
- =?utf-8?B?YXpnUVBsbUJ3RVpqUUZhNlQ1bGdSa3hhWGV2TkZCU1Ztc2tGWkYxS20zZXlU?=
- =?utf-8?B?YzhGVU1BS0tub3IzSXhENmxsQ1FqR2ovK2dJblc1MnhITk1FWllsZm5ieDZ0?=
- =?utf-8?B?YkxBK2YyTkRYUzBuL2Vwb1k2MWFaMnZUR3FQSkIxVnREWitOWUEvTDdpZk85?=
- =?utf-8?B?Q25jUWkxTEJkS2JMRzJjVi9pcjh4T2M1RFJkSjBHNU5jSzBJbzZpd1ovVUxL?=
- =?utf-8?B?OUhOQktZN1BEaHZVRE10eERhTnNqN1JGWTVKZVdDWUNVVElyR09JTlhEM1Rh?=
- =?utf-8?B?VGlPdDVhZytCSHBmUTV3eWppa0swUjRFS1h3SWV5cmQ3QUNXQm5vM3p5UTRM?=
- =?utf-8?B?N21MbnN4em5yNmlqUE5ESm53Mk1XMC9XR2xyK1VyMVl5alBiSlppanBFUEZB?=
- =?utf-8?B?Z1hORnVXNWQrRFNjVlljOVVIT01FYnFkUVBtNDh1OGw5dzM4anIzM2xFdG82?=
- =?utf-8?B?K3dLeXBLKy9RdFk4bU1xM2lNVDZNTzdxdkdBOHVSeTlXNmk1L3huTE9kYlV2?=
- =?utf-8?B?VFhJbWRKZ1hkRjllT28zYWM1T2l5dlBjVG9kRCt2c1YvODUrajZWUURiZW9G?=
- =?utf-8?B?bDVQeG5uOTFoYnhGQWlLcWg4RGJrU3BHTXl4MU5LV2xZWTRiNzN6VEJiSXJo?=
- =?utf-8?B?TFpncWlsUFdKM0d2YWJxbFBhbWFUUTF6V0ZwZFdGZ0xKK2JEeHpYN2VkVkRv?=
- =?utf-8?B?OW0zRE5vZThqRlc4bmZ3NE1lTjc3ZTQ5cUtnYXRzMWlHS05DMDdheGE2NGZD?=
- =?utf-8?B?NFhzQ2t6OTJ3cHQ1VjBpcEM0eDFMbGtyNEMzbWxpS250SXRPSERGcVJ5V1NK?=
- =?utf-8?B?bFEwdjVxNW5lQWdXWHR2RnQ3RTJVOWJhQWFSaXNYM3AvbmNiQmZqbFZvQW03?=
- =?utf-8?B?ZFRrZ1E5V3gwUlN5cTUzcmw4QnNPcGdvSDU4anpLOW9vTW5mQWx5L3VuMHNy?=
- =?utf-8?B?dE9YbHZLQVh2MzZhUDM3dUNNVGNFa0RBWmdlZjRqc3ZMaFZpaW9pNXFKNFpM?=
- =?utf-8?B?QnNLdWRJS2Q1T3ZTVWZQYWlsUklGbDYzR1hmVG9CYjdLQStVdWJiZz09?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=KY1lIvWH;
+ spf=pass (domain: gmail.com, ip: 209.85.167.42, mailfrom: ticotimo@gmail.com)
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5aa68d7d757so2505733e87.0
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 02 Jun 2026 08:11:50 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1780413109; cv=none;
+        d=google.com; s=arc-20240605;
+        b=Spftdp3B9L+YwEUVM/CB14HY5/XrGtP6HUx42zGHzgCQKlmY9IhiKw5+GjIu3RrWCC
+         F5A6krHVVhz7oKacPJfbaIAPAwm+XF2yVNvZCkHMGiU92GfX4K+uNrz/FBMP1H9+MGN6
+         WNwIi1LUIYIrHqipGhBLbRmg9QQwoHDadOqTKMlTaWZ/Rmd0aGEoKTaovu6Q779m5e/i
+         6Clo0T9F+cJpUMgdvM+NAxLtVeIjHrvq/ivK3pjMqTCeD2ahDd77YQVE145Xgp74KO9q
+         tJ9mctC/bmW1isdAhafXmtMo6dKzVxyaQBY/fv4TnMZ2JHI+npSYp/AE+j7vicRbOrOP
+         79Nw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :dkim-signature;
+        bh=ull4X3LoKUzoP6De7x9SAWIW3FkOo1enrtEd5l0uXJw=;
+        fh=moagCLbVVFQO5kw1aLdWVpJz+dpYgsdIWNCHzBu4K0w=;
+        b=HfR+6F6gkRSAu0W5BV8zEzufdF+Ahg+wz4Kb+g8iAORK+HZgb7l9BGqZnhWmEidV2Q
+         AAU34IoCyRprUKfzVREVfZdSfgMw4MJQiHiqw/76nG8CiYhfZz/FHFKYyhFsxPbo3sRQ
+         qQT1D4cAO78fkqCNd36LGUvH77PTYOuoifVWgM5i2Cf127ypIupcJhcx/GV+1t3rF6AO
+         zRZMn0w10hc8Os0o2EzZr1/42wy7E06h2SmIyeL7bWK4EvJEENzjOdQTpglKD+HhTc/F
+         TgsqIBGWZ3wAo5ytnWEl9Nd3dDiGdvFX1c1MBp40foDGkcEuj4g5ZvbOVLRdluYn+C/m
+         KosA==;
+        darn=lists.yoctoproject.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1780413109; x=1781017909; darn=lists.yoctoproject.org;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ull4X3LoKUzoP6De7x9SAWIW3FkOo1enrtEd5l0uXJw=;
+        b=KY1lIvWHYV5ZkwfEwAScziZcmRskvyCW5OPJANoJpIuMszM3WITXHISgq3EOj2l1D7
+         iqrzuQkwmRLy1MbLnyRzW/Qi2Fy+yHn2spb/oVYKmad6zmS5KX1uQx4whuaGWdhlz365
+         4S3OI6mAigbjsunX/GZORXiMfuTyFwWAdx87fM5fJBDTaly3DFpDIjxkIeAWEWnb5ZET
+         m+6W+RvcJdmjuei2B4x+lZErtq/LpqC2w2EbyfCGueAXOIm195WonqEt/5eylL7BMIhn
+         dJs1vX6YS0jIhlTk4eOK70g7/NO4dGlElh/fEbmdFQ1ASQ5KXTemqwUFHcZSY0vjsy26
+         32fQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780413109; x=1781017909;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ull4X3LoKUzoP6De7x9SAWIW3FkOo1enrtEd5l0uXJw=;
+        b=UCkkkSATpUd07mleDjq4QEVgnOa3HE+Gcrsw3X8SKKIW9OIZGehPr8XnlYKgxckMUW
+         J/Zb+760J8KDcXGuT6BF8vWSBoliQ1ryCQyYFBx55AOn/JmrC4f4yjj8gm+TyK3CLb4l
+         TBbsvmHApr9HgvzTP7E0yPA7abD7susiTbIoRWlT0f2+hqN6l2rF5xd9As3dVYTSU4GE
+         KA3QJ25JGuVT+mDhvh5YHEMFf5JCZWbU2R1NsXhDMAAMYMxGa8WoYCMhGU+pp5dRFIaU
+         QILay7nfeJns1AIkLGMvfIDwnCF0ehO6c7/uxN6HtzdAKibUvoS4xdS+UNIiKeGTCS0L
+         DRHw==
+X-Gm-Message-State: AOJu0YzszpRL4pc5x90isp/ZdTfTf++Lk5rV0dytGR1kOd4cPri1I97N
+	KRmt4khE2TVEP5TVo61SgI0PgchV8XkDeXOpFXZdAd64MD4eGFCFATSJJiHplIa4RA0BYl9fnd8
+	GrxlmtZ4TQ6VAvWJkox1bQUeEH4F4yqQQfg==
+X-Gm-Gg: Acq92OFMY1pb75gGT/BTHb8xSOMlP5TPo/m3QK4EwpWi6trbAWobeAEH4yV0p60DapL
+	+dFCZvdTHFLeEgNGZwVWRmUGIGXNJEtY6DHl0N7Tl0m4Nb9jkSy1umL/ih98riSc7X0ZxnhJ4IS
+	c3Klwc4+qzbjO4wSbZ6GZp+KXFbiC17Z7A+nNnUYWlq6dS9/7p/07mpt26pUz73oMCiIbnTA5xF
+	qQO/tA3vrFcuPwbyC3bTb8Kitk4+jutcbolAEwm8DfnUeHa00tKvdhDrdFVbz1kdCQUacxdHFcU
+	Di6PMgpNWcRhF5W7/A==
+X-Received: by 2002:a05:6512:1328:b0:5aa:7129:5d43 with SMTP id
+ 2adb3069b0e04-5aa7129604amr2137915e87.26.1780413108524; Tue, 02 Jun 2026
+ 08:11:48 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: ericsson.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PA3PR07MB10721.eurprd07.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b0fee6f9-0b0b-4a95-edd8-08dec0a96ccf
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Jun 2026 13:18:24.0680
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: MzVjdhr2z/pcP8tlg/96hqKnEa3SFYt+Lt5t1MqLuvEdl85deBUC6IIaZR5xzJFKIkUcNwJaLGsxtRWNTVjvkpRtnCjFKM6D3niLt1Q7RVQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR07MB10069
+References: <cover.1780354513.git.tim.orling@konsulko.com> <aff1838ffcfb3e4c2aa1fe455dc0f74f87effdf6.1780354513.git.tim.orling@konsulko.com>
+ <a79b6c395adcfaf933968401655642f018d53676.camel@pbarker.dev>
+In-Reply-To: <a79b6c395adcfaf933968401655642f018d53676.camel@pbarker.dev>
+From: Tim Orling <ticotimo@gmail.com>
+Date: Tue, 2 Jun 2026 08:11:34 -0700
+X-Gm-Features: AVHnY4LYN3h8fhKHwDAv_RPiaUlLwgFeIKXA6uHnuYjO7E_iLrKX9whWlqjXdw8
+Message-ID: <CANx9H-D_2Qf2_Jw2h6AhRpHUhQfWZpMhmdGqpciQ7LFMGJSzCg@mail.gmail.com>
+Subject: Re: [yocto-patches] [yocto-autobuilder-helper][PATCH v2 10/10]
+ config.json: add 'containers-library' build job
+To: yocto-patches@lists.yoctoproject.org
+Content-Type: multipart/alternative; boundary="000000000000e31924065346ba39"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 02 Jun 2026 13:18:37 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4113
+ <yocto-patches@lists.yoctoproject.org>; Tue, 02 Jun 2026 15:12:00 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4114
 
-VGhhbmtzIGZvciB0aGUgcmV2aWV3Lg0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+
-IEZyb206IEFsZXhhbmRlciBLYW5hdmluIDxhbGV4LmthbmF2aW5AZ21haWwuY29tPg0KPiBTZW50
-OiBUdWVzZGF5LCAyIEp1bmUgMjAyNiAxMTo1NQ0KPiBUbzogRGFuaWVsIFR1cnVsbCA8ZGFuaWVs
-LnR1cnVsbEBlcmljc3Nvbi5jb20+DQo+IENjOiB5b2N0by1wYXRjaGVzQGxpc3RzLnlvY3RvcHJv
-amVjdC5vcmcNCj4gU3ViamVjdDogUmU6IFtBVUhdIFtQQVRDSF0gdXBncmFkZS1oZWxwZXI6IGFk
-ZCBzdGF0ZSBtb2R1bGUgYW5kIC0tDQo+IGluY3JlbWVudGFsIG1vZGUNCj4gDQo+IE9uIE1vbiwg
-MSBKdW4gMjAyNiBhdCAxNDowNCwgPGRhbmllbC50dXJ1bGxAZXJpY3Nzb24uY29tPiB3cm90ZToN
-Cj4gPiBXaXRob3V0IHRoaXMsIGV2ZXJ5IEFVSCBydW4gcmV0cmllcyBhbGwgY2FuZGlkYXRlcyBy
-ZWdhcmRsZXNzIG9mIHByZXZpb3VzDQo+ID4gb3V0Y29tZXMsIHdhc3RpbmcgdGltZSBvbiByZWNp
-cGVzIHRoYXQgY29uc2lzdGVudGx5IGZhaWwgb3Igd2VyZSBhbHJlYWR5DQo+ID4gdXBncmFkZWQg
-cmVjZW50bHkuDQo+IA0KPiBUaGFua3MgZm9yIHdvcmtpbmcgb24gdGhlc2UsIG11Y2ggYXBwcmVj
-aWF0ZWQhIENvbW1lbnRzIGJlbG93Lg0KPiANCj4gPiArICAgIGRlZiBzaG91bGRfc2tpcChzZWxm
-LCBwbiwgdmVyc2lvbik6DQo+ID4gKyAgICAgICAgZW50cnkgPSBzZWxmLmRhdGEuZ2V0KHBuLCB7
-fSkuZ2V0KHZlcnNpb24pDQo+ID4gKyAgICAgICAgaWYgbm90IGVudHJ5Og0KPiA+ICsgICAgICAg
-ICAgICByZXR1cm4gRmFsc2UNCj4gPiArICAgICAgICBhZ2UgPSB0aW1lLnRpbWUoKSAtIGVudHJ5
-LmdldCgidGltZXN0YW1wIiwgMCkNCj4gPiArICAgICAgICBpZiBlbnRyeS5nZXQoInJlc3VsdCIp
-ID09IFJFU1VMVF9TVUNDRVNTOg0KPiA+ICsgICAgICAgICAgICByZXR1cm4gYWdlIDwgc2VsZi5z
-dWNjZXNzX21heF9hZ2UNCj4gPiArICAgICAgICByZXR1cm4gYWdlIDwgc2VsZi5jb29sZG93bg0K
-PiA+ICsNCj4gPiArICAgIGRlZiBfcHJ1bmUoc2VsZik6DQo+ID4gKyAgICAgICAgIiIiUmVtb3Zl
-IHN0YWxlIGVudHJpZXMgb2xkZXIgdGhhbiB0aGVpciByZXNwZWN0aXZlIG1heC1hZ2UuIiIiDQo+
-ID4gKyAgICAgICAgbm93ID0gdGltZS50aW1lKCkNCj4gPiArICAgICAgICBmb3IgcG4gaW4gbGlz
-dChzZWxmLmRhdGEpOg0KPiA+ICsgICAgICAgICAgICB2ZXJzaW9ucyA9IHNlbGYuZGF0YVtwbl0N
-Cj4gPiArICAgICAgICAgICAgZm9yIHZlciBpbiBsaXN0KHZlcnNpb25zKToNCj4gPiArICAgICAg
-ICAgICAgICAgIGVudHJ5ID0gdmVyc2lvbnNbdmVyXQ0KPiA+ICsgICAgICAgICAgICAgICAgYWdl
-ID0gbm93IC0gZW50cnkuZ2V0KCJ0aW1lc3RhbXAiLCAwKQ0KPiA+ICsgICAgICAgICAgICAgICAg
-aWYgZW50cnkuZ2V0KCJyZXN1bHQiKSA9PSBSRVNVTFRfU1VDQ0VTUzoNCj4gPiArICAgICAgICAg
-ICAgICAgICAgICBpZiBhZ2UgPiBzZWxmLnN1Y2Nlc3NfbWF4X2FnZToNCj4gPiArICAgICAgICAg
-ICAgICAgICAgICAgICAgZGVsIHZlcnNpb25zW3Zlcl0NCj4gPiArICAgICAgICAgICAgICAgIGVs
-c2U6DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgaWYgYWdlID4gc2VsZi5jb29sZG93bjoNCj4g
-PiArICAgICAgICAgICAgICAgICAgICAgICAgZGVsIHZlcnNpb25zW3Zlcl0NCj4gPiArICAgICAg
-ICAgICAgaWYgbm90IHZlcnNpb25zOg0KPiA+ICsgICAgICAgICAgICAgICAgZGVsIHNlbGYuZGF0
-YVtwbl0NCj4gDQo+IEkgYW0gc29tZXdoYXQgY29uZnVzZWQgYXMgdG8gaG93IHRoZXNlIGZ1bmN0
-aW9ucyBjb21wbGVtZW50IGVhY2gNCj4gb3RoZXIsIGJlY2F1c2UgdGhleSBzZWVtIHRvIHJlcGVh
-dCBlYWNoIG90aGVyJ3MgdGltZXN0YW1wIGxvZ2ljLiBJZg0KPiBlbnRyaWVzIHRoYXQgYXJlIHRv
-byBvbGQgYXJlIGFscmVhZHkgcHJ1bmVkIGF0IHRoZSBzdGFydCwgdGhlbiB0aGUNCj4gcmVtYWlu
-aW5nIGVudHJpZXMgd2lsbCBhbHdheXMgaGF2ZSB0aGVpciBhZ2UgbGVzcyB0aGFuIG1heGltdW0N
-Cj4gcGVyaW9kcywgYW5kIGl0J3Mgbm90IG5lY2Vzc2FyeSB0byBjb21wYXJlIHRpbWVzIGluIHNo
-b3VsZF9za2lwKCksIGFuZA0KPiBpdCBzaG91bGQgc2ltcGx5IHJldHVybiBUcnVlLiBObz8NCg0K
-WWVzLCBteSBmaXJzdCBpdGVyYXRpb24gaGFkIG9ubHkgc2hvdWxkX3NraXAgYW5kIHRoZW4gSSBh
-ZGRlZCB0aGUgcHJ1bmUuIA0KWW91ciBzdWdnZXN0aW9uIGlzIGNsZWFuZXIuIEknbGwgZml4IGl0
-IGluIHYyLg0KDQo+IA0KPiBJIGFsc28gdGhpbmsgdGhhdCBhbnkgJ2RlY2lzaW9ucycgcmVnYXJk
-aW5nIHBydW5pbmcsIGFuZCBza2lwcGluZw0KPiBzaG91bGQgYmUgYXQgbGVhc3QgcHJpbnRlZCBv
-dXQsIHNvIHRoYXQgdGhlIGxvZyBjb250YWlucyBpbmZvcm1hdGlvbg0KPiBhYm91dCB3aHkgc29t
-ZXRoaW5nIHdhc24ndCBhdHRlbXB0ZWQsIG9yIHdoeSBpdCB3YXMgYXR0ZW1wdGVkIGFnYWluLA0K
-PiBpbmNsdWRpbmcgaW5mb3JtYXRpb24gYWJvdXQgd2hlbiBpdCB3YXMgYXR0ZW1wdGVkIHByZXZp
-b3VzbHkgYW5kIHdoYXQNCj4gd2FzIHRoZSByZXN1bHQgdGhlbi4NCg0KSSdsbCBhZGQgYSBsb2cg
-ZW50cnkgZm9yIGl0IGluIHYyLg0KDQo+IA0KPiA+IEBAIC01MjAsNiArNTQyLDEwIEBAIGNsYXNz
-IFVwZGF0ZXIob2JqZWN0KToNCj4gPiAgICAgICAgICAgICAgICAgIGdbJ2Vycm9yJ10gPSBlDQo+
-ID4gICAgICAgICAgICAgICAgICBmYWlsZWRfcGtnZ3JvdXBzX2N0eC5hcHBlbmQoZykNCj4gPg0K
-PiA+ICsgICAgICAgICAgICAjIENhcHR1cmUgdXBncmFkZSBlcnJvciBiZWZvcmUgY29tbWl0X2No
-YW5nZXMoKSB3aGljaCBtYXkNCj4gPiArICAgICAgICAgICAgIyBvdmVyd3JpdGUgZ1snZXJyb3In
-XSB3aXRoIGEgZ2l0IGNvbW1pdCBmYWlsdXJlLg0KPiA+ICsgICAgICAgICAgICB1cGdyYWRlX2Vy
-ciA9IGcuZ2V0KCdlcnJvcicpIGlmIHNlbGYuc3RhdGUgZWxzZSBOb25lDQo+ID4gKw0KPiANCj4g
-U3VjaCBzcGVjaWFsLWNhc2luZyBhbHdheXMgbWFrZXMgbWUgYSBiaXQgdW5lYXN5LiBXaGF0IGlz
-IHRoZSBzY2VuYXJpbw0KPiB3aGVyZSB0aGlzIG1hdHRlcnM/IERpZCB5b3UgaGl0IHRoYXQgaW4g
-dGVzdGluZz8gSWYgdGhlIHVwZ3JhZGUgaXRzZWxmDQo+IHN1Y2NlZWRlZCwgYnV0IHRoZSBjb21t
-aXQgZmFpbGVkLCB0aGVuIHRoZSBvdmVyYWxsIHJlc3VsdCBpcyAnZmFpbGVkJywNCj4gYW5kIHdl
-IHNob3VsZG4ndCByb2xsIGl0IGJhY2suDQoNCkkgY2Fubm90IHJlcHJvZHVjZSBpdCBub3cuIEkg
-d2FzIG92ZXIgY29uc2VydmF0aXZlIHdpdGggdGhlIGZhaWx1cmVzLiAgSSdsbCBkcm9wIGl0Lg0K
-PiANCj4gPiArICAgICAgICAgICAgaWYgc2VsZi5zdGF0ZToNCj4gPiArICAgICAgICAgICAgICAg
-ICMgVXBncmFkZU5vdE5lZWRlZEVycm9yIG1lYW5zIHRoZSByZWNpcGUgaXMgYWxyZWFkeSBjdXJy
-ZW50LA0KPiA+ICsgICAgICAgICAgICAgICAgIyB3aGljaCBpcyBhIHN1Y2Nlc3NmdWwgb3V0Y29t
-ZSDigJQgbm8gcmV0cnkgbmVlZGVkLg0KPiA+ICsgICAgICAgICAgICAgICAgaWYgbm90IHVwZ3Jh
-ZGVfZXJyIG9yIGlzaW5zdGFuY2UodXBncmFkZV9lcnIsDQo+IFVwZ3JhZGVOb3ROZWVkZWRFcnJv
-cik6DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgcmVzdWx0ID0gUkVTVUxUX1NVQ0NFU1MNCj4g
-PiArICAgICAgICAgICAgICAgIGVsc2U6DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgcmVzdWx0
-ID0gUkVTVUxUX0ZBSUxVUkUNCj4gDQo+IExvb2tpbmcgYXQgY29kZSwgdGhlcmUgaXNuJ3QgYW55
-IHBsYWNlIHdoZXJlIFVwZ3JhZGVOb3ROZWVkZWRFcnJvciBpcw0KPiBhY3R1YWxseSByYWlzZWQs
-IHNvIHlvdSBjb3VsZCBwcm9iYWJseSBhZGQgYSBwYXRjaCB0aGF0IHJlbW92ZXMgaXQNCj4gYWx0
-b2dldGhlciBmb3IgbGFjayBvZiB1c2U/DQoNCkknbGwgY3JlYXRlIGEgcGF0Y2ggdG8gcmVtb3Zl
-IGl0IGFuZCByZW1vdmUgZnJvbSB0aGUgaW5jcmVtZW50YWwgY29kZS4NCg0KSSdsbCByZXJ1biB0
-aGUgZnVsbCB0ZXN0IHdpdGggdG9kYXkncyBtYXN0ZXIgYW5kIEknbGwgc2VuZCBhIHYyIHdoZW4g
-SSdtIGhhcHB5IHdpdGggdGhlIHRlc3RpbmcuDQoNClRoYW5rcywNCkRhbmllbA0K
+--000000000000e31924065346ba39
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Jun 2, 2026 at 4:02=E2=80=AFAM Paul Barker via lists.yoctoproject.o=
+rg <paul=3D
+pbarker.dev@lists.yoctoproject.org> wrote:
+
+> On Mon, 2026-06-01 at 16:18 -0700, Tim Orling via lists.yoctoproject.org
+> wrote:
+> > From: Tim Orling <tim.orling@konsulko.com>
+> >
+> > Add 'containers-library' build job that build container images on top
+> > of the vcontainer-tarball SDK:
+> >
+> >   * original container images from the intial "container-cross-install"
+> >     branch of  meta-virtualization
+> >     - container-base
+> >     - app-container-curl
+> >   * additional images modelled after docker.io/library/*
+> >     - app-container-python
+> >     - app-container-mosquitto
+> >     - app-container-valkey
+> >     - app-container-nginx
+> >   * Tag containers with versions based on the recipe to which they are
+> >     mapped, e.g. python:3, python:3.14, python:3.14.5.
+>
+> These version tags may exist in docker library/hardened images, but are
+> they actually appropriate for the images we create?
+>
+
+They are tagged with 'wrynose' and 'yocto-6.0' (and release builds would be
+tagged with full 'yocto-6.0.n').
+
+We need to think about container consumers, not just Yocto users. Container
+consumers want to know
+what version of the tool is in the container they are consuming, so we
+should follow the same tagging
+pattern. Tags are cheap (they are just an alias for the same hash).
+
+
+>
+> I would expect python:master, python:blacksail, etc tags which track our
+> branches.
+>
+> Best regards,
+>
+> --
+> Paul Barker
+>
+>
+>
+> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+> Links: You receive all messages sent to this group.
+> View/Reply Online (#4112):
+> https://lists.yoctoproject.org/g/yocto-patches/message/4112
+> Mute This Topic: https://lists.yoctoproject.org/mt/119603250/924729
+> Group Owner: yocto-patches+owner@lists.yoctoproject.org
+> Unsubscribe:
+> https://lists.yoctoproject.org/g/yocto-patches/leave/13169857/924729/1023=
+951714/xyzzy
+> [ticotimo@gmail.com]
+> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+>
+>
+>
+
+--000000000000e31924065346ba39
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
+mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Tue, Jun 2, =
+2026 at 4:02=E2=80=AFAM Paul Barker via <a href=3D"http://lists.yoctoprojec=
+t.org">lists.yoctoproject.org</a> &lt;paul=3D<a href=3D"mailto:pbarker.dev@=
+lists.yoctoproject.org">pbarker.dev@lists.yoctoproject.org</a>&gt; wrote:<b=
+r></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex=
+;border-left:1px solid rgb(204,204,204);padding-left:1ex">On Mon, 2026-06-0=
+1 at 16:18 -0700, Tim Orling via <a href=3D"http://lists.yoctoproject.org" =
+rel=3D"noreferrer" target=3D"_blank">lists.yoctoproject.org</a><br>
+wrote:<br>
+&gt; From: Tim Orling &lt;<a href=3D"mailto:tim.orling@konsulko.com" target=
+=3D"_blank">tim.orling@konsulko.com</a>&gt;<br>
+&gt; <br>
+&gt; Add &#39;containers-library&#39; build job that build container images=
+ on top<br>
+&gt; of the vcontainer-tarball SDK:<br>
+&gt; <br>
+&gt;=C2=A0 =C2=A0* original container images from the intial &quot;containe=
+r-cross-install&quot;<br>
+&gt;=C2=A0 =C2=A0 =C2=A0branch of=C2=A0 meta-virtualization<br>
+&gt;=C2=A0 =C2=A0 =C2=A0- container-base<br>
+&gt;=C2=A0 =C2=A0 =C2=A0- app-container-curl<br>
+&gt;=C2=A0 =C2=A0* additional images modelled after <a href=3D"http://docke=
+r.io/library/*" rel=3D"noreferrer" target=3D"_blank">docker.io/library/*</a=
+><br>
+&gt;=C2=A0 =C2=A0 =C2=A0- app-container-python<br>
+&gt;=C2=A0 =C2=A0 =C2=A0- app-container-mosquitto<br>
+&gt;=C2=A0 =C2=A0 =C2=A0- app-container-valkey<br>
+&gt;=C2=A0 =C2=A0 =C2=A0- app-container-nginx<br>
+&gt;=C2=A0 =C2=A0* Tag containers with versions based on the recipe to whic=
+h they are<br>
+&gt;=C2=A0 =C2=A0 =C2=A0mapped, e.g. python:3, python:3.14, python:3.14.5.<=
+br>
+<br>
+These version tags may exist in docker library/hardened images, but are<br>
+they actually appropriate for the images we create?<br></blockquote><div><b=
+r></div><div>They are tagged with &#39;wrynose&#39; and &#39;yocto-6.0&#39;=
+ (and release builds would be tagged with full &#39;yocto-6.0.n&#39;).</div=
+><div><br></div><div>We need to think about container consumers, not just Y=
+octo users. Container consumers want to know</div><div>what version of the =
+tool is in the container they are consuming, so we should follow the same t=
+agging</div><div>pattern. Tags are cheap (they are just an alias for the sa=
+me hash).</div><div>=C2=A0</div><blockquote class=3D"gmail_quote" style=3D"=
+margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-lef=
+t:1ex">
+<br>
+I would expect python:master, python:blacksail, etc tags which track our<br=
+>
+branches.<br>
+<br>
+Best regards,<br>
+<br>
+-- <br>
+Paul Barker<br>
+<br>
+<br>
+<br>
+-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-<br>
+Links: You receive all messages sent to this group.<br>
+View/Reply Online (#4112): <a href=3D"https://lists.yoctoproject.org/g/yoct=
+o-patches/message/4112" rel=3D"noreferrer" target=3D"_blank">https://lists.=
+yoctoproject.org/g/yocto-patches/message/4112</a><br>
+Mute This Topic: <a href=3D"https://lists.yoctoproject.org/mt/119603250/924=
+729" rel=3D"noreferrer" target=3D"_blank">https://lists.yoctoproject.org/mt=
+/119603250/924729</a><br>
+Group Owner: <a href=3D"mailto:yocto-patches%2Bowner@lists.yoctoproject.org=
+" target=3D"_blank">yocto-patches+owner@lists.yoctoproject.org</a><br>
+Unsubscribe: <a href=3D"https://lists.yoctoproject.org/g/yocto-patches/leav=
+e/13169857/924729/1023951714/xyzzy" rel=3D"noreferrer" target=3D"_blank">ht=
+tps://lists.yoctoproject.org/g/yocto-patches/leave/13169857/924729/10239517=
+14/xyzzy</a> [<a href=3D"mailto:ticotimo@gmail.com" target=3D"_blank">ticot=
+imo@gmail.com</a>]<br>
+-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-<br>
+<br>
+<br>
+</blockquote></div></div>
+
+--000000000000e31924065346ba39--
 
