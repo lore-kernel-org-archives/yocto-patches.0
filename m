@@ -2,23 +2,23 @@ Return-Path: <mark.hatle@kernel.crashing.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3855DCD6E55
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46D6BCD6E71
 	for <webhook@archiver.kernel.org>; Wed,  3 Jun 2026 20:39:21 +0000 (UTC)
 Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.29656.1780519152937675784
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.29655.1780519152835833287
  for <yocto-patches@lists.yoctoproject.org>;
  Wed, 03 Jun 2026 13:39:13 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: kernel.crashing.org, ip: 63.228.1.57, mailfrom: mark.hatle@kernel.crashing.org)
 Received: from kernel.crashing.org.net (70-99-78-136.nuveramail.net [70.99.78.136] (may be forged))
-	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 653Kd9V42263173;
+	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 653Kd9V32263173;
 	Wed, 3 Jun 2026 15:39:11 -0500
 From: Mark Hatle <mark.hatle@kernel.crashing.org>
 To: yocto-patches@lists.yoctoproject.org
 Cc: seebs@seebs.net, richard.purdie@linuxfoundation.org
-Subject: [pseudo][PATCH 6/6] client: permissions drop setuid and setgid
-Date: Wed,  3 Jun 2026 15:39:08 -0500
-Message-Id: <1780519148-30836-7-git-send-email-mark.hatle@kernel.crashing.org>
+Subject: [pseudo][PATCH 5/6] tests: Add setuid permission check
+Date: Wed,  3 Jun 2026 15:39:07 -0500
+Message-Id: <1780519148-30836-6-git-send-email-mark.hatle@kernel.crashing.org>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1780519148-30836-1-git-send-email-mark.hatle@kernel.crashing.org>
 References: <1780519148-30836-1-git-send-email-mark.hatle@kernel.crashing.org>
@@ -26,46 +26,85 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Wed, 03 Jun 2026 20:39:21 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4129
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4128
 
-From: Victor Kamensky <victor.kamensky7@gmail.com>
+From: Mark Hatle <mark.hatle@amd.com>
 
-Otherwise, in some situation, where code running under pseudo set
-setuid and setgit permission bits, they bleed into underlying files,
-and may result with executables that have setuid and setgid bit(s) on
-on real files that are owned by user who run pseudo.
+Verify that +s permissions are not leaking into real filesystem.
 
-Signed-off-by: Victor Kamensky <victor.kamensky7@gmail.com>
-
-Added comment to indicate why we also filter setuid/setgid.
+AI-Generated: Implemented with the assistance of github CoPilot (Claude Opus 4.6)
 
 Signed-off-by: Mark Hatle <mark.hatle@amd.com>
 Signed-off-by: Mark Hatle <mark.hatle@kernel.crashing.org>
 ---
- pseudo_client.h | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ test/test-setuid-permissions.sh | 58 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 58 insertions(+)
+ create mode 100755 test/test-setuid-permissions.sh
 
-diff --git a/pseudo_client.h b/pseudo_client.h
-index 9d98ea1..83dbe08 100644
---- a/pseudo_client.h
-+++ b/pseudo_client.h
-@@ -88,12 +88,15 @@ extern int read_pidfile(FILE *, int *);
-  * the user read/write/execute bits.  When storing to the database, though,
-  * we mask out any such bits which weren't in the original mode.
-  *
-+ * Additional setuid/setgid modes are also filteed as they are unsafe as
-+ * a real executable may allow someone to setuid/gid as the running user.
-+ *
-  * Note: PSEUDO_DB_MODE must be kept in sync with PSEUDO_FS_MODE, as the
-  * former defined which filesystem mode bits must be loaded from the DB.
-  *
-  * Note: S_ISUID and S_ISGID may be stripped during a mkdir as a user,
-  * account for this in PSEUDO_DB_MODE.
-  */
--#define PSEUDO_FS_MODE(mode, isdir) (((mode) | S_IRUSR | S_IWUSR | ((isdir) ? S_IXUSR : 0)) & ~(S_IWGRP | S_IWOTH))
-+#define PSEUDO_FS_MODE(mode, isdir) (((mode) | S_IRUSR | S_IWUSR | ((isdir) ? S_IXUSR : 0)) & ~(S_IWGRP | S_IWOTH | S_ISUID | S_ISGID))
- #define PSEUDO_DB_MODE(fs_mode, user_mode) (((fs_mode) & ~(S_IRUSR | S_IWUSR | S_IXUSR | S_IWGRP | S_IWOTH | S_ISUID | S_ISGID)) | ((user_mode) & (S_IRUSR | S_IWUSR | S_IXUSR | S_IWGRP | S_IWOTH | S_ISUID | S_ISGID)))
- 
+diff --git a/test/test-setuid-permissions.sh b/test/test-setuid-permissions.sh
+new file mode 100755
+index 0000000..b6fafde
+--- /dev/null
++++ b/test/test-setuid-permissions.sh
+@@ -0,0 +1,58 @@
++#!/bin/bash
++#
++# SPDX-License-Identifier: LGPL-2.1-only
++#
++set -e
++
++# Verify that setuid/setgid bits tracked by pseudo do not
++# bleed into the real filesystem.
++#
++# Return vals:
++#
++#                 2 - Setuid/setgid bits found on real file
++#                 1 - Unexpected command error
++#                 0 - Pass
++
++mode() {
++	stat -c "%a" "$1"
++}
++
++trap "rm -f testfile" EXIT
++
++test_mode() {
++	local octal_mode="$1"
++	local expected_pseudo="$2"
++	local expected_real="$3"
++
++	chmod $octal_mode testfile
++
++	# Under pseudo, verify mode is as requested
++	local pseudo_mode=$(mode testfile)
++	if [ "$pseudo_mode" != "$expected_pseudo" ]; then
++		echo "FAIL: pseudo mode $pseudo_mode != expected $expected_pseudo (chmod $octal_mode)"
++		exit 1
++	fi
++
++	# Check without pseudo - real file must NOT have setuid/setgid
++	local real_mode=$(PSEUDO_DISABLED=1 stat -c "%a" testfile)
++	if [ "$real_mode" != "$expected_real" ]; then
++		echo "FAIL: real mode $real_mode != expected $expected_real (chmod $octal_mode)"
++		exit 2
++	fi
++}
++
++touch testfile
++
++# Test setuid only (4755)
++test_mode 4755 4755 755
++
++# Test setgid only (2755)
++test_mode 2755 2755 755
++
++# Test setuid + setgid (6755)
++test_mode 6755 6755 755
++
++# Test setuid + setgid + other base perms (6644)
++test_mode 6644 6644 644
++
++exit 0
 -- 
 1.8.3.1
 
