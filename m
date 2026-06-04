@@ -2,121 +2,188 @@ Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4757CD6E6E
-	for <webhook@archiver.kernel.org>; Thu,  4 Jun 2026 19:38:06 +0000 (UTC)
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.3563.1780601876975143757
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9486BCD6E75
+	for <webhook@archiver.kernel.org>; Thu,  4 Jun 2026 19:40:47 +0000 (UTC)
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.3848.1780602038906608371
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 04 Jun 2026 12:37:57 -0700
+ Thu, 04 Jun 2026 12:40:39 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=sFeDqJFY;
- spf=pass (domain: gmail.com, ip: 209.85.219.48, mailfrom: twoerner@gmail.com)
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-8cce22e029cso27516926d6.0
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 04 Jun 2026 12:37:56 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=XFjnFntj;
+ spf=pass (domain: gmail.com, ip: 209.85.160.170, mailfrom: twoerner@gmail.com)
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-51788280e71so11299391cf.0
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 04 Jun 2026 12:40:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780601876; x=1781206676; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20251104; t=1780602038; x=1781206838; darn=lists.yoctoproject.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gpOoVIRe8ptCOsCXxnY+gxWlbffdP+h7ODZKBhGmAs4=;
-        b=sFeDqJFYlxJ438NyfPi4m2POVRQaWNW+jsbuman+SCpSAIfFi27HDs+jVmchGzbve6
-         J0hkeXRDfW3ki23MywVixd9qP8DZUwBQZZ+ZB2SNfxTLFiZ7QxnZRwGrpASrsEjvndqu
-         MeRPATu9SxAX5bB2skggnmT6nwyPihRQPrB1FSDTldLOevdXgBcRBA+eEm3GRJGIIh69
-         kifnMYH3JpgtLa1BIrnDZFN4KJTwjzimnAZ9AKU5zwwiOTnDDsbf+o3kodtBPAiLSI2S
-         5cpRXuMMiST0tKwhJYHndgQ9hUJCIeohG6SIu76kdGQKoPG/AUgfbBCJu3AS/M7uPWzz
-         GWeQ==
+         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BiLILD5xOxuSCmccOkZvvjXPGDopfSw9x7HvkTUekTg=;
+        b=XFjnFntj18z64lHbEGWtz+OzAdu70TrRvO5mYtTw6Ybvircq5ZF0HDRWRn1wvaWyAf
+         CYNLQ9IPMsm6G7tQ9pm75QRJMINytEt64qY0QQjRJMrGhnMTUdx3Q9ouuA8eJ9nUyVia
+         0bEdAm6i5cdhN/Plc06CgR22cUWu5BBJyZam+v4Uhox1mq5iaziUc//WoNaoZ9Azi33t
+         8/2geEe+qEFGiZvCs6CW6H4MHAKCKbPAy8lxTj2IuX8dSJNq+O8j+WxJwLD47j3+vl2U
+         HUuZ8b977vw5ATm/BZ5V5LnooXWzd+PMrfY9zGAAN8GRTL/2YML7kvkMH43IBH5ri/nc
+         iP+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780601876; x=1781206676;
+        d=1e100.net; s=20251104; t=1780602038; x=1781206838;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gpOoVIRe8ptCOsCXxnY+gxWlbffdP+h7ODZKBhGmAs4=;
-        b=RVF5fgtHBu0rPV6SWbJQIJBX8/kR6Q8Kp0dSoVR/IInk8DYkc9kTocbeZgzl64f6nA
-         11ZsGqq1lIxTnZ9/PvQ4CDiJl1OlfHq730TA9I8DJr6IDW/A2RLQ3RtI1o9BeZTvme+Y
-         t7bWJ1wTNh0AuzMArN6Sn2PAYL1h4Ici02IpQrr8HVCsMhOW31VfijwGYvOfYlP819MG
-         w8q5EdJGbXWy54agSrfrYIU4alB7NCje8LM+LhKUroGq29WAYH2EOT0AhdlV1I4gWhdS
-         Qp0sHSje5iIUNyHWkt9xKJdX84kFewgoPS65XeV6+T1sTJfDUI+hH2QShshSw/AMtyNx
-         0uEg==
-X-Forwarded-Encrypted: i=1; AFNElJ9URLtHOihOSwL+Ir4rgFee4BfOgdePE8rZD9yYoOtanOOacw7nkw8Nr3E7ZA1FYYQ17OGEXcg9zYwpfgHk@lists.yoctoproject.org
-X-Gm-Message-State: AOJu0Yw+6oX8A+sPTdk/+S6QlgnWP95mqo4qcQ+oQOUgkJzKOd8wPPgN
-	YUDX5upfdYHn6ZsOWPxnUpWe1ad6YALN1eQiS3+5emKSCyiRxWUnmZqDjiquwA==
-X-Gm-Gg: Acq92OGizETw7xaegZ/qidhx9NQO0FM9fS9NFulTRh9eUqnbY7C/pt+GxJBM7tf+047
-	JIH5+Un9eR+0uyrg0wfM5IN6TbVrQBcv7NV6fI+4Mvj9ivDuLqSnP7S49KFnpq9u9d29rLA1Z/8
-	raLJSWwiSLFx3xWIMx1cO1JgNNA+bYvJA14f6VX6oM41cH1r79ivc5olttWjP7+8llFKHAQW4Wu
-	k3r16XGgAvv3NCxuA+/oE2ZChIqI2zeqiXWphSTbHcs1r0ten3eAiJjHLt8HkTXz5hNUpfCYwFg
-	4Sj2jt2A5yTgycFdrnG41p8l9I+2CF/Dl/gCNNKifZqAtMVeL9a8nolbNZrk4S5Soy7HPVJ7NLE
-	zeKM/fPVNWGU2UC3/m1LHMtq1SPBx3e7tMXsy/7X+cALquswrx8FC6dwiq4qcTR7huIOc7lqNeN
-	VYJQvloMD45cDUjKI5lwdJdr8j8eF6Va9efnG061PHsEf3ocDh1oDvggGfBDiKDPuU5IAR3FrE7
-	Y9Adc9jePxg5/A=
-X-Received: by 2002:a05:6214:c66:b0:8ca:1e71:c5fb with SMTP id 6a1803df08f44-8cee7551958mr193846d6.7.1780601875850;
-        Thu, 04 Jun 2026 12:37:55 -0700 (PDT)
+         :subject:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=BiLILD5xOxuSCmccOkZvvjXPGDopfSw9x7HvkTUekTg=;
+        b=OPDEC8Mk+qqKHBhU9S7EliYmhM5QodBI3W78EWfBuCch3VUtQCbQi+KrzkbeMm5Otl
+         bvTBqjCoJZ7E4rfhWZRQGOM3JGuH8WxZaaCjzyWCrNUjxqzM29WF0c23CURUg+sDNIJj
+         21kh9hO2FTSCt/V2R+dG3cQhgLqgYl6PFB1jrEW06P/1GGI5v0OJbAoDHtp+esIhM/Yi
+         fVp/4il0iUaqHr49pHzqpR1HOgmFGbs9sU21qyMB0DMaA2stVl7RSmk49CH1iNJXFBhN
+         jOoNkzlK/F8lqQqQOvNdQLGw+g+Pbx47SlWl6PVefNwGTZVG84NxCm3tYoVLe+BBSb7+
+         Q4CA==
+X-Gm-Message-State: AOJu0Yyw6dYlekX56tgbIfP17wRwwVJQWul9AOVfrdT9dxt7yveuoJQg
+	o7DpwZQPzBMW+KvztIFkZj12zCpUxz30dD5SZGTy3ZatGW1vajOm+E7YeUC04w==
+X-Gm-Gg: Acq92OEgeEMHpbgjA+UAgRuELOzOAHqsHNlBk2rdjEzO6SPnJeCCAsNHxLncVCc2hIo
+	P9pgcDcHm5SQmd5QwBpsrEg1Mv+WddLaUjLhNIPqx9pAjDGndobA/2ZAC13wmK9ulZE0/l0E2wD
+	J/n/fZnIqGrM+jOa4dHtdTYbB+wsF23qXmNnAzDy9sujWndmJtcfMdDQE27lPhVHI7Hf4Ud2XRj
+	qBc62Bgxas2KhQ4Y4ieXjUeOlsNxXU2y/73TAqxIivufqYsgRlpXGy1uLTftB0+yFgUlI/mt4pH
+	ymI8NF+AlpJ/c6RFWgl4oJnk40xLMxi6LexWjkD14mHUxKsy/JlYj9Od+m/zPA1e1gID5hVodba
+	Qhpu5O7p5FMPRiFtn4vkD0p1aO0fjwg6Psv+T78JHal11r/mVynEvRgGvyh6EMWl+JBWEoOzCSX
+	UlCydfzLdm5zWGj72NJKMEzDPFqcts4M+jDKWJX77N4IU+iq1fyeJYVU1yG+o3NwPrMekMgN7Tk
+	CJoyKrrNquIKWo=
+X-Received: by 2002:a05:622a:4c13:b0:517:8f2e:5d9e with SMTP id d75a77b69052e-51795a71833mr4360311cf.7.1780602037800;
+        Thu, 04 Jun 2026 12:40:37 -0700 (PDT)
 Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8ceccd9fe25sm61800546d6.3.2026.06.04.12.37.54
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8cecd2629cesm58758916d6.41.2026.06.04.12.40.36
+        for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jun 2026 12:37:54 -0700 (PDT)
-Date: Thu, 4 Jun 2026 15:37:52 -0400
+        Thu, 04 Jun 2026 12:40:37 -0700 (PDT)
+Date: Thu, 4 Jun 2026 15:40:35 -0400
 From: Trevor Woerner <twoerner@gmail.com>
-To: Quentin Schulz <quentin.schulz@cherry.de>
-Cc: Quentin Schulz <foss+yocto@0leil.net>,
-	yocto-patches@lists.yoctoproject.org
-Subject: Re: [PATCH wic] add basic b4 config file
-Message-ID: <aiHUEFS-ucG_p3kV@localhost.localdomain>
-References: <20260424-b4-v1-1-04ede4cc261f@cherry.de>
- <6976ce0c-ce97-4adf-bb6c-c75c89a7e674@cherry.de>
- <ahZz7v5I08_FI6Eu@localhost.localdomain>
- <d288802d-3752-4da6-86b2-fd55dd0a6a5e@cherry.de>
+To: yocto-patches@lists.yoctoproject.org
+Subject: Re: [yocto-patches] [PATCH meta-rockchip 2/2] add support for baking
+ OP-TEE OS into U-Boot proper binary
+Message-ID: <aiHUs_ETeYUg9weN@localhost.localdomain>
+References: <20260126-optee-os-v1-0-874261a77dad@cherry.de>
+ <20260126-optee-os-v1-2-874261a77dad@cherry.de>
+ <ahcOBJWhevGNqPyF@localhost.localdomain>
+ <1226166b-a604-4a40-95d1-68d8d5c64d05@cherry.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <d288802d-3752-4da6-86b2-fd55dd0a6a5e@cherry.de>
+In-Reply-To: <1226166b-a604-4a40-95d1-68d8d5c64d05@cherry.de>
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 04 Jun 2026 19:38:06 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4141
+ <yocto-patches@lists.yoctoproject.org>; Thu, 04 Jun 2026 19:40:47 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4142
 
-On Thu 2026-05-28 @ 12:15:36 PM, Quentin Schulz wrote:
+On Thu 2026-05-28 @ 10:48:24 AM, Quentin Schulz via lists.yoctoproject.org wrote:
 > Hi Trevor,
 > 
-> On 5/27/26 6:32 AM, Trevor Woerner wrote:
-> > On Fri 2026-04-24 @ 12:26:59 PM, Quentin Schulz wrote:
-> > > OK so this is very confusing. The default branch in cgit is
-> > > origin/feature/no-create and I got my info from the README.md there, which
-> > > differs from the README.md from instructions in the README.md in the master
-> > > branch where it isn't requested to Cc Trevor.
+> On 5/27/26 5:30 PM, Trevor Woerner via lists.yoctoproject.org wrote:
+> > Hi Quentin,
 > > 
-> > I asked Michael Halstead to take a look and change it. We think it's
-> > fixed now.
+> > Thanks for this patch series!
 > > 
 > 
-> I think too, thanks!
+> Thanks for the review!
 > 
-> > > 
-> > > On 4/24/26 12:18 PM, Quentin Schulz wrote:
-> > > > From: Quentin Schulz <quentin.schulz@cherry.de>
-> > > > 
-> > > > b4[1] is a very nice tool for mail-based contribution. A config[2] file
-> > > > exists to set up a few defaults. We can use it to set the To recipients
-> > > > to always add, in our case the mailing list, and the Cc recipients, in
-> > > > our case, Trevor's address.
-> > > > 
-> > > > Additionally, automatically provide a default prefix so that one doesn't
-> > > > need to not forget to run `b4 prep --set-prefixes wic` for each series.
-> > > > 
-> > > > [1] https://pypi.org/project/b4/
-> > > > [2] https://b4.docs.kernel.org/en/latest/config.html
-> > > > 
-> > > > Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
-> > > > ---
-> > > >    .b4-config | 4 ++++
-> > > >    1 file changed, 4 insertions(+)
+> > I believe there was a little fuzz required to apply patch 1 (around the
+> > -D), perhaps a v2 against the current to clean that up?
 > > 
 > 
-> Your gmail address is in the Cc recipients, which doesn't match what's been
-> requested in the README.md in the master branch (only the ML in To
-> recipients). Should we patch the README.md to align with .b4-config or the
-> opposite?
+> I'm assuming due to commit 9fb264d42a20 ("bsp: fix upstream TF-A deploy
+> desync") already being merged.
 
-Might as well update the README to add it.
+Yes, I think so.
 
-Thanks!
+> > On Mon 2026-01-26 @ 03:48:30 PM, Quentin Schulz via lists.yoctoproject.org wrote:
+> [...]
+> > > diff --git a/README b/README
+> > > index c2697d1..f49fdb5 100644
+> > > --- a/README
+> > > +++ b/README
+> > > @@ -222,6 +222,48 @@ Notes:
+> > >   	NOTE: this variable must be set before any include/require in the
+> > >   	      machine configuration file
+> > > +  OP-TEE
+> > > +
+> > > +	PX30, RK3399 and RK3588 are all supported by upstream OP-TEE OS. By
+> > > +	default, OP-TEE OS is not baked into U-Boot.
+> > > +
+> > > +	You can bake OP-TEE OS in U-Boot by setting:
+> > > +
+> > > +		RK_UBOOT_TEE = "1"
+> > 
+> > Is it worth pointing out this is a boolean so any of
+> > "1"/"y"/"yes"/"true" or "0"/"n"/"no"/"false" will work?
+> > 
+> 
+> Not sure it's worth the added complexity? We also don't say that for
+> RK_IMAGE_INCLUDES_UBOOT_ENV, RK_RAUC_DEMO, RK_KERNEL_FITIMAGE,
+> RK_OVERLAY_DEMO but we word it differently for them.
+> 
+> Would,
+> 
+> You can bake OP-TEE OS in U-Boot by enabling the RK_UBOOT_TEE variable
+> boolean.
+> 
+> work for you?
+
+Sounds great!
+
+> [...]
+> > > diff --git a/recipes-security/optee/optee-os_%.bbappend b/recipes-security/optee/optee-os_%.bbappend
+> > > new file mode 100644
+> > > index 0000000..2a5ec8b
+> > > --- /dev/null
+> > > +++ b/recipes-security/optee/optee-os_%.bbappend
+> > > @@ -0,0 +1,19 @@
+> > > +# Increase size for FDT in OP-TEE OS to the one in TF-A since v2.13 to avoid
+> > > +# panics on 64+KiB FDT passed by U-Boot to TF-A to OP-TEE OS.
+> > > +# Can be removed once https://github.com/OP-TEE/optee_os/pull/7687 is merged.
+> > > +EXTRA_OEMAKE:append:rockchip:aarch64 = " CFG_DTB_MAX_SIZE=0x60000"
+> > > +
+> > > +# Disable early console by default to avoid OP-TEE OS panicking on boards with
+> > > +# their UART console different from OP-TEE OS default (UART2 for rk322x, rk3399
+> > > +# and rk3588(s)).
+> > > +# In-tree default changes if https://github.com/OP-TEE/optee_os/pull/7688 merged
+> > > +OPTEE_OS_EARLY_CONSOLE ?= "n"
+> > > +EXTRA_OEMAKE:append:rockchip = " CFG_EARLY_CONSOLE=${OPTEE_OS_EARLY_CONSOLE}"
+> > > +
+> > > +# Enable hardware acceleration using Arm Cryptography Extensions on PX30.
+> > > +# Can be removed once https://github.com/OP-TEE/optee_os/pull/7689 is merged.
+> > 
+> > Have these 3 merges occurred yet?
+> > 
+> 
+> Yes.
+> 
+> b6c7291c246b ("plat-rockchip: increase FDT max size to 384KiB on all Aarch64
+> supported SoCs")
+> 763be3b08c16 ("plat-rockchip: disable early console by default")
+> 74eb4d9ed3ac ("plat-rockchip: px30: set CFG_CRYPTO_WITH_CE ?= y")
+> 
+> All available in 4.10.0. However, meta-arm currently is still at 4.9.0. I
+> don't see patches on their ML
+> (https://lore.kernel.org/yocto-meta-arm/?q=op-tee) for a version bump so we
+> need to keep those in for now.
+> 
+> I guess I can change the comment to say we need to keep this until 4.10.0?
+
+Please do.
+
+> At the same time, it shouldn't hurt keeping them in even in 4.10.0 or later.
+
+Okay.
+
+> Cheers,
+> Quentin
+> 
+> 
+> -=-=-=-=-=-=-=-=-=-=-=-
+> Links: You receive all messages sent to this group.
+> View/Reply Online (#4082): https://lists.yoctoproject.org/g/yocto-patches/message/4082
+> Mute This Topic: https://lists.yoctoproject.org/mt/117469183/900817
+> Group Owner: yocto-patches+owner@lists.yoctoproject.org
+> Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/13168745/900817/63955952/xyzzy [twoerner@gmail.com]
+> -=-=-=-=-=-=-=-=-=-=-=-
+> 
+> 
 
