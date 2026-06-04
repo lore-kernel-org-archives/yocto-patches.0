@@ -1,349 +1,118 @@
-Return-Path: <jackson.james9803@gmail.com>
+Return-Path: <alex.kanavin@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A2A6CD6E4A
-	for <webhook@archiver.kernel.org>; Thu,  4 Jun 2026 08:05:56 +0000 (UTC)
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.6328.1780560351724893235
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1B83CD6E4A
+	for <webhook@archiver.kernel.org>; Thu,  4 Jun 2026 11:40:12 +0000 (UTC)
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.9339.1780573207816843357
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 04 Jun 2026 01:05:51 -0700
+ Thu, 04 Jun 2026 04:40:07 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=ThkZaF0Q;
- spf=pass (domain: gmail.com, ip: 209.85.210.169, mailfrom: jackson.james9803@gmail.com)
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-842848fd613so293031b3a.3
-        for <yocto-patches@lists.yoctoproject.org>; Thu, 04 Jun 2026 01:05:51 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=DelWeX5V;
+ spf=pass (domain: gmail.com, ip: 209.85.160.178, mailfrom: alex.kanavin@gmail.com)
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-517760dc3c2so3470051cf.3
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 04 Jun 2026 04:40:07 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1780573207; cv=none;
+        d=google.com; s=arc-20240605;
+        b=KEr7RyyH6fENFnhdesR2HWcNSmD4FzE+ChY2KVJr7QRgjAIn/dEr2ukoZwMpuWSmvJ
+         ioPmx1o4BC/8u7t7O0Ml2XpaKmLrJV6u1222Rr24/eDP/EMm9csOoelbEm7yBYjyO0E2
+         KbKgF0gITC/h+QHVEAuA0ghSovXd9xgp+0HB2HE8qsxQLVVjrBSDuXaQ9a+r31vb7pf6
+         1Uys7LbFhJY12vOfyVcmrLpb+wcQ4WJIq4+HUJqiS7z/Ak6szDhs+t0KD5PfqfRTfBjm
+         yqqQFQmUhvEDbAYUFXp0gMkONYWl3KojsnDV99dQIpuKKYvnb6FzsOd1Z7AMsf4GBxBi
+         4n5g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=JkreQJs8RtkqqNFXzcR2yMF9sZX49a0rEoiQjXQbQlI=;
+        fh=28JQhdK5h5mLF5DLv2fLR8YFHEF0yTvH5opUNnJ6Zzo=;
+        b=ICRkGVB24Xq98T2LBHUPJjMNgt8EAIA57HaVO2wQRRQMeqjJ7BNbN2aATp3efoimex
+         3w/IN7dgxn+IsZzrNzMEAZMDGohaXQm7b8Y1MtaGoxSB/cugVvwR5J9e/SWwxu0hlaOl
+         g7xywHrzmw7FW1anPCg/S5zgvMRRjTqzlcp98MEaeB/UTwSpt+AqHj/KN4k4mQCJiqGB
+         1XrQE33kt9t2L4SYV8IFCfba73zhmNX1DIFD2eTvR5qQPOoo+H8awvZmAODPumaQTvSF
+         P/rWOuySERPAd+wI8mlga96plwYhSWxiL71cKNRHGvsVVMGlugIqZYvUErxDkNyD6VTu
+         v64A==;
+        darn=lists.yoctoproject.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780560351; x=1781165151; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OYf9Sx6TVO7GfAoOqWuVNBnlA/kyjxgHM+rFEOeG/2k=;
-        b=ThkZaF0QImQERfuruNjX6v8+3ahckNCHYS+guD2hPofZYGhCML3Rx51wr3ynp5GkL/
-         yS1cPNYzCGLPSIOwOfv7slQGCASLz7A9F/4Ow+JjBDmgw2FNFKz0f94io4EbFIWQnA+G
-         OOCsCvnP60O9iN0w4+cgG9ZMUIkKz+VmnLCfJR4oNRA+QCeSUxGpjsfNCyMz6LYGBg1a
-         OKyMNuPJGmVcaG0kMUv2D3qTw78o962qgCx2vIj7cuyPLfElTCxyXWJTipF+e4VBsuw3
-         +AQEqm/kgGm6Gs/+pHyb80TmUSwqteO+RaZyvEtRRFZPJxXMziUy/iTXvG0fOnbMKJX0
-         Ml7w==
+        d=gmail.com; s=20251104; t=1780573207; x=1781178007; darn=lists.yoctoproject.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=JkreQJs8RtkqqNFXzcR2yMF9sZX49a0rEoiQjXQbQlI=;
+        b=DelWeX5V4d0vgLUgVb/oBfs6E1mO6tm0HXklqsWFrm5UHb5iH3nd7QU896lsZpcvHC
+         U2sPMJuf+TSPFd5e5jpNRNpxVjBcO5ShL36lJSuwqYHsnePC/b8ZzLOK7E1zloULw5dE
+         XRo5VYiXeI8S+unK3BxZWgpr0aXzJqTowhZyI8nQZR8/yu8Sg2uxANozPgHDJhQCQpcr
+         zEX+T/AZrudtp51NCib/Dd+PAwqU8XqD77PzpF+Q2hJUwT+dNPCf2/87wWUsymJ/4hhr
+         IfZk0UrytSjdwmuU4IgIta+zuo8NrpEV2SXPE4sy6eA9U5Q42DF3C5BhlKHmEVZ1xWdw
+         kIqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780560351; x=1781165151;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=OYf9Sx6TVO7GfAoOqWuVNBnlA/kyjxgHM+rFEOeG/2k=;
-        b=bq087AbcNeKG9k+YB4ixWhssPWZGXqArZsA4aXl+Mul8LRkqAhNd5um+yIOSxsr8X6
-         fuLV1U/zbdnXrrRbmni4x+GUbeQbJz6C87kAlYd11DNND0Yg59fbVGVAqlpwjJ3kfK4f
-         B27qWGYoL2y/hu6qRAleIbwOERsiTe9OBWExmxQBjK7ZLYWMfVm7GH0DsL0lAgiDpY9I
-         mb4Co9gQXUwtzel13z+aFNoSSDG2zwf0m4rsoENVpv4cDAXSXM4xWMEY68P23XLEXCfv
-         0zvKkwNXpfU22CpXOGNBMFOqb6cyiRRvLpQPok67hXgYnYiLuRRWNPV3V5qp1q+fnn5O
-         I4Mg==
-X-Gm-Message-State: AOJu0YzJMy+UHKQ0hYd1n4YfRGvtPkvufYVSUEeK8YhXu/dZvl4/wqKD
-	KosocB8WI6OsXIR8E+xFzF0EAd0mVa62UoKTTXOgzHXyR/St5zRZpwQSE0Jukg==
-X-Gm-Gg: Acq92OE4a2GtUtNOwwZ+s+JvV32szXaNG/uzQu1bVEq9S9MMMf8YiW/hboR3pt7y4rJ
-	9KIIO3s7bBr9bmhevQzVEKeW/9JDoJqqwuPOAn7LLcyrxwgrqp6JrElp+RSRkLsOhBAzDTyLY9s
-	cIg/9doREIfaxtFlB+0cXmZA3950eUvrxbAxf6cy9Je+Ehn/u+WHLlbl8PsHqVMM2wN1drQO+lG
-	IZjkITDJ0z7gZX6lgv6qwai2Sl4hd1dO5hJUis89bKXaIEATb8sTUFsXGbvpgmLT8PfSs8c+Bcy
-	6POzBni370vsuQnQMXePjmB1MgjsKZqz0NxMdxkuYSeMQpkt4/G7HYNgj8TWqOOtVoZ4ax7qUpC
-	LZtzm2ZDza1S2+bP/oPFzqkzNCTT1dQSNqXg84Bp4iLTGLxAGRD5tN+6DXwienvcf3zrMj/Mi3d
-	XJ92LWm8cwFlPP3bCWZ8HtcZAhFRrP/ENi4rbtT6rx0FoX7w==
-X-Received: by 2002:a05:6a00:3403:b0:842:48ae:1d56 with SMTP id d2e1a72fcca58-84284f37c67mr6718463b3a.35.1780560350941;
-        Thu, 04 Jun 2026 01:05:50 -0700 (PDT)
-Received: from LL-868L.kpit.com ([103.155.222.113])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-842828e21c8sm6139001b3a.49.2026.06.04.01.05.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jun 2026 01:05:50 -0700 (PDT)
-From: Nitin Wankhade <jackson.james9803@gmail.com>
-X-Google-Original-From: Nitin Wankhade <nitin.wankhade@kpit.com>
-To: yocto-patches@lists.yoctoproject.org
-Cc: nitin.wankhade@kpit.com,
-	Nitin Wankhade <nitin.wankhade333@gmail.com>
-Subject: [meta-lts-collab][kirkstone][PATCH 7/7] strongswan: Fix CVE-2026-35334
-Date: Thu,  4 Jun 2026 13:35:06 +0530
-Message-Id: <20260604080506.274123-7-nitin.wankhade@kpit.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260604080506.274123-1-nitin.wankhade@kpit.com>
-References: <20260604080506.274123-1-nitin.wankhade@kpit.com>
+        d=1e100.net; s=20251104; t=1780573207; x=1781178007;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JkreQJs8RtkqqNFXzcR2yMF9sZX49a0rEoiQjXQbQlI=;
+        b=DXE/VH+RqulCCGbwtaZGX9QC6cCJJPMBFKETuQFzfN5+Y46IK0B/GfrKJheDjYlxjA
+         8HFEp0i0cwyi+ubKC9ei0asXTouMuxx6JcJIezhDuWfmZhx4w/76kpy4d8ot562gLktc
+         Vd4/g7TZMMt6FD4MSlHvCet3+yi/ru108dC/NrMbf0Q6JKLelIka8jrI/kPew7Ctcpck
+         c7onlKKp7uDJZ7ubjV7x0H8m44u8l3I65A/XCSL9RbmtUzCRUgPewqfqDANq+XSWUA51
+         oqQC1uYqsVo9RTA+V4OSVzklmAG4ydW3IzLGLFf9GZ0PKwouyQEVmFacSJwG8SOlrABL
+         juDg==
+X-Gm-Message-State: AOJu0Yzk3T9RXSlhLHitro0pTzyWfHOzhIY5RzIL8r6nIVd5nITLBkwy
+	cd209wa08w8FsDdjUU+CF2JBnzZhnbDw0PTzU7r25NFIssSnZVxxZB57oPbT7a/sbpZzVQa3NqD
+	HiqyuNkxtiVZh8AUIot4xE+jFyctXBQY=
+X-Gm-Gg: Acq92OHgcLECTFZNzPvfJmWqltpDcPFpbWlaBYDQ0ANU6UfWQzdof4pYju3JvaDH5dL
+	u5jp0YmK33cIgLkUW+6R4f4X63hS8mRQhjmFKMcRZwE7XOQf05ArGa0v2ENRoyDOI19IlZUxSOp
+	7YFGi5Er6E09U3tChylogB90IRBd9Znm2OdTN+zFnO9QoeK/LSLBsgJif9MmwP/JTO807xRmn7l
+	jqUc8tNPCPhLTjpWB0rLPwmouNO0SeFUVH0C2oeRa5q379gLqOKQIXTkFgSf7KMzLqm1VSJ5jMe
+	kcf4fScNzNj2NBoroaF8PbCFlvRhoET+s6jQuRd6HcY/cBVyI6vE
+X-Received: by 2002:a05:622a:6091:b0:517:7620:20f9 with SMTP id
+ d75a77b69052e-517785d8b28mr107810331cf.19.1780573206716; Thu, 04 Jun 2026
+ 04:40:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20260603134044.3377639-1-daniel.turull@ericsson.com>
+In-Reply-To: <20260603134044.3377639-1-daniel.turull@ericsson.com>
+From: Alexander Kanavin <alex.kanavin@gmail.com>
+Date: Thu, 4 Jun 2026 13:39:55 +0200
+X-Gm-Features: AVVi8CcBnTCgVLLFMwf74QgwQh6CIELJWSWYYrLDYRavrdSwOv2wYr5wi33PvT0
+Message-ID: <CANNYZj9X=Bd47XAP49w6hDqP6GVTMNWxE=Jc8WUV78bUdRCULg@mail.gmail.com>
+Subject: Re: [AUH] [PATCH v2 1/2] upgrade-helper: add state module and
+ --incremental mode
+To: daniel.turull@ericsson.com
+Cc: yocto-patches@lists.yoctoproject.org
+Content-Type: text/plain; charset="UTF-8"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 04 Jun 2026 08:05:56 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4138
+ <yocto-patches@lists.yoctoproject.org>; Thu, 04 Jun 2026 11:40:12 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4139
 
-From: Nitin Wankhade <nitin.wankhade333@gmail.com>
+On Wed, 3 Jun 2026 at 17:50, <daniel.turull@ericsson.com> wrote:
+> Behavior:
+> - Failed attempts are retried after retry_interval days (default 30).
+> - Successful/already-current upgrades are suppressed for success_max_age
+>   days (default 30).
 
-Upstream-Status: Backport [https://snapshot.debian.org/archive/debian-security-debug/20260422T125423Z/pool/updates/main/s/strongswan/strongswan_6.0.1-6%2Bdeb13u5.debian.tar.xz]
+I have realized that we also need to handle recipes with rapid-fire
+releases, that would otherwise flood the mailing list with daily
+updates (if AUH is run once a day, which is the goal). This typically
+happens when:
+- there are no release tags, the recipe just takes the latest commit,
+and upstream adds commits frequently (for example, vulkan-samples)
+- upstream does have release tags, but they're added often, e.g.
+sbom-cve-check-* items add them once a day, and some python items are
+also rather quite 'liberal' with tags
 
-Signed-off-by: Nitin Wankhade <nitin.wankhade333@gmail.com>
----
- ...and-timing-leaks-in-PKCS-1-v1.5-decr.patch | 244 ++++++++++++++++++
- .../strongswan/strongswan_5.9.13.bbappend     |   1 +
- 2 files changed, 245 insertions(+)
- create mode 100644 meta-networking/recipes-support/strongswan/files/gmp-Avoid-crash-and-timing-leaks-in-PKCS-1-v1.5-decr.patch
+So I'd suggest:
 
-diff --git a/meta-networking/recipes-support/strongswan/files/gmp-Avoid-crash-and-timing-leaks-in-PKCS-1-v1.5-decr.patch b/meta-networking/recipes-support/strongswan/files/gmp-Avoid-crash-and-timing-leaks-in-PKCS-1-v1.5-decr.patch
-new file mode 100644
-index 0000000..cb6777a
---- /dev/null
-+++ b/meta-networking/recipes-support/strongswan/files/gmp-Avoid-crash-and-timing-leaks-in-PKCS-1-v1.5-decr.patch
-@@ -0,0 +1,244 @@
-+From: Tobias Brunner <tobias@strongswan.org>
-+Date: Tue, 24 Mar 2026 18:00:23 +0100
-+Subject: gmp: Avoid crash and timing leaks in PKCS#1 v1.5 decryption padding
-+ validation
-+MIME-Version: 1.0
-+Content-Type: text/plain; charset="utf-8"
-+Content-Transfer-Encoding: 8bit
-+
-+This fixes a potential crash due to a null-pointer dereference if rsadp()
-+returns NULL (e.g. with an all-zero ciphertext).
-+
-+And it also implements the PKCS#1 v1.5 decryption padding check in
-+constant time.
-+
-+The timing leak caused by the previous implementation was measured at
-+~17.5 μs at 3 GHz, which could allow a Bleichenbacher-like attack in
-+LAN environments.  However, because of how RSA encryption is used in
-+strongSwan, this is not that much of an issue in practice.  The mechanism
-+is only used for two use cases.  One is SCEP/EST via PKCS#7 enveloped
-+data.  Fortunately, this can not be triggered in significant numbers by
-+an attacker.  The other use case is TLS as used by EAP methods (EAP-TLS,
-+EAP-PEAP/TTLS) during the authentication.  While the cipher suites that
-+use RSA encryption are still enabled by default, the TLS messages are
-+wrapped in EAP and encrypted by IKE, making any kind of attack difficult.
-+
-+Note that the gmp plugin isn't enabled anymore by default.  And even
-+before that, most setups had the openssl plugin enabled, which has
-+priority over the gmp plugin.  So it's unlikely the plugin was used in
-+practice.
-+
-+Also note that this patch doesn't modify libstrongswan's Makefile.am
-+to avoid potentially requiring autotools when patching a tarball.
-+
-+Fixes: d615ffdcf3cd ("implement gmp_rsa_private_key.decrypt()")
-+Fixes: CVE-2026-35334
-+
-+CVE: CVE-2026-35334
-+Upstream-Status: Backport [https://snapshot.debian.org/archive/debian-security-debug/20260422T125423Z/pool/updates/main/s/strongswan/strongswan_6.0.1-6%2Bdeb13u5.debian.tar.xz]
-+Signed-off-by: Nitin Wankhade <nitin.wankhade333@gmail.com>
-+===
-+diff --git a/src/libstrongswan/plugins/gmp/gmp_rsa_private_key.c b/src/libstrongswan/plugins/gmp/gmp_rsa_private_key.c
-+index 47784b6..08c5eee 100644
-+--- a/src/libstrongswan/plugins/gmp/gmp_rsa_private_key.c
-++++ b/src/libstrongswan/plugins/gmp/gmp_rsa_private_key.c
-+@@ -495,8 +495,8 @@ METHOD(private_key_t, decrypt, bool,
-+ 	private_gmp_rsa_private_key_t *this, encryption_scheme_t scheme,
-+ 	void *params, chunk_t crypto, chunk_t *plain)
-+ {
-+-	chunk_t em, stripped;
-+-	bool success = FALSE;
-++	chunk_t em;
-++	u_int valid, i, j, found_sep = 0, sep_index = 0, m_index;
-+ 
-+ 	if (scheme != ENCRYPT_RSA_PKCS1)
-+ 	{
-+@@ -505,33 +505,51 @@ METHOD(private_key_t, decrypt, bool,
-+ 		return FALSE;
-+ 	}
-+ 	/* rsa decryption using PKCS#1 RSADP */
-+-	stripped = em = rsadp(this, crypto);
-++	em = rsadp(this, crypto);
-++	if (em.len != this->k)
-++	{
-++		return FALSE;
-++	}
-+ 
-+-	/* PKCS#1 v1.5 8.1 encryption-block formatting (EB = 00 || 02 || PS || 00 || D) */
-++	/* PKCS#1 v1.5, RFC 8017, section 7.2.2 message structure:
-++	 * EM = 00 || 02 || PS || 00 || M */
-+ 
-+ 	/* check for hex pattern 00 02 in decrypted message */
-+-	if ((*stripped.ptr++ != 0x00) || (*(stripped.ptr++) != 0x02))
-++	valid  = constant_time_eq(em.ptr[0], 0x00);
-++	valid &= constant_time_eq(em.ptr[1], 0x02);
-++
-++        /* the plaintext data starts after first 0x00 byte */
-++	for (i = 2; i < em.len; i++)
-+ 	{
-+-		DBG1(DBG_LIB, "incorrect padding - probably wrong rsa key");
-+-		goto end;
-++		u_int zero = constant_time_eq(em.ptr[i], 0x00);
-++
-++		sep_index = constant_time_select(i, sep_index, ~found_sep & zero);
-++		found_sep |= zero;
-+ 	}
-+-	stripped.len -= 2;
-+ 
-+-	/* the plaintext data starts after first 0x00 byte */
-+-	while (stripped.len-- > 0 && *stripped.ptr++ != 0x00)
-++	/* make sure PS is at least eight bytes long (plus the initial bytes) */
-++	valid &= constant_time_ge(sep_index, 10);
-+ 
-+-	if (stripped.len == 0)
-++	/* instead of copying the message directly, we try not to reveal the message
-++         * length i.e. where the 0x00 byte was. and since clearing a chunk is
-++         * relatively efficient, i.e. doesn't leak much, we always allocate and copy
-++         * a value and then clear it if the structure was invalid */
-++         m_index = constant_time_select(sep_index + 1, 11, valid);
-++
-++	*plain = chunk_alloc(this->k);
-++	for (i = 0, j = 0; i < em.len; i++)
-+ 	{
-+-		DBG1(DBG_LIB, "no plaintext data");
-+-		goto end;
-++		plain->ptr[j] = em.ptr[i];
-++		j += constant_time_ge(i, m_index);
-+ 	}
-++	plain->len = j;
-+ 
-+-	*plain = chunk_clone(stripped);
-+-	success = TRUE;
-+-
-+-end:
-++	if (!valid)
-++	{
-++		chunk_clear(plain);
-++	}
-+ 	chunk_clear(&em);
-+-	return success;
-++	return valid;
-+ }
-+ 
-+ METHOD(private_key_t, get_keysize, int,
-+diff --git a/src/libstrongswan/utils/utils.h b/src/libstrongswan/utils/utils.h
-+index 40fe76a..80199a9 100644
-+--- a/src/libstrongswan/utils/utils.h
-++++ b/src/libstrongswan/utils/utils.h
-+@@ -53,6 +53,7 @@
-+ #include "utils/atomics.h"
-+ #include "utils/align.h"
-+ #include "utils/byteorder.h"
-++#include "utils/constant_time.h"
-+ #include "utils/string.h"
-+ #include "utils/memory.h"
-+ #include "utils/strerror.h"
-+diff --git a/src/libstrongswan/utils/utils/constant_time.h b/src/libstrongswan/utils/utils/constant_time.h
-+new file mode 100644
-+index 0000000..30a8549
-+--- /dev/null
-++++ b/src/libstrongswan/utils/utils/constant_time.h
-+@@ -0,0 +1,103 @@
-++/*
-++ * Copyright (C) 2026 Tobias Brunner
-++ *
-++ * Copyright (C) secunet Security Networks AG
-++ *
-++ * This program is free software; you can redistribute it and/or modify it
-++ * under the terms of the GNU General Public License as published by the
-++ * Free Software Foundation; either version 2 of the License, or (at your
-++ * option) any later version.  See <http://www.fsf.org/copyleft/gpl.txt>.
-++ *
-++ * This program is distributed in the hope that it will be useful, but
-++ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-++ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-++ * for more details.
-++ */
-++
-++/**
-++ * @defgroup constant_time_i constant_time
-++ * @{ @ingroup constant_time_i
-++ */
-++
-++#ifndef CONSTANT_TIME_H_
-++#define CONSTANT_TIME_H_
-++
-++#include <stdint.h>
-++
-++/**
-++ * Check if the given values are not equal in constant time.
-++ *
-++ * @param x            first value to check
-++ * @param y            second value to check
-++ * @return             1 if values are not equal, 0 otherwise
-++ */
-++static inline u_int constant_time_neq(uint32_t x, uint32_t y)
-++{
-++       return ((x-y) | (y-x)) >> 31;
-++}
-++
-++/**
-++ * Check if the given values are equal in constant time.
-++ *
-++ * @param x            first value to check
-++ * @param y            second value to check
-++ * @return             1 if values are equal, 0 otherwise
-++ */
-++static inline u_int constant_time_eq(uint32_t x, uint32_t y)
-++{
-++       return 1 ^ constant_time_neq(x, y);
-++}
-++
-++/**
-++ * Compare the two values and return 1 if the first argument is lower than
-++ * the second in constant time.
-++ *
-++ * @param x            first value to check
-++ * @param y            second value to check
-++ * @return             1 if first value is lower than second
-++ */
-++static inline u_int constant_time_lt(uint32_t x, uint32_t y)
-++{
-++       return (x ^ ((x^y) | ((x-y) ^ y))) >> 31;
-++}
-++
-++/**
-++ * Compare the two values and return 1 if the first argument greater or equal to
-++ * the second in constant time.
-++ *
-++ * @param x            first value to check
-++ * @param y            second value to check
-++ * @return             1 if first value is greater or equal to the second
-++ */
-++static inline u_int constant_time_ge(uint32_t x, uint32_t y)
-++{
-++       return 1 ^ constant_time_lt(x, y);
-++}
-++
-++/**
-++ * Return a 32-bit all bit-set mask if the given value is not 0.
-++ *
-++ * @param x            value to check
-++ * @return             0xffffffff if value is != 0, 0 otherwise
-++ */
-++static inline uint32_t constant_time_mask(uint32_t x)
-++{
-++       return -(uint32_t)constant_time_neq(x, 0);
-++}
-++
-++/**
-++ * Select one of two values depending on whether the condition is != 0 or not.
-++ * Basically equivalent to 'c ? x : y'.
-++ *
-++ * @param x            first value to select
-++ * @param y            second value to select
-++ * @param c            condition
-++ * @return             x if c is != 0, y otherwise
-++ */
-++static inline uint32_t constant_time_select(uint32_t x, uint32_t y, uint32_t c)
-++{
-++       uint32_t m = constant_time_mask(c);
-++       return (x & m) | (y & ~m);
-++}
-++
-++#endif /** CONSTANT_TIME_H_ @} */
-diff --git a/meta-networking/recipes-support/strongswan/strongswan_5.9.13.bbappend b/meta-networking/recipes-support/strongswan/strongswan_5.9.13.bbappend
-index 8d22b60..a452a92 100644
---- a/meta-networking/recipes-support/strongswan/strongswan_5.9.13.bbappend
-+++ b/meta-networking/recipes-support/strongswan/strongswan_5.9.13.bbappend
-@@ -5,4 +5,5 @@ SRC_URI += "\
-     file://constraints-Case-insensitive-matching-and-reject-exc.patch \
-     file://tls-server-Only-accept-non-empty-ECDH-public-keys-wi.patch \
-     file://libradius-Reject-undersized-attributes-in-enumerator.patch \
-+    file://gmp-Avoid-crash-and-timing-leaks-in-PKCS-1-v1.5-decr.patch \
- "
--- 
-2.34.1
+retry_interval is renamed to retry_same_version_interval
+retry_any_version_interval setting is introduced
+retry_any_version_recipes setting is introduced, and is a list of recipes
+_prune() is adjusted to first check if a recipe is in that list, and
+if so, it's checked against retry_any_version_interval, and not any
+other intervals, so that it's guaranteed to be skipped until that
+interval elapses (and skip_reason() should consider that similarly)
 
+Otherwise, I think this is more or less ready!
+
+Alex
 
