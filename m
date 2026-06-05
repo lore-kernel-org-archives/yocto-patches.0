@@ -1,98 +1,194 @@
-Return-Path: <ross.burton@arm.com>
+Return-Path: <richard.purdie@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94DEFCD8C81
-	for <webhook@archiver.kernel.org>; Fri,  5 Jun 2026 14:47:13 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.9886.1780670829257836723
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9604ACD6E7D
+	for <webhook@archiver.kernel.org>; Fri,  5 Jun 2026 16:02:27 +0000 (UTC)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.11572.1780675346753259457
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 05 Jun 2026 07:47:09 -0700
+ Fri, 05 Jun 2026 09:02:27 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@arm.com header.s=foss header.b=JGyVxpVC;
- spf=pass (domain: arm.com, ip: 217.140.110.172, mailfrom: ross.burton@arm.com)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C00CA244C
-	for <yocto-patches@lists.yoctoproject.org>; Fri,  5 Jun 2026 07:47:03 -0700 (PDT)
-Received: from cesw-amp-gbt-1s-m12830-04.lab.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3DD7F3F7D8
-	for <yocto-patches@lists.yoctoproject.org>; Fri,  5 Jun 2026 07:47:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1780670828; bh=ht3HLL3zsuhLjsTTAt+FRCV3gzd4B8Wx8zPcNqNavPk=;
-	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=JGyVxpVCtfKI+LA4lmYOGRL/lNlXeAgxP9ZGSQG+b0YDznNZC2lgNJ9w7DtU9vkL8
-	 Z2SSSOHEz+IYIxWlXk1aTlXABFfVjmczUmFCf0raUJlUPUPmXvVQ2RKZBE6yM47adn
-	 sjrA2JI/xnLDG+rKofoWqRdI75YWVa46k3/mOpC8=
-From: Ross Burton <ross.burton@arm.com>
-To: yocto-patches@lists.yoctoproject.org
-Subject: [PATCH][yocto-autobuilder-helper 2/2] bugtriage: ignore meta-security issues
-Date: Fri,  5 Jun 2026 15:47:03 +0100
-Message-ID: <20260605144703.3472116-2-ross.burton@arm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260605144703.3472116-1-ross.burton@arm.com>
-References: <20260605144703.3472116-1-ross.burton@arm.com>
-MIME-Version: 1.0
+ dkim=pass header.i=@linuxfoundation.org header.s=google header.b=YZUiLgre;
+ spf=pass (domain: linuxfoundation.org, ip: 209.85.218.51, mailfrom: richard.purdie@linuxfoundation.org)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-becfa735b9aso296644866b.1
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 05 Jun 2026 09:02:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1780675345; x=1781280145; darn=lists.yoctoproject.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fF3Japg9zkeylgBXTQ5W+2yJr7C6Ayl1n0BUxrFqbqQ=;
+        b=YZUiLgre1L/dYa1UlOfkBO/Xo+sj8b+iA0U7P2X4xw5mp5VnaNBi2UT6a0rb4l3HMy
+         mT3uAANJ5RWOOSv7MKd7N1JnCmcFwt5M4LevDuv5RK24NrGgVO3CNQfFG+O7FNVKkOIl
+         kiLwWuSG5cYLqElYPcPehbAqizUdvCjpKH53s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780675345; x=1781280145;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fF3Japg9zkeylgBXTQ5W+2yJr7C6Ayl1n0BUxrFqbqQ=;
+        b=JWytFH18OSBKF0Jfb+a8zJ2bNBjPq8a1+md79q6mm9mpHXM7lnFyn59tesSa8znvp4
+         FDZ17Z0pTIuKAGFcU1/hDxOVMJz28zDchBZaKNT3nQqxXCy2YBRyOcawOyIFjezMXWJS
+         ZTYOrsilQxWmUatQgGimhqT6vhB31bDXGIcOn7Ctc9cARIy6e9rX7KnleICp7R19wZ6t
+         rpb+q6cEu7Vrct4VUxseUE3hesZwj6PlKHXFXxtRF2SdTqA8T9SCrOvZlZ5KE43oZ7Gn
+         PHKY4LG1yvaphbxA5VPRQ1gFmJ9sc6Sil1cHLzdcLnvG6CsAsOvI24LDDuIrKWBNsuID
+         Gw8A==
+X-Gm-Message-State: AOJu0Yxj1yPzR0P4Jkiede9EVdPEXwlu95XBFYzYK+ds0K+uZ+tZixJQ
+	sEIy709ulJPTJmKAAzcJWgiPjqh7ieoHeQxRbIjOY5vxTklXymgFbRRFGaBSQXVw9EOSqbccDEy
+	5LlFz
+X-Gm-Gg: Acq92OH77mkEjmqT3PbdNlWpc6WafvykRQY8m51usdW2vgav8dw8htda+evy33Ar+y7
+	lbfTvB3Bm1T2SLWENUGQa3jNfGHgmpacuppTTZkBharzr7Eo62Ci48S+RQBX4eoYrDuQRTOn6qh
+	y00UDZJUf0KRfpAkSwC0M6grGHhf1EkIhiW9+e0i+P5yFczdPNm1y1rqnN9Q/w/HpQ6HYp1n6Ln
+	iFANaHEx7jCDyskrwK/yzr0eVgxS88wZPBEJNGzexi5lOqZn5gTUbvFLZd+Zn2XzWncBXkKIhe+
+	WoVPMKxmZwJXpMzSAgTJz8MVYa07B4p2753WrtojMn27HaxIKXY+OH3TXATVBq40spr2vLgE+2U
+	RhVnSzFG+21wAE4ZLR6p38hKhcW9rJLSjn1UJj1HhHW6mFkNKiessQoCXaPhbMjggYgkSnyB62X
+	+Zc9tIQgYLn9OXUfxJAEA4dJudk1hCKROm47QTTa/kEUnJo8+tV9N0iCAJ9vxmEp2pUj4d9G8WZ
+	/scUOUrfYJOUI0huoI9VUbNR1U=
+X-Received: by 2002:a17:907:160f:b0:bed:2a8b:3e73 with SMTP id a640c23a62f3a-bf3739f9bc3mr256705566b.41.1780675344686;
+        Fri, 05 Jun 2026 09:02:24 -0700 (PDT)
+Received: from ?IPv6:2001:8b0:aba:5f3c:176b:6db2:d527:85f4? ([2001:8b0:aba:5f3c:176b:6db2:d527:85f4])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4601f351d69sm44836642f8f.29.2026.06.05.09.02.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jun 2026 09:02:23 -0700 (PDT)
+Message-ID: <302c406db158cfeb89b44ba879e1a2407f42a9a2.camel@linuxfoundation.org>
+Subject: Re: [yocto-patches] [yocto-autobuilder-helper][PATCH v2 05/10]
+ scripts: add vcontainer-tarball setup, integration, and publishing
+From: Richard Purdie <richard.purdie@linuxfoundation.org>
+To: yocto-patches@lists.yoctoproject.org, Tim Orling
+ <tim.orling@konsulko.com>
+Date: Fri, 05 Jun 2026 17:02:22 +0100
+In-Reply-To: <2cf468a3da7c7db15ee42c14404a71aaacab0f28.1780354513.git.tim.orling@konsulko.com>
+References: <cover.1780354513.git.tim.orling@konsulko.com>
+	 <2cf468a3da7c7db15ee42c14404a71aaacab0f28.1780354513.git.tim.orling@konsulko.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-9 
+MIME-Version: 1.0
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 05 Jun 2026 14:47:13 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4150
+ <yocto-patches@lists.yoctoproject.org>; Fri, 05 Jun 2026 16:02:27 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4151
 
-These issues are not triaged by the Yocto triage team.
+On Mon, 2026-06-01 at 16:18 -0700, Tim Orling via lists.yoctoproject.org wr=
+ote:
+> From: Tim Orling <tim.orling@konsulko.com>
+>=20
+> Introduce the vcontainer-tarball SDK plumbing used by container build
+> jobs. The vcontainer-tarball is a meta-virtualization-derived SDK
+> (modelled after buildtools-tarball) that ships the container build
+> toolchain so worker jobs do not need to rebuild it for every step.
+>=20
+> =C2=A0 * scripts/utils.py: add setup_vcontainer_tarball(), and add an
+> =C2=A0=C2=A0=C2=A0 env_glob keyword argument to setup_tools_tarball() and
+> =C2=A0=C2=A0=C2=A0 enable_tools_tarball() so the vcontainer-tarball can s=
+ource its
+> =C2=A0=C2=A0=C2=A0 specific environment-setup-ci file rather than the uni=
+versal
+> =C2=A0=C2=A0=C2=A0 glob.
+> =C2=A0 * scripts/run-config: source the vcontainer-tarball environment
+> =C2=A0=C2=A0=C2=A0 for build-targets / cmds / test-targets / plain-cmds s=
+teps,
+> =C2=A0=C2=A0=C2=A0 gated by a new NOVCONTAINER step variable so individua=
+l steps
+> =C2=A0=C2=A0=C2=A0 (such as the dashboard indexing step) can opt out inde=
+pendently
+> =C2=A0=C2=A0=C2=A0 of NOBUILDTOOLS.
+> =C2=A0 * scripts/shared-repo-unpack: invoke setup_vcontainer_tarball so
+> =C2=A0=C2=A0=C2=A0 workers extract the SDK during unpack.
+> =C2=A0 * scripts/publish-artefacts: publish the vcontainer-tarball
+> =C2=A0=C2=A0=C2=A0 artefact so downstream test jobs can fetch a stable SD=
+K.
+>=20
+> AI-Generated: Claude Cowork Opus 4.7
+> Signed-off-by: Tim Orling <tim.orling@konsulko.com>
+> ---
+> =C2=A0config.json=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 1 +
+> =C2=A0scripts/publish-artefacts=C2=A0 |=C2=A0 5 +++++
+> =C2=A0scripts/run-config=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+| 19 +++++++++++++++++++
+> =C2=A0scripts/shared-repo-unpack |=C2=A0 1 +
+> =C2=A0scripts/utils.py=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 | 22 ++++++++++++++++++----
+> =C2=A05 files changed, 44 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/config.json b/config.json
+> index 7df4271..16d8a04 100644
+> --- a/config.json
+> +++ b/config.json
+> @@ -1433,6 +1433,7 @@
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+"step3" : {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 "shortname" : "Populate/update dashboard site",
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 "NOBUILDTOOLS" : true,
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 "NOVCONTAINER" : true,
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 "EXTRACMDS" : ["${SCRIPTSDIR}/run-dashboard-index =
+${HELPERBUILDDIR}/../"]
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+}
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 },
+> diff --git a/scripts/publish-artefacts b/scripts/publish-artefacts
+> index e56e131..0e820e9 100755
+> --- a/scripts/publish-artefacts
+> +++ b/scripts/publish-artefacts
+> @@ -146,5 +146,10 @@ case "$target" in
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sha256sums $TMPDIR/deplo=
+y/images/qemux86-64
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cp -R --no-dereference -=
+-preserve=3Dlinks $TMPDIR/deploy/images/qemux86-64/*qemux86* $DEST/patchtes=
+t
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ;;
+> +=C2=A0=C2=A0=C2=A0 "vcontainer-tarball")
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mkdir -p $DEST/vcontainer-tar=
+ball
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sha256sums $TMPDIR/deploy/sdk
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cp -R --no-dereference --pres=
+erve=3Dlinks $TMPDIR/deploy/sdk/*vcontainer* $DEST/vcontainer-tarball
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ;;
+> =C2=A0esac
+> =C2=A0
+> diff --git a/scripts/run-config b/scripts/run-config
+> index e896234..0f5a26a 100755
+> --- a/scripts/run-config
+> +++ b/scripts/run-config
+> @@ -153,6 +153,25 @@ else:
+> =C2=A0=C2=A0=C2=A0=C2=A0 if args.phase =3D=3D "init" and args.stepname =
+=3D=3D "buildtools":
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sys.exit(0)
+> =C2=A0
+> +if jcfg:
+> +=C2=A0=C2=A0=C2=A0 vcontainer =3D utils.setup_vcontainer_tarball(ourconf=
+ig, args.workername, None, checkonly=3DTrue)
+> +=C2=A0=C2=A0=C2=A0 if vcontainer:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 addentry("vcontainer", "Setup=
+ vcontainer tarball", "init")
+> +else:
+> +=C2=A0=C2=A0=C2=A0 # If we're executing a specific step, check whether v=
+container is disabled for it
+> +=C2=A0=C2=A0=C2=A0 vcontainer =3D True
+> +=C2=A0=C2=A0=C2=A0 if args.stepname in ("build-targets", "cmds", "test-t=
+argets", "plain-cmds"):
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 try:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 vcont=
+ainer =3D not utils.getconfigvar("NOVCONTAINER", ourconfig, args.target, in=
+t(args.phase))
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 except ValueError:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 # Not=
+ an integer step phase
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pass
 
-This means adding support for ignoring components. To avoid field
-conflicts with the caller's arbitrary field queries, change the
-numbering to 100 onwards. This means there is still a theoretical chance
-of conflicts but it's unlikely, and luckily bugzilla doesn't care that
-the queries are not numbered sequentially.
+I suspect this logic also needs to be in the if jcfg block above, else
+it will add the task to all jobs on the autobuilder, then just do
+nothing in the task. If there isn't anything to do, we may as well just
+not add it all?
 
-Signed-off-by: Ross Burton <ross.burton@arm.com>
----
- scripts/dashboard/bugtriage/index.html | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+Cheers,
 
-diff --git a/scripts/dashboard/bugtriage/index.html b/scripts/dashboard/b=
-ugtriage/index.html
-index f18c0b34..ee4f4019 100644
---- a/scripts/dashboard/bugtriage/index.html
-+++ b/scripts/dashboard/bugtriage/index.html
-@@ -470,6 +470,10 @@
-       "Wic",
-     ];
-=20
-+    const ignoreComponents =3D [
-+      "meta-security",
-+    ];
-+
-     // Fields to display (bugzilla field name -> column header)
-     const fields =3D new Map([
-       ["id", "ID"],
-@@ -544,9 +548,16 @@
-       reloadButton.classList.toggle('spin')
-=20
-       params.append("include_fields", Array.from(fields.keys()).join());
--      params.append("f0", "product",)
--      params.append("o0", "notregexp",)
--      params.append("v0", `^(${ignoreProducts.map((s) =3D> escapeRegExp(=
-s)).join("|")})$`)
-+
-+      // Ignore specific products and components. The field numbers are =
-high so
-+      // that caller's queries can use fields without conflicts.
-+      params.append("f100", "product",)
-+      params.append("o100", "notregexp",)
-+      params.append("v100", `^(${ignoreProducts.map((s) =3D> escapeRegEx=
-p(s)).join("|")})$`)
-+
-+      params.append("f101", "component",)
-+      params.append("o101", "notregexp",)
-+      params.append("v101", `^(${ignoreComponents.map((s) =3D> escapeReg=
-Exp(s)).join("|")})$`)
-=20
-       var bzlink =3D document.createElement("a");
-       var buglistURL =3D `${serverUrl}/buglist.cgi?${params}`;
---=20
-2.43.0
-
+Richard
 
