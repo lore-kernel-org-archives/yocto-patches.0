@@ -1,457 +1,105 @@
-Return-Path: <mark.hatle@kernel.crashing.org>
+Return-Path: <alex.kanavin@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 840EECD6E79
-	for <webhook@archiver.kernel.org>; Mon,  8 Jun 2026 18:02:06 +0000 (UTC)
-Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.61213.1780941722769179129
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64EF6CD6E79
+	for <webhook@archiver.kernel.org>; Tue,  9 Jun 2026 09:41:18 +0000 (UTC)
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.75659.1780998071356302757
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 08 Jun 2026 11:02:03 -0700
+ Tue, 09 Jun 2026 02:41:11 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: kernel.crashing.org, ip: 63.228.1.57, mailfrom: mark.hatle@kernel.crashing.org)
-Received: from kernel.crashing.org (70-99-78-136.nuveramail.net [70.99.78.136] (may be forged))
-	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 658I20dK3267561;
-	Mon, 8 Jun 2026 13:02:00 -0500
-Received: from [192.168.2.62] ([192.168.2.62])
-	by kernel.crashing.org (8.14.7/8.14.7) with ESMTP id 658I1xER007712;
-	Mon, 8 Jun 2026 13:01:59 -0500
-Message-ID: <ef5463c9-656c-49ff-89aa-0b0fab3d6d26@kernel.crashing.org>
-Date: Mon, 8 Jun 2026 13:01:59 -0500
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [pseudo] [PATCH] [RFC] pseudo_util: Change
- pseudo_diag() calls to appropriate logging macros
-Content-Language: en-US
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=CYkFhlhs;
+ spf=pass (domain: gmail.com, ip: 209.85.221.53, mailfrom: alex.kanavin@gmail.com)
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-46015dc517aso4267358f8f.2
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 09 Jun 2026 02:41:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1780998070; x=1781602870; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yo4rnm7ydtQJFWFBDxbt2vmOvNrSQW2iuT+f9pFdbro=;
+        b=CYkFhlhsbArXh6tQlpvhEN5TL4vXUpXxkSUZ8BoZTk8P1bdAAu2858wwvmrQec6xvW
+         xo79P1nuCH6g3ehynEU5CzvWChZYJFP57Xcpy567l+uovpPvU1Hww5Pj7AOIY6TFe+BM
+         hpNiOWaSTn6qMmu5hPesXdNOXKZKtwbHc+F52iX7u4J+hycuRu2yH78w5ZlIY/eIcv9z
+         Yt6GrhEysmHyMIUQHBtJz5T1Iu1M8EUHzohFekUND7+A3IzkDub2SfTYoxyXDQuNjsCU
+         MsTMaAFpAQ5WFb8w/DU7ZkBYsKOwW9MfzlW+tiuup8BbcboSmfkinAAJ4j1r1S0Sk7V4
+         kGXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780998070; x=1781602870;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yo4rnm7ydtQJFWFBDxbt2vmOvNrSQW2iuT+f9pFdbro=;
+        b=RE1NJXE1wairbu3Jqqanw8ZpSIBrmJJelYyxk0Bgi/srRr9e/CLNLfvRetZL9DUxYZ
+         EyGr6qOQtYAFn2UY/w4Q0a7iYP9N5Jc55iA1sfp5lGLkqBPZzXah/jQSj8wd0lZr7QL3
+         LuzNL+ndfIfC6rOBXaO23TBhGD2oqr5tImaICJEehs65Tw6C3YQBOg7aQhTqUrFTjBJK
+         vn+WL66MVi+GKO4BKDj63atgaJ+5Q1YG2OCtA2Qlj2Icn9bNIJRmV05v3MZ1zxa6KOEZ
+         wTFzfYH8VsUOC7WPwTACG5+HMc76TgIqDqEKfEBZVXmgncbH2uBRC1PIR18HhixtlrfJ
+         ZHqA==
+X-Gm-Message-State: AOJu0YxcqZhgWt8MBUuSvaBffMgVG3DCKAdcmcS+YgIB/47fL7FdLjvs
+	ngaW0HgwWrfPNXqvJSlHDIGNAwBAuouQ/lHRON/j7nDHoqqTUMFQVUI21gig+reB
+X-Gm-Gg: Acq92OGWlBbfR8d8zR8xlDWSJq89cjkSdizl4pI0BHBAYf8tG5v02mmAB/G7Jr+Xrk8
+	yEbHyMh7lVC1vcs9HpBNCAqSAKHUaAYbNAUTM0DN9StayGJtz3CayclTIiApU/UFJrP9j8YWZzX
+	QBVtoM0ZcaydYxZwGgHKdT//ell/H2KxMDeAbfy3b88Fieyw4WtGryYxv6NaIpi0B3nRXrLK85O
+	fcEXYzdpzV2Fu3CYiKI6jR5aeu54RqtyM90oy/7Tz9GxtM3j+DS6YovQPUUjc9mLwVm0i6MCFT/
+	eWqXpNwJmIx14noysbU+GzhmO/jBon9rmKaPd7b4BMjt0XJdWuU8prw/GN7D8T0NSYgco3Rrt23
+	21bKwaNOPK4BgX4hCzrqr/nFXWnzb3o9OQCYS0Anx+dkieFUR2Jpzhr9ilT3QmhUZrigYONBYdJ
+	oB70xmoJoNlAxIe8juG+xM+E+jLMNgnVbwI8QKtSiBmyILiCy4QxKajMUDKji7uj+PkVrAE1tv+
+	9Q32mGiNL3uOGyw
+X-Received: by 2002:adf:e545:0:b0:45e:e44b:3136 with SMTP id ffacd0b85a97d-4603063a715mr23172625f8f.19.1780998069476;
+        Tue, 09 Jun 2026 02:41:09 -0700 (PDT)
+Received: from alex-lx-laptop.lab.linutronix.de (drugstore.linutronix.de. [80.153.143.164])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4601f2dcae2sm63986286f8f.6.2026.06.09.02.41.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jun 2026 02:41:08 -0700 (PDT)
+From: Alexander Kanavin <alex.kanavin@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Dmitry Sakhonchik <frezidok1@gmail.com>
-References: <20260608124450.4020884-1-frezidok1@gmail.com>
-From: Mark Hatle <mark.hatle@kernel.crashing.org>
-In-Reply-To: <20260608124450.4020884-1-frezidok1@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Cc: Alexander Kanavin <alex@linutronix.de>
+Subject: [yocto-autobuilder-helper][PATCH] config.json/auh: configure for incremental version upgrades
+Date: Tue,  9 Jun 2026 11:40:10 +0200
+Message-ID: <20260609094010.897937-1-alex.kanavin@gmail.com>
+X-Mailer: git-send-email 2.53.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 08 Jun 2026 18:02:06 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4179
+ <yocto-patches@lists.yoctoproject.org>; Tue, 09 Jun 2026 09:41:18 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4180
 
-This and the previous definition of critical, error, warning, info and debug 
-seem good.
+From: Alexander Kanavin <alex@linutronix.de>
 
---Mark
+Please see https://lists.openembedded.org/g/openembedded-architecture/message/2349 for details.
 
-On 6/8/26 7:44 AM, Dmitry Sakhonchik via lists.yoctoproject.org wrote:
-> From: Dmitry Sakhonchik <frezidok1@gmail.com>
-> 
-> I've tried my best, but I am not completely sure what to consider "warning"
-> or "info" or "error". Some are very clear, some are don't.
-> I would appreciate if someone more familiar with the code point me out to
-> the right direction.
-> 
-> The patch is based on: [pseudo] pseudo: Add new logging macros
-> and implements [YOCTO #12141]
-> 
-> Signed-off-by: Dmitry Sakhonchik <frezidok1@gmail.com>
-> ---
->   pseudo_util.c | 88 +++++++++++++++++++++++++--------------------------
->   1 file changed, 44 insertions(+), 44 deletions(-)
-> 
-> diff --git a/pseudo_util.c b/pseudo_util.c
-> index f8f2a2f..dbd979e 100644
-> --- a/pseudo_util.c
-> +++ b/pseudo_util.c
-> @@ -177,7 +177,7 @@ pseudo_get_value(const char *key) {
->   		value = NULL;
->   
->   	if (!pseudo_env[i].key)
-> -		pseudo_diag("Unknown variable %s.\n", key);
-> +		pseudo_warning("Unknown variable %s.\n", key);
->   
->   	return value;
->   }
-> @@ -202,12 +202,12 @@ pseudo_set_value(const char *key, const char *value) {
->   			if (new)
->   				pseudo_env[i].value = new;
->   			else
-> -				pseudo_diag("warning: failed to save new value (%s) for key %s\n",
-> +				pseudo_warning("failed to save new value (%s) for key %s\n",
->   					value, key);
->   		} else
->   			pseudo_env[i].value = NULL;
->   	} else {
-> -		if (!pseudo_util_initted) pseudo_diag("Unknown variable %s.\n", key);
-> +		if (!pseudo_util_initted) pseudo_warning("Unknown variable %s.\n", key);
->   		rc = -EINVAL;
->   	}
->   
-> @@ -350,7 +350,7 @@ without_libpseudo(char *list) {
->   	}
->   	list = strdup(list);
->   	if (!list) {
-> -		pseudo_diag("Couldn't allocate memory to remove libpseudo from environment.\n");
-> +		pseudo_error("Couldn't allocate memory to remove libpseudo from environment.\n");
->   	}
->   	while (list && !(*real_regexec)(&libpseudo_regex, list, 1, pmatch, 0)) {
->   		char *start = list + pmatch[0].rm_so;
-> @@ -360,7 +360,7 @@ without_libpseudo(char *list) {
->   		memmove(start, end, strlen(end) + 1);
->   		++counter;
->   		if (counter > 5) {
-> -			pseudo_diag("Found way too many libpseudo.so in environment, giving up.\n");
-> +			pseudo_error("Found way too many libpseudo.so in environment, giving up.\n");
->   			return list;
->   		}
->   	}
-> @@ -621,7 +621,7 @@ pseudo_evlog_internal(char *fmt, ...) {
->   				event_log[i].data = pseudo_evlog_buffer + (PSEUDO_EVLOG_LENGTH * i);
->   			}
->   		} else {
-> -			pseudo_diag("fatal: can't allocate event log storage.\n");
-> +			pseudo_error("can't allocate event log storage.\n");
->   		}
->   	}
->   
-> @@ -668,7 +668,7 @@ pseudo_append_element(char *newpath, char *root, size_t allocated, char **pcurre
->   	if (!newpath ||
->   	    !pcurrent || !*pcurrent ||
->   	    !root || !element) {
-> -		pseudo_diag("pseudo_append_element: invalid args.\n");
-> +		pseudo_warning("pseudo_append_element: invalid args.\n");
->   		return -1;
->   	}
->   
-> @@ -689,7 +689,7 @@ pseudo_append_element(char *newpath, char *root, size_t allocated, char **pcurre
->   		 * fall through and do standard processing
->   		 */
->   		if (!proc_path)
-> -			pseudo_diag("allocation failed seeking memory for path (%s).\n", newpath);
-> +			pseudo_warning("allocation failed seeking memory for path (%s).\n", newpath);
->   		else
->   			is_proc = 1;
->   	}
-> @@ -729,7 +729,7 @@ pseudo_append_element(char *newpath, char *root, size_t allocated, char **pcurre
->   	/* current length, plus / <element> / \0 */
->   	/* => curlen + elen + 3 */
->   	if (curlen + elen + 3 > allocated) {
-> -		pseudo_diag("pseudo_append_element: path too long (wanted %lu bytes).\n", (unsigned long) curlen + elen + 3);
-> +		pseudo_error("pseudo_append_element: path too long (wanted %lu bytes).\n", (unsigned long) curlen + elen + 3);
->   		return -1;
->   	}
->   	/* append a slash */
-> @@ -798,7 +798,7 @@ pseudo_append_element(char *newpath, char *root, size_t allocated, char **pcurre
->   					char *target_link_path = malloc(pseudo_path_max());
->   
->   					if (!target_link_path)
-> -						pseudo_diag("allocation failed seeking memory for path (%s/%s).\n", proc_path, linkbuf);
-> +						pseudo_error("allocation failed seeking memory for path (%s/%s).\n", proc_path, linkbuf);
->   						/* Fall through, nothing we can do here */
->   					else {
->   						snprintf(target_link_path, target_link_max, "%s/%s", proc_path, linkbuf);
-> @@ -865,7 +865,7 @@ pseudo_append_elements(char *newpath, char *root, size_t allocated, char **curre
->   	if (!newpath || !root ||
->   	    !current || !*current ||
->   	    !path) {
-> -		pseudo_diag("pseudo_append_elements: invalid arguments.");
-> +		pseudo_error("pseudo_append_elements: invalid arguments.");
->   		return -1;
->   	}
->   	if (!sbuf) {
-> @@ -935,7 +935,7 @@ pseudo_fix_path(const char *base, const char *path, size_t rootlen, size_t basel
->   	int trailing_slash = 0;
->   	
->   	if (!path) {
-> -		pseudo_diag("can't fix empty path.\n");
-> +		pseudo_warning("can't fix empty path.\n");
->   		return 0;
->   	}
->   	if (baselen == 1) {
-> @@ -957,7 +957,7 @@ pseudo_fix_path(const char *base, const char *path, size_t rootlen, size_t basel
->   	if (!pathbufs[pathbuf]) {
->   		pathbufs[pathbuf] = malloc(newpathlen);
->   		if (!pathbufs[pathbuf]) {
-> -			pseudo_diag("allocation failed seeking memory for path (%s).\n", path);
-> +			pseudo_error("allocation failed seeking memory for path (%s).\n", path);
->   			return 0;
->   		}
->   	}
-> @@ -976,7 +976,7 @@ pseudo_fix_path(const char *base, const char *path, size_t rootlen, size_t basel
->   	 * easier for the library.
->   	 */
->   	if (!newpath) {
-> -		pseudo_diag("allocation failed seeking memory for path (%s).\n", path);
-> +		pseudo_error("allocation failed seeking memory for path (%s).\n", path);
->   		return 0;
->   	}
->   	newpath[0] = '\0';
-> @@ -1037,7 +1037,7 @@ void pseudo_dropenv() {
->   	if (ld_preload) {
->   		ld_preload = without_libpseudo(ld_preload);
->   		if (!ld_preload) {
-> -			pseudo_diag("fatal: can't allocate new %s variable.\n", PRELINK_LIBRARIES);
-> +			pseudo_error("can't allocate new %s variable.\n", PRELINK_LIBRARIES);
->   		}
->   		if (ld_preload && strlen(ld_preload)) {
->   			SETENV(PRELINK_LIBRARIES, ld_preload, 1);
-> @@ -1056,7 +1056,7 @@ pseudo_dropenvp(char * const *envp) {
->   
->   	new_envp = malloc((i + 1) * sizeof(*new_envp));
->   	if (!new_envp) {
-> -		pseudo_diag("fatal: can't allocate new environment.\n");
-> +		pseudo_error("can't allocate new environment.\n");
->   		return NULL;
->   	}
->   
-> @@ -1065,7 +1065,7 @@ pseudo_dropenvp(char * const *envp) {
->   		if (STARTSWITH(envp[i], PRELINK_LIBRARIES "=")) {
->   			char *new_val = without_libpseudo(envp[i]);
->   			if (!new_val) {
-> -				pseudo_diag("fatal: can't allocate new environment variable.\n");
-> +				pseudo_error("can't allocate new environment variable.\n");
->   				return 0;
->   			} else {
->   				/* don't keep an empty value; if the whole string is
-> @@ -1111,7 +1111,7 @@ pseudo_setupenv() {
->   		size_t len = strlen(libdir_path) + 1 + (strlen(libdir_path) + 2) + 1;
->   		char *newenv = malloc(len);
->   		if (!newenv) {
-> -			pseudo_diag("fatal: can't allocate new %s variable.\n", PRELINK_PATH);
-> +			pseudo_error("can't allocate new %s variable.\n", PRELINK_PATH);
->   		} else {
->   		    snprintf(newenv, len, "%s:%s64", libdir_path, libdir_path);
->   		    SETENV(PRELINK_PATH, newenv, 1);
-> @@ -1121,7 +1121,7 @@ pseudo_setupenv() {
->   		size_t len = strlen(ld_library_path) + 1 + strlen(libdir_path) + 1 + (strlen(libdir_path) + 2) + 1;
->   		char *newenv = malloc(len);
->   		if (!newenv) {
-> -			pseudo_diag("fatal: can't allocate new %s variable.\n", PRELINK_PATH);
-> +			pseudo_error("can't allocate new %s variable.\n", PRELINK_PATH);
->   		} else {
->   		    snprintf(newenv, len, "%s:%s:%s64", ld_library_path, libdir_path, libdir_path);
->   		    SETENV(PRELINK_PATH, newenv, 1);
-> @@ -1136,7 +1136,7 @@ pseudo_setupenv() {
->   	if (ld_preload) {
->   		ld_preload = with_libpseudo(ld_preload, libdir_path);
->   		if (!ld_preload) {
-> -			pseudo_diag("fatal: can't allocate new %s variable.\n", PRELINK_LIBRARIES);
-> +			pseudo_error("can't allocate new %s variable.\n", PRELINK_LIBRARIES);
->   		} else {
->   		    SETENV(PRELINK_LIBRARIES, ld_preload, 1);
->   		    free(ld_preload);
-> @@ -1144,7 +1144,7 @@ pseudo_setupenv() {
->   	} else {
->   		ld_preload = with_libpseudo("", libdir_path);
->   		if (!ld_preload) {
-> -			pseudo_diag("fatal: can't allocate new %s variable.\n", PRELINK_LIBRARIES);
-> +			pseudo_error("can't allocate new %s variable.\n", PRELINK_LIBRARIES);
->   		} else {
->   		    SETENV(PRELINK_LIBRARIES, ld_preload, 1);
->   		    free(ld_preload);
-> @@ -1216,7 +1216,7 @@ pseudo_setupenvp(char * const *envp) {
->   	j = 0;
->   	new_envp = malloc((env_count + 1) * sizeof(*new_envp));
->   	if (!new_envp) {
-> -		pseudo_diag("fatal: can't allocate new environment.\n");
-> +		pseudo_error("can't allocate new environment.\n");
->   		return NULL;
->   	}	
->   
-> @@ -1225,7 +1225,7 @@ pseudo_setupenvp(char * const *envp) {
->   		size_t len = strlen(PRELINK_PATH "=") + strlen(libdir_path) + 1 + (strlen(libdir_path) + 2) + 1;
->   		char *newenv = malloc(len);
->   		if (!newenv) {
-> -			pseudo_diag("fatal: can't allocate new %s variable.\n", PRELINK_PATH);
-> +			pseudo_error("can't allocate new %s variable.\n", PRELINK_PATH);
->   		} else {
->   		    snprintf(newenv, len, PRELINK_PATH "=%s:%s64", libdir_path, libdir_path);
->   		    new_envp[j++] = newenv;
-> @@ -1234,7 +1234,7 @@ pseudo_setupenvp(char * const *envp) {
->   		size_t len = strlen(ld_library_path) + 1 + strlen(libdir_path) + 1 + (strlen(libdir_path) + 2) + 1;
->   		char *newenv = malloc(len);
->   		if (!newenv) {
-> -			pseudo_diag("fatal: can't allocate new %s variable.\n", PRELINK_PATH);
-> +			pseudo_error("can't allocate new %s variable.\n", PRELINK_PATH);
->   		} else {
->   		    snprintf(newenv, len, "%s:%s:%s64", ld_library_path, libdir_path, libdir_path);
->   		    new_envp[j++] = newenv;
-> @@ -1247,18 +1247,18 @@ pseudo_setupenvp(char * const *envp) {
->   	if (ld_preload) {
->   		ld_preload = with_libpseudo(ld_preload, libdir_path);
->   		if (!ld_preload) {
-> -			pseudo_diag("fatal: can't allocate new %s variable.\n", PRELINK_LIBRARIES);
-> +			pseudo_error("can't allocate new %s variable.\n", PRELINK_LIBRARIES);
->   		} else
->   			new_envp[j++] = ld_preload;
->   	} else {
->   		ld_preload = with_libpseudo("", libdir_path);
->   		if (!ld_preload) {
-> -			pseudo_diag("fatal: can't allocate new %s variable.\n", PRELINK_LIBRARIES);
-> +			pseudo_error("can't allocate new %s variable.\n", PRELINK_LIBRARIES);
->   		} else {
->   			size_t len = strlen(PRELINK_LIBRARIES "=") + strlen(ld_preload) + 1;
->   			char *newenv = malloc(len);
->   			if (!newenv) {
-> -				pseudo_diag("fatal: can't allocate new %s variable.\n", PRELINK_LIBRARIES);
-> +				pseudo_error("can't allocate new %s variable.\n", PRELINK_LIBRARIES);
->   			} else {
->   				snprintf(newenv, len, PRELINK_LIBRARIES "=%s", ld_preload);
->   				new_envp[j++] = newenv;
-> @@ -1287,7 +1287,7 @@ pseudo_setupenvp(char * const *envp) {
->   			size_t len = strlen(pseudo_env[i].key) + 1 + strlen(pseudo_env[i].value) + 1;
->   			char *newenv = malloc(len);
->   			if (!newenv) {
-> -				pseudo_diag("fatal: can't allocate new variable.\n");
-> +				pseudo_error("can't allocate new variable.\n");
->   			} else {
->   				snprintf(newenv, len, "%s=%s", pseudo_env[i].key, pseudo_env[i].value);
->   				new_envp[j++] = newenv;
-> @@ -1339,7 +1339,7 @@ pseudo_prefix_path(char *file) {
->   	char * prefix = pseudo_get_prefix(NULL);
->   
->   	if (!prefix) {
-> -		pseudo_diag("You must set the PSEUDO_PREFIX environment variable to run pseudo.\n");
-> +		pseudo_error("You must set the PSEUDO_PREFIX environment variable to run pseudo.\n");
->   		exit(1);
->   	}
->   
-> @@ -1356,7 +1356,7 @@ pseudo_bindir_path(char *file) {
->   	char * bindir = pseudo_get_bindir();
->   
->   	if (!bindir) {
-> -		pseudo_diag("You must set the PSEUDO_BINDIR environment variable to run pseudo.\n");
-> +		pseudo_error("You must set the PSEUDO_BINDIR environment variable to run pseudo.\n");
->   		exit(1);
->   	}
->   
-> @@ -1373,7 +1373,7 @@ pseudo_libdir_path(char *file) {
->   	char * libdir = pseudo_get_libdir();
->   
->   	if (!libdir) {
-> -		pseudo_diag("You must set the PSEUDO_LIBDIR environment variable to run pseudo.\n");
-> +		pseudo_error("You must set the PSEUDO_LIBDIR environment variable to run pseudo.\n");
->   		exit(1);
->   	}
->   
-> @@ -1390,7 +1390,7 @@ pseudo_localstatedir_path(char *file) {
->   	char * localstatedir = pseudo_get_localstatedir();
->   
->   	if (!localstatedir) {
-> -		pseudo_diag("You must set the PSEUDO_LOCALSTATEDIR environment variable to run pseudo.\n");
-> +		pseudo_error("You must set the PSEUDO_LOCALSTATEDIR environment variable to run pseudo.\n");
->   		exit(1);
->   	}
->   
-> @@ -1424,7 +1424,7 @@ pseudo_get_prefix(char *pathname) {
->   		tmp_path = pseudo_fix_path(NULL, mypath, 0, 0, 0, AT_SYMLINK_NOFOLLOW);
->   		/* point s to the end of the fixed path */
->   		if ((int) strlen(tmp_path) >= pseudo_path_max()) {
-> -			pseudo_diag("Can't expand path '%s' -- expansion exceeds %d.\n",
-> +			pseudo_error("Can't expand path '%s' -- expansion exceeds %d.\n",
->   				mypath, (int) pseudo_path_max());
->   		} else {
->   			s = mypath + snprintf(mypath, pseudo_path_max(), "%s", tmp_path);
-> @@ -1446,7 +1446,7 @@ pseudo_get_prefix(char *pathname) {
->   			strcpy(mypath, "/");
->   		}
->   
-> -		pseudo_diag("Warning: PSEUDO_PREFIX unset, defaulting to %s.\n",
-> +		pseudo_warning("PSEUDO_PREFIX unset, defaulting to %s.\n",
->   			mypath);
->   		pseudo_set_value("PSEUDO_PREFIX", mypath);
->   		s = pseudo_get_value("PSEUDO_PREFIX");
-> @@ -1702,7 +1702,7 @@ pseudo_logfile(char *filename, char *defname, int prefer_fd) {
->   		}
->   		pseudo_path = pseudo_localstatedir_path(defname);
->   		if (!pseudo_path) {
-> -			pseudo_diag("can't get path for prefix/%s\n", PSEUDO_LOGFILE);
-> +			pseudo_error("can't get path for prefix/%s\n", PSEUDO_LOGFILE);
->   			return -1;
->   		}
->   	} else {
-> @@ -1716,7 +1716,7 @@ pseudo_logfile(char *filename, char *defname, int prefer_fd) {
->   					break;
->   				case 'd':
->   					if (pid) {
-> -						pseudo_diag("found second %%d in PSEUDO_DEBUG_FILE, ignoring.\n");
-> +						pseudo_info("found second %%d in PSEUDO_DEBUG_FILE, ignoring.\n");
->   						return -1;
->   					} else {
->   						pid = s;
-> @@ -1724,7 +1724,7 @@ pseudo_logfile(char *filename, char *defname, int prefer_fd) {
->   					break;
->   				case 's':
->   					if (prog) {
-> -						pseudo_diag("found second %%s in PSEUDO_DEBUG_FILE, ignoring.\n");
-> +						pseudo_info("found second %%s in PSEUDO_DEBUG_FILE, ignoring.\n");
->   						return -1;
->   					} else {
->   						prog = s;
-> @@ -1732,10 +1732,10 @@ pseudo_logfile(char *filename, char *defname, int prefer_fd) {
->   					break;
->   				default:
->   					if (isprint(s[1])) {
-> -						pseudo_diag("found unknown format character '%c' in PSEUDO_DEBUG_FILE, ignoring.\n",
-> +						pseudo_info("found unknown format character '%c' in PSEUDO_DEBUG_FILE, ignoring.\n",
->   							s[1]);
->   					} else {
-> -						pseudo_diag("found unknown format character '\\x%02x' in PSEUDO_DEBUG_FILE, ignoring.\n",
-> +						pseudo_info("found unknown format character '\\x%02x' in PSEUDO_DEBUG_FILE, ignoring.\n",
->   							(unsigned char) s[1]);
->   					}
->   					return -1;
-> @@ -1750,7 +1750,7 @@ pseudo_logfile(char *filename, char *defname, int prefer_fd) {
->   			len += strlen(program_invocation_short_name);
->   		pseudo_path = malloc(len);
->   		if (!pseudo_path) {
-> -			pseudo_diag("can't allocate space for debug file name.\n");
-> +			pseudo_error("can't allocate space for debug file name.\n");
->   			return -1;
->   		}
->   		if (pid && prog) {
-> @@ -1770,7 +1770,7 @@ pseudo_logfile(char *filename, char *defname, int prefer_fd) {
->   	}	
->   	fd = open(pseudo_path, O_WRONLY | O_APPEND | O_CREAT | O_CLOEXEC, 0644);
->   	if (fd == -1) {
-> -		pseudo_diag("help: can't open log file %s: %s\n", pseudo_path, strerror(errno));
-> +		pseudo_error("help: can't open log file %s: %s\n", pseudo_path, strerror(errno));
->   	} else {
->   		/* try to force fd to prefer_fd.  We do this because glibc's malloc
->   		 * debug unconditionally writes to fd 2, and we don't want
-> @@ -1799,7 +1799,7 @@ pseudo_debug_logfile(char *defname, int prefer_fd) {
->   
->   	fd = pseudo_logfile(filename, defname, prefer_fd);
->   	if (fd > -1) {
-> -		pseudo_diag("debug_logfile: fd %d\n", fd);
-> +		pseudo_info("debug_logfile: fd %d\n", fd);
->   		pseudo_util_debug_fd = fd;
->   		return 0;
->   	}
-> @@ -1864,7 +1864,7 @@ pseudo_dump_data(char *name, const void *v, size_t len) {
->   	const unsigned char *base = v;
->   	const unsigned char *data = base;
->   	int remaining = len;
-> -	pseudo_diag("%s at %p [%d byte%s]:\n",
-> +	pseudo_info("%s at %p [%d byte%s]:\n",
->   		name ? name : "data", v, (int) len, len == 1 ? "" : "s");
->   	while (remaining > 0) {
->   		char *hexptr = hexbuf;
-> @@ -1882,7 +1882,7 @@ pseudo_dump_data(char *name, const void *v, size_t len) {
->   		}
->   		*hexptr = '\0';
->   		*asciiptr = '\0';
-> -		pseudo_diag("0x%06x %-50.50s '%.16s'\n",
-> +		pseudo_info("0x%06x %-50.50s '%.16s'\n",
->   			(int) (data - base),
->   			hexbuf, asciibuf);
->   		remaining = remaining - 16;
-> 
-> 
-> -=-=-=-=-=-=-=-=-=-=-=-
-> Links: You receive all messages sent to this group.
-> View/Reply Online (#4178): https://lists.yoctoproject.org/g/yocto-patches/message/4178
-> Mute This Topic: https://lists.yoctoproject.org/mt/119704509/3616948
-> Group Owner: yocto-patches+owner@lists.yoctoproject.org
-> Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/13201099/3616948/947757854/xyzzy [mark.hatle@kernel.crashing.org]
-> -=-=-=-=-=-=-=-=-=-=-=-
-> 
+Signed-off-by: Alexander Kanavin <alex@linutronix.de>
+---
+ config.json                            | 2 +-
+ scripts/auh-config/upgrade-helper.conf | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/config.json b/config.json
+index 4904439..fe9d416 100644
+--- a/config.json
++++ b/config.json
+@@ -1591,7 +1591,7 @@
+             "step2" : {
+                 "shortname" : "run AUH",
+                 "EXTRACMDS" : [
+-                    "../auto-upgrade-helper/upgrade-helper.py -e all",
++                    "../auto-upgrade-helper/upgrade-helper.py -e all --incremental",
+                     "mkdir -p ${WEBPUBLISH_DIR}/pub/auh/",
+                     "cp -rf ./upgrade-helper/* ${WEBPUBLISH_DIR}/pub/auh/"
+                 ]
+diff --git a/scripts/auh-config/upgrade-helper.conf b/scripts/auh-config/upgrade-helper.conf
+index a0d53c4..d7c6b1d 100644
+--- a/scripts/auh-config/upgrade-helper.conf
++++ b/scripts/auh-config/upgrade-helper.conf
+@@ -33,3 +33,4 @@ publish_work_url=https://valkyrie.yocto.io/pub/auh
+ 
+ commit_revert_policy=all
+ 
++retry_any_version_recipes=vulkan-samples sbom-cve-check-update-cvelist-native sbom-cve-check-update-nvd-native
+-- 
+2.53.0
+
 
