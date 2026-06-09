@@ -1,446 +1,521 @@
-Return-Path: <alex.kanavin@gmail.com>
+Return-Path: <patel.rajkumar@oss.qualcomm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 715A1CD6E79
-	for <webhook@archiver.kernel.org>; Tue,  9 Jun 2026 09:52:18 +0000 (UTC)
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.75814.1780998737276263851
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CFD1CD8CAA
+	for <webhook@archiver.kernel.org>; Tue,  9 Jun 2026 10:38:23 +0000 (UTC)
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.76639.1781001501387752544
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 09 Jun 2026 02:52:17 -0700
+ Tue, 09 Jun 2026 03:38:21 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=dv/2e4B4;
- spf=pass (domain: gmail.com, ip: 209.85.219.49, mailfrom: alex.kanavin@gmail.com)
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-8ce0f17a69cso40185536d6.0
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 09 Jun 2026 02:52:17 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1780998736; cv=none;
-        d=google.com; s=arc-20240605;
-        b=ZjuEMhEQIsTb5+FJbrOCoeGWMx5tdysZDzNjQBuhNTRtUMY95KSsVPJgnbLerHsLUO
-         xD5uXbnky6ui+s35uR6zoK4QwrSbc000cl1aZC9t6DkgmgmTiSAaPaJefNzZGoIFgP3A
-         7zlad2K+xoZ+scrgGjYcj5XkqPwJ829faze1pkoBJY7QKVzsKJMnLmYg7lT7h5u3S7eq
-         7oDWaQ+LXqb8gogOC2cTdpS7px3YGt58zLHgG7PtoSgJ7zgaWpaKW5XXE3+QVmkYOSVz
-         FWtKu6+4bmbImlE0AO5cXcCdVDHvl/sZCTWymc+Gxbc3W97WBne9mX0R0zRO5cKB05bf
-         bQ6w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=n1jrBlq3umahQMIAunOAkY7shLLsIcWhcMK1LSXHgEw=;
-        fh=28JQhdK5h5mLF5DLv2fLR8YFHEF0yTvH5opUNnJ6Zzo=;
-        b=MvHLv00/xFgl8qLQLKOpH5wbLdksaYEht+ji19ganFV9stuOEcK12yLADoLrA1alPX
-         4AmYGLbJebTlMpQHtljTBMqiYz90NEeoVWp/rbMVkXm/jssZW2JblHLv87AxU+7u7ZIB
-         4szojBK8ib/6rJKYCc0TOAdtds742z+gaAL79Ri/fv8rzwsmYCaWVKS2uVjFRth3FvpS
-         Lpm6GljE33Xm0/YQ+eY0j7JDIcnReGgN4VkDyaSi1MI1L7PUSqe+zfOJFERUKEOlvG5V
-         hRVlvspOCPnvkD9KX/ASQUGsjbq2QSmjmGdQzmZ/t5Iu4+R8OSVX8WrBSFR0e0wpwLMt
-         rcww==;
-        darn=lists.yoctoproject.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+ dkim=pass header.i=@qualcomm.com header.s=qcppdkim1 header.b=D70QfVv6;
+ dkim=pass header.i=@oss.qualcomm.com header.s=google header.b=RPOtmMgx;
+ spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: oss.qualcomm.com, ip: 205.220.168.131, mailfrom: patel.rajkumar@oss.qualcomm.com)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6599vDZ01868510
+	for <yocto-patches@lists.yoctoproject.org>; Tue, 9 Jun 2026 10:38:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=n1ZoJwOvLsjLywuLiso2ZuYDbUtZkBfuc6y
+	9yxD9V9E=; b=D70QfVv6jwoRnCeJKSNjyURGTK5GY/y+1N/fU46dGklbkfBy7R0
+	vG15Hw+R0aVNfFueZpuoHcTjczVuMb/XOax0gZUaSVQibmYNFhkb759oVGR7F2R8
+	jZdXlXwZac8MrCwIP2oG0V5NJpgfIYkzJmbhth3jRpMIAdiX7Na3K56dbIG02Klc
+	1lGFMJGIOsV4LnAjZp1QhO3mJlIG3G4OzOLi8Ms3h8+uo19E2jfiPP1cBmjpRtrq
+	ACOafo/e/Dxan0WeuG4h1hMyemMMInQ6EiX444X/m0OHj74gBfvVtDj6z3Gpo0SU
+	uYVPOfsr4WBuKP5VbQqXlvcrzHfZHYpA8Tg==
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4epg3wg9jd-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <yocto-patches@lists.yoctoproject.org>; Tue, 09 Jun 2026 10:38:20 +0000 (GMT)
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-c858e0cbca3so2839030a12.2
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 09 Jun 2026 03:38:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780998736; x=1781603536; darn=lists.yoctoproject.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=n1jrBlq3umahQMIAunOAkY7shLLsIcWhcMK1LSXHgEw=;
-        b=dv/2e4B4A2W2ombMOtpZ0iS85qL/8NaNYAC0+Mu7lIoIlqkyaZMDPkJ+8y7yUr5tnT
-         RsTSUZE4akQkB/H6mdIa/jxGw0Jv2cg8wn5KRlketQexPLGTztQu26ZZKWS4ECqlLIXq
-         8/Q7z6TdPbkFKLtO4vp56BP1YdBmWAQnhB8gnRNhoPtE9ekNHh1+Ab23dXrFnJqK6Fv/
-         Bi4C50c/2LxbYcqauZzGvE98ytXNvKCJWIIB/btfnv52aNFP1/WPmEe0XZwxxTZ95UrS
-         coMbyBbOqgDJFEwzeY8/fbIlnuEft+NfExsJRx1VYwkORXSk6D92n9dJxhlhDa5SMQYt
-         sYsA==
+        d=oss.qualcomm.com; s=google; t=1781001500; x=1781606300; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=n1ZoJwOvLsjLywuLiso2ZuYDbUtZkBfuc6y9yxD9V9E=;
+        b=RPOtmMgxKcedOiWL/8EXL1uvlOioSsWGd60BPTaC9/iSPGSOxCjCOynsuE9i16uPrt
+         CW2Zl3hcs9wBWT2igd2vbEp+3a4tHdHtFtF6ro95RSykau7hALWJ3PK0GWoPMtT4qjk8
+         NAu9iCDHoAI0a1zENlibN3iYj4nxfvOHIbqidoqn95javhkHX0ddmsBXWOG9Xr8hMBQU
+         pp73eqYuliQpuOTf1Fzaoi1+ub5BHJ+R1qf99tjEjQMGitDyaY0Tmyj8A1zyZt+scsVx
+         SzoQHXNB6fUxcgghveBo0WURBCXaBoG105Y1iG2u7rSoFvfknXz55Xq/KVIAJQUWy5J8
+         +XDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780998736; x=1781603536;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20251104; t=1781001500; x=1781606300;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=n1jrBlq3umahQMIAunOAkY7shLLsIcWhcMK1LSXHgEw=;
-        b=CKyxSkY1J9jGWbrgl/NVMZgYjQK6ZWN7sM6W7+dW9yLq08VD0pslz9HYzPY13RFh3q
-         sjwO8uZx+3VmuggKHahS9T1MrBRSiIcmny74BcAf2zng2lGwEeNE4iITleyheEMMiX23
-         gaNOt6OhzQ9CAwAznMqM7Rtz15V5dVc5jKKS47nMnGx+nBLETWfZuBeTzKlOOxNpUO97
-         QtZnq4FA9XZhl0kqz8sSG+P/QI373eSIqfZlkUEZVtZKCaifzxCKi2dswSxSz+kr7RLT
-         llfnieDMyA9RP8GIH6FAfU7m1fHZgYk4fCq7iscXquo9BbPk7WeVg+geM/yRZZ4BAGaz
-         rBGw==
-X-Gm-Message-State: AOJu0YwP70rHrL/oaorchoRuvWUDOm9PW5L+RKz190zFPlyqAaXEZWL2
-	Mpkag+gQvF77Dvgac2lY4kHem68SYbLowXuB7+c9UYzr7NsS//sgW7gZMpvJknkF3Rw3AKW8z4b
-	3n4Q5iD96fIuGYPDariYI5Pl3NlBrLjQv4w==
-X-Gm-Gg: Acq92OFPKQeq8DB4SA1iZ59rmbYnGSCdJ1n3YyfKi7CzTrUn09m3kf1H+utDIfUOCVQ
-	nFKMuiBht9TO/VxaWz89A3VkHkDBnfQgOoB4yQmghd3ZTKxqBUIaP4akX+l64cuSIkflOwaNE+v
-	7dPBoeqYyRkPr14u2QgrvEnPoBGLBnEtvOe3hI1cug4auwCd8Sf3g65DE2p1lqn5FIbagBg05Jd
-	K2u/uS1/1KAL9GXca1+LY7PiH3FM//Gb92NT5VeWxgH8LnF8EusMkwNGFdPuCjU7QYy5+khlgJj
-	s01gaqSGK5kpnBVU0NE=
-X-Received: by 2002:a0c:fb0f:0:b0:8cc:f0b9:1f3b with SMTP id
- 6a1803df08f44-8cee5ff3b4emr230898626d6.20.1780998736100; Tue, 09 Jun 2026
- 02:52:16 -0700 (PDT)
+        bh=n1ZoJwOvLsjLywuLiso2ZuYDbUtZkBfuc6y9yxD9V9E=;
+        b=rfVcLDoS7ePTXBFaH9FfZZWNH82x2dsEHrfPLm0kRUhqJnCKXtencGw74IgAxoAPyn
+         heb7blsTJ05xq/U2UFyKJVjE1pXGhn3w+DRXBDK09CHIdAwyiFnjPCn/Q8c1Fs39YQvy
+         ZuOmD6Wp7KZoKKtfLhqwVbV+Vuzdg4H4ARyaGsc7avRm3J37SIEbV0wriKfm6R04u9tq
+         riXdjMrWH/M6UJaaSTZNI29VT0WYzXAZzklYiYtYfW7GLAFVgTyFmDpl4ejcQ4g3ybdE
+         zRCcvd0Br0Wl2J5CC07oYO/S+1KffD3ipzFxvJiR/azsXpSsTGipImM2DhuTKWHNeb75
+         tOQQ==
+X-Gm-Message-State: AOJu0YzXhTOFei2WaEC7MaLRnQTwQbZWunp0pRDOfoevl8qISI9I5YJz
+	4bmz07Uup6fSiaJVMX6cfb+Y9wZ5bE40OqgUFeVs/Sy7+TALa8PwqWtDIIEpijYfRrjuIQYz7oq
+	fe96BhcdH1bjFKJqbNTSA0caP2pIw2LGdhswjQXiOcs5da12o5Di4NysnXMKpPLva6qwKzP/uss
+	4nnruuXTkZsbnE
+X-Gm-Gg: Acq92OHYdREmN1UkA9kZJzfj8NufzbZqO8w+B/U2nx5z9G51tJgbJsD87uUawZKX5jK
+	4wvhkbqf98nVGMqzRK2RBj0gwiL7gmPCz0PN1S6G0veu4/HALKmZgmjem0bZV2OgLharO+U9QQ3
+	REaqRPZEA3Gh4EO09NR5mdpRaEEZu7lR4Pcf7L89UlEKFYS9Q/rzb6/dJOesXmqidZc5rUBBj7m
+	v4AJU78AGWmLK3AyNlochLxQJre4zj5pSSQwtsPJMZuxNLWMSXIwlivHIZW+AlpTlww6cDEjJtI
+	ZnfnJmiHHvEUw4tKr1UcrTXPLxiVCjLbvsASR8wt8nkKq9iVzJX9IjTrMmq8Wpne4jCpKg2mPh2
+	1twm0R7WY8/8rUdvzzbdm2gLau7/r32oIe3nsjSHGFk/sCGW3ig4i
+X-Received: by 2002:a05:6a21:3cc2:b0:38d:fad1:cf2a with SMTP id adf61e73a8af0-3b4ccd65aebmr21521722637.13.1781001499637;
+        Tue, 09 Jun 2026 03:38:19 -0700 (PDT)
+X-Received: by 2002:a05:6a21:3cc2:b0:38d:fad1:cf2a with SMTP id adf61e73a8af0-3b4ccd65aebmr21521686637.13.1781001498968;
+        Tue, 09 Jun 2026 03:38:18 -0700 (PDT)
+Received: from hu-rajkpate-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c85df03387asm19455395a12.4.2026.06.09.03.38.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jun 2026 03:38:18 -0700 (PDT)
+From: Rajkumar Patel <patel.rajkumar@oss.qualcomm.com>
+To: yocto-patches@lists.yoctoproject.org
+Cc: anuj.mittal@oss.qualcomm.com,
+        Rajkumar Patel <patel.rajkumar@oss.qualcomm.com>
+Subject: [meta-dpdk][PATCH] xdp-tools: Move out of dynamic-layers and upgrade to v1.6.3
+Date: Tue,  9 Jun 2026 16:07:55 +0530
+Message-Id: <20260609103755.1955622-1-patel.rajkumar@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20260605132739.617143-1-daniel.turull@ericsson.com>
-In-Reply-To: <20260605132739.617143-1-daniel.turull@ericsson.com>
-From: Alexander Kanavin <alex.kanavin@gmail.com>
-Date: Tue, 9 Jun 2026 11:52:06 +0200
-X-Gm-Features: AVVi8CcLeuiezmk4nrrs4lkS51zrVEsAWCwygEFty6oPOZ5iDHBfHMtmuwpIgos
-Message-ID: <CANNYZj-okUKGLMSE2gbgX5U8nNrbhE9n0bxctC3qywcfxwc8YQ@mail.gmail.com>
-Subject: Re: [AUH] [PATCH v3] upgrade-helper: add state module and
- --incremental mode
-To: daniel.turull@ericsson.com
-Cc: yocto-patches@lists.yoctoproject.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjA5MDEwMCBTYWx0ZWRfX/tadKCLhQYyJ
+ vyyV1mAXMmRWo486A4oakMaGZtOXhzlAKLSe2jpGcHzVUqahX9yt9ExHxKTbrtWH4hDtvPD5Cof
+ bAcqT3dysKwE9PduMyK4UbTblKIH6yI5cR8grQ9MauiBUTkb9l/16apTJs0kUdYXhXL/Ra50kJI
+ A0ZOwdDaZxvP3g/VhWJxnIjMxAZ08OvwZY+FqJM0TUbNg41HEViIacLqHyGa9ht1ZgUrWz6p6Bs
+ hiGefHshdHJSaB/VUH2P9lbt0sRo4rDzkDFk7dVaKhL9LlyKCMYj2xumpiLWIEvVij+1FKDZxvv
+ VPYTC/ktRFiAj3feWNHgO4r78NanYFEo5o8O+9XF3WGubeUDuucoM9vihty1/2SKIzDEuBw9PhH
+ deuaf8lXmmNVtv5wtIkktEgnSQoBmyPeUDYSLSyVBhfPOsZaWbeO0xfm1MUcahjz5Riy0TLAmK3
+ 12eaXpU7AobX9LTR5Ww==
+X-Authority-Analysis: v=2.4 cv=csWrVV4i c=1 sm=1 tr=0 ts=6a27ed1c cx=c_pps
+ a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=9ZdZAmFfhINEWCGy:21 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22
+ a=NEAV23lmAAAA:8 a=EUspDBNiAAAA:8 a=QyXUC8HyAAAA:8 a=hX9f41WZAt5pQm368A0A:9
+ a=x9snwWr2DeNwDh03kgHS:22
+X-Proofpoint-GUID: OiCfNkTeS0pP88L6LB9IM38CJ-pJTM4N
+X-Proofpoint-ORIG-GUID: OiCfNkTeS0pP88L6LB9IM38CJ-pJTM4N
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-06-09_02,2026-06-09_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 clxscore=1015 spamscore=0 adultscore=0 lowpriorityscore=0
+ malwarescore=0 impostorscore=0 phishscore=0 suspectscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2605210000 definitions=main-2606090100
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 09 Jun 2026 09:52:18 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4184
+ <yocto-patches@lists.yoctoproject.org>; Tue, 09 Jun 2026 10:38:23 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4185
 
-Thanks, this has been merged. I've also posted patches that tweak the
-autobuilder to take the incremental updates into daily use. Once they
-merge, let's run it for a few days to see that it operates correctly,
-then we can add the changelog support.
+clang-native is provided by oe-core and is available in any standard
+Yocto build without requiring meta-clang. Gating xdp-tools behind
+the clang-layer dynamic-layer mechanism therefore serves no purpose.
 
-Alex
+Move the recipe from dynamic-layers/clang-layer/ to recipes-support/
+so it is always available when meta-dpdk is in the build. Remove the
+BBFILES_DYNAMIC clang-layer entry from layer.conf accordingly.
 
-On Fri, 5 Jun 2026 at 15:28, <daniel.turull@ericsson.com> wrote:
->
-> From: Daniel Turull <daniel.turull@ericsson.com>
->
-> Without this, every AUH run retries all candidates regardless of previous
-> outcomes, wasting time on recipes that consistently fail or were already
-> upgraded recently.
->
-> Add modules/state.py which persists upgrade results to a JSON state file
-> (auh-state.json in the upgrade-helper work directory, typically
-> $BUILDDIR/upgrade-helper/). The new --incremental flag activates this
-> tracking and skips package groups where all packages were recently attempted.
->
-> Behavior:
-> - Failed attempts are retried after retry_same_version_interval days
->   (default 30).
-> - Successful/already-current upgrades are suppressed for success_max_age
->   days (default 30).
-> - Rapid-fire recipes (listed in retry_any_version_recipes) are throttled
->   by retry_any_version_interval (default 7) regardless of version or
->   result, preventing mailing list flooding from recipes with very frequent
->   upstream releases.
->
-> Tested with master (2026-06-01):
-> command: ../auto-upgrade-helper/upgrade-helper.py all --incremental -s
->
-> - Run 1 (2026-06-01 07:38): 122 attempted, 98 succeeded, 24 failed, 0 skipped
-> - Run 2 (2026-06-01 11:17): 1 attempted, 0 succeeded, 1 failed, 26 skipped
-> - Run 3 (2026-06-01 11:20): 0 attempted, 0 succeeded, 0 failed, 27 skipped
->
-> 2nd test on master (2026-06-02)
->
-> Now in the second run we get the skipping message
->
-> INFO: piglit 1.0-new-commits-available: skipping (last attempt 2026-06-02 13:38:01 result=failure; will retry in 30 day(s))
-> INFO: libinput 1.31.2: skipping (last attempt 2026-06-02 13:40:03 result=failure; will retry in 30 day(s))
-> INFO: alsa-ucm-conf 1.2.16: skipping (last attempt 2026-06-02 13:43:57 result=failure; will retry in 30 day(s))
-> INFO: webkitgtk 2.52.4: skipping (last attempt 2026-06-02 13:46:52 result=failure; will retry in 30 day(s))
-> INFO: boost 1.91.0: skipping (last attempt 2026-06-02 13:50:11 result=failure; will retry in 30 day(s))
-> INFO: libical 4.0.2: skipping (last attempt 2026-06-02 13:52:44 result=failure; will retry in 30 day(s))
-> INFO: vte 0.84.0: skipping (last attempt 2026-06-02 13:53:31 result=failure; will retry in 30 day(s))
-> INFO: 28/28 package groups skipped (incremental mode)
-> Link: https://lists.openembedded.org/g/openembedded-architecture/message/2349
->
-> And extract of auh-state.json
->
->     "cargo": {
->       "1.96.0": {
->         "timestamp": 1780405831.0888734,
->         "result": "failure"
->       }
->     },
->     "sbom-cve-check-update-cvelist-native": {
->       "2026-06-02": {
->         "timestamp": 1780406109.500104,
->         "result": "success"
->       }
->     },
->
-> AI-Generated: kiro with claude-opus-4.6 model
-> Signed-off-by: Daniel Turull <daniel.turull@ericsson.com>
->
-> ---
-> Changes in v3:
-> - Rename retry_interval to retry_same_version_interval
-> - Add retry_any_version_interval (default 7 days) for rapid-fire recipes
-> - Add retry_any_version_recipes config setting (space-separated list)
-> - Unify timestamp logic into a single check() helper returning
->   {skip, reason}; should_skip(), skip_reason() and _prune() all
->   derive from it
->
-> Changes in v2:
-> - should_skip() simplified to a presence check; _prune() owns all time logic
-> - log skip reason (previous timestamp, result, days until retry) per group
-> - log recorded result per package after each attempt
-> - drop upgrade_err capture; use g['error'] directly after commit_changes()
-> - drop dead isinstance(upgrade_err, UpgradeNotNeededError) check
-> ---
->  modules/state.py    | 140 ++++++++++++++++++++++++++++++++++++++++++++
->  upgrade-helper.conf |  21 ++++++-
->  upgrade-helper.py   |  46 +++++++++++++++
->  3 files changed, 206 insertions(+), 1 deletion(-)
->  create mode 100644 modules/state.py
->
-> diff --git a/modules/state.py b/modules/state.py
-> new file mode 100644
-> index 0000000..0c2c7bb
-> --- /dev/null
-> +++ b/modules/state.py
-> @@ -0,0 +1,140 @@
-> +# SPDX-License-Identifier: GPL-2.0-or-later
-> +# vim: set ts=4 sw=4 et:
-> +#
-> +# Copyright (c) 2026 Ericsson AB
-> +#
-> +# This program is free software; you can redistribute it and/or
-> +# modify it under the terms of the GNU General Public License
-> +# as published by the Free Software Foundation; either version 2
-> +# of the License, or (at your option) any later version.
-> +#
-> +# This program is distributed in the hope that it will be useful,
-> +# but WITHOUT ANY WARRANTY; without even the implied warranty of
-> +# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> +# GNU General Public License for more details.
-> +#
-> +# You should have received a copy of the GNU General Public License
-> +# along with this program; if not, write to the Free Software
-> +# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-> +#
-> +# AUTHORS
-> +# Daniel Turull   <daniel.turull@ericsson.com>
-> +#
-> +
-> +import datetime
-> +import json
-> +import os
-> +import time
-> +
-> +from logging import warning as W
-> +
-> +RESULT_SUCCESS = "success"
-> +RESULT_FAILURE = "failure"
-> +
-> +STATE_FILENAME = "auh-state.json"
-> +STATE_VERSION = 1
-> +
-> +SECONDS_PER_DAY = 86400
-> +DEFAULT_RETRY_SAME_VERSION_DAYS = 30
-> +DEFAULT_RETRY_ANY_VERSION_DAYS = 7
-> +DEFAULT_SUCCESS_MAX_AGE_DAYS = 30
-> +
-> +
-> +class State:
-> +    """Tracks upgrade attempts as {recipe: {version: {timestamp, result}}}."""
-> +
-> +    def __init__(self, state_dir,
-> +                 retry_same_version_days=DEFAULT_RETRY_SAME_VERSION_DAYS,
-> +                 success_max_age_days=DEFAULT_SUCCESS_MAX_AGE_DAYS,
-> +                 retry_any_version_days=DEFAULT_RETRY_ANY_VERSION_DAYS,
-> +                 retry_any_version_recipes=None):
-> +        self.path = os.path.join(state_dir, STATE_FILENAME)
-> +        self.retry_same_version = retry_same_version_days * SECONDS_PER_DAY
-> +        self.success_max_age = success_max_age_days * SECONDS_PER_DAY
-> +        self.retry_any_version = retry_any_version_days * SECONDS_PER_DAY
-> +        self.any_version_recipes = set(retry_any_version_recipes or [])
-> +        self.data = self._load()
-> +        self._prune()
-> +
-> +    def _load(self):
-> +        if os.path.exists(self.path):
-> +            try:
-> +                with open(self.path) as f:
-> +                    raw = json.load(f)
-> +            except (json.JSONDecodeError, OSError) as e:
-> +                W(" %s is corrupt (%s), starting fresh" % (self.path, e))
-> +                return {}
-> +            if not isinstance(raw, dict) or raw.get("version") != STATE_VERSION:
-> +                W(" %s: unsupported or missing version, starting fresh"
-> +                  % self.path)
-> +                return {}
-> +            return raw.get("recipes", {})
-> +        return {}
-> +
-> +    def save(self):
-> +        with open(self.path, "w") as f:
-> +            json.dump({"version": STATE_VERSION, "recipes": self.data},
-> +                      f, indent=2)
-> +
-> +    def record(self, pn, version, result):
-> +        entry = {"timestamp": time.time(), "result": result}
-> +        if pn not in self.data:
-> +            self.data[pn] = {}
-> +        self.data[pn][version] = entry
-> +
-> +    def should_skip(self, pn, version):
-> +        """Return True if this recipe/version should not be attempted."""
-> +        return self.check(pn, version)['skip']
-> +
-> +    def skip_reason(self, pn, version):
-> +        """Return a human-readable string explaining why pn/version is being skipped."""
-> +        return self.check(pn, version)['reason']
-> +
-> +    def check(self, pn, version):
-> +        """Return {'skip': bool, 'reason': str} for a recipe/version pair.
-> +
-> +        For any_version_recipes, any recent attempt (any version) causes a skip.
-> +        For normal recipes, only a matching version entry causes a skip.
-> +        """
-> +        if pn in self.any_version_recipes:
-> +            entry = self._newest_entry(pn)
-> +            max_age = self.retry_any_version
-> +        else:
-> +            entry = self.data.get(pn, {}).get(version)
-> +            if entry is None:
-> +                return {'skip': False, 'reason': ''}
-> +            max_age = self.success_max_age \
-> +                if entry.get("result") == RESULT_SUCCESS \
-> +                else self.retry_same_version
-> +
-> +        if not entry:
-> +            return {'skip': False, 'reason': ''}
-> +
-> +        ts = entry.get("timestamp", 0)
-> +        age = time.time() - ts
-> +        if age > max_age:
-> +            return {'skip': False, 'reason': ''}
-> +
-> +        result = entry.get("result", "unknown")
-> +        when = datetime.datetime.fromtimestamp(ts).strftime("%Y-%m-%d %H:%M:%S")
-> +        retry_in = int((max_age - age) / SECONDS_PER_DAY) + 1
-> +        prefix = "rapid-fire; " if pn in self.any_version_recipes else ""
-> +        return {'skip': True,
-> +                'reason': "%slast attempt %s result=%s; will retry in %d day(s)"
-> +                          % (prefix, when, result, retry_in)}
-> +
-> +    def _newest_entry(self, pn):
-> +        """Return the most recent entry for a recipe across all versions."""
-> +        versions = self.data.get(pn, {})
-> +        return max(versions.values(), key=lambda e: e.get("timestamp", 0),
-> +                   default={})
-> +
-> +    def _prune(self):
-> +        """Remove entries that check() would no longer skip."""
-> +        for pn in list(self.data):
-> +            versions = self.data[pn]
-> +            for ver in list(versions):
-> +                if not self.check(pn, ver)['skip']:
-> +                    del versions[ver]
-> +            if not versions:
-> +                del self.data[pn]
-> diff --git a/upgrade-helper.conf b/upgrade-helper.conf
-> index 269bde3..53c3c46 100644
-> --- a/upgrade-helper.conf
-> +++ b/upgrade-helper.conf
-> @@ -50,7 +50,26 @@
->  # passed; does not apply when layer_mode is enabled).
->  #blacklist=python glibc gcc
->
-> -# specify the directory where work (patches) will be saved
-> +# When running with --incremental, how many days to wait before retrying
-> +# a failed upgrade attempt for the same recipe version. Default is 30 days.
-> +#retry_same_version_interval=30
-> +
-> +# When running with --incremental, how many days to skip a successfully
-> +# upgraded recipe version before attempting it again. Default is 30 days.
-> +#success_max_age=30
-> +
-> +# When running with --incremental, how many days to suppress any upgrade
-> +# attempt for recipes listed in retry_any_version_recipes, regardless of
-> +# version or result. Useful for recipes with very frequent upstream releases.
-> +# Default is 7 days.
-> +#retry_any_version_interval=7
-> +
-> +# Space-separated list of recipes that release so frequently that they would
-> +# flood the mailing list. These are throttled by retry_any_version_interval
-> +# instead of per-version intervals.
-> +#retry_any_version_recipes=vulkan-samples sbom-cve-check-update-cvelist-native sbom-cve-check-update-nvd-native
-> +
-> +# specify the directory where work (patches) will be saved
->  # (optional; default is BUILDDIR/upgrade-helper/)
->  #workdir=
->
-> diff --git a/upgrade-helper.py b/upgrade-helper.py
-> index 4786735..fb9e45f 100755
-> --- a/upgrade-helper.py
-> +++ b/upgrade-helper.py
-> @@ -59,6 +59,10 @@ from utils.emailhandler import Email
->  from statistics import Statistics
->  from steps import upgrade_steps
->  from testimage import TestImage
-> +from state import (State, RESULT_SUCCESS, RESULT_FAILURE,
-> +                   DEFAULT_RETRY_SAME_VERSION_DAYS,
-> +                   DEFAULT_RETRY_ANY_VERSION_DAYS,
-> +                   DEFAULT_SUCCESS_MAX_AGE_DAYS)
->
->  if not os.getenv('BUILDDIR', False):
->      E(" You must source oe-init-build-env before running this script!\n")
-> @@ -104,6 +108,8 @@ def parse_cmdline():
->                          help="do not compile, just change the checksums, remove PR, and commit")
->      parser.add_argument("-c", "--config-file", default=None,
->                          help="Path to the configuration file. Default is $BUILDDIR/upgrade-helper/upgrade-helper.conf")
-> +    parser.add_argument("--incremental", action="store_true",
-> +                        help="skip recipes already attempted (uses JSON state file)")
->      parser.add_argument("--layer-names", nargs='*', action="store", default='',
->                          help="layers to include in the upgrade research")
->      parser.add_argument("--layer-dir", action="store", default='',
-> @@ -169,6 +175,22 @@ class Updater(object):
->              self.email_handler = Email(settings)
->          self.statistics = Statistics()
->
-> +        if self.args.incremental:
-> +            retry_same = int(settings.get('retry_same_version_interval',
-> +                                          DEFAULT_RETRY_SAME_VERSION_DAYS))
-> +            success_max_age = int(settings.get('success_max_age',
-> +                                               DEFAULT_SUCCESS_MAX_AGE_DAYS))
-> +            retry_any = int(settings.get('retry_any_version_interval',
-> +                                         DEFAULT_RETRY_ANY_VERSION_DAYS))
-> +            any_version_recipes = settings.get('retry_any_version_recipes', '').split()
-> +            self.state = State(self.uh_dir,
-> +                               retry_same_version_days=retry_same,
-> +                               success_max_age_days=success_max_age,
-> +                               retry_any_version_days=retry_any,
-> +                               retry_any_version_recipes=any_version_recipes)
-> +        else:
-> +            self.state = None
-> +
->      def _set_options(self):
->          self.opts = {}
->          self.opts['layer_mode'] = settings.get('layer_mode', '')
-> @@ -468,6 +490,19 @@ class Updater(object):
->
->              pkggroups_ctx.append({"name":",".join([pkg_ctx['PN'] for pkg_ctx in pkgs_ctx]),"pkgs":pkgs_ctx,"error":None, 'base_dir':self.uh_recipes_all_dir})
->          I(" ############################################################")
-> +        if self.state:
-> +            kept = []
-> +            for g in pkggroups_ctx:
-> +                pn, npv = g['pkgs'][0]['PN'], g['pkgs'][0]['NPV']
-> +                r = self.state.check(pn, npv)
-> +                if r['skip']:
-> +                    I(" %s %s: skipping (%s)" % (pn, npv, r['reason']))
-> +                else:
-> +                    kept.append(g)
-> +            I(" %d/%d package groups skipped (incremental mode)"
-> +              % (len(pkggroups_ctx) - len(kept), len(pkggroups_ctx)))
-> +            pkggroups_ctx = kept
-> +            total_pkggroups = len(pkggroups_ctx)
->          if pkggroups_ctx and not self.args.skip_compilation:
->              I(" Building gcc runtimes ...")
->              for machine in self.opts['machines']:
-> @@ -532,6 +567,17 @@ class Updater(object):
->                      succeeded_pkggroups_ctx.remove(g)
->                      failed_pkggroups_ctx.append(g)
->
-> +            if self.state:
-> +                result = RESULT_FAILURE if g.get('error') else RESULT_SUCCESS
-> +                # All packages in a group share the same result because AUH
-> +                # upgrades them atomically; individual outcomes are not tracked.
-> +                for pkg_ctx in g['pkgs']:
-> +                    I(" %s %s: recording result=%s" % (pkg_ctx['PN'], pkg_ctx['NPV'], result))
-> +                    self.state.record(pkg_ctx['PN'], pkg_ctx['NPV'], result)
-> +
-> +        if self.state:
-> +            self.state.save()
-> +
->          if self.opts['testimage']:
->              ctxs = {}
->              ctxs['succeeded'] = succeeded_pkggroups_ctx
-> --
-> 2.51.0
->
+Upgrade from v1.2.10 to v1.6.3 and drop two patches that are no
+longer needed with the newer version.
+
+Signed-off-by: Rajkumar Patel <patel.rajkumar@oss.qualcomm.com>
+---
+ conf/layer.conf                               |  5 ---
+ ...0001-configure-skip-toolchain-checks.patch | 44 ------------------
+ ...-not-detect-libbpf-header-from-sysro.patch | 44 ------------------
+ .../0003-Makefile-fix-KeyError-failure.patch  | 31 -------------
+ .../0004-Makefile-fix-libxdp.pc-error.patch   | 34 --------------
+ .../xdp-tools/xdp-tools_1.2.10.bb             | 36 ---------------
+ ...tly-handle-CC-when-validating-requir.patch | 45 +++++++++++++++++++
+ ...ile-use-cp-fRd-to-preserve-symlinks-.patch | 36 +++++++++++++++
+ recipes-support/xdp-tools/xdp-tools_1.6.3.bb  | 44 ++++++++++++++++++
+ 9 files changed, 125 insertions(+), 194 deletions(-)
+ delete mode 100644 dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools/0001-configure-skip-toolchain-checks.patch
+ delete mode 100644 dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools/0002-Makefile-It-does-not-detect-libbpf-header-from-sysro.patch
+ delete mode 100644 dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools/0003-Makefile-fix-KeyError-failure.patch
+ delete mode 100644 dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools/0004-Makefile-fix-libxdp.pc-error.patch
+ delete mode 100644 dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools_1.2.10.bb
+ create mode 100644 recipes-support/xdp-tools/files/0001-configure-correctly-handle-CC-when-validating-requir.patch
+ create mode 100644 recipes-support/xdp-tools/files/0002-lib-libxdp-Makefile-use-cp-fRd-to-preserve-symlinks-.patch
+ create mode 100644 recipes-support/xdp-tools/xdp-tools_1.6.3.bb
+
+diff --git a/conf/layer.conf b/conf/layer.conf
+index b53a1af..776012d 100644
+--- a/conf/layer.conf
++++ b/conf/layer.conf
+@@ -15,8 +15,3 @@ LAYERDEPENDS_dpdk = "core"
+ # cause compatibility issues with other layers
+ LAYERVERSION_dpdk = "1"
+ LAYERSERIES_COMPAT_dpdk = "whinlatter wrynose"
+-
+-BBFILES_DYNAMIC += " \
+-    clang-layer:${LAYERDIR}/dynamic-layers/clang-layer/*/*/*.bb \
+-    clang-layer:${LAYERDIR}/dynamic-layers/clang-layer/*/*/*.bbappend \
+-"
+diff --git a/dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools/0001-configure-skip-toolchain-checks.patch b/dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools/0001-configure-skip-toolchain-checks.patch
+deleted file mode 100644
+index 0c89152..0000000
+--- a/dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools/0001-configure-skip-toolchain-checks.patch
++++ /dev/null
+@@ -1,44 +0,0 @@
+-From 9c9dce2e5f04de65b7b00321f96fff6071546ea1 Mon Sep 17 00:00:00 2001
+-From: Naveen Saini <naveen.kumar.saini@intel.com>
+-Date: Mon, 17 Oct 2022 15:44:16 +0800
+-Subject: [PATCH] configure: skip toolchain checks
+-
+-Current logic fetch full command line along with the tool. i.e
+-gcc -m64 -march=skylake -mtune=generic ...
+-
+-Which throws ERROR: Cannot find tool -m64
+-
+-So need to re-write for loop, so it can work in cross-compilation
+-environment too.
+-
+-Upstream-Status: Inappropriate
+-
+-Signed-off-by: Naveen Saini <naveen.kumar.saini@intel.com>
+-
+----
+- configure | 12 ++++++------
+- 1 file changed, 6 insertions(+), 6 deletions(-)
+-
+-diff --git a/configure b/configure
+-index b4e824f..10618fc 100755
+---- a/configure
+-+++ b/configure
+-@@ -69,12 +69,12 @@ check_toolchain()
+-     CLANG=$(find_tool clang "$CLANG")
+-     LLC=$(find_tool llc "$LLC")
+- 
+--    for TOOL in $PKG_CONFIG $CC $LD $OBJCOPY $CLANG $LLC $M4; do
+--        if [ ! $(command -v ${TOOL} 2>/dev/null) ]; then
+--            echo "*** ERROR: Cannot find tool ${TOOL}" ;
+--            exit 1;
+--        fi;
+--    done
+-+    #for TOOL in $PKG_CONFIG $CC $LD $OBJCOPY $CLANG $LLC $M4; do
+-+    #    if [ ! $(command -v ${TOOL} 2>/dev/null) ]; then
+-+    #        echo "*** ERROR: Cannot find tool ${TOOL}" ;
+-+    #        exit 1;
+-+    #    fi;
+-+    #done
+- 
+-     clang_version=$($CLANG --version | grep -Po '(?<=clang version )[[:digit:]]+')
+-     if [ "$?" -ne "0" ]; then
+diff --git a/dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools/0002-Makefile-It-does-not-detect-libbpf-header-from-sysro.patch b/dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools/0002-Makefile-It-does-not-detect-libbpf-header-from-sysro.patch
+deleted file mode 100644
+index 2e66783..0000000
+--- a/dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools/0002-Makefile-It-does-not-detect-libbpf-header-from-sysro.patch
++++ /dev/null
+@@ -1,44 +0,0 @@
+-From 2840cf0b89497f545fae2eed7ece3f3c5fc558e3 Mon Sep 17 00:00:00 2001
+-From: Naveen Saini <naveen.kumar.saini@intel.com>
+-Date: Mon, 17 Oct 2022 15:50:34 +0800
+-Subject: [PATCH 2/4] Makefile: It does not detect libbpf header from sysroot
+-
+-So adding sysroot headers path.
+-
+-Upstream-Status: OE-Specific
+-
+-Signed-off-by: Naveen Saini <naveen.kumar.saini@intel.com>
+----
+- lib/common.mk       | 2 +-
+- lib/libxdp/Makefile | 2 +-
+- 2 files changed, 2 insertions(+), 2 deletions(-)
+-
+-diff --git a/lib/common.mk b/lib/common.mk
+-index 56c0406..ab0bad8 100644
+---- a/lib/common.mk
+-+++ b/lib/common.mk
+-@@ -55,7 +55,7 @@ LIBXDP_SOURCES := $(wildcard $(LIBXDP_DIR)/*.[ch] $(LIBXDP_DIR)/*.in)
+- KERN_USER_H ?= $(wildcard common_kern_user.h)
+- 
+- CFLAGS += -I$(HEADER_DIR) -I$(LIB_DIR)/util $(ARCH_INCLUDES)
+--BPF_CFLAGS += -I$(HEADER_DIR) $(ARCH_INCLUDES)
+-+BPF_CFLAGS += -I$(HEADER_DIR) $(ARCH_INCLUDES) -I${STAGING_INCDIR}/
+- 
+- BPF_HEADERS := $(wildcard $(HEADER_DIR)/bpf/*.h) $(wildcard $(HEADER_DIR)/xdp/*.h)
+- 
+-diff --git a/lib/libxdp/Makefile b/lib/libxdp/Makefile
+-index 358b751..8f459d8 100644
+---- a/lib/libxdp/Makefile
+-+++ b/lib/libxdp/Makefile
+-@@ -30,7 +30,7 @@ PC_FILE := $(OBJDIR)/libxdp.pc
+- TEMPLATED_SOURCES := xdp-dispatcher.c
+- 
+- CFLAGS += -I$(HEADER_DIR)
+--BPF_CFLAGS += -I$(HEADER_DIR)
+-+BPF_CFLAGS += -I$(HEADER_DIR) -I${STAGING_INCDIR}/
+- 
+- 
+- ifndef BUILD_STATIC_ONLY
+--- 
+-2.25.1
+-
+diff --git a/dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools/0003-Makefile-fix-KeyError-failure.patch b/dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools/0003-Makefile-fix-KeyError-failure.patch
+deleted file mode 100644
+index 41c57f6..0000000
+--- a/dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools/0003-Makefile-fix-KeyError-failure.patch
++++ /dev/null
+@@ -1,31 +0,0 @@
+-From 157546fbc4f18751c52b3c8788879c05cf253331 Mon Sep 17 00:00:00 2001
+-From: Naveen Saini <naveen.kumar.saini@intel.com>
+-Date: Mon, 17 Oct 2022 16:02:46 +0800
+-Subject: [PATCH 3/4] Makefile: fix KeyError failure
+-
+-Error:
+-Exception: KeyError: 'getpwuid(): uid not found: 11857215'
+-
+-Upstream-Status: Inappropriate
+-
+-Signed-off-by: Naveen Saini <naveen.kumar.saini@intel.com>
+----
+- lib/libxdp/Makefile | 2 +-
+- 1 file changed, 1 insertion(+), 1 deletion(-)
+-
+-diff --git a/lib/libxdp/Makefile b/lib/libxdp/Makefile
+-index 8f459d8..9a340a3 100644
+---- a/lib/libxdp/Makefile
+-+++ b/lib/libxdp/Makefile
+-@@ -55,7 +55,7 @@ install: all
+- 	$(Q)install -d -m 0755 $(DESTDIR)$(BPF_OBJECT_DIR)
+- 	$(Q)install -m 0644 $(LIB_HEADERS) $(DESTDIR)$(HDRDIR)/
+- 	$(Q)install -m 0644 $(PC_FILE) $(DESTDIR)$(LIBDIR)/pkgconfig/
+--	$(Q)cp -fpR $(SHARED_LIBS) $(STATIC_LIBS) $(DESTDIR)$(LIBDIR)
+-+	$(Q)cp -fpR --no-preserve=ownership $(SHARED_LIBS) $(STATIC_LIBS) $(DESTDIR)$(LIBDIR)
+- 	$(Q)install -m 0755 $(XDP_OBJS) $(DESTDIR)$(BPF_OBJECT_DIR)
+- 	$(if $(MAN_FILES),$(Q)install -m 0755 -d $(DESTDIR)$(MANDIR)/man3)
+- 	$(if $(MAN_FILES),$(Q)install -m 0644 $(MAN_FILES) $(DESTDIR)$(MANDIR)/man3)
+--- 
+-2.25.1
+-
+diff --git a/dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools/0004-Makefile-fix-libxdp.pc-error.patch b/dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools/0004-Makefile-fix-libxdp.pc-error.patch
+deleted file mode 100644
+index b1e15e5..0000000
+--- a/dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools/0004-Makefile-fix-libxdp.pc-error.patch
++++ /dev/null
+@@ -1,34 +0,0 @@
+-From 46b3ff797135574aa0ee42f633a281d44f48da95 Mon Sep 17 00:00:00 2001
+-From: Naveen Saini <naveen.kumar.saini@intel.com>
+-Date: Mon, 17 Oct 2022 16:05:15 +0800
+-Subject: [PATCH 4/4] Makefile: fix libxdp.pc error
+-
+-Error:
+-do_populate_sysroot: QA Issue: libxdp.pc failed sanity test (tmpdir) in
+-path ... xdp-tools/1.2.8-r0/sysroot-destdir/usr/lib/pkgconfig [pkgconfig]
+-
+-Upstream-Status: Inappropriate
+-
+-Signed-off-by: Naveen Saini <naveen.kumar.saini@intel.com>
+----
+- lib/libxdp/Makefile | 4 ++--
+- 1 file changed, 2 insertions(+), 2 deletions(-)
+-
+-diff --git a/lib/libxdp/Makefile b/lib/libxdp/Makefile
+-index 9a340a3..bc39177 100644
+---- a/lib/libxdp/Makefile
+-+++ b/lib/libxdp/Makefile
+-@@ -76,8 +76,8 @@ $(OBJDIR)/libxdp.so.$(LIBXDP_VERSION): $(SHARED_OBJS)
+- 		      $^ $(LDFLAGS) $(LDLIBS) -o $@
+- 
+- $(OBJDIR)/libxdp.pc:
+--	$(Q)sed -e "s|@PREFIX@|$(PREFIX)|" \
+--			-e "s|@LIBDIR@|$(LIBDIR)|" \
+-+	$(Q)sed -e "s|@PREFIX@|$(prefix)|" \
+-+			-e "s|@LIBDIR@|$(libdir)|" \
+- 			-e "s|@VERSION@|$(TOOLS_VERSION)|" \
+- 			< libxdp.pc.template > $@
+- 
+--- 
+-2.25.1
+-
+diff --git a/dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools_1.2.10.bb b/dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools_1.2.10.bb
+deleted file mode 100644
+index 4a06124..0000000
+--- a/dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools_1.2.10.bb
++++ /dev/null
+@@ -1,36 +0,0 @@
+-SUMMARY = "Utilities and example programs for use with XDP"
+-HOMEPAGE = "https://github.com/xdp-project/xdp-tools"
+-LICENSE = "GPL-2.0-or-later & LGPL-2.1-or-later & BSD-2-Clause"
+-LIC_FILES_CHKSUM = "file://LICENSE;md5=9ee53f8d06bbdb4c11b1557ecc4f8cd5 \
+-                    file://LICENSES/GPL-2.0;md5=994331978b428511800bfbd17eea3001 \
+-                    file://LICENSES/LGPL-2.1;md5=b370887980db5dd40659b50909238dbd \
+-                    file://LICENSES/BSD-2-Clause;md5=5d6306d1b08f8df623178dfd81880927"
+-
+-DEPENDS += " libbpf clang-native zlib elfutils libpcap"
+-
+-SRC_URI = "git://github.com/xdp-project/xdp-tools.git;branch=v1.2;protocol=https \
+-            file://0001-configure-skip-toolchain-checks.patch \
+-            file://0002-Makefile-It-does-not-detect-libbpf-header-from-sysro.patch \
+-            file://0003-Makefile-fix-KeyError-failure.patch \
+-            file://0004-Makefile-fix-libxdp.pc-error.patch \
+-          "
+-
+-SRCREV = "57a139f9bf6ef644f9c1deb4f7df4bb4c76d6179"
+-
+-
+-inherit pkgconfig
+-
+-EXTRA_OEMAKE += "PREFIX=${D}${prefix} LIBDIR=${D}${libdir} BUILD_STATIC_ONLY=1 PRODUCTION=1"
+-
+-CFLAGS += "-fPIC"
+-
+-export STAGING_INCDIR
+-
+-do_install () {
+-    oe_runmake install
+-
+-    # Remove object files *.o
+-    rm -rf ${D}/${libdir}/bpf
+-}
+-
+-RDEPENDS:${PN} += "bash"
+diff --git a/recipes-support/xdp-tools/files/0001-configure-correctly-handle-CC-when-validating-requir.patch b/recipes-support/xdp-tools/files/0001-configure-correctly-handle-CC-when-validating-requir.patch
+new file mode 100644
+index 0000000..1102566
+--- /dev/null
++++ b/recipes-support/xdp-tools/files/0001-configure-correctly-handle-CC-when-validating-requir.patch
+@@ -0,0 +1,45 @@
++From 2a6d219ec2f5413e38ec502421cce8a2c6d7f054 Mon Sep 17 00:00:00 2001
++From: Rajkumar Patel <patel.rajkumar@oss.qualcomm.com>
++Date: Tue, 9 Jun 2026 11:22:13 +0530
++Subject: [PATCH 1/2] configure: correctly handle CC when validating required
++ tools
++
++The tool validation loop checks the availability of required
++binaries using `command -v`. However, when CC is defined with
++additional flags (e.g. "aarch64-linux-gnu-gcc -O2 -pipe"),
++the check fails because `command -v` expects only the binary
++name.
++
++Extract the actual compiler executable from CC by taking the
++first word and include it in the validation list.
++
++This ensures tool detection works correctly in cross-compilation
++environments where CC commonly includes compiler flags.
++
++Additionally, quote variable expansions to avoid issues with
++word splitting and empty values.
++
++Upstream-Status: Pending
++
++Signed-off-by: Rajkumar Patel <patel.rajkumar@oss.qualcomm.com>
++---
++ configure | 6 ++++--
++ 1 file changed, 4 insertions(+), 2 deletions(-)
++
++diff --git a/configure b/configure
++index d57b2ae..a234f80 100755
++--- a/configure
+++++ b/configure
++@@ -70,8 +70,10 @@ check_toolchain()
++ 
++     CLANG=$(find_tool clang "$CLANG")
++ 
++-    for TOOL in $PKG_CONFIG $CC $OBJCOPY $CLANG $M4 $READELF; do
++-        if [ ! $(command -v ${TOOL} 2>/dev/null) ]; then
+++    CC_TOOL=$(echo "$CC" | awk '{print $1}')
+++
+++    for TOOL in $PKG_CONFIG "$CC_TOOL" $OBJCOPY $CLANG $M4 $READELF; do
+++        if [ ! $(command -v "${TOOL}" 2>/dev/null) ]; then
++             echo "*** ERROR: Cannot find tool ${TOOL}" ;
++             exit 1;
++         fi;
+diff --git a/recipes-support/xdp-tools/files/0002-lib-libxdp-Makefile-use-cp-fRd-to-preserve-symlinks-.patch b/recipes-support/xdp-tools/files/0002-lib-libxdp-Makefile-use-cp-fRd-to-preserve-symlinks-.patch
+new file mode 100644
+index 0000000..bc860ad
+--- /dev/null
++++ b/recipes-support/xdp-tools/files/0002-lib-libxdp-Makefile-use-cp-fRd-to-preserve-symlinks-.patch
+@@ -0,0 +1,36 @@
++From 064ccdaf0d84bea86f9cd17383581c3844a33151 Mon Sep 17 00:00:00 2001
++From: Rajkumar Patel <patel.rajkumar@oss.qualcomm.com>
++Date: Tue, 9 Jun 2026 11:24:51 +0530
++Subject: [PATCH 2/2] lib/libxdp/Makefile: use cp -fRd to preserve symlinks
++ without metadata
++
++cp -fpR preserves ownership and timestamps from the build host,
++which breaks cross-compilation and packaging QA checks.
++
++The `-p` flag is unnecessary for symlink handling. Replace it
++with `-d` to explicitly preserve symlinks without carrying over
++file metadata.
++
++Switch to cp -fRd to maintain symlink structure while avoiding
++host contamination.
++
++Upstream-Status: Pending
++
++Signed-off-by: Rajkumar Patel <patel.rajkumar@oss.qualcomm.com>
++---
++ lib/libxdp/Makefile | 2 +-
++ 1 file changed, 1 insertion(+), 1 deletion(-)
++
++diff --git a/lib/libxdp/Makefile b/lib/libxdp/Makefile
++index 7ea7e7e..3c36b70 100644
++--- a/lib/libxdp/Makefile
+++++ b/lib/libxdp/Makefile
++@@ -56,7 +56,7 @@ install: all
++ 	$(Q)install -d -m 0755 $(DESTDIR)$(BPF_OBJECT_DIR)
++ 	$(Q)install -m 0644 $(LIB_HEADERS) $(DESTDIR)$(HDRDIR)/
++ 	$(Q)install -m 0644 $(PC_FILE) $(DESTDIR)$(LIBDIR)/pkgconfig/
++-	$(Q)cp -fpR $(SHARED_LIBS) $(STATIC_LIBS) $(DESTDIR)$(LIBDIR)
+++	$(Q)cp -fdR $(SHARED_LIBS) $(STATIC_LIBS) $(DESTDIR)$(LIBDIR)
++ 	$(Q)install -m 0644 $(XDP_OBJS) $(DESTDIR)$(BPF_OBJECT_DIR)
++ 	$(if $(MAN_FILES),$(Q)install -m 0755 -d $(DESTDIR)$(MANDIR)/man3)
++ 	$(if $(MAN_FILES),$(Q)install -m 0644 $(MAN_FILES) $(DESTDIR)$(MANDIR)/man3)
+diff --git a/recipes-support/xdp-tools/xdp-tools_1.6.3.bb b/recipes-support/xdp-tools/xdp-tools_1.6.3.bb
+new file mode 100644
+index 0000000..3f3a615
+--- /dev/null
++++ b/recipes-support/xdp-tools/xdp-tools_1.6.3.bb
+@@ -0,0 +1,44 @@
++SUMMARY = "Utilities and library for managing XDP/eBPF programs"
++
++DESCRIPTION = "xdp-tools provides libxdp and command-line utilities for working \
++with XDP eBPF programs in Linux, including tools for loading programs, packet \
++processing, monitoring, traffic generation, and benchmarking."
++
++HOMEPAGE = "https://github.com/xdp-project/xdp-tools"
++LICENSE = "GPL-2.0-only & GPL-2.0-or-later & LGPL-2.1-only & BSD-2-Clause"
++LIC_FILES_CHKSUM = " \
++    file://LICENSE;md5=9ee53f8d06bbdb4c11b1557ecc4f8cd5 \
++    file://LICENSES/GPL-2.0;md5=994331978b428511800bfbd17eea3001 \
++    file://LICENSES/LGPL-2.1;md5=b370887980db5dd40659b50909238dbd \
++    file://LICENSES/BSD-2-Clause;md5=5d6306d1b08f8df623178dfd81880927 \
++"
++SRC_URI = " \
++    git://github.com/xdp-project/xdp-tools.git;tag=v${PV};nobranch=1;protocol=https \
++    file://0001-configure-correctly-handle-CC-when-validating-requir.patch \
++    file://0002-lib-libxdp-Makefile-use-cp-fRd-to-preserve-symlinks-.patch \
++"
++SRCREV = "8fbad9f0af621a22aa87ff2520b3735915b1f0fd"
++
++DEPENDS += " \
++    libbpf \
++    clang-native \
++    zlib \
++    elfutils \
++    libpcap \
++"
++
++inherit pkgconfig
++
++EXTRA_OEMAKE += " \
++    PREFIX=${prefix} \
++    LIBDIR=${libdir} \
++    PRODUCTION=1 \
++    BPF_CFLAGS='-D__${TARGET_ARCH}__ -I${S}/headers -I${STAGING_INCDIR} -ffile-prefix-map=${S}=${TARGET_DBGSRC_DIR} -ffile-prefix-map=${STAGING_DIR_HOST}=' \
++"
++
++do_install () {
++    oe_runmake DESTDIR=${D} install
++}
++
++FILES:${PN} += "${libdir}/bpf ${libdir}/bpf/*"
++RDEPENDS:${PN} += "bash"
 
