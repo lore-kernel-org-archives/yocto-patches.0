@@ -1,113 +1,195 @@
-Return-Path: <frezidok1@gmail.com>
+Return-Path: <tim.orling@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74C1ECD8CB2
-	for <webhook@archiver.kernel.org>; Wed, 10 Jun 2026 13:29:36 +0000 (UTC)
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.20317.1781098174964630149
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 983DACD98C7
+	for <webhook@archiver.kernel.org>; Wed, 10 Jun 2026 18:37:54 +0000 (UTC)
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.27906.1781116669625910515
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 10 Jun 2026 06:29:35 -0700
+ Wed, 10 Jun 2026 11:37:49 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=RqeHHHWX;
- spf=pass (domain: gmail.com, ip: 209.85.208.41, mailfrom: frezidok1@gmail.com)
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-68c32f3c6d6so6919893a12.3
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 10 Jun 2026 06:29:34 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=Ire6hqmt;
+ spf=pass (domain: konsulko.com, ip: 209.85.128.182, mailfrom: tim.orling@konsulko.com)
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-7dfe7712572so66132847b3.1
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 10 Jun 2026 11:37:49 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1781116669; cv=none;
+        d=google.com; s=arc-20240605;
+        b=IKeUVYWQP+VKJPYsX0O1PTlTRhItjlOPcZ3nYKCvdb0Lg3xdf00hVVkGcNY+iv5spd
+         oTKp3aIWFW7HWa7kB/tdIB8JI3ZdKGWupRpV9TlLtag8xjkWR6bThV7XwZV3IFciSCj3
+         ijnyksUnATbcuLeSWuRuKTu885NJRxb1lDifcFCQlNph85CmtwKrLiXVsmr9m0Vv5i1e
+         IgP1OfN2fuAwm8FMnYpCIQe8GktQS24yH6ha1EEB7yWoYguTcXgaMgZCTtSfx2yYTh2p
+         t92jjoPLZh64QGOjYvWCuL6geHXJFugqqjx6woNqoGg8RyLP7BEC2n8aH+2Citfjzx2g
+         XRIw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=sObFjNqA9XfjmGJXZAqHsKmRNDewyJ/5l097PXL544A=;
+        fh=oelZnrg5dmur//Cq9EZ6v+RhAeHGCj2nFzzrUJxuFwI=;
+        b=Q4HuSwwA7Guae7a5AjiEXRFh+woBU1BHDMTFB4LwkCM4d+rvQjxpJWu9JpHDxdYfjv
+         +XkD1fRG+HMqm2whVR1EPiZnBfhIrDHuYvFiBXKHU5L9uNG32n8aBX9qWthtT+idEksh
+         N9YjSkNTaahTYqMzC0/OP2xfjFPQoAIxnf4I5+S4CDvIW5u+ub/JfVklWHTRd2vQDJWR
+         u5eWmj4VzYOE1mOjgCEDPvc0NO0MsU5vABJ1tQDoO24NK2jyneymVujh0WiOXAiAuBJ4
+         MX8lmYg6m0W48jQBP9w/F94tjfaN4WXMNNLk/9MgAclcmvqxL7t2G11tzIu4ZIwI6vIt
+         PJYw==;
+        darn=lists.yoctoproject.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781098173; x=1781702973; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QQbGzixfqpBogC3q+8osfTnyqLhwWCEPxyXXO4H9/+k=;
-        b=RqeHHHWXChA9xN9HWzqm3zjbP5XvxvbxjenDN+ltKr9kqWgVKYLn7v+XobvOkideOA
-         +o5LowMGmaNCNrRlV6l43OiADMil9b/kvrzWDkTCyqSO+c5RQ/0NIdz9Rf0p6iEV2WOk
-         /jGnC6/7FyKAIXUilXW/5D4d+1G92ZMlgPGarvFHsuv/5fjVAYmH0xo/1iOCCx9PqpH0
-         twr2l97EdVWf1DGZd85BKsuGKGAeXKy30HtjTWD9m0iJmrguVDTi3as4ymOz4Lgl1Hd7
-         +IGNObEnmdpEdtVvyFrFzQgBFQT38T5Doj9R9FIeIgn4k8vTuK1qzec1apzbpihLIh33
-         NYKA==
+        d=konsulko.com; s=google; t=1781116669; x=1781721469; darn=lists.yoctoproject.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=sObFjNqA9XfjmGJXZAqHsKmRNDewyJ/5l097PXL544A=;
+        b=Ire6hqmtzD+wieDs116GHHfc7CLXfBkJuyZRrvXFNr0CmpXkpm2uPmL9ezdF2kP0ly
+         RUBJrDBE4YKnHo3axEznAdb0ZJeSsEgkznd0Ak40p4GsSmCQyGk1LkGGvmCp2wYL2NDG
+         T/Ju3R5AHphGOEov8HbxIqZxqqJKhQl8ghbEw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781098173; x=1781702973;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20251104; t=1781116669; x=1781721469;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QQbGzixfqpBogC3q+8osfTnyqLhwWCEPxyXXO4H9/+k=;
-        b=c+5SscgRlrRexwVJFdesLbVbXv4yQoJw7DGGY1dGcW1rgrI4H1Z2ybn+iFobBoLVA+
-         GWF0+MN5Yo6ef3Ilb5YTrhNnAzY0X0YZPbw1NsebRbHUbU3v+6D9Ybc39nhlHsvh/a87
-         oUTFpJhMX7qGi+kDE2qkwCU2tgbksTuu/CHlG7XLgGbtdh81opmK7xT+mZp2OPl71vnC
-         fYuK6G3bY/9UaE9NvdrX7eglmhNAxfzOUzuP73dUHv+04kt13hkxFXcteEmbCth0jiuX
-         J2DBkw6JEE745mGw0E563iU8DcsAHHO9HSmWpPJFSn2vfSpF1xQwBP2Lx8a+4w28QTol
-         vghQ==
-X-Gm-Message-State: AOJu0YwiCOMoO4XRu4QlrGQeNBYI8AAW2oDDRvTedXJ492Y33aHPLjBI
-	J2P7xn6hRo/0rT6E2iYcL9VP5J+vNfyh93HLx3TDV27V6GnBpRRXZfbnUkQ0J8C0
-X-Gm-Gg: Acq92OGc6s+zVbtyWfRIguzGLpIWnKo9Ez3FnYghxwXFWYcWSDm2bp6hQAr7iCO/5OA
-	AgO1oUvn3G+Blfo1yofkw7pGVPTGcnsoM0QqUSeeW2+prUkdMoG7ysD6+BKhie77OO08n1QRDkk
-	nkpe/ksYH2uDGS/wDMekgO7cM5p4KZAT2BJKcmag+uVmdndfvxxrP9Ts7oNhVkbNHH4rp9ynGIp
-	h3cYwXq6zMUicOu5vrhpwbut9IR4C7bfYxJCNVUueDOLcBUGi8Q9kn/jQ1laCk+BZhTbdAPoeLC
-	0cpNnFJKPTQds1EcTMcALEQ1tHrOja1qNLLVSlInY+cDloIMZGYvOXnAMGvtIgQmmfMKfWnePAs
-	uFiGAA37CmKz1u+2BN84xiqL2e1knnZ5L/kKF4UIGbO4FB2mhRqyKRxTskbOEI64IbxFQZPtbb9
-	L2iOarNDNqeeiJW/9dcOeLi0Zd2kCNoRHaNrC4yxM=
-X-Received: by 2002:a17:907:d093:b0:bdb:4cf3:7035 with SMTP id a640c23a62f3a-bf36fd9e51dmr1265840566b.4.1781098172945;
-        Wed, 10 Jun 2026 06:29:32 -0700 (PDT)
-Received: from ubuntu1.. ([194.87.83.187])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-bfb0416d0fbsm76037066b.14.2026.06.10.06.29.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jun 2026 06:29:31 -0700 (PDT)
-From: frezidok1@gmail.com
-To: yocto-patches@lists.yoctoproject.org
-Cc: Dmitry Sakhonchik <frezidok1@gmail.com>
-Subject: [pseudo] [PATCH] pseudo_util: Add default log severity values
-Date: Wed, 10 Jun 2026 16:28:30 +0300
-Message-ID: <20260610132830.84003-1-frezidok1@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        bh=sObFjNqA9XfjmGJXZAqHsKmRNDewyJ/5l097PXL544A=;
+        b=W60D5/AmSs3bjCyFkuK1b5MuFcFgfXa31ymgxsAhdxTK13bR2orhSfc46OAlxPQ/V/
+         X9ZkQcDSaHk8u/Nw8pun4QCw6JO5e00JnVND4zu3ANshWP+Ompil3k5WckSSnXbIgtp5
+         pYQX18VO8B0lEFJKWAIIvHkExxFnKO3hkzfBW7dteZvhukejcCv2oYiBLfAEMLyKTd8E
+         lzeliCJyIWw/DeqAYps41nbKAgxdS05U0SEGYlmSNNHWI6B1wQlvalyEAS0evJ3B76PF
+         ZIZNjCS62wCgDxazDYRN6uz1sFw7DyHiRoZKhEOwDIbkJBMhBQm7J3rh7h8mjMHo7AmJ
+         jgaQ==
+X-Gm-Message-State: AOJu0YzB1GNBR1tLDZ+7S/o6fGBPR2406t2xTMFv7/6NmoInJ0WlMOwK
+	9venLXwz9+S0kMLRiXcTKPpUPtlE+Ua0yRBA2ybzPDp22fWda0CtpK9/lZTb/zcp5j2iqL791Jr
+	A/NQoQMiYzah6I11N4TZDhYSi9O5iZRXXDhXgNZQKoQ==
+X-Gm-Gg: Acq92OHjeej5EUZERedjqxVOC+xGsCb7sBrz5wbXVff0WTuhHQ/1jt2tUUBXPH3U+JN
+	pDcZQHyP8Uimfq0bbHMPEX2b4PJRdfP+mwkzkfPuM6sxSE9s4f7tmPmLp+MJa1ojwTVlFxXiEFy
+	p6rARZI1TPDnVGxd7r1AuIPHwY3uVFi4/RLGztL17vs+uUaSACIQ61c6/B9YZ2tPOWvG8N9wDk+
+	CrM/LfZWoWWgwDi/jT7DPQM2aV7t3102qh68Wt8DgxiqK/1WtSzKQ0YQynySePWm+PHKVXy4Qzw
+	d3V6vJ/8aZSJ+tl/Nw==
+X-Received: by 2002:a05:690c:4907:b0:7cf:d242:d94a with SMTP id
+ 00721157ae682-7ed0d1d9d24mr244663787b3.25.1781116668583; Wed, 10 Jun 2026
+ 11:37:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260609164032.1415124-1-sandeep.gundlupet-raju@amd.com> <20260609164032.1415124-3-sandeep.gundlupet-raju@amd.com>
+In-Reply-To: <20260609164032.1415124-3-sandeep.gundlupet-raju@amd.com>
+From: Tim Orling <tim.orling@konsulko.com>
+Date: Wed, 10 Jun 2026 11:37:37 -0700
+X-Gm-Features: AVVi8CdC35WcNiMeYne8sP4SxiiAn6xV18GcQXXulgJ2RNljenz6a03vBHkZIzI
+Message-ID: <CAOyo-84YrMoXjH7O6UExaby+Jx6h9ZK7Fnvg2xL_Td_iw-0i2A@mail.gmail.com>
+Subject: Re: [yocto-patches] [layerindex-web][PATCH v3 2/4]
+ connectivity_check.sh: Use yoctoproject.org for HTTPS check
+To: Sandeep Gundlupet Raju <sandeep.gundlupet-raju@amd.com>
+Cc: yocto-patches@lists.yoctoproject.org, mark.hatle@kernel.crashing.org, 
+	piotr@qbee.io
+Content-Type: multipart/alternative; boundary="00000000000055adc20653ea8ac4"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 10 Jun 2026 13:29:36 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4200
+ <yocto-patches@lists.yoctoproject.org>; Wed, 10 Jun 2026 18:37:54 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4201
 
-From: Dmitry Sakhonchik <frezidok1@gmail.com>
+--00000000000055adc20653ea8ac4
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Default values are "show everything". If the user wants to see
-only certain categories, they should explicitely set
-PSEUDO_SEVERITY env var or use -k option.
+On Tue, Jun 9, 2026 at 9:40=E2=80=AFAM Sandeep Gundlupet Raju <
+sandeep.gundlupet-raju@amd.com> wrote:
 
-Signed-off-by: Dmitry Sakhonchik <frezidok1@gmail.com>
----
- pseudo.h      | 2 ++
- pseudo_util.c | 7 ++++---
- 2 files changed, 6 insertions(+), 3 deletions(-)
+> Replace google.com with yoctoproject.org as the HTTPS test URL.
+> google.com may be blocked or considered unsafe on some Linux host
+> environments, while yoctoproject.org is a more appropriate and
+> reliable choice for a Yocto/OE layer index deployment.
+>
+> AI-Generated: GitHub Copilot (Claude Sonnet 4.6)
+>
+> Signed-off-by: Sandeep Gundlupet Raju <sandeep.gundlupet-raju@amd.com>
+> ---
+>  docker/connectivity_check.sh | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/docker/connectivity_check.sh b/docker/connectivity_check.sh
+> index 2e46ce4..630d0dc 100755
+> --- a/docker/connectivity_check.sh
+> +++ b/docker/connectivity_check.sh
+> @@ -18,7 +18,7 @@ if ! wget -q $HTTP_TEST_URL ; then
+>      exit 1
+>  fi
+>
+> -HTTPS_TEST_URL=3D"https://google.com"
+> +HTTPS_TEST_URL=3D"https://yoctoproject.org"
+>
 
-diff --git a/pseudo.h b/pseudo.h
-index 92ae71e..66aa70e 100644
---- a/pseudo.h
-+++ b/pseudo.h
-@@ -130,6 +130,8 @@ extern char *pseudo_version;
- #define PSEUDO_PIDFILE "pseudo.pid"
- #define PSEUDO_SOCKET "pseudo.socket"
- 
-+#define PSEUDO_SEVERITY_DEFAULT "info,warn,error"
-+
- /* some systems might not have *at().  We like to define operations in
-  * terms of each other, and for instance, open(...) is the same as
-  * openat(AT_FDCWD, ...).  If no AT_FDCWD is provided, any value that can't
-diff --git a/pseudo_util.c b/pseudo_util.c
-index 893a25b..4c05394 100644
---- a/pseudo_util.c
-+++ b/pseudo_util.c
-@@ -250,10 +250,11 @@ pseudo_init_util(void) {
- 	}
- 	free(env);
- 	env = pseudo_get_value("PSEUDO_SEVERITY");
--	if (env) {
--		pseudo_severity_set(env);
--		pseudo_severity_flags_finalize();
-+	if (!env) {
-+		env = strdup(PSEUDO_SEVERITY_DEFAULT);
- 	}
-+	pseudo_severity_set(env);
-+	pseudo_severity_flags_finalize();
- 	free(env);
- }
- 
+The yoctoproject.org site downloads a lot, but we have an existing
+connectivity check URL.
+
+openembedded-core/meta/conf/distro/include/default-distrovars.inc:CONNECTIV=
+ITY_CHECK_URIS
+?=3D "https://www.yoctoproject.org/connectivity.html"
+
+I will just make the edit before pushing the commit.
+
+ if ! wget -q $HTTPS_TEST_URL ; then
+>      echo "ERROR: failed to fetch $HTTPS_TEST_URL"
+>      cleanup_tmp
+> --
+> 2.43.0
+>
+>
+
+--00000000000055adc20653ea8ac4
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
+mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Tue, Jun 9, =
+2026 at 9:40=E2=80=AFAM Sandeep Gundlupet Raju &lt;<a href=3D"mailto:sandee=
+p.gundlupet-raju@amd.com">sandeep.gundlupet-raju@amd.com</a>&gt; wrote:<br>=
+</div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;b=
+order-left:1px solid rgb(204,204,204);padding-left:1ex">Replace <a href=3D"=
+http://google.com" rel=3D"noreferrer" target=3D"_blank">google.com</a> with=
+ <a href=3D"http://yoctoproject.org" rel=3D"noreferrer" target=3D"_blank">y=
+octoproject.org</a> as the HTTPS test URL.<br>
+<a href=3D"http://google.com" rel=3D"noreferrer" target=3D"_blank">google.c=
+om</a> may be blocked or considered unsafe on some Linux host<br>
+environments, while <a href=3D"http://yoctoproject.org" rel=3D"noreferrer" =
+target=3D"_blank">yoctoproject.org</a> is a more appropriate and<br>
+reliable choice for a Yocto/OE layer index deployment.<br>
+<br>
+AI-Generated: GitHub Copilot (Claude Sonnet 4.6)<br>
+<br>
+Signed-off-by: Sandeep Gundlupet Raju &lt;<a href=3D"mailto:sandeep.gundlup=
+et-raju@amd.com" target=3D"_blank">sandeep.gundlupet-raju@amd.com</a>&gt;<b=
+r>
+---<br>
+=C2=A0docker/connectivity_check.sh | 2 +-<br>
+=C2=A01 file changed, 1 insertion(+), 1 deletion(-)<br>
+<br>
+diff --git a/docker/connectivity_check.sh b/docker/connectivity_check.sh<br=
+>
+index 2e46ce4..630d0dc 100755<br>
+--- a/docker/connectivity_check.sh<br>
++++ b/docker/connectivity_check.sh<br>
+@@ -18,7 +18,7 @@ if ! wget -q $HTTP_TEST_URL ; then<br>
+=C2=A0 =C2=A0 =C2=A0exit 1<br>
+=C2=A0fi<br>
+<br>
+-HTTPS_TEST_URL=3D&quot;<a href=3D"https://google.com" rel=3D"noreferrer" t=
+arget=3D"_blank">https://google.com</a>&quot;<br>
++HTTPS_TEST_URL=3D&quot;<a href=3D"https://yoctoproject.org" rel=3D"norefer=
+rer" target=3D"_blank">https://yoctoproject.org</a>&quot;<br></blockquote><=
+div><br></div><div>The <a href=3D"http://yoctoproject.org">yoctoproject.org=
+</a> site downloads a lot, but we have an existing connectivity check URL.<=
+/div><div><br></div><div>openembedded-core/meta/conf/distro/include/default=
+-distrovars.inc:CONNECTIVITY_CHECK_URIS ?=3D &quot;<a href=3D"https://www.y=
+octoproject.org/connectivity.html">https://www.yoctoproject.org/connectivit=
+y.html</a>&quot;<br></div><div>=C2=A0</div><div>I will just make the edit b=
+efore pushing the commit.</div><div><br></div><blockquote class=3D"gmail_qu=
+ote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,20=
+4);padding-left:1ex">
+=C2=A0if ! wget -q $HTTPS_TEST_URL ; then<br>
+=C2=A0 =C2=A0 =C2=A0echo &quot;ERROR: failed to fetch $HTTPS_TEST_URL&quot;=
+<br>
+=C2=A0 =C2=A0 =C2=A0cleanup_tmp<br>
+-- <br>
+2.43.0<br>
+<br>
+</blockquote></div></div>
+
+--00000000000055adc20653ea8ac4--
 
