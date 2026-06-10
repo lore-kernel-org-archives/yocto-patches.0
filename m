@@ -2,467 +2,620 @@ Return-Path: <frezidok1@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25C55CD8CB9
-	for <webhook@archiver.kernel.org>; Wed, 10 Jun 2026 11:46:36 +0000 (UTC)
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.18355.1781091987092163099
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 093BBCD8CB2
+	for <webhook@archiver.kernel.org>; Wed, 10 Jun 2026 11:46:46 +0000 (UTC)
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.18624.1781092001781016565
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 10 Jun 2026 04:46:27 -0700
+ Wed, 10 Jun 2026 04:46:42 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=iZa9gLBN;
- spf=pass (domain: gmail.com, ip: 209.85.208.47, mailfrom: frezidok1@gmail.com)
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-68b90fc6a1dso2775330a12.1
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 10 Jun 2026 04:46:26 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=SgbKTy2i;
+ spf=pass (domain: gmail.com, ip: 209.85.208.50, mailfrom: frezidok1@gmail.com)
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-68d233bf083so9506280a12.1
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 10 Jun 2026 04:46:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781091985; x=1781696785; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oOlgvYhHTzVRNQlneINMF2oinsKnP+jOhYRFb+5Y7Y0=;
-        b=iZa9gLBNqRosf43b95XZsiS0dIaQAf+Cr+WTYRXpNT6KSzVU5RtiPM6A7g3zb6TAWO
-         IbxAnupXZvn3H9h0rd76ZUVD4dIL0uA9A678yUrIvJ0Gddcd7EXTqyjl+hPLbtQI9XTQ
-         F0izc7NXzkSQwVqBrmdAtF7las7bSd8VvW9L/NacQ8gG48n9ZQ+FKjSB9mC+k5QPD5eB
-         DJ+IweFl0Y08Zfee5J2m4QsxfUPxhVbqu1i0GNxrck3o2DBjIOFYtHgbHbL1pnrmwrgP
-         7ba8RYY3OMPEeu6O3KIIqJSWnUmmdiJ68dfIeYBOuoWrmFw1LrHuAegkRgXYXSbvvNM+
-         qLYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781091985; x=1781696785;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1781092000; x=1781696800; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oOlgvYhHTzVRNQlneINMF2oinsKnP+jOhYRFb+5Y7Y0=;
-        b=UDbywdtkIX3MNgssW4AfRkdcquq8aMkNhr8rF3e0HeXBxFW7R9vGH1ttnAIkw0wimn
-         lAj3sqqrSas90k9PZjyMvL/71KCs2QPDUAbzmIn4aFmP002evzqWCmuekUNiZ0/CoXwN
-         RMvJxWPHBYNmPGRLzISTI6CyYouRn5G53PcnMZ7wrvDX8aAtIe0QCvEJL+IapCRhZLH5
-         u9Dg6eN/S0XAN6rqWTQxI2hMjs3R7uOAc+h7pL8hVfJ6b7pTJtKwNOzcQ1iyCvTfpbZH
-         VHgCs0egTe4uAvTHqML0py1g4KcA23T/G6EfXSAcJeiXDQAEySyWmkKu5fX+31Fskpt0
-         sxDA==
-X-Gm-Message-State: AOJu0YzFGDeJ7dhhQzhR379nnoVgz+niZNjmIjAKffBmEPWgI86zzjUt
-	Ox0y76v9Yqfx9DlOEah2JkbwAa5N+yrPhKW5kquwInuTd+Q579WTX7Q2U4xabgCF
-X-Gm-Gg: Acq92OFoTgyi0Kg68keitK32wI/FB58qb+QZmnIGEpCKgDx4PPZkknYGrR5N+xgh9hu
-	JgwK9iGjR58X5C6HCoRH+/k+dbxLzQzB9Vb7iBFeAdaB+tOoBXjDHFhCy65w7H4hyR+WHverfYP
-	gH/JTQgSKXCJagZ0h3jrs9bcVfo+2Pz1DeEA5PqmlCu5PojQvX/fPb2qYUShcEmFB1Zx3Om7Q0h
-	3PXA8K1DlUarvOuOgvN+b2oaPG7m44rCHjEWtEwoVwH/EXOXRHwbXPnYSrPP64k4Aua4HuhoAAi
-	Na/aT0brIqQMdHG2r+VRbUbfqMWJnw2J5mgp7yS1QYDCZocLs/lfkePCo7Tg8vxIJj46FkNB0Cv
-	JWDkJbNssy0OzjywF3ULXU4Ho7vzxLveWBIS3oG9ufqLIcjYTwJOO6EBJxjDCS5pU19YtQOnqSK
-	sor6YCiwUpK0Yf89Cy1+FeAdZcln/jvdZFVaAtd8k=
-X-Received: by 2002:a05:6402:4487:b0:68f:9fd9:435a with SMTP id 4fb4d7f45d1cf-68ff2495467mr9397243a12.17.1781091985246;
-        Wed, 10 Jun 2026 04:46:25 -0700 (PDT)
+        bh=ffi7ZbbC0lnjyYhJRmXhZcMvrCFNiqp6++NPyTYQJX8=;
+        b=SgbKTy2ivmeg8NyafbnECpDhhc/V/2VC7H8XCGUBduNWbNgcxHfM/R7QJiRt6kZe2w
+         blqQGxzJV21YAR3N3Bfx/BZGamZVEHTFj6PRdn9PjzvM1lUFdpCIzPJSP4p6zG2gMVpk
+         5S+z89SWXefp3piOdCFfopD3l9lLcj1Xdm1hzEo18CYhnfcJT2IIWW11srp83mbNm/34
+         BsXLjiPxi+kHAmeZA3niRT4FZngPdf1j1Urlx9XvtzZ0ZC6TyTqOE0Jrq6TNQ7vIWb+F
+         rdhVBBuFDvMnZXAZe7W6H6y1B6TQ5v1K8GdHcAz308XUNMi6P3BWg7F+JnFEG4mYRrCQ
+         Zc8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781092000; x=1781696800;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=ffi7ZbbC0lnjyYhJRmXhZcMvrCFNiqp6++NPyTYQJX8=;
+        b=hNIkTLuG73508rzM4GBm/GaxnqEMJqQX1C5aMSQEwFi0YdTZlrOgw1YJc/ArDsWgUm
+         l9pAaYKiOywkwhpmmPurCTESpiTQEhJqO/XrRBeqQWyXnauB8jaVwl1lGcmkjtnwfl1R
+         KkWvbgcGxIJ1zILIDCZClkcLU7lEBDsWNNq/vebsSNgoPNz5Jm28vxXxSgQJ4Jd25Gyr
+         hlh68ogbaA7/KqINbrkOXKqfOQjPE7Dl4PxG4dJqPJ00IW12A7V7DRD5EopTYkcAi61f
+         tgbF+3ICrkhslGRSMR01v8I4DNQ6ntuNxP3P8iNMn1bz79IMruNQyurL0GBi0gvDb6aB
+         +unQ==
+X-Gm-Message-State: AOJu0Yx8K5GlQHGu5oQu93bk4AuSXysl2pYyKgxIAc8PvoGLXdoycYXo
+	Z8m6W5F3q2q0LL/VPj45Q8ZT9RzCg3T/lnwBZ82HiyLYu6RjFFsv6n4HtEcI3w19
+X-Gm-Gg: Acq92OEvMmiABHtG41DoUbsaBl26WakY2ZE4y8PIVXobRdw3k+XSm2SqEZ0U5QB8rLM
+	7lWkNBMuNH/3HlXHN+QZ1TYLJpYPdlYv42tckdKQg8wkw1hSXjrS0TuusVl1q+KzrRcMALguHo1
+	srNbJdW4T+hSCqwMRmfIWJAmw5a/6rhAEWWk+pOHvLIYSPV2O9CyGp9ovxXF8qKC0w3NJaNv4DM
+	FkHVLSpg9oeufR9HVvhWrY9RA+w9JYszKxGo/cPLF3vvJ0bJkygqDHWLYGmDxsYVtPcCcCUJszx
+	vRyqB9R8AU0VXTidOzJ9qjvmJGYJxRic1YAoKt6k1Q06MwNM8PvPcG12GzbYZEJO9UqAcz4tbpu
+	Hie+1X6kslAWdux4SVIAnyomt+vYVvS8eVZ5EcorCbf+ksGuYx5UUOqB32Om6ehEkNk9UbjyXbR
+	c6h6qUEKxqJfa59vdap7aGf2BHcUrYANdgfhhxLLk=
+X-Received: by 2002:a05:6402:e86:b0:68c:bf82:8844 with SMTP id 4fb4d7f45d1cf-68fa4c24a12mr11420003a12.6.1781091999692;
+        Wed, 10 Jun 2026 04:46:39 -0700 (PDT)
 Received: from ubuntu1.. ([194.87.83.187])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6912faea64dsm5997164a12.19.2026.06.10.04.46.23
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6912faea64dsm5997164a12.19.2026.06.10.04.46.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jun 2026 04:46:24 -0700 (PDT)
+        Wed, 10 Jun 2026 04:46:39 -0700 (PDT)
 From: frezidok1@gmail.com
 To: yocto-patches@lists.yoctoproject.org
 Cc: Dmitry Sakhonchik <frezidok1@gmail.com>
-Subject: [pseudo] [PATCH 1/8] pseudo_util: Change pseudo_diag() calls to appropriate logging macros
-Date: Wed, 10 Jun 2026 14:46:03 +0300
-Message-ID: <20260610114610.60776-1-frezidok1@gmail.com>
+Subject: [pseudo] [PATCH 2/8] pseudo_db: Change pseudo_diag() calls to appropriate macros
+Date: Wed, 10 Jun 2026 14:46:04 +0300
+Message-ID: <20260610114610.60776-2-frezidok1@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260610114610.60776-1-frezidok1@gmail.com>
+References: <20260610114610.60776-1-frezidok1@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 10 Jun 2026 11:46:36 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4192
+ <yocto-patches@lists.yoctoproject.org>; Wed, 10 Jun 2026 11:46:46 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4193
 
 From: Dmitry Sakhonchik <frezidok1@gmail.com>
 
-The patch is based on: [pseudo] pseudo: Add new logging macros
-and implements [YOCTO #12141]
+Implements [YOCTO #12141]
 
 Signed-off-by: Dmitry Sakhonchik <frezidok1@gmail.com>
 ---
- pseudo_util.c | 88 +++++++++++++++++++++++++--------------------------
- 1 file changed, 44 insertions(+), 44 deletions(-)
+ pseudo_db.c | 122 ++++++++++++++++++++++++++--------------------------
+ 1 file changed, 61 insertions(+), 61 deletions(-)
 
-diff --git a/pseudo_util.c b/pseudo_util.c
-index f8f2a2f..dbd979e 100644
---- a/pseudo_util.c
-+++ b/pseudo_util.c
-@@ -177,7 +177,7 @@ pseudo_get_value(const char *key) {
- 		value = NULL;
- 
- 	if (!pseudo_env[i].key) 
--		pseudo_diag("Unknown variable %s.\n", key);
-+		pseudo_warning("Unknown variable %s.\n", key);
- 
- 	return value;
+diff --git a/pseudo_db.c b/pseudo_db.c
+index 6a33f20..6945a83 100644
+--- a/pseudo_db.c
++++ b/pseudo_db.c
+@@ -27,7 +27,7 @@
+ #ifdef NPROFILE
+ void xProfile(void * pArg, const char * pQuery, sqlite3_uint64 pTimeTaken)
+ {
+-       pseudo_diag("profile: %lld %s\n", pTimeTaken, pQuery);
++       pseudo_info("profile: %lld %s\n", pTimeTaken, pQuery);
  }
-@@ -202,12 +202,12 @@ pseudo_set_value(const char *key, const char *value) {
- 			if (new)
- 				pseudo_env[i].value = new;
- 			else
--				pseudo_diag("warning: failed to save new value (%s) for key %s\n",
-+				pseudo_warning("failed to save new value (%s) for key %s\n",
- 					value, key);
- 		} else
- 			pseudo_env[i].value = NULL;
+ #endif
+ 
+@@ -647,7 +647,7 @@ cleanup_db(void) {
+ 	localtime_r(&stamp.tv_sec, &stamp_tm);
+ 	strftime(datebuf, 64, "%H:%M:%S", &stamp_tm);
+ 
+-	pseudo_diag("db cleanup for server shutdown, %s.%03d\n",
++	pseudo_info("db cleanup for server shutdown, %s.%03d\n",
+ 		datebuf, (int) (stamp.tv_usec / 1000));
+ #ifdef USE_MEMORY_DB
+         if (real_file_db) {
+@@ -657,7 +657,7 @@ cleanup_db(void) {
+ 	gettimeofday(&stamp, NULL);
+ 	localtime_r(&stamp.tv_sec, &stamp_tm);
+ 	strftime(datebuf, 64, "%H:%M:%S", &stamp_tm);
+-	pseudo_diag("memory-to-file backup complete, %s.%03d.\n",
++	pseudo_info("memory-to-file backup complete, %s.%03d.\n",
+ 		datebuf, (int) (stamp.tv_usec / 1000));
+ #endif
+ 	if (file_db)
+@@ -667,7 +667,7 @@ cleanup_db(void) {
+ 	gettimeofday(&stamp, NULL);
+ 	localtime_r(&stamp.tv_sec, &stamp_tm);
+ 	strftime(datebuf, 64, "%H:%M:%S", &stamp_tm);
+-	pseudo_diag("db cleanup finished, %s.%03d\n",
++	pseudo_info("db cleanup finished, %s.%03d\n",
+ 		datebuf, (int) (stamp.tv_usec / 1000));
+ }
+ 
+@@ -704,7 +704,7 @@ get_db(struct database_info *dbinfo) {
+                 rc = sqlite3_open(dbfile, &db);
+ 	free(dbfile);
+ 	if (rc) {
+-		pseudo_diag("Failed: %s\n", sqlite3_errmsg(db));
++		pseudo_error("Failed: %s\n", sqlite3_errmsg(db));
+ 		sqlite3_close(db);
+ 		*(dbinfo->db) = NULL;
+ 		return 1;
+@@ -733,7 +733,7 @@ get_db(struct database_info *dbinfo) {
+ 		"ORDER BY name;";
+ 	rc = sqlite3_get_table(db, sql, &results, &rows, &columns, &errmsg);
+ 	if (rc) {
+-		pseudo_diag("Failed: %s\n", errmsg);
++		pseudo_error("Failed: %s\n", errmsg);
  	} else {
--		if (!pseudo_util_initted) pseudo_diag("Unknown variable %s.\n", key);
-+		if (!pseudo_util_initted) pseudo_warning("Unknown variable %s.\n", key);
- 		rc = -EINVAL;
+ 		rc = make_tables(db, dbinfo->tables, dbinfo->indexes, dbinfo->migrations, results, rows);
+ 		sqlite3_free_table(results);
+@@ -760,7 +760,7 @@ get_dbs(void) {
+ #endif
+ 	for (i = 0; db_infos[i].db; ++i) {
+ 		if (get_db(&db_infos[i])) {
+-			pseudo_diag("Error getting '%s' database.\n",
++			pseudo_error("Error getting '%s' database.\n",
+ 				db_infos[i].pathname);
+ 			err = 1;
+ 		}
+@@ -780,12 +780,12 @@ pdb_log_traits(pseudo_query_t *traits) {
+ 	int rc;
+ 
+ 	if (!log_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 1;
+ 	}
+ 	e = calloc(1, sizeof(*e));
+ 	if (!e) {
+-		pseudo_diag("can't allocate space for log entry.");
++		pseudo_error("can't allocate space for log entry.");
+ 		return 1;
+ 	}
+ 	for (trait = traits; trait; trait = trait->next) {
+@@ -854,7 +854,7 @@ pdb_log_traits(pseudo_query_t *traits) {
+ 		case PSQF_ID:
+ 		case PSQF_ORDER:
+ 		default:
+-			pseudo_diag("Invalid trait %s for log creation.\n",
++			pseudo_error("Invalid trait %s for log creation.\n",
+ 				pseudo_query_field_name(trait->field));
+ 			free(e);
+ 			return 1;
+@@ -878,7 +878,7 @@ pdb_log_entry(log_entry *e) {
+ 	int rc;
+ 
+ 	if (!log_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 1;
  	}
  
-@@ -350,7 +350,7 @@ without_libpseudo(char *list) {
- 	}
- 	list = strdup(list);
- 	if (!list) {
--		pseudo_diag("Couldn't allocate memory to remove libpseudo from environment.\n");
-+		pseudo_error("Couldn't allocate memory to remove libpseudo from environment.\n");
- 	}
- 	while (list && !(*real_regexec)(&libpseudo_regex, list, 1, pmatch, 0)) {
- 		char *start = list + pmatch[0].rm_so;
-@@ -360,7 +360,7 @@ without_libpseudo(char *list) {
- 		memmove(start, end, strlen(end) + 1);
- 		++counter;
- 		if (counter > 5) {
--			pseudo_diag("Found way too many libpseudo.so in environment, giving up.\n");
-+			pseudo_error("Found way too many libpseudo.so in environment, giving up.\n");
- 			return list;
- 		}
- 	}
-@@ -621,7 +621,7 @@ pseudo_evlog_internal(char *fmt, ...) {
- 				event_log[i].data = pseudo_evlog_buffer + (PSEUDO_EVLOG_LENGTH * i);
- 			}
- 		} else {
--			pseudo_diag("fatal: can't allocate event log storage.\n");
-+			pseudo_error("can't allocate event log storage.\n");
- 		}
+@@ -976,7 +976,7 @@ pdb_log_msg(pseudo_sev_t severity, pseudo_msg_t *msg, const char *program, const
  	}
  
-@@ -668,7 +668,7 @@ pseudo_append_element(char *newpath, char *root, size_t allocated, char **pcurre
- 	if (!newpath ||
- 	    !pcurrent || !*pcurrent ||
- 	    !root || !element) {
--		pseudo_diag("pseudo_append_element: invalid args.\n");
-+		pseudo_warning("pseudo_append_element: invalid args.\n");
+ 	if (!log_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 1;
+ 	}
+ 
+@@ -1062,7 +1062,7 @@ frag(buffer *b, char *fmt, ...) {
+ 	int rc;
+ 
+ 	if (!b) {
+-		pseudo_diag("frag called without buffer.\n");
++		pseudo_error("frag called without buffer.\n");
  		return -1;
  	}
- 
-@@ -689,7 +689,7 @@ pseudo_append_element(char *newpath, char *root, size_t allocated, char **pcurre
- 		 * fall through and do standard processing
- 		 */
- 		if (!proc_path)
--			pseudo_diag("allocation failed seeking memory for path (%s).\n", newpath);
-+			pseudo_warning("allocation failed seeking memory for path (%s).\n", newpath);
- 		else
- 			is_proc = 1;
- 	}
-@@ -729,7 +729,7 @@ pseudo_append_element(char *newpath, char *root, size_t allocated, char **pcurre
- 	/* current length, plus / <element> / \0 */
- 	/* => curlen + elen + 3 */
- 	if (curlen + elen + 3 > allocated) {
--		pseudo_diag("pseudo_append_element: path too long (wanted %lu bytes).\n", (unsigned long) curlen + elen + 3);
-+		pseudo_error("pseudo_append_element: path too long (wanted %lu bytes).\n", (unsigned long) curlen + elen + 3);
- 		return -1;
- 	}
- 	/* append a slash */
-@@ -798,7 +798,7 @@ pseudo_append_element(char *newpath, char *root, size_t allocated, char **pcurre
- 					char *target_link_path = malloc(pseudo_path_max());
- 
- 					if (!target_link_path)
--						pseudo_diag("allocation failed seeking memory for path (%s/%s).\n", proc_path, linkbuf);
-+						pseudo_error("allocation failed seeking memory for path (%s/%s).\n", proc_path, linkbuf);
- 						/* Fall through, nothing we can do here */
- 					else {
- 						snprintf(target_link_path, target_link_max, "%s/%s", proc_path, linkbuf);
-@@ -865,7 +865,7 @@ pseudo_append_elements(char *newpath, char *root, size_t allocated, char **curre
- 	if (!newpath || !root ||
- 	    !current || !*current ||
- 	    !path) {
--		pseudo_diag("pseudo_append_elements: invalid arguments.");
-+		pseudo_error("pseudo_append_elements: invalid arguments.");
- 		return -1;
- 	}
- 	if (!sbuf) {
-@@ -935,7 +935,7 @@ pseudo_fix_path(const char *base, const char *path, size_t rootlen, size_t basel
- 	int trailing_slash = 0;
- 	
- 	if (!path) {
--		pseudo_diag("can't fix empty path.\n");
-+		pseudo_warning("can't fix empty path.\n");
- 		return 0;
- 	}
- 	if (baselen == 1) {
-@@ -957,7 +957,7 @@ pseudo_fix_path(const char *base, const char *path, size_t rootlen, size_t basel
- 	if (!pathbufs[pathbuf]) {
- 		pathbufs[pathbuf] = malloc(newpathlen);
- 		if (!pathbufs[pathbuf]) {
--			pseudo_diag("allocation failed seeking memory for path (%s).\n", path);
-+			pseudo_error("allocation failed seeking memory for path (%s).\n", path);
- 			return 0;
+ 	curlen = b->tail - b->data;
+@@ -1075,7 +1075,7 @@ frag(buffer *b, char *fmt, ...) {
+ 			newlen *= 2;
+ 		char *newbuf = malloc(newlen);
+ 		if (!newbuf) {
+-			pseudo_diag("failed to allocate SQL buffer.\n");
++			pseudo_error("failed to allocate SQL buffer.\n");
+ 			return -1;
+ 		}
+ 		memcpy(newbuf, b->data, curlen + 1);
+@@ -1088,7 +1088,7 @@ frag(buffer *b, char *fmt, ...) {
+ 		rc = vsnprintf(b->tail, b->buflen - curlen, fmt, ap);
+ 		va_end(ap);
+ 		if ((rc > 0) && ((size_t) rc >= (b->buflen - curlen))) {
+-			pseudo_diag("tried to reallocate larger buffer, failed.  giving up.\n");
++			pseudo_error("tried to reallocate larger buffer, failed.  giving up.\n");
+ 			return -1;
  		}
  	}
-@@ -976,7 +976,7 @@ pseudo_fix_path(const char *base, const char *path, size_t rootlen, size_t basel
- 	 * easier for the library.
- 	 */
- 	if (!newpath) {
--		pseudo_diag("allocation failed seeking memory for path (%s).\n", path);
-+		pseudo_error("allocation failed seeking memory for path (%s).\n", path);
- 		return 0;
- 	}
- 	newpath[0] = '\0';
-@@ -1037,7 +1037,7 @@ void pseudo_dropenv() {
- 	if (ld_preload) {
- 		ld_preload = without_libpseudo(ld_preload);
- 		if (!ld_preload) {
--			pseudo_diag("fatal: can't allocate new %s variable.\n", PRELINK_LIBRARIES);
-+			pseudo_error("can't allocate new %s variable.\n", PRELINK_LIBRARIES);
- 		}
- 		if (ld_preload && strlen(ld_preload)) {
- 			SETENV(PRELINK_LIBRARIES, ld_preload, 1);
-@@ -1056,7 +1056,7 @@ pseudo_dropenvp(char * const *envp) {
+@@ -1110,24 +1110,24 @@ pdb_query(char *stmt_type, pseudo_query_t *traits, unsigned long fields, int uni
+ 	static buffer *sql;
  
- 	new_envp = malloc((i + 1) * sizeof(*new_envp));
- 	if (!new_envp) {
--		pseudo_diag("fatal: can't allocate new environment.\n");
-+		pseudo_error("can't allocate new environment.\n");
+ 	if (!log_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
  		return NULL;
  	}
  
-@@ -1065,7 +1065,7 @@ pseudo_dropenvp(char * const *envp) {
- 		if (STARTSWITH(envp[i], PRELINK_LIBRARIES "=")) {
- 			char *new_val = without_libpseudo(envp[i]);
- 			if (!new_val) {
--				pseudo_diag("fatal: can't allocate new environment variable.\n");
-+				pseudo_error("can't allocate new environment variable.\n");
+ 	if (!stmt_type) {
+-		pseudo_diag("can't prepare a statement without a type.\n");
++		pseudo_warning("can't prepare a statement without a type.\n");
+ 	}
+ 
+ 	if (!sql) {
+ 		sql = malloc(sizeof *sql);
+ 		if (!sql) {
+-			pseudo_diag("can't allocate SQL buffer.\n");
++			pseudo_error("can't allocate SQL buffer.\n");
+ 			return NULL;
+ 		}
+ 		sql->buflen = 512;
+ 		sql->data = malloc(sql->buflen);
+ 		if (!sql->data) {
+-			pseudo_diag("can't allocate SQL text buffer.\n");
++			pseudo_error("can't allocate SQL text buffer.\n");
+ 			free(sql);
+ 			sql = 0;
+ 			return NULL;
+@@ -1193,7 +1193,7 @@ pdb_query(char *stmt_type, pseudo_query_t *traits, unsigned long fields, int uni
+ 			case PSQT_LIKE:
+ 			case PSQT_NOTLIKE:
+ 			case PSQT_SQLPAT:
+-				pseudo_diag("Error:  Can't use a LIKE match on non-text fields.\n");
++				pseudo_error("Can't use a LIKE match on non-text fields.\n");
  				return 0;
- 			} else {
- 				/* don't keep an empty value; if the whole string is
-@@ -1111,7 +1111,7 @@ pseudo_setupenv() {
- 		size_t len = strlen(libdir_path) + 1 + (strlen(libdir_path) + 2) + 1;
- 		char *newenv = malloc(len);
- 		if (!newenv) {
--			pseudo_diag("fatal: can't allocate new %s variable.\n", PRELINK_PATH);
-+			pseudo_error("can't allocate new %s variable.\n", PRELINK_PATH);
- 		} else {
- 		    snprintf(newenv, len, "%s:%s64", libdir_path, libdir_path);
- 		    SETENV(PRELINK_PATH, newenv, 1);
-@@ -1121,7 +1121,7 @@ pseudo_setupenv() {
- 		size_t len = strlen(ld_library_path) + 1 + strlen(libdir_path) + 1 + (strlen(libdir_path) + 2) + 1;
- 		char *newenv = malloc(len);
- 		if (!newenv) {
--			pseudo_diag("fatal: can't allocate new %s variable.\n", PRELINK_PATH);
-+			pseudo_error("can't allocate new %s variable.\n", PRELINK_PATH);
- 		} else {
- 		    snprintf(newenv, len, "%s:%s:%s64", ld_library_path, libdir_path, libdir_path);
- 		    SETENV(PRELINK_PATH, newenv, 1);
-@@ -1136,7 +1136,7 @@ pseudo_setupenv() {
- 	if (ld_preload) {
- 		ld_preload = with_libpseudo(ld_preload, libdir_path);
- 		if (!ld_preload) {
--			pseudo_diag("fatal: can't allocate new %s variable.\n", PRELINK_LIBRARIES);
-+			pseudo_error("can't allocate new %s variable.\n", PRELINK_LIBRARIES);
- 		} else {
- 		    SETENV(PRELINK_LIBRARIES, ld_preload, 1);
- 		    free(ld_preload);
-@@ -1144,7 +1144,7 @@ pseudo_setupenv() {
- 	} else {
- 		ld_preload = with_libpseudo("", libdir_path);
- 		if (!ld_preload) {
--			pseudo_diag("fatal: can't allocate new %s variable.\n", PRELINK_LIBRARIES);
-+			pseudo_error("can't allocate new %s variable.\n", PRELINK_LIBRARIES);
- 		} else {
- 		    SETENV(PRELINK_LIBRARIES, ld_preload, 1);
- 		    free(ld_preload);
-@@ -1216,7 +1216,7 @@ pseudo_setupenvp(char * const *envp) {
- 	j = 0;
- 	new_envp = malloc((env_count + 1) * sizeof(*new_envp));
- 	if (!new_envp) {
--		pseudo_diag("fatal: can't allocate new environment.\n");
-+		pseudo_error("can't allocate new environment.\n");
- 		return NULL;
- 	}	
- 
-@@ -1225,7 +1225,7 @@ pseudo_setupenvp(char * const *envp) {
- 		size_t len = strlen(PRELINK_PATH "=") + strlen(libdir_path) + 1 + (strlen(libdir_path) + 2) + 1;
- 		char *newenv = malloc(len);
- 		if (!newenv) {
--			pseudo_diag("fatal: can't allocate new %s variable.\n", PRELINK_PATH);
-+			pseudo_error("can't allocate new %s variable.\n", PRELINK_PATH);
- 		} else {
- 		    snprintf(newenv, len, PRELINK_PATH "=%s:%s64", libdir_path, libdir_path);
- 		    new_envp[j++] = newenv;
-@@ -1234,7 +1234,7 @@ pseudo_setupenvp(char * const *envp) {
- 		size_t len = strlen(ld_library_path) + 1 + strlen(libdir_path) + 1 + (strlen(libdir_path) + 2) + 1;
- 		char *newenv = malloc(len);
- 		if (!newenv) {
--			pseudo_diag("fatal: can't allocate new %s variable.\n", PRELINK_PATH);
-+			pseudo_error("can't allocate new %s variable.\n", PRELINK_PATH);
- 		} else {
- 		    snprintf(newenv, len, "%s:%s:%s64", ld_library_path, libdir_path, libdir_path);
- 		    new_envp[j++] = newenv;
-@@ -1247,18 +1247,18 @@ pseudo_setupenvp(char * const *envp) {
- 	if (ld_preload) {
- 		ld_preload = with_libpseudo(ld_preload, libdir_path);
- 		if (!ld_preload) {
--			pseudo_diag("fatal: can't allocate new %s variable.\n", PRELINK_LIBRARIES);
-+			pseudo_error("can't allocate new %s variable.\n", PRELINK_LIBRARIES);
- 		} else
- 			new_envp[j++] = ld_preload;
- 	} else {
- 		ld_preload = with_libpseudo("", libdir_path);
- 		if (!ld_preload) {
--			pseudo_diag("fatal: can't allocate new %s variable.\n", PRELINK_LIBRARIES);
-+			pseudo_error("can't allocate new %s variable.\n", PRELINK_LIBRARIES);
- 		} else {
- 			size_t len = strlen(PRELINK_LIBRARIES "=") + strlen(ld_preload) + 1;
- 			char *newenv = malloc(len);
- 			if (!newenv) {
--				pseudo_diag("fatal: can't allocate new %s variable.\n", PRELINK_LIBRARIES);
-+				pseudo_error("can't allocate new %s variable.\n", PRELINK_LIBRARIES);
- 			} else {
- 				snprintf(newenv, len, PRELINK_LIBRARIES "=%s", ld_preload);
- 				new_envp[j++] = newenv;
-@@ -1287,7 +1287,7 @@ pseudo_setupenvp(char * const *envp) {
- 			size_t len = strlen(pseudo_env[i].key) + 1 + strlen(pseudo_env[i].value) + 1;
- 			char *newenv = malloc(len);
- 			if (!newenv) {
--				pseudo_diag("fatal: can't allocate new variable.\n");
-+				pseudo_error("can't allocate new variable.\n");
- 			} else {
- 				snprintf(newenv, len, "%s=%s", pseudo_env[i].key, pseudo_env[i].value);
- 				new_envp[j++] = newenv;
-@@ -1339,7 +1339,7 @@ pseudo_prefix_path(char *file) {
- 	char * prefix = pseudo_get_prefix(NULL);
- 
- 	if (!prefix) {
--		pseudo_diag("You must set the PSEUDO_PREFIX environment variable to run pseudo.\n");
-+		pseudo_error("You must set the PSEUDO_PREFIX environment variable to run pseudo.\n");
- 		exit(1);
- 	}
- 
-@@ -1356,7 +1356,7 @@ pseudo_bindir_path(char *file) {
- 	char * bindir = pseudo_get_bindir();
- 
- 	if (!bindir) {
--		pseudo_diag("You must set the PSEUDO_BINDIR environment variable to run pseudo.\n");
-+		pseudo_error("You must set the PSEUDO_BINDIR environment variable to run pseudo.\n");
- 		exit(1);
- 	}
- 
-@@ -1373,7 +1373,7 @@ pseudo_libdir_path(char *file) {
- 	char * libdir = pseudo_get_libdir();
- 
- 	if (!libdir) {
--		pseudo_diag("You must set the PSEUDO_LIBDIR environment variable to run pseudo.\n");
-+		pseudo_error("You must set the PSEUDO_LIBDIR environment variable to run pseudo.\n");
- 		exit(1);
- 	}
- 
-@@ -1390,7 +1390,7 @@ pseudo_localstatedir_path(char *file) {
- 	char * localstatedir = pseudo_get_localstatedir();
- 
- 	if (!localstatedir) {
--		pseudo_diag("You must set the PSEUDO_LOCALSTATEDIR environment variable to run pseudo.\n");
-+		pseudo_error("You must set the PSEUDO_LOCALSTATEDIR environment variable to run pseudo.\n");
- 		exit(1);
- 	}
- 
-@@ -1424,7 +1424,7 @@ pseudo_get_prefix(char *pathname) {
- 		tmp_path = pseudo_fix_path(NULL, mypath, 0, 0, 0, AT_SYMLINK_NOFOLLOW);
- 		/* point s to the end of the fixed path */
- 		if ((int) strlen(tmp_path) >= pseudo_path_max()) {
--			pseudo_diag("Can't expand path '%s' -- expansion exceeds %d.\n",
-+			pseudo_error("Can't expand path '%s' -- expansion exceeds %d.\n",
- 				mypath, (int) pseudo_path_max());
- 		} else {
- 			s = mypath + snprintf(mypath, pseudo_path_max(), "%s", tmp_path);
-@@ -1446,7 +1446,7 @@ pseudo_get_prefix(char *pathname) {
- 			strcpy(mypath, "/");
+ 				break;
+ 			default:
+@@ -1210,7 +1210,7 @@ pdb_query(char *stmt_type, pseudo_query_t *traits, unsigned long fields, int uni
+ 			case PSQT_LIKE:
+ 			case PSQT_NOTLIKE:
+ 			case PSQT_SQLPAT:
+-				pseudo_diag("Error:  Can't use a LIKE match on non-text fields.\n");
++				pseudo_error("Error:  Can't use a LIKE match on non-text fields.\n");
+ 				return 0;
+ 				break;
+ 			default:
+@@ -1235,7 +1235,7 @@ pdb_query(char *stmt_type, pseudo_query_t *traits, unsigned long fields, int uni
+ 				order_dir = "ASC";
+ 				break;
+ 			default:
+-				pseudo_diag("Ordering must be < or >.\n");
++				pseudo_error("Ordering must be < or >.\n");
+ 				return 0;
+ 				break;
+ 			}
+@@ -1245,7 +1245,7 @@ pdb_query(char *stmt_type, pseudo_query_t *traits, unsigned long fields, int uni
+ 			case PSQT_LIKE:
+ 			case PSQT_NOTLIKE:
+ 			case PSQT_SQLPAT:
+-				pseudo_diag("Error:  Can't use a LIKE match on non-text fields.\n");
++				pseudo_error("Can't use a LIKE match on non-text fields.\n");
+ 				return 0;
+ 				break;
+ 			default:
+@@ -1300,7 +1300,7 @@ pdb_query(char *stmt_type, pseudo_query_t *traits, unsigned long fields, int uni
+ 			sqlite3_bind_int64(stmt, field++, trait->data.ivalue);
+ 			break;
+ 		default:
+-			pseudo_diag("Inexplicably invalid field type %d\n", trait->field);
++			pseudo_error("Inexplicably invalid field type %d\n", trait->field);
+ 			sqlite3_finalize(stmt);
+ 			return NULL;
  		}
- 
--		pseudo_diag("Warning: PSEUDO_PREFIX unset, defaulting to %s.\n",
-+		pseudo_warning("PSEUDO_PREFIX unset, defaulting to %s.\n",
- 			mypath);
- 		pseudo_set_value("PSEUDO_PREFIX", mypath);
- 		s = pseudo_get_value("PSEUDO_PREFIX");
-@@ -1702,7 +1702,7 @@ pseudo_logfile(char *filename, char *defname, int prefer_fd) {
- 		}
- 		pseudo_path = pseudo_localstatedir_path(defname);
- 		if (!pseudo_path) {
--			pseudo_diag("can't get path for prefix/%s\n", PSEUDO_LOGFILE);
-+			pseudo_error("can't get path for prefix/%s\n", PSEUDO_LOGFILE);
+@@ -1322,7 +1322,7 @@ pdb_delete(pseudo_query_t *traits, unsigned long fields) {
+ 			dberr(log_db, "deletion failed");
  			return -1;
+ 		} else {
+-			pseudo_diag("Deleted records, vacuuming log database (may take a while).\n");
++			pseudo_info("Deleted records, vacuuming log database (may take a while).\n");
+ 			/* we can't do anything about it if this fails... */
+ 			sqlite3_exec(log_db, "VACUUM;", NULL, NULL, NULL);
  		}
- 	} else {
-@@ -1716,7 +1716,7 @@ pseudo_logfile(char *filename, char *defname, int prefer_fd) {
- 					break;
- 				case 'd':
- 					if (pid) {
--						pseudo_diag("found second %%d in PSEUDO_DEBUG_FILE, ignoring.\n");
-+						pseudo_info("found second %%d in PSEUDO_DEBUG_FILE, ignoring.\n");
- 						return -1;
- 					} else {
- 						pid = s;
-@@ -1724,7 +1724,7 @@ pseudo_logfile(char *filename, char *defname, int prefer_fd) {
- 					break;
- 				case 's':
- 					if (prog) {
--						pseudo_diag("found second %%s in PSEUDO_DEBUG_FILE, ignoring.\n");
-+						pseudo_info("found second %%s in PSEUDO_DEBUG_FILE, ignoring.\n");
- 						return -1;
- 					} else {
- 						prog = s;
-@@ -1732,10 +1732,10 @@ pseudo_logfile(char *filename, char *defname, int prefer_fd) {
- 					break;
- 				default:
- 					if (isprint(s[1])) {
--						pseudo_diag("found unknown format character '%c' in PSEUDO_DEBUG_FILE, ignoring.\n",
-+						pseudo_info("found unknown format character '%c' in PSEUDO_DEBUG_FILE, ignoring.\n",
- 							s[1]);
- 					} else {
--						pseudo_diag("found unknown format character '\\x%02x' in PSEUDO_DEBUG_FILE, ignoring.\n",
-+						pseudo_info("found unknown format character '\\x%02x' in PSEUDO_DEBUG_FILE, ignoring.\n",
- 							(unsigned char) s[1]);
- 					}
- 					return -1;
-@@ -1750,7 +1750,7 @@ pseudo_logfile(char *filename, char *defname, int prefer_fd) {
- 			len += strlen(program_invocation_short_name);
- 		pseudo_path = malloc(len);
- 		if (!pseudo_path) {
--			pseudo_diag("can't allocate space for debug file name.\n");
-+			pseudo_error("can't allocate space for debug file name.\n");
- 			return -1;
+@@ -1347,7 +1347,7 @@ pdb_history(pseudo_query_t *traits, unsigned long fields, int unique) {
+ 			h->fields = fields;
+ 			h->stmt = stmt;
+ 		} else {
+-			pseudo_diag("failed to allocate memory for log_history\n");
++			pseudo_error("failed to allocate memory for log_history\n");
+ 			sqlite3_finalize(stmt);
  		}
- 		if (pid && prog) {
-@@ -1770,7 +1770,7 @@ pseudo_logfile(char *filename, char *defname, int prefer_fd) {
- 	}	
- 	fd = open(pseudo_path, O_WRONLY | O_APPEND | O_CREAT | O_CLOEXEC, 0644);
- 	if (fd == -1) {
--		pseudo_diag("help: can't open log file %s: %s\n", pseudo_path, strerror(errno));
-+		pseudo_error("help: can't open log file %s: %s\n", pseudo_path, strerror(errno));
- 	} else {
- 		/* try to force fd to prefer_fd.  We do this because glibc's malloc
- 		 * debug unconditionally writes to fd 2, and we don't want
-@@ -1799,7 +1799,7 @@ pseudo_debug_logfile(char *defname, int prefer_fd) {
- 
- 	fd = pseudo_logfile(filename, defname, prefer_fd);
- 	if (fd > -1) {
--		pseudo_diag("debug_logfile: fd %d\n", fd);
-+		pseudo_info("debug_logfile: fd %d\n", fd);
- 		pseudo_util_debug_fd = fd;
+ 		return h;
+@@ -1378,7 +1378,7 @@ pdb_history_entry(log_history h) {
+ 	}
+ 	l = calloc(1, sizeof(log_entry));
+ 	if (!l) {
+-		pseudo_diag("couldn't allocate log entry.\n");
++		pseudo_error("couldn't allocate log entry.\n");
  		return 0;
  	}
-@@ -1864,7 +1864,7 @@ pseudo_dump_data(char *name, const void *v, size_t len) {
- 	const unsigned char *base = v;
- 	const unsigned char *data = base;
- 	int remaining = len;
--	pseudo_diag("%s at %p [%d byte%s]:\n",
-+	pseudo_info("%s at %p [%d byte%s]:\n",
- 		name ? name : "data", v, (int) len, len == 1 ? "" : "s");
- 	while (remaining > 0) {
- 		char *hexptr = hexbuf;
-@@ -1882,7 +1882,7 @@ pseudo_dump_data(char *name, const void *v, size_t len) {
+ 
+@@ -1449,12 +1449,12 @@ pdb_history_entry(log_history h) {
+ 		case PSQF_ORDER:
+ 		case PSQF_FTYPE:
+ 		case PSQF_PERM:
+-			pseudo_diag("field %s should not be in the fields list.\n",
++			pseudo_warning("field %s should not be in the fields list.\n",
+ 				pseudo_query_field_name(f));
+ 			return 0;
+ 			break;
+ 		default:
+-			pseudo_diag("unknown field %d\n", f);
++			pseudo_warning("unknown field %d\n", f);
+ 			return 0;
+ 			break;
  		}
- 		*hexptr = '\0';
- 		*asciiptr = '\0';
--		pseudo_diag("0x%06x %-50.50s '%.16s'\n",
-+		pseudo_info("0x%06x %-50.50s '%.16s'\n",
- 			(int) (data - base),
- 			hexbuf, asciibuf);
- 		remaining = remaining - 16;
-
-base-commit: f554e5d2b207eb96754d2c62784419a46cb364ba
+@@ -1498,7 +1498,7 @@ pdb_clear_unused_xattrs(void) {
+ 	int rc;
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return;
+ 	}
+ 	if (!delete) {
+@@ -1528,7 +1528,7 @@ pdb_clear_xattrs(pseudo_msg_t *msg) {
+ 	if (!msg)
+ 		return;
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return;
+ 	}
+ 	if (!delete) {
+@@ -1565,7 +1565,7 @@ pdb_copy_xattrs(pseudo_msg_t *oldmsg, pseudo_msg_t *msg) {
+ 	if (!oldmsg || !msg)
+ 		return;
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return;
+ 	}
+ 	if (!copy) {
+@@ -1596,7 +1596,7 @@ pdb_check_xattrs(pseudo_msg_t *msg) {
+ 	if (!msg)
+ 		return;
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return;
+ 	}
+ 	if (!scan) {
+@@ -1643,7 +1643,7 @@ pdb_link_file(pseudo_msg_t *msg) {
+ 		    " VALUES (?, ?, ?, ?, ?, ?, ?, 0);";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!insert) {
+@@ -1689,7 +1689,7 @@ pdb_unlink_file_dev(pseudo_msg_t *msg) {
+ 	char *sql = "DELETE FROM files WHERE dev = ? AND ino = ?;";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!sql_delete) {
+@@ -1724,7 +1724,7 @@ pdb_update_file_path(pseudo_msg_t *msg) {
+ 		"WHERE path = 'NAMELESS FILE' and dev = ? AND ino = ?;";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!update) {
+@@ -1759,7 +1759,7 @@ pdb_may_unlink_file(pseudo_msg_t *msg, int deleting) {
+ 	char *sql_mark_file = "UPDATE files SET deleting = ? WHERE path = ?;";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!mark_file) {
+@@ -1804,7 +1804,7 @@ pdb_cancel_unlink_file(pseudo_msg_t *msg) {
+ 	char *sql_mark_file = "UPDATE files SET deleting = 0 WHERE path = ?;";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!mark_file) {
+@@ -1846,7 +1846,7 @@ pdb_did_unlink_files(int deleting) {
+ 	char *sql_delete_exact = "DELETE FROM files WHERE deleting = ?;";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!delete_exact) {
+@@ -1857,7 +1857,7 @@ pdb_did_unlink_files(int deleting) {
+ 		}
+ 	}
+ 	if (deleting == 0) {
+-		pseudo_diag("did_unlink_files: deleting must be non-zero.\n");
++		pseudo_error("did_unlink_files: deleting must be non-zero.\n");
+ 		return 0;
+ 	}
+ 	sqlite3_bind_int(delete_exact, 1, deleting);
+@@ -1882,7 +1882,7 @@ pdb_did_unlink_file(char *path, pseudo_msg_t *msg, int deleting) {
+ 	char *sql_delete_exact = "DELETE FROM files WHERE path = ? AND deleting = ?;";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!delete_exact) {
+@@ -1925,7 +1925,7 @@ pdb_unlink_file(pseudo_msg_t *msg) {
+ 	char *sql_delete_exact = "DELETE FROM files WHERE path = ?;";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!delete_exact) {
+@@ -1973,7 +1973,7 @@ pdb_unlink_contents(pseudo_msg_t *msg) {
+ 				"(path > (? || '/') AND path < (? || '0'));";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!delete_sub) {
+@@ -2025,7 +2025,7 @@ pdb_rename_file(const char *oldpath, pseudo_msg_t *msg) {
+ 			       "WHERE (path > (? || '/') AND path < (? || '0'));";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!update_exact) {
+@@ -2098,7 +2098,7 @@ pdb_renumber_all(dev_t from, dev_t to) {
+ 		    " WHERE dev = ?;";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!files_update) {
+@@ -2166,7 +2166,7 @@ pdb_update_inode(pseudo_msg_t *msg) {
+ 	if (!oldmsg) {
+ 		oldmsg = malloc(sizeof(*msg) + pseudo_path_max());
+ 		if (!oldmsg) {
+-			pseudo_diag("%s: out of memory\n", __func__);
++			pseudo_error("%s: out of memory\n", __func__);
+ 			return 1;
+ 		}
+ 	}
+@@ -2175,7 +2175,7 @@ pdb_update_inode(pseudo_msg_t *msg) {
+ 		    " SET dev = ?, ino = ? "
+ 		    " WHERE path = ?;";
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!update) {
+@@ -2189,7 +2189,7 @@ pdb_update_inode(pseudo_msg_t *msg) {
+ 		return 1;
+ 	}
+ 	if (!msg->pathlen) {
+-		pseudo_diag("Can't update the inode of a file without its path.\n");
++		pseudo_error("Can't update the inode of a file without its path.\n");
+ 		return 1;
+ 	}
+ 	memcpy(oldmsg, msg, sizeof(*msg) + msg->pathlen);
+@@ -2240,7 +2240,7 @@ pdb_update_file(pseudo_msg_t *msg) {
+ 		    " WHERE dev = ? AND ino = ?;";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!update) {
+@@ -2281,7 +2281,7 @@ pdb_find_file_exact(pseudo_msg_t *msg) {
+ 	char *sql = "SELECT * FROM files WHERE path = ? AND dev = ? AND ino = ?;";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!select) {
+@@ -2332,7 +2332,7 @@ pdb_find_file_path(pseudo_msg_t *msg) {
+ 	char *sql = "SELECT * FROM files WHERE path = ?;";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 1;
+ 	}
+ 	if (!select) {
+@@ -2389,7 +2389,7 @@ pdb_get_file_path(pseudo_msg_t *msg) {
+ 	char *response;
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!select) {
+@@ -2438,7 +2438,7 @@ pdb_find_file_dev(pseudo_msg_t *msg, char **path) {
+ 	char *sql = "SELECT * FROM files WHERE dev = ? AND ino = ?;";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!select) {
+@@ -2492,7 +2492,7 @@ pdb_get_xattr(pseudo_msg_t *msg, char **value, size_t *len) {
+ 	char *sql = "SELECT value FROM xattrs WHERE dev  = ? AND ino = ? AND name = ?;";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!select) {
+@@ -2523,7 +2523,7 @@ pdb_get_xattr(pseudo_msg_t *msg, char **value, size_t *len) {
+ 			 */
+ 			*value = malloc(length);
+ 			if (!*value) {
+-				pseudo_diag("%s: out of memory\n", __func__);
++				pseudo_error("%s: out of memory\n", __func__);
+ 				sqlite3_reset(select);
+ 				sqlite3_clear_bindings(select);
+ 				return 1;
+@@ -2561,7 +2561,7 @@ pdb_list_xattr(pseudo_msg_t *msg, char **value, size_t *len) {
+ 	char *sql = "SELECT name FROM xattrs WHERE dev = ? AND ino = ? ORDER BY name;";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!select) {
+@@ -2615,7 +2615,7 @@ pdb_remove_xattr(pseudo_msg_t *msg, char *value, size_t len) {
+ 	char *sql = "DELETE FROM xattrs WHERE dev = ? AND ino = ? AND name = ?;";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!delete) {
+@@ -2656,7 +2656,7 @@ pdb_set_xattr(pseudo_msg_t *msg, char *value, size_t len, int flags) {
+ 	size_t vlen;
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!select) {
+@@ -2769,7 +2769,7 @@ pdb_find_file_ino(pseudo_msg_t *msg) {
+ 	char *sql = "SELECT * FROM files WHERE ino = ?;";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!select) {
+@@ -2813,7 +2813,7 @@ pdb_files(void) {
+ 	pdb_file_list l;
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 
+@@ -2852,7 +2852,7 @@ pdb_file(pdb_file_list l) {
+ 	s = sqlite3_column_text(l->stmt, column++);
+ 	m = pseudo_msg_new(0, (const char *) s);
+ 	if (!m) {
+-		pseudo_diag("couldn't allocate file message.\n");
++		pseudo_error("couldn't allocate file message.\n");
+ 		return NULL;
+ 	}
+ 	pseudo_debug(PDBGF_DB, "pdb_file: '%s'\n", s ? (const char *) s : "<nil>");
 
