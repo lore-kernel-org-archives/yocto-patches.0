@@ -2,62 +2,62 @@ Return-Path: <frezidok1@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B9EACD8CB2
-	for <webhook@archiver.kernel.org>; Wed, 10 Jun 2026 11:47:16 +0000 (UTC)
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.18629.1781092028500604725
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21D71CD8CB9
+	for <webhook@archiver.kernel.org>; Wed, 10 Jun 2026 11:47:26 +0000 (UTC)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.18632.1781092038389549229
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 10 Jun 2026 04:47:08 -0700
+ Wed, 10 Jun 2026 04:47:18 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=CIZyaF0f;
- spf=pass (domain: gmail.com, ip: 209.85.208.44, mailfrom: frezidok1@gmail.com)
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6914a658115so5934844a12.0
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 10 Jun 2026 04:47:08 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=qSXDxsU1;
+ spf=pass (domain: gmail.com, ip: 209.85.208.51, mailfrom: frezidok1@gmail.com)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-687ed9aabb3so13119638a12.1
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 10 Jun 2026 04:47:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781092027; x=1781696827; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20251104; t=1781092037; x=1781696837; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oI5UnFtmAAfyctZhRXoeMQf982EOf8PORKjKasij5vk=;
-        b=CIZyaF0fKm+L7DFGIEX95W2LxZ4pfmKRwiZRPp4AzX7ErVuI+9No36/D38gC1Fgpol
-         TDgeTTZBRCU9souchbVXLLT7SPJ1j1FsVsxN+vT6AMUh4MpAeuM0XG6Hmjpyd6Mdw3Wb
-         ElOcaEgE5aZ4Y8+zTHneGhcrXbf9BWUKHmcxWK0/wpOGbetgdKKUy9W9Cm9vBMuKcm41
-         m5SzVVC/7vhm6bOYVU4gc48CjrCxtdNPanmoVNQEOU+pJR571FltG0hbCoP3/VTYlJuK
-         ksuUvjvFqyIUJ3nx96v9f0GinAryuQ82KPcjeaDKQjJ3KOfPozCKjtfTween5NK2agpA
-         obSg==
+        bh=8FfiefZ2Iv6Y+bSBqRU8RJhOCQtMXaaY/t2xo867vE8=;
+        b=qSXDxsU13uj58rHMc5HotszitSDUkGVon7bAlHeR9Z/oSLurUO6TcFf6dUEy7qvdZ4
+         pyo/m15S7AEFMeImMhtg3r8CCiLqlJtFTHp3pbUtyi1VzkLOHzhPWZuodpIqSLfB3s0x
+         GJm9JwVB92syE0gsih9IPSse2mRRkcPT93aB7OYhO4PycqcZG3ZqXOvpz9CX+OfMyOyN
+         tv7YTSAhAOPWf8WZcx0qLddIsvzmM3Kv/mnpfW50JjcQV/z+VJkba856nHvS2Q9q1/9J
+         pLMmLE/xkUXl6nvtQdX8IaIQre4irLR+FQupDx9mM05N+JPJBuCnD/wSr2iwy+9oSFv5
+         Wlsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781092027; x=1781696827;
+        d=1e100.net; s=20251104; t=1781092037; x=1781696837;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=oI5UnFtmAAfyctZhRXoeMQf982EOf8PORKjKasij5vk=;
-        b=dELcpAiuIW48Q/l1O0Hy3Tzbpw6sVh2dj7+QewOJFNnd85XiKgKo2bx2zQAjXb8upB
-         SlD8I48XqnqxryJwv97HPUDqregUiSSNI9ycBCCdLMVrvEVFqy3UT3CTeKxV1L1Hiu7d
-         lvWOtSSlSM3dLTQ6h599E+1nWVV8AeTR6xhhaXg3EgrBHf5/zWNgMxnajDa/ElraCTd2
-         HYR5mjuqiywePpX4PUFQkIy3jGqXEuidvC1caIDjeq90Id1ib5HVnjnj4f0F6JyYw8Ul
-         0mfjQ3+XTnbF6QxEGcCU3TweXlw9QFLJC9o4pgcDTla6F5g0chlPQzQ2LQWxght7gYI8
-         KbwQ==
-X-Gm-Message-State: AOJu0YwLG3ISUCyNifOESZ+ooVI2pKecvIjijhY0BHThr42AgKzurhrf
-	EFDsMhiBb23DiWIUNCciWT6oqr6ErFJw/xmqQKMN3Cni1BXl2aePba8xE5ukNqu8
-X-Gm-Gg: Acq92OHsLpC8Cw3sbC4cQdlsqJQnEK1qsiGCVpeo8OZ2/eQO/JhJwkN+Q+/srRnd/S7
-	nNRhIwvunqX/ISVRnZ4Q35QXdPvmHEmcZJYckmlMenH2g2MoftaRXfsB97jwDiO5kvixj9Uznx3
-	LS0Ya7ilDZhykG+ZpuQBa1duhuRp4rzZHIhF2NJkaopv7o23M00jlw+wGjkwOtqODVGJEhWWc5s
-	6jyFPYx1eIOzDEiSUFlCnFxf9I1gWkEYVurvXp1kw87Pk8afY+DcRQAb4JZGLk7sW1WJYF/RisE
-	1nIAa2PuDPSsoXHi9+Fl5+Qw1H8geXSRFawXctjErPPtTXt+n3CdrlBYNGl7tnzbMI3Avw+yx9v
-	QcX8QqP9IV2FHvqTIQ61eDug0F0mFcbVh6/s+JrDd0xiNg47+WrbiL+Br1hH6r/kiTNYrNz5yNu
-	DQlUpj/r1mSXomTNSogKz99fJx1bEJ
-X-Received: by 2002:a05:6402:4506:b0:68a:88cd:eb22 with SMTP id 4fb4d7f45d1cf-68fa535d734mr11624557a12.26.1781092026483;
-        Wed, 10 Jun 2026 04:47:06 -0700 (PDT)
+        bh=8FfiefZ2Iv6Y+bSBqRU8RJhOCQtMXaaY/t2xo867vE8=;
+        b=c+/cK9VunPYlt++vMXRkNC/bMDrz6BOzmPrbn8+WSbq2T4lY9tT0UAYupNoRIYXpwl
+         iTprv2+e/zyLwhx7g8MMwKXGHH2EetBcVniH7U0htBE2xLaz9w5HCCQbMmeKGL+eRcYx
+         5uF5OdvSplXjaFhbZ2rh5CMNobqAYQID81HcuWyqvzNIczamXorzKCzeUbCu2NWkm2/W
+         y/QydZa5bzrR87E6qirnguCM89LBE83We27dT0xSsBPXBqvHEJHL58wPzT8CGp4w8NYU
+         ZdNnwPwR1IS3iJFhF5sz1l9GzeDXpihICq887HrGuJJlw4jbNojBf5CAGaNYBR1+b1XW
+         o9oQ==
+X-Gm-Message-State: AOJu0Yxw0w+eYTSLont2NtHcjnh1Jt2HMmQnIXci27n8iP2saUS86xGk
+	r/bUZQyCYDEYatub3Z/lTfW7qHV5k7xtD+IrM1ef3sZnPxbnhjAQ1IIsgPqgDzDb
+X-Gm-Gg: Acq92OFaca9T66VlTzWnYQ3WPfZITFT2zMMja1lBSAYqQ6vyGa3rt7S8of9giZrPAA0
+	glytY8im0MAqOmRvPiXyVaKuxB+lbmgDDraObAMCmDGd7CbfRlXS7Y32A5/F8e3iP9OYBLkN3f4
+	So0v/gDhOYo2jFkvBrRg3rQYPxPRmEAtevuAMwgw0qBHzLZrJoBN7SINpVlUVlgL/kRw6HQ9j5I
+	GmCWTDOWFIUyqhdgWUBlEQlVG6omgFGJxXNxGg2uXL06x4JRCFReED0wPw37CwI4wcfRuTFMpE6
+	wSYYgTVCrMUktt8pLJeIklUgQw/Oekuxpi6iTMs1N1LA9m3DzGKcay+MChn3YO2kNm/owEssuh9
+	lNFMGnrzATHu0IH+KGbEF+hvs/O/ULZCQ4p28IW3Adwrw/Ci20eIkhGeBkJYEUu2gB3PRLPomZx
+	k6Jgj1fOkj0na/UshB3jCL/l+4U+8c
+X-Received: by 2002:a05:6402:51c9:b0:68c:eb73:3918 with SMTP id 4fb4d7f45d1cf-68fa4d225c6mr12639915a12.10.1781092036440;
+        Wed, 10 Jun 2026 04:47:16 -0700 (PDT)
 Received: from ubuntu1.. ([194.87.83.187])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6912faea64dsm5997164a12.19.2026.06.10.04.47.04
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6912faea64dsm5997164a12.19.2026.06.10.04.47.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jun 2026 04:47:05 -0700 (PDT)
+        Wed, 10 Jun 2026 04:47:15 -0700 (PDT)
 From: frezidok1@gmail.com
 To: yocto-patches@lists.yoctoproject.org
 Cc: Dmitry Sakhonchik <frezidok1@gmail.com>
-Subject: [pseudo] [PATCH 5/8] pseudo.c: Change pseudo_diag() calls to appropriate macros
-Date: Wed, 10 Jun 2026 14:46:07 +0300
-Message-ID: <20260610114610.60776-5-frezidok1@gmail.com>
+Subject: [pseudo] [PATCH 6/8] pseudolog.c: Change pseudo_diag() calls to appropriate macros
+Date: Wed, 10 Jun 2026 14:46:08 +0300
+Message-ID: <20260610114610.60776-6-frezidok1@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260610114610.60776-1-frezidok1@gmail.com>
 References: <20260610114610.60776-1-frezidok1@gmail.com>
@@ -66,8 +66,8 @@ Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 10 Jun 2026 11:47:16 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4196
+ <yocto-patches@lists.yoctoproject.org>; Wed, 10 Jun 2026 11:47:26 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4197
 
 From: Dmitry Sakhonchik <frezidok1@gmail.com>
 
@@ -75,387 +75,307 @@ Implements [YOCTO #12141]
 
 Signed-off-by: Dmitry Sakhonchik <frezidok1@gmail.com>
 ---
- pseudo.c | 100 +++++++++++++++++++++++++++----------------------------
- 1 file changed, 50 insertions(+), 50 deletions(-)
+ pseudolog.c | 76 ++++++++++++++++++++++++++---------------------------
+ 1 file changed, 38 insertions(+), 38 deletions(-)
 
-diff --git a/pseudo.c b/pseudo.c
-index e5fe5cf..11112dd 100644
---- a/pseudo.c
-+++ b/pseudo.c
-@@ -105,8 +105,8 @@ main(int argc, char *argv[]) {
- 		pseudo_debug(PDBGF_SERVER, "[server %d] can't run daemon with libpseudo in %s\n", getpid(), PRELINK_LIBRARIES);
- 		s = pseudo_get_value("PSEUDO_UNLOAD");
- 		if (s) {
--			pseudo_diag("pseudo: I can't seem to make %s go away.  Sorry.\n", PRELINK_LIBRARIES);
--			pseudo_diag("pseudo: %s: %s\n", PRELINK_LIBRARIES, ld_env);
-+			pseudo_error("pseudo: I can't seem to make %s go away.  Sorry.\n", PRELINK_LIBRARIES);
-+			pseudo_error("pseudo: %s: %s\n", PRELINK_LIBRARIES, ld_env);
- 			exit(PSEUDO_EXIT_PSEUDO_LOADED);
- 		}
- 		free(s);
-@@ -155,7 +155,7 @@ main(int argc, char *argv[]) {
- 		case 'i': /* renumber devices, assuming stable inodes */
- 			s = PSEUDO_ROOT_PATH(AT_FDCWD, optarg, 0);
- 			if (!s) {
--				pseudo_diag("Can't resolve path '%s'\n", optarg);
-+				pseudo_error("Can't resolve path '%s'\n", optarg);
- 				usage(EXIT_FAILURE);
- 			}
- 			opt_i = strdup(s);
-@@ -168,7 +168,7 @@ main(int argc, char *argv[]) {
- 		case 'm': /* move from... (see also 'M') */
- 			s = PSEUDO_ROOT_PATH(AT_FDCWD, optarg, 0);
- 			if (!s) {
--				pseudo_diag("Can't resolve move-from path '%s'\n", optarg);
-+				pseudo_error("Can't resolve move-from path '%s'\n", optarg);
- 				usage(EXIT_FAILURE);
- 			}
- 			opt_m = strdup(s);
-@@ -176,7 +176,7 @@ main(int argc, char *argv[]) {
- 		case 'M': /* move to... (see also 'm') */
- 			s = PSEUDO_ROOT_PATH(AT_FDCWD, optarg, 0);
- 			if (!s) {
--				pseudo_diag("Can't resolve move-to path '%s'\n", optarg);
-+				pseudo_error("Can't resolve move-to path '%s'\n", optarg);
- 				usage(EXIT_FAILURE);
- 			}
- 			opt_M = strdup(s);
-@@ -184,7 +184,7 @@ main(int argc, char *argv[]) {
- 		case 'p': /* passwd file path */
- 			s = PSEUDO_ROOT_PATH(AT_FDCWD, optarg, AT_SYMLINK_NOFOLLOW);
- 			if (!s) {
--				pseudo_diag("Can't resolve passwd path '%s'\n", optarg);
-+				pseudo_error("Can't resolve passwd path '%s'\n", optarg);
- 				usage(EXIT_FAILURE);
- 			}
- 			pseudo_set_value("PSEUDO_PASSWD", s);
-@@ -192,7 +192,7 @@ main(int argc, char *argv[]) {
- 		case 'P': /* prefix */
- 			s = PSEUDO_ROOT_PATH(AT_FDCWD, optarg, AT_SYMLINK_NOFOLLOW);
- 			if (!s) {
--				pseudo_diag("Can't resolve prefix path '%s'\n", optarg);
-+				pseudo_error("Can't resolve prefix path '%s'\n", optarg);
- 				usage(EXIT_FAILURE);
- 			}
- 			pseudo_set_value("PSEUDO_PREFIX", s);
-@@ -201,7 +201,7 @@ main(int argc, char *argv[]) {
- 		case 'R':	/* pseudo root path */
- 			s = PSEUDO_ROOT_PATH(AT_FDCWD, optarg, AT_SYMLINK_NOFOLLOW);
- 			if (!s) {
--				pseudo_diag("Can't resolve root path '%s'\n", optarg);
-+				pseudo_error("Can't resolve root path '%s'\n", optarg);
- 				usage(EXIT_FAILURE);
- 			}
- 			pseudo_set_value("PSEUDO_CHROOT", s);
-@@ -214,7 +214,7 @@ main(int argc, char *argv[]) {
- 		case 't': /* timeout */
- 			pseudo_server_timeout = pseudo_strtol_wrapper(optarg, &s, 10);
- 			if (*s && !isspace(*s)) {
--				pseudo_diag("Timeout must be an integer value.\n");
-+				pseudo_error("Timeout must be an integer value.\n");
- 				usage(EXIT_FAILURE);
- 			}
- 			optptr += snprintf(optptr, pseudo_path_max() - (optptr - opts),
-@@ -239,7 +239,7 @@ main(int argc, char *argv[]) {
- 			break;
- 		case '?':
- 		default:
--			pseudo_diag("unknown/invalid argument (option '%c').\n", optopt);
-+			pseudo_error("unknown/invalid argument (option '%c').\n", optopt);
- 			usage(EXIT_FAILURE);
- 			break;
- 		}
-@@ -250,7 +250,7 @@ main(int argc, char *argv[]) {
- 
- 	s = pseudo_get_prefix(argv[0]);
- 	if (!s) {
--		pseudo_diag("Can't figure out prefix.  Set PSEUDO_PREFIX or invoke with full path.\n");
-+		pseudo_error("Can't figure out prefix.  Set PSEUDO_PREFIX or invoke with full path.\n");
- 		exit(PSEUDO_EXIT_PSEUDO_PREFIX);
- 	}
- 	free(s);
-@@ -261,29 +261,29 @@ main(int argc, char *argv[]) {
- 		pseudo_msg_t *msg;
- 		int rc;
- 		if (!(opt_m && opt_M)) {
--			pseudo_diag("You cannot move the database without specifying from and to.\n");
-+			pseudo_error("You cannot move the database without specifying from and to.\n");
- 			exit(EXIT_FAILURE);
- 		}
- 		if (stat(opt_M, &buf) < 0) {
--			pseudo_diag("stat of '%s' failed: %s\n",
-+			pseudo_error("stat of '%s' failed: %s\n",
- 				opt_M, strerror(errno));
--			pseudo_diag("The directory the database is being moved to must exist.\n");
-+			pseudo_error("The directory the database is being moved to must exist.\n");
- 			exit(EXIT_FAILURE);
- 		}
- 		msg = pseudo_msg_new(0, opt_M);
- 		if (!msg) {
--			pseudo_diag("Can't allocate message structure.\n");
-+			pseudo_error("Can't allocate message structure.\n");
- 			exit(EXIT_FAILURE);
- 		}
- 		rc = pdb_rename_file(opt_m, msg);
- 		free(msg);
- 		if (rc < 0) {
--			pseudo_diag("Warning: Database move may have failed.\n");
--			pseudo_diag("To try to restore, you can reverse the move.\n");
--			pseudo_diag("To commit to this anyway, run pseudo -C to check the database.\n");
-+			pseudo_warning("Database move may have failed.\n");
-+			pseudo_warning("To try to restore, you can reverse the move.\n");
-+			pseudo_warning("To commit to this anyway, run pseudo -C to check the database.\n");
- 			exit(EXIT_FAILURE);
- 		}
--		pseudo_diag("Rename looked okay, running database sanity check.\n");
-+		pseudo_info("Rename looked okay, running database sanity check.\n");
- 		opt_C = 1;
- 	}
- 
-@@ -292,32 +292,32 @@ main(int argc, char *argv[]) {
- 		struct stat buf;
- 		pseudo_msg_t *msg;
- 		if (stat(opt_i, &buf) < 0) {
--			pseudo_diag("stat of '%s' failed: %s\n",
-+			pseudo_error("stat of '%s' failed: %s\n",
- 				opt_i, strerror(errno));
--			pseudo_diag("The file used to renumber the database must exist.\n");
-+			pseudo_error("The file used to renumber the database must exist.\n");
- 			exit(EXIT_FAILURE);
- 		}
- 		msg = pseudo_msg_new(0, opt_i);
- 		if (!msg) {
--			pseudo_diag("Couldn't allocate data structure for path.\n");
-+			pseudo_error("Couldn't allocate data structure for path.\n");
- 			exit(EXIT_FAILURE);
- 		}
- 		if (pdb_find_file_path(msg)) {
--			pseudo_diag("Couldn't find a database entry for '%s'.\n", opt_i);
-+			pseudo_error("Couldn't find a database entry for '%s'.\n", opt_i);
- 			exit(EXIT_FAILURE);
- 		}
- 		if (buf.st_ino != msg->ino) {
--			pseudo_diag("The database inode entry for '%s' doesn't match; you must use -b.\n",
-+			pseudo_error("The database inode entry for '%s' doesn't match; you must use -b.\n",
- 				opt_i);
- 			exit(EXIT_FAILURE);
- 		}
- 		rc = pdb_renumber_all(msg->dev, buf.st_dev);
- 		free(msg);
- 		if (rc < 0) {
--			pseudo_diag("Warning: Database renumber failed.\n");
-+			pseudo_warning("Database renumber failed.\n");
- 			exit(EXIT_FAILURE);
- 		}
--		pseudo_diag("Renumber looked okay, running database sanity check.\n");
-+		pseudo_info("Renumber looked okay, running database sanity check.\n");
- 		opt_C = 1;
- 	}
- 
-@@ -332,13 +332,13 @@ main(int argc, char *argv[]) {
- 	}
- 
- 	if (opt_d && opt_f) {
--		pseudo_diag("You cannot run a foregrounded daemon.\n");
-+		pseudo_error("You cannot run a foregrounded daemon.\n");
- 		exit(PSEUDO_EXIT_PSEUDO_INVOCATION);
- 	}
- 
- 	if (opt_f || opt_d) {
- 		if (argc > optind) {
--			pseudo_diag("pseudo: running program implies spawning background daemon.\n");
-+			pseudo_error("pseudo: running program implies spawning background daemon.\n");
- 			exit(PSEUDO_EXIT_PSEUDO_INVOCATION);
- 		}
- 	} else {
-@@ -347,7 +347,7 @@ main(int argc, char *argv[]) {
- 
- 		if (opt_r) {
- 			if (chdir(opt_r) == -1) {
--				pseudo_diag("failed to chdir to '%s': %s\n",
-+				pseudo_error("failed to chdir to '%s': %s\n",
- 					opt_r, strerror(errno));
- 				exit(EXIT_FAILURE);
- 			}
-@@ -378,7 +378,7 @@ main(int argc, char *argv[]) {
- 				int len = strcspn(path, ":");
- 				if ( snprintf(fullpath, pseudo_path_max(), "%.*s/%s",
- 					len, path, argv[0]) > (int) pseudo_path_max()) {
--					pseudo_diag("pseudo: path too long.\n");
-+					pseudo_error("pseudo: path too long.\n");
- 					exit(EXIT_FAILURE);
- 				}
- 				path += len;
-@@ -392,7 +392,7 @@ main(int argc, char *argv[]) {
- 				}
- 			}
- 			if (!found) {
--				pseudo_diag("Can't find '%s' in $PATH.\n",
-+				pseudo_error("Can't find '%s' in $PATH.\n",
- 					argv[0]);
- 				exit(EXIT_FAILURE);
- 			}
-@@ -401,7 +401,7 @@ main(int argc, char *argv[]) {
- 
- 		rc = fork();
- 		if (rc == -1) {
--			pseudo_diag("pseudo: fork failed: %s\n",
-+			pseudo_error("pseudo: fork failed: %s\n",
- 				strerror(errno));
- 			exit(EXIT_FAILURE);
- 		} else {
-@@ -424,7 +424,7 @@ main(int argc, char *argv[]) {
- 			} else {
- 				rc = execv(fullpath, argv);
- 				if (rc == -1) {
--					pseudo_diag("pseudo: can't run %s: %s\n",
-+					pseudo_error("pseudo: can't run %s: %s\n",
- 						argv[0], strerror(errno));
- 				}
- 			}
-@@ -615,7 +615,7 @@ pseudo_op(pseudo_msg_t *msg, const char *program, const char *tag, char **respon
- 					 */
- 					pdb_did_unlink_file(msg->path, NULL, by_path.deleting);
- 				} else {
--					pseudo_diag("inode mismatch: '%s' ino %llu in db, %llu in request.\n",
-+					pseudo_error("inode mismatch: '%s' ino %llu in db, %llu in request.\n",
- 						msg->path,
- 						(unsigned long long) by_path.ino,
- 						(unsigned long long) msg_header.ino);
-@@ -634,14 +634,14 @@ pseudo_op(pseudo_msg_t *msg, const char *program, const char *tag, char **respon
- 		 * the bogus entry that we noticed.
- 		 */
- 		if (S_ISDIR(by_path.mode) != S_ISDIR(msg_header.mode)) {
--			pseudo_diag("dir mismatch: '%s' [%llu] db mode 0%o, header mode 0%o (unlinking db)\n",
-+			pseudo_error("dir mismatch: '%s' [%llu] db mode 0%o, header mode 0%o (unlinking db)\n",
- 				msg->path, (unsigned long long) by_path.ino,
- 				(int) by_path.mode, (int) msg_header.mode);
- 			/* unlink this path -- the inode may be in use elsewhere */
- 			pdb_unlink_file(msg);
- 			found_path = 0;
- 		} else if (S_ISLNK(by_path.mode) != S_ISLNK(msg_header.mode)) {
--			pseudo_diag("symlink mismatch: '%s' [%llu] db mode 0%o, header mode 0%o (unlinking db)\n",
-+			pseudo_error("symlink mismatch: '%s' [%llu] db mode 0%o, header mode 0%o (unlinking db)\n",
- 				msg->path, (unsigned long long) by_path.ino,
- 				(int) by_path.mode, (int) msg_header.mode);
- 			/* unlink this path -- the inode may be in use elsewhere */
-@@ -649,7 +649,7 @@ pseudo_op(pseudo_msg_t *msg, const char *program, const char *tag, char **respon
- 			found_path = 0;
- 		}
- 		if (trailing_slash && !S_ISDIR(by_path.mode)) {
--			pseudo_diag("dir quasi-mismatch: '%s' [%llu] db mode 0%o, incoming path had trailing slash. Not unlinking.\n",
-+			pseudo_error("dir quasi-mismatch: '%s' [%llu] db mode 0%o, incoming path had trailing slash. Not unlinking.\n",
- 				msg->path, (unsigned long long) by_path.ino,
- 				(int) by_path.mode);
- 		}
-@@ -713,7 +713,7 @@ pseudo_op(pseudo_msg_t *msg, const char *program, const char *tag, char **respon
- 					pseudo_debug(PDBGF_FILE, "inode mismatch for '%s' -- old one was marked for deletion.\n",
- 						msg->path);
- 				} else {
--					pseudo_diag("path mismatch [%d link%s]: ino %llu db '%s' req '%s'.\n",
-+					pseudo_error("path mismatch [%d link%s]: ino %llu db '%s' req '%s'.\n",
- 						msg->nlink,
- 						msg->nlink == 1 ? "" : "s",
- 						(unsigned long long) msg_header.ino,
-@@ -734,7 +734,7 @@ pseudo_op(pseudo_msg_t *msg, const char *program, const char *tag, char **respon
- 		 * entry.  There is no way it can be right.
- 		 */
- 		if (S_ISDIR(by_ino.mode) != S_ISDIR(msg_header.mode)) {
--			pseudo_diag("dir err : %llu ['%s'] (db '%s') db mode 0%o, header mode 0%o (unlinking db)\n",
-+			pseudo_error("dir err : %llu ['%s'] (db '%s') db mode 0%o, header mode 0%o (unlinking db)\n",
- 				(unsigned long long) msg_header.ino,
- 				msg->pathlen ? msg->path : "no path",
- 				path_by_ino ? path_by_ino : "no path",
-@@ -746,7 +746,7 @@ pseudo_op(pseudo_msg_t *msg, const char *program, const char *tag, char **respon
- 			 * can ever be a symlink; the test is generic as
- 			 * insurance against forgetting to fix it in a future
- 			 * update. */
--			pseudo_diag("symlink err : %llu ['%s'] (db '%s') db mode 0%o, header mode 0%o (unlinking db)\n",
-+			pseudo_error("symlink err : %llu ['%s'] (db '%s') db mode 0%o, header mode 0%o (unlinking db)\n",
- 				(unsigned long long) msg_header.ino,
- 				msg->pathlen ? msg->path : "no path",
- 				path_by_ino ? path_by_ino : "no path",
-@@ -771,7 +771,7 @@ pseudo_op(pseudo_msg_t *msg, const char *program, const char *tag, char **respon
- 	case OP_CLOSE:
- 		/* these messages are handled entirely on the client side,
- 		 * as of this writing, but might be logged by accident: */
--		pseudo_diag("error: op %s sent to server.\n", pseudo_op_name(msg->op));
-+		pseudo_error("op %s sent to server.\n", pseudo_op_name(msg->op));
+diff --git a/pseudolog.c b/pseudolog.c
+index 44f7dbf..a497eb5 100644
+--- a/pseudolog.c
++++ b/pseudolog.c
+@@ -128,7 +128,7 @@ plog_query_type(char **string) {
+ 		return PSQT_UNKNOWN;
+ 	switch (**string) {
+ 	case '\0':
+-		pseudo_diag("Error: Value may not be an empty string.");
++		pseudo_error("Value may not be an empty string.");
+ 		return PSQT_UNKNOWN;
  		break;
- 	case OP_EXEC:		/* FALLTHROUGH */
- 	case OP_OPEN:
-@@ -785,7 +785,7 @@ pseudo_op(pseudo_msg_t *msg, const char *program, const char *tag, char **respon
- 			 * ... But only if it wasn't a match on both inode *and*
- 			 * path, because if it were, that would be harmless.
- 			 */
--			pseudo_diag("creat for '%s' replaces existing %llu ['%s'].\n",
-+			pseudo_info("creat for '%s' replaces existing %llu ['%s'].\n",
- 				msg->pathlen ? msg->path : "no path",
- 				(unsigned long long) by_ino.ino,
- 				path_by_ino ? path_by_ino : "no path");
-@@ -797,7 +797,7 @@ pseudo_op(pseudo_msg_t *msg, const char *program, const char *tag, char **respon
- 			pdb_link_file(msg);
- 		} else {
- 			/* again, an error, but leaving it alone for now. */
--			pseudo_diag("creat ignored for existing file '%s'.\n",
-+			pseudo_error("creat ignored for existing file '%s'.\n",
- 				msg->pathlen ? msg->path : "no path");
- 		}
+ 	case '>':
+@@ -170,7 +170,7 @@ plog_query_type(char **string) {
  		break;
-@@ -984,7 +984,7 @@ pseudo_op(pseudo_msg_t *msg, const char *program, const char *tag, char **respon
- 		 * file DID NOT exist before the call.  Fix database:
- 		 */
- 		if (found_path) {
--			pseudo_diag("mkdir/mknod: '%s' [%llu] already existed (mode 0%o), unlinking\n",
-+			pseudo_info("mkdir/mknod: '%s' [%llu] already existed (mode 0%o), unlinking\n",
- 				msg->path, (unsigned long long) by_path.ino,
- 				(int) by_path.mode);
- 			pdb_unlink_file(msg);
-@@ -1035,7 +1035,7 @@ pseudo_op(pseudo_msg_t *msg, const char *program, const char *tag, char **respon
- 		pdb_remove_xattr(msg, oldpath, oldpathlen);
+ 	}
+ 	if (opt_l && type != PSQT_EXACT) {
+-		pseudo_diag("Error: Non-exact match requested while trying to create a log entry.\n");
++		pseudo_error("Non-exact match requested while trying to create a log entry.\n");
+ 		type = PSQT_UNKNOWN;
+ 	}
+ 	return type;
+@@ -214,7 +214,7 @@ parse_file_type(char *string) {
+ 		return S_IFSOCK;
  		break;
  	default:
--		pseudo_diag("unknown op from client %d, op %d [%s]\n",
-+		pseudo_error("unknown op from client %d, op %d [%s]\n",
- 			msg->client, msg->op,
- 			msg->pathlen ? msg->path : "no path");
+-		pseudo_diag("unknown file type %c; should be one of [-bcdflps]\n",
++		pseudo_error("unknown file type %c; should be one of [-bcdflps]\n",
+ 			isprint(*string) ? *string : '?');
+ 		return -1;
  		break;
-@@ -1110,7 +1110,7 @@ pseudo_db_check(int fix) {
- 
- 	l = pdb_files();
- 	if (!l) {
--		pseudo_diag("Couldn't start file list, can't scan.\n");
-+		pseudo_error("Couldn't start file list, can't scan.\n");
- 		return EXIT_FAILURE;
+@@ -231,7 +231,7 @@ parse_partial_mode(char *string) {
+ 	case '-':
+ 		break;
+ 	default:
+-		pseudo_diag("unknown mode character: %c\n", string[0]);
++		pseudo_error("unknown mode character: %c\n", string[0]);
+ 		return -1;
+ 		break;
  	}
- 	while ((m = pdb_file(l)) != NULL) {
-@@ -1123,7 +1123,7 @@ pseudo_db_check(int fix) {
- 			pseudo_debug(PDBGF_DB, "Checking <%s>\n", m->path);
- 			if (lstat(m->path, &buf)) {
- 				if (!fix) {
--					pseudo_diag("can't stat <%s>\n", m->path);
-+					pseudo_error("can't stat <%s>\n", m->path);
- 					errors = EXIT_FAILURE;
- 					continue;
- 				} else {
-@@ -1180,7 +1180,7 @@ pseudo_db_check(int fix) {
- 						rc = pdb_may_unlink_file(m, magic_cookie);
- 					}
- 					if (rc) {
--						pseudo_diag("error updating file %s\n",
-+						pseudo_error("error updating file %s\n",
- 							m->path);
- 						errors = EXIT_FAILURE;
- 					}
-@@ -1195,8 +1195,8 @@ pseudo_db_check(int fix) {
- 	if (delete_some) {
- 		rc = pdb_did_unlink_files(magic_cookie);
- 		if (rc) {
--			pseudo_diag("error nuking mismatched files.\n");
--			pseudo_diag("database may not be fixed.\n");
-+			pseudo_error("error nuking mismatched files.\n");
-+			pseudo_error("database may not be fixed.\n");
- 			errors = EXIT_FAILURE;
+@@ -242,7 +242,7 @@ parse_partial_mode(char *string) {
+ 	case '-':
+ 		break;
+ 	default:
+-		pseudo_diag("unknown mode character: %c\n", string[1]);
++		pseudo_error("unknown mode character: %c\n", string[1]);
+ 		return -1;
+ 		break;
+ 	}
+@@ -261,7 +261,7 @@ parse_partial_mode(char *string) {
+ 	case '-':
+ 		break;
+ 	default:
+-		pseudo_diag("unknown mode character: %c\n", string[2]);
++		pseudo_error("unknown mode character: %c\n", string[2]);
+ 		return -1;
+ 		break;
+ 	}
+@@ -275,14 +275,14 @@ parse_mode_string(char *string) {
+ 	mode_t bits = 0;
+ 
+ 	if (len != 9 && len != 10) {
+-		pseudo_diag("mode strings must be of the form [-]rwxr-xr-x\n");
++		pseudo_error("mode strings must be of the form [-]rwxr-xr-x\n");
+ 		return -1;
+ 	}
+ 	if (len == 10) {
+ 		mode |= parse_file_type(string);
+ 		++string;
+ 		if (mode == (mode_t) -1) {
+-			pseudo_diag("mode strings with a file type must use a valid type [-bcdflps]\n");
++			pseudo_error("mode strings with a file type must use a valid type [-bcdflps]\n");
+ 			return -1;
  		}
  	}
+@@ -341,14 +341,14 @@ parse_timestamp(char *string) {
+ 		}
+ 	}
+ 	if (!time_formats[i]) {
+-		pseudo_diag("Couldn't parse <%s> as a time.  Current time in known formats is:\n",
++		pseudo_error("Couldn't parse <%s> as a time.  Current time in known formats is:\n",
+ 			string);
+ 		localtime_r(&stamp_sec, &stamp_tm);
+ 		for (i = 0; time_formats[i]; ++i) {
+ 			strftime(timebuf, sizeof(timebuf), time_formats[i], &stamp_tm);
+-			pseudo_diag("\t%s\n", timebuf);
++			pseudo_info("\t%s\n", timebuf);
+ 		}
+-		pseudo_diag("Or, specify your own with -E; see strptime(3).\n");
++		pseudo_info("Or, specify your own with -E; see strptime(3).\n");
+ 		return -1;
+ 	}
+ 	return mktime(&stamp_tm);
+@@ -360,31 +360,31 @@ plog_trait(int opt, char *string) {
+ 	char *endptr;
+ 
+ 	if (opt < 0 || opt > UCHAR_MAX) {
+-		pseudo_diag("Unknown/invalid option value: %d\n", opt);
++		pseudo_error("Unknown/invalid option value: %d\n", opt);
+ 		return 0;
+ 	}
+ 	if (!opt_to_field[opt]) {
+ 		if (isprint(opt)) {
+-			pseudo_diag("Unknown option: -%c\n", opt);
++			pseudo_error("Unknown option: -%c\n", opt);
+ 		} else {
+-			pseudo_diag("Unknown option: 0x%02x\n", opt);
++			pseudo_error("Unknown option: 0x%02x\n", opt);
+ 		}
+ 		return 0;
+ 	}
+ 	if (!*string) {
+-		pseudo_diag("invalid empty string for -%c\n", opt);
++		pseudo_error("invalid empty string for -%c\n", opt);
+ 		return 0;
+ 	}
+ 	new_trait = calloc(1, sizeof(*new_trait));
+ 	if (!new_trait) {
+-		pseudo_diag("Couldn't allocate requested trait (for -%c %s)\n",
++		pseudo_error("Couldn't allocate requested trait (for -%c %s)\n",
+ 			opt, string ? string : "<nil>");
+ 		return 0;
+ 	}
+ 	new_trait->field = opt_to_field[opt];
+ 	new_trait->type = plog_query_type(&string);
+ 	if (new_trait->type == PSQT_UNKNOWN) {
+-		pseudo_diag("Couldn't comprehend trait type for '%s'\n",
++		pseudo_error("Couldn't comprehend trait type for '%s'\n",
+ 			string ? string : "<nil>");
+ 		free(new_trait);
+ 		return 0;
+@@ -393,7 +393,7 @@ plog_trait(int opt, char *string) {
+ 	case PSQF_ACCESS:
+ 		new_trait->data.ivalue = pseudo_access_fopen(string);
+ 		if (new_trait->data.ivalue == (unsigned long long) -1) {
+-			pseudo_diag("access flags should be specified like fopen(3) mode strings (or x for exec).\n");
++			pseudo_error("access flags should be specified like fopen(3) mode strings (or x for exec).\n");
+ 			free(new_trait);
+ 			return 0;
+ 		}
+@@ -406,7 +406,7 @@ plog_trait(int opt, char *string) {
+ 		 * first character is the terminating NUL, we may not
+ 		 * access the second. */
+ 		if (string[0] && string[1]) {
+-			pseudo_diag("file type must be a single character [-bcdflps].\n");
++			pseudo_error("file type must be a single character [-bcdflps].\n");
+ 			free(new_trait);
+ 			return 0;
+ 		}
+@@ -421,13 +421,13 @@ plog_trait(int opt, char *string) {
+ 		break;
+ 	case PSQF_ORDER:
+ 		if (string[0] && string[1]) {
+-			pseudo_diag("order type must be a single specifier character.\n");
++			pseudo_error("order type must be a single specifier character.\n");
+ 			free(new_trait);
+ 			return 0;
+ 		}
+ 		new_trait->data.ivalue = opt_to_field[(unsigned char) string[0]];
+ 		if (!new_trait->data.ivalue) {
+-			pseudo_diag("Unknown field type: %c\n", string[0]);
++			pseudo_error("Unknown field type: %c\n", string[0]);
+ 		}
+ 		break;
+ 	case PSQF_RESULT:
+@@ -454,7 +454,7 @@ plog_trait(int opt, char *string) {
+ 	case PSQF_UID:
+ 		new_trait->data.ivalue = pseudo_strtoll_wrapper(string, &endptr, 0);
+ 		if (*endptr) {
+-			pseudo_diag("Unexpected garbage after number (%llu): '%s'\n",
++			pseudo_error("Unexpected garbage after number (%llu): '%s'\n",
+ 				new_trait->data.ivalue, endptr);
+ 			free(new_trait);
+ 			return 0;
+@@ -485,7 +485,7 @@ plog_trait(int opt, char *string) {
+ 		new_trait->data.svalue = strdup(string);
+ 		break;
+ 	default:
+-		pseudo_diag("I don't know how I got here.  Unknown field type %d.\n",
++		pseudo_error("I don't know how I got here.  Unknown field type %d.\n",
+ 			new_trait->field);
+ 		free(new_trait);
+ 		return 0;
+@@ -518,7 +518,7 @@ main(int argc, char **argv) {
+ 		case 'P':
+ 			s = PSEUDO_ROOT_PATH(AT_FDCWD, optarg, AT_SYMLINK_NOFOLLOW);
+ 			if (!s)
+-				pseudo_diag("Can't resolve prefix path '%s'\n", optarg);
++				pseudo_error("Can't resolve prefix path '%s'\n", optarg);
+ 			pseudo_set_value("PSEUDO_PREFIX", s);
+ 			break;
+ 		case 'v':
+@@ -597,12 +597,12 @@ main(int argc, char **argv) {
+ 	pseudo_debug_flags_finalize();
+ 
+ 	if (optind < argc) {
+-		pseudo_diag("Error: Extra arguments not associated with any option.\n");
++		pseudo_error("extra arguments not associated with any option.\n");
+ 		usage(EXIT_FAILURE);
+ 	}
+ 
+ 	if (query_only && opt_l) {
+-		pseudo_diag("Error: -l cannot be used with query-only options or flags.\n");
++		pseudo_error("-l cannot be used with query-only options or flags.\n");
+ 		bad_args = 1;
+ 	}
+ 
+@@ -611,22 +611,22 @@ main(int argc, char **argv) {
+ 		exit(EXIT_FAILURE);
+ 
+ 	if (!pseudo_get_prefix(argv[0])) {
+-		pseudo_diag("Can't figure out prefix.  Set PSEUDO_PREFIX or invoke with full path.\n");
++		pseudo_error("Can't figure out prefix.  Set PSEUDO_PREFIX or invoke with full path.\n");
+ 		exit(EXIT_FAILURE);
+ 	}
+ 
+ 	if (!pseudo_get_bindir()) {
+-		pseudo_diag("Can't figure out bindir.  Set PSEUDO_BINDIR.\n");
++		pseudo_error("Can't figure out bindir.  Set PSEUDO_BINDIR.\n");
+ 		exit(EXIT_FAILURE);
+ 	}
+ 
+ 	if (!pseudo_get_libdir()) {
+-		pseudo_diag("Can't figure out libdir.  Set PSEUDO_LIBDIR.\n");
++		pseudo_error("Can't figure out libdir.  Set PSEUDO_LIBDIR.\n");
+ 		exit(EXIT_FAILURE);
+ 	}
+ 
+ 	if (!pseudo_get_localstatedir()) {
+-		pseudo_diag("Can't figure out localstatedir.  Set PSEUDO_LOCALSTATEDIR.\n");
++		pseudo_error("Can't figure out localstatedir.  Set PSEUDO_LOCALSTATEDIR.\n");
+ 		exit(EXIT_FAILURE);
+ 	}
+ 
+@@ -636,12 +636,12 @@ main(int argc, char **argv) {
+ 		int fields;
+ 		fields = format_scan(format);
+ 		if (fields == -1) {
+-			pseudo_diag("couldn't parse format string (%s).\n", format);
++			pseudo_error("couldn't parse format string (%s).\n", format);
+ 			return EXIT_FAILURE;
+ 		}
+ 		if (opt_D) {
+ 			if (pdb_delete(traits, fields)) {
+-				pseudo_diag("errors occurred trying to delete entries.\n");
++				pseudo_error("errors occurred trying to delete entries.\n");
+ 			}
+ 		} else {
+ 			history = pdb_history(traits, fields, opt_U);
+@@ -653,7 +653,7 @@ main(int argc, char **argv) {
+ 				}
+ 				pdb_history_free(history);
+ 			} else {
+-				pseudo_diag("could not retrieve history.\n");
++				pseudo_error("could not retrieve history.\n");
+ 				return EXIT_FAILURE;
+ 			}
+ 		}
+@@ -674,12 +674,12 @@ format_one(log_entry *e, char *format) {
+ 	char *s;
+ 
+ 	if (!e || !format) {
+-		pseudo_diag("invalid log entry or format specifier.\n");
++		pseudo_error("invalid log entry or format specifier.\n");
+ 		return 0;
+ 	}
+ 	real_len = snprintf(fmtbuf, sizeof(fmtbuf), "%.*s", (int) len + 1, format);
+ 	if (real_len >= sizeof(fmtbuf) - 1) {
+-		pseudo_diag("Format string way too long starting at %.10s",
++		pseudo_error("Format string way too long starting at %.10s",
+ 			format - 1);
+ 		return 0;
+ 	}
+@@ -690,7 +690,7 @@ format_one(log_entry *e, char *format) {
+ 	 * parameters -- this doesn't make sense here.
+ 	 */
+ 	if (strchr(fmtbuf, '*') || strchr(fmtbuf, 'l') || strchr(fmtbuf, 'h')) {
+-		pseudo_diag("Sorry, you can't use *, h, or l format modifiers.\n");
++		pseudo_error("Sorry, you can't use *, h, or l format modifiers.\n");
+ 		return 0;
+ 	}
+ 
+@@ -830,7 +830,7 @@ format_scan(char *format) {
+ 		len = strcspn(s, "acdfgGimMoprRsStTuy");
+ 		s += len;
+ 		if (!*s) {
+-			pseudo_diag("Unknown format: '%.3s'\n",
++			pseudo_error("Unknown format: '%.3s'\n",
+ 				(s - len));
+ 			return -1;
+ 		}
+@@ -865,7 +865,7 @@ format_scan(char *format) {
+ 			 */
+ 			break;
+ 		default:
+-			pseudo_diag("error: invalid format specifier %c (at %s)\n", *s, s);
++			pseudo_error("invalid format specifier %c (at %s)\n", *s, s);
+ 			return -1;
+ 			break;
+ 		}
 
