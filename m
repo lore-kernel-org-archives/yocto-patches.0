@@ -2,62 +2,62 @@ Return-Path: <frezidok1@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09692CD8CB2
-	for <webhook@archiver.kernel.org>; Wed, 10 Jun 2026 11:46:56 +0000 (UTC)
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.18627.1781092013605110236
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B38CCD8CB9
+	for <webhook@archiver.kernel.org>; Wed, 10 Jun 2026 11:47:06 +0000 (UTC)
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.18366.1781092022232140710
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 10 Jun 2026 04:46:53 -0700
+ Wed, 10 Jun 2026 04:47:02 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=lhMzKqfC;
- spf=pass (domain: gmail.com, ip: 209.85.208.46, mailfrom: frezidok1@gmail.com)
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-6912f4acca4so8841251a12.1
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 10 Jun 2026 04:46:53 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=gmooO63j;
+ spf=pass (domain: gmail.com, ip: 209.85.208.44, mailfrom: frezidok1@gmail.com)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-68852b58d87so12286826a12.3
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 10 Jun 2026 04:47:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781092012; x=1781696812; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20251104; t=1781092021; x=1781696821; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CMpahlxNluK3mG2+AuhkNJfiJLy4QPz8QwmwW9Gixyc=;
-        b=lhMzKqfCw69ObmKV+4V1kc0PBtLc2xKUxnpwBjEjRMfUecucBnlFKUcFxll9/3Ns3Q
-         kJ8akIxXy9iKwRryHOs65QNA2ybH+eTKn3ImwKm9fpFdnKy9xjZ09LmZthPIEXLi6yGj
-         Mkf6I6JQmcYiXGsVgIQkXeG2G4eI+1/ijLoP62erk2v/uQxtJy/ICXRIl3lHs4ECfWFY
-         8jiM2ntqcUjWHkCR0WIlkqj4Ay1JjL2r5L57qNWHlpasDRdbijV33KlupgoljboZj3DV
-         lDh1IPVWLF7SFfJ92aOnji7YtH3WHdqQKEN5vv//qyKtruU+374PPX2mUQ4r/gBa74j5
-         F4JQ==
+        bh=uD8NZH+RLViO9p+BfgFN7spI7HIO6762HqFFIpPx1iI=;
+        b=gmooO63jW/OqRg12TRr9Bq+EoKLu3MTBjrTKzUmOh8c+QJESyB7JSANQLEiO4cm6St
+         39pO9hBJiH8kgSZZGt23J5jL7cddpw0YCAn+yMr2ixt5OPiu1EYajAsOlchWmSd86xRK
+         k8A7SjY4EG7Su7QJN44iEtZ3hhgjPB0+QrYQZz1WOLbmlgysa41MFp+KtNYa+5ZFg6bL
+         iEr3p0JMaInhz/B7PpmHC8j38FPHH3b2mAJcQgJbGZUKuw5Zz8JyT6Bl+73qdW8epD8T
+         PJXwKv5px6nOt/Rtsn0SCbjSqrjvkTl8WVHTq4tnYhauTvgdKwWmE8DbXs7O+YJZIfmW
+         itDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781092012; x=1781696812;
+        d=1e100.net; s=20251104; t=1781092021; x=1781696821;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=CMpahlxNluK3mG2+AuhkNJfiJLy4QPz8QwmwW9Gixyc=;
-        b=L6zjpf4DDH/4yuqXLADM9dv2swWsYkrj0k6JA+wApwxrV869/6sq+WUgARuuVEKDHd
-         qT0QVi6LODATkY41PkLRveLRsFzPbsnZ3MzaToN6psOhMyAgF9DvBiQUUlIxVZoC6onk
-         ZEVaJJMzoZ83UP3wjYPCaK159A4D8C2tuPDSNK0ZRCSEaBbGCYnYrdbCvsW2o3XXgHKR
-         UKtZ9MGYyHGqVm86QOAYNpDHl+yqbmH4Eav3LKlOxVFFd8nP/ibSazMj2h1LoAgBy0wb
-         9/QtFk7nbz6uhS8hhq/4x3XD+/QkJxkl/3D0Jcyes/b4Xx+Pj318PiQHokxcBJBVHfis
-         eTFQ==
-X-Gm-Message-State: AOJu0YzdfbygbjMhoLfPhQ5dicne7WycUFktNq2Ouv1RVzflFOLOfoy7
-	igZ1NjhiitSKmTt37HfI79Ie0SGZZj0zUMpUYe3lx1DlZGV8HipqFjJsYIXooGBl
-X-Gm-Gg: Acq92OGm/vPu1/x8aChgXiPFMjpc1c+y6E6SWp8bXKXqV6mDp2zF6CXmuG1MPygqXIJ
-	/k5/oBXmPlemTMfO0wG3FvQJjKnveTksp/GpmfyuYIAtvuw+56V3K7xLgoPIJvN/IDHnVUZDCN9
-	Crh7i/U5MglJemgczWJlnTDzog6cg/NDEybK2JkB69a+EMPpN0yGbdwU+NNwvS/WHHvo9CHecxq
-	IMkMNOnw52FAQbMC64plZtdBp62ASU8RdsyIlpJrhn9o+beHPk2v3s0dqVUTeH0oWlHzURnHiZD
-	LgqvY3+b3dFH4HUm9g/tZD9TRv2NEIthEZFuK5UGeRt+FojONvM//Q4LrIP3/t/N3pZliQipuUE
-	zNA+2/P/8yVVEN2w9Ei5eg5PPqjSQMlR4ANFH4oBjoOT9zEjCnPrJQgyVUkf7jaOegudl0S8CkF
-	fGqvx8pQR3DZsk8qQMO0Gx4OLC/Tfm
-X-Received: by 2002:a05:6402:35d1:b0:68d:642b:3d4c with SMTP id 4fb4d7f45d1cf-68fa4d24321mr12683296a12.11.1781092011447;
-        Wed, 10 Jun 2026 04:46:51 -0700 (PDT)
+        bh=uD8NZH+RLViO9p+BfgFN7spI7HIO6762HqFFIpPx1iI=;
+        b=K22ficaXiDcI+8/0ZlKj8J0lg3sBL4lZXmNKxoCUIFMaU76kEKViwC/JrCW960qcxn
+         fOPe9MxZk8bCajybuB8pLp/Y0MXGJ+/zFtx8fZdxK+jF9XOD/ZR34tB0EorlOZ5batIx
+         ZJIU6UnXlY84eMyGaU5jejg9NxW7z8D4/dtnit5IT9Do4mTgqo2ksYvl+eazWlv+7BPm
+         KSHLhCNaqJVb8RcLhhzm4jicYbjSM8mZxtHzrq3HMnW33cjdKGPOdTMZ6qg8EZ2mdfNz
+         MGyB0jP3p9EJRU0eBIZpm0d6sJuAQJZV2a0RU4P+iGWTC1bpk9QmbGF7b7ihcxxnCEZk
+         hJVw==
+X-Gm-Message-State: AOJu0YxyXMgBUFlSDuJhSJgRTADR0IGtSlQvR5Qupsp2qVwTvhsuZaVX
+	27XLJ8n89yEhrl/Mg0DEHzIHw3eNps4mMh6TIVCK8fqLyv+8Ga4/ArIrL+Eb0sja
+X-Gm-Gg: Acq92OGspKF2DrtytVZjtcjOLPjC0EKHR9Xl0CIqtz9YG+2bpge5IIz4w5CAb2xX+Xy
+	0xEqvXQ6yPQyyDAb4FjLgiDlecpJV5ClTctDUntziiSjkN9AKjXEWHMEEyH8GrMLOngaomMFCkD
+	TCIs/Qcd2FSnZOahZqm2NBG+HJZXsQXLwJ0gR3ep0OqqPM78JCGnc+HdN+WcCVN6Nk6Y5OG3wC5
+	xINCkTNRm2VmwHxVQExlNZ47N9J6DkuLzp4dk62cBgm+cFCXrBUVOEUUoA4U62c+EJdwSmxH+i4
+	4vGkXx8mug78PT00Wr88M64rvI2ma/Byop6T8Y2otOiQPD+lHJu9R7Y6/ReKZe5zPXHGooJ8Vdx
+	qE+Zwrbe1+ltE85TkBGAKqRGIQPdeQZ0ejXyLw++tNUiOzG3P68+0j9gdPnaNNPVZyy+GehSrRb
+	injxVXQesfQrNezVhp9IJvexpoUI3n
+X-Received: by 2002:a05:6402:4494:b0:692:4759:ac57 with SMTP id 4fb4d7f45d1cf-6924759aff8mr3646412a12.2.1781092020318;
+        Wed, 10 Jun 2026 04:47:00 -0700 (PDT)
 Received: from ubuntu1.. ([194.87.83.187])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6912faea64dsm5997164a12.19.2026.06.10.04.46.49
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6912faea64dsm5997164a12.19.2026.06.10.04.46.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jun 2026 04:46:50 -0700 (PDT)
+        Wed, 10 Jun 2026 04:46:59 -0700 (PDT)
 From: frezidok1@gmail.com
 To: yocto-patches@lists.yoctoproject.org
 Cc: Dmitry Sakhonchik <frezidok1@gmail.com>
-Subject: [pseudo] [PATCH 3/8] pseudo_client: Change pseudo_diag() calls to appropriate macros
-Date: Wed, 10 Jun 2026 14:46:05 +0300
-Message-ID: <20260610114610.60776-3-frezidok1@gmail.com>
+Subject: [pseudo] [PATCH 4/8] pseudo_server: Change pseudo_diag() calls to appropriate macros
+Date: Wed, 10 Jun 2026 14:46:06 +0300
+Message-ID: <20260610114610.60776-4-frezidok1@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260610114610.60776-1-frezidok1@gmail.com>
 References: <20260610114610.60776-1-frezidok1@gmail.com>
@@ -66,8 +66,8 @@ Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 10 Jun 2026 11:46:56 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4194
+ <yocto-patches@lists.yoctoproject.org>; Wed, 10 Jun 2026 11:47:06 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4195
 
 From: Dmitry Sakhonchik <frezidok1@gmail.com>
 
@@ -75,391 +75,348 @@ Implements [YOCTO #12141]
 
 Signed-off-by: Dmitry Sakhonchik <frezidok1@gmail.com>
 ---
- pseudo_client.c | 96 ++++++++++++++++++++++++-------------------------
- 1 file changed, 47 insertions(+), 49 deletions(-)
+ pseudo_server.c | 92 ++++++++++++++++++++++++-------------------------
+ 1 file changed, 46 insertions(+), 46 deletions(-)
 
-diff --git a/pseudo_client.c b/pseudo_client.c
-index 7041366..69e5cbc 100644
---- a/pseudo_client.c
-+++ b/pseudo_client.c
-@@ -166,7 +166,7 @@ build_passwd_paths(void)
- 		/* allocation and/or return */
- 		if (passwd_paths) {
- 			if (np != npasswd_paths) {
--				pseudo_diag("internal error: path allocation was inconsistent.\n");
-+				pseudo_error("internal error: path allocation was inconsistent.\n");
- 			} else {
- 				/* yes, we allocated one extra for a trailing
- 				 * null pointer.
-@@ -178,14 +178,14 @@ build_passwd_paths(void)
- 			passwd_paths = malloc((np + 1) * sizeof(*passwd_paths));
- 			npasswd_paths = np;
- 			if (!passwd_paths) {
--				pseudo_diag("couldn't allocate storage for password paths.\n");
-+				pseudo_error("couldn't allocate storage for password paths.\n");
- 				exit(1);
- 			}
- 			np = 0;
- 		}
- 	} while (++pass < 2);
- 	/* in theory the second pass already returned, but. */
--	pseudo_diag("should totally not have gotten here.\n");
-+	pseudo_error("should totally not have gotten here.\n");
+diff --git a/pseudo_server.c b/pseudo_server.c
+index edfbce1..c1a97c8 100644
+--- a/pseudo_server.c
++++ b/pseudo_server.c
+@@ -68,7 +68,7 @@ void pseudo_antimagic(void) { }
  
- 	return;
+ void
+ quit_now(int signal) {
+-	pseudo_diag("Received signal %d, quitting.\n", signal);
++	pseudo_info("Received signal %d, quitting.\n", signal);
+ 	die_forcefully = 1;
  }
-@@ -567,11 +567,11 @@ pseudo_init_client(void) {
+ 
+@@ -116,12 +116,12 @@ pseudo_server_write_pid(pid_t pid) {
+ 
+ 	pseudo_path = pseudo_localstatedir_path(PSEUDO_PIDFILE);
+ 	if (!pseudo_path) {
+-		pseudo_diag("Couldn't get path for prefix/%s\n", PSEUDO_PIDFILE);
++		pseudo_error("Couldn't get path for prefix/%s\n", PSEUDO_PIDFILE);
+ 		return 1;
+ 	}
+ 	fp = fopen(pseudo_path, "w");
+ 	if (!fp) {
+-		pseudo_diag("Couldn't open %s: %s\n",
++		pseudo_error("Couldn't open %s: %s\n",
+ 			pseudo_path, strerror(errno));
+ 		return 1;
+ 	}
+@@ -171,7 +171,7 @@ pseudo_server_start(int daemonize) {
+ 		pseudo_debug_logfile(PSEUDO_LOGFILE, 2);
+ 		child = fork();
+ 		if (child == -1) {
+-			pseudo_diag("Couldn't fork child process: %s\n",
++			pseudo_error("Couldn't fork child process: %s\n",
+ 				strerror(errno));
+ 			exit(PSEUDO_EXIT_FORK_FAILED);
+ 		}
+@@ -204,18 +204,18 @@ pseudo_server_start(int daemonize) {
+ 				exit(0);
+ 			}
+ 			if (got_sigalrm) {
+-				pseudo_diag("Child process timeout after %d seconds.\n",
++				pseudo_error("Child process timeout after %d seconds.\n",
+ 					PSEUDO_CHILD_PROCESS_TIMEOUT);
+ 				exit(PSEUDO_EXIT_TIMEOUT);
+ 			}
+ 			if (rc == -1) {
+-				pseudo_diag("Failure in waitpid(): %s\n",
++				pseudo_error("Failure in waitpid(): %s\n",
+ 					strerror(save_errno));
+ 				exit(PSEUDO_EXIT_WAITPID);
+ 			}
+ 			if (WIFSIGNALED(status)) {
+ 				status = WTERMSIG(status);
+-				pseudo_diag("Child process exited from signal %d.\n",
++				pseudo_error("Child process exited from signal %d.\n",
+ 					status);
+ 				kill(getpid(), status);
+ 				/* can't use +128 because that's not valid */
+@@ -223,15 +223,15 @@ pseudo_server_start(int daemonize) {
+ 			}
+ 			if (WIFEXITED(status)) {
+ 				status = WEXITSTATUS(status);
+-				pseudo_diag("Child process exit status %d: %s\n",
++				pseudo_error("Child process exit status %d: %s\n",
+ 					status,
+ 					pseudo_exit_status_name(status));
+ 				if (status == 0) {
+-					pseudo_diag("Hang on, server should not have exited 0 without sending us sigusr1?\n");
++					pseudo_error("Hang on, server should not have exited 0 without sending us sigusr1?\n");
  				}
- 				pseudo_prefix_dir_fd = pseudo_fd(pseudo_prefix_dir_fd, MOVE_FD);
- 			} else {
--				pseudo_diag("No prefix available to to find server.\n");
-+				pseudo_error("No prefix available to to find server.\n");
- 				exit(1);
+ 				exit(status);
  			}
- 			if (pseudo_prefix_dir_fd == -1) {
--				pseudo_diag("Can't open prefix path '%s' for server: %s\n",
-+				pseudo_error("Can't open prefix path '%s' for server: %s\n",
- 					pseudo_path,
- 					strerror(errno));
- 				exit(1);
-@@ -590,11 +590,11 @@ pseudo_init_client(void) {
- 				}
- 				pseudo_localstate_dir_fd = pseudo_fd(pseudo_localstate_dir_fd, MOVE_FD);
- 			} else {
--				pseudo_diag("No local state directory available for server/file interactions.\n");
-+				pseudo_error("No local state directory available for server/file interactions.\n");
- 				exit(1);
- 			}
- 			if (pseudo_localstate_dir_fd == -1) {
--				pseudo_diag("Can't open local state path '%s': %s\n",
-+				pseudo_error("Can't open local state path '%s': %s\n",
- 					pseudo_path,
- 					strerror(errno));
- 				exit(1);
-@@ -633,7 +633,7 @@ pseudo_init_client(void) {
- 			if (pseudo_chroot) {
- 				pseudo_chroot_len = strlen(pseudo_chroot);
- 			} else {
--				pseudo_diag("Can't store chroot path '%s'\n", env);
-+				pseudo_error("Can't store chroot path '%s'\n", env);
- 			}
- 		}
- 		free(env);
-@@ -662,7 +662,7 @@ pseudo_init_client(void) {
- static void
- pseudo_file_close(int *fd, FILE **fp) {
- 	if (!fp || !fd) {
--		pseudo_diag("pseudo_file_close: needs valid pointers.\n");
-+		pseudo_error("pseudo_file_close: needs valid pointers.\n");
- 		return;
- 	}
- 	pseudo_antimagic();
-@@ -698,7 +698,7 @@ pseudo_file_close(int *fd, FILE **fp) {
- static FILE *
- pseudo_file_open(char *name, int *fd, FILE **fp) {
- 	if (!fp || !fd || !name) {
--		pseudo_diag("pseudo_file_open: needs valid pointers.\n");
-+		pseudo_error("pseudo_file_open: needs valid pointers.\n");
- 		return NULL;
- 	}
- 	pseudo_file_close(fd, fp);
-@@ -734,7 +734,7 @@ pseudo_pwd_lck_open(void) {
- 	if (!pseudo_pwd_lck_name) {
- 		pseudo_pwd_lck_name = malloc(pseudo_path_max());
- 		if (!pseudo_pwd_lck_name) {
--			pseudo_diag("couldn't allocate space for passwd lockfile path.\n");
-+			pseudo_error("couldn't allocate space for passwd lockfile path.\n");
- 			return -1;
+-			pseudo_diag("Unknown exit status %d.\n", status);
++			pseudo_error("Unknown exit status %d.\n", status);
+ 			exit(PSEUDO_EXIT_GENERAL);
+ 		} else {
+ 			/* detach from parent session */
+@@ -245,24 +245,24 @@ pseudo_server_start(int daemonize) {
  		}
  	}
-@@ -815,7 +815,7 @@ pseudo_client_chroot(const char *path) {
- 	pseudo_chroot_len = strlen(path);
- 	pseudo_chroot = malloc(pseudo_chroot_len + 1);
- 	if (!pseudo_chroot) {
--		pseudo_diag("Couldn't allocate chroot directory buffer.\n");
-+		pseudo_error("Couldn't allocate chroot directory buffer.\n");
- 		pseudo_chroot_len = 0;
- 		errno = ENOMEM;
- 		return -1;
-@@ -834,7 +834,7 @@ pseudo_root_path(const char *func, int line, int dirfd, const char *path, int le
- 	rc = base_path(dirfd, path, leave_last);
- 	pseudo_magic();
- 	if (!rc) {
--		pseudo_diag("couldn't allocate absolute path for '%s'.\n",
-+		pseudo_error("couldn't allocate absolute path for '%s'.\n",
- 			path ? path : "null");
+ 
+-	pseudo_diag("pid %d [parent %d], doing new pid setup and server start\n", getpid(), getppid());
++	pseudo_info("pid %d [parent %d], doing new pid setup and server start\n", getpid(), getppid());
+ 	pseudo_new_pid();
+ 
+ 	pseudo_debug(PDBGF_SERVER, "opening lock.\n");
+ 	lockpath = pseudo_localstatedir_path(NULL);
+ 	if (!lockpath) {
+-		pseudo_diag("Couldn't allocate a file path.\n");
++		pseudo_error("Couldn't allocate a file path.\n");
+ 		exit(PSEUDO_EXIT_LOCK_PATH);
  	}
- 	pseudo_debug(PDBGF_CHROOT, "root_path [%s, %d]: '%s' from '%s'\n",
-@@ -849,7 +849,7 @@ pseudo_client_getcwd(void) {
- 	char *cwd;
- 	cwd = malloc(pseudo_path_max());
- 	if (!cwd) {
--		pseudo_diag("Can't allocate CWD buffer!\n");
-+		pseudo_error("Can't allocate CWD buffer!\n");
- 		return -1;
+ 	mkdir_p(lockpath);
+ 	lockname = pseudo_localstatedir_path(PSEUDO_LOCKFILE);
+ 	if (!lockname) {
+-		pseudo_diag("Couldn't allocate a file path.\n");
++		pseudo_error("Couldn't allocate a file path.\n");
+ 		exit(PSEUDO_EXIT_LOCK_PATH);
  	}
- 	pseudo_debug(PDBGF_CLIENT | PDBGF_VERBOSE, "getcwd: trying to find cwd.\n");
-@@ -874,7 +874,7 @@ pseudo_client_getcwd(void) {
+ 	lockfd = open(lockname, O_RDWR | O_CREAT, 0644);
+ 	if (lockfd < 0) {
+-		pseudo_diag("Can't open or create lockfile %s: %s\n",
++		pseudo_error("Can't open or create lockfile %s: %s\n",
+ 			lockname, strerror(errno));
+ 		exit(PSEUDO_EXIT_LOCK_FAILED);
+ 	}
+@@ -275,7 +275,7 @@ pseudo_server_start(int daemonize) {
+ 	if (lockfd <= 2) {
+ 		newfd = fcntl(lockfd, F_DUPFD, 3);
+ 		if (newfd < 0) {
+-			pseudo_diag("Can't move lockfile to safe descriptor, leaving it on %d: %s\n",
++			pseudo_warning("Can't move lockfile to safe descriptor, leaving it on %d: %s\n",
+ 				lockfd, strerror(errno));
+ 		} else {
+ 			close(lockfd);
+@@ -297,11 +297,11 @@ pseudo_server_start(int daemonize) {
+ 		if (save_errno == EACCES || save_errno == EAGAIN) {
+ 			rc = fcntl(lockfd, F_GETLK, &lock_data);
+ 			if (rc == 0 && lock_data.l_type != F_UNLCK) {
+-				pseudo_diag("lock already held by existing pid %d.\n",
++				pseudo_warning("lock already held by existing pid %d.\n",
+ 					lock_data.l_pid);
+ 			}
  		}
- 		return 0;
+-		pseudo_diag("Couldn't obtain lock: %s.\n", strerror(save_errno));
++		pseudo_error("Couldn't obtain lock: %s.\n", strerror(save_errno));
+ 		exit(PSEUDO_EXIT_LOCK_HELD);
+ 
  	} else {
--		pseudo_diag("Can't get CWD: %s\n", strerror(errno));
-+		pseudo_error("Can't get CWD: %s\n", strerror(errno));
- 		return -1;
- 	}
- }
-@@ -901,7 +901,7 @@ pseudo_client_path_set(int fd, const char *path, char ***patharray, int *len) {
- 			*len, fd + 1);
- 		(*patharray) = realloc((*patharray), (fd + 1) * sizeof(char *));
- 		if (!*patharray) {
--			pseudo_diag("couldn't realloc fd path array to %ld entries\n", (fd + 1) * sizeof(char *));
-+			pseudo_error("couldn't realloc fd path array to %ld entries\n", (fd + 1) * sizeof(char *));
- 			exit(1);
- 		}
- 		for (i = *len; i < fd + 1; ++i)
-@@ -1002,7 +1002,7 @@ client_spawn_server(void) {
+@@ -314,14 +314,14 @@ pseudo_server_start(int daemonize) {
  
- 	if ((server_pid = pseudo_real_fork()) != 0) {
- 		if (server_pid == -1) {
--			pseudo_diag("couldn't fork server: %s\n", strerror(errno));
-+			pseudo_error("couldn't fork server: %s\n", strerror(errno));
- 			return 1;
- 		}
- 		pseudo_evlog(PDBGF_CLIENT, "spawned new server, pid %d\n", server_pid);
-@@ -1109,7 +1109,7 @@ client_spawn_server(void) {
- 		pseudo_setupenv();
- 		pseudo_dropenv();
- 		pseudo_real_execv(argv[0], argv);
--		pseudo_diag("critical failure: exec of pseudo daemon failed: %s\n", strerror(errno));
-+		pseudo_error("critical failure: exec of pseudo daemon failed: %s\n", strerror(errno));
- 		exit(1);
+ 	listen_fd = socket(PF_UNIX, SOCK_STREAM, 0);
+ 	if (listen_fd < 0) {
+-		pseudo_diag("couldn't create listening socket: %s\n", strerror(errno));
++		pseudo_error("couldn't create listening socket: %s\n", strerror(errno));
+ 		exit(PSEUDO_EXIT_SOCKET_CREATE);
  	}
- }
-@@ -1187,7 +1187,7 @@ pseudo_fd(int fd, int how) {
  
- 	/* Set close on exec, even if we didn't move it. */
- 	if ((newfd >= 0) && (fcntl(newfd, F_SETFD, FD_CLOEXEC) < 0))
--		pseudo_diag("Can't set close on exec flag: %s\n",
-+		pseudo_error("Can't set close on exec flag: %s\n",
- 			strerror(errno));
- 
- 	return(newfd);
-@@ -1208,7 +1208,7 @@ client_connect(void) {
- 	pseudo_evlog(PDBGF_CLIENT, "creating socket %s.\n", sun.sun_path);
- 	if (connect_fd == -1) {
- 		char *e = strerror(errno);
--		pseudo_diag("Can't create socket: %s (%s)\n", sun.sun_path, e);
-+		pseudo_error("Can't create socket: %s (%s)\n", sun.sun_path, e);
- 		pseudo_evlog(PDBGF_CLIENT, "failed to create socket: %s\n", e);
- 		return 1;
- 	}
-@@ -1216,14 +1216,14 @@ client_connect(void) {
- 	pseudo_debug(PDBGF_CLIENT, "connecting socket...\n");
- 	cwd_fd = open(".", O_RDONLY);
- 	if (cwd_fd == -1) {
--		pseudo_diag("Couldn't stash directory before opening socket: %s",
-+		pseudo_error("Couldn't stash directory before opening socket: %s",
- 			strerror(errno));
- 		close(connect_fd);
- 		connect_fd = -1;
- 		return 1;
- 	}
- 	if (fchdir(pseudo_localstate_dir_fd) == -1) {
--		pseudo_diag("Couldn't chdir to server directory [%d]: %s\n",
-+		pseudo_error("Couldn't chdir to server directory [%d]: %s\n",
- 			pseudo_localstate_dir_fd, strerror(errno));
- 		close(connect_fd);
- 		close(cwd_fd);
-@@ -1236,7 +1236,7 @@ client_connect(void) {
- 		pseudo_evlog(PDBGF_CLIENT, "connect failed: %s\n", e);
- 		close(connect_fd);
- 		if (fchdir(cwd_fd) == -1) {
--			pseudo_diag("return to previous directory failed: %s\n",
-+			pseudo_error("return to previous directory failed: %s\n",
- 				strerror(errno));
- 		}
- 		close(cwd_fd);
-@@ -1244,7 +1244,7 @@ client_connect(void) {
- 		return 1;
- 	}
- 	if (fchdir(cwd_fd) == -1) {
--		pseudo_diag("return to previous directory failed: %s\n",
-+		pseudo_error("return to previous directory failed: %s\n",
- 			strerror(errno));
- 	}
- 	close(cwd_fd);
-@@ -1402,11 +1402,9 @@ pseudo_client_request(pseudo_msg_t *msg, size_t len, const char *path) {
- 			}
- 		}
- 	}
--	pseudo_diag("pseudo: server connection persistently failed, aborting.\n");
-+	pseudo_error("pseudo: server connection persistently failed, aborting.\n");
- 	pseudo_evlog_dump();
--	pseudo_diag("event log dumped, aborting.\n");
--	abort();
--	pseudo_diag("aborted.\n");
-+	pseudo_critical("event log dumped, aborting.\n");
- 	return 0;
- }
- 
-@@ -1430,11 +1428,11 @@ pseudo_client_shutdown(int wait_on_socket) {
- 			pseudo_prefix_dir_fd = pseudo_fd(pseudo_prefix_dir_fd, COPY_FD);
- 			free(pseudo_path);
+ 	if (listen_fd <= 2) {
+ 		newfd = fcntl(listen_fd, F_DUPFD, 3);
+ 		if (newfd < 0) {
+-			pseudo_diag("couldn't dup listening socket: %s\n", strerror(errno));
++			pseudo_error("couldn't dup listening socket: %s\n", strerror(errno));
+ 			close(listen_fd);
+ 			exit(PSEUDO_EXIT_SOCKET_FD);
  		} else {
--			pseudo_diag("No prefix available to to find server.\n");
-+			pseudo_error("No prefix available to to find server.\n");
- 			exit(1);
- 		}
- 		if (pseudo_prefix_dir_fd == -1) {
--			pseudo_diag("Can't open prefix path (%s) for server. (%s)\n",
-+			pseudo_error("Can't open prefix path (%s) for server. (%s)\n",
- 				pseudo_prefix_path(NULL),
- 				strerror(errno));
- 			exit(1);
-@@ -1454,11 +1452,11 @@ pseudo_client_shutdown(int wait_on_socket) {
- 			pseudo_localstate_dir_fd = pseudo_fd(pseudo_localstate_dir_fd, COPY_FD);
- 			free(pseudo_path);
+@@ -333,7 +333,7 @@ pseudo_server_start(int daemonize) {
+ 	/* cd to the data directory */
+ 	pseudo_path = pseudo_localstatedir_path(NULL);
+ 	if (!pseudo_path || chdir(pseudo_path) == -1) {
+-		pseudo_diag("can't get to '%s': %s\n",
++		pseudo_error("can't get to '%s': %s\n",
+ 			pseudo_path, strerror(errno));
+ 		exit(PSEUDO_EXIT_SOCKET_PATH);
+ 	}
+@@ -341,21 +341,21 @@ pseudo_server_start(int daemonize) {
+ 	/* remove existing socket -- if it exists */
+ 	rc = unlink(sun.sun_path);
+ 	if (rc == -1 && errno != ENOENT) {
+-		pseudo_diag("Can't unlink existing socket: %s.\n",
++		pseudo_error("Can't unlink existing socket: %s.\n",
+ 			strerror(errno));
+ 		exit(PSEUDO_EXIT_SOCKET_UNLINK);
+ 	}
+ 	if (bind(listen_fd, (struct sockaddr *) &sun, sizeof(sun)) == -1) {
+-		pseudo_diag("couldn't bind listening socket: %s\n", strerror(errno));
++		pseudo_error("couldn't bind listening socket: %s\n", strerror(errno));
+ 		exit(PSEUDO_EXIT_SOCKET_BIND);
+ 	}
+ 	if (listen(listen_fd, 5) == -1) {
+-		pseudo_diag("couldn't listen on socket: %s\n", strerror(errno));
++		pseudo_error("couldn't listen on socket: %s\n", strerror(errno));
+ 		exit(PSEUDO_EXIT_SOCKET_LISTEN);
+ 	}
+ 	rc = pseudo_server_write_pid(getpid());
+ 	if (rc != 0) {
+-		pseudo_diag("warning: couldn't write pid file.\n");
++		pseudo_warning("couldn't write pid file.\n");
+ 	}
+ 	signal(SIGHUP, quit_now);
+ 	signal(SIGINT, quit_now);
+@@ -366,9 +366,9 @@ pseudo_server_start(int daemonize) {
+ 	if (daemonize) {
+ 		pid_t ppid = getppid();
+ 		if (ppid == 1) {
+-			pseudo_diag("Setup complete, but parent is init, not sending SIGUSR1.\n");
++			pseudo_info("Setup complete, but parent is init, not sending SIGUSR1.\n");
  		} else {
--			pseudo_diag("No prefix available to to find server.\n");
-+			pseudo_error("No prefix available to to find server.\n");
- 			exit(1);
+-			pseudo_diag("Setup complete, sending SIGUSR1 to pid %d.\n",
++			pseudo_info("Setup complete, sending SIGUSR1 to pid %d.\n",
+ 				ppid);
+ 			kill(ppid, SIGUSR1);
  		}
- 		if (pseudo_localstate_dir_fd == -1) {
--			pseudo_diag("Can't open local state path (%s) for server. (%s)\n",
-+			pseudo_error("Can't open local state path (%s) for server. (%s)\n",
- 				pseudo_localstatedir_path(NULL),
- 				strerror(errno));
- 			exit(1);
-@@ -1479,13 +1477,13 @@ pseudo_client_shutdown(int wait_on_socket) {
+@@ -424,7 +424,7 @@ open_client(int fd) {
+ 		++active_clients;
+ 		return max_clients - 16;
+ 	} else {
+-		pseudo_diag("error allocating new client, fd %d\n", fd);
++		pseudo_error("error allocating new client, fd %d\n", fd);
+ 		close(fd);
+ 		return 0;
  	}
- 	ack = pseudo_msg_receive(connect_fd);
- 	if (!ack) {
--		pseudo_diag("server did not respond to shutdown query.\n");
-+		pseudo_error("server did not respond to shutdown query.\n");
- 		return 1;
- 	}
- 	if (ack->type != PSEUDO_MSG_ACK) {
--		pseudo_diag("Server refused shutdown.  Remaining client fds: %d\n", ack->fd);
--		pseudo_diag("Client pids: %s\n", ack->path);
--		pseudo_diag("Server will shut down after all clients exit.\n");
-+		pseudo_info("Server refused shutdown.  Remaining client fds: %d\n", ack->fd);
-+		pseudo_info("Client pids: %s\n", ack->path);
-+		pseudo_info("Server will shut down after all clients exit.\n");
- 	}
- 	if (wait_on_socket) {
- 		/* try to receive a message the server won't send;
-@@ -1520,14 +1518,14 @@ base_path(int dirfd, const char *path, int leave_last) {
- 			if (basepath) {
- 				baselen = strlen(basepath);
- 			} else {
--				pseudo_diag("got *at() syscall for unknown directory, fd %d\n", dirfd);
-+				pseudo_error("got *at() syscall for unknown directory, fd %d\n", dirfd);
- 			}
- 		} else {
- 			basepath = pseudo_cwd;
- 			baselen = pseudo_cwd_len;
- 		}
- 		if (!basepath) {
--			pseudo_diag("unknown base path for fd %d, path %s\n", dirfd, path);
-+			pseudo_error("unknown base path for fd %d, path %s\n", dirfd, path);
- 			return 0;
- 		}
- 		/* if there's a chroot path, and it's the start of basepath,
-@@ -1756,7 +1754,7 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
- 	if (op == OP_RENAME) {
- 		va_list ap;
- 		if (!path) {
--			pseudo_diag("rename (%s) without new path.\n",
-+			pseudo_warning("rename (%s) without new path.\n",
- 				path ? path : "<nil>");
- 			pseudo_magic();
- 			return 0;
-@@ -1766,7 +1764,7 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
- 		va_end(ap);
- 		/* last argument is the previous path of the file */
- 		if (!path_extra_1) {
--			pseudo_diag("rename (%s) without old path.\n",
-+			pseudo_warning("rename (%s) without old path.\n",
- 				path ? path : "<nil>");
- 			pseudo_magic();
- 			return 0;
-@@ -1835,7 +1833,7 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
- 			alloced_path = malloc(full_len);
- 			alloced_len = full_len;
- 			if (!alloced_path) {
--				pseudo_diag("Can't allocate space for paths for a rename operation.  Sorry.\n");
-+				pseudo_error("Can't allocate space for paths for a rename operation.  Sorry.\n");
- 				alloced_len = 0;
- 				pseudo_magic();
- 				return 0;
-@@ -1859,7 +1857,7 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
- 				alloced_path = malloc(pathlen);
- 				alloced_len = pathlen;
- 				if (!alloced_path) {
--					pseudo_diag("Can't allocate space for paths for a rename operation.  Sorry.\n");
-+					pseudo_error("Can't allocate space for paths for a rename operation.  Sorry.\n");
- 					alloced_len = 0;
- 					pseudo_magic();
- 					return 0;
-@@ -1965,7 +1963,7 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
- 			if (fd == connect_fd) {
- 				connect_fd = pseudo_fd(connect_fd, COPY_FD);
- 				if (connect_fd == -1) {
--					pseudo_diag("tried to close connection, couldn't dup: %s\n", strerror(errno));
-+					pseudo_error("tried to close connection, couldn't dup: %s\n", strerror(errno));
- 				}
- 			} else if (fd == pseudo_util_debug_fd) {
- 				pseudo_util_debug_fd = pseudo_fd(fd, COPY_FD);
-@@ -2037,7 +2035,7 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
- 		do_request = 1;
- 		break;
- 	default:
--		pseudo_diag("error: unknown or unimplemented operator %d (%s)", op, pseudo_op_name(op));
-+		pseudo_error("unknown or unimplemented operator %d (%s)", op, pseudo_op_name(op));
- 		break;
- 	}
- 	/* result can only be set when PSEUDO_XATTRDB resulted in a
-@@ -2069,7 +2067,7 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
- 			pseudo_debug(PDBGF_OP, "(%d) %s", getpid(), pseudo_res_name(result->result));
- 			if (result->result == RESULT_ABORT) {
- 				char *local_state_dir = pseudo_get_value("PSEUDO_LOCALSTATEDIR");
--				pseudo_diag("abort()ing pseudo client by server request. See https://wiki.yoctoproject.org/wiki/Pseudo_Abort for more details on this.\n"
-+				pseudo_info("abort()ing pseudo client by server request. See https://wiki.yoctoproject.org/wiki/Pseudo_Abort for more details on this.\n"
- 					"Check logfile: %s/%s\n", local_state_dir, PSEUDO_LOGFILE);
- 				abort();
- 			}
-@@ -2149,13 +2147,13 @@ populate_path_segs(void) {
- 	}
- 	path_segs = malloc((c+2) * sizeof(*path_segs));
- 	if (!path_segs) {
--		pseudo_diag("warning: failed to allocate space for %d path segments.\n",
-+		pseudo_warning("failed to allocate space for %d path segments.\n",
- 			c);
+@@ -439,7 +439,7 @@ close_client(int client) {
+ 		clients[client].pid, clients[client].fd);
+ 	/* client went away... */
+ 	if (client > highest_client || client <= 0) {
+-		pseudo_diag("tried to close client %d (highest is %d)\n",
++		pseudo_info("tried to close client %d (highest is %d)\n",
+ 			client, highest_client);
  		return;
  	}
- 	path_lens = malloc((c + 2) * sizeof(*path_lens));
- 	if (!path_lens) {
--		pseudo_diag("warning: failed to allocate space for %d path lengths.\n",
-+		pseudo_warning("failed to allocate space for %d path lengths.\n",
- 			c);
- 		free(path_segs);
- 		path_segs = 0;
-@@ -2163,7 +2161,7 @@ populate_path_segs(void) {
+@@ -559,7 +559,7 @@ serve_client(int i) {
+ 
+ 				response_path = malloc(8 * active_clients);
+ 				if (!response_path) {
+-					pseudo_diag("out of memory allocating shutdown response\n");
++					pseudo_error("out of memory allocating shutdown response\n");
+ 					exit(PSEUDO_EXIT_GENERAL);
+ 				} else {
+ 					memset(response_path, 0, 8 * active_clients);
+@@ -633,7 +633,7 @@ static void pseudo_server_loop_epoll(void)
+ 
+ 	clients = malloc(16 * sizeof(*clients));
+ 	if (!clients) {
+-		pseudo_diag("out of memory allocating client table.\n");
++		pseudo_error("out of memory allocating client table.\n");
+ 		exit(PSEUDO_EXIT_LISTEN_FD);
  	}
- 	previous_path_segs = strdup(previous_path);
- 	if (!previous_path_segs) {
--		pseudo_diag("warning: failed to allocate space for path copy.\n");
-+		pseudo_warning("failed to allocate space for path copy.\n");
- 		free(path_segs);
- 		path_segs = NULL;
- 		free(path_lens);
-@@ -2242,7 +2240,7 @@ pseudo_exec_path(const char *filename, int search_path) {
- 				candidate = pseudo_fix_path(dir, filename, 0, len, NULL, 0);
- 				pseudo_debug(PDBGF_CLIENT, "exec_path: got %s for non-absolute path\n", candidate);
- 			} else {
--				pseudo_diag("couldn't allocate intermediate path.\n");
-+				pseudo_error("couldn't allocate intermediate path.\n");
- 				candidate = NULL;
+ 
+@@ -655,7 +655,7 @@ static void pseudo_server_loop_epoll(void)
+ 
+ 	pseudo_debug(PDBGF_SERVER, "server loop started.\n");
+ 	if (listen_fd < 0) {
+-		pseudo_diag("got into loop with no valid listen fd.\n");
++		pseudo_error("got into loop with no valid listen fd.\n");
+ 		exit(PSEUDO_EXIT_LISTEN_FD);
+ 	}
+ 
+@@ -663,13 +663,13 @@ static void pseudo_server_loop_epoll(void)
+ 
+ 	int epollfd = epoll_create1(0);
+ 	if (epollfd == -1) {
+-		pseudo_diag("epoll_create1() failed.\n");
++		pseudo_error("epoll_create1() failed.\n");
+ 		exit(PSEUDO_EXIT_EPOLL_CREATE);
+ 	}
+ 	ev.events = EPOLLIN;
+ 	ev.data.u64 = 0;
+ 	if (epoll_ctl(epollfd, EPOLL_CTL_ADD, clients[0].fd, &ev) == -1) {
+-		pseudo_diag("epoll_ctl() failed with listening socket.\n");
++		pseudo_error("epoll_ctl() failed with listening socket.\n");
+ 		exit(PSEUDO_EXIT_EPOLL_CTL);
+ 	}
+ 
+@@ -724,7 +724,7 @@ static void pseudo_server_loop_epoll(void)
+ 							ev.events = EPOLLIN;
+ 							ev.data.u64 = open_client(fd);
+ 							if (ev.data.u64 != 0 && epoll_ctl(epollfd, EPOLL_CTL_ADD, clients[ev.data.u64].fd, &ev) == -1) {
+-								pseudo_diag("epoll_ctl() failed with accepted socket.\n");
++								pseudo_error("epoll_ctl() failed with accepted socket.\n");
+ 								exit(PSEUDO_EXIT_EPOLL_CTL);
+ 							}
+ 						} else if (errno == EMFILE) {
+@@ -746,22 +746,22 @@ static void pseudo_server_loop_epoll(void)
  			}
+ 			pseudo_debug(PDBGF_SERVER, "server loop complete [%d clients left]\n", active_clients);
+ 		} else {
+-			pseudo_diag("epoll_wait failed: %s\n", strerror(errno));
++			pseudo_error("epoll_wait failed: %s\n", strerror(errno));
+ 			break;
  		}
+ 		if (do_list_clients) {
+ 			do_list_clients = 0;
+-			pseudo_diag("listing clients [1 through %d]:\n", highest_client);
++			pseudo_info("listing clients [1 through %d]:\n", highest_client);
+ 			for (i = 1; i <= highest_client; ++i) {
+ 				if (clients[i].fd == -1) {
+-					pseudo_diag("client %4d: inactive.\n", i);
++					pseudo_info("client %4d: inactive.\n", i);
+ 					continue;
+ 				}
+-				pseudo_diag("client %4d: fd %4d, pid %5d, program %s\n",
++				pseudo_info("client %4d: fd %4d, pid %5d, program %s\n",
+ 					i, clients[i].fd, clients[i].pid,
+ 					clients[i].program ? clients[i].program : "<unspecified>");
+ 			}
+-			pseudo_diag("done.\n");
++			pseudo_info("done.\n");
+ 		}
+ 		if (die_peacefully || die_forcefully) {
+ 			pseudo_debug(PDBGF_SERVER, "quitting.\n");
+@@ -807,7 +807,7 @@ pseudo_server_loop(void) {
+ 
+ 	clients = malloc(16 * sizeof(*clients));
+ 	if (!clients) {
+-		pseudo_diag("out of memory allocating client table.\n");
++		pseudo_error("out of memory allocating client table.\n");
+ 		exit(PSEUDO_EXIT_LISTEN_FD);
+ 	}
+ 
+@@ -830,7 +830,7 @@ pseudo_server_loop(void) {
+ 
+ 	pseudo_debug(PDBGF_SERVER, "server loop started.\n");
+ 	if (listen_fd < 0) {
+-		pseudo_diag("got into loop with no valid listen fd.\n");
++		pseudo_error("got into loop with no valid listen fd.\n");
+ 		exit(PSEUDO_EXIT_LISTEN_FD);
+ 	}
+ 	pdb_log_msg(SEVERITY_INFO, NULL, NULL, NULL, "server started (pid %d)", getpid());
+@@ -924,18 +924,18 @@ pseudo_server_loop(void) {
+ 		}
+ 		if (do_list_clients) {
+ 			do_list_clients = 0;
+-			pseudo_diag("listing clients [1 through %d]:\n", highest_client);
++			pseudo_info("listing clients [1 through %d]:\n", highest_client);
+ 			for (i = 1; i <= highest_client; ++i) {
+ 				if (clients[i].fd == -1) {
+-					pseudo_diag("client %4d: inactive.\n", i);
++					pseudo_info("client %4d: inactive.\n", i);
+ 					continue;
+ 				}
+-				pseudo_diag("client %4d: fd %4d, pid %5d, state %s, program %s\n",
++				pseudo_info("client %4d: fd %4d, pid %5d, state %s, program %s\n",
+ 					i, clients[i].fd, clients[i].pid,
+ 					FD_ISSET(clients[i].fd, &reads) ? "R" : "-",
+ 					clients[i].program ? clients[i].program : "<unspecified>");
+ 			}
+-			pseudo_diag("done.\n");
++			pseudo_info("done.\n");
+ 		}
+ 		if (die_peacefully || die_forcefully) {
+ 			pseudo_debug(PDBGF_SERVER, "quitting.\n");
+@@ -981,6 +981,6 @@ pseudo_server_loop(void) {
+ 		timeout = (struct timeval) { .tv_sec = LOOP_DELAY, .tv_usec = 0 };
+ 		sigprocmask(SIG_BLOCK, &maskusr2, NULL);
+ 	}
+-	pseudo_diag("select failed: %s\n", strerror(errno));
++	pseudo_error("select failed: %s\n", strerror(errno));
+ }
+ #endif /* this is the else of #ifdef PSEUDO_EPOLL */
 
