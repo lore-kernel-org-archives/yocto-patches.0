@@ -1,175 +1,149 @@
-Return-Path: <tim.orling@konsulko.com>
+Return-Path: <anders.heimer@est.tech>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B324CD98C7
-	for <webhook@archiver.kernel.org>; Wed, 10 Jun 2026 18:52:24 +0000 (UTC)
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.28464.1781117540912474438
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 816EBCD98CE
+	for <webhook@archiver.kernel.org>; Thu, 11 Jun 2026 06:13:48 +0000 (UTC)
+Received: from MRWPR03CU001.outbound.protection.outlook.com (MRWPR03CU001.outbound.protection.outlook.com [40.107.130.16])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.39387.1781158419335035151
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 10 Jun 2026 11:52:21 -0700
+ Wed, 10 Jun 2026 23:13:40 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=A4aeXQKk;
- spf=pass (domain: konsulko.com, ip: 209.85.128.169, mailfrom: tim.orling@konsulko.com)
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-7dc2b658544so61400187b3.2
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 10 Jun 2026 11:52:20 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1781117540; cv=none;
-        d=google.com; s=arc-20240605;
-        b=BzN6dHiwHcYx39ARIeDpVX/R+qYRtwSi0xegZhZmFY9CiQGH7NK0J9vkELCmn9SQ97
-         ibhqVCKb28xI3pVKSX5AbqvuhOczX1IQ888yoahTOTRAe6QuCnnGPJlQsGfp3etOSuF1
-         zn2+/t/YFdxQk7MS4eLmVPgkNJNiVdAoj9drUOwxpsRvhmzacmEr6DxNP0uwtryI4hvp
-         H1kMRIsQs3C9A2kA+jkp0CIleI/mUIxNww/GBaVYcqGi4eWHclHzEtWEcibCTmjvSOBJ
-         Mn/DQMoC0vpXXn1+pqKZYRGOvQGAC8aEPJ/qNh9Y4V7iecmxa7yFol+qiICBHv4YjNpW
-         UL0w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=ngpIdYWiPEZ5uMEtOex0ZXJE+nwvcchHL3EVuw8rlew=;
-        fh=oelZnrg5dmur//Cq9EZ6v+RhAeHGCj2nFzzrUJxuFwI=;
-        b=DR5b4pygN+Vq4B6dPGfaWgRKRA7HcP6Hsfit1J719HCu/rW2ARKliFfgsHboXmmMIz
-         E8fkDItMfPeZ6BJufE6gCefm2Ct+lNLvoH1xFHJkW3Ta8gANBLzGo11m7bCRZTR7RhsX
-         ztfP42tUZJxa78FMABNRcmwH2CYDhBuNO9DgbaOr6cb7rFcLci1hsk5L1BTigmvardSo
-         rhC2KVPoOWEKnHRsYtgOiQ6n5fOvt9Y3fzzLNu+bo9TFtxiGc+nDF127q0PMOwpML2hq
-         qfSTutCC1QcUsLbMXAgWWix8wjvk+MiQz67Hsc2XIlpTDPsas2GZuMPpw79FggvHOmQ8
-         V1YQ==;
-        darn=lists.yoctoproject.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1781117540; x=1781722340; darn=lists.yoctoproject.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ngpIdYWiPEZ5uMEtOex0ZXJE+nwvcchHL3EVuw8rlew=;
-        b=A4aeXQKkKoTKNrWsCTbNFo2nsxeIQFGBY9QmJRMoEbVNFu7BHavU9QUPj3sRBQh0RM
-         84LGbHuFu9juNvGY67yikxv9Wa52NDp93KcLpOhmEZ3qJuFd7Ul2HqvjEhuKqd1XcGcS
-         Kvjg2btRjhQmuU+JRfh4UTmOdlbVl+hYh/LQs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781117540; x=1781722340;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ngpIdYWiPEZ5uMEtOex0ZXJE+nwvcchHL3EVuw8rlew=;
-        b=OH2Sz+D9UtWitQb37MrGopUG9Dzpgc+hJ83Dgob1AmNQMM/tpoz8GxPKXDQmrEkKs8
-         esqAB1Q4niMc+RQI3REnPx1UXsXM0McprR0NLoqonNEwLGMGuEGZ7BYB6xKiIzVq1dEx
-         lBsg5/6itgxVU1EVO/vSnrEoKTJhez+w54zICqNe2MfcCezeZyneb5BtroAqa/91oqQ8
-         pDXcRVLD38bWSxXfA0gVy+OgnUSWuD1QeS/K2ASauwxQCWZ+aniAlBdYn4LnAD2UkOQV
-         T1kg3Cn+Rj5pi/yiHLQBiHxLNrlclPNeN+NMAk16kXUis+gWf9IKV5y6obcCa4wb0Xxa
-         eAPQ==
-X-Gm-Message-State: AOJu0YzPCXUZ7AcIT0BfNWBc6OF8kxwFfMG7OjYHeO3dLoZ15pzQ6rRk
-	jJR+/wvo9Et3XHktJjxYELftR8RPWEpFhVB/B9qXnhXxeQ7B+6UTuc9CC/M/dbehcRxWGklfz7s
-	Tkne+W616maYdNZlfr9wAAaiE8Gj9nVtyLMTGbPinVQ==
-X-Gm-Gg: Acq92OH3JcA6R+yuVmW4RZ08IuKBrppXW9vohKkIs9yqmyvPs/H93rQLADJnnR/QqUS
-	wH61MuRznUd9xUviTflw+uaSv/fHpnolRP6vrXsCMCIuExWYJtpWHkr7ZPonpcrsinHwgcMLlYM
-	uP63ZVR4GFMH/0qODwANa+80MkHVcdOtIvlV0AvGm2xz/vsdbWmrFbtBNHnFil/r8JgthhIrIhw
-	MPkhjZXby7fWhk9DYQhgUiz/RsgI4+Zj++WB+vUDSNWlgCTzU6s84EGgr8zKPfRzr96vzwdHE1q
-	LpOvfyKbU+SEVdOy6g==
-X-Received: by 2002:a05:690c:6c8e:b0:7b2:dad2:5dee with SMTP id
- 00721157ae682-7f616f1f798mr5201517b3.2.1781117540003; Wed, 10 Jun 2026
- 11:52:20 -0700 (PDT)
+ dkim=pass header.i=@est.tech header.s=selector1 header.b=pJdS6poM;
+ spf=pass (domain: est.tech, ip: 40.107.130.16, mailfrom: anders.heimer@est.tech)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sPKH3hwpp7+0uKxjqL4zfJfRKTmg6MJnUlQEWPRoSwtCJy50LlxwAv3y6x7VumVBhUEFT4ElvYAEWHDD6i7sF/BU3NpCPVkh+NdSqo0Ia30oyT1CveOWwFym39vV35UaZKg9RweBXYZbmntqfDMELiZhvO2Fbtj7noQs1QGvJHoCRRLg7ZR6lEyZAPWdCihqMTq63zW2tJFFkTZVnNoFoPH1Z3oe9Y+hKEj/wepqc1c1zMa6HL0VQirTHVlkeH1C+ijV/mdUqrssgrWMQkQyPP8tPwK9Rqf4gKaIBjSnSWby/Rk4YS9kWtcIvqtp4cmJyNebnR5yPQGJKCSoCwrE6A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=h5iCE+jm2gGpVSoCAkIM31PjKMUsgp0X/ktSJgSnoLA=;
+ b=QmUm2vyXbIGrfNKWDFSxHuaH60g6+EEWGzhu52ildjRJUzoA6y0Im6wz4em3dBy+FE/JnKb+BRwGDOc8Pc0oplbsPqEhFwb54ImTr7wCHZU4Ew4fItT4S4SpLLrYyYPl76ZzfWWdk3PzfviuNkvQrozfPNY3oTR4uLeLQCSpEfb8/1uhdAi17TPYKkpvBD9EGgDyAc7XAAlH98j8JupPXB4qJ6qMUrgPE0Lm57UckVoZ48FwU6a08qXqPO8LS3uYSjegLo37a0I6dDO6lDbFac+WgciYl/hmvdA9m8TJsdrzP2MN1qG47Jl+4Z6U7whRy85Qbpgxa70qa2cYqX3tkA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=est.tech; dmarc=pass action=none header.from=est.tech;
+ dkim=pass header.d=est.tech; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=est.tech; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=h5iCE+jm2gGpVSoCAkIM31PjKMUsgp0X/ktSJgSnoLA=;
+ b=pJdS6poMVjEmTp1CEoYV9yEYr3lXs2mYXJuRWoh7UBE12vNKkTybP46KYoBtiFu9CJSNfw3k4CV67rpNmfagy6oGMCvOFRNoPjoIAzW571l+VeMt2uuq3+zZeaf9AatahXprAZp5xndM5QoI29vaAvxxh9arkCOEi0dfytDB+qFNKRWQLuXL7aRXTFqDbbr5Y3XPwjrZpxVt/anzMClZOvD6HqoMR9t5kxZgO3pTw3VHL5tSCvDpWb7mCG+6DI5LOHV7nhmWuuZhm/gn+myhYpx2wYANgUW+56wJYD+9ILQJiSLwph7+lD+Sw0MlKEfBF2cCFiIJensTKKnIeaaheg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=est.tech;
+Received: from DB9P189MB1641.EURP189.PROD.OUTLOOK.COM (2603:10a6:10:2ac::9) by
+ GV1P189MB3003.EURP189.PROD.OUTLOOK.COM (2603:10a6:150:263::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.92.12; Thu, 11 Jun 2026 06:13:32 +0000
+Received: from DB9P189MB1641.EURP189.PROD.OUTLOOK.COM
+ ([fe80::90da:b700:f102:5c82]) by DB9P189MB1641.EURP189.PROD.OUTLOOK.COM
+ ([fe80::90da:b700:f102:5c82%6]) with mapi id 15.21.0113.013; Thu, 11 Jun 2026
+ 06:13:32 +0000
+From: Anders Heimer <anders.heimer@est.tech>
+To: yocto-patches@lists.yoctoproject.org
+CC: anders.heimer@est.tech
+Subject: [yocto-autobuilder2][PATCH 0/3] Avoid shell use
+Date: Thu, 11 Jun 2026 08:13:27 +0200
+Message-ID: <20260611061330.733392-1-anders.heimer@est.tech>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-ClientProxiedBy: DU2PR04CA0293.eurprd04.prod.outlook.com
+ (2603:10a6:10:28c::28) To DB9P189MB1641.EURP189.PROD.OUTLOOK.COM
+ (2603:10a6:10:2ac::9)
 MIME-Version: 1.0
-References: <20260609164032.1415124-1-sandeep.gundlupet-raju@amd.com> <20260609164032.1415124-4-sandeep.gundlupet-raju@amd.com>
-In-Reply-To: <20260609164032.1415124-4-sandeep.gundlupet-raju@amd.com>
-From: Tim Orling <tim.orling@konsulko.com>
-Date: Wed, 10 Jun 2026 11:52:09 -0700
-X-Gm-Features: AVVi8CfcpTvOIE1WL7Px69ZqfhN26gnKO6kiz0qmbFl9nat-q0eqOadYto87lEM
-Message-ID: <CAOyo-86SX3_JD3KzZjj-sJZC85uNXm9BdkrESJfaJZFn-hiVEg@mail.gmail.com>
-Subject: Re: [yocto-patches] [layerindex-web][PATCH v3 3/4] README.devel:
- Replace deprecated libmariadb package
-To: Sandeep Gundlupet Raju <sandeep.gundlupet-raju@amd.com>
-Cc: yocto-patches@lists.yoctoproject.org, mark.hatle@kernel.crashing.org, 
-	piotr@qbee.io
-Content-Type: multipart/alternative; boundary="000000000000467e710653eabef2"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9P189MB1641:EE_|GV1P189MB3003:EE_
+X-MS-Office365-Filtering-Correlation-Id: f75565b1-87cb-44ef-1df1-08dec7809084
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: 
+	BCL:0;ARA:13230040|23010399003|1800799024|376014|366016|18002099003|11063799006|56012099006|3023799007;
+X-Microsoft-Antispam-Message-Info: 
+	LiG0pNvYgx4MSK/NsZe+/qqRAtR4dybpqEZ51TNxMw0WG/mPNp7oDCAgE/RCKN/hQFOP5n03ukAYn+ETPNFH1ZBCYc0l6Qlk+L8ZIyhCdVKu5b8floq2k2ZA95hvzOudjcvTG/RSCzQsL+nTN1jBbuX4PTA3W4sRlAJ8SpO+gJ99k5xOjec/E7MrSubQ+sIGn6jmLKoFck7teYPJe5fjdqtnpkW3ik/cq/gjrkHag6KZrDyFfWw+Br9FvJQbpj23dnnYwo5yiGNf+Pz+i4yfDq1zbMyS+BNn8U2Wn/omQKfqUP8gJSwvK6aNMArFrvEIZ65t9HTkIiiOISzFmr4CKI2jV9u/iqjbC3iTOwZR50JFA6UxZoeSP23cdxzBlGmmS3PYL9vPcY11GmyCIFvkmgkujBfystdlcuki6TdIi3ScJE9DLD+dZ8PZZhbOFIHtdkzjqiIVKe/viGahpsmF5idMqacEWlgBs0RUPvPJNLTjO913h1j7x0wglH1kP3Q27VyJA+/PLPOelsWRAed0/Desnog+agoWtFfzEoN6hSBGmH9/1d6ksD2shi6BYvM7Lsv92Rj/4+gk9keTDlvsYw1KafZu3ibsd0Oc5+7UknWsR3cVFTM5/f7J4cxpHO053Fe0+UgUK/cBElF6prCZxOzl/UjAs97q2gNUHLMwKVWBg8AG+74A2VLBMbDhMuUA
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9P189MB1641.EURP189.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(1800799024)(376014)(366016)(18002099003)(11063799006)(56012099006)(3023799007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?SovS5eiXTeArKUTxrIA1e6H/q29fjSH8dfBouxaoRzY9mto6mey2dV/r29Z1?=
+ =?us-ascii?Q?4D2hWNeyPeKzEdyD3fIhTgHPqkXbxcFSc2Osu4Zk+AvoAQj0G6KXwSiWqXEj?=
+ =?us-ascii?Q?fZGym5fUdnEhB2sIUSTzB2BtPGddV83Jol8STdpGDETMFBM7y2kht+yJHQPd?=
+ =?us-ascii?Q?b1EqkYHItnnulnFcUHu/PU/uoGz5hOn70Su/6KZ1uvvEPW2xHykQD4CDRz3z?=
+ =?us-ascii?Q?9+OoZoWL/y4n23fbxI6KcNRmqMEMgvzxqKsjTNdoXOJxKIYX49GnQTph2/+w?=
+ =?us-ascii?Q?spW5qY5rbROIyk6V6ctUKVTg2VB+FtrAenJib88WBTxfPPYAmO4lAGwA0usc?=
+ =?us-ascii?Q?irrkiIKkwE+F9b1m0CsZKHMSowe1k1M7VmapevMSkM54SS870Yvsxm3l1Vwc?=
+ =?us-ascii?Q?XQQYG4XF8WCJ6uatOrw6Iz1U+yB2IhVtUhBNki4O7oq9eYLznQ9+ldc0ki1/?=
+ =?us-ascii?Q?C8PNtyIIKuz1p0sNlSSa99Co71X0s0b8bezqqhb/MtTAALpuXQVd45IR4foB?=
+ =?us-ascii?Q?htdVOJrDxT9YybzStMzRN2eX3v0DjhVN1CMhn7KaYm+DUfIay5/+0QFXIzH5?=
+ =?us-ascii?Q?NDD41wIXzWI0pWSBKE1rq+nfJEXyhZCd4bxuZ7L3iAemKL2yMxvFjtF0Gnv1?=
+ =?us-ascii?Q?sEW/eBLQ5jonrTlKF9iLSL+KRbYfVJC+7gEF8WIVFukbMm2H5Bpe4ln8kmDT?=
+ =?us-ascii?Q?s8UaBiBQ94hdd0R5pqZzWdjgEpbU30DoviaX/UUZUlAJ/X4n/8iTYydYVaJw?=
+ =?us-ascii?Q?g7+wDpFLmUqvkzK5B0CkB4aXWOvr3+i2dBRdRrxxtQRvyOvGHeZUQJAjFB2K?=
+ =?us-ascii?Q?d7fLjm7rtBaquJCgEzfDSvWPidFJH9CIAvxXEEQkyIM5baTiu/Hzuklu7T9t?=
+ =?us-ascii?Q?BbmYHlVoa9mRxRk0j1x74e/QjKZd1ydusQppgmLaykw8PxFKZxUvOC1GRl6O?=
+ =?us-ascii?Q?hJ1Agtuw3/2435FxMfVHHHtq1osLjnbXvCaB5VFNrvSxJs28HrbpjSiDTe8E?=
+ =?us-ascii?Q?FHnb4NCKedRTpmxbxMQARZNFtzvGqU/ZK9Capce1K7aDRs8A8ujiQaqf7cmC?=
+ =?us-ascii?Q?5FNNxQ218k6x+t9XX1zUhMofec5Grk98OyypwyOaCZGFDFLN0jAuvjtK3vxO?=
+ =?us-ascii?Q?cjYneKgTlPgArZjC7r1I1VU05dVx80L1XxylTiP74LIqCN2vgkupzyL3HfzE?=
+ =?us-ascii?Q?UGTKzj5Q3IjP2sdX634So8xSiXaiCQ8hxmHs+ph2xFdZXGZTuGcHCtd9Mm3o?=
+ =?us-ascii?Q?h3WVdUOp8BISyued//oR0/RJJqr3bJMZl25oTzdSEOb/Q+vag9BTSmxl4voB?=
+ =?us-ascii?Q?j/9oPwuuJkaHx5Zr7qLndT5/QqvFSjKb2iaRO7WRSeeVhGC4drNqPeA/bUvX?=
+ =?us-ascii?Q?nxgAJrZUXZbCcuP8g7yDBMQm+xvzzzNcO+4YnC77KDZXrKsPaIwqcbJBDXwo?=
+ =?us-ascii?Q?nAuAcVr+7yf7amWIZQjSOHeQks2RS8HQIaBwA23EZtCFKOna1rHujjJrl6wu?=
+ =?us-ascii?Q?AOngbWrrTDPEdtYRwdH/J5FpjCTrO1h2KouH5mBe40kTcvRH3D/yPP6J1tCM?=
+ =?us-ascii?Q?ZpGj9R0E/H193zmtHBOQu3pozeXjFm3Q/j1Tk108eFyLERKrGjowrMm/pvqV?=
+ =?us-ascii?Q?phEPPR5fyypuAb1hd7pKPg3WdnXdsI+pB3pd1Qdit9DI28YrqkUUwMzLpkeX?=
+ =?us-ascii?Q?NNlg9xy7nKmhP4AU2O2saKLa6H7B0xBDae6Y4npUG16KuS0AOgMlhd+xUd89?=
+ =?us-ascii?Q?VnRuIw9ztA=3D=3D?=
+X-OriginatorOrg: est.tech
+X-MS-Exchange-CrossTenant-Network-Message-Id: f75565b1-87cb-44ef-1df1-08dec7809084
+X-MS-Exchange-CrossTenant-AuthSource: DB9P189MB1641.EURP189.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jun 2026 06:13:32.8233
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: d2585e63-66b9-44b6-a76e-4f4b217d97fd
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: rtAgitUQI0fmMCZKZUh2O4oJEZMpf9NJ+A4ySv9DFUzWCKn/rxcdqIXPrY7IN53s1vKgv8cqdH8R3dLuhRYulA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1P189MB3003
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 10 Jun 2026 18:52:24 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4204
+ <yocto-patches@lists.yoctoproject.org>; Thu, 11 Jun 2026 06:13:48 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4206
 
---000000000000467e710653eabef2
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+This series removes shell use from a few backend paths where Buildbot
+already has structured command arguments or generated file contents.
 
-Merged. This is a change in upstream Ubuntu packaging.
+The changes are intended as hardening/cleanup with no intentional
+behaviour change.
 
-On Tue, Jun 9, 2026 at 9:40=E2=80=AFAM Sandeep Gundlupet Raju <
-sandeep.gundlupet-raju@amd.com> wrote:
+Testing:
+  * Metadata writers:
+    - qemuarm-oecore build wrote layerinfo.json and
+      bbsetup-overrides.json via StringDownload
+    - both files parsed correctly and preserved repo, branch and revision
+      values literally
+    - whitebox comparison showed byte-for-byte identical output for
+      qemuarm-oecore, a-quick, docs and default-repo fallback cases.
 
-> Replace deprecated libmariadb-client-lgpl-dev with libmariadb-dev
-> package in README.devel instructions.
->
-> AI-Generated: GitHub Copilot (Claude Sonnet 4.6)
->
-> Signed-off-by: Sandeep Gundlupet Raju <sandeep.gundlupet-raju@amd.com>
-> ---
->  README.devel | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/README.devel b/README.devel
-> index 78fbfbb..de370e5 100644
-> --- a/README.devel
-> +++ b/README.devel
-> @@ -40,7 +40,7 @@ distros).
->     the database backend):
->
->     sudo apt-get update
-> -   sudo apt-get install python3-venv libmariadb-client-lgpl-dev
-> build-essential python3-dev libjpeg-dev libz-dev libfreetype6-dev
-> libssl-dev mariadb-server rabbitmq-server
-> +   sudo apt-get install python3-venv libmariadb-dev build-essential
-> python3-dev libjpeg-dev libz-dev libfreetype6-dev libssl-dev mariadb-serv=
-er
-> rabbitmq-server
->
->  2. Work around path issues (you may not need this):
->
-> --
-> 2.43.0
->
->
+  * getproperties.py argv change:
+    - live qemuarm-oecore build reached and passed "Load build revisions"
+    - the step set 15 properties
+    - Buildbot log showed direct argv execution:
+          argv: [b'.../getproperties.py', b'.../build', b'qemuarm-oecore']
+    - direct replay on a preserved qemuarm-oecore build tree matched the
+      old shell-string output exactly.
 
---000000000000467e710653eabef2
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+  * Disk-space check:
+    - live builds passed the canStartBuild disk gate and started normally
+    - local comparison showed the old findmnt --df fifth field matched the
+      new findmnt -o AVAIL output for ., /tmp and the worker tree
 
-<div dir=3D"ltr">Merged. This is a change in upstream Ubuntu packaging.</di=
-v><br><div class=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr" cla=
-ss=3D"gmail_attr">On Tue, Jun 9, 2026 at 9:40=E2=80=AFAM Sandeep Gundlupet =
-Raju &lt;<a href=3D"mailto:sandeep.gundlupet-raju@amd.com">sandeep.gundlupe=
-t-raju@amd.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" st=
-yle=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padd=
-ing-left:1ex">Replace deprecated libmariadb-client-lgpl-dev with libmariadb=
--dev<br>
-package in README.devel instructions.<br>
-<br>
-AI-Generated: GitHub Copilot (Claude Sonnet 4.6)<br>
-<br>
-Signed-off-by: Sandeep Gundlupet Raju &lt;<a href=3D"mailto:sandeep.gundlup=
-et-raju@amd.com" target=3D"_blank">sandeep.gundlupet-raju@amd.com</a>&gt;<b=
-r>
----<br>
-=C2=A0README.devel | 2 +-<br>
-=C2=A01 file changed, 1 insertion(+), 1 deletion(-)<br>
-<br>
-diff --git a/README.devel b/README.devel<br>
-index 78fbfbb..de370e5 100644<br>
---- a/README.devel<br>
-+++ b/README.devel<br>
-@@ -40,7 +40,7 @@ distros).<br>
-=C2=A0 =C2=A0 the database backend):<br>
-<br>
-=C2=A0 =C2=A0 sudo apt-get update<br>
--=C2=A0 =C2=A0sudo apt-get install python3-venv libmariadb-client-lgpl-dev =
-build-essential python3-dev libjpeg-dev libz-dev libfreetype6-dev libssl-de=
-v mariadb-server rabbitmq-server<br>
-+=C2=A0 =C2=A0sudo apt-get install python3-venv libmariadb-dev build-essent=
-ial python3-dev libjpeg-dev libz-dev libfreetype6-dev libssl-dev mariadb-se=
-rver rabbitmq-server<br>
-<br>
-=C2=A02. Work around path issues (you may not need this):<br>
-<br>
--- <br>
-2.43.0<br>
-<br>
-</blockquote></div>
+Anders Heimer (3):
+  steps: avoid shell when writing repo metadata
+  builders: pass getproperties command as argv list
+  builders: avoid shell pipeline for disk space check
 
---000000000000467e710653eabef2--
+ builders.py               | 16 +++++++++++++---
+ steps/writebbsetupjson.py | 19 +++++++------------
+ steps/writelayerinfo.py   | 19 +++++++------------
+ 3 files changed, 27 insertions(+), 27 deletions(-)
+
 
