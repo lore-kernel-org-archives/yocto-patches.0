@@ -1,94 +1,111 @@
-Return-Path: <gael.portay@gmail.com>
+Return-Path: <richard.purdie@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E6B4CD98ED
-	for <webhook@archiver.kernel.org>; Wed, 17 Jun 2026 07:41:39 +0000 (UTC)
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.10326.1781682092633277301
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DF46CD98F0
+	for <webhook@archiver.kernel.org>; Wed, 17 Jun 2026 12:37:13 +0000 (UTC)
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.14369.1781699829932618814
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 17 Jun 2026 00:41:32 -0700
+ Wed, 17 Jun 2026 05:37:10 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=iy2fYr9z;
- spf=pass (domain: gmail.com, ip: 209.85.128.47, mailfrom: gael.portay@gmail.com)
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-490791a3e92so6318195e9.0
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 17 Jun 2026 00:41:32 -0700 (PDT)
+ dkim=pass header.i=@linuxfoundation.org header.s=google header.b=PncVSnRy;
+ spf=pass (domain: linuxfoundation.org, ip: 209.85.208.41, mailfrom: richard.purdie@linuxfoundation.org)
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-68bfcf11050so9585637a12.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 17 Jun 2026 05:37:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781682091; x=1782286891; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nJklKX2JSwUVsiaH92RMW5441IZMHs9edBy5IxBuHJQ=;
-        b=iy2fYr9zPb7FDWyfoJXNvfuGqXOgRG7nNyTwzueVzmrVVXlEBJYbs5AliqGINrduA+
-         TSrYlQbzkMTtxgU/Bopk9Hx3vGkEg+Bet3n+In0Gc2E2r8FKOG7p+FPhcsK5dppUfX2t
-         yT99Sdm5dX09Xv/9Xa/DVVI0BbbyeBVCMqPqs6AWqq21r7lxi9IUvynqjja4V9qZm9ak
-         LVhqL3DVdHpLtdrkY0aoFVrn0onGeojmsYCl2iOGwrJ4zcmQWaCbtUvAQPb+GmoBcsOY
-         057UUYWKmyPs90tgPUBKL+QK7q93j95auxQzW5cAiA/mJFjlHmwunBK+4GXJSCttcJmr
-         bzpA==
+        d=linuxfoundation.org; s=google; t=1781699828; x=1782304628; darn=lists.yoctoproject.org;
+        h=mime-version:user-agent:content-transfer-encoding:date:cc:to:from
+         :subject:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=nVagAua5slCJcvFn2OBm/P2AqA4nSlLYxijMpfvj4K0=;
+        b=PncVSnRyAf2Pt0OIw2LMS12bUdi+kH/rqpJp2F+Do3e21d8Vm4aZ8aPFJbmNCn3ZoN
+         +dn+Vnrj1UyzMKSLaDPzKsd5urh8kr3KxxHp5sYW7tMpfiGxAsJvwPfAwd5WWTp7N4K+
+         5jWr9fWpscEd0nxvern6y4c1L2/wzhVljcm38=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781682091; x=1782286891;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nJklKX2JSwUVsiaH92RMW5441IZMHs9edBy5IxBuHJQ=;
-        b=ByuFOpwtICd1t2u84JIyaXBbl/q4TvmFOtGmf+osO9if6Y+ghWHaQH+n8S/1EwpkZo
-         wRojpdPbH5yqkQ81jI/DNiAIiuj6xMZ23vPLF46+z+0Y7Bjd6lRZkVEugn+snpbEdiUR
-         FE4M2ixjGEnNr7iG7N4oKH8TLA0jsGIhdjc1oiMQIvv4Ya7s4c0y8HQY9NHzAbKPZsIu
-         ah8G4pUH75fSCBrpeKGKG1Cq7MPI2bWYm1N/xt2sXo/YY0N4jhuYYKGwzIVvsQ/t5KUs
-         Dr7WiGZzZGXzoPlEemfF2ffi6WbO3iqlvOve565KsuAmm1cb6VasLGXF96h+1i+A0scu
-         FsEg==
-X-Gm-Message-State: AOJu0YzyQ2OPqGhG/hnvSMYYMonM3+UlNUxjHsYId3vC0WBCB7pM09bS
-	oqb/S2lcsty2ORaWsfUS4WZYnCsMeWlpj0wexMJY2QyPKCawRQZmTpX36WJdQ1mz
-X-Gm-Gg: Acq92OGvr0qiGo5iAhIm0xFbKxDZFrnX9LGZ/797POEQpxLwDIQ/4xrm71hGh3h5fsV
-	1hW1NosSJt5zFZ3UI8B0ziKA95dvSNo3pMv8CA8DYlzYFI3ksDH4W2yGOwwemlQ3YRrBMsPfT3+
-	B7AwG8aoMCoBX4MG/YBS2EdQuj2wxoyV0IOe7TPZfERCYYGleARz4nq/3lUGdXygba9k+ulD+OZ
-	Iz5G9CHtm7YIvmeAh2j7A8j7TSg5QuK1/QIiFPX4PbXrDbcd6qlBsp5w96n5zZxjSRKUQRrhlEV
-	l5FiESqGXv64Q8cF/1ew8FGkb8ujAw8H/F7sl/9ohl0+eInRxGlvESWiO5PKp2qs98tRKpQ6pTc
-	kCXlWF5whAnbkdSQDTms2Qmo4aJ7DwYUN+VENOTqvYDWbE5btSxNPYEoPHZYeIR8HOpbt0g9tjo
-	re3P1WTP4u9HdrepTNIpSBZvweuCE3jMG80MvGmNgpYxcB9c2faU8iTM+D4cnyjg==
-X-Received: by 2002:a05:600c:1392:b0:492:1eaa:a8ba with SMTP id 5b1f17b1804b1-492333e6c17mr17900625e9.6.1781682090519;
-        Wed, 17 Jun 2026 00:41:30 -0700 (PDT)
-Received: from chipmunk-161.. ([2a01:e0a:ce:f2f0:6d55:4b21:7db4:207a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4606f2e592csm54493925f8f.36.2026.06.17.00.41.29
+        d=1e100.net; s=20251104; t=1781699828; x=1782304628;
+        h=mime-version:user-agent:content-transfer-encoding:date:cc:to:from
+         :subject:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=nVagAua5slCJcvFn2OBm/P2AqA4nSlLYxijMpfvj4K0=;
+        b=apwx2YPZKNqY9y7YYCjUm00jTyFL0Jed0nR1VmMFUOO9e4URgG+rr0S6xkTvVKOVHC
+         k86gGkRHW9qNkvEoZwmd3bhiGZqLxgUxbR1OrmkHrlg9bl3yvmCAc/GvOxyCCbLgXSY7
+         FZY709QtCOdP2O6+NdMVo2kNENRWlWNOJS35wm1mLAgdjQhpeVuDWVHI20TdcRiVQz9S
+         9SBfSO9NT7WPTryrGKJlPv2dtMqogYq1LEfTHOHA2aYONHc4SJIRDwFr/zTgyo13VREg
+         8RNG+W12M2zkq2gW2yb0tyw4si1KgNaJVR7Donf3QMuBVnh2X/b77RXumB0Jd0h5jS5Y
+         wL6Q==
+X-Forwarded-Encrypted: i=1; AFNElJ+MaaBAscPL00QqXlHS7m0B9r5CwFYDw9iDL4DkfWMP/IEzuceL4qjcaOAe2XE54smiZMCFbAB6AGaZbXLW@lists.yoctoproject.org
+X-Gm-Message-State: AOJu0YwmgqDlk7GQPxArzXHpIBKZwWHbvqsBdpG97CXr4aC8/1RaNGlM
+	ZTMarOFWBbuy6RU8s/2JULjq14Rqlqte5EDclRisL3/qpbuWj5jLEtc0R8/VXpZaozs=
+X-Gm-Gg: AfdE7cmqQE6tvd8mRAybm8xnvRhr/Tfi2t9Pn8lQcq9bWc05icRdvVu6rVBb1hpN9Uh
+	pqYdB/hMjqWZGbi/U8tmftqhTZfN1Wd5bdFQFw5bFYeUGlv3iygB8HOLz4k9YfKTsHHa+No4zYZ
+	4ZcHIg6eZ6V7wo0NzpjtVpKtrbktVDOjY+BZGXqbGvmk7dL+eG30925Q4rXCc4fDBvvPNJ8p0xw
+	sz9m4w6hdVnUHkdi5WUQkhLsUkRkEpW0z338iuAejxsCjXyMSNwA0h5HWN4BzLmEDEIfizNlhou
+	2FD9GmhdPi7mv7jS99tUsL4VB7hs6Ce1DzYee/IPveWR+1gywSbj3nIqj6KMotoaCN+PxKT/Hhs
+	zBQPg8KHLQvXSdSGR0E+sEVz3j5JPO4g4xTC0N3EhlNoGeyswuvCZOMp/jB0E8V5QdzwLEKmtvr
+	R5L9pRzuwk74xl05KBvuBw1of+D2PzGMkFsBYRD/w3Ovk6t8jDu7rE7piXuA0It3TAF0CvkpmS5
+	SnOC7D0ehX33CtK
+X-Received: by 2002:a05:6402:5010:b0:68d:92cf:52f4 with SMTP id 4fb4d7f45d1cf-695473eec9fmr1658766a12.5.1781699828119;
+        Wed, 17 Jun 2026 05:37:08 -0700 (PDT)
+Received: from ?IPv6:2001:8b0:aba:5f3c:1e34:81e7:2ec0:d3d5? ([2001:8b0:aba:5f3c:1e34:81e7:2ec0:d3d5])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-693c43a6d9csm5748452a12.13.2026.06.17.05.37.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jun 2026 00:41:29 -0700 (PDT)
-From: =?UTF-8?q?Ga=C3=ABl=20PORTAY?= <gael.portay@gmail.com>
-To: yocto-patches@lists.yoctoproject.org
-Cc: twoerner@gmail.com,
-	=?UTF-8?q?Ga=C3=ABl=20PORTAY?= <gael.portay+rtone@gmail.com>
-Subject: [wic][PATCH] bootimg_pcbios: fix typo in comment
-Date: Wed, 17 Jun 2026 09:40:07 +0200
-Message-ID: <20260617074007.2599873-1-gael.portay@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Wed, 17 Jun 2026 05:37:06 -0700 (PDT)
+Message-ID: <67ec48c8598922257469ce1fc62a0bd8c68e742f.camel@linuxfoundation.org>
+Subject: [pseudo] pseudo env corruption with bash
+From: Richard Purdie <richard.purdie@linuxfoundation.org>
+To: Mark Hatle <mark.hatle@kernel.crashing.org>, yocto-patches
+	 <yocto-patches@lists.yoctoproject.org>
+Cc: Paul Barker <paul@pbarker.dev>
+Date: Wed, 17 Jun 2026 13:37:05 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-9 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 17 Jun 2026 07:41:39 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4230
+ <yocto-patches@lists.yoctoproject.org>; Wed, 17 Jun 2026 12:37:13 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4231
 
-From: Gaël PORTAY <gael.portay+rtone@gmail.com>
+I thought I'd write down what I've discovered when looking into a
+segfault in pseudo on the autobuilder. The bug in question is this one:
 
-Signed-off-by: Gaël PORTAY <gael.portay+rtone@gmail.com>
----
- src/wic/plugins/source/bootimg_pcbios.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+https://bugzilla.yoctoproject.org/show_bug.cgi?id=3D16078
 
-diff --git a/src/wic/plugins/source/bootimg_pcbios.py b/src/wic/plugins/source/bootimg_pcbios.py
-index 2ae4eb1..f87c337 100644
---- a/src/wic/plugins/source/bootimg_pcbios.py
-+++ b/src/wic/plugins/source/bootimg_pcbios.py
-@@ -26,7 +26,7 @@ logger = logging.getLogger('wic')
- 
- class BootimgPcbiosPlugin(SourcePlugin):
-     """
--    Creates boot partition that is legacy BIOS firmare bootable with
-+    Creates boot partition that is legacy BIOS firmware bootable with
-     MBR/MSDOS as partition table format. Plugin will install caller
-     selected bootloader directly to resulting wic image.
- 
--- 
-2.43.0
+opkg-build is a bash script. The issue is that bash implements its own
+setenv/getenv/unsetenv functions which operate on bash variables as
+well as environ. What that means is that bash's view is environ+delta.
+bash does swap between different environ copies depending on what it is
+doing but it only updates that when it is about to exec something that
+needs it.
+
+Pseudo noticed problems in this area a while ago and bypassed the bash
+wrappers:
+
+https://git.yoctoproject.org/pseudo/commit/?id=3D80c6334a2e4204cdc7132216f6=
+4d1660eed62fd9
+
+The trouble is that glibc's functions alter environ in a way which is
+not compatible with bash and the two conflict. Whether there are issues
+depends on which variables are set/modified in bash's local delta to
+environ.
+
+If I remove the glibc calls and just use bash's wrappers when they are
+present, all the valgrind memory errors are removed and things look
+much cleaner.
+
+pseudo doesn't access environ directly that I've spotted yet, just via
+setenv/getenv.
+
+I'll ponder the right fix a bit more, the hard part will be getting a
+list of all the envvars without using environ directly...
+
+Cheers,
+
+Richard
+
+
+
+
 
 
