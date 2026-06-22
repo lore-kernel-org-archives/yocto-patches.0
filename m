@@ -1,167 +1,235 @@
-Return-Path: <quentin.schulz@cherry.de>
+Return-Path: <cleiton.bueno@b2open.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F6B3CD98F2
-	for <webhook@archiver.kernel.org>; Mon, 22 Jun 2026 16:00:24 +0000 (UTC)
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (DB3PR0202CU003.outbound.protection.outlook.com [52.101.84.27])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.299.1782144015518970681
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 632DACDB46F
+	for <webhook@archiver.kernel.org>; Mon, 22 Jun 2026 16:07:24 +0000 (UTC)
+Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.456.1782144434009595903
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 22 Jun 2026 09:00:16 -0700
+ Mon, 22 Jun 2026 09:07:14 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@cherry.de header.s=selector1 header.b=RQeUl/9B;
- spf=pass (domain: cherry.de, ip: 52.101.84.27, mailfrom: quentin.schulz@cherry.de)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=n9xB/8OEECADHu7V0aY7aGexpts1v9j06xl/Ih/I2cZ8C+WGOr6nDz3KsMf7YVPkFfmBqfxqqQXfyR9H4BDYzRH20acwXqEBhxx9Cx7WECUZOomYEH4dsc6brFYD30zBMkzoOnIMjeNPHy6rNJpXAiUlbPOV/HVURqxERp2vVXt8pRkYh4HEiuVSK7BocaFJezSz6CoPDMH3dzsYGrUcN3DxlAfXUz0hBKqtEnnmRobjfoHCzd1+1mZvxSD6wZOuOrB/4MkTFfMGVYZeOQjQEcf0+Nup6QopkR3Rp0YRm3YvZ5/3s1dgRDl3NAQ94Lou+YwDVX8qtPyoiat6+XGXbg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HwONFyGnjONy4pE0j6ONHE5UnleBZw3Fol9qfpj7gtU=;
- b=n/jD588nLhdPoNSnYyjgNKKtfq+DosxWlv6RiHoMaTNh2ViNn3CKm3+UaF0fegxgMn/cdRkF2KY8d9rFFe8OL6resZvSkYcIrzPoztpB3Kx7aTDUaf/IIhBWanD0PR0/pSy2d98Da2RpYHxrzIolyT8sgqN8UFltmWVOhpZjFQNt1V/KV/sXnJjWAKD6PPCqsRmMvfU7+nghaJOvakiJHLCIHRmY6L/1M/xLtxFJ+9EDgt8BMHtIV2e32z/QaNpadsIC9cSYTbrhkuv7qKvV9qWQ4uY1z3V36igwpbZmNldMoCZS63lJY/trxC3ws1aZG1pViyIfu+2hvK5dw1LCTw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HwONFyGnjONy4pE0j6ONHE5UnleBZw3Fol9qfpj7gtU=;
- b=RQeUl/9BLAX1VE5Gwk5534+8rGdgRhVyOKikAKfrCpfNFFLyJGGg3POSAZv4pVdutw49c66+/La3luF8eZl22iJKrLRP/8nMGxUgMM3A3dWu3sfiKuQ/PW8Tg4TkRu1ZlR42zlFscSa75eclcOGagq92pKQDibcLd57DLSveiZY=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from DBBPR04MB7737.eurprd04.prod.outlook.com (2603:10a6:10:1e5::22)
- by DU4PR04MB10597.eurprd04.prod.outlook.com (2603:10a6:10:581::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.139.11; Mon, 22 Jun
- 2026 16:00:10 +0000
-Received: from DBBPR04MB7737.eurprd04.prod.outlook.com
- ([fe80::5960:fb4b:9313:2b00]) by DBBPR04MB7737.eurprd04.prod.outlook.com
- ([fe80::5960:fb4b:9313:2b00%5]) with mapi id 15.21.0139.018; Mon, 22 Jun 2026
- 16:00:09 +0000
-Message-ID: <9edde087-11b6-4377-b74e-7637883c0d52@cherry.de>
-Date: Mon, 22 Jun 2026 18:00:08 +0200
-User-Agent: Mozilla Thunderbird
+ dkim=pass header.i=@b2open-com.20251104.gappssmtp.com header.s=20251104 header.b=mh1dxUSu;
+ spf=pass (domain: b2open.com, ip: 209.85.160.44, mailfrom: cleiton.bueno@b2open.com)
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-4472500e25fso1068142fac.1
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 22 Jun 2026 09:07:13 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1782144433; cv=none;
+        d=google.com; s=arc-20240605;
+        b=NZt2HeU70y15jXzu16VTQuPGxM/MZYbF4QUvvgrvt053j4SmUA9eFilhEADtixvwQk
+         rS70ZBdjjQBzBI3qv8wZpaijhjA7bJ8mXLSg+MTLorFwvcoTSx9RsR7234esso0IUH5D
+         QnCgYDlSIb1hkAHpkvMZ4YDrLIUrF9aaEUeOxF1bI7F3xz6KOXDLYmpq4b14cgQWEozG
+         8+z/yw0avk21Z/DWffoYAzwlF0aZH5X657NwhBvhuQKu3dUWiqrsKaRPHCCrXD7q3TxM
+         dAyTbopTI1nj0gsSWJSm4ittcRMC4YZQcVdY5Ob3Co71CXwQwQEUVP7PHncr8JCQtDtA
+         8fOQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=0eya2M09CYA3uywJAsIfR2z7Krj8cHpX3w7rWeV3vbM=;
+        fh=QttiF20qQLGPeYxvS2rfsZyKkvis9WXT/gr73OA3B8g=;
+        b=Z94y0ZSYyZ5Q96H8o+zR7PZwYX8TeBr0sDTWpdsxCiTsLcyWZJJwvJoSZ1SD/wPs2g
+         wsBH6ti+1RyzajYOzL+fa1GAeCo6jL3iPAOUFWA9YGclK9W2v8o/0BbBzqpnnp6NQ8pU
+         0hafOCHkHYeQ0PptNlGhk2vD8rT8T/klz/n75e4S9LzAm8kZ9KXHt4f/CbKrwGalc4lX
+         Ym3bfi38V4f0WJ0NO2R+Nwpys8XOCpuayG6kk/0Nr8fr+vc05bpDbNe0DWWYsatzhmI2
+         9cTAzcMRJdAb/9p4K8jzlSBC23LhzwFABlreyMAjEAZgeKyc6oNAIi5zpGec8fAw0Jnl
+         Yplw==;
+        darn=lists.yoctoproject.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=b2open-com.20251104.gappssmtp.com; s=20251104; t=1782144433; x=1782749233; darn=lists.yoctoproject.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=0eya2M09CYA3uywJAsIfR2z7Krj8cHpX3w7rWeV3vbM=;
+        b=mh1dxUSu+YH7xo/py5WK7JS35FleQ/ozMT3QVmC9p5pf6/1sPR/4PqKWhAkW6JtaG/
+         nhs6L/J+3MgqAbtjvt4Z/g2YTMKFiFyPPLu/bz8Zb3Y5i72skOxherV1W7yJQ7XRDk9G
+         U3u+7ZsD21svSaa9P2t1faetjbyKhjUU1+l322Q5dJK/D7fIIAFpM8cGW4zFsRj0P/Q6
+         pefkFmOFB9MxB7Z6D8L8f6kJdXXSqb8vAhKa6ghkSx2hHhRKKQN6Gg6bQzqOZ9ADwnLZ
+         i2Eu66cTMbr3ZSIea36Ww2A/5u/Xg5cCciKy5qGwj2IEr4MuHrspFo5kWb0xvb/c9PIV
+         ZkUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1782144433; x=1782749233;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0eya2M09CYA3uywJAsIfR2z7Krj8cHpX3w7rWeV3vbM=;
+        b=XpRTk3D9H+53FIcqA9cQC3WKykvoMgt6+vr1wAP5CWDeJBCCEEbbeDbaPalyF6nPgm
+         v5lmPQZneA/OKlW/hZMIjVS31nnma355dBnLlkGAvHzBR4J8Z6SEOGYkXJURzZgTiLLT
+         36SKRk+o+6Lv7thayoq9fGJnABr8x0X68SkK+9Ca5KbZUy4MKrtPm0JPE2nuUdE47vcd
+         3xwmjJqtLHhXME3TRRfpUUpSzwaNN7rh6eRpenXbhDYtgQtd5hftBTa4TKyMCgDeDcJn
+         AES9eHcBkj73jTI2tDnbhNbMGwT5WUKBBLIQ8bDIRWw69TvehF6gcxf8sIinpp0a/Tfz
+         u4sw==
+X-Gm-Message-State: AOJu0YwuZ8/JBQLeVyKMdKgqelB2NUkN5m1BdJWkl0k5KIfNXPG1qLXg
+	TSN60XAl5grrbvHZPDA96xie7C6xdgnWWkY0jzcemtkI72eFCb+/TyWSB4gh16bIE4FAtsizY8W
+	8ADcKy5ykguW9HQMtD7A4YS3LXcmZtgFuC4N58hjjBQ==
+X-Gm-Gg: AfdE7ckCmD5qb6zyGMAf7bAR3FUbHR1Ej2SoqsDNGMs5npkhIf0/A2fn5cKeIofjHlB
+	uTp812Bai40KbU1qTQX8iMpEDC0cs3QeLCLPWK93/EdoTVVM6IX3iNp4avJH+9y4sWQlnTBreDI
+	Jp3B1ccZ4BYAcelzoHGHJHgqMD2qwgjFv+rCBPZ8WefgXn3dCVGNAszGtTJ4rSfW9vbQooVtjt5
+	nOyWs/w4qJpd4trJPyxWt+0VeDtrJ77mkwnpGsJj2wCblfRaRrSc/Xkf6qnWB0nY8i7pQu7qDZi
+	8dMTryObXlfqxcszyZZK/cpNKHgBWYxIVFzu9BfJHQur4/L8lUPnNG7OLQQARYeR/Mll4GrGJiJ
+	12v+IVTVJ5UBktTZ4Vq/0fCbCFhQwJq//xbSuNR+lLZb2bzVguBL6Kw3PlQ==
+X-Received: by 2002:a05:6830:f8b:b0:7e6:e349:539a with SMTP id
+ 46e09a7af769-7e92d9187c0mr12738635a34.21.1782144432906; Mon, 22 Jun 2026
+ 09:07:12 -0700 (PDT)
+MIME-Version: 1.0
+References: <20260622134626.3616736-1-cleiton.bueno@b2open.com> <9edde087-11b6-4377-b74e-7637883c0d52@cherry.de>
+In-Reply-To: <9edde087-11b6-4377-b74e-7637883c0d52@cherry.de>
+From: Cleiton Bueno <cleiton.bueno@b2open.com>
+Date: Mon, 22 Jun 2026 13:06:36 -0300
+X-Gm-Features: AVVi8CfANj75XpsRuW41JA2ixGaxyBqFN4lAIiNmDFdQn9D7iRPuVtF-TAZW0_U
+Message-ID: <CAA-i2LwP13YUZ8cnN7G8h3XuYESC36PPHSyvnTp6Oyd+PnXA7g@mail.gmail.com>
 Subject: Re: [yocto-patches] [meta-rockchip] [PATCH] u-boot: fix incorrect
  commit reference (radxa-zero-3)
-To: yocto-patches@lists.yoctoproject.org
-Cc: Cleiton Bueno <cleiton.bueno@b2open.com>
-References: <20260622134626.3616736-1-cleiton.bueno@b2open.com>
-Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <20260622134626.3616736-1-cleiton.bueno@b2open.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: WA2PEPF0000089D.POLP291.PROD.OUTLOOK.COM
- (2603:10a6:1d8::652) To DBBPR04MB7737.eurprd04.prod.outlook.com
- (2603:10a6:10:1e5::22)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DBBPR04MB7737:EE_|DU4PR04MB10597:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4ee4e40d-8c6f-423b-1089-08ded0775621
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|1800799024|376014|23010399003|366016|56012099006|11063799006|3023799007|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info: 
-	6c/O+0o3JU/2M2T9A/ekA8Z3/ZEnPyOg4iA7DvNVFBDQq6H5qsjuO6EuCBIJL3o9Y9aL4Pt5Zy0vN8K3WvVYrDcdzs1QgXix61kHFujCj4ZeqT1CYHVF8n/0UAoFPI26Gw1q4NUfNyt2OP6vJrF6Bo03Mn45BiCKdTj/l90/A5ne3HTtHANlK8e2KaEqlkKQklMez9iR50R7eu32PeTMXX/lxe+E6n2A0cxsxyxQa3m9nGXAIUfoHuUS2XNkkCy2OyxrlGm8sHuwGDnrS2EleX1/51jPQtYFzk9ihnh15zsYUHxU/ArIHNVQBYQFk3gQ/VFGByRZrKfcWati1DtPj7ufybITYR78rr/TfYcC0fffWmV4R0tuYnu4Sn/nGQcycW6kxl9Npt7XJwNfm8zi9OyNpY1RWpFwDStskZ4pExnERwTLAd0YfKpKpUwL0KyBTFaTmkfYpmanXUwB/hxEjHXhdkZVeqkNWyFMkxtb8m52h4LOwKNa7J/lzmLMJtznbOFtJOwM2/gRAc+fVmejLXCaoi0DPYdkKJluUudyEM/Ofz6DDXANnLqAJ9omx4rhIR4T2ovvtL70tjzudvm8HoJ54s86tMl70CI25/+hcioQxHjGrM+GF4XbIQmjwOLwyoejP3oI5harhiQHXFApcSg41uj5lfGo96S606ZFmDM=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DBBPR04MB7737.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(23010399003)(366016)(56012099006)(11063799006)(3023799007)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?S3ZKc3QwQnFJcFQwSXNWd3pHc1c2NXJLTExjVHFRTFgvVW1tOXlxcVRQYk9B?=
- =?utf-8?B?c2VoWkZqUGxCeDRBTjlPVVpLZHhPRE1iTVNaOFZzTmxnZWw5cFd3ZHdCM1ky?=
- =?utf-8?B?NWtsQm1QY25xYjYxQXM0SUZqNDNmM3F5b1BMOWx2ZWhJVXNzMEF6MVVrWDZ0?=
- =?utf-8?B?Z09mTGxBWkNMVTVYM2hJVDU4RXR3NUpUQlhEQ3VDT2EyanZJMG00eWdjbVNv?=
- =?utf-8?B?QmFVemo5Zkg1VmlMSFlXb0hyNTFFRlh4dmN6T0dzWmV6VTNHUzdWN0pOQXhn?=
- =?utf-8?B?WU9QQ2t2ZnRmVFRMM3hJcUlQcGVkSzBMOVk0M3R2WVhBdklKeUtFTlE5L3A0?=
- =?utf-8?B?MEFMZDZROXJnRVlHTTdHNDFVYWNOWWNJdWVRUGtKb3dFaU8zVWZIZ0lBRitq?=
- =?utf-8?B?YnlWSktPWkFOQXY4VU9Ed29iem1vc3JIMnRHU0pKaGEwUEZDU2xKZjYyN2Vz?=
- =?utf-8?B?dGo2ckkrT0h4clgyaUJBM3EyZkU0RVN2aUhpN1pKamN0TkpmSTZsN3ZxUHk2?=
- =?utf-8?B?UXNHWDhHM0VrMXo2R0Z4VVZ4aXVBRFFDT1k5OFZhZWdMSG5HNzFvTkY1Q2tY?=
- =?utf-8?B?YmlzOGxxdUlxWWRBVEdBckhLTXpFT21PTUZUNHMvR1crZlBSNnB0Ty9mRmhK?=
- =?utf-8?B?V0xhc0xleU5KVEJ6cGlIOTBmSWRad2NVR0tXam9PZDlqdHBVOWNFemFvOGI4?=
- =?utf-8?B?QW9YWjZ3OURiQ3JSM2xnZDNObjk2Sk9uMTZXT0FnVjIrWmI5ZUl1VUFtdzBD?=
- =?utf-8?B?bHg2Y2VIWkJMTlNzVFM4d0l4MkVpb3lkMXQyRmFLS29GSmt6TG9SZUV0ZVJW?=
- =?utf-8?B?K3Nwb3hac2U3bm1oY1pFc3dxV0xibngyUVJQM3ZuS2tqbjZRK05LTTE3Nmhs?=
- =?utf-8?B?ekxSTmVyRHROUlNRejlyeE5nLytqZWNvK29Pb21uOCsrb2Z3Ri9lVm1vUkcr?=
- =?utf-8?B?QW1IblZ2aVZQTk1uVDg2ZXpSbGtrakZYQUFUNEplaTZlZytiSVpKRmhsbW1D?=
- =?utf-8?B?dkNHZ041L2k3N0phd3N1UjZMbmJTdW5VY0svQm9FME5LS3VFQUZ1N09iSVlh?=
- =?utf-8?B?R1lkam56c3JTaE1WdkZmRGd4ZGVyblFkcHdXK0tJeDNicnZPcEwzd1lWWVZS?=
- =?utf-8?B?bkpMRVhnbmwvRmkrWmgxUkhzN3dOaUhBR2hjTUsxQUFsVkN4dHM3NlYwTkN3?=
- =?utf-8?B?b1pLOHBsR05vTlFGVUg5SUlDRzFaUVB5VlZmTDBhNS9UVmNGYU1zYkw4Y0I2?=
- =?utf-8?B?WHVxT1VjZGs4N1hBR1lwOXU5NFQ0L3JqVER5SUF6NnJ3bkpJVSsyeXZtZFgr?=
- =?utf-8?B?d3dFK2w0enFDV3BNOTNJMk9OdFZQN0xTVG1LdFZxS0ZHZUcrWjV4SjFQdVpE?=
- =?utf-8?B?RkV5TWNUTGlyN0tHNExKMTlRc3NxRWpQaS9GajA2V1ZrcUF6RW9Wa01EcEh1?=
- =?utf-8?B?aS9tOUg0bEpBT3ZoWVlMMHdjajZNMUQwM1ZiL1FBZ0tqdUtYaEdKNzFEdThF?=
- =?utf-8?B?QUFQa3FMQk1CYmFzck0xbzZranFNNkpDMjUyRGZDS1FQNjZWbWRtdC9sTHhi?=
- =?utf-8?B?aG10SmRIdDNWUTVwOVhHMXJXb2JRQ0JCMVFySzIramJRZ25udkxoUjZKVTlV?=
- =?utf-8?B?ZDgrSk9EOE12ZjhLZFVoV215MnVvNDNFcWJYZEJtWDJlaWlHeVliTS9ZOE82?=
- =?utf-8?B?ZmoyQUpIc3gzUU5vRDY1VTZXVTJlSFlCUXV3aytOSWhSby9rcWRsMldzdE5V?=
- =?utf-8?B?UzVTc2hwbU5sS05Sa1BOUXB1b3dGeUw2akZvZitLeWxtYVNjVWxqdlJUV2RP?=
- =?utf-8?B?cmxEWFV2OUxzYVZJMkgwdG82RHVxK2FDU0hpK04rbkpBZUwxRUhlcURqL21m?=
- =?utf-8?B?ZEhoUnFHTHFUSzNpZnJDNk1SZGp3eEh5eXNvZTlEeUdsaUFzcUx5S1ZhaGNC?=
- =?utf-8?B?eWZkSkhXQkVSRmorUk9odjhmblpJOWdCMzVFMkJ1NVR3bGcyQ0VXKzN3UDNX?=
- =?utf-8?B?c2dxRDdWWnorRnVMblRweVhkaE5CRWhNYkpKVWR0WUd1VEl4TmhxSk44bEVu?=
- =?utf-8?B?bTQ5QkgvY3dpVEJ3OUlMc05Melc5bDh3b1FpZEV0Y1E1ZUp3WWVJMnlVSHYy?=
- =?utf-8?B?ejNZeDRaRkJxTy85MFl1a20vYUhIaEpCRTdyMTFrSzdKeDYvTHJscjQ5WTZB?=
- =?utf-8?B?SFVScjNvQWUxRWoyeFdJS244MEVRYVNVcVJWa1RVMXZIRGx5d2NWdWE3Zjkw?=
- =?utf-8?B?czNBb3RLNytVRXFzd0ljc2QwTHJTK05mRzFNdFA2NW9JdTAvd00zQktrcklt?=
- =?utf-8?B?TFIwUEUvSURFdjdEYXkwV3VmdTNEczQ2QzNoaVgrWjNrZ0FNVGladz09?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4ee4e40d-8c6f-423b-1089-08ded0775621
-X-MS-Exchange-CrossTenant-AuthSource: DBBPR04MB7737.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jun 2026 16:00:09.9592
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mlI6gNgebX87S2djUEk2OCPUqC0zKeJoPrTtADfc5y1fAWpZw5xC3rcvGIt2WOtZm8N3e94KDylpJFi4IZLqARnXnKTTowa9F4+bue/BiHM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB10597
+To: Quentin Schulz <quentin.schulz@cherry.de>
+Cc: yocto-patches@lists.yoctoproject.org
+Content-Type: multipart/alternative; boundary="000000000000dcb5120654d9d5a0"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 22 Jun 2026 16:00:24 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4258
+ <yocto-patches@lists.yoctoproject.org>; Mon, 22 Jun 2026 16:07:24 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4259
 
-Hi Cleiton,
+--000000000000dcb5120654d9d5a0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/22/26 3:46 PM, Cleiton Bueno via lists.yoctoproject.org wrote:
-> [You don't often get email from cleiton.bueno=b2open.com@lists.yoctoproject.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
-> 
-> The commit 8cdf606 is incorrect and does not belong to any
-> branch on this repository, it may belong to a fork outside of
-> the repository. The correct commit should be:
-> 2e2ae1fb69a25217640bfe2fb9abaf9f4fbacead
-> 
-> Signed-off-by: Cleiton Bueno <cleiton.bueno@b2open.com>
-> ---
->   recipes-bsp/u-boot/u-boot_%.bbappend | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/recipes-bsp/u-boot/u-boot_%.bbappend b/recipes-bsp/u-boot/u-boot_%.bbappend
-> index c939a48..9432e2b 100644
-> --- a/recipes-bsp/u-boot/u-boot_%.bbappend
-> +++ b/recipes-bsp/u-boot/u-boot_%.bbappend
-> @@ -3,8 +3,8 @@ require u-boot-rockchip.inc
->   FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
-> 
->   SRC_URI:radxa-zero-3 = "git://github.com/Kwiboo/u-boot-rockchip.git;protocol=https;branch=rk3xxx-2024.07;name=Kwiboo"
-> -SRCREV:radxa-zero-3 = "8cdf606e616baa36751f3b4adcfaefc781126c8c"
-> -SRCREV:radxa-zero-3:rk-u-boot-env = "8cdf606e616baa36751f3b4adcfaefc781126c8c"
-> +SRCREV:radxa-zero-3 = "2e2ae1fb69a25217640bfe2fb9abaf9f4fbacead"
-> +SRCREV:radxa-zero-3:rk-u-boot-env = "2e2ae1fb69a25217640bfe2fb9abaf9f4fbacead"
-> 
+Understood!
 
-This code doesn't exist anymore since Walnascar, on which branch of 
-meta-rockchip are you building?
+I'll move u-boot upstream and test it. If it works, I'll send a patch with
+this modification to radxa-zero-3w as soon as it's working.
 
-If it's for scarthgap/styhead, I think it'd make more sense to add 
-upstream 2024.10 (or later) U-Boot recipe since the board is supported 
-starting that version.
+Em seg., 22 de jun. de 2026 =C3=A0s 13:00, Quentin Schulz <
+quentin.schulz@cherry.de> escreveu:
 
-Jonas (Kwiboo) is the sole owner of that repo and may freely decide to 
-rebase branches or delete them, so we should really aim at not using it.
+> Hi Cleiton,
+>
+> On 6/22/26 3:46 PM, Cleiton Bueno via lists.yoctoproject.org wrote:
+> > [You don't often get email from cleiton.bueno=3D
+> b2open.com@lists.yoctoproject.org. Learn why this is important at
+> https://aka.ms/LearnAboutSenderIdentification ]
+> >
+> > The commit 8cdf606 is incorrect and does not belong to any
+> > branch on this repository, it may belong to a fork outside of
+> > the repository. The correct commit should be:
+> > 2e2ae1fb69a25217640bfe2fb9abaf9f4fbacead
+> >
+> > Signed-off-by: Cleiton Bueno <cleiton.bueno@b2open.com>
+> > ---
+> >   recipes-bsp/u-boot/u-boot_%.bbappend | 4 ++--
+> >   1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/recipes-bsp/u-boot/u-boot_%.bbappend
+> b/recipes-bsp/u-boot/u-boot_%.bbappend
+> > index c939a48..9432e2b 100644
+> > --- a/recipes-bsp/u-boot/u-boot_%.bbappend
+> > +++ b/recipes-bsp/u-boot/u-boot_%.bbappend
+> > @@ -3,8 +3,8 @@ require u-boot-rockchip.inc
+> >   FILESEXTRAPATHS:prepend :=3D "${THISDIR}/files:"
+> >
+> >   SRC_URI:radxa-zero-3 =3D "git://
+> github.com/Kwiboo/u-boot-rockchip.git;protocol=3Dhttps;branch=3Drk3xxx-20=
+24.07;name=3DKwiboo
+> "
+> > -SRCREV:radxa-zero-3 =3D "8cdf606e616baa36751f3b4adcfaefc781126c8c"
+> > -SRCREV:radxa-zero-3:rk-u-boot-env =3D
+> "8cdf606e616baa36751f3b4adcfaefc781126c8c"
+> > +SRCREV:radxa-zero-3 =3D "2e2ae1fb69a25217640bfe2fb9abaf9f4fbacead"
+> > +SRCREV:radxa-zero-3:rk-u-boot-env =3D
+> "2e2ae1fb69a25217640bfe2fb9abaf9f4fbacead"
+> >
+>
+> This code doesn't exist anymore since Walnascar, on which branch of
+> meta-rockchip are you building?
+>
+> If it's for scarthgap/styhead, I think it'd make more sense to add
+> upstream 2024.10 (or later) U-Boot recipe since the board is supported
+> starting that version.
+>
+> Jonas (Kwiboo) is the sole owner of that repo and may freely decide to
+> rebase branches or delete them, so we should really aim at not using it.
+>
+> Cheers,
+> Quentin
+>
 
-Cheers,
-Quentin
+
+--
+
+--000000000000dcb5120654d9d5a0
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Understood!<br><br>I&#39;ll move u-boot upstream and test =
+it. If it works, I&#39;ll send a patch with this modification to radxa-zero=
+-3w as soon as it&#39;s working.</div><br><div class=3D"gmail_quote gmail_q=
+uote_container"><div dir=3D"ltr" class=3D"gmail_attr">Em seg., 22 de jun. d=
+e 2026 =C3=A0s 13:00, Quentin Schulz &lt;<a href=3D"mailto:quentin.schulz@c=
+herry.de">quentin.schulz@cherry.de</a>&gt; escreveu:<br></div><blockquote c=
+lass=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px soli=
+d rgb(204,204,204);padding-left:1ex">Hi Cleiton,<br>
+<br>
+On 6/22/26 3:46 PM, Cleiton Bueno via <a href=3D"http://lists.yoctoproject.=
+org" rel=3D"noreferrer" target=3D"_blank">lists.yoctoproject.org</a> wrote:=
+<br>
+&gt; [You don&#39;t often get email from cleiton.bueno=3D<a href=3D"mailto:=
+b2open.com@lists.yoctoproject.org" target=3D"_blank">b2open.com@lists.yocto=
+project.org</a>. Learn why this is important at <a href=3D"https://aka.ms/L=
+earnAboutSenderIdentification" rel=3D"noreferrer" target=3D"_blank">https:/=
+/aka.ms/LearnAboutSenderIdentification</a> ]<br>
+&gt; <br>
+&gt; The commit 8cdf606 is incorrect and does not belong to any<br>
+&gt; branch on this repository, it may belong to a fork outside of<br>
+&gt; the repository. The correct commit should be:<br>
+&gt; 2e2ae1fb69a25217640bfe2fb9abaf9f4fbacead<br>
+&gt; <br>
+&gt; Signed-off-by: Cleiton Bueno &lt;<a href=3D"mailto:cleiton.bueno@b2ope=
+n.com" target=3D"_blank">cleiton.bueno@b2open.com</a>&gt;<br>
+&gt; ---<br>
+&gt;=C2=A0 =C2=A0recipes-bsp/u-boot/u-boot_%.bbappend | 4 ++--<br>
+&gt;=C2=A0 =C2=A01 file changed, 2 insertions(+), 2 deletions(-)<br>
+&gt; <br>
+&gt; diff --git a/recipes-bsp/u-boot/u-boot_%.bbappend b/recipes-bsp/u-boot=
+/u-boot_%.bbappend<br>
+&gt; index c939a48..9432e2b 100644<br>
+&gt; --- a/recipes-bsp/u-boot/u-boot_%.bbappend<br>
+&gt; +++ b/recipes-bsp/u-boot/u-boot_%.bbappend<br>
+&gt; @@ -3,8 +3,8 @@ require u-boot-rockchip.inc<br>
+&gt;=C2=A0 =C2=A0FILESEXTRAPATHS:prepend :=3D &quot;${THISDIR}/files:&quot;=
+<br>
+&gt; <br>
+&gt;=C2=A0 =C2=A0SRC_URI:radxa-zero-3 =3D &quot;git://<a href=3D"http://git=
+hub.com/Kwiboo/u-boot-rockchip.git;protocol=3Dhttps;branch=3Drk3xxx-2024.07=
+;name=3DKwiboo" rel=3D"noreferrer" target=3D"_blank">github.com/Kwiboo/u-bo=
+ot-rockchip.git;protocol=3Dhttps;branch=3Drk3xxx-2024.07;name=3DKwiboo</a>&=
+quot;<br>
+&gt; -SRCREV:radxa-zero-3 =3D &quot;8cdf606e616baa36751f3b4adcfaefc781126c8=
+c&quot;<br>
+&gt; -SRCREV:radxa-zero-3:rk-u-boot-env =3D &quot;8cdf606e616baa36751f3b4ad=
+cfaefc781126c8c&quot;<br>
+&gt; +SRCREV:radxa-zero-3 =3D &quot;2e2ae1fb69a25217640bfe2fb9abaf9f4fbacea=
+d&quot;<br>
+&gt; +SRCREV:radxa-zero-3:rk-u-boot-env =3D &quot;2e2ae1fb69a25217640bfe2fb=
+9abaf9f4fbacead&quot;<br>
+&gt; <br>
+<br>
+This code doesn&#39;t exist anymore since Walnascar, on which branch of <br=
+>
+meta-rockchip are you building?<br>
+<br>
+If it&#39;s for scarthgap/styhead, I think it&#39;d make more sense to add =
+<br>
+upstream 2024.10 (or later) U-Boot recipe since the board is supported <br>
+starting that version.<br>
+<br>
+Jonas (Kwiboo) is the sole owner of that repo and may freely decide to <br>
+rebase branches or delete them, so we should really aim at not using it.<br=
+>
+<br>
+Cheers,<br>
+Quentin<br>
+</blockquote></div><div><br clear=3D"all"></div><div><br></div><span class=
+=3D"gmail_signature_prefix">-- </span><br><div dir=3D"ltr" class=3D"gmail_s=
+ignature"><div dir=3D"ltr"><img src=3D"https://ci3.googleusercontent.com/ma=
+il-sig/AIorK4z-FDqneUytZeCMahhNKdzPOXCuRDUt42pGJKhGciWkdWJH3c_fneMTAdyi0Mza=
+_TEs4Av1U7gXpijA"><br></div></div>
+
+--000000000000dcb5120654d9d5a0--
 
