@@ -1,308 +1,98 @@
-Return-Path: <jackson.james9803@gmail.com>
+Return-Path: <ross.burton@arm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4205CCD98F6
-	for <webhook@archiver.kernel.org>; Mon, 22 Jun 2026 05:45:08 +0000 (UTC)
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.36871.1782107099662198797
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D22DACDB471
+	for <webhook@archiver.kernel.org>; Mon, 22 Jun 2026 14:35:47 +0000 (UTC)
+Received: from mail-qv1-f68.google.com (mail-qv1-f68.google.com [209.85.219.68])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.43549.1782135993235849035
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 21 Jun 2026 22:44:59 -0700
+ Mon, 22 Jun 2026 06:46:33 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=BiqHS8wN;
- spf=pass (domain: gmail.com, ip: 209.85.210.182, mailfrom: jackson.james9803@gmail.com)
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-84536ecfc5bso3535588b3a.2
-        for <yocto-patches@lists.yoctoproject.org>; Sun, 21 Jun 2026 22:44:59 -0700 (PDT)
+ dkim=pass header.i=@b2open-com.20251104.gappssmtp.com header.s=20251104 header.b=su4oGk62;
+ spf=pass (domain: b2open.com, ip: 209.85.219.68, mailfrom: cleiton.bueno@b2open.com)
+Received: by mail-qv1-f68.google.com with SMTP id 6a1803df08f44-8e066990ff9so22954436d6.0
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 22 Jun 2026 06:46:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782107099; x=1782711899; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GgBAnvrBYMA4b8DVpT5EE/54WyuVY/ppy6NqPjhicoM=;
-        b=BiqHS8wNWAltGifAvW9bi5ZNPasofVuuA7TP1w6lT0dLsfvUxHZA3OikTf1P9mfsSS
-         PrPEgG7APSKj9ISNIkDWzJ1guCXqhsLcxJihkw6zuNAqK5Xzjo0qgTOsDYmD0sDpoG/Y
-         D48b8dncoDkVY+doJHynqag+cqVZ5OCRC3t9/fVGcRH/zseJC/3RfB2adC+ZiX0UCsx+
-         3/v8FhpkBzhNlLWZYujHk6gfzFIiTRrSmXR54raESIUWNdejbLfHQKDs3kn4JZh6unpz
-         jmSP8hNBcNnqWiIjdJpOi1KODe5v+lmYPm2833JzEId8sXUSAEhodLERgTwIsJAkWHt+
-         VUFw==
+        d=b2open-com.20251104.gappssmtp.com; s=20251104; t=1782135992; x=1782740792; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=y6d4I5iBn8xr69QuN7LdWYv85BI9iAzJerRKRBG0ZlI=;
+        b=su4oGk62M3+0B0rFhUK6cZjocQRBXqLcCR12tyToMpZfTdxQ7UjJ/avKUYfIRXTRfp
+         J16YHCyvz7YkZDSFWjtRStWPVUuLjFF9jUrbyqixxrPqrcsMH/vXzebYo/K/+hfr+RIl
+         MgxCwts9XVaJPn/36D0mwq5eq+aTRmLH+csqMNc6i5bs01eGpUAwCAXHo7J1ZD8Gjvd8
+         PotNYeNjUqwDKlXgnrn/K4Rhg5cWWguq3Yl3XVQgil9kBUNvP2DUtvlbCq1Q8GzdVk6P
+         KefVWGwVRWz1ke673Vsz0PdC6gxbDn9jJ48u/2yTaGqZNme1Fw64oYUh3vUnF/++0blK
+         9EEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782107099; x=1782711899;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GgBAnvrBYMA4b8DVpT5EE/54WyuVY/ppy6NqPjhicoM=;
-        b=LzkwqSZ0L/uVD0mYuUNLhRuRGrKKX0ueVb0OFXWCnoQmyiaz3tBsfQ9nsVw7FzfgKp
-         wos85aZpBds3oq/IGWyrCptvA83HWvKVOvxib+90lRJc01NREi4LejVbZjDXB8uAnSV1
-         dTP5K71Q50f8ibZ2WiBOtNmedXygQ56RvxgMf/r8s7hr9lKQP5Khpkj/ZaxDHlWxEvR4
-         12v6PfJPinb+2ECf2Uyr2S50R8LOOVdCT/ltcXGFkTeg27hMl5AJUBafRAxrUJPudyVN
-         fIdha2EjznWbGAXEXBbQEGwI29jG+dPRYsMmS8i0gUiikMRFWegIsEgFmwADzMF/rZkM
-         ApUg==
-X-Gm-Message-State: AOJu0YyTtnZxc/y0S5PWHkDbnRhbpFoylE6gsyj17AiZuz4o2Fi9McZg
-	tXLZNBzdv0Uhh1BdT2MTeyoYToKbRgoAFFsPGGW4Mz0jYo7NeUOXyNF6A4EPvA==
-X-Gm-Gg: AfdE7cnBUZ6U2Ab0VzQC4yd9DDHqJkXvLU2kGBvOgUNi/eM73tjTYVZbXz380WaZ9Wd
-	kThvPIh2MUBl+Xfcl6SWYaFVGy5/4yQ/wm0hTZ8jnIF9Hl+QkJYmNQn3ULUua5nncZ02qDyRQl4
-	sUElynHUU/3lKOYK52RTXoaHOZVlZ2SLXVT2yAcSsYAi204ugZ3R0YUCxGtqyJut6+pgh28NMdU
-	aMS8DJr/j0RqIp4ulyKnNQvYHr7H0I87tU8X/C7rCpTD/vItcbgDZPZ8LGrpMISL0Ysk7i5NN+g
-	kF/37SAlmsWayocrCqZpWsB1gBkGaTAhtQMg3sjztDCmaLACUS6Vwd7TCF/cUppDJzwisDjRBqs
-	s9gBsRkDPWttroRS0HgH/0BiG2LbkCOaGrjLZunkeeZzP8YJbeS1uvsk3D2qq//62LuMdLG+wmI
-	Z3OL2kmMkytDW0rPC4
-X-Received: by 2002:a05:6a00:908e:b0:842:614e:cc94 with SMTP id d2e1a72fcca58-8455086655bmr13929302b3a.26.1782107098447;
-        Sun, 21 Jun 2026 22:44:58 -0700 (PDT)
-Received: from LL-868L.kpit.com ([49.206.129.123])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84564ef4c09sm6776525b3a.61.2026.06.21.22.44.56
-        for <yocto-patches@lists.yoctoproject.org>
+        d=1e100.net; s=20251104; t=1782135992; x=1782740792;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y6d4I5iBn8xr69QuN7LdWYv85BI9iAzJerRKRBG0ZlI=;
+        b=sEgGeSnLJwhwVXbI3OXeVDXSZmuUPC4B0F6N96IVsd3tLOIA/sXSpk0xcUgO92s1rP
+         KGrfHdhPLC6pPxqmvvLnL9z4ZLzhyrZE9luoQsyiiMJbTeFu6LI5A5R3yWvhWyu3smNn
+         K5fIPtLmSTYcGl7LHHoRH1XPTHOH0qQS86mK8r91x5NiKviFtkW+NjnoxuBqIdOxESSp
+         LafF3pOoF2oF+qHrjUoxPZBcldo1AVWDD7e9/4A0+lV+6MAFVcjNDlhDWrv/ZBSjucHq
+         /sXFIkyFCQe1PXw/EggaE006yUZc1+O5vczoz+kCKhjIJR6PHcAhW1eyMxeSpsjmqTUa
+         aivw==
+X-Gm-Message-State: AOJu0YzbmDZluhK9P0q+VfDCg2gZVs1fVU83cq+kHjkFHqv5RfdDJlot
+	cuRaVnLb7M2oQtyfburzQ5bBQk/Qs4KuQfeCeM7khCcYt99LKicM09rdcDOGvRgdDwETh2FdKwE
+	RGb8yuHk5pfBU
+X-Gm-Gg: AfdE7clViEostlT4TxoSwg8w9Pa4venYyPjQChEB9ESbhxy6vdlfHve/svevubUWfZl
+	0pZAbNx4w5A9l+H0Fw85qCvxV0d16rngT6k7Pf3essWwnGTvUtrI57uUhrQMrVbIjm12L/X4naQ
+	BHYY5NSVW6rGijDt9bPwZ/ztlmxT9d/jeWobfPGN61nS/D1c2SX9XBA5thUoMA1uXP5WFKR252O
+	mNcuvUNx0yB3NlhOGjF/ivbwSbL4q72zV5hEXYK7Q5Xwe8ZrHhBUarSts4UNw5xG2mfuOiwyNaC
+	ZoJUMqZqWSz2d93H9xBLDpHXZBVD241iJWvLyaTvrFgclaBoHtJ78FFWtoFxiXoh+YYL3t6P1x3
+	3vb7v6WuI9rOWgOQ39M78RB8EckRUHIN4M+j543cADw6u45OdQ0qj97YBKAPZp6vkJ4aUnqUCy8
+	C28On5wxv/LpY4CnFFHpDLSbvnwov94BtXEOdZhw22nZ3YIf6eoYwcF9NrrbEW2FQNADRCROPZ7
+	kJVxS95NPJti4CjhCYOxLafg6fGVkBY9aak4ZzYHgECrjM=
+X-Received: by 2002:a05:6214:da5:b0:8e0:c0f3:a2cb with SMTP id 6a1803df08f44-8e0c0f3b8e5mr106385046d6.0.1782135992066;
+        Mon, 22 Jun 2026 06:46:32 -0700 (PDT)
+Received: from b2open-a70-hyb.. ([2804:1b3:a301:76bc:f850:b260:b588:cee7])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8df7f015e50sm94247326d6.6.2026.06.22.06.46.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Jun 2026 22:44:57 -0700 (PDT)
-From: Jackson James <jackson.james9803@gmail.com>
-X-Google-Original-From: Jackson James <jacksonj2@kpit.com>
+        Mon, 22 Jun 2026 06:46:31 -0700 (PDT)
+From: "Cleiton Bueno" <cleiton.bueno@b2open.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-collab][kirkstone][PATCH] expat: Fix CVEs
-Date: Mon, 22 Jun 2026 11:14:25 +0530
-Message-Id: <20260622054426.225089-1-jacksonj2@kpit.com>
+Cc: Cleiton Bueno <cleiton.bueno@b2open.com>
+Subject: [meta-rockchip] [PATCH] u-boot: fix incorrect commit reference (radxa-zero-3)
+Date: Mon, 22 Jun 2026 10:46:26 -0300
+Message-Id: <20260622134626.3616736-1-cleiton.bueno@b2open.com>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 22 Jun 2026 05:45:08 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4255
+ <yocto-patches@lists.yoctoproject.org>; Mon, 22 Jun 2026 14:35:47 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4256
 
-Fix the following CVEs-
-CVE-2026-32776 CVE-2026-32777 CVE-2026-32778
+The commit 8cdf606 is incorrect and does not belong to any
+branch on this repository, it may belong to a fork outside of
+the repository. The correct commit should be:
+2e2ae1fb69a25217640bfe2fb9abaf9f4fbacead
 
-Signed-off-by: Jackson James <jacksonj2@kpit.com>
+Signed-off-by: Cleiton Bueno <cleiton.bueno@b2open.com>
 ---
- .../expat/expat/CVE-2026-32776.patch          | 51 +++++++++++
- .../expat/expat/CVE-2026-32777.patch          | 48 ++++++++++
- .../expat/expat/CVE-2026-32778.patch          | 91 +++++++++++++++++++
- meta-core/recipes-core/expat/expat_%.bbappend |  7 ++
- 4 files changed, 197 insertions(+)
- create mode 100644 meta-core/recipes-core/expat/expat/CVE-2026-32776.patch
- create mode 100644 meta-core/recipes-core/expat/expat/CVE-2026-32777.patch
- create mode 100644 meta-core/recipes-core/expat/expat/CVE-2026-32778.patch
- create mode 100644 meta-core/recipes-core/expat/expat_%.bbappend
+ recipes-bsp/u-boot/u-boot_%.bbappend | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/meta-core/recipes-core/expat/expat/CVE-2026-32776.patch b/meta-core/recipes-core/expat/expat/CVE-2026-32776.patch
-new file mode 100644
-index 0000000..0b96fbc
---- /dev/null
-+++ b/meta-core/recipes-core/expat/expat/CVE-2026-32776.patch
-@@ -0,0 +1,51 @@
-+From 5be25657583ea91b09025c858b4785834c20f59c Mon Sep 17 00:00:00 2001
-+From: Francesco Bertolaccini <francesco.bertolaccini@trailofbits.com>
-+Date: Tue, 3 Mar 2026 16:41:43 +0100
-+Subject: [PATCH] Fix NULL function-pointer dereference for empty external
-+ parameter entities
-+
-+When an external parameter entity with empty text is referenced inside
-+an entity declaration value, the sub-parser created to handle it receives
-+0 bytes of input.  Processing enters entityValueInitProcessor which calls
-+storeEntityValue() with the parser's encoding; since no bytes were ever
-+processed, encoding detection has not yet occurred and the encoding is
-+still the initial probing encoding set up by XmlInitEncoding().  That
-+encoding only populates scanners[] (for prolog and content), not
-+literalScanners[].  XmlEntityValueTok() calls through
-+literalScanners[XML_ENTITY_VALUE_LITERAL] which is NULL, causing a
-+SEGV.
-+
-+Skip the tokenization loop entirely when entityTextPtr >= entityTextEnd,
-+and initialize the `next` pointer before the early exit so that callers
-+(callStoreEntityValue) receive a valid value through nextPtr.
-+
-+CVE: CVE-2026-32776
-+Upstream-Status: Backport [https://github.com/libexpat/libexpat/commit/5be25657583ea91b09025c858b4785834c20f59c]
-+
-+Comment: Patch is refreshed as per codebase of 2.5.0
-+Signed-off-by: Jackson James <jacksonj2@kpit.com>
-+---
-+ lib/xmlparse.c | 7 +++++++
-+ 1 file changed, 7 insertions(+)
-+
-+diff --git a/lib/xmlparse.c b/lib/xmlparse.c
-+index 0883e2e..6a9ab7d 100644
-+--- a/lib/xmlparse.c
-++++ b/lib/xmlparse.c
-+@@ -6194,6 +6194,13 @@ storeEntityValue(XML_Parser parser, const ENCODING *enc,
-+   for (;;) {
-+     const char *next
-+         = entityTextPtr; /* XmlEntityValueTok doesn't always set the last arg */
-++
-++    /* Nothing to tokenize. */
-++    if (entityTextPtr >= entityTextEnd) {
-++        result = XML_ERROR_NONE;
-++        goto endEntityValue;
-++    }
-++    
-+     int tok = XmlEntityValueTok(enc, entityTextPtr, entityTextEnd, &next);
-+ 
-+     if (! accountingDiffTolerated(parser, tok, entityTextPtr, next, __LINE__,
-+-- 
-+2.34.1
-+
-diff --git a/meta-core/recipes-core/expat/expat/CVE-2026-32777.patch b/meta-core/recipes-core/expat/expat/CVE-2026-32777.patch
-new file mode 100644
-index 0000000..687e2e4
---- /dev/null
-+++ b/meta-core/recipes-core/expat/expat/CVE-2026-32777.patch
-@@ -0,0 +1,48 @@
-+From 55cda8c7125986e17d7e1825cba413bd94a35d02 Mon Sep 17 00:00:00 2001
-+From: Sebastian Pipping <sebastian@pipping.org>
-+Date: Sun, 1 Mar 2026 20:16:13 +0100
-+Subject: [PATCH] lib: Reject XML_TOK_INSTANCE_START infinite loop in
-+ entityValueProcessor
-+
-+.. that OSS-Fuzz/ClusterFuzz uncovered
-+
-+CVE: CVE-2026-32777
-+Upstream-Status: Backport [https://github.com/libexpat/libexpat/commit/55cda8c7125986e17d7e1825cba413bd94a35d02]
-+
-+Comment: Patch is refreshed as per codebase of 2.5.0
-+Signed-off-by: Jackson James <jacksonj2@kpit.com>
-+---
-+ lib/xmlparse.c | 10 +++++++++-
-+ 1 file changed, 9 insertions(+), 1 deletion(-)
-+
-+diff --git a/lib/xmlparse.c b/lib/xmlparse.c
-+index 6a9ab7d..c7e3665 100644
-+--- a/lib/xmlparse.c
-++++ b/lib/xmlparse.c
-+@@ -4560,7 +4560,7 @@ entityValueInitProcessor(XML_Parser parser, const char *s, const char *end,
-+     }
-+     /* If we get this token, we have the start of what might be a
-+        normal tag, but not a declaration (i.e. it doesn't begin with
-+-       "<!").  In a DTD context, that isn't legal.
-++       "<!" or "<?").  In a DTD context, that isn't legal.
-+     */
-+     else if (tok == XML_TOK_INSTANCE_START) {
-+       *nextPtr = next;
-+@@ -4649,6 +4649,14 @@ entityValueProcessor(XML_Parser parser, const char *s, const char *end,
-+       /* found end of entity value - can store it now */
-+       return storeEntityValue(parser, enc, s, end, XML_ACCOUNT_DIRECT);
-+     }
-++    /* If we get this token, we have the start of what might be a
-++       normal tag, but not a declaration (i.e. it doesn't begin with
-++       "<!" or "<?").  In a DTD context, that isn't legal.
-++    */
-++    else if (tok == XML_TOK_INSTANCE_START) {
-++      *nextPtr = next;
-++      return XML_ERROR_SYNTAX;
-++    }
-+     start = next;
-+   }
-+ }
-+-- 
-+2.34.1
-+
-diff --git a/meta-core/recipes-core/expat/expat/CVE-2026-32778.patch b/meta-core/recipes-core/expat/expat/CVE-2026-32778.patch
-new file mode 100644
-index 0000000..fb2d021
---- /dev/null
-+++ b/meta-core/recipes-core/expat/expat/CVE-2026-32778.patch
-@@ -0,0 +1,91 @@
-+From 576b61e42feeea704253cb7c7bedb2eeb3754387 Mon Sep 17 00:00:00 2001
-+From: laserbear <10689391+Laserbear@users.noreply.github.com>
-+Date: Sun, 8 Mar 2026 17:28:06 -0700
-+Subject: [PATCH] copy prefix name to pool before lookup
-+
-+.. so that we cannot end up with a zombie PREFIX in the pool
-+that has NULL for a name.
-+
-+Co-authored-by: Sebastian Pipping <sebastian@pipping.org>
-+
-+CVE: CVE-2026-32778
-+Upstream-Status: Backport [https://github.com/libexpat/libexpat/commit/576b61e42feeea704253cb7c7bedb2eeb3754387]
-+
-+Comment: Patch is refreshed as per codebase of 2.5.0
-+Signed-off-by: Jackson James <jacksonj2@kpit.com>
-+---
-+ lib/xmlparse.c | 42 ++++++++++++++++++++++++++++++++++--------
-+ 1 file changed, 34 insertions(+), 8 deletions(-)
-+
-+diff --git a/lib/xmlparse.c b/lib/xmlparse.c
-+index c7e3665..7579a1d 100644
-+--- a/lib/xmlparse.c
-++++ b/lib/xmlparse.c
-+@@ -556,6 +556,8 @@ static XML_Char *poolStoreString(STRING_POOL *pool, const ENCODING *enc,
-+ static XML_Bool FASTCALL poolGrow(STRING_POOL *pool);
-+ static const XML_Char *FASTCALL poolCopyString(STRING_POOL *pool,
-+                                                const XML_Char *s);
-++static const XML_Char *FASTCALL poolCopyStringNoFinish(STRING_POOL *pool,
-++                                                       const XML_Char *s);
-+ static const XML_Char *poolCopyStringN(STRING_POOL *pool, const XML_Char *s,
-+                                        int n);
-+ static const XML_Char *FASTCALL poolAppendString(STRING_POOL *pool,
-+@@ -6783,16 +6785,23 @@ setContext(XML_Parser parser, const XML_Char *context) {
-+       else {
-+         if (! poolAppendChar(&parser->m_tempPool, XML_T('\0')))
-+           return XML_FALSE;
-+-        prefix
-+-            = (PREFIX *)lookup(parser, &dtd->prefixes,
-+-                               poolStart(&parser->m_tempPool), sizeof(PREFIX));
-+-        if (! prefix)
-++        const XML_Char *const prefixName = poolCopyStringNoFinish(
-++            &dtd->pool, poolStart(&parser->m_tempPool));
-++        if (! prefixName) {
-+           return XML_FALSE;
-+-        if (prefix->name == poolStart(&parser->m_tempPool)) {
-+-          prefix->name = poolCopyString(&dtd->pool, prefix->name);
-+-          if (! prefix->name)
-+-            return XML_FALSE;
-+         }
-++
-++        prefix = (PREFIX *)lookup(parser, &dtd->prefixes, prefixName,
-++                                  sizeof(PREFIX));
-++
-++        const bool prefixNameUsed = prefix && prefix->name == prefixName;
-++        if (prefixNameUsed)
-++          poolFinish(&dtd->pool);
-++        else
-++          poolDiscard(&dtd->pool);
-++
-++        if (! prefix)
-++          return XML_FALSE;
-+         poolDiscard(&parser->m_tempPool);
-+       }
-+       for (context = s + 1; *context != CONTEXT_SEP && *context != XML_T('\0');
-+@@ -7381,6 +7390,23 @@ poolCopyString(STRING_POOL *pool, const XML_Char *s) {
-+   return s;
-+ }
-+ 
-++// A version of `poolCopyString` that does not call `poolFinish`
-++// and reverts any partial advancement upon failure.
-++static const XML_Char *FASTCALL
-++poolCopyStringNoFinish(STRING_POOL *pool, const XML_Char *s) {
-++  const XML_Char *const original = s;
-++  do {
-++    if (! poolAppendChar(pool, *s)) {
-++      // Revert any previously successful advancement
-++      const ptrdiff_t advancedBy = s - original;
-++      if (advancedBy > 0)
-++        pool->ptr -= advancedBy;
-++      return NULL;
-++    }
-++  } while (*s++);
-++  return pool->start;
-++}
-++
-+ static const XML_Char *
-+ poolCopyStringN(STRING_POOL *pool, const XML_Char *s, int n) {
-+   if (! pool->ptr && ! poolGrow(pool)) {
-+-- 
-+2.34.1
-+
-diff --git a/meta-core/recipes-core/expat/expat_%.bbappend b/meta-core/recipes-core/expat/expat_%.bbappend
-new file mode 100644
-index 0000000..0a11912
---- /dev/null
-+++ b/meta-core/recipes-core/expat/expat_%.bbappend
-@@ -0,0 +1,7 @@
-+FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
-+
-+SRC_URI:append = " \
-+           file://CVE-2026-32776.patch \
-+           file://CVE-2026-32777.patch \
-+           file://CVE-2026-32778.patch \
-+"
+diff --git a/recipes-bsp/u-boot/u-boot_%.bbappend b/recipes-bsp/u-boot/u-boot_%.bbappend
+index c939a48..9432e2b 100644
+--- a/recipes-bsp/u-boot/u-boot_%.bbappend
++++ b/recipes-bsp/u-boot/u-boot_%.bbappend
+@@ -3,8 +3,8 @@ require u-boot-rockchip.inc
+ FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
+ 
+ SRC_URI:radxa-zero-3 = "git://github.com/Kwiboo/u-boot-rockchip.git;protocol=https;branch=rk3xxx-2024.07;name=Kwiboo"
+-SRCREV:radxa-zero-3 = "8cdf606e616baa36751f3b4adcfaefc781126c8c"
+-SRCREV:radxa-zero-3:rk-u-boot-env = "8cdf606e616baa36751f3b4adcfaefc781126c8c"
++SRCREV:radxa-zero-3 = "2e2ae1fb69a25217640bfe2fb9abaf9f4fbacead"
++SRCREV:radxa-zero-3:rk-u-boot-env = "2e2ae1fb69a25217640bfe2fb9abaf9f4fbacead"
+ 
+ SRC_URI:append:rk-u-boot-env = " file://rockchip-enable-environment-mmc.cfg"
+ SRCREV:rk-u-boot-env = "cdfcc37428e06f4730ab9a17cc084eeb7676ea1a"
 -- 
 2.34.1
 
