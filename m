@@ -1,248 +1,159 @@
-Return-Path: <quentin.schulz@cherry.de>
+Return-Path: <wangmy@fujitsu.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 003CDCDB46F
-	for <webhook@archiver.kernel.org>; Mon, 22 Jun 2026 17:19:08 +0000 (UTC)
-Received: from AS8PR04CU009.outbound.protection.outlook.com (AS8PR04CU009.outbound.protection.outlook.com [52.101.70.27])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.2182.1782148739459374322
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A63EACDB46B
+	for <webhook@archiver.kernel.org>; Tue, 23 Jun 2026 02:20:55 +0000 (UTC)
+Received: from OS0P286CU010.outbound.protection.outlook.com (OS0P286CU010.outbound.protection.outlook.com [40.107.74.23])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.12408.1782181250371661594
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 22 Jun 2026 10:19:00 -0700
+ Mon, 22 Jun 2026 19:20:50 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@cherry.de header.s=selector1 header.b=Amu39t/o;
- spf=pass (domain: cherry.de, ip: 52.101.70.27, mailfrom: quentin.schulz@cherry.de)
+ dkim=pass header.i=@fujitsu.com header.s=selector1 header.b=LfzQiffu;
+ spf=pass (domain: fujitsu.com, ip: 40.107.74.23, mailfrom: wangmy@fujitsu.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=H1zT5jYmnmRclLBN6C37XAL0XNt88cD9UgnPnYkrsVb90fvCHwvh+qRmA7i0FXJrJlwNJFZKLlGfbP8fw5XkPM/2bHqv9yOtSxamJaFLgxCsfOMhqgdRN/atFgxpBTAVlWd1i0cWXhju6uYbDckBVuudoKfIIRyq27SCJ6tPiDj740ZkSOeG+ej5cgQoJV454Wh4sBWxam2pfLzCr1OY6hIL7K8qnqRBKmedjAB+LKhNt8zdsDdiZCtmXOwW8aTGo7zHsOmKoQqqET0tVTfZauqUXgWrICjC1MvfCp5TQ6ayqLGkEojkMWyfZki/nGlDVsIgjggnaNImwDURG/PT1A==
+ b=nZ/suqR7Sj+o1cwvMZW3PEIoOUO9C2Xndj83E/NcsBZyqnBFx8R/eroBmr2nwL/dTaKtNkxudwoKvX6824nRCYfkk+Tt+/pumM5YZORB2H61DAVLLMDwP0xthdmzP0nmary08hagf0iDNFkvP11igUqZL6Ty8HdXWZyuoguR3q5APxaOR1W3/j6tIBKG6g4KuHA0trWly6HfhTkh3UROvZgHsQamSeFAU6aX+DrGIUuPOT2USOWM1fig4zlFWGf93X3CWxGqWk7lehm5FiEhIRNl+plk9IJuu1cHACEibDcOKR5tK+RjbinudTIqXb+3OsqsuvO99pe6gTy5tXt4uw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VPPIU1DfOX7+Vx7nrSJpOegrCH/59wZApYMM3VpXegY=;
- b=JNiAgdT2VvurZdD/jvlNYKT/C9PEuOR4EkpGYJSc8Y6HDkNYwWdAD58qDTGp8C0+aBXp2NHNPoltUFUNP4DtUI3bwkFs5UjCkQuBqAQJ44kmXstJNMpnjMtM5/InsiwlpXQED2n8+krQ/wBGUVJIZxpdNzcHIxRD7wttS1klwb7/T2/e/Yf0Y9ZRNoXe3mtH/u/Mrl20QDNm1Qma8Q4wHqbBI/SQnTrvb0JZ/74qQ55DBf/fOMkhuLSKDDMU7W/ZO+tOG+1bH1JPINct7rXnGE49eYXeoUSUm/qEBMIZymowfJ4PWClh4s+6G5FwDue0CFtih3erW+A25DmICJ/Vng==
+ bh=KnFt6+e1jiBsQYdurYrhfRq9ROU7hTUtk+dHAeN4CFY=;
+ b=rzRKEggE+NjqrPWeJ6wDEJ4V2hxBKzpdpem3xku1DUK6TWcVtwj7Qesd8H5R1mkpaxLXMTQ990LXPrpEh0eWXdHPuAxncgOd2omCajeNYZ9Cex7wuIi5win7WdQOd2ezOrIGlpG5raqgV2UoR8fAClQ7iyn7HxHDsDp8grcXHmKVqbBRj0F4hYIafRYw0iujGH0huZpuLvi8qEc9xCAaTFFNbYUbqXUPQaQP+L+8m1djY0OxgqyFTos7e1XNxG7fAdE8lf6Tp3hqINuXnxtRMUub+ZeRs4XRoeqSMRaleq1kkR6EghglBAVwsws1wk7Pee6xnFxZ5iNAf1xugBZkqw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
+ smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
+ dkim=pass header.d=fujitsu.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VPPIU1DfOX7+Vx7nrSJpOegrCH/59wZApYMM3VpXegY=;
- b=Amu39t/oUI3qTMpiR2gpV9VFbjQpqiaLtof+1gZI2W9vpxddqxWd6ORC59A5qD2znhLAVbP2ALUJxrBr2vQzrsh/s30JpioHKcyVAqYgVhDIHtJNgXJVMdaDYEbUukbynP59iAkSqGoideZFHdvFpppoJVdU0v2n9bTL3B3jbYU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from DBBPR04MB7737.eurprd04.prod.outlook.com (2603:10a6:10:1e5::22)
- by DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18) with
+ bh=KnFt6+e1jiBsQYdurYrhfRq9ROU7hTUtk+dHAeN4CFY=;
+ b=LfzQiffusUnPzfmU+an1fQmUyvHHZO94qncyU3qgS+iml7DK6XvUdbiNOxEJmf4BhO4bxTgaIIX3LEq4S0ajL45pz/sI4OzLcRF159dHsm8SycNK5C0eLbwWVrR8zpYzaeLaxfIhVl0YROYu+8fno8WnRPII/mL1V5gKw/BTGi43FAX6OvKAWU2HL/b8oWvlxBlHDAmAau8g1uOyPNP9RprcVfLBI8p4tgbj/jrRbcyyR2t9fXchoCb1h6ailTKAILqOBMwAIxIIWfTyYMJhCQDE14ma6Bq6zDmTQnx0mYlFxWMjxDtSSA+swQJl9xj3nhNzx3uLz4M2nkO+ZSxjSA==
+Received: from TYYPR01MB13419.jpnprd01.prod.outlook.com (2603:1096:405:1be::9)
+ by OS3PR01MB9303.jpnprd01.prod.outlook.com (2603:1096:604:1c6::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.139.13; Mon, 22 Jun
- 2026 17:18:52 +0000
-Received: from DBBPR04MB7737.eurprd04.prod.outlook.com
- ([fe80::5960:fb4b:9313:2b00]) by DBBPR04MB7737.eurprd04.prod.outlook.com
- ([fe80::5960:fb4b:9313:2b00%5]) with mapi id 15.21.0139.018; Mon, 22 Jun 2026
- 17:18:52 +0000
-Message-ID: <ea1a1238-4662-4be0-a177-8728d01eeeab@cherry.de>
-Date: Mon, 22 Jun 2026 19:18:50 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [rockchip][PATCH 2/2] rock-4d: add initial
- support
-To: yocto-patches@lists.yoctoproject.org
-Cc: Trevor Woerner <twoerner@gmail.com>, Martin Herren <sputnik@on-the-web.ch>
-References: <20260621211915.72650-1-sputnik@on-the-web.ch>
- <20260621211915.72650-3-sputnik@on-the-web.ch>
-Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <20260621211915.72650-3-sputnik@on-the-web.ch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: VI1PR07CA0295.eurprd07.prod.outlook.com
- (2603:10a6:800:130::23) To DBBPR04MB7737.eurprd04.prod.outlook.com
- (2603:10a6:10:1e5::22)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.139.20; Tue, 23 Jun
+ 2026 02:20:45 +0000
+Received: from TYYPR01MB13419.jpnprd01.prod.outlook.com
+ ([fe80::5408:8c53:d81e:a928]) by TYYPR01MB13419.jpnprd01.prod.outlook.com
+ ([fe80::5408:8c53:d81e:a928%6]) with mapi id 15.21.0139.018; Tue, 23 Jun 2026
+ 02:20:45 +0000
+From: "Mingyu Wang (Fujitsu)" <wangmy@fujitsu.com>
+To: "Mingyu Wang (Fujitsu)" <wangmy@fujitsu.com>,
+	"yocto-patches@lists.yoctoproject.org" <yocto-patches@lists.yoctoproject.org>
+Subject: RE: [yocto-patches] [meta-cgl] [PATCH] layer.conf: Add wrynose
+Thread-Topic: [yocto-patches] [meta-cgl] [PATCH] layer.conf: Add wrynose
+Thread-Index: AQHcw0PNtZR/xRZT5kKQNT90dFeT77ZL5znw
+Date: Tue, 23 Jun 2026 02:20:45 +0000
+Message-ID: 
+ <TYYPR01MB134198509FB0AB3871B7EA343DCEE2@TYYPR01MB13419.jpnprd01.prod.outlook.com>
+References: <20260403082758.1460-1-wangmy@fujitsu.com>
+In-Reply-To: <20260403082758.1460-1-wangmy@fujitsu.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+ MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_ActionId=9c197aae-a849-4c1a-9ef1-84dbbc8dabed;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_ContentBits=0;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Enabled=true;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Method=Standard;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Name=FUJITSU-RESTRICTED?;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_SetDate=2026-06-23T02:20:36Z;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_SiteId=a19f121d-81e1-4858-a9d8-736e267fd4c7;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Tag=10,
+ 3, 0, 1;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=fujitsu.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYYPR01MB13419:EE_|OS3PR01MB9303:EE_
+x-ms-office365-filtering-correlation-id: d517c4c9-fae7-49e5-b76f-08ded0ce0841
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|23010399003|376014|1800799024|366016|38070700021|18002099003|22082099003|11063799006|56012099006|1580799027;
+x-microsoft-antispam-message-info: 
+ L8h/dmT5jnNYEns6zJ0PUX8NuBlmMMuGjD+2i7Pa5jVPrMdf3xeWHNZicFkt1mqPkrGrggIwGyFwIM4Cdgccm/hvhKyy0RSBbNUmAqJgcAQ3Wuuau25a/Bqhq6TxYP8MX8q319uiT8vy6t8YIxVw9dTlTCA0Rl+oHYifAOGPnes07VClrbHfxou29teuyheqm8hNv7Y2jd0XnO/4Qa8etrHJZcXBjpKiUEFrWirVY7JfSRUl3/ZAM0A+HWkgAKa0I72GlbPl6o9nANiqFXWMuWFuiUmhtva1ldzXAOlnEqapBqVSMFVw52EcoVxEB2ZwMJQ5el2kT5593Uh7U2AVa1jxT7MOfInKrUJjgX3mFrzvVin/ewjY0JRantd/8RPyQiGaD/50pKEg8N+D3Noo8MjB2Soelq+7o2OahQKopwZRXxAiXGS4K/BScEhaeLIYxHCNHAr3BPzSaVaAx+4XpVM5YANGzpAZZSlY8b7m4qJIMObeR1GE9n7nxtuL1oiDGedR0mRbcr+sF+wZDwlYzHiyQs+kQUlPguLViE4VzX7JLztSt1Y9JDFMJLpOY5fuebSxy1k2t+oZ3LXFjs+YHDYDTYMwtiT6k40dwgGDccPR8M/TESksX9iYCVXT0jjrwU1Rg4ZpmKRRzAHnFAUKUsi0NQLVHdlQodKPJSoB9NY3DDSSz8BLAxmcPfkPEiiQb2e/6d/t1RX4jNEMOUU0lhIzjY5dREloXqGcNML7kjUCRTh5uvkyWzkBmYkvfL/K
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYYPR01MB13419.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(376014)(1800799024)(366016)(38070700021)(18002099003)(22082099003)(11063799006)(56012099006)(1580799027);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?gb2312?B?ak9yRGpjd2QwT0l1L0JEWDRiVEdzd1UvSFUvT3pSWEliYW9RZTEvdjFRRUFT?=
+ =?gb2312?B?SFB4QnBic1lmRmJzeER0UDlDaW5kWFJkNmtNeWNNdW8zc01laUhNeEU3TVlM?=
+ =?gb2312?B?R1ovSVBXNGlCSWJyY1kwbkRybnE1MVRyLzlRWlFsQ01WeVBWV01sNVlVamFO?=
+ =?gb2312?B?REpSd0FmOHFwSXdrRXdZOEMyTTh1QTVra1BGWThwR2pxRlExSEc5ejhtc1FL?=
+ =?gb2312?B?TDdHamxBMnN3Sk8vVmxJUTRFY1BIYUhseFoxSU9iaTE2TmpRQ0pDbXJHR2FT?=
+ =?gb2312?B?UTJTYWtWZUI5anVhbUlPbDQ2UzU5RGVGUVJGMUE1US9Id0d0WEZ0V05PNnRv?=
+ =?gb2312?B?T2hSQ01EY1FRbEw5S0xHVmpyNklyN0xnTDhUVEhXUlFiZUhYajlYRm5zZnc2?=
+ =?gb2312?B?UlU5ai8wNW5NT0RMc0RZcU5NV0lEc2prT09CVm5xR2FuYkdzWlREN3UxV0NL?=
+ =?gb2312?B?alF0NjhnUEhCaWhENkphM2ViNzM2Q2xnd1RJeEE1Mm43aFdDQ3VkV3NzMEYv?=
+ =?gb2312?B?QzM3WXZpWHdBWFJTM0pCeFFFSzJSbGxOcXg3UEo2aVlLRkw3dTdlUGVrbkZY?=
+ =?gb2312?B?WTZGVXhmNEhmbkJYSDYxYi9DNjZFb3BRQVBlR1FWTjFMYUN6VCt3aXlCTWF5?=
+ =?gb2312?B?VUlueWt4Q0NnNUk4c2cwemRqdXNQUC9IMXRqb3BDUU5XN3RPTUFKNDJnSCtG?=
+ =?gb2312?B?UEpjeU0vQVFiNEpWZHpPQ1A4MUpMcTRscjBGd3lvVXpHeWtGV2RweTljUkZo?=
+ =?gb2312?B?YTVZb3RLUGNDb0FraDFXRzZDQjgzL3JHUWVIdE05VVdINzUxNWFyMW96L2xz?=
+ =?gb2312?B?ZTdxcThhaVZyV3kybmhyM3p5NW8wVVNId1BBRnVWV08zaldmVTFQM282Z3Ex?=
+ =?gb2312?B?MHdpYk16Vng2emg0Qjh0bThWUXZvMjI2VDZveVFxb3hyeGtLRXVkaGsyeVFq?=
+ =?gb2312?B?S2hQbVhPTE0vNkVmZzVRV3JNUWxqM2JYSkpDemxVNERWa0g5eGFDQnltem4v?=
+ =?gb2312?B?QlVVdS9hMWZ4ck95MXFIR1Y2UlpIVWVoaU5qM1lGMTMwMDNzbUg2SksvZE5O?=
+ =?gb2312?B?MEJ4VzhLQ3VhYVl3ODZtVVdIUVd2OVhwbks3eS8yRG5xRUNXYjhWelBpa1BX?=
+ =?gb2312?B?UFlMSU83TFpWd2VGV2xYVGFOcnVFNTROaGNIZGFobWcrRFdwUHZpL05CYTh0?=
+ =?gb2312?B?SDFDM2t3L2lEM1B1Um1kMWRFenF5QUNWa09VUmNQdmhhemhSK20vbmtUWWE4?=
+ =?gb2312?B?OTEyTUVhN05WaktTbHExYjMzYVlGWUNyNDdLUytmRlNIYVU5VTI0QjJMS2Qv?=
+ =?gb2312?B?Tm1LdVVmNXJvR2ZDOHJEeHVsTFB4Rk1UeUhxa2xnS0M0azdLdllnczQrRGl1?=
+ =?gb2312?B?YUg4WTJHUkovNW0rY0VhTlIxT0FpYzlRaVliTlBRZjc3eDU1S0hwWVYrVUg2?=
+ =?gb2312?B?SnR1S3FubmxHbldlL1BLMHB2NDRmaUhqUUZzZjBUWXgwRHBRb2RYUjQ1N2pS?=
+ =?gb2312?B?ZXhFakk1WE5tU1hPZEllbGJpU1NZMko3R0hWT1hUYjdjdTB0ZWRIL3BDTm51?=
+ =?gb2312?B?Z2ZjWWtBRjhKenZDeUpxNVBTandzWU9MRkdEcUozS1hrekxta2R0cWtraG5H?=
+ =?gb2312?B?NmNFZXN6MFVsTGRzM0pKMlFKaFZCZlRIQVhuZjErbU82anhQNkovdmFQZWFp?=
+ =?gb2312?B?clI1VGl6SC9jR0ZvL05RV3cxQTNrK2l5YXhWNmpGUGNpWExucUFqUFB4M0Rl?=
+ =?gb2312?B?S1E5VGtZcjNjNFJmc2tYbkpFUnJnbDgxRUdEaUhCT211Zlh5MDRlNDZNYTZy?=
+ =?gb2312?B?UUFBSGV0Mkd3Ri9kcE93TFc2SlBJamhLcG9EM1pyaU5LcHNFd1VuZndieFB4?=
+ =?gb2312?B?V2IwZVMwQmZrbDNBKy95T2RKWTJrZ0s1Y0JmemFyckkvbU84Z01LMlNtcWk5?=
+ =?gb2312?B?MVJxa3BvNHhZaytmams3cUlURWhnV3AvZ2YydnNZQmFySFFyU3lBNXFVWGZB?=
+ =?gb2312?B?eXZyMWFQcSsxd3Jhbkx2TjNjV2lpRVdNNTAwVWEvVks4Z0xYbjcyQW9RdWpv?=
+ =?gb2312?B?SGYxek5sRHFDekZpbnZGeS9nMUVlWHFNSE5hWkE2UlZ4WUJZWERUa20rTzM5?=
+ =?gb2312?B?WGZDMG84V29ZMlM1bThMeFIrelcwRmZVaVRseUpmSFhOc1NpdjExVlJlMDMz?=
+ =?gb2312?B?MzVOR0V1WUFIbWF3QzVhcG9pZWVtUUY3eEZFKzF4ck95c2YzU29neFhqeE1X?=
+ =?gb2312?B?Ry80bDh1NjUxMDM0eGwrcUxpRDNyazdpcHpjL3hxMytVWTQ5SnpJcjBYRjNp?=
+ =?gb2312?Q?efcrLGCrCbOkEmEWfT?=
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DBBPR04MB7737:EE_|DB9PR04MB9626:EE_
-X-MS-Office365-Filtering-Correlation-Id: 89d17321-f736-4a41-9874-08ded08254d6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|366016|1800799024|23010399003|376014|18002099003|22082099003|3023799007|11063799006|56012099006|6133799003|4143699003;
-X-Microsoft-Antispam-Message-Info: 
-	Ykxkt1Jh+9h3FaB+cupN9CSY8qqoYu8k+vc2BLpiTVvL62rGYEyi8WRFMkESfIRG+1LeWMJswToWU4Urgp5lEzWYMuBWMyvqX6rcwZmY5lnMwe1pWg3WyHdUbujU7zhcx8ff9oXIlnXZYIjSTJqyY3NzkkSg5c6YZ2/dSqPhPA5uMUMS+JzCK0zbLG7RnR4rqDSbzd5eMymqX0BElc7jSc98gLfYj6znAmg9c7mNBFxQDbnilcY1v+Z3fL4Ez8XPIdu/T30zeXpiN/6om0ACRzXAd/JiY1KzRnnVJe4GVMYiPn73MkIMSOt2wa/BRCw5bVLoh0jUS29leHkvh/el99zPQfCRY5A0KOKZdW0ZP7BeVLgWdKpJ1fbA289dXH+nhfozNgXFLO/fJcCooAIf3YXpR1XCx8v4Ur50r6fcJWWrCvUqnq2VGJO1g5QfgkxAlwVlIHN3/NcsTBNjr7iLeJkFouwKiKGSzlxNk6EmA6lteLHoHX32J1zH1zggLw2qF0fStAD9O1mL2DfNtkyxDy67Mk7aLC5JBtMx4LHs/NjDqMutAsvBhC+E9vhawW9iQjY6V7F4Hg/UAjXdx1LoqdfPPooze2yaZMtFD9eGYjarqde2/2B5B1/cGH1qWMzPWrJR3C4KN31pQNpjnb8hVl6MF/kSIndmFJvUY+/gmcg=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DBBPR04MB7737.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(23010399003)(376014)(18002099003)(22082099003)(3023799007)(11063799006)(56012099006)(6133799003)(4143699003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?czIvZkJxeXI4RDZwU1JqTk5md2hpUTdBMm9NVjA4WVNDajhjUWhpL3BKYWZH?=
- =?utf-8?B?KzNxK09HbHcySXZTb1huT0RjUUxVbWF3RHYxUWd5YloySzUzUUtYVlduNzlX?=
- =?utf-8?B?YUpEQTBEVjhIVmx5M3B4WCttc1hlUDIzMXluYjhtUFd0MklmaWtncnR5dmxH?=
- =?utf-8?B?RTFCZU5TMWczMHRoODR4Q1dCd0gxV2hpUnFOZVBXQ1N2SWNabjllWGRrTXor?=
- =?utf-8?B?MzErdVZjeERlbFRHN2JrUlRuZjkwS1oySDlIak9zOE9pdFR2bkJ4aDFuL3lj?=
- =?utf-8?B?eXUyQy96andkTFBUa0dtaTMzKzBYZE9aMTMzU0laWmdyR2t0SDRadHZKdW0r?=
- =?utf-8?B?cFFCbWh3cHcvU1pHa2ZJWnVuaGdaQ3dZdGNFUmNPeUkxcGJ0T3FHdEpmWVFO?=
- =?utf-8?B?ZXlxQnM3MTlDTWdXcFJCS0ZwMkpjTUU1Q1g0cnpSSXFmREl2SUJ6WnZFVmFV?=
- =?utf-8?B?cDRSVG92c21mNldtR1kyWlNhTVlURWtBbFg2eWFIeDN5eFgyZ0JYT3NheTg4?=
- =?utf-8?B?bkc2Ti9TSEJKc1BkV0w4SGE4WUkwZTNDRU5icTlqckRGcFU0eTJHU3ljSlRE?=
- =?utf-8?B?RlpHZ1BWMjJoTzE3NnJGK09kYUpWQVNkc2VTZXRLVllWOVpMZWt3VXpRWVp6?=
- =?utf-8?B?RStOY3pKWi9OUURwTkM4OXdVMXErV3FrZEZDSWFVdkIyNWVTSG1uT0FKOFRr?=
- =?utf-8?B?RGJBNVdPMnc2b1BmYm5OS0xlQVFDN2wrSWZkeko1eDU3NE1JejBOaHdKeGxV?=
- =?utf-8?B?RjM0N2NZQ0I1SEtUZzVnZk9NVnJJTTRRcWNTSDVIckVOU0tnUFFEdTUwZEh5?=
- =?utf-8?B?aU9aWmJzd0hmeUxwTGpNcTNYUm0yeEJ6b2RaWnJKbUlNMWdNajJWOHRPNXJr?=
- =?utf-8?B?LzY2TjFJL01ZRWN5Umt6Si9qM0JNZC9SbjVQSUR3cURkNkdWc3V3M2lqbTk3?=
- =?utf-8?B?ZHNRTklMaGk3Z1FNYjVPWkdKRUFCUGdpRVhQMHlJZHdsbklONVRpRjlTck0x?=
- =?utf-8?B?RVJDd0F2NTg0SEV5UVdZK0c0SThqV0tCSFgyVHpiQ0dwNFhOazVUSEtwZlVP?=
- =?utf-8?B?eUs1U3dNOWxlT3BsWmZia1dNdWlFTGkzQmZoNkZHdFlaN2w0ajA1Ry9MdVJa?=
- =?utf-8?B?SFAzaXRudmNLNnJRSFBHZE9FaCtCSzFQc2xnc09iNE01NHpZZ01LbzMzWGdN?=
- =?utf-8?B?Qm1hNlM5WXU5WnZqWEgxNHFiRFUzNndwYVFxeDZWL0o5aDErR0I0eDZvVE50?=
- =?utf-8?B?WCtBbFZ1ejB5emt1clhGVGZUaFg5ZWlSQlVHWU44QzRiU2NGc0NpM2pxT1lx?=
- =?utf-8?B?Wm9mektPTTdzVldwRjYzTnFxN1ljZHloVEtmYit5ZUV3K01XU1RvTnQyTmcy?=
- =?utf-8?B?TlczdklGSVA2amR6N1NNdW0rdDFFNkNQUFJEOTkxN0xXRkNaYW1uRFBvdTRz?=
- =?utf-8?B?UDNmRW8ybXhsRjlkY0VKcWZpbGNnVFRDV005d29iMG1UOVJYRkNMcDBWS3VC?=
- =?utf-8?B?YnNvTXhLVjVqZU84ZkJScENNditpbGtvMTBkbTBJWEg3WnhZRHdSaHpLYk44?=
- =?utf-8?B?R0xFcVNDSURJMzlTeU85bUpuazZsdjZ0b2MxazgvUTJQN2hLN1Z6dWNuUDRW?=
- =?utf-8?B?blJ0SUtRaE9sdCsyZXhsWkhTZW9RT3lhRTFQSmJRRTFZTTF2YXNPNjlmVWlr?=
- =?utf-8?B?VHBYNUQrUkwyR1BmM09zK3BzelFJZThCOG0rbGNUazVHYlpXSXVUd0pabERE?=
- =?utf-8?B?RVN2M0V1c0NTeU5HcTc1aGdPSm5aenpDTXlXcWRTeWZ5TEtoclhlMGN5NWxL?=
- =?utf-8?B?WmJrbFNEQitjenNkT1hOemtOZktXRStwQ2c4OU05dTkvM0lhYzhRU3RWVFRa?=
- =?utf-8?B?T3I0WEQyVXZnTkxUNWZCcGJ2bGZGWlZoa28rMGdjN3ZnOXFMbEsySmlNc1hU?=
- =?utf-8?B?dDMrODFjeDlvckpWMmRoVldxQllDZ3d1MU0wT2JFckZwaU5qZHRRczNNREZX?=
- =?utf-8?B?dFU3bGxkRzNzeC9OZUV2YWFTNVhkTlRISXNjWENCTHdwa2RwN1dlQVg4MndT?=
- =?utf-8?B?SEtMWEY3bVFEbzJKem9IR1lRcFhHTm42c0VBOEVXRjBIaVNzTi9ySnpGSGtv?=
- =?utf-8?B?bE5qVk04T3VNYkx4RS9vKzFVdDFJMDN6d01vM1BRQ21jeW9pekt2amE4ekFy?=
- =?utf-8?B?K2plOTJZQVE0SzRwa3FYU1lGV1JXVFVrYlJPRi9zY3J4TXdRNFFkZFJ1RVZW?=
- =?utf-8?B?aTUrN1dQNE5mWVhXUk8yNjUrQU12akpIREx3cGlOZVV1eUNFOEtkcUZXbU5r?=
- =?utf-8?B?aGFxZ3BET0FYSk45SG9wdmxuYldrWnZ1bFJSWWtIa2RNWVpOSEhPZz09?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: 89d17321-f736-4a41-9874-08ded08254d6
-X-MS-Exchange-CrossTenant-AuthSource: DBBPR04MB7737.eurprd04.prod.outlook.com
+X-Exchange-RoutingPolicyChecked: 
+	tAzgQx+QvzrGOEotAIvyPlwdlqrW7f7BPuybeKDiGhL+yu9Nc8ac98ewBXlCxDpLmpNxfhpb8pR/veCghOGOajxJl2i9ykE3u3nOehewfElyx56Llnm2GfUNmY9wYlgsEvifLVvLLB0WGRTsi7KpPFuru0vg07H5OT9SAM301b5h8X1JAv8DMQniXTjl2ou24GOgBLJYhf66bgRMLREl94rKvfkKEaok5UsBrctZ4kn+3BW6lItE2zbN49w1hL3b+7svFGtAifXjogKZHD7WBxbxXb3GEBEHN+6u0C4hq5KuPjjFpORggONAQulWGwLxO6OlUD6XVnmhqYxCi+BknQ==
+X-OriginatorOrg: fujitsu.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jun 2026 17:18:52.3036
+X-MS-Exchange-CrossTenant-AuthSource: TYYPR01MB13419.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d517c4c9-fae7-49e5-b76f-08ded0ce0841
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Jun 2026 02:20:45.3074
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gAkEw9DFGplBgMTx6ao99POhnGjn1TMu8vrNp9vvjijgwEaObVsQljHOjv4aK9fyMcCLRL3d/UZIcKSqmfCi/vFbgkg5AQy6KweyOYjq9Cc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9626
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: EqUPrWbCmR8k5M7PurQ4R6qVkRnwFfbCEI4eqLR/yPTVrjeKxF9w622jydxoUwU9leamGgxDOSZiGSRPJdN5yg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB9303
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 22 Jun 2026 17:19:08 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4264
+ <yocto-patches@lists.yoctoproject.org>; Tue, 23 Jun 2026 02:20:55 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4265
 
-Hi Martin,
-
-On 6/21/26 11:19 PM, Martin Herren via lists.yoctoproject.org wrote:
-> From: Martin Herren <sputnik@on-the-web.ch>
-> 
-> The Radxa ROCK 4D is a compact single-board computer (SBC) featuring
-> numerous top-tier functions, features, and expansion options.
-> 
-> Equipped with the Rockchip RK3576 SoC, the ROCK 4D boasts an octa-core
-> CPU (4x Cortex-A72 + 4x Cortex-A53), Mali-G52 MC3 GPU, and a 6 TOPS NPU,
-> making it ideal for AI and multimedia tasks.
-> 
-> 	http://radxa.com/products/rock4/4d
-> 
-> tech specs:
-> - Rockchip RK3576 (4x Arm Cortex-A72 + 4x Cortex-A53)
-> - Arm Mali-G52 MC3 GPU
-> - DDR5 RAM (2/4/8/16 GB)
-> - uSD, eMMC/UFS module connector
-> - GbE
-> - 1x USB-C (power delivery only)
-> - USB 3.0: 1x Type-A HOST, 1x Type-A OTG/HOST
-> - USB 2.0: 2x Type-A HOST
-> - 1x HDMI 2.1
-> - 1x MIPI CSI camera port
-> - 40-pin GPIO (uart, spi, i2c, pcm/i2s, pwm, gpio)
-> 
-> The ROCK 4D is the only board of the Rock 4 series using the new RK3576
-> SoC instead of the RK3399 used in the rest of the Rock 4x serie.
-> 
-> NOTES:
-> Due to the RK3576 boot ROM limitations, the bootloader cannot be
-> loaded
-> from the SD card; it must be extracted from the wic image and
-> flashed to the SPI flash. The kernel and rootfs then boot from the SD
-> card. See the "rk3576 booting" note in the README for details.
-> 
-
-I'm confused, if it doesn't work, what is the purpose of using Jonas's 
-U-Boot fork?
-
-> Ethernet is only partially working, mostly in degraded 100 or even 10
-> Mbps mode or sometimes not at all. Investigations are still ongoing and
-> if found a fix will be submitted in a future patch.
-> 
-> Wifi is not yet working, requires an out-of-tree kernel driver. Work on
-> this will be done on a separate future patch.
-> 
-> Signed-off-by: Martin Herren <sputnik@on-the-web.ch>
-> ---
->   README                                  | 17 +++++++++++++++++
->   conf/machine/rock-4d.conf               | 11 +++++++++++
->   recipes-kernel/linux/linux-rockchip.inc |  1 +
->   3 files changed, 29 insertions(+)
->   create mode 100644 conf/machine/rock-4d.conf
-> 
-> diff --git a/README b/README
-> index c2697d1..8192284 100644
-> --- a/README
-> +++ b/README
-> @@ -39,6 +39,7 @@ Status of supported boards:
->   			roc-rk3328-cc
->   			roc
-> k-3a
->   			rock-4c-plus
-> +			rock-4d
->   			rock-5a
->   			rock-5b
->   			rock-pi-4a
-> @@ -122,6 +123,22 @@ Notes:
->   
->   	in the configuration (e.g. conf/local.conf).
->   
-> +  rk3576 booting:
-> +	The RK3576 boot ROM cannot load the bootloader from the SD card.
-
-The datasheet claims otherwise.
-
-It could simply be that the board doesn't allow you to select booting 
-from SD card first. On RK35xx family, the SARADC channel 0 is used by 
-the BootROM to select which devices to try loading the bootloader from. 
-I'm thinking either you already have something valid on SPI and/or 
-eMMC/UFS and the board starts from there, or the board is configured in 
-such a way that the ADC selects a configuration for which the BootROM 
-will not attempt to load from SD card. I don't have a reference design 
-for the RK3576 and Radxa's schematics for the Rock4D don't provide this 
-table so your guess is as good as mine as to which values select which 
-devices. There's some weird circuitry on Rock4D schematics though on 
-that channel, c.f. page 11.
-
-> +	For rk3576-based boards (e.g. the rock-4d) the bootloader must be
-> +	extracted from the wic image and flashed to the SPI flash; the
-> +	kernel and rootfs then boot from the SD card.
-> +
-> +	To extract the SPI bootloader region (first 16 MiB) from a wic
-> +	image:
-> +
-> +		dd if=<image>.wic of=spi.bin bs=1M count=16
-> +
-
-Please just make sure idbloader.img and u-boot.itb are in the deploy 
-directory (or even better, u-boot-rockchip-spi.bin which contains both 
-with u-boot.itb at the right offset already) and tell the user to flash 
-those binaries on SPI at a specific offset. I believe you're also 
-copying the partition table, which doesn't make sense on the SPI flash 
-(at least not that partition table since there's for sure not enough 
-room for the full system on it).
-
-> +	Then flash spi.bin to the SPI flash, e.g. with rkdeveloptool
-> +	from a host PC with the board in Maskrom mode; see the board
-> +	vendor's documentation for details:
-
-Missing newline.
-
-> +		https://docs.radxa.com/en/rock4/rock4d/low-level-dev/spi_flash
-> +
-
-The "code" changes are fine.
-
-Cheers,
-Quentin
+cGluZw0KDQogIC0tDQpCZXN0IFJlZ2FyZHMNCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KV2FuZyBNaW5neXUNCkZVSklUU1UgTkFOSklORyBTT0ZU
+V0FSRSBURUNITk9MT0dZIENPLiwgTFRELiAoRk5TVCkNCk5vLjYgV2Vuemh1IFJvYWQsIE5hbmpp
+bmcsIDIxMDAxMiwgQ2hpbmENClRFTKO6Kzg2KzI1LTg2NjMwNTY2LS04NTY4DQpDT0lOUzogNzk5
+ODg1NDgNCkZBWDogKzg2KzI1LTgzMzE3Njg1DQpNQUlMOiB3YW5nbXlAZnVqaXRzdS5jb20NCg0K
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBXYW5nIE1pbmd5dSA8d2FuZ215
+QGZ1aml0c3UuY29tPg0KPiBTZW50OiBGcmlkYXksIEFwcmlsIDMsIDIwMjYgNDoyOCBQTQ0KPiBU
+bzogeW9jdG8tcGF0Y2hlc0BsaXN0cy55b2N0b3Byb2plY3Qub3JnDQo+IENjOiBXYW5nLCBNaW5n
+eXUvzfUgw/nopCA8d2FuZ215QGZ1aml0c3UuY29tPg0KPiBTdWJqZWN0OiBbeW9jdG8tcGF0Y2hl
+c10gW21ldGEtY2dsXSBbUEFUQ0hdIGxheWVyLmNvbmY6IEFkZCB3cnlub3NlDQo+IA0KPiBGcm9t
+OiBXYW5nIE1pbmd5dSA8d2FuZ215QGZ1aml0c3UuY29tPg0KPiANCj4gTEFZRVJTRVJJRVNfQ09N
+UEFUOiBhZGQgd3J5bm9zZQ0KPiANCj4gU2lnbmVkLW9mZi1ieTogV2FuZyBNaW5neXUgPHdhbmdt
+eUBmdWppdHN1LmNvbT4NCj4gLS0tDQo+ICBtZXRhLWNnbC1jb21tb24vY29uZi9sYXllci5jb25m
+IHwgMiArLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0p
+DQo+IA0KPiBkaWZmIC0tZ2l0IGEvbWV0YS1jZ2wtY29tbW9uL2NvbmYvbGF5ZXIuY29uZg0KPiBi
+L21ldGEtY2dsLWNvbW1vbi9jb25mL2xheWVyLmNvbmYgaW5kZXggNTIyZTEyMS4uOGFjMjgxYiAx
+MDA2NDQNCj4gLS0tIGEvbWV0YS1jZ2wtY29tbW9uL2NvbmYvbGF5ZXIuY29uZg0KPiArKysgYi9t
+ZXRhLWNnbC1jb21tb24vY29uZi9sYXllci5jb25mDQo+IEBAIC0xMSw2ICsxMSw2IEBAIEJCRklM
+RV9QUklPUklUWV9jZ2wtY29tbW9uID0gIjciDQo+IA0KPiAgTEFZRVJERVBFTkRTX2NnbC1jb21t
+b24gPSAiY29yZSBvcGVuZW1iZWRkZWQtbGF5ZXIgbmV0d29ya2luZy1sYXllcg0KPiBwZXJsLWxh
+eWVyIGZpbGVzeXN0ZW1zLWxheWVyIHNlY3VyaXR5IHNlbGludXggeW9jdG8iDQo+IA0KPiAtTEFZ
+RVJTRVJJRVNfQ09NUEFUX2NnbC1jb21tb24gPSAiaG9uaXN0ZXIga2lya3N0b25lIGxhbmdkYWxl
+IG1pY2tsZWRvcmUNCj4gbmFuYmllbGQgc2NhcnRoZ2FwIHN0eWhlYWQgd2FsbmFzY2FyIHdoaW5s
+YXR0ZXIiDQo+ICtMQVlFUlNFUklFU19DT01QQVRfY2dsLWNvbW1vbiA9ICJob25pc3RlciBraXJr
+c3RvbmUgbGFuZ2RhbGUgbWlja2xlZG9yZQ0KPiBuYW5iaWVsZCBzY2FydGhnYXAgc3R5aGVhZCB3
+YWxuYXNjYXIgd2hpbmxhdHRlciB3cnlub3NlIg0KPiANCj4gIHJlcXVpcmUgY29uZi9kaXN0cm8v
+aW5jbHVkZS9jZ2xfY29tbW9uX3NlY3VyaXR5X2ZsYWdzLmluYw0KPiAtLQ0KPiAyLjQzLjANCg0K
 
