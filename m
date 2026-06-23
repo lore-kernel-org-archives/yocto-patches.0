@@ -2,71 +2,74 @@ Return-Path: <nitin.wankhade333@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 257B4CD98F0
-	for <webhook@archiver.kernel.org>; Tue, 23 Jun 2026 06:10:17 +0000 (UTC)
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.14775.1782195012191959732
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06FE6CD98F0
+	for <webhook@archiver.kernel.org>; Tue, 23 Jun 2026 06:10:27 +0000 (UTC)
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.14969.1782195018298051819
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 22 Jun 2026 23:10:12 -0700
+ Mon, 22 Jun 2026 23:10:18 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=Q9kiSvgJ;
- spf=pass (domain: gmail.com, ip: 209.85.216.47, mailfrom: nitin.wankhade333@gmail.com)
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-37c5a6be9c9so849737a91.2
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 22 Jun 2026 23:10:12 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=jj9R9zTb;
+ spf=pass (domain: gmail.com, ip: 209.85.215.175, mailfrom: nitin.wankhade333@gmail.com)
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-c8aff9185edso13264a12.0
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 22 Jun 2026 23:10:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782195011; x=1782799811; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QbBr3lFKfZg5PTJw9FuamsSxSbCi6pXXttxlyM2Atcg=;
-        b=Q9kiSvgJELocUx6nWkUHvs3/YnDZ6/CPGv/8iJDzJwLgWu/62pYFQbl+PP2aPuOmxc
-         Ir58IvD/sNml+HTNMaKUacN6z10pCnx0QZzWLUWiQ+Md1w8AIHPkcXFCh8x1GNgT2Efk
-         6sYAW+3FmDzLyeg/dscBiPEkvnaZg7pfVt9bAqWt7Clfz7R9bfwew9eZNmqjT1CnEWeq
-         7jLvd3qlqPIcBQ8jNo1t0RkyGFWyzScp4bkIPswdGxVnKoZzeSw2SP30li46BXq8VjZy
-         N8HE57tCCoVz41DzECTKjWVI/tOJwPNw8QC6z2m4uW2FFxaDnNYjZVzJzGLuzVdLYgPq
-         HYlQ==
+        d=gmail.com; s=20251104; t=1782195017; x=1782799817; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=c15kgTN1Dgeji6pZdIZ0MXeCKZXelqTHfX3W284DAcI=;
+        b=jj9R9zTbuaj6aVNF4NJ3VjmE/W1YdR+qzvJUC/YlxiCHqKkgxjevvNznN6KK+sq0FZ
+         1aPMOQMRCG8ER81lpCJFqNgGvC4Dx4A+VJV47Z9gOt4cwmVMaEky6RLH2giuIH0iHjT8
+         5GY7QgALwOi+N7kwLTfzuTzOeQRJxgX0dF3SuSbOeKpC0e0OHv8ExJtf3rmKikfGjvAC
+         MNVtPTZOirEuThaMjHsAEDokQAGTUnxXZquo8bFh7KxDr+KqYiK+M95Gqzid+x+Br801
+         X0LKe0LinLichaw9diu7QBJCK7UeIn+kZf1IxLULssFWngp5X9KMBaUuUkUjD0FQTC1J
+         +pZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782195011; x=1782799811;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QbBr3lFKfZg5PTJw9FuamsSxSbCi6pXXttxlyM2Atcg=;
-        b=P2NJtQ0nphZF274z8udqRpKNs6NCM/6VEyDAXFcblsalqdEXg7Jsx6O0CtcLs6BHCQ
-         p/wFS06MwgaWcmEfCWRC7i6khDxfEbAdY2bsR4b1Q3X/cH/AKKX8kPOvp4BHeQkWs3u9
-         919h1GdL+cbBfFGZ8vkbRorVyWtYxSARxVsTkF0bUq3IcEDnAjQvE1weWxY+cLq+nrWt
-         x2X64idb57CLyljyh6Tjy48o5391dWkrAvzv+xbp9hz5po7uVKP4gxDdrzvwQnvFlaCH
-         b4kjrvBzf5fmfdA7aHyq0Bf7EOdcWQeoiy8Xuk2ErMTSFbkFFYMPZ0T8qsyDmU+ADfsC
-         fPQQ==
-X-Gm-Message-State: AOJu0YzcclvmuhDHnb4tvezfqKB4TyDEWLdLB4jkrymqx9tUTioHAGew
-	QgN37TTvbNVuC0H2VDGFikSScHE3qxAmTwx6/peCr1KSn/U3u2rmGvrcoJz9BA==
-X-Gm-Gg: AfdE7cnC9Ad3KuxuBZsnjrlHANGNXLyfjgjCulX5uEuEjjYd1DJdAZss118GBHNckML
-	+0oOndEZb6Pi+8/3oNZPFYgKsQ2JiySoi1u408EJaKz7J17MEV8dr1qhRgJTMF9GxydH62BsO9R
-	rabKhZR8VorWRZ71rrSF03MX42QNKA4lf4JpgxZfqE93wYYpzBSY7yKgHpWe/A8IDw9cZwPt2mN
-	BbEZOr8cUAWgVQBwc7ncDd4xJjVp8+3H+O9OO1rYIWu5ThDmUm6Tt1wjyTXE9uoz4uik7YFPzA7
-	TZpHXZU+xPInlq/wU0OjNYpyrOyOlyECsn35XkyJhhdG2Yn/OrMIrcfPoIOY6fFltvLGuJY0KZX
-	I6uUI+bibwCkZTZhVMH17CohQMctSBAhPUN+gWbcbphtIQUsDzplTEm6sUUY3hKfzpRU+S2K1We
-	4bY/vFFgx86izaUVZMvLgyGdg=
-X-Received: by 2002:a17:903:2f0b:b0:2c4:397:dd9a with SMTP id d9443c01a7336-2c7bf1b3aacmr16186745ad.4.1782195011450;
-        Mon, 22 Jun 2026 23:10:11 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1782195017; x=1782799817;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=c15kgTN1Dgeji6pZdIZ0MXeCKZXelqTHfX3W284DAcI=;
+        b=NTiTjYTB9WStEXKEQmQP3VdKuSAwKVnLG9DjacAHrtHj3XFJJeDskO6LpkFOSnNIT5
+         Hky03z66di2Lqn7FLc2EF6SI4BIZZ6zkONFrh1qtqw/wxP6vcQRns462Bd4nWd7Kwq6K
+         SQucw431Ax/ckgGYENPqJsphjmGEH18Adk0eYzMeWfgbxrOsuhtxEQBIL3HkbBrKK4/d
+         IRjYVVOj/pXtKnKy+6yAlK8/DSDgLiMvu8RQLzju3alWZOo0E0aC5beA8nvO3jiH7YJT
+         KYD7x98Y4ld6Set7uaL+OE1AbM8qQlE6G2Sh0YItIg8SZTe7liyRc4GrryTI/WMZLwzy
+         fSkA==
+X-Gm-Message-State: AOJu0YwezzCItJEOVlw1EEjyCTPfD9n+JUCh+lVzeUZRzwvukTqGIeBO
+	asKSJHfHehNwR5MTyD27mDv9eD4wQDUa2CY2vULMKbkZYHv78Qu0kb4m4x4QUi2Pmyc=
+X-Gm-Gg: AfdE7cllKs41t7jxYA7Eio5klrpoDkhQKRnTbMcHlinqtQ6Orh2n7EAtfWd898PczMd
+	Enmlc0JlcaHB8NvgzJlDMKwojLkt+MmOBnM5NHHFDSA1ByDTQhEkArH5E54sfkjeFgvPSOKAXG2
+	oI45faGDvL3w/q2ZvNbKKP7ogEnKco3IlNFGK2ZL5kb9IcTS2nGFhbLpDYulMCyIG8FaAQrqMfy
+	QmtIz4gSCAP+SCPwdvwXnYL++8K7XiPN7BYwFRbsWGtT6jyMDgmiOtfotz9khc6TroW2mM2aEHU
+	q0Iez8/nFosmIT1Hwlot4JQtEhtUOExD+MJn1JGHEg2Vpk6vi4PSVgrpNhhdBXvGGZyWMdnJ3fz
+	GNiF3A8C+r7bG2z9Ft8CslSY8OPGfBvERKCOkknkora7jK5u1YDI92qAfD+KSnXAvzuziE3q4Ma
+	N9JeEkxNdyXdsxiSe7m/I+owk=
+X-Received: by 2002:a17:903:13cf:b0:2ba:1e94:d03b with SMTP id d9443c01a7336-2c737ad3f04mr73795945ad.6.1782195017481;
+        Mon, 22 Jun 2026 23:10:17 -0700 (PDT)
 Received: from LL-868L.kpit.com ([49.206.129.123])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2c7439f85f1sm99844045ad.42.2026.06.22.23.10.09
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2c7439f85f1sm99844045ad.42.2026.06.22.23.10.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jun 2026 23:10:10 -0700 (PDT)
+        Mon, 22 Jun 2026 23:10:17 -0700 (PDT)
 From: Nitin Wankhade <nitin.wankhade333@gmail.com>
 X-Google-Original-From: Nitin Wankhade <nitin.wankhade@kpit.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: nitin.wankhade@kpit.com,
 	Nitin Wankhade <nitin.wankhade333@gmail.com>
-Subject: [meta-lts-collab][kirkstone][PATCH V2 1/7] strongswan: Fix CVE-2026-35328
-Date: Tue, 23 Jun 2026 11:39:55 +0530
-Message-Id: <20260623061001.644583-1-nitin.wankhade@kpit.com>
+Subject: [meta-lts-collab][kirkstone][PATCH V2 2/7] strongswan: Fix CVE-2026-35329
+Date: Tue, 23 Jun 2026 11:39:56 +0530
+Message-Id: <20260623061001.644583-2-nitin.wankhade@kpit.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260623061001.644583-1-nitin.wankhade@kpit.com>
+References: <20260623061001.644583-1-nitin.wankhade@kpit.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 23 Jun 2026 06:10:17 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4267
+ <yocto-patches@lists.yoctoproject.org>; Tue, 23 Jun 2026 06:10:27 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4268
 
 From: Nitin Wankhade <nitin.wankhade333@gmail.com>
 
@@ -74,70 +77,84 @@ Upstream-Status: Backport [https://snapshot.debian.org/archive/debian-security-d
 
 Signed-off-by: Nitin Wankhade <nitin.wankhade333@gmail.com>
 ---
- .../strongswan/files/CVE-2026-35328.patch     | 42 +++++++++++++++++++
- .../strongswan/strongswan_5.9.13.bbappend     |  4 ++
- 2 files changed, 46 insertions(+)
- create mode 100644 meta-networking/recipes-support/strongswan/files/CVE-2026-35328.patch
- create mode 100644 meta-networking/recipes-support/strongswan/strongswan_5.9.13.bbappend
+ .../strongswan/files/CVE-2026-35329.patch     | 57 +++++++++++++++++++
+ .../strongswan/strongswan_5.9.13.bbappend     |  1 +
+ 2 files changed, 58 insertions(+)
+ create mode 100644 meta-networking/recipes-support/strongswan/files/CVE-2026-35329.patch
 
-diff --git a/meta-networking/recipes-support/strongswan/files/CVE-2026-35328.patch b/meta-networking/recipes-support/strongswan/files/CVE-2026-35328.patch
+diff --git a/meta-networking/recipes-support/strongswan/files/CVE-2026-35329.patch b/meta-networking/recipes-support/strongswan/files/CVE-2026-35329.patch
 new file mode 100644
-index 0000000..32a23b3
+index 0000000..7c55d43
 --- /dev/null
-+++ b/meta-networking/recipes-support/strongswan/files/CVE-2026-35328.patch
-@@ -0,0 +1,42 @@
++++ b/meta-networking/recipes-support/strongswan/files/CVE-2026-35329.patch
+@@ -0,0 +1,57 @@
 +From: Tobias Brunner <tobias@strongswan.org>
-+Date: Wed, 25 Mar 2026 10:17:46 +0100
-+Subject: tls-server: Prevent infinite loop if supported versions are too
-+ short
++Date: Wed, 25 Mar 2026 10:28:45 +0100
++Subject: pkcs5/pkcs7: Avoid NULL pointer dereference when verifying padding
 +
-+If the extension doesn't contain a multiple of two bytes, the previous
-+code would get stuck in an infinite loop as `remaining()` continued to
-+return TRUE while `read_uint16()` failed to parse a value. Initiating
-+several connections with such an extension allows a DoS attack as no
-+threads would eventually be available to handle packets/events.
++Can be triggered via empty PKCS#7 encrypted- or enveloped-data content
++in IKEv1 CERT payload.
 +
-+Fixes: 7fbe2e27ecf6 ("tls-server: TLS 1.3 support for TLS server implementation")
-+Fixes: CVE-2026-35328
++Fixes: 4076e3ee9121 ("Extract PKCS#5 handling from pkcs8 plugin to separate helper class")
++Fixes: d7aa09104f08 ("Implement PKCS#7 enveloped-data parsing and decryption")
++Fixes: CVE-2026-35329
 +
-+CVE: CVE-2026-35328
++CVE: CVE-2026-35329
 +Upstream-Status: Backport [https://snapshot.debian.org/archive/debian-security-debug/20260422T125423Z/pool/updates/main/s/strongswan/strongswan_6.0.1-6%2Bdeb13u5.debian.tar.xz]
++Patch is refreshed as per the source code version 5.9.13
 +Signed-off-by: Nitin Wankhade <nitin.wankhade333@gmail.com>
 +===
-+diff --git a/src/libtls/tls_server.c b/src/libtls/tls_server.c
-+index 3ad9fd2..7b2238e 100644
-+--- a/src/libtls/tls_server.c
-++++ b/src/libtls/tls_server.c
-+@@ -471,15 +471,12 @@ static status_t process_client_hello(private_tls_server_t *this,
-+ 		bio_reader_t *client_versions;
++diff --git a/src/libstrongswan/crypto/pkcs5.c b/src/libstrongswan/crypto/pkcs5.c
++index e48a9ad..134ccd3 100644
++--- a/src/libstrongswan/crypto/pkcs5.c
+++++ b/src/libstrongswan/crypto/pkcs5.c
++@@ -113,6 +113,11 @@ static bool verify_padding(crypter_t *crypter, chunk_t *blob)
++ {
++ 	uint8_t padding, count;
 + 
-+ 		client_versions = bio_reader_create(versions);
-+-		while (client_versions->remaining(client_versions))
-++		while (client_versions->read_uint16(client_versions, &version))
-+ 		{
-+-			if (client_versions->read_uint16(client_versions, &version))
-++			if (this->tls->set_version(this->tls, version, version))
-+ 			{
-+-				if (this->tls->set_version(this->tls, version, version))
-+-				{
-+-					this->client_version = version;
-+-					break;
-+-				}
-++				this->client_version = version;
-++				break;
-+ 			}
-+ 		}
-+ 		client_versions->destroy(client_versions);
+++	if (!blob->len)
+++	{
+++                return FALSE;
+++       }
+++
++ 	padding = count = blob->ptr[blob->len - 1];
++ 
++ 	if (padding > crypter->get_block_size(crypter))
++diff --git a/src/libstrongswan/plugins/pkcs7/pkcs7_enveloped_data.c b/src/libstrongswan/plugins/pkcs7/pkcs7_enveloped_data.c
++index 8b26bad..3d601d6 100644
++--- a/src/libstrongswan/plugins/pkcs7/pkcs7_enveloped_data.c
+++++ b/src/libstrongswan/plugins/pkcs7/pkcs7_enveloped_data.c
++@@ -182,10 +182,17 @@ static bool decrypt(private_key_t *private, chunk_t key, chunk_t iv, int oid,
++  */
++ static bool remove_padding(private_pkcs7_enveloped_data_t *this)
++ {
++-	u_char *pos = this->content.ptr + this->content.len - 1;
++-	u_char pattern = *pos;
++-	size_t padding = pattern;
+++	u_char *pos, pattern;
+++	size_t padding;
++ 
+++	if (!this->content.len)
+++       {
+++		return FALSE;
+++	}
+++
+++	pos = this->content.ptr + this->content.len - 1;
+++	pattern = *pos;
+++	padding = pattern;
++ 	if (padding > this->content.len)
++ 	{
++ 		DBG1(DBG_LIB, "padding greater than data length");
 diff --git a/meta-networking/recipes-support/strongswan/strongswan_5.9.13.bbappend b/meta-networking/recipes-support/strongswan/strongswan_5.9.13.bbappend
-new file mode 100644
-index 0000000..9d48481
---- /dev/null
+index 9d48481..0f167db 100644
+--- a/meta-networking/recipes-support/strongswan/strongswan_5.9.13.bbappend
 +++ b/meta-networking/recipes-support/strongswan/strongswan_5.9.13.bbappend
-@@ -0,0 +1,4 @@
-+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
-+SRC_URI += "\
-+    file://CVE-2026-35328.patch \
-+"
+@@ -1,4 +1,5 @@
+ FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
+ SRC_URI += "\
+     file://CVE-2026-35328.patch \
++    file://CVE-2026-35329.patch \
+ "
 -- 
 2.34.1
 
