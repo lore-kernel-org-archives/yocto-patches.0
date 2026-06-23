@@ -2,147 +2,295 @@ Return-Path: <jackson.james9803@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49B9ACD4F26
-	for <webhook@archiver.kernel.org>; Tue, 23 Jun 2026 09:48:42 +0000 (UTC)
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.17508.1782208115114115962
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C0D4CD4F26
+	for <webhook@archiver.kernel.org>; Tue, 23 Jun 2026 09:56:12 +0000 (UTC)
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.17305.1782208567720961283
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 23 Jun 2026 02:48:35 -0700
+ Tue, 23 Jun 2026 02:56:07 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=WGeZn6YE;
- spf=pass (domain: gmail.com, ip: 209.85.216.52, mailfrom: jackson.james9803@gmail.com)
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-37cae998401so2415409a91.0
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 23 Jun 2026 02:48:35 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=g4sKEwLP;
+ spf=pass (domain: gmail.com, ip: 209.85.214.170, mailfrom: jackson.james9803@gmail.com)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2c7cfa17fedso2107105ad.3
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 23 Jun 2026 02:56:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782208114; x=1782812914; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20251104; t=1782208567; x=1782813367; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9327Uoxk6JQ5v6Izimj0zR2Z8OyxMV1e6Sz7EuNoWpE=;
-        b=WGeZn6YEXCELsriwxSFYnNJ1Ov4+c2HYeuC57oX9DJjP7UnBJsA2iRRO7eKUmG1lAi
-         mPsMKoK1MuS/bcLEdDxBzAQfvHwFnYw3kEwUh1PsFxRq/OiTtukptoVzYEd8C5NKO1ZB
-         UN4AO+I5Sq0hPhc1LD6d1Xr0Pe7RCksKbLCHxtlnyOfIU72D/Gjdra/7rAwg8w0z5QSn
-         /XQ9gaToUPmKC6cXex4/8edqtZa2xRH3lyCK2B+ZCM5/2Oeying8T+PqgspQoj4e30ez
-         39V7B01/xc3GSIkuG9kKItEysB/IN4SaGxK5WR6ba/MqfexjBquyAZHv30R6tHPGZPAk
-         nXIQ==
+        bh=j2ta1N81oVOIbf8wpDuHsgXKtRxxR49MLcd55Vnv0mQ=;
+        b=g4sKEwLPZpdC7h8HdLLHGOTLuphStG5CyDMCDeimtW32/Px0iXTKv5XhjqUxMtKKCu
+         JF6l14S/VCV2R3C7dm5BCTQYYW+UU0gVt5DQc5MfBiegARcKeFnrR9zflIpczOTefv+0
+         sWjR8D0nG1IDVMQSCT01ByhgHcnJPQpF6ZPQIXGs5BJkhCuMFI13qmH5hjCFksiFel3K
+         En8napzWPVRCSr4PAJ+DPObUN1VLNeeAoMtVm1wcMCGl24tSi+FLOpnvuNLBTAXjTVVu
+         1IT1v6Jz2sWBMX3SplYSt/QP0/wJok+ISNxptuMgAYAzjsqVPZ1SHKXQwi0M5aLRKXPR
+         7E7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782208114; x=1782812914;
+        d=1e100.net; s=20251104; t=1782208567; x=1782813367;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9327Uoxk6JQ5v6Izimj0zR2Z8OyxMV1e6Sz7EuNoWpE=;
-        b=U7/rEqGPoc58t/06IFStnUyW0WbdhJ7SMYjHAxTTo9O3L25LlJsCNe9hyLoKipcqqH
-         6gykMKkh91M7MbaEDaRXB1wwQcJitWNMi/9TevxBqjJqrx8Fk1G85t1DRAJhIydX640F
-         R59HUtC3tgKv6/Jt2Nr3x5EL4oQKTcFEX3leyzSZDUVSRG23vv+a0AMeUAPmuDl1GqZT
-         XUwoWnrs+W2j3gbWs8YOGt5FEnuY8h/0F/Bv30wN9tx3Tm6b1uYS+Y00/sjMbBNLNBdJ
-         5b9MCRiVvckQ9ptAfotUsE0v/IRv8LbseCbAsiL9fYkMA4vKtwM8l24b4YoDkBQAu/mA
-         hjzQ==
-X-Gm-Message-State: AOJu0Yz27GeGv663kx4xPHE0NVUOg92QHMLyn3qMAkBy8+M+Fk90co08
-	yAtfsyOoHKXg/CwdOsY32SsGL3uVUNopgkOHxf/j36oz0dZRm3rxRoo/6quGqg==
-X-Gm-Gg: AfdE7clcu10OA+7ukBGBpfiR8Rhy6XbD6UTmZDtmTs+WvErXEYuN+M+Dlgdm7U0Ubmp
-	O7K4yu6DMRiTX/DjiXZraayf5iZOROD34B8Ut0NdxizpBJwrkG6fUngpsXlRT4RIB52g0ed4svI
-	2HgyME6sfU7jYEBPC0kD78IZnxBlfVauH47vqtgMDiHc5YG+N/8OwiJWNxAV0y7PIOVYAWUgxuA
-	letgzQjL7zZXPZBQ3l9M4xpewddRxsM3fN9Z+RotMs+zdfVNwC4aq7JtycK8oFPf9zrqMh3B/8S
-	Hd371dRLlEsz0TxR4z/ckjbQAR5UHjsdoiJtAiTQ8MvvNnGfxejuRewp5l86d6yKCQWbCRutkkk
-	e4yYmvOUTsgd9Vo3hJs3CS3vf9yaf7YyHw6IihwF1Niugh2S+MDTsZZvw2ht8R6R5TsFEzEwaUm
-	ks5CblmANvaBFQLKi4
-X-Received: by 2002:a17:903:46c7:b0:2c6:b87c:e5a3 with SMTP id d9443c01a7336-2c718ed74e6mr187087975ad.15.1782208114173;
-        Tue, 23 Jun 2026 02:48:34 -0700 (PDT)
+        bh=j2ta1N81oVOIbf8wpDuHsgXKtRxxR49MLcd55Vnv0mQ=;
+        b=I3Sd/5LK43gSKdDfuZpqtgfMuTvBTH+Jn9uB011ETh5LlzHDqhL5DMHBIsaZTBACvx
+         61e6qrItUxHwTfxuSZxIUwQ2ouB59zfwVHv0hWOstEMuos9SeejUV+oDZ/3TBehCxE3+
+         g9J4e6v0Rf8ZaNJroMfF6aw2+jm/PCARemxJ5pQDir4fbt0v4CRD0AEMD24etBXdWxds
+         Q4iAm69uOSZHz+ta1JQkD20I6507snVlmgbV6h8bvJc+9DKFgXVKffA+5ATQ9f+Y37zY
+         nuvl5QxHj41UqVzEaBlx3YTov1nyoHntKLAWmHMXXS8rXJc8fd1LSwDm/soOBINRtLBZ
+         1rRQ==
+X-Gm-Message-State: AOJu0YyChFhPY38cXHSUSWEevywS3eXwudrB5hMGqgPWNeJcezHRyjRK
+	FCwt9PtpQRN+lWgFAZgP7WSwnBmI8PkjX6g3g29KmCsOzl5ZI6esn/mklWO0UjLb
+X-Gm-Gg: AfdE7cmRAHhLUkn3CKdAE2AggyaPK/66vceCJvHHQwXY7NXjCnZdqyhbtvEAD4sx35I
+	Hzijfvy6TsvXDko624IOQceKi4O3Y9aZS1OUdt9X5WPQb3hhfhe8ILLQAGDpPfrafe8s5QEsmPy
+	rsROR6JMe3A2EH22zevpgmplywxWDiILNugsqxJ6BhPKsxFqt/3LFJJnWES9aclMvoyTWqB8Hzv
+	PMNjyJ/DM8+f5YRuCebE8sjDCZT+qN+pAR16jZ5OU4WziymDyYtzoySGzv7o23TSF5h5Akn0NeN
+	I2Wynee/DR/KOKPShK3qC6/+JuiBoaoZMR+aV7JqhEukc9tfRQKjdm/UcQVbIHGXQc8uTxASdp1
+	EcYL3frXRoFF2FmWdynhbOeEy29AcFvmEtvHwn3PeKEmDGs36Xm104FpqkPlZYNsAw67e18ce7v
+	mP8tN9bgCj+hjCsM8h
+X-Received: by 2002:a17:903:19cb:b0:2c6:b40a:d0c7 with SMTP id d9443c01a7336-2c7c99435b2mr17071125ad.7.1782208566874;
+        Tue, 23 Jun 2026 02:56:06 -0700 (PDT)
 Received: from LL-868L.kpit.com ([157.45.208.254])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2c743bfd9d2sm117994015ad.56.2026.06.23.02.48.32
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2c7439f8e42sm100432365ad.48.2026.06.23.02.56.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jun 2026 02:48:33 -0700 (PDT)
+        Tue, 23 Jun 2026 02:56:06 -0700 (PDT)
 From: Jackson James <jackson.james9803@gmail.com>
 X-Google-Original-From: Jackson James <jacksonj2@kpit.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: careers.myinfo@gmail.com
-Subject: [meta-lts-collab][kirkstone][PATCH] jpeg: Reject unsupported number of components
-Date: Tue, 23 Jun 2026 15:18:13 +0530
-Message-Id: <20260623094813.130228-1-jacksonj2@kpit.com>
+Subject: [meta-lts-collab][kirkstone][PATCH] spirv: Use STACK_ARRAY instead of NIR_VLA
+Date: Tue, 23 Jun 2026 15:25:32 +0530
+Message-Id: <20260623095532.159994-1-jacksonj2@kpit.com>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 23 Jun 2026 09:48:42 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4276
+ <yocto-patches@lists.yoctoproject.org>; Tue, 23 Jun 2026 09:56:12 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4277
 
 From: Shaik Moin <careers.myinfo@gmail.com>
 
-This condition was already checked for incremental loading.
-This commit adds the same check in the nonincremental
-code path.
+The number of fields comes from the shader, so it could be a value large
+enough that using alloca would be problematic.
 
 Signed-off-by: Shaik Moin <careers.myinfo@gmail.com>
 ---
- .../gdk-pixbuf/gdk-pixbuf/CVE-2026-5201.patch | 47 +++++++++++++++++++
- .../gdk-pixbuf/gdk-pixbuf_%.bbappend          |  4 ++
- 2 files changed, 51 insertions(+)
- create mode 100644 meta-oe/recipes-gnome/gdk-pixbuf/gdk-pixbuf/CVE-2026-5201.patch
- create mode 100644 meta-oe/recipes-gnome/gdk-pixbuf/gdk-pixbuf_%.bbappend
+ ...0001-util-Move-STACK_ARRAY-into-util.patch |  83 ++++++++++++++
+ .../mesa/files/CVE-2026-40393.patch           | 103 ++++++++++++++++++
+ meta-oe/recipes-graphics/mesa/mesa_%.bbappend |   5 +
+ 3 files changed, 191 insertions(+)
+ create mode 100644 meta-oe/recipes-graphics/mesa/files/0001-util-Move-STACK_ARRAY-into-util.patch
+ create mode 100644 meta-oe/recipes-graphics/mesa/files/CVE-2026-40393.patch
+ create mode 100644 meta-oe/recipes-graphics/mesa/mesa_%.bbappend
 
-diff --git a/meta-oe/recipes-gnome/gdk-pixbuf/gdk-pixbuf/CVE-2026-5201.patch b/meta-oe/recipes-gnome/gdk-pixbuf/gdk-pixbuf/CVE-2026-5201.patch
+diff --git a/meta-oe/recipes-graphics/mesa/files/0001-util-Move-STACK_ARRAY-into-util.patch b/meta-oe/recipes-graphics/mesa/files/0001-util-Move-STACK_ARRAY-into-util.patch
 new file mode 100644
-index 0000000..d5bf327
+index 0000000..49aa1b0
 --- /dev/null
-+++ b/meta-oe/recipes-gnome/gdk-pixbuf/gdk-pixbuf/CVE-2026-5201.patch
-@@ -0,0 +1,47 @@
-+From 4d6eb46037d1b6a298d5db293dba57bbea4d0d08 Mon Sep 17 00:00:00 2001
++++ b/meta-oe/recipes-graphics/mesa/files/0001-util-Move-STACK_ARRAY-into-util.patch
+@@ -0,0 +1,83 @@
++From 8dfa16221058327dbfed11aafff963ac73334756 Mon Sep 17 00:00:00 2001
 +From: Shaik Moin <careers.myinfo@gmail.com>
-+Date: Thu, 18 Jun 2026 14:51:28 +0530
-+Subject: [PATCH] jpeg: Reject unsupported number of components
++Date: Fri, 19 Jun 2026 16:40:02 +0530
++Subject: [PATCH] util: Move STACK_ARRAY into util
 +
-+Backport the fix for CVE-2026-5201
++It's useful for more than just Vulkan.
 +
-+This condition was already checked for incremental loading.
-+This commit adds the same check in the nonincremental
-+code path.
++Reference:
++https://gitlab.freedesktop.org/mesa/mesa/-/commit/f43cff3728e58c377d1e03b13db62514217abfe1.patch
 +
-+CVE: CVE-2026-5201
-+
-+Upstream-Status: Backport [https://gitlab.gnome.org/GNOME/gdk-pixbuf/-/commit/6cce9311e70b969cbcc6e3e1e74ae1756ed02d5b]
-+
-+Reviewed-by: Matthias Clasen <mclasen@redhat.com>
 +Signed-off-by: Shaik Moin <careers.myinfo@gmail.com>
 +---
-+ gdk-pixbuf/io-jpeg.c | 12 ++++++++++++
-+ 1 file changed, 12 insertions(+)
++ src/util/meson.build   |  1 +
++ src/util/stack_array.h | 45 ++++++++++++++++++++++++++++++++++++++++++
++ 2 files changed, 46 insertions(+)
++ create mode 100644 src/util/stack_array.h
 +
-+diff --git a/gdk-pixbuf/io-jpeg.c b/gdk-pixbuf/io-jpeg.c
-+index 9ee1d21..60ad0d0 100644
-+--- a/gdk-pixbuf/io-jpeg.c
-++++ b/gdk-pixbuf/io-jpeg.c
-+@@ -625,6 +625,18 @@ gdk_pixbuf__real_jpeg_image_load (FILE *f, struct jpeg_decompress_struct *cinfo,
-+ 	cinfo->do_fancy_upsampling = FALSE;
-+ 	cinfo->do_block_smoothing = FALSE;
-+ 
-++        /* Reject unsupported component counts */
-++        if (cinfo->output_components != 3 && cinfo->output_components != 4 &&
-++            !(cinfo->output_components == 1 &&
-++              cinfo->out_color_space == JCS_GRAYSCALE)) {
-++                g_set_error (error,
-++                             GDK_PIXBUF_ERROR,
-++                             GDK_PIXBUF_ERROR_CORRUPT_IMAGE,
-++                             _("Unsupported number of color components (%d)"),
-++                             cinfo->output_components);
-++                goto out;
-++        }
++diff --git a/src/util/meson.build b/src/util/meson.build
++index 6e77a2f..9c37972 100644
++--- a/src/util/meson.build
+++++ b/src/util/meson.build
++@@ -110,6 +110,7 @@ files_mesa_util = files(
++   'softfloat.h',
++   'sparse_array.c',
++   'sparse_array.h',
+++  'stack_array.h',
++   'string_buffer.c',
++   'string_buffer.h',
++   'strndup.h',
++diff --git a/src/util/stack_array.h b/src/util/stack_array.h
++new file mode 100644
++index 0000000..e2133bd
++--- /dev/null
+++++ b/src/util/stack_array.h
++@@ -0,0 +1,45 @@
+++/*
+++ * Copyright © 2025 Collabora, Ltd.
+++ *
+++ * Permission is hereby granted, free of charge, to any person obtaining a
+++ * copy of this software and associated documentation files (the "Software"),
+++ * to deal in the Software without restriction, including without limitation
+++ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+++ * and/or sell copies of the Software, and to permit persons to whom the
+++ * Software is furnished to do so, subject to the following conditions:
+++ *
+++ * The above copyright notice and this permission notice (including the next
+++ * paragraph) shall be included in all copies or substantial portions of the
+++ * Software.
+++ *
+++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+++ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+++ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+++ * IN THE SOFTWARE.
+++ */
 ++
-+ 	pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB, 
-+ 				 cinfo->out_color_components == 4 ? TRUE : FALSE, 
-+ 				 8,
+++#include <stdlib.h>
+++
+++#ifndef UTIL_STACK_ARRAY_H
+++#define UTIL_STACK_ARRAY_H
+++
+++#define STACK_ARRAY_SIZE 8
+++
+++/* Sometimes gcc may claim -Wmaybe-uninitialized for the stack array in some
+++ * places it can't verify that when size is 0 nobody down the call chain reads
+++ * the array. Please don't try to fix it by zero-initializing the array here
+++ * since it's used in a lot of different places. An "if (size == 0) return;"
+++ * may work for you.
+++ */
+++#define STACK_ARRAY(type, name, size) \
+++   type _stack_##name[STACK_ARRAY_SIZE]; \
+++   type *const name = \
+++     ((size) <= STACK_ARRAY_SIZE ? _stack_##name : (type *)malloc((size) * sizeof(type)))
+++
+++#define STACK_ARRAY_FINISH(name) \
+++   if (name != _stack_##name) free(name)
+++
+++#endif /* UTIL_STACK_ARRAY_H */
 +-- 
 +2.34.1
 +
-diff --git a/meta-oe/recipes-gnome/gdk-pixbuf/gdk-pixbuf_%.bbappend b/meta-oe/recipes-gnome/gdk-pixbuf/gdk-pixbuf_%.bbappend
+diff --git a/meta-oe/recipes-graphics/mesa/files/CVE-2026-40393.patch b/meta-oe/recipes-graphics/mesa/files/CVE-2026-40393.patch
 new file mode 100644
-index 0000000..6a5584e
+index 0000000..e35e5a4
 --- /dev/null
-+++ b/meta-oe/recipes-gnome/gdk-pixbuf/gdk-pixbuf_%.bbappend
-@@ -0,0 +1,4 @@
++++ b/meta-oe/recipes-graphics/mesa/files/CVE-2026-40393.patch
+@@ -0,0 +1,103 @@
++From e240e44e1967b9f605225ecddbf07f307952c814 Mon Sep 17 00:00:00 2001
++From: Shaik Moin <careers.myinfo@gmail.com>
++Date: Mon, 8 Jun 2026 12:21:41 +0530
++Subject: [PATCH] spirv: Use STACK_ARRAY instead of NIR_VLA
++
++The number of fields comes from the shader, so it could be a value large
++enough that using alloca would be problematic.
++
++Backport the fix for CVE-2026-40393
++
++CVE: CVE-2026-40393
++
++Upstream-Status: Backport [https://gitlab.freedesktop.org/mesa/mesa/-/commit/978fd42b4b7d1e9c0435ffa7e1a4d339cba9b76e]
++
++Patch is refreshed based on code base.
++
++Fixes: 2a023f30a64 ("nir/spirv: Add basic support for types")
++Reviewed-by: Caio Oliveira <caio.oliveira@intel.com>
++Reviewed-by: Ryan Neph <ryanneph@google.com>
++Reviewed-by: Lionel Landwerlin <lionel.g.landwerlin@intel.com>
++Signed-off-by: Shaik Moin <moin.shaik@partner.bmwgroup.com>
++---
++ src/compiler/spirv/spirv_to_nir.c | 18 ++++++++++++------
++ 1 file changed, 12 insertions(+), 6 deletions(-)
++
++diff --git a/src/compiler/spirv/spirv_to_nir.c b/src/compiler/spirv/spirv_to_nir.c
++index 79e176a..68da937 100644
++--- a/src/compiler/spirv/spirv_to_nir.c
+++++ b/src/compiler/spirv/spirv_to_nir.c
++@@ -26,7 +26,6 @@
++  */
++ 
++ #include "vtn_private.h"
++-#include "nir/nir_vla.h"
++ #include "nir/nir_control_flow.h"
++ #include "nir/nir_constant_expressions.h"
++ #include "nir/nir_deref.h"
++@@ -35,6 +34,7 @@
++ #include "util/format/u_format.h"
++ #include "util/u_math.h"
++ #include "util/u_string.h"
+++#include "util/stack_array.h"
++ 
++ #include <stdio.h>
++ 
++@@ -926,7 +926,7 @@ vtn_type_get_nir_type(struct vtn_builder *b, struct vtn_type *type,
++       case vtn_base_type_struct: {
++          bool need_new_struct = false;
++          const uint32_t num_fields = type->length;
++-         NIR_VLA(struct glsl_struct_field, fields, num_fields);
+++         STACK_ARRAY(struct glsl_struct_field, fields, num_fields);
++          for (unsigned i = 0; i < num_fields; i++) {
++             fields[i] = *glsl_get_struct_field_data(type->type, i);
++             const struct glsl_type *field_nir_type =
++@@ -936,20 +936,25 @@ vtn_type_get_nir_type(struct vtn_builder *b, struct vtn_type *type,
++                need_new_struct = true;
++             }
++          }
+++
+++	 const struct glsl_type *result;
++          if (need_new_struct) {
++             if (glsl_type_is_interface(type->type)) {
++-               return glsl_interface_type(fields, num_fields,
+++               result = glsl_interface_type(fields, num_fields,
++                                           /* packing */ 0, false,
++                                           glsl_get_type_name(type->type));
++             } else {
++-               return glsl_struct_type(fields, num_fields,
+++               result = glsl_struct_type(fields, num_fields,
++                                        glsl_get_type_name(type->type),
++                                        glsl_struct_type_is_packed(type->type));
++             }
++          } else {
++             /* No changes, just pass it on */
++-            return type->type;
+++            result = type->type;
++          }
+++
+++	 STACK_ARRAY_FINISH(fields);
+++	 return result;
++       }
++ 
++       case vtn_base_type_image:
++@@ -1519,7 +1524,7 @@ vtn_handle_type(struct vtn_builder *b, SpvOp opcode,
++       val->type->offsets = ralloc_array(b, unsigned, num_fields);
++       val->type->packed = false;
++ 
++-      NIR_VLA(struct glsl_struct_field, fields, count);
+++      STACK_ARRAY(struct glsl_struct_field, fields, count);
++       for (unsigned i = 0; i < num_fields; i++) {
++          val->type->members[i] = vtn_get_type(b, w[i + 2]);
++          const char *name = NULL;
++@@ -1575,6 +1580,7 @@ vtn_handle_type(struct vtn_builder *b, SpvOp opcode,
++                                             name ? name : "struct",
++                                             val->type->packed);
++       }
+++      STACK_ARRAY_FINISH(fields);
++       break;
++    }
++ 
++-- 
++2.34.1
++
+diff --git a/meta-oe/recipes-graphics/mesa/mesa_%.bbappend b/meta-oe/recipes-graphics/mesa/mesa_%.bbappend
+new file mode 100644
+index 0000000..553264a
+--- /dev/null
++++ b/meta-oe/recipes-graphics/mesa/mesa_%.bbappend
+@@ -0,0 +1,5 @@
 +FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 +
-+SRC_URI += "file://CVE-2026-5201.patch \
++SRC_URI += "file://CVE-2026-40393.patch \
++            file://0001-util-Move-STACK_ARRAY-into-util.patch \
 +"
 -- 
 2.34.1
