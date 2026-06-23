@@ -1,349 +1,375 @@
-Return-Path: <nitin.wankhade333@gmail.com>
+Return-Path: <patel.rajkumar@oss.qualcomm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F9ADCD4F26
-	for <webhook@archiver.kernel.org>; Tue, 23 Jun 2026 06:10:48 +0000 (UTC)
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.14976.1782195038731725200
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4126FCD4F26
+	for <webhook@archiver.kernel.org>; Tue, 23 Jun 2026 09:43:12 +0000 (UTC)
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.17084.1782207791152205453
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 22 Jun 2026 23:10:38 -0700
+ Tue, 23 Jun 2026 02:43:11 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=gTPyl+GY;
- spf=pass (domain: gmail.com, ip: 209.85.214.174, mailfrom: nitin.wankhade333@gmail.com)
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2c6856433b0so3979765ad.2
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 22 Jun 2026 23:10:38 -0700 (PDT)
+ dkim=pass header.i=@qualcomm.com header.s=qcppdkim1 header.b=Vmia2LJ0;
+ dkim=pass header.i=@oss.qualcomm.com header.s=google header.b=OOv4jnYN;
+ spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: oss.qualcomm.com, ip: 205.220.180.131, mailfrom: patel.rajkumar@oss.qualcomm.com)
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65N6cYx83646579
+	for <yocto-patches@lists.yoctoproject.org>; Tue, 23 Jun 2026 09:43:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=53Y0OiAAKK5CeaCr25Y5aCRJLzr6nIm/bJK
+	H5LUprf0=; b=Vmia2LJ0dNRMK0lPPupMkMXd9AbQHYKO7uHM09m1rBF1u2uziju
+	jEsGI7PGuaablVeHYYrxkPcPl/5jKCy70oKQutjPBiWb63vjmdE4Q3Qx4eG2K53E
+	UvBrIotgcA8kKwpUl55SxObafA5pgbYdPCYeYJCdYhyEr+VgPunFa8liyJsCn4vx
+	9vH7cHgnpX/ReIijvyiPNDPImTPqoJyWeOkkwZdCwlVffRFNph7pEhTayMWwBDW9
+	yRrfYTKeMbHG8LNA/OAWEkDJBqyobRu203YlyFLxnpSE2ATLN0izamTAubjFyIRY
+	evqkigd9NR7fM66hf1QKw7ghNjbd6eStT9A==
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ey6tmut2v-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <yocto-patches@lists.yoctoproject.org>; Tue, 23 Jun 2026 09:43:09 +0000 (GMT)
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-c88e0f04e51so3353389a12.0
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 23 Jun 2026 02:43:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782195038; x=1782799838; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UQ3fxQnp+iOjUrYQ9b5oKSR0aNEWSELapkO6tmNPgYg=;
-        b=gTPyl+GYPtkJsE7st17FlOANf1DyRU2v0M7RLRGbIvqe9hYbAqEckSIRWofeQHbtJF
-         el2g7otqjjAkWc1AuQdh8LrWFqp74IEySa0TmHBgxli4NlvD9HufDEtNIE7UuVszBn3Y
-         /YnhKrI07uwHsaELSfAiuErbraPE/AbWbdqWbrXmWxrRhIQNryGi5Y+Q6Q4szHdd2GBt
-         NxL5v3rk63iGaYT2KkSIQHkNvmJmt1FexA0g44yxAdz5uFXv2m+9vTMncCujOumC9muU
-         wXQsECBmuVmNJDwSokKjtHTsGqdCPQcA01STu3x/Zuo0c+VnUDJaD8MLCTC4NtZhy7u5
-         PgJg==
+        d=oss.qualcomm.com; s=google; t=1782207789; x=1782812589; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=53Y0OiAAKK5CeaCr25Y5aCRJLzr6nIm/bJKH5LUprf0=;
+        b=OOv4jnYNkQeDWHJw3Ww+FdCsxsXYvVL51f4JOKyyK6neiVq6E9XOP48y7kVza5Cuzx
+         HRx968W+5t4x6QfeZAVVYs2RmSRvc3D11AhJBZHbFCRDlsBQssN71QwtliiuFzuWiP5Q
+         TsoEaSa4i2V+WwCSaP+Pv+VieshH1y0zfLeVDlIVzHSke9xp+crlr3xAAG6w9E6mc+iY
+         IGTN1Xa4DE8BQ1S5PUc9KfsFrCepbTmiVNvGjkReypJgPoICwk27bwbV9544DqmyKbKI
+         LxmKwpGrFoXwcsrCfMZ/VFDg0PVFoYkLViSUg6zI6LRi+3AwLA9Gfa2D7lyAlmdFLtsH
+         n1Tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782195038; x=1782799838;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=UQ3fxQnp+iOjUrYQ9b5oKSR0aNEWSELapkO6tmNPgYg=;
-        b=F7pywqmer2JGWALwMot50Ufawg7qsPLpS30M9z0vZ1spD5/fVsCPbfpJEpxe2z8Yht
-         dIK4/4dT9W0BWpxplYrUK+4U+qcpoJREpo2Fdnhlcd18JqqKxYqbz6dnLq9I72eML7/r
-         Vq5tNUcRyO/B4Z4+aErEUgp0XiGAoOwT78RCcfIlkRRh0HDWHS1jadhfwsEXU40/OvGQ
-         saxsrxexeBe7+jGSrzjrUQc+rtoaYBvwKui+fFsyxePS0CSpLW0zAv91+dZE4JXLHTtt
-         c88QrWOB33HVxlZoFe2Jo2Lk59vQLGioB3AeZcSifriMJv0xfKWsddONvjln9KLJy/Dt
-         tLmw==
-X-Gm-Message-State: AOJu0YygRZxjeZkVAmQWG/ySOWUWdaLiMZVWqVoHoa4j9ppg3EIoqPB3
-	ovSumcFdkvoOvOvRWNWCXi1NAiFxaGvjfPGlUI9ablChU5dcnNZOPjBt9INv2fvqrL0=
-X-Gm-Gg: AfdE7clA5QsEyiYHrKrqiF9SW69Bz0Ca7TRa9mycxj9WRRr+1zi9b1MJ0AbLBs8bz0t
-	LUZLOx377zURLlV0P8jrhmOz7iSdneHIsPxOo8fZ7PpWlv2rqb60vUoBkjncfFUB5dxPurjMK9v
-	l+nyQnJ6ZXLrv9/o/OEdEfvy7mP/KwEnq4iXZCiD+hTs/ssRl1ZcmiKO9LwK+fkfJqdB6yik2K5
-	cP2YaOVyy5Hg+/Mgg3DOMm3mGGxRDluq3UyAl3F5irMHqb1Ll6JSBH2yhxsZrdq605MRMBBHUok
-	mTBiIRcMKRURYtBX6Je7XGTMVMETiSWOdNgRb6qfqolPHomCfeFYBgegLaDm6JaF9dy0iYAxxDl
-	eFAJh6cxg3xqwtWu+itpqVagXGgWSKEQnwrp68UTZtYHpCg9o3SjBWW3unf8sR/6uwaLP7nU0KZ
-	DY+VxhxOWWKivkKKlsk5GwowZRAey11TMJRg==
-X-Received: by 2002:a17:902:d4d0:b0:2c0:ab82:6b98 with SMTP id d9443c01a7336-2c7bf1b3d2fmr15778205ad.3.1782195037878;
-        Mon, 22 Jun 2026 23:10:37 -0700 (PDT)
-Received: from LL-868L.kpit.com ([49.206.129.123])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2c7439f85f1sm99844045ad.42.2026.06.22.23.10.36
+        d=1e100.net; s=20251104; t=1782207789; x=1782812589;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=53Y0OiAAKK5CeaCr25Y5aCRJLzr6nIm/bJKH5LUprf0=;
+        b=KqGFru1Fe9+aP0DM2rVJwX7CmNYOE2eF/U3AT47mh9j5S4E3GblVRamX8eJv+gIJE4
+         vDtSDi9TxbAYvXaPYp9hKmyjaAjavFhplMCv87BSC3nXI2ZDWazuI45WBS7pe+IZMUq7
+         Kn6XO3F4Gz7MKmsutM8AtKh27R9FlIGzboW6VgTjaYru50cridmYcd0AA24BgeMn/X/y
+         DyE+esquFpZRzSa8kkyJGdCmMzMLcDp4/evqzu0wQI/lKbaGBQVEAau9DiH19S0Gmws2
+         8TjBfKRuKSQPUgTFgiyhmUubjwN+gt0MFr5SVR5WBppW0Z/KCaF/SEZkaIU7n4qeZ4kB
+         Bygg==
+X-Gm-Message-State: AOJu0YyYPYWf5Tdw6r66OrQzSn4bUBKUX+DV/9uxZI6WT7b1GTZHdzEj
+	llenOaQV418/m9lTFhFFqcW3R9qJXhxKPT/RDYTUXZZ4a1cN3PmIQ+h6A/zxmxvRVxZvyf4qU6T
+	iIC83oSrYONKyXkuYQ6fUP9ajp7CfGt8YnN5d4MhI4rjeqWS8jTRdiFSis/ENaeG2PpDXdhBtRn
+	VJn9qEfprB9Q==
+X-Gm-Gg: AfdE7cmbTiBCSW0Tk+LZ9JZ13hAGXgi4KkWEc1yVDo7gxT/WFBoFvFmWh+LfP+MBVgA
+	E4QrxyGZwct2aL0kvQw9ktv6ldMmyPx3VCmR5f+5P42WJR4LBX71y3PsKbjtlWDiuf+tYwZCHEH
+	hrGCQ7140LwscX1IrXIplU6WN5CDO5fdnNFXlkIe3BPPK2ZhhD/auj2WfdVSCy0iJWzUeuvKdl/
+	lA+fLhkvBMcYMlm+KgIBD5MUteWE2G8ZYnhbLlycu38Vy7dGiYUC5a06qVOCeuXJ71N8e4Q7qaa
+	nsopOp2CmsfCK5O+oEBLnxL0bZ/YqsY3+mhoVwBey1b4bFgiCZQL+cGTBbUjiwUWJLbUKXoAakt
+	yUZ97yfXzFa96fYGdEmVDcfSvaNjspPPxRzMu7jVHvNC8lw==
+X-Received: by 2002:a05:6a00:3e23:b0:845:3d82:10fc with SMTP id d2e1a72fcca58-8455051aba1mr19153281b3a.0.1782207788539;
+        Tue, 23 Jun 2026 02:43:08 -0700 (PDT)
+X-Received: by 2002:a05:6a00:3e23:b0:845:3d82:10fc with SMTP id d2e1a72fcca58-8455051aba1mr19153230b3a.0.1782207787720;
+        Tue, 23 Jun 2026 02:43:07 -0700 (PDT)
+Received: from hu-rajkpate-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84564ebd123sm9530678b3a.47.2026.06.23.02.43.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jun 2026 23:10:37 -0700 (PDT)
-From: Nitin Wankhade <nitin.wankhade333@gmail.com>
-X-Google-Original-From: Nitin Wankhade <nitin.wankhade@kpit.com>
+        Tue, 23 Jun 2026 02:43:07 -0700 (PDT)
+From: Rajkumar Patel <patel.rajkumar@oss.qualcomm.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: nitin.wankhade@kpit.com,
-	Nitin Wankhade <nitin.wankhade333@gmail.com>
-Subject: [meta-lts-collab][kirkstone][PATCH V2 7/7] strongswan: Fix CVE-2026-35334
-Date: Tue, 23 Jun 2026 11:40:01 +0530
-Message-Id: <20260623061001.644583-7-nitin.wankhade@kpit.com>
+Cc: anuj.mittal@oss.qualcomm.com,
+        Rajkumar Patel <patel.rajkumar@oss.qualcomm.com>
+Subject: [meta-dpdk][PATCH] xdp-tools: Remove recipe
+Date: Tue, 23 Jun 2026 15:12:51 +0530
+Message-Id: <20260623094251.1397656-1-patel.rajkumar@oss.qualcomm.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260623061001.644583-1-nitin.wankhade@kpit.com>
-References: <20260623061001.644583-1-nitin.wankhade@kpit.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNjIzMDA3OCBTYWx0ZWRfX2AxpB0/YMcbx
+ 1nXu9bRu2GbacnEhHMfaxXdNVCPjqCqr2DrQoezz+mokPPi1vuKSRrw9KGDaQEKa6LflsREi2ei
+ wpiq6pvP2wJix8/lhXSzJbBEuNJ0s6M=
+X-Proofpoint-GUID: KYzefEQNUPOxoihD2o7Q8NenJJcgUMih
+X-Proofpoint-ORIG-GUID: KYzefEQNUPOxoihD2o7Q8NenJJcgUMih
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjIzMDA3OCBTYWx0ZWRfX0wwa7sCAH2vO
+ yZNSASL5ngbNv8RoLzAI4MyfE1yweECC5xPAW6Uc+i/7jIiwVPDFny6X5oNEx7DFjJ1CEM8ud80
+ Kj02CWPvryGKTMj0PcTgQ7ypu107yDthdXjppBW/9smx0ObCvR214ogVEzEMnJySdEsnz4y26sI
+ ZuBNl8dsljz3FxbM3VvOwXczWdPXvmLE/dkH4opXCbmRqzJOxMTU6yxjDXH9vM2+7mzIfkLD2LB
+ 2H+OMNHz2ZFWimAtlV3F4gFpnOpuyk8JFCrOmHvBR2Nbrs/U6uNbKhu55LYa0tpa08g/JI/C3cv
+ +DCSfWtUqHxX3JnlqrtHuouJu8yySVfFpnqccKZuCrOckE+gMlZL7talZe7Z01XJVXZ5ZGDYFXS
+ YTLZhwsFreTLo/xv65QBCo5zpe2pMUTyLKUZAqLUUa10OGFZ2CxBHv9w+zc9vnpgUwCA2I8MjBK
+ WwsnMyPoEZKBJlM39xA==
+X-Authority-Analysis: v=2.4 cv=H4HrBeYi c=1 sm=1 tr=0 ts=6a3a552d cx=c_pps
+ a=rz3CxIlbcmazkYymdCej/Q==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22 a=NEAV23lmAAAA:8
+ a=EUspDBNiAAAA:8 a=QyXUC8HyAAAA:8 a=sattWYq3WWoUqiLc9UoA:9
+ a=bFCP_H2QrGi7Okbo017w:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-06-23_02,2026-06-22_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 suspectscore=0 clxscore=1015 phishscore=0 bulkscore=0
+ priorityscore=1501 impostorscore=0 adultscore=0 malwarescore=0
+ lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
+ definitions=main-2606230078
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 23 Jun 2026 06:10:48 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4273
+ <yocto-patches@lists.yoctoproject.org>; Tue, 23 Jun 2026 09:43:12 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4274
 
-From: Nitin Wankhade <nitin.wankhade333@gmail.com>
+xdp-tools is a generic recipe with no DPDK-specific changes and has
+been merged into meta-oe [1]. Remove it from this layer to avoid
+duplication and potential conflicts.
 
-Upstream-Status: Backport [https://snapshot.debian.org/archive/debian-security-debug/20260422T125423Z/pool/updates/main/s/strongswan/strongswan_6.0.1-6%2Bdeb13u5.debian.tar.xz]
+Also remove the BBFILES_DYNAMIC entry in layer.conf that registered
+the clang-layer dynamic layer solely for this recipe.
 
-Signed-off-by: Nitin Wankhade <nitin.wankhade333@gmail.com>
+[1] https://github.com/openembedded/meta-openembedded/tree/master/
+    meta-oe/recipes-support/xdp-tools
+
+Signed-off-by: Rajkumar Patel <patel.rajkumar@oss.qualcomm.com>
 ---
- .../strongswan/files/CVE-2026-35334.patch     | 244 ++++++++++++++++++
- .../strongswan/strongswan_5.9.13.bbappend     |   1 +
- 2 files changed, 245 insertions(+)
- create mode 100644 meta-networking/recipes-support/strongswan/files/CVE-2026-35334.patch
+ conf/layer.conf                               |  5 ---
+ ...0001-configure-skip-toolchain-checks.patch | 44 -------------------
+ ...-not-detect-libbpf-header-from-sysro.patch | 44 -------------------
+ .../0003-Makefile-fix-KeyError-failure.patch  | 31 -------------
+ .../0004-Makefile-fix-libxdp.pc-error.patch   | 34 --------------
+ .../xdp-tools/xdp-tools_1.2.10.bb             | 36 ---------------
+ 6 files changed, 194 deletions(-)
+ delete mode 100644 dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools/0001-configure-skip-toolchain-checks.patch
+ delete mode 100644 dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools/0002-Makefile-It-does-not-detect-libbpf-header-from-sysro.patch
+ delete mode 100644 dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools/0003-Makefile-fix-KeyError-failure.patch
+ delete mode 100644 dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools/0004-Makefile-fix-libxdp.pc-error.patch
+ delete mode 100644 dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools_1.2.10.bb
 
-diff --git a/meta-networking/recipes-support/strongswan/files/CVE-2026-35334.patch b/meta-networking/recipes-support/strongswan/files/CVE-2026-35334.patch
-new file mode 100644
-index 0000000..cb6777a
---- /dev/null
-+++ b/meta-networking/recipes-support/strongswan/files/CVE-2026-35334.patch
-@@ -0,0 +1,244 @@
-+From: Tobias Brunner <tobias@strongswan.org>
-+Date: Tue, 24 Mar 2026 18:00:23 +0100
-+Subject: gmp: Avoid crash and timing leaks in PKCS#1 v1.5 decryption padding
-+ validation
-+MIME-Version: 1.0
-+Content-Type: text/plain; charset="utf-8"
-+Content-Transfer-Encoding: 8bit
-+
-+This fixes a potential crash due to a null-pointer dereference if rsadp()
-+returns NULL (e.g. with an all-zero ciphertext).
-+
-+And it also implements the PKCS#1 v1.5 decryption padding check in
-+constant time.
-+
-+The timing leak caused by the previous implementation was measured at
-+~17.5 μs at 3 GHz, which could allow a Bleichenbacher-like attack in
-+LAN environments.  However, because of how RSA encryption is used in
-+strongSwan, this is not that much of an issue in practice.  The mechanism
-+is only used for two use cases.  One is SCEP/EST via PKCS#7 enveloped
-+data.  Fortunately, this can not be triggered in significant numbers by
-+an attacker.  The other use case is TLS as used by EAP methods (EAP-TLS,
-+EAP-PEAP/TTLS) during the authentication.  While the cipher suites that
-+use RSA encryption are still enabled by default, the TLS messages are
-+wrapped in EAP and encrypted by IKE, making any kind of attack difficult.
-+
-+Note that the gmp plugin isn't enabled anymore by default.  And even
-+before that, most setups had the openssl plugin enabled, which has
-+priority over the gmp plugin.  So it's unlikely the plugin was used in
-+practice.
-+
-+Also note that this patch doesn't modify libstrongswan's Makefile.am
-+to avoid potentially requiring autotools when patching a tarball.
-+
-+Fixes: d615ffdcf3cd ("implement gmp_rsa_private_key.decrypt()")
-+Fixes: CVE-2026-35334
-+
-+CVE: CVE-2026-35334
-+Upstream-Status: Backport [https://snapshot.debian.org/archive/debian-security-debug/20260422T125423Z/pool/updates/main/s/strongswan/strongswan_6.0.1-6%2Bdeb13u5.debian.tar.xz]
-+Signed-off-by: Nitin Wankhade <nitin.wankhade333@gmail.com>
-+===
-+diff --git a/src/libstrongswan/plugins/gmp/gmp_rsa_private_key.c b/src/libstrongswan/plugins/gmp/gmp_rsa_private_key.c
-+index 47784b6..08c5eee 100644
-+--- a/src/libstrongswan/plugins/gmp/gmp_rsa_private_key.c
-++++ b/src/libstrongswan/plugins/gmp/gmp_rsa_private_key.c
-+@@ -495,8 +495,8 @@ METHOD(private_key_t, decrypt, bool,
-+ 	private_gmp_rsa_private_key_t *this, encryption_scheme_t scheme,
-+ 	void *params, chunk_t crypto, chunk_t *plain)
-+ {
-+-	chunk_t em, stripped;
-+-	bool success = FALSE;
-++	chunk_t em;
-++	u_int valid, i, j, found_sep = 0, sep_index = 0, m_index;
-+ 
-+ 	if (scheme != ENCRYPT_RSA_PKCS1)
-+ 	{
-+@@ -505,33 +505,51 @@ METHOD(private_key_t, decrypt, bool,
-+ 		return FALSE;
-+ 	}
-+ 	/* rsa decryption using PKCS#1 RSADP */
-+-	stripped = em = rsadp(this, crypto);
-++	em = rsadp(this, crypto);
-++	if (em.len != this->k)
-++	{
-++		return FALSE;
-++	}
-+ 
-+-	/* PKCS#1 v1.5 8.1 encryption-block formatting (EB = 00 || 02 || PS || 00 || D) */
-++	/* PKCS#1 v1.5, RFC 8017, section 7.2.2 message structure:
-++	 * EM = 00 || 02 || PS || 00 || M */
-+ 
-+ 	/* check for hex pattern 00 02 in decrypted message */
-+-	if ((*stripped.ptr++ != 0x00) || (*(stripped.ptr++) != 0x02))
-++	valid  = constant_time_eq(em.ptr[0], 0x00);
-++	valid &= constant_time_eq(em.ptr[1], 0x02);
-++
-++        /* the plaintext data starts after first 0x00 byte */
-++	for (i = 2; i < em.len; i++)
-+ 	{
-+-		DBG1(DBG_LIB, "incorrect padding - probably wrong rsa key");
-+-		goto end;
-++		u_int zero = constant_time_eq(em.ptr[i], 0x00);
-++
-++		sep_index = constant_time_select(i, sep_index, ~found_sep & zero);
-++		found_sep |= zero;
-+ 	}
-+-	stripped.len -= 2;
-+ 
-+-	/* the plaintext data starts after first 0x00 byte */
-+-	while (stripped.len-- > 0 && *stripped.ptr++ != 0x00)
-++	/* make sure PS is at least eight bytes long (plus the initial bytes) */
-++	valid &= constant_time_ge(sep_index, 10);
-+ 
-+-	if (stripped.len == 0)
-++	/* instead of copying the message directly, we try not to reveal the message
-++         * length i.e. where the 0x00 byte was. and since clearing a chunk is
-++         * relatively efficient, i.e. doesn't leak much, we always allocate and copy
-++         * a value and then clear it if the structure was invalid */
-++         m_index = constant_time_select(sep_index + 1, 11, valid);
-++
-++	*plain = chunk_alloc(this->k);
-++	for (i = 0, j = 0; i < em.len; i++)
-+ 	{
-+-		DBG1(DBG_LIB, "no plaintext data");
-+-		goto end;
-++		plain->ptr[j] = em.ptr[i];
-++		j += constant_time_ge(i, m_index);
-+ 	}
-++	plain->len = j;
-+ 
-+-	*plain = chunk_clone(stripped);
-+-	success = TRUE;
-+-
-+-end:
-++	if (!valid)
-++	{
-++		chunk_clear(plain);
-++	}
-+ 	chunk_clear(&em);
-+-	return success;
-++	return valid;
-+ }
-+ 
-+ METHOD(private_key_t, get_keysize, int,
-+diff --git a/src/libstrongswan/utils/utils.h b/src/libstrongswan/utils/utils.h
-+index 40fe76a..80199a9 100644
-+--- a/src/libstrongswan/utils/utils.h
-++++ b/src/libstrongswan/utils/utils.h
-+@@ -53,6 +53,7 @@
-+ #include "utils/atomics.h"
-+ #include "utils/align.h"
-+ #include "utils/byteorder.h"
-++#include "utils/constant_time.h"
-+ #include "utils/string.h"
-+ #include "utils/memory.h"
-+ #include "utils/strerror.h"
-+diff --git a/src/libstrongswan/utils/utils/constant_time.h b/src/libstrongswan/utils/utils/constant_time.h
-+new file mode 100644
-+index 0000000..30a8549
-+--- /dev/null
-++++ b/src/libstrongswan/utils/utils/constant_time.h
-+@@ -0,0 +1,103 @@
-++/*
-++ * Copyright (C) 2026 Tobias Brunner
-++ *
-++ * Copyright (C) secunet Security Networks AG
-++ *
-++ * This program is free software; you can redistribute it and/or modify it
-++ * under the terms of the GNU General Public License as published by the
-++ * Free Software Foundation; either version 2 of the License, or (at your
-++ * option) any later version.  See <http://www.fsf.org/copyleft/gpl.txt>.
-++ *
-++ * This program is distributed in the hope that it will be useful, but
-++ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-++ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-++ * for more details.
-++ */
-++
-++/**
-++ * @defgroup constant_time_i constant_time
-++ * @{ @ingroup constant_time_i
-++ */
-++
-++#ifndef CONSTANT_TIME_H_
-++#define CONSTANT_TIME_H_
-++
-++#include <stdint.h>
-++
-++/**
-++ * Check if the given values are not equal in constant time.
-++ *
-++ * @param x            first value to check
-++ * @param y            second value to check
-++ * @return             1 if values are not equal, 0 otherwise
-++ */
-++static inline u_int constant_time_neq(uint32_t x, uint32_t y)
-++{
-++       return ((x-y) | (y-x)) >> 31;
-++}
-++
-++/**
-++ * Check if the given values are equal in constant time.
-++ *
-++ * @param x            first value to check
-++ * @param y            second value to check
-++ * @return             1 if values are equal, 0 otherwise
-++ */
-++static inline u_int constant_time_eq(uint32_t x, uint32_t y)
-++{
-++       return 1 ^ constant_time_neq(x, y);
-++}
-++
-++/**
-++ * Compare the two values and return 1 if the first argument is lower than
-++ * the second in constant time.
-++ *
-++ * @param x            first value to check
-++ * @param y            second value to check
-++ * @return             1 if first value is lower than second
-++ */
-++static inline u_int constant_time_lt(uint32_t x, uint32_t y)
-++{
-++       return (x ^ ((x^y) | ((x-y) ^ y))) >> 31;
-++}
-++
-++/**
-++ * Compare the two values and return 1 if the first argument greater or equal to
-++ * the second in constant time.
-++ *
-++ * @param x            first value to check
-++ * @param y            second value to check
-++ * @return             1 if first value is greater or equal to the second
-++ */
-++static inline u_int constant_time_ge(uint32_t x, uint32_t y)
-++{
-++       return 1 ^ constant_time_lt(x, y);
-++}
-++
-++/**
-++ * Return a 32-bit all bit-set mask if the given value is not 0.
-++ *
-++ * @param x            value to check
-++ * @return             0xffffffff if value is != 0, 0 otherwise
-++ */
-++static inline uint32_t constant_time_mask(uint32_t x)
-++{
-++       return -(uint32_t)constant_time_neq(x, 0);
-++}
-++
-++/**
-++ * Select one of two values depending on whether the condition is != 0 or not.
-++ * Basically equivalent to 'c ? x : y'.
-++ *
-++ * @param x            first value to select
-++ * @param y            second value to select
-++ * @param c            condition
-++ * @return             x if c is != 0, y otherwise
-++ */
-++static inline uint32_t constant_time_select(uint32_t x, uint32_t y, uint32_t c)
-++{
-++       uint32_t m = constant_time_mask(c);
-++       return (x & m) | (y & ~m);
-++}
-++
-++#endif /** CONSTANT_TIME_H_ @} */
-diff --git a/meta-networking/recipes-support/strongswan/strongswan_5.9.13.bbappend b/meta-networking/recipes-support/strongswan/strongswan_5.9.13.bbappend
-index ecc7788..ce3f750 100644
---- a/meta-networking/recipes-support/strongswan/strongswan_5.9.13.bbappend
-+++ b/meta-networking/recipes-support/strongswan/strongswan_5.9.13.bbappend
-@@ -6,4 +6,5 @@ SRC_URI += "\
-     file://CVE-2026-35331.patch \
-     file://CVE-2026-35332.patch \
-     file://CVE-2026-35333.patch \
-+    file://CVE-2026-35334.patch \
- "
--- 
-2.34.1
-
+diff --git a/conf/layer.conf b/conf/layer.conf
+index b53a1af..776012d 100644
+--- a/conf/layer.conf
++++ b/conf/layer.conf
+@@ -15,8 +15,3 @@ LAYERDEPENDS_dpdk = "core"
+ # cause compatibility issues with other layers
+ LAYERVERSION_dpdk = "1"
+ LAYERSERIES_COMPAT_dpdk = "whinlatter wrynose"
+-
+-BBFILES_DYNAMIC += " \
+-    clang-layer:${LAYERDIR}/dynamic-layers/clang-layer/*/*/*.bb \
+-    clang-layer:${LAYERDIR}/dynamic-layers/clang-layer/*/*/*.bbappend \
+-"
+diff --git a/dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools/0001-configure-skip-toolchain-checks.patch b/dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools/0001-configure-skip-toolchain-checks.patch
+deleted file mode 100644
+index 0c89152..0000000
+--- a/dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools/0001-configure-skip-toolchain-checks.patch
++++ /dev/null
+@@ -1,44 +0,0 @@
+-From 9c9dce2e5f04de65b7b00321f96fff6071546ea1 Mon Sep 17 00:00:00 2001
+-From: Naveen Saini <naveen.kumar.saini@intel.com>
+-Date: Mon, 17 Oct 2022 15:44:16 +0800
+-Subject: [PATCH] configure: skip toolchain checks
+-
+-Current logic fetch full command line along with the tool. i.e
+-gcc -m64 -march=skylake -mtune=generic ...
+-
+-Which throws ERROR: Cannot find tool -m64
+-
+-So need to re-write for loop, so it can work in cross-compilation
+-environment too.
+-
+-Upstream-Status: Inappropriate
+-
+-Signed-off-by: Naveen Saini <naveen.kumar.saini@intel.com>
+-
+----
+- configure | 12 ++++++------
+- 1 file changed, 6 insertions(+), 6 deletions(-)
+-
+-diff --git a/configure b/configure
+-index b4e824f..10618fc 100755
+---- a/configure
+-+++ b/configure
+-@@ -69,12 +69,12 @@ check_toolchain()
+-     CLANG=$(find_tool clang "$CLANG")
+-     LLC=$(find_tool llc "$LLC")
+- 
+--    for TOOL in $PKG_CONFIG $CC $LD $OBJCOPY $CLANG $LLC $M4; do
+--        if [ ! $(command -v ${TOOL} 2>/dev/null) ]; then
+--            echo "*** ERROR: Cannot find tool ${TOOL}" ;
+--            exit 1;
+--        fi;
+--    done
+-+    #for TOOL in $PKG_CONFIG $CC $LD $OBJCOPY $CLANG $LLC $M4; do
+-+    #    if [ ! $(command -v ${TOOL} 2>/dev/null) ]; then
+-+    #        echo "*** ERROR: Cannot find tool ${TOOL}" ;
+-+    #        exit 1;
+-+    #    fi;
+-+    #done
+- 
+-     clang_version=$($CLANG --version | grep -Po '(?<=clang version )[[:digit:]]+')
+-     if [ "$?" -ne "0" ]; then
+diff --git a/dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools/0002-Makefile-It-does-not-detect-libbpf-header-from-sysro.patch b/dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools/0002-Makefile-It-does-not-detect-libbpf-header-from-sysro.patch
+deleted file mode 100644
+index 2e66783..0000000
+--- a/dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools/0002-Makefile-It-does-not-detect-libbpf-header-from-sysro.patch
++++ /dev/null
+@@ -1,44 +0,0 @@
+-From 2840cf0b89497f545fae2eed7ece3f3c5fc558e3 Mon Sep 17 00:00:00 2001
+-From: Naveen Saini <naveen.kumar.saini@intel.com>
+-Date: Mon, 17 Oct 2022 15:50:34 +0800
+-Subject: [PATCH 2/4] Makefile: It does not detect libbpf header from sysroot
+-
+-So adding sysroot headers path.
+-
+-Upstream-Status: OE-Specific
+-
+-Signed-off-by: Naveen Saini <naveen.kumar.saini@intel.com>
+----
+- lib/common.mk       | 2 +-
+- lib/libxdp/Makefile | 2 +-
+- 2 files changed, 2 insertions(+), 2 deletions(-)
+-
+-diff --git a/lib/common.mk b/lib/common.mk
+-index 56c0406..ab0bad8 100644
+---- a/lib/common.mk
+-+++ b/lib/common.mk
+-@@ -55,7 +55,7 @@ LIBXDP_SOURCES := $(wildcard $(LIBXDP_DIR)/*.[ch] $(LIBXDP_DIR)/*.in)
+- KERN_USER_H ?= $(wildcard common_kern_user.h)
+- 
+- CFLAGS += -I$(HEADER_DIR) -I$(LIB_DIR)/util $(ARCH_INCLUDES)
+--BPF_CFLAGS += -I$(HEADER_DIR) $(ARCH_INCLUDES)
+-+BPF_CFLAGS += -I$(HEADER_DIR) $(ARCH_INCLUDES) -I${STAGING_INCDIR}/
+- 
+- BPF_HEADERS := $(wildcard $(HEADER_DIR)/bpf/*.h) $(wildcard $(HEADER_DIR)/xdp/*.h)
+- 
+-diff --git a/lib/libxdp/Makefile b/lib/libxdp/Makefile
+-index 358b751..8f459d8 100644
+---- a/lib/libxdp/Makefile
+-+++ b/lib/libxdp/Makefile
+-@@ -30,7 +30,7 @@ PC_FILE := $(OBJDIR)/libxdp.pc
+- TEMPLATED_SOURCES := xdp-dispatcher.c
+- 
+- CFLAGS += -I$(HEADER_DIR)
+--BPF_CFLAGS += -I$(HEADER_DIR)
+-+BPF_CFLAGS += -I$(HEADER_DIR) -I${STAGING_INCDIR}/
+- 
+- 
+- ifndef BUILD_STATIC_ONLY
+--- 
+-2.25.1
+-
+diff --git a/dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools/0003-Makefile-fix-KeyError-failure.patch b/dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools/0003-Makefile-fix-KeyError-failure.patch
+deleted file mode 100644
+index 41c57f6..0000000
+--- a/dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools/0003-Makefile-fix-KeyError-failure.patch
++++ /dev/null
+@@ -1,31 +0,0 @@
+-From 157546fbc4f18751c52b3c8788879c05cf253331 Mon Sep 17 00:00:00 2001
+-From: Naveen Saini <naveen.kumar.saini@intel.com>
+-Date: Mon, 17 Oct 2022 16:02:46 +0800
+-Subject: [PATCH 3/4] Makefile: fix KeyError failure
+-
+-Error:
+-Exception: KeyError: 'getpwuid(): uid not found: 11857215'
+-
+-Upstream-Status: Inappropriate
+-
+-Signed-off-by: Naveen Saini <naveen.kumar.saini@intel.com>
+----
+- lib/libxdp/Makefile | 2 +-
+- 1 file changed, 1 insertion(+), 1 deletion(-)
+-
+-diff --git a/lib/libxdp/Makefile b/lib/libxdp/Makefile
+-index 8f459d8..9a340a3 100644
+---- a/lib/libxdp/Makefile
+-+++ b/lib/libxdp/Makefile
+-@@ -55,7 +55,7 @@ install: all
+- 	$(Q)install -d -m 0755 $(DESTDIR)$(BPF_OBJECT_DIR)
+- 	$(Q)install -m 0644 $(LIB_HEADERS) $(DESTDIR)$(HDRDIR)/
+- 	$(Q)install -m 0644 $(PC_FILE) $(DESTDIR)$(LIBDIR)/pkgconfig/
+--	$(Q)cp -fpR $(SHARED_LIBS) $(STATIC_LIBS) $(DESTDIR)$(LIBDIR)
+-+	$(Q)cp -fpR --no-preserve=ownership $(SHARED_LIBS) $(STATIC_LIBS) $(DESTDIR)$(LIBDIR)
+- 	$(Q)install -m 0755 $(XDP_OBJS) $(DESTDIR)$(BPF_OBJECT_DIR)
+- 	$(if $(MAN_FILES),$(Q)install -m 0755 -d $(DESTDIR)$(MANDIR)/man3)
+- 	$(if $(MAN_FILES),$(Q)install -m 0644 $(MAN_FILES) $(DESTDIR)$(MANDIR)/man3)
+--- 
+-2.25.1
+-
+diff --git a/dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools/0004-Makefile-fix-libxdp.pc-error.patch b/dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools/0004-Makefile-fix-libxdp.pc-error.patch
+deleted file mode 100644
+index b1e15e5..0000000
+--- a/dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools/0004-Makefile-fix-libxdp.pc-error.patch
++++ /dev/null
+@@ -1,34 +0,0 @@
+-From 46b3ff797135574aa0ee42f633a281d44f48da95 Mon Sep 17 00:00:00 2001
+-From: Naveen Saini <naveen.kumar.saini@intel.com>
+-Date: Mon, 17 Oct 2022 16:05:15 +0800
+-Subject: [PATCH 4/4] Makefile: fix libxdp.pc error
+-
+-Error:
+-do_populate_sysroot: QA Issue: libxdp.pc failed sanity test (tmpdir) in
+-path ... xdp-tools/1.2.8-r0/sysroot-destdir/usr/lib/pkgconfig [pkgconfig]
+-
+-Upstream-Status: Inappropriate
+-
+-Signed-off-by: Naveen Saini <naveen.kumar.saini@intel.com>
+----
+- lib/libxdp/Makefile | 4 ++--
+- 1 file changed, 2 insertions(+), 2 deletions(-)
+-
+-diff --git a/lib/libxdp/Makefile b/lib/libxdp/Makefile
+-index 9a340a3..bc39177 100644
+---- a/lib/libxdp/Makefile
+-+++ b/lib/libxdp/Makefile
+-@@ -76,8 +76,8 @@ $(OBJDIR)/libxdp.so.$(LIBXDP_VERSION): $(SHARED_OBJS)
+- 		      $^ $(LDFLAGS) $(LDLIBS) -o $@
+- 
+- $(OBJDIR)/libxdp.pc:
+--	$(Q)sed -e "s|@PREFIX@|$(PREFIX)|" \
+--			-e "s|@LIBDIR@|$(LIBDIR)|" \
+-+	$(Q)sed -e "s|@PREFIX@|$(prefix)|" \
+-+			-e "s|@LIBDIR@|$(libdir)|" \
+- 			-e "s|@VERSION@|$(TOOLS_VERSION)|" \
+- 			< libxdp.pc.template > $@
+- 
+--- 
+-2.25.1
+-
+diff --git a/dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools_1.2.10.bb b/dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools_1.2.10.bb
+deleted file mode 100644
+index 4a06124..0000000
+--- a/dynamic-layers/clang-layer/recipes-support/xdp-tools/xdp-tools_1.2.10.bb
++++ /dev/null
+@@ -1,36 +0,0 @@
+-SUMMARY = "Utilities and example programs for use with XDP"
+-HOMEPAGE = "https://github.com/xdp-project/xdp-tools"
+-LICENSE = "GPL-2.0-or-later & LGPL-2.1-or-later & BSD-2-Clause"
+-LIC_FILES_CHKSUM = "file://LICENSE;md5=9ee53f8d06bbdb4c11b1557ecc4f8cd5 \
+-                    file://LICENSES/GPL-2.0;md5=994331978b428511800bfbd17eea3001 \
+-                    file://LICENSES/LGPL-2.1;md5=b370887980db5dd40659b50909238dbd \
+-                    file://LICENSES/BSD-2-Clause;md5=5d6306d1b08f8df623178dfd81880927"
+-
+-DEPENDS += " libbpf clang-native zlib elfutils libpcap"
+-
+-SRC_URI = "git://github.com/xdp-project/xdp-tools.git;branch=v1.2;protocol=https \
+-            file://0001-configure-skip-toolchain-checks.patch \
+-            file://0002-Makefile-It-does-not-detect-libbpf-header-from-sysro.patch \
+-            file://0003-Makefile-fix-KeyError-failure.patch \
+-            file://0004-Makefile-fix-libxdp.pc-error.patch \
+-          "
+-
+-SRCREV = "57a139f9bf6ef644f9c1deb4f7df4bb4c76d6179"
+-
+-
+-inherit pkgconfig
+-
+-EXTRA_OEMAKE += "PREFIX=${D}${prefix} LIBDIR=${D}${libdir} BUILD_STATIC_ONLY=1 PRODUCTION=1"
+-
+-CFLAGS += "-fPIC"
+-
+-export STAGING_INCDIR
+-
+-do_install () {
+-    oe_runmake install
+-
+-    # Remove object files *.o
+-    rm -rf ${D}/${libdir}/bpf
+-}
+-
+-RDEPENDS:${PN} += "bash"
 
