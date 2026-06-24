@@ -1,127 +1,162 @@
-Return-Path: <yoann.congal@smile.fr>
+Return-Path: <adityags2004@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14B0CCDB481
-	for <webhook@archiver.kernel.org>; Wed, 24 Jun 2026 14:24:49 +0000 (UTC)
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.8496.1782311087063160060
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23489CDB479
+	for <webhook@archiver.kernel.org>; Wed, 24 Jun 2026 14:36:29 +0000 (UTC)
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.8780.1782311784238199779
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 24 Jun 2026 07:24:47 -0700
+ Wed, 24 Jun 2026 07:36:24 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@smile.fr header.s=google header.b=VmqbsgN1;
- spf=pass (domain: smile.fr, ip: 209.85.128.50, mailfrom: yoann.congal@smile.fr)
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4924593f45dso12579085e9.1
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 24 Jun 2026 07:24:46 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=dDfHGtWW;
+ spf=pass (domain: gmail.com, ip: 209.85.167.47, mailfrom: adityags2004@gmail.com)
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5aa61503fdaso2155217e87.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 24 Jun 2026 07:36:23 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1782311782; cv=none;
+        d=google.com; s=arc-20260327;
+        b=l80qCIFBygUhzPqn+e6AleWOOC3crwWwbI3a0sRJnKU79fe07BPk/64oUdx5KVcm1q
+         WYxKO2ZH+sqwQDh8SAxGrakwCb4SHQlB8ruwuD+B80pODG8Mo8PpIpoqx6/e1irEMmMZ
+         eIyPNkdnBw1mbSE7xR2F+ygRz7pDUg3lKrGH6wQHSP35H9gYoDP1sKWuelUaKzlBB159
+         yXsiwqeeFCpUJfxveF2/mB0GjfhU5hU+ept5yh8YU8KC6UMHHQvIAJxetsDOieg7eUCh
+         Wbo2JMD+DV8JDbx0jqo4MFcMOKR6PDYWAQ+FZnQLVFOTvnzMSoQDmMlHk4dNwNEC3RkO
+         VrEw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=uTWkHA9OX+MFPVaKHm4epVRckD0PIl/mGFukWAXRfe0=;
+        fh=DzQvGcrSJfCJ7Q1SRroko91xyvYTcgsW7QO7MW39vuA=;
+        b=nYQSx6QTcrsGa96DxNJfEhICC2rK+a1nc1vtqwnPoyUs/g7fNIO5aH4bu93FUev63H
+         btqMkORvggVWaG3QlGpDvxZYmtXCBnP1+Wln+cmVSFIOnnvuX6nazr8u+DB/Vrwnzmd8
+         1jQg1h7ltDDrG7r/A5DnL/q+LphAOZok2lJM88psJx6kTU3CRtTMFniXYWPg1aGvkgzi
+         eD3BiDAcJnwcu7E3lBqTvyGl1AxgIx25Cl5NMU0WbcSWdSlWGa+YQi9j5gYy1IZd5Tee
+         SLqRInbNZSKdtbfrd28G601Jz7G24t66O746ZXa1g4y8UEn9IZgJxBZ0T9HeQmkIHxaJ
+         nnzg==;
+        darn=lists.yoctoproject.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=smile.fr; s=google; t=1782311085; x=1782915885; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9UTQH7S/fcQvyRcUj467tczNowsvu7gggnFFxFA0fpY=;
-        b=VmqbsgN1LGmS+T3hyXybjFGo+/WSa+bS65MsFhxwqkpwtdRcBBgUukDvlbUlQzCm68
-         tjaMUYqnSDkZk7Il1+ntqMn1Cy7rtNWnAgWjcHhLM180cFR9kVH/0MlrWkfoGNRLFNiX
-         8uAiIUyRiLjj+l2NqFZuO0LSK322MU5CsPE18=
+        d=gmail.com; s=20251104; t=1782311782; x=1782916582; darn=lists.yoctoproject.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=uTWkHA9OX+MFPVaKHm4epVRckD0PIl/mGFukWAXRfe0=;
+        b=dDfHGtWWYRXouZpRb00wkEwHO2cN6ryd7qfdUcT4r8PvaNE3a5jgQuTZKlOyyutzJ6
+         4eROdlDY+Clrv8WDUxNyGK8vV2/WEhsFM3iEwMlhhcnXhW0tfO5PqDjzMS9UMjIWq0/M
+         DGjbSKFLTO+KaS1cZMq8DAmEOj9IDEcWalyIY4MCvARMfJL+Myj9pYZkG0r68Uc0dBR1
+         v0noYmlsb7npYuNS38MG4CeC9VEQN0sCzPAl0H3MIF5tSLWDT2Pw41vJYSeHDfJAEt91
+         NLKJh6/WEWGmDFjqh0uDRIRqxLlU9hyGq9tj0xEgT7RvDTql5F5eL41K8GzLdCQAIyi1
+         HnEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782311085; x=1782915885;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20251104; t=1782311782; x=1782916582;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9UTQH7S/fcQvyRcUj467tczNowsvu7gggnFFxFA0fpY=;
-        b=ZV2QjvsUoN9PI5XCAeYfK9PxL8iV1cUiCgRlSuAbzN9XcInxGgv+PKwEQKZYXdiYpE
-         i3COuCUsds1p5tZYQfWQ2pgekimS2kDmvzX7CQUtYAvb+P+r2TKCPishcLZf8RuASb+6
-         XJ9hjcebxBf6Jt5lAIW6+BO2FA8aBrQK859eg8wD1xLF/x6luBGbEykfAIkYHSqTuEeQ
-         ZsGGKDb7aBQ23tXiVPc5JRC61X2N1xFCOmIgrCrU4QXxw++2QmLowunGCoLGTqsQsbfY
-         yHA6c68HMgQasq+WSmcDd/tjDAG922KxgILjcsTQpQcC65/p4Czcz3TZWpKn9A/4IuOs
-         LQqg==
-X-Gm-Message-State: AOJu0YyCXxvDD5KqpBaNTrKZUdpF4msN6hjQGUbY1eFIfrUlVdOHfok3
-	RG+Ae9xMCT8DlTxGOPWtENYvIIGZ9KHPuq/nROKrGYWUHaZhfTjDRs0kG12rFOKWHEhjJnpOIGl
-	QrzSI
-X-Gm-Gg: AfdE7cn/mqDPEogTX5JWRuz+JVTs79BnwAlV2VzPJaLfVYmbCVzjUWwmigmmm7JGdHm
-	WRETpswPpz6fmDB6f8GnmJkJT8h1IuKZOgNBhfx371w7VuJxOvcsI4I8oeQd52pSnWE9jezoO0h
-	JKThVl73XkOs1VONR61+XRdKmFJmh46rK4CH6oI9E9/WQzW7enyqKmZEfXsD4aBSLX3V4vdrgFI
-	Kpdoz4cHhKate21P4OpmZno+u7K6Z1IIJ+h+WrnjXbNk/qtvCpRTDbwl5TRFjjB52/RTLZwfKJn
-	sMqAkJnliYEiLygNDppn05t3uN22wNfbwPc7rX+h2yAp1rzupMz5skOtA9yqMVmDvU5Wxrf+ZBT
-	rbAIzLUsLCt4V2kUKrjWf3aQviu+HLNMYlcNE0EfV0VY8ZpkAlWRSQPClhFexUYA+DAVUVIK30U
-	gX+pxBahdh9dMhCZRCFS3x6gUmrKVAjjxST85oAu0Z5HOFwddYsP/GU+u7eELzvILdRDkAOLPAB
-	6fLJmMr2IwSC+vwJg==
-X-Received: by 2002:a05:600c:c4a2:b0:492:604b:c77b with SMTP id 5b1f17b1804b1-49260875ae9mr48882585e9.26.1782311084869;
-        Wed, 24 Jun 2026 07:24:44 -0700 (PDT)
-Received: from FRSMI25-LASER.home (2a01cb001331aa00f2ebd4aef93feb0a.ipv6.abo.wanadoo.fr. [2a01:cb00:1331:aa00:f2eb:d4ae:f93f:eb0a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4923ff8a9e3sm491570955e9.14.2026.06.24.07.24.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jun 2026 07:24:44 -0700 (PDT)
-From: Yoann Congal <yoann.congal@smile.fr>
-To: yocto-patches@lists.yoctoproject.org
-Cc: Yoann Congal <yoann.congal@smile.fr>,
-	Paul Barker <paul@pbarker.dev>,
-	Richard Purdie <richard.purdie@linuxfoundation.org>
-Subject: [yocto-autobuilder-helper][scarthgap][PATCH] config.json: Use buildtools on RHEL9 derivatives
-Date: Wed, 24 Jun 2026 16:24:29 +0200
-Message-ID: <20260624142429.1628429-1-yoann.congal@smile.fr>
-X-Mailer: git-send-email 2.47.3
+        bh=uTWkHA9OX+MFPVaKHm4epVRckD0PIl/mGFukWAXRfe0=;
+        b=Ogv5PIenizSMz5W0Cp+vPl2c34A3yOQKgnJ8Eum+B4uPwTeZaUZBiUNFFoOHS010eO
+         W1bHutIgKH4xR7Cl8YG3XHXglqMNHpTsN91xh4qbhZ9ffemM7C+W7s+L9218iFxftEhS
+         Lqlcg/RqIL6C8PBDBkeJ4H0U1upLFclY6f3r9xDuEVyG3fL37CHH/vlOEvdxvNcM+kz1
+         1j5IX6rPxc0IlYGQRE134vQyZgjjmprj/CdC/EUATH32svcgZmoC3mX9jtEZLTzutt2q
+         1cm0Wd4curGel5t8k2mmpgkJyUV8X93mopOxlmLIkAfUHq0ojl0ZOxsK8JQh7WlsSa3S
+         S+4Q==
+X-Gm-Message-State: AOJu0YwZssD+mvPOJ4LLwldSLqtybzHrLM97zABI7OEr1Wy5wcnwOMRV
+	61jabmyu7WMslHzzYijUXKOIbGuXMCErdiRJKIMNUlH3X+llEp+VVOkuLC0cYqbD3oauadOhEeu
+	7aNiYoGegBGX1uMnmomruL8AcDQMTrTY=
+X-Gm-Gg: AfdE7cnRV0CiEUmMdUwgstoLjJHCQ2jRYCbVtSPQ95MUJI7GOcxYqAhe7ZH1GZ5cn46
+	s0Abvk4fUKh2+x5V6L4cfSD+PEaQyJh0i86tTU9fromiMjUQS4cBxP9R9ZmyEN0WISK7bL7aEBf
+	pY+DsAOnMgaoFKveyFCsQDPseeADfI+d46hEG1lpyU6q/08oQWFBX46LcGtfgGIXbnRTimGAtfY
+	QJITkiIkUfp2IcTdTvsNzDe7sxRgUkwn0ehnMzcXJESHX1H3+6r/FOasGJdFJ2uKhIN3EIZZOyd
+	KnoGKrwqiEWGhc7b9aD+XdYOJc5HFtKTqUTNdXnlP7qsiMrJm5DVr+t90qn2+g==
+X-Received: by 2002:a05:6512:12c8:b0:5aa:9360:307e with SMTP id
+ 2adb3069b0e04-5ad695b5737mr2635867e87.12.1782311780752; Wed, 24 Jun 2026
+ 07:36:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260624062620.753-1-adityags2004@gmail.com> <CANNYZj_91TYttV2Y+yMcC7F0DGcpkdMOt9yU+8_p7XYnWNmcxA@mail.gmail.com>
+In-Reply-To: <CANNYZj_91TYttV2Y+yMcC7F0DGcpkdMOt9yU+8_p7XYnWNmcxA@mail.gmail.com>
+From: "Aditya G.S" <adityags2004@gmail.com>
+Date: Wed, 24 Jun 2026 20:06:06 +0530
+X-Gm-Features: AVVi8CcPYGLMa8vYduyD_XWtxjnUoO9Lns7W-0u5xyDej1WxTaPQYnJbvDTB2yM
+Message-ID: <CAHaUZZDYrqCSfFH4ujFVPkTL3J2XaMS+QLRA=LT7unztWDE0rw@mail.gmail.com>
+Subject: Re: [yocto-patches] [meta-lts-collab][kirkstone][PATCH] openssl:
+ upgrade 3.0.20 -> 3.0.21
+To: Alexander Kanavin <alex.kanavin@gmail.com>
+Cc: yocto-patches@lists.yoctoproject.org, 
+	Aditya GS <aditya.gs@bmwtechworks.in>
+Content-Type: multipart/alternative; boundary="000000000000921fb2065500cc22"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 24 Jun 2026 14:24:49 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4296
+ <yocto-patches@lists.yoctoproject.org>; Wed, 24 Jun 2026 14:36:29 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4297
 
-From: Paul Barker <paul@pbarker.dev>
+--000000000000921fb2065500cc22
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-tar 1.34 (and possibly earlier versions) is unable to extract tarballs
-containing read-only files with xattrs. This was fixed upstream, but
-it's unlikely at this point that the fix will be backported to RHEL9
-related distros (CentOS Stream 9, AlmaLinux 9, Rocky Linux 9). The issue
-affects these distros specifically because they have selinux enabled by
-default and this uses xattrs.
+Hi Alex,
 
-The specific failure we've seen is with the /usr/lib/udev/hwdb.bin file
-installed by the systemd recipe - this file is chmod 0444. This leads to
-the following error, typically during do_image_wic (shortened and split
-to make it readable):
+Thanks for pointing that out.
 
-    subprocess.CalledProcessError: Command
-    'tar --xattrs --xattrs-include='*' -cf - -S -C .../tmp/work/qemux86_64-poky-linux/core-image-minimal/1.0/rootfs -p . |
-    tar --xattrs --xattrs-include='*' -xf - -C .../tmp/work/qemux86_64-poky-linux/core-image-minimal/1.0/tmp-wic/rootfs2'
-    returned non-zero exit status 2.
+I'll remove the unused patch files and send a v2 of the patch shortly.
 
-To work around this, we will need to use the buildtools tarball on
-affected systems.
+Regards,
+Aditya GS
 
-Fixes [YOCTO #16143].
+On Wed, Jun 24, 2026, 7:33=E2=80=AFPM Alexander Kanavin <alex.kanavin@gmail=
+.com>
+wrote:
 
-Signed-off-by: Paul Barker <paul@pbarker.dev>
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(cherry picked from commit ae74094f8aeae21dcc2510cd0d854b70cfe2192f)
-[YC: Also, by upgrading python3, this patch fixes:
-| ERROR: Unable to parse /srv/pokybuild/yocto-worker/oe-selftest-fedora/build/meta/lib/oe/data.py
-| Traceback (most recent call last):
-|   File "/srv/pokybuild/yocto-worker/oe-selftest-fedora/build/meta/lib/oe/data.py", line 8, in <module>
-|     import oe.maketype
-|   File "<frozen importlib._bootstrap>", line 1004, in _find_and_load
-|   File "<frozen importlib._bootstrap>", line 158, in __enter__
-|   File "<frozen importlib._bootstrap>", line 110, in acquire
-| KeyError: 140127001167424
-From https://autobuilder.yoctoproject.org/valkyrie/?#/builders/40/builds/3981
-See upstream issue: https://github.com/python/cpython/issues/91351]
-Signed-off-by: Yoann Congal <yoann.congal@smile.fr>
----
- config.json | 3 +++
- 1 file changed, 3 insertions(+)
+> On Wed, 24 Jun 2026 at 11:06, Aditya GS via lists.yoctoproject.org
+> <adityags2004=3Dgmail.com@lists.yoctoproject.org> wrote:
+> > -           file://CVE-2024-41996.patch \
+> > -           file://CVE-2023-50781-1.patch \
+> > -           file://CVE-2023-50781-2.patch \
+> > -           file://CVE-2023-50781-3.patch \
+> > -           file://CVE-2023-50781-4.patch \
+> > -           file://CVE-2023-50781-5.patch \
+> > -           file://CVE-2023-50781-6.patch \
+>
+> You also need to remove actual patch files.
+>
+> Alex
+>
 
-diff --git a/config.json b/config.json
-index 86a6ada..64c7495 100644
---- a/config.json
-+++ b/config.json
-@@ -1932,6 +1932,9 @@
-         "alma8*"       : "${BUILDTOOLS_URL}",
-         "rocky8*"      : "${BUILDTOOLS_URL}",
-         "stream8*"     : "${BUILDTOOLS_URL}",
-+        "alma9*"       : "${BUILDTOOLS_URL}",
-+        "rocky9*"      : "${BUILDTOOLS_URL}",
-+        "stream9*"     : "${BUILDTOOLS_URL}",
-         "opensuse154*" : "${BUILDTOOLS_URL}",
-         "opensuse155*" : "${BUILDTOOLS_URL}",
-         "perf-alma8*"  : "${BUILDTOOLS_URL}",
+--000000000000921fb2065500cc22
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"auto">Hi Alex,<div dir=3D"auto"><br></div><div dir=3D"auto">Tha=
+nks for pointing that out.</div><div dir=3D"auto"><br></div><div dir=3D"aut=
+o">I&#39;ll remove the unused patch files and send a v2 of the patch shortl=
+y.</div><div dir=3D"auto"><br></div><div dir=3D"auto">Regards,</div><div di=
+r=3D"auto">Aditya GS</div></div><br><div class=3D"gmail_quote gmail_quote_c=
+ontainer"><div dir=3D"ltr" class=3D"gmail_attr">On Wed, Jun 24, 2026, 7:33=
+=E2=80=AFPM Alexander Kanavin &lt;<a href=3D"mailto:alex.kanavin@gmail.com"=
+>alex.kanavin@gmail.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_=
+quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1=
+ex">On Wed, 24 Jun 2026 at 11:06, Aditya GS via <a href=3D"http://lists.yoc=
+toproject.org" rel=3D"noreferrer noreferrer" target=3D"_blank">lists.yoctop=
+roject.org</a><br>
+&lt;adityags2004=3D<a href=3D"mailto:gmail.com@lists.yoctoproject.org" targ=
+et=3D"_blank" rel=3D"noreferrer">gmail.com@lists.yoctoproject.org</a>&gt; w=
+rote:<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0file://CVE-2024-41996.patch =
+\<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0file://CVE-2023-50781-1.patc=
+h \<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0file://CVE-2023-50781-2.patc=
+h \<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0file://CVE-2023-50781-3.patc=
+h \<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0file://CVE-2023-50781-4.patc=
+h \<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0file://CVE-2023-50781-5.patc=
+h \<br>
+&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0file://CVE-2023-50781-6.patc=
+h \<br>
+<br>
+You also need to remove actual patch files.<br>
+<br>
+Alex<br>
+</blockquote></div>
+
+--000000000000921fb2065500cc22--
 
