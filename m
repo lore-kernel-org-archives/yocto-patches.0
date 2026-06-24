@@ -1,2033 +1,1232 @@
-Return-Path: <adityags2004@gmail.com>
+Return-Path: <piotr@qbee.io>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69C3FCDB479
-	for <webhook@archiver.kernel.org>; Wed, 24 Jun 2026 14:43:49 +0000 (UTC)
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.8858.1782312226861692186
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3FBECDB479
+	for <webhook@archiver.kernel.org>; Wed, 24 Jun 2026 18:08:12 +0000 (UTC)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.13931.1782324486187370454
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 24 Jun 2026 07:43:47 -0700
+ Wed, 24 Jun 2026 11:08:06 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=j4lrjixV;
- spf=pass (domain: gmail.com, ip: 209.85.210.177, mailfrom: adityags2004@gmail.com)
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-842338c18e0so889605b3a.1
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 24 Jun 2026 07:43:46 -0700 (PDT)
+ dkim=pass header.i=@qbee.io header.s=google header.b=JlmyNYIF;
+ spf=pass (domain: qbee.io, ip: 209.85.208.42, mailfrom: piotr@qbee.io)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6974a6e54dbso2590874a12.2
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 24 Jun 2026 11:08:05 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1782324484; cv=none;
+        d=google.com; s=arc-20240605;
+        b=Z+8XRYL8vqa7Xtn5+cu9cZ66W/nsdZ4890LJ4ppXaAgiBPsdc7tTW1JfoahYKGP1hI
+         vaiQAcIxdsfj/CELEiyxneXVKKeUEkgNd0z0d0xUUmVsAoJkemYaOrABEXBIQ+4ETjZh
+         eY3LpGeQqtumK6afAn5LOhzWmnD4FvZUXvG6vAkKSDpFI76Gi0AN110Im1qSi1u+Gv9K
+         XM+1+1HRspPu258F1cAZuw2gQ38A2+joww+pqyt4n3Va+Huc+2SRFJYxUF5qFWk2xAaD
+         +HM4bdTosd0qA8oamtmkbSb/AcrkYiEUx1eacET+uhLFrBOwcU8ljJM5Di0SOBqYtAOz
+         kErA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=jadVyT3I+6zGImgcvCoWEB9Qr64jyMoPSbGLrNIj9/U=;
+        fh=mb3LbRBBTguxXSQtFTPqWBlhFDjF4kCC3kciY6zXgJA=;
+        b=lt0b97PxY5qaj38HpxYLxmvhz5IzRmd9luRuDfFuTg8IUM8c4o3DxsU2L/wBvNRGE6
+         ZNFyf0MsoJZEOGvDUYUxoqg8CreVajk9NNJt8uDH1o/tv9RR2mGzpB0lTYJGoP4Aa9AU
+         nki7um3RxeTCKGk3YF7jOYBrxOUK5SZ/GOMPiaV70wRSIDEx+oeSciJYMm5jQUNXFKkT
+         lM9vdAlAo7eEWLs7k42TnTkUo5yMRiPo8zxGma86bNGL67ePXDl7+zAkUKSgFUd1R4Ud
+         HH8mQVAFS1GuBXTAAtXhfrTdfX7rAhHKfHF5l1cl0oAV7DIPOgU+M9XSEMLcasEPlV0f
+         I2/w==;
+        darn=lists.yoctoproject.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782312226; x=1782917026; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ktp0bKPKdUdvdpR3wqw3B6wZb+eWgRdLxzo78SjPW6s=;
-        b=j4lrjixVnfjHDCbtzab1uq8n9rW60MT04PatL8+6CGPnaP752RNLdvREzK6nHmucSj
-         rpkdW2+849I+yOC6t7lm2tdsn5xmaJQ+6jhjj2WxpJQr+O49uKXm8lH8XMuUErcZKfWM
-         PCAfawwMk0NUVWiBA7IjZnxlqiqRCWn8ppqQ52FBvRN2np8Bf1W/1RG0vCbG00mgeq5I
-         pH+CkxMgGpTpS1UB8ytWPhHBykGSkzOvUfIOg7kW+iCl0cEhAPd/YDwt51D7/1jpQbZM
-         GQILWyULuKEQCuEdCPflCmXj06NoZ63rcRCGHBYZpYaIgP6tpHMYkx69KOd5Xqp/Y7y9
-         oc8g==
+        d=qbee.io; s=google; t=1782324484; x=1782929284; darn=lists.yoctoproject.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=jadVyT3I+6zGImgcvCoWEB9Qr64jyMoPSbGLrNIj9/U=;
+        b=JlmyNYIFKNnzSqFWhKKkg3cs9l3UYB2XvPquaak7o527+3BuwwQ8Jm3Gz8VJ+VpH/8
+         qC7+Nvy4VXNaxOUUqVvuUnv7hvgjzg1eQ3ZplfQWVGaHlqcjTXzCLKGnw2vbNeocKzqx
+         MiOM6KoNvWTwU7n4nG/EFkDNqfj4IyIi+YWEI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782312226; x=1782917026;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20251104; t=1782324484; x=1782929284;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ktp0bKPKdUdvdpR3wqw3B6wZb+eWgRdLxzo78SjPW6s=;
-        b=Yi2xCy3nDXpBS/E+nBVNhE2uQ8GYU4tRHJnTWNEKCqF162CkIPjnpGROP9LVDzDjl8
-         AkYGyoAVdleW1qAtHsusbUxMd8TJzL+J18eXVORVsQ+eLfO/rDnWrZAjoHcLivit0Mgf
-         pKtI4NHQrOePWTU/yUtx+WwZ8w2ixQCi3eoplxPWfL+l5o4SecL7LL8TISeHBzjamWXt
-         14Ui1stGOcrPGovFrDb7hdmP09NXiPuDM8dvaZ7xNBMuKWXpYZFg3Mva4a84jiGYuSCA
-         SYvw26BWk0MAWdkAfhIYE/L+P3fFxZRXeOXWF0NsqOS5H3Gp+MddKIq6568RrozBYoIo
-         mm3g==
-X-Gm-Message-State: AOJu0YwzL4ZBsXR1qD+oFJTtgL2QUyY4zYfpCmhB+6cPk9CFKcfHmamZ
-	Nuy4y4SRkNb4DliY9SWLmHUoCQpF5yKK15sTYiXgNd1BxF23G4ciUBVwK5NCmQ==
-X-Gm-Gg: AfdE7cnp5qnALFz4YtIydxy1//eU7ikWuximjsvqwSg+siMIYkmUojfKMRr3agnGdPH
-	Pl2nbzw6KONiKzduGyTy+5jLRJ1b4U1AF2Rsz/S3wwpB5LBYyHD46sW4KZ0FjZHEhBnZED1cqKY
-	/ADHhCGSr91W5GeGdM13ZigyrSebGYIO4KvTh+STDZ+XnvOxet0YqeajJJuP/pzr3RmqLg6a3xM
-	X59wMdP71dl+iVD2TfbmVptc5GDjKXXF1YXweasgdcNO3rmr4pZsbi8Sp9R0xbAQbjGNUHLydne
-	GzwpX+RED/UUioI2mBe95owMMQbZO58SGbdhJlX2FXkcATsrQd+kdtLTso5S3CR8iIOsrYiTpu+
-	ZgLrytP/O9kbM/QucBXRmNf6JXHN30ez+AYTftgyTrRLMxirFrtFJgRWxjZX6dLwJdcYCULSKv+
-	VkHtMbYBJzIGGeMzcDqCn3xmcBBNwAD3nLAECWo35p0tcr/UATMQRcermjkpHfVdK1SA==
-X-Received: by 2002:a05:6a00:a111:b0:842:277d:f72a with SMTP id d2e1a72fcca58-845a2794c30mr5226489b3a.33.1782312224688;
-        Wed, 24 Jun 2026 07:43:44 -0700 (PDT)
-Received: from BLR1RLPT00005.localdomain ([223.231.164.30])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-845a3ec0ec9sm2488255b3a.0.2026.06.24.07.43.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jun 2026 07:43:43 -0700 (PDT)
-From: Aditya GS <adityags2004@gmail.com>
-To: yocto-patches@lists.yoctoproject.org
-Cc: Aditya GS <adityags2004@gmail.com>,
-	Aditya GS <aditya.gs@bmwtechworks.in>
-Subject: [meta-lts-collab][kirkstone][PATCH v2] openssl: upgrade 3.0.20 -> 3.0.21
-Date: Wed, 24 Jun 2026 20:13:11 +0530
-Message-Id: <20260624144311.674-1-adityags2004@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        bh=jadVyT3I+6zGImgcvCoWEB9Qr64jyMoPSbGLrNIj9/U=;
+        b=eb9PwqwREvc3OO1yx92dihtfoQHF55g5Nyk28k9koWM+07JlRvnwFs7PrcDp2kDc3B
+         KC5Ia8b7Fhe4aIlKNeUpQ7q0kgKr3ojib7k4xAkKqTkeTiyLZX7G4L+9NDlT3EbjdMFk
+         2N8TMQhYFpm9Od7Oz1nqbyONaHcdvtNidW14tJ7AKIek98XecAcJPNjSzi6+jCNtGOG8
+         aqEmSllbWyOVqpUwLslgyM91/AtzCQ30nTSodoghRooqxRpGfVvPs1jqo2V8YuLo+ekB
+         iOdgAdqqsM/h52yobNzUZPznexeKULRv1ihNjhKYMDsuPOdsUJeeycDXPoNfYp0AK74q
+         1EgA==
+X-Gm-Message-State: AOJu0Yw5E/w1WHiSdRFx45QgWxvcnjgADUYhbSWDa2996EYpZBp90wJ3
+	eD6ATcjzaOo6lJShE4XsC9Hr9l2859LFZp2QOQziiWNHwdOKWEcf4yYyJwGEX7ukv71cNVXzRMm
+	1j8/3jw7phITm7D1QQm/iiRMC+RTa9WvcVtBsBAoDqA==
+X-Gm-Gg: AfdE7clcfh/U4Z9Yp6LpB45tMAPmVj9NJn3I/fis7tj1OZkoYLQDMif2Vh/niXTGZZ7
+	q8hoJ0VRZ3rvQwhUXQlDCG5/mDp39JQcfYlCx5ODgA03BbeqJ9VLhVu2wl9UE1ACnKH8Jt4joza
+	b9vxXc/dmPCTR7dfBFHMr2VjQvE9A9UGowIvVcHsp4rRIzT67Y6NJ63I5pRgn+yu036pIzcetBZ
+	HVnkyugDiMqmuE3f/TK0SNKEESfuku6e1Xp7jvAE+/WvGZULYCcApJes4ng2MOutAdUuIQ=
+X-Received: by 2002:a05:6402:3513:b0:695:572a:7abb with SMTP id
+ 4fb4d7f45d1cf-697f3aa9d78mr2486855a12.22.1782324484036; Wed, 24 Jun 2026
+ 11:08:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20260619215252.2803094-1-sandeep.gundlupet-raju@amd.com>
+In-Reply-To: <20260619215252.2803094-1-sandeep.gundlupet-raju@amd.com>
+From: Piotr Bulinski <piotr@qbee.io>
+Date: Wed, 24 Jun 2026 20:07:53 +0200
+X-Gm-Features: AVVi8CcTcRcc3rDqJgCN6qwVnGDn28u6euAs1RRAXPL7RZsQOdANBk-pjLj8xpA
+Message-ID: <CAGjhzsKyprtbc53Ra2MiP31bygMhmmzg5NHhgo3b_snZNjj3YA@mail.gmail.com>
+Subject: Re: [yocto-patches] [layerindex-web][PATCH 1/1] layerindex: Use
+ settings.DEFAULT_BRANCH instead of hardcoded branch name
+To: Sandeep Gundlupet Raju <sandeep.gundlupet-raju@amd.com>
+Cc: yocto-patches@lists.yoctoproject.org, tim.orling@konsulko.com, 
+	mark.hatle@kernel.crashing.org
+Content-Type: multipart/alternative; boundary="000000000000beebd6065503c13a"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 24 Jun 2026 14:43:49 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4298
+ <yocto-patches@lists.yoctoproject.org>; Wed, 24 Jun 2026 18:08:12 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4299
 
-Upgrade OpenSSL from 3.0.20 to 3.0.21.
+--000000000000beebd6065503c13a
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This upgrade brings in upstream fixes for multiple CVEs:
+Hi Sandeep,
 
-  - CVE-2026-45447 (High): heap use-after-free in PKCS7_verify()
-  - CVE-2026-7383: heap buffer overflow in ASN.1 multibyte string
-  - CVE-2026-9076: out-of-bounds read in CMS password-based decryption
-  - CVE-2026-34180: heap buffer over-read in ASN.1 content parsing
-  - CVE-2026-42764: NULL pointer dereference in QUIC server packet handling
-  - CVE-2026-45445: AES-OCB IV ignored on EVP_Cipher() path
-  - CVE-2026-34182: CMS AuthEnvelopedData may accept forged messages
-  - CVE-2026-42766: NULL pointer dereference in password-based CMS decryption
-  - CVE-2026-42770: FFC-DH peer validation uses attacker-supplied q
-  - CVE-2026-45446: incorrect tag processing for empty messages in AES-GCM-SIV and AES-SIV modes
+Thank you for the patch.
 
-As a result of this upgrade, the following CVEs are already fixed in the
-upstream version and no longer require local patches:
+In the layerindex/update_layer.py you are updating the default value
+of `--branch`
+to an empty string,
+which is inconsistent with the rest of the changes in this patch.
 
-  - CVE-2024-41996: vulnerability that could lead to denial of service
-  - CVE-2023-50781: fixes related to certificate validation and memory handling
+In the same file, system settings are already imported at line 298, so
+perhaps that import should be moved above the parser logic
+to allow you to use `settings.DEFAULT_BRANCH` as a default value for the
+`--branch` option instead of an empty string.
 
-Remove obsolete CVE patch files that are no longer required after upgrading to OpenSSL 3.0.21.
+Best regards,
+Piotr Buli=C5=84ski
 
-Upstream changelog:
-https://github.com/openssl/openssl/blob/openssl-3.0.21/NEWS.md
+On Fri, Jun 19, 2026 at 11:52=E2=80=AFPM Sandeep Gundlupet Raju <
+sandeep.gundlupet-raju@amd.com> wrote:
 
-Signed-off-by: Aditya GS <adityags2004@gmail.com>
-Signed-off-by: Aditya GS <aditya.gs@bmwtechworks.in>
----
- .../openssl/openssl/CVE-2023-50781-1.patch    | 616 ------------------
- .../openssl/openssl/CVE-2023-50781-2.patch    | 356 ----------
- .../openssl/openssl/CVE-2023-50781-3.patch    |  39 --
- .../openssl/openssl/CVE-2023-50781-4.patch    | 441 -------------
- .../openssl/openssl/CVE-2023-50781-5.patch    | 284 --------
- .../openssl/openssl/CVE-2023-50781-6.patch    |  57 --
- .../openssl/openssl/CVE-2024-41996.patch      |  48 --
- .../{openssl_3.0.20.bb => openssl_3.0.21.bb}  |   9 +-
- 8 files changed, 1 insertion(+), 1849 deletions(-)
- delete mode 100644 meta-core/recipes-connectivity/openssl/openssl/CVE-2023-50781-1.patch
- delete mode 100644 meta-core/recipes-connectivity/openssl/openssl/CVE-2023-50781-2.patch
- delete mode 100644 meta-core/recipes-connectivity/openssl/openssl/CVE-2023-50781-3.patch
- delete mode 100644 meta-core/recipes-connectivity/openssl/openssl/CVE-2023-50781-4.patch
- delete mode 100644 meta-core/recipes-connectivity/openssl/openssl/CVE-2023-50781-5.patch
- delete mode 100644 meta-core/recipes-connectivity/openssl/openssl/CVE-2023-50781-6.patch
- delete mode 100644 meta-core/recipes-connectivity/openssl/openssl/CVE-2024-41996.patch
- rename meta-core/recipes-connectivity/openssl/{openssl_3.0.20.bb => openssl_3.0.21.bb} (96%)
+> Replace all hardcoded branch name references with settings.DEFAULT_BRANCH
+> so the default branch can be changed from a single location in settings.p=
+y
+> without modifying individual source files. DEFAULT_BRANCH defaults to
+> 'master'.
+>
+> - settings.py: add DEFAULT_BRANCH =3D 'master'
+> - docker/settings.py: add DEFAULT_BRANCH =3D 'master'
+> - layerindex/urls.py: use _DEFAULT_BRANCH from settings
+> - layerindex/views.py: use settings.DEFAULT_BRANCH (10 occurrences)
+> - layerindex/models.py: add import settings; use settings.DEFAULT_BRANCH
+> - layerindex/update.py: use settings.DEFAULT_BRANCH
+> - layerindex/update_layer.py: resolve branch from settings.DEFAULT_BRANCH
+> - layerindex/bulkchange.py: use settings.DEFAULT_BRANCH
+> - layerindex/tools/import_layer.py: use settings.DEFAULT_BRANCH
+> - layerindex/tools/import_wiki_layers.py: add import settings; use
+> DEFAULT_BRANCH
+> - layerindex/tools/import_classic_wiki.py: add import settings; use
+> DEFAULT_BRANCH
+> - layerindex/tools/update_classic_status.py: add import settings; use
+> DEFAULT_BRANCH
+> - rrs/tools/historytool.py: use settings.DEFAULT_BRANCH
+>
+> AI-Generated: GitHub Copilot (Claude Sonnet 4.6)
+>
+> Signed-off-by: Sandeep Gundlupet Raju <sandeep.gundlupet-raju@amd.com>
+> ---
+>  docker/settings.py                        |  2 ++
+>  layerindex/bulkchange.py                  |  2 +-
+>  layerindex/models.py                      |  5 +++--
+>  layerindex/tools/import_classic_wiki.py   |  3 ++-
+>  layerindex/tools/import_layer.py          |  4 ++--
+>  layerindex/tools/import_wiki_layers.py    |  3 ++-
+>  layerindex/tools/update_classic_status.py |  7 ++++---
+>  layerindex/update.py                      |  2 +-
+>  layerindex/update_layer.py                |  4 +++-
+>  layerindex/urls.py                        | 16 +++++++++-------
+>  layerindex/views.py                       | 20 ++++++++++----------
+>  rrs/tools/historytool.py                  |  4 ++--
+>  settings.py                               |  3 +++
+>  13 files changed, 44 insertions(+), 31 deletions(-)
+>
+> diff --git a/docker/settings.py b/docker/settings.py
+> index e3ae0fd..85b7efd 100644
+> --- a/docker/settings.py
+> +++ b/docker/settings.py
+> @@ -315,3 +315,5 @@ SECURE_PROXY_SSL_HEADER =3D ('HTTP_X_FORWARDED_PROTO'=
+,
+> 'https')
+>  SECURE_BROWSER_XSS_FILTER =3D True
+>  SECURE_CONTENT_TYPE_NOSNIFF =3D True
+>
+> +# Default branch name used across the layer index
+> +DEFAULT_BRANCH =3D 'master'
+> diff --git a/layerindex/bulkchange.py b/layerindex/bulkchange.py
+> index 0ec4058..11cd7a6 100644
+> --- a/layerindex/bulkchange.py
+> +++ b/layerindex/bulkchange.py
+> @@ -98,7 +98,7 @@ def main():
+>      utils.setup_django()
+>      import settings
+>
+> -    branch =3D utils.get_branch('master')
+> +    branch =3D utils.get_branch(settings.DEFAULT_BRANCH)
+>      fetchdir =3D settings.LAYER_FETCH_DIR
+>
+>      import layerindex.models import LayerItem
+> diff --git a/layerindex/models.py b/layerindex/models.py
+> index 864264b..7a09962 100644
+> --- a/layerindex/models.py
+> +++ b/layerindex/models.py
+> @@ -18,6 +18,7 @@ import os.path
+>  import re
+>  import posixpath
+>  import codecs
+> +import settings
+>
+>  from . import utils
+>
+> @@ -190,7 +191,7 @@ class LayerItem(models.Model):
+>          return fetch_dir
+>
+>      def get_absolute_url(self):
+> -        return reverse('layer_item', args=3D('master',self.name));
+> +        return reverse('layer_item', args=3D(settings.DEFAULT_BRANCH,
+> self.name));
+>
+>      def __str__(self):
+>          return self.name
+> @@ -672,7 +673,7 @@ class ClassicRecipe(Recipe):
+>          ('E', 'Equivalent functionality'),
+>          ('D', 'Direct match'),
+>      ]
+> -    cover_layerbranch =3D models.ForeignKey(LayerBranch,
+> verbose_name=3D'Covering layer', blank=3DTrue, null=3DTrue, limit_choices=
+_to =3D
+> {'branch__name': 'master'}, on_delete=3Dmodels.SET_NULL)
+> +    cover_layerbranch =3D models.ForeignKey(LayerBranch,
+> verbose_name=3D'Covering layer', blank=3DTrue, null=3DTrue, limit_choices=
+_to =3D
+> {'branch__name': settings.DEFAULT_BRANCH}, on_delete=3Dmodels.SET_NULL)
+>      cover_pn =3D models.CharField('Covering recipe', max_length=3D100,
+> blank=3DTrue)
+>      cover_status =3D models.CharField(max_length=3D1,
+> choices=3DCOVER_STATUS_CHOICES, default=3D'U')
+>      cover_verified =3D models.BooleanField(default=3DFalse)
+> diff --git a/layerindex/tools/import_classic_wiki.py
+> b/layerindex/tools/import_classic_wiki.py
+> index bd7ab9a..e8c4c8c 100755
+> --- a/layerindex/tools/import_classic_wiki.py
+> +++ b/layerindex/tools/import_classic_wiki.py
+> @@ -84,6 +84,7 @@ def main():
+>      options, args =3D parser.parse_args(sys.argv)
+>
+>      utils.setup_django()
+> +    import settings
+>      from layerindex.models import LayerItem, LayerBranch, Recipe,
+> ClassicRecipe
+>      from django.db import transaction
+>
+> @@ -178,7 +179,7 @@ def main():
+>                              res =3D
+> list(LayerItem.objects.filter(name=3Dnewlayer)[:1])
+>                              if res:
+>                                  newlayeritem =3D res[0]
+> -                                recipe.cover_layerbranch =3D
+> newlayeritem.get_layerbranch('master')
+> +                                recipe.cover_layerbranch =3D
+> newlayeritem.get_layerbranch(settings.DEFAULT_BRANCH)
+>                              else:
+>                                  logger.info('Replacement layer "%s" for
+> %s could not be found' % (newlayer, pn))
+>                          recipe.cover_pn =3D newpn
+> diff --git a/layerindex/tools/import_layer.py
+> b/layerindex/tools/import_layer.py
+> index 79c679e..cdbd40d 100755
+> --- a/layerindex/tools/import_layer.py
+> +++ b/layerindex/tools/import_layer.py
+> @@ -284,7 +284,7 @@ def main():
+>      if not os.path.exists(fetchdir):
+>          os.makedirs(fetchdir)
+>
+> -    master_branch =3D utils.get_branch('master')
+> +    master_branch =3D utils.get_branch(settings.DEFAULT_BRANCH)
+>      core_layer =3D None
+>      try:
+>          with transaction.atomic():
+> @@ -311,7 +311,7 @@ def main():
+>                  logger.error("Fetch failed: %s" % str(e))
+>                  sys.exit(1)
+>
+> -            actual_branch =3D 'master'
+> +            actual_branch =3D settings.DEFAULT_BRANCH
+>              if (options.actual_branch):
+>                  actual_branch =3D options.actual_branch
+>              try:
+> diff --git a/layerindex/tools/import_wiki_layers.py
+> b/layerindex/tools/import_wiki_layers.py
+> index 061f6df..f287bf6 100755
+> --- a/layerindex/tools/import_wiki_layers.py
+> +++ b/layerindex/tools/import_wiki_layers.py
+> @@ -35,6 +35,7 @@ def main():
+>      options, args =3D parser.parse_args(sys.argv)
+>
+>      utils.setup_django()
+> +    import settings
+>      from layerindex.models import LayerItem, LayerBranch, LayerDependenc=
+y
+>      from django.db import transaction
+>
+> @@ -49,7 +50,7 @@ def main():
+>          nowiki_re =3D re.compile(r'</?nowiki>')
+>          link_re =3D re.compile(r'\[(http.*) +link\]')
+>          readme_re =3D re.compile(r';f=3D[a-zA-Z0-9/-]*README;')
+> -        master_branch =3D utils.get_branch('master')
+> +        master_branch =3D utils.get_branch(settings.DEFAULT_BRANCH)
+>          core_layer =3D None
+>          with transaction.atomic():
+>              for line in data.splitlines():
+> diff --git a/layerindex/tools/update_classic_status.py
+> b/layerindex/tools/update_classic_status.py
+> index aa5d2ef..c8c373b 100755
+> --- a/layerindex/tools/update_classic_status.py
+> +++ b/layerindex/tools/update_classic_status.py
+> @@ -83,6 +83,7 @@ def main():
+>      args =3D parser.parse_args()
+>
+>      utils.setup_django()
+> +    import settings
+>      from layerindex.models import LayerItem, LayerBranch, Recipe,
+> ClassicRecipe, Update, ComparisonRecipeUpdate
+>      from django.db import transaction
+>
+> @@ -121,7 +122,7 @@ def main():
+>      try:
+>          with transaction.atomic():
+>              def recipe_pn_query(pn):
+> -                return
+> Recipe.objects.filter(layerbranch__branch__name=3D'master').filter(pn=3Dp=
+n).order_by('-layerbranch__layer__index_preference')
+> +                return
+> Recipe.objects.filter(layerbranch__branch__name=3Dsettings.DEFAULT_BRANCH=
+).filter(pn=3Dpn).order_by('-layerbranch__layer__index_preference')
+>
+>              if args.import_data:
+>                  recipequery =3D
+> ClassicRecipe.objects.filter(layerbranch=3Dlayerbranch)
+> @@ -141,9 +142,9 @@ def main():
+>                          orig_layerbranch =3D recipe.cover_layerbranch
+>                          recipe.cover_layerbranch =3D
+> layerbranches.get(cover_layer, None)
+>                          if recipe.cover_layerbranch is None:
+> -                            recipe.cover_layerbranch =3D
+> LayerBranch.objects.filter(branch__name=3D'master',
+> layer__name=3Dcover_layer).first()
+> +                            recipe.cover_layerbranch =3D
+> LayerBranch.objects.filter(branch__name=3Dsettings.DEFAULT_BRANCH,
+> layer__name=3Dcover_layer).first()
+>                              if recipe.cover_layerbranch is None:
+> -                                logger.warning('Could not find cover
+> layer %s in master branch' % cover_layer)
+> +                                logger.warning('Could not find cover
+> layer %s in %s branch' % (cover_layer, settings.DEFAULT_BRANCH))
+>                              else:
+>                                  layerbranches[cover_layer] =3D
+> recipe.cover_layerbranch
+>                          if orig_layerbranch !=3D recipe.cover_layerbranc=
+h:
+> diff --git a/layerindex/update.py b/layerindex/update.py
+> index df3939f..788daee 100755
+> --- a/layerindex/update.py
+> +++ b/layerindex/update.py
+> @@ -333,7 +333,7 @@ def main():
+>
+>              # Get a safe bitbake branch to call into from this script
+> (used later on)
+>              safe_bitbake_branch =3D 'origin/master'
+> -            master_branch =3D Branch.objects.filter(name=3D'master').fir=
+st()
+> +            master_branch =3D
+> Branch.objects.filter(name=3Dsettings.DEFAULT_BRANCH).first()
+>              if master_branch and master_branch.bitbake_branch:
+>                  safe_bitbake_branch =3D 'origin/' +
+> master_branch.bitbake_branch
+>
+> diff --git a/layerindex/update_layer.py b/layerindex/update_layer.py
+> index 33c5cfb..6248f78 100644
+> --- a/layerindex/update_layer.py
+> +++ b/layerindex/update_layer.py
+> @@ -250,7 +250,7 @@ def main():
+>
+>      parser.add_option("-b", "--branch",
+>              help =3D "Specify branch to update",
+> -            action=3D"store", dest=3D"branch", default=3D'master')
+> +            action=3D"store", dest=3D"branch", default=3D'')
+>      parser.add_option("-l", "--layer",
+>              help =3D "Layer to update",
+>              action=3D"store", dest=3D"layer")
+> @@ -304,6 +304,8 @@ def main():
+>
+>      logger.setLevel(options.loglevel)
+>
+> +    if not options.branch:
+> +        options.branch =3D settings.DEFAULT_BRANCH
+>      branch =3D utils.get_branch(options.branch)
+>      if not branch:
+>          logger.error("Specified branch %s is not valid" % options.branch=
+)
+> diff --git a/layerindex/urls.py b/layerindex/urls.py
+> index 51a832d..e7b0531 100644
+> --- a/layerindex/urls.py
+> +++ b/layerindex/urls.py
+> @@ -20,6 +20,8 @@ from layerindex.views import LayerListView,
+> LayerReviewListView, LayerReviewDeta
+>  from layerindex.models import LayerItem, Recipe, RecipeChangeset
+>  from rest_framework import routers
+>  from . import restviews
+> +import settings as _settings
+> +_DEFAULT_BRANCH =3D getattr(_settings, 'DEFAULT_BRANCH', 'master')
+>
+>  router =3D routers.DefaultRouter()
+>  router.register(r'branches', restviews.BranchViewSet)
+> @@ -39,23 +41,23 @@ router.register(r'incFiles', restviews.IncFileViewSet=
+)
+>
+>  urlpatterns =3D [
+>      re_path(r'^$',
+> -        RedirectView.as_view(url=3Dreverse_lazy('layer_list',
+> args=3D('master',)), permanent=3DFalse),
+> +        RedirectView.as_view(url=3Dreverse_lazy('layer_list',
+> args=3D(_DEFAULT_BRANCH,)), permanent=3DFalse),
+>          name=3D'frontpage'),
+>
+>      re_path(r'^api/', include(router.urls)),
+>
+>      re_path(r'^layers/$',
+> -        RedirectView.as_view(url=3Dreverse_lazy('layer_list',
+> args=3D('master',)), permanent=3DFalse)),
+> +        RedirectView.as_view(url=3Dreverse_lazy('layer_list',
+> args=3D(_DEFAULT_BRANCH,)), permanent=3DFalse)),
+>      re_path(r'^layer/(?P<slug>[-\.\w]+)/$',
+> -        RedirectParamsView.as_view(permanent=3DFalse), {'redirect_name':
+> 'layer_item', 'branch': 'master'}),
+> +        RedirectParamsView.as_view(permanent=3DFalse), {'redirect_name':
+> 'layer_item', 'branch': _DEFAULT_BRANCH}),
+>      re_path(r'^recipes/$',
+> -        RedirectView.as_view(url=3Dreverse_lazy('recipe_search',
+> args=3D('master',)), permanent=3DFalse)),
+> +        RedirectView.as_view(url=3Dreverse_lazy('recipe_search',
+> args=3D(_DEFAULT_BRANCH,)), permanent=3DFalse)),
+>      re_path(r'^machines/$',
+> -        RedirectView.as_view(url=3Dreverse_lazy('machine_search',
+> args=3D('master',)), permanent=3DFalse)),
+> +        RedirectView.as_view(url=3Dreverse_lazy('machine_search',
+> args=3D(_DEFAULT_BRANCH,)), permanent=3DFalse)),
+>      re_path(r'^distros/$',
+> -        RedirectView.as_view(url=3Dreverse_lazy('distro_search',
+> args=3D('master',)), permanent=3DFalse)),
+> +        RedirectView.as_view(url=3Dreverse_lazy('distro_search',
+> args=3D(_DEFAULT_BRANCH,)), permanent=3DFalse)),
+>      re_path(r'^classes/$',
+> -        RedirectView.as_view(url=3Dreverse_lazy('class_search',
+> args=3D('master',)), permanent=3DFalse)),
+> +        RedirectView.as_view(url=3Dreverse_lazy('class_search',
+> args=3D(_DEFAULT_BRANCH,)), permanent=3DFalse)),
+>      re_path(r'^submit/$', edit_layer_view, {'template_name':
+> 'layerindex/submitlayer.html'}, name=3D"submit_layer"),
+>      re_path(r'^submit/thanks/$',
+>          TemplateView.as_view(
+> diff --git a/layerindex/views.py b/layerindex/views.py
+> index 84750f7..d3d8181 100644
+> --- a/layerindex/views.py
+> +++ b/layerindex/views.py
+> @@ -114,7 +114,7 @@ def delete_layer_view(request, template_name, slug):
+>          raise PermissionDenied
+>      if request.method =3D=3D 'POST':
+>          layeritem.delete()
+> -        return HttpResponseRedirect(reverse('layer_list',
+> args=3D('master',)))
+> +        return HttpResponseRedirect(reverse('layer_list',
+> args=3D(settings.DEFAULT_BRANCH,)))
+>      else:
+>          return render(request, template_name, {
+>              'object': layeritem,
+> @@ -122,7 +122,7 @@ def delete_layer_view(request, template_name, slug):
+>              'cancel_url': layeritem.get_absolute_url()
+>          })
+>
+> -def update_layer_view(request, template_name, branch=3D'master', slug=3D=
+None):
+> +def update_layer_view(request, template_name,
+> branch=3Dsettings.DEFAULT_BRANCH, slug=3DNone):
+>      if not (request.user.is_authenticated and request.user.is_staff):
+>          raise PermissionDenied
+>      return_url =3D None
+> @@ -157,7 +157,7 @@ def update_layer_view(request, template_name,
+> branch=3D'master', slug=3DNone):
+>
+>      return HttpResponseRedirect(reverse_lazy('task_status',
+> kwargs=3D{'task_id': task_id}))
+>
+> -def edit_layer_view(request, template_name, branch=3D'master', slug=3DNo=
+ne):
+> +def edit_layer_view(request, template_name,
+> branch=3Dsettings.DEFAULT_BRANCH, slug=3DNone):
+>      return_url =3D None
+>      branchobj =3D Branch.objects.filter(name=3Dbranch)[:1].get()
+>      if slug:
+> @@ -444,7 +444,7 @@ class LayerReviewListView(ListView):
+>          return super(LayerReviewListView, self).dispatch(request, *args,
+> **kwargs)
+>
+>      def get_queryset(self):
+> -        return
+> LayerBranch.objects.filter(branch__name=3D'master').filter(layer__status=
+=3D'N').order_by('layer__name')
+> +        return
+> LayerBranch.objects.filter(branch__name=3Dsettings.DEFAULT_BRANCH).filter=
+(layer__status=3D'N').order_by('layer__name')
+>
+>  class LayerDetailView(DetailView):
+>      model =3D LayerItem
+> @@ -492,7 +492,7 @@ class LayerReviewDetailView(LayerDetailView):
+>          return super(LayerReviewDetailView, self).dispatch(request,
+> *args, **kwargs)
+>
+>      def get_context_data(self, **kwargs):
+> -        self.kwargs['branch'] =3D 'master'
+> +        self.kwargs['branch'] =3D settings.DEFAULT_BRANCH
+>          context =3D super(LayerReviewDetailView,
+> self).get_context_data(**kwargs)
+>          return context
+>
+> @@ -738,7 +738,7 @@ class AdvancedRecipeSearchView(ListView):
+>                  query =3D Q(**{"%s__icontains" % field: value})
+>              else:
+>                  query =3D Q(**{"%s" % field: value})
+> -            queryset =3D
+> Recipe.objects.filter(layerbranch__branch__name=3D'master')
+> +            queryset =3D
+> Recipe.objects.filter(layerbranch__branch__name=3Dsettings.DEFAULT_BRANCH=
+)
+>              layer =3D self.request.GET.get('layer', '')
+>              if layer:
+>                  queryset =3D queryset.filter(layerbranch__layer=3Dlayer)
+> @@ -825,7 +825,7 @@ class BulkChangeSearchView(AdvancedRecipeSearchView):
+>      def get_context_data(self, **kwargs):
+>          context =3D super(BulkChangeSearchView,
+> self).get_context_data(**kwargs)
+>          context['changeset'] =3D self.changeset
+> -        context['current_branch'] =3D 'master'
+> +        context['current_branch'] =3D settings.DEFAULT_BRANCH
+>          return context
+>
+>
+> @@ -1341,7 +1341,7 @@ class ClassicRecipeSearchView(RecipeSearchView):
+>              filtered =3D True
+>          qs, filtered =3D self.search_recipe_query(init_qs, query_string,
+> preferred=3DFalse)
+>          if qreversed:
+> -            init_rqs =3D
+> Recipe.objects.filter(layerbranch__branch__name=3D'master')
+> +            init_rqs =3D
+> Recipe.objects.filter(layerbranch__branch__name=3Dsettings.DEFAULT_BRANCH=
+)
+>              if layer_ids:
+>                  init_rqs =3D
+> init_rqs.filter(layerbranch__layer__id__in=3Dlayer_ids)
+>              excludeclasses_param =3D self.request.GET.get('excludeclasse=
+s',
+> '')
+> @@ -1735,7 +1735,7 @@ class
+> ComparisonRecipeSelectView(ClassicRecipeSearchView):
+>          return True
+>
+>      def get_context_data(self, **kwargs):
+> -        self.kwargs['branch'] =3D 'master'
+> +        self.kwargs['branch'] =3D settings.DEFAULT_BRANCH
+>          context =3D super(ComparisonRecipeSelectView,
+> self).get_context_data(**kwargs)
+>          recipe =3D get_object_or_404(ClassicRecipe, pk=3Dself.kwargs['pk=
+'])
+>          context['select_for'] =3D recipe
+> @@ -1761,7 +1761,7 @@ class
+> ComparisonRecipeSelectView(ClassicRecipeSearchView):
+>              layer_ids =3D [int(i) for i in selectedlayers_param.split(',=
+')]
+>          else:
+>              layer_ids =3D []
+> -        init_qs =3D
+> Recipe.objects.filter(layerbranch__branch__name=3D'master')
+> +        init_qs =3D
+> Recipe.objects.filter(layerbranch__branch__name=3Dsettings.DEFAULT_BRANCH=
+)
+>          if layer_ids:
+>              init_qs =3D init_qs.filter(layerbranch__layer__in=3Dlayer_id=
+s)
+>          qs, _ =3D self.search_recipe_query(init_qs, query_string,
+> preferred=3DFalse)
+> diff --git a/rrs/tools/historytool.py b/rrs/tools/historytool.py
+> index 9f03ade..92e4b04 100755
+> --- a/rrs/tools/historytool.py
+> +++ b/rrs/tools/historytool.py
+> @@ -77,7 +77,7 @@ def rrs_import(args):
+>      if not core_layer:
+>          logger.error('Unable to find core layer %s' %
+> settings.CORE_LAYER_NAME)
+>          return 1
+> -    core_layerbranch =3D core_layer.get_layerbranch('master')
+> +    core_layerbranch =3D core_layer.get_layerbranch(settings.DEFAULT_BRA=
+NCH)
+>      if not core_layerbranch:
+>          logger.error('Unable to find branch master of layer %s' %
+> core_layerbranch.name)
+>          return 1
+> @@ -130,7 +130,7 @@ def rrs_remove_duplicates(args):
+>      if not core_layer:
+>          logger.error('Unable to find core layer %s' %
+> settings.CORE_LAYER_NAME)
+>          return 1
+> -    core_layerbranch =3D core_layer.get_layerbranch('master')
+> +    core_layerbranch =3D core_layer.get_layerbranch(settings.DEFAULT_BRA=
+NCH)
+>      if not core_layerbranch:
+>          logger.error('Unable to find branch master of layer %s' %
+> core_layerbranch.name)
+>          return 1
+> diff --git a/settings.py b/settings.py
+> index 94b3dd1..08004cb 100644
+> --- a/settings.py
+> +++ b/settings.py
+> @@ -299,3 +299,6 @@ TASK_LOG_DIR =3D "/tmp/layerindex-task-logs"
+>
+>  # Full path to directory where rrs tools stores logs
+>  TOOLS_LOG_DIR =3D ""
+> +
+> +# Default branch name used across the layer index
+> +DEFAULT_BRANCH =3D 'master'
+> --
+> 2.43.0
+>
+>
 
-diff --git a/meta-core/recipes-connectivity/openssl/openssl/CVE-2023-50781-1.patch b/meta-core/recipes-connectivity/openssl/openssl/CVE-2023-50781-1.patch
-deleted file mode 100644
-index a00f670..0000000
---- a/meta-core/recipes-connectivity/openssl/openssl/CVE-2023-50781-1.patch
-+++ /dev/null
-@@ -1,616 +0,0 @@
--From 295485f5c4b3120b272b81f92356f6d24871c02e Mon Sep 17 00:00:00 2001
--From: Hubert Kario <hkario@redhat.com>
--Date: Tue, 15 Mar 2022 13:58:08 +0100
--Subject: [PATCH] rsa: add implicit rejection in PKCS#1 v1.5
--
--The RSA decryption as implemented before required very careful handling
--of both the exit code returned by OpenSSL and the potentially returned
--ciphertext. Looking at the recent security vulnerabilities
--(CVE-2020-25659 and CVE-2020-25657) it is unlikely that most users of
--OpenSSL do it correctly.
--
--Given that correct code requires side channel secure programming in
--application code, we can classify the existing RSA decryption methods
--as CWE-676, which in turn likely causes CWE-208 and CWE-385 in
--application code.
--
--To prevent that, we can use a technique called "implicit rejection".
--For that we generate a random message to be returned in case the
--padding check fails. We generate the message based on static secret
--data (the private exponent) and the provided ciphertext (so that the
--attacker cannot determine that the returned value is randomly generated
--instead of result of decryption and de-padding). We return it in case
--any part of padding check fails.
--
--The upshot of this approach is that then not only is the length of the
--returned message useless as the Bleichenbacher oracle, so are the
--actual bytes of the returned message. So application code doesn't have
--to perform any operations on the returned message in side-channel free
--way to remain secure against Bleichenbacher attacks.
--
--Note: this patch implements a specific algorithm, shared with Mozilla
--NSS, so that the attacker cannot use one library as an oracle against the
--other in heterogeneous environments.
--
--CVE: CVE-2023-50781
--
--Upstream-Status: Backport
--[https://github.com/openssl/openssl/commit/7fc67e0a33102aa47bbaa56533eeecb98c0450f7]
--
--Reviewed-by: Dmitry Belyavskiy <beldmit@gmail.com>
--Reviewed-by: Tim Hudson <tjh@openssl.org>
--Reviewed-by: Tomas Mraz <tomas@openssl.org>
--(Merged from https://github.com/openssl/openssl/pull/13817)
--
--Signed-off-by: Jiaying Song <jiaying.song.cn@windriver.com>
--
-----
-- crypto/rsa/rsa_ossl.c                     |  95 +++++++-
-- crypto/rsa/rsa_pk1.c                      | 252 ++++++++++++++++++++++
-- doc/man1/openssl-pkeyutl.pod.in           |   5 +
-- doc/man1/openssl-rsautl.pod.in            |   5 +
-- doc/man3/EVP_PKEY_CTX_ctrl.pod            |   7 +
-- doc/man3/EVP_PKEY_decrypt.pod             |  12 ++
-- doc/man3/RSA_padding_add_PKCS1_type_1.pod |   7 +-
-- doc/man3/RSA_public_encrypt.pod           |  11 +-
-- include/crypto/rsa.h                      |   4 +
-- 9 files changed, 393 insertions(+), 5 deletions(-)
--
--diff --git a/crypto/rsa/rsa_ossl.c b/crypto/rsa/rsa_ossl.c
--index 6c32764..d658a3c 100644
----- a/crypto/rsa/rsa_ossl.c
--+++ b/crypto/rsa/rsa_ossl.c
--@@ -17,6 +17,9 @@
-- #include "crypto/bn.h"
-- #include "rsa_local.h"
-- #include "internal/constant_time.h"
--+#include <openssl/evp.h>
--+#include <openssl/sha.h>
--+#include <openssl/hmac.h>
-- 
-- static int rsa_ossl_public_encrypt(int flen, const unsigned char *from,
--     unsigned char *to, RSA *rsa, int padding);
--@@ -373,8 +376,13 @@ static int rsa_ossl_private_decrypt(int flen, const unsigned char *from,
--     BIGNUM *f, *ret;
--     int j, num = 0, r = -1;
--     unsigned char *buf = NULL;
--+    unsigned char d_hash[SHA256_DIGEST_LENGTH] = {0};
--+    HMAC_CTX *hmac = NULL;
--+    unsigned int md_len = SHA256_DIGEST_LENGTH;
--+    unsigned char kdk[SHA256_DIGEST_LENGTH] = {0};
--     BN_CTX *ctx = NULL;
--     int local_blinding = 0;
--+    EVP_MD *md = NULL;
--     /*
--      * Used only if the blinding structure is shared. A non-NULL unblind
--      * instructs rsa_blinding_convert() and rsa_blinding_invert() to store
--@@ -404,6 +412,11 @@ static int rsa_ossl_private_decrypt(int flen, const unsigned char *from,
--         goto err;
--     }
-- 
--+    if (flen < 1) {
--+        ERR_raise(ERR_LIB_RSA, RSA_R_DATA_TOO_SMALL);
--+        goto err;
--+    }
--+
--     /* make data into a big number */
--     if (BN_bin2bn(from, (int)flen, f) == NULL)
--         goto err;
--@@ -464,13 +477,91 @@ static int rsa_ossl_private_decrypt(int flen, const unsigned char *from,
--         if (!rsa_blinding_invert(blinding, ret, unblind, ctx))
--             goto err;
-- 
--+    /*
--+     * derive the Key Derivation Key from private exponent and public
--+     * ciphertext
--+     */
--+    if (!(rsa->flags & RSA_FLAG_EXT_PKEY)) {
--+        /*
--+         * because we use d as a handle to rsa->d we need to keep it local and
--+         * free before any further use of rsa->d
--+         */
--+        BIGNUM *d = BN_new();
--+        if (d == NULL) {
--+            ERR_raise(ERR_LIB_RSA, ERR_R_MALLOC_FAILURE);
--+            goto err;
--+        }
--+        if (rsa->d == NULL) {
--+            ERR_raise(ERR_LIB_RSA, RSA_R_MISSING_PRIVATE_KEY);
--+            BN_free(d);
--+            goto err;
--+        }
--+        BN_with_flags(d, rsa->d, BN_FLG_CONSTTIME);
--+        if (BN_bn2binpad(d, buf, num) < 0) {
--+            ERR_raise(ERR_LIB_RSA, ERR_R_INTERNAL_ERROR);
--+            BN_free(d);
--+            goto err;
--+        }
--+        BN_free(d);
--+
--+        /*
--+         * we use hardcoded hash so that migrating between versions that use
--+         * different hash doesn't provide a Bleichenbacher oracle:
--+         * if the attacker can see that different versions return different
--+         * messages for the same ciphertext, they'll know that the message is
--+         * syntethically generated, which means that the padding check failed
--+         */
--+        md = EVP_MD_fetch(rsa->libctx, "sha256", NULL);
--+        if (md == NULL) {
--+            ERR_raise(ERR_LIB_RSA, ERR_R_INTERNAL_ERROR);
--+            goto err;
--+        }
--+
--+        if (EVP_Digest(buf, num, d_hash, NULL, md, NULL) <= 0) {
--+            ERR_raise(ERR_LIB_RSA, ERR_R_INTERNAL_ERROR);
--+            goto err;
--+        }
--+
--+        hmac = HMAC_CTX_new();
--+        if (hmac == NULL) {
--+            ERR_raise(ERR_LIB_RSA, ERR_R_MALLOC_FAILURE);
--+            goto err;
--+        }
--+
--+        if (HMAC_Init_ex(hmac, d_hash, sizeof(d_hash), md, NULL) <= 0) {
--+            ERR_raise(ERR_LIB_RSA, ERR_R_INTERNAL_ERROR);
--+            goto err;
--+        }
--+
--+        if (flen < num) {
--+            memset(buf, 0, num - flen);
--+            if (HMAC_Update(hmac, buf, num - flen) <= 0) {
--+                ERR_raise(ERR_LIB_RSA, ERR_R_INTERNAL_ERROR);
--+                goto err;
--+            }
--+        }
--+        if (HMAC_Update(hmac, from, flen) <= 0) {
--+            ERR_raise(ERR_LIB_RSA, ERR_R_INTERNAL_ERROR);
--+            goto err;
--+        }
--+
--+        md_len = SHA256_DIGEST_LENGTH;
--+        if (HMAC_Final(hmac, kdk, &md_len) <= 0) {
--+            ERR_raise(ERR_LIB_RSA, ERR_R_INTERNAL_ERROR);
--+            goto err;
--+        }
--+    }
--+
--     j = BN_bn2binpad(ret, buf, num);
--     if (j < 0)
--         goto err;
-- 
--     switch (padding) {
--     case RSA_PKCS1_PADDING:
---        r = RSA_padding_check_PKCS1_type_2(to, num, buf, j, num);
--+        if (rsa->flags & RSA_FLAG_EXT_PKEY)
--+            r = RSA_padding_check_PKCS1_type_2(to, num, buf, j, num);
--+        else
--+            r = ossl_rsa_padding_check_PKCS1_type_2(rsa->libctx, to, num, buf, j, num, kdk);
--         break;
--     case RSA_PKCS1_OAEP_PADDING:
--         r = RSA_padding_check_PKCS1_OAEP(to, num, buf, j, num, NULL, 0);
--@@ -493,6 +584,8 @@ static int rsa_ossl_private_decrypt(int flen, const unsigned char *from,
-- #endif
-- 
-- err:
--+    HMAC_CTX_free(hmac);
--+    EVP_MD_free(md);
--     BN_CTX_end(ctx);
--     BN_CTX_free(ctx);
--     OPENSSL_clear_free(buf, num);
--diff --git a/crypto/rsa/rsa_pk1.c b/crypto/rsa/rsa_pk1.c
--index bebb43a..3fe12b2 100644
----- a/crypto/rsa/rsa_pk1.c
--+++ b/crypto/rsa/rsa_pk1.c
--@@ -21,10 +21,14 @@
-- #include <openssl/rand.h>
-- /* Just for the SSL_MAX_MASTER_KEY_LENGTH value */
-- #include <openssl/prov_ssl.h>
--+#include <openssl/evp.h>
--+#include <openssl/sha.h>
--+#include <openssl/hmac.h>
-- #include "internal/cryptlib.h"
-- #include "crypto/rsa.h"
-- #include "rsa_local.h"
-- 
--+
-- int RSA_padding_add_PKCS1_type_1(unsigned char *to, int tlen,
--     const unsigned char *from, int flen)
-- {
--@@ -273,6 +277,254 @@ int RSA_padding_check_PKCS1_type_2(unsigned char *to, int tlen,
--     return constant_time_select_int(good, mlen, -1);
-- }
-- 
--+
--+static int ossl_rsa_prf(OSSL_LIB_CTX *ctx,
--+                        unsigned char *to, int tlen,
--+                        const char *label, int llen,
--+                        const unsigned char *kdk,
--+                        uint16_t bitlen)
--+{
--+    int pos;
--+    int ret = -1;
--+    uint16_t iter = 0;
--+    unsigned char be_iter[sizeof(iter)];
--+    unsigned char be_bitlen[sizeof(bitlen)];
--+    HMAC_CTX *hmac = NULL;
--+    EVP_MD *md = NULL;
--+    unsigned char hmac_out[SHA256_DIGEST_LENGTH];
--+    unsigned int md_len;
--+
--+    if (tlen * 8 != bitlen) {
--+        ERR_raise(ERR_LIB_RSA, ERR_R_INTERNAL_ERROR);
--+        return ret;
--+    }
--+
--+    be_bitlen[0] = (bitlen >> 8) & 0xff;
--+    be_bitlen[1] = bitlen & 0xff;
--+
--+    hmac = HMAC_CTX_new();
--+    if (hmac == NULL) {
--+        ERR_raise(ERR_LIB_RSA, ERR_R_INTERNAL_ERROR);
--+        goto err;
--+    }
--+
--+    /*
--+     * we use hardcoded hash so that migrating between versions that use
--+     * different hash doesn't provide a Bleichenbacher oracle:
--+     * if the attacker can see that different versions return different
--+     * messages for the same ciphertext, they'll know that the message is
--+     * syntethically generated, which means that the padding check failed
--+     */
--+    md = EVP_MD_fetch(ctx, "sha256", NULL);
--+    if (md == NULL) {
--+        ERR_raise(ERR_LIB_RSA, ERR_R_INTERNAL_ERROR);
--+        goto err;
--+    }
--+
--+    if (HMAC_Init_ex(hmac, kdk, SHA256_DIGEST_LENGTH, md, NULL) <= 0) {
--+        ERR_raise(ERR_LIB_RSA, ERR_R_INTERNAL_ERROR);
--+        goto err;
--+    }
--+
--+    for (pos = 0; pos < tlen; pos += SHA256_DIGEST_LENGTH, iter++) {
--+        if (HMAC_Init_ex(hmac, NULL, 0, NULL, NULL) <= 0) {
--+            ERR_raise(ERR_LIB_RSA, ERR_R_INTERNAL_ERROR);
--+            goto err;
--+        }
--+
--+        be_iter[0] = (iter >> 8) & 0xff;
--+        be_iter[1] = iter & 0xff;
--+
--+        if (HMAC_Update(hmac, be_iter, sizeof(be_iter)) <= 0) {
--+            ERR_raise(ERR_LIB_RSA, ERR_R_INTERNAL_ERROR);
--+            goto err;
--+        }
--+        if (HMAC_Update(hmac, (unsigned char *)label, llen) <= 0) {
--+            ERR_raise(ERR_LIB_RSA, ERR_R_INTERNAL_ERROR);
--+            goto err;
--+        }
--+        if (HMAC_Update(hmac, be_bitlen, sizeof(be_bitlen)) <= 0) {
--+            ERR_raise(ERR_LIB_RSA, ERR_R_INTERNAL_ERROR);
--+            goto err;
--+        }
--+
--+        /*
--+         * HMAC_Final requires the output buffer to fit the whole MAC
--+         * value, so we need to use the intermediate buffer for the last
--+         * unaligned block
--+         */
--+        md_len = SHA256_DIGEST_LENGTH;
--+        if (pos + SHA256_DIGEST_LENGTH > tlen) {
--+            if (HMAC_Final(hmac, hmac_out, &md_len) <= 0) {
--+                ERR_raise(ERR_LIB_RSA, ERR_R_INTERNAL_ERROR);
--+                goto err;
--+            }
--+            memcpy(to + pos, hmac_out, tlen - pos);
--+        } else {
--+            if (HMAC_Final(hmac, to + pos, &md_len) <= 0) {
--+                ERR_raise(ERR_LIB_RSA, ERR_R_INTERNAL_ERROR);
--+                goto err;
--+            }
--+        }
--+    }
--+
--+    ret = 0;
--+
--+err:
--+    HMAC_CTX_free(hmac);
--+    EVP_MD_free(md);
--+    return ret;
--+}
--+
--+/*
--+ * ossl_rsa_padding_check_PKCS1_type_2() checks and removes the PKCS#1 type 2
--+ * padding from a decrypted RSA message. Unlike the
--+ * RSA_padding_check_PKCS1_type_2() it will not return an error in case it
--+ * detects a padding error, rather it will return a deterministically generated
--+ * random message. In other words it will perform an implicit rejection
--+ * of an invalid padding. This means that the returned value does not indicate
--+ * if the padding of the encrypted message was correct or not, making
--+ * side channel attacks like the ones described by Bleichenbacher impossible
--+ * without access to the full decrypted value and a brute-force search of
--+ * remaining padding bytes
--+ */
--+int ossl_rsa_padding_check_PKCS1_type_2(OSSL_LIB_CTX *ctx,
--+                                        unsigned char *to, int tlen,
--+                                        const unsigned char *from, int flen,
--+                                        int num, unsigned char *kdk)
--+{
--+/*
--+ * We need to generate a random length for the synthethic message, to avoid
--+ * bias towards zero and avoid non-constant timeness of DIV, we prepare
--+ * 128 values to check if they are not too large for the used key size,
--+ * and use 0 in case none of them are small enough, as 2^-128 is a good enough
--+ * safety margin
--+ */
--+#define MAX_LEN_GEN_TRIES 128
--+    unsigned char *synthetic = NULL;
--+    int synthethic_length;
--+    uint16_t len_candidate;
--+    unsigned char candidate_lengths[MAX_LEN_GEN_TRIES * sizeof(len_candidate)];
--+    uint16_t len_mask;
--+    uint16_t max_sep_offset;
--+    int synth_msg_index = 0;
--+    int ret = -1;
--+    int i, j;
--+    unsigned int good, found_zero_byte;
--+    int zero_index = 0, msg_index;
--+
--+    /*
--+     * If these checks fail then either the message in publicly invalid, or
--+     * we've been called incorrectly. We can fail immediately.
--+     * Since this code is called only internally by openssl, those are just
--+     * sanity checks
--+     */
--+    if (num != flen || tlen <= 0 || flen <= 0) {
--+        ERR_raise(ERR_LIB_RSA, ERR_R_INTERNAL_ERROR);
--+        return -1;
--+    }
--+
--+    /* Generate a random message to return in case the padding checks fail */
--+    synthetic = OPENSSL_malloc(flen);
--+    if (synthetic == NULL) {
--+        ERR_raise(ERR_LIB_RSA, ERR_R_MALLOC_FAILURE);
--+        return -1;
--+    }
--+
--+    if (ossl_rsa_prf(ctx, synthetic, flen, "message", 7, kdk, flen * 8) < 0)
--+        goto err;
--+
--+    /* decide how long the random message should be */
--+    if (ossl_rsa_prf(ctx, candidate_lengths, sizeof(candidate_lengths),
--+                     "length", 6, kdk,
--+                     MAX_LEN_GEN_TRIES * sizeof(len_candidate) * 8) < 0)
--+        goto err;
--+
--+    /*
--+     * max message size is the size of the modulus size less 2 bytes for
--+     * version and padding type and a minimum of 8 bytes padding
--+     */
--+    len_mask = max_sep_offset = flen - 2 - 8;
--+    /*
--+     * we want a mask so lets propagate the high bit to all positions less
--+     * significant than it
--+     */
--+    len_mask |= len_mask >> 1;
--+    len_mask |= len_mask >> 2;
--+    len_mask |= len_mask >> 4;
--+    len_mask |= len_mask >> 8;
--+
--+    synthethic_length = 0;
--+    for (i = 0; i < MAX_LEN_GEN_TRIES * (int)sizeof(len_candidate);
--+            i += sizeof(len_candidate)) {
--+        len_candidate = (candidate_lengths[i] << 8) | candidate_lengths[i + 1];
--+        len_candidate &= len_mask;
--+
--+        synthethic_length = constant_time_select_int(
--+            constant_time_lt(len_candidate, max_sep_offset),
--+            len_candidate, synthethic_length);
--+    }
--+
--+    synth_msg_index = flen - synthethic_length;
--+
--+    /* we have alternative message ready, check the real one */
--+    good = constant_time_is_zero(from[0]);
--+    good &= constant_time_eq(from[1], 2);
--+
--+    /* then look for the padding|message separator (the first zero byte) */
--+    found_zero_byte = 0;
--+    for (i = 2; i < flen; i++) {
--+        unsigned int equals0 = constant_time_is_zero(from[i]);
--+        zero_index = constant_time_select_int(~found_zero_byte & equals0,
--+                                              i, zero_index);
--+        found_zero_byte |= equals0;
--+    }
--+
--+    /*
--+     * padding must be at least 8 bytes long, and it starts two bytes into
--+     * |from|. If we never found a 0-byte, then |zero_index| is 0 and the check
--+     * also fails.
--+     */
--+    good &= constant_time_ge(zero_index, 2 + 8);
--+
--+    /*
--+     * Skip the zero byte. This is incorrect if we never found a zero-byte
--+     * but in this case we also do not copy the message out.
--+     */
--+    msg_index = zero_index + 1;
--+
--+    /*
--+     * old code returned an error in case the decrypted message wouldn't fit
--+     * into the |to|, since that would leak information, return the synthethic
--+     * message instead
--+     */
--+    good &= constant_time_ge(tlen, num - msg_index);
--+
--+    msg_index = constant_time_select_int(good, msg_index, synth_msg_index);
--+
--+    /*
--+     * since at this point the |msg_index| does not provide the signal
--+     * indicating if the padding check failed or not, we don't have to worry
--+     * about leaking the length of returned message, we still need to ensure
--+     * that we read contents of both buffers so that cache accesses don't leak
--+     * the value of |good|
--+     */
--+    for (i = msg_index, j = 0; i < flen && j < tlen; i++, j++)
--+        to[j] = constant_time_select_8(good, from[i], synthetic[i]);
--+    ret = j;
--+
--+err:
--+    /*
--+     * the only time ret < 0 is when the ciphertext is publicly invalid
--+     * or we were called with invalid parameters, so we don't have to perform
--+     * a side-channel secure raising of the error
--+     */
--+    if (ret < 0)
--+        ERR_raise(ERR_LIB_RSA, ERR_R_INTERNAL_ERROR);
--+    OPENSSL_free(synthetic);
--+    return ret;
--+}
--+
-- /*
--  * ossl_rsa_padding_check_PKCS1_type_2_TLS() checks and removes the PKCS1 type 2
--  * padding from a decrypted RSA message in a TLS signature. The result is stored
--diff --git a/doc/man1/openssl-pkeyutl.pod.in b/doc/man1/openssl-pkeyutl.pod.in
--index 2f6ef00..015265a 100644
----- a/doc/man1/openssl-pkeyutl.pod.in
--+++ b/doc/man1/openssl-pkeyutl.pod.in
--@@ -273,6 +273,11 @@ signed or verified directly instead of using a B<DigestInfo> structure. If a
-- digest is set, then the B<DigestInfo> structure is used and its length
-- must correspond to the digest type.
-- 
--+Note, for B<pkcs1> padding, as a protection against Bleichenbacher attack,
--+the decryption will not fail in case of padding check failures. Use B<none>
--+and manual inspection of the decrypted message to verify if the decrypted
--+value has correct PKCS#1 v1.5 padding.
--+
-- For B<oaep> mode only encryption and decryption is supported.
-- 
-- For B<x931> if the digest type is set it is used to format the block data
--diff --git a/doc/man1/openssl-rsautl.pod.in b/doc/man1/openssl-rsautl.pod.in
--index 0a32fd9..4c462ab 100644
----- a/doc/man1/openssl-rsautl.pod.in
--+++ b/doc/man1/openssl-rsautl.pod.in
--@@ -105,6 +105,11 @@ The padding to use: PKCS#1 v1.5 (the default), PKCS#1 OAEP,
-- ANSI X9.31, or no padding, respectively.
-- For signatures, only B<-pkcs> and B<-raw> can be used.
-- 
--+Note: because of protection against Bleichenbacher attacks, decryption
--+using PKCS#1 v1.5 mode will not return errors in case padding check failed.
--+Use B<-raw> and inspect the returned value manually to check if the
--+padding is correct.
--+
-- =item B<-hexdump>
-- 
-- Hex dump the output data.
--diff --git a/doc/man3/EVP_PKEY_CTX_ctrl.pod b/doc/man3/EVP_PKEY_CTX_ctrl.pod
--index 3075eaa..e788f38 100644
----- a/doc/man3/EVP_PKEY_CTX_ctrl.pod
--+++ b/doc/man3/EVP_PKEY_CTX_ctrl.pod
--@@ -386,6 +386,13 @@ this behaviour should be tolerated then
-- OSSL_ASYM_CIPHER_PARAM_TLS_NEGOTIATED_VERSION should be set to the actual
-- negotiated protocol version. Otherwise it should be left unset.
-- 
--+Similarly to the B<RSA_PKCS1_WITH_TLS_PADDING> above, since OpenSSL version
--+3.1.0, the use of B<RSA_PKCS1_PADDING> will return a randomly generated message
--+instead of padding errors in case padding checks fail. Applications that
--+want to remain secure while using earlier versions of OpenSSL, still need to
--+handle both the error code from the RSA decryption operation and the
--+returned message in a side channel secure manner.
--+
-- =head2 DSA parameters
-- 
-- EVP_PKEY_CTX_set_dsa_paramgen_bits() sets the number of bits used for DSA
--diff --git a/doc/man3/EVP_PKEY_decrypt.pod b/doc/man3/EVP_PKEY_decrypt.pod
--index b6f9bad..898535a 100644
----- a/doc/man3/EVP_PKEY_decrypt.pod
--+++ b/doc/man3/EVP_PKEY_decrypt.pod
--@@ -51,6 +51,18 @@ return 1 for success and 0 or a negative value for failure. In particular a
-- return value of -2 indicates the operation is not supported by the public key
-- algorithm.
-- 
--+=head1 WARNINGS
--+
--+In OpenSSL versions before 3.1.0, when used in PKCS#1 v1.5 padding,
--+both the return value from the EVP_PKEY_decrypt() and the B<outlen> provided
--+information useful in mounting a Bleichenbacher attack against the
--+used private key. They had to processed in a side-channel free way.
--+
--+Since version 3.1.0, the EVP_PKEY_decrypt() method when used with PKCS#1
--+v1.5 padding doesn't return an error in case it detects an error in padding,
--+instead it returns a pseudo-randomly generated message, removing the need
--+of side-channel secure code from applications using OpenSSL.
--+
-- =head1 EXAMPLES
-- 
-- Decrypt data using OAEP (for RSA keys):
--diff --git a/doc/man3/RSA_padding_add_PKCS1_type_1.pod b/doc/man3/RSA_padding_add_PKCS1_type_1.pod
--index 9f7025c..36ae185 100644
----- a/doc/man3/RSA_padding_add_PKCS1_type_1.pod
--+++ b/doc/man3/RSA_padding_add_PKCS1_type_1.pod
--@@ -121,8 +121,8 @@ L<ERR_get_error(3)>.
-- 
-- =head1 WARNINGS
-- 
---The result of RSA_padding_check_PKCS1_type_2() is a very sensitive
---information which can potentially be used to mount a Bleichenbacher
--+The result of RSA_padding_check_PKCS1_type_2() is exactly the
--+information which is used to mount a classical Bleichenbacher
-- padding oracle attack. This is an inherent weakness in the PKCS #1
-- v1.5 padding design. Prefer PKCS1_OAEP padding. If that is not
-- possible, the result of RSA_padding_check_PKCS1_type_2() should be
--@@ -137,6 +137,9 @@ as this would create a small timing side channel which could be
-- used to mount a Bleichenbacher attack against any padding mode
-- including PKCS1_OAEP.
-- 
--+You should prefer the use of EVP PKEY APIs for PKCS#1 v1.5 decryption
--+as they implement the necessary workarounds internally.
--+
-- =head1 SEE ALSO
-- 
-- L<RSA_public_encrypt(3)>,
--diff --git a/doc/man3/RSA_public_encrypt.pod b/doc/man3/RSA_public_encrypt.pod
--index 1d38073..bd3f835 100644
----- a/doc/man3/RSA_public_encrypt.pod
--+++ b/doc/man3/RSA_public_encrypt.pod
--@@ -52,8 +52,8 @@ Encrypting user data directly with RSA is insecure.
-- 
-- =back
-- 
---B<flen> must not be more than RSA_size(B<rsa>) - 11 for the PKCS #1 v1.5
---based padding modes, not more than RSA_size(B<rsa>) - 42 for
--+When encrypting B<flen> must not be more than RSA_size(B<rsa>) - 11 for the
--+PKCS #1 v1.5 based padding modes, not more than RSA_size(B<rsa>) - 42 for
-- RSA_PKCS1_OAEP_PADDING and exactly RSA_size(B<rsa>) for RSA_NO_PADDING.
-- When a padding mode other than RSA_NO_PADDING is in use, then
-- RSA_public_encrypt() will include some random bytes into the ciphertext
--@@ -92,6 +92,13 @@ which can potentially be used to mount a Bleichenbacher padding oracle
-- attack. This is an inherent weakness in the PKCS #1 v1.5 padding
-- design. Prefer RSA_PKCS1_OAEP_PADDING.
-- 
--+In OpenSSL before version 3.1.0, both the return value and the length of
--+returned value could be used to mount the Bleichenbacher attack.
--+Since version 3.1.0, OpenSSL does not return an error in case of padding
--+checks failed. Instead it generates a random message based on used private
--+key and provided ciphertext so that application code doesn't have to implement
--+a side-channel secure error handling.
--+
-- =head1 CONFORMING TO
-- 
-- SSL, PKCS #1 v2.0
--diff --git a/include/crypto/rsa.h b/include/crypto/rsa.h
--index 797dc1f..2f86e4c 100644
----- a/include/crypto/rsa.h
--+++ b/include/crypto/rsa.h
--@@ -83,6 +83,10 @@ int ossl_rsa_param_decode(RSA *rsa, const X509_ALGOR *alg);
-- RSA *ossl_rsa_key_from_pkcs8(const PKCS8_PRIV_KEY_INFO *p8inf,
--     OSSL_LIB_CTX *libctx, const char *propq);
-- 
--+int ossl_rsa_padding_check_PKCS1_type_2(OSSL_LIB_CTX *ctx,
--+                                        unsigned char *to, int tlen,
--+                                        const unsigned char *from, int flen,
--+                                        int num, unsigned char *kdk);
-- int ossl_rsa_padding_check_PKCS1_type_2_TLS(OSSL_LIB_CTX *ctx, unsigned char *to,
--     size_t tlen,
--     const unsigned char *from,
-diff --git a/meta-core/recipes-connectivity/openssl/openssl/CVE-2023-50781-2.patch b/meta-core/recipes-connectivity/openssl/openssl/CVE-2023-50781-2.patch
-deleted file mode 100644
-index 13ea3c7..0000000
---- a/meta-core/recipes-connectivity/openssl/openssl/CVE-2023-50781-2.patch
-+++ /dev/null
-@@ -1,356 +0,0 @@
--From 584936eb09cef64eb0755c0ccb2661e7ba1aea58 Mon Sep 17 00:00:00 2001
--From: Hubert Kario <hkario@redhat.com>
--Date: Thu, 27 Oct 2022 19:16:58 +0200
--Subject: [PATCH] rsa: Add option to disable implicit rejection
--
--CVE: CVE-2023-50781
--
--Upstream-Status: Backport
--[https://github.com/openssl/openssl/commit/5ab3ec1bb1eaa795d775f5896818cfaa84d33a1a]
--
--Reviewed-by: Dmitry Belyavskiy <beldmit@gmail.com>
--Reviewed-by: Tim Hudson <tjh@openssl.org>
--Reviewed-by: Tomas Mraz <tomas@openssl.org>
--(Merged from https://github.com/openssl/openssl/pull/13817)
--
--Signed-off-by: Jiaying Song <jiaying.song.cn@windriver.com>
--
-----
-- crypto/cms/cms_env.c                          |  7 +++++
-- crypto/evp/ctrl_params_translate.c            |  6 +++++
-- crypto/rsa/rsa_ossl.c                         | 16 ++++++++----
-- crypto/rsa/rsa_pmeth.c                        | 20 +++++++++++++-
-- doc/man1/openssl-pkeyutl.pod.in               | 10 +++++++
-- doc/man3/EVP_PKEY_CTX_ctrl.pod                |  2 ++
-- doc/man7/provider-asym_cipher.pod             |  9 +++++++
-- include/openssl/core_names.h                  |  2 ++
-- include/openssl/rsa.h                         |  5 ++++
-- .../implementations/asymciphers/rsa_enc.c     | 26 +++++++++++++++++--
-- 10 files changed, 95 insertions(+), 8 deletions(-)
--
--diff --git a/crypto/cms/cms_env.c b/crypto/cms/cms_env.c
--index 2326253..96e3315 100644
----- a/crypto/cms/cms_env.c
--+++ b/crypto/cms/cms_env.c
--@@ -576,6 +576,13 @@ static int cms_RecipientInfo_ktri_decrypt(CMS_ContentInfo *cms,
--     if (!ossl_cms_env_asn1_ctrl(ri, 1))
--         goto err;
-- 
--+    if (EVP_PKEY_is_a(pkey, "RSA"))
--+        /* upper layer CMS code incorrectly assumes that a successful RSA
--+         * decryption means that the key matches ciphertext (which never
--+         * was the case, implicit rejection or not), so to make it work
--+         * disable implicit rejection for RSA keys */
--+        EVP_PKEY_CTX_ctrl_str(ktri->pctx, "rsa_pkcs1_implicit_rejection", "0");
--+
--     if (EVP_PKEY_decrypt(ktri->pctx, NULL, &eklen,
--             ktri->encryptedKey->data,
--             ktri->encryptedKey->length)
--diff --git a/crypto/evp/ctrl_params_translate.c b/crypto/evp/ctrl_params_translate.c
--index 14306a0..b481776 100644
----- a/crypto/evp/ctrl_params_translate.c
--+++ b/crypto/evp/ctrl_params_translate.c
--@@ -2249,6 +2249,12 @@ static const struct translation_st evp_pkey_ctx_translations[] = {
--         EVP_PKEY_CTRL_GET_RSA_OAEP_LABEL, NULL, NULL,
--         OSSL_ASYM_CIPHER_PARAM_OAEP_LABEL, OSSL_PARAM_OCTET_PTR, NULL },
-- 
--+    { SET, EVP_PKEY_RSA, 0, EVP_PKEY_OP_TYPE_CRYPT,
--+      EVP_PKEY_CTRL_RSA_IMPLICIT_REJECTION, NULL,
--+      "rsa_pkcs1_implicit_rejection",
--+      OSSL_ASYM_CIPHER_PARAM_IMPLICIT_REJECTION, OSSL_PARAM_UNSIGNED_INTEGER,
--+      NULL },
--+
--     { SET, EVP_PKEY_RSA_PSS, 0, EVP_PKEY_OP_TYPE_GEN,
--         EVP_PKEY_CTRL_MD, "rsa_pss_keygen_md", NULL,
--         OSSL_ALG_PARAM_DIGEST, OSSL_PARAM_UTF8_STRING, fix_md },
--diff --git a/crypto/rsa/rsa_ossl.c b/crypto/rsa/rsa_ossl.c
--index d658a3c..5a0b160 100644
----- a/crypto/rsa/rsa_ossl.c
--+++ b/crypto/rsa/rsa_ossl.c
--@@ -391,6 +391,12 @@ static int rsa_ossl_private_decrypt(int flen, const unsigned char *from,
--     BIGNUM *unblind = NULL;
--     BN_BLINDING *blinding = NULL;
-- 
--+    /*
--+     * we need the value of the private exponent to perform implicit rejection
--+     */
--+    if ((rsa->flags & RSA_FLAG_EXT_PKEY) && (padding == RSA_PKCS1_PADDING))
--+        padding = RSA_PKCS1_NO_IMPLICIT_REJECT_PADDING;
--+
--     if ((ctx = BN_CTX_new_ex(rsa->libctx)) == NULL)
--         goto err;
--     BN_CTX_start(ctx);
--@@ -481,7 +487,7 @@ static int rsa_ossl_private_decrypt(int flen, const unsigned char *from,
--      * derive the Key Derivation Key from private exponent and public
--      * ciphertext
--      */
---    if (!(rsa->flags & RSA_FLAG_EXT_PKEY)) {
--+    if (padding == RSA_PKCS1_PADDING) {
--         /*
--          * because we use d as a handle to rsa->d we need to keep it local and
--          * free before any further use of rsa->d
--@@ -557,11 +563,11 @@ static int rsa_ossl_private_decrypt(int flen, const unsigned char *from,
--         goto err;
-- 
--     switch (padding) {
--+    case RSA_PKCS1_NO_IMPLICIT_REJECT_PADDING:
--+        r = RSA_padding_check_PKCS1_type_2(to, num, buf, j, num);
--+        break;
--     case RSA_PKCS1_PADDING:
---        if (rsa->flags & RSA_FLAG_EXT_PKEY)
---            r = RSA_padding_check_PKCS1_type_2(to, num, buf, j, num);
---        else
---            r = ossl_rsa_padding_check_PKCS1_type_2(rsa->libctx, to, num, buf, j, num, kdk);
--+        r = ossl_rsa_padding_check_PKCS1_type_2(rsa->libctx, to, num, buf, j, num, kdk);
--         break;
--     case RSA_PKCS1_OAEP_PADDING:
--         r = RSA_padding_check_PKCS1_OAEP(to, num, buf, j, num, NULL, 0);
--diff --git a/crypto/rsa/rsa_pmeth.c b/crypto/rsa/rsa_pmeth.c
--index 85cdfb4..7f3d810 100644
----- a/crypto/rsa/rsa_pmeth.c
--+++ b/crypto/rsa/rsa_pmeth.c
--@@ -52,6 +52,8 @@ typedef struct {
--     /* OAEP label */
--     unsigned char *oaep_label;
--     size_t oaep_labellen;
--+    /* if to use implicit rejection in PKCS#1 v1.5 decryption */
--+    int implicit_rejection;
-- } RSA_PKEY_CTX;
-- 
-- /* True if PSS parameters are restricted */
--@@ -72,6 +74,7 @@ static int pkey_rsa_init(EVP_PKEY_CTX *ctx)
--     /* Maximum for sign, auto for verify */
--     rctx->saltlen = RSA_PSS_SALTLEN_AUTO;
--     rctx->min_saltlen = -1;
--+    rctx->implicit_rejection = 1;
--     ctx->data = rctx;
--     ctx->keygen_info = rctx->gentmp;
--     ctx->keygen_info_count = 2;
--@@ -97,6 +100,7 @@ static int pkey_rsa_copy(EVP_PKEY_CTX *dst, const EVP_PKEY_CTX *src)
--     dctx->md = sctx->md;
--     dctx->mgf1md = sctx->mgf1md;
--     dctx->saltlen = sctx->saltlen;
--+    dctx->implicit_rejection = sctx->implicit_rejection;
--     if (sctx->oaep_label) {
--         OPENSSL_free(dctx->oaep_label);
--         dctx->oaep_label = OPENSSL_memdup(sctx->oaep_label, sctx->oaep_labellen);
--@@ -345,6 +349,7 @@ static int pkey_rsa_decrypt(EVP_PKEY_CTX *ctx,
--     const unsigned char *in, size_t inlen)
-- {
--     int ret;
--+    int pad_mode;
--     RSA_PKEY_CTX *rctx = ctx->data;
--     /*
--      * Discard const. Its marked as const because this may be a cached copy of
--@@ -365,7 +370,12 @@ static int pkey_rsa_decrypt(EVP_PKEY_CTX *ctx,
--             rctx->oaep_labellen,
--             rctx->md, rctx->mgf1md);
--     } else {
---        ret = RSA_private_decrypt(inlen, in, out, rsa, rctx->pad_mode);
--+        if (rctx->pad_mode == RSA_PKCS1_PADDING &&
--+              rctx->implicit_rejection == 0)
--+            pad_mode = RSA_PKCS1_NO_IMPLICIT_REJECT_PADDING;
--+        else
--+            pad_mode = rctx->pad_mode;
--+        ret = RSA_private_decrypt(inlen, in, out, rsa, pad_mode);
--     }
--     *outlen = constant_time_select_s(constant_time_msb_s(ret), *outlen, ret);
--     ret = constant_time_select_int(constant_time_msb(ret), ret, 1);
--@@ -587,6 +597,14 @@ static int pkey_rsa_ctrl(EVP_PKEY_CTX *ctx, int type, int p1, void *p2)
--         *(unsigned char **)p2 = rctx->oaep_label;
--         return rctx->oaep_labellen;
-- 
--+    case EVP_PKEY_CTRL_RSA_IMPLICIT_REJECTION:
--+        if (rctx->pad_mode != RSA_PKCS1_PADDING) {
--+            ERR_raise(ERR_LIB_RSA, RSA_R_INVALID_PADDING_MODE);
--+            return -2;
--+        }
--+        rctx->implicit_rejection = p1;
--+        return 1;
--+
--     case EVP_PKEY_CTRL_DIGESTINIT:
--     case EVP_PKEY_CTRL_PKCS7_SIGN:
-- #ifndef OPENSSL_NO_CMS
--diff --git a/doc/man1/openssl-pkeyutl.pod.in b/doc/man1/openssl-pkeyutl.pod.in
--index 015265a..5e62551 100644
----- a/doc/man1/openssl-pkeyutl.pod.in
--+++ b/doc/man1/openssl-pkeyutl.pod.in
--@@ -305,6 +305,16 @@ explicitly set in PSS mode then the signing digest is used.
-- Sets the digest used for the OAEP hash function. If not explicitly set then
-- SHA1 is used.
-- 
--+=item B<rsa_pkcs1_implicit_rejection:>I<flag>
--+
--+Disables (when set to 0) or enables (when set to 1) the use of implicit
--+rejection with PKCS#1 v1.5 decryption. When enabled (the default), as a
--+protection against Bleichenbacher attack, the library will generate a
--+deterministic random plaintext that it will return to the caller in case
--+of padding check failure.
--+When disabled, it's the callers' responsibility to handle the returned
--+errors in a side-channel free manner.
--+
-- =back
-- 
-- =head1 RSA-PSS ALGORITHM
--diff --git a/doc/man3/EVP_PKEY_CTX_ctrl.pod b/doc/man3/EVP_PKEY_CTX_ctrl.pod
--index e788f38..3844aa2 100644
----- a/doc/man3/EVP_PKEY_CTX_ctrl.pod
--+++ b/doc/man3/EVP_PKEY_CTX_ctrl.pod
--@@ -392,6 +392,8 @@ instead of padding errors in case padding checks fail. Applications that
-- want to remain secure while using earlier versions of OpenSSL, still need to
-- handle both the error code from the RSA decryption operation and the
-- returned message in a side channel secure manner.
--+This protection against Bleichenbacher attacks can be disabled by setting
--+the OSSL_ASYM_CIPHER_PARAM_IMPLICIT_REJECTION (an unsigned integer) to 0.
-- 
-- =head2 DSA parameters
-- 
--diff --git a/doc/man7/provider-asym_cipher.pod b/doc/man7/provider-asym_cipher.pod
--index 0976a26..2a8426a 100644
----- a/doc/man7/provider-asym_cipher.pod
--+++ b/doc/man7/provider-asym_cipher.pod
--@@ -234,6 +234,15 @@ The TLS protocol version first requested by the client.
-- 
-- The negotiated TLS protocol version.
-- 
--+=item "implicit-rejection" (B<OSSL_PKEY_PARAM_IMPLICIT_REJECTION>) <unsigned integer>
--+
--+Gets of sets the use of the implicit rejection mechanism for RSA PKCS#1 v1.5
--+decryption. When set (non zero value), the decryption API will return
--+a deterministically random value if the PKCS#1 v1.5 padding check fails.
--+This makes explotation of the Bleichenbacher significantly harder, even
--+if the code using the RSA decryption API is not implemented in side-channel
--+free manner. Set by default.
--+
-- =back
-- 
-- OSSL_FUNC_asym_cipher_gettable_ctx_params() and OSSL_FUNC_asym_cipher_settable_ctx_params()
--diff --git a/include/openssl/core_names.h b/include/openssl/core_names.h
--index 02bebc6..9586a6d 100644
----- a/include/openssl/core_names.h
--+++ b/include/openssl/core_names.h
--@@ -292,6 +292,7 @@ extern "C" {
-- #define OSSL_PKEY_PARAM_DIST_ID "distid"
-- #define OSSL_PKEY_PARAM_PUB_KEY "pub"
-- #define OSSL_PKEY_PARAM_PRIV_KEY "priv"
--+#define OSSL_PKEY_PARAM_IMPLICIT_REJECTION "implicit-rejection"
-- 
-- /* Diffie-Hellman/DSA Parameters */
-- #define OSSL_PKEY_PARAM_FFC_P "p"
--@@ -467,6 +468,7 @@ extern "C" {
-- #define OSSL_ASYM_CIPHER_PARAM_OAEP_LABEL "oaep-label"
-- #define OSSL_ASYM_CIPHER_PARAM_TLS_CLIENT_VERSION "tls-client-version"
-- #define OSSL_ASYM_CIPHER_PARAM_TLS_NEGOTIATED_VERSION "tls-negotiated-version"
--+#define OSSL_ASYM_CIPHER_PARAM_IMPLICIT_REJECTION "implicit-rejection"
-- 
-- /*
--  * Encoder / decoder parameters
--diff --git a/include/openssl/rsa.h b/include/openssl/rsa.h
--index 36a780d..ceb05b2 100644
----- a/include/openssl/rsa.h
--+++ b/include/openssl/rsa.h
--@@ -183,6 +183,8 @@ int EVP_PKEY_CTX_get0_rsa_oaep_label(EVP_PKEY_CTX *ctx, unsigned char **label);
-- 
-- #define EVP_PKEY_CTRL_RSA_KEYGEN_PRIMES (EVP_PKEY_ALG_CTRL + 13)
-- 
--+#define EVP_PKEY_CTRL_RSA_IMPLICIT_REJECTION (EVP_PKEY_ALG_CTRL + 14)
--+
-- #define RSA_PKCS1_PADDING 1
-- #define RSA_NO_PADDING 3
-- #define RSA_PKCS1_OAEP_PADDING 4
--@@ -192,6 +194,9 @@ int EVP_PKEY_CTX_get0_rsa_oaep_label(EVP_PKEY_CTX *ctx, unsigned char **label);
-- #define RSA_PKCS1_PSS_PADDING 6
-- #define RSA_PKCS1_WITH_TLS_PADDING 7
-- 
--+/* internal RSA_ only */
--+#define RSA_PKCS1_NO_IMPLICIT_REJECT_PADDING 8
--+
-- #define RSA_PKCS1_PADDING_SIZE 11
-- 
-- #define RSA_set_app_data(s, arg) RSA_set_ex_data(s, 0, arg)
--diff --git a/providers/implementations/asymciphers/rsa_enc.c b/providers/implementations/asymciphers/rsa_enc.c
--index 799357f3..1e74150 100644
----- a/providers/implementations/asymciphers/rsa_enc.c
--+++ b/providers/implementations/asymciphers/rsa_enc.c
--@@ -75,6 +75,8 @@ typedef struct {
--     /* TLS padding */
--     unsigned int client_version;
--     unsigned int alt_version;
--+    /* PKCS#1 v1.5 decryption mode */
--+    unsigned int implicit_rejection;
-- } PROV_RSA_CTX;
-- 
-- static void *rsa_newctx(void *provctx)
--@@ -107,6 +109,7 @@ static int rsa_init(void *vprsactx, void *vrsa, const OSSL_PARAM params[],
--     RSA_free(prsactx->rsa);
--     prsactx->rsa = vrsa;
--     prsactx->operation = operation;
--+    prsactx->implicit_rejection = 1;
-- 
--     switch (RSA_test_flags(prsactx->rsa, RSA_FLAG_TYPE_MASK)) {
--     case RSA_FLAG_TYPE_RSA:
--@@ -203,6 +206,7 @@ static int rsa_decrypt(void *vprsactx, unsigned char *out, size_t *outlen,
-- {
--     PROV_RSA_CTX *prsactx = (PROV_RSA_CTX *)vprsactx;
--     int ret;
--+    int pad_mode;
--     size_t len = RSA_size(prsactx->rsa);
-- 
--     if (!ossl_prov_is_running())
--@@ -280,8 +284,12 @@ static int rsa_decrypt(void *vprsactx, unsigned char *out, size_t *outlen,
--         }
--         OPENSSL_free(tbuf);
--     } else {
---        ret = RSA_private_decrypt(inlen, in, out, prsactx->rsa,
---            prsactx->pad_mode);
--+        if ((prsactx->implicit_rejection == 0) &&
--+                (prsactx->pad_mode == RSA_PKCS1_PADDING))
--+            pad_mode = RSA_PKCS1_NO_IMPLICIT_REJECT_PADDING;
--+        else
--+            pad_mode = prsactx->pad_mode;
--+        ret = RSA_private_decrypt(inlen, in, out, prsactx->rsa, pad_mode);
--     }
--     *outlen = constant_time_select_s(constant_time_msb_s(ret), *outlen, ret);
--     ret = constant_time_select_int(constant_time_msb(ret), 0, 1);
--@@ -403,6 +411,10 @@ static int rsa_get_ctx_params(void *vprsactx, OSSL_PARAM *params)
--     if (p != NULL && !OSSL_PARAM_set_uint(p, prsactx->alt_version))
--         return 0;
-- 
--+    p = OSSL_PARAM_locate(params, OSSL_ASYM_CIPHER_PARAM_IMPLICIT_REJECTION);
--+    if (p != NULL && !OSSL_PARAM_set_uint(p, prsactx->implicit_rejection))
--+        return 0;
--+
--     return 1;
-- }
-- 
--@@ -414,6 +426,7 @@ static const OSSL_PARAM known_gettable_ctx_params[] = {
--         NULL, 0),
--     OSSL_PARAM_uint(OSSL_ASYM_CIPHER_PARAM_TLS_CLIENT_VERSION, NULL),
--     OSSL_PARAM_uint(OSSL_ASYM_CIPHER_PARAM_TLS_NEGOTIATED_VERSION, NULL),
--+    OSSL_PARAM_uint(OSSL_ASYM_CIPHER_PARAM_IMPLICIT_REJECTION, NULL),
--     OSSL_PARAM_END
-- };
-- 
--@@ -549,6 +562,14 @@ static int rsa_set_ctx_params(void *vprsactx, const OSSL_PARAM params[])
--             return 0;
--         prsactx->alt_version = alt_version;
--     }
--+    p = OSSL_PARAM_locate_const(params, OSSL_ASYM_CIPHER_PARAM_IMPLICIT_REJECTION);
--+    if (p != NULL) {
--+        unsigned int implicit_rejection;
--+
--+        if (!OSSL_PARAM_get_uint(p, &implicit_rejection))
--+            return 0;
--+        prsactx->implicit_rejection = implicit_rejection;
--+    }
-- 
--     return 1;
-- }
--@@ -562,6 +583,7 @@ static const OSSL_PARAM known_settable_ctx_params[] = {
--     OSSL_PARAM_octet_string(OSSL_ASYM_CIPHER_PARAM_OAEP_LABEL, NULL, 0),
--     OSSL_PARAM_uint(OSSL_ASYM_CIPHER_PARAM_TLS_CLIENT_VERSION, NULL),
--     OSSL_PARAM_uint(OSSL_ASYM_CIPHER_PARAM_TLS_NEGOTIATED_VERSION, NULL),
--+    OSSL_PARAM_uint(OSSL_ASYM_CIPHER_PARAM_IMPLICIT_REJECTION, NULL),
--     OSSL_PARAM_END
-- };
-- 
-diff --git a/meta-core/recipes-connectivity/openssl/openssl/CVE-2023-50781-3.patch b/meta-core/recipes-connectivity/openssl/openssl/CVE-2023-50781-3.patch
-deleted file mode 100644
-index 324e41e..0000000
---- a/meta-core/recipes-connectivity/openssl/openssl/CVE-2023-50781-3.patch
-+++ /dev/null
-@@ -1,39 +0,0 @@
--From 156a6ca5791f9c642a77270a90d5dbd0a3a7a33d Mon Sep 17 00:00:00 2001
--From: Hubert Kario <hkario@redhat.com>
--Date: Tue, 22 Nov 2022 18:25:49 +0100
--Subject: [PATCH] smime/pkcs7: disable the Bleichenbacher workaround
--
--CVE: CVE-2023-50781
--
--Upstream-Status: Backport
--[https://github.com/openssl/openssl/commit/056dade341d2589975a3aae71f81c8d7061583c7]
--
--Reviewed-by: Dmitry Belyavskiy <beldmit@gmail.com>
--Reviewed-by: Tim Hudson <tjh@openssl.org>
--Reviewed-by: Tomas Mraz <tomas@openssl.org>
--(Merged from https://github.com/openssl/openssl/pull/13817)
--
--Signed-off-by: Jiaying Song <jiaying.song.cn@windriver.com>
--
-----
-- crypto/pkcs7/pk7_doit.c | 7 +++++++
-- 1 file changed, 7 insertions(+)
--
--diff --git a/crypto/pkcs7/pk7_doit.c b/crypto/pkcs7/pk7_doit.c
--index a38e8a3..d751f5e 100644
----- a/crypto/pkcs7/pk7_doit.c
--+++ b/crypto/pkcs7/pk7_doit.c
--@@ -168,6 +168,13 @@ static int pkcs7_decrypt_rinfo(unsigned char **pek, int *peklen,
--     if (EVP_PKEY_decrypt_init(pctx) <= 0)
--         goto err;
-- 
--+    if (EVP_PKEY_is_a(pkey, "RSA"))
--+        /* upper layer pkcs7 code incorrectly assumes that a successful RSA
--+         * decryption means that the key matches ciphertext (which never
--+         * was the case, implicit rejection or not), so to make it work
--+         * disable implicit rejection for RSA keys */
--+        EVP_PKEY_CTX_ctrl_str(pctx, "rsa_pkcs1_implicit_rejection", "0");
--+
--     if (EVP_PKEY_decrypt(pctx, NULL, &eklen,
--             ri->enc_key->data, ri->enc_key->length)
--         <= 0)
-diff --git a/meta-core/recipes-connectivity/openssl/openssl/CVE-2023-50781-4.patch b/meta-core/recipes-connectivity/openssl/openssl/CVE-2023-50781-4.patch
-deleted file mode 100644
-index c6dad3c..0000000
---- a/meta-core/recipes-connectivity/openssl/openssl/CVE-2023-50781-4.patch
-+++ /dev/null
-@@ -1,441 +0,0 @@
--From 8ae4f0e68ebb7435be494b58676827ae91695371 Mon Sep 17 00:00:00 2001
--From: Hubert Kario <hkario@redhat.com>
--Date: Tue, 12 Jan 2021 14:58:04 +0100
--Subject: [PATCH] rsa: add test vectors for the implicit rejection in RSA
-- PKCS#1 v1.5
--
--CVE: CVE-2023-50781
--
--Upstream-Status: Backport [https://github.com/openssl/openssl/commit/8ae4f0e68ebb7435be494b58676827ae91695371]
--
--Reviewed-by: Dmitry Belyavskiy <beldmit@gmail.com>
--Reviewed-by: Tim Hudson <tjh@openssl.org>
--Reviewed-by: Tomas Mraz <tomas@openssl.org>
--(Merged from https://github.com/openssl/openssl/pull/13817)
--Signed-off-by: Jiaying Song <jiaying.song.cn@windriver.com>
-----
-- .../30-test_evp_data/evppkey_rsa_common.txt   | 408 ++++++++++++++++++
-- 1 file changed, 408 insertions(+)
--
--diff --git a/test/recipes/30-test_evp_data/evppkey_rsa_common.txt b/test/recipes/30-test_evp_data/evppkey_rsa_common.txt
--index 080c4d02af..1405465098 100644
----- a/test/recipes/30-test_evp_data/evppkey_rsa_common.txt
--+++ b/test/recipes/30-test_evp_data/evppkey_rsa_common.txt
--@@ -277,6 +277,414 @@ Derive = RSA-2048
-- Result = KEYOP_INIT_ERROR
-- Reason = operation not supported for this keytype
-- 
--+# Test vectors for the Bleichenbacher workaround
--+
--+PrivateKey = RSA-2048-2
--+-----BEGIN RSA PRIVATE KEY-----
--+MIIEowIBAAKCAQEAyMyDlxQJjaVsqiNkD5PciZfBY3KWj8Gwxt9RE8HJTosh5IrS
--+KX5lQZARtObY9ec7G3iyV0ADIdHva2AtTsjOjRQclJBetK0wZjmkkgZTS25/JgdC
--+Ppff/RM8iNchOZ3vvH6WzNy9fzquH+iScSv7SSmBfVEWZkQKH6y3ogj16hZZEK3Y
--+o/LUlyAjYMy2MgJPDQcWnBkY8xb3lLFDrvVOyHUipMApePlomYC/+/ZJwwfoGBm/
--++IQJY41IvZS+FStZ/2SfoL1inQ/6GBPDq/S1a9PC6lRl3/oUWJKSqdiiStJr5+4F
--+EHQbY4LUPIPVv6QKRmE9BivkRVF9vK8MtOGnaQIDAQABAoIBABRVAQ4PLVh2Y6Zm
--+pv8czbvw7dgQBkbQKgI5IpCJksStOeVWWSlybvZQjDpxFY7wtv91HTnQdYC7LS8G
--+MhBELQYD/1DbvXs1/iybsZpHoa+FpMJJAeAsqLWLeRmyDt8yqs+/Ua20vEthubfp
--+aMqk1XD3DvGNgGMiiJPkfUOe/KeTJZvPLNEIo9hojN8HjnrHmZafIznSwfUiuWlo
--+RimpM7quwmgWJeq4T05W9ER+nYj7mhmc9xAj4OJXsURBszyE07xnyoAx0mEmGBA6
--+egpAhEJi912IkM1hblH5A1SI/W4Jnej/bWWk/xGCVIB8n1jS+7qLoVHcjGi+NJyX
--+eiBOBMECgYEA+PWta6gokxvqRZuKP23AQdI0gkCcJXHpY/MfdIYColY3GziD7UWe
--+z5cFJkWe3RbgVSL1pF2UdRsuwtrycsf4gWpSwA0YCAFxY02omdeXMiL1G5N2MFSG
--+lqn32MJKWUl8HvzUVc+5fuhtK200lyszL9owPwSZm062tcwLsz53Yd0CgYEAznou
--+O0mpC5YzChLcaCvfvfuujdbcA7YUeu+9V1dD8PbaTYYjUGG3Gv2crS00Al5WrIaw
--+93Q+s14ay8ojeJVCRGW3Bu0iF15XGMjHC2cD6o9rUQ+UW+SOWja7PDyRcytYnfwF
--+1y2AkDGURSvaITSGR+xylD8RqEbmL66+jrU2sP0CgYB2/hXxiuI5zfHfa0RcpLxr
--+uWjXiMIZM6T13NKAAz1nEgYswIpt8gTB+9C+RjB0Q+bdSmRWN1Qp1OA4yiVvrxyb
--+3pHGsXt2+BmV+RxIy768e/DjSUwINZ5OjNalh9e5bWIh/X4PtcVXXwgu5XdpeYBx
--+sru0oyI4FRtHMUu2VHkDEQKBgQCZiEiwVUmaEAnLx9KUs2sf/fICDm5zZAU+lN4a
--+AA3JNAWH9+JydvaM32CNdTtjN3sDtvQITSwCfEs4lgpiM7qe2XOLdvEOp1vkVgeL
--+9wH2fMaz8/3BhuZDNsdrNy6AkQ7ICwrcwj0C+5rhBIaigkgHW06n5W3fzziC5FFW
--+FHGikQKBgGQ790ZCn32DZnoGUwITR++/wF5jUfghqd67YODszeUAWtnp7DHlWPfp
--+LCkyjnRWnXzvfHTKvCs1XtQBoaCRS048uwZITlgZYFEWntFMqi76bqBE4FTSYUTM
--+FinFUBBVigThM/RLfCRNrCW/kTxXuJDuSfVIJZzWNAT+9oWdz5da
--+-----END RSA PRIVATE KEY-----
--+
--+# corresponding public key
--+PublicKey = RSA-2048-2-PUBLIC
--+-----BEGIN PUBLIC KEY-----
--+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyMyDlxQJjaVsqiNkD5Pc
--+iZfBY3KWj8Gwxt9RE8HJTosh5IrSKX5lQZARtObY9ec7G3iyV0ADIdHva2AtTsjO
--+jRQclJBetK0wZjmkkgZTS25/JgdCPpff/RM8iNchOZ3vvH6WzNy9fzquH+iScSv7
--+SSmBfVEWZkQKH6y3ogj16hZZEK3Yo/LUlyAjYMy2MgJPDQcWnBkY8xb3lLFDrvVO
--+yHUipMApePlomYC/+/ZJwwfoGBm/+IQJY41IvZS+FStZ/2SfoL1inQ/6GBPDq/S1
--+a9PC6lRl3/oUWJKSqdiiStJr5+4FEHQbY4LUPIPVv6QKRmE9BivkRVF9vK8MtOGn
--+aQIDAQAB
--+-----END PUBLIC KEY-----
--+
--+PrivPubKeyPair = RSA-2048-2:RSA-2048-2-PUBLIC
--+
--+# RSA decrypt
--+
--+# a random positive test case
--+Decrypt = RSA-2048-2
--+Input = 8bfe264e85d3bdeaa6b8851b8e3b956ee3d226fd3f69063a86880173a273d9f283b2eebdd1ed35f7e02d91c571981b6737d5320bd8396b0f3ad5b019daec1b0aab3cbbc026395f4fd14f13673f2dfc81f9b660ec26ac381e6db3299b4e460b43fab9955df2b3cfaa20e900e19c856238fd371899c2bf2ce8c868b76754e5db3b036533fd603746be13c10d4e3e6022ebc905d20c2a7f32b215a4cd53b3f44ca1c327d2c2b651145821c08396c89071f665349c25e44d2733cd9305985ceef6430c3cf57af5fa224089221218fa34737c79c446d28a94c41c96e4e92ac53fbcf384dea8419ea089f8784445a492c812eb0d409467f75afd7d4d1078886205a066
--+Output = "lorem ipsum dolor sit amet"
--+
--+# a random negative test case decrypting to empty
--+Decrypt = RSA-2048-2
--+Input = 20aaa8adbbc593a924ba1c5c7990b5c2242ae4b99d0fe636a19a4cf754edbcee774e472fe028160ed42634f8864900cb514006da642cae6ae8c7d087caebcfa6dad1551301e130344989a1d462d4164505f6393933450c67bc6d39d8f5160907cabc251b737925a1cf21e5c6aa5781b7769f6a2a583d97cce008c0f8b6add5f0b2bd80bee60237aa39bb20719fe75749f4bc4e42466ef5a861ae3a92395c7d858d430bfe38040f445ea93fa2958b503539800ffa5ce5f8cf51fa8171a91f36cb4f4575e8de6b4d3f096ee140b938fd2f50ee13f0d050222e2a72b0a3069ff3a6738e82c87090caa5aed4fcbe882c49646aa250b98f12f83c8d528113614a29e7
--+Output =
--+
--+# invalid decrypting to max length message
--+Decrypt = RSA-2048-2
--+Input = 48cceab10f39a4db32f60074feea473cbcdb7accf92e150417f76b44756b190e843e79ec12aa85083a21f5437e7bad0a60482e601198f9d86923239c8786ee728285afd0937f7dde12717f28389843d7375912b07b991f4fdb0190fced8ba665314367e8c5f9d2981d0f5128feeb46cb50fc237e64438a86df198dd0209364ae3a842d77532b66b7ef263b83b1541ed671b120dfd660462e2107a4ee7b964e734a7bd68d90dda61770658a3c242948532da32648687e0318286473f675b412d6468f013f14d760a358dfcad3cda2afeec5e268a37d250c37f722f468a70dfd92d7294c3c1ee1e7f8843b7d16f9f37ef35748c3ae93aa155cdcdfeb4e78567303
--+Output = 22d850137b9eebe092b24f602dc5bb7918c16bd89ddbf20467b119d205f9c2e4bd7d2592cf1e532106e0f33557565923c73a02d4f09c0c22bea89148183e60317f7028b3aa1f261f91c979393101d7e15f4067e63979b32751658ef769610fe97cf9cef3278b3117d384051c3b1d82c251c2305418c8f6840530e631aad63e70e20e025bcd8efb54c92ec6d3b106a2f8e64eeff7d38495b0fc50c97138af4b1c0a67a1c4e27b077b8439332edfa8608dfeae653cd6a628ac550395f7e74390e42c11682234870925eeaa1fa71b76cf1f2ee3bda69f6717033ff8b7c95c9799e7a3bea5e7e4a1c359772fb6b1c6e6c516661dfe30c3
--+
--+# invalid decrypting to message with length specified by second to last value from PRF
--+Decrypt = RSA-2048-2
--+Input = 1439e08c3f84c1a7fec74ce07614b20e01f6fa4e8c2a6cffdc3520d8889e5d9a950c6425798f85d4be38d300ea5695f13ecd4cb389d1ff5b82484b494d6280ab7fa78e645933981cb934cce8bfcd114cc0e6811eefa47aae20af638a1cd163d2d3366186d0a07df0c81f6c9f3171cf3561472e98a6006bf75ddb457bed036dcce199369de7d94ef2c68e8467ee0604eea2b3009479162a7891ba5c40cab17f49e1c438cb6eaea4f76ce23cce0e483ff0e96fa790ea15be67671814342d0a23f4a20262b6182e72f3a67cd289711503c85516a9ed225422f98b116f1ab080a80abd6f0216df88d8cfd67c139243be8dd78502a7aaf6bc99d7da71bcdf627e7354
--+Output = 0f9b
--+
--+# invalid decrypting to message with length specified by third to last value from PRF
--+Decrypt = RSA-2048-2
--+Input = 1690ebcceece2ce024f382e467cf8510e74514120937978576caf684d4a02ad569e8d76cbe365a060e00779de2f0865ccf0d923de3b4783a4e2c74f422e2f326086c390b658ba47f31ab013aa80f468c71256e5fa5679b24e83cd82c3d1e05e398208155de2212993cd2b8bab6987cf4cc1293f19909219439d74127545e9ed8a706961b8ee2119f6bfacafbef91b75a789ba65b8b833bc6149cf49b5c4d2c6359f62808659ba6541e1cd24bf7f7410486b5103f6c0ea29334ea6f4975b17387474fe920710ea61568d7b7c0a7916acf21665ad5a31c4eabcde44f8fb6120d8457afa1f3c85d517cda364af620113ae5a3c52a048821731922737307f77a1081
--+Output = 4f02
--+
--+# positive test with 11 byte long value
--+Decrypt = RSA-2048-2
--+Input = 6213634593332c485cef783ea2846e3d6e8b0e005cd8293eaebbaa5079712fd681579bdfbbda138ae4d9d952917a03c92398ec0cb2bb0c6b5a8d55061fed0d0d8d72473563152648cfe640b335dc95331c21cb133a91790fa93ae44497c128708970d2beeb77e8721b061b1c44034143734a77be8220877415a6dba073c3871605380542a9f25252a4babe8331cdd53cf828423f3cc70b560624d0581fb126b2ed4f4ed358f0eb8065cf176399ac1a846a31055f9ae8c9c24a1ba050bc20842125bc1753158f8065f3adb9cc16bfdf83816bdf38b624f12022c5a6fbfe29bc91542be8c0208a770bcd677dc597f5557dc2ce28a11bf3e3857f158717a33f6592
--+Output = "lorem ipsum"
--+
--+# positive test with 11 byte long value and zero padded ciphertext
--+Decrypt = RSA-2048-2
--+Input = 00a2e8f114ea8d05d12dc843e3cc3b2edc8229ff2a028bda29ba9d55e3cd02911902fef1f42a075bf05e8016e8567213d6f260fa49e360779dd81aeea3e04c2cb567e0d72b98bf754014561b7511e083d20e0bfb9cd23f8a0d3c88900c49d2fcd5843ff0765607b2026f28202a87aa94678aed22a0c20724541394cd8f44e373eba1d2bae98f516c1e2ba3d86852d064f856b1daf24795e767a2b90396e50743e3150664afab131fe40ea405dcf572dd1079af1d3f0392ccadcca0a12740dbb213b925ca2a06b1bc1383e83a658c82ba2e7427342379084d5f66b544579f07664cb26edd4f10fd913fdbc0de05ef887d4d1ec1ac95652397ea7fd4e4759fda8b
--+Output = "lorem ipsum"
--+
--+# positive test with 11 byte long value and zero truncated ciphertext
--+Decrypt = RSA-2048-2
--+Input = a2e8f114ea8d05d12dc843e3cc3b2edc8229ff2a028bda29ba9d55e3cd02911902fef1f42a075bf05e8016e8567213d6f260fa49e360779dd81aeea3e04c2cb567e0d72b98bf754014561b7511e083d20e0bfb9cd23f8a0d3c88900c49d2fcd5843ff0765607b2026f28202a87aa94678aed22a0c20724541394cd8f44e373eba1d2bae98f516c1e2ba3d86852d064f856b1daf24795e767a2b90396e50743e3150664afab131fe40ea405dcf572dd1079af1d3f0392ccadcca0a12740dbb213b925ca2a06b1bc1383e83a658c82ba2e7427342379084d5f66b544579f07664cb26edd4f10fd913fdbc0de05ef887d4d1ec1ac95652397ea7fd4e4759fda8b
--+Output = "lorem ipsum"
--+
--+# positive test with 11 byte long value and double zero padded ciphertext
--+Decrypt = RSA-2048-2
--+Input = 00001f71879b426127f7dead621f7380a7098cf7d22173aa27991b143c46d53383c209bd0c9c00d84078037e715f6b98c65005a77120070522ede51d472c87ef94b94ead4c5428ee108a345561658301911ec5a8f7dd43ed4a3957fd29fb02a3529bf63f8040d3953490939bd8f78b2a3404b6fb5ff70a4bfdaac5c541d6bcce49c9778cc390be24cbef1d1eca7e870457241d3ff72ca44f9f56bdf31a890fa5eb3a9107b603ccc9d06a5dd911a664c82b6abd4fe036f8db8d5a070c2d86386ae18d97adc1847640c211d91ff5c3387574a26f8ef27ca7f48d2dd1f0c7f14b81cc9d33ee6853031d3ecf10a914ffd90947909c8011fd30249219348ebff76bfc
--+Output = "lorem ipsum"
--+
--+# positive test with 11 byte long value and double zero truncated ciphertext
--+Decrypt = RSA-2048-2
--+Input = 1f71879b426127f7dead621f7380a7098cf7d22173aa27991b143c46d53383c209bd0c9c00d84078037e715f6b98c65005a77120070522ede51d472c87ef94b94ead4c5428ee108a345561658301911ec5a8f7dd43ed4a3957fd29fb02a3529bf63f8040d3953490939bd8f78b2a3404b6fb5ff70a4bfdaac5c541d6bcce49c9778cc390be24cbef1d1eca7e870457241d3ff72ca44f9f56bdf31a890fa5eb3a9107b603ccc9d06a5dd911a664c82b6abd4fe036f8db8d5a070c2d86386ae18d97adc1847640c211d91ff5c3387574a26f8ef27ca7f48d2dd1f0c7f14b81cc9d33ee6853031d3ecf10a914ffd90947909c8011fd30249219348ebff76bfc
--+Output = "lorem ipsum"
--+
--+# positive that generates a 0 byte long synthethic message internally
--+Decrypt = RSA-2048-2
--+Input = b5e49308f6e9590014ffaffc5b8560755739dd501f1d4e9227a7d291408cf4b753f292322ff8bead613bf2caa181b221bc38caf6392deafb28eb21ad60930841ed02fd6225cc9c463409adbe7d8f32440212fbe3881c51375bb09565efb22e62b071472fb38676e5b4e23a0617db5d14d93519ac0007a30a9c822eb31c38b57fcb1be29608fcf1ca2abdcaf5d5752bbc2b5ac7dba5afcff4a5641da360dd01f7112539b1ed46cdb550a3b1006559b9fe1891030ec80f0727c42401ddd6cbb5e3c80f312df6ec89394c5a7118f573105e7ab00fe57833c126141b50a935224842addfb479f75160659ba28877b512bb9a93084ad8bec540f92640f63a11a010e0
--+Output = "lorem ipsum"
--+
--+# positive that generates a 245 byte long synthethic message internally
--+Decrypt = RSA-2048-2
--+Input = 1ea0b50ca65203d0a09280d39704b24fe6e47800189db5033f202761a78bafb270c5e25abd1f7ecc6e7abc4f26d1b0cd9b8c648d529416ee64ccbdd7aa72a771d0353262b543f0e436076f40a1095f5c7dfd10dcf0059ccb30e92dfa5e0156618215f1c3ff3aa997a9d999e506924f5289e3ac72e5e2086cc7b499d71583ed561028671155db4005bee01800a7cdbdae781dd32199b8914b5d4011dd6ff11cd26d46aad54934d293b0bc403dd211bf13b5a5c6836a5e769930f437ffd8634fb7371776f4bc88fa6c271d8aa6013df89ae6470154497c4ac861be2a1c65ebffec139bf7aaba3a81c7c5cdd84da9af5d3edfb957848074686b5837ecbcb6a41c50
--+Output = "lorem ipsum"
--+
--+# a random negative test that generates an 11 byte long message
--+Decrypt = RSA-2048-2
--+Input = 5f02f4b1f46935c742ebe62b6f05aa0a3286aab91a49b34780adde6410ab46f7386e05748331864ac98e1da63686e4babe3a19ed40a7f5ceefb89179596aab07ab1015e03b8f825084dab028b6731288f2e511a4b314b6ea3997d2e8fe2825cef8897cbbdfb6c939d441d6e04948414bb69e682927ef8576c9a7090d4aad0e74c520d6d5ce63a154720f00b76de8cc550b1aa14f016d63a7b6d6eaa1f7dbe9e50200d3159b3d099c900116bf4eba3b94204f18b1317b07529751abf64a26b0a0bf1c8ce757333b3d673211b67cc0653f2fe2620d57c8b6ee574a0323a167eab1106d9bc7fd90d415be5f1e9891a0e6c709f4fc0404e8226f8477b4e939b36eb2
--+Output = af9ac70191c92413cb9f2d
--+
--+# an otherwise correct plaintext, but with wrong first byte
--+# (0x01 instead of 0x00), generates a random 11 byte long plaintext
--+Decrypt = RSA-2048-2
--+Input = 9b2ec9c0c917c98f1ad3d0119aec6be51ae3106e9af1914d48600ab6a2c0c0c8ae02a2dc3039906ff3aac904af32ec798fd65f3ad1afa2e69400e7c1de81f5728f3b3291f38263bc7a90a0563e43ce7a0d4ee9c0d8a716621ca5d3d081188769ce1b131af7d35b13dea99153579c86db31fe07d5a2c14d621b77854e48a8df41b5798563af489a291e417b6a334c63222627376118c02c53b6e86310f728734ffc86ef9d7c8bf56c0c841b24b82b59f51aee4526ba1c4268506d301e4ebc498c6aebb6fd5258c876bf900bac8ca4d309dd522f6a6343599a8bc3760f422c10c72d0ad527ce4af1874124ace3d99bb74db8d69d2528db22c3a37644640f95c05f
--+Output = a1f8c9255c35cfba403ccc
--+
--+# an otherwise correct plaintext, but with wrong second byte
--+# (0x01 instead of 0x02), generates a random 11 byte long plaintext
--+Decrypt = RSA-2048-2
--+Input = 782c2b59a21a511243820acedd567c136f6d3090c115232a82a5efb0b178285f55b5ec2d2bac96bf00d6592ea7cdc3341610c8fb07e527e5e2d20cfaf2c7f23e375431f45e998929a02f25fd95354c33838090bca838502259e92d86d568bc2cdb132fab2a399593ca60a015dc2bb1afcd64fef8a3834e17e5358d822980dc446e845b3ab4702b1ee41fe5db716d92348d5091c15d35a110555a35deb4650a5a1d2c98025d42d4544f8b32aa6a5e02dc02deaed9a7313b73b49b0d4772a3768b0ea0db5846ace6569cae677bf67fb0acf3c255dc01ec8400c963b6e49b1067728b4e563d7e1e1515664347b92ee64db7efb5452357a02fff7fcb7437abc2e579
--+Output = e6d700309ca0ed62452254
--+
--+# an invalid ciphertext, with a zero byte in first byte of
--+# ciphertext, decrypts to a random 11 byte long synthethic
--+# plaintext
--+Decrypt = RSA-2048-2
--+Input = 0096136621faf36d5290b16bd26295de27f895d1faa51c800dafce73d001d60796cd4e2ac3fa2162131d859cd9da5a0c8a42281d9a63e5f353971b72e36b5722e4ac444d77f892a5443deb3dca49fa732fe855727196e23c26eeac55eeced8267a209ebc0f92f4656d64a6c13f7f7ce544ebeb0f668fe3a6c0f189e4bcd5ea12b73cf63e0c8350ee130dd62f01e5c97a1e13f52fde96a9a1bc9936ce734fdd61f27b18216f1d6de87f49cf4f2ea821fb8efd1f92cdad529baf7e31aff9bff4074f2cad2b4243dd15a711adcf7de900851fbd6bcb53dac399d7c880531d06f25f7002e1aaf1722765865d2c2b902c7736acd27bc6cbd3e38b560e2eecf7d4b576
--+Output = ba27b1842e7c21c0e7ef6a
--+
--+# an invalid ciphertext, with a zero byte removed from first byte of
--+# ciphertext, decrypts to a random 11 byte long synthethic
--+# plaintext
--+Decrypt = RSA-2048-2
--+Input = 96136621faf36d5290b16bd26295de27f895d1faa51c800dafce73d001d60796cd4e2ac3fa2162131d859cd9da5a0c8a42281d9a63e5f353971b72e36b5722e4ac444d77f892a5443deb3dca49fa732fe855727196e23c26eeac55eeced8267a209ebc0f92f4656d64a6c13f7f7ce544ebeb0f668fe3a6c0f189e4bcd5ea12b73cf63e0c8350ee130dd62f01e5c97a1e13f52fde96a9a1bc9936ce734fdd61f27b18216f1d6de87f49cf4f2ea821fb8efd1f92cdad529baf7e31aff9bff4074f2cad2b4243dd15a711adcf7de900851fbd6bcb53dac399d7c880531d06f25f7002e1aaf1722765865d2c2b902c7736acd27bc6cbd3e38b560e2eecf7d4b576
--+Output = ba27b1842e7c21c0e7ef6a
--+
--+# an invalid ciphertext, with two zero bytes in first bytes of
--+# ciphertext, decrypts to a random 11 byte long synthethic
--+# plaintext
--+Decrypt = RSA-2048-2
--+Input = 0000587cccc6b264bdfe0dc2149a988047fa921801f3502ea64624c510c6033d2f427e3f136c26e88ea9f6519e86a542cec96aad1e5e9013c3cc203b6de15a69183050813af5c9ad79703136d4b92f50ce171eefc6aa7988ecf02f319ffc5eafd6ee7a137f8fce64b255bb1b8dd19cfe767d64fdb468b9b2e9e7a0c24dae03239c8c714d3f40b7ee9c4e59ac15b17e4d328f1100756bce17133e8e7493b54e5006c3cbcdacd134130c5132a1edebdbd01a0c41452d16ed7a0788003c34730d0808e7e14c797a21f2b45a8aa1644357fd5e988f99b017d9df37563a354c788dc0e2f9466045622fa3f3e17db63414d27761f57392623a2bef6467501c63e8d645
--+Output = d5cf555b1d6151029a429a
--+
--+# an invalid ciphertext, with two zero bytes removed from first bytes of
--+# ciphertext, decrypts to a random 11 byte long synthethic
--+# plaintext
--+Decrypt = RSA-2048-2
--+Input = 587cccc6b264bdfe0dc2149a988047fa921801f3502ea64624c510c6033d2f427e3f136c26e88ea9f6519e86a542cec96aad1e5e9013c3cc203b6de15a69183050813af5c9ad79703136d4b92f50ce171eefc6aa7988ecf02f319ffc5eafd6ee7a137f8fce64b255bb1b8dd19cfe767d64fdb468b9b2e9e7a0c24dae03239c8c714d3f40b7ee9c4e59ac15b17e4d328f1100756bce17133e8e7493b54e5006c3cbcdacd134130c5132a1edebdbd01a0c41452d16ed7a0788003c34730d0808e7e14c797a21f2b45a8aa1644357fd5e988f99b017d9df37563a354c788dc0e2f9466045622fa3f3e17db63414d27761f57392623a2bef6467501c63e8d645
--+Output = d5cf555b1d6151029a429a
--+
--+# and invalid ciphertext, otherwise valid but starting with 000002, decrypts
--+# to random 11 byte long synthethic plaintext
--+Decrypt = RSA-2048-2
--+Input = 1786550ce8d8433052e01ecba8b76d3019f1355b212ac9d0f5191b023325a7e7714b7802f8e9a17c4cb3cd3a84041891471b10ca1fcfb5d041d34c82e6d0011cf4dc76b90e9c2e0743590579d55bcd7857057152c4a8040361343d1d22ba677d62b011407c652e234b1d663af25e2386251d7409190f19fc8ec3f9374fdf1254633874ce2ec2bff40ad0cb473f9761ec7b68da45a4bd5e33f5d7dac9b9a20821df9406b653f78a95a6c0ea0a4d57f867e4db22c17bf9a12c150f809a7b72b6db86c22a8732241ebf3c6a4f2cf82671d917aba8bc61052b40ccddd743a94ea9b538175106201971cca9d136d25081739aaf6cd18b2aecf9ad320ea3f89502f955
--+Output = 3d4a054d9358209e9cbbb9
--+
--+# negative test with otherwise valid padding but a zero byte in first byte
--+# of padding
--+Decrypt = RSA-2048-2
--+Input = 179598823812d2c58a7eb50521150a48bcca8b4eb53414018b6bca19f4801456c5e36a940037ac516b0d6412ba44ec6b4f268a55ef1c5ffbf18a2f4e3522bb7b6ed89774b79bffa22f7d3102165565642de0d43a955e96a1f2e80e5430671d7266eb4f905dc8ff5e106dc5588e5b0289e49a4913940e392a97062616d2bda38155471b7d360cfb94681c702f60ed2d4de614ea72bf1c53160e63179f6c5b897b59492bee219108309f0b7b8cb2b136c346a5e98b8b4b8415fb1d713bae067911e3057f1c335b4b7e39101eafd5d28f0189037e4334f4fdb9038427b1d119a6702aa8233319cc97d496cc289ae8c956ddc84042659a2d43d6aa22f12b81ab884e
--+Output = 1f037dd717b07d3e7f7359
--+
--+# negative test with otherwise valid padding but a zero byte at the eigth
--+# byte of padding
--+Decrypt = RSA-2048-2
--+Input = a7a340675a82c30e22219a55bc07cdf36d47d01834c1834f917f18b517419ce9de2a96460e745024436470ed85e94297b283537d52189c406a3f533cb405cc6a9dba46b482ce98b6e3dd52d8fce2237425617e38c11fbc46b61897ef200d01e4f25f5f6c4c5b38cd0de38ba11908b86595a8036a08a42a3d05b79600a97ac18ba368a08d6cf6ccb624f6e8002afc75599fba4de3d4f3ba7d208391ebe8d21f8282b18e2c10869eb2702e68f9176b42b0ddc9d763f0c86ba0ff92c957aaeab76d9ab8da52ea297ec11d92d770146faa1b300e0f91ef969b53e7d2907ffc984e9a9c9d11fb7d6cba91972059b46506b035efec6575c46d7114a6b935864858445f
--+Output = 63cb0bf65fc8255dd29e17
--+
--+# negative test with an otherwise valid plaintext but with missing separator
--+# byte
--+Decrypt = RSA-2048-2
--+Input = 3d1b97e7aa34eaf1f4fc171ceb11dcfffd9a46a5b6961205b10b302818c1fcc9f4ec78bf18ea0cee7e9fa5b16fb4c611463b368b3312ac11cf9c06b7cf72b54e284848a508d3f02328c62c2999d0fb60929f81783c7a256891bc2ff4d91df2af96a24fc5701a1823af939ce6dbdc510608e3d41eec172ad2d51b9fc61b4217c923cadcf5bac321355ef8be5e5f090cdc2bd0c697d9058247db3ad613fdce87d2955a6d1c948a5160f93da21f731d74137f5d1f53a1923adb513d2e6e1589d44cc079f4c6ddd471d38ac82d20d8b1d21f8d65f3b6907086809f4123e08d86fb38729585de026a485d8f0e703fd4772f6668febf67df947b82195fa3867e3a3065
--+Output = 6f09a0b62699337c497b0b
--+
--+# Test vectors for the Bleichenbacher workaround (2049 bit key size)
--+
--+PrivateKey = RSA-2049
--+-----BEGIN RSA PRIVATE KEY-----
--+MIIEpQIBAAKCAQEBVfiJVWoXdfHHp3hqULGLwoyemG7eVmfKs5uEEk6Q66dcHbCD
--+rD5EO7qU3CNWD3XjqBaToqQ73HQm2MTq/mjIXeD+dX9uSbue1EfmAkMIANuwTOsi
--+5/pXoY0zj7ZgJs20Z+cMwEDn02fvQDx78ePfYkZQCUYx8h6v0vtbyRX/BDeazRES
--+9zLAtGYHwXjTiiD1LtpQny+cBAXVEGnoDM+UFVTQRwRnUFw89UHqCJffyfQAzssp
--+j/x1M3LZ9pM68XTMQO2W1GcDFzO5f4zd0/krw6A+qFdsQX8kAHteT3UBEFtUTen6
--+3N/635jftLsFuBmfP4Ws/ZH3qaCUuaOD9QSQlwIDAQABAoIBAQEZwrP1CnrWFSZ5
--+1/9RCVisLYym8AKFkvMy1VoWc2F4qOZ/F+cFzjAOPodUclEAYBP5dNCj20nvNEyl
--+omo0wEUHBNDkIuDOI6aUJcFf77bybhBu7/ZMyLnXRC5NpOjIUAjq6zZYWaIpT6OT
--+e8Jr5WMy59geLBYO9jXMUoqnvlXmM6cj28Hha6KeUrKa7y+eVlT9wGZrsPwlSsvo
--+DmOHTw9fAgeC48nc/CUg0MnEp7Y05FA/u0k+Gq/us/iL16EzmHJdrm/jmed1zV1M
--+8J/IODR8TJjasaSIPM5iBRNhWvqhCmM2jm17ed9BZqsWJznvUVpEAu4eBgHFpVvH
--+HfDjDt+BAoGBAYj2k2DwHhjZot4pUlPSUsMeRHbOpf97+EE99/3jVlI83JdoBfhP
--+wN3sdw3wbO0GXIETSHVLNGrxaXVod/07PVaGgsh4fQsxTvasZ9ZegTM5i2Kgg8D4
--+dlxa1A1agfm73OJSftfpUAjLECnLTKvR+em+38KGyWVSJV2n6rGSF473AoGBAN7H
--+zxHa3oOkxD0vgBl/If1dRv1XtDH0T+gaHeN/agkf/ARk7ZcdyFCINa3mzF9Wbzll
--+YTqLNnmMkubiP1LvkH6VZ+NBvrxTNxiWJfu+qx87ez+S/7JoHm71p4SowtePfC2J
--+qqok0s7b0GaBz+ZcNse/o8W6E1FiIi71wukUyYNhAoGAEgk/OnPK7dkPYKME5FQC
--++HGrMsjJVbCa9GOjvkNw8tVYSpq7q2n9sDHqRPmEBl0EYehAqyGIhmAONxVUbIsL
--+ha0m04y0MI9S0H+ZRH2R8IfzndNAONsuk46XrQU6cfvtZ3Xh3IcY5U5sr35lRn2c
--+ut3H52XIWJ4smN/cJcpOyoECgYEAjM5hNHnPlgj392wkXPkbtJXWHp3mSISQVLTd
--+G0MW8/mBQg3AlXi/eRb+RpHPrppk5jQLhgMjRSPyXXe2amb8PuWTqfGN6l32PtX3
--+3+udILpppb71Wf+w7JTbcl9v9uq7o9SVR8DKdPA+AeweSQ0TmqCnlHuNZizOSjwP
--+G16GF0ECgYEA+ZWbNMS8qM5IiHgbMbHptdit9dDT4+1UXoNn0/hUW6ZEMriHMDXv
--+iBwrzeANGAn5LEDYeDe1xPms9Is2uNxTpZVhpFZSNALR6Po68wDlTJG2PmzuBv5t
--+5mbzkpWCoD4fRU53ifsHgaTW+7Um74gWIf0erNIUZuTN2YrtEPTnb3k=
--+-----END RSA PRIVATE KEY-----
--+
--+# corresponding public key
--+PublicKey = RSA-2049-PUBLIC
--+-----BEGIN PUBLIC KEY-----
--+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEBVfiJVWoXdfHHp3hqULGL
--+woyemG7eVmfKs5uEEk6Q66dcHbCDrD5EO7qU3CNWD3XjqBaToqQ73HQm2MTq/mjI
--+XeD+dX9uSbue1EfmAkMIANuwTOsi5/pXoY0zj7ZgJs20Z+cMwEDn02fvQDx78ePf
--+YkZQCUYx8h6v0vtbyRX/BDeazRES9zLAtGYHwXjTiiD1LtpQny+cBAXVEGnoDM+U
--+FVTQRwRnUFw89UHqCJffyfQAzsspj/x1M3LZ9pM68XTMQO2W1GcDFzO5f4zd0/kr
--+w6A+qFdsQX8kAHteT3UBEFtUTen63N/635jftLsFuBmfP4Ws/ZH3qaCUuaOD9QSQ
--+lwIDAQAB
--+-----END PUBLIC KEY-----
--+
--+PrivPubKeyPair = RSA-2049:RSA-2049-PUBLIC
--+
--+# RSA decrypt
--+
--+# malformed that generates length specified by 3rd last value from PRF
--+Decrypt = RSA-2049
--+Input = 00b26f6404b82649629f2704494282443776929122e279a9cf30b0c6fe8122a0a9042870d97cc8ef65490fe58f031eb2442352191f5fbc311026b5147d32df914599f38b825ebb824af0d63f2d541a245c5775d1c4b78630e4996cc5fe413d38455a776cf4edcc0aa7fccb31c584d60502ed2b77398f536e137ff7ba6430e9258e21c2db5b82f5380f566876110ac4c759178900fbad7ab70ea07b1daf7a1639cbb4196543a6cbe8271f35dddb8120304f6eef83059e1c5c5678710f904a6d760c4d1d8ad076be17904b9e69910040b47914a0176fb7eea0c06444a6c4b86d674d19a556a1de5490373cb01ce31bbd15a5633362d3d2cd7d4af1b4c5121288b894
--+Output = 42
--+
--+# simple positive test case
--+Decrypt = RSA-2049
--+Input = 013300edbf0bb3571e59889f7ed76970bf6d57e1c89bbb6d1c3991d9df8e65ed54b556d928da7d768facb395bbcc81e9f8573b45cf8195dbd85d83a59281cddf4163aec11b53b4140053e3bd109f787a7c3cec31d535af1f50e0598d85d96d91ea01913d07097d25af99c67464ebf2bb396fb28a9233e56f31f7e105d71a23e9ef3b736d1e80e713d1691713df97334779552fc94b40dd733c7251bc522b673d3ec9354af3dd4ad44fa71c0662213a57ada1d75149697d0eb55c053aaed5ffd0b815832f454179519d3736fb4faf808416071db0d0f801aca8548311ee708c131f4be658b15f6b54256872c2903ac708bd43b017b073b5707bc84c2cd9da70e967
--+Output = "lorem ipsum"
--+
--+# positive test case with null padded ciphertext
--+Decrypt = RSA-2049
--+Input = 0002aadf846a329fadc6760980303dbd87bfadfa78c2015ce4d6c5782fd9d3f1078bd3c0a2c5bfbdd1c024552e5054d98b5bcdc94e476dd280e64d650089326542ce7c61d4f1ab40004c2e6a88a883613568556a10f3f9edeab67ae8dddc1e6b0831c2793d2715de943f7ce34c5c05d1b09f14431fde566d17e76c9feee90d86a2c158616ec81dda0c642f58c0ba8fa4495843124a7235d46fb4069715a51bf710fd024259131ba94da73597ace494856c94e7a3ec261545793b0990279b15fa91c7fd13dbfb1df2f221dab9fa9f7c1d21e48aa49f6aaecbabf5ee76dc6c2af2317ffb4e303115386a97f8729afc3d0c89419669235f1a3a69570e0836c79fc162
--+Output = "lorem ipsum"
--+
--+# positive test case with null truncated ciphertext
--+Decrypt = RSA-2049
--+Input = 02aadf846a329fadc6760980303dbd87bfadfa78c2015ce4d6c5782fd9d3f1078bd3c0a2c5bfbdd1c024552e5054d98b5bcdc94e476dd280e64d650089326542ce7c61d4f1ab40004c2e6a88a883613568556a10f3f9edeab67ae8dddc1e6b0831c2793d2715de943f7ce34c5c05d1b09f14431fde566d17e76c9feee90d86a2c158616ec81dda0c642f58c0ba8fa4495843124a7235d46fb4069715a51bf710fd024259131ba94da73597ace494856c94e7a3ec261545793b0990279b15fa91c7fd13dbfb1df2f221dab9fa9f7c1d21e48aa49f6aaecbabf5ee76dc6c2af2317ffb4e303115386a97f8729afc3d0c89419669235f1a3a69570e0836c79fc162
--+Output = "lorem ipsum"
--+
--+# positive test case with double null padded ciphertext
--+Decrypt = RSA-2049
--+Input = 0000f36da3b72d8ff6ded74e7efd08c01908f3f5f0de7b55eab92b5f875190809c39d4162e1e6649618f854fd84aeab03970d16bb814e999852c06de38d82b95c0f32e2a7b5714021fe303389be9c0eac24c90a6b7210f929d390fabf903d44e04110bb7a7fd6c383c275804721efa6d7c93aa64c0bb2b18d97c5220a846c66a4895ae52adddbe2a9996825e013585adcec4b32ba61d782737bd343e5fabd68e8a95b8b1340318559860792dd70dffbe05a1052b54cbfb48cfa7bb3c19cea52076bddac5c25ee276f153a610f6d06ed696d192d8ae4507ffae4e5bdda10a625d6b67f32f7cffcd48dee2431fe66f6105f9d17e611cdcc674868e81692a360f4052
--+Output = "lorem ipsum"
--+
--+# positive test case with double null truncated ciphertext
--+Decrypt = RSA-2049
--+Input = f36da3b72d8ff6ded74e7efd08c01908f3f5f0de7b55eab92b5f875190809c39d4162e1e6649618f854fd84aeab03970d16bb814e999852c06de38d82b95c0f32e2a7b5714021fe303389be9c0eac24c90a6b7210f929d390fabf903d44e04110bb7a7fd6c383c275804721efa6d7c93aa64c0bb2b18d97c5220a846c66a4895ae52adddbe2a9996825e013585adcec4b32ba61d782737bd343e5fabd68e8a95b8b1340318559860792dd70dffbe05a1052b54cbfb48cfa7bb3c19cea52076bddac5c25ee276f153a610f6d06ed696d192d8ae4507ffae4e5bdda10a625d6b67f32f7cffcd48dee2431fe66f6105f9d17e611cdcc674868e81692a360f4052
--+Output = "lorem ipsum"
--+
--+# a random negative test case that generates an 11 byte long message
--+Decrypt = RSA-2049
--+Input = 00f910200830fc8fff478e99e145f1474b312e2512d0f90b8cef77f8001d09861688c156d1cbaf8a8957f7ebf35f724466952d0524cad48aad4fba1e45ce8ea27e8f3ba44131b7831b62d60c0762661f4c1d1a88cd06263a259abf1ba9e6b0b172069afb86a7e88387726f8ab3adb30bfd6b3f6be6d85d5dfd044e7ef052395474a9cbb1c3667a92780b43a22693015af6c513041bdaf87d43b24ddd244e791eeaea1066e1f4917117b3a468e22e0f7358852bb981248de4d720add2d15dccba6280355935b67c96f9dcb6c419cc38ab9f6fba2d649ef2066e0c34c9f788ae49babd9025fa85b21113e56ce4f43aa134c512b030dd7ac7ce82e76f0be9ce09ebca
--+Output = 1189b6f5498fd6df532b00
--+
--+# otherwise correct plaintext, but with wrong first byte (0x01 instead of 0x00)
--+Decrypt = RSA-2049
--+Input = 002c9ddc36ba4cf0038692b2d3a1c61a4bb3786a97ce2e46a3ba74d03158aeef456ce0f4db04dda3fe062268a1711250a18c69778a6280d88e133a16254e1f0e30ce8dac9b57d2e39a2f7d7be3ee4e08aec2fdbe8dadad7fdbf442a29a8fb40857407bf6be35596b8eefb5c2b3f58b894452c2dc54a6123a1a38d642e23751746597e08d71ac92704adc17803b19e131b4d1927881f43b0200e6f95658f559f912c889b4cd51862784364896cd6e8618f485a992f82997ad6a0917e32ae5872eaf850092b2d6c782ad35f487b79682333c1750c685d7d32ab3e1538f31dcaa5e7d5d2825875242c83947308dcf63ba4bfff20334c9c140c837dbdbae7a8dee72ff
--+Output = f6d0f5b78082fe61c04674
--+
--+# otherwise correct plaintext, but with wrong second byte (0x01 instead of 0x02)
--+Decrypt = RSA-2049
--+Input = 00c5d77826c1ab7a34d6390f9d342d5dbe848942e2618287952ba0350d7de6726112e9cebc391a0fae1839e2bf168229e3e0d71d4161801509f1f28f6e1487ca52df05c466b6b0a6fbbe57a3268a970610ec0beac39ec0fa67babce1ef2a86bf77466dc127d7d0d2962c20e66593126f276863cd38dc6351428f884c1384f67cad0a0ffdbc2af16711fb68dc559b96b37b4f04cd133ffc7d79c43c42ca4948fa895b9daeb853150c8a5169849b730cc77d68b0217d6c0e3dbf38d751a1998186633418367e7576530566c23d6d4e0da9b038d0bb5169ce40133ea076472d055001f0135645940fd08ea44269af2604c8b1ba225053d6db9ab43577689401bdc0f3
--+Output = 1ab287fcef3ff17067914d
--+
--+# RSA decrypt with 3072 bit keys
--+PrivateKey = RSA-3072
--+-----BEGIN RSA PRIVATE KEY-----
--+MIIG5AIBAAKCAYEAr9ccqtXp9bjGw2cHCkfxnX5mrt4YpbJ0H7PE0zQ0VgaSotkJ
--+72iI7GAv9rk68ljudDA8MBr81O2+xDMR3cjdvwDdu+OG0zuNDiKxtEk23EiYcbhS
--+N7NM50etj9sMTk0dqnqt8HOFxchzLMt9Wkni5QyIPH16wQ7Wp02ayQ35EpkFoX1K
--+CHIQ/Hi20EseuWlILBGm7recUOWxbz8lT3VxUosvFxargW1uygcnveqYBZMpcw64
--+wzznHWHdSsOTtiVuB6wdEk8CANHD4FpMG8fx7S/IPlcZnP5ZCLEAh+J/vZfSwkIU
--+YZxxR8j778o5vCVnYqaCNTH34jTWjq56DZ+vEN0V6VI3gMfVrlgJStUlqQY7TDP5
--+XhAG2i6xLTdDaJSVwfICPkBzU8XrPkyhxIz/gaEJANFIIOuAGvTxpZbEuc6aUx/P
--+ilTZ/9ckJYtu7CAQjfb9/XbUrgO6fqWY3LDkooCElYcob01/JWzoXl61Z5sdrMH5
--+CVZJty5foHKusAN5AgMBAAECggGAJRfqyzr+9L/65gOY35lXpdKhVKgzaNjhWEKy
--+9Z7gn3kZe9LvHprdr4eG9rQSdEdAXjBCsh8vULeqc3cWgMO7y2wiWl1f9rVsRxwY
--+gqCjOwrxZaPtbCSdx3g+a8dYrDfmVy0z/jJQeO2VJlDy65YEkC75mlEaERnRPE/J
--+pDoXXc37+xoUAP4XCTtpzTzbiV9lQy6iGV+QURxzNrWKaF2s/y2vTF6S5WWxZlrm
--+DlErqplluAjV/xGc63zWksv5IAZ6+s2An2a+cG2iaBCseQ2xVslI5v5YG8mEkVf0
--+2kk/OmSwxuEZ4DGxB/hDbOKRYLRYuPnxCV/esZJjOE/1OHVXvE8QtANN6EFwO60s
--+HnacI4U+tjCjbRBh3UbipruvdDqX8LMsNvUMGjci3vOjlNkcLgeL8J15Xs3l5WuC
--+Avl0Am91/FbpoN1qiPLny3jvEpjMbGUgfKRb03GIgHtPzbHmDdjluFZI+376i2/d
--+RI85dBqNmAn+Fjrz3kW6wkpahByBAoHBAOSj2DDXPosxxoLidP/J/RKsMT0t0FE9
--+UFcNt+tHYv6hk+e7VAuUqUpd3XQqz3P13rnK4xvSOsVguyeU/WgmH4ID9XGSgpBP
--+Rh6s7izn4KAJeqfI26vTPxvyaZEqB4JxT6k7SerENus95zSn1v/f2MLBQ16EP8cJ
--++QSOVCoZfEhUK+srherQ9eZKpj0OwBUrP4VhLdymv96r8xddWX1AVj4OBi2RywKI
--+gAgv6fjwkb292jFu6x6FjKRNKwKK6c3jqQKBwQDE4c0Oz0KYYV4feJun3iL9UJSv
--+StGsKVDuljA4WiBAmigMZTii/u0DFEjibiLWcJOnH53HTr0avA6c6D1nCwJ2qxyF
--+rHNN2L+cdMx/7L1zLR11+InvRgpIGbpeGwHeIzJVUYG3b6llRJMZimBvAMr9ipM1
--+bkVvIjt1G9W1ypeuKzm6d/t8F0yC7AIYZWDV4nvxiiY8whLZzGawHR2iZz8pfUwb
--+7URbTvxdsGE27Kq9gstU0PzEJpnU1goCJ7/gA1ECgcBA8w5B6ZM5xV0H5z6nPwDm
--+IgYmw/HucgV1hU8exfuoK8wxQvTACW4B0yJKkrK11T1899aGG7VYRn9D4j4OLO48
--+Z9V8esseJXbc1fEezovvymGOci984xiFXtqAQzk44+lmQJJh33VeZApe2eLocvVH
--+ddEmc1kOuJWFpszf3LeCcG69cnKrXsrLrZ8Frz//g3aa9B0sFi5hGeWHWJxISVN2
--+c1Nr9IN/57i/GqVTcztjdCAcdM7Tr8phDg7OvRlnxGkCgcEAuYhMFBuulyiSaTff
--+/3ZvJKYOJ45rPkEFGoD/2ercn+RlvyCYGcoAEjnIYVEGlWwrSH+b0NlbjVkQsD6O
--+to8CeE/RpgqX8hFCqC7NE/RFp8cpDyXy3j/zqnRMUyhCP1KNuScBBZs9V8gikxv6
--+ukBWCk3PYbeTySHKRBbB8vmCrMfhM96jaBIQsQO1CcZnVceDo1/bnsAIwaREVMxr
--+Q8LmG7QOx/Z0x1MMsUFoqzilwccC09/JgxMZPh+h+Nv6jiCxAoHBAOEqQgFAfSdR
--+ya60LLH55q803NRFMamuKiPbVJLzwiKfbjOiiopmQOS/LxxqIzeMXlYV4OsSvxTo
--+G7mcTOFRtU5hKCK+t8qeQQpa/dsMpiHllwArnRyBjIVgL5lFKRpHUGLsavU/T1IH
--+mtgaxZo32dXvcAh1+ndCHVBwbHTOF4conA+g+Usp4bZSSWn5nU4oIizvSVpG7SGe
--+0GngdxH9Usdqbvzcip1EKeHRTZrHIEYmB+x0LaRIB3dwZNidK3TkKw==
--+-----END RSA PRIVATE KEY-----
--+
--+PublicKey = RSA-3072-PUBLIC
--+-----BEGIN PUBLIC KEY-----
--+MIIBojANBgkqhkiG9w0BAQEFAAOCAY8AMIIBigKCAYEAr9ccqtXp9bjGw2cHCkfx
--+nX5mrt4YpbJ0H7PE0zQ0VgaSotkJ72iI7GAv9rk68ljudDA8MBr81O2+xDMR3cjd
--+vwDdu+OG0zuNDiKxtEk23EiYcbhSN7NM50etj9sMTk0dqnqt8HOFxchzLMt9Wkni
--+5QyIPH16wQ7Wp02ayQ35EpkFoX1KCHIQ/Hi20EseuWlILBGm7recUOWxbz8lT3Vx
--+UosvFxargW1uygcnveqYBZMpcw64wzznHWHdSsOTtiVuB6wdEk8CANHD4FpMG8fx
--+7S/IPlcZnP5ZCLEAh+J/vZfSwkIUYZxxR8j778o5vCVnYqaCNTH34jTWjq56DZ+v
--+EN0V6VI3gMfVrlgJStUlqQY7TDP5XhAG2i6xLTdDaJSVwfICPkBzU8XrPkyhxIz/
--+gaEJANFIIOuAGvTxpZbEuc6aUx/PilTZ/9ckJYtu7CAQjfb9/XbUrgO6fqWY3LDk
--+ooCElYcob01/JWzoXl61Z5sdrMH5CVZJty5foHKusAN5AgMBAAE=
--+-----END PUBLIC KEY-----
--+
--+PrivPubKeyPair = RSA-3072:RSA-3072-PUBLIC
--+
--+# a random invalid ciphertext that generates an empty synthethic one
--+Decrypt = RSA-3072
--+Input = 5e956cd9652f4a2ece902931013e09662b6a9257ad1e987fb75f73a0606df2a4b04789770820c2e02322c4e826f767bd895734a01e20609c3be4517a7a2a589ea1cdc137beb73eb38dac781b52e863de9620f79f9b90fd5b953651fcbfef4a9f1cc07421d511a87dd6942caab6a5a0f4df473e62defb529a7de1509ab99c596e1dff1320402298d8be73a896cc86c38ae3f2f576e9ea70cc28ad575cb0f854f0be43186baa9c18e29c47c6ca77135db79c811231b7c1730955887d321fdc06568382b86643cf089b10e35ab23e827d2e5aa7b4e99ff2e914f302351819eb4d1693243b35f8bf1d42d08f8ec4acafa35f747a4a975a28643ec630d8e4fa5be59d81995660a14bb64c1fea5146d6b11f92da6a3956dd5cb5e0d747cf2ea23f81617769185336263d46ef4c144b754de62a6337342d6c85a95f19f015724546ee3fc4823eca603dbc1dc01c2d5ed50bd72d8e96df2dc048edde0081284068283fc5e73a6139851abf2f29977d0b3d160c883a42a37efba1be05c1a0b1741d7ddf59
--+Output =
--+
--+# a random invalid that has PRF output with a length one byte too long
--+# in the last value
--+Decrypt = RSA-3072
--+Input = 7db0390d75fcf9d4c59cf27b264190d856da9abd11e92334d0e5f71005cfed865a711dfa28b791188374b61916dbc11339bf14b06f5f3f68c206c5607380e13da3129bfb744157e1527dd6fdf6651248b028a496ae1b97702d44706043cdaa7a59c0f41367303f21f268968bf3bd2904db3ae5239b55f8b438d93d7db9d1666c071c0857e2ec37757463769c54e51f052b2a71b04c2869e9e7049a1037b8429206c99726f07289bac18363e7eb2a5b417f47c37a55090cda676517b3549c873f2fe95da9681752ec9864b069089a2ed2f340c8b04ee00079055a817a3355b46ac7dc00d17f4504ccfbcfcadb0c04cb6b22069e179385ae1eafabad5521bac2b8a8ee1dfff59a22eb3fdacfc87175d10d7894cfd869d056057dd9944b869c1784fcc27f731bc46171d39570fbffbadf082d33f6352ecf44aca8d9478e53f5a5b7c852b401e8f5f74da49da91e65bdc97765a9523b7a0885a6f8afe5759d58009fbfa837472a968e6ae92026a5e0202a395483095302d6c3985b5f5831c521a271
--+Output = 56a3bea054e01338be9b7d7957539c
--+
--+# a random invalid that generates a synthethic of maximum size
--+Decrypt = RSA-3072
--+Input = 1715065322522dff85049800f6a29ab5f98c465020467414b2a44127fe9446da47fa18047900f99afe67c2df6f50160bb8e90bff296610fde632b3859d4d0d2e644f23835028c46cca01b84b88231d7e03154edec6627bcba23de76740d839851fa12d74c8f92e540c73fe837b91b7d699b311997d5f0f7864c486d499c3a79c111faaacbe4799597a25066c6200215c3d158f3817c1aa57f18bdaad0be1658da9da93f5cc6c3c4dd72788af57adbb6a0c26f42d32d95b8a4f95e8c6feb2f8a5d53b19a50a0b7cbc25e055ad03e5ace8f3f7db13e57759f67b65d143f08cca15992c6b2aae643390483de111c2988d4e76b42596266005103c8de6044fb7398eb3c28a864fa672de5fd8774510ff45e05969a11a4c7d3f343e331190d2dcf24fb9154ba904dc94af98afc5774a9617d0418fe6d13f8245c7d7626c176138dd698a23547c25f27c2b98ea4d8a45c7842b81888e4cc14e5b72e9cf91f56956c93dbf2e5f44a8282a7813157fc481ff1371a0f66b31797e81ebdb09a673d4db96d6
--+Output = 7b036fcd6243900e4236c894e2462c17738acc87e01a76f4d95cb9a328d9acde81650283b8e8f60a217e3bdee835c7b222ad4c85d0acdb9a309bd2a754609a65dec50f3aa04c6d5891034566b9563d42668ede1f8992b17753a2132e28970584e255efc8b45a41c5dbd7567f014acec5fe6fdb6d484790360a913ebb9defcd74ff377f2a8ba46d2ed85f733c9a3da08eb57ecedfafda806778f03c66b2c5d2874cec1c291b2d49eb194c7b5d0dd2908ae90f4843268a2c45563092ade08acb6ab481a08176102fc803fbb2f8ad11b0e1531bd37df543498daf180b12017f4d4d426ca29b4161075534bfb914968088a9d13785d0adc0e2580d3548494b2a9e91605f2b27e6cc701c796f0de7c6f471f6ab6cb9272a1ed637ca32a60d117505d82af3c1336104afb537d01a8f70b510e1eebf4869cb976c419473795a66c7f5e6e20a8094b1bb603a74330c537c5c0698c31538bd2e138c1275a1bdf24c5fa8ab3b7b526324e7918a382d1363b3d463764222150e04
--+
--+# a positive test case that decrypts to 9 byte long value
--+Decrypt = RSA-3072
--+Input = 6c60845a854b4571f678941ae35a2ac03f67c21e21146f9db1f2306be9f136453b86ad55647d4f7b5c9e62197aaff0c0e40a3b54c4cde14e774b1c5959b6c2a2302896ffae1f73b00b862a20ff4304fe06cea7ff30ecb3773ca9af27a0b54547350d7c07dfb0a39629c7e71e83fc5af9b2adbaf898e037f1de696a3f328cf45af7ec9aff7173854087fb8fbf34be981efbd8493f9438d1b2ba2a86af082662aa46ae9adfbec51e5f3d9550a4dd1dcb7c8969c9587a6edc82a8cabbc785c40d9fbd12064559fb769450ac3e47e87bc046148130d7eaa843e4b3ccef3675d0630500803cb7ffee3882378c1a404e850c3e20707bb745e42b13c18786c4976076ed9fa8fd0ff15e571bef02cbbe2f90c908ac3734a433b73e778d4d17fcc28f49185ebc6e8536a06d293202d94496453bfdf1c2c7833a3f99fa38ca8a81f42eaa529d603b890308a319c0ab63a35ff8ebac965f6278f5a7e5d622be5d5fe55f0ca3ec993d55430d2bf59c5d3e860e90c16d91a04596f6fdf60d89ed95d88c036dde
--+Output = "forty two"
--+
--+# a positive test case with null padded ciphertext
--+Decrypt = RSA-3072
--+Input = 00f4d565a3286784dbb85327db8807ae557ead229f92aba945cecda5225f606a7d6130edeeb6f26724d1eff1110f9eb18dc3248140ee3837e6688391e78796c526791384f045e21b6b853fb6342a11f309eb77962f37ce23925af600847fbd30e6e07e57de50b606e6b7f288cc777c1a6834f27e6edace508452128916eef7788c8bb227e3548c6a761cc4e9dd1a3584176dc053ba3500adb1d5e1611291654f12dfc5722832f635db3002d73f9defc310ace62c63868d341619c7ee15b20243b3371e05078e11219770c701d9f341af35df1bc729de294825ff2e416aa11526612852777eb131f9c45151eb144980d70608d2fc4043477368369aa0fe487a48bd57e66b00c3c58f941549f5ec050fca64449debe7a0c4ac51e55cb71620a70312aa4bd85fac1410c9c7f9d6ec610b7d11bf8faeffa20255d1a1bead9297d0aa8765cd2805847d639bc439f4a6c896e2008f746f9590ff4596de5ddde000ed666c452c978043ff4298461eb5a26d5e63d821438627f91201924bf7f2aeee1727
--+Output = "forty two"
--+
--+# a positive test case with null truncated ciphertext
--+Decrypt = RSA-3072
--+Input = f4d565a3286784dbb85327db8807ae557ead229f92aba945cecda5225f606a7d6130edeeb6f26724d1eff1110f9eb18dc3248140ee3837e6688391e78796c526791384f045e21b6b853fb6342a11f309eb77962f37ce23925af600847fbd30e6e07e57de50b606e6b7f288cc777c1a6834f27e6edace508452128916eef7788c8bb227e3548c6a761cc4e9dd1a3584176dc053ba3500adb1d5e1611291654f12dfc5722832f635db3002d73f9defc310ace62c63868d341619c7ee15b20243b3371e05078e11219770c701d9f341af35df1bc729de294825ff2e416aa11526612852777eb131f9c45151eb144980d70608d2fc4043477368369aa0fe487a48bd57e66b00c3c58f941549f5ec050fca64449debe7a0c4ac51e55cb71620a70312aa4bd85fac1410c9c7f9d6ec610b7d11bf8faeffa20255d1a1bead9297d0aa8765cd2805847d639bc439f4a6c896e2008f746f9590ff4596de5ddde000ed666c452c978043ff4298461eb5a26d5e63d821438627f91201924bf7f2aeee1727
--+Output = "forty two"
--+
--+# a positive test case with double null padded ciphertext
--+Decrypt = RSA-3072
--+Input = 00001ec97ac981dfd9dcc7a7389fdfa9d361141dac80c23a060410d472c16094e6cdffc0c3684d84aa402d7051dfccb2f6da33f66985d2a259f5b7fbf39ac537e95c5b7050eb18844a0513abef812cc8e74a3c5240009e6e805dcadf532bc1a2702d5acc9e585fad5b89d461fcc1397351cdce35171523758b171dc041f412e42966de7f94856477356d06f2a6b40e3ff0547562a4d91bbf1338e9e049facbee8b20171164505468cd308997447d3dc4b0acb49e7d368fedd8c734251f30a83491d2506f3f87318cc118823244a393dc7c5c739a2733d93e1b13db6840a9429947357f47b23fbe39b7d2d61e5ee26f9946c4632f6c4699e452f412a26641d4751135400713cd56ec66f0370423d55d2af70f5e7ad0adea8e4a0d904a01e4ac272eba4af1a029dd53eb71f115bf31f7a6c8b19a6523adeecc0d4c3c107575e38572a8f8474ccad163e46e2e8b08111132aa97a16fb588c9b7e37b3b3d7490381f3c55d1a9869a0fd42cd86fed59ecec78cb6b2dfd06a497f5afe3419691314ba0
--+Output = "forty two"
--+
--+# a positive test case with double null truncated ciphertext
--+Decrypt = RSA-3072
--+Input = 1ec97ac981dfd9dcc7a7389fdfa9d361141dac80c23a060410d472c16094e6cdffc0c3684d84aa402d7051dfccb2f6da33f66985d2a259f5b7fbf39ac537e95c5b7050eb18844a0513abef812cc8e74a3c5240009e6e805dcadf532bc1a2702d5acc9e585fad5b89d461fcc1397351cdce35171523758b171dc041f412e42966de7f94856477356d06f2a6b40e3ff0547562a4d91bbf1338e9e049facbee8b20171164505468cd308997447d3dc4b0acb49e7d368fedd8c734251f30a83491d2506f3f87318cc118823244a393dc7c5c739a2733d93e1b13db6840a9429947357f47b23fbe39b7d2d61e5ee26f9946c4632f6c4699e452f412a26641d4751135400713cd56ec66f0370423d55d2af70f5e7ad0adea8e4a0d904a01e4ac272eba4af1a029dd53eb71f115bf31f7a6c8b19a6523adeecc0d4c3c107575e38572a8f8474ccad163e46e2e8b08111132aa97a16fb588c9b7e37b3b3d7490381f3c55d1a9869a0fd42cd86fed59ecec78cb6b2dfd06a497f5afe3419691314ba0
--+Output = "forty two"
--+
--+# a random negative test case that generates a 9 byte long message
--+Decrypt = RSA-3072
--+Input = 5c8555f5cef627c15d37f85c7f5fd6e499264ea4b8e3f9112023aeb722eb38d8eac2be3751fd5a3785ab7f2d59fa3728e5be8c3de78a67464e30b21ee23b5484bb3cd06d0e1c6ad25649c8518165653eb80488bfb491b20c04897a6772f69292222fc5ef50b5cf9efc6d60426a449b6c489569d48c83488df629d695653d409ce49a795447fcec2c58a1a672e4a391401d428baaf781516e11e323d302fcf20f6eab2b2dbe53a48c987e407c4d7e1cb41131329138313d330204173a4f3ff06c6fadf970f0ed1005d0b27e35c3d11693e0429e272d583e57b2c58d24315c397856b34485dcb077665592b747f889d34febf2be8fce66c265fd9fc3575a6286a5ce88b4b413a08efc57a07a8f57a999605a837b0542695c0d189e678b53662ecf7c3d37d9dbeea585eebfaf79141118e06762c2381fe27ca6288edddc19fd67cd64f16b46e06d8a59ac530f22cd83cc0bc4e37feb52015cbb2283043ccf5e78a4eb7146827d7a466b66c8a4a4826c1bad68123a7f2d00fc1736525ff90c058f56
--+Output = 257906ca6de8307728
--+
--+# a random negative test case that generates a 9 byte long message based on
--+# second to last value from PRF
--+Decrypt = RSA-3072
--+Input = 758c215aa6acd61248062b88284bf43c13cb3b3d02410be4238607442f1c0216706e21a03a2c10eb624a63322d854da195c017b76fea83e274fa371834dcd2f3b7accf433fc212ad76c0bac366e1ed32e25b279f94129be7c64d6e162adc08ccebc0cfe8e926f01c33ab9c065f0e0ac83ae5137a4cb66702615ad68a35707d8676d2740d7c1a954680c83980e19778ed11eed3a7c2dbdfc461a9bbef671c1bc00c882d361d29d5f80c42bdf5efec886c34138f83369c6933b2ac4e93e764265351b4a0083f040e14f511f09b22f96566138864e4e6ff24da4810095da98e0585410951538ced2f757a277ff8e17172f06572c9024eeae503f176fd46eb6c5cd9ba07af11cde31dccac12eb3a4249a7bfd3b19797ad1656984bfcbf6f74e8f99d8f1ac420811f3d166d87f935ef15ae858cf9e72c8e2b547bf16c3fb09a8c9bf88fd2e5d38bf24ed610896131a84df76b9f920fe76d71fff938e9199f3b8cd0c11fd0201f9139d7673a871a9e7d4adc3bbe360c8813617cd60a90128fbe34c9d5
--+Output = 043383c929060374ed
--+
--+# a random negative test that generates message based on 3rd last value from
--+# PRF
--+Decrypt = RSA-3072
--+Input = 7b22d5e62d287968c6622171a1f75db4b0fd15cdf3134a1895d235d56f8d8fe619f2bf4868174a91d7601a82975d2255190d28b869141d7c395f0b8c4e2be2b2c1b4ffc12ce749a6f6803d4cfe7fba0a8d6949c04151f981c0d84592aa2ff25d1bd3ce5d10cb03daca6b496c6ad40d30bfa8acdfd02cdb9326c4bdd93b949c9dc46caa8f0e5f429785bce64136a429a3695ee674b647452bea1b0c6de9c5f1e8760d5ef6d5a9cfff40457b023d3c233c1dcb323e7808103e73963b2eafc928c9eeb0ee3294955415c1ddd9a1bb7e138fecd79a3cb89c57bd2305524624814aaf0fd1acbf379f7f5b39421f12f115ba488d380586095bb53f174fae424fa4c8e3b299709cd344b9f949b1ab57f1c645d7ed3c8f81d5594197355029fee8960970ff59710dc0e5eb50ea6f4c3938e3f89ed7933023a2c2ddffaba07be147f686828bd7d520f300507ed6e71bdaee05570b27bc92741108ac2eb433f028e138dd6d63067bc206ea2d826a7f41c0d613daed020f0f30f4e272e9618e0a8c39018a83
--+Output = 70263fa6050534b9e0
--+
--+# an otherwise valid plaintext, but with wrong first byte (0x01 instead of 0x00)
--+Decrypt = RSA-3072
--+Input = 6db80adb5ff0a768caf1378ecc382a694e7d1bde2eff4ba12c48aaf794ded7a994a5b2b57acec20dbec4ae385c9dd531945c0f197a5496908725fc99d88601a17d3bb0b2d38d2c1c3100f39955a4cb3dbed5a38bf900f23d91e173640e4ec655c84fdfe71fcdb12a386108fcf718c9b7af37d39703e882436224c877a2235e8344fba6c951eb7e2a4d1d1de81fb463ac1b880f6cc0e59ade05c8ce35179ecd09546731fc07b141d3d6b342a97ae747e61a9130f72d37ac5a2c30215b6cbd66c7db893810df58b4c457b4b54f34428247d584e0fa71062446210db08254fb9ead1ba1a393c724bd291f0cf1a7143f32df849051dc896d7d176fef3b57ab6dffd626d0c3044e9edb2e3d012ace202d2581df01bec7e9aa0727a6650dd373d374f0bc0f4a611f8139dfe97d63e70c6188f4df5b672e47c51d8aa567097293fbff127c75ec690b43407578b73c85451710a0cece58fd497d7f7bd36a8a92783ef7dc6265dff52aac8b70340b996508d39217f2783ce6fc91a1cc94bb2ac487b84f62
--+Output = 6d8d3a094ff3afff4c
--+
--+# an otherwise valid plaintext, but with wrong second byte (0x01 instead of 0x02)
--+Decrypt = RSA-3072
--+Input = 417328c034458563079a4024817d0150340c34e25ae16dcad690623f702e5c748a6ebb3419ff48f486f83ba9df35c05efbd7f40613f0fc996c53706c30df6bba6dcd4a40825f96133f3c21638a342bd4663dffbd0073980dac47f8c1dd8e97ce1412e4f91f2a8adb1ac2b1071066efe8d718bbb88ca4a59bd61500e826f2365255a409bece0f972df97c3a55e09289ef5fa815a2353ef393fd1aecfc888d611c16aec532e5148be15ef1bf2834b8f75bb26db08b66d2baad6464f8439d1986b533813321dbb180080910f233bcc4dd784fb21871aef41be08b7bfad4ecc3b68f228cb5317ac6ec1227bc7d0e452037ba918ee1da9fdb8393ae93b1e937a8d4691a17871d5092d2384b6190a53df888f65b951b05ed4ad57fe4b0c6a47b5b22f32a7f23c1a234c9feb5d8713d949686760680da4db454f4acad972470033472b9864d63e8d23eefc87ebcf464ecf33f67fbcdd48eab38c5292586b36aef5981ed2fa07b2f9e23fc57d9eb71bfff4111c857e9fff23ceb31e72592e70c874b4936
--+Output = c6ae80ffa80bc184b0
--+
--+# an otherwise valid plaintext, but with zero byte in first byte of padding
--+Decrypt = RSA-3072
--+Input = 8542c626fe533467acffcd4e617692244c9b5a3bf0a215c5d64891ced4bf4f9591b4b2aedff9843057986d81631b0acb3704ec2180e5696e8bd15b217a0ec36d2061b0e2182faa3d1c59bd3f9086a10077a3337a3f5da503ec3753535ffd25b837a12f2541afefd0cffb0224b8f874e4bed13949e105c075ed44e287c5ae03b155e06b90ed247d2c07f1ef3323e3508cce4e4074606c54172ad74d12f8c3a47f654ad671104bf7681e5b061862747d9afd37e07d8e0e2291e01f14a95a1bb4cbb47c304ef067595a3947ee2d722067e38a0f046f43ec29cac6a8801c6e3e9a2331b1d45a7aa2c6af3205be382dd026e389614ee095665a611ab2e8dced2ee1c9d08ac9de11aef5b3803fc9a9ce8231ec87b5fed386fb92ee3db995a89307bcba844bd0a691c29ae51216e949dfc813133cb06a07265fd807bcb3377f6adb0a481d9b7f442003115895939773e6b95371c4febef29edae946fa245e7c50729e2e558cfaad773d1fd5f67b457a6d9d17a847c6fcbdb103a86f35f228cefc06cea0
--+Output = a8a9301daa01bb25c7
--+
--+# an otherwise valid plaintext, but with zero byte in eight byte of padding
--+Decrypt = RSA-3072
--+Input = 449dfa237a70a99cb0351793ec8677882021c2aa743580bf6a0ea672055cffe8303ac42855b1d1f3373aae6af09cb9074180fc963e9d1478a4f98b3b4861d3e7f0aa8560cf603711f139db77667ca14ba3a1acdedfca9ef4603d6d7eb0645bfc805304f9ad9d77d34762ce5cd84bd3ec9d35c30e3be72a1e8d355d5674a141b5530659ad64ebb6082e6f73a80832ab6388912538914654d34602f4b3b1c78589b4a5d964b2efcca1dc7004c41f6cafcb5a7159a7fc7c0398604d0edbd4c8f4f04067da6a153a05e7cbeea13b5ee412400ef7d4f3106f4798da707ec37a11286df2b7a204856d5ff773613fd1e453a7114b78e347d3e8078e1cb3276b3562486ba630bf719697e0073a123c3e60ebb5c7a1ccff4279faffa2402bc1109f8d559d6766e73591943dfcf25ba10c3762f02af85187799b8b4b135c3990793a6fd32642f1557405ba55cc7cf7336a0e967073c5fa50743f9cc5e3017c172d9898d2af83345e71b3e0c22ab791eacb6484a32ec60ebc226ec9deaee91b1a0560c2b571
--+Output = 6c716fe01d44398018
--+
--+# an otherwise valid plaintext, but with null separator missing
--+Decrypt = RSA-3072
--+Input = a7a5c99e50da48769ecb779d9abe86ef9ec8c38c6f43f17c7f2d7af608a4a1bd6cf695b47e97c191c61fb5a27318d02f495a176b9fae5a55b5d3fabd1d8aae4957e3879cb0c60f037724e11be5f30f08fc51c033731f14b44b414d11278cd3dba7e1c8bfe208d2b2bb7ec36366dacb6c88b24cd79ab394adf19dbbc21dfa5788bacbadc6a62f79cf54fd8cf585c615b5c0eb94c35aa9de25321c8ffefb8916bbaa2697cb2dd82ee98939df9b6704cee77793edd2b4947d82e00e5749664970736c59a84197bd72b5c71e36aae29cd39af6ac73a368edbc1ca792e1309f442aafcd77c992c88f8e4863149f221695cb7b0236e75b2339a02c4ea114854372c306b9412d8eedb600a31532002f2cea07b4df963a093185e4607732e46d753b540974fb5a5c3f9432df22e85bb17611370966c5522fd23f2ad3484341ba7fd8885fc8e6d379a611d13a2aca784fba2073208faad2137bf1979a0fa146c1880d4337db3274269493bab44a1bcd0681f7227ffdf589c2e925ed9d36302509d1109ba4
--+Output = aa2de6cde4e2442884
--+
-- # RSA PSS key tests
-- 
-- # PSS only key, no parameter restrictions
---- 
--2.34.1
--
-diff --git a/meta-core/recipes-connectivity/openssl/openssl/CVE-2023-50781-5.patch b/meta-core/recipes-connectivity/openssl/openssl/CVE-2023-50781-5.patch
-deleted file mode 100644
-index f4650de..0000000
---- a/meta-core/recipes-connectivity/openssl/openssl/CVE-2023-50781-5.patch
-+++ /dev/null
-@@ -1,284 +0,0 @@
--From c693522a96b6fb2bb4b55a53d86550811bc0d7df Mon Sep 17 00:00:00 2001
--From: Hubert Kario <hkario@redhat.com>
--Date: Thu, 3 Nov 2022 17:45:58 +0100
--Subject: [PATCH] rsa: Skip the synthethic plaintext test with old FIPS
-- provider
--
--since the 3.0.0 FIPS provider doesn't implement the Bleichenbacher
--workaround, the decryption fails instead of providing a synthetic
--plaintext, so skip them then
--
--CVE: CVE-2023-50781
--
--Upstream-Status: Backport [https://github.com/openssl/openssl/commit/ddecbef6e389d263b728b7fa30fd3d9ce13feddb]
--
--Reviewed-by: Dmitry Belyavskiy <beldmit@gmail.com>
--Reviewed-by: Tim Hudson <tjh@openssl.org>
--Reviewed-by: Tomas Mraz <tomas@openssl.org>
--(Merged from https://github.com/openssl/openssl/pull/13817)
--Signed-off-by: Jiaying Song <jiaying.song.cn@windriver.com>
-----
-- .../30-test_evp_data/evppkey_rsa_common.txt   | 66 ++++++++++++++++++-
-- 1 file changed, 63 insertions(+), 3 deletions(-)
--
--diff --git a/test/recipes/30-test_evp_data/evppkey_rsa_common.txt b/test/recipes/30-test_evp_data/evppkey_rsa_common.txt
--index d569e78..4bd7c72 100644
----- a/test/recipes/30-test_evp_data/evppkey_rsa_common.txt
--+++ b/test/recipes/30-test_evp_data/evppkey_rsa_common.txt
--@@ -253,12 +253,12 @@ Decrypt = RSA-2048
-- Input = 550AF55A2904E7B9762352F8FB7FA235A9CB053AACB2D5FCB8CA48453CB2EE3619746C701ABF2D4CC67003471A187900B05AA812BD25ED05C675DFC8C97A24A7BF49BD6214992CAD766D05A9A2B57B74F26A737E0237B8B76C45F1F226A836D7CFBC75BA999BDBE48DBC09227AA46C88F21DCCBA7840141AD5A5D71FD122E6BD6AC3E564780DFE623FC1CA9B995A6037BF0BBD43B205A84AC5444F34202C05CE9113087176432476576DE6FFFF9A52EA57C08BE3EC2F49676CB8E12F762AC71FA3C321E00AC988910C85FF52F93825666CE0D40FFAA0592078919D4493F46D95CCF76364C6D57760DD0B64805F9AFC76A2365A5575CA301D5103F0EA76CB9A78
-- Output = "Hello World"
-- 
--+# The old FIPS provider doesn't include the workaround (#13817)
--+FIPSversion = >3.0.0
-- # Corrupted ciphertext
---FIPSversion = <3.2.0
-- Decrypt = RSA-2048
-- Input = 550AF55A2904E7B9762352F8FB7FA235A9CB053AACB2D5FCB8CA48453CB2EE3619746C701ABF2D4CC67003471A187900B05AA812BD25ED05C675DFC8C97A24A7BF49BD6214992CAD766D05A9A2B57B74F26A737E0237B8B76C45F1F226A836D7CFBC75BA999BDBE48DBC09227AA46C88F21DCCBA7840141AD5A5D71FD122E6BD6AC3E564780DFE623FC1CA9B995A6037BF0BBD43B205A84AC5444F34202C05CE9113087176432476576DE6FFFF9A52EA57C08BE3EC2F49676CB8E12F762AC71FA3C321E00AC988910C85FF52F93825666CE0D40FFAA0592078919D4493F46D95CCF76364C6D57760DD0B64805F9AFC76A2365A5575CA301D5103F0EA76CB9A79
---Output = "Hello World"
---Result = KEYOP_ERROR
--+Output = 4cbb988d6a46228379132b0b5f8c249b3860043848c93632fb982c807c7c82fffc7a9ef83f4908f890373ac181ffea6381e103bcaa27e65638b6ecebef38b59ed4226a9d12af675cfcb634d8c40e7a7aff
-- 
-- # OAEP padding
-- Decrypt = RSA-2048
--@@ -330,21 +330,29 @@ Decrypt = RSA-2048-2
-- Input = 8bfe264e85d3bdeaa6b8851b8e3b956ee3d226fd3f69063a86880173a273d9f283b2eebdd1ed35f7e02d91c571981b6737d5320bd8396b0f3ad5b019daec1b0aab3cbbc026395f4fd14f13673f2dfc81f9b660ec26ac381e6db3299b4e460b43fab9955df2b3cfaa20e900e19c856238fd371899c2bf2ce8c868b76754e5db3b036533fd603746be13c10d4e3e6022ebc905d20c2a7f32b215a4cd53b3f44ca1c327d2c2b651145821c08396c89071f665349c25e44d2733cd9305985ceef6430c3cf57af5fa224089221218fa34737c79c446d28a94c41c96e4e92ac53fbcf384dea8419ea089f8784445a492c812eb0d409467f75afd7d4d1078886205a066
-- Output = "lorem ipsum dolor sit amet"
-- 
--+# The old FIPS provider doesn't include the workaround (#13817)
--+FIPSversion = >3.0.0
-- # a random negative test case decrypting to empty
-- Decrypt = RSA-2048-2
-- Input = 20aaa8adbbc593a924ba1c5c7990b5c2242ae4b99d0fe636a19a4cf754edbcee774e472fe028160ed42634f8864900cb514006da642cae6ae8c7d087caebcfa6dad1551301e130344989a1d462d4164505f6393933450c67bc6d39d8f5160907cabc251b737925a1cf21e5c6aa5781b7769f6a2a583d97cce008c0f8b6add5f0b2bd80bee60237aa39bb20719fe75749f4bc4e42466ef5a861ae3a92395c7d858d430bfe38040f445ea93fa2958b503539800ffa5ce5f8cf51fa8171a91f36cb4f4575e8de6b4d3f096ee140b938fd2f50ee13f0d050222e2a72b0a3069ff3a6738e82c87090caa5aed4fcbe882c49646aa250b98f12f83c8d528113614a29e7
-- Output =
-- 
--+# The old FIPS provider doesn't include the workaround (#13817)
--+FIPSversion = >3.0.0
-- # invalid decrypting to max length message
-- Decrypt = RSA-2048-2
-- Input = 48cceab10f39a4db32f60074feea473cbcdb7accf92e150417f76b44756b190e843e79ec12aa85083a21f5437e7bad0a60482e601198f9d86923239c8786ee728285afd0937f7dde12717f28389843d7375912b07b991f4fdb0190fced8ba665314367e8c5f9d2981d0f5128feeb46cb50fc237e64438a86df198dd0209364ae3a842d77532b66b7ef263b83b1541ed671b120dfd660462e2107a4ee7b964e734a7bd68d90dda61770658a3c242948532da32648687e0318286473f675b412d6468f013f14d760a358dfcad3cda2afeec5e268a37d250c37f722f468a70dfd92d7294c3c1ee1e7f8843b7d16f9f37ef35748c3ae93aa155cdcdfeb4e78567303
-- Output = 22d850137b9eebe092b24f602dc5bb7918c16bd89ddbf20467b119d205f9c2e4bd7d2592cf1e532106e0f33557565923c73a02d4f09c0c22bea89148183e60317f7028b3aa1f261f91c979393101d7e15f4067e63979b32751658ef769610fe97cf9cef3278b3117d384051c3b1d82c251c2305418c8f6840530e631aad63e70e20e025bcd8efb54c92ec6d3b106a2f8e64eeff7d38495b0fc50c97138af4b1c0a67a1c4e27b077b8439332edfa8608dfeae653cd6a628ac550395f7e74390e42c11682234870925eeaa1fa71b76cf1f2ee3bda69f6717033ff8b7c95c9799e7a3bea5e7e4a1c359772fb6b1c6e6c516661dfe30c3
-- 
--+# The old FIPS provider doesn't include the workaround (#13817)
--+FIPSversion = >3.0.0
-- # invalid decrypting to message with length specified by second to last value from PRF
-- Decrypt = RSA-2048-2
-- Input = 1439e08c3f84c1a7fec74ce07614b20e01f6fa4e8c2a6cffdc3520d8889e5d9a950c6425798f85d4be38d300ea5695f13ecd4cb389d1ff5b82484b494d6280ab7fa78e645933981cb934cce8bfcd114cc0e6811eefa47aae20af638a1cd163d2d3366186d0a07df0c81f6c9f3171cf3561472e98a6006bf75ddb457bed036dcce199369de7d94ef2c68e8467ee0604eea2b3009479162a7891ba5c40cab17f49e1c438cb6eaea4f76ce23cce0e483ff0e96fa790ea15be67671814342d0a23f4a20262b6182e72f3a67cd289711503c85516a9ed225422f98b116f1ab080a80abd6f0216df88d8cfd67c139243be8dd78502a7aaf6bc99d7da71bcdf627e7354
-- Output = 0f9b
-- 
--+# The old FIPS provider doesn't include the workaround (#13817)
--+FIPSversion = >3.0.0
-- # invalid decrypting to message with length specified by third to last value from PRF
-- Decrypt = RSA-2048-2
-- Input = 1690ebcceece2ce024f382e467cf8510e74514120937978576caf684d4a02ad569e8d76cbe365a060e00779de2f0865ccf0d923de3b4783a4e2c74f422e2f326086c390b658ba47f31ab013aa80f468c71256e5fa5679b24e83cd82c3d1e05e398208155de2212993cd2b8bab6987cf4cc1293f19909219439d74127545e9ed8a706961b8ee2119f6bfacafbef91b75a789ba65b8b833bc6149cf49b5c4d2c6359f62808659ba6541e1cd24bf7f7410486b5103f6c0ea29334ea6f4975b17387474fe920710ea61568d7b7c0a7916acf21665ad5a31c4eabcde44f8fb6120d8457afa1f3c85d517cda364af620113ae5a3c52a048821731922737307f77a1081
--@@ -385,23 +393,31 @@ Decrypt = RSA-2048-2
-- Input = 1ea0b50ca65203d0a09280d39704b24fe6e47800189db5033f202761a78bafb270c5e25abd1f7ecc6e7abc4f26d1b0cd9b8c648d529416ee64ccbdd7aa72a771d0353262b543f0e436076f40a1095f5c7dfd10dcf0059ccb30e92dfa5e0156618215f1c3ff3aa997a9d999e506924f5289e3ac72e5e2086cc7b499d71583ed561028671155db4005bee01800a7cdbdae781dd32199b8914b5d4011dd6ff11cd26d46aad54934d293b0bc403dd211bf13b5a5c6836a5e769930f437ffd8634fb7371776f4bc88fa6c271d8aa6013df89ae6470154497c4ac861be2a1c65ebffec139bf7aaba3a81c7c5cdd84da9af5d3edfb957848074686b5837ecbcb6a41c50
-- Output = "lorem ipsum"
-- 
--+# The old FIPS provider doesn't include the workaround (#13817)
--+FIPSversion = >3.0.0
-- # a random negative test that generates an 11 byte long message
-- Decrypt = RSA-2048-2
-- Input = 5f02f4b1f46935c742ebe62b6f05aa0a3286aab91a49b34780adde6410ab46f7386e05748331864ac98e1da63686e4babe3a19ed40a7f5ceefb89179596aab07ab1015e03b8f825084dab028b6731288f2e511a4b314b6ea3997d2e8fe2825cef8897cbbdfb6c939d441d6e04948414bb69e682927ef8576c9a7090d4aad0e74c520d6d5ce63a154720f00b76de8cc550b1aa14f016d63a7b6d6eaa1f7dbe9e50200d3159b3d099c900116bf4eba3b94204f18b1317b07529751abf64a26b0a0bf1c8ce757333b3d673211b67cc0653f2fe2620d57c8b6ee574a0323a167eab1106d9bc7fd90d415be5f1e9891a0e6c709f4fc0404e8226f8477b4e939b36eb2
-- Output = af9ac70191c92413cb9f2d
-- 
--+# The old FIPS provider doesn't include the workaround (#13817)
--+FIPSversion = >3.0.0
-- # an otherwise correct plaintext, but with wrong first byte
-- # (0x01 instead of 0x00), generates a random 11 byte long plaintext
-- Decrypt = RSA-2048-2
-- Input = 9b2ec9c0c917c98f1ad3d0119aec6be51ae3106e9af1914d48600ab6a2c0c0c8ae02a2dc3039906ff3aac904af32ec798fd65f3ad1afa2e69400e7c1de81f5728f3b3291f38263bc7a90a0563e43ce7a0d4ee9c0d8a716621ca5d3d081188769ce1b131af7d35b13dea99153579c86db31fe07d5a2c14d621b77854e48a8df41b5798563af489a291e417b6a334c63222627376118c02c53b6e86310f728734ffc86ef9d7c8bf56c0c841b24b82b59f51aee4526ba1c4268506d301e4ebc498c6aebb6fd5258c876bf900bac8ca4d309dd522f6a6343599a8bc3760f422c10c72d0ad527ce4af1874124ace3d99bb74db8d69d2528db22c3a37644640f95c05f
-- Output = a1f8c9255c35cfba403ccc
-- 
--+# The old FIPS provider doesn't include the workaround (#13817)
--+FIPSversion = >3.0.0
-- # an otherwise correct plaintext, but with wrong second byte
-- # (0x01 instead of 0x02), generates a random 11 byte long plaintext
-- Decrypt = RSA-2048-2
-- Input = 782c2b59a21a511243820acedd567c136f6d3090c115232a82a5efb0b178285f55b5ec2d2bac96bf00d6592ea7cdc3341610c8fb07e527e5e2d20cfaf2c7f23e375431f45e998929a02f25fd95354c33838090bca838502259e92d86d568bc2cdb132fab2a399593ca60a015dc2bb1afcd64fef8a3834e17e5358d822980dc446e845b3ab4702b1ee41fe5db716d92348d5091c15d35a110555a35deb4650a5a1d2c98025d42d4544f8b32aa6a5e02dc02deaed9a7313b73b49b0d4772a3768b0ea0db5846ace6569cae677bf67fb0acf3c255dc01ec8400c963b6e49b1067728b4e563d7e1e1515664347b92ee64db7efb5452357a02fff7fcb7437abc2e579
-- Output = e6d700309ca0ed62452254
-- 
--+# The old FIPS provider doesn't include the workaround (#13817)
--+FIPSversion = >3.0.0
-- # an invalid ciphertext, with a zero byte in first byte of
-- # ciphertext, decrypts to a random 11 byte long synthethic
-- # plaintext
--@@ -409,6 +425,8 @@ Decrypt = RSA-2048-2
-- Input = 0096136621faf36d5290b16bd26295de27f895d1faa51c800dafce73d001d60796cd4e2ac3fa2162131d859cd9da5a0c8a42281d9a63e5f353971b72e36b5722e4ac444d77f892a5443deb3dca49fa732fe855727196e23c26eeac55eeced8267a209ebc0f92f4656d64a6c13f7f7ce544ebeb0f668fe3a6c0f189e4bcd5ea12b73cf63e0c8350ee130dd62f01e5c97a1e13f52fde96a9a1bc9936ce734fdd61f27b18216f1d6de87f49cf4f2ea821fb8efd1f92cdad529baf7e31aff9bff4074f2cad2b4243dd15a711adcf7de900851fbd6bcb53dac399d7c880531d06f25f7002e1aaf1722765865d2c2b902c7736acd27bc6cbd3e38b560e2eecf7d4b576
-- Output = ba27b1842e7c21c0e7ef6a
-- 
--+# The old FIPS provider doesn't include the workaround (#13817)
--+FIPSversion = >3.0.0
-- # an invalid ciphertext, with a zero byte removed from first byte of
-- # ciphertext, decrypts to a random 11 byte long synthethic
-- # plaintext
--@@ -416,6 +434,8 @@ Decrypt = RSA-2048-2
-- Input = 96136621faf36d5290b16bd26295de27f895d1faa51c800dafce73d001d60796cd4e2ac3fa2162131d859cd9da5a0c8a42281d9a63e5f353971b72e36b5722e4ac444d77f892a5443deb3dca49fa732fe855727196e23c26eeac55eeced8267a209ebc0f92f4656d64a6c13f7f7ce544ebeb0f668fe3a6c0f189e4bcd5ea12b73cf63e0c8350ee130dd62f01e5c97a1e13f52fde96a9a1bc9936ce734fdd61f27b18216f1d6de87f49cf4f2ea821fb8efd1f92cdad529baf7e31aff9bff4074f2cad2b4243dd15a711adcf7de900851fbd6bcb53dac399d7c880531d06f25f7002e1aaf1722765865d2c2b902c7736acd27bc6cbd3e38b560e2eecf7d4b576
-- Output = ba27b1842e7c21c0e7ef6a
-- 
--+# The old FIPS provider doesn't include the workaround (#13817)
--+FIPSversion = >3.0.0
-- # an invalid ciphertext, with two zero bytes in first bytes of
-- # ciphertext, decrypts to a random 11 byte long synthethic
-- # plaintext
--@@ -423,6 +443,8 @@ Decrypt = RSA-2048-2
-- Input = 0000587cccc6b264bdfe0dc2149a988047fa921801f3502ea64624c510c6033d2f427e3f136c26e88ea9f6519e86a542cec96aad1e5e9013c3cc203b6de15a69183050813af5c9ad79703136d4b92f50ce171eefc6aa7988ecf02f319ffc5eafd6ee7a137f8fce64b255bb1b8dd19cfe767d64fdb468b9b2e9e7a0c24dae03239c8c714d3f40b7ee9c4e59ac15b17e4d328f1100756bce17133e8e7493b54e5006c3cbcdacd134130c5132a1edebdbd01a0c41452d16ed7a0788003c34730d0808e7e14c797a21f2b45a8aa1644357fd5e988f99b017d9df37563a354c788dc0e2f9466045622fa3f3e17db63414d27761f57392623a2bef6467501c63e8d645
-- Output = d5cf555b1d6151029a429a
-- 
--+# The old FIPS provider doesn't include the workaround (#13817)
--+FIPSversion = >3.0.0
-- # an invalid ciphertext, with two zero bytes removed from first bytes of
-- # ciphertext, decrypts to a random 11 byte long synthethic
-- # plaintext
--@@ -430,24 +452,32 @@ Decrypt = RSA-2048-2
-- Input = 587cccc6b264bdfe0dc2149a988047fa921801f3502ea64624c510c6033d2f427e3f136c26e88ea9f6519e86a542cec96aad1e5e9013c3cc203b6de15a69183050813af5c9ad79703136d4b92f50ce171eefc6aa7988ecf02f319ffc5eafd6ee7a137f8fce64b255bb1b8dd19cfe767d64fdb468b9b2e9e7a0c24dae03239c8c714d3f40b7ee9c4e59ac15b17e4d328f1100756bce17133e8e7493b54e5006c3cbcdacd134130c5132a1edebdbd01a0c41452d16ed7a0788003c34730d0808e7e14c797a21f2b45a8aa1644357fd5e988f99b017d9df37563a354c788dc0e2f9466045622fa3f3e17db63414d27761f57392623a2bef6467501c63e8d645
-- Output = d5cf555b1d6151029a429a
-- 
--+# The old FIPS provider doesn't include the workaround (#13817)
--+FIPSversion = >3.0.0
-- # and invalid ciphertext, otherwise valid but starting with 000002, decrypts
-- # to random 11 byte long synthethic plaintext
-- Decrypt = RSA-2048-2
-- Input = 1786550ce8d8433052e01ecba8b76d3019f1355b212ac9d0f5191b023325a7e7714b7802f8e9a17c4cb3cd3a84041891471b10ca1fcfb5d041d34c82e6d0011cf4dc76b90e9c2e0743590579d55bcd7857057152c4a8040361343d1d22ba677d62b011407c652e234b1d663af25e2386251d7409190f19fc8ec3f9374fdf1254633874ce2ec2bff40ad0cb473f9761ec7b68da45a4bd5e33f5d7dac9b9a20821df9406b653f78a95a6c0ea0a4d57f867e4db22c17bf9a12c150f809a7b72b6db86c22a8732241ebf3c6a4f2cf82671d917aba8bc61052b40ccddd743a94ea9b538175106201971cca9d136d25081739aaf6cd18b2aecf9ad320ea3f89502f955
-- Output = 3d4a054d9358209e9cbbb9
-- 
--+# The old FIPS provider doesn't include the workaround (#13817)
--+FIPSversion = >3.0.0
-- # negative test with otherwise valid padding but a zero byte in first byte
-- # of padding
-- Decrypt = RSA-2048-2
-- Input = 179598823812d2c58a7eb50521150a48bcca8b4eb53414018b6bca19f4801456c5e36a940037ac516b0d6412ba44ec6b4f268a55ef1c5ffbf18a2f4e3522bb7b6ed89774b79bffa22f7d3102165565642de0d43a955e96a1f2e80e5430671d7266eb4f905dc8ff5e106dc5588e5b0289e49a4913940e392a97062616d2bda38155471b7d360cfb94681c702f60ed2d4de614ea72bf1c53160e63179f6c5b897b59492bee219108309f0b7b8cb2b136c346a5e98b8b4b8415fb1d713bae067911e3057f1c335b4b7e39101eafd5d28f0189037e4334f4fdb9038427b1d119a6702aa8233319cc97d496cc289ae8c956ddc84042659a2d43d6aa22f12b81ab884e
-- Output = 1f037dd717b07d3e7f7359
-- 
--+# The old FIPS provider doesn't include the workaround (#13817)
--+FIPSversion = >3.0.0
-- # negative test with otherwise valid padding but a zero byte at the eigth
-- # byte of padding
-- Decrypt = RSA-2048-2
-- Input = a7a340675a82c30e22219a55bc07cdf36d47d01834c1834f917f18b517419ce9de2a96460e745024436470ed85e94297b283537d52189c406a3f533cb405cc6a9dba46b482ce98b6e3dd52d8fce2237425617e38c11fbc46b61897ef200d01e4f25f5f6c4c5b38cd0de38ba11908b86595a8036a08a42a3d05b79600a97ac18ba368a08d6cf6ccb624f6e8002afc75599fba4de3d4f3ba7d208391ebe8d21f8282b18e2c10869eb2702e68f9176b42b0ddc9d763f0c86ba0ff92c957aaeab76d9ab8da52ea297ec11d92d770146faa1b300e0f91ef969b53e7d2907ffc984e9a9c9d11fb7d6cba91972059b46506b035efec6575c46d7114a6b935864858445f
-- Output = 63cb0bf65fc8255dd29e17
-- 
--+# The old FIPS provider doesn't include the workaround (#13817)
--+FIPSversion = >3.0.0
-- # negative test with an otherwise valid plaintext but with missing separator
-- # byte
-- Decrypt = RSA-2048-2
--@@ -501,6 +531,8 @@ PrivPubKeyPair = RSA-2049:RSA-2049-PUBLIC
-- 
-- # RSA decrypt
-- 
--+# The old FIPS provider doesn't include the workaround (#13817)
--+FIPSversion = >3.0.0
-- # malformed that generates length specified by 3rd last value from PRF
-- Decrypt = RSA-2049
-- Input = 00b26f6404b82649629f2704494282443776929122e279a9cf30b0c6fe8122a0a9042870d97cc8ef65490fe58f031eb2442352191f5fbc311026b5147d32df914599f38b825ebb824af0d63f2d541a245c5775d1c4b78630e4996cc5fe413d38455a776cf4edcc0aa7fccb31c584d60502ed2b77398f536e137ff7ba6430e9258e21c2db5b82f5380f566876110ac4c759178900fbad7ab70ea07b1daf7a1639cbb4196543a6cbe8271f35dddb8120304f6eef83059e1c5c5678710f904a6d760c4d1d8ad076be17904b9e69910040b47914a0176fb7eea0c06444a6c4b86d674d19a556a1de5490373cb01ce31bbd15a5633362d3d2cd7d4af1b4c5121288b894
--@@ -531,16 +563,22 @@ Decrypt = RSA-2049
-- Input = f36da3b72d8ff6ded74e7efd08c01908f3f5f0de7b55eab92b5f875190809c39d4162e1e6649618f854fd84aeab03970d16bb814e999852c06de38d82b95c0f32e2a7b5714021fe303389be9c0eac24c90a6b7210f929d390fabf903d44e04110bb7a7fd6c383c275804721efa6d7c93aa64c0bb2b18d97c5220a846c66a4895ae52adddbe2a9996825e013585adcec4b32ba61d782737bd343e5fabd68e8a95b8b1340318559860792dd70dffbe05a1052b54cbfb48cfa7bb3c19cea52076bddac5c25ee276f153a610f6d06ed696d192d8ae4507ffae4e5bdda10a625d6b67f32f7cffcd48dee2431fe66f6105f9d17e611cdcc674868e81692a360f4052
-- Output = "lorem ipsum"
-- 
--+# The old FIPS provider doesn't include the workaround (#13817)
--+FIPSversion = >3.0.0
-- # a random negative test case that generates an 11 byte long message
-- Decrypt = RSA-2049
-- Input = 00f910200830fc8fff478e99e145f1474b312e2512d0f90b8cef77f8001d09861688c156d1cbaf8a8957f7ebf35f724466952d0524cad48aad4fba1e45ce8ea27e8f3ba44131b7831b62d60c0762661f4c1d1a88cd06263a259abf1ba9e6b0b172069afb86a7e88387726f8ab3adb30bfd6b3f6be6d85d5dfd044e7ef052395474a9cbb1c3667a92780b43a22693015af6c513041bdaf87d43b24ddd244e791eeaea1066e1f4917117b3a468e22e0f7358852bb981248de4d720add2d15dccba6280355935b67c96f9dcb6c419cc38ab9f6fba2d649ef2066e0c34c9f788ae49babd9025fa85b21113e56ce4f43aa134c512b030dd7ac7ce82e76f0be9ce09ebca
-- Output = 1189b6f5498fd6df532b00
-- 
--+# The old FIPS provider doesn't include the workaround (#13817)
--+FIPSversion = >3.0.0
-- # otherwise correct plaintext, but with wrong first byte (0x01 instead of 0x00)
-- Decrypt = RSA-2049
-- Input = 002c9ddc36ba4cf0038692b2d3a1c61a4bb3786a97ce2e46a3ba74d03158aeef456ce0f4db04dda3fe062268a1711250a18c69778a6280d88e133a16254e1f0e30ce8dac9b57d2e39a2f7d7be3ee4e08aec2fdbe8dadad7fdbf442a29a8fb40857407bf6be35596b8eefb5c2b3f58b894452c2dc54a6123a1a38d642e23751746597e08d71ac92704adc17803b19e131b4d1927881f43b0200e6f95658f559f912c889b4cd51862784364896cd6e8618f485a992f82997ad6a0917e32ae5872eaf850092b2d6c782ad35f487b79682333c1750c685d7d32ab3e1538f31dcaa5e7d5d2825875242c83947308dcf63ba4bfff20334c9c140c837dbdbae7a8dee72ff
-- Output = f6d0f5b78082fe61c04674
-- 
--+# The old FIPS provider doesn't include the workaround (#13817)
--+FIPSversion = >3.0.0
-- # otherwise correct plaintext, but with wrong second byte (0x01 instead of 0x02)
-- Decrypt = RSA-2049
-- Input = 00c5d77826c1ab7a34d6390f9d342d5dbe848942e2618287952ba0350d7de6726112e9cebc391a0fae1839e2bf168229e3e0d71d4161801509f1f28f6e1487ca52df05c466b6b0a6fbbe57a3268a970610ec0beac39ec0fa67babce1ef2a86bf77466dc127d7d0d2962c20e66593126f276863cd38dc6351428f884c1384f67cad0a0ffdbc2af16711fb68dc559b96b37b4f04cd133ffc7d79c43c42ca4948fa895b9daeb853150c8a5169849b730cc77d68b0217d6c0e3dbf38d751a1998186633418367e7576530566c23d6d4e0da9b038d0bb5169ce40133ea076472d055001f0135645940fd08ea44269af2604c8b1ba225053d6db9ab43577689401bdc0f3
--@@ -603,17 +641,23 @@ ooCElYcob01/JWzoXl61Z5sdrMH5CVZJty5foHKusAN5AgMBAAE=
-- 
-- PrivPubKeyPair = RSA-3072:RSA-3072-PUBLIC
-- 
--+# The old FIPS provider doesn't include the workaround (#13817)
--+FIPSversion = >3.0.0
-- # a random invalid ciphertext that generates an empty synthethic one
-- Decrypt = RSA-3072
-- Input = 5e956cd9652f4a2ece902931013e09662b6a9257ad1e987fb75f73a0606df2a4b04789770820c2e02322c4e826f767bd895734a01e20609c3be4517a7a2a589ea1cdc137beb73eb38dac781b52e863de9620f79f9b90fd5b953651fcbfef4a9f1cc07421d511a87dd6942caab6a5a0f4df473e62defb529a7de1509ab99c596e1dff1320402298d8be73a896cc86c38ae3f2f576e9ea70cc28ad575cb0f854f0be43186baa9c18e29c47c6ca77135db79c811231b7c1730955887d321fdc06568382b86643cf089b10e35ab23e827d2e5aa7b4e99ff2e914f302351819eb4d1693243b35f8bf1d42d08f8ec4acafa35f747a4a975a28643ec630d8e4fa5be59d81995660a14bb64c1fea5146d6b11f92da6a3956dd5cb5e0d747cf2ea23f81617769185336263d46ef4c144b754de62a6337342d6c85a95f19f015724546ee3fc4823eca603dbc1dc01c2d5ed50bd72d8e96df2dc048edde0081284068283fc5e73a6139851abf2f29977d0b3d160c883a42a37efba1be05c1a0b1741d7ddf59
-- Output =
-- 
--+# The old FIPS provider doesn't include the workaround (#13817)
--+FIPSversion = >3.0.0
-- # a random invalid that has PRF output with a length one byte too long
-- # in the last value
-- Decrypt = RSA-3072
-- Input = 7db0390d75fcf9d4c59cf27b264190d856da9abd11e92334d0e5f71005cfed865a711dfa28b791188374b61916dbc11339bf14b06f5f3f68c206c5607380e13da3129bfb744157e1527dd6fdf6651248b028a496ae1b97702d44706043cdaa7a59c0f41367303f21f268968bf3bd2904db3ae5239b55f8b438d93d7db9d1666c071c0857e2ec37757463769c54e51f052b2a71b04c2869e9e7049a1037b8429206c99726f07289bac18363e7eb2a5b417f47c37a55090cda676517b3549c873f2fe95da9681752ec9864b069089a2ed2f340c8b04ee00079055a817a3355b46ac7dc00d17f4504ccfbcfcadb0c04cb6b22069e179385ae1eafabad5521bac2b8a8ee1dfff59a22eb3fdacfc87175d10d7894cfd869d056057dd9944b869c1784fcc27f731bc46171d39570fbffbadf082d33f6352ecf44aca8d9478e53f5a5b7c852b401e8f5f74da49da91e65bdc97765a9523b7a0885a6f8afe5759d58009fbfa837472a968e6ae92026a5e0202a395483095302d6c3985b5f5831c521a271
-- Output = 56a3bea054e01338be9b7d7957539c
-- 
--+# The old FIPS provider doesn't include the workaround (#13817)
--+FIPSversion = >3.0.0
-- # a random invalid that generates a synthethic of maximum size
-- Decrypt = RSA-3072
-- Input = 1715065322522dff85049800f6a29ab5f98c465020467414b2a44127fe9446da47fa18047900f99afe67c2df6f50160bb8e90bff296610fde632b3859d4d0d2e644f23835028c46cca01b84b88231d7e03154edec6627bcba23de76740d839851fa12d74c8f92e540c73fe837b91b7d699b311997d5f0f7864c486d499c3a79c111faaacbe4799597a25066c6200215c3d158f3817c1aa57f18bdaad0be1658da9da93f5cc6c3c4dd72788af57adbb6a0c26f42d32d95b8a4f95e8c6feb2f8a5d53b19a50a0b7cbc25e055ad03e5ace8f3f7db13e57759f67b65d143f08cca15992c6b2aae643390483de111c2988d4e76b42596266005103c8de6044fb7398eb3c28a864fa672de5fd8774510ff45e05969a11a4c7d3f343e331190d2dcf24fb9154ba904dc94af98afc5774a9617d0418fe6d13f8245c7d7626c176138dd698a23547c25f27c2b98ea4d8a45c7842b81888e4cc14e5b72e9cf91f56956c93dbf2e5f44a8282a7813157fc481ff1371a0f66b31797e81ebdb09a673d4db96d6
--@@ -644,43 +688,59 @@ Decrypt = RSA-3072
-- Input = 1ec97ac981dfd9dcc7a7389fdfa9d361141dac80c23a060410d472c16094e6cdffc0c3684d84aa402d7051dfccb2f6da33f66985d2a259f5b7fbf39ac537e95c5b7050eb18844a0513abef812cc8e74a3c5240009e6e805dcadf532bc1a2702d5acc9e585fad5b89d461fcc1397351cdce35171523758b171dc041f412e42966de7f94856477356d06f2a6b40e3ff0547562a4d91bbf1338e9e049facbee8b20171164505468cd308997447d3dc4b0acb49e7d368fedd8c734251f30a83491d2506f3f87318cc118823244a393dc7c5c739a2733d93e1b13db6840a9429947357f47b23fbe39b7d2d61e5ee26f9946c4632f6c4699e452f412a26641d4751135400713cd56ec66f0370423d55d2af70f5e7ad0adea8e4a0d904a01e4ac272eba4af1a029dd53eb71f115bf31f7a6c8b19a6523adeecc0d4c3c107575e38572a8f8474ccad163e46e2e8b08111132aa97a16fb588c9b7e37b3b3d7490381f3c55d1a9869a0fd42cd86fed59ecec78cb6b2dfd06a497f5afe3419691314ba0
-- Output = "forty two"
-- 
--+# The old FIPS provider doesn't include the workaround (#13817)
--+FIPSversion = >3.0.0
-- # a random negative test case that generates a 9 byte long message
-- Decrypt = RSA-3072
-- Input = 5c8555f5cef627c15d37f85c7f5fd6e499264ea4b8e3f9112023aeb722eb38d8eac2be3751fd5a3785ab7f2d59fa3728e5be8c3de78a67464e30b21ee23b5484bb3cd06d0e1c6ad25649c8518165653eb80488bfb491b20c04897a6772f69292222fc5ef50b5cf9efc6d60426a449b6c489569d48c83488df629d695653d409ce49a795447fcec2c58a1a672e4a391401d428baaf781516e11e323d302fcf20f6eab2b2dbe53a48c987e407c4d7e1cb41131329138313d330204173a4f3ff06c6fadf970f0ed1005d0b27e35c3d11693e0429e272d583e57b2c58d24315c397856b34485dcb077665592b747f889d34febf2be8fce66c265fd9fc3575a6286a5ce88b4b413a08efc57a07a8f57a999605a837b0542695c0d189e678b53662ecf7c3d37d9dbeea585eebfaf79141118e06762c2381fe27ca6288edddc19fd67cd64f16b46e06d8a59ac530f22cd83cc0bc4e37feb52015cbb2283043ccf5e78a4eb7146827d7a466b66c8a4a4826c1bad68123a7f2d00fc1736525ff90c058f56
-- Output = 257906ca6de8307728
-- 
--+# The old FIPS provider doesn't include the workaround (#13817)
--+FIPSversion = >3.0.0
-- # a random negative test case that generates a 9 byte long message based on
-- # second to last value from PRF
-- Decrypt = RSA-3072
-- Input = 758c215aa6acd61248062b88284bf43c13cb3b3d02410be4238607442f1c0216706e21a03a2c10eb624a63322d854da195c017b76fea83e274fa371834dcd2f3b7accf433fc212ad76c0bac366e1ed32e25b279f94129be7c64d6e162adc08ccebc0cfe8e926f01c33ab9c065f0e0ac83ae5137a4cb66702615ad68a35707d8676d2740d7c1a954680c83980e19778ed11eed3a7c2dbdfc461a9bbef671c1bc00c882d361d29d5f80c42bdf5efec886c34138f83369c6933b2ac4e93e764265351b4a0083f040e14f511f09b22f96566138864e4e6ff24da4810095da98e0585410951538ced2f757a277ff8e17172f06572c9024eeae503f176fd46eb6c5cd9ba07af11cde31dccac12eb3a4249a7bfd3b19797ad1656984bfcbf6f74e8f99d8f1ac420811f3d166d87f935ef15ae858cf9e72c8e2b547bf16c3fb09a8c9bf88fd2e5d38bf24ed610896131a84df76b9f920fe76d71fff938e9199f3b8cd0c11fd0201f9139d7673a871a9e7d4adc3bbe360c8813617cd60a90128fbe34c9d5
-- Output = 043383c929060374ed
-- 
--+# The old FIPS provider doesn't include the workaround (#13817)
--+FIPSversion = >3.0.0
-- # a random negative test that generates message based on 3rd last value from
-- # PRF
-- Decrypt = RSA-3072
-- Input = 7b22d5e62d287968c6622171a1f75db4b0fd15cdf3134a1895d235d56f8d8fe619f2bf4868174a91d7601a82975d2255190d28b869141d7c395f0b8c4e2be2b2c1b4ffc12ce749a6f6803d4cfe7fba0a8d6949c04151f981c0d84592aa2ff25d1bd3ce5d10cb03daca6b496c6ad40d30bfa8acdfd02cdb9326c4bdd93b949c9dc46caa8f0e5f429785bce64136a429a3695ee674b647452bea1b0c6de9c5f1e8760d5ef6d5a9cfff40457b023d3c233c1dcb323e7808103e73963b2eafc928c9eeb0ee3294955415c1ddd9a1bb7e138fecd79a3cb89c57bd2305524624814aaf0fd1acbf379f7f5b39421f12f115ba488d380586095bb53f174fae424fa4c8e3b299709cd344b9f949b1ab57f1c645d7ed3c8f81d5594197355029fee8960970ff59710dc0e5eb50ea6f4c3938e3f89ed7933023a2c2ddffaba07be147f686828bd7d520f300507ed6e71bdaee05570b27bc92741108ac2eb433f028e138dd6d63067bc206ea2d826a7f41c0d613daed020f0f30f4e272e9618e0a8c39018a83
-- Output = 70263fa6050534b9e0
-- 
--+# The old FIPS provider doesn't include the workaround (#13817)
--+FIPSversion = >3.0.0
-- # an otherwise valid plaintext, but with wrong first byte (0x01 instead of 0x00)
-- Decrypt = RSA-3072
-- Input = 6db80adb5ff0a768caf1378ecc382a694e7d1bde2eff4ba12c48aaf794ded7a994a5b2b57acec20dbec4ae385c9dd531945c0f197a5496908725fc99d88601a17d3bb0b2d38d2c1c3100f39955a4cb3dbed5a38bf900f23d91e173640e4ec655c84fdfe71fcdb12a386108fcf718c9b7af37d39703e882436224c877a2235e8344fba6c951eb7e2a4d1d1de81fb463ac1b880f6cc0e59ade05c8ce35179ecd09546731fc07b141d3d6b342a97ae747e61a9130f72d37ac5a2c30215b6cbd66c7db893810df58b4c457b4b54f34428247d584e0fa71062446210db08254fb9ead1ba1a393c724bd291f0cf1a7143f32df849051dc896d7d176fef3b57ab6dffd626d0c3044e9edb2e3d012ace202d2581df01bec7e9aa0727a6650dd373d374f0bc0f4a611f8139dfe97d63e70c6188f4df5b672e47c51d8aa567097293fbff127c75ec690b43407578b73c85451710a0cece58fd497d7f7bd36a8a92783ef7dc6265dff52aac8b70340b996508d39217f2783ce6fc91a1cc94bb2ac487b84f62
-- Output = 6d8d3a094ff3afff4c
-- 
--+# The old FIPS provider doesn't include the workaround (#13817)
--+FIPSversion = >3.0.0
-- # an otherwise valid plaintext, but with wrong second byte (0x01 instead of 0x02)
-- Decrypt = RSA-3072
-- Input = 417328c034458563079a4024817d0150340c34e25ae16dcad690623f702e5c748a6ebb3419ff48f486f83ba9df35c05efbd7f40613f0fc996c53706c30df6bba6dcd4a40825f96133f3c21638a342bd4663dffbd0073980dac47f8c1dd8e97ce1412e4f91f2a8adb1ac2b1071066efe8d718bbb88ca4a59bd61500e826f2365255a409bece0f972df97c3a55e09289ef5fa815a2353ef393fd1aecfc888d611c16aec532e5148be15ef1bf2834b8f75bb26db08b66d2baad6464f8439d1986b533813321dbb180080910f233bcc4dd784fb21871aef41be08b7bfad4ecc3b68f228cb5317ac6ec1227bc7d0e452037ba918ee1da9fdb8393ae93b1e937a8d4691a17871d5092d2384b6190a53df888f65b951b05ed4ad57fe4b0c6a47b5b22f32a7f23c1a234c9feb5d8713d949686760680da4db454f4acad972470033472b9864d63e8d23eefc87ebcf464ecf33f67fbcdd48eab38c5292586b36aef5981ed2fa07b2f9e23fc57d9eb71bfff4111c857e9fff23ceb31e72592e70c874b4936
-- Output = c6ae80ffa80bc184b0
-- 
--+# The old FIPS provider doesn't include the workaround (#13817)
--+FIPSversion = >3.0.0
-- # an otherwise valid plaintext, but with zero byte in first byte of padding
-- Decrypt = RSA-3072
-- Input = 8542c626fe533467acffcd4e617692244c9b5a3bf0a215c5d64891ced4bf4f9591b4b2aedff9843057986d81631b0acb3704ec2180e5696e8bd15b217a0ec36d2061b0e2182faa3d1c59bd3f9086a10077a3337a3f5da503ec3753535ffd25b837a12f2541afefd0cffb0224b8f874e4bed13949e105c075ed44e287c5ae03b155e06b90ed247d2c07f1ef3323e3508cce4e4074606c54172ad74d12f8c3a47f654ad671104bf7681e5b061862747d9afd37e07d8e0e2291e01f14a95a1bb4cbb47c304ef067595a3947ee2d722067e38a0f046f43ec29cac6a8801c6e3e9a2331b1d45a7aa2c6af3205be382dd026e389614ee095665a611ab2e8dced2ee1c9d08ac9de11aef5b3803fc9a9ce8231ec87b5fed386fb92ee3db995a89307bcba844bd0a691c29ae51216e949dfc813133cb06a07265fd807bcb3377f6adb0a481d9b7f442003115895939773e6b95371c4febef29edae946fa245e7c50729e2e558cfaad773d1fd5f67b457a6d9d17a847c6fcbdb103a86f35f228cefc06cea0
-- Output = a8a9301daa01bb25c7
-- 
--+# The old FIPS provider doesn't include the workaround (#13817)
--+FIPSversion = >3.0.0
-- # an otherwise valid plaintext, but with zero byte in eight byte of padding
-- Decrypt = RSA-3072
-- Input = 449dfa237a70a99cb0351793ec8677882021c2aa743580bf6a0ea672055cffe8303ac42855b1d1f3373aae6af09cb9074180fc963e9d1478a4f98b3b4861d3e7f0aa8560cf603711f139db77667ca14ba3a1acdedfca9ef4603d6d7eb0645bfc805304f9ad9d77d34762ce5cd84bd3ec9d35c30e3be72a1e8d355d5674a141b5530659ad64ebb6082e6f73a80832ab6388912538914654d34602f4b3b1c78589b4a5d964b2efcca1dc7004c41f6cafcb5a7159a7fc7c0398604d0edbd4c8f4f04067da6a153a05e7cbeea13b5ee412400ef7d4f3106f4798da707ec37a11286df2b7a204856d5ff773613fd1e453a7114b78e347d3e8078e1cb3276b3562486ba630bf719697e0073a123c3e60ebb5c7a1ccff4279faffa2402bc1109f8d559d6766e73591943dfcf25ba10c3762f02af85187799b8b4b135c3990793a6fd32642f1557405ba55cc7cf7336a0e967073c5fa50743f9cc5e3017c172d9898d2af83345e71b3e0c22ab791eacb6484a32ec60ebc226ec9deaee91b1a0560c2b571
-- Output = 6c716fe01d44398018
-- 
--+# The old FIPS provider doesn't include the workaround (#13817)
--+FIPSversion = >3.0.0
-- # an otherwise valid plaintext, but with null separator missing
-- Decrypt = RSA-3072
-- Input = a7a5c99e50da48769ecb779d9abe86ef9ec8c38c6f43f17c7f2d7af608a4a1bd6cf695b47e97c191c61fb5a27318d02f495a176b9fae5a55b5d3fabd1d8aae4957e3879cb0c60f037724e11be5f30f08fc51c033731f14b44b414d11278cd3dba7e1c8bfe208d2b2bb7ec36366dacb6c88b24cd79ab394adf19dbbc21dfa5788bacbadc6a62f79cf54fd8cf585c615b5c0eb94c35aa9de25321c8ffefb8916bbaa2697cb2dd82ee98939df9b6704cee77793edd2b4947d82e00e5749664970736c59a84197bd72b5c71e36aae29cd39af6ac73a368edbc1ca792e1309f442aafcd77c992c88f8e4863149f221695cb7b0236e75b2339a02c4ea114854372c306b9412d8eedb600a31532002f2cea07b4df963a093185e4607732e46d753b540974fb5a5c3f9432df22e85bb17611370966c5522fd23f2ad3484341ba7fd8885fc8e6d379a611d13a2aca784fba2073208faad2137bf1979a0fa146c1880d4337db3274269493bab44a1bcd0681f7227ffdf589c2e925ed9d36302509d1109ba4
---- 
--2.34.1
--
-diff --git a/meta-core/recipes-connectivity/openssl/openssl/CVE-2023-50781-6.patch b/meta-core/recipes-connectivity/openssl/openssl/CVE-2023-50781-6.patch
-deleted file mode 100644
-index 75e1df4..0000000
---- a/meta-core/recipes-connectivity/openssl/openssl/CVE-2023-50781-6.patch
-+++ /dev/null
-@@ -1,57 +0,0 @@
--From 455db0c94c0b83083ce8b792982c03aa56fc866f Mon Sep 17 00:00:00 2001
--From: Hubert Kario <hkario@redhat.com>
--Date: Tue, 22 Nov 2022 17:42:11 +0100
--Subject: [PATCH] rsa: add test for the option to disable implicit rejection
--
--CVE: CVE-2023-50781
--
--Upstream-Status: Backport [https://github.com/openssl/openssl/commit/455db0c94c0b83083ce8b792982c03aa56fc866f]
--
--Reviewed-by: Dmitry Belyavskiy <beldmit@gmail.com>
--Reviewed-by: Tim Hudson <tjh@openssl.org>
--Reviewed-by: Tomas Mraz <tomas@openssl.org>
--(Merged from https://github.com/openssl/openssl/pull/13817)
--Signed-off-by: Jiaying Song <jiaying.song.cn@windriver.com>
-----
-- .../30-test_evp_data/evppkey_rsa_common.txt    | 18 ++++++++++++++++++
-- 1 file changed, 18 insertions(+)
--
--diff --git a/test/recipes/30-test_evp_data/evppkey_rsa_common.txt b/test/recipes/30-test_evp_data/evppkey_rsa_common.txt
--index 0ad654fc60..a3d01eec45 100644
----- a/test/recipes/30-test_evp_data/evppkey_rsa_common.txt
--+++ b/test/recipes/30-test_evp_data/evppkey_rsa_common.txt
--@@ -253,6 +253,14 @@ Decrypt = RSA-2048
-- Input = 550AF55A2904E7B9762352F8FB7FA235A9CB053AACB2D5FCB8CA48453CB2EE3619746C701ABF2D4CC67003471A187900B05AA812BD25ED05C675DFC8C97A24A7BF49BD6214992CAD766D05A9A2B57B74F26A737E0237B8B76C45F1F226A836D7CFBC75BA999BDBE48DBC09227AA46C88F21DCCBA7840141AD5A5D71FD122E6BD6AC3E564780DFE623FC1CA9B995A6037BF0BBD43B205A84AC5444F34202C05CE9113087176432476576DE6FFFF9A52EA57C08BE3EC2F49676CB8E12F762AC71FA3C321E00AC988910C85FF52F93825666CE0D40FFAA0592078919D4493F46D95CCF76364C6D57760DD0B64805F9AFC76A2365A5575CA301D5103F0EA76CB9A78
-- Output = "Hello World"
-- 
--+# The old FIPS provider doesn't include the workaround (#13817)
--+FIPSversion = >3.0.0
--+# Note: disable the Bleichenbacher workaround to see if it passes
--+Decrypt = RSA-2048
--+Ctrl = rsa_pkcs1_implicit_rejection:0
--+Input = 550AF55A2904E7B9762352F8FB7FA235A9CB053AACB2D5FCB8CA48453CB2EE3619746C701ABF2D4CC67003471A187900B05AA812BD25ED05C675DFC8C97A24A7BF49BD6214992CAD766D05A9A2B57B74F26A737E0237B8B76C45F1F226A836D7CFBC75BA999BDBE48DBC09227AA46C88F21DCCBA7840141AD5A5D71FD122E6BD6AC3E564780DFE623FC1CA9B995A6037BF0BBD43B205A84AC5444F34202C05CE9113087176432476576DE6FFFF9A52EA57C08BE3EC2F49676CB8E12F762AC71FA3C321E00AC988910C85FF52F93825666CE0D40FFAA0592078919D4493F46D95CCF76364C6D57760DD0B64805F9AFC76A2365A5575CA301D5103F0EA76CB9A78
--+Output = "Hello World"
--+
-- # The old FIPS provider doesn't include the workaround (#13817)
-- FIPSversion = >3.0.0
-- # Corrupted ciphertext
--@@ -261,6 +269,16 @@ Decrypt = RSA-2048
-- Input = 550AF55A2904E7B9762352F8FB7FA235A9CB053AACB2D5FCB8CA48453CB2EE3619746C701ABF2D4CC67003471A187900B05AA812BD25ED05C675DFC8C97A24A7BF49BD6214992CAD766D05A9A2B57B74F26A737E0237B8B76C45F1F226A836D7CFBC75BA999BDBE48DBC09227AA46C88F21DCCBA7840141AD5A5D71FD122E6BD6AC3E564780DFE623FC1CA9B995A6037BF0BBD43B205A84AC5444F34202C05CE9113087176432476576DE6FFFF9A52EA57C08BE3EC2F49676CB8E12F762AC71FA3C321E00AC988910C85FF52F93825666CE0D40FFAA0592078919D4493F46D95CCF76364C6D57760DD0B64805F9AFC76A2365A5575CA301D5103F0EA76CB9A79
-- Output = 4cbb988d6a46228379132b0b5f8c249b3860043848c93632fb982c807c7c82fffc7a9ef83f4908f890373ac181ffea6381e103bcaa27e65638b6ecebef38b59ed4226a9d12af675cfcb634d8c40e7a7aff
-- 
--+# The old FIPS provider doesn't include the workaround (#13817)
--+FIPSversion = >3.0.0
--+# Corrupted ciphertext
--+# Note: disable the Bleichenbacher workaround to see if it fails
--+Decrypt = RSA-2048
--+Ctrl = rsa_pkcs1_implicit_rejection:0
--+Input = 550AF55A2904E7B9762352F8FB7FA235A9CB053AACB2D5FCB8CA48453CB2EE3619746C701ABF2D4CC67003471A187900B05AA812BD25ED05C675DFC8C97A24A7BF49BD6214992CAD766D05A9A2B57B74F26A737E0237B8B76C45F1F226A836D7CFBC75BA999BDBE48DBC09227AA46C88F21DCCBA7840141AD5A5D71FD122E6BD6AC3E564780DFE623FC1CA9B995A6037BF0BBD43B205A84AC5444F34202C05CE9113087176432476576DE6FFFF9A52EA57C08BE3EC2F49676CB8E12F762AC71FA3C321E00AC988910C85FF52F93825666CE0D40FFAA0592078919D4493F46D95CCF76364C6D57760DD0B64805F9AFC76A2365A5575CA301D5103F0EA76CB9A79
--+Output = "Hello World"
--+Result = KEYOP_ERROR
--+
-- # OAEP padding
-- Decrypt = RSA-2048
-- Ctrl = rsa_padding_mode:oaep
---- 
--2.34.1
--
-diff --git a/meta-core/recipes-connectivity/openssl/openssl/CVE-2024-41996.patch b/meta-core/recipes-connectivity/openssl/openssl/CVE-2024-41996.patch
-deleted file mode 100644
-index 49ec9c0..0000000
---- a/meta-core/recipes-connectivity/openssl/openssl/CVE-2024-41996.patch
-+++ /dev/null
-@@ -1,48 +0,0 @@
--From e70e34d857d4003199bcb5d3b52ca8102ccc1b98 Mon Sep 17 00:00:00 2001
--From: Tomas Mraz <tomas@openssl.org>
--Date: Mon, 5 Aug 2024 17:54:14 +0200
--Subject: [PATCH] dh_kmgmt.c: Avoid expensive public key validation for known
-- safe-prime groups
--MIME-Version: 1.0
--Content-Type: text/plain; charset=UTF-8
--Content-Transfer-Encoding: 8bit
--
--The partial validation is fully sufficient to check the key validity.
--
--Thanks to Szilárd Pfeiffer for reporting the issue.
--
--Reviewed-by: Neil Horman <nhorman@openssl.org>
--Reviewed-by: Matt Caswell <matt@openssl.org>
--Reviewed-by: Paul Dale <ppzgs1@gmail.com>
--(Merged from https://github.com/openssl/openssl/pull/25088)
--
--CVE: CVE-2024-41996
--
--Upstream-Status: Backport [https://github.com/openssl/openssl/commit/e70e34d857d4003199bcb5d3b52ca8102ccc1b98]
--
--Signed-off-by: Archana Polampalli <archana.polampalli@windriver.com>
-----
-- providers/implementations/keymgmt/dh_kmgmt.c | 8 +++++---
-- 1 file changed, 5 insertions(+), 3 deletions(-)
--
--diff --git a/providers/implementations/keymgmt/dh_kmgmt.c b/providers/implementations/keymgmt/dh_kmgmt.c
--index 795a3f2..3e7a811 100644
----- a/providers/implementations/keymgmt/dh_kmgmt.c
--+++ b/providers/implementations/keymgmt/dh_kmgmt.c
--@@ -387,9 +387,11 @@ static int dh_validate_public(const DH *dh, int checktype)
--     if (pub_key == NULL)
--         return 0;
--
---    /* The partial test is only valid for named group's with q = (p - 1) / 2 */
---    if (checktype == OSSL_KEYMGMT_VALIDATE_QUICK_CHECK
---        && ossl_dh_is_named_safe_prime_group(dh))
--+    /*
--+     * The partial test is only valid for named group's with q = (p - 1) / 2
--+     * but for that case it is also fully sufficient to check the key validity.
--+     */
--+    if (ossl_dh_is_named_safe_prime_group(dh))
--         return ossl_dh_check_pub_key_partial(dh, pub_key, &res);
--
--     return DH_check_pub_key_ex(dh, pub_key);
----
--2.40.0
-diff --git a/meta-core/recipes-connectivity/openssl/openssl_3.0.20.bb b/meta-core/recipes-connectivity/openssl/openssl_3.0.21.bb
-similarity index 96%
-rename from meta-core/recipes-connectivity/openssl/openssl_3.0.20.bb
-rename to meta-core/recipes-connectivity/openssl/openssl_3.0.21.bb
-index d33874e..fffe303 100644
---- a/meta-core/recipes-connectivity/openssl/openssl_3.0.20.bb
-+++ b/meta-core/recipes-connectivity/openssl/openssl_3.0.21.bb
-@@ -12,20 +12,13 @@ SRC_URI = "https://github.com/openssl/openssl/releases/download/openssl-${PV}/op
-            file://0001-buildinfo-strip-sysroot-and-debug-prefix-map-from-co.patch \
-            file://afalg.patch \
-            file://0001-Configure-do-not-tweak-mips-cflags.patch \
--           file://CVE-2024-41996.patch \
--           file://CVE-2023-50781-1.patch \
--           file://CVE-2023-50781-2.patch \
--           file://CVE-2023-50781-3.patch \
--           file://CVE-2023-50781-4.patch \
--           file://CVE-2023-50781-5.patch \
--           file://CVE-2023-50781-6.patch \
-           "
- 
- SRC_URI:append:class-nativesdk = " \
-            file://environment.d-openssl.sh \
-            "
- 
--SRC_URI[sha256sum] = "c80a01dfc70ece4dc21168932c37739042d404d46ccc81a5986dd75314ecda6f"
-+SRC_URI[sha256sum] = "617e29af8e421f46649484a4937e48c685e47f46488167c982f88bc4ec1d522f"
- 
- inherit lib_package multilib_header multilib_script ptest perlnative
- MULTILIB_SCRIPTS = "${PN}-bin:${bindir}/c_rehash"
--- 
-2.34.1
+--000000000000beebd6065503c13a
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+<div dir=3D"ltr"><div>Hi Sandeep,</div><div><br></div><div>Thank you for th=
+e patch.</div><div><br></div><div>In the=C2=A0<span style=3D"background-col=
+or:transparent">layerindex/update_layer.py you are updating the default val=
+ue of `</span><span style=3D"background-color:transparent">--branch` to an =
+empty string,</span></div><div><span style=3D"background-color:transparent"=
+>which is inconsistent with the rest of the changes in this patch.</span></=
+div><div><span style=3D"background-color:transparent"><br></span></div><div=
+><span style=3D"background-color:transparent">In the same file, system sett=
+ings are already imported at line 298, so perhaps that import should be mov=
+ed above the parser logic</span></div><div><span style=3D"background-color:=
+transparent">to</span><span style=3D"background-color:transparent">=C2=A0al=
+low you to use `</span><span style=3D"background-color:transparent">setting=
+s.DEFAULT_BRANCH` as a default value for the `--branch` option instead of a=
+n empty string.</span></div><div><span style=3D"background-color:transparen=
+t"><br></span></div><div><span style=3D"background-color:transparent">Best=
+=C2=A0regards,</span></div><div><span style=3D"background-color:transparent=
+">Piotr Buli=C5=84ski</span></div><br><div class=3D"gmail_quote gmail_quote=
+_container"><div dir=3D"ltr" class=3D"gmail_attr">On Fri, Jun 19, 2026 at 1=
+1:52=E2=80=AFPM Sandeep Gundlupet Raju &lt;<a href=3D"mailto:sandeep.gundlu=
+pet-raju@amd.com">sandeep.gundlupet-raju@amd.com</a>&gt; wrote:<br></div><b=
+lockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-le=
+ft:1px solid rgb(204,204,204);padding-left:1ex">Replace all hardcoded branc=
+h name references with settings.DEFAULT_BRANCH<br>
+so the default branch can be changed from a single location in settings.py<=
+br>
+without modifying individual source files. DEFAULT_BRANCH defaults to &#39;=
+master&#39;.<br>
+<br>
+- settings.py: add DEFAULT_BRANCH =3D &#39;master&#39;<br>
+- docker/settings.py: add DEFAULT_BRANCH =3D &#39;master&#39;<br>
+- layerindex/urls.py: use _DEFAULT_BRANCH from settings<br>
+- layerindex/views.py: use settings.DEFAULT_BRANCH (10 occurrences)<br>
+- layerindex/models.py: add import settings; use settings.DEFAULT_BRANCH<br=
+>
+- layerindex/update.py: use settings.DEFAULT_BRANCH<br>
+- layerindex/update_layer.py: resolve branch from settings.DEFAULT_BRANCH<b=
+r>
+- layerindex/bulkchange.py: use settings.DEFAULT_BRANCH<br>
+- layerindex/tools/import_layer.py: use settings.DEFAULT_BRANCH<br>
+- layerindex/tools/import_wiki_layers.py: add import settings; use DEFAULT_=
+BRANCH<br>
+- layerindex/tools/import_classic_wiki.py: add import settings; use DEFAULT=
+_BRANCH<br>
+- layerindex/tools/update_classic_status.py: add import settings; use DEFAU=
+LT_BRANCH<br>
+- rrs/tools/historytool.py: use settings.DEFAULT_BRANCH<br>
+<br>
+AI-Generated: GitHub Copilot (Claude Sonnet 4.6)<br>
+<br>
+Signed-off-by: Sandeep Gundlupet Raju &lt;<a href=3D"mailto:sandeep.gundlup=
+et-raju@amd.com" target=3D"_blank">sandeep.gundlupet-raju@amd.com</a>&gt;<b=
+r>
+---<br>
+=C2=A0docker/settings.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 |=C2=A0 2 ++<br>
+=C2=A0layerindex/bulkchange.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 |=C2=A0 2 +-<br>
+=C2=A0layerindex/models.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 |=C2=A0 5 +++--<br>
+=C2=A0layerindex/tools/import_classic_wiki.py=C2=A0 =C2=A0|=C2=A0 3 ++-<br>
+=C2=A0layerindex/tools/import_layer.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 |=
+=C2=A0 4 ++--<br>
+=C2=A0layerindex/tools/import_wiki_layers.py=C2=A0 =C2=A0 |=C2=A0 3 ++-<br>
+=C2=A0layerindex/tools/update_classic_status.py |=C2=A0 7 ++++---<br>
+=C2=A0layerindex/update.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 |=C2=A0 2 +-<br>
+=C2=A0layerindex/update_layer.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 |=C2=A0 4 +++-<br>
+=C2=A0layerindex/urls.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 | 16 +++++++++-------<br>
+=C2=A0layerindex/views.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0| 20 ++++++++++----------<br>
+=C2=A0rrs/tools/historytool.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 |=C2=A0 4 ++--<br>
+=C2=A0settings.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0|=C2=A0 3 +++<br>
+=C2=A013 files changed, 44 insertions(+), 31 deletions(-)<br>
+<br>
+diff --git a/docker/settings.py b/docker/settings.py<br>
+index e3ae0fd..85b7efd 100644<br>
+--- a/docker/settings.py<br>
++++ b/docker/settings.py<br>
+@@ -315,3 +315,5 @@ SECURE_PROXY_SSL_HEADER =3D (&#39;HTTP_X_FORWARDED_PROT=
+O&#39;, &#39;https&#39;)<br>
+=C2=A0SECURE_BROWSER_XSS_FILTER =3D True<br>
+=C2=A0SECURE_CONTENT_TYPE_NOSNIFF =3D True<br>
+<br>
++# Default branch name used across the layer index<br>
++DEFAULT_BRANCH =3D &#39;master&#39;<br>
+diff --git a/layerindex/bulkchange.py b/layerindex/bulkchange.py<br>
+index 0ec4058..11cd7a6 100644<br>
+--- a/layerindex/bulkchange.py<br>
++++ b/layerindex/bulkchange.py<br>
+@@ -98,7 +98,7 @@ def main():<br>
+=C2=A0 =C2=A0 =C2=A0utils.setup_django()<br>
+=C2=A0 =C2=A0 =C2=A0import settings<br>
+<br>
+-=C2=A0 =C2=A0 branch =3D utils.get_branch(&#39;master&#39;)<br>
++=C2=A0 =C2=A0 branch =3D utils.get_branch(settings.DEFAULT_BRANCH)<br>
+=C2=A0 =C2=A0 =C2=A0fetchdir =3D settings.LAYER_FETCH_DIR<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0import layerindex.models import LayerItem<br>
+diff --git a/layerindex/models.py b/layerindex/models.py<br>
+index 864264b..7a09962 100644<br>
+--- a/layerindex/models.py<br>
++++ b/layerindex/models.py<br>
+@@ -18,6 +18,7 @@ import os.path<br>
+=C2=A0import re<br>
+=C2=A0import posixpath<br>
+=C2=A0import codecs<br>
++import settings<br>
+<br>
+=C2=A0from . import utils<br>
+<br>
+@@ -190,7 +191,7 @@ class LayerItem(models.Model):<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return fetch_dir<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0def get_absolute_url(self):<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 return reverse(&#39;layer_item&#39;, args=3D(&=
+#39;master&#39;,<a href=3D"http://self.name" rel=3D"noreferrer" target=3D"_=
+blank">self.name</a>));<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 return reverse(&#39;layer_item&#39;, args=3D(s=
+ettings.DEFAULT_BRANCH,<a href=3D"http://self.name" rel=3D"noreferrer" targ=
+et=3D"_blank">self.name</a>));<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0def __str__(self):<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return <a href=3D"http://self.name" rel=
+=3D"noreferrer" target=3D"_blank">self.name</a><br>
+@@ -672,7 +673,7 @@ class ClassicRecipe(Recipe):<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0(&#39;E&#39;, &#39;Equivalent functionali=
+ty&#39;),<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0(&#39;D&#39;, &#39;Direct match&#39;),<br=
+>
+=C2=A0 =C2=A0 =C2=A0]<br>
+-=C2=A0 =C2=A0 cover_layerbranch =3D models.ForeignKey(LayerBranch, verbose=
+_name=3D&#39;Covering layer&#39;, blank=3DTrue, null=3DTrue, limit_choices_=
+to =3D {&#39;branch__name&#39;: &#39;master&#39;}, on_delete=3Dmodels.SET_N=
+ULL)<br>
++=C2=A0 =C2=A0 cover_layerbranch =3D models.ForeignKey(LayerBranch, verbose=
+_name=3D&#39;Covering layer&#39;, blank=3DTrue, null=3DTrue, limit_choices_=
+to =3D {&#39;branch__name&#39;: settings.DEFAULT_BRANCH}, on_delete=3Dmodel=
+s.SET_NULL)<br>
+=C2=A0 =C2=A0 =C2=A0cover_pn =3D models.CharField(&#39;Covering recipe&#39;=
+, max_length=3D100, blank=3DTrue)<br>
+=C2=A0 =C2=A0 =C2=A0cover_status =3D models.CharField(max_length=3D1, choic=
+es=3DCOVER_STATUS_CHOICES, default=3D&#39;U&#39;)<br>
+=C2=A0 =C2=A0 =C2=A0cover_verified =3D models.BooleanField(default=3DFalse)=
+<br>
+diff --git a/layerindex/tools/import_classic_wiki.py b/layerindex/tools/imp=
+ort_classic_wiki.py<br>
+index bd7ab9a..e8c4c8c 100755<br>
+--- a/layerindex/tools/import_classic_wiki.py<br>
++++ b/layerindex/tools/import_classic_wiki.py<br>
+@@ -84,6 +84,7 @@ def main():<br>
+=C2=A0 =C2=A0 =C2=A0options, args =3D parser.parse_args(sys.argv)<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0utils.setup_django()<br>
++=C2=A0 =C2=A0 import settings<br>
+=C2=A0 =C2=A0 =C2=A0from layerindex.models import LayerItem, LayerBranch, R=
+ecipe, ClassicRecipe<br>
+=C2=A0 =C2=A0 =C2=A0from django.db import transaction<br>
+<br>
+@@ -178,7 +179,7 @@ def main():<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0res =3D list(LayerItem.objects.filter(name=
+=3Dnewlayer)[:1])<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if res:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0newlayeritem =3D res[0]<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 recipe.cover_layerbranch =3D newlaye=
+ritem.get_layerbranch(&#39;master&#39;)<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 recipe.cover_layerbranch =3D newlaye=
+ritem.get_layerbranch(settings.DEFAULT_BRANCH)<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0else:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0<a href=3D"http://logger.info"=
+ rel=3D"noreferrer" target=3D"_blank">logger.info</a>(&#39;Replacement laye=
+r &quot;%s&quot; for %s could not be found&#39; % (newlayer, pn))<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0recipe.cover_pn =3D newpn<br>
+diff --git a/layerindex/tools/import_layer.py b/layerindex/tools/import_lay=
+er.py<br>
+index 79c679e..cdbd40d 100755<br>
+--- a/layerindex/tools/import_layer.py<br>
++++ b/layerindex/tools/import_layer.py<br>
+@@ -284,7 +284,7 @@ def main():<br>
+=C2=A0 =C2=A0 =C2=A0if not os.path.exists(fetchdir):<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0os.makedirs(fetchdir)<br>
+<br>
+-=C2=A0 =C2=A0 master_branch =3D utils.get_branch(&#39;master&#39;)<br>
++=C2=A0 =C2=A0 master_branch =3D utils.get_branch(settings.DEFAULT_BRANCH)<=
+br>
+=C2=A0 =C2=A0 =C2=A0core_layer =3D None<br>
+=C2=A0 =C2=A0 =C2=A0try:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0with transaction.atomic():<br>
+@@ -311,7 +311,7 @@ def main():<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0logger.error(=
+&quot;Fetch failed: %s&quot; % str(e))<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0sys.exit(1)<b=
+r>
+<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 actual_branch =3D &#39;master&#3=
+9;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 actual_branch =3D settings.DEFAU=
+LT_BRANCH<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (options.actual_branch):=
+<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0actual_branch=
+ =3D options.actual_branch<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0try:<br>
+diff --git a/layerindex/tools/import_wiki_layers.py b/layerindex/tools/impo=
+rt_wiki_layers.py<br>
+index 061f6df..f287bf6 100755<br>
+--- a/layerindex/tools/import_wiki_layers.py<br>
++++ b/layerindex/tools/import_wiki_layers.py<br>
+@@ -35,6 +35,7 @@ def main():<br>
+=C2=A0 =C2=A0 =C2=A0options, args =3D parser.parse_args(sys.argv)<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0utils.setup_django()<br>
++=C2=A0 =C2=A0 import settings<br>
+=C2=A0 =C2=A0 =C2=A0from layerindex.models import LayerItem, LayerBranch, L=
+ayerDependency<br>
+=C2=A0 =C2=A0 =C2=A0from django.db import transaction<br>
+<br>
+@@ -49,7 +50,7 @@ def main():<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0nowiki_re =3D re.compile(r&#39;&lt;/?nowi=
+ki&gt;&#39;)<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0link_re =3D re.compile(r&#39;\[(http.*) +=
+link\]&#39;)<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0readme_re =3D re.compile(r&#39;;f=3D[a-zA=
+-Z0-9/-]*README;&#39;)<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 master_branch =3D utils.get_branch(&#39;master=
+&#39;)<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 master_branch =3D utils.get_branch(settings.DE=
+FAULT_BRANCH)<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0core_layer =3D None<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0with transaction.atomic():<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0for line in data.splitlines=
+():<br>
+diff --git a/layerindex/tools/update_classic_status.py b/layerindex/tools/u=
+pdate_classic_status.py<br>
+index aa5d2ef..c8c373b 100755<br>
+--- a/layerindex/tools/update_classic_status.py<br>
++++ b/layerindex/tools/update_classic_status.py<br>
+@@ -83,6 +83,7 @@ def main():<br>
+=C2=A0 =C2=A0 =C2=A0args =3D parser.parse_args()<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0utils.setup_django()<br>
++=C2=A0 =C2=A0 import settings<br>
+=C2=A0 =C2=A0 =C2=A0from layerindex.models import LayerItem, LayerBranch, R=
+ecipe, ClassicRecipe, Update, ComparisonRecipeUpdate<br>
+=C2=A0 =C2=A0 =C2=A0from django.db import transaction<br>
+<br>
+@@ -121,7 +122,7 @@ def main():<br>
+=C2=A0 =C2=A0 =C2=A0try:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0with transaction.atomic():<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0def recipe_pn_query(pn):<br=
+>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return Recipe.obje=
+cts.filter(layerbranch__branch__name=3D&#39;master&#39;).filter(pn=3Dpn).or=
+der_by(&#39;-layerbranch__layer__index_preference&#39;)<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return Recipe.obje=
+cts.filter(layerbranch__branch__name=3Dsettings.DEFAULT_BRANCH).filter(pn=
+=3Dpn).order_by(&#39;-layerbranch__layer__index_preference&#39;)<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if args.import_data:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0recipequery =
+=3D ClassicRecipe.objects.filter(layerbranch=3Dlayerbranch)<br>
+@@ -141,9 +142,9 @@ def main():<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0orig_layerbranch =3D recipe.cover_layerbranch<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0recipe.cover_layerbranch =3D layerbranches.get(cover_layer=
+, None)<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0if recipe.cover_layerbranch is None:<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 recipe.cover_layerbranch =3D LayerBranch.objects.f=
+ilter(branch__name=3D&#39;master&#39;, layer__name=3Dcover_layer).first()<b=
+r>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 recipe.cover_layerbranch =3D LayerBranch.objects.f=
+ilter(branch__name=3Dsettings.DEFAULT_BRANCH, layer__name=3Dcover_layer).fi=
+rst()<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if recipe.cover_layerbranch is None:<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 logger.warning(&#39;Could not find c=
+over layer %s in master branch&#39; % cover_layer)<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 logger.warning(&#39;Could not find c=
+over layer %s in %s branch&#39; % (cover_layer, settings.DEFAULT_BRANCH))<b=
+r>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0else:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0layerbranches[cover_layer] =3D=
+ recipe.cover_layerbranch<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0if orig_layerbranch !=3D recipe.cover_layerbranch:<br>
+diff --git a/layerindex/update.py b/layerindex/update.py<br>
+index df3939f..788daee 100755<br>
+--- a/layerindex/update.py<br>
++++ b/layerindex/update.py<br>
+@@ -333,7 +333,7 @@ def main():<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0# Get a safe bitbake branch=
+ to call into from this script (used later on)<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0safe_bitbake_branch =3D &#3=
+9;origin/master&#39;<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 master_branch =3D Branch.objects=
+.filter(name=3D&#39;master&#39;).first()<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 master_branch =3D Branch.objects=
+.filter(name=3Dsettings.DEFAULT_BRANCH).first()<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if master_branch and master=
+_branch.bitbake_branch:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0safe_bitbake_=
+branch =3D &#39;origin/&#39; + master_branch.bitbake_branch<br>
+<br>
+diff --git a/layerindex/update_layer.py b/layerindex/update_layer.py<br>
+index 33c5cfb..6248f78 100644<br>
+--- a/layerindex/update_layer.py<br>
++++ b/layerindex/update_layer.py<br>
+@@ -250,7 +250,7 @@ def main():<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0parser.add_option(&quot;-b&quot;, &quot;--branch&quot;,=
+<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0help =3D &quot;Specify bran=
+ch to update&quot;,<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 action=3D&quot;store&quot;, dest=
+=3D&quot;branch&quot;, default=3D&#39;master&#39;)<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 action=3D&quot;store&quot;, dest=
+=3D&quot;branch&quot;, default=3D&#39;&#39;)<br>
+=C2=A0 =C2=A0 =C2=A0parser.add_option(&quot;-l&quot;, &quot;--layer&quot;,<=
+br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0help =3D &quot;Layer to upd=
+ate&quot;,<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0action=3D&quot;store&quot;,=
+ dest=3D&quot;layer&quot;)<br>
+@@ -304,6 +304,8 @@ def main():<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0logger.setLevel(options.loglevel)<br>
+<br>
++=C2=A0 =C2=A0 if not options.branch:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 options.branch =3D settings.DEFAULT_BRANCH<br>
+=C2=A0 =C2=A0 =C2=A0branch =3D utils.get_branch(options.branch)<br>
+=C2=A0 =C2=A0 =C2=A0if not branch:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0logger.error(&quot;Specified branch %s is=
+ not valid&quot; % options.branch)<br>
+diff --git a/layerindex/urls.py b/layerindex/urls.py<br>
+index 51a832d..e7b0531 100644<br>
+--- a/layerindex/urls.py<br>
++++ b/layerindex/urls.py<br>
+@@ -20,6 +20,8 @@ from layerindex.views import LayerListView, LayerReviewLi=
+stView, LayerReviewDeta<br>
+=C2=A0from layerindex.models import LayerItem, Recipe, RecipeChangeset<br>
+=C2=A0from rest_framework import routers<br>
+=C2=A0from . import restviews<br>
++import settings as _settings<br>
++_DEFAULT_BRANCH =3D getattr(_settings, &#39;DEFAULT_BRANCH&#39;, &#39;mast=
+er&#39;)<br>
+<br>
+=C2=A0router =3D routers.DefaultRouter()<br>
+=C2=A0router.register(r&#39;branches&#39;, restviews.BranchViewSet)<br>
+@@ -39,23 +41,23 @@ router.register(r&#39;incFiles&#39;, restviews.IncFileV=
+iewSet)<br>
+<br>
+=C2=A0urlpatterns =3D [<br>
+=C2=A0 =C2=A0 =C2=A0re_path(r&#39;^$&#39;,<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 RedirectView.as_view(url=3Dreverse_lazy(&#39;l=
+ayer_list&#39;, args=3D(&#39;master&#39;,)), permanent=3DFalse),<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 RedirectView.as_view(url=3Dreverse_lazy(&#39;l=
+ayer_list&#39;, args=3D(_DEFAULT_BRANCH,)), permanent=3DFalse),<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0name=3D&#39;frontpage&#39;),<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0re_path(r&#39;^api/&#39;, include(router.urls)),<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0re_path(r&#39;^layers/$&#39;,<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 RedirectView.as_view(url=3Dreverse_lazy(&#39;l=
+ayer_list&#39;, args=3D(&#39;master&#39;,)), permanent=3DFalse)),<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 RedirectView.as_view(url=3Dreverse_lazy(&#39;l=
+ayer_list&#39;, args=3D(_DEFAULT_BRANCH,)), permanent=3DFalse)),<br>
+=C2=A0 =C2=A0 =C2=A0re_path(r&#39;^layer/(?P&lt;slug&gt;[-\.\w]+)/$&#39;,<b=
+r>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 RedirectParamsView.as_view(permanent=3DFalse),=
+ {&#39;redirect_name&#39;: &#39;layer_item&#39;, &#39;branch&#39;: &#39;mas=
+ter&#39;}),<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 RedirectParamsView.as_view(permanent=3DFalse),=
+ {&#39;redirect_name&#39;: &#39;layer_item&#39;, &#39;branch&#39;: _DEFAULT=
+_BRANCH}),<br>
+=C2=A0 =C2=A0 =C2=A0re_path(r&#39;^recipes/$&#39;,<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 RedirectView.as_view(url=3Dreverse_lazy(&#39;r=
+ecipe_search&#39;, args=3D(&#39;master&#39;,)), permanent=3DFalse)),<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 RedirectView.as_view(url=3Dreverse_lazy(&#39;r=
+ecipe_search&#39;, args=3D(_DEFAULT_BRANCH,)), permanent=3DFalse)),<br>
+=C2=A0 =C2=A0 =C2=A0re_path(r&#39;^machines/$&#39;,<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 RedirectView.as_view(url=3Dreverse_lazy(&#39;m=
+achine_search&#39;, args=3D(&#39;master&#39;,)), permanent=3DFalse)),<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 RedirectView.as_view(url=3Dreverse_lazy(&#39;m=
+achine_search&#39;, args=3D(_DEFAULT_BRANCH,)), permanent=3DFalse)),<br>
+=C2=A0 =C2=A0 =C2=A0re_path(r&#39;^distros/$&#39;,<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 RedirectView.as_view(url=3Dreverse_lazy(&#39;d=
+istro_search&#39;, args=3D(&#39;master&#39;,)), permanent=3DFalse)),<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 RedirectView.as_view(url=3Dreverse_lazy(&#39;d=
+istro_search&#39;, args=3D(_DEFAULT_BRANCH,)), permanent=3DFalse)),<br>
+=C2=A0 =C2=A0 =C2=A0re_path(r&#39;^classes/$&#39;,<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 RedirectView.as_view(url=3Dreverse_lazy(&#39;c=
+lass_search&#39;, args=3D(&#39;master&#39;,)), permanent=3DFalse)),<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 RedirectView.as_view(url=3Dreverse_lazy(&#39;c=
+lass_search&#39;, args=3D(_DEFAULT_BRANCH,)), permanent=3DFalse)),<br>
+=C2=A0 =C2=A0 =C2=A0re_path(r&#39;^submit/$&#39;, edit_layer_view, {&#39;te=
+mplate_name&#39;: &#39;layerindex/submitlayer.html&#39;}, name=3D&quot;subm=
+it_layer&quot;),<br>
+=C2=A0 =C2=A0 =C2=A0re_path(r&#39;^submit/thanks/$&#39;,<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0TemplateView.as_view(<br>
+diff --git a/layerindex/views.py b/layerindex/views.py<br>
+index 84750f7..d3d8181 100644<br>
+--- a/layerindex/views.py<br>
++++ b/layerindex/views.py<br>
+@@ -114,7 +114,7 @@ def delete_layer_view(request, template_name, slug):<br=
+>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0raise PermissionDenied<br>
+=C2=A0 =C2=A0 =C2=A0if request.method =3D=3D &#39;POST&#39;:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0layeritem.delete()<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 return HttpResponseRedirect(reverse(&#39;layer=
+_list&#39;, args=3D(&#39;master&#39;,)))<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 return HttpResponseRedirect(reverse(&#39;layer=
+_list&#39;, args=3D(settings.DEFAULT_BRANCH,)))<br>
+=C2=A0 =C2=A0 =C2=A0else:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return render(request, template_name, {<b=
+r>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0&#39;object&#39;: layeritem=
+,<br>
+@@ -122,7 +122,7 @@ def delete_layer_view(request, template_name, slug):<br=
+>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0&#39;cancel_url&#39;: layer=
+item.get_absolute_url()<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0})<br>
+<br>
+-def update_layer_view(request, template_name, branch=3D&#39;master&#39;, s=
+lug=3DNone):<br>
++def update_layer_view(request, template_name, branch=3Dsettings.DEFAULT_BR=
+ANCH, slug=3DNone):<br>
+=C2=A0 =C2=A0 =C2=A0if not (request.user.is_authenticated and request.user.=
+is_staff):<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0raise PermissionDenied<br>
+=C2=A0 =C2=A0 =C2=A0return_url =3D None<br>
+@@ -157,7 +157,7 @@ def update_layer_view(request, template_name, branch=3D=
+&#39;master&#39;, slug=3DNone):<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0return HttpResponseRedirect(reverse_lazy(&#39;task_stat=
+us&#39;, kwargs=3D{&#39;task_id&#39;: task_id}))<br>
+<br>
+-def edit_layer_view(request, template_name, branch=3D&#39;master&#39;, slu=
+g=3DNone):<br>
++def edit_layer_view(request, template_name, branch=3Dsettings.DEFAULT_BRAN=
+CH, slug=3DNone):<br>
+=C2=A0 =C2=A0 =C2=A0return_url =3D None<br>
+=C2=A0 =C2=A0 =C2=A0branchobj =3D Branch.objects.filter(name=3Dbranch)[:1].=
+get()<br>
+=C2=A0 =C2=A0 =C2=A0if slug:<br>
+@@ -444,7 +444,7 @@ class LayerReviewListView(ListView):<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return super(LayerReviewListView, self).d=
+ispatch(request, *args, **kwargs)<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0def get_queryset(self):<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 return LayerBranch.objects.filter(branch__name=
+=3D&#39;master&#39;).filter(layer__status=3D&#39;N&#39;).order_by(&#39;laye=
+r__name&#39;)<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 return LayerBranch.objects.filter(branch__name=
+=3Dsettings.DEFAULT_BRANCH).filter(layer__status=3D&#39;N&#39;).order_by(&#=
+39;layer__name&#39;)<br>
+<br>
+=C2=A0class LayerDetailView(DetailView):<br>
+=C2=A0 =C2=A0 =C2=A0model =3D LayerItem<br>
+@@ -492,7 +492,7 @@ class LayerReviewDetailView(LayerDetailView):<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return super(LayerReviewDetailView, self)=
+.dispatch(request, *args, **kwargs)<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0def get_context_data(self, **kwargs):<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 self.kwargs[&#39;branch&#39;] =3D &#39;master&=
+#39;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 self.kwargs[&#39;branch&#39;] =3D settings.DEF=
+AULT_BRANCH<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0context =3D super(LayerReviewDetailView, =
+self).get_context_data(**kwargs)<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return context<br>
+<br>
+@@ -738,7 +738,7 @@ class AdvancedRecipeSearchView(ListView):<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0query =3D Q(*=
+*{&quot;%s__icontains&quot; % field: value})<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0else:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0query =3D Q(*=
+*{&quot;%s&quot; % field: value})<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 queryset =3D Recipe.objects.filt=
+er(layerbranch__branch__name=3D&#39;master&#39;)<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 queryset =3D Recipe.objects.filt=
+er(layerbranch__branch__name=3Dsettings.DEFAULT_BRANCH)<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0layer =3D self.request.GET.=
+get(&#39;layer&#39;, &#39;&#39;)<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if layer:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0queryset =3D =
+queryset.filter(layerbranch__layer=3Dlayer)<br>
+@@ -825,7 +825,7 @@ class BulkChangeSearchView(AdvancedRecipeSearchView):<b=
+r>
+=C2=A0 =C2=A0 =C2=A0def get_context_data(self, **kwargs):<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0context =3D super(BulkChangeSearchView, s=
+elf).get_context_data(**kwargs)<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0context[&#39;changeset&#39;] =3D self.cha=
+ngeset<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 context[&#39;current_branch&#39;] =3D &#39;mas=
+ter&#39;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 context[&#39;current_branch&#39;] =3D settings=
+.DEFAULT_BRANCH<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return context<br>
+<br>
+<br>
+@@ -1341,7 +1341,7 @@ class ClassicRecipeSearchView(RecipeSearchView):<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0filtered =3D True<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0qs, filtered =3D self.search_recipe_query=
+(init_qs, query_string, preferred=3DFalse)<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if qreversed:<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 init_rqs =3D Recipe.objects.filt=
+er(layerbranch__branch__name=3D&#39;master&#39;)<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 init_rqs =3D Recipe.objects.filt=
+er(layerbranch__branch__name=3Dsettings.DEFAULT_BRANCH)<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if layer_ids:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0init_rqs =3D =
+init_rqs.filter(layerbranch__layer__id__in=3Dlayer_ids)<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0excludeclasses_param =3D se=
+lf.request.GET.get(&#39;excludeclasses&#39;, &#39;&#39;)<br>
+@@ -1735,7 +1735,7 @@ class ComparisonRecipeSelectView(ClassicRecipeSearchV=
+iew):<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return True<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0def get_context_data(self, **kwargs):<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 self.kwargs[&#39;branch&#39;] =3D &#39;master&=
+#39;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 self.kwargs[&#39;branch&#39;] =3D settings.DEF=
+AULT_BRANCH<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0context =3D super(ComparisonRecipeSelectV=
+iew, self).get_context_data(**kwargs)<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0recipe =3D get_object_or_404(ClassicRecip=
+e, pk=3Dself.kwargs[&#39;pk&#39;])<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0context[&#39;select_for&#39;] =3D recipe<=
+br>
+@@ -1761,7 +1761,7 @@ class ComparisonRecipeSelectView(ClassicRecipeSearchV=
+iew):<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0layer_ids =3D [int(i) for i=
+ in selectedlayers_param.split(&#39;,&#39;)]<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0else:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0layer_ids =3D []<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 init_qs =3D Recipe.objects.filter(layerbranch_=
+_branch__name=3D&#39;master&#39;)<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 init_qs =3D Recipe.objects.filter(layerbranch_=
+_branch__name=3Dsettings.DEFAULT_BRANCH)<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if layer_ids:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0init_qs =3D init_qs.filter(=
+layerbranch__layer__in=3Dlayer_ids)<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0qs, _ =3D self.search_recipe_query(init_q=
+s, query_string, preferred=3DFalse)<br>
+diff --git a/rrs/tools/historytool.py b/rrs/tools/historytool.py<br>
+index 9f03ade..92e4b04 100755<br>
+--- a/rrs/tools/historytool.py<br>
++++ b/rrs/tools/historytool.py<br>
+@@ -77,7 +77,7 @@ def rrs_import(args):<br>
+=C2=A0 =C2=A0 =C2=A0if not core_layer:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0logger.error(&#39;Unable to find core lay=
+er %s&#39; % settings.CORE_LAYER_NAME)<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return 1<br>
+-=C2=A0 =C2=A0 core_layerbranch =3D core_layer.get_layerbranch(&#39;master&=
+#39;)<br>
++=C2=A0 =C2=A0 core_layerbranch =3D core_layer.get_layerbranch(settings.DEF=
+AULT_BRANCH)<br>
+=C2=A0 =C2=A0 =C2=A0if not core_layerbranch:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0logger.error(&#39;Unable to find branch m=
+aster of layer %s&#39; % <a href=3D"http://core_layerbranch.name" rel=3D"no=
+referrer" target=3D"_blank">core_layerbranch.name</a>)<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return 1<br>
+@@ -130,7 +130,7 @@ def rrs_remove_duplicates(args):<br>
+=C2=A0 =C2=A0 =C2=A0if not core_layer:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0logger.error(&#39;Unable to find core lay=
+er %s&#39; % settings.CORE_LAYER_NAME)<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return 1<br>
+-=C2=A0 =C2=A0 core_layerbranch =3D core_layer.get_layerbranch(&#39;master&=
+#39;)<br>
++=C2=A0 =C2=A0 core_layerbranch =3D core_layer.get_layerbranch(settings.DEF=
+AULT_BRANCH)<br>
+=C2=A0 =C2=A0 =C2=A0if not core_layerbranch:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0logger.error(&#39;Unable to find branch m=
+aster of layer %s&#39; % <a href=3D"http://core_layerbranch.name" rel=3D"no=
+referrer" target=3D"_blank">core_layerbranch.name</a>)<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return 1<br>
+diff --git a/settings.py b/settings.py<br>
+index 94b3dd1..08004cb 100644<br>
+--- a/settings.py<br>
++++ b/settings.py<br>
+@@ -299,3 +299,6 @@ TASK_LOG_DIR =3D &quot;/tmp/layerindex-task-logs&quot;<=
+br>
+<br>
+=C2=A0# Full path to directory where rrs tools stores logs<br>
+=C2=A0TOOLS_LOG_DIR =3D &quot;&quot;<br>
++<br>
++# Default branch name used across the layer index<br>
++DEFAULT_BRANCH =3D &#39;master&#39;<br>
+-- <br>
+2.43.0<br>
+<br>
+</blockquote></div></div>
+
+--000000000000beebd6065503c13a--
 
