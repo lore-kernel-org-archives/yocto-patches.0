@@ -2,91 +2,91 @@ Return-Path: <jackson.james9803@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55081CDB47F
-	for <webhook@archiver.kernel.org>; Wed, 24 Jun 2026 08:59:23 +0000 (UTC)
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.2681.1782291554483887762
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53782CDB479
+	for <webhook@archiver.kernel.org>; Wed, 24 Jun 2026 09:00:33 +0000 (UTC)
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.2726.1782291624503197681
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 24 Jun 2026 01:59:14 -0700
+ Wed, 24 Jun 2026 02:00:24 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=sXAIYvXI;
- spf=pass (domain: gmail.com, ip: 209.85.208.46, mailfrom: jackson.james9803@gmail.com)
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-697ce8cfe65so1210407a12.3
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 24 Jun 2026 01:59:14 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1782291553; cv=none;
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=o7cqW85b;
+ spf=pass (domain: gmail.com, ip: 209.85.208.43, mailfrom: jackson.james9803@gmail.com)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-697cee2eb6dso706744a12.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 24 Jun 2026 02:00:24 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1782291623; cv=none;
         d=google.com; s=arc-20240605;
-        b=NBDOdaPzsG0E9aoBfDO62R55IGHRUCyfwClkrMadimmzPB6Tzt0pljh1yLZ3bQ8ODK
-         eXec19v+yQCOQcKtW36DdhW6dmHaiGasCoe0iUPI85MxgmT87i7fRL6c5Cw2z2SRnoZr
-         s6cHjyJK3LldENY4Rd9c9wxy67Qx2mDHhfRTiAQ9FAM/i1HpfiWqRjAZ6vBUJyi4ZJwl
-         KJj6ala1Cuzcrf31kLdst9My5z4rffj6cecdxzsW+G/AYcw0x1LT2LRR7xS1dqg014Ui
-         88yY4zVFC2afjJOXvY4jrvv9dbzLDaDP6LHBZtS1cugc+9s6V86r0soZm+JDvpTDCGql
-         +vLQ==
+        b=c3w+OB5fV8kpajjJ8TygfG67pqg2IW/AIpF1n9oKkrnOnVH/h3JEsZIL1F32yZfQHm
+         NCU/sHa41j2ckhr9xI2FAF3Ix0ENRaQVDRN3a8s52EMfQxqm0huEWOAglz7QvvIBZMcv
+         BuoVJLTIF9RgCZlDuD4kKgILsrj/ozjzaO0O8N9hMH2kDNcs8A2ccByBZeFpOYzDznaG
+         9lxhA7vPyQGz4cDer0mWCD0yjliY7+g14XVuQHNm9tHV+o4RKT1+/4irrY8zvmJ+3h6Z
+         k0ZNN354c9ue6wCvxI3PVBzBVkPm3gbxVJ8ySOjMdMdB/7YYPWzV5hvcII3QKb/vOQI3
+         28yw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:dkim-signature;
-        bh=rU+PVWXGxbm8Wcv1t+NIsvEPEF01GAd8XhXNJLZ/y5Q=;
+        bh=vGPIaYCxkzplkX/jEEl7Ew+bZe99JFqJ5Vo1fH2W2Oo=;
         fh=eSJHAoFNOdYsDj7gKKTW2Rj4cGqmVqZHwehqO+2rtmA=;
-        b=GOHh5a9X5ZTgo/WKXEBOnGXGg7RKJY7A3Z6G9dnHHtGMw9gnHVQtZm9BP7G8sGhgrA
-         VebxGYrqeTQScW68iRMPiNeU7h4+JuMlKR241/VBho3r5550w8dNdl0VQcg7LKzY2BFH
-         iHqpDSziIV1GTvInwhfBDk3YbeUW8zUGBaUKEsJjLSdpXHGEX4Uy0SkC6I7BYVMPnzC6
-         QRh2Gea4QUYdJNkRR1OAiRJamPHSN0zxHtM+KdSLX1QwBO4pHcxtddpqp7c5tFcSnAQk
-         VW/15ouEYdIcxGHCt0VDQEtEJCBqmy8WZTTomwrlfeEKmGAiBRDmDVpZiQtWn+n63Liu
-         +eZA==;
+        b=QFDoxscQU4LsYq+Z881yuQX3bjkMvECHy7e5sMSmfqJFB7saOwkdAOf8MzqLyzjMvd
+         8+ONDK+qHOQAEGqnxuu18D9rcGOLZjuZwCwFaMKM2AG8qeJcUwVnQlPCN1wDGm3PHX97
+         dHuepIqxOV3IoAn8srdJ7gp2X4QbkcQ+SCB5VjgbhR2lbpmKcRCS6tH7zfRwI1j1jyXS
+         IPT2KelvwmtDZ9+YSMBK8GwW0COxkLerDssCrSjhGKG1bJ2t0B9r+Cv3vuDxhP0zguTt
+         BK6KGnS6ShV3GjrbvahWKVD3Bs9rCYQyflvOfbvU1vqGYp98KFXKeVgov7hdLJTA58Et
+         XlNA==;
         darn=lists.yoctoproject.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782291553; x=1782896353; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20251104; t=1782291623; x=1782896423; darn=lists.yoctoproject.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=rU+PVWXGxbm8Wcv1t+NIsvEPEF01GAd8XhXNJLZ/y5Q=;
-        b=sXAIYvXIepUzBRrSrYnK8NdK2ffoP9nBCpeo3c6WwXY8LvTBhBSlxWo3bakXETOzdy
-         z9RVS86pLVO56GdHpxUZd2so2y7jmv2rCcxBrb3oRLzp7+sBuUs7ApMW7wItcn44ZlRf
-         IwrkmT+S3UgRkLidj7GGhFE11WBeuABxrT77n4TtxW2SC7nyvAotuvn/5I+DBYwHEFMl
-         qi++DLjD+No2pSwbHe/W01p6S0UcLa1E89lKvvlTo5LUk9op9iRFhwcsR++ieQiPe8ei
-         MCMcPlKMjPgLan3/Kb+AAn6QqaDsZYx/N99JHQ+mefTZADOkbiigRmi+5dsKsN7WdKTQ
-         66aA==
+        bh=vGPIaYCxkzplkX/jEEl7Ew+bZe99JFqJ5Vo1fH2W2Oo=;
+        b=o7cqW85bS2Ss3uxScgrQ48JfXtFkC1cGxDnbl+4C6FPtoGB4bGa2jd+m2NuW4zWrCL
+         e0G2qnJzEaRIjGlFapeTCyHT8cw77TkQcUfhKbf6rvY7iqqAknzyXunBzfsGKuI5jirU
+         g/pFhG+1k6KKUoo/LFYQgJ+LcIWz1C/6I1YNVqym9oCYO6Y1x8wJjgBhgy4eEJz75xIQ
+         bH4bsG2U+vZWzitUqzBzkx0SWUG78K3D2hUwr/6yAHgyKh7kb+4FXZip1K5LgIByP+jk
+         38115PeqNwqjzVFkrS0/JI6y7+/9MpT/lvYHF47e89SYLHABRTbHkOSuV1dECzDEGJUJ
+         //ZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782291553; x=1782896353;
+        d=1e100.net; s=20251104; t=1782291623; x=1782896423;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rU+PVWXGxbm8Wcv1t+NIsvEPEF01GAd8XhXNJLZ/y5Q=;
-        b=HfwsDpZr1gI7yoZTFtvMu5TKE729FMMD0a1KOt3L17boqzbZ9NJSY5fNiqkjVpxQ4l
-         /DAycSn1+x9ri/oE7yvzfLgP4DvRyic89h0DmPuopbmxzJ+P9wvQA9FrUWmyJomSiPTj
-         c/zqVjkjC+YXja5vLz2ZPRCVDe9YXy81YMhmb+YUPxnXQNVHuFjyJpsNzcxyg0/VVf9u
-         /Ss2skkqAwdpyWWvwolk1t+MFfjPnNaFOr+8i8ybNJh4ci6fMTvhjo7Ti0XCgijg3qAj
-         pSZCd6yEX6Fet1Ifz8sCCtstgYPRdHUcoIktJGyvEAMYst3aVWebaNTw8NC/0iEe9eQq
-         KqgA==
-X-Gm-Message-State: AOJu0YxSRGf4JkeHERRzIZJstUpdpWo/WLU8aAH6hqd0X1G0LrF489gr
-	+RUY8P5GS1br2YYjRXRlk5RKSIzs32MXdo/BUQuOWPf/2lNB/7tIDQJ1SZR0qhrV0DVtjHm/QFw
-	zBayU6RmWtBhc2JkjeIBLn6g/knu3107aqQ==
-X-Gm-Gg: AfdE7ckVTaEbmBakIuSdKSeejb1tscCcD8taZaanAcvaMopiGog1467GoVTRbXxwKez
-	nh6pe5/BAX20eA6ziTs96ZE9g5aqVZIooXD20cU5qM5NPcPlPh1o47AC7KWo34Qyf08zrL4T44/
-	wY9Tsn+lE4BZiEHfyezaW6qw7UKUjNEmvioSfbhGSX0E0tHS3w4DJamwxACknzfP6/BL95ti90Z
-	2TYOdgYlc+AqFd4vdpHudfjH21BScP3inaCmtMxAC6g3DSEvNczTBMNGxTTyGLW6ghCL9avaVBt
-	RPZlCIFiFx5x3O1AR/6KG1TVbrHP
-X-Received: by 2002:a05:6402:2349:b0:697:edf5:20d3 with SMTP id
- 4fb4d7f45d1cf-697f3771086mr1276723a12.3.1782291551741; Wed, 24 Jun 2026
- 01:59:11 -0700 (PDT)
+        bh=vGPIaYCxkzplkX/jEEl7Ew+bZe99JFqJ5Vo1fH2W2Oo=;
+        b=ndDPJhSMX5V2cPyL8iaIE0adDUkHaZ3KMX7fy6gqOlWn044aBOKgAPky69VqKsTLXP
+         JzbDgRZF1YhDFXcKDEUZjLCsYBxNhbT8DF0DCLGIyQ9m/Okwl8a0a3DqSlsvA43uIbvG
+         meIekak0kvjy0IUcuJWfpaHO2cxSuIDQWQQM5E2u9b+W/0IVeYLGoyX3KOczmEKBTw8r
+         b96A11x5InG6tdwRPPvYozXuHpcDm7ZOvUzpqPWeFqp/XrTG+ukCIXoZIb5kY2xos49i
+         5QHlFaKq83+Tzgn5N4hePRhGcEB1ordhLXxrpCybmBCQ3RkuMmOPIauiVEbtIO36MeOp
+         syuA==
+X-Gm-Message-State: AOJu0YxLxp4gFAjENvND7zzDdmY963XSDin5AgtxsZVLqrooIF6QZyX+
+	y1vnc5uW4Mw1HIym4tHztrM3yLfYwz8udxVQIqohsX+TVRIGkDp3mx2iY35h1TDQTOFN+jFTajv
+	S/dLfHkSZne1wGVKZHrzjuaGr+k+CiYCqGQ==
+X-Gm-Gg: AfdE7ckjPZi5sj5cAQUUI+QlPw2Ts/26hiFCaSNEr4QfHfeI1F9nBCrGzYDND+N2okP
+	pOK90JXviIpEXA0bvQPCSlYSSyo6mztvbtaV76VkgNZQaNuke55gHzGu9TgQU4Cp5V84xOYKruh
+	2OE4uSVuHxqeP8JrIOwdN9Oj7hWHzt61ShyRIjP6XnO7UbBuarrJRuvawtY6/e6S2EhNs42E+G6
+	iGOXyxJY24bcX14JH2HtNLWkMCBCKEv0RHvl3/uZmcTG9+5dFGVMN7pDugLssAp7/+UNmFoN4qh
+	kOxRkzYXbr6P6sExTOvP+c7I/l8t
+X-Received: by 2002:a05:6402:4012:b0:697:f2e4:3f11 with SMTP id
+ 4fb4d7f45d1cf-697f3aa2236mr1103109a12.14.1782291622322; Wed, 24 Jun 2026
+ 02:00:22 -0700 (PDT)
 MIME-Version: 1.0
-References: <20260623095532.159994-1-jacksonj2@kpit.com>
-In-Reply-To: <20260623095532.159994-1-jacksonj2@kpit.com>
+References: <20260623094813.130228-1-jacksonj2@kpit.com>
+In-Reply-To: <20260623094813.130228-1-jacksonj2@kpit.com>
 From: Jackson James <jackson.james9803@gmail.com>
-Date: Wed, 24 Jun 2026 14:29:00 +0530
-X-Gm-Features: AVVi8Cc5K6BXY3jFeqwL-QN9CkPu6cQnKGxBVhrkuOb5Fz2bK4htRNGjNCWUgAM
-Message-ID: <CADuKNg6WnmnVZfKLREiATMffO9x1TTkbcm+ma1GbKS04prPcjw@mail.gmail.com>
-Subject: Re: [meta-lts-collab][kirkstone][PATCH] spirv: Use STACK_ARRAY
- instead of NIR_VLA
+Date: Wed, 24 Jun 2026 14:30:09 +0530
+X-Gm-Features: AVVi8Ce5B7l2o2MEnZ7lQQl-H-xQx85Xq6_HcHJQbkya0PdmJkWoAy-gLdpjT5o
+Message-ID: <CADuKNg7pRs6a274-kbksQuy1EUpiPzw_qWozZk+tndxKy_Ua4g@mail.gmail.com>
+Subject: Re: [meta-lts-collab][kirkstone][PATCH] jpeg: Reject unsupported
+ number of components
 To: yocto-patches@lists.yoctoproject.org
 Cc: careers.myinfo@gmail.com
-Content-Type: multipart/alternative; boundary="000000000000d3e9880654fc1689"
+Content-Type: multipart/alternative; boundary="00000000000008e63d0654fc1b7e"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 24 Jun 2026 08:59:23 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4291
+ <yocto-patches@lists.yoctoproject.org>; Wed, 24 Jun 2026 09:00:33 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4292
 
---000000000000d3e9880654fc1689
+--00000000000008e63d0654fc1b7e
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
@@ -96,610 +96,231 @@ Please ignore the patch. Will update patch commit message and send it again
 Regards,
 Jackson James
 
-On Tue, 23 Jun, 2026, 3:26=E2=80=AFpm Jackson James, <jackson.james9803@gma=
+On Tue, 23 Jun, 2026, 3:18=E2=80=AFpm Jackson James, <jackson.james9803@gma=
 il.com>
 wrote:
 
 > From: Shaik Moin <careers.myinfo@gmail.com>
 >
-> The number of fields comes from the shader, so it could be a value large
-> enough that using alloca would be problematic.
+> This condition was already checked for incremental loading.
+> This commit adds the same check in the nonincremental
+> code path.
 >
 > Signed-off-by: Shaik Moin <careers.myinfo@gmail.com>
 > ---
->  ...0001-util-Move-STACK_ARRAY-into-util.patch |  83 ++++++++++++++
->  .../mesa/files/CVE-2026-40393.patch           | 103 ++++++++++++++++++
->  meta-oe/recipes-graphics/mesa/mesa_%.bbappend |   5 +
->  3 files changed, 191 insertions(+)
+>  .../gdk-pixbuf/gdk-pixbuf/CVE-2026-5201.patch | 47 +++++++++++++++++++
+>  .../gdk-pixbuf/gdk-pixbuf_%.bbappend          |  4 ++
+>  2 files changed, 51 insertions(+)
 >  create mode 100644
-> meta-oe/recipes-graphics/mesa/files/0001-util-Move-STACK_ARRAY-into-util.=
-patch
->  create mode 100644
-> meta-oe/recipes-graphics/mesa/files/CVE-2026-40393.patch
->  create mode 100644 meta-oe/recipes-graphics/mesa/mesa_%.bbappend
+> meta-oe/recipes-gnome/gdk-pixbuf/gdk-pixbuf/CVE-2026-5201.patch
+>  create mode 100644 meta-oe/recipes-gnome/gdk-pixbuf/gdk-pixbuf_%.bbappen=
+d
 >
 > diff --git
-> a/meta-oe/recipes-graphics/mesa/files/0001-util-Move-STACK_ARRAY-into-uti=
-l.patch
-> b/meta-oe/recipes-graphics/mesa/files/0001-util-Move-STACK_ARRAY-into-uti=
-l.patch
+> a/meta-oe/recipes-gnome/gdk-pixbuf/gdk-pixbuf/CVE-2026-5201.patch
+> b/meta-oe/recipes-gnome/gdk-pixbuf/gdk-pixbuf/CVE-2026-5201.patch
 > new file mode 100644
-> index 0000000..49aa1b0
+> index 0000000..d5bf327
 > --- /dev/null
-> +++
-> b/meta-oe/recipes-graphics/mesa/files/0001-util-Move-STACK_ARRAY-into-uti=
-l.patch
-> @@ -0,0 +1,83 @@
-> +From 8dfa16221058327dbfed11aafff963ac73334756 Mon Sep 17 00:00:00 2001
+> +++ b/meta-oe/recipes-gnome/gdk-pixbuf/gdk-pixbuf/CVE-2026-5201.patch
+> @@ -0,0 +1,47 @@
+> +From 4d6eb46037d1b6a298d5db293dba57bbea4d0d08 Mon Sep 17 00:00:00 2001
 > +From: Shaik Moin <careers.myinfo@gmail.com>
-> +Date: Fri, 19 Jun 2026 16:40:02 +0530
-> +Subject: [PATCH] util: Move STACK_ARRAY into util
+> +Date: Thu, 18 Jun 2026 14:51:28 +0530
+> +Subject: [PATCH] jpeg: Reject unsupported number of components
 > +
-> +It's useful for more than just Vulkan.
+> +Backport the fix for CVE-2026-5201
 > +
-> +Reference:
+> +This condition was already checked for incremental loading.
+> +This commit adds the same check in the nonincremental
+> +code path.
 > +
-> https://gitlab.freedesktop.org/mesa/mesa/-/commit/f43cff3728e58c377d1e03b=
-13db62514217abfe1.patch
-> +
-> +Signed-off-by: Shaik Moin <careers.myinfo@gmail.com>
-> +---
-> + src/util/meson.build   |  1 +
-> + src/util/stack_array.h | 45 ++++++++++++++++++++++++++++++++++++++++++
-> + 2 files changed, 46 insertions(+)
-> + create mode 100644 src/util/stack_array.h
-> +
-> +diff --git a/src/util/meson.build b/src/util/meson.build
-> +index 6e77a2f..9c37972 100644
-> +--- a/src/util/meson.build
-> ++++ b/src/util/meson.build
-> +@@ -110,6 +110,7 @@ files_mesa_util =3D files(
-> +   'softfloat.h',
-> +   'sparse_array.c',
-> +   'sparse_array.h',
-> ++  'stack_array.h',
-> +   'string_buffer.c',
-> +   'string_buffer.h',
-> +   'strndup.h',
-> +diff --git a/src/util/stack_array.h b/src/util/stack_array.h
-> +new file mode 100644
-> +index 0000000..e2133bd
-> +--- /dev/null
-> ++++ b/src/util/stack_array.h
-> +@@ -0,0 +1,45 @@
-> ++/*
-> ++ * Copyright =C2=A9 2025 Collabora, Ltd.
-> ++ *
-> ++ * Permission is hereby granted, free of charge, to any person obtainin=
-g
-> a
-> ++ * copy of this software and associated documentation files (the
-> "Software"),
-> ++ * to deal in the Software without restriction, including without
-> limitation
-> ++ * the rights to use, copy, modify, merge, publish, distribute,
-> sublicense,
-> ++ * and/or sell copies of the Software, and to permit persons to whom th=
-e
-> ++ * Software is furnished to do so, subject to the following conditions:
-> ++ *
-> ++ * The above copyright notice and this permission notice (including the
-> next
-> ++ * paragraph) shall be included in all copies or substantial portions o=
-f
-> the
-> ++ * Software.
-> ++ *
-> ++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-> EXPRESS OR
-> ++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-> MERCHANTABILITY,
-> ++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT
-> SHALL
-> ++ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
-> OTHER
-> ++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-> ARISING
-> ++ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-> DEALINGS
-> ++ * IN THE SOFTWARE.
-> ++ */
-> ++
-> ++#include <stdlib.h>
-> ++
-> ++#ifndef UTIL_STACK_ARRAY_H
-> ++#define UTIL_STACK_ARRAY_H
-> ++
-> ++#define STACK_ARRAY_SIZE 8
-> ++
-> ++/* Sometimes gcc may claim -Wmaybe-uninitialized for the stack array in
-> some
-> ++ * places it can't verify that when size is 0 nobody down the call chai=
-n
-> reads
-> ++ * the array. Please don't try to fix it by zero-initializing the array
-> here
-> ++ * since it's used in a lot of different places. An "if (size =3D=3D 0)
-> return;"
-> ++ * may work for you.
-> ++ */
-> ++#define STACK_ARRAY(type, name, size) \
-> ++   type _stack_##name[STACK_ARRAY_SIZE]; \
-> ++   type *const name =3D \
-> ++     ((size) <=3D STACK_ARRAY_SIZE ? _stack_##name : (type *)malloc((si=
-ze)
-> * sizeof(type)))
-> ++
-> ++#define STACK_ARRAY_FINISH(name) \
-> ++   if (name !=3D _stack_##name) free(name)
-> ++
-> ++#endif /* UTIL_STACK_ARRAY_H */
-> +--
-> +2.34.1
-> +
-> diff --git a/meta-oe/recipes-graphics/mesa/files/CVE-2026-40393.patch
-> b/meta-oe/recipes-graphics/mesa/files/CVE-2026-40393.patch
-> new file mode 100644
-> index 0000000..e35e5a4
-> --- /dev/null
-> +++ b/meta-oe/recipes-graphics/mesa/files/CVE-2026-40393.patch
-> @@ -0,0 +1,103 @@
-> +From e240e44e1967b9f605225ecddbf07f307952c814 Mon Sep 17 00:00:00 2001
-> +From: Shaik Moin <careers.myinfo@gmail.com>
-> +Date: Mon, 8 Jun 2026 12:21:41 +0530
-> +Subject: [PATCH] spirv: Use STACK_ARRAY instead of NIR_VLA
-> +
-> +The number of fields comes from the shader, so it could be a value large
-> +enough that using alloca would be problematic.
-> +
-> +Backport the fix for CVE-2026-40393
-> +
-> +CVE: CVE-2026-40393
+> +CVE: CVE-2026-5201
 > +
 > +Upstream-Status: Backport [
-> https://gitlab.freedesktop.org/mesa/mesa/-/commit/978fd42b4b7d1e9c0435ffa=
-7e1a4d339cba9b76e
+> https://gitlab.gnome.org/GNOME/gdk-pixbuf/-/commit/6cce9311e70b969cbcc6e3=
+e1e74ae1756ed02d5b
 > ]
 > +
-> +Patch is refreshed based on code base.
-> +
-> +Fixes: 2a023f30a64 ("nir/spirv: Add basic support for types")
-> +Reviewed-by: Caio Oliveira <caio.oliveira@intel.com>
-> +Reviewed-by: Ryan Neph <ryanneph@google.com>
-> +Reviewed-by: Lionel Landwerlin <lionel.g.landwerlin@intel.com>
-> +Signed-off-by: Shaik Moin <moin.shaik@partner.bmwgroup.com>
+> +Reviewed-by: Matthias Clasen <mclasen@redhat.com>
+> +Signed-off-by: Shaik Moin <careers.myinfo@gmail.com>
 > +---
-> + src/compiler/spirv/spirv_to_nir.c | 18 ++++++++++++------
-> + 1 file changed, 12 insertions(+), 6 deletions(-)
+> + gdk-pixbuf/io-jpeg.c | 12 ++++++++++++
+> + 1 file changed, 12 insertions(+)
 > +
-> +diff --git a/src/compiler/spirv/spirv_to_nir.c
-> b/src/compiler/spirv/spirv_to_nir.c
-> +index 79e176a..68da937 100644
-> +--- a/src/compiler/spirv/spirv_to_nir.c
-> ++++ b/src/compiler/spirv/spirv_to_nir.c
-> +@@ -26,7 +26,6 @@
-> +  */
+> +diff --git a/gdk-pixbuf/io-jpeg.c b/gdk-pixbuf/io-jpeg.c
+> +index 9ee1d21..60ad0d0 100644
+> +--- a/gdk-pixbuf/io-jpeg.c
+> ++++ b/gdk-pixbuf/io-jpeg.c
+> +@@ -625,6 +625,18 @@ gdk_pixbuf__real_jpeg_image_load (FILE *f, struct
+> jpeg_decompress_struct *cinfo,
+> +       cinfo->do_fancy_upsampling =3D FALSE;
+> +       cinfo->do_block_smoothing =3D FALSE;
 > +
-> + #include "vtn_private.h"
-> +-#include "nir/nir_vla.h"
-> + #include "nir/nir_control_flow.h"
-> + #include "nir/nir_constant_expressions.h"
-> + #include "nir/nir_deref.h"
-> +@@ -35,6 +34,7 @@
-> + #include "util/format/u_format.h"
-> + #include "util/u_math.h"
-> + #include "util/u_string.h"
-> ++#include "util/stack_array.h"
-> +
-> + #include <stdio.h>
-> +
-> +@@ -926,7 +926,7 @@ vtn_type_get_nir_type(struct vtn_builder *b, struct
-> vtn_type *type,
-> +       case vtn_base_type_struct: {
-> +          bool need_new_struct =3D false;
-> +          const uint32_t num_fields =3D type->length;
-> +-         NIR_VLA(struct glsl_struct_field, fields, num_fields);
-> ++         STACK_ARRAY(struct glsl_struct_field, fields, num_fields);
-> +          for (unsigned i =3D 0; i < num_fields; i++) {
-> +             fields[i] =3D *glsl_get_struct_field_data(type->type, i);
-> +             const struct glsl_type *field_nir_type =3D
-> +@@ -936,20 +936,25 @@ vtn_type_get_nir_type(struct vtn_builder *b, struc=
-t
-> vtn_type *type,
-> +                need_new_struct =3D true;
-> +             }
-> +          }
+> ++        /* Reject unsupported component counts */
+> ++        if (cinfo->output_components !=3D 3 && cinfo->output_components=
+ !=3D
+> 4 &&
+> ++            !(cinfo->output_components =3D=3D 1 &&
+> ++              cinfo->out_color_space =3D=3D JCS_GRAYSCALE)) {
+> ++                g_set_error (error,
+> ++                             GDK_PIXBUF_ERROR,
+> ++                             GDK_PIXBUF_ERROR_CORRUPT_IMAGE,
+> ++                             _("Unsupported number of color components
+> (%d)"),
+> ++                             cinfo->output_components);
+> ++                goto out;
+> ++        }
 > ++
-> ++       const struct glsl_type *result;
-> +          if (need_new_struct) {
-> +             if (glsl_type_is_interface(type->type)) {
-> +-               return glsl_interface_type(fields, num_fields,
-> ++               result =3D glsl_interface_type(fields, num_fields,
-> +                                           /* packing */ 0, false,
-> +
->  glsl_get_type_name(type->type));
-> +             } else {
-> +-               return glsl_struct_type(fields, num_fields,
-> ++               result =3D glsl_struct_type(fields, num_fields,
-> +                                        glsl_get_type_name(type->type),
-> +
-> glsl_struct_type_is_packed(type->type));
-> +             }
-> +          } else {
-> +             /* No changes, just pass it on */
-> +-            return type->type;
-> ++            result =3D type->type;
-> +          }
-> ++
-> ++       STACK_ARRAY_FINISH(fields);
-> ++       return result;
-> +       }
-> +
-> +       case vtn_base_type_image:
-> +@@ -1519,7 +1524,7 @@ vtn_handle_type(struct vtn_builder *b, SpvOp opcod=
-e,
-> +       val->type->offsets =3D ralloc_array(b, unsigned, num_fields);
-> +       val->type->packed =3D false;
-> +
-> +-      NIR_VLA(struct glsl_struct_field, fields, count);
-> ++      STACK_ARRAY(struct glsl_struct_field, fields, count);
-> +       for (unsigned i =3D 0; i < num_fields; i++) {
-> +          val->type->members[i] =3D vtn_get_type(b, w[i + 2]);
-> +          const char *name =3D NULL;
-> +@@ -1575,6 +1580,7 @@ vtn_handle_type(struct vtn_builder *b, SpvOp opcod=
-e,
-> +                                             name ? name : "struct",
-> +                                             val->type->packed);
-> +       }
-> ++      STACK_ARRAY_FINISH(fields);
-> +       break;
-> +    }
-> +
+> +       pixbuf =3D gdk_pixbuf_new (GDK_COLORSPACE_RGB,
+> +                                cinfo->out_color_components =3D=3D 4 ? T=
+RUE :
+> FALSE,
+> +                                8,
 > +--
 > +2.34.1
 > +
-> diff --git a/meta-oe/recipes-graphics/mesa/mesa_%.bbappend
-> b/meta-oe/recipes-graphics/mesa/mesa_%.bbappend
+> diff --git a/meta-oe/recipes-gnome/gdk-pixbuf/gdk-pixbuf_%.bbappend
+> b/meta-oe/recipes-gnome/gdk-pixbuf/gdk-pixbuf_%.bbappend
 > new file mode 100644
-> index 0000000..553264a
+> index 0000000..6a5584e
 > --- /dev/null
-> +++ b/meta-oe/recipes-graphics/mesa/mesa_%.bbappend
-> @@ -0,0 +1,5 @@
+> +++ b/meta-oe/recipes-gnome/gdk-pixbuf/gdk-pixbuf_%.bbappend
+> @@ -0,0 +1,4 @@
 > +FILESEXTRAPATHS:prepend :=3D "${THISDIR}/files:"
 > +
-> +SRC_URI +=3D "file://CVE-2026-40393.patch \
-> +            file://0001-util-Move-STACK_ARRAY-into-util.patch \
+> +SRC_URI +=3D "file://CVE-2026-5201.patch \
 > +"
 > --
 > 2.34.1
 >
 >
 
---000000000000d3e9880654fc1689
+--00000000000008e63d0654fc1b7e
 Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-<div dir=3D"auto">Hi team,<div dir=3D"auto">Please ignore the patch. Will u=
-pdate patch commit message and send it again</div><div dir=3D"auto"><br></d=
-iv><div dir=3D"auto">Regards,</div><div dir=3D"auto">Jackson James</div></d=
-iv><br><div class=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr" cl=
-ass=3D"gmail_attr">On Tue, 23 Jun, 2026, 3:26=E2=80=AFpm Jackson James, &lt=
-;<a href=3D"mailto:jackson.james9803@gmail.com">jackson.james9803@gmail.com=
-</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:=
-0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex">From: Shaik Moin &l=
-t;<a href=3D"mailto:careers.myinfo@gmail.com" target=3D"_blank" rel=3D"nore=
-ferrer">careers.myinfo@gmail.com</a>&gt;<br>
+<div dir=3D"auto"><span style=3D"font-size:12.8px;background-color:rgb(18,1=
+9,22)">Hi team,</span><div dir=3D"auto" style=3D"font-size:12.8px;backgroun=
+d-color:rgb(18,19,22)">Please ignore the patch. Will update patch commit me=
+ssage and send it again</div><div dir=3D"auto" style=3D"font-size:12.8px;ba=
+ckground-color:rgb(18,19,22)"><br></div><div dir=3D"auto" style=3D"font-siz=
+e:12.8px;background-color:rgb(18,19,22)">Regards,</div><div dir=3D"auto" st=
+yle=3D"font-size:12.8px;background-color:rgb(18,19,22)">Jackson James</div>=
+</div><br><div class=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr"=
+ class=3D"gmail_attr">On Tue, 23 Jun, 2026, 3:18=E2=80=AFpm Jackson James, =
+&lt;<a href=3D"mailto:jackson.james9803@gmail.com">jackson.james9803@gmail.=
+com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"marg=
+in:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex">From: Shaik Moin=
+ &lt;<a href=3D"mailto:careers.myinfo@gmail.com" target=3D"_blank" rel=3D"n=
+oreferrer">careers.myinfo@gmail.com</a>&gt;<br>
 <br>
-The number of fields comes from the shader, so it could be a value large<br=
->
-enough that using alloca would be problematic.<br>
+This condition was already checked for incremental loading.<br>
+This commit adds the same check in the nonincremental<br>
+code path.<br>
 <br>
 Signed-off-by: Shaik Moin &lt;<a href=3D"mailto:careers.myinfo@gmail.com" t=
 arget=3D"_blank" rel=3D"noreferrer">careers.myinfo@gmail.com</a>&gt;<br>
 ---<br>
-=C2=A0...0001-util-Move-STACK_ARRAY-into-util.patch |=C2=A0 83 ++++++++++++=
-++<br>
-=C2=A0.../mesa/files/CVE-2026-40393.patch=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0| 103 ++++++++++++++++++<br>
-=C2=A0meta-oe/recipes-graphics/mesa/mesa_%.bbappend |=C2=A0 =C2=A05 +<br>
-=C2=A03 files changed, 191 insertions(+)<br>
-=C2=A0create mode 100644 meta-oe/recipes-graphics/mesa/files/0001-util-Move=
--STACK_ARRAY-into-util.patch<br>
-=C2=A0create mode 100644 meta-oe/recipes-graphics/mesa/files/CVE-2026-40393=
-.patch<br>
-=C2=A0create mode 100644 meta-oe/recipes-graphics/mesa/mesa_%.bbappend<br>
+=C2=A0.../gdk-pixbuf/gdk-pixbuf/CVE-2026-5201.patch | 47 ++++++++++++++++++=
++<br>
+=C2=A0.../gdk-pixbuf/gdk-pixbuf_%.bbappend=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 |=C2=A0 4 ++<br>
+=C2=A02 files changed, 51 insertions(+)<br>
+=C2=A0create mode 100644 meta-oe/recipes-gnome/gdk-pixbuf/gdk-pixbuf/CVE-20=
+26-5201.patch<br>
+=C2=A0create mode 100644 meta-oe/recipes-gnome/gdk-pixbuf/gdk-pixbuf_%.bbap=
+pend<br>
 <br>
-diff --git a/meta-oe/recipes-graphics/mesa/files/0001-util-Move-STACK_ARRAY=
--into-util.patch b/meta-oe/recipes-graphics/mesa/files/0001-util-Move-STACK=
-_ARRAY-into-util.patch<br>
+diff --git a/meta-oe/recipes-gnome/gdk-pixbuf/gdk-pixbuf/CVE-2026-5201.patc=
+h b/meta-oe/recipes-gnome/gdk-pixbuf/gdk-pixbuf/CVE-2026-5201.patch<br>
 new file mode 100644<br>
-index 0000000..49aa1b0<br>
+index 0000000..d5bf327<br>
 --- /dev/null<br>
-+++ b/meta-oe/recipes-graphics/mesa/files/0001-util-Move-STACK_ARRAY-into-u=
-til.patch<br>
-@@ -0,0 +1,83 @@<br>
-+From 8dfa16221058327dbfed11aafff963ac73334756 Mon Sep 17 00:00:00 2001<br>
++++ b/meta-oe/recipes-gnome/gdk-pixbuf/gdk-pixbuf/CVE-2026-5201.patch<br>
+@@ -0,0 +1,47 @@<br>
++From 4d6eb46037d1b6a298d5db293dba57bbea4d0d08 Mon Sep 17 00:00:00 2001<br>
 +From: Shaik Moin &lt;<a href=3D"mailto:careers.myinfo@gmail.com" target=3D=
 "_blank" rel=3D"noreferrer">careers.myinfo@gmail.com</a>&gt;<br>
-+Date: Fri, 19 Jun 2026 16:40:02 +0530<br>
-+Subject: [PATCH] util: Move STACK_ARRAY into util<br>
++Date: Thu, 18 Jun 2026 14:51:28 +0530<br>
++Subject: [PATCH] jpeg: Reject unsupported number of components<br>
 +<br>
-+It&#39;s useful for more than just Vulkan.<br>
++Backport the fix for CVE-2026-5201<br>
 +<br>
-+Reference:<br>
-+<a href=3D"https://gitlab.freedesktop.org/mesa/mesa/-/commit/f43cff3728e58=
-c377d1e03b13db62514217abfe1.patch" rel=3D"noreferrer noreferrer" target=3D"=
-_blank">https://gitlab.freedesktop.org/mesa/mesa/-/commit/f43cff3728e58c377=
-d1e03b13db62514217abfe1.patch</a><br>
++This condition was already checked for incremental loading.<br>
++This commit adds the same check in the nonincremental<br>
++code path.<br>
 +<br>
++CVE: CVE-2026-5201<br>
++<br>
++Upstream-Status: Backport [<a href=3D"https://gitlab.gnome.org/GNOME/gdk-p=
+ixbuf/-/commit/6cce9311e70b969cbcc6e3e1e74ae1756ed02d5b" rel=3D"noreferrer =
+noreferrer" target=3D"_blank">https://gitlab.gnome.org/GNOME/gdk-pixbuf/-/c=
+ommit/6cce9311e70b969cbcc6e3e1e74ae1756ed02d5b</a>]<br>
++<br>
++Reviewed-by: Matthias Clasen &lt;<a href=3D"mailto:mclasen@redhat.com" tar=
+get=3D"_blank" rel=3D"noreferrer">mclasen@redhat.com</a>&gt;<br>
 +Signed-off-by: Shaik Moin &lt;<a href=3D"mailto:careers.myinfo@gmail.com" =
 target=3D"_blank" rel=3D"noreferrer">careers.myinfo@gmail.com</a>&gt;<br>
 +---<br>
-+ src/util/meson.build=C2=A0 =C2=A0|=C2=A0 1 +<br>
-+ src/util/stack_array.h | 45 ++++++++++++++++++++++++++++++++++++++++++<br=
->
-+ 2 files changed, 46 insertions(+)<br>
-+ create mode 100644 src/util/stack_array.h<br>
++ gdk-pixbuf/io-jpeg.c | 12 ++++++++++++<br>
++ 1 file changed, 12 insertions(+)<br>
 +<br>
-+diff --git a/src/util/meson.build b/src/util/meson.build<br>
-+index 6e77a2f..9c37972 100644<br>
-+--- a/src/util/meson.build<br>
-++++ b/src/util/meson.build<br>
-+@@ -110,6 +110,7 @@ files_mesa_util =3D files(<br>
-+=C2=A0 =C2=A0&#39;softfloat.h&#39;,<br>
-+=C2=A0 =C2=A0&#39;sparse_array.c&#39;,<br>
-+=C2=A0 =C2=A0&#39;sparse_array.h&#39;,<br>
-++=C2=A0 &#39;stack_array.h&#39;,<br>
-+=C2=A0 =C2=A0&#39;string_buffer.c&#39;,<br>
-+=C2=A0 =C2=A0&#39;string_buffer.h&#39;,<br>
-+=C2=A0 =C2=A0&#39;strndup.h&#39;,<br>
-+diff --git a/src/util/stack_array.h b/src/util/stack_array.h<br>
-+new file mode 100644<br>
-+index 0000000..e2133bd<br>
-+--- /dev/null<br>
-++++ b/src/util/stack_array.h<br>
-+@@ -0,0 +1,45 @@<br>
-++/*<br>
-++ * Copyright =C2=A9 2025 Collabora, Ltd.<br>
-++ *<br>
-++ * Permission is hereby granted, free of charge, to any person obtaining =
-a<br>
-++ * copy of this software and associated documentation files (the &quot;So=
-ftware&quot;),<br>
-++ * to deal in the Software without restriction, including without limitat=
-ion<br>
-++ * the rights to use, copy, modify, merge, publish, distribute, sublicens=
-e,<br>
-++ * and/or sell copies of the Software, and to permit persons to whom the<=
-br>
-++ * Software is furnished to do so, subject to the following conditions:<b=
-r>
-++ *<br>
-++ * The above copyright notice and this permission notice (including the n=
-ext<br>
-++ * paragraph) shall be included in all copies or substantial portions of =
-the<br>
-++ * Software.<br>
-++ *<br>
-++ * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KI=
-ND, EXPRESS OR<br>
-++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILIT=
-Y,<br>
-++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.=C2=A0 IN NO EVEN=
-T SHALL<br>
-++ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR O=
-THER<br>
-++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISIN=
-G<br>
-++ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DE=
-ALINGS<br>
-++ * IN THE SOFTWARE.<br>
-++ */<br>
++diff --git a/gdk-pixbuf/io-jpeg.c b/gdk-pixbuf/io-jpeg.c<br>
++index 9ee1d21..60ad0d0 100644<br>
++--- a/gdk-pixbuf/io-jpeg.c<br>
+++++ b/gdk-pixbuf/io-jpeg.c<br>
++@@ -625,6 +625,18 @@ gdk_pixbuf__real_jpeg_image_load (FILE *f, struct jpe=
+g_decompress_struct *cinfo,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0cinfo-&gt;do_fancy_upsampling =3D FALSE;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0cinfo-&gt;do_block_smoothing =3D FALSE;<br>
++ <br>
+++=C2=A0 =C2=A0 =C2=A0 =C2=A0 /* Reject unsupported component counts */<br>
+++=C2=A0 =C2=A0 =C2=A0 =C2=A0 if (cinfo-&gt;output_components !=3D 3 &amp;&=
+amp; cinfo-&gt;output_components !=3D 4 &amp;&amp;<br>
+++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 !(cinfo-&gt;output_components =
+=3D=3D 1 &amp;&amp;<br>
+++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cinfo-&gt;out_color_spac=
+e =3D=3D JCS_GRAYSCALE)) {<br>
+++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 g_set_error (erro=
+r,<br>
+++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0GDK_PIXBUF_ERROR,<br>
+++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0GDK_PIXBUF_ERROR_CORRUPT_IMAGE,<br>
+++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0_(&quot;Unsupported number of color componen=
+ts (%d)&quot;),<br>
+++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0cinfo-&gt;output_components);<br>
+++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 goto out;<br>
+++=C2=A0 =C2=A0 =C2=A0 =C2=A0 }<br>
 ++<br>
-++#include &lt;stdlib.h&gt;<br>
-++<br>
-++#ifndef UTIL_STACK_ARRAY_H<br>
-++#define UTIL_STACK_ARRAY_H<br>
-++<br>
-++#define STACK_ARRAY_SIZE 8<br>
-++<br>
-++/* Sometimes gcc may claim -Wmaybe-uninitialized for the stack array in s=
-ome<br>
-++ * places it can&#39;t verify that when size is 0 nobody down the call ch=
-ain reads<br>
-++ * the array. Please don&#39;t try to fix it by zero-initializing the arr=
-ay here<br>
-++ * since it&#39;s used in a lot of different places. An &quot;if (size =
-=3D=3D 0) return;&quot;<br>
-++ * may work for you.<br>
-++ */<br>
-++#define STACK_ARRAY(type, name, size) \<br>
-++=C2=A0 =C2=A0type _stack_##name[STACK_ARRAY_SIZE]; \<br>
-++=C2=A0 =C2=A0type *const name =3D \<br>
-++=C2=A0 =C2=A0 =C2=A0((size) &lt;=3D STACK_ARRAY_SIZE ? _stack_##name : (t=
-ype *)malloc((size) * sizeof(type)))<br>
-++<br>
-++#define STACK_ARRAY_FINISH(name) \<br>
-++=C2=A0 =C2=A0if (name !=3D _stack_##name) free(name)<br>
-++<br>
-++#endif /* UTIL_STACK_ARRAY_H */<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0pixbuf =3D gdk_pixbuf_new (GDK_COLORSPACE_RGB, =
+<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cinfo-&gt;out_color_components =3D=
+=3D 4 ? TRUE : FALSE, <br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 8,<br>
 +-- <br>
 +2.34.1<br>
 +<br>
-diff --git a/meta-oe/recipes-graphics/mesa/files/CVE-2026-40393.patch b/met=
-a-oe/recipes-graphics/mesa/files/CVE-2026-40393.patch<br>
+diff --git a/meta-oe/recipes-gnome/gdk-pixbuf/gdk-pixbuf_%.bbappend b/meta-=
+oe/recipes-gnome/gdk-pixbuf/gdk-pixbuf_%.bbappend<br>
 new file mode 100644<br>
-index 0000000..e35e5a4<br>
+index 0000000..6a5584e<br>
 --- /dev/null<br>
-+++ b/meta-oe/recipes-graphics/mesa/files/CVE-2026-40393.patch<br>
-@@ -0,0 +1,103 @@<br>
-+From e240e44e1967b9f605225ecddbf07f307952c814 Mon Sep 17 00:00:00 2001<br>
-+From: Shaik Moin &lt;<a href=3D"mailto:careers.myinfo@gmail.com" target=3D=
-"_blank" rel=3D"noreferrer">careers.myinfo@gmail.com</a>&gt;<br>
-+Date: Mon, 8 Jun 2026 12:21:41 +0530<br>
-+Subject: [PATCH] spirv: Use STACK_ARRAY instead of NIR_VLA<br>
-+<br>
-+The number of fields comes from the shader, so it could be a value large<b=
-r>
-+enough that using alloca would be problematic.<br>
-+<br>
-+Backport the fix for CVE-2026-40393<br>
-+<br>
-+CVE: CVE-2026-40393<br>
-+<br>
-+Upstream-Status: Backport [<a href=3D"https://gitlab.freedesktop.org/mesa/=
-mesa/-/commit/978fd42b4b7d1e9c0435ffa7e1a4d339cba9b76e" rel=3D"noreferrer n=
-oreferrer" target=3D"_blank">https://gitlab.freedesktop.org/mesa/mesa/-/com=
-mit/978fd42b4b7d1e9c0435ffa7e1a4d339cba9b76e</a>]<br>
-+<br>
-+Patch is refreshed based on code base.<br>
-+<br>
-+Fixes: 2a023f30a64 (&quot;nir/spirv: Add basic support for types&quot;)<br=
->
-+Reviewed-by: Caio Oliveira &lt;<a href=3D"mailto:caio.oliveira@intel.com" =
-target=3D"_blank" rel=3D"noreferrer">caio.oliveira@intel.com</a>&gt;<br>
-+Reviewed-by: Ryan Neph &lt;<a href=3D"mailto:ryanneph@google.com" target=
-=3D"_blank" rel=3D"noreferrer">ryanneph@google.com</a>&gt;<br>
-+Reviewed-by: Lionel Landwerlin &lt;<a href=3D"mailto:lionel.g.landwerlin@i=
-ntel.com" target=3D"_blank" rel=3D"noreferrer">lionel.g.landwerlin@intel.co=
-m</a>&gt;<br>
-+Signed-off-by: Shaik Moin &lt;<a href=3D"mailto:moin.shaik@partner.bmwgrou=
-p.com" target=3D"_blank" rel=3D"noreferrer">moin.shaik@partner.bmwgroup.com=
-</a>&gt;<br>
-+---<br>
-+ src/compiler/spirv/spirv_to_nir.c | 18 ++++++++++++------<br>
-+ 1 file changed, 12 insertions(+), 6 deletions(-)<br>
-+<br>
-+diff --git a/src/compiler/spirv/spirv_to_nir.c b/src/compiler/spirv/spirv_=
-to_nir.c<br>
-+index 79e176a..68da937 100644<br>
-+--- a/src/compiler/spirv/spirv_to_nir.c<br>
-++++ b/src/compiler/spirv/spirv_to_nir.c<br>
-+@@ -26,7 +26,6 @@<br>
-+=C2=A0 */<br>
-+ <br>
-+ #include &quot;vtn_private.h&quot;<br>
-+-#include &quot;nir/nir_vla.h&quot;<br>
-+ #include &quot;nir/nir_control_flow.h&quot;<br>
-+ #include &quot;nir/nir_constant_expressions.h&quot;<br>
-+ #include &quot;nir/nir_deref.h&quot;<br>
-+@@ -35,6 +34,7 @@<br>
-+ #include &quot;util/format/u_format.h&quot;<br>
-+ #include &quot;util/u_math.h&quot;<br>
-+ #include &quot;util/u_string.h&quot;<br>
-++#include &quot;util/stack_array.h&quot;<br>
-+ <br>
-+ #include &lt;stdio.h&gt;<br>
-+ <br>
-+@@ -926,7 +926,7 @@ vtn_type_get_nir_type(struct vtn_builder *b, struct vt=
-n_type *type,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0case vtn_base_type_struct: {<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 bool need_new_struct =3D false;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 const uint32_t num_fields =3D type-&gt;=
-length;<br>
-+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0NIR_VLA(struct glsl_struct_field, field=
-s, num_fields);<br>
-++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0STACK_ARRAY(struct glsl_struct_field, f=
-ields, num_fields);<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 for (unsigned i =3D 0; i &lt; num_field=
-s; i++) {<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0fields[i] =3D *glsl_get_st=
-ruct_field_data(type-&gt;type, i);<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0const struct glsl_type *fi=
-eld_nir_type =3D<br>
-+@@ -936,20 +936,25 @@ vtn_type_get_nir_type(struct vtn_builder *b, struct =
-vtn_type *type,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 need_new_struct =
-=3D true;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 }<br>
-++<br>
-++=C2=A0 =C2=A0 =C2=A0 =C2=A0const struct glsl_type *result;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (need_new_struct) {<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (glsl_type_is_interface=
-(type-&gt;type)) {<br>
-+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return glsl_interf=
-ace_type(fields, num_fields,<br>
-++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0result =3D glsl_in=
-terface_type(fields, num_fields,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0/* packing */ 0, false,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0glsl_get_type_name(type-&gt;type));<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0} else {<br>
-+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return glsl_struct=
-_type(fields, num_fields,<br>
-++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0result =3D glsl_st=
-ruct_type(fields, num_fields,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 glsl_get=
-_type_name(type-&gt;type),<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 glsl_str=
-uct_type_is_packed(type-&gt;type));<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 } else {<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0/* No changes, just pass i=
-t on */<br>
-+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return type-&gt;type;<br>
-++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 result =3D type-&gt;type;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 }<br>
-++<br>
-++=C2=A0 =C2=A0 =C2=A0 =C2=A0STACK_ARRAY_FINISH(fields);<br>
-++=C2=A0 =C2=A0 =C2=A0 =C2=A0return result;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-+ <br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0case vtn_base_type_image:<br>
-+@@ -1519,7 +1524,7 @@ vtn_handle_type(struct vtn_builder *b, SpvOp opcode,=
-<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0val-&gt;type-&gt;offsets =3D ralloc_array(b, un=
-signed, num_fields);<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0val-&gt;type-&gt;packed =3D false;<br>
-+ <br>
-+-=C2=A0 =C2=A0 =C2=A0 NIR_VLA(struct glsl_struct_field, fields, count);<br=
->
-++=C2=A0 =C2=A0 =C2=A0 STACK_ARRAY(struct glsl_struct_field, fields, count)=
-;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0for (unsigned i =3D 0; i &lt; num_fields; i++) =
-{<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 val-&gt;type-&gt;members[i] =3D vtn_get=
-_type(b, w[i + 2]);<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 const char *name =3D NULL;<br>
-+@@ -1575,6 +1580,7 @@ vtn_handle_type(struct vtn_builder *b, SpvOp opcode,=
-<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0name ? name : &quot;struct&quot;,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0val-&gt;type-&gt;packed);<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-++=C2=A0 =C2=A0 =C2=A0 STACK_ARRAY_FINISH(fields);<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0break;<br>
-+=C2=A0 =C2=A0 }<br>
-+ <br>
-+-- <br>
-+2.34.1<br>
-+<br>
-diff --git a/meta-oe/recipes-graphics/mesa/mesa_%.bbappend b/meta-oe/recipe=
-s-graphics/mesa/mesa_%.bbappend<br>
-new file mode 100644<br>
-index 0000000..553264a<br>
---- /dev/null<br>
-+++ b/meta-oe/recipes-graphics/mesa/mesa_%.bbappend<br>
-@@ -0,0 +1,5 @@<br>
++++ b/meta-oe/recipes-gnome/gdk-pixbuf/gdk-pixbuf_%.bbappend<br>
+@@ -0,0 +1,4 @@<br>
 +FILESEXTRAPATHS:prepend :=3D &quot;${THISDIR}/files:&quot;<br>
 +<br>
-+SRC_URI +=3D &quot;file://CVE-2026-40393.patch \<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 file://0001-util-Move-STACK_ARRA=
-Y-into-util.patch \<br>
++SRC_URI +=3D &quot;file://CVE-2026-5201.patch \<br>
 +&quot;<br>
 -- <br>
 2.34.1<br>
 <br>
 </blockquote></div>
 
---000000000000d3e9880654fc1689--
+--00000000000008e63d0654fc1b7e--
 
