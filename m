@@ -1,94 +1,115 @@
-Return-Path: <yoann.congal@smile.fr>
+Return-Path: <paul@pbarker.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56D52C43458
-	for <webhook@archiver.kernel.org>; Mon, 29 Jun 2026 06:54:31 +0000 (UTC)
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.32154.1782716062890843794
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88C09C43327
+	for <webhook@archiver.kernel.org>; Mon, 29 Jun 2026 07:36:11 +0000 (UTC)
+Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.87101.1782718562091891016
  for <yocto-patches@lists.yoctoproject.org>;
- Sun, 28 Jun 2026 23:54:23 -0700
+ Mon, 29 Jun 2026 00:36:02 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@smile.fr header.s=google header.b=UoGGWvgs;
- spf=pass (domain: smile.fr, ip: 209.85.218.45, mailfrom: yoann.congal@smile.fr)
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-c126553552dso83913666b.1
-        for <yocto-patches@lists.yoctoproject.org>; Sun, 28 Jun 2026 23:54:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=smile.fr; s=google; t=1782716061; x=1783320861; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uDFLPvI1leWlaEjEF6inUXqxq3QhduhOkAYqt00r1n0=;
-        b=UoGGWvgsQEhfqPCIITnTCWeQc9HujJHw0IqFd5PfjVomjNKMhK72YGim2Z7sqQAw0W
-         irt/LX/eGLJd/U/yv0+Mjec9tWIAVOAykExJy5UB9BaAhr9Sl6QZ3tWQKnbYmFRbRwol
-         30zhVywYK1o02T1PrFMk0dSXrQfX2kk3lY/I0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782716061; x=1783320861;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uDFLPvI1leWlaEjEF6inUXqxq3QhduhOkAYqt00r1n0=;
-        b=FdZYfmrQH+DUNGoNwLnHi5LC+COOMz4LxPjX2/Kip4uNifJfDUP4r7blBZuE/WIF77
-         YrcFZpAdKmwylxUvibBO951uOUE+f+28tSfQ/zxN77EbtJG6g6H6AO7CLwc4ycgOg98D
-         k24k56s7WQEeKm+H8BplqkCm2k0BjTrqZUkE3frm+oS0pbwbUx74BXjEvkhpXlN3O9l3
-         i97dJ/VozHQXKNCuXu7yptBYJWI5w77Hyj3/4svAQtwBBlDL5wEg7PvjADjMWJ9Mesan
-         6hoEfQ+lTsE05nYCM1ZbOa1a5Cv1jAd7N/WgZADkHnCv0rr59+Xkh8wgtjkjeh18tNA2
-         VJoQ==
-X-Gm-Message-State: AOJu0YwhG19JhkpgBNBuC6eva60/mzmlyCu/APCiBZqMEAKsgeJWVVPv
-	CCrKnS35Cz0mEpVcys/vrtXg3z7tW449UNQYU6SlyD6UGOz6f8svb+NlDRKGH/Uqjav+JPmmW71
-	YAaoK
-X-Gm-Gg: AfdE7cmouQjsGq/jx6C68hIzFC/3jOrSeQaaISfxeES0SEKgUuRqGt3ht+dft9BRY7E
-	Gg7a8aaMsI8gYQKzey0+sDsOm/6rd0gEZxry2nY+OLsl20dbJ2bz/KdaHNWksD9WbUW7ftNDhs7
-	wTut2zuxiZT9MPEp+K9O5WI5FA29ktns9WtvI6Vv1GGMwbkWxQQIoeP8Ee/sw56Ib0nnPrIWirr
-	8cpfWB1oL+lXn/zJw7py39h8G5NN1n+6Xh0z3zZdsrZVXuZ3m4ltjkO9oWcXEDEsqYO/OBDSLJT
-	apxJlx+H6DAJ1+Hm14/p1lgSW0z/BuYw5RyssbM4pGOAHMVnJcF/yGzMm+qn7hMtLAe2aGrRk06
-	+YgAtIqyMB9Tf9m+/b57oFTp4vy2S1hI/Eu9VMpGvCs6bWwAzl1i+XXGWh5AKGdP4lQDLfVf2YM
-	pRyQlz9zQGJy1MFDd5Pzi+sk3D3AZ8y83n9LrJ+2DzRHb8Jjyp69gIomss5RSv+Xfl5w6RmTlKD
-	wJ0E7J7AbxAHFNpyvQbydonxvJFTg==
-X-Received: by 2002:a17:907:8e95:b0:c12:68f5:e083 with SMTP id a640c23a62f3a-c1268f5e717mr96876266b.64.1782716061067;
-        Sun, 28 Jun 2026 23:54:21 -0700 (PDT)
-Received: from localhost.localdomain (2a02-8440-250d-69b5-f9da-de58-f051-1989.rev.sfr.net. [2a02:8440:250d:69b5:f9da:de58:f051:1989])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c12376df39asm373156066b.16.2026.06.28.23.54.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Jun 2026 23:54:20 -0700 (PDT)
-From: Yoann Congal <yoann.congal@smile.fr>
-To: yocto-patches@lists.yoctoproject.org
-Cc: Yoann Congal <yoann.congal@smile.fr>
-Subject: [yocto-autobuilder2][PATCH] Revert "config: add Ubuntu 26.04 to scarthgap worker list"
-Date: Mon, 29 Jun 2026 08:54:03 +0200
-Message-ID: <20260629065403.2863125-1-yoann.congal@smile.fr>
-X-Mailer: git-send-email 2.47.3
+ dkim=pass header.i=@pbarker.dev header.s=fm3 header.b=dWEqNre9;
+ dkim=pass header.i=@messagingengine.com header.s=fm1 header.b=YntVgWfQ;
+ spf=pass (domain: pbarker.dev, ip: 202.12.124.159, mailfrom: paul@pbarker.dev)
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 892597A0096;
+	Mon, 29 Jun 2026 03:36:01 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Mon, 29 Jun 2026 03:36:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pbarker.dev; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1782718561;
+	 x=1782804961; bh=TFg30GIRwkrxoybjdB621+Cr7ivr+O0qnmwME5f8vKY=; b=
+	dWEqNre94sQPqvpyzoRTHsv+sit5eJgFm4ziin7klOgcZ/w7Iwg9STejUIHYRoNt
+	92cLy8+KRynbNXt9aoWCj48OugEvJFhTLpDTCP8g2CnwPojnknZSjx+vh+HhF0VE
+	KPA2+CIbyQzHelEJiQgQAC4bPdLCz1CGOYIvM96N1l2RnP0NJJfcY4F2lf4synFZ
+	CHo8a2QCYaju/KUcji6SEzMiDhl7SD5SWUOT+Uj3TWqlP8jeQFxT17vxNLzS+RwS
+	pISJNSk/k5vWJlYK6+ZDKZ9hKk78a6Ea0zL0CFh8ek8XGw8DkQKRcM193LbVYi5t
+	kzqbpD9I9PeY8S8dApDESA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1782718561; x=
+	1782804961; bh=TFg30GIRwkrxoybjdB621+Cr7ivr+O0qnmwME5f8vKY=; b=Y
+	ntVgWfQAj3umfLnWp7AS+MS7Ypjrp6RWh65uDx6e/aQbv3f1Kz2QJ0J6ukq9Kx+N
+	8GO2jTSOEWMOKTBwKeta7oi3VRbtwZUtlaN6IflawrttjbkAabJ04kmkRtaYc6KK
+	52kQQydZE53zcNNGClG+X6//jT5jzwO6+EwIIOCjtVNs1+l1/4mFuLg3RgNTufpP
+	398yqRkDub2j1UazlYoPtfy1bgCv2tU3YYxreVHfPyy55+NSaVtLg28td775647i
+	EGyH79bhNpQRv7OdLlQd07OdTjTv3FFpoZ70n5/juwPNoiaxNtiF35DMha+lczzV
+	9M3HxTbKqqNYOZjiQ4SBw==
+X-ME-Sender: <xms:YSBCanWGgpyimFDJp6rQyiFZ6_OEUi8U7RMYU3QgazysjoO8URZ48g>
+    <xme:YSBCaln9zypCEporlnRSCbyBuVm0DAb3DKcNG3w7aPJqbndS5zqK8Y46tCqkxbSxn
+    jET3ev0I7D8H98F-3mkvMlwar6Su4-aq9-NbzZ2bscNx4M_UdEAOv0>
+X-ME-Received: <xmr:YSBCahDLgQh5ystrEPQ-IPJOAsjm3etoE1vWYuJO34t-Eiz82ldEm-wrycJP_UqWBrvzm6MJc0wsMbmEfKAJ-joYVXCAM_Q>
+X-ME-Proxy-Cause: dmFkZTFCU18uH5r1WwAWMEiwnynHfW0nLEnmeNPDUITFlmzg5Rs0tnuxYxJ/JLZYdzK3cO
+    WbRoMwtzy64+D7EQJVjnpfFceaYq+Vqbw3pLIxzKOjV2hvrwflpJVcA61wBBPly6AyRmcw
+    i44d/jWD7/YcOZrP7G/F4hVk0w9ewm3vFaRQDoSRJSctTG7bAKbBCjGDqiTTkqd2HNsuKz
+    7zNkflhAu5skb2HJznkXGEVN09HROlaPUKm1ser1+5mTj0YMkvStoLcL0RCQ3u/WCyqGuA
+    qTMC4IsZrY2LHdfvSIVwxnZlK/Z2E/UMoDhK13YkoLnHa551kenABqfNQD0xB+0ASuzkE6
+    6ck35qy5OjQ6Yf1xgyn4M1W+o7bHlbWCRMCait/aJ1OGhVu7evToXJiJ4iVDUSgiJ79MLj
+    G0BUAH1VSpPbpsnxapyw2fxTi6vhzR4s9eE7DLnPNVU0bKrtRkpUfypZAfqOzRshcAHACq
+    /BFOiqRl+FXYi/cxO+p0SDy1sa722NtVAwiUBSohyR6YKpXVXxVPSbueBkT/CZvkYyRxk+
+    5gxjPAJ2bpZkro5Dy24PSNkOPrFQdbYjfzK+UpN2RCEb5mKpNK+hO5xUfT71GxDKeFJsqO
+    wo5USVAk/rIn12+x8AXZv5A2cDkAVj4ZUssZIQyqDLE77A87zQpHbJKEBXug
+X-ME-Proxy: <xmx:YSBCatceTnbTuJizfJGe28l5DMNfH5sWxSRBMCZdeFpkyaz_CL09pA>
+    <xmx:YSBCakLJ8lh7R3iS82WD7I1fVHUg2cyXSCrDdaRVsX-QoX8Fx3ZpBA>
+    <xmx:YSBCaofooGIvr7r8Ls1iMW1sYXuslRJ6v61Gz8v8bvVZhI_kz9s4Rw>
+    <xmx:YSBCaj3-dNkAZJ6AhN7QLMn2hzCh7CGz7_Ri_0ByFcI-JVax4b8_tw>
+    <xmx:YSBCao7aQFHPoEyUjATv2r_WZr-sP15TNll11xuavGqybb8FiMz9jtq4>
+Feedback-ID: i51494658:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 29 Jun 2026 03:36:00 -0400 (EDT)
+From: Paul Barker <paul@pbarker.dev>
+Date: Mon, 29 Jun 2026 08:35:45 +0100
+Subject: [PATCH yocto-autobuilder2 1/2] schedulers: Add missing master
+ branches
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260629-branches-v1-1-1ab28b1ee5e8@pbarker.dev>
+References: <20260629-branches-v1-0-1ab28b1ee5e8@pbarker.dev>
+In-Reply-To: <20260629-branches-v1-0-1ab28b1ee5e8@pbarker.dev>
+To: yocto-patches@lists.yoctoproject.org
+Cc: Paul Barker <paul@pbarker.dev>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=622; i=paul@pbarker.dev;
+ h=from:subject:message-id; bh=gklSon6d2zMl/PT/t8+Z5mKFb6fMAJcewB/Q6xODVnQ=;
+ b=owGbwMvMwCW2OjnkzdxdX/IYT6slMWQ5KcT3KWRqXCmZt3fSv1r9yueHl716xOk4f0n9suIT/
+ 3fsmWCq3VHKwiDGxSArpsiyuefr/ae9jrwZIbcUYOawMoEMYeDiFICJ7P/GyLCkP+V+/29JAdPv
+ LWdKlLxui6xPkJ8/q7+DI3a714rpc9oZGZo7rr9WtapXn35po6dzTFDeZIk/0tziF0+b3nSNEFC
+ 7yAQA
+X-Developer-Key: i=paul@pbarker.dev; a=openpgp;
+ fpr=98B2AAC100AC3F82BB5D546774975C81B7E66BAC
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 29 Jun 2026 06:54:31 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4313
+ <yocto-patches@lists.yoctoproject.org>; Mon, 29 Jun 2026 07:36:11 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4315
 
-From: Yoann Congal <yoann.congal@smile.fr>
-
-This reverts commit 241a957b6f76c2e6eb31d2456cae923c6e3f96e2.
-
-To avoid triggering:
-  16058 – AB-INT: rust do_test_compile/do_install segfault
-  https://bugzilla.yoctoproject.org/show_bug.cgi?id=16058
-... for the upcoming 5.0.19 build.
+Signed-off-by: Paul Barker <paul@pbarker.dev>
 ---
- config.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ schedulers.py | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/config.py b/config.py
-index 63e8b56..d102c93 100644
---- a/config.py
-+++ b/config.py
-@@ -205,7 +205,7 @@ workers_prev_releases = {
-     "whinlatter" : ("alma8", "alma9", "debian11", "debian12", "debian13", "fedora39", "fedora40", "fedora41", "fedora42", "opensuse155", "opensuse156", "rocky8", "rocky9", "stream9", "ubuntu2204", "ubuntu2404", "ubuntu2504", "ubuntu2510", "perf-"),
-     "walnascar" : ("alma8", "alma9", "debian11", "debian12", "fedora39", "fedora40", "fedora41", "opensuse155", "opensuse156", "rocky8", "rocky9", "stream9", "ubuntu2004","ubuntu2204", "ubuntu2304", "ubuntu2404", "ubuntu2410", "perf-"),
-     "styhead" : ("alma8", "alma9", "debian11", "debian12", "fedora38", "fedora39", "fedora40", "opensuse154", "opensuse155", "opensuse156", "rocky8", "rocky9", "stream8", "ubuntu1804", "ubuntu2004","ubuntu2204", "ubuntu2304", "ubuntu2404", "perf-"),
--    "scarthgap" : ("alma8", "alma9", "debian11", "debian12", "fedora38", "fedora39", "fedora40", "fedora41", "opensuse154", "rocky8", "rocky9", "stream8", "stream9", "ubuntu1804", "ubuntu2004","ubuntu2204", "ubuntu2304", "ubuntu2404", "ubuntu2604", "perf-"),
-+    "scarthgap" : ("alma8", "alma9", "debian11", "debian12", "fedora38", "fedora39", "fedora40", "fedora41", "opensuse154", "rocky8", "rocky9", "stream8", "stream9", "ubuntu1804", "ubuntu2004","ubuntu2204", "ubuntu2304", "ubuntu2404", "perf-"),
-     "nanbield" : ("alma8", "alma9", "debian11", "debian12", "fedora37", "fedora38", "opensuse153", "opensuse154", "rocky9", "stream8", "ubuntu1804", "ubuntu2004","ubuntu2204", "ubuntu2304", "perf-"),
-     "mickledore" : ("alma8", "alma9", "debian10", "debian11", "fedora35", "fedora36", "fedora37", "fedora38", "opensuse153", "opensuse154", "ubuntu1804", "ubuntu2004","ubuntu2204", "perf-"),
-     "langdale" : ("alma8", "alma9", "debian10", "debian11", "fedora35", "fedora36", "opensuse153", "opensuse154", "ubuntu1804", "ubuntu2004","ubuntu2204", "perf-"),
+diff --git a/schedulers.py b/schedulers.py
+index 5ca57f3961a5..9117a059e066 100644
+--- a/schedulers.py
++++ b/schedulers.py
+@@ -26,6 +26,8 @@ branchdefaults = {
+         'branch_meta-intel': 'master',
+         'branch_meta-mingw': 'master',
+         'branch_meta-exein': 'main',
++        'branch_meta-qcom': 'master',
++        'branch_meta-riscv': 'master',
+         'branch_meta-security': 'master',
+         'branch_meta-openembedded': 'master',
+         'branch_oecore': 'master',
+
+-- 
+2.43.0
+
 
