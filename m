@@ -2,62 +2,62 @@ Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 931E1C43602
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 870D1C43458
 	for <webhook@archiver.kernel.org>; Tue, 30 Jun 2026 16:07:04 +0000 (UTC)
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.25091.1782835619928831644
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.25084.1782835616016887189
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 30 Jun 2026 09:07:00 -0700
+ Tue, 30 Jun 2026 09:06:56 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=S58160zx;
- spf=pass (domain: gmail.com, ip: 209.85.222.181, mailfrom: twoerner@gmail.com)
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-92e67555e24so75771785a.3
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 30 Jun 2026 09:06:59 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=YLrmMExl;
+ spf=pass (domain: gmail.com, ip: 209.85.160.174, mailfrom: twoerner@gmail.com)
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-51bfbe05683so18094651cf.2
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 30 Jun 2026 09:06:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782835619; x=1783440419; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20251104; t=1782835615; x=1783440415; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=A5ahhGnLahXnO8Z7/NI7nZYav1I5X6A7dXXYRegvcCg=;
-        b=S58160zxkbqVdm+Blj+Y5LJ3D3jRmlCDXfT08PVj99zASyHnLJfFEp4Hnile7KDkK+
-         LglEVEYCkusK0+OEtZaanT5iEw5v/t6fpG9G+e4F2pqRWfKStGhoHPSbhXsUlOTHF0eO
-         SxHNy739cvaQRLwh7bKqqYMDOniCc1E0Ban7g48a57S717vBLBx64tvtAkw1m8XQn187
-         BO9CerLyWWF6IXiqkYG0zgUjGl+Y04FKh+NecGkEE4CyWWE99hk2/UFcw/QXN8LJ//3+
-         MJ+GWX+MIfbrXHmI2EVecxIGL3uH9Bw9MKbLiwH+dgr9Xwx0rfGRsndJvI/Yt0sbmzf2
-         w3XQ==
+        bh=+a7CM3rIlK7cLIeHcfsiwYl6KjuhJqv+7Ztj9/XJWAc=;
+        b=YLrmMExletVsmCzg/EmvAlSMFgVuGvA3IDlNI6U8DopywliGu9RkneNbxaZIxyBr/I
+         ktHwWhkhUJo1gLeE5vhM9WRIF0bb/v3LVUQk/SXZtwFbTNVp5HI0RY4H9GfUI+XWxmjc
+         PewYCvYGZbKcjZLTeWWgXR/RJn7zb0BwBnlhc3AUL1dSvef35+nShcgJt8CSDXX0jK0G
+         SnumIigkM44R52LsrpXRiz8WREraixV9ymur9UEfiSh1QGdznvDjCDag2QI7VFxaVl3q
+         uDql8mqCSeQzNqbC7yX25toJOw90OWzmbepsmIYUjbWJbygPM6t3U3oyH+vGxnhEixsM
+         cT9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782835619; x=1783440419;
+        d=1e100.net; s=20251104; t=1782835615; x=1783440415;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=A5ahhGnLahXnO8Z7/NI7nZYav1I5X6A7dXXYRegvcCg=;
-        b=DG9sDheDBbgRMLtZMclGvA11UJVtIa4s8okGkshj1LP3/7Sd5odGCH3MQjczGzE+Rm
-         POUS2K4poUzRhu1SMB7Desi+UUH+zLWii+0oFkpytc4aA8oGrpve618mpc5GccLWBGUi
-         jIzkOM3cjI9OYhZWCwYIk7b/XqgVYo2YsJnZKQMsC1V9gFHfKZ8YF+d//th5lD7O5mij
-         m4OVoNA1AbKG7hFj5GoKrlXw8LYAhksC4SFlYkgouWCeRlLSnPKfvRx1vzihtiVd/aCC
-         7iGtSqSzWZWwAN5zq2l7fO+KLieRGe8kbXpkWEnOwCh7t/bwDl6Fez6RaIXBBjuU6OIR
-         VuAQ==
-X-Gm-Message-State: AOJu0YxCOGKmqmmtOojRG5fBhZNT9g36smAg/ZoWd9r2VZvX1Yaqms42
-	zJeHQsSaRbYyV2k4Q2a9YyiX2N4YBg1VrtQwk8MKYRwMj9tjY+ft+l548SZVLw==
-X-Gm-Gg: AfdE7cniSzhG008J6MSB1fax2uA0Av5hnQqkMLkS1nkBNAR7rha/eOdH6XWe4w10C/n
-	L915LQu0sLVbJ6fGkNAuM8tuQlmu24XwtdsculeV7YJt9AyuNNfIsnQ4/paJKOQA7b4ytDY1COl
-	mERyrlikCfkitMK2whqJFRvjeIUI7GIz936jQqUhqbjiUtYQ9fqst9C1VWU1h9gh1d55bJC1vwh
-	SbFXFZ/uzZLT2NoWjKZEYeMRhx9BhLKhynzTLmmu1kG/zgwgGkNTlBdMmmCFzQE01knNZAchomH
-	N6N0r5X1DdmwNjc9Ab1xR4FEDKria1Q0I1P3vW7sy4FozgiltU8xvrb4LFNdjQ0WMHPYvIuREt1
-	6vHPNUNnwTmNbe/vE/ezcUoIMk6eBqlWfKZkBQoFE3Pu+0jiADgE0dtyLk4EIAtOhrsxp3/R1Zg
-	/KLWBycRFtSA6BH7EZ3q7Eb5mMtPFdWrJkKgwApSCXfNMTh6Aijx5Oamc=
-X-Received: by 2002:a05:620a:390c:b0:92e:529b:b802 with SMTP id af79cd13be357-92e62815e60mr680923685a.70.1782835618662;
-        Tue, 30 Jun 2026 09:06:58 -0700 (PDT)
+        bh=+a7CM3rIlK7cLIeHcfsiwYl6KjuhJqv+7Ztj9/XJWAc=;
+        b=lYC6ZdLkVRSUMBBnozr/Ochj9yK9KciFzBJLSBz2FJgeN5kIioIJFHBU5ao8NMZH+V
+         5TRk9OmxT+qade5F4I+weiuyHysUfM3HXuFLv1owRIhfGnKjFtvafntSyUQMqbBWxLaj
+         ZnKxfR7aSFjNRJJrkPf4nTPRioZf5q5zK1uPW77OD6NIy/3UEoWRtYNCnDGL2fBoruSd
+         /MeIYGe/fjUYDsGOJB/6/MBPpTZfF+lAVsJwwehX+LTRI2Q3GcNsE0tQpcA8Q5foqmGd
+         GZvI1wjS9qYDbWw9HpjSVqUmy2aA7LgOnIyTZmSWbqaiyKmZORDgNVR2qlIQwVsKjUaK
+         PUEQ==
+X-Gm-Message-State: AOJu0Yy5JZXIAammF2N5YRHJ2UazkDOhfH7F92cHXKbby5ZlI+32dlg9
+	1HEmOZaTwMyxnGlDO9m1xNDSriROjKbkvdEFWPBNTSZsgQaQrBrLp8qjF8dLCw==
+X-Gm-Gg: AfdE7clOw1LpXqMpTx3Y9jG0GGPB21rUZA3hnBTrA5o06FPTEBN+SBB7i5K7Rg9MhOW
+	t39eMhzgAK4ko4Y/STVWuDquDpX1hp7jivI2THksj+MdwTEYROT3KJ9UlULoA1wwcLaBBUkQLGM
+	wE2HDU0vZRQ9QKP5+zgI9ENQjxjedkSrzbN5E4X6Mu9dS0/38nHysnXeCdtc7kHfQOl3sq2f/sJ
+	4zP1Tdof7EKM4Oixf06FkT+i9AdM2OHs2JIxr58srv36RXXuw0MSFvBYJxluCnm5e87PvPy4icV
+	/yJnoOMWjDALQsj3nltj43HwRKJWfXeqpbSxrmdNJCbKecuPoY0xl08SYIa6EHpoKlIECau6wxw
+	5NUNPcSc7Ko+4tay4dQgujNj7Mv2R0rs7Ak1R29AN+QkFbdqAkOpAc/Hb0+Vv+YfrN4oBSf9voV
+	dLFJUTAVl0rc+sr8eJ0fZYo4A4hX8rHkPG6J7+OCs87N5HmHxRfnIrwdw=
+X-Received: by 2002:a05:622a:5cb:b0:517:71d2:37d2 with SMTP id d75a77b69052e-51c104cea19mr59740681cf.0.1782835614221;
+        Tue, 30 Jun 2026 09:06:54 -0700 (PDT)
 Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-92e621374dbsm272461785a.4.2026.06.30.09.06.56
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-92e621374dbsm272461785a.4.2026.06.30.09.06.52
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jun 2026 09:06:56 -0700 (PDT)
+        Tue, 30 Jun 2026 09:06:53 -0700 (PDT)
 From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [wic][PATCH v2 9/9] tests/unit/test_bb_utils: test mkdirhier() and fix its missing errno import
-Date: Tue, 30 Jun 2026 12:06:12 -0400
-Message-ID: <20260630160612.1005451-10-twoerner@gmail.com>
+Subject: [wic][PATCH v2 7/9] tests/docs: add the test-authoring guide
+Date: Tue, 30 Jun 2026 12:06:10 -0400
+Message-ID: <20260630160612.1005451-8-twoerner@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260630160612.1005451-1-twoerner@gmail.com>
 References: <20260630160612.1005451-1-twoerner@gmail.com>
@@ -67,199 +67,177 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Tue, 30 Jun 2026 16:07:04 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4330
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4328
 
-mkdirhier() wraps os.makedirs() and, on OSError, re-checks the error to
-decide whether to swallow a benign "already exists" race or re-raise:
+A suite is only as good as the tests added to it over time, so it needs
+a guide that says where a new test goes, what one looks like, and how
+to choose its inputs and assertions. This commit adds
+tests/docs/authoring.md.
 
-    except OSError as e:
-        if e.errno != errno.EEXIST or not os.path.isdir(directory):
-            raise e
+The guide covers:
 
-but the module never imports errno. The reference to errno.EEXIST is
-only evaluated when os.makedirs() actually raises, so the defect is
-invisible on the happy path and on the unexpanded-${} guard. The moment
-a real OSError occurs -- a parent component that is a file, a permission
-error, anything -- the handler itself raises NameError: name 'errno' is
-not defined, masking the original error with a misleading one.
+  - where a test goes: one test_<area>.py per wic module under
+    tests/unit/, extending an existing file or starting a new one;
 
-The fix is a one-line import. With errno available the handler behaves
-as intended: an EEXIST on an existing directory is swallowed, while any
-other OSError (and an EEXIST whose path is not a directory) propagates
-unchanged.
+  - the shape of a test: a small worked example, a preference for
+    parametrize over in-test loops so each input/output pair is its own
+    named case, and use of the tmp_path fixture for scratch files;
 
-This commit adds tests/unit/test_bb_utils.py, covering mkdirhier() end
-to end:
+  - asserting the correct behaviour rather than whatever wic currently
+    does, so a test never bakes in a bug; when a test exposes a defect,
+    the source fix lands in the same change so the test passes;
 
-  - the happy path (nested, single-level, idempotent, existing dir);
-  - the unexpanded-${} guard (rejected, nothing created, and that a
-    bare brace without a dollar is allowed);
-  - the OSError handler: a real mkdir under a file component surfaces an
-    OSError, an arbitrary OSError propagates with its errno intact, an
-    EEXIST on an existing directory is swallowed, and an EEXIST on a
-    regular file propagates.
+  - probing the boundaries: a checklist of input classes worth covering
+    for numbers, strings, paths, types/shape, and state, each asserting
+    a specific value or exception rather than merely "it did not
+    crash";
 
-The error-path tests fail with NameError without the import and pass
-with it, so the test and the fix belong together in this one change.
+  - keeping the assertion strong: never weaken an assertion to get
+    green;
+
+  - how to run just the test you wrote, with and without coverage.
 
 AI-Generated: codex/claude-opus 4.7 (xhigh)
 Signed-off-by: Trevor Woerner <twoerner@gmail.com>
 ---
 changes in v2:
-- v1 recorded this bug with an xfail marker in one large commit;
-  v2 drops the xfail, asserts the correct behaviour directly, and
-  lands the one-line errno-import fix in this same commit so the
-  test passes green.
+- v1 submitted the entire test suite as a single commit; v2 breaks
+  the work into a reviewable series, and this patch is one step of it.
 ---
- src/wic/bb/utils.py         |   1 +
- tests/unit/test_bb_utils.py | 126 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 127 insertions(+)
- create mode 100644 tests/unit/test_bb_utils.py
+ tests/docs/authoring.md | 124 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 124 insertions(+)
+ create mode 100644 tests/docs/authoring.md
 
-diff --git a/src/wic/bb/utils.py b/src/wic/bb/utils.py
-index 3750056ba563..0b40dd0c1d59 100644
---- a/src/wic/bb/utils.py
-+++ b/src/wic/bb/utils.py
-@@ -1,6 +1,7 @@
- """
- Minimal subset of BitBake's bb.utils used by standalone wic.
- """
-+import errno
- import os
- 
- # from bitbake/lib/bb/utils.py
-diff --git a/tests/unit/test_bb_utils.py b/tests/unit/test_bb_utils.py
+diff --git a/tests/docs/authoring.md b/tests/docs/authoring.md
 new file mode 100644
-index 000000000000..5cd6035ca453
+index 000000000000..c60cceb2d32d
 --- /dev/null
-+++ b/tests/unit/test_bb_utils.py
-@@ -0,0 +1,126 @@
-+r"""
-+Unit tests for wic.bb.utils -- a small standalone subset of BitBake's
-+bb.utils. mkdirhier() is a mkdir -p wrapper with two guards: an
-+unexpanded-${} check and an OSError handler that re-checks EEXIST.
-+"""
-+import errno
-+import os
-+import sys
-+import tempfile
-+import unittest.mock as mock
-+from pathlib import Path
++++ b/tests/docs/authoring.md
+@@ -0,0 +1,124 @@
++# Authoring a unit test
 +
++Unit tests live under `tests/unit/`, one module per area of wic, named
++`test_<area>.py`. They import the wic module under test directly and
++run in-process, so they need no host tools and no build environment.
++
++## Contents
++
++- [Where a test goes](#where-a-test-goes)
++- [Shape of a test](#shape-of-a-test)
++- [Assert the correct behaviour](#assert-the-correct-behaviour)
++- [Probe the boundaries](#probe-the-boundaries)
++- [Keep the assertion strong](#keep-the-assertion-strong)
++- [Running what you wrote](#running-what-you-wrote)
++
++## Where a test goes
++
++Group tests by the wic module they exercise, one `test_<area>.py` per
++module. Start a new file when you begin covering a module that has no
++file yet; otherwise extend the existing one.
++
++## Shape of a test
++
++```python
 +import pytest
 +
-+_SRC = Path(__file__).resolve().parent.parent.parent / "src"
-+if str(_SRC) not in sys.path:
-+    sys.path.insert(0, str(_SRC))
-+
-+from wic.bb.utils import mkdirhier
++from wic.ksparser import sizetype
 +
 +
-+# ---------------------------------------------------------------------------
-+# Happy path
-+# ---------------------------------------------------------------------------
++class TestSizetype:
++    # sizetype(default, size_in_bytes=False) returns a parser f(arg);
++    # with default "M", a bare number is read as mebibytes-in-KiB.
++    def test_plain_value_uses_default_unit(self):
++        parse = sizetype("M")
++        assert parse("100") == 100 * 1024
 +
-+class TestMkdirhierHappyPath:
-+    def test_creates_nested_directory(self):
-+        d = tempfile.mkdtemp()
-+        target = os.path.join(d, "a", "b", "c")
-+        mkdirhier(target)
-+        assert os.path.isdir(target)
++    @pytest.mark.parametrize("arg,expected", [
++        ("1K", 1),
++        ("1G", 1 * 1024 * 1024),
++        ("0", 0),
++    ])
++    def test_suffixes(self, arg, expected):
++        assert sizetype("M")(arg) == expected
++```
 +
-+    def test_idempotent_on_existing_directory(self):
-+        d = tempfile.mkdtemp()
-+        target = os.path.join(d, "x")
-+        mkdirhier(target)
-+        # Second call must not raise (exist_ok=True).
-+        mkdirhier(target)
-+        assert os.path.isdir(target)
++Prefer `@pytest.mark.parametrize` to express each input/output pair as
++its own case rather than looping inside one test, so a single bad
++value shows up as one named failure.
 +
-+    def test_single_level(self):
-+        d = tempfile.mkdtemp()
-+        target = os.path.join(d, "single")
-+        mkdirhier(target)
-+        assert os.path.isdir(target)
++Use `pytest`'s `tmp_path` fixture for any scratch files; a passing
++test's scratch directory is removed automatically (see the retention
++policy in `pyproject.toml`), and a failing one is kept for inspection.
 +
-+    def test_existing_root_directory(self):
-+        # An already-existing directory (the tmpdir itself) is a no-op.
-+        d = tempfile.mkdtemp()
-+        mkdirhier(d)
-+        assert os.path.isdir(d)
++## Assert the correct behaviour
 +
++Every assertion states the behaviour wic is *expected* to provide,
++never the behaviour it currently happens to have. A test that locks in
++a wrong result is worse than no test: it gives false confidence and it
++turns red exactly when someone repairs the code.
 +
-+# ---------------------------------------------------------------------------
-+# Unexpanded bitbake-variable guard
-+# ---------------------------------------------------------------------------
++When a test exposes a defect, the fix to the wic source lands in the
++same change as the test, so the test asserts the correct behaviour and
++passes. Do not commit a test that asserts a known-wrong result.
 +
-+class TestMkdirhierUnexpandedVar:
-+    def test_unexpanded_var_rejected(self):
-+        with pytest.raises(Exception) as ei:
-+            mkdirhier("/tmp/${WORKDIR}/x")
-+        assert "unexpanded bitbake variable" in str(ei.value)
++Wrong -- bakes in the bug:
 +
-+    def test_unexpanded_var_not_created(self):
-+        d = tempfile.mkdtemp()
-+        bad = os.path.join(d, "${VAR}", "sub")
-+        with pytest.raises(Exception):
-+            mkdirhier(bad)
-+        # Nothing should have been created.
-+        assert not os.path.exists(os.path.join(d, "${VAR}"))
++```python
++# value lost its comma; asserting the broken output
++assert result["file"] == "s3://bucket/a"
++```
 +
-+    def test_brace_without_dollar_is_allowed(self):
-+        # Only the literal '${' marker triggers the guard; a bare '{' is a
-+        # legal (if unusual) directory name.
-+        d = tempfile.mkdtemp()
-+        target = os.path.join(d, "plain{brace")
-+        mkdirhier(target)
-+        assert os.path.isdir(target)
++Right -- asserts the correct output (and the fix lands with it):
 +
++```python
++assert result["file"] == "s3://bucket/a,b.img"
++```
 +
-+# ---------------------------------------------------------------------------
-+# OSError handler
-+# ---------------------------------------------------------------------------
++## Probe the boundaries
 +
-+class TestMkdirhierErrorPath:
-+    def test_oserror_under_a_file_component(self):
-+        # Create a regular file, then try to mkdir a subdir *under* it. On
-+        # Linux os.makedirs raises NotADirectoryError (an OSError subclass);
-+        # the handler must let it surface rather than swallow it.
-+        d = tempfile.mkdtemp()
-+        f = os.path.join(d, "afile")
-+        Path(f).write_text("x")
-+        target = os.path.join(f, "sub")
-+        with pytest.raises(OSError):
-+            mkdirhier(target)
++For a parameter, probe the boundary and just past it rather than only
++the comfortable middle of its range. The classes worth covering:
 +
-+    def test_generic_oserror_propagates(self):
-+        # An arbitrary OSError (EACCES != EEXIST) must propagate unchanged.
-+        err = OSError()
-+        err.errno = errno.EACCES
-+        with mock.patch("wic.bb.utils.os.makedirs", side_effect=err):
-+            with pytest.raises(OSError) as ei:
-+                mkdirhier("/whatever/path")
-+        assert ei.value.errno == errno.EACCES
++- numbers: empty, zero, negative, the maximum and one beyond it,
++  non-power-of-two and non-multiple-of-1024/1000 values, primes,
++  fractional values where an integer is assumed, `0` versus `0.0`
++  versus `"0"`, off-by-one at a block or sector boundary, and very
++  large magnitudes near `2**31` and `2**63`
++- strings: the empty string, whitespace only, embedded spaces, tabs,
++  newlines and CRLF endings, non-ASCII characters, shell
++  metacharacters in a value that becomes part of a command line,
++  leading-dash values that look like options, over-delimited or
++  malformed forms (stray commas, doubled or missing separators), and
++  very long values
++- paths: traversal (`../`), doubled slashes, a trailing slash or its
++  absence, `.` and `..` components, broken or looping symlinks, and a
++  non-existent path
++- types and shape: each wrong type the parameter might receive (a
++  string where an integer is expected, a list where a string is
++  expected, `None`, and so on), the wrong argument count, and
++  duplicate keys or entries
++- state: a second call that must not see stale cached data, a
++  `cache=False` path that must evict, calling an operation twice, and
++  finalising a half-constructed object
 +
-+    def test_eexist_on_existing_dir_is_swallowed(self):
-+        # An EEXIST OSError on a path that is already a directory is the
-+        # benign race the handler exists to absorb; it must not propagate.
-+        d = tempfile.mkdtemp()
-+        err = OSError()
-+        err.errno = errno.EEXIST
-+        with mock.patch("wic.bb.utils.os.makedirs", side_effect=err):
-+            mkdirhier(d)  # d exists and is a dir -> swallowed, no raise
++Each case asserts a specific outcome -- an exact value, or a specific
++exception -- rather than merely "it did not crash." A test that only
++checks for the absence of an exception will pass against badly wrong
++output.
 +
-+    def test_eexist_on_existing_file_propagates(self):
-+        # EEXIST but the path is a regular file, not a directory: the
-+        # handler's isdir() re-check fails, so the error must propagate.
-+        d = tempfile.mkdtemp()
-+        f = os.path.join(d, "afile")
-+        Path(f).write_text("x")
-+        err = OSError()
-+        err.errno = errno.EEXIST
-+        with mock.patch("wic.bb.utils.os.makedirs", side_effect=err):
-+            with pytest.raises(OSError) as ei:
-+                mkdirhier(f)
-+        assert ei.value.errno == errno.EEXIST
++## Keep the assertion strong
++
++If a test is hard to make pass, the answer is in the code or in
++understanding the correct behaviour, never in weakening the assertion
++to something vague enough to pass. Loosening an assertion to get green
++is how a suite quietly stops catching regressions.
++
++## Running what you wrote
++
++```bash
++tests/run-tests.sh tests/unit/test_<area>.py -v
++tests/run-tests.sh --coverage tests/unit/test_<area>.py
++```
++
++A new test should leave the suite green, with zero failures.
 -- 
 2.50.0.173.g8b6f19ccfc3a
 
