@@ -2,89 +2,99 @@ Return-Path: <richard.purdie@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDBC9C43327
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1748C43458
 	for <webhook@archiver.kernel.org>; Wed,  1 Jul 2026 13:13:42 +0000 (UTC)
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.44824.1782911620737753245
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.44825.1782911621353107219
  for <yocto-patches@lists.yoctoproject.org>;
  Wed, 01 Jul 2026 06:13:41 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=OA8PZsvu;
- spf=pass (domain: linuxfoundation.org, ip: 209.85.221.41, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-4720d22c94aso586352f8f.1
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 01 Jul 2026 06:13:40 -0700 (PDT)
+ dkim=pass header.i=@linuxfoundation.org header.s=google header.b=AVlUbanw;
+ spf=pass (domain: linuxfoundation.org, ip: 209.85.221.42, mailfrom: richard.purdie@linuxfoundation.org)
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-472055b0efaso413194f8f.2
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 01 Jul 2026 06:13:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linuxfoundation.org; s=google; t=1782911619; x=1783516419; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VMgfiNjmVYo0V29h5q5zEZ5lmJeIMhlBiAJvtttDOpo=;
-        b=OA8PZsvudZ93Tv3r0hcI0o0/9x14o1DyZLPnAqHFmGywIiMexhu1IqqQPkOK4h04R7
-         8ocrjg67zPk88E0aubR0i6L1lApHj7bBI5mZXQY+OkeQEs9kMWIJ4IKCAclQo45kb03j
-         /TWl33TNuKM/7iGDCYqzRTaAasl6kqYP2HCss=
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CkUWwxUNRvxsnC+n183QLGxO6VkJqiffdg6soptPVHM=;
+        b=AVlUbanwdG+QpiteIQLhVQhtmDZnRN0pKnyauGlYGPWJGBZR+aUAPymM/92XBTNkIs
+         t4tNPbv2uxwXy30Xy8rG7KUrtKGxZ+baBdHbPcohkZ0I+jyhkX6Iwdxik4ZBAh59fRAE
+         KAhp/S3m7WR2OtVG4QtmWZ/3l4EqnaCE5Kftk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20251104; t=1782911619; x=1783516419;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VMgfiNjmVYo0V29h5q5zEZ5lmJeIMhlBiAJvtttDOpo=;
-        b=n4jIxmPVSj3F5/b5adRN9d913USE4OAjlH5BeL7Va36LTWJj5SVMcooM5wjL8J4p0U
-         JmfXEwbO7bshTVgj77mDmDRSP7vD2pLlFtBtpArawIucPvYqfcBhK6NrOatttwJVswmc
-         5x7bUeai3u91QhuLGoxeIO+tjHjvYq2co/mJIPf2QdE4cMjPcUM1PSA2YH8+G8Ny32dz
-         33lgLT3Wbkr/oqlMcUcSXK0uloD1hh9OP1vVJpQlOa44cOKODGfTRjmk4xjl7Tn7Rtbw
-         iTxaesmuSoyTXDXYrJf8CBRzPo99Ty0zQ1qJThJSfDsTXSpP4XHuAk2HSfaEIcgMb0zh
-         S2Ng==
-X-Gm-Message-State: AOJu0YypOj68DZxyxwN9EcSBPP3NUSr3tHv3hnB5/u1xdx3jmPrrl95T
-	MTqAcBC+2ZkeHSgilF9yi21u+IrJQsVr4kc+JEf1GniLuo1Y2pZRoQcMFP6p5izLYG2kImYrso/
-	QWxSZ
-X-Gm-Gg: AfdE7clKBelYHyItIJwoJb8evgI/VhYxava/adeeMWWBxorRYiUIRvP2VQtMR8ozuSa
-	DUMgTZ5Kg6Wnvkm5FmXxEPjQDMtFmpzvGNKYh9Ox3cGC7kbhK/NTskzLydnAuBaF/WFuJ2ijot3
-	awk0zH42B37OmHVOMcjWbQosg13jvm0qnCnqnN8C2z5FdBvcYGPvGBRabBsZZBDu54iWf5KUDPZ
-	Qk616hkR/xxB/suQ/KXFQ82OkimoDyb2XEo6f2ctSaF8x5WXy3lPvjyfBcelzga+Oct6V1XP6Hh
-	hXevLhh9kRD1rCl4M6xLM7tMJT9A428/dRv0qswD7V77xvmguqC0Q7vX++VMyMYpUIfmC+LTFWs
-	o+uDpgKD4FpeMSz5G5VtXE7JwDERevHcfeWDb73k/zrVw39vRKIQ9d00/Cf+hOPn9JS28P+h810
-	zbHrNcAkGkCWkXIdMFYEp/Iniz/UdEwm3SR5qJvjkGBQ==
-X-Received: by 2002:adf:e006:0:20b0:473:1ccc:15be with SMTP id ffacd0b85a97d-477b11002f4mr657060f8f.39.1782911618572;
-        Wed, 01 Jul 2026 06:13:38 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=CkUWwxUNRvxsnC+n183QLGxO6VkJqiffdg6soptPVHM=;
+        b=orQ/lpTGDOPdjH6cQHrPx8ft93oxnULDVIEyHHlj1ByjV4qowjb9AZZJYIA+p9sN/+
+         E+CZk3KFGQf/Vs/zNi3JCzrXhihGHZ0cbzU5Dd33UajKCEcdD4ABWkTfF92PdGlzTfcu
+         QsAs0HfxtwvETf5LUSvqRfSjLjYyzUjm6JUlMZgRYysraOME27eTOYUS+7uWsuKxflBM
+         pXxedHCxx2a2sHVgO428P0bl5eap7xZl3qVlLLa6JMKeayldpO2NFxrehfOd/YDRbRHJ
+         JIaT7Q0F1dwGt3OZzxBuZVIH7XXxeXZga6839QxswaIrbso5TW32VLlTwJ+Ko7FtzCZ5
+         l2tw==
+X-Gm-Message-State: AOJu0YwGINE1R+Fk9FU2xGdpXjGoVcfo8IW0UPUhkEfGL6IPAXq8HJft
+	xRhifoLI3XByC73BjunufQL8QpQN+dx5kGeX8LxI8FK9Eo2ToBf0XYKW9of2jGTJQNZtVvuHtG/
+	mYbxQ
+X-Gm-Gg: AfdE7cn1++hWkj0+YC4Gx7BEz9CzswMe9AMqsqhFEqnTe8JFUgw09cqpNM+jM7LEsv1
+	FY3R1aAQUteRphHLAqhkYlbc3Vkh1mxHX+Mu4H1Ynobn44g9ldVuhO/9SKfNEEHOapGMlbdbrMb
+	szo2Bk4SwRH9NnP8y8++/L9bCVHw+A3wsCu2ouqunC1Viu6psqX0SBc1VpHBf0l6Qiaq95Sf5mQ
+	iP9p0aYmViw6QSLCBtJ5zswGxA73viLndMi8dui+H2rLd5L8q5OehiDIOmk2FQuKsVzcAuqOr/4
+	jj2/5JFB6p4HeS/4442gRbnfj++hsTjnCBDPnqySM5BR0h3ES1ebK/WPDfL6QOgzJoIYJPtIRez
+	bHJJ9al45HiFjY+6MFbIyQEckInbv3rFsG0V+8Zye6Sdrw5775xj1/QmhHwmf82JhZD+QIUrHCX
+	PHN6CiEbqYUiLENd1tk1swYJp2dbR76Y2Fxzzp2hE6Vw==
+X-Received: by 2002:a05:6000:1847:b0:475:e3fe:8ac3 with SMTP id ffacd0b85a97d-477574b037dmr2864476f8f.8.1782911619574;
+        Wed, 01 Jul 2026 06:13:39 -0700 (PDT)
 Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:6b3f:20f2:ee05:f032])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47567884770sm17568280f8f.33.2026.07.01.06.13.37
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47567884770sm17568280f8f.33.2026.07.01.06.13.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Jul 2026 06:13:37 -0700 (PDT)
+        Wed, 01 Jul 2026 06:13:39 -0700 (PDT)
 From: Richard Purdie <richard.purdie@linuxfoundation.org>
 To: yocto-patches@lists.yoctoproject.org
 Cc: seebs@seebs.net,
 	mark.hatle@kernel.crashing.org
-Subject: [pseudo] [PATCH 1/7] pseudo.h: Avoid accessing unallocated memory
-Date: Wed,  1 Jul 2026 14:13:30 +0100
-Message-ID: <20260701131336.3578279-1-richard.purdie@linuxfoundation.org>
+Subject: [pseudo] [PATCH 2/7] pseudo_util: Avoid accidental free calls for without_libpseudo()
+Date: Wed,  1 Jul 2026 14:13:31 +0100
+Message-ID: <20260701131336.3578279-2-richard.purdie@linuxfoundation.org>
 X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260701131336.3578279-1-richard.purdie@linuxfoundation.org>
+References: <20260701131336.3578279-1-richard.purdie@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Wed, 01 Jul 2026 13:13:42 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4343
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4344
 
-We can call STARTSWITH in cases where the item being searched for is longer
-than the string itself. Switch from memcmp to strncmp to avoid accessing
-unassigned memory.
+We need to return list after the strdup otherwise the caller doesn't
+know whether to free the return value or not.
 
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
 ---
- pseudo.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ pseudo_util.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/pseudo.h b/pseudo.h
-index b6c13f2..1152c19 100644
---- a/pseudo.h
-+++ b/pseudo.h
-@@ -99,7 +99,7 @@ extern char *pseudo_version;
-  #define PSEUDO_LIBDIR "lib"
- #endif
+diff --git a/pseudo_util.c b/pseudo_util.c
+index 2b0cc04..9cafad6 100644
+--- a/pseudo_util.c
++++ b/pseudo_util.c
+@@ -336,13 +336,13 @@ without_libpseudo(char *list) {
+ 	if (list[0] == '=' || list[0] == PSEUDO_LINKPATH_SEPARATOR[0])
+ 		skip_start = 1;
  
--#define STARTSWITH(x, y) (!memcmp((x), (y), sizeof(y) - 1))
-+#define STARTSWITH(x, y) (strncmp(y, x, strlen(y)) == 0)
- 
- #ifndef PSEUDO_LOCALSTATEDIR
-  #define PSEUDO_LOCALSTATEDIR "var/pseudo"
+-	if ((*real_regexec)(&libpseudo_regex, list, 1, pmatch, 0)) {
+-		return list;
+-	}
+ 	list = strdup(list);
+ 	if (!list) {
+ 		pseudo_diag("Couldn't allocate memory to remove libpseudo from environment.\n");
+ 	}
++	if ((*real_regexec)(&libpseudo_regex, list, 1, pmatch, 0)) {
++		return list;
++	}
+ 	while (list && !(*real_regexec)(&libpseudo_regex, list, 1, pmatch, 0)) {
+ 		char *start = list + pmatch[0].rm_so;
+ 		char *end = list + pmatch[0].rm_eo;
 
