@@ -2,62 +2,62 @@ Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93976C43327
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 824D6C44500
 	for <webhook@archiver.kernel.org>; Wed,  1 Jul 2026 07:40:41 +0000 (UTC)
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.39523.1782891639846996442
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.39829.1782891638676099415
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 01 Jul 2026 00:40:40 -0700
+ Wed, 01 Jul 2026 00:40:38 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=lrqdqqLq;
- spf=pass (domain: gmail.com, ip: 209.85.219.50, mailfrom: twoerner@gmail.com)
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-8f032b47e3cso2540346d6.0
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 01 Jul 2026 00:40:39 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=s2BEWoHz;
+ spf=pass (domain: gmail.com, ip: 209.85.222.173, mailfrom: twoerner@gmail.com)
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-915ab38ac14so33678685a.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 01 Jul 2026 00:40:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782891639; x=1783496439; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20251104; t=1782891637; x=1783496437; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=l8AwUyqD3YHDjcfObBhFvOsCWa4Eh1L7njz67SGuOEQ=;
-        b=lrqdqqLq+tlM/yJbLzL6OK1bdoMTfbyUaArMInll3z3yA1MHfgZETvwFxKFXLZJ5qJ
-         dMFOd/C2raFd/4sPPBttGbc31s7Q63uUoCaBX+xqSB+7Vv15/1lkpe5gxEfLg+hkDGpq
-         8xGjr6LdeUTHVxVPk42aqtNMBVtMhnQwV13Eb3nrnFQCln5x6VfZALd6HTn8pkHnQKrr
-         JyTXErtFymenmsz02EWEH39Gx/jNGd+izHSSNDAquyziAuwF4mDAippkZadBcJpUR9DX
-         hHInQMplFScn50hQ7Kj3PWHD09fc4uq2TGZmch6BrCXBD3oWNIyZR1fYehigRCb9UM+I
-         SCPw==
+        bh=g+JbDIq7r4PS1tgWPnuiK0Rqjmn0yHxyhY8c27yUaxo=;
+        b=s2BEWoHz0ebwEeLObYk5G+Jx1yX7+qsk+W7/ofLBs8F03fOK8jSE7amXRC5EML6I0x
+         JsOakvmJgUnUhVVqQtMd/RTtQBALgVZ/9QDSxXpr8W9EcndQ2+4/mDzmVbxwsuppflki
+         h4OtSw3SajvxAf12j1Q16Nz6eTbnzEDJslzmI1jVyQnK9zIUpDR+p+tkHiXR9twDfDJS
+         WRzL3cSVCi/+v/F3hE0PzHh2fQEPv0jK4je7fOrRM3M7HUGCYn2Y/p17bdOFGedeG3hi
+         N6Icvdejf0AYzXFYaHb89sF0+6LLGt+7bIHXaWKb1o4CiaN8MUAJkkC1Q4XrqUMO3b/N
+         iFKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782891639; x=1783496439;
+        d=1e100.net; s=20251104; t=1782891637; x=1783496437;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=l8AwUyqD3YHDjcfObBhFvOsCWa4Eh1L7njz67SGuOEQ=;
-        b=dDUP1DB1TYUV2+6Eq5waF7Cq/a5CBNWaVuQUPg+oa4ncswzhNB6bhrxaCwvP5GBWsd
-         OtLlo/TmayyMxZpN758MatfEEJ/X32Nw7bovvqNBzA0w3N3vpj6Vt3ZRnoxb5jioHlfq
-         OD6cOz/e8QIC+6Emr3xUYr9NjWzYLP5sS3kU3k1sqy94W5OKx87Ifae0iGMYC5rjj8fd
-         p/bD2S3pBINRh/etDjizqeEFlxtVjHN412Inab/BeR+yUyP7LD3C+xUL0EQhtiMDP/mO
-         GU1kL7aHnbRQSlk8sP9mMCsB7HT99lz4eEN5THjxHCzj5fjD1EPmFK7YK9RchL9c1qXg
-         3DZA==
-X-Gm-Message-State: AOJu0Yz16WzqqUmW/32Whvfp6+7ayGHizBN12QDmUYdjmCLoCuHtoqyA
-	gZFAFXQVJSisNX9t7impbcz+Prm1M34EeCYc5L8HIr+jlVbwo6MaYu109ITgMg==
-X-Gm-Gg: AfdE7cnFF24JMnDGmToIdsAxD4CwEwtzM08b8pBc/eVQQcLC7OYl7uFPWExQYurS33x
-	27osGiD+d47cxBABNLNItLyQL4qcd7WN1RxJxZsvn4KaXKKWqzoS2Ey5wwgZcqCHYrbsfygrCUp
-	+KelRuLn3OYzsvYg5PYGif7koWn55pGWxWlUfjagC5EAThmFdHfpiGbW/is4GYL33an4Te1+D21
-	u+PZNeHXhJjEWOJpes069rGYqBxZ0fCkDXyL8WdQyIclqA/+NKKLdtdNc2EfklCCnRtmOPuDk0A
-	XX/Vi6/HkYY6eL2zhlgpakV1MsJOQpGBvXH6HXhrmhSMjcrxlGSNdXLgiuX6Op2xklxg62vFIF/
-	LXN+cgIU4f6XYNbYg2NQzEep2RtgxeGI91huZwuFMDaktq8GSWx8kyEIC4sjdHt+5l1zM6IHbaM
-	dpnE8H4NQlTwKvUCjUmJo5aTpm88R4Jfl1VGdJcfE+VUOoqt/pNS53xgw=
-X-Received: by 2002:a05:6214:2604:b0:8f1:c359:43cf with SMTP id 6a1803df08f44-8f3c8ff7be5mr4987706d6.39.1782891638684;
-        Wed, 01 Jul 2026 00:40:38 -0700 (PDT)
+        bh=g+JbDIq7r4PS1tgWPnuiK0Rqjmn0yHxyhY8c27yUaxo=;
+        b=W3/foCccb+8GsP2oDchS1Wayhga+oYLxFtVsa7ScyjqJ3KZabMwBXgdBn3eZlyIUFd
+         bUph3l/1n51kbPddkB3fbPgnLib9Q8463Ue2u8x4mTsqoAuxdSonZzoWQNaios5+4i1y
+         uWv/0heZEZl5IGXNBw2d74qwX6raQjW1k0HVvUuq672HC7FUSjPp4kLbA2LVFSWzUBtY
+         /dntPG1td8iRw5ibNWR6ZyPguTkKjFAHW647IxB+8za6V8ZQaNkMrPsviz/IS/Yu8qWR
+         mdOkFJwd4xTaQHhIhn+RQ2G9Ym1aVESkCD7pPCjtCknNU67QG0Rfctioygz2qpUef3RL
+         e8BQ==
+X-Gm-Message-State: AOJu0Yyqz5Q7UKtV2E6qr6kAxYzXbVW0bVTZd9JzBQShCEk3m9cP9vQw
+	4gm8CBkd+kdDSjPZNCKwPuxTy5DoTmPcA4Yat0rdPjCy1Ks5ou/7gsvIZVkv7w==
+X-Gm-Gg: AfdE7cnpqOQnccS2qd4BqCn1bJBWlXXSo2q9MS+b9baMU72LZKNxIVekpWgL9WbJ2s5
+	6F2Eby92Ore4sn8roRMIGTZTIBVJLIU4EOqDRt2Eu7rF0qGtjXIrYeTviN9SpilQn4Z3Z6ZcaKL
+	YPalmKuZ4ixL3Uor+gYaIuFmudSYUbftvZRdjsgC5597X4Tx/ocu9pY5IH/W41YjNRbX6AGHLFT
+	QXt9YUdk9+4Dn1EJZpCmpDfTcKOmEgoEGtqU0N6HU4oM1tztAHUWs0YsJf2/sH4ZJOrUhmxFSO2
+	2nF2jf6CS3zdjqzAzzhaCQWZganIz+CKjSPyJzWy9XiXNqCIRS0OCPj9CWWZOYugfQWEiRY7Gx0
+	eHcil55IK18VN9nom3IBy6azhpJ/R2KBNJsB1cb5XrWSqZW9jnnssovHcdkaM54z72bA0vSb3h4
+	M53V4dP8+Lwn494LAYruleTQfjMwgd4hjaXcfG6QPQeftk4cgcB8qcPNo=
+X-Received: by 2002:a05:620a:408c:b0:92e:6bbf:9672 with SMTP id af79cd13be357-92e784d12f8mr73882985a.46.1782891637225;
+        Wed, 01 Jul 2026 00:40:37 -0700 (PDT)
 Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8f35e790229sm15822316d6.2.2026.07.01.00.40.37
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8f35e790229sm15822316d6.2.2026.07.01.00.40.35
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Jul 2026 00:40:37 -0700 (PDT)
+        Wed, 01 Jul 2026 00:40:35 -0700 (PDT)
 From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [wic][PATCH v3 03/10] tests: add the run-tests.sh wrapper
-Date: Wed,  1 Jul 2026 03:40:23 -0400
-Message-ID: <20260701074030.1090807-4-twoerner@gmail.com>
+Subject: [wic][PATCH v3 02/10] tests: add a session banner via conftest.py
+Date: Wed,  1 Jul 2026 03:40:22 -0400
+Message-ID: <20260701074030.1090807-3-twoerner@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260701074030.1090807-1-twoerner@gmail.com>
 References: <20260701074030.1090807-1-twoerner@gmail.com>
@@ -67,34 +67,33 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Wed, 01 Jul 2026 07:40:41 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4335
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4334
 
-The suite is run with pytest, but invoking pytest directly has two
-sharp edges: it must be run from the right directory for the pyproject
-configuration to apply, and it happily runs against whatever Python
-happens to be first on PATH, even one that cannot import wic. A run
-against the wrong interpreter produces a misleading banner and, worse,
-can silently exercise a different wic than the one in the checkout.
+When a test run starts it is useful to see, at a glance, exactly what
+is being tested: which host the run is on, which Python and pytest are
+in use, and -- most importantly -- which wic the suite imported and
+what version it reports. Without that, a passing or failing run is
+hard to attribute, especially when more than one wic checkout or
+virtualenv is in play.
 
-This commit adds tests/run-tests.sh, a thin wrapper that removes both
-hazards:
+pytest looks for a file named conftest.py and, among other things,
+calls its pytest_report_header() hook to print extra lines in the
+session header before collection begins. This commit adds that file
+with a single hook that prints a short banner:
 
-  - it locates the repository root from its own path and changes there
-    before running, so it works regardless of the caller's directory;
+  - the host node name, operating system, and machine type;
+  - the running Python version and the pytest version;
+  - the version wic reports and the filesystem path the wic module was
+    imported from.
 
-  - it checks that the interpreter can import wic before handing off to
-    pytest, and fails loudly with the install command if it cannot;
+The wic lookup is defensive: if wic cannot be imported (for example
+the test extras were not installed, or the suite is being run outside
+the checkout) the banner says so rather than aborting the run, so the
+failure is visible in the header instead of as an opaque collection
+error.
 
-  - with no arguments it runs the whole suite under tests/; any
-    argument it does not recognise (a path, -k EXPR, -v, ...) is passed
-    straight through to pytest, and an explicit -- forwards everything
-    after it.
-
-The interpreter can be overridden with the PYTHON environment variable
-(default python3). -h/--help prints usage and exits.
-
-The README Testing section gains the run-tests.sh invocation alongside
-the install step.
+The file name conftest.py is mandatory; pytest discovers it by name,
+so it cannot be called anything else.
 
 AI-Generated: codex/claude-opus 4.7 (xhigh)
 Signed-off-by: Trevor Woerner <twoerner@gmail.com>
@@ -105,104 +104,54 @@ changes in v2:
 - v1 submitted the entire test suite as a single commit; v2 breaks
   the work into a reviewable series, and this patch is one step of it.
 ---
- README.md          |  1 +
- tests/run-tests.sh | 75 ++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 76 insertions(+)
- create mode 100755 tests/run-tests.sh
+ tests/conftest.py | 38 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+ create mode 100644 tests/conftest.py
 
-diff --git a/README.md b/README.md
-index 497ebb1de0f0..e557eb435316 100644
---- a/README.md
-+++ b/README.md
-@@ -56,6 +56,7 @@ extras pull in everything the suite needs:
- 
- ```
- pip install -e ".[tests]"
-+tests/run-tests.sh
- ```
- 
- See [tests/docs/](tests/docs/) for how to run the suite and the
-diff --git a/tests/run-tests.sh b/tests/run-tests.sh
-new file mode 100755
-index 000000000000..9db6d50338d6
+diff --git a/tests/conftest.py b/tests/conftest.py
+new file mode 100644
+index 000000000000..1c368ebf8595
 --- /dev/null
-+++ b/tests/run-tests.sh
-@@ -0,0 +1,75 @@
-+#!/usr/bin/env bash
++++ b/tests/conftest.py
+@@ -0,0 +1,38 @@
++# Session banner for the wic test suite.
 +#
-+# Run the wic test suite.
-+#
-+# Thin wrapper around pytest that works from anywhere in the checkout:
-+# it locates the repository root, makes sure the interpreter can import
-+# wic, and then hands off to pytest.
-+#
-+# Needs the test extras: pip install -e ".[tests]"
++# Before collection, print the environment the tests exercise:
++#   - the host
++#   - the Python and pytest versions
++#   - the wic under test (its version and the module path of its import)
 +
-+set -euo pipefail
++import platform
 +
-+usage() {
-+    cat <<'USAGE'
-+Usage:
-+  tests/run-tests.sh [pytest args]
++import pytest
 +
-+Options:
-+  -h, --help    show this help and exit
 +
-+Anything else is passed straight through to pytest (for example a
-+path, -k EXPR, or -v). With no such argument the whole suite under
-+tests/ is run.
++def _wic_under_test():
++    """Return (version, module_path) for the wic being tested."""
++    try:
++        import wic.cli as wic_cli
++    except Exception as exc:  # pragma: no cover - reported in the banner
++        return ("(import failed: %s)" % exc, "(unimported)")
++    version = getattr(wic_cli, "__version__", "(unknown)")
++    module_path = getattr(wic_cli, "__file__", "(unknown)")
++    return (version, module_path)
 +
-+Examples:
-+  tests/run-tests.sh                  # whole suite
-+  tests/run-tests.sh -k filemap -v    # pass args through to pytest
-+  tests/run-tests.sh tests/unit       # a single tier or file
 +
-+Needs the test extras: pip install -e ".[tests]"
-+USAGE
-+}
++def _format_banner():
++    wic_version, wic_path = _wic_under_test()
++    lines = [
++        "wic test suite",
++        "  host:   %s  %s %s" % (
++            platform.node(), platform.system(), platform.machine()),
++        "  python: %s   pytest: %s" % (
++            platform.python_version(), pytest.__version__),
++        "  wic:    %s  (%s)" % (wic_version, wic_path),
++    ]
++    return "\n".join(lines)
 +
-+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-+PY="${PYTHON:-python3}"
 +
-+pytest_args=()
-+while [ $# -gt 0 ]; do
-+    case "$1" in
-+        -h|--help)
-+            usage
-+            exit 0
-+            ;;
-+        --)
-+            shift
-+            pytest_args+=("$@")
-+            break
-+            ;;
-+        *)
-+            pytest_args+=("$1")
-+            ;;
-+    esac
-+    shift
-+done
-+
-+cd "$REPO_ROOT"
-+
-+# Make sure the interpreter that will run pytest can actually import wic.
-+# The suites pass even without an install (each adds src/ to sys.path),
-+# but the session banner and any install-dependent behaviour would be
-+# wrong, so fail loudly instead of running against the wrong interpreter.
-+if ! "$PY" -c "import wic" >/dev/null 2>&1; then
-+    echo "error: '$PY' cannot import wic." >&2
-+    echo "       install wic with its test extras:" >&2
-+    echo "       $PY -m pip install -e \".[tests]\"" >&2
-+    exit 1
-+fi
-+
-+# Default target: the whole suite. Overridden if the caller passed a
-+# path or -k/-m selector to pytest.
-+if [ ${#pytest_args[@]} -eq 0 ]; then
-+    pytest_args=("tests")
-+fi
-+
-+exec "$PY" -m pytest "${pytest_args[@]}"
++def pytest_report_header(config):
++    return _format_banner()
 -- 
 2.50.0.173.g8b6f19ccfc3a
 
