@@ -2,62 +2,62 @@ Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D61FC43602
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93976C43327
 	for <webhook@archiver.kernel.org>; Wed,  1 Jul 2026 07:40:41 +0000 (UTC)
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.39828.1782891637108077429
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.39523.1782891639846996442
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 01 Jul 2026 00:40:37 -0700
+ Wed, 01 Jul 2026 00:40:40 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=YXjYQc/x;
- spf=pass (domain: gmail.com, ip: 209.85.160.181, mailfrom: twoerner@gmail.com)
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-51a8f5ef23bso2069171cf.2
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 01 Jul 2026 00:40:36 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=lrqdqqLq;
+ spf=pass (domain: gmail.com, ip: 209.85.219.50, mailfrom: twoerner@gmail.com)
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-8f032b47e3cso2540346d6.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 01 Jul 2026 00:40:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782891636; x=1783496436; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20251104; t=1782891639; x=1783496439; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=wgA1KZBX54HVNPOyagtXsuIOHW3aatFGsduASI2pxTw=;
-        b=YXjYQc/xJJSL2G2Y7//vH6T6V0sKRbalV8VU7ZX7ad1tmuxDNl6ZObtNlNQx8i8sWY
-         7U7OhhU10qsR5UOM92pb0KnO0eITq+W7GCZm2A8JG7exLu7sPmDOo8W5d4dN9Tunkm2Y
-         JKIhmNyXbZW59kB4pz88N9lnghBBkJj+p0S6FP+gDwPFIlzkF7wqoKFy+c/sfZ8PXAVf
-         w8IWEvWccngZxWHMIiHx9YMhXGKT+x8L3hIeA58dYa8qoorog8mTq2JW6Y35TjWmFFRF
-         NfcLQmE+15YByAb/bNERGgfiHirF+FniEHj04zx0uHUOSqdXfrjDYpRJoO4HM1cBR3/x
-         HERg==
+        bh=l8AwUyqD3YHDjcfObBhFvOsCWa4Eh1L7njz67SGuOEQ=;
+        b=lrqdqqLq+tlM/yJbLzL6OK1bdoMTfbyUaArMInll3z3yA1MHfgZETvwFxKFXLZJ5qJ
+         dMFOd/C2raFd/4sPPBttGbc31s7Q63uUoCaBX+xqSB+7Vv15/1lkpe5gxEfLg+hkDGpq
+         8xGjr6LdeUTHVxVPk42aqtNMBVtMhnQwV13Eb3nrnFQCln5x6VfZALd6HTn8pkHnQKrr
+         JyTXErtFymenmsz02EWEH39Gx/jNGd+izHSSNDAquyziAuwF4mDAippkZadBcJpUR9DX
+         hHInQMplFScn50hQ7Kj3PWHD09fc4uq2TGZmch6BrCXBD3oWNIyZR1fYehigRCb9UM+I
+         SCPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782891636; x=1783496436;
+        d=1e100.net; s=20251104; t=1782891639; x=1783496439;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=wgA1KZBX54HVNPOyagtXsuIOHW3aatFGsduASI2pxTw=;
-        b=Q/5Df43jRvnFFB7pCoA6HeJBXtlJ6gdelspIG006hx9aRv8NwP2bBX2lTir2o7EjJW
-         Q02XvEcnTeo9/6nOZpz/77HLF6i4GSfoWwQ0oAknNX1myMowpPZ2vgQ2AWdvls5s+lQk
-         RVnN+zORZ+gtHx4MFLEuXmEFWaXc6ysmTYcbJlaom1qUpMc93zGoBnf4mOAFcm8kRDiV
-         M9GXtsYruYphJ5ND5SKYAS92563eEBMV2gwbwslKy49Ud4iuEdsHgLGybm6AOcbpKPGS
-         PyjkrkfTZbUu69wB8T3vG0pgcMQknC+7QMMVECkEUVMuRuI5vp1HScn6FCAyG+1q4O6Z
-         M78g==
-X-Gm-Message-State: AOJu0Yx7a1fBEGy5ezM/AHAFc13kM7pB2/K8CZbJ64STv4bxI/yNd9iD
-	T8oZbBgLFtB7Y86HqRFMorUbZ7GFNbyvJHryzgGGeri9AOWu8SpMj+6ECtYo4Q==
-X-Gm-Gg: AfdE7cm3uzC6FSD5XgBQwbgV0Fz8lyrcVGicxZaFIxVyXLbFGndgYPvhFchMyRA0a1f
-	Pjt4hIa+F/Oxz+F9yBHYMiymBZFYzRKzLBETgpl6DiQvBwga32nPVyZ9XB5YdMTMK5zkaYpKwkG
-	CwZFUDoFQxHZPubYCgKYXPZk6FwZ3poQuaeGZm1QptpDMvQUcL2AqYzDewMAnDoBy0sPb3FlZV+
-	tzSsLCjOLnrc1O9sXPWaHQ8Oftr9CZjsjESKeN65i0U1W/CxdiHE8Olhwjt38hKvE65S+yekWDL
-	ZzM93XatUNujl9i0Qwh/BtVSuY66PUxV+7/RTi18QnIi793xUMndbU4P2LZ/Zo+T5NEOUHjO3i4
-	K7C7yDLshKaC+2Su6AaW+UbMqSj09wx+NMV/9pJF2Uc4tyHvhGpOaMLvhN0YbwZbrtCLM7+JLa+
-	s+xlVirWUA3niCzxuN0q3lWhGupJcIvFEU8DRqBRMl6Vg+YtHN4UWyWaw=
-X-Received: by 2002:ac8:5a95:0:b0:51c:ebd:fb42 with SMTP id d75a77b69052e-51c26b20e48mr6086181cf.59.1782891635522;
-        Wed, 01 Jul 2026 00:40:35 -0700 (PDT)
+        bh=l8AwUyqD3YHDjcfObBhFvOsCWa4Eh1L7njz67SGuOEQ=;
+        b=dDUP1DB1TYUV2+6Eq5waF7Cq/a5CBNWaVuQUPg+oa4ncswzhNB6bhrxaCwvP5GBWsd
+         OtLlo/TmayyMxZpN758MatfEEJ/X32Nw7bovvqNBzA0w3N3vpj6Vt3ZRnoxb5jioHlfq
+         OD6cOz/e8QIC+6Emr3xUYr9NjWzYLP5sS3kU3k1sqy94W5OKx87Ifae0iGMYC5rjj8fd
+         p/bD2S3pBINRh/etDjizqeEFlxtVjHN412Inab/BeR+yUyP7LD3C+xUL0EQhtiMDP/mO
+         GU1kL7aHnbRQSlk8sP9mMCsB7HT99lz4eEN5THjxHCzj5fjD1EPmFK7YK9RchL9c1qXg
+         3DZA==
+X-Gm-Message-State: AOJu0Yz16WzqqUmW/32Whvfp6+7ayGHizBN12QDmUYdjmCLoCuHtoqyA
+	gZFAFXQVJSisNX9t7impbcz+Prm1M34EeCYc5L8HIr+jlVbwo6MaYu109ITgMg==
+X-Gm-Gg: AfdE7cnFF24JMnDGmToIdsAxD4CwEwtzM08b8pBc/eVQQcLC7OYl7uFPWExQYurS33x
+	27osGiD+d47cxBABNLNItLyQL4qcd7WN1RxJxZsvn4KaXKKWqzoS2Ey5wwgZcqCHYrbsfygrCUp
+	+KelRuLn3OYzsvYg5PYGif7koWn55pGWxWlUfjagC5EAThmFdHfpiGbW/is4GYL33an4Te1+D21
+	u+PZNeHXhJjEWOJpes069rGYqBxZ0fCkDXyL8WdQyIclqA/+NKKLdtdNc2EfklCCnRtmOPuDk0A
+	XX/Vi6/HkYY6eL2zhlgpakV1MsJOQpGBvXH6HXhrmhSMjcrxlGSNdXLgiuX6Op2xklxg62vFIF/
+	LXN+cgIU4f6XYNbYg2NQzEep2RtgxeGI91huZwuFMDaktq8GSWx8kyEIC4sjdHt+5l1zM6IHbaM
+	dpnE8H4NQlTwKvUCjUmJo5aTpm88R4Jfl1VGdJcfE+VUOoqt/pNS53xgw=
+X-Received: by 2002:a05:6214:2604:b0:8f1:c359:43cf with SMTP id 6a1803df08f44-8f3c8ff7be5mr4987706d6.39.1782891638684;
+        Wed, 01 Jul 2026 00:40:38 -0700 (PDT)
 Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8f35e790229sm15822316d6.2.2026.07.01.00.40.34
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8f35e790229sm15822316d6.2.2026.07.01.00.40.37
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Jul 2026 00:40:34 -0700 (PDT)
+        Wed, 01 Jul 2026 00:40:37 -0700 (PDT)
 From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [wic][PATCH v3 01/10] tests: add the standalone test-suite skeleton
-Date: Wed,  1 Jul 2026 03:40:21 -0400
-Message-ID: <20260701074030.1090807-2-twoerner@gmail.com>
+Subject: [wic][PATCH v3 03/10] tests: add the run-tests.sh wrapper
+Date: Wed,  1 Jul 2026 03:40:23 -0400
+Message-ID: <20260701074030.1090807-4-twoerner@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260701074030.1090807-1-twoerner@gmail.com>
 References: <20260701074030.1090807-1-twoerner@gmail.com>
@@ -67,36 +67,34 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Wed, 01 Jul 2026 07:40:41 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4333
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4335
 
-wic currently has no test mechanism of its own; it relies on the
-oe-selftest from oe-core for all its testing, which means a full
-bitbake build is needed to exercise even pure-Python logic. This
-commit lays the groundwork for a small standalone suite that runs
-from a plain checkout with nothing but pytest, so that logic can be
-pinned down and kept stable as the code evolves.
+The suite is run with pytest, but invoking pytest directly has two
+sharp edges: it must be run from the right directory for the pyproject
+configuration to apply, and it happily runs against whatever Python
+happens to be first on PATH, even one that cannot import wic. A run
+against the wrong interpreter produces a misleading banner and, worse,
+can silently exercise a different wic than the one in the checkout.
 
-This commit adds the skeleton only; it does not add any tests.
+This commit adds tests/run-tests.sh, a thin wrapper that removes both
+hazards:
 
-What this adds:
+  - it locates the repository root from its own path and changes there
+    before running, so it works regardless of the caller's directory;
 
-  - pyproject.toml: a "tests" optional-dependency group (pytest only)
-    so that "pip install -e .[tests]" pulls in what the suite needs,
-    plus a [tool.pytest.ini_options] section. The pytest options keep
-    a test's scratch directory only when that test fails, so repeated
-    runs do not accumulate leftover files.
+  - it checks that the interpreter can import wic before handing off to
+    pytest, and fails loudly with the install command if it cannot;
 
-  - tests/unit/ and tests/docs/: the directories that hold the
-    in-process unit suites and the suite documentation. Git cannot
-    track an empty directory, so a placeholder .gitkeep is committed
-    in each to create it. The .gitkeep files have no content and are
-    removed once real files land in those directories.
+  - with no arguments it runs the whole suite under tests/; any
+    argument it does not recognise (a path, -k EXPR, -v, ...) is passed
+    straight through to pytest, and an explicit -- forwards everything
+    after it.
 
-  - .gitignore: ignore the .pytest_cache/ directory that pytest
-    writes at the top of the checkout.
+The interpreter can be overridden with the PYTHON environment variable
+(default python3). -h/--help prints usage and exits.
 
-  - README.md: a Testing section pointing at the suite and at
-    tests/docs/, and a tests/* entry in the project layout list.
+The README Testing section gains the run-tests.sh invocation alongside
+the install step.
 
 AI-Generated: codex/claude-opus 4.7 (xhigh)
 Signed-off-by: Trevor Woerner <twoerner@gmail.com>
@@ -107,82 +105,104 @@ changes in v2:
 - v1 submitted the entire test suite as a single commit; v2 breaks
   the work into a reviewable series, and this patch is one step of it.
 ---
- .gitignore          |  3 +++
- README.md           | 14 ++++++++++++++
- pyproject.toml      | 12 ++++++++++++
- tests/docs/.gitkeep |  0
- tests/unit/.gitkeep |  0
- 5 files changed, 29 insertions(+)
- create mode 100644 tests/docs/.gitkeep
- create mode 100644 tests/unit/.gitkeep
+ README.md          |  1 +
+ tests/run-tests.sh | 75 ++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 76 insertions(+)
+ create mode 100755 tests/run-tests.sh
 
-diff --git a/.gitignore b/.gitignore
-index eeb8a6ec4087..07992096c0fb 100644
---- a/.gitignore
-+++ b/.gitignore
-@@ -1 +1,4 @@
- **/__pycache__
-+
-+# pytest cache
-+/.pytest_cache/
 diff --git a/README.md b/README.md
-index 75229421763c..497ebb1de0f0 100644
+index 497ebb1de0f0..e557eb435316 100644
 --- a/README.md
 +++ b/README.md
-@@ -46,6 +46,20 @@ environment file or folder (generated via `bitbake -c rootfs_wicenv
- - `src/wic/*`: core engine, plugins, and helpers.
- - `src/bb/*`: various bitbake helpers that were brought along and used in other parts of wic.
- - `src/oe/*`: various oe-core helpers that were brought along and used in other parts of wic.
-+- `tests/*`: the standalone test suite and its documentation (see Testing below).
-+
-+## Testing
-+
-+wic ships a standalone test suite under `tests/` that runs from a plain
-+checkout, with no bitbake and no OpenEmbedded build required. The test
-+extras pull in everything the suite needs:
-+
-+```
-+pip install -e ".[tests]"
-+```
-+
-+See [tests/docs/](tests/docs/) for how to run the suite and the
-+conventions it follows.
+@@ -56,6 +56,7 @@ extras pull in everything the suite needs:
  
- ## Contributing
+ ```
+ pip install -e ".[tests]"
++tests/run-tests.sh
+ ```
  
-diff --git a/pyproject.toml b/pyproject.toml
-index fdc1ce0f5ece..d660e39007c4 100644
---- a/pyproject.toml
-+++ b/pyproject.toml
-@@ -21,6 +21,11 @@ classifiers = [
- Homepage = "https://git.yoctoproject.org/wic"
- Repository = "https://git.yoctoproject.org/wic"
- 
-+[project.optional-dependencies]
-+tests = [
-+    "pytest >= 7.0",
-+]
+ See [tests/docs/](tests/docs/) for how to run the suite and the
+diff --git a/tests/run-tests.sh b/tests/run-tests.sh
+new file mode 100755
+index 000000000000..9db6d50338d6
+--- /dev/null
++++ b/tests/run-tests.sh
+@@ -0,0 +1,75 @@
++#!/usr/bin/env bash
++#
++# Run the wic test suite.
++#
++# Thin wrapper around pytest that works from anywhere in the checkout:
++# it locates the repository root, makes sure the interpreter can import
++# wic, and then hands off to pytest.
++#
++# Needs the test extras: pip install -e ".[tests]"
 +
- [project.scripts]
- wic = "wic.cli:main"
- 
-@@ -36,3 +41,10 @@ build-backend = "hatchling.build"
- 
- [tool.hatch.version]
- path = "src/wic/cli.py"
++set -euo pipefail
 +
-+[tool.pytest.ini_options]
-+# Keep a test's scratch directory only when it fails; a passing test's
-+# tmp_path is removed automatically so repeated runs do not accumulate
-+# leftover files under the pytest base temp directory.
-+tmp_path_retention_policy = "failed"
-+tmp_path_retention_count  = 1
-diff --git a/tests/docs/.gitkeep b/tests/docs/.gitkeep
-new file mode 100644
-index 000000000000..e69de29bb2d1
-diff --git a/tests/unit/.gitkeep b/tests/unit/.gitkeep
-new file mode 100644
-index 000000000000..e69de29bb2d1
++usage() {
++    cat <<'USAGE'
++Usage:
++  tests/run-tests.sh [pytest args]
++
++Options:
++  -h, --help    show this help and exit
++
++Anything else is passed straight through to pytest (for example a
++path, -k EXPR, or -v). With no such argument the whole suite under
++tests/ is run.
++
++Examples:
++  tests/run-tests.sh                  # whole suite
++  tests/run-tests.sh -k filemap -v    # pass args through to pytest
++  tests/run-tests.sh tests/unit       # a single tier or file
++
++Needs the test extras: pip install -e ".[tests]"
++USAGE
++}
++
++REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
++PY="${PYTHON:-python3}"
++
++pytest_args=()
++while [ $# -gt 0 ]; do
++    case "$1" in
++        -h|--help)
++            usage
++            exit 0
++            ;;
++        --)
++            shift
++            pytest_args+=("$@")
++            break
++            ;;
++        *)
++            pytest_args+=("$1")
++            ;;
++    esac
++    shift
++done
++
++cd "$REPO_ROOT"
++
++# Make sure the interpreter that will run pytest can actually import wic.
++# The suites pass even without an install (each adds src/ to sys.path),
++# but the session banner and any install-dependent behaviour would be
++# wrong, so fail loudly instead of running against the wrong interpreter.
++if ! "$PY" -c "import wic" >/dev/null 2>&1; then
++    echo "error: '$PY' cannot import wic." >&2
++    echo "       install wic with its test extras:" >&2
++    echo "       $PY -m pip install -e \".[tests]\"" >&2
++    exit 1
++fi
++
++# Default target: the whole suite. Overridden if the caller passed a
++# path or -k/-m selector to pytest.
++if [ ${#pytest_args[@]} -eq 0 ]; then
++    pytest_args=("tests")
++fi
++
++exec "$PY" -m pytest "${pytest_args[@]}"
 -- 
 2.50.0.173.g8b6f19ccfc3a
 
