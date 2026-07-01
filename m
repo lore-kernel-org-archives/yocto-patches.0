@@ -2,62 +2,62 @@ Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88D96C43458
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9963AC43602
 	for <webhook@archiver.kernel.org>; Wed,  1 Jul 2026 07:40:51 +0000 (UTC)
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.39524.1782891643629284491
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.39525.1782891645088313295
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 01 Jul 2026 00:40:43 -0700
+ Wed, 01 Jul 2026 00:40:45 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=DhBr/udh;
- spf=pass (domain: gmail.com, ip: 209.85.222.175, mailfrom: twoerner@gmail.com)
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-92e622cc874so19018285a.0
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 01 Jul 2026 00:40:43 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=qe4zevRs;
+ spf=pass (domain: gmail.com, ip: 209.85.219.53, mailfrom: twoerner@gmail.com)
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-8eefd4a8057so4494746d6.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 01 Jul 2026 00:40:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782891642; x=1783496442; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20251104; t=1782891644; x=1783496444; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/mQcRXUgEI8W4D4U44K3nCuFCRFgIDOVPPX/UhC27ik=;
-        b=DhBr/udhOqi4LhHSlzPfA4PF5E5OATq65k+8gPBK7EI2OYePPb4YVgkoiEIyQ4erfi
-         dgMMXbd7FoEhoxpNDrkTc9+ypKy8vN9admFkQnc8c6x9HUb/Y1KbP0wt6pPvRUemicIw
-         8bjqmLpo86q6iCo4Fgpw+nvcvYgvplhTup3l53SLan9tGYXeaDvY5GX17QwYX0RIu4oE
-         su48V2bD+7e8raNBxGFJwGUO1beWPLUp2TnX+fm8Shq53tKP+IZVIpdwwnx4cEVVBXNC
-         8MfQwkBS7vpJEtFqQAtZyS0mgxQ+WkR7imTWnCXYwXAIFoaQxSiWItZW52wqRXRa6kqn
-         68+A==
+         :reply-to:content-type;
+        bh=FNUNHVfuGVDIE7QbmCHde7NVjnWrHF198jUhaGuOORo=;
+        b=qe4zevRsp3Oph99HdqsVA2k5pbGgMYIFOJ2DGy1g1Kn0qjv6NKoFs+9bp37cPGPpY4
+         UEEvLOFI6NEMP+2/RZ1ftFiq0X1LjRIW5jxoPNFwZQfzeuYRZYr++qZdLYyzcv/dSj0I
+         IXANtAKLEmoRYMYhRvXihJnWXgQKt/0rzo4xvG63Oi4HKYn0QnBWVNIvY/JdwJqofWrE
+         GGdpBYxIRWfJ/H93iT16pw43OOUZCg8JNZOt2rTJFdESyHEVKQE25y55dEjlRJM8csWb
+         C+0RxrxFirhNEC3dz4EpN5zS8y9sEoVhn40iDjOa3DXZ2k8kMXPpZIcMFBi+wdNru71Z
+         OVMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782891642; x=1783496442;
+        d=1e100.net; s=20251104; t=1782891644; x=1783496444;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/mQcRXUgEI8W4D4U44K3nCuFCRFgIDOVPPX/UhC27ik=;
-        b=dtQ9WPP7gwwwAa59tsLjO6I2cFNwpClt9QR0qG+lPnGIkq3rLEIZBjuJc403SzAZIY
-         V6JzQmlhaIQ/KumrzmWtBZPVOgVNDKPNBYplLw+t+bmmhfy0RBI2i36gkRBbZxuLjYwz
-         dM6zOiS20M9YFot3aXw2NKEPqI9n/7/UzPMlSlJ0SLWMPi2gVjESnhMUBOqwCNpCyUFs
-         7zvraDx1eRukv5N7gglZedoe7Qp31eZRC3sKMW5p2QVqlgEedX9LxkxUCm+TAr2+ULYq
-         0uTNZuU4mtUtggnYJX/pYga2Oom9XrUNPY/euiZBTAv+/jsRJdAcQJGpA2g8sp/caV9g
-         h2Iw==
-X-Gm-Message-State: AOJu0YwjGdM75dtIvOuC3wOpjVNnMUzGO4U/UqPRIfKuhjTlsMrHbHXA
-	QIeR6UynJkBMaMF7otR4mVj2Mhpvrv0rvFG9NWGsQG+E9vERgGe1iHcWkhxdDg==
-X-Gm-Gg: AfdE7cm+yd8dz1D3Nq/WI9jQzJOTWsdgYGsA5Vi/pnuyVEoGT8tJxUibnagDKkttE1q
-	PItGWy8tyH3JNEHpw085QgEI77pTxk401exgGsd9lw+SItH+YjehFIGmJzzmX0m+qDgH4VEHfVi
-	PBh0HZCDeNIu8HJKmGXMmPHE29SUkkjt8x7JPxEUNkYDCmMU79m/9B60fEpkOSSuzixPaWwtpLR
-	y2C8/yKmdo0MwOwJHtu1RmPM8WxVJPlnn6/4QO1hUKA/me7AsliMd6Yu09e5FgEariRHaNpWvoU
-	r11xyzh92tXXws32Bhe51yCBsefWV+Z8tdqdKcxHRFF5bmtKhG7dIa+JAAaXo2bsG539W3mOz5L
-	Di3Q//XF1Iuq6tMy9sTJbGLmY7YHr0EvgXIXvxmHaJAe/tySuqKTbHGtQcddy/4GWb94c05ny9X
-	VuP6Xxryvg8c/F06MoQjKmEL00773gaFZUqX3cz4QI/w0eAIoqSO2brC0=
-X-Received: by 2002:a05:620a:4451:b0:92d:d721:3fd1 with SMTP id af79cd13be357-92e78534bdamr68029885a.74.1782891642326;
-        Wed, 01 Jul 2026 00:40:42 -0700 (PDT)
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=FNUNHVfuGVDIE7QbmCHde7NVjnWrHF198jUhaGuOORo=;
+        b=sOaa1SPMDIOJWdOwPCLXU2ibByHlsOUHp2np7zU4hw3vp3oKnEf7cLXBWw3zfvcEsz
+         7V2aIEQUUlX4W4IM7UKiI3SvsTlfiYC+gLbyZYXHqNyh1I+YtyCz99DGgCEexXvUHnx5
+         upSwrGZHcnI+aIvi2/Jw/WchvTVZi+snfOIJLePR4KUYV2S2VIo9RG4JxmVtcxAuw6FZ
+         8Mfol/8xPbxqFLfpHzKfP7hvuNMXYwN90emX8tCnEDX8Wgm/9wsyBAjdPtNQbh7tDoIk
+         887CVfs5E/ebStfdUd6qWVStOklY/LFlYin/vcGmaOeONAvys8Iwz3+/dRy5cns4728G
+         vmIA==
+X-Gm-Message-State: AOJu0YzdviUPvjRJNjOrwXZQASOmlR5uHi8DMqrBfFIUi416E8Aer9mF
+	z0Vx2iVYNYO+RDi4XTgjA9MjLVidmbgJEqOze/RI3uxzGsuZBJojIY7KRJnwSw==
+X-Gm-Gg: AfdE7cnN5NjjMf9JAjKxRR2KTfpw21A3dBfEAfiO7ArTWSVZM1uANwMMZJVvLhCkALT
+	AOs3NCu1vblBcDn0DQNAS/BGf+ZGrBxQP2sYrtAovzQEIuad16pk/yJn2NHigrQijpoU1KCcGjP
+	8+KFg4zfaht/LU+fwiC7SWtoL/bK9L4U/c6LMZ+4p/9NcqfBUIEEbQTnf7xkdtYtIxsLopzz6WJ
+	QElW8fyruzGanzodtjNczGPOJAsaWLwZOBetIEA4dkOMneVsichFHWH9PwrMpb87I7h6xuIhmk7
+	BYwSHP7Nt5u377tkUMAMwFUk0MZZuj/PYbz+fuz5UMz6f6Ka7b2YVH725kWW9SZW7ZYwqecXb3Z
+	ZU5sRTNqfelbIo88yq79wUshcJZTNvPudWoUerdOL2eVw/YQUyJ+9oFN4CAWsJdWq3/MdjwFqtB
+	NYTSRJZaJ0ef5CnWuxC5QjbwbqTOjS8d03kkeNXezR8z/YqsZqiFpm7WQ=
+X-Received: by 2002:a05:6214:2dca:b0:8e4:d2ba:d677 with SMTP id 6a1803df08f44-8f3c7e708demr5879746d6.29.1782891643663;
+        Wed, 01 Jul 2026 00:40:43 -0700 (PDT)
 Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8f35e790229sm15822316d6.2.2026.07.01.00.40.38
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8f35e790229sm15822316d6.2.2026.07.01.00.40.42
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Jul 2026 00:40:39 -0700 (PDT)
+        Wed, 01 Jul 2026 00:40:42 -0700 (PDT)
 From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [wic][PATCH v3 04/10] tests: add optional coverage reporting to run-tests.sh
-Date: Wed,  1 Jul 2026 03:40:24 -0400
-Message-ID: <20260701074030.1090807-5-twoerner@gmail.com>
+Subject: [wic][PATCH v3 05/10] tests: add ruff linting to run-tests.sh
+Date: Wed,  1 Jul 2026 03:40:25 -0400
+Message-ID: <20260701074030.1090807-6-twoerner@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260701074030.1090807-1-twoerner@gmail.com>
 References: <20260701074030.1090807-1-twoerner@gmail.com>
@@ -67,30 +67,40 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Wed, 01 Jul 2026 07:40:51 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4336
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4337
 
-Knowing which lines a test run actually exercised is the difference
-between "the suite is green" and "the suite is green and we know what
-it touched". This commit wires branch coverage of the wic source into
-the runner, kept entirely opt-in so a plain run stays fast and quiet.
+A test suite is only trustworthy if its own code is clean, so this
+commit brings ruff into the runner and holds the test tree to a clean
+bar. It also makes it easy to preview what ruff thinks of the wic
+source, without yet enforcing it.
 
-pyproject.toml gains coverage and pytest-cov in the tests extra, so
-"pip install -e .[tests]" pulls in what the new flags need.
+pyproject.toml gains ruff in the tests extra and a [tool.ruff] section.
+The configuration is deliberately minimal for now: the test suite is
+the only tree under an enforced clean bar; the wic source under src/ is
+not yet ruff-clean and is reported, not gated.
 
-run-tests.sh gains two options:
+run-tests.sh gains two lint modes, each used on its own:
 
-  - --coverage measures branch coverage of src/wic during the run and
-    prints a terminal report listing the lines that were missed;
+  - --lint-tests runs ruff over tests/ and exits. The test suite must
+    report nothing; a finding here is a bug in our own test code and is
+    expected to be fixed.
 
-  - --html [DIR] additionally writes a browsable HTML report (default
-    htmlcov/, or DIR if given) and implies --coverage.
+  - --lint-src runs ruff over src/ and exits. The source is not yet
+    ruff-clean, so this is a preview: the runner prints ruff's findings
+    and exits with its status, but nothing in the suite asserts on
+    them. Keeping the two trees on separate flags means cleaning up the
+    source later does not disturb the test-tree gate.
 
-If --coverage is requested but pytest-cov is not installed the runner
-fails loudly with the install command rather than running without the
-measurement it was asked for.
+A lint mode cannot be combined with coverage, with the other lint mode,
+or with pytest arguments; the runner rejects such combinations loudly
+rather than silently dropping the extras. If ruff is not installed it
+fails with the install command.
 
-The coverage data file and the HTML report directory are build
-artifacts, so .gitignore learns to ignore .coverage and htmlcov/.
+tests/docs/linting.md documents the two modes and why src/ is held back
+for now. That file replaces the tests/docs/.gitkeep placeholder, which
+is no longer needed now that the directory has real content.
+
+.gitignore learns to ignore ruff's .ruff_cache/ directory.
 
 AI-Generated: codex/claude-opus 4.7 (xhigh)
 Signed-off-by: Trevor Woerner <twoerner@gmail.com>
@@ -101,110 +111,193 @@ changes in v2:
 - v1 submitted the entire test suite as a single commit; v2 breaks
   the work into a reviewable series, and this patch is one step of it.
 ---
- .gitignore         |  4 ++++
- pyproject.toml     |  2 ++
- tests/run-tests.sh | 39 ++++++++++++++++++++++++++++++++++++++-
- 3 files changed, 44 insertions(+), 1 deletion(-)
+ .gitignore            |  3 +++
+ pyproject.toml        |  8 ++++++++
+ tests/docs/.gitkeep   |  0
+ tests/docs/linting.md | 39 +++++++++++++++++++++++++++++++++++
+ tests/run-tests.sh    | 47 +++++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 97 insertions(+)
+ delete mode 100644 tests/docs/.gitkeep
+ create mode 100644 tests/docs/linting.md
 
 diff --git a/.gitignore b/.gitignore
-index 07992096c0fb..534c49538091 100644
+index 534c49538091..3c3cfb328fb0 100644
 --- a/.gitignore
 +++ b/.gitignore
-@@ -2,3 +2,7 @@
- 
- # pytest cache
- /.pytest_cache/
+@@ -6,3 +6,6 @@
+ # coverage data and reports
+ /.coverage
+ /htmlcov/
 +
-+# coverage data and reports
-+/.coverage
-+/htmlcov/
++# ruff cache
++/.ruff_cache/
 diff --git a/pyproject.toml b/pyproject.toml
-index d660e39007c4..ece2757bb686 100644
+index ece2757bb686..656adcd4930a 100644
 --- a/pyproject.toml
 +++ b/pyproject.toml
-@@ -24,6 +24,8 @@ Repository = "https://git.yoctoproject.org/wic"
- [project.optional-dependencies]
- tests = [
+@@ -26,6 +26,7 @@ tests = [
      "pytest >= 7.0",
-+    "coverage >= 7.0",
-+    "pytest-cov >= 4.0",
+     "coverage >= 7.0",
+     "pytest-cov >= 4.0",
++    "ruff >= 0.5",
  ]
  
  [project.scripts]
+@@ -50,3 +51,10 @@ path = "src/wic/cli.py"
+ # leftover files under the pytest base temp directory.
+ tmp_path_retention_policy = "failed"
+ tmp_path_retention_count  = 1
++
++[tool.ruff]
++# For now only the test suite is actually linted (run-tests.sh
++# --lint-tests passes the tests/ path); the wic source under src/ is
++# not yet ruff-clean and is left out until its findings are fixed (see
++# tests/docs/linting.md). --lint-src can still be run to preview the
++# source findings, but it is reported, not enforced.
+diff --git a/tests/docs/.gitkeep b/tests/docs/.gitkeep
+deleted file mode 100644
+index e69de29bb2d1..000000000000
+diff --git a/tests/docs/linting.md b/tests/docs/linting.md
+new file mode 100644
+index 000000000000..71b4de21c100
+--- /dev/null
++++ b/tests/docs/linting.md
+@@ -0,0 +1,39 @@
++# Linting
++
++## Contents
++
++- [Running the linter](#running-the-linter)
++- [tests/ must be clean](#tests-must-be-clean)
++- [src/ is not linted yet](#src-is-not-linted-yet)
++
++The test suite is linted with [ruff](https://docs.astral.sh/ruff/). It
++is configured in `pyproject.toml` (`[tool.ruff]`).
++
++## Running the linter
++
++The runner exposes ruff through two separate modes, each used on its
++own:
++
++```bash
++tests/run-tests.sh --lint-tests   # ruff over tests/
++tests/run-tests.sh --lint-src     # ruff over src/ (preview only)
++```
++
++A lint mode cannot be combined with coverage, with the other lint
++mode, or with pytest arguments; the runner rejects such combinations.
++
++## tests/ must be clean
++
++Our own test code is held to a clean bar: `tests/run-tests.sh
++--lint-tests` reports nothing. If you add a test that trips a rule, fix
++the test before the change lands.
++
++## src/ is not linted yet
++
++`--lint-src` runs ruff over the wic source, but the source is **not**
++yet ruff-clean, so its findings are a preview report rather than a
++gate: the runner prints them and exits with ruff's status, but nothing
++in the suite asserts on them. Treating `src/` findings as a hard
++failure now would block every run on fixes that have not landed. Once
++the source is cleaned up, `src/` can be promoted to the same clean bar
++as `tests/`.
 diff --git a/tests/run-tests.sh b/tests/run-tests.sh
-index 9db6d50338d6..a483da6a63a6 100755
+index a483da6a63a6..085dcc93f91d 100755
 --- a/tests/run-tests.sh
 +++ b/tests/run-tests.sh
-@@ -13,9 +13,13 @@ set -euo pipefail
- usage() {
+@@ -14,23 +14,34 @@ usage() {
      cat <<'USAGE'
  Usage:
--  tests/run-tests.sh [pytest args]
-+  tests/run-tests.sh [--coverage] [--html [DIR]] [pytest args]
+   tests/run-tests.sh [--coverage] [--html [DIR]] [pytest args]
++  tests/run-tests.sh --lint-tests
++  tests/run-tests.sh --lint-src
  
  Options:
-+  --coverage    also measure branch coverage of src/wic and print a
-+                terminal report listing the lines that were missed
-+  --html [DIR]  also write an HTML coverage report (default dir:
-+                htmlcov/); implies --coverage
+   --coverage    also measure branch coverage of src/wic and print a
+                 terminal report listing the lines that were missed
+   --html [DIR]  also write an HTML coverage report (default dir:
+                 htmlcov/); implies --coverage
++  --lint-tests  run ruff over tests/ and exit; the test suite is held
++                to a clean bar, so this must report nothing
++  --lint-src    run ruff over src/ and exit; src/ is not yet ruff-clean,
++                so this is a preview report and is not enforced
    -h, --help    show this help and exit
  
  Anything else is passed straight through to pytest (for example a
-@@ -24,6 +28,9 @@ tests/ is run.
+ path, -k EXPR, or -v). With no such argument the whole suite under
+ tests/ is run.
  
++The two lint modes each run on their own; they cannot be combined with
++coverage, with each other, or with pytest arguments.
++
  Examples:
    tests/run-tests.sh                  # whole suite
-+  tests/run-tests.sh --coverage       # + terminal coverage report
-+  tests/run-tests.sh --html           # + HTML report in htmlcov/
-+  tests/run-tests.sh --html /tmp/cov  # + HTML report in /tmp/cov
+   tests/run-tests.sh --coverage       # + terminal coverage report
+   tests/run-tests.sh --html           # + HTML report in htmlcov/
+   tests/run-tests.sh --html /tmp/cov  # + HTML report in /tmp/cov
++  tests/run-tests.sh --lint-tests     # ruff over tests/
++  tests/run-tests.sh --lint-src       # ruff over src/ (preview)
    tests/run-tests.sh -k filemap -v    # pass args through to pytest
    tests/run-tests.sh tests/unit       # a single tier or file
  
-@@ -34,9 +41,25 @@ USAGE
- REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
- PY="${PYTHON:-python3}"
- 
-+coverage=0
-+html=0
-+html_dir="htmlcov"
+@@ -44,6 +55,8 @@ PY="${PYTHON:-python3}"
+ coverage=0
+ html=0
+ html_dir="htmlcov"
++lint_tests=0
++lint_src=0
  pytest_args=()
  while [ $# -gt 0 ]; do
      case "$1" in
-+        --coverage)
-+            coverage=1
+@@ -60,6 +73,12 @@ while [ $# -gt 0 ]; do
+                 *) html_dir="$2"; shift ;;
+             esac
+             ;;
++        --lint-tests)
++            lint_tests=1
 +            ;;
-+        --html)
-+            coverage=1
-+            html=1
-+            # Optional directory argument: consume the next token only if
-+            # it is not another option or the pytest pass-through marker.
-+            case "${2:-}" in
-+                ""|-*|--) ;;
-+                *) html_dir="$2"; shift ;;
-+            esac
++        --lint-src)
++            lint_src=1
 +            ;;
          -h|--help)
              usage
              exit 0
-@@ -72,4 +95,18 @@ if [ ${#pytest_args[@]} -eq 0 ]; then
-     pytest_args=("tests")
- fi
+@@ -78,6 +97,34 @@ done
  
-+if [ "$coverage" -eq 1 ]; then
-+    if ! "$PY" -c "import pytest_cov" >/dev/null 2>&1; then
-+        echo "error: coverage requested but pytest-cov is not installed." >&2
+ cd "$REPO_ROOT"
+ 
++# The lint modes run ruff and exit, so each must be used on its own.
++# Reject combining them with coverage, with each other, or with pytest
++# arguments loudly instead of silently ignoring the extras.
++if [ $((lint_tests + lint_src)) -gt 0 ]; then
++    if [ "$lint_tests" -eq 1 ] && [ "$lint_src" -eq 1 ]; then
++        echo "error: --lint-tests and --lint-src cannot be combined." >&2
++        echo "       run one lint mode at a time." >&2
++        exit 2
++    fi
++    if [ "$coverage" -eq 1 ] || [ "$html" -eq 1 ] || [ ${#pytest_args[@]} -gt 0 ]; then
++        echo "error: a lint mode must be used on its own." >&2
++        echo "       lint, or drop the lint flag to run the suite." >&2
++        exit 2
++    fi
++    if ! "$PY" -c "import ruff" >/dev/null 2>&1 && ! command -v ruff >/dev/null 2>&1; then
++        echo "error: lint requested but ruff is not installed." >&2
 +        echo "       run: $PY -m pip install -e \".[tests]\"" >&2
 +        exit 1
 +    fi
-+    cov_args=(--cov=wic --cov-branch --cov-report=term-missing)
-+    if [ "$html" -eq 1 ]; then
-+        cov_args+=(--cov-report="html:${html_dir}")
-+        echo "HTML coverage report: ${html_dir}/index.html" >&2
++    if [ "$lint_tests" -eq 1 ]; then
++        # The test suite is held to a clean bar; a finding here is a bug
++        # in our own test code and must be fixed.
++        exec "$PY" -m ruff check tests
 +    fi
-+    exec "$PY" -m pytest "${pytest_args[@]}" "${cov_args[@]}"
++    # src/ is not yet ruff-clean; this is a preview report, not a gate.
++    exec "$PY" -m ruff check src
 +fi
 +
- exec "$PY" -m pytest "${pytest_args[@]}"
+ # Make sure the interpreter that will run pytest can actually import wic.
+ # The suites pass even without an install (each adds src/ to sys.path),
+ # but the session banner and any install-dependent behaviour would be
 -- 
 2.50.0.173.g8b6f19ccfc3a
 
