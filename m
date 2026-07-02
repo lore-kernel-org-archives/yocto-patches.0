@@ -1,37 +1,37 @@
-Return-Path: <mark.yang@lge.com>
+Return-Path: <ross.burton@arm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E58DC43458
-	for <webhook@archiver.kernel.org>; Thu,  2 Jul 2026 08:00:54 +0000 (UTC)
-Received: from lgeamrelo11.lge.com (lgeamrelo11.lge.com [156.147.23.51])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.64599.1782979253208258912
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3D8EC43458
+	for <webhook@archiver.kernel.org>; Thu,  2 Jul 2026 11:04:10 +0000 (UTC)
+Received: from lgeamrelo12.lge.com (lgeamrelo12.lge.com [156.147.23.52])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.64562.1782979106253189367
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 02 Jul 2026 01:00:53 -0700
+ Thu, 02 Jul 2026 00:58:27 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: lge.com, ip: 156.147.23.51, mailfrom: mark.yang@lge.com)
+ dkim=none (message not signed); spf=pass (domain: lge.com, ip: 156.147.23.52, mailfrom: mark.yang@lge.com)
 Received: from unknown (HELO lgeamrelo01.lge.com) (156.147.1.125)
-	by 156.147.23.51 with ESMTP; 2 Jul 2026 17:00:51 +0900
+	by 156.147.23.52 with ESMTP; 2 Jul 2026 16:58:23 +0900
 X-Original-SENDERIP: 156.147.1.125
 X-Original-MAILFROM: mark.yang@lge.com
 Received: from unknown (HELO jenkins-X670-AORUS-ELITE-AX..) (10.177.121.125)
-	by 156.147.1.125 with ESMTP; 2 Jul 2026 17:00:51 +0900
+	by 156.147.1.125 with ESMTP; 2 Jul 2026 16:58:23 +0900
 X-Original-SENDERIP: 10.177.121.125
 X-Original-MAILFROM: mark.yang@lge.com
-From: mark.yang@lge.com
+From: "mark.yang" <mark.yang@lge.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: "mark.yang" <mark.yang@lge.com>
 Subject: [meta-tensorflow][PATCH] tensorflow.inc: add CVE_PRODUCT
-Date: Thu,  2 Jul 2026 17:00:50 +0900
-Message-Id: <20260702080050.370258-1-mark.yang@lge.com>
+Date: Thu,  2 Jul 2026 16:58:21 +0900
+Message-Id: <20260702075821.354920-1-mark.yang@lge.com>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 02 Jul 2026 08:00:54 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4363
+ <yocto-patches@lists.yoctoproject.org>; Thu, 02 Jul 2026 11:04:10 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4364
 
 From: "mark.yang" <mark.yang@lge.com>
 
