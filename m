@@ -2,23 +2,23 @@ Return-Path: <mark.hatle@kernel.crashing.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15437C44512
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CE9EC44513
 	for <webhook@archiver.kernel.org>; Fri,  3 Jul 2026 00:46:34 +0000 (UTC)
 Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.82803.1783039584062869402
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.82805.1783039584348579663
  for <yocto-patches@lists.yoctoproject.org>;
  Thu, 02 Jul 2026 17:46:24 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: kernel.crashing.org, ip: 63.228.1.57, mailfrom: mark.hatle@kernel.crashing.org)
 Received: from kernel.crashing.org.net (70-99-78-136.nuveramail.net [70.99.78.136] (may be forged))
-	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 6630kJ16069650;
-	Thu, 2 Jul 2026 19:46:21 -0500
+	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 6630kJ18069650;
+	Thu, 2 Jul 2026 19:46:22 -0500
 From: Mark Hatle <mark.hatle@kernel.crashing.org>
 To: yocto-patches@lists.yoctoproject.org
 Cc: richard.purdie@linuxfoundation.org, frezidok1@gmail.com
-Subject: [pseudo][PATCH 07/23] pseudo_server: Change pseudo_diag() calls to appropriate macros
-Date: Thu,  2 Jul 2026 19:46:02 -0500
-Message-Id: <1783039578-31531-8-git-send-email-mark.hatle@kernel.crashing.org>
+Subject: [pseudo][PATCH 09/23] pseudolog.c: Change pseudo_diag() calls to appropriate macros
+Date: Thu,  2 Jul 2026 19:46:04 -0500
+Message-Id: <1783039578-31531-10-git-send-email-mark.hatle@kernel.crashing.org>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1783039578-31531-1-git-send-email-mark.hatle@kernel.crashing.org>
 References: <1783039578-31531-1-git-send-email-mark.hatle@kernel.crashing.org>
@@ -26,7 +26,7 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Fri, 03 Jul 2026 00:46:34 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4367
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4368
 
 From: Dmitry Sakhonchik <frezidok1@gmail.com>
 
@@ -35,350 +35,309 @@ Implements [YOCTO #12141]
 Signed-off-by: Dmitry Sakhonchik <frezidok1@gmail.com>
 Signed-off-by: Mark Hatle <mark.hatle@kernel.crashing.org>
 ---
- pseudo_server.c | 92 ++++++++++++++++++++++++-------------------------
- 1 file changed, 46 insertions(+), 46 deletions(-)
+ pseudolog.c | 76 ++++++++++++++++++++++++++---------------------------
+ 1 file changed, 38 insertions(+), 38 deletions(-)
 
-diff --git a/pseudo_server.c b/pseudo_server.c
-index edfbce1..c1a97c8 100644
---- a/pseudo_server.c
-+++ b/pseudo_server.c
-@@ -68,7 +68,7 @@ void pseudo_antimagic(void) { }
- 
- void
- quit_now(int signal) {
--	pseudo_diag("Received signal %d, quitting.\n", signal);
-+	pseudo_info("Received signal %d, quitting.\n", signal);
- 	die_forcefully = 1;
- }
- 
-@@ -116,12 +116,12 @@ pseudo_server_write_pid(pid_t pid) {
- 
- 	pseudo_path = pseudo_localstatedir_path(PSEUDO_PIDFILE);
- 	if (!pseudo_path) {
--		pseudo_diag("Couldn't get path for prefix/%s\n", PSEUDO_PIDFILE);
-+		pseudo_error("Couldn't get path for prefix/%s\n", PSEUDO_PIDFILE);
- 		return 1;
+diff --git a/pseudolog.c b/pseudolog.c
+index 44f7dbf..a497eb5 100644
+--- a/pseudolog.c
++++ b/pseudolog.c
+@@ -128,7 +128,7 @@ plog_query_type(char **string) {
+ 		return PSQT_UNKNOWN;
+ 	switch (**string) {
+ 	case '\0':
+-		pseudo_diag("Error: Value may not be an empty string.");
++		pseudo_error("Value may not be an empty string.");
+ 		return PSQT_UNKNOWN;
+ 		break;
+ 	case '>':
+@@ -170,7 +170,7 @@ plog_query_type(char **string) {
+ 		break;
  	}
- 	fp = fopen(pseudo_path, "w");
- 	if (!fp) {
--		pseudo_diag("Couldn't open %s: %s\n",
-+		pseudo_error("Couldn't open %s: %s\n",
- 			pseudo_path, strerror(errno));
- 		return 1;
+ 	if (opt_l && type != PSQT_EXACT) {
+-		pseudo_diag("Error: Non-exact match requested while trying to create a log entry.\n");
++		pseudo_error("Non-exact match requested while trying to create a log entry.\n");
+ 		type = PSQT_UNKNOWN;
  	}
-@@ -171,7 +171,7 @@ pseudo_server_start(int daemonize) {
- 		pseudo_debug_logfile(PSEUDO_LOGFILE, 2);
- 		child = fork();
- 		if (child == -1) {
--			pseudo_diag("Couldn't fork child process: %s\n",
-+			pseudo_error("Couldn't fork child process: %s\n",
- 				strerror(errno));
- 			exit(PSEUDO_EXIT_FORK_FAILED);
- 		}
-@@ -204,18 +204,18 @@ pseudo_server_start(int daemonize) {
- 				exit(0);
- 			}
- 			if (got_sigalrm) {
--				pseudo_diag("Child process timeout after %d seconds.\n",
-+				pseudo_error("Child process timeout after %d seconds.\n",
- 					PSEUDO_CHILD_PROCESS_TIMEOUT);
- 				exit(PSEUDO_EXIT_TIMEOUT);
- 			}
- 			if (rc == -1) {
--				pseudo_diag("Failure in waitpid(): %s\n",
-+				pseudo_error("Failure in waitpid(): %s\n",
- 					strerror(save_errno));
- 				exit(PSEUDO_EXIT_WAITPID);
- 			}
- 			if (WIFSIGNALED(status)) {
- 				status = WTERMSIG(status);
--				pseudo_diag("Child process exited from signal %d.\n",
-+				pseudo_error("Child process exited from signal %d.\n",
- 					status);
- 				kill(getpid(), status);
- 				/* can't use +128 because that's not valid */
-@@ -223,15 +223,15 @@ pseudo_server_start(int daemonize) {
- 			}
- 			if (WIFEXITED(status)) {
- 				status = WEXITSTATUS(status);
--				pseudo_diag("Child process exit status %d: %s\n",
-+				pseudo_error("Child process exit status %d: %s\n",
- 					status,
- 					pseudo_exit_status_name(status));
- 				if (status == 0) {
--					pseudo_diag("Hang on, server should not have exited 0 without sending us sigusr1?\n");
-+					pseudo_error("Hang on, server should not have exited 0 without sending us sigusr1?\n");
- 				}
- 				exit(status);
- 			}
--			pseudo_diag("Unknown exit status %d.\n", status);
-+			pseudo_error("Unknown exit status %d.\n", status);
- 			exit(PSEUDO_EXIT_GENERAL);
- 		} else {
- 			/* detach from parent session */
-@@ -245,24 +245,24 @@ pseudo_server_start(int daemonize) {
+ 	return type;
+@@ -214,7 +214,7 @@ parse_file_type(char *string) {
+ 		return S_IFSOCK;
+ 		break;
+ 	default:
+-		pseudo_diag("unknown file type %c; should be one of [-bcdflps]\n",
++		pseudo_error("unknown file type %c; should be one of [-bcdflps]\n",
+ 			isprint(*string) ? *string : '?');
+ 		return -1;
+ 		break;
+@@ -231,7 +231,7 @@ parse_partial_mode(char *string) {
+ 	case '-':
+ 		break;
+ 	default:
+-		pseudo_diag("unknown mode character: %c\n", string[0]);
++		pseudo_error("unknown mode character: %c\n", string[0]);
+ 		return -1;
+ 		break;
+ 	}
+@@ -242,7 +242,7 @@ parse_partial_mode(char *string) {
+ 	case '-':
+ 		break;
+ 	default:
+-		pseudo_diag("unknown mode character: %c\n", string[1]);
++		pseudo_error("unknown mode character: %c\n", string[1]);
+ 		return -1;
+ 		break;
+ 	}
+@@ -261,7 +261,7 @@ parse_partial_mode(char *string) {
+ 	case '-':
+ 		break;
+ 	default:
+-		pseudo_diag("unknown mode character: %c\n", string[2]);
++		pseudo_error("unknown mode character: %c\n", string[2]);
+ 		return -1;
+ 		break;
+ 	}
+@@ -275,14 +275,14 @@ parse_mode_string(char *string) {
+ 	mode_t bits = 0;
+ 
+ 	if (len != 9 && len != 10) {
+-		pseudo_diag("mode strings must be of the form [-]rwxr-xr-x\n");
++		pseudo_error("mode strings must be of the form [-]rwxr-xr-x\n");
+ 		return -1;
+ 	}
+ 	if (len == 10) {
+ 		mode |= parse_file_type(string);
+ 		++string;
+ 		if (mode == (mode_t) -1) {
+-			pseudo_diag("mode strings with a file type must use a valid type [-bcdflps]\n");
++			pseudo_error("mode strings with a file type must use a valid type [-bcdflps]\n");
+ 			return -1;
  		}
  	}
- 
--	pseudo_diag("pid %d [parent %d], doing new pid setup and server start\n", getpid(), getppid());
-+	pseudo_info("pid %d [parent %d], doing new pid setup and server start\n", getpid(), getppid());
- 	pseudo_new_pid();
- 
- 	pseudo_debug(PDBGF_SERVER, "opening lock.\n");
- 	lockpath = pseudo_localstatedir_path(NULL);
- 	if (!lockpath) {
--		pseudo_diag("Couldn't allocate a file path.\n");
-+		pseudo_error("Couldn't allocate a file path.\n");
- 		exit(PSEUDO_EXIT_LOCK_PATH);
- 	}
- 	mkdir_p(lockpath);
- 	lockname = pseudo_localstatedir_path(PSEUDO_LOCKFILE);
- 	if (!lockname) {
--		pseudo_diag("Couldn't allocate a file path.\n");
-+		pseudo_error("Couldn't allocate a file path.\n");
- 		exit(PSEUDO_EXIT_LOCK_PATH);
- 	}
- 	lockfd = open(lockname, O_RDWR | O_CREAT, 0644);
- 	if (lockfd < 0) {
--		pseudo_diag("Can't open or create lockfile %s: %s\n",
-+		pseudo_error("Can't open or create lockfile %s: %s\n",
- 			lockname, strerror(errno));
- 		exit(PSEUDO_EXIT_LOCK_FAILED);
- 	}
-@@ -275,7 +275,7 @@ pseudo_server_start(int daemonize) {
- 	if (lockfd <= 2) {
- 		newfd = fcntl(lockfd, F_DUPFD, 3);
- 		if (newfd < 0) {
--			pseudo_diag("Can't move lockfile to safe descriptor, leaving it on %d: %s\n",
-+			pseudo_warning("Can't move lockfile to safe descriptor, leaving it on %d: %s\n",
- 				lockfd, strerror(errno));
- 		} else {
- 			close(lockfd);
-@@ -297,11 +297,11 @@ pseudo_server_start(int daemonize) {
- 		if (save_errno == EACCES || save_errno == EAGAIN) {
- 			rc = fcntl(lockfd, F_GETLK, &lock_data);
- 			if (rc == 0 && lock_data.l_type != F_UNLCK) {
--				pseudo_diag("lock already held by existing pid %d.\n",
-+				pseudo_warning("lock already held by existing pid %d.\n",
- 					lock_data.l_pid);
- 			}
+@@ -341,14 +341,14 @@ parse_timestamp(char *string) {
  		}
--		pseudo_diag("Couldn't obtain lock: %s.\n", strerror(save_errno));
-+		pseudo_error("Couldn't obtain lock: %s.\n", strerror(save_errno));
- 		exit(PSEUDO_EXIT_LOCK_HELD);
- 
- 	} else {
-@@ -314,14 +314,14 @@ pseudo_server_start(int daemonize) {
- 
- 	listen_fd = socket(PF_UNIX, SOCK_STREAM, 0);
- 	if (listen_fd < 0) {
--		pseudo_diag("couldn't create listening socket: %s\n", strerror(errno));
-+		pseudo_error("couldn't create listening socket: %s\n", strerror(errno));
- 		exit(PSEUDO_EXIT_SOCKET_CREATE);
  	}
- 
- 	if (listen_fd <= 2) {
- 		newfd = fcntl(listen_fd, F_DUPFD, 3);
- 		if (newfd < 0) {
--			pseudo_diag("couldn't dup listening socket: %s\n", strerror(errno));
-+			pseudo_error("couldn't dup listening socket: %s\n", strerror(errno));
- 			close(listen_fd);
- 			exit(PSEUDO_EXIT_SOCKET_FD);
- 		} else {
-@@ -333,7 +333,7 @@ pseudo_server_start(int daemonize) {
- 	/* cd to the data directory */
- 	pseudo_path = pseudo_localstatedir_path(NULL);
- 	if (!pseudo_path || chdir(pseudo_path) == -1) {
--		pseudo_diag("can't get to '%s': %s\n",
-+		pseudo_error("can't get to '%s': %s\n",
- 			pseudo_path, strerror(errno));
- 		exit(PSEUDO_EXIT_SOCKET_PATH);
- 	}
-@@ -341,21 +341,21 @@ pseudo_server_start(int daemonize) {
- 	/* remove existing socket -- if it exists */
- 	rc = unlink(sun.sun_path);
- 	if (rc == -1 && errno != ENOENT) {
--		pseudo_diag("Can't unlink existing socket: %s.\n",
-+		pseudo_error("Can't unlink existing socket: %s.\n",
- 			strerror(errno));
- 		exit(PSEUDO_EXIT_SOCKET_UNLINK);
- 	}
- 	if (bind(listen_fd, (struct sockaddr *) &sun, sizeof(sun)) == -1) {
--		pseudo_diag("couldn't bind listening socket: %s\n", strerror(errno));
-+		pseudo_error("couldn't bind listening socket: %s\n", strerror(errno));
- 		exit(PSEUDO_EXIT_SOCKET_BIND);
- 	}
- 	if (listen(listen_fd, 5) == -1) {
--		pseudo_diag("couldn't listen on socket: %s\n", strerror(errno));
-+		pseudo_error("couldn't listen on socket: %s\n", strerror(errno));
- 		exit(PSEUDO_EXIT_SOCKET_LISTEN);
- 	}
- 	rc = pseudo_server_write_pid(getpid());
- 	if (rc != 0) {
--		pseudo_diag("warning: couldn't write pid file.\n");
-+		pseudo_warning("couldn't write pid file.\n");
- 	}
- 	signal(SIGHUP, quit_now);
- 	signal(SIGINT, quit_now);
-@@ -366,9 +366,9 @@ pseudo_server_start(int daemonize) {
- 	if (daemonize) {
- 		pid_t ppid = getppid();
- 		if (ppid == 1) {
--			pseudo_diag("Setup complete, but parent is init, not sending SIGUSR1.\n");
-+			pseudo_info("Setup complete, but parent is init, not sending SIGUSR1.\n");
- 		} else {
--			pseudo_diag("Setup complete, sending SIGUSR1 to pid %d.\n",
-+			pseudo_info("Setup complete, sending SIGUSR1 to pid %d.\n",
- 				ppid);
- 			kill(ppid, SIGUSR1);
+ 	if (!time_formats[i]) {
+-		pseudo_diag("Couldn't parse <%s> as a time.  Current time in known formats is:\n",
++		pseudo_error("Couldn't parse <%s> as a time.  Current time in known formats is:\n",
+ 			string);
+ 		localtime_r(&stamp_sec, &stamp_tm);
+ 		for (i = 0; time_formats[i]; ++i) {
+ 			strftime(timebuf, sizeof(timebuf), time_formats[i], &stamp_tm);
+-			pseudo_diag("\t%s\n", timebuf);
++			pseudo_info("\t%s\n", timebuf);
  		}
-@@ -424,7 +424,7 @@ open_client(int fd) {
- 		++active_clients;
- 		return max_clients - 16;
- 	} else {
--		pseudo_diag("error allocating new client, fd %d\n", fd);
-+		pseudo_error("error allocating new client, fd %d\n", fd);
- 		close(fd);
+-		pseudo_diag("Or, specify your own with -E; see strptime(3).\n");
++		pseudo_info("Or, specify your own with -E; see strptime(3).\n");
+ 		return -1;
+ 	}
+ 	return mktime(&stamp_tm);
+@@ -360,31 +360,31 @@ plog_trait(int opt, char *string) {
+ 	char *endptr;
+ 
+ 	if (opt < 0 || opt > UCHAR_MAX) {
+-		pseudo_diag("Unknown/invalid option value: %d\n", opt);
++		pseudo_error("Unknown/invalid option value: %d\n", opt);
  		return 0;
  	}
-@@ -439,7 +439,7 @@ close_client(int client) {
- 		clients[client].pid, clients[client].fd);
- 	/* client went away... */
- 	if (client > highest_client || client <= 0) {
--		pseudo_diag("tried to close client %d (highest is %d)\n",
-+		pseudo_info("tried to close client %d (highest is %d)\n",
- 			client, highest_client);
- 		return;
- 	}
-@@ -559,7 +559,7 @@ serve_client(int i) {
- 
- 				response_path = malloc(8 * active_clients);
- 				if (!response_path) {
--					pseudo_diag("out of memory allocating shutdown response\n");
-+					pseudo_error("out of memory allocating shutdown response\n");
- 					exit(PSEUDO_EXIT_GENERAL);
- 				} else {
- 					memset(response_path, 0, 8 * active_clients);
-@@ -633,7 +633,7 @@ static void pseudo_server_loop_epoll(void)
- 
- 	clients = malloc(16 * sizeof(*clients));
- 	if (!clients) {
--		pseudo_diag("out of memory allocating client table.\n");
-+		pseudo_error("out of memory allocating client table.\n");
- 		exit(PSEUDO_EXIT_LISTEN_FD);
- 	}
- 
-@@ -655,7 +655,7 @@ static void pseudo_server_loop_epoll(void)
- 
- 	pseudo_debug(PDBGF_SERVER, "server loop started.\n");
- 	if (listen_fd < 0) {
--		pseudo_diag("got into loop with no valid listen fd.\n");
-+		pseudo_error("got into loop with no valid listen fd.\n");
- 		exit(PSEUDO_EXIT_LISTEN_FD);
- 	}
- 
-@@ -663,13 +663,13 @@ static void pseudo_server_loop_epoll(void)
- 
- 	int epollfd = epoll_create1(0);
- 	if (epollfd == -1) {
--		pseudo_diag("epoll_create1() failed.\n");
-+		pseudo_error("epoll_create1() failed.\n");
- 		exit(PSEUDO_EXIT_EPOLL_CREATE);
- 	}
- 	ev.events = EPOLLIN;
- 	ev.data.u64 = 0;
- 	if (epoll_ctl(epollfd, EPOLL_CTL_ADD, clients[0].fd, &ev) == -1) {
--		pseudo_diag("epoll_ctl() failed with listening socket.\n");
-+		pseudo_error("epoll_ctl() failed with listening socket.\n");
- 		exit(PSEUDO_EXIT_EPOLL_CTL);
- 	}
- 
-@@ -724,7 +724,7 @@ static void pseudo_server_loop_epoll(void)
- 							ev.events = EPOLLIN;
- 							ev.data.u64 = open_client(fd);
- 							if (ev.data.u64 != 0 && epoll_ctl(epollfd, EPOLL_CTL_ADD, clients[ev.data.u64].fd, &ev) == -1) {
--								pseudo_diag("epoll_ctl() failed with accepted socket.\n");
-+								pseudo_error("epoll_ctl() failed with accepted socket.\n");
- 								exit(PSEUDO_EXIT_EPOLL_CTL);
- 							}
- 						} else if (errno == EMFILE) {
-@@ -746,22 +746,22 @@ static void pseudo_server_loop_epoll(void)
- 			}
- 			pseudo_debug(PDBGF_SERVER, "server loop complete [%d clients left]\n", active_clients);
+ 	if (!opt_to_field[opt]) {
+ 		if (isprint(opt)) {
+-			pseudo_diag("Unknown option: -%c\n", opt);
++			pseudo_error("Unknown option: -%c\n", opt);
  		} else {
--			pseudo_diag("epoll_wait failed: %s\n", strerror(errno));
-+			pseudo_error("epoll_wait failed: %s\n", strerror(errno));
+-			pseudo_diag("Unknown option: 0x%02x\n", opt);
++			pseudo_error("Unknown option: 0x%02x\n", opt);
+ 		}
+ 		return 0;
+ 	}
+ 	if (!*string) {
+-		pseudo_diag("invalid empty string for -%c\n", opt);
++		pseudo_error("invalid empty string for -%c\n", opt);
+ 		return 0;
+ 	}
+ 	new_trait = calloc(1, sizeof(*new_trait));
+ 	if (!new_trait) {
+-		pseudo_diag("Couldn't allocate requested trait (for -%c %s)\n",
++		pseudo_error("Couldn't allocate requested trait (for -%c %s)\n",
+ 			opt, string ? string : "<nil>");
+ 		return 0;
+ 	}
+ 	new_trait->field = opt_to_field[opt];
+ 	new_trait->type = plog_query_type(&string);
+ 	if (new_trait->type == PSQT_UNKNOWN) {
+-		pseudo_diag("Couldn't comprehend trait type for '%s'\n",
++		pseudo_error("Couldn't comprehend trait type for '%s'\n",
+ 			string ? string : "<nil>");
+ 		free(new_trait);
+ 		return 0;
+@@ -393,7 +393,7 @@ plog_trait(int opt, char *string) {
+ 	case PSQF_ACCESS:
+ 		new_trait->data.ivalue = pseudo_access_fopen(string);
+ 		if (new_trait->data.ivalue == (unsigned long long) -1) {
+-			pseudo_diag("access flags should be specified like fopen(3) mode strings (or x for exec).\n");
++			pseudo_error("access flags should be specified like fopen(3) mode strings (or x for exec).\n");
+ 			free(new_trait);
+ 			return 0;
+ 		}
+@@ -406,7 +406,7 @@ plog_trait(int opt, char *string) {
+ 		 * first character is the terminating NUL, we may not
+ 		 * access the second. */
+ 		if (string[0] && string[1]) {
+-			pseudo_diag("file type must be a single character [-bcdflps].\n");
++			pseudo_error("file type must be a single character [-bcdflps].\n");
+ 			free(new_trait);
+ 			return 0;
+ 		}
+@@ -421,13 +421,13 @@ plog_trait(int opt, char *string) {
+ 		break;
+ 	case PSQF_ORDER:
+ 		if (string[0] && string[1]) {
+-			pseudo_diag("order type must be a single specifier character.\n");
++			pseudo_error("order type must be a single specifier character.\n");
+ 			free(new_trait);
+ 			return 0;
+ 		}
+ 		new_trait->data.ivalue = opt_to_field[(unsigned char) string[0]];
+ 		if (!new_trait->data.ivalue) {
+-			pseudo_diag("Unknown field type: %c\n", string[0]);
++			pseudo_error("Unknown field type: %c\n", string[0]);
+ 		}
+ 		break;
+ 	case PSQF_RESULT:
+@@ -454,7 +454,7 @@ plog_trait(int opt, char *string) {
+ 	case PSQF_UID:
+ 		new_trait->data.ivalue = pseudo_strtoll_wrapper(string, &endptr, 0);
+ 		if (*endptr) {
+-			pseudo_diag("Unexpected garbage after number (%llu): '%s'\n",
++			pseudo_error("Unexpected garbage after number (%llu): '%s'\n",
+ 				new_trait->data.ivalue, endptr);
+ 			free(new_trait);
+ 			return 0;
+@@ -485,7 +485,7 @@ plog_trait(int opt, char *string) {
+ 		new_trait->data.svalue = strdup(string);
+ 		break;
+ 	default:
+-		pseudo_diag("I don't know how I got here.  Unknown field type %d.\n",
++		pseudo_error("I don't know how I got here.  Unknown field type %d.\n",
+ 			new_trait->field);
+ 		free(new_trait);
+ 		return 0;
+@@ -518,7 +518,7 @@ main(int argc, char **argv) {
+ 		case 'P':
+ 			s = PSEUDO_ROOT_PATH(AT_FDCWD, optarg, AT_SYMLINK_NOFOLLOW);
+ 			if (!s)
+-				pseudo_diag("Can't resolve prefix path '%s'\n", optarg);
++				pseudo_error("Can't resolve prefix path '%s'\n", optarg);
+ 			pseudo_set_value("PSEUDO_PREFIX", s);
+ 			break;
+ 		case 'v':
+@@ -597,12 +597,12 @@ main(int argc, char **argv) {
+ 	pseudo_debug_flags_finalize();
+ 
+ 	if (optind < argc) {
+-		pseudo_diag("Error: Extra arguments not associated with any option.\n");
++		pseudo_error("extra arguments not associated with any option.\n");
+ 		usage(EXIT_FAILURE);
+ 	}
+ 
+ 	if (query_only && opt_l) {
+-		pseudo_diag("Error: -l cannot be used with query-only options or flags.\n");
++		pseudo_error("-l cannot be used with query-only options or flags.\n");
+ 		bad_args = 1;
+ 	}
+ 
+@@ -611,22 +611,22 @@ main(int argc, char **argv) {
+ 		exit(EXIT_FAILURE);
+ 
+ 	if (!pseudo_get_prefix(argv[0])) {
+-		pseudo_diag("Can't figure out prefix.  Set PSEUDO_PREFIX or invoke with full path.\n");
++		pseudo_error("Can't figure out prefix.  Set PSEUDO_PREFIX or invoke with full path.\n");
+ 		exit(EXIT_FAILURE);
+ 	}
+ 
+ 	if (!pseudo_get_bindir()) {
+-		pseudo_diag("Can't figure out bindir.  Set PSEUDO_BINDIR.\n");
++		pseudo_error("Can't figure out bindir.  Set PSEUDO_BINDIR.\n");
+ 		exit(EXIT_FAILURE);
+ 	}
+ 
+ 	if (!pseudo_get_libdir()) {
+-		pseudo_diag("Can't figure out libdir.  Set PSEUDO_LIBDIR.\n");
++		pseudo_error("Can't figure out libdir.  Set PSEUDO_LIBDIR.\n");
+ 		exit(EXIT_FAILURE);
+ 	}
+ 
+ 	if (!pseudo_get_localstatedir()) {
+-		pseudo_diag("Can't figure out localstatedir.  Set PSEUDO_LOCALSTATEDIR.\n");
++		pseudo_error("Can't figure out localstatedir.  Set PSEUDO_LOCALSTATEDIR.\n");
+ 		exit(EXIT_FAILURE);
+ 	}
+ 
+@@ -636,12 +636,12 @@ main(int argc, char **argv) {
+ 		int fields;
+ 		fields = format_scan(format);
+ 		if (fields == -1) {
+-			pseudo_diag("couldn't parse format string (%s).\n", format);
++			pseudo_error("couldn't parse format string (%s).\n", format);
+ 			return EXIT_FAILURE;
+ 		}
+ 		if (opt_D) {
+ 			if (pdb_delete(traits, fields)) {
+-				pseudo_diag("errors occurred trying to delete entries.\n");
++				pseudo_error("errors occurred trying to delete entries.\n");
+ 			}
+ 		} else {
+ 			history = pdb_history(traits, fields, opt_U);
+@@ -653,7 +653,7 @@ main(int argc, char **argv) {
+ 				}
+ 				pdb_history_free(history);
+ 			} else {
+-				pseudo_diag("could not retrieve history.\n");
++				pseudo_error("could not retrieve history.\n");
+ 				return EXIT_FAILURE;
+ 			}
+ 		}
+@@ -674,12 +674,12 @@ format_one(log_entry *e, char *format) {
+ 	char *s;
+ 
+ 	if (!e || !format) {
+-		pseudo_diag("invalid log entry or format specifier.\n");
++		pseudo_error("invalid log entry or format specifier.\n");
+ 		return 0;
+ 	}
+ 	real_len = snprintf(fmtbuf, sizeof(fmtbuf), "%.*s", (int) len + 1, format);
+ 	if (real_len >= sizeof(fmtbuf) - 1) {
+-		pseudo_diag("Format string way too long starting at %.10s",
++		pseudo_error("Format string way too long starting at %.10s",
+ 			format - 1);
+ 		return 0;
+ 	}
+@@ -690,7 +690,7 @@ format_one(log_entry *e, char *format) {
+ 	 * parameters -- this doesn't make sense here.
+ 	 */
+ 	if (strchr(fmtbuf, '*') || strchr(fmtbuf, 'l') || strchr(fmtbuf, 'h')) {
+-		pseudo_diag("Sorry, you can't use *, h, or l format modifiers.\n");
++		pseudo_error("Sorry, you can't use *, h, or l format modifiers.\n");
+ 		return 0;
+ 	}
+ 
+@@ -830,7 +830,7 @@ format_scan(char *format) {
+ 		len = strcspn(s, "acdfgGimMoprRsStTuy");
+ 		s += len;
+ 		if (!*s) {
+-			pseudo_diag("Unknown format: '%.3s'\n",
++			pseudo_error("Unknown format: '%.3s'\n",
+ 				(s - len));
+ 			return -1;
+ 		}
+@@ -865,7 +865,7 @@ format_scan(char *format) {
+ 			 */
+ 			break;
+ 		default:
+-			pseudo_diag("error: invalid format specifier %c (at %s)\n", *s, s);
++			pseudo_error("invalid format specifier %c (at %s)\n", *s, s);
+ 			return -1;
  			break;
  		}
- 		if (do_list_clients) {
- 			do_list_clients = 0;
--			pseudo_diag("listing clients [1 through %d]:\n", highest_client);
-+			pseudo_info("listing clients [1 through %d]:\n", highest_client);
- 			for (i = 1; i <= highest_client; ++i) {
- 				if (clients[i].fd == -1) {
--					pseudo_diag("client %4d: inactive.\n", i);
-+					pseudo_info("client %4d: inactive.\n", i);
- 					continue;
- 				}
--				pseudo_diag("client %4d: fd %4d, pid %5d, program %s\n",
-+				pseudo_info("client %4d: fd %4d, pid %5d, program %s\n",
- 					i, clients[i].fd, clients[i].pid,
- 					clients[i].program ? clients[i].program : "<unspecified>");
- 			}
--			pseudo_diag("done.\n");
-+			pseudo_info("done.\n");
- 		}
- 		if (die_peacefully || die_forcefully) {
- 			pseudo_debug(PDBGF_SERVER, "quitting.\n");
-@@ -807,7 +807,7 @@ pseudo_server_loop(void) {
- 
- 	clients = malloc(16 * sizeof(*clients));
- 	if (!clients) {
--		pseudo_diag("out of memory allocating client table.\n");
-+		pseudo_error("out of memory allocating client table.\n");
- 		exit(PSEUDO_EXIT_LISTEN_FD);
- 	}
- 
-@@ -830,7 +830,7 @@ pseudo_server_loop(void) {
- 
- 	pseudo_debug(PDBGF_SERVER, "server loop started.\n");
- 	if (listen_fd < 0) {
--		pseudo_diag("got into loop with no valid listen fd.\n");
-+		pseudo_error("got into loop with no valid listen fd.\n");
- 		exit(PSEUDO_EXIT_LISTEN_FD);
- 	}
- 	pdb_log_msg(SEVERITY_INFO, NULL, NULL, NULL, "server started (pid %d)", getpid());
-@@ -924,18 +924,18 @@ pseudo_server_loop(void) {
- 		}
- 		if (do_list_clients) {
- 			do_list_clients = 0;
--			pseudo_diag("listing clients [1 through %d]:\n", highest_client);
-+			pseudo_info("listing clients [1 through %d]:\n", highest_client);
- 			for (i = 1; i <= highest_client; ++i) {
- 				if (clients[i].fd == -1) {
--					pseudo_diag("client %4d: inactive.\n", i);
-+					pseudo_info("client %4d: inactive.\n", i);
- 					continue;
- 				}
--				pseudo_diag("client %4d: fd %4d, pid %5d, state %s, program %s\n",
-+				pseudo_info("client %4d: fd %4d, pid %5d, state %s, program %s\n",
- 					i, clients[i].fd, clients[i].pid,
- 					FD_ISSET(clients[i].fd, &reads) ? "R" : "-",
- 					clients[i].program ? clients[i].program : "<unspecified>");
- 			}
--			pseudo_diag("done.\n");
-+			pseudo_info("done.\n");
- 		}
- 		if (die_peacefully || die_forcefully) {
- 			pseudo_debug(PDBGF_SERVER, "quitting.\n");
-@@ -981,6 +981,6 @@ pseudo_server_loop(void) {
- 		timeout = (struct timeval) { .tv_sec = LOOP_DELAY, .tv_usec = 0 };
- 		sigprocmask(SIG_BLOCK, &maskusr2, NULL);
- 	}
--	pseudo_diag("select failed: %s\n", strerror(errno));
-+	pseudo_error("select failed: %s\n", strerror(errno));
- }
- #endif /* this is the else of #ifdef PSEUDO_EPOLL */
 -- 
 2.53.0
 
