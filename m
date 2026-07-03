@@ -2,76 +2,76 @@ Return-Path: <paul@pbarker.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58F8FC44500
-	for <webhook@archiver.kernel.org>; Fri,  3 Jul 2026 10:43:18 +0000 (UTC)
-Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.90596.1783075395462325011
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C7C4C43458
+	for <webhook@archiver.kernel.org>; Fri,  3 Jul 2026 10:44:18 +0000 (UTC)
+Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.89795.1783075456236029260
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 03 Jul 2026 03:43:15 -0700
+ Fri, 03 Jul 2026 03:44:16 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@pbarker.dev header.s=fm3 header.b=pikyz34S;
- dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=A6OIsOJT;
- spf=pass (domain: pbarker.dev, ip: 202.12.124.157, mailfrom: paul@pbarker.dev)
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 349F37A00F6;
-	Fri,  3 Jul 2026 06:43:14 -0400 (EDT)
+ dkim=pass header.i=@pbarker.dev header.s=fm3 header.b=PuoJWRRg;
+ dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=NIQPQoET;
+ spf=pass (domain: pbarker.dev, ip: 202.12.124.147, mailfrom: paul@pbarker.dev)
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfout.stl.internal (Postfix) with ESMTP id 2E66F1D0001A;
+	Fri,  3 Jul 2026 06:44:15 -0400 (EDT)
 Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Fri, 03 Jul 2026 06:43:14 -0400
+  by phl-compute-02.internal (MEProxy); Fri, 03 Jul 2026 06:44:15 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pbarker.dev; h=
 	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
 	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1783075394; x=1783161794; bh=n6lc1VZuIp
-	dJHq8ycsAz8K0sgTwMkreVoAcosiB3iHI=; b=pikyz34S8mUNLBs2VFx9nzk0XN
-	XBEhmAnOIiIhI3ERBbGPj93XAaVhQvnm7Nc1CA0u0eoZOTf50LIrtpF8ODNPt2bw
-	9t8J9hQeAUGuyAU6d9nd8mNNOBG9notuE2NP57kkljEMbGrHIGJa6ui1RO7N/9aR
-	vVQB5CtDbFo7x2iRC276SOmN8p9s+gI7DjnsUEZ8O5C0MgdATqU8T1X6aVedFYVF
-	aUNKQerx7pZpNN2UbSPmeXAmRN5rKG+3GMEIjIiTSwxosO4UduhMnkdN2HiO0qel
-	af4/60MeZlrmTl/Q98AfgOY8cwH27Sl1DpUV/mSGSHwAyGbvNsspJFOCbCfg==
+	:subject:to:to; s=fm3; t=1783075455; x=1783161855; bh=wkdxo9MG5x
+	DA50Zg2JzupSBPoqVbcYW2uCsTlxtkDJU=; b=PuoJWRRgvioVBMXkZBDj1pvTZm
+	RZBe2VtpxjO9x106UAGPIEiakP97MpL4NGQ9cpRllzTylpTInmx846f+CtSfazwk
+	TbR0kmOp0UQXNNTzZzBTQH8KqrExgVxPcZaa8Y+US/BvXbNd1FZxbzPwnFa7WXLL
+	Az2DC+Yi/cpG24blX52RUR8BwqzEzEbJju6WEhkHwzwrngxvQ1f/3Z6OjN376Cdy
+	BdDQSPF/FPqwYk+CZeIBZsdbLyASyii/0SA28f3EXaruEgVh/BHyoJWgVJ20AzMw
+	S/SnWHzOZ/7jF7J7YE6PXRx+wh0jwrr+ogm5VToa3pqE9P25xoRVDJ/yaMuQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-type:content-type:date:date
 	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
 	:message-id:mime-version:references:reply-to:subject:subject:to
 	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1783075394; x=1783161794; bh=n6lc1VZuIpdJHq8ycsAz8K0sgTwMkreVoAc
-	osiB3iHI=; b=A6OIsOJTm32AEBEjLH4CQWN39qbV7QzCw8d3OY70dGRX6HJpMq6
-	dEeXa1rGgBvUF/hpSR9ayop0SJQuMNZQOqm+5HgPTQldlBdmTL9IKBgtFNGfxXCi
-	1tO5IEDnXCOQW39A28kcQIJ6QsWM5sV8/CxYTcJlVJFsyGfVKjr6hHgP8HWvUEbY
-	c6mCuKB6IdVMysLP1lUk7F306eeD3jpML8QYZHoeSokksStbSYqRJMPJDm6vEBus
-	fY3vRJIW+sBRcdc5PgEffTOl66ftessU6dHMghIstWKHIbwdWQXOJxm2Jn2k6C+8
-	28k1rXM8YcqkpLpwIvJ/rzURIJFEitLk65g==
-X-ME-Sender: <xms:QZJHauqRIIaI5SZbaFSsQ3SFx5I-ZW1_0AJFo2LsnZuTdB02kNUpfQ>
-    <xme:QZJHakFUgID2DtrqjyAH6teoK4zj2OTML3HnFyPPaykCPjHbWgOoLI51MiF4WtPoU
-    8AotP4m5Y5iQKFbeUBtHU81XSAnF1T2cTNre3C4FYwul6dFlbHvhe8>
-X-ME-Received: <xmr:QZJHaglOwECk7LCaKa-tN3vAZEtRB5rU0xaYuIOLW1gn22Ja9pi9F8L4piHqoffbMTV6W9AnT4_bpQM65oPLme311TZY_1hO8hzNFlg_2mxb>
+	1783075455; x=1783161855; bh=wkdxo9MG5xDA50Zg2JzupSBPoqVbcYW2uCs
+	TlxtkDJU=; b=NIQPQoET7HFfGN3HKZnL4aBjqDXlZnHG8Y2WIzXo1wOaWdNdeNw
+	EwODpmmcMeUPzwk2J+j3OlFxhskfBYWqY/GB0ZQNpOi6VbipqhkpeYc/DHVQcmTk
+	4i7x9TsiNIRSgPi7Ldb5H0ytGci1yNgB14J7K3xkuYoLr83Zhg2TOtAP+3kzEfN9
+	Uk2EG7C96dd/w92grzptMXN22kAwvL6cTP/rMo8O0GuzXtnMMN6Hp7/U1wieILJS
+	KLg41uQQDtCoRmLIcVuSoEfAj/IaAPEhvkUZchctiBFu53aLhx09aKbT09vr2JAE
+	5/ra7VNKq6p+K1BFaKztLZG/3HGoE1Cz9dw==
+X-ME-Sender: <xms:fpJHavtYpqmspmKVUX3h2JyycBBYJF6yuTQk8e6em5pkbMSg49N-oA>
+    <xme:fpJHan5c-xI5ZTOfhBfqEAhVf8Q82rnQvwves_szpQ3oghWnoqF0A8KvHANkQianR
+    Yl37U-EaLYl3ChCWa69J5J-ES2zzMvKaZX0bUN2sn8MRjsp98if-A>
+X-ME-Received: <xmr:fpJHagKexabSv39f2-PwrGKG08OOAECYQ1NcRXW2mx2v3jV_yqGYVhw5cGyb8_knRv5av7U7ZE9A0Eg6O6QLbSgHco4zr_mibJRQ9i0xu44r>
 X-ME-Proxy-Cause: dmFkZTGfy1VuNxYz73oD30EXpvDqvontWx9IC+Rm8IcalxEEOSHXH43wk09v3AQ34s7I1t
     QbCNRiQycgTqt5HGtv0eJjq1g6OqQEK9/UQYm4dtwWR6Mu9uT0Hcxl2RKjFY1RX8M7QLla
     NIDTmnwlQfYqkuJoGapnRCPJauUn4kw7zNkaMd55S1jAymI3y/WJf9T6JOe7gc5mYZg4EF
     4t2Wp0eUtuHB6e34tKX+iOVUhTWcDJ5+a6d6S4f8xPmNWahL7BJsZFhooncbEuTXf/UpfN
-    ddUor+/J/48k/ifEnHsUsYtvYyurMFdD8+swSAQP6+mRR/b139Y1uzCpO8eYk82vq0FEA4
-    hcFTgvgYu6f3ifagsz1Sdmw4t+jcGkVKaQ+m+UXGquuAU3hqqw1sW6O4XhvxXyAAozAbOi
-    ZfErN8PHaaqz2wiKWnQgpiaChxV8dR6+q4MlncgthY3UEO59yV8qZEYDCPSR798vz+oGGM
-    yrae70n17PWjpfQC4CnDge6L9sS5w+awlJ33xzhGtaVGs1ADhoMLS9/Zn/kWujaH81Ra6O
-    kU9X0nNXcKyvevBqGMvRhd5xgE2MqYThQXXMKVM5+VP0GJ2lzxpfm2SA/OjGKYFYBAsG+Q
-    ICiUKPvFernyGq2T4aCZFTeUGV6nyoidZUexsuDreIFX5HyrHcQbfC8dlebQ
-X-ME-Proxy: <xmx:QZJHannTE__92yzvqpyiMFzycgNrxucQRQv7kGC4NAukVz03QJ23mg>
-    <xmx:QZJHahs8XbdRw9ARj2dL8jY39rNo3_QnN7D_Gj3gfom7iCNEAUWjVA>
-    <xmx:QZJHaqlaKLQzhMgBik3oU3zqimy19r2WGr5274lwIqg2CFUKwCNwfw>
-    <xmx:QZJHast5QYZ6scYcOGOKV299kBUo4SgE6AECbv29PHxRo096pY0ynQ>
-    <xmx:QpJHaqB-MV00mX1dGTVc0Q8rl7JFqrzJKgQK6qTtdgT7qAxjxQJf4cEA>
+    ddUor+/J/48k/ifEnHsUsYtvYyurMFdD8+swSAQP6+mRR/b139Y1uzCpO8eYk82vq0FEZl
+    nmL5WL+//93EUz63xU/m6yvxAzdubsEy5VoYsLnZOzkBZ1rvc8qlKoqu5dl4veKJL4D6JM
+    ecR+cjR1QJYRWX7LOqCPqVWEu5/0pQsPkqt/vSe7YcYl7CUzNgKU88v22Q9yeEax1U/OTJ
+    AC2VSgAidYM5xLTo2PtyhE09ui8ATyEsEbungNdv2GOlD+o1IS69bwzFvnsHcWn/VHEPtn
+    yXbIB8UYZ9VZdsWMQwcrEoW0UQog+RWfgqUCPx9K/DvHpNQRj83zbEGIgitWKtnf0W8OXq
+    Rpou1RBDVyJh3IUh2Fr1Tl5vjQldrfTauxPbRwlXmU3Be8rZLLVtDWpFoAIQ
+X-ME-Proxy: <xmx:fpJHan6WvNzL1w2t2A7z4zsvGfDyf_ADzuiWiD6KYRdh2X-nKL3iUg>
+    <xmx:fpJHajzDCta5wKFKoogQxRmiBnVulB7I_el0aJJ_n8GHxZbyO4Nzlw>
+    <xmx:fpJHaraJ3tuzRV58hfXpS9XUY0jBUnBN2BOHsrylgH0UCe9OIQuKZQ>
+    <xmx:fpJHalQwFcMcDnIgBI5vUE7GuVqFi9nilRAUa8cIjKrv1iomGy5zgA>
+    <xmx:f5JHalu8hoaexygxRiVIXg4varnZn1uOXfL2Z5IAmd9gLLHyRf6alb-z>
 Feedback-ID: i51494658:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 3 Jul 2026 06:43:13 -0400 (EDT)
-Message-ID: <bc1f156be43b3c476a853e93321db726de900b50.camel@pbarker.dev>
-Subject: Re: [yocto-patches] [pseudo][PATCH 12/23] pseudo_util: Add default
- log severity values
+ 3 Jul 2026 06:44:14 -0400 (EDT)
+Message-ID: <2a3a5f89dd6ff36f5d6fa1b5b53200ac5fe372ec.camel@pbarker.dev>
+Subject: Re: [yocto-patches] [pseudo][PATCH 14/23] test/test-openat2-func.c:
+ Remove unusuaed saved_errno
 From: Paul Barker <paul@pbarker.dev>
 To: yocto-patches@lists.yoctoproject.org
 Cc: richard.purdie@linuxfoundation.org, frezidok1@gmail.com
-Date: Fri, 03 Jul 2026 11:43:10 +0100
-In-Reply-To: <1783039578-31531-13-git-send-email-mark.hatle@kernel.crashing.org>
+Date: Fri, 03 Jul 2026 11:44:12 +0100
+In-Reply-To: <1783039578-31531-15-git-send-email-mark.hatle@kernel.crashing.org>
 References: 
 	<1783039578-31531-1-git-send-email-mark.hatle@kernel.crashing.org>
-	 <1783039578-31531-13-git-send-email-mark.hatle@kernel.crashing.org>
+	 <1783039578-31531-15-git-send-email-mark.hatle@kernel.crashing.org>
 Autocrypt: addr=paul@pbarker.dev; prefer-encrypt=mutual;
  keydata=mQINBGC756sBEADXL6cawsZRrDvICz9Y1SG0/lW1me4xpq36obh7a0IGAzp3ywNRb/4MO
  DTqP4+DD0cIFuDY41/N17g0sNlp8z+/k/IIDmNPtYQOTVmAkrkdDU4BP8dD3Cp1PUw6nrbInfujAJ
@@ -117,56 +117,24 @@ Autocrypt: addr=paul@pbarker.dev; prefer-encrypt=mutual;
  ChZPI3NMLnKZPJC8ZQZ4S8yb5oA3rqTA2DMODvsrEVlaB2cQ6IWHSa/mvBwA8Ias3771cp4fZS7W7
  LUewj8JVy0aJsGTwI4invl
 Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-dNI6tpIOjgIToOsxhN3X"
+	protocol="application/pgp-signature"; boundary="=-U49u5CdNTUIZnWkLIDMf"
 User-Agent: Evolution 3.52.3-0ubuntu1.1 
 MIME-Version: 1.0
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 03 Jul 2026 10:43:18 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4390
+ <yocto-patches@lists.yoctoproject.org>; Fri, 03 Jul 2026 10:44:18 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4391
 
 
---=-dNI6tpIOjgIToOsxhN3X
+--=-U49u5CdNTUIZnWkLIDMf
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 On Thu, 2026-07-02 at 19:46 -0500, Mark Hatle wrote:
-> From: Dmitry Sakhonchik <frezidok1@gmail.com>
->=20
-> Default values are "show everything". If the user wants to see
-> only certain categories, they should explicitely set
-> PSEUDO_SEVERITY env var or use -k option.
->=20
-> Signed-off-by: Dmitry Sakhonchik <frezidok1@gmail.com>
 > Signed-off-by: Mark Hatle <mark.hatle@kernel.crashing.org>
-> ---
->  pseudo.h      | 2 ++
->  pseudo_util.c | 7 ++++---
->  2 files changed, 6 insertions(+), 3 deletions(-)
->=20
-> diff --git a/pseudo.h b/pseudo.h
-> index 92ae71e..66aa70e 100644
-> --- a/pseudo.h
-> +++ b/pseudo.h
-> @@ -130,6 +130,8 @@ extern char *pseudo_version;
->  #define PSEUDO_PIDFILE "pseudo.pid"
->  #define PSEUDO_SOCKET "pseudo.socket"
-> =20
-> +#define PSEUDO_SEVERITY_DEFAULT "info,warn,error"
 
-This default is confusing. pseudo_error() doesn't check
-pseudo_util_severity_flags, so errors are always printed.
-
-This also isn't "show everything" as pseudo_debug() messages are not
-shown with this default severity level. They are instead controlled by
-pseudo_util_debug_flags, and having two separate sets of flags is
-another level of confusion to me.
-
-If we're overhauling the logging for v2.0, I think it would be much
-better to merge the log/debug handling into one ordered list of severity
-levels and control what is printed by specifying the minimum severity
-level to output.
+Typo in commit summary: unusuaed.
 
 Best regards,
 
@@ -174,17 +142,17 @@ Best regards,
 Paul Barker
 
 
---=-dNI6tpIOjgIToOsxhN3X
+--=-U49u5CdNTUIZnWkLIDMf
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 
 -----BEGIN PGP SIGNATURE-----
 
-iIcEABYKAC8WIQSzjPXf5Y1BDWhU2iCrY1Tsnbr0bgUCakeSPhEccGF1bEBwYmFy
-a2VyLmRldgAKCRCrY1Tsnbr0bi/2AP98pln1sJratVvR72vRts8jcMX22EWq4jMN
-qH7xs+dJuAEAnJOgtV2MpWAN7FYxcA9FHxDPJ7sj8yCodvmfE5d+tQQ=
-=4dLj
+iIcEABYKAC8WIQSzjPXf5Y1BDWhU2iCrY1Tsnbr0bgUCakeSfBEccGF1bEBwYmFy
+a2VyLmRldgAKCRCrY1Tsnbr0bjSJAQDZlfp0PzVdIXzjK5RPHILkwjLkNowad5XG
+kGfcXyRSBQEAyiz0KmBm4/VG/QBvrMDERJFX4dpOTXYamTDCazcgaAc=
+=L3Ml
 -----END PGP SIGNATURE-----
 
---=-dNI6tpIOjgIToOsxhN3X--
+--=-U49u5CdNTUIZnWkLIDMf--
 
