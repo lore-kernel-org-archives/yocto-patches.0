@@ -2,31 +2,31 @@ Return-Path: <mark.hatle@kernel.crashing.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4358C44502
-	for <webhook@archiver.kernel.org>; Fri,  3 Jul 2026 18:41:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 658CDC4450C
+	for <webhook@archiver.kernel.org>; Fri,  3 Jul 2026 18:41:12 +0000 (UTC)
 Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.99266.1783104060578914285
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.98537.1783104060998053775
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 03 Jul 2026 11:41:00 -0700
+ Fri, 03 Jul 2026 11:41:01 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: kernel.crashing.org, ip: 63.228.1.57, mailfrom: mark.hatle@kernel.crashing.org)
 Received: from kernel.crashing.org.net (70-99-78-136.nuveramail.net [70.99.78.136] (may be forged))
-	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 663Ieua5237103;
+	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 663Ieua7237103;
 	Fri, 3 Jul 2026 13:40:58 -0500
 From: Mark Hatle <mark.hatle@kernel.crashing.org>
 To: yocto-patches@lists.yoctoproject.org
 Cc: richard.purdie@linuxfoundation.org, frezidok1@gmail.com
-Subject: [pseudo][PATCH v2 06/23] pseudo_client: Change pseudo_diag() calls to appropriate macros
-Date: Fri,  3 Jul 2026 13:40:38 -0500
-Message-Id: <1783104055-19005-7-git-send-email-mark.hatle@kernel.crashing.org>
+Subject: [pseudo][PATCH v2 08/23] pseudo.c: Change pseudo_diag() calls to appropriate macros
+Date: Fri,  3 Jul 2026 13:40:40 -0500
+Message-Id: <1783104055-19005-9-git-send-email-mark.hatle@kernel.crashing.org>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1783104055-19005-1-git-send-email-mark.hatle@kernel.crashing.org>
 References: <1783104055-19005-1-git-send-email-mark.hatle@kernel.crashing.org>
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 03 Jul 2026 18:41:11 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4401
+ <yocto-patches@lists.yoctoproject.org>; Fri, 03 Jul 2026 18:41:12 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4402
 
 From: Dmitry Sakhonchik <frezidok1@gmail.com>
 
@@ -35,393 +35,389 @@ Implements [YOCTO #12141]
 Signed-off-by: Dmitry Sakhonchik <frezidok1@gmail.com>
 Signed-off-by: Mark Hatle <mark.hatle@kernel.crashing.org>
 ---
- pseudo_client.c | 96 ++++++++++++++++++++++++++++-----------------------------
- 1 file changed, 47 insertions(+), 49 deletions(-)
+ pseudo.c | 100 +++++++++++++++++++++++++++++++--------------------------------
+ 1 file changed, 50 insertions(+), 50 deletions(-)
 
-diff --git a/pseudo_client.c b/pseudo_client.c
-index 7041366..69e5cbc 100644
---- a/pseudo_client.c
-+++ b/pseudo_client.c
-@@ -166,7 +166,7 @@ build_passwd_paths(void)
- 		/* allocation and/or return */
- 		if (passwd_paths) {
- 			if (np != npasswd_paths) {
--				pseudo_diag("internal error: path allocation was inconsistent.\n");
-+				pseudo_error("internal error: path allocation was inconsistent.\n");
- 			} else {
- 				/* yes, we allocated one extra for a trailing
- 				 * null pointer.
-@@ -178,14 +178,14 @@ build_passwd_paths(void)
- 			passwd_paths = malloc((np + 1) * sizeof(*passwd_paths));
- 			npasswd_paths = np;
- 			if (!passwd_paths) {
--				pseudo_diag("couldn't allocate storage for password paths.\n");
-+				pseudo_error("couldn't allocate storage for password paths.\n");
- 				exit(1);
- 			}
- 			np = 0;
+diff --git a/pseudo.c b/pseudo.c
+index e5fe5cf..11112dd 100644
+--- a/pseudo.c
++++ b/pseudo.c
+@@ -105,8 +105,8 @@ main(int argc, char *argv[]) {
+ 		pseudo_debug(PDBGF_SERVER, "[server %d] can't run daemon with libpseudo in %s\n", getpid(), PRELINK_LIBRARIES);
+ 		s = pseudo_get_value("PSEUDO_UNLOAD");
+ 		if (s) {
+-			pseudo_diag("pseudo: I can't seem to make %s go away.  Sorry.\n", PRELINK_LIBRARIES);
+-			pseudo_diag("pseudo: %s: %s\n", PRELINK_LIBRARIES, ld_env);
++			pseudo_error("pseudo: I can't seem to make %s go away.  Sorry.\n", PRELINK_LIBRARIES);
++			pseudo_error("pseudo: %s: %s\n", PRELINK_LIBRARIES, ld_env);
+ 			exit(PSEUDO_EXIT_PSEUDO_LOADED);
  		}
- 	} while (++pass < 2);
- 	/* in theory the second pass already returned, but. */
--	pseudo_diag("should totally not have gotten here.\n");
-+	pseudo_error("should totally not have gotten here.\n");
+ 		free(s);
+@@ -155,7 +155,7 @@ main(int argc, char *argv[]) {
+ 		case 'i': /* renumber devices, assuming stable inodes */
+ 			s = PSEUDO_ROOT_PATH(AT_FDCWD, optarg, 0);
+ 			if (!s) {
+-				pseudo_diag("Can't resolve path '%s'\n", optarg);
++				pseudo_error("Can't resolve path '%s'\n", optarg);
+ 				usage(EXIT_FAILURE);
+ 			}
+ 			opt_i = strdup(s);
+@@ -168,7 +168,7 @@ main(int argc, char *argv[]) {
+ 		case 'm': /* move from... (see also 'M') */
+ 			s = PSEUDO_ROOT_PATH(AT_FDCWD, optarg, 0);
+ 			if (!s) {
+-				pseudo_diag("Can't resolve move-from path '%s'\n", optarg);
++				pseudo_error("Can't resolve move-from path '%s'\n", optarg);
+ 				usage(EXIT_FAILURE);
+ 			}
+ 			opt_m = strdup(s);
+@@ -176,7 +176,7 @@ main(int argc, char *argv[]) {
+ 		case 'M': /* move to... (see also 'm') */
+ 			s = PSEUDO_ROOT_PATH(AT_FDCWD, optarg, 0);
+ 			if (!s) {
+-				pseudo_diag("Can't resolve move-to path '%s'\n", optarg);
++				pseudo_error("Can't resolve move-to path '%s'\n", optarg);
+ 				usage(EXIT_FAILURE);
+ 			}
+ 			opt_M = strdup(s);
+@@ -184,7 +184,7 @@ main(int argc, char *argv[]) {
+ 		case 'p': /* passwd file path */
+ 			s = PSEUDO_ROOT_PATH(AT_FDCWD, optarg, AT_SYMLINK_NOFOLLOW);
+ 			if (!s) {
+-				pseudo_diag("Can't resolve passwd path '%s'\n", optarg);
++				pseudo_error("Can't resolve passwd path '%s'\n", optarg);
+ 				usage(EXIT_FAILURE);
+ 			}
+ 			pseudo_set_value("PSEUDO_PASSWD", s);
+@@ -192,7 +192,7 @@ main(int argc, char *argv[]) {
+ 		case 'P': /* prefix */
+ 			s = PSEUDO_ROOT_PATH(AT_FDCWD, optarg, AT_SYMLINK_NOFOLLOW);
+ 			if (!s) {
+-				pseudo_diag("Can't resolve prefix path '%s'\n", optarg);
++				pseudo_error("Can't resolve prefix path '%s'\n", optarg);
+ 				usage(EXIT_FAILURE);
+ 			}
+ 			pseudo_set_value("PSEUDO_PREFIX", s);
+@@ -201,7 +201,7 @@ main(int argc, char *argv[]) {
+ 		case 'R':	/* pseudo root path */
+ 			s = PSEUDO_ROOT_PATH(AT_FDCWD, optarg, AT_SYMLINK_NOFOLLOW);
+ 			if (!s) {
+-				pseudo_diag("Can't resolve root path '%s'\n", optarg);
++				pseudo_error("Can't resolve root path '%s'\n", optarg);
+ 				usage(EXIT_FAILURE);
+ 			}
+ 			pseudo_set_value("PSEUDO_CHROOT", s);
+@@ -214,7 +214,7 @@ main(int argc, char *argv[]) {
+ 		case 't': /* timeout */
+ 			pseudo_server_timeout = pseudo_strtol_wrapper(optarg, &s, 10);
+ 			if (*s && !isspace(*s)) {
+-				pseudo_diag("Timeout must be an integer value.\n");
++				pseudo_error("Timeout must be an integer value.\n");
+ 				usage(EXIT_FAILURE);
+ 			}
+ 			optptr += snprintf(optptr, pseudo_path_max() - (optptr - opts),
+@@ -239,7 +239,7 @@ main(int argc, char *argv[]) {
+ 			break;
+ 		case '?':
+ 		default:
+-			pseudo_diag("unknown/invalid argument (option '%c').\n", optopt);
++			pseudo_error("unknown/invalid argument (option '%c').\n", optopt);
+ 			usage(EXIT_FAILURE);
+ 			break;
+ 		}
+@@ -250,7 +250,7 @@ main(int argc, char *argv[]) {
  
- 	return;
- }
-@@ -567,11 +567,11 @@ pseudo_init_client(void) {
- 				}
- 				pseudo_prefix_dir_fd = pseudo_fd(pseudo_prefix_dir_fd, MOVE_FD);
- 			} else {
--				pseudo_diag("No prefix available to to find server.\n");
-+				pseudo_error("No prefix available to to find server.\n");
- 				exit(1);
- 			}
- 			if (pseudo_prefix_dir_fd == -1) {
--				pseudo_diag("Can't open prefix path '%s' for server: %s\n",
-+				pseudo_error("Can't open prefix path '%s' for server: %s\n",
- 					pseudo_path,
- 					strerror(errno));
- 				exit(1);
-@@ -590,11 +590,11 @@ pseudo_init_client(void) {
- 				}
- 				pseudo_localstate_dir_fd = pseudo_fd(pseudo_localstate_dir_fd, MOVE_FD);
- 			} else {
--				pseudo_diag("No local state directory available for server/file interactions.\n");
-+				pseudo_error("No local state directory available for server/file interactions.\n");
- 				exit(1);
- 			}
- 			if (pseudo_localstate_dir_fd == -1) {
--				pseudo_diag("Can't open local state path '%s': %s\n",
-+				pseudo_error("Can't open local state path '%s': %s\n",
- 					pseudo_path,
- 					strerror(errno));
- 				exit(1);
-@@ -633,7 +633,7 @@ pseudo_init_client(void) {
- 			if (pseudo_chroot) {
- 				pseudo_chroot_len = strlen(pseudo_chroot);
- 			} else {
--				pseudo_diag("Can't store chroot path '%s'\n", env);
-+				pseudo_error("Can't store chroot path '%s'\n", env);
- 			}
+ 	s = pseudo_get_prefix(argv[0]);
+ 	if (!s) {
+-		pseudo_diag("Can't figure out prefix.  Set PSEUDO_PREFIX or invoke with full path.\n");
++		pseudo_error("Can't figure out prefix.  Set PSEUDO_PREFIX or invoke with full path.\n");
+ 		exit(PSEUDO_EXIT_PSEUDO_PREFIX);
+ 	}
+ 	free(s);
+@@ -261,29 +261,29 @@ main(int argc, char *argv[]) {
+ 		pseudo_msg_t *msg;
+ 		int rc;
+ 		if (!(opt_m && opt_M)) {
+-			pseudo_diag("You cannot move the database without specifying from and to.\n");
++			pseudo_error("You cannot move the database without specifying from and to.\n");
+ 			exit(EXIT_FAILURE);
  		}
- 		free(env);
-@@ -662,7 +662,7 @@ pseudo_init_client(void) {
- static void
- pseudo_file_close(int *fd, FILE **fp) {
- 	if (!fp || !fd) {
--		pseudo_diag("pseudo_file_close: needs valid pointers.\n");
-+		pseudo_error("pseudo_file_close: needs valid pointers.\n");
- 		return;
- 	}
- 	pseudo_antimagic();
-@@ -698,7 +698,7 @@ pseudo_file_close(int *fd, FILE **fp) {
- static FILE *
- pseudo_file_open(char *name, int *fd, FILE **fp) {
- 	if (!fp || !fd || !name) {
--		pseudo_diag("pseudo_file_open: needs valid pointers.\n");
-+		pseudo_error("pseudo_file_open: needs valid pointers.\n");
- 		return NULL;
- 	}
- 	pseudo_file_close(fd, fp);
-@@ -734,7 +734,7 @@ pseudo_pwd_lck_open(void) {
- 	if (!pseudo_pwd_lck_name) {
- 		pseudo_pwd_lck_name = malloc(pseudo_path_max());
- 		if (!pseudo_pwd_lck_name) {
--			pseudo_diag("couldn't allocate space for passwd lockfile path.\n");
-+			pseudo_error("couldn't allocate space for passwd lockfile path.\n");
- 			return -1;
+ 		if (stat(opt_M, &buf) < 0) {
+-			pseudo_diag("stat of '%s' failed: %s\n",
++			pseudo_error("stat of '%s' failed: %s\n",
+ 				opt_M, strerror(errno));
+-			pseudo_diag("The directory the database is being moved to must exist.\n");
++			pseudo_error("The directory the database is being moved to must exist.\n");
+ 			exit(EXIT_FAILURE);
  		}
- 	}
-@@ -815,7 +815,7 @@ pseudo_client_chroot(const char *path) {
- 	pseudo_chroot_len = strlen(path);
- 	pseudo_chroot = malloc(pseudo_chroot_len + 1);
- 	if (!pseudo_chroot) {
--		pseudo_diag("Couldn't allocate chroot directory buffer.\n");
-+		pseudo_error("Couldn't allocate chroot directory buffer.\n");
- 		pseudo_chroot_len = 0;
- 		errno = ENOMEM;
- 		return -1;
-@@ -834,7 +834,7 @@ pseudo_root_path(const char *func, int line, int dirfd, const char *path, int le
- 	rc = base_path(dirfd, path, leave_last);
- 	pseudo_magic();
- 	if (!rc) {
--		pseudo_diag("couldn't allocate absolute path for '%s'.\n",
-+		pseudo_error("couldn't allocate absolute path for '%s'.\n",
- 			path ? path : "null");
- 	}
- 	pseudo_debug(PDBGF_CHROOT, "root_path [%s, %d]: '%s' from '%s'\n",
-@@ -849,7 +849,7 @@ pseudo_client_getcwd(void) {
- 	char *cwd;
- 	cwd = malloc(pseudo_path_max());
- 	if (!cwd) {
--		pseudo_diag("Can't allocate CWD buffer!\n");
-+		pseudo_error("Can't allocate CWD buffer!\n");
- 		return -1;
- 	}
- 	pseudo_debug(PDBGF_CLIENT | PDBGF_VERBOSE, "getcwd: trying to find cwd.\n");
-@@ -874,7 +874,7 @@ pseudo_client_getcwd(void) {
+ 		msg = pseudo_msg_new(0, opt_M);
+ 		if (!msg) {
+-			pseudo_diag("Can't allocate message structure.\n");
++			pseudo_error("Can't allocate message structure.\n");
+ 			exit(EXIT_FAILURE);
  		}
- 		return 0;
+ 		rc = pdb_rename_file(opt_m, msg);
+ 		free(msg);
+ 		if (rc < 0) {
+-			pseudo_diag("Warning: Database move may have failed.\n");
+-			pseudo_diag("To try to restore, you can reverse the move.\n");
+-			pseudo_diag("To commit to this anyway, run pseudo -C to check the database.\n");
++			pseudo_warning("Database move may have failed.\n");
++			pseudo_warning("To try to restore, you can reverse the move.\n");
++			pseudo_warning("To commit to this anyway, run pseudo -C to check the database.\n");
+ 			exit(EXIT_FAILURE);
+ 		}
+-		pseudo_diag("Rename looked okay, running database sanity check.\n");
++		pseudo_info("Rename looked okay, running database sanity check.\n");
+ 		opt_C = 1;
+ 	}
+ 
+@@ -292,32 +292,32 @@ main(int argc, char *argv[]) {
+ 		struct stat buf;
+ 		pseudo_msg_t *msg;
+ 		if (stat(opt_i, &buf) < 0) {
+-			pseudo_diag("stat of '%s' failed: %s\n",
++			pseudo_error("stat of '%s' failed: %s\n",
+ 				opt_i, strerror(errno));
+-			pseudo_diag("The file used to renumber the database must exist.\n");
++			pseudo_error("The file used to renumber the database must exist.\n");
+ 			exit(EXIT_FAILURE);
+ 		}
+ 		msg = pseudo_msg_new(0, opt_i);
+ 		if (!msg) {
+-			pseudo_diag("Couldn't allocate data structure for path.\n");
++			pseudo_error("Couldn't allocate data structure for path.\n");
+ 			exit(EXIT_FAILURE);
+ 		}
+ 		if (pdb_find_file_path(msg)) {
+-			pseudo_diag("Couldn't find a database entry for '%s'.\n", opt_i);
++			pseudo_error("Couldn't find a database entry for '%s'.\n", opt_i);
+ 			exit(EXIT_FAILURE);
+ 		}
+ 		if (buf.st_ino != msg->ino) {
+-			pseudo_diag("The database inode entry for '%s' doesn't match; you must use -b.\n",
++			pseudo_error("The database inode entry for '%s' doesn't match; you must use -b.\n",
+ 				opt_i);
+ 			exit(EXIT_FAILURE);
+ 		}
+ 		rc = pdb_renumber_all(msg->dev, buf.st_dev);
+ 		free(msg);
+ 		if (rc < 0) {
+-			pseudo_diag("Warning: Database renumber failed.\n");
++			pseudo_warning("Database renumber failed.\n");
+ 			exit(EXIT_FAILURE);
+ 		}
+-		pseudo_diag("Renumber looked okay, running database sanity check.\n");
++		pseudo_info("Renumber looked okay, running database sanity check.\n");
+ 		opt_C = 1;
+ 	}
+ 
+@@ -332,13 +332,13 @@ main(int argc, char *argv[]) {
+ 	}
+ 
+ 	if (opt_d && opt_f) {
+-		pseudo_diag("You cannot run a foregrounded daemon.\n");
++		pseudo_error("You cannot run a foregrounded daemon.\n");
+ 		exit(PSEUDO_EXIT_PSEUDO_INVOCATION);
+ 	}
+ 
+ 	if (opt_f || opt_d) {
+ 		if (argc > optind) {
+-			pseudo_diag("pseudo: running program implies spawning background daemon.\n");
++			pseudo_error("pseudo: running program implies spawning background daemon.\n");
+ 			exit(PSEUDO_EXIT_PSEUDO_INVOCATION);
+ 		}
  	} else {
--		pseudo_diag("Can't get CWD: %s\n", strerror(errno));
-+		pseudo_error("Can't get CWD: %s\n", strerror(errno));
- 		return -1;
- 	}
- }
-@@ -901,7 +901,7 @@ pseudo_client_path_set(int fd, const char *path, char ***patharray, int *len) {
- 			*len, fd + 1);
- 		(*patharray) = realloc((*patharray), (fd + 1) * sizeof(char *));
- 		if (!*patharray) {
--			pseudo_diag("couldn't realloc fd path array to %ld entries\n", (fd + 1) * sizeof(char *));
-+			pseudo_error("couldn't realloc fd path array to %ld entries\n", (fd + 1) * sizeof(char *));
- 			exit(1);
- 		}
- 		for (i = *len; i < fd + 1; ++i)
-@@ -1002,7 +1002,7 @@ client_spawn_server(void) {
+@@ -347,7 +347,7 @@ main(int argc, char *argv[]) {
  
- 	if ((server_pid = pseudo_real_fork()) != 0) {
- 		if (server_pid == -1) {
--			pseudo_diag("couldn't fork server: %s\n", strerror(errno));
-+			pseudo_error("couldn't fork server: %s\n", strerror(errno));
- 			return 1;
- 		}
- 		pseudo_evlog(PDBGF_CLIENT, "spawned new server, pid %d\n", server_pid);
-@@ -1109,7 +1109,7 @@ client_spawn_server(void) {
- 		pseudo_setupenv();
- 		pseudo_dropenv();
- 		pseudo_real_execv(argv[0], argv);
--		pseudo_diag("critical failure: exec of pseudo daemon failed: %s\n", strerror(errno));
-+		pseudo_error("critical failure: exec of pseudo daemon failed: %s\n", strerror(errno));
- 		exit(1);
- 	}
- }
-@@ -1187,7 +1187,7 @@ pseudo_fd(int fd, int how) {
- 
- 	/* Set close on exec, even if we didn't move it. */
- 	if ((newfd >= 0) && (fcntl(newfd, F_SETFD, FD_CLOEXEC) < 0))
--		pseudo_diag("Can't set close on exec flag: %s\n",
-+		pseudo_error("Can't set close on exec flag: %s\n",
- 			strerror(errno));
- 
- 	return(newfd);
-@@ -1208,7 +1208,7 @@ client_connect(void) {
- 	pseudo_evlog(PDBGF_CLIENT, "creating socket %s.\n", sun.sun_path);
- 	if (connect_fd == -1) {
- 		char *e = strerror(errno);
--		pseudo_diag("Can't create socket: %s (%s)\n", sun.sun_path, e);
-+		pseudo_error("Can't create socket: %s (%s)\n", sun.sun_path, e);
- 		pseudo_evlog(PDBGF_CLIENT, "failed to create socket: %s\n", e);
- 		return 1;
- 	}
-@@ -1216,14 +1216,14 @@ client_connect(void) {
- 	pseudo_debug(PDBGF_CLIENT, "connecting socket...\n");
- 	cwd_fd = open(".", O_RDONLY);
- 	if (cwd_fd == -1) {
--		pseudo_diag("Couldn't stash directory before opening socket: %s",
-+		pseudo_error("Couldn't stash directory before opening socket: %s",
- 			strerror(errno));
- 		close(connect_fd);
- 		connect_fd = -1;
- 		return 1;
- 	}
- 	if (fchdir(pseudo_localstate_dir_fd) == -1) {
--		pseudo_diag("Couldn't chdir to server directory [%d]: %s\n",
-+		pseudo_error("Couldn't chdir to server directory [%d]: %s\n",
- 			pseudo_localstate_dir_fd, strerror(errno));
- 		close(connect_fd);
- 		close(cwd_fd);
-@@ -1236,7 +1236,7 @@ client_connect(void) {
- 		pseudo_evlog(PDBGF_CLIENT, "connect failed: %s\n", e);
- 		close(connect_fd);
- 		if (fchdir(cwd_fd) == -1) {
--			pseudo_diag("return to previous directory failed: %s\n",
-+			pseudo_error("return to previous directory failed: %s\n",
- 				strerror(errno));
- 		}
- 		close(cwd_fd);
-@@ -1244,7 +1244,7 @@ client_connect(void) {
- 		return 1;
- 	}
- 	if (fchdir(cwd_fd) == -1) {
--		pseudo_diag("return to previous directory failed: %s\n",
-+		pseudo_error("return to previous directory failed: %s\n",
- 			strerror(errno));
- 	}
- 	close(cwd_fd);
-@@ -1402,11 +1402,9 @@ pseudo_client_request(pseudo_msg_t *msg, size_t len, const char *path) {
+ 		if (opt_r) {
+ 			if (chdir(opt_r) == -1) {
+-				pseudo_diag("failed to chdir to '%s': %s\n",
++				pseudo_error("failed to chdir to '%s': %s\n",
+ 					opt_r, strerror(errno));
+ 				exit(EXIT_FAILURE);
  			}
- 		}
- 	}
--	pseudo_diag("pseudo: server connection persistently failed, aborting.\n");
-+	pseudo_error("pseudo: server connection persistently failed, aborting.\n");
- 	pseudo_evlog_dump();
--	pseudo_diag("event log dumped, aborting.\n");
--	abort();
--	pseudo_diag("aborted.\n");
-+	pseudo_critical("event log dumped, aborting.\n");
- 	return 0;
- }
- 
-@@ -1430,11 +1428,11 @@ pseudo_client_shutdown(int wait_on_socket) {
- 			pseudo_prefix_dir_fd = pseudo_fd(pseudo_prefix_dir_fd, COPY_FD);
- 			free(pseudo_path);
- 		} else {
--			pseudo_diag("No prefix available to to find server.\n");
-+			pseudo_error("No prefix available to to find server.\n");
- 			exit(1);
- 		}
- 		if (pseudo_prefix_dir_fd == -1) {
--			pseudo_diag("Can't open prefix path (%s) for server. (%s)\n",
-+			pseudo_error("Can't open prefix path (%s) for server. (%s)\n",
- 				pseudo_prefix_path(NULL),
- 				strerror(errno));
- 			exit(1);
-@@ -1454,11 +1452,11 @@ pseudo_client_shutdown(int wait_on_socket) {
- 			pseudo_localstate_dir_fd = pseudo_fd(pseudo_localstate_dir_fd, COPY_FD);
- 			free(pseudo_path);
- 		} else {
--			pseudo_diag("No prefix available to to find server.\n");
-+			pseudo_error("No prefix available to to find server.\n");
- 			exit(1);
- 		}
- 		if (pseudo_localstate_dir_fd == -1) {
--			pseudo_diag("Can't open local state path (%s) for server. (%s)\n",
-+			pseudo_error("Can't open local state path (%s) for server. (%s)\n",
- 				pseudo_localstatedir_path(NULL),
- 				strerror(errno));
- 			exit(1);
-@@ -1479,13 +1477,13 @@ pseudo_client_shutdown(int wait_on_socket) {
- 	}
- 	ack = pseudo_msg_receive(connect_fd);
- 	if (!ack) {
--		pseudo_diag("server did not respond to shutdown query.\n");
-+		pseudo_error("server did not respond to shutdown query.\n");
- 		return 1;
- 	}
- 	if (ack->type != PSEUDO_MSG_ACK) {
--		pseudo_diag("Server refused shutdown.  Remaining client fds: %d\n", ack->fd);
--		pseudo_diag("Client pids: %s\n", ack->path);
--		pseudo_diag("Server will shut down after all clients exit.\n");
-+		pseudo_info("Server refused shutdown.  Remaining client fds: %d\n", ack->fd);
-+		pseudo_info("Client pids: %s\n", ack->path);
-+		pseudo_info("Server will shut down after all clients exit.\n");
- 	}
- 	if (wait_on_socket) {
- 		/* try to receive a message the server won't send;
-@@ -1520,14 +1518,14 @@ base_path(int dirfd, const char *path, int leave_last) {
- 			if (basepath) {
- 				baselen = strlen(basepath);
- 			} else {
--				pseudo_diag("got *at() syscall for unknown directory, fd %d\n", dirfd);
-+				pseudo_error("got *at() syscall for unknown directory, fd %d\n", dirfd);
- 			}
- 		} else {
- 			basepath = pseudo_cwd;
- 			baselen = pseudo_cwd_len;
- 		}
- 		if (!basepath) {
--			pseudo_diag("unknown base path for fd %d, path %s\n", dirfd, path);
-+			pseudo_error("unknown base path for fd %d, path %s\n", dirfd, path);
- 			return 0;
- 		}
- 		/* if there's a chroot path, and it's the start of basepath,
-@@ -1756,7 +1754,7 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
- 	if (op == OP_RENAME) {
- 		va_list ap;
- 		if (!path) {
--			pseudo_diag("rename (%s) without new path.\n",
-+			pseudo_warning("rename (%s) without new path.\n",
- 				path ? path : "<nil>");
- 			pseudo_magic();
- 			return 0;
-@@ -1766,7 +1764,7 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
- 		va_end(ap);
- 		/* last argument is the previous path of the file */
- 		if (!path_extra_1) {
--			pseudo_diag("rename (%s) without old path.\n",
-+			pseudo_warning("rename (%s) without old path.\n",
- 				path ? path : "<nil>");
- 			pseudo_magic();
- 			return 0;
-@@ -1835,7 +1833,7 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
- 			alloced_path = malloc(full_len);
- 			alloced_len = full_len;
- 			if (!alloced_path) {
--				pseudo_diag("Can't allocate space for paths for a rename operation.  Sorry.\n");
-+				pseudo_error("Can't allocate space for paths for a rename operation.  Sorry.\n");
- 				alloced_len = 0;
- 				pseudo_magic();
- 				return 0;
-@@ -1859,7 +1857,7 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
- 				alloced_path = malloc(pathlen);
- 				alloced_len = pathlen;
- 				if (!alloced_path) {
--					pseudo_diag("Can't allocate space for paths for a rename operation.  Sorry.\n");
-+					pseudo_error("Can't allocate space for paths for a rename operation.  Sorry.\n");
- 					alloced_len = 0;
- 					pseudo_magic();
- 					return 0;
-@@ -1965,7 +1963,7 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
- 			if (fd == connect_fd) {
- 				connect_fd = pseudo_fd(connect_fd, COPY_FD);
- 				if (connect_fd == -1) {
--					pseudo_diag("tried to close connection, couldn't dup: %s\n", strerror(errno));
-+					pseudo_error("tried to close connection, couldn't dup: %s\n", strerror(errno));
+@@ -378,7 +378,7 @@ main(int argc, char *argv[]) {
+ 				int len = strcspn(path, ":");
+ 				if ( snprintf(fullpath, pseudo_path_max(), "%.*s/%s",
+ 					len, path, argv[0]) > (int) pseudo_path_max()) {
+-					pseudo_diag("pseudo: path too long.\n");
++					pseudo_error("pseudo: path too long.\n");
+ 					exit(EXIT_FAILURE);
  				}
- 			} else if (fd == pseudo_util_debug_fd) {
- 				pseudo_util_debug_fd = pseudo_fd(fd, COPY_FD);
-@@ -2037,7 +2035,7 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
- 		do_request = 1;
+ 				path += len;
+@@ -392,7 +392,7 @@ main(int argc, char *argv[]) {
+ 				}
+ 			}
+ 			if (!found) {
+-				pseudo_diag("Can't find '%s' in $PATH.\n",
++				pseudo_error("Can't find '%s' in $PATH.\n",
+ 					argv[0]);
+ 				exit(EXIT_FAILURE);
+ 			}
+@@ -401,7 +401,7 @@ main(int argc, char *argv[]) {
+ 
+ 		rc = fork();
+ 		if (rc == -1) {
+-			pseudo_diag("pseudo: fork failed: %s\n",
++			pseudo_error("pseudo: fork failed: %s\n",
+ 				strerror(errno));
+ 			exit(EXIT_FAILURE);
+ 		} else {
+@@ -424,7 +424,7 @@ main(int argc, char *argv[]) {
+ 			} else {
+ 				rc = execv(fullpath, argv);
+ 				if (rc == -1) {
+-					pseudo_diag("pseudo: can't run %s: %s\n",
++					pseudo_error("pseudo: can't run %s: %s\n",
+ 						argv[0], strerror(errno));
+ 				}
+ 			}
+@@ -615,7 +615,7 @@ pseudo_op(pseudo_msg_t *msg, const char *program, const char *tag, char **respon
+ 					 */
+ 					pdb_did_unlink_file(msg->path, NULL, by_path.deleting);
+ 				} else {
+-					pseudo_diag("inode mismatch: '%s' ino %llu in db, %llu in request.\n",
++					pseudo_error("inode mismatch: '%s' ino %llu in db, %llu in request.\n",
+ 						msg->path,
+ 						(unsigned long long) by_path.ino,
+ 						(unsigned long long) msg_header.ino);
+@@ -634,14 +634,14 @@ pseudo_op(pseudo_msg_t *msg, const char *program, const char *tag, char **respon
+ 		 * the bogus entry that we noticed.
+ 		 */
+ 		if (S_ISDIR(by_path.mode) != S_ISDIR(msg_header.mode)) {
+-			pseudo_diag("dir mismatch: '%s' [%llu] db mode 0%o, header mode 0%o (unlinking db)\n",
++			pseudo_error("dir mismatch: '%s' [%llu] db mode 0%o, header mode 0%o (unlinking db)\n",
+ 				msg->path, (unsigned long long) by_path.ino,
+ 				(int) by_path.mode, (int) msg_header.mode);
+ 			/* unlink this path -- the inode may be in use elsewhere */
+ 			pdb_unlink_file(msg);
+ 			found_path = 0;
+ 		} else if (S_ISLNK(by_path.mode) != S_ISLNK(msg_header.mode)) {
+-			pseudo_diag("symlink mismatch: '%s' [%llu] db mode 0%o, header mode 0%o (unlinking db)\n",
++			pseudo_error("symlink mismatch: '%s' [%llu] db mode 0%o, header mode 0%o (unlinking db)\n",
+ 				msg->path, (unsigned long long) by_path.ino,
+ 				(int) by_path.mode, (int) msg_header.mode);
+ 			/* unlink this path -- the inode may be in use elsewhere */
+@@ -649,7 +649,7 @@ pseudo_op(pseudo_msg_t *msg, const char *program, const char *tag, char **respon
+ 			found_path = 0;
+ 		}
+ 		if (trailing_slash && !S_ISDIR(by_path.mode)) {
+-			pseudo_diag("dir quasi-mismatch: '%s' [%llu] db mode 0%o, incoming path had trailing slash. Not unlinking.\n",
++			pseudo_error("dir quasi-mismatch: '%s' [%llu] db mode 0%o, incoming path had trailing slash. Not unlinking.\n",
+ 				msg->path, (unsigned long long) by_path.ino,
+ 				(int) by_path.mode);
+ 		}
+@@ -713,7 +713,7 @@ pseudo_op(pseudo_msg_t *msg, const char *program, const char *tag, char **respon
+ 					pseudo_debug(PDBGF_FILE, "inode mismatch for '%s' -- old one was marked for deletion.\n",
+ 						msg->path);
+ 				} else {
+-					pseudo_diag("path mismatch [%d link%s]: ino %llu db '%s' req '%s'.\n",
++					pseudo_error("path mismatch [%d link%s]: ino %llu db '%s' req '%s'.\n",
+ 						msg->nlink,
+ 						msg->nlink == 1 ? "" : "s",
+ 						(unsigned long long) msg_header.ino,
+@@ -734,7 +734,7 @@ pseudo_op(pseudo_msg_t *msg, const char *program, const char *tag, char **respon
+ 		 * entry.  There is no way it can be right.
+ 		 */
+ 		if (S_ISDIR(by_ino.mode) != S_ISDIR(msg_header.mode)) {
+-			pseudo_diag("dir err : %llu ['%s'] (db '%s') db mode 0%o, header mode 0%o (unlinking db)\n",
++			pseudo_error("dir err : %llu ['%s'] (db '%s') db mode 0%o, header mode 0%o (unlinking db)\n",
+ 				(unsigned long long) msg_header.ino,
+ 				msg->pathlen ? msg->path : "no path",
+ 				path_by_ino ? path_by_ino : "no path",
+@@ -746,7 +746,7 @@ pseudo_op(pseudo_msg_t *msg, const char *program, const char *tag, char **respon
+ 			 * can ever be a symlink; the test is generic as
+ 			 * insurance against forgetting to fix it in a future
+ 			 * update. */
+-			pseudo_diag("symlink err : %llu ['%s'] (db '%s') db mode 0%o, header mode 0%o (unlinking db)\n",
++			pseudo_error("symlink err : %llu ['%s'] (db '%s') db mode 0%o, header mode 0%o (unlinking db)\n",
+ 				(unsigned long long) msg_header.ino,
+ 				msg->pathlen ? msg->path : "no path",
+ 				path_by_ino ? path_by_ino : "no path",
+@@ -771,7 +771,7 @@ pseudo_op(pseudo_msg_t *msg, const char *program, const char *tag, char **respon
+ 	case OP_CLOSE:
+ 		/* these messages are handled entirely on the client side,
+ 		 * as of this writing, but might be logged by accident: */
+-		pseudo_diag("error: op %s sent to server.\n", pseudo_op_name(msg->op));
++		pseudo_error("op %s sent to server.\n", pseudo_op_name(msg->op));
+ 		break;
+ 	case OP_EXEC:		/* FALLTHROUGH */
+ 	case OP_OPEN:
+@@ -785,7 +785,7 @@ pseudo_op(pseudo_msg_t *msg, const char *program, const char *tag, char **respon
+ 			 * ... But only if it wasn't a match on both inode *and*
+ 			 * path, because if it were, that would be harmless.
+ 			 */
+-			pseudo_diag("creat for '%s' replaces existing %llu ['%s'].\n",
++			pseudo_info("creat for '%s' replaces existing %llu ['%s'].\n",
+ 				msg->pathlen ? msg->path : "no path",
+ 				(unsigned long long) by_ino.ino,
+ 				path_by_ino ? path_by_ino : "no path");
+@@ -797,7 +797,7 @@ pseudo_op(pseudo_msg_t *msg, const char *program, const char *tag, char **respon
+ 			pdb_link_file(msg);
+ 		} else {
+ 			/* again, an error, but leaving it alone for now. */
+-			pseudo_diag("creat ignored for existing file '%s'.\n",
++			pseudo_error("creat ignored for existing file '%s'.\n",
+ 				msg->pathlen ? msg->path : "no path");
+ 		}
+ 		break;
+@@ -984,7 +984,7 @@ pseudo_op(pseudo_msg_t *msg, const char *program, const char *tag, char **respon
+ 		 * file DID NOT exist before the call.  Fix database:
+ 		 */
+ 		if (found_path) {
+-			pseudo_diag("mkdir/mknod: '%s' [%llu] already existed (mode 0%o), unlinking\n",
++			pseudo_info("mkdir/mknod: '%s' [%llu] already existed (mode 0%o), unlinking\n",
+ 				msg->path, (unsigned long long) by_path.ino,
+ 				(int) by_path.mode);
+ 			pdb_unlink_file(msg);
+@@ -1035,7 +1035,7 @@ pseudo_op(pseudo_msg_t *msg, const char *program, const char *tag, char **respon
+ 		pdb_remove_xattr(msg, oldpath, oldpathlen);
  		break;
  	default:
--		pseudo_diag("error: unknown or unimplemented operator %d (%s)", op, pseudo_op_name(op));
-+		pseudo_error("unknown or unimplemented operator %d (%s)", op, pseudo_op_name(op));
+-		pseudo_diag("unknown op from client %d, op %d [%s]\n",
++		pseudo_error("unknown op from client %d, op %d [%s]\n",
+ 			msg->client, msg->op,
+ 			msg->pathlen ? msg->path : "no path");
  		break;
+@@ -1110,7 +1110,7 @@ pseudo_db_check(int fix) {
+ 
+ 	l = pdb_files();
+ 	if (!l) {
+-		pseudo_diag("Couldn't start file list, can't scan.\n");
++		pseudo_error("Couldn't start file list, can't scan.\n");
+ 		return EXIT_FAILURE;
  	}
- 	/* result can only be set when PSEUDO_XATTRDB resulted in a
-@@ -2069,7 +2067,7 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
- 			pseudo_debug(PDBGF_OP, "(%d) %s", getpid(), pseudo_res_name(result->result));
- 			if (result->result == RESULT_ABORT) {
- 				char *local_state_dir = pseudo_get_value("PSEUDO_LOCALSTATEDIR");
--				pseudo_diag("abort()ing pseudo client by server request. See https://wiki.yoctoproject.org/wiki/Pseudo_Abort for more details on this.\n"
-+				pseudo_info("abort()ing pseudo client by server request. See https://wiki.yoctoproject.org/wiki/Pseudo_Abort for more details on this.\n"
- 					"Check logfile: %s/%s\n", local_state_dir, PSEUDO_LOGFILE);
- 				abort();
- 			}
-@@ -2149,13 +2147,13 @@ populate_path_segs(void) {
- 	}
- 	path_segs = malloc((c+2) * sizeof(*path_segs));
- 	if (!path_segs) {
--		pseudo_diag("warning: failed to allocate space for %d path segments.\n",
-+		pseudo_warning("failed to allocate space for %d path segments.\n",
- 			c);
- 		return;
- 	}
- 	path_lens = malloc((c + 2) * sizeof(*path_lens));
- 	if (!path_lens) {
--		pseudo_diag("warning: failed to allocate space for %d path lengths.\n",
-+		pseudo_warning("failed to allocate space for %d path lengths.\n",
- 			c);
- 		free(path_segs);
- 		path_segs = 0;
-@@ -2163,7 +2161,7 @@ populate_path_segs(void) {
- 	}
- 	previous_path_segs = strdup(previous_path);
- 	if (!previous_path_segs) {
--		pseudo_diag("warning: failed to allocate space for path copy.\n");
-+		pseudo_warning("failed to allocate space for path copy.\n");
- 		free(path_segs);
- 		path_segs = NULL;
- 		free(path_lens);
-@@ -2242,7 +2240,7 @@ pseudo_exec_path(const char *filename, int search_path) {
- 				candidate = pseudo_fix_path(dir, filename, 0, len, NULL, 0);
- 				pseudo_debug(PDBGF_CLIENT, "exec_path: got %s for non-absolute path\n", candidate);
- 			} else {
--				pseudo_diag("couldn't allocate intermediate path.\n");
-+				pseudo_error("couldn't allocate intermediate path.\n");
- 				candidate = NULL;
- 			}
+ 	while ((m = pdb_file(l)) != NULL) {
+@@ -1123,7 +1123,7 @@ pseudo_db_check(int fix) {
+ 			pseudo_debug(PDBGF_DB, "Checking <%s>\n", m->path);
+ 			if (lstat(m->path, &buf)) {
+ 				if (!fix) {
+-					pseudo_diag("can't stat <%s>\n", m->path);
++					pseudo_error("can't stat <%s>\n", m->path);
+ 					errors = EXIT_FAILURE;
+ 					continue;
+ 				} else {
+@@ -1180,7 +1180,7 @@ pseudo_db_check(int fix) {
+ 						rc = pdb_may_unlink_file(m, magic_cookie);
+ 					}
+ 					if (rc) {
+-						pseudo_diag("error updating file %s\n",
++						pseudo_error("error updating file %s\n",
+ 							m->path);
+ 						errors = EXIT_FAILURE;
+ 					}
+@@ -1195,8 +1195,8 @@ pseudo_db_check(int fix) {
+ 	if (delete_some) {
+ 		rc = pdb_did_unlink_files(magic_cookie);
+ 		if (rc) {
+-			pseudo_diag("error nuking mismatched files.\n");
+-			pseudo_diag("database may not be fixed.\n");
++			pseudo_error("error nuking mismatched files.\n");
++			pseudo_error("database may not be fixed.\n");
+ 			errors = EXIT_FAILURE;
  		}
+ 	}
 -- 
 1.8.3.1
 
