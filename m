@@ -2,23 +2,23 @@ Return-Path: <mark.hatle@kernel.crashing.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1693C4450E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB082C44511
 	for <webhook@archiver.kernel.org>; Fri,  3 Jul 2026 00:46:33 +0000 (UTC)
 Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.82807.1783039585669936513
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.82802.1783039583796474879
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 02 Jul 2026 17:46:25 -0700
+ Thu, 02 Jul 2026 17:46:24 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: kernel.crashing.org, ip: 63.228.1.57, mailfrom: mark.hatle@kernel.crashing.org)
 Received: from kernel.crashing.org.net (70-99-78-136.nuveramail.net [70.99.78.136] (may be forged))
-	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 6630kJ17069650;
+	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 6630kJ14069650;
 	Thu, 2 Jul 2026 19:46:21 -0500
 From: Mark Hatle <mark.hatle@kernel.crashing.org>
 To: yocto-patches@lists.yoctoproject.org
 Cc: richard.purdie@linuxfoundation.org, frezidok1@gmail.com
-Subject: [pseudo][PATCH 08/23] pseudo.c: Change pseudo_diag() calls to appropriate macros
-Date: Thu,  2 Jul 2026 19:46:03 -0500
-Message-Id: <1783039578-31531-9-git-send-email-mark.hatle@kernel.crashing.org>
+Subject: [pseudo][PATCH 05/23] pseudo_db: Change pseudo_diag() calls to appropriate macros
+Date: Thu,  2 Jul 2026 19:46:00 -0500
+Message-Id: <1783039578-31531-6-git-send-email-mark.hatle@kernel.crashing.org>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1783039578-31531-1-git-send-email-mark.hatle@kernel.crashing.org>
 References: <1783039578-31531-1-git-send-email-mark.hatle@kernel.crashing.org>
@@ -26,7 +26,7 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Fri, 03 Jul 2026 00:46:33 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4373
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4366
 
 From: Dmitry Sakhonchik <frezidok1@gmail.com>
 
@@ -35,389 +35,549 @@ Implements [YOCTO #12141]
 Signed-off-by: Dmitry Sakhonchik <frezidok1@gmail.com>
 Signed-off-by: Mark Hatle <mark.hatle@kernel.crashing.org>
 ---
- pseudo.c | 100 +++++++++++++++++++++++++++----------------------------
- 1 file changed, 50 insertions(+), 50 deletions(-)
+ pseudo_db.c | 122 ++++++++++++++++++++++++++--------------------------
+ 1 file changed, 61 insertions(+), 61 deletions(-)
 
-diff --git a/pseudo.c b/pseudo.c
-index e5fe5cf..11112dd 100644
---- a/pseudo.c
-+++ b/pseudo.c
-@@ -105,8 +105,8 @@ main(int argc, char *argv[]) {
- 		pseudo_debug(PDBGF_SERVER, "[server %d] can't run daemon with libpseudo in %s\n", getpid(), PRELINK_LIBRARIES);
- 		s = pseudo_get_value("PSEUDO_UNLOAD");
- 		if (s) {
--			pseudo_diag("pseudo: I can't seem to make %s go away.  Sorry.\n", PRELINK_LIBRARIES);
--			pseudo_diag("pseudo: %s: %s\n", PRELINK_LIBRARIES, ld_env);
-+			pseudo_error("pseudo: I can't seem to make %s go away.  Sorry.\n", PRELINK_LIBRARIES);
-+			pseudo_error("pseudo: %s: %s\n", PRELINK_LIBRARIES, ld_env);
- 			exit(PSEUDO_EXIT_PSEUDO_LOADED);
- 		}
- 		free(s);
-@@ -155,7 +155,7 @@ main(int argc, char *argv[]) {
- 		case 'i': /* renumber devices, assuming stable inodes */
- 			s = PSEUDO_ROOT_PATH(AT_FDCWD, optarg, 0);
- 			if (!s) {
--				pseudo_diag("Can't resolve path '%s'\n", optarg);
-+				pseudo_error("Can't resolve path '%s'\n", optarg);
- 				usage(EXIT_FAILURE);
- 			}
- 			opt_i = strdup(s);
-@@ -168,7 +168,7 @@ main(int argc, char *argv[]) {
- 		case 'm': /* move from... (see also 'M') */
- 			s = PSEUDO_ROOT_PATH(AT_FDCWD, optarg, 0);
- 			if (!s) {
--				pseudo_diag("Can't resolve move-from path '%s'\n", optarg);
-+				pseudo_error("Can't resolve move-from path '%s'\n", optarg);
- 				usage(EXIT_FAILURE);
- 			}
- 			opt_m = strdup(s);
-@@ -176,7 +176,7 @@ main(int argc, char *argv[]) {
- 		case 'M': /* move to... (see also 'm') */
- 			s = PSEUDO_ROOT_PATH(AT_FDCWD, optarg, 0);
- 			if (!s) {
--				pseudo_diag("Can't resolve move-to path '%s'\n", optarg);
-+				pseudo_error("Can't resolve move-to path '%s'\n", optarg);
- 				usage(EXIT_FAILURE);
- 			}
- 			opt_M = strdup(s);
-@@ -184,7 +184,7 @@ main(int argc, char *argv[]) {
- 		case 'p': /* passwd file path */
- 			s = PSEUDO_ROOT_PATH(AT_FDCWD, optarg, AT_SYMLINK_NOFOLLOW);
- 			if (!s) {
--				pseudo_diag("Can't resolve passwd path '%s'\n", optarg);
-+				pseudo_error("Can't resolve passwd path '%s'\n", optarg);
- 				usage(EXIT_FAILURE);
- 			}
- 			pseudo_set_value("PSEUDO_PASSWD", s);
-@@ -192,7 +192,7 @@ main(int argc, char *argv[]) {
- 		case 'P': /* prefix */
- 			s = PSEUDO_ROOT_PATH(AT_FDCWD, optarg, AT_SYMLINK_NOFOLLOW);
- 			if (!s) {
--				pseudo_diag("Can't resolve prefix path '%s'\n", optarg);
-+				pseudo_error("Can't resolve prefix path '%s'\n", optarg);
- 				usage(EXIT_FAILURE);
- 			}
- 			pseudo_set_value("PSEUDO_PREFIX", s);
-@@ -201,7 +201,7 @@ main(int argc, char *argv[]) {
- 		case 'R':	/* pseudo root path */
- 			s = PSEUDO_ROOT_PATH(AT_FDCWD, optarg, AT_SYMLINK_NOFOLLOW);
- 			if (!s) {
--				pseudo_diag("Can't resolve root path '%s'\n", optarg);
-+				pseudo_error("Can't resolve root path '%s'\n", optarg);
- 				usage(EXIT_FAILURE);
- 			}
- 			pseudo_set_value("PSEUDO_CHROOT", s);
-@@ -214,7 +214,7 @@ main(int argc, char *argv[]) {
- 		case 't': /* timeout */
- 			pseudo_server_timeout = pseudo_strtol_wrapper(optarg, &s, 10);
- 			if (*s && !isspace(*s)) {
--				pseudo_diag("Timeout must be an integer value.\n");
-+				pseudo_error("Timeout must be an integer value.\n");
- 				usage(EXIT_FAILURE);
- 			}
- 			optptr += snprintf(optptr, pseudo_path_max() - (optptr - opts),
-@@ -239,7 +239,7 @@ main(int argc, char *argv[]) {
- 			break;
- 		case '?':
- 		default:
--			pseudo_diag("unknown/invalid argument (option '%c').\n", optopt);
-+			pseudo_error("unknown/invalid argument (option '%c').\n", optopt);
- 			usage(EXIT_FAILURE);
- 			break;
- 		}
-@@ -250,7 +250,7 @@ main(int argc, char *argv[]) {
+diff --git a/pseudo_db.c b/pseudo_db.c
+index 6a33f20..6945a83 100644
+--- a/pseudo_db.c
++++ b/pseudo_db.c
+@@ -27,7 +27,7 @@
+ #ifdef NPROFILE
+ void xProfile(void * pArg, const char * pQuery, sqlite3_uint64 pTimeTaken)
+ {
+-       pseudo_diag("profile: %lld %s\n", pTimeTaken, pQuery);
++       pseudo_info("profile: %lld %s\n", pTimeTaken, pQuery);
+ }
+ #endif
  
- 	s = pseudo_get_prefix(argv[0]);
- 	if (!s) {
--		pseudo_diag("Can't figure out prefix.  Set PSEUDO_PREFIX or invoke with full path.\n");
-+		pseudo_error("Can't figure out prefix.  Set PSEUDO_PREFIX or invoke with full path.\n");
- 		exit(PSEUDO_EXIT_PSEUDO_PREFIX);
- 	}
- 	free(s);
-@@ -261,29 +261,29 @@ main(int argc, char *argv[]) {
- 		pseudo_msg_t *msg;
- 		int rc;
- 		if (!(opt_m && opt_M)) {
--			pseudo_diag("You cannot move the database without specifying from and to.\n");
-+			pseudo_error("You cannot move the database without specifying from and to.\n");
- 			exit(EXIT_FAILURE);
- 		}
- 		if (stat(opt_M, &buf) < 0) {
--			pseudo_diag("stat of '%s' failed: %s\n",
-+			pseudo_error("stat of '%s' failed: %s\n",
- 				opt_M, strerror(errno));
--			pseudo_diag("The directory the database is being moved to must exist.\n");
-+			pseudo_error("The directory the database is being moved to must exist.\n");
- 			exit(EXIT_FAILURE);
- 		}
- 		msg = pseudo_msg_new(0, opt_M);
- 		if (!msg) {
--			pseudo_diag("Can't allocate message structure.\n");
-+			pseudo_error("Can't allocate message structure.\n");
- 			exit(EXIT_FAILURE);
- 		}
- 		rc = pdb_rename_file(opt_m, msg);
- 		free(msg);
- 		if (rc < 0) {
--			pseudo_diag("Warning: Database move may have failed.\n");
--			pseudo_diag("To try to restore, you can reverse the move.\n");
--			pseudo_diag("To commit to this anyway, run pseudo -C to check the database.\n");
-+			pseudo_warning("Database move may have failed.\n");
-+			pseudo_warning("To try to restore, you can reverse the move.\n");
-+			pseudo_warning("To commit to this anyway, run pseudo -C to check the database.\n");
- 			exit(EXIT_FAILURE);
- 		}
--		pseudo_diag("Rename looked okay, running database sanity check.\n");
-+		pseudo_info("Rename looked okay, running database sanity check.\n");
- 		opt_C = 1;
- 	}
+@@ -647,7 +647,7 @@ cleanup_db(void) {
+ 	localtime_r(&stamp.tv_sec, &stamp_tm);
+ 	strftime(datebuf, 64, "%H:%M:%S", &stamp_tm);
  
-@@ -292,32 +292,32 @@ main(int argc, char *argv[]) {
- 		struct stat buf;
- 		pseudo_msg_t *msg;
- 		if (stat(opt_i, &buf) < 0) {
--			pseudo_diag("stat of '%s' failed: %s\n",
-+			pseudo_error("stat of '%s' failed: %s\n",
- 				opt_i, strerror(errno));
--			pseudo_diag("The file used to renumber the database must exist.\n");
-+			pseudo_error("The file used to renumber the database must exist.\n");
- 			exit(EXIT_FAILURE);
- 		}
- 		msg = pseudo_msg_new(0, opt_i);
- 		if (!msg) {
--			pseudo_diag("Couldn't allocate data structure for path.\n");
-+			pseudo_error("Couldn't allocate data structure for path.\n");
- 			exit(EXIT_FAILURE);
- 		}
- 		if (pdb_find_file_path(msg)) {
--			pseudo_diag("Couldn't find a database entry for '%s'.\n", opt_i);
-+			pseudo_error("Couldn't find a database entry for '%s'.\n", opt_i);
- 			exit(EXIT_FAILURE);
- 		}
- 		if (buf.st_ino != msg->ino) {
--			pseudo_diag("The database inode entry for '%s' doesn't match; you must use -b.\n",
-+			pseudo_error("The database inode entry for '%s' doesn't match; you must use -b.\n",
- 				opt_i);
- 			exit(EXIT_FAILURE);
- 		}
- 		rc = pdb_renumber_all(msg->dev, buf.st_dev);
- 		free(msg);
- 		if (rc < 0) {
--			pseudo_diag("Warning: Database renumber failed.\n");
-+			pseudo_warning("Database renumber failed.\n");
- 			exit(EXIT_FAILURE);
- 		}
--		pseudo_diag("Renumber looked okay, running database sanity check.\n");
-+		pseudo_info("Renumber looked okay, running database sanity check.\n");
- 		opt_C = 1;
- 	}
+-	pseudo_diag("db cleanup for server shutdown, %s.%03d\n",
++	pseudo_info("db cleanup for server shutdown, %s.%03d\n",
+ 		datebuf, (int) (stamp.tv_usec / 1000));
+ #ifdef USE_MEMORY_DB
+         if (real_file_db) {
+@@ -657,7 +657,7 @@ cleanup_db(void) {
+ 	gettimeofday(&stamp, NULL);
+ 	localtime_r(&stamp.tv_sec, &stamp_tm);
+ 	strftime(datebuf, 64, "%H:%M:%S", &stamp_tm);
+-	pseudo_diag("memory-to-file backup complete, %s.%03d.\n",
++	pseudo_info("memory-to-file backup complete, %s.%03d.\n",
+ 		datebuf, (int) (stamp.tv_usec / 1000));
+ #endif
+ 	if (file_db)
+@@ -667,7 +667,7 @@ cleanup_db(void) {
+ 	gettimeofday(&stamp, NULL);
+ 	localtime_r(&stamp.tv_sec, &stamp_tm);
+ 	strftime(datebuf, 64, "%H:%M:%S", &stamp_tm);
+-	pseudo_diag("db cleanup finished, %s.%03d\n",
++	pseudo_info("db cleanup finished, %s.%03d\n",
+ 		datebuf, (int) (stamp.tv_usec / 1000));
+ }
  
-@@ -332,13 +332,13 @@ main(int argc, char *argv[]) {
- 	}
- 
- 	if (opt_d && opt_f) {
--		pseudo_diag("You cannot run a foregrounded daemon.\n");
-+		pseudo_error("You cannot run a foregrounded daemon.\n");
- 		exit(PSEUDO_EXIT_PSEUDO_INVOCATION);
- 	}
- 
- 	if (opt_f || opt_d) {
- 		if (argc > optind) {
--			pseudo_diag("pseudo: running program implies spawning background daemon.\n");
-+			pseudo_error("pseudo: running program implies spawning background daemon.\n");
- 			exit(PSEUDO_EXIT_PSEUDO_INVOCATION);
- 		}
+@@ -704,7 +704,7 @@ get_db(struct database_info *dbinfo) {
+                 rc = sqlite3_open(dbfile, &db);
+ 	free(dbfile);
+ 	if (rc) {
+-		pseudo_diag("Failed: %s\n", sqlite3_errmsg(db));
++		pseudo_error("Failed: %s\n", sqlite3_errmsg(db));
+ 		sqlite3_close(db);
+ 		*(dbinfo->db) = NULL;
+ 		return 1;
+@@ -733,7 +733,7 @@ get_db(struct database_info *dbinfo) {
+ 		"ORDER BY name;";
+ 	rc = sqlite3_get_table(db, sql, &results, &rows, &columns, &errmsg);
+ 	if (rc) {
+-		pseudo_diag("Failed: %s\n", errmsg);
++		pseudo_error("Failed: %s\n", errmsg);
  	} else {
-@@ -347,7 +347,7 @@ main(int argc, char *argv[]) {
+ 		rc = make_tables(db, dbinfo->tables, dbinfo->indexes, dbinfo->migrations, results, rows);
+ 		sqlite3_free_table(results);
+@@ -760,7 +760,7 @@ get_dbs(void) {
+ #endif
+ 	for (i = 0; db_infos[i].db; ++i) {
+ 		if (get_db(&db_infos[i])) {
+-			pseudo_diag("Error getting '%s' database.\n",
++			pseudo_error("Error getting '%s' database.\n",
+ 				db_infos[i].pathname);
+ 			err = 1;
+ 		}
+@@ -780,12 +780,12 @@ pdb_log_traits(pseudo_query_t *traits) {
+ 	int rc;
  
- 		if (opt_r) {
- 			if (chdir(opt_r) == -1) {
--				pseudo_diag("failed to chdir to '%s': %s\n",
-+				pseudo_error("failed to chdir to '%s': %s\n",
- 					opt_r, strerror(errno));
- 				exit(EXIT_FAILURE);
- 			}
-@@ -378,7 +378,7 @@ main(int argc, char *argv[]) {
- 				int len = strcspn(path, ":");
- 				if ( snprintf(fullpath, pseudo_path_max(), "%.*s/%s",
- 					len, path, argv[0]) > (int) pseudo_path_max()) {
--					pseudo_diag("pseudo: path too long.\n");
-+					pseudo_error("pseudo: path too long.\n");
- 					exit(EXIT_FAILURE);
- 				}
- 				path += len;
-@@ -392,7 +392,7 @@ main(int argc, char *argv[]) {
- 				}
- 			}
- 			if (!found) {
--				pseudo_diag("Can't find '%s' in $PATH.\n",
-+				pseudo_error("Can't find '%s' in $PATH.\n",
- 					argv[0]);
- 				exit(EXIT_FAILURE);
- 			}
-@@ -401,7 +401,7 @@ main(int argc, char *argv[]) {
+ 	if (!log_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 1;
+ 	}
+ 	e = calloc(1, sizeof(*e));
+ 	if (!e) {
+-		pseudo_diag("can't allocate space for log entry.");
++		pseudo_error("can't allocate space for log entry.");
+ 		return 1;
+ 	}
+ 	for (trait = traits; trait; trait = trait->next) {
+@@ -854,7 +854,7 @@ pdb_log_traits(pseudo_query_t *traits) {
+ 		case PSQF_ID:
+ 		case PSQF_ORDER:
+ 		default:
+-			pseudo_diag("Invalid trait %s for log creation.\n",
++			pseudo_error("Invalid trait %s for log creation.\n",
+ 				pseudo_query_field_name(trait->field));
+ 			free(e);
+ 			return 1;
+@@ -878,7 +878,7 @@ pdb_log_entry(log_entry *e) {
+ 	int rc;
  
- 		rc = fork();
- 		if (rc == -1) {
--			pseudo_diag("pseudo: fork failed: %s\n",
-+			pseudo_error("pseudo: fork failed: %s\n",
- 				strerror(errno));
- 			exit(EXIT_FAILURE);
+ 	if (!log_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 1;
+ 	}
+ 
+@@ -976,7 +976,7 @@ pdb_log_msg(pseudo_sev_t severity, pseudo_msg_t *msg, const char *program, const
+ 	}
+ 
+ 	if (!log_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 1;
+ 	}
+ 
+@@ -1062,7 +1062,7 @@ frag(buffer *b, char *fmt, ...) {
+ 	int rc;
+ 
+ 	if (!b) {
+-		pseudo_diag("frag called without buffer.\n");
++		pseudo_error("frag called without buffer.\n");
+ 		return -1;
+ 	}
+ 	curlen = b->tail - b->data;
+@@ -1075,7 +1075,7 @@ frag(buffer *b, char *fmt, ...) {
+ 			newlen *= 2;
+ 		char *newbuf = malloc(newlen);
+ 		if (!newbuf) {
+-			pseudo_diag("failed to allocate SQL buffer.\n");
++			pseudo_error("failed to allocate SQL buffer.\n");
+ 			return -1;
+ 		}
+ 		memcpy(newbuf, b->data, curlen + 1);
+@@ -1088,7 +1088,7 @@ frag(buffer *b, char *fmt, ...) {
+ 		rc = vsnprintf(b->tail, b->buflen - curlen, fmt, ap);
+ 		va_end(ap);
+ 		if ((rc > 0) && ((size_t) rc >= (b->buflen - curlen))) {
+-			pseudo_diag("tried to reallocate larger buffer, failed.  giving up.\n");
++			pseudo_error("tried to reallocate larger buffer, failed.  giving up.\n");
+ 			return -1;
+ 		}
+ 	}
+@@ -1110,24 +1110,24 @@ pdb_query(char *stmt_type, pseudo_query_t *traits, unsigned long fields, int uni
+ 	static buffer *sql;
+ 
+ 	if (!log_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return NULL;
+ 	}
+ 
+ 	if (!stmt_type) {
+-		pseudo_diag("can't prepare a statement without a type.\n");
++		pseudo_warning("can't prepare a statement without a type.\n");
+ 	}
+ 
+ 	if (!sql) {
+ 		sql = malloc(sizeof *sql);
+ 		if (!sql) {
+-			pseudo_diag("can't allocate SQL buffer.\n");
++			pseudo_error("can't allocate SQL buffer.\n");
+ 			return NULL;
+ 		}
+ 		sql->buflen = 512;
+ 		sql->data = malloc(sql->buflen);
+ 		if (!sql->data) {
+-			pseudo_diag("can't allocate SQL text buffer.\n");
++			pseudo_error("can't allocate SQL text buffer.\n");
+ 			free(sql);
+ 			sql = 0;
+ 			return NULL;
+@@ -1193,7 +1193,7 @@ pdb_query(char *stmt_type, pseudo_query_t *traits, unsigned long fields, int uni
+ 			case PSQT_LIKE:
+ 			case PSQT_NOTLIKE:
+ 			case PSQT_SQLPAT:
+-				pseudo_diag("Error:  Can't use a LIKE match on non-text fields.\n");
++				pseudo_error("Can't use a LIKE match on non-text fields.\n");
+ 				return 0;
+ 				break;
+ 			default:
+@@ -1210,7 +1210,7 @@ pdb_query(char *stmt_type, pseudo_query_t *traits, unsigned long fields, int uni
+ 			case PSQT_LIKE:
+ 			case PSQT_NOTLIKE:
+ 			case PSQT_SQLPAT:
+-				pseudo_diag("Error:  Can't use a LIKE match on non-text fields.\n");
++				pseudo_error("Error:  Can't use a LIKE match on non-text fields.\n");
+ 				return 0;
+ 				break;
+ 			default:
+@@ -1235,7 +1235,7 @@ pdb_query(char *stmt_type, pseudo_query_t *traits, unsigned long fields, int uni
+ 				order_dir = "ASC";
+ 				break;
+ 			default:
+-				pseudo_diag("Ordering must be < or >.\n");
++				pseudo_error("Ordering must be < or >.\n");
+ 				return 0;
+ 				break;
+ 			}
+@@ -1245,7 +1245,7 @@ pdb_query(char *stmt_type, pseudo_query_t *traits, unsigned long fields, int uni
+ 			case PSQT_LIKE:
+ 			case PSQT_NOTLIKE:
+ 			case PSQT_SQLPAT:
+-				pseudo_diag("Error:  Can't use a LIKE match on non-text fields.\n");
++				pseudo_error("Can't use a LIKE match on non-text fields.\n");
+ 				return 0;
+ 				break;
+ 			default:
+@@ -1300,7 +1300,7 @@ pdb_query(char *stmt_type, pseudo_query_t *traits, unsigned long fields, int uni
+ 			sqlite3_bind_int64(stmt, field++, trait->data.ivalue);
+ 			break;
+ 		default:
+-			pseudo_diag("Inexplicably invalid field type %d\n", trait->field);
++			pseudo_error("Inexplicably invalid field type %d\n", trait->field);
+ 			sqlite3_finalize(stmt);
+ 			return NULL;
+ 		}
+@@ -1322,7 +1322,7 @@ pdb_delete(pseudo_query_t *traits, unsigned long fields) {
+ 			dberr(log_db, "deletion failed");
+ 			return -1;
  		} else {
-@@ -424,7 +424,7 @@ main(int argc, char *argv[]) {
- 			} else {
- 				rc = execv(fullpath, argv);
- 				if (rc == -1) {
--					pseudo_diag("pseudo: can't run %s: %s\n",
-+					pseudo_error("pseudo: can't run %s: %s\n",
- 						argv[0], strerror(errno));
- 				}
- 			}
-@@ -615,7 +615,7 @@ pseudo_op(pseudo_msg_t *msg, const char *program, const char *tag, char **respon
- 					 */
- 					pdb_did_unlink_file(msg->path, NULL, by_path.deleting);
- 				} else {
--					pseudo_diag("inode mismatch: '%s' ino %llu in db, %llu in request.\n",
-+					pseudo_error("inode mismatch: '%s' ino %llu in db, %llu in request.\n",
- 						msg->path,
- 						(unsigned long long) by_path.ino,
- 						(unsigned long long) msg_header.ino);
-@@ -634,14 +634,14 @@ pseudo_op(pseudo_msg_t *msg, const char *program, const char *tag, char **respon
- 		 * the bogus entry that we noticed.
- 		 */
- 		if (S_ISDIR(by_path.mode) != S_ISDIR(msg_header.mode)) {
--			pseudo_diag("dir mismatch: '%s' [%llu] db mode 0%o, header mode 0%o (unlinking db)\n",
-+			pseudo_error("dir mismatch: '%s' [%llu] db mode 0%o, header mode 0%o (unlinking db)\n",
- 				msg->path, (unsigned long long) by_path.ino,
- 				(int) by_path.mode, (int) msg_header.mode);
- 			/* unlink this path -- the inode may be in use elsewhere */
- 			pdb_unlink_file(msg);
- 			found_path = 0;
- 		} else if (S_ISLNK(by_path.mode) != S_ISLNK(msg_header.mode)) {
--			pseudo_diag("symlink mismatch: '%s' [%llu] db mode 0%o, header mode 0%o (unlinking db)\n",
-+			pseudo_error("symlink mismatch: '%s' [%llu] db mode 0%o, header mode 0%o (unlinking db)\n",
- 				msg->path, (unsigned long long) by_path.ino,
- 				(int) by_path.mode, (int) msg_header.mode);
- 			/* unlink this path -- the inode may be in use elsewhere */
-@@ -649,7 +649,7 @@ pseudo_op(pseudo_msg_t *msg, const char *program, const char *tag, char **respon
- 			found_path = 0;
+-			pseudo_diag("Deleted records, vacuuming log database (may take a while).\n");
++			pseudo_info("Deleted records, vacuuming log database (may take a while).\n");
+ 			/* we can't do anything about it if this fails... */
+ 			sqlite3_exec(log_db, "VACUUM;", NULL, NULL, NULL);
  		}
- 		if (trailing_slash && !S_ISDIR(by_path.mode)) {
--			pseudo_diag("dir quasi-mismatch: '%s' [%llu] db mode 0%o, incoming path had trailing slash. Not unlinking.\n",
-+			pseudo_error("dir quasi-mismatch: '%s' [%llu] db mode 0%o, incoming path had trailing slash. Not unlinking.\n",
- 				msg->path, (unsigned long long) by_path.ino,
- 				(int) by_path.mode);
- 		}
-@@ -713,7 +713,7 @@ pseudo_op(pseudo_msg_t *msg, const char *program, const char *tag, char **respon
- 					pseudo_debug(PDBGF_FILE, "inode mismatch for '%s' -- old one was marked for deletion.\n",
- 						msg->path);
- 				} else {
--					pseudo_diag("path mismatch [%d link%s]: ino %llu db '%s' req '%s'.\n",
-+					pseudo_error("path mismatch [%d link%s]: ino %llu db '%s' req '%s'.\n",
- 						msg->nlink,
- 						msg->nlink == 1 ? "" : "s",
- 						(unsigned long long) msg_header.ino,
-@@ -734,7 +734,7 @@ pseudo_op(pseudo_msg_t *msg, const char *program, const char *tag, char **respon
- 		 * entry.  There is no way it can be right.
- 		 */
- 		if (S_ISDIR(by_ino.mode) != S_ISDIR(msg_header.mode)) {
--			pseudo_diag("dir err : %llu ['%s'] (db '%s') db mode 0%o, header mode 0%o (unlinking db)\n",
-+			pseudo_error("dir err : %llu ['%s'] (db '%s') db mode 0%o, header mode 0%o (unlinking db)\n",
- 				(unsigned long long) msg_header.ino,
- 				msg->pathlen ? msg->path : "no path",
- 				path_by_ino ? path_by_ino : "no path",
-@@ -746,7 +746,7 @@ pseudo_op(pseudo_msg_t *msg, const char *program, const char *tag, char **respon
- 			 * can ever be a symlink; the test is generic as
- 			 * insurance against forgetting to fix it in a future
- 			 * update. */
--			pseudo_diag("symlink err : %llu ['%s'] (db '%s') db mode 0%o, header mode 0%o (unlinking db)\n",
-+			pseudo_error("symlink err : %llu ['%s'] (db '%s') db mode 0%o, header mode 0%o (unlinking db)\n",
- 				(unsigned long long) msg_header.ino,
- 				msg->pathlen ? msg->path : "no path",
- 				path_by_ino ? path_by_ino : "no path",
-@@ -771,7 +771,7 @@ pseudo_op(pseudo_msg_t *msg, const char *program, const char *tag, char **respon
- 	case OP_CLOSE:
- 		/* these messages are handled entirely on the client side,
- 		 * as of this writing, but might be logged by accident: */
--		pseudo_diag("error: op %s sent to server.\n", pseudo_op_name(msg->op));
-+		pseudo_error("op %s sent to server.\n", pseudo_op_name(msg->op));
- 		break;
- 	case OP_EXEC:		/* FALLTHROUGH */
- 	case OP_OPEN:
-@@ -785,7 +785,7 @@ pseudo_op(pseudo_msg_t *msg, const char *program, const char *tag, char **respon
- 			 * ... But only if it wasn't a match on both inode *and*
- 			 * path, because if it were, that would be harmless.
- 			 */
--			pseudo_diag("creat for '%s' replaces existing %llu ['%s'].\n",
-+			pseudo_info("creat for '%s' replaces existing %llu ['%s'].\n",
- 				msg->pathlen ? msg->path : "no path",
- 				(unsigned long long) by_ino.ino,
- 				path_by_ino ? path_by_ino : "no path");
-@@ -797,7 +797,7 @@ pseudo_op(pseudo_msg_t *msg, const char *program, const char *tag, char **respon
- 			pdb_link_file(msg);
+@@ -1347,7 +1347,7 @@ pdb_history(pseudo_query_t *traits, unsigned long fields, int unique) {
+ 			h->fields = fields;
+ 			h->stmt = stmt;
  		} else {
- 			/* again, an error, but leaving it alone for now. */
--			pseudo_diag("creat ignored for existing file '%s'.\n",
-+			pseudo_error("creat ignored for existing file '%s'.\n",
- 				msg->pathlen ? msg->path : "no path");
+-			pseudo_diag("failed to allocate memory for log_history\n");
++			pseudo_error("failed to allocate memory for log_history\n");
+ 			sqlite3_finalize(stmt);
  		}
- 		break;
-@@ -984,7 +984,7 @@ pseudo_op(pseudo_msg_t *msg, const char *program, const char *tag, char **respon
- 		 * file DID NOT exist before the call.  Fix database:
- 		 */
- 		if (found_path) {
--			pseudo_diag("mkdir/mknod: '%s' [%llu] already existed (mode 0%o), unlinking\n",
-+			pseudo_info("mkdir/mknod: '%s' [%llu] already existed (mode 0%o), unlinking\n",
- 				msg->path, (unsigned long long) by_path.ino,
- 				(int) by_path.mode);
- 			pdb_unlink_file(msg);
-@@ -1035,7 +1035,7 @@ pseudo_op(pseudo_msg_t *msg, const char *program, const char *tag, char **respon
- 		pdb_remove_xattr(msg, oldpath, oldpathlen);
- 		break;
- 	default:
--		pseudo_diag("unknown op from client %d, op %d [%s]\n",
-+		pseudo_error("unknown op from client %d, op %d [%s]\n",
- 			msg->client, msg->op,
- 			msg->pathlen ? msg->path : "no path");
- 		break;
-@@ -1110,7 +1110,7 @@ pseudo_db_check(int fix) {
- 
- 	l = pdb_files();
+ 		return h;
+@@ -1378,7 +1378,7 @@ pdb_history_entry(log_history h) {
+ 	}
+ 	l = calloc(1, sizeof(log_entry));
  	if (!l) {
--		pseudo_diag("Couldn't start file list, can't scan.\n");
-+		pseudo_error("Couldn't start file list, can't scan.\n");
- 		return EXIT_FAILURE;
+-		pseudo_diag("couldn't allocate log entry.\n");
++		pseudo_error("couldn't allocate log entry.\n");
+ 		return 0;
  	}
- 	while ((m = pdb_file(l)) != NULL) {
-@@ -1123,7 +1123,7 @@ pseudo_db_check(int fix) {
- 			pseudo_debug(PDBGF_DB, "Checking <%s>\n", m->path);
- 			if (lstat(m->path, &buf)) {
- 				if (!fix) {
--					pseudo_diag("can't stat <%s>\n", m->path);
-+					pseudo_error("can't stat <%s>\n", m->path);
- 					errors = EXIT_FAILURE;
- 					continue;
- 				} else {
-@@ -1180,7 +1180,7 @@ pseudo_db_check(int fix) {
- 						rc = pdb_may_unlink_file(m, magic_cookie);
- 					}
- 					if (rc) {
--						pseudo_diag("error updating file %s\n",
-+						pseudo_error("error updating file %s\n",
- 							m->path);
- 						errors = EXIT_FAILURE;
- 					}
-@@ -1195,8 +1195,8 @@ pseudo_db_check(int fix) {
- 	if (delete_some) {
- 		rc = pdb_did_unlink_files(magic_cookie);
- 		if (rc) {
--			pseudo_diag("error nuking mismatched files.\n");
--			pseudo_diag("database may not be fixed.\n");
-+			pseudo_error("error nuking mismatched files.\n");
-+			pseudo_error("database may not be fixed.\n");
- 			errors = EXIT_FAILURE;
+ 
+@@ -1449,12 +1449,12 @@ pdb_history_entry(log_history h) {
+ 		case PSQF_ORDER:
+ 		case PSQF_FTYPE:
+ 		case PSQF_PERM:
+-			pseudo_diag("field %s should not be in the fields list.\n",
++			pseudo_warning("field %s should not be in the fields list.\n",
+ 				pseudo_query_field_name(f));
+ 			return 0;
+ 			break;
+ 		default:
+-			pseudo_diag("unknown field %d\n", f);
++			pseudo_warning("unknown field %d\n", f);
+ 			return 0;
+ 			break;
+ 		}
+@@ -1498,7 +1498,7 @@ pdb_clear_unused_xattrs(void) {
+ 	int rc;
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return;
+ 	}
+ 	if (!delete) {
+@@ -1528,7 +1528,7 @@ pdb_clear_xattrs(pseudo_msg_t *msg) {
+ 	if (!msg)
+ 		return;
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return;
+ 	}
+ 	if (!delete) {
+@@ -1565,7 +1565,7 @@ pdb_copy_xattrs(pseudo_msg_t *oldmsg, pseudo_msg_t *msg) {
+ 	if (!oldmsg || !msg)
+ 		return;
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return;
+ 	}
+ 	if (!copy) {
+@@ -1596,7 +1596,7 @@ pdb_check_xattrs(pseudo_msg_t *msg) {
+ 	if (!msg)
+ 		return;
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return;
+ 	}
+ 	if (!scan) {
+@@ -1643,7 +1643,7 @@ pdb_link_file(pseudo_msg_t *msg) {
+ 		    " VALUES (?, ?, ?, ?, ?, ?, ?, 0);";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!insert) {
+@@ -1689,7 +1689,7 @@ pdb_unlink_file_dev(pseudo_msg_t *msg) {
+ 	char *sql = "DELETE FROM files WHERE dev = ? AND ino = ?;";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!sql_delete) {
+@@ -1724,7 +1724,7 @@ pdb_update_file_path(pseudo_msg_t *msg) {
+ 		"WHERE path = 'NAMELESS FILE' and dev = ? AND ino = ?;";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!update) {
+@@ -1759,7 +1759,7 @@ pdb_may_unlink_file(pseudo_msg_t *msg, int deleting) {
+ 	char *sql_mark_file = "UPDATE files SET deleting = ? WHERE path = ?;";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!mark_file) {
+@@ -1804,7 +1804,7 @@ pdb_cancel_unlink_file(pseudo_msg_t *msg) {
+ 	char *sql_mark_file = "UPDATE files SET deleting = 0 WHERE path = ?;";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!mark_file) {
+@@ -1846,7 +1846,7 @@ pdb_did_unlink_files(int deleting) {
+ 	char *sql_delete_exact = "DELETE FROM files WHERE deleting = ?;";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!delete_exact) {
+@@ -1857,7 +1857,7 @@ pdb_did_unlink_files(int deleting) {
  		}
  	}
+ 	if (deleting == 0) {
+-		pseudo_diag("did_unlink_files: deleting must be non-zero.\n");
++		pseudo_error("did_unlink_files: deleting must be non-zero.\n");
+ 		return 0;
+ 	}
+ 	sqlite3_bind_int(delete_exact, 1, deleting);
+@@ -1882,7 +1882,7 @@ pdb_did_unlink_file(char *path, pseudo_msg_t *msg, int deleting) {
+ 	char *sql_delete_exact = "DELETE FROM files WHERE path = ? AND deleting = ?;";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!delete_exact) {
+@@ -1925,7 +1925,7 @@ pdb_unlink_file(pseudo_msg_t *msg) {
+ 	char *sql_delete_exact = "DELETE FROM files WHERE path = ?;";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!delete_exact) {
+@@ -1973,7 +1973,7 @@ pdb_unlink_contents(pseudo_msg_t *msg) {
+ 				"(path > (? || '/') AND path < (? || '0'));";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!delete_sub) {
+@@ -2025,7 +2025,7 @@ pdb_rename_file(const char *oldpath, pseudo_msg_t *msg) {
+ 			       "WHERE (path > (? || '/') AND path < (? || '0'));";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!update_exact) {
+@@ -2098,7 +2098,7 @@ pdb_renumber_all(dev_t from, dev_t to) {
+ 		    " WHERE dev = ?;";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!files_update) {
+@@ -2166,7 +2166,7 @@ pdb_update_inode(pseudo_msg_t *msg) {
+ 	if (!oldmsg) {
+ 		oldmsg = malloc(sizeof(*msg) + pseudo_path_max());
+ 		if (!oldmsg) {
+-			pseudo_diag("%s: out of memory\n", __func__);
++			pseudo_error("%s: out of memory\n", __func__);
+ 			return 1;
+ 		}
+ 	}
+@@ -2175,7 +2175,7 @@ pdb_update_inode(pseudo_msg_t *msg) {
+ 		    " SET dev = ?, ino = ? "
+ 		    " WHERE path = ?;";
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!update) {
+@@ -2189,7 +2189,7 @@ pdb_update_inode(pseudo_msg_t *msg) {
+ 		return 1;
+ 	}
+ 	if (!msg->pathlen) {
+-		pseudo_diag("Can't update the inode of a file without its path.\n");
++		pseudo_error("Can't update the inode of a file without its path.\n");
+ 		return 1;
+ 	}
+ 	memcpy(oldmsg, msg, sizeof(*msg) + msg->pathlen);
+@@ -2240,7 +2240,7 @@ pdb_update_file(pseudo_msg_t *msg) {
+ 		    " WHERE dev = ? AND ino = ?;";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!update) {
+@@ -2281,7 +2281,7 @@ pdb_find_file_exact(pseudo_msg_t *msg) {
+ 	char *sql = "SELECT * FROM files WHERE path = ? AND dev = ? AND ino = ?;";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!select) {
+@@ -2332,7 +2332,7 @@ pdb_find_file_path(pseudo_msg_t *msg) {
+ 	char *sql = "SELECT * FROM files WHERE path = ?;";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 1;
+ 	}
+ 	if (!select) {
+@@ -2389,7 +2389,7 @@ pdb_get_file_path(pseudo_msg_t *msg) {
+ 	char *response;
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!select) {
+@@ -2438,7 +2438,7 @@ pdb_find_file_dev(pseudo_msg_t *msg, char **path) {
+ 	char *sql = "SELECT * FROM files WHERE dev = ? AND ino = ?;";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!select) {
+@@ -2492,7 +2492,7 @@ pdb_get_xattr(pseudo_msg_t *msg, char **value, size_t *len) {
+ 	char *sql = "SELECT value FROM xattrs WHERE dev  = ? AND ino = ? AND name = ?;";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!select) {
+@@ -2523,7 +2523,7 @@ pdb_get_xattr(pseudo_msg_t *msg, char **value, size_t *len) {
+ 			 */
+ 			*value = malloc(length);
+ 			if (!*value) {
+-				pseudo_diag("%s: out of memory\n", __func__);
++				pseudo_error("%s: out of memory\n", __func__);
+ 				sqlite3_reset(select);
+ 				sqlite3_clear_bindings(select);
+ 				return 1;
+@@ -2561,7 +2561,7 @@ pdb_list_xattr(pseudo_msg_t *msg, char **value, size_t *len) {
+ 	char *sql = "SELECT name FROM xattrs WHERE dev = ? AND ino = ? ORDER BY name;";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!select) {
+@@ -2615,7 +2615,7 @@ pdb_remove_xattr(pseudo_msg_t *msg, char *value, size_t len) {
+ 	char *sql = "DELETE FROM xattrs WHERE dev = ? AND ino = ? AND name = ?;";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!delete) {
+@@ -2656,7 +2656,7 @@ pdb_set_xattr(pseudo_msg_t *msg, char *value, size_t len, int flags) {
+ 	size_t vlen;
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!select) {
+@@ -2769,7 +2769,7 @@ pdb_find_file_ino(pseudo_msg_t *msg) {
+ 	char *sql = "SELECT * FROM files WHERE ino = ?;";
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 	if (!select) {
+@@ -2813,7 +2813,7 @@ pdb_files(void) {
+ 	pdb_file_list l;
+ 
+ 	if (!file_db && get_dbs()) {
+-		pseudo_diag("%s: database error.\n", __func__);
++		pseudo_error("%s: database error.\n", __func__);
+ 		return 0;
+ 	}
+ 
+@@ -2852,7 +2852,7 @@ pdb_file(pdb_file_list l) {
+ 	s = sqlite3_column_text(l->stmt, column++);
+ 	m = pseudo_msg_new(0, (const char *) s);
+ 	if (!m) {
+-		pseudo_diag("couldn't allocate file message.\n");
++		pseudo_error("couldn't allocate file message.\n");
+ 		return NULL;
+ 	}
+ 	pseudo_debug(PDBGF_DB, "pdb_file: '%s'\n", s ? (const char *) s : "<nil>");
 -- 
 2.53.0
 
