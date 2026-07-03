@@ -2,427 +2,941 @@ Return-Path: <mark.hatle@kernel.crashing.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 821FBC4450D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E961C44509
 	for <webhook@archiver.kernel.org>; Fri,  3 Jul 2026 00:46:33 +0000 (UTC)
 Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.83543.1783039585493589540
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.83548.1783039587503037938
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 02 Jul 2026 17:46:25 -0700
+ Thu, 02 Jul 2026 17:46:27 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: kernel.crashing.org, ip: 63.228.1.57, mailfrom: mark.hatle@kernel.crashing.org)
 Received: from kernel.crashing.org.net (70-99-78-136.nuveramail.net [70.99.78.136] (may be forged))
-	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 6630kJ15069650;
-	Thu, 2 Jul 2026 19:46:21 -0500
+	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 6630kJ1L069650;
+	Thu, 2 Jul 2026 19:46:24 -0500
 From: Mark Hatle <mark.hatle@kernel.crashing.org>
 To: yocto-patches@lists.yoctoproject.org
 Cc: richard.purdie@linuxfoundation.org, frezidok1@gmail.com
-Subject: [pseudo][PATCH 06/23] pseudo_client: Change pseudo_diag() calls to appropriate macros
-Date: Thu,  2 Jul 2026 19:46:01 -0500
-Message-Id: <1783039578-31531-7-git-send-email-mark.hatle@kernel.crashing.org>
+Subject: [pseudo][PATCH 22/23] test-bash-exec-env: Add bash env test case
+Date: Thu,  2 Jul 2026 19:46:17 -0500
+Message-Id: <1783039578-31531-23-git-send-email-mark.hatle@kernel.crashing.org>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1783039578-31531-1-git-send-email-mark.hatle@kernel.crashing.org>
 References: <1783039578-31531-1-git-send-email-mark.hatle@kernel.crashing.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-MIME-Autoconverted: from 8bit to quoted-printable by gate.crashing.org id 6630kJ1L069650
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Fri, 03 Jul 2026 00:46:33 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4372
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4383
 
-From: Dmitry Sakhonchik <frezidok1@gmail.com>
+From: Mark Hatle <mark.hatle@amd.com>
 
-Implements [YOCTO #12141]
+Add a test reproducing the bash/pseudo environment conflict
+(https://bugzilla.yoctoproject.org/show_bug.cgi?id=3D16078) where pseudo'=
+s
+setenv workaround corrupted memory when pseudo ran under bash.
 
-Signed-off-by: Dmitry Sakhonchik <frezidok1@gmail.com>
-Signed-off-by: Mark Hatle <mark.hatle@kernel.crashing.org>
+The helper binary exports its own getenv/setenv/unsetenv (as bash does),
+maintaining a private variable table separate from environ. It strips the
+derived PSEUDO_* variables and forks children, mirroring the opkg-build
+pipeline that triggered the production crash. pseudo's fork wrapper runs
+pseudo_setupenv() in each child, which re-adds those variables; the child
+then checks whether they leaked back into the real environ:
+
+  Unfixed pseudo calls glibc's setenv via dlsym(RTLD_NEXT), writing the
+  variables straight into environ and desyncing it from bash's table.
+
+  Fixed pseudo calls the process's own setenv, leaving environ untouched.
+
+The check is deterministic, so the test fails when the fixes are reverted
+and passes when they are present. MALLOC_CHECK_=3D3 is kept as a secondar=
+y
+safety net.
+
+AI-Generated: Test constructed with GitHub Copilot (Claude Opus 4.8)
+
+Signed-off-by: Mark Hatle <mark.hatle@amd.com>
 ---
- pseudo_client.c | 96 ++++++++++++++++++++++++-------------------------
- 1 file changed, 47 insertions(+), 49 deletions(-)
+ test/test-bash-exec-env.c  | 667 +++++++++++++++++++++++++++++++++++++
+ test/test-bash-exec-env.sh |  34 ++
+ 2 files changed, 701 insertions(+)
+ create mode 100644 test/test-bash-exec-env.c
+ create mode 100755 test/test-bash-exec-env.sh
 
-diff --git a/pseudo_client.c b/pseudo_client.c
-index 7041366..69e5cbc 100644
---- a/pseudo_client.c
-+++ b/pseudo_client.c
-@@ -166,7 +166,7 @@ build_passwd_paths(void)
- 		/* allocation and/or return */
- 		if (passwd_paths) {
- 			if (np != npasswd_paths) {
--				pseudo_diag("internal error: path allocation was inconsistent.\n");
-+				pseudo_error("internal error: path allocation was inconsistent.\n");
- 			} else {
- 				/* yes, we allocated one extra for a trailing
- 				 * null pointer.
-@@ -178,14 +178,14 @@ build_passwd_paths(void)
- 			passwd_paths = malloc((np + 1) * sizeof(*passwd_paths));
- 			npasswd_paths = np;
- 			if (!passwd_paths) {
--				pseudo_diag("couldn't allocate storage for password paths.\n");
-+				pseudo_error("couldn't allocate storage for password paths.\n");
- 				exit(1);
- 			}
- 			np = 0;
- 		}
- 	} while (++pass < 2);
- 	/* in theory the second pass already returned, but. */
--	pseudo_diag("should totally not have gotten here.\n");
-+	pseudo_error("should totally not have gotten here.\n");
- 
- 	return;
- }
-@@ -567,11 +567,11 @@ pseudo_init_client(void) {
- 				}
- 				pseudo_prefix_dir_fd = pseudo_fd(pseudo_prefix_dir_fd, MOVE_FD);
- 			} else {
--				pseudo_diag("No prefix available to to find server.\n");
-+				pseudo_error("No prefix available to to find server.\n");
- 				exit(1);
- 			}
- 			if (pseudo_prefix_dir_fd == -1) {
--				pseudo_diag("Can't open prefix path '%s' for server: %s\n",
-+				pseudo_error("Can't open prefix path '%s' for server: %s\n",
- 					pseudo_path,
- 					strerror(errno));
- 				exit(1);
-@@ -590,11 +590,11 @@ pseudo_init_client(void) {
- 				}
- 				pseudo_localstate_dir_fd = pseudo_fd(pseudo_localstate_dir_fd, MOVE_FD);
- 			} else {
--				pseudo_diag("No local state directory available for server/file interactions.\n");
-+				pseudo_error("No local state directory available for server/file interactions.\n");
- 				exit(1);
- 			}
- 			if (pseudo_localstate_dir_fd == -1) {
--				pseudo_diag("Can't open local state path '%s': %s\n",
-+				pseudo_error("Can't open local state path '%s': %s\n",
- 					pseudo_path,
- 					strerror(errno));
- 				exit(1);
-@@ -633,7 +633,7 @@ pseudo_init_client(void) {
- 			if (pseudo_chroot) {
- 				pseudo_chroot_len = strlen(pseudo_chroot);
- 			} else {
--				pseudo_diag("Can't store chroot path '%s'\n", env);
-+				pseudo_error("Can't store chroot path '%s'\n", env);
- 			}
- 		}
- 		free(env);
-@@ -662,7 +662,7 @@ pseudo_init_client(void) {
- static void
- pseudo_file_close(int *fd, FILE **fp) {
- 	if (!fp || !fd) {
--		pseudo_diag("pseudo_file_close: needs valid pointers.\n");
-+		pseudo_error("pseudo_file_close: needs valid pointers.\n");
- 		return;
- 	}
- 	pseudo_antimagic();
-@@ -698,7 +698,7 @@ pseudo_file_close(int *fd, FILE **fp) {
- static FILE *
- pseudo_file_open(char *name, int *fd, FILE **fp) {
- 	if (!fp || !fd || !name) {
--		pseudo_diag("pseudo_file_open: needs valid pointers.\n");
-+		pseudo_error("pseudo_file_open: needs valid pointers.\n");
- 		return NULL;
- 	}
- 	pseudo_file_close(fd, fp);
-@@ -734,7 +734,7 @@ pseudo_pwd_lck_open(void) {
- 	if (!pseudo_pwd_lck_name) {
- 		pseudo_pwd_lck_name = malloc(pseudo_path_max());
- 		if (!pseudo_pwd_lck_name) {
--			pseudo_diag("couldn't allocate space for passwd lockfile path.\n");
-+			pseudo_error("couldn't allocate space for passwd lockfile path.\n");
- 			return -1;
- 		}
- 	}
-@@ -815,7 +815,7 @@ pseudo_client_chroot(const char *path) {
- 	pseudo_chroot_len = strlen(path);
- 	pseudo_chroot = malloc(pseudo_chroot_len + 1);
- 	if (!pseudo_chroot) {
--		pseudo_diag("Couldn't allocate chroot directory buffer.\n");
-+		pseudo_error("Couldn't allocate chroot directory buffer.\n");
- 		pseudo_chroot_len = 0;
- 		errno = ENOMEM;
- 		return -1;
-@@ -834,7 +834,7 @@ pseudo_root_path(const char *func, int line, int dirfd, const char *path, int le
- 	rc = base_path(dirfd, path, leave_last);
- 	pseudo_magic();
- 	if (!rc) {
--		pseudo_diag("couldn't allocate absolute path for '%s'.\n",
-+		pseudo_error("couldn't allocate absolute path for '%s'.\n",
- 			path ? path : "null");
- 	}
- 	pseudo_debug(PDBGF_CHROOT, "root_path [%s, %d]: '%s' from '%s'\n",
-@@ -849,7 +849,7 @@ pseudo_client_getcwd(void) {
- 	char *cwd;
- 	cwd = malloc(pseudo_path_max());
- 	if (!cwd) {
--		pseudo_diag("Can't allocate CWD buffer!\n");
-+		pseudo_error("Can't allocate CWD buffer!\n");
- 		return -1;
- 	}
- 	pseudo_debug(PDBGF_CLIENT | PDBGF_VERBOSE, "getcwd: trying to find cwd.\n");
-@@ -874,7 +874,7 @@ pseudo_client_getcwd(void) {
- 		}
- 		return 0;
- 	} else {
--		pseudo_diag("Can't get CWD: %s\n", strerror(errno));
-+		pseudo_error("Can't get CWD: %s\n", strerror(errno));
- 		return -1;
- 	}
- }
-@@ -901,7 +901,7 @@ pseudo_client_path_set(int fd, const char *path, char ***patharray, int *len) {
- 			*len, fd + 1);
- 		(*patharray) = realloc((*patharray), (fd + 1) * sizeof(char *));
- 		if (!*patharray) {
--			pseudo_diag("couldn't realloc fd path array to %ld entries\n", (fd + 1) * sizeof(char *));
-+			pseudo_error("couldn't realloc fd path array to %ld entries\n", (fd + 1) * sizeof(char *));
- 			exit(1);
- 		}
- 		for (i = *len; i < fd + 1; ++i)
-@@ -1002,7 +1002,7 @@ client_spawn_server(void) {
- 
- 	if ((server_pid = pseudo_real_fork()) != 0) {
- 		if (server_pid == -1) {
--			pseudo_diag("couldn't fork server: %s\n", strerror(errno));
-+			pseudo_error("couldn't fork server: %s\n", strerror(errno));
- 			return 1;
- 		}
- 		pseudo_evlog(PDBGF_CLIENT, "spawned new server, pid %d\n", server_pid);
-@@ -1109,7 +1109,7 @@ client_spawn_server(void) {
- 		pseudo_setupenv();
- 		pseudo_dropenv();
- 		pseudo_real_execv(argv[0], argv);
--		pseudo_diag("critical failure: exec of pseudo daemon failed: %s\n", strerror(errno));
-+		pseudo_error("critical failure: exec of pseudo daemon failed: %s\n", strerror(errno));
- 		exit(1);
- 	}
- }
-@@ -1187,7 +1187,7 @@ pseudo_fd(int fd, int how) {
- 
- 	/* Set close on exec, even if we didn't move it. */
- 	if ((newfd >= 0) && (fcntl(newfd, F_SETFD, FD_CLOEXEC) < 0))
--		pseudo_diag("Can't set close on exec flag: %s\n",
-+		pseudo_error("Can't set close on exec flag: %s\n",
- 			strerror(errno));
- 
- 	return(newfd);
-@@ -1208,7 +1208,7 @@ client_connect(void) {
- 	pseudo_evlog(PDBGF_CLIENT, "creating socket %s.\n", sun.sun_path);
- 	if (connect_fd == -1) {
- 		char *e = strerror(errno);
--		pseudo_diag("Can't create socket: %s (%s)\n", sun.sun_path, e);
-+		pseudo_error("Can't create socket: %s (%s)\n", sun.sun_path, e);
- 		pseudo_evlog(PDBGF_CLIENT, "failed to create socket: %s\n", e);
- 		return 1;
- 	}
-@@ -1216,14 +1216,14 @@ client_connect(void) {
- 	pseudo_debug(PDBGF_CLIENT, "connecting socket...\n");
- 	cwd_fd = open(".", O_RDONLY);
- 	if (cwd_fd == -1) {
--		pseudo_diag("Couldn't stash directory before opening socket: %s",
-+		pseudo_error("Couldn't stash directory before opening socket: %s",
- 			strerror(errno));
- 		close(connect_fd);
- 		connect_fd = -1;
- 		return 1;
- 	}
- 	if (fchdir(pseudo_localstate_dir_fd) == -1) {
--		pseudo_diag("Couldn't chdir to server directory [%d]: %s\n",
-+		pseudo_error("Couldn't chdir to server directory [%d]: %s\n",
- 			pseudo_localstate_dir_fd, strerror(errno));
- 		close(connect_fd);
- 		close(cwd_fd);
-@@ -1236,7 +1236,7 @@ client_connect(void) {
- 		pseudo_evlog(PDBGF_CLIENT, "connect failed: %s\n", e);
- 		close(connect_fd);
- 		if (fchdir(cwd_fd) == -1) {
--			pseudo_diag("return to previous directory failed: %s\n",
-+			pseudo_error("return to previous directory failed: %s\n",
- 				strerror(errno));
- 		}
- 		close(cwd_fd);
-@@ -1244,7 +1244,7 @@ client_connect(void) {
- 		return 1;
- 	}
- 	if (fchdir(cwd_fd) == -1) {
--		pseudo_diag("return to previous directory failed: %s\n",
-+		pseudo_error("return to previous directory failed: %s\n",
- 			strerror(errno));
- 	}
- 	close(cwd_fd);
-@@ -1402,11 +1402,9 @@ pseudo_client_request(pseudo_msg_t *msg, size_t len, const char *path) {
- 			}
- 		}
- 	}
--	pseudo_diag("pseudo: server connection persistently failed, aborting.\n");
-+	pseudo_error("pseudo: server connection persistently failed, aborting.\n");
- 	pseudo_evlog_dump();
--	pseudo_diag("event log dumped, aborting.\n");
--	abort();
--	pseudo_diag("aborted.\n");
-+	pseudo_critical("event log dumped, aborting.\n");
- 	return 0;
- }
- 
-@@ -1430,11 +1428,11 @@ pseudo_client_shutdown(int wait_on_socket) {
- 			pseudo_prefix_dir_fd = pseudo_fd(pseudo_prefix_dir_fd, COPY_FD);
- 			free(pseudo_path);
- 		} else {
--			pseudo_diag("No prefix available to to find server.\n");
-+			pseudo_error("No prefix available to to find server.\n");
- 			exit(1);
- 		}
- 		if (pseudo_prefix_dir_fd == -1) {
--			pseudo_diag("Can't open prefix path (%s) for server. (%s)\n",
-+			pseudo_error("Can't open prefix path (%s) for server. (%s)\n",
- 				pseudo_prefix_path(NULL),
- 				strerror(errno));
- 			exit(1);
-@@ -1454,11 +1452,11 @@ pseudo_client_shutdown(int wait_on_socket) {
- 			pseudo_localstate_dir_fd = pseudo_fd(pseudo_localstate_dir_fd, COPY_FD);
- 			free(pseudo_path);
- 		} else {
--			pseudo_diag("No prefix available to to find server.\n");
-+			pseudo_error("No prefix available to to find server.\n");
- 			exit(1);
- 		}
- 		if (pseudo_localstate_dir_fd == -1) {
--			pseudo_diag("Can't open local state path (%s) for server. (%s)\n",
-+			pseudo_error("Can't open local state path (%s) for server. (%s)\n",
- 				pseudo_localstatedir_path(NULL),
- 				strerror(errno));
- 			exit(1);
-@@ -1479,13 +1477,13 @@ pseudo_client_shutdown(int wait_on_socket) {
- 	}
- 	ack = pseudo_msg_receive(connect_fd);
- 	if (!ack) {
--		pseudo_diag("server did not respond to shutdown query.\n");
-+		pseudo_error("server did not respond to shutdown query.\n");
- 		return 1;
- 	}
- 	if (ack->type != PSEUDO_MSG_ACK) {
--		pseudo_diag("Server refused shutdown.  Remaining client fds: %d\n", ack->fd);
--		pseudo_diag("Client pids: %s\n", ack->path);
--		pseudo_diag("Server will shut down after all clients exit.\n");
-+		pseudo_info("Server refused shutdown.  Remaining client fds: %d\n", ack->fd);
-+		pseudo_info("Client pids: %s\n", ack->path);
-+		pseudo_info("Server will shut down after all clients exit.\n");
- 	}
- 	if (wait_on_socket) {
- 		/* try to receive a message the server won't send;
-@@ -1520,14 +1518,14 @@ base_path(int dirfd, const char *path, int leave_last) {
- 			if (basepath) {
- 				baselen = strlen(basepath);
- 			} else {
--				pseudo_diag("got *at() syscall for unknown directory, fd %d\n", dirfd);
-+				pseudo_error("got *at() syscall for unknown directory, fd %d\n", dirfd);
- 			}
- 		} else {
- 			basepath = pseudo_cwd;
- 			baselen = pseudo_cwd_len;
- 		}
- 		if (!basepath) {
--			pseudo_diag("unknown base path for fd %d, path %s\n", dirfd, path);
-+			pseudo_error("unknown base path for fd %d, path %s\n", dirfd, path);
- 			return 0;
- 		}
- 		/* if there's a chroot path, and it's the start of basepath,
-@@ -1756,7 +1754,7 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
- 	if (op == OP_RENAME) {
- 		va_list ap;
- 		if (!path) {
--			pseudo_diag("rename (%s) without new path.\n",
-+			pseudo_warning("rename (%s) without new path.\n",
- 				path ? path : "<nil>");
- 			pseudo_magic();
- 			return 0;
-@@ -1766,7 +1764,7 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
- 		va_end(ap);
- 		/* last argument is the previous path of the file */
- 		if (!path_extra_1) {
--			pseudo_diag("rename (%s) without old path.\n",
-+			pseudo_warning("rename (%s) without old path.\n",
- 				path ? path : "<nil>");
- 			pseudo_magic();
- 			return 0;
-@@ -1835,7 +1833,7 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
- 			alloced_path = malloc(full_len);
- 			alloced_len = full_len;
- 			if (!alloced_path) {
--				pseudo_diag("Can't allocate space for paths for a rename operation.  Sorry.\n");
-+				pseudo_error("Can't allocate space for paths for a rename operation.  Sorry.\n");
- 				alloced_len = 0;
- 				pseudo_magic();
- 				return 0;
-@@ -1859,7 +1857,7 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
- 				alloced_path = malloc(pathlen);
- 				alloced_len = pathlen;
- 				if (!alloced_path) {
--					pseudo_diag("Can't allocate space for paths for a rename operation.  Sorry.\n");
-+					pseudo_error("Can't allocate space for paths for a rename operation.  Sorry.\n");
- 					alloced_len = 0;
- 					pseudo_magic();
- 					return 0;
-@@ -1965,7 +1963,7 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
- 			if (fd == connect_fd) {
- 				connect_fd = pseudo_fd(connect_fd, COPY_FD);
- 				if (connect_fd == -1) {
--					pseudo_diag("tried to close connection, couldn't dup: %s\n", strerror(errno));
-+					pseudo_error("tried to close connection, couldn't dup: %s\n", strerror(errno));
- 				}
- 			} else if (fd == pseudo_util_debug_fd) {
- 				pseudo_util_debug_fd = pseudo_fd(fd, COPY_FD);
-@@ -2037,7 +2035,7 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
- 		do_request = 1;
- 		break;
- 	default:
--		pseudo_diag("error: unknown or unimplemented operator %d (%s)", op, pseudo_op_name(op));
-+		pseudo_error("unknown or unimplemented operator %d (%s)", op, pseudo_op_name(op));
- 		break;
- 	}
- 	/* result can only be set when PSEUDO_XATTRDB resulted in a
-@@ -2069,7 +2067,7 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
- 			pseudo_debug(PDBGF_OP, "(%d) %s", getpid(), pseudo_res_name(result->result));
- 			if (result->result == RESULT_ABORT) {
- 				char *local_state_dir = pseudo_get_value("PSEUDO_LOCALSTATEDIR");
--				pseudo_diag("abort()ing pseudo client by server request. See https://wiki.yoctoproject.org/wiki/Pseudo_Abort for more details on this.\n"
-+				pseudo_info("abort()ing pseudo client by server request. See https://wiki.yoctoproject.org/wiki/Pseudo_Abort for more details on this.\n"
- 					"Check logfile: %s/%s\n", local_state_dir, PSEUDO_LOGFILE);
- 				abort();
- 			}
-@@ -2149,13 +2147,13 @@ populate_path_segs(void) {
- 	}
- 	path_segs = malloc((c+2) * sizeof(*path_segs));
- 	if (!path_segs) {
--		pseudo_diag("warning: failed to allocate space for %d path segments.\n",
-+		pseudo_warning("failed to allocate space for %d path segments.\n",
- 			c);
- 		return;
- 	}
- 	path_lens = malloc((c + 2) * sizeof(*path_lens));
- 	if (!path_lens) {
--		pseudo_diag("warning: failed to allocate space for %d path lengths.\n",
-+		pseudo_warning("failed to allocate space for %d path lengths.\n",
- 			c);
- 		free(path_segs);
- 		path_segs = 0;
-@@ -2163,7 +2161,7 @@ populate_path_segs(void) {
- 	}
- 	previous_path_segs = strdup(previous_path);
- 	if (!previous_path_segs) {
--		pseudo_diag("warning: failed to allocate space for path copy.\n");
-+		pseudo_warning("failed to allocate space for path copy.\n");
- 		free(path_segs);
- 		path_segs = NULL;
- 		free(path_lens);
-@@ -2242,7 +2240,7 @@ pseudo_exec_path(const char *filename, int search_path) {
- 				candidate = pseudo_fix_path(dir, filename, 0, len, NULL, 0);
- 				pseudo_debug(PDBGF_CLIENT, "exec_path: got %s for non-absolute path\n", candidate);
- 			} else {
--				pseudo_diag("couldn't allocate intermediate path.\n");
-+				pseudo_error("couldn't allocate intermediate path.\n");
- 				candidate = NULL;
- 			}
- 		}
--- 
+diff --git a/test/test-bash-exec-env.c b/test/test-bash-exec-env.c
+new file mode 100644
+index 0000000..68ed42a
+--- /dev/null
++++ b/test/test-bash-exec-env.c
+@@ -0,0 +1,667 @@
++/*
++ * SPDX-License-Identifier: LGPL-2.1-only
++ *
++ * test-bash-exec-env.c
++ *
++ * Reproducer for https://bugzilla.yoctoproject.org/show_bug.cgi?id=3D16=
+078
++ *
++ * What this binary simulates
++ * --------------------------
++ * bash exports getenv(), setenv(), and unsetenv() as dynamic symbols.
++ * Because the main executable appears first in the dynamic-linker searc=
+h
++ * order, every library loaded into the process (including libpseudo.so)
++ * resolves calls to those names to bash's own implementations.
++ *
++ * bash maintains a private variable hash table that is separate from th=
+e
++ * C-library 'environ' array.  bash's setenv/getenv operate on this tabl=
+e;
++ * 'environ' is only rebuilt lazily by maybe_make_export_env().
++ *
++ * The old pseudo workaround (commit 80c6334a) used
++ *   pseudo_real_setenv =3D dlsym(RTLD_NEXT, "setenv")
++ * to bypass bash's override and call glibc's setenv directly.
++ * dlsym(RTLD_NEXT, =E2=80=A6) from within an LD_PRELOAD library searche=
+s the
++ * shared-library chain *after* the LD_PRELOAD library, so it finds
++ * glibc's implementation =E2=80=94 it does NOT find the main executable=
+'s
++ * (bash's) version.
++ *
++ * glibc's setenv modifies 'environ' directly, allocating a new heap
++ * block (block A) for the updated "LD_PRELOAD=3Dlibpseudo.so:=E2=80=A6"=
+ entry.
++ * bash's internal variable table is NOT updated.
++ *
++ * When bash later calls maybe_make_export_env() (before exec-ing each
++ * pipeline stage), it calls strvec_flush() which frees every entry in
++ * the current 'environ' array =E2=80=94 including block A =E2=80=94 and=
+ rebuilds from
++ * the internal table (which still has the original LD_PRELOAD without
++ * libpseudo.so).
++ *
++ * The freed block A therefore remains live in the allocator's free list
++ * while pseudo's exec wrapper (pseudo_setupenvp) iterates 'environ'.
++ * Whether the access to freed memory produces a crash depends on whethe=
+r
++ * the allocator happens to reuse that block and overwrite its contents
++ * before pseudo reads from it.
++ *
++ * This binary faithfully reproduces the bash conditions:
++ *
++ *   1.  It exports its own setenv/getenv/unsetenv (like bash) that
++ *       maintain a private internal table, separate from 'environ'.
++ *       The regular setenv/getenv calls in pseudo therefore go to
++ *       *our* functions; only dlsym(RTLD_NEXT, =E2=80=A6) from inside
++ *       libpseudo.so reaches glibc's implementations.
++ *
++ *   2.  It implements strvec_flush() and maybe_make_export_env() that
++ *       rebuild 'environ' from the internal table, freeing the old
++ *       array (which contains glibc-setenv-allocated blocks).
++ *
++ *   3.  It runs the pipeline pattern from opkg-build: fork N children
++ *       in parallel (simulating find|sort|tar|gzip|ar), each child
++ *       calling maybe_make_export_env() then execve().  This is the
++ *       exact sequence that triggered the production crash.
++ *
++ * Detection
++ * ---------
++ * The bug is detected deterministically rather than by relying on the
++ * probabilistic heap corruption it causes.  main() strips the derived
++ * PSEUDO_* variables (PSEUDO_BINDIR, PSEUDO_LIBDIR, =E2=80=A6) from bot=
+h the
++ * internal table and the real 'environ'.  pseudo's fork wrapper then
++ * runs pseudo_setupenv() in every child, which re-adds them:
++ *
++ *   Unfixed pseudo calls glibc's setenv (via dlsym(RTLD_NEXT, =E2=80=A6=
+)),
++ *   which writes the variables straight back into the real 'environ'
++ *   array =E2=80=94 the very environ/allocator desync that corrupts bas=
+h's
++ *   heap in production.  The child observes the reappearing PSEUDO_*
++ *   entries and reports the bug.
++ *
++ *   Fixed pseudo calls the process's own setenv (ours/bash's), which
++ *   updates only the internal table, and the exec/system/popen
++ *   wrappers operate on a private pseudo_setupenvp() copy and restore
++ *   environ afterwards.  The real 'environ' is never mutated, so the
++ *   PSEUDO_* variables do not reappear and the child exits cleanly.
++ *
++ * See pseudo_mutated_environ() below for the check.  MALLOC_CHECK_=3D3 =
+is
++ * still set by the shell wrapper as a secondary safety net so that any
++ * residual heap corruption also aborts the run.
++ */
++
++#define _GNU_SOURCE
++#include <errno.h>
++#include <stddef.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <sys/wait.h>
++#include <unistd.h>
++
++/* ------------------------------------------------------------------ */
++/* Internal variable table =E2=80=94 analogous to bash's variable hash t=
+able.  */
++/* setenv/getenv/unsetenv operate on this table; 'environ' is rebuilt   =
+*/
++/* on demand by maybe_make_export_env().                                =
+*/
++/* ------------------------------------------------------------------ */
++
++static char **internal_table =3D NULL;  /* "KEY=3DVALUE" strings        =
+   */
++static int    internal_count  =3D 0;
++static int    internal_cap    =3D 0;
++
++static int table_find(const char *name, size_t nlen)
++{
++    for (int i =3D 0; i < internal_count; i++) {
++        if (strncmp(internal_table[i], name, nlen) =3D=3D 0 &&
++            internal_table[i][nlen] =3D=3D '=3D')
++            return i;
++    }
++    return -1;
++}
++
++/* ------------------------------------------------------------------ */
++/* Exported env functions =E2=80=94 these override glibc's versions for =
+code   */
++/* that resolves symbols via the normal dynamic-linker search order    *=
+/
++/* (i.e., callers inside bash/this binary itself).                     *=
+/
++/*                                                                      =
+*/
++/* dlsym(RTLD_NEXT, "setenv") from an LD_PRELOAD library searches      *=
+/
++/* *after* the LD_PRELOAD library, finding glibc's implementation =E2=80=
+=94    */
++/* NOT these functions.  That is the exact asymmetry that pseudo's old  =
+*/
++/* workaround relied on and that caused the bug.                        =
+*/
++/*                                                                      =
+*/
++/* The defensive NULL checks below intentionally mirror bash's own      =
+*/
++/* env functions.  glibc declares setenv/getenv/unsetenv with the       =
+*/
++/* 'nonnull' attribute, so comparing the parameters to NULL trips       =
+*/
++/* -Wnonnull-compare; suppress it for this block since keeping the      =
+*/
++/* guards is deliberate.                                                =
+*/
++/* ------------------------------------------------------------------ */
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wnonnull-compare"
++
++int setenv(const char *name, const char *value, int overwrite)
++{
++    if (!name || !value || strchr(name, '=3D')) { errno =3D EINVAL; retu=
+rn -1; }
++    size_t nlen =3D strlen(name);
++    size_t vlen =3D strlen(value);
++
++    /* Before main() initialises internal_table, update environ directly=
+. */
++    if (!internal_table) {
++        /* Find and replace existing entry, or append if not found. */
++        if (environ) {
++            for (int i =3D 0; environ[i]; i++) {
++                if (strncmp(environ[i], name, nlen) =3D=3D 0 &&
++                    environ[i][nlen] =3D=3D '=3D') {
++                    if (!overwrite) return 0;
++                    char *e =3D malloc(nlen + 1 + vlen + 1);
++                    if (!e) return -1;
++                    memcpy(e, name, nlen); e[nlen] =3D '=3D';
++                    memcpy(e + nlen + 1, value, vlen + 1);
++                    free(environ[i]); environ[i] =3D e;
++                    return 0;
++                }
++            }
++        }
++        /* Entry not found: can't resize kernel-provided environ safely;
++         * just ignore (the entry will be added when main() starts). */
++        return 0;
++    }
++
++    int idx =3D table_find(name, nlen);
++    if (idx >=3D 0) {
++        if (!overwrite) return 0;
++        free(internal_table[idx]);
++        internal_table[idx] =3D NULL;
++    } else {
++        /* Grow table if needed (keep a NULL sentinel). */
++        if (internal_count + 1 >=3D internal_cap) {
++            internal_cap =3D (internal_cap < 8) ? 16 : internal_cap * 2;
++            char **t =3D realloc(internal_table,
++                               (size_t)internal_cap * sizeof(char *));
++            if (!t) return -1;
++            internal_table =3D t;
++        }
++        idx =3D internal_count++;
++        internal_table[internal_count] =3D NULL;  /* sentinel */
++    }
++
++    char *entry =3D malloc(nlen + 1 + vlen + 1);
++    if (!entry) return -1;
++    memcpy(entry, name, nlen);
++    entry[nlen] =3D '=3D';
++    memcpy(entry + nlen + 1, value, vlen + 1);
++    internal_table[idx] =3D entry;
++    return 0;
++}
++
++char *getenv(const char *name)
++{
++    if (!name) return NULL;
++    size_t nlen =3D strlen(name);
++    /*
++     * Before main() initialises internal_table, fall back to searching
++     * 'environ' directly.  This is needed because pseudo's library
++     * constructor (which runs before main()) calls getenv() to read
++     * PSEUDO_PREFIX and similar variables.
++     */
++    if (!internal_table) {
++        for (int i =3D 0; environ && environ[i]; i++) {
++            if (strncmp(environ[i], name, nlen) =3D=3D 0 &&
++                environ[i][nlen] =3D=3D '=3D')
++                return environ[i] + nlen + 1;
++        }
++        return NULL;
++    }
++    int idx =3D table_find(name, nlen);
++    if (idx < 0) return NULL;
++    return internal_table[idx] + nlen + 1;
++}
++
++int unsetenv(const char *name)
++{
++    if (!name || !*name || strchr(name, '=3D')) { errno =3D EINVAL; retu=
+rn -1; }
++    size_t nlen =3D strlen(name);
++    /* Before internal_table is initialised, remove from environ directl=
+y. */
++    if (!internal_table) {
++        if (environ) {
++            for (int i =3D 0; environ[i]; i++) {
++                if (strncmp(environ[i], name, nlen) =3D=3D 0 &&
++                    environ[i][nlen] =3D=3D '=3D') {
++                    free(environ[i]);
++                    int j =3D i;
++                    while (environ[j]) { environ[j] =3D environ[j+1]; j+=
++; }
++                    break;
++                }
++            }
++        }
++        return 0;
++    }
++    int idx =3D table_find(name, nlen);
++    if (idx < 0) return 0;
++    free(internal_table[idx]);
++    memmove(&internal_table[idx], &internal_table[idx + 1],
++            (size_t)(internal_count - idx) * sizeof(char *));
++    internal_count--;
++    return 0;
++}
++
++#pragma GCC diagnostic pop
++
++/* ------------------------------------------------------------------ */
++/* strip_asan_from_preload =E2=80=94 remove any libasan*.so entry from a=
+n      */
++/* LD_PRELOAD value string (colon-separated list).                     *=
+/
++/*                                                                      =
+*/
++/* The ASAN library must be first in LD_PRELOAD so that ASAN properly  *=
+/
++/* intercepts malloc/free from all shared libraries (including         *=
+/
++/* libpseudo.so).  But the pseudo server-spawn grandchild must NOT     *=
+/
++/* inherit it: the server is not ASAN-compiled and loading the ASAN    *=
+/
++/* runtime into an uninstrumented binary causes SQLite lock failures.  *=
+/
++/*                                                                      =
+*/
++/* By stripping libasan from the rebuilt 'environ' (produced by        *=
+/
++/* maybe_make_export_env), the server inherits clean LD_PRELOAD while  *=
+/
++/* ASAN detection in the direct child (fork of our binary) remains    */
++/* active =E2=80=94 ASAN is compiled into the binary and its hooks are a=
+lready */
++/* live from process startup.                                           =
+*/
++/* ------------------------------------------------------------------ */
++static char *strip_asan_from_preload(const char *preload)
++{
++    if (!preload) return NULL;
++    char *buf =3D strdup(preload);
++    if (!buf) return NULL;
++
++    char *out =3D buf;
++    const char *in  =3D preload;
++    while (*in) {
++        const char *sep =3D strchr(in, ':');
++        size_t len =3D sep ? (size_t)(sep - in) : strlen(in);
++
++        /* skip any entry that contains "libasan" */
++        int skip =3D 0;
++        for (size_t k =3D 0; k + 6 <=3D len; k++) {
++            if (strncmp(in + k, "libasan", 7) =3D=3D 0) { skip =3D 1; br=
+eak; }
++        }
++
++        if (!skip) {
++            memcpy(out, in, len);
++            out +=3D len;
++            if (sep) *out++ =3D ':';
++        }
++
++        in +=3D len;
++        if (*in =3D=3D ':') in++;
++    }
++    /* trim a trailing colon */
++    if (out > buf && *(out - 1) =3D=3D ':') out--;
++    *out =3D '\0';
++    return buf;
++}
++
++/* ------------------------------------------------------------------ */
++/* strvec_flush =E2=80=94 free every string in v[] then free v itself.  =
+       */
++/* Equivalent to bash's strvec_flush() in lib/sh/stringvec.c.         */
++/* ------------------------------------------------------------------ */
++static void strvec_flush(char **v)
++{
++    if (!v) return;
++    for (int i =3D 0; v[i]; i++)
++        free(v[i]);
++    free(v);
++}
++
++/* ------------------------------------------------------------------ */
++/* maybe_make_export_env =E2=80=94 rebuild 'environ' from the internal t=
+able.  */
++/*                                                                      =
+*/
++/* This is the function that triggers the use-after-free:              *=
+/
++/*                                                                      =
+*/
++/*   1. pseudo's fork wrapper called glibc's setenv (via               *=
+/
++/*      dlsym(RTLD_NEXT)) which allocated block A and stored it in     *=
+/
++/*      environ[LD_PRELOAD_idx].                                        =
+*/
++/*                                                                      =
+*/
++/*   2. strvec_flush(old_environ) frees block A.                       *=
+/
++/*                                                                      =
+*/
++/*   3. environ is updated to point to the freshly built array         *=
+/
++/*      (built from internal_table, which has the original LD_PRELOAD  *=
+/
++/*      without libpseudo.so).                                         *=
+/
++/*                                                                      =
+*/
++/*   4. When the exec wrapper runs pseudo_setupenvp(environ), the      *=
+/
++/*      allocator may have already reused block A, causing the freed   *=
+/
++/*      memory to be read with stale or garbage content.               *=
+/
++/* ------------------------------------------------------------------ */
++static void maybe_make_export_env(void)
++{
++    char **old =3D environ;
++
++    /* Build fresh copy from internal_table. */
++    char **new_env =3D malloc((size_t)(internal_count + 1) * sizeof(char=
+ *));
++    if (!new_env) return;
++
++    for (int i =3D 0; i < internal_count; i++) {
++        new_env[i] =3D strdup(internal_table[i]);
++        if (!new_env[i]) {
++            for (int j =3D 0; j < i; j++) free(new_env[j]);
++            free(new_env);
++            return;
++        }
++    }
++    new_env[internal_count] =3D NULL;
++
++    /* Strip the ASAN runtime library from LD_PRELOAD in BOTH the rebuil=
+t
++     * environ AND internal_table so that the pseudo server-spawn grandc=
+hild
++     * does not inherit it (via pseudo_setupenv reading internal_table).
++     *
++     * ASAN detection in the current process is unaffected: libasan.so i=
+s
++     * already mapped in the process address space (loaded at startup vi=
+a the
++     * original LD_PRELOAD) and its malloc/free interception is active a=
+t the
++     * GOT/PLT level for all shared libraries including libpseudo.so.
++     * Removing it from environ/internal_table only affects exec'd child=
+ren. */
++    const char *ldp =3D "LD_PRELOAD=3D";
++    size_t ldp_len =3D strlen(ldp);
++    for (int i =3D 0; i < internal_count; i++) {
++        if (strncmp(new_env[i], ldp, ldp_len) =3D=3D 0) {
++            char *stripped =3D strip_asan_from_preload(new_env[i] + ldp_=
+len);
++            if (stripped) {
++                char *new_entry =3D malloc(ldp_len + strlen(stripped) + =
+1);
++                if (new_entry) {
++                    memcpy(new_entry, ldp, ldp_len);
++                    strcpy(new_entry + ldp_len, stripped);
++                    free(new_env[i]);
++                    new_env[i] =3D new_entry;
++                }
++                free(stripped);
++            }
++            break;
++        }
++    }
++    /* Also strip from internal_table so pseudo_setupenv() doesn't
++     * re-inject libasan into environ via SETENV(). */
++    for (int i =3D 0; i < internal_count; i++) {
++        if (strncmp(internal_table[i], ldp, ldp_len) =3D=3D 0) {
++            char *stripped =3D strip_asan_from_preload(internal_table[i]=
+ + ldp_len);
++            if (stripped) {
++                char *new_entry =3D malloc(ldp_len + strlen(stripped) + =
+1);
++                if (new_entry) {
++                    memcpy(new_entry, ldp, ldp_len);
++                    strcpy(new_entry + ldp_len, stripped);
++                    free(internal_table[i]);
++                    internal_table[i] =3D new_entry;
++                }
++                free(stripped);
++            }
++            break;
++        }
++    }
++
++    /*
++     * Free the old environ.  This releases every entry including any
++     * block that glibc's setenv (called by pseudo_setupenv inside the
++     * fork wrapper) had allocated.  After this, 'environ' briefly
++     * points to freed memory until the assignment below.
++     */
++    strvec_flush(old);
++
++    environ =3D new_env;
++}
++
++/* ------------------------------------------------------------------ */
++/* run_pipeline_iteration                                               =
+*/
++/*                                                                      =
+*/
++/* Simulate one opkg-build pipeline:                                   *=
+/
++/*   ( cd CTRL && find . | sort > list )                               *=
+/
++/*   ( cd PKG  && find . | sort > list )                               *=
+/
++/*   ( cd PKG  && tar  =E2=80=A6 | gzip  > data.tar.gz )                =
+      */
++/*   ( cd CTRL && tar  =E2=80=A6 | gzip  > ctrl.tar.gz )                =
+      */
++/*   ( cd TMP  && ar =E2=80=A6               )                          =
+       */
++/*                                                                      =
+*/
++/* Each child simulates one pipeline stage:                            *=
+/
++/*   fork =E2=86=92 [pseudo fork wrapper runs pseudo_setupenv() in the c=
+hild]  */
++/*   child: check whether pseudo mutated the real environ (bug), then  *=
+/
++/*          maybe_make_export_env() and execve("/bin/true")            *=
+/
++/* ------------------------------------------------------------------ */
++#define PIPELINE_STAGES 5   /* find, sort, tar, gzip, ar */
++
++/* Distinct exit code a child uses to report that pseudo mutated the
++ * real 'environ' array (i.e. the unfixed glibc-setenv code path ran). *=
+/
++#define BUG_ENV_MUTATED 42
++
++/* ------------------------------------------------------------------ */
++/* pseudo_mutated_environ =E2=80=94 deterministic detector for the bug f=
+ixed   */
++/* by commits 9c6b4c1..5abd42c.                                        *=
+/
++/*                                                                      =
+*/
++/* pseudo's fork wrapper runs pseudo_setupenv() in every child before   =
+*/
++/* fork() returns.  pseudo_setupenv() re-adds the PSEUDO_* variables    =
+*/
++/* (PSEUDO_BINDIR, PSEUDO_LIBDIR, =E2=80=A6) that main() stripped from t=
+he      */
++/* environment:                                                         =
+*/
++/*                                                                      =
+*/
++/*   Unfixed pseudo:  SETENV -> pseudo_real_setenv (dlsym RTLD_NEXT) -> =
+*/
++/*     glibc setenv, which writes directly into the real 'environ'      =
+*/
++/*     array.  The stripped PSEUDO_* vars therefore REAPPEAR in the     =
+*/
++/*     real environ =E2=80=94 exactly the environ/allocator desync that =
+        */
++/*     corrupts bash's heap in production.                              =
+*/
++/*                                                                      =
+*/
++/*   Fixed pseudo:  SETENV -> setenv -> our (bash's) setenv, which only =
+*/
++/*     updates internal_table; the exec/system/popen wrappers build a   =
+*/
++/*     private copy with pseudo_setupenvp() and restore environ.  The   =
+*/
++/*     real 'environ' is left untouched, so the stripped PSEUDO_* vars  =
+*/
++/*     do NOT reappear there.                                           =
+*/
++/*                                                                      =
+*/
++/* Returns 1 if a stripped PSEUDO_* var was found back in the real      =
+*/
++/* environ (buggy code path), 0 otherwise.  Must be called BEFORE       =
+*/
++/* maybe_make_export_env(), which would otherwise rebuild environ from  =
+*/
++/* internal_table and discard the injected entries.                     =
+*/
++/* ------------------------------------------------------------------ */
++static int pseudo_mutated_environ(void)
++{
++    for (int i =3D 0; environ && environ[i]; i++) {
++        if (strncmp(environ[i], "PSEUDO_BINDIR=3D", 14) =3D=3D 0 ||
++            strncmp(environ[i], "PSEUDO_LIBDIR=3D", 14) =3D=3D 0)
++            return 1;
++    }
++    return 0;
++}
++
++static int run_pipeline_iteration(void)
++{
++    pid_t pids[PIPELINE_STAGES];
++    char *const args[] =3D { "/bin/true", NULL };
++
++    /*
++     * Fork all pipeline stages before waiting for any of them, just
++     * as bash does for a pipeline.  pseudo's fork wrapper runs
++     * pseudo_setupenv() in each child before fork() returns.
++     */
++    for (int s =3D 0; s < PIPELINE_STAGES; s++) {
++        pid_t pid =3D fork();
++        if (pid < 0) {
++            perror("fork");
++            return -1;
++        }
++        if (pid =3D=3D 0) {
++            /*
++             * Child: pseudo's fork wrapper has already run
++             * pseudo_setupenv() at this point.  Deterministically
++             * detect whether it mutated the real environ (the bug)
++             * before doing anything that would rebuild environ.
++             */
++            if (pseudo_mutated_environ())
++                _exit(BUG_ENV_MUTATED);
++            /*
++             * Otherwise behave like bash: rebuild environ from the
++             * internal table and exec the pipeline stage.
++             */
++            maybe_make_export_env();
++            execve("/bin/true", args, environ);
++            _exit(127);
++        }
++        pids[s] =3D pid;
++    }
++
++    /* Wait for all pipeline children. */
++    for (int s =3D 0; s < PIPELINE_STAGES; s++) {
++        int status;
++        if (waitpid(pids[s], &status, 0) < 0) {
++            perror("waitpid");
++            return -1;
++        }
++        if (WIFEXITED(status) && WEXITSTATUS(status) =3D=3D BUG_ENV_MUTA=
+TED) {
++            fprintf(stderr,
++                "BUG: pseudo mutated the real environ in pipeline stage =
+%d "
++                "(pseudo_setupenv used glibc setenv via dlsym instead of=
+ the "
++                "process's own setenv)\n", s);
++            return -1;
++        }
++        if (!WIFEXITED(status) || WEXITSTATUS(status) !=3D 0) {
++            fprintf(stderr, "pipeline stage %d failed: status=3D%d\n",
++                    s, status);
++            return -1;
++        }
++    }
++    return 0;
++}
++
++int main(void)
++{
++    /* Initialise internal_table from the process's current environ. */
++    int count =3D 0;
++    while (environ[count]) count++;
++
++    internal_cap =3D count + 32;
++    internal_table =3D malloc((size_t)internal_cap * sizeof(char *));
++    if (!internal_table) { perror("malloc"); return 1; }
++
++    for (int i =3D 0; i < count; i++) {
++        internal_table[i] =3D strdup(environ[i]);
++        if (!internal_table[i]) { perror("strdup"); return 1; }
++    }
++    internal_table[count] =3D NULL;
++    internal_count =3D count;
++
++    /*
++     * Replace environ with a heap-allocated copy before any call to
++     * maybe_make_export_env().  The initial environ supplied by the
++     * kernel exec is in static memory, not the heap; calling free()
++     * on those strings (as strvec_flush does) would crash immediately.
++     * bash avoids this by building its own heap-allocated export_env
++     * during shell initialisation; we replicate that here.
++     */
++    {
++        char **heap_env =3D malloc((size_t)(count + 1) * sizeof(char *))=
+;
++        if (!heap_env) { perror("malloc"); return 1; }
++        for (int i =3D 0; i < count; i++) {
++            heap_env[i] =3D strdup(internal_table[i]);
++            if (!heap_env[i]) { perror("strdup"); return 1; }
++        }
++        heap_env[count] =3D NULL;
++        environ =3D heap_env;   /* now environ is entirely heap-managed =
+*/
++    }
++
++    /*
++     * Run 20 pipeline iterations.  With the unfixed pseudo code and
++     * MALLOC_CHECK_=3D3, the heap corruption introduced by pseudo_setup=
+env
++     * (glibc setenv) followed by strvec_flush causes an abort within
++     * the first few iterations on affected platforms.
++     */
++
++    /*
++     * Strip the ASAN runtime library from LD_PRELOAD and strip derived
++     * PSEUDO_* vars (PSEUDO_BINDIR, PSEUDO_LIBDIR, etc.) from both
++     * internal_table and heap environ BEFORE any pseudo-intercepted cal=
+l.
++     *
++     * Reason for stripping ASAN from LD_PRELOAD:
++     *   The pseudo server-spawn grandchild is not ASAN-compiled; loadin=
+g the
++     *   ASAN runtime into an uninstrumented binary causes SQLite lock f=
+ailures.
++     *
++     * Reason for stripping derived PSEUDO_* vars:
++     *   When the test runs inside the pseudo test framework, the outer =
+pseudo's
++     *   exec wrapper pre-populates all PSEUDO_* vars (PSEUDO_BINDIR etc=
+.) in
++     *   the binary's initial environ via pseudo_setupenvp().  If these =
+are
++     *   already present, pseudo_setupenv() treats them as existing (ove=
+rwrite=3D0)
++     *   and makes no change =E2=80=94 no __add_to_environ() call, no he=
+ap-corruption
++     *   opportunity, MALLOC_CHECK_=3D3 detects nothing.
++     *   By stripping them here we force pseudo_setupenv() (in the fork =
+wrapper
++     *   of every child) to ADD them as NEW environ entries.  The unfixe=
+d code
++     *   (glibc setenv via dlsym RTLD_NEXT) calls __add_to_environ() whi=
+ch
++     *   calls realloc(environ_array).  strvec_flush() later frees that
++     *   allocation, and MALLOC_CHECK_=3D3 aborts the server-spawn grand=
+child.
++     *   The fixed code calls our binary's setenv() which updates intern=
+al_table
++     *   only =E2=80=94 no __add_to_environ(), no realloc, no corruption.
++     *
++     * We keep PSEUDO_PREFIX and PSEUDO_LOCALSTATEDIR so that pseudo can=
+ find
++     * the server binary and socket directory.
++     */
++    {
++        const char *ldp    =3D "LD_PRELOAD=3D";
++        size_t      ldp_len =3D strlen(ldp);
++
++        /* is_kept: return 1 if the env entry should NOT be stripped.
++         * Keep non-PSEUDO, non-LD_PRELOAD, PSEUDO_PREFIX, PSEUDO_LOCALS=
+TATEDIR.
++         */
++        /* NOTE: GCC nested functions are used here for locality; the la=
+mbda
++         * captures ldp/ldp_len by enclosing scope (auto function). */
++        int is_kept(const char *entry) {
++            if (strncmp(entry, "PSEUDO_", 7) !=3D 0 &&
++                strncmp(entry, ldp, ldp_len) !=3D 0)
++                return 1;
++            if (strncmp(entry, "PSEUDO_PREFIX=3D",       14) =3D=3D 0) r=
+eturn 1;
++            if (strncmp(entry, "PSEUDO_LOCALSTATEDIR=3D", 21) =3D=3D 0) =
+return 1;
++            return 0;
++        }
++
++        /* Process internal_table */
++        {
++            int w =3D 0;
++            for (int i =3D 0; i < internal_count; i++) {
++                if (strncmp(internal_table[i], ldp, ldp_len) =3D=3D 0) {
++                    /* LD_PRELOAD: strip ASAN lib, keep pseudo lib */
++                    char *s =3D strip_asan_from_preload(
++                                  internal_table[i] + ldp_len);
++                    char *e =3D s ? malloc(ldp_len + strlen(s) + 1) : NU=
+LL;
++                    if (e) {
++                        memcpy(e, ldp, ldp_len);
++                        strcpy(e + ldp_len, s);
++                    }
++                    free(internal_table[i]);
++                    free(s);
++                    if (e) internal_table[w++] =3D e;
++                } else if (is_kept(internal_table[i])) {
++                    internal_table[w++] =3D internal_table[i];
++                } else {
++                    free(internal_table[i]); /* drop PSEUDO_BINDIR etc. =
+*/
++                }
++            }
++            internal_count =3D w;
++            internal_table[w] =3D NULL;
++        }
++
++        /* Process environ (the heap copy) */
++        {
++            int w =3D 0;
++            for (int i =3D 0; environ[i]; i++) {
++                if (strncmp(environ[i], ldp, ldp_len) =3D=3D 0) {
++                    char *s =3D strip_asan_from_preload(environ[i] + ldp=
+_len);
++                    char *e =3D s ? malloc(ldp_len + strlen(s) + 1) : NU=
+LL;
++                    if (e) {
++                        memcpy(e, ldp, ldp_len);
++                        strcpy(e + ldp_len, s);
++                    }
++                    free(environ[i]);
++                    free(s);
++                    if (e) environ[w++] =3D e;
++                } else if (is_kept(environ[i])) {
++                    environ[w++] =3D environ[i];
++                } else {
++                    free(environ[i]); /* drop PSEUDO_BINDIR etc. */
++                }
++            }
++            environ[w] =3D NULL;
++        }
++    }
++
++    /*
++     * Force pseudo server startup in the parent before any children are
++     * forked.  Without this, all PIPELINE_STAGES children may try to sp=
+awn
++     * the server simultaneously, causing a "lock_held" race condition o=
+n the
++     * first iteration.
++     */
++    access(".", F_OK);
++
++    int iterations =3D 20;
++    for (int i =3D 0; i < iterations; i++) {
++        if (run_pipeline_iteration() !=3D 0) {
++            fprintf(stderr, "FAILED on pipeline iteration %d\n", i + 1);
++            return 1;
++        }
++    }
++
++    return 0;
++}
+diff --git a/test/test-bash-exec-env.sh b/test/test-bash-exec-env.sh
+new file mode 100755
+index 0000000..d95a04d
+--- /dev/null
++++ b/test/test-bash-exec-env.sh
+@@ -0,0 +1,34 @@
++#!/bin/bash
++#
++# SPDX-License-Identifier: LGPL-2.1-only
++#
++# Test for the bash/pseudo environment conflict:
++#   https://bugzilla.yoctoproject.org/show_bug.cgi?id=3D16078
++#
++# The compiled helper binary (test-bash-exec-env.c) exports its own
++# getenv/setenv/unsetenv (simulating bash) and calls maybe_make_export_e=
+nv()
++# before each execve(), exactly reproducing the opkg-build crash pattern.
++#
++# Detection mechanism:
++#   The binary strips all PSEUDO_* vars (except PSEUDO_PREFIX and
++#   PSEUDO_LOCALSTATEDIR) from its internal table and environ before
++#   starting.  This forces pseudo_setupenv() =E2=80=94 called by pseudo'=
+s fork
++#   wrapper in each child =E2=80=94 to ADD those vars back.
++#
++#   The check is deterministic: each child inspects the real environ aft=
+er
++#   pseudo's fork wrapper has run.
++#
++#   Unfixed pseudo: SETENV() -> dlsym(RTLD_NEXT) -> glibc setenv writes =
+the
++#     stripped PSEUDO_* vars straight back into the real environ array. =
+ The
++#     child sees them reappear and reports the bug (exit 42); the test f=
+ails.
++#
++#   Fixed pseudo: SETENV() -> our binary's setenv() -> internal_table on=
+ly;
++#     the real environ is left untouched, no PSEUDO_* vars reappear, the=
+ child
++#     execs cleanly and the test passes.
++#
++#   MALLOC_CHECK_=3D3 is kept as a secondary safety net so any residual =
+heap
++#   corruption from the unfixed code also aborts the run.
++
++MALLOC_CHECK_=3D3 $(dirname "$0")/test-bash-exec-env || { echo "FAILED: =
+test-bash-exec-env returned $?" ; exit 1; }
++
++exit 0
+--=20
 2.53.0
 
 
