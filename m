@@ -2,67 +2,78 @@ Return-Path: <mark.hatle@kernel.crashing.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47658C43458
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 620ACC4450A
 	for <webhook@archiver.kernel.org>; Fri,  3 Jul 2026 18:41:12 +0000 (UTC)
 Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.98543.1783104062419208049
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.98542.1783104061923126707
  for <yocto-patches@lists.yoctoproject.org>;
  Fri, 03 Jul 2026 11:41:02 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: kernel.crashing.org, ip: 63.228.1.57, mailfrom: mark.hatle@kernel.crashing.org)
 Received: from kernel.crashing.org.net (70-99-78-136.nuveramail.net [70.99.78.136] (may be forged))
-	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 663IeuaC237103;
+	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 663IeuaB237103;
 	Fri, 3 Jul 2026 13:40:59 -0500
 From: Mark Hatle <mark.hatle@kernel.crashing.org>
 To: yocto-patches@lists.yoctoproject.org
 Cc: richard.purdie@linuxfoundation.org, frezidok1@gmail.com
-Subject: [pseudo][PATCH v2 13/23] pseudo_util.c: strchr now returns const char
-Date: Fri,  3 Jul 2026 13:40:45 -0500
-Message-Id: <1783104055-19005-14-git-send-email-mark.hatle@kernel.crashing.org>
+Subject: [pseudo][PATCH v2 12/23] pseudo_util: Add default log severity values
+Date: Fri,  3 Jul 2026 13:40:44 -0500
+Message-Id: <1783104055-19005-13-git-send-email-mark.hatle@kernel.crashing.org>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1783104055-19005-1-git-send-email-mark.hatle@kernel.crashing.org>
 References: <1783104055-19005-1-git-send-email-mark.hatle@kernel.crashing.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-MIME-Autoconverted: from 8bit to quoted-printable by gate.crashing.org id 663IeuaC237103
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Fri, 03 Jul 2026 18:41:12 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4408
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4407
 
-Fix compile warning:
-  pseudo_util.c: In function =E2=80=98pseudo_append_elements=E2=80=99:
-  pseudo_util.c:896:30: warning: initialization discards =E2=80=98const=E2=
-=80=99 qualifier from pointer target type [-Wdiscarded-qualifiers]
-    896 |                 char *next =3D strchr(path, '/');
-        |                              ^~~~~~
-  pseudo_util.c:898:30: warning: assignment discards =E2=80=98const=E2=80=
-=99 qualifier from pointer target type [-Wdiscarded-qualifiers]
-    898 |                         next =3D strchr(path, '\0');
-        |                              ^
+From: Dmitry Sakhonchik <frezidok1@gmail.com>
 
+Default values are "show everything". If the user wants to see
+only certain categories, they should explicitely set
+PSEUDO_SEVERITY env var or use -k option.
+
+Signed-off-by: Dmitry Sakhonchik <frezidok1@gmail.com>
 Signed-off-by: Mark Hatle <mark.hatle@kernel.crashing.org>
 ---
- pseudo_util.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ pseudo.h      | 2 ++
+ pseudo_util.c | 7 ++++---
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
+diff --git a/pseudo.h b/pseudo.h
+index 92ae71e..66aa70e 100644
+--- a/pseudo.h
++++ b/pseudo.h
+@@ -130,6 +130,8 @@ extern char *pseudo_version;
+ #define PSEUDO_PIDFILE "pseudo.pid"
+ #define PSEUDO_SOCKET "pseudo.socket"
+ 
++#define PSEUDO_SEVERITY_DEFAULT "info,warn,error"
++
+ /* some systems might not have *at().  We like to define operations in
+  * terms of each other, and for instance, open(...) is the same as
+  * openat(AT_FDCWD, ...).  If no AT_FDCWD is provided, any value that can't
 diff --git a/pseudo_util.c b/pseudo_util.c
-index 4c05394..3eaa9e6 100644
+index 893a25b..4c05394 100644
 --- a/pseudo_util.c
 +++ b/pseudo_util.c
-@@ -893,7 +893,7 @@ pseudo_append_elements(char *newpath, char *root, siz=
-e_t allocated, char **curre
- 	while (path < (start + elen) && *path) {
- 		size_t this_elen;
- 		int leave_this =3D 0;
--		char *next =3D strchr(path, '/');
-+		const char *next =3D strchr(path, '/');
- 		if (!next) {
- 			next =3D strchr(path, '\0');
- 			leave_this =3D leave_last;
---=20
+@@ -250,10 +250,11 @@ pseudo_init_util(void) {
+ 	}
+ 	free(env);
+ 	env = pseudo_get_value("PSEUDO_SEVERITY");
+-	if (env) {
+-		pseudo_severity_set(env);
+-		pseudo_severity_flags_finalize();
++	if (!env) {
++		env = strdup(PSEUDO_SEVERITY_DEFAULT);
+ 	}
++	pseudo_severity_set(env);
++	pseudo_severity_flags_finalize();
+ 	free(env);
+ }
+ 
+-- 
 1.8.3.1
 
 
