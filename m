@@ -2,66 +2,67 @@ Return-Path: <mark.hatle@kernel.crashing.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1452C44508
-	for <webhook@archiver.kernel.org>; Fri,  3 Jul 2026 18:41:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47658C43458
+	for <webhook@archiver.kernel.org>; Fri,  3 Jul 2026 18:41:12 +0000 (UTC)
 Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.98545.1783104062778033718
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.98543.1783104062419208049
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 03 Jul 2026 11:41:03 -0700
+ Fri, 03 Jul 2026 11:41:02 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: kernel.crashing.org, ip: 63.228.1.57, mailfrom: mark.hatle@kernel.crashing.org)
 Received: from kernel.crashing.org.net (70-99-78-136.nuveramail.net [70.99.78.136] (may be forged))
-	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 663IeuaF237103;
-	Fri, 3 Jul 2026 13:41:00 -0500
+	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 663IeuaC237103;
+	Fri, 3 Jul 2026 13:40:59 -0500
 From: Mark Hatle <mark.hatle@kernel.crashing.org>
 To: yocto-patches@lists.yoctoproject.org
 Cc: richard.purdie@linuxfoundation.org, frezidok1@gmail.com
-Subject: [pseudo][PATCH v2 16/23] pseudo_util: Avoid accidental free calls for without_libpseudo()
-Date: Fri,  3 Jul 2026 13:40:48 -0500
-Message-Id: <1783104055-19005-17-git-send-email-mark.hatle@kernel.crashing.org>
+Subject: [pseudo][PATCH v2 13/23] pseudo_util.c: strchr now returns const char
+Date: Fri,  3 Jul 2026 13:40:45 -0500
+Message-Id: <1783104055-19005-14-git-send-email-mark.hatle@kernel.crashing.org>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1783104055-19005-1-git-send-email-mark.hatle@kernel.crashing.org>
 References: <1783104055-19005-1-git-send-email-mark.hatle@kernel.crashing.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-MIME-Autoconverted: from 8bit to quoted-printable by gate.crashing.org id 663IeuaC237103
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 03 Jul 2026 18:41:11 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4411
+ <yocto-patches@lists.yoctoproject.org>; Fri, 03 Jul 2026 18:41:12 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4408
 
-From: Richard Purdie <richard.purdie@linuxfoundation.org>
+Fix compile warning:
+  pseudo_util.c: In function =E2=80=98pseudo_append_elements=E2=80=99:
+  pseudo_util.c:896:30: warning: initialization discards =E2=80=98const=E2=
+=80=99 qualifier from pointer target type [-Wdiscarded-qualifiers]
+    896 |                 char *next =3D strchr(path, '/');
+        |                              ^~~~~~
+  pseudo_util.c:898:30: warning: assignment discards =E2=80=98const=E2=80=
+=99 qualifier from pointer target type [-Wdiscarded-qualifiers]
+    898 |                         next =3D strchr(path, '\0');
+        |                              ^
 
-We need to return list after the strdup otherwise the caller doesn't
-know whether to free the return value or not.
-
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-Message-ID: <20260701131336.3578279-2-richard.purdie@linuxfoundation.org>
 Signed-off-by: Mark Hatle <mark.hatle@kernel.crashing.org>
 ---
- pseudo_util.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ pseudo_util.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/pseudo_util.c b/pseudo_util.c
-index 3eaa9e6..66afe25 100644
+index 4c05394..3eaa9e6 100644
 --- a/pseudo_util.c
 +++ b/pseudo_util.c
-@@ -346,13 +346,13 @@ without_libpseudo(char *list) {
- 	if (list[0] == '=' || list[0] == PSEUDO_LINKPATH_SEPARATOR[0])
- 		skip_start = 1;
- 
--	if ((*real_regexec)(&libpseudo_regex, list, 1, pmatch, 0)) {
--		return list;
--	}
- 	list = strdup(list);
- 	if (!list) {
- 		pseudo_error("Couldn't allocate memory to remove libpseudo from environment.\n");
- 	}
-+	if ((*real_regexec)(&libpseudo_regex, list, 1, pmatch, 0)) {
-+		return list;
-+	}
- 	while (list && !(*real_regexec)(&libpseudo_regex, list, 1, pmatch, 0)) {
- 		char *start = list + pmatch[0].rm_so;
- 		char *end = list + pmatch[0].rm_eo;
--- 
+@@ -893,7 +893,7 @@ pseudo_append_elements(char *newpath, char *root, siz=
+e_t allocated, char **curre
+ 	while (path < (start + elen) && *path) {
+ 		size_t this_elen;
+ 		int leave_this =3D 0;
+-		char *next =3D strchr(path, '/');
++		const char *next =3D strchr(path, '/');
+ 		if (!next) {
+ 			next =3D strchr(path, '\0');
+ 			leave_this =3D leave_last;
+--=20
 1.8.3.1
 
 
