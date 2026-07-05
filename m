@@ -1,584 +1,198 @@
-Return-Path: <mark.hatle@kernel.crashing.org>
+Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41F8FC44515
-	for <webhook@archiver.kernel.org>; Fri,  3 Jul 2026 18:41:13 +0000 (UTC)
-Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.98536.1783104060415371755
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFA2DC44500
+	for <webhook@archiver.kernel.org>; Sun,  5 Jul 2026 22:30:04 +0000 (UTC)
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.139873.1783290599079688309
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 03 Jul 2026 11:41:00 -0700
+ Sun, 05 Jul 2026 15:29:59 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: kernel.crashing.org, ip: 63.228.1.57, mailfrom: mark.hatle@kernel.crashing.org)
-Received: from kernel.crashing.org.net (70-99-78-136.nuveramail.net [70.99.78.136] (may be forged))
-	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 663Ieua4237103;
-	Fri, 3 Jul 2026 13:40:58 -0500
-From: Mark Hatle <mark.hatle@kernel.crashing.org>
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=RztniXio;
+ spf=pass (domain: gmail.com, ip: 209.85.219.49, mailfrom: twoerner@gmail.com)
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-8eec5dfdb65so8247136d6.0
+        for <yocto-patches@lists.yoctoproject.org>; Sun, 05 Jul 2026 15:29:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1783290598; x=1783895398; darn=lists.yoctoproject.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1bwg3VXrLvaYKMXlX3FPGXczh3fC6eazqMg6JctMLUo=;
+        b=RztniXiondNCjpd3cDDynN9beB1I3c/sEOrRW2O9Az9Ex2Ueu5+bey3DC+DBLjIEMc
+         OlnJakfKL8K9Tnls5BCzUnjwasefKyIoIrZeR03WhwbXi1gwyh0r/4Yflh9tgS7T/Tfw
+         LMv1abp07uc4XnF2bgMQRXM+HbvLytA1kMVKmaNCF3qjQsQNOzU2CtqfJ8Aq7XRe8mXF
+         jxV1yNWCvJKVMvOP1KspEDYxv5Lnkl9VwV4bW/k0ZnwMcOc1R9f36C+ZyHUWZ1B85hsr
+         9CB+yLwjkMeGGxpVYgb6p/0uHIixvM2jYpiFKx7BApjK0sFI3WjVdkPRYqDtgiPqQVzY
+         fI2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783290598; x=1783895398;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1bwg3VXrLvaYKMXlX3FPGXczh3fC6eazqMg6JctMLUo=;
+        b=Ccj0W6EkNr81EUMafRvdym/sUT5US+aKv0t0yHGnFBbOPOekCPazIknoLcGcfVcbIn
+         sxm3u6bjjwXuvCBo20bHYQW7/+EUoyvidLzBOaU6vyNwO1PIX/Lu+URvV/s9ZL6A7aqI
+         51fWd2Kv40MP/SAs9ABXsZV5YKKLQ9R407bheJ6V56r4S0pgKZlxK+Tmmk56KDaNBQm/
+         o061teVPbnlZuc/yC+OQk2nuFaK0iLfbpiGn4/6zvZwTvMGMbAaOmgCy2zOVGQ0Je7pW
+         l+ETACccL7irQLRLGhGPHxc/kuhppi0tIzCcAgfX02YorNyX4U2TqJf8PkUO1pwa9gdB
+         9zOw==
+X-Gm-Message-State: AOJu0Yy4ZWVHiFrWwjexkIbLlzjZR1tfzAwf70aWJswC8z4NnBc//4J1
+	pyJYdfwhZpN/rMUxynVR6D+dZoAVi0dxAiBEyMv7OBQfP+EdC0xHghBuwGrTpA==
+X-Gm-Gg: AfdE7clRNFUGr2oZk0K2dFQ6/eWhsLn+xWwAMutHKA/ckpVqPqbNh1MbGqVTgs6A6H1
+	/P0+w3g0Kk+6dGNiKjc4tqw9vtXgKKEoXiM2WUjHoYfMsNU8xN+Z+fBalc9dJEN8LOGgp5ancRv
+	fv8NHZa1gqFJHtt2a5IHuuvpxrbmWDsA1J63R4JSg8vAumfhw6OUyFkNfsLbJf1n88iZM0zePYo
+	LL4I6APBvyendytz06eRl9OWNub09GtY+MXNWSp6h+4O4erkxFAK+v4Gw42CCKKYekjB0f0KgN1
+	aXrWPf3XbdK3eWAL293Nc/4Bj/WLLcwPuGyfWok8zCp4AcHd3cmp7HR2TdOaRiuvO0+AViT2v3S
+	pr41p4D0wj09zExzOH40VgCYffwFUgtOSvpNbvaF2PjWuH4gWDyfhKflyYRqdM88NdIsDvEawxk
+	gp0BK8U0EcNF99VH15EJopivUuvnjyYXwNWtmiHZCH
+X-Received: by 2002:a05:6214:488f:b0:8ea:bcf7:b153 with SMTP id 6a1803df08f44-8f74bc91093mr128718946d6.34.1783290597808;
+        Sun, 05 Jul 2026 15:29:57 -0700 (PDT)
+Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8f46e27d526sm126051276d6.4.2026.07.05.15.29.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 05 Jul 2026 15:29:56 -0700 (PDT)
+Date: Sun, 5 Jul 2026 18:29:54 -0400
+From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: richard.purdie@linuxfoundation.org, frezidok1@gmail.com
-Subject: [pseudo][PATCH v2 05/23] pseudo_db: Change pseudo_diag() calls to appropriate macros
-Date: Fri,  3 Jul 2026 13:40:37 -0500
-Message-Id: <1783104055-19005-6-git-send-email-mark.hatle@kernel.crashing.org>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1783104055-19005-1-git-send-email-mark.hatle@kernel.crashing.org>
-References: <1783104055-19005-1-git-send-email-mark.hatle@kernel.crashing.org>
+Cc: quentin.schulz=cherry.de@lists.yoctoproject.org
+Subject: Re: [yocto-patches] [PATCH meta-rockchip 2/2] add support for baking
+ OP-TEE OS into U-Boot proper binary
+Message-ID: <akra4jhkqxfTYgq9@localhost.localdomain>
+References: <20260126-optee-os-v1-0-874261a77dad@cherry.de>
+ <20260126-optee-os-v1-2-874261a77dad@cherry.de>
+ <ahcOBJWhevGNqPyF@localhost.localdomain>
+ <1226166b-a604-4a40-95d1-68d8d5c64d05@cherry.de>
+ <18B5F81EDB16A25D.1007@lists.yoctoproject.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <18B5F81EDB16A25D.1007@lists.yoctoproject.org>
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 03 Jul 2026 18:41:13 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4400
+ <yocto-patches@lists.yoctoproject.org>; Sun, 05 Jul 2026 22:30:04 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4419
 
-From: Dmitry Sakhonchik <frezidok1@gmail.com>
+It looks like I forgot to add you, Quentin, to the "to:" or "cc:" for
+this reply. Are you working on a v2?
 
-Implements [YOCTO #12141]
-
-Signed-off-by: Dmitry Sakhonchik <frezidok1@gmail.com>
-Signed-off-by: Mark Hatle <mark.hatle@kernel.crashing.org>
----
- pseudo_db.c | 122 ++++++++++++++++++++++++++++++------------------------------
- 1 file changed, 61 insertions(+), 61 deletions(-)
-
-diff --git a/pseudo_db.c b/pseudo_db.c
-index 6a33f20..6945a83 100644
---- a/pseudo_db.c
-+++ b/pseudo_db.c
-@@ -27,7 +27,7 @@
- #ifdef NPROFILE
- void xProfile(void * pArg, const char * pQuery, sqlite3_uint64 pTimeTaken)
- {
--       pseudo_diag("profile: %lld %s\n", pTimeTaken, pQuery);
-+       pseudo_info("profile: %lld %s\n", pTimeTaken, pQuery);
- }
- #endif
- 
-@@ -647,7 +647,7 @@ cleanup_db(void) {
- 	localtime_r(&stamp.tv_sec, &stamp_tm);
- 	strftime(datebuf, 64, "%H:%M:%S", &stamp_tm);
- 
--	pseudo_diag("db cleanup for server shutdown, %s.%03d\n",
-+	pseudo_info("db cleanup for server shutdown, %s.%03d\n",
- 		datebuf, (int) (stamp.tv_usec / 1000));
- #ifdef USE_MEMORY_DB
-         if (real_file_db) {
-@@ -657,7 +657,7 @@ cleanup_db(void) {
- 	gettimeofday(&stamp, NULL);
- 	localtime_r(&stamp.tv_sec, &stamp_tm);
- 	strftime(datebuf, 64, "%H:%M:%S", &stamp_tm);
--	pseudo_diag("memory-to-file backup complete, %s.%03d.\n",
-+	pseudo_info("memory-to-file backup complete, %s.%03d.\n",
- 		datebuf, (int) (stamp.tv_usec / 1000));
- #endif
- 	if (file_db)
-@@ -667,7 +667,7 @@ cleanup_db(void) {
- 	gettimeofday(&stamp, NULL);
- 	localtime_r(&stamp.tv_sec, &stamp_tm);
- 	strftime(datebuf, 64, "%H:%M:%S", &stamp_tm);
--	pseudo_diag("db cleanup finished, %s.%03d\n",
-+	pseudo_info("db cleanup finished, %s.%03d\n",
- 		datebuf, (int) (stamp.tv_usec / 1000));
- }
- 
-@@ -704,7 +704,7 @@ get_db(struct database_info *dbinfo) {
-                 rc = sqlite3_open(dbfile, &db);
- 	free(dbfile);
- 	if (rc) {
--		pseudo_diag("Failed: %s\n", sqlite3_errmsg(db));
-+		pseudo_error("Failed: %s\n", sqlite3_errmsg(db));
- 		sqlite3_close(db);
- 		*(dbinfo->db) = NULL;
- 		return 1;
-@@ -733,7 +733,7 @@ get_db(struct database_info *dbinfo) {
- 		"ORDER BY name;";
- 	rc = sqlite3_get_table(db, sql, &results, &rows, &columns, &errmsg);
- 	if (rc) {
--		pseudo_diag("Failed: %s\n", errmsg);
-+		pseudo_error("Failed: %s\n", errmsg);
- 	} else {
- 		rc = make_tables(db, dbinfo->tables, dbinfo->indexes, dbinfo->migrations, results, rows);
- 		sqlite3_free_table(results);
-@@ -760,7 +760,7 @@ get_dbs(void) {
- #endif
- 	for (i = 0; db_infos[i].db; ++i) {
- 		if (get_db(&db_infos[i])) {
--			pseudo_diag("Error getting '%s' database.\n",
-+			pseudo_error("Error getting '%s' database.\n",
- 				db_infos[i].pathname);
- 			err = 1;
- 		}
-@@ -780,12 +780,12 @@ pdb_log_traits(pseudo_query_t *traits) {
- 	int rc;
- 
- 	if (!log_db && get_dbs()) {
--		pseudo_diag("%s: database error.\n", __func__);
-+		pseudo_error("%s: database error.\n", __func__);
- 		return 1;
- 	}
- 	e = calloc(1, sizeof(*e));
- 	if (!e) {
--		pseudo_diag("can't allocate space for log entry.");
-+		pseudo_error("can't allocate space for log entry.");
- 		return 1;
- 	}
- 	for (trait = traits; trait; trait = trait->next) {
-@@ -854,7 +854,7 @@ pdb_log_traits(pseudo_query_t *traits) {
- 		case PSQF_ID:
- 		case PSQF_ORDER:
- 		default:
--			pseudo_diag("Invalid trait %s for log creation.\n",
-+			pseudo_error("Invalid trait %s for log creation.\n",
- 				pseudo_query_field_name(trait->field));
- 			free(e);
- 			return 1;
-@@ -878,7 +878,7 @@ pdb_log_entry(log_entry *e) {
- 	int rc;
- 
- 	if (!log_db && get_dbs()) {
--		pseudo_diag("%s: database error.\n", __func__);
-+		pseudo_error("%s: database error.\n", __func__);
- 		return 1;
- 	}
- 
-@@ -976,7 +976,7 @@ pdb_log_msg(pseudo_sev_t severity, pseudo_msg_t *msg, const char *program, const
- 	}
- 
- 	if (!log_db && get_dbs()) {
--		pseudo_diag("%s: database error.\n", __func__);
-+		pseudo_error("%s: database error.\n", __func__);
- 		return 1;
- 	}
- 
-@@ -1062,7 +1062,7 @@ frag(buffer *b, char *fmt, ...) {
- 	int rc;
- 
- 	if (!b) {
--		pseudo_diag("frag called without buffer.\n");
-+		pseudo_error("frag called without buffer.\n");
- 		return -1;
- 	}
- 	curlen = b->tail - b->data;
-@@ -1075,7 +1075,7 @@ frag(buffer *b, char *fmt, ...) {
- 			newlen *= 2;
- 		char *newbuf = malloc(newlen);
- 		if (!newbuf) {
--			pseudo_diag("failed to allocate SQL buffer.\n");
-+			pseudo_error("failed to allocate SQL buffer.\n");
- 			return -1;
- 		}
- 		memcpy(newbuf, b->data, curlen + 1);
-@@ -1088,7 +1088,7 @@ frag(buffer *b, char *fmt, ...) {
- 		rc = vsnprintf(b->tail, b->buflen - curlen, fmt, ap);
- 		va_end(ap);
- 		if ((rc > 0) && ((size_t) rc >= (b->buflen - curlen))) {
--			pseudo_diag("tried to reallocate larger buffer, failed.  giving up.\n");
-+			pseudo_error("tried to reallocate larger buffer, failed.  giving up.\n");
- 			return -1;
- 		}
- 	}
-@@ -1110,24 +1110,24 @@ pdb_query(char *stmt_type, pseudo_query_t *traits, unsigned long fields, int uni
- 	static buffer *sql;
- 
- 	if (!log_db && get_dbs()) {
--		pseudo_diag("%s: database error.\n", __func__);
-+		pseudo_error("%s: database error.\n", __func__);
- 		return NULL;
- 	}
- 
- 	if (!stmt_type) {
--		pseudo_diag("can't prepare a statement without a type.\n");
-+		pseudo_warning("can't prepare a statement without a type.\n");
- 	}
- 
- 	if (!sql) {
- 		sql = malloc(sizeof *sql);
- 		if (!sql) {
--			pseudo_diag("can't allocate SQL buffer.\n");
-+			pseudo_error("can't allocate SQL buffer.\n");
- 			return NULL;
- 		}
- 		sql->buflen = 512;
- 		sql->data = malloc(sql->buflen);
- 		if (!sql->data) {
--			pseudo_diag("can't allocate SQL text buffer.\n");
-+			pseudo_error("can't allocate SQL text buffer.\n");
- 			free(sql);
- 			sql = 0;
- 			return NULL;
-@@ -1193,7 +1193,7 @@ pdb_query(char *stmt_type, pseudo_query_t *traits, unsigned long fields, int uni
- 			case PSQT_LIKE:
- 			case PSQT_NOTLIKE:
- 			case PSQT_SQLPAT:
--				pseudo_diag("Error:  Can't use a LIKE match on non-text fields.\n");
-+				pseudo_error("Can't use a LIKE match on non-text fields.\n");
- 				return 0;
- 				break;
- 			default:
-@@ -1210,7 +1210,7 @@ pdb_query(char *stmt_type, pseudo_query_t *traits, unsigned long fields, int uni
- 			case PSQT_LIKE:
- 			case PSQT_NOTLIKE:
- 			case PSQT_SQLPAT:
--				pseudo_diag("Error:  Can't use a LIKE match on non-text fields.\n");
-+				pseudo_error("Error:  Can't use a LIKE match on non-text fields.\n");
- 				return 0;
- 				break;
- 			default:
-@@ -1235,7 +1235,7 @@ pdb_query(char *stmt_type, pseudo_query_t *traits, unsigned long fields, int uni
- 				order_dir = "ASC";
- 				break;
- 			default:
--				pseudo_diag("Ordering must be < or >.\n");
-+				pseudo_error("Ordering must be < or >.\n");
- 				return 0;
- 				break;
- 			}
-@@ -1245,7 +1245,7 @@ pdb_query(char *stmt_type, pseudo_query_t *traits, unsigned long fields, int uni
- 			case PSQT_LIKE:
- 			case PSQT_NOTLIKE:
- 			case PSQT_SQLPAT:
--				pseudo_diag("Error:  Can't use a LIKE match on non-text fields.\n");
-+				pseudo_error("Can't use a LIKE match on non-text fields.\n");
- 				return 0;
- 				break;
- 			default:
-@@ -1300,7 +1300,7 @@ pdb_query(char *stmt_type, pseudo_query_t *traits, unsigned long fields, int uni
- 			sqlite3_bind_int64(stmt, field++, trait->data.ivalue);
- 			break;
- 		default:
--			pseudo_diag("Inexplicably invalid field type %d\n", trait->field);
-+			pseudo_error("Inexplicably invalid field type %d\n", trait->field);
- 			sqlite3_finalize(stmt);
- 			return NULL;
- 		}
-@@ -1322,7 +1322,7 @@ pdb_delete(pseudo_query_t *traits, unsigned long fields) {
- 			dberr(log_db, "deletion failed");
- 			return -1;
- 		} else {
--			pseudo_diag("Deleted records, vacuuming log database (may take a while).\n");
-+			pseudo_info("Deleted records, vacuuming log database (may take a while).\n");
- 			/* we can't do anything about it if this fails... */
- 			sqlite3_exec(log_db, "VACUUM;", NULL, NULL, NULL);
- 		}
-@@ -1347,7 +1347,7 @@ pdb_history(pseudo_query_t *traits, unsigned long fields, int unique) {
- 			h->fields = fields;
- 			h->stmt = stmt;
- 		} else {
--			pseudo_diag("failed to allocate memory for log_history\n");
-+			pseudo_error("failed to allocate memory for log_history\n");
- 			sqlite3_finalize(stmt);
- 		}
- 		return h;
-@@ -1378,7 +1378,7 @@ pdb_history_entry(log_history h) {
- 	}
- 	l = calloc(1, sizeof(log_entry));
- 	if (!l) {
--		pseudo_diag("couldn't allocate log entry.\n");
-+		pseudo_error("couldn't allocate log entry.\n");
- 		return 0;
- 	}
- 
-@@ -1449,12 +1449,12 @@ pdb_history_entry(log_history h) {
- 		case PSQF_ORDER:
- 		case PSQF_FTYPE:
- 		case PSQF_PERM:
--			pseudo_diag("field %s should not be in the fields list.\n",
-+			pseudo_warning("field %s should not be in the fields list.\n",
- 				pseudo_query_field_name(f));
- 			return 0;
- 			break;
- 		default:
--			pseudo_diag("unknown field %d\n", f);
-+			pseudo_warning("unknown field %d\n", f);
- 			return 0;
- 			break;
- 		}
-@@ -1498,7 +1498,7 @@ pdb_clear_unused_xattrs(void) {
- 	int rc;
- 
- 	if (!file_db && get_dbs()) {
--		pseudo_diag("%s: database error.\n", __func__);
-+		pseudo_error("%s: database error.\n", __func__);
- 		return;
- 	}
- 	if (!delete) {
-@@ -1528,7 +1528,7 @@ pdb_clear_xattrs(pseudo_msg_t *msg) {
- 	if (!msg)
- 		return;
- 	if (!file_db && get_dbs()) {
--		pseudo_diag("%s: database error.\n", __func__);
-+		pseudo_error("%s: database error.\n", __func__);
- 		return;
- 	}
- 	if (!delete) {
-@@ -1565,7 +1565,7 @@ pdb_copy_xattrs(pseudo_msg_t *oldmsg, pseudo_msg_t *msg) {
- 	if (!oldmsg || !msg)
- 		return;
- 	if (!file_db && get_dbs()) {
--		pseudo_diag("%s: database error.\n", __func__);
-+		pseudo_error("%s: database error.\n", __func__);
- 		return;
- 	}
- 	if (!copy) {
-@@ -1596,7 +1596,7 @@ pdb_check_xattrs(pseudo_msg_t *msg) {
- 	if (!msg)
- 		return;
- 	if (!file_db && get_dbs()) {
--		pseudo_diag("%s: database error.\n", __func__);
-+		pseudo_error("%s: database error.\n", __func__);
- 		return;
- 	}
- 	if (!scan) {
-@@ -1643,7 +1643,7 @@ pdb_link_file(pseudo_msg_t *msg) {
- 		    " VALUES (?, ?, ?, ?, ?, ?, ?, 0);";
- 
- 	if (!file_db && get_dbs()) {
--		pseudo_diag("%s: database error.\n", __func__);
-+		pseudo_error("%s: database error.\n", __func__);
- 		return 0;
- 	}
- 	if (!insert) {
-@@ -1689,7 +1689,7 @@ pdb_unlink_file_dev(pseudo_msg_t *msg) {
- 	char *sql = "DELETE FROM files WHERE dev = ? AND ino = ?;";
- 
- 	if (!file_db && get_dbs()) {
--		pseudo_diag("%s: database error.\n", __func__);
-+		pseudo_error("%s: database error.\n", __func__);
- 		return 0;
- 	}
- 	if (!sql_delete) {
-@@ -1724,7 +1724,7 @@ pdb_update_file_path(pseudo_msg_t *msg) {
- 		"WHERE path = 'NAMELESS FILE' and dev = ? AND ino = ?;";
- 
- 	if (!file_db && get_dbs()) {
--		pseudo_diag("%s: database error.\n", __func__);
-+		pseudo_error("%s: database error.\n", __func__);
- 		return 0;
- 	}
- 	if (!update) {
-@@ -1759,7 +1759,7 @@ pdb_may_unlink_file(pseudo_msg_t *msg, int deleting) {
- 	char *sql_mark_file = "UPDATE files SET deleting = ? WHERE path = ?;";
- 
- 	if (!file_db && get_dbs()) {
--		pseudo_diag("%s: database error.\n", __func__);
-+		pseudo_error("%s: database error.\n", __func__);
- 		return 0;
- 	}
- 	if (!mark_file) {
-@@ -1804,7 +1804,7 @@ pdb_cancel_unlink_file(pseudo_msg_t *msg) {
- 	char *sql_mark_file = "UPDATE files SET deleting = 0 WHERE path = ?;";
- 
- 	if (!file_db && get_dbs()) {
--		pseudo_diag("%s: database error.\n", __func__);
-+		pseudo_error("%s: database error.\n", __func__);
- 		return 0;
- 	}
- 	if (!mark_file) {
-@@ -1846,7 +1846,7 @@ pdb_did_unlink_files(int deleting) {
- 	char *sql_delete_exact = "DELETE FROM files WHERE deleting = ?;";
- 
- 	if (!file_db && get_dbs()) {
--		pseudo_diag("%s: database error.\n", __func__);
-+		pseudo_error("%s: database error.\n", __func__);
- 		return 0;
- 	}
- 	if (!delete_exact) {
-@@ -1857,7 +1857,7 @@ pdb_did_unlink_files(int deleting) {
- 		}
- 	}
- 	if (deleting == 0) {
--		pseudo_diag("did_unlink_files: deleting must be non-zero.\n");
-+		pseudo_error("did_unlink_files: deleting must be non-zero.\n");
- 		return 0;
- 	}
- 	sqlite3_bind_int(delete_exact, 1, deleting);
-@@ -1882,7 +1882,7 @@ pdb_did_unlink_file(char *path, pseudo_msg_t *msg, int deleting) {
- 	char *sql_delete_exact = "DELETE FROM files WHERE path = ? AND deleting = ?;";
- 
- 	if (!file_db && get_dbs()) {
--		pseudo_diag("%s: database error.\n", __func__);
-+		pseudo_error("%s: database error.\n", __func__);
- 		return 0;
- 	}
- 	if (!delete_exact) {
-@@ -1925,7 +1925,7 @@ pdb_unlink_file(pseudo_msg_t *msg) {
- 	char *sql_delete_exact = "DELETE FROM files WHERE path = ?;";
- 
- 	if (!file_db && get_dbs()) {
--		pseudo_diag("%s: database error.\n", __func__);
-+		pseudo_error("%s: database error.\n", __func__);
- 		return 0;
- 	}
- 	if (!delete_exact) {
-@@ -1973,7 +1973,7 @@ pdb_unlink_contents(pseudo_msg_t *msg) {
- 				"(path > (? || '/') AND path < (? || '0'));";
- 
- 	if (!file_db && get_dbs()) {
--		pseudo_diag("%s: database error.\n", __func__);
-+		pseudo_error("%s: database error.\n", __func__);
- 		return 0;
- 	}
- 	if (!delete_sub) {
-@@ -2025,7 +2025,7 @@ pdb_rename_file(const char *oldpath, pseudo_msg_t *msg) {
- 			       "WHERE (path > (? || '/') AND path < (? || '0'));";
- 
- 	if (!file_db && get_dbs()) {
--		pseudo_diag("%s: database error.\n", __func__);
-+		pseudo_error("%s: database error.\n", __func__);
- 		return 0;
- 	}
- 	if (!update_exact) {
-@@ -2098,7 +2098,7 @@ pdb_renumber_all(dev_t from, dev_t to) {
- 		    " WHERE dev = ?;";
- 
- 	if (!file_db && get_dbs()) {
--		pseudo_diag("%s: database error.\n", __func__);
-+		pseudo_error("%s: database error.\n", __func__);
- 		return 0;
- 	}
- 	if (!files_update) {
-@@ -2166,7 +2166,7 @@ pdb_update_inode(pseudo_msg_t *msg) {
- 	if (!oldmsg) {
- 		oldmsg = malloc(sizeof(*msg) + pseudo_path_max());
- 		if (!oldmsg) {
--			pseudo_diag("%s: out of memory\n", __func__);
-+			pseudo_error("%s: out of memory\n", __func__);
- 			return 1;
- 		}
- 	}
-@@ -2175,7 +2175,7 @@ pdb_update_inode(pseudo_msg_t *msg) {
- 		    " SET dev = ?, ino = ? "
- 		    " WHERE path = ?;";
- 	if (!file_db && get_dbs()) {
--		pseudo_diag("%s: database error.\n", __func__);
-+		pseudo_error("%s: database error.\n", __func__);
- 		return 0;
- 	}
- 	if (!update) {
-@@ -2189,7 +2189,7 @@ pdb_update_inode(pseudo_msg_t *msg) {
- 		return 1;
- 	}
- 	if (!msg->pathlen) {
--		pseudo_diag("Can't update the inode of a file without its path.\n");
-+		pseudo_error("Can't update the inode of a file without its path.\n");
- 		return 1;
- 	}
- 	memcpy(oldmsg, msg, sizeof(*msg) + msg->pathlen);
-@@ -2240,7 +2240,7 @@ pdb_update_file(pseudo_msg_t *msg) {
- 		    " WHERE dev = ? AND ino = ?;";
- 
- 	if (!file_db && get_dbs()) {
--		pseudo_diag("%s: database error.\n", __func__);
-+		pseudo_error("%s: database error.\n", __func__);
- 		return 0;
- 	}
- 	if (!update) {
-@@ -2281,7 +2281,7 @@ pdb_find_file_exact(pseudo_msg_t *msg) {
- 	char *sql = "SELECT * FROM files WHERE path = ? AND dev = ? AND ino = ?;";
- 
- 	if (!file_db && get_dbs()) {
--		pseudo_diag("%s: database error.\n", __func__);
-+		pseudo_error("%s: database error.\n", __func__);
- 		return 0;
- 	}
- 	if (!select) {
-@@ -2332,7 +2332,7 @@ pdb_find_file_path(pseudo_msg_t *msg) {
- 	char *sql = "SELECT * FROM files WHERE path = ?;";
- 
- 	if (!file_db && get_dbs()) {
--		pseudo_diag("%s: database error.\n", __func__);
-+		pseudo_error("%s: database error.\n", __func__);
- 		return 1;
- 	}
- 	if (!select) {
-@@ -2389,7 +2389,7 @@ pdb_get_file_path(pseudo_msg_t *msg) {
- 	char *response;
- 
- 	if (!file_db && get_dbs()) {
--		pseudo_diag("%s: database error.\n", __func__);
-+		pseudo_error("%s: database error.\n", __func__);
- 		return 0;
- 	}
- 	if (!select) {
-@@ -2438,7 +2438,7 @@ pdb_find_file_dev(pseudo_msg_t *msg, char **path) {
- 	char *sql = "SELECT * FROM files WHERE dev = ? AND ino = ?;";
- 
- 	if (!file_db && get_dbs()) {
--		pseudo_diag("%s: database error.\n", __func__);
-+		pseudo_error("%s: database error.\n", __func__);
- 		return 0;
- 	}
- 	if (!select) {
-@@ -2492,7 +2492,7 @@ pdb_get_xattr(pseudo_msg_t *msg, char **value, size_t *len) {
- 	char *sql = "SELECT value FROM xattrs WHERE dev  = ? AND ino = ? AND name = ?;";
- 
- 	if (!file_db && get_dbs()) {
--		pseudo_diag("%s: database error.\n", __func__);
-+		pseudo_error("%s: database error.\n", __func__);
- 		return 0;
- 	}
- 	if (!select) {
-@@ -2523,7 +2523,7 @@ pdb_get_xattr(pseudo_msg_t *msg, char **value, size_t *len) {
- 			 */
- 			*value = malloc(length);
- 			if (!*value) {
--				pseudo_diag("%s: out of memory\n", __func__);
-+				pseudo_error("%s: out of memory\n", __func__);
- 				sqlite3_reset(select);
- 				sqlite3_clear_bindings(select);
- 				return 1;
-@@ -2561,7 +2561,7 @@ pdb_list_xattr(pseudo_msg_t *msg, char **value, size_t *len) {
- 	char *sql = "SELECT name FROM xattrs WHERE dev = ? AND ino = ? ORDER BY name;";
- 
- 	if (!file_db && get_dbs()) {
--		pseudo_diag("%s: database error.\n", __func__);
-+		pseudo_error("%s: database error.\n", __func__);
- 		return 0;
- 	}
- 	if (!select) {
-@@ -2615,7 +2615,7 @@ pdb_remove_xattr(pseudo_msg_t *msg, char *value, size_t len) {
- 	char *sql = "DELETE FROM xattrs WHERE dev = ? AND ino = ? AND name = ?;";
- 
- 	if (!file_db && get_dbs()) {
--		pseudo_diag("%s: database error.\n", __func__);
-+		pseudo_error("%s: database error.\n", __func__);
- 		return 0;
- 	}
- 	if (!delete) {
-@@ -2656,7 +2656,7 @@ pdb_set_xattr(pseudo_msg_t *msg, char *value, size_t len, int flags) {
- 	size_t vlen;
- 
- 	if (!file_db && get_dbs()) {
--		pseudo_diag("%s: database error.\n", __func__);
-+		pseudo_error("%s: database error.\n", __func__);
- 		return 0;
- 	}
- 	if (!select) {
-@@ -2769,7 +2769,7 @@ pdb_find_file_ino(pseudo_msg_t *msg) {
- 	char *sql = "SELECT * FROM files WHERE ino = ?;";
- 
- 	if (!file_db && get_dbs()) {
--		pseudo_diag("%s: database error.\n", __func__);
-+		pseudo_error("%s: database error.\n", __func__);
- 		return 0;
- 	}
- 	if (!select) {
-@@ -2813,7 +2813,7 @@ pdb_files(void) {
- 	pdb_file_list l;
- 
- 	if (!file_db && get_dbs()) {
--		pseudo_diag("%s: database error.\n", __func__);
-+		pseudo_error("%s: database error.\n", __func__);
- 		return 0;
- 	}
- 
-@@ -2852,7 +2852,7 @@ pdb_file(pdb_file_list l) {
- 	s = sqlite3_column_text(l->stmt, column++);
- 	m = pseudo_msg_new(0, (const char *) s);
- 	if (!m) {
--		pseudo_diag("couldn't allocate file message.\n");
-+		pseudo_error("couldn't allocate file message.\n");
- 		return NULL;
- 	}
- 	pseudo_debug(PDBGF_DB, "pdb_file: '%s'\n", s ? (const char *) s : "<nil>");
--- 
-1.8.3.1
-
+On Thu 2026-06-04 @ 03:40:35 PM, Trevor Woerner via lists.yoctoproject.org wrote:
+> On Thu 2026-05-28 @ 10:48:24 AM, Quentin Schulz via lists.yoctoproject.org wrote:
+> > Hi Trevor,
+> > 
+> > On 5/27/26 5:30 PM, Trevor Woerner via lists.yoctoproject.org wrote:
+> > > Hi Quentin,
+> > > 
+> > > Thanks for this patch series!
+> > > 
+> > 
+> > Thanks for the review!
+> > 
+> > > I believe there was a little fuzz required to apply patch 1 (around the
+> > > -D), perhaps a v2 against the current to clean that up?
+> > > 
+> > 
+> > I'm assuming due to commit 9fb264d42a20 ("bsp: fix upstream TF-A deploy
+> > desync") already being merged.
+> 
+> Yes, I think so.
+> 
+> > > On Mon 2026-01-26 @ 03:48:30 PM, Quentin Schulz via lists.yoctoproject.org wrote:
+> > [...]
+> > > > diff --git a/README b/README
+> > > > index c2697d1..f49fdb5 100644
+> > > > --- a/README
+> > > > +++ b/README
+> > > > @@ -222,6 +222,48 @@ Notes:
+> > > >   	NOTE: this variable must be set before any include/require in the
+> > > >   	      machine configuration file
+> > > > +  OP-TEE
+> > > > +
+> > > > +	PX30, RK3399 and RK3588 are all supported by upstream OP-TEE OS. By
+> > > > +	default, OP-TEE OS is not baked into U-Boot.
+> > > > +
+> > > > +	You can bake OP-TEE OS in U-Boot by setting:
+> > > > +
+> > > > +		RK_UBOOT_TEE = "1"
+> > > 
+> > > Is it worth pointing out this is a boolean so any of
+> > > "1"/"y"/"yes"/"true" or "0"/"n"/"no"/"false" will work?
+> > > 
+> > 
+> > Not sure it's worth the added complexity? We also don't say that for
+> > RK_IMAGE_INCLUDES_UBOOT_ENV, RK_RAUC_DEMO, RK_KERNEL_FITIMAGE,
+> > RK_OVERLAY_DEMO but we word it differently for them.
+> > 
+> > Would,
+> > 
+> > You can bake OP-TEE OS in U-Boot by enabling the RK_UBOOT_TEE variable
+> > boolean.
+> > 
+> > work for you?
+> 
+> Sounds great!
+> 
+> > [...]
+> > > > diff --git a/recipes-security/optee/optee-os_%.bbappend b/recipes-security/optee/optee-os_%.bbappend
+> > > > new file mode 100644
+> > > > index 0000000..2a5ec8b
+> > > > --- /dev/null
+> > > > +++ b/recipes-security/optee/optee-os_%.bbappend
+> > > > @@ -0,0 +1,19 @@
+> > > > +# Increase size for FDT in OP-TEE OS to the one in TF-A since v2.13 to avoid
+> > > > +# panics on 64+KiB FDT passed by U-Boot to TF-A to OP-TEE OS.
+> > > > +# Can be removed once https://github.com/OP-TEE/optee_os/pull/7687 is merged.
+> > > > +EXTRA_OEMAKE:append:rockchip:aarch64 = " CFG_DTB_MAX_SIZE=0x60000"
+> > > > +
+> > > > +# Disable early console by default to avoid OP-TEE OS panicking on boards with
+> > > > +# their UART console different from OP-TEE OS default (UART2 for rk322x, rk3399
+> > > > +# and rk3588(s)).
+> > > > +# In-tree default changes if https://github.com/OP-TEE/optee_os/pull/7688 merged
+> > > > +OPTEE_OS_EARLY_CONSOLE ?= "n"
+> > > > +EXTRA_OEMAKE:append:rockchip = " CFG_EARLY_CONSOLE=${OPTEE_OS_EARLY_CONSOLE}"
+> > > > +
+> > > > +# Enable hardware acceleration using Arm Cryptography Extensions on PX30.
+> > > > +# Can be removed once https://github.com/OP-TEE/optee_os/pull/7689 is merged.
+> > > 
+> > > Have these 3 merges occurred yet?
+> > > 
+> > 
+> > Yes.
+> > 
+> > b6c7291c246b ("plat-rockchip: increase FDT max size to 384KiB on all Aarch64
+> > supported SoCs")
+> > 763be3b08c16 ("plat-rockchip: disable early console by default")
+> > 74eb4d9ed3ac ("plat-rockchip: px30: set CFG_CRYPTO_WITH_CE ?= y")
+> > 
+> > All available in 4.10.0. However, meta-arm currently is still at 4.9.0. I
+> > don't see patches on their ML
+> > (https://lore.kernel.org/yocto-meta-arm/?q=op-tee) for a version bump so we
+> > need to keep those in for now.
+> > 
+> > I guess I can change the comment to say we need to keep this until 4.10.0?
+> 
+> Please do.
+> 
+> > At the same time, it shouldn't hurt keeping them in even in 4.10.0 or later.
+> 
+> Okay.
+> 
+> > Cheers,
+> > Quentin
+> > 
+> > 
+> > 
+> > 
+> > 
+> 
+> 
+> -=-=-=-=-=-=-=-=-=-=-=-
+> Links: You receive all messages sent to this group.
+> View/Reply Online (#4142): https://lists.yoctoproject.org/g/yocto-patches/message/4142
+> Mute This Topic: https://lists.yoctoproject.org/mt/117469183/900817
+> Group Owner: yocto-patches+owner@lists.yoctoproject.org
+> Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/13168745/900817/63955952/xyzzy [twoerner@gmail.com]
+> -=-=-=-=-=-=-=-=-=-=-=-
+> 
+> 
 
