@@ -2,64 +2,64 @@ Return-Path: <ticotimo@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4F7FC44500
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B73B0C43458
 	for <webhook@archiver.kernel.org>; Mon,  6 Jul 2026 22:06:44 +0000 (UTC)
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.162430.1783375600958320813
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.161473.1783375597337593838
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 06 Jul 2026 15:06:41 -0700
+ Mon, 06 Jul 2026 15:06:37 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=ERB5kb0c;
- spf=pass (domain: gmail.com, ip: 209.85.210.178, mailfrom: ticotimo@gmail.com)
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-8478fe07f65so3584019b3a.0
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 06 Jul 2026 15:06:40 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=TrtGqzM4;
+ spf=pass (domain: gmail.com, ip: 209.85.210.170, mailfrom: ticotimo@gmail.com)
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-845ea8924a2so3469661b3a.1
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 06 Jul 2026 15:06:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783375600; x=1783980400; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20251104; t=1783375597; x=1783980397; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=9+gFaOja+ZxdtARCjaXQkdq5mL9J6nnmick6B/WZ7hE=;
-        b=ERB5kb0c99a8A3iwPE5gEop1gMzRiCHA0wP7+qN648OG66SD07cIJ45G7Tg/G4KeBi
-         DGTR/V2s4XBhVKGPsLTZuJayzwP1Z+ibAspA4XY8DbSzWlpN1w2fr4A5jO7p1AHQfnzs
-         a9PgMJweHFU3Mf9DWPoDwHB09Y+aOjBx4+90cvdJORNhU4vgskhZqkqwa5Fe/P+Idzwc
-         bzbE85ys7gfMZ9xKlw7/v97RhLZIBIHrfWjZMcI8NdP09MSXIKel3Mc6ucaQHtAyWrip
-         CRpb8sMRBkS0dnPE43FwW5cSvXgNIUB9s5T7gG5u0K2fEMdN0OqLFLWAaOK1oe0VkxO1
-         UGLA==
+        bh=RHc2v7P6S3eXsGYj8ncD03YtPXXdbXRMlxd+lLp0sgM=;
+        b=TrtGqzM4aQvaH/9aThDZpF1BdT18KKcUO95Erx4e5SLmIlIEfuliKYjRxhR0SurhQS
+         3pMGmRpmrX6HW44Ei0Izu8gPwGZzbCFaOZNbwxcMuaoCmbK8sBZKX/Y0N6VReb/d2sRk
+         XWU5cKHdB7sO/f+mL1CElh/fF8kX0RSAVoHqQCmYOJKuSoozl5qegOZhiZ4Ha4QS4cN9
+         FD8ZDLGbozGYLgZLRSKeSBTAwS4t9EW7B7kTH6ateozZE+A4vVS54g9XfiomxKQDuGyR
+         G1n/+ByNmVbnZ1nQtKfbvtrf+rFgw+2VQ47bP3wyfIPMFQ8fqdG3lKUX2S4od3W9p7L+
+         V6lQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783375600; x=1783980400;
+        d=1e100.net; s=20251104; t=1783375597; x=1783980397;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=9+gFaOja+ZxdtARCjaXQkdq5mL9J6nnmick6B/WZ7hE=;
-        b=Zmnx75YU91ZFOj+xOd1LNa7ZpHmIvlp8gfXHNAPYDTdUj1/4NapU3foymxzeGoxgQN
-         jt9TAr8oDvC5kpPw8xcjep5o2amOlQVSI/gMqXBD8an0x+XxqFz6cxBsz3p6XvLgV+v1
-         6HAvCdECncK9eW2kUX5RCIyYZRtOq8AFCk2lOuqO5YuT+BZsOo00gYnpSSsL6aV0YqTW
-         dyN4RAwX2G4xvI2p2ePMbQgNFmZUosdayMFkeahKFhz4ur7f/UILIQrwd16vw6aBSTbY
-         zeLLhJWTCbVNsPFC4mCld/HgtliHeQ1YuU6/vD+rRUKUmHXZoJ+/wpj/jNIFZR7/2Nqh
-         FM4Q==
-X-Gm-Message-State: AOJu0YxehNvWkWPb6YGDFYaR9HsFzIqK7sQR4KdtQr2326lbGCk++HVr
-	6T6tUXoUrWdfOXxRkHCD9ZMV6MhUnp6HHklx82E3DvZkdfpR107HhM0P6vtVDQ==
-X-Gm-Gg: AfdE7cm6HEIItDkCAvkfWp70yA1LAv+a3sgyAUZC+ivg30Th5hIvB9/1V7EXiGV+slk
-	IsU/YDDIRCjp5qOT6kwMhmUkCxzcFyOhW7GiWZDxh0B2eErh0EifOHJx2+RLa0nzmiSbAP03f34
-	VmytpL0QjARKhTRty83BYMnnJM0d+TG1xY5B/quebvbos8xhqkqG+6RmicL8U67hs8nn+UR+pr/
-	sCkDjcexL/mADilIZYKOk6t6jlt6NmajZGgBIAKrstiQXI2hy793RNFlo4WAmJCQf+ubnUoP+hD
-	h4kCldd363HGIBJesp7Rrig0OqVn8qKp+FvEk8BiJaEpdVDdlRMHgilgvNdPblHkd1t9ob2uamt
-	vACI4bdTpoyMfHwjEl/37fg27LIshnO0QQT1Rl96ijVPCO7jcwhey1gvdlAxJ9F80kO7ZS64W48
-	QGS+0LD0EbxquvQAheoSkn7xv80xjp1wMJkQXtLyAMQlUrAakSdtZDfOu/+NbZKUgQocxdcxP7T
-	BCCHdSNbOt3
-X-Received: by 2002:a05:6a00:995:b0:847:949e:ea6f with SMTP id d2e1a72fcca58-84826bfc073mr2420336b3a.4.1783375600212;
-        Mon, 06 Jul 2026 15:06:40 -0700 (PDT)
+        bh=RHc2v7P6S3eXsGYj8ncD03YtPXXdbXRMlxd+lLp0sgM=;
+        b=XIb64EIbTFq4+LRX2x2LMLfGqNf5GSqGaeh1g0VXSjbhzfZQ06RQuSlmmiNkJDFXH/
+         4k23qh613yc97s0zuBaiw65ga8aSnCrBRpMssN/R2rnkDyDJt5tPkDFrCv+DEZTlPy2f
+         eojNC52q5CyMokN4HP6gMaa5pYOrzsp19O8wbW+PsAfdHQcIoXlNEmgaIG459E/gWuEI
+         pONbpSqUJfQiLxZowwtFv+FY1kTqc5iHqn1gnI0nOx+euseyrC/n9dpQxI+pE2o+V0qw
+         9EgVqGMWvQvjT1wTKsZRHF4NtVOB9ms5MEmn1Cw1USkEVC/boy7pGHXL0qAS8OGvxNPg
+         boEQ==
+X-Gm-Message-State: AOJu0Yx9wm34smOe+8kl9mQuXI39V1P1/RWv1/yvM41gkGTsNNM0bZzf
+	ByyLB3vRybuxatj12eN7XSA9ImHAn8bk8OF1te073hDy0YrSi3/8AXhsZbpJjA==
+X-Gm-Gg: AfdE7cnM0rhtBCXeHuXN0TkhDOFsx3vQR84Y7IuCm3dVoQTHYNmdWBr0hMUmx4H6rn8
+	PBkBVCk+ipN6rL2GJJcSezfsNQUp3ocCGiZmZH567TiVrsK25tvjD3ULmcZjRx/dU+my3OIIOt8
+	Pt22f+XLO5olInd8UGqnKAufkBX4kC0RfamI7/ZtAzU2+SOOeRQy5enWnHDiPqLbGR8TOlAE4H6
+	tRHSLwumGICSbOEaL5D/cwtQ27W/1zRaG5KswbNZmvV5q+3Bnmrkfsgn8/z8gZ+iU4HtP1HcaBZ
+	FpE+UoswZtEcH0NbQRvbloRFXiypoU6vzfSQhGPSjf7NtEKcpFqA3m5j9cP0Xb5Iz+bexIrcunf
+	YvHk7UZzVkZjOVpjwMXQwIUuNULE3WFW5LMYgQ/Uy30ooDxhkkHcUhaS0LyYndJFuwM/vzQsI7j
+	77fCItpsg7CiTyyx2/ClCbxY2BxifNwZMzJX5yL43pIJXUUKuN8CYWi7MZmOCLiA/HfuRPv86Nd
+	FOMG9rYBA+BBWjzzffk1pE=
+X-Received: by 2002:a05:6a00:2e24:b0:847:8625:f7bb with SMTP id d2e1a72fcca58-84826e2393cmr2304731b3a.60.1783375596587;
+        Mon, 06 Jul 2026 15:06:36 -0700 (PDT)
 Received: from localhost.localdomain (c-98-232-159-17.hsd1.or.comcast.net. [98.232.159.17])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ca5af7d5b95sm84720a12.3.2026.07.06.15.06.37
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ca5af7d5b95sm84720a12.3.2026.07.06.15.06.32
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 06 Jul 2026 15:06:38 -0700 (PDT)
+        Mon, 06 Jul 2026 15:06:32 -0700 (PDT)
 From: Tim Orling <ticotimo@gmail.com>
 X-Google-Original-From: Tim Orling <tim.orling@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [yocto-autobuilder-helper][PATCH v4 02/11] config.json: add vcontainer-tarball build target
-Date: Mon,  6 Jul 2026 15:05:34 -0700
-Message-ID: <21daf90c9799e7049ebb34f24925e26d311852af.1783371914.git.tim.orling@konsulko.com>
+Subject: [yocto-autobuilder-helper][PATCH v4 01/11] scripts: add vcontainer-tarball setup, integration, and publishing
+Date: Mon,  6 Jul 2026 15:05:33 -0700
+Message-ID: <496be2c920bf0bffb4c0881f0818ff858175ed2d.1783371914.git.tim.orling@konsulko.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <cover.1783371914.git.tim.orling@konsulko.com>
 References: <cover.1780710041.git.tim.orling@konsulko.com> <cover.1783371914.git.tim.orling@konsulko.com>
@@ -69,74 +69,121 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Mon, 06 Jul 2026 22:06:44 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4432
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4431
 
-Add the vcontainer-tarball build target which produces the
-meta-virtualization SDK used by downstream container build/test
-jobs. Modelled after the buildtools-tarball target.
+Introduce the vcontainer-tarball SDK plumbing used by container build
+jobs. The vcontainer-tarball is a meta-virtualization-derived SDK
+(modelled after buildtools-tarball) that ships the container build
+toolchain so worker jobs do not need to rebuild it for every step.
 
-Following meta-virtualization/docs/build-profiles.md add
-"require conf/distro/include/meta-virt-host.conf" to extravars,
-which appends required DISTRO_FEATURES and sets appropriate
-BBMULTICONFIG.
+  * scripts/utils.py: add setup_vcontainer_tarball(), and add an
+    env_glob keyword argument to setup_tools_tarball() and
+    enable_tools_tarball() so the vcontainer-tarball can source its
+    specific environment-setup-ci file rather than the universal
+    glob.
+  * scripts/run-config: source the vcontainer-tarball environment
+    for build-targets when "vcontainer" parameter is passed in,
+    similar to "extratools" behavior.
+  * scripts/publish-artefacts: publish the vcontainer-tarball
+    artefact so downstream test jobs can fetch a stable SDK.
 
-The target places the extravars in the per-step config, and includes
-a publish-artefacts step so the resulting SDK tarball is staged
-for reuse by container-tests and other consumers.
-
-Since meta-virtualization is the first layer removed by
-'remove-layers', our BBMULTICONFIGs become invalid immediately
-after layer removal and throw an error.
-
-In scripts/run-config, EXTRACMDS runs after BBTARGETS, but
-before 'remove-layers'. Use 'sed' to remove the "require
-...meta-virt-host.conf" line.
-
-The error in the 'remove-layers' step can be summarized as:
-
-bb.parse.ParseError: ParseError at /home/pokybuild/yocto-worker/vcontainer-tarball/build/layers/openembedded-core/meta/conf/bitbake.conf:824: Could not include required file conf/multiconfig/vruntime-aarch64.conf
-
+AI-Generated: Claude Cowork Opus 4.8
 Signed-off-by: Tim Orling <tim.orling@konsulko.com>
 ---
- config.json | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ scripts/publish-artefacts |  5 +++++
+ scripts/run-config        | 11 +++++++++++
+ scripts/utils.py          | 20 ++++++++++++++++----
+ 3 files changed, 32 insertions(+), 4 deletions(-)
 
-diff --git a/config.json b/config.json
-index f4ead18..972682d 100644
---- a/config.json
-+++ b/config.json
-@@ -1830,6 +1830,31 @@
-         },
-         "toaster" : {
-             "EXTRACMDS" : ["${SCRIPTSDIR}/run-toaster-tests ${HELPERBUILDDIR} ${HELPERBUILDDIR}/../layers/bitbake"]
-+        },
-+        "vcontainer-tarball": {
-+            "NEEDREPOS" : ["bitbake", "meta-openembedded", "meta-virtualization"],
-+            "ADDLAYER" : [
-+                "${BUILDDIR}/../meta-openembedded/meta-oe",
-+                "${BUILDDIR}/../meta-openembedded/meta-python",
-+                "${BUILDDIR}/../meta-openembedded/meta-networking",
-+                "${BUILDDIR}/../meta-openembedded/meta-filesystems",
-+                "${BUILDDIR}/../meta-virtualization"
-+            ],
-+            "step1" : {
-+                "shortname" : "Build vcontainer-tarballs",
-+                "BBTARGETS" : "vcontainer-tarball",
-+                "extravars" : [
-+                    "require conf/distro/include/meta-virt-host.conf",
-+                    "INIT_MANAGER = 'systemd'"
-+                ],
-+                "EXTRACMDS" : ["sed -i '/meta-virt-host.conf/d' ${HELPERBUILDDIR}/conf/auto.conf"]
-+            },
-+            "step2" : {
-+                "shortname" : "Publish vcontainer SDK for test reuse",
-+                "EXTRACMDS" : [
-+                    "install -d ${BASE_SHAREDDIR}/pub/vcontainer-tarball-latest && install -m 0755 ${BUILDDIR}/tmp/deploy/sdk/vcontainer-standalone.sh ${BASE_SHAREDDIR}/pub/vcontainer-tarball-latest/vcontainer-standalone.sh.new && mv -f ${BASE_SHAREDDIR}/pub/vcontainer-tarball-latest/vcontainer-standalone.sh.new ${BASE_SHAREDDIR}/pub/vcontainer-tarball-latest/vcontainer-standalone.sh"
-+                ]
-+            }
-         }
-     },
-     "repo-defaults" : {
+diff --git a/scripts/publish-artefacts b/scripts/publish-artefacts
+index e56e131..0e820e9 100755
+--- a/scripts/publish-artefacts
++++ b/scripts/publish-artefacts
+@@ -146,5 +146,10 @@ case "$target" in
+         sha256sums $TMPDIR/deploy/images/qemux86-64
+         cp -R --no-dereference --preserve=links $TMPDIR/deploy/images/qemux86-64/*qemux86* $DEST/patchtest
+         ;;
++    "vcontainer-tarball")
++        mkdir -p $DEST/vcontainer-tarball
++        sha256sums $TMPDIR/deploy/sdk
++        cp -R --no-dereference --preserve=links $TMPDIR/deploy/sdk/*vcontainer* $DEST/vcontainer-tarball
++        ;;
+ esac
+ 
+diff --git a/scripts/run-config b/scripts/run-config
+index e896234..90a5996 100755
+--- a/scripts/run-config
++++ b/scripts/run-config
+@@ -153,6 +153,17 @@ else:
+     if args.phase == "init" and args.stepname == "buildtools":
+         sys.exit(0)
+ 
++vcontainer = utils.getconfigvar("vcontainer", ourconfig, args.target)
++if jcfg:
++    if vcontainer:
++        addentry("vcontainer", "Setup vcontainer tarball", "init")
++elif vcontainer:
++    # vcontainer is opt-in per target via the "vcontainer" config variable,
++    # so this is a no-op for targets which don't set it
++    utils.setup_vcontainer_tarball(ourconfig, args.target, args.builddir + "/../vcontainer-tarball")
++    if args.phase == "init" and args.stepname == "vcontainer":
++        sys.exit(0)
++
+ extratools = utils.getconfigvar("extratools", ourconfig, args.target)
+ if jcfg:
+     if extratools:
+diff --git a/scripts/utils.py b/scripts/utils.py
+index a4dd12e..bddc715 100644
+--- a/scripts/utils.py
++++ b/scripts/utils.py
+@@ -456,8 +456,8 @@ def sha256_file(filename):
+             pass
+     return method.hexdigest()
+ 
+-def enable_tools_tarball(btdir, name):
+-    btenv = glob.glob(btdir + "/environment-setup*")
++def enable_tools_tarball(btdir, name, env_glob="/environment-setup*"):
++    btenv = glob.glob(btdir + env_glob)
+     print("Using %s %s" % (name, btenv))
+     # We either parse or wrap all our execution calls, rock and a hard place :(
+     with open(btenv[0], "r") as f:
+@@ -474,6 +474,18 @@ def enable_tools_tarball(btdir, name):
+                 if line in os.environ:
+                     del os.environ[line]
+ 
++# Unlike buildtools (a host/worker property, keyed by worker name globs),
++# the vcontainer-tarball is only needed by specific jobs (e.g.
++# containers-library), so it is keyed off the target/builder via a
++# per-target "vcontainer" config variable, following the extratools pattern.
++def setup_vcontainer_tarball(ourconfig, target, vcdir, checkonly=False):
++    vctarball = getconfigvar("vcontainer", ourconfig, target) or None
++
++    if checkonly:
++        return vctarball
++
++    setup_tools_tarball(ourconfig, vcdir, vctarball, name="vcontainer-tarball", env_glob="/environment-setup-ci")
++
+ def setup_buildtools_tarball(ourconfig, workername, btdir, checkonly=False):
+     bttarball = None
+     if "buildtools" in ourconfig and workername:
+@@ -488,7 +500,7 @@ def setup_buildtools_tarball(ourconfig, workername, btdir, checkonly=False):
+ 
+     setup_tools_tarball(ourconfig, btdir, bttarball)
+ 
+-def setup_tools_tarball(ourconfig, btdir, bttarball, name="buildtools"):
++def setup_tools_tarball(ourconfig, btdir, bttarball, name="buildtools", env_glob="/environment-setup*"):
+ 
+     btenv = None
+     if bttarball:
+@@ -557,7 +569,7 @@ def setup_tools_tarball(ourconfig, btdir, bttarball, name="buildtools"):
+         if not os.path.exists(btdir):
+             print("Extracting %s %s" % (name, bttarball))
+             subprocess.check_call(["bash", btdlpath, "-d", btdir, "-y"])
+-        enable_tools_tarball(btdir, name)
++        enable_tools_tarball(btdir, name, env_glob)
+ 
+ def get_string_from_version(version, milestone=None, rc=None):
+     """ Point releases finishing by 0 (e.g 4.0.0, 4.1.0) do no exists,
 -- 
 2.54.0
 
