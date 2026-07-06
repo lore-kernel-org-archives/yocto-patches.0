@@ -2,62 +2,62 @@ Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8385BC44500
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75D17C43458
 	for <webhook@archiver.kernel.org>; Mon,  6 Jul 2026 22:29:35 +0000 (UTC)
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.161872.1783376967169044579
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.161871.1783376965541335556
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 06 Jul 2026 15:29:27 -0700
+ Mon, 06 Jul 2026 15:29:25 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=UOve2KLC;
- spf=pass (domain: gmail.com, ip: 209.85.219.41, mailfrom: twoerner@gmail.com)
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-8f256eaedf8so37556396d6.2
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 06 Jul 2026 15:29:27 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=sIQPPNl8;
+ spf=pass (domain: gmail.com, ip: 209.85.222.174, mailfrom: twoerner@gmail.com)
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-92e7632b193so223408785a.2
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 06 Jul 2026 15:29:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783376966; x=1783981766; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20251104; t=1783376964; x=1783981764; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=o/TyJz94mX2i1QV8NCVxcG4VNAPy5W9Tg1kMNh3vuSk=;
-        b=UOve2KLCfaXk5Np2DIyDhmCaaBkNej7h4qkJnVndHYGINZc9/Qkce2BTihvXjyK6yZ
-         OcbKJF9JgFAlo7+2o32aRys+aiz9CFjjoFBTYyKAiSGeel/BIvXflWHFFftPtXfy85CJ
-         sV5MSo/nkkCHdjAEyAYCKA5UF8j1S1sIu4A/H1AqgcSAGmb3fZYPOe084QdLo63THi5O
-         lA+t/gHxqQT0gxt0NZ70E8gFyQ3EE9SeR1D6ElmK0jNK1akOtlCvkIBuIhzsoTdg+OC1
-         f1SgoQZ+ox/VnDC2JUldHKXNUPZD/31V5qfV+DYr9iEgraLwUB2yW6LFiSpU3oOLHE4F
-         O1TA==
+        bh=g8XYBvdHt4KI6c7j0GOgzFRHyu6nVjuGW5Ayik6PBuI=;
+        b=sIQPPNl8akzQDf627G+e3083dJiHdCV+WnAHUiGOBfiZSdLmyYyoQ7lIFvzogFl4dg
+         TYd0fuzEmAjm3ZcmdIIs0c59bDdjvfbXFjNidEZGW9pFAsHuLxIZkYw8iaUXchl/xLcD
+         cuaACb0DsfC5yUCuDZoWxS0eALleW1PEqR+TOieSan5bvmXRkdCQR549B5Xtwva/sbc6
+         VHSdIIvdfqE4Bh4zCqXL/Iu5CMUMWdGi0pUUwM/hJqfNW9x4Uo3GqhXvLoaQB91vQb2N
+         fW/y1+gW81vz4AvdE5fBHmLyx3JK8SsUJWmUh3eEluplc1RvX/+eFfN7Ve2ZgNSuWTeo
+         SbXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783376966; x=1783981766;
+        d=1e100.net; s=20251104; t=1783376964; x=1783981764;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to:content-type;
-        bh=o/TyJz94mX2i1QV8NCVxcG4VNAPy5W9Tg1kMNh3vuSk=;
-        b=nfF650wB3JSBhRJkPN+Xr/yDv/nZbjtjz376VWCD5+/bdaYmWhw5zt+L7iST+ULvKo
-         MQBvrUKCEae/uRmgtFsXZdzVrVOglYvumJkcelWHQcQZoq0e2cUNidGhutQaO8RUiqB+
-         cXUq9yPrStPPolqKBeVIlvrLfVwv/xbcWJQyZi3kUYj7rmz9V8oG5RaMiN/1J+vQvsUc
-         ECHldfP+7IuXsvb5lv7nFODTzFKAaww+vVAnrqd+R3JUnDfd1+j9z+A9uuQBf3Wejdc3
-         HflBz0tJIrXsD/4YQkUFYPzqxd+IBtlwBJ7e3zNYvmrW+JzbdV+z3eGI12ARPJIZSQse
-         fg2A==
-X-Gm-Message-State: AOJu0YzTIWUWyNcRglV8xalvBMKtIaTVpWlMmVSOlpbJG3b9Yr2nn6H3
-	qOjo327o+/k/L7muIhgWqig7TXcHiLNXQ+RpyS5X7tLh8qzP7t2u/6HtsUkJPK5f
-X-Gm-Gg: AfdE7cnEsaQzcsDaZLtpR0kcjbapewUXvTjqj9D6PTChiUfpXoCXFjPigSvoQKowHgM
-	lU8C20+6W598H8Z4kxYH55GbMyj8XoPxMpLwlvsO5AYf8VqL2+reCrhpUbdoxl/M3FLkv9rOfNq
-	Q1esdXh4JeaO656oMAKsT+zr3L13yesUMg1UGoaZZ+YW6uyO7RFY5H38p/D54Yfebevg6q9kIyj
-	kd0e2BHU3h5ZCXej23D7LWlUgpYpgp7/FoPhPanjGURCoq6oWRXU0umVfySvHdzbDLPYL1xYZBe
-	vu9TeFHi6Jz8zSXMGWVfF3i4tbya7snrNqe2uH14qK+Xd0V4lTTLeefvgfEEPjDBeRtbzn2CK1Y
-	nTdz30ZQgANjtti4zhUmz/4QfJ3QfvBb47e/vEEUQUIaC5ohYqlZZeVI6GHKaDJOIw6g8SVjXKe
-	xWi3PYTdoSlTNeLrFrTj5+J8ODcqSGfW8ZsgD+4scDAfioTUj7BF4Y7/w=
-X-Received: by 2002:a05:6214:2e4a:b0:8f4:821d:95f7 with SMTP id 6a1803df08f44-8fcb25a90bemr36342116d6.18.1783376965969;
-        Mon, 06 Jul 2026 15:29:25 -0700 (PDT)
+        bh=g8XYBvdHt4KI6c7j0GOgzFRHyu6nVjuGW5Ayik6PBuI=;
+        b=GhW5iC9NuNd2S+EqtS7TeXucNwH97sC2v2BBktTKzYf9yfZsKDukLFNbUwCT7N5bmg
+         iDRGfmicx6zuMKWTp4FWddE+38XfV5QSo1xxOta6dcCQdn/tImzuG1MYrD3rLv0cHOY/
+         o3tyUnQNkiR5rMs8a5dEFKcNgRDDouzzpwpv7K9n73pjyRNrk/pGKkfVFQSyZ5sticgo
+         PNCLZfbALIxZpv3CGzZ/xzN8YwaxESoGuCZTJid8G+0/ZvAAIk3D/mBgVodg6L20+alj
+         HVrxK3V0qcIrVVX+p1LfA7HMBH4zvrE32vaVSQYX3/di5avQzQ6WwYHFYnOkrAbP6T7u
+         07hg==
+X-Gm-Message-State: AOJu0Yzxx+QtumkG1/sShYaH2lzskfoP0zk7GFgr/aaBguA3VS25h1w6
+	dwTedswYNTFkI1lIEX6WlwF0RDzSVqeCzOXOx51BavMewGhEUeYrU5SzsoEnEGng
+X-Gm-Gg: AfdE7cm5Ik3wpKJaT0LjEwPksk/cUbCmcCdosfEeMvjCVsWJ22iTNtwMie2ZLWJOrBD
+	nk266U8eHbm/bkufiaSxNKu2IZC06bHDHijnoJMfJ5JCFiqpTIKTHBmBnmrFiT9GqREZyZgio+W
+	6qSluau9ewF1FPwdKcmdgNQDwpqbaxokGTQcjWa/mnD3h5zOSR4tzFxISn1QHEpNp8tGd7WZzKy
+	y2H8pqvHHcFqc5JmijLQLLVFJA+nzZBI9aRR7DWo1F2YqlhGLp9ijuazrvykIXkh7vXzTVnKpqv
+	V+wE2kDq8C0dXVWU7i6Sy6dF+UuwCM5hSaKsAPI1FTjoyha6W+wvZKYf5bbq1buVCCP7b9eB6Y1
+	fqu0X/9fI2wYwVHxVGBlpi4RII3FnvkzmmVHd3d3M3t7npRdDygcqXBGWjB0D0Ce1228DrqKiMV
+	ZUoi1Y3uyb/gIvb93EhHUs2P1iCyBQc0X+KRFG1PrDYc+PpdtGNmMhQbA=
+X-Received: by 2002:a05:6214:e6b:b0:8ef:60f2:5b52 with SMTP id 6a1803df08f44-8fcb3f3377fmr31262486d6.37.1783376964193;
+        Mon, 06 Jul 2026 15:29:24 -0700 (PDT)
 Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8f472a9d8c0sm143663726d6.49.2026.07.06.15.29.24
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8f472a9d8c0sm143663726d6.49.2026.07.06.15.29.23
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jul 2026 15:29:24 -0700 (PDT)
+        Mon, 06 Jul 2026 15:29:23 -0700 (PDT)
 From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [wic][PATCH v4 5/6] bb/utils: import errno so mkdirhier's OSError handler works
-Date: Mon,  6 Jul 2026 18:29:03 -0400
-Message-ID: <20260706222904.664863-6-twoerner@gmail.com>
+Subject: [wic][PATCH v4 4/6] add ruff linting
+Date: Mon,  6 Jul 2026 18:29:02 -0400
+Message-ID: <20260706222904.664863-5-twoerner@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260706222904.664863-1-twoerner@gmail.com>
 References: <20260706222904.664863-1-twoerner@gmail.com>
@@ -67,49 +67,91 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Mon, 06 Jul 2026 22:29:35 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4447
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4446
 
-mkdirhier() calls os.makedirs(directory, exist_ok=True) and, if that
-still raises OSError, re-checks the error before deciding what to do:
+Lint with ruff via just recipes. lint-tests runs ruff over tests/ and
+is held to a clean bar; lint also runs it over src/, whose findings are
+a preview since the wic source is not yet ruff-clean. ruff joins the
+tests extra and .gitignore ignores its .ruff_cache/.
 
-    except OSError as e:
-        if e.errno != errno.EEXIST or not os.path.isdir(directory):
-            raise e
+ruff is pinned exactly so the gate is reproducible: a ruff minor release
+can add rules that turn a previously clean tree red, so every machine
+must lint with the same version.
 
-but the module never imports errno. The reference to errno.EEXIST is
-only evaluated when os.makedirs() actually raises, so the defect stays
-hidden on every ordinary call. The moment a real OSError occurs -- a
-parent component that is a file, a permission error, anything -- the
-handler itself raises NameError: name 'errno' is not defined, masking
-the original error with a misleading one.
-
-Import errno so the handler behaves as intended: it re-raises every real
-error, while tolerating only an EEXIST whose path is in fact already a
-directory.
+Test modules relax E402 via per-file-ignores: they prepend src/ to
+sys.path before importing wic, which trips the rule, and that ordering
+is deliberate.
 
 AI-Generated: codex/claude-opus 4.8 (xhigh)
 Signed-off-by: Trevor Woerner <twoerner@gmail.com>
 ---
 changes in v4:
-- new commit: the errno import fix now lands on its own, before the
-  test that exercises it. In v2 and v3 it was folded into the
-  test_bb_utils commit.
+- expose linting through just recipes (lint-tests, lint) rather than
+  run-tests.sh flags.
+- pin ruff exactly (was a stale >= floor) so the clean-bar gate is
+  reproducible across machines.
+- fold in the tests/** E402 ignore (its own patch in v2 and v3) and
+  drop the linting.md doc; the pyproject.toml comment explains it.
+changes in v3:
+- no change in this revision.
+changes in v2:
+- v1 submitted the entire test suite as a single commit; v2 breaks
+  the work into a reviewable series, and this patch is one step of it.
 ---
- src/wic/bb/utils.py | 1 +
- 1 file changed, 1 insertion(+)
+ .gitignore     | 1 +
+ justfile       | 9 +++++++++
+ pyproject.toml | 8 ++++++++
+ 3 files changed, 18 insertions(+)
 
-diff --git a/src/wic/bb/utils.py b/src/wic/bb/utils.py
-index 3750056ba563..0b40dd0c1d59 100644
---- a/src/wic/bb/utils.py
-+++ b/src/wic/bb/utils.py
-@@ -1,6 +1,7 @@
- """
- Minimal subset of BitBake's bb.utils used by standalone wic.
- """
-+import errno
- import os
+diff --git a/.gitignore b/.gitignore
+index e30cafa40f7f..f2fd2f56b6d7 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -2,3 +2,4 @@
+ .pytest_cache/
+ .coverage
+ htmlcov/
++.ruff_cache/
+diff --git a/justfile b/justfile
+index 1be3e01e7c7d..5ccd8144181d 100644
+--- a/justfile
++++ b/justfile
+@@ -16,3 +16,12 @@ coverage *args:
+ # Run the suite with an HTML coverage report (written to htmlcov/).
+ coverage-html *args:
+     pytest {{args}} --cov=wic --cov-branch --cov-report=term-missing --cov-report=html
++
++# Lint the test suite; it is held to a clean bar, so this must be clean.
++lint-tests:
++    ruff check tests
++
++# Lint the test suite and then the wic source. src/ is not yet
++# ruff-clean, so its findings are a preview, not a gate.
++lint: lint-tests
++    ruff check src
+diff --git a/pyproject.toml b/pyproject.toml
+index 2ad694b13358..569944ff468c 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -26,6 +26,7 @@ tests = [
+     "pytest >= 9.1.1",
+     "coverage >= 7.15.0",
+     "pytest-cov >= 7.1.0",
++    "ruff == 0.15.20",
+     "rust-just >= 1.55.1",
+ ]
  
- # from bitbake/lib/bb/utils.py
+@@ -52,3 +53,10 @@ testpaths = ["tests"]
+ # leftover directories under the pytest base temp directory.
+ tmp_path_retention_policy = "failed"
+ tmp_path_retention_count  = 1
++
++[tool.ruff.lint.per-file-ignores]
++# Test modules prepend the in-tree src/ directory to sys.path before
++# importing wic, so the suite runs against a checkout that has not been
++# installed. That bootstrap runs before the wic imports, which trips
++# E402; the ordering is deliberate, so ignore E402 for the test tree.
++"tests/**" = ["E402"]
 -- 
 2.50.0.173.g8b6f19ccfc3a
 
