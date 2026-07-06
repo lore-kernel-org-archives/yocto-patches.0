@@ -2,75 +2,75 @@ Return-Path: <paul@pbarker.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E0D1C44500
-	for <webhook@archiver.kernel.org>; Mon,  6 Jul 2026 08:33:33 +0000 (UTC)
-Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.145765.1783326808421429396
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB203C43458
+	for <webhook@archiver.kernel.org>; Mon,  6 Jul 2026 08:41:03 +0000 (UTC)
+Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.145828.1783327256856861161
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 06 Jul 2026 01:33:28 -0700
+ Mon, 06 Jul 2026 01:40:57 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@pbarker.dev header.s=fm3 header.b=BpUbF3cy;
- dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=QLCAshVg;
- spf=pass (domain: pbarker.dev, ip: 202.12.124.159, mailfrom: paul@pbarker.dev)
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id A03D77A0009
-	for <yocto-patches@lists.yoctoproject.org>; Mon,  6 Jul 2026 04:33:27 -0400 (EDT)
+ dkim=pass header.i=@pbarker.dev header.s=fm3 header.b=nUGqmBPJ;
+ dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=ULLFTtSI;
+ spf=pass (domain: pbarker.dev, ip: 202.12.124.144, mailfrom: paul@pbarker.dev)
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailfout.stl.internal (Postfix) with ESMTP id 1FF5B1D0010B
+	for <yocto-patches@lists.yoctoproject.org>; Mon,  6 Jul 2026 04:40:56 -0400 (EDT)
 Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Mon, 06 Jul 2026 04:33:27 -0400
+  by phl-compute-06.internal (MEProxy); Mon, 06 Jul 2026 04:40:56 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pbarker.dev; h=
 	cc:content-type:content-type:date:date:from:from:in-reply-to
 	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1783326807; x=1783413207; bh=RhZq6pygxg
-	++fdzUSS413VPrxN2OaFYmdU5kOCe7mMw=; b=BpUbF3cyy6eq/VqhAVQA8P7jE5
-	Vo5Pkuwm4eAZHCFUPlUhuxKnyi2jxWTgY7b4j9rjZlJrQlcQWMstRg0we9EW1Rlr
-	8CY1FzwpwiPO34nt+OS8TWVO+AAg3tp2Zdoz74YG6LS5ytfy2RXtln5CKXJUFKsC
-	rFOdirqISSRLBFSWzCStvUvlUVyIAqEU44rzmMnAfpMcT2JDUQ+nrsYdQkkBuhqx
-	PDkxYPDsjNvmLtya0zKnFH/jJCAMpVvu6YInLkG/8vwOIU31YYZIBt+9Le7bly+J
-	KOwDWoPkuWoZ4F/SsPan0l/gayDBjsnjLu+YPXjTIB3gsh1bfegn/H0IPIAA==
+	:subject:to:to; s=fm3; t=1783327255; x=1783413655; bh=TRnw6A8hof
+	Z72gvYn02tLcQWZmXhpW6a4m/dXPVkkPc=; b=nUGqmBPJEu/HNWLTPtD8P/wTcc
+	iwWiyrICMZCW/+CgjxsGiHp4r5qW/HG5yKqNi0a/0SzQGCrlD5WyjJsWajmu7Jie
+	RyAeX+xrVYJ7+Kf63HQIoo0DOb+kjz1w6wvV9RT7fjxdNZWsNYwsjVnjTQzZJsjJ
+	YVYn3ZOqMAEJVpmDhgR68LXexoZKwUvqwSz7Swnoc9JIOrHV1B7vQDw8Yd9JA7cH
+	Y+CcTCRImIyIpZIUrgXIJl0lsZ+4fDNi60uat3w8zt8cjhVSmpo2jGeP8//rf94s
+	UsY6FPzqqEh2VMc/dgewXwuLKMf/wsGBHMeueZiN30YA58P6srwIZw6LZaZA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:content-type:content-type:date:date
 	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
 	:message-id:mime-version:references:reply-to:subject:subject:to
 	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1783326807; x=1783413207; bh=RhZq6pygxg++fdzUSS413VPrxN2OaFYmdU5
-	kOCe7mMw=; b=QLCAshVgTS4Tp8rya7HRXoByjr/zyq+Xg0SthvJl7/Pb8b3D9uP
-	VeMAwF9Xpry/ICSzrvOBWDF0rtUWd5VJktmloIHqZvJ3CYxmSUbPfxFDfdMG6WUo
-	XKzfiMllJfk7P95+XQauy5DVnX03oTwncvtqEK3A+dXZuAwK+Q98L5jBI/I8iCEf
-	SC30FB9zke+mUkgRxvKAk3K00UViMBlM+g+tuZlrPgHVGkT5VNVVIQHlIHd3oSaV
-	sEAykhB8eeDdtPam/I+esUAy0zI1k+NF2NglPaJOrh7LvE0O6oHZ2uC9i3SM4kyG
-	Ry4UbF+Ut3gbZDLKu5/V1gKh2HXFAQTaMjw==
-X-ME-Sender: <xms:V2hLasvW9Ip6PnlsgNfTNwnaBgt1C9KT3H1brfYX5cX2xM7dDTDTIg>
-    <xme:V2hLagbr_dbfuAEWQ0t3Wp3MW2oPcVYflu34LP_66nrwD9rCtnIlm2iY1T5knkTdd
-    Y1ldaNJ3-lzWHDKJlrR7KKj5zxvKYgx_dEjYsVCVkK5yxR0jxAnSdE>
-X-ME-Received: <xmr:V2hLatbg7gTKpkT5DfemrdSvMPw5xebt7P4lo98_rcA_RA-F0P_0gceQuCONC_Ack3_RsTcbs4wn8Lj8hRRNhJzX4W1aWitSjJ2Dn2KwEC9F>
-X-ME-Proxy-Cause: dmFkZTFs6uRcQVju9zBkjqMG0XBhIfF52kFTapzBjFQp0NPjy2dYYQNwWCFNUXIwr//Tw/
-    O/DKoWE63eoKjkBzX5vfFqGsqwyfn1jBAj068QJsHuUk8BBUl6X/zwQB9D7FXqRsu4nCgI
-    G3SeMKouE3rJGGH7DTKWZ/isiaY9GrfaApnMQMLGLq2AhNQNPTXrXlRL2qaNoCKZmK+0NF
-    SXMYoiAq9CVD3pYTD5d0YeqDiGw+j55F69Mre0WG1GJhbIEF86osteHzjTh4N1N2o94jzA
-    KBj9rSBIpw1dLeqK8JJQonr/a3H96GQ8qJ6DKXzJ9X7nK6or/WnCbJnkp9Oeha90UTHFbm
-    gvwCHcWQc9LNzBNDpE/V9/KFmGUldQp9vehPhX5LIwweWWrsFvIeTrnOQqoE4gcHObAcF5
-    q6qf5cYcj5v5InyNX18pKIaqaOQLPNx+rfhjHwcd9Uv9ghWBJL4KCmICj1M/YidQlVu4Ml
-    UVstyYFVl/ypOOjKCupP35JLdjrrbwlV467cXqVUCuDts3K4CJ3nZ3zQt08I6jtUsXf1W6
-    FzhpZerCehhEjOA/AbfaCn0fPV0HNynKKl1GcZUX2Q7Amvig4fQero+XyNfe7TaJdr770B
-    emUozqVtWnE9glYW/8wW67F8auNXNFPMNpDeUWffDUyoKPEyGjF+ma4uHM8g
-X-ME-Proxy: <xmx:V2hLakWAc_mSmIrz68rWn8rsvgwD0KavKbJNGtzJJ43tFzmwU0viQg>
-    <xmx:V2hLas2QLLIdRvwRxrpXfDjIUANJ98Y05TUyONllco_WXQ02T9oBjA>
-    <xmx:V2hLajbCuOuGeletfU2tv_HfBvPuimlDOUF8pfOISWxKiI7yCAJ9EA>
-    <xmx:V2hLano-7kjOr6lmUWjFXmLmauZQdS7_eLw7k25K_p3Z35NOp0rFXg>
-    <xmx:V2hLamtI_IJp_8K2c8Mj8SE1iAGaEJHXbUGu_GfjLGDEsUIlWmmWfAvh>
+	1783327255; x=1783413655; bh=TRnw6A8hofZ72gvYn02tLcQWZmXhpW6a4m/
+	dXPVkkPc=; b=ULLFTtSI74nnzeqtoENnARZFz7kGmC1i3H26dMXsgSIXS7CHcRd
+	p+7tc81CVK/0aO02D5dtDX357diYjqV3PR8gvtaXaw4k1jTsxWLegaOfdVJOOFD1
+	SLiJ7TaK3Cc12WUcYk+mAdYrAbpMAWBFS9VM1djAiZpfTn6Nl4IPtRl4y2GjenMH
+	WTbjDie086GnYKZKZmZc5Yc00b18WVUXExz3T8knGUlf6rw02NdYPpHX5SYdh9TV
+	t7fWyzQ/rR24g9gYfEeYnIjpL5vTRRYlvvnOrFJcrdP5TPz4rFIqMzeLk7jPIcRi
+	IzyyE3LmAAmFfnOJQkDCz+GheN+TgTP8a2g==
+X-ME-Sender: <xms:F2pLaoKftRyIj1N4iN4NGPGOh_qZCjLCmmXjslyuR4TPHIicNibVsw>
+    <xme:F2pLavHKG9XwUx8PrTGoepukQ5Ep0bd5OqANIBbjY7UaQudEsmh41iC-G0cnPkvbK
+    _PksyXxFs-4Gv7Ne_MyLEx9uMkI4u6pKCGTyoNd3JzZPwSBRMSLOjc>
+X-ME-Received: <xmr:F2pLauVZeEUudV5KuBz4jT01nekEl9E0mCm4Mlybdx2cmL_u4TqOHi9t6ntY352fDW-aCqxgRz6ycAw55b2xxWvT1IgN4AiXnM1qrzmT7I81>
+X-ME-Proxy-Cause: dmFkZTE+q3J0DaudaqaLjtNFVTY5E+0nfLFtj6r23KQx84sLuMAN9Qu8wH0WtaPLxdki3o
+    OZGUqR5tf1AjGe+CaGWZ92/cNm40scNL8CGjbGKKBwlDvCg7QkxwJUMAMHn2WzdrJsFVbY
+    UoZtV+eM0Ee+uyeL+xXG64s8T5GUYp40d8ZiRkD+E/tHcROiF+mDQsqlciMOKr+o3gMK0s
+    LtBl24Y5HVSRP8fTHbpOG0NS2pBhvkdJgHquEli1Pd5mNU4h3WzrPywW41Bn+aPt4tppnK
+    dsmT1/a7GoRY/YESap+mtXgz3PcY6zhbbfMNxmicxAMHjFaGL5yqbPT8lOpLX+0Jq8iFSH
+    bpXdDGiSzlPFCG/UGdTKG/RYJF54ocn4zHx1iRjd/90gL4ZO5nxN2ERxy86IEaQRxvbdkD
+    R6b4h8YntN0/wTeXnxUQa376P7iigSD/b0HVTbORxGqyF+s4NhKCPXA0XEMyy6Zr0pD9qY
+    0yh+E6kSbYaXPxvJc/KWh2mIxciuSUVSaVEmyw0h9X5X94O3ty/43/atrD1BJ1MZ16pgXE
+    ec92fAYwOEV+Rk2iGsPqm3CSeujBXEQjwqaSpvHvQCMiHV+qg6VvIkGTRkuq9Ogz8hyElU
+    HNWIs888IaMUIcg2Gk37kCF47Juku/V7Jynzp7sejXO8sPEsiLZV64SMPg9A
+X-ME-Proxy: <xmx:F2pLaqiFk5Kdyhr08588p-YTLPn9OhLhPFBwMHg_ERwulT0EZxRSyA>
+    <xmx:F2pLavTN6Xq5pFnlGQcLO2BVEoMs_9TsL0mNJNDyR_FdPdDoQ0LxZQ>
+    <xmx:F2pLatHVMJsjW8YF3zq3TevMemB0t7f4PJc09zeTMmHugnn-vOKUFw>
+    <xmx:F2pLannZj13_wo2TNva0Yf1n6paIpZ26E2pHi6LAFlZLEytX6VgeIg>
+    <xmx:F2pLar6r89U75NYB5PsYX0oJIfEF0v8AYXUNrPIdzmvz-_MYvc8P9s63>
 Feedback-ID: i51494658:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA for
  <yocto-patches@lists.yoctoproject.org>; Mon,
- 6 Jul 2026 04:33:26 -0400 (EDT)
-Message-ID: <e450e25f5d0b9f31564d9b559fbc03d034e83274.camel@pbarker.dev>
-Subject: Re: [yocto-patches] [wic][PATCH v3 04/10] tests: add optional
- coverage reporting to run-tests.sh
+ 6 Jul 2026 04:40:55 -0400 (EDT)
+Message-ID: <4d187efe2887fa9b53725309bb1fd8638d72e141.camel@pbarker.dev>
+Subject: Re: [yocto-patches] [wic][PATCH v3 05/10] tests: add ruff linting
+ to run-tests.sh
 From: Paul Barker <paul@pbarker.dev>
 To: yocto-patches@lists.yoctoproject.org
-Date: Mon, 06 Jul 2026 09:33:24 +0100
-In-Reply-To: <20260701074030.1090807-5-twoerner@gmail.com>
+Date: Mon, 06 Jul 2026 09:40:52 +0100
+In-Reply-To: <20260701074030.1090807-6-twoerner@gmail.com>
 References: <20260701074030.1090807-1-twoerner@gmail.com>
-	 <20260701074030.1090807-5-twoerner@gmail.com>
+	 <20260701074030.1090807-6-twoerner@gmail.com>
 Autocrypt: addr=paul@pbarker.dev; prefer-encrypt=mutual;
  keydata=mQINBGC756sBEADXL6cawsZRrDvICz9Y1SG0/lW1me4xpq36obh7a0IGAzp3ywNRb/4MO
  DTqP4+DD0cIFuDY41/N17g0sNlp8z+/k/IIDmNPtYQOTVmAkrkdDU4BP8dD3Cp1PUw6nrbInfujAJ
@@ -116,88 +116,177 @@ Autocrypt: addr=paul@pbarker.dev; prefer-encrypt=mutual;
  ChZPI3NMLnKZPJC8ZQZ4S8yb5oA3rqTA2DMODvsrEVlaB2cQ6IWHSa/mvBwA8Ias3771cp4fZS7W7
  LUewj8JVy0aJsGTwI4invl
 Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-9gH+Yvax4Mga4Ud81g+1"
+	protocol="application/pgp-signature"; boundary="=-EOy7wrT9ru0/DPy6PQQ7"
 User-Agent: Evolution 3.52.3-0ubuntu1.1 
 MIME-Version: 1.0
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 06 Jul 2026 08:33:33 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4423
+ <yocto-patches@lists.yoctoproject.org>; Mon, 06 Jul 2026 08:41:03 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4424
 
 
---=-9gH+Yvax4Mga4Ud81g+1
+--=-EOy7wrT9ru0/DPy6PQQ7
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 On Wed, 2026-07-01 at 03:40 -0400, Trevor Woerner via
 lists.yoctoproject.org wrote:
-> Knowing which lines a test run actually exercised is the difference
-> between "the suite is green" and "the suite is green and we know what
-> it touched". This commit wires branch coverage of the wic source into
-> the runner, kept entirely opt-in so a plain run stays fast and quiet.
+> A test suite is only trustworthy if its own code is clean, so this
+> commit brings ruff into the runner and holds the test tree to a clean
+> bar. It also makes it easy to preview what ruff thinks of the wic
+> source, without yet enforcing it.
 >=20
-> pyproject.toml gains coverage and pytest-cov in the tests extra, so
-> "pip install -e .[tests]" pulls in what the new flags need.
+> pyproject.toml gains ruff in the tests extra and a [tool.ruff] section.
+> The configuration is deliberately minimal for now: the test suite is
+> the only tree under an enforced clean bar; the wic source under src/ is
+> not yet ruff-clean and is reported, not gated.
 >=20
-> run-tests.sh gains two options:
+> run-tests.sh gains two lint modes, each used on its own:
 >=20
->   - --coverage measures branch coverage of src/wic during the run and
->     prints a terminal report listing the lines that were missed;
+>   - --lint-tests runs ruff over tests/ and exits. The test suite must
+>     report nothing; a finding here is a bug in our own test code and is
+>     expected to be fixed.
 >=20
->   - --html [DIR] additionally writes a browsable HTML report (default
->     htmlcov/, or DIR if given) and implies --coverage.
+>   - --lint-src runs ruff over src/ and exits. The source is not yet
+>     ruff-clean, so this is a preview: the runner prints ruff's findings
+>     and exits with its status, but nothing in the suite asserts on
+>     them. Keeping the two trees on separate flags means cleaning up the
+>     source later does not disturb the test-tree gate.
 >=20
-> If --coverage is requested but pytest-cov is not installed the runner
-> fails loudly with the install command rather than running without the
-> measurement it was asked for.
+> A lint mode cannot be combined with coverage, with the other lint mode,
+> or with pytest arguments; the runner rejects such combinations loudly
+> rather than silently dropping the extras. If ruff is not installed it
+> fails with the install command.
 >=20
-> The coverage data file and the HTML report directory are build
-> artifacts, so .gitignore learns to ignore .coverage and htmlcov/.
+> tests/docs/linting.md documents the two modes and why src/ is held back
+> for now. That file replaces the tests/docs/.gitkeep placeholder, which
+> is no longer needed now that the directory has real content.
+>=20
+> .gitignore learns to ignore ruff's .ruff_cache/ directory.
 >=20
 > AI-Generated: codex/claude-opus 4.7 (xhigh)
 > Signed-off-by: Trevor Woerner <twoerner@gmail.com>
+> ---
+> changes in v3:
+> - no change in this revision.
+> changes in v2:
+> - v1 submitted the entire test suite as a single commit; v2 breaks
+>   the work into a reviewable series, and this patch is one step of it.
+> ---
+>  .gitignore            |  3 +++
+>  pyproject.toml        |  8 ++++++++
+>  tests/docs/.gitkeep   |  0
+>  tests/docs/linting.md | 39 +++++++++++++++++++++++++++++++++++
+>  tests/run-tests.sh    | 47 +++++++++++++++++++++++++++++++++++++++++++
+>  5 files changed, 97 insertions(+)
+>  delete mode 100644 tests/docs/.gitkeep
+>  create mode 100644 tests/docs/linting.md
+>=20
+> diff --git a/.gitignore b/.gitignore
+> index 534c49538091..3c3cfb328fb0 100644
+> --- a/.gitignore
+> +++ b/.gitignore
+> @@ -6,3 +6,6 @@
+>  # coverage data and reports
+>  /.coverage
+>  /htmlcov/
+> +
+> +# ruff cache
+> +/.ruff_cache/
+> diff --git a/pyproject.toml b/pyproject.toml
+> index ece2757bb686..656adcd4930a 100644
+> --- a/pyproject.toml
+> +++ b/pyproject.toml
+> @@ -26,6 +26,7 @@ tests =3D [
+>      "pytest >=3D 7.0",
+>      "coverage >=3D 7.0",
+>      "pytest-cov >=3D 4.0",
+> +    "ruff >=3D 0.5",
 
-Ok, now the run-tests.sh script starts to make sense.
+The latest ruff version is 0.15.20, it's had lots of breaking changes
+since v0.5 in 2024. Be careful with Claude filling in dependency
+versions, it often picks outdated or inappropriate versions to depend
+on, always check them by hand.
 
-Have you considered something like `just`
-(https://github.com/casey/just) as a command runner? It's much simpler
-to maintain a `justfile` than a shell script.
+>  ]
+> =20
+>  [project.scripts]
+> @@ -50,3 +51,10 @@ path =3D "src/wic/cli.py"
+>  # leftover files under the pytest base temp directory.
+>  tmp_path_retention_policy =3D "failed"
+>  tmp_path_retention_count  =3D 1
+> +
+> +[tool.ruff]
+> +# For now only the test suite is actually linted (run-tests.sh
+> +# --lint-tests passes the tests/ path); the wic source under src/ is
+> +# not yet ruff-clean and is left out until its findings are fixed (see
+> +# tests/docs/linting.md). --lint-src can still be run to preview the
+> +# source findings, but it is reported, not enforced.
+> diff --git a/tests/docs/.gitkeep b/tests/docs/.gitkeep
+> deleted file mode 100644
+> index e69de29bb2d1..000000000000
+> diff --git a/tests/docs/linting.md b/tests/docs/linting.md
+> new file mode 100644
+> index 000000000000..71b4de21c100
+> --- /dev/null
+> +++ b/tests/docs/linting.md
+> @@ -0,0 +1,39 @@
+> +# Linting
+> +
+> +## Contents
+> +
+> +- [Running the linter](#running-the-linter)
+> +- [tests/ must be clean](#tests-must-be-clean)
+> +- [src/ is not linted yet](#src-is-not-linted-yet)
+> +
+> +The test suite is linted with [ruff](https://docs.astral.sh/ruff/). It
+> +is configured in `pyproject.toml` (`[tool.ruff]`).
+> +
+> +## Running the linter
+> +
+> +The runner exposes ruff through two separate modes, each used on its
+> +own:
+> +
+> +```bash
+> +tests/run-tests.sh --lint-tests   # ruff over tests/
+> +tests/run-tests.sh --lint-src     # ruff over src/ (preview only)
+> +```
+> +
+> +A lint mode cannot be combined with coverage, with the other lint
+> +mode, or with pytest arguments; the runner rejects such combinations.
+> +
+> +## tests/ must be clean
+> +
+> +Our own test code is held to a clean bar: `tests/run-tests.sh
+> +--lint-tests` reports nothing. If you add a test that trips a rule, fix
+> +the test before the change lands.
+> +
+> +## src/ is not linted yet
+> +
+> +`--lint-src` runs ruff over the wic source, but the source is **not**
+> +yet ruff-clean, so its findings are a preview report rather than a
+> +gate: the runner prints them and exits with ruff's status, but nothing
+> +in the suite asserts on them. Treating `src/` findings as a hard
+> +failure now would block every run on fixes that have not landed. Once
+> +the source is cleaned up, `src/` can be promoted to the same clean bar
+> +as `tests/`.
 
-Using claude (opus 4.8) to convert run-tests.sh (as it is at the end of
-this series of patches) to a much simpler justfile, I get:
+I am a bit concerned about a test suite needing its own docs directory.
+Claude likes to write output I guess. But this level of detail is
+unnecessary and is a pain to keep up-to-date with any changes in the
+test suite.
 
-    # List the available recipes.
-    default:
-        @just --list
+You probably just need a top level TESTING.md file or something, with a
+stripped down set of docs on running and authoring tests, any
+assumptions that aren't documented in the test code, etc.
 
-    # Run the test suite. Extra args pass through to pytest (e.g. `just tes=
-t -k filemap`).
-    test *args=3D"tests":
-        pytest {{args}}
-
-    # Run the suite with a terminal branch-coverage report for wic.
-    coverage *args=3D"tests":
-        pytest {{args}} --cov=3Dwic --cov-branch --cov-report=3Dterm-missin=
-g
-
-    # Run the suite with an HTML coverage report (default dir: htmlcov/).
-    coverage-html dir=3D"htmlcov" *args=3D"tests":
-        pytest {{args}} --cov=3Dwic --cov-branch --cov-report=3Dterm-missin=
-g --cov-report=3Dhtml:{{dir}}
-
-    # Lint the test suite; held to a clean bar, so this must report nothing=
-.
-    lint-tests:
-        ruff check tests
-
-    # Lint src/ (not yet ruff-clean, so this is a preview report, not a gat=
-e).
-    lint: lint-tests
-        ruff check src
-
-Feel free to keep the shell script if you want to, but I think the above
-is easier to maintain :)
+If you want to enforce that tests is kept clean of linter errors,
+perhaps use pre-commit (https://pre-commit.com) to run the linter before
+committing. This pairs well with using Claude for development as it
+forces the AI agent to fix the errors before making a commit. If it's
+automated, it also doesn't need documenting so much, just point at how
+to enable pre-commit.
 
 Best regards,
 
@@ -205,17 +294,18 @@ Best regards,
 Paul Barker
 
 
---=-9gH+Yvax4Mga4Ud81g+1
+
+--=-EOy7wrT9ru0/DPy6PQQ7
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 
 -----BEGIN PGP SIGNATURE-----
 
-iIcEABYKAC8WIQSzjPXf5Y1BDWhU2iCrY1Tsnbr0bgUCaktoVBEccGF1bEBwYmFy
-a2VyLmRldgAKCRCrY1Tsnbr0bhBHAP9J/bmhRK0sQhwkoTnOwFXzc/n7l2aKWSJg
-Wv3IcwZiwwD9EfnG33QgjOQMulMjhfPC1rsB3AeCkm8C9RdSDWZIfAo=
-=+84/
+iIcEABYKAC8WIQSzjPXf5Y1BDWhU2iCrY1Tsnbr0bgUCaktqFREccGF1bEBwYmFy
+a2VyLmRldgAKCRCrY1Tsnbr0bhfRAP9hALeaA8EHrcs5lfsQ33OqpDBpGG59jubj
+0kfomxjAJwD/TP4lLRkwG3iErtwh5NmFjumvnR9qDG+mgJUUjkpeOg8=
+=G22M
 -----END PGP SIGNATURE-----
 
---=-9gH+Yvax4Mga4Ud81g+1--
+--=-EOy7wrT9ru0/DPy6PQQ7--
 
