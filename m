@@ -2,150 +2,189 @@ Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E07DC43458
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E0D3C44500
 	for <webhook@archiver.kernel.org>; Mon,  6 Jul 2026 22:29:25 +0000 (UTC)
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.162833.1783376958168809377
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.161869.1783376960285847474
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 06 Jul 2026 15:29:18 -0700
+ Mon, 06 Jul 2026 15:29:20 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=NiuImQOB;
- spf=pass (domain: gmail.com, ip: 209.85.219.51, mailfrom: twoerner@gmail.com)
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-8f23e851626so28910796d6.3
-        for <yocto-patches@lists.yoctoproject.org>; Mon, 06 Jul 2026 15:29:18 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=NCjdE4Uc;
+ spf=pass (domain: gmail.com, ip: 209.85.219.43, mailfrom: twoerner@gmail.com)
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-8f256eaedf8so37555756d6.2
+        for <yocto-patches@lists.yoctoproject.org>; Mon, 06 Jul 2026 15:29:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783376957; x=1783981757; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+xqo5i5Kx31NrZlkwm2FjDc8ob/Cj5Wl06skah07Zkk=;
-        b=NiuImQOBnFqll3ZYT/n7LHr4ZkoE6e+YdOlKytu4R6RiA0bKOtCSaipmHRClK6Y3TS
-         xpLRjR3vL7hnXytTYqn0I37cecK+gpfsQ0cwdQOgSPy9ArRI9XSDJFGTh1wMVw9MgAMe
-         vD93EbKWZpZpYRbSLGcxQc6XvGTRiSMuWtrtOfzYwzmaNF2wx7sdrGtW5xDu8vaTIFiT
-         LdvzwG5JI5AERvhZdPCJJFYlyupYm/A9U8pP+IKpTJEOqkBUJjvxeYhZxz/x2xvHHhCH
-         yaXo1y2vZO6tsaZ2+QPPwsdT1s7xCYo5hMO4ood1rK8lLg5+T40yr5rEbjb9gegxy5Tx
-         DKQQ==
+        d=gmail.com; s=20251104; t=1783376959; x=1783981759; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=AY1AaOePOsDeEuk4oPElxBGhF9J51T/21Aclc0GdCoY=;
+        b=NCjdE4UcYNBOB3b0G0LhAb59iBDs6VzNgEYDNPJ7MdJRNRHQ2HjtNdrPy+JqXF5vGI
+         tyROPpc1c1o8GyYvgsnihGkoGkBAikmrqdvfNZXskX8FlEP8Qjg+s74dPvxcmvxWERRD
+         17XQQL9ZXOhhYw37+R094eMzBcGDSfSEn5yAt3cR3wTOo52Xgmp0wvTFx67n/6l3q1rs
+         GOYr8le4H3wk2CV53pxmUiVJ3qsge89ewQFOuWZ9WhK3vwFLhn8CL3m7nwcLRiDdqD3r
+         l9hIXfpzr6cDAYXl/AMzwzQsoimn/3ZwJnOpvAu5O8rwP6RN8PB1Q6iKJ2lWMF0FIBsb
+         +OJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783376957; x=1783981757;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+xqo5i5Kx31NrZlkwm2FjDc8ob/Cj5Wl06skah07Zkk=;
-        b=PeEUJvln475olqwktRV2hHeX1xytif5mo2LrRfCZx2S5Ckdq4wJIgRhLLpltMxpGLS
-         8pcFuVZskqmhh7B7yPwd13om6rgmW4jNLzHZ+Ls4hQh8+kYL+kxieAaCdCdWa50gHSKK
-         3EawgVC6ZXdn/QvczD/Qbqcj3oqvJ9gzMCEJV8KUeRT3UoXAe+IaJQ/X7a6hFXxH41iJ
-         mi9MNAuQD0si5KQZ7H9pdH8X4sxTL6r09fOv/PwitW+uYg4EqVh3xkWO2AiGwkTU7BjE
-         TAHaSClSoaqhi3b7g5/t7koWgvaU00V1mhCiLe4IsSw9Be2+a/DvD/p9hMHMIqRSE61v
-         WQtQ==
-X-Gm-Message-State: AOJu0YzqVe9/hQ2ui2s4A9T3zghxszmh4326um1jyigqwNQpAY+Mw1j4
-	zuBjpfFNaCMGiiVdaT/BWmai1BB3SLxduMMhVgW7LERXOx61HEW7kQONPfB6thRP
-X-Gm-Gg: AfdE7cnDJITcIr/iVV4bU7haYSrOeISnAgrR6VFWIYQ1luP9Y+XUV62SLTsDca/WO+3
-	8nV1pQaDpMB8iXRlrKB6lm0cgPQ4+Rt9y9Rn8exgYuCnqQAtVGAafGYbMwlmAA/jjHlYuGPQdyh
-	LjgEQfv89GqWqXlYVU1vdpfBvBCOJWe39h9BM834Q0EV6uo6xRUBczgwP2QM6pw1RCc5LXPosch
-	ECJqJCp68oVSr0gq0SK0xkpwTdxQ6fM1O/jSBoZLvu4fkJOA2fos7eBYG8i+aJ49b1PSrCncXHt
-	nNz8oF8H8Wo7nKCqmy8Bj0xF7mCNbyJYzW4fOvKj1Kcythiu5Rq5R7qbnVrlUcTI4sCN3VUls9L
-	JJBEmaTNBOgUvrZpDhRqS6qopf8EZKBPiYVdgGZA1HzoWc9koQ0jYJEdv3eD8JfNndT4j7O8Y79
-	3hDTQ3ognPni868BuXVUyHhV0rCROqQqBRjLdAaQ1QLbNztx1cAMqELbm45RHRbttC4A==
-X-Received: by 2002:ad4:5aa1:0:b0:8f0:1375:93e with SMTP id 6a1803df08f44-8fcb54d2e3cmr34706146d6.44.1783376956854;
-        Mon, 06 Jul 2026 15:29:16 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1783376959; x=1783981759;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=AY1AaOePOsDeEuk4oPElxBGhF9J51T/21Aclc0GdCoY=;
+        b=TFt/zWaic4/YBAy8rLBvMg+98JVuQyqGBdCqy+dikjh1kZHBGX7f+te1kNWP71m56E
+         XpWbzzqwg2wPNvwZVfreH2DbSRLCeOFigTuXAusrbflUEtepKuBBYFUAh1MT8IBrrhed
+         LXIh28n4KMjm6oWnskBjj/RUnRr+XUNAf4sRX7JdbD0dK4mhJNzy+23DDVkLkU3y1yWd
+         Embj+kk4dfebPORG1npH4xea2r7nuODCYMJ1NUqPyvI5jZALTXJJNJwQXHoM+hagHUGv
+         I+E7YYsv7fBSO5LJu6fc4WVHfNyeQU8gsL05oOsN/575+74WmhYPIEDQWefk98w3j47L
+         fkiA==
+X-Gm-Message-State: AOJu0YwflTyG5QQGIVsiEQtS74SNyudjCcRREhJ/BtyL4WK8jXNJLDqL
+	Hm92PPbeTmXkFdrNiheEwGREz6UXEcFDOvcN3snWrmw/qhcLiQbmXx2Tng6SH0qM
+X-Gm-Gg: AfdE7cmFEuygwJpHbk8n1Zy98lfrRt+eIpUOCuadK8kP3GEmM/0RDgdDVwALZqsak88
+	ris21M26oonSzkIsCyzMr0UWXyuR3tGyr7zrH/x2IAsMS/PKweH7oHxLgtzN8tTzJKC61dZMaQJ
+	tMqzqISy+uNeB8SRPYUaSAqp4QD9uo0NutdPGuXLywqD9Yc9rrkjO/YGMUI8ckjnoxBtU4XpLSo
+	TcRMxZ2p9EvKzDNbdVf3BhnS74GR5T5ORXElYEeN+bbtlC7Py9kwWIgfqI+z63DY56mV3mGoWYk
+	9EZ/6jK8+MJFu+NLqLH0Y6xQlzcXzysuZldkRNVWSuIPANfQjH2a9yaJvDeRpShCViTJXNMb5Gc
+	1UfL7akQB/UbtDqvXX0S+thNZ49BnNwrkcVP/s5sNH3Qvo1eMzi5rqR7XT/5lvwzbgGWZGwu/SF
+	FImqoj677gXrw1YH2NngvY7tz8ZJED6hMfyJ4vXSWs/FZJf0weZWxPX3LdD2BWfHpfzw==
+X-Received: by 2002:ad4:5764:0:b0:8f2:940e:2406 with SMTP id 6a1803df08f44-8fcb1aed76fmr35774026d6.2.1783376958909;
+        Mon, 06 Jul 2026 15:29:18 -0700 (PDT)
 Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8f472a9d8c0sm143663726d6.49.2026.07.06.15.29.15
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8f472a9d8c0sm143663726d6.49.2026.07.06.15.29.16
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jul 2026 15:29:15 -0700 (PDT)
+        Mon, 06 Jul 2026 15:29:18 -0700 (PDT)
 From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [wic][PATCH v4 0/6] tests: standalone test-suite framework plus the first unit test
-Date: Mon,  6 Jul 2026 18:28:58 -0400
-Message-ID: <20260706222904.664863-1-twoerner@gmail.com>
+Subject: [wic][PATCH v4 1/6] tests: add the standalone unit-test suite skeleton
+Date: Mon,  6 Jul 2026 18:28:59 -0400
+Message-ID: <20260706222904.664863-2-twoerner@gmail.com>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20260706222904.664863-1-twoerner@gmail.com>
+References: <20260706222904.664863-1-twoerner@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Mon, 06 Jul 2026 22:29:25 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4442
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4443
 
 wic has no test mechanism of its own; it relies on the oe-selftest from
 oe-core, which needs a full bitbake build to exercise even pure-Python
-logic. This series starts a small standalone suite that runs from a
-plain checkout, framework first, then the first fix, and its test.
+logic. This starts a small standalone suite that runs from a plain
+checkout, with no BitBake and no OpenEmbedded build.
 
-  - the suite skeleton (pyproject test extra, pytest config, layout,
-    a justfile command runner, and a README Testing section);
-  - a conftest that imports wic once up front (stopping the session with
-    a clear message if that fails) and prints a session banner;
-  - optional coverage and ruff linting, each exposed as just recipes;
-  - a one-line fix to wic.bb.utils (import errno) so mkdirhier's OSError
-    handler works, as its own commit;
-  - unit tests for mkdirhier() that pin its behaviour and catch that
-    bug.
+This is the skeleton only and adds no tests. It gives pyproject.toml a
+"tests" extra (pytest and the just command runner) and a pytest config
+section, adds a justfile with default and tests recipes, creates
+tests/unit/ with a placeholder .gitkeep, ignores .pytest_cache/, and
+adds a README Testing section covering install and how to run the suite.
 
-The suite is green at every commit and the test tree is ruff-clean.
-
-Changes in v4 (in response to review feedback, thanks to Paul Barker):
-
-v4 restructures the v3 10-patch series into 6 patches. How the old
-patches map to the new ones:
-
-  - v3 1/10 (skeleton) -> v4 1/6, which also gains a justfile command
-    runner in place of the run-tests.sh wrapper and no longer creates a
-    tests/docs/ tree;
-  - v3 2/10 (conftest banner) -> v4 2/6, which also absorbs the
-    wic-import check (see next line);
-  - v3 3/10 (run-tests.sh wrapper) -> dropped; the justfile replaces it
-    and its wic-import check moves into conftest, so the check runs on
-    every invocation rather than only through the wrapper;
-  - v3 4/10 (coverage) -> v4 3/6, exposed as just recipes;
-  - v3 5/10 (ruff linting) -> v4 4/6, exposed as just recipes, with
-    ruff now pinned exactly so the clean-bar gate is reproducible;
-  - v3 8/10 (tests/** E402 ignore) -> folded into v4 4/6;
-  - v3 6/10, 7/10, 10/10 (docs README, authoring guide, review rubric)
-    -> dropped; the suite ships a short README Testing section instead
-    of a tests/docs/ tree;
-  - v3 9/10 (test plus folded-in errno fix) -> split into v4 5/6 (the
-    errno fix, on its own, first) and v4 6/6 (the tests), and the tests
-    are reframed to target mkdirhier's own behaviour rather than
-    re-testing os.makedirs.
-
-Dependency versions were also refreshed to current releases.
-
-Changes in v3:
-
-  - test_bb_utils used the tmp_path fixture instead of
-    tempfile.mkdtemp(), so the tests no longer leaked scratch
-    directories under /tmp;
-  - documented the standard pytest scratch-directory controls (TMPDIR
-    and --basetemp) rather than a custom variable;
-  - added a review-rubric doc.
-
-Changes in v2:
-
-  - v1 was a single ~6000-line commit that used xfail markers to record
-    the bugs it found; v2 broke the work into a reviewable series where
-    each test lands green next to the fix that makes it pass, with no
-    xfails.
-
-Trevor Woerner (6):
-  tests: add the standalone unit-test suite skeleton
-  tests: add conftest with a wic-import preflight and session banner
-  tests: add optional coverage reporting
-  add ruff linting
-  bb/utils: import errno so mkdirhier's OSError handler works
-  tests/unit/test_bb_utils: cover mkdirhier()
-
- .gitignore                  |  4 ++
- README.md                   | 15 +++++++
- justfile                    | 27 +++++++++++++
- pyproject.toml              | 24 +++++++++++
- src/wic/bb/utils.py         |  1 +
- tests/conftest.py           | 28 +++++++++++++
- tests/unit/test_bb_utils.py | 81 +++++++++++++++++++++++++++++++++++++
- 7 files changed, 180 insertions(+)
+AI-Generated: codex/claude-opus 4.8 (xhigh)
+Signed-off-by: Trevor Woerner <twoerner@gmail.com>
+---
+changes in v4:
+- drop the tests/docs/ documentation tree; the suite now ships with
+  a short README Testing section only.
+- add a justfile as the command runner and drop the run-tests.sh
+  wrapper; just joins the tests extra.
+changes in v3:
+- no change in this revision.
+changes in v2:
+- v1 submitted the entire test suite as a single commit; v2 breaks
+  the work into a reviewable series, and this patch is one step of it.
+---
+ .gitignore          |  1 +
+ README.md           | 15 +++++++++++++++
+ justfile            | 10 ++++++++++
+ pyproject.toml      | 14 ++++++++++++++
+ tests/unit/.gitkeep |  0
+ 5 files changed, 40 insertions(+)
  create mode 100644 justfile
- create mode 100644 tests/conftest.py
- create mode 100644 tests/unit/test_bb_utils.py
+ create mode 100644 tests/unit/.gitkeep
 
+diff --git a/.gitignore b/.gitignore
+index eeb8a6ec4087..a0f016bc5823 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -1 +1,2 @@
+ **/__pycache__
++.pytest_cache/
+diff --git a/README.md b/README.md
+index 75229421763c..c9c38eb5e98a 100644
+--- a/README.md
++++ b/README.md
+@@ -47,6 +47,21 @@ environment file or folder (generated via `bitbake -c rootfs_wicenv
+ - `src/bb/*`: various bitbake helpers that were brought along and used in other parts of wic.
+ - `src/oe/*`: various oe-core helpers that were brought along and used in other parts of wic.
+ 
++## Testing
++
++wic's test suite lives under `tests/` and runs from a plain checkout
++with nothing but `pytest`; it needs no BitBake and no OpenEmbedded
++build. Install the test extras and run it:
++
++```
++pip install -e ".[tests]"
++just tests
++```
++
++The test extras include [just](https://just.systems/), the command
++runner used to drive the suite; run `just` on its own to list the
++available recipes.
++
+ ## Contributing
+ 
+ Please send all patches, comments, or questions to the yocto-patches
+diff --git a/justfile b/justfile
+new file mode 100644
+index 000000000000..41a9d3d236f4
+--- /dev/null
++++ b/justfile
+@@ -0,0 +1,10 @@
++# wic test-suite command runner. Run `just` to list recipes.
++
++# List the available recipes.
++default:
++    @just --list
++
++# Run the test suite. Extra args pass through to pytest
++# (e.g. `just tests -k <expr>` or `just tests tests/unit`).
++tests *args:
++    pytest {{args}}
+diff --git a/pyproject.toml b/pyproject.toml
+index fdc1ce0f5ece..e60c4fcc1595 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -21,6 +21,12 @@ classifiers = [
+ Homepage = "https://git.yoctoproject.org/wic"
+ Repository = "https://git.yoctoproject.org/wic"
+ 
++[project.optional-dependencies]
++tests = [
++    "pytest >= 9.1.1",
++    "rust-just >= 1.55.1",
++]
++
+ [project.scripts]
+ wic = "wic.cli:main"
+ 
+@@ -36,3 +42,11 @@ build-backend = "hatchling.build"
+ 
+ [tool.hatch.version]
+ path = "src/wic/cli.py"
++
++[tool.pytest.ini_options]
++testpaths = ["tests"]
++# Keep a test's scratch directory only when that test fails, and keep
++# just the most recent failing session, so repeated runs do not pile up
++# leftover directories under the pytest base temp directory.
++tmp_path_retention_policy = "failed"
++tmp_path_retention_count  = 1
+diff --git a/tests/unit/.gitkeep b/tests/unit/.gitkeep
+new file mode 100644
+index 000000000000..e69de29bb2d1
 -- 
 2.50.0.173.g8b6f19ccfc3a
+
 
