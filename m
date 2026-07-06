@@ -2,75 +2,75 @@ Return-Path: <paul@pbarker.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D06BC43458
-	for <webhook@archiver.kernel.org>; Mon,  6 Jul 2026 08:21:33 +0000 (UTC)
-Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.146554.1783326088443673936
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E0D1C44500
+	for <webhook@archiver.kernel.org>; Mon,  6 Jul 2026 08:33:33 +0000 (UTC)
+Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.145765.1783326808421429396
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 06 Jul 2026 01:21:28 -0700
+ Mon, 06 Jul 2026 01:33:28 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@pbarker.dev header.s=fm3 header.b=ZYE49yvW;
- dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=EDQSn9XK;
- spf=pass (domain: pbarker.dev, ip: 202.12.124.144, mailfrom: paul@pbarker.dev)
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
-	by mailfout.stl.internal (Postfix) with ESMTP id C9CAB1D000E0
-	for <yocto-patches@lists.yoctoproject.org>; Mon,  6 Jul 2026 04:21:27 -0400 (EDT)
+ dkim=pass header.i=@pbarker.dev header.s=fm3 header.b=BpUbF3cy;
+ dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=QLCAshVg;
+ spf=pass (domain: pbarker.dev, ip: 202.12.124.159, mailfrom: paul@pbarker.dev)
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id A03D77A0009
+	for <yocto-patches@lists.yoctoproject.org>; Mon,  6 Jul 2026 04:33:27 -0400 (EDT)
 Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Mon, 06 Jul 2026 04:21:27 -0400
+  by phl-compute-05.internal (MEProxy); Mon, 06 Jul 2026 04:33:27 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pbarker.dev; h=
 	cc:content-type:content-type:date:date:from:from:in-reply-to
 	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1783326087; x=1783412487; bh=d+nDCzCJre
-	w1wJZ+CVUikzPe3N6P4Uj2U3YX5QsP5zA=; b=ZYE49yvWiTDpopYbIax9mxEosR
-	/YNRaFQDNeBu0X5fnByMzQ+R1y40LlwvNzHL3wJ0LZav2OZmWj/0MOgAr+IBNPQW
-	76+p2+buh6xB1rHfljwaRfODV4ad8qX6uOSM8gtElwtipclHF6XUlluwn7MbRV4e
-	qLpKmdpZca17iimwRfnwwGAKfSvClBzSHIWXzFUVujZyh02B+YXNIMkRU2KvrSKy
-	YGLst/QcmQY+WsRkLrzJyXy1k/2TcJDZmlD5G8GfLd8ZSx1pMZfVzL0R4IgIIAuH
-	ehY/jC1OMEZaarkBORRBflPntoH9TxTbvaRmOd9lXU6MumhIGNVsxcDpwYHg==
+	:subject:to:to; s=fm3; t=1783326807; x=1783413207; bh=RhZq6pygxg
+	++fdzUSS413VPrxN2OaFYmdU5kOCe7mMw=; b=BpUbF3cyy6eq/VqhAVQA8P7jE5
+	Vo5Pkuwm4eAZHCFUPlUhuxKnyi2jxWTgY7b4j9rjZlJrQlcQWMstRg0we9EW1Rlr
+	8CY1FzwpwiPO34nt+OS8TWVO+AAg3tp2Zdoz74YG6LS5ytfy2RXtln5CKXJUFKsC
+	rFOdirqISSRLBFSWzCStvUvlUVyIAqEU44rzmMnAfpMcT2JDUQ+nrsYdQkkBuhqx
+	PDkxYPDsjNvmLtya0zKnFH/jJCAMpVvu6YInLkG/8vwOIU31YYZIBt+9Le7bly+J
+	KOwDWoPkuWoZ4F/SsPan0l/gayDBjsnjLu+YPXjTIB3gsh1bfegn/H0IPIAA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:content-type:content-type:date:date
 	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
 	:message-id:mime-version:references:reply-to:subject:subject:to
 	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1783326087; x=1783412487; bh=d+nDCzCJrew1wJZ+CVUikzPe3N6P4Uj2U3Y
-	X5QsP5zA=; b=EDQSn9XKgUYj36LlmTf71ppDQW1cBOSqNETgINbT8YayZoNlyuX
-	zhqEvstwJc7ZC1taEYP0crz6sEPERX1ktlgjEQbcJX7wJLVQCsUuZD1zEIXD+7Be
-	FHE0aYlzamokrUZ0t7wAFXRLwCxQbHSfLu+sgeJGWbuQguS9H37y6bMazJ2g0zio
-	JLoDvEqf5wq3Kq/8N1oHcWPitCLZAlmrOCtPVxcr/KgOzutSBV2MLEI+Hf+wIRPW
-	J9rwWHFrrQLUdlMHRoSiPnIDMbZ2ILBtjRJ7l0p8Xe/WoO4/JCEHVS+9upo+IJGI
-	6Jt3a7801BjodGaQZjFS4nhewGL/+mp+UsQ==
-X-ME-Sender: <xms:h2VLas38RwP1g3H87udk_QL3Tmem6HWPYjJWJudtkNHHGVMY_RnhrQ>
-    <xme:h2VLauDlYoxkgceR5wCcy8h8zcadSEn3cVz0yWjUESbJ11-0_QAIpUG5YGw8FnQiM
-    hmWL9_L3TACuckKG21MNGlmxybAkHUR8TJLob43DVuQSFmF-f-w9OY>
-X-ME-Received: <xmr:h2VLaqiLRUdkilxrkaxyZyfZy7xTvIDaH42w36iCjKPBhW5NhzGVHEm9p1wkJANmXoRg4Fa3KNV__egfrHe9QSTunRJxMNkTOMAlqS9e9U81>
-X-ME-Proxy-Cause: dmFkZTEIndQ1jc4epZAX651TVrmSJZHF905WctdYmFbloEbNGGrq0wc7H8dYy4K5t92Skz
-    b923ul6ImzJpE//yjzj2OERO+KX+g+jM6wP76ZOo1rOtm96/oct97rB0wjHb5NVyZjJUnM
-    Cg05nMkox8zeUu/D/2klGbWuCGrZa4Ap0KVaihAdRjrPfMAjrjDE0aNb8rtzaHuigB7NtR
-    s6mqdKXIgXYJBOq7acXPYecS1pCZ5kiq11TwW7RhDPK2i5dj5fSW9X0x29gWoUmM06bXyo
-    B6Ae8d9IqlY5g1aWiQVhlClvHFbuEqY/y2tYiFAauSpZ6PxhgVQhsWRD3SQOg+bvM5c+rz
-    APSEPUHaq1XkE3zoalkcJUFxuMCN1T19L0+BT67Z36GHvWaAn0nDaku2hXsv9D0FzLBGBc
-    LxYL/EsYjQo1qubinj7X+LY5EL/rvmWrU4jEpE+jhqxrg5/fm4Y+YJ5M12SocefIsmawL0
-    +D3NHg+auJT/kiQUPigf73O+DRn/3sRnVun8Eunok6KZ20cBdbNVeb0D3dJ3ohLwijLUns
-    FhizR71vuWAprcTZGNF/FGZ7ilLHWU3Hwpn5kfrbvSthb9sYg6UJ5v7bIryBSCaF/Ns+LD
-    8oNX+KcebmsMkcBSxu5Q+RE+0RhQgK5KKycr/+Gkw1TiKW01AGUCG5eCr60Q
-X-ME-Proxy: <xmx:h2VLaq_naqvuqcbgEd_VcyJ4f6xt52RSFsVGkdMDHWSWtt9xXRGVfQ>
-    <xmx:h2VLau_UJAFrpmlEGgDvpQ6M7dfp7V5Fdchfgti50a404gWtJzXqAQ>
-    <xmx:h2VLarBQ_ONOq1UGWhBBcoPWVRORXNQjo7HxB6gJH_P6tw0xz9JZFw>
-    <xmx:h2VLamyEK9QEfk3ehTq8M6s_L4WVTGYbGYAvMIA22Ggpnrl_siHIIw>
-    <xmx:h2VLavWSf9IThdVMtIOo-qnLKG8ZCq5rTyeJxKLAzGFaSBvAqcUJTo1v>
+	1783326807; x=1783413207; bh=RhZq6pygxg++fdzUSS413VPrxN2OaFYmdU5
+	kOCe7mMw=; b=QLCAshVgTS4Tp8rya7HRXoByjr/zyq+Xg0SthvJl7/Pb8b3D9uP
+	VeMAwF9Xpry/ICSzrvOBWDF0rtUWd5VJktmloIHqZvJ3CYxmSUbPfxFDfdMG6WUo
+	XKzfiMllJfk7P95+XQauy5DVnX03oTwncvtqEK3A+dXZuAwK+Q98L5jBI/I8iCEf
+	SC30FB9zke+mUkgRxvKAk3K00UViMBlM+g+tuZlrPgHVGkT5VNVVIQHlIHd3oSaV
+	sEAykhB8eeDdtPam/I+esUAy0zI1k+NF2NglPaJOrh7LvE0O6oHZ2uC9i3SM4kyG
+	Ry4UbF+Ut3gbZDLKu5/V1gKh2HXFAQTaMjw==
+X-ME-Sender: <xms:V2hLasvW9Ip6PnlsgNfTNwnaBgt1C9KT3H1brfYX5cX2xM7dDTDTIg>
+    <xme:V2hLagbr_dbfuAEWQ0t3Wp3MW2oPcVYflu34LP_66nrwD9rCtnIlm2iY1T5knkTdd
+    Y1ldaNJ3-lzWHDKJlrR7KKj5zxvKYgx_dEjYsVCVkK5yxR0jxAnSdE>
+X-ME-Received: <xmr:V2hLatbg7gTKpkT5DfemrdSvMPw5xebt7P4lo98_rcA_RA-F0P_0gceQuCONC_Ack3_RsTcbs4wn8Lj8hRRNhJzX4W1aWitSjJ2Dn2KwEC9F>
+X-ME-Proxy-Cause: dmFkZTFs6uRcQVju9zBkjqMG0XBhIfF52kFTapzBjFQp0NPjy2dYYQNwWCFNUXIwr//Tw/
+    O/DKoWE63eoKjkBzX5vfFqGsqwyfn1jBAj068QJsHuUk8BBUl6X/zwQB9D7FXqRsu4nCgI
+    G3SeMKouE3rJGGH7DTKWZ/isiaY9GrfaApnMQMLGLq2AhNQNPTXrXlRL2qaNoCKZmK+0NF
+    SXMYoiAq9CVD3pYTD5d0YeqDiGw+j55F69Mre0WG1GJhbIEF86osteHzjTh4N1N2o94jzA
+    KBj9rSBIpw1dLeqK8JJQonr/a3H96GQ8qJ6DKXzJ9X7nK6or/WnCbJnkp9Oeha90UTHFbm
+    gvwCHcWQc9LNzBNDpE/V9/KFmGUldQp9vehPhX5LIwweWWrsFvIeTrnOQqoE4gcHObAcF5
+    q6qf5cYcj5v5InyNX18pKIaqaOQLPNx+rfhjHwcd9Uv9ghWBJL4KCmICj1M/YidQlVu4Ml
+    UVstyYFVl/ypOOjKCupP35JLdjrrbwlV467cXqVUCuDts3K4CJ3nZ3zQt08I6jtUsXf1W6
+    FzhpZerCehhEjOA/AbfaCn0fPV0HNynKKl1GcZUX2Q7Amvig4fQero+XyNfe7TaJdr770B
+    emUozqVtWnE9glYW/8wW67F8auNXNFPMNpDeUWffDUyoKPEyGjF+ma4uHM8g
+X-ME-Proxy: <xmx:V2hLakWAc_mSmIrz68rWn8rsvgwD0KavKbJNGtzJJ43tFzmwU0viQg>
+    <xmx:V2hLas2QLLIdRvwRxrpXfDjIUANJ98Y05TUyONllco_WXQ02T9oBjA>
+    <xmx:V2hLajbCuOuGeletfU2tv_HfBvPuimlDOUF8pfOISWxKiI7yCAJ9EA>
+    <xmx:V2hLano-7kjOr6lmUWjFXmLmauZQdS7_eLw7k25K_p3Z35NOp0rFXg>
+    <xmx:V2hLamtI_IJp_8K2c8Mj8SE1iAGaEJHXbUGu_GfjLGDEsUIlWmmWfAvh>
 Feedback-ID: i51494658:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA for
  <yocto-patches@lists.yoctoproject.org>; Mon,
- 6 Jul 2026 04:21:27 -0400 (EDT)
-Message-ID: <5b7fb2ff371f113fc9e3f0278ff23fea6ae56af3.camel@pbarker.dev>
-Subject: Re: [yocto-patches] [wic][PATCH v3 03/10] tests: add the
- run-tests.sh wrapper
+ 6 Jul 2026 04:33:26 -0400 (EDT)
+Message-ID: <e450e25f5d0b9f31564d9b559fbc03d034e83274.camel@pbarker.dev>
+Subject: Re: [yocto-patches] [wic][PATCH v3 04/10] tests: add optional
+ coverage reporting to run-tests.sh
 From: Paul Barker <paul@pbarker.dev>
 To: yocto-patches@lists.yoctoproject.org
-Date: Mon, 06 Jul 2026 09:21:24 +0100
-In-Reply-To: <20260701074030.1090807-4-twoerner@gmail.com>
+Date: Mon, 06 Jul 2026 09:33:24 +0100
+In-Reply-To: <20260701074030.1090807-5-twoerner@gmail.com>
 References: <20260701074030.1090807-1-twoerner@gmail.com>
-	 <20260701074030.1090807-4-twoerner@gmail.com>
+	 <20260701074030.1090807-5-twoerner@gmail.com>
 Autocrypt: addr=paul@pbarker.dev; prefer-encrypt=mutual;
  keydata=mQINBGC756sBEADXL6cawsZRrDvICz9Y1SG0/lW1me4xpq36obh7a0IGAzp3ywNRb/4MO
  DTqP4+DD0cIFuDY41/N17g0sNlp8z+/k/IIDmNPtYQOTVmAkrkdDU4BP8dD3Cp1PUw6nrbInfujAJ
@@ -116,54 +116,88 @@ Autocrypt: addr=paul@pbarker.dev; prefer-encrypt=mutual;
  ChZPI3NMLnKZPJC8ZQZ4S8yb5oA3rqTA2DMODvsrEVlaB2cQ6IWHSa/mvBwA8Ias3771cp4fZS7W7
  LUewj8JVy0aJsGTwI4invl
 Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-JI7K0H9GS5K/UBuF+ZpU"
+	protocol="application/pgp-signature"; boundary="=-9gH+Yvax4Mga4Ud81g+1"
 User-Agent: Evolution 3.52.3-0ubuntu1.1 
 MIME-Version: 1.0
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 06 Jul 2026 08:21:33 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4422
+ <yocto-patches@lists.yoctoproject.org>; Mon, 06 Jul 2026 08:33:33 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4423
 
 
---=-JI7K0H9GS5K/UBuF+ZpU
+--=-9gH+Yvax4Mga4Ud81g+1
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 On Wed, 2026-07-01 at 03:40 -0400, Trevor Woerner via
 lists.yoctoproject.org wrote:
-> The suite is run with pytest, but invoking pytest directly has two
-> sharp edges: it must be run from the right directory for the pyproject
-> configuration to apply, and it happily runs against whatever Python
-> happens to be first on PATH, even one that cannot import wic. A run
-> against the wrong interpreter produces a misleading banner and, worse,
-> can silently exercise a different wic than the one in the checkout.
+> Knowing which lines a test run actually exercised is the difference
+> between "the suite is green" and "the suite is green and we know what
+> it touched". This commit wires branch coverage of the wic source into
+> the runner, kept entirely opt-in so a plain run stays fast and quiet.
 >=20
-> This commit adds tests/run-tests.sh, a thin wrapper that removes both
-> hazards:
+> pyproject.toml gains coverage and pytest-cov in the tests extra, so
+> "pip install -e .[tests]" pulls in what the new flags need.
 >=20
->   - it locates the repository root from its own path and changes there
->     before running, so it works regardless of the caller's directory;
+> run-tests.sh gains two options:
 >=20
->   - it checks that the interpreter can import wic before handing off to
->     pytest, and fails loudly with the install command if it cannot;
+>   - --coverage measures branch coverage of src/wic during the run and
+>     prints a terminal report listing the lines that were missed;
 >=20
->   - with no arguments it runs the whole suite under tests/; any
->     argument it does not recognise (a path, -k EXPR, -v, ...) is passed
->     straight through to pytest, and an explicit -- forwards everything
->     after it.
+>   - --html [DIR] additionally writes a browsable HTML report (default
+>     htmlcov/, or DIR if given) and implies --coverage.
 >=20
-> The interpreter can be overridden with the PYTHON environment variable
-> (default python3). -h/--help prints usage and exits.
+> If --coverage is requested but pytest-cov is not installed the runner
+> fails loudly with the install command rather than running without the
+> measurement it was asked for.
 >=20
-> The README Testing section gains the run-tests.sh invocation alongside
-> the install step.
+> The coverage data file and the HTML report directory are build
+> artifacts, so .gitignore learns to ignore .coverage and htmlcov/.
 >=20
 > AI-Generated: codex/claude-opus 4.7 (xhigh)
 > Signed-off-by: Trevor Woerner <twoerner@gmail.com>
 
-I don't think this is needed, since we already attempt to import wic in
-conftest.py, we can call pytest.exit() from there if the import fails.
+Ok, now the run-tests.sh script starts to make sense.
+
+Have you considered something like `just`
+(https://github.com/casey/just) as a command runner? It's much simpler
+to maintain a `justfile` than a shell script.
+
+Using claude (opus 4.8) to convert run-tests.sh (as it is at the end of
+this series of patches) to a much simpler justfile, I get:
+
+    # List the available recipes.
+    default:
+        @just --list
+
+    # Run the test suite. Extra args pass through to pytest (e.g. `just tes=
+t -k filemap`).
+    test *args=3D"tests":
+        pytest {{args}}
+
+    # Run the suite with a terminal branch-coverage report for wic.
+    coverage *args=3D"tests":
+        pytest {{args}} --cov=3Dwic --cov-branch --cov-report=3Dterm-missin=
+g
+
+    # Run the suite with an HTML coverage report (default dir: htmlcov/).
+    coverage-html dir=3D"htmlcov" *args=3D"tests":
+        pytest {{args}} --cov=3Dwic --cov-branch --cov-report=3Dterm-missin=
+g --cov-report=3Dhtml:{{dir}}
+
+    # Lint the test suite; held to a clean bar, so this must report nothing=
+.
+    lint-tests:
+        ruff check tests
+
+    # Lint src/ (not yet ruff-clean, so this is a preview report, not a gat=
+e).
+    lint: lint-tests
+        ruff check src
+
+Feel free to keep the shell script if you want to, but I think the above
+is easier to maintain :)
 
 Best regards,
 
@@ -171,17 +205,17 @@ Best regards,
 Paul Barker
 
 
---=-JI7K0H9GS5K/UBuF+ZpU
+--=-9gH+Yvax4Mga4Ud81g+1
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 
 -----BEGIN PGP SIGNATURE-----
 
-iIcEABYKAC8WIQSzjPXf5Y1BDWhU2iCrY1Tsnbr0bgUCaktlhBEccGF1bEBwYmFy
-a2VyLmRldgAKCRCrY1Tsnbr0blHTAP9bHkU1/qDEljj1D3HBCRp08gcYFHbstAUV
-Cy2zKUCVLgEAmuH//MJnvjCekLHwoUidViQk6bjhaIucniYTeOvGQgo=
-=IK4e
+iIcEABYKAC8WIQSzjPXf5Y1BDWhU2iCrY1Tsnbr0bgUCaktoVBEccGF1bEBwYmFy
+a2VyLmRldgAKCRCrY1Tsnbr0bhBHAP9J/bmhRK0sQhwkoTnOwFXzc/n7l2aKWSJg
+Wv3IcwZiwwD9EfnG33QgjOQMulMjhfPC1rsB3AeCkm8C9RdSDWZIfAo=
+=+84/
 -----END PGP SIGNATURE-----
 
---=-JI7K0H9GS5K/UBuF+ZpU--
+--=-9gH+Yvax4Mga4Ud81g+1--
 
