@@ -2,75 +2,75 @@ Return-Path: <paul@pbarker.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8AFCC43458
-	for <webhook@archiver.kernel.org>; Mon,  6 Jul 2026 08:55:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67F1CC43458
+	for <webhook@archiver.kernel.org>; Mon,  6 Jul 2026 09:06:34 +0000 (UTC)
 Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.146015.1783328106881710685
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.147093.1783328788044996532
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 06 Jul 2026 01:55:07 -0700
+ Mon, 06 Jul 2026 02:06:28 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@pbarker.dev header.s=fm3 header.b=mhThZ3+p;
- dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=B3iLr+3L;
+ dkim=pass header.i=@pbarker.dev header.s=fm3 header.b=lJazozfo;
+ dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=AnRCg0M4;
  spf=pass (domain: pbarker.dev, ip: 202.12.124.144, mailfrom: paul@pbarker.dev)
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id 3BE661D0010B
-	for <yocto-patches@lists.yoctoproject.org>; Mon,  6 Jul 2026 04:55:06 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Mon, 06 Jul 2026 04:55:06 -0400
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.stl.internal (Postfix) with ESMTP id 545A81D000E9
+	for <yocto-patches@lists.yoctoproject.org>; Mon,  6 Jul 2026 05:06:27 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Mon, 06 Jul 2026 05:06:27 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pbarker.dev; h=
 	cc:content-type:content-type:date:date:from:from:in-reply-to
 	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1783328106; x=1783414506; bh=yP/utq1Rqc
-	ZphSt1gdYZoFl9pnmaZ7da5C0oMF/ZQ6U=; b=mhThZ3+pmlUXMKowMGMXk6yPvP
-	uwrS7L9/6DBWS4urCIlA7GNkJSiz5EE8lCftSISi+iadW4nc68pLBpBemA9BI6zQ
-	cxxHh6b2QLii5qYAp7KXKicFbipiDzzyQhpZceUzG2ffka+zC3Rv4XpK4bqoY3nM
-	0AydhSe0/xwHuDCc3CLN1dfusgVqyZGuQjuyfvCu2wOpMcfQFL6pgQkR3tHJDkGN
-	vbnkgldykyEJ43jYWCUcmPp+fOEiGqmIAVJ/gF+hCBrFFcat8AIEhdu/bhNYa2W1
-	aBMrkygAlRG+CPCmPd40KbcBGS05szPEeGn5xJfPyYg6+yNoslI7NHQOoFIA==
+	:subject:to:to; s=fm3; t=1783328787; x=1783415187; bh=WM0SrC/4pA
+	yRWlI4fgZYdMgc1d1g13S1ng4dP5HxxTM=; b=lJazozfo6GlwJXlmPxPgMUg6p5
+	7/E4pDblS7HDLB8TK3l4PdgiqPIlOv81uFUtNAAU6hR1JEVfgPVXpICKypFtS1y9
+	sZqxoNZ4ORLkwlQxCPsNq1N+/teYp4lk4IjYM6RMzgal9ok9WtrlmRgyXEbuPfLh
+	sWl7bBxyihJVYyoP3bFAjzMQ8A59bXmcfkKUyfsEIB0YBw2H8fa937tCwbdUIzBg
+	uF2GJ6UPBQlvRI7fbxuzgyVcioTPtPE7+MnfHn0gkulSGq4TL+t3jk2je5gZic8V
+	ciWx4OlOTPQ+8xQhZzQYnu0ntsb9EsA4hfgdJ8peY62vk9VvYjVYx34uF2wg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:content-type:content-type:date:date
 	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
 	:message-id:mime-version:references:reply-to:subject:subject:to
 	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1783328106; x=1783414506; bh=yP/utq1RqcZphSt1gdYZoFl9pnmaZ7da5C0
-	oMF/ZQ6U=; b=B3iLr+3LTpTp6M+hOVTibxEsjB7eoO8xIT+HBY21bZ7stQpCAmP
-	fXWZ0g8OmDMW1Q7LflWMZsQ/2gEypVIFs402OSOmTYZinPutcI6JwKGbCRQ8WbZX
-	/4qhbbzI0nYkk/or176cm9iTCK9LF/0s5AD3HcyiJG4cy/CC2qd0JuAPB9ZTPsS2
-	e2ynZJtLQaMnk5gTwgH+Bbqn+EguO+QSztrvQW6GwhtqkYxrloin7U2ZhbP7gE73
-	tzEQwxMdRwSmHHSI/nNdcb5OiOGrYSBLocdzZDlQMgXZGXT7p8g96AngpV3zMUXm
-	JZu7Lcu85thQ9LCfG0UbmiybxxF+al9eydg==
-X-ME-Sender: <xms:aW1LajusQGUt4Yp0P4ksMCr6O4SbmTjtFydW28hVakyGOsBhMiZ0ug>
-    <xme:aW1LarZrSs7H8d3a4jMCJYCEtlaozO3OwSvqE8iZ6gfB2w4iMB8CniZ1Hw4e0wHHh
-    yInMr8q7PNcY48C-vW0FY312Tro7bnJ-omNAYJyteHR3rkhCFpHLUk>
-X-ME-Received: <xmr:aW1LasbLX040FzbQVpkEx2z6vwSV3dKznTJhOXkjcYkqXzV9Rr0ILMqykc4TE_h4n8Ip-ij9nXGUZRrpmhpsFr480ClMAGZVJTSFjbtJit9t>
-X-ME-Proxy-Cause: dmFkZTGlRvFVDLOL6UJdtRxuJP8ldbb/dUjmj1te4vvFcCY4aZgAWmj7QdJtJ+yz2lV+d3
-    u0SqqQGWUIM4L1Nvki4baK5A151r9nDZd0Y+/9NalmWspc3cZOXKoN9KQPcwyOo+7rXWCL
-    g/JDqTOo9GkAFfqWS0sPsjXpYrwsn+oE7qIgBvfHIhIxPA4j5Il3uYPsrvZ7PdphB/0PEt
-    VNoXjkugl/TFQdai2VEddg6xRfZPS3jPu+cPIJ3LB9to0F2kRB8pHgG5zagfkg3PY9YgQv
-    msEzl3PeKmtamwn6zFFjr5gZeIUGAeVihAe/KcUMytKUK3Ah4Zwc9bW67xVEgsYObPdtfG
-    xF67Nvrwrwhu8vuKfgthwtcZaU/2fWL7JuTw//thXT/x7X07K55gbNVXrIpSFPwymV5VU7
-    +/cJ/8EWm5/IJa4W9GXw+KQrCBwSRnFYvdcFqISTUd5ij+uWfjltaUugp4vhlPcvOQIAW7
-    MpFHHy7xVG00/f8ULTYlUps0GHbPk8VfS+tTGt1MzDq+iYadOc3dZ9F+TNbpfunmDbRl4e
-    vsOsK8bN8On7j+IzrLdYDApZ2TNqR9Gac2XQ069AO/uLaYaP4217113rYka/CmOJURH0Sa
-    egOHO9mAtF/z/20JqITntwiqV6Y6pbho6dvLhkZ+asjQCg+QY8bNFq+/e5kg
-X-ME-Proxy: <xmx:aW1LanUo22YszM0VOuMe58Y9MNIHBLpRwfYAdSoHTmT866Ga3nAU3g>
-    <xmx:am1Laj1NqhTPpi_CC2H_x5FYFb5tJssesPzaoqMN-WKc3KlnK3x79w>
-    <xmx:am1Lauadzqneoi3d4advxfzOdWQEEUgyCM0X52rwId5kr288JP49VA>
-    <xmx:am1Lamro3AHZ6R8CmQmeivAGWng87_mMBKF9aQAkKtMQnzkX0BctkQ>
-    <xmx:am1LaptvPUOMNvTpahzQQUlT1V6FdRAVCLrtZ5MIOhQ1zRkp3KnZXokx>
+	1783328787; x=1783415187; bh=WM0SrC/4pAyRWlI4fgZYdMgc1d1g13S1ng4
+	dP5HxxTM=; b=AnRCg0M40Cd/jD27oBZyuINC3J4VQmFuJ4//LkAtEZlISue9kYe
+	sw1ZkUrKvXK0vY41fZqNSWWsMlILFCmjpcQ0n4jjeODe9FJAr/SQZRx8xUDlD9qj
+	+9Qc5xpBxbgtzMBtSRiPnLxojGT1Qz3OFQy71oweRAvR5Syf0MIiOb7fSk7nSYrc
+	o2hf5EjPAeD3S81K7FTZI0XLslhZDFMU5nuTFwYheXP7x4anZFoZ0sHYs0PqUnXI
+	PMX1EcBoZmsZQ9r6eIQZ8vQOjg0vP/vrE2bX2F2LgYALENT8tzYPpNQXW2N4FWxm
+	Mz9OPTHTLsiHZMyD+8tFipeDpvU5LIIXH9Q==
+X-ME-Sender: <xms:EnBLah-8M23So9njrNC8uFWPgXeG66GcEO7H_RJc5vcUyQp_pfxPAQ>
+    <xme:EnBLasoHP-9tn9mPgt1G059Bs6bbZTupSEGxr3vt8pGUY5eY_ErixFr3BYttR9Tl_
+    zZ_MQx5IXKlEYe5-g5O2FH9k-g8-zXg8mHxeAaYwZDoNXUNbBKWq8I>
+X-ME-Received: <xmr:EnBLako4MFVSVdJBtiqZ4ms9SWj8EpoHgFA8IDOZdxbvKXEgCGdI2e_Oi6LIlSlQYBG1xbxtcHNWzxHex_jlLb2ir5faq_lOciObvKmqk_FD>
+X-ME-Proxy-Cause: dmFkZTE3Cs/hbpm7XiM9p4K56JxQRUN6ZUjQoq0YVJ5HpZx5YikR/LQsTU2lq2bXmKvqUU
+    vW2yTIOdOx0KSHTwWMMdAaQRVhYLKICoq2O7dD+pxLb2GyWVw66LadyGtGU2KVvBKeWqWf
+    DRYwWV+LlDqNhVC+J7Gz5SXONZ9Gcl2GaW2fjOBU6b6+Gg2h0yGpRn5Om0zisXEJlX1IQ1
+    K/qH8L1+gFSUbrRa0QKCnLQGmZLSPhQS7jlCkUoK4yJZwTZQgkBJvu/ITc6BaiEh8eKC2E
+    WTIO8EuzTx6mFngKBW/83r/2UcEpFJCmK4yt+eY1evz+SJRWmgjM1B0jxfqFQWGh82a0M1
+    BVO5onL0lgfnMGAX5wj3fvdW13cNQKE0He4ku10vqaJkRKz/hu5Oiv0FNFaQcHRsFsmjg0
+    hDiiY6sxzt+7WO6zMU6ArSje/+2b9o8HJDbJR6IGHqr4vQ0mhlb8aKBaZCnOSh5kIZSYf7
+    yg/fSigEBnvJR6YJptmjwEJd9BrpzZUXXJBplcxOGve7gKhuFy0YDpvtk8WDGDsvB4zmX7
+    eEBLavcWa5r+EGBpZP9vmVzKQVaLEAplSr2pxzi2HsswypKptXIdxAzJdnratshfi58BdP
+    Xu7LeE1HhY4lqJvIPU/C9+o5jFojxiP7s9i+K99IytDkGd8AH3cwvxjkc8PQ
+X-ME-Proxy: <xmx:EnBLaqn0xxB0leWAlkmxh_A46nQFYFz-cSl-8xKEZ24GnMgJ9f8c4Q>
+    <xmx:EnBLamH344UDxHMuZp6I4d84StO9VkTApI6DDsX72ajxvJDlXzMwNw>
+    <xmx:EnBLajpnaL8Qom5Hif2vYC0Fnrc8oMogCYJ_SA_Ap0YoRmncg4UOpw>
+    <xmx:EnBLai4ZqdD3XR6sxl_MnE0xqCyiqJJOpDzSxO6QnPiUVHFe-MXVPA>
+    <xmx:E3BLag8QLN8om2-N7YlLgeupO8QffK3Vy_hvfVWKvpmsWMEZqa4RpV3p>
 Feedback-ID: i51494658:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA for
  <yocto-patches@lists.yoctoproject.org>; Mon,
- 6 Jul 2026 04:55:05 -0400 (EDT)
-Message-ID: <997b69f88a8fd258b424f014e9b4e14679f1b618.camel@pbarker.dev>
-Subject: Re: [yocto-patches] [wic][PATCH v3 08/10] tests: ignore E402 in the
- test tree for the sys.path bootstrap
+ 6 Jul 2026 05:06:26 -0400 (EDT)
+Message-ID: <a7ec7fe1de84a6159506b6ead5b99497e497bb24.camel@pbarker.dev>
+Subject: Re: [yocto-patches] [wic][PATCH v3 09/10] tests/unit/test_bb_utils:
+ test mkdirhier() and fix its missing errno import
 From: Paul Barker <paul@pbarker.dev>
 To: yocto-patches@lists.yoctoproject.org
-Date: Mon, 06 Jul 2026 09:55:00 +0100
-In-Reply-To: <20260701074030.1090807-9-twoerner@gmail.com>
+Date: Mon, 06 Jul 2026 10:06:23 +0100
+In-Reply-To: <20260701074030.1090807-10-twoerner@gmail.com>
 References: <20260701074030.1090807-1-twoerner@gmail.com>
-	 <20260701074030.1090807-9-twoerner@gmail.com>
+	 <20260701074030.1090807-10-twoerner@gmail.com>
 Autocrypt: addr=paul@pbarker.dev; prefer-encrypt=mutual;
  keydata=mQINBGC756sBEADXL6cawsZRrDvICz9Y1SG0/lW1me4xpq36obh7a0IGAzp3ywNRb/4MO
  DTqP4+DD0cIFuDY41/N17g0sNlp8z+/k/IIDmNPtYQOTVmAkrkdDU4BP8dD3Cp1PUw6nrbInfujAJ
@@ -116,123 +116,246 @@ Autocrypt: addr=paul@pbarker.dev; prefer-encrypt=mutual;
  ChZPI3NMLnKZPJC8ZQZ4S8yb5oA3rqTA2DMODvsrEVlaB2cQ6IWHSa/mvBwA8Ias3771cp4fZS7W7
  LUewj8JVy0aJsGTwI4invl
 Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-V1Q4qjU90ThNEZXnJ/gp"
+	protocol="application/pgp-signature"; boundary="=-S6BrXksz3ZPQ3hY3KUf4"
 User-Agent: Evolution 3.52.3-0ubuntu1.1 
 MIME-Version: 1.0
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Mon, 06 Jul 2026 08:55:13 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4427
+ <yocto-patches@lists.yoctoproject.org>; Mon, 06 Jul 2026 09:06:34 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4428
 
 
---=-V1Q4qjU90ThNEZXnJ/gp
+--=-S6BrXksz3ZPQ3hY3KUf4
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 On Wed, 2026-07-01 at 03:40 -0400, Trevor Woerner via
 lists.yoctoproject.org wrote:
-> The unit tests that follow run against a plain checkout that has not
-> been installed. To do that, each test module prepends the in-tree src/
-> directory to sys.path and only then imports wic:
+> mkdirhier() wraps os.makedirs() and, on OSError, re-checks the error to
+> decide whether to swallow a benign "already exists" race or re-raise:
 >=20
->     _SRC =3D Path(__file__).resolve().parent.parent.parent / "src"
->     if str(_SRC) not in sys.path:
->         sys.path.insert(0, str(_SRC))
+>     except OSError as e:
+>         if e.errno !=3D errno.EEXIST or not os.path.isdir(directory):
+>             raise e
 >=20
->     from wic.bb.utils import mkdirhier
+> but the module never imports errno. The reference to errno.EEXIST is
+> only evaluated when os.makedirs() actually raises, so the defect is
+> invisible on the happy path and on the unexpanded-${} guard. The moment
+> a real OSError occurs -- a parent component that is a file, a permission
+> error, anything -- the handler itself raises NameError: name 'errno' is
+> not defined, masking the original error with a misleading one.
 >=20
-> That bootstrap necessarily runs before the wic imports, which trips
-> ruff's E402 (module-level import not at top of file). The ordering is
-> required, not accidental: the import would fail without the sys.path
-> adjustment ahead of it.
+> The fix is a one-line import. With errno available the handler behaves
+> as intended: an EEXIST on an existing directory is swallowed, while any
+> other OSError (and an EEXIST whose path is not a directory) propagates
+> unchanged.
 >=20
-> Rather than scatter per-line noqa comments through every test module,
-> this commit relaxes E402 for the test tree once, via a
-> [tool.ruff.lint.per-file-ignores] entry scoped to tests/**. It is the
-> only rule relaxed for tests/; the suite is otherwise held to a clean
-> bar by --lint-tests.
+> This commit adds tests/unit/test_bb_utils.py, covering mkdirhier() end
+> to end:
 >=20
-> tests/docs/linting.md gains a section describing this single exception
-> and why it exists.
+>   - the happy path (nested, single-level, idempotent, existing dir);
+>   - the unexpanded-${} guard (rejected, nothing created, and that a
+>     bare brace without a dollar is allowed);
+>   - the OSError handler: a real mkdir under a file component surfaces an
+>     OSError, an arbitrary OSError propagates with its errno intact, an
+>     EEXIST on an existing directory is swallowed, and an EEXIST on a
+>     regular file propagates.
 >=20
-> AI-Generated: codex/claude-opus 4.7 (xhigh)
+> The error-path tests fail with NameError without the import and pass
+> with it, so the test and the fix belong together in this one change.
+>=20
+> AI-Generated: codex/claude-opus 4.8 (xhigh)
 > Signed-off-by: Trevor Woerner <twoerner@gmail.com>
 > ---
 > changes in v3:
-> - no change in this revision.
+> - switch the tests from tempfile.mkdtemp() to pytest's tmp_path
+>   fixture so each test's scratch directory is cleaned up instead of
+>   leaking under /tmp; no change to what is tested.
 > changes in v2:
-> - v1 submitted the entire test suite as a single commit; v2 breaks
->   the work into a reviewable series, and this patch is one step of it.
+> - v1 recorded this bug with an xfail marker in one large commit;
+>   v2 drops the xfail, asserts the correct behaviour directly, and
+>   lands the one-line errno-import fix in this same commit so the
+>   test passes green.
 > ---
->  pyproject.toml        |  8 ++++++++
->  tests/docs/linting.md | 20 ++++++++++++++++++++
->  2 files changed, 28 insertions(+)
+>  src/wic/bb/utils.py         |   1 +
+>  tests/unit/test_bb_utils.py | 116 ++++++++++++++++++++++++++++++++++++
+>  2 files changed, 117 insertions(+)
+>  create mode 100644 tests/unit/test_bb_utils.py
 >=20
-> diff --git a/pyproject.toml b/pyproject.toml
-> index 656adcd4930a..fb42fe6dd135 100644
-> --- a/pyproject.toml
-> +++ b/pyproject.toml
-> @@ -58,3 +58,11 @@ tmp_path_retention_count  =3D 1
->  # not yet ruff-clean and is left out until its findings are fixed (see
->  # tests/docs/linting.md). --lint-src can still be run to preview the
->  # source findings, but it is reported, not enforced.
-> +
-> +[tool.ruff.lint.per-file-ignores]
-> +# Test modules prepend the in-tree src/ directory to sys.path before
-> +# importing wic, so the suite runs against a checkout that has not been
-> +# installed. That bootstrap necessarily runs before the wic imports,
-> +# which trips E402 (module-level import not at top of file). The
-> +# ordering is deliberate; ignore E402 for the test tree only.
-> +"tests/**" =3D ["E402"]
+> diff --git a/src/wic/bb/utils.py b/src/wic/bb/utils.py
+> index 3750056ba563..0b40dd0c1d59 100644
+> --- a/src/wic/bb/utils.py
+> +++ b/src/wic/bb/utils.py
+> @@ -1,6 +1,7 @@
+>  """
+>  Minimal subset of BitBake's bb.utils used by standalone wic.
+>  """
+> +import errno
+>  import os
+> =20
+>  # from bitbake/lib/bb/utils.py
 
-LTGM.
+Nitpick: It's better to fix the bug in a separate commit before the test
+is added.
 
-> diff --git a/tests/docs/linting.md b/tests/docs/linting.md
-> index 71b4de21c100..1c1bfcc06f82 100644
-> --- a/tests/docs/linting.md
-> +++ b/tests/docs/linting.md
-> @@ -4,6 +4,7 @@
-> =20
->  - [Running the linter](#running-the-linter)
->  - [tests/ must be clean](#tests-must-be-clean)
-> +- [The one intentional exception in tests/](#the-one-intentional-excepti=
-on-in-tests)
->  - [src/ is not linted yet](#src-is-not-linted-yet)
-> =20
->  The test suite is linted with [ruff](https://docs.astral.sh/ruff/). It
-> @@ -28,6 +29,25 @@ Our own test code is held to a clean bar: `tests/run-t=
-ests.sh
->  --lint-tests` reports nothing. If you add a test that trips a rule, fix
->  the test before the change lands.
-> =20
-> +## The one intentional exception in tests/
+> diff --git a/tests/unit/test_bb_utils.py b/tests/unit/test_bb_utils.py
+> new file mode 100644
+> index 000000000000..aeca054109ff
+> --- /dev/null
+> +++ b/tests/unit/test_bb_utils.py
+> @@ -0,0 +1,116 @@
+> +r"""
+> +Unit tests for wic.bb.utils -- a small standalone subset of BitBake's
+> +bb.utils. mkdirhier() is a mkdir -p wrapper with two guards: an
+> +unexpanded-${} check and an OSError handler that re-checks EEXIST.
+> +"""
+
+This doesn't need to be a raw string.
+
+> +import errno
+> +import os
+> +import sys
+> +import unittest.mock as mock
+> +from pathlib import Path
 > +
-> +Test modules prepend the in-tree `src/` directory to `sys.path` before
-> +importing `wic`, so the suite runs against a plain checkout that has not
-> +been installed:
+> +import pytest
 > +
-> +```python
 > +_SRC =3D Path(__file__).resolve().parent.parent.parent / "src"
 > +if str(_SRC) not in sys.path:
 > +    sys.path.insert(0, str(_SRC))
 > +
 > +from wic.bb.utils import mkdirhier
-> +```
 > +
-> +That bootstrap necessarily runs before the `wic` imports, which trips
-> +`E402` (module-level import not at top of file). The ordering is
-> +required, so `E402` is ignored for the test tree via `per-file-ignores`
-> +in `pyproject.toml`. This is the only rule relaxed for `tests/`.
 > +
->  ## src/ is not linted yet
-> =20
->  `--lint-src` runs ruff over the wic source, but the source is **not**
+> +# ----------------------------------------------------------------------=
+-----
+> +# Happy path
+> +# ----------------------------------------------------------------------=
+-----
+> +
+> +class TestMkdirhierHappyPath:
+> +    def test_creates_nested_directory(self, tmp_path):
+> +        target =3D os.path.join(str(tmp_path), "a", "b", "c")
+> +        mkdirhier(target)
+> +        assert os.path.isdir(target)
+> +
+> +    def test_idempotent_on_existing_directory(self, tmp_path):
+> +        target =3D os.path.join(str(tmp_path), "x")
+> +        mkdirhier(target)
+> +        # Second call must not raise (exist_ok=3DTrue).
+> +        mkdirhier(target)
+> +        assert os.path.isdir(target)
+> +
+> +    def test_single_level(self, tmp_path):
+> +        target =3D os.path.join(str(tmp_path), "single")
+> +        mkdirhier(target)
+> +        assert os.path.isdir(target)
+> +
+> +    def test_existing_root_directory(self, tmp_path):
+> +        # An already-existing directory (the tmpdir itself) is a no-op.
+> +        mkdirhier(str(tmp_path))
+> +        assert os.path.isdir(str(tmp_path))
 
-Argh! Claude! No!
+Are we testing mkdirhier() or testing Python's os.makedirs()
+implementation?
 
-This is well documented by the comment in pyproject.toml, it doesn't
-need detailed explanation in a documentation file.
+There's no need to re-test Python's standard library. We only need to
+test the functionality we add in mkdirhier(), and probably a single
+basic "can it create a directory" test.
+
+> +
+> +
+> +# ----------------------------------------------------------------------=
+-----
+> +# Unexpanded bitbake-variable guard
+> +# ----------------------------------------------------------------------=
+-----
+> +
+> +class TestMkdirhierUnexpandedVar:
+> +    def test_unexpanded_var_rejected(self):
+> +        with pytest.raises(Exception) as ei:
+> +            mkdirhier("/tmp/${WORKDIR}/x")
+> +        assert "unexpanded bitbake variable" in str(ei.value)
+> +
+> +    def test_unexpanded_var_not_created(self, tmp_path):
+> +        bad =3D os.path.join(str(tmp_path), "${VAR}", "sub")
+> +        with pytest.raises(Exception):
+> +            mkdirhier(bad)
+> +        # Nothing should have been created.
+> +        assert not os.path.exists(os.path.join(str(tmp_path), "${VAR}"))
+
+This assert could be merged into the previous test.
+
+> +
+> +    def test_brace_without_dollar_is_allowed(self, tmp_path):
+> +        # Only the literal '${' marker triggers the guard; a bare '{' is=
+ a
+> +        # legal (if unusual) directory name.
+> +        target =3D os.path.join(str(tmp_path), "plain{brace")
+> +        mkdirhier(target)
+> +        assert os.path.isdir(target)
+> +
+> +
+> +# ----------------------------------------------------------------------=
+-----
+> +# OSError handler
+> +# ----------------------------------------------------------------------=
+-----
+> +
+> +class TestMkdirhierErrorPath:
+> +    def test_oserror_under_a_file_component(self, tmp_path):
+> +        # Create a regular file, then try to mkdir a subdir *under* it. =
+On
+> +        # Linux os.makedirs raises NotADirectoryError (an OSError subcla=
+ss);
+> +        # the handler must let it surface rather than swallow it.
+> +        f =3D os.path.join(str(tmp_path), "afile")
+> +        Path(f).write_text("x")
+> +        target =3D os.path.join(f, "sub")
+> +        with pytest.raises(OSError):
+> +            mkdirhier(target)
+> +
+> +    def test_generic_oserror_propagates(self):
+> +        # An arbitrary OSError (EACCES !=3D EEXIST) must propagate uncha=
+nged.
+> +        err =3D OSError()
+> +        err.errno =3D errno.EACCES
+> +        with mock.patch("wic.bb.utils.os.makedirs", side_effect=3Derr):
+> +            with pytest.raises(OSError) as ei:
+> +                mkdirhier("/whatever/path")
+> +        assert ei.value.errno =3D=3D errno.EACCES
+> +
+> +    def test_eexist_on_existing_dir_is_swallowed(self, tmp_path):
+> +        # An EEXIST OSError on a path that is already a directory is the
+> +        # benign race the handler exists to absorb; it must not propagat=
+e.
+> +        err =3D OSError()
+> +        err.errno =3D errno.EEXIST
+> +        with mock.patch("wic.bb.utils.os.makedirs", side_effect=3Derr):
+> +            mkdirhier(str(tmp_path))  # exists and is a dir -> swallowed=
+, no raise
+> +
+> +    def test_eexist_on_existing_file_propagates(self, tmp_path):
+> +        # EEXIST but the path is a regular file, not a directory: the
+> +        # handler's isdir() re-check fails, so the error must propagate.
+> +        f =3D os.path.join(str(tmp_path), "afile")
+> +        Path(f).write_text("x")
+> +        err =3D OSError()
+> +        err.errno =3D errno.EEXIST
+> +        with mock.patch("wic.bb.utils.os.makedirs", side_effect=3Derr):
+> +            with pytest.raises(OSError) as ei:
+> +                mkdirhier(f)
+> +        assert ei.value.errno =3D=3D errno.EEXIST
+
+Claude loves to write test cases like this, that test specific little
+details of the current implementation. This needs to be re-framed, test
+the expected behaviour not the implementation details.
+
+And to take a step back - if mkdirhier() is imported from bitbake, why
+add test cases here anyway? If bitbake is missing test coverage then
+it's better to add it there and plan to keep src/wic/bb in sync with
+any future changes in bitbake.
 
 Best regards,
 
@@ -240,17 +363,17 @@ Best regards,
 Paul Barker
 
 
---=-V1Q4qjU90ThNEZXnJ/gp
+--=-S6BrXksz3ZPQ3hY3KUf4
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 
 -----BEGIN PGP SIGNATURE-----
 
-iIcEABYKAC8WIQSzjPXf5Y1BDWhU2iCrY1Tsnbr0bgUCakttZBEccGF1bEBwYmFy
-a2VyLmRldgAKCRCrY1Tsnbr0bpN9AP4kDK9T9MM0rsYz9RALeEIKJP15iPqS01rb
-8puwrswMKAD/eo0Y7dzG4Ok5O4yVXxf4U6fFzrhK/8ybskNoFfI6wAo=
-=6fF+
+iIcEABYKAC8WIQSzjPXf5Y1BDWhU2iCrY1Tsnbr0bgUCaktwEBEccGF1bEBwYmFy
+a2VyLmRldgAKCRCrY1Tsnbr0br3GAP4+oWrXz16/z9FOmhfeUgSG+DpTfqSA4rhs
+aU41buyvMAEA2yqCpUaAavEbDc+L2nNvO9s/f4zaU+fb+x0SX2B22QY=
+=GMOb
 -----END PGP SIGNATURE-----
 
---=-V1Q4qjU90ThNEZXnJ/gp--
+--=-S6BrXksz3ZPQ3hY3KUf4--
 
