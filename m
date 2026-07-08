@@ -1,265 +1,174 @@
-Return-Path: <rchiluka@qti.qualcomm.com>
+Return-Path: <paul@pbarker.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CCEBC43458
-	for <webhook@archiver.kernel.org>; Wed,  8 Jul 2026 07:47:52 +0000 (UTC)
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.3611.1783496862187918142
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2FF1C43458
+	for <webhook@archiver.kernel.org>; Wed,  8 Jul 2026 14:28:11 +0000 (UTC)
+Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.10034.1783520888464010866
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 08 Jul 2026 00:47:42 -0700
+ Wed, 08 Jul 2026 07:28:09 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@qualcomm.com header.s=qcppdkim1 header.b=eOsmd/aM;
- spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: qti.qualcomm.com, ip: 205.220.180.131, mailfrom: rchiluka@qti.qualcomm.com)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66842JWD1656668;
-	Wed, 8 Jul 2026 07:47:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:message-id:mime-version:subject:to; s=
-	qcppdkim1; bh=JqYSOVuHsvf00pU48V3OafunLK+a4LQ/x3nFDqZdAcY=; b=eO
-	smd/aMy3YY1z8wVaHZm5NKomoShcSUBV0S1mlyZ3OEycSrE0gcqk3hsqnxqrCvZ3
-	k+J17Qb14jSeRtpf2Qk0fyuxAAFd1Mf6xgteRN0yz1UaIjrEzRmpm48wYUnqXlr5
-	EU1uO+vzdNJs/fWOemB05OlaluqPq5fBei5erVqg5zUmOvewxYoinzVmXTj2ZVjQ
-	/BAzeT3RAo+1oRSjln1oWozZk4aFxb0/UW75aHYx37m/zLSxawZKku/sDCqvNUat
-	mucHn4kaETLQ7q0A86V+YOzpoIufA/gKubDWGp1bRRHb+CRphW/oT/GN4URjQGz1
-	QWqNK+KW0WygJaE6zIRg==
-Received: from byapr08cu003.outbound.protection.outlook.com (mail-byapr08cu00302.outbound.protection.outlook.com [40.93.1.106])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4f9csssbbt-2
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Wed, 08 Jul 2026 07:47:39 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=R97BeMytwLUKaFjh/3uEdnGYKeuEt8f999f+ATq2zw08K2J3ePbWqD8a0pc14N1D+SJsL+j6Tzc80yzDIComX6nHv/DpjkiydpwD+AM/mzSa0h8y+ZY9zV92Pgts718WmkNyn7qYEzC3Le2IH8XM16dd4bgyp9egVA8H3SpJyr60LhxLn6K1rTamT9nWjCujGj9eC+zDJOBDq0ynkGjYy74/B7n6zGmDo+oCpPgfSqDBR0coz4gtm+fKFNVzJr3cxTKaaUZ/9RQspQ/cMTPafssT66G9IuxMmYIUej8AtbNCvN2eqB5KViwvftwccXthlTRQvmxYxGZIYSaMV2YR9Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JqYSOVuHsvf00pU48V3OafunLK+a4LQ/x3nFDqZdAcY=;
- b=I2INuKgQIrh4Ed1G9gNiNVi+ZCL5pT0UsP/Jyfzn0Vi+IshDnlZ/Z7Lg7Pv1Si/JSouuVdrjRFRrYTv9AyQ5aqDfl/B+B92wp/ru+OygAO+pRFnaUNAwWjwfpnCcgEHrEpDk0V+iuHMHzByiPQjq7K+5TLTXTCCACsM7yfzPey1wymnRpPDiLgZn34XLQEZw6AHSVZi48b+y5fQPUzlZ2k2Kv/QSeoqIxwaKSIKnbqGB7f8YW1LxJtTL/6TrBWfAtXxEu072BohZT5VaELxYMEzAlUQ0dMfNWU+DITJX3eE6gp5rTbZj4AUHzn6utTAf5f/C8f+hd0jgjSx/3Tp6dQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=qti.qualcomm.com; dmarc=pass action=none
- header.from=qti.qualcomm.com; dkim=pass header.d=qti.qualcomm.com; arc=none
-Received: from SJ0PR02MB7821.namprd02.prod.outlook.com (2603:10b6:a03:32e::5)
- by MW6PR02MB9816.namprd02.prod.outlook.com (2603:10b6:303:23a::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.8; Wed, 8 Jul 2026
- 07:47:35 +0000
-Received: from SJ0PR02MB7821.namprd02.prod.outlook.com
- ([fe80::fb73:7e6:d2dd:1863]) by SJ0PR02MB7821.namprd02.prod.outlook.com
- ([fe80::fb73:7e6:d2dd:1863%4]) with mapi id 15.21.0181.014; Wed, 8 Jul 2026
- 07:47:35 +0000
-From: Rohith Chiluka <rchiluka@qti.qualcomm.com>
-To: "yocto-patches@lists.yoctoproject.org"
-	<yocto-patches@lists.yoctoproject.org>
-CC: "joe.macdonald@siemens.com" <joe.macdonald@siemens.com>,
-        "yi.zhao@windriver.com" <yi.zhao@windriver.com>
-Subject: [meta-selinux][PATCH] refpolicy_common: strip POLICY_CUSTOM_BUILDOPT
- before passing to make
-Thread-Topic: [meta-selinux][PATCH] refpolicy_common: strip
- POLICY_CUSTOM_BUILDOPT before passing to make
-Thread-Index: AQHdDqwVps+iqIfqYUmIpW4aildetw==
-Date: Wed, 8 Jul 2026 07:47:35 +0000
-Message-ID: 
- <SJ0PR02MB7821AE63AAB7FA8A268F99ADF1FF2@SJ0PR02MB7821.namprd02.prod.outlook.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-IN
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-msip_labels: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ0PR02MB7821:EE_|MW6PR02MB9816:EE_
-x-ms-office365-filtering-correlation-id: 3145cbca-09a6-48b0-e3d6-08dedcc52d30
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230040|23010399003|376014|1800799024|6049299003|366016|4053099003|38070700021|18002099003|8096899003|56012099006|11063799006;
-x-microsoft-antispam-message-info: 
- q2GIf03Bj4tNFe5cLUjp3nI3pfh7X05BWwWvskCt34lcVmUkTv+2UY5fRZ1PbVn2kIwTux+RmDgBL5Faee/l51Ooe5mKPKTChD139w5ysTf6w9G6uSgXjFhDxJlZ502Jw40s2MlKD1uMLlq/nTxvjjuhDoRD+aVDWahTuYtuOhsY4Xchc/JKiZw3wnuhBYAy2jdlS0MgoKbE5+kWnvDhP/kWO83YJ0nvdPQrpgNcBj8isTQvVdL+GkjgaIdqj+ffkJNkW+dXbQQUYiMCj3/FwZqRsNafuebat28mWr9DI2rmGOlaNYfmuF+Ryk5Md6Qx+bHq+oyLbFqNzm/jZ3t05aI7Bas8rpaAIHb4uhz32VG6Wee1l7LNUkFDac9iNs3LzPBwEm9DHGX0J5VWFpARgJZYxSMZWr1cxrXsjdaiZnj43oNMRbw6r1xq6V/GQ5Q2EDGh99rj79fV+jMF17RH2RebYYaz8KADVz2bie3cOR79LH96+jelibvfD0iI9Yt4x5Ol/T/3O7pZAHYZDCuuhiIYiBcs/FpbAHaNBBkYjZpO3Y5Z2xsl/r+t7JC1cDKGD/+0fi8rXI9jmTwyowGkwkKWrxzhnATylyTjqZqTqR6NUvSJZvJFVQ3H45dX7sXHiWaZYv6SoVheWZCOyMY2Q3crEWr1t4sFTFpB8lyweH3jTIze/RGCKr5+aZ43DnG0ltrjh69L585FLXr7TtsMWxuNnBTMVHHrjK/E78NbxlU=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR02MB7821.namprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(376014)(1800799024)(6049299003)(366016)(4053099003)(38070700021)(18002099003)(8096899003)(56012099006)(11063799006);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?iso-8859-1?Q?JlnGfH7yqUQ9ASqApd43rzRXk95w0nkyw9zkq/oj/QrlAN76p1nmjqbs/K?=
- =?iso-8859-1?Q?el1UFwmROK5Ause7QYWDCrE3ke9oT7ZTyefS/Z/GsIT5Pu6uayTEuGG9b3?=
- =?iso-8859-1?Q?x2b5cNPDySBH5td0ms15LcTC6uYTpofyCK+pO+s+xn62nIQ1a997kfKdnq?=
- =?iso-8859-1?Q?zeG5aop0Y3XUQ9zIXAd3v1G3TJsyFjHEDC0Ej3949jwwXVZ0JWCSrZNTtA?=
- =?iso-8859-1?Q?+fFqk+EJH73FRjz+mdVYUVySNJpxHL9uT+VPR80fziIX3P1sWa+HLHj7Up?=
- =?iso-8859-1?Q?OZWwisDeyBc10n0JlLQIXiy9hnOjDQMz80MRj1kPnlAbHdaC2qJRi560Fl?=
- =?iso-8859-1?Q?aYPTPU0F0P6LyYw+5g9fWKVIp7dBEAZmM6J1e9BHMvrEOO0WJSZx0kIONT?=
- =?iso-8859-1?Q?PE7Of9gEIFEPOB4hWa3cMs/EILgoiB0iUsXqIrTcdPEp6cvSrP0sNOTs/u?=
- =?iso-8859-1?Q?qIPKb39aj0eY1dQk7Kgu7vQfvaT5FnY8JelE+R/YvVwo6ZLF3JV6uPB2se?=
- =?iso-8859-1?Q?MlVrIjGdZjnSridpO2EurZugCy27LBWR7T9fyG7MQTuGxMCvSErrrYEzU4?=
- =?iso-8859-1?Q?EnnQwvKh2/0brQyGthVqJCihOUIuEq7bJjjGJHERIChhQKdE6TYWDliMYX?=
- =?iso-8859-1?Q?j22JnLMDl0rDedHLuje61U1MTSVaMqvcJDN+xHEZgcEmjDRJWFpVIZLQai?=
- =?iso-8859-1?Q?ZArFaQNxtYZb87vrvcFcQy4nZmx+lNA1raegppn/HoQf3fK2bfrTPMTksG?=
- =?iso-8859-1?Q?ike1xpfIVB2RXNhOgnuDY+Z2aN1MJH1pI3FiatQQarPveg15HGb/sNFq/y?=
- =?iso-8859-1?Q?AnkNNtjB1whop+33XCaZWZopxZkA587/m4uTCZdHZzr49AkTMW+fwK0gxp?=
- =?iso-8859-1?Q?qgeQgCliCDL1QUoEfy5xSVkL/4QrHxjEDxdZKnAXHxKjDXNJRstctquvn1?=
- =?iso-8859-1?Q?VxqjRmUWt9VP2lCsV5wiuPD6xJgsKxG9lYW8d6jsP5obivnnzFx69UdpNl?=
- =?iso-8859-1?Q?PkO24IpYkMHV4yhdq+dElvVwOA0w/8zd9OR13Vebuj8MiTSYFXsRCHOsZ2?=
- =?iso-8859-1?Q?6y93VTF/PWxiEi4igtW9hGMfwcVFeBHPVHI7nLscXpVx+BVjaLVJkXaBv8?=
- =?iso-8859-1?Q?B8iAY11JM8cpz5ycO2GQjYYPSHdpFqNw8WQ09SXaFiJCjWoP3dMlA91HLy?=
- =?iso-8859-1?Q?squF1Wf521DqleGVytdUPHD2WabNwY0JiNqbeS/q8vone9MTL2d/59m89D?=
- =?iso-8859-1?Q?3xYtiNw3RaiCNoikm/jx1GO91kLFIR2z1EFyCATRWGLL2a2noHH1yPqUjV?=
- =?iso-8859-1?Q?1T3pKwq9fEv8Cb6+llCUQkLKe3iLebvja6Tze+FtSkBE2ymjnqFuSauy2S?=
- =?iso-8859-1?Q?2iBj2/fjwcxeBVVOpINeDgACzIEyPHWnpzWCXdMbfoK7QhGJh8WDiKGtzK?=
- =?iso-8859-1?Q?xEX8GzZj3IqkZyXCkglE5/4OyPo0jfRSOnMFCZuKXN13NEUlsxOWB0VyAd?=
- =?iso-8859-1?Q?pO5G49hYyoFHfEvL/WtAwFLgVI0DXIEcJJH8vShTnnpXKlOi+uF9wfX0xM?=
- =?iso-8859-1?Q?WSYL0HQal7xT0qJhKuJgr86m2Aio9JQrplHjd/QlaqDV4Ryl4cRMSlephc?=
- =?iso-8859-1?Q?J+Pd9dwhDgEAKatMaUQFNpUbm3egz690rMJ1F+1TqagI9u3W0fJqLw5Git?=
- =?iso-8859-1?Q?18ZdJAab28aJClzBy0+qPmZqPIqAvxXymZxbMkVvWSe8O6nBhZGQwHXTKM?=
- =?iso-8859-1?Q?QgMCLq3OWcVCGktzprucEkLUopxCSZTibjAAf8+jmgIoCs+TZZlQV4xOLC?=
- =?iso-8859-1?Q?spVSpwZLuA=3D=3D?=
-Content-Type: multipart/mixed;
-	boundary="_004_SJ0PR02MB7821AE63AAB7FA8A268F99ADF1FF2SJ0PR02MB7821namp_"
+ dkim=pass header.i=@pbarker.dev header.s=fm3 header.b=lyYYrNIi;
+ dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=ksdXsArL;
+ spf=pass (domain: pbarker.dev, ip: 103.168.172.156, mailfrom: paul@pbarker.dev)
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 7FD81140006C
+	for <yocto-patches@lists.yoctoproject.org>; Wed,  8 Jul 2026 10:28:07 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-12.internal (MEProxy); Wed, 08 Jul 2026 10:28:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pbarker.dev; h=
+	cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1783520887; x=1783607287; bh=ctXz6JnGxu
+	BtX++Ab+D2w+2X0QFRXgSSKsIxHoYgP+8=; b=lyYYrNIi19UfKdzqwqNX6X/6dt
+	Uz1XDfEla4E20SXPIXTHahuPOT7nfLttCCdLqRDqR5o5ebqjx1twpyx3NGzgV5qS
+	vLzorBSs6P2B9boLt8ZcR3QqJ8HjMy7UfOTEua+TGT5Rrw7qKL2HpXY1a47/h3Rc
+	de9pcmgb3zU09dA9IhnV72Ellsakk8Z6wXWQxk536aZMx0seVjI9Wjt3G/dkGyYY
+	xcaklGQDs6HqJipQEBd7791EHgz6rOsxlIbdpjtNPf73O0B1P49jSNlMnWm+I9iT
+	31w8GCIkzzMVthITmmy2ueTbRUdpYvIwCze95kV0ZLJclJnMvoavZyAN0R6w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1783520887; x=1783607287; bh=ctXz6JnGxuBtX++Ab+D2w+2X0QFRXgSSKsI
+	xHoYgP+8=; b=ksdXsArLMbtlpv2I9sYJrT2r5VeG/4X9VQAlzKyS/A7t2dYIQhl
+	cqNpmAI7IAzkQs7r/HsPamK/SubQQy0SHdB2k9rafXoSpEybM3jnAw+GPR4YrmS9
+	8tKG51bqok8EioEHI/ht//R3iZe4Ybc6YyWDZXae10yGqH0+SiSoUgFF6ZeAD9hR
+	/k/mbvRpFQWbSlgliVYbUy0SgIUro5niOuPqs2weEdWCcRVgGXGZlK6PQmH0fVsZ
+	61QNYlKOcl6n3B7ovxcZbDpDziLQRKgH/Km9rjKvUAn6+g8anSzVUwtmH+1IK7Bs
+	KUjC7Aowmn4PINyiNASHKdPLUrWfPCFlQJg==
+X-ME-Sender: <xms:d15Oah5dSbLr3ejG3tu338pHxFzz8IUk8svG6J3MK8BoIx7H_ukRfQ>
+    <xme:d15Oal2uLVWHPV_hwTv_chua8o5HX1gZsXNOciqcR4YVxx_arQi-xgcfHO-n0ywN-
+    zCeF5xwrmCMK6AgSjBLI8efF7ZmXB-tup4IYzOl3MV8P-QCxc0d>
+X-ME-Received: <xmr:d15OauE2-S5Z2Ku1J0RTPBo9cjHgfKgP3xFAZ-y-e_ps2EQwpowI95IoyUZ2L8yFIt49UZsspvJ0li_xMzCRifOGE1MfByf9a_8LGQ>
+X-ME-Proxy-Cause: dmFkZTE6sr7QGopEuOwrblp5O5q3gJR/8/gdHkq1bD0quvmUTLoU59q5sTQLHfdNZh5VDD
+    Tp9t9hCrUeWc45Woh0ePlwaqx4jOGYP/HxMm07Tq55toet3Cq4Q5vsT2RBQP9J3sx+9iTh
+    bv9Uq+LFxul17G5Cjclsul9xnCgCXCirP3On6buz+oXzqghvOoTbWBCKNFrBV/va9XSzT7
+    hbj3coteT9DJwVQWC0K5aenWSUzUdjZLmoFH27YrRDVlfyv6E6N9fgYubx00JDImYBHGDV
+    nIXicwyu52i4tq4g8Gw6JvI2B0ut2dUgn85cbjeXB/0BSh3wAMnvn27t5Exi0Y7VfunNLN
+    TnLC7m3nAnbIHp06SXI5VJKLX4kBnxi5CUWbd1jHzGI/XrzXo7wYf8XorMxUmgdWB0s/vN
+    KNukGG3wH3OyKt2bMlphDq1z/iijxJxz89BjLg9oilmpSfu+RRwkIWrAKs0MMmhtr1c93G
+    wEjbvfEO9pDHrl+VjRYhhvxx40vGf0egTs+zHm5Rxr1NZ4/r3E/zI20NVgI+8vulCG02YD
+    XtOTK24k7jIuMboIpMM23AQYdRezxhWN3+UskTUEyEC/cRpxn0fNKi4TIl7je502VP08rq
+    j9tNT6Dsx4R4uqn5qLZguVGwW6iP7vXLSL+yBbW6yEHYDOqpUoiZxhpoGepQ
+X-ME-Proxy: <xmx:d15OavQETAWxFFLaE_nPhk8R_ssOWbVhBhMqICKFMbwZr9FOZDkZqQ>
+    <xmx:d15OalBJ5lf-mccHoDEyElG5USAl4hzHOxp14mG2-wh-W5A93badMw>
+    <xmx:d15Oav0DVgqX6QTcaxmOpXJtnp5XmUlaxkdGWLF1QLJaaze3WT4bYQ>
+    <xmx:d15OajUKcNB_rCx-SRjgZwx4sFiq-Vlibx50_oh3UtoOJj2K_7tUIg>
+    <xmx:d15Oaspuq4RxtnW1geahOtrEI8gZhjtuvw1M379UnAuh-fzgYgGC4H-1>
+Feedback-ID: i51494658:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA for
+ <yocto-patches@lists.yoctoproject.org>; Wed,
+ 8 Jul 2026 10:28:06 -0400 (EDT)
+Message-ID: <b9026649ff8dc1c9d1eb56ac3ef33b84e91573fc.camel@pbarker.dev>
+Subject: Re: [yocto-patches] [wic][PATCH v4 0/6] tests: standalone
+ test-suite framework plus the first unit test
+From: Paul Barker <paul@pbarker.dev>
+To: yocto-patches@lists.yoctoproject.org
+Date: Wed, 08 Jul 2026 15:27:59 +0100
+In-Reply-To: <20260706222904.664863-1-twoerner@gmail.com>
+References: <20260706222904.664863-1-twoerner@gmail.com>
+Autocrypt: addr=paul@pbarker.dev; prefer-encrypt=mutual;
+ keydata=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
+ LUewj8JVy0aJsGTwI4invl
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-8u3aLCyLG+ZIsg6i9Zcl"
+User-Agent: Evolution 3.52.3-0ubuntu1.1 
 MIME-Version: 1.0
-X-Exchange-RoutingPolicyChecked: 
-	QoYbWrHH/gP6bbQuxiLK7n1gAAovgQpxGau6d5fhHlhMXnWrw5RExEWTZuOUvP1LP0opnSU8+Zq1U343khHb2UngO/J1QnzaAr1giwrp4rP0Mz9A2chFJOH+clLp/Rn0KSxJ/qfsxKaAqBUp9bo2sD7f97J3ZLiBkf/ryYRWaGR7V181tCVfRVTZX6aXskqjLRs37key5n4ZW4zGDgSUtNYklTRm4soRYKUc48GSFGYybS0si/+8tUC7X45eeZlJqb6/VE5wsD4S2UQF0cCFn5GhMBC6Mvmrrg2E90bQcZZ7stXp9uRH1L9krGMRz1HJajFE01IH2OiZiYlaDD7skQ==
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	GrOGGFBZzkCFEto6V0TGBQwwGJ4HqBcsusJUJ2ECO2PQ3Xm0fTwBLPJhwVaNn3PNzIp/Y42nxWp52ncOnKQ4cp6qn8Fth7RAT5Gv7GZ1HpSPNhs/8QRkAaV3teiGoBD/7H8ZC2TSkoT6D3TS9/E7S16VmTYslgDYT0ivLPH56lwcP/WMiRGk4jf7VnWSq0OjhfiV4I7IPExeRymx2g+ZqiBbc7LIb7GRDV/BhDKOJv3vt/fPZIR1SKShqsGmQNlwTt19AzlaJbzZBf8U3ZXc+d1eNCZB2yrun+N9saV7sgmTJk4QghTRAsTcITNrqi8aOWs5aXR6LYmLwu3WzRy4tKfdYXN80nyXCgdGscAEggpvUlje8X+JGUrZNtBUBoBqGJIX7XF2HYqaTpvplXzGrJ+1FllNL4HgovnUD14w9S/kNu5A7IfhAX6IPvPQ73dP5eRebmj1SHQsEnCqtIok2XFSae5iX0TpoiuS3Wq5CVm9Kq69ZxRTB+mEZzTk/NBZl+lkiHV/3ZFbpe226JR3DV8hBIRTYsZcfLBP8kFNipgrIaA4s8CREQxbsIhyJ1wheVPN9g8hGjz8pKHfqB8VrpY5PsSPMPgNlRnwz5C2qQFWnz3dr/HgXGJ9yC49K1qL
-X-OriginatorOrg: qti.qualcomm.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR02MB7821.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3145cbca-09a6-48b0-e3d6-08dedcc52d30
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jul 2026 07:47:35.8007
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 98e9ba89-e1a1-4e38-9007-8bdabc25de1d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: prWPaOKk/v0h+fK/9QRGcozooVyv9UgjIvVzRYI1xy+n8zizqkkGIN6i0AnnFei8SE2N+WekPvYHPaGV5+gAPGUH5RI4mFf9nrQIjZiXssQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR02MB9816
-X-Authority-Analysis: v=2.4 cv=EtziaycA c=1 sm=1 tr=0 ts=6a4e009b cx=c_pps
- a=3CRHu18DflYqj82tS/m+pw==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=RAioF0-LDSMA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22
- a=EUspDBNiAAAA:8 a=ODj8oAt0KyTlCUJcyBwA:9 a=wPNLvfGTeEIA:10
- a=YiUiQvwFPB3HWbwCeEwA:9 a=islKDBKu__pYnCpS:21 a=frz4AuCg-hUA:10
- a=_W_S_7VecoQA:10 a=u4Ef-fn88yQwT9K9ZQ0A:9 a=B2y7HmGcmWMA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzA4MDA3MyBTYWx0ZWRfX89DcVhgEY20O
- zqtSMslYdf+HfJuJmirxaJDFfrKwSBVMAHxm+W/YdLGY0NrpRxtGdoDF6WVcagswI3tnK+G+mFf
- o4FRMyFlAITChpyMPhRTgzZzGWNS/H94KhnWOOGyKNnUqQJnW+EVzptKjIffhbTqmm0/K/U+OEL
- h3fDapoPctSdZ3GrQhD6lPF0q4ukhkuzoTlOChvXEudPwzQ4oGx1w+g3FDwjKy5bF2YiRYxuNtY
- TGL7n3JeslwgEgpuKEg0mKlFa9mjJ02o5UWlFUh8pt1qa6RcWyrx2jjLpsJqzuFkLsHuHxxxFpV
- enwWo2nf/5C3co6Eo8S4UglcH+kB8WjCqW7IzDnOpDrrSFPkNACIZFfMfc6DyuzY5UV4PeJsskT
- f3xJRsRoP+X9G+Icx8fkbxWNVoJqbIiHbwotP083YW4QfvKCFaHMU4BlFgusD9y0e2g1Z4qJtrg
- +oXDAd3E4VFnUXQ/q3g==
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzA4MDA3MyBTYWx0ZWRfXzdMP8wkdTxqL
- ZkimmBsNKMc6oADxH9LnIplVYdSElnlJ5dPyfuTbXFLRrWUjv0DrArYf1TXp0uM8mx/oYrcJg1i
- sHiJ1GVKWGqOSSGeMEuaRik+jfK2eh8=
-X-Proofpoint-GUID: Hvz_0Qed2ix930xmu0OEZZEAGb9R1HwI
-X-Proofpoint-ORIG-GUID: Hvz_0Qed2ix930xmu0OEZZEAGb9R1HwI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-07-07_06,2026-07-06_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 lowpriorityscore=0 malwarescore=0 phishscore=0
- priorityscore=1501 clxscore=1011 suspectscore=0 bulkscore=0 impostorscore=0
- spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2607080073
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 08 Jul 2026 07:47:52 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4452
+ <yocto-patches@lists.yoctoproject.org>; Wed, 08 Jul 2026 14:28:11 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4453
 
---_004_SJ0PR02MB7821AE63AAB7FA8A268F99ADF1FF2SJ0PR02MB7821namp_
-Content-Type: multipart/alternative;
-	boundary="_000_SJ0PR02MB7821AE63AAB7FA8A268F99ADF1FF2SJ0PR02MB7821namp_"
 
---_000_SJ0PR02MB7821AE63AAB7FA8A268F99ADF1FF2SJ0PR02MB7821namp_
-Content-Type: text/plain; charset="iso-8859-1"
+--=-8u3aLCyLG+ZIsg6i9Zcl
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-  Please review the attached meta-selinux patch.
+On Mon, 2026-07-06 at 18:28 -0400, Trevor Woerner via
+lists.yoctoproject.org wrote:
+> wic has no test mechanism of its own; it relies on the oe-selftest from
+> oe-core, which needs a full bitbake build to exercise even pure-Python
+> logic. This series starts a small standalone suite that runs from a
+> plain checkout, framework first, then the first fix, and its test.
+>=20
+>   - the suite skeleton (pyproject test extra, pytest config, layout,
+>     a justfile command runner, and a README Testing section);
+>   - a conftest that imports wic once up front (stopping the session with
+>     a clear message if that fails) and prints a session banner;
+>   - optional coverage and ruff linting, each exposed as just recipes;
+>   - a one-line fix to wic.bb.utils (import errno) so mkdirhier's OSError
+>     handler works, as its own commit;
+>   - unit tests for mkdirhier() that pin its behaviour and catch that
+>     bug.
+>=20
+> The suite is green at every commit and the test tree is ruff-clean.
 
-This fixes a refpolicy build failure when POLICY_CUSTOM_BUILDOPT is extende=
-d using :append from another layer. The appended value includes a leading s=
-pace and the current refpolicy_common.inc passes it directly to make, causi=
-ng the appended option to be interpreted as a make target.
+All LGTM now!
 
-Signed-off-by: Chiluka Rohith <rchiluka@qti.qualcomm.com>
+Reviewed-by: Paul Barker <paul@pbarker.dev>
+
+Best regards,
+
+--=20
+Paul Barker
 
 
---_000_SJ0PR02MB7821AE63AAB7FA8A268F99ADF1FF2SJ0PR02MB7821namp_
-Content-Type: text/html; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+--=-8u3aLCyLG+ZIsg6i9Zcl
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 
-<html>
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859-=
-1">
-<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
-ttom:0;} </style>
-</head>
-<body dir=3D"ltr">
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-&nbsp; Please review the attached meta-selinux patch.</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-This fixes a refpolicy build failure when POLICY_CUSTOM_BUILDOPT is extende=
-d using :append from another layer. The appended value includes a leading s=
-pace and the current refpolicy_common.inc passes it directly to make, causi=
-ng the appended option to be interpreted
- as a make target.</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-<br>
-</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-Signed-off-by: Chiluka Rohith &lt;rchiluka@qti.qualcomm.com&gt;</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-</body>
-</html>
+-----BEGIN PGP SIGNATURE-----
 
---_000_SJ0PR02MB7821AE63AAB7FA8A268F99ADF1FF2SJ0PR02MB7821namp_--
+iIcEABYKAC8WIQSzjPXf5Y1BDWhU2iCrY1Tsnbr0bgUCak5ebxEccGF1bEBwYmFy
+a2VyLmRldgAKCRCrY1Tsnbr0bhtbAQDU47J5fmubqOyW4Kw2Q0/w7n47TBgWCXL2
+5QItEdUbrwEAwt9moPKjm7eRv+fCK5AnFxzfIfzbF3gbjsAnVZ3EFwI=
+=Sts+
+-----END PGP SIGNATURE-----
 
---_004_SJ0PR02MB7821AE63AAB7FA8A268F99ADF1FF2SJ0PR02MB7821namp_
-Content-Type: application/octet-stream;
-	name="0059-refpolicy_common-strip-POLICY_CUSTOM_BUILDOPT-before.patch"
-Content-Description: 
- 0059-refpolicy_common-strip-POLICY_CUSTOM_BUILDOPT-before.patch
-Content-Disposition: attachment;
-	filename="0059-refpolicy_common-strip-POLICY_CUSTOM_BUILDOPT-before.patch";
-	size=1349; creation-date="Wed, 08 Jul 2026 07:46:57 GMT";
-	modification-date="Wed, 08 Jul 2026 07:47:29 GMT"
-Content-Transfer-Encoding: base64
-
-RnJvbSBlMzcxZDE2YWJiZTAzYTljYjEwMmY2YjViZDZiNDBiMzNjMzA1NTdiIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBDaGlsdWthIFJvaGl0aCA8cmNoaWx1a2FAcXRpLnF1YWxjb21t
-LmNvbT4KRGF0ZTogVHVlLCA3IEp1bCAyMDI2IDE1OjQyOjEzICswNTMwClN1YmplY3Q6IFttZXRh
-LXNlbGludXhdW1BBVENIXSByZWZwb2xpY3lfY29tbW9uOiBzdHJpcCBQT0xJQ1lfQ1VTVE9NX0JV
-SUxET1BUCiBiZWZvcmUgcGFzc2luZyB0byBtYWtlCgpQT0xJQ1lfQ1VTVE9NX0JVSUxET1BUIGlz
-IHBhc3NlZCBkaXJlY3RseSB0byB0aGUgcmVmcG9saWN5IG1ha2UgY29tbWFuZAphcyBDVVNUT01f
-QlVJTERPUFQuIFdoZW4gbGF5ZXJzIHVzZSAnOmFwcGVuZCcgdG8gZXh0ZW5kIHRoaXMgdmFyaWFi
-bGUKKGUuZy4gUE9MSUNZX0NVU1RPTV9CVUlMRE9QVDphcHBlbmQ6ZGlzdHJvID0gIiBvcHRpb24i
-KSwgQml0QmFrZQppbnRyb2R1Y2VzIGEgbGVhZGluZyBzcGFjZS4gUGFzc2luZyB0aGF0IHJhdyB2
-YWx1ZSB0byBtYWtlIGNhdXNlczoKCiAgbWFrZTogKioqIE5vIHJ1bGUgdG8gbWFrZSB0YXJnZXQg
-J29wdGlvbicuICBTdG9wLgotLS0KIHJlY2lwZXMtc2VjdXJpdHkvcmVmcG9saWN5L3JlZnBvbGlj
-eV9jb21tb24uaW5jIHwgMiArLQogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRl
-bGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEvcmVjaXBlcy1zZWN1cml0eS9yZWZwb2xpY3kvcmVmcG9s
-aWN5X2NvbW1vbi5pbmMgYi9yZWNpcGVzLXNlY3VyaXR5L3JlZnBvbGljeS9yZWZwb2xpY3lfY29t
-bW9uLmluYwppbmRleCAwMTQ3MTRjLi4xNTY2NTkxIDEwMDY0NAotLS0gYS9yZWNpcGVzLXNlY3Vy
-aXR5L3JlZnBvbGljeS9yZWZwb2xpY3lfY29tbW9uLmluYworKysgYi9yZWNpcGVzLXNlY3VyaXR5
-L3JlZnBvbGljeS9yZWZwb2xpY3lfY29tbW9uLmluYwpAQCAtMTI2LDcgKzEyNiw3IEBAIEVYVFJB
-X09FTUFLRSA9ICJOQU1FPSR7UE9MSUNZX05BTUV9IFwKICAgICBESVJFQ1RfSU5JVFJDPSR7UE9M
-SUNZX0RJUkVDVF9JTklUUkN9IFwKICAgICBTWVNURU1EPSR7UE9MSUNZX1NZU1RFTUR9IFwKICAg
-ICBNT05PTElUSElDPSR7UE9MSUNZX01PTk9MSVRISUN9IFwKLSAgICBDVVNUT01fQlVJTERPUFQ9
-JHtQT0xJQ1lfQ1VTVE9NX0JVSUxET1BUfSBcCisgICAgQ1VTVE9NX0JVSUxET1BUPSR7QGQuZ2V0
-VmFyKCdQT0xJQ1lfQ1VTVE9NX0JVSUxET1BUJykuc3RyaXAoKX0gXAogICAgIFFVSUVUPSR7UE9M
-SUNZX1FVSUVUfSBcCiAgICAgTUxTX1NFTlM9JHtQT0xJQ1lfTUxTX1NFTlN9IFwKICAgICBNTFNf
-Q0FUUz0ke1BPTElDWV9NTFNfQ0FUU30gXAotLSAKMi4zNC4xCgo=
-
---_004_SJ0PR02MB7821AE63AAB7FA8A268F99ADF1FF2SJ0PR02MB7821namp_--
+--=-8u3aLCyLG+ZIsg6i9Zcl--
 
