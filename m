@@ -1,198 +1,160 @@
-Return-Path: <JPEWhacker@gmail.com>
+Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB960C43458
-	for <webhook@archiver.kernel.org>; Wed,  8 Jul 2026 14:56:51 +0000 (UTC)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.10388.1783522611254992362
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E802C43458
+	for <webhook@archiver.kernel.org>; Thu,  9 Jul 2026 03:50:18 +0000 (UTC)
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.1653.1783569016858181324
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 08 Jul 2026 07:56:51 -0700
+ Wed, 08 Jul 2026 20:50:17 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=W7VuyqbW;
- spf=pass (domain: gmail.com, ip: 209.85.128.180, mailfrom: jpewhacker@gmail.com)
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-81d2b54fa70so11745077b3.1
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 08 Jul 2026 07:56:51 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1783522610; cv=none;
-        d=google.com; s=arc-20260327;
-        b=Vs83BPmPuB7H0tudZOCT/Ck39n9+WX7P9GN/jNMkTZzkVg1udnMzzkSkwpshIEASir
-         aXTDytOENbMy5V8oGFORGo2hTQWQnXoL3RRyuFvsDXgkDTzTeg8SQaeS5fXTV8hk54Sm
-         nss3ByDaQhoobVyrarIn5wOfd7aqMK+2+Ry740+LKwwYxroTFvZtgvyqXUiaeCiNtQyG
-         Wj6MC8KyjYGLWmdKQ1xl4KQoPkW4ls1S+2flmPnkc1/W9kfO3o9wz5+uwFa21j3oSZuC
-         YLVUo7rr3nBFfJnkxIehJxan7nVg7yJAgVBpVU2NJHNSZ33aiT9ZWKc2KbmHFerg3y/t
-         cI4Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=2iFQsHXCMHqO63nPIfpE0x9r9txVt5UYxA6epdGcQcw=;
-        fh=ZH3wtczcUaw/qCH+nsmdcFXP/O47krpttXtPWPBQK6s=;
-        b=Gg2ULzfbzAfWFIuIwfeYkfgYSy/tFs6fhE0Uskv/5nHkAe+H3MJa4pBzovMp895Qie
-         GwJUMuj1bdyx4nA8lgywRclf4d8YgwV8u53/dziPsPrPiPBwdOFsOv27DxTBdpTzojIf
-         SeU9nNucvmc/zY8dVhvQPKfge9cgG9A1Hf6vtRqDCueYsEZdRUbfGlLkntoLl7NPeZdV
-         Qk3YvrANVfW4Rl94Std3wx+R8CzxOgrytvx/nLmeDv2wlArCQl1w8RfvNnbSKrjdqfFv
-         jUEv7VSdyCUg37OGFLSNAY20itcbzf6WZKoXtorXQlyvAuC+0zMye6UrteoQRA2jv93j
-         G+hA==;
-        darn=lists.yoctoproject.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=WDtRxOBO;
+ spf=pass (domain: gmail.com, ip: 209.85.222.170, mailfrom: twoerner@gmail.com)
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-92e5d50b0dbso84039385a.1
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 08 Jul 2026 20:50:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783522610; x=1784127410; darn=lists.yoctoproject.org;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=2iFQsHXCMHqO63nPIfpE0x9r9txVt5UYxA6epdGcQcw=;
-        b=W7VuyqbWIdvMLphdpkcV95JuYBJmwE6E5hoHobOGESlcOjb5qtYvXEEAidLa285N6e
-         OcfsttPLAm2AEUffhdkamaliP07xwRp7+zSeLMxTU9rDBHymh6sNzq0STtFpjbRuYtbc
-         Ajt5owigP/quVa3zxhSr4eroyrHfS6WtdoRXAXwmTwEV5LrBbnvs2BNYBA78QXNtL+yG
-         c+0m7Va5OSlkAPrDmI+M85ugMBKswZ1zE6JmvNbu5k6i6BP04Kry5Mzdoai7JaE42J/X
-         yfPD8h0SWPiuOmX3SgUZbd7+TLHva2rR7SkXfQVaJzwrWUbC4OQhW+/eA0T2D1fqsX4U
-         DCoA==
+        d=gmail.com; s=20251104; t=1783569016; x=1784173816; darn=lists.yoctoproject.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=zwO6dgb48rOCnhb7rhz1bQHBM5l1lCG1s9e0cCN/TD4=;
+        b=WDtRxOBOTDCHOKnlctbuUa9YUeg3BUhGSoxVLSWVVZrd6/fqkDj0zWpWxomPrVw/j9
+         dD/TRruQoNg4q/iqlePGiZ+E8aw8VAnyR6g3D6w/YrCg7W8u5/1OUngvgLXAbYe1g6rJ
+         zahOVa8ZRxQxc/okVJsTSMgILhmPI8iQFeAKFMh5f6ZcxHhMri9HWhxu3t6u1HEMReM0
+         VuXROpIKf+hIG0fEQn90geeo8SiPRbkMrzpoKTJ6wKi828TXrZ5OB7qx2iauT5j/icKA
+         NgrnX4mdp+WKh7hviBmL2VV1Qiy3lpmxMuGRuBawHJBqFR0OrSyVTBe7Qu26Gm3QQ/y6
+         kQ+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783522610; x=1784127410;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=2iFQsHXCMHqO63nPIfpE0x9r9txVt5UYxA6epdGcQcw=;
-        b=XPPTzjvO6dU90zrmxTTHfjIdNksYZqa7lfiaIziWHtF8G3y+vLIq9Ko5CCZJWYcxKZ
-         /gOeHgro/pM6ott4WqJ0czLdpo9nss0mE4qepMmiNtJZSQPHVbloW4nz4W7TLrm7DGPm
-         j+858eWbF6KxlMTgdSOGiUAlNXErZc3XSMvQv0HkKYGFaOnlJ782SsNfN2PntB8/a1VM
-         c5G2yNXwcF5IzPCC826GNaRhOS1AJIvMKq3VGtxQUykABMkzvAOkdGwpNmXAXAePbV4/
-         f2M7BqXdvmVgArfoxB+FF+oECB3pSe1tlHMIql7j/8uQSTrxS0GXSuSZnKtTkS/IG1qS
-         yssA==
-X-Gm-Message-State: AOJu0Yw/i9AVA4VIQKgLjO7GFe5NTaB3x5zLKOa5jKI+h3xjVMKS+kid
-	eUKxmt0jV8HnYCdI9MPqgvPNz+6/JFW/TtVatxTC4+COgHtEg1rF+rh+8qeAmcsWchbeDE2EMnh
-	oVCnkeYYPKTXZgS3S7olDjICKMZjkzR8=
-X-Gm-Gg: AfdE7clWbUlfcndrb61MrC79SA5AiZWIasJyIg8oDq52vtFvW7+JbQBGnPAW8YhgPmO
-	LURf2vwjh4voXZe00TIt6XXLNC7W1QXmGcpfRMtWD+oe7mqLHioJSB7cFAnFlGHTR1jUcKADnI1
-	0iSbS9g94nfibdN4nx7QUduH4RtMVNeA6ZsRUqEvtg80DFpOr0z0QBfYrHwuMnUdEguY2jzYz1g
-	xiWDUDQGy13fRTq5gWdbCAs7b6Isg2g+qSCumzfW44jxSn+8szpq4bxJNf10qfGiOC+crPelGZj
-	3RZiDOpgHvyElFnpoRcNSw==
-X-Received: by 2002:a05:690c:9b11:b0:80f:34b4:ae with SMTP id
- 00721157ae682-81dc12efa68mr22429937b3.47.1783522605502; Wed, 08 Jul 2026
- 07:56:45 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1783569016; x=1784173816;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=zwO6dgb48rOCnhb7rhz1bQHBM5l1lCG1s9e0cCN/TD4=;
+        b=ArBXzPHTXgW1h4aMyV8uXlz0aJ+tjPb0uhSlV061I4tMRc7OjJlW4JtIoQjnAlL1PP
+         CKRKvuL5jS++M7sof/9AtIgssQGYN9iB8Ep01VaDExIGlfNO6qQDSu8/WKj0cRLNO8sm
+         rUK4W05wlhLE2MMMIBlr9p9frnRQU9D4mq7OXYiH/7hf2WCVU4W08Oj6c7/5XbQwo+DI
+         tuNffECqGUs5XYmQlagzSVq7aODIOLdY3FnteHF2dSBNBqF7zbuf/kCG6zA6hzolVUUc
+         GY2iTZE00rtV/ilJrGcA5xj6CByxghAlFB+Eqe8Ra6x/lV8Iu5l3o7k5x3FoMthzqLo8
+         lGyw==
+X-Gm-Message-State: AOJu0Yys4oedY6V5gRSY1G+1iNHhqu6G/ujmMNJshXnFOI0I3h9E/1B5
+	TyYmuXwDYnnjA+7QDukNONptwIKypMu80MSUtduuXCX6HHuUZXsqnQHIuZft5Q==
+X-Gm-Gg: AfdE7cmY+2mR1fzexrZ7lACwszdeRqVRSSov0AdGatMvtcAfJ33D+ne4z8xGods938m
+	94o71phqG7cY4m5sppobjnLPHEkI/gyGSBEr7BkLJhKPok10QOW6x3PEkBs4Bm1EYlwOZYALGcs
+	jNz7QcYGt1CsAeuhSoBCbik4SRKwVNIJP449MMfNzRLdMiwvApHV9xaF6wDMgdhHyG6/wnzvhyu
+	Igcbw9KEQV3p4fFGzM3gtACBy0BvAriEb71nN6r7SAwROLcii+cw6AhzT7yWwzmOAwFxkGxibVi
+	I9Jt85l4dNSNVawg4C/xFTD15mWtASGudi7rQGTKyJavurF/KuLXtixD69z/CVyydTL+D3OFsFJ
+	W5YnTF37pOqnw+kq3Vclgo/MNO8W2WgHnoiLiNnpDliqNXCq9HOWD+ouJdLjWc25mXoJA2boVEZ
+	1o9OBAzIDi763M0JIVHWgGLszQJuXHSaA7UAWCS5SleAKwQmb5Y5S2xI4=
+X-Received: by 2002:a05:620a:2802:b0:92e:c118:18a0 with SMTP id af79cd13be357-92ecf91f3e0mr542344385a.83.1783569015422;
+        Wed, 08 Jul 2026 20:50:15 -0700 (PDT)
+Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-92e90b800efsm1516806885a.4.2026.07.08.20.50.14
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Jul 2026 20:50:14 -0700 (PDT)
+Date: Wed, 8 Jul 2026 23:50:12 -0400
+From: Trevor Woerner <twoerner@gmail.com>
+To: yocto-patches@lists.yoctoproject.org
+Subject: Re: [wic][PATCH v4 0/6] tests: standalone test-suite framework plus
+ the first unit test
+Message-ID: <ak8adD3nntUJyEMY@localhost.localdomain>
+References: <20260706222904.664863-1-twoerner@gmail.com>
 MIME-Version: 1.0
-References: <20260708144551.2741360-1-ross.sweng@gmail.com>
-In-Reply-To: <20260708144551.2741360-1-ross.sweng@gmail.com>
-From: Joshua Watt <jpewhacker@gmail.com>
-Date: Wed, 8 Jul 2026 08:56:31 -0600
-X-Gm-Features: AVVi8CeW493mtCR2Pk6c3l7KnvloP5GsDVYG5p7wFHaEdf6XT6QZXmqBQGOSlC8
-Message-ID: <CAJdd5GacXK_J47BaVU6RE_S-Rn-St4AqtebccYFKPCz1BRm0ng@mail.gmail.com>
-Subject: Re: [meta-mingw] [PATCH] toolchain-scripts-mingw32: add /usr/share/pkgconfig
-To: Ross Stutterheim <ross.sweng@gmail.com>
-Cc: yocto-patches@lists.yoctoproject.org
-Content-Type: multipart/alternative; boundary="0000000000005992f306561ab75d"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260706222904.664863-1-twoerner@gmail.com>
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 08 Jul 2026 14:56:51 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4455
+ <yocto-patches@lists.yoctoproject.org>; Thu, 09 Jul 2026 03:50:18 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4456
 
---0000000000005992f306561ab75d
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Patch series applied to wic, master branch.
+Thanks Paul!
 
-On Wed, Jul 8, 2026 at 8:46=E2=80=AFAM Ross Stutterheim <ross.sweng@gmail.c=
-om>
-wrote:
-
-> poky commit e0bcf333df8bccbc7aca39048423d97247454c5e added
->
-
-FYI: poky repo is no longer used so I updated the commit message to OE core
-1bea760f3f462fdcc3eefc0d8597688d61447ddd for you
-
-Otherwise, LGTM; I'll run it through the test suite just to be sure
-
-
-> /usr/share/pkgconfig to PKG_CONFIG_PATH back in 2016. Add here so SDKs
-> generated for windows can find the same packages as SDKs for linux
-> when using pkg-config after sourcing the environment-setup script.
->
-> Signed-off-by: Ross Stutterheim <ross.sweng@gmail.com>
-> ---
->  classes/toolchain-scripts-mingw32.bbclass | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/classes/toolchain-scripts-mingw32.bbclass
-> b/classes/toolchain-scripts-mingw32.bbclass
-> index 8cb426a..ee53bf8 100644
-> --- a/classes/toolchain-scripts-mingw32.bbclass
-> +++ b/classes/toolchain-scripts-mingw32.bbclass
-> @@ -25,7 +25,7 @@ toolchain_create_sdk_env_script:sdkmingw32 () {
->         done
->         echo "set
-> PATH=3D$sdkpathnative$bindir;$sdkpathnative$bindir/../${HOST_SYS}/bin;$sd=
-kpathnative$bindir/${TARGET_SYS}"$EXTRAPATH';%PATH%'
-> >> $script
->         echo 'set PKG_CONFIG_SYSROOT_DIR=3D%SDKTARGETSYSROOT%' >> $script
-> -       echo 'set PKG_CONFIG_PATH=3D%SDKTARGETSYSROOT%'"$libdir"'/pkgconf=
-ig'
-> >> $script
-> +       echo 'set
-> PKG_CONFIG_PATH=3D%SDKTARGETSYSROOT%'"$libdir"'/pkgconfig;%SDKTARGETSYSRO=
-OT%'"$prefix"'/share/pkgconfig'
-> >> $script
->         echo 'set
-> CONFIG_SITE=3D%SDKROOT%/site-config-'"${multimach_target_sys}" >> $script
->         echo "set OECORE_NATIVE_SYSROOT=3D$sdkpathnative" >> $script
->         echo 'set OECORE_TARGET_SYSROOT=3D%SDKTARGETSYSROOT%' >> $script
-> --
-> 2.54.0
->
->
-
---0000000000005992f306561ab75d
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
-mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Wed, Jul 8, =
-2026 at 8:46=E2=80=AFAM Ross Stutterheim &lt;<a href=3D"mailto:ross.sweng@g=
-mail.com">ross.sweng@gmail.com</a>&gt; wrote:<br></div><blockquote class=3D=
-"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(2=
-04,204,204);padding-left:1ex">poky commit e0bcf333df8bccbc7aca39048423d9724=
-7454c5e added<br></blockquote><div><br></div><div>FYI: poky repo is no long=
-er used so I updated the commit message to OE core 1bea760f3f462fdcc3eefc0d=
-8597688d61447ddd for you</div><div><br></div><div>Otherwise, LGTM; I&#39;ll=
- run it through the test suite just to be sure</div><div>=C2=A0</div><block=
-quote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1=
-px solid rgb(204,204,204);padding-left:1ex">
-/usr/share/pkgconfig to PKG_CONFIG_PATH back in 2016. Add here so SDKs<br>
-generated for windows can find the same packages as SDKs for linux<br>
-when using pkg-config after sourcing the environment-setup script.<br>
-<br>
-Signed-off-by: Ross Stutterheim &lt;<a href=3D"mailto:ross.sweng@gmail.com"=
- target=3D"_blank">ross.sweng@gmail.com</a>&gt;<br>
----<br>
-=C2=A0classes/toolchain-scripts-mingw32.bbclass | 2 +-<br>
-=C2=A01 file changed, 1 insertion(+), 1 deletion(-)<br>
-<br>
-diff --git a/classes/toolchain-scripts-mingw32.bbclass b/classes/toolchain-=
-scripts-mingw32.bbclass<br>
-index 8cb426a..ee53bf8 100644<br>
---- a/classes/toolchain-scripts-mingw32.bbclass<br>
-+++ b/classes/toolchain-scripts-mingw32.bbclass<br>
-@@ -25,7 +25,7 @@ toolchain_create_sdk_env_script:sdkmingw32 () {<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 done<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 echo &quot;set PATH=3D$sdkpathnative$bindir;$sd=
-kpathnative$bindir/../${HOST_SYS}/bin;$sdkpathnative$bindir/${TARGET_SYS}&q=
-uot;$EXTRAPATH&#39;;%PATH%&#39; &gt;&gt; $script<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 echo &#39;set PKG_CONFIG_SYSROOT_DIR=3D%SDKTARG=
-ETSYSROOT%&#39; &gt;&gt; $script<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0echo &#39;set PKG_CONFIG_PATH=3D%SDKTARGETSYSRO=
-OT%&#39;&quot;$libdir&quot;&#39;/pkgconfig&#39; &gt;&gt; $script<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0echo &#39;set PKG_CONFIG_PATH=3D%SDKTARGETSYSRO=
-OT%&#39;&quot;$libdir&quot;&#39;/pkgconfig;%SDKTARGETSYSROOT%&#39;&quot;$pr=
-efix&quot;&#39;/share/pkgconfig&#39; &gt;&gt; $script<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 echo &#39;set CONFIG_SITE=3D%SDKROOT%/site-conf=
-ig-&#39;&quot;${multimach_target_sys}&quot; &gt;&gt; $script<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 echo &quot;set OECORE_NATIVE_SYSROOT=3D$sdkpath=
-native&quot; &gt;&gt; $script<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 echo &#39;set OECORE_TARGET_SYSROOT=3D%SDKTARGE=
-TSYSROOT%&#39; &gt;&gt; $script<br>
--- <br>
-2.54.0<br>
-<br>
-</blockquote></div></div>
-
---0000000000005992f306561ab75d--
+On Mon 2026-07-06 @ 06:28:58 PM, Trevor Woerner wrote:
+> wic has no test mechanism of its own; it relies on the oe-selftest from
+> oe-core, which needs a full bitbake build to exercise even pure-Python
+> logic. This series starts a small standalone suite that runs from a
+> plain checkout, framework first, then the first fix, and its test.
+> 
+>   - the suite skeleton (pyproject test extra, pytest config, layout,
+>     a justfile command runner, and a README Testing section);
+>   - a conftest that imports wic once up front (stopping the session with
+>     a clear message if that fails) and prints a session banner;
+>   - optional coverage and ruff linting, each exposed as just recipes;
+>   - a one-line fix to wic.bb.utils (import errno) so mkdirhier's OSError
+>     handler works, as its own commit;
+>   - unit tests for mkdirhier() that pin its behaviour and catch that
+>     bug.
+> 
+> The suite is green at every commit and the test tree is ruff-clean.
+> 
+> Changes in v4 (in response to review feedback, thanks to Paul Barker):
+> 
+> v4 restructures the v3 10-patch series into 6 patches. How the old
+> patches map to the new ones:
+> 
+>   - v3 1/10 (skeleton) -> v4 1/6, which also gains a justfile command
+>     runner in place of the run-tests.sh wrapper and no longer creates a
+>     tests/docs/ tree;
+>   - v3 2/10 (conftest banner) -> v4 2/6, which also absorbs the
+>     wic-import check (see next line);
+>   - v3 3/10 (run-tests.sh wrapper) -> dropped; the justfile replaces it
+>     and its wic-import check moves into conftest, so the check runs on
+>     every invocation rather than only through the wrapper;
+>   - v3 4/10 (coverage) -> v4 3/6, exposed as just recipes;
+>   - v3 5/10 (ruff linting) -> v4 4/6, exposed as just recipes, with
+>     ruff now pinned exactly so the clean-bar gate is reproducible;
+>   - v3 8/10 (tests/** E402 ignore) -> folded into v4 4/6;
+>   - v3 6/10, 7/10, 10/10 (docs README, authoring guide, review rubric)
+>     -> dropped; the suite ships a short README Testing section instead
+>     of a tests/docs/ tree;
+>   - v3 9/10 (test plus folded-in errno fix) -> split into v4 5/6 (the
+>     errno fix, on its own, first) and v4 6/6 (the tests), and the tests
+>     are reframed to target mkdirhier's own behaviour rather than
+>     re-testing os.makedirs.
+> 
+> Dependency versions were also refreshed to current releases.
+> 
+> Changes in v3:
+> 
+>   - test_bb_utils used the tmp_path fixture instead of
+>     tempfile.mkdtemp(), so the tests no longer leaked scratch
+>     directories under /tmp;
+>   - documented the standard pytest scratch-directory controls (TMPDIR
+>     and --basetemp) rather than a custom variable;
+>   - added a review-rubric doc.
+> 
+> Changes in v2:
+> 
+>   - v1 was a single ~6000-line commit that used xfail markers to record
+>     the bugs it found; v2 broke the work into a reviewable series where
+>     each test lands green next to the fix that makes it pass, with no
+>     xfails.
+> 
+> Trevor Woerner (6):
+>   tests: add the standalone unit-test suite skeleton
+>   tests: add conftest with a wic-import preflight and session banner
+>   tests: add optional coverage reporting
+>   add ruff linting
+>   bb/utils: import errno so mkdirhier's OSError handler works
+>   tests/unit/test_bb_utils: cover mkdirhier()
+> 
+>  .gitignore                  |  4 ++
+>  README.md                   | 15 +++++++
+>  justfile                    | 27 +++++++++++++
+>  pyproject.toml              | 24 +++++++++++
+>  src/wic/bb/utils.py         |  1 +
+>  tests/conftest.py           | 28 +++++++++++++
+>  tests/unit/test_bb_utils.py | 81 +++++++++++++++++++++++++++++++++++++
+>  7 files changed, 180 insertions(+)
+>  create mode 100644 justfile
+>  create mode 100644 tests/conftest.py
+>  create mode 100644 tests/unit/test_bb_utils.py
+> 
+> -- 
+> 2.50.0.173.g8b6f19ccfc3a
 
