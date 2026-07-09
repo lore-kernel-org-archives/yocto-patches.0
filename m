@@ -1,122 +1,89 @@
-Return-Path: <twoerner@gmail.com>
+Return-Path: <gael.portay+rtone@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D4F8C43458
-	for <webhook@archiver.kernel.org>; Thu,  9 Jul 2026 03:51:28 +0000 (UTC)
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.1659.1783569081933082428
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0FA1C44501
+	for <webhook@archiver.kernel.org>; Thu,  9 Jul 2026 07:25:33 +0000 (UTC)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.3766.1783581931127906378
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 08 Jul 2026 20:51:22 -0700
+ Thu, 09 Jul 2026 00:25:31 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=GCMHpQFn;
- spf=pass (domain: gmail.com, ip: 209.85.222.182, mailfrom: twoerner@gmail.com)
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-92e53581361so70598985a.1
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 08 Jul 2026 20:51:21 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=Kx/wtZpP;
+ spf=pass (domain: gmail.com, ip: 209.85.218.45, mailfrom: gael.portay+rtone@gmail.com)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-c15e62c695cso1851666b.1
+        for <yocto-patches@lists.yoctoproject.org>; Thu, 09 Jul 2026 00:25:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783569081; x=1784173881; darn=lists.yoctoproject.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=Zi5gzNBAl9uq+i3roFifGL43V2/nCJK7ch2LYQV3lJQ=;
-        b=GCMHpQFnx7DVc+T1lmz67CCiEYc+0zFpNrrq4D1hr18zcqEURGeaUWxNNnZpo5X3PO
-         5H2T0696WHzBG1vmseGgEsm7gDVK4ul16ujHOGz1awGGJO+KGqAOqnT+DU77dnJTUFoo
-         aVCXX2U+ZIWM9deJS8NPDU+2EQPz9RgQil2xqt8XgcgTXnYhHADB04i1ewS6+R9gq+yQ
-         w2GBUTBoCabieh+GUzWkQK+8sgst7B9dL4Fqx1xXq2Kyh2FUt4Ru8HeA0o2c+/aUxsBv
-         qmdJ1103STg40N/OstfheCGThnJ5VNZ8LnxDB23eD6QlOLeXG8pbGNu6rwuozqE+d6j4
-         zxKg==
+        d=gmail.com; s=20251104; t=1783581929; x=1784186729; darn=lists.yoctoproject.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-type:content-transfer-encoding:mime-version:sender:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=c25YVC+/qTGSjZjxiuHaWwfLeTq6L4tK8DxjPBtjzbk=;
+        b=Kx/wtZpPh1hRW5rbJ6ot79OOQijqa38pwUtKTnuUpYF3qXXs1oxTLzOVSjr9XPdutq
+         SbUxXbc49LTdx2V9hiQX3XJdnp0VqfXfjsuC0ipPNQlN+vfZ5xyjbbMJvNYupUpRYSy3
+         RnckcazEU7o6jYKuWwbf/0cOYyc8rC8eju2RJyaln91cEShmcofnEj/FIaf7prmmhZtb
+         YMlmpLEAlrh9IfOBh+Cpai4Z4RZ2q28PW7LBIVIP5m80tWhCa3t89ya2r1M35tovhtM4
+         fLhnrhQv0qPZp5gbeXQzhUSfzHMhZ8Im8SDrB6cjDmO4cJHMmx7d1OARFA9W+d3O29HN
+         Bnhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783569081; x=1784173881;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=Zi5gzNBAl9uq+i3roFifGL43V2/nCJK7ch2LYQV3lJQ=;
-        b=WCLeOBup+bxrvVvOgdImGpGqPXOmLOz/aE2qUfzSCvHB1s0whWSVRtSQi92TyTHAuh
-         SIvjxiSCUuph21cfVPApA7AY9GdkYM5q6jKEH6Gdv7Jk2SFWPFa2EXT+x+XFz5Hjcigs
-         o9OpRV40usZDNuyQrK5qqLd57GXcGIy0DTAnO9x4JAAH/mllStGMuZumFaWL8dj+82mq
-         CctNlA3hMJ81EOvS05ad8ocDhkBVJvwbn7Ba0QXtnBRsSJTMCjNlbRcf7M7UyB2uvdwF
-         oO2jAkkca99iaylHhzobqev5YPRfHrvEahQCguVvNbHk6MG+4VyvJ0p73rzNYs6cDvoI
-         5ltQ==
-X-Gm-Message-State: AOJu0YxBqExQKLg2HUlcAMO6RodRNjz5RN1md4tlhFtE1BybBmxcJ/Qy
-	FKVfXcs4rsQQmbEtAX98CwIkbx4Vv7Mnr59h/WeN4thMvSr/XuZc6d9b2qC9RQ==
-X-Gm-Gg: AfdE7cm8gADOJZQZ+i8Lf01Ag7+dXbf7VO302fPSeLXLHMWtSK75YQivgbNM3jxg+qo
-	zQFndlVioEqJS89rs6bpoxgWPK3R/QdmpgtpotZ43JFZwXUck+Wq8ndmigi1bv+2DbND795tjUT
-	42+K5hiYoCY1iykK96UMyh/WG/OfRwEW1aukIP6X5INFUw55Q/C9mW449IWW52L6cRHbP2Eic7G
-	8YPQxNSmSkEzVxVcbpeBqELtx33roEzJGWuyhPOmKKoEsu2mjM9OrLkrJXDGEFw4HbH2jk4s9h8
-	UA0N7yLm4IoRzY1vPDsrGPW8dxcUt9WZZ6SLoo3nBeYnpKFEpqDDwUZ2sawNfEGKoBQGDa/TNLA
-	ngIBR+J+0BI87woalKzIW+l0la3XwIGVhmzsTyRo7AaMvHBPzqIANwaWISMHPvgrKSyIMuaCRW4
-	9FiETm6+xhMNyG4le/xa7QlBHPtrq5bSpJRDJ0XiWoqT+UKc8pzgKzItg=
-X-Received: by 2002:a05:620a:270f:b0:92e:666a:f4a2 with SMTP id af79cd13be357-92ecf8ea9c7mr588634985a.60.1783569080821;
-        Wed, 08 Jul 2026 20:51:20 -0700 (PDT)
-Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-92e90cbe3e2sm1568557485a.35.2026.07.08.20.51.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jul 2026 20:51:20 -0700 (PDT)
-Date: Wed, 8 Jul 2026 23:51:18 -0400
-From: Trevor Woerner <twoerner@gmail.com>
-To: =?utf-8?B?R2HDq2w=?= PORTAY <gael.portay+rtone@gmail.com>
-Cc: yocto-patches@lists.yoctoproject.org
+        d=1e100.net; s=20251104; t=1783581929; x=1784186729;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-type:content-transfer-encoding:mime-version:sender:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=c25YVC+/qTGSjZjxiuHaWwfLeTq6L4tK8DxjPBtjzbk=;
+        b=Ubo5jDKi0X/eaCfO3zq9Hoy/0x2pwgeEpGcHhGJFf226au+VnIDTIIbJ0Fqr5B5e/U
+         i3Lpmi+REep4t9ZSNCifX8GGjPTD0FSw/66rvVNdgeL4S6uWKcYkmEc1Cs1XEe0+XSXq
+         /uNEjnC9zt+bCBHQ1by9mFpUJgqMxXav9OjI53Z8j9gkGaLPATB1MjzTnONOru5W2uQK
+         Q8nDRZWKQYApEDFj8BSzgAM+bvotzj7R9/iDatafJUIOPQRV6xTZ7utTuLZ005zK+EB9
+         oHOyjbBUFRMKXRD1EZ3dp7hbWW4jHgl49ykC2zC25awG8KIs4GTzk7pa5Isr/pXfa1DJ
+         dB2Q==
+X-Gm-Message-State: AOJu0YxLiz0XbqMs8OFf63n0OeHjylGAZeWLqKDlHJelLOdkYRC7sqjB
+	In0KpaAnaFl7ESmJauQ24Tdt1cS6BWibIzy/EkfCdvi21N051wDHgvIi
+X-Gm-Gg: AfdE7cnlxInzad6xTVO+Q8Unqunq90JDR5M8xjK2XNZ51gA8uXr3H8ZydoJ/R034bvr
+	gP4xX1ivHK0QJ//AyigcVOQtC64jU0pAmePtEfhFvJOAdD1R0C/oYi5LV0+L8Gbc1FKtVX8QR6N
+	MvlNAcS66D6vioVU1Tu2031ZBwdnCxYX8k6WlN+iSqqikdP7uKW+QrovZO4SLrbeV00Gj31LU9p
+	vXT2owhDRt+cttB0AdLv+Na6sGYhFQQ2MBvfYfDmq2hWgDiFK+0ez4H74sTct0s/WXWz1kpj94k
+	QKMR89nhZYnlRRflhnRJzs5muKC7PTTtJMMfKmTwNjGiEMW1uwjMfJIYMrheJgqm1YzuP5RRJxN
+	9luc12PU0o0UMY1e8YLixTtqPRrT8A2RE2pmjfa1n62rSFhpW8YWGijb/zscWRCHPFK+DVhcmsf
+	SDB7fDL9rKeNoQ+r91xwLPMJFe4gkllEBYNsEfvfnLtChstvA5kL3hfhmMMSul0mWgyyL5eRefz
+	+lEGgRBH9lMX1hkFjmZMYvZpsyyJJIilQ==
+X-Received: by 2002:a17:907:e1c6:10b0:c15:ef57:de2f with SMTP id a640c23a62f3a-c15ef57e7a1mr8156866b.1.1783581929203;
+        Thu, 09 Jul 2026 00:25:29 -0700 (PDT)
+Received: from localhost (pla93-h04-89-80-79-40.dsl.sta.abo.bbox.fr. [89.80.79.40])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c15ae0bb618sm435529866b.20.2026.07.09.00.25.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Jul 2026 00:25:28 -0700 (PDT)
+Sender: =?UTF-8?B?R2HDq2wgUE9SVEFZ?= <gael.portay@gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 09 Jul 2026 09:25:27 +0200
+Message-Id: <DJTV0XT222JF.8QDPSTQ3RWY4@gmail.com>
+Cc: <yocto-patches@lists.yoctoproject.org>
 Subject: Re: [PATCH 0/6] wic/help: Refresh wic create help and usage strings
-Message-ID: <ak8attfxZztmVJdX@localhost.localdomain>
+From: =?utf-8?q?Ga=C3=ABl_PORTAY?= <gael.portay+rtone@gmail.com>
+To: "Trevor Woerner" <twoerner@gmail.com>
+X-Mailer: aerc 0.17.0
 References: <20260702044425.846351-1-gael.portay+rtone@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260702044425.846351-1-gael.portay+rtone@gmail.com>
+ <ak8attfxZztmVJdX@localhost.localdomain>
+In-Reply-To: <ak8attfxZztmVJdX@localhost.localdomain>
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 09 Jul 2026 03:51:28 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4457
+ <yocto-patches@lists.yoctoproject.org>; Thu, 09 Jul 2026 07:25:33 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4458
 
-Oops! I missed these.
-Please put the tag [wic] in the email subject in the future, thanks!
+On Thu Jul 9, 2026 at 5:51 AM CEST, Trevor Woerner wrote:
+> Oops! I missed these.
+> Please put the tag [wic] in the email subject in the future, thanks!
+>
 
-On Thu 2026-07-02 @ 06:44:18 AM, Gaël PORTAY wrote:
-> Hello maintainers,
-> 
-> That patch series refreshes a bit the help and usage strings for wic
-> create.
-> 
-> The first patch removes the removed option --infile, while the following
-> two patches list the missing options --no-fstab-update and --workdir as
-> compared to `wic create` output:
-> 
-> 	usage: wic create [-h] [-o OUTDIR] [-w WORKDIR] [-e IMAGE_NAME]
-> 	                  [-r ROOTFS_DIR] [-b BOOTIMG_DIR]
-> 	                  [-k KERNEL_DIR] [-n NATIVE_SYSROOT] [-s] [-f]
-> 	                  [-c {gzip,bzip2,xz}] [-m] [--no-fstab-update]
-> 	                  [-v VARS_DIR] [-D] [-i IMAGER]
-> 	                  [--extra-space EXTRA_SPACE]
-> 	                  [--sector-size SECTOR_SIZE]
-> 	                  wks_file
-> 	wic create: error: the following arguments are required: wks_file
-> 
-> The fourth patch fixes inconsistent output between options by replacing
-> the character `|' to `,'.
-> 
-> The fifth patch updates the output of command `wic create` that is
-> hardcoded in the overview help string.
-> 
-> And the last patch outputs option capitalized values that are missing
-> for options requiring a value; also, it ensure the lines are wrapped to
-> 80-characters.
-> 
-> Regards,
-> Gaël PORTAY (6):
->   wic/help: Drop removed --infile option from help string
->   wic/help: List missing option --no-fstab-update to usage string
->   wic/help: List missing option --workdir usage string
->   wic/help: Use comma to list short and long options
->   wic/help: Refresh output of create command in overview help string
->   wic/help: Add missing option values and rewrap lines
-> 
->  src/wic/help.py | 52 +++++++++++++++++++++----------------------------
->  1 file changed, 22 insertions(+), 30 deletions(-)
-> 
-> -- 
-> 2.43.0
-> 
+Oops! I forgot to set the tag for that series.
+
+At least, I have set the tag for the other patch; I will do my best to
+add it in the future :)
+
+Regards,
+Ga=C3=ABl
 
