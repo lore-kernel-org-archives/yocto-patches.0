@@ -2,74 +2,76 @@ Return-Path: <paul@pbarker.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 179EBC44508
-	for <webhook@archiver.kernel.org>; Wed, 15 Jul 2026 18:01:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7429EC44508
+	for <webhook@archiver.kernel.org>; Wed, 15 Jul 2026 19:09:27 +0000 (UTC)
 Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.230.1784138490854478155
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.1684.1784142557097946811
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 15 Jul 2026 11:01:31 -0700
+ Wed, 15 Jul 2026 12:09:17 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@pbarker.dev header.s=fm3 header.b=TfmMCsnS;
- dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=Ut+uVwCY;
+ dkim=pass header.i=@pbarker.dev header.s=fm3 header.b=PQ14wf9u;
+ dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=TqyWnfZF;
  spf=pass (domain: pbarker.dev, ip: 202.12.124.151, mailfrom: paul@pbarker.dev)
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfout.stl.internal (Postfix) with ESMTP id 072F01D00081
-	for <yocto-patches@lists.yoctoproject.org>; Wed, 15 Jul 2026 14:01:30 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Wed, 15 Jul 2026 14:01:30 -0400
+Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
+	by mailfout.stl.internal (Postfix) with ESMTP id DD1321D000B0
+	for <yocto-patches@lists.yoctoproject.org>; Wed, 15 Jul 2026 15:09:15 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-11.internal (MEProxy); Wed, 15 Jul 2026 15:09:15 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pbarker.dev; h=
 	cc:content-type:content-type:date:date:from:from:in-reply-to
 	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1784138489; x=1784224889; bh=owy3f0EkbT
-	KyZiaArtjvXcCzriJW3uLl8ttHwJdCUp8=; b=TfmMCsnS34D1tYHh/V1ahW9Dl0
-	F4ZGt/KSN0vh+2QHqrpuTCJmy81itW51ltMa2bNa0fH4pKprkCe3BRsa4tVmdpQe
-	IY/9AV/7T4NSzlq6+wl6Bky0/fH22+3BW1m7Jp8/EG/KmdwZpyKCQpwkjmmUdbMs
-	CmL+tHk036rhfOMB1YrFDGAXf4QcuwUjG4ydlk/9lpVK3gKg1tahEMlIDURbzJz+
-	AfXt3DKBS3FEWmzoBpgoGWJ9RsT4HVisvk+QIP1/Ejq8vye/d0wzYgFx7HWbsOVt
-	hvAA+DjgUubIDmi/V1UkurcPCmiVCFhYHTZUzwn1ggB9fNMHQQyJoaw40NQA==
+	:subject:to:to; s=fm3; t=1784142555; x=1784228955; bh=OWNxEYtNJ0
+	2jhdKldmnWOyauchZB+DJQTrn3GW7DMhs=; b=PQ14wf9u86JAOtpN7quWM/W8NQ
+	i7hmhnsgLk1Zhh2kMCn/DxF8rfv5UWpYegw3kEOazXDPU9maTfAvA7EhFPifD3qk
+	lpl7+Sthid4HfNYt81Jm1uHAJW32I3Kjq98VkuOF1gyQUXgMl0PEXUp1sPjy3m0Y
+	K2KcftULxSlVp937YYWZ648HnVXGkRxKcZbRewMb/gX1jXqwXDWwfqfmQbyTpATs
+	iYqVY1TRR43R0obppuQn/oRQ3YdQoE3aNLdBCRAR71K0lqiqEHW2VAV1Af6zXb5+
+	S+nxHw5SOmaaunNS6YKLFIDQsfEIWYGwngUdoinx/7dt8+h1I84uOfWuyOlg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:content-type:content-type:date:date
 	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
 	:message-id:mime-version:references:reply-to:subject:subject:to
 	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1784138489; x=1784224889; bh=owy3f0EkbTKyZiaArtjvXcCzriJW3uLl8tt
-	HwJdCUp8=; b=Ut+uVwCYIc6U+h8JjE0JrX3c3RM8R4YO7xRBMZ6kJiCY7sLKWdX
-	L7fZLIcTzl02GNwVMIZdEBoIoEnKFcA1I712Y71SMnS5rxoC8hzqtygQsFyuS1zs
-	YF+iWI3HrYEDqVGE2TOGuDxUH+8NBm9bgG2z2tWWLV+AKnngQTl4raP8VNG/pAtF
-	Ik+nwNxKT2XxwEk6G8MiFlinGRcCGodtMQHazHuP7hl9Wnq54B/FdcEmJ6a5bf/Y
-	5wtEdWJj9t3GZCcr9RjxU6hqetDD9wqhTF8xLpIm6dae2cBmgisU6HhocjK6Gg+D
-	W+nlJ66oU3FcJSSVdwIY/2VXmkP/NsYBllQ==
-X-ME-Sender: <xms:-cpXaknOgeHpQyR8ZEGFJQVfaR7lYUYAXLife3IEK9mYhMYiUA7OJQ>
-    <xme:-cpXaqx_hsOkfz-Ids_f6f9oHBIyxWeF7tGcF1xCI3xBr30PIRNDFsORB5XeL95lU
-    QWE6bBotP5TCCkGJDbPdW9VtyrCpDIw-TAzyhzOlZLRiGSyZXrgl5o>
-X-ME-Received: <xmr:-cpXaoRPq23x7ZSJsvRgY17TeMkxNlTRJzzReftkbB4qNWUhiHnQcfkB541I0izsZN3O_jU-IaTQrknCfnibhuNKO_pTVConOA1iW6lPYZO3>
-X-ME-Proxy-Cause: dmFkZTEVIiMcHz0pZbT1sys+vvyZ7nzRgey007dALy28Ef1XV9UqQF6EU1cS6wQ8x7caOg
-    mrmRdxsaNW9kx1D0LvigQTo7avRwYL3GAAW649uRzvNb/WqLbhhlPqFKbvi96PjSN0dFa9
-    R4LNYOMOABut1S+hQK7K5sAn2n3r42v/ltlUFeRefezPvPkoxHAPwv0DxIvrZQHqc3Pa7s
-    zaRm2IERSeBcMWTA4/biSAEO8aCYGHYE9uBUWR5sA7Kz3lWZrRT2pgwKsYgVrgnz2ylHCA
-    DtBqQoRlo4XhyXytvNKWZ61sp5hToW1u2RBo55MEbwOnazS9TNcs7qaL3RILqp02BMKEmK
-    RKawIe1ypGcJbwkr27cTTvetJ20T2b1vD1pHxUb+T2kEoAXY492jypH6RG7MU08dh8iG9B
-    BbfVpe1AoHDbu9GZBq+m91mGOM2QtB9HwEZ4iRarrfhz3PS6ELeQCA0GheTIMhyfeXkBTH
-    hUUExGhWRBUteRjRCV3w8NK+6UQrcqFds8AmpPjvWzI1e9zKXhNCFE1tsefQYVcg1vxSJi
-    BEErQH47YUKY33FtO9ySjKcmG8o/8l9bZlXuGw/GjLnGhWplQYtsSVE4QA/aLoICrPa1jB
-    NK29b37nFZH/sQXKGmFv6W51hEUlUHhH0IgkXhNY45zc4o4YS8yWuicZbYHQ
-X-ME-Proxy: <xmx:-cpXalv0hskceh361cyagc4v8ii_gpQWoMuE86A3JPgZneDEurHz6g>
-    <xmx:-cpXaivCCN19leT2bOTSLcchhLX5rqWc2uWn-0By-wCfOl1RCW9hmw>
-    <xmx:-cpXajw7fAai7yfY6Bn9uqFBz0LDmKKMs4UUnzl7MzKieEoCGGwcOg>
-    <xmx:-cpXaggqbBKLaV8ZGAuuQcExwEjwIUL39bGxEZ9qlDKAtJkGK8lEpQ>
-    <xmx:-cpXamHxEVOFgcUN_1XnNmVyW_jmZdAJd5NeK8p6cnV4eJ2fLd9fAqLN>
+	1784142555; x=1784228955; bh=OWNxEYtNJ02jhdKldmnWOyauchZB+DJQTrn
+	3GW7DMhs=; b=TqyWnfZFl40p6ovnh16dNT31rt/qgfSSUCHklnrVAvOKd+20ish
+	5vKj5UnKu7F8oXwSbmm6ZLU9xxGe/rBGbwPVi6GYNt8WfVBfJvEZRAKArhyjtTRE
+	fGND5wNHoOLVpUa+QwF0A8iGglr3lobnV+VgMhZNWYgb+rY+gkEvlR+t+Yie8GM+
+	uIx+LwKwqLjIiNn5y4lCu/rrvG4TMftYxwKeJRqNxX2P/IqZj55iYgFDF6JYjAgR
+	/Iaxmazoe4scR83AOz0yTUmE9iJ2q0cpglTFvMcPhrCl6NtHWZ0wsSqnLwEOSXeU
+	Uxsq3JDR73pa6PuvJFPyCuLE1FSeENum+KQ==
+X-ME-Sender: <xms:29pXangRLAnq0ziibB5M4rxtXUrzgqOHoatltDJis8QfjfUoqcrDCQ>
+    <xme:29pXaq9UtVC2pn8DOeZvKxfnRtpAxsIzmFawITq-o0uXGv87Uf42sV2YqCl0e9zW_
+    m5p2SmYzEsR5OinNP3YmguP_K_d4RE05yvcNBrfZuSMiiXCPu8EqvY>
+X-ME-Received: <xmr:29pXasuzwJYgKrndoDqY5la-y3UT1iOo_7V2XS8K-XaxaI4MdRjOJ3ihV9UMmfTXKTXPOx0OfwJuoVcx7uT9uvb88pe2rPzd3cvcu7Qo4AMz>
+X-ME-Proxy-Cause: dmFkZTEYDa9ES4/WsPH+s5gREf9aPn/JH/PyxSnCd+OWwqfViB3dcKxJgUMo5yqLZgYGoY
+    XvrLzjrCI9n87x4Tzkx33Hu241y/adKDac7x3fm4UdlIsOPR1dOGnkSS9AD7TX0w37teRM
+    6fyqV5HIxmQJPafXvJX6J1TDILlN1a30hcNSRFvR0G/0y5klZSLYGK3K5anv7c6oBRhock
+    uXYJXWps61oQq4yoXTfUn3QC9JS0VvFSY6H8u9LcWZnrXmcz+0wwRGSXQDD1lgV2xpBN3g
+    OS3bVqGmHZaZUK0WY+J8ulZVw3+t9n6FTeCxr/UY6IkPvj0HZqCan3bzgvOynoDelsfdin
+    qXfieSuKF4FYDclZhR7FN3kaGc+AfrE5XPEHNz90P4qhQ84xU1P6U+b6ktohm/28Lh1oL1
+    NnuewoAIbhlTVDsPQ1Eq8xjxw6mV3pr9LCaeyiwyjwXswjea6qm3j2ia5C6/LIcwO5fJAr
+    lHbI+fMZO60cs+hApl9OMI6d2Ac5LSsK1o2bIDS4lcRirCRCuyfTJtxIy3CY1SbWarcj7c
+    5QOHMpOor4tlyrZJR7Nq51Hj6K/z9xoazciWFD8HMzfPZzg7IKzXm62ZRKGhGJF0bQ59rQ
+    8dPLnzX2+nShltexiS3+a/xUUrY1TWCF0Vn1i0Owi2T1fvPrPM0jlQgr0wPQ
+X-ME-Proxy: <xmx:29pXapZwLoMXHhWR9wqhZtVwi9C2yNHTOplXjcShSP1bRMpovAF6Lg>
+    <xmx:29pXakqpWRMx0bVkeIab5hugKg6XGor34KziyopefPktKht3c9mdoA>
+    <xmx:29pXam99KMnzbVFQVnMWi9BhcDS3TakySy9QqL52FSTLr7H8ol6RDg>
+    <xmx:29pXar8rQvqV6niClHmmEURGQ9gKhzh1xQTWFF24ixbWuuV3Lnju1A>
+    <xmx:29pXagwnfsHBfZt2lBQ6zW_Wp-si5dCKxYbHhGeH1KuAlNgxIHE0oK3R>
 Feedback-ID: i51494658:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA for
  <yocto-patches@lists.yoctoproject.org>; Wed,
- 15 Jul 2026 14:01:29 -0400 (EDT)
-Message-ID: <237352d6f13f1081afcbe97da4f67bd94cee9b92.camel@pbarker.dev>
-Subject: Re: [yocto-patches] [wic][PATCH 0/4] oe/path: three fixes plus unit
- coverage
+ 15 Jul 2026 15:09:15 -0400 (EDT)
+Message-ID: <e645c8e9df3e28a87b9daa07f220f023ee6287ca.camel@pbarker.dev>
+Subject: Re: [yocto-patches] [yocto-autobuilder-helper][PATCH v4 03/11]
+ scripts: add run-vcontainer-tests for meta-virtualization
 From: Paul Barker <paul@pbarker.dev>
 To: yocto-patches@lists.yoctoproject.org
-Date: Wed, 15 Jul 2026 19:01:25 +0100
-In-Reply-To: <20260709205227.3470712-1-twoerner@gmail.com>
-References: <20260709205227.3470712-1-twoerner@gmail.com>
+Date: Wed, 15 Jul 2026 20:09:08 +0100
+In-Reply-To: <33fd6cf552070e50949e104771ed72746ff5921b.1783371914.git.tim.orling@konsulko.com>
+References: <cover.1780710041.git.tim.orling@konsulko.com>
+	 <cover.1783371914.git.tim.orling@konsulko.com>
+	 <33fd6cf552070e50949e104771ed72746ff5921b.1783371914.git.tim.orling@konsulko.com>
 Autocrypt: addr=paul@pbarker.dev; prefer-encrypt=mutual;
  keydata=mQINBGC756sBEADXL6cawsZRrDvICz9Y1SG0/lW1me4xpq36obh7a0IGAzp3ywNRb/4MO
  DTqP4+DD0cIFuDY41/N17g0sNlp8z+/k/IIDmNPtYQOTVmAkrkdDU4BP8dD3Cp1PUw6nrbInfujAJ
@@ -115,73 +117,118 @@ Autocrypt: addr=paul@pbarker.dev; prefer-encrypt=mutual;
  ChZPI3NMLnKZPJC8ZQZ4S8yb5oA3rqTA2DMODvsrEVlaB2cQ6IWHSa/mvBwA8Ias3771cp4fZS7W7
  LUewj8JVy0aJsGTwI4invl
 Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-9pL30SvRhtkkJCyKq2G2"
+	protocol="application/pgp-signature"; boundary="=-SqA9jyDofHnsaJXPzxrB"
 User-Agent: Evolution 3.52.3-0ubuntu1.1 
 MIME-Version: 1.0
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 15 Jul 2026 18:01:37 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4480
+ <yocto-patches@lists.yoctoproject.org>; Wed, 15 Jul 2026 19:09:27 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4481
 
 
---=-9pL30SvRhtkkJCyKq2G2
+--=-SqA9jyDofHnsaJXPzxrB
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2026-07-09 at 16:52 -0400, Trevor Woerner via
-lists.yoctoproject.org wrote:
-> This series continues the standalone unit-test work, this time over
-> oe/path.py. It follows the same shape the suite settled on: each
-> source fix is its own standalone commit, and the green test module
-> lands last, so the suite passes at every commit.
+On Mon, 2026-07-06 at 15:05 -0700, Tim Orling via lists.yoctoproject.org
+wrote:
+> Add scripts/run-vcontainer-tests, the test runner used by the
+> vcontainers-test job. It sources the vcontainer-tarball SDK,
+> discovers the meta-virtualization pytest suite, and runs a
+> configurable set of suites (vdkr, vpdmn, memres) against the
+> checked-out layers. Suites can be selected per-step so the
+> top-level 'vcontainer-tests' job runs the container engine
+> agnostic tests:
 >=20
-> Three fixes come first, each independent of the others:
+> - tests/test_container_cross_install.py
+> - tests/test_container_registry_script.py
+> - tests/test_vcontainer_auth_config.py
+> - tests/test_multiarch_oci.py
+> - tests/test_multilayer_oci.py
 >=20
->   - __realpath's isdir guard assigns a bare `false`, which is not a
->     Python name; when os.path.isdir() raises, the handler meant to
->     absorb the error raises NameError instead. Use the builtin False.
->   - symlink(force=3DTrue) cleared the destination through remove(), which
->     globs its argument; a destination containing glob metacharacters
->     could fail to match itself or match unrelated files. Remove the
->     literal destination instead.
->   - canonicalize('') and canonicalize(None) returned the current
->     working directory, because os.path.realpath('') does; a stray
->     separator injected a spurious cwd entry too. Skip empty tokens.
+> The 'vdkr-tests' and 'vpdmn-tests' jobs run only their respective
+> suites (including memres for each container engine):
 >=20
-> The final commit adds tests/unit/test_oe_path.py, covering oe/path's
-> own logic (join, is_path_parent, symlink, make_relative_symlink,
-> canonicalize, which_wild, realpath) and locking in the three fixes.
-> Backing any fix out turns the matching test red. The suite is green
-> and ruff-clean, and the series passes oe-core's wic oe-selftest with
-> no regressions.
+> - tests/test_vdkr.py
+> - tests/test_vdkr_registry.py
 >=20
-> Trevor Woerner (4):
->   oe/path: fix bare `false` NameError in __realpath's isdir guard
->   oe/path: don't glob-expand the destination in symlink(force=3DTrue)
->   oe/path: canonicalize('') should return '' rather than the cwd
->   tests/unit/test_oe_path: cover oe/path's own path logic
+> and
 >=20
->  src/wic/oe/path.py         |  21 ++-
->  tests/unit/test_oe_path.py | 298 +++++++++++++++++++++++++++++++++++++
->  2 files changed, 316 insertions(+), 3 deletions(-)
->  create mode 100644 tests/unit/test_oe_path.py
+> - tests/test_vpdmn.py
+>=20
+> The purpose of this script is to test the just built vcontainer-tarball,
+> so that it can be considered "known-good" and be published for use by
+> container building jobs that need the vcontainer-tarball installed.
+>=20
+> AI-Generated: Claude Cowork Opus 4.7
+> Signed-off-by: Tim Orling <tim.orling@konsulko.com>
+> ---
+>  config.json                  |  31 +++++
+>  scripts/run-vcontainer-tests | 212 +++++++++++++++++++++++++++++++++++
+>  2 files changed, 243 insertions(+)
+>  create mode 100755 scripts/run-vcontainer-tests
+>=20
+> diff --git a/config.json b/config.json
+> index 972682d..ae13c5b 100644
+> --- a/config.json
+> +++ b/config.json
+> @@ -1855,6 +1855,37 @@
+>                      "install -d ${BASE_SHAREDDIR}/pub/vcontainer-tarball=
+-latest && install -m 0755 ${BUILDDIR}/tmp/deploy/sdk/vcontainer-standalone=
+.sh ${BASE_SHAREDDIR}/pub/vcontainer-tarball-latest/vcontainer-standalone.s=
+h.new && mv -f ${BASE_SHAREDDIR}/pub/vcontainer-tarball-latest/vcontainer-s=
+tandalone.sh.new ${BASE_SHAREDDIR}/pub/vcontainer-tarball-latest/vcontainer=
+-standalone.sh"
+>                  ]
+>              }
+> +        },
+> +        "vcontainer-tests": {
+> +            "NEEDREPOS" : ["bitbake", "meta-openembedded", "meta-virtual=
+ization"],
+> +            "ADDLAYER" : [
+> +                "${BUILDDIR}/../meta-openembedded/meta-oe",
+> +                "${BUILDDIR}/../meta-openembedded/meta-python",
+> +                "${BUILDDIR}/../meta-openembedded/meta-networking",
+> +                "${BUILDDIR}/../meta-openembedded/meta-filesystems",
+> +                "${BUILDDIR}/../meta-virtualization"
+> +            ],
+> +            "step1" : {
+> +                "shortname" : "Run vcontainer pytest suite",
+> +                "NOBUILDTOOLS" : 1,
+> +                "EXTRACMDS" : [
+> +                    "${SCRIPTSDIR}/run-vcontainer-tests -s vcontainer -b=
+ ${BUILDDIR} -m ${BUILDDIR}/../meta-virtualization -S ${BASE_SHAREDDIR}/pub=
+/vcontainer-tarball-latest/vcontainer-standalone.sh -r ${HELPERRESULTSDIR}"
+> +                ]
+> +            },
+> +            "step2" : {
+> +                "shortname" : "Run vdkr pytest suite",
+> +                "NOBUILDTOOLS" : 1,
+> +                "EXTRACMDS" : [
+> +                    "${SCRIPTSDIR}/run-vcontainer-tests -s vdkr -b ${BUI=
+LDDIR} -m ${BUILDDIR}/../meta-virtualization -S ${BASE_SHAREDDIR}/pub/vcont=
+ainer-tarball-latest/vcontainer-standalone.sh -r ${HELPERRESULTSDIR}"
+> +                ]
+> +            },
+> +            "step3" : {
+> +                "shortname" : "Run vpdmn pytest suite",
+> +                "NOBUILDTOOLS" : 1,
+> +                "EXTRACMDS" : [
+> +                    "${SCRIPTSDIR}/run-vcontainer-tests -s vpdmn -b ${BU=
+ILDDIR} -m ${BUILDDIR}/../meta-virtualization -S ${BASE_SHAREDDIR}/pub/vcon=
+tainer-tarball-latest/vcontainer-standalone.sh -r ${HELPERRESULTSDIR}"
+> +                ]
+> +            }
+>          }
+>      },
 
-Hi Trevor,
+Hi Tim,
 
-As src/wic/oe/path.py is a copy of meta/lib/oe/path.py from OE-core, I
-you should propose the fixes on the OE-core mailing list so that the
-rest of the project can benefit from them. The fix for bb/utils.py in
-the previous series was not applicable in bitbake itself, but the fixes
-here are definitely applicable in OE-core.
-
-It would also be better for unit tests covering these functions to live
-in the OE-core selftest suite if possible. Tests in wic are better than
-no tests though!
-
-What we should avoid though is the library functions copied in from
-bitbake & OE-core diverging in wic, as that just complicates
-maintenance.
+Would it make sense to merge the vcontainer-tests steps in to the
+vcontainer-tarball job defined in patch 2 of this series? Essentially,
+build the tarball (step 1), test it (steps 2-4, merged from this patch),
+then publish it (step 5) only if it has passed the tests.
 
 Best regards,
 
@@ -189,17 +236,17 @@ Best regards,
 Paul Barker
 
 
---=-9pL30SvRhtkkJCyKq2G2
+--=-SqA9jyDofHnsaJXPzxrB
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 
 -----BEGIN PGP SIGNATURE-----
 
-iIcEABYKAC8WIQSzjPXf5Y1BDWhU2iCrY1Tsnbr0bgUCalfK9REccGF1bEBwYmFy
-a2VyLmRldgAKCRCrY1Tsnbr0bkO6AQCpfOoyOvB3FXt4z2qTphT4q+QbEkYwl/Iv
-/8aCCHh6FgEA6LUF0qMFmC6+a07QIJzigc6g/xBRAHW1YbcHTSfKbw4=
-=Ca5J
+iIcEABYKAC8WIQSzjPXf5Y1BDWhU2iCrY1Tsnbr0bgUCalfa1BEccGF1bEBwYmFy
+a2VyLmRldgAKCRCrY1Tsnbr0boo6AP9UxNdxi08EG8bWZbenx4tU7IbHXmInkRg9
+1abI4iK7LgD7BeLIfbdbeCFnQ2R49yd+HZbgoINvwWDEkD3EJxLdsQI=
+=AQkS
 -----END PGP SIGNATURE-----
 
---=-9pL30SvRhtkkJCyKq2G2--
+--=-SqA9jyDofHnsaJXPzxrB--
 
