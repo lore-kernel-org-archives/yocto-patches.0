@@ -2,78 +2,78 @@ Return-Path: <paul@pbarker.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E10C44508
-	for <webhook@archiver.kernel.org>; Wed, 15 Jul 2026 19:51:27 +0000 (UTC)
-Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.2634.1784145080459548225
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB4A5C44508
+	for <webhook@archiver.kernel.org>; Wed, 15 Jul 2026 20:03:27 +0000 (UTC)
+Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.2900.1784145802920761755
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 15 Jul 2026 12:51:20 -0700
+ Wed, 15 Jul 2026 13:03:23 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@pbarker.dev header.s=fm3 header.b=Z+IuObfW;
- dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=aFgCTbWH;
- spf=pass (domain: pbarker.dev, ip: 202.12.124.153, mailfrom: paul@pbarker.dev)
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 67BB77A00F6;
-	Wed, 15 Jul 2026 15:51:19 -0400 (EDT)
+ dkim=pass header.i=@pbarker.dev header.s=fm3 header.b=cLvJiujm;
+ dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=KP+Yhtw4;
+ spf=pass (domain: pbarker.dev, ip: 202.12.124.146, mailfrom: paul@pbarker.dev)
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfout.stl.internal (Postfix) with ESMTP id E76641D0007A;
+	Wed, 15 Jul 2026 16:03:21 -0400 (EDT)
 Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Wed, 15 Jul 2026 15:51:19 -0400
+  by phl-compute-02.internal (MEProxy); Wed, 15 Jul 2026 16:03:22 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pbarker.dev; h=
 	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
 	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1784145079; x=1784231479; bh=Ghbg2Bli2A
-	WTBcZnJWkRmehUBwSS4qsKbNuZqDFvRcg=; b=Z+IuObfW8+jZaDzS90KATFl80a
-	GmqpFCZYmq01/DrqcPfurqzDQZzm5F+25KnmVd+NAAYJUS8c/OBw0j9toXhz7N7K
-	Wn0InT0NfdAmHvN4j3rTFNcfkf9S5MPamFo2Ixmehlwk3oJUpFBDCsemEXA1vvir
-	3IeAT1v1h9MPOFgCSOzxnRDrRUxnErFB4Vi7ylcXngvT5Olo26Dm7qcqUM/LJjGd
-	2Bcw4P1Lm+wa64m8i7fgWTi5lNPU5BGRlN0ArgyPhYI40jrq230cjfeEXlfM8YQE
-	soyNXPYOl6v6T2OsEBDvO49YesGl1qXdrobFyHDNMpBP7oWOFK5SVymsho9Q==
+	:subject:to:to; s=fm3; t=1784145801; x=1784232201; bh=nuqfgsrIy/
+	AxBUUDg4WozzX/ZhMw6yCShv+KlTzBYAA=; b=cLvJiujm6TLOOg5z2NAUqI3qvF
+	JjeMZqacNCMqwh+piyuSL5kYOrw2KmDZrgwtU7g/vhWC2mgUipHOjjjD8AZsbSKV
+	XtvgbNXpbq08Wv6KNHnndklZOIOnzAnjDKVhuA1Lf35B1UXqkIe2Wal1wKzwgGJz
+	68SgMYB17AseSGgO3TbHkTiv81hRg923jjNm7JC9mH4fuFbcRYwAkK5EWwBPyMPU
+	iYKVes85D8zmxSdrcAdCKqB8ddknPLvhj70aIaUYaSQbgkGiekW+T0CTzg6cU6PX
+	bH9R3xY3UmekkgQ9K7uZPbAbV7GiR4im7PO+vhzXlaU4EDcC98/T9WH1qzaA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-type:content-type:date:date
 	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
 	:message-id:mime-version:references:reply-to:subject:subject:to
 	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1784145079; x=1784231479; bh=Ghbg2Bli2AWTBcZnJWkRmehUBwSS4qsKbNu
-	ZqDFvRcg=; b=aFgCTbWH7H05/BdYUa9lwio94MgfEh/34EvyJuwxc5MioqOrEtZ
-	RaJNozBNy2ETeNB9STtK7/k7Kr20drEEGaBStiqo2qtdhwr+4CQJLPj1MXyT9rii
-	bLljQxyhoNR5bRlkv6lgknxbEfpdKszULeV2sXmibZZRWNfw2qNb+GPr7jkNI7XH
-	s+yoZyOz4elqhm5C4jh9mgwGT4mOfWpZKPTYYFQ96MCJ/qlUrHJ96gsWh9D6Nz+3
-	/SHRgTH5XC4B1knOwiAA4ZNV758FEE4bvLK/W0c9VeIxcDeFgtv5eSBO2mk5BzTY
-	+l7P0PQi+Wtqc7W+fk9XJVWqDX2RJsyfVxw==
-X-ME-Sender: <xms:tuRXajmOpJajMeYBwc60A1DTWswo-Loef-xj2bFPmfigHEU07lc_Uw>
-    <xme:tuRXaqgF1X2K-vERIc-23lXYbAksuIO0DGiTDaZlFj4GQYP75BJIjNEtvIY7GOU24
-    -6VS03Rg85pYgb5xIxEUmfhu2D3FOmG4_EpOi61sEz7NuROQcWQ2R4>
-X-ME-Received: <xmr:tuRXajezayYDRYJQ44_4wS9YBjB_0F1jDlFpjD9ChHLu_PR4aQJ6t8FSnrUMtZ6P9qHyX9Nmrp3NV4efJ43VK1vl1dFDnNb5kQ7ZeKEyu2jh>
-X-ME-Proxy-Cause: dmFkZTEkg3kK7C43jwe1xbQebO+v/i8jWau9LyoSD9gjqr42zeTErCD0alrMmCQIdEKCXF
-    acvFbChA9YYTxmekxwOm8DFjyRGWej37VfzB9wTcog/gO1lKz79Kn2nsMKlI2BxFYCcZ7b
-    grBNiylMkKVFoc0yRpWjKIC6H09yJSnmElkd2beMdPtfBQRBhZMCvGs40H7VA9Ym0CI990
-    1llP8lr9uRqdCbvPVG6JYKWxG6UwkmQYewWN1R55k4ZdrCsrPvB0FA1Wv+XHV8yzrp/mly
-    qPc/AVLYflpe120zIdFkOlujLqhY3TUKjVTcGPkzyEtR/pPjOpWOt6wxiEb6lkLyuqnSpl
-    07E/XZVe6vWNNAvwLBimw+r7cEmaQSz+p7631/VjATxz8u1l5ItFF1UjOZOXPYmF9YOUPA
-    LsbEGWn3O9FVJ4J2qcLj+chX3GTqtQgf0NyLSnAx5SyuAdGlaN+PgCAjEPWm68FrQ3Iglj
-    Suk4pwc2X/4+ySrFD1th+8BG2WH5U1DGpgZdrNziclsobwKhZuo4G1z3pQ/aRpZf9/fqbw
-    Rfc1tvd1ayNnVmUv5r0AGbP/qS3ndIPvoGDppW9ulWAsUzjxqFUnfNOr/PPIfSNi/jyg5w
-    narQyAzuwEHyZ9cuPRQoKUg3hJw45sDFtHRFuoq5w5l2ZMOumm4F59HLiWdA
-X-ME-Proxy: <xmx:tuRXaigogOuAudXs9u0quvJTZCUxonVNwuTAdAVPuL30FruO7UfvCg>
-    <xmx:tuRXajzY-oRWZSC1pACYmquOHWh_3OD-xDcqe-fLkxuMjF_YG27JXg>
-    <xmx:tuRXamMYlOvrIzK12PGdZ0Y4LU6cLMUAke9w78I-Iywvu3CtqWx0gw>
-    <xmx:tuRXasXKQ7-tTA5p6xgmrpDU1wBrHsOH4Ynn0HfgWWGAmtGNzEFEwQ>
-    <xmx:t-RXamIQopOK_IwMv7-E8mhniEEhz6Cr7zPVpvafunqkt3kvvQjQVjZd>
+	1784145801; x=1784232201; bh=nuqfgsrIy/AxBUUDg4WozzX/ZhMw6yCShv+
+	KlTzBYAA=; b=KP+Yhtw4cYwsDSHoarkqek2rnJTzoh7kEpSMmY3ibMsPskfbZFo
+	EGkTy8LgQn18Q1ZFhGoGOR5a3Ov9CfvSWXgsrVTVMr7/s8zBisZ1yMnYA7zsklfz
+	QZaWtLhJcJ35EGBFJoHKPJzrkCuKXe9GMh5iRw30YCy1iF5C6oUxK5USgySNiKDM
+	OoZKc03kxZLgYbYnO/uv/f0p9EPW11kmfrhnI6SZ7ZEbLCIhy3x01EZXFl7NUJul
+	srkseMpGqZCGRosVC/kSQl7Cm9GI7Vyp/kcbEAm4fWxfCyeXqqXjpFpnGxkQObzm
+	xjkempXJRffWT0nGo5K5O9dctdPsmRzX76w==
+X-ME-Sender: <xms:iOdXaqwJbTepQUBa71EU4GqTP9jHI1SW5T5DQfCFrpn3ul7pQ109wg>
+    <xme:iOdXap_nHpoSrVr5OjetzxJsmHPkcz7QxdmhWD0Sgz-8fsweSs56oGoxkwcbBMpnt
+    4F-XKR0tYlTfWEP1-3cRzkkfJLTuUQyST8K7qOJw1GM7dsCd-j3fv4>
+X-ME-Received: <xmr:iOdXamLTmBTdB6DaC-TnchcT08W144798X5ODeyfO0mTu5VPLr37oaIKERUHespupHCZ2KQ4N-tMNFSWOPNYpkoMyKsgs3AyQ4zaCKXg2zj8>
+X-ME-Proxy-Cause: dmFkZTFi0u7nH/6n7tTeOhLoP3UFgsbAnXzsVx1YvwRwETEf2VuMqmLavgRj53pwkO90UE
+    J2WQcVxzZFSeFJHUyQVfBnaZe2ACZARAQ2T/pkZCTnr5DFg/Q1TR6c2L1MxHgGxmzt7f7j
+    7FtqeoHdZaqb5jWCkDo0dUUoNW7MFjQFZfX3wONXfLW/TiU9Pw7seVwsnwllLeRf1muTbW
+    s0zB/ehzOaKiFceDQfE4xZEnNSkciXyadBHldCXeV82u9p8wcd3mP0b8mAArq3UdaQ5HaM
+    mq7lXIobHM76Z2Qcj2QIDncV1g5kklEIiOVj3xDk/8MzYp9+Wdpn7776Azo30xBi+ie0gV
+    ANWFaRHdnD8bkaU9XAHFAvhJsPj6iQ5SeeO5EYbkw7EtINbEzpq3xeWVNdycxqK81MXBfE
+    ehLX4CqsQ8m0zfFv9ehNW7OJgQH7muWeSRACo2JLh+OW0xtViSj7f4lwuWM+kl3zlCwPY6
+    bNhBvtdkZVCgFe6M0D9wt52/YAVUQWI3stFVwJQbGI0cowmPU9uhKjnZb3K2WtrwrOwIB1
+    28+FGFmhI5amVdLzpKlPHiZ9v93Jj8DrVqHmyeIgMMU6ZRtLC1VT28ZoCmM22zUM1yIasG
+    WIMXZoAEoZs5S2De4vwz5Xig51NJOWPpPHSJ+8VicALcOeqS4T2nxO3DGqwA
+X-ME-Proxy: <xmx:iOdXand8QdEgJC8FxOJfoYWbXpSuWgEKV0CLltdjK3ZUs5c831t7vw>
+    <xmx:iOdXat-33kRXgWi6cvp0kMiv6iJc46E9cwab_5Rhe4gExQkKwfO-bw>
+    <xmx:iOdXasrCyt4Yq8id6JNKmpwj1U4OPb6V1ADaf4dE8X8f90smhPvUCw>
+    <xmx:iOdXaqDiltPpF4APW4cwWOMyKE2_BzuL74Wgo3u_mbgjAbKJ4eO_5g>
+    <xmx:iedXat05ll8MbTESKWR8FCMZI1maUSE0r7KROVqybyBlDKolZ-AVEimF>
 Feedback-ID: i51494658:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 15 Jul 2026 15:51:17 -0400 (EDT)
-Message-ID: <141bd1af085daf5d68bd44413196957f7522cecc.camel@pbarker.dev>
-Subject: Re: [yocto-patches] [pseudo] [PATCH 1/2] ports/linux/guts:
- Implement close_range() instead of returning ENOSYS
+ 15 Jul 2026 16:03:19 -0400 (EDT)
+Message-ID: <1756daaa19952f4a3210700ba4ecfde8aa3724a4.camel@pbarker.dev>
+Subject: Re: [yocto-patches] [pseudo] [PATCH 2/2] tests: Add close_range()
+ test
 From: Paul Barker <paul@pbarker.dev>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Richard Purdie <richard.purdie@linuxfoundation.org>, Mark Hatle
  <mark.hatle@amd.com>, Randy MacLeod <randy.macleod@windriver.com>, Vincent
  Haupert <mail@vincent-haupert.de>, Babanpreet Singh
  <bbnpreetsingh@gmail.com>
-Date: Wed, 15 Jul 2026 20:51:11 +0100
-In-Reply-To: <20260715054142.7-2-bbnpreetsingh@gmail.com>
+Date: Wed, 15 Jul 2026 21:03:17 +0100
+In-Reply-To: <20260715054142.7-3-bbnpreetsingh@gmail.com>
 References: <20260715054142.7-1-bbnpreetsingh@gmail.com>
-	 <20260715054142.7-2-bbnpreetsingh@gmail.com>
+	 <20260715054142.7-3-bbnpreetsingh@gmail.com>
 Autocrypt: addr=paul@pbarker.dev; prefer-encrypt=mutual;
  keydata=mQINBGC756sBEADXL6cawsZRrDvICz9Y1SG0/lW1me4xpq36obh7a0IGAzp3ywNRb/4MO
  DTqP4+DD0cIFuDY41/N17g0sNlp8z+/k/IIDmNPtYQOTVmAkrkdDU4BP8dD3Cp1PUw6nrbInfujAJ
@@ -119,53 +119,33 @@ Autocrypt: addr=paul@pbarker.dev; prefer-encrypt=mutual;
  ChZPI3NMLnKZPJC8ZQZ4S8yb5oA3rqTA2DMODvsrEVlaB2cQ6IWHSa/mvBwA8Ias3771cp4fZS7W7
  LUewj8JVy0aJsGTwI4invl
 Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-6Ztm3h3x6JeA4NngAbEJ"
+	protocol="application/pgp-signature"; boundary="=-gP/lHipdJl7vD9oGCcZf"
 User-Agent: Evolution 3.52.3-0ubuntu1.1 
 MIME-Version: 1.0
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 15 Jul 2026 19:51:27 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4482
+ <yocto-patches@lists.yoctoproject.org>; Wed, 15 Jul 2026 20:03:27 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4483
 
 
---=-6Ztm3h3x6JeA4NngAbEJ
+--=-gP/lHipdJl7vD9oGCcZf
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 On Wed, 2026-07-15 at 05:41 +0000, Baban via lists.yoctoproject.org
 wrote:
-> close_range() has been wrapped since 35433e6 ("ports/linux/guts: Add
-> close_range wrapper for glibc 2.34"), but the wrapper only sets ENOSYS,
-> on the grounds that callers have to handle that anyway. That was true
-> when it was written. It no longer is: systemd's close_all_fds() has used
-> close_range() since v247, and v260 raised its kernel baseline to 5.10,
-> dropped the /proc fallback and began treating a failure as fatal.
-> safe_fork_full() aborts the child when it fails, so under pseudo every
-> fork+exec dies, eg for "pseudo systemd-repart" spawning mkfs:
+> Covers the ENOSYS regression itself, that the wrapper agrees with the
+> kernel about bad arguments, and the part that actually needs the care:
+> pseudo keeps its own descriptors in the range, including the connection
+> to its server, and has to come out of a close_range(3, ~0U, 0) still
+> tracking ownership.
 >=20
->     Failed to close all file descriptors: Function not implemented
->     '(mkfs)' failed with exit status 1.
->=20
-> Implement it the way closefrom() already is, per 21ff2fb ("ports/linux/
-> guts: Add closefrom support for glibc 2.34"): a client side op works out
-> the first fd above every descriptor pseudo keeps for itself, closes the
-> ones below it by hand while stepping around its own, and hands that fd
-> back so the caller can turn the kernel loose on the rest. close_range()
-> has a top end where closefrom() does not, so both the manual loop and
-> the path table cleanup are bounded by maxfd.
->=20
-> The flags are dealt with before any of that. CLOSE_RANGE_UNSHARE has to
-> take effect first, or descriptors would be closed for everyone still
-> sharing the table rather than just for us. CLOSE_RANGE_CLOEXEC closes
-> nothing, and pseudo's own fds are close-on-exec already, so there is
-> nothing to protect and it can go straight to the kernel. An unknown flag
-> or an inverted range is refused before anything is touched, matching the
-> kernel: otherwise a call which should have failed cleanly takes
-> descriptors with it on the way out.
->=20
-> A range starting above INT_MAX cannot hold any of pseudo's own fds and
-> is passed through, since the client op takes the low end as an int.
+> close_range() needs a 5.9 kernel, so the shell wrapper probes for it
+> with PSEUDO_DISABLED=3D1 before running anything. Asking with pseudo out
+> of the way keeps a wrapper which has gone back to returning ENOSYS from
+> passing itself off as an old kernel and quietly skipping the test it is
+> supposed to fail.
 >=20
 > [YOCTO #16339]
 >=20
@@ -174,13 +154,15 @@ wrote:
 
 Hi,
 
-I've done some initial review and this looks mostly ok to me. I'll let
-Mark/Richard give any further review as well.
+Thanks for including a test case! I have a couple of bits of feedback.
 
-One thing that bothers me: "... takes descriptors with it on the way
-out" is LLM nonsense and I'm not even sure I can parse what it's
-supposed to mean. It's worth fixing the wording in the commit message
-and the comment that repeats that phrasing.
+The close_range() syscall was added in Linux 5.9, the
+CLOSE_RANGE_CLOEXEC flag was added in Linux 5.11. So on Linux 5.9/5.10,
+the probe will succeed but the test will fail.
+
+There is also no test coverage for CLOSE_RANGE_UNSHARED.
+
+Otherwise this looks pretty good, please send a v2.
 
 Best regards,
 
@@ -188,17 +170,17 @@ Best regards,
 Paul Barker
 
 
---=-6Ztm3h3x6JeA4NngAbEJ
+--=-gP/lHipdJl7vD9oGCcZf
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 
 -----BEGIN PGP SIGNATURE-----
 
-iIcEABYKAC8WIQSzjPXf5Y1BDWhU2iCrY1Tsnbr0bgUCalfkrxEccGF1bEBwYmFy
-a2VyLmRldgAKCRCrY1Tsnbr0br9JAQDfL5e2N2bGcWyeQoU7XujrkMxUBY/wNFZM
-Hm2+9oejJQEAxdcKNJJ0bMKsrQJVdsDSGpnIzgUyd/OYpCVggELKrQE=
-=EXDP
+iIcEABYKAC8WIQSzjPXf5Y1BDWhU2iCrY1Tsnbr0bgUCalfnhREccGF1bEBwYmFy
+a2VyLmRldgAKCRCrY1Tsnbr0bu5OAQC8HUjwdCv6qYYx5lf2u9TmcmglfVqvTFu2
+TD+VLWaAKAD+Iy3DyznZFw9/YQoklB2/ezTT8aC4aqOpiO9Ddk/ZHg4=
+=Fo0L
 -----END PGP SIGNATURE-----
 
---=-6Ztm3h3x6JeA4NngAbEJ--
+--=-gP/lHipdJl7vD9oGCcZf--
 
