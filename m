@@ -2,62 +2,62 @@ Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E93DC44507
-	for <webhook@archiver.kernel.org>; Wed, 15 Jul 2026 22:32:49 +0000 (UTC)
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.847.1784154766961523451
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 641FCC44501
+	for <webhook@archiver.kernel.org>; Wed, 15 Jul 2026 22:32:59 +0000 (UTC)
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.849.1784154771089480134
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 15 Jul 2026 15:32:47 -0700
+ Wed, 15 Jul 2026 15:32:51 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=OX7ymLax;
- spf=pass (domain: gmail.com, ip: 209.85.222.182, mailfrom: twoerner@gmail.com)
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-92e5c9211d2so465444085a.1
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 15 Jul 2026 15:32:46 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=mpKL5MXl;
+ spf=pass (domain: gmail.com, ip: 209.85.219.46, mailfrom: twoerner@gmail.com)
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-90004d2f7b7so76212026d6.1
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 15 Jul 2026 15:32:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784154766; x=1784759566; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20251104; t=1784154770; x=1784759570; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=X9+QoDSp9pMkV1VzPHZkid1oJcoMg6nv+SazO+k7r+4=;
-        b=OX7ymLaxu2JvaFNPYpJop2H4Bituzlg/2fO41cinyVaM4RxQgNbs9y1p+yH5mdG1te
-         1r/Sm37uJn/MW9ObHQhwXkSVIbdDqrAJNs0EWOyEEue482aZEzdk129n2pFWu+n/cGPX
-         F648Ghzpn/pXTnU9ctbVgbiz94ymKszla0uEIZ2bFmE39pUrSU3llE+iumY1O5woJR7H
-         T1CQnZE5Hr5UsKQ76HXx1sN/+uewDRIfdU5CQdYeMi7XAHkLNX5xE6YFoGVdVqYGqzOU
-         Ou+6UKeknZn8Ydjr2Uz5HjnlHcYTzPKedQYULKnnJBe/yEWjG0PNhVFOll7Kubv3jHLw
-         oYfQ==
+        bh=Cox+V5NfMGBoTovzmcyCjkMvC5wJztFakUujrKVvb+A=;
+        b=mpKL5MXliT9f466Til4tllpXhghhjQwnK43XLgdgDZLcGBfYZDtwPKSdB3xtbywgCQ
+         fAlRlWwMq7qek3Ka/t1Z4Ye9saRoAa2AQT+RKDrcFSulLGc8jaeAaydGOAQMXBmO3cG2
+         LRaBIDUcKSbyYCXgZDbyvEFZfgd7gugwJpe7radFA+HDvHVMeiEFGkvVPLEuY1Wwo4Vt
+         IOehl30pGWcgrQDqWeku2nHJOo3AQfvkRwupdqRbDAnINiLB1fwNDEq/u7JYm3N+ZbZK
+         d0LfZ6quz+bXN9RSZrVifTEkDAZABmulCeLa9tg6jmXlVa1wqfzc0o5wbpeZPvbGayQ0
+         9U2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784154766; x=1784759566;
+        d=1e100.net; s=20251104; t=1784154770; x=1784759570;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to:content-type;
-        bh=X9+QoDSp9pMkV1VzPHZkid1oJcoMg6nv+SazO+k7r+4=;
-        b=BqEMNlD2wK3n9sS7QmQlAUQh90njf+mrpo1uOvL8FyXfJ0FXPMWYZw8c3JzMQGstvi
-         IvbqhIMURYULF4y9PdOi0KZdSYlc1L+ymYUcQ+XyQNgNdM1c4aTyKoMdC+FCQECC3AhZ
-         JwA0E2ue/IONPb7H0E1gzTCeFz+Kca09+cZmx2k+ZVEAoi038m/gWun7X/RtbRHbWE/1
-         4VKi4VGP8i1DU5L+F6LBKC1TXUfs7IeVmV1voCiFxWEUqnqVVTrAD4289rK9/Xr0pkt9
-         JwwIehMtNYog4dSoYrpRwaOUiifPaxPNVDTQkoVc3EQz31b6BKjivpdgEVKNM2QL7Vdz
-         sVew==
-X-Gm-Message-State: AOJu0YwvTeKYtzNRlgEbfe0C74xURBq3dqxE8FmNPOHdQLRIvkEfl8zC
-	COUNZHpeVQaCJ3XwyIJroO0Kbkxbu113LhrllgYPzGQYLwcy0MV7PVAdcSO4eg==
-X-Gm-Gg: AfdE7cmYTjTaIqqVEQZaHISr/40kaBL+uVKw/QTNhAP8z1zqk1gMmtZOHgfKzpK085n
-	z6QfBbFmY3M35+yfnRjzZx2zpisg/Iz2aHV9UB/6pq91gb8ZZMsqpTqoUP/9Lqkl2RfjMvne3rv
-	Sgy0yQJzUPJW6vOvzSB4EGX20YkZ92AhM+QbMSvEMb5QukfY9UYzR0HgU1PFoaYl76z1CT4TdoU
-	mJBUNwqUHZg8k3GcqHTx3HKNqEIBoZEAx5nOKfkuInN23pugoULKH4GKVamlvs1zHqXlbqJ4xW6
-	YqQTyHtLp52Dmp6oB+LGmEk8yABqhVZZJyLpWiJqhRdHxp4gc9V2Ug2nPTnoTE3gedhJZgGLyR4
-	R/OXsi3QvzOwQayJhQlikhjyBhDQDNN0wbUkZkxwfZxfXO1cZdYoWOT0KKaMyT/Wid0q1JGYaZc
-	ZYHHAgApf3hWI2Q9TBoQt0f90SlrzYlt1ru4zNZV4qd0zg
-X-Received: by 2002:a05:620a:25ca:b0:92e:c118:18b5 with SMTP id af79cd13be357-930963feca4mr515121085a.84.1784154765584;
-        Wed, 15 Jul 2026 15:32:45 -0700 (PDT)
+        bh=Cox+V5NfMGBoTovzmcyCjkMvC5wJztFakUujrKVvb+A=;
+        b=RqZyy3dpwp0oGFxbxIvSgLaqf7uz7K9cawIvKKidKLc9TS29xckLJPphbH94tAsEoc
+         opWnnJUwMD6rw8SZVxRUP71TNdrg29lvzP2kWRpYmYVkANGfszWsEmZRwbkfoZPi5zjd
+         r0447a2Pf1dcEDgUM5Kr0sz7SK5vBuHY0Ht2JwrnfIOheTg+U1XYFFzyeILwelvuUilc
+         OG6/vp/2gn2YqW4yCPoK1pieyn2mnnQc4nQ2VeMdOoK/mjsqRY5W4HEa8sh3ui9x7Tkj
+         5GB93X2SChVKtBxXMSsn+KBNiJC+ieFE+mePrvus1sXU/2J4UtDfRjWmp8rJK4NFWoPG
+         iBWQ==
+X-Gm-Message-State: AOJu0YwpcQFQP9/FuM8gB6q9b8zr7Li81V5XB3ZrjDJ7VbyHY+qezodb
+	6aQyJE3vz+xT4N1z620MF1w2aNOo81S+YZicSaL1z+BM9TvuoS4CgCC2v5c50w==
+X-Gm-Gg: AfdE7cmOEJDOMigosvUbr3yIhkkFGp9/t7XeXLpBQO5EWAfOfgNHjNM7IUIUTgohHZr
+	pOcQ0jbf8Lon1IDLwXKworQw0EQp9Z7O34kxfq1GJ638FtsX3lyfsfll8ubbso6PQxBWTzyfRIA
+	n6SPFVJenwPSWJgEfk0ilJdwXQ+vfsXrEsWjyZbQOfcVXJnS59aeGHthM9ehOzYu2szLHAPzBVL
+	0u8HXJwKP4o6XKO3qFmWB7dz29b/yLMhR76z+CP3fAdDTZxOqMRQ16QEZkFEDDm4s070bb9yiOA
+	SGI8yfZEuPhXrLbKfzN7pfpJVAB7eSmQyFL2SFNED3+ZX5V7Z4mW0s9E/e+jpgdF/4gbNPbFWfg
+	ilFSYyF/qARX43QJyyBFq3D1r61NY8LpGillhilfUHxMvZ0SIrdaFc96IwF6+LHmIfLuID8KtMX
+	JcRGJK4I8DdpwQYZJgSTSYCFwaXK5eyp/R25hXVNQnGj+G
+X-Received: by 2002:a05:6214:440b:b0:8f1:7a7:b869 with SMTP id 6a1803df08f44-90758deb9camr56865366d6.31.1784154769831;
+        Wed, 15 Jul 2026 15:32:49 -0700 (PDT)
 Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8ffd81f43e6sm205883726d6.39.2026.07.15.15.32.44
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8ffd81f43e6sm205883726d6.39.2026.07.15.15.32.47
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jul 2026 15:32:44 -0700 (PDT)
+        Wed, 15 Jul 2026 15:32:48 -0700 (PDT)
 From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [wic][PATCH 2/5] ksparser: fix crash on out-of-range overhead factor
-Date: Wed, 15 Jul 2026 18:32:23 -0400
-Message-ID: <20260715223226.3371498-3-twoerner@gmail.com>
+Subject: [wic][PATCH 4/5] ksparser: require an explicit 0x prefix for --system-id
+Date: Wed, 15 Jul 2026 18:32:25 -0400
+Message-ID: <20260715223226.3371498-5-twoerner@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260715223226.3371498-1-twoerner@gmail.com>
 References: <20260715223226.3371498-1-twoerner@gmail.com>
@@ -66,41 +66,45 @@ Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 15 Jul 2026 22:32:49 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4486
+ <yocto-patches@lists.yoctoproject.org>; Wed, 15 Jul 2026 22:32:59 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4488
 
-overheadtype() rejects a factor below 1.0, but the error path read
+systemidtype() validates the MBR partition type as "hex between 0x1 and
+0xFF", but it converts with int(arg, 16), which also accepts a bare "82"
+(parsed as hex 0x82 = 130) and a signed form like "+0x82". Those inputs
+contradict the documented contract and are silently returned unchanged,
+so the raw string later handed to sfdisk may not be what the user meant.
 
-    raise ArgumentTypeError("Overhead factor should be > 1.0" % arg)
-
-The message string carries no %-placeholder, so the `% arg`
-interpolation itself raised TypeError ("not all arguments converted
-during string formatting") before the ArgumentTypeError could be
-constructed. Every out-of-range value (0.0, 0.5, -1.0, -inf) crashed
-with an opaque TypeError instead of the intended argument error.
-
-Add the missing placeholder so the offending value is reported and the
-correct ArgumentTypeError is raised.
+Require an explicit 0x/0X-prefixed hex string before converting, so only
+the documented form is accepted and every other spelling raises the
+existing ArgumentTypeError.
 
 AI-Generated: codex/claude-opus 4.8 (xhigh)
 Signed-off-by: Trevor Woerner <twoerner@gmail.com>
 ---
- src/wic/ksparser.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ src/wic/ksparser.py | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
 diff --git a/src/wic/ksparser.py b/src/wic/ksparser.py
-index 24c7015b336d..a73ae56cd196 100644
+index 528a8180826f..dcf26f788083 100644
 --- a/src/wic/ksparser.py
 +++ b/src/wic/ksparser.py
-@@ -99,7 +99,7 @@ def overheadtype(arg):
-         raise ArgumentTypeError("Invalid value: %r" % arg)
+@@ -132,10 +132,12 @@ def systemidtype(arg):
+     """
+     error = "Invalid system type: %s. must be hex "\
+             "between 0x1 and 0xFF" % arg
+-    try:
+-        result = int(arg, 16)
+-    except ValueError:
++    # int(arg, 16) also accepts a bare "82" (-> 130) and a leading sign
++    # like "+0x82"; the documented contract is an explicit 0x-prefixed
++    # hex byte, so require that form before converting.
++    if not re.fullmatch(r"0[xX][0-9a-fA-F]+", arg or ""):
+         raise ArgumentTypeError(error)
++    result = int(arg, 16)
  
-     if result < 1.0:
--        raise ArgumentTypeError("Overhead factor should be > 1.0" % arg)
-+        raise ArgumentTypeError("Overhead factor should be > 1.0, not %r" % arg)
- 
-     return result
- 
+     if result <= 0 or result > 0xff:
+         raise ArgumentTypeError(error)
 -- 
 2.50.0.173.g8b6f19ccfc3a
 
