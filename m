@@ -2,56 +2,55 @@ Return-Path: <ross.burton@arm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F760C44507
-	for <webhook@archiver.kernel.org>; Wed, 15 Jul 2026 09:06:36 +0000 (UTC)
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.481.1784094106041579388
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 494A8C44507
+	for <webhook@archiver.kernel.org>; Wed, 15 Jul 2026 09:06:46 +0000 (UTC)
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.479.1784094104802181398
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 14 Jul 2026 22:41:46 -0700
+ Tue, 14 Jul 2026 22:41:44 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=cleeu0Z6;
- spf=pass (domain: gmail.com, ip: 209.85.210.182, mailfrom: bbnpreetsingh@gmail.com)
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-8487b7b4066so5010744b3a.1
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 14 Jul 2026 22:41:45 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=cqA0fOab;
+ spf=pass (domain: gmail.com, ip: 209.85.210.174, mailfrom: bbnpreetsingh@gmail.com)
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-84861fc51f5so2953546b3a.1
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 14 Jul 2026 22:41:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784094105; x=1784698905; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=1HmKLCW9+ZXJqHBltPu8fin/Ezulz9iFCmh7iTNMcqw=;
-        b=cleeu0Z66lBOgnAQS+rzJAFyPyu38BkVB/GB1scHTqIQLJIdeC2wH+SKQBW8qLFQ/n
-         dDo+dBb9IHVnMfky4T1ayGv8W6K4esLI8cA0SaW0XpT3rXENAThMi6Rz76BK94UWz0lo
-         DDI/zLQAUOx3Ql9DpK24Rd3cQ6WMWvH/8V4r8fOEHRt/j8C9H1VeRCYiTqvQa7J1O6Fo
-         euNId8Qp4kJP2Uti1YqFK6+cvJGtvFaeolEcmDxORxxQl9SOPq92F4cBOR3y9nyQUZwS
-         NZJW3LljT2PaIoktMwIXhn4KhN/Q+MpW05wUNE8zgK/eHu7gIV6zd/toEmBqLKBxHCV2
-         CgIw==
+        d=gmail.com; s=20251104; t=1784094104; x=1784698904; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=WBHW1WSxrYadLF0M5JpPEM0Or0xr8G9kX3GTaup0HRk=;
+        b=cqA0fOabf0XpNwjBnrWGaey6PI6bd/PJKzjycp+HSK0xIN6h/0Hm0aV+Eq288iKy38
+         6j9abX9uH4WXgVi+lNelxAX14eOUXZn+X/H+f/PLlkljh5+Ujffi2f1N04yqfkWaC1XI
+         m8StMxsEdW6fz7GHLjOh2S6YC80LoynU6KHQtb60b2Lq2fz1Br2TtuJJjCkI1EUrQHPS
+         X64WQJI6cbULm7o899dG+emXE5SMTNGsJZEb2JTvM6oVVlXYtlVxLDzMA0jY3XAmJcYQ
+         vHINDSuavV8IWCIYCXqzPS9BKmFL8ARx9DOeev4iitiqqhW1YDg9Y50WE2KPCued6bD4
+         u//w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784094105; x=1784698905;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=1HmKLCW9+ZXJqHBltPu8fin/Ezulz9iFCmh7iTNMcqw=;
-        b=qrL1wK4GHbpyfsBmDobu4dvwVvg7Q60JlVj2eZEJKNrulJtPEgw8yOZq3+WYSZDdd0
-         5LQIC/WH4nMmauxCRPOb5UpVx0F2+sUYm0qxbFU7SDIQ960GAOH4IQ/2JmEPCViGETxg
-         guuA7hKcv2eqruHkdXufwOad6LoupvImkFH3/n+Bh/p3wSb4MFxj2InPYmXyZ3W6j3It
-         Q85PXSyqmPqbJgzUAo6f+wJoWDNBL1Dlit9cl0qg4dLFyjeemwZB29p18IGKQtMaT/Ca
-         5ui/qKHkctJa7E2pwWG8wAgYqEMe7M2FTsrLoBsuh11FkaAbrZ6TRy7AUPrdzKPH245y
-         gJUQ==
-X-Gm-Message-State: AOJu0Yx5dTISUWNdD5tpDhSHYVHJ6F5un4uvt1YqtbwKgXqkOEYLTQua
-	/8iKLrSZzk9RXgD48g27GH236fycsSETHV79A2BohWzK/dqT9cMwZIj99t2xsaKhMJ4=
-X-Gm-Gg: AfdE7cnblUR7WEaJURZiVx1KqamtSQkkCFxsS7E16zIlPrltMXt16xN0+PPWmONr2CF
-	G9FSRCIMu9FNf9Ot+CBJ/8M4xKiTPZUPj/YK3gJfe3oMQ9vdAO5W2M03waZRAdp/vnDQDKFw7+E
-	0HIYNiq62wRwY//xI65Cz6SpRUruuBwDBrPGSBkSR9FyPEUJQmW6dKUx5v7kbEB1jVIFuiVT8WV
-	SqFXsMrqqdO7NgK6LRRMPyH5PU1HvB4vwv8CzABJxZR09nlbwv5L5cjv91Xmy7b+oBnBGwFWswa
-	qmDloJZre3BRRBndyIyX2s1NyD4S+WqQafjkXZnJymJCw08cqqIbR3xLYCqVgJEhyoqcwQTWdbf
-	I9LJ588xLD/n5DjyIV59Flf4GSk27G1VvYN5Kd67pJKiXLzFdTfKTLBlGBLbLDpIMTKwWF4ew0C
-	qRnGpnRDrbXAoh
-X-Received: by 2002:aa7:8891:0:b0:847:b2e4:9f68 with SMTP id d2e1a72fcca58-84a671da3aamr1125803b3a.9.1784094105303;
-        Tue, 14 Jul 2026 22:41:45 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1784094104; x=1784698904;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=WBHW1WSxrYadLF0M5JpPEM0Or0xr8G9kX3GTaup0HRk=;
+        b=G41YS5sZOx3MTQgEQm3283U3CzB+UrQqOLrzgokf86jPVPinMxNx30m6K3+0xvcVKw
+         ZhIZBKXSoIgOhAdRPCTtuH9dM4QSZAx48TjUj9xkyZLCGNhKQ0f12D6DIYpu126WGj06
+         06/XRMqaALtsPeqdPmX2DKUUdm0NoIysDDh116oKtKOY0owL9waZ2rIU0cPm9vade4yz
+         BsmtZ33SQz/vaP4ZS/qaT/Grc7wc38IRG1L36MRJfnKJeTJBbvxTwB4xmRHmXM4tT+EI
+         4GCrftLYKMoL9gnYRBuvsyB8YE5/CS+6L+RnCSj5vNx1tQLxNfrhJ4C2vCOQC3ZntYhN
+         pkUw==
+X-Gm-Message-State: AOJu0YwBVgSLNmGHvR3nY1lNNTSOTvS7tTAQ0jwnYyptUzf5SUJei6UL
+	EICKvBm43SLaWNhngK6tEtHBKhEBtC61n5AM2uOs4ijgE3RFD5a3r0zCrbkbFf9+IBQ=
+X-Gm-Gg: AfdE7cnW7VYt0fxLFxdPkWPMb1QtiodZbEUQWCwLUh2wPn5RH4KvhxMTl7sT7aS9FeK
+	Un4uem8tghGi/ZoJVKIenQdIuVGWGUIDfHJ4RHG+59WE4BUWC2S3JfW5i5UkBiIg7K20P4mViUd
+	AQ+Jeyiw/0JdePFBW8tFxh3KnpL6sF2MQs/J0VV3/+0r7eDsMa1FP0UKbu8Rb5JBoqeIhYLWwgZ
+	enYmvNDyQAznmTcsOBCBaqO5gHbMJXHcXHKvDl833XCJgyj2yUtsiMxRDma9SZTtyWncVBMtep5
+	PAfvMx08QAPvdaaKEwJTJbl5JnGfyNjJ1Hfayq7LEb1tNeKgbls05cqYB8qBSXJespHX6bTj4k7
+	JxjsFQVnXCs/0rvJ6X+3INBhU6/zKArERM/ye0T+IL0m5zbqJQ7AeGHNt11Ftp0ss5FaBR5+K3M
+	OIef6ABRubGBiS
+X-Received: by 2002:a05:6a00:9286:b0:848:65f3:23c1 with SMTP id d2e1a72fcca58-84a673aab51mr1175239b3a.69.1784094104042;
+        Tue, 14 Jul 2026 22:41:44 -0700 (PDT)
 Received: from ydev.. ([108.180.130.139])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84a4f264989sm2550668b3a.13.2026.07.14.22.41.44
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84a4f264989sm2550668b3a.13.2026.07.14.22.41.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jul 2026 22:41:45 -0700 (PDT)
+        Tue, 14 Jul 2026 22:41:43 -0700 (PDT)
 From: "Baban" <bbnpreetsingh@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Richard Purdie <richard.purdie@linuxfoundation.org>,
@@ -59,238 +58,110 @@ Cc: Richard Purdie <richard.purdie@linuxfoundation.org>,
 	Randy MacLeod <randy.macleod@windriver.com>,
 	Vincent Haupert <mail@vincent-haupert.de>,
 	Babanpreet Singh <bbnpreetsingh@gmail.com>
-Subject: [pseudo] [PATCH 2/2] tests: Add close_range() test
-Date: Wed, 15 Jul 2026 05:41:42 +0000
-Message-ID: <20260715054142.7-3-bbnpreetsingh@gmail.com>
+Subject: [pseudo] [PATCH 0/2] close_range: implement it rather than return ENOSYS
+Date: Wed, 15 Jul 2026 05:41:40 +0000
+Message-ID: <20260715054142.7-1-bbnpreetsingh@gmail.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260715054142.7-1-bbnpreetsingh@gmail.com>
-References: <20260715054142.7-1-bbnpreetsingh@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 15 Jul 2026 09:06:36 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4477
+ <yocto-patches@lists.yoctoproject.org>; Wed, 15 Jul 2026 09:06:46 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4478
 
-Covers the ENOSYS regression itself, that the wrapper agrees with the
-kernel about bad arguments, and the part that actually needs the care:
-pseudo keeps its own descriptors in the range, including the connection
-to its server, and has to come out of a close_range(3, ~0U, 0) still
-tracking ownership.
+pseudo's close_range() wrapper has returned ENOSYS unconditionally since
+35433e6 ("ports/linux/guts: Add close_range wrapper for glibc 2.34"). That
+was a deliberate call, and the commit message says why: "This one is
+straight forward as it allows ENOSYS to be returned and the caller has to
+handle it so lets do that."
 
-close_range() needs a 5.9 kernel, so the shell wrapper probes for it
-with PSEUDO_DISABLED=1 before running anything. Asking with pseudo out
-of the way keeps a wrapper which has gone back to returning ENOSYS from
-passing itself off as an old kernel and quietly skipping the test it is
-supposed to fail.
+It held for five years. It doesn't any more. systemd's close_all_fds() has
+called close_range() since v247, but v260 raised its kernel baseline to
+5.10, concluded close_range() (5.9) is always present, deleted its
+/proc/self/fd fallback and started treating a failure as fatal.
+safe_fork_full() then aborts the child, so under pseudo every fork+exec
+dies:
 
-[YOCTO #16339]
+    Failed to close all file descriptors: Function not implemented
+    '(mkfs)' failed with exit status 1.
 
-AI-Generated: Uses Claude (claude-opus-4-8)
-Signed-off-by: Babanpreet Singh <bbnpreetsingh@gmail.com>
----
- test/test-close-range.c  | 167 +++++++++++++++++++++++++++++++++++++++
- test/test-close-range.sh |  16 ++++
- 2 files changed, 183 insertions(+)
+That is [YOCTO #16339], reported by Vincent Haupert against a
+systemd-repart image build.
+
+Vincent - Randy asked on the bug whether you wanted to send a patch for
+this, and that question was addressed to you, not to the list. It had been
+quiet for a few days and this looked worth picking up, but if you already
+have it in progress please say so and ignore this series. I'm happy to
+defer.
+
+1/2 implements it. The stub was protecting something real: pseudo keeps its
+own descriptors, including the socket to its server, inside the range a
+caller asks to close, and the kernel does the closing, so pseudo cannot ask
+it to skip one. Returning ENOSYS pushed callers onto the /proc loop, which
+closes one fd at a time through close() - a path pseudo already wraps and
+can defend itself inside. With the fallback gone, that no longer works.
+
+So this follows the shape 21ff2fb ("ports/linux/guts: Add closefrom support
+for glibc 2.34") already established for the same problem: a client-side op
+works out the first fd above every descriptor pseudo keeps, closes the ones
+below it by hand while stepping around its own, and hands that fd back so
+the kernel is only turned loose on the tail that is safe. close_range() has
+a top end where closefrom() does not, so both the manual loop and the path
+table cleanup are bounded by maxfd.
+
+The flags are settled before any of that. CLOSE_RANGE_UNSHARE has to take
+effect first, or descriptors get closed for everyone still sharing the
+table rather than just for us. CLOSE_RANGE_CLOEXEC closes nothing and
+pseudo's own fds are close-on-exec already, so there is nothing to protect
+and it goes straight to the kernel. An unknown flag or an inverted range is
+refused up front, matching the kernel.
+
+2/2 adds a test. It probes for kernel support with PSEUDO_DISABLED=1 first,
+so that a wrapper which goes back to returning ENOSYS fails the test rather
+than quietly skipping it.
+
+Tested on x86_64 (Ubuntu 24.04, glibc 2.39). close_range() under pseudo is
+identical to a run without pseudo across eight cases: single fd, bounded
+range, both flags, an inverted range, an unknown flag, an already-closed
+fd, and an unbounded range. pseudo also comes through close_range(3, ~0U, 0)
+with its server connection intact and still tracking ownership, which is
+the case that actually matters here. run_tests.sh is unchanged from master
+apart from the new test passing (two pre-existing flaky parallel-* failures
+show up either way).
+
+Comparing against the real kernel is what caught the argument validation:
+without it, close_range(3, 3, 0x80) returned success and closed fd 3, on a
+call the kernel rejects outright.
+
+Not tested: x86_64 only, no 32-bit/aarch64/riscv build; no end-to-end
+systemd-repart reproduction, the ENOSYS-to-working transition is shown
+directly instead; and CLOSE_RANGE_UNSHARE is exercised for return value and
+closing behaviour but not against a real process sharing the descriptor
+table, so its isolating effect rests on unshare(CLONE_FILES) semantics
+rather than observation.
+
+One question while I was in here. OP_CLOSEFROM steps around five of pseudo's
+descriptors, but there are others it doesn't mention - pseudo_prefix_dir_fd,
+pseudo_pwd_lck_fd, pseudo_util_evlog_fd. I kept the new op consistent with
+the existing five rather than change closefrom()'s behaviour as a drive-by,
+but if that list is short then it's short in both places and I'm happy to
+send a follow-up.
+
+Babanpreet Singh (2):
+  ports/linux/guts: Implement close_range() instead of returning ENOSYS
+  tests: Add close_range() test
+
+ enums/op.in                    |   1 +
+ ports/linux/guts/close_range.c |  55 +++++++++--
+ ports/linux/portdefs.h         |  16 ++++
+ pseudo_client.c                |  60 ++++++++++++
+ test/test-close-range.c        | 167 +++++++++++++++++++++++++++++++++
+ test/test-close-range.sh       |  16 ++++
+ 6 files changed, 308 insertions(+), 7 deletions(-)
  create mode 100644 test/test-close-range.c
  create mode 100755 test/test-close-range.sh
 
-diff --git a/test/test-close-range.c b/test/test-close-range.c
-new file mode 100644
-index 0000000..61f729b
---- /dev/null
-+++ b/test/test-close-range.c
-@@ -0,0 +1,167 @@
-+/*
-+ * SPDX-License-Identifier: LGPL-2.1-only
-+ *
-+ * close_range() was stubbed out to return ENOSYS unconditionally, on the
-+ * assumption that callers all cope with that. Current systemd does not: it
-+ * dropped its /proc fallback once its kernel baseline reached 5.10, so every
-+ * fork+exec under pseudo failed. Check the wrapper works, that it agrees
-+ * with the kernel about bad arguments, and that pseudo still functions after
-+ * a caller closes every descriptor from 3 up.
-+ */
-+#define _GNU_SOURCE
-+
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <limits.h>
-+#include <stdio.h>
-+#include <string.h>
-+#include <sys/stat.h>
-+#include <unistd.h>
-+
-+/* <linux/close_range.h> is missing on hosts with pre-5.9 kernel headers */
-+#ifndef CLOSE_RANGE_CLOEXEC
-+#define CLOSE_RANGE_CLOEXEC (1U << 2)
-+#endif
-+
-+/* matches test-openat2-syscall: the shell wrapper turns 77 into "skipped" */
-+#define SKIP 77
-+
-+#define TESTFILE "test-close-range-file"
-+
-+static int open_null(void) {
-+	int fd = open("/dev/null", O_RDONLY);
-+	if (fd < 0)
-+		perror("open /dev/null");
-+	return fd;
-+}
-+
-+static int is_closed(int fd) {
-+	return fcntl(fd, F_GETFD) == -1 && errno == EBADF;
-+}
-+
-+/* Is close_range() there at all? The wrapper runs this with PSEUDO_DISABLED
-+ * set, so the answer is the kernel's and a stubbed wrapper cannot pass
-+ * itself off as an old kernel.
-+ */
-+static int probe(void) {
-+	int fd = open_null();
-+
-+	if (fd < 0)
-+		return 1;
-+	if (close_range(fd, fd, 0) == -1) {
-+		int err = errno;
-+		close(fd);
-+		return (err == ENOSYS) ? SKIP : 1;
-+	}
-+	return 0;
-+}
-+
-+int main(int argc, char **argv) {
-+	struct stat st;
-+	int a, b, c;
-+
-+	if (argc > 1 && !strcmp(argv[1], "--probe"))
-+		return probe();
-+
-+	/* the reported bug: this used to fail with ENOSYS every time */
-+	a = open_null();
-+	if (a < 0)
-+		return 1;
-+	if (close_range(a, a, 0) == -1) {
-+		fprintf(stderr, "close_range(%d, %d, 0): %s\n", a, a, strerror(errno));
-+		return 1;
-+	}
-+	if (!is_closed(a)) {
-+		fprintf(stderr, "close_range() left fd %d open\n", a);
-+		return 1;
-+	}
-+
-+	/* a bounded range closes all of itself */
-+	a = open_null();
-+	b = open_null();
-+	c = open_null();
-+	if (a < 0 || b < 0 || c < 0)
-+		return 1;
-+	if (close_range(a, c, 0) == -1) {
-+		perror("close_range(a, c, 0)");
-+		return 1;
-+	}
-+	if (!is_closed(a) || !is_closed(b) || !is_closed(c)) {
-+		fprintf(stderr, "close_range(%d, %d, 0) left descriptors open\n", a, c);
-+		return 1;
-+	}
-+
-+	/* CLOSE_RANGE_CLOEXEC marks descriptors, it does not close them */
-+	a = open_null();
-+	if (a < 0)
-+		return 1;
-+	if (close_range(a, a, CLOSE_RANGE_CLOEXEC) == -1) {
-+		perror("close_range(a, a, CLOSE_RANGE_CLOEXEC)");
-+		return 1;
-+	}
-+	if (is_closed(a)) {
-+		fprintf(stderr, "CLOSE_RANGE_CLOEXEC closed fd %d\n", a);
-+		return 1;
-+	}
-+	if (!(fcntl(a, F_GETFD) & FD_CLOEXEC)) {
-+		fprintf(stderr, "CLOSE_RANGE_CLOEXEC did not set FD_CLOEXEC on fd %d\n", a);
-+		return 1;
-+	}
-+	close(a);
-+
-+	/* bad arguments are refused, and nothing is closed on the way out */
-+	a = open_null();
-+	if (a < 0)
-+		return 1;
-+	if (close_range(a, a, 0x80) != -1 || errno != EINVAL) {
-+		fprintf(stderr, "close_range() with an unknown flag should fail EINVAL\n");
-+		return 1;
-+	}
-+	if (is_closed(a)) {
-+		fprintf(stderr, "a rejected close_range() closed fd %d anyway\n", a);
-+		return 1;
-+	}
-+	if (close_range(a + 1, a, 0) != -1 || errno != EINVAL) {
-+		fprintf(stderr, "close_range() with lowfd > maxfd should fail EINVAL\n");
-+		return 1;
-+	}
-+	close(a);
-+
-+	/* a range entirely above INT_MAX holds no descriptors at all, but it
-+	 * still has to be accepted rather than mangled on the way through
-+	 */
-+	if (close_range((unsigned int) INT_MAX + 1, ~0U, 0) == -1) {
-+		fprintf(stderr, "close_range(INT_MAX+1, ~0U, 0): %s\n", strerror(errno));
-+		return 1;
-+	}
-+
-+	/* And the point of the care in the wrapper: pseudo keeps descriptors
-+	 * of its own in this range and has to come out of it still working.
-+	 */
-+	a = open(TESTFILE, O_CREAT | O_WRONLY, 0644);
-+	if (a < 0) {
-+		perror("open " TESTFILE);
-+		return 1;
-+	}
-+	close(a);
-+	if (chown(TESTFILE, 0, 0) == -1) {
-+		perror("chown " TESTFILE);
-+		return 1;
-+	}
-+	if (close_range(3, ~0U, 0) == -1) {
-+		fprintf(stderr, "close_range(3, ~0U, 0): %s\n", strerror(errno));
-+		return 1;
-+	}
-+	if (stat(TESTFILE, &st) == -1) {
-+		perror("stat after close_range");
-+		return 1;
-+	}
-+	if (st.st_uid != 0 || st.st_gid != 0) {
-+		fprintf(stderr, "pseudo lost track after close_range: uid %d, gid %d\n",
-+			(int) st.st_uid, (int) st.st_gid);
-+		return 1;
-+	}
-+	unlink(TESTFILE);
-+
-+	return 0;
-+}
-diff --git a/test/test-close-range.sh b/test/test-close-range.sh
-new file mode 100755
-index 0000000..65be016
---- /dev/null
-+++ b/test/test-close-range.sh
-@@ -0,0 +1,16 @@
-+#!/bin/bash
-+#
-+# SPDX-License-Identifier: LGPL-2.1-only
-+#
-+
-+# close_range() needs a 5.9 kernel. Ask with pseudo out of the way, so that a
-+# wrapper which has gone back to returning ENOSYS cannot pass itself off as an
-+# old kernel and quietly skip the test it is supposed to fail.
-+PSEUDO_DISABLED=1 ./test/test-close-range --probe
-+case $? in
-+0)  ;;
-+77) exit 255 ;;
-+*)  exit 1 ;;
-+esac
-+
-+./test/test-close-range
 -- 
 2.43.0
 
