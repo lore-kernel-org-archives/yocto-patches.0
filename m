@@ -2,62 +2,62 @@ Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 641FCC44501
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55AB7C44507
 	for <webhook@archiver.kernel.org>; Wed, 15 Jul 2026 22:32:59 +0000 (UTC)
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.849.1784154771089480134
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.883.1784154769116344371
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 15 Jul 2026 15:32:51 -0700
+ Wed, 15 Jul 2026 15:32:49 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=mpKL5MXl;
- spf=pass (domain: gmail.com, ip: 209.85.219.46, mailfrom: twoerner@gmail.com)
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-90004d2f7b7so76212026d6.1
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 15 Jul 2026 15:32:50 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=mxGH9hWo;
+ spf=pass (domain: gmail.com, ip: 209.85.160.171, mailfrom: twoerner@gmail.com)
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-51c0cea8883so22670271cf.1
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 15 Jul 2026 15:32:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784154770; x=1784759570; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20251104; t=1784154768; x=1784759568; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=Cox+V5NfMGBoTovzmcyCjkMvC5wJztFakUujrKVvb+A=;
-        b=mpKL5MXliT9f466Til4tllpXhghhjQwnK43XLgdgDZLcGBfYZDtwPKSdB3xtbywgCQ
-         fAlRlWwMq7qek3Ka/t1Z4Ye9saRoAa2AQT+RKDrcFSulLGc8jaeAaydGOAQMXBmO3cG2
-         LRaBIDUcKSbyYCXgZDbyvEFZfgd7gugwJpe7radFA+HDvHVMeiEFGkvVPLEuY1Wwo4Vt
-         IOehl30pGWcgrQDqWeku2nHJOo3AQfvkRwupdqRbDAnINiLB1fwNDEq/u7JYm3N+ZbZK
-         d0LfZ6quz+bXN9RSZrVifTEkDAZABmulCeLa9tg6jmXlVa1wqfzc0o5wbpeZPvbGayQ0
-         9U2w==
+        bh=DGZA0SHlucguA9WNdVCmxl44jhm0wTT6MA5FUnD/Rqc=;
+        b=mxGH9hWoaT0tp2NztBy4kJeCu5HV1YdtJfXbmZkM44tIofiqgvnVyOVf8mQf0lHXvH
+         EkYju/3PZDDFmbC0rvSHX3R2wElsiRmfbQg7J2lZqI7OTZbE5EXnLIKoodKsoQxMeC1j
+         f1H9iB3sCaKJArgAqhOq6vrInUaTURAvuuhOJiEYN5FEG+O69cF/svKTE/ecDfBBg84L
+         eVByNGlky3iBI9qed6ojr2S0HQ35IuWrdzhakPHc757VXOW1XL6N396r/sMRTpGuoTLJ
+         RYVFYtQLU5D5B7dANCP4TE4qlYmuwnb2/pIazKNfi0OFposUJOefgdX8mK7eH8lDtofl
+         OSIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784154770; x=1784759570;
+        d=1e100.net; s=20251104; t=1784154768; x=1784759568;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to:content-type;
-        bh=Cox+V5NfMGBoTovzmcyCjkMvC5wJztFakUujrKVvb+A=;
-        b=RqZyy3dpwp0oGFxbxIvSgLaqf7uz7K9cawIvKKidKLc9TS29xckLJPphbH94tAsEoc
-         opWnnJUwMD6rw8SZVxRUP71TNdrg29lvzP2kWRpYmYVkANGfszWsEmZRwbkfoZPi5zjd
-         r0447a2Pf1dcEDgUM5Kr0sz7SK5vBuHY0Ht2JwrnfIOheTg+U1XYFFzyeILwelvuUilc
-         OG6/vp/2gn2YqW4yCPoK1pieyn2mnnQc4nQ2VeMdOoK/mjsqRY5W4HEa8sh3ui9x7Tkj
-         5GB93X2SChVKtBxXMSsn+KBNiJC+ieFE+mePrvus1sXU/2J4UtDfRjWmp8rJK4NFWoPG
-         iBWQ==
-X-Gm-Message-State: AOJu0YwpcQFQP9/FuM8gB6q9b8zr7Li81V5XB3ZrjDJ7VbyHY+qezodb
-	6aQyJE3vz+xT4N1z620MF1w2aNOo81S+YZicSaL1z+BM9TvuoS4CgCC2v5c50w==
-X-Gm-Gg: AfdE7cmOEJDOMigosvUbr3yIhkkFGp9/t7XeXLpBQO5EWAfOfgNHjNM7IUIUTgohHZr
-	pOcQ0jbf8Lon1IDLwXKworQw0EQp9Z7O34kxfq1GJ638FtsX3lyfsfll8ubbso6PQxBWTzyfRIA
-	n6SPFVJenwPSWJgEfk0ilJdwXQ+vfsXrEsWjyZbQOfcVXJnS59aeGHthM9ehOzYu2szLHAPzBVL
-	0u8HXJwKP4o6XKO3qFmWB7dz29b/yLMhR76z+CP3fAdDTZxOqMRQ16QEZkFEDDm4s070bb9yiOA
-	SGI8yfZEuPhXrLbKfzN7pfpJVAB7eSmQyFL2SFNED3+ZX5V7Z4mW0s9E/e+jpgdF/4gbNPbFWfg
-	ilFSYyF/qARX43QJyyBFq3D1r61NY8LpGillhilfUHxMvZ0SIrdaFc96IwF6+LHmIfLuID8KtMX
-	JcRGJK4I8DdpwQYZJgSTSYCFwaXK5eyp/R25hXVNQnGj+G
-X-Received: by 2002:a05:6214:440b:b0:8f1:7a7:b869 with SMTP id 6a1803df08f44-90758deb9camr56865366d6.31.1784154769831;
-        Wed, 15 Jul 2026 15:32:49 -0700 (PDT)
+        bh=DGZA0SHlucguA9WNdVCmxl44jhm0wTT6MA5FUnD/Rqc=;
+        b=JVSqcHHUS9wT8Z+BK23afqybkbFPYFz09qaub+NjsEiZ04/3Ao483GNix8wArgZnEW
+         WXPljjNeKLujBZLxtux6noOx1t+cWqnDNqoUd4i4kSHmBieKGCfyfGvVaHjK9iZM/7Je
+         DlYmoG0CLOsGmq3Dp0t5URyOmmruNFDjDNsJPb9UGs+gZfVDc7hQFptIuhyr3qFDk2MH
+         9eZHbkNCaubfVsE9LmYgSbJEjfOsXQN/CEdbfwwZJgR9Co/jK3cf9mfWi9E2jh4e5qaZ
+         URc6eerQvyiIngxssBSeSMm50uV/xtuHZClBenc+U/yhuUr/VUNilmtDn25RXEJzcj6k
+         uF9g==
+X-Gm-Message-State: AOJu0Yz+qUnrWn4yzn6xivWtQBAS2qc+HmMxCQzyw9jHKRKtIzXE/lAx
+	zIk2fTpOtWtfg2G9+h9B+lFyv0MUUUVyun56bk9XvtJvXq1Y6pCnAJHi6Ji9pQ==
+X-Gm-Gg: AfdE7cmh0SnFa/0cu+uYCN7JrlV9VeqtLPT4yjcwhkNsQbYn4Mw6WaMb0lWgvXgHFSB
+	ZWMGycWTNltwBDcGF2iwFr7fyKnj3b/gpBCMMk2uang0w1q2uNiVg8TPngICttC9lY+k1v5sGp4
+	QKtrJLE4FOlJj26sYgJIJE/VrHn/iUmJP98xA8T/+jXsJ69IfOAXEn4k5ivaQfPigQkcqCYtmfA
+	u99z9KoMAalNkFbM1NChgL88asjm3Fj38SKn6j4vrqUS1slZsFl/bfDB2K3ffBY9mtTRqVZLYK/
+	Rh1Rz6pQN/YRkDCk0apQYMctleCav1LqsMxuMcwSKwA0GhIuHuEXXIsXJ7G/uTjOqAccRj09L1D
+	9TPOS2Z6+iQED5W09dq/kg7zfDMjw28dNyqrDcp3m8zRhlHbzWnkJct6uv4zWvspzEzIEFR4SoJ
+	2Dn++CCo3o5PsPhhLUMNVA7TikiysEFul46ww3EtYJkzXm
+X-Received: by 2002:a05:622a:4d2:b0:51b:fe30:b8d5 with SMTP id d75a77b69052e-51fc1971cbamr175091cf.29.1784154767775;
+        Wed, 15 Jul 2026 15:32:47 -0700 (PDT)
 Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8ffd81f43e6sm205883726d6.39.2026.07.15.15.32.47
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8ffd81f43e6sm205883726d6.39.2026.07.15.15.32.45
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jul 2026 15:32:48 -0700 (PDT)
+        Wed, 15 Jul 2026 15:32:45 -0700 (PDT)
 From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [wic][PATCH 4/5] ksparser: require an explicit 0x prefix for --system-id
-Date: Wed, 15 Jul 2026 18:32:25 -0400
-Message-ID: <20260715223226.3371498-5-twoerner@gmail.com>
+Subject: [wic][PATCH 3/5] ksparser: reject non-finite overhead factors
+Date: Wed, 15 Jul 2026 18:32:24 -0400
+Message-ID: <20260715223226.3371498-4-twoerner@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260715223226.3371498-1-twoerner@gmail.com>
 References: <20260715223226.3371498-1-twoerner@gmail.com>
@@ -67,44 +67,45 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Wed, 15 Jul 2026 22:32:59 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4488
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4487
 
-systemidtype() validates the MBR partition type as "hex between 0x1 and
-0xFF", but it converts with int(arg, 16), which also accepts a bare "82"
-(parsed as hex 0x82 = 130) and a signed form like "+0x82". Those inputs
-contradict the documented contract and are silently returned unchanged,
-so the raw string later handed to sfdisk may not be what the user meant.
+overheadtype() guards against factors below 1.0, but float("nan") and
+float("inf") slip past that check: nan compares false against every
+bound, and inf is trivially greater than 1.0. wic then multiplied the
+rootfs size by nan or inf (partition.py does
+int(rootfs_size * self.overhead_factor)), producing a ValueError deep in
+image sizing or a nonsensical partition size.
 
-Require an explicit 0x/0X-prefixed hex string before converting, so only
-the documented form is accepted and every other spelling raises the
-existing ArgumentTypeError.
+Reject any non-finite factor up front with math.isfinite() so the error
+is reported at parse time alongside the other overhead validation.
 
 AI-Generated: codex/claude-opus 4.8 (xhigh)
 Signed-off-by: Trevor Woerner <twoerner@gmail.com>
 ---
- src/wic/ksparser.py | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ src/wic/ksparser.py | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/src/wic/ksparser.py b/src/wic/ksparser.py
-index 528a8180826f..dcf26f788083 100644
+index a73ae56cd196..528a8180826f 100644
 --- a/src/wic/ksparser.py
 +++ b/src/wic/ksparser.py
-@@ -132,10 +132,12 @@ def systemidtype(arg):
-     """
-     error = "Invalid system type: %s. must be hex "\
-             "between 0x1 and 0xFF" % arg
--    try:
--        result = int(arg, 16)
--    except ValueError:
-+    # int(arg, 16) also accepts a bare "82" (-> 130) and a leading sign
-+    # like "+0x82"; the documented contract is an explicit 0x-prefixed
-+    # hex byte, so require that form before converting.
-+    if not re.fullmatch(r"0[xX][0-9a-fA-F]+", arg or ""):
-         raise ArgumentTypeError(error)
-+    result = int(arg, 16)
+@@ -15,6 +15,7 @@
+ import os
+ import shlex
+ import logging
++import math
+ import re
+ import uuid
  
-     if result <= 0 or result > 0xff:
-         raise ArgumentTypeError(error)
+@@ -98,7 +99,7 @@ def overheadtype(arg):
+     except ValueError:
+         raise ArgumentTypeError("Invalid value: %r" % arg)
+ 
+-    if result < 1.0:
++    if not math.isfinite(result) or result < 1.0:
+         raise ArgumentTypeError("Overhead factor should be > 1.0, not %r" % arg)
+ 
+     return result
 -- 
 2.50.0.173.g8b6f19ccfc3a
 
