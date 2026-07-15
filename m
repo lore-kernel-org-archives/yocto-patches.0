@@ -1,317 +1,205 @@
-Return-Path: <ross.burton@arm.com>
+Return-Path: <paul@pbarker.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 582ECC44508
-	for <webhook@archiver.kernel.org>; Wed, 15 Jul 2026 09:06:46 +0000 (UTC)
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.480.1784094105435895567
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 179EBC44508
+	for <webhook@archiver.kernel.org>; Wed, 15 Jul 2026 18:01:37 +0000 (UTC)
+Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.230.1784138490854478155
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 14 Jul 2026 22:41:45 -0700
+ Wed, 15 Jul 2026 11:01:31 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=Li5difgn;
- spf=pass (domain: gmail.com, ip: 209.85.210.177, mailfrom: bbnpreetsingh@gmail.com)
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-845c92bc464so1684581b3a.2
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 14 Jul 2026 22:41:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784094105; x=1784698905; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=6MfFuRyPRnk8cGj7U0aOW5yv28tMt3ff4BwJD3L/xOg=;
-        b=Li5difgn3vChBNBbtPNtK9Fmmen0upfPzsYKks30HrFcxmd4Mk9kjuAWEUehvl8voc
-         tfYBV7dr6112Vn90pVf8s3UII/fvM1/y/QJ1Jl8W0pQf2x0+ZyM4pZng9echjs4YY0jc
-         cDwlW9F3Qy0AaX+yTgVTnwGGnK+esMhSLoWv/QqBNpb4jneC9hnry9EhGVJi+od0JxBe
-         hAw6rvOR3ZcpkiQnoU63pLG/n0/exMRWN8TB1Y2ryvyDOMkQhfmDhPq5VMB3pRKrIsPK
-         r2wJde2X9H+sIMS/jDrUkomdmhJHRGgUvis/dpEXQmbbEbz8P8XtlYXSbUXr6gmhuX8X
-         mgyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784094105; x=1784698905;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=6MfFuRyPRnk8cGj7U0aOW5yv28tMt3ff4BwJD3L/xOg=;
-        b=F/4IusP8VErYwD2CztTsXQaq8kl6rd5IDuDi4XYS6sWnNOGkyqOhSzHlzAzW2xIDN0
-         E8WM7CzOt5I1rOwhQTgUUp7Lzg9rfk1vC6Aqgm0EX/QApwKhkB5LiaFNhYFrb+Q+dGtJ
-         7xX/jCkKene+DkaV8kyriWlFdQiDMdPSeGflQvLgs8BbOe0dhLfxR3XDMYS61px3Z2pA
-         JZn3n9FhJ3dtO35zqtyyANfKTeo6Fd8j8bNZXN7kfIYqLCPGJDBAfEkCOjGtxLV1R/uZ
-         VWfa9JDnAUsoBW2m5YhC0Xp0ed/A60u2iBGsEPm6wCTZufWO931U9YQsZeHucTFvoEMA
-         6cAA==
-X-Gm-Message-State: AOJu0YwCI6GH3sKaipEYxXIufW8FUbM5rzhxKsosqvB6eiVQwoWoeAEl
-	Rs190tVnce/wQskJ4kmjJWjVn7mFWN1DyROOywd8GNcaiZDfdFkdg/jhnkYntpHd6mM=
-X-Gm-Gg: AfdE7cn/ZmK+dDVo4AL4WQCV5bTyYgwi9nKjW/dpWCI5M1nTGhL6wPzLqcUcCVT5Df/
-	Sj7o9xl0PI3Q8eS8t/ed+TjIIBCxeW7PB2i5vdSnCTu6oB3uE9djvOHRm67YusxL72Im4QiMIwR
-	8DdmPwSyjfmxByM0eCjcQbhb7DxL8YIAks3nXUbsMDLZiKbHql4hfLsCix55hNiwsv0xJheIG9u
-	ZcQmdazUo+XC49FjBGvrVNDADmnwQIlI7l1rvdDkRRho7twBqClyC87DHkHpkR+epQPlU5/IYmr
-	q1cmz4oAVBi9kTIkwLctf8hGzEIVE1Aq9NiWf2MbAUoJotNl3RjlPuGZFidU5sMx31gx6KOZWPl
-	K6rfzILh7xv25wRoJEBuVa3lB5bnbodtina9+QrNTUY10KXLD4BlxyuX9MomeNIqE3WEhtDMq1q
-	lWi2CmVfnE99jX
-X-Received: by 2002:a05:6a00:1741:b0:845:e1a3:107e with SMTP id d2e1a72fcca58-848896eb340mr15376983b3a.52.1784094104673;
-        Tue, 14 Jul 2026 22:41:44 -0700 (PDT)
-Received: from ydev.. ([108.180.130.139])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84a4f264989sm2550668b3a.13.2026.07.14.22.41.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jul 2026 22:41:44 -0700 (PDT)
-From: "Baban" <bbnpreetsingh@gmail.com>
+ dkim=pass header.i=@pbarker.dev header.s=fm3 header.b=TfmMCsnS;
+ dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=Ut+uVwCY;
+ spf=pass (domain: pbarker.dev, ip: 202.12.124.151, mailfrom: paul@pbarker.dev)
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.stl.internal (Postfix) with ESMTP id 072F01D00081
+	for <yocto-patches@lists.yoctoproject.org>; Wed, 15 Jul 2026 14:01:30 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Wed, 15 Jul 2026 14:01:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pbarker.dev; h=
+	cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1784138489; x=1784224889; bh=owy3f0EkbT
+	KyZiaArtjvXcCzriJW3uLl8ttHwJdCUp8=; b=TfmMCsnS34D1tYHh/V1ahW9Dl0
+	F4ZGt/KSN0vh+2QHqrpuTCJmy81itW51ltMa2bNa0fH4pKprkCe3BRsa4tVmdpQe
+	IY/9AV/7T4NSzlq6+wl6Bky0/fH22+3BW1m7Jp8/EG/KmdwZpyKCQpwkjmmUdbMs
+	CmL+tHk036rhfOMB1YrFDGAXf4QcuwUjG4ydlk/9lpVK3gKg1tahEMlIDURbzJz+
+	AfXt3DKBS3FEWmzoBpgoGWJ9RsT4HVisvk+QIP1/Ejq8vye/d0wzYgFx7HWbsOVt
+	hvAA+DjgUubIDmi/V1UkurcPCmiVCFhYHTZUzwn1ggB9fNMHQQyJoaw40NQA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1784138489; x=1784224889; bh=owy3f0EkbTKyZiaArtjvXcCzriJW3uLl8tt
+	HwJdCUp8=; b=Ut+uVwCYIc6U+h8JjE0JrX3c3RM8R4YO7xRBMZ6kJiCY7sLKWdX
+	L7fZLIcTzl02GNwVMIZdEBoIoEnKFcA1I712Y71SMnS5rxoC8hzqtygQsFyuS1zs
+	YF+iWI3HrYEDqVGE2TOGuDxUH+8NBm9bgG2z2tWWLV+AKnngQTl4raP8VNG/pAtF
+	Ik+nwNxKT2XxwEk6G8MiFlinGRcCGodtMQHazHuP7hl9Wnq54B/FdcEmJ6a5bf/Y
+	5wtEdWJj9t3GZCcr9RjxU6hqetDD9wqhTF8xLpIm6dae2cBmgisU6HhocjK6Gg+D
+	W+nlJ66oU3FcJSSVdwIY/2VXmkP/NsYBllQ==
+X-ME-Sender: <xms:-cpXaknOgeHpQyR8ZEGFJQVfaR7lYUYAXLife3IEK9mYhMYiUA7OJQ>
+    <xme:-cpXaqx_hsOkfz-Ids_f6f9oHBIyxWeF7tGcF1xCI3xBr30PIRNDFsORB5XeL95lU
+    QWE6bBotP5TCCkGJDbPdW9VtyrCpDIw-TAzyhzOlZLRiGSyZXrgl5o>
+X-ME-Received: <xmr:-cpXaoRPq23x7ZSJsvRgY17TeMkxNlTRJzzReftkbB4qNWUhiHnQcfkB541I0izsZN3O_jU-IaTQrknCfnibhuNKO_pTVConOA1iW6lPYZO3>
+X-ME-Proxy-Cause: dmFkZTEVIiMcHz0pZbT1sys+vvyZ7nzRgey007dALy28Ef1XV9UqQF6EU1cS6wQ8x7caOg
+    mrmRdxsaNW9kx1D0LvigQTo7avRwYL3GAAW649uRzvNb/WqLbhhlPqFKbvi96PjSN0dFa9
+    R4LNYOMOABut1S+hQK7K5sAn2n3r42v/ltlUFeRefezPvPkoxHAPwv0DxIvrZQHqc3Pa7s
+    zaRm2IERSeBcMWTA4/biSAEO8aCYGHYE9uBUWR5sA7Kz3lWZrRT2pgwKsYgVrgnz2ylHCA
+    DtBqQoRlo4XhyXytvNKWZ61sp5hToW1u2RBo55MEbwOnazS9TNcs7qaL3RILqp02BMKEmK
+    RKawIe1ypGcJbwkr27cTTvetJ20T2b1vD1pHxUb+T2kEoAXY492jypH6RG7MU08dh8iG9B
+    BbfVpe1AoHDbu9GZBq+m91mGOM2QtB9HwEZ4iRarrfhz3PS6ELeQCA0GheTIMhyfeXkBTH
+    hUUExGhWRBUteRjRCV3w8NK+6UQrcqFds8AmpPjvWzI1e9zKXhNCFE1tsefQYVcg1vxSJi
+    BEErQH47YUKY33FtO9ySjKcmG8o/8l9bZlXuGw/GjLnGhWplQYtsSVE4QA/aLoICrPa1jB
+    NK29b37nFZH/sQXKGmFv6W51hEUlUHhH0IgkXhNY45zc4o4YS8yWuicZbYHQ
+X-ME-Proxy: <xmx:-cpXalv0hskceh361cyagc4v8ii_gpQWoMuE86A3JPgZneDEurHz6g>
+    <xmx:-cpXaivCCN19leT2bOTSLcchhLX5rqWc2uWn-0By-wCfOl1RCW9hmw>
+    <xmx:-cpXajw7fAai7yfY6Bn9uqFBz0LDmKKMs4UUnzl7MzKieEoCGGwcOg>
+    <xmx:-cpXaggqbBKLaV8ZGAuuQcExwEjwIUL39bGxEZ9qlDKAtJkGK8lEpQ>
+    <xmx:-cpXamHxEVOFgcUN_1XnNmVyW_jmZdAJd5NeK8p6cnV4eJ2fLd9fAqLN>
+Feedback-ID: i51494658:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA for
+ <yocto-patches@lists.yoctoproject.org>; Wed,
+ 15 Jul 2026 14:01:29 -0400 (EDT)
+Message-ID: <237352d6f13f1081afcbe97da4f67bd94cee9b92.camel@pbarker.dev>
+Subject: Re: [yocto-patches] [wic][PATCH 0/4] oe/path: three fixes plus unit
+ coverage
+From: Paul Barker <paul@pbarker.dev>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Richard Purdie <richard.purdie@linuxfoundation.org>,
-	Mark Hatle <mark.hatle@amd.com>,
-	Randy MacLeod <randy.macleod@windriver.com>,
-	Vincent Haupert <mail@vincent-haupert.de>,
-	Babanpreet Singh <bbnpreetsingh@gmail.com>
-Subject: [pseudo] [PATCH 1/2] ports/linux/guts: Implement close_range() instead of returning ENOSYS
-Date: Wed, 15 Jul 2026 05:41:41 +0000
-Message-ID: <20260715054142.7-2-bbnpreetsingh@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260715054142.7-1-bbnpreetsingh@gmail.com>
-References: <20260715054142.7-1-bbnpreetsingh@gmail.com>
+Date: Wed, 15 Jul 2026 19:01:25 +0100
+In-Reply-To: <20260709205227.3470712-1-twoerner@gmail.com>
+References: <20260709205227.3470712-1-twoerner@gmail.com>
+Autocrypt: addr=paul@pbarker.dev; prefer-encrypt=mutual;
+ keydata=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
+ LUewj8JVy0aJsGTwI4invl
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-9pL30SvRhtkkJCyKq2G2"
+User-Agent: Evolution 3.52.3-0ubuntu1.1 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 15 Jul 2026 09:06:46 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4479
+ <yocto-patches@lists.yoctoproject.org>; Wed, 15 Jul 2026 18:01:37 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4480
 
-close_range() has been wrapped since 35433e6 ("ports/linux/guts: Add
-close_range wrapper for glibc 2.34"), but the wrapper only sets ENOSYS,
-on the grounds that callers have to handle that anyway. That was true
-when it was written. It no longer is: systemd's close_all_fds() has used
-close_range() since v247, and v260 raised its kernel baseline to 5.10,
-dropped the /proc fallback and began treating a failure as fatal.
-safe_fork_full() aborts the child when it fails, so under pseudo every
-fork+exec dies, eg for "pseudo systemd-repart" spawning mkfs:
 
-    Failed to close all file descriptors: Function not implemented
-    '(mkfs)' failed with exit status 1.
+--=-9pL30SvRhtkkJCyKq2G2
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Implement it the way closefrom() already is, per 21ff2fb ("ports/linux/
-guts: Add closefrom support for glibc 2.34"): a client side op works out
-the first fd above every descriptor pseudo keeps for itself, closes the
-ones below it by hand while stepping around its own, and hands that fd
-back so the caller can turn the kernel loose on the rest. close_range()
-has a top end where closefrom() does not, so both the manual loop and
-the path table cleanup are bounded by maxfd.
+On Thu, 2026-07-09 at 16:52 -0400, Trevor Woerner via
+lists.yoctoproject.org wrote:
+> This series continues the standalone unit-test work, this time over
+> oe/path.py. It follows the same shape the suite settled on: each
+> source fix is its own standalone commit, and the green test module
+> lands last, so the suite passes at every commit.
+>=20
+> Three fixes come first, each independent of the others:
+>=20
+>   - __realpath's isdir guard assigns a bare `false`, which is not a
+>     Python name; when os.path.isdir() raises, the handler meant to
+>     absorb the error raises NameError instead. Use the builtin False.
+>   - symlink(force=3DTrue) cleared the destination through remove(), which
+>     globs its argument; a destination containing glob metacharacters
+>     could fail to match itself or match unrelated files. Remove the
+>     literal destination instead.
+>   - canonicalize('') and canonicalize(None) returned the current
+>     working directory, because os.path.realpath('') does; a stray
+>     separator injected a spurious cwd entry too. Skip empty tokens.
+>=20
+> The final commit adds tests/unit/test_oe_path.py, covering oe/path's
+> own logic (join, is_path_parent, symlink, make_relative_symlink,
+> canonicalize, which_wild, realpath) and locking in the three fixes.
+> Backing any fix out turns the matching test red. The suite is green
+> and ruff-clean, and the series passes oe-core's wic oe-selftest with
+> no regressions.
+>=20
+> Trevor Woerner (4):
+>   oe/path: fix bare `false` NameError in __realpath's isdir guard
+>   oe/path: don't glob-expand the destination in symlink(force=3DTrue)
+>   oe/path: canonicalize('') should return '' rather than the cwd
+>   tests/unit/test_oe_path: cover oe/path's own path logic
+>=20
+>  src/wic/oe/path.py         |  21 ++-
+>  tests/unit/test_oe_path.py | 298 +++++++++++++++++++++++++++++++++++++
+>  2 files changed, 316 insertions(+), 3 deletions(-)
+>  create mode 100644 tests/unit/test_oe_path.py
 
-The flags are dealt with before any of that. CLOSE_RANGE_UNSHARE has to
-take effect first, or descriptors would be closed for everyone still
-sharing the table rather than just for us. CLOSE_RANGE_CLOEXEC closes
-nothing, and pseudo's own fds are close-on-exec already, so there is
-nothing to protect and it can go straight to the kernel. An unknown flag
-or an inverted range is refused before anything is touched, matching the
-kernel: otherwise a call which should have failed cleanly takes
-descriptors with it on the way out.
+Hi Trevor,
 
-A range starting above INT_MAX cannot hold any of pseudo's own fds and
-is passed through, since the client op takes the low end as an int.
+As src/wic/oe/path.py is a copy of meta/lib/oe/path.py from OE-core, I
+you should propose the fixes on the OE-core mailing list so that the
+rest of the project can benefit from them. The fix for bb/utils.py in
+the previous series was not applicable in bitbake itself, but the fixes
+here are definitely applicable in OE-core.
 
-[YOCTO #16339]
+It would also be better for unit tests covering these functions to live
+in the OE-core selftest suite if possible. Tests in wic are better than
+no tests though!
 
-AI-Generated: Uses Claude (claude-opus-4-8)
-Signed-off-by: Babanpreet Singh <bbnpreetsingh@gmail.com>
----
- enums/op.in                    |  1 +
- ports/linux/guts/close_range.c | 55 +++++++++++++++++++++++++++----
- ports/linux/portdefs.h         | 16 +++++++++
- pseudo_client.c                | 60 ++++++++++++++++++++++++++++++++++
- 4 files changed, 125 insertions(+), 7 deletions(-)
+What we should avoid though is the library functions copied in from
+bitbake & OE-core diverging in wic, as that just complicates
+maintenance.
 
-diff --git a/enums/op.in b/enums/op.in
-index 5b5e21b..5013892 100644
---- a/enums/op.in
-+++ b/enums/op.in
-@@ -28,3 +28,4 @@ set-xattr, 0
- create-xattr, 1
- replace-xattr, 1
- closefrom, 0
-+close-range, 0
-diff --git a/ports/linux/guts/close_range.c b/ports/linux/guts/close_range.c
-index 4bd2fe1..15258be 100644
---- a/ports/linux/guts/close_range.c
-+++ b/ports/linux/guts/close_range.c
-@@ -6,14 +6,55 @@
-  * int close_range(unsigned int lowfd, unsigned int maxfd, int flags)
-  *      int rc = -1;
-  */
-+	pseudo_msg_t *msg;
- 
--        (void) lowfd;
--        (void) maxfd;
--        (void) flags;
--        /* for now pretend the kernel doesn't support it regardless 
--           which users are supposed to be able to handle */
--        errno = ENOSYS;
--        rc = -1;
-+	/* The kernel rejects both of these outright, so check before doing
-+	 * anything: otherwise a call which should have failed cleanly takes
-+	 * descriptors with it on the way out.
-+	 */
-+	if (flags & ~(CLOSE_RANGE_UNSHARE | CLOSE_RANGE_CLOEXEC)) {
-+		errno = EINVAL;
-+		return -1;
-+	}
-+	if (lowfd > maxfd) {
-+		errno = EINVAL;
-+		return -1;
-+	}
-+
-+	/* CLOSE_RANGE_UNSHARE has to take effect before anything is closed:
-+	 * while the descriptor table is still shared, closing a descriptor
-+	 * would close it for everyone sharing the table, not just for us.
-+	 */
-+	if (flags & CLOSE_RANGE_UNSHARE) {
-+		if (unshare(CLONE_FILES) == -1)
-+			return -1;
-+		flags &= ~CLOSE_RANGE_UNSHARE;
-+	}
-+
-+	/* CLOSE_RANGE_CLOEXEC closes nothing, it only marks descriptors, and
-+	 * pseudo's own are close-on-exec already (pseudo_fd() sets that on
-+	 * every one of them), so there is nothing here to protect.
-+	 */
-+	if (flags & CLOSE_RANGE_CLOEXEC)
-+		return real_close_range(lowfd, maxfd, flags);
-+
-+	/* Descriptors are ints, so a range starting above INT_MAX cannot hold
-+	 * any of pseudo's own and there is nothing to step around. Worth its
-+	 * own case because pseudo_client_op() takes the low end as an int.
-+	 */
-+	if (lowfd > INT_MAX)
-+		return real_close_range(lowfd, maxfd, flags);
-+
-+	/* Same shape as closefrom(): the client op closes the descriptors its
-+	 * own are mixed in with by hand, stepping around the ones pseudo needs
-+	 * to keep, and hands back the first fd the kernel can safely be turned
-+	 * loose on.
-+	 */
-+	msg = pseudo_client_op(OP_CLOSE_RANGE, 0, lowfd, -1, 0, 0, maxfd);
-+	if (maxfd >= (unsigned int) msg->fd)
-+		rc = real_close_range(msg->fd, maxfd, flags);
-+	else
-+		rc = 0;
- 
- /*      return rc;
-  * }
-diff --git a/ports/linux/portdefs.h b/ports/linux/portdefs.h
-index 19bb232..1f1a41a 100644
---- a/ports/linux/portdefs.h
-+++ b/ports/linux/portdefs.h
-@@ -35,6 +35,22 @@ GLIBC_COMPAT_SYMBOL(memcpy,2.0);
- #include <sys/prctl.h>
- #include <linux/seccomp.h>
- 
-+/* close_range()'s flags, and unshare(), are only declared by glibc under
-+ * _GNU_SOURCE, which pseudo does not build with. <linux/close_range.h> is
-+ * not an option either: it is absent on hosts with pre-5.9 kernel headers,
-+ * the same problem SYS_openat2 has below. Both values are kernel ABI.
-+ */
-+#ifndef CLOSE_RANGE_UNSHARE
-+#define CLOSE_RANGE_UNSHARE (1U << 1)
-+#endif
-+#ifndef CLOSE_RANGE_CLOEXEC
-+#define CLOSE_RANGE_CLOEXEC (1U << 2)
-+#endif
-+#ifndef CLONE_FILES
-+#define CLONE_FILES 0x00000400
-+#endif
-+extern int unshare(int flags);
-+
- #ifndef _STAT_VER
- #if defined (__aarch64__) || defined (__riscv)
- #define _STAT_VER 0
-diff --git a/pseudo_client.c b/pseudo_client.c
-index 7041366..1acd948 100644
---- a/pseudo_client.c
-+++ b/pseudo_client.c
-@@ -993,6 +993,28 @@ pseudo_client_closefrom(int fd) {
- 	}
- }
- 
-+/* Like pseudo_client_closefrom(), but bounded: close_range() has a top end,
-+ * so entries above it have to be left alone.
-+ */
-+static void
-+pseudo_client_close_range(int lowfd, unsigned int maxfd) {
-+	int i, top;
-+
-+	if (lowfd < 0 || lowfd >= nfds)
-+		return;
-+
-+	top = (maxfd >= (unsigned int) nfds) ? nfds - 1 : (int) maxfd;
-+	for (i = lowfd; i <= top; ++i) {
-+		free(fd_paths[i]);
-+		fd_paths[i] = 0;
-+
-+		if (i < linked_nfds) {
-+			free(linked_fd_paths[i]);
-+			linked_fd_paths[i] = 0;
-+		}
-+	}
-+}
-+
- /* spawn server */
- static int
- client_spawn_server(void) {
-@@ -1633,6 +1655,7 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
- 	static size_t alloced_len = 0;
- 	int strip_slash;
- 	int startfd, i;
-+	unsigned int close_range_maxfd = 0;
- 
- #ifdef PSEUDO_PROFILING
- 	struct timeval tv1_op, tv2_op;
-@@ -1753,6 +1776,13 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
- 	}
- #endif
- 
-+	if (op == OP_CLOSE_RANGE) {
-+		va_list ap;
-+		va_start(ap, buf);
-+		close_range_maxfd = va_arg(ap, unsigned int);
-+		va_end(ap);
-+	}
-+
- 	if (op == OP_RENAME) {
- 		va_list ap;
- 		if (!path) {
-@@ -1959,6 +1989,36 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
- 		msg.fd = startfd;
- 		do_request = 0;
- 		break;
-+	case OP_CLOSE_RANGE:
-+		/* no request needed */
-+		startfd = fd;
-+		if (pseudo_util_debug_fd > startfd)
-+			startfd = pseudo_util_debug_fd + 1;
-+		if (pseudo_localstate_dir_fd > startfd)
-+			startfd = pseudo_localstate_dir_fd + 1;
-+		if (pseudo_pwd_fd > startfd)
-+			startfd = pseudo_pwd_fd + 1;
-+		if (pseudo_grp_fd > startfd)
-+			startfd = pseudo_grp_fd + 1;
-+		if (connect_fd > startfd)
-+			startfd = connect_fd + 1;
-+		/* the fds below startfd are the ones our own are mixed in
-+		 * with, so close those by hand and skip the ones we need
-+		 */
-+		for (i = fd; i < startfd && (unsigned int) i <= close_range_maxfd; ++i) {
-+			if (i == pseudo_util_debug_fd || i == pseudo_localstate_dir_fd || i == pseudo_pwd_fd ||
-+					i == pseudo_grp_fd || i == connect_fd)
-+				continue;
-+			pseudo_client_close(i);
-+			close(i);
-+		}
-+		if (close_range_maxfd >= (unsigned int) startfd)
-+			pseudo_client_close_range(startfd, close_range_maxfd);
-+		/* tell the caller to start at startfd instead of fd */
-+		result = &msg;
-+		msg.fd = startfd;
-+		do_request = 0;
-+		break;
- 	case OP_CLOSE:
- 		/* no request needed */
- 		if (fd >= 0) {
--- 
-2.43.0
+Best regards,
 
+--=20
+Paul Barker
+
+
+--=-9pL30SvRhtkkJCyKq2G2
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iIcEABYKAC8WIQSzjPXf5Y1BDWhU2iCrY1Tsnbr0bgUCalfK9REccGF1bEBwYmFy
+a2VyLmRldgAKCRCrY1Tsnbr0bkO6AQCpfOoyOvB3FXt4z2qTphT4q+QbEkYwl/Iv
+/8aCCHh6FgEA6LUF0qMFmC6+a07QIJzigc6g/xBRAHW1YbcHTSfKbw4=
+=Ca5J
+-----END PGP SIGNATURE-----
+
+--=-9pL30SvRhtkkJCyKq2G2--
 
