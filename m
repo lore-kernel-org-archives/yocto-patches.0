@@ -2,76 +2,78 @@ Return-Path: <paul@pbarker.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7429EC44508
-	for <webhook@archiver.kernel.org>; Wed, 15 Jul 2026 19:09:27 +0000 (UTC)
-Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.1684.1784142557097946811
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E10C44508
+	for <webhook@archiver.kernel.org>; Wed, 15 Jul 2026 19:51:27 +0000 (UTC)
+Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.2634.1784145080459548225
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 15 Jul 2026 12:09:17 -0700
+ Wed, 15 Jul 2026 12:51:20 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@pbarker.dev header.s=fm3 header.b=PQ14wf9u;
- dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=TqyWnfZF;
- spf=pass (domain: pbarker.dev, ip: 202.12.124.151, mailfrom: paul@pbarker.dev)
-Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
-	by mailfout.stl.internal (Postfix) with ESMTP id DD1321D000B0
-	for <yocto-patches@lists.yoctoproject.org>; Wed, 15 Jul 2026 15:09:15 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-11.internal (MEProxy); Wed, 15 Jul 2026 15:09:15 -0400
+ dkim=pass header.i=@pbarker.dev header.s=fm3 header.b=Z+IuObfW;
+ dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=aFgCTbWH;
+ spf=pass (domain: pbarker.dev, ip: 202.12.124.153, mailfrom: paul@pbarker.dev)
+Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 67BB77A00F6;
+	Wed, 15 Jul 2026 15:51:19 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-09.internal (MEProxy); Wed, 15 Jul 2026 15:51:19 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pbarker.dev; h=
-	cc:content-type:content-type:date:date:from:from:in-reply-to
+	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
 	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1784142555; x=1784228955; bh=OWNxEYtNJ0
-	2jhdKldmnWOyauchZB+DJQTrn3GW7DMhs=; b=PQ14wf9u86JAOtpN7quWM/W8NQ
-	i7hmhnsgLk1Zhh2kMCn/DxF8rfv5UWpYegw3kEOazXDPU9maTfAvA7EhFPifD3qk
-	lpl7+Sthid4HfNYt81Jm1uHAJW32I3Kjq98VkuOF1gyQUXgMl0PEXUp1sPjy3m0Y
-	K2KcftULxSlVp937YYWZ648HnVXGkRxKcZbRewMb/gX1jXqwXDWwfqfmQbyTpATs
-	iYqVY1TRR43R0obppuQn/oRQ3YdQoE3aNLdBCRAR71K0lqiqEHW2VAV1Af6zXb5+
-	S+nxHw5SOmaaunNS6YKLFIDQsfEIWYGwngUdoinx/7dt8+h1I84uOfWuyOlg==
+	:subject:to:to; s=fm3; t=1784145079; x=1784231479; bh=Ghbg2Bli2A
+	WTBcZnJWkRmehUBwSS4qsKbNuZqDFvRcg=; b=Z+IuObfW8+jZaDzS90KATFl80a
+	GmqpFCZYmq01/DrqcPfurqzDQZzm5F+25KnmVd+NAAYJUS8c/OBw0j9toXhz7N7K
+	Wn0InT0NfdAmHvN4j3rTFNcfkf9S5MPamFo2Ixmehlwk3oJUpFBDCsemEXA1vvir
+	3IeAT1v1h9MPOFgCSOzxnRDrRUxnErFB4Vi7ylcXngvT5Olo26Dm7qcqUM/LJjGd
+	2Bcw4P1Lm+wa64m8i7fgWTi5lNPU5BGRlN0ArgyPhYI40jrq230cjfeEXlfM8YQE
+	soyNXPYOl6v6T2OsEBDvO49YesGl1qXdrobFyHDNMpBP7oWOFK5SVymsho9Q==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:content-type:content-type:date:date
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
 	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
 	:message-id:mime-version:references:reply-to:subject:subject:to
 	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1784142555; x=1784228955; bh=OWNxEYtNJ02jhdKldmnWOyauchZB+DJQTrn
-	3GW7DMhs=; b=TqyWnfZFl40p6ovnh16dNT31rt/qgfSSUCHklnrVAvOKd+20ish
-	5vKj5UnKu7F8oXwSbmm6ZLU9xxGe/rBGbwPVi6GYNt8WfVBfJvEZRAKArhyjtTRE
-	fGND5wNHoOLVpUa+QwF0A8iGglr3lobnV+VgMhZNWYgb+rY+gkEvlR+t+Yie8GM+
-	uIx+LwKwqLjIiNn5y4lCu/rrvG4TMftYxwKeJRqNxX2P/IqZj55iYgFDF6JYjAgR
-	/Iaxmazoe4scR83AOz0yTUmE9iJ2q0cpglTFvMcPhrCl6NtHWZ0wsSqnLwEOSXeU
-	Uxsq3JDR73pa6PuvJFPyCuLE1FSeENum+KQ==
-X-ME-Sender: <xms:29pXangRLAnq0ziibB5M4rxtXUrzgqOHoatltDJis8QfjfUoqcrDCQ>
-    <xme:29pXaq9UtVC2pn8DOeZvKxfnRtpAxsIzmFawITq-o0uXGv87Uf42sV2YqCl0e9zW_
-    m5p2SmYzEsR5OinNP3YmguP_K_d4RE05yvcNBrfZuSMiiXCPu8EqvY>
-X-ME-Received: <xmr:29pXasuzwJYgKrndoDqY5la-y3UT1iOo_7V2XS8K-XaxaI4MdRjOJ3ihV9UMmfTXKTXPOx0OfwJuoVcx7uT9uvb88pe2rPzd3cvcu7Qo4AMz>
-X-ME-Proxy-Cause: dmFkZTEYDa9ES4/WsPH+s5gREf9aPn/JH/PyxSnCd+OWwqfViB3dcKxJgUMo5yqLZgYGoY
-    XvrLzjrCI9n87x4Tzkx33Hu241y/adKDac7x3fm4UdlIsOPR1dOGnkSS9AD7TX0w37teRM
-    6fyqV5HIxmQJPafXvJX6J1TDILlN1a30hcNSRFvR0G/0y5klZSLYGK3K5anv7c6oBRhock
-    uXYJXWps61oQq4yoXTfUn3QC9JS0VvFSY6H8u9LcWZnrXmcz+0wwRGSXQDD1lgV2xpBN3g
-    OS3bVqGmHZaZUK0WY+J8ulZVw3+t9n6FTeCxr/UY6IkPvj0HZqCan3bzgvOynoDelsfdin
-    qXfieSuKF4FYDclZhR7FN3kaGc+AfrE5XPEHNz90P4qhQ84xU1P6U+b6ktohm/28Lh1oL1
-    NnuewoAIbhlTVDsPQ1Eq8xjxw6mV3pr9LCaeyiwyjwXswjea6qm3j2ia5C6/LIcwO5fJAr
-    lHbI+fMZO60cs+hApl9OMI6d2Ac5LSsK1o2bIDS4lcRirCRCuyfTJtxIy3CY1SbWarcj7c
-    5QOHMpOor4tlyrZJR7Nq51Hj6K/z9xoazciWFD8HMzfPZzg7IKzXm62ZRKGhGJF0bQ59rQ
-    8dPLnzX2+nShltexiS3+a/xUUrY1TWCF0Vn1i0Owi2T1fvPrPM0jlQgr0wPQ
-X-ME-Proxy: <xmx:29pXapZwLoMXHhWR9wqhZtVwi9C2yNHTOplXjcShSP1bRMpovAF6Lg>
-    <xmx:29pXakqpWRMx0bVkeIab5hugKg6XGor34KziyopefPktKht3c9mdoA>
-    <xmx:29pXam99KMnzbVFQVnMWi9BhcDS3TakySy9QqL52FSTLr7H8ol6RDg>
-    <xmx:29pXar8rQvqV6niClHmmEURGQ9gKhzh1xQTWFF24ixbWuuV3Lnju1A>
-    <xmx:29pXagwnfsHBfZt2lBQ6zW_Wp-si5dCKxYbHhGeH1KuAlNgxIHE0oK3R>
+	1784145079; x=1784231479; bh=Ghbg2Bli2AWTBcZnJWkRmehUBwSS4qsKbNu
+	ZqDFvRcg=; b=aFgCTbWH7H05/BdYUa9lwio94MgfEh/34EvyJuwxc5MioqOrEtZ
+	RaJNozBNy2ETeNB9STtK7/k7Kr20drEEGaBStiqo2qtdhwr+4CQJLPj1MXyT9rii
+	bLljQxyhoNR5bRlkv6lgknxbEfpdKszULeV2sXmibZZRWNfw2qNb+GPr7jkNI7XH
+	s+yoZyOz4elqhm5C4jh9mgwGT4mOfWpZKPTYYFQ96MCJ/qlUrHJ96gsWh9D6Nz+3
+	/SHRgTH5XC4B1knOwiAA4ZNV758FEE4bvLK/W0c9VeIxcDeFgtv5eSBO2mk5BzTY
+	+l7P0PQi+Wtqc7W+fk9XJVWqDX2RJsyfVxw==
+X-ME-Sender: <xms:tuRXajmOpJajMeYBwc60A1DTWswo-Loef-xj2bFPmfigHEU07lc_Uw>
+    <xme:tuRXaqgF1X2K-vERIc-23lXYbAksuIO0DGiTDaZlFj4GQYP75BJIjNEtvIY7GOU24
+    -6VS03Rg85pYgb5xIxEUmfhu2D3FOmG4_EpOi61sEz7NuROQcWQ2R4>
+X-ME-Received: <xmr:tuRXajezayYDRYJQ44_4wS9YBjB_0F1jDlFpjD9ChHLu_PR4aQJ6t8FSnrUMtZ6P9qHyX9Nmrp3NV4efJ43VK1vl1dFDnNb5kQ7ZeKEyu2jh>
+X-ME-Proxy-Cause: dmFkZTEkg3kK7C43jwe1xbQebO+v/i8jWau9LyoSD9gjqr42zeTErCD0alrMmCQIdEKCXF
+    acvFbChA9YYTxmekxwOm8DFjyRGWej37VfzB9wTcog/gO1lKz79Kn2nsMKlI2BxFYCcZ7b
+    grBNiylMkKVFoc0yRpWjKIC6H09yJSnmElkd2beMdPtfBQRBhZMCvGs40H7VA9Ym0CI990
+    1llP8lr9uRqdCbvPVG6JYKWxG6UwkmQYewWN1R55k4ZdrCsrPvB0FA1Wv+XHV8yzrp/mly
+    qPc/AVLYflpe120zIdFkOlujLqhY3TUKjVTcGPkzyEtR/pPjOpWOt6wxiEb6lkLyuqnSpl
+    07E/XZVe6vWNNAvwLBimw+r7cEmaQSz+p7631/VjATxz8u1l5ItFF1UjOZOXPYmF9YOUPA
+    LsbEGWn3O9FVJ4J2qcLj+chX3GTqtQgf0NyLSnAx5SyuAdGlaN+PgCAjEPWm68FrQ3Iglj
+    Suk4pwc2X/4+ySrFD1th+8BG2WH5U1DGpgZdrNziclsobwKhZuo4G1z3pQ/aRpZf9/fqbw
+    Rfc1tvd1ayNnVmUv5r0AGbP/qS3ndIPvoGDppW9ulWAsUzjxqFUnfNOr/PPIfSNi/jyg5w
+    narQyAzuwEHyZ9cuPRQoKUg3hJw45sDFtHRFuoq5w5l2ZMOumm4F59HLiWdA
+X-ME-Proxy: <xmx:tuRXaigogOuAudXs9u0quvJTZCUxonVNwuTAdAVPuL30FruO7UfvCg>
+    <xmx:tuRXajzY-oRWZSC1pACYmquOHWh_3OD-xDcqe-fLkxuMjF_YG27JXg>
+    <xmx:tuRXamMYlOvrIzK12PGdZ0Y4LU6cLMUAke9w78I-Iywvu3CtqWx0gw>
+    <xmx:tuRXasXKQ7-tTA5p6xgmrpDU1wBrHsOH4Ynn0HfgWWGAmtGNzEFEwQ>
+    <xmx:t-RXamIQopOK_IwMv7-E8mhniEEhz6Cr7zPVpvafunqkt3kvvQjQVjZd>
 Feedback-ID: i51494658:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA for
- <yocto-patches@lists.yoctoproject.org>; Wed,
- 15 Jul 2026 15:09:15 -0400 (EDT)
-Message-ID: <e645c8e9df3e28a87b9daa07f220f023ee6287ca.camel@pbarker.dev>
-Subject: Re: [yocto-patches] [yocto-autobuilder-helper][PATCH v4 03/11]
- scripts: add run-vcontainer-tests for meta-virtualization
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 15 Jul 2026 15:51:17 -0400 (EDT)
+Message-ID: <141bd1af085daf5d68bd44413196957f7522cecc.camel@pbarker.dev>
+Subject: Re: [yocto-patches] [pseudo] [PATCH 1/2] ports/linux/guts:
+ Implement close_range() instead of returning ENOSYS
 From: Paul Barker <paul@pbarker.dev>
 To: yocto-patches@lists.yoctoproject.org
-Date: Wed, 15 Jul 2026 20:09:08 +0100
-In-Reply-To: <33fd6cf552070e50949e104771ed72746ff5921b.1783371914.git.tim.orling@konsulko.com>
-References: <cover.1780710041.git.tim.orling@konsulko.com>
-	 <cover.1783371914.git.tim.orling@konsulko.com>
-	 <33fd6cf552070e50949e104771ed72746ff5921b.1783371914.git.tim.orling@konsulko.com>
+Cc: Richard Purdie <richard.purdie@linuxfoundation.org>, Mark Hatle
+ <mark.hatle@amd.com>, Randy MacLeod <randy.macleod@windriver.com>, Vincent
+ Haupert <mail@vincent-haupert.de>, Babanpreet Singh
+ <bbnpreetsingh@gmail.com>
+Date: Wed, 15 Jul 2026 20:51:11 +0100
+In-Reply-To: <20260715054142.7-2-bbnpreetsingh@gmail.com>
+References: <20260715054142.7-1-bbnpreetsingh@gmail.com>
+	 <20260715054142.7-2-bbnpreetsingh@gmail.com>
 Autocrypt: addr=paul@pbarker.dev; prefer-encrypt=mutual;
  keydata=mQINBGC756sBEADXL6cawsZRrDvICz9Y1SG0/lW1me4xpq36obh7a0IGAzp3ywNRb/4MO
  DTqP4+DD0cIFuDY41/N17g0sNlp8z+/k/IIDmNPtYQOTVmAkrkdDU4BP8dD3Cp1PUw6nrbInfujAJ
@@ -117,118 +119,68 @@ Autocrypt: addr=paul@pbarker.dev; prefer-encrypt=mutual;
  ChZPI3NMLnKZPJC8ZQZ4S8yb5oA3rqTA2DMODvsrEVlaB2cQ6IWHSa/mvBwA8Ias3771cp4fZS7W7
  LUewj8JVy0aJsGTwI4invl
 Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-SqA9jyDofHnsaJXPzxrB"
+	protocol="application/pgp-signature"; boundary="=-6Ztm3h3x6JeA4NngAbEJ"
 User-Agent: Evolution 3.52.3-0ubuntu1.1 
 MIME-Version: 1.0
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 15 Jul 2026 19:09:27 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4481
+ <yocto-patches@lists.yoctoproject.org>; Wed, 15 Jul 2026 19:51:27 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4482
 
 
---=-SqA9jyDofHnsaJXPzxrB
+--=-6Ztm3h3x6JeA4NngAbEJ
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2026-07-06 at 15:05 -0700, Tim Orling via lists.yoctoproject.org
+On Wed, 2026-07-15 at 05:41 +0000, Baban via lists.yoctoproject.org
 wrote:
-> Add scripts/run-vcontainer-tests, the test runner used by the
-> vcontainers-test job. It sources the vcontainer-tarball SDK,
-> discovers the meta-virtualization pytest suite, and runs a
-> configurable set of suites (vdkr, vpdmn, memres) against the
-> checked-out layers. Suites can be selected per-step so the
-> top-level 'vcontainer-tests' job runs the container engine
-> agnostic tests:
+> close_range() has been wrapped since 35433e6 ("ports/linux/guts: Add
+> close_range wrapper for glibc 2.34"), but the wrapper only sets ENOSYS,
+> on the grounds that callers have to handle that anyway. That was true
+> when it was written. It no longer is: systemd's close_all_fds() has used
+> close_range() since v247, and v260 raised its kernel baseline to 5.10,
+> dropped the /proc fallback and began treating a failure as fatal.
+> safe_fork_full() aborts the child when it fails, so under pseudo every
+> fork+exec dies, eg for "pseudo systemd-repart" spawning mkfs:
 >=20
-> - tests/test_container_cross_install.py
-> - tests/test_container_registry_script.py
-> - tests/test_vcontainer_auth_config.py
-> - tests/test_multiarch_oci.py
-> - tests/test_multilayer_oci.py
+>     Failed to close all file descriptors: Function not implemented
+>     '(mkfs)' failed with exit status 1.
 >=20
-> The 'vdkr-tests' and 'vpdmn-tests' jobs run only their respective
-> suites (including memres for each container engine):
+> Implement it the way closefrom() already is, per 21ff2fb ("ports/linux/
+> guts: Add closefrom support for glibc 2.34"): a client side op works out
+> the first fd above every descriptor pseudo keeps for itself, closes the
+> ones below it by hand while stepping around its own, and hands that fd
+> back so the caller can turn the kernel loose on the rest. close_range()
+> has a top end where closefrom() does not, so both the manual loop and
+> the path table cleanup are bounded by maxfd.
 >=20
-> - tests/test_vdkr.py
-> - tests/test_vdkr_registry.py
+> The flags are dealt with before any of that. CLOSE_RANGE_UNSHARE has to
+> take effect first, or descriptors would be closed for everyone still
+> sharing the table rather than just for us. CLOSE_RANGE_CLOEXEC closes
+> nothing, and pseudo's own fds are close-on-exec already, so there is
+> nothing to protect and it can go straight to the kernel. An unknown flag
+> or an inverted range is refused before anything is touched, matching the
+> kernel: otherwise a call which should have failed cleanly takes
+> descriptors with it on the way out.
 >=20
-> and
+> A range starting above INT_MAX cannot hold any of pseudo's own fds and
+> is passed through, since the client op takes the low end as an int.
 >=20
-> - tests/test_vpdmn.py
+> [YOCTO #16339]
 >=20
-> The purpose of this script is to test the just built vcontainer-tarball,
-> so that it can be considered "known-good" and be published for use by
-> container building jobs that need the vcontainer-tarball installed.
->=20
-> AI-Generated: Claude Cowork Opus 4.7
-> Signed-off-by: Tim Orling <tim.orling@konsulko.com>
-> ---
->  config.json                  |  31 +++++
->  scripts/run-vcontainer-tests | 212 +++++++++++++++++++++++++++++++++++
->  2 files changed, 243 insertions(+)
->  create mode 100755 scripts/run-vcontainer-tests
->=20
-> diff --git a/config.json b/config.json
-> index 972682d..ae13c5b 100644
-> --- a/config.json
-> +++ b/config.json
-> @@ -1855,6 +1855,37 @@
->                      "install -d ${BASE_SHAREDDIR}/pub/vcontainer-tarball=
--latest && install -m 0755 ${BUILDDIR}/tmp/deploy/sdk/vcontainer-standalone=
-.sh ${BASE_SHAREDDIR}/pub/vcontainer-tarball-latest/vcontainer-standalone.s=
-h.new && mv -f ${BASE_SHAREDDIR}/pub/vcontainer-tarball-latest/vcontainer-s=
-tandalone.sh.new ${BASE_SHAREDDIR}/pub/vcontainer-tarball-latest/vcontainer=
--standalone.sh"
->                  ]
->              }
-> +        },
-> +        "vcontainer-tests": {
-> +            "NEEDREPOS" : ["bitbake", "meta-openembedded", "meta-virtual=
-ization"],
-> +            "ADDLAYER" : [
-> +                "${BUILDDIR}/../meta-openembedded/meta-oe",
-> +                "${BUILDDIR}/../meta-openembedded/meta-python",
-> +                "${BUILDDIR}/../meta-openembedded/meta-networking",
-> +                "${BUILDDIR}/../meta-openembedded/meta-filesystems",
-> +                "${BUILDDIR}/../meta-virtualization"
-> +            ],
-> +            "step1" : {
-> +                "shortname" : "Run vcontainer pytest suite",
-> +                "NOBUILDTOOLS" : 1,
-> +                "EXTRACMDS" : [
-> +                    "${SCRIPTSDIR}/run-vcontainer-tests -s vcontainer -b=
- ${BUILDDIR} -m ${BUILDDIR}/../meta-virtualization -S ${BASE_SHAREDDIR}/pub=
-/vcontainer-tarball-latest/vcontainer-standalone.sh -r ${HELPERRESULTSDIR}"
-> +                ]
-> +            },
-> +            "step2" : {
-> +                "shortname" : "Run vdkr pytest suite",
-> +                "NOBUILDTOOLS" : 1,
-> +                "EXTRACMDS" : [
-> +                    "${SCRIPTSDIR}/run-vcontainer-tests -s vdkr -b ${BUI=
-LDDIR} -m ${BUILDDIR}/../meta-virtualization -S ${BASE_SHAREDDIR}/pub/vcont=
-ainer-tarball-latest/vcontainer-standalone.sh -r ${HELPERRESULTSDIR}"
-> +                ]
-> +            },
-> +            "step3" : {
-> +                "shortname" : "Run vpdmn pytest suite",
-> +                "NOBUILDTOOLS" : 1,
-> +                "EXTRACMDS" : [
-> +                    "${SCRIPTSDIR}/run-vcontainer-tests -s vpdmn -b ${BU=
-ILDDIR} -m ${BUILDDIR}/../meta-virtualization -S ${BASE_SHAREDDIR}/pub/vcon=
-tainer-tarball-latest/vcontainer-standalone.sh -r ${HELPERRESULTSDIR}"
-> +                ]
-> +            }
->          }
->      },
+> AI-Generated: Uses Claude (claude-opus-4-8)
+> Signed-off-by: Babanpreet Singh <bbnpreetsingh@gmail.com>
 
-Hi Tim,
+Hi,
 
-Would it make sense to merge the vcontainer-tests steps in to the
-vcontainer-tarball job defined in patch 2 of this series? Essentially,
-build the tarball (step 1), test it (steps 2-4, merged from this patch),
-then publish it (step 5) only if it has passed the tests.
+I've done some initial review and this looks mostly ok to me. I'll let
+Mark/Richard give any further review as well.
+
+One thing that bothers me: "... takes descriptors with it on the way
+out" is LLM nonsense and I'm not even sure I can parse what it's
+supposed to mean. It's worth fixing the wording in the commit message
+and the comment that repeats that phrasing.
 
 Best regards,
 
@@ -236,17 +188,17 @@ Best regards,
 Paul Barker
 
 
---=-SqA9jyDofHnsaJXPzxrB
+--=-6Ztm3h3x6JeA4NngAbEJ
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 
 -----BEGIN PGP SIGNATURE-----
 
-iIcEABYKAC8WIQSzjPXf5Y1BDWhU2iCrY1Tsnbr0bgUCalfa1BEccGF1bEBwYmFy
-a2VyLmRldgAKCRCrY1Tsnbr0boo6AP9UxNdxi08EG8bWZbenx4tU7IbHXmInkRg9
-1abI4iK7LgD7BeLIfbdbeCFnQ2R49yd+HZbgoINvwWDEkD3EJxLdsQI=
-=AQkS
+iIcEABYKAC8WIQSzjPXf5Y1BDWhU2iCrY1Tsnbr0bgUCalfkrxEccGF1bEBwYmFy
+a2VyLmRldgAKCRCrY1Tsnbr0br9JAQDfL5e2N2bGcWyeQoU7XujrkMxUBY/wNFZM
+Hm2+9oejJQEAxdcKNJJ0bMKsrQJVdsDSGpnIzgUyd/OYpCVggELKrQE=
+=EXDP
 -----END PGP SIGNATURE-----
 
---=-SqA9jyDofHnsaJXPzxrB--
+--=-6Ztm3h3x6JeA4NngAbEJ--
 
