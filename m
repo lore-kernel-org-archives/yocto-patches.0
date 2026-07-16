@@ -1,325 +1,139 @@
-Return-Path: <twoerner@gmail.com>
+Return-Path: <bbnpreetsingh@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73148C4450A
-	for <webhook@archiver.kernel.org>; Wed, 15 Jul 2026 22:32:59 +0000 (UTC)
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.887.1784154773056621771
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07548C43458
+	for <webhook@archiver.kernel.org>; Thu, 16 Jul 2026 05:56:44 +0000 (UTC)
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.6530.1784181396075573490
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 15 Jul 2026 15:32:53 -0700
+ Wed, 15 Jul 2026 22:56:36 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=a2ODggNE;
- spf=pass (domain: gmail.com, ip: 209.85.219.53, mailfrom: twoerner@gmail.com)
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-8f0d6853360so43297776d6.0
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 15 Jul 2026 15:32:52 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=ObE+d6VV;
+ spf=pass (domain: gmail.com, ip: 209.85.214.180, mailfrom: bbnpreetsingh@gmail.com)
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2cc7e86e7aeso30892525ad.2
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 15 Jul 2026 22:56:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784154772; x=1784759572; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20251104; t=1784181395; x=1784786195; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=Hzknf4H9TyLnXFxGkY4rAzItZggB8hKQ5vgDhzh529s=;
-        b=a2ODggNECpAOLKizVndNx2ykl/moBBhE1NsNgMw9KvNgkL4GttuZbkEZleErB4VUaf
-         k/ZzIbeRGme98TWoFmsIVhmGaZazYs/KBEvgs6W2asPUA2lF1gkM8r9kqmTfGAHWBYr8
-         DRyZtL/0ex/9vaYkaLI6qxgs44vGXIN/ZYHCuH9LTR82YxuqOH3AvpsMBLbh3w8P72A3
-         afWQtK2DA4USN1PdeF+g5xsOwH4yLUSkRNLb17v/xFo11H3vd3iRO/Ou2EBaWoI2cA3g
-         JiOQdL4DKF+Hz0zwggsfFFfpTGCGRtAkO4aNHTV1gA46M9v+n8umKoj5HXA3rvV0Vhn2
-         xDAg==
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=AwKaMWBoxkR+1R3vakqQh6DBR+OCEFK34SFDKGyxf2k=;
+        b=ObE+d6VVDc6xdGhkJ+dHN4jUQ1fGsQ4yJdzIlMAsd3My4Lo6BLpsTRPdiyVC1w0KJU
+         wq1FVE8hCCN8MQcdVOYPR8xNSekb3vzW/hzDp3BrqMAssfd0+S/LkhwN7gxWLIIdzIOS
+         a0LCWCmd/c9AbCtUzdmx7H7F2CAlL/rhpluEtSfBhInUDjLF0G3tpqWeJJThYPbqNk7z
+         Jon+G4xFNllycCMbIp8n271ZFepmiaitHU9OhHR3FUtTlUjYpV76g9m15EUScvNneabO
+         Ly+pfkX6yAOgwlfNwhqNieIbCZCNJ7Z7TIoJ9E8JtgS2hHzZXdXkYzHdpasUH6Ar4R1u
+         /7eQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784154772; x=1784759572;
+        d=1e100.net; s=20251104; t=1784181395; x=1784786195;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=Hzknf4H9TyLnXFxGkY4rAzItZggB8hKQ5vgDhzh529s=;
-        b=c4co9EjgB8LY+2M9tRqjxZZ6UIvoKbZAi+ax+6Ew9wdDafQvTr42Bv3q6dnPv1fi37
-         Tb+jJfebVoAuQ04biEFLNLrv5uO8UX0HvVKIgVUnWynkydGd4aMs1d9eQwZWADsrZas4
-         1vp0d3fdrBqADOHTQZz2pdOvj1yxaFGAp6aE2PhzWn+VwTfRmTbJjviAWqFhL9T+2sgA
-         L3sKe3+zYtBDqcNy1OT2iUCUigIBugoq067ZneKu4c6bS18tyYz2SEZq1RU8kFdkr8Np
-         thHDMVGxZpMNShUDhbEpeE06aLyKcS6pwn8CuQsbbHxoM6SoyHg4Q3tOBgyAClBPcZz8
-         YmSw==
-X-Gm-Message-State: AOJu0YyFLFsTOweg+TNaalp3pcO0bA1xPXSuBI/J3KDs+HKeI490MnsJ
-	LNAPM/2gADifj9cLCodg2DfhMfssN/khaVgRIKO6zOQQNz5C1Qero50EY9MEOw==
-X-Gm-Gg: AfdE7cne0ec/AiU8NuQq4AkHxJRC92w5DtC5NzDJyNPTMdRN+0dsEYuxEstDF8GkEUi
-	rCDD2A/atQV2l/ryfJK/CaZ6Z9PYKfOV60n/7gH0oHT/THeKA2qlKgFd5/2tHHSixMr0K1NTBLL
-	MM74xFuo1ReiwLo+xiRvW3l8kGy/4QCooxPjK99OUymnOifdD8QBxCYGEUGgvVTjR3F5nNvG/UR
-	GcZuJ8gPF1uJamwh9zTz//GNj6w76haJBnJAq5aMZ2PzTnaYwE31VO7K97BWXZ1Q86r1k1PYspH
-	Rw56B5htx+EkmJyrbnLLW5QjNbSySsqHsLwdYjussHjhMRSVY+1YIvJjPKqCL/PTAndw1FTiz+q
-	o70OetPR4Dmjy+nVnG8fJf6TPdQqPlq6MGIZ4iEBgqfnP+VMghZAyujzIXygEydhGEH4syBV9AP
-	8VByCQPSbjakcU1pSL0gxGd3icuwj2eVuzii0zbZh2upnU
-X-Received: by 2002:a05:6214:500e:b0:8ef:5b18:65ec with SMTP id 6a1803df08f44-9074c70b5cemr93457776d6.15.1784154771681;
-        Wed, 15 Jul 2026 15:32:51 -0700 (PDT)
-Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8ffd81f43e6sm205883726d6.39.2026.07.15.15.32.49
-        for <yocto-patches@lists.yoctoproject.org>
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=AwKaMWBoxkR+1R3vakqQh6DBR+OCEFK34SFDKGyxf2k=;
+        b=rOiTDVEPS3pM+jqiip1WxW/tV1ypBr70ApEcs8IjMLTKosX56n0i9LTYrjF8DjfHXy
+         eMtE7wxXvCDjoBQ3JZTytzY03iEN4VKEU5FcloIBgWbhhdWx7XKnlEEaFFymMftLlk1V
+         U+WkaYpe35DagjHBc7nbj7Unvf3zfuGhcdz6BsFI3JEjHLoTWi+CNi6CLQbo90ZGtcPf
+         W84SSmzPmv8CEvJ93m5xPNjfBJPCfHFznK7wiA0g/DJQKQ5J/4AUc8B+hvUSA8ARomzX
+         JhkXt6VWieNzq33MvyMP1SinQzdKDXibPZEO0j0L6q0uNnmI+Oz3ebV6DvvRBMKmixDe
+         CYtw==
+X-Gm-Message-State: AOJu0YyvYZgpsGnpBmiyLQ/G69LE/8XmMEOTZ+5a3m8lGZmxSq5XOO2x
+	Ltf4CYZqrXpNJfbOQuxU7e+P5lBJqbDTgxz20qIwajgS1vZDJ4zMsrwqpgxhOu0BY7U=
+X-Gm-Gg: AfdE7cmgJW+vGArf0eSHTamCnr7eol5xnQ6b4sklreuglkXCwSu/4SjnHWDGtiTwMSL
+	VIDMp3isfnUbeaRhww9tE8nJtWvGLrWl6KylJNSwgd8W13B/HU2jRrOj0W1yRZMT3lhvy+HoRBm
+	+xjPkzsJChA5Hcz1H+DskmBfj4+WhrfLCDOTelpC1UVWfxGb8UBFsklbNgCpH0bW62qXtwbQU2+
+	EZqslkHVFH2Ij0UPdZbyng+BHPjYYcjVNbW5zchpQz0eeLzrdfELIWAtZ3/ms4zA+Vuuv0hVDRF
+	TF0YP+8A/HQMXPW8stuZi6DjHzs3TOUl8lUNrCQ7fWgYaR3uzLKQ2dDipaY1/vhpQxiX+o2NiZ3
+	qmIvIyftr6Gn5+37u6LoJgCLCYySkVSWCE81Z8qXQr1VWTc6g7myewfemaR9tZ11AIYDZ8NZW5U
+	kCbQ==
+X-Received: by 2002:a17:902:ecce:b0:2c9:c083:cd50 with SMTP id d9443c01a7336-2ce9e9ac9acmr189912685ad.17.1784181395264;
+        Wed, 15 Jul 2026 22:56:35 -0700 (PDT)
+Received: from ydev.. ([108.180.130.139])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2cf100e44ecsm14124585ad.12.2026.07.15.22.56.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jul 2026 15:32:50 -0700 (PDT)
-From: Trevor Woerner <twoerner@gmail.com>
+        Wed, 15 Jul 2026 22:56:34 -0700 (PDT)
+From: Babanpreet Singh <bbnpreetsingh@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [wic][PATCH 5/5] tests/unit/test_ksparser_types: cover ksparser's argparse types
-Date: Wed, 15 Jul 2026 18:32:26 -0400
-Message-ID: <20260715223226.3371498-6-twoerner@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260715223226.3371498-1-twoerner@gmail.com>
-References: <20260715223226.3371498-1-twoerner@gmail.com>
+Cc: Paul Barker <paul@pbarker.dev>,
+	Richard Purdie <richard.purdie@linuxfoundation.org>,
+	Mark Hatle <mark.hatle@amd.com>,
+	Randy MacLeod <randy.macleod@windriver.com>,
+	Vincent Haupert <mail@vincent-haupert.de>,
+	Babanpreet Singh <bbnpreetsingh@gmail.com>
+Subject: [pseudo] [PATCH v2 0/2] close_range: implement it rather than return ENOSYS
+Date: Thu, 16 Jul 2026 05:56:31 +0000
+Message-ID: <20260716055633.7-1-bbnpreetsingh@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260715054142.7-1-bbnpreetsingh@gmail.com>
+References: <20260715054142.7-1-bbnpreetsingh@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 15 Jul 2026 22:32:59 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4489
+ <yocto-patches@lists.yoctoproject.org>; Thu, 16 Jul 2026 05:56:44 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4490
 
-Add direct unit coverage for sizetype(), overheadtype(), and
-systemidtype(): the accepted KiB/byte-mode units and default-suffix
-handling, the >= 1.0 overhead contract, and the 0x-prefixed system-id
-byte range, together with the boundary and malformed inputs each
-rejects.
+pseudo's close_range() wrapper has returned ENOSYS unconditionally since
+35433e6 ("ports/linux/guts: Add close_range wrapper for glibc 2.34").
+systemd v260 deleted its /proc/self/fd fallback and treats a failure as
+fatal, so under pseudo every fork+exec dies. That is [YOCTO #16339]. Full
+story in v1:
 
-The cases pin behaviour that is easy to regress: sizetype() rejects a
-negative count, overheadtype() raises a clean ArgumentTypeError (not a
-TypeError) for a sub-1.0 factor and refuses nan/inf, and systemidtype()
-accepts only an explicit 0x-prefixed hex byte.
+  https://lore.kernel.org/yocto-patches/20260715054142.7-1-bbnpreetsingh@gmail.com/
 
-AI-Generated: codex/claude-opus 4.8 (xhigh)
-Signed-off-by: Trevor Woerner <twoerner@gmail.com>
----
- tests/unit/test_ksparser_types.py | 226 ++++++++++++++++++++++++++++++
- 1 file changed, 226 insertions(+)
- create mode 100644 tests/unit/test_ksparser_types.py
+Paul, thanks for the review. Changes in v2, both from it:
 
-diff --git a/tests/unit/test_ksparser_types.py b/tests/unit/test_ksparser_types.py
-new file mode 100644
-index 000000000000..49ac38ba5397
---- /dev/null
-+++ b/tests/unit/test_ksparser_types.py
-@@ -0,0 +1,226 @@
-+"""
-+Unit tests for wic/ksparser.py's custom argparse types: sizetype,
-+overheadtype, and systemidtype. These are wic's own input validators for
-+kickstart/command-line values, so the tests pin the accepted forms, the
-+rejected forms, and the boundaries between them.
-+"""
-+import sys
-+from pathlib import Path
-+
-+import pytest
-+
-+_SRC = Path(__file__).resolve().parent.parent.parent / "src"
-+if str(_SRC) not in sys.path:
-+    sys.path.insert(0, str(_SRC))
-+
-+from argparse import ArgumentTypeError
-+
-+from wic.ksparser import sizetype, overheadtype, systemidtype
-+
-+
-+class TestSizetype:
-+    """sizetype(default, size_in_bytes=False) returns f(arg) that turns a
-+    "<num>[S|s|K|k|M|G]" string into an integer. With size_in_bytes=False
-+    the multiplier is 1 (K->1, M->1024, G->1024*1024, i.e. KiB counts);
-+    with size_in_bytes=True the multiplier is 1024 and S/s means sectors of
-+    512 bytes. A bare number takes the default suffix."""
-+
-+    @pytest.mark.parametrize("arg,expected", [
-+        ("0", 0),
-+        ("0M", 0),
-+        ("1K", 1),
-+        ("1k", 1),
-+        ("3K", 3),
-+        ("7K", 7),
-+        ("512k", 512),
-+        ("999k", 999),
-+        ("1024K", 1024),
-+        ("1000K", 1000),
-+        ("1M", 1 * 1024),
-+        ("10M", 10 * 1024),
-+        ("13M", 13 * 1024),
-+        ("100M", 100 * 1024),
-+        ("512M", 512 * 1024),
-+        ("1G", 1 * 1024 * 1024),
-+        ("2G", 2 * 1024 * 1024),
-+        ("3G", 3 * 1024 * 1024),
-+        # a large magnitude past 2**31, to catch any 32-bit truncation
-+        ("5000000K", 5000000),
-+    ])
-+    def test_kib_units_with_M_default(self, arg, expected):
-+        assert sizetype("M")(arg) == expected
-+
-+    def test_bare_number_uses_M_default(self):
-+        assert sizetype("M")("100") == 100 * 1024
-+
-+    def test_bare_number_uses_K_default(self):
-+        assert sizetype("K")("512") == 512
-+
-+    @pytest.mark.parametrize("arg,expected", [
-+        ("1S", 512),
-+        ("1s", 512),
-+        ("2S", 2 * 512),
-+        ("7S", 7 * 512),
-+        ("1K", 1024),
-+        ("3K", 3 * 1024),
-+        ("17M", 17 * 1024 * 1024),
-+        ("1M", 1024 * 1024),
-+        ("1G", 1024 ** 3),
-+        # past 2**63 to confirm Python's arbitrary-precision ints hold
-+        ("10000000G", 10000000 * 1024 ** 3),
-+    ])
-+    def test_size_in_bytes_units(self, arg, expected):
-+        assert sizetype("K", size_in_bytes=True)(arg) == expected
-+
-+    def test_sectors_only_when_size_in_bytes(self):
-+        # 'S' is a valid suffix only in byte mode; without it the suffix is
-+        # unknown and rejected.
-+        with pytest.raises(ArgumentTypeError):
-+            sizetype("M")("1S")
-+
-+    # --- suffix case sensitivity -------------------------------------------
-+
-+    @pytest.mark.parametrize("arg", ["1m", "1g"])
-+    def test_lowercase_m_and_g_rejected(self, arg):
-+        # Only k/K are case-insensitive; m and g are not accepted.
-+        with pytest.raises(ArgumentTypeError):
-+            sizetype("M")(arg)
-+
-+    # --- negative sizes -----------------------------------------------------
-+
-+    @pytest.mark.parametrize("arg", ["-1M", "-5", "-1K", "-1024K", "-1G"])
-+    def test_negative_size_rejected(self, arg):
-+        with pytest.raises(ArgumentTypeError):
-+            sizetype("M")(arg)
-+
-+    # --- invalid formats ----------------------------------------------------
-+
-+    @pytest.mark.parametrize("bad", [
-+        "abc",       # no digits
-+        "M",         # suffix only
-+        "1X",        # unsupported suffix
-+        "1.5M",      # float not accepted
-+        "1M ",       # trailing space becomes the suffix
-+        "1e3M",      # scientific notation
-+        "",          # empty
-+        "   ",       # whitespace only
-+        "1;M",       # shell metacharacters
-+        "1|M",
-+        "$(1)M",
-+        "1`M",
-+    ])
-+    def test_invalid_format_rejected(self, bad):
-+        with pytest.raises(ArgumentTypeError):
-+            sizetype("M")(bad)
-+
-+    def test_none_rejected(self):
-+        with pytest.raises((ArgumentTypeError, TypeError)):
-+            sizetype("M")(None)
-+
-+
-+class TestOverheadtype:
-+    """overheadtype(arg) -> float, and the factor must be >= 1.0. Anything
-+    below 1.0, non-numeric, or non-finite is an ArgumentTypeError."""
-+
-+    @pytest.mark.parametrize("arg,expected", [
-+        ("1.0", 1.0),
-+        ("1.001", 1.001),
-+        ("1.1", 1.1),
-+        ("1.3", 1.3),
-+        ("1.37", 1.37),
-+        ("3.14159", 3.14159),
-+        ("7", 7.0),
-+        ("2", 2.0),
-+        ("2.0", 2.0),
-+        ("100.0", 100.0),
-+        ("1000000.0", 1000000.0),
-+    ])
-+    def test_valid_factor(self, arg, expected):
-+        assert overheadtype(arg) == pytest.approx(expected)
-+
-+    def test_leading_whitespace_accepted(self):
-+        # float() strips surrounding whitespace.
-+        assert overheadtype(" 1.1") == pytest.approx(1.1)
-+
-+    def test_trailing_whitespace_accepted(self):
-+        assert overheadtype("1.1 ") == pytest.approx(1.1)
-+
-+    # --- below 1.0: a clean ArgumentTypeError, not a TypeError crash --------
-+
-+    @pytest.mark.parametrize("arg", ["0.0", "0.5", "0.999", "-1.0", "-0.5"])
-+    def test_below_one_rejected(self, arg):
-+        with pytest.raises(ArgumentTypeError):
-+            overheadtype(arg)
-+
-+    # --- non-finite ---------------------------------------------------------
-+
-+    @pytest.mark.parametrize("arg", ["nan", "NaN", "inf", "Infinity", "-inf"])
-+    def test_non_finite_rejected(self, arg):
-+        with pytest.raises(ArgumentTypeError):
-+            overheadtype(arg)
-+
-+    # --- non-numeric --------------------------------------------------------
-+
-+    @pytest.mark.parametrize("bad", [
-+        "abc", "1.1.1", "M", "1,3", "1 1", "--1.1", "",
-+    ])
-+    def test_non_numeric_rejected(self, bad):
-+        with pytest.raises(ArgumentTypeError):
-+            overheadtype(bad)
-+
-+    def test_none_rejected(self):
-+        with pytest.raises((ArgumentTypeError, TypeError)):
-+            overheadtype(None)
-+
-+
-+class TestSystemidtype:
-+    """systemidtype(arg) validates an MBR partition type id as an explicit
-+    0x-prefixed hex byte in 0x1..0xFF and returns the original string
-+    unchanged."""
-+
-+    @pytest.mark.parametrize("arg", [
-+        "0x1", "0x01", "0x0b", "0x0B", "0x82", "0x83", "0xFE", "0xFF",
-+        "0xff", "0xFf", "0X82",
-+        # odd, non-round bytes across the range
-+        "0x7", "0x2a", "0x5b", "0x93", "0xa7", "0xd3",
-+    ])
-+    def test_valid_returned_unchanged(self, arg):
-+        assert systemidtype(arg) == arg
-+
-+    # --- out of range -------------------------------------------------------
-+
-+    @pytest.mark.parametrize("arg", ["0x0", "0x00", "0x100", "0xFFFF"])
-+    def test_out_of_range_rejected(self, arg):
-+        with pytest.raises(ArgumentTypeError):
-+            systemidtype(arg)
-+
-+    # --- must be an explicit 0x-prefixed hex string -------------------------
-+
-+    @pytest.mark.parametrize("arg", [
-+        "82",        # no 0x prefix (would parse as hex 130)
-+        "130",       # decimal that names a valid value
-+        "+0x82",     # leading sign
-+        "-0x82",
-+        "0b1010",    # binary prefix
-+    ])
-+    def test_non_prefixed_forms_rejected(self, arg):
-+        with pytest.raises(ArgumentTypeError):
-+            systemidtype(arg)
-+
-+    @pytest.mark.parametrize("bad", [
-+        "0x",              # prefix with no digit
-+        "0xGG",            # invalid hex digit
-+        "abc",             # not hex
-+        "0x 82",           # embedded whitespace
-+        " 0x82",           # leading whitespace
-+        "",                # empty
-+        "   ",             # whitespace only
-+        "0x" + "F" * 10000,  # very long
-+    ])
-+    def test_invalid_format_rejected(self, bad):
-+        with pytest.raises(ArgumentTypeError):
-+            systemidtype(bad)
-+
-+    def test_none_rejected(self):
-+        with pytest.raises((ArgumentTypeError, TypeError)):
-+            systemidtype(None)
+1/2: no code change apart from one comment. The commit message is
+rewritten in plainer language throughout; the "takes descriptors with it
+on the way out" sentence and the comment that repeated it now simply say
+that invalid arguments are rejected with EINVAL before anything is
+closed.
+
+2/2: two real gaps closed.
+
+  - CLOSE_RANGE_CLOEXEC needs a 5.11 kernel while the syscall itself needs
+    5.9, so probing only for the syscall made the test fail on 5.9/5.10.
+    The shell wrapper now probes for the flag separately, the same
+    PSEUDO_DISABLED=1 way, and on such a kernel only the CLOEXEC part of
+    the test is left out.
+
+  - CLOSE_RANGE_UNSHARE is now tested against a real sharer, not argued
+    from unshare() semantics: a child cloned with CLONE_FILES closes a
+    shared descriptor with the flag set, and the parent must still hold it
+    afterwards. A second child closes the same descriptor without the flag
+    and the parent must see it gone, so a clone that quietly stopped
+    sharing the table cannot make the first check pass vacuously.
+
+The new test was checked for sensitivity by deliberately removing the
+unshare() call from the wrapper: it fails with "child's CLOSE_RANGE_UNSHARE
+closed the parent's fd 3", and passes with the real implementation. The
+5.9/5.10 probe path cannot be exercised end to end on this host (6.17
+kernel); the --no-cloexec branch it selects was run directly under pseudo
+and passes. Full run_tests.sh is unchanged from master apart from the new
+test passing (the two pre-existing flaky parallel-* failures show up either
+way).
+
+The v1 question about OP_CLOSEFROM stepping around five of pseudo's
+descriptors while others exist (pseudo_prefix_dir_fd, pseudo_pwd_lck_fd,
+pseudo_util_evlog_fd) still stands; happy to send a follow-up if that list
+is short in both places.
+
+Babanpreet Singh (2):
+  ports/linux/guts: Implement close_range() instead of returning ENOSYS
+  tests: Add close_range() test
+
+ enums/op.in                    |   1 +
+ ports/linux/guts/close_range.c |  54 ++++++-
+ ports/linux/portdefs.h         |  16 ++
+ pseudo_client.c                |  60 +++++++
+ test/test-close-range.c        | 283 +++++++++++++++++++++++++++++++++
+ test/test-close-range.sh       |  24 +++
+ 6 files changed, 431 insertions(+), 7 deletions(-)
+ create mode 100644 test/test-close-range.c
+ create mode 100755 test/test-close-range.sh
+
 -- 
-2.50.0.173.g8b6f19ccfc3a
+2.43.0
 
 
