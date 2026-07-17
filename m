@@ -1,104 +1,118 @@
-Return-Path: <richard.purdie@linuxfoundation.org>
+Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3C4DC4451C
-	for <webhook@archiver.kernel.org>; Fri, 17 Jul 2026 13:19:50 +0000 (UTC)
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.13307.1784294387473771494
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7BDAC4451C
+	for <webhook@archiver.kernel.org>; Fri, 17 Jul 2026 13:53:15 +0000 (UTC)
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.14003.1784296389518479429
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 17 Jul 2026 06:19:48 -0700
+ Fri, 17 Jul 2026 06:53:09 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=f31a3feX;
- spf=pass (domain: linuxfoundation.org, ip: 209.85.221.42, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-475881b9a4bso4464115f8f.3
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 17 Jul 2026 06:19:47 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=beIfSE/O;
+ spf=pass (domain: gmail.com, ip: 209.85.160.173, mailfrom: twoerner@gmail.com)
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-5218927884fso6017561cf.3
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 17 Jul 2026 06:53:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1784294386; x=1784899186; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=I0CoBAZWSP5J4tCI0fyjAebZXBZIlx3CTO/n6aVhtDU=;
-        b=f31a3feXkoK8gyK1enw2IuO7D6O+yZJa7NTIgMZFXjhGNDCW7plV/q1fDctatcM9d+
-         yle0oUOj1rSYrON4A0rqs7XabLa5BkmD1+uRe/euUabckWTAiVANXuLS1ZuxXF4AnSg8
-         pBlKhqbWCdDhFu+d0BunlFYLYNvI5iPDiwPPs=
+        d=gmail.com; s=20251104; t=1784296388; x=1784901188; darn=lists.yoctoproject.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=38xfoKN0S5HfKBdWC40De1DtE8gbPNMzU4+bix00vYY=;
+        b=beIfSE/OCHyxWKvcxR/fuphW3yb5t3OcAkJNVVwssLqQMuqfk8M+VAZf/rWETsde7M
+         aJn7LiQff4VFJ1vg4yRGTnLompUo9VbCzM9rcKS50ykMtpdwyCPTnkrC2F5t7o7sp3Yr
+         vitkOV8klCAF644jbU83d1xmL2JQ/tv+br3GoNF26DsORWDUQP50QkpLHD68elRzMJ27
+         y87/4/jKnZkI5jQGlN+rIhg83OiDHQM3rgf/kZhN4ys+/oHWoXZv3F6nZH2lgs7o8pp5
+         jKF1EkP0tXqr+4EFr0mzgFcwgx4JGz/81xHYQ/U7mX2WF4pjExT1WU2c6UNSlmKutoqz
+         a/OQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784294386; x=1784899186;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=I0CoBAZWSP5J4tCI0fyjAebZXBZIlx3CTO/n6aVhtDU=;
-        b=OOz+cfz08jyD7Yzrr/OUJNS1nG+4DIgAvgYYzcbWA5TdrOVvcX87nRacnSRvRVYFSb
-         HBWZROatNx5rDo2h9DcrPJh3og2rLAsBlrCZzI86BNrK1FXQr9neuFH0gkYJi/JAqqc4
-         okPlb47o4QShRs9bPYMyOb/s8ujnLUndpBpeHXnITKf5mphEtoQ1b53vN1xF6ugrOyJ7
-         MfLbyNc7pixFV9sC/sMIm30cjbsyz35vfRjXp67iWKSXIypSldKPZPT111Sc9El2GGFL
-         Tp4zzCXDnuutmEAheRAg/JAuYq9W75F4RwsZJkGTfHGD4nDJDveIm7xzW/6dZNuFS1FX
-         mv4w==
-X-Gm-Message-State: AOJu0Yy5YoYSzbCCgMb4DMkYa940ckEGJszBNY4L1O5nPk4RZAJmehAU
-	yw7u83RWnDG8hxTvrucNbshsg1Qr22KFMdWGbBpHYXoKDXTHqEFl9J8HwDmAfMf6ZASLh7A/YTC
-	N0f+qwPw=
-X-Gm-Gg: AfdE7cl7tZMD1VRKaLS17sBFJUn7Jx0QnhyRiDcsIhwOyWHa5fAZaJTdGATdDQt3dwc
-	stKhjPhclZtOPGogJgdYoY6wiycOmlYGmmRLkVzmiHMnNOPpZTadAOfhL2t7EU9wI92VYPiJwOo
-	aLkuXZyWsi4Cd3/r1ZbaCNTTzDGAwxuE178TlX3sonJwLEU8kwlyT4q2xBjyKtFzbsQePaxGCBO
-	bZZFhXhR2XFRix9NGuOU8x2hcl8Wwy8V1S9AsgaFXN2eQrHi5PqME3aVoEsMNQUVIvT0apcBh1u
-	t3imr744zwp9hw+iEyrbNJM1BIyLvbk0sAqD5WARCEUUU7is3XvKHgPpkFkwxwv0CSAUwVsvnMz
-	9+O8XfBiU69OP/HsI/mOgf/jT1iZ9FryaLpCr25//IWgQhxglidzEVasHQ51rAscuTXsurZuP3k
-	C5nmpboGNK5+TBQ8R4telkR0eRj2Dnvg==
-X-Received: by 2002:a05:6000:228a:b0:46f:f12b:e45a with SMTP id ffacd0b85a97d-47f622fe81bmr3889910f8f.23.1784294385544;
-        Fri, 17 Jul 2026 06:19:45 -0700 (PDT)
-Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:4f8:d22a:f372:6bf7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f63eea8afsm4074701f8f.33.2026.07.17.06.19.44
+        d=1e100.net; s=20251104; t=1784296388; x=1784901188;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=38xfoKN0S5HfKBdWC40De1DtE8gbPNMzU4+bix00vYY=;
+        b=Pu9tkspVws3wSuyKktAd76dNXWndaCEtWAPYQ1X8AtHjueBshXc8yXezrJdUFbNHiL
+         1qrgLYgbM47dh+sXtLKyYoDf/DR5J6A9DaemIpn4c5iYf3yyQIXukLieZNaWtuKS4bWT
+         bDO49tDWT6SSVZpwgjmLJ18mUv9HeFoQ/RRGNfQXHqof7BzmgJ6szi1ACXh98KmZN8vh
+         rS3Fk6OkBA6rJLKl8Ooch8ZnM7WCXvXlb8mUatEskCGrIT1jTkpHgCa9tIan1iw3tswR
+         KBod+4SoKcnhismEZ09P+6SK8p96DpNU0IPi4R1hL6ArsviZOmAkf3fOjvrb4X++HcY0
+         tF1A==
+X-Gm-Message-State: AOJu0YweMm1zw/vaJ6FE1Udqa0/IMZz4sTX5dbRQcZoVhKnavIvYQkoL
+	X5A+DLfvnXU83GS+xCo1VRi1q73/pL7JDSH9acYhsYZVYjufCzEl2fCt
+X-Gm-Gg: AfdE7ckYD5/kaQD3RIQ/0tgkv1WChwrA77/Zw0SFePAOC/ClQTobjEHE3dqdydhrEjJ
+	cIf0yrR9GEkmyUSZI1/2c5keNsi8dvb9gjaB3D6uPrHeqiGLBEvXpTgZkUDlifl1hwwX08vqVWC
+	MiUXx1yBR+rVs9c5rNM//r7Py7CUEdCMmTjSVeYDVYGW6mXKdtDPCbWnu0DUL9EC0qozg/Z4EjN
+	svPxFJcR5+lH2999XoJTLhtuLg8EgZO+SYiX6fwH2F4ZagSH1BID1c75E+f0j0TThXkOBbIEJGn
+	eQt79tbSqL9k9zuVaM7/UlfcVIqRuXCBbo+JcKcBgiudaJN2dbam7RLJw6orgHIUB7JQwbZDSkE
+	8YhIh87ZCvptY+VdLF4gfQbpTODBXz4o2sRsvRXaIt4IruwJhL6D9hhdO7iy26dBxaQrG1Y/UHQ
+	/ygvDqsv54Qv3Z8dO8sPLw73PrC8vBRLOLOS5/opsmQAoZ
+X-Received: by 2002:a05:622a:48a:b0:51c:a2ea:64d3 with SMTP id d75a77b69052e-5213ae5557cmr22962361cf.35.1784296387682;
+        Fri, 17 Jul 2026 06:53:07 -0700 (PDT)
+Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-5214c5cd3dbsm12802691cf.5.2026.07.17.06.53.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jul 2026 06:19:44 -0700 (PDT)
-From: Richard Purdie <richard.purdie@linuxfoundation.org>
-To: yocto-patches@lists.yoctoproject.org
-Cc: seebs@seebs.net,
-	mark.hatle@kernel.crashing.org
-Subject: [pseudo] [PATCH] linkat: Fix AT_EMPTY_PATH handling
-Date: Fri, 17 Jul 2026 14:19:43 +0100
-Message-ID: <20260717131943.3386262-1-richard.purdie@linuxfoundation.org>
-X-Mailer: git-send-email 2.53.0
+        Fri, 17 Jul 2026 06:53:06 -0700 (PDT)
+Date: Fri, 17 Jul 2026 09:53:04 -0400
+From: Trevor Woerner <twoerner@gmail.com>
+To: =?utf-8?B?R2HDq2w=?= PORTAY <gael.portay+rtone@gmail.com>
+Cc: yocto-patches@lists.yoctoproject.org
+Subject: Re: [PATCH 0/6] wic/help: Refresh wic create help and usage strings
+Message-ID: <alozwEnVdMwJQ0L2@localhost.localdomain>
+References: <20260702044425.846351-1-gael.portay+rtone@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260702044425.846351-1-gael.portay+rtone@gmail.com>
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 17 Jul 2026 13:19:50 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4500
+ <yocto-patches@lists.yoctoproject.org>; Fri, 17 Jul 2026 13:53:15 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4501
 
-Currently we don't cover the case where AT_EMPTY_PATH is set for atlink.
-Update the code to handle this case in a similar way to the /proc/self
-case which is similar.
+On Thu 2026-07-02 @ 06:44:18 AM, Gaël PORTAY wrote:
+> Hello maintainers,
+> 
+> That patch series refreshes a bit the help and usage strings for wic
+> create.
+> 
+> The first patch removes the removed option --infile, while the following
+> two patches list the missing options --no-fstab-update and --workdir as
+> compared to `wic create` output:
+> 
+> 	usage: wic create [-h] [-o OUTDIR] [-w WORKDIR] [-e IMAGE_NAME]
+> 	                  [-r ROOTFS_DIR] [-b BOOTIMG_DIR]
+> 	                  [-k KERNEL_DIR] [-n NATIVE_SYSROOT] [-s] [-f]
+> 	                  [-c {gzip,bzip2,xz}] [-m] [--no-fstab-update]
+> 	                  [-v VARS_DIR] [-D] [-i IMAGER]
+> 	                  [--extra-space EXTRA_SPACE]
+> 	                  [--sector-size SECTOR_SIZE]
+> 	                  wks_file
+> 	wic create: error: the following arguments are required: wks_file
+> 
+> The fourth patch fixes inconsistent output between options by replacing
+> the character `|' to `,'.
+> 
+> The fifth patch updates the output of command `wic create` that is
+> hardcoded in the overview help string.
+> 
+> And the last patch outputs option capitalized values that are missing
+> for options requiring a value; also, it ensure the lines are wrapped to
+> 80-characters.
+> 
+> Regards,
+> Gaël PORTAY (6):
+>   wic/help: Drop removed --infile option from help string
+>   wic/help: List missing option --no-fstab-update to usage string
+>   wic/help: List missing option --workdir usage string
+>   wic/help: Use comma to list short and long options
+>   wic/help: Refresh output of create command in overview help string
+>   wic/help: Add missing option values and rewrap lines
+> 
+>  src/wic/help.py | 52 +++++++++++++++++++++----------------------------
+>  1 file changed, 22 insertions(+), 30 deletions(-)
 
-This is used by some systemd tools which OE might run at rootfs time
-such as hwdb generation.
-
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
----
- ports/unix/guts/linkat.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/ports/unix/guts/linkat.c b/ports/unix/guts/linkat.c
-index 60fbf63..36ffc0f 100644
---- a/ports/unix/guts/linkat.c
-+++ b/ports/unix/guts/linkat.c
-@@ -35,13 +35,18 @@
- 	}
- #endif
- 	oldpath = oldname;
--	if (pseudo_chroot_len && !strncmp(oldpath, pseudo_chroot, pseudo_chroot_len) &&
-+	if (oldpath && !*oldpath && pseudo_chroot_len && !strncmp(oldpath, pseudo_chroot, pseudo_chroot_len) &&
- 		oldpath[pseudo_chroot_len] == '/') {
- 		oldpath += pseudo_chroot_len;
- 	}
- 
- 	newpath = pseudo_root_path(__func__, __LINE__, newdirfd, newname, AT_SYMLINK_NOFOLLOW);
- 
-+	if ((!oldpath || !*oldpath) && (flags & AT_EMPTY_PATH)) {
-+		tmpfile_fd = olddirfd;
-+		// call actual link
-+		rc = real_linkat(olddirfd, "", AT_FDCWD, newpath, flags);
-+	} else
- 	/* weird special case: if you link /proc/self/fd/N, you're supposed
- 	 * to get a link to fd N. Used in conjunction with opening a directory
- 	 * with O_TMPFILE in flags, which actually opens an already-deleted
+This patchset merged to wic, master branch.
+Thanks!
 
