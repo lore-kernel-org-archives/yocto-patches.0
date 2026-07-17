@@ -1,93 +1,108 @@
-Return-Path: <yoann.congal@smile.fr>
+Return-Path: <twoerner@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4993EC4451B
-	for <webhook@archiver.kernel.org>; Fri, 17 Jul 2026 17:37:59 +0000 (UTC)
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.2166.1784309872966035455
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CD55C4451B
+	for <webhook@archiver.kernel.org>; Fri, 17 Jul 2026 18:35:19 +0000 (UTC)
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.3146.1784313315288021226
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 17 Jul 2026 10:37:53 -0700
+ Fri, 17 Jul 2026 11:35:15 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@smile.fr header.s=google header.b=FqVJg4RD;
- spf=pass (domain: smile.fr, ip: 209.85.128.46, mailfrom: yoann.congal@smile.fr)
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-49545ba3d4eso9081415e9.3
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 17 Jul 2026 10:37:52 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=FCOhs1I5;
+ spf=pass (domain: gmail.com, ip: 209.85.219.46, mailfrom: twoerner@gmail.com)
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-8e5be46f663so32539226d6.0
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 17 Jul 2026 11:35:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=smile.fr; s=google; t=1784309871; x=1784914671; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=AL7d7R0Wg+SNJ9ndfQe1ryIHbIMe13SSQPGAr9Tr92Q=;
-        b=FqVJg4RDH9W4X0z2GxCPgiIH792BSWTcf6rUZ+vpXloQwgxj+3wyrhbkEoeyaIxXPS
-         qaNgKHAQx4U7IfkCgMzPueap6sqzNs4PpEUHZy57sJCqwxl410HcRXDUQc67Hdu6iDEw
-         Lfn0PV11xRpv1ulSgAnn48O8YR2GI/y4kMqBk=
+        d=gmail.com; s=20251104; t=1784313314; x=1784918114; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=VMzqcjGL9EpmtqCnJw0Nnq0yygyC9qb774U+sJdkir4=;
+        b=FCOhs1I5ktYqCEtamGRHvHfiVFZNRMyTi36ocix2YJN5/hjpY7qKF0seo6DDfPXScn
+         gCHMrHXPeMcfz5M83sNvU2i8uxeqBYi52G+rwMrHBqYruPRFKodR32eztMTA5/06R+Ps
+         Q9/b3mxkxeJaoX7rRCYaEf3aZu+kDlOQrB6jLZk8W195IXSOK2LPi2ShEJeRyvOGNEGk
+         g2aDjoYxa4zEFIkCNIjKN0WlXfFBPPrNMOnZr/3FFiBcMdUVOC/AcfceDbKlmqGgN0sv
+         /+vN0AGUsl2wUjxlb3dgvBC5FlSNiCldEBN6IC+pPj0YAUzSUETsmp4flNUE0/ibT82z
+         q8Xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784309871; x=1784914671;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=AL7d7R0Wg+SNJ9ndfQe1ryIHbIMe13SSQPGAr9Tr92Q=;
-        b=Zno6qeZU4XkBVkNlbqNF6lSVG42ubm1Vaq2fiWVV3qRdQsLQN2OoGtFdeOonSGuBly
-         k7t09q7iM62DNkPC55VqW3ISEFlLPPw9IzJPOM0dRmIy9qLpuOS5TJoUPs1h9ZceNhgd
-         FxvVcJy/UZVaRR+IdhNO1NombBCZ/owhq6nHrCK7ceidxK9PGQGEyc34mrKERBpC7gnT
-         7WLUddLbCj5qh1BwXHXc5jQRY3UCrMVzGrd8cCCAMxWl44m7h7fMsahaSvRYot3Exiup
-         FopKzv7gsvl8zqxg8zwlG8xVxgztyjlSkv6ydVxlikJXtEAUFP1mgbop5npkbebaqSZL
-         r0GQ==
-X-Gm-Message-State: AOJu0Yx12nQnb3+zHQztO8/F5KnSS4UqYole25mIoJEQ7xnkV8J2z4U/
-	Q6+zo+YS7rQVRHiIRxcYoSvHmOQO0fxFjskzINbF8UK120wuBtiOrG+wPuuhORUdNZy9dKzq/FU
-	qQKUUQ1M=
-X-Gm-Gg: AfdE7cmljn/DUNVMyRdPQ/buLdrGE+HHnrZ2465gFX6q8ADJHbgse1FhHBOS+jjEdLW
-	sZebMU+Zf4bwc9tbyc2BmoDj99HKKGGLQHz+OHN6oNqBijOhHklPUkr+IYQ4sVO3cOeHePeOV45
-	+KU1xG4BCooqih1l2JhZq4dF+g/sufGAY7Zwyw8kIpr306CCSc6VC6D8IMNTFhwhqXFDZaW7eek
-	YBdX4WW9qJIgR65skKPpFBgS/k+rizQv6Iw/qqbb8qdQ2M0YZ3L1Iu7hW2JmtXaFlc+nDuGGVre
-	bvmp8fL1lupVgC4GDIwGBR9hwTcKOcnhCLzprTeVheVUGltoanUjxLwlATF69Xbw4ChnRAcHuL2
-	69q0iUBcnpN1Rp6k+pC/YeGHV2hJLuBREqYplnGP7+38G2iVmfcCNyn3++JFUg1cx7Ox7wRumE5
-	LL0XUXXTON40iEvpLmPAnu/DXaZaVPZvTR/i4eFi4KQRZhrKsg2IFnryUphYEQvgf0jLZWjhpfn
-	QeyBd0=
-X-Received: by 2002:a05:600c:1d15:b0:495:4859:8f9b with SMTP id 5b1f17b1804b1-4954a3f4901mr47288845e9.9.1784309871115;
-        Fri, 17 Jul 2026 10:37:51 -0700 (PDT)
-Received: from FRSMI25-LASER.home (2a01cb001331aa0093f4151e9fe9f4b8.ipv6.abo.wanadoo.fr. [2a01:cb00:1331:aa00:93f4:151e:9fe9:f4b8])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4954c0a81f7sm28504195e9.1.2026.07.17.10.37.50
+        d=1e100.net; s=20251104; t=1784313314; x=1784918114;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=VMzqcjGL9EpmtqCnJw0Nnq0yygyC9qb774U+sJdkir4=;
+        b=BGZzkp+ZhkQLuCbLYxAFCTCktJbPWEaJUA+LPebgnraNHONA4e3Hrt2csf6ZEWCmmB
+         QbdPug9wSFFqzBo4MTjaR5vyiJmBodwIzAabOlqYYxs0cAVx8X1xX9QcYpx6Brqr7V06
+         gj5TcqltJj4tFn5A4L9zAkVmO/JRjyiKqj4i40xLzVGWj5O2nAQJjeSCEU2fa49mre95
+         pO1CwDHk4CygADtaH3VtAP1JDG8SAqi718nubQ1G04oB28ccUgVH2jfC1AgsSE9xRvCf
+         /YiLiDp1KbskJLV03jvZYPKMhECu44a14ag+22djMfgQ3OkFaH1DFCCd/pggiCyh6xqC
+         LehQ==
+X-Gm-Message-State: AOJu0YxAdIUOqmpLmwOBs56gs5sdCoFqDzWhldv0EYShoyYKlvTowUeJ
+	zsUirGZ81cnmvF8YJo2gYPOQ72lViD5/dsqyiPGaLBE5ab0N6wIqs8HatSNACA==
+X-Gm-Gg: AfdE7cmxVmMn8L3CN6br5U+bkDzmczobvFJKPSkKxYhPymEk07t6s7SeTIHU8dNat7p
+	g/Tdsup89YAyMVJGfGAI5u2L7y7AbP6k368WpbxWGt8xJwRM2rUD83i7ilfrgNpRI8MGKZfK+33
+	8UBGww37cWjbx+M5T591Etb8+HmUMmyCeiD2xInNcDY9LW4lgU84wJB+OqgcjyCtHZNtN1hfBSG
+	QGdQdP8F/gRfEnP//PORiDjbMDnDqFwxeraxP7w+pV7UCp4u+wh6+9TxYT8Jo7nTXwGsxaBbQVE
+	Q+Tq47WDgFRmdCf8zRwAzTkmpZvGki4wg5u4+18xBRH3nt6dCc03iVYNQwnVu6mwJJGEprzoAAR
+	PgwWeDCsQbVSCDSk2aty46QurKP+ShYkxFPMGbSA9EkbnIVu6ZWPNRy1oFOQUEAmBeF/1qJBq7s
+	6T/Rf3zGq32g90ct9rrk6nkp3G2pW+bNynAZCHnB5dki43
+X-Received: by 2002:ad4:5942:0:b0:8ef:31b6:74e7 with SMTP id 6a1803df08f44-907783c95a1mr45754386d6.43.1784313314169;
+        Fri, 17 Jul 2026 11:35:14 -0700 (PDT)
+Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-907786b21d6sm22992816d6.24.2026.07.17.11.35.13
+        for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jul 2026 10:37:50 -0700 (PDT)
-From: Yoann Congal <yoann.congal@smile.fr>
+        Fri, 17 Jul 2026 11:35:13 -0700 (PDT)
+From: Trevor Woerner <twoerner@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Yoann Congal <yoann.congal@smile.fr>
-Subject: [yocto-autobuilder2][PATCH] config.py: add wrynose release to workers_prev_releases
-Date: Fri, 17 Jul 2026 19:37:20 +0200
-Message-ID: <20260717173719.2820271-2-yoann.congal@smile.fr>
-X-Mailer: git-send-email 2.47.3
+Subject: [wic][PATCH 1/2] ksparser: fix crash on an invalid msdos --diskid
+Date: Fri, 17 Jul 2026 14:35:06 -0400
+Message-ID: <20260717183507.3539287-2-twoerner@gmail.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20260717183507.3539287-1-twoerner@gmail.com>
+References: <20260717183507.3539287-1-twoerner@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 17 Jul 2026 17:37:59 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4503
+ <yocto-patches@lists.yoctoproject.org>; Fri, 17 Jul 2026 18:35:19 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4505
 
-From: Yoann Congal <yoann.congal@smile.fr>
+When a bootloader line sets --ptable msdos with a --diskid that is not a
+32-bit integer, the error path builds its message with "... % self.ptable".
+self is the KickStart instance, which has no ptable attribute, so the
+interpolation raises AttributeError before the intended KickStartError is
+raised. Instead of a described error naming the bad value, the user sees an
+opaque traceback.
 
-The list is based on what we list as supported in the documentation:
-https://git.yoctoproject.org/yocto-docs/tree/documentation/ref-manual/system-requirements.rst?h=wrynose&id=9e2e70b7ba20b6ad297fdf83599367f1cdcf24cc
-and
-Poky's SANITY_TESTED_DISTROS:
-https://git.yoctoproject.org/meta-yocto/tree/meta-poky/conf/distro/poky.conf?h=wrynose#n33
+Interpolate the offending value (parsed.diskid) into the message, matching
+the gpt branch just below, so a bad msdos --diskid raises a KickStartError
+that names it. Fix the "--ptbale" typo in the same message while here.
 
-Signed-off-by: Yoann Congal <yoann.congal@smile.fr>
+AI-Generated: codex/claude-opus 4.8 (xhigh)
+Signed-off-by: Trevor Woerner <twoerner@gmail.com>
 ---
- config.py | 1 +
- 1 file changed, 1 insertion(+)
+ src/wic/ksparser.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/config.py b/config.py
-index 22ec6b5..cd0ec2b 100644
---- a/config.py
-+++ b/config.py
-@@ -202,6 +202,7 @@ all_workers = workers + workers_bringup + workers_buildperf + workers_arm
- 
- # Worker filtering for older releases
- workers_prev_releases = {
-+    "wrynose" : ("alma8", "alma9", "debian11", "debian12", "debian13", "fedora42", "fedora43", "opensuse156", "opensuse160", "rocky8", "rocky9", "stream9", "stream10", "ubuntu2204", "ubuntu2404", "ubuntu2504", "ubuntu2510", "ubuntu2604", "perf-"),
-     "whinlatter" : ("alma8", "alma9", "debian11", "debian12", "debian13", "fedora39", "fedora40", "fedora41", "fedora42", "opensuse155", "opensuse156", "rocky8", "rocky9", "stream9", "ubuntu2204", "ubuntu2404", "ubuntu2504", "ubuntu2510", "perf-"),
-     "walnascar" : ("alma8", "alma9", "debian11", "debian12", "fedora39", "fedora40", "fedora41", "opensuse155", "opensuse156", "rocky8", "rocky9", "stream9", "ubuntu2004","ubuntu2204", "ubuntu2304", "ubuntu2404", "ubuntu2410", "perf-"),
-     "styhead" : ("alma8", "alma9", "debian11", "debian12", "fedora38", "fedora39", "fedora40", "opensuse154", "opensuse155", "opensuse156", "rocky8", "rocky9", "stream8", "ubuntu1804", "ubuntu2004","ubuntu2204", "ubuntu2304", "ubuntu2404", "perf-"),
+diff --git a/src/wic/ksparser.py b/src/wic/ksparser.py
+index dcf26f788083..a1276af8d3c6 100644
+--- a/src/wic/ksparser.py
++++ b/src/wic/ksparser.py
+@@ -322,9 +322,9 @@ class KickStart():
+                                     try:
+                                         self.bootloader.diskid = int(parsed.diskid, 0)
+                                     except ValueError:
+-                                        err = "with --ptbale msdos only 32bit integers " \
++                                        err = "with --ptable msdos only 32bit integers " \
+                                               "are allowed for --diskid. %s could not " \
+-                                              "be parsed" % self.ptable
++                                              "be parsed" % parsed.diskid
+                                         raise KickStartError(err)
+                                 else:
+                                     try:
+-- 
+2.50.0.173.g8b6f19ccfc3a
+
 
