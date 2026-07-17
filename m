@@ -1,133 +1,104 @@
-Return-Path: <mark.hatle@kernel.crashing.org>
+Return-Path: <richard.purdie@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C178DC44512
-	for <webhook@archiver.kernel.org>; Thu, 16 Jul 2026 23:16:33 +0000 (UTC)
-Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.2586.1784243786754094982
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3C4DC4451C
+	for <webhook@archiver.kernel.org>; Fri, 17 Jul 2026 13:19:50 +0000 (UTC)
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.13307.1784294387473771494
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 16 Jul 2026 16:16:27 -0700
+ Fri, 17 Jul 2026 06:19:48 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: kernel.crashing.org, ip: 63.228.1.57, mailfrom: mark.hatle@kernel.crashing.org)
-Received: from kernel.crashing.org (70-99-78-136.nuveramail.net [70.99.78.136] (may be forged))
-	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 66GNGFh43041209;
-	Thu, 16 Jul 2026 18:16:15 -0500
-Received: from [192.168.2.236] ([192.168.2.236])
-	by kernel.crashing.org (8.14.7/8.14.7) with ESMTP id 66GNGEuO015996;
-	Thu, 16 Jul 2026 18:16:14 -0500
-Message-ID: <302f2831-696c-438c-b25f-ab38a6489142@kernel.crashing.org>
-Date: Thu, 16 Jul 2026 18:16:14 -0500
+ dkim=pass header.i=@linuxfoundation.org header.s=google header.b=f31a3feX;
+ spf=pass (domain: linuxfoundation.org, ip: 209.85.221.42, mailfrom: richard.purdie@linuxfoundation.org)
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-475881b9a4bso4464115f8f.3
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 17 Jul 2026 06:19:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1784294386; x=1784899186; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=I0CoBAZWSP5J4tCI0fyjAebZXBZIlx3CTO/n6aVhtDU=;
+        b=f31a3feXkoK8gyK1enw2IuO7D6O+yZJa7NTIgMZFXjhGNDCW7plV/q1fDctatcM9d+
+         yle0oUOj1rSYrON4A0rqs7XabLa5BkmD1+uRe/euUabckWTAiVANXuLS1ZuxXF4AnSg8
+         pBlKhqbWCdDhFu+d0BunlFYLYNvI5iPDiwPPs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784294386; x=1784899186;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=I0CoBAZWSP5J4tCI0fyjAebZXBZIlx3CTO/n6aVhtDU=;
+        b=OOz+cfz08jyD7Yzrr/OUJNS1nG+4DIgAvgYYzcbWA5TdrOVvcX87nRacnSRvRVYFSb
+         HBWZROatNx5rDo2h9DcrPJh3og2rLAsBlrCZzI86BNrK1FXQr9neuFH0gkYJi/JAqqc4
+         okPlb47o4QShRs9bPYMyOb/s8ujnLUndpBpeHXnITKf5mphEtoQ1b53vN1xF6ugrOyJ7
+         MfLbyNc7pixFV9sC/sMIm30cjbsyz35vfRjXp67iWKSXIypSldKPZPT111Sc9El2GGFL
+         Tp4zzCXDnuutmEAheRAg/JAuYq9W75F4RwsZJkGTfHGD4nDJDveIm7xzW/6dZNuFS1FX
+         mv4w==
+X-Gm-Message-State: AOJu0Yy5YoYSzbCCgMb4DMkYa940ckEGJszBNY4L1O5nPk4RZAJmehAU
+	yw7u83RWnDG8hxTvrucNbshsg1Qr22KFMdWGbBpHYXoKDXTHqEFl9J8HwDmAfMf6ZASLh7A/YTC
+	N0f+qwPw=
+X-Gm-Gg: AfdE7cl7tZMD1VRKaLS17sBFJUn7Jx0QnhyRiDcsIhwOyWHa5fAZaJTdGATdDQt3dwc
+	stKhjPhclZtOPGogJgdYoY6wiycOmlYGmmRLkVzmiHMnNOPpZTadAOfhL2t7EU9wI92VYPiJwOo
+	aLkuXZyWsi4Cd3/r1ZbaCNTTzDGAwxuE178TlX3sonJwLEU8kwlyT4q2xBjyKtFzbsQePaxGCBO
+	bZZFhXhR2XFRix9NGuOU8x2hcl8Wwy8V1S9AsgaFXN2eQrHi5PqME3aVoEsMNQUVIvT0apcBh1u
+	t3imr744zwp9hw+iEyrbNJM1BIyLvbk0sAqD5WARCEUUU7is3XvKHgPpkFkwxwv0CSAUwVsvnMz
+	9+O8XfBiU69OP/HsI/mOgf/jT1iZ9FryaLpCr25//IWgQhxglidzEVasHQ51rAscuTXsurZuP3k
+	C5nmpboGNK5+TBQ8R4telkR0eRj2Dnvg==
+X-Received: by 2002:a05:6000:228a:b0:46f:f12b:e45a with SMTP id ffacd0b85a97d-47f622fe81bmr3889910f8f.23.1784294385544;
+        Fri, 17 Jul 2026 06:19:45 -0700 (PDT)
+Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:4f8:d22a:f372:6bf7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f63eea8afsm4074701f8f.33.2026.07.17.06.19.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jul 2026 06:19:44 -0700 (PDT)
+From: Richard Purdie <richard.purdie@linuxfoundation.org>
+To: yocto-patches@lists.yoctoproject.org
+Cc: seebs@seebs.net,
+	mark.hatle@kernel.crashing.org
+Subject: [pseudo] [PATCH] linkat: Fix AT_EMPTY_PATH handling
+Date: Fri, 17 Jul 2026 14:19:43 +0100
+Message-ID: <20260717131943.3386262-1-richard.purdie@linuxfoundation.org>
+X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [pseudo] [PATCH v2 0/2] close_range: implement it
- rather than return ENOSYS
-Content-Language: en-US
-To: yocto-patches@lists.yoctoproject.org,
-        Babanpreet Singh <bbnpreetsingh@gmail.com>
-Cc: Paul Barker <paul@pbarker.dev>, Mark Hatle <mark.hatle@amd.com>,
-        Randy MacLeod <randy.macleod@windriver.com>,
-        Vincent Haupert <mail@vincent-haupert.de>
-References: <20260715054142.7-1-bbnpreetsingh@gmail.com>
- <20260716055633.7-1-bbnpreetsingh@gmail.com>
- <b6bfa88be0a54a3edf8e55571d4be4e1d54e736e.camel@linuxfoundation.org>
- <CAO8wpHypNwFNKPCnwzcgGcMVqHK9DscZ1XO8U1GD29W1kU-NbQ@mail.gmail.com>
- <4321836d169d2ff0e80884717ec1de4aaa868d83.camel@linuxfoundation.org>
-From: Mark Hatle <mark.hatle@kernel.crashing.org>
-In-Reply-To: <4321836d169d2ff0e80884717ec1de4aaa868d83.camel@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-MIME-Autoconverted: from 8bit to quoted-printable by gate.crashing.org id 66GNGFh43041209
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 16 Jul 2026 23:16:33 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4499
+ <yocto-patches@lists.yoctoproject.org>; Fri, 17 Jul 2026 13:19:50 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4500
 
+Currently we don't cover the case where AT_EMPTY_PATH is set for atlink.
+Update the code to handle this case in a similar way to the /proc/self
+case which is similar.
 
+This is used by some systemd tools which OE might run at rootfs time
+such as hwdb generation.
 
-On 7/16/26 11:55 AM, Richard Purdie via lists.yoctoproject.org wrote:
-> On Thu, 2026-07-16 at 08:46 -0700, Babanpreet Singh wrote:
->> Thanks!
->>
->>>  =C2=A0 That said, I couldn't see what pseudo_prefix_dir_fd actually =
-helps with
->>> and I couldn't see why we need that...
->>
->> I flagged it since it is held open and a close_range() sweep will wipe=
- it out. I hadn't checked if anything still reads it untill now. It seems=
- like it is just kept open and alive and the socket connection=C2=A0+ fch=
-dir() has been moved to pseudo_localstate_dir_fd.
->>
->> So, for the follow-up I'd purpose:
->>
->> 1/2: remove=C2=A0 pseudo_prefix_dir_fd
->> 2/2: add pseudo_pwd_lck_fd and pseudo_util_evlog_fd to the descriptors=
- OP_CLOSEFROM and OP_CLOSE_RANGE step around
->>
->> If you'd rather keep the fd, I'll drop the removal and add it to the p=
-rotected set in 2/2 instead.
->=20
-> I'd suggest making the series the other way around, protect it for now,
-> send a removal patch on top and we can look at the removal patch and
-> test and check it isn't really used anywhere. It is possible I'm
-> missing some usage of it and I'm curious what Mark thinks.
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+---
+ ports/unix/guts/linkat.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-I agree.  Maybe it's no longer needed, but we're not sure.
-
-The code was introduced VERY early in pseudo development, 2010 era.
-
-The variable, pseudo_prefix_dir_fd was introduced in=20
-551bf567c171c9f6f475f02de80e35df9563dce7, but this is based on an earlier=
- commit.
-
-^33d9386 (Peter Seebach 2010-03-16 19:26:24 -0500  713)         pseudo_pa=
-th =3D=20
-pseudo_prefix_path(NULL);
-^33d9386 (Peter Seebach 2010-03-16 19:26:24 -0500  714)         if=20
-(pseudo_dir_fd =3D=3D -1) {
-^33d9386 (Peter Seebach 2010-03-16 19:26:24 -0500  715)                 i=
-f=20
-(pseudo_path) {
-^33d9386 (Peter Seebach 2010-03-16 19:26:24 -0500  716)=20
-pseudo_dir_fd =3D open(pseudo_path, O_RDONLY);
-^33d9386 (Peter Seebach 2010-03-16 19:26:24 -0500  717)=20
-pseudo_dir_fd =3D pseudo_fd(pseudo_dir_fd, COPY_FD);
-^33d9386 (Peter Seebach 2010-03-16 19:26:24 -0500  718)=20
-free(pseudo_path);
-
-Unfortunately this was the _FIRST_ commit.  So based on that, there reall=
-y is no=20
-history why this was added to begin with.
-
- From looking at that first commit, it was using this fd to spawn the ser=
-ver and=20
-change the cwd.  By holding an open fd on the path we were sure that the=20
-directory wouldn't be removed until all the FDs cleared.  (Some filesyste=
-ms you=20
-can't delete open directories, other just postpone the removal until the =
-fds=20
-clear..)
-
---Mark
-
-> The protection patch makes sense and should be easy to merge compared
-> to that.
->=20
-> Cheers,
->=20
-> Richard
->=20
->=20
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-> Links: You receive all messages sent to this group.
-> View/Reply Online (#4497): https://lists.yoctoproject.org/g/yocto-patch=
-es/message/4497
-> Mute This Topic: https://lists.yoctoproject.org/mt/120294678/3616948
-> Group Owner: yocto-patches+owner@lists.yoctoproject.org
-> Unsubscribe: https://lists.yoctoproject.org/g/yocto-patches/leave/13201=
-099/3616948/947757854/xyzzy [mark.hatle@kernel.crashing.org]
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
->=20
->=20
+diff --git a/ports/unix/guts/linkat.c b/ports/unix/guts/linkat.c
+index 60fbf63..36ffc0f 100644
+--- a/ports/unix/guts/linkat.c
++++ b/ports/unix/guts/linkat.c
+@@ -35,13 +35,18 @@
+ 	}
+ #endif
+ 	oldpath = oldname;
+-	if (pseudo_chroot_len && !strncmp(oldpath, pseudo_chroot, pseudo_chroot_len) &&
++	if (oldpath && !*oldpath && pseudo_chroot_len && !strncmp(oldpath, pseudo_chroot, pseudo_chroot_len) &&
+ 		oldpath[pseudo_chroot_len] == '/') {
+ 		oldpath += pseudo_chroot_len;
+ 	}
+ 
+ 	newpath = pseudo_root_path(__func__, __LINE__, newdirfd, newname, AT_SYMLINK_NOFOLLOW);
+ 
++	if ((!oldpath || !*oldpath) && (flags & AT_EMPTY_PATH)) {
++		tmpfile_fd = olddirfd;
++		// call actual link
++		rc = real_linkat(olddirfd, "", AT_FDCWD, newpath, flags);
++	} else
+ 	/* weird special case: if you link /proc/self/fd/N, you're supposed
+ 	 * to get a link to fd N. Used in conjunction with opening a directory
+ 	 * with O_TMPFILE in flags, which actually opens an already-deleted
 
