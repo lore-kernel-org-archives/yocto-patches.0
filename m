@@ -1,162 +1,280 @@
-Return-Path: <daniel.turull@ericsson.com>
+Return-Path: <peter.marko@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8843C4451C
-	for <webhook@archiver.kernel.org>; Tue, 21 Jul 2026 07:52:09 +0000 (UTC)
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (DB3PR0202CU003.outbound.protection.outlook.com [52.101.84.9])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.17548.1784620321924291674
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5632BC44532
+	for <webhook@archiver.kernel.org>; Tue, 21 Jul 2026 15:34:46 +0000 (UTC)
+Received: from AS8PR04CU009.outbound.protection.outlook.com (AS8PR04CU009.outbound.protection.outlook.com [52.101.70.40])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.25887.1784648083472337010
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 21 Jul 2026 00:52:02 -0700
+ Tue, 21 Jul 2026 08:34:44 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@ericsson.com header.s=selector2 header.b=c1rewQ8R;
- spf=pass (domain: ericsson.com, ip: 52.101.84.9, mailfrom: daniel.turull@ericsson.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=qBftlFE3;
+ spf=pass (domain: siemens.com, ip: 52.101.70.40, mailfrom: peter.marko@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Vcsm0Xc4oZybTJqMfF0v3NUXuE/PuUaJzShmRBe3hVzWWEt79pt+iUAnRLTYBKeGw6Q8UYMBNYNAQVkJbQtGapvo4KYpzjDdXN7COUlGPQqqMNIHLCVUCu18ZI2V92KTgCoSm0DJbAOe+EM471p/FYmbzybwh33uefR6ur2V+cEFc5Gf/GcQLzl8/2ruvcAgo1Mj2c593N64xFnSwPRYbSA8f3ZNcJVBwkIbeluevzFcxxo52A0bv1mDI60u812RUBNGa7s9z6ewJhFuxKE7S83rc1SxRbQ/N9YiG55s7y3azPqGggGBdwa/Knuv2tmC9G4DPfyb7EdjUuXUVwMnFA==
+ b=wjuPtUJBHoCeBCH8NvVzvvI/+cuHQVr+dxfeM+7aEWG2dnQzP4exeMAc2YdsYKX0nRVzNKFQHNpYFD05iPDgiJ6odeZLADLJz3IZytJKyaSN9aakrn+XvzgmEdiazQTGDNtmw/ouuSpd0dEIan0IfF2xMWMthTIZTt9n9jbYL2tIZEBSLog6r/cfwoNR55d3/itCafOpEqRAvDu0nk5qnHwuAsxdpEpY/OR/zfjsxUleu+nn16K2OJ4Lz3cxN+oO4riERFnKpQPBUjThxM4jFJkTRfWwqh8L+CABNwDPoiAtLkP1ZN2TA9/pnISjG0f0nyGIs6/58SQnrkd5kWWyeA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kZqMUf/4BSGVYg4mDp7U0EmZAjSYF+WTThxhwtxvSVE=;
- b=bY1WmN8fHsVUXKZV/5u6jcbB1YwjDb2UbcYSTfh57peUGYKganmskNlJgdkqmV4AIx+5IZM71w4zCQkmTh7di6q1fR+ShBI5YBhxmcxg4WG4nCrzb5f5SqeTKlRdH/ayeaUJkF8Ol9wg8dCnbLE3piEnejCISB/9f6eB35/zxF+08Lv49IMtlZc9PS/bpLfXfhRyWNsgDMHqCmZ7pckCvFwwzi/yBV4Gk9QbpO7DyJ2n7sh5i80gJWYA+dUa+K6kAIevdKpwsoANPDlNfdM6tDbCg+yxYODZ/A+GkmJzGhjQ7wxTYKILOLGk3V8JNMmzmXUnZyfh1VtwlmzeZC/DQQ==
+ bh=FcCVH+ZKjivaHD9eK1xr421e3Nx3EXFeVDTnPkWALP4=;
+ b=MwYD3rmLKHicyH36Z08QeF/B4cj2mTW+PXPkGV2k1x8nZHK5IyYvoFUfUHi8xAueGoRExnhdmu3FKkQhNrmzPej9HqYTClvsoxEIrLcrVt8RBLwGv6zcoaFG+/wuf/To3ry08r7eDigcwMKQujgKO83xKlvytJ6usCxMct9qjpJKaiYRt3nJANODfa7X0nQCpV8Ji5hF+799R1RHTk1c5bhh8leOizJfTPHdOb2b8fWHD38HynQoWsRrpNhhrQ7sya8AcgE1Z9HS2y3cpdt5ZX9y4a2wpFx919h9x4doN608o++CzTudx89ApCCboxiui94q/t/92/COGhVabIHVCQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=ericsson.com; dmarc=pass action=none header.from=ericsson.com;
- dkim=pass header.d=ericsson.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ericsson.com;
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kZqMUf/4BSGVYg4mDp7U0EmZAjSYF+WTThxhwtxvSVE=;
- b=c1rewQ8RtZzVW29SrRo8WOd3Jy1QL9tS169tXMkDa6GofjzH6Qn53FGckYJT427GnQ9Y88yH2u11oADOykPUJLsPOda1I89KMid3c5kK0602rIyo3etCUApZM1d7KZ/sdakHR3Ob3VLYMW3rFuxi0Zk8Sb7mPOgDDL/w7KhNm0adf6YwPLStzbSvOdBSA7UIUjHbR0+4lQehUs7b0a/6kEwd9w41p7IeXg41fYdo82LgQM6iPNHTjGAOod4UYQOiDsml6u7c+EmeRZm9AKtBkoaujGrrdJpg6NaqNRF/TQf14o/CtcpfQAn8mur6p7E5BIsnX1JprBl/4jrYDV2kug==
-Received: from PA3PR07MB10721.eurprd07.prod.outlook.com (2603:10a6:102:4af::6)
- by PAXPR07MB7757.eurprd07.prod.outlook.com (2603:10a6:102:15c::6) with
+ bh=FcCVH+ZKjivaHD9eK1xr421e3Nx3EXFeVDTnPkWALP4=;
+ b=qBftlFE3Fe86DN5vBnblZDLPXtaK02FdgLz9NID9tGoSelyDFVtlQu8xH31JUeJKkt7wzFODiBRdDLHKBU9Blor/flz3i3GTZ3ss6hbFCNo4H8Xh6wCv3rReXgv3jnfLCA0bG8rIuq+EaaNufzfZJO7Aalk5zhwQG8Hz2xcGX3dzH1cnHpaKiiKNSL9UhhRx/llkvC3k/o3EfQLocyK27hsnq3J+BqC2+Vbb1HBTOW7pHplzkaeeVD28pKKXKH7XSJ9BCz0eAdkRrCw9fRx/Yq/TwAzBjl5MI+A+iVMvSva1V6m9qZXh2TDO72nUbGvcXUdo2nbw5wPAkBarT0jrSw==
+Received: from AS8PR10MB5073.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:420::16)
+ by DU0PR10MB7531.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:426::17) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.245.10; Tue, 21 Jul
- 2026 07:51:57 +0000
-Received: from PA3PR07MB10721.eurprd07.prod.outlook.com
- ([fe80::afd3:17e5:1663:7ce7]) by PA3PR07MB10721.eurprd07.prod.outlook.com
- ([fe80::afd3:17e5:1663:7ce7%6]) with mapi id 15.21.0245.009; Tue, 21 Jul 2026
- 07:51:57 +0000
-From: Daniel Turull <daniel.turull@ericsson.com>
-To: "alex.kanavin@gmail.com" <alex.kanavin@gmail.com>
-CC: "yocto-patches@lists.yoctoproject.org"
-	<yocto-patches@lists.yoctoproject.org>, "richard.purdie@linuxfoundation.org"
-	<richard.purdie@linuxfoundation.org>
-Subject: Re: [AUH] [PATCH v3 2/2] steps: include devtool changelog in upgrade
- report
-Thread-Topic: [AUH] [PATCH v3 2/2] steps: include devtool changelog in upgrade
- report
-Thread-Index: AQHc7eXtGs8K6HqJsUmGk9To9fuLC7Z2ermAgAF1FQA=
-Date: Tue, 21 Jul 2026 07:51:57 +0000
-Message-ID: <e6f5126115b0626d4cf17c0467b5d2f0f62fde52.camel@ericsson.com>
-References: <20260527124827.2486471-1-daniel.turull@ericsson.com>
-	 <20260527124827.2486471-2-daniel.turull@ericsson.com>
-	 <CANNYZj_a0hSXOGqh_KOVhcmdnGJKqHyBd5xT=97rP9LObhJYsQ@mail.gmail.com>
-In-Reply-To: 
- <CANNYZj_a0hSXOGqh_KOVhcmdnGJKqHyBd5xT=97rP9LObhJYsQ@mail.gmail.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.223.18; Tue, 21 Jul
+ 2026 15:34:37 +0000
+Received: from AS8PR10MB5073.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::a905:57e5:8858:d008]) by AS8PR10MB5073.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::a905:57e5:8858:d008%4]) with mapi id 15.21.0223.015; Tue, 21 Jul 2026
+ 15:34:37 +0000
+From: "Marko, Peter" <Peter.Marko@siemens.com>
+To: "yocto-patches@lists.yoctoproject.org"
+	<yocto-patches@lists.yoctoproject.org>
+CC: "jose.quaresma@foundries.io" <jose.quaresma@foundries.io>
+Subject: RE: [meta-lts-mixins][scarthgap/go][PATCH] go: upgrade 1.26.4 ->
+ 1.26.5
+Thread-Topic: [meta-lts-mixins][scarthgap/go][PATCH] go: upgrade 1.26.4 ->
+ 1.26.5
+Thread-Index: AQHdE71NpbFbjLk3SEeRn2yJSh+XU7Z4JVEg
+Date: Tue, 21 Jul 2026 15:34:37 +0000
+Message-ID: 
+ <AS8PR10MB5073B9FD9DB541497BE1E5CFFDC22@AS8PR10MB5073.EURPRD10.PROD.OUTLOOK.COM>
+References: <20260714181902.5214-1-peter.marko@siemens.com>
+In-Reply-To: <20260714181902.5214-1-peter.marko@siemens.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-user-agent: Evolution 3.52.3-0ubuntu1.1 
+msip_labels: 
+ MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ActionId=9739fe6a-d58c-4979-b81a-59ca33031ea2;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ContentBits=0;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Enabled=true;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Method=Standard;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Name=restricted;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SetDate=2026-07-21T15:34:20Z;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SiteId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Tag=10,
+ 3, 0, 1;
 authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=ericsson.com;
+ header.d=none;dmarc=none action=none header.from=siemens.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PA3PR07MB10721:EE_|PAXPR07MB7757:EE_
-x-ms-office365-filtering-correlation-id: 31982ad2-d134-42b3-fefd-08dee6fcf04b
+x-ms-traffictypediagnostic: AS8PR10MB5073:EE_|DU0PR10MB7531:EE_
+x-ms-office365-filtering-correlation-id: 843e043d-e414-48eb-2aea-08dee73d92d3
+x-ms-exchange-atpmessageproperties: SA
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: 
- BCL:0;ARA:13230040|366016|1800799024|23010399003|10070799003|376014|38070700021|56012099006|10067099003|11063799006|4143699003|22082099003|18002099003;
+ BCL:0;ARA:13230040|1800799024|376014|23010399003|366016|6133799003|18002099003|22082099003|55112099003|12006099003|38070700021|56012099006|11063799006|10067099003;
 x-microsoft-antispam-message-info: 
- WRHxP7PwJ7sqols/28GeHvJvptOxWLk8zaxE5VJMgjpt3gEmPE1VQZOAmMIkudorUTsSDOcplZZBbLrtqjIhXHNY+MiCYCb0UbYWrPEfbFOGE7vEKUuIKS+SoGxlYjBdy/0cMRTxMcDX78OUPiofhl5uNcxOCP9cIRHKu8s9v8Vwce5glWqGDgkcBg0zODTKwzC+cqtf/swaHwfUR7UBPwQgR+3bQwkg35UPQjB+xdVNyNayq0Ovw2e98BIjI16D8xrDz2WFPrkU2MYOlZqNtxLrMOcWxI7TfnhOUKC+EScut8SlSC+/56Tsvflh94TROe6Tu6zOK5e31h06+P2Z48xMfd9x+AjCjHc47gxNc0IWtljBP8VCS1KLygH4R20rWXw0sSNlG/zTsmZPOGue16EC/UQluy/Vwsn8vk3xEHA+EbZ5mFA0kU2hEnbKu98V96jkhmBO3wUmvzfN1yG551JqmYlCglm3nuAD24Ssic9rA/S8tQNGkE7fE7JEFrr1ZBJ8TzK/xcTs9585XI3xlPc/TfRhYq31bi8d0hQJIALyWJ92XzcZpOa1xJdYKuTEU1vmdlzEHNoh/OVb7DRl5Rshm8BNWR4ShxxOnviHisARLmn0VNzBoZZiwbJjUg64USI2KwLl56mAGaRpeqxPIs8QtjYqjm18rtAP6rCha6KF4lQREMUWXKg1mo8Qio8YDyqtDEz/G0OsJ1NGnFB/uYYb6Qs1WwrN64LMUl2zLm8=
+ jEjABySEUg0kc5D93dG9cvCDR2PPlkx/H3dRWQQwvNqxYLTcoFeASf7DGKpu2Q2E2QlM5MxZkk5jViqOP7jAjY/nEu1ysVwOElMWEA016wDpafFLLU9OeJNwpK+TLsoLHXltH7nStuuvs3AeesFcRYWsvzgSDO8te+PNgZAmETAw3DIEQMHlQ+nVnmSvkswwYxnHPnFV9XLb7PYQdNUoiYSTS/vhkqyGY59Rkcg0ENn8QXNeXfwgoVdHKyASSjTf98l7MaBgCsJWMittgyqo9weMGwX8oCuIBzcbTu+VOCFz74N3iKKIlhs1mRASBIJwxSTeDiLo4Bs0BUK/w/WhK9DJRdwOeEEfqSga4Uzp7Kj4lzB+D7wDZVQemwbjUIvffRjOpihsqCScehRF4Of0v0kfs8GOa5O6kZeHO/sPJiN9NWBgiv0CsYG/SS+CLiMrO3mrhFoT8zaj5JHSOJminqGDq/1uypbj/ay3q0R6D5j8BPt88DcDnuGPNfhbcVoW2jDyxISzsN5e1fAFAqkTpmJSv+3OHCJc5GZYzGf76NIiavE0dhfIlumVmC1pdNoWcEJyvz5IJf5ZsQmCqOnfRCNjS1Hq3qf6NwlS5/PTH3dZZ1oWEoa3T/E9GyzZ3fegLiIVIRR4zaPptu5ggw/5fuu0MHYwwCCOlByngQ2iKZ0=
 x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA3PR07MB10721.eurprd07.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(23010399003)(10070799003)(376014)(38070700021)(56012099006)(10067099003)(11063799006)(4143699003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 2
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR10MB5073.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(23010399003)(366016)(6133799003)(18002099003)(22082099003)(55112099003)(12006099003)(38070700021)(56012099006)(11063799006)(10067099003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
- =?utf-8?B?ZU5UMzk5RHNFVjk3VkNBRms5N3ZmYlJ5MXNkSFQzbkN3SDdpcFdMdnhudUM4?=
- =?utf-8?B?K2VIZThqbzdTU2hVMHdUSElPWUNXLytFRGRXbVprcWp3b21MWWxBQXN1em55?=
- =?utf-8?B?MXFBV2p2MStpeG9YNC9vbkN6YUEvbnF4RGY2K05CTWk1bzh2UW5Nb3NicmRG?=
- =?utf-8?B?MW1SUVk5TWU3QXhoakVYQTI1MWNpN2tQNUNlMDNDbXA4SnRPWjVmb1ZydE1q?=
- =?utf-8?B?b2lqTDBWMXFJWEpwREhMS2hxRk5WOUlpQUtScnU3U2hIUStXMmZmUVpoY3Qw?=
- =?utf-8?B?d0c0alMrZ1lONjdwZkVuU0dJclAzeUNXOHhXdWZGZ3FKWUtkNEdrQkVTRFRF?=
- =?utf-8?B?b3dzNmp0bmw4Ui9PUGpRN2hJVjNkbHNTM3RwNURUUmg1bTZyUXc3ZVM4UFdI?=
- =?utf-8?B?MEw0WDR3QXY4dVN4UUg5cEVsVnptSDVnUzN5SlhpTWdTM0JoN2ZOSmdtSHpC?=
- =?utf-8?B?ZGg1YkxMV3hlaUgweFd5clJNOHdnU09EV2MrSjhVM0VUUHVJVk54em9McTRm?=
- =?utf-8?B?UW13OGpsa2g2U3E1TU5QM0hzVzB0ckRDemlJc2M2c1p5eWM5OC9vclk2NWR0?=
- =?utf-8?B?S1FaRU5qWmlRNm5iUktLSDd2SWlNemFEWkdwb0V0WlhYRmtmMk1rZTA0OU4v?=
- =?utf-8?B?TThqTUE1SDBQM1habmNSb092aEgxaElCSFlxTEhVVlpXUUxrK3B5WTRFczg4?=
- =?utf-8?B?bDFhZUs5Slc4eWRpMTgyT1NHUzM5OWhqQ1QwWW9VV1BBMGgveDJsblFOZUVh?=
- =?utf-8?B?QlRDc1hrWmNtczVlTnhtdktndUhJOTNGUjlsMzdmM2RUZGhvSHBydG1HUVNq?=
- =?utf-8?B?Q1dnUkk1WGg1ZDdyWjJzV05Fc0VzalFnYXV5MHJjRmgxSC9za3J2T2tqbmRW?=
- =?utf-8?B?SWFlaDFMczYrZjl3NDRDbFVDelBwUWRyS3h1YlF4eEdBK2U2Qkl2NEtjbmlB?=
- =?utf-8?B?WERoRG1IbGRJRkI1UGlWeWl6RVRqNTlLbXd1THhuMEVRTWpiSDVjQkRHRjEz?=
- =?utf-8?B?cHRqY3M2SmVHdFhvQjViUGp1emhsODlCN3ZnbkU1MUFQLy9SSmFUQnNnc3NF?=
- =?utf-8?B?YjBJVllIRTAzUUdDdkpzVWZScWJMeEUrUEh1b0w2SCtSclFQa3lteFhXY1pt?=
- =?utf-8?B?ZjV0ZUZNWTIzV1Z3bENTbFdHV1NwVWVOeThLQjZldnM1WEFuaTNrZktuR1pP?=
- =?utf-8?B?UVl6cmFackhHaThod015SWNPd3hhblBabm44Y3JQUmJYSzF1dlh5Z2ZrQ1h3?=
- =?utf-8?B?MHZwcTVPVmszNGt4dXJqVVloaS8xWFVkRDVMeVZuaFdsR3lmNHI4WGVtZGtq?=
- =?utf-8?B?RXAwZm1pdXBkVjYwYXBudWIzMjZmSjNSRDJ1Z216RlZ5RlZMcHphcmVQd0U4?=
- =?utf-8?B?Tk50dHRTU3VXSWViaFBJRWhpaE9pT1dydG5YaGI0L3VoOWRFWXQ1Z1dOcmRZ?=
- =?utf-8?B?MUhlS2Q1NXhTM05ybU9QUzVRWXhoem5PZGJGUDNkMVQwZjJZaWZaVStpcWgv?=
- =?utf-8?B?amFIdzZ6bEJLd29wdWdsMmpyNXRyczdkbi9rZ0pKNUl1VDF2c092dHZZMGpk?=
- =?utf-8?B?Q2FEeGlmc1VjTjZZblJSMFJFeU8xRUJ0ZnhNaHFLWDdwa201dGxqL0RTTjVF?=
- =?utf-8?B?cGNEYURGTzRUYm9JMzRxT2ZiVlZZdWloU1FqUUluZlp4RnRjUE5CZmNOTzE0?=
- =?utf-8?B?M0lWNjYwQ0dqdEhER1pFM01sZDR4b1RvdDNuYmNrT0pHTmZZNTVDcDZVdStO?=
- =?utf-8?B?UnNUTG5UNXFWbk1mbThrZ1dBTmFOS2kvTU9hYUMrQldLY0ptWFlLejF2MjV4?=
- =?utf-8?B?dEtRbzNGcnV6OUk5RTRZendESFFFaUtzNXdxaHo2K0Zwc0RtZnZaUEZqejlv?=
- =?utf-8?B?SkZGc3FmcXVvaGRveU5KTEo3T2tMNVVMVHpkcmJ4amx2anRSd0M1YTU2Qzg1?=
- =?utf-8?B?TmxCTU5pOUpaalY3YXFaQnV3dUJhRzNJR3NUcWlYbHlOb3RyNVBjbXlWWHd1?=
- =?utf-8?B?dFdZSDhOQThBUDMyRG1HdFJBcnV4VTFBREFmcVdnRmpINENqZ0xYVUVJR3do?=
- =?utf-8?B?YUorSzQ3d2E2Zzd3ZnZSaDZ3UlpOUlV6VHA5U3I0VUZHeUdWNjNkWUlpYU5S?=
- =?utf-8?B?TDJGTi8rM2NWcFVnK3BFWEM1UExKMm1SZ3lia0NjUWxWejhoczhxekUvdExV?=
- =?utf-8?B?ektZME50QWFCeGk4MEE2WGlHYWprUTYzZCtZQzUxSUhrT1ZqTTNkdVN3Zzgv?=
- =?utf-8?B?OCt6dDlGVTA0cDZneHdpSkdoZWs4Y0FlczBudkFycWh5ZUdsWkpXbzFlL1A4?=
- =?utf-8?B?M3JmWUFheG1DWHlaaGVreW5KZUw1WHcvNVpWb2xLYzFJUDdqRFhFcStKOFky?=
- =?utf-8?Q?/3mNFEPJ0UUlp7KUJLOLRJoWQprbV7E7qJbTBOKqqBFA3?=
-x-ms-exchange-antispam-messagedata-1: 7PYIsUP2EIN+Qk+zPIrYg35DaT+Wwj7oUG8=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <F298995AA803B54E9617DEC738DF2709@eurprd07.prod.outlook.com>
-Content-Transfer-Encoding: base64
+ =?us-ascii?Q?isPlFhfSpoWu+9v5i5As36oiswwBU7KyRxfE2Oz/2SkPKzuzLmyZ9EjdGYwW?=
+ =?us-ascii?Q?62sPip2w82OJBT33U+iRZNUsNm9zYLFC4E7bF02tX9vs6VgVz4RGR1o0MfPU?=
+ =?us-ascii?Q?LL0xpt1Mv2AQoulBk7/bDtlCCO8m7zrR/tznLA2AZI0HtMiUgGqiYQDs00x/?=
+ =?us-ascii?Q?vIU0r0CmmZkoIWbKKXG9kcSnIS+7zi1g+HK05StzdZPddTkiHzXlB2dz7zZ1?=
+ =?us-ascii?Q?FaBi8GYE0aVxTk4x6gpdXazbbaY16ufO7l1cdQGteobGDBWOAdfwPij88qhM?=
+ =?us-ascii?Q?fLy6qWRU7t89BT7b48w59BG4EbuFySZjj4bOVpateiJwmCqxbvv/8SgjytPY?=
+ =?us-ascii?Q?rHWM20GH57rq1WLP9Iqh6nJxn0z6nIFgNyqYyyJEaThkF87Lyd5SeCwOEd7Z?=
+ =?us-ascii?Q?/71C8MrkG+pyt1aq9/BccH/CK5he0myQdwNz2bAeE/Fls/76srqoz2ddrKdb?=
+ =?us-ascii?Q?O6UMS15Ah3hAXzjL0mxLTUT5+HEQBGTiMtdNGu1/9ZA5Cd6ZJfx0CeMFX1hT?=
+ =?us-ascii?Q?fSkFORBSNMF7AM4WLCb9EvzFistUQKkdmUjIxxK0QhI0kNOJLdoYxYKmayix?=
+ =?us-ascii?Q?dCD9o3vsb7WxiRmwEnlQP7xIsgJ95yLRDFRQDbUJFFjDJz+q/O9Hu72tUKab?=
+ =?us-ascii?Q?dRx6BRGpKwiL6eNcFtEHpI7zrtLVvsQ7ljg1yaeGeyJgJaR+1jqJXvhZXQzb?=
+ =?us-ascii?Q?KoYts8gSmq/CuqfOZpaVI4gGLKSuQ9l67YLd/h6Jz/QseRpnpSH0Maf0Zllt?=
+ =?us-ascii?Q?btB0xmz4xowd4PYu1xdMOmtyX2H13MF7/MaZMWgEFm/DMI9kUzdN2vdsBH3k?=
+ =?us-ascii?Q?qmR7X0Btjr7/uCThWiCY7/JSPHMySWDXSZDS6mDT0YezaZfGQeRTKs21Vo8C?=
+ =?us-ascii?Q?/vqjQlppaKdH1cmPpThAMByDFOo1aCIg3E36AYuZrUguyV/zJYgZTSBMCc+o?=
+ =?us-ascii?Q?jqSlFGkTT/tpU0NMxe3YGUrwPwuJve7+N/hW1TTD9U4sxa2DyZyjg4rwvIri?=
+ =?us-ascii?Q?NiIItehwptOxFXWRSk5fX8rF/oMRN0bmel9zUmhA0guqltRqzMFquCQVDEp4?=
+ =?us-ascii?Q?q6grZKU3SrrvDy3AJny/eqwjicM4y/KZj0FzusU/Lgp2wvtFpyW8cmBB0A+o?=
+ =?us-ascii?Q?z2mxA3hNIwYoIOIIDwBtdYxvE4Z8qHkM7ocCE77OwhWgP/0BPYC6C35Ys0tq?=
+ =?us-ascii?Q?3jNnADp4Bix75pOecCKbSJkUB8Cm0o8h2BBP1iOIZllhPigYEBSTfGDoADn2?=
+ =?us-ascii?Q?IHp/cJ+ETOvEg2esJqSBTPoq2ghTMD9DRj08cxW/RPAZdzgTYsha+sFgcEtj?=
+ =?us-ascii?Q?oHyx7mZnDrDTG2Q5quHKUzSTmG52sXxT6Ywxx7oUVg0lmJROMkkVuDYvwsXM?=
+ =?us-ascii?Q?Bh6PSF5BvESXamhPt+8mX7j6A1FVou29vpMfUuFBkXJyb1M9nhPizB4fZxqV?=
+ =?us-ascii?Q?4grJB9Dl/alboiN72Lj5R0mDgtHgXugo7xIHb6I7Vd6tDj8RMI9NwNKXJmcE?=
+ =?us-ascii?Q?j7ATdq+g/p9FiFzFYFQMx32eJpmTFac7ciDP6/i0qXSn1rJoIItKm+Fys+JA?=
+ =?us-ascii?Q?6TFEWUSwOT8Fh/JSrfrBehJp8H9DvnTiBqo+QdrCytpXWZiMcJCAP5arXMcJ?=
+ =?us-ascii?Q?5Jw5eGjuVxHa9xOJXGiv5Z8S/WyeZ1ky6ucM2UOd3W9Vp+7HD+Pn1qigG+Zz?=
+ =?us-ascii?Q?DbKX0OUkHqIMLK7e80ysPm+sZmE+xwLRURre4pq3TzEr1qQ31YcH6R03BAGV?=
+ =?us-ascii?Q?KY/JVTmQfQ=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: ericsson.com
+X-OriginatorOrg: siemens.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PA3PR07MB10721.eurprd07.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 31982ad2-d134-42b3-fefd-08dee6fcf04b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jul 2026 07:51:57.0580
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR10MB5073.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 843e043d-e414-48eb-2aea-08dee73d92d3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jul 2026 15:34:37.5241
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
+X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: rXkJoOfus41SLNXvmbS3Rjsagwxps9w5593te94OejeaIaeSNIDdF+9jt11xYJgc8CwnV+2njISAcORh2lj2f1etgiNCBUo/b5rb1VTNUMc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR07MB7757
+X-MS-Exchange-CrossTenant-userprincipalname: q87j+ARpgJ0EVhvREAMHPT9EU4kqDOKPnj2Db2+l1tUMW4EFgmtDQ0a1cAEoxT/FsFexzv1Gm/mrtBUIN3UBBQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB7531
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 21 Jul 2026 07:52:09 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4524
+ <yocto-patches@lists.yoctoproject.org>; Tue, 21 Jul 2026 15:34:46 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4525
 
-T24gTW9uLCAyMDI2LTA3LTIwIGF0IDExOjM2ICswMjAwLCBBbGV4YW5kZXIgS2FuYXZpbiB3cm90
-ZToNCj4gT24gV2VkLCAyNyBNYXkgMjAyNiBhdCAxNjozNCwgPGRhbmllbC50dXJ1bGxAZXJpY3Nz
-b24uY29tPiB3cm90ZToNCj4gPiBDb3B5IHRoZSBjaGFuZ2Vsb2cgZmlsZSBnZW5lcmF0ZWQgYnkg
-J2RldnRvb2wgdXBncmFkZScgaW50byB0aGUNCj4gPiBwYWNrYWdlIHdvcmtkaXIgc28gaXQgaXMg
-aW5jbHVkZWQgYXMgYW4gZW1haWwgYXR0YWNobWVudCBpbiB0aGUNCj4gPiB1cGdyYWRlIHJlcG9y
-dC4gVGhpcyBnaXZlcyBtYWludGFpbmVycyBpbW1lZGlhdGUgdmlzaWJpbGl0eSBpbnRvDQo+ID4g
-d2hhdCBjaGFuZ2VkIHVwc3RyZWFtIHdpdGhvdXQgbmVlZGluZyB0byBsb29rIGl0IHVwIG1hbnVh
-bGx5Lg0KPiANCj4gVGhpcyBoYXMgYmVlbiBub3cgcHVzaGVkIHRvIG1hc3RlciwgdGhhbmtzIQ0K
-PiANCj4gSSdkIGxpa2UgdG8gYXNrIHlvdSBEYW5pZWwgdG8ga2VlcCBhbiBleWUgb24gdGhlIGRh
-aWx5IGluY3JlbWVudGFsDQo+IHVwZGF0ZXMgdGhhdCBhdWggd2lsbCBiZSBzZW5kaW5nIHRvIG9l
-LWNvcmUsIGp1c3QgaW4gY2FzZSB0aGVyZSBpcw0KPiB3ZWlyZG5lc3MsIGNyYXNoZXMsIG9yIHBv
-c3NpYmxlIHR3ZWFrcyB0aGF0IGltcHJvdmUgdGhlIGNoYW5nZWxvZw0KPiBleHRyYWN0aW9uIGFu
-ZCBwcmVzZW50YXRpb24uIEkgcHVycG9zZWx5IGhlbGQgb2ZmIHRoZSBwYXRjaGVzIHNvIHRoYXQN
-Cj4geW91J3JlIGF2YWlsYWJsZSBhZ2FpbiA6KQ0KPiANCj4gQWxleA0KDQpGaXJzdCBkYXkgYW5k
-IGZpcnN0IGlzc3VlIHdpdGggcGVybC4gVGhlIHBhdHRlcm4gbWF0Y2hpbmcgaXMgdG9vDQphZ2dy
-ZXNzaXZlIGFuZCBpZiB0aGVyZSBhcmUgZW1iZWRkZWQgY29tcG9uZW50cyBpdCB3aWxsIHBpY2sg
-dGhlbS4NCg0KSSdsbCB0YWtlIGEgbG9vaw0KDQpDaGFuZ2Vsb2cgZm9yIHBlcmw6IDUuNDIuMiAt
-PiA1LjQ0LjANClNvdXJjZTogZGlzdC9BdHRyaWJ1dGUtSGFuZGxlcnMvQ2hhbmdlcw0KDQpSZXZp
-c2lvbiBoaXN0b3J5IGZvciBQZXJsIGV4dGVuc2lvbiBBdHRyaWJ1dGUtSGFuZGxlcnMNCjEuMDMg
-MjAyMi0xMC0xNyAocGVybCBjb3JlIG9ubHkpDQogIC0gcmVkdWNlIGhvdyBtdWNoIGNvZGUgaXMg
-aW4gYSBzdHJpbmcgZXZhbCwgdG8gbWFrZSBkZWJ1Z2dpbmcgc2ltcGxlcg0KMS4wMiAyMDIyLTAy
-LTI1IChwZXJsIGNvcmUgb25seSkNCiAgLSBmaXggX19DQUxMRVJfXyBoYW5kbGluZyBpbiBBdHRy
-aWJ1dGU6OkhhbmRsZXJzDQogIC0gd3JhcCBhbnkgZXhpc3RpbmcgaW1wb3J0IGluIHRoZSBBdHRy
-aWJ1dGU6OkhhbmRsZXJzIGltcG9ydA0KMS4wMSAyMDE3LTA5LTEyIChwZXJsIGNvcmUgb25seSkN
-Ci4uLi4NCg0KRGFuaWVsDQo=
+This is now merged.
+Peter
+
+> -----Original Message-----
+> From: Marko, Peter (FT D EU SK BFS1) <Peter.Marko@siemens.com>
+> Sent: Tuesday, July 14, 2026 8:19 PM
+> To: yocto-patches@lists.yoctoproject.org
+> Cc: jose.quaresma@foundries.io; Marko, Peter (FT D EU SK BFS1)
+> <Peter.Marko@siemens.com>
+> Subject: [meta-lts-mixins][scarthgap/go][PATCH] go: upgrade 1.26.4 -> 1.2=
+6.5
+>=20
+> From: Peter Marko <peter.marko@siemens.com>
+>=20
+> Upgrade to latest 1.26.x release [1]:
+>=20
+> $ git --no-pager log --oneline go1.26.4..go1.26.5
+> c19862e5f8 (tag: go1.26.5) [release-branch.go1.26] go1.26.5
+> f9ef7f5598 [release-branch.go1.26] os: properly handle trailing slashes i=
+n paths in
+> Root
+> ca8ca590cc [release-branch.go1.26] crypto/tls: omit PSK in ECH outer clie=
+nt hello
+> 7397dd7495 [release-branch.go1.26] net: fix TestLookupCNAME
+> 044c995af7 [release-branch.go1.26] runtime: tolerate vendor suffixes in L=
+inux kernel
+> release strings
+> 814591410b [release-branch.go1.26] cmd/compile,sync/atomic: make Add And =
+& Or
+> SQCST on PPC64
+> 2055b1a15d [release-branch.go1.26] syscall: add //go:norace to rawSyscall=
+ on
+> darwin
+> d7c9c818f9 [release-branch.go1.26] runtime: in moveSliceNoCap, round size=
+ down to
+> a whole multiple of element size
+> dc80258a97 [release-branch.go1.26] internal/runtime/gc: require AVX512DQ =
+for
+> greentea
+> 6efcff6602 [release-branch.go1.26] os/signal: make NotifyContext Cause ma=
+tch
+> context.Canceled
+> fe91cea4f2 [release-branch.go1.26] cmd/go: use fsys.ReadDir for
+> IsStandardPackage
+> ec988a9af1 [release-branch.go1.26] os: notify testlog from (*File).Chdir
+>=20
+> Fixes CVE-2026-39822 and CVE-2026-42505.
+>=20
+> Release information: [2]
+>=20
+> [1] https://github.com/golang/go/compare/go1.26.4...go1.26.5
+> [2] https://groups.google.com/g/golang-announce/c/OrmQE_Yp5Sc
+>=20
+> Signed-off-by: Peter Marko <peter.marko@siemens.com>
+> Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+> (From OE-Core rev: b498f6d6d93e0adb3f0e9439aa55a2abfcb9b063)
+> Signed-off-by: Peter Marko <peter.marko@siemens.com>
+> ---
+>  recipes-devtools/go/{go-1.26.4.inc =3D> go-1.26.5.inc}        | 2 +-
+>  ...o-binary-native_1.26.4.bb =3D> go-binary-native_1.26.5.bb} | 6 +++---
+>  ...cross-canadian_1.26.4.bb =3D> go-cross-canadian_1.26.5.bb} | 0
+>  .../go/{go-cross_1.26.4.bb =3D> go-cross_1.26.5.bb}           | 0
+>  .../go/{go-crosssdk_1.26.4.bb =3D> go-crosssdk_1.26.5.bb}     | 0
+>  .../go/{go-runtime_1.26.4.bb =3D> go-runtime_1.26.5.bb}       | 0
+>  recipes-devtools/go/{go_1.26.4.bb =3D> go_1.26.5.bb}          | 0
+>  7 files changed, 4 insertions(+), 4 deletions(-)
+>  rename recipes-devtools/go/{go-1.26.4.inc =3D> go-1.26.5.inc} (90%)
+>  rename recipes-devtools/go/{go-binary-native_1.26.4.bb =3D> go-binary-
+> native_1.26.5.bb} (80%)
+>  rename recipes-devtools/go/{go-cross-canadian_1.26.4.bb =3D> go-cross-
+> canadian_1.26.5.bb} (100%)
+>  rename recipes-devtools/go/{go-cross_1.26.4.bb =3D> go-cross_1.26.5.bb} =
+(100%)
+>  rename recipes-devtools/go/{go-crosssdk_1.26.4.bb =3D> go-crosssdk_1.26.=
+5.bb}
+> (100%)
+>  rename recipes-devtools/go/{go-runtime_1.26.4.bb =3D> go-runtime_1.26.5.=
+bb} (100%)
+>  rename recipes-devtools/go/{go_1.26.4.bb =3D> go_1.26.5.bb} (100%)
+>=20
+> diff --git a/recipes-devtools/go/go-1.26.4.inc b/recipes-devtools/go/go-1=
+.26.5.inc
+> similarity index 90%
+> rename from recipes-devtools/go/go-1.26.4.inc
+> rename to recipes-devtools/go/go-1.26.5.inc
+> index 8bc6f4d..a4302b2 100644
+> --- a/recipes-devtools/go/go-1.26.4.inc
+> +++ b/recipes-devtools/go/go-1.26.5.inc
+> @@ -16,4 +16,4 @@ SRC_URI +=3D "\
+>      file://0009-go-Filter-build-paths-on-staticly-linked-arches.patch \
+>      file://0010-cmd-go-clear-GOROOT-for-func-ldShared-when-trimpath-.pat=
+ch \
+>  "
+> -SRC_URI[main.sha256sum] =3D
+> "4f668a32fbfc1132e6a881fb968c2f1dada631492a339211735fbb255a42602d"
+> +SRC_URI[main.sha256sum] =3D
+> "495be4bc87176ac567392e5b4116abd98466d33d7b49d41e764ccc6976b2dc42"
+> diff --git a/recipes-devtools/go/go-binary-native_1.26.4.bb b/recipes-dev=
+tools/go/go-
+> binary-native_1.26.5.bb
+> similarity index 80%
+> rename from recipes-devtools/go/go-binary-native_1.26.4.bb
+> rename to recipes-devtools/go/go-binary-native_1.26.5.bb
+> index 489ea0c..8ba9dd4 100644
+> --- a/recipes-devtools/go/go-binary-native_1.26.4.bb
+> +++ b/recipes-devtools/go/go-binary-native_1.26.5.bb
+> @@ -9,9 +9,9 @@ PROVIDES =3D "go-native"
+>=20
+>  # Checksums available at https://go.dev/dl/
+>  SRC_URI =3D "https://dl.google.com/go/go${PV}.${BUILD_GOOS}-
+> ${BUILD_GOARCH}.tar.gz;name=3Dgo_${BUILD_GOTUPLE}"
+> -SRC_URI[go_linux_amd64.sha256sum] =3D
+> "1153d3d50e0ac764b447adfe05c2bcf08e889d42a02e0fe0259bd47f6733ad7f"
+> -SRC_URI[go_linux_arm64.sha256sum] =3D
+> "ef758ae7c6cf9267c9c0ef080b8965f453d89ab2d25d9eb22de4405925238768"
+> -SRC_URI[go_linux_ppc64le.sha256sum] =3D
+> "53f49b8c7eace2d30389327b4a516b13321f90377fdf5929a6b63174609bc22e"
+> +SRC_URI[go_linux_amd64.sha256sum] =3D
+> "5c2c3b16caefa1d968a94c1daca04a7ca301a496d9b086e17ad77bb81393f053"
+> +SRC_URI[go_linux_arm64.sha256sum] =3D
+> "fe4789e92b1f33358680864bbe8704289e7bb5fc207d80623c308935bd696d49"
+> +SRC_URI[go_linux_ppc64le.sha256sum] =3D
+> "c5d60e2b303bb612f20cd82786594b64874e73b35134025e27d3390bf284ae43"
+>=20
+>  UPSTREAM_CHECK_URI =3D "https://golang.org/dl/"
+>  UPSTREAM_CHECK_REGEX =3D "go(?P<pver>\d+(\.\d+)+)\.linux"
+> diff --git a/recipes-devtools/go/go-cross-canadian_1.26.4.bb b/recipes-de=
+vtools/go/go-
+> cross-canadian_1.26.5.bb
+> similarity index 100%
+> rename from recipes-devtools/go/go-cross-canadian_1.26.4.bb
+> rename to recipes-devtools/go/go-cross-canadian_1.26.5.bb
+> diff --git a/recipes-devtools/go/go-cross_1.26.4.bb b/recipes-devtools/go=
+/go-
+> cross_1.26.5.bb
+> similarity index 100%
+> rename from recipes-devtools/go/go-cross_1.26.4.bb
+> rename to recipes-devtools/go/go-cross_1.26.5.bb
+> diff --git a/recipes-devtools/go/go-crosssdk_1.26.4.bb b/recipes-devtools=
+/go/go-
+> crosssdk_1.26.5.bb
+> similarity index 100%
+> rename from recipes-devtools/go/go-crosssdk_1.26.4.bb
+> rename to recipes-devtools/go/go-crosssdk_1.26.5.bb
+> diff --git a/recipes-devtools/go/go-runtime_1.26.4.bb b/recipes-devtools/=
+go/go-
+> runtime_1.26.5.bb
+> similarity index 100%
+> rename from recipes-devtools/go/go-runtime_1.26.4.bb
+> rename to recipes-devtools/go/go-runtime_1.26.5.bb
+> diff --git a/recipes-devtools/go/go_1.26.4.bb b/recipes-devtools/go/go_1.=
+26.5.bb
+> similarity index 100%
+> rename from recipes-devtools/go/go_1.26.4.bb
+> rename to recipes-devtools/go/go_1.26.5.bb
 
