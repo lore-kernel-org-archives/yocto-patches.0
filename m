@@ -1,93 +1,104 @@
-Return-Path: <JPEWhacker@gmail.com>
+Return-Path: <richard.purdie@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B68A2C4451C
-	for <webhook@archiver.kernel.org>; Tue, 21 Jul 2026 20:16:42 +0000 (UTC)
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.32876.1784665000571256247
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA95EC44536
+	for <webhook@archiver.kernel.org>; Wed, 22 Jul 2026 20:54:30 +0000 (UTC)
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.10126.1784753670047571554
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 21 Jul 2026 13:16:40 -0700
+ Wed, 22 Jul 2026 13:54:30 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=Pf6QiC/r;
- spf=pass (domain: gmail.com, ip: 209.85.210.54, mailfrom: jpewhacker@gmail.com)
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-7e9ecb1e13cso8895842a34.3
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 21 Jul 2026 13:16:40 -0700 (PDT)
+ dkim=pass header.i=@linuxfoundation.org header.s=google header.b=LG8xLPeJ;
+ spf=pass (domain: linuxfoundation.org, ip: 209.85.221.51, mailfrom: richard.purdie@linuxfoundation.org)
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-47f707e5d75so2825061f8f.1
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 22 Jul 2026 13:54:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784665000; x=1785269800; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=v6iO8cHD7R1M8sXWFVqhzjly8fVNUJ4o4XgogQTsKcc=;
-        b=Pf6QiC/rI2fTUXXNWo9pJwRgKaXA/by1JfTouiXnJ1z1mO3Pn7T+0M6/irLaD5aQmT
-         N1+SWvKRr92ybEdNWJgwWf4px1TBVqClJaBmgJoStalqAUw/0BickpjsGIz6IUrAVij6
-         9z2Rl+mBDfDbBG/wFX/3w6EOYzXKyc4h0lSBBJPIYSPGAdFIwdwg6t7USg4J0Gh/Q+tT
-         s0LONSBkCcqrsAvxbKXj5eNj1eHV65WNzjD5mqF7xdt+yHS2KxpfM0ch5jJIavUQd/ZP
-         wlt3GEueYgEp7jIlABwzuXRSxurIAhN84HxkuM7J0qWTc4N2/vS6DwG8G8kDdDq7YpZ3
-         H4kQ==
+        d=linuxfoundation.org; s=google; t=1784753668; x=1785358468; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=ZwVm7MyKw7xnEqWCE+k3j8QWi/IaCN/Nl9QZUhmNIdo=;
+        b=LG8xLPeJ0oJyx0DzD5kXZvJW40Qt6MRVbzGULQfP5PufQfYtXyL5Jr3ntJnEhkzHfZ
+         hSqKeBpo/NjuENS/mlYSiWwLo8Ep6oKtFVsf5sqOmxCc39V7tckFL7PZbPUy6H2U71t5
+         CuCBDza7FDmCDczizrmtePArKtm0OCUnlgkdY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784665000; x=1785269800;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=v6iO8cHD7R1M8sXWFVqhzjly8fVNUJ4o4XgogQTsKcc=;
-        b=D9H/sBCEsfPirhBMlJQMDxTkelQyaMimr3s5IBq70kllkgHkCDvlo/Ws0flgpDiujr
-         luNpwLpgOhwbsTr4ZGOAdJ35iijYJUEyJ7YPVlr/VwDCXdNN57QnjpTAIsylIL2j5LxS
-         mda0InBWFuT4b0I0VdkFrg27xc8VptD00bWzearK3Cz6sCJXb2m/RGSYgFze0srKyhEl
-         6+ocjSqk2+YDkXuBBeYb/vLdoyJ05JZ5FWjYMzwzskjeu1PO9PjFcsLsDciQScZLYCRR
-         EWBYKdGwZhkbS/0pK2XJpCVEtLQHhnX5tXLvIIDAVLmCWI8klJK8LqZw3EFvPhF7Bsxd
-         JkVA==
-X-Gm-Message-State: AOJu0YyZ6RY2FOAWSb0gE6UoHkW52ZGR/mKsc/pzIMcZ4Lex7uZoWjqB
-	iSifxosB061h4FbNdpE8qDoHWeCMEvYJDw+X4+PBFRNl7jTtMrUfSL0VEvdMAw==
-X-Gm-Gg: AfdE7cmYxOtXMpLkTLoUrWr93JU1INa6TKhEJXrulGJkiq4SsdBKTUx8Me9OyCs54em
-	V0VxKpro96SePC3niNT+5mu77+XtWewmNKpRoiLizwEbYEVGxMigwnM55JxYNNy8LBdGNWXm1jk
-	U40qavC9WgiRk47i3x5qRl0hrDRVvgrFZhWDAG0L7/4vyOWPNN7ztTg88dJd5SK3mtoAf05V94F
-	+3Lk4QKR+wT+s8fwOrazp8Kd0Yg9XBRT3bJJpR9iRiLBXtDkR1p4sXG3NP+tEmfvN+UL4RUAEPj
-	D6Sy0dcQCYRV+mw/lF/ZL50K8YlgeurfKpOKFncwjFpq+ue5XLQtS329We9talsJD9MSSohdw2q
-	chAvORIDu78CTqQVjdrRPHCorRVUJ8A1kal2ZqTRZObJxDHRSQZSC56+m/qLHaGqAfa7EfTe/lA
-	==
-X-Received: by 2002:a05:6830:398d:b0:7ec:5899:cd6f with SMTP id 46e09a7af769-7eda097a615mr11135229a34.17.1784664999653;
-        Tue, 21 Jul 2026 13:16:39 -0700 (PDT)
-Received: from localhost.localdomain ([2601:283:4b02:22d0::d8e])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7ee24743ac5sm353174a34.6.2026.07.21.13.16.39
+        d=1e100.net; s=20251104; t=1784753668; x=1785358468;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=ZwVm7MyKw7xnEqWCE+k3j8QWi/IaCN/Nl9QZUhmNIdo=;
+        b=NdYWHEoLn+OkuemVue3ZO0D8LnTd62N93FsT25IJh1MKIoMzOHxmrXSzJgTjU32oH+
+         WwlfkZe2InvpHay1XrHiF30Yo5kLApR9Ghz3J+xzUams6KGbLR7jiU2+qWg8oROx1bY8
+         0/uNmUBGpJb+GuycdjV34uObJva7Zr+F3hQ92TJbAw2pROL6zcTMoFZY7U6JdfboRlwC
+         v3hZy/Ng/S1L6i71IKayIiRtua0bv+EePf20HvoYmbliZSLOoa8Y+PUl11ITcA0o/54A
+         OpvjKEuQV153ct4xJHkQP3iWSErHbZSXqJF6NK9CQEMDsq69X/NqB1ZY3AjV/quR735R
+         EzKg==
+X-Gm-Message-State: AOJu0YylgOHN9NwNQethmItgIF8u8t3z6LASwpKwbItMa+KuZPBmqK1R
+	3xR+oTm9K2JaMLfRP0HqnwpcNHncGDR5Vij6H8LXZua1MeeavxBdlzCou3sgDMnoWC3b5cbwPjy
+	d5ytcmpA=
+X-Gm-Gg: AR+sD11tUTY+ag2wIv9Ph3PKfOcUpKBPOXrDFzlO4QdUVgBtBsj1OplGmFDW6rXfBGn
+	1T6FttaBKEEmiF0LN9E0I23zw2DmOEMWby0F1aqbiOOiEDOpHI1QcgPRs/EPPHw++uO/FKaVbg6
+	pd6vzMYsyEPNGSDAg0IobFvsr/ee+jiRSdebwAvkqR7ri/N7Hg17nafjFdvwkeqmYSZ8H3SjgjI
+	620Y8jZw7iAjVBlBnEBYLjv9cbszSM76iTYfJb8QampZ7QoFgFFtaoMrvVFXfVIQvdayIqeWceo
+	OJmmpYs5FAc+QkEcuuTlYpvM4g2cVriZAhko+fqzl4VZc0wfeZZBGGhyRZDcp+eO7oPUa2DmoMc
+	r2ibf1CdbqYaWX1b3CHhT2YOIvxF9B0HA/pHTWDYAY7PkXBBBhBk+YONjI8XZgdYPXwNAr+PRkm
+	+LhXpq9kFzXPedZ+qupvf6ZmVo2Wo7/F4=
+X-Received: by 2002:a05:6000:3112:b0:47f:6fbd:8a23 with SMTP id ffacd0b85a97d-47f8da6e52cmr473278f8f.9.1784753668149;
+        Wed, 22 Jul 2026 13:54:28 -0700 (PDT)
+Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:2add:73ee:28e7:c242])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f85c52fa9sm9940031f8f.20.2026.07.22.13.54.27
+        for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jul 2026 13:16:39 -0700 (PDT)
-From: Joshua Watt <jpewhacker@gmail.com>
-X-Google-Original-From: Joshua Watt <JPEWhacker@gmail.com>
+        Wed, 22 Jul 2026 13:54:27 -0700 (PDT)
+From: Richard Purdie <richard.purdie@linuxfoundation.org>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Joshua Watt <JPEWhacker@gmail.com>
-Subject: [yocto][meta-mingw][PATCH] libiconv: Update LICENSE expression
-Date: Tue, 21 Jul 2026 14:16:37 -0600
-Message-ID: <20260721201637.1636702-1-JPEWhacker@gmail.com>
-X-Mailer: git-send-email 2.54.0
+Subject: [yocto-autobuilder-helper] [PATCH] config.json: Drop x32 support testing
+Date: Wed, 22 Jul 2026 21:54:26 +0100
+Message-ID: <20260722205426.3978178-1-richard.purdie@linuxfoundation.org>
+X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 21 Jul 2026 20:16:42 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4530
+ <yocto-patches@lists.yoctoproject.org>; Wed, 22 Jul 2026 20:54:30 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4531
 
-Updates the LICENSE for libiconv to be a valid SPDX Licenses Expression
+The linux kernel plans to drop x32 support. At that point it is not viable for
+us to have this so we may as well stop building/testing it.
 
-Signed-off-by: Joshua Watt <JPEWhacker@gmail.com>
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
 ---
- recipes-support/libiconv/libiconv_1.18.bb | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ config.json | 18 ------------------
+ 1 file changed, 18 deletions(-)
 
-diff --git a/recipes-support/libiconv/libiconv_1.18.bb b/recipes-support/libiconv/libiconv_1.18.bb
-index e4e6a62..52b61f3 100644
---- a/recipes-support/libiconv/libiconv_1.18.bb
-+++ b/recipes-support/libiconv/libiconv_1.18.bb
-@@ -6,7 +6,7 @@ SECTION = "libs"
- NOTES = "Needs to be stripped down to: ascii iso8859-1 eucjp iso-2022jp gb utf8"
- PROVIDES = "virtual/libiconv"
- PR = "r1"
--LICENSE = "GPL-3.0-only & LGPL-2.1-only"
-+LICENSE = "GPL-3.0-only AND LGPL-2.1-only"
- LIC_FILES_CHKSUM = "file://COPYING;md5=d32239bcb673463ab874e80d47fae504 \
- 					file://COPYING.LIB;md5=4bf661c1e3793e55c8d1051bc5e0ae21 \
-                     file://libcharset/COPYING.LIB;md5=4bf661c1e3793e55c8d1051bc5e0ae21"
--- 
-2.54.0
-
+diff --git a/config.json b/config.json
+index 4d329e3..97eec0e 100644
+--- a/config.json
++++ b/config.json
+@@ -819,24 +819,6 @@
+                 "OE_FRAGMENTS += 'core/yocto-autobuilder/multilib-x86-lib32'"
+             ]
+         },
+-        "qemux86-64-x32" : {
+-            "MACHINE" : "qemux86-64",
+-            "BUILDINFO" : true,
+-            "extravars" : [
+-                "DEFAULTTUNE = 'x86-64-x32'",
+-                "baselib = \"${@d.getVar('BASE_LIB_tune-' + (d.getVar('DEFAULTTUNE', True) or 'INVALID'), True) or 'lib'}\""
+-            ],
+-            "step1" : {
+-                "BBTARGETS" : "core-image-minimal core-image-full-cmdline",
+-                "SANITYTARGETS" : "core-image-minimal:do_testimage"
+-            },
+-            "step2" : {
+-                "SANITYTARGETS" : "core-image-full-cmdline:do_testimage",
+-                "extravars" : [
+-                    "TEST_SUITES:append = ' x32lib'"
+-                ]
+-            }
+-        },
+         "qemux86-64-ptest" : {
+             "MACHINE" : "qemux86-64",
+             "TEMPLATE" : "ptest-qemu"
 
