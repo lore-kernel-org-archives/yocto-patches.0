@@ -1,99 +1,96 @@
-Return-Path: <gael.portay+rtone@gmail.com>
+Return-Path: <bbnpreetsingh@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F2EDC54FCD
-	for <webhook@archiver.kernel.org>; Thu, 30 Jul 2026 02:49:35 +0000 (UTC)
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.3522.1785379766896400877
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CEA1C531D0
+	for <webhook@archiver.kernel.org>; Thu, 30 Jul 2026 05:07:36 +0000 (UTC)
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.5001.1785388053027280349
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 29 Jul 2026 19:49:27 -0700
+ Wed, 29 Jul 2026 22:07:33 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=IqdMg5DB;
- spf=pass (domain: gmail.com, ip: 209.85.221.47, mailfrom: gael.portay+rtone@gmail.com)
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-47f706438c3so107275f8f.3
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 29 Jul 2026 19:49:26 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=J19F2GyW;
+ spf=pass (domain: gmail.com, ip: 209.85.214.171, mailfrom: bbnpreetsingh@gmail.com)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2cace91f112so20167895ad.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 29 Jul 2026 22:07:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785379765; x=1785984565; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:sender:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=+V9jVTyXH5/P7POLLH8lD2v5G16n3SV3ZLyjM79++UI=;
-        b=IqdMg5DBsB3SiyCTtcKqhdFxRf/KMV2Zn/oEUUG67rV3w7PZ4IxjWg3zFEVQJ2EvR7
-         GG9DaVTQhttYtt6rmLF34yJy02rSZfGH12mwMzyluvxkssoPKzrGT0xUG1fjUiEihW7c
-         M8E3IaOp7d75ccgYcdtu3fEQoqba0z4GCAeDs9Sc4YPZG3opyXXKQbE0P1eebnU7QFjq
-         rsX2w0ZVFl6MLzB14AleB9EDPiPLYPQqLwbBvY8ptwbw/GAY1JiJ6BDr0rQA66lOHCi3
-         GL4Lpaih8ifD9upXG5AbpzQ85L1gp453X0Y8EfTMsPFhU99acbtpV69OvVDvzkue+IeW
-         M5kA==
+        d=gmail.com; s=20251104; t=1785388052; x=1785992852; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=c+xjASlzQwm+SZBrGUNvQnyzAL9ZeX2kvwuoaVXdF2w=;
+        b=J19F2GyWV1SZD2qlpY05ZPXvUZFXokPKBHzunEMzBAb2VVUktSfBHQg6LTtsK26wNU
+         YVfxjWdBzTlvuFwbGBq5SMUSojAOgZp/9DQpYIDvsUsRdvYQP0HRiGgG3iueT827Hfla
+         99TkyvsX9wNgXfDU4DlDkErdWlHqQHKqDvfPmLjDq9khDZEyPYM/Kd724bIaFwLnwoTr
+         0Ir9htXCJsetw3WrlK09l9qkck+msSI2pWLTEtjxa9AGaiDZpeOp+TjiIKcakrid5MZY
+         5+Nx+uPhH4EAGDGKKqa0MsSjKq8eGGyDMzvTTfc5uD1JgM2tz1Xm9AK51Qj2IPpc5iIY
+         dK4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785379765; x=1785984565;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:sender:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=+V9jVTyXH5/P7POLLH8lD2v5G16n3SV3ZLyjM79++UI=;
-        b=ryN0qMiXuu/SbmFDTStG7ZHyxo1GGHnjXg0NeG7h6AOjQPMfAHaXJxytEOnCoyxD4L
-         OZWtl6chRhDoYdGTJApaM95tXTSyL/uxaFo4DAUvS+6SSavPAMCwkDuQxqqe/MP2Ggnk
-         pHqI+NNAWP+QhvkjQF/zn/kPig1cGxCreYD7wsgnkCGb6m9YOyRGehrbKcQnmvSc2q6t
-         /rwqsQGg2TwYlTAInbmZJLXTnWr8lwOrDiS+jB0BTUk9g/aQOkAKGVA3vaK5HAve3fNE
-         53Vg36naO2uv6P9TbQ8yFY/DsIZrJSSu/SjfPvaQI6YIJJbTzpHYIUvFyjCvoVVP5ezX
-         48Mg==
-X-Gm-Message-State: AOJu0YyxL6ujbKrtoJelO7tqdvrjtEGzLoCknhXldh3w1FiyCA+txRpA
-	qyJ7NbxsHVep8FVX29y6tph9Tj+wlYHzeyyxRe1gGP19Dw2p3uSEV7d2c9/kuyVWSBg=
-X-Gm-Gg: AR+sD13abur31D0Jfhj8BkrceB3FrBKPVN44zi/18NqXzuyOvKCpMZPLr9t+eSWObCK
-	ozVBBMTYJNIfb9R5BOhInk6QCoIT8mFRMg8pJrbI4wTMUwfWS+UFehzPuf6x6dQ5+xXU8gVFNkW
-	bpRNjEzyglctfLWXtOhwWesCOQ73kCpJizERSAV91SkZKaIYpTEoyv5lq6bjEvUSFYlgx4tT+TE
-	8Cro4CbsjBeF/M4/EEuQaux0NhREb9NLzrxFazB05BUSU+JuU/yyTdTvbp2gXmWrIcJF/4gJ1mb
-	+45rpqcE4Os07N1+fXIcoQhDVvZSMw38GE69mBiIMxpErsb1t9wHfjs+WWoqxocc/d2aTUgt6GB
-	7xVwdRksMtL6IXJH9lnMqaFCQcOkuYkLzwon6JsoduxuOVIhK+vGGWSTZzUp6NKrGjfEx1nMsQB
-	HndQu8Gc6wRekRk5FKCrwJLJ1PUTneowr6ItLZrxlPkXAZDJXUKr5JDNI6sYMZjjSusL0GN+uur
-	gj24+BowrVea0F10wquiRVrVn9HFn0Qi4x8vxMphNP45w==
-X-Received: by 2002:a05:600c:4ec6:b0:495:71ff:598d with SMTP id 5b1f17b1804b1-49800e6d0b8mr8387345e9.1.1785379764735;
-        Wed, 29 Jul 2026 19:49:24 -0700 (PDT)
-Received: from chipmunk-161.. ([2a01:e0a:ce:f2f0:4bd7:86b5:c090:c54d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-498011f4eb7sm20647675e9.6.2026.07.29.19.49.23
+        d=1e100.net; s=20251104; t=1785388052; x=1785992852;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=c+xjASlzQwm+SZBrGUNvQnyzAL9ZeX2kvwuoaVXdF2w=;
+        b=EyDP4yvEtFY50Nr6hloIl58w3Ya8P1LQh1szEMnt1yZgpG5ZMuSjHvRLQKMf+TvbEa
+         Dh4XuC/7dKJ/iCgdM7GIInTcf0ujZUCxhEcm5qvwVmtfTLi8YLfCMoGfuK4CHja2gXv0
+         J0ciNbGhtA9o3DkSYhPgYeLDBXDm3ncH74pDKD+0pnbfaz5EsF2IO3YY0ChollZ/IL8F
+         o7wrDWboDu5idUASsuuzzOLoitbPwEJcgdqOXBG8ykIoSIDbArwlgh/4Wm0SbXa+r7eL
+         kdGbWhKqRMmqszl+Yqt1pTEHI8kEYEKZa3rEEtiDt0PGgdDVuUYrhPoD2Ms5N3hzmD7o
+         QDsQ==
+X-Forwarded-Encrypted: i=1; AHgh+Rp5qQygiKkSWWUN7p/gZ22z2j2qDnL8+XLWY17Ng2EM1Y3u3VenqXfh77kWEa0zqYlVXdSRufon4Pbffo/j@lists.yoctoproject.org
+X-Gm-Message-State: AOJu0YywiQ1peoq0nh+zsDBY3NdZuXUPsVaunl6P/ysYzmpG5lWuqIaT
+	RvBhi4KbxSbcviCm5Db5TBzfvL0WTygJQ+vgeyzi3eUcgdx6t2/Ju5jN
+X-Gm-Gg: AR+sD12eUEzwGTWn5nYuiUkxUUoI7MeQNrbJ/50IVGSvVBGiFQ/3daET/0mjPPhzX8r
+	umZwZD7V3hM0tiLOben0NPYzFmtzXUHsjRmD/2RUWB5owXN9vEuP8/xxb3dNRB1Oug5bpilKu2g
+	y0O3N6krKkpF7cEMBV5VUCtqNZBZs7GTWdKomaT8jObPIMpe6zZ8OCZSMPoUxUKkUSFN7gjw41k
+	axyj+U5M7UT4P8BnItchDGyg8z8Nu9Du0H1ORNIvz43GgKc+6ql5vaaDYvGsH3VxmnM/Obw+wVp
+	1FIDZPPwl1oUvyi/eF09LRXIsu0EXCd5lWGR3kcFSHzdQAam1pUFhde//M0cwsPmeRmMMfi3JPI
+	trwJClz4F0JxeZNywH1rrdzwZbwhxv6zjAhMVCmKvf80XUmd4YUaxMDJLgoP5xN78FnTAX8fGdj
+	1h4a4oaUwRZUtOVNjiWxmsYGfloMgvV0TcKGyCE7g55rw2YiAZbOnoasDFOF0uGe4H4+6Hdjhn
+X-Received: by 2002:a17:903:2f84:b0:2c9:b48c:fdec with SMTP id d9443c01a7336-2d035c4edf1mr12053215ad.12.1785388052202;
+        Wed, 29 Jul 2026 22:07:32 -0700 (PDT)
+Received: from ydev.. ([108.180.130.139])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2d022a1531dsm20088355ad.13.2026.07.29.22.07.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Jul 2026 19:49:23 -0700 (PDT)
-Sender: =?UTF-8?B?R2HDq2wgUE9SVEFZ?= <gael.portay@gmail.com>
-From: =?UTF-8?q?Ga=C3=ABl=20PORTAY?= <gael.portay+rtone@gmail.com>
-To: yocto-patches@lists.yoctoproject.org
-Cc: =?UTF-8?q?Ga=C3=ABl=20PORTAY?= <gael.portay+rtone@gmail.com>
-Subject: [meta-security][PATCH] docs: fix formatting in dm-verity documentation
-Date: Thu, 30 Jul 2026 04:48:49 +0200
-Message-ID: <20260730024849.1120938-2-gael.portay+rtone@gmail.com>
+        Wed, 29 Jul 2026 22:07:31 -0700 (PDT)
+From: Babanpreet Singh <bbnpreetsingh@gmail.com>
+To: Richard Purdie <richard.purdie@linuxfoundation.org>,
+	yocto-patches@lists.yoctoproject.org
+Cc: Mark Hatle <mark.hatle@amd.com>,
+	Mark Hatle <mark.hatle@kernel.crashing.org>,
+	Paul Barker <paul@pbarker.dev>,
+	Randy MacLeod <randy.macleod@windriver.com>,
+	Vincent Haupert <mail@vincent-haupert.de>,
+	Babanpreet Singh <bbnpreetsingh@gmail.com>
+Subject: Re: [pseudo] [PATCH 0/3] closefrom/close_range: protect every pseudo fd, then drop one
+Date: Thu, 30 Jul 2026 05:07:30 +0000
+Message-ID: <20260730050730.7-1-bbnpreetsingh@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <15f732196c35cafae077a46b2ad4b88ae6191630.camel@linuxfoundation.org>
+References: <15f732196c35cafae077a46b2ad4b88ae6191630.camel@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Thu, 30 Jul 2026 02:49:35 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4571
+ <yocto-patches@lists.yoctoproject.org>; Thu, 30 Jul 2026 05:07:36 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4572
 
-This reformats the WIC partition example in the dm-verity documentation
-to keep the `/boot` partition definition on a single line to make the
-example easier to copy and less error-prone.
+Hi Richard,
 
-Signed-off-by: Gaël PORTAY <gael.portay+rtone@gmail.com>
----
- docs/dm-verity.txt | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Yes, that's fine by me, thanks for folding it in and for redoing the
+commit messages. I see the fd-protect patches on master with 1.9.10 on
+top.
 
-diff --git a/docs/dm-verity.txt b/docs/dm-verity.txt
-index a538fa2..f33f5a2 100644
---- a/docs/dm-verity.txt
-+++ b/docs/dm-verity.txt
-@@ -86,8 +86,7 @@ things and remove a bunch of manual steps that might be error prone.
- 
- Consider for example, the beaglebone black WIC file, which contains:
- 
--part /boot --source bootimg-partition --ondisk mmcblk0 --fstype=vfat
----label boot --active --align 4 --fixed-size 32 --sourceparams="loader=u-boot" --use-uuid
-+part /boot --source bootimg-partition --ondisk mmcblk0 --fstype=vfat --label boot --active --align 4 --fixed-size 32 --sourceparams="loader=u-boot" --use-uuid
- part / --source rawcopy --ondisk mmcblk0 --sourceparams="file=${IMGDEPLOYDIR}/${DM_VERITY_IMAGE}-${MACHINE}.${DM_VERITY_IMAGE_TYPE}.verity"
- bootloader --append="console=ttyS0,115200"
- 
--- 
-2.43.0
+I've also read through the close_range respin on master-next. The clamp
+and the OP_CLOSE_RANGE exemption match what I reproduced here.
 
+Sorry the __open64_2 hunt cost you an afternoon. Happy to run the
+close_range probe and the OE reproducer against current master-next and
+report back if another data point would help.
+
+I'll add a note to bug 16339 once the close_range side lands.
+
+Cheers,
+Baban
 
