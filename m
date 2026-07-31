@@ -2,62 +2,62 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 195DAC55175
-	for <webhook@archiver.kernel.org>; Fri, 31 Jul 2026 11:33:24 +0000 (UTC)
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.4583.1785497603580048141
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19442C54F54
+	for <webhook@archiver.kernel.org>; Fri, 31 Jul 2026 11:33:34 +0000 (UTC)
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.4595.1785497612579084298
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 31 Jul 2026 04:33:23 -0700
+ Fri, 31 Jul 2026 04:33:32 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=frOPc0eo;
- spf=pass (domain: konsulko.com, ip: 209.85.222.172, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-92e50979c71so77071085a.3
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 31 Jul 2026 04:33:23 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=X6lI2Eu6;
+ spf=pass (domain: konsulko.com, ip: 209.85.222.169, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-92e5cb052edso65838585a.2
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 31 Jul 2026 04:33:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1785497602; x=1786102402; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1785497611; x=1786102411; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=RBa3eK5bF3nzm1nFmEPxOBdCbiYkfeXe/5zBjXBgg7g=;
-        b=frOPc0eo8PwuoXQhZHpz1WPJYjt02sWSoR4L9rKdBleOt+J48ip6est93KEKQcoCq/
-         PNWuB9wUryxZ6GRngS7BKsIUgBW1K9yXoGqUdLnZzg8ZLa4jEJAYB5rRSWBaeSqpzrXA
-         x95+C42Ztjj/jFyJ6I+rHMIv6Q4y0CAme6z+4=
+        bh=JPOMLrotMJeo3L318RlZLmZ1U2ym0INUqvAmizM9iqg=;
+        b=X6lI2Eu6W4yBLKcG3x6SMFlldBMlz9eHZclppqtUK3eU8c+a6tVxQHc4JoVBp4DpM5
+         +jPpy8X/sc2nkLAZU3+EZVHJj0n3Hkh25iyFTMlTHHDpPvspOGVBH4A/GiHHaRHpmPoz
+         5RHZEJgs4luEesRkVz2VgSB7CdaSRz1YKo5lU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785497602; x=1786102402;
+        d=1e100.net; s=20251104; t=1785497611; x=1786102411;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to:content-type;
-        bh=RBa3eK5bF3nzm1nFmEPxOBdCbiYkfeXe/5zBjXBgg7g=;
-        b=GqmyYImh0eRQ+IEftIdYIvzhujpVaX4fTPBCnITbK+ikGuitpsNLpFeZ63OXx4qgmo
-         wn6dr3iU8+uhe5ItCk1qLkbutuH5ED9YscIj+MM8C9Akiw+epJ1iy8m5Vf0/HYpSTliV
-         sGwA6i8Pg9XjL9kzR/JiUFLkJVx688xsm8wpHoK/1kx035WCItMdGo4p+maA6HEKVIji
-         nnN44VX1d59bzpE11TP3nUF153RWzEfjibzUF9Q5kz+4np0Pb/Rik0NpmV1eLg0qWAfE
-         NCxdnW0wD0ITvxVCHYzwt/ePNyGJFMlPF0ePCdbE29pvl6/nJTtPU336ey6p4/ECAiR3
-         ocDQ==
-X-Gm-Message-State: AOJu0Yxg6KqOrWWcf5BsYgsnM7zDK+qEx6eYgwzYCgWGAVLJl0v9WJkL
-	SlSPng/81ULs8Q1QuIrh1AyhBtaTNjq1tIMudZdkpUxhCKz9zoELpwiFPDY4gcVSE7bop4wTdNR
-	Z+FBd
-X-Gm-Gg: AR+sD13O1PfCmlTkJ1BRcZFWJR5lEgU0ir3rzFxIpJJq5Z+uItRZe05Cw2d9dCiT9uI
-	hjWfcg3csVXWMR/VvAJc54ZX2XeewfAvIRv2ktX7tbOVzJs+DkTRgsoOAmkID0fkHqW5K2Nh16R
-	3yVI4DaaU4+NRUYMr8JNAWTJZ62Te1up+/Zr85PCT3otdgBRhtVWt0e8/gGCxq1EJ7O/kYSPKJV
-	2LMjGIehAQIr1J0szve1FAxNwDA7jLNjhF3wEGUJMHVhRNaClA9+3vGx3NNo0QHCX129Qb7KUAR
-	vOL7M7s5h0ACG1J2nUic+3JHiG/oCYN9hemZFxum9y5e0XBbUqlx2fpunDpTrC4pF1yGYxdxAkN
-	CxGcgts/zhL8LXOYgDGSVcys0NqcYstMMYcDyEVNdWShQ6XAuZRpjnwCDgaBDRjS2Ki0J+vxP2H
-	+zgHxdpOce5eJowsF8UDwXs3yCnTeicz9kLcf6ShLZf4uBQszUXK1NV5ortZaqIO/9o2OSgjVYE
-	oL/nCH0PvfscGvxLiS3qpPTntZxIxlW/BU+KQHOlACR8wVJ7457ydPFZ8DP3Yf7o7un8CqWAgkK
-	s9w1eBzDsby7kZbAx2AoLaS3aQ==
-X-Received: by 2002:a05:620a:90c3:10b0:930:f271:6784 with SMTP id af79cd13be357-934967c7019mr176220285a.38.1785497602356;
-        Fri, 31 Jul 2026 04:33:22 -0700 (PDT)
+        bh=JPOMLrotMJeo3L318RlZLmZ1U2ym0INUqvAmizM9iqg=;
+        b=MYqMKzwBikFkWbWlhOz4IzI+IomHSjcF9zDOs06rhhfEB7hcSZu7TCPX45nAqoCjAX
+         dMt49wLR/bEniJ5MA3XvOAgg+apQcci/Q5n02SZ74tJSitCpeYeMlss7nAS6rmqp4yiF
+         5O/Dao8IGDZ0YleOY3nBDHASkO6WFIMVlllBRNq0N+OJCfzkHhFsqr+1537rRYHeuhCK
+         ESImWGE+D3fRGtSB8RV480+KO78mjQd5l8ZjEKrJEQHom1SqlGyvCVTZczYfoYHk1KMN
+         pAs6ne9WHScGiZI4WbtLEN0jK5/HfaViMEqRAH0devP54qypWGr9QDwowyFiOMmhPEfN
+         N6cw==
+X-Gm-Message-State: AOJu0YzEI+Hj2gTh6YorimmkvJ+g7aWqfftyeP3b0jPMsE96FqU86VNr
+	qB3aJIqwJpghQyyoqx2hD6TgE749DLJkdrdFEoYH1P6hkrMMk1N9ILNShnW5UaWhTy4uCSaRbK5
+	Ycwkw
+X-Gm-Gg: AR+sD10Ugw/cty2OyOWPZrQFJDBC89+Ls0hDcvcY3zLTBZLUUK3j4uAFDxavSjAI4zG
+	ZcSzvE80Js7EBqaPHPuCrUud4r97GB2SmG3GTcA2dnPnnFW7jjBFT9wNgdFJsv2xWKrOy/vJZn4
+	uiMlbgx7+hiGq/uZAJ9XlELeuoaaQfBl89sipItNwqUTzZKcpBTyQmwIG3Cb3yTXXNs9d6jXxte
+	vnZfChPe9D3nRvhxy5sAAcmjS7kkugAygsZQw7Vz82bKTewfOg24vJ0Nl9WZ13aKhncUfR+VnqP
+	sQMut3TCYHeEzT1kdLIW0T6RMqz93kPVMevKzriWKzu8waCOKpgwoaFvpHS+CYkue6xtYF5Rm0M
+	G+f6CtHnSzYx3uu1L7apZ2DHhRpGM7PW8rJu9d3mzl5lduhIIy4857+nyYJsOJFyH/Hivrv2au+
+	3xc5Y18lo8SELLgf9hrWCOslc/PK0+Gg6LEzWjmmRxIT4FlsqQPM/EfeDGOSZM9SHUZpmCkkNy3
+	AQcwNPAEiB9mR5U6d3/wc8zcCMe4u1YyB8NfRyGKxB3wvD7TCd+etREwPg5SNQIxGOFsDOQV9cW
+	8pinlU5UqfKMhyoUA6r6v1+I/A==
+X-Received: by 2002:a05:620a:c4a:b0:92e:5444:9274 with SMTP id af79cd13be357-93496833eddmr205794985a.30.1785497611261;
+        Fri, 31 Jul 2026 04:33:31 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-9349c1c1d0esm35560585a.33.2026.07.31.04.33.21
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-9349c1c1d0esm35560585a.33.2026.07.31.04.33.30
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Jul 2026 04:33:22 -0700 (PDT)
+        Fri, 31 Jul 2026 04:33:31 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][scarthgap/rust][PATCH 06/35] cargo-c: Move recipe out of rust directory
-Date: Fri, 31 Jul 2026 07:32:36 -0400
-Message-ID: <51e098a4d1e2cc3d0755729fbaad6341ff314802.1785496469.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][scarthgap/rust][PATCH 18/35] librsvg: remove obsolete .la deletion
+Date: Fri, 31 Jul 2026 07:32:48 -0400
+Message-ID: <f51397584cf7ff6be559f4012ab4d451212b86e7.1785496469.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <cover.1785496469.git.scott.murray@konsulko.com>
 References: <cover.1785496469.git.scott.murray@konsulko.com>
@@ -66,43 +66,39 @@ Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 31 Jul 2026 11:33:24 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4582
+ <yocto-patches@lists.yoctoproject.org>; Fri, 31 Jul 2026 11:33:34 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4594
 
-From: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
+From: Ross Burton <ross.burton@arm.com>
 
-cargo-c is an external Cargo extension used to build Rust libraries
-with a C-compatible ABI and generate C headers and pkg-config files.
-Since it is not part of the standard Rust toolchain, move it from the
-rust directory to cargo-c under recipes-devtools for better organization
-and maintainability.
+librsvg is built with Meson now, so there's no need to delete .a or .la
+files that don't exist.
 
-Signed-off-by: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
+Signed-off-by: Ross Burton <ross.burton@arm.com>
 Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(adapted from oe-core commit a91d977917fba29f0c994d896dfec898e1b46d77)
+(adapted from oe-core commit 25b1f198ea69c7f1c08cd0638f322edf4121c199)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- recipes-devtools/{rust => cargo-c}/cargo-c-crates.inc             | 0
- .../0001-parking-lot-Use-libc-SYS_futex_time64-on-riscv32.patch   | 0
- .../{rust => cargo-c}/cargo-c_0.10.20+cargo-0.94.0.bb             | 0
- 3 files changed, 0 insertions(+), 0 deletions(-)
- rename recipes-devtools/{rust => cargo-c}/cargo-c-crates.inc (100%)
- rename recipes-devtools/{rust => cargo-c}/cargo-c/0001-parking-lot-Use-libc-SYS_futex_time64-on-riscv32.patch (100%)
- rename recipes-devtools/{rust => cargo-c}/cargo-c_0.10.20+cargo-0.94.0.bb (100%)
+ recipes-gnome/librsvg/librsvg_2.61.3.bb | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/recipes-devtools/rust/cargo-c-crates.inc b/recipes-devtools/cargo-c/cargo-c-crates.inc
-similarity index 100%
-rename from recipes-devtools/rust/cargo-c-crates.inc
-rename to recipes-devtools/cargo-c/cargo-c-crates.inc
-diff --git a/recipes-devtools/rust/cargo-c/0001-parking-lot-Use-libc-SYS_futex_time64-on-riscv32.patch b/recipes-devtools/cargo-c/cargo-c/0001-parking-lot-Use-libc-SYS_futex_time64-on-riscv32.patch
-similarity index 100%
-rename from recipes-devtools/rust/cargo-c/0001-parking-lot-Use-libc-SYS_futex_time64-on-riscv32.patch
-rename to recipes-devtools/cargo-c/cargo-c/0001-parking-lot-Use-libc-SYS_futex_time64-on-riscv32.patch
-diff --git a/recipes-devtools/rust/cargo-c_0.10.20+cargo-0.94.0.bb b/recipes-devtools/cargo-c/cargo-c_0.10.20+cargo-0.94.0.bb
-similarity index 100%
-rename from recipes-devtools/rust/cargo-c_0.10.20+cargo-0.94.0.bb
-rename to recipes-devtools/cargo-c/cargo-c_0.10.20+cargo-0.94.0.bb
+diff --git a/recipes-gnome/librsvg/librsvg_2.61.3.bb b/recipes-gnome/librsvg/librsvg_2.61.3.bb
+index 419d5cc..06f08ba 100644
+--- a/recipes-gnome/librsvg/librsvg_2.61.3.bb
++++ b/recipes-gnome/librsvg/librsvg_2.61.3.bb
+@@ -68,11 +68,6 @@ PACKAGECONFIG[gdkpixbuf] = "-Dpixbuf-loader=enabled,-Dpixbuf-loader=disabled,gdk
+ PACKAGECONFIG[vala] = "-Dvala=enabled,-Dvala=disabled"
+ PACKAGECONFIG[apitest] = "-Dtests=true,-Dtests=false"
+ 
+-do_install:append() {
+-	# Loadable modules don't need .a or .la on Linux
+-	rm -f ${D}${libdir}/gdk-pixbuf-2.0/*/loaders/*.a ${D}${libdir}/gdk-pixbuf-2.0/*/loaders/*.la
+-}
+-
+ do_compile_ptest_cargo:prepend() {
+     # The packageconfig is for meson, but the rust tests are compiled directly with cargo,
+     # so these arguments don't apply. Note that this is Python, the intendation is intentional.
 -- 
 2.55.0
 
