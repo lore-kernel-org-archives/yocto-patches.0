@@ -2,62 +2,62 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C75EC5516F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 669F2C55172
 	for <webhook@archiver.kernel.org>; Fri, 31 Jul 2026 11:33:34 +0000 (UTC)
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.4471.1785497611040007552
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.4585.1785497605793549823
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 31 Jul 2026 04:33:31 -0700
+ Fri, 31 Jul 2026 04:33:25 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=DwopjdwD;
- spf=pass (domain: konsulko.com, ip: 209.85.222.170, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-92e6c4a867cso59405085a.0
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 31 Jul 2026 04:33:30 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=TGPSak7G;
+ spf=pass (domain: konsulko.com, ip: 209.85.222.180, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-930f72317a6so45079385a.3
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 31 Jul 2026 04:33:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1785497610; x=1786102410; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1785497605; x=1786102405; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=5oD1XMAE1IXlNFCMMjiHolnCMh335NR6Uz/eXYbKhzY=;
-        b=DwopjdwDxazf5Cl+DTDq+mPVNg8Y2kTyALIlaoT/uR6UY6uMRaA6z018UgmbjndWT6
-         iYZ8XXK53lX4cGLqgkLkcDEF4JfdQXkAc01AD8Qf1YweJI6yY6LH3dFN9p2Y3Tyw41bN
-         A/7WQgVJukcUNpBNwE8xNnZGLHhL43eEKZMtA=
+        bh=AUVjCmS+DBBN8+Nngrh0sfAdaM1N6isNf4X6nZ5j/Ss=;
+        b=TGPSak7G/hagDzKgpsjWcTD+RuchITrzQONLbW8PdI0Qf0c8hHbN+K9M+khkWeFicW
+         nVuQzIF33ydkxEym/UtEKe/PUSYmPp6CwVAefbDv0VuB64cQTx1LZE/mLMr3ubNxHDfR
+         V3WEOHtnfi/BvrtkNs0CS3rK4/TZHeWqVLmpw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785497610; x=1786102410;
+        d=1e100.net; s=20251104; t=1785497605; x=1786102405;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to:content-type;
-        bh=5oD1XMAE1IXlNFCMMjiHolnCMh335NR6Uz/eXYbKhzY=;
-        b=qYK+fygfT3HHTi6w3bjqu835PAYECKBBJb4VbHHTfUi1Lx/601p1x/VKXbrMcw3PF5
-         bsB3g75cZy11FzLTApvjVc3nW0yiylRr3dpnqFMXWkFtB2EiuuCQG7c9WkNIvcumA82f
-         3w22NeTZuYyRLuXibYYCAQaSctXdlybQ2Jc6pkXGXMAwn9YuIcghT1FnE8qyCCVXP1Eg
-         Er//n28mNzJersBApReLocJRNiqm/fdIYBQbe78vK8iyE5+O9b3bQFFULWR5UAN1HD/P
-         9XQjaoUkVhQASQ8URZFH6VchNvA6+qdhDs6icJaK5BSPSV14Knc/1L8WFW02wrR6HQ1W
-         8VWg==
-X-Gm-Message-State: AOJu0Yz08MpZeRrNcqP3W2AgFlNXu7AwQLBwPBo7BkflHFRiUJwh54U9
-	OwD9LY+qkXis6AlSVcClj81m65DhRPhgAT6+FbD444kl0yLLqsPx2vo/Pksm2L//I+a0JW7fgmO
-	NJSph
-X-Gm-Gg: AR+sD12mCye6eko5LUW6OLx2+IX7f9cGwXnYos1G7O+Hr7Bbe23KkPgw9EM7Vo5NQ2E
-	PyJn9+MmYwm84fnbUfBxIPqnMvyVYnNqsDrURQRnDK0KfSDBr2Ukry3uUv6jf0xWl6wHglwapmp
-	2I9jwnYcsTJ0S6RgvWXUPYkjnKoydQ/pUT4lLZMKAK6VeDBm7LuF87DZhniL5dHgfmLpfXNrZkP
-	jLaKDrYMCS8vD6g1EqZcr3lBSL6mwap+XRXWRDLrHUSMbJUTQnWHJX6qR1fmuwCpsZH1KBtoQXt
-	WfGX25PFJuspffgs6DihWUJ33OLmU5xQOh4hN3HG/7yeiE+kZLiZmCtkKDduPI7lyYc0W+Vo865
-	jF0j/uxnT44tGYMeqFPgLCyGk72BIMYpSOuX8ZWgldAbtuYIVuVtF4PiltuCCAwb1/Ez3PR2LuG
-	OtZaEgBqFi+Cs0/t+JcRaaJPuPDyH7+UCLICxtOtKOlZcd3JCDCrBdtvj9kb5P4nEXZsdSE2juP
-	gT8I36Sju1JV057aOJBMDm0wIiPW6hOTo3UKeXjQOGFO+tf0k0/08dhr4qv1c8NDE/1Af49vHqU
-	93UsROzZL0BHc0j8nEsgRxJoxyGJbWU8e3b5
-X-Received: by 2002:a05:620a:2406:10b0:92e:76a1:96d3 with SMTP id af79cd13be357-934965cfcdcmr163259285a.34.1785497609735;
-        Fri, 31 Jul 2026 04:33:29 -0700 (PDT)
+        bh=AUVjCmS+DBBN8+Nngrh0sfAdaM1N6isNf4X6nZ5j/Ss=;
+        b=aidPae24xqhP6Blhe1qnxwfGwmyaSQFc0NwpLg8umzVrtco7KEqr/t3ddCO1gCYXPA
+         Zodtg5egJbUfVXWp7Y4Ya/0+aV91Bx82F5nbm43D963lrOUBIYYVJJlu/JXfLheoxce3
+         73LEELp4pTCgGbTCyE0QuKQxppQeIZ4XaEYTHLDOUkX42B0B4lVfCVD7Jr8mTTlL3BW5
+         29ZHAlBVvsrBGzJsLuw+3PWL+vUX8ed66/fZZD5EoByqw1vqCCuh47XRC8SXnwl11Dth
+         6Qi9TcPzt+Cpt8jw9iyUqYXL4xFcc4TkVHQkm0pArOMBo1fix1ZH3KWn6mzJ1IsteU75
+         ssZQ==
+X-Gm-Message-State: AOJu0YwTQ5jhlahg0WAIWxQ0NM1ZgAQr0IV9N2ksidj97dGfXvNILtD3
+	1fwgNvBJTp8EKI7RK5o5rkPxXFPz8XB2P+LHjWlw17Jed0jHJDTg+0C3vKnjoxCInZDo5i7OXnA
+	hpJ2N
+X-Gm-Gg: AR+sD12GWF55+MAucbamaI6YV5cTDZlu2gC6fIwPJ3EuPy3g89ATr1xEfAAl57QXRFv
+	BEJ7UzWfx7M3YXw2GiQpASHgAZG0Ordjvo1IKayMuDY+qfIqS3rIkFkwTR2m7ffW0BnwaXyY+pi
+	v2662hbyif0Qvvc8r5y4OORjUTiPrwlTHtwPBSxx5Z+uNaz1M+JNjnU7u3RR6+8vdWIEUdZB6Ks
+	YdL200jtz6wYEMbTsOfSkCcqvBHPxGxsmxw4Kt9RLPJ4wGT+UNHISr1s68/phV972EmmjN5cvnH
+	jH1CZ50FJbDv9WgkN1X5yGvAVpyu3RD/9LBX3gxEUclLmH2Pij+7+AntiFoVzO0Mth3xwV3BHqg
+	npw9qOneyryv/dFnj3xPLpzm2UlBfGhIR6QZDmuTY4FeS2lEufGnV5xRoflvBpDZE0GoKLNPbX7
+	I5QfY5bH5bD10q5qIKl/INl9dLREWe8X/WFpjzQtYzdC9xYnxjqtZcmLPbS5Rq12twqtUFBkBC8
+	FsBhBFyTDoJWf3vcyf8WMe3M5AX7M6ay9UJm9b7JWMAEAPuSXV6YDdGTzMA+tmrSGOvdADfG/ns
+	c1TicbnFL+eumk4iiOlYDgmLpQ==
+X-Received: by 2002:a05:620a:4867:b0:915:6a2b:6265 with SMTP id af79cd13be357-9349b8830d8mr107889485a.44.1785497604494;
+        Fri, 31 Jul 2026 04:33:24 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-9349c1c1d0esm35560585a.33.2026.07.31.04.33.29
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-9349c1c1d0esm35560585a.33.2026.07.31.04.33.23
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Jul 2026 04:33:29 -0700 (PDT)
+        Fri, 31 Jul 2026 04:33:24 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][scarthgap/rust][PATCH 16/35] cargo: set CVE_PRODUCT
-Date: Fri, 31 Jul 2026 07:32:46 -0400
-Message-ID: <8f0c82ab82b38bb500170943e01a5ec309f76657.1785496469.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][scarthgap/rust][PATCH 09/35] rust: install Rust library sources for 'make rustavailable' support
+Date: Fri, 31 Jul 2026 07:32:39 -0400
+Message-ID: <e9c304a5f6dfca0cd9c96b49de278497c5c12355.1785496469.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <cover.1785496469.git.scott.murray@konsulko.com>
 References: <cover.1785496469.git.scott.murray@konsulko.com>
@@ -67,34 +67,84 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Fri, 31 Jul 2026 11:33:34 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4592
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4585
 
-From: Peter Marko <peter.marko@siemens.com>
+From: Harish Sadineni <Harish.Sadineni@windriver.com>
 
-This removes mediawiki:cargo CVEs from CVE metrics.
-* CVE-2026-39837, CVE-2026-39839, CVE-2026-39840, CVE-2026-39841
+The `make rustavailable` process (1) expects the Rust standard library source files (e.g., `lib.rs`)
+to be present in the `library/` directory under `rustlib/src/rust/`.
 
-Signed-off-by: Peter Marko <peter.marko@siemens.com>
+This patch ensures the required sources are available by:
+- Installing the `library/` directory (of size ~50MB) into `${D}${libdir}/rustlib/src/rust` for
+  making them available during `make rustavailable` for native, target & sdk.
+- packaging `${libdir}/rustlib/src/rust` sepearately with `${PN}-src-lib`.
+
+1) See the kernel tree for Documentation/rust/quick-start.rst in the section: Requirements: Building
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/rust/quick-start.rst#n145
+
+Signed-off-by: Harish Sadineni <Harish.Sadineni@windriver.com>
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(adapted from oe-core commit a5cb71e7df95925a5c342c341e699e244b1b84f6)
+(adapted from oe-core commit 2912ca3b341a5c5f6a658cde332ccd87368bd39d)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- recipes-devtools/rust/cargo_1.94.1.bb | 2 ++
- 1 file changed, 2 insertions(+)
+ recipes-devtools/rust/rust_1.94.0.bb | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
-diff --git a/recipes-devtools/rust/cargo_1.94.1.bb b/recipes-devtools/rust/cargo_1.94.1.bb
-index 1c60700..64944ff 100644
---- a/recipes-devtools/rust/cargo_1.94.1.bb
-+++ b/recipes-devtools/rust/cargo_1.94.1.bb
-@@ -17,6 +17,8 @@ require rust-snapshot.inc
- S = "${RUSTSRC}/src/tools/cargo"
- CARGO_VENDORING_DIRECTORY = "${RUSTSRC}/vendor"
+diff --git a/recipes-devtools/rust/rust_1.94.0.bb b/recipes-devtools/rust/rust_1.94.0.bb
+index 8cfc2bd..2b907c7 100644
+--- a/recipes-devtools/rust/rust_1.94.0.bb
++++ b/recipes-devtools/rust/rust_1.94.0.bb
+@@ -237,10 +237,11 @@ do_test_compile () {
  
-+CVE_PRODUCT = "rust-lang:cargo"
+ ALLOW_EMPTY:${PN} = "1"
+ 
+-PACKAGES =+ "${PN}-rustdoc ${PN}-tools-clippy ${PN}-tools-rustfmt"
++PACKAGES =+ "${PN}-rustdoc ${PN}-tools-clippy ${PN}-tools-rustfmt ${PN}-src-lib"
+ FILES:${PN}-rustdoc = "${bindir}/rustdoc"
+ FILES:${PN}-tools-clippy = "${bindir}/cargo-clippy ${bindir}/clippy-driver"
+ FILES:${PN}-tools-rustfmt = "${bindir}/rustfmt"
++FILES:${PN}-src-lib = "${libdir}/rustlib/src/rust"
+ 
+ RDEPENDS:${PN}-rustdoc = "${PN}"
+ RDEPENDS:${PN}-tools-clippy = "${PN}"
+@@ -257,6 +258,12 @@ rust_do_install() {
+     rust_runx install
+ }
+ 
++rust_do_install:append:class-native() {
++    install -d ${D}${libdir}/rustlib/src/rust
++    cp -r ${S}/library ${D}${libdir}/rustlib/src/rust
++    find ${D}${libdir}/rustlib/src/rust/ -name "*.sh" -type f -delete
++}
 +
- inherit cargo pkgconfig
+ rust_do_install:class-nativesdk() {
+     export PSEUDO_UNLOAD=1
+     rust_runx install
+@@ -287,6 +294,11 @@ rust_do_install:class-nativesdk() {
+ 	export CARGO_TARGET_${RUST_HOST_TRIPLE}_RUNNER="\$OECORE_NATIVE_SYSROOT/lib/${SDKLOADER}"
+ 	export CC_$RUST_HOST_CC="${CCACHE}${HOST_PREFIX}gcc"
+ 	EOF
++
++    install -d ${D}${libdir}/rustlib/src/rust
++    cp -r ${S}/library ${D}${libdir}/rustlib/src/rust
++    find ${D}${libdir}/rustlib/src/rust/ -name "*.sh" -type f -delete
++
+ }
  
- DEBUG_PREFIX_MAP += "-fdebug-prefix-map=${RUSTSRC}/vendor=${TARGET_DBGSRC_DIR}"
+ FILES:${PN} += "${base_prefix}/environment-setup.d"
+@@ -307,6 +319,11 @@ rust_do_install:class-target() {
+ 
+     install -d ${D}${libdir}/rustlib/${RUST_HOST_SYS}
+     install -m 0644 ${WORKDIR}/rust-targets/${RUST_HOST_SYS}.json ${D}${libdir}/rustlib/${RUST_HOST_SYS}/target.json
++    install -d ${D}${libdir}/rustlib/src/rust
++    cp -r ${S}/library ${D}${libdir}/rustlib/src/rust
++    find ${D}${libdir}/rustlib/src/rust -name "*.sh" -type f -delete
++    install -m 0644 ${WORKDIR}/rust-targets/${RUST_HOST_SYS}.json ${D}${libdir}/rustlib/${RUST_HOST_SYS}/${RUST_HOST_SYS}.json
++
+ 
+     chown root:root ${D}/ -R
+     rm ${D}${libdir}/rustlib/uninstall.sh
 -- 
 2.55.0
 
