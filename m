@@ -2,62 +2,62 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E20D7C55183
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4427C55180
 	for <webhook@archiver.kernel.org>; Fri, 31 Jul 2026 11:33:34 +0000 (UTC)
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.4470.1785497607334328940
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.4594.1785497611851346326
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 31 Jul 2026 04:33:27 -0700
+ Fri, 31 Jul 2026 04:33:32 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=JVl+CQY7;
- spf=pass (domain: konsulko.com, ip: 209.85.222.169, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-92e50a650a0so43700885a.1
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 31 Jul 2026 04:33:27 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=WxUhvE6z;
+ spf=pass (domain: konsulko.com, ip: 209.85.222.179, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-934944f2d22so32000285a.0
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 31 Jul 2026 04:33:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1785497606; x=1786102406; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1785497611; x=1786102411; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=wXH7sUaES3niRQjhgq3DR33OsZ9DkvW5nDf0aSghi08=;
-        b=JVl+CQY7AMgL6ikXHE39vR/4BYtdIt93KlE8yRWz++hcHxT43LPyKZA0O9Gfuv5I97
-         JZCUyII07zZyoOqVmahijDsJkM7EGs/6lkumhq1X9VXmhES9uP+0iMOsXf+lpCkKqvTb
-         43Qc2RucRFtaumWGBYDPDFRkb3wCE4JhllTYA=
+        bh=SXA2eFDtjlOj1e/qmi78bnnlF8+akuQFB4fiJqSYlxE=;
+        b=WxUhvE6zZ+tUnbccgn8N66ziz+eCcYHuQwHJfr7GHDa7WX7ZuW4+LufpVm6USK27S2
+         hXnXx6pTSpgsO/Xc407JGrE8QtLBnfN+OpuXQSRGwTr0d2rx/24NaJA4bFSu8fqOInNR
+         LPbM3pBITtWgjhXYPWVkrNhgCXEYBqTjGPwD4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785497606; x=1786102406;
+        d=1e100.net; s=20251104; t=1785497611; x=1786102411;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to:content-type;
-        bh=wXH7sUaES3niRQjhgq3DR33OsZ9DkvW5nDf0aSghi08=;
-        b=Tyo/5iTZc6z/7t3Yw41+WSQG73ebUCl00UMsHrrD8T+zx8oqZMw8PQaA07cId/f2xM
-         PoBRS77PwEWe97jPRGPmrSANLlHPfC8z12vLG1ue2g0mxNIyq/TZaPXwlnDN1iEGrQsc
-         Tkyg5ON9XDP1zSkU+L99akdM+93/Bb3Ic2tRf0DDQEcs+1CB7r0V+VYSUN0PA+pV/5eC
-         bFpkNoSxo0uehJ0B2mhMsYsqoPmk4P4UiKAE2qk2iRk4Gw0oJBSYUCQtUPdox7ZLPVS5
-         wK6wnOwB7Jrez0CEJ+8KxstUd99XT+RQHcql6IY6a1cxD7GpzsTDavuZeKoobgy3iyfZ
-         tSPA==
-X-Gm-Message-State: AOJu0YyHR0rFYEzvZ6TwGbGj7jsEji2rCvukLL8/YcFilJfxzJWhMtRA
-	WGhSDc2k9wSBzBfngaOR+edIgTjbbnDf614JXazKjxess9XPbPLIz9PdvewWZAnKgzLcceV7wYJ
-	QoHOT
-X-Gm-Gg: AR+sD126Z0nMsICazihYaU0w/Ri1mE2y5Nj2CPIc0xca48ZjwdCJZmtO++hlDK9qWeR
-	hNRk0WHiqbvejaFaOUq22+R9zDKtTP6NqPbHKYkRZVif7RVBJ4OupyAa6/qvRa4rYsISr0tQvir
-	O9cOvnP1BX+aa3izB3DxgjNE1q50lPZDJJ0iH2XCbYstIv5F2Ugflrjfs7RhYdqQS9AI6ZJLsLB
-	XB2SUDg66jHUFyQbOqDfxYf3/HiS5/Xeo04DQXzazRm9Tk6Y3B/TXzZ8EdZAYZIOspVnzRYxopx
-	0DPbwuKeeLWHDkyJKPCTyKcGvc28oGBFvx6yKjvPotRAmh9jacHEP/Q+/3bc5Fa7UNPWCIMA6Lc
-	ahv1z70OemjzDv3lOWHvZbaZymSR6NqSFEWBoartTowAIhcEthj6MVKct827wex+JdL75wBkT38
-	6dSoUukKFPuZ/rduv+RTLGyo7C0ucd4xOkruYUGKYFlFqDfHB0pEQFN7LqMuHyxo8q52iYRi1ZW
-	skDrYFP6wwCZC3lXXcwCTH3/xl00vnB25b4d7a6VJB8qGa84+x+GZdqP9STHVK4g29taR1lyzmI
-	6Nk6j2VM5zm9TWZJxN0MmMD3nQ==
-X-Received: by 2002:a05:620a:a1c8:b0:915:e670:4021 with SMTP id af79cd13be357-93497c4f067mr153670685a.45.1785497606099;
-        Fri, 31 Jul 2026 04:33:26 -0700 (PDT)
+        bh=SXA2eFDtjlOj1e/qmi78bnnlF8+akuQFB4fiJqSYlxE=;
+        b=XKINO6NHQDlkJduP8EipZ7H0O4PjjUc3T39qYKlPM9wa8rgUBt9igeSQUK8EnVoEkx
+         V9mZEFZDBSXBWz1GJ1u4qOyGHBSeMoeLm86NVCTnOSdWsHftrEZ/Rrj0vGpWWKIhrfJ7
+         zn4dFp6SGM4QDN1ZuQ6NYwWC4RbsQrD3nnIjJCiR3VGnEdI3UZ5uv/jh3ujwlNOIUc3n
+         HNKnesrZmvv8Vs1Xr2wrijsBlLhI1TwPW9IaoZDhKJoEvcLQhXLOcvRZlFADQkSuRF87
+         bGNAcxNIg7Mw/lLJlCPkZt4JXpaQHI8WyIRIC663sKnOWB8FHEV2qabq42pxfhZ7oq7a
+         EpeQ==
+X-Gm-Message-State: AOJu0YzXIaXBWtS4K165K2nLEI75AaJz5syyjMINtCayVypTxXMRcpRs
+	yt5l5CHiZYUAMuyHYxI00suk+7Ob2pbRyp77ZmjZ/SGmNhDApO6GU0W/ImJIpMXd1febjtBFLF9
+	AKV0Q
+X-Gm-Gg: AR+sD124LI6kOHDamoBEPdQ9MHdIM4wtGmlGNxyfG706lUKRpoJW155CgIfW4yWHOTL
+	kjIH10NJNsYFV3wiR1LXWd1JZM9u21QcZPjaH73a953OdDY56nN4ZsN7ZlNpPTjIEhV08viUjSK
+	le0957tJTBW4UVco0BX+2ukum0oDyVNTQVyOwumDJrSR0ATI4X97kzbSGhcZhIwntx9qwSsnRu+
+	VQ/cbB+c81uveTMez0VTt/A03NjvQcizqy9cNjFC3ewpkT8Z70duWrnnQzXJdujCmAJ1XCtw7Yj
+	vCaxxkCUG3Kfk+tWNeuHHS4wb+BB/fFV7Uo/ha5W0LnvaS9UGeVLqXkZVTN013rYaZli6B5sgLx
+	zRi8oxi+aWO8GStv1NehVe0f3MSkDVsIh4uk3HM6r73ihBZLyfqIcND2FVs0pjMovBdp2SltzJ1
+	zRLNf51nTraz9NgJliTgptN7Ktc+XWES5gWqBj5BMvnIGKCvtIWTBTipI+/ZwhZwI2ay5zypbQm
+	4vIi9EApBYzIfhhAvfQ68ora4i+aMd1ffTZC9RQygIjmNvsfN26Ot0ahhglKHw55LwiCtdSJVkX
+	UyAtsb69y4B//KRizGzrSQ8qVA==
+X-Received: by 2002:a05:620a:245:b0:92e:59b0:df08 with SMTP id af79cd13be357-9349ba7297cmr95343185a.3.1785497610537;
+        Fri, 31 Jul 2026 04:33:30 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-9349c1c1d0esm35560585a.33.2026.07.31.04.33.25
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-9349c1c1d0esm35560585a.33.2026.07.31.04.33.30
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Jul 2026 04:33:25 -0700 (PDT)
+        Fri, 31 Jul 2026 04:33:30 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][scarthgap/rust][PATCH 11/35] rust: Fix flaky assertions in oneshot tests
-Date: Fri, 31 Jul 2026 07:32:41 -0400
-Message-ID: <64b972909b93bcee722046d1f8d4ba1e3398d116.1785496469.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][scarthgap/rust][PATCH 17/35] rust: fix codegen test failure on big-endian targets
+Date: Fri, 31 Jul 2026 07:32:47 -0400
+Message-ID: <4722ce0cc00f65fb0d0b510269b39242c194b479.1785496469.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <cover.1785496469.git.scott.murray@konsulko.com>
 References: <cover.1785496469.git.scott.murray@konsulko.com>
@@ -67,117 +67,177 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Fri, 31 Jul 2026 11:33:34 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4587
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4593
 
-From: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
+From: Peter Tatrai <peter.tatrai.ext@siemens.com>
 
-Fixes [YOCTO #16199]
+The test tests/codegen-llvm/issues/multiple-option-or-permutations.rs
+uses FileCheck to verify LLVM IR for Option::or operations on slices.
+The CHECK-NEXT directives assumed a little-endian memory layout where
+the Option discriminant is the low byte, emitting a simple:
 
-Backport three commits from upstream to fix flaky assertions in oneshot tests
+  trunc i16 %0 to i1
 
-https://github.com/rust-lang/rust/commit/6970849fee93900b6eb28a64cf957157a9fb51b3
-https://github.com/rust-lang/rust/commit/dab350a3ed7691201f6752c4375e8e6ab40b58b9
-https://github.com/rust-lang/rust/commit/d02743e2fd7433ba2320fc85421a8a5927235b65
+On big-endian targets (e.g. powerpc), the discriminant resides in the
+high byte, so LLVM first emits an lshr before the trunc, causing the
+test to fail.
 
-Signed-off-by: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(adapted from oe-core commit 636ea9269c1d7ebabefb3bed01fd30583758cc8c)
+Backport upstream fix from rust-lang/rust#151780 which introduces
+BIG/LITTLE revisions with the only-endian-big / ignore-endian-big
+directives (also backported via directive_names.rs change) to handle
+both layouts correctly.
+
+Fixes: rust-lang/rust#151718
+Upstream-Status: Backport [https://github.com/rust-lang/rust/pull/151780]
+
+Signed-off-by: Peter Tatrai <peter.tatrai.ext@siemens.com>
+Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+(adapted from oe-core commit 1efb76b9698d025e9d8b3de2039e6a422b5f4bee)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- ...ix-flaky-assertions-in-oneshot-tests.patch | 72 +++++++++++++++++++
- recipes-devtools/rust/rust-source.inc         |  1 +
- 2 files changed, 73 insertions(+)
- create mode 100644 recipes-devtools/rust/files/0001-Fix-flaky-assertions-in-oneshot-tests.patch
+ ...ion-or-permutations-test-for-big-end.patch | 121 ++++++++++++++++++
+ recipes-devtools/rust/rust-source.inc         |   1 +
+ 2 files changed, 122 insertions(+)
+ create mode 100644 recipes-devtools/rust/files/0001-Fix-multiple-option-or-permutations-test-for-big-end.patch
 
-diff --git a/recipes-devtools/rust/files/0001-Fix-flaky-assertions-in-oneshot-tests.patch b/recipes-devtools/rust/files/0001-Fix-flaky-assertions-in-oneshot-tests.patch
+diff --git a/recipes-devtools/rust/files/0001-Fix-multiple-option-or-permutations-test-for-big-end.patch b/recipes-devtools/rust/files/0001-Fix-multiple-option-or-permutations-test-for-big-end.patch
 new file mode 100644
-index 0000000..be0e85d
+index 0000000..a36089c
 --- /dev/null
-+++ b/recipes-devtools/rust/files/0001-Fix-flaky-assertions-in-oneshot-tests.patch
-@@ -0,0 +1,72 @@
-+Backport three commits from upstream to fix flaky assertions in oneshot tests
++++ b/recipes-devtools/rust/files/0001-Fix-multiple-option-or-permutations-test-for-big-end.patch
+@@ -0,0 +1,121 @@
++From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
++From: Ryan Ward <rwardd@users.noreply.github.com>
++Date: Tue, 28 Jan 2026 12:21:35 +0000
++Subject: [PATCH] Fix multiple-option-or-permutations test for big-endian
++ targets
 +
-+Upstream-Status: Backport [https://github.com/rust-lang/rust/commit/6970849fee93900b6eb28a64cf957157a9fb51b3]
-+Upstream-Status: Backport [https://github.com/rust-lang/rust/commit/dab350a3ed7691201f6752c4375e8e6ab40b58b9]
-+Upstream-Status: Backport [https://github.com/rust-lang/rust/commit/d02743e2fd7433ba2320fc85421a8a5927235b65]
++The FileCheck tests for Option::or on slices assumed little-endian
++layout. On big-endian targets (e.g. powerpc), the Option discriminant
++resides in the high byte, so LLVM emits an lshr before the trunc.
 +
-+Signed-off-by: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
++Add only-endian-big directive support and use BIG/LITTLE revisions to
++cover both cases.
 +
-+diff --git a/library/std/tests/sync/oneshot.rs b/library/std/tests/sync/oneshot.rs
-+index 6a87c72..d8f3cd7 100644
-+--- a/library/std/tests/sync/oneshot.rs
-++++ b/library/std/tests/sync/oneshot.rs
-+@@ -89,15 +89,15 @@ fn send_before_recv_timeout() {
++Upstream-Status: Backport [https://github.com/rust-lang/rust/pull/151780]
++Signed-off-by: Ryan Ward <rwardd@users.noreply.github.com>
++Signed-off-by: Peter Tatrai <peter.tatrai.ext@siemens.com>
++---
++ .../compiletest/src/directives/directive_names.rs     |  1 +
++ .../issues/multiple-option-or-permutations.rs         | 47 ++++++++++++++++--
++ 2 files changed, 44 insertions(+), 4 deletions(-)
++
++diff --git a/src/tools/compiletest/src/directives/directive_names.rs b/src/tools/compiletest/src/directives/directive_names.rs
++index 9813ac7ff500d..334b2dda343a5 100644
++--- a/src/tools/compiletest/src/directives/directive_names.rs
+++++ b/src/tools/compiletest/src/directives/directive_names.rs
++@@ -218,6 +218,7 @@ pub(crate) const KNOWN_DIRECTIVE_NAMES: &[&str] = &[
++     "only-eabihf",
++     "only-elf",
++     "only-emscripten",
+++    "only-endian-big",
++     "only-gnu",
++     "only-i686-pc-windows-gnu",
++     "only-i686-pc-windows-msvc",
++diff --git a/tests/codegen-llvm/issues/multiple-option-or-permutations.rs b/tests/codegen-llvm/issues/multiple-option-or-permutations.rs
++index 9ec4ec8eeb159..8756d45eaa03e 100644
++--- a/tests/codegen-llvm/issues/multiple-option-or-permutations.rs
+++++ b/tests/codegen-llvm/issues/multiple-option-or-permutations.rs
++@@ -1,4 +1,7 @@
++ // Tests output of multiple permutations of `Option::or`
+++//@ revisions: LITTLE BIG
+++//@ [BIG] only-endian-big
+++//@ [LITTLE] ignore-endian-big
++ //@ compile-flags: -Copt-level=3 -Zmerge-functions=disabled
 + 
-+     assert!(sender.send(22i128).is_ok());
-+ 
-+-    let start = Instant::now();
-+-
-+     let timeout = Duration::from_secs(1);
-+     match receiver.recv_timeout(timeout) {
-+         Ok(22) => {}
-+         _ => panic!("expected Ok(22)"),
-+     }
-+ 
-+-    assert!(start.elapsed() < timeout);
-++    // FIXME(#152648): There previously was a timing assertion here.
-++    // This was removed, because under load there's no guarantee that the main thread is
-++    // scheduled and run before `timeout` expires
++ #![crate_type = "lib"]
++@@ -70,8 +73,16 @@ pub fn if_some_u8(opta: Option<u8>, optb: Option<u8>) -> Option<u8> {
++ #[no_mangle]
++ pub fn or_match_slice_u8(opta: Option<[u8; 1]>, optb: Option<[u8; 1]>) -> Option<[u8; 1]> {
++     // CHECK: start:
++-    // CHECK-NEXT: [[SOME_A:%.+]] = trunc i16 %0 to i1
++-    // CHECK-NEXT: [[R:%.+]] = select i1 [[SOME_A]], i16 %0, i16 %1
+++    // LITTLE-NEXT: [[SOME_A:%.+]] = trunc i16 %0 to i1
+++    // LITTLE-NEXT: [[R:%.+]] = select i1 [[SOME_A]], i16 %0, i16 %1
+++    // BIG-NEXT: [[OPT_A:%.+]] = lshr i16 %0, 8
+++    // BIG-NEXT: [[SOME_A:%.+]] = trunc i16 [[OPT_A]] to i1
+++    // BIG-NEXT: [[OPT_B:%.+]] = lshr i16 %1, 8
+++    // BIG-NEXT: [[A_OR_B:%.+]] = select i1 [[SOME_A]], i16 [[OPT_A]], i16 [[OPT_B]]
+++    // BIG-NEXT: [[AGGREGATE:%.+]] = select i1 [[SOME_A]], i16 %0, i16 %1
+++    // BIG-NEXT: [[R_LOWER:%.+]] = and i16 [[AGGREGATE]], 255
+++    // BIG-NEXT: [[R_UPPER:%.+]] = shl nuw i16 [[A_OR_B]], 8
+++    // BIG-NEXT: [[R:%.+]] = or disjoint i16 [[R_UPPER]], [[R_LOWER]]
++     // CHECK: ret i16 [[R]]
++     match opta {
++         Some(x) => Some(x),
++@@ -84,8 +95,16 @@ pub fn or_match_slice_u8(opta: Option<[u8; 1]>, optb: Option<[u8; 1]>) -> Option<[u8; 1]> {
++ #[no_mangle]
++ pub fn or_match_slice_alt_u8(opta: Option<[u8; 1]>, optb: Option<[u8; 1]>) -> Option<[u8; 1]> {
++     // CHECK: start:
++-    // CHECK-NEXT: [[SOME_A:%.+]] = trunc i16 %0 to i1
++-    // CHECK-NEXT: [[R:%.+]] = select i1 [[SOME_A]], i16 %0, i16 %1
+++    // LITTLE-NEXT: [[SOME_A:%.+]] = trunc i16 %0 to i1
+++    // LITTLE-NEXT: [[R:%.+]] = select i1 [[SOME_A]], i16 %0, i16 %1
+++    // BIG-NEXT: [[OPT_A:%.+]] = lshr i16 %0, 8
+++    // BIG-NEXT: [[SOME_A:%.+]] = trunc i16 [[OPT_A]] to i1
+++    // BIG-NEXT: [[OPT_B:%.+]] = lshr i16 %1, 8
+++    // BIG-NEXT: [[A_OR_B:%.+]] = select i1 [[SOME_A]], i16 [[OPT_A]], i16 [[OPT_B]]
+++    // BIG-NEXT: [[AGGREGATE:%.+]] = select i1 [[SOME_A]], i16 %0, i16 %1
+++    // BIG-NEXT: [[R_LOWER:%.+]] = and i16 [[AGGREGATE]], 255
+++    // BIG-NEXT: [[R_UPPER:%.+]] = shl nuw i16 [[A_OR_B]], 8
+++    // BIG-NEXT: [[R:%.+]] = or disjoint i16 [[R_UPPER]], [[R_LOWER]]
++     // CHECK: ret i16 [[R]]
++     match opta {
++         Some(_) => opta,
++@@ -98,8 +117,16 @@ pub fn or_match_slice_alt_u8(opta: Option<[u8; 1]>, optb: Option<[u8; 1]>) -> Option<[u8; 1]> {
++ #[no_mangle]
++ pub fn option_or_slice_u8(opta: Option<[u8; 1]>, optb: Option<[u8; 1]>) -> Option<[u8; 1]> {
++     // CHECK: start:
++-    // CHECK-NEXT: [[SOME_A:%.+]] = trunc i16 %0 to i1
++-    // CHECK-NEXT: [[R:%.+]] = select i1 [[SOME_A]], i16 %0, i16 %1
+++    // LITTLE-NEXT: [[SOME_A:%.+]] = trunc i16 %0 to i1
+++    // LITTLE-NEXT: [[R:%.+]] = select i1 [[SOME_A]], i16 %0, i16 %1
+++    // BIG-NEXT: [[OPT_A:%.+]] = lshr i16 %0, 8
+++    // BIG-NEXT: [[SOME_A:%.+]] = trunc i16 [[OPT_A]] to i1
+++    // BIG-NEXT: [[OPT_B:%.+]] = lshr i16 %1, 8
+++    // BIG-NEXT: [[A_OR_B:%.+]] = select i1 [[SOME_A]], i16 [[OPT_A]], i16 [[OPT_B]]
+++    // BIG-NEXT: [[AGGREGATE:%.+]] = select i1 [[SOME_A]], i16 %0, i16 %1
+++    // BIG-NEXT: [[R_LOWER:%.+]] = and i16 [[AGGREGATE]], 255
+++    // BIG-NEXT: [[R_UPPER:%.+]] = shl nuw i16 [[A_OR_B]], 8
+++    // BIG-NEXT: [[R:%.+]] = or disjoint i16 [[R_UPPER]], [[R_LOWER]]
++     // CHECK: ret i16 [[R]]
++     opta.or(optb)
 + }
-+ 
-+ #[test]
-+@@ -127,6 +127,7 @@ fn recv_before_send() {
++@@ -109,8 +136,16 @@ pub fn option_or_slice_u8(opta: Option<[u8; 1]>, optb: Option<[u8; 1]>) -> Option<[u8; 1]> {
++ #[no_mangle]
++ pub fn if_some_slice_u8(opta: Option<[u8; 1]>, optb: Option<[u8; 1]>) -> Option<[u8; 1]> {
++     // CHECK: start:
++-    // CHECK-NEXT: [[SOME_A:%.+]] = trunc i16 %0 to i1
++-    // CHECK-NEXT: [[R:%.+]] = select i1 [[SOME_A]], i16 %0, i16 %1
+++    // LITTLE-NEXT: [[SOME_A:%.+]] = trunc i16 %0 to i1
+++    // LITTLE-NEXT: [[R:%.+]] = select i1 [[SOME_A]], i16 %0, i16 %1
+++    // BIG-NEXT: [[OPT_A:%.+]] = lshr i16 %0, 8
+++    // BIG-NEXT: [[SOME_A:%.+]] = trunc i16 [[OPT_A]] to i1
+++    // BIG-NEXT: [[OPT_B:%.+]] = lshr i16 %1, 8
+++    // BIG-NEXT: [[A_OR_B:%.+]] = select i1 [[SOME_A]], i16 [[OPT_A]], i16 [[OPT_B]]
+++    // BIG-NEXT: [[AGGREGATE:%.+]] = select i1 [[SOME_A]], i16 %0, i16 %1
+++    // BIG-NEXT: [[R_LOWER:%.+]] = and i16 [[AGGREGATE]], 255
+++    // BIG-NEXT: [[R_UPPER:%.+]] = shl nuw i16 [[A_OR_B]], 8
+++    // BIG-NEXT: [[R:%.+]] = or disjoint i16 [[R_UPPER]], [[R_LOWER]]
++     // CHECK: ret i16 [[R]]
++     if opta.is_some() { opta } else { optb }
 + }
-+ 
-+ #[test]
-++#[ignore = "Inherently flaky and has caused several CI failures"]
-+ fn recv_timeout_before_send() {
-+     let (sender, receiver) = oneshot::channel();
-+ 
-+@@ -135,6 +136,8 @@ fn recv_timeout_before_send() {
-+         sender.send(99u128).unwrap();
-+     });
-+ 
-++    // FIXME(#152145): Under load, there's no guarantee that thread `t` has
-++    // ever been scheduled and run before this timeout expires.
-+     match receiver.recv_timeout(Duration::from_secs(1)) {
-+         Ok(99) => {}
-+         _ => panic!("expected Ok(99)"),
-+@@ -240,7 +243,9 @@ fn recv_deadline_passed() {
-+     }
-+ 
-+     assert!(start.elapsed() >= timeout);
-+-    assert!(start.elapsed() < timeout * 3);
-++    // FIXME(#152878): An upper-bound assertion on the elapsed time was removed,
-++    // because CI runners can starve individual threads for a surprisingly long
-++    // time, leading to flaky failures.
-+ }
-+ 
-+ #[test]
-+@@ -253,8 +258,11 @@ fn recv_time_passed() {
-+         Err(RecvTimeoutError::Timeout(_)) => {}
-+         _ => panic!("expected timeout error"),
-+     }
-++
-+     assert!(start.elapsed() >= timeout);
-+-    assert!(start.elapsed() < timeout * 3);
-++    // FIXME(#152878): An upper-bound assertion on the elapsed time was removed,
-++    // because CI runners can starve individual threads for a surprisingly long
-++    // time, leading to flaky failures.
-+ }
-+ 
-+ #[test]
 diff --git a/recipes-devtools/rust/rust-source.inc b/recipes-devtools/rust/rust-source.inc
-index 8887824..b9077c3 100644
+index 19acf5f..49dd20a 100644
 --- a/recipes-devtools/rust/rust-source.inc
 +++ b/recipes-devtools/rust/rust-source.inc
-@@ -7,6 +7,7 @@ SRC_URI += "https://static.rust-lang.org/dist/rustc-${RUST_VERSION}-src.tar.xz;n
-             file://0001-src-core-build_steps-tool.rs-switch-off-lto-for-rust.patch;patchdir=${RUSTSRC} \
-             file://0001-riscv32-Define-plain-syscalls-as-their-time64-varian.patch;patchdir=${RUSTSRC} \
-             file://0001-Update-call-llvm-intrinsics-test.patch;patchdir=${RUSTSRC} \
-+            file://0001-Fix-flaky-assertions-in-oneshot-tests.patch;patchdir=${RUSTSRC} \
+@@ -10,6 +10,7 @@ SRC_URI += "https://static.rust-lang.org/dist/rustc-${RUST_VERSION}-src.tar.xz;n
+             file://0001-Fix-flaky-assertions-in-oneshot-tests.patch;patchdir=${RUSTSRC} \
+             file://0001-Update-amdgpu-data-layout.patch;patchdir=${RUSTSRC} \
+             file://0001-Adjust-loongarch-assembly-test.patch;patchdir=${RUSTSRC} \
++            file://0001-Fix-multiple-option-or-permutations-test-for-big-end.patch;patchdir=${RUSTSRC} \
  "
- SRC_URI[rust.sha256sum] = "0b53ae34f5c0c3612cfe1de139f9167a018cd5737bc2205664fd69ba9b25f600"
+ SRC_URI[rust.sha256sum] = "174fce10ce012317ca995810296d8af199318838180b03d68a853e0f02d4b571"
  
 -- 
 2.55.0
