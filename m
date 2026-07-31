@@ -2,62 +2,62 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1716C55181
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E20D7C55183
 	for <webhook@archiver.kernel.org>; Fri, 31 Jul 2026 11:33:34 +0000 (UTC)
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.4469.1785497604993844526
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.4470.1785497607334328940
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 31 Jul 2026 04:33:25 -0700
+ Fri, 31 Jul 2026 04:33:27 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=puj0c9WP;
- spf=pass (domain: konsulko.com, ip: 209.85.222.179, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-92f0b5ed131so63836885a.3
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 31 Jul 2026 04:33:24 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=JVl+CQY7;
+ spf=pass (domain: konsulko.com, ip: 209.85.222.169, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-92e50a650a0so43700885a.1
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 31 Jul 2026 04:33:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1785497604; x=1786102404; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1785497606; x=1786102406; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=bhcCyVN5h0VEhNff2PJbvwb2BqMsDnHCvIgYbgvGd18=;
-        b=puj0c9WPPUqSyccmiBxlNh5w7Qy99PMNNYojg79sM2JeZs8ykfX3XGtEF3fcW03VEv
-         oY8EIOAAAhqtm+bIwS5of2+JHsZ+Nn5I50uOGY70/oB048oubbBWT3ShLbDK5HUwLB2x
-         EzHeHI1FRoDo8S0wAmWW0WbnsixdXOzJhp8r4=
+        bh=wXH7sUaES3niRQjhgq3DR33OsZ9DkvW5nDf0aSghi08=;
+        b=JVl+CQY7AMgL6ikXHE39vR/4BYtdIt93KlE8yRWz++hcHxT43LPyKZA0O9Gfuv5I97
+         JZCUyII07zZyoOqVmahijDsJkM7EGs/6lkumhq1X9VXmhES9uP+0iMOsXf+lpCkKqvTb
+         43Qc2RucRFtaumWGBYDPDFRkb3wCE4JhllTYA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785497604; x=1786102404;
+        d=1e100.net; s=20251104; t=1785497606; x=1786102406;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to:content-type;
-        bh=bhcCyVN5h0VEhNff2PJbvwb2BqMsDnHCvIgYbgvGd18=;
-        b=fEWnw+70En/jO6r6Ldlbhyjp4A7FlNFZonwsV+dtwaDXyw28po5RfUNW5WgcYivqRW
-         0WT7TgIjEV1qT164eNxYoaP/1huicWjQ5qjhRld2DoqtxeEMC3SwdlDHeOz6UOtaeDkv
-         ahJi4op7mwupEQChW/J+WTl38JrQq8xsLAiapZB0KWu57OFV57hig9+Iox/5ZdlMbihM
-         0tmKaW7ldqwaGTvSL9YTPZImPZbNZorKxxEQN2VdSvG/J2nXkqR23ydL9A2aHcUFuwDQ
-         fbgsAqjJX1plgt4OZYB2TFzkVf874lJV+DRmnWDr9WkrO48C5PZMj58ARDJxGEFT+0iI
-         m7QA==
-X-Gm-Message-State: AOJu0YxmYn/wed7/Zxf4FIPRZRtpeW2NHH6EnvVXH80V6otaZLlDSZC0
-	+xgiFxln/gwhyrUWuDgZlKssUeHxeFV+KAGeh2GmIkZtfMDwkx30B2G5t2bAq6ODM1j4JQxkXH6
-	7K7tr
-X-Gm-Gg: AR+sD110nS8LhZ6sFxT1H9BOamfw2gqDhKb8aqSVWUtfWh1wvOGUgxTfQccgv2R6mz0
-	VrmfGDTXHEDHXL3qtmhobyYKDTcXGpSOCeixG6rv8hk56a/o7N0zOwShZP2oaa5Jhu7OuGIHc/p
-	22fY8XmF0FuDoAB+UD6jg2UmaOPxnkr/RR2bwSmQ7fWf5Sp2wU/I9XfIyDZ22HmpoqSWGH+4Xih
-	s9QcAUBKI6gLc4dUI4O3n/ONbAv22uzDIXuVO8Ur3fuviYjrTZVNpEUdAzI3vyWug+CK5CzLBId
-	pxRzMFqtG1s90TrW3CTB8X5VjmdVo+ZSUnj9gY1+nB4cgonzHTNbUWtPRvFrAZAPRFTilH/9MD1
-	+twGzAGsA/3Xm87AKMH2+dNEB4EHO2kFx+uzfdYBM9WqxZEVIJfW0Xb2PfkN4B4FO9buxpik5oF
-	vOxM5dQyhbTailX7npboSCE7YvkKYv2TRQXpfbu/ixatvzerPxhSSZvH0HL4GpFg/tWLnEWvk17
-	+wRimIRrFrIN4/C8wE5uyQ+trASgWCBea1gmGXH2IRdSWkBuwNGZosXLhvdWC/PQqy8Hi0TyyMA
-	8KLS+4qZrWU3Sehf9WiAjaCpRg==
-X-Received: by 2002:a05:620a:2b8f:b0:930:f9a6:11ae with SMTP id af79cd13be357-934965b4622mr188552385a.17.1785497603748;
-        Fri, 31 Jul 2026 04:33:23 -0700 (PDT)
+        bh=wXH7sUaES3niRQjhgq3DR33OsZ9DkvW5nDf0aSghi08=;
+        b=Tyo/5iTZc6z/7t3Yw41+WSQG73ebUCl00UMsHrrD8T+zx8oqZMw8PQaA07cId/f2xM
+         PoBRS77PwEWe97jPRGPmrSANLlHPfC8z12vLG1ue2g0mxNIyq/TZaPXwlnDN1iEGrQsc
+         Tkyg5ON9XDP1zSkU+L99akdM+93/Bb3Ic2tRf0DDQEcs+1CB7r0V+VYSUN0PA+pV/5eC
+         bFpkNoSxo0uehJ0B2mhMsYsqoPmk4P4UiKAE2qk2iRk4Gw0oJBSYUCQtUPdox7ZLPVS5
+         wK6wnOwB7Jrez0CEJ+8KxstUd99XT+RQHcql6IY6a1cxD7GpzsTDavuZeKoobgy3iyfZ
+         tSPA==
+X-Gm-Message-State: AOJu0YyHR0rFYEzvZ6TwGbGj7jsEji2rCvukLL8/YcFilJfxzJWhMtRA
+	WGhSDc2k9wSBzBfngaOR+edIgTjbbnDf614JXazKjxess9XPbPLIz9PdvewWZAnKgzLcceV7wYJ
+	QoHOT
+X-Gm-Gg: AR+sD126Z0nMsICazihYaU0w/Ri1mE2y5Nj2CPIc0xca48ZjwdCJZmtO++hlDK9qWeR
+	hNRk0WHiqbvejaFaOUq22+R9zDKtTP6NqPbHKYkRZVif7RVBJ4OupyAa6/qvRa4rYsISr0tQvir
+	O9cOvnP1BX+aa3izB3DxgjNE1q50lPZDJJ0iH2XCbYstIv5F2Ugflrjfs7RhYdqQS9AI6ZJLsLB
+	XB2SUDg66jHUFyQbOqDfxYf3/HiS5/Xeo04DQXzazRm9Tk6Y3B/TXzZ8EdZAYZIOspVnzRYxopx
+	0DPbwuKeeLWHDkyJKPCTyKcGvc28oGBFvx6yKjvPotRAmh9jacHEP/Q+/3bc5Fa7UNPWCIMA6Lc
+	ahv1z70OemjzDv3lOWHvZbaZymSR6NqSFEWBoartTowAIhcEthj6MVKct827wex+JdL75wBkT38
+	6dSoUukKFPuZ/rduv+RTLGyo7C0ucd4xOkruYUGKYFlFqDfHB0pEQFN7LqMuHyxo8q52iYRi1ZW
+	skDrYFP6wwCZC3lXXcwCTH3/xl00vnB25b4d7a6VJB8qGa84+x+GZdqP9STHVK4g29taR1lyzmI
+	6Nk6j2VM5zm9TWZJxN0MmMD3nQ==
+X-Received: by 2002:a05:620a:a1c8:b0:915:e670:4021 with SMTP id af79cd13be357-93497c4f067mr153670685a.45.1785497606099;
+        Fri, 31 Jul 2026 04:33:26 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-9349c1c1d0esm35560585a.33.2026.07.31.04.33.23
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-9349c1c1d0esm35560585a.33.2026.07.31.04.33.25
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Jul 2026 04:33:23 -0700 (PDT)
+        Fri, 31 Jul 2026 04:33:25 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][scarthgap/rust][PATCH 08/35] rust: Drop oeqa-selftest-Increase-timeout-in-process-sigpipe-ru.patch
-Date: Fri, 31 Jul 2026 07:32:38 -0400
-Message-ID: <1918e0c1013438f8735a82a95df85121df442fb3.1785496469.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][scarthgap/rust][PATCH 11/35] rust: Fix flaky assertions in oneshot tests
+Date: Fri, 31 Jul 2026 07:32:41 -0400
+Message-ID: <64b972909b93bcee722046d1f8d4ba1e3398d116.1785496469.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <cover.1785496469.git.scott.murray@konsulko.com>
 References: <cover.1785496469.git.scott.murray@konsulko.com>
@@ -67,73 +67,118 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Fri, 31 Jul 2026 11:33:34 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4584
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4587
 
 From: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
 
-This patch was originally introduced to address a rare failure on the PPC
-target and with the latest version of rustc this issue no longer occurs.
-So, this patch can be removed.
+Fixes [YOCTO #16199]
+
+Backport three commits from upstream to fix flaky assertions in oneshot tests
+
+https://github.com/rust-lang/rust/commit/6970849fee93900b6eb28a64cf957157a9fb51b3
+https://github.com/rust-lang/rust/commit/dab350a3ed7691201f6752c4375e8e6ab40b58b9
+https://github.com/rust-lang/rust/commit/d02743e2fd7433ba2320fc85421a8a5927235b65
 
 Signed-off-by: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(adapted from oe-core commit 3b5c2d8bdbcaa6f01af43bb04fe93790b04100a2)
+(adapted from oe-core commit 636ea9269c1d7ebabefb3bed01fd30583758cc8c)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- ...crease-timeout-in-process-sigpipe-ru.patch | 31 -------------------
- recipes-devtools/rust/rust-source.inc         |  1 -
- 2 files changed, 32 deletions(-)
- delete mode 100644 recipes-devtools/rust/files/oeqa-selftest-Increase-timeout-in-process-sigpipe-ru.patch
+ ...ix-flaky-assertions-in-oneshot-tests.patch | 72 +++++++++++++++++++
+ recipes-devtools/rust/rust-source.inc         |  1 +
+ 2 files changed, 73 insertions(+)
+ create mode 100644 recipes-devtools/rust/files/0001-Fix-flaky-assertions-in-oneshot-tests.patch
 
-diff --git a/recipes-devtools/rust/files/oeqa-selftest-Increase-timeout-in-process-sigpipe-ru.patch b/recipes-devtools/rust/files/oeqa-selftest-Increase-timeout-in-process-sigpipe-ru.patch
-deleted file mode 100644
-index 5bd1abf..0000000
---- a/recipes-devtools/rust/files/oeqa-selftest-Increase-timeout-in-process-sigpipe-ru.patch
-+++ /dev/null
-@@ -1,31 +0,0 @@
--From b4524278985f517b0785b6f64a21380dcf1ff096 Mon Sep 17 00:00:00 2001
--From: Peter Tatrai <peter.tatrai.ext@siemens.com>
--Date: Mon, 4 Nov 2024 13:58:16 +0100
--Subject: [PATCH] oeqa/selftest: Increase timeout in process-sigpipe rust test
--
--This patch increases the timeout for the process-sigpipe rust test, which
--occasionally fails when the server is under heavy load. Increasing the timeout
--reduces the likelihood of false negatives under load.
--
--Fixes [YOCTO #15625]
--
--Upstream-Status: Inappropriate [OE testing specific]
--
--Signed-off-by: Peter Tatrai <peter.tatrai.ext@siemens.com>
-----
-- tests/ui/process/process-sigpipe.rs | 2 +-
-- 1 file changed, 1 insertion(+), 1 deletion(-)
--
--diff --git a/tests/ui/process/process-sigpipe.rs b/tests/ui/process/process-sigpipe.rs
--index 11f363d62..c12d66016 100644
----- a/tests/ui/process/process-sigpipe.rs
--+++ b/tests/ui/process/process-sigpipe.rs
--@@ -23,7 +23,7 @@ use std::thread;
-- fn main() {
--     // Just in case `yes` or `while-echo` doesn't check for EPIPE...
--     thread::spawn(|| {
---        thread::sleep_ms(5000);
--+        thread::sleep_ms(50000);
--         process::exit(1);
--     });
--     // QNX Neutrino does not have `yes`. Therefore, use `while-echo` for `nto`
+diff --git a/recipes-devtools/rust/files/0001-Fix-flaky-assertions-in-oneshot-tests.patch b/recipes-devtools/rust/files/0001-Fix-flaky-assertions-in-oneshot-tests.patch
+new file mode 100644
+index 0000000..be0e85d
+--- /dev/null
++++ b/recipes-devtools/rust/files/0001-Fix-flaky-assertions-in-oneshot-tests.patch
+@@ -0,0 +1,72 @@
++Backport three commits from upstream to fix flaky assertions in oneshot tests
++
++Upstream-Status: Backport [https://github.com/rust-lang/rust/commit/6970849fee93900b6eb28a64cf957157a9fb51b3]
++Upstream-Status: Backport [https://github.com/rust-lang/rust/commit/dab350a3ed7691201f6752c4375e8e6ab40b58b9]
++Upstream-Status: Backport [https://github.com/rust-lang/rust/commit/d02743e2fd7433ba2320fc85421a8a5927235b65]
++
++Signed-off-by: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
++
++diff --git a/library/std/tests/sync/oneshot.rs b/library/std/tests/sync/oneshot.rs
++index 6a87c72..d8f3cd7 100644
++--- a/library/std/tests/sync/oneshot.rs
+++++ b/library/std/tests/sync/oneshot.rs
++@@ -89,15 +89,15 @@ fn send_before_recv_timeout() {
++ 
++     assert!(sender.send(22i128).is_ok());
++ 
++-    let start = Instant::now();
++-
++     let timeout = Duration::from_secs(1);
++     match receiver.recv_timeout(timeout) {
++         Ok(22) => {}
++         _ => panic!("expected Ok(22)"),
++     }
++ 
++-    assert!(start.elapsed() < timeout);
+++    // FIXME(#152648): There previously was a timing assertion here.
+++    // This was removed, because under load there's no guarantee that the main thread is
+++    // scheduled and run before `timeout` expires
++ }
++ 
++ #[test]
++@@ -127,6 +127,7 @@ fn recv_before_send() {
++ }
++ 
++ #[test]
+++#[ignore = "Inherently flaky and has caused several CI failures"]
++ fn recv_timeout_before_send() {
++     let (sender, receiver) = oneshot::channel();
++ 
++@@ -135,6 +136,8 @@ fn recv_timeout_before_send() {
++         sender.send(99u128).unwrap();
++     });
++ 
+++    // FIXME(#152145): Under load, there's no guarantee that thread `t` has
+++    // ever been scheduled and run before this timeout expires.
++     match receiver.recv_timeout(Duration::from_secs(1)) {
++         Ok(99) => {}
++         _ => panic!("expected Ok(99)"),
++@@ -240,7 +243,9 @@ fn recv_deadline_passed() {
++     }
++ 
++     assert!(start.elapsed() >= timeout);
++-    assert!(start.elapsed() < timeout * 3);
+++    // FIXME(#152878): An upper-bound assertion on the elapsed time was removed,
+++    // because CI runners can starve individual threads for a surprisingly long
+++    // time, leading to flaky failures.
++ }
++ 
++ #[test]
++@@ -253,8 +258,11 @@ fn recv_time_passed() {
++         Err(RecvTimeoutError::Timeout(_)) => {}
++         _ => panic!("expected timeout error"),
++     }
+++
++     assert!(start.elapsed() >= timeout);
++-    assert!(start.elapsed() < timeout * 3);
+++    // FIXME(#152878): An upper-bound assertion on the elapsed time was removed,
+++    // because CI runners can starve individual threads for a surprisingly long
+++    // time, leading to flaky failures.
++ }
++ 
++ #[test]
 diff --git a/recipes-devtools/rust/rust-source.inc b/recipes-devtools/rust/rust-source.inc
-index a5423d0..8887824 100644
+index 8887824..b9077c3 100644
 --- a/recipes-devtools/rust/rust-source.inc
 +++ b/recipes-devtools/rust/rust-source.inc
-@@ -4,7 +4,6 @@ SRC_URI += "https://static.rust-lang.org/dist/rustc-${RUST_VERSION}-src.tar.xz;n
-             file://0001-Define-more-ioctl-codes-on-riscv32gc-unknown-linux-g.patch;patchdir=${RUSTSRC} \
-             file://rust-oe-selftest.patch;patchdir=${RUSTSRC} \
-             file://repro-issue-fix-with-cc-crate-hashmap.patch;patchdir=${RUSTSRC} \
--            file://oeqa-selftest-Increase-timeout-in-process-sigpipe-ru.patch;patchdir=${RUSTSRC} \
+@@ -7,6 +7,7 @@ SRC_URI += "https://static.rust-lang.org/dist/rustc-${RUST_VERSION}-src.tar.xz;n
              file://0001-src-core-build_steps-tool.rs-switch-off-lto-for-rust.patch;patchdir=${RUSTSRC} \
              file://0001-riscv32-Define-plain-syscalls-as-their-time64-varian.patch;patchdir=${RUSTSRC} \
              file://0001-Update-call-llvm-intrinsics-test.patch;patchdir=${RUSTSRC} \
++            file://0001-Fix-flaky-assertions-in-oneshot-tests.patch;patchdir=${RUSTSRC} \
+ "
+ SRC_URI[rust.sha256sum] = "0b53ae34f5c0c3612cfe1de139f9167a018cd5737bc2205664fd69ba9b25f600"
+ 
 -- 
 2.55.0
 
