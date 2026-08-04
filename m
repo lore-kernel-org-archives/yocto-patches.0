@@ -2,62 +2,62 @@ Return-Path: <JPEWhacker@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A2F1C55838
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A2B1C55822
 	for <webhook@archiver.kernel.org>; Tue,  4 Aug 2026 15:29:08 +0000 (UTC)
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.19229.1785857347222307921
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.19226.1785857344458050479
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 04 Aug 2026 08:29:07 -0700
+ Tue, 04 Aug 2026 08:29:04 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=DKpl5Nuy;
- spf=pass (domain: gmail.com, ip: 209.85.161.44, mailfrom: jpewhacker@gmail.com)
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-6acb51944d6so24180eaf.0
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 04 Aug 2026 08:29:07 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=aVIQJnIQ;
+ spf=pass (domain: gmail.com, ip: 209.85.167.174, mailfrom: jpewhacker@gmail.com)
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-4ab70b882c5so2721104b6e.2
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 04 Aug 2026 08:29:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785857346; x=1786462146; darn=lists.yoctoproject.org;
+        d=gmail.com; s=20251104; t=1785857343; x=1786462143; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=4eigbG6sjkwjKqYPNcwXKieBeX4qhlDkvOJubtKHwUw=;
-        b=DKpl5NuyG4Xv6uNice7sjR56QO9gCsWxRoMIy4Binj9nvm7I7eImydxp6Eyg7xS3BQ
-         LVVf5IASPmbYQRbpaYDa59Y/zLTko7boW7BSkv1Nf/YVmrOBVnAUbs1Fy1un4OCHI2aR
-         NrSQvc3M0/ekAK/K2fpiITI8hqcrOZcQC9ALxPihZ6A6fomeys6khsRmSRZVnuBEleKl
-         wVkctCk7aSJG77zrcYLHDmTmfL/BznODMSExYofkIS8RIMZONdqY6/3/TCsq7Sx+k/DR
-         ZPjFQHB2lHC8/OuZzrM1GVPOoR2gVIfCvtn8YeCzUniFsrQ0g1GadMNpTyJEWg2ATRZG
-         OUNA==
+        bh=Ym50oAe+hEDK/T5OUHylRw2ku0e5Y2PxGQvXMzEhqjo=;
+        b=aVIQJnIQ9JIbZBby+JXxl6zLkM/A8PammwP+IAQTaSPn0oJkcLglrbvU8AUsf1NaPE
+         6G3FsqvIYtGC1GE3yHnZniLCCUAmyYtWSoshJb75stJWF+I51fFFSPlAZAzXwpKHt5JY
+         +0mcFhUqgQXAfoaSlvxSg18MD1Lf3yeaKMglDIZpU/ropkceoWwOw8rbIi2sLuoMEaWA
+         kweuY4uXb2lTJTRi2hHu1MHgB6nVs4664GeXimrEmEBJGek54VKWbKrE/+8FIobdsMuL
+         JaX+4zV2oDSLFTsfs1aqDvJTZg4W/13TdcPMHK2KCGFOaB/8BEdl2RsTGmsLqQoefDWU
+         o8Lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785857346; x=1786462146;
+        d=1e100.net; s=20251104; t=1785857343; x=1786462143;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=4eigbG6sjkwjKqYPNcwXKieBeX4qhlDkvOJubtKHwUw=;
-        b=YC8P7h9f3K0BxkL0d6s01/GLiA5/DWflWIzou7spLXbVlrLdnzdzRf8vvD2RF8OkVM
-         F6HDjyRzQAIRhgAYmfUJJPV1PV7lELXdCcqFHJfQD0qU3EkiytXz/sxXcn73dRUlsxpA
-         bXeS85uwaWt5URReQnWmwZn9vTHZt5/tDmk/AO63AIXWZp3jWjZCCrmLwnnfnEkul9cK
-         kbDLMtyQwZD5UnSS6XYWyxY8Y0PeV6iihdG0lEHOCPs65n9s1gkNv8xez+4H1r2mnuzG
-         OXZD1BogDIw5s8yLtv5FhnwynJM8Ubd5VujJpcLPM9u4dcvZVGK0slMqlNnvXRPu51WZ
-         cCFw==
-X-Gm-Message-State: AOJu0Yzhlf/p47JXA3ajSj2a8rtkm+Y1Dh3WRmI1pc12jUMZoZ4Ka9Ce
-	nODyXc7hA68dr7IrLznGCqtFzP7lPuAH2RLw2rRcF8BndxHV3bIAK9iUl3bi0w==
-X-Gm-Gg: AR+sD1009Q0oq+LQJ1nqKzA7m3P94A2SNn2uO/d1O7aPdrpOP4QQIvqLsKXdS8QbCF1
-	BqZH9l6zq9tYFq9O4OtDngTWg6RuO5JlaLiF5sAq3fxtSuE36/Lu4HRdukqJuEj/lk3r/f405bI
-	h2omKpoJqB/bDzPPLos54ZOzAUcsk7b8unN6NbmgcXNSC/uuGsbqvJRvihuYpK1/gZweenw8WlI
-	d/lRzAxiwFarp4S4pcanDJhMTeJmooPDXah/3Mo2YZWp1XVXpjiZR5dzjtXuHjSMkHBWbGPAxZL
-	72XTl4jMEySjzG6tmoX7k3dSlMARQGJvuRiA889HqHCThKPvQMYOVzDK6LpwNI56gwqTnEqTyA6
-	XerWEyp6hdSAgPtWVysOKJZX2YS75zFK1HMEBC5Hz7t3dXkbkqmmFVf6prRXaUph5Qql9oYYE8/
-	8n0ZXLMqQz4vtNo9D9xApeKEey8rN0r52OZp2PD9Wem2ToFr9Wmay55+Watg==
-X-Received: by 2002:a05:6820:1849:b0:6ac:a5a3:460f with SMTP id 006d021491bc7-6ae43408fa4mr21307183eaf.25.1785857346306;
-        Tue, 04 Aug 2026 08:29:06 -0700 (PDT)
+        bh=Ym50oAe+hEDK/T5OUHylRw2ku0e5Y2PxGQvXMzEhqjo=;
+        b=Ly7QnHPxg334/pzye8IH0lBj6P9dRX0F9hv+nLI04lTP05U+xLD393bZsGwQlV2up3
+         fm+Bq2mwZHUZ4KBCZvEZVNrNzuNXF1TcBADQOuBac5/GEeh72OqM5W3ZJvkXOeLrg2nF
+         lLJ4i42RZuFWQ4Qpwx+St+lKSlPwBGfs099b2XMlVFMvb+8jJ3Bn5aaMm16w0algsgZ7
+         dnxWXsMhWAH9OI6NTzbst08L0kXsfVKs8SfIm+K2EscNm5p2Ux/q+PJP0V+ZwlClsx3E
+         wZdVqCly0dphV6u3S9vVvfiu2b1HMfOReYMnldMsCUxdq/597R06yiqDatkXLCgqGG8i
+         VI2Q==
+X-Gm-Message-State: AOJu0Yx+fL6efBEwlNeE04wTZEzpCteS7RWyzwPMwLwPwMm6lNxyRV+L
+	6ikk/Hf0oQHgcXGv7rj8D8GuaY1s+3yNeIYPWSA6GwPnLCE0YhFrrkKukKL97w==
+X-Gm-Gg: AR+sD13SCPlQBMzgA2zV/Bvm2FZ/iSC2IqTy24NcvGEXeOaLW94DPKXkPQADXnExkBI
+	FWrZphpItDaIEa/Am5Kf3+3vJb4RO69QYX3oYyJ9zICkULIFzRcb3XZ97PVa9JoLVioF+GLiWFk
+	+Xc5r76J038DT25tzQpH7Npki/2dKaHXayEoK50LLskqDtk45LPcPNNzy8xjP9htie+gmkUKeEs
+	cot2gMuf5pfHzpPsC7MgHsXTZR8F0Qw4hbaYAgEJNebwCxa4Z/swHRWpC1pgW5+8xUS09pLjhgG
+	gh9oae59WHGWuRXYrZUVVw1dwLw+fZpstPz8V7BprpaB3Zqrd+5rSAh0mPDvU3K/BjuP7lEq8i2
+	o97FHtaUrUXcMLAedXnGONuLxO6sdvmy1UQ4OpdbZzdEi0AP1jtLdqCmS+p+ezpdwCJEIFAKIg1
+	BN++QwIba6z0l7fXysK349xL3kdf9SB9eIIpFu0OLOAgY=
+X-Received: by 2002:a05:6808:1b8f:b0:497:d1e7:5e90 with SMTP id 5614622812f47-4af5e2927e6mr22633506b6e.18.1785857338727;
+        Tue, 04 Aug 2026 08:28:58 -0700 (PDT)
 Received: from localhost.localdomain ([2601:283:4b02:22d0::2351])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-458f60ea539sm12196526fac.8.2026.08.04.08.29.05
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-4af58f22c54sm8703324b6e.13.2026.08.04.08.28.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Aug 2026 08:29:06 -0700 (PDT)
+        Tue, 04 Aug 2026 08:28:58 -0700 (PDT)
 From: Joshua Watt <jpewhacker@gmail.com>
 X-Google-Original-From: Joshua Watt <JPEWhacker@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: Joshua Watt <JPEWhacker@gmail.com>
-Subject: [yocto][meta-mingw][PATCH] c-ares: Fix append
-Date: Tue,  4 Aug 2026 09:29:03 -0600
-Message-ID: <20260804152903.929527-1-JPEWhacker@gmail.com>
+Subject: [yocto][meta-mingw][PATCH] re2: Fix append
+Date: Tue,  4 Aug 2026 09:28:48 -0600
+Message-ID: <20260804152848.928489-1-JPEWhacker@gmail.com>
 X-Mailer: git-send-email 2.54.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -65,23 +65,23 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Tue, 04 Aug 2026 15:29:08 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4622
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4621
 
 The append needs a space prefixed to apply correctly
 
 Signed-off-by: Joshua Watt <JPEWhacker@gmail.com>
 ---
- .../openembedded-layer/recipes-support/c-ares/c-ares_%.bbappend | 2 +-
+ .../openembedded-layer/recipes-support/re2/re2_%.bbappend       | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/dynamic-layers/openembedded-layer/recipes-support/c-ares/c-ares_%.bbappend b/dynamic-layers/openembedded-layer/recipes-support/c-ares/c-ares_%.bbappend
-index 8ef58f9..84330d8 100644
---- a/dynamic-layers/openembedded-layer/recipes-support/c-ares/c-ares_%.bbappend
-+++ b/dynamic-layers/openembedded-layer/recipes-support/c-ares/c-ares_%.bbappend
+diff --git a/dynamic-layers/openembedded-layer/recipes-support/re2/re2_%.bbappend b/dynamic-layers/openembedded-layer/recipes-support/re2/re2_%.bbappend
+index 16bb5a0..a72496d 100644
+--- a/dynamic-layers/openembedded-layer/recipes-support/re2/re2_%.bbappend
++++ b/dynamic-layers/openembedded-layer/recipes-support/re2/re2_%.bbappend
 @@ -1,2 +1,2 @@
- EXTRA_OECMAKE:append:mingw32 = "-DCARES_SHARED=OFF"
--EXTRA_OECMAKE:append:mingw32 = "-DCARES_STATIC=ON"
-+EXTRA_OECMAKE:append:mingw32 = " -DCARES_STATIC=ON"
+ EXTRA_OECMAKE:remove:mingw32 = "-DBUILD_SHARED_LIBS=ON"
+-EXTRA_OECMAKE:append:mingw32 = "-DBUILD_SHARED_LIBS=OFF"
++EXTRA_OECMAKE:append:mingw32 = " -DBUILD_SHARED_LIBS=OFF"
 -- 
 2.54.0
 
