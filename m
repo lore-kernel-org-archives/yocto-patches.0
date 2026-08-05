@@ -1,320 +1,332 @@
-Return-Path: <peter.marko@siemens.com>
+Return-Path: <bbnpreetsingh@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93317C55ABA
-	for <webhook@archiver.kernel.org>; Tue,  4 Aug 2026 21:56:28 +0000 (UTC)
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (DB3PR0202CU003.outbound.protection.outlook.com [52.101.84.25])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.27591.1785880582457132304
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F379C55174
+	for <webhook@archiver.kernel.org>; Wed,  5 Aug 2026 06:23:02 +0000 (UTC)
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.34439.1785910981339098785
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 04 Aug 2026 14:56:22 -0700
+ Tue, 04 Aug 2026 23:23:01 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=OI/9VRVS;
- spf=pass (domain: siemens.com, ip: 52.101.84.25, mailfrom: peter.marko@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OWM+Ln72rytLzIwZ512dXm7Jfl3EdTDqw+MCMEB6p9act0jds8wURE9uog0dSbvNtiEsukn/BFgbHAzcNY0pq/jzfqsWivpPSlNhkR5sTXXY6v7dXrOm1Ho/lbHDZ9PH1MalnrtDW/9qlEoI/z4BiBDx70T4/9o5W5V7nDhaT6yuJugaTQoiGw+Ux6+XT1bmja2DarwF5dry5ZwFAi0nTrpfUIDoIX/phrmtDeDycRidO3jnKCdkyFHMxeVg2VMPaxAu4qIHElyqBqHaSqLPFjUm9Oh5wNUgnHc+M0Z/gLNNevEyVsrdCIIvBmVQx3EhqcIghO3YvyK5/Nls2m+GAw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=n8sC8PEr7p6mmyc0isYc6pv6hBshGxuGUekbwGS2yCM=;
- b=Vqw03QqwZqMgSgA6ssErG9/I3HKnICeLvvqcBzdKW1uAhffj4MbXJWcSrxaabOdGU+HI4uQv/+qM48mtVUIzCZ3KcAN2ED1a8wuGFbMqI3rIiUrboNVwMgSbU313e0yNiWm/0IpVl46Dm3b12pKlhgruKBqTSNAZ8LwJ/FudVNn+3OnME47IEwrx824gWj9N0zKKT7tlbC5GEAceTVJLqMd7hj3kBAvCtJL8nlNHA6DO1acMYru15UD8/KTHHEv1wajBpEUwTWaFxyso4rO6ht3yOyuXM3ef70WQbVDtvyoybLJRRnTlQf4aenZpRWHWZLMwhD9c9fkaMeL8prJs4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n8sC8PEr7p6mmyc0isYc6pv6hBshGxuGUekbwGS2yCM=;
- b=OI/9VRVST7iKrz0IirKJ4RpxeiRhiRK+uQcpW82d44IkOL3234FIwn8lAiOLxuFIipxKcDvHwz3HWxlBg+ymyWdF3JhGBvJlRNi8OaLM/wDEFM0gXriwKyhsQovK1XLfzUt+tLWDt9Lf6THS9QI25Tbe89Xh0jd0xW/s89y6PxlibUK/9u/N+MUTBpegwKKUJaJ9ho4jVW7Zyq1QaKCAAQH3cLA8ewrz4vk8mVvoyB+iOLpldkJH15+NdC4M8qT6WyV3GlUh6OTCEQlzlLD5nj6wxALpL+OjZOxhYbGra9a4ooFl7ysKOuB1oIBpaI/jD9C6q6NBqENtDhfz+MxB0A==
-Received: from AS8PR10MB5073.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:420::16)
- by DU0PR10MB6680.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:400::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.270.18; Tue, 4 Aug
- 2026 21:56:18 +0000
-Received: from AS8PR10MB5073.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::a905:57e5:8858:d008]) by AS8PR10MB5073.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::a905:57e5:8858:d008%4]) with mapi id 15.21.0292.015; Tue, 4 Aug 2026
- 21:56:18 +0000
-From: "Marko, Peter" <Peter.Marko@siemens.com>
-To: Scott Murray <scott.murray@konsulko.com>
-CC: "yocto-patches@lists.yoctoproject.org"
-	<yocto-patches@lists.yoctoproject.org>
-Subject: RE: [yocto-patches] [meta-lts-mixins][scarthgap/rust][PATCH 00/35]
- Update to 1.96.1
-Thread-Topic: [yocto-patches] [meta-lts-mixins][scarthgap/rust][PATCH 00/35]
- Update to 1.96.1
-Thread-Index: AQHdJFb9Y1jRr0W85EScuAnjbvKy7baObAKA
-Date: Tue, 4 Aug 2026 21:56:18 +0000
-Message-ID: 
- <AS8PR10MB50733593873B3ED9907CF072FDD42@AS8PR10MB5073.EURPRD10.PROD.OUTLOOK.COM>
-References: <18C75C9B3F4EC7FF.1793795@lists.yoctoproject.org>
- <57b8baa1-9c24-b9b1-fcc7-5f4ff8172fdf@konsulko.com>
-In-Reply-To: <57b8baa1-9c24-b9b1-fcc7-5f4ff8172fdf@konsulko.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
- MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ActionId=8a3057ca-672b-4aaa-8bc3-5b7b6ab2322f;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ContentBits=0;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Enabled=true;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Method=Standard;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Name=restricted;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SetDate=2026-08-04T21:43:53Z;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SiteId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Tag=10,
- 3, 0, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AS8PR10MB5073:EE_|DU0PR10MB6680:EE_
-x-ms-office365-filtering-correlation-id: c50f8c62-6e78-47e0-3362-08def273368a
-x-ms-exchange-atpmessageproperties: SA
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230040|366016|4022899009|376014|1800799024|23010399003|6133799003|11063799006|3023799007|4143699003|56012099006|55112099003|18002099003|22082099003|10067099003|13003099007|38070700021;
-x-microsoft-antispam-message-info: 
- hSGWgiUsOk2tvRMTpJLj2J0J/ZNdrs0AfDh1g7ivVqrOu5rVljac6JjKnXMXT9pktcLotXBtrlTKAbryhZHC4JhlPXqOcgXjDBAKHnvBmwosHDSfs271kb60YV79j9BLFYA9UFBZihBB1DvqJEF4IJUdZfmB7GR38uvkRfuDVNaXmRtpH7g82hgyEtjLgigpMumZt6EPdfW4/mUcWwevXW1qp3H1xpHH+8pUk56W5BEIdcq+QHcHEd1EYPKxJFIFE3LvKrZWdNt3SpTBeniKgIo/u4FwmWvjl60Frp8wt0VzeqO/nNSB4EWZsiob2hydvVg/3UsjTZDsVu30SJqgVnHWNoq7JVGI6X4yMs/2CLnC1YfodaYePCs/41e20UEFPKMoq+gXBLhfdBzLx1zOe45m/4DS6SmWsgGzooUTTi5tVl3dRelCvdp0sjQaMpCWlhKrj39tCCpDnP4+iKOj6bwF2nCzm8JMFrtqpY8gE+I8hgy+JK3adr19M/B4X5SAYFf20gtdN89kcO2gamcu0PhVsr4wdCX6/Wavfs66IdGf84/fkZXEjBdrFNwfM0T/2Tybo+poH5hiCUtrbUX522AdElbjWzykdVHY69P6dXOHCv/4fWDv0kZUzL2EAQBo1OTmRpB96EtJjDeNxTi+bzxxAfibm8RrPvlSq7KpY3TiDXcamcjK0NhNKEPDGDJ5BJCFZO/vzY2BWCiAOfYGjkz76a+HHL8tOYjh31AEqME=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR10MB5073.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(4022899009)(376014)(1800799024)(23010399003)(6133799003)(11063799006)(3023799007)(4143699003)(56012099006)(55112099003)(18002099003)(22082099003)(10067099003)(13003099007)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?us-ascii?Q?Cy/fzbKyqV1Pq86518nhlLgVhte0l0tIyf+APThyq0Rj1MpZ+NUT/0gOp5G7?=
- =?us-ascii?Q?x7M+1F/F2BWYihlnG5EElIjZdBgL0MaBYi28g7lkvSfBqTMF8+Nlz/ycI2jX?=
- =?us-ascii?Q?05dN1AB7YvyJW5+JmKOD78eLeMM+xlD3hiRZ3nmBuvC990siwPwImZzvCMsG?=
- =?us-ascii?Q?eOFoGIBVlVgTnf5VQ5O8LiwWL6oc0RW37QEf9Pmtj1HnhIOjoGD1d1LlENuo?=
- =?us-ascii?Q?j0bEzOMTXSlMzAHTKuvqLSbmgeokyorwftduCZaKwaNL2SzYgC4lbIArUlD5?=
- =?us-ascii?Q?7UtusboGLlPUhcR68F3kgn5xXrLTtiDXbYhYCSYYWJDda1VIL1s4CToS/8Zl?=
- =?us-ascii?Q?DYqHSvE5uLJnRGT+ZhxoJGJmwtXI8Y3ZHqYKfNRKrrvEt1y8voZkib9CJscG?=
- =?us-ascii?Q?qBQUP7IC0+7ud/1ZyBNMA7W+wBRubrxv9AOGtrWZ74jR6+Hpc/F9/yoNeCSn?=
- =?us-ascii?Q?0p6iQ6UQPGd/2w8H8foIHcjFldvpRoeLnmtvDy3D9LHTaQjwPt66j2S17m0M?=
- =?us-ascii?Q?ulMyecidmZmsBxqAUacZUFKx0EsvFj3Yg34Vg0SzeKeR4jzVuzwjWb/T3i86?=
- =?us-ascii?Q?rgbvcFrRcZul0iT7cZ9d//NfyQhJ9cxYE67Wxo+5+1WM0HHbVOF5p/x+E+Rm?=
- =?us-ascii?Q?zmNEQSGS3hG0CaPfSWUxu5Q/WodMSDA87vo4+mzgUNrINVN/y5bUh51H4+vj?=
- =?us-ascii?Q?QhBCT5xyipCuc3083t0dV7V+7q8DNLIRCejWl78pIvYwBgCeGkeLVkue2th6?=
- =?us-ascii?Q?XjFCBPfEwHc5d5yOSm/aN1m0Hn4zmJXfM34eJcDHzxxmJ+tE35/N3/YL4+y0?=
- =?us-ascii?Q?jRh3Kh4SYdLjAulkHhpBxMrpR4I+4Zd2vt0EmBCTQcN4r0t/b1bYPmxUXBtt?=
- =?us-ascii?Q?MY+viIsm7+VHHDPBTiN812wPP93tFhAtdNBhIaULGZGqrpZn4/qEkvCp4wZI?=
- =?us-ascii?Q?DCo//KTAlbyP2fRjsXIFoWfra53qbKCPPrzPl56Kx6Di/jgPOI4X8Jk7O1uR?=
- =?us-ascii?Q?aPxh47++tnuynaKJzXi9FiStmfwoIzxtIvLYG3ZqihB8gie0oSpjIQmC+GV8?=
- =?us-ascii?Q?AyWHj6etl6PPveFFxGwjZe4YSwVSO68IZCN5QdsPC5VnSV0Cmugn/HfEA/js?=
- =?us-ascii?Q?CVIBWLVElxuxETshWPdDrGsLnHtda6bRcM0Qtwz0pdTZi6sJxpGdY/trh8mK?=
- =?us-ascii?Q?AhZIBZEQWjAqzHsGzEhCuz8E1y/QgawiI5AwBAsTubnnEOYfArBoVJEQbdjj?=
- =?us-ascii?Q?NzWjI20SMyr61SB0t7QLuQoOZeSRt77DobLFiFygaEQjYTmMSg+6LgTCDyb1?=
- =?us-ascii?Q?7lWke9w5064zwq8Br3mrV8jLKDC4A4Q89GS/N/7Ug4WZMESiJOaYFemosYoX?=
- =?us-ascii?Q?0SNQ5LJb6YTwKYuMGYWaG7ogdwNl5oY4bhKak9Xx6eLj1lBdfzfRDxMcvTCy?=
- =?us-ascii?Q?kZgH87WMESbDJKGdit1zE7k6provG8D4nedg1++5J+A6/9d2nc2FXo23t2qO?=
- =?us-ascii?Q?wFOvJaySltSj5eC5Xi2S2+Tl4r7vKvk2iOgVbk4NEPsZ4o6iKSBvYUWs9D89?=
- =?us-ascii?Q?Z3kge6XGgalQC4x2BsN6SIvdvi12ck8xYy/9L81gakai36k6PtbjqIdnhGme?=
- =?us-ascii?Q?NCBS+WLUSa4v/jY5R7rtZEWh5FHp1eRlkGJJKXQ3r0+G0nerVdmxdYDxY46g?=
- =?us-ascii?Q?4cJKQvhGRltbAv9NqbbQUloLUrC5ZWt/ZKcLzqTYp7UKY7dEJmErxQA/yBB8?=
- =?us-ascii?Q?w5PGNSwoiQ=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=WCE/4IJ/;
+ spf=pass (domain: gmail.com, ip: 209.85.214.178, mailfrom: bbnpreetsingh@gmail.com)
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2cc61541f8cso21583865ad.0
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 04 Aug 2026 23:23:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1785910981; x=1786515781; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=vra5moo9/2Fsl9bnt8G0H2qZNz8OefuPkZ2/FI2SGkk=;
+        b=WCE/4IJ/X8G3p+hNK04j587yYvlHnyAEJTJqh55N3R1gNMcA35Fs2qpzJEDAXggi9Y
+         WZs2UjTmqyvAw7nphZfpi4AUInnoCrk9ZK4c1/NdAZHvY2bdIAMAaHiyFEYVbwepVbD+
+         6HievGcJUXx3yHgGDPkoyLQ5ap7NfELZvUpp9qu2qSwXFfI/bfQHAQe8JYz259jc2mzP
+         Syb5A7dbwSpaYKH8ucd5J1JTPvupuXbQHqLWlmjpv2UV4H1OP2Bd4JzlzQHILIOHi71C
+         MmhzYlcMe6u6JD45OKxtO6l5y2cjuHkUhqRCtw/anubJyUtb9bumS1EhD8srbUUz8f4Z
+         bkwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785910981; x=1786515781;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=vra5moo9/2Fsl9bnt8G0H2qZNz8OefuPkZ2/FI2SGkk=;
+        b=UkpPLyTfDISSaIqKDk5VvRmQMMKDzP47Q42YDdy0Q4i/fW9hrfqdRyMAvVr1VVLBSE
+         mwZFg7U64cFbaob4/JJarq7xEYD+pqcfCiIG5HEwaavVffzyyQ5tLfr66M1BNHv7kKud
+         EwbUVDGMqQnh5LpD6bIIjvplLmc9hsqSTPB39OfiGzRa5HcVkDlNtd2jzIRxIiCVNbnE
+         AclCaZz1B3Y+tEVEIlRD10mppj9jzXxNOPcBpGHd4FZhr1I8tKMk6vaU8udWtvQcZ/t2
+         gtJSWir2h0dqdmV2OdoZA2cqKzVQLkQ82rDKuXjZKpmwgqaVAz57VAT/dhwDBB4kuipC
+         Ddhg==
+X-Gm-Message-State: AOJu0Ywn8cyncmC83AR7OMF6eOh1+DVOLURsjmefsekawEW9S5kJxRDc
+	tsvyvRDbOLn6qzi1UlUrh9b7F9vu5+jG0DRDCMZtJdkn1zg2c8v1dVuYo8o7HWTgSpM=
+X-Gm-Gg: AR+sD13BHQ1iu5QpWfWy/9LtDYgAqRJLrqYJqgZyY9eBCOYeClMQlT7X3NjlMkaD+Bv
+	ykwrqbdf/kJp7o7nKcHwNmxLktCwZlQl2LZ2RwbsJdf/K7w0+kK2zaQEXLD+eYXFQ3CajD/T6vF
+	9MbTaw52kkh6aakCpigq6mm77WSdZ2OKRvpdliTlt2LRZCIhgG1Ej9ZPSHCrn+gKKTt715v3JDn
+	6DzNB1Rwd9NWLyTjMNTcdB0FPwcmb7rBOZmbDPZXNAqA71TDxruDsRJlSMYtLau1n0z1zhXDqw5
+	yYNAeL+2JxTb05H9vRrheFjmuGkU7jIrbV56HRRcg894tmVaBYmKHJSF/ZJrBnAcgOdwG3uqPws
+	EHL7b/Z/2oo8Q63t3bS1HrH/bpCd7Foku048fGD7ZLZMv7mbGUeXMH3gZXr/bTy3JrqVKGDFnwv
+	muL7/A67UGjHGJjpEXyWn2sDgIZHWUPodZvdYV9vitlWbp7E/+I0YzjjOs5rii
+X-Received: by 2002:a17:902:c952:b0:2bd:2c3a:2a36 with SMTP id d9443c01a7336-2d088e888d6mr97083135ad.0.1785910980500;
+        Tue, 04 Aug 2026 23:23:00 -0700 (PDT)
+Received: from ydev.. ([108.180.130.139])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2d0aa492c7fsm14230065ad.43.2026.08.04.23.22.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Aug 2026 23:23:00 -0700 (PDT)
+From: Babanpreet Singh <bbnpreetsingh@gmail.com>
+To: yocto-patches@lists.yoctoproject.org
+Cc: Richard Purdie <richard.purdie@linuxfoundation.org>,
+	Mark Hatle <mark.hatle@amd.com>,
+	Mark Hatle <mark.hatle@kernel.crashing.org>,
+	Paul Barker <paul@pbarker.dev>,
+	Randy MacLeod <randy.macleod@windriver.com>,
+	Vincent Haupert <mail@vincent-haupert.de>,
+	Babanpreet Singh <bbnpreetsingh@gmail.com>
+Subject: [pseudo] [PATCH v3 1/2] ports/linux/guts: Implement close_range() instead of returning ENOSYS
+Date: Wed,  5 Aug 2026 06:22:57 +0000
+Message-ID: <20260805062258.7-2-bbnpreetsingh@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260805062258.7-1-bbnpreetsingh@gmail.com>
+References: <92c180949cc82cbd9025c7673c2ffb8a43896fda.camel@linuxfoundation.org>
+ <20260805062258.7-1-bbnpreetsingh@gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR10MB5073.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: c50f8c62-6e78-47e0-3362-08def273368a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Aug 2026 21:56:18.2998
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: aX/eatsGofZ4SMPjbKpfgkhuXMszr6C8VNbTpxB69/xJCBAHnzZNxJriM2xAMxZUFy0I0+OJG/aPY2++erGcDg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB6680
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 04 Aug 2026 21:56:28 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4626
+ <yocto-patches@lists.yoctoproject.org>; Wed, 05 Aug 2026 06:23:02 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4628
 
-Hello Scott,
+close_range() runs through a client side op, OP_CLOSE_RANGE. The op closes
+the descriptors below pseudo's own one at a time, skipping the ones pseudo
+keeps, clears the tracked paths across the range, and returns the first
+descriptor above pseudo's own so the caller can hand the rest of the range
+to the kernel.
 
-this update puts scarthgap+mixins ahead of wrynose.
-I think I'll update to a commit somewhere between the 1.94.1 and 1.95.0 bum=
-ps to cap our scarthgap at wrynose level.
+closefrom() uses the same op, with INT_MAX as the maximum.
 
-Are there any plans for wrynose mixins layer so we don't fall behind there?
+Unknown flags and a lowfd above maxfd return EINVAL before anything is
+closed. CLOSE_RANGE_UNSHARE unshares the descriptor table first, so the
+closes do not reach other processes sharing it. CLOSE_RANGE_CLOEXEC and a
+range starting above INT_MAX go straight to the kernel. A maxfd above
+INT_MAX is clamped for the op; the kernel still gets the caller's maxfd.
 
-Peter
+[YOCTO #16339]
 
-> -----Original Message-----
-> From: yocto-patches@lists.yoctoproject.org <yocto-patches@lists.yoctoproj=
-ect.org>
-> On Behalf Of Scott Murray via lists.yoctoproject.org
-> Sent: Tuesday, August 4, 2026 11:19 PM
-> To: yocto-patches@lists.yoctoproject.org
-> Subject: Re: [yocto-patches] [meta-lts-mixins][scarthgap/rust][PATCH 00/3=
-5] Update
-> to 1.96.1
->=20
-> On Fri, 31 Jul 2026, Scott Murray via lists.yoctoproject.org wrote:
->=20
-> > This patch series for the scarthgap/rust mixin layer backports the
-> > recent Rust toolchain changes in oe-core master branch to pull in
-> > the 1.92.0 -> 1.96.1 updates and other fixes.  Note that due to
-> > scarthgap not having the later clang integration some changes
-> > related to an issue with sstate reuse across hosts with different
-> > toolchains ([YOCTO #16058]) are not really viable to backport with
-> > this mixin.  I have not confirmed whether the issue exists with the
-> > rust-llvm toolchain used to build Rust in scarthgap, if you do
-> > encounter a similar issue while using the mixin, please let me know.
-> >
-> > I intend to merge this series to scarthgap/rust by end of day Tuesday
-> > (August 4, EST) unless a serious showstopper is pointed out.
->=20
-> These have now been merged to scarthgap/rust.
->=20
-> Scott
->=20
->=20
-> > Changes:
-> >
-> > Alex Kiernan (1):
-> >   rust-target-config: armv8a AArch32 Thumb build fixes
-> >
-> > Alexander Kanavin (1):
-> >   librsvg: upgrade: 2.62.2 -> 2.62.3
-> >
-> > Changqing Li (1):
-> >   librsvg: move symlink file for ptest in package librsvg-ptest
-> >
-> > Deepesh Varatharajan (9):
-> >   cargo-c: update 0.10.19 -> 0.10.20
-> >   rust: Upgrade 1.93.0 -> 1.94.0
-> >   cargo-c: Move recipe out of rust directory
-> >   rust: Drop revert-link-std-statically-in-rustc_driver-feature.patch
-> >   rust: Drop oeqa-selftest-Increase-timeout-in-process-sigpipe-ru.patch
-> >   rust: Fix flaky assertions in oneshot tests
-> >   rust: Upgrade 1.94.0 -> 1.94.1
-> >   rust: Upgrade 1.94.1 -> 1.95.0
-> >   rust: Upgrade 1.95.0 -> 1.96.0
-> >
-> > George Refseth (1):
-> >   cargo_common.bbclass: add subdir argument to git dependency to let
-> >     cargo find crate
-> >
-> > Harish Sadineni (1):
-> >   rust: install Rust library sources for 'make rustavailable' support
-> >
-> > Hemanth Kumar M D (1):
-> >   rust: Upgrade 1.92.0 -> 1.93.0
-> >
-> > Jesse Van Gavere (1):
-> >   rust: export CARGO_BUILD_TARGET
-> >
-> > Khem Raj (2):
-> >   rust: Fix build with llvm-22
-> >   rust: Fix loongarch unit test with llvm-22
-> >
-> > Martin Schwan (2):
-> >   cargo-update-recipe-crates: Don't fail for partially empty Cargo.lock
-> >   cargo-update-recipe-crates: Properly close target file after writing
-> >
-> > Peter Marko (2):
-> >   cargo: set status of CVE-2023-40030
-> >   cargo: set CVE_PRODUCT
-> >
-> > Peter Tatrai (2):
-> >   rust: fix codegen test failure on big-endian targets
-> >   rust: backport explicit-tail-calls test skips for unsupported LLVM
-> >     targets
-> >
-> > Ross Burton (9):
-> >   librsvg: remove obsolete .la deletion
-> >   librsvg: consolidate DEPENDS
-> >   librsvg: consolidate PACKAGECONFIG
-> >   librsvg: rewrite cross gdk-pixbuf-query-loaders handling
-> >   librsvg: remove dependency on liberation-fonts
-> >   librsvg: add PACKAGECONFIGs for avif and gdkpixbuf
-> >   librsvg: upgrade 2.61.3 -> 2.62.2
-> >   classes/cargo: fix indentation
-> >   classes/cargo: remove BUILD_MODE, replace with CARGO_PROFILE
-> >
-> > Sundeep KOKKONDA (1):
-> >   rust: Upgrade 1.96.0 -> 1.96.1
-> >
-> > Taruntej Kanakamalla (1):
-> >   cargo_c.bbclass: pass --libdir to cargo cinstall
-> >
-> >  .../cargo-update-recipe-crates.bbclass        |  19 +-
-> >  classes-recipe/cargo.bbclass                  |  22 +-
-> >  classes-recipe/cargo_c.bbclass                |   1 +
-> >  classes-recipe/cargo_common.bbclass           |   3 +
-> >  classes-recipe/rust-target-config.bbclass     |  34 +-
-> >  conf/layer.conf                               |   2 +-
-> >  lib/oeqa/selftest/cases/rust_mixin.py         |   3 +-
-> >  .../{rust =3D> cargo-c}/cargo-c-crates.inc      | 434 +++++++--------
-> >  ...Use-libc-SYS_futex_time64-on-riscv32.patch |   0
-> >  .../cargo-c_0.10.20+cargo-0.94.0.bb}          |   2 +-
-> >  .../rust/{cargo_1.92.0.bb =3D> cargo_1.96.1.bb} |   4 +
-> >  ...teps-tool.rs-switch-off-lto-for-rust.patch |   4 +-
-> >  ...-build-failure-with-unstable-options.patch |  63 +++
-> >  ...xplicit-tail-calls-disable-two-tests.patch |  39 ++
-> >  ...lls-ignore-tests-on-unsupported-llvm.patch |  96 ++++
-> >  ...crease-timeout-in-process-sigpipe-ru.patch |  31 --
-> >  ...d-statically-in-rustc_driver-feature.patch | 229 --------
-> >  .../rust/files/rust-oe-selftest.patch         | 115 ++--
-> >  ...ibstd-rs_1.92.0.bb =3D> libstd-rs_1.96.1.bb} |   0
-> >  recipes-devtools/rust/rust-cross-canadian.inc |   1 +
-> >  ....92.0.bb =3D> rust-cross-canadian_1.96.1.bb} |   0
-> >  ...-llvm-allow-env-override-of-exe-path.patch |   8 +-
-> >  ...ust-llvm_1.92.0.bb =3D> rust-llvm_1.96.1.bb} |   0
-> >  recipes-devtools/rust/rust-snapshot.inc       | 102 ++--
-> >  recipes-devtools/rust/rust-source.inc         |   7 +-
-> >  .../rust/{rust_1.92.0.bb =3D> rust_1.96.1.bb}   |  19 +-
-> >  recipes-gnome/librsvg/librsvg-crates.inc      | 498 +++++++++---------
-> >  ...ld-do-not-force-disable-gdk-pixbuf-l.patch |  49 --
-> >  ...append-RUSTFLAGS-to-rustc-executable.patch |   2 +-
-> >  ...e-care-of-deprecated-assert_cmd-Comm.patch |  10 +-
-> >  .../{librsvg_2.61.3.bb =3D> librsvg_2.62.3.bb}  |  30 +-
-> >  31 files changed, 912 insertions(+), 915 deletions(-)
-> >  rename recipes-devtools/{rust =3D> cargo-c}/cargo-c-crates.inc (72%)
-> >  rename recipes-devtools/{rust =3D> cargo-c}/cargo-c/0001-parking-lot-U=
-se-libc-
-> SYS_futex_time64-on-riscv32.patch (100%)
-> >  rename recipes-devtools/{rust/cargo-c_0.10.19+cargo-0.93.0.bb =3D> car=
-go-c/cargo-
-> c_0.10.20+cargo-0.94.0.bb} (87%)
-> >  rename recipes-devtools/rust/{cargo_1.92.0.bb =3D> cargo_1.96.1.bb} (9=
-7%)
-> >  create mode 100644 recipes-devtools/rust/files/0002-Fix-rust-build-fai=
-lure-with-
-> unstable-options.patch
-> >  create mode 100644 recipes-devtools/rust/files/0003-explicit-tail-call=
-s-disable-two-
-> tests.patch
-> >  create mode 100644 recipes-devtools/rust/files/0004-explicit-tail-call=
-s-ignore-tests-
-> on-unsupported-llvm.patch
-> >  delete mode 100644 recipes-devtools/rust/files/oeqa-selftest-Increase-=
-timeout-in-
-> process-sigpipe-ru.patch
-> >  delete mode 100644 recipes-devtools/rust/files/revert-link-std-statica=
-lly-in-
-> rustc_driver-feature.patch
-> >  rename recipes-devtools/rust/{libstd-rs_1.92.0.bb =3D> libstd-rs_1.96.=
-1.bb} (100%)
-> >  rename recipes-devtools/rust/{rust-cross-canadian_1.92.0.bb =3D> rust-=
-cross-
-> canadian_1.96.1.bb} (100%)
-> >  rename recipes-devtools/rust/{rust-llvm_1.92.0.bb =3D> rust-llvm_1.96.=
-1.bb} (100%)
-> >  rename recipes-devtools/rust/{rust_1.92.0.bb =3D> rust_1.96.1.bb} (95%=
-)
-> >  delete mode 100644 recipes-gnome/librsvg/librsvg/0001-Revert-meson.bui=
-ld-do-
-> not-force-disable-gdk-pixbuf-l.patch
-> >  rename recipes-gnome/librsvg/{librsvg_2.61.3.bb =3D> librsvg_2.62.3.bb=
-} (79%)
-> >
-> >
->=20
->=20
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-> Links: You receive all messages sent to this group.
-> View/Reply Online (#4625): https://lists.yoctoproject.org/g/yocto-
-> patches/message/4625
-> Mute This Topic: https://lists.yoctoproject.org/mt/120532672/4454441
-> Group Owner: yocto-patches+owner@lists.yoctoproject.org
-> Unsubscribe: https://lists.yoctoproject.org/g/yocto-
-> patches/leave/13703729/4454441/683413657/xyzzy [peter.marko@siemens.com]
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
->=20
+[RP: Various tweaks for type conversion and path handling]
+AI-Generated: Uses Claude (claude-opus-4-8)
+Signed-off-by: Babanpreet Singh <bbnpreetsingh@gmail.com>
+---
+ enums/op.in                    |  2 +-
+ ports/linux/guts/close_range.c | 59 ++++++++++++++++++++++++++++++----
+ ports/linux/guts/closefrom.c   |  3 +-
+ ports/linux/portdefs.h         | 16 +++++++++
+ pseudo_client.c                | 38 ++++++++++++++++------
+ 5 files changed, 99 insertions(+), 19 deletions(-)
+
+diff --git a/enums/op.in b/enums/op.in
+index 5b5e21b..5854b74 100644
+--- a/enums/op.in
++++ b/enums/op.in
+@@ -27,4 +27,4 @@ remove-xattr, 1
+ set-xattr, 0
+ create-xattr, 1
+ replace-xattr, 1
+-closefrom, 0
++close-range, 0
+diff --git a/ports/linux/guts/close_range.c b/ports/linux/guts/close_range.c
+index 4bd2fe1..1964c70 100644
+--- a/ports/linux/guts/close_range.c
++++ b/ports/linux/guts/close_range.c
+@@ -6,14 +6,59 @@
+  * int close_range(unsigned int lowfd, unsigned int maxfd, int flags)
+  *      int rc = -1;
+  */
++	pseudo_msg_t *msg;
++	int maxintfd;
+ 
+-        (void) lowfd;
+-        (void) maxfd;
+-        (void) flags;
+-        /* for now pretend the kernel doesn't support it regardless 
+-           which users are supposed to be able to handle */
+-        errno = ENOSYS;
+-        rc = -1;
++	/* The kernel rejects both of these outright and closes nothing when
++	 * it does, so validate before touching anything.
++	 */
++	if (flags & ~(CLOSE_RANGE_UNSHARE | CLOSE_RANGE_CLOEXEC)) {
++		errno = EINVAL;
++		return -1;
++	}
++	if (lowfd > maxfd) {
++		errno = EINVAL;
++		return -1;
++	}
++
++	/* CLOSE_RANGE_UNSHARE has to take effect before anything is closed:
++	 * while the descriptor table is still shared, closing a descriptor
++	 * would close it for everyone sharing the table, not just for us.
++	 */
++	if (flags & CLOSE_RANGE_UNSHARE) {
++		if (unshare(CLONE_FILES) == -1)
++			return -1;
++		flags &= ~CLOSE_RANGE_UNSHARE;
++	}
++
++	/* CLOSE_RANGE_CLOEXEC closes nothing, it only marks descriptors, and
++	 * pseudo's own are close-on-exec already (pseudo_fd() sets that on
++	 * every one of them), so there is nothing here to protect.
++	 */
++	if (flags & CLOSE_RANGE_CLOEXEC)
++		return real_close_range(lowfd, maxfd, flags);
++
++	/* Descriptors are ints, so a range starting above INT_MAX cannot hold
++	 * any of pseudo's own and there is nothing to step around. Worth its
++	 * own case because pseudo_client_op() takes the low end as an int.
++	 */
++	if (lowfd > INT_MAX)
++		return real_close_range(lowfd, maxfd, flags);
++	if (maxfd > INT_MAX)
++		maxintfd = INT_MAX;
++	else
++		maxintfd = (int) maxfd;
++
++	/* The op closefrom() also goes through: it closes the descriptors
++	 * pseudo's own are mixed in with by hand, stepping around the ones
++	 * pseudo needs to keep, and hands back the first fd the kernel can
++	 * safely be turned loose on.
++	 */
++	msg = pseudo_client_op(OP_CLOSE_RANGE, 0, lowfd, -1, 0, 0, maxintfd);
++	if (maxfd >= (unsigned int) msg->fd)
++		rc = real_close_range(msg->fd, maxfd, flags);
++	else
++		rc = 0;
+ 
+ /*      return rc;
+  * }
+diff --git a/ports/linux/guts/closefrom.c b/ports/linux/guts/closefrom.c
+index 1350506..7d5df31 100644
+--- a/ports/linux/guts/closefrom.c
++++ b/ports/linux/guts/closefrom.c
+@@ -7,7 +7,8 @@
+  */
+  	pseudo_msg_t *msg;
+ 	/* this cleans up internal tables, and shouldn't make it to the server. Avoids pseudo's internal fds */
+-	msg = pseudo_client_op(OP_CLOSEFROM, 0, fd, -1, 0, 0);
++	/* closefrom() has no top end, so the range op gets the highest fd there can be */
++	msg = pseudo_client_op(OP_CLOSE_RANGE, 0, fd, -1, 0, 0, INT_MAX);
+ 	/* fds between fd and msg->fd are closed within the above function avoiding pseudo's own fds */
+ 	real_closefrom(msg->fd);
+ 
+diff --git a/ports/linux/portdefs.h b/ports/linux/portdefs.h
+index 19bb232..1f1a41a 100644
+--- a/ports/linux/portdefs.h
++++ b/ports/linux/portdefs.h
+@@ -35,6 +35,22 @@ GLIBC_COMPAT_SYMBOL(memcpy,2.0);
+ #include <sys/prctl.h>
+ #include <linux/seccomp.h>
+ 
++/* close_range()'s flags, and unshare(), are only declared by glibc under
++ * _GNU_SOURCE, which pseudo does not build with. <linux/close_range.h> is
++ * not an option either: it is absent on hosts with pre-5.9 kernel headers,
++ * the same problem SYS_openat2 has below. Both values are kernel ABI.
++ */
++#ifndef CLOSE_RANGE_UNSHARE
++#define CLOSE_RANGE_UNSHARE (1U << 1)
++#endif
++#ifndef CLOSE_RANGE_CLOEXEC
++#define CLOSE_RANGE_CLOEXEC (1U << 2)
++#endif
++#ifndef CLONE_FILES
++#define CLONE_FILES 0x00000400
++#endif
++extern int unshare(int flags);
++
+ #ifndef _STAT_VER
+ #if defined (__aarch64__) || defined (__riscv)
+ #define _STAT_VER 0
+diff --git a/pseudo_client.c b/pseudo_client.c
+index 6a7fef7..d83175e 100644
+--- a/pseudo_client.c
++++ b/pseudo_client.c
+@@ -950,13 +950,19 @@ pseudo_client_close(int fd) {
+ 	}
+ }
+ 
++/* Drop the tracked paths for a range of descriptors. The range has a top
++ * end, so entries above it have to be left alone; closefrom() asks for
++ * everything by passing INT_MAX.
++ */
+ static void
+-pseudo_client_closefrom(int fd) {
+-	int i;
+-	if (fd < 0 || fd >= nfds)
++pseudo_client_close_range(int lowfd, unsigned int maxfd) {
++	int i, top;
++
++	if (lowfd < 0 || lowfd >= nfds)
+ 		return;
+ 
+-	for (i = fd; i < nfds; ++i) {
++	top = (maxfd >= (unsigned int) nfds) ? nfds - 1 : (int) maxfd;
++	for (i = lowfd; i <= top; ++i) {
+ 		free(fd_paths[i]);
+ 		fd_paths[i] = 0;
+ 
+@@ -1584,6 +1590,7 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
+ 	static size_t alloced_len = 0;
+ 	int strip_slash;
+ 	int startfd, i;
++	int close_range_maxfd = 0;
+ 
+ #ifdef PSEUDO_PROFILING
+ 	struct timeval tv1_op, tv2_op;
+@@ -1611,7 +1618,7 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
+ 		}
+ 	}
+ 
+-	if (op != OP_CHROOT && op != OP_CHDIR && op != OP_CLOSE && op != OP_CLOSEFROM && op != OP_DUP
++	if (op != OP_CHROOT && op != OP_CHDIR && op != OP_CLOSE && op != OP_CLOSE_RANGE && op != OP_DUP
+ 			&& pseudo_client_ignore_path_chroot(path, 0)) {
+ 		if (op == OP_OPEN) {
+ 			/* Sanitise the path to have no trailing slash as this is convention in the database */
+@@ -1704,6 +1711,13 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
+ 	}
+ #endif
+ 
++	if (op == OP_CLOSE_RANGE) {
++		va_list ap;
++		va_start(ap, buf);
++		close_range_maxfd = va_arg(ap, int);
++		va_end(ap);
++	}
++
+ 	if (op == OP_RENAME) {
+ 		va_list ap;
+ 		if (!path) {
+@@ -1884,7 +1898,7 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
+ 	case OP_EXEC:
+ 		do_request = pseudo_client_logging;
+ 		break;
+-	case OP_CLOSEFROM:
++	case OP_CLOSE_RANGE:
+ 		/* no request needed */
+ 		startfd = fd;
+ 		if (pseudo_util_debug_fd >= startfd)
+@@ -1901,7 +1915,10 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
+ 			startfd = pseudo_grp_fd + 1;
+ 		if (connect_fd >= startfd)
+ 			startfd = connect_fd + 1;
+-		for (i = fd; i < startfd; ++i) {
++		/* the fds below startfd are the ones our own are mixed in
++		 * with, so close those by hand and skip the ones we need
++		 */
++		for (i = fd; i < startfd && i <= close_range_maxfd; ++i) {
+ 			if (i == pseudo_util_debug_fd || i == pseudo_util_evlog_fd ||
+ 					i == pseudo_localstate_dir_fd || i == pseudo_pwd_fd ||
+ 					i == pseudo_pwd_lck_fd || i == pseudo_grp_fd ||
+@@ -1910,8 +1927,9 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
+ 			pseudo_client_close(i);
+ 			close(i);
+ 		}
+-		pseudo_client_closefrom(startfd);
+-		/* tell the caller to close from startfd instead of fd */
++		if (close_range_maxfd >= startfd)
++			pseudo_client_close_range(startfd, close_range_maxfd);
++		/* tell the caller to start at startfd instead of fd */
+ 		result = &msg;
+ 		msg.fd = startfd;
+ 		do_request = 0;
+@@ -1996,7 +2014,7 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
+ 		break;
+ 	}
+ 	/* result can only be set when PSEUDO_XATTRDB resulted in a
+-	 * successful store to or read from the local database or for OP_CLOSEFROM.
++	 * successful store to or read from the local database or for OP_CLOSE_RANGE.
+ 	 */
+ 	if (do_request && !result) {
+ #ifdef PSEUDO_PROFILING
+-- 
+2.43.0
 
 
