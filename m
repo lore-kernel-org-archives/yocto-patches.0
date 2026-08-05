@@ -2,54 +2,54 @@ Return-Path: <bbnpreetsingh@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F379C55174
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D377FC55822
 	for <webhook@archiver.kernel.org>; Wed,  5 Aug 2026 06:23:02 +0000 (UTC)
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.34439.1785910981339098785
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.34401.1785910982088619792
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 04 Aug 2026 23:23:01 -0700
+ Tue, 04 Aug 2026 23:23:02 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20251104 header.b=WCE/4IJ/;
- spf=pass (domain: gmail.com, ip: 209.85.214.178, mailfrom: bbnpreetsingh@gmail.com)
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2cc61541f8cso21583865ad.0
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 04 Aug 2026 23:23:01 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=LM1SU4SO;
+ spf=pass (domain: gmail.com, ip: 209.85.214.175, mailfrom: bbnpreetsingh@gmail.com)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2d02b4c3601so7604635ad.3
+        for <yocto-patches@lists.yoctoproject.org>; Tue, 04 Aug 2026 23:23:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20251104; t=1785910981; x=1786515781; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=vra5moo9/2Fsl9bnt8G0H2qZNz8OefuPkZ2/FI2SGkk=;
-        b=WCE/4IJ/X8G3p+hNK04j587yYvlHnyAEJTJqh55N3R1gNMcA35Fs2qpzJEDAXggi9Y
-         WZs2UjTmqyvAw7nphZfpi4AUInnoCrk9ZK4c1/NdAZHvY2bdIAMAaHiyFEYVbwepVbD+
-         6HievGcJUXx3yHgGDPkoyLQ5ap7NfELZvUpp9qu2qSwXFfI/bfQHAQe8JYz259jc2mzP
-         Syb5A7dbwSpaYKH8ucd5J1JTPvupuXbQHqLWlmjpv2UV4H1OP2Bd4JzlzQHILIOHi71C
-         MmhzYlcMe6u6JD45OKxtO6l5y2cjuHkUhqRCtw/anubJyUtb9bumS1EhD8srbUUz8f4Z
-         bkwA==
+        bh=rimp8WitE9zbsIDrFZlsS+wNK/4vZn0uQjicKbM1kPg=;
+        b=LM1SU4SO4YgdT+4RhAklR48wwhqcUQSBviHCioWgQlsl37kPB5dWWK7E2VcYuSgXjc
+         Ya9pArWWyuIssQGo+NciEG34ef0l+cm99w8o/vNijHHLhwZYD8lzrhxRGhWM0oGt7WcI
+         cLfnChXSIotop0kXkr2Y/T5E8pEeYF/SSarBYiwk/if2D5gpshHvuiGfP01qN+CNCqJE
+         zgWQKuHogNUiToFqZB2MP9bFVku7OxbrrXTbMZQrvGXtFVeQUFUdO5qgNqGHAFRcRgLu
+         i7kUG7YMxmr6gzhB2lRwlQ7/LIjHuTKxNFVaAFddKAbXSkUKZ+W1R06ezVegajO1rcu/
+         VPkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20251104; t=1785910981; x=1786515781;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=vra5moo9/2Fsl9bnt8G0H2qZNz8OefuPkZ2/FI2SGkk=;
-        b=UkpPLyTfDISSaIqKDk5VvRmQMMKDzP47Q42YDdy0Q4i/fW9hrfqdRyMAvVr1VVLBSE
-         mwZFg7U64cFbaob4/JJarq7xEYD+pqcfCiIG5HEwaavVffzyyQ5tLfr66M1BNHv7kKud
-         EwbUVDGMqQnh5LpD6bIIjvplLmc9hsqSTPB39OfiGzRa5HcVkDlNtd2jzIRxIiCVNbnE
-         AclCaZz1B3Y+tEVEIlRD10mppj9jzXxNOPcBpGHd4FZhr1I8tKMk6vaU8udWtvQcZ/t2
-         gtJSWir2h0dqdmV2OdoZA2cqKzVQLkQ82rDKuXjZKpmwgqaVAz57VAT/dhwDBB4kuipC
-         Ddhg==
-X-Gm-Message-State: AOJu0Ywn8cyncmC83AR7OMF6eOh1+DVOLURsjmefsekawEW9S5kJxRDc
-	tsvyvRDbOLn6qzi1UlUrh9b7F9vu5+jG0DRDCMZtJdkn1zg2c8v1dVuYo8o7HWTgSpM=
-X-Gm-Gg: AR+sD13BHQ1iu5QpWfWy/9LtDYgAqRJLrqYJqgZyY9eBCOYeClMQlT7X3NjlMkaD+Bv
-	ykwrqbdf/kJp7o7nKcHwNmxLktCwZlQl2LZ2RwbsJdf/K7w0+kK2zaQEXLD+eYXFQ3CajD/T6vF
-	9MbTaw52kkh6aakCpigq6mm77WSdZ2OKRvpdliTlt2LRZCIhgG1Ej9ZPSHCrn+gKKTt715v3JDn
-	6DzNB1Rwd9NWLyTjMNTcdB0FPwcmb7rBOZmbDPZXNAqA71TDxruDsRJlSMYtLau1n0z1zhXDqw5
-	yYNAeL+2JxTb05H9vRrheFjmuGkU7jIrbV56HRRcg894tmVaBYmKHJSF/ZJrBnAcgOdwG3uqPws
-	EHL7b/Z/2oo8Q63t3bS1HrH/bpCd7Foku048fGD7ZLZMv7mbGUeXMH3gZXr/bTy3JrqVKGDFnwv
-	muL7/A67UGjHGJjpEXyWn2sDgIZHWUPodZvdYV9vitlWbp7E/+I0YzjjOs5rii
-X-Received: by 2002:a17:902:c952:b0:2bd:2c3a:2a36 with SMTP id d9443c01a7336-2d088e888d6mr97083135ad.0.1785910980500;
-        Tue, 04 Aug 2026 23:23:00 -0700 (PDT)
+        bh=rimp8WitE9zbsIDrFZlsS+wNK/4vZn0uQjicKbM1kPg=;
+        b=TqE1FHteYK1DTYea/sUdExn8cbEv+tjelJwd3puzaRkmJg64XIVvdOTQMYwIz29IxD
+         q63GyHfSbxrV+kvGUhpFfb1Sl3/JHGpxFrqEJXu2qHVgRRRkYD9cRPrH6VLdN8EMKoqb
+         nr22ARhGHa9iI+XQpTt6RCMlO68NGXoWaouRowR2yFhp5cg+sRHlU2tth20ks5Vbl4mT
+         /+AAIgQw8rnz6hZKBjTviLZ5ogUJcp28Msl7yQvvmkNC/VSwWlVMbJ5A5w+Lx/n5Xuua
+         2YSvNciQO9lEXJITc7KSnwSNtCSxW4YV/ZupqNE73GIUce0W7pQY3ZbY3ArO5uAW7Hym
+         ZKFg==
+X-Gm-Message-State: AOJu0Yx96K9aQDaKyDirnsgftmci4ppkna8EKRjF2DVPZ0COE/z8Kg2N
+	vvsGRTBubGHcDJ66hyXFtap6ZE6hgbGr+VbFRK8UA4cl+qRzM3Gx++nE1WAmyOhV6CQ=
+X-Gm-Gg: AR+sD10/jdSDM74a5+pJOLUqKeycfc0U+w3Qx8JtjmfSJ87bFNfvPC/vBE1jKAmDiiO
+	Nn/6XUSnWiyajvwxMD/m/bqIcmN50/e3OXtdTpAgrQzNsg1W2KsT+FTbJSzcbrEp/eDd90E9tXz
+	j32nXbsWdRB9m/cZBZ+rgEPz2mDNLnWTFOnlW/fruiMjfiCzjjwr+yUaKSskwqTJsdt6MeGRZRg
+	W+lQdF2ucORt24/B3wrhFrPqINfqXHkagU+6eYu+a9zJSgkv8gczx8kCCdyLH3qc0/1gD+IQp6E
+	rCroFtamgHZZxXyZJCqOB1fw3H3B/Dka+tksUUs42JiEhaPkfBUzeyqLJe3HoNMGQ+syAteMZXw
+	cKilY7m6ewypz7DNfk8aiQAFFpDfeErVCeFVb5QjoqZHnrFLVqyY7gsBsRUFhKpK3qRUqL01wWw
+	M3qJpJd5u4XJGNHFGvvjV73Mftftz8DUGi7fWmpaNfXVETWCqB45Tfq5nXyYEX
+X-Received: by 2002:a17:902:f54a:b0:2d0:cc92:f7ac with SMTP id d9443c01a7336-2d0cc9302b2mr39544995ad.14.1785910981329;
+        Tue, 04 Aug 2026 23:23:01 -0700 (PDT)
 Received: from ydev.. ([108.180.130.139])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2d0aa492c7fsm14230065ad.43.2026.08.04.23.22.59
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2d0aa492c7fsm14230065ad.43.2026.08.04.23.23.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Tue, 04 Aug 2026 23:23:00 -0700 (PDT)
 From: Babanpreet Singh <bbnpreetsingh@gmail.com>
@@ -61,9 +61,9 @@ Cc: Richard Purdie <richard.purdie@linuxfoundation.org>,
 	Randy MacLeod <randy.macleod@windriver.com>,
 	Vincent Haupert <mail@vincent-haupert.de>,
 	Babanpreet Singh <bbnpreetsingh@gmail.com>
-Subject: [pseudo] [PATCH v3 1/2] ports/linux/guts: Implement close_range() instead of returning ENOSYS
-Date: Wed,  5 Aug 2026 06:22:57 +0000
-Message-ID: <20260805062258.7-2-bbnpreetsingh@gmail.com>
+Subject: [pseudo] [PATCH v3 2/2] tests: Add close_range() test
+Date: Wed,  5 Aug 2026 06:22:58 +0000
+Message-ID: <20260805062258.7-3-bbnpreetsingh@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260805062258.7-1-bbnpreetsingh@gmail.com>
 References: <92c180949cc82cbd9025c7673c2ffb8a43896fda.camel@linuxfoundation.org>
@@ -74,258 +74,356 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Wed, 05 Aug 2026 06:23:02 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4628
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4629
 
-close_range() runs through a client side op, OP_CLOSE_RANGE. The op closes
-the descriptors below pseudo's own one at a time, skipping the ones pseudo
-keeps, clears the tracked paths across the range, and returns the first
-descriptor above pseudo's own so the caller can hand the rest of the range
-to the kernel.
+Covers the ENOSYS regression itself, that the wrapper agrees with the
+kernel about bad arguments, and the part that actually needs the care:
+pseudo keeps its own descriptors in the range, including the connection
+to its server, and has to come out of a close_range(3, ~0U, 0) still
+tracking ownership.
 
-closefrom() uses the same op, with INT_MAX as the maximum.
+CLOSE_RANGE_UNSHARE is exercised against a child cloned with
+CLONE_FILES: the child closes a shared descriptor with the flag set,
+and the parent must still hold that descriptor afterwards, which is
+what the wrapper's unshare-before-closing order exists to preserve. A
+second child then closes the same descriptor without the flag and the
+parent must see it gone.
 
-Unknown flags and a lowfd above maxfd return EINVAL before anything is
-closed. CLOSE_RANGE_UNSHARE unshares the descriptor table first, so the
-closes do not reach other processes sharing it. CLOSE_RANGE_CLOEXEC and a
-range starting above INT_MAX go straight to the kernel. A maxfd above
-INT_MAX is clamped for the op; the kernel still gets the caller's maxfd.
+close_range() needs a 5.9 kernel and CLOSE_RANGE_CLOEXEC a 5.11 one, so
+the shell wrapper probes for each with PSEUDO_DISABLED=1 before running.
+On 5.9 and 5.10 the syscall probe succeeds, the flag probe fails, and
+only the CLOSE_RANGE_CLOEXEC part of the test is left out.
 
 [YOCTO #16339]
 
-[RP: Various tweaks for type conversion and path handling]
 AI-Generated: Uses Claude (claude-opus-4-8)
 Signed-off-by: Babanpreet Singh <bbnpreetsingh@gmail.com>
 ---
- enums/op.in                    |  2 +-
- ports/linux/guts/close_range.c | 59 ++++++++++++++++++++++++++++++----
- ports/linux/guts/closefrom.c   |  3 +-
- ports/linux/portdefs.h         | 16 +++++++++
- pseudo_client.c                | 38 ++++++++++++++++------
- 5 files changed, 99 insertions(+), 19 deletions(-)
+ test/test-close-range.c  | 283 +++++++++++++++++++++++++++++++++++++++
+ test/test-close-range.sh |  24 ++++
+ 2 files changed, 307 insertions(+)
+ create mode 100644 test/test-close-range.c
+ create mode 100755 test/test-close-range.sh
 
-diff --git a/enums/op.in b/enums/op.in
-index 5b5e21b..5854b74 100644
---- a/enums/op.in
-+++ b/enums/op.in
-@@ -27,4 +27,4 @@ remove-xattr, 1
- set-xattr, 0
- create-xattr, 1
- replace-xattr, 1
--closefrom, 0
-+close-range, 0
-diff --git a/ports/linux/guts/close_range.c b/ports/linux/guts/close_range.c
-index 4bd2fe1..1964c70 100644
---- a/ports/linux/guts/close_range.c
-+++ b/ports/linux/guts/close_range.c
-@@ -6,14 +6,59 @@
-  * int close_range(unsigned int lowfd, unsigned int maxfd, int flags)
-  *      int rc = -1;
-  */
-+	pseudo_msg_t *msg;
-+	int maxintfd;
- 
--        (void) lowfd;
--        (void) maxfd;
--        (void) flags;
--        /* for now pretend the kernel doesn't support it regardless 
--           which users are supposed to be able to handle */
--        errno = ENOSYS;
--        rc = -1;
-+	/* The kernel rejects both of these outright and closes nothing when
-+	 * it does, so validate before touching anything.
-+	 */
-+	if (flags & ~(CLOSE_RANGE_UNSHARE | CLOSE_RANGE_CLOEXEC)) {
-+		errno = EINVAL;
-+		return -1;
-+	}
-+	if (lowfd > maxfd) {
-+		errno = EINVAL;
-+		return -1;
-+	}
-+
-+	/* CLOSE_RANGE_UNSHARE has to take effect before anything is closed:
-+	 * while the descriptor table is still shared, closing a descriptor
-+	 * would close it for everyone sharing the table, not just for us.
-+	 */
-+	if (flags & CLOSE_RANGE_UNSHARE) {
-+		if (unshare(CLONE_FILES) == -1)
-+			return -1;
-+		flags &= ~CLOSE_RANGE_UNSHARE;
-+	}
-+
-+	/* CLOSE_RANGE_CLOEXEC closes nothing, it only marks descriptors, and
-+	 * pseudo's own are close-on-exec already (pseudo_fd() sets that on
-+	 * every one of them), so there is nothing here to protect.
-+	 */
-+	if (flags & CLOSE_RANGE_CLOEXEC)
-+		return real_close_range(lowfd, maxfd, flags);
-+
-+	/* Descriptors are ints, so a range starting above INT_MAX cannot hold
-+	 * any of pseudo's own and there is nothing to step around. Worth its
-+	 * own case because pseudo_client_op() takes the low end as an int.
-+	 */
-+	if (lowfd > INT_MAX)
-+		return real_close_range(lowfd, maxfd, flags);
-+	if (maxfd > INT_MAX)
-+		maxintfd = INT_MAX;
-+	else
-+		maxintfd = (int) maxfd;
-+
-+	/* The op closefrom() also goes through: it closes the descriptors
-+	 * pseudo's own are mixed in with by hand, stepping around the ones
-+	 * pseudo needs to keep, and hands back the first fd the kernel can
-+	 * safely be turned loose on.
-+	 */
-+	msg = pseudo_client_op(OP_CLOSE_RANGE, 0, lowfd, -1, 0, 0, maxintfd);
-+	if (maxfd >= (unsigned int) msg->fd)
-+		rc = real_close_range(msg->fd, maxfd, flags);
-+	else
-+		rc = 0;
- 
- /*      return rc;
-  * }
-diff --git a/ports/linux/guts/closefrom.c b/ports/linux/guts/closefrom.c
-index 1350506..7d5df31 100644
---- a/ports/linux/guts/closefrom.c
-+++ b/ports/linux/guts/closefrom.c
-@@ -7,7 +7,8 @@
-  */
-  	pseudo_msg_t *msg;
- 	/* this cleans up internal tables, and shouldn't make it to the server. Avoids pseudo's internal fds */
--	msg = pseudo_client_op(OP_CLOSEFROM, 0, fd, -1, 0, 0);
-+	/* closefrom() has no top end, so the range op gets the highest fd there can be */
-+	msg = pseudo_client_op(OP_CLOSE_RANGE, 0, fd, -1, 0, 0, INT_MAX);
- 	/* fds between fd and msg->fd are closed within the above function avoiding pseudo's own fds */
- 	real_closefrom(msg->fd);
- 
-diff --git a/ports/linux/portdefs.h b/ports/linux/portdefs.h
-index 19bb232..1f1a41a 100644
---- a/ports/linux/portdefs.h
-+++ b/ports/linux/portdefs.h
-@@ -35,6 +35,22 @@ GLIBC_COMPAT_SYMBOL(memcpy,2.0);
- #include <sys/prctl.h>
- #include <linux/seccomp.h>
- 
-+/* close_range()'s flags, and unshare(), are only declared by glibc under
-+ * _GNU_SOURCE, which pseudo does not build with. <linux/close_range.h> is
-+ * not an option either: it is absent on hosts with pre-5.9 kernel headers,
-+ * the same problem SYS_openat2 has below. Both values are kernel ABI.
+diff --git a/test/test-close-range.c b/test/test-close-range.c
+new file mode 100644
+index 0000000..482c85e
+--- /dev/null
++++ b/test/test-close-range.c
+@@ -0,0 +1,283 @@
++/*
++ * SPDX-License-Identifier: LGPL-2.1-only
++ *
++ * close_range() was stubbed out to return ENOSYS unconditionally, on the
++ * assumption that callers all cope with that. Current systemd does not: it
++ * dropped its /proc fallback once its kernel baseline reached 5.10, so every
++ * fork+exec under pseudo failed. Check the wrapper works, that it agrees
++ * with the kernel about bad arguments, that CLOSE_RANGE_UNSHARE keeps a
++ * process sharing the descriptor table unaffected, and that pseudo still
++ * functions after a caller closes every descriptor from 3 up.
 + */
++#define _GNU_SOURCE
++
++#include <errno.h>
++#include <fcntl.h>
++#include <limits.h>
++#include <sched.h>
++#include <signal.h>
++#include <stdio.h>
++#include <string.h>
++#include <sys/stat.h>
++#include <sys/wait.h>
++#include <unistd.h>
++
++/* <linux/close_range.h> is missing on hosts with pre-5.9 kernel headers */
 +#ifndef CLOSE_RANGE_UNSHARE
 +#define CLOSE_RANGE_UNSHARE (1U << 1)
 +#endif
 +#ifndef CLOSE_RANGE_CLOEXEC
 +#define CLOSE_RANGE_CLOEXEC (1U << 2)
 +#endif
-+#ifndef CLONE_FILES
-+#define CLONE_FILES 0x00000400
-+#endif
-+extern int unshare(int flags);
 +
- #ifndef _STAT_VER
- #if defined (__aarch64__) || defined (__riscv)
- #define _STAT_VER 0
-diff --git a/pseudo_client.c b/pseudo_client.c
-index 6a7fef7..d83175e 100644
---- a/pseudo_client.c
-+++ b/pseudo_client.c
-@@ -950,13 +950,19 @@ pseudo_client_close(int fd) {
- 	}
- }
- 
-+/* Drop the tracked paths for a range of descriptors. The range has a top
-+ * end, so entries above it have to be left alone; closefrom() asks for
-+ * everything by passing INT_MAX.
++/* matches test-openat2-syscall: the shell wrapper turns 77 into "skipped" */
++#define SKIP 77
++
++#define TESTFILE "test-close-range-file"
++
++static int open_null(void) {
++	int fd = open("/dev/null", O_RDONLY);
++	if (fd < 0)
++		perror("open /dev/null");
++	return fd;
++}
++
++static int is_closed(int fd) {
++	return fcntl(fd, F_GETFD) == -1 && errno == EBADF;
++}
++
++/* Is close_range() there at all? The wrapper runs this with PSEUDO_DISABLED
++ * set, so the answer is the kernel's and a stubbed wrapper cannot pass
++ * itself off as an old kernel.
 + */
- static void
--pseudo_client_closefrom(int fd) {
--	int i;
--	if (fd < 0 || fd >= nfds)
-+pseudo_client_close_range(int lowfd, unsigned int maxfd) {
-+	int i, top;
++static int probe(void) {
++	int fd = open_null();
 +
-+	if (lowfd < 0 || lowfd >= nfds)
- 		return;
- 
--	for (i = fd; i < nfds; ++i) {
-+	top = (maxfd >= (unsigned int) nfds) ? nfds - 1 : (int) maxfd;
-+	for (i = lowfd; i <= top; ++i) {
- 		free(fd_paths[i]);
- 		fd_paths[i] = 0;
- 
-@@ -1584,6 +1590,7 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
- 	static size_t alloced_len = 0;
- 	int strip_slash;
- 	int startfd, i;
-+	int close_range_maxfd = 0;
- 
- #ifdef PSEUDO_PROFILING
- 	struct timeval tv1_op, tv2_op;
-@@ -1611,7 +1618,7 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
- 		}
- 	}
- 
--	if (op != OP_CHROOT && op != OP_CHDIR && op != OP_CLOSE && op != OP_CLOSEFROM && op != OP_DUP
-+	if (op != OP_CHROOT && op != OP_CHDIR && op != OP_CLOSE && op != OP_CLOSE_RANGE && op != OP_DUP
- 			&& pseudo_client_ignore_path_chroot(path, 0)) {
- 		if (op == OP_OPEN) {
- 			/* Sanitise the path to have no trailing slash as this is convention in the database */
-@@ -1704,6 +1711,13 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
- 	}
- #endif
- 
-+	if (op == OP_CLOSE_RANGE) {
-+		va_list ap;
-+		va_start(ap, buf);
-+		close_range_maxfd = va_arg(ap, int);
-+		va_end(ap);
++	if (fd < 0)
++		return 1;
++	if (close_range(fd, fd, 0) == -1) {
++		int err = errno;
++		close(fd);
++		return (err == ENOSYS) ? SKIP : 1;
++	}
++	return 0;
++}
++
++/* CLOSE_RANGE_CLOEXEC is newer than the syscall: 5.11 rather than 5.9. Probe
++ * for it separately, the same way, so that on a 5.9 or 5.10 kernel only the
++ * CLOSE_RANGE_CLOEXEC part of the test is left out, not the whole thing.
++ */
++static int probe_cloexec(void) {
++	int fd = open_null();
++	int rc;
++
++	if (fd < 0)
++		return 1;
++	rc = close_range(fd, fd, CLOSE_RANGE_CLOEXEC);
++	if (rc == -1) {
++		int err = errno;
++		close(fd);
++		return (err == EINVAL || err == ENOSYS) ? SKIP : 1;
++	}
++	close(fd);
++	return 0;
++}
++
++/* for the CLONE_FILES children: close one descriptor, with or without
++ * CLOSE_RANGE_UNSHARE, and report whether it is gone for the child itself.
++ */
++struct child_close {
++	int fd;
++	int flags;
++};
++
++static char child_stack[65536];
++
++static int child_close_one(void *arg) {
++	struct child_close *cc = arg;
++
++	if (close_range(cc->fd, cc->fd, cc->flags) == -1)
++		return 2;
++	return is_closed(cc->fd) ? 0 : 3;
++}
++
++int main(int argc, char **argv) {
++	struct child_close cc;
++	struct stat st;
++	int a, b, c;
++	int status;
++	int test_cloexec = 1;
++	pid_t pid;
++
++	if (argc > 1 && !strcmp(argv[1], "--probe"))
++		return probe();
++	if (argc > 1 && !strcmp(argv[1], "--probe-cloexec"))
++		return probe_cloexec();
++	if (argc > 1 && !strcmp(argv[1], "--no-cloexec"))
++		test_cloexec = 0;
++
++	/* the reported bug: this used to fail with ENOSYS every time */
++	a = open_null();
++	if (a < 0)
++		return 1;
++	if (close_range(a, a, 0) == -1) {
++		fprintf(stderr, "close_range(%d, %d, 0): %s\n", a, a, strerror(errno));
++		return 1;
++	}
++	if (!is_closed(a)) {
++		fprintf(stderr, "close_range() left fd %d open\n", a);
++		return 1;
 +	}
 +
- 	if (op == OP_RENAME) {
- 		va_list ap;
- 		if (!path) {
-@@ -1884,7 +1898,7 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
- 	case OP_EXEC:
- 		do_request = pseudo_client_logging;
- 		break;
--	case OP_CLOSEFROM:
-+	case OP_CLOSE_RANGE:
- 		/* no request needed */
- 		startfd = fd;
- 		if (pseudo_util_debug_fd >= startfd)
-@@ -1901,7 +1915,10 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
- 			startfd = pseudo_grp_fd + 1;
- 		if (connect_fd >= startfd)
- 			startfd = connect_fd + 1;
--		for (i = fd; i < startfd; ++i) {
-+		/* the fds below startfd are the ones our own are mixed in
-+		 * with, so close those by hand and skip the ones we need
-+		 */
-+		for (i = fd; i < startfd && i <= close_range_maxfd; ++i) {
- 			if (i == pseudo_util_debug_fd || i == pseudo_util_evlog_fd ||
- 					i == pseudo_localstate_dir_fd || i == pseudo_pwd_fd ||
- 					i == pseudo_pwd_lck_fd || i == pseudo_grp_fd ||
-@@ -1910,8 +1927,9 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
- 			pseudo_client_close(i);
- 			close(i);
- 		}
--		pseudo_client_closefrom(startfd);
--		/* tell the caller to close from startfd instead of fd */
-+		if (close_range_maxfd >= startfd)
-+			pseudo_client_close_range(startfd, close_range_maxfd);
-+		/* tell the caller to start at startfd instead of fd */
- 		result = &msg;
- 		msg.fd = startfd;
- 		do_request = 0;
-@@ -1996,7 +2014,7 @@ pseudo_client_op(pseudo_op_t op, int access, int fd, int dirfd, const char *path
- 		break;
- 	}
- 	/* result can only be set when PSEUDO_XATTRDB resulted in a
--	 * successful store to or read from the local database or for OP_CLOSEFROM.
-+	 * successful store to or read from the local database or for OP_CLOSE_RANGE.
- 	 */
- 	if (do_request && !result) {
- #ifdef PSEUDO_PROFILING
++	/* a bounded range closes all of itself */
++	a = open_null();
++	b = open_null();
++	c = open_null();
++	if (a < 0 || b < 0 || c < 0)
++		return 1;
++	if (close_range(a, c, 0) == -1) {
++		perror("close_range(a, c, 0)");
++		return 1;
++	}
++	if (!is_closed(a) || !is_closed(b) || !is_closed(c)) {
++		fprintf(stderr, "close_range(%d, %d, 0) left descriptors open\n", a, c);
++		return 1;
++	}
++
++	/* CLOSE_RANGE_CLOEXEC marks descriptors, it does not close them. The
++	 * flag needs a 5.11 kernel; the shell wrapper passes --no-cloexec
++	 * when the probe says this kernel has the syscall but not the flag.
++	 */
++	if (test_cloexec) {
++		a = open_null();
++		if (a < 0)
++			return 1;
++		if (close_range(a, a, CLOSE_RANGE_CLOEXEC) == -1) {
++			perror("close_range(a, a, CLOSE_RANGE_CLOEXEC)");
++			return 1;
++		}
++		if (is_closed(a)) {
++			fprintf(stderr, "CLOSE_RANGE_CLOEXEC closed fd %d\n", a);
++			return 1;
++		}
++		if (!(fcntl(a, F_GETFD) & FD_CLOEXEC)) {
++			fprintf(stderr, "CLOSE_RANGE_CLOEXEC did not set FD_CLOEXEC on fd %d\n", a);
++			return 1;
++		}
++		close(a);
++	}
++
++	/* bad arguments are refused, and a refused call closes nothing */
++	a = open_null();
++	if (a < 0)
++		return 1;
++	if (close_range(a, a, 0x80) != -1 || errno != EINVAL) {
++		fprintf(stderr, "close_range() with an unknown flag should fail EINVAL\n");
++		return 1;
++	}
++	if (is_closed(a)) {
++		fprintf(stderr, "a rejected close_range() closed fd %d anyway\n", a);
++		return 1;
++	}
++	if (close_range(a + 1, a, 0) != -1 || errno != EINVAL) {
++		fprintf(stderr, "close_range() with lowfd > maxfd should fail EINVAL\n");
++		return 1;
++	}
++	close(a);
++
++	/* a range entirely above INT_MAX holds no descriptors at all, but it
++	 * still has to be accepted rather than mangled on the way through
++	 */
++	if (close_range((unsigned int) INT_MAX + 1, ~0U, 0) == -1) {
++		fprintf(stderr, "close_range(INT_MAX+1, ~0U, 0): %s\n", strerror(errno));
++		return 1;
++	}
++
++	/* CLOSE_RANGE_UNSHARE unshares the descriptor table before closing:
++	 * when a child cloned with CLONE_FILES closes our shared descriptor
++	 * with the flag set, we must still hold that descriptor afterwards.
++	 * This is what the wrapper's unshare-first order preserves; closing
++	 * by hand before unsharing would go through the still-shared table.
++	 */
++	a = open_null();
++	if (a < 0)
++		return 1;
++	cc.fd = a;
++	cc.flags = CLOSE_RANGE_UNSHARE;
++	pid = clone(child_close_one, child_stack + sizeof(child_stack),
++		    CLONE_FILES | SIGCHLD, &cc);
++	if (pid == -1) {
++		perror("clone(CLONE_FILES)");
++		return 1;
++	}
++	if (waitpid(pid, &status, 0) == -1) {
++		perror("waitpid");
++		return 1;
++	}
++	if (!WIFEXITED(status) || WEXITSTATUS(status) != 0) {
++		fprintf(stderr, "CLOSE_RANGE_UNSHARE failed in the child (status %d)\n",
++			status);
++		return 1;
++	}
++	if (is_closed(a)) {
++		fprintf(stderr, "child's CLOSE_RANGE_UNSHARE closed the parent's fd %d\n", a);
++		return 1;
++	}
++
++	/* the control for the test above: the same close without the flag
++	 * happens in the shared table, so this time fd a must be gone for
++	 * us as well. A clone that quietly stopped sharing the table would
++	 * pass the test above no matter what the wrapper did; it fails here
++	 * instead.
++	 */
++	cc.flags = 0;
++	pid = clone(child_close_one, child_stack + sizeof(child_stack),
++		    CLONE_FILES | SIGCHLD, &cc);
++	if (pid == -1) {
++		perror("clone(CLONE_FILES)");
++		return 1;
++	}
++	if (waitpid(pid, &status, 0) == -1) {
++		perror("waitpid");
++		return 1;
++	}
++	if (!WIFEXITED(status) || WEXITSTATUS(status) != 0) {
++		fprintf(stderr, "close_range() failed in the CLONE_FILES child (status %d)\n",
++			status);
++		return 1;
++	}
++	if (!is_closed(a)) {
++		fprintf(stderr, "close in a CLONE_FILES child did not reach the parent's fd %d\n", a);
++		return 1;
++	}
++
++	/* And the point of the care in the wrapper: pseudo keeps descriptors
++	 * of its own in this range and has to come out of it still working.
++	 */
++	a = open(TESTFILE, O_CREAT | O_WRONLY, 0644);
++	if (a < 0) {
++		perror("open " TESTFILE);
++		return 1;
++	}
++	close(a);
++	if (chown(TESTFILE, 0, 0) == -1) {
++		perror("chown " TESTFILE);
++		return 1;
++	}
++	if (close_range(3, ~0U, 0) == -1) {
++		fprintf(stderr, "close_range(3, ~0U, 0): %s\n", strerror(errno));
++		return 1;
++	}
++	if (stat(TESTFILE, &st) == -1) {
++		perror("stat after close_range");
++		return 1;
++	}
++	if (st.st_uid != 0 || st.st_gid != 0) {
++		fprintf(stderr, "pseudo lost track after close_range: uid %d, gid %d\n",
++			(int) st.st_uid, (int) st.st_gid);
++		return 1;
++	}
++	unlink(TESTFILE);
++
++	return 0;
++}
+diff --git a/test/test-close-range.sh b/test/test-close-range.sh
+new file mode 100755
+index 0000000..578102c
+--- /dev/null
++++ b/test/test-close-range.sh
+@@ -0,0 +1,24 @@
++#!/bin/bash
++#
++# SPDX-License-Identifier: LGPL-2.1-only
++#
++
++# close_range() needs a 5.9 kernel. Ask with pseudo out of the way, so that a
++# wrapper which has gone back to returning ENOSYS cannot pass itself off as an
++# old kernel and quietly skip the test it is supposed to fail.
++PSEUDO_DISABLED=1 ./test/test-close-range --probe
++case $? in
++0)  ;;
++77) exit 255 ;;
++*)  exit 1 ;;
++esac
++
++# CLOSE_RANGE_CLOEXEC needs 5.11. On a 5.9 or 5.10 kernel the syscall probe
++# above succeeds but the flag does not exist yet, so probe for it the same
++# way and leave only the CLOSE_RANGE_CLOEXEC part of the test out.
++PSEUDO_DISABLED=1 ./test/test-close-range --probe-cloexec
++case $? in
++0)  ./test/test-close-range ;;
++77) ./test/test-close-range --no-cloexec ;;
++*)  exit 1 ;;
++esac
 -- 
 2.43.0
 
