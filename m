@@ -2,53 +2,51 @@ Return-Path: <quentin.schulz@cherry.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84730C5AC7D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA5D8C5AC80
 	for <webhook@archiver.kernel.org>; Thu,  6 Aug 2026 12:42:25 +0000 (UTC)
 Received: from DUZPR83CU001.outbound.protection.outlook.com (DUZPR83CU001.outbound.protection.outlook.com [52.101.66.61])
  by mx.groups.io with SMTP id smtpd.msgproc02-g2.18853.1786020133943842754
  for <yocto-patches@lists.yoctoproject.org>;
- Thu, 06 Aug 2026 05:42:20 -0700
+ Thu, 06 Aug 2026 05:42:17 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@cherry.de header.s=selector1 header.b=nFZTYe3c;
+ dkim=pass header.i=@cherry.de header.s=selector1 header.b=WPSQjiaV;
  spf=pass (domain: cherry.de, ip: 52.101.66.61, mailfrom: quentin.schulz@cherry.de)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SV1GJ/TfZa307XXb1pK+5/cEr8ddchGp3u2//V4VrcHIWfSVvSS/a9EI34OC7F1HAUYigADKHNdwKaRLvzxWOg2aB34UcS4g45ttDVQVWUvYmrsmOOb/c57t7AIX+gqDLiwsbgei9Mk0fsuBtdXd8QOEMi3g6LY+zdzpBswMhj8yKmjQbVC9N1ehu/j3nVBVjuGb61TL4G3VTRfmBhExBLCaOkquqXpR8gWn3YmcoZsnrOYKzAsOkiVGGr0bWznb5o5SbkwIMxGikTSDLcqFpsJgbK2wemWnJ7YC9tqmtCXJrS3Y1syByrNHroj5L33Fr2e5tEN2yMDDdJXfzSeu+Q==
+ b=bnVCW9yUezrSqYQ8ueISEAj1D4OSUPOsPF3eBXFgh0pH018qdJl/WwaMIk35BMLY4UefNWPkJDSVHlRu18DkOaVa78Uxg82i7qcd5SYMweOAmYicAjbTf4870u/WeD2cjYb/k5Jcf83FHrLU1Hhn2KtHkmpFzgaVQ3ZCrjn7Tqh0PqnJt9QzN+cvCdyNwz+PcxBisTcmjtcxgB0R2iwROITuRaM6rVqnJCYtgrig4Zsu3cOSV/iE1IXD4Evj95rsUTTBX5Yt74ATo5YhO1tjIXsNHLxtlC4YdvcKNRIXS/3ueQhhtyGPPYAuwRrblKpm0cHrAsI4q6PLLDwU7DFrOQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZIpCsnSgsKm2+xPzHEcsQwLPzWWqBiDWN/t73LiARkY=;
- b=OywsG11BDdOhKZunRmZ15f/xyUrB45Bh7MJ239l3EtDylynFzKvRvkWGDNB9gaRbqEWz5F1XdVdNRkcp2lihpey29KkbVh1LwyysEoYxmXVzV4Unp4oGppN9lGdr5MsAIpYYxiNWnQkKxJeIXTjw4qRZQKrWG6vRZgM57zWlQS3Fxni3QP1BrRihf/5FILXdX9AamEKgPBX1M6sBV0ei02OpoFfoHlApqA/0tX8PaTKLsuvNMI//j1kWE5rWhgiOxEKtcWRAnY9H17koNzDAAjjcqWZgAmHBWYZGl47Z/JNw1sES3IRKEH1mE3IuXGcYZMHD9wwIfz2x42YNDOZLxQ==
+ bh=/VNgIQqAGMWt4x0efnC7be+ove+7R/pQaFExIZ2OgJM=;
+ b=LPhjVt/9RYsk4FPa1mCOrPa2XWOWAYanT+sJVd7htpjs15NlJrburISJBau+J5ZFKXLRdt5patSBJ+y+pVcKZkwUqcPgt3BOixPUg6k+R8l7Rj+JDZ80OiCFg1wTh8cPHw3Zs3gwhk5/3QnqUE1PR6TbwEwk9acXLrH8TcasCwrla+aC4ZBx8Zq5SFnSTToQweIFMe8Wop8ZHFHLJG5xb8vZTSXx0RfH+B6aslMzB+vF+RmbG7kp7SI1riQEjL9l0o50dX8Hxcr69xq/md9I8rNCocsCHn7Yfm7Q70ZnxJVg5mhLJVcnm21+j8YLvYemNIjX8vRMYIqxUSCBFdp5dA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
  dkim=pass header.d=cherry.de; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZIpCsnSgsKm2+xPzHEcsQwLPzWWqBiDWN/t73LiARkY=;
- b=nFZTYe3czIotDzpHGhct+338U2T4NfMLbbo1SeUPL+Hgtr/1jhVXHeGZNs9ZnZpfERetYrn0hmO5iRZV6PF+UgCx16HuSNNdzj4xB/oe1uN7Es6o1lh9IzcpBzgtpkZvhQ9FZQpCXY21oQJxiRpUyYIHzuJ76y0WUePaOqokkd8=
+ bh=/VNgIQqAGMWt4x0efnC7be+ove+7R/pQaFExIZ2OgJM=;
+ b=WPSQjiaVo4o3jal6LZlGRMvVhr/+mUQv3KvyyQQeFMh/cxSzn51gyWnOoUqGp84mb90Z6XixFhikdU0HxmDO85PnDIbhdlaa9XxWNQKfI6kc3sOsEFTlNJrBtPmzOw0jN5jMswSdDZciBXMMXsyX9Ig89VQoShsrCGL/94fHD9s=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=cherry.de;
 Received: from AS8PR04MB7733.eurprd04.prod.outlook.com (2603:10a6:20b:288::18)
  by FRRPR04MB12571.eurprd04.prod.outlook.com (2603:10a6:d10:1cf::18) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.292.20; Thu, 6 Aug
- 2026 12:42:16 +0000
+ 2026 12:42:13 +0000
 Received: from AS8PR04MB7733.eurprd04.prod.outlook.com
  ([fe80::8f86:fafb:dce7:bcd5]) by AS8PR04MB7733.eurprd04.prod.outlook.com
  ([fe80::8f86:fafb:dce7:bcd5%3]) with mapi id 15.21.0292.018; Thu, 6 Aug 2026
- 12:42:16 +0000
-Message-ID: <6c58262c-06bb-43ac-a72c-e930056f71bd@cherry.de>
-Date: Thu, 6 Aug 2026 12:10:10 +0200
+ 12:42:13 +0000
+Message-ID: <478c7c78-ef45-4f56-b655-0828719eb136@cherry.de>
+Date: Thu, 6 Aug 2026 10:56:20 +0200
 User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [meta-rockchip][PATCH 1/3] bsp: rkbin: use SPDX
- LicenseRef for Rockchip proprietary firmware
+Subject: Re: [yocto-patches] [meta-rockchip] [PATCH] rock-5b-plus: add
 To: yocto-patches@lists.yoctoproject.org
-Cc: Trevor Woerner <twoerner@gmail.com>, Martin Herren <sputnik@on-the-web.ch>
-References: <20260805121327.3946788-1-sputnik@on-the-web.ch>
- <20260805121327.3946788-2-sputnik@on-the-web.ch>
+Cc: twoerner@gmail.com, Vinay Patil <vinay@v-patil.com>
+References: <20260801214005.3948-1-vinay@v-patil.com>
 Content-Language: en-US
 From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <20260805121327.3946788-2-sputnik@on-the-web.ch>
+In-Reply-To: <20260801214005.3948-1-vinay@v-patil.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-ClientProxiedBy: PR1P264CA0063.FRAP264.PROD.OUTLOOK.COM
@@ -57,127 +55,186 @@ X-ClientProxiedBy: PR1P264CA0063.FRAP264.PROD.OUTLOOK.COM
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: AS8PR04MB7733:EE_|FRRPR04MB12571:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8aba43b7-22a5-4d23-42c0-08def3b825c3
+X-MS-Office365-Filtering-Correlation-Id: c36c2150-4fc8-4a25-14d3-08def3b823ca
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|1800799024|23010399003|10070799003|376014|366016|56012099006|11063799006|5023799004|10067099003|4143699003|3023799007|22082099003|18002099003;
+	BCL:0;ARA:13230040|1800799024|23010399003|10070799003|376014|366016|13003099007|56012099006|11063799006|5023799004|10067099003|3023799007|22082099003|18002099003;
 X-Microsoft-Antispam-Message-Info: 
-	7FOC/qksbvT0hbw/3wkcscZHIB7uCKEv7k+OGYl0Ht7DipkiMz57OMeEluVaJbrHTdHDpiqVRDrGZaW4KU6OdI68k7hC1v9ld7bkOBeJzmwVAplz4qWQTLGDQD/5P1Y3uBY9Mcu0GRa8Yq/36YGlIHiIVtJhRjGJXilIYViNCFrxiiN8x900QkhwkqMaEo0DD+JQO5N78WgVD4duuWlVs707W6mx2GOB3fh8Uu7PL2IXH26Ek4ZCeCXPRrIvmaYCscBeVINW2bUQvKv9jDegYzyzThTl6paNsGOLduedXnG5IuESd6kJIM8WAFP4PjaXmiYCjInDGXDX9sBNkmGHX0LgDc7pTOvVfvA0vBmcPCn5w7jxXcV1F0LpMX1GL6e7ayTEjXfhfnHil6YI/Hr/x8LsyMgT6inxYG3SvNWs7J+qu4GB1dBHCZtqZL+VQ9ON38NyxkiDoA6dw1mZwKonIC/VtUuzIKqqobxGx5zmDD6P8TM87ee90SP2mWspJmMCUVxd8VdsM1WjgKRRY7abypl5BfbprYcPN2TpivwezTKgTyofMRGKMzt2RZIwmfPO7+ZYIjv8KGyuXjTA7wwtcjrM7NRY01xrqHrMwVaweN1wOo8n0dz4KUfS2/bSEvDpzRUuff1qI2Zvm86nWHCKwixIUjmK0c1HYUTLxhOAb+M=
+	yjVEc+556QWtHaXqCVLQsnZM60FbbB8zjmgXLNMsS0SDhMgccGZDUobsMW4Hd0cefVnEuOgPgfjDaG+tXw74EKWpcVPl/8yy2rt/RWV5Nn46x+UFTnNya8BW2TBzhVpbA30Cfh9F+wx2alpSYdT5Fp+YbOA7toGZAP0v5c4fYYu9lHrUsfkmNPpX/gpIk/wNgOcldHyEZ/rW/hWVlFhZUhdkyZKyfSy50jSbv0XyfVbJ7aDUrHS8/4oagaOdrsBiBkDuh9K5lzv8T27B6ZbuiKUWN8sI3n4Fu5IemiQSev0Rmz45XvTsCuwSJr3yY6ChosRm+SlFEdx4vq7t2rHsc1HL63QIZNAL/jque9OpR0aDq4VI+jp1t/AiBJcxkkO8UtYDRr1qJdoPy3y9sDb3Y7XfAZB0oWiF5AHT37FK8KeOuBrZNEZddX4eng8uwDvvxgD6PH2VKJObx8EHJIS9A8xq/nDQforMa49ssm+bJVIatHRT5h8Q/ILfWVTloaU/mDCO2hpxOpjcEkCcUrrpHwiqEegMHnyic09dOGedX2ug6BMSebqc59SsC6syl+wuIMAdqxG+lA1sPSmIdQygJsdHLpDHNCf42NwhRvakHL8/h8w61noNcrxc5QRGjIvgtFx7zHtTIBHJwcsbGLrdcqs7iB5UvTCyrl/y1zDR1qc=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB7733.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(23010399003)(10070799003)(376014)(366016)(56012099006)(11063799006)(5023799004)(10067099003)(4143699003)(3023799007)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB7733.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(23010399003)(10070799003)(376014)(366016)(13003099007)(56012099006)(11063799006)(5023799004)(10067099003)(3023799007)(22082099003)(18002099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?aVg2UDZNMkc2dzVmMFpCUDB6VTVQclVkRm1lcnhaQW5ocm1teUpVU3ZTK1pu?=
- =?utf-8?B?dFZxbFEzWTdHZ0d6ck16SjMyZ29XV3ZFdm15MllNdzh2RXQxSFBLKzIyKzgr?=
- =?utf-8?B?Z2YxK3M2c29nenV6NHYxNE1nZEp5amFnYlJlczlFeFRETjFHZ1ZXZ2VTa1Bj?=
- =?utf-8?B?aFI2ZE1ia1lBR08rOXhhdGdicUdFSmNxSUZTcnRmUzNiSEUwRkF0ZWsvT25o?=
- =?utf-8?B?aHBiMHBnOVk2T291SFkvM1VBYU9KKzYxTkFBOHhaQi9ETFBKTDZZRkM4M1Zp?=
- =?utf-8?B?TWFXVy81NTdQN2ZCOFVtUDNxYlJyZnU3dUVNMnIzQXc4SnhwRTZzWStHclhI?=
- =?utf-8?B?c2R3b1JCNjFldVpsNVk2aTMrbnUvMWRTUXVhR0EzWFlWN29jTEZ6YnVvUXZn?=
- =?utf-8?B?eUV4WFcyRytkRzhveUJQc2QrMzNnQmEzSE1NOWxzSVp3VW03RGFvSDhweGtM?=
- =?utf-8?B?Z3FlR0hYVUQ0YUVGUXU0am5iNWtWVlhXbXpPS3U3UllBMmJweWlQTWFFdXNj?=
- =?utf-8?B?dkRXMzM3Yll5ZFJRbkVPMTVSMlgrUHdRVlVSdEZRcGxJYUs1cFNFZ2tQQkVn?=
- =?utf-8?B?MDFHTGFVK0ladHQvMXFSeFN4Z1I1alErWXA0OFU1RUhCeWZ4OWcybW9lQ0Rp?=
- =?utf-8?B?cUthNzVEYytTSUR1aFM1alBMV2ZiWUtRSklJL2Q4ZkNnZk1OZVZCdWtGMFRQ?=
- =?utf-8?B?Y2JnTkt1dmJ2RXRqQ0lPSFd1RFFpTC9uY1YzZnpVR1BFTUFtS3c4OUVzRXRE?=
- =?utf-8?B?WkVRVzh5ZWcra0lXZ01hWFFCc3RJOGR3Yk5qZk9neTVHYXJQZWtlSjJjMEF0?=
- =?utf-8?B?R2hoMTk2c1pQT0Q4bll3bUxLNnNKUUhZZ01POVNwMU9KckdGUlgwWnBreWov?=
- =?utf-8?B?VmpvUW1KdmJ1dlNBbUZTS3IweWNqdTA5bzFMRnE1TGc2R2ZIVlBEa1ZpMDYz?=
- =?utf-8?B?aDhaNzU2MkowWWU1QnZ4WGo3NDlUbWlVbWZTWDhOTXdldDdFTTNTemh1TWpm?=
- =?utf-8?B?M2RiTGNlY0JUeVQveVpzNU1UMExpOXpoYSt2TTI0aWVZRWdLeVlVSHY2VnFM?=
- =?utf-8?B?dmU2SHp4cFZ1VDVoVkhPK0JnUGhiZU16QnNDZ0RzZ3NLbWlNb1ZSWW95d3Nj?=
- =?utf-8?B?dDlsTTNqQlNVZDMvZUJtdlplNUNHZUFKT3hPUElzTngwTUErZU9CRTBuV01z?=
- =?utf-8?B?UFdBSFh6d2RDdy9hTGN2UXRjLytBZjNROVpCRFNxR3VVdi8rUkVrc2ZLdUJj?=
- =?utf-8?B?RXZETGR2d2lKb1dPVktFSnNoSjEraUZQU1poOGpROTExbXY3MUpRUkJwUGpC?=
- =?utf-8?B?Q2lkdEhDUExXS3RoUkxtL2tEWWI4alBPZ1d2LzZYYzQ2ZFRFeHc3MFhqTkIz?=
- =?utf-8?B?cWxGcEJGMEE5MlFUeWh6eld3dHA0TkZKT2tyblNOR2l5cWxYSC9mcHVkMCtE?=
- =?utf-8?B?K210bkFpZ2lyZ0RmTjhncmZLb0ZCK3BKaGdMTURZWGNPaDQ1dy9hYkUrbzVR?=
- =?utf-8?B?SnFxbU1pQ1NlNXNJR2UrbC9rcXhPME1Sc1hNTjdjaC9Nd2xiRzVJcGtjSTFQ?=
- =?utf-8?B?TktDU3ZMYmgwdkt1WjV4UkpVZ0U3eGVYMTNpNUgrLzVBOFdmR0N6OEtLN09B?=
- =?utf-8?B?OXRiQ3dsNXVPd05HeHJyck42anlnK3JIak9oeVJ2OHdydDRqMldVZStSR1Ax?=
- =?utf-8?B?MWdQVno5cUFEclBoS3A1R3Q5em04OWl3ZEZJZGZ4d3JKT0dtYVZqaENrZysr?=
- =?utf-8?B?YmQrV2U3M3FMd3BSWXM2blQ5RGdGYWtsbXVYTGY2TWJhQXkrRTBGbGJoRnph?=
- =?utf-8?B?QkIrZld6ZDVpTmVaR2g4NGtNVXN6akJyWU1oamJycXJkcXhxNVp1Y21LNy9G?=
- =?utf-8?B?OHZWNy9ybEpucW1YT1BXNnZFUldoWE5aM3dsQ1kzTytCTnhxNUZnVThLUGxp?=
- =?utf-8?B?SVRaMFlQRUZ0bW9xcHJSa2VwbnlKekg3R0VUUGNrYmhFQmtlckd0VHhRN1Zr?=
- =?utf-8?B?Nm42Yy9xK1Fob2pHSW1pWTJlWExmVDBBQVBxbnpRMytHajZsSlVadExOZGxN?=
- =?utf-8?B?SFEwaHhqS3NMMDlmU3VIR2prQ2x6aHU2REVhV3VnSWVybXBzWlhYL1JqM1R1?=
- =?utf-8?B?ODc5SUlOakhab3RMZnI3SlFaeURBOEQ3MiszNDBxSS9lOUVFcXFQMGhuTDB2?=
- =?utf-8?B?Rk9VYjVqakJUV3M1aGRvSzh3eTc4TnljSmwxZWdtL1QzeXd2Z21ma3Z2Zk1O?=
- =?utf-8?B?b0FWZ21LbnBzV3lUU2Y0OVlVRFM2d2tkMGFFL3hFcG1td2s5RnpSMElLd2dj?=
- =?utf-8?B?R1BCK0pWNjRyRTdCQmFZM1Q1NjBvVTBMT2ZBSTJMRm9ad0lHZW1GWWlRelZS?=
- =?utf-8?Q?KvIkYrX4Qg/Db0n61fWyZRt8b95DvALon4YL3r2TQBMWN?=
-X-MS-Exchange-AntiSpam-MessageData-1: Zv2ifzzXvfwMg3N21NA9iM7v+8shbxAR0zw=
+	=?utf-8?B?UHI5WVNhazZDc1dnOHFLOTNRYTJNNVRnOUxsYUNtODhrYmJjdW5vSFg4bjh1?=
+ =?utf-8?B?MkNDalJ5d2tBL0V3VDE5c0lvbi85VHVmbFQ4dTVGSld0a0NDc1AyREppQ2ZG?=
+ =?utf-8?B?UmxkUFpXTVBJUSsrZUYxMldJU3IzSEVyanArd1pCOUEvQmdYVWNjUERxQUlY?=
+ =?utf-8?B?THlDUUJsbmhKcVRnRmNDbFVWRlNpdGlNU2g4eW5iR1VQRzBJS2htblFIQ25S?=
+ =?utf-8?B?dFg5bTFvaDFiQUNIRTdLK0JQUndzeEMrMVRUd0l5ZzJ0elJyQXVJS09PYmQ3?=
+ =?utf-8?B?NUhyalF0WUdOdUhLbm56M0w5Z2dJS1FFYzJLOEpIZ3NEY1hhZWQzOVVoOHNU?=
+ =?utf-8?B?QXlZZ2g0OVNYdWxQQmJDamtSMEFXdzRpZVNKWlJ0OTVXdTJoMlduVHhOOHBS?=
+ =?utf-8?B?Z2tITjJXSTVlcSthT1kvdmdsd21CTkZXclNncGFJNitEY2hia2FoQjNNVkVV?=
+ =?utf-8?B?LzZpdXFjd2V1MDZFelJ6ekcrSW5Ja0lFZ3JFd2dORlpGY3pTbDVGbHBNTDlh?=
+ =?utf-8?B?ZUk5RFB4ZDZVYjQvL0FCYm5JMUszTWhGNE8wVDBCSjhITVJMaUhFNnRGcXdT?=
+ =?utf-8?B?OU9TZGQyTXRIS2M4SGtwdnRxMVB6MThkeW01RnZXRG4reTM4dTJ3dHFxbVlp?=
+ =?utf-8?B?SG5kNHN6NlJsajQycG9CR1gyQzdzUkE2YTlteFVOQkVMdHJCdFJ5Z0srQ1RJ?=
+ =?utf-8?B?c1A1TVQ1OGdod3dTRmdySHUwQmtkZVJ2L2lrM3lHM1NwdmxkODNSUUUzWmxO?=
+ =?utf-8?B?Mmh4K1VDdWpBL3djZmloOWFCcnFkdnNHYTcyZWxEc3R5NGx3KzVmUTg2M1pO?=
+ =?utf-8?B?enVXVkRKZnZKVTliVnhGRDFMdGdpT08rNGx2em42TWxZNWJXeVJqbGVncnc0?=
+ =?utf-8?B?blhDSEVySWsvUS93dW9WaVByOVhyeEkrUGk2d25kYjRQUHU1QWR0ckw1Tjh1?=
+ =?utf-8?B?M2Z0a2MwZkVDeTZraWF0V2ZQbSttZ2ZBelVRc3BEQ2V1eFdyOVNVRE9ONGMv?=
+ =?utf-8?B?T0NhOWNxT3NnazZqUWxTK3hkbmxvOTJSWlhZZVNGWU50alVMU09kZStOZ2cy?=
+ =?utf-8?B?VXdpVmZRdW1qbEx4QUszL2pCcjN2QzN0ZnNDQjh0VWN5SThmQzBiT0FSQkow?=
+ =?utf-8?B?ak1BL1ZGZGFLT2lKVDVlYTJHWFRpOVZEczZXaEVyUVErdnhGK1Y0NG1lOW8z?=
+ =?utf-8?B?WUhIYUlGNUVDdmtWTDQvcWxsLzlRZHI0cXRuQ2ZkQ0ptRHFWenRFRitySTFt?=
+ =?utf-8?B?OElWWHI4NmhZUndRVDZHckRib2J0V3lRenZhSHZhWWErMkNzU0Vld0xGU3Y0?=
+ =?utf-8?B?RW90Q2h1ZUtqRTZDdXptRGcyTVFQUldDeTZWK2JwaU1aS05jQTJqRlR2NTRM?=
+ =?utf-8?B?YTFYeE5qUHgvclFmQmI0TGZtNHhRK3JNNnk4K2FjaEJ4S3Y5MmxFSXlxdS9h?=
+ =?utf-8?B?TC9iODg3dXBOMzViZThWTER4MjgwUENFWis5d3BYVDFuaVltVWRqeUtIckpz?=
+ =?utf-8?B?T0pkUm95YTBtN2VPb1hjTS9MbUg2VDBtVXc0Wi9ZZnNxcmI3TnBuMXVLSTh5?=
+ =?utf-8?B?RFhDd1d5VElGNGFDTUNCaXpUZzM0TWQ0SVAvMm83T054ODRyVWpoMWRnaEtX?=
+ =?utf-8?B?MGFQUVo4Y3RDRE1WUWFEMWhiem4rQlV0SDF1eVFmeUh0WCs5SEgvRVRkeFZ3?=
+ =?utf-8?B?eXlkWEZuSis2c0lub21HSFpCcmxocTdYRHV0bFNlcEFMMGhoa1dFMTAvNHNF?=
+ =?utf-8?B?YzdCemF4QTdvak1JUGRTZFZmNXI0ZTdxQkpVL3VWaUlhRExucER0SVN3WUNS?=
+ =?utf-8?B?MHU0MmQ1TndNRzdpSFFEYk1qbHBzRS9mVnpoOGVjRXM5RVJrRElXVGdhbmk4?=
+ =?utf-8?B?VTNOc2VHZXlzcnFmVGx6Z0lrejBXQUZ4TC9lSEZ0UnVQaGE4MU1Ib3VWbzRH?=
+ =?utf-8?B?VDBNYzZSYjQ5bnkxQjRNNWN2djREOEVMa3FrbEtTUnpGNzhQcDlIcm9WVzNi?=
+ =?utf-8?B?eFo5OStENWN2YmpOeTlodHlYdVVuQ3pUdXRsSXVjT2RKcmFYbWlSemtsdndZ?=
+ =?utf-8?B?a1VBK1p4aThDUGRiTllGbkJkZTR3Q2gvdHAxQzloUER1YjZXZkFRSVdaN1JI?=
+ =?utf-8?B?RXI2OUFGM25udHR6QUEzcGcySERXbmJKejBQTTBkMXJkYnJqdWZESTAxUndP?=
+ =?utf-8?B?WXkrVVRDNGhMbGIwaTNlY2N0anB0eFdNeDBWTldzVTNjVHh1S3RIZ3k3dTdO?=
+ =?utf-8?B?NHNTdXUzc0VabHRUNDFyMkp5MG5rbU1RbURKb3ZRajVhaHFoSmYvZzllYlEz?=
+ =?utf-8?B?UGtrc1J5QVRSeW9SR0dPUnhUK20rK0IvM1VUM3JPS1E3SU5SV1FPeUR3RG9R?=
+ =?utf-8?Q?1XOuZVNXcAQpu2o3JJqCyOKttOj+QnN5MmQ7VddDB/WaI?=
+X-MS-Exchange-AntiSpam-MessageData-1: eK0qpS4aU/r4ebLzx/Uv6My6DFXh0MFeQm0=
 X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8aba43b7-22a5-4d23-42c0-08def3b825c3
+X-MS-Exchange-CrossTenant-Network-Message-Id: c36c2150-4fc8-4a25-14d3-08def3b823ca
 X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB7733.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2026 12:42:16.7463
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2026 12:42:13.5481
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +KbD/O52NywIONnbrJJl8xwqeq+1KD0f1lUobUgm8eWjD8R5tZnur8CZTBL/Wb5nZ7O0OT3IA/KFQK3OSElzEebM0Ok9WHvXoRl3BX0mlN0=
+X-MS-Exchange-CrossTenant-UserPrincipalName: L/mOD/8Y1dV+TMcEgUgKtW/1YpDtGHHer3z2AmYkQyu8+YFiqK91kehGSk8K5aQ69G4LLFLceIAjt9sHc4gsIksTkToRZFzm+Ul/z9k8wSM=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: FRRPR04MB12571
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Thu, 06 Aug 2026 12:42:25 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4639
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4638
 
-Hi Martin,
+Hi Vinay,
 
-I've read on LinkedIn you used AI/LLM for some stuff related to Rockchip 
-and was wondering if maybe this series got some of it developed by/with 
-AI/LLM. OE-Core and BitBake require to add an
+Thanks for the patch!
 
-AI-Generated: <AI/LLM used>
-
-in the commit log and I think it could be nice to see it stated for 
-meta-rockchip as well. Ultimately, it's up to Trevor to define or 
-"enforce" this as he's the sole maintainer of meta-rockchip at the 
-moment. See the "Acceptance of AI Generated Code" section in the 
-contributor guide (I'm traveling so cannot provide you with a link right 
-now) if you want to know more.
-
-On 8/5/26 2:14 PM, Martin Herren via lists.yoctoproject.org wrote:
-> From: Martin Herren <sputnik@on-the-web.ch>
+On 8/1/26 11:40 PM, Vinay Patil via lists.yoctoproject.org wrote:
+> [You don't often get email from vinay=v-patil.com@lists.yoctoproject.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
 > 
-> OE-Core now parses LICENSE as an SPDX expression and warns on legacy
-> non-SPDX names such as "Proprietary".
+> The Radxa ROCK 5B+ is an RK3588-based single-board computer and a
+> successor to the ROCK 5B. It features LPDDR5 memory, onboard Wi-Fi 6,
+> Bluetooth 5.2, dual M.2 M-Key connectors and 2.5 Gigabit Ethernet.
 > 
-> Switch the rkbin family (rockchip-rkbin.inc, used by -ddr, -optee-os and
-> -tf-a) to a recipe-specific LicenseRef backed by NO_GENERIC_LICENSE, so
-> the SPDX manifest references the real Rockchip LICENSE at the repo root.
+> Product Page:
+> https://radxa.com/products/rock5/5b-plus/
 > 
-> References: oe-core e9d424738d6f ("classes/conf/lib: Parse LICENSE as SPDX Expression")
+> Documentation page:
+> https://docs.radxa.com/en/rock5/rock5b
 > 
-> Signed-off-by: Martin Herren <sputnik@on-the-web.ch>
+> Specs:
+> 
+> - Rockchip RK3588
+> - Quad-Core Arm Cortex-A76 @ 2.4GHz
+> - Quad-Core Arm Cortex-A55 @ 1.8GHz
+> - Arm Mali-G610 MP4 GPU
+> - OpenGL ES 1.1/2.0/3.2
+> - OpenCL 1.1/1.2/2.2
+> - Vulkan 1.2
+> - 6 TOPS neural processing unit
+> - LPDDR5 RAM (4/8/16/32 GB)
+> - Onboard eMMC socket
+> - 2x M.2 M-Key connectors supporting NVMe SSDs
+> - 1x M.2 E-Key connector
+> - 1x MicroSD card slot
+> - 2x HDMI outputs
+> - 1x HDMI input
+> - 1x DisplayPort over USB Type-C
+> - 2x MIPI DSI
+> - 2x MIPI CSI
+> - Wi-Fi 6 and Bluetooth 5.2 with BLE
+> - 1x 2.5 Gigabit Ethernet
+> - 2x USB 3.0 HOST ports
+> - 2x USB 2.0 HOST ports
+> - 1x 4-ring 3.5mm audio jack
+> - 40-pin GPIO header with UART, SPI, I2C, I2S, PWM and GPIO
+> - USB Type-C power input
+> 
+> Signed-off-by: Vinay Patil <vinay@v-patil.com>
 > ---
->   recipes-bsp/rkbin/rockchip-rkbin.inc | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
+>   README                                  |  1 +
+>   conf/machine/rock-5b-plus.conf          | 11 +++++++++++
+>   recipes-kernel/linux/linux-rockchip.inc |  1 +
+>   3 files changed, 13 insertions(+)
+>   create mode 100644 conf/machine/rock-5b-plus.conf
 > 
-> diff --git a/recipes-bsp/rkbin/rockchip-rkbin.inc b/recipes-bsp/rkbin/rockchip-rkbin.inc
-> index 9ddd54f..d715b44 100644
-> --- a/recipes-bsp/rkbin/rockchip-rkbin.inc
-> +++ b/recipes-bsp/rkbin/rockchip-rkbin.inc
-> @@ -1,7 +1,8 @@
->   SRC_URI = "git://github.com/rockchip-linux/rkbin;protocol=https;branch=master"
->   SRCREV = "f43a462e7a1429a9d407ae52b4745033034a6cf9"
-> -LICENSE =
->   "Proprietary"
-> +LICENSE = "LicenseRef-Rockchip-rkbin"
->   LIC_FILES_CHKSUM = "file://LICENSE;md5=11e3673115959bf596feaaa6ea7ce9a5"
-> +NO_GENERIC_LICENSE[Rockchip-rkbin] = "LICENSE"
->   
+> diff --git a/README b/README
+> index c2697d1..6825009 100644
+> --- a/README
+> +++ b/README
+> @@ -41,6 +41,7 @@ Status of supported boards:
+>                          rock-4c-plus
+>                          rock-5a
+>                          rock-5b
+> +                       rock-5b-plus
+>                          rock-pi-4a
+>                          rock-pi-4b
+>                          rock-pi-4b-plus
+> diff --git a/conf/machine/rock-5b-plus.conf b/conf/machine/rock-5b-plus.conf
+> new file mode 100644
+> index 0000000..bfa3714
+> --- /dev/null
+> +++ b/conf/machine/rock-5b-plus.conf
+> @@ -0,0 +1,11 @@
+> +#@TYPE: Machine
+> +#@NAME: Radxa Rock 5B plus
+> +#@DESCRIPTION: ROCK5 is the 5th generation of SBC designed by Radxa.
+> +#https://docs.radxa.com/en/rock5/rock5b
+> +
+> +require conf/machine/include/rk3588.inc
+> +
+> +KERNEL_DEVICETREE = "rockchip/rk3588-rock-5b-plus.dtb"
+> +MACHINE_EXTRA_RRECOMMENDS += "kernel-modules"
+> +
+> +UBOOT_MACHINE = "rock5b-rk3588_defconfig"
+> diff --git a/recipes-kernel/linux/linux-rockchip.inc b/recipes-kernel/linux/linux-rockchip.inc
+> index 6c62e84..6c012d4 100644
+> --- a/recipes-kernel/linux/linux-rockchip.inc
+> +++ b/recipes-kernel/linux/linux-rockchip.inc
+> @@ -25,6 +25,7 @@ COMPATIBLE_MACHINE:rock-3a = "rock-3a"
+>   COMPATIBLE_MACHINE:rock-4c-plus = "rock-4c-plus"
+>   COMPATIBLE_MACHINE:rock-5a = "rock-5a"
+>   COMPATIBLE_MACHINE:rock-5b = "rock-5b"
+> +COMPATIBLE_MACHINE:rock-5b-plus = "rock-5b-plus"
+>   COMPATIBLE_MACHINE:rock-pi-4 = "rock-pi-4"
+>   COMPATIBLE_MACHINE:rock-pi-e = "rock-pi-e"
+>   COMPATIBLE_MACHINE:rock-pi-s = "rock-pi-s"
 
-This seems to follow what we've done for 
-meta/recipes-kernel/linux-firmware/linux-firmware_*.bb so looks good to 
-me, thus:
+This is unnecessary as U-Boot can detect whether it's running on a Rock 
+5B, Rock 5B+ or even Rock 5T and select the appropriate device tree to 
+use with the Linux kernel. What's important then is that this device 
+tree is available to U-Boot, which it isn't at the moment.
 
-Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
+I would recommend to instead advertise support for the Rock 5B+ (and 
+Rock 5T) in the README via the rock-5b machine and in the 
+conf/machine/rock-5b.conf at the top of the file, and then simply add 
+the Rock 5B+ and Rock 5T device trees to KERNEL_DEVICETREE in that 
+machine conf file, see board_models in 
+board/radxa/rock5b-rk3588/rock5b-rk3588.c in U-Boot for reference.
 
-Thanks!
+This will avoid increasing the number of machines to build for to 
+validate meta-rockchip still works as expected (I believe Trevor does 
+that every now and then).
+
+Cheers,
 Quentin
 
