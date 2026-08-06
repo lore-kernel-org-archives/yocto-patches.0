@@ -1,110 +1,147 @@
-Return-Path: <piotr@qbee.io>
+Return-Path: <quentin.schulz@cherry.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E107EC55ABA
-	for <webhook@archiver.kernel.org>; Wed,  5 Aug 2026 16:17:33 +0000 (UTC)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.43940.1785946643905745110
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56A1FC55ABF
+	for <webhook@archiver.kernel.org>; Thu,  6 Aug 2026 12:42:25 +0000 (UTC)
+Received: from DUZPR83CU001.outbound.protection.outlook.com (DUZPR83CU001.outbound.protection.outlook.com [52.101.66.61])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.18853.1786020133943842754
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 05 Aug 2026 09:17:24 -0700
+ Thu, 06 Aug 2026 05:42:21 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@qbee.io header.s=google header.b=ZDX3B8Pj;
- spf=pass (domain: qbee.io, ip: 209.85.208.169, mailfrom: piotr@qbee.io)
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-39c74c469e8so8725621fa.0
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 05 Aug 2026 09:17:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=qbee.io; s=google; t=1785946642; x=1786551442; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=TwPdFC0WRcoEPvd7IoOac7q+dZChQc9wzSbcTdHEvms=;
-        b=ZDX3B8Pjru1HedzudCb4tJZFlaPzpFizQQCcXJRdzWhQmibhyvx8t9UouX3kIx7t8j
-         Q0EhvVf///DulbI6ieYVIh6LK/TCPqAwFgbWThus1A6DKXEX2D63CHixUXzv79UFOeJf
-         iIMybNqwYjJNu8AQ2dQzC2mKv6BiTpOY0C2R4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785946642; x=1786551442;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=TwPdFC0WRcoEPvd7IoOac7q+dZChQc9wzSbcTdHEvms=;
-        b=fSjNK9P/7X5KDG3fQjF5jMmawaVyDn/4SphiVb0fVdxA1k5TGiHOcWDgKc7XzmyJ2U
-         1sWKkao56dcxc+IHyTWFXubnhB1OcIbpG7lF6BPdx7cBq0pQ0usi0lOZmopgRJQf7yp2
-         +mk+UvWgu82/OhCP0r2vr/DklUQtJMqxuVkCMs1e7KRw/yBVgKZqYy4sU/PGo0yGXarc
-         LxoRXiRYa981RZ3wl8i4qybx3lqXQmlqLwY63G6jRdoOmaKEX8YJbXOhcR6HIjAWhJQr
-         v35yfSnr2SNwVz/XSH9MVfUS+KtO1TUBYXF9h7wM2jemsNx3k3cR0AURD0ZtUPLUaslV
-         /AfQ==
-X-Gm-Message-State: AOJu0YzZMxAsrtGj3+qawPkcx1JvFu3c4T3yn0hLHa4xO7oDsqfdQDfq
-	fqXV/MbA5DonDvJLmtCgmqT02i7G83+WRy55K9Jffh58IiL+PBsQCbvO3MnCitT7KbJkw2HgdRr
-	AEqlcn60=
-X-Gm-Gg: AR+sD11zeSAPGz0kAlBO3Jca3c/JyNJ58rHY5j3q7/dKNiCJOdQ+cYIZIcp5y8WJ8k/
-	cmu9Zd0ZQdU8VVV9GHFTLs66HR+oJEkmbOz3w0cn7Bfu+uGjDVcfXhhGknBRG4dFUk4AtUnZ6YS
-	yzKaKuwgldoHWad72sJFmLqHBYRWubWSHqQM6wCoMsy8/6vNRZAjtvL3V+DcGelTkJKgZAHA8nr
-	akLrXyMEYnuSCVh4T5sbY/PSrtyGu5JMhnv5i6T4G5nLcNWQ8JaXARkhDZX2Sq6M8UnvXqTUyRU
-	bf6RCRWqW861zMVUrAe4WgAJW2kRdKoPoehYGsLZHdkxb+nh6wR51eQBIDDPY7vL1t8r9ooPU4T
-	+MbqYwAIZwxt4a5wceSAttVbQVNogzMXhm1THa42uA5/xJANLpz2o6DjGknmt3o2Job3s5SzIGC
-	0irqTr7KS/4BDTA0ZlfDN2i3cgBS1ombrXb3gi8qfRzAX7DGPzdr1cmgHhaTW3kauBp9actAtrD
-	f8s1+Gb5GOrP9XFGQ==
-X-Received: by 2002:a2e:a802:0:b0:39f:c7f9:e4b4 with SMTP id 38308e7fff4ca-39fc7f9fd31mr3731451fa.26.1785946641661;
-        Wed, 05 Aug 2026 09:17:21 -0700 (PDT)
-Received: from localhost (80.89-10-247.nextgentel.com. [89.10.247.80])
-        by smtp.gmail.com with UTF8SMTPSA id 38308e7fff4ca-39fb9a576c2sm11394901fa.40.2026.08.05.09.17.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Aug 2026 09:17:20 -0700 (PDT)
-From: =?UTF-8?q?Piotr=20Buli=C5=84ski?= <piotr@qbee.io>
+ dkim=pass header.i=@cherry.de header.s=selector1 header.b=Le1fmexF;
+ spf=pass (domain: cherry.de, ip: 52.101.66.61, mailfrom: quentin.schulz@cherry.de)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AhpIA9AMUzMB5v5XVjroepF/mMi4nEkQLI2M7pc4wsSfiOXG1ZAvAcDTYCXxxRvYKLdZjPcFLM6NKBKg3TCkAHKWjjKfwyIavc7nN+wjD4wUKkxCXyGPo+n86zVX7zxgCv/rX5WBu9bOdrU1TvIeeomdaFAcveBOwusIgwpVYHNmaV4cVMhHAGBWiUHy2CbcxF6pe1/I4lvyHr5O86+UDXCAROpsJyQbf1LOhcuXoJNKovbT0QCUvoAXpgqwf3jvFNBJZWwShklGxsHAfAE1t1YEE2bTL6M7SV/m/4B12XB6drprgdbe0W59xEFpqA9iv9S3guBru1gI2AhKb0D/Uw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=b1qEFQvEfI5HUcRagdDugwTU8fANOtj2t1V9dR0+vig=;
+ b=TAUiUahP1wW0VPjX8gheTXBHTbtjXiTIITzHQnfYX9wt9saWk/sQpcI/RvC9r070fkUDu7zBLUG523zoplTvKeUBEUnUGE+hnVW2WV9h08JH+59q6JM1y7UHHmD0X7LTazC6AMHhIkiNk9hsJvS7a9EgclBFddodAitxLS6FzQ8rRfYGZZtHNiwZgafMh72duH9qCNbAWcWiYg1l2kU9CIJ8pMAqxmPBhr6R6Ksytg9BHBFoAN2oPhGM7QwYpHPKYXVbrlKfsFJeKtyzl8qFXU4U97C6h9ZlqZTNS9soSaXuFwTLORjG+Xrg2O+uzUF7Uh4VgC6D7MPqJ+ElK2BabQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
+ dkim=pass header.d=cherry.de; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=b1qEFQvEfI5HUcRagdDugwTU8fANOtj2t1V9dR0+vig=;
+ b=Le1fmexF45Iw7m4tlDfwHfYnpk3AUWZnuA/f7jbuojcJwSjtCHpxqfmhKLNJelmQLFkj+L2dr2pa/ds+9hpQHLsY2yuxFWZEUqjDYDUo9ACfKv4a2JZW27sRMdE2I0iIvjyZ2ljT5gRq658Pw18PTxNSfPai1cu3pQj7V+FiJ1Q=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=cherry.de;
+Received: from AS8PR04MB7733.eurprd04.prod.outlook.com (2603:10a6:20b:288::18)
+ by FRRPR04MB12571.eurprd04.prod.outlook.com (2603:10a6:d10:1cf::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.292.20; Thu, 6 Aug
+ 2026 12:42:19 +0000
+Received: from AS8PR04MB7733.eurprd04.prod.outlook.com
+ ([fe80::8f86:fafb:dce7:bcd5]) by AS8PR04MB7733.eurprd04.prod.outlook.com
+ ([fe80::8f86:fafb:dce7:bcd5%3]) with mapi id 15.21.0292.018; Thu, 6 Aug 2026
+ 12:42:19 +0000
+Message-ID: <6c6aa0c0-64d2-45d6-898e-aa77c47b56d1@cherry.de>
+Date: Thu, 6 Aug 2026 12:32:42 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [yocto-patches] [meta-rockchip][PATCH 2/3] bsp: rkbin-native: use
+ SPDX LicenseRef for Rockchip proprietary firmware
 To: yocto-patches@lists.yoctoproject.org
-Cc: =?UTF-8?q?Piotr=20Buli=C5=84ski?= <piotr@qbee.io>
-Subject: [layerindex-web][PATCH] Install BitBake inside DevContainer.
-Date: Wed,  5 Aug 2026 18:17:18 +0200
-Message-ID: <20260805161718.51061-1-piotr@qbee.io>
-X-Mailer: git-send-email 2.50.1
+Cc: Trevor Woerner <twoerner@gmail.com>, Martin Herren <sputnik@on-the-web.ch>
+References: <20260805121327.3946788-1-sputnik@on-the-web.ch>
+ <20260805121327.3946788-3-sputnik@on-the-web.ch>
+Content-Language: en-US
+From: Quentin Schulz <quentin.schulz@cherry.de>
+In-Reply-To: <20260805121327.3946788-3-sputnik@on-the-web.ch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PR1P264CA0063.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:2ca::18) To AS8PR04MB7733.eurprd04.prod.outlook.com
+ (2603:10a6:20b:288::18)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR04MB7733:EE_|FRRPR04MB12571:EE_
+X-MS-Office365-Filtering-Correlation-Id: 744ea800-ad71-4817-4634-08def3b82748
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: 
+	BCL:0;ARA:13230040|1800799024|23010399003|10070799003|376014|366016|56012099006|11063799006|10067099003|4143699003|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info: 
+	KZAwX5LtUNbGbPQR1wLc4hzBM4jg3zZWRkCL5DJaf92WTKDiBbRs96woL4jvTQ/rPpsJTv0h7+I7QuoD+bSUxVbk2B/Emut82s01NKrZqGWKaDvoPULAcXg00osuNR/i2OG6VCYl2hd7ng6fVBDRZ8nGaCYX6GX/HXYSsNypy2WVG3llQ4Gy5kfB3XRUdwuHkk1O5GwG30DOAO6rKoLSRFdb7zikHJt7XIHGaW1gdvbKFp8F7xcH1xYe0Z1CGd056SvJtdKbhMSfNmNJRp5Ee+3/0703B5vq7j0VqCmi4wuEFprZHvrH+FGAN6WnU8dG972jujzH2ZSJ5VH8GIy0rjIwMyj3oCcVE5rj/Grj44JISsVH+WeKQbN8Vvx8nLAF8ysWb2YkqRpdj3GwXh36bCWzF8tQcH7cusgJbqQLbyGjuQyYcgMkVqSqSgIMXmEFick6fwIErJzaxiCBai9/OHiBJ1wIlyde8rWDdVzFRxNCPsuLxJdzA85rmo+mcWnOaKUXQOmiwc5av1DYKwIjUILBeFGr/OJWLFZd0roWQLfpF0+P1r/c2m9y26P0a71z8QIYi5LZQqyBq/wFtU9ZyALOSJ6Y1+rdgQC3/4QC1rOh61wdpnaGKDlbcqRZAObEMNhQFxnxZ32HvN8kgoJRvrd8Z60JB17CAa/ZNNwpLmY=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB7733.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(23010399003)(10070799003)(376014)(366016)(56012099006)(11063799006)(10067099003)(4143699003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?RzNxTXpxM2dZeFF2Rjh1eFl4SlJEaFFnL1E1UTQyaFkwQ3c2Z0UvNmhUUXNs?=
+ =?utf-8?B?RUxpUGxtYnNSMGtTc09BbThGak1QWDZJTTVXUTF0amxyWENwQVZXV0IrTXFH?=
+ =?utf-8?B?RjNUc2tka3kzQlNsWCsyUGNRR1ZraVVLUFlHZFlRaE1RK0xidndINGd3RE5T?=
+ =?utf-8?B?U3Z6bCtYUVpHZWo3OWxjaStPWG1zMEsrRWdRZ2dqbEZ4NXQrb2Nhb2dpbjd4?=
+ =?utf-8?B?V3VhdUx4OVlCL2JqM3JhcXRpOVdkMWFFYk1DR2F1L3ZvUlBXVmdMa3J4Vk9V?=
+ =?utf-8?B?NEpIYVRkYnNaVEZXa0ttNnBKbzNJaEdEQUVpbzZraGxkWUhWeDFiT3NHV0ZF?=
+ =?utf-8?B?KzVoWnJMT2d6bVRaYmExTm5WS2hhQ3haSXNuM3VrUE1ZUFlmaGpwLzlYZ0Q2?=
+ =?utf-8?B?K1IxREl6djEzWjJpWjlJTzdveXM1b2R4S3F6S2VTTlNza3RueFFBNll0WE95?=
+ =?utf-8?B?b0NkZUJ2cWdYTklzZ1lJYUJkdmFVZ1VGQU1UcHY4VEE3YUhEdFArOU1TOXhr?=
+ =?utf-8?B?M1c3YlhjUHlmU2VUZUJZZmJocDlFekZmR20rbDcybWV5NkMyQzdWNjhMQW9U?=
+ =?utf-8?B?bGhQa0RkZXBlbnQ4RitGNkxFYzgxNUhoV0M3RDhVMEJWL2o5dmFaRlFsK3NF?=
+ =?utf-8?B?blZySTRlb1dqVGFIYVhIWUlnMjNBYUlwY1JsenFBdFdZRHNEd21BRW5FYnd4?=
+ =?utf-8?B?K3UrNDZGZGRVcUhFaW9MRm1kUXVXVnBVck1zazRNc2hBMDRhdzB4MVpib3lz?=
+ =?utf-8?B?dEI3MTlCOHdMT01DcmtsdzY5eWlmTGJXQklNcW5Ocm0rN2NLZXd3ZDN4UG45?=
+ =?utf-8?B?YWdXa0ZhOWVwbGIrK0JwWE14SGgybnNjRzRXMVhkaDI4ZmtkNmJJQTMxcVNr?=
+ =?utf-8?B?NjVSL210VjNhREp3YzZOT1NtRlBzRWZQekhKZTMxU3diSUg5N1JWa1ZTQk8z?=
+ =?utf-8?B?dk56Z3hMdTJDZjlwaWp4YWVNNDdRWkxGVGg3ZmQyYnVVa0pFR3Q0SEFUMmov?=
+ =?utf-8?B?RytaaWZ2TXcwVWpuOEtHa2hUdlAxZUdFVmFQYXhkVWgwWnd2d29NN3IwdElj?=
+ =?utf-8?B?UHkyVndJZnFleEZRZnp1bkduQXd5VzBjQWQ5Qnh5VWttN2lOcGR3ci9makRS?=
+ =?utf-8?B?dms3bGkzOVJqeXFlTzJBZXVFbmIwRkhCbGhtRE1KZGZucnNQYVJwODNlRUVo?=
+ =?utf-8?B?USs1T09FMmFqaEJFSnZJZk1tV0lGZHJuWmg5U0ExbUgySHA1Ukw2bEpaT1JB?=
+ =?utf-8?B?bTNKb1JjQnJGTmJVMGJFVGN0ZU9CSWlHU2JEMjlnUENzamhSMmJWWVFmZldz?=
+ =?utf-8?B?Z0c2OVpSWHNwN3I1Z2tLT2hiWEpqc2h5V2oyakFCZVU2ajdtZklpTWYyaUx3?=
+ =?utf-8?B?MERiZFJNTmYrMVFuM3VlWDk0RitkbEJWanU4M0M4c1RRZU4zMk9RUGxjS09V?=
+ =?utf-8?B?elVtZTNncmFQT0h6UDJWYXdncTlpNllFZUZOaExkd3JncWFYcEFIOFR2cGpS?=
+ =?utf-8?B?ZlZVdWREb3V5U1RxVFo3R0JwVnhoVWlYZnRKajJ3WjF0YkRVRGFUc05hbmJv?=
+ =?utf-8?B?bUFwdjhPMnZOdDZXWTVLdVdwYnNKQjNwTnZXazdjS2hQNWNYSWlKS2w0WVZs?=
+ =?utf-8?B?bW1PcUpzUS9VN1lIRHlERmVBNkNVZjlXWlZON2VIU3lMRkdPVnpKMWxocTBV?=
+ =?utf-8?B?QVNtWmY4RWxrWU1WbFY2aHdzeWZSekF5NjNqUjVXY0ZXb0JMYnl0S21rV1FZ?=
+ =?utf-8?B?Yk8xelc2U3JscnpGVlIzRlNxNjNsdC9UOUF6QzBPTjNJTGNoUU1VU2RIczZo?=
+ =?utf-8?B?NWYrSUxHaUlFT04vaTVYRVF5MkxEaUU2SzVURG5QMHgyRitvSXB0bktpSGxG?=
+ =?utf-8?B?enQ2L1V4cm1KSkpoYnZtSDRnY0ZKdmVERGJjSUlhclhrZG9YMS9vbnR1a0ZN?=
+ =?utf-8?B?YVFsZjdSRHVyQXh2T0FPVkNQVWR6ZkFLWE9IdFRkU01ZVXQ0alFUMXlDRkFN?=
+ =?utf-8?B?VktZK0lTakxJV3lkK3JrOTdnMURXRHVmZUtxaW90Mk9aeHptemRiU3lrZlpH?=
+ =?utf-8?B?cXB0bGt3WXRlV3dZOXJvcWFnWW4yZG54ZXdBNzNyRi8vUHhiTFlmKzJNWXkw?=
+ =?utf-8?B?YkEvZzVNdWxST1ZrOVNaM2dEL21zWTRtMlpHRWppaC90c1NwaVF4aG1PcDB3?=
+ =?utf-8?B?MUdXL0Q2bkZmRnhhMjExNHJYUlV4L29PTXNwbGl6VVRHcjE2M0lpSVk5blcr?=
+ =?utf-8?B?TURGMXdHQ2NnZkQyYThBL3VMSjE3K3VyQVY3ZzBCa0ZLSmZEOWgySi9sVUVl?=
+ =?utf-8?B?aHhsYUF6QjNCc0JoTU9PWCtHVHdBSUxjR0Rzd21XaGxrcDZLZjQ5NmdPZjQz?=
+ =?utf-8?Q?F/msKkfGD63raGlv2GnLN6UYQSFL8Ne4RXK7LElbWEPuW?=
+X-MS-Exchange-AntiSpam-MessageData-1: eEm0mkKQKiXQhsusAQv8mL3UkPkhcN8kEsE=
+X-OriginatorOrg: cherry.de
+X-MS-Exchange-CrossTenant-Network-Message-Id: 744ea800-ad71-4817-4634-08def3b82748
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB7733.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2026 12:42:19.2665
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GMcLDHSVsEaPdoqFLIUKjDpjOUiOQnjuBntjprdpFBaiaZvdrSUMwsr97R81WNLWNf35PzuFB592obc0izAi3LP/Ax65r3Pia9bfHD6gj2M=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: FRRPR04MB12571
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 05 Aug 2026 16:17:33 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4637
+ <yocto-patches@lists.yoctoproject.org>; Thu, 06 Aug 2026 12:42:25 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4641
 
-This change make tools like import_layer.py to work out-of-the-box when
-DevContainers are used.
+Hi Martin,
 
-Signed-off-by: Piotr Buliński <piotr@qbee.io>
----
- .devcontainer/devcontainer.json | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+On 8/5/26 2:14 PM, Martin Herren via lists.yoctoproject.org wrote:
+> From: Martin Herren <sputnik@on-the-web.ch>
+> 
+> OE-Core now parses LICENSE as an SPDX expression and warns on legacy
+> non-SPDX names such as "Proprietary".
+> 
+> Switch rockchip-rkbin-native to a recipe-specific LicenseRef backed by
+> NO_GENERIC_LICENSE.
+> 
+> References: oe-core e9d424738d6f ("classes/conf/lib: Parse LICENSE as SPDX Expression")
+> 
 
-diff --git a/.devcontainer/devcontainer.json b/.devcontainer/devcontainer.json
-index 4eb5b22..0642115 100644
---- a/.devcontainer/devcontainer.json
-+++ b/.devcontainer/devcontainer.json
-@@ -3,7 +3,15 @@
-   "dockerComposeFile": "docker-compose.yml",
-   "service": "app",
-   "workspaceFolder": "/opt/layerindex",
--  "postCreateCommand": "pip install ruff pytest && python3 manage.py migrate",
-+  // Clone BitBake into the persistent workdir volume (once) so that `import bb`
-+  // works, alongside the usual Python setup.
-+  "postCreateCommand": {
-+    "bitbake": "test -d /opt/workdir/https___git_openembedded_org_bitbake || git clone https://git.openembedded.org/bitbake /opt/workdir/https___git_openembedded_org_bitbake",
-+    "python": "pip install ruff pytest && python3 manage.py migrate"
-+  },
-+  "remoteEnv": {
-+    "PYTHONPATH": "/opt/workdir/https___git_openembedded_org_bitbake/lib:${containerEnv:PYTHONPATH}"
-+  },
-   "remoteUser": "layers",
-   "forwardPorts": [
-     8000
-@@ -27,6 +35,10 @@
-       "settings": {
-         "terminal.integrated.defaultProfile.linux": "bash",
-         "python.defaultInterpreterPath": "/usr/bin/python3",
-+        // Let Pylance resolve `import bb` from the cloned BitBake checkout.
-+        "python.analysis.extraPaths": [
-+          "/opt/workdir/https___git_openembedded_org_bitbake/lib"
-+        ],
-         "remote.autoForwardPorts": false,
-         "sqltools.connections": [
-           {
+Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
+
+Thanks!
+Quentin
 
