@@ -1,172 +1,117 @@
-Return-Path: <wangmy@fujitsu.com>
+Return-Path: <yannik.tannhaeuser@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43106C5AC7C
-	for <webhook@archiver.kernel.org>; Fri,  7 Aug 2026 07:24:16 +0000 (UTC)
-Received: from esa9.hc1455-7.c3s2.iphmx.com (esa9.hc1455-7.c3s2.iphmx.com [139.138.36.223])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.37687.1786087452456799820
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0E7CC2A09B
+	for <webhook@archiver.kernel.org>; Fri,  7 Aug 2026 12:52:54 +0000 (UTC)
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.41795.1786107167990041018
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 07 Aug 2026 00:24:12 -0700
+ Fri, 07 Aug 2026 05:52:48 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@fujitsu.com header.s=fj2 header.b=g5WxcEqn;
- spf=pass (domain: fujitsu.com, ip: 139.138.36.223, mailfrom: wangmy@fujitsu.com)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
-  t=1786087452; x=1817623452;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=NfBW945pdCV3/Nf1pUJHw0wTggMZRWJW+8l83FqCl8k=;
-  b=g5WxcEqnznw4IiZ2qeSD4tj+fXU6akCB2fN5AH15sC4oBjyQuabyneq5
-   Vh8LN7cBdpDc513pqYA0X80Q4GVBJqm3P4U/2ps5xdtu/NIkIY6FXoFWc
-   AhFS4nXXQyQfeN1wnLMDcsudWzN4Kelv+dwRoerMNa+bTpUpfBozVn/VB
-   U+EZ2fuwTHNoBgCLftKJvCw9urpLhy2pYHqS4o/9dl6nLxr2eWSD8aA40
-   R9z9F8mw/hyTovVqAubkR84NLp02k+U9lOW+ifOWKSdQj2E4y3rzwg3+L
-   svvhT9k5P/AKLCtb6Vi+qpH2eRsE7BEv2kd/MBRbTLE8qKCr3UHwdlDLK
-   A==;
-X-CSE-ConnectionGUID: z3Kv2vK1R/yQLIFlU1PCgw==
-X-CSE-MsgGUID: 7yJw5ZN/QfC6YWgk3O94lQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11867"; a="237507742"
-X-IronPort-AV: E=Sophos;i="6.25,210,1779116400"; 
-   d="scan'208";a="237507742"
-Received: from gmgwnl01.global.fujitsu.com ([52.143.17.124])
-  by esa9.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2026 16:24:10 +0900
-Received: from az2nlsmgm3.fujitsu.com (unknown [10.150.26.205])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by gmgwnl01.global.fujitsu.com (Postfix) with ESMTPS id 869FE1C000F2
-	for <yocto-patches@lists.yoctoproject.org>; Fri,  7 Aug 2026 07:24:10 +0000 (UTC)
-Received: from az2uksmom1.o.css.fujitsu.com (unknown [10.151.22.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by az2nlsmgm3.fujitsu.com (Postfix) with ESMTPS id 3AC431801EA7
-	for <yocto-patches@lists.yoctoproject.org>; Fri,  7 Aug 2026 07:24:10 +0000 (UTC)
-Received: from G08FNSTD200057.g08.fujitsu.local (unknown [10.167.135.104])
-	by az2uksmom1.o.css.fujitsu.com (Postfix) with ESMTP id 4E89F18051E0;
-	Fri,  7 Aug 2026 07:24:08 +0000 (UTC)
-From: Wang Mingyu < wangmy@fujitsu.com>
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=jSZxDHrY;
+ spf=pass (domain: gmail.com, ip: 209.85.128.45, mailfrom: yannik.tannhaeuser@gmail.com)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4995b0343c1so9659765e9.3
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 07 Aug 2026 05:52:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1786107166; x=1786711966; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=EcmGVxtvLbmeXvs0O78GpU15pAcmUQZOqFJKEDrJOQc=;
+        b=jSZxDHrYQH39Jj6zP9C9uZThJzm4ugqu6UwMkKpO5KxYoqR1XQjuYaQH4PX79IBOA2
+         O79nmKiVXvLBZ7uYwxgipZgVVTrFWc63LHkDEh0HUx5SoLzOezRdWBR80D46VojiiRjo
+         kgFNeZjYsF9uSBsBNq4PrbRJ2nEyJKQF3oyUnigDtnooXtcrVrwlSdtCvLjgQXwz7u7m
+         dCcpnM44IFU7hbp6PmlirbtCoPjvIPVFQXiKyWDjq/tC4CUyAnNIfCj7/gom2r7KFboy
+         2W8nuNvk7/pLMRELrCJEcQKmy4B/J7c7jzDfsS9yau2i2nk2CIFp90ol+i3n+Cy2cZED
+         3ztQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786107166; x=1786711966;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=EcmGVxtvLbmeXvs0O78GpU15pAcmUQZOqFJKEDrJOQc=;
+        b=CJeCiOyf2eWEpHwPLA72vnZ8vtuOMWJhN5m15VMoYNCoPnb15rHwuG4T4Seuu3k5Rn
+         CU0/3qdop59nNchbaf8C4i+qcFSHaUd8zQQLeCiJRSc7ohyNqSlFW4xWZ0D+lc7YTHtc
+         2IqYAsps8kFnnwr+cEeqctKdBAbN27SF3qED2VAA0ysfvecR31U2nvjHcgsFdNyAuoz+
+         2jfScQWUu4ymb9pR053f2NVZFcdfBEdS1437jdVgHBLtwBRMUIwk2NoXzHOElEt+yeTw
+         dOQ8lIlFutznd4twaLH/0uzmEFoV4M7c9KavHgGwLFuPlvEgjLqoFKE4n8YM3ZWJcLVf
+         YN6w==
+X-Gm-Message-State: AOJu0YzudFAHyrw4vlGV5LN/cGqEXqu+mKjfvrLUWT1qkcEo0f7NTP3y
+	ry/W1GyIVcIxHFNUopDuQumQgiO1yd8TVAJiTDZz5AjwnytuTdE+xWz7vmzNsA==
+X-Gm-Gg: AR+sD10iKEvFK5E5BEyH37/FFQnL2kA2JTh43W3T0MbCPcrNYYmFOjmFdkYGPPQB4X6
+	rA0ZPMRZH3fq7/8P/PKrHoyX+Q53XSj3K/v1Tk7ulziwyWpKd67GRasBN+4ZLJ1+QVyLc+o9CZ7
+	ngOJ3mC6cA8d2Klmwxr0zCz8YeJOt0Bh0YTC1LgI0xHnxqZBfZlLOkGxIxNNR1Gj4hgxojziaji
+	HUD2ycdZWEQvLiKjFAd/k3o1lm/v8qr9jwgJKCdA3dnk0R59w3GUTJyIPPuh3+skJ6wxNxKPdqc
+	6mnIv5KKknBNGURhNo8KWVF/qY37f/t6xUZvQt5ZMj8nEWY/k4XqWEdtyxXYvAaieJOP6nlcKpI
+	X9f14xP3S9P4MFmauscyS6L+GoJXMcjKbid3O1SH3vGKlnbMLIREPvV2zaa2HcU4nqHYs0uzoYA
+	/wmIss0j6Tp+c4gvidQ/IHX4Qyxt83IN3E+gZDdzXKTAZ3OOTeSgBfaWscQDQGA/vOXK0ME8NUq
+	Kp+zg+/mYKLXPX+SfBO93UA0Zpy7UOUihZqCzEANObJade21r4dobvQcBcbiTq1hIrdkhAF7Hf7
+	8F+w6mnudQ==
+X-Received: by 2002:a05:600c:4e94:b0:497:ff73:68d5 with SMTP id 5b1f17b1804b1-4994e6c5eafmr286539005e9.0.1786107166106;
+        Fri, 07 Aug 2026 05:52:46 -0700 (PDT)
+Received: from ERL0724PF3HPJ22.global.ul.com (p200300f847017a0099d583c1a3d62c58.dip0.t-ipconnect.de. [2003:f8:4701:7a00:99d5:83c1:a3d6:2c58])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48002145589sm6133442f8f.1.2026.08.07.05.52.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Aug 2026 05:52:45 -0700 (PDT)
+From: Yannik Tannhaeuser <yannik.tannhaeuser@gmail.com>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Wang Mingyu <wangmy@fujitsu.com>
-Subject: [yocto-patches] [meta-security] [PATCH] fix LICENSE variable syntax to suppress QA warning
-Date: Fri,  7 Aug 2026 15:24:04 +0800
-Message-ID: <20260807072404.1605-1-wangmy@fujitsu.com>
-X-Mailer: git-send-email 2.55.0.windows.3
+Cc: Yannik Tannhaeuser <yannik.tannhaeuser@gmail.com>
+Subject: [meta-selinux][wrynose][PATCH] openssh: restore SELinux labels for /var/run/sshd
+Date: Fri,  7 Aug 2026 14:52:19 +0200
+Message-ID: <20260807125219.420529-1-yannik.tannhaeuser@gmail.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 07 Aug 2026 07:24:16 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4648
+ <yocto-patches@lists.yoctoproject.org>; Fri, 07 Aug 2026 12:52:54 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4649
 
-From: Wang Mingyu <wangmy@fujitsu.com>
+Since /var/run/sshd is in most deployments a tmpfs, we need to call
+restorecon to set the correct SELinux labels each time.
 
-Signed-off-by: Wang Mingyu <wangmy@fujitsu.com>
+Signed-off-by: Yannik Tannhaeuser <yannik.tannhaeuser@gmail.com>
 ---
- recipes-ids/crowdsec/crowdsec-licenses.inc    | 2 +-
- recipes-ids/crowdsec/crowdsec_1.7.7.bb        | 2 +-
- recipes-mac/AppArmor/apparmor_4.0.3.bb        | 2 +-
- recipes-perl/perl/lib-perl_0.63.bb            | 2 +-
- recipes-perl/perl/libwhisker2-perl_2.5.bb     | 2 +-
- recipes-scanners/clamav/clamav_1.4.4.bb       | 4 ++--
- recipes-security/libgssglue/libgssglue_0.9.bb | 2 +-
- 7 files changed, 8 insertions(+), 8 deletions(-)
+ .../openssh/files/var-run-sshd-restorecon.conf              | 2 ++
+ recipes-connectivity/openssh/openssh_selinux.inc            | 6 ++++++
+ 2 files changed, 8 insertions(+)
+ create mode 100644 recipes-connectivity/openssh/files/var-run-sshd-restorecon.conf
 
-diff --git a/recipes-ids/crowdsec/crowdsec-licenses.inc b/recipes-ids/crowdsec/crowdsec-licenses.inc
-index cb45b10..92f5dc6 100644
---- a/recipes-ids/crowdsec/crowdsec-licenses.inc
-+++ b/recipes-ids/crowdsec/crowdsec-licenses.inc
-@@ -4,7 +4,7 @@
- # Do not modify it by hand, as the contents will be replaced when
- # running the update-modules task.
+diff --git a/recipes-connectivity/openssh/files/var-run-sshd-restorecon.conf b/recipes-connectivity/openssh/files/var-run-sshd-restorecon.conf
+new file mode 100644
+index 0000000..250dc4f
+--- /dev/null
++++ b/recipes-connectivity/openssh/files/var-run-sshd-restorecon.conf
+@@ -0,0 +1,2 @@
++[Socket]
++ExecStartPre=/sbin/restorecon /var/run/sshd
+diff --git a/recipes-connectivity/openssh/openssh_selinux.inc b/recipes-connectivity/openssh/openssh_selinux.inc
+index 119ce63..6fb105d 100644
+--- a/recipes-connectivity/openssh/openssh_selinux.inc
++++ b/recipes-connectivity/openssh/openssh_selinux.inc
+@@ -4,15 +4,21 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
  
--LICENSE += "& Apache-2.0 & BSD-2-Clause & BSD-3-Clause & ISC & MIT & MPL-2.0 & WTFPL"
-+LICENSE += "AND Apache-2.0 AND BSD-2-Clause AND BSD-3-Clause AND ISC AND MIT AND MPL-2.0 AND WTFPL"
+ SRC_URI += " \
+     file://50-selinux.conf \
++    file://var-run-sshd-restorecon.conf \
+ "
  
- LIC_FILES_CHKSUM += "\
-     file://pkg/mod/ariga.io/atlas@v0.31.1-0.20250212144724-069be8033e83/LICENSE;md5=175792518e4ac015ab6696d16c4f607e;spdx=Apache-2.0 \
-diff --git a/recipes-ids/crowdsec/crowdsec_1.7.7.bb b/recipes-ids/crowdsec/crowdsec_1.7.7.bb
-index 0697022..356c227 100644
---- a/recipes-ids/crowdsec/crowdsec_1.7.7.bb
-+++ b/recipes-ids/crowdsec/crowdsec_1.7.7.bb
-@@ -1,7 +1,7 @@
- SUMMARY = "CrowdSec is a free, modern & collaborative behavior detection engine, coupled with a global IP reputation network."
- DESCRIPTION = "Open-source and participative security solution offering crowdsourced protection against malicious IPs and access to the most advanced real-world CTI."
- HOMEPAGE = "https://www.crowdsec.net"
--LICENSE = "MIT & CC0-1.0"
-+LICENSE = "MIT AND CC0-1.0"
- LIC_FILES_CHKSUM = "file://src/${GO_IMPORT}/LICENSE;md5=1e58fe4126ce0b50677f3aa6ba8e13c2 \
-                     file://src/${GO_IMPORT}/build/windows/Chocolatey/crowdsec/tools/LICENSE.txt;md5=4d249f04094c9fb4d2b6fd2b1127e219 \
-                     file://src/${GO_IMPORT}/test/lib/bats-assert/LICENSE;md5=7bae63a234e80ee7c6427dce9fdba6cc \
-diff --git a/recipes-mac/AppArmor/apparmor_4.0.3.bb b/recipes-mac/AppArmor/apparmor_4.0.3.bb
-index 9983157..76025bd 100644
---- a/recipes-mac/AppArmor/apparmor_4.0.3.bb
-+++ b/recipes-mac/AppArmor/apparmor_4.0.3.bb
-@@ -8,7 +8,7 @@ DESCRIPTION = "user-space parser utility for AppArmor \
- HOMEPAGE = "http://apparmor.net/"
- SECTION = "admin"
+ do_install:append() {
+     install -d ${D}${sysconfdir}/ssh/sshd_config.d
+     install -m 0644 ${UNPACKDIR}/50-selinux.conf \
+         ${D}${sysconfdir}/ssh/sshd_config.d/50-selinux.conf
++
++    install -d ${D}${systemd_system_unitdir}/sshd.socket.d
++    install -m 0644 ${UNPACKDIR}/var-run-sshd-restorecon.conf \
++        ${D}${systemd_system_unitdir}/sshd.socket.d/var-run-sshd-restorecon.conf
+ }
  
--LICENSE = "GPL-2.0-only & GPL-2.0-or-later & BSD-3-Clause & LGPL-2.1-or-later"
-+LICENSE = "GPL-2.0-only AND GPL-2.0-or-later AND BSD-3-Clause AND LGPL-2.1-or-later"
- LIC_FILES_CHKSUM = "file://${S}/LICENSE;md5=fd57a4b0bc782d7b80fd431f10bbf9d0"
+ FILES:${PN}-sshd:append = " ${sysconfdir}/ssh/sshd_config.d/50-selinux.conf"
++FILES:${PN}-sshd:append = " ${systemd_system_unitdir}/sshd.socket.d/var-run-sshd-restorecon.conf"
  
- DEPENDS = "bison-native apr autoconf-archive-native gettext-native coreutils-native swig-native"
-diff --git a/recipes-perl/perl/lib-perl_0.63.bb b/recipes-perl/perl/lib-perl_0.63.bb
-index f0d6832..c0fb43a 100644
---- a/recipes-perl/perl/lib-perl_0.63.bb
-+++ b/recipes-perl/perl/lib-perl_0.63.bb
-@@ -5,7 +5,7 @@ will find modules which are not located in the default search path."
- 
- SECTION = "libs"
- HOMEPAGE = "https://metacpan.org/dist/lib"
--LICENSE = "Artistic-1.0 | GPL-1.0-or-later"
-+LICENSE = "Artistic-1.0 OR GPL-1.0-or-later"
- PR = "r0"
- 
- LIC_FILES_CHKSUM = "file://README;beginline=26;endline=30;md5=94b119f1a7b8d611efc89b5d562a1a50"
-diff --git a/recipes-perl/perl/libwhisker2-perl_2.5.bb b/recipes-perl/perl/libwhisker2-perl_2.5.bb
-index e16e5f2..94b2384 100644
---- a/recipes-perl/perl/libwhisker2-perl_2.5.bb
-+++ b/recipes-perl/perl/libwhisker2-perl_2.5.bb
-@@ -1,7 +1,7 @@
- DESCRIPTION = "Libwhisker is a Perl module geared specificly for HTTP testing."
- 
- SECTION = "libs"
--LICENSE = "Artistic-1.0 | GPL-1.0-or-later"
-+LICENSE = "Artistic-1.0 OR GPL-1.0-or-later"
- 
- LIC_FILES_CHKSUM = "file://LICENSE;md5=254b8e29606fce6d1c1a4c9e32354573"
- 
-diff --git a/recipes-scanners/clamav/clamav_1.4.4.bb b/recipes-scanners/clamav/clamav_1.4.4.bb
-index e9c2aca..b3f14cd 100644
---- a/recipes-scanners/clamav/clamav_1.4.4.bb
-+++ b/recipes-scanners/clamav/clamav_1.4.4.bb
-@@ -1,8 +1,8 @@
- SUMMARY = "ClamAV anti-virus utilities and scanner tools"
--DESCRIPTION = "ClamAV is an open source antivirus engine for detecting trojans, viruses, malware & other malicious threats."
-+DESCRIPTION = "ClamAV is an open source antivirus engine for detecting trojans, viruses, malware AND other malicious threats."
- HOMEPAGE = "http://www.clamav.net/index.html"
- SECTION = "security"
--LICENSE = "GPL-2.0-only & LGPL-2.1-only & BSD-2-Clause & Zlib & Apache-2.0-with-LLVM-exception"
-+LICENSE = "GPL-2.0-only AND LGPL-2.1-only AND BSD-2-Clause AND Zlib AND Apache-2.0-with-LLVM-exception"
- LIC_FILES_CHKSUM = "file://COPYING.txt;md5=2c0b5770a62017a3121c69bb9f680b0c \
-                     file://COPYING/COPYING.LGPL;md5=2d5025d4aa3495befef8f17206a5b0a1 \
-                     file://COPYING/COPYING.bzip2;md5=ae8d555c34b656ff864ea9437a10d3a0 \
-diff --git a/recipes-security/libgssglue/libgssglue_0.9.bb b/recipes-security/libgssglue/libgssglue_0.9.bb
-index 0952ed1..9b33ce9 100644
---- a/recipes-security/libgssglue/libgssglue_0.9.bb
-+++ b/recipes-security/libgssglue/libgssglue_0.9.bb
-@@ -8,7 +8,7 @@ depending on the mechanism. \
- HOMEPAGE = "https://gitlab.com/gsasl/libgssglue"
- SECTION = "libs"
- 
--LICENSE = "BSD-3-Clause | HPND"
-+LICENSE = "BSD-3-Clause OR HPND"
- 
- #Copyright (c) 1996, by Sun Microsystems, Inc.                   HPND
- #Copyright (c) 2007 The Regents of the University of Michigan. BSD-3-Clause
+ PACKAGECONFIG[selinux] = "--with-selinux,--without-selinux,libselinux"
+ PACKAGECONFIG[audit] = "--with-audit=linux,--without-audit,audit"
 -- 
 2.43.0
 
