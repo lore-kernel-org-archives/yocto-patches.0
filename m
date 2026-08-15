@@ -1,91 +1,108 @@
-Return-Path: <antonin.godard@bootlin.com>
+Return-Path: <richard.purdie@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F3C6C5CFC1
-	for <webhook@archiver.kernel.org>; Fri, 14 Aug 2026 15:11:03 +0000 (UTC)
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.15024.1786720254348737003
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD5E2C5CFC1
+	for <webhook@archiver.kernel.org>; Sat, 15 Aug 2026 09:55:39 +0000 (UTC)
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.6025.1786787734349126285
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 14 Aug 2026 08:10:54 -0700
+ Sat, 15 Aug 2026 02:55:34 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bootlin.com header.s=dkim header.b=EtQsLRmu;
- spf=pass (domain: bootlin.com, ip: 185.246.85.4, mailfrom: antonin.godard@bootlin.com)
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 616554E4122E
-	for <yocto-patches@lists.yoctoproject.org>; Fri, 14 Aug 2026 15:10:52 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 36F766046D
-	for <yocto-patches@lists.yoctoproject.org>; Fri, 14 Aug 2026 15:10:52 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6FA7611C4EE4A;
-	Fri, 14 Aug 2026 17:10:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1786720247; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=zrvH2xyBbpSdZ1zEzErK09G7djedjAJ8pH+NtzJN+Lk=;
-	b=EtQsLRmuX0nL8gR9B6fkfpP23Q0lGLksaiSq1eKptVmdB6ooqg2Otwm7W8To7zhw4ShyTV
-	i2fUaO1AlSokRWoeyjubywhTkEGz/Xa4xBCEoI9DessFv2mNBdHq0JKJPZJABxnW/KXCiI
-	UKp1gR1DwJlqafpcG/obZSYjchM8BfD/ocyYbE9kveOM2JMzB6zOe4d0qlXNfGdP73xazT
-	kSNtaxWeQYzC6zu9WrNiMUmvlXQlYeZJrrd1yIqiOynLoeqbl82J4jJtb+KEFKLloNAaVC
-	QliJZ+2tIxLd7TU7HRpSegC0MYQnJlEQIeH6joEMkpIWukx27emm3XuzTQcTNQ==
-From: Antonin Godard <antonin.godard@bootlin.com>
-Date: Fri, 14 Aug 2026 17:10:35 +0200
-Subject: [yocto-autobuilder-helper][PATCH 1/2]
- scripts/dashboard/index.html: fix a typo
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260814-dashboard-updates-v1-1-2ef14945639c@bootlin.com>
-References: <20260814-dashboard-updates-v1-0-2ef14945639c@bootlin.com>
-In-Reply-To: <20260814-dashboard-updates-v1-0-2ef14945639c@bootlin.com>
+ dkim=pass header.i=@linuxfoundation.org header.s=google header.b=LQ44Qwg2;
+ spf=pass (domain: linuxfoundation.org, ip: 209.85.128.46, mailfrom: richard.purdie@linuxfoundation.org)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-490cf322ed0so17610665e9.1
+        for <yocto-patches@lists.yoctoproject.org>; Sat, 15 Aug 2026 02:55:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1786787732; x=1787392532; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=0e5fxvE6HbKNdfnxhSDsZPPausPhbknzscEAdBMQda4=;
+        b=LQ44Qwg2gCGO5MBYtWmtThF8nK/zdvnLSMXeoS0Y6GYF+V7mrxJyBx5WfTxVfvJbT+
+         TQmgVTuTY3la44xa5CRo0IMekspi+ZTnwOltXWQ7jcTfHmgwAvo/vqck39x6hechn6nn
+         sES4MNwCs06fGepRI4qjJX9Xr114OGQoVXa8I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786787732; x=1787392532;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=0e5fxvE6HbKNdfnxhSDsZPPausPhbknzscEAdBMQda4=;
+        b=f38I0ambC7nfmUcwNRbxFUhYTCAOshXBTEcMCoBJvY/KgQenLnRH9VNFv2DDrMxDG5
+         ljNWJHYG/UuNVwb4/5BFVTv9fINI6iNjnDYWENrWFUal25jCoHU2cJNDDQf86/dFDfNm
+         YwJvoc+xzLw9hSO8H5T9wLnLt8Qk9M8dbIJCDO1mbSKxDDtpy1bggObPQIBUY5SJ7UiO
+         z1jJGOEdb4V4DG94Y/vsollrCeW0KNSeVi5IUwJ4xz8FvyTutQzQZlSa1wQwhFUuf4Tz
+         njfYBQjx2DvZgbYK86MXiIH/OpkAwTahWu/sGUDlUwhZCt7xcFchK2krxl2dQ5Kaxvt9
+         zKJg==
+X-Gm-Message-State: AOJu0Yy/2Tkh8wsfLzdoxRaDBOhPlMdcjD3dqih1e5zZSHNP4Ya6ioxD
+	+MZOBOdXEwyIwOoEbKAuNqk2usaYucE+Kl0Ad8PVLidDviRe+EYYN2Blxw7A/wFlaphWwKR+lm0
+	vWD2vzuE=
+X-Gm-Gg: AR+sD13V+DUyneyESTuXQEwAZ0WCO3ldN8044UmmhfnlfKy67sXAZDowBP2kuQl912L
+	lOaQX/3+OK1PnQtoiWgQPQ7X3hBf+wKnju3HTvk7lNP/FvY/73KaISHTZk/hulZX+b5kLclx+dk
+	nFINs8WEXjAjP1kLdPIHmVt/8miR8nixRC2mlLBiXgZMYpYkv+M1Qg+QduNJfMdJPxrACRM9703
+	11BBZRpSfmhOSp8twodTOdtrcnhqDL9z82BrGv84mmGtKcp+qN/Ac3dqDwgrdd+EDFKlg3i261Z
+	IcTUHkQgod5h53lgSpUHLXQy62FDf35WdT+rF6J6UtlZSpwtn4Ve/oINNEb5eaaeTgqvXJTebxm
+	Ij74kVgnBIM0bQ0gVPoxP21J2GlduYajpAgut/O00f0qCgGEK6KNIvLKZYBgDBpfJqgiQUo9GrO
+	AZpcEmT9A4R5oFc6XQmU5KM3udxuaPD8VMUP7RePcG8tewhL8lytcANuBxgQNW8FIH80gYN/Qef
+	ZzqDl0woLmslfwQ
+X-Received: by 2002:a05:600c:3acf:b0:499:728c:4704 with SMTP id 5b1f17b1804b1-49987979c41mr186651475e9.12.1786787732357;
+        Sat, 15 Aug 2026 02:55:32 -0700 (PDT)
+Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:76a9:d146:8f01:f2e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-499899bff2csm95596435e9.7.2026.08.15.02.55.31
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Aug 2026 02:55:31 -0700 (PDT)
+From: Richard Purdie <richard.purdie@linuxfoundation.org>
 To: yocto-patches@lists.yoctoproject.org
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Antonin Godard <antonin.godard@bootlin.com>
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1059;
- i=antonin.godard@bootlin.com; h=from:subject:message-id;
- bh=vc5sFb82kteaCON+il51ggp+lZfnInwPPIIiPd0Iyqg=;
- b=owEBbQKS/ZANAwAKAdGAQUApo6g2AcsmYgBqfy/xKRgk2Y8cDOo0UQpFoSTTbuZb1D0oCAOJX
- 6KKUxMQNXGJAjMEAAEKAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCan8v8QAKCRDRgEFAKaOo
- Nv9ND/45QRJWbWcII1nRCkWm+SQcg8nsX0C/sKEokerB80Fk0fFkWgLS2Js9MukDo6xYCU/NzQM
- JNNyQv8sf6hOdWJ5gUP3rAa5dw9i9vGjW+at9FUDABa7f8PIQ6pj/amd4MqoQ15vXRwPx1/fyGO
- 7AckZrbjsPOD6JxoCWb1nLFx9m6C8dzpjMK4IhaF3cPrgFKbWltjHRgVxv1cYz1Yb7QSzP9mW0u
- D0AM1kFeYqRuk4iPOZDz09dcA/eIZ2eMSky7PtJKZFJ92JTO6wNNOjqb8etnTyl4B1R3gvNA3Mj
- rELXJTpHrmSZ8jo0LToZGJdsnOJsyHs0kmuHw0yfdqvVmRr4l4GpEGf4nEfAlqn/yLBbAz151VZ
- X/y9xqnH6+ivMxfUw6N6SC6D0IlBlrTMuB2YEp3eVFvlWxb4UWAiaZD/P/yGxn0dV6nnXTCRvTi
- t5Z+ZO/3NNuZ1bEy3WVcr2VeQnjQgaY+bUtAq9QDDHrsv0AbhwbTRtgkeTud7eXRwE/NnxInNYt
- 9ZGo8gLkWeIRAYUVcD22vkxax+xzIQHW1c+HprVXvJp535FNhtwcMl/jjOrciLgQgJrr0D29bgc
- tsk+w5OSJ6Z/ro/j4YtPrUqKyWKPuVOvDO3766nbXuerGj7PCd7qLTKU8QZ35w1fXZBm15lW47Y
- 3DLKsAg88tfuWoQ==
-X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
- fpr=8648725188DD401BB9A0D3FFD180414029A3A836
-X-Last-TLS-Session-Version: TLSv1.3
+Subject: [yocto-autobuilder-helper] [PATCH] config.json: Use own-mirrors for auh/buildperf
+Date: Sat, 15 Aug 2026 10:55:30 +0100
+Message-ID: <20260815095530.3524320-1-richard.purdie@linuxfoundation.org>
+X-Mailer: git-send-email 2.53.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 14 Aug 2026 15:11:03 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4665
+ <yocto-patches@lists.yoctoproject.org>; Sat, 15 Aug 2026 09:55:39 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4667
 
-Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
+Now that we disable the yocto mirrors from all builds, we need to tweak the ones
+that populate their own DL_DIR to use the sources directory as a mirror and reduce
+network traffic.
+
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
 ---
- scripts/dashboard/index.html | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ config.json | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/scripts/dashboard/index.html b/scripts/dashboard/index.html
-index c4f657b..d20276f 100644
---- a/scripts/dashboard/index.html
-+++ b/scripts/dashboard/index.html
-@@ -37,7 +37,7 @@
-         <li><a href="https://git.openembedded.org/">OpenEmbedded Source Code Repositories (git)</a></li>
-         <li><a href="https://bugzilla.yoctoproject.org/">Yocto Project Bugzilla</a></li>
-         <li><a href="https://www.yoctoproject.org/development/yocto-project-compatible-layers/">Yocto Project Compatible Layers</a></li>
--        <li><a href="https://www.yoctoproject.org/reproducible-build-results/">Reproducibile Build Status</a></li>
-+        <li><a href="https://www.yoctoproject.org/reproducible-build-results/">Reproducible Build Status</a></li>
-         <li><a href="https://lore.kernel.org/">Lore Public Inbox for mailing lists</a></li>
-       </ul>
-     </section>
-
--- 
-2.55.0
-
+diff --git a/config.json b/config.json
+index 9fd9ba3..b887900 100644
+--- a/config.json
++++ b/config.json
+@@ -243,6 +243,8 @@
+                 "BB_NUMBER_PARSE_THREADS = '24'",
+                 "PARALLEL_MAKE = '-j 24'",
+                 "DL_DIR = '${BUILDPERF_STATEDIR}/downloads'",
++                "INHERIT += 'own-mirrors'",
++                "SOURCE_MIRROR_URL = 'file://${BASE_SHAREDDIR}/current_sources'",
+                 "CONNECTIVITY_CHECK_URIS = ''",
+                 "BB_HASHSERVE = 'auto'",
+                 "BB_LOG_HOST_STAT_CMDS = ''",
+@@ -1560,6 +1562,8 @@
+             "NEEDREPOS" : ["bitbake", "auto-upgrade-helper"],
+             "extravars" :[
+                 "DL_DIR = '${TOPDIR}/downloads'",
++                "INHERIT += 'own-mirrors'",
++                "SOURCE_MIRROR_URL = 'file://${BASE_SHAREDDIR}/current_sources'",
+                 "INHERIT += 'buildhistory'",
+                 "LICENSE_FLAGS_ACCEPTED = 'commercial'",
+                 "INIT_MANAGER:libc-glibc = 'systemd'",
+@@ -1590,6 +1594,8 @@
+             "NEEDREPOS": ["bitbake", "auto-upgrade-helper", "meta-openembedded"],
+             "extravars": [
+                 "DL_DIR = '${TOPDIR}/downloads'",
++                "INHERIT += 'own-mirrors'",
++                "SOURCE_MIRROR_URL = 'file://${BASE_SHAREDDIR}/current_sources'",
+                 "INHERIT += 'buildhistory'",
+                 "LICENSE_FLAGS_ACCEPTED = 'commercial'",
+                 "DISTRO_FEATURES:append:libc-glibc = ' systemd usrmerge'",
 
