@@ -1,127 +1,149 @@
-Return-Path: <richard.purdie@linuxfoundation.org>
+Return-Path: <esa.jaaskela@suomi24.fi>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BE19C5DF81
-	for <webhook@archiver.kernel.org>; Tue, 18 Aug 2026 15:55:33 +0000 (UTC)
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.12253.1787068522666389344
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBF3DC5DF81
+	for <webhook@archiver.kernel.org>; Tue, 18 Aug 2026 19:34:20 +0000 (UTC)
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.17122.1787081650941046534
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 18 Aug 2026 08:55:23 -0700
+ Tue, 18 Aug 2026 12:34:11 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=FPNf3Ufk;
- spf=pass (domain: linuxfoundation.org, ip: 209.85.128.54, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4954a9e8490so7475025e9.1
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 18 Aug 2026 08:55:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1787068521; x=1787673321; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=Yoy8OBNTD9gFi1fPZSTpf0a4TWdWQYUjJVcJQ5IC0AY=;
-        b=FPNf3UfkD9ovuH4f7iWh6QbjJOw3xuTFJLOGgWiMVeu16xCoeOItkKkNItRBOkRkc1
-         X1XTJr7SKi9ED9EDVvKkweEx998Hx5n5zD6vgR/7NMdMbUsIx8Pf/jxu8F5GfL47kbtN
-         jNblttgu0Nqw2F3AhvOjSrC69wBRx2g2mWI4o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787068521; x=1787673321;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=Yoy8OBNTD9gFi1fPZSTpf0a4TWdWQYUjJVcJQ5IC0AY=;
-        b=pxqDPiwpz4JMymirKPp4R1xTvAN+em6zPDnQ43Xdl309q/8DGxmS0AZ1eZF0RdC6TD
-         iMzCRLnkxmTRNMA6XAZG0gbGIYt6whka4Mx3xvho5aHZJA8Jgtt+iBbfbX7IhweJ6kqp
-         S+dxvrEy3jUT9dmizl6mVqOm/rk+fDKFfK/kip5TXy3E4IwsMg2rNfT5N/B9URMrh9Tm
-         QEuKeawa2AdB6W4FUKSXmv+ax/ueE/DRyru9n2QlwnOyGrtUndW4akt+AnGndfM3wlq2
-         uzlm6CzIYsBsWw5EBarYVmkZw77XdSp3kIVhXRuH0yG1Lc7uPurjMvWrIaa6Ab12ZvFq
-         m3ng==
-X-Gm-Message-State: AOJu0Yy6P6mHXRbf1j6E4CFmkYkd3UDSGSVgPMy4DISToV8pp2w2149A
-	iKwVg/cZ7/RqVAhIDHylbS8pEv4fACr3Iwye0kqRmu1MXz1NC/KUbTqiI+0oIcNXliXR9FDIaTA
-	j1WjjfaM=
-X-Gm-Gg: AR+sD10f7mr/dV920F3bCBl60Eaf7NbEV3vivHC87WSn9eirMltQOoOziHEtr8Zk+Mw
-	o64+VxDNbJ9oiIUt4ZvygoZToLuWxs9PMwNhDVx0H4D89FtfSTugf3YfY4wPSrHwHxL0KQw1yyy
-	RHB+61CU+zcfH7CzVrW7sOpb2xTeIMeevzJ/oKeTBNVoYiKtX0gyiFMxBPCSq+tGjn+HXCRRPS0
-	UjmjNhcZBnF6VcVbmpP5vdTNfyO3bg44QlDfNepU0t8IM9qcPM9DzW5GEtcgrnt9Hdrvyc95Dik
-	cHMo42Z+fFg2FhGWeIslBRANIhMtghrTKyz9wnEXGP8JYYoZL5uaDIz26JhgrTHmEC3QcpyCjJj
-	mEcNPYg99WZFP2mj9Feq4SGYjJjzIrUvmwpbpkGcPcMfRI/9ve/Ot4lvUgNjGa4TESxZEHoMd2L
-	F1viC3MfIqu4QpRLA2v1/QUftOHPDCXnyw11r3YKdRD664Ug3I+hHOf7s40xlMcDbMn4mZAuFAS
-	dpurpGZ+FTRZAKkwg==
-X-Received: by 2002:a05:600c:35d1:b0:499:a0a5:e13f with SMTP id 5b1f17b1804b1-499a2040313mr109864565e9.2.1787068520720;
-        Tue, 18 Aug 2026 08:55:20 -0700 (PDT)
-Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:ee4b:f6b4:d308:732d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4999d0fb85csm187558845e9.11.2026.08.18.08.55.19
-        for <yocto-patches@lists.yoctoproject.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Aug 2026 08:55:19 -0700 (PDT)
-From: Richard Purdie <richard.purdie@linuxfoundation.org>
+ dkim=fail reason="dkim: body hash did not verify" header.i=@suomi24.fi header.s=MBO0001 header.b=Ehzyargd;
+ spf=pass (domain: suomi24.fi, ip: 80.241.56.172, mailfrom: esa.jaaskela@suomi24.fi)
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4hPfyk5h4GzMlQ0;
+	Tue, 18 Aug 2026 21:34:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suomi24.fi; s=MBO0001;
+	t=1787081646;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=GrtbWB7EWQl0IqFK98bSQRRQsE5+ET2oiIPHBZQuYpI=;
+	b=EhzyargdbGAq+ifEyZrz5I6TF7WG4zv1q0Xym/hcHmxjBQl1ofVBsAEYqsUj4pQUCG0Q8L
+	acChbXrmZ87jOfH+lOJdv1k4xKQNhdudrZsQojFMnfZ52lr8/sN2fSHsg/lO+UeNsuE8QQ
+	tUYAx4C4am3Ukl9s4lem2iY9JPvhQ0+6DLWZlFFeauHIcgn6Y57x9AeVIeQLSj/7lPlf59
+	NySMCK8kMY6iLNLmDkVgGp/cHOXjqUfFaI75x7zpyYvSyXyyed9Hmo7Lbvl+FzxauyGSf5
+	iSSYaDVqQ/w0wrvsrxkE7zg3KPw0s/0IkF0LMmamcaduow2Yh8D3jNqiJtv8tQ==
+From: Esa Jaaskela <esa.jaaskela@suomi24.fi>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [yocto-autobuilder-helper] [PATCH] utils: Improve buildtools env parsing
-Date: Tue, 18 Aug 2026 16:55:19 +0100
-Message-ID: <20260818155519.278450-1-richard.purdie@linuxfoundation.org>
-X-Mailer: git-send-email 2.53.0
+Cc: Esa Jaaskela <esa.jaaskela@suomi24.fi>
+Subject: [meta-security][PATCH] aide: Fix unstable install task hash
+Date: Tue, 18 Aug 2026 22:33:59 +0300
+Message-ID: <20260818193359.1608995-1-esa.jaaskela@suomi24.fi>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 18 Aug 2026 15:55:33 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4672
+ <yocto-patches@lists.yoctoproject.org>; Tue, 18 Aug 2026 19:34:20 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4673
 
-The current env scripts have includes which the current parsing code can't
-handle and we miss the variables defined there. Switch to a different method
-where source the scripts and print the environment, then parse that back in
-instead.
+The installation task hash for the aide is marked as nostamp. This is
+done because the native task installs files outside the sysroot, to the
+Aide staging directory. Those files are not captured by
+do_populate_sysroot, so they are missing whenever the task is skipped or
+restored from sstate.
 
-There are quite a few variables which can cause problems which we don't want
-to touch so skip over the ones we know don't make sense and the buildtools
-environment is unlikely to need/change.
+Install the required native contents to the sysroot, and then customise
+and deploy the configuration file in the aide_init_db rootfs postprocess
+function that utilizes the files. The configuration file needs to be
+reset every time the function is run to avoid using stale
+configurations.
 
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+Staging the native files through the sysroot makes the nostamp
+unnecessary, so remove it along with the unstable task hash it caused.
+
+Signed-off-by: Esa Jaaskela <esa.jaaskela@suomi24.fi>
 ---
- scripts/utils.py | 34 +++++++++++++++++++++-------------
- 1 file changed, 21 insertions(+), 13 deletions(-)
+ classes/aide-db-init.bbclass    | 11 +++++++++--
+ recipes-ids/aide/aide_0.19.3.bb | 13 ++++---------
+ 2 files changed, 13 insertions(+), 11 deletions(-)
 
-diff --git a/scripts/utils.py b/scripts/utils.py
-index 4858d34..ab33734 100644
---- a/scripts/utils.py
-+++ b/scripts/utils.py
-@@ -460,19 +460,27 @@ def enable_tools_tarball(btdir, name, env_glob="/environment-setup*"):
-     btenv = glob.glob(btdir + env_glob)
-     print("Using %s %s" % (name, btenv))
-     # We either parse or wrap all our execution calls, rock and a hard place :(
--    with open(btenv[0], "r") as f:
--        for line in f.readlines():
--            if line.startswith("export "):
--                line = line.strip().split(" ", 1)[1].split("=", 1)
--                if "$PATH" in line[1]:
--                    line[1] = line[1].replace("$PATH", os.environ["PATH"])
--                if line[1].startswith(("'", '"')):
--                    line[1] = line[1][1:-1]
--                os.environ[line[0]] = line[1]
--            elif line.startswith("unset "):
--                line = line.strip().split(" ", 1)[1]
--                if line in os.environ:
--                    del os.environ[line]
-+    # Run the environment script, dump the output and parse back in.
-+    output = subprocess.check_output(". %s; set" % btenv[0], shell=True, text=True)
-+    skip = ['_', 'SHELL', 'OLDPWD', 'PWD', 'TERM', 'PS4', 'USER', 'SHELLOPTS', 'IFS', 'EUID', 'UID', 'HOME', 'SHLVL', 'DIRSTACK', 'OPTERR', 'OPTIND', 'PIPESTATUS', 'PPID', 'GROUPS', 'POSIXLY_CORRECT']
-+    env = {}
-+    for line in output.splitlines():
-+        if "=" not in line:
-+             continue
-+        key, val = line.split("=", 1)
-+        if key in skip:
-+            continue
-+        if key.startswith("BASH"):
-+            continue
-+        if val[0] == "'" and val[-1] == "'":
-+            val = val[1:-1]
-+        env[key] = val
-+    for key in os.environ:
-+        if key not in env and key not in skip:
-+            del os.environ[key]
+diff --git a/classes/aide-db-init.bbclass b/classes/aide-db-init.bbclass
+index 800006f..3fe2c27 100644
+--- a/classes/aide-db-init.bbclass
++++ b/classes/aide-db-init.bbclass
+@@ -31,6 +31,13 @@
+ inherit aide-base=20
+=20
+ aide_init_db() {
++    install -d ${STAGING_AIDE_DIR}/lib/logs
++    rm -f ${STAGING_AIDE_DIR}/aide.conf ${STAGING_AIDE_DIR}/lib/aide.db =
+${STAGING_AIDE_DIR}/lib/aide.db.gz ${STAGING_AIDE_DIR}/lib/logs/aide.log
++    install ${STAGING_DATADIR_NATIVE}/aide/aide.conf ${STAGING_AIDE_DIR}=
+/
 +
-+    for key in env:
-+        os.environ[key] = env[key]
- 
- # Unlike buildtools (a host/worker property, keyed by worker name globs),
- # the vcontainer-tarball is only needed by specific jobs (e.g.
++    sed -i -s "s:\@\@define DBDIR.*:\@\@define DBDIR ${STAGING_AIDE_DIR}=
+/lib:" ${STAGING_AIDE_DIR}/aide.conf
++    sed -i -e "s:\@\@define LOGDIR.*:\@\@define LOGDIR ${STAGING_AIDE_DI=
+R}/lib/logs:" ${STAGING_AIDE_DIR}/aide.conf
++
+     for dir in ${AIDE_INCLUDE_DIRS}; do
+         echo "${IMAGE_ROOTFS}${dir} NORMAL" >> ${STAGING_AIDE_DIR}/aide.=
+conf
+     done
+@@ -39,7 +46,7 @@ aide_init_db() {
+     done
+=20
+=20
+-    ${STAGING_AIDE_DIR}/bin/aide -c ${STAGING_AIDE_DIR}/aide.conf --init
++    ${STAGING_BINDIR_NATIVE}/aide -c ${STAGING_AIDE_DIR}/aide.conf --ini=
+t
+     gunzip ${STAGING_AIDE_DIR}/lib/aide.db.gz=20
+     # strip out native path
+     sed -i -e 's:${IMAGE_ROOTFS}::' ${STAGING_AIDE_DIR}/lib/aide.db
+@@ -47,6 +54,6 @@ aide_init_db() {
+     cp -f ${STAGING_AIDE_DIR}/lib/aide.db.gz ${IMAGE_ROOTFS}${libdir}/ai=
+de
+ }
+=20
+-EXTRA_IMAGEDEPENDS:append =3D " aide-native"
++do_rootfs[depends] +=3D "aide-native:do_populate_sysroot"
+=20
+ ROOTFS_POSTPROCESS_COMMAND:append =3D " aide_init_db;"
+diff --git a/recipes-ids/aide/aide_0.19.3.bb b/recipes-ids/aide/aide_0.19=
+.3.bb
+index 68e3bfa..5daa295 100644
+--- a/recipes-ids/aide/aide_0.19.3.bb
++++ b/recipes-ids/aide/aide_0.19.3.bb
+@@ -31,8 +31,6 @@ PACKAGECONFIG[e2fsattrs] =3D "--with-e2fsattrs, --witho=
+ut-e2fsattrs, e2fsprogs, e2
+ PACKAGECONFIG[capabilities] =3D "--with-capabilities, --without-capabili=
+ties, libcap, libcap"
+ PACKAGECONFIG[posix-acl] =3D "--with-posix-acl, --without-posix-acl, acl=
+, acl"
+=20
+-do_install[nostamp] =3D "1"
+-
+ do_install:append () {
+     install -d ${D}${libdir}/${PN}/logs  =20
+     install -d ${D}${sysconfdir}  =20
+@@ -47,14 +45,11 @@ do_install:append () {
+ }
+=20
+ do_install:class-native () {
+-    install -d ${STAGING_AIDE_DIR}/bin
+-    install -d ${STAGING_AIDE_DIR}/lib/logs
+-
+-    install ${B}/aide ${STAGING_AIDE_DIR}/bin
+-    install ${UNPACKDIR}/aide.conf ${STAGING_AIDE_DIR}/
++    install -d ${D}${bindir}
++    install -d ${D}${datadir}/${BPN}
+=20
+-    sed -i -s "s:\@\@define DBDIR.*:\@\@define DBDIR ${STAGING_AIDE_DIR}=
+/lib:" ${STAGING_AIDE_DIR}/aide.conf
+-    sed -i -e "s:\@\@define LOGDIR.*:\@\@define LOGDIR ${STAGING_AIDE_DI=
+R}/lib/logs:" ${STAGING_AIDE_DIR}/aide.conf
++    install ${B}/aide ${D}${bindir}
++    install ${UNPACKDIR}/aide.conf ${D}${datadir}/${BPN}/
+ }
+=20
+ CONF_FILE =3D "${sysconfdir}/aide.conf"
+--=20
+2.47.3
+
 
