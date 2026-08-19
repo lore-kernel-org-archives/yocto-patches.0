@@ -1,149 +1,95 @@
-Return-Path: <esa.jaaskela@suomi24.fi>
+Return-Path: <chenqi_hycx@cetc.com.cn>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBF3DC5DF81
-	for <webhook@archiver.kernel.org>; Tue, 18 Aug 2026 19:34:20 +0000 (UTC)
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.17122.1787081650941046534
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17642C5DF6D
+	for <webhook@archiver.kernel.org>; Wed, 19 Aug 2026 06:09:22 +0000 (UTC)
+Received: from cetci.com.cn (cetci.com.cn [220.181.78.204])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.1206.1787119757229214745
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 18 Aug 2026 12:34:11 -0700
+ Tue, 18 Aug 2026 23:09:17 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@suomi24.fi header.s=MBO0001 header.b=Ehzyargd;
- spf=pass (domain: suomi24.fi, ip: 80.241.56.172, mailfrom: esa.jaaskela@suomi24.fi)
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4hPfyk5h4GzMlQ0;
-	Tue, 18 Aug 2026 21:34:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suomi24.fi; s=MBO0001;
-	t=1787081646;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=GrtbWB7EWQl0IqFK98bSQRRQsE5+ET2oiIPHBZQuYpI=;
-	b=EhzyargdbGAq+ifEyZrz5I6TF7WG4zv1q0Xym/hcHmxjBQl1ofVBsAEYqsUj4pQUCG0Q8L
-	acChbXrmZ87jOfH+lOJdv1k4xKQNhdudrZsQojFMnfZ52lr8/sN2fSHsg/lO+UeNsuE8QQ
-	tUYAx4C4am3Ukl9s4lem2iY9JPvhQ0+6DLWZlFFeauHIcgn6Y57x9AeVIeQLSj/7lPlf59
-	NySMCK8kMY6iLNLmDkVgGp/cHOXjqUfFaI75x7zpyYvSyXyyed9Hmo7Lbvl+FzxauyGSf5
-	iSSYaDVqQ/w0wrvsrxkE7zg3KPw0s/0IkF0LMmamcaduow2Yh8D3jNqiJtv8tQ==
-From: Esa Jaaskela <esa.jaaskela@suomi24.fi>
+ dkim=none (message not signed); spf=pass (domain: cetc.com.cn, ip: 220.181.78.204, mailfrom: chenqi_hycx@cetc.com.cn)
+Received: from mail.cetc.com.cn (unknown [123.125.172.198])
+	by mtasvr (Coremail) with SMTP id _____wAXAWN6SIVqRbkAAA--.3827S3;
+	Wed, 19 Aug 2026 14:08:59 +0800 (CST)
+Received: from chenqi-Matebook14.. (unknown [123.125.172.198])
+	by front01 (Coremail) with SMTP id C6CowACnJ2gsSIVqwj4QAA--.10209S2;
+	Wed, 19 Aug 2026 14:07:43 +0800 (CST)
+From: chenqi_hycx@cetc.com.cn
 To: yocto-patches@lists.yoctoproject.org
-Cc: Esa Jaaskela <esa.jaaskela@suomi24.fi>
-Subject: [meta-security][PATCH] aide: Fix unstable install task hash
-Date: Tue, 18 Aug 2026 22:33:59 +0300
-Message-ID: <20260818193359.1608995-1-esa.jaaskela@suomi24.fi>
+Cc: joe.macdonald@siemens.com
+Subject: [meta-selinux][PATCH] selinux-image.bbclass: fix selinux_set_labels
+Date: Wed, 19 Aug 2026 14:08:57 +0800
+Message-ID: <20260819060857.274091-1-chenqi_hycx@cetc.com.cn>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: C6CowACnJ2gsSIVqwj4QAA--.10209S2
+X-CM-SenderInfo: xfkh015lbk5un06fv33fof0zgofq/1tbiAQYECmqEYRYPTAABsS
+X-CM-DELIVERINFO: =?B?zlQd/5MTIGijefgSB8euu+6OLk7VHJpweJu2O0jc6H0leTZ35Rt/fA/pqtc40DVWE/
+	da9DFuAIZ/qTrE0jX7KAvClOFz9Y8Hb+NgtD9Wfe56IAC345v2KWabDcZNTkJbv8sMwEJh
+	JBo8l58W71Kb9ZhHHtZd/H1izO0p69zfX0t33+GV
+X-Coremail-Antispam: 1Uk129KBj93XoW7KrykAF4UWF4DKr4rGF1xWFX_yoW8CF18pa
+	1vvr4ak3WrJF1fKrn7Aa42gFyFqrWkCas7W3sIkrW5Za4Ykr48Xr4qkw1avr47JrW7Jwsr
+	Aa1rXFW7XFW8trgCm3ZEXasCq-sJn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3gc02F40EFcxC0VAKzVAqx4xG6I80ewCY02Avz4vE14v_GFUv73VFW2AG
+	mfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYz7kC6x804xWl14x267AKxVWUJVW8JwAFc2x0x2
+	IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l
+	84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7
+	IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2
+	z280aVCY1x0267AKxVWxJr0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0c
+	Ia020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_
+	JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwI
+	xGrwAKzVCY07xG64k0F24lc2xSY4AK67AK6r47MxAIw28IcxkI7VAKI48JMxC20s026xCa
+	FVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_Jr
+	Wlx4CE17CEb7AF67AKxVWUXVWUAwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0
+	cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z2
+	80aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIF
+	yTuYvjxU2eMNUUUUU
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 18 Aug 2026 19:34:20 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4673
+ <yocto-patches@lists.yoctoproject.org>; Wed, 19 Aug 2026 06:09:22 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4674
 
-The installation task hash for the aide is marked as nostamp. This is
-done because the native task installs files outside the sysroot, to the
-Aide staging directory. Those files are not captured by
-do_populate_sysroot, so they are missing whenever the task is skipped or
-restored from sstate.
+From: Chen Qi <chenqi_hycx@cetc.com.cn>
 
-Install the required native contents to the sysroot, and then customise
-and deploy the configuration file in the aide_init_db rootfs postprocess
-function that utilizes the files. The configuration file needs to be
-reset every time the function is run to avoid using stale
-configurations.
+1. The selinux_set_labels needs to be run before reproducible_final_image_task.
+2. The ';' needs to be removed, as it's useless and it will prevent
+   selinux_set_labels to have the correct function contents value,
+   causing signature calculation not depending on the function's
+   contents.
+3. Add a bbnote to give users more information. The command is a
+   key one, and it's useful that users know what is running.
 
-Staging the native files through the sysroot makes the nostamp
-unnecessary, so remove it along with the unstable task hash it caused.
-
-Signed-off-by: Esa Jaaskela <esa.jaaskela@suomi24.fi>
+Signed-off-by: Chen Qi <chenqi_hycx@cetc.com.cn>
 ---
- classes/aide-db-init.bbclass    | 11 +++++++++--
- recipes-ids/aide/aide_0.19.3.bb | 13 ++++---------
- 2 files changed, 13 insertions(+), 11 deletions(-)
+ classes/selinux-image.bbclass | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/classes/aide-db-init.bbclass b/classes/aide-db-init.bbclass
-index 800006f..3fe2c27 100644
---- a/classes/aide-db-init.bbclass
-+++ b/classes/aide-db-init.bbclass
-@@ -31,6 +31,13 @@
- inherit aide-base=20
-=20
- aide_init_db() {
-+    install -d ${STAGING_AIDE_DIR}/lib/logs
-+    rm -f ${STAGING_AIDE_DIR}/aide.conf ${STAGING_AIDE_DIR}/lib/aide.db =
-${STAGING_AIDE_DIR}/lib/aide.db.gz ${STAGING_AIDE_DIR}/lib/logs/aide.log
-+    install ${STAGING_DATADIR_NATIVE}/aide/aide.conf ${STAGING_AIDE_DIR}=
-/
-+
-+    sed -i -s "s:\@\@define DBDIR.*:\@\@define DBDIR ${STAGING_AIDE_DIR}=
-/lib:" ${STAGING_AIDE_DIR}/aide.conf
-+    sed -i -e "s:\@\@define LOGDIR.*:\@\@define LOGDIR ${STAGING_AIDE_DI=
-R}/lib/logs:" ${STAGING_AIDE_DIR}/aide.conf
-+
-     for dir in ${AIDE_INCLUDE_DIRS}; do
-         echo "${IMAGE_ROOTFS}${dir} NORMAL" >> ${STAGING_AIDE_DIR}/aide.=
-conf
-     done
-@@ -39,7 +46,7 @@ aide_init_db() {
-     done
-=20
-=20
--    ${STAGING_AIDE_DIR}/bin/aide -c ${STAGING_AIDE_DIR}/aide.conf --init
-+    ${STAGING_BINDIR_NATIVE}/aide -c ${STAGING_AIDE_DIR}/aide.conf --ini=
-t
-     gunzip ${STAGING_AIDE_DIR}/lib/aide.db.gz=20
-     # strip out native path
-     sed -i -e 's:${IMAGE_ROOTFS}::' ${STAGING_AIDE_DIR}/lib/aide.db
-@@ -47,6 +54,6 @@ aide_init_db() {
-     cp -f ${STAGING_AIDE_DIR}/lib/aide.db.gz ${IMAGE_ROOTFS}${libdir}/ai=
-de
+diff --git a/classes/selinux-image.bbclass b/classes/selinux-image.bbclass
+index 852db5f..97ff99e 100644
+--- a/classes/selinux-image.bbclass
++++ b/classes/selinux-image.bbclass
+@@ -1,6 +1,7 @@
+ selinux_set_labels() {
+     if [ -f ${IMAGE_ROOTFS}/${sysconfdir}/selinux/config ]; then
+         POL_TYPE=$(sed -n -e "s&^SELINUXTYPE[[:space:]]*=[[:space:]]*\([0-9A-Za-z_]\+\)&\1&p" ${IMAGE_ROOTFS}/${sysconfdir}/selinux/config)
++	bbnote "Running setfiles -m -r ${IMAGE_ROOTFS} ${IMAGE_ROOTFS}/${sysconfdir}/selinux/${POL_TYPE}/contexts/files/file_contexts ${IMAGE_ROOTFS}"
+         if ! setfiles -m -r ${IMAGE_ROOTFS} ${IMAGE_ROOTFS}/${sysconfdir}/selinux/${POL_TYPE}/contexts/files/file_contexts ${IMAGE_ROOTFS}
+         then
+             bbwarn "Failed to set security contexts. Restoring security contexts will run on first boot."
+@@ -19,7 +20,7 @@ python selinux_setlabels_handler() {
+     if d.getVar('FIRST_BOOT_RELABEL') == '1':
+         return
+ 
+-    d.appendVar('IMAGE_PREPROCESS_COMMAND', ' selinux_set_labels; ')
++    d.prependVar('IMAGE_PREPROCESS_COMMAND', ' selinux_set_labels ')
+     d.appendVarFlag('do_image', 'depends', ' policycoreutils-native:do_populate_sysroot')
  }
-=20
--EXTRA_IMAGEDEPENDS:append =3D " aide-native"
-+do_rootfs[depends] +=3D "aide-native:do_populate_sysroot"
-=20
- ROOTFS_POSTPROCESS_COMMAND:append =3D " aide_init_db;"
-diff --git a/recipes-ids/aide/aide_0.19.3.bb b/recipes-ids/aide/aide_0.19=
-.3.bb
-index 68e3bfa..5daa295 100644
---- a/recipes-ids/aide/aide_0.19.3.bb
-+++ b/recipes-ids/aide/aide_0.19.3.bb
-@@ -31,8 +31,6 @@ PACKAGECONFIG[e2fsattrs] =3D "--with-e2fsattrs, --witho=
-ut-e2fsattrs, e2fsprogs, e2
- PACKAGECONFIG[capabilities] =3D "--with-capabilities, --without-capabili=
-ties, libcap, libcap"
- PACKAGECONFIG[posix-acl] =3D "--with-posix-acl, --without-posix-acl, acl=
-, acl"
-=20
--do_install[nostamp] =3D "1"
--
- do_install:append () {
-     install -d ${D}${libdir}/${PN}/logs  =20
-     install -d ${D}${sysconfdir}  =20
-@@ -47,14 +45,11 @@ do_install:append () {
- }
-=20
- do_install:class-native () {
--    install -d ${STAGING_AIDE_DIR}/bin
--    install -d ${STAGING_AIDE_DIR}/lib/logs
--
--    install ${B}/aide ${STAGING_AIDE_DIR}/bin
--    install ${UNPACKDIR}/aide.conf ${STAGING_AIDE_DIR}/
-+    install -d ${D}${bindir}
-+    install -d ${D}${datadir}/${BPN}
-=20
--    sed -i -s "s:\@\@define DBDIR.*:\@\@define DBDIR ${STAGING_AIDE_DIR}=
-/lib:" ${STAGING_AIDE_DIR}/aide.conf
--    sed -i -e "s:\@\@define LOGDIR.*:\@\@define LOGDIR ${STAGING_AIDE_DI=
-R}/lib/logs:" ${STAGING_AIDE_DIR}/aide.conf
-+    install ${B}/aide ${D}${bindir}
-+    install ${UNPACKDIR}/aide.conf ${D}${datadir}/${BPN}/
- }
-=20
- CONF_FILE =3D "${sysconfdir}/aide.conf"
---=20
-2.47.3
+ 
+-- 
+2.43.0
 
 
