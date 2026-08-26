@@ -1,98 +1,191 @@
-Return-Path: <chenqi_hycx@cetc.com.cn>
+Return-Path: <wenwfu@qti.qualcomm.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4B38C5DF94
-	for <webhook@archiver.kernel.org>; Tue, 25 Aug 2026 05:40:24 +0000 (UTC)
-Received: from cetc.com.cn (cetc.com.cn [220.181.39.39])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.15497.1787636418966216744
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFA06C5DF97
+	for <webhook@archiver.kernel.org>; Wed, 26 Aug 2026 04:55:55 +0000 (UTC)
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.5707.1787720150473861820
  for <yocto-patches@lists.yoctoproject.org>;
- Mon, 24 Aug 2026 22:40:19 -0700
+ Tue, 25 Aug 2026 21:55:50 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: cetc.com.cn, ip: 220.181.39.39, mailfrom: chenqi_hycx@cetc.com.cn)
-Received: from mail.cetc.com.cn (unknown [117.61.153.123])
-	by mtasvr (Coremail) with SMTP id _____wBHQKOsKo1qrWoCAA--.11349S3;
-	Tue, 25 Aug 2026 13:39:56 +0800 (CST)
-Received: from [192.168.0.4] (unknown [117.61.153.123])
-	by front01 (Coremail) with SMTP id C6CowABnmmpfKo1qpDweAA--.46894S2;
-	Tue, 25 Aug 2026 13:38:40 +0800 (CST)
-Message-ID: <64883715-b8f8-4e62-81db-9a0c968a1a08@cetc.com.cn>
-Date: Tue, 25 Aug 2026 13:40:13 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [yocto-patches] [meta-selinux][PATCH] refpolicy_common: strip
- POLICY_CUSTOM_BUILDOPT before passing to make
+ dkim=pass header.i=@qualcomm.com header.s=qcppdkim1 header.b=hM7Nok7K;
+ spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: qualcomm.com, ip: 205.220.168.131, mailfrom: wenwfu@qualcomm.com)
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67Q3HJXb3275855;
+	Wed, 26 Aug 2026 04:55:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=5ZSckl+bf5ioXCHAzA0sfxLio0Y59mBPUak
+	7QnAIrHg=; b=hM7Nok7KH9aHpINze/tNnCXdhVdWzzomOz8GbfgS1+3/xMAuSbd
+	uCXjfJCikk6+o8pZkXoZYkvnefpbAkrX5Y3mMBhRB/Wwbe2pHin/kCpIOREZqhbc
+	cA1V43lmup1NMTWvxcf09mkpZK2podhP8SXIEZpu7O+TIcS+FyNxhNKlgvNiLING
+	awwtDz87OoinBcRovejtuRnYKAGkGkbfX/3MWEJllSWWqJGb/rF1aXcLGmGPSswl
+	VZbvyEiXvfG5fO0MO4JiEVa/jxuXzxxkMT53mxsvtkwk0ubNbnekND3NC0uJZNn7
+	N8jg6e6uIsfdr596z+U6+EnokZJvzjlZDbg==
+Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4g9fjn22f7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Aug 2026 04:55:49 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (8.18.1.7/8.18.1.7) with ESMTP id 67Q4tlPn008614;
+	Wed, 26 Aug 2026 04:55:47 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 4g74ujb80u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Aug 2026 04:55:47 +0000 (GMT)
+Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.1.12) with ESMTP id 67Q4tlHY008608;
+	Wed, 26 Aug 2026 04:55:47 GMT
+Received: from perf-sh02-lnx.ap.qualcomm.com (smtphost-taiwan.qualcomm.com [10.249.136.33])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 67Q4tkZG008604
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Aug 2026 04:55:47 +0000 (GMT)
+Received: by perf-sh02-lnx.ap.qualcomm.com (Postfix, from userid 3975139)
+	id 03A43AB9; Wed, 26 Aug 2026 12:55:46 +0800 (CST)
+From: Wenwen Fu <wenwfu@qti.qualcomm.com>
 To: yocto-patches@lists.yoctoproject.org
 Cc: joe.macdonald@siemens.com, yi.zhao@windriver.com,
- rchiluka@qti.qualcomm.com
-References: <20260812060045.244559-1-rchiluka@qti.qualcomm.com>
-Content-Language: en-US
-From: Chen Qi <chenqi_hycx@cetc.com.cn>
-In-Reply-To: <20260812060045.244559-1-rchiluka@qti.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: C6CowABnmmpfKo1qpDweAA--.46894S2
-X-CM-SenderInfo: xfkh015lbk5un06fv33fof0zgofq/1tbiAQYKCmqMShwO-gACsF
-X-CM-DELIVERINFO: =?B?wNHfM5MTIGijefgSB8euu+6OLk7VHJpweJu2O0jc6H0leTZ35Rt/fA/pqtc40DVWE/
-	da9H0+NkjjyUeUvxa5zYm5GFG/tMpfOeoBC8qGeUTNUBWgmJ4tH2Yd6cuyKTlmt4Y2kO7E
-	/XLtVvEHsxkW5RkMsHj/0Neg/qYHkaL59/ekq0KV
-X-Coremail-Antispam: 1Uk129KBj93XoW7WF15Zw4ftryxur47CF4Utrc_yoW8Xw1Up3
-	y7t34Yya4jqayIgrsrCFy8W347Ka98Jw4j9ryDGFs8Awn0qa4xCaykX397ua1fZry7Cwn7
-	Aw1ava9rCw4UAFgCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3gc02F40EFcxC0VAKzVAqx4xG6I80ewCY02Avz4vE14v_GrJv73VFW2AG
-	mfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUU5R7kC6x804xWl14x267AKxVWUJVW8JwAFc2x0x2
-	IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l
-	84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7
-	IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2
-	z280aVCY1x0267AKxVWxJr0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0c
-	Ia020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_
-	JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrw
-	CY02Avz4vE14v_GrWl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2Iq
-	xVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r
-	126r1DMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j
-	6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42
-	IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UtwIDUUUUU=
+        Wenwen Fu <wenwfu@qti.qualcomm.com>
+Subject: [meta-selinux][PATCH] refpolicy: allow configuring policy booleans
+Date: Wed, 26 Aug 2026 12:55:40 +0800
+Message-ID: <20260826045540.1390035-1-wenwfu@qti.qualcomm.com>
+X-Mailer: git-send-email 2.43.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-GUID: jb1Z5FH-r-6hr5JWslCtjxtikosCklMU
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODI2MDAzOCBTYWx0ZWRfXw4gv8tqyaoMY
+ Eu8dn2h8O6m+s1BiBuoJfyTthOY9Kh1vZEB3J4MOhm8AVlljAsL94rH2N/D6UEyHeqwnYYOsNNL
+ 3e7rP4wX6Gj/fpC9TxYJbsuPyRGZJFQ=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODI2MDAzOCBTYWx0ZWRfXzGK/7tzXse4k
+ ZBsxLlmGYDKel+D7OBigpBbqslnFmPwW880zOkaBXfvbJYoqdgwjWQWRDLFcvmT5F7Q2jcY7m05
+ HNH2eDjQU2OMtQSBUJeTvnK6PDxr9Udf3EXo17W+YTyY6Yzoq6JMXPOECUXAb/bQmy5Mu0ybwjn
+ ZidNKegtR0rdnfMv8v+JTQcdkTwjt26YfTKgBwoyc6jh6lgMQ8gOh/dQGcM+g8y3XBTybumLPAH
+ kAeWNceI2hUqYmtz7lmXESfIRI2u9k4uMwF/QExpbsRuXxOWPGs2jBiqUp+mAoHeAiT5NkH5sHN
+ 2c8bA5+QPfNbo167htzZjd4kIrwKnhcKrAGiUPXmg95uoZqrPTqxwY2LCSmtqfa6nmGYtkd1V8n
+ 7rPvBaVUyeDHSNEoJSVX0cGpdtDdsoCISqoYMOZUmZ+5wklKILZM/T2FxcY4PoWDavVSaDsLlVD
+ 2cc+A2b5fysk+Z4FZIw==
+X-Authority-Analysis: v=2.4 cv=ccziaHDM c=1 sm=1 tr=0 ts=6a8e71d5 cx=c_pps
+ a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=Sv0fKeRqtYgA:10 a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22
+ a=YMgV9FUhrdKAYTUUvYB2:22 a=EUspDBNiAAAA:8 a=qWK6lUww1F3doyr-U_wA:9
+X-Proofpoint-ORIG-GUID: jb1Z5FH-r-6hr5JWslCtjxtikosCklMU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-08-26_01,2026-08-24_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 phishscore=0 lowpriorityscore=0 spamscore=0 suspectscore=0
+ clxscore=1015 malwarescore=0 bulkscore=0 adultscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608260038
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 25 Aug 2026 05:40:24 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4686
+ <yocto-patches@lists.yoctoproject.org>; Wed, 26 Aug 2026 04:55:55 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4687
 
-The strip() function only removes leading and trailing whitespaces.
+Changing boolean or tunable defaults currently requires layers to patch
+refpolicy sources. This does not scale when a distribution maintains
+several policy-specific settings.
 
-Your original problem looks like a quoting issue. Does something like 
-below solve your problem?
+Add POLICY_BOOLEANS as a space-separated list of name=value settings.
+Apply the settings after generating booleans.conf and fail the build for
+invalid entries or names not provided by the selected policy.
 
-CUSTOM_BUILDOPT='${POLICY_CUSTOM_BUILDOPT}'
+Document the new variable in the layer README.
 
-Regards,
-Qi
+Signed-off-by: Wenwen Fu <wenwfu@qti.qualcomm.com>
+---
+ README                                        | 12 ++++++
+ .../refpolicy/refpolicy_common.inc            | 37 +++++++++++++++++++
+ 2 files changed, 49 insertions(+)
 
-On 8/12/26 14:00, Rohith Chiluka via lists.yoctoproject.org wrote:
-> POLICY_CUSTOM_BUILDOPT is passed directly to the refpolicy make command
-> as CUSTOM_BUILDOPT. When layers use ':append' to extend this variable
-> (e.g. POLICY_CUSTOM_BUILDOPT:append:distro = " option"), BitBake
-> introduces a leading space. Passing that raw value to make causes:
->
->    make: *** No rule to make target 'option'.  Stop.
->
-> Signed-off-by: Chiluka Rohith <rchiluka@qti.qualcomm.com>
-> ---
->   recipes-security/refpolicy/refpolicy_common.inc | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/recipes-security/refpolicy/refpolicy_common.inc b/recipes-security/refpolicy/refpolicy_common.inc
-> index 014714c..1566591 100644
-> --- a/recipes-security/refpolicy/refpolicy_common.inc
-> +++ b/recipes-security/refpolicy/refpolicy_common.inc
-> @@ -126,7 +126,7 @@ EXTRA_OEMAKE = "NAME=${POLICY_NAME} \
->       DIRECT_INITRC=${POLICY_DIRECT_INITRC} \
->       SYSTEMD=${POLICY_SYSTEMD} \
->       MONOLITHIC=${POLICY_MONOLITHIC} \
-> -    CUSTOM_BUILDOPT=${POLICY_CUSTOM_BUILDOPT} \
-> +    CUSTOM_BUILDOPT=${@d.getVar('POLICY_CUSTOM_BUILDOPT').strip()} \
->       QUIET=${POLICY_QUIET} \
->       MLS_SENS=${POLICY_MLS_SENS} \
->       MLS_CATS=${POLICY_MLS_CATS} \
+diff --git a/README b/README
+index ae011f3..4a13669 100644
+--- a/README
++++ b/README
+@@ -47,6 +47,18 @@ to be tailored for your environment.
+ e.g. PREFERRED_PROVIDER_virtual/refpolicy ?= "refpolicy-mls"
+ 
+ 
++Configuring policy booleans and tunables
++----------------------------------------
++Policy boolean and tunable defaults can be changed at build time with the
++POLICY_BOOLEANS variable.  Entries use a space-separated name=value format,
++and values must be either true or false.  For example:
++
++POLICY_BOOLEANS = "secure_mode=true allow_execmem=false"
++
++The refpolicy build fails if an entry has an invalid format or names a boolean
++or tunable that is not provided by the selected policy.
++
++
+ Using different init manager
+ ----------------------------
+ By default selinux enabled images coming up with "sysvinit" as init manager,
+diff --git a/recipes-security/refpolicy/refpolicy_common.inc b/recipes-security/refpolicy/refpolicy_common.inc
+index d241343..f9a55bc 100644
+--- a/recipes-security/refpolicy/refpolicy_common.inc
++++ b/recipes-security/refpolicy/refpolicy_common.inc
+@@ -117,6 +117,10 @@ POLICY_MLS_SENS ?= "16"
+ POLICY_MLS_CATS ?= "1024"
+ POLICY_MCS_CATS ?= "1024"
+ 
++# Space-separated policy boolean/tunable settings in name=value format.
++# Values must be either true or false.
++POLICY_BOOLEANS ?= ""
++
+ EXTRA_OEMAKE = "NAME=${POLICY_NAME} \
+     TYPE=${POLICY_TYPE} \
+     DISTRO=${POLICY_DISTRO} \
+@@ -153,11 +157,44 @@ disable_policy_modules() {
+     done
+ }
+ 
++set_policy_booleans() {
++    for setting in ${POLICY_BOOLEANS}; do
++        name="${setting%%=*}"
++        value="${setting#*=}"
++
++        if [ "${name}" = "${setting}" ]; then
++            bbfatal "Invalid POLICY_BOOLEANS entry: ${setting}"
++        fi
++
++        case "${name}" in
++            ""|*[!A-Za-z0-9_]*)
++                bbfatal "Invalid policy boolean name: ${name}"
++                ;;
++        esac
++
++        case "${value}" in
++            true|false) ;;
++            *)
++                bbfatal "Invalid value for ${name}: ${value}"
++                ;;
++        esac
++
++        if ! grep -q "^${name}[[:space:]]*=" \
++                "${S}/policy/booleans.conf"; then
++            bbfatal "Unknown policy boolean or tunable: ${name}"
++        fi
++
++        sed -i "s/^\(${name}[[:space:]]*=[[:space:]]*\).*/\1${value}/" \
++            "${S}/policy/booleans.conf"
++    done
++}
++
+ do_compile() {
+     if [ -f "${WORKDIR}/modules.conf" ] ; then
+         cp -f ${WORKDIR}/modules.conf ${S}/policy/modules.conf
+     fi
+     oe_runmake conf
++    set_policy_booleans
+     disable_policy_modules
+     oe_runmake policy
+ }
+-- 
+2.43.0
 
 
