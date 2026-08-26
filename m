@@ -2,62 +2,62 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2288C5DF97
-	for <webhook@archiver.kernel.org>; Wed, 26 Aug 2026 20:59:03 +0000 (UTC)
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.22442.1787777938925603796
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36562C61DC6
+	for <webhook@archiver.kernel.org>; Wed, 26 Aug 2026 20:59:04 +0000 (UTC)
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.22437.1787777934430968616
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 26 Aug 2026 13:58:59 -0700
+ Wed, 26 Aug 2026 13:58:54 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=G9EmSUSR;
- spf=pass (domain: konsulko.com, ip: 209.85.160.172, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-52d590ce5cdso107551cf.1
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 26 Aug 2026 13:58:58 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=XJiKyUjD;
+ spf=pass (domain: konsulko.com, ip: 209.85.160.177, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-52e2d1bdbc0so10469721cf.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 26 Aug 2026 13:58:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1787777938; x=1788382738; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1787777933; x=1788382733; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=5YsrYyLH1PtsYrEVzvnEREoheTcl8kBBgPoyHGeW8xI=;
-        b=G9EmSUSRANa3e8GKxL6LV6tCKGfX98r5PhqYciN5KTsdSsVjzpbDQ6Z0kPO5zGjuws
-         nwsBFw6e9ZVyZWrJiXPvGhWegOUskClzaPRBUzpTz3CjLod+JWpnGzOqnlWhuY51QC/2
-         DQUY68HLnpBEVVaIMYbofDvXa84+a4F9yEiww=
+        bh=pn1ziw/2Ct0AV93+LleKcaEf4OfiR5j3sKq4oZLw3Ag=;
+        b=XJiKyUjDjDDOS5Rm/fGiEuWRe3IzahB8b+hE1UMHWhetvPB7nQou75DMcz2PTyo64T
+         x6hLN4V3WM33eK7R+BzCteUDuHqr9vFXwtbdJoWqDwBcjj/5ZfLzs8gq9K8K7AtGYBwf
+         5hS8HEx3jrXcOwajLBsNaIBulqhFzEEfLQUkQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787777938; x=1788382738;
+        d=1e100.net; s=20251104; t=1787777933; x=1788382733;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to:content-type;
-        bh=5YsrYyLH1PtsYrEVzvnEREoheTcl8kBBgPoyHGeW8xI=;
-        b=CGsWczFIGtZ9ih494GtNbuffUPZp2NJ4xTKTDfypUXhkikyYbWR7b4KnnxsgCp0YzC
-         aaxxI0+rsykQiqQI+M+L6lwYEO5o08KFPcE8xaPb4uBuCvsPAVbEEOgYUDIREbrE3Ahx
-         F1ZjYugj8nPSJLVDDQDdcGzzzERrpD/sfcPo/+s2Bnyd0OJMj+o6Y0W9RrNh7qBIuNu8
-         qyLqfomTt0f3H3b8/73qtQHS7dMjs4doj07svkd0p4/E5EZ/GPEukwQPNf4c+Varb3M8
-         nkBgnf5dOWVo/6V74OhAtBVKwEeMJhexrZkpLkMTBxVh9huR2xcP73aThas3E8d+OI/C
-         i5ow==
-X-Gm-Message-State: AFuF++n9jzqN8VlG+jctgpWR7QhXAUYG3IC5ReuIjkLlk8v45XboTTvK
-	7YDy1bJcyE1Hkym4BLZJLmcjZpM4HAU6UX0fU3xm5j1ATbhddS3/Cg14G1x13UcH+3hhcqAyBhr
-	K1llO
-X-Gm-Gg: AR+sD10vcjTvE6+v/oSvSbXKNQ4UcgIxILvd2JJNINSl1tHo3YxWUyqRz2sdrIakFOW
-	x6Ezm3uUw3mDLcmBmgp8tgdYoBLhDkWc12JtakkQh+CGEXGm+PoCwQSOv0H7rY5/JsxMdHt8n8+
-	cBswNC6Hi+9Mm6V6EahXY/ffPaHt4+RfhxOr6YKMNJu2HZy2BQ6Ky7Pz2qp6wVybWa0PxDa/0Pc
-	t5hoZR4aRlFhqNFDVi7lxMCYbJp0r1ZtQMR1Mz06kHjkT787W7xJDjqJYd1Tuwgzv9XsGFfflf6
-	vH8NAEuiP9ce5hUbzaMr3F8pyvYvWOZoUc1cwg7PUblgCP/0c0hObxhoLgw3UxH3AJzGhg+7bmC
-	15uhHLK2OOhaIRRdoX5kRiRb5doe/FoIdwVMM01ICHNIb/PxYR+fESOFioh2U/bOxg4cHHsF+YX
-	ceLNMeZ51eHHdlG4Zq27YmxBuWwuJBEIP6Pu3SqgbtBoofSG3bmsbuYSzkg5sH+EWEBaghc61tM
-	khJAK3jN9+Bb1fOdHpSN/bEKHPKWTGfbIuT4cfB0lGCGVHd7Tkewr9A+/waY3EIuaxlNWY0Gg2K
-	f3S6V/vOpP/Q7veVnBlVJbE+cwp42KFIHTzw
-X-Received: by 2002:a05:622a:1303:b0:50d:e471:2d1e with SMTP id d75a77b69052e-52e42371acamr106692221cf.35.1787777937677;
-        Wed, 26 Aug 2026 13:58:57 -0700 (PDT)
+        bh=pn1ziw/2Ct0AV93+LleKcaEf4OfiR5j3sKq4oZLw3Ag=;
+        b=A5g1rmbjU2JPD4esk9Co74lr453BaR7DdC5anaJh7GN/gcxpR0+vyXNnNNUlepPF6e
+         EXKpukzDVQsp3ksE5m1o67yKahGpVhAEkrWxa4oHaWAvVRRr7PGS2vnmKieuRuPuLXmX
+         CrJBjJH4j803dbbOtCsKb/G70Gd4vbyk+sEQ6eWEbaPC1PnO9gwvqWDgmJIO81XyTGCj
+         Oxdk/cfckFbehNXoB/G8phUzw/SRE1VgnM+MxQUQ7PoBwTzwOsH1xE63dsfAzoPEhrlP
+         2N+DTb7IDI2m+4/GtEEBl6s2jBq0uhEVFGHX98jkQytEVSnOnl3+La5wC5b9z6dMRmzp
+         zgQQ==
+X-Gm-Message-State: AFuF++m+ELrZ0PSHi+vzmr0qhYusQgc+Vdp7AmnsTGM6TdxKBDsMP4YS
+	umdXPXFK9U2Y8E74aBOPmcr3hixVfYg76etpOkWf3buV7SCEzAS2ethLDJ/qSetdOXT0aTIdDxM
+	E4+pb
+X-Gm-Gg: AR+sD13fP0xWSdgoLbXBkePeQ/yFWX3KTxfQItLWcaC2G+jNa4hYgeA/XSRAazc1t3d
+	+xQLFHL7EPFIh4Bg/BLFSaF4P/E9I5JXaxx2c5+CoYAcRiWwMiDM+K4nVEj9Z7yl6xcvwDzEyaf
+	Fb7uXIkfgZJIGVHk5Ny8/1l38Nt0/TOmA7gT14uS7JcZYs1jM1A/y+xfJKEXYblGm8IQ5GaLFrM
+	b6O0jNkbHcty3iSjvxQIYmCXUBUfK5Pjjvmu+5N8dBDwQfHQpYvaQQUUifLL0/nK2tQ5rQ/p0WB
+	gfA2Z0ZJ8QvoboKd5ERThUVHvskucNAg+idhFvtyuOBfAafUQXU+CqOVwIihas89oU54Clt8C2w
+	CCjk29Y3ug4ThbUv/oebsiZxv52F8Rt/XocZB7AFcYhspTlYU/qW34usQ7G742UyOUZjwccUUCl
+	R2dG5eQXwwH7xEjSojBsEQe0k4DGkthiSNNJDjzCb4VrOBjU0NeUdRdLrYzFaekxL1UlRsrTVdW
+	2RuhPeezZCzTjkEYzFB9FT7sq29yg905EfgMTOEe0P5SxCYjpF0Z27WSaEH1+dQD1PdNn/Rjg3u
+	NYZ8YFERacFJsE1nnQZxG3otc94=
+X-Received: by 2002:a05:622a:8e0a:b0:52f:a0b3:bcb2 with SMTP id d75a77b69052e-52fa0b42525mr30240751cf.35.1787777933262;
+        Wed, 26 Aug 2026 13:58:53 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-90cc65093d5sm35135856d6.26.2026.08.26.13.58.57
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-90cc65093d5sm35135856d6.26.2026.08.26.13.58.52
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Aug 2026 13:58:57 -0700 (PDT)
+        Wed, 26 Aug 2026 13:58:52 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-security][PATCH 15/15] aide: Fix unstable install task hash
-Date: Wed, 26 Aug 2026 16:57:49 -0400
-Message-ID: <0339b65f63877ed36fcffa44953e57c3bb969ca9.1787777775.git.scott.murray@konsulko.com>
+Subject: [meta-security][PATCH 10/15] tpm2-tss: set status for CVE-2024-29040
+Date: Wed, 26 Aug 2026 16:57:44 -0400
+Message-ID: <aa594ecd247349028ebb13fef357819462a05ac8.1787777775.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <cover.1787777775.git.scott.murray@konsulko.com>
 References: <cover.1787777775.git.scott.murray@konsulko.com>
@@ -66,100 +66,31 @@ Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 26 Aug 2026 20:59:03 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4707
+ <yocto-patches@lists.yoctoproject.org>; Wed, 26 Aug 2026 20:59:04 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4702
 
-From: Esa Jaaskela <esa.jaaskela@suomi24.fi>
+From: Peter Marko <peter.marko@siemens.com>
 
-The installation task hash for the aide is marked as nostamp. This is
-done because the native task installs files outside the sysroot, to the
-Aide staging directory. Those files are not captured by
-do_populate_sysroot, so they are missing whenever the task is skipped or
-restored from sstate.
+CVE-2024-29040 is per Debian report [2] fixed in 4.1.0.
 
-Install the required native contents to the sysroot, and then customise
-and deploy the configuration file in the aide_init_db rootfs postprocess
-function that utilizes the files. The configuration file needs to be
-reset every time the function is run to avoid using stale
-configurations.
+[1] https://security-tracker.debian.org/tracker/CVE-2024-29040
 
-Staging the native files through the sysroot makes the nostamp
-unnecessary, so remove it along with the unstable task hash it caused.
-
-Signed-off-by: Esa Jaaskela <esa.jaaskela@suomi24.fi>
+Signed-off-by: Peter Marko <peter.marko@siemens.com>
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- classes/aide-db-init.bbclass    | 11 +++++++++--
- recipes-ids/aide/aide_0.19.3.bb | 13 ++++---------
- 2 files changed, 13 insertions(+), 11 deletions(-)
+ meta-tpm/recipes-tpm2/tpm2-tss/tpm2-tss_4.1.3.bb | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/classes/aide-db-init.bbclass b/classes/aide-db-init.bbclass
-index 800006f..3fe2c27 100644
---- a/classes/aide-db-init.bbclass
-+++ b/classes/aide-db-init.bbclass
-@@ -31,6 +31,13 @@
- inherit aide-base 
+diff --git a/meta-tpm/recipes-tpm2/tpm2-tss/tpm2-tss_4.1.3.bb b/meta-tpm/recipes-tpm2/tpm2-tss/tpm2-tss_4.1.3.bb
+index f8e87a5..30e984e 100644
+--- a/meta-tpm/recipes-tpm2/tpm2-tss/tpm2-tss_4.1.3.bb
++++ b/meta-tpm/recipes-tpm2/tpm2-tss/tpm2-tss_4.1.3.bb
+@@ -94,3 +94,5 @@ FILES:${PN} = "\
+     ${sysconfdir}/sysusers.d"
  
- aide_init_db() {
-+    install -d ${STAGING_AIDE_DIR}/lib/logs
-+    rm -f ${STAGING_AIDE_DIR}/aide.conf ${STAGING_AIDE_DIR}/lib/aide.db ${STAGING_AIDE_DIR}/lib/aide.db.gz ${STAGING_AIDE_DIR}/lib/logs/aide.log
-+    install ${STAGING_DATADIR_NATIVE}/aide/aide.conf ${STAGING_AIDE_DIR}/
+ BBCLASSEXTEND = "native nativesdk"
 +
-+    sed -i -s "s:\@\@define DBDIR.*:\@\@define DBDIR ${STAGING_AIDE_DIR}/lib:" ${STAGING_AIDE_DIR}/aide.conf
-+    sed -i -e "s:\@\@define LOGDIR.*:\@\@define LOGDIR ${STAGING_AIDE_DIR}/lib/logs:" ${STAGING_AIDE_DIR}/aide.conf
-+
-     for dir in ${AIDE_INCLUDE_DIRS}; do
-         echo "${IMAGE_ROOTFS}${dir} NORMAL" >> ${STAGING_AIDE_DIR}/aide.conf
-     done
-@@ -39,7 +46,7 @@ aide_init_db() {
-     done
- 
- 
--    ${STAGING_AIDE_DIR}/bin/aide -c ${STAGING_AIDE_DIR}/aide.conf --init
-+    ${STAGING_BINDIR_NATIVE}/aide -c ${STAGING_AIDE_DIR}/aide.conf --init
-     gunzip ${STAGING_AIDE_DIR}/lib/aide.db.gz 
-     # strip out native path
-     sed -i -e 's:${IMAGE_ROOTFS}::' ${STAGING_AIDE_DIR}/lib/aide.db
-@@ -47,6 +54,6 @@ aide_init_db() {
-     cp -f ${STAGING_AIDE_DIR}/lib/aide.db.gz ${IMAGE_ROOTFS}${libdir}/aide
- }
- 
--EXTRA_IMAGEDEPENDS:append = " aide-native"
-+do_rootfs[depends] += "aide-native:do_populate_sysroot"
- 
- ROOTFS_POSTPROCESS_COMMAND:append = " aide_init_db;"
-diff --git a/recipes-ids/aide/aide_0.19.3.bb b/recipes-ids/aide/aide_0.19.3.bb
-index 8d4efbb..c352583 100644
---- a/recipes-ids/aide/aide_0.19.3.bb
-+++ b/recipes-ids/aide/aide_0.19.3.bb
-@@ -32,8 +32,6 @@ PACKAGECONFIG[e2fsattrs] = "--with-e2fsattrs, --without-e2fsattrs, e2fsprogs, e2
- PACKAGECONFIG[capabilities] = "--with-capabilities, --without-capabilities, libcap, libcap"
- PACKAGECONFIG[posix-acl] = "--with-posix-acl, --without-posix-acl, acl, acl"
- 
--do_install[nostamp] = "1"
--
- do_install:append () {
-     install -d ${D}${libdir}/${PN}/logs   
-     install -d ${D}${sysconfdir}   
-@@ -48,14 +46,11 @@ do_install:append () {
- }
- 
- do_install:class-native () {
--    install -d ${STAGING_AIDE_DIR}/bin
--    install -d ${STAGING_AIDE_DIR}/lib/logs
--
--    install ${B}/aide ${STAGING_AIDE_DIR}/bin
--    install ${UNPACKDIR}/aide.conf ${STAGING_AIDE_DIR}/
-+    install -d ${D}${bindir}
-+    install -d ${D}${datadir}/${BPN}
- 
--    sed -i -s "s:\@\@define DBDIR.*:\@\@define DBDIR ${STAGING_AIDE_DIR}/lib:" ${STAGING_AIDE_DIR}/aide.conf
--    sed -i -e "s:\@\@define LOGDIR.*:\@\@define LOGDIR ${STAGING_AIDE_DIR}/lib/logs:" ${STAGING_AIDE_DIR}/aide.conf
-+    install ${B}/aide ${D}${bindir}
-+    install ${UNPACKDIR}/aide.conf ${D}${datadir}/${BPN}/
- }
- 
- CONF_FILE = "${sysconfdir}/aide.conf"
++CVE_STATUS[CVE-2024-29040] = "fixed-version: Fixed since version 4.1.0"
 -- 
 2.55.0
 
