@@ -2,99 +2,107 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE101C61DC4
-	for <webhook@archiver.kernel.org>; Wed, 26 Aug 2026 20:58:52 +0000 (UTC)
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.22430.1787777929745230859
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D0FC61DCD
+	for <webhook@archiver.kernel.org>; Wed, 26 Aug 2026 20:58:53 +0000 (UTC)
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.22625.1787777926411811081
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 26 Aug 2026 13:58:49 -0700
+ Wed, 26 Aug 2026 13:58:46 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=ClMmUUGE;
- spf=pass (domain: konsulko.com, ip: 209.85.219.49, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-90cd4631090so2795316d6.1
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 26 Aug 2026 13:58:49 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=FqaHBFjC;
+ spf=pass (domain: konsulko.com, ip: 209.85.222.177, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-936cda0e3fbso105319285a.3
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 26 Aug 2026 13:58:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1787777929; x=1788382729; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=iwGb7IfXmzwXKCAT2zQ4MK4glKNTE+PJxtde1KfEQ8A=;
-        b=ClMmUUGE3ROGF5hvLSQxNxzarWN/GjbwtDAVGhFMfi3/4MnEhSEBohKPOFRjMb8UdC
-         BrrfGnetgxo7LfAZo3QQzT2SnXVYhE9Qx9K0G3mKcWIQLiIOwQN/pVDwwcKIL8Rx3UrI
-         GtN81KZNwcxsgUnQtZ0qH8h5vlmglLo/619Ck=
+        d=konsulko.com; s=google; t=1787777925; x=1788382725; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=V89ZoqbV/9M7Aiv0Mcy7UNb/UquGwm9FfQy8p3qeYWg=;
+        b=FqaHBFjCrxYkUdpBxbUotS6w8sH0DNOSyl3qJfdO3N2obYp4G4iFJvUEB7kR6b5yft
+         wvzdJmXmfyb484qgZFhEPMU5RgWucXVAo7Ln9TEeB1yPiCCms5PmggkyaiONTGJfy5fO
+         qcenVq3gRk1Ujxh9qrK2BqBbhmU4jJdIOQVfI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787777929; x=1788382729;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=iwGb7IfXmzwXKCAT2zQ4MK4glKNTE+PJxtde1KfEQ8A=;
-        b=gJIBPn6Zt0MBdsogc0VY6urzGLn13l8TyTBDcJwSmcbfbdlK2fW2M3MCJt+jg+mkMr
-         1zfT7qwezpwP45128o5DZS0MoSgQqDZq2sQHpVPQE0FXP6CoNssV9vqntqI/39cWpN6J
-         fZV2ZCkbPfYnGDvoyMjSncl9QHJc668w0w+CkMHMAM7ltJB1lfsL5aNkNClEn4KymPPt
-         q3Z3U8NUrHOuKHvLXAsDrgs8Aj6NxOYlgLx1MDdt/3l7RSbeg6aCAb21y3HIstU7IZun
-         GtVcKP3yvSsNwF5AkU2TiRZ5jDn050Dw9M6H07cgZDOGyJYN/1pGHMD1SmnfaoVa2VZS
-         rJRg==
-X-Gm-Message-State: AFuF++mQ6PdTmY8qgsZL2xrhcDgiUVruytkAlLDGbBrLu4jgInPv+6Uq
-	jujsfh3F5nGe5PpDcWxcOKap7L9Rzr8vtEA4A4jTSFCYHa9nvfJHbNp/idC3jxcjuebKatBaOym
-	sSH6v
-X-Gm-Gg: AR+sD11mYWsJUOlfEYyTjlOv9OETMJ2H7eAOxAFk606jj+gLKyxw3ycfnsYLP1+zpTG
-	xxLg/N3kDdcUq7FwSy+nrcNPHQGCY0rSSum3DBXIUuRp4v2vXcT9wGALoBKa3gdSKM94D5U7qc/
-	MLPVHoWzS0gxCy2AUBjfgdpxYToazPK6PphJiJ6fGNhgbcfijZYRbfnL1cXvTwZ1oG13Dn4uPqH
-	HNGmuST4STWMFoz+pU6fwOFjDTqL91qu0SKoh3Lt4izCg0CVAfvN9fXpcTM6q8+jEzO47XWVD47
-	7B6plrhvco5c0FiUbvJ/9gPoaD+OUI9IEut9oNMGqSEyf1xrz7Pic9T2Bj0iv6rHwY88tqOkWzy
-	5CJRhhi/0EW75yhzHyRtuJNHtmyvYU3dfGuk5AwIxL0Ago+cyCzkFONwdEtKFy8ot8ixRET8YIp
-	52gYj7VAbisxL5H14u9vUuXwXnmUf2nIJucACdwSUkIlpla6wNfqpPinXQiesgDP8J63De76xsY
-	4tDDDjoHVWjX3vkXSOWqX1KvbNWjwaVu2PV6zGAefeI8A1Ss/ioocMHdRfh8WUvjDm9enVsMAB3
-	MbuWyLWiOltx0GbgrXp27rA2dg==
-X-Received: by 2002:a05:6214:5d05:b0:90c:d1c3:534f with SMTP id 6a1803df08f44-90cd4369161mr28070926d6.4.1787777928553;
-        Wed, 26 Aug 2026 13:58:48 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1787777925; x=1788382725;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=V89ZoqbV/9M7Aiv0Mcy7UNb/UquGwm9FfQy8p3qeYWg=;
+        b=Judg2tzC1GlqAws3f03iiqubpsZfSWl41JxEFv97Uo8TPzk1rIs0yAVlQhva2zoCoz
+         KsF22orUlIk3Se4SuZkaoBFqW8PmG2xbcgxu3geExA6oYkZdwDzGck2UYKlLQAxYWOj9
+         eMfTAvf0k84bZjJnii2n6SlVqsxBiMRLR3PDd9jmRGXERadIT3XGw80T6BZ6Xy1EPMdk
+         WxvEsDP8yBrnkG/TIOsqPi9VeSSe1JUr5fx0DZd2b4N4RsszOxKlNS39zFZ5VbusaITv
+         GP7psYT+zLjSrbHZAPl6JcBbf78GCmMnNg2k/XpiaJwRNhHTtjoeVbGclKFUcYaZtmDp
+         ZxuA==
+X-Gm-Message-State: AFuF++l4seqYqdoAl+LmblRLwDH9RmtlXEJV9/H8gDzufdormg1k7AO3
+	a6v+Zz7MHNGP5ukBgUmpT5TxxJbGYsP9fz2bBVU9qaLcOU2xb9cjjkvO81A4hLeFvE0kXEC6xyL
+	QIale
+X-Gm-Gg: AR+sD10fG8sxsnqNDFIJhJroJl8pM+dGA3svyOh2Qmra6ckEHoLi7IL2mHP+NhT2SPZ
+	QMrlXZ8nf4B4o8ePa4bz3KZAbIJnUtzoEuheCsvEQaJHsnaQGHB3s/NGDjV87mQE6cyZtRLjNU4
+	clADZ1e7D3oR9T2rUTbEQO7lqkRILojXSm9cPBiGLyiofquhWMBY/SAo35Dvb5ZFUWwnkyJHJc9
+	rY8XAVzkSZ2wamzvIy/cxE8KafHkBKZFFtXxpExc/V0dhMsJofaD9t4/LYx4qf1P7sbVMM1Oq/U
+	So/EkPjrwZrKieMYL3JOos9lQXHDnPa/axShrjqxscF0IldwTtzB5EI+lCzGFYnxNfAEFLzH5ZC
+	1y+KWPjQ0zRz45VZ//53aKY9w5MOvu9ZgGjWyU8AzAjRC+QhYykngcD41eHHhWfm5UABsxbX6RM
+	2yPXCXjaYdnE46zsHO/WdDazdeyc7n93mrRqQHuldkgG18tyei1himzWBMMZk1QrVetNhY9Tubr
+	FbvmaZ0FKbDiGlgLzORPcqDC09s47BpAvk2P9urlyDJKkFtgbdpZxzJykTmPWHgY5ZcSJzckCr9
+	csS7/tJHnYsK7R/ODe2iF9HxuQ==
+X-Received: by 2002:ae9:c213:0:b0:92e:5b92:98bb with SMTP id af79cd13be357-9378016e8d7mr863071285a.14.1787777924952;
+        Wed, 26 Aug 2026 13:58:44 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-90cc65093d5sm35135856d6.26.2026.08.26.13.58.47
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-90cc65093d5sm35135856d6.26.2026.08.26.13.58.44
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Aug 2026 13:58:47 -0700 (PDT)
+        Wed, 26 Aug 2026 13:58:44 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-security][PATCH 06/15] dm-verity: remove unused variable
-Date: Wed, 26 Aug 2026 16:57:40 -0400
-Message-ID: <013ac8517413fd8fe96a303ffccd084853d1aa03.1787777775.git.scott.murray@konsulko.com>
+Subject: [meta-security][PATCH 02/15] suricata: handle oe_cargo_build removal
+Date: Wed, 26 Aug 2026 16:57:36 -0400
+Message-ID: <74e55cf4fb2e4a6f58a487ede7d4fe39d6101448.1787777775.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <cover.1787777775.git.scott.murray@konsulko.com>
 References: <cover.1787777775.git.scott.murray@konsulko.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 26 Aug 2026 20:58:52 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4698
+ <yocto-patches@lists.yoctoproject.org>; Wed, 26 Aug 2026 20:58:53 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4694
 
-From: Gaël PORTAY <gael.portay+rtone@gmail.com>
+Handle upstream removal of oe_cargo_build function in oe-core commit
+a64ac03a61 by renaming our local override to cargo_do_compile to get
+the same effect.
 
-This removes unused variable that was dropped by commit d80cd2ba6a
-("dm-verity: Set the IMAGE_FSTYPES correctly when dm-verity is
-enabled").
-
-Signed-off-by: Gaël PORTAY <gael.portay+rtone@gmail.com>
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- classes/dm-verity-img.bbclass | 1 -
- 1 file changed, 1 deletion(-)
+ recipes-ids/suricata/suricata_8.0.4.bb | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/classes/dm-verity-img.bbclass b/classes/dm-verity-img.bbclass
-index 48557e9..619cda8 100644
---- a/classes/dm-verity-img.bbclass
-+++ b/classes/dm-verity-img.bbclass
-@@ -202,7 +202,6 @@ IMAGE_FSTYPES += "${@get_verity_fstypes(d)}"
- python __anonymous() {
-     verity_image = d.getVar('DM_VERITY_IMAGE')
-     verity_type = d.getVar('DM_VERITY_IMAGE_TYPE')
--    verity_hash = d.getVar('DM_VERITY_SEPARATE_HASH')
-     image_fstypes = d.getVar('IMAGE_FSTYPES')
-     pn = d.getVar('PN')
+diff --git a/recipes-ids/suricata/suricata_8.0.4.bb b/recipes-ids/suricata/suricata_8.0.4.bb
+index b3ab261..5ae0d97 100644
+--- a/recipes-ids/suricata/suricata_8.0.4.bb
++++ b/recipes-ids/suricata/suricata_8.0.4.bb
+@@ -86,12 +86,17 @@ CFLAGS += "-Wno-error=incompatible-pointer-types \
+ # breaks building this recipe. Providing a copy of the original function
+ # Armin 2025/04/01
+ #
+-oe_cargo_build () {
++# 08/2026 note - oe_cargo_build function inlined into cargo_do_compile
++# upstream in openembedded-core commit a64ac03a61, handle by renaming
++# our forked function to cargo_do_compile to override it directly.
++# This still works since before a64ac03a61 cargo_do_compile did nothing
++# but call oe_cargo_build.
++cargo_do_compile () {
+     export RUSTFLAGS="${RUSTFLAGS}"
+     bbnote "Using rust targets from ${RUST_TARGET_PATH}"
+     bbnote "cargo = $(which ${CARGO})"
+-    bbnote "${CARGO} build ${CARGO_BUILD_FLAGS}$@"
+-    "${CARGO}" build ${CARGO_BUILD_FLAGS}"$@"
++    bbnote "${CARGO} build ${CARGO_BUILD_FLAGS} $@"
++    "${CARGO}" build ${CARGO_BUILD_FLAGS} "$@"
+ }
  
+ do_compile () {
 -- 
 2.55.0
 
