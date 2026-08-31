@@ -1,173 +1,83 @@
-Return-Path: <scott.murray@konsulko.com>
+Return-Path: <chenqi_hycx@cetc.com.cn>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 896F1C61DB9
-	for <webhook@archiver.kernel.org>; Fri, 28 Aug 2026 22:01:37 +0000 (UTC)
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.32.1787954494886740533
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15DE6C624A5
+	for <webhook@archiver.kernel.org>; Mon, 31 Aug 2026 07:08:13 +0000 (UTC)
+Received: from cetc.com.cn (cetc.com.cn [220.181.39.39])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.24266.1788160086889162852
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 28 Aug 2026 15:01:35 -0700
+ Mon, 31 Aug 2026 00:08:07 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=BC/Ih6GV;
- spf=pass (domain: konsulko.com, ip: 209.85.219.53, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-90ccbed6edcso16140036d6.0
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 28 Aug 2026 15:01:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1787954494; x=1788559294; darn=lists.yoctoproject.org;
-        h=content-id:content-type:mime-version:references:message-id
-         :in-reply-to:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=wgCncTONIGBqCX0i2V6uUXTywdR5S3Tp3LHQFsjhdG0=;
-        b=BC/Ih6GVN6bnrgWueSJgojL3ZsR2LlMzrgdUq9VkTLQJ1xo8ofJl9xOnCdBM487vzz
-         6BSNnzLPA5DUbgEnLRzqb/j1pFsSouibpptENcx5k4308AlrYp9cL1tslbqmhnhUom86
-         KEnGkcJd0Nnezta/iCGu0N7NMoLiw10oJM1SE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787954494; x=1788559294;
-        h=content-id:content-type:mime-version:references:message-id
-         :in-reply-to:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=wgCncTONIGBqCX0i2V6uUXTywdR5S3Tp3LHQFsjhdG0=;
-        b=SfTCShv7iKS1Vs5IqQcYfriEKntn39UFq5Y/C6dYKniEDTg28XDByZjjlv2IevB0LN
-         SrqWaml0TBerOwGrj6Umhi6ELP+84iMFcWF4IGm4EB7K4arXvnqqF8GymuXs8/62+/5a
-         E+akSzz8c7YwjD1S5e+ZGfgI+u2Y+CuSJr4pKRdkKMfzolgd2D5IC7weHFjxJgNGQIKN
-         xER7qKuuJTqbEd/0zaTXvDlPGCJB1LppgBLHN0jFqaHV9XBV2Po4Gk8ag/yGUO0JIwxv
-         Spbe9H9hYYNZHMnYbvJg2NjxdhVVkz6WDn/f9NHhhSvGzahNXM6+6yXecIq9IMLV8haR
-         LWIQ==
-X-Gm-Message-State: AFuF++mBrDj8Mie1eS1GjZPI0fAFoiU6lYC3SXerLxEv7mzWsbH84r0g
-	eD1s8bGlA5CgcGOBGXl7Z6/Nv7+oUxyOPv4ZMlHcAy7Zn/v2hyxlHq5TUkh8rF6woIvwoWUz6j9
-	D1Gn4
-X-Gm-Gg: AYBFou2EvioLNNp0ZCzNHi0tHPguPl/K+EU+lZnyLDYqGY618/AMjt4lw3ZxhC9Kkbq
-	zdUPZQzB5E2m69RIiNcaf9CynQ01YwtMk5AToTN0/e6+8Rl4q4b/WkSGUK2ujbXH/rLKx8/07t5
-	mSC2+7hlsc3SZ8C5l+Yj9NACKLHCMPIMHZCd4Q1GKirWajyid6CbH/nrCHyJsKCRcn79PZYe2de
-	6lAY5TXCAtv1hrw5sXdG9j2DOlEW1XLytIM1tj8RiyQYahU/0nC2z1RjIxHOwpY3YtRwNKGgBr5
-	sWFJICZu48jUVbM+jP/0vGpwerETZ56wQ713ceSfvHTprHZjmZdumWWqeY/6Ticx3N6V31Z42E/
-	H0c/SdpiboJ09P+i8TxvHLRaiPC5l9b2K6AqIb3QkvWlawnYGLgRJ52EFCuAf1KCCqwRBYe9qpD
-	MDOpuis0maC3tEm53Yd90kPJD9KrARr9+BvVb9MZS9+WN1HZRiwfkpyxFOvSngYpd6NZTLQxVrK
-	2G4JMZELmBBw6Hjv/rAsfNCx8clJxo6objM/B/oV3LSIMnhpUhbULtY3zma/3Cfp5ZAPA5R83Xn
-	ksluaRm/xEwTel7hIg==
-X-Received: by 2002:a05:6214:4606:b0:907:5cea:2f04 with SMTP id 6a1803df08f44-90ce0e5890cmr138956936d6.1.1787954493527;
-        Fri, 28 Aug 2026 15:01:33 -0700 (PDT)
-Received: from godzilla (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-90ce4512dcasm24587586d6.34.2026.08.28.15.01.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Aug 2026 15:01:32 -0700 (PDT)
-Date: Fri, 28 Aug 2026 18:01:19 -0400 (EDT)
-From: Scott Murray <scott.murray@konsulko.com>
+ dkim=none (message not signed); spf=pass (domain: cetc.com.cn, ip: 220.181.39.39, mailfrom: chenqi_hycx@cetc.com.cn)
+Received: from mail.cetc.com.cn (unknown [101.95.142.114])
+	by mtasvr (Coremail) with SMTP id _____wBHQKM3KJVqC1AGAA--.24752S3;
+	Mon, 31 Aug 2026 15:07:35 +0800 (CST)
+Received: from server-7r32.. (unknown [101.95.142.114])
+	by front01 (Coremail) with SMTP id C6CowAB3+WnjJ5Vqc2QkAA--.64718S2;
+	Mon, 31 Aug 2026 15:06:15 +0800 (CST)
+From: chenqi_hycx@cetc.com.cn
 To: yocto-patches@lists.yoctoproject.org
-cc: Marta Rybczynska <rybczynska@gmail.com>
-Subject: Re: [yocto-patches] [meta-security][PATCH 00/15] Assorted updates
- 08/26
-In-Reply-To: <18CF768CF3D1C1B6.642712@lists.yoctoproject.org>
-Message-ID: <b6c56505-2c52-9848-fb0c-328ec1c1835e@konsulko.com>
-References: <18CF768CF3D1C1B6.642712@lists.yoctoproject.org>
+Cc: joe.macdonald@siemens.com
+Subject: [meta-selinux][PATCH] refpolicy-targeted: remove useless POLICY_MLS_SENS setting
+Date: Mon, 31 Aug 2026 15:07:53 +0800
+Message-ID: <20260831070753.1435111-1-chenqi_hycx@cetc.com.cn>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="-1463811583-1796331030-1787954415=:4042"
-Content-ID: <7d52de25-0952-8b9c-7258-ccb3e4eb69a9@spiteful.org>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: C6CowAB3+WnjJ5Vqc2QkAA--.64718S2
+X-CM-SenderInfo: xfkh015lbk5un06fv33fof0zgofq/1tbiAQYQCmqUMyEQdwACsU
+X-CM-DELIVERINFO: =?B?CGFc75MTIGijefgSB8euu+6OLk7VHJpweJu2O0jc6H0leTZ35Rt/fA/pqtc40DVWE/
+	da9Au2knOD+lD9q//CttQet9umFb9LULN/QP8ywDf62Sc8BcAv8xrd6i8WM5Y1vmlA0/8P
+	Wlg75PGDkEi+ps5CdwY+oTPXZcnMhOQcE+HQXwseiukbPNaKFaI1+7IwKsexVw==
+X-Coremail-Antispam: 1Uk129KBj9xXoW7Jw4rWFWDAw4xKF4xXr1DurX_yoWfXrXEgr
+	WxZr9rAa15ZF48G3WIk34fGF1qvr1rKr1a9r10k34ag3s8Zr4fKrW5XFyrArWfJF15Xa1f
+	GFyagFyjkry7GosvyTuYvTs0mTUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUj1kv1TuYvT
+	s0mT0YCTnIWjgY5I8CrVACY4xI64kE6c02F40Ex7xfMxkIecxEwVAFwVW8CbIjqfuFe4nv
+	WSU5nxnvy29KBjDU0xBIdaVrnRJUUUvGb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20V
+	C2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2
+	F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjx
+	v20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2
+	z280aVCY1x0267AKxVWxJr0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0c
+	Ia020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_
+	JrylYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwI
+	xGrwAKzVCY07xG64k0F24lc2xSY4AK67AK6r4xMxAIw28IcxkI7VAKI48JMxC20s026xCa
+	FVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_Jr
+	Wlx4CE17CEb7AF67AKxVWUXVWUAwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j
+	6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr
+	0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIY
+	CTnIWIevJa73UjIFyTuYvjxU7NVyUUUUU
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 28 Aug 2026 22:01:37 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4719
+ <yocto-patches@lists.yoctoproject.org>; Mon, 31 Aug 2026 07:08:13 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4720
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+From: Chen Qi <chenqi_hycx@cetc.com.cn>
 
----1463811583-1796331030-1787954415=:4042
-Content-Type: text/plain; CHARSET=ISO-8859-15
-Content-Transfer-Encoding: 8BIT
-Content-ID: <506ed5a3-071e-9e13-502c-d411b032272d@spiteful.org>
+When 'mcs' refpolicy type is used, the mls sens is hardcoded to 1.
+See https://github.com/SELinuxProject/refpolicy/blob/main/policy/mcs#L7
 
-On Wed, 26 Aug 2026, Scott Murray via lists.yoctoproject.org wrote:
+So remove this POLICY_MLS_SENS as it's useless and misleading.
 
-> My apologies for being slow in getting this out, this patch series rolls
-> up the contributed patches from the past few months along with some
-> other fixes from myself.  These changes are queued on the master-next
-> branch if you would like to check them out to test yourself.  I intend
-> to merge these to master branch Friday evening (EDT, August 28) unless
-> there are objections.  I should have the relevant backports to wrynose
-> and scarthgap out for early next week.
+Signed-off-by: Chen Qi <chenqi_hycx@cetc.com.cn>
+---
+ recipes-security/refpolicy/refpolicy-targeted_git.bb | 1 -
+ 1 file changed, 1 deletion(-)
 
-These are now merged to master branch.
+diff --git a/recipes-security/refpolicy/refpolicy-targeted_git.bb b/recipes-security/refpolicy/refpolicy-targeted_git.bb
+index 321407d..b4bec46 100644
+--- a/recipes-security/refpolicy/refpolicy-targeted_git.bb
++++ b/recipes-security/refpolicy/refpolicy-targeted_git.bb
+@@ -8,7 +8,6 @@ enabled. \
+ 
+ POLICY_NAME = "targeted"
+ POLICY_TYPE = "mcs"
+-POLICY_MLS_SENS = "0"
+ 
+ include refpolicy_${PV}.inc
+ 
+-- 
+2.43.0
 
-Scott
-
-
->
-> Bin Cao (1):
->   samhain: fix server startup failure on systemd-based systems
->
-> Esa Jaaskela (1):
->   aide: Fix unstable install task hash
->
-> Ga�l PORTAY (3):
->   dm-verity: remove unused variable
->   wic: document the meta-intel dependency in the dm-verity hash example
->   docs: update path of wic files
->
-> Krupal Ka Patel (1):
->   tpm2-tools: fix PACKAGECONFIG typo
->
-> Peter Marko (2):
->   tpm2-tools: set status for CVE-2017-7524 and CVE-2024-29039
->   tpm2-tss: set status for CVE-2024-29040
->
-> Sandeep J (1):
->   README: fix broken URLs in meta-integrity and ccs-tools
->
-> Scott Murray (4):
->   aide: Fix compilation with nettle 4.x
->   suricata: handle oe_cargo_build removal
->   meta-integrity: Fix ima-evm-utils LICENSE
->   meta-tpm: Fix SUMMARY/HOMEPAGE in affected recipes
->
-> Shreejit C (1):
->   meta-tpm: Add missing recipe metadata (HOMEPAGE/SUMMARY)
->
-> Wang Mingyu (1):
->   fix LICENSE variable syntax to suppress QA warning
->
->  classes/aide-db-init.bbclass                  | 11 +++-
->  classes/dm-verity-img.bbclass                 |  1 -
->  docs/dm-verity-systemd-x86-64.txt             |  6 +--
->  docs/dm-verity.txt                            |  2 +-
->  .../wic/systemd-bootdisk-dmverity-hash.wks.in |  1 +
->  meta-integrity/README.md                      |  4 +-
->  .../ima-evm-utils/ima-evm-utils_1.5.bb        |  2 +-
->  .../recipes-core/images/security-tpm-image.bb |  2 +-
->  .../images/security-tpm2-image.bb             |  2 +-
->  .../packagegroup/packagegroup-security-tpm.bb |  2 +-
->  .../packagegroup-security-tpm2.bb             |  1 +
->  meta-tpm/recipes-tpm/libtpm/libtpms_0.10.0.bb |  1 +
->  meta-tpm/recipes-tpm/swtpm/swtpm_0.10.0.bb    |  1 +
->  .../openssl-tpm-engine_0.5.0.bb               |  2 +-
->  .../tpm-tools/tpm-tools_1.3.9.2.bb            |  1 +
->  .../tpm2-abrmd/tpm2-abrmd_3.0.0.bb            |  1 +
->  .../tpm2-openssl/tpm2-openssl_1.3.0.bb        |  1 +
->  .../tpm2-pkcs11/tpm2-pkcs11_1.9.2.bb          |  1 +
->  .../tpm2-pytss/python3-tpm2-pytss_2.3.0.bb    |  1 +
->  .../recipes-tpm2/tpm2-tools/tpm2-tools_5.7.bb |  6 ++-
->  .../tpm2-tss-engine/tpm2-tss-engine_1.2.0.bb  |  1 +
->  .../recipes-tpm2/tpm2-tss/tpm2-tss_4.1.3.bb   |  3 ++
->  .../0002-Support-build-with-nettle-4.patch    | 53 +++++++++++++++++++
->  recipes-ids/aide/aide_0.19.3.bb               | 14 ++---
->  recipes-ids/crowdsec/crowdsec-licenses.inc    |  2 +-
->  recipes-ids/crowdsec/crowdsec_1.7.7.bb        |  2 +-
->  ...-set-SetLockfilePath-to-run-yule.pid.patch | 41 ++++++++++++++
->  recipes-ids/samhain/files/samhain-client.init |  3 +-
->  recipes-ids/samhain/files/samhain-server.init |  3 +-
->  recipes-ids/samhain/samhain.inc               |  1 +
->  recipes-ids/suricata/suricata_8.0.4.bb        | 11 ++--
->  recipes-mac/AppArmor/apparmor_4.0.3.bb        |  2 +-
->  recipes-mac/ccs-tools/README                  |  2 +-
->  recipes-perl/perl/lib-perl_0.63.bb            |  2 +-
->  recipes-perl/perl/libwhisker2-perl_2.5.bb     |  2 +-
->  recipes-scanners/clamav/clamav_1.4.4.bb       |  4 +-
->  recipes-security/libgssglue/libgssglue_0.9.bb |  2 +-
->  37 files changed, 159 insertions(+), 38 deletions(-)
->  create mode 100644 recipes-ids/aide/aide/0002-Support-build-with-nettle-4.patch
->  create mode 100644 recipes-ids/samhain/files/0013-yulerc-set-SetLockfilePath-to-run-yule.pid.patch
->
->
----1463811583-1796331030-1787954415=:4042--
 
