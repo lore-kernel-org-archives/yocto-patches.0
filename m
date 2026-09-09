@@ -1,86 +1,108 @@
-Return-Path: <richard.purdie@linuxfoundation.org>
+Return-Path: <alex.kanavin@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA3EC79FA1
-	for <webhook@archiver.kernel.org>; Tue,  8 Sep 2026 21:28:38 +0000 (UTC)
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.394.1788902917290749393
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D1FBC79FAD
+	for <webhook@archiver.kernel.org>; Wed,  9 Sep 2026 08:41:16 +0000 (UTC)
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.7206.1788943270992823041
  for <yocto-patches@lists.yoctoproject.org>;
- Tue, 08 Sep 2026 14:28:38 -0700
+ Wed, 09 Sep 2026 01:41:11 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=id6HPyzX;
- spf=pass (domain: linuxfoundation.org, ip: 209.85.128.46, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-49b9320423cso58035925e9.0
-        for <yocto-patches@lists.yoctoproject.org>; Tue, 08 Sep 2026 14:28:36 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20251104 header.b=IJH6pjOH;
+ spf=pass (domain: gmail.com, ip: 209.85.160.174, mailfrom: alex.kanavin@gmail.com)
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-5218927884fso78698021cf.3
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 09 Sep 2026 01:41:10 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1788943270; cv=none;
+        d=google.com; s=arc-20260327;
+        b=phbRsQzEMQ0IjhGGgIAD4xtu23v3YCIkff8lfIGmx88KmZDYNwiooGIf/HiX5xOFZM
+         KWXe9jQkmkFQzUjIPUNRn5iqrv5uz17L1Ggo/gWHwu7JE+wYvwG6SL989V2DJjHePdoB
+         LBM8OtRFGMAaKWCcbVMW0/4wyCjikusj4QdJm7YMGjXqOxYOd4aZqCbpE0wxNAMVBf7D
+         Yook2cB9DQoNF/MDCn7jx6FXkOkU66Vg6WRsGgY4wD/BxlEoTPuk7FMXYoA4wis1hyaT
+         KB+nyAD14U4vvhNZlkKJ8DRzSX+kSWuVHA1JdwRMHUTVSebBorfiup/fYjvLUK8SOWJx
+         mgKA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=RWq+6sM7U9zI1MRJeTmBTRhM+cOMbuGdx34618ZRuUw=;
+        fh=28JQhdK5h5mLF5DLv2fLR8YFHEF0yTvH5opUNnJ6Zzo=;
+        b=nS3liW+/EJIHHP/+/n9qKFTcSMUOHhZQBzXpD6qGbatxNal50sh5vbr1TLDv3yhNgQ
+         SfKy64gEyN+Jrf6qWvP0UKcRx8dp3Z+dZA286ATgEnh06CjWKPmncAAk1Jxb7txuI5p6
+         gfwbGYa9YxI3yfHMJqt0U7sr1Fo6ylIvYkurMEeXWJv+n3zVwfMGykN4qv8OZQTfXQil
+         cikxdNEPbTDRO/kZ2cq0xC0VWBUxkz7AOUu2Najge9I1Hz9FQBO+ye91beKfd1MQ5uWx
+         bgUdlRbeBd0gExTXR7xiUgTAABkNAIZX8qCsZhJcZXtRhCBIWWOMCiHrl1pkUOVsuxSs
+         vWcw==;
+        darn=lists.yoctoproject.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1788902915; x=1789507715; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=SbFvje8vuVJpeIESMrex2TS/yZ9eaebHGcui8pzpzVU=;
-        b=id6HPyzXMwj7glO9+AJof0oW1AgJZlrS9LEcLZog9sTux3gfNDGcb+RAMqNv3e/eXJ
-         3N0S6k5ne7zaWwNQy5MHZiPCkaiWG3GOuIbRcT/Jk9rl75Z/CKP0AzoKRs6c06GySz/T
-         ShwkCxO4cOvEjN7zJ8qV10bogLOehV5sWXpLI=
+        d=gmail.com; s=20251104; t=1788943270; x=1789548070; darn=lists.yoctoproject.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=RWq+6sM7U9zI1MRJeTmBTRhM+cOMbuGdx34618ZRuUw=;
+        b=IJH6pjOHHK9o4iZeHl5w12X5vu/q+Q/+RYuW/lcUG7CDr6fq4LblNf3NYwxOZUneqi
+         t2+lgipb6Pj6xNAK+pJgnZ4RgKOgszPv3uoxN5NzaC5tqXq+eIDApYFXQWQGjosUomh1
+         L2aHxgAUtzuWCgCyyAPxw7Ag1/3mfR/Qug/MaCp2DBzHg+P+/7wR5SvZIN6sfGVl62Sk
+         /99ExzwSGpRESDBfZGK4PFk9wkeHXYr/+SZcXV16ypMc+ZT2Dstru6VAgI0Y/hiHuYTs
+         Y7/9aIgrRbs/VPx50c7ma2BvtJgKUgEzXSP7UU3YGlDJVtZFYG/Fx1eHpAq5zop5Jm0o
+         AH6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788902915; x=1789507715;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=SbFvje8vuVJpeIESMrex2TS/yZ9eaebHGcui8pzpzVU=;
-        b=Sh32TJ4CcptMS/NGcN+OKSJYsScUF+JAjSO2Gl6Mqmr8V4TkHAPZwOZUdRGqRNSFSv
-         jelnBAMuepuTPf9Voa9mwcRQXEoHV3GUXq+uFYN96elaq6g8/q03MjqPxPx/B+LOM5rW
-         Iy6F7/5V3bxk/hsdk+YgP/8igBHK8U3j8ml1+vSEBmSi2KaqbY1lBYOpTc54d29TERPR
-         r54Ua9USlNKSFnZ2Qry4Kg4vN/hk0xSPgLna+feNlCYsApGN6JBj3nAHX2yYt6/IK5St
-         3zek8pjnbQB0KBMaSIQ2lGdiJj/g/F92yGirVrCxD0NJf6GTC/E1rsdXdG5jR2lzUF20
-         vNLA==
-X-Gm-Message-State: AFuF++mgPGLaIM2/EmQpVwf+pLJZRhvw1ewqp5fleWu5O5aqq61xBhPW
-	PXLOCOQ6PlvV6xSt3bj5Mz5Goyw3M81AMvDduwcJSvH97yo2lzBvOokDDc4guGY26F39FrA4GPm
-	kI7PiG3E=
-X-Gm-Gg: AYBFou0dzzUVNVF0P+n00WTIfGuKooWJqLiyd7NLUT2ziy4hIJPQT6Aw2nJhhTVlLuE
-	vnJfFsmUti4OgQU3TZ6gJwPajop5vGA/rQKuzrhs8Z8G191ZOaL4JdEFPQyQKIYx57zLsqtNgbV
-	8Nz4C0NCED77zF0fsdrl+kgzfK5KgFLGT7iVF9q0zh0aHdoog4QA98mX4qFAlUEl+8ba/pAg6JZ
-	CKMKp25iKTlb8V+6miWuWFZmbKmAkQv9y+O/9R56yu7/NOjXgIocNbxbYQnTc6Z8bXugufp3y8q
-	LoGUKcmvlgBtW0DhKKBaasZY4IhPILSq/1kvq3GggzL9yYsviN/ugjMLFD1RbRf9g7Kwe0abj8u
-	xYKAAQ2cTXm3VFiJVZPD/nk6tV1jx9AUasF6sGRADiftVx94KMaxQhQJY5SkNo9EoeVrWL38nJu
-	C9B8ny46smKfXezgegQwbzddWBNalZ9MbUDEurZfFM6A3Ywg9OzXYYJLukZQKCM3d93MDidhNSC
-	h5NN7usPDTCw8g14g==
-X-Received: by 2002:a05:600c:4514:b0:49d:1e09:694a with SMTP id 5b1f17b1804b1-49d1e096970mr77448445e9.11.1788902915126;
-        Tue, 08 Sep 2026 14:28:35 -0700 (PDT)
-Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:3b52:472d:bd88:cdf3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49d20daed8esm3815085e9.2.2026.09.08.14.28.32
-        for <yocto-patches@lists.yoctoproject.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Sep 2026 14:28:33 -0700 (PDT)
-From: Richard Purdie <richard.purdie@linuxfoundation.org>
-To: yocto-patches@lists.yoctoproject.org
-Subject: [yocto-autobuilder-helper] [PATCH] config.json: Show bitbake-selftest test durations and progress
-Date: Tue,  8 Sep 2026 22:28:31 +0100
-Message-ID: <20260908212831.1825824-1-richard.purdie@linuxfoundation.org>
-X-Mailer: git-send-email 2.53.0
+        d=1e100.net; s=20251104; t=1788943270; x=1789548070;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=RWq+6sM7U9zI1MRJeTmBTRhM+cOMbuGdx34618ZRuUw=;
+        b=h/RNtcm+00qVcRd5+NbqpAJcKqPzCf8DA+K11GjxUNQ8Qy8lKa3Mq10qeGipBP+sjz
+         fy16aEYclkavIfWlGGwhdPxIFhcehwZ7DqXxbHX78ATmZNDP1IwDqlIi03CU30INxo7z
+         1CQTZCvK9irH0Zkz7RQthZxNYf+vsH9LwzQgPWScSp6sGv6hUhk22uH1QmTg55Gn5K0z
+         uGs1HB/g/YKWDAenxMTgfrMtm4Bqyc5OK3QHgY1YrFqoqTvdKlIYoQR2uBKSYq+auiXh
+         RTE0ay8DotWbYCM710mXFy3b+CuDqyOfhZvQrKqpdz+Y2gc3KQLbaL6JpmH7ytukQK3p
+         hL+Q==
+X-Gm-Message-State: AFuF++lP6O36KkJPQQGaHdqHE3IvvFwFmCFnj/VXdvf1fNz2kzBUzDTP
+	iip5pIi7KYH/LAKT89GBfqSOb9vX/d04UgGbeosks9qXS2mwtCi2+KgbM0z+Q/UctpJIcu4Wb87
+	jUC/Xreo5nk9r0yFm1nOFs5ddxjIW7iM=
+X-Gm-Gg: AYBFou2zal/rCwvaWuEX2QUrVDi+Dos4C0fPqrM+Z7Msr8IelRkY/gMcIlvLXpWqMk/
+	od0r/JRcKxeGiVmgg1vMIUBLKHyaswpmEYGY+u/RpN+t1rMIj4jfLfWRgZA8oV//p7HhTCPDUPP
+	k09ifEvrS9QogrBGIVCl3C0sUhx7uTSy1X0caCMkL0eM+KlQF6X9fqBN8zetN8Aluljt6RpHWmQ
+	0y4zDJx3alDTUZvuu6uswOkiwFANc9BpKeUbQ0h5GoM4dyZhwk0GSuOTHwEd/mOfg7r+7qDMeNd
+	4NTRO91d/BWaQJCMJHwOMSgTUnGoc+dYZrcQX7Vr09MaGybfmRSx7yZPZYTMpKW+6Ij9rmpystZ
+	ZVA6dMQ+mQzJk17P8gQH74mRP
+X-Received: by 2002:a05:622b:8f:20b0:530:8a37:ad1d with SMTP id
+ d75a77b69052e-5308a37b343mr40747251cf.45.1788943269690; Wed, 09 Sep 2026
+ 01:41:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260907131252.2810926-1-daniel.turull@ericsson.com>
+In-Reply-To: <20260907131252.2810926-1-daniel.turull@ericsson.com>
+From: Alexander Kanavin <alex.kanavin@gmail.com>
+Date: Wed, 9 Sep 2026 10:41:00 +0200
+X-Gm-Features: AcwNN1VOWfTeuarUoL5uxcy0O8cfbyhtIdsXShFWKDIoxVZ_pD0KYMpRRcWmhDU
+Message-ID: <CANNYZj-TeqYEDbrR6XLPv119e38QaPGDoA7RDTDczTnA38d2XA@mail.gmail.com>
+Subject: Re: [auh][PATCH] steps: ignore source in commit msg
+To: daniel.turull@ericsson.com
+Cc: yocto-patches@lists.yoctoproject.org
+Content-Type: text/plain; charset="UTF-8"
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Tue, 08 Sep 2026 21:28:38 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4754
+ <yocto-patches@lists.yoctoproject.org>; Wed, 09 Sep 2026 08:41:16 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4755
 
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
----
- config.json | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Mon, 7 Sept 2026 at 15:14, <daniel.turull@ericsson.com> wrote:
+> @@ -103,6 +103,8 @@ def _append_changelog_to_commit_msg(group, opts):
+>          text = p['changelog_text'].strip()
+>          if text.startswith('Changelog for '):
+>              text = text[text.index('\n') + 1:].strip()
+> +        if text.startswith('Source: ') and not text.startswith('Source: http'):
+> +            text = text[text.index('\n') + 1:].strip()
+>          if len(text) > max_len:
+>              text = (text[:max_len] + "\n\n[Changelog truncated as it exceeds {} characters; \n"
+>                      "the full changelog can be found in an attachment to the AUH email]".format(max_len))
 
-diff --git a/config.json b/config.json
-index b887900..6eaeffa 100644
---- a/config.json
-+++ b/config.json
-@@ -263,7 +263,7 @@
-             ],
-             "step1" : {
-                 "shortname" : "Bitbake Selftest",
--                "EXTRACMDS" : ["bitbake-selftest"]
-+                "EXTRACMDS" : ["bitbake-selftest --durations=0 -v"]
-             },
-             "step2" : {
-                 "shortname" : "OE Selftest",
+This code block relies on brittle particularities of how devtool
+writes out the changelog file. I wonder if we can rather make it more
+structured, e.g. devtool writes out a json with all the metadata
+including the pointer (filename) where the actual changelog text is,
+and then auh can pick and format pieces the way it wants?
+
+Alex
 
