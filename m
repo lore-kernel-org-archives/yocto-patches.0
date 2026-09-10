@@ -1,107 +1,95 @@
-Return-Path: <richard.purdie@linuxfoundation.org>
+Return-Path: <chenqi_hycx@cetc.com.cn>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A437BC79FB7
-	for <webhook@archiver.kernel.org>; Wed,  9 Sep 2026 16:15:47 +0000 (UTC)
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.16654.1788970542550600990
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D66FFC79FB6
+	for <webhook@archiver.kernel.org>; Thu, 10 Sep 2026 02:38:40 +0000 (UTC)
+Received: from cetc.com.cn (cetc.com.cn [220.181.39.39])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.4888.1789007917144209483
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 09 Sep 2026 09:15:43 -0700
+ Wed, 09 Sep 2026 19:38:37 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linuxfoundation.org header.s=google header.b=b4NZBnFk;
- spf=pass (domain: linuxfoundation.org, ip: 209.85.128.54, mailfrom: richard.purdie@linuxfoundation.org)
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4998b5a63e2so70954645e9.1
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 09 Sep 2026 09:15:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1788970540; x=1789575340; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=HatvxE3q1AD4BkcZArnw5ta7tB6magWenIWgbd5lV6c=;
-        b=b4NZBnFk/T8EXq8R2DqkWLID7KFoD5PIUjzyEOIyJWfjZlz+wFl9qvdmOalePZI1CF
-         wb5D1FUoI2vwPSF48k1IshujZPagQsNdBsRI5LJWjYT3E5roh7dAIjOdT/RCaThdzufH
-         9RuXPCosm9Bcb9pcQzKhD8VP3Ck4p1SMc8FVo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788970540; x=1789575340;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=HatvxE3q1AD4BkcZArnw5ta7tB6magWenIWgbd5lV6c=;
-        b=ZA/Mke3mzBTOuGvP+yGx7tB+IvvQroAZXmgvqC0v50Lz6pxpQPCXa0bksgfi4mTtZz
-         QLYs599W/1sL0afbPUD1sFpxuGXJg3KqegrIGV3Bd5/j8D3b/zQ6KC4CCzoxGj2BXvR4
-         LllQDiAh0j0SDCuR9y2v7cYrCAB9EPXQ5M7vmfNAvY1rt18ka1sHs04YyKveX3npS0qE
-         VdPhs4X907/3JpI+mHvo6eeI3u2+JABtlarevJn2DweiGHJq8QbU8UQ1FqNypu1EitsE
-         cjVTv3ZbkxcVqOvCMr7d7YtL/6GNuYfgEdKAH2iaKVjAz+RNbpCIA5JQLPunZfQwIngq
-         40Gg==
-X-Gm-Message-State: AFuF++lY/id7nxlcvSq+Xzf7fFrvmSvd8Q6rmYM/Aw+qppmUNdMzOJdC
-	KfUfs7wJIbZ2CKjGhLjk8y89ffc3UGNOgXPLWMhuDiZdev57yIZdGbx0ShHQKhVTRVBpxyE1epH
-	9fMcQjmQ=
-X-Gm-Gg: AYBFou0u4LbwtMXyvUmDhlnrj5DdWgkKkDbt8hbcLyTYZo6QKEhOGqJCSDBsIYKbmoy
-	TZ82KOBIyR6rcRzMzK41X7b4WIk0Kb5IF9c1nuN8Az7HsV1zqvN5AMVfS4AXKwjyRZ1w2EQI74B
-	MNHQb7Ifq4sFhONBTjMF/0REsVr+7UBF/yAmqq12M4qIe2eb+O0w63FKYb4DjNIoW3ljCTEJ/DZ
-	r3QR7akXpjhgS8Qzwo4GTl0CVlKeLb6m6//HXpuwXPb77IucCJGFe10U0szfq5XLvsbGEIFr4xK
-	0vHsoD8qrXFCLuyK+F+b4y7eMPXGk4RfDmPkhUSTltVVS05JlAEpaT4kt/23RV9zLsM+Jl8fTjd
-	P2uJzCy81E/kqfF7jcGJnyDEtMouQ6N+IULgYsf9STVLAFUwPRJEzxyQOcLHmizJ+MDLHhO5jrJ
-	L+g62L9tgMW5eDZlrGJdcHR1LViY3/e54kGRogP93abZKATa5BS24CUfDKhFnqbNxpGA9KtvPNH
-	16qe3gGbJF9Imhlwk5bfhurqbI=
-X-Received: by 2002:a05:600c:35c3:b0:49c:fc6c:be10 with SMTP id 5b1f17b1804b1-49cfc6cc055mr327762975e9.22.1788970538661;
-        Wed, 09 Sep 2026 09:15:38 -0700 (PDT)
-Received: from max.int.rpsys.net ([2001:8b0:aba:5f3c:a320:8b5c:de4:61f9])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-485883acd33sm44956785f8f.18.2026.09.09.09.15.37
-        for <yocto-patches@lists.yoctoproject.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Sep 2026 09:15:37 -0700 (PDT)
-From: Richard Purdie <richard.purdie@linuxfoundation.org>
+ dkim=none (message not signed); spf=pass (domain: cetc.com.cn, ip: 220.181.39.39, mailfrom: chenqi_hycx@cetc.com.cn)
+Received: from mail.cetc.com.cn (unknown [101.95.142.114])
+	by mtasvr (Coremail) with SMTP id _____wD3YvX6F6JqwAIEAA--.14413S3;
+	Thu, 10 Sep 2026 10:37:47 +0800 (CST)
+Received: from server-7r32.. (unknown [101.95.142.114])
+	by front01 (Coremail) with SMTP id C6CowAB3+WmuF6JqIvQsAA--.25703S2;
+	Thu, 10 Sep 2026 10:36:30 +0800 (CST)
+From: chenqi_hycx@cetc.com.cn
 To: yocto-patches@lists.yoctoproject.org
-Subject: [yocto-autobuilder2] [PATCH] steps: Handle wrynose mixin special case in non-wrynose builds
-Date: Wed,  9 Sep 2026 17:15:36 +0100
-Message-ID: <20260909161536.718818-1-richard.purdie@linuxfoundation.org>
-X-Mailer: git-send-email 2.53.0
+Cc: joe.macdonald@siemens.com
+Subject: [meta-selinux][PATCH 1/3] selinux-image.bbclass: fix selinux_set_labels
+Date: Thu, 10 Sep 2026 10:38:23 +0800
+Message-ID: <20260910023825.1829224-1-chenqi_hycx@cetc.com.cn>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: C6CowAB3+WmuF6JqIvQsAA--.25703S2
+X-CM-SenderInfo: xfkh015lbk5un06fv33fof0zgofq/1tbiAgYGCmqhYIQJowAAsN
+X-CM-DELIVERINFO: =?B?jh/33ZMTIGijefgSB8euu+6OLk7VHJpweJu2O0jc6H0leTZ3KSwAYM2Ck2shLWqtE7
+	j2j3y1idtR2Omz1+d0wE13o2zMJuzzp3wYcoSA5ifANGjG0i5y4WIlgxu8IyCFR37wDB+R
+	cvB7NDVKf9OPxAtslLwa/aXFoQFaGKBowG9kYuFoiukbPNaKFaI1+7IwKsexVw==
+X-Coremail-Antispam: 1Uk129KBj93XoW7KrykAF4UWF4DKr4rGF1xWFX_yoW8CF18pa
+	1vvr4ak3WrJF1fKrn7Aa42gFyFqrWkCas7W3sIkrW5Za4Ykr48Xr4qkw1avr47JrW7Jwsr
+	Aa1rXFW7XFW8trgCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3gc02F40EFcxC0VAKzVAqx4xG6I80ewCY02Avz4vE14v_GrUv73VFW2AG
+	mfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUY27kC6x804xWl14x267AKxVWUJVW8JwAFc2x0x2
+	IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l
+	84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7
+	IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vE
+	x4A2jsIEc7CjxVAFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
+	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
+	JVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7V
+	AKI48JM4kE6xkIj40Ew7xC0wCY02Avz4vE14v_Gr1l42xK82IYc2Ij64vIr41l4I8I3I0E
+	4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGV
+	WUWwC2zVAF1VAY17CE14v26r1Y6r17MIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0
+	I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I
+	8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU
+	0xZFpf9x07jUCztUUUUU=
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 09 Sep 2026 16:15:47 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4756
+ <yocto-patches@lists.yoctoproject.org>; Thu, 10 Sep 2026 02:38:40 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4759
 
-We don't want the wrynose mixin for qcom leaking into our other
-builds. This workaround is horrible but the least worst solution I
-could find.
+From: Chen Qi <chenqi_hycx@cetc.com.cn>
 
-Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+1. The selinux_set_labels needs to be run before reproducible_final_image_task.
+2. The ';' needs to be removed, as it's useless and it will prevent
+   selinux_set_labels to have the correct function contents value,
+   causing signature calculation not depending on the function's
+   contents.
+3. Add a bbnote to give users more information. The command is a
+   key one, and it's useful that users know what is running.
+
+Signed-off-by: Chen Qi <chenqi_hycx@cetc.com.cn>
 ---
- steps/writebbsetupjson.py | 4 ++++
- steps/writelayerinfo.py   | 3 +++
- 2 files changed, 7 insertions(+)
+ classes/selinux-image.bbclass | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/steps/writebbsetupjson.py b/steps/writebbsetupjson.py
-index e1f14634..68a8b2db 100644
---- a/steps/writebbsetupjson.py
-+++ b/steps/writebbsetupjson.py
-@@ -39,6 +39,10 @@ class WriteBBSetupJson(steps.StringDownload):
-             branch = self.getProperty("branch_{}".format(repo))
-             revision = self.getProperty("commit_{}".format(repo))
+diff --git a/classes/selinux-image.bbclass b/classes/selinux-image.bbclass
+index 852db5f..97ff99e 100644
+--- a/classes/selinux-image.bbclass
++++ b/classes/selinux-image.bbclass
+@@ -1,6 +1,7 @@
+ selinux_set_labels() {
+     if [ -f ${IMAGE_ROOTFS}/${sysconfdir}/selinux/config ]; then
+         POL_TYPE=$(sed -n -e "s&^SELINUXTYPE[[:space:]]*=[[:space:]]*\([0-9A-Za-z_]\+\)&\1&p" ${IMAGE_ROOTFS}/${sysconfdir}/selinux/config)
++	bbnote "Running setfiles -m -r ${IMAGE_ROOTFS} ${IMAGE_ROOTFS}/${sysconfdir}/selinux/${POL_TYPE}/contexts/files/file_contexts ${IMAGE_ROOTFS}"
+         if ! setfiles -m -r ${IMAGE_ROOTFS} ${IMAGE_ROOTFS}/${sysconfdir}/selinux/${POL_TYPE}/contexts/files/file_contexts ${IMAGE_ROOTFS}
+         then
+             bbwarn "Failed to set security contexts. Restoring security contexts will run on first boot."
+@@ -19,7 +20,7 @@ python selinux_setlabels_handler() {
+     if d.getVar('FIRST_BOOT_RELABEL') == '1':
+         return
  
-+            # Skip mixin-wrynose-linux-firmware for non wrynose builds
-+            if "wrynose" in repo and "wrynose" not in branch:
-+                continue
-+
-             if revision and revision != "HEAD":
-                 rev = revision
-             else:
-diff --git a/steps/writelayerinfo.py b/steps/writelayerinfo.py
-index 741888b1..cdfd0657 100644
---- a/steps/writelayerinfo.py
-+++ b/steps/writelayerinfo.py
-@@ -29,6 +29,9 @@ class WriteLayerInfo(steps.StringDownload):
-             location = self.getProperty("location_{}".format(repo))
-             if location:
-                 repodict["location"] = location
-+            # Skip mixin-wrynose-linux-firmware for non wrynose builds
-+            if "wrynose" in repo and "wrynose" not in repodict["branch"]:
-+                continue
-             layerinfo[repo] = repodict
+-    d.appendVar('IMAGE_PREPROCESS_COMMAND', ' selinux_set_labels; ')
++    d.prependVar('IMAGE_PREPROCESS_COMMAND', ' selinux_set_labels ')
+     d.appendVarFlag('do_image', 'depends', ' policycoreutils-native:do_populate_sysroot')
+ }
  
-         return json.dumps(layerinfo, sort_keys=True, indent=4,
+-- 
+2.43.0
+
 
