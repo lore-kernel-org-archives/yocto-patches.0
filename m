@@ -2,199 +2,252 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A14E2C88E53
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2CFFC88E5A
 	for <webhook@archiver.kernel.org>; Fri, 11 Sep 2026 20:13:48 +0000 (UTC)
-Received: from mail-qk2-f13.google.com (mail-qk2-f13.google.com [74.125.230.205])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.48509.1789157619930247841
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.48516.1789157627759238751
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 11 Sep 2026 13:13:40 -0700
+ Fri, 11 Sep 2026 13:13:47 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=C42ADkKS;
- spf=pass (domain: konsulko.com, ip: 74.125.230.205, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk2-f13.google.com with SMTP id d75a77b69052e-530de452c33so3285631cf.1
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 11 Sep 2026 13:13:39 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=pz8vr9e2;
+ spf=pass (domain: konsulko.com, ip: 209.85.160.175, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-53024149d40so7837181cf.1
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 11 Sep 2026 13:13:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1789157619; x=1789762419; darn=lists.yoctoproject.org;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:to:from:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=4ZBPbsL5omivgDSBqTEpfN2D3yvwI/hu0QXciPLt3zM=;
-        b=C42ADkKSCLMtnczk/KNwM3wfqGuKBBX8tri4g0SY1l/lGk5vxMVyVBKkIYTH1llMyG
-         k1tcNOh8ztgVJoCycpGzFH49CDDEAUtH5HJSVJLGbvUy8sgz9lkx44QjY7MnMowFuA8B
-         4DVtFkM/jNoZNbJ7fLQOEtAypLTkIbo+YyJnA=
+        d=konsulko.com; s=google; t=1789157627; x=1789762427; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=V2PIo9AfLbIFdtaj8ikm3G3uDKFJlGyHN18S4LuOdvk=;
+        b=pz8vr9e2WY0DE3z7kJRf630QKiKlPk0sdx8RbX3XMClGqflAZX5KpUKRrwsvIFTHgT
+         KkG03OD1Y4891QCP1vQuu7WmusYc+8H3QGg415+pSrvDbOSWWFIgeJ2AaF8cy2nCi6sz
+         T0BFAALomy4r10er6taNRL1dPTPhxO+YORO5g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789157619; x=1789762419;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=4ZBPbsL5omivgDSBqTEpfN2D3yvwI/hu0QXciPLt3zM=;
-        b=SVz0l29286mamdB9kxA1GJ3l01Gr09FRajpvSzsE8RULpxk3aQW9vm0klwWZ7xjMMc
-         w9MrD0ILiE6J7PWIN/ijvty9VgbeLOYIYYoRNvmmqzOtirN0pmPnKwA0EjXN7P4G3lGk
-         pvsdzXRGU0UeL2hWuOi9rrlOE0yS/wnPcmguh5DnqPyK3ZQlb2aMd7uUhU7+IInlPxf6
-         4CXQ9x4aNzvL0+h5jOHEkbFk/fwoyNBX9w/b0C6zYaUtCEJ2fUsfisCY13vLk1nUIBQW
-         KvYSo/6qf1L90qQAuLnBDyX//TUW9Rl2ne3egB+L+ulRkkbz2TX3gSbbSxnUO/wDGqnm
-         ENBg==
-X-Gm-Message-State: AFuF++kWioe6+3mchV3Welco1Di/uik+iMJpKsknLVaDxPwmd0y+NrIQ
-	xlIxWgsbHJnYQbMtD0YjxpRSGnnt4n0IOyZCNU60yjQ8V56rg81FCFaAg3kQXnLRYKLFKfQoyjy
-	5ipk9
-X-Gm-Gg: AYBFou3ngtsFS/JwBBVwoIor5YiU6QXUVMX74Z3P4KV5DGpdaz9JGviTFfuxWm5TGCu
-	J7T/l38koYnF9Iz06bDzVYiYPmIKgI5V6OGQuL8vEzlR6rU4JZaEjCjINjfhzky36qTdV7hkKZq
-	JwN1vv4E7MYgm5PIyN2g11Z/OKcgSFOPgikFavZrVPOl2WRlI+4rSTYBq5eU7zPwQ7Hq0+nK2nC
-	wO/lx2Q2b53mlPF3vdIsL5x5h1T9xlk7wr9C9VZcd0cKR7gMEEraGEKxcAknnbv2dIKmZYcdCTi
-	ZFxSdCAzoCGyxAMU9xvnQFAwY/pARqIru+ahUeyBElmDt5wCyqa0gbLQwP2ieuM8+hh8W2i2Vem
-	loZCexRmBLHSiqN6KUawK9+PbIikXHp/1IiW2auhrmlqSLKY4SrmDP1LQ3VGP8JTh4JMFKHMhSe
-	+HfIISFdaWKNqgvoBQxYyA1MvPnwKV08hJS8QkKjN0utwF2XthGK4QA+VKSNUd5wSZ2CUfGLo+v
-	N0RBZMA+53Q7s2iQF+7cPzgfZuhPdNYbJ4hEJl2UC/UxBfWKggrgNoMe5pSeSukTyj5UKutAyfy
-	GE1oxMffj+2vR145tddv1xDOSSHHCF58oyA=
-X-Received: by 2002:a05:622a:453:b0:530:b2e2:903a with SMTP id d75a77b69052e-530c87c5f70mr86781111cf.58.1789157618326;
-        Fri, 11 Sep 2026 13:13:38 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1789157627; x=1789762427;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=V2PIo9AfLbIFdtaj8ikm3G3uDKFJlGyHN18S4LuOdvk=;
+        b=mkTDfbRWUkdNVODZlFoB2nlOE3TO7IPsJh/ds1SjLr9+M6+rUPk/KzUwG8I1r4MWFn
+         ukBsIYvwtYMp+FXHzhMHYc/np84elu+Kf/IdxJuvl00zzgoTGftal88XIzeVMfxKThfy
+         gjIp4BWDgIYDUaPkeGr5ZdvKnbv11CT4EH+ISJPpz9cT9ILhjT82JnBttUpjG/VfKZzR
+         ZW4ThEf1tHWZ03LgMpvyEVHg8xGh4Zr5hMm0fZUbtS2aBNb6XaGL7rEjAeMvx98OYjSU
+         L/tnqbfk7DaBUnurUvyN1zxukTx6xbK7pBG9NJ2MyVrVaxmgBOAo/H11p3e0TZTqxC4M
+         lRDA==
+X-Gm-Message-State: AFuF++leEkemkRKeBFwwarGx3l/5K9V09O4OJL0/0jI6GLB/zGOuUYsG
+	kwU5/+/jUajp0XPl5obobd89oFzYipXjz00GOf0TzivrQqe211rXsESAppqz9U3Y5/NcYYJhFiw
+	f3QRD
+X-Gm-Gg: AYBFou2mKSPMO7/KUIzpbso2LEIF8Yw82A1m03txxHbfSaFwS5WDKwk6byQh4hnEdIe
+	UPYIoTMdrHVmcPkqRWbMEzm50oNlA+HpC6lFoVxcnL26YSGvArrcfY20q27YJPkaeDZn+4YN5ys
+	VbToN/yb7U8Brw43GWW/4q/kX2sQupuopxZOYC6bOKOSFFYp2/xBayR1pczN+wnl2n9Mo2nq8Mi
+	weMlcv5c2zTlgKB3nhRBeorpSwFHAhMG2XaNXt+1RJrOY67mJ3pwx3tz6ETb+L4ooVuPrp76Dsk
+	ud/qxB+eFfGaSJ7u5mXbxNec7OH2p3dMrdkk8KhViP1+6iupSWafqoY3Fm1/YI6E+QFrL3KVCiz
+	xvQAY2UdQiiuM/sotZGb2GGlnLv4BMEI8w0Iyavb6Tn+WJVtoBRiWcjxDQFnUF/Q90Dk0uWD747
+	pNXs7iIbgPwsrsitjCV0YgLE8IdiscYTfCleTWyDsO/pW2Z2GicxOKS5sufzcnwlmcUu+X9bVe+
+	vz4yP0MNIMx9iH2y2R0VGtSrmpLeTYZNav6eczA/k/GqjWJGwS+93kIm9EuxFlyzBq3KlYoDj5t
+	4K8+gGsNNrVR0930hgZ+g2fSsitkoDglCSc=
+X-Received: by 2002:a05:622a:64a:b0:530:b2e1:8e3f with SMTP id d75a77b69052e-530c87458b1mr91056341cf.58.1789157626481;
+        Fri, 11 Sep 2026 13:13:46 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-530cc781402sm25826061cf.7.2026.09.11.13.13.37
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-530cc781402sm25826061cf.7.2026.09.11.13.13.45
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Sep 2026 13:13:37 -0700 (PDT)
+        Fri, 11 Sep 2026 13:13:46 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][scarthgap/rust][PATCH 00/37] Update to 1.98.1
-Date: Fri, 11 Sep 2026 16:12:46 -0400
-Message-ID: <cover.1789156653.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][scarthgap/rust][PATCH 09/37] rust: Move do_update_snapshot to rust-source
+Date: Fri, 11 Sep 2026 16:12:55 -0400
+Message-ID: <80fd100de90de248676db00e6fb27f3ab3e7733c.1789156653.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.55.0
+In-Reply-To: <cover.1789156653.git.scott.murray@konsulko.com>
+References: <cover.1789156653.git.scott.murray@konsulko.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Fri, 11 Sep 2026 20:13:48 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4766
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4775
 
-This patch series for the scarthgap/rust mixin layer backports the
-recent Rust toolchain changes in oe-core master branch to pull in
-the 1.96.1 -> 1.97.1 -> 1.98.0 -> 1.98.1 updates and other fixes.
+From: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
 
-Note that the cargo-c updates at the start of the series are to
-recover for my originally missing the move of the cargo-c recipe out
-of recipes-devtools/rust, which I noticed after posting the last patch
-series.  This does mean there are now some out of order commits
-compared to master branch, but I think things should be back on track
-now.
+Move do_update_snapshot from rust to rust-source, since
+rust-source now owns do_fetch/do_unpack/do_patch tasks
+after the shared source refactoring.
 
-I intend to merge this series to scarthgap/rust by end of day Monday
-(September 14, EST) unless an issue is pointed out.
+Signed-off-by: Deepesh Varatharajan <Deepesh.Varatharajan@windriver.com>
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+(adapted from oe-core commit b0734d8d34e04df5f544f119ed9161253e200670)
+Signed-off-by: Scott Murray <scott.murray@konsulko.com>
+---
+ recipes-devtools/rust/rust-source_1.96.1.bb | 72 ++++++++++++++++++++
+ recipes-devtools/rust/rust_1.96.1.bb        | 73 ---------------------
+ 2 files changed, 72 insertions(+), 73 deletions(-)
 
-Scott
-
-
-Changes:
-
-Deepesh Varatharajan (10):
-  cargo-c: update 0.10.20 -> 0.10.21
-  cargo-c: update 0.10.22 -> 0.10.23
-  cargo-c: upgrade 0.10.23 -> 0.10.24
-  rust: Fix reproducibility with shared source trees
-  rust: refactor source handling into a shared work-shared recipe
-  rust: Move do_update_snapshot to rust-source
-  rust: Upgrade 1.96.1 -> 1.97.1
-  rust: Upgrade 1.97.1 -> 1.98.0
-  rust: Fix build and oe-selftest failures with LLVM 23
-  rust: Upgrade 1.98.0 -> 1.98.1
-
-Jaipaul Cheernam (1):
-  classes-recipe: fix trailing whitespace
-
-Markus Volk (1):
-  rust: patch uninative loader into snapshot's self-contained lld
-
-Richard Purdie (2):
-  libgit: Add nativesdk variant
-  libgit2: upgrade 1.9.6 -> 1.9.7
-
-Ross Burton (17):
-  libgit2: remove library paths from installed .cmake
-  classes/rust-common: don't export rustlibdir
-  cargo: centralise anti-vendoring environment variables
-  cargo: add missing build dependencies
-  cargo-c: add missing build dependencies
-  classes/cargo_common: move PKG_CONFIG_ALLOW_CROSS export to
-    oe_cargo_fix_env
-  classes/rust: remove unused variables
-  classes/cargo: move general assignments to cargo_common.bbclass
-  classes/cargo: consolidate dependencies
-  rust: clean up dependencies
-  classes/cargo_c: inherit cargo_common
-  classes/cargo-c: remove CARGO_C_BUILD/CARGO_C_INSTALL variables
-  classes/cargo-c: pass flags via CARGO_BUILD_FLAGS
-  classes/cargo: merge oe_cargo_build into cargo_do_compile
-  libgit2: set correct homepage URL
-  classes/ptest-cargo: use oe.path.join instead of os.path.join
-  classes/ptest-cargo: add explanatory comment
-
-Scott Murray (1):
-  libgit2: backport libgit2 1.9.4
-
-Sunil Dora (1):
-  rust: Do not pass the removed x86 amx-tf32 feature to LLVM 23
-
-WXbet (1):
-  rust-target-config: set MIPS ABI in the target JSON
-
-Wang Mingyu (1):
-  libgit2: upgrade 1.9.4 -> 1.9.6
-
-Yash Shinde (2):
-  cargo-c: update 0.10.21 -> 0.10.22
-  cargo-c: upgrade 0.10.24 -> 0.10.25
-
- classes-recipe/cargo.bbclass                  |   44 +-
- classes-recipe/cargo_c.bbclass                |   26 +-
- classes-recipe/cargo_common.bbclass           |   65 +-
- classes-recipe/ptest-cargo.bbclass            |    8 +-
- classes-recipe/rust-common.bbclass            |    6 +-
- classes-recipe/rust-target-config.bbclass     |   12 +
- classes-recipe/rust.bbclass                   |   22 -
- conf/layer.conf                               |    6 +-
- lib/oeqa/selftest/cases/rust_mixin.py         |   13 +-
- recipes-devtools/cargo-c/cargo-c-crates.inc   | 1054 +++++++++--------
- ...4.0.bb => cargo-c_0.10.25+cargo-0.99.0.bb} |    4 +-
- .../rust/{cargo_1.96.1.bb => cargo_1.98.1.bb} |   21 +-
- recipes-devtools/rust/common-source.inc       |   28 +
- ...l-codes-on-riscv32gc-unknown-linux-g.patch |    9 +-
- ...lain-syscalls-as-their-time64-varian.patch |   81 --
- ...teps-tool.rs-switch-off-lto-for-rust.patch |    6 +-
- ...ip-StdarchVerify-when-remote-testing.patch |   30 +
- ...xplicit-tail-calls-disable-two-tests.patch |   39 -
- ...ommits-from-rust-Fix-selftest-llvm23.patch |  661 +++++++++++
- ...lls-ignore-tests-on-unsupported-llvm.patch |   96 --
- ...llvm-Do-not-pass-amx-tf32-to-LLVM-23.patch |   38 +
- ...epro-issue-fix-with-cc-crate-hashmap.patch |    5 +-
- .../rust/files/rust-oe-selftest.patch         |   24 +-
- ...ibstd-rs_1.96.1.bb => libstd-rs_1.98.1.bb} |    4 +
- ....96.1.bb => rust-cross-canadian_1.98.1.bb} |    0
- ...ust-llvm_1.96.1.bb => rust-llvm_1.98.1.bb} |    1 +
- recipes-devtools/rust/rust-snapshot.inc       |  104 +-
- recipes-devtools/rust/rust-source.inc         |   14 +-
- recipes-devtools/rust/rust-source_1.98.1.bb   |  128 ++
- .../rust/{rust_1.96.1.bb => rust_1.98.1.bb}   |  129 +-
- ...m-libraries-are-private-link-librari.patch |   40 +
- recipes-support/libgit2/libgit2_1.9.7.bb      |   23 +
- 32 files changed, 1732 insertions(+), 1009 deletions(-)
- rename recipes-devtools/cargo-c/{cargo-c_0.10.20+cargo-0.94.0.bb => cargo-c_0.10.25+cargo-0.99.0.bb} (82%)
- rename recipes-devtools/rust/{cargo_1.96.1.bb => cargo_1.98.1.bb} (78%)
- create mode 100644 recipes-devtools/rust/common-source.inc
- delete mode 100644 recipes-devtools/rust/files/0001-riscv32-Define-plain-syscalls-as-their-time64-varian.patch
- create mode 100644 recipes-devtools/rust/files/0003-bootstrap-skip-StdarchVerify-when-remote-testing.patch
- delete mode 100644 recipes-devtools/rust/files/0003-explicit-tail-calls-disable-two-tests.patch
- create mode 100644 recipes-devtools/rust/files/0004-Backport-commits-from-rust-Fix-selftest-llvm23.patch
- delete mode 100644 recipes-devtools/rust/files/0004-explicit-tail-calls-ignore-tests-on-unsupported-llvm.patch
- create mode 100644 recipes-devtools/rust/files/0005-rustc_codegen_llvm-Do-not-pass-amx-tf32-to-LLVM-23.patch
- rename recipes-devtools/rust/{libstd-rs_1.96.1.bb => libstd-rs_1.98.1.bb} (92%)
- rename recipes-devtools/rust/{rust-cross-canadian_1.96.1.bb => rust-cross-canadian_1.98.1.bb} (100%)
- rename recipes-devtools/rust/{rust-llvm_1.96.1.bb => rust-llvm_1.98.1.bb} (99%)
- create mode 100644 recipes-devtools/rust/rust-source_1.98.1.bb
- rename recipes-devtools/rust/{rust_1.96.1.bb => rust_1.98.1.bb} (74%)
- create mode 100644 recipes-support/libgit2/files/0001-cmake-mark-system-libraries-are-private-link-librari.patch
- create mode 100644 recipes-support/libgit2/libgit2_1.9.7.bb
-
+diff --git a/recipes-devtools/rust/rust-source_1.96.1.bb b/recipes-devtools/rust/rust-source_1.96.1.bb
+index 570c03c..7f2948e 100644
+--- a/recipes-devtools/rust/rust-source_1.96.1.bb
++++ b/recipes-devtools/rust/rust-source_1.96.1.bb
+@@ -54,3 +54,75 @@ B = "${WORKDIR}/build"
+ RUST_BUILD_ARCH = "${@{'ppc': 'powerpc', 'ppc64': 'powerpc64', 'ppc64le': 'powerpc64le', 'riscv64': 'riscv64gc'}.get(d.getVar('BUILD_ARCH'), d.getVar('BUILD_ARCH'))}"
+ 
+ EXCLUDE_FROM_WORLD = "1"
++
++addtask do_update_snapshot after do_patch
++do_update_snapshot[nostamp] = "1"
++
++# Run with `bitbake rust-source-${PV} -c update_snapshot` to update `rust-snapshot.inc`
++# with the checksums for the rust snapshot associated with this rustc-src tarball.
++python do_update_snapshot() {
++    import json
++    import re
++    import sys
++
++    from collections import defaultdict
++
++    key_value_pairs = {}
++    with open(os.path.join(d.getVar("S"), "src", "stage0")) as f:
++        for line in f:
++            # Skip empty lines or comments
++            if not line.strip() or line.startswith("#"):
++                continue
++            # Split the line into key and value using '=' as separator
++            match = re.match(r'(\S+)\s*=\s*(\S+)', line.strip())
++            if match:
++                key = match.group(1)
++                value = match.group(2)
++                key_value_pairs[key] = value
++    # Extract the required values from key_value_pairs
++    config_dist_server = key_value_pairs.get('dist_server', '')
++    compiler_date = key_value_pairs.get('compiler_date', '')
++    compiler_version = key_value_pairs.get('compiler_version', '')
++
++    src_uri = defaultdict(list)
++    # Assuming checksums_sha256 is now a key-value pair like: checksum_key = checksum_value
++    for k, v in key_value_pairs.items():
++        # Match the pattern for checksums
++        if "dist" in k and "tar.xz" in k:
++            m = re.search(f"dist/{compiler_date}/(?P<component>.*)-{compiler_version}-(?P<arch>.*)-unknown-linux-gnu\\.tar\\.xz", k)
++            if m:
++                component = m.group('component')
++                arch = m.group('arch')
++                src_uri[arch].append(f"SRC_URI[{component}-snapshot-{arch}.sha256sum] = \"{v}\"")
++    # Create the snapshot string with the extracted values
++    snapshot = """\
++## This is information on the rust-snapshot (binary) used to build our current release.
++## snapshot info is taken from rust/src/stage0
++## Rust is self-hosting and bootstraps itself with a pre-built previous version of itself.
++## The exact (previous) version that has been used is specified in the source tarball.
++## The version is replicated here.
++
++SNAPSHOT_VERSION = "%s"
++
++""" % compiler_version
++    # Add the checksum components to the snapshot
++    for arch, components in src_uri.items():
++        snapshot += "\n".join(components) + "\n\n"
++    # Add the additional snapshot URIs
++    snapshot += """\
++SRC_URI += " \\
++    ${RUST_DIST_SERVER}/dist/${RUST_STD_SNAPSHOT}.tar.xz;name=rust-std-snapshot-${RUST_BUILD_ARCH};subdir=rust-snapshot-components \\
++    ${RUST_DIST_SERVER}/dist/${RUSTC_SNAPSHOT}.tar.xz;name=rustc-snapshot-${RUST_BUILD_ARCH};subdir=rust-snapshot-components \\
++    ${RUST_DIST_SERVER}/dist/${CARGO_SNAPSHOT}.tar.xz;name=cargo-snapshot-${RUST_BUILD_ARCH};subdir=rust-snapshot-components \\
++"
++
++RUST_DIST_SERVER = "%s"
++
++RUST_STD_SNAPSHOT = "rust-std-${SNAPSHOT_VERSION}-${RUST_BUILD_ARCH}-unknown-linux-gnu"
++RUSTC_SNAPSHOT = "rustc-${SNAPSHOT_VERSION}-${RUST_BUILD_ARCH}-unknown-linux-gnu"
++CARGO_SNAPSHOT = "cargo-${SNAPSHOT_VERSION}-${RUST_BUILD_ARCH}-unknown-linux-gnu"
++""" % config_dist_server
++    # Write the updated snapshot information to the rust-snapshot.inc file
++    with open(os.path.join(d.getVar("THISDIR"), "rust-snapshot.inc"), "w") as f:
++        f.write(snapshot)
++}
+diff --git a/recipes-devtools/rust/rust_1.96.1.bb b/recipes-devtools/rust/rust_1.96.1.bb
+index 03970cd..a7101d5 100644
+--- a/recipes-devtools/rust/rust_1.96.1.bb
++++ b/recipes-devtools/rust/rust_1.96.1.bb
+@@ -345,79 +345,6 @@ rust_do_install:class-target() {
+     rm ${D}${libdir}/rustlib/${RUST_HOST_SYS}/lib/libstd*.so
+ }
+ 
+-addtask do_update_snapshot after do_patch
+-do_update_snapshot[nostamp] = "1"
+-
+-# Run with `bitbake -c update_snapshot rust` to update `rust-snapshot.inc`
+-# with the checksums for the rust snapshot associated with this rustc-src
+-# tarball.
+-python do_update_snapshot() {
+-    import json
+-    import re
+-    import sys
+-
+-    from collections import defaultdict
+-
+-    key_value_pairs = {}
+-    with open(os.path.join(d.getVar("S"), "src", "stage0")) as f:
+-        for line in f:
+-            # Skip empty lines or comments
+-            if not line.strip() or line.startswith("#"):
+-                continue
+-            # Split the line into key and value using '=' as separator
+-            match = re.match(r'(\S+)\s*=\s*(\S+)', line.strip())
+-            if match:
+-                key = match.group(1)
+-                value = match.group(2)
+-                key_value_pairs[key] = value
+-    # Extract the required values from key_value_pairs
+-    config_dist_server = key_value_pairs.get('dist_server', '')
+-    compiler_date = key_value_pairs.get('compiler_date', '')
+-    compiler_version = key_value_pairs.get('compiler_version', '')
+-
+-    src_uri = defaultdict(list)
+-    # Assuming checksums_sha256 is now a key-value pair like: checksum_key = checksum_value
+-    for k, v in key_value_pairs.items():
+-        # Match the pattern for checksums
+-        if "dist" in k and "tar.xz" in k:
+-            m = re.search(f"dist/{compiler_date}/(?P<component>.*)-{compiler_version}-(?P<arch>.*)-unknown-linux-gnu\\.tar\\.xz", k)
+-            if m:
+-                component = m.group('component')
+-                arch = m.group('arch')
+-                src_uri[arch].append(f"SRC_URI[{component}-snapshot-{arch}.sha256sum] = \"{v}\"")
+-    # Create the snapshot string with the extracted values
+-    snapshot = """\
+-## This is information on the rust-snapshot (binary) used to build our current release.
+-## snapshot info is taken from rust/src/stage0
+-## Rust is self-hosting and bootstraps itself with a pre-built previous version of itself.
+-## The exact (previous) version that has been used is specified in the source tarball.
+-## The version is replicated here.
+-
+-SNAPSHOT_VERSION = "%s"
+-
+-""" % compiler_version
+-    # Add the checksum components to the snapshot
+-    for arch, components in src_uri.items():
+-        snapshot += "\n".join(components) + "\n\n"
+-    # Add the additional snapshot URIs
+-    snapshot += """\
+-SRC_URI += " \\
+-    ${RUST_DIST_SERVER}/dist/${RUST_STD_SNAPSHOT}.tar.xz;name=rust-std-snapshot-${RUST_BUILD_ARCH};subdir=rust-snapshot-components \\
+-    ${RUST_DIST_SERVER}/dist/${RUSTC_SNAPSHOT}.tar.xz;name=rustc-snapshot-${RUST_BUILD_ARCH};subdir=rust-snapshot-components \\
+-    ${RUST_DIST_SERVER}/dist/${CARGO_SNAPSHOT}.tar.xz;name=cargo-snapshot-${RUST_BUILD_ARCH};subdir=rust-snapshot-components \\
+-"
+-
+-RUST_DIST_SERVER = "%s"
+-
+-RUST_STD_SNAPSHOT = "rust-std-${SNAPSHOT_VERSION}-${RUST_BUILD_ARCH}-unknown-linux-gnu"
+-RUSTC_SNAPSHOT = "rustc-${SNAPSHOT_VERSION}-${RUST_BUILD_ARCH}-unknown-linux-gnu"
+-CARGO_SNAPSHOT = "cargo-${SNAPSHOT_VERSION}-${RUST_BUILD_ARCH}-unknown-linux-gnu"
+-""" % config_dist_server
+-    # Write the updated snapshot information to the rust-snapshot.inc file
+-    with open(os.path.join(d.getVar("THISDIR"), "rust-snapshot.inc"), "w") as f:
+-        f.write(snapshot)
+-}
+-
+ RUSTLIB_DEP:class-nativesdk = ""
+ 
+ # musl builds include libunwind.a
 -- 
 2.55.0
 
