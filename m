@@ -2,62 +2,62 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D32EC88E56
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAD35C88E5E
 	for <webhook@archiver.kernel.org>; Fri, 11 Sep 2026 20:14:04 +0000 (UTC)
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.48452.1789157635212229686
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.48524.1789157636541962099
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 11 Sep 2026 13:13:55 -0700
+ Fri, 11 Sep 2026 13:13:56 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=CHJ02/RO;
- spf=pass (domain: konsulko.com, ip: 209.85.160.176, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-530e1b6a689so3232631cf.3
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 11 Sep 2026 13:13:55 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=hLfBuXKY;
+ spf=pass (domain: konsulko.com, ip: 209.85.160.175, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-5306c3ed04eso16927791cf.0
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 11 Sep 2026 13:13:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1789157634; x=1789762434; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1789157635; x=1789762435; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=XOOl+F7T2KSWB9dvTtcEwiYt4H2VTR9aP+BALaU7Mhc=;
-        b=CHJ02/ROmR6qzuBj3PunfZbgcz8TdyhHNmfuoNbIjG6INP3NCf+nEcpP0UkSp+YOTp
-         3HL/u2qamvYPu6xfu/qk1Wo5P9mioK1EJkRgKsSKtf+Ta+quuXHwY3uPozua8ffqexSI
-         iLyLSNU8rTVyi7Mx/JkIfiTOMT265MJHTTjnU=
+        bh=1GFlI69hSTwrqgjvX01u5jdtGXBfcDeL6Ju5g4iZ3ZU=;
+        b=hLfBuXKYc3ns6s55XzPsc5bOI9lvRqB4gTb88gHxYLeWkfyLq8VPK6HLPHVJamDAfx
+         hkzoI0Q+YHaxPhTIu6RqDpnqx+2nXKDjHtEw1P+au0A9v1GfDYAEq3p2j/v4Fpd39kVp
+         E7y0qjBl+pTtj+Z2AUk1vBFGkFkXRCjmxOcxQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789157634; x=1789762434;
+        d=1e100.net; s=20251104; t=1789157635; x=1789762435;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to:content-type;
-        bh=XOOl+F7T2KSWB9dvTtcEwiYt4H2VTR9aP+BALaU7Mhc=;
-        b=iOSpUIDKz0awNPjRdtrsiFaV2No7IhxbQuElRqZrcsUAaDnRzekTtETe0Rec2m4IgE
-         MCAaqnOSs2m+MNQi4lSaVrFT7LVdMlNnKiWdowYerxY750dKTO9Th6d0IugmWXN+oH3R
-         smr7IfyABxdDo1HsQ4DmvZDmb1a3tbVDbCRwZkKOpkA+xvSFqZgmrtdCzIP/ZQ18R8AE
-         dszA1VdpansrYgwrxoQQSJI3+I0Gfe9/ZdBRnjA8omoi2PuVlzl6i4FqTSa9zSKXxIsC
-         ymidnkrF4Hkgs22v4gnFm3gS6kOCTZbN292n1uy1MOwP4+tmNi+oc1f7OHoEBu4t+RHb
-         TmWw==
-X-Gm-Message-State: AFuF++mbZ/XuWqODV9Ax1BCUAOUCXHgjEmFSnm3TRZGY2huik0cunnAJ
-	dkY3DAhS0PfxOirnJOfLlY4JoamtmIn2FJZmq/ts0N9HRlAQrGiQfMK4pFot7vM3Cidj9bM1tdc
-	Zg9JF
-X-Gm-Gg: AYBFou0DewaWe6NA0gmYz0Y3TBNGkaWqdfV8t1tQt/W8YV3Y8iF94s1+gkyp96rDMRn
-	zkk3BVHq68tWlsbj+aIfhR2orUdh33fBBqpc0k/QKlQVBLeNkxj2DhbfXFrO0T/9ASOUvwvLI/q
-	tHtzqL2vUok+Y51bc5NgJgWJo1V0KggFdi5MzTdbOUkucnPzhMJAUjttsj94lb/uvF52uOo2t1I
-	E5AzEu7d0b/DEj0z2qns8KAM03M2iXLfEsH+EO8aBPm92MP1NEGjmKjsb3cVi751MsqkmpGnFkS
-	qbo+j8SkS1yxsCkUtkKPoYTjD+2dBm7Y08iFNPFV+embt8KLDD39FQ9FS9ImaTtV7/ZtWwmWKTZ
-	4/N4a5eSGCuTz/6JwPx/m5GkB/6x8Lwme6Al/eDUgWvj026ZA2ezxVqzqq+sddCmSbAslcAGgZN
-	LSQMKLQK1j5lgfwpZG9JRV9IHz97WgDU2oeOBnryAB0gRVivKlh1fDvt24o4CN64V2l21cFo+8x
-	+sdax05zMzbV9DR1AJY0P6iWU+YEKOQOgbwQLtRdVKrbL+63Y4SSpbb67ZkD5Q8ZObsepbZjE4Q
-	jG8kaU/nhBA/gUEOcC8WLP6sDeBnRytXJ7Y=
-X-Received: by 2002:a05:622a:48f:b0:530:7caa:ec94 with SMTP id d75a77b69052e-530c850ea8cmr95627221cf.19.1789157633970;
-        Fri, 11 Sep 2026 13:13:53 -0700 (PDT)
+        bh=1GFlI69hSTwrqgjvX01u5jdtGXBfcDeL6Ju5g4iZ3ZU=;
+        b=WRWr/BwtyU/PTgsK1Yw2WNHw5bWgnBhutrlJlBG2oilEZIfZiaGVt0yGoaoBA1FQK+
+         do9nz0tPS7NrdViZ89j7SosGGRDcoQNW7ro1MxoPdPW+zw86R1g0lKnCmDdEr8TxiiEo
+         S7p0e258R1Iw8eW8f//rJgmnwcdTXKzk1MeL5PxShUEI8MCRupeTPiMqVJQH7ydozgpL
+         xDJdKmSTstOJpyEYRDik7YOawqUuRezrvAwGFRfIkOVg47+tq5TOWwjHxvUrC8k09RHa
+         eMHEn8uvurMj1CoIT/t8irtmltNwlOs4kJiiBXgUEgOAvIIUu0Ggy43D1u1fGn6tzPZj
+         u+0g==
+X-Gm-Message-State: AFuF++mXKvdnMZDWPSaXNlFAbNLIAuV9UUb432GQova0GxLsO1Q7QRwM
+	Pn0Zig2+1epacGF2WyWNkLRJiwCkxwSRI9MWjSpIh5ryYqVu9i12LsaZ+JOdc/aTn9GeI8JejU/
+	FFyzE
+X-Gm-Gg: AYBFou0vg0BOrbUK8DBKubUi951FuPMI0BOjsGb1pRokSAp2ptKRoHl8l6Va0Vk9sFF
+	fJA/Qgxjx55M8Zk9od1YTVAO+Rf39LPbbgK2YsEa5ZRE1mglJQKfvUQRv4q001CfZPOBho4h3el
+	22KT4cpvBexuszbPSsQQRKLiLOXGG8w57vrAFkrVuFe7Ex8DlVBafL1W2ZS8hbd/2IQFf6fMvNK
+	t2Jr6mESO8y1G+f0JJy5cMhpJeYcWAhk8LfcFGma6nSlZMmhWsW622qx5I8NHPUb53OjE9Plno/
+	cLkQPAsckqSpIQvfKOKgI1fn22oJ0Pcucn+3jqQbwOMMFxWSKaZO9KpZzmF0JfUXSbc9i2zP1qw
+	lo7CuMujySjHcIpt2eEDfODbhvuLhmiDZffLc8yaAnSgjEVMWhATaysHq2mwWLE0nitL0HqkWhc
+	EQGJ/f1+wuoLBN8CKjN17icYtg2xJINqPmh19csdM/DntUxwMFRReyp9WUiSIf/KFO/7XvUQhf9
+	RnOq7QyBa6Ceris1N6GpjPxRk0xrV/4RjzD/3uqsc6zHEJNaGPxh135OG+jdmYq0YY34SLutdSi
+	3K3LqIuxaZE/h46v5tZEKnrhwJ6qFC36bKE=
+X-Received: by 2002:a05:622a:1818:b0:530:31a:a222 with SMTP id d75a77b69052e-530c86893afmr88486691cf.29.1789157635313;
+        Fri, 11 Sep 2026 13:13:55 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-530cc781402sm25826061cf.7.2026.09.11.13.13.53
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-530cc781402sm25826061cf.7.2026.09.11.13.13.54
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Sep 2026 13:13:53 -0700 (PDT)
+        Fri, 11 Sep 2026 13:13:54 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][scarthgap/rust][PATCH 16/37] libgit2: upgrade 1.9.4 -> 1.9.6
-Date: Fri, 11 Sep 2026 16:13:02 -0400
-Message-ID: <b26e925655bf927a857ce7a764c1b5e39f05d8f1.1789156653.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][scarthgap/rust][PATCH 17/37] classes/cargo_common: move PKG_CONFIG_ALLOW_CROSS export to oe_cargo_fix_env
+Date: Fri, 11 Sep 2026 16:13:03 -0400
+Message-ID: <1a7e9ae54beceba8ac185359b39f311f4799c822.1789156653.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <cover.1789156653.git.scott.murray@konsulko.com>
 References: <cover.1789156653.git.scott.murray@konsulko.com>
@@ -67,46 +67,58 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Fri, 11 Sep 2026 20:14:04 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4782
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4783
 
-From: Wang Mingyu <wangmy@fujitsu.com>
+From: Ross Burton <ross.burton@arm.com>
 
-License-Update: update COPYING to include PCRE2 copyright notice
-                Remove the original PCRE copyright notice; replace it with PCRE2.
+This export is used to tell the pkg-config-rs crate how to behave, so is
+only needed at build time.  Move the export to oe_cargo_fix_env() along
+with the other variables so that the exports are localised and not
+global.
 
-Signed-off-by: Wang Mingyu <wangmy@fujitsu.com>
+Signed-off-by: Ross Burton <ross.burton@arm.com>
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(adapted from oe-core commit 9ed24f38e57454e554165392ee8d1b2eec1ee032)
+(adapted from oe-core commit b20adb82ec4e367bc775f9621a5ce96f761831d6)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- .../libgit2/{libgit2_1.9.4.bb => libgit2_1.9.6.bb}            | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
- rename recipes-support/libgit2/{libgit2_1.9.4.bb => libgit2_1.9.6.bb} (83%)
+ classes-recipe/cargo_common.bbclass | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/recipes-support/libgit2/libgit2_1.9.4.bb b/recipes-support/libgit2/libgit2_1.9.6.bb
-similarity index 83%
-rename from recipes-support/libgit2/libgit2_1.9.4.bb
-rename to recipes-support/libgit2/libgit2_1.9.6.bb
-index f81cdaa..38a03fb 100644
---- a/recipes-support/libgit2/libgit2_1.9.4.bb
-+++ b/recipes-support/libgit2/libgit2_1.9.6.bb
-@@ -1,14 +1,14 @@
- SUMMARY = "the Git linkable library"
- HOMEPAGE = "http://libgit2.github.com/"
- LICENSE = "GPL-2.0-with-GCC-exception & MIT & OpenSSL & BSD-3-Clause & Zlib & ISC & LGPL-2.1-or-later & CC0-1.0 & BSD-2-Clause"
--LIC_FILES_CHKSUM = "file://COPYING;md5=8eacfdc17c8f4d219e131a073973b97d"
-+LIC_FILES_CHKSUM = "file://COPYING;md5=8289345c8713c385f45ec0c6c8a0d080"
+diff --git a/classes-recipe/cargo_common.bbclass b/classes-recipe/cargo_common.bbclass
+index 7ff2351..998c6cb 100644
+--- a/classes-recipe/cargo_common.bbclass
++++ b/classes-recipe/cargo_common.bbclass
+@@ -20,11 +20,6 @@ inherit rust-common
+ # Where we download our registry and dependencies to
+ export CARGO_HOME = "${WORKDIR}/cargo_home"
  
- DEPENDS = "curl openssl zlib libssh2 libgcrypt libpcre2"
+-# The pkg-config-rs library used by cargo build scripts disables itself when
+-# cross compiling unless this is defined. We set up pkg-config appropriately
+-# for cross compilation, so tell it we know better than it.
+-export PKG_CONFIG_ALLOW_CROSS = "1"
+-
+ # Don't instruct cargo to use crates downloaded by bitbake. Some rust packages,
+ # for example the rust compiler itself, come with their own vendored sources.
+ # Specifying two [source.crates-io] will not work.
+@@ -241,11 +236,15 @@ oe_cargo_fix_env () {
+ 	# openssl-sys
+ 	export OPENSSL_NO_VENDOR="1"
  
- SRC_URI = "git://github.com/libgit2/libgit2.git;branch=maint/v1.9;protocol=https \
-            file://0001-cmake-mark-system-libraries-are-private-link-librari.patch"
+-	# pkg-config-rs. Crates can still override the dynamic linking
+-	# but try to dynamically link to system libraries.
++	# pkg-config-rs.
+ 	# https://docs.rs/pkg-config/latest/pkg_config/
+-	export SYSTEM_DEPS_BUILD_INTERNAL="never"
++	# In cross pkg-config-rs disables itself unless this is defined to tell it
++	# we have set up sysroots appropriately.
++	export PKG_CONFIG_ALLOW_CROSS="1"
++	# Crates can still override the dynamic linking but try to dynamically link
++	# to system libraries.
+ 	export PKG_CONFIG_ALL_DYNAMIC="1"
++	export SYSTEM_DEPS_BUILD_INTERNAL="never"
  
--SRCREV = "f7164261c9bc0a7e0ebf767c584e5192810a8b24"
-+SRCREV = "26055f5af74ab1cf636d272e8a34315496d3f06f"
- 
- S = "${WORKDIR}/git"
- 
+ 	# zstd-sys
+ 	export ZSTD_SYS_USE_PKG_CONFIG="1"
 -- 
 2.55.0
 
