@@ -2,62 +2,62 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEE47C88E53
-	for <webhook@archiver.kernel.org>; Fri, 11 Sep 2026 20:14:06 +0000 (UTC)
-Received: from mail-qk2-f13.google.com (mail-qk2-f13.google.com [74.125.230.205])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.48533.1789157644700846948
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64AABC88E53
+	for <webhook@archiver.kernel.org>; Fri, 11 Sep 2026 20:14:17 +0000 (UTC)
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.48537.1789157647604786529
  for <yocto-patches@lists.yoctoproject.org>;
- Fri, 11 Sep 2026 13:14:04 -0700
+ Fri, 11 Sep 2026 13:14:07 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=Gx6XNtaq;
- spf=pass (domain: konsulko.com, ip: 74.125.230.205, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk2-f13.google.com with SMTP id d75a77b69052e-52fb76798a2so749721cf.1
-        for <yocto-patches@lists.yoctoproject.org>; Fri, 11 Sep 2026 13:14:04 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=NXiFeWvZ;
+ spf=pass (domain: konsulko.com, ip: 209.85.160.176, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-5218927884fso20259031cf.3
+        for <yocto-patches@lists.yoctoproject.org>; Fri, 11 Sep 2026 13:14:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1789157644; x=1789762444; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1789157646; x=1789762446; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=HKwl9US/X+gWA6F/4IkufsX29NLSvrhodlJQj4dAfaE=;
-        b=Gx6XNtaqKX8pk1q4EENFKhDqFXQdcsjUhSnaIcnBk/UF57lxhbfc96R80YGlyoz53t
-         o0mPEe7ruEVNgVltqpVR82bqmjIiG3XISxXCX8EG9WhgU2uuej74jus7epF3ozdXr7UN
-         Hg7jmj3m/5oRL/6yFG64Fi/JVqAH2si2wk5do=
+        bh=xjw98cBXr4Spwat0QK5ITNPpY9uDEqLDqNz99HZnnNY=;
+        b=NXiFeWvZmPRZ+TlN1iRn/4ATiWnsBEYhTT0XhZ4F2xLvF5omq7tWAMZb5KJOrOTSrr
+         rxNvRVkEpZ5IeoIXK78khWcfrfdsjwbxDE9N34qE8nZsnhAgOBd9TSKi61Y8oqQcO+Wp
+         7sgfD/HrycDi+TKjrQXsvoim7c4sPvbSBOrzc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789157644; x=1789762444;
+        d=1e100.net; s=20251104; t=1789157646; x=1789762446;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to:content-type;
-        bh=HKwl9US/X+gWA6F/4IkufsX29NLSvrhodlJQj4dAfaE=;
-        b=ScLzv7VhpR4tnj7j0zLFakO/XUUXVftbv8Akfn/E4EKp5QG3JsTDlye+pwoMYRma4u
-         4xV2IA+2E3NwMAO384dLQnMtBGRKqwTS04wunjFENOt5xMSgADBPJWoOmpkwzYb+RohA
-         RTwjC8zqC8xzCiSaiHPIiGjMK33JTYsTtDNXvg3MwtXCO4ZofekCBI03wB/Z/rsVf21L
-         Eb4PSXwy5AUpZBVozKwIuBV6DQdTM8swhs7Jy1puTHJ08liut0SmA6nxh6IZWBowEKh0
-         VBeXHPYAC3oRixj+YUtTVSqsxe0eH0uVuB8j5q6QhaQIe93L2VUOgyWFGu5BdOH7p/n/
-         LT+Q==
-X-Gm-Message-State: AFuF++mLyALmmwJnjIaVhBLepgBWz90FGSMkvn6OAHBGfX/M4eve5x9t
-	E4covt8fwo1RsVHdk8WIYI90ycyKcZm5XsFNRFYqzi54JyCnx370qgyL0ywRIyCEIrvTudOeG39
-	OoXtn
-X-Gm-Gg: AYBFou3Z9Hu9lX48Jqj68D/U3B3rAW2giL96nUw+Id8rj0WBzBWdhQhy0lM3WxUvASP
-	1BNY2YWp90iiKhhHWsOQB+KotAex9sH9ntOedkHfcndSS0M8MBJOktVhrkvqyLFvY18Km3MKdre
-	Dz6F3xL+iLmhKPaHPtX451fxS+tMQY7v/I2pweJl0/nxIc5t0LV5BzTzEyyIhwa60xBXafNmFQz
-	aKVU96QkU1/sGViImwnA+YbcKZWQ2c96LE9MsLkAdVeiCmWKw3fhF8O3YnuX9RNunD+UlRpqcQf
-	N9ZcMFTOss/9+Qg2zBYBbDwDYzXZyzbe5REDHOXhoBeiTDXlO0LiFxdzZxSDPoyOXEDxGhUgyhA
-	KF+64tdXnL7GUp8lfu5YvMvn32oAf8Tzoy33nDv17IhyFlfbZ6Hb4UuWY74qonQABMM6GXh6GlD
-	6LEhu5v1694vo2MxnhPLUrKj2rRSMIBOqN26c8wUCmF1p6ZZCgVUqs7vwcdLNLl8lXMZjlBMi45
-	820RzE6GR+8ppKaUAn4FfCf/k1gdcqtyc/Jklo7EXOBTV1NCAZe5kDbGKmuqqM4bTADjdk1ZDPu
-	Q3mYwQsDhR7xe3Ka4o9fpkQCYlU+WdYVHF4=
-X-Received: by 2002:ac8:5f4d:0:b0:530:90a6:d28b with SMTP id d75a77b69052e-530c8533b53mr71815951cf.8.1789157643211;
-        Fri, 11 Sep 2026 13:14:03 -0700 (PDT)
+        bh=xjw98cBXr4Spwat0QK5ITNPpY9uDEqLDqNz99HZnnNY=;
+        b=KHvRjMBqcTX0DAiYhq6WXEKfnHvGfs45JMFEhZD9W+V44IISEtJdOquvzkxG3GGGqJ
+         KC+iau73Q+XixNUPodfO6pPgblJto58UILAEoWrVPi1678lTRIAyMsT4CVrr8KjBevwr
+         eHYiQ9sfJHiFg0Cfc3J1Xezq2XUGstnijjDHUlEosqpZucPSseSptnkQlutLuVi8HOjr
+         HsjbFulSTQBW44tJQ9SE7PAZIPW/58Mp/wYtVNZUjE1eII8XiscWy5WV5fBfV4umpWDz
+         ws0a4D+FsPhQp9o45l41HZN7xUmvXO3JzzTicawONlYMsebNai+ivhxg+kEnHujFOfCK
+         J/Ag==
+X-Gm-Message-State: AFuF++lwyvf/6zj/qioVm5k87y6KsHVXFuA7kyRojq8eZeZDdAZNscRb
+	+VylVYuHc6U8VtQ6runloLLqphR98pmQ07Hegfzkn0ZxFvB1I+K1OpR3RKWByvSPluasUQnw5wq
+	SSIa6
+X-Gm-Gg: AYBFou2QQ85kZAvTGxOPQpYrbCd8X7456vHX8SOaD4GZFnq3E6NxopY/8jqQhLXoP5E
+	oBzcPUocaSLmkvmtb+385qyv3uvIKWKGYoWYfwXzr4GfcxkEfcGVwwYrrNQGNVVC79hOZb0enmV
+	DUwbGngwqrEIpIN4B6A7u55iu5RA1dszhPtXO4y+lyLPegDWoAFla5EHnuZhOcSNgUJFiNr+QeI
+	X/Jr/iggvMA303gTfQlsYkXTbl53H/LG9d6DiCMaggUfO1U0anuAz++f7iWVDnDtHayH+ZBfjBw
+	oFZLGW1J0VbCnUYjAPRVlasP+C/ocWGz7BiJSCwDS16lECLco/xDi22yOopdxOWBi73HCaXU7mA
+	PgIMGQbmSL7dcimrLScXk7kCINEGMarEascYcTV7LwqZEpSao1In7BeGgIboDH8Yb2vzm2XsG6w
+	F8ZGEsOt/di7pOorAOp4W8+eC1oFnAWDvqKw5yVFphP6QiWn08slvHAOBLHwwXw500HF7rtvKyt
+	AnYE1JVYWvfSMQOzFVxmclEg+3UOgWPmBCqK9icwLymzArVsheu5X6d5GICSWySsD+MS/KkzPwg
+	22oCso+yrk2gp52kZtl4NVfa1dBWtiA5Jv+euYMskCVS3Q==
+X-Received: by 2002:a05:622a:1e10:b0:530:de20:2bdb with SMTP id d75a77b69052e-530de203e9cmr42791421cf.29.1789157646432;
+        Fri, 11 Sep 2026 13:14:06 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-530cc781402sm25826061cf.7.2026.09.11.13.14.02
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-530cc781402sm25826061cf.7.2026.09.11.13.14.05
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Sep 2026 13:14:02 -0700 (PDT)
+        Fri, 11 Sep 2026 13:14:06 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-lts-mixins][scarthgap/rust][PATCH 26/37] libgit2: set correct homepage URL
-Date: Fri, 11 Sep 2026 16:13:12 -0400
-Message-ID: <54deb3d307ce3d77a7e3516f554fcc01e744bc74.1789156653.git.scott.murray@konsulko.com>
+Subject: [meta-lts-mixins][scarthgap/rust][PATCH 30/37] classes-recipe: fix trailing whitespace
+Date: Fri, 11 Sep 2026 16:13:16 -0400
+Message-ID: <772b2a832bcf65188901c81909b597782b349ae7.1789156653.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <cover.1789156653.git.scott.murray@konsulko.com>
 References: <cover.1789156653.git.scott.murray@konsulko.com>
@@ -66,32 +66,44 @@ Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Fri, 11 Sep 2026 20:14:06 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4792
+ <yocto-patches@lists.yoctoproject.org>; Fri, 11 Sep 2026 20:14:17 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4796
 
-From: Ross Burton <ross.burton@arm.com>
+From: Jaipaul Cheernam <jaipaul.cheernam@est.tech>
 
-libgit2.github.com no longer resolves, the homepage is now libgit2.org.
+Fix trailing whitespace in classes-recipe bbclass files to resolve
+bitbake parsing warnings.
 
-Signed-off-by: Ross Burton <ross.burton@arm.com>
+Signed-off-by: Jaipaul Cheernam <jaipaul.cheernam@est.tech>
 Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
-(adapted from oe-core commit ed4467f06e069573450c4746c506da40d959bb16)
+(adapted from oe-core commit 3aa7dfc7d409194639b52cc3fb7d3f5dcc85b3b6)
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- recipes-support/libgit2/libgit2_1.9.6.bb | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ classes-recipe/ptest-cargo.bbclass | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/recipes-support/libgit2/libgit2_1.9.6.bb b/recipes-support/libgit2/libgit2_1.9.6.bb
-index 38a03fb..67322cb 100644
---- a/recipes-support/libgit2/libgit2_1.9.6.bb
-+++ b/recipes-support/libgit2/libgit2_1.9.6.bb
-@@ -1,5 +1,5 @@
- SUMMARY = "the Git linkable library"
--HOMEPAGE = "http://libgit2.github.com/"
-+HOMEPAGE = "https://libgit2.org/"
- LICENSE = "GPL-2.0-with-GCC-exception & MIT & OpenSSL & BSD-3-Clause & Zlib & ISC & LGPL-2.1-or-later & CC0-1.0 & BSD-2-Clause"
- LIC_FILES_CHKSUM = "file://COPYING;md5=8289345c8713c385f45ec0c6c8a0d080"
+diff --git a/classes-recipe/ptest-cargo.bbclass b/classes-recipe/ptest-cargo.bbclass
+index 2e008b3..62444e9 100644
+--- a/classes-recipe/ptest-cargo.bbclass
++++ b/classes-recipe/ptest-cargo.bbclass
+@@ -107,7 +107,7 @@ python do_install_ptest_cargo() {
+             f.write("#!/bin/sh\n")
+         else:
+             f.write(f"\necho \"\"\n")
+-            f.write(f"echo \"## starting to run rust tests ##\"\n")               
++            f.write(f"echo \"## starting to run rust tests ##\"\n")
+         f.write("if [ -z \"$rc\" ]; then rc=0; fi\n")
+         for test_path in test_paths:
+             script = textwrap.dedent(f"""\
+@@ -120,7 +120,7 @@ python do_install_ptest_cargo() {
+                 fi
+             """)
+             f.write(script)
+-        
++
+         f.write("exit $rc\n")
  
+     if not script_exists:
 -- 
 2.55.0
 
