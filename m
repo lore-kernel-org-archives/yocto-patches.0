@@ -1,161 +1,159 @@
-Return-Path: <sandeep.gundlupet-raju@amd.com>
+Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19510C982C4
-	for <webhook@archiver.kernel.org>; Wed, 16 Sep 2026 15:00:50 +0000 (UTC)
-Received: from CY3PR05CU001.outbound.protection.outlook.com (CY3PR05CU001.outbound.protection.outlook.com [40.93.201.64])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.16991.1789570845510925347
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D309C982D0
+	for <webhook@archiver.kernel.org>; Wed, 16 Sep 2026 21:58:40 +0000 (UTC)
+Received: from mail-qk2-f12.google.com (mail-qk2-f12.google.com [74.125.230.204])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.26466.1789595918636518106
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 16 Sep 2026 08:00:45 -0700
+ Wed, 16 Sep 2026 14:58:38 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@amd.com header.s=selector1 header.b=Uyjd8nac;
- spf=permerror, err=parse error for token &{10 18 %{i}._ip.%{h}._ehlo.%{d}._spf.vali.email}: invalid domain name (domain: amd.com, ip: 40.93.201.64, mailfrom: sandeep.gundlupet-raju@amd.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=S/vocieUTv4eES3IwDxe1JH8TLbFQH5v9hCaKim4jGTirR+ETFkX0J5wo/HQXBonJaGcVT9xGwwvR4YpHGyHTxi1bgLcR4S24X9Oo6ijsRATb1W6+gquYPOV4WzeKPmkqDWuFlo7WqGsQI5F9SwnMSVQoNd+v95EAiXf/+ud/XCRDjnUkWfHyEI1VFUM3KublmCFx4q/ukz3bsR5UperMft+RM+jrUbOnLX5EhG0lNer8S4Fqh08mkbCSYmGk3Ah80bvAnggWndilGQMPgy87HViR+Z3wMOQizBIraBhD4cwz3LjF6HNdACY57Bom1u74lQKsSQC2yhOXC2O73PXXg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FnhcuxuA+UTGzjDxT3nK8Q0bwLcOPO0wQrWFhIro3Mk=;
- b=p9fi9Hj21jwsl8BXFs9gajQbDqXe6n8sy4PPRqaw5zGfd0Pw44j9ZcNWWT/c+JPUi9Rt8vtPegqMH+opoVS6w4Qma7qFdFqXfXwR2FhIGWdPxA8ohNo17gGySQJZ5BJTRqq71enwVRT8OdBxKxB10OpViXAPGsuUUt4JYih+jn262PWCqYkuTyi4pVY3jDJQA16dceKnXESODoUVs0g596tj4l9+lzlALwSShZvNgE+Ldm/S9Nsu3s2TyMl+W2XRvHxoclKa+OdSdBlmc95Qs8FlnZKy46ytSYbnlK1DRguN12Wc4bjL0Esn3NqJIevNGIgnAL+NjkvC615UW676bA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=lists.yoctoproject.org
- smtp.mailfrom=amd.com; dmarc=pass (p=quarantine sp=quarantine pct=100)
- action=none header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FnhcuxuA+UTGzjDxT3nK8Q0bwLcOPO0wQrWFhIro3Mk=;
- b=Uyjd8nac+2Zg7TZXnz4AZc7CU18KFcxUQi/zflNH1ecld+g7FXQvoUvVOFRv7eO2JOt1dBo3b3tNAUsDS5Z5P48y7v0tEw4KWXhwknmtlW6B+8TAI7JULjSv5MrbqFOJ9zSr/f9lAbedjzSTQINQdHaq7dpiQElSCeyMNBDgDSI=
-Received: from SA1P222CA0056.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:2c1::8)
- by DS0PR12MB7828.namprd12.prod.outlook.com (2603:10b6:8:14b::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.9; Wed, 16 Sep
- 2026 15:00:37 +0000
-Received: from SA2PEPF00003F64.namprd04.prod.outlook.com
- (2603:10b6:806:2c1:cafe::2b) by SA1P222CA0056.outlook.office365.com
- (2603:10b6:806:2c1::8) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.428.9 via Frontend Transport; Wed, 16
- Sep 2026 15:00:37 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- SA2PEPF00003F64.mail.protection.outlook.com (10.167.248.39) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.428.7 via Frontend Transport; Wed, 16 Sep 2026 15:00:37 +0000
-Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.49; Wed, 16 Sep
- 2026 10:00:36 -0500
-Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb10.amd.com
- (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.49; Wed, 16 Sep
- 2026 10:00:36 -0500
-Received: from xcosswyocto01.xilinx.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.49 via Frontend
- Transport; Wed, 16 Sep 2026 10:00:36 -0500
-From: Sandeep Gundlupet Raju <sandeep.gundlupet-raju@amd.com>
-To: <yocto-patches@lists.yoctoproject.org>
-CC: <chee.yang.lee@intel.com>
-Subject: [yocto-patches][meta-zephyr][master][blacksail][wrynose][PATCH]  zephyr-toolchain-zephyr: Unexport Yocto toolchain variables
-Date: Wed, 16 Sep 2026 09:00:36 -0600
-Message-ID: <20260916150036.1839867-1-sandeep.gundlupet-raju@amd.com>
-X-Mailer: git-send-email 2.34.1
+ dkim=pass header.i=@konsulko.com header.s=google header.b=TB+qLBCO;
+ spf=pass (domain: konsulko.com, ip: 74.125.230.204, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk2-f12.google.com with SMTP id af79cd13be357-93a222edc62so17872985a.0
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 16 Sep 2026 14:58:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=konsulko.com; s=google; t=1789595917; x=1790200717; darn=lists.yoctoproject.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=pf4ZeUNlEb7Oyl9PnmtCkqHq0/JSSowSuvVWpGUEv+0=;
+        b=TB+qLBCOpKyXXdokWvSqx2D3L1amUPajm9A6qF4xxpUKNWpzJQcw6x+3z6675C+JPt
+         DHWvpyKRo+TYAoOLlfeNXAAVJSRik3cUvfwkVErxFfiAaDSFkKJJBv0Og+0tQGhHhXWj
+         Uw5pdIIqNcLDvFD7JYFsmKGjuiolQx79zw+Ss=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789595917; x=1790200717;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=pf4ZeUNlEb7Oyl9PnmtCkqHq0/JSSowSuvVWpGUEv+0=;
+        b=xBuobiZHvF2hGQY+saNmHQzjoluidPeYxNrfX8lK2ubhSCNorDjGrgzCjAJZtKYprx
+         IaFaMFwPvIh5xtc99HDcW9UBFrNGC3CSlPeHUKlj1ZOfm1tFyBFWNh7tihWdcJg9x1fP
+         dUli+W6c+QtYWQmEKL6M9KPH2H8PYrPH+dzVFj52bpmwvRtqzXdVFnFnCaQ/g9n+FTx4
+         QN//GFifxoF+gk1kd1p9mAGBJ16R5KfdFjCGIowuB4wrj81qXJ8tAUSAf+BsgXTI8YKR
+         hlisaYwopYd3PwNtHsu/+rg2Ui5iqZ7XF8iMpNrEUJ4AnTgAA6mvrdEIbHhMIuUNhc1h
+         1IkQ==
+X-Gm-Message-State: AFuF++mqvs1o2ON+g3Z6fwQPzX9Q2NRzB6JObbwGEOancsNjOwxh7LTE
+	8tt4RaRa1ba/WU3aFg6JYP80OPD+/mZCuetS4gItOnXOmowSBfz1rZgxQY2u0AGCJZb+E6nZOwR
+	G3YCX
+X-Gm-Gg: AYBFou3ZboohIjpnsPblGt6Qd2VEhYkIwfGjl6yHHYEqGKpCmgis0PMUH9LGskyfZFw
+	jNewaRzg/YqEwVkUWvYXkvRZjsolvSiwf2Dxo00sw56rY+NALVOFknWLdhylP3pKNuRrFXpL2kh
+	ZZnzJFzZyXHP5a2DYJPbWvGNhlmP9DPft1AwaspdPiT2Ed1bqZxCB55y0JxSdXfC/FmItMvJAK2
+	TFAFsag4umvuXLS99vbCKORqkxFVLjkcwSCC1h+DXWQyaiphofaEDU/b1IXg8CmIc4yBgIL3fGQ
+	LJNBpwV9upHaBR/E9yfvWLUNnATFGXdz2YZ5d9mrfSzjRhiU72OverbEmWaBJjdaZHCSk1fdKGm
+	lJhQpoMGjd4ChgW9+0L7LpEucvgZp+ML1cos6qAKUeSUOHNPaDTcWmqoqH2Uk5YEV9dBIiHQkog
+	OdtYxfoOmLo+7s+mUDwfbxKwiegMmZXtMjsJj/CuCg1GQ4PW8zDFjS4u4B5FyFoYdasutDXbpaB
+	+taJcmh4KGFWRfy8vqnhvHCa9BAKf6/fnLuTxtQgPSpFvpirwJYsSD9xwEJa2nHD0EtNy5zsBC3
+	Cj1H787kIiTOqT2T6bHqvs3RX3i525dTpVIDqbaprHKOhA==
+X-Received: by 2002:a05:620a:700c:b0:939:c303:c54a with SMTP id af79cd13be357-93bb787b13dmr825167285a.31.1789595917492;
+        Wed, 16 Sep 2026 14:58:37 -0700 (PDT)
+Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-93b781def43sm323293085a.16.2026.09.16.14.58.36
+        for <yocto-patches@lists.yoctoproject.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Sep 2026 14:58:36 -0700 (PDT)
+From: Scott Murray <scott.murray@konsulko.com>
+To: yocto-patches@lists.yoctoproject.org
+Subject: [meta-security][PATCH 01/19] ncrack: fix OpenSSL 4.0 breakage
+Date: Wed, 16 Sep 2026 17:58:01 -0400
+Message-ID: <4ca185ea19052e37e76d896c01dcece07cb1f985.1789595456.git.scott.murray@konsulko.com>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <cover.1789595456.git.scott.murray@konsulko.com>
+References: <cover.1789595456.git.scott.murray@konsulko.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00003F64:EE_|DS0PR12MB7828:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7d481211-6c33-4f70-c030-08df14034430
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|376014|23010399003|82310400026|1800799024|36860700016|11063799006|5023799004|56012099006|10067099003|18002099003|6133799003;
-X-Microsoft-Antispam-Message-Info: 
-	0r/d416OnDJ2HPe4YR4vE92Bzssa/UiiMTTUdt/etl2XzqgM+bE12x7GO6bHW+Uq0snHlUJkcRY+t7rZJnK7wd9i53OqHlSkGu+KtAb6Y93cwqrK35geoZcqKYiXPkYB7Sbt6yuq7Ce2kb8s0ILX4xqoIVvKEucbMc65sPh99nZQNYEs6+1mAsBUUl+p66hzsIBDNQwHnLRQg3LfAwZwTEUOmeF4hrkf27nUfeTNQT/LNHPs4kUTz3SHcGjk/ZHIzH0eJtrv6WXlkrP3ZzpcvDgClKohnHS9vitFIaLw8+CiY6XI65tpARDtrFAZbW7fQYYh3wx8xedjUR214uLjPI6kq9B9uuaCWNq1SfDi5u4XwbFWm1vYxkN1z7TbyvwKrAlHUqd6Qkc9PJrxm4TaaotGGAEqyEeK/LLzsJbnoa+bXtSVWtktmkVb/I8uvxy0q0XRu/fnG1EU7L1NsXqQ8sleW2l181A4M8DOZOpnZBY7I8FmUrlFVsI/HiA5wNye8aOyyVVceGD0IvIYpK1D489NdvzjryaJX496Xte57YkSFO9blnA/Ihl7g7YEcHkOnBhGhEidKONZob+QEUrl37O8T/a7HuNywvotgu2fr25zfeB4SWzNuDmvmjcF63crChU3Fmx0nsFrMeBAsJMOOubSxJRWaooYijQx1MqK7BVJ/WqAK70JoGMTO8p9dE27hytb5nXVP9MpnEa6k4eJ/g==
-X-Forefront-Antispam-Report: 
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(23010399003)(82310400026)(1800799024)(36860700016)(11063799006)(5023799004)(56012099006)(10067099003)(18002099003)(6133799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	l2UuS4Xr7vQeYZ19kVGFqVZDXsVd38w890WCrqyAO1NTlPDSU+QZXaojmg/VSS4vD34smS5LJHbZM9QPmaNGRph2bMeRsM1D9BaLBBUS6lAlmyPudvaO40tw26orozXAQjAKUJAQpJftced4KCNE3G4BZ6ATa0Bs2YT6X3gXzaERui8XzFrzPtdnv22c/eiRJSKrc2CXFDp2B8himyd4LtgnI6hpVK/OCrBVUhPnp32cbsHbDDEedYFkEKU5dZBDLKlCiQHsfdm0kNUhd+3KtoWO0jCr38Y/X54Y01ubRD/Hc1CAluKKsXu5LD0N1T4x2zasLvjNA+PJLLSRIPFypl/OJhzVly0xZrRBdVsieXB0cFAHlO/uzWGW7mmqKokIy2T3mjtWBhOEDA9thGCmVU+Jkty6KT9u9Rp1d/ZwhgpidSbz4rhWXJtT6UOWsQkL
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2026 15:00:37.0776
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7d481211-6c33-4f70-c030-08df14034430
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: 
-	SA2PEPF00003F64.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7828
+Content-Transfer-Encoding: 8bit
 List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <yocto-patches@lists.yoctoproject.org>; Wed, 16 Sep 2026 15:00:50 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4855
+ <yocto-patches@lists.yoctoproject.org>; Wed, 16 Sep 2026 21:58:40 -0000
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4857
 
-When ZEPHYR_TOOLCHAIN_VARIANT is "zephyr", INHIBIT_DEFAULT_DEPS is set
-and no Yocto cross toolchain is built for the recipe. BitBake still
-exports CC, LD, AR and friends into the task environment, where they
-reference aarch64-yocto-elf-* binaries that do not exist.
+Apply patch from outstanding upstream PR to fix building with
+OpenSSL 4.0.
 
-Zephyr ignores these and uses the SDK, but external module build systems
-invoked from the Zephyr build do not. Trusted Firmware-A is built by its
-own Makefile, which prefers CC/LD/AR from the environment over the
-CROSS_COMPILE value pointing at the Zephyr SDK. Its tool detection then
-fails and expands a multi-line warning macro into the tool identifier
-variable, leaving embedded newlines that break a later conditional:
-
-  lib/libfdt/libfdt.mk:16: *** invalid syntax in conditional.  Stop.
-
-Set the unexport flag on the toolchain variables so they are unset in
-the task environment and TF-A falls back to CROSS_COMPILE.
-
-AI-Generated: GitHub Copilot (Claude Opus 5)
-
-Signed-off-by: Sandeep Gundlupet Raju <sandeep.gundlupet-raju@amd.com>
+Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- .../zephyr-kernel/zephyr-toolchain-zephyr.inc       | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ .../0001-fix-ftbfs-with-OpenSSL-4.patch       | 53 +++++++++++++++++++
+ recipes-security/ncrack/ncrack_0.7.bb         |  4 +-
+ 2 files changed, 56 insertions(+), 1 deletion(-)
+ create mode 100644 recipes-security/ncrack/ncrack/0001-fix-ftbfs-with-OpenSSL-4.patch
 
-diff --git a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-toolchain=
--zephyr.inc b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-toolchai=
-n-zephyr.inc
-index e265883..8fa3e09 100644
---- a/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-toolchain-zephyr=
-.inc
-+++ b/meta-zephyr-core/recipes-kernel/zephyr-kernel/zephyr-toolchain-zephyr=
-.inc
-@@ -18,5 +18,18 @@ EXTRA_OECMAKE:append =3D " -DUSER_CACHE_DIR=3D${ZEPHYR_U=
-SER_CACHE_DIR}"
- INHIBIT_PACKAGE_DEBUG_SPLIT =3D "1"
- INHIBIT_PACKAGE_STRIP =3D "1"
-=20
-+# INHIBIT_DEFAULT_DEPS means no Yocto cross toolchain is built for this re=
-cipe,
-+# so the exported CC/LD/AR/... point at binaries which do not exist. Zephy=
-r
-+# itself ignores them and uses the SDK, but external module build systems
-+# invoked by Zephyr (for example Trusted Firmware-A, which is built with i=
-ts own
-+# Makefile) honour them and fail instead of using the SDK passed through
-+# CROSS_COMPILE. Keep them out of the task environment.
-+ZEPHYR_UNEXPORT_TOOLS =3D "AR AS CC CPP CXX LD NM OBJCOPY OBJDUMP RANLIB S=
-TRIP"
+diff --git a/recipes-security/ncrack/ncrack/0001-fix-ftbfs-with-OpenSSL-4.patch b/recipes-security/ncrack/ncrack/0001-fix-ftbfs-with-OpenSSL-4.patch
+new file mode 100644
+index 0000000..93b2dd1
+--- /dev/null
++++ b/recipes-security/ncrack/ncrack/0001-fix-ftbfs-with-OpenSSL-4.patch
+@@ -0,0 +1,53 @@
++From 76a0eabaad402ed935c1294f98663cf58a806a06 Mon Sep 17 00:00:00 2001
++From: Ujjwal Sarswat <ujjwal.sarswat@canonical.com>
++Date: Tue, 28 Jul 2026 07:54:33 +0530
++Subject: [PATCH] fix: ftbfs with OpenSSL 4
 +
-+python () {
-+    for tool in d.getVar("ZEPHYR_UNEXPORT_TOOLS").split():
-+        d.setVarFlag(tool, "unexport", "1")
-+}
++Upstream-Status: Pending [https://github.com/nmap/ncrack/pull/147]
++Signed-off-by: Scott Murray <scott.murray@konsulko.com>
++---
++ opensshlib/cipher-3des1.c | 4 ++++
++ opensshlib/cipher-bf1.c   | 4 ++--
++ 2 files changed, 6 insertions(+), 2 deletions(-)
 +
- # Set Zephyr work directory to describe toolchain accurately
- MULTIMACH_TARGET_SYS =3D "${ZEPHYR_BOARD}-zephyr"
---=20
-2.34.1
++diff --git a/opensshlib/cipher-3des1.c b/opensshlib/cipher-3des1.c
++index 790faa2..30bd6bb 100644
++--- a/opensshlib/cipher-3des1.c
+++++ b/opensshlib/cipher-3des1.c
++@@ -26,6 +26,8 @@
++ 
++ #include "ssherr.h"
++ 
+++#ifdef WITH_SSH1
+++
++ /*
++  * This is used by SSH1:
++  *
++@@ -155,3 +157,5 @@ evp_ssh1_3des(void)
++ 	EVP_CIPHER_meth_set_flags(ssh1_3des, EVP_CIPH_CBC_MODE | EVP_CIPH_VARIABLE_LENGTH);
++ 	return ssh1_3des;
++ }
+++
+++#endif /* WITH_SSH1 */
++diff --git a/opensshlib/cipher-bf1.c b/opensshlib/cipher-bf1.c
++index 8e3aac3..97c7de6 100644
++--- a/opensshlib/cipher-bf1.c
+++++ b/opensshlib/cipher-bf1.c
++@@ -20,7 +20,7 @@
++ 
++ #include "includes.h"
++ 
++-#ifdef WITH_OPENSSL
+++#if defined(WITH_OPENSSL) && defined(WITH_SSH1)
++ 
++ #include <sys/types.h>
++ 
++@@ -99,4 +99,4 @@ evp_ssh1_bf(void)
++ 	EVP_CIPHER_meth_set_do_cipher(ssh1_bf, bf_ssh1_do_cipher);
++ 	return (ssh1_bf);
++ }
++-#endif /* WITH_OPENSSL */
+++#endif /* WITH_OPENSSL && WITH_SSH1 */
++-- 
++2.47.3
++
+diff --git a/recipes-security/ncrack/ncrack_0.7.bb b/recipes-security/ncrack/ncrack_0.7.bb
+index c0a38ca..149b974 100644
+--- a/recipes-security/ncrack/ncrack_0.7.bb
++++ b/recipes-security/ncrack/ncrack_0.7.bb
+@@ -8,7 +8,9 @@ LIC_FILES_CHKSUM = "file://COPYING;beginline=7;endline=12;md5=8df67d60bde9d6c7b7
+ 
+ DEPENDS = "openssl zlib"
+ 
+-SRC_URI = "git://github.com/nmap/ncrack.git;branch=master;protocol=https"
++SRC_URI = "git://github.com/nmap/ncrack.git;branch=master;protocol=https \
++           file://0001-fix-ftbfs-with-OpenSSL-4.patch \
++"
+ SRCREV = "7fab46addcb99326cbf60f41dbde22a1e87aebad"
+ 
+ PV = "0.7+git"
+-- 
+2.55.0
 
 
