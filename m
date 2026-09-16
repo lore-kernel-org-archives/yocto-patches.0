@@ -2,62 +2,62 @@ Return-Path: <scott.murray@konsulko.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38D41C982D3
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DE55C982D4
 	for <webhook@archiver.kernel.org>; Wed, 16 Sep 2026 22:30:53 +0000 (UTC)
-Received: from mail-qk2-f13.google.com (mail-qk2-f13.google.com [74.125.230.205])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.27098.1789597849081034660
+Received: from mail-qk2-f12.google.com (mail-qk2-f12.google.com [74.125.230.204])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.27124.1789597843554848814
  for <yocto-patches@lists.yoctoproject.org>;
- Wed, 16 Sep 2026 15:30:49 -0700
+ Wed, 16 Sep 2026 15:30:43 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@konsulko.com header.s=google header.b=tprP3JJ5;
- spf=pass (domain: konsulko.com, ip: 74.125.230.205, mailfrom: scott.murray@konsulko.com)
-Received: by mail-qk2-f13.google.com with SMTP id af79cd13be357-93910a0cefaso13318585a.2
-        for <yocto-patches@lists.yoctoproject.org>; Wed, 16 Sep 2026 15:30:48 -0700 (PDT)
+ dkim=pass header.i=@konsulko.com header.s=google header.b=Xb5j0fRr;
+ spf=pass (domain: konsulko.com, ip: 74.125.230.204, mailfrom: scott.murray@konsulko.com)
+Received: by mail-qk2-f12.google.com with SMTP id af79cd13be357-93910ca5aa8so14110485a.3
+        for <yocto-patches@lists.yoctoproject.org>; Wed, 16 Sep 2026 15:30:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google; t=1789597848; x=1790202648; darn=lists.yoctoproject.org;
+        d=konsulko.com; s=google; t=1789597842; x=1790202642; darn=lists.yoctoproject.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=/XAvRnGECGwdT+fddAEPlgc/pDAOtHMcKoay26GJ1hg=;
-        b=tprP3JJ5CsY0iKfFnOhh1qqOeRKNsVVLZZ3416F/Z/cgjkkgbcxUhOd4Qd2iu1r8TS
-         ZQpKWRqPJSDgUu6LNGDDcer+QczCHffvnA5s1KhN1k6RNhghFkMvvxGeMlDYazkotHQX
-         SaCIsmHFk2c0t0rS7VgUBJTARdtbE3KhRDA9s=
+        bh=nxim3a4uS7qQY4yadJJq9KxrWWqnylWA5gBiMArwS+A=;
+        b=Xb5j0fRrm0eON/+q55TvJpphSEz/1e9KNYpLrZDMW6i07+CcFOCacnp90ZytZYwG5J
+         1xCjB9MzWbgfRnSpDfdG67l1D1H/L6vEX1gVZ0rpHQtMBeA87ZgnbgZujmdsSTpxJ4qV
+         3h6+n61r/TExCdzrluP6fc4RJGrYitnKbZ2CI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789597848; x=1790202648;
+        d=1e100.net; s=20260707; t=1789597842; x=1790202642;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to:content-type;
-        bh=/XAvRnGECGwdT+fddAEPlgc/pDAOtHMcKoay26GJ1hg=;
-        b=mJuOTYic074SVxLMvX/ck7janvyB2gloqT7xDUQ37rNnWtyoPRuEJlui+9YT5h9fFN
-         6UFjV4ZBoklOD4cpUKcEKUN+pzk2yyNcTXbVE0S2+ewR0aTDbwtTXtO1RlTVnQKWB7jc
-         Qk7Bw3j8MsbC8t443YSYtCFBJFrEQBDv+UqfUN15SlAKFRwhZKZZgO7HzvvyXiZbFRDa
-         mAM2a0INsRpoa0I8YUv9Qdy/x5fnj9qgbZJnX2Hajk/pVst42FnRqwz404rqk6gnuXBh
-         mY0PUQZD7A0CwnLiRpe8GbumCwEv/mPk4PY7OJjSWFSVeuFZQM7aDVOt1NYNzyqf0qBB
-         Rpag==
-X-Gm-Message-State: AFuF++kc+5zbimNZ43NzyjMLy+QwbktVHyBqDZErBzCvZXqz2eSMfUEi
-	iQoQYLn0kozIkYiQZp0JjSqsJ3AJipWO3R0swhPSIMnmiKPBD/Xf16CzgAkBL4BJ+2Sa9UNMf3+
-	U0T0I
-X-Gm-Gg: AYBFou3/Tb/SIWYok81eET/wOarr/9ZQdEtHCUUUoBOrSuHdKeLLp8hS2Mk7nntR7Un
-	duiGOI/MnnF+wrHZXQYYyWuvCcVW3w/hUsBpYGzftJPauu4UZZesH0s6vQ4x9ak0QYL6te49b0X
-	8OT555yiCol8laly1K/XAsmL4MFw8yEYmkUvz9VLHhKraQJyNRSdYFX8fiiqOUhWfbyvVrLfw6g
-	ZKUFQlkCbfIJ342b3vTrFDlq3xbA4nd3SKxQKlasqgfzc2oxleiKHKQgwOaJuR2uR52marHmqSZ
-	uM7zUUQV2bLbhPFJwybIi7BQxJoiUR2W97bAj4E1HEklBY4ndSS+d+h0aGQepTjDDc2cf1bj84t
-	iIsEigWrxRkO9gwMvuiqEWyxhLe7wBEb6bcrXX3SZjgzy2OLsSGoQZtqVXAxBp6wtFRyZaqVozn
-	wBs6kMgwUAvz0ylhBPgHHVmW60DCgmiLp2v9+hJM3X21vCDU+KtRK2mQ1S9TsHTHVpYJnuLllvN
-	sVDyGAJcwV6nBYu8H1ZFIb32TeB74RqGCFpgSFKXR9CRmcAB05qg7RfmVMY6IycI938tRiupLI9
-	6fqxlvW6p9fq3Yg/cxy4yWgZ8+TzQzyOWyo=
-X-Received: by 2002:a05:620a:4728:b0:93a:2bdc:cd57 with SMTP id af79cd13be357-93bb77085edmr748278885a.2.1789597847909;
-        Wed, 16 Sep 2026 15:30:47 -0700 (PDT)
+        bh=nxim3a4uS7qQY4yadJJq9KxrWWqnylWA5gBiMArwS+A=;
+        b=lTuktWb3VJATV08AHZFU+31eAOISs8LUjz0lMP3hTTntDCatqwX3lsAdLwXsApPM6R
+         7/qYlmivU3dQPKxsULYGvvkVa6+ac8oaM7xv3MCKh6EEKOXeGwTDSeD8kpoEk+/SU+mc
+         eZejmFavxOEXdSPfDqlH/rPRcDthl3qrAbUjBQsSnzky4PNAuG/WblSWu+WAHHC7wby1
+         sCkWPF1ujOt15gbrP+h594mSrNLJQr6jp9rHh4CKON5aESFLfPoNrQ9NunrTmPKDe71k
+         V9A/JSyp0ivqEzAxPQS067+FCeVahUgj72LCX9uG84Z3ja6IoWyFkci1EOE5kbr4U19I
+         v2KQ==
+X-Gm-Message-State: AFuF++ki4d9FgdS/RmTdqKQndlh+bOsAboklz8+pv+RwROcUxCOV2NBF
+	fFtcbRf02JVavRV3BehKs41W++LobrEEL4fnURTRF1BcoajwhCkVf+t6M18bSnahPAc1jg4pQuI
+	ktII2
+X-Gm-Gg: AYBFou37lJAdSpo6ylE+2T81j6bGBeMw+0KgLUp/sTLP6WRccJSTLcVMK+yH5d0NNFT
+	Be4MCn9dVC3KOqvCg+zDZt5ngvEBBcuuYRYH2Vd1lYBbnfef+y/ZmqYCTajep4ZBJiQmEfO3AM2
+	tYyEUTUbFx7w0LHTSuNoODUtwsSZQ1pOTDtc77Rcr9pOh2UnCStTymMA3me6r3hJXwCAZJXsnNM
+	xumSWcI0/sw8dg6RVfZp7Et/EsJAQHSArMjoqegnNfkh6/04X5sF0X4C21tseQsvpj2yLLWmELK
+	RXq/eSfFVMRgFLCZHsdSjXgcudG5slI8rtUqYeE/BUDhsuqqvyRBZHbW5IOOzHgZaizq5d4a4Zf
+	m5IxOv0ewnlQnw7TsB5LSpLoh4F/Na0o4UZEcDc1HP/kxXl0NjF1NsaziUFuPkJaUII/UNnHnES
+	L72AClckGrmvPSaqRFAFWqxRUpf5bq7/cDHEAG/QSz9S78mfLFu69nM9UyMspKpoppnXl/MNQKt
+	FKnXwWsRAFNnf4s4A7P9ggOE7KUAIlmgxB37OmAwEPOdlmPZ/SZkRMC5dn/WVd/bqCz5ESU1ho2
+	C713xn7RChfJph7X77nco/fckVf1UzAP+U1Tf357xMNtaA==
+X-Received: by 2002:a05:620a:4410:b0:93a:251c:5337 with SMTP id af79cd13be357-93bb76a8322mr854390485a.4.1789597842372;
+        Wed, 16 Sep 2026 15:30:42 -0700 (PDT)
 Received: from ghidorah.spiteful.org (107-179-213-3.cpe.teksavvy.com. [107.179.213.3])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-93b781d94c0sm310900685a.10.2026.09.16.15.30.47
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-93b781d94c0sm310900685a.10.2026.09.16.15.30.41
         for <yocto-patches@lists.yoctoproject.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Sep 2026 15:30:47 -0700 (PDT)
+        Wed, 16 Sep 2026 15:30:41 -0700 (PDT)
 From: Scott Murray <scott.murray@konsulko.com>
 To: yocto-patches@lists.yoctoproject.org
-Subject: [meta-security][wrynose][PATCH 18/24] ccs-tools: upgrade 1.8.9 -> 1.8.14
-Date: Wed, 16 Sep 2026 18:30:12 -0400
-Message-ID: <020af94becefcef8d4e3f4ef61f77791aa10bcab.1789597604.git.scott.murray@konsulko.com>
+Subject: [meta-security][wrynose][PATCH 12/24] openscap: upgrade 1.4.3 -> 1.4.4
+Date: Wed, 16 Sep 2026 18:30:06 -0400
+Message-ID: <2596106b0980963b08727600b8d29ceac7028199.1789597604.git.scott.murray@konsulko.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <cover.1789597604.git.scott.murray@konsulko.com>
 References: <cover.1789597604.git.scott.murray@konsulko.com>
@@ -67,37 +67,35 @@ List-Id: <yocto-patches.lists.yoctoproject.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <yocto-patches@lists.yoctoproject.org>; Wed, 16 Sep 2026 22:30:53 -0000
-X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4894
+X-Groupsio-URL: https://lists.yoctoproject.org/g/yocto-patches/message/4888
 
-From: Wang Mingyu <wangmy@fujitsu.com>
+Release notes:
+https://github.com/OpenSCAP/openscap/releases/tag/1.4.4
 
-Signed-off-by: Wang Mingyu <wangmy@fujitsu.com>
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- .../ccs-tools/{ccs-tools_1.8.9.bb => ccs-tools_1.8.14.bb}   | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
- rename recipes-mac/ccs-tools/{ccs-tools_1.8.9.bb => ccs-tools_1.8.14.bb} (84%)
+ .../openscap/{openscap_1.4.3.bb => openscap_1.4.4.bb}         | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+ rename recipes-compliance/openscap/{openscap_1.4.3.bb => openscap_1.4.4.bb} (98%)
 
-diff --git a/recipes-mac/ccs-tools/ccs-tools_1.8.9.bb b/recipes-mac/ccs-tools/ccs-tools_1.8.14.bb
-similarity index 84%
-rename from recipes-mac/ccs-tools/ccs-tools_1.8.9.bb
-rename to recipes-mac/ccs-tools/ccs-tools_1.8.14.bb
-index 3f754e9..aaf17b0 100644
---- a/recipes-mac/ccs-tools/ccs-tools_1.8.9.bb
-+++ b/recipes-mac/ccs-tools/ccs-tools_1.8.14.bb
-@@ -7,10 +7,10 @@ LIC_FILES_CHKSUM = "file://COPYING.ccs;md5=751419260aa954499f7abaabaa882bbe"
+diff --git a/recipes-compliance/openscap/openscap_1.4.3.bb b/recipes-compliance/openscap/openscap_1.4.4.bb
+similarity index 98%
+rename from recipes-compliance/openscap/openscap_1.4.3.bb
+rename to recipes-compliance/openscap/openscap_1.4.4.bb
+index 1b6d9af..34fcf47 100644
+--- a/recipes-compliance/openscap/openscap_1.4.3.bb
++++ b/recipes-compliance/openscap/openscap_1.4.4.bb
+@@ -11,9 +11,9 @@ DEPENDS:class-native = "pkgconfig-native swig-native curl-native libxml2-native
  
- DEPENDS = "ncurses"
+ SRC_URI = "git://github.com/OpenSCAP/openscap.git;branch=main;protocol=https \
+            file://0001-CMakeLists.txt-fix-installation-directory-for-system.patch \
+-          "
++"
  
--DS = "20210910"
--SRC_URI = "http://osdn.dl.sourceforge.jp/tomoyo/49693/${BPN}-${PV}-${DS}.tar.gz"
-+DS = "20250707"
-+SRC_URI = "https://sourceforge.net/projects/tomoyo/files/ccs-tools/1.8/${BPN}-${PV}-${DS}.tar.gz"
+-SRCREV = "24986066961363e24fcff83294995b3cfe4058ba"
++SRCREV = "4ac56ce0e6dfdea7215b5ad202b3db20855d2507"
  
--SRC_URI[sha256sum] = "7900126cf2dd8706c42c2c1ef7a37fd8b50f1505abd7d9c3d653dc390fb4d620"
-+SRC_URI[sha256sum] = "b62e344cc357a982310a08760f2a2cebf4cf48b1341ea9bd3990ae55f45bab03"
- 
- S = "${UNPACKDIR}/${BPN}"
+ COMPATIBLE_HOST:libc-musl = "null"
  
 -- 
 2.55.0
